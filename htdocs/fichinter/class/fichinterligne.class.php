@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2020 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2015-2020 Charlene Benke       <charlie@patas-monkey.com>
+ * Copyright (C) 2015-2025 Charlene Benke       <charlene@patas-monkey.com>
  * Copyright (C) 2018      Nicolas ZABOURI	    <info@inovea-conseil.com>
  * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2023-2024  William Mead        <william.mead@manchenumerique.fr>
@@ -124,7 +124,7 @@ class FichinterLigne extends CommonObjectLine
 	{
 		dol_syslog("FichinterLigne::fetch", LOG_DEBUG);
 
-		$sql = 'SELECT ft.rowid, ft.fk_fichinter, ft.description, ft.duree, ft.rang, ft.date, ft.extraparams';
+		$sql = 'SELECT ft.rowid, ft.fk_fichinter, ft.description, ft.duree, ft.rang, ft.date, ft.product_type, ft.extraparams';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'fichinterdet as ft';
 		$sql .= ' WHERE ft.rowid = '.((int) $rowid);
 
@@ -137,6 +137,7 @@ class FichinterLigne extends CommonObjectLine
 			$this->date = $this->db->jdate($objp->date);
 			$this->datei = $this->db->jdate($objp->date);	// For backward compatibility
 			$this->desc           	= $objp->description;
+			$this->product_type     = $objp->product_type;
 			$this->duration       	= $objp->duree;
 			$this->rang           	= $objp->rang;
 
@@ -170,6 +171,11 @@ class FichinterLigne extends CommonObjectLine
 			$this->date = $this->datei;
 		}
 
+		// Check parameters
+		if ($this->product_type < 0) {
+			return -1;
+		}
+
 		$this->db->begin();
 
 		$rangToUse = $this->rang;
@@ -190,12 +196,13 @@ class FichinterLigne extends CommonObjectLine
 
 		// Insertion dans base de la ligne
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'fichinterdet';
-		$sql .= ' (fk_fichinter, description, date, duree, rang)';
+		$sql .= ' (fk_fichinter, description, date, duree, rang, product_type)';
 		$sql .= " VALUES (".((int) $this->fk_fichinter).",";
 		$sql .= " '".$this->db->escape($this->desc)."',";
 		$sql .= " '".$this->db->idate($this->date)."',";
 		$sql .= " ".((int) $this->duration).",";
-		$sql .= ' '.((int) $rangToUse);
+		$sql .= ' '.((int) $rangToUse).",";
+		$sql .= " ".((int) $this->product_type);
 		$sql .= ')';
 
 		dol_syslog("FichinterLigne::insert", LOG_DEBUG);
@@ -262,7 +269,8 @@ class FichinterLigne extends CommonObjectLine
 		$sql .= " description = '".$this->db->escape($this->desc)."',";
 		$sql .= " date = '".$this->db->idate($this->date)."',";
 		$sql .= " duree = ".((int) $this->duration).",";
-		$sql .= " rang = ".((int) $this->rang);
+		$sql .= " rang = ".((int) $this->rang).",";
+		$sql .= " product_type = ".((int) $this->product_type);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog("FichinterLigne::update", LOG_DEBUG);

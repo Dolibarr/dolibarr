@@ -1080,10 +1080,12 @@ abstract class CommonDocGenerator
 			$array_shipment = $this->fill_substitutionarray_with_extrafields($object, $array_shipment, $extrafields, $array_key, $outputlangs);
 		}
 
-		// Add info from $object->xxx where xxx has been loaded by fetch_origin() of shipment
-		if (is_object($object->commande) && !empty($object->commande->ref)) {
-			$array_shipment['order_ref'] = $object->commande->ref;
-			$array_shipment['order_ref_customer'] = $object->commande->ref_customer;
+		// Add info from $object->origin_object which has been loaded by fetch() of shipment
+		if ($object->origin_type == 'commande' && is_object($object->origin_object) && !empty($object->origin_object->ref)) {
+			$originOrder = $object->origin_object;
+			'@phan-var-force Commande $originOrder';
+			$array_shipment['order_ref'] = $originOrder->ref;
+			$array_shipment['order_ref_customer'] = $originOrder->ref_customer;
 		}
 
 		// Load dim data

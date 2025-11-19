@@ -12847,4 +12847,417 @@ class Form
 
 		return '<div class="search-tool-container"><input '.$compiledAttributes.'></div>';
 	}
+
+	/**
+	 * Html for input with label
+	 *
+	 * @param	string	$type			Type of input : button, checkbox, color, email, hidden, month, number, password, radio, range, tel, text, time, url, week
+	 * @param	string	$name			Name
+	 * @param	string	$value			[=''] Value
+	 * @param	string	$id				[=''] Id
+	 * @param	string	$morecss		[=''] Class
+	 * @param	string	$moreparam		[=''] Add attributes (checked, required, etc)
+	 * @param	string	$label			[=''] Label
+	 * @param	string	$addInputLabel	[=''] Add label for input
+	 * @return	string					Html for input with label
+	 */
+	public function inputType($type, $name, $value = '', $id = '', $morecss = '', $moreparam = '', $label = '', $addInputLabel = '')
+	{
+		$out = '';
+		if ($label != '') {
+			$out .= '<label for="' . dolPrintHTMLForAttribute($id) . '">';
+		}
+		$out .= '<input type="' . dolPrintHTMLForAttribute($type) . '"';
+		$out .= ' class="flat valignmiddle maxwidthonsmartphone ' . dolPrintHTMLForAttribute($morecss) . '"';
+		if ($id != '') {
+			$out .= ' id="' . dolPrintHTMLForAttribute($id) . '"';
+		}
+		$out .= ' name="' . dolPrintHTMLForAttribute($name) . '"';
+		$out .= ' value="' . dolPrintHTMLForAttribute($value) . '" ';
+		$out .= ($moreparam ? ' ' . $moreparam : '');
+		$out .= ' />' . $addInputLabel;
+		if ($label != '') {
+			$out .= $label . '</label>';
+		}
+
+		return $out;
+	}
+
+	/**
+	 * Html for select with get options by AJAX
+	 *
+	 * @param	string					$htmlName		Name
+	 * @param	array<string,mixed>		$array			Array like array(key => value) or array(key=>array('label'=>..., 'data-...'=>..., 'disabled'=>..., 'css'=>...))
+	 * @param	string					$id				Preselected key or preselected keys for multiselect. Use 'ifone' to autoselect record if there is only one record.
+	 * @param	string					$ajaxUrl		Ajax page Url
+	 * @param	array<string,string>	$ajaxData		Additional data send to the AJAX page
+	 * @param	string					$morecss		[=''] Class
+	 * @param	string					$moreparam		[=''] Add attributes (checked, required, etc)
+	 * @return	string									Html for input with label
+	 */
+	public function inputSelectAjax($htmlName, $array, $id, $ajaxUrl, $ajaxData = [], $morecss = 'minwidth75', $moreparam = '')
+	{
+		$out = "
+					<script>
+					$(document).ready(function () {
+						$('#" . $htmlName . "').select2({
+							ajax: {
+								url: '" . $ajaxUrl . "',
+								dataType: 'json',
+								delay: 250, // wait 250 milliseconds before triggering the request
+								data: function (params) {
+									var query = {
+										search: params.term,
+										page: params.page || 1";
+		if (!empty($ajaxData) && is_array($ajaxData)) {
+			foreach ($ajaxData as $key => $value) {
+				$out .= ", " . $key . ": '" . $value . "'";
+			}
+		}
+		$out .= "
+									}
+									return query;
+								}
+							}
+						})
+					});
+					</script>";
+
+		$out .= $this->selectarray($htmlName, $array, $id, 0, 0, 0, $moreparam, 0, 0, 0, '', $morecss);
+
+		return $out;
+	}
+
+	/**
+	 * Html for HTML area
+	 *
+	 * @param	string	$htmlName		Html name
+	 * @param	string	$value			[=''] Value
+	 * @param	string	$morecss		[=''] Class
+	 * @param	string	$moreparam		[=''] Add attributes (checked, required, etc)
+	 * @return	string					Html for input with label
+	 */
+	public function inputHtml($htmlName, $value, $morecss = '', $moreparam = '')
+	{
+		require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
+		$doleditor = new DolEditor($htmlName, $value, '', 200, 'dolibarr_notes', 'In', false, false, isModEnabled('fckeditor') && getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_5, '90%');
+
+		return (string) $doleditor->Create(1, '', true, '', '', $moreparam, $morecss);
+	}
+
+	/**
+	 * Html for HTML area
+	 *
+	 * @param	string				$htmlName		Html name
+	 * @param	string				$value			[=''] Value
+	 * @param	string				$morecss		[=''] Class
+	 * @param	string				$moreparam		[=''] Add attributes (checked, required, etc)
+	 * @param	array<string,mixed>	$options		Array like array(key => value) or array(key=>array('label'=>..., 'data-...'=>..., 'disabled'=>..., 'css'=>...))
+	 * @return	string								Html for input with label
+	 */
+	public function inputText($htmlName, $value, $morecss = '', $moreparam = '', $options = array())
+	{
+		global $langs;
+
+		$out = '';
+		if (!empty($options)) {
+			// If the textarea field has a list of arrayofkeyval into its definition, we suggest a combo with possible values to fill the textarea.
+			$out .= $this->selectarray($htmlName . "_multiinput", $options, '', 1, 0, 0, $moreparam, 0, 0, 0, '', "flat maxwidthonphone" . $morecss);
+			$out .= '<input id="' . $htmlName . '_multiinputadd" type="button" class="button" value="' . $langs->trans("Add") . '">';
+			$out .= "<script>";
+			$out .= '
+					function handlemultiinputdisabling(htmlname){
+						console.log("We handle the disabling of used options for "+htmlname+"_multiinput");
+						multiinput = $("#"+htmlname+"_multiinput");
+						multiinput.find("option").each(function(){
+							tmpval = $("#"+htmlname).val();
+							tmpvalarray = tmpval.split("\n");
+							valtotest = $(this).val();
+							if(tmpvalarray.includes(valtotest)){
+								$(this).prop("disabled",true);
+							} else {
+								if($(this).prop("disabled") == true){
+									console.log(valtotest)
+									$(this).prop("disabled", false);
+								}
+							}
+						});
+					}
+
+					$(document).ready(function () {
+						$("#' . $htmlName . '_multiinputadd").on("click",function() {
+							tmpval = $("#' . $htmlName . '").val();
+							tmpvalarray = tmpval.split(",");
+							valtotest = $("#' . $htmlName . '_multiinput").val();
+							if(valtotest != -1 && !tmpvalarray.includes(valtotest)){
+								console.log("We add the selected value to the text area ' . $htmlName . '");
+								if(tmpval == ""){
+									tmpval = valtotest;
+								} else {
+									tmpval = tmpval + "\n" + valtotest;
+								}
+								$("#' . $htmlName . '").val(tmpval);
+								handlemultiinputdisabling("' . $htmlName . '");
+								$("#' . $htmlName . '_multiinput").val(-1);
+							} else {
+								console.log("We add nothing the text area ' . $htmlName . '");
+							}
+						});
+						$("#' . $htmlName . '").on("change",function(){
+							handlemultiinputdisabling("' . $htmlName . '");
+						});
+						handlemultiinputdisabling("' . $htmlName . '");
+					})';
+			$out .= "</script>";
+			$value = str_replace(',', "\n", $value);
+		}
+
+		require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
+		$doleditor = new DolEditor($htmlName, (string) $value, '', 200, 'dolibarr_notes', 'In', false, false, false, ROWS_5, '90%');
+		$out .= (string) $doleditor->Create(1, '', true, '', '', $moreparam, $morecss);
+
+		return $out;
+	}
+
+	/**
+	 * Html for input radio
+	 *
+	 * @param	string					$htmlName		Html name
+	 * @param	array<string,string>	$options		List of option
+	 * @param	string					$selectedValue	Selected value
+	 * @param	string					$morecss		[=''] Class
+	 * @param	string					$moreparam		[=''] Add attributes (checked, required, etc)
+	 * @return	string									Html for input radio
+	 */
+	public function inputRadio($htmlName, $options, $selectedValue, $morecss = '', $moreparam = '')
+	{
+		$out = '';
+		foreach ($options as $optionKey => $optionLabel) {
+			$selected = ((string) $selectedValue) === ((string) $optionKey) ? ' checked="checked"' : '';
+			$optionId = $htmlName . '_' . $optionKey;
+			$out .= '<input class="flat' . $morecss . '" type="radio" name="' . $htmlName . '" id="' . $optionId . '" value="' . dolPrintHTMLForAttribute((string) $optionKey) . '"' . $selected . $moreparam . '/><label for="' . $optionId . '">' . $optionLabel . '</label><br>';
+		}
+
+		return $out;
+	}
+
+	/**
+	 * Html for input stars
+	 *
+	 * @param	string		$htmlName		Html name
+	 * @param	int			$size			Number of stars
+	 * @param	int			$value			Value
+	 * @param	string		$morecss		[=''] Class
+	 * @param	string		$moreparam		[=''] Add attributes (checked, required, etc)
+	 * @return	string						Html for input stars
+	 */
+	public function inputStars($htmlName, $size, $value, $morecss = '', $moreparam = '')
+	{
+		$out = '<input type="hidden" class="flat ' . $morecss . '" name="' . $htmlName . '" id="' . $htmlName . '" value="' . dolPrintHTMLForAttribute((string) $value) . '"' . $moreparam . '>';
+		$out .= '<div class="star-selection" id="' . $htmlName . '_selection">';
+		for ($i = 1; $i <= $size; $i++) {
+			$out .= '<span class="star" data-value="' . $i . '">' . img_picto('', 'fontawesome_star_fas') . '</span>';
+		}
+		$out .= '</div>';
+		$out .= '<script>
+				jQuery(function($) {	/* commonobject.class.php 1 */
+					let container = $("#' . $htmlName . '_selection");
+					let selectedStars = parseInt($("#' . $htmlName . '").val()) || 0;
+					container.find(".star").each(function() {
+						$(this).toggleClass("active", $(this).data("value") <= selectedStars);
+					});
+					container.find(".star").on("mouseover", function() {
+						let selectedStar = $(this).data("value");
+						container.find(".star").each(function() {
+							$(this).toggleClass("active", $(this).data("value") <= selectedStar);
+						});
+					});
+					container.on("mouseout", function() {
+						container.find(".star").each(function() {
+							$(this).toggleClass("active", $(this).data("value") <= selectedStars);
+						});
+					});
+					container.find(".star").off("click").on("click", function() {
+						selectedStars = $(this).data("value");
+						if (selectedStars === 1 && $("#' . $htmlName . '").val() == 1) {
+							selectedStars = 0;
+						}
+						$("#' . $htmlName . '").val(selectedStars);
+						container.find(".star").each(function() {
+							$(this).toggleClass("active", $(this).data("value") <= selectedStars);
+						});
+					});
+				});
+			</script>';
+
+		return $out;
+	}
+
+	/**
+	 * Html for input icon
+	 *
+	 * @param	string		$htmlName		Html name
+	 * @param	string		$value			Value
+	 * @param	string		$morecss		[=''] Class
+	 * @param	string		$moreparam		[=''] Add attributes (checked, required, etc)
+	 * @return	string						Html for input icon
+	 */
+	public function inputIcon($htmlName, $value, $morecss = '', $moreparam = '')
+	{
+		global $langs;
+
+		/* External lib inclusion are not allowed in backoffice. Also lib is included several time if there is several icon file.
+		 Some code must be added into main when MAIN_ADD_ICONPICKER_JS is set to add of lib in html header
+		 $out ='<link rel="stylesheet" href="'.dol_buildpath('/myfield/css/fontawesome-iconpicker.min.css', 1).'">';
+		 $out.='<script src="'.dol_buildpath('/myfield/js/fontawesome-iconpicker.min.js', 1).'"></script>';
+		 */
+		$out = '<input type="text" class="form-control icp icp-auto iconpicker-element iconpicker-input flat ' . $morecss . ' maxwidthonsmartphone"';
+		$out .= ' name="' . $htmlName . '" id="' . $htmlName . '" value="' . dolPrintHTMLForAttribute((string) $value) . '" ' . ((string) $moreparam) . '>';
+		if (getDolGlobalInt('MAIN_ADD_ICONPICKER_JS')) {
+			$out .= '<script>';
+			$options = "{ title: '<b>" . $langs->trans("IconFieldSelector") . "</b>', placement: 'right', showFooter: false, templates: {";
+			$options .= "iconpicker: '<div class=\"iconpicker\"><div style=\"background-color:#EFEFEF;\" class=\"iconpicker-items\"></div></div>',";
+			$options .= "iconpickerItem: '<a role=\"button\" href=\"#\" class=\"iconpicker-item\" style=\"background-color:#DDDDDD;\"><i></i></a>',";
+			// $options.="buttons: '<button style=\"background-color:#FFFFFF;\" class=\"iconpicker-btn iconpicker-btn-cancel btn btn-default btn-sm\">".$langs->trans("Cancel")."</button>";
+			// $options.="<button style=\"background-color:#FFFFFF;\" class=\"iconpicker-btn iconpicker-btn-accept btn btn-primary btn-sm\">".$langs->trans("Save")."</button>',";
+			$options .= "footer: '<div class=\"popover-footer\" style=\"background-color:#EFEFEF;\"></div>',";
+			$options .= "search: '<input type=\"search\" class\"form-control iconpicker-search\" placeholder=\"" . $langs->trans("TypeToFilter") . "\" />',";
+			$options .= "popover: '<div class=\"iconpicker-popover popover\">";
+			$options .= "   <div class=\"arrow\" ></div>";
+			$options .= "   <div class=\"popover-title\" style=\"text-align:center;background-color:#EFEFEF;\"></div>";
+			$options .= "   <div class=\"popover-content \" ></div>";
+			$options .= "</div>'}}";
+			$out .= "$('#" . $htmlName . "').iconpicker(" . $options . ");";
+			$out .= '</script>';
+		}
+
+		return $out;
+	}
+
+	/**
+	 * Html for input geo point
+	 *
+	 * @param	string		$htmlName		Html name
+	 * @param	string		$value			Value
+	 * @param	string		$type			Type (linestrg, multipts, point, polygon)
+	 * @return	string						Html for input geo point
+	 */
+	public function inputGeoPoint($htmlName, $value, $type = '')
+	{
+		require_once DOL_DOCUMENT_ROOT . '/core/class/dolgeophp.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/core/class/geomapeditor.class.php';
+		$dolgeophp = new DolGeoPHP($this->db);
+		$geomapeditor = new GeoMapEditor();
+
+		$geojson = '{}';
+		$centroidjson = getDolGlobalString('MAIN_INFO_SOCIETE_GEO_COORDINATES', '{}');
+		if (!empty($value)) {
+			$tmparray = $dolgeophp->parseGeoString($value);
+			$geojson = $tmparray['geojson'];
+			$centroidjson = $tmparray['centroidjson'];
+		}
+
+		return $geomapeditor->getHtml($htmlName, $geojson, $centroidjson, $type);
+	}
+
+	/**
+	 * Html for show selected multiple values
+	 *
+	 * @param	string[]	$values		Values
+	 * @return	string					Html for show selected multiple values
+	 */
+	public function outputMultiValues($values)
+	{
+		$out = '';
+		$toPrint = array();
+		$values = is_array($values) ? $values : array();
+
+		foreach ($values as $value) {
+			$toPrint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">' . $value . '</li>';
+		}
+		if (!empty($toPrint)) {
+			$out = '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">' . implode(' ', $toPrint) . '</ul></div>';
+		}
+
+		return $out;
+	}
+
+	/**
+	 * Html for show stars
+	 *
+	 * @param	int			$size		Number of stars
+	 * @param	int			$value		Value
+	 * @return	string					Html for show stars
+	 */
+	public function outputStars($size, $value)
+	{
+		$out = '<div class="star-selection" data-value="' . dolPrintHTMLForAttribute((string) $value) . '">';
+		for ($i = 1; $i <= $size; $i++) {
+			$out .= '<span class="star' . ($i <= $value ? ' active' : '') . '" data-value="' . $i . '">' . img_picto('', 'fontawesome_star_fas') . '</span>';
+		}
+		$out .= '</div>';
+
+		return $out;
+	}
+
+	/**
+	 * Html for show icon
+	 *
+	 * @param	string		$value		Value
+	 * @return	string					Html for show icon
+	 */
+	public function outputIcon($value)
+	{
+		$out = '<span class="' . dolPrintHTMLForAttribute((string) $value) . '"></span>';
+
+		return $out;
+	}
+
+	/**
+	 * Html for show geo point
+	 *
+	 * @param	string		$value		Value
+	 * @param	string		$type		Type (linestrg, multipts, point, polygon)
+	 * @return	string					Html for show geo point
+	 */
+	public function outputGeoPoint($value, $type)
+	{
+		$out = '';
+
+		if (!empty($value)) {
+			require_once DOL_DOCUMENT_ROOT . '/core/class/dolgeophp.class.php';
+			$dolgeophp = new DolGeoPHP($this->db);
+			if ($type == 'point') {
+				$out = $dolgeophp->getXYString($value);
+			} else { // multipts, linestrg, polygon
+				$out = $dolgeophp->getPointString($value);
+			}
+		}
+
+		return $out;
+	}
+
+	/**
+	 * Return link of object
+	 *
+	 * @param	CommonObject	$object					Object handler
+	 * @param	int				$withpicto				Add picto into link
+	 * @param	string			$option					Where point the link ('stock', 'composition', 'category', 'supplier', '')
+	 * @param	int				$maxlength				Maxlength of ref
+	 * @param 	int				$save_lastsearch_value	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 * @param	int				$notooltip				No tooltip
+	 * @param  	string  		$morecss            	''=Add more css on link
+	 * @param	int				$add_label				0=Default, 1=Add label into string, >1=Add first chars into string
+	 * @param	string			$sep					' - '=Separator between ref and label if option 'add_label' is set
+	 * @return	string									String with URL
+	 */
+	public function getNomUrl(&$object, $withpicto = 0, $option = '', $maxlength = 0, $save_lastsearch_value = -1, $notooltip = 0, $morecss = '', $add_label = 0, $sep = ' - ')
+	{
+		if (is_object($object) && method_exists($object, 'getNomUrl')) {
+			$out = $object->getNomUrl($withpicto, $option, $maxlength, $save_lastsearch_value, $notooltip, $morecss, $add_label, $sep);
+			return $out;
+		} else {
+			return '';
+		}
+	}
 }

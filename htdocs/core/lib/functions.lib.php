@@ -8687,7 +8687,7 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart = '
 	$path = '';
 
 	// Define $arrayforoldpath that is module path using a hierarchy on more than 1 level.
-	$arrayforoldpath = array('cheque' => 2, 'category' => 2, 'holiday' => 2, 'supplier_invoice' => 2, 'invoice_supplier' => 2, 'mailing' => 2, 'supplier_payment' => 2);
+	$arrayforoldpath = array('cheque' => 2, 'category' => 2, 'supplier_invoice' => 2, 'invoice_supplier' => 2, 'mailing' => 2, 'supplier_payment' => 2);
 	if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
 		$arrayforoldpath['product'] = 2;
 	}

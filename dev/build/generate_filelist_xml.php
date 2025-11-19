@@ -26,6 +26,7 @@
 if (!defined('NOREQUIREDB')) {
 	define('NOREQUIREDB', '1');	// Do not create database handler $db
 }
+define('NOREQUIREVIRTUALURL', 1);
 
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
@@ -36,6 +37,8 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
 	exit(1);
 }
+
+define('DOL_DOCUMENT_ROOT', dirname(dirname($path)).'/htdocs');
 
 require_once $path."../../htdocs/master.inc.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
@@ -200,6 +203,9 @@ if ($release) {
 }
 
 
+$needtoclose = 0;
+
+
 // Build the XML file
 if ($release) {
 	$checksumconcat = array();
@@ -226,8 +232,6 @@ if ($release) {
 
 	fputs($fp, '<?xml version="1.0" encoding="UTF-8" ?>'."\n");
 	fputs($fp, '<checksum_list version="'.$release.'" date="'.dol_print_date(dol_now(), 'dayhourrfc').'" generator="'.$script_file.'" gitcommit="'.$gitcommit.'">'."\n");
-
-	$needtoclose = 0;
 
 	foreach ($includeconstants as $countrycode => $tmp) {
 		fputs($fp, '<dolibarr_constants country="'.$countrycode.'">'."\n");
@@ -382,6 +386,7 @@ foreach ($arrayofunalterablefiles as $entry) {
 		}
 	} else {
 		$file = $entry['dir'].'/'.$entry['file'];
+		$dir = '';
 		$newdir = str_replace(DOL_DOCUMENT_ROOT, '', dirname($file));
 		$newdir = str_replace(dirname(__FILE__).'/../../htdocs', '', dirname($file));
 		if (!file_exists($file)) {
@@ -461,24 +466,29 @@ if ($release) {
 if ($checklock) {
 	print "Signature for unalterable files: ".$md5unalterable_files."\n";
 
+	$lockedfile = DOL_DOCUMENT_ROOT.'/../dev/lockedfiles.txt';
 	$checksuminlockedfile = '';
 
-	// Now we check the content of lockedfiles.txt
-	$arraylocked = file(DOL_DOCUMENT_ROOT.'/../dev/lockedfiles.txt');
-	foreach ($arraylocked as $line) {
-		$tmparray = preg_split("/\s+/", $line, 3);
-		if ($tmparray[0] == $checklockmajorversion) {
-			$checksuminlockedfile = $tmparray[2];
+	if (!file_exists($lockedfile)) {
+		print "Can't find the file ".$lockedfile.". No checksum to check\n";
+	} else {
+		// Now we check the content of lockedfiles.txt
+		$arraylocked = file($lockedfile);
+		foreach ($arraylocked as $line) {
+			$tmparray = preg_split("/\s+/", $line, 3);
+			if ($tmparray[0] == $checklockmajorversion) {
+				$checksuminlockedfile = $tmparray[2];
+			}
 		}
-	}
-	if (empty($checksuminlockedfile)) {
-		print "The major version ".$checklockmajorversion." is not locked on the scope ".$checksource." (no entry found into dev/lockedfiles.txt).\n";
-	} elseif ($checksuminlockedfile != $md5unalterable_files) {
-		print "The major version ".$checklockmajorversion." is locked on scope '".$checksource."' to checksum ".$checksuminlockedfile."\n";
-		if ($checklockmajorversion != $checksource) {
-			print "The checksum now differs from the locked one, so we return an error.\n";
-			print "\n";
-			exit(10);
+		if (empty($checksuminlockedfile)) {
+			print "The major version ".$checklockmajorversion." is not locked on the scope ".$checksource." (file found but no matching entry found into dev/lockedfiles.txt).\n";
+		} elseif ($checksuminlockedfile != $md5unalterable_files) {
+			print "The major version ".$checklockmajorversion." is locked on scope '".$checksource."' to checksum ".$checksuminlockedfile."\n";
+			if ($checklockmajorversion != $checksource) {
+				print "The checksum now differs from the locked one, so we return an error.\n";
+				print "\n";
+				exit(10);
+			}
 		}
 	}
 }
