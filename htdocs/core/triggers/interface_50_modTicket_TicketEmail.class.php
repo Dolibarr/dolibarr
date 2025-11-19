@@ -52,11 +52,11 @@ class InterfaceTicketEmail extends DolibarrTriggers
 	 *      Function called when a Dolibarr business event is done.
 	 *      All functions "runTrigger" are triggered if file is inside directory htdocs/core/triggers
 	 *
-	 *      @param  string    $action Event action code
-	 *      @param  Ticket    $object Object
-	 *      @param  User      $user   Object user
-	 *      @param  Translate $langs  Object langs
-	 *      @param  Conf      $conf   Object conf
+	 *      @param  string    		$action Event action code
+	 *      @param  CommonObject    $object Object
+	 *      @param  User      		$user   Object user
+	 *      @param  Translate 		$langs  Object langs
+	 *      @param  Conf      		$conf   Object conf
 	 *      @return int                     Return integer <0 if KO, 0 if no triggered ran, >0 if OK
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
