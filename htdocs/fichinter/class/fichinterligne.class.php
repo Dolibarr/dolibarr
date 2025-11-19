@@ -270,7 +270,7 @@ class FichinterLigne extends CommonObjectLine
 		$sql .= " date = '".$this->db->idate($this->date)."',";
 		$sql .= " duree = ".((int) $this->duration).",";
 		$sql .= " rang = ".((int) $this->rang).",";
-		$sql .= " product_type=".$this->product_type;
+		$sql .= " product_type = ".((int) $this->product_type);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog("FichinterLigne::update", LOG_DEBUG);
