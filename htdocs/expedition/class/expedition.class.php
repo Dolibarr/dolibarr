@@ -1133,6 +1133,71 @@ class Expedition extends CommonObject
 		}
 	}
 
+	/**
+	 * Override to keep every expeditiondet row that belongs to the displayed line in sync when drag & drop reorders rows.
+	 *
+	 * @param array $rows Array of row ids received from ajax
+	 * @return void
+	 */
+	public function line_ajaxorder($rows)
+	{
+		if (empty($rows) || !is_array($rows)) {
+			return;
+		}
+
+		$rowToOrigin = array();
+		$originToRows = array();
+
+		$sql = "SELECT rowid, fk_elementdet";
+		$sql .= " FROM ".$this->db->prefix()."expeditiondet";
+		$sql .= " WHERE fk_expedition = ".((int) $this->id);
+		$sql .= " ORDER BY rang ASC, rowid ASC";
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$rowid = (int) $obj->rowid;
+				$originLine = (int) $obj->fk_elementdet;
+				$rowToOrigin[$rowid] = $originLine;
+
+				if (!isset($originToRows[$originLine])) {
+					$originToRows[$originLine] = array();
+				}
+				$originToRows[$originLine][] = $rowid;
+			}
+			$this->db->free($resql);
+		} else {
+			parent::line_ajaxorder($rows);
+			return;
+		}
+
+		$processedOrigins = array();
+		$position = 1;
+
+		foreach ($rows as $rowid) {
+			$rowid = (int) $rowid;
+			if (empty($rowid)) {
+				continue;
+			}
+
+			$originLine = isset($rowToOrigin[$rowid]) ? $rowToOrigin[$rowid] : 0;
+			if ($originLine > 0 && !empty($processedOrigins[$originLine])) {
+				continue;
+			}
+
+			$rowidsToUpdate = array($rowid);
+			if ($originLine > 0 && !empty($originToRows[$originLine])) {
+				$rowidsToUpdate = $originToRows[$originLine];
+				$processedOrigins[$originLine] = 1;
+			}
+
+			foreach ($rowidsToUpdate as $childRowId) {
+				$this->updateRangOfLine($childRowId, $position);
+				$position++;
+			}
+		}
+	}
+
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
