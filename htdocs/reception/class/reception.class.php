@@ -503,7 +503,7 @@ class Reception extends CommonObject
 		$sql .= ', e.fk_incoterms, e.location_incoterms';
 		$sql .= ', i.libelle as label_incoterms';
 		$sql .= " FROM ".MAIN_DB_PREFIX."reception as e";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = e.rowid AND el.targettype = '".$this->db->escape($this->element)."' AND el.sourcetype = 'order_supplier'";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = e.rowid AND el.targettype = '".$this->db->escape($this->element)."' AND el.sourcetype = 'supplier_order'";
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON e.fk_incoterms = i.rowid';
 
 		if ($id) {
@@ -854,7 +854,7 @@ class Reception extends CommonObject
 
 		$status = CommandeFournisseur::STATUS_RECEIVED_PARTIALLY;
 
-		if (!empty($this->origin) && $this->origin_id > 0 && ($this->origin == 'order_supplier' || $this->origin == 'commandeFournisseur')) {
+		if (!empty($this->origin) && $this->origin_id > 0 && ($this->origin == 'supplier_order' || $this->origin == 'commandeFournisseur')) {
 			if (empty($this->origin_object)) {
 				$this->fetch_origin();
 				if ($this->origin_object instanceof CommonObject && empty($this->origin_object->lines)) {
@@ -2019,7 +2019,7 @@ class Reception extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			// Set order billed if 100% of order is received (qty in reception lines match qty in order lines)
-			if ($this->origin == 'order_supplier' && $this->origin_id > 0) {
+			if ($this->origin == 'supplier_order' && $this->origin_id > 0) {
 				require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 
 				$order = new CommandeFournisseur($this->db);
@@ -2283,7 +2283,7 @@ class Reception extends CommonObject
 				}
 			}
 
-			if (!$error && $this->origin == 'order_supplier') {
+			if (!$error && $this->origin == 'supplier_order') {
 				require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 
 				$commande = new CommandeFournisseur($this->db);
@@ -2417,7 +2417,7 @@ class Reception extends CommonObject
 					$error++;
 				}
 			}
-			if ($this->origin == 'order_supplier') {
+			if ($this->origin == 'supplier_order') {
 				if (!empty($this->origin) && $this->origin_id > 0) {
 					$this->fetch_origin();
 					if ($this->origin_object->statut == 4) {  // If order source of reception is "partially received"
