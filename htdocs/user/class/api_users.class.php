@@ -349,10 +349,10 @@ class Users extends DolibarrApi
 		// check mandatory fields
 		if (!isset($request_data["login"]))
 			throw new RestException(400, "login field missing");
-		if (!isset($request_data["password"]))
+		/*if (!isset($request_data["password"]))
 			throw new RestException(400, "password field missing");
 		if (!isset($request_data["lastname"]))
-			 throw new RestException(400, "lastname field missing");
+			 throw new RestException(400, "lastname field missing");*/
 
 		//assign field values
 		foreach ($request_data as $field => $value) {
