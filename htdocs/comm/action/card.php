@@ -1943,39 +1943,37 @@ if ($action == 'create') {
 				});
 		   })';
 		print '</script>'."\n";
-
-		print "\n".'<script type="text/javascript">';
-		print '$(document).ready(function () {
-	            		$("#addreminder").click(function(){
-							console.log("Click on addreminder");
-	            		    if (this.checked) {
-	            		    	$(".reminderparameters").show();
-                            } else {
-                            	$(".reminderparameters").hide();
-                            }
-							$("#selectremindertype").select2("destroy");
-							$("#selectremindertype").select2();
-							$("#select_offsetunittype_duration").select2("destroy");
-							$("#select_offsetunittype_duration").select2();
-							selectremindertype();
-	            		 });
-
-	            		$("#selectremindertype").change(function(){
-							selectremindertype();
-	            		});
-
-						function selectremindertype() {
-							console.log("Call selectremindertype");
-	            	        var selected_option = $("#selectremindertype option:selected").val();
-	            		    if(selected_option == "email") {
-	            		        $("#select_actioncommsendmodel_mail").closest("tr").show();
-	            		    } else {
-	            			    $("#select_actioncommsendmodel_mail").closest("tr").hide();
-	            		    }
-						}
-
-                   })';
-		print '</script>'."\n";
+		?>
+		<script type="text/javascript">
+			$(document).ready(function () {
+				$("#addreminder").click(function(){
+					console.log("Click on addreminder");
+					if (this.checked) {
+						$(".reminderparameters").show();
+					} else {
+						$(".reminderparameters").hide();
+					}
+					$("#selectremindertype").select2("destroy");
+					$("#selectremindertype").select2();
+					$("#select_offsetunittype_duration").select2("destroy");
+					$("#select_offsetunittype_duration").select2();
+					selectremindertype();
+				 });
+				$("#selectremindertype").change(function(){
+					selectremindertype();
+				});
+				function selectremindertype() {
+					console.log("Call selectremindertype");
+					var selected_option = $("#selectremindertype option:selected").val();
+					if(selected_option == "email") {
+						$("#select_actioncommsendmodel_mail").closest("tr").show();
+					} else {
+						$("#select_actioncommsendmodel_mail").closest("tr").hide();
+					}
+				}
+			});
+		</script>
+		<?php
 	}
 
 	print dol_get_fiche_end();
