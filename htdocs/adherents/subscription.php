@@ -1021,7 +1021,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 	if ($adht->subscription) {
 		// Amount
 		print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td>';
-		print '<td><input autofocus class="width50" type="text" name="subscription" value="'.(GETPOSTISSET('subscription') ? GETPOST('subscription') : (is_null($adht->amount) ? '' : price($adht->amount, 0, '', 0))).'"> '.$langs->trans("Currency".$conf->currency) .'</td></tr>';
+		print '<td><input autofocus class="width50" type="text" name="subscription" value="'.(GETPOSTISSET('subscription') ? GETPOST('subscription') : (is_null($adht->amount) ? '' : price($adht->amount, 0, '', 0))).'"> '.$langs->trans("Currency".getDolCurrency()) .'</td></tr>';
 
 		// Label
 		print '<tr><td>'.$langs->trans("Label").'</td>';

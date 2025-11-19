@@ -2404,7 +2404,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	$dropdownBody .= '<br><b>'.$langs->trans("VATIntraShort").'</b>: <span>'.dol_print_profids(getDolGlobalString("MAIN_INFO_TVAINTRA"), 'VAT').'</span>';
 	$dropdownBody .= '<br><b>'.$langs->trans("Country").'</b>: <span>'.($mysoc->country_code ? $langs->trans("Country".$mysoc->country_code) : '').'</span>';
 	if (isModEnabled('multicurrency')) {
-		$dropdownBody .= '<br><b>'.$langs->trans("Currency").'</b>: <span>'.$conf->currency.'</span>';
+		$dropdownBody .= '<br><b>'.$langs->trans("Currency").'</b>: <span>'.getDolCurrency().'</span>';
 	}
 	$dropdownBody .= '</div>';
 

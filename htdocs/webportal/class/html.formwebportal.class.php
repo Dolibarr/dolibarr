@@ -583,7 +583,7 @@ class FormWebPortal extends Form
 				if (!empty($value)) {
 					$value = price($value); // $value in memory is a php numeric, we format it into user number format.
 				}
-				$addInputLabel = ' ' . $langs->getCurrencySymbol($conf->currency);
+				$addInputLabel = ' ' . $langs->getCurrencySymbol();
 				$out = $this->inputType('text', $htmlName, $value, $htmlId, $morecss, $moreparam, '', $addInputLabel);
 				break;
 
@@ -961,7 +961,7 @@ class FormWebPortal extends Form
 			$value = dol_print_ip($value, 0);
 		} elseif ($type == 'price') {
 			if (!is_null($value) && $value !== '') {
-				$value = price($value, 0, $langs, 0, 0, -1, $conf->currency);
+				$value = price($value, 0, $langs, 0, 0, -1, getDolCurrency());
 			} else {
 				// Resulting type must be string
 				$value = '';

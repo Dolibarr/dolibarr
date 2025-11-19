@@ -246,7 +246,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 	if ($result) {
 		$langs->load("errors");
 
-		$currency_code = $conf->currency;
+		$currency_code = getDolCurrency();
 
 		$dateo = dol_now();
 		$label = $event->data->object->description;
@@ -484,12 +484,12 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 
 			$paiement->datepaye = $now;
 			$paiement->date = $now;
-			if ($currencyCodeType == $conf->currency) {
+			if ($currencyCodeType == getDolCurrency()) {
 				$paiement->amounts = [$invoice_id => $payment_amount];   // Array with all payments dispatching with invoice id
 			} else {
 				$paiement->multicurrency_amounts = [$invoice_id => $payment_amount];   // Array with all payments dispatching
 
-				$postactionmessages[] = 'Payment was done in a currency ('.$currencyCodeType.') other than the expected currency of company ('.$conf->currency.')';
+				$postactionmessages[] = 'Payment was done in a currency ('.$currencyCodeType.') other than the expected currency of company ('.getDolCurrency().')';
 				$ispostactionok = -1;
 				// Not yet supported, so error
 				$error++;

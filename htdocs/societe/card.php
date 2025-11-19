@@ -437,7 +437,7 @@ if (empty($reshook)) {
 
 			// Webservices url/key
 			$object->webservices_url		= GETPOST('webservices_url', 'url');
-			$object->webservices_key		= GETPOST('webservices_key', 'san_alpha');
+			$object->webservices_key		= GETPOST('webservices_key', 'password');
 
 			if (GETPOSTISSET('accountancy_code_sell')) {
 				$accountancy_code_sell		= GETPOST('accountancy_code_sell', 'alpha');
@@ -2164,7 +2164,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				// Webservices url/key
 				$object->webservices_url        = GETPOST('webservices_url', 'url');
-				$object->webservices_key        = GETPOST('webservices_key', 'san_alpha');
+				$object->webservices_key        = GETPOST('webservices_key', 'password');
 
 				if (GETPOSTISSET('accountancy_code_sell')) {
 					$accountancy_code_sell  = GETPOST('accountancy_code_sell', 'alpha');

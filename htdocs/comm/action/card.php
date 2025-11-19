@@ -244,7 +244,7 @@ if (empty($reshook) && (GETPOST('removedassignedresource') || GETPOST('removedas
 	}
 
 	$_SESSION['assignedtoresource'] = json_encode($tmpassignedresourceids);
-	$donotclearsessionresource = 1;
+
 	if ($action == 'add' && $usercancreate) {
 		$action = 'create';
 	}
@@ -1700,7 +1700,7 @@ if ($action == 'create') {
 			$percent = 100;
 		}
 	}
-	$formactions->form_select_status_action('formaction', $percent, 1, 'complete', 0, 0, 'minwidth150 maxwidth300');
+	print $formactions->form_select_status_action('formaction', $percent, 1, 'complete', 0, 0, 'minwidth150 maxwidth300', 1);
 	print '</td></tr>';
 
 	if (isModEnabled("societe")) {
