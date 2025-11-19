@@ -3662,18 +3662,18 @@ if ($action == 'create' && $usercancreate) {
 				// Display lines extrafields.
 				// $line is a line of shipment
 				$colspan = 6;
-					if ($origin_id > 0) {
-						$colspan++;
-					}
-					if (isModEnabled('productbatch')) {
-						$colspan++;
-					}
-					if (isModEnabled('stock')) {
-						$colspan++;
-					}
-					if ($object->status == Expedition::STATUS_DRAFT) {
-						$colspan ++;
-					}
+				if ($origin_id > 0) {
+					$colspan++;
+				}
+				if (isModEnabled('productbatch')) {
+					$colspan++;
+				}
+				if (isModEnabled('stock')) {
+					$colspan++;
+				}
+				if ($object->status == Expedition::STATUS_DRAFT) {
+					$colspan ++;
+				}
 
 				$line = $lines[$i];
 				$line->fetch_optionals();
