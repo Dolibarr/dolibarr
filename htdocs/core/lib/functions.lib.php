@@ -126,7 +126,7 @@ if (!function_exists('str_contains')) {
  * Return the full path of the directory where a module (or an object of a module) stores its files.
  * Path may depends on the entity if a multicompany module is enabled.
  *
- * @param 	CommonObject 	$object 	Dolibarr common object.
+ * @param 	CommonObject|BlockedLog 	$object 	Dolibarr common object.
  * @param 	string 			$module 	Override object element, for example to use 'mycompany' instead of 'societe'
  * @param	int				$forobject	Return the more complete path for the given object instead of for the module only.
  * @param	string			$mode		'output' (full main dir) or 'outputrel' (relative dir) or 'temp' (full dir for temporary files) or 'version' (full dir for archived files)
@@ -295,6 +295,17 @@ function getDolCurrency()
 {
 	global $conf;
 	return (string) $conf->currency;
+}
+
+/**
+ * Return the current entity
+ *
+ * @return 	int							Value returned
+ */
+function getDolEntity()
+{
+	global $conf;
+	return (int) $conf->entity;
 }
 
 /**
@@ -622,6 +633,7 @@ function isASecretKey($keyname)
  */
 function num2Alpha($n)
 {
+	$r = '';
 	for ($r = ""; $n >= 0; $n = intval($n / 26) - 1) {
 		$r = chr($n % 26 + 0x41) . $r;
 	}
@@ -1355,6 +1367,7 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 			}
 			break;
 		case 'san_alpha':
+			dol_syslog("Use of parameter value 'san_alpha' in GETPOST is deprecated. Use 'alphanohtml', 'aZ09comma', ...", LOG_WARNING);
 			$out = filter_var($out, FILTER_SANITIZE_STRING);
 			break;
 		case 'email':
@@ -6900,7 +6913,7 @@ function dol_print_error_email($prefixcode, $errormessage = '', $errormessages =
  *	@param	string	$file        Url used when we click on sort picto
  *	@param	string	$field       Field to use for new sorting
  *	@param	string	$begin       ("" by default)
- *	@param	string	$moreparam   Add more parameters on sort url links ("" by default)
+ *	@param	string	$param       Add more parameters on sort url links ("" by default)
  *	@param  string	$moreattrib  Options of attribute td ("" by default)
  *	@param  ?string	$sortfield   Current field used to sort
  *	@param  ?string	$sortorder   Current sort order
@@ -6909,9 +6922,9 @@ function dol_print_error_email($prefixcode, $errormessage = '', $errormessages =
  *  @param	int		$forcenowrapcolumntitle		No need to use 'wrapcolumntitle' css style
  *	@return	void
  */
-function print_liste_field_titre($name, $file = "", $field = "", $begin = "", $moreparam = "", $moreattrib = "", $sortfield = "", $sortorder = "", $prefix = "", $tooltip = "", $forcenowrapcolumntitle = 0)
+function print_liste_field_titre($name, $file = "", $field = "", $begin = "", $param = "", $moreattrib = "", $sortfield = "", $sortorder = "", $prefix = "", $tooltip = "", $forcenowrapcolumntitle = 0)
 {
-	print getTitleFieldOfList($name, 0, $file, $field, $begin, $moreparam, $moreattrib, $sortfield, $sortorder, $prefix, 0, $tooltip, $forcenowrapcolumntitle);
+	print getTitleFieldOfList($name, 0, $file, $field, $begin, $param, $moreattrib, $sortfield, $sortorder, $prefix, 0, $tooltip, $forcenowrapcolumntitle);
 }
 
 /**
@@ -7810,8 +7823,8 @@ function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs, $round 
 
 
 /**
- *	Return localtax rate for a particular vat, when selling a product with vat $vatrate, from a $thirdparty_buyer to a $thirdparty_seller
- *  Note: This function applies same rules than get_default_tva
+ *	Return localtax rate for a particular VAT rate, when selling a product with vat $vatrate, from a $thirdparty_buyer to a $thirdparty_seller
+ *  Note: This function get information into the table llx_tva using the VAT rate as key.
  *
  * 	@param	float|string	$vatrate	        Vat rate. Can be '8.5' or '8.5 (VATCODEX)' for example
  * 	@param  int			$local		         	Local tax to search and return (1 or 2 return only tax rate 1 or tax rate 2)
@@ -7819,7 +7832,7 @@ function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs, $round 
  *  @param	?Societe	$thirdparty_seller		Object of selling third party ($mysoc if not defined)
  *  @param	int<0,1>		$vatnpr					If vat rate is NPR or not
  * 	@return	int<0,0>|string	   					0 if not found, localtax rate if found (Can be '20', '-19:-15:-9')
- *  @see get_default_tva()
+ *  @see get_default_tva(), get_default_localtax()
  */
 function get_localtax($vatrate, $local, $thirdparty_buyer = null, $thirdparty_seller = null, $vatnpr = 0)
 {
@@ -8237,6 +8250,7 @@ function get_product_vat_for_country($idprod, $thirdpartytouseforcountry, $idpro
 	}
 
 	dol_syslog("get_product_vat_for_country: ret=" . $ret);
+
 	return $ret;
 }
 
@@ -8325,7 +8339,7 @@ function get_product_localtax_for_country($idprod, $local, $thirdpartytouseforco
  */
 function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, $idprod = 0, $idprodfournprice = 0)
 {
-	global $mysoc, $db;
+	global $mysoc, $db, $hookmanager;
 
 	require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 
@@ -8346,6 +8360,9 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 
 	dol_syslog("get_default_tva: seller use vat=" . $seller_use_vat . ", seller country=" . $seller_country_code . ", seller in cee=" . ((string) (int) $seller_in_cee) . ", buyer vat number=" . $thirdparty_buyer->tva_intra . " buyer country=" . $buyer_country_code . ", buyer state=" . $thirdparty_buyer->state_id . " buyer in cee=" . ((string) (int) $buyer_in_cee) . ", idprod=" . $idprod . ", idprodfournprice=" . $idprodfournprice . ", SERVICE_ARE_ECOMMERCE_200238EC=" . getDolGlobalString('SERVICE_ARE_ECOMMERCE_200238EC'));
 
+	$vatvalue = 0;
+	$vatrule = '';
+
 	// If services are eServices according to EU Council Directive 2002/38/EC (http://ec.europa.eu/taxation_customs/taxation/vat/traders/e-commerce/article_1610_en.htm)
 	// we use the buyer VAT.
 	if (getDolGlobalString('SERVICE_ARE_ECOMMERCE_200238EC')) {
@@ -8359,25 +8376,26 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 			}
 
 			if (!$isacompany) {
-				//print 'VATRULE 0';
-				return get_product_vat_for_country($idprod, $thirdparty_buyer, $idprodfournprice);
+				$vatvalue = get_product_vat_for_country($idprod, $thirdparty_buyer, $idprodfournprice);
+				$vatrule = 'VATRULE 0';
 			}
 		}
 	}
 
 	// If seller does not use VAT, default VAT is 0. End of rule.
-	if (!$seller_use_vat) {
+	if (empty($vatrule) && !$seller_use_vat) {
 		//print 'VATRULE 1';
 		// TODO get the VAT Code of exemption asked into setup if country isInEEC (from an array list of possible
 		// values like VATEX-EU-132-*, VATEX-FR-FRANCHISE, VATEX-EU-AE...
 		// When we had recorded it, we also added a corresponding entry into table of vat code if it does not exists yet.
 		// Here we test if entry for the VAT exemption code exists in llx_vat, we can return '0 (VATEX-EU-132-xx)'
 		// If not, we add it and we return '0 (VATEX-EU-132-xx)'
-		return 0;
+		$vatvalue = 0;
+		$vatrule = 'VATRULE 1';
 	}
 
 	// 'VATRULE 2' - Force VAT if a buyer department is defined on vat rates dictionary
-	if (!empty($thirdparty_buyer->state_id)) {
+	if (empty($vatrule) && !empty($thirdparty_buyer->state_id)) {
 		$sql = "SELECT d.rowid, t.taux as vat_default_rate, t.code as vat_default_code ";
 		$sql .= " FROM " . $db->prefix() . "c_tva as t";
 		$sql .= " INNER JOIN " . $db->prefix() . "c_departements as d ON t.fk_department_buyer = d.rowid";
@@ -8388,17 +8406,19 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 		if ($res) {
 			if ($db->num_rows($res)) {
 				$obj = $db->fetch_object($res);
-				return $obj->vat_default_rate . ' (' . $obj->vat_default_code . ')';
+
+				$vatvalue = $obj->vat_default_rate . ' (' . $obj->vat_default_code . ')';
+				$vatrule = 'VATRULE 2';
 			}
 			$db->free($res);
 		}
 	}
 
 	// If the (seller country = buyer country) then the default VAT = VAT of the product sold. End of rule.
-	if (($seller_country_code == $buyer_country_code)
+	if (empty($vatrule) && (($seller_country_code == $buyer_country_code)
 		|| (in_array($seller_country_code, array('FR', 'MC')) && in_array($buyer_country_code, array('FR', 'MC')))
 		|| (in_array($seller_country_code, array('MQ', 'GP')) && in_array($buyer_country_code, array('MQ', 'GP')))	// We should be able to manage the case of MQ, GP, ... with a deicated vat rate at previous step.
-	) { // Warning ->country_code not always defined
+	)) { // Warning ->country_code not always defined
 		//print 'VATRULE 3';
 		$tmpvat = get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
 
@@ -8415,7 +8435,8 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 			}
 		}
 
-		return $tmpvat;
+		$vatvalue = $tmpvat;
+		$vatrule = 'VATRULE 3b';
 	}
 
 	// If (seller and buyer in the European Community) and (property sold = new means of transport such as car, boat, plane) then VAT by default = 0 (VAT must be paid by the buyer to the tax center of his country and not to the seller). End of rule.
@@ -8423,7 +8444,7 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 
 	// If (seller and buyer in the European Community) and (buyer = individual) then VAT by default = VAT of the product sold. End of rule
 	// If (seller and buyer in European Community) and (buyer = company) then VAT by default=0. End of rule
-	if (($seller_in_cee && $buyer_in_cee)) {
+	if (empty($vatrule) && ($seller_in_cee && $buyer_in_cee)) {
 		$isacompany = $thirdparty_buyer->isACompany();
 		if ($isacompany && !getDolGlobalString('MAIN_USE_VAT_ZERO_FOR_COMPANIES_IN_EEC_EVEN_IF_VAT_ID_UNKNOWN')) {
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
@@ -8434,22 +8455,25 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 
 		if (!$isacompany) {
 			//print 'VATRULE 5';
-			return get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
+			$vatvalue = get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
+			$vatrule = 'VATRULE 5';
 		} else {
 			//print 'VATRULE 6';
 			// TODO This is the case of VAT exemption 'VATEX-EU-IC'
 			// If entry for the VAT exemption code exists in llx_vat, we can return '0 (VATEX-EU-IC)'
 			// If not, we add it and we return '0 (VATEX-EU-IC)'
-			return 0;
+			$vatvalue = 0;
+			$vatrule = 'VATRULE 6';
 		}
 	}
 
 	// If (seller in the European Community and buyer outside the European Community and private buyer) then VAT by default = VAT of the product sold. End of rule
 	// I don't see any use case that need this rule, this case is on only if MAIN_USE_VAT_OF_PRODUCT_FOR_INDIVIDUAL_CUSTOMER_OUT_OF_EEC set
-	if (getDolGlobalString('MAIN_USE_VAT_OF_PRODUCT_FOR_INDIVIDUAL_CUSTOMER_OUT_OF_EEC') && empty($buyer_in_cee)) {
+	if (empty($vatrule) && getDolGlobalString('MAIN_USE_VAT_OF_PRODUCT_FOR_INDIVIDUAL_CUSTOMER_OUT_OF_EEC') && empty($buyer_in_cee)) {
 		$isacompany = $thirdparty_buyer->isACompany();
 		if (!$isacompany) {
-			return get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
+			$vatvalue = get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
+			$vatrule = 'VATRULE extra';
 			//print 'VATRULE extra';
 		}
 	}
@@ -8460,7 +8484,18 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 	// TODO This is the case of VAT exemption 'VATEX-EU-G'
 	// If entry for the VAT exemption code exists in llx_vat, we can return '0 (VATEX-xxx)'
 	// If not, we add it and we return '0 (VATEX-xxx)'
-	return 0;
+
+	// Allow an external module to bypass the calculation of prices
+	$parameters = array('vatvalue' => $vatvalue, 'vatrule' => $vatrule);
+	$tmpobject = null; $tmpaction = '';
+	// @phan-suppress-next-line PhanPluginConstantVariableNull
+	$reshook = $hookmanager->executeHooks('get_default_tva', $parameters, $tmpobject, $tmpaction);	// @phan-suppress-current-line PhanPluginConstantVariableNull
+	if ($reshook > 0 && !empty($hookmanager->resArray['vatvalue'])) {
+		$vatvalue = $hookmanager->resArray['vatvalue'];
+		$vatrule = $hookmanager->resArray['vatrule'];	// For information
+	}
+
+	return $vatvalue;
 }
 
 
@@ -8652,7 +8687,7 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart = '
 	$path = '';
 
 	// Define $arrayforoldpath that is module path using a hierarchy on more than 1 level.
-	$arrayforoldpath = array('cheque' => 2, 'category' => 2, 'holiday' => 2, 'supplier_invoice' => 2, 'invoice_supplier' => 2, 'mailing' => 2, 'supplier_payment' => 2);
+	$arrayforoldpath = array('cheque' => 2, 'category' => 2, 'supplier_invoice' => 2, 'invoice_supplier' => 2, 'mailing' => 2, 'supplier_payment' => 2);
 	if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
 		$arrayforoldpath['product'] = 2;
 	}
@@ -9803,7 +9838,18 @@ function dol_concatdesc($text1, $text2, $forxml = false, $invert = false)
 	return $ret;
 }
 
-
+/**
+ *  Concat 2 strings. Can be used for dol_eval strings for example.
+ *
+ *  @param  string  $text1          Text 1
+ *  @param  string  $text2          Text 2
+ *  @return string                  Text 1 + new line + Text2
+ *  @see    dol_textishtml()
+ */
+function dol_concat($text1, $text2)
+{
+	return $text1.$text2;
+}
 
 /**
  * Return array of possible common substitutions. This includes several families like: 'system', 'mycompany', 'object', 'objectamount', 'date', 'user'
@@ -11465,13 +11511,13 @@ function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid =
 }
 
 /**
- *	Check if a variable with name $var startx with $text.
+ *	Check if a variable with name $var start with $regextext.
  *  Can be used to forge dol_eval() conditions.
  *
- *  @param	string	$var		Variable
- *  @param	string	$regextext	Text that must be a valid regex string
- *  @param	int<0,1>	$matchrule	1=Test if start with, 0=Test if equal
- *  @return	boolean|string		True or False, text if bad usage.
+ *  @param	string			$var		Variable
+ *  @param	string			$regextext	Text that must be a valid regex string
+ *  @param	int<0,1>		$matchrule	1=Test if start with, 0=Test if equal
+ *  @return	boolean|string				True or False, text if bad usage.
  */
 function isStringVarMatching($var, $regextext, $matchrule = 1)
 {
@@ -11486,7 +11532,7 @@ function isStringVarMatching($var, $regextext, $matchrule = 1)
 			return 'This variable is not accessible with dol_eval';
 		}
 	} else {
-		return 'This value for matchrule is not implemented';
+		return 'This value '.$matchrule.' for param $matchrule is not yet implemented';
 	}
 }
 
@@ -11522,7 +11568,7 @@ function verifCond($strToEvaluate, $onlysimplestring = '1')
  * @param	int<0,1>	$returnvalue		0=No return (deprecated, used to execute eval($a=something)). 1=Value of eval is returned (used to eval($something)).
  * @param   int<0,1>	$hideerrors     	1=Hide errors
  * @param	string		$onlysimplestring	'0' (deprecated, do not use it anymore) = Accept all chars,
- *                                          '1' (most common use) = Accept only simple string with char 'a-z0-9\s^$_+-.*>&|=!?():"\',/@';',
+ *                                          '1' (most common use, recommended) = Accept only simple string with char 'a-z0-9\s^$_+-.*>&|=!?():"\',/@';',
  *                                          '2' (used for example for the compute property of extrafields) = Accept also '<[]'
  * @return	string							Return result of eval (even if type can be int, it is safer to assume string and find all potential typing issues as abs(dol_eval(...)).
  * @see verifCond(), checkPHPCode() to see sanitizing rules that should be very close.
@@ -11537,7 +11583,7 @@ function dol_eval($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1'
 	if (getDolGlobalString("MAIN_USE_DOL_EVAL_NEW")) {
 		return dol_eval_new($s);
 	} else {
-		return dol_eval_standard($s, $returnvalue, $hideerrors, $onlysimplestring);
+		return dol_eval_standard($s, $hideerrors, $onlysimplestring);
 	}
 }
 
@@ -11818,8 +11864,7 @@ function dol_eval_new($s)
  * Replace eval function to add more security.
  * This function is called by dol_eval(), itself called by verifCond() or trans() and transnoentitiesnoconv().
  *
- * @param 	string		$s					String to evaluate
- * @param	int<0,1>	$returnvalue		0=No return (deprecated, used to execute eval($a=something)). 1=Value of eval is returned (used to eval($something)).
+ * @param 	string		$s					String to evaluate with eval($something)
  * @param   int<0,1>	$hideerrors     	1=Hide errors
  * @param	string		$onlysimplestring	'0' (deprecated, do not use it anymore)=Accept all chars,
  *                                          '1' (most common use)=Accept only simple string with char 'a-z0-9\s^$_+-.*>&|=!?():"\',/@';',
@@ -11828,81 +11873,89 @@ function dol_eval_new($s)
  * @see verifCond(), checkPHPCode() to see sanitizing rules that should be very close.
  * @phan-suppress PhanPluginUnsafeEval
  */
-function dol_eval_standard($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1')
+function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 {
 	// Only this global variables can be read by eval function and returned to caller
-	//global $conf;	// Disabled. Read of const is done with getDolGlobalString() and read of $conf->currency is done with getDolCurrency()
-	global $db;
-	global $langs, $user, $website, $websitepage;
+	// The less we have, the better it is.
+	// $conf is excluded. We can read $conf->global->xxx properties with getDolGlobalString(), $conf->currency with getDolCurrency(), $conf->entity with getDolEntity()
+	global $db, $langs, $user, $website, $websitepage;
 	global $action, $mainmenu, $leftmenu;
 	global $mysoc;
 	global $objectoffield;	// To allow the use of $objectoffield in computed fields
 
-	// Old variables used (deprecated)
-	global $object;
-	global $obj; // To get $obj used into list when dol_eval() is used for computed fields and $obj is not yet $object
+	// Old variables (deprecated)
+	if (getDolGlobalString('MAIN_ALLOW_OLD_VAR_OBJ_IN_DOL_EVAL')) {
+		global $object;
+		global $obj; // To get $obj used into list when dol_eval() is used for computed fields and $obj is not yet $objectoffield
+	}
 
-	$isObBufferActive = false;  // When true, the ObBuffer must be cleaned in the exception handler
-	if (!in_array($onlysimplestring, array('0', '1', '2'))) {
-		return "Bad call of dol_eval. Parameter onlysimplestring must be '0' (deprecated), '1' or '2'";
+	$isObBufferActive = false;  	// When true, the ObBuffer must be cleaned in the exception handler
+	if ($onlysimplestring == '0') {	// '0' is deprecated, we process it as the more secured '1'
+		$onlysimplestring = '1';
+	}
+	if (!in_array($onlysimplestring, array('1', '2'))) {
+		return "Bad call of dol_eval. Parameter onlysimplestring must be '1' or '2'";
 	}
 
 	try {
+		global $dolibarr_main_restrict_eval_methods;
+
+		// Set $dolibarr_main_restrict_eval_methods_array
+		if (!isset($dolibarr_main_restrict_eval_methods)) {
+			$dolibarr_main_restrict_eval_methods = 'getDolGlobalString,getDolGlobalInt,getDolCurrency,fetchNoCompute,hasRight,isModEnabled,isStringVarMatching,abs,min,max,round,dol_now,preg_match';
+		}
+		//print '$dolibarr_main_restrict_eval_methods = '.$dolibarr_main_restrict_eval_methods."\n";
+		$dolibarr_main_restrict_eval_methods_array = explode(',', $dolibarr_main_restrict_eval_methods);
+
+		if (is_array($s) || $s === 'Array') {
+			return 'Bad string syntax to evaluate (value is Array): ' . var_export($s, true);
+		}
+
 		// Test on dangerous char (used for RCE), we allow only characters to make PHP variable testing
-		if ($onlysimplestring == '1' || $onlysimplestring == '2') {
-			// We must accept with 1: '1 && getDolGlobalInt("doesnotexist1") && getDolGlobalString("MAIN_FEATURES_LEVEL")'
-			// We must accept with 1: '$user->hasRight("cabinetmed", "read") && !$object->canvas=="patient@cabinetmed"'
-			// We must accept with 2: (($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) <= 99) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref : "Parent project not found"
+		// We must accept with 1: '1 && getDolGlobalInt("doesnotexist1") && getDolGlobalString("MAIN_FEATURES_LEVEL")'
+		// We must accept with 1: '$user->hasRight("cabinetmed", "read") && !$objectoffield->canvas == "patient@cabinetmed"'
+		// We must accept with 2: (($var1 = new Task($db)) && ($var1->fetchNoCompute($object->id) <= 99) && ($var2 = new Project($db)) && ($var2->fetchNoCompute($var1->fk_project) > 0)) ? $var2->ref : "Parent project not found"
 
-			// Check if there is dynamic call (first we check chars are all into a whitelist chars)
-			$specialcharsallowed = '^$_+-.*>&|=!?():"\',/@';
-			if ($onlysimplestring == '2') {
-				$specialcharsallowed .= '<[]';
-			}
-			if (getDolGlobalString('MAIN_ALLOW_UNSECURED_SPECIAL_CHARS_IN_DOL_EVAL')) {
-				$specialcharsallowed .= getDolGlobalString('MAIN_ALLOW_UNSECURED_SPECIAL_CHARS_IN_DOL_EVAL');
-			}
-			if (preg_match('/[^a-z0-9\s' . preg_quote($specialcharsallowed, '/') . ']/i', $s)) {
-				if ($returnvalue) {
-					return 'Bad string syntax to evaluate (found chars that are not chars for a simple one line clean eval string): ' . $s;
-				} else {
-					dol_syslog('Bad string syntax to evaluate (found chars that are not chars for a simple one line clean eval string): ' . $s, LOG_WARNING);
-					return '';
-				}
-			}
+		// Check if there is dynamic call (first we check chars are all into a whitelist chars)
+		$specialcharsallowed = '^$_+-.*>&|=!?():"\',/@';
+		if ($onlysimplestring == '2') {
+			$specialcharsallowed .= '<[]';	// Later we check that < has space before and after
+		}
+		global $dolibarr_main_allow_unsecured_special_chars_in_dol_eval;
+		if (!empty($dolibarr_main_allow_unsecured_special_chars_in_dol_eval)) {
+			$specialcharsallowed .= (string) $dolibarr_main_allow_unsecured_special_chars_in_dol_eval;
+		}
+		if (preg_match('/[^a-z0-9\s' . preg_quote($specialcharsallowed, '/') . ']/i', $s)) {
+			return 'Bad string syntax to evaluate (found chars that are not chars for a simple one line clean eval string): ' . $s;
+		}
 
-			// Check if we found a ? without a space before and after
-			$tmps = str_replace(' ? ', '__XXX__', $s);
-			if (strpos($tmps, '?') !== false) {
-				if ($returnvalue) {
-					return 'Bad string syntax to evaluate (The char ? can be used only with a space before and after): ' . $s;
-				} else {
-					dol_syslog('Bad string syntax to evaluate (The char ? can be used only with a space before and after): ' . $s, LOG_WARNING);
-					return '';
-				}
-			}
+		// Check if we found a | without a space before and after
+		/* Disabled to allow preg_match('/(AAA|BBB)/')
+		$tmps = str_replace(' || ', '__XXX__', $s);
+		if (strpos($tmps, '|') !== false) {
+			return 'Bad string syntax to evaluate (The char | can be used only when duplicated || with a space before and after): ' . $s;
+		}
+		*/
 
-			// Check if there is a < or <= without spaces before/after
-			if (preg_match('/<=?[^\s]/', $s)) {
-				if ($returnvalue) {
-					return 'Bad string syntax to evaluate (mode ' . $onlysimplestring . ', found a < or <= without space before and after): ' . $s;
-				} else {
-					dol_syslog('Bad string syntax to evaluate (mode ' . $onlysimplestring . ', found a < or <= without space before and after): ' . $s, LOG_WARNING);
-					return '';
-				}
-			}
+		// Check if we found a ? without a space before and after
+		$tmps = str_replace(' ? ', '__XXX__', $s);
+		if (strpos($tmps, '?') !== false) {
+			return 'Bad string syntax to evaluate (The char ? can be used only with a space before and after): ' . $s;
+		}
 
-			// Check if there is dynamic call (first we use black list patterns)
-			if (preg_match('/\$[\w]*\s*\(/', $s)) {
-				if ($returnvalue) {
-					return 'Bad string syntax to evaluate (mode ' . $onlysimplestring . ', found a call using "$abc(" or "$abc (" instead of using the direct name of the function): ' . $s;
-				} else {
-					dol_syslog('Bad string syntax to evaluate (mode ' . $onlysimplestring . ', found a call using "$abc(" or "$abc (" instead of using the direct name of the function): ' . $s, LOG_WARNING);
-					return '';
-				}
-			}
+		// Check if there is a < or <= without spaces after
+		if (preg_match('/<=?[^\s]/', $s)) {
+			return 'Bad string syntax to evaluate (mode ' . $onlysimplestring . ', found a < or <= without space after): ' . $s;
+		}
 
-			// Now we check if we try dynamic call
+		// Check if there is dynamic call (first we use black list patterns)
+		if (preg_match('/\$[\w]*\s*\(/', $s)) {
+			return 'Bad string syntax to evaluate (mode ' . $onlysimplestring . ', found a call using "$abc(" or "$abc (" instead of using the direct name of the function): ' . $s;
+		}
+
+		if (empty($dolibarr_main_restrict_eval_methods)) {
+			// If $dolibarr_main_restrict_eval_methods was set to '', we must check if we try dynamic call
+
 			// First we remove white list pattern of using parenthesis then testing if one open parenthesis exists
 			$savescheck = '';
 			$scheck = $s;
@@ -11923,138 +11976,158 @@ function dol_eval_standard($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestr
 
 			// Now test if it remains 1 open parenthesis.
 			if (strpos($scheck, '(') !== false) {
-				if ($returnvalue) {
-					return 'Bad string syntax to evaluate (mode ' . $onlysimplestring . ', found call of a function or method without using the direct name of the function): ' . $s;
-				} else {
-					dol_syslog('Bad string syntax to evaluate (mode ' . $onlysimplestring . ', found call of a function or method without using the direct name of the function): ' . $s, LOG_WARNING);
-					return '';
-				}
-			}
-
-			// TODO
-			// We can exclude $ char that are not in dol_eval global, so that are not:
-			// $db, $langs, $leftmenu, $topmenu, $user, $langs, $objectoffield, $object, $obj, ...,
-		}
-		if (is_array($s) || $s === 'Array') {
-			if ($returnvalue) {
-				return 'Bad string syntax to evaluate (value is Array): ' . var_export($s, true);
-			} else {
-				dol_syslog('Bad string syntax to evaluate (value is Array): ' . var_export($s, true), LOG_WARNING);
-				return '';
-			}
-		}
-
-		if (!getDolGlobalString('MAIN_ALLOW_DOUBLE_COLON_IN_DOL_EVAL') && strpos($s, '::') !== false) {
-			if ($returnvalue) {
-				return 'Bad string syntax to evaluate (double : char is forbidden without setting MAIN_ALLOW_DOUBLE_COLON_IN_DOL_EVAL): ' . $s;
-			} else {
-				dol_syslog('Bad string syntax to evaluate (double : char is forbidden without setting MAIN_ALLOW_DOUBLE_COLON_IN_DOL_EVAL): ' . $s, LOG_WARNING);
-				return '';
+				return 'Bad string syntax to evaluate (mode ' . $onlysimplestring . ', found call of a function or method without using the direct name of the function): ' . $s;
 			}
 		}
 
 		if (strpos($s, '`') !== false) {
-			if ($returnvalue) {
-				return 'Bad string syntax to evaluate (backtick char is forbidden): ' . $s;
-			} else {
-				dol_syslog('Bad string syntax to evaluate (backtick char is forbidden): ' . $s, LOG_WARNING);
-				return '';
+			return 'Bad string syntax to evaluate (backtick char is forbidden): ' . $s;
+		}
+
+		// Disallow also concat operator
+		if (!getDolGlobalString('MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL')) {
+			if (preg_match('/[^0-9]+\.[^0-9]+/', $s)) {    // We refuse . if not between 2 numbers
+				return 'Bad string syntax to evaluate (dot char is forbidden if not strictly between 2 numbers): ' . $s;
 			}
 		}
 
-		// Disallow also concat
-		if (getDolGlobalString('MAIN_DISALLOW_STRING_OBFUSCATION_IN_DOL_EVAL')) {
-			if (preg_match('/[^0-9]+\.[^0-9]+/', $s)) {    // We refuse . if not between 2 numbers
-				if ($returnvalue) {
-					return 'Bad string syntax to evaluate (dot char is forbidden): ' . $s;
-				} else {
-					dol_syslog('Bad string syntax to evaluate (dot char is forbidden): ' . $s, LOG_WARNING);
-					return '';
-				}
+		// We exclude string using a $ character that are not an expected global or temporary vars, so that are not:
+		// $db, $langs, $leftmenu, $topmenu, $user, $langs, $objectoffield, $var....
+		$savescheck = '';
+		$scheck = $s;
+		while ($scheck && $savescheck != $scheck) {
+			$savescheck = $scheck;
+			$scheck = preg_replace('/\$user->hasRight/', '__VARUSERHASRIGHT__', $scheck);
+			$scheck = preg_replace('/\(\$db\)/', '__VARDB__', $scheck);
+			$scheck = preg_replace('/\$langs/', '__VARLANGSTRANS__', $scheck);
+			$scheck = preg_replace('/\$mysoc/', '__VARMYSOC__', $scheck);
+			$scheck = preg_replace('/\$action/', '__VARACTION__', $scheck);
+			$scheck = preg_replace('/\$mainmenu/', '__VARMAINMENU__', $scheck);
+			$scheck = preg_replace('/\$leftmenu/', '__VARLEFTMENU__', $scheck);
+			$scheck = preg_replace('/\$websitepage/', '__VARWEBSITEPAGE__', $scheck);
+			$scheck = preg_replace('/\$website/', '__VARWEBSITE__', $scheck);
+			$scheck = preg_replace('/\$objectoffield/', '__VAROBJECTOFFIELD__', $scheck);
+			$scheck = preg_replace('/\$var/', '__VARVAR__', $scheck);
+
+			// Now test if it remains 1 $
+			if (strpos($scheck, '$') !== false) {
+				return 'Bad string syntax to evaluate (found use of $ that does not match one of the following pattern: $user->hasRight, ($db), $langs, $mysoc, $action, $mainmenu, $leftmenu, $website, $websitepage, $objectoffield or $var123): ' . $s;
 			}
 		}
 
 		// We block use of php exec or php file functions
-		$forbiddenphpstrings = array('$$', '$_', '}[', ')(');
-		$forbiddenphpstrings = array_merge($forbiddenphpstrings, array('_ENV', '_SESSION', '_COOKIE', '_GET', '_GLOBAL', '_POST', '_REQUEST', 'ReflectionFunction'));
+		$forbiddenphpstrings = array('}[', ')(');
+		$forbiddenphpstrings = array_merge($forbiddenphpstrings, array('_ENV', '_SESSION', '_COOKIE', '_GET', '_GLOBAL', '_POST', '_REQUEST', 'ReflectionFunction', 'SplFileObject', 'SplTempFileObject'));
 
-		// We list all forbidden function as keywords we don't want to see (we don't mind it if is "kewyord(" or just "keyword", we don't want "keyword" at all)
+		// We list all forbidden function as keywords we don't want to see (we don't mind it if is "keyword(" or just "keyword", we don't want "keyword" at all)
 		// We must exclude all functions that allow to execute another function. This includes all function that has a parameter with type "callable" to avoid things
 		// like we can do with array_map and its callable parameter:  dol_eval('json_encode(array_map(implode("",["ex","ec"]), ["id"]))', 1, 1, '0')
 		$forbiddenphpfunctions = array();
-		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("override_function", "session_id", "session_create_id", "session_regenerate_id"));
-		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("get_defined_functions", "get_defined_vars", "get_defined_constants", "get_declared_classes"));
-		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("function", "call_user_func", "call_user_func_array"));
+		$forbiddenphpmethods = array();
 
-		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("array_all", "array_any", "array_diff_ukey", "array_filter", "array_find", "array_find_key", "array_map", "array_reduce", "array_intersect_uassoc", "array_intersect_ukey", "array_walk", "array_walk_recursive"));
-		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("usort", "uasort", "uksort", "preg_replace_callback", "preg_replace_callback_array", "header_register_callback"));
-		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("set_error_handler", "set_exception_handler", "libxml_set_external_entity_loader", "register_shutdown_function", "register_tick_function", "unregister_tick_function"));
-		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("spl_autoload_register", "spl_autoload_unregister", "iterator_apply", "session_set_save_handler"));
-		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("forward_static_call", "forward_static_call_array", "register_postsend_function"));
+		if (empty($dolibarr_main_restrict_eval_methods)) {	// If forced to ''
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("override_function", "session_id", "session_create_id", "session_regenerate_id"));
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("get_defined_functions", "get_defined_vars", "get_defined_constants", "get_declared_classes"));
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("function", "call_user_func", "call_user_func_array"));
 
-		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("ob_start"));
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("array_all", "array_any", "array_diff_ukey", "array_filter", "array_find", "array_find_key", "array_map", "array_reduce", "array_intersect_uassoc", "array_intersect_ukey", "array_walk", "array_walk_recursive"));
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("usort", "uasort", "uksort", "preg_replace_callback", "preg_replace_callback_array", "header_register_callback"));
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("error_log", "set_error_handler", "set_exception_handler", "libxml_set_external_entity_loader", "register_shutdown_function", "register_tick_function", "unregister_tick_function"));
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("spl_autoload_register", "spl_autoload_unregister", "iterator_apply", "session_set_save_handler"));
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("forward_static_call", "forward_static_call_array", "register_postsend_function"));
 
-		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("require", "include", "require_once", "include_once"));
-		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("exec", "passthru", "shell_exec", "system", "proc_open", "popen"));
-		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_eval", "dol_eval_new", "dol_eval_standard", "dol_concatdesc", "executeCLI", "verifCond", "GETPOST"));	// native dolibarr functions
-		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("eval", "create_function", "assert", "mb_ereg_replace")); // function with eval capabilities
-		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("readline_completion_function", "readline_callback_handler_install"));
-		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_compress_dir", "dol_decode", "dol_delete_file", "dol_delete_dir", "dol_delete_dir_recursive", "dol_copy", "archiveOrBackupFile")); // more dolibarr functions
-		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("fopen", "file_put_contents", "fputs", "fputscsv", "fwrite", "fpassthru", "mkdir", "rmdir", "symlink", "touch", "unlink", "umask"));
-		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("require", "include"));
-		if (getDolGlobalString('MAIN_DISALLOW_STRING_OBFUSCATION_IN_DOL_EVAL')) {	// We disabllow all function that allow to obfuscate the real name of a function
-			// @phpcs:ignore
-			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("base64" . "_" . "decode", "rawurl" . "decode", "url" . "decode", "str" . "_rot13", "hex" . "2bin")); // name of forbidden functions are split to avoid false positive
-			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_concatdesc"));	// native dolibarr functions
-		}
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("ob_start"));
 
-		$forbiddenphpmethods = array('invoke', 'invokeArgs');	// Method of ReflectionFunction to execute a function
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("require", "include", "require_once", "include_once"));
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("exec", "passthru", "shell_exec", "system", "proc_open", "popen"));
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_eval", "dol_eval_new", "dol_eval_standard", "executeCLI", "verifCond", "GETPOST", "dolEncrypt", "dolDecrypt"));	// native dolibarr functions
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("eval", "create_function", "assert", "mb_ereg_replace")); // function with eval capabilities
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("readline_completion_function", "readline_callback_handler_install"));
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_compress_dir", "dol_decode", "dol_dir_list", "dol_dir_list_in_database", "dol_delete_file", "dol_delete_dir", "dol_delete_dir_recursive", "dol_copy", "archiveOrBackupFile")); // more dolibarr functions
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("chdir", "dir", "fopen", "file", "file_exists", "file_get_contents", "file_put_contents", "fget", "fgetc", "fgetcsv", "fputs", "fputscsv", "fpassthru", "fscanf", "fseek", "fwrite", "is_file", "is_dir", "is_link", "mkdir", "opendir", "rmdir", "scandir", "symlink", "touch", "unlink", "umask"));
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("require", "include"));
+			if (!getDolGlobalString('MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL')) {	// We disallow all function that allow to obfuscate the real name of a function
+				// @phpcs:ignore
+				$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("base64" . "_" . "decode", "rawurl" . "decode", "url" . "decode", "str" . "_rot13", "hex" . "2bin", "printf", "sprintf")); // name of forbidden functions are split to avoid false positive
+				$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_concat", "dol_concatdesc"));		// native dolibarr functions
+			}
+			// Remove from blacklist the function that are into the whitelist
+			/*foreach ($forbiddenphpfunctions as $key => $forbiddenphpfunction) {
+				if (in_array($forbiddenphpfunction, $dolibarr_main_restrict_eval_methods_array)) {
+					unset($forbiddenphpfunctions[$key]);
+				}
+			}*/
 
-		$forbiddenphpregex = 'global\s*\$';
-		$forbiddenphpregex .= '|';
-		$forbiddenphpregex .= '\b(' . implode('|', $forbiddenphpfunctions) . ')\b';
+			$forbiddenphpmethods = array_merge($forbiddenphpmethods, array('invoke', 'invokeArgs'));	// Methods of ReflectionFunction to execute a function
+			// Remove from blacklist the function that are into the whitelist
+			/*foreach ($forbiddenphpmethods as $key => $forbiddenphpmethod) {
+				if (in_array($forbiddenphpmethod, $dolibarr_main_restrict_eval_methods_array)) {
+					unset($forbiddenphpmethods[$key]);
+				}
+			}*/
 
-		$forbiddenphpmethodsregex = '->(' . implode('|', $forbiddenphpmethods) . ')';
+			$forbiddenphpregex = 'global\s*\$';
+			$forbiddenphpregex .= '|';
+			$forbiddenphpregex .= '\b(' . implode('|', $forbiddenphpfunctions) . ')\b';
 
-		do {
-			$oldstringtoclean = $s;
-			$s = str_ireplace($forbiddenphpstrings, '__forbiddenstring__', $s);
-			$s = preg_replace('/' . $forbiddenphpregex . '/i', '__forbiddenstring__', $s);
-			$s = preg_replace('/' . $forbiddenphpmethodsregex . '/i', '__forbiddenstring__', $s);
-			//$s = preg_replace('/\$[a-zA-Z0-9_\->\$]+\(/i', '', $s);	// Remove $function( call and $mycall->mymethod(
-		} while ($oldstringtoclean != $s);
+			$forbiddenphpmethodsregex = '->(' . implode('|', $forbiddenphpmethods) . ')';
 
+			// Now scan all forbidden patterns
+			do {
+				$oldstringtoclean = $s;
+				$s = str_ireplace($forbiddenphpstrings, '__forbiddenstring__', $s);
+				$s = preg_replace('/' . $forbiddenphpregex . '/i', '__forbiddenstring__', $s);
+				$s = preg_replace('/' . $forbiddenphpmethodsregex . '/i', '__forbiddenstring__', $s);
+				//$s = preg_replace('/\$[a-zA-Z0-9_\->\$]+\(/i', '', $s);	// Remove $function( call and $mycall->mymethod(
+			} while ($oldstringtoclean != $s);
 
-		if (strpos($s, '__forbiddenstring__') !== false) {
-			dol_syslog('Bad string syntax to evaluate: ' . $s, LOG_WARNING);
-			if ($returnvalue) {
+			if (strpos($s, '__forbiddenstring__') !== false) {
+				dol_syslog('Bad string syntax to evaluate: ' . $s, LOG_WARNING);
 				return 'Bad string syntax to evaluate: ' . $s;
-			} else {
-				dol_syslog('Bad string syntax to evaluate: ' . $s);
-				return '';
+			}
+		} else {
+			// Accept only white-listed allowed function and classes
+			// TODO Get all pattern '/([\s\w]+)\(/', then check that $reg[1] is a defined class or a function into a given list
+			$pattern = '/([\s\w\'\]\"]+)\(/';
+
+			$matches = array();
+			preg_match_all($pattern, $s, $matches);
+
+			if (count($matches)) {
+				foreach ($matches[1] as $m) {
+					$m = trim($m);
+					if (empty($m)) {
+						continue;
+					}
+					$reg = array();
+					if (!preg_match('/new ([A-Z][\w]+)/i', $m, $reg)) {
+						if (!in_array($m, $dolibarr_main_restrict_eval_methods_array)) {
+							if ($m != "'" && $m != '"') {
+								dol_syslog('Bad string syntax to evaluate: ' . $s, LOG_WARNING);
+								return 'Bad string syntax to evaluate. A function or method "'.$m.'" was called and is not into the parameter $dolibarr_main_restrict_eval_methods of white-listed functions and methods: ' . $s;
+							}
+						}
+					} else {
+						if ($reg[1] == 'ReflectionFunction') {
+							dol_syslog('Bad string syntax to evaluate: Class ReflectionFunction is not allowed. ' . $s, LOG_WARNING);
+							return 'Bad string syntax to evaluate. Class ReflectionFunction is not allowed. ' . $s;
+						}
+					}
+				}
 			}
 		}
+
 
 		//print $s."<br>\n";
-		if ($returnvalue) {
-			ob_start(); // An evaluation has no reason to output data
-			$isObBufferActive = true;
-			$tmps = $hideerrors ? @eval('return ' . $s . ';') : eval('return ' . $s . ';');
-			$tmpo = ob_get_clean();
-			$isObBufferActive = false;
-			if ($tmpo) {
-				print 'Bad string syntax to evaluate. Some data were output when it should not when evaluating: ' . $s;
-			}
-			return $tmps;
-		} else {
-			dol_syslog('Do not use anymore dol_eval with param returnvalue=0', LOG_WARNING);
-			if ($hideerrors) {
-				@eval($s);
-			} else {
-				eval($s);
-			}
-			return '';
+		ob_start(); // An evaluation has no reason to output data
+		$isObBufferActive = true;
+		$tmps = $hideerrors ? @eval('return ' . $s . ';') : eval('return ' . $s . ';');
+		$tmpo = ob_get_clean();
+		$isObBufferActive = false;
+		if ($tmpo) {
+			print 'Bad string syntax to evaluate. Some data were output when it should not when evaluating: ' . $s;
 		}
+		return $tmps;
 	} catch (Error $e) {
 		if ($isObBufferActive) {
 			// Clean up buffer which was left behind due to exception.
@@ -12064,11 +12137,7 @@ function dol_eval_standard($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestr
 		$error = 'dol_eval try/catch error : ';
 		$error .= $e->getMessage();
 		dol_syslog($error, LOG_WARNING);
-		if ($returnvalue) {
-			return 'Exception during evaluation: ' . $s;
-		} else {
-			return '';
-		}
+		return 'Exception during evaluation: ' . $s;
 	}
 }
 

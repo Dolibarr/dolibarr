@@ -1016,7 +1016,7 @@ class AccountancyExport
 			$tab['affaire'] = str_repeat(' ', 10);
 			$tab['quantity1'] = str_repeat(' ', 10);
 			$tab['num_piece2'] = str_pad(self::trunc((string) $line->piece_num, 8), 8);
-			$tab['devis'] = str_pad($conf->currency, 3);
+			$tab['devis'] = str_pad(getDolCurrency(), 3);
 			$tab['code_journal2'] = str_pad(self::trunc($line->code_journal, 3), 3);
 			$tab['filler3'] = str_repeat(' ', 3);
 

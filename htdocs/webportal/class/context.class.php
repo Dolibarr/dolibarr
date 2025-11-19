@@ -202,13 +202,13 @@ class Context
 
 		//$this->generateNewToken();
 
-		$this->initController();
+		$this->initController(false);
 
 		// Init of base URL. Must be the public URL.
 		$this->rootUrl = self::getRootConfigUrl();
 
 
-		$this->theme = new WebPortalTheme();
+		$this->theme = new WebPortalTheme(false);
 	}
 
 	/**
@@ -228,9 +228,10 @@ class Context
 	/**
 	 * Init controller
 	 *
+	 * @param	bool	$init_theme		Init theme properties
 	 * @return  void
 	 */
-	public function initController()
+	public function initController($init_theme = true)
 	{
 		global $hookmanager;
 
@@ -249,6 +250,7 @@ class Context
 		$this->addControllerDefinition('documentlist', $defaultControllersPath . 'documentlist.controller.class.php', 'DocumentListController');
 		//** Below is the addition to the menu of the DocumentUtileController.class.php controller in order to share via the GED (documents) "Documentscomptes"
 		$this->addControllerDefinition('documentutile', $defaultControllersPath . 'documentutile.controller.class.php', 'DocumentUtileController');
+		$this->addControllerDefinition('viewimage', $defaultControllersPath . 'viewimage.controller.class.php', 'ViewImageController');
 
 		// Hooks for init controller
 		$hookmanager->initHooks(array('webportaldao'));
@@ -264,6 +266,10 @@ class Context
 				$this->controllerInstance = new $this->controllers[$this->controller]->class();
 				$this->setControllerFound();
 			}
+		}
+
+		if ($init_theme) {
+			$this->theme->init();
 		}
 	}
 

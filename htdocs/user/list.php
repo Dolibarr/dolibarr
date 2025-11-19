@@ -972,7 +972,7 @@ if (!empty($arrayfields['u.salary']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['u.thm']['checked'])) {
-	print_liste_field_titre("THM", $_SERVER['PHP_SELF'], "u.thm", $param, "", "", $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("THM", $_SERVER['PHP_SELF'], "u.thm", '', $param, "", $sortfield, $sortorder, 'right ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['u.datelastlogin']['checked']) && getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0) {

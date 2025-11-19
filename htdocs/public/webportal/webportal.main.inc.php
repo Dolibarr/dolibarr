@@ -107,6 +107,7 @@ require_once DOL_DOCUMENT_ROOT . '/webportal/class/webportalpartnership.class.ph
 //}
 
 $context = Context::getInstance();
+$context->initController();
 
 $hookmanager->initHooks(array('main', 'webportal'));
 
