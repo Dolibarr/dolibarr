@@ -164,6 +164,8 @@ ExperimentalUxContributionTxt02 = The different variants of this experiment will
 ExperimentalUxContributionTxt03 = In some cases, variants may be incompatible with each other. It is often challenging to make different behaviors coexist when they are based on the same interaction. For this reason, it may be necessary to separate the demos in such situations.
 ExperimentalUxContributionEnd = This structure ensures a clear and modular organization of UX experiments, making testing and future integration more efficient.
 
+UxDolibarrContext = JS Dolibarr context
+
 # Start experiements menu title
 ExperimentalUxInputAjaxFeedback = Input feedback
 # End experiements manu tyile
