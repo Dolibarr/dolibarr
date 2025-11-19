@@ -205,7 +205,7 @@ class Holidays extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('holiday', 'read')) {
+		if (!DolibarrApiAccess::$user->hasRight('holiday', 'write')) {
 			throw new RestException(403, "Insufficiant rights");
 		}
 
@@ -255,7 +255,7 @@ class Holidays extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('holiday', 'read')) {
+		if (!DolibarrApiAccess::$user->hasRight('holiday', 'write')) {
 			throw new RestException(403);
 		}
 
