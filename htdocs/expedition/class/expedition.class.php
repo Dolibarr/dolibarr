@@ -1133,6 +1133,7 @@ class Expedition extends CommonObject
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Override to keep every expeditiondet row that belongs to the displayed line in sync when drag & drop reorders rows.
 	 *
@@ -1197,9 +1198,8 @@ class Expedition extends CommonObject
 			}
 		}
 	}
+	// phpcs:enable
 
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Create a delivery receipt from a shipment
 	 *
