@@ -172,14 +172,18 @@
 	 * Display help in console log
 	 */
 	Dolibarr.defineTool('showConsoleHelp', () => {
-		console.group(
+		console.groupCollapsed(
 			"%cDolibarr JS Developers HELP",
 			"background-color: #95cf04 ; color: #ffffff ; font-weight: bold ; padding: 4px ;"
 		);
 		console.log( "Show this help : %cDolibarr.tools.showConsoleHelp();","font-weight: bold ;");
+
+		console.groupCollapsed('Dolibarr debug mode');
 		console.log( "Activate Dolibarr debug mode : %cDolibarr.debugMode(true);","font-weight: bold ;");
 		console.log( "Disable Dolibarr debug mode : %cDolibarr.debugMode(false);","font-weight: bold ;");
 		console.log( "Note : debug mode status is persistent");
+		console.groupEnd();
+
 		console.groupEnd();
 	});
 
