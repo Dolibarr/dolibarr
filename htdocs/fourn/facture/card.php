@@ -1156,7 +1156,7 @@ if (empty($reshook)) {
 					$objectsrc->fetch_thirdparty();
 
 					if (!empty($object->origin_type) && !empty($object->origin_id)) {
-						$object->linkedObjectsIds[$object->origin_type][$object->rowid] = $object->origin_id;
+						$object->linkedObjectsIds[$object->origin_type][-1] = $object->origin_id;
 					}
 
 					// Add also link with order if object is reception
@@ -1165,7 +1165,7 @@ if (empty($reshook)) {
 
 						if (count($objectsrc->linkedObjectsIds['order_supplier']) > 0) {
 							foreach ($objectsrc->linkedObjectsIds['order_supplier'] as $key => $value) {
-								$object->linkedObjectsIds['order_supplier'] = $value;
+								$object->linkedObjectsIds['order_supplier'][-1] = $value;
 							}
 						}
 					}
