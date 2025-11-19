@@ -67,7 +67,7 @@ if ($id > 0 || !empty($ref)) {
 	}
 
 	// Linked documents
-	if ($origin == 'order_supplier' && $object->origin_object->id && isModEnabled("supplier_order")) {
+	if ($origin == 'supplier_order' && $object->origin_object->id && isModEnabled("supplier_order")) {
 		$objectsrc = new CommandeFournisseur($db);
 		$objectsrc->fetch($object->origin_object->id);
 	}
@@ -100,7 +100,7 @@ $permissionnote = $user->hasRight('reception', 'creer'); // Used by the include 
 if ($origin == 'reception') {
 	$result = restrictedArea($user, $origin, $object->id);
 } else {
-	if ($origin == 'supplierorder' || $origin == 'order_supplier') {
+	if ($origin == 'supplierorder' || $origin == 'supplier_order') {
 		$result = restrictedArea($user, 'fournisseur', $object, 'commande_fournisseur', 'commande');
 	} elseif (!$user->hasRight($origin, 'lire') && !$user->hasRight($origin, 'read')) {
 		accessforbidden();
