@@ -1179,8 +1179,8 @@ class pdf_octopus extends ModelePDFFactures
 				// Add terms to sale
 				if (getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_INVOICE')) {
 					$termsofsalefilename = getDolGlobalString('MAIN_INFO_INVOICE_TERMSOFSALE');
-					$termsofsale = $conf->mycompany->dir_output.'/'.$termsofsalefilename;
-					if (!empty($conf->mycompany->multidir_output[$object->entity ?? $conf->entity])) {
+					$termsofsale = $conf->invoice->dir_output.'/'.$termsofsalefilename;
+					if (!empty($conf->mycompany->multidir_output[$object->entity ?? $conf->entity]) && !empty($mysoc->termsofsale)) {
 						$termsofsale = $conf->mycompany->multidir_output[$object->entity ?? $conf->entity].'/'.$mysoc->termsofsale;
 					}
 					if (file_exists($termsofsale) && is_readable($termsofsale)) {
