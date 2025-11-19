@@ -447,6 +447,10 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		$tableandshare = 'paiementcharge';
 		$parentfortableentity = 'fk_charge@chargesociales';
 	}
+	if ($features == 'evaluation') {
+		$features = 'hrm';
+		$feature2 = 'evaluation';
+	}
 
 	//print $features.' - '.$tableandshare.' - '.$feature2.' - '.$dbt_select."\n";
 
@@ -908,7 +912,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		$checkparentsoc = array('agenda', 'contact', 'contrat'); // Test on entity + link to third party on field $dbt_keyfield. Allowed if link is empty (Ex: contacts...).
 		$checkproject = array('projet', 'project'); // Test for project object
 		$checktask = array('projet_task'); // Test for task object
-		$checkhierarchy = array('expensereport', 'holiday');	// check permission among the hierarchy of user
+		$checkhierarchy = array('expensereport', 'holiday', 'hrm');	// check permission among the hierarchy of user
 		$checkuser = array('bookmark');	// check permission among the fk_user (must be myself or null)
 		$nocheck = array('barcode', 'stock'); // No test
 
@@ -1134,6 +1138,20 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 						return false;
 					}
 				}
+			}
+			if ($feature == 'hrm' && in_array('evaluation', $feature2)) {
+				$useridtocheck = $object->fk_user;
+
+				if ($user->hasRight('hrm', 'evaluation', 'readall')) {
+					// the user can view evaluations for anyone
+					return true;
+				}
+				if (!$user->hasRight('hrm', 'evaluation', 'read')) {
+					// the user can't view any evaluations
+					return false;
+				}
+				// the user can only their own evaluations or their subordinates'
+				return in_array($useridtocheck, $childids);
 			}
 		}
 
