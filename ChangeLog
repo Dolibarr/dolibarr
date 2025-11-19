@@ -36,6 +36,11 @@ The following changes may create regressions for some external modules, but were
 * Stock movement API GET method output variable names has been harmonized with POST input parameter names
 * $conf is no more allowed into computed formulae. You ca replace use of $conf->currency by NEW Introduce getCurrency() and $conf->global->xxx by getDolGlobalString('xxx')
 * Concatenation into computed property of extrafields is off by default. You can enable it with $dolibarr_main_restrict_eval_methods = 'dol_concat'
+* Old variable $obj and $object are no more allowed into evaluated strings like computed extrafields or conditions. Use $objectoffield to get current object or $var123 to
+  instantiate a non existing object.
+* The hidden constant MAIN_ALLOW_UNSECURED_SPECIAL_CHARS_IN_DOL_EVAL has been replaced with the
+  variable $dolibarr_main_allow_unsecured_special_chars_in_dol_eval into conf.php
+
 
 
 ***** ChangeLog for 22.0.3 compared to 22.0.2 *****
