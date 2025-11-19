@@ -119,9 +119,6 @@ function llxFooter($comment = '', $zone = 'private', $disabledoutputofmessages =
 }
 
 require 'main.inc.php'; // Load $user and permissions
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -129,6 +126,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
 $encoding = '';
 $action = GETPOST('action', 'aZ09');

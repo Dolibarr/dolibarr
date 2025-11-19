@@ -53,4 +53,4 @@ PrintingDriverDescprintgcp=Paramètres de configuration des drivers Google Cloud
 PrintingDriverDescprintipp=Variables de configuration pour le pilotes d'impression Cups.
 PrintTestDescprintgcp=Liste des imprimantes Google Cloud Print.
 PrintTestDescprintipp=Liste des imprimantes pour Cups.
-Testbbbb
+PrinterLocation=Emplacement de l'imprimante

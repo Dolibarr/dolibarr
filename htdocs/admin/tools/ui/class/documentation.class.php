@@ -87,7 +87,7 @@ class Documentation
 
 		// Go back to Dolibarr
 		$this->menu['BackToDolibarr'] = array(
-			'url' => DOL_URL_ROOT,
+			'url' => dol_buildpath('modulebuilder/index.php', 1),
 			'icon' => 'fas fa-arrow-left',
 			'submenu' => array(),
 		);
@@ -201,6 +201,13 @@ class Documentation
 					'submenu' => array(),
 					'summary' => array(),
 				),
+
+				'FreezeTooltip' => array(
+					'url' => dol_buildpath($this->baseUrl.'/content/freeze-tooltip.php', 1),
+					'icon' => 'far fa-comment',
+					'submenu' => array(),
+					'summary' => array(),
+				),
 			)
 		);
 
@@ -239,14 +246,6 @@ class Documentation
 						'ExperimentalUxContributionTitle' => '#experimental-ux-contribution',
 					),
 				),
-
-				'ExperimentalUxFreezeTooltip' => array(
-					'url' => dol_buildpath($this->baseUrl.'/experimental/experiments/freeze-tooltip/index.php', 1),
-					'icon' => 'fas fa-flask',
-					'submenu' => array(),
-					'summary' => array(),
-				),
-
 				'ExperimentalUxInputAjaxFeedback' => array(
 					'url' => dol_buildpath($this->baseUrl.'/experimental/experiments/input-feedback/index.php', 1),
 					'icon' => 'fas fa-flask',

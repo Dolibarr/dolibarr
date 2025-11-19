@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025		Charlene Benke	    <charlene@patas-monkey.com>
+/* Copyright (C) 2007-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025	MDW					    <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Charlene Benke	        <charlene@patas-monkey.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,7 +92,9 @@ class Ccountry extends CommonDict
 	public function create($user, $notrigger = 0)
 	{
 		$error = 0;
-
+		if (empty($this->id)) {
+			return -1;
+		}
 		// Clean parameters
 		if (isset($this->code)) {
 			$this->code = trim($this->code);
@@ -117,11 +120,11 @@ class Ccountry extends CommonDict
 		$sql .= "label,";
 		$sql .= "active";
 		$sql .= ") VALUES (";
-		$sql .= " ".(!isset($this->rowid) ? 'NULL' : "'".$this->db->escape($this->rowid)."'").",";
-		$sql .= " ".(!isset($this->code) ? 'NULL' : "'".$this->db->escape($this->code)."'").",";
-		$sql .= " ".(!isset($this->code_iso) ? 'NULL' : "'".$this->db->escape($this->code_iso)."'").",";
-		$sql .= " ".(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'").",";
-		$sql .= " ".(!isset($this->active) ? 'NULL' : "'".$this->db->escape((string) $this->active)."'");
+		$sql .= (int) $this->id;
+		$sql .= ", ".(!isset($this->code) ? 'NULL' : "'".$this->db->escape($this->code)."'");
+		$sql .= ", ".(!isset($this->code_iso) ? 'NULL' : "'".$this->db->escape($this->code_iso)."'");
+		$sql .= ", ".(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'");
+		$sql .= ", ".(!isset($this->active) ? 'NULL' : "'".$this->db->escape((string) $this->active)."'");
 		$sql .= ")";
 
 		$this->db->begin();
@@ -188,12 +191,12 @@ class Ccountry extends CommonDict
 				$obj = $this->db->fetch_object($resql);
 
 				if ($obj) {
-					$this->id = $obj->rowid;
+					$this->id = (int) $obj->rowid;
 					$this->code = $obj->code;
 					$this->code_iso = $obj->code_iso;
 					$this->label = $obj->label;
 					$this->eec = $obj->eec;
-					$this->active = $obj->active;
+					$this->active = (int) $obj->active;
 					$this->favorite = $obj->favorite;
 					$this->numeric_code = $obj->numeric_code;
 				}

@@ -103,7 +103,7 @@ foreach ($argv as $key => $val) {
 }
 
 print "Mails sending disabled (useless in batch mode)\n";
-$conf->global->MAIN_DISABLE_ALL_MAILS = 1; // On bloque les mails
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1; // We block email sending
 print "\n";
 print "----- Synchronize all records from LDAP database:\n";
 print "host=" . getDolGlobalString('LDAP_SERVER_HOST')."\n";

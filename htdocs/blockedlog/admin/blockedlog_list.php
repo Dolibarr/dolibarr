@@ -22,7 +22,7 @@
 /**
  *    \file       htdocs/blockedlog/admin/blockedlog_list.php
  *    \ingroup    blockedlog
- *    \brief      Page setup for blockedlog module
+ *    \brief      Page to list and view unalterable logs
  */
 
 // Load Dolibarr environment
@@ -41,19 +41,15 @@ require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'banks', 'bills', 'blockedlog', 'other'));
 
-// Access Control
-if ((!$user->admin && !$user->hasRight('blockedlog', 'read')) || empty($conf->blockedlog->enabled)) {
-	accessforbidden();
-}
-
 // Get Parameters
 $action      = GETPOST('action', 'aZ09');
-$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'blockedloglist'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : getDolDefaultContextPage(__FILE__); // To manage different context of search
 $backtopage  = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss   = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
@@ -112,6 +108,11 @@ if (empty($sortorder)) {
 
 $block_static = new BlockedLog($db);
 $block_static->loadTrackedEvents();
+
+// Access Control
+if ((!$user->admin && !$user->hasRight('blockedlog', 'read')) || !isModEnabled('blockedlog')) {
+	accessforbidden();
+}
 
 $result = restrictedArea($user, 'blockedlog', 0, '');
 
@@ -373,7 +374,6 @@ if (GETPOST('downloadcsv', 'alpha')) {
  */
 
 $form = new Form($db);
-$formother = new FormOther($db);
 
 if (GETPOST('withtab', 'alpha')) {
 	$title = $langs->trans("ModuleSetup").' '.$langs->trans('BlockedLog');
@@ -401,11 +401,9 @@ if (GETPOST('withtab', 'alpha')) {
 
 print load_fiche_titre($title, $linkback, 'blockedlog');
 
-if (GETPOST('withtab', 'alpha')) {
-	$head = blockedlogadmin_prepare_head();
+$head = blockedlogadmin_prepare_head(GETPOST('withtab', 'alpha'));
 
-	print dol_get_fiche_head($head, 'fingerprints', '', -1);
-}
+print dol_get_fiche_head($head, 'fingerprints', '', -1);
 
 print '<div class="opacitymedium hideonsmartphone justify">';
 
@@ -416,13 +414,8 @@ print $s;
 print "<br>\n";
 print "</div>\n";
 
-$htmltext = $langs->trans("UnalterableLogTool1");
-if ($mysoc->country_code == 'FR') {
-	$htmltext .= ' '.$langs->trans("UnalterableLogTool1FR");
-}
-$htmltext .= "<br>";
-
-$htmltext .= $langs->trans("UnalterableLogTool2")."<br>";
+$htmltext = '';
+$htmltext .= $langs->trans("UnalterableLogTool2", $langs->transnoentitiesnoconv("Archives"))."<br>";
 $htmltext .= $langs->trans("UnalterableLogTool3")."<br>";
 
 print info_admin($htmltext);
@@ -431,7 +424,7 @@ print info_admin($htmltext);
 print '<br>';
 
 $param = '';
-if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+if ($contextpage != getDolDefaultContextPage(__FILE__)) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
@@ -476,26 +469,6 @@ if ($optioncss != '') {
 if (GETPOST('withtab', 'alpha')) {
 	$param .= '&withtab='.urlencode(GETPOST('withtab', 'alpha'));
 }
-
-// Add $param from extra fields
-//include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
-
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'?output=file">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-
-print '<div class="right">';
-print $langs->trans("RestrictYearToExport").': ';
-// Month
-print $formother->select_month((string) GETPOSTINT('monthtoexport'), 'monthtoexport', 1, 0, 'minwidth50 maxwidth75imp valignmiddle', true);
-print '<input type="text" name="yeartoexport" class="valignmiddle maxwidth75imp" value="'.GETPOST('yeartoexport').'" placeholder="'.$langs->trans("Year").'">';
-print '<input type="hidden" name="withtab" value="'.GETPOST('withtab', 'alpha').'">';
-print '<input type="submit" name="downloadcsv" class="button" value="'.$langs->trans('DownloadLogCSV').'">';
-/*if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY')) {
-	print ' | <a href="?action=downloadblockchain'.(GETPOST('withtab', 'alpha') ? '&withtab='.GETPOST('withtab', 'alpha') : '').'">'.$langs->trans('DownloadBlockChain').'</a>';
-}*/
-print ' </div><br>';
-
-print '</form>';
 
 print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 
@@ -589,7 +562,7 @@ print getTitleFieldOfList($langs->trans('Date'), 0, $_SERVER["PHP_SELF"], 'date_
 print getTitleFieldOfList($langs->trans('Author'), 0, $_SERVER["PHP_SELF"], 'user_fullname', '', $param, '', $sortfield, $sortorder, '')."\n";
 print getTitleFieldOfList($langs->trans('Action'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '')."\n";
 print getTitleFieldOfList($langs->trans('Ref'), 0, $_SERVER["PHP_SELF"], 'ref_object', '', $param, '', $sortfield, $sortorder, '')."\n";
-print getTitleFieldOfList($langs->trans('Amount'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ', 0, $langs->trans("TotalTTCIfInvoiceSeeCompleteDataForDetail"))."\n";
+print getTitleFieldOfList($langs->trans('Amount'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ', 0, $langs->trans("TotalTTCIfInvoiceSeeCompleteDataForDetail").'<br>'.$langs->trans("AmountInCurrency", getDolCurrency()))."\n";
 print getTitleFieldOfList($langs->trans('DataOfArchivedEvent'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ', 0, $langs->trans('DataOfArchivedEventHelp'), 1)."\n";
 print getTitleFieldOfList($langs->trans('Fingerprint'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '')."\n";
 print getTitleFieldOfList($form->textwithpicto($langs->trans('Status'), $langs->trans('DataOfArchivedEventHelp2')), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ')."\n";
@@ -634,6 +607,8 @@ if (getDolGlobalString('BLOCKEDLOG_SCAN_ALL_FOR_LOWERIDINERROR')) {
 	}
 }
 
+$totalhtamount = array();
+$totalvatamount = array();
 $totalamount = array();
 
 if (is_array($blocks)) {
@@ -687,22 +662,55 @@ if (is_array($blocks)) {
 			}
 			print '</td>';
 
+			//$tmpobj = json_decode($block->object_data);
+
 			// Amount
-			print '<td class="right nowraponall">'.price($block->amounts).'</td>';
+			print '<td class="right nowraponall">';
+
+			// Define $totalhtamount, $totalvatamount, $totalamount
 			if (empty($totalamount[$block->action])) {
 				$totalamount[$block->action] = array();
 			}
 			if ($block->action == 'BILL_VALIDATE') {
+				$total_ht = $block->object_data->total_ht;
+				$total_vat = $block->object_data->total_tva;
+				$total_ttc = $block->object_data->total_ttc;
+
 				if (empty($totalamount[$block->action][$block->ref_object])) {	// If not, we already met the event for this object, we keep only first one.
-					$totalamount[$block->action][$block->ref_object] = $block->amounts;
+					$totalhtamount[$block->action][$block->ref_object] = $total_ht;
+					$totalvatamount[$block->action][$block->ref_object] = $total_vat;
+					$totalamount[$block->action][$block->ref_object] = $total_ttc;
 				}
-			}
-			if ($block->action == 'PAYMENT_CUSTOMER_CREATE') {
+			} elseif ($block->action == 'PAYMENT_CUSTOMER_CREATE') {
+				$total_ht = $block->object_data->amount;
+				$total_vat = 0;
+				$total_ttc = $block->object_data->amount;
+
+				if (empty($totalhtamount[$block->action][$block->ref_object])) {
+					$totalhtamount[$block->action][$block->ref_object] = 0;
+				}
+				if (empty($totalvatamount[$block->action][$block->ref_object])) {
+					$totalvatamount[$block->action][$block->ref_object] = 0;
+				}
 				if (empty($totalamount[$block->action][$block->ref_object])) {
 					$totalamount[$block->action][$block->ref_object] = 0;
 				}
-				$totalamount[$block->action][$block->ref_object] = $block->amounts;
+				$totalhtamount[$block->action][$block->ref_object] = $total_ht;
+				$totalvatamount[$block->action][$block->ref_object] = $total_vat;
+				$totalamount[$block->action][$block->ref_object] = $total_ttc;
+			} else {
+				$total_ttc = $block->amounts;
 			}
+
+			if (empty($total_ttc)) {
+				print '<span class="opacitymedium">';
+			}
+			print price($total_ttc);
+			if (empty($total_ttc)) {
+				print '</span>';
+			}
+
+			print '</td>';
 
 			// Details link
 			print '<td class="center"><a href="#" data-blockid="'.$block->id.'" rel="show-info">'.img_picto($langs->trans('ShowDetails'), 'note', 'class="size15x"').'</span></td>';
@@ -733,7 +741,9 @@ if (is_array($blocks)) {
 			// Note
 			if (!$checkresult[$block->id] || ($loweridinerror && $block->id >= $loweridinerror)) {	// If error
 				if ($checkresult[$block->id]) {
-					print $form->textwithpicto('', $langs->trans('OkCheckFingerprintValidityButChainIsKo'));
+					if (getDolGlobalString("BLOCKEDLOG_DEBUG")) {
+						print $form->textwithpicto('', $langs->trans('OkCheckFingerprintValidityButChainIsKo'));
+					}
 				}
 			}
 
@@ -745,7 +755,7 @@ if (is_array($blocks)) {
 			print '</td>';
 
 			// Link to debug information object
-			if (getDolGlobalString('MAIN_FEATURES_LEVEL') > 0) {	// If in experimental or develop mode, we add some debug information. It may help developers to find origin of bugs.
+			if (getDolGlobalString("BLOCKEDLOG_DEBUG")) {	// If in experimental or develop mode, we add some debug information. It may help developers to find origin of bugs.
 				print '<td class="tdoverflowmax150"'.(preg_match('/<a/', $object_link) ? '' : 'title="'.dol_escape_htmltag(dol_string_nohtmltag($object_link.($object_link_title ? ' - '.$object_link_title : ''))).'"').'>';
 				print '<!-- object_link -->';	// $object_link can be a '<a href' link or a text
 				print $object_link;
@@ -772,7 +782,7 @@ if (is_array($blocks)) {
 		foreach ($totalamount as $key => $totalamountperref) {
 			if ($key == 'BILL_VALIDATE') {
 				// Total
-				print '<tr class="oddeven">';
+				print '<tr class="totalline">';
 
 				// Action column
 				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -781,7 +791,7 @@ if (is_array($blocks)) {
 				}
 
 				// ID
-				print '<td colspan="2">'.dolPrintHTML($langs->trans("TotalForAction").' '.$key).'</td>';
+				print '<td colspan="2">'.dolPrintHTML($langs->trans("TotalForAction").' '.$langs->trans('log'.$key)).'</td>';
 
 				// Date
 				//print '<td class="nowraponall"></td>';
@@ -799,10 +809,29 @@ if (is_array($blocks)) {
 
 				// Amount (HT)
 				print '<td class="right nowraponall">';
+				$totalhttoshow = 0;
+				foreach ($totalhtamount[$key] as $value) {
+					$totalhttoshow += $value;
+				}
+				print $langs->trans("HT").': ';
+				print price($totalhttoshow);
+
+				print '<br>';
+
+				$totalvattoshow = 0;
+				foreach ($totalvatamount[$key] as $value) {
+					$totalvattoshow += $value;
+				}
+				print $langs->trans("VAT").': ';
+				print price($totalvattoshow);
+
+				print '<br>';
+
 				$totaltoshow = 0;
 				foreach ($totalamountperref as $value) {
 					$totaltoshow += $value;
 				}
+				print $langs->trans("TTC").': ';
 				print price($totaltoshow);
 				print '</td>';
 
@@ -870,7 +899,7 @@ jQuery(document).ready(function () {
 		});
 
 		var mydialog = jQuery("#dialogforpopup");
-		mydialog.dialog({autoOpen: false, modal: true, height: (window.innerHeight - 150), width: \'80%\', title: \''.dol_escape_js($langs->trans("UnlaterableDataOfEvent")).'\',});
+		mydialog.dialog({autoOpen: false, modal: true, height: (window.innerHeight - 150), width: \'80%\', title: \''.dol_escape_js($langs->transnoentitiesnoconv("UnlaterableDataOfEvent")).'\',});
 		mydialog.dialog("open");
 		return false;
 	});
@@ -903,9 +932,7 @@ if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY') && getDolGlobalString(
 }
 */
 
-if (GETPOST('withtab', 'alpha')) {
-	print dol_get_fiche_end();
-}
+print dol_get_fiche_end();
 
 print '<br><br>';
 

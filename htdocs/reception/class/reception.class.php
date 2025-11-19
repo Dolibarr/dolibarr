@@ -1776,7 +1776,7 @@ class Reception extends CommonObject
 			$return .= '<br><div class="info-box-ref tdoverflowmax150">'.$this->thirdparty->getNomUrl(1).'</div>';
 		}
 		/*if (property_exists($this, 'total_ht')) {
-			$return .= '<div class="info-box-ref amount">'.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency).' '.$langs->trans('HT').'</div>';
+			$return .= '<div class="info-box-ref amount">'.price($this->total_ht, 0, $langs, 0, -1, -1, getDolCurrency()).' '.$langs->trans('HT').'</div>';
 		}*/
 		if (method_exists($this, 'getLibStatut')) {
 			$return .= '<div class="info-box-status">'.$this->getLibStatut(3).'</div>';
