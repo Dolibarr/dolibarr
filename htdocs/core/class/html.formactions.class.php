@@ -65,7 +65,7 @@ class FormActions
 	 *  @param	integer	$onlyselect		0=Standard, 1=Hide percent of completion and force usage of a select list, 2=Same than 1 and add "Incomplete (Todo+Running)
 	 *  @param  string  $morecss        More css on select field
 	 *  @param	int		$nooutput		1=No output, return string. 0=Print on output
-	 * 	@return	void
+	 * 	@return	string|void
 	 */
 	public function form_select_status_action($formname, $selected, $canedit = 1, $htmlname = 'complete', $showempty = 0, $onlyselect = 0, $morecss = 'maxwidth100', $nooutput = 0)
 	{
