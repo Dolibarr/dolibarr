@@ -906,6 +906,10 @@ input.pageplusone {
 	padding-top: 4px;
 	margin-right: 4px;
 	margin-left: 3px;
+	width: 32px;
+}
+.paginationlastpage a {
+	padding-left: 6px;
 }
 
 .saturatemedium {
@@ -1400,9 +1404,6 @@ td.wordbreak img, td.wordbreakimp img {
 	cursor: default;
 }
 .cursorpointer {
-	cursor: pointer;
-}
-.classfortooltiponclick .fa-question-circle {
 	cursor: pointer;
 }
 .cursormove {
@@ -3000,6 +3001,7 @@ img.pictofixedwidth {
 	padding-bottom: 1px;
 	width: 50px;
 	text-align:center;
+	border-radius: 5px;
 }
 div.attacharea {
 	padding-top: 18px;
@@ -8905,6 +8907,10 @@ table.jPicker {
 
 @media only screen and (max-width: 767px)
 {
+	body {
+		font-size: 0.91em;
+	}
+
 	td.widthpictotitle,	table.titlemodulehelp tr td img.widthpictotitle {
 		width: 30px;
 	}
@@ -9010,6 +9016,7 @@ include dol_buildpath($path.'/theme/'.$theme.'/info-box.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/progress.inc.php', 0);
 include dol_buildpath($path.'/theme/eldy/timeline.inc.php', 0); // actually md use same style as eldy theme
 include dol_buildpath($path.'/theme/'.$theme.'/search-input.inc.css', 0); // actually md use same style as eldy theme
+include dol_buildpath($path.'/theme/'.$theme.'/tooltips.inc.css', 0);
 
 if (getDolGlobalString('THEME_CUSTOM_CSS')) {
 	print getDolGlobalString('THEME_CUSTOM_CSS');

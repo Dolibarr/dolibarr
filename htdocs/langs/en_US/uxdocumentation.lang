@@ -14,6 +14,7 @@ DocExampleForPHPCode=Example of code to use in PHP
 # Components
 DocComponentsTitle=Components
 DocComponentsMainDescription=Components section description is under development
+FreezeTooltip = Tooltip freeze
 
 # Badges
 DocBadgeTitle=Badges
@@ -164,7 +165,6 @@ ExperimentalUxContributionTxt03 = In some cases, variants may be incompatible wi
 ExperimentalUxContributionEnd = This structure ensures a clear and modular organization of UX experiments, making testing and future integration more efficient.
 
 # Start experiements menu title
-ExperimentalUxFreezeTooltip = Tooltip freeze
 ExperimentalUxInputAjaxFeedback = Input feedback
 # End experiements manu tyile
 

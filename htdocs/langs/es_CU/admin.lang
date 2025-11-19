@@ -818,7 +818,6 @@ ListOfSecurityEvents=Lista de eventos de seguridad de Dolibarr
 LogEventDesc=Habilite el registro para eventos de seguridad específicos. Los administradores inician sesión a través del menú <b> %s - %s </b> . Advertencia, esta función puede generar una gran cantidad de datos en la base de datos.
 AreaForAdminOnly=Los parámetros de configuración pueden ser configurados por los usuarios administradores de <b> </b> únicamente.
 SystemInfoDesc=La información del sistema es información técnica diversa que obtiene en modo de solo lectura y es visible solo para los administradores.
-AccountantDesc=Si tiene un contador/tenedor de libros externo, puede editar aquí su información.
 AccountantFileNumber=código contable
 DisplayDesc=Los parámetros que afectan el aspecto y la presentación de la aplicación se pueden modificar aquí.
 AvailableModules=Aplicación/módulos disponibles

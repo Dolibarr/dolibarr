@@ -1099,7 +1099,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 
 							$pagecsscontent .= $contentforlessc."\n";
 							//$pagecsscontent.=$tmpgeturl['content']."\n";
-						} catch (exception $e) {
+						} catch (Exception $e) {
 							//echo "failed to compile lessc";
 							dol_syslog("Failed to compile the CSS from URL ".$urltograbbis." with lessc: ".$e->getMessage(), LOG_WARNING);
 							$pagecsscontent .= $tmpgeturl['content']."\n";

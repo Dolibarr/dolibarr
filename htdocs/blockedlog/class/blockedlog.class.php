@@ -512,12 +512,16 @@ class BlockedLog
 		$this->object_data = new stdClass();
 		// Add fields to exclude
 		$arrayoffieldstoexclude = array(
-			'table_element', 'fields', 'ref_previous', 'ref_next', 'origin', 'origin_id', 'oldcopy', 'picto', 'error', 'errors', 'model_pdf', 'modelpdf', 'last_main_doc', 'civility_id', 'contact', 'contact_id',
+			'table_element', 'fields',
+			'ref_previous', 'ref_next',
+			'origin', 'origin_id',
+			'oldcopy', 'picto', 'error', 'errors', 'model_pdf', 'modelpdf', 'last_main_doc', 'civility_id', 'contact', 'contact_id',
 			'table_element_line', 'ismultientitymanaged', 'isextrafieldmanaged',
 			'array_languages',
 			'childtables',
 			'contact_ids',
 			'context',
+			'element',
 			'labelStatus',
 			'labelStatusShort',
 			'linkedObjectsIds',
@@ -1022,6 +1026,9 @@ class BlockedLog
 			$concatenatedata = $this->buildKeyForSignature();	// All the information for the hash (meta data + data saved)
 
 			$this->signature = $this->buildFinalSignatureHash($previoushash.$concatenatedata);	// Build the hmac signature
+
+			// For debug:
+			$this->debuginfo = $this->buildFirstPartOfKeyForSignature();	// Not used
 		} catch (Exception $e) {
 			$this->error = $e->getMessage();
 
@@ -1030,9 +1037,6 @@ class BlockedLog
 			$this->db->rollback();
 			return -1;
 		}
-
-		// For debug:
-		$this->debuginfo = $this->buildFirstPartOfKeyForSignature();	// Note used
 
 		if ($forcesignature) {
 			$this->signature = $forcesignature;
@@ -1179,6 +1183,8 @@ class BlockedLog
 			$s .= '|'.(string) $this->linktoref;
 			$s .= '|'.(string) $this->linktype;
 			return $s;
+		} else {
+			throw new Exception('Error bad value "'.$this->object_format.'" for object_format');
 		}
 	}
 

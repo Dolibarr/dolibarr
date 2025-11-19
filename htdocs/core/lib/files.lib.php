@@ -47,9 +47,9 @@ function dol_basename($pathfile)
  * @param	string			$utf8_path     	Starting path from which to search. This is a full path.
  * @param	string			$types        	Can be "directories", "files", or "all"
  * @param	int				$recursive		Determines whether subdirectories are searched
- * @param	string|string[]	$filter        	Regex or Array of Regex filter to restrict list. The regex value must be escaped for '/' by doing preg_quote($var,'/'), since this char is used for preg_match function,
- *                  	                    but must NOT contains the start and end '/'. Filter is checked into basename only.
- * @param	string|string[]	$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview.*\.png)$','^\.')). Exclude is checked both into fullpath and into basename (So '^xxx' may exclude 'xxx/dirscanned/...' and dirscanned/xxx').
+ * @param	string|string[]|null	$filter        	Regex or Array of Regex filter to restrict list. The regex value must be escaped for '/' by doing preg_quote($var,'/'), since this char is used for preg_match function,
+ *                  	                    		but must NOT contains the start and end '/'. Filter is checked into basename only.
+ * @param	string|string[]|null	$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview.*\.png)$','^\.')). Exclude is checked both into fullpath and into basename (So '^xxx' may exclude 'xxx/dirscanned/...' and dirscanned/xxx').
  * @param	string			$sortcriteria	Sort criteria ('','fullname','relativename','name','date','size')
  * @param	int 			$sortorder		Sort order (SORT_ASC, SORT_DESC)
  * @param	int				$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower), 2=Force load of date only, 3=Force load of size only, 4=Force load of perm
@@ -70,7 +70,7 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
 
 		// Verify filters (only on the first call of the function)
 		$filter_ok = true;
-		if (!is_array($filter)) {
+		if (!empty($filter) && !is_array($filter)) {
 			if (strlen($filter) > 25000) {	// Note that limit depends on syntax of filter
 				dol_syslog("Value for filter is too large", LOG_ERR);
 				$filter_ok = false;
@@ -762,13 +762,13 @@ function dol_fileperm($pathoffile)
 /**
  * Make replacement of strings into a file.
  *
- * @param	string					$srcfile			       Source file (can't be a directory)
- * @param	array<string,string|int> $arrayreplacement	       Array with strings to replace. Example: array('valuebefore'=>'valueafter', ...)
- * @param	string					$destfile			       Destination file (can't be a directory). If empty, will be same than source file.
- * @param	string					$newmask			       Mask for new file. '0' by default means getDolGlobalString('MAIN_UMASK'). Example: '0666'.
- * @param	int						$indexdatabase		       1=index new file into database.
- * @param   int     				$arrayreplacementisregex   1=Array of replacement is already an array with key that is a regex. Warning: the key must be escaped with preg_quote for '/'
- * @return	int											       Return integer <0 if error, 0 if nothing done (dest file already exists), >0 if OK
+ * @param	string						$srcfile			       Source file (can't be a directory)
+ * @param	array<string,string|int> 	$arrayreplacement	       Array with strings to replace. Example: array('valuebefore'=>'valueafter', ...)
+ * @param	string						$destfile			       Destination file (can't be a directory). If empty, will be same than source file.
+ * @param	string						$newmask			       Mask for new file. '0' by default means getDolGlobalString('MAIN_UMASK'). Example: '0666'.
+ * @param	int							$indexdatabase		       1=index new file into database.
+ * @param   int     					$arrayreplacementisregex   1=Array of replacement is already an array with key that is a regex. Warning: the key must be escaped with preg_quote for '/' and include the starting/ending '/' in string.
+ * @return	int												       Return integer <0 if error, 0 if nothing done (dest file already exists), >0 if OK
  * @see		dol_copy(), dolCopyDir()
  */
 function dolReplaceInFile($srcfile, $arrayreplacement, $destfile = '', $newmask = '0', $indexdatabase = 0, $arrayreplacementisregex = 0)
@@ -3406,6 +3406,11 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->contract->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
+	} elseif ($modulepart == 'massfilesarea_stock' && !empty($conf->stock->dir_output)) {
+		if ($fuser->hasRight('stock', $lire) || preg_match('/^specimen/i', $original_file)) {
+			$accessallowed = 1;
+		}
+		$original_file = $conf->stock->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
 	} elseif (($modulepart == 'fichinter' || $modulepart == 'ficheinter') && !empty($conf->ficheinter->dir_output)) {
 		// Wrapping for interventions
 		if ($fuser->hasRight('ficheinter', $lire) || preg_match('/^specimen/i', $original_file)) {

@@ -699,7 +699,7 @@ if ($id > 0 || $ref) {
 				if (empty($currencycodetouse) && $object->fourn_multicurrency_tx == 1) {
 					$currencycodetouse = $conf->currency;
 				}
-				print $form->selectMultiCurrency($currencycodetouse, "multicurrency_code", 1);
+				print $form->selectMultiCurrency((string) $currencycodetouse, "multicurrency_code", 1);
 				print ' &nbsp; &nbsp; '.$langs->trans("CurrencyRate").' ';
 				print '<input class="flat width50" name="multicurrency_tx" value="';
 				print GETPOST('multicurrency_tx');

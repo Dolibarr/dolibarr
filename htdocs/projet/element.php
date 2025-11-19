@@ -876,7 +876,7 @@ if (isModEnabled('stock')) {
 print '<!-- Begin PROFIT table -->';
 print load_fiche_titre($langs->trans("Profit"), '', 'title_accountancy');
 
-PRINT '<div class="div-table-responsive">';
+print '<div class="div-table-responsive">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td class="left" width="200">';
@@ -945,6 +945,7 @@ foreach ($listofreferent as $key => $value) {
 		if (is_array($elementarray) && count($elementarray) > 0) {
 			$total_ht = 0;
 			$total_ttc = 0;
+			$i = 0;
 
 			// Loop on each object for the current element type
 			$num = count($elementarray);
@@ -1342,6 +1343,20 @@ foreach ($listofreferent as $key => $value) {
 			$total_duration = 0;
 			print '</td>';
 		}
+		// Type from Expense Report
+		if ($tablename == 'expensereport_det') {
+			print '<td id="expensereport_type">';
+			print $langs->trans("Type");
+			print '</td>';
+		}
+		// Description from Expense Report
+		if ($tablename == 'expensereport_det') {
+			print '<td id="expensereport_description">';
+			print $langs->trans("Description");
+			print '</td>';
+		}
+
+
 		// Amount HT
 		//if (empty($value['disableamount']) && ! in_array($tablename, array('projet_task'))) print '<td class="right" width="120">'.$langs->trans("AmountHT").'</td>';
 		//elseif (empty($value['disableamount']) && in_array($tablename, array('projet_task'))) print '<td class="right" width="120">'.$langs->trans("Amount").'</td>';
@@ -1372,6 +1387,7 @@ foreach ($listofreferent as $key => $value) {
 		if (is_array($elementarray) && count($elementarray) > 0) {
 			$total_ht = 0;
 			$total_ttc = 0;
+			$i = 0;
 
 			$total_ht_by_third = 0;
 			$total_ttc_by_third = 0;
@@ -1624,6 +1640,21 @@ foreach ($listofreferent as $key => $value) {
 					print '</td>';
 				}
 
+				// Type from Expense Report
+				if ($tablename == 'expensereport_det') {
+					print '<td class="left linecoltype">';
+					$labeltype = ($langs->trans(($element->type_fees_code)) == $element->type_fees_code ? $element->type_fees_libelle : $langs->trans($element->type_fees_code));
+					print (string) $labeltype;
+					print '</td>';
+				}
+				// Description from Expense Report
+				if ($tablename == 'expensereport_det') {
+					print '<td class="left linecolcomment">';
+					print (string) $element->comments;
+					print '</td>';
+				}
+
+
 				// Amount without tax
 				$warning = '';
 				if (empty($value['disableamount'])) {
@@ -1642,7 +1673,7 @@ foreach ($listofreferent as $key => $value) {
 						if (isModEnabled('salaries')) {
 							// TODO Permission to read daily rate to show value
 							$total_ht_by_line = price2num($tmpprojtime['amount'], 'MT');
-							if ($tmpprojtime['nblinesnull'] > 0) {
+							if (isset($tmpprojtime['nblinesnull']) && ($tmpprojtime['nblinesnull'] > 0)) {
 								$langs->load("errors");
 								$warning = $langs->trans("WarningSomeLinesWithNullHourlyRate", $conf->currency);
 							}
@@ -1679,7 +1710,7 @@ foreach ($listofreferent as $key => $value) {
 					if ($warning) {
 						print ' '.img_warning($warning);
 					}
-					if ($tmpprojtime['nblinesnull'] > 0) {
+					if (isset($tmpprojtime['nblinesnull']) && ($tmpprojtime['nblinesnull'] > 0)) {
 						if ($tmpprojtime['nbuserthmnull'] > 0) {
 							$title = $langs->trans("EnterUsersHourlyRateFirst");
 							print ' '.img_picto($title, "sync", '', 0, 0, 0, '', 'opacitymedium');
@@ -1747,7 +1778,7 @@ foreach ($listofreferent as $key => $value) {
 					if ($warning) {
 						print ' '.img_warning($warning);
 					}
-					if ($tmpprojtime['nblinesnull'] > 0) {
+					if (isset($tmpprojtime['nblinesnull']) && ($tmpprojtime['nblinesnull'] > 0)) {
 						if ($tmpprojtime['nbuserthmnull'] > 0) {
 							$title = $langs->trans("EnterUsersHourlyRateFirst");
 							print ' '.img_picto($title, "sync", '', 0, 0, 0, '', 'opacitymedium');
@@ -1867,6 +1898,11 @@ foreach ($listofreferent as $key => $value) {
 				}
 				print '</td>';
 				print '<td>&nbsp;</td>';
+				// Because of the added Type and Description columns to Expense Reports
+				if ($tablename == 'expensereport_det') {
+					print '<td>&nbsp;</td>';
+					print '<td>&nbsp;</td>';
+				}
 				print '</tr>';
 			}
 		} else {

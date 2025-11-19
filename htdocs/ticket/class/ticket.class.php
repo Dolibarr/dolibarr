@@ -1277,6 +1277,7 @@ class Ticket extends CommonObject
 		$object->status = 0;
 		$object->ref = $object->getDefaultRef();
 		$object->track_id = generate_random_id(16);
+		$object->progress = 0;
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
@@ -3201,8 +3202,8 @@ class Ticket extends CommonObject
 				} else {
 					$langs->load("other");
 					if ($mailfile->error) {
-						setEventMessages($langs->trans('ErrorFailedToSendMail', $from, $receiver), null, 'errors');
-						dol_syslog($langs->trans('ErrorFailedToSendMail', $from, $receiver).' : '.$mailfile->error);
+						setEventMessages($langs->trans('ErrorFailedToSendMail', $from, $receiverstring), null, 'errors');
+						dol_syslog($langs->trans('ErrorFailedToSendMail', $from, $receiverstring).' : '.$mailfile->error);
 					} else {
 						setEventMessages('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', null, 'errors');
 					}

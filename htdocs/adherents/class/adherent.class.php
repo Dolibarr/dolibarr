@@ -106,7 +106,7 @@ class Adherent extends CommonObject
 	public $civility_code;
 
 	/**
-	 * @var int
+	 * @var string Human readable civility
 	 */
 	public $civility;
 
@@ -210,7 +210,7 @@ class Adherent extends CommonObject
 	public $datevalid;
 
 	/**
-	 * @var string gender
+	 * @var ?string gender
 	 */
 	public $gender;
 
@@ -268,7 +268,7 @@ class Adherent extends CommonObject
 	public $first_subscription_date_end;
 
 	/**
-	 * @var int|string|null date
+	 * @var null|float|string amount
 	 */
 	public $first_subscription_amount;
 
@@ -288,7 +288,7 @@ class Adherent extends CommonObject
 	public $last_subscription_date_end;
 
 	/**
-	 * @var null|float|string date, null until set
+	 * @var null|float|string amount, null until set
 	 */
 	public $last_subscription_amount;
 
@@ -810,7 +810,9 @@ class Adherent extends CommonObject
 		// Clean parameters
 		$this->lastname = trim($this->lastname) ? trim($this->lastname) : trim($this->lastname);
 		$this->firstname = trim($this->firstname) ? trim($this->firstname) : trim($this->firstname);
-		$this->gender = trim($this->gender);
+		if (isset($this->gender)) {
+			$this->gender = trim($this->gender);
+		}
 		// $this->address = ($this->address ? $this->address : $this->address);
 		// $this->zip = ($this->zip ? $this->zip : $this->zip);
 		// $this->town = ($this->town ? $this->town : $this->town);
@@ -3097,10 +3099,10 @@ class Adherent extends CommonObject
 
 
 	/**
-	 *      Load type info information in the member object
+	 *  Load type info information in the member object
 	 *
-	 *      @param  int		$id       Id of member to load
-	 *      @return	void
+	 *  @param  int		$id       Id of member to load
+	 *  @return	void
 	 */
 	public function info($id)
 	{
@@ -3200,7 +3202,7 @@ class Adherent extends CommonObject
 		global $conf;
 
 		//Only valid members
-		if ($this->statut != self::STATUS_VALIDATED) {
+		if ($this->status != self::STATUS_VALIDATED) {
 			return false;
 		}
 		if (!$this->datefin) {

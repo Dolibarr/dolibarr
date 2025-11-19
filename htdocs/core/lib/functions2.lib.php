@@ -2682,7 +2682,7 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'compta/facture';
 	} elseif ($moduleobject == 'project' || $moduleobject == 'projects' || $moduleobject == 'task' || $moduleobject == 'tasks') {
 		$moduledirforclass = 'projet';
-	} elseif ($moduleobject == 'stock' || $moduleobject == 'stockmovements' || $moduleobject == 'warehouses') {
+	} elseif ($moduleobject == 'stock' || $moduleobject == 'stockmovements' || $moduleobject == 'warehouses' || $moduleobject == 'productlots') {
 		$moduledirforclass = 'product/stock';
 	} elseif ($moduleobject == 'supplierproposals' || $moduleobject == 'supplierproposal' || $moduleobject == 'supplier_proposal') {
 		$moduledirforclass = 'supplier_proposal';
@@ -3122,7 +3122,7 @@ function csvClean($newvalue, $charset = '', $separator = '')
  * @param	string	$constanttosavefirstok		Name of cosntant to save the first try that succeed
  * @param	array<string,string>	$arrayofdata				Array of key-value to add as parameter in the ajax call
  * @param	int		$forceping					Value 1 to force the ping, even if it was already done
- * @return 	string								HTML content with ajax call
+ * @return 	void
  */
 function printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayofdata = array(), $forceping = 0)
 {

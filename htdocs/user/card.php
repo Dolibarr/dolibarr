@@ -85,6 +85,7 @@ $group = GETPOSTINT("group", 3);
 $cancel = GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'usercard'; // To manage different context of search
 $backtopage = GETPOST('backtopage');
+$backtopageforcancel = GETPOST('backtopageforcancel');
 
 if (empty($id) && $action != 'add' && $action != 'create') {
 	$id = $user->id;
@@ -326,16 +327,18 @@ if (empty($reshook)) {
 			$object->fk_user_holiday_validator = GETPOSTINT("fk_user_holiday_validator") > 0 ? GETPOSTINT("fk_user_holiday_validator") : 0;
 			$object->employee = GETPOSTINT('employee');
 
-			$object->thm = GETPOST("thm", 'alphanohtml') != '' ? GETPOST("thm", 'alphanohtml') : '';
+			$object->thm = GETPOST("thm", 'alphanohtml') != '' ? GETPOSTFLOAT("thm") : '';
 			$object->thm = price2num($object->thm);
-			$object->tjm = GETPOST("tjm", 'alphanohtml') != '' ? GETPOST("tjm", 'alphanohtml') : '';
+			$object->tjm = GETPOST("tjm", 'alphanohtml') != '' ? GETPOSTFLOAT("tjm") : '';
 			$object->tjm = price2num($object->tjm);
-			$object->salary = GETPOST("salary", 'alphanohtml') != '' ? GETPOST("salary", 'alphanohtml') : '';
+			$object->salary = GETPOST("salary", 'alphanohtml') != '' ? GETPOSTFLOAT("salary") : '';
 			$object->salary = price2num($object->salary);
-			$object->salaryextra = GETPOST("salaryextra", 'alphanohtml') != '' ? GETPOST("salaryextra", 'alphanohtml') : '';
-			$object->weeklyhours = GETPOST("weeklyhours", 'alphanohtml') != '' ? GETPOST("weeklyhours", 'alphanohtml') : '';
+			$object->salaryextra = GETPOST("salaryextra", 'alphanohtml');
+			//$object->salaryextra = price2num($object->salaryextra);
+			$object->weeklyhours = GETPOST("weeklyhours", 'alphanohtml') != '' ? GETPOSTFLOAT("weeklyhours") : '';
+			$object->weeklyhours = price2num($object->weeklyhours);
 
-			$object->color = GETPOST("color", 'alphanohtml') != '' ? GETPOST("color", 'alphanohtml') : '';
+			$object->color = GETPOST("color", 'alphanohtml') != '' ? str_replace('#', '', (string) GETPOST("color", 'alphanohtml')) : '';
 
 			$object->dateemployment = $dateemployment;
 			$object->dateemploymentend = $dateemploymentend;
@@ -507,18 +510,18 @@ if (empty($reshook)) {
 				$object->fk_user_holiday_validator = GETPOSTINT("fk_user_holiday_validator") > 0 ? GETPOSTINT("fk_user_holiday_validator") : 0;
 				$object->employee = GETPOSTINT('employee');
 
-				$object->thm = GETPOST("thm", 'alphanohtml') != '' ? GETPOST("thm", 'alphanohtml') : '';
+				$object->thm = GETPOST("thm", 'alphanohtml') != '' ? GETPOSTFLOAT("thm") : '';
 				$object->thm = price2num($object->thm);
-				$object->tjm = GETPOST("tjm", 'alphanohtml') != '' ? GETPOST("tjm", 'alphanohtml') : '';
+				$object->tjm = GETPOST("tjm", 'alphanohtml') != '' ? GETPOSTFLOAT("tjm") : '';
 				$object->tjm = price2num($object->tjm);
-				$object->salary = GETPOST("salary", 'alphanohtml') != '' ? GETPOST("salary", 'alphanohtml') : '';
+				$object->salary = GETPOST("salary", 'alphanohtml') != '' ? GETPOSTFLOAT("salary") : '';
 				$object->salary = price2num($object->salary);
-				$object->salaryextra = GETPOST("salaryextra", 'alphanohtml') != '' ? GETPOST("salaryextra", 'alphanohtml') : '';
-				$object->salaryextra = price2num($object->salaryextra);
-				$object->weeklyhours = GETPOST("weeklyhours", 'alphanohtml') != '' ? GETPOST("weeklyhours", 'alphanohtml') : '';
+				$object->salaryextra = GETPOST("salaryextra", 'alphanohtml') != '' ? GETPOSTFLOAT("salaryextra") : '';
+				//$object->salaryextra = price2num($object->salaryextra);
+				$object->weeklyhours = GETPOST("weeklyhours", 'alphanohtml') != '' ? GETPOSTFLOAT("weeklyhours") : '';
 				$object->weeklyhours = price2num($object->weeklyhours);
 
-				$object->color = GETPOST("color", 'alphanohtml') != '' ? GETPOST("color", 'alphanohtml') : '';
+				$object->color = GETPOST("color", 'alphanohtml') != '' ? str_replace('#', '', (string) GETPOST("color", 'alphanohtml')) : '';
 				$object->dateemployment = $dateemployment;
 				$object->dateemploymentend = $dateemploymentend;
 				$object->datestartvalidity = $datestartvalidity;
@@ -1077,9 +1080,9 @@ if ($action == 'create' || $action == 'adduserldap') {
 					lastname = $("#lastname").val().toLowerCase();
 			';
 		if (getDolGlobalString('MAIN_BUILD_LOGIN_RULE') == 'f.lastname') {
-			print '			firstname = $("#firstname").val().toLowerCase()[0];';
+			print '			firstname = $("#firstname").val().toLowerCase().replace(/\s+/g, \'\').trim()[0];';
 		} else {
-			print '			firstname = $("#firstname").val().toLowerCase();';
+			print '			firstname = $("#firstname").val().toLowerCase().replace(/\s+/g, \'\').trim();';
 		}
 		print '
 					login = "";
@@ -1087,7 +1090,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 						if (firstname) {
 							login = firstname + \''. dol_escape_js($charforseparator).'\';
 						}
-						login += lastname;
+						login += lastname.replace(/\s+/g, \'\').trim();
 					}
 					$("#login").val(login);
 				})
@@ -1382,7 +1385,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 	// User color
 	if (isModEnabled('agenda')) {
-		print '<tr><td>'.$langs->trans("ColorUser").'</td>';
+		print '<tr><td>'.$langs->trans("Color").'</td>';
 		print '<td>';
 		print $formother->selectColor(GETPOSTISSET('color') ? GETPOST('color', 'alphanohtml') : $object->color, 'color', null, 1, array(), 'hideifnotset');
 		print '</td></tr>';
@@ -1671,12 +1674,10 @@ if ($action == 'create' || $action == 'adduserldap') {
 			} else {
 				print '<td>';
 				$addadmin = '';
-				if (property_exists($object, 'admin')) {
-					if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
-						$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft valignmiddle"');
-					} elseif (!empty($object->admin)) {
-						$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft valignmiddle"');
-					}
+				if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
+					$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft valignmiddle"');
+				} elseif (!empty($object->admin)) {
+					$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft valignmiddle"');
 				}
 				print showValueWithClipboardCPButton($object->login).$addadmin;
 				print '</td>';
@@ -1858,7 +1859,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			// Color user
 			if (isModEnabled('agenda')) {
-				print '<tr><td class="titlefieldmax45">'.$langs->trans("ColorUser").'</td>';
+				print '<tr><td class="titlefieldmax45">'.$langs->trans("Color").'</td>';
 				print '<td>';
 				print $formother->showColor($object->color, '');
 				print '</td>';
@@ -1919,7 +1920,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '<tr><td>'.$langs->trans("LinkToCompanyContact").'</td>';
 				print '<td>';
 				$s = '';
-				if (isset($object->socid) && $object->socid > 0) {
+				if (!empty($object->socid) && $object->socid > 0) {
 					$societe = new Societe($db);
 					$societe->fetch($object->socid);
 					if ($societe->id > 0) {
@@ -1978,14 +1979,18 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '<table class="noborder tableforfield centpercent">';
 
 			// Title line
-			print '<tr class="liste_titre"><th class="liste_titre">';
+			print '<tr class="liste_titre"><th class="liste_titre" colspan="2">';
+			print '<div class="centpercent display-flex">';
+			print '<div class="left inline-block">';
 			print img_picto('', 'security', 'class="paddingleft pictofixedwidth"').$langs->trans("SecurityForConnection");
-			print '</th>';
-			print '<th class="liste_titre right">';
+			print '</div>';
+			//print '</th>';
+			//print '<th class="liste_titre right">';
 			if (getDolGlobalString('MAIN_SECURITY_ALLOW_TOTP') && $permissiontoeditpasswordandsee) {
 				$s = '<!-- MAIN_SECURITY_ALLOW_TOTP --><span class="fa fa-plus-circle valignmiddle btnTitle-icon"></span>';
 				print dolButtonToOpenUrlInDialogPopup('openpopuptoaddcredential', $langs->trans("AddCredential"), $s, '/user/credentials.php?userid='.$object->id.'&token='.newToken());
 			}
+			print '</div>';
 			print '</th>';
 			print '</tr>';
 
