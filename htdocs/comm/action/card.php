@@ -2356,17 +2356,19 @@ if ($id > 0 && $action != 'create') {
 				$url = DOL_URL_ROOT.'/comm/action/card.php'.$urloption;
 
 				// update task list
-				print "\n".'<script type="text/javascript" >';
-				print '$(document).ready(function () {
-	              $("#projectid").change(function () {
-                        var url = "'.$url.'&projectid="+$("#projectid").val();
-                        $.get(url, function(data) {
-                            console.log($( data ).find("#fk_element").html());
-                            if (data) $("#fk_element").html( $( data ).find("#taskid").html() ).select2();
-                        })
-                  });
-                })';
-				print '</script>'."\n";
+				?>
+				<script type="text/javascript" >
+					$(document).ready(function () {
+						$("#projectid").change(function () {
+							var url = "<?php echo $url; ?>&projectid="+$("#projectid").val();
+							$.get(url, function(data) {
+								console.log($( data ).find("#fk_element").html());
+								if (data) $("#fk_element").html( $( data ).find("#taskid").html() ).select2();
+							})
+						});
+					});
+				</script>
+				<?php
 
 				print $formproject->selectTasks((!empty($societe->id) ? $societe->id : -1), $object->elementid, 'fk_element', 24, 0, '', 1, 0, 0, 'maxwidth500', (string) $object->fk_project, 'all', null, 1);
 				print '<input type="hidden" name="elementtype" value="'.$object->elementtype.'">';
@@ -2379,18 +2381,20 @@ if ($id > 0 && $action != 'create') {
 					print '<td id="project-task-input-container" >';
 
 					// update task list
-					print "\n".'<script type="text/javascript">';
-					print '$(document).ready(function () {
+					?>
+					<script type="text/javascript">
+						$(document).ready(function () {
 							$("#projectid").change(function () {
-									var url = "'.DOL_URL_ROOT.'/projet/ajax/projects.php?mode=gettasks&socid="+$("#search_socid").val()+"&projectid="+$("#projectid").val();
-									console.log("Call url to get new list of tasks: "+url);
-									$.get(url, function(data) {
-										console.log(data);
-										if (data) $("#taskid").html(data).select2();
-									})
+								var url = "<?php echo DOL_URL_ROOT; ?>/projet/ajax/projects.php?mode=gettasks&socid="+$("#search_socid").val()+"&projectid="+$("#projectid").val();
+								console.log("Call url to get new list of tasks: "+url);
+								$.get(url, function(data) {
+									console.log(data);
+									if (data) $("#taskid").html(data).select2();
+								})
 							});
-						})';
-					print '</script>'."\n";
+						});
+					</script>
+					<?php
 
 					$tid = '';
 					if (GETPOSTISSET("projecttaskid") && GETPOSTINT("projecttaskid") > 0) {
@@ -2416,7 +2420,7 @@ if ($id > 0 && $action != 'create') {
 
 		// Description
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
-		// Editeur wysiwyg
+		// Wysiwyg editor
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$doleditor = new DolEditor('note', $object->note_private, '', 120, 'dolibarr_notes', 'In', true, true, isModEnabled('fckeditor'), ROWS_4, '90%');
 		$doleditor->Create();
