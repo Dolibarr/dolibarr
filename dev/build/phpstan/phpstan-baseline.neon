@@ -1315,12 +1315,6 @@ parameters:
 			path: ../../../htdocs/barcode/printsheet.php
 
 		-
-			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/blockedlog/admin/blockedlog_list.php
-
-		-
 			message: '#^Strict comparison using \=\=\= between ''facture'' and ''facture'' will always evaluate to true\.$#'
 			identifier: identical.alwaysTrue
 			count: 1
@@ -8347,12 +8341,6 @@ parameters:
 			path: ../../../htdocs/core/tpl/document_actions_post_headers.tpl.php
 
 		-
-			message: '#^Variable \$modulepart might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/core/tpl/document_actions_post_headers.tpl.php
-
-		-
 			message: '#^Variable \$permissiontoadd might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
@@ -8366,12 +8354,6 @@ parameters:
 
 		-
 			message: '#^Variable \$sortorder might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/document_actions_post_headers.tpl.php
-
-		-
-			message: '#^Variable \$upload_dir might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/core/tpl/document_actions_post_headers.tpl.php
