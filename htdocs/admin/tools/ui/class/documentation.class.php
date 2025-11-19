@@ -252,6 +252,12 @@ class Documentation
 					'submenu' => array(),
 					'summary' => array(),
 				),
+				'UxDolibarrContext' => array(
+					'url' => dol_buildpath($this->baseUrl.'/experimental/experiments/dolibarr-context/index.php', 1),
+					'icon' => 'fas fa-flask',
+					'submenu' => array(),
+					'summary' => array(),
+				),
 			)
 		);
 
