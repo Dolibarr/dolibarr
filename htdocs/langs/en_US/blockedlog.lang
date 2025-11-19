@@ -23,6 +23,7 @@ BlockedLogBillPreview=Customer invoice preview
 BlockedlogInfoDialog=Log Details
 ListOfTrackedEvents=List of tracked events
 Fingerprint=Fingerprint
+FingerprintExport=Fingerprint export
 DownloadLogCSV=Export unalterable logs (CSV)
 DataOfArchivedEvent=Complete data of archived event
 DataOfArchivedEventHelp=This field contains the complementary data that was archived on real time. Even if some parent business event could have been canceled or modified, the data stored here is the original data, and it can't be modified.
