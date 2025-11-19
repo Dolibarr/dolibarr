@@ -62,7 +62,7 @@
 		 * @param {*} value Function, class or object
 		 * @param {boolean} overwrite Explicitly allow overwriting an existing tool
 		 */
-		defineTool(name, value, overwrite = false) {
+		defineTool(name, value, overwrite = false, triggerHook = true) {
 			// Prevent silent overrides unless "overwrite" is true
 			if (!overwrite && this.checkToolExist(name)) {
 				throw new Error(`Dolibarr: Tool '${name}' already defined`);
@@ -76,7 +76,10 @@
 				enumerable: true,
 			});
 
-			this.log(`Tool defined: ${name}`);
+			this.log(`Tool defined: ${name}, triggerHook: ${triggerHook}`);
+			if(triggerHook) {
+				Dolibarr.executeHook('defineTool', { toolName: name, overwrite: overwrite });
+			}
 		},
 
 		/**
@@ -114,7 +117,7 @@
 		 * @param {object} data Extra information passed to listeners
 		 */
 		executeHook(hookName, data = {}) {
-			this.log(`Dolibarr Hook executed: ${hookName}`);
+			this.log(`Hook executed: ${hookName}`);
 
 			const ev = new CustomEvent(hookName, { detail: data });
 
@@ -185,7 +188,7 @@
 		console.groupEnd();
 
 		console.groupEnd();
-	});
+	}, false, false);
 
 	Dolibarr.tools.showConsoleHelp();
 
@@ -193,7 +196,7 @@
 	(function triggerContextInit() {
 		const initHook = () => {
 			Dolibarr.executeHook('Ready', { context: Dolibarr });
-			Dolibarr.log('Dolibarr context initialized.');
+			Dolibarr.log('Context initialized');
 		};
 
 		if (document.readyState === 'complete' || document.readyState === 'interactive') {
