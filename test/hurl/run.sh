@@ -45,7 +45,7 @@ EOHELP
 # Github compatible messages
 print_error() { printf "::error::%s\n" "$*" >&2 ; }
 print_warning() { printf "::warning::%s\n" "$*" >&2 ; }
-print_info() { printf "::notice::%s\n" "$*" ; }
+print_info() { printf "::notice::%s\n" "$*" >&2 ; }
 
 
 # Parse command-line arguments as test filters
@@ -223,6 +223,7 @@ get_dolibarr_api_key() {
 
 	# If key is already set, return it
 	if [ -n "${current_key}" ]; then
+		print_info "Using existing DOLAPIKEY."
 		echo "${current_key}"
 		return 0
 	fi
