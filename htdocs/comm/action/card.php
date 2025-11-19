@@ -163,6 +163,7 @@ if (getDolGlobalString('AGENDA_REMINDER_BROWSER')) {
 	$TRemindTypes['browser'] = [
 		'label' => $langs->trans('BrowserPush'),
 		'disabled' => (getDolGlobalString('AGENDA_REMINDER_BROWSER') ? 0 : 1),
+		'type' => ActionCommReminder::TYPE_USER,
 		'data-html' => img_picto('', 'globe', 'class="pictofixedwidth"') . $langs->trans('BrowserPush'),
 	];
 }
@@ -170,6 +171,7 @@ if (getDolGlobalString('AGENDA_REMINDER_EMAIL')) {
 	$TRemindTypes['email'] = [
 		'label' => $langs->trans('EMail'),
 		'disabled' => (getDolGlobalString('AGENDA_REMINDER_EMAIL') ? 0 : 1),
+		'type' => ActionCommReminder::TYPE_USER,
 		'data-html' => img_picto('', 'email', 'class="pictofixedwidth"') . $langs->trans('EMail'),
 	];
 }
@@ -178,6 +180,7 @@ if (getDolGlobalString('AGENDA_REMINDER_SMS')) {
 	$TRemindTypes['sms'] = [
 		'label' => $langs->trans('Sms'),
 		'disabled' => (getDolGlobalString('MAIN_SMS_SENDMODE') ? 0 : 1),
+		'type' => ActionCommReminder::TYPE_USER,
 		'data-html' => img_picto('', 'phoning_mobile', 'class="pictofixedwidth"') . $langs->trans('Sms'),
 	];
 }
