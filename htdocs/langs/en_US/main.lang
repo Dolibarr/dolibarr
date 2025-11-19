@@ -848,6 +848,7 @@ AttributeCode=Attribute code
 URLPhoto=URL of photo/logo
 SetLinkToAnotherThirdParty=Link to another third party
 LinkTo=Link to
+LinkType=Link type
 LinkToProposal=Link to proposal
 LinkToExpedition= Link to expedition
 LinkToOrder=Link to order
