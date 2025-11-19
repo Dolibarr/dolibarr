@@ -57,7 +57,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies", "other", "commercial", "bills", "orders", "agenda", "mails"));
+$langs->loadLangs(["companies", "other", "commercial", "bills", "orders", "agenda", "mails"]);
 
 // Get Parameters
 $action = GETPOST('action', 'aZ09');
@@ -156,20 +156,29 @@ if (empty($action) && empty($object->id)) {
 }
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-$hookmanager->initHooks(array('actioncard', 'globalcard'));
+$hookmanager->initHooks(['actioncard', 'globalcard']);
 
 $TRemindTypes = [];
 if (getDolGlobalString('AGENDA_REMINDER_BROWSER')) {
-	$TRemindTypes['browser'] = array('label' => $langs->trans('BrowserPush'), 'disabled' => (getDolGlobalString('AGENDA_REMINDER_BROWSER') ? 0 : 1));
+	$TRemindTypes['browser'] = [
+		'label' => $langs->trans('BrowserPush'),
+		'disabled' => (getDolGlobalString('AGENDA_REMINDER_BROWSER') ? 0 : 1),
+		'data-html' => img_picto('', 'globe', 'class="pictofixedwidth"') . $langs->trans('BrowserPush'),
+	];
 }
 if (getDolGlobalString('AGENDA_REMINDER_EMAIL')) {
-	$TRemindTypes['email'] = array('label' => $langs->trans('EMail'), 'disabled' => (getDolGlobalString('AGENDA_REMINDER_EMAIL') ? 0 : 1));
+	$TRemindTypes['email'] = [
+		'label' => $langs->trans('EMail'),
+		'disabled' => (getDolGlobalString('AGENDA_REMINDER_EMAIL') ? 0 : 1),
+		'data-html' => img_picto('', 'email', 'class="pictofixedwidth"') . $langs->trans('EMail'),
+	];
 }
 if (getDolGlobalString('AGENDA_REMINDER_SMS')) {
 	$langs->load('sms');
 	$TRemindTypes['sms'] = [
 		'label' => $langs->trans('Sms'),
 		'disabled' => (getDolGlobalString('MAIN_SMS_SENDMODE') ? 0 : 1),
+		'data-html' => img_picto('', 'phoning_mobile', 'class="pictofixedwidth"') . $langs->trans('Sms'),
 	];
 }
 $TDurationTypes = $form->getDurationTypes($langs);
