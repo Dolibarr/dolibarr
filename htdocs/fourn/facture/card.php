@@ -1156,7 +1156,7 @@ if (empty($reshook)) {
 					$objectsrc->fetch_thirdparty();
 
 					if (!empty($object->origin_type) && !empty($object->origin_id)) {
-						$object->linkedObjectsIds[$object->origin_type] = $object->origin_id;
+						$object->linkedObjectsIds[$object->origin_type][$object->rowid] = $object->origin_id;
 					}
 
 					// Add also link with order if object is reception
