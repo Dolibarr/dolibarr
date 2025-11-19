@@ -179,13 +179,16 @@ class CodingPhpTest extends CommonClassTest
 				//exit;
 			}
 
-			if (preg_match('/\.class\.php$/', $file['relativename']) && ! in_array($file['relativename'], array(
+			if (preg_match('/\.class\.php$/', $file['relativename']) &&
+				! preg_match('/^core\/class\/fields\/.*field\.class\.php$/', $file['relativename']) &&
+				! in_array($file['relativename'], array(
 					'adherents/class/adherent.class.php',
 					'adherents/canvas/actions_adherentcard_common.class.php',
 					'contact/canvas/actions_contactcard_common.class.php',
 					'compta/facture/class/facture.class.php',
 					'core/class/commonobject.class.php',
 					'core/class/extrafields.class.php',
+					'core/class/fieldsmanager.class.php',
 					'core/class/html.form.class.php',
 					'core/class/html.formfile.class.php',
 					'core/class/html.formcategory.class.php',
@@ -205,6 +208,7 @@ class CodingPhpTest extends CommonClassTest
 					'webportal/class/html.formcardwebportal.class.php',
 					'webportal/class/html.formlistwebportal.class.php',
 					'webportal/controllers/document.controller.class.php',
+					'webportal/controllers/viewimage.controller.class.php',
 					'workstation/class/workstation.class.php',
 				))) {
 				// Must not find GETPOST

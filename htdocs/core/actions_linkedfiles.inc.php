@@ -157,7 +157,6 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 		}
 	}
 	$linkid = GETPOSTINT('linkid');
-
 	if ($urlfile) {
 		// delete of a file
 		$dir = dirname($file).'/'; // Chemin du dossier contenant l'image d'origine

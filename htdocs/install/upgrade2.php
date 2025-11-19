@@ -659,6 +659,8 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
 				dol_syslog("Run migrate_... versionto is between ".json_encode($afterversionarray)." and ".json_encode($beforeversionarray));
 
+				migrate_holiday_path();
+
 				migrate_apiresttokens();
 
 				migrate_blockedlog_add_hmac_key();
@@ -4759,6 +4761,95 @@ function migrate_user_photospath2()
 									//print $origin.'/'.$file.' -> '.$destin.'/'.$file.'<br>'."\n";
 									print '.';
 									dol_copy($origin.'/'.$file, $destin.'/'.$file, '0', 0);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	print '</td></tr>';
+}
+
+
+
+/**
+ * Migrate file from old path to new one for users
+ *
+ * @return	void
+ */
+function migrate_holiday_path()
+{
+	global $conf, $db, $langs, $user;
+
+	print '<tr><td colspan="4">';
+
+	print '<b>'.$langs->trans('MigrationHolidayPath')."</b><br>\n";
+
+	include_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
+	$holiday = new Holiday($db);
+
+	$sql = "SELECT rowid as uid, ref, entity from ".MAIN_DB_PREFIX."holiday"; // Get list of all holiday
+	$resql = $db->query($sql);
+	if ($resql) {
+		while ($obj = $db->fetch_object($resql)) {
+			//$holiday->fetch($obj->uid);
+			$holiday->id = $obj->uid;
+			$holiday->ref = $obj->ref;
+			$holiday->entity = $obj->entity;
+
+			//echo '<hr>'.$holiday->id.' -> '.$holiday->entity;
+			$entity = (empty($holiday->entity) ? 1 : $holiday->entity);
+			if ($entity > 1) {
+				$dir = DOL_DATA_ROOT.'/'.$entity.'/holiday';
+			} else {
+				$dir = $conf->holiday->multidir_output[$entity]; // $conf->user->multidir_output[] for each entity is construct by the multicompany module
+			}
+
+			if ($dir) {
+				//print "Process holiday id ".$holiday->id."<br>\n";
+				$origin = $dir.'/'.get_exdir($holiday->id, 2, 0, 1, $holiday, 'holiday'); // Use old behaviour to get x/y path
+				$destin = $dir.'/'.$holiday->ref;
+
+				$origin_osencoded = dol_osencode($origin);
+
+				dol_mkdir($destin);
+
+				//echo $origin.' -> '.$destin."<br>\n";
+				if (dol_is_dir($origin)) {
+					$handle = opendir($origin_osencoded);
+					if (is_resource($handle)) {
+						while (($file = readdir($handle)) !== false) {
+							if ($file == '.' || $file == '..') {
+								continue;
+							}
+
+							if (dol_is_dir($origin.'/'.$file)) {	// it is a dir (like 'thumbs')
+								$thumbs = opendir($origin_osencoded.'/'.$file);
+								if (is_resource($thumbs)) {
+									dol_mkdir($destin.'/'.$file);
+									while (($thumb = readdir($thumbs)) !== false) {
+										if (!dol_is_file($destin.'/'.$file.'/'.$thumb)) {
+											if ($thumb == '.' || $thumb == '..') {
+												continue;
+											}
+
+											//print $origin.'/'.$file.'/'.$thumb.' -> '.$destin.'/'.$file.'/'.$thumb.'<br>'."\n";
+											print '.';
+											dol_copy($origin.'/'.$file.'/'.$thumb, $destin.'/'.$file.'/'.$thumb, '0', 0);
+											//var_dump('aaa');exit;
+										}
+									}
+									// dol_delete_dir($origin.'/'.$file);
+								}
+							} else { // it is a file
+								if (!dol_is_file($destin.'/'.$file)) {
+									//print $origin.'/'.$file.' -> '.$destin.'/'.$file.'<br>'."\n";
+									print '.';
+									dol_copy($origin.'/'.$file, $destin.'/'.$file, '0', 0);
+									//var_dump('eee');exit;
 								}
 							}
 						}
