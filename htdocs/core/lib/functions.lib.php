@@ -126,7 +126,7 @@ if (!function_exists('str_contains')) {
  * Return the full path of the directory where a module (or an object of a module) stores its files.
  * Path may depends on the entity if a multicompany module is enabled.
  *
- * @param 	CommonObject 	$object 	Dolibarr common object.
+ * @param 	CommonObject|BlockedLog 	$object 	Dolibarr common object.
  * @param 	string 			$module 	Override object element, for example to use 'mycompany' instead of 'societe'
  * @param	int				$forobject	Return the more complete path for the given object instead of for the module only.
  * @param	string			$mode		'output' (full main dir) or 'outputrel' (relative dir) or 'temp' (full dir for temporary files) or 'version' (full dir for archived files)
@@ -8487,7 +8487,8 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 
 	// Allow an external module to bypass the calculation of prices
 	$parameters = array('vatvalue' => $vatvalue, 'vatrule' => $vatrule);
-	$tmpobject = null; $tmpaction = null;
+	$tmpobject = null; $tmpaction = '';
+	// @phan-ignore-next-line PhanPluginConstantVariableNull
 	$reshook = $hookmanager->executeHooks('get_default_tva', $parameters, $tmpobject, $tmpaction);
 	if ($reshook > 0 && !empty($hookmanager->resArray['vatvalue'])) {
 		$vatvalue = $hookmanager->resArray['vatvalue'];
