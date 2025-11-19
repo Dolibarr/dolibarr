@@ -71,6 +71,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 
 		switch ($action) {
 			case 'TICKET_ASSIGNED':
+				/** @var Ticket $object */
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 				if ($object->fk_user_assign > 0) {
@@ -145,6 +146,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 				break;
 
 			case 'TICKET_CREATE':
+				/** @var Ticket $object */
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 				$langs->load('ticket');
@@ -232,14 +234,17 @@ class InterfaceTicketEmail extends DolibarrTriggers
 				break;
 
 			case 'TICKET_DELETE':
+				/** @var Ticket $object */
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 				break;
 
 			case 'TICKET_MODIFY':
+				/** @var Ticket $object */
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 				break;
 
 			case 'TICKET_CLOSE':
+				/** @var Ticket $object */
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 				$langs->load('ticket');
 
