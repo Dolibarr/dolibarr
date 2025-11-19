@@ -8488,8 +8488,8 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 	// Allow an external module to bypass the calculation of prices
 	$parameters = array('vatvalue' => $vatvalue, 'vatrule' => $vatrule);
 	$tmpobject = null; $tmpaction = '';
-	// @phan-ignore-next-line PhanPluginConstantVariableNull
-	$reshook = $hookmanager->executeHooks('get_default_tva', $parameters, $tmpobject, $tmpaction);
+	// @phan-suppress-next-line PhanPluginConstantVariableNull
+	$reshook = $hookmanager->executeHooks('get_default_tva', $parameters, $tmpobject, $tmpaction);	// @phan-suppress-current-line PhanPluginConstantVariableNull
 	if ($reshook > 0 && !empty($hookmanager->resArray['vatvalue'])) {
 		$vatvalue = $hookmanager->resArray['vatvalue'];
 		$vatrule = $hookmanager->resArray['vatrule'];	// For information
@@ -12093,7 +12093,7 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 			$matches = array();
 			preg_match_all($pattern, $s, $matches);
 
-			if (!empty($matches)) {
+			if (count($matches)) {
 				foreach ($matches[1] as $m) {
 					$m = trim($m);
 					if (empty($m)) {
