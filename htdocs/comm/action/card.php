@@ -1786,18 +1786,20 @@ if ($action == 'create') {
 		$url = dol_buildpath('comm/action/card.php', 2).$urloption;
 
 		// update task list
-		print "\n".'<script type="text/javascript">';
-		print '$(document).ready(function () {
-	               $("#projectid").change(function () {
-                        var url = "'.DOL_URL_ROOT.'/projet/ajax/projects.php?mode=gettasks&socid="+$("#search_socid").val()+"&projectid="+$("#projectid").val();
-						console.log("Call url to get the new list of tasks: "+url);
-                        $.get(url, function(data) {
-                            console.log(data);
-                            if (data) $("#taskid").html(data).select2();
-                        })
-                  });
-               })';
-		print '</script>'."\n";
+		?>
+		<script type="text/javascript">
+			$(document).ready(function () {
+				$("#projectid").change(function () {
+					var url = "<?php echo DOL_URL_ROOT; ?>/projet/ajax/projects.php?mode=gettasks&socid="+$("#search_socid").val()+"&projectid="+$("#projectid").val();
+					console.log("Call url to get the new list of tasks: "+url);
+					$.get(url, function(data) {
+						console.log(data);
+						if (data) $("#taskid").html(data).select2();
+					})
+				});
+			});
+		</script>
+		<?php
 
 		print '</td></tr>';
 
