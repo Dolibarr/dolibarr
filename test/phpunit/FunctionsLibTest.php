@@ -1378,26 +1378,32 @@ class FunctionsLibTest extends CommonClassTest
 		// Not tested
 
 		// Test RULE 1
+		print __METHOD__." rule=RULE 1\n";
 		$vat = get_default_tva($companyfrnovat, $companymc, 0);
 		$this->assertEquals(0, $vat, 'RULE 1');
 
 		// Test RULE 2 (FR-FR)
+		print __METHOD__." rule=RULE 2 FR-FR\n";
 		$vat = get_default_tva($companyfr, $companyfr, 0);
 		$this->assertEquals(20, $vat, 'RULE 2');
 
 		// Test RULE 2 (FR-MC)
+		print __METHOD__." rule=RULE 2 FR-MC\n";
 		$vat = get_default_tva($companyfr, $companymc, 0);
 		$this->assertEquals(20, $vat, 'RULE 2');
 
 		// Test RULE 3 (FR-DE company)
+		print __METHOD__." rule=RULE 3 FR-DE\n";
 		$vat = get_default_tva($companyfr, $companyit, 0);
 		$this->assertEquals(0, $vat, 'RULE 3');
 
 		// Test RULE 4 (FR-DE not a company)
+		print __METHOD__." rule=RULE 4 FR-DE\n";
 		$vat = get_default_tva($companyfr, $notcompanyde, 0);
 		$this->assertEquals(20, $vat, 'RULE 4');
 
 		// Test RULE 5 (FR-US)
+		print __METHOD__." rule=RULE 5 FR-US\n";
 		$vat = get_default_tva($companyfr, $companyus, 0);
 		$this->assertEquals(0, $vat, 'RULE 5');
 
@@ -1406,22 +1412,27 @@ class FunctionsLibTest extends CommonClassTest
 		$conf->global->SERVICE_ARE_ECOMMERCE_200238EC = 1;
 
 		// Test RULE 1 (FR-US)
+		print __METHOD__." rule=RULE 1 ECOMMERCE_200238EC FR-US\n";
 		$vat = get_default_tva($companyfr, $companyus, 0);
 		$this->assertEquals(0, $vat, 'RULE 1 ECOMMERCE_200238EC');
 
 		// Test RULE 2 (FR-FR)
+		print __METHOD__." rule=RULE 2 ECOMMERCE_200238EC FR-FR\n";
 		$vat = get_default_tva($companyfr, $companyfr, 0);
 		$this->assertEquals(20, $vat, 'RULE 2 ECOMMERCE_200238EC');
 
 		// Test RULE 3 (FR-DE company)
+		print __METHOD__." rule=RULE 3 ECOMMERCE_200238EC FR-DE company\n";
 		$vat = get_default_tva($companyfr, $companyde, 0);
 		$this->assertEquals(0, $vat, 'RULE 3 ECOMMERCE_200238EC');
 
 		// Test RULE 4 (FR-DE not a company)
+		print __METHOD__." rule=RULE 4 ECOMMERCE_200238EC FR-DE not company\n";
 		$vat = get_default_tva($companyfr, $notcompanyde, 0);
 		$this->assertEquals(19, $vat, 'RULE 4 ECOMMERCE_200238EC');
 
 		// Test RULE 5 (FR-US)
+		print __METHOD__." rule=RULE 5 ECOMMERCE_200238EC FR-US\n";
 		$vat = get_default_tva($companyfr, $companyus, 0);
 		$this->assertEquals(0, $vat, 'RULE 5 ECOMMERCE_200238EC');
 	}
@@ -1480,24 +1491,28 @@ class FunctionsLibTest extends CommonClassTest
 		$companyus->localtax2_assuj = 0;
 
 		// Test RULE FR-MC
+		print __METHOD__." rule=FR-MC\n";
 		$vat1 = get_default_localtax($companyfrnovat, $companymc, 1, 0);
 		$vat2 = get_default_localtax($companyfrnovat, $companymc, 2, 0);
 		$this->assertEquals(0, $vat1);
 		$this->assertEquals(0, $vat2);
 
 		// Test RULE ES-ES
+		print __METHOD__." rule=ES-ES\n";
 		$vat1 = get_default_localtax($companyes, $companyes, 1, 0);
 		$vat2 = get_default_localtax($companyes, $companyes, 2, 0);
 		$this->assertEquals($vat1, 5.2);
 		$this->assertStringStartsWith((string) $vat2, '-19:-15:-9');       // Can be -19 (old version) or '-19:-15:-9' (new setup)
 
 		// Test RULE ES-IT
+		print __METHOD__." rule=ES-IT company\n";
 		$vat1 = get_default_localtax($companyes, $companyit, 1, 0);
 		$vat2 = get_default_localtax($companyes, $companyit, 2, 0);
 		$this->assertEquals(0, $vat1);
 		$this->assertEquals(0, $vat2);
 
-		// Test RULE ES-IT
+		// Test RULE ES-not IT
+		print __METHOD__." rule=ES-IT not company\n";
 		$vat1 = get_default_localtax($companyes, $notcompanyit, 1, 0);
 		$vat2 = get_default_localtax($companyes, $notcompanyit, 2, 0);
 		$this->assertEquals(0, $vat1);
@@ -1507,6 +1522,7 @@ class FunctionsLibTest extends CommonClassTest
 		// Not tested
 
 		// Test RULE ES-US
+		print __METHOD__." rule=ES-US\n";
 		$vat1 = get_default_localtax($companyes, $companyus, 1, 0);
 		$vat2 = get_default_localtax($companyes, $companyus, 2, 0);
 		$this->assertEquals(0, $vat1);

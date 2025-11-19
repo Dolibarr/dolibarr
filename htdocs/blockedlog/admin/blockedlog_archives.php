@@ -273,14 +273,14 @@ if (GETPOST('action') == 'upload' && $user->hasRight('blockedlog', 'read')) {		/
 			// Print line with title
 			fwrite($fh, "BEGIN - date=".$yearmonthdateofexport
 				.';'.$langs->transnoentities('Id')
-				.';'.$langs->transnoentities('DateCeation')
+				.';'.$langs->transnoentities('DateCreation')
 				.';'.$langs->transnoentities('Action')
 				.';'.$langs->transnoentities('Amounts')
 				.';'.$langs->transnoentities('Ref')
 				.';'.$langs->transnoentities('Date')
 				.';'.$langs->transnoentities('User')
-				.';'.$langs->transnoentities('LinkToRef')
-				.';'.$langs->transnoentities('LinkToType')
+				.';'.$langs->transnoentities('LinkTo')
+				.';'.$langs->transnoentities('LinkType')
 				.';'.$langs->transnoentities('FullData')
 				.';'.$langs->transnoentities('Version')
 				.';'.$langs->transnoentities('Fingerprint')

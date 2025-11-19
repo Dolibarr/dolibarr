@@ -64,9 +64,10 @@ class FormActions
 	 *  @param	integer	$showempty		Show an empty line if select is used
 	 *  @param	integer	$onlyselect		0=Standard, 1=Hide percent of completion and force usage of a select list, 2=Same than 1 and add "Incomplete (Todo+Running)
 	 *  @param  string  $morecss        More css on select field
+	 *  @param	int		$nooutput		1=No output, return string. 0=Print on output
 	 * 	@return	void
 	 */
-	public function form_select_status_action($formname, $selected, $canedit = 1, $htmlname = 'complete', $showempty = 0, $onlyselect = 0, $morecss = 'maxwidth100')
+	public function form_select_status_action($formname, $selected, $canedit = 1, $htmlname = 'complete', $showempty = 0, $onlyselect = 0, $morecss = 'maxwidth100', $nooutput = 0)
 	{
 		// phpcs:enable
 		global $langs, $conf;
@@ -79,40 +80,45 @@ class FormActions
 		);
 		// +ActionUncomplete
 
+		$out = '';
+
 		if (!empty($conf->use_javascript_ajax) || $onlyselect) {
 			//var_dump($selected);
 			if ($selected == 'done') {
 				$selected = '100';
 			}
-			print '<select '.($canedit ? '' : 'disabled ').'name="'.$htmlname.'" id="select'.$htmlname.'" class="flat'.($morecss ? ' '.$morecss : '').'">';
+			$out .= '<select '.($canedit ? '' : 'disabled ').'name="'.$htmlname.'" id="select'.$htmlname.'" class="flat'.($morecss ? ' '.$morecss : '').'">';
 			if ($showempty) {
-				print '<option value="-1"'.($selected == '' ? ' selected' : '').'>&nbsp;</option>';
+				$out .= '<option value="-1"'.($selected == '' ? ' selected' : '').'>&nbsp;</option>';
 			}
 			foreach ($listofstatus as $key => $val) {
-				print '<option value="'.$key.'"'.(($selected == $key && strlen($selected) == strlen($key)) || (($selected > 0 && $selected < 100) && $key == '50') ? ' selected' : '').'>'.$val.'</option>';
-				if ($key == '50' && $onlyselect == 2) {
-					print '<option value="todo"'.($selected == 'todo' ? ' selected' : '').'>'.$langs->trans("ActionUncomplete").' ('.$langs->trans("ActionsToDoShort")."+".$langs->trans("ActionRunningShort").')</option>';
+				$out .= '<option value="'.$key.'"'.(($selected == $key && strlen($selected) == strlen($key)) || (($selected > 0 && $selected < 100) && $key == '50') ? ' selected' : '').'>';
+				$out .= $val;
+				$out .= '</option>';
+				// Add a choice "Incomplete" at second position
+				if ($key === 'na' && $onlyselect == 2) {
+					$out .= '<option value="todo"'.($selected == 'todo' ? ' selected' : '').'>'.$langs->trans("ActionUncomplete").' ('.$langs->trans("ActionsToDoShort")." + ".$langs->trans("ActionRunningShort").')</option>';
 				}
 			}
-			print '</select>';
+			$out .= '</select>';
 			if ($selected == 0 || $selected == 100) {
 				$canedit = 0;
 			}
 
-			print ajax_combobox('select'.$htmlname, array(), 0, 0, 'resolve', '-1', $morecss);
+			$out .= ajax_combobox('select'.$htmlname, array(), 0, 0, 'resolve', '-1', $morecss);
 
 			if (empty($onlyselect)) {
-				print ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat hideifna heightofcombo" value="'.($selected >= 0 ? $selected : '').'" size="2"'.($canedit && ($selected >= 0) ? '' : ' disabled').'>';
-				print '<span class="hideonsmartphone hideifna">%</span>';
+				$out .= ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat hideifna heightofcombo" value="'.($selected >= 0 ? $selected : '').'" size="2"'.($canedit && ($selected >= 0) ? '' : ' disabled').'>';
+				$out .= '<span class="hideonsmartphone hideifna">%</span>';
 			}
 		} else {
-			print ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat" value="'.($selected >= 0 ? $selected : '').'" size="2"'.($canedit ? '' : ' disabled').'>%';
+			$out .= ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat" value="'.($selected >= 0 ? $selected : '').'" size="2"'.($canedit ? '' : ' disabled').'>%';
 		}
 
 		if (!empty($conf->use_javascript_ajax)) {
-			print "\n";
-			print '<script nonce="'.getNonce().'" type="text/javascript">';
-			print "
+			$out .= "\n";
+			$out .= '<script nonce="'.getNonce().'" type="text/javascript">';
+			$out .= "
                 var htmlname = '".dol_escape_js($htmlname)."';
 
                 $(document).ready(function () {
@@ -154,6 +160,12 @@ class FormActions
                     }
                 }
                 </script>\n";
+		}
+
+		if ($nooutput) {
+			return $out;
+		} else {
+			print $out;
 		}
 	}
 

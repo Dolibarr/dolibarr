@@ -26,11 +26,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -38,6 +33,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 // Load translation files required by the page
 $langs->load("projects");
@@ -77,11 +76,13 @@ $search_agenda_label = GETPOST('search_agenda_label');
 
 $hookmanager->initHooks(array('projectcardinfo'));
 
+$object = new Project($db);
+
 // Security check
 $id = GETPOSTINT("id");
 $socid = 0;
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
-$result = restrictedArea($user, 'projet', $id, 'projet&project');
+restrictedArea($user, 'projet', $id, 'projet&project');
 
 if (!$user->hasRight('projet', 'lire')) {
 	accessforbidden();
@@ -92,8 +93,6 @@ if (!$user->hasRight('projet', 'lire')) {
 /*
  * Actions
  */
-
-$object = new Project($db);
 
 if ($id > 0 || !empty($ref)) {
 	$object->fetch($id, $ref);

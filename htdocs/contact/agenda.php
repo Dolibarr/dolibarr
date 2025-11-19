@@ -32,6 +32,13 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
@@ -45,14 +52,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'users', 'other', 'commercial'));
@@ -87,8 +86,8 @@ if (!empty($canvas)) {
 	$objcanvas->getCanvas('contact', 'contactcard', $canvas);
 }
 
-if (GETPOST('actioncode', 'array')) {
-	$actioncode = GETPOST('actioncode', 'array', 3);
+if (GETPOSTISARRAY('actioncode')) {
+	$actioncode = GETPOST('actioncode', 'array:alpha', 3);
 	if (!count($actioncode)) {
 		$actioncode = '0';
 	}
@@ -97,6 +96,9 @@ if (GETPOST('actioncode', 'array')) {
 }
 $search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
+$search_complete = GETPOST('search_complete');
+$search_dateevent_start = GETPOSTDATE('dateevent_start');
+$search_dateevent_end = GETPOSTDATE('dateevent_end');
 
 // Security check
 if ($user->socid) {
@@ -120,10 +122,10 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (!$sortfield) {
-	$sortfield = 'a.datep, a.id';
+	$sortfield = 'a.datep,a.id';
 }
 if (!$sortorder) {
-	$sortorder = 'DESC';
+	$sortorder = 'DESC,DESC';
 }
 
 
@@ -145,9 +147,11 @@ if (empty($reshook)) {
 	}
 
 	// Purge search criteria
-	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All test are required to be compatible with all browsers
+	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 		$actioncode = '';
+		$search_rowid = '';
 		$search_agenda_label = '';
+		$search_complete = '';
 	}
 }
 
@@ -262,6 +266,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		print '</div>';
 
+		print '<div class="clearboth"></div>';
+
 		print dol_get_fiche_end();
 
 
@@ -285,7 +291,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					$out .= '&originid='.$objthirdparty->id.($objthirdparty->id > 0 ? '&socid='.$objthirdparty->id : '');
 				}
 				$out .= (!empty($objcon->id) ? '&contactid='.$objcon->id : '').'&origin=contact&originid='.$object->id.'&backtopage='.urlencode($_SERVER['PHP_SELF'].($objcon->id > 0 ? '?id='.$objcon->id : ''));
-				$out .= '&datep='.urlencode(dol_print_date(dol_now(), 'dayhourlog'));
+				$out .= '&datep='.urlencode(dol_print_date(dol_now(), 'dayhourlog'), 'tzuserrel');
 			}
 
 			if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
@@ -298,21 +304,54 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			$param = '&id='.$id;
 			if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
-				$param .= '&contextpage='.$contextpage;
+				$param .= '&contextpage='.urlencode($contextpage);
 			}
 			if ($limit > 0 && $limit != $conf->liste_limit) {
-				$param .= '&limit='.$limit;
+				$param .= '&limit='.((int) $limit);
+			}
+			if ($search_rowid) {
+				$param .= '&search_rowid='.urlencode($search_rowid);
+			}
+			if ($actioncode !== '' && $actioncode !== '-1') {
+				$param .= '&actioncode='.urlencode($actioncode);
+			}
+			if ($search_agenda_label) {
+				$param .= '&search_agenda_label='.urlencode($search_agenda_label);
+			}
+			if ($search_complete != '') {
+				$param .= '&search_complete='.urlencode($search_complete);
+			}
+			if ($search_dateevent_start != '') {
+				$param .= '&dateevent_startyear='.GETPOSTINT('dateevent_startyear');
+				$param .= '&dateevent_startmonth='.GETPOSTINT('dateevent_startmonth');
+				$param .= '&dateevent_startday='.GETPOSTINT('dateevent_startday');
+			}
+			if ($search_dateevent_end != '') {
+				$param .= '&dateevent_endyear='.GETPOSTINT('dateevent_endyear');
+				$param .= '&dateevent_endmonth='.GETPOSTINT('dateevent_endmonth');
+				$param .= '&dateevent_endday='.GETPOSTINT('dateevent_endday');
 			}
 
-			print load_fiche_titre($langs->trans("ActionsOnContact"), $newcardbutton, '');
-			//print_barre_liste($langs->trans("ActionsOnCompany"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $morehtmlcenter, 0, -1, '', '', '', '', 0, 1, 1);
+			// Try to know count of actioncomm from cache
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+			$cachekey = 'count_events_contact_'.$object->id;
+			$nbEvent = dol_getcache($cachekey);
+
+			$titlelist = $langs->trans("ActionsOnContact").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>' : '');
+			if (!empty($conf->dol_optimize_smallscreen)) {
+				$titlelist = $langs->trans("Actions").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>' : '');
+			}
+
+			print_barre_liste($titlelist, 0, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 0);
 
 			// List of all actions
 			$filters = array();
 			$filters['search_agenda_label'] = $search_agenda_label;
 			$filters['search_rowid'] = $search_rowid;
+			$filters['search_complete'] = $search_complete;		// Can be 'na', '0', '100', '50'
 
-			show_actions_done($conf, $langs, $db, $objthirdparty, $object, 0, $actioncode, '', $filters, $sortfield, $sortorder);
+			// TODO Replace this with same code than into list.php
+			show_actions_done($conf, $langs, $db, $objthirdparty, $object, 0, $actioncode, '', $filters, $sortfield, $sortorder, $object->module);
 		}
 	}
 }
