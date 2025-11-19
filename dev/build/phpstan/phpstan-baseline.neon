@@ -1315,12 +1315,6 @@ parameters:
 			path: ../../../htdocs/barcode/printsheet.php
 
 		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/blockedlog/admin/blockedlog_archives.php
-
-		-
 			message: '#^Strict comparison using \=\=\= between ''facture'' and ''facture'' will always evaluate to true\.$#'
 			identifier: identical.alwaysTrue
 			count: 1

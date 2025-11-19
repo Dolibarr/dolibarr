@@ -914,10 +914,10 @@ if (empty($reshook)) {
 			if (!$error) {
 				$tmpproject = GETPOSTINT('projectid');
 
-				// Creation facture
+				// Create Supplier Invoice
 				$object->ref                = GETPOST('ref', 'alphanohtml');
 				$object->ref_supplier       = GETPOST('ref_supplier', 'alphanohtml');
-				$object->subtype            = GETPOST('subtype', 'alphanohtml');
+				$object->subtype            = GETPOSTINT('subtype');
 				$object->socid				= GETPOSTINT('socid');
 				$object->label				= GETPOST('label', 'alphanohtml');
 				$object->libelle            = $object->label;  // Deprecated
@@ -1156,7 +1156,7 @@ if (empty($reshook)) {
 					$objectsrc->fetch_thirdparty();
 
 					if (!empty($object->origin_type) && !empty($object->origin_id)) {
-						$object->linkedObjectsIds[$object->origin_type][] = $object->origin_id;
+						$object->linkedObjectsIds[$object->origin_type][-1] = $object->origin_id;
 					}
 
 					// Add also link with order if object is reception
@@ -1165,7 +1165,7 @@ if (empty($reshook)) {
 
 						if (count($objectsrc->linkedObjectsIds['order_supplier']) > 0) {
 							foreach ($objectsrc->linkedObjectsIds['order_supplier'] as $key => $value) {
-								$object->linkedObjectsIds['order_supplier'][] = $value;
+								$object->linkedObjectsIds['order_supplier'][-1] = $value;
 							}
 						}
 					}
@@ -3864,7 +3864,7 @@ if ($action == 'create') {
 
 			if ($object->type != FactureFournisseur::TYPE_CREDIT_NOTE) {
 				// Total already paid
-				print '<tr><td colspan="'.($nbcols+1).'" class="right">';
+				print '<tr><td colspan="'.($nbcols + 1).'" class="right">';
 				print '<span class="opacitymedium">';
 				if ($object->type != FactureFournisseur::TYPE_DEPOSIT) {
 					print $langs->trans('AlreadyPaidNoCreditNotesNoDeposits');
@@ -3930,7 +3930,7 @@ if ($action == 'create') {
 
 				// Pay partially 'escompte'
 				if (($object->status == FactureFournisseur::STATUS_CLOSED || $object->status == FactureFournisseur::STATUS_ABANDONED) && $object->close_code == 'discount_vat') {
-					print '<tr><td colspan="'.($nbcols+1).'" class="right nowrap">';
+					print '<tr><td colspan="'.($nbcols + 1).'" class="right nowrap">';
 					print '<span class="opacitymedium">';
 					print $form->textwithpicto($langs->trans("Discount"), $langs->trans("HelpEscompte"), - 1);
 					print '</span>';
@@ -3943,7 +3943,7 @@ if ($action == 'create') {
 				}
 				// Paye partiellement ou Abandon 'badsupplier'
 				if (($object->status == FactureFournisseur::STATUS_CLOSED || $object->status == FactureFournisseur::STATUS_ABANDONED) && $object->close_code == 'badsupplier') {
-					print '<tr><td colspan="'.($nbcols+1).'" class="right nowrap">';
+					print '<tr><td colspan="'.($nbcols + 1).'" class="right nowrap">';
 					print '<span class="opacitymedium">';
 					print $form->textwithpicto($langs->trans("Abandoned"), $langs->trans("HelpAbandonBadCustomer"), - 1);
 					print '</span>';
@@ -3956,7 +3956,7 @@ if ($action == 'create') {
 				}
 				// Paye partiellement ou Abandon 'product_returned'
 				if (($object->status == FactureFournisseur::STATUS_CLOSED || $object->status == FactureFournisseur::STATUS_ABANDONED) && $object->close_code == 'product_returned') {
-					print '<tr><td colspan="'.($nbcols+1).'" class="right nowrap">';
+					print '<tr><td colspan="'.($nbcols + 1).'" class="right nowrap">';
 					print '<span class="opacitymedium">';
 					print $form->textwithpicto($langs->trans("ProductReturned"), $langs->trans("HelpAbandonProductReturned"), - 1);
 					print '</span>';
@@ -3969,7 +3969,7 @@ if ($action == 'create') {
 				}
 				// Paye partiellement ou Abandon 'abandon'
 				if (($object->status == FactureFournisseur::STATUS_CLOSED || $object->status == FactureFournisseur::STATUS_ABANDONED) && $object->close_code == 'abandon') {
-					print '<tr><td colspan="'.($nbcols+1).'" class="right nowrap">';
+					print '<tr><td colspan="'.($nbcols + 1).'" class="right nowrap">';
 					$text = $langs->trans("HelpAbandonOther");
 					if ($object->close_note) {
 						$text .= '<br><br><b>'.$langs->trans("Reason").'</b>:'.$object->close_note;
@@ -3987,7 +3987,7 @@ if ($action == 'create') {
 				}
 
 				// Billed
-				print '<tr><td colspan="'.($nbcols+1).'" class="right">';
+				print '<tr><td colspan="'.($nbcols + 1).'" class="right">';
 				print '<span class="opacitymedium">';
 				print $langs->trans("Billed");
 				print '</span>';
@@ -3997,7 +3997,7 @@ if ($action == 'create') {
 				print '</tr>';
 
 				// Remainder to pay
-				print '<tr><td colspan="'.($nbcols+1).'" class="right">';
+				print '<tr><td colspan="'.($nbcols + 1).'" class="right">';
 				print '<span class="opacitymedium">';
 				print $langs->trans('RemainderToPay');
 				if ($resteapayeraffiche < 0) {
@@ -4011,7 +4011,7 @@ if ($action == 'create') {
 
 				// Remainder to pay Multicurrency
 				if (isModEnabled('multicurrency') && (($object->multicurrency_code && $object->multicurrency_code != $conf->currency) || $object->multicurrency_tx != 1)) {
-					print '<tr><td colspan="'.($nbcols+1).'" class="right">';
+					print '<tr><td colspan="'.($nbcols + 1).'" class="right">';
 					print '<span class="opacitymedium">';
 					print $langs->trans('RemainderToPayMulticurrency');
 					if ($resteapayeraffiche < 0) {
@@ -4027,7 +4027,7 @@ if ($action == 'create') {
 				$cssforamountpaymentcomplete = 'amountpaymentneutral';
 
 				// Total already paid back
-				print '<tr><td colspan="'.($nbcols+1).'" class="right">';
+				print '<tr><td colspan="'.($nbcols + 1).'" class="right">';
 				print $langs->trans('AlreadyPaidBack');
 				print '</td>';
 				//print '<td></td>';
@@ -4035,13 +4035,13 @@ if ($action == 'create') {
 				print '</tr>';
 
 				// Billed
-				print '<tr><td colspan="'.($nbcols+1).'" class="right">'.$langs->trans("Billed").'</td>';
+				print '<tr><td colspan="'.($nbcols + 1).'" class="right">'.$langs->trans("Billed").'</td>';
 				//print '<td></td>';
 				print '<td class="right">'.price($sign * $object->total_ttc).'</td>';
 				print '</tr>';
 
 				// Remainder to pay back
-				print '<tr><td colspan="'.($nbcols+1).'" class="right">';
+				print '<tr><td colspan="'.($nbcols + 1).'" class="right">';
 				print '<span class="opacitymedium">';
 				print $langs->trans('RemainderToPayBack');
 				if ($resteapayeraffiche > 0) {
@@ -4055,7 +4055,7 @@ if ($action == 'create') {
 
 				// Remainder to pay back Multicurrency
 				if (isModEnabled('multicurrency') && (($object->multicurrency_code && $object->multicurrency_code != $conf->currency) || $object->multicurrency_tx != 1)) {
-					print '<tr><td colspan="'.($nbcols+1).'" class="right">';
+					print '<tr><td colspan="'.($nbcols + 1).'" class="right">';
 					print '<span class="opacitymedium">';
 					print $langs->trans('RemainderToPayBackMulticurrency');
 					if ($resteapayeraffiche > 0) {
