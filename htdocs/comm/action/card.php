@@ -2499,28 +2499,27 @@ if ($id > 0 && $action != 'create') {
 			}
 
 			print '</table>';
-
-			print "\n".'<script type="text/javascript">';
-			print '$(document).ready(function () {
-	            		$("#addreminder").click(function(){
-	            		    if (this.checked) {
-	            		      	$(".reminderparameters").show();
-                            } else {
-                            	$(".reminderparameters").hide();
-                            }
-	            		 });
-
-	            		$("#selectremindertype").change(function(){
-	            	        var selected_option = $("#selectremindertype option:selected").val();
-	            		    if(selected_option == "email") {
-	            		        $("#select_actioncommsendmodel_mail").closest("tr").show();
-	            		    } else {
-	            			    $("#select_actioncommsendmodel_mail").closest("tr").hide();
-	            		    }
-	            		});
-
-                   })';
-			print '</script>'."\n";
+			?>
+			<script type="text/javascript">
+				$(document).ready(function () {
+					$("#addreminder").click(function(){
+						if (this.checked) {
+							$(".reminderparameters").show();
+						} else {
+							$(".reminderparameters").hide();
+						}
+					});
+					$("#selectremindertype").change(function(){
+						var selected_option = $("#selectremindertype option:selected").val();
+						if(selected_option == "email") {
+							$("#select_actioncommsendmodel_mail").closest("tr").show();
+						} else {
+							$("#select_actioncommsendmodel_mail").closest("tr").hide();
+						}
+					});
+				});
+			</script>
+			<?php
 
 			$reminderDefaultEventTypes = getDolGlobalString('AGENDA_DEFAULT_REMINDER_EVENT_TYPES', '');
 			$reminderDefaultOffset = getDolGlobalString('AGENDA_DEFAULT_REMINDER_OFFSET', 30);
