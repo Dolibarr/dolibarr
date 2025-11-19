@@ -1206,6 +1206,7 @@ class Expedition extends CommonObject
 	}
 	// phpcs:enable
 
+	// phpcs:disable
 	/**
 	 *	Create a delivery receipt from a shipment
 	 *
