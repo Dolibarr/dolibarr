@@ -342,17 +342,17 @@ class Users extends DolibarrApi
 	public function post($request_data = null)
 	{
 		// Check user authorization
-		if (!DolibarrApiAccess::$user->hasRight('user', 'creer') && empty(DolibarrApiAccess::$user->admin)) {
+		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'creer') && empty(DolibarrApiAccess::$user->admin)) {
 			throw new RestException(403, "User creation not allowed for login ".DolibarrApiAccess::$user->login);
 		}
 
 		// check mandatory fields
-		/*if (!isset($request_data["login"]))
+		if (!isset($request_data["login"]))
 			throw new RestException(400, "login field missing");
 		if (!isset($request_data["password"]))
 			throw new RestException(400, "password field missing");
 		if (!isset($request_data["lastname"]))
-			 throw new RestException(400, "lastname field missing");*/
+			 throw new RestException(400, "lastname field missing");
 
 		//assign field values
 		foreach ($request_data as $field => $value) {
@@ -640,7 +640,7 @@ class Users extends DolibarrApi
 	public function postGroups($request_data = null)
 	{
 		// Check user authorization
-		if (!DolibarrApiAccess::$user->hasRight('user', 'group_advance', 'creer') && empty(DolibarrApiAccess::$user->admin)) {
+		if (!DolibarrApiAccess::$user->hasRight('user', 'group_advance', 'write') && empty(DolibarrApiAccess::$user->admin)) {
 			throw new RestException(403, "Usergroup creation not allowed for login ".DolibarrApiAccess::$user->login);
 		}
 		$usergroup = new UserGroup($this->db);
