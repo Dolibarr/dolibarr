@@ -273,14 +273,14 @@ if (GETPOST('action') == 'upload' && $user->hasRight('blockedlog', 'read')) {		/
 			// Print line with title
 			fwrite($fh, "BEGIN - date=".$yearmonthdateofexport
 				.';'.$langs->transnoentities('Id')
-				.';'.$langs->transnoentities('DateCeation')
+				.';'.$langs->transnoentities('DateCreation')
 				.';'.$langs->transnoentities('Action')
 				.';'.$langs->transnoentities('Amounts')
 				.';'.$langs->transnoentities('Ref')
 				.';'.$langs->transnoentities('Date')
 				.';'.$langs->transnoentities('User')
-				.';'.$langs->transnoentities('LinkToRef')
-				.';'.$langs->transnoentities('LinkToType')
+				.';'.$langs->transnoentities('LinkTo')
+				.';'.$langs->transnoentities('LinkType')
 				.';'.$langs->transnoentities('FullData')
 				.';'.$langs->transnoentities('Version')
 				.';'.$langs->transnoentities('Fingerprint')
@@ -505,7 +505,7 @@ if (GETPOST('withtab', 'alpha')) {
 if ($action == 'deletefile') {
 	$langs->load("companies"); // Need for string DeleteFile+ConfirmDeleteFiles
 	print $form->formconfirm(
-		$_SERVER["PHP_SELF"].'?id='.$object->id.'&urlfile='.urlencode(GETPOST("urlfile")).'&linkid='.GETPOSTINT('linkid').(empty($param) ? '' : $param),
+		$_SERVER["PHP_SELF"].'?urlfile='.urlencode(GETPOST("urlfile")).'&linkid='.GETPOSTINT('linkid').(empty($param) ? '' : $param),
 		$langs->trans('DeleteFile'),
 		$langs->trans('ConfirmDeleteFile'),
 		'confirm_deletefile',
