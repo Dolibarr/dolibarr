@@ -1563,30 +1563,24 @@ if ($action == 'create') {
 		print $langs->trans("Until")." ";
 		print $form->selectDate($repeateventlimitdate, 'limit', 0, 0, 0, "action", 1, 0, 0, '', '', '', '', 1, '', '', 'tzuserrel');
 		print '</div>';
-
-		print '<script type="text/javascript">
+		?>
+		<script type="text/javascript">
 			jQuery(document).ready(function() {
-				function init_repeat()
-				{
-					console.log("recurrule: " + "'.$object->recurrule.'");
-					console.log("reg1: " + "'.$selectedrecurrulefreq.'");
-					console.log("reg2: " + "'.$selectedrecurrulebymonthday.'");
-					console.log("reg3: " + "'.$selectedrecurrulebyday.'");
-					console.log("selectedrulefreq: " + "'.$selectedrecurrulefreq.'");
-					if (jQuery("#recurrulefreq").val() == \'MONTHLY\')
-					{
+				function init_repeat() {
+					console.log("recurrule: " + "<?php echo $object->recurrule; ?>");
+					console.log("reg1: " + "<?php echo $selectedrecurrulefreq; ?>");
+					console.log("reg2: " + "<?php echo $selectedrecurrulebymonthday; ?>");
+					console.log("reg3: " + "<?php echo $selectedrecurrulebyday; ?>");
+					console.log("selectedrulefreq: " + "<?php echo $selectedrecurrulefreq; ?>");
+					if (jQuery("#recurrulefreq").val() == 'MONTHLY') {
 						/* jQuery(".repeateventBYMONTHDAY").css("display", "inline-block");	*/	/* use this instead of show because we want inline-block and not block */
 						jQuery(".repeateventlimitdate").css("display", "inline-block");
 						jQuery(".repeateventBYDAY").hide();
-					}
-					else if (jQuery("#recurrulefreq").val() == \'WEEKLY\')
-					{
+					} else if (jQuery("#recurrulefreq").val() == 'WEEKLY') {
 						jQuery(".repeateventBYMONTHDAY").hide();
 						/* jQuery(".repeateventBYDAY").css("display", "inline-block"); */		/* use this instead of show because we want inline-block and not block */
 						jQuery(".repeateventlimitdate").css("display", "inline-block");
-					}
-					else
-					{
+					} else {
 						jQuery(".repeateventBYMONTHDAY").hide();
 						jQuery(".repeateventBYDAY").hide();
 						jQuery(".repeateventlimitdate").hide();
@@ -1597,9 +1591,10 @@ if ($action == 'create') {
 					init_repeat();
 				});
 			});
-			</script>';
+		</script>
+		<?php
 		print '</div>';
-		//print '</td></tr>';
+		// print '</td></tr>';
 	}
 
 	print '</td></tr>';
