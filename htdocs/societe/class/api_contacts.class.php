@@ -345,16 +345,12 @@ class Contacts extends DolibarrApi
 
 		// External api user does not know internal country ID
 		if (!isset($request_data['country_id']) && isset($request_data['country_code'])) {
-			$country_code = $this->db->escape($request_data['country_code']);
-			$column = strlen($country_code) > 2 ? 'code_iso' : 'code';
-			$sql = sprintf("SELECT rowid FROM %sc_country WHERE %s = '%s'", MAIN_DB_PREFIX, $column, $country_code);
-			$res = $this->db->query($sql);
-			if ($res) {
-				$result = $res->fetch_array(MYSQLI_ASSOC);
-				$request_data['country_id'] = $result['rowid'];
-			} else {
-				throw new RestException(503, 'Error finding ISO country code in database : ' . $this->db->error);
+			$field = strlen($request_data['country_code']) > 2 ? 'code_iso' : 'code';
+			$id = dol_getIdFromCode($this->db, $request_data['country_code'], "c_country", $field, "rowid");
+			if ($id < 0) {
+				throw new RestException(404, 'Country code not found in database: ' . $this->db->error);
 			}
+			$request_data['country_id'] = $id;
 		}
 
 		foreach ($request_data as $field => $value) {
