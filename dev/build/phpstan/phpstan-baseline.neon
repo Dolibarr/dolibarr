@@ -9613,12 +9613,6 @@ parameters:
 			path: ../../../htdocs/fourn/facture/card.php
 
 		-
-			message: '#^Property CommonInvoice\:\:\$subtype \(int\|null\) does not accept string\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/fourn/facture/card.php
-
-		-
 			message: '#^Property FactureFournisseur\:\:\$type \(int\) does not accept string\.$#'
 			identifier: assign.propertyType
 			count: 2
