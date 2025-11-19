@@ -45,7 +45,7 @@ EOHELP
 # Github compatible messages
 print_error() { printf "::error::%s\n" "$*" >&2 ; }
 print_warning() { printf "::warning::%s\n" "$*" >&2 ; }
-print_info() { printf "::notice::%s\n" "$*" ; }
+print_info() { printf "::notice::%s\n" "$*" >&2 ; }
 
 
 # Parse command-line arguments as test filters
