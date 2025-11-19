@@ -976,7 +976,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 	/**
 	 *  Define Array Column Field
 	 *
-	 *  @param	object			$object    		common object
+	 *  @param	CommonObject	$object    		common object
 	 *  @param	Translate		$outputlangs    langs
 	 *  @param	int<0,1>		$hidedetails	Do not show line details
 	 *  @param	int<0,1>		$hidedesc		Do not show desc
