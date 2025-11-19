@@ -215,7 +215,7 @@ abstract class CommonObject
 	public $linked_objects;
 
 	/**
-	 * @var int[][]		Array of linked objects ids. Loaded by ->fetchObjectLinked
+	 * @var array<string,array<int,int>>	Array of linked objects ids. Loaded by ->fetchObjectLinked
 	 */
 	public $linkedObjectsIds;
 
@@ -805,7 +805,7 @@ abstract class CommonObject
 	public $totalpaid;
 
 	/**
-	 * @var int|float|null	Amount already paid from getSommePaiement(), like $totalpaid, but in the foreign currency
+	 * @var int|float|null	Amount already paid from getSommePaiement(), like `$totalpaid`, but in the foreign currency
 	 * @see $totalpaid, $alreadypaid
 	 */
 	public $totalpaid_multicurrency;
@@ -1283,8 +1283,8 @@ abstract class CommonObject
 
 		if ($this->restrictiononfksoc && property_exists($this, 'socid') && !empty($this->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql_allowed_contacts = 'SELECT COUNT(*) as cnt FROM '.$this->db->prefix().'societe_commerciaux as sc';
-			$sql_allowed_contacts.= ' WHERE sc.fk_soc = '.(int) $this->socid;
-			$sql_allowed_contacts.= ' AND sc.fk_user = '.(int) $user->id;
+			$sql_allowed_contacts .= ' WHERE sc.fk_soc = '.(int) $this->socid;
+			$sql_allowed_contacts .= ' AND sc.fk_user = '.(int) $user->id;
 
 			$resql_allowed_contacts = $this->db->query($sql_allowed_contacts);
 
@@ -2158,20 +2158,21 @@ abstract class CommonObject
 	public function fetch_origin()
 	{
 		// phpcs:enable
-		$origin = $this->origin ? $this->origin : $this->origin_type;
+		$tmpclassname = $this->origin ? $this->origin : $this->origin_type;
 
 		// Manage classes with non standard name
-		if ($origin == 'shipping') {
-			$origin = 'expedition';
+		if ($tmpclassname == 'shipping') {
+			$tmpclassname = 'Expedition';
 		}
-		if ($origin == 'delivery') {
-			$origin = 'livraison';
+		if ($tmpclassname == 'delivery') {
+			$tmpclassname = 'Livraison';
 		}
-		if ($origin == 'order_supplier' || $origin == 'supplier_order') {
-			$origin = 'commandeFournisseur';
+		if ($tmpclassname == 'order_supplier' || $tmpclassname == 'supplier_order') {
+			$tmpclassname = 'CommandeFournisseur';
 		}
 
-		$classname = ucfirst($origin);
+		$classname = ucfirst($tmpclassname);
+
 		$this->origin_object = new $classname($this->db);
 		// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
 		$this->origin_object->fetch($this->origin_id);
@@ -9554,7 +9555,7 @@ abstract class CommonObject
 						$labeltoshow = $langs->trans($label);
 						$helptoshow = $langs->trans($extrafields->attributes[$this->table_element]['help'][$key]);
 						if ($display_type == 'card') {
-							$out .= '<tr '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="field_options_'.$key.' '.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$collapse_group.'" '.$domData.' >';
+							$out .= '<tr '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="field_options_'.$key.' '.$class.$this->element.'_extras_'.$key.' trextrafields trextrafields_collapse'.$collapse_group.'" '.$domData.' >';
 							if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER') && ($action == 'view' || $action == 'valid' || $action == 'editline' || $action == 'confirm_valid' || $action == 'confirm_cancel')) {
 								$out .= '<td></td>';
 							}

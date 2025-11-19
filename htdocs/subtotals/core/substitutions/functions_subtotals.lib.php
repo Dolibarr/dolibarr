@@ -39,7 +39,7 @@ function subtotals_completesubstitutionarray_lines(&$substitutionarray, $langs, 
 		$substitutionarray['is_subtotals_title'] = (($line->special_code == SUBTOTALS_SPECIAL_CODE) && $line->qty > 0);
 		$substitutionarray['is_subtotals_subtotal'] = (($line->special_code == SUBTOTALS_SPECIAL_CODE) && $line->qty < 0);
 		$subtotal_total = 0;
-		if (isModEnabled('multicurrency') && $object->multicurrency_code != $conf->currency) {
+		if (isModEnabled('multicurrency') && $object->multicurrency_code != getDolCurrency()) {
 			$subtotal_total = $object->getSubtotalLineMulticurrencyAmount($line); // @phan-suppress-current-line PhanPluginUnknownObjectMethodCall
 		} else {
 			$subtotal_total = $object->getSubtotalLineAmount($line); // @phan-suppress-current-line PhanPluginUnknownObjectMethodCall

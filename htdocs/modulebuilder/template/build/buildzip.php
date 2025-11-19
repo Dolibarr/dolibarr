@@ -4,6 +4,7 @@
  * buildzip.php
  *
  * Copyright (c) 2023-2025 Eric Seigne <eric.seigne@cap-rel.fr>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -304,7 +305,7 @@ foreach ($listOfModuleContent as $moduleContent) {
 }
 
 $z = new ZipArchive();
-$z->open($outzip, ZIPARCHIVE::CREATE);
+$z->open($outzip, ZipArchive::CREATE);
 zipDir($tmpdir, $z, $tmpdir . '/');
 $z->close();
 delTree($tmpdir);

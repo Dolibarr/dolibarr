@@ -1376,7 +1376,7 @@ function pricejs(amount, mode = 'MT', currency_code = '', force_locale = '') {
 	var amountAsLocalizedString;
 	var useIntl = Boolean(Intl && Intl.NumberFormat);
 	var nDigits;
-	if (currency_code === 'auto') currency_code = <?php echo json_encode($conf->currency) ?>;
+	if (currency_code === 'auto') currency_code = <?php echo json_encode(getDolCurrency()) ?>;
 
 	if (mode === 'MU') nDigits = main_rounding_unit;
 	else if (mode === 'MT') nDigits = main_rounding_tot;

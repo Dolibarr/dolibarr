@@ -151,6 +151,12 @@ parameters:
 			path: ../../../htdocs/accountancy/class/bookkeeping.class.php
 
 		-
+			message: '#^Variable \$obj might not be defined\.$#'
+			identifier: variable.undefined
+			count: 2
+			path: ../../../htdocs/accountancy/class/bookkeeping.class.php
+
+		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
@@ -843,18 +849,6 @@ parameters:
 		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
-			count: 2
-			path: ../../../htdocs/admin/stocktransfer.php
-
-		-
-			message: '#^Variable \$setupnotempty in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/admin/stocktransfer.php
-
-		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
 			count: 1
 			path: ../../../htdocs/admin/system/about.php
 
@@ -1072,12 +1066,6 @@ parameters:
 			message: '#^Comparison operation "\<\=" between 0 and 0 is always true\.$#'
 			identifier: smallerOrEqual.alwaysTrue
 			count: 1
-			path: ../../../htdocs/api/class/api_setup.class.php
-
-		-
-			message: '#^Left side of && is always true\.$#'
-			identifier: booleanAnd.leftAlwaysTrue
-			count: 2
 			path: ../../../htdocs/api/class/api_setup.class.php
 
 		-
@@ -1325,12 +1313,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/barcode/printsheet.php
-
-		-
-			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/blockedlog/admin/blockedlog_list.php
 
 		-
 			message: '#^Strict comparison using \=\=\= between ''facture'' and ''facture'' will always evaluate to true\.$#'
@@ -3601,6 +3583,12 @@ parameters:
 			path: ../../../htdocs/compta/resultat/clientfourn.php
 
 		-
+			message: '#^Variable \$annee might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: ../../../htdocs/compta/resultat/index.php
+
+		-
 			message: '#^Variable \$description might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -4387,12 +4375,6 @@ parameters:
 			path: ../../../htdocs/core/actions_massactions.inc.php
 
 		-
-			message: '#^Variable \$listofobjectthirdparties in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/core/actions_massactions.inc.php
-
-		-
 			message: '#^Variable \$triggername in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
@@ -4419,6 +4401,12 @@ parameters:
 		-
 			message: '#^Call to function is_array\(\) with array\<mixed\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
+			count: 1
+			path: ../../../htdocs/core/actions_setmoduleoptions.inc.php
+
+		-
+			message: '#^Variable \$tmpdir might not be defined\.$#'
+			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/core/actions_setmoduleoptions.inc.php
 
@@ -5119,12 +5107,6 @@ parameters:
 			path: ../../../htdocs/core/class/cleadstatus.class.php
 
 		-
-			message: '#^Property CommonDict\:\:\$id \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/core/class/cleadstatus.class.php
-
-		-
 			message: '#^Property Comment\:\:\$description \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
@@ -5455,40 +5437,10 @@ parameters:
 			path: ../../../htdocs/core/class/conf.class.php
 
 		-
-			message: '#^Property CommonDict\:\:\$id \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/core/class/cproductnature.class.php
-
-		-
 			message: '#^Property Cstate\:\:\$code_departement \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 4
 			path: ../../../htdocs/core/class/cstate.class.php
-
-		-
-			message: '#^Property Cstate\:\:\$name \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/core/class/cstate.class.php
-
-		-
-			message: '#^Property Cstate\:\:\$nom \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/core/class/cstate.class.php
-
-		-
-			message: '#^Property Cstate\:\:\$rowid \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/core/class/cstate.class.php
-
-		-
-			message: '#^Property CommonDict\:\:\$id \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/core/class/ctypent.class.php
 
 		-
 			message: '#^Property Ctypent\:\:\$libelle \(string\) in isset\(\) is not nullable\.$#'
@@ -5524,12 +5476,6 @@ parameters:
 			message: '#^Property CUnits\:\:\$unit_type \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 4
-			path: ../../../htdocs/core/class/cunits.class.php
-
-		-
-			message: '#^Property CommonDict\:\:\$id \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
 			path: ../../../htdocs/core/class/cunits.class.php
 
 		-
@@ -6601,6 +6547,12 @@ parameters:
 			path: ../../../htdocs/core/lib/agenda.lib.php
 
 		-
+			message: '#^Variable \$s might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: ../../../htdocs/core/lib/bank.lib.php
+
+		-
 			message: '#^Left side of && is always true\.$#'
 			identifier: booleanAnd.leftAlwaysTrue
 			count: 1
@@ -7389,6 +7341,12 @@ parameters:
 		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
+			count: 1
+			path: ../../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
+
+		-
+			message: '#^Variable \$fac might not be defined\.$#'
+			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
 
@@ -8383,12 +8341,6 @@ parameters:
 			path: ../../../htdocs/core/tpl/document_actions_post_headers.tpl.php
 
 		-
-			message: '#^Variable \$modulepart might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/core/tpl/document_actions_post_headers.tpl.php
-
-		-
 			message: '#^Variable \$permissiontoadd might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
@@ -8402,12 +8354,6 @@ parameters:
 
 		-
 			message: '#^Variable \$sortorder might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/document_actions_post_headers.tpl.php
-
-		-
-			message: '#^Variable \$upload_dir might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/core/tpl/document_actions_post_headers.tpl.php
@@ -9664,12 +9610,6 @@ parameters:
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 2
-			path: ../../../htdocs/fourn/facture/card.php
-
-		-
-			message: '#^Property CommonInvoice\:\:\$subtype \(int\|null\) does not accept string\.$#'
-			identifier: assign.propertyType
-			count: 1
 			path: ../../../htdocs/fourn/facture/card.php
 
 		-
@@ -12253,6 +12193,12 @@ parameters:
 			path: ../../../htdocs/product/stats/card.php
 
 		-
+			message: '#^Variable \$year might not be defined\.$#'
+			identifier: variable.undefined
+			count: 3
+			path: ../../../htdocs/product/stats/card.php
+
+		-
 			message: '#^Variable \$sortfield in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
@@ -12544,6 +12490,12 @@ parameters:
 			message: '#^Variable \$month might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
+			path: ../../../htdocs/product/stock/movement_list.php
+
+		-
+			message: '#^Variable \$productlabelselected might not be defined\.$#'
+			identifier: variable.undefined
+			count: 2
 			path: ../../../htdocs/product/stock/movement_list.php
 
 		-

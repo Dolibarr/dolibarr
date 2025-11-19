@@ -51,6 +51,13 @@ class ActionCommReminder extends CommonObject
 	const STATUS_DONE = 1;
 	const STATUS_ERROR = -1;
 
+	/** @var int reminder for user */
+	const TYPE_USER = 0;
+	/** @var int reminder for customer */
+	const TYPE_CUSTOMER = 1;
+	/** @var int reminder for contact */
+	const TYPE_CONTACT = 2;
+
 
 	/**
 	 *  'type' if the field format.

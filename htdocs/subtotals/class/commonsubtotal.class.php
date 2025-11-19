@@ -80,17 +80,13 @@ trait CommonSubtotal
 	public function addSubtotalLine($langs, $desc, $depth, $options = array(), $parent_line = 0)
 	{
 		if (empty($desc)) {
-			if (isset($this->errors)) {
-				$this->errors[] = $langs->trans("TitleNeedDesc");
-			}
+			$this->errors[] = $langs->trans("TitleNeedDesc");
 			return -1;
 		}
 		$current_module = $this->element;
 		// Ensure the object is one of the supported types
 		if (!in_array($current_module, self::$ALLOWED_TYPES)) {
-			if (isset($this->errors)) {
-				$this->errors[] = $langs->trans("UnsupportedModuleError");
-			}
+			$this->errors[] = $langs->trans("UnsupportedModuleError");
 			return -1; // Unsupported type
 		}
 		$error = 0;
@@ -127,9 +123,7 @@ trait CommonSubtotal
 
 			if ($max_existing_level+1 < $depth) {
 				$depth = $max_existing_level+1;
-				if (isset($this->errors)) {
-					$this->errors[] = $langs->trans("TitleAddedLevelTooHigh", $depth);
-				}
+				$this->errors[] = $langs->trans("TitleAddedLevelTooHigh", $depth);
 
 				$error ++;
 			}
@@ -330,9 +324,7 @@ trait CommonSubtotal
 		$current_module = $this->element;
 		// Ensure the object is one of the supported types
 		if (!in_array($current_module, self::$ALLOWED_TYPES)) {
-			if (isset($this->errors)) {
-				$this->errors[] = $langs->trans("UnsupportedModuleError");
-			}
+			$this->errors[] = $langs->trans("UnsupportedModuleError");
 			return -1; // Unsupported type
 		}
 
@@ -408,9 +400,7 @@ trait CommonSubtotal
 		$current_module = $this->element;
 		// Ensure the object is one of the supported types
 		if (!in_array($current_module, self::$ALLOWED_TYPES)) {
-			if (isset($this->errors)) {
-				$this->errors[] = $langs->trans("UnsupportedModuleError");
-			}
+			$this->errors[] = $langs->trans("UnsupportedModuleError");
 			return -1; // Unsupported type
 		}
 
@@ -429,9 +419,7 @@ trait CommonSubtotal
 
 		if ($max_existing_level+1 < $depth) {
 			$depth = $max_existing_level+1;
-			if (isset($this->errors)) {
-				$this->errors[] = $langs->trans("TitleEditedLevelTooHigh");
-			}
+			$this->errors[] = $langs->trans("TitleEditedLevelTooHigh");
 			$error ++;
 		}
 
@@ -638,9 +626,7 @@ trait CommonSubtotal
 		$current_module = $this->element;
 		// Ensure the object is one of the supported types
 		if (!in_array($current_module, self::$ALLOWED_TYPES)) {
-			if (isset($this->errors)) {
-				$this->errors[] = $langs->trans("UnsupportedModuleError");
-			}
+			$this->errors[] = $langs->trans("UnsupportedModuleError");
 			return -1; // Unsupported type
 		}
 

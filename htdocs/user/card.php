@@ -1988,7 +1988,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			//print '<th class="liste_titre right">';
 			if (getDolGlobalString('MAIN_SECURITY_ALLOW_TOTP') && $permissiontoeditpasswordandsee) {
 				$s = '<!-- MAIN_SECURITY_ALLOW_TOTP --><span class="fa fa-plus-circle valignmiddle btnTitle-icon"></span>';
-				print dolButtonToOpenUrlInDialogPopup('openpopuptoaddcredential', $langs->trans("AddCredential"), $s, '/user/credentials.php?userid='.$object->id.'&token='.newToken());
+				print dolButtonToOpenUrlInDialogPopup('openpopuptoaddcredential', $langs->transnoentitiesnoconv("AddCredential"), $s, '/user/credentials.php?userid='.$object->id.'&token='.newToken());
 			}
 			print '</div>';
 			print '</th>';

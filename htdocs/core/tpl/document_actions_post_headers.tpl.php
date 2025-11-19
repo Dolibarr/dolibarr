@@ -24,13 +24,8 @@
  */
 
 // Following var can be set
-// $modulepart  = for download
-// $param       = param to add to download links
-// $moreparam   = param to add to download link for the form_attach_new_file function
-// $upload_dir
 // $object
 // $filearray
-// $savingdocmask = dol_sanitizeFileName($object->ref).'-__file__';
 
 /**
  * @var Conf $conf
@@ -40,9 +35,16 @@
  * @var HookManager $hookmanager
  * @var Translate $langs
  *
- * @var	string 	$action
- * @var string 	$relativepathwithnofile
- * @var	int		$permisstiontoadd			Permission or not to add a file (can use also $permission) and permission or not to edit file name or crop file (can use also $permtoedit)
+ * @var FormFile	$formfile
+ * @var	string 		$action
+ * @var string  	$modulepart
+ * @var string		$upload_dir
+ * @var	string 		$param
+ * @var string		$moreparam = param to add to download link for the form_attach_new_file function
+ * @var string 		$relativepathwithnofile
+ * @var	int			$permisstiontoadd			Permission or not to add a file (can use also $permission) and permission or not to edit file name or crop file (can use also $permtoedit)
+ * @var string  	$savingdocmask				For example dol_sanitizeFileName($object->ref).'-__file__';
+ * @var int			$withproject
  */
 
 // Protection to avoid direct call of template
@@ -146,6 +148,7 @@ if (!isset($savingdocmask) || getDolGlobalString('MAIN_DISABLE_SUGGEST_REF_AS_PR
 }
 
 if (empty($formfile) || !is_object($formfile)) {
+	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 	$formfile = new FormFile($db);
 }
 
