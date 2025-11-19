@@ -99,7 +99,7 @@ if ($id > 0 || !empty($ref)) {
 
 		$object->fetch_origin();
 	}
-	if ($origin == 'order_supplier' && $object->origin_object->id && (isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') || isModEnabled("supplier_order"))) {
+	if ($origin == 'supplier_order' && $object->origin_object->id && (isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') || isModEnabled("supplier_order"))) {
 		$origin_id = $object->origin_object->id;
 		$objectsrc = new CommandeFournisseur($db);
 		$objectsrc->fetch($origin_id);
@@ -322,7 +322,7 @@ llxHeader('', $title, $help_url, '', 0, 0, $morejs, '', '', 'mod-reception page-
 if ($id > 0 || !empty($ref)) {
 	$typeobject = '';
 	if (!empty($object->origin) && $object->origin_id > 0) {
-		$object->origin = 'CommandeFournisseur';
+		$object->origin = 'supplier_order';
 		$typeobject = $object->origin;
 		$origin = $object->origin;
 		$origin_id = $object->origin_id;
@@ -418,7 +418,7 @@ if ($id > 0 || !empty($ref)) {
 		print "</td>\n";
 		print '</tr>';
 	}
-	if ($typeobject == 'CommandeFournisseur' && $object->origin_object->id && isModEnabled("propal")) {
+	if ($typeobject == 'supplier_order' && $object->origin_object->id && isModEnabled("propal")) {
 		print '<tr><td>';
 		print $langs->trans("SupplierOrder").'</td>';
 		print '<td colspan="3">';
