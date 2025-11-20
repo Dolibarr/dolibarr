@@ -1032,7 +1032,7 @@ class Mo extends CommonObject
 
 					$resdel = $moline->delete($user, $notrigger);
 					if ($resdel < 0) {
-						$this->error++;
+						$error++;
 						$this->setErrorsFromObject($moline);
 					}
 				}
