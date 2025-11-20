@@ -256,7 +256,13 @@ class Documentation
 					'url' => dol_buildpath($this->baseUrl.'/experimental/experiments/dolibarr-context/index.php', 1),
 					'icon' => 'fas fa-flask',
 					'submenu' => array(),
-					'summary' => array(),
+					'summary' => array(
+						'Introduction' => '#titlesection-basicusage',
+						'ConsoleHelp' => '#titlesection-console-help',
+						'JSDolibarrhooks' => '#titlesection-hooks',
+						'ExampleOfCreatingNewContextTool' => '#titlesection-create-tool-example',
+						'SetEventMessageTool' => '#titlesection-tool-seteventmessage',
+					),
 				),
 			)
 		);

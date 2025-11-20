@@ -49,6 +49,7 @@ $js = [
 	'/includes/ace/src/ext-statusbar.js',
 	'/includes/ace/src/ext-language_tools.js',
 	$experimentAssetsPath . '/dolibarr-context.umd.js',
+	$experimentAssetsPath . '/dolibarr-tool.seteventmessage.js',
 ];
 $css = [];
 
@@ -72,7 +73,7 @@ $documentation->showSidebar(); ?>
 		<?php $documentation->showSummary(); ?>
 
 		<div class="documentation-section">
-			<h2 class="documentation-title">Introduction</h2>
+			<h2 id="titlesection-basicusage" class="documentation-title">Introduction</h2>
 
 			<p>
 				DolibarrContext is a secure global JavaScript context for Dolibarr.
@@ -108,7 +109,7 @@ $documentation->showSidebar(); ?>
 		</div>
 
 		<div class="documentation-section">
-			<h2 class="documentation-title">Console help</h2>
+			<h2 id="titlesection-console-help" class="documentation-title">Console help</h2>
 
 			<p>
 				Open your browser console with <code>F12</code> to view the available commands.<br/>
@@ -117,7 +118,7 @@ $documentation->showSidebar(); ?>
 		</div>
 
 		<div class="documentation-section">
-			<h2 class="documentation-title">JS Dolibarr hooks</h2>
+			<h2 id="titlesection-hooks"  class="documentation-title">JS Dolibarr hooks</h2>
 
 			<h3>Event listener : the Dolibarr ready like</h3>
 			<div class="documentation-example">
@@ -139,7 +140,7 @@ $documentation->showSidebar(); ?>
 			</div>
 
 			<h3>Example of code usage</h3>
-			<div class="documentation-example">
+			<div id="titlesection-create-tool-example" class="documentation-example">
 				<?php
 				$lines = array(
 					'<script>',
@@ -191,12 +192,13 @@ $documentation->showSidebar(); ?>
 		</div>
 
 		<div class="documentation-section">
-			<h2 class="documentation-title">Example of creating a new context tool</h2>
+			<h2 id="titlesection-tool-seteventmessage" class="documentation-title">Example of creating a new context tool</h2>
 
 			<h3>Defining Tools</h3>
 			<p>
-				You can define reusable and protected tools in the Dolibarr context using <code>Dolibarr.defineTool</code>:
+				You can define reusable and protected tools in the Dolibarr context using <code>Dolibarr.defineTool</code>.
 			</p>
+			<p>See also <code>dolibarr-context.mock.js</code> for defining all standard Dolibarr tools and creating mock implementations to improve code completion and editor support.</p>
 
 			<div class="documentation-example">
 				<?php
@@ -254,7 +256,84 @@ $documentation->showSidebar(); ?>
 
 		</div>
 
+		<div class="documentation-section">
+			<h2 class="documentation-title">Set event message tool</h2>
+
+			<p>
+				Instead of calling JNotify directly in your code, use Dolibarr’s setEventMessage tool.
+				Dolibarr provides the configuration option DISABLE_JQUERY_JNOTIFY, which disables the jQuery JNotify system, usually because another notification library will be used instead.
+			</p>
+
+			<p>
+				If you rely on Dolibarr.tools.setEventMessage(), your code remains compatible even if the underlying notification system changes.
+				The setEventMessage tool can be replaced internally without requiring any changes in your modules or custom scripts.
+			</p>
+			<p>
+				This means all developers can write features without worrying about frontend compatibility or future library replacements. Enjoy!
+
+			</p>
+
+			<div class="documentation-example">
+				<?php
+				$lines = array(
+					'<script nonce="<?php print getNonce() ?>">',
+					'	document.addEventListener(\'Dolibarr:Ready\', function(e) {',
+					'',
+					'		document.getElementById(\'setEventMessage-success\').addEventListener(\'click\', function(e) {',
+					'			Dolibarr.tools.setEventMessage(\'Success Test\');',
+					'		});',
+					'',
+					'		document.getElementById(\'setEventMessage-error\').addEventListener(\'click\', function(e) {',
+					'			Dolibarr.tools.setEventMessage(\'Error Test\', \'errors\');',
+					'		});',
+					'',
+					'		document.getElementById(\'setEventMessage-error-sticky\').addEventListener(\'click\', function(e) {',
+					'			Dolibarr.tools.setEventMessage(\'Error Test\', \'errors\', true);',
+					'		});',
+					'',
+					'		document.getElementById(\'setEventMessage-warning\').addEventListener(\'click\', function(e) {',
+					'			Dolibarr.tools.setEventMessage(\'Warning Test\', \'warnings\');',
+					'		});',
+					'',
+					'	});',
+					'</script>',
+				);
+				echo $documentation->showCode($lines, 'php'); ?>
+				<script nonce="<?php print getNonce() ?>"  >
+					document.addEventListener('Dolibarr:Ready', function(e) {
+
+						document.getElementById('setEventMessage-success').addEventListener('click', function(e) {
+							Dolibarr.tools.setEventMessage('Success Test')
+						});
+
+						document.getElementById('setEventMessage-error').addEventListener('click', function(e) {
+							Dolibarr.tools.setEventMessage('Error Test', 'errors');
+						});
+
+						document.getElementById('setEventMessage-error-sticky').addEventListener('click', function(e) {
+							Dolibarr.tools.setEventMessage('Error Test', 'errors', true);
+						});
+
+						document.getElementById('setEventMessage-warning').addEventListener('click', function(e) {
+							Dolibarr.tools.setEventMessage('Warning Test', 'warnings');
+						});
+
+					});
+				</script>
+				<button id="setEventMessage-success" class="button">Alert success</button>
+				<button id="setEventMessage-error" class="button">Alert error</button>
+				<button id="setEventMessage-error-sticky" class="button">Alert error sticky</button>
+				<button id="setEventMessage-warning" class="button">Alert warning</button>
+			</div>
+
+		</div>
+
 	</div>
+
+
+
+
+</div>
 
 </div>
 <?php
