@@ -1773,34 +1773,34 @@ function dol_get_object_properties($obj, $properties = [])
  *
  *  @template T
  *
- *  @param	T      $object		Object to clone
- *  @param	int		          $native		0=Full isolation method, 1=Native PHP method, 2=Full isolation method keeping only scalar and array properties (recommended)
- *  @return T                	Clone object
+ *  @param	T		$srcobject		Object to clone
+ *  @param	int		$native			0=Full isolation method, 1=Native PHP method, 2=Full isolation method keeping only scalar and array properties (recommended)
+ *  @return T                		Clone object
  *
  *  @see https://php.net/manual/language.oop5.cloning.php
  *  @phan-suppress PhanTypeExpectedObjectPropAccess
  */
-function dol_clone($object, $native = 2)
+function dol_clone($srcobject, $native = 2)
 {
 	if ($native == 0) {
 		// deprecated method, use the method with native = 2 instead
 		dol_syslog("Warning, call to dol_clone() with the deprecated parameter native=0, use 2 instead", LOG_WARNING);
 
 		$tmpsavdb = null;
-		if (isset($object->db) && isset($object->db->db) && is_object($object->db->db) && get_class($object->db->db) == 'PgSql\Connection') {
-			$tmpsavdb = $object->db;
-			unset($object->db);		// Such property can not be serialized with pgsl (when object->db->db = 'PgSql\Connection')
+		if (isset($srcobject->db) && isset($srcobject->db->db) && is_object($srcobject->db->db) && get_class($srcobject->db->db) == 'PgSql\Connection') {
+			$tmpsavdb = $srcobject->db;
+			unset($srcobject->db);		// Such property can not be serialized with pgsl (when object->db->db = 'PgSql\Connection')
 		}
 
-		$myclone = unserialize(serialize($object));	// serialize then unserialize is a hack to be sure to have a new object for all fields
+		$myclone = unserialize(serialize($srcobject));	// serialize then unserialize is a hack to be sure to have a new object for all fields
 
 		if (!empty($tmpsavdb)) {
-			$object->db = $tmpsavdb;
+			$srcobject->db = $tmpsavdb;
 		}
 	} elseif ($native == 2) {
 		// recommended method to have a full secured isolated cloned object
 		$myclone = new stdClass();
-		$tmparray = get_object_vars($object);	// return only public properties
+		$tmparray = get_object_vars($srcobject);	// return only public properties
 
 		if (is_array($tmparray)) {
 			foreach ($tmparray as $propertykey => $propertyval) {
@@ -1810,11 +1810,41 @@ function dol_clone($object, $native = 2)
 			}
 		}
 	} else {
-		$myclone = clone $object; // PHP clone is a shallow copy only, not a real clone, so properties of references will keep the reference (referring to the same target/variable)
+		$myclone = clone $srcobject; // PHP clone is a shallow copy only, not a real clone, so properties of references will keep the reference (referring to the same target/variable)
 	}
 
 	return $myclone;
 }
+
+
+/**
+ *  Create a clone of instance of object into a full array, using recursive call.
+ *  It also cleans some properties.
+ *
+ *  @param	Object	$srcobject		Object to clone
+ *  @param	int		$startlevel		Start level to track recursive depth
+ *  @return array					Array
+ */
+function dol_clone_in_array($srcobject, $startlevel = 0)
+{
+	if (is_object($srcobject)) {
+		$srcobject = get_object_vars($srcobject); // exclude private/protected properties
+	}
+
+	if (is_array($srcobject)) {
+		$result = [];
+		foreach ($srcobject as $key => $value) {
+			if (in_array($key, array('db', 'fields', 'error', 'errorhidden', 'errors', 'oldcopy', 'linkedObjects', 'linked_objects'))) {
+				continue;
+			}
+			$result[$key] = dol_clone_in_array($value, $startlevel + 1);
+		}
+		return $result;
+	}
+
+	return $srcobject;
+}
+
 
 /**
  *	Optimize a size for some browsers (phone, smarphone...)

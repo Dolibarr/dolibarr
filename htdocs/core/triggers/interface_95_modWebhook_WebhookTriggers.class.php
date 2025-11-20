@@ -108,20 +108,10 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 				// Build the answer object
 				$resobject = new stdClass();
 				$resobject->triggercode = $action;
-				$resobject->object = dol_clone($object, 2);
 
-				if (property_exists($resobject->object, 'fields')) {
-					unset($resobject->object->fields);
-				}
-				if (property_exists($resobject->object, 'error')) {
-					unset($resobject->object->error);
-				}
-				if (property_exists($resobject->object, 'errors')) {
-					unset($resobject->object->errors);
-				}
+				$resobject->object = dol_clone_in_array($object);
 
-				//$jsonstr = json_encode($resobject);
-				$jsonstr = json_encode(dol_clone($resobject, 2));
+				$jsonstr = json_encode($resobject);
 
 				$headers = array(
 					'Content-Type: application/json'

@@ -289,6 +289,7 @@ class FunctionsLibTest extends CommonClassTest
 		global $db;
 
 		$newproduct1 = new Product($db);
+		$newproduct1->initAsSpecimen();
 
 		print __METHOD__." this->savdb has type ".(is_resource($db->db) ? get_resource_type($db->db) : (is_object($db->db) ? 'object' : 'unknown'))."\n";
 		print __METHOD__." newproduct1->db->db has type ".(is_resource($newproduct1->db->db) ? get_resource_type($newproduct1->db->db) : (is_object($newproduct1->db->db) ? 'object' : 'unknown'))."\n";
@@ -301,11 +302,25 @@ class FunctionsLibTest extends CommonClassTest
 		print __METHOD__." newproduct1->db->db has type ".(is_resource($newproduct1->db->db) ? get_resource_type($newproduct1->db->db) : (is_object($newproduct1->db->db) ? 'object' : 'unknown'))."\n";
 		$this->assertEquals($db->connected, 1, 'Savdb is connected');
 		$this->assertNotNull($newproduct1->db->db, 'newproduct1->db is not null');
+	}
 
-		//$newproductcloned2 = dol_clone($newproduct1, 2);
-		//var_dump($newproductcloned2);
-		//print __METHOD__." newproductcloned1->db must be null\n";
-		//$this->assertNull($newproductcloned1->db, 'newproductcloned1->db is null');
+	/**
+	 * testDolCloneInArray
+	 *
+	 * @return void
+	 */
+	public function testDolCloneInArray()
+	{
+		global $db;
+
+		$newproduct1 = new Product($db);
+		$newproduct1->initAsSpecimen();
+
+		$newproductclonedinarray1 = dol_clone_in_array($newproduct1);
+		var_dump($newproductclonedinarray1);
+		print __METHOD__." newproductclonedinarray1->db must be null\n";
+		$this->assertNull($newproductclonedinarray1['db'], 'newproductclonedinarray1[db] is null');
+		$this->assertNotNull($newproduct1->db->db, 'newproduct1->db is not null');
 	}
 
 	/**
