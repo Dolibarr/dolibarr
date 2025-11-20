@@ -1,21 +1,29 @@
-// This file is only for IDE autocompletion.
-// It is never loaded in Dolibarr.
+// This file is purely for IDE autocompletion and developer convenience.
+// It is never executed or loaded in Dolibarr itself.
 
-// THIS IS A MOCK a Dolibarr.tools definition for your IDE
+// MOCK DEFINITION: Dolibarr.tools
+// This mock helps your code editor understand the structure of Dolibarr.tools
+// and provides autocomplete hints, parameter hints, and inline documentation.
+// You can safely edit this file to add all standard Dolibarr tools for autocompletion.
 
 var Dolibarr = {
 	tools: {
 
 		/**
-		 * See dolibarr-tool.seteventmessage.js
-		 * Displays a Dolibarr message (success, warning, errors)
-		 * @param {string} msg
-		 * @param {string=} type
-		 * @param {boolean=} sticky
+		 * Displays a Dolibarr notification message (success, warning, or error).
+		 * This is the JavaScript equivalent of the PHP setEventMessage tool.
+		 *
+		 * @param {string} msg      The message text to display
+		 * @param {string=} type    Optional: 'mesgs' (default), 'warnings', or 'errors'
+		 * @param {boolean=} sticky Optional: true if the message should stay until manually closed
+		 *
+		 * Example usage in your IDE:
+		 * Dolibarr.tools.setEventMessage('Operation successful', 'success');
 		 */
 		setEventMessage: function(msg, type, sticky) {},
 
-		// etc ...
-		// TODO : You can add all standard Dolibarr Tools here for IDE auto completion
+		// You can add more standard Dolibarr tools here for IDE autocompletion.
+		// Example:
+		// alertUser: function(msg) {},
 	}
 };
