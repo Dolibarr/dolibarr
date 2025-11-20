@@ -1823,7 +1823,7 @@ function dol_clone($srcobject, $native = 2)
  *
  *  @param	Object	$srcobject		Object to clone
  *  @param	int		$startlevel		Start level to track recursive depth
- *  @return array					Array
+ *  @return array<string,mixed>		Array
  */
 function dol_clone_in_array($srcobject, $startlevel = 0)
 {
