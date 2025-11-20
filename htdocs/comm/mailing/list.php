@@ -5,6 +5,7 @@
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		Jon Bendtsen            <jon.bendtsen.github@jonb.dk>
+ * Copyright (C) 2025       Josep Lluís Amador Teruel   <joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

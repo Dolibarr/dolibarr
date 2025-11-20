@@ -92,7 +92,7 @@ if (isset($totalarray['pos'])) {
 			printTotalValCell($totalarray['type'][$i] ?? '', empty($totalarray['val'][$totalarray['pos'][$i]]) ? '0' : (string) $totalarray['val'][$totalarray['pos'][$i]]);
 		} else {
 			if ($i == 1) {
-				if ((!isset($limit) || is_null($limit) || $num < $limit) && empty($offset)) {
+				if ((!isset($limit) || $num < $limit) && empty($offset)) {
 					print '<td>'.$langs->trans("Total").'</td>';
 				} else {
 					print '<td>';
