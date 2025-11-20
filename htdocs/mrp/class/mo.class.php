@@ -951,12 +951,10 @@ class Mo extends CommonObject
 
 		$this->db->begin();
 
-		if (!empty($fk_movement) || !empty($arrayoflines)) {
+		if (!empty($fk_movement)) {
 			$stockmove = new MouvementStock($this->db);
 			$stockmove->setOrigin($this->element, $this->id);
-		}
 
-		if (!empty($fk_movement)) {
 			// The fk_movement was not recorded so we try to guess the product and quantity to restore.
 			$moline = new MoLine($this->db);
 			$TArrayMoLine = $moline->fetchAll('', '', 1, 0, '(fk_stock_movement:=:'.((int) $fk_movement).')');
@@ -983,6 +981,9 @@ class Mo extends CommonObject
 				$result = $moline->delete($user, $notrigger);
 			}
 		} elseif (!empty($arrayoflines)) {
+			$stockmove = new MouvementStock($this->db);
+			$stockmove->setOrigin($this->element, $this->id);
+
 			// Loop on each child lines
 			foreach ($arrayoflines as $key => $arrayofline) {
 				$lineDetails = $arrayoflines[$key];
