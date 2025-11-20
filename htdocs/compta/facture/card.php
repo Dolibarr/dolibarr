@@ -5750,6 +5750,7 @@ if ($action == 'create') {
 			print '<td>'.$langs->trans('ListOfSituationInvoices').'</td>';
 			print '<td></td>';
 			print '<td class="center">'.$langs->trans('Situation').'</td>';
+
 			if (isModEnabled("bank")) {
 				print '<td class="right"></td>';
 			}
@@ -5850,7 +5851,6 @@ if ($action == 'create') {
 					$totalpaid = $next_invoice->getSommePaiement(0);
 					$totalcreditnotes = $next_invoice->getSumCreditNotesUsed(0);
 					$totaldeposits = $next_invoice->getSumDepositsUsed(0);
-
 					$total_next_ht += $next_invoice->total_ht;
 					$total_next_ttc += $next_invoice->total_ttc;
 

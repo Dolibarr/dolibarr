@@ -482,7 +482,7 @@ function MoreProducts(moreorless) {
 	var nb_cat_shown = $('.div5 div.wrapper2[data-iscat=1]').length;
 	var offset = <?php echo($MAXPRODUCT - 2); ?> * pageproducts - nb_cat_shown;
 	// Only show products for sale (tosell=1)
-	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&token=<?php echo newToken();?>&category='+currentcat+'&tosell=1&limit='+limit+'&offset='+offset, function(data) {
+	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&token=<?php echo newToken();?>&thirdpartyid=' + jQuery('#thirdpartyid').val() + '&category='+currentcat+'&tosell=1&limit='+limit+'&offset='+offset, function(data) {
 		console.log("Call ajax.php (in MoreProducts) to get Products of category "+currentcat);
 
 		if (typeof (data[0]) == "undefined" && moreorless=="more"){ // Return if no more pages
