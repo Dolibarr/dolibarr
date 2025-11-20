@@ -2,7 +2,7 @@
 /* Copyright (C) 2015   	Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2018   	Pierre Chéné            <pierre.chene44@gmail.com>
  * Copyright (C) 2019		Cedric Ancelin			<icedo.anc@gmail.com>
- * Copyright (C) 2020-2024  Frédéric France     	<frederic.france@free.fr>
+ * Copyright (C) 2020-2025  Frédéric France     	<frederic.france@free.fr>
  * Copyright (C) 2023       Alexandre Janniaux  	<alexandre.janniaux@gmail.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024      Jon Bendtsen             <jon.bendtsen.github@jonb.dk>
@@ -2479,9 +2479,12 @@ class Thirdparties extends DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
+	 * @phpstan-template T
 	 *
 	 * @param   Object  $object     Object to clean
 	 * @return  Object				Object with cleaned properties
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	protected function _cleanObjectDatas($object)
 	{

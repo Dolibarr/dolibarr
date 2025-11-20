@@ -100,8 +100,11 @@ HTTP 200
 # GET emailtemplates DOLAPIENTITY: 2
 GET http://{{hostnport}}/api/index.php/emailtemplates
 DOLAPIENTITY: 2
-HTTP 401
-{"error":{"code":401,"message":"Unauthorized: Error user not valid (not found with api key or bad status or bad validity dates) (conf->entity=2)"}}
+HTTP 403
+[Asserts]
+jsonpath "$.error" exists
+jsonpath "$.error.code" == 403
+jsonpath "$.error.message" == "Forbidden: denied access to email templates"
 
 # GET id of first element
 GET http://{{hostnport}}/api/index.php/emailtemplates?limit=1&page=0

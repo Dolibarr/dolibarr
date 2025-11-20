@@ -203,6 +203,9 @@ if ($release) {
 }
 
 
+$needtoclose = 0;
+
+
 // Build the XML file
 if ($release) {
 	$checksumconcat = array();
@@ -229,8 +232,6 @@ if ($release) {
 
 	fputs($fp, '<?xml version="1.0" encoding="UTF-8" ?>'."\n");
 	fputs($fp, '<checksum_list version="'.$release.'" date="'.dol_print_date(dol_now(), 'dayhourrfc').'" generator="'.$script_file.'" gitcommit="'.$gitcommit.'">'."\n");
-
-	$needtoclose = 0;
 
 	foreach ($includeconstants as $countrycode => $tmp) {
 		fputs($fp, '<dolibarr_constants country="'.$countrycode.'">'."\n");
@@ -385,6 +386,7 @@ foreach ($arrayofunalterablefiles as $entry) {
 		}
 	} else {
 		$file = $entry['dir'].'/'.$entry['file'];
+		$dir = '';
 		$newdir = str_replace(DOL_DOCUMENT_ROOT, '', dirname($file));
 		$newdir = str_replace(dirname(__FILE__).'/../../htdocs', '', dirname($file));
 		if (!file_exists($file)) {

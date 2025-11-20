@@ -20,8 +20,8 @@
 
 /**
  * @var CommonObject $this
- * @var CommonObject $object
- * @var CommonObjectLine $line
+ * @var Propal|Contrat|Commande|Facture|Expedition|Delivery|CommandeFournisseur|FactureFournisseur|SupplierProposal|Fichinter $object
+ * @var PropaleLigne|ContratLigne|OrderLine|FactureLigne|ExpeditionLigne|DeliveryLine|CommandeFournisseurLigne|SupplierInvoiceLine|SupplierProposalLine|FichinterLigne $line
  * @var Form $form
  * @var Translate $langs
  * @var User $user
@@ -30,8 +30,8 @@
  */
 
 '
-@phan-var-force Propal|Contrat|Commande|Facture|Expedition|Delivery|CommandeFournisseur|FactureFournisseur|SupplierProposal $object
-@phan-var-force CommonObjectLine|CommonInvoiceLine|CommonOrderLine|ExpeditionLigne|PropaleLigne $line
+@phan-var-force Propal|Contrat|Commande|Facture|Expedition|Delivery|CommandeFournisseur|FactureFournisseur|SupplierProposal|Fichinter $object
+@phan-var-force CommonObjectLine|CommonInvoiceLine|CommonOrderLine|ExpeditionLigne|PropaleLigne|FichinterLigne $line
 ';
 
 // Options for subtotal
