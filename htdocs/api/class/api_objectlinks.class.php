@@ -408,14 +408,15 @@ class ObjectLinks extends DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
+	 * @phpstan-template T
 	 *
 	 * @param   Object  $object     	Object to clean
 	 * @phan-param		ObjectLink	$object
-	 * @phpstan-param	ObjectLink	$object
+	 * @phpstan-param	T	$object
 	 *
 	 * @return  Object	Object with cleaned properties
 	 * @phan-return		ObjectLink
-	 * @phpstan-return	ObjectLink
+	 * @phpstan-return	T
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -478,18 +479,18 @@ class ObjectLinks extends DolibarrApi
 		unset($object->date_modification);
 		unset($object->tms);
 		unset($object->date_cloture);
-		unset($object->user_author);
-		unset($object->user_creation);
 		unset($object->user_creation_id);
-		unset($object->user_valid);
-		unset($object->user_validation);
 		unset($object->user_validation_id);
 		unset($object->user_closing_id);
-		unset($object->user_modification);
 		unset($object->user_modification_id);
 		unset($object->fk_user_creat);
 		unset($object->fk_user_modif);
 		unset($object->totalpaid);
+		unset($object->totalcreditnotes);
+		unset($object->totaldeposits);
+		unset($object->totalpaid_multicurrency);
+		unset($object->totalcreditnotes_multicurrency);
+		unset($object->totaldeposits_multicurrency);
 		unset($object->product);
 		unset($object->cond_reglement_supplier_id);
 		unset($object->deposit_percent);

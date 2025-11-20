@@ -151,28 +151,26 @@ if (empty($reshook)) {
 		if ($result >= 0) {
 			// Define output language
 			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
-				if (method_exists($object, 'generateDocument')) {
-					$outputlangs = $langs;
-					$newlang = '';
-					if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
-						$newlang = GETPOST('lang_id', 'aZ09');
-					}
-					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-						$newlang = $object->thirdparty->default_lang;
-					}
-					if (!empty($newlang)) {
-						$outputlangs = new Translate("", $conf);
-						$outputlangs->setDefaultLang($newlang);
-					}
+				$outputlangs = $langs;
+				$newlang = '';
+				if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
+					$newlang = GETPOST('lang_id', 'aZ09');
+				}
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+					$newlang = $object->thirdparty->default_lang;
+				}
+				if (!empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
 
-					$ret = $object->fetch($id); // Reload to get new records
+				$ret = $object->fetch($id); // Reload to get new records
 
-					$model = $object->model_pdf;
+				$model = $object->model_pdf;
 
-					$retgen = $object->generateDocument($model, $outputlangs, 0, 0, 0);
-					if ($retgen < 0) {
-						setEventMessages($object->error, $object->errors, 'warnings');
-					}
+				$retgen = $object->generateDocument($model, $outputlangs, 0, 0, 0);
+				if ($retgen < 0) {
+					setEventMessages($object->error, $object->errors, 'warnings');
 				}
 			}
 		} else {
@@ -183,28 +181,26 @@ if (empty($reshook)) {
 		if ($result >= 0) {
 			// Define output language
 			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
-				if (method_exists($object, 'generateDocument')) {
-					$outputlangs = $langs;
-					$newlang = '';
-					if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
-						$newlang = GETPOST('lang_id', 'aZ09');
-					}
-					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-						$newlang = $object->thirdparty->default_lang;
-					}
-					if (!empty($newlang)) {
-						$outputlangs = new Translate("", $conf);
-						$outputlangs->setDefaultLang($newlang);
-					}
+				$outputlangs = $langs;
+				$newlang = '';
+				if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
+					$newlang = GETPOST('lang_id', 'aZ09');
+				}
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+					$newlang = $object->thirdparty->default_lang;
+				}
+				if (!empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
 
-					$ret = $object->fetch($id); // Reload to get new records
+				$ret = $object->fetch($id); // Reload to get new records
 
-					$model = $object->model_pdf;
+				$model = $object->model_pdf;
 
-					$retgen = $object->generateDocument($model, $outputlangs, 0, 0, 0);
-					if ($retgen < 0) {
-						setEventMessages($object->error, $object->errors, 'warnings');
-					}
+				$retgen = $object->generateDocument($model, $outputlangs, 0, 0, 0);
+				if ($retgen < 0) {
+					setEventMessages($object->error, $object->errors, 'warnings');
 				}
 			}
 		} else {
@@ -293,7 +289,7 @@ if ($action == 'create') {
 
 	print load_fiche_titre($langs->trans("NewPartnership"), '', 'object_'.$object->picto);
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	if ($backtopage) {
@@ -328,7 +324,7 @@ if ($action == 'create') {
 if (($id || $ref) && $action == 'edit') {
 	print load_fiche_titre($langs->trans("Partnership"), '', 'object_'.$object->picto);
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';

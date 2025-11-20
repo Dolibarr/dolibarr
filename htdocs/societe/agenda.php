@@ -30,12 +30,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -43,14 +37,20 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('agenda', 'bills', 'companies', 'orders', 'propal'));
 
+$action = GETPOST('action', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'thirdpartyagenda';
 
-if (GETPOST('actioncode', 'array')) {
-	$actioncode = GETPOST('actioncode', 'array', 3);
+if (GETPOSTISARRAY('actioncode')) {
+	$actioncode = GETPOST('actioncode', 'array:alpha', 3);
 	if (!count($actioncode)) {
 		$actioncode = '0';
 	}
@@ -60,14 +60,18 @@ if (GETPOST('actioncode', 'array')) {
 
 $search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
+$search_complete = GETPOST('search_complete');
+$search_dateevent_start = GETPOSTDATE('dateevent_start');
+$search_dateevent_end = GETPOSTDATE('dateevent_end');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
-if (empty($page) || $page == -1) {
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT('page');
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
-}     // If $page is not defined, or '' or -1
+}
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -76,6 +80,15 @@ if (!$sortfield) {
 }
 if (!$sortorder) {
 	$sortorder = 'DESC,DESC';
+}
+
+if (GETPOST('actioncode', 'array')) {
+	$actioncode = GETPOST('actioncode', 'array', 3);
+	if (!count($actioncode)) {
+		$actioncode = '0';
+	}
+} else {
+	$actioncode = GETPOST("actioncode", "alpha", 3) ? GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT'));
 }
 
 // Initialize a technical objects
@@ -119,7 +132,9 @@ if (empty($reshook)) {
 	// Purge search criteria
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 		$actioncode = '';
+		$search_rowid = '';
 		$search_agenda_label = '';
+		$search_complete = '';
 	}
 }
 
@@ -157,6 +172,8 @@ $object->info($socid);
 dol_print_object_info($object, 1);
 
 print '</div>';
+
+print '<div class="clearboth"></div>';
 
 print dol_get_fiche_end();
 
@@ -210,6 +227,28 @@ if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') ||
 	if ($limit > 0 && $limit != $conf->liste_limit) {
 		$param .= '&limit='.((int) $limit);
 	}
+	if ($search_rowid) {
+		$param .= '&search_rowid='.urlencode($search_rowid);
+	}
+	if ($actioncode !== '' && $actioncode !== '-1') {
+		$param .= '&actioncode='.urlencode($actioncode);
+	}
+	if ($search_agenda_label) {
+		$param .= '&search_agenda_label='.urlencode($search_agenda_label);
+	}
+	if ($search_complete != '') {
+		$param .= '&search_complete='.urlencode($search_complete);
+	}
+	if ($search_dateevent_start != '') {
+		$param .= '&dateevent_startyear='.GETPOSTINT('dateevent_startyear');
+		$param .= '&dateevent_startmonth='.GETPOSTINT('dateevent_startmonth');
+		$param .= '&dateevent_startday='.GETPOSTINT('dateevent_startday');
+	}
+	if ($search_dateevent_end != '') {
+		$param .= '&dateevent_endyear='.GETPOSTINT('dateevent_endyear');
+		$param .= '&dateevent_endmonth='.GETPOSTINT('dateevent_endmonth');
+		$param .= '&dateevent_endday='.GETPOSTINT('dateevent_endday');
+	}
 
 	// Try to know count of actioncomm from cache
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
@@ -221,12 +260,13 @@ if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') ||
 		$titlelist = $langs->trans("Actions").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>' : '');
 	}
 
-	print_barre_liste($titlelist, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 0);
+	print_barre_liste($titlelist, 0, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 0);
 
 	// List of all actions
 	$filters = array();
 	$filters['search_agenda_label'] = $search_agenda_label;
 	$filters['search_rowid'] = $search_rowid;
+	$filters['search_complete'] = $search_complete;		// Can be 'na', '0', '100', '50'
 
 	// TODO Replace this with same code than into list.php
 	show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder, $object->module);

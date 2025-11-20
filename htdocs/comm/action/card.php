@@ -8,8 +8,8 @@
  * Copyright (C) 2014       Cedric GROSS            <c.gross@kreiz-it.fr>
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2019	      Ferran Marcet	          <fmarcet@2byte.es>
- * Copyright (C) 2024-2025	MDW				          <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2019       Ferran Marcet	        <fmarcet@2byte.es>
+ * Copyright (C) 2024-2025  MDW				        <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,13 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
@@ -49,17 +56,8 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
-
 // Load translation files required by the page
-$langs->loadLangs(array("companies", "other", "commercial", "bills", "orders", "agenda", "mails"));
+$langs->loadLangs(["companies", "other", "commercial", "bills", "orders", "agenda", "mails"]);
 
 // Get Parameters
 $action = GETPOST('action', 'aZ09');
@@ -99,7 +97,7 @@ if ($fulldayevent) {
 	$datep = dol_mktime($aphour, $apmin, 0, GETPOSTINT("apmonth"), GETPOSTINT("apday"), GETPOSTINT("apyear"), 'tzuserrel');
 	$datef = dol_mktime($p2hour, $p2min, 59, GETPOSTINT("p2month"), GETPOSTINT("p2day"), GETPOSTINT("p2year"), 'tzuserrel');
 }
-$reg = array();
+$reg = [];
 if (GETPOST('datep')) {
 	if (GETPOST('datep') == 'now') {
 		$datep = dol_now();
@@ -158,23 +156,48 @@ if (empty($action) && empty($object->id)) {
 }
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-$hookmanager->initHooks(array('actioncard', 'globalcard'));
+$hookmanager->initHooks(['actioncard', 'globalcard']);
 
-$parameters = array('socid' => $socid);
+$TRemindTypes = [];
+if (getDolGlobalString('AGENDA_REMINDER_BROWSER')) {
+	$TRemindTypes['browser'] = [
+		'label' => $langs->trans('BrowserPush'),
+		'disabled' => (getDolGlobalString('AGENDA_REMINDER_BROWSER') ? 0 : 1),
+		'type' => ActionCommReminder::TYPE_USER,
+		'data-html' => img_picto('', 'globe', 'class="pictofixedwidth"') . $langs->trans('BrowserPush'),
+	];
+}
+if (getDolGlobalString('AGENDA_REMINDER_EMAIL')) {
+	$TRemindTypes['email'] = [
+		'label' => $langs->trans('EMail'),
+		'disabled' => (getDolGlobalString('AGENDA_REMINDER_EMAIL') ? 0 : 1),
+		'type' => ActionCommReminder::TYPE_USER,
+		'data-html' => img_picto('', 'email', 'class="pictofixedwidth"') . $langs->trans('EMail'),
+	];
+}
+if (getDolGlobalString('AGENDA_REMINDER_SMS')) {
+	$langs->load('sms');
+	$TRemindTypes['sms'] = [
+		'label' => $langs->trans('Sms'),
+		'disabled' => (getDolGlobalString('MAIN_SMS_SENDMODE') ? 0 : 1),
+		'type' => ActionCommReminder::TYPE_USER,
+		'data-html' => img_picto('', 'phoning_mobile', 'class="pictofixedwidth"') . $langs->trans('Sms'),
+	];
+}
+$TDurationTypes = $form->getDurationTypes($langs);
+$TDurationTypesExcluded = ['y', 'm', 's'];
+$enablereminders = getDolGlobalString('AGENDA_REMINDER_EMAIL') || getDolGlobalString('AGENDA_REMINDER_BROWSER') || getDolGlobalString('AGENDA_REMINDER_SMS');
+$parameters = [
+	'socid' => $socid,
+	'TRemindTypes' => &$TRemindTypes,
+	'enablereminders' => &$enablereminders,
+	'TDurationTypes' => &$TDurationTypes,
+	'TDurationTypesExcluded' => &$TDurationTypesExcluded,
+];
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
-
-$TRemindTypes = array();
-if (getDolGlobalString('AGENDA_REMINDER_BROWSER')) {
-	$TRemindTypes['browser'] = array('label' => $langs->trans('BrowserPush'), 'disabled' => (getDolGlobalString('AGENDA_REMINDER_BROWSER') ? 0 : 1));
-}
-if (getDolGlobalString('AGENDA_REMINDER_EMAIL')) {
-	$TRemindTypes['email'] = array('label' => $langs->trans('EMail'), 'disabled' => (getDolGlobalString('AGENDA_REMINDER_EMAIL') ? 0 : 1));
-}
-
-$TDurationTypes = array('y' => $langs->trans('Years'), 'm' => $langs->trans('Month'), 'w' => $langs->trans('Weeks'), 'd' => $langs->trans('Days'), 'h' => $langs->trans('Hours'), 'i' => $langs->trans('Minutes'));
 
 $result = restrictedArea($user, 'agenda', $object, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id');
 
@@ -187,7 +210,7 @@ $usercancreate = $user->hasRight('agenda', 'allactions', 'create') || ((empty($o
 
 $listUserAssignedUpdated = false;
 $listResourceAssignedUpdated = false;
-$assignedtouser = array();
+$assignedtouser = [];
 
 // Remove user to assigned list
 if (empty($reshook) && (GETPOST('removedassigned') || GETPOST('removedassigned') == '0')) {
@@ -196,7 +219,7 @@ if (empty($reshook) && (GETPOST('removedassigned') || GETPOST('removedassigned')
 	if (!empty($_SESSION['assignedtouser'])) {
 		$tmpassigneduserids = json_decode($_SESSION['assignedtouser'], true);
 	} else {
-		$tmpassigneduserids = array();
+		$tmpassigneduserids = [];
 	}
 
 	foreach ($tmpassigneduserids as $key => $val) {
@@ -223,7 +246,7 @@ if (empty($reshook) && (GETPOST('removedassignedresource') || GETPOST('removedas
 	if (!empty($_SESSION['assignedtoresource'])) {
 		$tmpassignedresourceids = json_decode($_SESSION['assignedtoresource'], true);
 	} else {
-		$tmpassignedresourceids = array();
+		$tmpassignedresourceids = [];
 	}
 
 	foreach ($tmpassignedresourceids as $key => $val) {
@@ -233,7 +256,7 @@ if (empty($reshook) && (GETPOST('removedassignedresource') || GETPOST('removedas
 	}
 
 	$_SESSION['assignedtoresource'] = json_encode($tmpassignedresourceids);
-	$donotclearsessionresource = 1;
+
 	if ($action == 'add' && $usercancreate) {
 		$action = 'create';
 	}
@@ -248,7 +271,7 @@ if (empty($reshook) && (GETPOST('removedassignedresource') || GETPOST('removedas
 if (empty($reshook) && (GETPOST('addassignedtouser') || GETPOST('updateassignedtouser'))) {
 	// Add a new user
 	if (GETPOST('assignedtouser') > 0) {
-		$assignedtouser = array();
+		$assignedtouser = [];
 		if (!empty($_SESSION['assignedtouser'])) {
 			$assignedtouser = json_decode($_SESSION['assignedtouser'], true);
 		}
@@ -270,7 +293,7 @@ if (empty($reshook) && (GETPOST('addassignedtouser') || GETPOST('updateassignedt
 if (empty($reshook) && (GETPOST('addassignedtoresource') || GETPOST('updateassignedtoresource'))) {
 	// Add a new user
 	if (GETPOST('assignedtoresource') > 0) {
-		$assignedtoresource = array();
+		$assignedtoresource = [];
 		if (!empty($_SESSION['assignedtoresource'])) {
 			$assignedtoresource = json_decode($_SESSION['assignedtoresource'], true);
 		}
@@ -380,7 +403,7 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 		$object->type_code = GETPOST('actioncode', 'aZ09');
 	}
 
-	$listofresourceid = array();
+	$listofresourceid = [];
 
 	if (!$error) {
 		// Initialisation of object actioncomm
@@ -431,7 +454,7 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 
 			$object->fk_element = $taskid;
 			$object->elementid = $taskid;
-			$object->elementtype = 'task';
+			$object->elementtype = 'project_task';
 		}
 
 		$object->datep = $datep;
@@ -441,7 +464,7 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 
 		$transparency = (GETPOST("transparency") == 'on' ? 1 : 0);
 
-		$listofuserid = array();
+		$listofuserid = [];
 		if (!empty($_SESSION['assignedtouser'])) {
 			$listofuserid = json_decode($_SESSION['assignedtouser'], true);
 		}
@@ -528,9 +551,9 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 		$object->recurrule .= (GETPOST('recurrulefreq', 'alpha') == 'MONTHLY') ? "_BYMONTHDAY".((int) $dayinmonth) : "";
 		$object->recurrule .= (GETPOST('recurrulefreq', 'alpha') == 'WEEKLY') ? "_BYDAY".((int) $dayinweek) : "";
 
-		$reg1 = array();
-		$reg2 = array();
-		$reg3 = array();
+		$reg1 = [];
+		$reg2 = [];
+		$reg3 = [];
 		if ($object->recurrule && preg_match('/FREQ=([A-Z]+)/i', $object->recurrule, $reg1)) {
 			$selectedrecurrulefreq = $reg1[1];
 		}
@@ -931,7 +954,7 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 		$object->location    = GETPOST('location', "alphanohtml");
 		$object->socid       = GETPOSTINT("socid");
 		$socpeopleassigned   = GETPOST("socpeopleassigned", 'array');
-		$object->socpeopleassigned = array();
+		$object->socpeopleassigned = [];
 		foreach ($socpeopleassigned as $cid) {
 			$object->socpeopleassigned[$cid] = array('id' => $cid);
 		}
@@ -950,7 +973,7 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 
 			$object->fk_element = $taskid;
 			$object->elementid = $taskid;
-			$object->elementtype = 'task';
+			$object->elementtype = 'project_task';
 		}
 
 		$object->note_private = trim(GETPOST("note", "restricthtml"));
@@ -974,7 +997,7 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 		$transparency = (GETPOST("transparency") == 'on' ? 1 : 0);
 
 		// Users
-		$listofuserid = array();
+		$listofuserid = [];
 		if (!empty($_SESSION['assignedtouser'])) {	// Now concat assigned users
 			// Restore array with key with same value than param 'id'
 			$tmplist1 = json_decode($_SESSION['assignedtouser'], true);
@@ -989,7 +1012,7 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 				$listofuserid[$assignedtouser] = array('id' => $assignedtouser, 'mandatory' => 0, 'transparency' => ($user->id == $assignedtouser ? $transparency : '')); // Owner first
 			}
 		}
-		$object->userassigned = array();
+		$object->userassigned = [];
 		$object->userownerid = 0; // Clear old content
 		$i = 0;
 		foreach ($listofuserid as $key => $val) {
@@ -1103,7 +1126,7 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 							$reminder->delete($user);
 						}
 					}
-					$object->reminders = array();
+					$object->reminders = [];
 				}
 
 				// Create reminders for every assigned user if reminder is on
@@ -1432,7 +1455,11 @@ if ($action == 'create') {
 
 	print dol_get_fiche_head();
 
+	print '<div class="divcreate">';
 	print '<table class="border centpercent nobottom">';
+
+	// Title
+	print '<tr><td'.(getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? ' class="fieldrequired"' : ' class="fieldrequired titlefieldcreate"').'>'.$langs->trans("Title").'</td><td><input type="text" id="label" name="label" class="soixantepercent" value="'.GETPOST('label').'"></td></tr>';
 
 	// Type of event
 	if (getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
@@ -1444,12 +1471,12 @@ if ($action == 'create') {
 		print '</td></tr>';
 	}
 
-	// Title
-	print '<tr><td'.(getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? '' : ' class="fieldrequired titlefieldcreate"').'>'.$langs->trans("Title").'</td><td><input type="text" id="label" name="label" class="soixantepercent" value="'.GETPOST('label').'"></td></tr>';
-
 	// Full day
 	print '<tr><td><span class="fieldrequired">'.$langs->trans("Date").'</span></td>';
-	print '<td class="valignmiddle height30"><input class="valignmiddle" type="checkbox" id="fullday" name="fullday" '.(GETPOST('fullday') ? ' checked' : '').'><label for="fullday" class="valignmiddle small">'.$langs->trans("EventOnFullDay").'</label>';
+	print '<td class="valignmiddle height30">';
+	print '<div>';
+	print '<input class="valignmiddle" type="checkbox" id="fullday" name="fullday" '.(GETPOST('fullday') ? ' checked' : '').'><label for="fullday" class="valignmiddle small">'.$langs->trans("EventOnFullDay").'</label>';
+	print '</div>';
 	print '</td></tr>';
 
 	$datep = ($datep ? $datep : (is_null($object->datep) ? '' : $object->datep));
@@ -1469,24 +1496,28 @@ if ($action == 'create') {
 	// Date start
 	print '<tr><td class="nowrap">';
 	print '</td><td>';
+	print '<div class="inline-block">';
 	if (GETPOST("afaire") == 1) {
 		print $form->selectDate($datep, 'ap', 1, 1, 0, "action", 1, 2, 0, 'fulldaystart', '', '', '', 1, '', '', 'tzuserrel'); // Empty value not allowed for start date and hours if "todo"
 	} else {
 		print $form->selectDate($datep, 'ap', 1, 1, 1, "action", 1, 2, 0, 'fulldaystart', '', '', '', 1, '', '', 'tzuserrel');
 	}
 	print ' <span class="hideonsmartphone">&nbsp; &nbsp; - &nbsp; &nbsp;</span><br class="showonsmartphone"> ';
-	print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 2, 0, 'fulldayend', '', '', '', 1, '', '', 'tzuserrel');
-	print '</td></tr>';
+	print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 0, 0, 'fulldayend', '', '', '', 1, '', '', 'tzuserrel');
+	print '</div>';
+
+	//print '</td></tr>';
 
 	// Recurring event
 	$userepeatevent = (getDolGlobalInt('MAIN_DISABLE_RECURRING_EVENTS') ? 0 : 1);
 	if ($userepeatevent) {
-		print '<tr><td></td><td>';
+		//print '<tr><td></td><td>';
+		print '<div class="clearbothonsmartphone hideonsmartphone inline-block"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>';
 
 		// Repeat
-		//print ' &nbsp; &nbsp; &nbsp; &nbsp; ';
-		print '<div class="opacitymedium inline-block small">';
-		print img_picto($langs->trans("Recurrence"), 'recurring', 'style="margin-left: 6px" class="paddingright2"');
+		print '<div class="inline-block small" data-html="repeat">';
+		print '<span class="opacitymedium">';
+		print img_picto($langs->trans("Recurrence"), 'recurring', 'style="margin-left: 3px" class="paddingright"');
 		print '<input type="hidden" name="recurid" value="'.(empty($object->recurid) ? '' : $object->recurid).'">';
 
 		$selectedrecurrulefreq = 'no';
@@ -1497,7 +1528,7 @@ if ($action == 'create') {
 		$object->recurrule .= GETPOSTISSET('BYDAY') ? "_BYDAY".GETPOST('BYDAY', 'alpha') : "";
 
 
-		$reg = array();
+		$reg = [];
 		if ($object->recurrule && preg_match('/FREQ=([A-Z]+)/i', $object->recurrule, $reg)) {
 			$selectedrecurrulefreq = $reg[1];
 		}
@@ -1508,7 +1539,8 @@ if ($action == 'create') {
 			$selectedrecurrulebyday = (int) $reg[1];
 		}
 
-		print $form->selectarray('recurrulefreq', $arrayrecurrulefreq, $selectedrecurrulefreq, 0, 0, 0, '', 0, 0, 0, '', 'marginrightonly minwidth100');
+		print $form->selectarray('recurrulefreq', $arrayrecurrulefreq, $selectedrecurrulefreq, 0, 0, 0, '', 0, 0, 0, '', 'marginrightonly minwidth125 maxwidth150');
+		print '</span>';
 		// print '<script>console.log("recurrule: " +'.$object->recurrule.')</script>';
 		// For recursive event
 
@@ -1531,30 +1563,24 @@ if ($action == 'create') {
 		print $langs->trans("Until")." ";
 		print $form->selectDate($repeateventlimitdate, 'limit', 0, 0, 0, "action", 1, 0, 0, '', '', '', '', 1, '', '', 'tzuserrel');
 		print '</div>';
-
-		print '<script type="text/javascript">
+		?>
+		<script type="text/javascript">
 			jQuery(document).ready(function() {
-				function init_repeat()
-				{
-					console.log("recurrule: " + "'.$object->recurrule.'");
-					console.log("reg1: " + "'.$selectedrecurrulefreq.'");
-					console.log("reg2: " + "'.$selectedrecurrulebymonthday.'");
-					console.log("reg3: " + "'.$selectedrecurrulebyday.'");
-					console.log("selectedrulefreq: " + "'.$selectedrecurrulefreq.'");
-					if (jQuery("#recurrulefreq").val() == \'MONTHLY\')
-					{
+				function init_repeat() {
+					console.log("recurrule: " + "<?php echo $object->recurrule; ?>");
+					console.log("reg1: " + "<?php echo $selectedrecurrulefreq; ?>");
+					console.log("reg2: " + "<?php echo $selectedrecurrulebymonthday; ?>");
+					console.log("reg3: " + "<?php echo $selectedrecurrulebyday; ?>");
+					console.log("selectedrulefreq: " + "<?php echo $selectedrecurrulefreq; ?>");
+					if (jQuery("#recurrulefreq").val() == 'MONTHLY') {
 						/* jQuery(".repeateventBYMONTHDAY").css("display", "inline-block");	*/	/* use this instead of show because we want inline-block and not block */
 						jQuery(".repeateventlimitdate").css("display", "inline-block");
 						jQuery(".repeateventBYDAY").hide();
-					}
-					else if (jQuery("#recurrulefreq").val() == \'WEEKLY\')
-					{
+					} else if (jQuery("#recurrulefreq").val() == 'WEEKLY') {
 						jQuery(".repeateventBYMONTHDAY").hide();
 						/* jQuery(".repeateventBYDAY").css("display", "inline-block"); */		/* use this instead of show because we want inline-block and not block */
 						jQuery(".repeateventlimitdate").css("display", "inline-block");
-					}
-					else
-					{
+					} else {
 						jQuery(".repeateventBYMONTHDAY").hide();
 						jQuery(".repeateventBYDAY").hide();
 						jQuery(".repeateventlimitdate").hide();
@@ -1565,18 +1591,35 @@ if ($action == 'create') {
 					init_repeat();
 				});
 			});
-			</script>';
+		</script>
+		<?php
 		print '</div>';
-		print '</td></tr>';
+		// print '</td></tr>';
 	}
 
-	print '<tr><td class="">&nbsp;</td><td></td></tr>';
+	print '</td></tr>';
+
+
+	// Location
+	if (!getDolGlobalString('AGENDA_DISABLE_LOCATION')) {
+		print '<tr><td class="titlefieldcreate">'.$langs->trans("Location").'</td><td>';
+		print img_picto('', 'map-marker-alt', 'class="pictofixedwidth"');
+		print '<input type="text" name="location" class="minwidth300 maxwidth150onsmartphone" value="'.(GETPOST('location') ? GETPOST('location') : $object->location).'"></td></tr>';
+	}
+
+	print '</table>';
+	print '</div>';
+
+	print '<br>';
+
+	print '<div class="divcreate">';
+	print '<table class="border centpercent nobottom">';
 
 	// Assigned to user
-	print '<tr><td class="tdtop nowrap"><span class="fieldrequired">'.$langs->trans("ActionAffectedTo").'</span></td><td>';
-	$listofuserid = array();
-	$listofcontactid = array();
-	$listofotherid = array();
+	print '<tr><td class="tdtop nowrap titlefieldcreate"><span>'.$langs->trans("ActionAffectedTo").'</span></td><td>';
+	$listofuserid = [];
+	$listofcontactid = [];
+	$listofotherid = [];
 
 	if (empty($donotclearsession)) {
 		$assignedtouser = GETPOST("assignedtouser") ? GETPOST("assignedtouser") : (!empty($object->userownerid) && $object->userownerid > 0 ? $object->userownerid : $user->id);
@@ -1591,35 +1634,24 @@ if ($action == 'create') {
 			$listofuserid = json_decode($_SESSION['assignedtouser'], true);
 		}
 		if (!is_array($listofuserid)) {
-			$listofuserid = array();
+			$listofuserid = [];
 		}
 		$firstelem = reset($listofuserid);
 		if (isset($listofuserid[$firstelem['id']])) {
 			$listofuserid[$firstelem['id']]['transparency'] = (GETPOSTISSET('transparency') ? GETPOST('transparency', 'alpha') : 0); // 0 by default when refreshing
 		}
 	}
-	print '<!-- list of user to assign --><div class="assignedtouser">';
-	print $form->select_dolusers_forevent(($action == 'create' ? 'add' : 'update'), 'assignedtouser', 1, array(), 0, '', array(), '0', 0, 0, 'u.statut:<>:0', 1, $listofuserid, $listofcontactid, $listofotherid);
+	print '<!-- list of user to assign -->'."\n";
+	print '<div class="assignedtouser">';
+	print $form->select_dolusers_forevent(($action == 'create' ? 'add' : 'update'), 'assignedtouser', 1, [], 0, '', [], '0', 0, 0, 'u.statut:<>:0', 1, $listofuserid, $listofcontactid, $listofotherid);
 	print '</div>';
 	print '</td></tr>';
-
-	// Location
-	if (!getDolGlobalString('AGENDA_DISABLE_LOCATION')) {
-		print '<tr><td>'.$langs->trans("Location").'</td><td><input type="text" name="location" class="minwidth300 maxwidth150onsmartphone" value="'.(GETPOST('location') ? GETPOST('location') : $object->location).'"></td></tr>';
-	}
-
-	if (isModEnabled('category')) {
-		// Categories
-		print '<tr><td>'.$langs->trans("Categories").'</td><td>';
-		print $form->selectCategories(Categorie::TYPE_ACTIONCOMM, 'categories', $object);
-		print "</td></tr>";
-	}
 
 	if (isModEnabled('resource')) {
 		// Resources
 		print '<tr><td class="tdtop nowrap">'.$langs->trans("Resource").'</td><td>';
 
-		$listofresourceid = array();
+		$listofresourceid = [];
 		if (empty($donotclearsession)) {
 			$assignedtoresource = GETPOST("assignedtoresource");
 			if ($assignedtoresource) {
@@ -1631,7 +1663,7 @@ if ($action == 'create') {
 				$listofresourceid = json_decode($_SESSION['assignedtoresource'], true);
 			}
 			if (!is_array($listofresourceid)) {
-				$listofresourceid = array();
+				$listofresourceid = [];
 			}
 			$firstelem = reset($listofresourceid);
 			if (isset($listofresourceid[$firstelem['id']])) {
@@ -1639,10 +1671,26 @@ if ($action == 'create') {
 			}
 		}
 		print '<div class="assignedtoresource">';
-		print $form->select_dolresources_forevent(($action == 'create' ? 'add' : 'update'), 'assignedtoresource', 1, array(), 0, '', array(), '0', 0, 0, 'AND u.statut != 0', 1, $listofresourceid);
+		print $form->select_dolresources_forevent(($action == 'create' ? 'add' : 'update'), 'assignedtoresource', 1, [], 0, '', [], '0', 0, 0, 'AND u.statut != 0', 1, $listofresourceid);
 		print '</div>';
 		print '</td></tr>';
 	}
+
+	if (isModEnabled('category')) {
+		// Categories
+		print '<tr><td>'.$langs->trans("Categories").'</td><td>';
+		print $form->selectCategories(Categorie::TYPE_ACTIONCOMM, 'categories', $object);
+		print "</td></tr>";
+	}
+
+	print '</table>';
+	print '</div>';
+
+
+	print '<br>';
+
+	print '<div class="divcreate">';
+	print '<table class="border centpercent nobottom">';
 
 	// Status
 	print '<tr><td>'.$langs->trans("Status").' / '.$langs->trans("Progression").'</td>';
@@ -1659,16 +1707,8 @@ if ($action == 'create') {
 			$percent = 100;
 		}
 	}
-	$formactions->form_select_status_action('formaction', $percent, 1, 'complete', 0, 0, 'maxwidth200');
+	print $formactions->form_select_status_action('formaction', $percent, 1, 'complete', 0, 0, 'minwidth150 maxwidth300', 1);
 	print '</td></tr>';
-
-	print '</table>';
-
-
-	print '<br><hr><br>';
-
-
-	print '<table class="border centpercent nobottom">';
 
 	if (isModEnabled("societe")) {
 		// Related company
@@ -1679,13 +1719,13 @@ if ($action == 'create') {
 			print $societe->getNomUrl(1);
 			print '<input type="hidden" id="socid" name="socid" value="'.GETPOSTINT('socid').'">';
 		} else {
-			$events = array();
+			$events = [];
 			$events[] = array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php?showempty=1&token='.currentToken(), 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
 			//For external user force the company to user company
 			if (!empty($user->socid)) {
-				print img_picto('', 'company', 'class="paddingrightonly"').$form->select_company($user->socid, 'socid', '', 1, 1, 0, $events, 0, 'minwidth300 widthcentpercentminusxx maxwidth500');
+				print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company($user->socid, 'socid', '', 1, 1, 0, $events, 0, 'minwidth300 widthcentpercentminusxx maxwidth500');
 			} else {
-				print img_picto('', 'company', 'class="paddingrightonly"').$form->select_company('', 'socid', '', $langs->trans('SelectThirdParty'), 1, 0, $events, 0, 'minwidth300 widthcentpercentminusxx maxwidth500');
+				print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company('', 'socid', '', $langs->trans('SelectThirdParty'), 1, 0, $events, 0, 'minwidth300 widthcentpercentminusxx maxwidth500');
 			}
 		}
 		print '</td></tr>';
@@ -1706,20 +1746,20 @@ if ($action == 'create') {
 		} else {
 			$select_contact_default = -1; // select "none" by default
 		}
-		print img_picto('', 'contact', 'class="paddingrightonly"');
+		print img_picto('', 'contact', 'class="pictofixedwidth"');
 
 		if (getDolGlobalString('CONTACT_USE_SEARCH_TO_SELECT') && $conf->use_javascript_ajax) {
 			// FIXME Use a select without the "multiple" (not supported when CONTACT_USE_SEARCH_TO_SELECT is on) or allow use only when $object->socid is set...
 			/*
 			 $selected = array_keys($object->socpeopleassigned);
-			 print $form->select_contact(getDolGlobalString('MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT') ? 0 : $object->socid, $selected, 'socpeopleassigned', 1, '', '', 1, 'minwidth300 widthcentpercentminusx', false, 0, 0, array());
+			 print $form->select_contact(getDolGlobalString('MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT') ? 0 : $object->socid, $selected, 'socpeopleassigned', 1, '', '', 1, 'minwidth300 widthcentpercentminusx', false, 0, 0, []);
 			 */
 			$sav = getDolGlobalString('CONTACT_USE_SEARCH_TO_SELECT');
 			$conf->global->CONTACT_USE_SEARCH_TO_SELECT = 0;
-			print $form->selectcontacts(GETPOSTISSET('socid') ? GETPOSTINT('socid') : $select_contact_default, $preselectedids, 'socpeopleassigned[]', 1, '', '', 0, 'minwidth300 widthcentpercentminusxx maxwidth500', 0, 0, 0, array(), 'multiple', 'contactid');
+			print $form->selectcontacts(GETPOSTISSET('socid') ? GETPOSTINT('socid') : $select_contact_default, $preselectedids, 'socpeopleassigned[]', 1, '', '', 0, 'minwidth300 widthcentpercentminusxx maxwidth500', 0, 0, 0, [], 'multiple', 'contactid');
 			$conf->global->CONTACT_USE_SEARCH_TO_SELECT = $sav;
 		} else {
-			print $form->selectcontacts(GETPOSTISSET('socid') ? GETPOSTINT('socid') : $select_contact_default, $preselectedids, 'socpeopleassigned[]', 1, '', '', 0, 'minwidth300 widthcentpercentminusxx maxwidth500', 0, 0, 0, array(), 'multiple', 'contactid');
+			print $form->selectcontacts(GETPOSTISSET('socid') ? GETPOSTINT('socid') : $select_contact_default, $preselectedids, 'socpeopleassigned[]', 1, '', '', 0, 'minwidth300 widthcentpercentminusxx maxwidth500', 0, 0, 0, [], 'multiple', 'contactid');
 		}
 
 		print '</td></tr>';
@@ -1741,24 +1781,26 @@ if ($action == 'create') {
 		$url = dol_buildpath('comm/action/card.php', 2).$urloption;
 
 		// update task list
-		print "\n".'<script type="text/javascript">';
-		print '$(document).ready(function () {
-	               $("#projectid").change(function () {
-                        var url = "'.DOL_URL_ROOT.'/projet/ajax/projects.php?mode=gettasks&socid="+$("#search_socid").val()+"&projectid="+$("#projectid").val();
-						console.log("Call url to get the new list of tasks: "+url);
-                        $.get(url, function(data) {
-                            console.log(data);
-                            if (data) $("#taskid").html(data).select2();
-                        })
-                  });
-               })';
-		print '</script>'."\n";
+		?>
+		<script type="text/javascript">
+			$(document).ready(function () {
+				$("#projectid").change(function () {
+					var url = "<?php echo DOL_URL_ROOT; ?>/projet/ajax/projects.php?mode=gettasks&socid="+$("#search_socid").val()+"&projectid="+$("#projectid").val();
+					console.log("Call url to get the new list of tasks: "+url);
+					$.get(url, function(data) {
+						console.log(data);
+						if (data) $("#taskid").html(data).select2();
+					})
+				});
+			});
+		</script>
+		<?php
 
 		print '</td></tr>';
 
 		// Task
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("Task").'</td><td id="project-task-input-container" >';
-		print img_picto('', 'projecttask', 'class="paddingrightonly"');
+		print img_picto('', 'projecttask', 'class="pictofixedwidth"');
 		$projectsListId = '';
 		if (!empty($projectid)) {
 			$projectsListId = $projectid;
@@ -1790,7 +1832,7 @@ if ($action == 'create') {
 		}
 		//var_dump('origin='.$origin.' originid='.$originid.' hasPermissionOnLinkedObject='.$hasPermissionOnLinkedObject);
 
-		if (! in_array($origin, array('societe', 'project', 'task', 'user'))) {
+		if (! in_array($origin, array('societe', 'project', 'project_task', 'user'))) {
 			// We do not use link for object that already contains a hard coded field to make links with agenda events
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("LinkedObject").'</td>';
 			print '<td colspan="3">';
@@ -1817,12 +1859,12 @@ if ($action == 'create') {
 	// Description
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('note', (GETPOSTISSET('note') ? GETPOST('note', 'restricthtml') : $object->note_private), '', 120, 'dolibarr_notes', 'In', true, true, isModEnabled('fckeditor'), ROWS_4, '90%');
+	$doleditor = new DolEditor('note', (GETPOSTISSET('note') ? GETPOST('note', 'restricthtml') : $object->note_private), '', 100, 'dolibarr_notes', 'In', true, true, isModEnabled('fckeditor'), ROWS_4, '90%');
 	$doleditor->Create();
 	print '</td></tr>';
 
 	// Other attributes
-	$parameters = array();
+	$parameters = [];
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	if (empty($reshook)) {
@@ -1830,22 +1872,23 @@ if ($action == 'create') {
 	}
 
 	print '</table>';
+	print '</div>';
 
-
-	if (getDolGlobalString('AGENDA_REMINDER_EMAIL') || getDolGlobalString('AGENDA_REMINDER_BROWSER')) {
+	if ($enablereminders) {
 		//checkbox create reminder
 		print '<hr>';
-		print '<br>';
-		print '<label for="addreminder">'.img_picto('', 'bell', 'class="pictofixedwidth"').$langs->trans("AddReminder").'</label> <input type="checkbox" id="addreminder" name="addreminder"><br><br>';
+
+		print '<label for="addreminder">'.img_picto('', 'bell', 'class="pictofixedwidth"').$langs->trans("AddReminder").'</label> <input type="checkbox" id="addreminder" name="addreminder"><br>';
 
 		print '<div class="reminderparameters" style="display: none;">';
+		print '<br>';
 
 		print '<table class="border centpercent">';
 
 		//Reminder
 		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderTime").'</td><td colspan="3">';
 		print '<input class="width50" type="number" name="offsetvalue" value="'.(GETPOSTISSET('offsetvalue') ? GETPOSTINT('offsetvalue') : getDolGlobalInt('AGENDA_REMINDER_DEFAULT_OFFSET', 30)).'"> ';
-		print $form->selectTypeDuration('offsetunit', 'i', array('y', 'm'));
+		print $form->selectTypeDuration('offsetunit', 'i', $TDurationTypesExcluded);
 		print '</td></tr>';
 
 		//Reminder Type
@@ -1897,39 +1940,37 @@ if ($action == 'create') {
 				});
 		   })';
 		print '</script>'."\n";
-
-		print "\n".'<script type="text/javascript">';
-		print '$(document).ready(function () {
-	            		$("#addreminder").click(function(){
-							console.log("Click on addreminder");
-	            		    if (this.checked) {
-	            		    	$(".reminderparameters").show();
-                            } else {
-                            	$(".reminderparameters").hide();
-                            }
-							$("#selectremindertype").select2("destroy");
-							$("#selectremindertype").select2();
-							$("#select_offsetunittype_duration").select2("destroy");
-							$("#select_offsetunittype_duration").select2();
-							selectremindertype();
-	            		 });
-
-	            		$("#selectremindertype").change(function(){
-							selectremindertype();
-	            		});
-
-						function selectremindertype() {
-							console.log("Call selectremindertype");
-	            	        var selected_option = $("#selectremindertype option:selected").val();
-	            		    if(selected_option == "email") {
-	            		        $("#select_actioncommsendmodel_mail").closest("tr").show();
-	            		    } else {
-	            			    $("#select_actioncommsendmodel_mail").closest("tr").hide();
-	            		    }
-						}
-
-                   })';
-		print '</script>'."\n";
+		?>
+		<script type="text/javascript">
+			$(document).ready(function () {
+				$("#addreminder").click(function(){
+					console.log("Click on addreminder");
+					if (this.checked) {
+						$(".reminderparameters").show();
+					} else {
+						$(".reminderparameters").hide();
+					}
+					$("#selectremindertype").select2("destroy");
+					$("#selectremindertype").select2();
+					$("#select_offsetunittype_duration").select2("destroy");
+					$("#select_offsetunittype_duration").select2();
+					selectremindertype();
+				 });
+				$("#selectremindertype").change(function(){
+					selectremindertype();
+				});
+				function selectremindertype() {
+					console.log("Call selectremindertype");
+					var selected_option = $("#selectremindertype option:selected").val();
+					if(selected_option == "email") {
+						$("#select_actioncommsendmodel_mail").closest("tr").show();
+					} else {
+						$("#select_actioncommsendmodel_mail").closest("tr").hide();
+					}
+				}
+			});
+		</script>
+		<?php
 	}
 
 	print dol_get_fiche_end();
@@ -1963,7 +2004,7 @@ if ($id > 0 && $action != 'create') {
 		$object->datep       = $datep;
 		$object->datef       = $datef;
 		$object->percentage  = $percentage;
-		$object->priority    = GETPOST("priority", "alphanohtml");
+		$object->priority = GETPOSTINT("priority");
 		$object->fulldayevent = GETPOST("fullday") ? 1 : 0;
 		$object->location    = GETPOST('location', "alphanohtml");
 		$object->socid       = GETPOSTINT("socid");
@@ -2176,7 +2217,7 @@ if ($id > 0 && $action != 'create') {
 		print '<tr><td class="">&nbsp;</td><td></td></tr>';
 
 		// Assigned to
-		$listofuserid = array(); // User assigned
+		$listofuserid = []; // User assigned
 		if (empty($donotclearsession)) {
 			if ($object->userownerid > 0) {
 				$listofuserid[$object->userownerid] = array(
@@ -2209,7 +2250,7 @@ if ($id > 0 && $action != 'create') {
 
 		print '<tr><td class="tdtop nowrap fieldrequired">'.$langs->trans("ActionAssignedTo").'</td><td>';
 		print '<div class="assignedtouser">';
-		print $form->select_dolusers_forevent(($action == 'create' ? 'add' : 'update'), 'assignedtouser', 1, array(), 0, '', array(), '0', 0, 0, 'u.statut:<>:0', 1, $listofuserid, $listofcontactid, $listofotherid, (int) $caneditdateorowner);
+		print $form->select_dolusers_forevent(($action == 'create' ? 'add' : 'update'), 'assignedtouser', 1, [], 0, '', [], '0', 0, 0, 'u.statut:<>:0', 1, $listofuserid, $listofcontactid, $listofotherid, (int) $caneditdateorowner);
 		print '</div>';
 		/*if (in_array($user->id,array_keys($listofuserid)))
 		{
@@ -2227,7 +2268,7 @@ if ($id > 0 && $action != 'create') {
 		// Status
 		print '<tr><td class="nowrap">'.$langs->trans("Status").' / '.$langs->trans("Progression").'</td><td colspan="3">';
 		$percent = GETPOSTISSET("percentage") ? GETPOSTINT("percentage") : $object->percentage;
-		$formactions->form_select_status_action('formaction', (string) $percent, 1, 'complete', 0, 0, 'maxwidth200');
+		$formactions->form_select_status_action('formaction', (string) $percent, 1, 'complete', 0, 0, 'minwidth150 maxwidth300');
 		print '</td></tr>';
 
 		// Tags-Categories
@@ -2250,7 +2291,7 @@ if ($id > 0 && $action != 'create') {
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("ActionOnCompany").'</td>';
 			print '<td>';
 			print '<div>';
-			$events = array(); // 'method'=parameter action of url, 'url'=url to call that return new list of contacts
+			$events = []; // 'method'=parameter action of url, 'url'=url to call that return new list of contacts
 			$events[] = array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php?showempty=1&token='.currentToken(), 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
 			// TODO Refresh also list of project if conf PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY not defined with list linked to socid ?
 			// FIXME If we change company, we may get a project that does not match
@@ -2267,15 +2308,15 @@ if ($id > 0 && $action != 'create') {
 				// FIXME Use the select_contact supporting the "multiple"
 				/*
 				$selected = array_keys($object->socpeopleassigned);
-				print $form->select_contact(getDolGlobalString('MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT') ? 0 : $object->socid, $selected, 'socpeopleassigned', 1, '', '', 1, 'minwidth300 widthcentpercentminusx', false, 0, 0, array());
+				print $form->select_contact(getDolGlobalString('MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT') ? 0 : $object->socid, $selected, 'socpeopleassigned', 1, '', '', 1, 'minwidth300 widthcentpercentminusx', false, 0, 0, []);
 				*/
 				$sav = getDolGlobalString('CONTACT_USE_SEARCH_TO_SELECT');
 				$conf->global->CONTACT_USE_SEARCH_TO_SELECT = 0;
-				print $form->selectcontacts(getDolGlobalString('MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT') ? 0 : ($object->socid > 0 ? $object->socid : -1), array_keys($object->socpeopleassigned), 'socpeopleassigned[]', 1, '', '', 1, 'minwidth300 widthcentpercentminusx', 0, 0, 0, array(), 'multiple', 'contactid');
+				print $form->selectcontacts(getDolGlobalString('MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT') ? 0 : ($object->socid > 0 ? $object->socid : -1), array_keys($object->socpeopleassigned), 'socpeopleassigned[]', 1, '', '', 1, 'minwidth300 widthcentpercentminusx', 0, 0, 0, [], 'multiple', 'contactid');
 				$conf->global->CONTACT_USE_SEARCH_TO_SELECT = $sav;
 			} else {
 				// Warning: MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT will hangs on large databases
-				print $form->selectcontacts(getDolGlobalString('MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT') ? 0 : $object->socid, array_keys($object->socpeopleassigned), 'socpeopleassigned[]', 1, '', '', 1, 'minwidth300 widthcentpercentminusx', 0, 0, 0, array(), 'multiple', 'contactid');
+				print $form->selectcontacts(getDolGlobalString('MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT') ? 0 : $object->socid, array_keys($object->socpeopleassigned), 'socpeopleassigned[]', 1, '', '', 1, 'minwidth300 widthcentpercentminusx', 0, 0, 0, [], 'multiple', 'contactid');
 			}
 			print '</div>';
 			print '</td>';
@@ -2303,31 +2344,33 @@ if ($id > 0 && $action != 'create') {
 		}
 
 		// Object linked
-		if ($object->fk_project || (!empty($object->fk_element) && !empty($object->elementtype))) {
+		if ($object->fk_project || (!empty($object->elementid) && !empty($object->elementtype))) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 			print '<tr>';
 			print '<td>'.$langs->trans("LinkedObject").'</td>';
 
-			if ($object->elementtype == 'task' && isModEnabled('project')) {
+			if ($object->elementtype == 'project_task' && isModEnabled('project')) {
 				print '<td id="project-task-input-container" >';
 
 				$urloption = '?action=create&donotclearsession=1'; // we use create not edit for more flexibility
 				$url = DOL_URL_ROOT.'/comm/action/card.php'.$urloption;
 
 				// update task list
-				print "\n".'<script type="text/javascript" >';
-				print '$(document).ready(function () {
-	              $("#projectid").change(function () {
-                        var url = "'.$url.'&projectid="+$("#projectid").val();
-                        $.get(url, function(data) {
-                            console.log($( data ).find("#fk_element").html());
-                            if (data) $("#fk_element").html( $( data ).find("#taskid").html() ).select2();
-                        })
-                  });
-                })';
-				print '</script>'."\n";
+				?>
+				<script type="text/javascript" >
+					$(document).ready(function () {
+						$("#projectid").change(function () {
+							var url = "<?php echo $url; ?>&projectid="+$("#projectid").val();
+							$.get(url, function(data) {
+								console.log($( data ).find("#fk_element").html());
+								if (data) $("#fk_element").html( $( data ).find("#taskid").html() ).select2();
+							})
+						});
+					});
+				</script>
+				<?php
 
-				print $formproject->selectTasks((!empty($societe->id) ? $societe->id : -1), $object->fk_element, 'fk_element', 24, 0, '', 1, 0, 0, 'maxwidth500', (string) $object->fk_project, 'all', null, 1);
+				print $formproject->selectTasks((!empty($societe->id) ? $societe->id : -1), $object->elementid, 'fk_element', 24, 0, '', 1, 0, 0, 'maxwidth500', (string) $object->fk_project, 'all', null, 1);
 				print '<input type="hidden" name="elementtype" value="'.$object->elementtype.'">';
 
 				print '</td>';
@@ -2338,18 +2381,20 @@ if ($id > 0 && $action != 'create') {
 					print '<td id="project-task-input-container" >';
 
 					// update task list
-					print "\n".'<script type="text/javascript">';
-					print '$(document).ready(function () {
+					?>
+					<script type="text/javascript">
+						$(document).ready(function () {
 							$("#projectid").change(function () {
-									var url = "'.DOL_URL_ROOT.'/projet/ajax/projects.php?mode=gettasks&socid="+$("#search_socid").val()+"&projectid="+$("#projectid").val();
-									console.log("Call url to get new list of tasks: "+url);
-									$.get(url, function(data) {
-										console.log(data);
-										if (data) $("#taskid").html(data).select2();
-									})
+								var url = "<?php echo DOL_URL_ROOT; ?>/projet/ajax/projects.php?mode=gettasks&socid="+$("#search_socid").val()+"&projectid="+$("#projectid").val();
+								console.log("Call url to get new list of tasks: "+url);
+								$.get(url, function(data) {
+									console.log(data);
+									if (data) $("#taskid").html(data).select2();
+								})
 							});
-						})';
-					print '</script>'."\n";
+						});
+					</script>
+					<?php
 
 					$tid = '';
 					if (GETPOSTISSET("projecttaskid") && GETPOSTINT("projecttaskid") > 0) {
@@ -2363,8 +2408,8 @@ if ($id > 0 && $action != 'create') {
 					print '</td>';
 				} else {
 					print '<td>';
-					print dolGetElementUrl($object->fk_element, $object->elementtype, 1);
-					print '<input type="hidden" name="fk_element" value="'.$object->fk_element.'">';
+					print dolGetElementUrl($object->elementid, $object->elementtype, 1);
+					print '<input type="hidden" name="fk_element" value="'.$object->elementid.'">';
 					print '<input type="hidden" name="elementtype" value="'.$object->elementtype.'">';
 					print '</td>';
 				}
@@ -2375,14 +2420,14 @@ if ($id > 0 && $action != 'create') {
 
 		// Description
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
-		// Editeur wysiwyg
+		// Wysiwyg editor
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$doleditor = new DolEditor('note', $object->note_private, '', 120, 'dolibarr_notes', 'In', true, true, isModEnabled('fckeditor'), ROWS_4, '90%');
 		$doleditor->Create();
 		print '</td></tr>';
 
 		// Other attributes
-		$parameters = array();
+		$parameters = [];
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		if (empty($reshook)) {
@@ -2392,7 +2437,7 @@ if ($id > 0 && $action != 'create') {
 		print '</table>';
 
 		// Reminders
-		if (getDolGlobalString('AGENDA_REMINDER_EMAIL') || getDolGlobalString('AGENDA_REMINDER_BROWSER')) {
+		if ($enablereminders) {
 			$filteruserid = $user->id;
 			if ($user->hasRight('agenda', 'allactions', 'read')) {
 				$filteruserid = 0;
@@ -2432,7 +2477,7 @@ if ($id > 0 && $action != 'create') {
 			// Reminder
 			print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderTime").'</td><td colspan="3">';
 			print '<input type="number" name="offsetvalue" class="width50" value="'.$actionCommReminder->offsetvalue.'"> ';
-			print $form->selectTypeDuration('offsetunit', $actionCommReminder->offsetunit, array('y', 'm'));
+			print $form->selectTypeDuration('offsetunit', $actionCommReminder->offsetunit, $TDurationTypesExcluded);
 			print '</td></tr>';
 
 			// Reminder Type
@@ -2453,28 +2498,27 @@ if ($id > 0 && $action != 'create') {
 			}
 
 			print '</table>';
-
-			print "\n".'<script type="text/javascript">';
-			print '$(document).ready(function () {
-	            		$("#addreminder").click(function(){
-	            		    if (this.checked) {
-	            		      	$(".reminderparameters").show();
-                            } else {
-                            	$(".reminderparameters").hide();
-                            }
-	            		 });
-
-	            		$("#selectremindertype").change(function(){
-	            	        var selected_option = $("#selectremindertype option:selected").val();
-	            		    if(selected_option == "email") {
-	            		        $("#select_actioncommsendmodel_mail").closest("tr").show();
-	            		    } else {
-	            			    $("#select_actioncommsendmodel_mail").closest("tr").hide();
-	            		    }
-	            		});
-
-                   })';
-			print '</script>'."\n";
+			?>
+			<script type="text/javascript">
+				$(document).ready(function () {
+					$("#addreminder").click(function(){
+						if (this.checked) {
+							$(".reminderparameters").show();
+						} else {
+							$(".reminderparameters").hide();
+						}
+					});
+					$("#selectremindertype").change(function(){
+						var selected_option = $("#selectremindertype option:selected").val();
+						if(selected_option == "email") {
+							$("#select_actioncommsendmodel_mail").closest("tr").show();
+						} else {
+							$("#select_actioncommsendmodel_mail").closest("tr").hide();
+						}
+					});
+				});
+			</script>
+			<?php
 
 			$reminderDefaultEventTypes = getDolGlobalString('AGENDA_DEFAULT_REMINDER_EVENT_TYPES', '');
 			$reminderDefaultOffset = getDolGlobalString('AGENDA_DEFAULT_REMINDER_OFFSET', 30);
@@ -2525,11 +2569,11 @@ if ($id > 0 && $action != 'create') {
 
 		// Clone event
 		if ($action == 'clone') {
-			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.GETPOST('id'), $langs->trans('ToClone'), $langs->trans('ConfirmCloneEvent', $object->label), 'confirm_clone', array(), 'yes', 1);
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.GETPOST('id'), $langs->trans('ToClone'), $langs->trans('ConfirmCloneEvent', $object->label), 'confirm_clone', [], 'yes', 1);
 		}
 
 		// Call Hook formConfirm
-		$parameters = array();
+		$parameters = [];
 		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		if (empty($reshook)) {
 			$formconfirm .= $hookmanager->resPrint;
@@ -2572,7 +2616,7 @@ if ($id > 0 && $action != 'create') {
 		$linkback .= '</a>';
 
 		// Add more views from hooks
-		$parameters = array();
+		$parameters = [];
 		$reshook = $hookmanager->executeHooks('addCalendarView', $parameters, $object, $action);
 		if (empty($reshook)) {
 			$linkback .= $hookmanager->resPrint;
@@ -2592,7 +2636,7 @@ if ($id > 0 && $action != 'create') {
 			if ($usercancreate) {
 				$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 				if ($action != 'classify') {
-					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+					$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 				}
 				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			} else {
@@ -2641,7 +2685,7 @@ if ($id > 0 && $action != 'create') {
 		}
 
 		// Date start
-		print '<tr><td>'.$langs->trans("DateActionStart").'</td><td>';
+		print '<tr><td>'.$langs->trans("DateActionStart").'</td><td title="'.dol_print_date($object->datep, 'dayhoursec', 'tzuserrel').'">';
 		// Test a date before the 27 march and one after
 		//print dol_print_date($object->datep, 'dayhour', 'gmt');
 		//print dol_print_date($object->datep, 'dayhour', 'tzuser');
@@ -2659,7 +2703,7 @@ if ($id > 0 && $action != 'create') {
 		print '</tr>';
 
 		// Date end
-		print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td>';
+		print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td title="'.dol_print_date($object->datef, 'dayhoursec', 'tzuserrel').'">';
 		if (empty($object->fulldayevent)) {
 			print dol_print_date($object->datef, 'dayhour', 'tzuserrel');
 		} else {
@@ -2675,7 +2719,7 @@ if ($id > 0 && $action != 'create') {
 		if ($object->recurid) {
 			print '<tr><td class="titlefieldmiddle">'.$langs->trans("RecurringEvent").'</td><td>';
 			print img_picto($langs->trans("EventPartOfARecurringSerie", $object->recurid), 'recurring', 'class="pictofixedwidth"');
-			$reg = array();
+			$reg = [];
 			if (preg_match('/FREQ=MONTHLY_BYMONTHDAY(\d+)/', $object->recurrule, $reg)) {
 				print $langs->trans("EveryMonth").' <span class="opacitymedium small">('.$langs->trans("DayOfMonth").' '.$reg[1].' - '.$langs->trans("Until").' '.dol_print_date($object->recurdateend, 'day').')</span>';
 			}
@@ -2689,7 +2733,7 @@ if ($id > 0 && $action != 'create') {
 
 		// Assigned to user
 		print '<tr><td class="nowrap">'.$langs->trans("ActionAssignedTo").'</td><td>';
-		$listofuserid = array();
+		$listofuserid = [];
 		if (empty($donotclearsession)) {
 			if ($object->userownerid > 0) {
 				$listofuserid[$object->userownerid] = array(
@@ -2715,10 +2759,10 @@ if ($id > 0 && $action != 'create') {
 			}
 		}
 
-		$listofcontactid = array(); // not used yet
-		$listofotherid = array(); // not used yet
+		$listofcontactid = []; // not used yet
+		$listofotherid = []; // not used yet
 		print '<div class="assignedtouser">';
-		print $form->select_dolusers_forevent('view', 'assignedtouser', 1, array(), 0, '', array(), '0', 0, 0, '', ($object->datep != $object->datef) ? 1 : 0, $listofuserid, $listofcontactid, $listofotherid);
+		print $form->select_dolusers_forevent('view', 'assignedtouser', 1, [], 0, '', [], '0', 0, 0, '', ($object->datep != $object->datef) ? 1 : 0, $listofuserid, $listofcontactid, $listofotherid);
 		print '</div>';
 		/*
 		if ($object->datep != $object->datef && in_array($user->id,array_keys($listofuserid)))
@@ -2831,7 +2875,7 @@ if ($id > 0 && $action != 'create') {
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 		// Reminders
-		if (getDolGlobalString('AGENDA_REMINDER_EMAIL') || getDolGlobalString('AGENDA_REMINDER_BROWSER')) {
+		if ($enablereminders) {
 			$filteruserid = $user->id;
 			if ($user->hasRight('agenda', 'allactions', 'read')) {
 				$filteruserid = 0;
@@ -2886,7 +2930,7 @@ if ($id > 0 && $action != 'create') {
 	 */
 	print '<div class="tabsAction">';
 
-	$parameters = array();
+	$parameters = [];
 	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) {
 		if ($action != 'edit') {
@@ -2920,21 +2964,29 @@ if ($id > 0 && $action != 'create') {
 			print '<div class="clearboth"></div><div class="fichecenter"><div class="fichehalfleft">';
 			print '<a name="builddoc"></a>'; // ancre
 
-			/*
-			 * Generated documents
-			 */
-
+			// Generated documents
 			$filedir = $conf->agenda->multidir_output[$conf->entity].'/'.$object->id;
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 
 			$genallowed = $user->hasRight('agenda', 'myactions', 'read');
 			$delallowed = $user->hasRight('agenda', 'myactions', 'create');
 
-
 			print $formfile->showdocuments('actions', (string) $object->id, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 0, 0, '', '', '', $langs->getDefaultLang());
 
+			if (getDolGlobalString('AGENDA_ENABLE_LINKED_ELEMENTS')) {
+				// Show links to link elements
+				$tmparray = $form->showLinkToObjectBlock($object, [], array('myobject'), 1);
+				if (is_array($tmparray)) {
+					$linktoelem = $tmparray['linktoelem'];
+					$htmltoenteralink = $tmparray['htmltoenteralink'];
+					print $htmltoenteralink;
+					$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+				} else {
+					// backward compatibility
+					$somethingshown = $form->showLinkedObjectBlock($object, $tmparray);
+				}
+			}
 			print '</div><div class="fichehalfright">';
-
 
 			print '</div></div>';
 		}

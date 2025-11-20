@@ -573,28 +573,21 @@ input {
 	padding-right: 6px !important;
 }
 
-/*
-input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
-	background-color: #FDFDFD;
-}
-*/
 select.vmenusearchselectcombo {
 	background-color: unset;
 }
 
 textarea:focus {
-	/* v6 box-shadow: 0 0 4px #8091BF; */
 	border: 1px solid #aaa !important;
-	/*
-	padding-left: 3px;
-	padding-right: 3px;
-	padding-top: 3px;
-	*/
 }
-input:focus, textarea:focus,
-button:focus:not(.button_search_x):not(.button_search):not(.button_removefilter), select:focus,
-.select2-container--focus span.selection span.select2-selection {
+input:focus:not(.input-icon-user, .input-icon-password, .input-icon-security):not(.noborderfocus):not(.inputsearch_dropdownselectedfields):not(.button):not(.buttonwebsite):not(.buttonreset):not(.select2-search__field):not(#top-bookmark-search-input):not(.search_component_input):not(.input-nobottom),
+ select:focus, .select2-container--open [aria-expanded="false"].select2-selection--single,
+ .select2-container--focus span.selection span.select2-selection:not(.massactionselect) {
+<?php if (getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT')) { ?>
+	border: 1px solid #666 !important;
+<?php } else { ?>
 	border-bottom: 1px solid #666;
+<?php } ?>
 }
 
 textarea.cke_source:focus
@@ -627,7 +620,6 @@ input, input.flat, form.flat select, select, select.flat, .dataTables_length lab
 	border: none;
 }
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
-	border<?php echo !getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
 	color: var(--colortext);
 	font-family: <?php print $fontlist ?>;
 	outline: none;
@@ -635,13 +627,32 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
 	background-color: var(--inputbackgroundcolor);
 	<?php if (!getDolGlobalString('THEME_ADD_BACKGROUND_ON_INPUT')) { ?>
 		border<?php echo !getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
+	<?php }
+	if (getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT')) { ?>
+		border-radius: 5px;
 	<?php } ?>
+}
+
+/* this cases always use an input with only a background border */
+span.massactionselect, input.inputsearch_dropdownselectedfields {
+	border-radius: 0 !important;
+	border-top: 0 !important;
+	border-left: 0 !important;
+	border-right: 0 !important;
+	background-color: unset !important;
 }
 
 input {
 	line-height: 1.3em;
-	padding: 5px;
+	padding: 4px;
 	padding-left: 5px;
+}
+input[type="text"]:not(.input-icon-security, .input-icon-user, .input-icon-password),
+input[type="password"]:not(.input-icon-security, .input-icon-user, .input-icon-password) {
+	height: 1.3em;
+}
+.login_table .input-icon-user, .login_table .input-icon-password {
+	padding-right: 42px !important;
 }
 select {
 	padding-top: 4px;
@@ -899,6 +910,10 @@ input.pageplusone {
 	padding-top: 4px;
 	margin-right: 4px;
 	margin-left: 3px;
+	width: 32px;
+}
+.paginationlastpage a {
+	padding-left: 6px;
 }
 
 .saturatemedium {
@@ -945,6 +960,9 @@ input.pageplusone {
 }
 .hmirror {
 	transform: scale(-1, 1);
+}
+.undertopmenu {
+	scroll-margin-top: 80px;
 }
 
 select:invalid, select.--error {
@@ -1113,6 +1131,10 @@ div.floatright
 .inline-blockimp
 {
 	display:inline-block !important;
+}
+.displaycontents
+{
+	display:contents !important;
 }
 .largenumber {
 	font-size: 1.4em;
@@ -1303,6 +1325,9 @@ td.wordbreak img, td.wordbreakimp img {
 .nopadding {
 	padding: 0;
 }
+.nopaddingimp {
+	padding: 0 !important;
+}
 .nopaddingleft {
 	padding-<?php print $left; ?>: 0;
 }
@@ -1385,9 +1410,6 @@ td.wordbreak img, td.wordbreakimp img {
 .cursorpointer {
 	cursor: pointer;
 }
-.classfortooltiponclick .fa-question-circle {
-	cursor: pointer;
-}
 .cursormove {
 	cursor: move;
 }
@@ -1433,6 +1455,14 @@ div.urllink {
 	/* width: fit-content; */
 	background-color: #e0e0e8;
 	opacity: 0.8;
+	/* to sort content vertically */
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	height: 2em;
+}
+div.urllink span.fa, div.urllink span.fas, div.urllink span.far {
+	width: 22px;
 }
 div.urllink, div.urllink a {
 	color: #339 !important;
@@ -1952,19 +1982,34 @@ select.flat.selectlimit {
 	font-weight: bold;
 	white-space: nowrap;
 }
+.amountpaymentcompletenoresize {
+	color: var(--amountpaymentcomplete);
+	white-space: nowrap;
+}
 .amountremaintopay {
 	color: var(--amountremaintopaycolor);
 	font-weight: bold;
+	white-space: nowrap;
+}
+.amountremaintopaynoresize {
+	color: var(--amountremaintopaycolor);
 	white-space: nowrap;
 }
 .amountremaintopayback {
 	font-weight: bold;
 	white-space: nowrap;
 }
+.amountremaintopaybacknoresize {
+	white-space: nowrap;
+}
 .amountpaymentneutral {
 	color: var(--amountremaintopaybackcolor);
 	font-weight: bold;
 	font-size: 1.4em;
+	white-space: nowrap;
+}
+.amountpaymentneutralnoresize {
+	color: var(--amountremaintopaybackcolor);
 	white-space: nowrap;
 }
 
@@ -2053,7 +2098,8 @@ div.ticketpublicarealist>form>div.div-table-responsive {
 	flex:1;
 }
 .flex-item-uploadfile {
-	border: 2px solid #888;
+	border: 2px dashed #aaa;
+	/* box-shadow: 2px 3px 10px #ccc; */
 	border-radius: 5px;
 	cursor: pointer;
 	text-align: center;
@@ -2140,6 +2186,8 @@ tr.nobottom td {
 .minwidth25  { min-width: 25px; }
 .minwidth50  { min-width: 50px; }
 .minwidth75  { min-width: 75px; }
+.minwidth100  { min-width: 75px; }
+.minwidth125  { min-width: 125px; }
 .nominwidth { min-width: fit-content !important; }
 /* rule for not too small screen only */
 @media only screen and (min-width: <?php echo getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC3', round($nbtopmenuentries * 47, 0) + 130); ?>px)
@@ -2185,7 +2233,7 @@ tr.nobottom td {
 .maxwidth40  { max-width: 40px; }
 .maxwidth50  { max-width: 50px; }
 .maxwidth75  { max-width: 75px; }
-.maxwidthdate  { max-width: 95px; }
+.maxwidthdate  { max-width: 105px; }
 .maxwidth100 { max-width: 100px; }
 .maxwidth125 { max-width: 125px; }
 .maxwidth150 { max-width: 150px; }
@@ -2270,7 +2318,7 @@ select.widthcentpercentminusx, span.widthcentpercentminusx:not(.select2-selectio
 	min-width: 100px;
 }
 select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-selection), input.widthcentpercentminusxx {
-	width: calc(100% - 70px) !important;
+	width: calc(100% - 76px) !important;
 	display: inline-block;
 	min-width: 100px;
 }
@@ -2304,11 +2352,11 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	.margintoponsmartphone { margin-top: 6px; }
 
 	select.minwidth100imp, select.minwidth100, select.minwidth200, select.minwidth200imp, select.minwidth300 {
-		width: calc(100% - 40px) !important;
+		width: calc(100% - 44px) !important;
 		display: inline-block;
 	}
 	select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-selection), input.widthcentpercentminusxx {
-		width: calc(100% - 70px) !important;
+		width: calc(100% - 76px) !important;
 		display: inline-block;
 		min-width: 100px;
 	}
@@ -2377,7 +2425,11 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	div.fiche {
 		margin-top: <?php print($dol_hide_topmenu ? '12' : '6'); ?>px !important;
 	}
-	.border tbody tr, .border tbody tr td, div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col {
+	.border tbody tr,
+	.border tbody tr td,
+	.border tfoot tr,
+	.border tfoot tr td,
+	div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col {
 		height: 40px !important;
 	}
 	div.tabBar .listofinvoicetype table tr, div.tabBar .listofinvoicetype table tr td {
@@ -2421,6 +2473,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	.maxwidth250onsmartphone { max-width: 250px; }
 	.maxwidth300onsmartphone { max-width: 300px; }
 	.maxwidth400onsmartphone { max-width: 400px; }
+	.minwidth125 { min-width: 100px !important; }
 	.minwidth150 { min-width: 110px !important; }
 	.minwidth50imp  { min-width: 50px !important; }
 	.minwidth75imp  { min-width: 75px !important; }
@@ -2952,6 +3005,7 @@ img.pictofixedwidth {
 	padding-bottom: 1px;
 	width: 50px;
 	text-align:center;
+	border-radius: 5px;
 }
 div.attacharea {
 	padding-top: 18px;
@@ -3523,7 +3577,7 @@ form#login {
 .login_table #tdpasswordlogin #togglepassword {
 	position: absolute;
 	top: 0.7em;
-	right: 11px;
+	right: 8px;
 	background: none;
 	border: none;
 	opacity: 0.3;
@@ -4334,7 +4388,10 @@ table.borderplus {
 	border: 1px solid #BBB;
 }
 
-.border tbody tr, .bordernooddeven tbody tr, .border tbody tr td, .bordernooddeven tbody tr td,
+.border tbody tr,
+.bordernooddeven tbody tr,
+.border tbody tr td,
+.bordernooddeven tbody tr td,
 div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col,
 tr.liste_titre.box_titre td table td, .bordernooddeven tr td {
 	height: 28px;
@@ -4558,11 +4615,11 @@ div.liste_titre_bydiv_nothingafter {
 	border-bottom-style: solid;
 }
 table.liste tr:last-child td:first-child,
-table.liste tr:last-child th:first-child {
+table.liste > tr:last-child th:first-child, table.liste tfoot tr:last-child th:first-child {
 	border-bottom-left-radius: <?php echo $borderradius; ?>px;
 }
 table.liste tr:last-child td:last-child,
-table.liste tr:last-child th:last-child {
+table.liste > tr:last-child th:last-child, table.liste tfoot tr:last-child th:last-child {
 	border-bottom-right-radius: <?php echo $borderradius; ?>px;
 }
 
@@ -4614,7 +4671,9 @@ table.liste th, table.noborder th, table.noborder tr.liste_titre td, table.nobor
 	padding: 8px 8px 8px 10px;			/* t r b l */
 }
 
-table.liste td, table.noborder td, div.noborder form div, table.tableforservicepart1 td, table.tableforservicepart2 td {
+table.liste td, table.noborder > tr > td,
+table.noborder > tbody > tr > td,
+div.noborder form div, table.tableforservicepart1 td, table.tableforservicepart2 td {
 	padding: 4px 8px 4px 10px;			/* t r b l */
 	height: 28px;
 }
@@ -4819,32 +4878,6 @@ table.hidepaginationnext .paginationnext {
 	/* filter: invert(0.3); */
 	font-size: 1.03em;
 }
-
-
-/* Prepare to remove class pair - impair
-.noborder > tbody > tr:nth-child(even) td {
-	background: linear-gradient(to bottom, var(--colorbacklineimpai2) 85%, var(--colorbacklineimpair2) 100%);
-	background: -o-linear-gradient(bottom, var(--colorbacklineimpair2) 85%, var(--colorbacklineimpair2) 100%);
-	background: -moz-linear-gradient(bottom, var(--colorbacklineimpair2) 85%, var(--colorbacklineimpair2) 100%);
-	background: -webkit-linear-gradient(bottom, var(--colorbacklineimpair2) 85%, var(--colorbacklineimpair2) 100%);
-	font-family: <?php print $fontlist ?>;
-	border: 0px;
-	margin-bottom: 1px;
-	color: #202020;
-	min-height: 18px;
-}
-
-.noborder > tbody > tr:nth-child(odd) td {
-	background: linear-gradient(to bottom, var(--colorbacklinepair2) 85%, var(--colorbacklinepair2) 100%);
-	background: -o-linear-gradient(bottom, var(--colorbacklinepair2) 85%, var(--colorbacklinepair2) 100%);
-	background: -moz-linear-gradient(bottom, var(--colorbacklinepair2) 85%, var(--colorbacklinepair2) 100%);
-	background: -webkit-linear-gradient(bottom, var(--colorbacklinepair2) 85%, var(--colorbacklinepair2) 100%);
-	font-family: <?php print $fontlist ?>;
-	border: 0px;
-	margin-bottom: 1px;
-	color: #202020;
-}
-*/
 
 ul.noborder li:nth-child(odd):not(.liste_titre) {
 	background-color: var(--colorbacklinepair2) !important;
@@ -5877,7 +5910,7 @@ div.ui-tooltip.mytooltip {
 
 
 /* ============================================================================== */
-/* Calendar date picker                                                                */
+/* Calendar date picker                                                           */
 /* ============================================================================== */
 
 .ui-datepicker-calendar .ui-state-default, .ui-datepicker-calendar .ui-widget-content .ui-state-default,
@@ -5894,6 +5927,7 @@ div#ui-datepicker-div {
 	padding-left: 5px;
 	padding-right: 5px;
 	padding-top: 5px;
+	z-index: 1010 !important;	/* must be over menu bar */
 }
 .ui-datepicker .ui-datepicker table {
 	font-size: unset;
@@ -5920,13 +5954,14 @@ select.ui-datepicker-year {
 	padding-left: 2px;
 	padding-right: 2px;
 }
-
+/*
 .bodyline {
 	border-radius: 4px;
 	border: 1px #E4ECEC outset;
 	padding: 0px;
 	margin-bottom: 5px;
 }
+*/
 table.dp {
 	width: 180px;
 	background-color: #FFFFFF;
@@ -6012,7 +6047,7 @@ div.visible {
 }
 
 div.hidden, div.hiddenforpopup, header.hidden, tr.hidden, td.hidden,
-img.hidden, span.hidden, br.hidden, div.showifmore {
+img.hidden, span.hidden, br.hidden, div.showifmore, input.hidden {
 	display: none;
 }
 
@@ -6230,8 +6265,10 @@ td.peruser_holiday_imp {
 .cal_available { background: #0060d450; }
 .cal_chosen { background: #0060d4; }
 
+
+
 /* ============================================================================== */
-/*  Ajax - Combo list for autocompletion                                          */
+/*  UI features                                                                   */
 /* ============================================================================== */
 
 .ui-widget-content {
@@ -6239,6 +6276,43 @@ td.peruser_holiday_imp {
 	background: var(--colorbackbody) !important;
 	color: var(--colortext) !important;
 }
+
+/* Style to overwrites UI JQuery styles */
+.ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight {
+	/* border: 1px solid #888; */
+	background: rgb(<?php echo $colorbacktitle1; ?>);
+	color: unset;
+	font-weight: bold;
+}
+.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active, a.ui-button:active, .ui-button:active, .ui-button.ui-state-active:hover {
+	background: #007fff !important;
+	color: #ffffff !important;
+}
+
+.ui-menu .ui-menu-item a {
+	text-decoration:none;
+	display:block;
+	padding:.2em .4em;
+	line-height:1.5;
+	font-weight: normal;
+	font-family:<?php echo $fontlist; ?>;
+	font-size:1em;
+}
+.ui-widget {
+	font-family:<?php echo $fontlist; ?>;
+}
+.ui-button { margin-left: -2px; <?php print(preg_match('/chrome/', $conf->browser->name) ? 'padding-top: 1px;' : ''); ?> }
+.ui-button-icon-only .ui-button-text { height: 8px; }
+.ui-button-icon-only .ui-button-text, .ui-button-icons-only .ui-button-text { padding: 2px 0px 6px 0px; }
+.ui-button-text
+{
+	line-height: 1em !important;
+}
+
+
+/* ============================================================================== */
+/*  Ajax combo list for autocompletion                                            */
+/* ============================================================================== */
 
 .ui-autocomplete-loading { background: white url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/working.gif', 1) ?>) right center no-repeat; }
 .ui-autocomplete {
@@ -6264,6 +6338,7 @@ td.peruser_holiday_imp {
 		   height:18px;
 		   cursor:pointer;
 		 }
+.ui-autocomplete-input { margin: 0; padding: 4px; }
 
 
 /* ============================================================================== */
@@ -6380,6 +6455,9 @@ table.jPicker tr:first-of-type td {
 	height: 2px !important;
 	line-height: 2px;
 }
+.jPicker .Icon {
+	margin-left: 2px;
+}
 .jPicker .Move {
 	background: unset !important;
 	border: unset !important;
@@ -6398,6 +6476,9 @@ table.jPicker {
 	background-color: var(--colorbackbody) !important;
 	box-shadow: 0px 0px 10px #ccc;
 	width: 300px !important;
+}
+span.jPicker {
+	vertical-align: middle;
 }
 .jPicker .Grid {
 	background-image: unset !important;
@@ -6420,6 +6501,9 @@ table.jPicker {
 	border-radius: 4px;
 	border-collapse: collapse;
 	border: none;
+}
+.jPicker td.Text input {
+	width: 35px !important;
 }
 
 A.color, A.color:active, A.color:visited {
@@ -6500,40 +6584,6 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 .colorselector {
 	border: solid 1px #ddd !important;
 }
-
-
-/* Style to overwrites JQuery styles */
-.ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight {
-	/* border: 1px solid #888; */
-	background: rgb(<?php echo $colorbacktitle1; ?>);
-	color: unset;
-	font-weight: bold;
-}
-.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active, a.ui-button:active, .ui-button:active, .ui-button.ui-state-active:hover {
-	background: #007fff !important;
-	color: #ffffff !important;
-}
-
-.ui-menu .ui-menu-item a {
-	text-decoration:none;
-	display:block;
-	padding:.2em .4em;
-	line-height:1.5;
-	font-weight: normal;
-	font-family:<?php echo $fontlist; ?>;
-	font-size:1em;
-}
-.ui-widget {
-	font-family:<?php echo $fontlist; ?>;
-}
-.ui-button { margin-left: -2px; <?php print(preg_match('/chrome/', $conf->browser->name) ? 'padding-top: 1px;' : ''); ?> }
-.ui-button-icon-only .ui-button-text { height: 8px; }
-.ui-button-icon-only .ui-button-text, .ui-button-icons-only .ui-button-text { padding: 2px 0px 6px 0px; }
-.ui-button-text
-{
-	line-height: 1em !important;
-}
-.ui-autocomplete-input { margin: 0; padding: 4px; }
 
 
 /* ============================================================================== */
@@ -6939,6 +6989,7 @@ div#ecm-layout-center {
 	padding-right: 10px !important;
 	padding-top: 10px !important;
 	word-wrap: break-word;
+	max-height: 320px;
 }
 .jnotify-container .jnotify-notification .jnotify-message {
 	font-weight: normal;
@@ -7198,15 +7249,20 @@ input.select2-input {
 	border-top: 1px solid #ccc;
 	border-bottom: 1px solid #ccc;
 }
-.select2-container--default .select2-selection--single
-{
+.select2-container--default .select2-selection--single {
 	outline: none;
+	<?php if (!getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT')) { ?>
 	border-top: none;
 	border-left: none;
 	border-right: none;
-	border-bottom: solid 1px rgba(0,0,0,.2);
+	border-radius: 3px;
+	<?php } else { ?>
+	border-radius: 5px;
+	<?php } ?>
+
+	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>: solid 1px var(--inputbordercolor);
+
 	box-shadow: none !important;
-	border-radius: 0 !important;
 }
 .select2-container--default.select2-container--focus .select2-selection--multiple {
 	border-top: none;
@@ -7442,11 +7498,13 @@ select.multiselectononeline {
 {
 	/* CSS to have the dropdown boxes larger that the input search area */
 	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem):not(.yesno) .select2-dropdown.ui-dialog {
-		min-width: 240px !important;
+		min-width: 260px !important;
+		padding: 8px;
 	}
 	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem):not(.yesno) .select2-dropdown--below:not(.onrightofpage),
 	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem):not(.yesno) .select2-dropdown--above:not(.onrightofpage) {
-		min-width: 240px !important;
+		min-width: 260px !important;
+		padding: 8px;
 	}
 	.onrightofpage span.select2-dropdown.ui-dialog.select2-dropdown--below,
 	.onrightofpage span.select2-dropdown.ui-dialog.select2-dropdown--above {
@@ -7654,10 +7712,10 @@ dl.dropdown {
 	white-space: nowrap;
 	font-weight: normal;
 	padding: 7px 8px 7px 8px;
-	/* color: rgb(<?php print $colortext; ?>); */
-	color: #000;
+	/* color: var(--colortext); */
+	color: var(--colortext);
 }
-.dropdown dd ul li:hover {
+.dropdown dd ul li:hover:not(.liinputsearch) {
 	background: #eee;
 }
 .dropdown dd ul li input[type="checkbox"] {
@@ -8595,11 +8653,14 @@ table.jPicker {
 }
 .bookcalform {
 	border: 1px solid #000;
-	padding: 15px;
+	padding: 20px;
 	border-radius: 5px;
 	margin-bottom: 15px;
+	box-shadow: 10px 10px 10px #ddd;
 }
-
+.bookcalsearch {
+	padding-bottom: 10px;
+}
 
 
 /* ============================================================================== */
@@ -8787,9 +8848,6 @@ table.jPicker {
 		width: auto !important;		/* We want to ignore the 30%, try to use more if you can */
 		min-width: unset;
 	}
-	.tableforfield>tr>td:first-child, .tableforfield>tbody>tr>td:first-child, div.tableforfield div.tagtr>div.tagtd:first-of-type {
-		/* max-width: 100px; */			/* but no more than 100px */
-	}
 	.tableforfield>tr>td:nth-child(2), .tableforfield>tbody>tr>td:nth-child(2), div.tableforfield div.tagtr>div.tagtd:nth-child(2) {
 		word-break: break-word;
 	}
@@ -8853,6 +8911,14 @@ table.jPicker {
 
 @media only screen and (max-width: 767px)
 {
+	body {
+		font-size: 0.91em;
+	}
+
+	td.widthpictotitle,	table.titlemodulehelp tr td img.widthpictotitle {
+		width: 30px;
+	}
+
 	.ai_dropdown{
 		min-width : 280px !important;
 	}
@@ -8864,6 +8930,10 @@ table.jPicker {
 		width: <?php print dol_size(350, 'width'); ?>px;
 	}
 
+	.maxwidthdate  {
+		max-width: 105px;	/* lower than 105, text is truncated with some smartphone resolution and date on 4 digits, but we use 2 digits on smartphone */
+	}
+
 	div.tabBar {
 		padding-left: 8px;
 		padding-right: 8px;
@@ -8871,8 +8941,6 @@ table.jPicker {
 		border-right: none;
 		border-left: none;
 	}
-
-	td.widthpictotitle { width: 30px; }
 
 	.logopublicpayment #dolpaymentlogo {
 		max-width: 260px;
@@ -8912,6 +8980,11 @@ table.jPicker {
 	a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 		padding: 10px 3px 10px;
 	}
+
+	pre {
+		white-space: normal;
+		word-break: break-word;
+	}
 }
 
 @media only screen and (max-width: 1024px)
@@ -8947,6 +9020,7 @@ include dol_buildpath($path.'/theme/'.$theme.'/info-box.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/progress.inc.php', 0);
 include dol_buildpath($path.'/theme/eldy/timeline.inc.php', 0); // actually md use same style as eldy theme
 include dol_buildpath($path.'/theme/'.$theme.'/search-input.inc.css', 0); // actually md use same style as eldy theme
+include dol_buildpath($path.'/theme/'.$theme.'/tooltips.inc.css', 0);
 
 if (getDolGlobalString('THEME_CUSTOM_CSS')) {
 	print getDolGlobalString('THEME_CUSTOM_CSS');
@@ -8969,9 +9043,18 @@ if (is_object($db)) {
 }
 ::-webkit-scrollbar-thumb {
 	background: #ddd;
-}​
+}
 
-
+/* Remove text selection - Intuitive table selection */
+.row-with-select[data-is-last-changed] * {
+	-webkit-touch-callout: none; /* iOS Safari */
+	-webkit-user-select: none; /* Safari */
+	-khtml-user-select: none; /* Konqueror HTML */
+	-moz-user-select: none; /* Old versions of Firefox */
+	-ms-user-select: none; /* Internet Explorer/Edge */
+	user-select: none; /* Non-prefixed version, currently
+			  supported by Chrome, Edge, Opera and Firefox */
+}
 
 /* Must be at end */
 div.flot-text .flot-tick-label .tickLabel, .fa-color-unset {

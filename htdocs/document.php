@@ -6,7 +6,7 @@
  * Copyright (C) 2010	   Pierre Morin         <pierre.morin@auguria.net>
  * Copyright (C) 2010	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2022	    Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -74,6 +74,16 @@ if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias')) {
 	if (!defined("NOIPCHECK")) {
 		define("NOIPCHECK", 1); // Do not check IP defined into conf $dolibarr_main_restrict_ip
 	}
+} elseif (isset($_GET["modulepart"]) && $_GET["modulepart"] == 'ticket' && strpos($_SERVER['HTTP_REFERER'], 'public/ticket') !== false) {
+	if (!defined("NOLOGIN")) {
+		define("NOLOGIN", 1);
+	}
+	if (!defined("NOCSRFCHECK")) {
+		define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
+	}
+	if (!defined("NOIPCHECK")) {
+		define("NOIPCHECK", 1); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+	}
 }
 
 /**
@@ -119,9 +129,6 @@ function llxFooter($comment = '', $zone = 'private', $disabledoutputofmessages =
 }
 
 require 'main.inc.php'; // Load $user and permissions
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -129,6 +136,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
 $encoding = '';
 $action = GETPOST('action', 'aZ09');
@@ -269,7 +278,7 @@ if (empty($modulepart)) {
 }
 
 // Check security and set return info with full path of file
-$check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $user, '');
+$check_access = dol_check_secure_access_document($modulepart, $original_file, ($entity ?? 1), $user, '');
 $accessallowed              = $check_access['accessallowed'];
 $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 $fullpath_original_file     = $check_access['original_file']; // $fullpath_original_file is now a full path name
@@ -293,6 +302,16 @@ if (!empty($hashp)) {
 						break;
 					}
 					$i++;
+				}
+			}
+		}
+	} elseif ($modulepart == 'ticket' && !getDolGlobalString('TICKET_EMAIL_MUST_EXISTS')) {
+		if ($sqlprotectagainstexternals) {
+			$resql = $db->query($sqlprotectagainstexternals);
+			if ($resql) {
+				$num = $db->num_rows($resql);
+				if ($num > 0) {
+					$accessallowed = 1;
 				}
 			}
 		}
@@ -326,7 +345,7 @@ $fullpath_original_file_osencoded = dol_osencode($fullpath_original_file); // Ne
 // This test if file exists should be useless. We keep it to find bug more easily
 if (!file_exists($fullpath_original_file_osencoded)) {
 	dol_syslog("ErrorFileDoesNotExists: ".$fullpath_original_file);
-	print "ErrorFileDoesNotExists: ".dol_escape_htmltag($original_file);
+	print $langs->trans("ErrorFileDoesNotExists") . ' : ' . dol_escape_htmltag($original_file);
 	exit;
 }
 

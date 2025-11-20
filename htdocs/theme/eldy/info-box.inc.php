@@ -37,9 +37,10 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	min-height: 94px;	/* must be same height than info-box-icon */
 	background: var(--colorbacklineimpair2);
 	width: 100%;
-	box-shadow: 1px 1px 12px rgba(192, 192, 192, 0.2);
+	box-shadow: 1px 1px 20px rgba(192, 192, 192, 0.2);
 	border-radius: 2px;
 	border: 1px solid #e9e9e9;
+	/* border: 1px solid var(--colorbacktitle1); */
 	margin-bottom: 15px;
 }
 .info-box.info-box-sm {
@@ -317,7 +318,33 @@ a.info-box-text{ text-decoration: none;}
 }
 
 
-
+/* customize section for home box link */
+.infobox-haslink .info-box-icon i {
+	transition: opacity 0.2s ease-in-out;
+}
+.infobox-haslink .info-box-icon:hover i {
+	opacity: 0.2;
+}
+.infobox-haslink .info-box-icon .info-box-createlink {
+	height:100%;
+	width:100%;
+	display:block;
+	position:absolute;
+	top:0;
+	left:0;
+	font-size:0.6em;
+	display: flex;
+	opacity: 0;
+	transition: opacity 0.2s ease-in-out;
+	color:inherit;
+	text-decoration: none;
+}
+.infobox-haslink .info-box-icon:hover .info-box-createlink {
+	opacity: 1;
+}
+.infobox-haslink .info-box-icon .info-box-createlink span.fas {
+	margin:auto;
+}
 
 
 /* ICONS INFO BOX */
@@ -347,57 +374,46 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	<?php } ?>
 }
 
+.spannature {
+	padding-top: 6px !important;
+	padding-bottom: 6px !important;
+	vertical-align: middle;
+}
+
 .nonature-back {
 	background-color: #EEE;
-	padding: 2px;
-	margin: 2px;
-	border-radius: 3px;
 }
 .prospect-back {
 	background-color: #a7c5b0 !important;
 	color: #FFF !important;
-	padding: 2px;
-	margin: 2px;
-	border-radius: 3px;
 }
 .customer-back {
 	background-color: #55955d !important;
 	color: #FFF !important;
-	padding: 2px;
-	margin: 2px;
-	border-radius: 3px;
 }
 .vendor-back {
 	background-color: #599caf !important;
 	color: #FFF !important;
-	padding: 2px;
-	margin: 2px;
-	border-radius: 3px;
 }
 .user-back {
 	background-color: #79633f !important;
 	color: #FFF !important;
-	padding: 2px;
-	margin: 2px;
-	border-radius: 3px;
 }
 .member-company-back {
-	padding: 2px;
-	margin: 2px;
 	background-color: #e4e4e4;
 	color: #666;
-	border-radius: 3px;
 	white-space: nowrap;
 }
 .member-individual-back {
-	padding: 2px;
-	margin: 2px;
 	background-color: #e4e4e4;
 	color: #666;
-	border-radius: 3px;
 	white-space: nowrap;
 }
-
+.nonature-back, .prospect-back, .customer-back, .vendor-back, .user-back, .member-company-back, .member-individual-back {
+	padding: 2px;
+	margin: 2px;
+	border-radius: 5px;
+}
 
 .bg-infobox-project{
 	<?php echo $prefix; ?>color: #6c6aa8 !important;
@@ -436,7 +452,7 @@ a.vmenu span, span.vmenu, span.vmenu span {
 	/* color: var(--colortextbackvmenu) !important; */
 }
 
-.infobox-adherent, .infobox-member {
+.infobox-adherent, .infobox-member, .infobox-expensereport {
 	color: #79633f;
 }
 .infobox-project{
@@ -463,14 +479,11 @@ a.vmenu span, span.vmenu, span.vmenu span {
 .infobox-bank_account{
 	color: #b0bb39;
 }
-.infobox-adherent, .infobox-member {
-	color: #79633f;
-}
-.infobox-expensereport{
-	color: #79633f;
-}
 .infobox-holiday{
 	color: #755114;
+}
+.infobox-portal {
+	color: #304;
 }
 
 
@@ -537,7 +550,7 @@ a.vmenu span, span.vmenu, span.vmenu span {
 }
 .fa-weather-level4:before{
 	content: "\f0e7";
-	color : #b01000;
+	color : #993013;
 }
 
 

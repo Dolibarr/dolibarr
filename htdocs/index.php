@@ -6,7 +6,7 @@
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2021-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +31,6 @@
 define('CSRFCHECK_WITH_TOKEN', 1); // We force need to use a token to login when making a POST
 
 require 'main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -42,6 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
  *
  * @var string $conffile	defined into filefunc.inc.php
  */
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // If not defined, we select menu "home"
 $_GET['mainmenu'] = GETPOST('mainmenu', 'aZ09') ? GETPOST('mainmenu', 'aZ09') : 'home';	// Keep this ?
@@ -49,29 +48,13 @@ $action = GETPOST('action', 'aZ09');
 
 $hookmanager->initHooks(array('index'));
 
+require_once DOL_DOCUMENT_ROOT.'/core/redirect_if_setup_not_complete.inc.php';
+
 
 /*
  * Actions
  */
 
-// Define $nbmodulesnotautoenabled - TODO This code is at different places
-$nbmodulesnotautoenabled = count($conf->modules);
-$listofmodulesautoenabled = array('user', 'agenda', 'fckeditor', 'export', 'import');
-foreach ($listofmodulesautoenabled as $moduleautoenable) {
-	if (in_array($moduleautoenable, $conf->modules)) {
-		$nbmodulesnotautoenabled--;
-	}
-}
-
-// Check if company name is defined (first install)
-if (!getDolGlobalString('MAIN_INFO_SOCIETE_NOM') || !getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY')) {
-	header("Location: ".DOL_URL_ROOT."/admin/index.php?mainmenu=home&leftmenu=setup&mesg=setupnotcomplete");
-	exit;
-}
-if ($nbmodulesnotautoenabled < getDolGlobalInt('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only autoenabled modules (property ->enabled_bydefault in modules) are activated
-	header("Location: ".DOL_URL_ROOT."/admin/index.php?mainmenu=home&leftmenu=setup&mesg=setupnotcomplete");
-	exit;
-}
 if (GETPOST('addbox')) {	// Add box (when submit is done from a form when ajax disabled)
 	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
 	$zone = GETPOSTINT('areacode');
@@ -354,7 +337,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 		$dashboardlines[$board->element] = $board->load_board($user);
 	}
 
-	if (isModEnabled('mrp')) {
+	if (isModEnabled('mrp')  && !getDolGlobalString('MAIN_DISABLE_BLOCK_MRP')) {
 		include_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 		$board = new Mo($db);
 		$dashboardlines[$board->element] = $board->load_board($user);
@@ -579,8 +562,32 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 					$groupElement['globalStats'] = array();
 				}
 
+				// Links
+				$arrayLinks = array(
+					'action' => dol_buildpath('/comm/action/card.php?action=create', 1),
+					'project' => dol_buildpath('/projet/card.php?action=create', 1),
+					'propal' => dol_buildpath('/comm/propal/card.php?action=create', 1),
+					'commande' => dol_buildpath('/commande/card.php?action=create', 1),
+					'facture' => dol_buildpath('/compta/facture/card.php?action=create', 1),
+					'supplier_proposal' => dol_buildpath('/supplier_proposal/card.php?action=create', 1),
+					'order_supplier' => dol_buildpath('/fourn/commande/card.php?action=create', 1),
+					'invoice_supplier' => dol_buildpath('/fourn/facture/card.php?action=create', 1),
+					'contrat' => dol_buildpath('/contrat/card.php?action=create', 1),
+					'ticket' => dol_buildpath('/ticket/card.php?action=create', 1),
+					'bank_account' => dol_buildpath('/compta/bank/card.php?action=create', 1),
+					'member' => dol_buildpath('/adherents/card.php?action=create', 1),
+					'expensereport' => dol_buildpath('/expensereport/card.php?action=create', 1),
+					'holiday' => dol_buildpath('/holiday/card.php?action=create', 1),
+					'cubes' => dol_buildpath('/mrp/mo_card.php?action=create', 1),
+
+				);
+				$infoboxMoreCss = '';
+				if (array_key_exists($groupKey, $arrayLinks)) {
+					$infoboxMoreCss = 'infobox-haslink';
+				}
+
 				$openedDashBoard .= '<div class="box-flex-item"><div class="box-flex-item-with-margin">'."\n";
-				$openedDashBoard .= '	<div class="info-box '.$openedDashBoardSize.'">'."\n";
+				$openedDashBoard .= '	<div class="info-box '.$openedDashBoardSize.' '.$infoboxMoreCss.'">'."\n";
 				$openedDashBoard .= '		<span class="info-box-icon bg-infobox-'.$groupKeyLowerCase.'">'."\n";
 				$openedDashBoard .= '		<i class="fa fa-dol-'.$groupKeyLowerCase.'"></i>'."\n";
 
@@ -588,6 +595,10 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 				if (!empty($groupElement['globalStats'])) {
 					$globalStatInTopOpenedDashBoard[] = $globalStatsKey;
 					$openedDashBoard .= '<span class="info-box-icon-text" title="'.$groupElement['globalStats']['text'].'">'.$groupElement['globalStats']['nbTotal'].'</span>';
+				}
+
+				if (array_key_exists($groupKey, $arrayLinks)) {
+					$openedDashBoard .= '		<a href="'.$arrayLinks[$groupKey].'" class="info-box-createlink"><span class="fas fa-plus-circle"></span></a>'."\n";
 				}
 
 				$openedDashBoard .= '</span>'."\n";
@@ -642,7 +653,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 					// Forge the line to show into the open object box
 					$labeltoshow = $board->label.' ('.$board->nbtodo.')';
 					if ($board->total > 0) {
-						$labeltoshow .= ' - '.price($board->total, 0, $langs, 1, -1, -1, $conf->currency);
+						$labeltoshow .= ' - '.price($board->total, 0, $langs, 1, -1, -1, getDolCurrency());
 					}
 					$openedDashBoard .= '<a href="'.$board->url.'" class="info-box-text info-box-text-a">';
 					$openedDashBoard .= $infoName;
@@ -652,7 +663,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 					$openedDashBoard .= '<span class="classfortooltip'.($nbtodClass ? ' '.$nbtodClass : '').'" title="'.$labeltoshow.'">';
 					$openedDashBoard .= $board->nbtodo;
 					if ($board->total > 0 && getDolGlobalString('MAIN_WORKBOARD_SHOW_TOTAL_WO_TAX')) {
-						$openedDashBoard .= ' : '.price($board->total, 0, $langs, 1, -1, -1, $conf->currency);
+						$openedDashBoard .= ' : '.price($board->total, 0, $langs, 1, -1, -1, getDolCurrency());
 					}
 					$openedDashBoard .= '</span>';
 					$openedDashBoard .= '</a>';
@@ -662,11 +673,13 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 							$openedDashBoard .= '</div>';
 							$openedDashBoard .= ' <div class="inline-block"><a href="'.$board->url_late.'" class="info-box-text info-box-text-a paddingleft">';
 						} else {
-							$openedDashBoard .= ' ';
+							$openedDashBoard .= ' <span class="info-box-text info-box-text-a displaycontents">';
 						}
 						$openedDashBoard .= $textLate;
 						if ($board->url_late) {
 							$openedDashBoard .= '</a>';
+						} else {
+							$openedDashBoard .= '</span>';
 						}
 					}
 					$openedDashBoard .= '</div>'."\n";

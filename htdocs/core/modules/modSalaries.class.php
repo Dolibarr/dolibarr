@@ -59,7 +59,7 @@ class modSalaries extends DolibarrModules
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->picto = 'payment';
+		$this->picto = 'salary';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array("/salaries/temp");
@@ -98,7 +98,7 @@ class modSalaries extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 511;
-		$this->rights[$r][1] = 'Read employee salaries and payments (yours and your subordinates)';
+		$this->rights[$r][1] = 'Read employee salaries and payments (yours only)';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'read';
@@ -106,6 +106,14 @@ class modSalaries extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 512;
+		$this->rights[$r][1] = 'Read employee salaries and payments (yours and of your subordinates)';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'readchild';
+		$this->rights[$r][5] = '';
+
+		$r++;
+		$this->rights[$r][0] = 513;
 		$this->rights[$r][1] = 'Create/modify payments of empoyee salaries';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
@@ -122,7 +130,7 @@ class modSalaries extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 517;
-		$this->rights[$r][1] = 'Read salaries and payments of all employees';
+		$this->rights[$r][1] = 'Read salaries and payments (of all employees)';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'readall';

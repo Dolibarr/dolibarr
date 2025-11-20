@@ -323,7 +323,7 @@ if (empty($reshook)) {
 			$mesg = $object->error;
 		}
 	} elseif ($action == 'add' && $permissiontoadd) {
-		$selectedLines = GETPOST('toselect', 'array');
+		$selectedLines = GETPOST('toselect', 'array:int');
 		$object->socid = $socid;
 		$object->duration = GETPOSTINT('duration');
 		$object->fk_project = GETPOSTINT('projectid');
@@ -441,7 +441,7 @@ if (empty($reshook)) {
 											$label = $lines[$i]->product_label;
 										}
 
-										if ($prod->duration_value && $conf->global->FICHINTER_USE_SERVICE_DURATION) {
+										if ($prod->duration_value && getDolGlobalString('FICHINTER_USE_SERVICE_DURATION')) {
 											switch ($prod->duration_unit) {
 												default:
 												case 'h':
@@ -956,7 +956,7 @@ if ($action == 'create') {
 			}
 			$objectsrc->fetch_thirdparty();
 
-			$projectid = (!empty($objectsrc->fk_project) ? $objectsrc->fk_project : '');
+			$projectid = (int) $objectsrc->fk_project;
 
 			$soc = $objectsrc->thirdparty;
 
@@ -1030,7 +1030,7 @@ if ($action == 'create') {
 			else
 				$numprojet=select_projects($societe->id, GETPOST("projectid", 'int'), 'projectid');
 				*/
-			$numprojet = $formproject->select_projects($soc->id, $projectid, 'projectid');
+			$numprojet = $formproject->select_projects($soc->id, $projectid, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0, 0, 'maxwidth500 widthcentpercentminusxx');
 			if ($numprojet == 0) {
 				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProject").'"></span></a>';
 			}
@@ -1190,7 +1190,7 @@ if ($action == 'create') {
 
 	$head = fichinter_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'card', $langs->trans("InterventionCard"), -1, 'intervention');
+	print dol_get_fiche_head($head, 'card', $langs->trans("InterventionCard"), -1, $object->picto);
 
 	$formconfirm = '';
 
@@ -1210,7 +1210,7 @@ if ($action == 'create') {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		} else {
-			$numref = $object->ref;
+			$numref = (string) $object->ref;
 		}
 		$text = $langs->trans('ConfirmValidateIntervention', $numref);
 		if (isModEnabled('notification')) {
@@ -1312,6 +1312,19 @@ if ($action == 'create') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneIntervention', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
 
+	// Subtotal line form
+	if ($action == 'add_title_line') {
+		$langs->load('subtotals');
+		$type = 'title';
+		$depth_array = $object->getPossibleLevels($langs);
+		require dol_buildpath('/core/tpl/subtotal_create.tpl.php');
+	} elseif ($action == 'add_subtotal_line') {
+		$langs->load('subtotals');
+		$type = 'subtotal';
+		$titles = $object->getPossibleTitles();
+		require dol_buildpath('/core/tpl/subtotal_create.tpl.php');
+	}
+
 	if (!$formconfirm) {
 		$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
 		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -1343,7 +1356,7 @@ if ($action == 'create') {
 		if ($permissiontoadd) {
 			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+				$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
 			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
@@ -1610,7 +1623,7 @@ if ($action == 'create') {
 
 					$temps = $objectline->showOptionals($extrafields, 'edit', array(), '', '', '1', 'line');
 					if (!empty($temps)) {
-						print '<div style="padding-top: 10px" id="extrafield_lines_area_'.$line->id.'" name="extrafield_lines_area_'.$line->id.'">';
+						print '<div style="padding-top: 10px" id="extrafield_lines_area_'.$objectline->id.'" name="extrafield_lines_area_'.$objectline->id.'">';
 						print $temps;
 						print '</div>';
 					}
@@ -1766,6 +1779,29 @@ if ($action == 'create') {
 		$params = array();
 		if ($user->socid == 0) {
 			if ($action != 'editdescription' && ($action != 'presend')) {
+				// Subtotal
+				if ($object->status == Fichinter::STATUS_DRAFT && isModEnabled('subtotals') && getDolGlobalString('SUBTOTAL_TITLE_'.strtoupper($object->element))) {
+					$langs->load('subtotals');
+
+					$url_button = array();
+					$url_button[] = array(
+						'lang' => 'subtotals',
+						'enabled' => (isModEnabled('intervention') && $object->status == Fichinter::STATUS_DRAFT),
+						'perm' => (bool) $user->hasRight('intervention', 'creer'),
+						'label' => $langs->trans('AddTitleLine'),
+						'url' => '/fichinter/card.php?id='.$object->id.'&action=add_title_line&token='.newToken()
+					);
+
+					$url_button[] = array(
+						'lang' => 'subtotals',
+						'enabled' => (isModEnabled('intervention') && $object->status == Fichinter::STATUS_DRAFT),
+						'perm' => (bool) $user->hasRight('intervention', 'creer'),
+						'label' => $langs->trans('AddSubtotalLine'),
+						'url' => '/fichinter/card.php?id='.$object->id.'&action=add_subtotal_line&token='.newToken()
+					);
+					print dolGetButtonAction('', $langs->trans('Subtotal'), 'default', $url_button, '', true);
+				}
+
 				// Validate
 				if ($object->status == Fichinter::STATUS_DRAFT && (count($object->lines) > 0 || getDolGlobalString('FICHINTER_DISABLE_DETAILS') == '1')) {
 					if ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ficheinter', 'creer')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ficheinter', 'ficheinter_advance', 'validate'))) {

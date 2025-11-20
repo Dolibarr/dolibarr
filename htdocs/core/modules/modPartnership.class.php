@@ -152,10 +152,9 @@ class modPartnership extends DolibarrModules
 		$this->need_dolibarr_version = array(11, -3); // Minimum version of Dolibarr required by module
 
 		// Messages at activation
-		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
-		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
+		$this->warnings_activation = array();
+		$this->warnings_activation_ext = array();
 		//$this->automatic_activation = array('FR'=>'PartnershipWasAutomaticallyActivatedBecauseOfYourCountryChoice');
-		//$this->always_enabled = true;								// If true, can't be disabled
 
 		// Constants
 		// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
@@ -340,8 +339,8 @@ class modPartnership extends DolibarrModules
 			'url' => '/partnership/partnership_list.php',
 			'langs' => 'partnership', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1100 + $r,
-			'enabled' => '$conf->partnership->enabled', // Define condition to show or hide menu entry. Use '$conf->partnership->enabled' if entry must be visible if module is enabled.
-			'perms' => '$user->rights->partnership->read', // Use 'perms'=>'$user->rights->partnership->level1->level2' if you want your menu with a permission rules
+			'enabled' => 'isModEnabled("partnership")', // Define condition to show or hide menu entry. Use '$conf->partnership->enabled' if entry must be visible if module is enabled.
+			'perms' => '$user->hasRight("partnership", "read")', // Use 'perms'=>'$user->rights->partnership->level1->level2' if you want your menu with a permission rules
 			'target' => '',
 			'user' => 2, // 0=Menu for internal users, 1=external users, 2=both
 		);
@@ -354,8 +353,8 @@ class modPartnership extends DolibarrModules
 			'url' => '/partnership/partnership_card.php?action=create',
 			'langs' => 'partnership', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1100 + $r,
-			'enabled' => '$conf->partnership->enabled', // Define condition to show or hide menu entry. Use '$conf->partnership->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms' => '$user->rights->partnership->write', // Use 'perms'=>'$user->rights->partnership->level1->level2' if you want your menu with a permission rules
+			'enabled' => 'isModEnabled("partnership")', // Define condition to show or hide menu entry. Use '$conf->partnership->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+			'perms' => '$user->hasRight("partnership", "write")', // Use 'perms'=>'$user->rights->partnership->level1->level2' if you want your menu with a permission rules
 			'target' => '',
 			'user' => 2, // 0=Menu for internal users, 1=external users, 2=both
 		);
@@ -368,8 +367,8 @@ class modPartnership extends DolibarrModules
 			'url' => '/partnership/partnership_list.php',
 			'langs' => 'partnership', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1100 + $r,
-			'enabled' => '$conf->partnership->enabled', // Define condition to show or hide menu entry. Use '$conf->partnership->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms' => '$user->rights->partnership->read', // Use 'perms'=>'$user->rights->partnership->level1->level2' if you want your menu with a permission rules
+			'enabled' => 'isModEnabled("partnership")', // Define condition to show or hide menu entry. Use '$conf->partnership->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+			'perms' => '$user->hasRight("partnership", "write")', // Use 'perms'=>'$user->rights->partnership->level1->level2' if you want your menu with a permission rules
 			'target' => '',
 			'user' => 2, // 0=Menu for internal users, 1=external users, 2=both
 		);

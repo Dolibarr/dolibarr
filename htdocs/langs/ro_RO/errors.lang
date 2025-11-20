@@ -87,6 +87,7 @@ ErrorBadFormatValueList=Valorile din lista nu pot avea mai mult de o virgulă: <
 ErrorFieldCanNotContainSpecialCharacters=Câmpul <b>%s</b> nu trebuie să conțină caractere speciale.
 ErrorFieldCanNotContainSpecialNorUpperCharacters=Câmpul <b>%s</b> nu trebuie să conțină caractere speciale, nici caractere majuscule și trebuie să înceapă cu un caracter alfabetic (a-z) 
 ErrorFieldMustHaveXChar=Câmpul <b>%s</b> trebuie să aibă cel puțin %scaractere.
+ErrorFieldMustHaveLessThanXChar=Câmpul <b>%s</b> trebuie să aibă maxim %s caractere.
 ErrorNoAccountancyModuleLoaded=Modulul Contabilitate nu este activat
 ErrorExportDuplicateProfil=Acest nume de profil există deja pentru acest set de export.
 ErrorLDAPSetupNotComplete=Potrivirea Dolibarr-LDAP nu este finalizată.

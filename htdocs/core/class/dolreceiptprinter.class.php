@@ -590,10 +590,13 @@ class dolReceiptPrinter extends Printer
 	{
 		$error = 0;
 		$img = EscposImage::load(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo_bw.png');
-		//$this->profile = CapabilityProfile::load("TM-T88IV");
+
+		// TODO Set the profile into $this->profile (used by initPrinter). Profile not used yet.
+
+		// Init printer
 		$ret = $this->initPrinter($printerid);
 		if ($ret > 0) {
-			setEventMessages($this->error, $this->errors, 'errors');
+			setEventMessages("initPrinter error: ".$this->error, $this->errors, 'errors');
 		} else {
 			try {
 				if ($addimgandbarcode) {
@@ -728,6 +731,10 @@ class dolReceiptPrinter extends Printer
 		//print '<pre>'.print_r($vals, true).'</pre>';
 		// print ticket
 		$nbcharactbyline = getDolGlobalInt('RECEIPT_PRINTER_NB_CHARACT_BY_LINE', 48);
+
+		// TODO Set the profile into $this->profile (used by initPrinter). Profile not used yet.
+
+		// Init printer
 		$ret = $this->initPrinter($printerid);
 
 		if ($ret > 0) {
@@ -1066,7 +1073,11 @@ class dolReceiptPrinter extends Printer
 							break;
 						case 3:
 							$parameters = explode(':', $parameter);
-							$this->connector = new NetworkPrintConnector($parameters[0], $parameters[1]);
+							if (empty($parameters[1])) {
+								$this->connector = new NetworkPrintConnector($parameters[0]);
+							} else {
+								$this->connector = new NetworkPrintConnector($parameters[0], $parameters[1]);
+							}
 							break;
 						case 4:	// LPT1, smb://...
 							$this->connector = new WindowsPrintConnector(dol_sanitizePathName($parameter));
@@ -1078,6 +1089,9 @@ class dolReceiptPrinter extends Printer
 							$found = false;
 							break;
 					}
+
+					// TODO Set the profile into $this->profile by the caller of this method initPrinter. Profile not used yet.
+					// Note: currently $this->profile is always null, so will load "default".
 					if ($found) {
 						$this->printer = new Printer($this->connector, $this->profile);
 					} else {

@@ -163,7 +163,7 @@ class pdf_ledger extends ModelePdfAccountancy
 		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && $outputlangs->defaultlang != getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE')) {
 			$outputlangsbis = new Translate('', $conf);
 			$outputlangsbis->setDefaultLang(getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE'));
-			$outputlangsbis->loadLangs(array("main", "bills", "orders", "products", "dict", "companies", "other", "propal", "deliveries", "sendings", "productbatch", "compta"));
+			$outputlangsbis->loadLangs(array("main", "bills", "orders", "products", "dict", "companies", "other", "propal", "sendings", "productbatch", "compta"));
 		}
 
 		$nblines = count($object->lines);
@@ -320,6 +320,9 @@ class pdf_ledger extends ModelePdfAccountancy
 					}
 
 					// Add the title line
+					if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES')) {
+						$this->addDashLine($pdf, $pdf->getPage(), $nexY);
+					}
 					$this->addTitleLine(
 						$pdf,
 						$curY,
@@ -345,7 +348,7 @@ class pdf_ledger extends ModelePdfAccountancy
 							$curY,
 							$nexY,
 							$default_font_size,
-							$langs->trans('Total'),
+							$langs->transnoentities('Total'),
 							$tab_top_newpage,
 							$accountDebit,
 							$accountCredit
@@ -353,13 +356,16 @@ class pdf_ledger extends ModelePdfAccountancy
 					}
 
 					// Add the title line
+					if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES')) {
+						$this->addDashLine($pdf, $pdf->getPage(), $nexY);
+					}
 					$this->addTitleLine(
 						$pdf,
 						$curY,
 						$nexY,
 						$default_font_size,
 						'piece_num',
-						$langs->trans('AccountAccountingShort') . ' ' . length_accountg($accountingAccount->ref) . ' - ' . $accountingAccount->label,
+						$langs->transnoentities('AccountAccountingShort') . ' ' . length_accountg($accountingAccount->ref) . ' - ' . $accountingAccount->label,
 						$tab_top_newpage
 					);
 
@@ -477,7 +483,7 @@ class pdf_ledger extends ModelePdfAccountancy
 
 			if ($this->getColumnStatus('balance')) {
 				$solde = $object->lines[$i]->credit - $object->lines[$i]->debit;
-				$soldeText = price(price2num(abs($solde), 'MT')) . ($solde >= 0 ? ' C' : ' D');
+				$soldeText = price(price2num(abs($solde), 'MT')) . ($solde >= 0 ? ' ' . $langs->trans('CreditShort') : ' ' . $langs->trans('DebitShort'));
 				$this->printStdColumnContent($pdf, $curY, 'balance', $soldeText);
 				$nexY = max($pdf->GetY(), $nexY);
 			}
@@ -547,7 +553,7 @@ class pdf_ledger extends ModelePdfAccountancy
 				$curY,
 				$nexY,
 				$default_font_size,
-				$langs->trans('Total'),
+				$langs->transnoentities('Total'),
 				$tab_top_newpage,
 				$accountDebit,
 				$accountCredit
@@ -566,9 +572,8 @@ class pdf_ledger extends ModelePdfAccountancy
 			$langs->transnoentities('GrandTotals'),
 			$tab_top_newpage,
 			$totalDebit,
-			$totalCredit,
+			$totalCredit
 		);
-
 
 
 		// Show square
@@ -596,6 +601,8 @@ class pdf_ledger extends ModelePdfAccountancy
 		if ($reshook < 0) {
 			$this->error = $hookmanager->error;
 			$this->errors = $hookmanager->errors;
+			dolChmod($file);
+			return -1;
 		}
 
 		dolChmod($file);
@@ -745,7 +752,7 @@ class pdf_ledger extends ModelePdfAccountancy
 	 * @param	TCPDF		$pdf     			PDF
 	 * @param	BookKeeping	$object				Object to show
 	 * @param	Translate	$outputlangs		Object lang for output
-	 * @param	int			$hidefreetext		1=Hide free text
+	 * @param	int<0,1>	$hidefreetext		1=Hide free text
 	 * @return	int								Return height of bottom margin including footer text
 	 */
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
@@ -757,11 +764,11 @@ class pdf_ledger extends ModelePdfAccountancy
 	/**
 	 * Define Array Column Field
 	 *
-	 * @param	BookKeeping	   $object    	    common object
-	 * @param	Translate	   $outputlangs     langs
-	 * @param	int			   $hidedetails		Do not show line details
-	 * @param	int			   $hidedesc		Do not show desc
-	 * @param	int			   $hideref			Do not show ref
+	 * @param	CommonObject	$object    	    common object
+	 * @param	Translate		$outputlangs    langs
+	 * @param	int<0,1>		$hidedetails		Do not show line details
+	 * @param	int<0,1>		$hidedesc		Do not show desc
+	 * @param	int<0,1>		$hideref			Do not show ref
 	 * @return	void
 	 */
 	public function defineColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
@@ -991,6 +998,8 @@ class pdf_ledger extends ModelePdfAccountancy
 	 */
 	protected function addTotalLine(TCPDF $pdf, &$curY, &$nexY, $default_font_size, string $label, $tab_top_newpage, $debit, $credit, bool $uppercase = true)
 	{
+		global $langs;
+
 		$curY = $nexY;
 		$pageposbefore = $pdf->getPage();
 		$pdf->SetFont('', 'B', $default_font_size - 1);
@@ -1025,7 +1034,7 @@ class pdf_ledger extends ModelePdfAccountancy
 
 		if ($this->getColumnStatus('balance')) {
 			$solde = $credit - $debit;
-			$soldeText = price(price2num(abs($solde), 'MT')) . ($solde >= 0 ? ' C' : ' D');
+			$soldeText = price(price2num(abs($solde), 'MT')) . ($solde >= 0 ? ' ' . $langs->trans('CreditShort') : ' ' . $langs->trans('DebitShort'));
 			$this->printStdColumnContent($pdf, $curY, 'balance', $soldeText);
 			$nexY = max($pdf->GetY(), $nexY);
 		}

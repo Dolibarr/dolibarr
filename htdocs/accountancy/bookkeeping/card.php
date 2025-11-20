@@ -198,6 +198,11 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("AccountAccountingShort")), null, 'errors');
 			$action = '';
 		}
+		$subledger_account_str = is_array($subledger_account) ? reset($subledger_account) : (string) $subledger_account;
+		if (!checkGeneralAccountAllowsAuxiliary($db, $accountingaccount_number, $subledger_account_str)) {
+			$error++;
+			setEventMessages($langs->trans("ErrorAccountNotCentralized"). ". " . $langs->trans("RemoveSubsidiaryAccountOrAdjustTheGeneralAccount"), null, 'errors');
+		}
 
 		if (!$error) {
 			if (GETPOSTINT('doc_datemonth') && GETPOSTINT('doc_dateday') && GETPOSTINT('doc_dateyear')) {
@@ -490,6 +495,29 @@ if ($action == 'delete') {
 	print $formconfirm;
 }
 
+// Update fields properties in realtime
+if (!empty($conf->use_javascript_ajax)) {
+	print "\n" . '<script type="text/javascript">';
+	print '$(document).ready(function () {
+			function toggleSubledger() {
+				var isCentral = $("#accountingaccount_number option:selected").data("centralized");
+				console.log("the selected general ledger account is centralised?", isCentral);
+				if (isCentral) {
+					$("#subledger_account, #subledger_label").prop("disabled", false);
+				} else {
+					$("#subledger_account, #subledger_label").prop("disabled", true);
+				}
+			}
+
+			toggleSubledger();
+
+			$("#accountingaccount_number").on("change", toggleSubledger);
+			$("#accountingaccount_number").on("select2:select", toggleSubledger);
+		';
+	print '	});' . "\n";
+	print '	</script>' . "\n";
+}
+
 if ($action == 'create') {
 	print load_fiche_titre($title);
 
@@ -576,6 +604,25 @@ if ($action == 'create') {
 			print load_fiche_titre($langs->trans("UpdateMvts"), $backlink);
 		}*/
 
+		$head = accounting_transaction_prepare_head($object, $mode, $type, $backtopage);
+
+		print dol_get_fiche_head($head, 'transaction', '', -1);
+
+		//$object->label = $object->doc_ref;
+		if ($mode == '_tmp') {
+			$object->context['mode'] = $mode;
+			$object->next_prev_filter = '1=0';	// Add a test always false to disable navigation into the dol_banner_tab. In tmp mode, we just want to create/edit lines of bank transaction.
+		}
+		$object->label = $object->ref;
+
+		$morehtmlref = '<div style="clear: both;"></div>';
+		$morehtmlref .= '<div class="refidno opacitymedium">';
+		$morehtmlref .= $object->label;
+		$morehtmlref .= '</div>';
+
+		dol_banner_tab($object, 'ref', $backlink, 1, 'piece_num', 'piece_num', $morehtmlref);
+
+
 		if ($action == 'clonebookkeepingwriting' && $confirm != 'yes' && $permissiontoadd) {
 			$piece_num = GETPOST('piece_num', 'alpha');
 			$formaccounting = new FormAccounting($db);
@@ -614,28 +661,6 @@ if ($action == 'create') {
 			);
 		}
 
-		$head = array();
-		$h = 0;
-		$head[$h][0] = DOL_URL_ROOT."/accountancy/bookkeeping/card.php".'?piece_num='.((int) $object->piece_num).($mode ? '&mode='.$mode : '').($type ? '&type='.$type : '').'&backtopage='.urlencode($backtopage);
-		$head[$h][1] = $langs->trans("Transaction");
-		$head[$h][2] = 'transaction';
-		$h++;
-
-		print dol_get_fiche_head($head, 'transaction', '', -1);
-
-		//$object->label = $object->doc_ref;
-		if ($mode == '_tmp') {
-			$object->context['mode'] = $mode;
-			$object->next_prev_filter = '1=0';	// Add a test always false to disable navigation into the dol_banner_tab. In tmp mode, we just want to create/edit lines of bank transaction.
-		}
-		$object->label = $object->ref;
-
-		$morehtmlref = '<div style="clear: both;"></div>';
-		$morehtmlref .= '<div class="refidno opacitymedium">';
-		$morehtmlref .= $object->label;
-		$morehtmlref .= '</div>';
-
-		dol_banner_tab($object, 'ref', $backlink, 1, 'piece_num', 'piece_num', $morehtmlref);
 
 		print '<div class="fichecenter">';
 
@@ -1009,7 +1034,7 @@ if ($action == 'create') {
 							print '<input type="text" class="maxwidth150" name="subledger_account" value="'.(GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account).'" placeholder="'.dol_escape_htmltag($langs->trans("SubledgerAccount")).'">';
 						}
 						// Add also input for subledger label
-						print '<br><input type="text" class="maxwidth150" name="subledger_label" value="'.(GETPOSTISSET("subledger_label") ? GETPOST("subledger_label", "alpha") : $line->subledger_label).'" placeholder="'.dol_escape_htmltag($langs->trans("SubledgerAccountLabel")).'">';
+						print '<br><input type="text" class="maxwidth150" name="subledger_label" id="subledger_label" value="'.(GETPOSTISSET("subledger_label") ? GETPOST("subledger_label", "alpha") : $line->subledger_label).'" placeholder="'.dol_escape_htmltag($langs->trans("SubledgerAccountLabel")).'">';
 						print '</td>';
 						print '<td><input type="text" class="minwidth200" name="label_operation" value="'.(GETPOSTISSET("label_operation") ? GETPOST("label_operation", "alpha") : $line->label_operation).'"></td>';
 						print '<td class="right"><input type="text" class="right width50" name="debit" value="'.(GETPOSTISSET("debit") ? GETPOST("debit", "alpha") : price($line->debit)).'"></td>';
@@ -1036,7 +1061,7 @@ if ($action == 'create') {
 							} else {
 								print '<input type="text" class="maxwidth150" name="subledger_account" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccount")) . '">';
 							}
-							print '<br><input type="text" class="maxwidth150" name="subledger_label" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccountLabel")) . '">';
+							print '<br><input type="text" class="maxwidth150" name="subledger_label" id="subledger_label" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccountLabel")) . '">';
 							print '</td>';
 							print '<td><input type="text" class="minwidth200" name="label_operation" value="' . dol_escape_htmltag($label_operation) . '"/></td>';
 							print '<td class="right"><input type="text" class="right width50" name="debit" value=""/></td>';

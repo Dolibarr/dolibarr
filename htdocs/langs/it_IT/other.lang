@@ -1,8 +1,7 @@
 # Dolibarr language file - Source file is en_US - other
+# THIS FILE MUST CONTAINS ENTRIES THAT ARE RARELY USED
 SecurityCode=Codice di sicurezza
 NumberingShort=N°
-Tools=Strumenti
-TMenuTools=Strumenti
 ToolsDesc=Quest'area è dedicata agli strumenti di gruppo non disponibili in altre voci di menu.<br>Tali strumenti sono raggiungibili dal menu laterale.
 Birthday=Compleanno
 BirthdayAlert=Avviso di compleanno
@@ -384,3 +383,25 @@ FillExtrafieldWithAi=Riempi il campo extra con contenuto AI
 ExtrafieldFiller=Riempitivo extracampo
 OurProductSelection=La nostra selezione di nuovi prodotti
 NoSupportedModulesHaveBeenActivated=The reporting tool can generate dynamic reports for some modules only. There is no supported module enabled yet.
+# Bookmarks
+AddThisPageToBookmarks = Aggiungi la seguente pagina ai segnalibri
+BehaviourOnClick = Behavior when a bookmark URL is selected
+BookmarkTargetNewWindowShort = Nuova finestra
+BookmarkTargetReplaceWindowShort = Finestra corrente
+BookmarkTitle = Titolo segnalibro
+BookmarksManagement = Gestione segnalibri
+BookmarksMenuShortCut = Ctrl + shift + m
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark = Scegli se la pagina collegata deve essera aperta in una nuova finestra oppure no
+CreateBookmark = Crea segnalibro
+EditBookmarks = Visualizza lista/crea segnalibri
+ListOfBookmarks = Elenco segnalibri
+NewBookmark = Nuovo segnalibro
+NoBookmarkFound = Nessun segnalibro trovato
+NoBookmarks = Nessun segnalibro definito
+OpenANewWindow = Apri una nuova finestra
+ReplaceWindow = Sostituisci finestra attuale
+SetHereATitleForLink = Dai un titolo al segnalibro
+ShowBookmark = Visualizza segnalibro
+UrlOrLink = Collegamento
+UseAnExternalHttpLinkOrRelativeDolibarrLink = Use an external/absolute link (https://externalurl.com) or an internal/relative link (/mypage.php). You can also use phone like tel:0123456.
+SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation

@@ -1,0 +1,30 @@
+
+.nav-item.--cart {
+	background-color: #f3f3f3;
+}
+
+nav a, nav  [role=link] {
+	--color : hsl(202, 13.67%, 41.54%);
+}
+
+nav a:is([aria-current], :hover, :active, :focus), [role=link]:is([aria-current], :hover, :active, :focus) {
+	/* --color: hsl(289, 90%, 32%); */
+	--color: var(--primary-hover);
+}
+
+nav  a:focus, nav  [role=link]:focus {
+	--background-color: hsla(274, 97%, 59%, 0.125);
+}
+
+.top-nav-icon{
+	max-height: 24px;
+}
+
+a:hover .top-nav-icon{
+	filter: hue-rotate(50deg) brightness(30%);
+}
+
+/* Used to pull primary menu on left */
+.primary-top-nav .logout {
+	margin-left: auto;
+}

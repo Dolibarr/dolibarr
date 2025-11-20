@@ -2,7 +2,7 @@
 /* Copyright (C) 2014-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018  	   Ferran Marcet 		<fmarcet@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -295,7 +295,7 @@ if ($action == 'initbarcodeproducts' && $user->hasRight('produit', 'lire')) {
 llxHeader('', $langs->trans("MassBarcodeInit"), '', '', 0, 0, '', '', '', 'mod-barcode page-codeinit');
 
 if (!GETPOST('dol_openinpopup', 'aZ')) {
-	print load_fiche_titre($langs->trans("MassBarcodeInit"), '', 'title_setup.png');
+	print load_fiche_titre($langs->trans("MassBarcodeInit"), '', 'title_setup');
 	print '<br>';
 }
 

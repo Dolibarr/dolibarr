@@ -8,7 +8,7 @@
  * Copyright (C) 2013-2018 Juanjo Menent	       <jmenent@2byte.es>
  * Copyright (C) 2014-2015 Cédric Gross            <c.gross@kreiz-it.fr>
  * Copyright (C) 2015      Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021	   Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -83,7 +83,7 @@ $fieldid = GETPOSTISSET("ref") ? 'ref' : 'rowid';
 $d_eatby = dol_mktime(0, 0, 0, GETPOSTINT('eatbymonth'), GETPOSTINT('eatbyday'), GETPOSTINT('eatbyyear'));
 $d_sellby = dol_mktime(0, 0, 0, GETPOSTINT('sellbymonth'), GETPOSTINT('sellbyday'), GETPOSTINT('sellbyyear'));
 $pdluoid = GETPOSTINT('pdluoid');
-$batchnumber = GETPOST('batch_number', 'san_alpha');
+$batchnumber = GETPOST('batch_number', 'aZ09comma');
 if (!empty($batchnumber)) {
 	$batchnumber = trim($batchnumber);
 }
@@ -1368,7 +1368,7 @@ if (!$variants || getDolGlobalString('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PA
 	$comb2val = new ProductCombination2ValuePair($db);
 	$productCombinations = $prodcomb->fetchAllByFkProductParent($object->id);
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="massaction">';
 	print '<input type="hidden" name="id" value="'.$id.'">';

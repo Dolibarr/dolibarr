@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016   Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2020-2024  Frédéric France		<frederic.france@free.fr>
+ * Copyright (C) 2020-2025  Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025	William Mead			<william@m34d.com>
  *
@@ -215,7 +215,7 @@ class ExpenseReports extends DolibarrApi
 	public function post($request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'creer')) {
-			throw new RestException(403, "Insuffisant rights");
+			throw new RestException(403, "Insufficiant rights");
 		}
 
 		// Check mandatory fields
@@ -568,7 +568,7 @@ class ExpenseReports extends DolibarrApi
 	public function validate($id, $notrigger = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'creer')) {
-			throw new RestException(403, "Insuffisant rights");
+			throw new RestException(403, "Insufficiant rights");
 		}
 		$result = $this->expensereport->fetch($id);
 		if (!$result) {
@@ -586,8 +586,6 @@ class ExpenseReports extends DolibarrApi
 		if ($result < 0) {
 			throw new RestException(500, 'Error when validating expense report: '.$this->expensereport->error);
 		}
-
-		$this->expensereport->fetchObjectLinked();
 
 		return $this->_cleanObjectDatas($this->expensereport);
 	}
@@ -615,7 +613,7 @@ class ExpenseReports extends DolibarrApi
 	public function approve($id, $notrigger = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'approve')) {
-			throw new RestException(403, "Insuffisant rights");
+			throw new RestException(403, "Insufficiant rights");
 		}
 		$result = $this->expensereport->fetch($id);
 		if (!$result) {
@@ -633,8 +631,6 @@ class ExpenseReports extends DolibarrApi
 		if ($result < 0) {
 			throw new RestException(500, 'Error when approving expense report: '.$this->expensereport->error);
 		}
-
-		$this->expensereport->fetchObjectLinked();
 
 		return $this->_cleanObjectDatas($this->expensereport);
 	}
@@ -663,7 +659,7 @@ class ExpenseReports extends DolibarrApi
 	public function deny($id, $details, $notrigger = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'approve')) {
-			throw new RestException(403, "Insuffisant rights");
+			throw new RestException(403, "Insufficiant rights");
 		}
 		$result = $this->expensereport->fetch($id);
 		if (!$result) {
@@ -682,7 +678,7 @@ class ExpenseReports extends DolibarrApi
 			throw new RestException(500, 'Error when denying expense report: '.$this->expensereport->error);
 		}
 
-		$this->expensereport->fetchObjectLinked();
+
 
 		return $this->_cleanObjectDatas($this->expensereport);
 	}
@@ -895,9 +891,12 @@ class ExpenseReports extends DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
+	 * @phpstan-template T
 	 *
 	 * @param   Object  $object     Object to clean
 	 * @return  Object              Object with cleaned properties
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	protected function _cleanObjectDatas($object)
 	{

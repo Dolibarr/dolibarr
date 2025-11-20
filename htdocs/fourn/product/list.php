@@ -213,7 +213,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -280,7 +280,7 @@ print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sort
 if (!empty($catid)) {
 	print "<div id='ways'>";
 	$c = new Categorie($db);
-	$ways = $c->print_all_ways(' &gt; ', 'fourn/product/list.php');
+	$ways = $c->print_all_ways('auto', 'fourn/product/list.php');
 	print " &gt; ".$ways[0]."<br>\n";
 	print "</div><br>";
 }
@@ -421,7 +421,7 @@ while ($i < $imaxinloop) {
 	$productstatic->barcode = $objp->barcode;
 	$productstatic->barcode_type = $objp->fk_barcode_type;
 
-	print '<tr data-rowid="'.$productstatic->id.'" class="oddeven">';
+	print '<tr data-rowid="'.$productstatic->id.'" class="oddeven row-with-select">';
 
 	// Action column
 	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {

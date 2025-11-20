@@ -3,10 +3,10 @@ MenuFinancial=Facturare | Plăți
 TaxModuleSetupToModifyRules=Du-te la <a href="%s"> Configurare modul Taxe</a> pentru a modifica regulile de calcul
 TaxModuleSetupToModifyRulesLT=Du-te la <a href="%s">Setare Companie</a> pentru a modifica regulile de calcul
 OptionMode=Opţiune pentru evidenţa contabilă
-OptionModeTrue=Contabilitate angajamente
-OptionModeVirtual=Contabilitate numerar
-OptionModeTrueDesc=În acest context, cifra de afaceri se calculează pe plăți (data plăților). Valabilitatea cifrelor este asigurată numai dacă evidența contabilă este controlată prin intrare/ieșire încasări și plăți.
+OptionModeVirtual=Contabilitate angajamente
+OptionModeTrue=Contabilitate numerar
 OptionModeVirtualDesc=În acest context, cifra de afaceri se calculează pe facturi (data de validare). Când aceste facturi se datorează, indiferent dacă acestea au fost plătite sau nu, ele sunt enumerate în cifra de afaceri de ieşire.
+OptionModeTrueDesc=În acest context, cifra de afaceri se calculează pe plăți (data plăților). Valabilitatea cifrelor este asigurată numai dacă evidența contabilă este controlată prin intrare/ieșire încasări și plăți.
 FeatureIsSupportedInInOutModeOnly=Caracteristicã disponibilă doar în modul contabil CREDITE-DEBITE (vezi Configurare modul Contabilitate)
 VATReportBuildWithOptionDefinedInModule=Sumele prezentate aici sunt calculate folosind regulile definite de modul de configurare fiscală.
 LTReportBuildWithOptionDefinedInModule=Sumele prezentate aici sunt calculate folosind regulile definite în configurarea Companiei.
@@ -302,7 +302,6 @@ ByVatRate=După cota TVA
 TurnoverbyVatrate=Cifra de afaceri facturată după cota TVA
 TurnoverCollectedbyVatrate=Cifra de afaceri colectată după cota TVA
 PurchasebyVatrate=Achiziţii după cota de TVA
-LabelToShow=Etichetă scurtă
 PurchaseTurnover=Cifră de afaceri din achiziţii
 PurchaseTurnoverCollected=Cifra de afaceri colectată din achiziţii
 RulesPurchaseTurnoverDue=- Include facturile restante la furnizori indiferent dacă sunt achitate sau nu. - <br>Se bazează pe data de emitere a acestor facturi.<br>
@@ -329,3 +328,4 @@ RuleForLinesDates=Regulă pentru datele liniilor
 Prepaid=Preplătit
 Postpaid=Plată ulterioară
 SetRuleForLinesDates=Setare regulă pentru datele liniilor
+SomeNotConvertedCreditNoteExists=Există <b>%s</b> note de credit care nu au fost încă convertite pentru consum

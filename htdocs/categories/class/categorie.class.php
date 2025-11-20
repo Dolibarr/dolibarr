@@ -9,7 +9,7 @@
  * Copyright (C) 2013-2018	Philippe Grand				<philippe.grand@atoo-net.com>
  * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2016-2024	Charlene Benke				<charlene@patas-monkey.com>
+ * Copyright (C) 2016-2025	Charlene Benke				<charlene@patas-monkey.com>
  * Copyright (C) 2018-2025	Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2022-2023	Solution Libre SAS			<contact@solution-libre.fr>
  * Copyright (C) 2023-2024	Benjamin Falière			<benjamin.faliere@altairis.fr>
@@ -69,6 +69,9 @@ class Categorie extends CommonObject
 	const TYPE_INVOICE				= 'invoice';
 	const TYPE_SUPPLIER_ORDER		= 'supplier_order';
 	const TYPE_SUPPLIER_INVOICE		= 'supplier_invoice';
+	const TYPE_SUPPLIER_PROPOSAL	= 'supplier_proposal';
+	const TYPE_PROPOSAL	            = 'propal';
+	const TYPE_PROJECT_TASK			= 'project_task';
 
 
 	/**
@@ -99,14 +102,18 @@ class Categorie extends CommonObject
 		'order'					=> 16,
 		'invoice'				=> 17,
 		'supplier_order'		=> 20,
-		'supplier_invoice'		=> 21
+		'supplier_invoice'		=> 21,
+		'supplier_proposal'		=> 22,
+		'propal'				=> 23,
+		'project_task'			=> 24,
 	);
 
 	/**
 	 * @var array<int,string> 	Code mapping from ID
 	 *
-	 * @deprecated	This array should be removed in future, once previous constants are moved to the string value.
+	 * @deprecated	This array should be removed now. We can get it by doing: array_flip($categ->MAP_ID)
 	 */
+	/*
 	public static $MAP_ID_TO_CODE = array(
 		0  => 'product',
 		1  => 'supplier',
@@ -126,13 +133,15 @@ class Categorie extends CommonObject
 		16 => 'order',
 		17 => 'invoice',
 		20 => 'supplier_order',
-		21 => 'supplier_invoice'
+		21 => 'supplier_invoice',
+		22 => 'supplier_proposal',
+		23 => 'propal',
+		24 => 'project_task'
 	);
+	*/
 
 	/**
 	 * @var array<string,string> Foreign keys mapping from type string when value does not match
-	 *
-	 * @todo Move to const array when PHP 5.6 will be our minimum target
 	 */
 	public $MAP_CAT_FK = array(
 		'customer'     => 'soc',
@@ -143,8 +152,6 @@ class Categorie extends CommonObject
 
 	/**
 	 * @var array<string,string> Category tables mapping from type string (llx_categorie_...) when value does not match
-	 *
-	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
 	public $MAP_CAT_TABLE = array(
 		'customer'     => 'societe',
@@ -154,8 +161,6 @@ class Categorie extends CommonObject
 
 	/**
 	 * @var array<string,string> Object class mapping from type string
-	 *
-	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
 	public $MAP_OBJ_CLASS = array(
 		'product'				=> 'Product',
@@ -176,13 +181,14 @@ class Categorie extends CommonObject
 		'order'					=> 'Commande',
 		'invoice'				=> 'Facture',
 		'supplier_order'		=> 'CommandeFournisseur',
-		'supplier_invoice'		=> 'FactureFournisseur'
+		'supplier_invoice'		=> 'FactureFournisseur',
+		'supplier_proposal' 	=> 'SupplierProposal',
+		'propal' 				=> 'Propal',
+		'project_task'			=> 'Task',
 	);
 
 	/**
 	 * @var array<string,string> 	Title/Label mapping from type string
-	 *
-	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
 	public static $MAP_TYPE_TITLE_AREA = array(
 		'product'				=> 'Products',
@@ -204,7 +210,10 @@ class Categorie extends CommonObject
 		'order'					=> 'Orders',
 		'invoice'				=> 'Invoices',
 		'supplier_order'		=> 'SuppliersOrders',
-		'supplier_invoice'		=> 'SuppliersInvoices'
+		'supplier_invoice'		=> 'SuppliersInvoices',
+		'propal' 				=> 'Proposals',
+		'supplier_proposal' 	=> 'SupplierProposals',
+		'project_task'			=> 'Tasks'
 	);
 
 	/**
@@ -224,7 +233,8 @@ class Categorie extends CommonObject
 		'order'					=> 'commande',
 		'invoice'				=> 'facture',
 		'supplier_order'		=> 'commande_fournisseur',
-		'supplier_invoice'		=> 'facture_fourn'
+		'supplier_invoice'		=> 'facture_fourn',
+		'project_task'			=> 'projet_task'
 	);
 
 	/**
@@ -293,6 +303,7 @@ class Categorie extends CommonObject
 	 * @see Categorie::TYPE_INVOICE
 	 * @see Categorie::TYPE_SUPPLIER_ORDER
 	 * @see Categorie::TYPE_SUPPLIER_INVOICE
+	 * @see Categorie::TYPE_PROJECT_TASK
 	 */
 	public $type;
 
@@ -335,7 +346,7 @@ class Categorie extends CommonObject
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -389,14 +400,16 @@ class Categorie extends CommonObject
 			$reshook = $hookmanager->executeHooks('constructCategory', $parameters, $this); // Note that $action and $object may have been modified by some hooks
 			if ($reshook >= 0 && !empty($hookmanager->resArray)) {
 				foreach ($hookmanager->resArray as $mapList) {
+					/** @var array{id:int,code:string,cat_fk:string|null,cat_table:string|null,obj_class:string,obj_table:string,label:string|null} $mapList */
 					$mapId = $mapList['id'];
 					$mapCode = $mapList['code'];
-					self::$MAP_ID_TO_CODE[$mapId] = $mapCode;
+					//self::$MAP_ID_TO_CODE[$mapId] = $mapCode;
 					$this->MAP_ID[$mapCode] = $mapId;
 					$this->MAP_CAT_FK[$mapCode] = isset($mapList['cat_fk']) ? $mapList['cat_fk'] : null;
 					$this->MAP_CAT_TABLE[$mapCode] = isset($mapList['cat_table']) ? $mapList['cat_table'] : null;
 					$this->MAP_OBJ_CLASS[$mapCode] = $mapList['obj_class'];
 					$this->MAP_OBJ_TABLE[$mapCode] = $mapList['obj_table'];
+					self::$MAP_TYPE_TITLE_AREA[$mapCode] = isset($mapList['label']) ? $mapList['label'] : null;
 				}
 			}
 		}
@@ -765,6 +778,7 @@ class Categorie extends CommonObject
 			'categorie_user' => 'fk_categorie',
 			'categorie_product' => 'fk_categorie',
 			'categorie_project' => 'fk_categorie',
+			'categorie_project_task' => 'fk_categorie',
 			'categorie_societe' => 'fk_categorie',
 			'categorie_ticket' => array('field' => 'fk_categorie', 'enabled' => isModEnabled('ticket')),
 			'categorie_warehouse' => 'fk_categorie',
@@ -1129,7 +1143,11 @@ class Categorie extends CommonObject
 				dol_print_error($this->db);
 			}
 
-			if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+			if (($limit >= (int) $nbtotalofrecords) && $page > 0) {
+				return [];
+			}
+
+			if (($page * $limit) >= (int) $nbtotalofrecords) {	// if total resultset is smaller or equal then paging size (filtering), goto and load page 0
 				$page = 0;
 				$offset = 0;
 			}
@@ -1531,16 +1549,21 @@ class Categorie extends CommonObject
 	 * Returns the path of the category, with the names of the categories
 	 * separated by $sep (" >> " by default)
 	 *
-	 * @param	string	$sep	     Separator
-	 * @param	string	$url	     Url ('', 'none' or 'urltouse')
-	 * @param   int     $nocolor     0
-	 * @param	int		$addpicto	 Add picto into link
+	 * @param	string		$sep	     Separator
+	 * @param	string		$url	     Url ('', 'none' or 'urltouse')
+	 * @param   int     	$nocolor     0
+	 * @param	int			$addpicto	 Add picto into link
+	 * @param	int			$notrunc	 Do not truncate names of parent categories
 	 * @return	string[]
 	 */
-	public function print_all_ways($sep = '&gt;&gt;', $url = '', $nocolor = 0, $addpicto = 0)
+	public function print_all_ways($sep = 'auto', $url = '', $nocolor = 0, $addpicto = 0, $notrunc = 0)
 	{
 		// phpcs:enable
 		$ways = array();
+
+		if ($sep == 'auto') {
+			$sep = '&gt;';
+		}
 
 		$all_ways = $this->get_all_ways(); // Load array of categories to reach this->id
 
@@ -1565,13 +1588,29 @@ class Categorie extends CommonObject
 				}
 
 				if ($url == '') {
-					$link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.((int) $cat->id).'&type='.urlencode($cat->type).'" class="'.($i < count($way) ? 'small ' : '').$forced_color.'">';
-					$linkend = '</a>';
-					$w[] = $link.(($addpicto && $i == 1) ? img_object('', 'category', 'class="paddingright"') : '').$cat->label.$linkend;
+					if (($i < count($way) && empty($notrunc)) && $i > 1) {
+						$link = '';
+						$linkend = '';
+					} else {
+						$link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.((int) $cat->id).'&type='.urlencode($cat->type).'" class="'.(($i < count($way) && empty($notrunc)) ? 'small ' : '').$forced_color.'">';
+						$linkend = '</a>';
+					}
+					$s = $link.(($addpicto && $i == 1) ? img_object('', 'category', 'class="paddingright"') : '');
+					$s .= (($i < count($way) && empty($notrunc)) ? ($i == 1 ? dol_trunc($cat->label, 3) : '') : $cat->label);
+					$s .= $linkend;
+					$w[] = $s;
 				} elseif ($url == 'none') {
-					$link = '<span class="valignmiddle '.($i < count($way) ? 'small ' : '').$forced_color.'">';
-					$linkend = '</span>';
-					$w[] = $link.(($addpicto && $i == 1) ? img_object('', 'category', 'class="paddingright"') : '').$cat->label.$linkend;
+					if (($i < count($way) && empty($notrunc)) && $i > 1) {
+						$link = '';
+						$linkend = '';
+					} else {
+						$link = '<span class="valignmiddle '.($i < count($way) ? 'small ' : '').$forced_color.'">';
+						$linkend = '</span>';
+					}
+					$s = $link.(($addpicto && $i == 1) ? img_object('', 'category', 'class="paddingright"') : '');
+					$s .= (($i < count($way) && empty($notrunc)) ? ($i == 1 ? dol_trunc($cat->label, 3) : '') : $cat->label);
+					$s .= $linkend;
+					$w[] = $s;
 				} else {
 					$w[] = '<a class="valignmiddle '.($i < count($way) ? 'small ' : '').$forced_color.'" href="'.DOL_URL_ROOT.'/'.$url.'?catid='.((int) $cat->id).'">'.($addpicto ? img_object('', 'category') : '').$cat->label.'</a>';
 				}
@@ -1894,7 +1933,7 @@ class Categorie extends CommonObject
 		$linkclose = '';
 		if (empty($notooltip)) {
 			if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER')) {
-				$label = $langs->trans("ShowMyObject");
+				$label = $langs->trans("ShowCategory");
 				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
 			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');

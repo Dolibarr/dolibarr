@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2022	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,14 +24,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -44,9 +36,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
  * @var string 		$dolibarr_main_prod
  * @var string		$dolibarr_main_document_root
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("install", "other", "admin", "errors"));
+$langs->loadLangs(array("install", "other", "admin", "errors", "website"));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -198,13 +197,13 @@ if ($todisabletext) {
 	print img_picto('', 'warning', 'class="pictofixedwidth nopaddingleft"').$langs->trans("IfCLINotRequiredYouShouldDisablePHPFunctions").': '.$todisabletext;
 	print '<br>';
 }
-if (!\function_exists($functiontokeep)) {
+if (!function_exists($functiontokeep)) {
 	print img_picto($langs->trans("PHPFunctionsRequiredForCLI"), 'warning', 'class="pictofixedwidth"');
 } else {
 	print img_picto('', 'tick', 'class="pictofixedwidth"');
 }
 print $langs->trans("PHPFunctionsRequiredForCLI").': ';
-print '<span class="opacitymedium">'.$functiontokeep.'</span>';
+print '<span class="opacitymedium" title="exec or popen can be used depending on MAIN_EXEC_USE_POPEN option, currently to '.getDolGlobalInt('MAIN_EXEC_USE_POPEN').'">'.$functiontokeep.'</span>';
 print '<br>';
 
 print '<br>';
@@ -437,6 +436,7 @@ if (!empty($dolibarr_main_stream_do_not_disable)) {
 }
 */
 
+
 // Menu Home - Setup - Security
 
 print '<br>';
@@ -556,9 +556,9 @@ print '<br>';
 */
 
 print '<strong>'.$langs->trans("AntivirusEnabledOnUpload").'</strong>: ';
-print !getDolGlobalString('MAIN_ANTIVIRUS_COMMAND') ? img_warning().' ' : img_picto('', 'tick').' ';
-print yn(!getDolGlobalString('MAIN_ANTIVIRUS_COMMAND') ? 0 : 1);
-if (!getDolGlobalString('MAIN_ANTIVIRUS_COMMAND')) {
+print getDolGlobalString('MAIN_ANTIVIRUS_UPLOAD_ON') ? img_picto('', 'tick').' ' : img_warning().' ';
+print yn(!getDolGlobalString('MAIN_ANTIVIRUS_UPLOAD_ON') ? 0 : 1);
+if (!getDolGlobalString('MAIN_ANTIVIRUS_UPLOAD_ON') || !getDolGlobalString('MAIN_ANTIVIRUS_COMMAND')) {
 	print ' - <span class="opacitymedium">'.$langs->trans("Recommended").': '.$langs->trans("DefinedAPathForAntivirusCommandIntoSetup", $langs->transnoentitiesnoconv("Home")." - ".$langs->transnoentitiesnoconv("Setup")." - ".$langs->transnoentitiesnoconv("Security")).'</span>';
 } else {
 	print ' &nbsp; - ' . getDolGlobalString('MAIN_ANTIVIRUS_COMMAND');
@@ -614,9 +614,37 @@ if (empty($out)) {
 	print ' - '.str_replace('{s2}', '</a>', str_replace('{s1}', '<a href="'.DOL_URL_ROOT.'/admin/events.php" target="_blank">'.img_picto('', 'url', 'class="pictofixedwidth"'), $s));
 }
 
+print '<br>';
+
+print '<br>';
+
+print '<strong>MAIN_SECURITY_FORCERP</strong> = '.getDolGlobalString('MAIN_SECURITY_FORCERP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or")." \"strict-origin-when-cross-origin\" or \"same-origin\" so browser doesn't send any referrer when going into another web site domain)</span><br>";
+print '<br>';
+
+print '<strong>MAIN_SECURITY_FORCESTS</strong> = '.getDolGlobalString('MAIN_SECURITY_FORCESTS', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").": max-age=31536000; includeSubDomains)</span><br>";
+print '<br>';
+
+print '<strong>MAIN_SECURITY_FORCEPP</strong> = '.getDolGlobalString('MAIN_SECURITY_FORCEPP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").": camera=*, microphone=(), geolocation=*)</span><br>";
+print '<br>';
+
+if (getDolGlobalString('MAIN_SECURITY_FORCECSPRO')) {
+	$examplecsprule = "frame-ancestors 'self'; img-src * data:; font-src *; default-src 'self' 'unsafe-inline' 'unsafe-eval' *.paypal.com *.stripe.com *.google.com *.googleapis.com *.google-analytics.com *.googletagmanager.com *.dolistore.com *.githubusercontent.com";
+	print '<strong>MAIN_SECURITY_FORCECSPRO</strong> = '.getDolGlobalString('MAIN_SECURITY_FORCECSPRO', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").': "'.$examplecsprule.'")</span><br>';
+	print '<br>';
+}
+
+$examplecsprule = "frame-ancestors 'self'; img-src * data:; font-src *; default-src 'self' 'unsafe-inline' 'unsafe-eval' *.paypal.com *.stripe.com *.google.com *.googleapis.com *.google-analytics.com *.googletagmanager.com *.dolistore.com *.githubusercontent.com";
+print '<strong>MAIN_SECURITY_FORCECSP</strong> = '.getDolGlobalString('MAIN_SECURITY_FORCECSP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").': "'.$examplecsprule.'")</span><br>';
+print '<br>';
+
+$tmpurl = constant('DOL_MAIN_URL_ROOT');
+$tmpurl = preg_replace('/^(https?:\/\/[^\/]+)\/.*$/', '\1', $tmpurl);
+print '<strong>MAIN_SECURITY_FORCE_ACCESS_CONTROL_ALLOW_ORIGIN</strong> = '.getDolGlobalString('MAIN_SECURITY_FORCE_ACCESS_CONTROL_ALLOW_ORIGIN', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").": 1 so browsers will accept answers of a page only if page was requested from the domain ".$tmpurl.". Note: it is not possible to limit to several domains)</span><br>";
+
 print '</div>';
 
 print '<br>';
+
 
 
 // Modules/Applications
@@ -775,17 +803,22 @@ $exampletodecrypt = GETPOST('exampletodecrypt', 'password');
 
 print '<strong>'.$langs->trans("AlgorithmFor", $langs->transnoentitiesnoconv("SensitiveData"));
 print $form->textwithpicto('', 'reversible encryption done with dolEncrypt/dolDecrypt');
-print '</strong> = '.constant('MAIN_SECURITY_REVERSIBLE_ALGO').' with key defined into conf.php file in $dolibarr_main_dolcrypt_key (or $dolibarr_main_instance_unique_id)<br>';
-print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '</strong> = '.constant('MAIN_SECURITY_REVERSIBLE_ALGO').' with a random seed + a crypt key defined into the conf.php file (in $dolibarr_main_dolcrypt_key or $dolibarr_main_instance_unique_id)<br>';
+print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="action" value="doldecrypt">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="page_y" value="">';
 print $langs->trans("ToolToDecryptAString").': ';
-print '<input type="text" class="minwidth300" name="exampletodecrypt" placeholder="dolcrypt:ALGOXXXX:ABCDFEF1234" value="'.$exampletodecrypt.'">';
+print '<input type="text" class="minwidth500" name="exampletodecrypt" placeholder="dolcrypt:ALGOXXXX:ABCDFEF1234" value="'.$exampletodecrypt.'">';
 print '<input type="submit" class="reposition button small smallpaddingimp" name="submit" value="'.$langs->transnoentitiesnoconv("Decrypt").'">';
 if ($action == 'doldecrypt' && $user->admin && $exampletodecrypt) {
 	usleep(200);
-	print ' => <textarea rows="'.ROWS_1.'" class="valignmiddle">'.dolPrintHTMLForTextArea(dolDecrypt($exampletodecrypt)).'</textarea>';
+	$decryptedstring = dolDecrypt($exampletodecrypt);
+	if (ascii_check($decryptedstring)) {
+		print '<br> => <textarea rows="'.ROWS_1.'" class="valignmiddle quatrevingtpercent">'.dolPrintHTMLForTextArea($decryptedstring).'</textarea>';
+	} else {
+		print '<br><span class="error"> => Failed to decrypt. The crypting key saved into the conf.php file seems to not be the one used to encrypt the provided encrypted string</span>';
+	}
 }
 print '</form>';
 
@@ -813,13 +846,22 @@ if (isModEnabled('website')) {
 		if ($num_rows > 0) {
 			$i = 0;
 			while ($obj = $db->fetch_object($resql)) {
-				print "<strong>".$langs->trans("RefWebsite").": ".$obj->ref."</strong>";
+				print "<strong>".$langs->trans("WebsiteSecurityOptions").": ".$obj->ref."</strong>";
 				print'<br><br>';
-				print '<strong>WEBSITE_'.$obj->id.'_SECURITY_FORCERP</strong> = '.getDolGlobalString('WEBSITE_'.$obj->id.'_SECURITY_FORCERP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
-				print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").': "';
-				$examplecsprule = "default-src 'self' 'unsafe-inline' matomo.".getDomainFromURL($_SERVER["SERVER_NAME"], 1)." *.transifex.net *.transifex.com *.cloudflare.com *.cloudflareinsights.com *.google-analytics.com *.googletagmanager.com *.google.com *.gstatic.com *.googleapis.com *.googleadservices.com *.ads-twitter.com *.doubleclick.net; frame-ancestors 'self'; object-src *.youtube.com; frame-src 'self' *.twitter.com *.facebook.com *.youtube.com; img-src * data:;";
-				print $examplecsprule;
-				print '")</span><br>';
+
+				print '<strong>WEBSITE_'.$obj->id.'_SECURITY_FORCERP</strong> = '.getDolGlobalString('WEBSITE_'.$obj->id.'_SECURITY_FORCERP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("Undefined").'="strict-origin-when-cross-origin" '.$langs->trans("or").' "same-origin"=more secured)</span><br>';
+
+				print '<strong>WEBSITE_'.$obj->id.'_SECURITY_FORCESTS</strong> = '.getDolGlobalString('WEBSITE_'.$obj->id.'_SECURITY_FORCESTS', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").": \"max-age=31536000; includeSubDomains\")</span><br>";
+
+				print '<strong>WEBSITE_'.$obj->id.'_SECURITY_FORCEPP</strong> = '.getDolGlobalString('WEBSITE_'.$obj->id.'_SECURITY_FORCEPP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").": \"camera=(), microphone=(), geolocation=*\")</span><br>";
+
+				if (getDolGlobalString('WEBSITE_'.$obj->id.'_SECURITY_FORCECSPPRO')) {
+					print '<strong>WEBSITE_'.$obj->id.'_SECURITY_FORCECSPPRO</strong> = '.getDolGlobalString('WEBSITE_'.$obj->id.'_SECURITY_FORCECSPPRO', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
+					print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").': "';
+					$examplecsprule = "default-src 'self' 'unsafe-inline' matomo.".getDomainFromURL($_SERVER["SERVER_NAME"], 1)." *.transifex.net *.transifex.com *.cloudflare.com *.cloudflareinsights.com *.google-analytics.com *.googletagmanager.com *.google.com *.gstatic.com *.googleapis.com *.googleadservices.com *.ads-twitter.com *.doubleclick.net; frame-ancestors 'self'; object-src *.youtube.com; frame-src 'self' *.twitter.com *.facebook.com *.youtube.com; img-src * data:;";
+					print $examplecsprule;
+					print '")</span><br>';
+				}
 
 				print '<strong>WEBSITE_'.$obj->id.'_SECURITY_FORCECSP</strong> = '.getDolGlobalString('WEBSITE_'.$obj->id.'_SECURITY_FORCECSP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
 				print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").': "';
@@ -827,11 +869,6 @@ if (isModEnabled('website')) {
 				print $examplecsprule;
 				print '")</span><br>';
 
-				print '<strong>WEBSITE_'.$obj->id.'_SECURITY_FORCERP</strong> = '.getDolGlobalString('WEBSITE_'.$obj->id.'_SECURITY_FORCERP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("Undefined").'="strict-origin-when-cross-origin" '.$langs->trans("or").' "same-origin"=more secured)</span><br>';
-
-				print '<strong>WEBSITE_'.$obj->id.'_SECURITY_FORCESTS</strong> = '.getDolGlobalString('WEBSITE_'.$obj->id.'_SECURITY_FORCESTS', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").": \"max-age=31536000; includeSubDomains\")</span><br>";
-
-				print '<strong>WEBSITE_'.$obj->id.'_SECURITY_FORCEPP</strong> = '.getDolGlobalString('WEBSITE_'.$obj->id.'_SECURITY_FORCEPP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").": \"camera=(), microphone=(), geolocation=*\")</span><br>";
 				$i++;
 				if ($i != $num_rows) {
 					print '<br>';
@@ -935,8 +972,8 @@ print '<br>';
 print '<strong>MAIN_ALLOW_SVG_FILES_AS_EXTERNAL_LINKS</strong> = '.getDolGlobalString('MAIN_ALLOW_SVG_FILES_AS_EXTERNAL_LINKS', '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 0)</span>')."<br>";
 print '<br>';
 
-print '<strong>MAIN_DISALLOW_STRING_OBFUSCATION_IN_DOL_EVAL</strong> = '.(getDolGlobalString('MAIN_DISALLOW_STRING_OBFUSCATION_IN_DOL_EVAL') ? '1' : '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
-print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").": 1 - may break use of concatenation function like . or dol_concatdesc into extra fields conditions or formula)</span><br>";
+print '<strong>MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL</strong> = '.getDolGlobalString('MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
+print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").": 0 - The value 1 allows the use of concatenation functions like . or dol_concat into extra fields conditions or formula but is not secured)</span><br>";
 print '<br>';
 
 
@@ -946,47 +983,6 @@ print '<strong>MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL</strong> = '.getDol
 print '<br>';
 
 print '<strong>MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED</strong> = '.getDolGlobalString('MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED', '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 0)</span>')."<br>";
-print '<br>';
-
-$examplecsprule = "frame-ancestors 'self'; img-src * data:; font-src *; default-src 'self' 'unsafe-inline' 'unsafe-eval' *.paypal.com *.stripe.com *.google.com *.googleapis.com *.google-analytics.com *.googletagmanager.com *.dolistore.com *.githubusercontent.com";
-print '<strong>MAIN_SECURITY_FORCECSPRO</strong> = '.getDolGlobalString('MAIN_SECURITY_FORCECSPRO', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").': "'.$examplecsprule.'")</span><br>';
-print '<br>';
-
-$examplecsprule = "frame-ancestors 'self'; img-src * data:; font-src *; default-src 'self' 'unsafe-inline' 'unsafe-eval' *.paypal.com *.stripe.com *.google.com *.googleapis.com *.google-analytics.com *.googletagmanager.com *.dolistore.com *.githubusercontent.com";
-print '<strong>MAIN_SECURITY_FORCECSP</strong> = '.getDolGlobalString('MAIN_SECURITY_FORCECSP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").': "'.$examplecsprule.'")</span><br>';
-print '<br>';
-
-print '<strong>MAIN_SECURITY_FORCERP</strong> = '.getDolGlobalString('MAIN_SECURITY_FORCERP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or")." \"strict-origin-when-cross-origin\" so browser doesn't send any referrer when going into another web site domain)</span><br>";
-print '<br>';
-
-print '<strong>MAIN_SECURITY_FORCE_ACCESS_CONTROL_ALLOW_ORIGIN</strong> = '.getDolGlobalString('MAIN_SECURITY_FORCE_ACCESS_CONTROL_ALLOW_ORIGIN', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").": 1)</span><br>";
-
-
-/* Removed, already in the dedicated section Websites.
-print '<br>';
-
-print '<strong>WEBSITE_MAIN_SECURITY_FORCECSPRO</strong> = '.getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCECSPRO', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
-print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").': "';
-$examplecsprule = "default-src 'self' 'unsafe-inline' matomo.".getDomainFromURL($_SERVER["SERVER_NAME"], 1)." *.transifex.net *.transifex.com *.cloudflare.com *.cloudflareinsights.com *.google-analytics.com *.googletagmanager.com *.google.com *.gstatic.com *.googleapis.com *.googleadservices.com *.ads-twitter.com *.doubleclick.net; frame-ancestors 'self'; object-src *.youtube.com; frame-src 'self' *.twitter.com *.facebook.com *.youtube.com; img-src * data:;";
-print $examplecsprule;
-print '")</span><br>';
-print '<br>';
-
-print '<strong>WEBSITE_MAIN_SECURITY_FORCECSP</strong> = '.getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCECSP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
-print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").': "';
-$examplecsprule = "default-src 'self' 'unsafe-inline' matomo.".getDomainFromURL($_SERVER["SERVER_NAME"], 1)." *.transifex.net *.transifex.com *.cloudflare.com *.cloudflareinsights.com *.google-analytics.com *.googletagmanager.com *.google.com *.gstatic.com *.googleapis.com *.googleadservices.com *.ads-twitter.com *.doubleclick.net; frame-ancestors 'self'; object-src *.youtube.com; frame-src 'self' *.twitter.com *.facebook.com *.youtube.com; img-src * data:;";
-print $examplecsprule;
-print '")</span><br>';
-print '<br>';
-
-print '<strong>WEBSITE_MAIN_SECURITY_FORCERP</strong> = '.getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCERP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("Undefined").'="strict-origin-when-cross-origin" '.$langs->trans("or").' "same-origin"=more secured)</span><br>';
-print '<br>';
-
-print '<strong>WEBSITE_MAIN_SECURITY_FORCESTS</strong> = '.getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCESTS', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").": \"max-age=31536000; includeSubDomains\")</span><br>";
-print '<br>';
-
-print '<strong>WEBSITE_MAIN_SECURITY_FORCEPP</strong> = '.getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCEPP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").": \"camera=(), microphone=(), geolocation=*\")</span><br>";
-*/
 
 print '</div>';
 

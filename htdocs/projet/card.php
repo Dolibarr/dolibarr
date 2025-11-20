@@ -80,7 +80,6 @@ $location = GETPOST('location', 'alphanohtml');
 
 
 $mine = GETPOST('mode') == 'mine' ? 1 : 0;
-//if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('projectcard', 'globalcard'));
@@ -274,7 +273,7 @@ if (empty($reshook)) {
 			}
 			if (!$error && !empty($object->id) > 0) {
 				// Category association
-				$categories = GETPOST('categories', 'array');
+				$categories = GETPOST('categories', 'array:int');
 				$result = $object->setCategories($categories);
 				if ($result < 0) {
 					$langs->load("errors");
@@ -389,7 +388,7 @@ if (empty($reshook)) {
 				}
 			} else {
 				// Category association
-				$categories = GETPOST('categories', 'array');
+				$categories = GETPOST('categories', 'array:int');
 				$result = $object->setCategories($categories);
 				if ($result < 0) {
 					$error++;
@@ -510,7 +509,7 @@ if (empty($reshook)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 			$langs->load("other");
-			$upload_dir = $conf->project->multidir_output[$object->entity];
+			$upload_dir = $conf->project->multidir_output[$object->entity ?? $conf->entity];
 			$file = $upload_dir.'/'.GETPOST('file');
 			$ret = dol_delete_file($file, 0, 0, 0, $object);
 			if ($ret) {
@@ -940,7 +939,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 	}
 
 	if (count($array) > 0) {
-		print $form->selectarray('public', $array, GETPOSTINT('public') ? 1 : 0, 0, 0, 0, '', 0, 0, 0, '', '', 1);
+		print $form->selectarray('public', $array, GETPOSTINT('public') ? 1 : 0, 0, 0, 0, '', 0, 0, 0, '', 'minwidth200', 1);
 	} else {
 		print '<input type="hidden" name="public" id="public" value="'.(GETPOSTINT('public') ? 1 : 0).'">';
 
@@ -959,7 +958,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 	print '<td>';
 	$contactList = $object->liste_type_contact('internal', 'position', 1);
 	$typeofcontact = GETPOST('typeofcontact') ? GETPOST('typeofcontact') : 'PROJECTLEADER';
-	print $form->selectarray('typeofcontact', $contactList, $typeofcontact, 0, 0, 0, '', 0, 0, 0, '', '', 1);
+	print $form->selectarray('typeofcontact', $contactList, $typeofcontact, 0, 0, 0, '', 0, 0, 0, '', 'minwidth200', 1);
 	print '</td></tr>';
 
 	// Other options
@@ -1828,7 +1827,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 		 * Generated documents
 		 */
 		$filename = dol_sanitizeFileName($object->ref);
-		$filedir = $conf->project->multidir_output[$object->entity]."/".dol_sanitizeFileName($object->ref);
+		$filedir = $conf->project->multidir_output[$object->entity ?? $conf->entity]."/".dol_sanitizeFileName($object->ref);
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 		$genallowed = ($user->hasRight('projet', 'lire') && $userAccess > 0);
 		$delallowed = ($user->hasRight('projet', 'creer') && $userWrite > 0);
@@ -1856,7 +1855,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 	$modelmail = 'project';
 	$defaulttopic = 'SendProjectRef';
 	$defaulttopiclang = 'projects';
-	$diroutput = $conf->project->multidir_output[$object->entity];
+	$diroutput = $conf->project->multidir_output[$object->entity ?? $conf->entity];
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_PROJECT_TO'; // used to know the automatic BCC to add
 	$trackid = 'proj'.$object->id;
 

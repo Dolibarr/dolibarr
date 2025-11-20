@@ -3,7 +3,7 @@ exclude: (?x)^( htdocs/includes/ckeditor/.*|(\.(?!github/workflows)[^/]*/.*))$
 repos:
   # Several miscellaneous checks and fix (on yaml files, end of files fix)
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
       # This hook tests the name of the branch and return an error if the name is
       #  'develop' or an official version 'x.y'
@@ -60,13 +60,13 @@ repos:
 
   # Gitleaks is a SAST tool for detecting and preventing hardcoded secrets like passwords, api keys, and tokens in git repos
   - repo: https://github.com/gitleaks/gitleaks.git
-    rev: v8.24.0
+    rev: v8.29.0
     hooks:
       - id: gitleaks
 
   # Check github actions
   - repo: https://github.com/rhysd/actionlint
-    rev: v1.7.7
+    rev: v1.7.8
     hooks:
       - id: actionlint
 
@@ -137,6 +137,8 @@ repos:
         files: \.(php)$
         args: [--standard=dev/setup/codesniffer/ruleset.xml]
       - id: php-cs
+        exclude: |
+          (?x)^(htdocs/includes/.*)$
         files: \.(php)$
         args:
           [
@@ -191,7 +193,7 @@ repos:
 
   # Check format of yaml files
   - repo: https://github.com/adrienverge/yamllint.git
-    rev: v1.36.2
+    rev: v1.37.1
     hooks:
       - id: yamllint
         args:
@@ -244,7 +246,7 @@ repos:
 
   # Check some shell scripts
   - repo: https://github.com/shellcheck-py/shellcheck-py
-    rev: v0.10.0.1
+    rev: v0.11.0.1
     hooks:
       - id: shellcheck
         args: [-W, "100"]

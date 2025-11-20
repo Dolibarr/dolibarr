@@ -208,7 +208,7 @@ if (empty($reshook)) {
 	// Payment terms of the settlement
 	if ($action == 'setconditions' && $permissiontoadd) {
 		$object->fetch($id);
-		$result = $object->setPaymentTerms(GETPOSTINT('cond_reglement_id'), GETPOSTINT('cond_reglement_id_deposit_percent'));
+		$result = $object->setPaymentTerms(GETPOSTINT('cond_reglement_id'), GETPOSTFLOAT('cond_reglement_id_deposit_percent'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -378,13 +378,6 @@ if ($object->id > 0) {
 	print '<tr><td class="titlefieldmiddle">'.$langs->trans('NatureOfThirdParty').'</td><td>';
 	print $object->getTypeUrl(1);
 	print '</td></tr>';
-
-	// Prefix
-	if (getDolGlobalString('SOCIETE_USEPREFIX')) {  // Old not used prefix field
-		print '<tr><td>'.$langs->trans("Prefix").'</td><td>';
-		print($object->prefix_comm ? $object->prefix_comm : '&nbsp;');
-		print '</td></tr>';
-	}
 
 	if ($object->client) {
 		$langs->loadLangs(array("compta", "accountancy"));
@@ -622,12 +615,12 @@ if ($object->id > 0) {
 		print $form->editfieldkey("Warehouse", 'warehouse', '', $object, $permissiontoadd);
 		print '</td><td>';
 		if ($action == 'editwarehouse') {
-			$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_warehouse, 'fk_warehouse', 1);
+			$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, (int) $object->fk_warehouse, 'fk_warehouse', 1);
 		} else {
 			if ($object->fk_warehouse > 0) {
 				print img_picto('', 'stock', 'class="paddingrightonly"');
 			}
-			$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_warehouse, 'none');
+			$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, (int) $object->fk_warehouse, 'none');
 		}
 		print '</td>';
 		print '</tr>';
@@ -762,7 +755,7 @@ if ($object->id > 0) {
 	$boxstat = '';
 
 	// Max nb of elements in lists
-	$MAXLIST = getDolGlobalString('MAIN_SIZE_SHORTLIST_LIMIT');
+	$MAXLIST = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 
 	// Link summary/status board
 	$boxstat .= '<div class="box divboxtable box-halfright">';
@@ -891,6 +884,7 @@ if ($object->id > 0) {
 	 * Latest proposals
 	 */
 	if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
+		$propal_static = new Propal($db);
 		$langs->load("propal");
 
 		$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.fk_projet, p.fk_statut, p.total_ht";
@@ -902,12 +896,13 @@ if ($object->id > 0) {
 		$sql .= " WHERE p.fk_soc = s.rowid AND p.fk_statut = c.id";
 		$sql .= " AND s.rowid = ".((int) $object->id);
 		$sql .= " AND p.entity IN (".getEntity('propal').")";
+		$parameters = array();
+		$hookmanager->executeHooks('printFieldListWhere', $parameters, $propal_static); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
 		$sql .= " ORDER BY p.datep DESC";
 
 		$resql = $db->query($sql);
 		if ($resql) {
-			$propal_static = new Propal($db);
-
 			$num = $db->num_rows($resql);
 			if ($num > 0) {
 				print '<div class="div-table-responsive-no-min">';
@@ -971,7 +966,7 @@ if ($object->id > 0) {
 				// $filedir = $conf->propal->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
 				// $urlsource = '/comm/propal/card.php?id='.$objp->cid;
 				// print $formfile->getDocumentsLink($propal_static->element, $filename, $filedir);
-				if (($db->jdate($objp->date_limit) < ($now - $conf->propal->cloture->warning_delay)) && $objp->fk_statut == $propal_static::STATUS_VALIDATED) {
+				if (($db->jdate($objp->date_limit) < ($now - getWarningDelay('propal', 'cloture'))) && $objp->fk_statut == $propal_static::STATUS_VALIDATED) {
 					print " ".img_warning();
 				}
 				print '</td><td class="right" width="80px">'.dol_print_date($db->jdate($objp->dp), 'day')."</td>\n";
@@ -996,6 +991,7 @@ if ($object->id > 0) {
 	 * Latest orders
 	 */
 	if (isModEnabled('order') && $user->hasRight('commande', 'lire')) {
+		$commande_static = new Commande($db);
 		$sql = "SELECT s.nom, s.rowid";
 		$sql .= ", c.rowid as cid, c.entity, c.fk_projet, c.total_ht";
 		$sql .= ", c.total_tva";
@@ -1007,12 +1003,13 @@ if ($object->id > 0) {
 		$sql .= " WHERE c.fk_soc = s.rowid ";
 		$sql .= " AND s.rowid = ".((int) $object->id);
 		$sql .= " AND c.entity IN (".getEntity('commande').')';
+		$parameters = array();
+		$hookmanager->executeHooks('printFieldListWhere', $parameters, $commande_static); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
 		$sql .= " ORDER BY c.date_commande DESC";
 
 		$resql = $db->query($sql);
 		if ($resql) {
-			$commande_static = new Commande($db);
-
 			$num = $db->num_rows($resql);
 			if ($num > 0) {
 				// Check if there are orders billable
@@ -1260,7 +1257,7 @@ if ($object->id > 0) {
 				$late = '';
 				foreach ($contrat->lines as $line) {
 					if ($contrat->status == Contrat::STATUS_VALIDATED && $line->statut == ContratLigne::STATUS_OPEN) {
-						if (((!empty($line->date_end) ? $line->date_end : 0) + $conf->contract->services->expires->warning_delay) < $now) {
+						if (((!empty($line->date_end) ? $line->date_end : 0) + getWarningDelay('contract', 'service', 'expires')) < $now) {
 							$late = img_warning($langs->trans("Late"));
 						}
 					}
@@ -1592,8 +1589,10 @@ if ($object->id > 0) {
 				$facturestatic->statut = $objp->status;	// deprecated
 				$facturestatic->status = $objp->status;
 				$facturestatic->paye = $objp->paye;
+
 				$facturestatic->alreadypaid = $objp->am;
 				$facturestatic->totalpaid = $objp->am;
+
 				$facturestatic->date = $db->jdate($objp->df);
 				$facturestatic->date_lim_reglement = $db->jdate($objp->dl);
 

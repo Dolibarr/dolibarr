@@ -18,9 +18,11 @@
  */
 /**
  * @var Conf $conf
+ * @var DoliDB $db
  * @var Form $form
  * @var Translate $langs
  * @var User $user
+ * @var Societe $object
  *
  * @var string $action
  */
@@ -39,7 +41,7 @@ print $langs->trans('SalesRepresentatives');
 print '</td>';
 if ($action != 'editsalesrepresentatives' && $user->hasRight('societe', 'creer')) {
 	print '<td class="right">';
-	print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editsalesrepresentatives&token='.newToken().'&socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a>';
+	print '<a class="editfielda reposition" href="' . dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'editsalesrepresentatives', 'socid' => $object->id], true) . '">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a>';
 	print '</td>';
 }
 print '</tr></table>';

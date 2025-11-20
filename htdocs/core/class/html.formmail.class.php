@@ -4,7 +4,7 @@
  * Copyright (C) 2010-2011	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2015-2017	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2015-2017	Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2024  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2022		Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2023		Anthony Berton			<anthony.berton@bb2a.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
@@ -27,9 +27,10 @@
 /**
  *       \file       htdocs/core/class/html.formmail.class.php
  *       \ingroup    core
- *       \brief      Fichier de la class permettant la generation du formulaire html d'envoi de mail unitaire
+ *       \brief      File of class to generate HTML form to send email of unitary email.
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/cemailtemplate.class.php';	// So the class ModelMail that was defined into this file in old version is still available when including this file
 
 
 /**
@@ -626,7 +627,7 @@ class FormMail extends Form
 				$out .= '</div>';
 			} elseif (!empty($this->param['models']) && in_array($this->param['models'], array(
 					'propal_send', 'order_send', 'facture_send',
-					'shipping_send', 'fichinter_send', 'supplier_proposal_send', 'order_supplier_send',
+					'shipping_send', 'reception_send', 'fichinter_send', 'supplier_proposal_send', 'order_supplier_send',
 					'invoice_supplier_send', 'thirdparty', 'contract', 'user', 'recruitmentcandidature_send', 'product_send', 'all'
 				))) {
 				// If list of template is empty
@@ -651,16 +652,15 @@ class FormMail extends Form
 			$helpforsubstitution = '';
 			if (is_array($this->substit) && count($this->substit)) {
 				$helpforsubstitution .= $langs->trans('AvailableVariables').' :<br><br><span class="small">'."\n";
-			}
-			foreach ($this->substit as $key => $val) {
-				// Do not show deprecated variables into the tooltip help of substitution variables
-				if (in_array($key, array('__NEWREF__', '__REFCLIENT__', '__REFSUPPLIER__', '__SUPPLIER_ORDER_DATE_DELIVERY__', '__SUPPLIER_ORDER_DELAY_DELIVERY__'))) {
-					continue;
+				foreach ($this->substit as $key => $val) {
+					// Do not show deprecated variables into the tooltip help of substitution variables
+					if (in_array($key, array('__NEWREF__', '__REFCLIENT__', '__REFSUPPLIER__', '__SUPPLIER_ORDER_DATE_DELIVERY__', '__SUPPLIER_ORDER_DELAY_DELIVERY__'))) {
+						continue;
+					}
+					if (is_array($val)) $val = implode(', ', $val); // key __MULTICURRENCY_CODE__ is an array and crashes dolGetFirstLineOfText function which accept only text
+					$helpforsubstitution .= $key.' -> '.$langs->trans(dol_string_nohtmltag(dolGetFirstLineOfText($val))).'<br>';
+					$helpforsubstitution .= '</span>';
 				}
-				$helpforsubstitution .= $key.' -> '.$langs->trans(dol_string_nohtmltag(dolGetFirstLineOfText($val))).'<br>';
-			}
-			if (is_array($this->substit) && count($this->substit)) {
-				$helpforsubstitution .= '</span>';
 			}
 
 			/*
@@ -711,7 +711,7 @@ class FormMail extends Form
 
 						// Add also company main email
 						if (getDolGlobalString('MAIN_INFO_SOCIETE_MAIL')) {
-							$s = (!getDolGlobalString('MAIN_INFO_SOCIETE_NOM') ? $conf->global->MAIN_INFO_SOCIETE_EMAIL : $conf->global->MAIN_INFO_SOCIETE_NOM).' &lt;' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'&gt;';
+							$s = getDolGlobalString('MAIN_INFO_SOCIETE_NOM', getDolGlobalString('MAIN_INFO_SOCIETE_EMAIL')).' &lt;' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'&gt;';
 							$liste['company'] = array('label' => $s, 'data-html' => $s);
 						}
 
@@ -1458,9 +1458,9 @@ class FormMail extends Form
 	/**
 	 * Return Html section for the Topic of message
 	 *
-	 * @param	ModelMail	$arraydefaultmessage		Array with message template content
-	 * @param	string	$helpforsubstitution		Help string for substitution
-	 * @return 	string 								Text for topic
+	 * @param	CEmailTemplate	$arraydefaultmessage		Array with message template content
+	 * @param	string			$helpforsubstitution		Help string for substitution
+	 * @return 	string 										Text for topic
 	 */
 	public function getHtmlForTopic($arraydefaultmessage, $helpforsubstitution)
 	{
@@ -1513,10 +1513,9 @@ class FormMail extends Form
 
 		// Define list of email layouts to use
 		$layouts = array(
-			'empty' => 'empty',
+			'none' => 'None',
 		);
-
-		// Search available layouts on disk
+		// Add layouts found on disk in install/doctemplates/maillayout directory
 		$arrayoflayoutemplates = dol_dir_list(DOL_DOCUMENT_ROOT.'/install/doctemplates/maillayout/', 'files', 0, '\.html$');
 		foreach ($arrayoflayoutemplates as $layouttemplatefile) {
 			$layoutname = preg_replace('/\.html$/i', '', $layouttemplatefile['name']);
@@ -1525,7 +1524,7 @@ class FormMail extends Form
 			if ($layoutname == 'news' && (!in_array($showlinktolayout, array('emailing', 'websitepage')) || !isModEnabled('website'))) {
 				continue;
 			}
-			if ($layoutname == 'products' && (!in_array($showlinktolayout, array('emailing', 'websitepage')) || (!isModEnabled('product') && !isModEnabled('service')))) {
+			if ($layoutname == 'product' && (!in_array($showlinktolayout, array('emailing', 'websitepage')) || (!isModEnabled('product') && !isModEnabled('service')))) {
 				continue;
 			}
 
@@ -1577,11 +1576,23 @@ class FormMail extends Form
 		}
 
 		// Use the multiselect array function to create the dropdown
-		$out .= '<div id="post-dropdown-container" class="email-layout-container hidden" style="display:none;">';
+		$out .= '<div id="post-dropdown-container" class="email-layout-container hidden" style="height: 32px; display:none;">';
 		$out .= '<label for="blogpost-select">Select Posts: </label>';
-		$out .= '<!-- select component for selection of products -->'."\n";
+		$out .= '<!-- select component for selection of blog posts -->'."\n";
 		$out .= self::multiselectarray('blogpost-select', $blogArray, array(), 0, 0, 'minwidth200');
+		$out .= ' <input type="submit" class="smallpaddingimp button" name="submit" id="post-submit" value="'.dolPrintHTMLForAttribute($langs->trans("Select")).'">';
 		$out .= '</div>';
+
+		if (isModEnabled('product') || isModEnabled('service')) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+			$form = new Form($this->db);
+			$out .= '<div id="product-dropdown-container" class="email-layout-container hidden" style="height: 32px; display:none;">';
+			$out .= '<label for="product-select">'.img_picto('', 'product', 'class="pictofixedwidth"').$langs->trans("Product").' : </label>';
+			$out .= '<!-- select component for selection of product -->'."\n";
+			$out .= $form->select_produits(0, 'product-select', '', 0, 0, 1, 2, '', 0, array(), 0, '1', 0, '', 0, '', null, 1);
+			$out .= ' <input type="submit" class="smallpaddingimp button" name="submit" id="product-submit" value="'.dolPrintHTMLForAttribute($langs->trans("Select")).'">';
+			$out .= '</div>';
+		}
 
 		$out .= '<!-- Js code to manage choice of an email layout -->'."\n";
 		$out .= '<script type="text/javascript">
@@ -1601,36 +1612,42 @@ class FormMail extends Form
 
 				if (template === "news") {
 					$("#post-dropdown-container").show();
-					console.log("Displaying dropdown for news template");
+					$("#product-dropdown-container").hide();
+					console.log("Displaying dropdown for news selection");
+				} else if (template === "product") {
+					$("#product-dropdown-container").show();
+					$("#post-dropdown-container").hide();
+					console.log("Displaying dropdown for product selection");
 				} else {
 					$("#post-dropdown-container").hide();
-
-					var csrfToken = "' .newToken().'";
-					$.ajax({
-						type: "POST",
-						url: "'.DOL_URL_ROOT.'/core/ajax/mailtemplate.php",
-						data: {
-							token: csrfToken,
-							template: template,
-							subject: subject,
-							fromtype: fromtype,
-							sendto: sendto,
-							sendtocc: sendtocc,
-							sendtoccc: sendtoccc,
-							selectedPosts: "[]"
-						},
-						success: function(response) {
-							jQuery("#'.$htmlContent.'").val(response);
-							var editorInstance = CKEDITOR.instances["'.$htmlContent.'"];
-							if (editorInstance) {
-								editorInstance.setData(response);
-							}
-						},
-						error: function(xhr, status, error) {
-							console.error("An error occurred: " + xhr.responseText);
-						}
-					});
+					$("#product-dropdown-container").hide();
 				}
+
+				var csrfToken = "' .newToken().'";
+				$.ajax({
+					type: "POST",
+					url: "'.DOL_URL_ROOT.'/core/ajax/mailtemplate.php",
+					data: {
+						token: csrfToken,
+						template: template,
+						subject: subject,
+						fromtype: fromtype,
+						sendto: sendto,
+						sendtocc: sendtocc,
+						sendtoccc: sendtoccc,
+						selectedPosts: "[]"
+					},
+					success: function(response) {
+						jQuery("#'.$htmlContent.'").val(response);
+						var editorInstance = CKEDITOR.instances["'.$htmlContent.'"];
+						if (editorInstance) {
+							editorInstance.setData(response);
+						}
+					},
+					error: function(xhr, status, error) {
+						console.error("An error occurred: " + xhr.responseText);
+					}
+				});
 			});
 
 			$("#blogpost-select").change(function() {
@@ -1706,7 +1723,7 @@ class FormMail extends Form
 	 *  @param  int         $active         1=Only active template, 0=Only disabled, -1=All
 	 *  @param	string		$label			Label of template to get
 	 *  @param  int         $defaultfortype 1=Only default templates, 0=Only not default, -1=All
-	 *  @return ModelMail|int<-1,-1>		One instance of ModelMail or < 0 if error
+	 *  @return ModelMail|CEmailTemplate|int<-1,-1>		One instance of CEmailTemplate or < 0 if error
 	 */
 	public function getEMailTemplate($dbs, $type_template, $user, $outputlangs, $id = 0, $active = 1, $label = '', $defaultfortype = -1)
 	{
@@ -1716,8 +1733,10 @@ class FormMail extends Form
 			$this->error = 'LabelIsMandatoryWhenIdIs-2or-3';
 			return -1;
 		}
-
-		$ret = new ModelMail($dbs);
+		if ($type_template === 'societe') {
+			$type_template = 'thirdparty';
+		}
+		$ret = new CEmailTemplate($dbs);
 
 		$languagetosearch = (is_object($outputlangs) ? $outputlangs->defaultlang : '');
 		// Define $languagetosearchmain to fall back on main language (for example to get 'es_ES' for 'es_MX')
@@ -1729,7 +1748,7 @@ class FormMail extends Form
 
 		$sql = "SELECT rowid, entity, module, label, type_template, topic, email_from, joinfiles, content, content_lines, lang, email_from, email_to, email_tocc, email_tobcc";
 		$sql .= " FROM ".$dbs->prefix().'c_email_templates';
-		$sql .= " WHERE (type_template = '".$dbs->escape($type_template)."' OR type_template = 'all')";
+		$sql .= " WHERE (type_template = '".$dbs->escape($type_template)."' OR type_template = '".$dbs->escape($type_template)."_send' OR type_template = 'all')";
 		$sql .= " AND entity IN (".getEntity('c_email_templates').")";
 		$sql .= " AND (private = 0 OR fk_user = ".((int) $user->id).")"; // Get all public or private owned
 		if ($active >= 0) {
@@ -1818,6 +1837,8 @@ class FormMail extends Form
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendSupplierInvoice");
 					} elseif ($type_template == 'shipping_send') {
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendShipping");
+					} elseif ($type_template == 'reception_send') {
+						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendReception");
 					} elseif ($type_template == 'fichinter_send') {
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendFichInter");
 					} elseif ($type_template == 'actioncomm_send') {
@@ -1915,7 +1936,7 @@ class FormMail extends Form
 					}
 				}
 
-				$line = new ModelMail($db);
+				$line = new CEmailTemplate($db);
 				$line->id = (int) $obj->rowid;
 				$line->label = (string) $obj->label;
 				$line->lang = $obj->lang;
@@ -2112,224 +2133,5 @@ class FormMail extends Form
 		}
 
 		return $tmparray;
-	}
-}
-
-
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-
-/**
- * Object of table llx_c_email_templates
- *
- * TODO Move this class into a file cemailtemplate.class.php
- */
-class ModelMail extends CommonObject
-{
-	/**
-	 * @var string ID to identify managed object.
-	 */
-	public $element = 'email_template';
-
-	/**
-	 * @var string 	Name of table without prefix where object is stored. This is also the key used for extrafields management (so extrafields know the link to the parent table).
-	 */
-	public $table_element = 'c_email_templates';
-
-
-	// BEGIN MODULEBUILDER PROPERTIES
-	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
-	 */
-	public $fields = array(
-		"rowid" => array("type" => "integer", "label" => "TechnicalID", 'enabled' => 1, 'position' => 10, 'notnull' => 1, 'visible' => -1,),
-		"module" => array("type" => "varchar(32)", "label" => "Module", 'enabled' => 1, 'position' => 20, 'notnull' => 0, 'visible' => -1,),
-		"type_template" => array("type" => "varchar(32)", "label" => "Typetemplate", 'enabled' => 1, 'position' => 25, 'notnull' => 0, 'visible' => -1,),
-		"lang" => array("type" => "varchar(6)", "label" => "Lang", 'enabled' => 1, 'position' => 30, 'notnull' => 0, 'visible' => -1,),
-		"private" => array("type" => "smallint(6)", "label" => "Private", 'enabled' => 1, 'position' => 35, 'notnull' => 1, 'visible' => -1,),
-		"fk_user" => array("type" => "integer:User:user/class/user.class.php", "label" => "Fkuser", 'enabled' => 1, 'position' => 40, 'notnull' => 0, 'visible' => -1, "css" => "maxwidth500 widthcentpercentminusxx", "csslist" => "tdoverflowmax150",),
-		"datec" => array("type" => "datetime", "label" => "DateCreation", 'enabled' => 1, 'position' => 45, 'notnull' => 0, 'visible' => -1,),
-		"tms" => array("type" => "timestamp", "label" => "DateModification", 'enabled' => 1, 'position' => 50, 'notnull' => 1, 'visible' => -1,),
-		"label" => array("type" => "varchar(255)", "label" => "Label", 'enabled' => 1, 'position' => 55, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1, "css" => "minwidth300", "cssview" => "wordbreak", "csslist" => "tdoverflowmax150",),
-		"position" => array("type" => "smallint(6)", "label" => "Position", 'enabled' => 1, 'position' => 60, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
-		"active" => array("type" => "integer", "label" => "Active", 'enabled' => 1, 'position' => 65, 'notnull' => 1, 'visible' => -1, 'alwayseditable' => 1,),
-		"topic" => array("type" => "text", "label" => "Topic", 'enabled' => 1, 'position' => 70, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
-		"content" => array("type" => "mediumtext", "label" => "Content", 'enabled' => 1, 'position' => 75, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
-		"content_lines" => array("type" => "text", "label" => "Contentlines", "enabled" => "getDolGlobalString('MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES')", 'position' => 80, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
-		"enabled" => array("type" => "varchar(255)", "label" => "Enabled", 'enabled' => 1, 'position' => 85, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
-		"joinfiles" => array("type" => "varchar(255)", "label" => "Joinfiles", 'enabled' => 1, 'position' => 90, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
-		"email_from" => array("type" => "varchar(255)", "label" => "Emailfrom", 'enabled' => 1, 'position' => 95, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
-		"email_to" => array("type" => "varchar(255)", "label" => "Emailto", 'enabled' => 1, 'position' => 100, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
-		"email_tocc" => array("type" => "varchar(255)", "label" => "Emailtocc", 'enabled' => 1, 'position' => 105, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
-		"email_tobcc" => array("type" => "varchar(255)", "label" => "Emailtobcc", 'enabled' => 1, 'position' => 110, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
-		"defaultfortype" => array("type" => "smallint(6)", "label" => "Defaultfortype", 'enabled' => 1, 'position' => 115, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
-	);
-	/**
-	 * @var int
-	 */
-	public $rowid;
-	/**
-	 * @var string
-	 */
-	public $type_template;
-	/**
-	 * @var int|string
-	 */
-	public $datec;
-	/**
-	 * @var int
-	 */
-	public $tms;
-	/**
-	 * @var int
-	 */
-	public $active;
-	/**
-	 * @var string
-	 */
-	public $enabled;
-	/**
-	 * @var int
-	 */
-	public $defaultfortype;
-
-	/**
-	 * @var int ID
-	 */
-	public $id;
-
-	/**
-	 * @var string Model mail label
-	 */
-	public $label;
-
-	/**
-	 * @var int Owner of email template
-	 */
-	public $fk_user;
-
-	/**
-	 * @var int Is template private
-	 */
-	public $private;
-
-	/**
-	 * @var string Model mail topic
-	 */
-	public $topic;
-
-	/**
-	 * @var string 	Model mail content
-	 */
-	public $content;
-	/**
-	 * @var string 	Model to use to generate the string with each lines
-	 */
-	public $content_lines;
-
-	/**
-	 * @var string
-	 */
-	public $lang;
-	/**
-	 * @var int<0,1>
-	 */
-	public $joinfiles;
-
-	/**
-	 * @var string
-	 */
-	public $email_from;
-	/**
-	 * @var string
-	 */
-	public $email_to;
-	/**
-	 * @var string
-	 */
-	public $email_tocc;
-	/**
-	 * @var string
-	 */
-	public $email_tobcc;
-
-	/**
-	 * @var string Module the template is dedicated for
-	 */
-	public $module;
-
-	/**
-	 * @var int Position of template in a combo list
-	 */
-	public $position;
-	// END MODULEBUILDER PROPERTIES
-
-
-
-	/**
-	 * Constructor
-	 *
-	 * @param DoliDB $db Database handler
-	 */
-	public function __construct(DoliDB $db)
-	{
-		global $langs;
-
-		$this->db = $db;
-		$this->ismultientitymanaged = 0;
-		$this->isextrafieldmanaged = 1;
-
-		// @phan-suppress-next-line PhanTypeMismatchProperty
-		if (!getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid']) && !empty($this->fields['ref'])) {
-			$this->fields['rowid']['visible'] = 0;
-		}
-		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
-			$this->fields['entity']['enabled'] = 0;
-		}
-
-		// Example to show how to set values of fields definition dynamically
-		/*if ($user->hasRight('test', 'mailtemplate', 'read')) {
-		 $this->fields['myfield']['visible'] = 1;
-		 $this->fields['myfield']['noteditable'] = 0;
-		 }*/
-
-		// Unset fields that are disabled
-		foreach ($this->fields as $key => $val) {
-			if (isset($val['enabled']) && empty($val['enabled'])) {
-				unset($this->fields[$key]);
-			}
-		}
-
-		// Translate some data of arrayofkeyval
-		if (is_object($langs)) {
-			foreach ($this->fields as $key => $val) {
-				if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
-					foreach ($val['arrayofkeyval'] as $key2 => $val2) {
-						$this->fields[$key]['arrayofkeyval'][$key2] = $langs->trans($val2);
-					}
-				}
-			}
-		}
-	}
-
-
-	/**
-	 * Load object in memory from the database
-	 *
-	 * @param 	int    	$id   			Id object
-	 * @param 	string 	$ref  			Ref
-	 * @param	int		$noextrafields	0=Default to load extrafields, 1=No extrafields
-	 * @param	int		$nolines		0=Default to load extrafields, 1=No extrafields
-	 * @return 	int     				Return integer <0 if KO, 0 if not found, >0 if OK
-	 */
-	public function fetch($id, $ref = null, $noextrafields = 0, $nolines = 0)
-	{
-		// The table llx_c_email_templates has no field ref. The field ref was named "label" instead. So we change the call to fetchCommon.
-		//$result = $this->fetchCommon($id, $ref, '', $noextrafields);
-		$result = $this->fetchCommon($id, '', (empty($ref) ? '' : " AND t.label = '".$this->db->escape($ref)."'"), $noextrafields);
-
-		if ($result > 0 && !empty($this->table_element_line) && empty($nolines)) {
-			$this->fetchLines($noextrafields);
-		}
-		return $result;
 	}
 }

@@ -141,7 +141,15 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 	foreach ($arrayofimages as $varforimage) {
 		if ($_FILES[$varforimage]["name"] && !image_format_supported($_FILES[$varforimage]["name"], 0)) {	// Logo can be used on a lot of different places. Recommend using jpg and png for better compatibility.
 			$langs->load("errors");
-			setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');
+			$mesg = $langs->trans("ErrorBadImageFormat");
+			if (!function_exists("imagecreate")) {
+				$mesg .= ' - '.$langs->trans("ErrorPHPDoesNotSupport", "GD");
+			} else {
+				$supportedextensions = getListOfPossibleImageExt();
+				$supportedextensions = preg_replace('/\\\./', '', $supportedextensions); // Remove '\.'
+				$mesg .= ' - '.$langs->trans("ErrorSupportedFormatAre", implode(', ', explode('|', $supportedextensions)));
+			}
+			setEventMessages($mesg, null, 'errors');
 			break;
 		}
 
@@ -462,7 +470,7 @@ print '<input name="name" id="name" maxlength="'.$mysoc->fields['nom']['length']
 // Main currency
 print '<tr class="oddeven"><td class="fieldrequired"><label for="currency">'.$langs->trans("CompanyCurrency").'</label></td><td>';
 print img_picto('', 'multicurrency', 'class="pictofixedwidth"');
-print $form->selectCurrency($conf->currency, "currency");
+print $form->selectCurrency(getDolCurrency(), "currency", 2);
 print '</td></tr>'."\n";
 
 // Country
@@ -795,7 +803,7 @@ if ($mysoc->useLocalTax(1)) {
 	print $form->textwithpicto($langs->transcountry("LocalTax1IsUsedDesc", $mysoc->country_code), $tooltiphelp);
 	if (!isOnlyOneLocalTax(1)) {
 		print '<br><label for="lt1">'.$langs->trans("LTRate").'</label>: ';
-		$formcompany->select_localtax(1, $conf->global->MAIN_INFO_VALUE_LOCALTAX1, "lt1");
+		$formcompany->select_localtax(1, getDolGlobalFloat('MAIN_INFO_VALUE_LOCALTAX1'), "lt1");
 	}
 
 	$options = array($langs->trans("CalcLocaltax1").' '.$langs->trans("CalcLocaltax1Desc"), $langs->trans("CalcLocaltax2").' - '.$langs->trans("CalcLocaltax2Desc"), $langs->trans("CalcLocaltax3").' - '.$langs->trans("CalcLocaltax3Desc"));
@@ -839,7 +847,7 @@ if ($mysoc->useLocalTax(2)) {
 	$tooltiphelp = ($tooltiphelp != "LocalTax2IsUsedExample" ? "<i>".$langs->trans("Example").': '.$langs->transcountry("LocalTax2IsUsedExample", $mysoc->country_code)."</i>\n" : "");
 	if (!isOnlyOneLocalTax(2)) {
 		print '<br><label for="lt2">'.$langs->trans("LTRate").'</label>: ';
-		$formcompany->select_localtax(2, (float) getDolGlobalString('MAIN_INFO_VALUE_LOCALTAX2'), "lt2");
+		$formcompany->select_localtax(2, getDolGlobalFloat('MAIN_INFO_VALUE_LOCALTAX2'), "lt2");
 	}
 
 	$options = array($langs->trans("CalcLocaltax1").' '.$langs->trans("CalcLocaltax1Desc"), $langs->trans("CalcLocaltax2").' - '.$langs->trans("CalcLocaltax2Desc"), $langs->trans("CalcLocaltax3").' - '.$langs->trans("CalcLocaltax3Desc"));

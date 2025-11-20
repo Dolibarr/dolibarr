@@ -4,8 +4,9 @@
  * Copyright (C)    2013-2014 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C)	2015	  Marcos García		  <marcosgdf@gmail.com>
  * Copyright (C) 	2019	  Nicolas ZABOURI     <info@inovea-conseil.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 	2024-2025 Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 	2025	  MDW				  <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 	2025	  Charlene Benke      <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,22 +24,27 @@
  */
 
 // Following var can be set
-// $modulepart  = for download
-// $param       = param to add to download links
-// $moreparam   = param to add to download link for the form_attach_new_file function
-// $upload_dir
 // $object
 // $filearray
-// $savingdocmask = dol_sanitizeFileName($object->ref).'-__file__';
 
 /**
+ * @var Conf $conf
  * @var CommonObject $object
+ * @var DoliDB $db
  * @var Form $form
  * @var HookManager $hookmanager
  * @var Translate $langs
  *
- * @var string 	$relativepathwithnofile
- * @var	int		$permisstiontoadd			Permission or not to add a file (can use also $permission) and permission or not to edit file name or crop file (can use also $permtoedit)
+ * @var FormFile	$formfile
+ * @var	string 		$action
+ * @var string  	$modulepart
+ * @var string		$upload_dir
+ * @var	string 		$param
+ * @var string		$moreparam = param to add to download link for the form_attach_new_file function
+ * @var string 		$relativepathwithnofile
+ * @var	int			$permisstiontoadd			Permission or not to add a file (can use also $permission) and permission or not to edit file name or crop file (can use also $permtoedit)
+ * @var string  	$savingdocmask				For example dol_sanitizeFileName($object->ref).'-__file__';
+ * @var int			$withproject
  */
 
 // Protection to avoid direct call of template
@@ -142,6 +148,7 @@ if (!isset($savingdocmask) || getDolGlobalString('MAIN_DISABLE_SUGGEST_REF_AS_PR
 }
 
 if (empty($formfile) || !is_object($formfile)) {
+	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 	$formfile = new FormFile($db);
 }
 
@@ -176,6 +183,11 @@ if (is_array($tmparray) && !empty($tmparray)) {
 }
 
 
+if (getDolGlobalString('MAIN_DOCUMENTS_LIST_IN_TWOCOLUMNS')) {
+	// We use a table with 2 columns
+	print '<div class="fichecenter">';
+	print '<div class="fichehalfleft">';
+}
 // List of document
 $formfile->list_of_documents(
 	$filearray,
@@ -202,9 +214,12 @@ $formfile->list_of_documents(
 	array('afteruploadtitle' => $formToUploadAFile, 'showhideaddbutton' => 1)
 );
 
-
-print "<br>";
-
+if (getDolGlobalString('MAIN_DOCUMENTS_LIST_IN_TWOCOLUMNS')) {
+	print '</div>';
+	print '<div class="fichehalfright">';
+} else {
+	print "<br>";
+}
 
 //List of links
 $formfile->listOfLinks(
@@ -216,5 +231,10 @@ $formfile->listOfLinks(
 	'formaddlink',
 	array('afterlinktitle' => $formToAddALink, 'showhideaddbutton' => 1)
 );
+
+if (getDolGlobalString('MAIN_DOCUMENTS_LIST_IN_TWOCOLUMNS')) {
+	print '</div>';
+	print '</div>';
+}
 
 print "<br>";

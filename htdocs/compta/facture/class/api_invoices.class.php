@@ -2,8 +2,9 @@
 /* Copyright (C) 2015   	Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2020   	Thibault FOUCART		<support@ptibogxiv.net>
  * Copyright (C) 2023		Joachim Kueter			<git-jk@bloxera.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,13 +70,21 @@ class Invoices extends DolibarrApi
 	 *
 	 * @param	int		$id				ID of invoice
 	 * @param   int     $contact_list	0:Return array contains all properties, 1:Return array contains just id, -1: Do not return contacts/adddesses
+	 * @param 	string 	$properties 	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param 	bool 	$withLines 		true or false to display or hide lines
 	 * @return	Object					Object with cleaned properties
 	 *
 	 * @throws	RestException
 	 */
-	public function get($id, $contact_list = 1)
+	public function get($id, $contact_list = 1, $properties = '', $withLines = true)
 	{
-		return $this->_fetch($id, '', '', $contact_list);
+		$invoice = $this->_fetch($id, '', '', $contact_list);
+
+		if (!$withLines) {
+			unset($invoice->lines);
+		}
+
+		return $this->_filterObjectProperties($invoice, $properties);
 	}
 
 	/**
@@ -187,6 +196,7 @@ class Invoices extends DolibarrApi
 	 * @param string    $properties	      	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool      $pagination_data  	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0
 	 * @param int		$loadlinkedobjects	Load also linked object
+	 * @param bool 		$withLines 			true or false to display or hide lines
 	 * @return array                      	Array of invoice objects
 	 * @phan-return Facture[]|array{data:Facture[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 * @phpstan-return Facture[]|array{data:Facture[],pagination:array{total:int,page:int,page_count:int,limit:int}}
@@ -194,7 +204,7 @@ class Invoices extends DolibarrApi
 	 * @throws RestException 404 Not found
 	 * @throws RestException 503 Error
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $status = '', $sqlfilters = '', $properties = '', $pagination_data = false, $loadlinkedobjects = 0)
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $status = '', $sqlfilters = '', $properties = '', $pagination_data = false, $loadlinkedobjects = 0, $withLines = true)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('facture', 'lire')) {
 			throw new RestException(403);
@@ -213,6 +223,7 @@ class Invoices extends DolibarrApi
 
 		$sql = "SELECT t.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture AS t";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe AS s ON (s.rowid = t.fk_soc)";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 		$sql .= ' WHERE t.entity IN ('.getEntity('invoice').')';
 		if ($socids) {
@@ -290,6 +301,10 @@ class Invoices extends DolibarrApi
 						$invoice_static->fetchObjectLinked();
 					}
 
+					if (!$withLines) {
+						unset($invoice_static->lines);
+					}
+
 					// Add online_payment_url, copied from order
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 					$invoice_static->online_payment_url = getOnlinePaymentUrl(0, 'invoice', $invoice_static->ref);
@@ -333,7 +348,7 @@ class Invoices extends DolibarrApi
 	public function post($request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('facture', 'creer')) {
-			throw new RestException(403, "Insuffisant rights");
+			throw new RestException(403, "Insufficiant rights");
 		}
 
 		if (!is_array($request_data)) {
@@ -568,6 +583,8 @@ class Invoices extends DolibarrApi
 	 * @param	int    $id             Id of invoice to update
 	 * @param	int    $contactid      Id of contact to add
 	 * @param	string $type           Type of the contact (BILLING, SHIPPING, CUSTOMER)
+	 * @param   string  $source		   external=Contact extern (llx_socpeople), internal=Contact intern (llx_user)
+	 * @param   int     $notrigger     Disable all triggers
 	 * @return	array
 	 * @phan-return array{success:array{code:int,message:string}}
 	 * @phpstan-return array{success:array{code:int,message:string}}
@@ -577,7 +594,7 @@ class Invoices extends DolibarrApi
 	 * @throws RestException 401
 	 * @throws RestException 404
 	 */
-	public function postContact($id, $contactid, $type)
+	public function postContact($id, $contactid, $type, $source = 'external', $notrigger = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('facture', 'creer')) {
 			throw new RestException(403);
@@ -597,7 +614,7 @@ class Invoices extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$result = $this->invoice->add_contact($contactid, $type, 'external');
+		$result = $this->invoice->add_contact($contactid, $type, $source, $notrigger);
 
 		if (!$result) {
 			throw new RestException(500, 'Error when added the contact');
@@ -609,6 +626,42 @@ class Invoices extends DolibarrApi
 				'message' => 'Contact linked to the invoice'
 			)
 		);
+	}
+
+	/**
+	 * Get contacts of given invoice
+	 *
+	 * Return an array with contact information
+	 *
+	 * @param	int					$id			ID of invoice
+	 * @param	string				$type		Type of the contact (BILLING, SHIPPING, CUSTOMER)
+	 * @return	array<int,mixed>				Array with contact and user associated
+	 *
+	 * @url	GET {id}/contacts
+	 *
+	 * @throws	RestException
+	 */
+	public function getContacts($id, $type = '')
+	{
+		if (!DolibarrApiAccess::$user->hasRight('facture', 'lire')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->invoice->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Invoice not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$contacts = $this->invoice->liste_contact(-1, 'external', 0, $type);
+		$socpeoples = $this->invoice->liste_contact(-1, 'internal', 0, $type);
+
+		$contacts = array_merge($contacts, $socpeoples);
+
+		return $contacts;
 	}
 
 	/**
@@ -686,6 +739,9 @@ class Invoices extends DolibarrApi
 		$result = $this->invoice->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'Invoice not found');
+		}
+		if ($this->invoice->status != 0) {
+			throw new RestException(403, 'Invoice not in Draft Status : '.$this->invoice->getLibStatut(1));
 		}
 
 		$updateRes = $this->invoice->deleteLine($lineid, $id);
@@ -931,9 +987,10 @@ class Invoices extends DolibarrApi
 			throw new RestException(404, 'Invoice not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
+		// test already done
+		// if (!DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
+		// 	throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		// }
 
 		return $this->_cleanObjectDatas($this->invoice);
 	}
@@ -1029,9 +1086,10 @@ class Invoices extends DolibarrApi
 			throw new RestException(404, 'Invoice not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
+		// test already done
+		// if (!DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
+		// 	throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		// }
 
 		// copy from order
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
@@ -1083,9 +1141,10 @@ class Invoices extends DolibarrApi
 			throw new RestException(404, 'Invoice not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
+		// test already done
+		// if (!DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
+		// 	throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		// }
 
 		return $this->_cleanObjectDatas($this->invoice);
 	}
@@ -1132,9 +1191,10 @@ class Invoices extends DolibarrApi
 			throw new RestException(404, 'Invoice not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
+		// test already done
+		// if (!DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
+		// 	throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		// }
 
 		return $this->_cleanObjectDatas($this->invoice);
 	}
@@ -1207,7 +1267,7 @@ class Invoices extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if ($this->invoice->paye) {
+		if ($this->invoice->paye) {		// TODO Replace by a test on status
 			throw new RestException(500, 'Alreay paid');
 		}
 
@@ -1314,7 +1374,9 @@ class Invoices extends DolibarrApi
 				}
 
 				$discount->amount_ht = $discount->amount_ttc = $total_payments + $total_creditnote_and_deposit - $this->invoice->total_ttc;
+				$discount->total_ht = $discount->total_ttc = $total_payments + $total_creditnote_and_deposit - $this->invoice->total_ttc;
 				$discount->amount_tva = 0;
+				$discount->total_tva = 0;
 				$discount->tva_tx = 0;
 
 				$result = $discount->create(DolibarrApiAccess::$user);
@@ -1327,9 +1389,15 @@ class Invoices extends DolibarrApi
 					$discount->amount_ht = abs($amount_ht[$tva_tx]);
 					$discount->amount_tva = abs($amount_tva[$tva_tx]);
 					$discount->amount_ttc = abs($amount_ttc[$tva_tx]);
+					$discount->total_ht = abs($amount_ht[$tva_tx]);
+					$discount->total_tva = abs($amount_tva[$tva_tx]);
+					$discount->total_ttc = abs($amount_ttc[$tva_tx]);
 					$discount->multicurrency_amount_ht = abs($multicurrency_amount_ht[$tva_tx]);
 					$discount->multicurrency_amount_tva = abs($multicurrency_amount_tva[$tva_tx]);
 					$discount->multicurrency_amount_ttc = abs($multicurrency_amount_ttc[$tva_tx]);
+					$discount->multicurrency_total_ht = abs($multicurrency_amount_ht[$tva_tx]);
+					$discount->multicurrency_total_tva = abs($multicurrency_amount_tva[$tva_tx]);
+					$discount->multicurrency_total_ttc = abs($multicurrency_amount_ttc[$tva_tx]);
 					$discount->tva_tx = abs((float) $tva_tx);
 
 					$result = $discount->create(DolibarrApiAccess::$user);
@@ -1819,9 +1887,12 @@ class Invoices extends DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
+	 * @phpstan-template T
 	 *
 	 * @param   Object  $object     Object to clean
 	 * @return  Object              Object with cleaned properties
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	protected function _cleanObjectDatas($object)
 	{
