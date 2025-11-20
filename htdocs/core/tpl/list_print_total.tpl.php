@@ -23,7 +23,8 @@
  * @var Form $form
  * @var Translate $langs
  *
- * @var int	$trforbreaknobg
+ * @var int			$trforbreaknobg
+ * @var ?mixed|null	$limit
  * @var array{nbfield:int,type?:array<int,string>,pos?:array<int,string>,val?:array<int,float>} $totalarray
  */
 '

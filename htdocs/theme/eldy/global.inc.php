@@ -330,9 +330,14 @@ input {
 	font-size: unset;
 	box-sizing: border-box;
 }
-input[type="text"] {
+input[type="text"]:not(.input-icon-security, .input-icon-user, .input-icon-password),
+input[type="password"]:not(.input-icon-security, .input-icon-user, .input-icon-password) {
 	height: 28px;
 }
+.input-icon-user, .input-icon-password {
+	padding-right: 28px !important;
+}
+
 select.vmenusearchselectcombo {
 	background-color: unset;
 }
@@ -2334,7 +2339,7 @@ datalist {
 	input, input[type=text], input[type=password], select, textarea     {
 		min-width: 20px;
 	}
-	.trinputlogin input[type=text], input[type=password] {
+	.trinputlogin input[type=text], .trinputlogin input[type=password] {
 		max-width: 180px;
 	}
 	.vmenu .searchform input {

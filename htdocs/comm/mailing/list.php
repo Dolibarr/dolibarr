@@ -36,9 +36,7 @@ require '../../main.inc.php';
  * @var User $user
  */
 require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
-if (isModEnabled('project')) {
-	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
-}
+require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 
 // Load translation files required by the page
 $langs->load('mails');
