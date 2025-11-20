@@ -1240,7 +1240,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							print '</td>';
 						}
 
-						// Action delete line, if no consumption has occured for this product
+						// Action delete line, if no consumption has occurred for this product
 						if ($permissiontodelete && empty($arrayoflines)) {
 							$href = $_SERVER["PHP_SELF"] . '?id=' . ((int) $object->id) . '&action=deleteline&token=' . newToken() . '&lineid=' . ((int) $line->id);
 							print '<td class="center">';

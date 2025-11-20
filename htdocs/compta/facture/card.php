@@ -5230,6 +5230,7 @@ if ($action == 'create') {
 			print '<td>'.$langs->trans('ListOfSituationInvoices').'</td>';
 			print '<td></td>';
 			print '<td class="center">'.$langs->trans('Situation').'</td>';
+
 			if (isModEnabled("bank")) {
 				print '<td class="right"></td>';
 			}
@@ -5321,7 +5322,9 @@ if ($action == 'create') {
 				$total_next_ht = $total_next_ttc = 0;
 
 				foreach ($object->tab_next_situation_invoice as $next_invoice) {
-					$totalpaid = $next_invoice->getSommePaiement();
+					$next_invoice_total_paid = $next_invoice->getSommePaiement(0);
+					$next_invoice_totalcreditnotes = $next_invoice->getSumCreditNotesUsed(0);
+					$next_invoice_totaldeposits = $next_invoice->getSumDepositsUsed(0);
 					$total_next_ht += $next_invoice->total_ht;
 					$total_next_ttc += $next_invoice->total_ttc;
 
@@ -5334,7 +5337,7 @@ if ($action == 'create') {
 					}
 					print '<td class="right"><span class="amount">'.price($next_invoice->total_ht).'</span></td>';
 					print '<td class="right"><span class="amount">'.price($next_invoice->total_ttc).'</span></td>';
-					print '<td class="right">'.$next_invoice->getLibStatut(3, $totalpaid).'</td>';
+					print '<td class="right">'.$next_invoice->getLibStatut(3, $next_invoice_total_paid + $next_invoice_totalcreditnotes + $next_invoice_totaldeposits).'</td>';
 					print '</tr>';
 				}
 

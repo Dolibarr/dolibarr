@@ -447,6 +447,10 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		$tableandshare = 'paiementcharge';
 		$parentfortableentity = 'fk_charge@chargesociales';
 	}
+	if ($features == 'evaluation') {
+		$features = 'hrm';
+		$feature2 = 'evaluation';
+	}
 
 	//print $features.' - '.$tableandshare.' - '.$feature2.' - '.$dbt_select."\n";
 
@@ -885,8 +889,11 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		if ($feature == 'project') {
 			$feature = 'projet';
 		}
-		if ($feature == 'task') {
-			$feature = 'projet_task';
+		if ($feature == 'projet' && !empty($feature2) && is_array($feature2) && !empty(array_intersect(array('project_task', 'projet_task'), $feature2))) {
+			$feature = 'project_task';
+		}
+		if ($feature == 'task' || $feature == 'projet_task') {
+			$feature = 'project_task';
 		}
 		if ($feature == 'eventorganization') {
 			$feature = 'agenda';
@@ -907,8 +914,8 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		$checksoc = array('societe'); // Test for object Societe
 		$checkparentsoc = array('agenda', 'contact', 'contrat'); // Test on entity + link to third party on field $dbt_keyfield. Allowed if link is empty (Ex: contacts...).
 		$checkproject = array('projet', 'project'); // Test for project object
-		$checktask = array('projet_task'); // Test for task object
-		$checkhierarchy = array('expensereport', 'holiday');	// check permission among the hierarchy of user
+		$checktask = array('projet_task', 'project_task'); // Test for task object
+		$checkhierarchy = array('expensereport', 'holiday', 'hrm');	// check permission among the hierarchy of user
 		$checkuser = array('bookmark');	// check permission among the fk_user (must be myself or null)
 		$nocheck = array('barcode', 'stock'); // No test
 
@@ -1047,6 +1054,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 					return false;
 				}
 			} else {
+				$sharedelement = 'project'; // for multicompany compatibility
 				$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 				$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
@@ -1134,6 +1142,20 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 						return false;
 					}
 				}
+			}
+			if ($feature == 'hrm' && in_array('evaluation', $feature2)) {
+				$useridtocheck = $object->fk_user;
+
+				if ($user->hasRight('hrm', 'evaluation', 'readall')) {
+					// the user can view evaluations for anyone
+					return true;
+				}
+				if (!$user->hasRight('hrm', 'evaluation', 'read')) {
+					// the user can't view any evaluations
+					return false;
+				}
+				// the user can only their own evaluations or their subordinates'
+				return in_array($useridtocheck, $childids);
 			}
 		}
 
