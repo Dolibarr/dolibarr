@@ -1140,6 +1140,28 @@ class pdf_octopus extends ModelePDFFactures
 				$bottomlasttab = $this->page_hauteur - $this->heightforinfotot - $this->heightforfreetext - $this->heightforfooter + 1;
 				$this->_pagefoot($pdf, $object, $outputlangs, 1);
 
+				// Add terms to sale
+				if (getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_INVOICE')) {
+					$termsofsalefilename = getDolGlobalString('MAIN_INFO_INVOICE_TERMSOFSALE');
+					$termsofsale = $conf->invoice->dir_output.'/'.$termsofsalefilename;
+					if (!empty($conf->invoice->multidir_output[$object->entity ?? $conf->entity])) {
+						$termsofsale = $conf->invoice->multidir_output[$object->entity ?? $conf->entity].'/'.$termsofsalefilename;
+					}
+					if (file_exists($termsofsale) && is_readable($termsofsale)) {
+						$pagecount = $pdf->setSourceFile($termsofsale);
+						for ($i = 1; $i <= $pagecount; $i++) {
+							$tplIdx = $pdf->importPage($i);
+							if ($tplIdx !== false) {
+								$s = $pdf->getTemplatesize($tplIdx);
+								$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
+								$pdf->useTemplate($tplIdx);
+							} else {
+								setEventMessages(null, array($termsofsale.' cannot be added, probably protected PDF'), 'warnings');
+							}
+						}
+					}
+				}
+
 				$pdf->Close();
 
 				$pdf->Output($file, 'F');

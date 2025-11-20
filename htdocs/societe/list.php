@@ -1695,7 +1695,7 @@ if (!empty($arrayfields['s.ref_ext']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.barcode']['checked'])) {
-	print_liste_field_titre($arrayfields['s.barcode']['label'], $_SERVER["PHP_SELF"], "s.barcode", $param, '', '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['s.barcode']['label'], $_SERVER["PHP_SELF"], "s.barcode", '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.code_client']['checked'])) {

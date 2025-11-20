@@ -2574,9 +2574,12 @@ while ($i < $imaxinloop) {
 			if (!is_array($typenArray) || count($typenArray) == 0) {
 				$typenArray = $formcompany->typent_array(1);
 			}
-			print '<td class="center tdoverflowmax100" title="'.dolPrintHTMLForAttribute($typenArray[$obj->typent_code]).'">';
 			if (!empty($obj->typent_code)) {
+				print '<td class="center tdoverflowmax100" title="'.dolPrintHTMLForAttribute($typenArray[$obj->typent_code]).'">';
 				print $typenArray[$obj->typent_code];
+			} else {
+				print '<td class="center tdoverflowmax100">';
+				print '';
 			}
 			print '</td>';
 			if (!$i) {

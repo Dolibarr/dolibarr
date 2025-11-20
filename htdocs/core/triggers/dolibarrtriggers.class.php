@@ -169,10 +169,18 @@ abstract class DolibarrTriggers
 	public function setErrorsFromObject(CommonObject $object)
 	{
 		if (!empty($object->error)) {
-			$this->errors = array_merge($this->errors, array($object->error));
+			if (is_array($this->errors)) {
+				$this->errors = array_merge($this->errors, array($object->error));
+			} else {
+				$this->errors = array($object->error);
+			}
 		}
 		if (!empty($object->errors)) {
-			$this->errors = array_merge($this->errors, $object->errors);
+			if (is_array($this->errors)) {
+				$this->errors = array_merge($this->errors, $object->errors);
+			} else {
+				$this->errors = $object->errors;
+			}
 		}
 	}
 

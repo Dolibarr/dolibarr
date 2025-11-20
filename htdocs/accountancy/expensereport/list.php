@@ -528,7 +528,7 @@ if ($result) {
 	}
 	// User
 	if (!empty($arrayfields['u.login']['checked'])) {
-		print_liste_field_titre($arrayfields['u.login']['label'], $_SERVER['PHP_SELF'], "u.login", $param, "", "", $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['u.login']['label'], $_SERVER['PHP_SELF'], "u.login", "", $param, '', $sortfield, $sortorder);
 		$totalarray['nbfield']++;
 	}
 	// Expensereport

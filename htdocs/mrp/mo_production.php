@@ -5,6 +5,7 @@
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2025		Noé Cendrier		 <noe.cendrier@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1296,8 +1297,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							print '</td>';
 						}
 
-						// Action delete line
-						if ($permissiontodelete) {
+						// Action delete line, if no consumption has occurred for this product
+						if ($permissiontodelete && empty($arrayoflines)) {
 							$href = $_SERVER["PHP_SELF"] . '?id=' . ((int) $object->id) . '&action=deleteline&token=' . newToken() . '&lineid=' . ((int) $line->id);
 							print '<td class="center">';
 							print '<a class="reposition" href="' . $href . '">';
