@@ -317,7 +317,7 @@ class Thirdparties extends DolibarrApi
 			}
 			$request_data['country_id'] = $id;
 		}
-		
+
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
 
