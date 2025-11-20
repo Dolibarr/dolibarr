@@ -129,7 +129,7 @@
 			// Dispatch on internal EventTarget
 			_events.dispatchEvent(ev);
 
-			// Dispatch globally on document so document.addEventListener('DolibarrHook:' + hookName) can catch it
+			// Dispatch globally on document so document.addEventListener('Dolibarr:' + hookName) can catch it
 			if (typeof document !== "undefined") {
 				document.dispatchEvent(new CustomEvent('Dolibarr:' + hookName, { detail: data }));
 			}
@@ -197,7 +197,7 @@
 
 	Dolibarr.tools.showConsoleHelp();
 
-	// Trigger DolibarrContext:init as DOM ready
+	// Trigger Dolibarr:Ready as DOM ready
 	(function triggerContextInit() {
 		const initHook = () => {
 			Dolibarr.executeHook('Ready', { context: Dolibarr });
