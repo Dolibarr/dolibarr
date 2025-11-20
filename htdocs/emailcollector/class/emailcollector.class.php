@@ -907,7 +907,7 @@ class EmailCollector extends CommonObject
 			$this->output .= 'EmailCollector ID '.$emailcollector->id.': '.$emailcollector->lastresult.'<br>';
 
 			if ($result < 0) {
-				$nberror++;
+				$nbErrors++;
 			}
 		}
 

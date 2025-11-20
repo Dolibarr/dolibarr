@@ -580,7 +580,7 @@ select.vmenusearchselectcombo {
 textarea:focus {
 	border: 1px solid #aaa !important;
 }
-input:focus:not(.noborderfocus):not(.inputsearch_dropdownselectedfields):not(.button):not(.buttonwebsite):not(.buttonreset):not(.select2-search__field):not(#top-bookmark-search-input):not(.search_component_input):not(.input-nobottom),
+input:focus:not(.input-icon-user, .input-icon-password, .input-icon-security):not(.noborderfocus):not(.inputsearch_dropdownselectedfields):not(.button):not(.buttonwebsite):not(.buttonreset):not(.select2-search__field):not(#top-bookmark-search-input):not(.search_component_input):not(.input-nobottom),
  select:focus, .select2-container--open [aria-expanded="false"].select2-selection--single,
  .select2-container--focus span.selection span.select2-selection:not(.massactionselect) {
 <?php if (getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT')) { ?>
@@ -647,8 +647,12 @@ input {
 	padding: 4px;
 	padding-left: 5px;
 }
-input[type="text"] {
+input[type="text"]:not(.input-icon-security, .input-icon-user, .input-icon-password),
+input[type="password"]:not(.input-icon-security, .input-icon-user, .input-icon-password) {
 	height: 1.3em;
+}
+.login_table .input-icon-user, .login_table .input-icon-password {
+	padding-right: 42px !important;
 }
 select {
 	padding-top: 4px;
@@ -3573,7 +3577,7 @@ form#login {
 .login_table #tdpasswordlogin #togglepassword {
 	position: absolute;
 	top: 0.7em;
-	right: 11px;
+	right: 8px;
 	background: none;
 	border: none;
 	opacity: 0.3;

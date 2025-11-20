@@ -975,12 +975,10 @@ class Mo extends CommonObject
 
 		$this->db->begin();
 
-		if (!empty($fk_movement) || !empty($arrayoflines)) {
+		if (!empty($fk_movement)) {
 			$stockmove = new MouvementStock($this->db);
 			$stockmove->setOrigin($this->element, $this->id);
-		}
 
-		if (!empty($fk_movement)) {
 			// The fk_movement was not recorded so we try to guess the product and quantity to restore.
 			$moline = new MoLine($this->db);
 			$TArrayMoLine = $moline->fetchAll('', '', 1, 0, '(fk_stock_movement:=:'.((int) $fk_movement).')');
@@ -1001,12 +999,14 @@ class Mo extends CommonObject
 				$idstockmove = $stockmove->livraison($user, $movement->product_id, $movement->warehouse_id, $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', $movement->batch, 0, $codemovementCancel);
 			}
 			if ($idstockmove < 0) {
-				$this->error++;
-				setEventMessages($stockmove->error, $stockmove->errors, 'errors');
+				$this->setErrorsFromObject($stockmove);
 			} else {
 				$result = $moline->delete($user, $notrigger);
 			}
 		} elseif (!empty($arrayoflines)) {
+			$stockmove = new MouvementStock($this->db);
+			$stockmove->setOrigin($this->element, $this->id);
+
 			// Loop on each child lines
 			foreach ($arrayoflines as $key => $arrayofline) {
 				$lineDetails = $arrayoflines[$key];
@@ -1025,33 +1025,15 @@ class Mo extends CommonObject
 				}
 				if ($idstockmove < 0) {
 					$error++;
-					setEventMessages($stockmove->error, $stockmove->errors, 'errors');
+					$this->setErrorsFromObject($stockmove);
 				} else {
 					$moline = new MoLine($this->db);
 					$moline->fetch($lineDetails['rowid']);
 
-					// Reverse stock movement
-					$labelmovementCancel = $langs->trans("CancelProductionForRef", $productstatic->ref);
-					$codemovementCancel = $langs->trans("StockIncrease");
-
-
-					if ($qtytoprocess >= 0) {
-						$idstockmove = $stockmove->reception($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, '', '', $lineDetails['batch'], dol_now(), 0, $codemovementCancel);
-					} else {
-						$idstockmove = $stockmove->livraison($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', $lineDetails['batch'], 0, $codemovementCancel);
-					}
-					if ($idstockmove < 0) {
+					$resdel = $moline->delete($user, $notrigger);
+					if ($resdel < 0) {
 						$error++;
-						setEventMessages($stockmove->error, $stockmove->errors, 'errors');
-					} else {
-						$moline = new MoLine($this->db);
-						$moline->fetch($lineDetails['rowid']);
-
-						$resdel = $moline->delete($user, $notrigger);
-						if ($resdel < 0) {
-							$error++;
-							setEventMessages($moline->error, $moline->errors, 'errors');
-						}
+						$this->setErrorsFromObject($moline);
 					}
 				}
 
