@@ -2716,6 +2716,7 @@ CacheForTranslationIsUsed=Warning, translation files seems loaded into a cache s
 TriggerData=Data sent to URL
 ErrorMessage=Error message received
 TriggerHistory=Trigger history
+TriggerHistoryAltWithLog=You can also have a view on webhook call from the dolibarr_curl.log file if you add the constant MAIN_CURL_DEBUG to 1.
 ShowTriggerHistory=Show trigger history
 DeleteTriggereHistoryRecord=Delete trigger history record
 MAIN_ENABLE_AJAX_TOOLTIP=Use Ajax lazy load of tooltip content with Ajax

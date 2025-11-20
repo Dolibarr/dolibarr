@@ -999,8 +999,7 @@ class Mo extends CommonObject
 				$idstockmove = $stockmove->livraison($user, $movement->product_id, $movement->warehouse_id, $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', $movement->batch, 0, $codemovementCancel);
 			}
 			if ($idstockmove < 0) {
-				$this->error++;
-				setEventMessages($stockmove->error, $stockmove->errors, 'errors');
+				$this->setErrorsFromObject($stockmove);
 			} else {
 				$result = $moline->delete($user, $notrigger);
 			}
@@ -1026,33 +1025,15 @@ class Mo extends CommonObject
 				}
 				if ($idstockmove < 0) {
 					$error++;
-					setEventMessages($stockmove->error, $stockmove->errors, 'errors');
+					$this->setErrorsFromObject($stockmove);
 				} else {
 					$moline = new MoLine($this->db);
 					$moline->fetch($lineDetails['rowid']);
 
-					// Reverse stock movement
-					$labelmovementCancel = $langs->trans("CancelProductionForRef", $productstatic->ref);
-					$codemovementCancel = $langs->trans("StockIncrease");
-
-
-					if ($qtytoprocess >= 0) {
-						$idstockmove = $stockmove->reception($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, '', '', $lineDetails['batch'], dol_now(), 0, $codemovementCancel);
-					} else {
-						$idstockmove = $stockmove->livraison($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', $lineDetails['batch'], 0, $codemovementCancel);
-					}
-					if ($idstockmove < 0) {
-						$error++;
-						setEventMessages($stockmove->error, $stockmove->errors, 'errors');
-					} else {
-						$moline = new MoLine($this->db);
-						$moline->fetch($lineDetails['rowid']);
-
-						$resdel = $moline->delete($user, $notrigger);
-						if ($resdel < 0) {
-							$error++;
-							setEventMessages($moline->error, $moline->errors, 'errors');
-						}
+					$resdel = $moline->delete($user, $notrigger);
+					if ($resdel < 0) {
+						$this->error++;
+						$this->setErrorsFromObject($moline);
 					}
 				}
 
