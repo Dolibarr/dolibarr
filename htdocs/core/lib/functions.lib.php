@@ -3810,7 +3810,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 			} elseif ($tzoutput == 'tzuser' || $tzoutput == 'tzuserrel') {
 				$to_gmt = true;
 				// if no session (by example in cron) may use MAIN_DOLIBARR_USER_TIMEZONE instead UTC
-				$offsettzstring = (empty($_SESSION['dol_tz_string']) ? getDolGLobalString('MAIN_DOLIBARR_USER_TIMEZONE', 'UTC') : $_SESSION['dol_tz_string']); // Example 'Europe/Berlin' or 'Indian/Reunion'
+				$offsettzstring = (empty($_SESSION['dol_tz_string']) ? getDolGlobalString('MAIN_DOLIBARR_USER_TIMEZONE', 'UTC') : $_SESSION['dol_tz_string']); // Example 'Europe/Berlin' or 'Indian/Reunion'
 
 				if (class_exists('DateTimeZone')) {
 					try {
