@@ -1817,13 +1817,7 @@ abstract class CommonInvoice extends CommonObject
 		global $mysoc;
 
 		// Get the amount to pay
-		if (method_exists($this, 'getRemainToPay')) {
-			// Get remaining amount to pay
-			$amount_to_pay = $this->getRemainToPay();
-		} else {
-			// Use Total amount with taxes
-			$amount_to_pay = $this->total_ttc;
-		}
+		$amount_to_pay = $this->getRemainToPay();
 
 		// Ensure numeric formatting for EPC QR code
 		$amount_to_pay = price2num($amount_to_pay, 'MT');

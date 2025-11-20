@@ -78,8 +78,10 @@ if (!$sortfield) {
 $object = new Facture($db);
 if ($object->fetch($id, $ref) > 0) {
 	$object->fetch_thirdparty();
-	$upload_dir = $conf->facture->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
 }
+
+$upload_dir = $conf->facture->multidir_output[isset($object->entity) ? $object->entity : 1].'/'.dol_sanitizeFileName($object->ref);
+
 
 $permissiontoadd = $user->hasRight('facture', 'creer');
 

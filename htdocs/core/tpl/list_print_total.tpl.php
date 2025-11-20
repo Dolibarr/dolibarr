@@ -22,6 +22,7 @@
  * @var Translate $langs
  */
 '@phan-var-force array{nbfield:int,type?:array<int,string>,pos?:array<int,int>,val?:array<int,float>} $totalarray';
+'@phan-var-force ?int $limit';
 
 if (!function_exists('printTotalValCell')) { // allow two list with total on same screen
 
