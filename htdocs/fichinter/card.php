@@ -1786,7 +1786,7 @@ if ($action == 'create') {
 					$url_button = array();
 					$url_button[] = array(
 						'lang' => 'subtotals',
-						'enabled' => (isModEnabled('ficheinter') && $object->status == Fichinter::STATUS_DRAFT),
+						'enabled' => (isModEnabled('intervention') && $object->status == Fichinter::STATUS_DRAFT),
 						'perm' => (bool) $user->hasRight('ficheinter', 'creer'),
 						'label' => $langs->trans('AddTitleLine'),
 						'url' => '/fichinter/card.php?id='.$object->id.'&action=add_title_line&token='.newToken()
@@ -1794,7 +1794,7 @@ if ($action == 'create') {
 
 					$url_button[] = array(
 						'lang' => 'subtotals',
-						'enabled' => (isModEnabled('ficheinter') && $object->status == Fichinter::STATUS_DRAFT),
+						'enabled' => (isModEnabled('intervention') && $object->status == Fichinter::STATUS_DRAFT),
 						'perm' => (bool) $user->hasRight('ficheinter', 'creer'),
 						'label' => $langs->trans('AddSubtotalLine'),
 						'url' => '/fichinter/card.php?id='.$object->id.'&action=add_subtotal_line&token='.newToken()
