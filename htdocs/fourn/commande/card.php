@@ -179,7 +179,7 @@ $permissiontoadd	= $usercancreate; // Used by the include of actions_addupdatede
 $permissiontoeditextra = $permissiontoadd;
 if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
 	// For action 'update_extras', is there a specific permission set for the attribute to update
-	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+	$permissiontoeditextra = dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
 }
 
 // Project permission
@@ -811,7 +811,7 @@ if (empty($reshook)) {
 			$ht,
 			(float) price2num(GETPOST('qty'), 'MS'),
 			(float) price2num(GETPOST('remise_percent'), '', 2),
-			(float) $vat_rate,
+			$vat_rate,
 			$localtax1_rate,
 			$localtax2_rate,
 			$price_base_type,

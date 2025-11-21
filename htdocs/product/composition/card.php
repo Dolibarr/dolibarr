@@ -554,6 +554,7 @@ if ($id > 0 || !empty($ref)) {
 		print '<input type="hidden" name="action" value="save_composed_product" />';
 		print '<input type="hidden" name="id" value="'.$id.'" />';
 
+		print '<div class="div-table-responsive-no-min">';
 		print '<table id="tablelines" class="ui-sortable liste noborder nobottom">';
 
 		print '<tr class="liste_titre nodrag nodrop">';
@@ -793,6 +794,7 @@ if ($id > 0 || !empty($ref)) {
 		}
 
 		print '</table>';
+		print '</div>';
 
 		/*if($user->rights->produit->creer || $user->hasRight('service', 'creer')) {
 			print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';

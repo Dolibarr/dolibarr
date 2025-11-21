@@ -564,7 +564,7 @@ class FormProduct
 	 *
 	 *  @param  string		$name                Name of HTML field
 	 *  @param  string		$measuring_style     Unit to show: weight, size, surface, volume, time
-	 *  @param  string		$selected            Preselected value
+	 *  @param  int|string	$selected            Preselected value
 	 *  @param  int|string	$adddefault			 1=Add empty unit called "Default", ''=Add empty value
 	 *  @param  int<0,2>	$mode                1=Use short label as value, 0=Use rowid, 2=Use scale (power)
 	 *  @param	string		$morecss			 More CSS

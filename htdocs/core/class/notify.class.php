@@ -668,7 +668,8 @@ class Notify
 			$application = (preg_match('/^\+/', $applicationcustom) ? $application : '').$applicationcustom;
 		}
 
-		$from = getDolGlobalString('NOTIFICATION_EMAIL_FROM');
+		$from = getDolGlobalString('NOTIFICATION_EMAIL_FROM', getDolGlobalString('MAIN_MAIL_EMAIL_FROM'));
+
 		$object_type = '';
 		$link = '';
 		$num = 0;
