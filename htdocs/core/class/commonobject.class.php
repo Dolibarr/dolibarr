@@ -1014,11 +1014,11 @@ abstract class CommonObject
 					$enabled = (int) dol_eval((string) $extrafields->attributes[$this->table_element]['enabled'][$key], 1, 1, '2');
 				}
 				if ($enabled && isset($extrafields->attributes[$this->table_element]['list'][$key])) {
-					$enabled = (int) dol_eval($extrafields->attributes[$this->table_element]['list'][$key], 1, 1, '2');
+					$enabled = (int) dol_eval((string) $extrafields->attributes[$this->table_element]['list'][$key], 1, 1, '2');
 				}
 				$perms = 1;
 				if ($perms && isset($extrafields->attributes[$this->table_element]['perms'][$key])) {
-					$perms = (int) dol_eval($extrafields->attributes[$this->table_element]['perms'][$key], 1, 1, '2');
+					$perms = (int) dol_eval((string) $extrafields->attributes[$this->table_element]['perms'][$key], 1, 1, '2');
 				}
 				if (empty($enabled)) {
 					continue; // 0 = Never visible field
@@ -5008,7 +5008,7 @@ abstract class CommonObject
 
 			// Check if module is enabled (to avoid error if tables of module not created)
 			if (isset($element['enabled']) && !empty($element['enabled'])) {
-				$enabled = (int) dol_eval($element['enabled'], 1);
+				$enabled = (int) dol_eval((string) $element['enabled'], 1);
 				if (empty($enabled)) {
 					continue;
 				}
@@ -6465,12 +6465,12 @@ abstract class CommonObject
 
 			$enabled = 1;
 			if (isset($this->fields[$key]['enabled'])) {
-				$enabled = (int) dol_eval($this->fields[$key]['enabled'], 1, 1, '1');
+				$enabled = (int) dol_eval((string) $this->fields[$key]['enabled'], 1, 1, '1');
 			}
 			/*$perms = 1;
 			 if (isset($this->fields[$key]['perms']))
 			 {
-			 $perms = (int) dol_eval($this->fields[$key]['perms'], 1, 1, '1');
+			 $perms = (int) dol_eval((string) $this->fields[$key]['perms'], 1, 1, '1');
 			 }*/
 			if (empty($enabled)) {
 				continue;
@@ -6651,7 +6651,7 @@ abstract class CommonObject
 							if (empty($conf->disable_compute)) {
 								global $objectoffield;        // We set a global variable to $objectoffield so
 								$objectoffield = $this;        // we can use it inside computed formula
-								$this->array_options['options_' . $key] = dol_eval($extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '2');
+								$this->array_options['options_' . $key] = dol_eval((string) $extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '2');
 							}
 						}
 					}
@@ -6780,7 +6780,7 @@ abstract class CommonObject
 
 			if (!empty($attrfieldcomputed)) {
 				if (getDolGlobalString('MAIN_STORE_COMPUTED_EXTRAFIELDS')) {
-					$value = dol_eval($attrfieldcomputed, 1, 0, '2');
+					$value = dol_eval((string) $attrfieldcomputed, 1, 0, '2');
 					dol_syslog($langs->trans("Extrafieldcomputed")." on ".$attributeLabel."(".$value.")", LOG_DEBUG);
 					$new_array_options[$key] = $value;
 				} else {
@@ -7229,7 +7229,7 @@ abstract class CommonObject
 			//dol_syslog("attributeType=".$attributeType, LOG_DEBUG);
 			if (!empty($attrfieldcomputed)) {
 				if (getDolGlobalString('MAIN_STORE_COMPUTED_EXTRAFIELDS')) {
-					$value = dol_eval($attrfieldcomputed, 1, 0, '2');
+					$value = dol_eval((string) $attrfieldcomputed, 1, 0, '2');
 					dol_syslog($langs->trans("Extrafieldcomputed")." on ".$attributeLabel."(".$value.")", LOG_DEBUG);
 
 					$new_array_options["options_".$key] = $value;
@@ -8546,7 +8546,7 @@ abstract class CommonObject
 		if ($computed) {
 			// Make the eval of compute string
 			//var_dump($computed);
-			$value = dol_eval($computed, 1, 0, '2');
+			$value = dol_eval((string) $computed, 1, 0, '2');
 		}
 
 		if (empty($morecss)) {
@@ -9308,12 +9308,12 @@ abstract class CommonObject
 
 					$visibility = 1;
 					if (isset($extrafields->attributes[$this->table_element]['list'][$key])) {
-						$visibility = (int) dol_eval($extrafields->attributes[$this->table_element]['list'][$key], 1, 1, '2');
+						$visibility = (int) dol_eval((string) $extrafields->attributes[$this->table_element]['list'][$key], 1, 1, '2');
 					}
 
 					$perms = 1;
 					if ($perms && isset($extrafields->attributes[$this->table_element]['perms'][$key])) {
-						$perms = (int) dol_eval($extrafields->attributes[$this->table_element]['perms'][$key], 1, 1, '2');
+						$perms = (int) dol_eval((string) $extrafields->attributes[$this->table_element]['perms'][$key], 1, 1, '2');
 					}
 
 					if (($mode == 'create') && !in_array(abs($visibility), array(1, 3))) {

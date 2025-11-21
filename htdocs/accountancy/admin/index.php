@@ -176,77 +176,101 @@ if ($action == 'updatemode') {
 	}
 }
 
-if ($action == 'update2') {
+if ($action == 'update') {
 	$error = 0;
 
-	if (!$error) {
-		foreach ($list as $constname) {
-			$constvalue = GETPOST($constname, 'alpha');
-			if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
-				$error++;
-			}
-		}
-		if ($error) {
-			setEventMessages($langs->trans("Error"), null, 'errors');
-		}
+	foreach ($list as $constname) {
+		$constvalue = GETPOST($constname, 'alpha');
 
-		// option in section binding
-		foreach ($list_binding as $constname) {
-			$constvalue = GETPOST($constname, 'alpha');
-
-			if ($constname == 'ACCOUNTING_DATE_START_BINDING') {
-				$constvalue = dol_mktime(0, 0, 0, GETPOSTINT($constname.'month'), GETPOSTINT($constname.'day'), GETPOSTINT($constname.'year'));
-			}
-
-			if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
-				$error++;
-			}
-		}
-
-		// options in section other
-		if (GETPOSTISSET('ACCOUNTING_LETTERING_NBLETTERS')) {
-			if (!dolibarr_set_const($db, 'ACCOUNTING_LETTERING_NBLETTERS', GETPOST('ACCOUNTING_LETTERING_NBLETTERS'), 'chaine', 0, '', $conf->entity)) {
-				$error++;
-			}
-		}
-
-		// Export options
-		$modelcsv = GETPOSTINT('ACCOUNTING_EXPORT_MODELCSV');
-
-		if (!empty($modelcsv)) {
-			if (!dolibarr_set_const($db, 'ACCOUNTING_EXPORT_MODELCSV', $modelcsv, 'chaine', 0, '', $conf->entity)) {
-				$error++;
-			}
-			//if ($modelcsv==AccountancyExport::$EXPORT_TYPE_QUADRATUS || $modelcsv==AccountancyExport::$EXPORT_TYPE_CIEL) {
-			//	dolibarr_set_const($db, 'ACCOUNTING_EXPORT_FORMAT', 'txt', 'chaine', 0, '', $conf->entity);
-			//}
-		} else {
+		if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
 			$error++;
 		}
+	}
 
-		foreach ($main_option as $constname) {
-			$constvalue = GETPOST($constname, 'alpha');
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+}
 
-			if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+if ($action == 'update_binding') {
+	$error = 0;
+
+	foreach ($list_binding as $constname) {
+		$constvalue = GETPOST($constname, 'alpha');
+
+		if ($constname == 'ACCOUNTING_DATE_START_BINDING') {
+			$constvalue = dol_mktime(0, 0, 0, GETPOSTINT($constname.'month'), GETPOSTINT($constname.'day'), GETPOSTINT($constname.'year'));
+		}
+
+		if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+			$error++;
+		}
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+}
+
+if ($action == 'update_advanced') {
+	$error = 0;
+
+	if (GETPOSTISSET('ACCOUNTING_LETTERING_NBLETTERS')) {
+		if (!dolibarr_set_const($db, 'ACCOUNTING_LETTERING_NBLETTERS', GETPOST('ACCOUNTING_LETTERING_NBLETTERS'), 'chaine', 0, '', $conf->entity)) {
+			$error++;
+		}
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+}
+
+if ($action == 'update_export') {
+	$error = 0;
+
+	// Export options
+	$modelcsv = GETPOSTINT('ACCOUNTING_EXPORT_MODELCSV');
+
+	if (!$error) {
+		// reload
+		$configuration = $accountancyexport->getTypeConfig();
+		$listparam = $configuration['param'];
+	}
+
+	if (!empty($modelcsv)) {
+		if (!dolibarr_set_const($db, 'ACCOUNTING_EXPORT_MODELCSV', $modelcsv, 'chaine', 0, '', $conf->entity)) {
+			$error++;
+		}
+		//if ($modelcsv==AccountancyExport::$EXPORT_TYPE_QUADRATUS || $modelcsv==AccountancyExport::$EXPORT_TYPE_CIEL) {
+		//	dolibarr_set_const($db, 'ACCOUNTING_EXPORT_FORMAT', 'txt', 'chaine', 0, '', $conf->entity);
+		//}
+	} else {
+		$error++;
+	}
+
+	foreach ($main_option as $constname) {
+		$constvalue = GETPOST($constname, 'alpha');
+
+		if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+			$error++;
+		}
+	}
+
+	foreach ($listparam[$modelcsv] as $key => $value) {
+		$constante = $key;
+
+		if (strpos($constante, 'ACCOUNTING') !== false) {
+			$constvalue = GETPOST($key, 'alpha');
+			if (!dolibarr_set_const($db, $constante, $constvalue, 'chaine', 0, '', $conf->entity)) {
 				$error++;
 			}
-		}
-
-		foreach ($listparam[$modelcsv] as $key => $value) {
-			$constante = $key;
-
-			if (strpos($constante, 'ACCOUNTING') !== false) {
-				$constvalue = GETPOST($key, 'alpha');
-				if (!dolibarr_set_const($db, $constante, $constvalue, 'chaine', 0, '', $conf->entity)) {
-					$error++;
-				}
-			}
-		}
-
-		if (!$error) {
-			// reload
-			$configuration = $accountancyexport->getTypeConfig();
-			$listparam = $configuration['param'];
 		}
 	}
 
@@ -456,19 +480,19 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1) {
 	print '</form>';
 
 
-	print '<br><br><br>';
+	print '<br><br>';
 }
 
 
 // Show form main options
 print $formSetup->generateOutput(true);
 
-print '<br><br><br>';
+print '<br><br>';
 
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="update2">';
+print '<input type="hidden" name="action" value="update_binding">';
 print '<input type="hidden" name="page_y" value="">';
 
 // Binding params
@@ -577,7 +601,8 @@ print '</tr>';
 print '</table>';
 print '</div>';
 
-print '<div class="center"><input type="submit" class="button reposition" value="'.dol_escape_htmltag($langs->trans('Save')).'" name="button"></div>';
+print '<div class="center"><input type="submit" class="button button-edit reposition" name="button" value="'.dol_escape_htmltag($langs->trans('Save')).'"></div>';
+print '</form>';
 
 // Show numbering options
 print '<br><br>';
@@ -700,7 +725,7 @@ print '<br><br>';
 // Advanced params
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="update2">';
+print '<input type="hidden" name="action" value="update_advanced">';
 print '<input type="hidden" name="page_y" value="">';
 
 print '<div class="div-table-responsive-no-min">';
@@ -790,11 +815,16 @@ print '</div>';
 
 
 print '<div class="center"><input type="submit" class="button button-edit reposition" name="button" value="'.$langs->trans('Save').'"></div>';
+print '</form>';
 
 print '<br><br>';
 
 
 // Export options
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="update_export">';
+print '<input type="hidden" name="page_y" value="">';
 
 print "\n".'<script type="text/javascript">'."\n";
 print 'jQuery(document).ready(function () {'."\n";
@@ -839,8 +869,6 @@ print '        initfields();'."\n";
 print '    });'."\n";
 print '})'."\n";
 print '</script>'."\n";
-
-// Main Options
 
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
@@ -902,7 +930,6 @@ if ($num2) {
 }
 
 print '<div class="center"><input type="submit" class="button reposition" value="'.dol_escape_htmltag($langs->trans('Save')).'" name="button"></div>';
-
 
 print '</form>';
 

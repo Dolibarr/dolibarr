@@ -73,15 +73,15 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	$menu_arr = array();
 
 	// Home
-	$landingpage = getDolUserString('MAIN_LANDING_PAGE', getDolGlobalString('MAIN_LANDING_PAGE'));
-	if (!empty($landingpage)) {
-		$landingpage = dol_buildpath($landingpage, 1);
+	$homepage = getDolUserString('MAIN_HOME_PAGE', getDolGlobalString('MAIN_HOME_PAGE'));
+	if (!empty($homepage) && !$user->admin) {
+		$homepage = dol_buildpath($homepage, 1);
 	} else {
-		$landingpage = '/index.php?mainmenu=home&leftmenu=home';
+		$homepage = '/index.php?mainmenu=home&leftmenu=home';
 	}
 	$menu_arr[] = array(
 		'name' => 'Home',
-		'link' => $landingpage,
+		'link' => $homepage,
 		'title' => "Home",
 		'level' => 0,
 		'enabled' => $showmode = 1,

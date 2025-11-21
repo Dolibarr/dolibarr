@@ -190,6 +190,7 @@ class DolibarrApiAccess implements iAuthenticate
 							$conf->global->MAIN_NO_INPUT_PRICE_WITH_TAX = 1;
 						}
 						// Set also the global variable $mysoc
+						global $mysoc;
 						$mysoc = $fmysoc;
 
 						// Reload langs
