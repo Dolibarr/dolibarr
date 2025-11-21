@@ -364,7 +364,7 @@ if (empty($reshook)) {
 	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $canedittoken) {
 		// Remove token
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token";
-		$sql .= " WHERE rowid = ".((int) $tokenid;
+		$sql .= " WHERE rowid = ".((int) $tokenid);
 
 		$resql = $db->query($sql);
 
