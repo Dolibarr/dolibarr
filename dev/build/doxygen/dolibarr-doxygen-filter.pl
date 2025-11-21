@@ -5,17 +5,20 @@
 # \author	Laurent Destailleur
 #--------------------------------------------------------------------
 
+use strict;
+use warnings;
+
 # Usage: dolibarr-doxygen-filter.pl pathtofilefromdolibarrroot
 
-$file=$ARGV[0];
+my $file = $ARGV[0];
 if (! $file)
 {
 	print "Usage: dolibarr-doxygen-filter.pl pathtofilefromdolibarrroot\n";
 	exit;
 }
 
-open(FILE,"<",$file) || die "Failed to open file $file";
-while (<FILE>)
+open(my $fh, "<", $file) || die "Failed to open file $file";
+while (<$fh>)
 {
 	if ($_ =~ /\\version\s/i)
 	{
@@ -25,15 +28,15 @@ while (<FILE>)
 		$_ =~ s/(\w)\s(\w)/$1_$2/g;
 	}
 	$_ =~ s/exit\s*;/exit(0);/i;
-	$i=0;
-	$len=length($_);
-	$s="";
-	$insidequote=0;
-	$insidedquote=0;
-	$ignore="";
+	my $i=0;
+	my $len=length($_);
+	my $s="";
+	my $insidequote=0;
+	my $insidedquote=0;
+	my $ignore="";
 	while ($i < $len)
 	{
-		$c=substr($_,$i,1);
+		my $c=substr($_,$i,1);
 		if ($c eq "\\")
 		{
 			if ($insidequote)  { $ignore="'";  };
@@ -85,4 +88,4 @@ while (<FILE>)
 	}
 	print $s;
 }
-close(FILE);
+close($fh);

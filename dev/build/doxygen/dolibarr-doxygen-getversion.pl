@@ -1,4 +1,6 @@
 #!/usr/bin/perl
+use strict;
+use warnings;
 #--------------------------------------------------------------------
 # Script to get version of a source file
 # Does not work with cygwin cvs command on Windows.

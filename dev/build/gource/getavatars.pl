@@ -16,10 +16,9 @@ mkdir($output_dir) unless -d $output_dir;
 
 open(my $GITLOG, q|-|, q/git log --pretty=format:"%ae|%an"/) or die("failed to read git-log: $!\n");
 
-
 my %processed_authors;
 
-while(<GITLOG>) {
+while(<$GITLOG>) {
     chomp;
     my($email, $author) = split(/\|/, $_);
 
@@ -46,4 +45,4 @@ while(<GITLOG>) {
     }
 }
 
-close GITLOG;
+close $GITLOG;

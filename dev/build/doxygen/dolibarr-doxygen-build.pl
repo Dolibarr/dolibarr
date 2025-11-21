@@ -1,17 +1,20 @@
 #!/usr/bin/perl
+use strict;
+use warnings;
+
 #--------------------------------------------------------------------
 # Start the generation of the development documentation with doxygen
 #--------------------------------------------------------------------
 
 # Determine the patho of this script
-($DIR=$0) =~ s/([^\/\\]+)$//;
+(my $DIR=$0) =~ s/([^\/\\]+)$//;
 $DIR||='.';
 $DIR =~ s/([^\/\\])[\\\/]+$/$1/;
 
-$OPTIONS="";
+my $OPTIONS="";
 #$OPTIONS="-d Preprocessor";
 
-$CONFFILE="dolibarr-doxygen.doxyfile";
+my $CONFFILE="dolibarr-doxygen.doxyfile";
 
 use Cwd;
 my $dir = getcwd;
@@ -30,20 +33,20 @@ if (! -s "dev/build/doxygen/$CONFFILE")
     exit 1;
 }
 
-$SOURCE=".";
+my $SOURCE=".";
 
 # Get version $MAJOR, $MINOR and $BUILD
-$result = open( IN, "<", $SOURCE . "/htdocs/filefunc.inc.php" );
+my $result = open( my $IN, "<", $SOURCE . "/htdocs/filefunc.inc.php" );
 if ( !$result ) { die "Error: Can't open descriptor file " . $SOURCE . "/htdocs/filefunc.inc.php\n"; }
-while (<IN>) {
-	if ( $_ =~ /define\('DOL_VERSION', '([\d\.a-z\-]+)'\)/ ) { $PROJVERSION = $1; break; }
+while (<$IN>) {
+	if ( $_ =~ /define\('DOL_VERSION', '([\d\.a-z\-]+)'\)/ ) { my $PROJVERSION = $1; last; }
 }
-close IN;
-($MAJOR,$MINOR,$BUILD)=split(/\./,$PROJVERSION,3);
+close $IN;
+(my $MAJOR,my $MINOR,my $BUILD)=split(/\./,$PROJVERSION,3);
 if ($MINOR eq '') { die "Error can't detect version into ".$SOURCE . "/htdocs/filefunc.inc.php"; }
 
 
-$version=$MAJOR.".".$MINOR.".".$BUILD;
+my $version=$MAJOR.".".$MINOR.".".$BUILD;
 
 
 print "Running doxygen for version ".$version.", please wait...\n";
