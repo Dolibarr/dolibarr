@@ -285,7 +285,9 @@
 		 * @param {*} data Input data for first hook
 		 * @returns {Promise<*>} Final result after all hooks
 		 */
-		async executeAwait(eventName, data) {
+		async executeHookAwait(eventName, data) {
+			this.log(`Await Hook executed: ${eventName}`);
+
 			_ensureEvent(eventName);
 			let result = data;
 			for (const h of _awaitHooks[eventName]) {

@@ -186,5 +186,6 @@ SetAndUseContextVars = Set and use context vars
 
 ConsoleHelp = Console help
 JSDolibarrhooks = JS Dolibarr hooks
+JSDolibarrAwaitHooks = JS Dolibarr Async Hooks (Await Hooks) - sequential execution
 ExampleOfCreatingNewContextTool = Dolibarr Tool : Example of creating a new context tool
 SetEventMessageTool = Dolibarr Tool : Set event message

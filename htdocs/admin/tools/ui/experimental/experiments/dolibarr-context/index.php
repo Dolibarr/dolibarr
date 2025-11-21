@@ -195,7 +195,7 @@ $documentation->showSidebar(); ?>
 			<h2 id="titlesection-await-hooks" class="documentation-title">Async Hooks (Await Hooks) - sequential execution</h2>
 
 			<p>
-				Dolibarr supports <strong>asynchronous hooks</strong> using <code>Dolibarr.onAwait()</code> and <code>Dolibarr.executeAwait()</code>.
+				Dolibarr supports <strong>asynchronous hooks</strong> using <code>Dolibarr.onAwait()</code> and <code>Dolibarr.executeHookAwait()</code>.
 				These hooks allow you to register functions that execute <em>in sequence</em> and can modify data before passing it to the next hook.
 				They are useful for complex workflows where multiple modules or scripts need to process or enrich the same data asynchronously.
 			</p>
@@ -239,7 +239,7 @@ $documentation->showSidebar(); ?>
 					'        document.getElementById(\'try-event-yourCustomAwaitHookName\').addEventListener(\'click\', async function(e) {',
 					'            // Execute all registered await hooks sequentially',
 					'            let order = {total: 1200};',
-					'            order = await Dolibarr.executeAwait(\'calculateDiscount\', order);',
+					'            order = await Dolibarr.executeHookAwait(\'calculateDiscount\', order);',
 					'            console.log(order); // order.total : 1200 -> 1080 -> 1090 -> 1040',
 					'        });',
 					'',
@@ -275,7 +275,7 @@ $documentation->showSidebar(); ?>
 						document.getElementById('try-event-yourCustomAwaitHookName').addEventListener('click', async function(e) {
 							// Execute all registered await hooks sequentially
 							let order = {total: 1200};
-							order = await Dolibarr.executeAwait('calculateDiscount', order);
+							order = await Dolibarr.executeHookAwait('calculateDiscount', order);
 							console.log(order); // order.total : 1200 -> 1080 -> 1090 -> 1040
 						});
 
