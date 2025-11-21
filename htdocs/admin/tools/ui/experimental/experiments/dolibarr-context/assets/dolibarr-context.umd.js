@@ -16,6 +16,9 @@
  * Dolibarr Global Context (UMD)
  * Provides a secure global object window.Dolibarr
  * with non-replaceable tools, events and debug mode.
+ *
+ * See also dolibarr-context.mock.js for defining all standard Dolibarr tools and creating mock implementations to improve code completion and editor support.
+ *
  */
 (function (root, factory) {
 	// Support AMD
@@ -61,6 +64,8 @@
 		 * @param {string} name Name of the tool
 		 * @param {*} value Function, class or object
 		 * @param {boolean} overwrite Explicitly allow overwriting an existing tool
+		 *
+		 * See also dolibarr-context.mock.js for defining all standard Dolibarr tools and creating mock implementations to improve code completion and editor support.
 		 */
 		defineTool(name, value, overwrite = false, triggerHook = true) {
 			// Prevent silent overrides unless "overwrite" is true
@@ -76,7 +81,7 @@
 				enumerable: true,
 			});
 
-			this.log(`Tool defined: ${name}, triggerHook: ${triggerHook}`);
+			this.log(`Tool defined: ${name}, triggerHook: ${triggerHook}, overwrite: ${overwrite} `);
 			if(triggerHook) {
 				Dolibarr.executeHook('defineTool', { toolName: name, overwrite: overwrite });
 			}
@@ -124,7 +129,7 @@
 			// Dispatch on internal EventTarget
 			_events.dispatchEvent(ev);
 
-			// Dispatch globally on document so document.addEventListener('DolibarrHook:' + hookName) can catch it
+			// Dispatch globally on document so document.addEventListener('Dolibarr:' + hookName) can catch it
 			if (typeof document !== "undefined") {
 				document.dispatchEvent(new CustomEvent('Dolibarr:' + hookName, { detail: data }));
 			}
@@ -192,7 +197,7 @@
 
 	Dolibarr.tools.showConsoleHelp();
 
-	// Trigger DolibarrContext:init as DOM ready
+	// Trigger Dolibarr:Ready as DOM ready
 	(function triggerContextInit() {
 		const initHook = () => {
 			Dolibarr.executeHook('Ready', { context: Dolibarr });

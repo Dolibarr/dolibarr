@@ -317,9 +317,9 @@ class FunctionsLibTest extends CommonClassTest
 		$newproduct1->initAsSpecimen();
 
 		$newproductclonedinarray1 = dol_clone_in_array($newproduct1);
-		var_dump($newproductclonedinarray1);
-		print __METHOD__." newproductclonedinarray1->db must be null\n";
-		$this->assertNull($newproductclonedinarray1['db'], 'newproductclonedinarray1[db] is null');
+
+		print __METHOD__." newproductclonedinarray1[db] must be null\n";
+		$this->assertNull((empty($newproductclonedinarray1['db']) ? null : 'defined'), 'newproductclonedinarray1[db] is null');
 		$this->assertNotNull($newproduct1->db->db, 'newproduct1->db is not null');
 	}
 

@@ -11916,7 +11916,10 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 		$onlysimplestring = '1';
 	}
 	if (!in_array($onlysimplestring, array('1', '2'))) {
-		return "Bad call of dol_eval. Parameter onlysimplestring must be '1' or '2'";
+		return "Bad call of dol_eval. Parameter onlysimplestring must be '1' or '2'.";
+	}
+	if (!is_scalar($s)) {
+		return "Bad call of dol_eval. First parameter must be a string, found ".var_export($s, true);
 	}
 
 	try {
@@ -11928,10 +11931,6 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 		}
 		//print '$dolibarr_main_restrict_eval_methods = '.$dolibarr_main_restrict_eval_methods."\n";
 		$dolibarr_main_restrict_eval_methods_array = explode(',', $dolibarr_main_restrict_eval_methods);
-
-		if (is_array($s) || $s === 'Array') {
-			return 'Bad string syntax to evaluate (value is Array): ' . var_export($s, true);
-		}
 
 		// Test on dangerous char (used for RCE), we allow only characters to make PHP variable testing
 		// We must accept with 1: '1 && getDolGlobalInt("doesnotexist1") && getDolGlobalString("MAIN_FEATURES_LEVEL")'

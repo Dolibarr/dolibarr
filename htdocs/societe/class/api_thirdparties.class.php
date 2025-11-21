@@ -307,6 +307,17 @@ class Thirdparties extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('societe', 'creer')) {
 			throw new RestException(403);
 		}
+
+		// External api user does not know internal country ID
+		if (!isset($request_data['country_id']) && isset($request_data['country_code'])) {
+			$field = strlen($request_data['country_code']) > 2 ? 'code_iso' : 'code';
+			$id = dol_getIdFromCode($this->db, $request_data['country_code'], "c_country", $field, "rowid");
+			if ($id < 0) {
+				throw new RestException(404, 'Country code not found in database: ' . $this->db->error);
+			}
+			$request_data['country_id'] = $id;
+		}
+
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
 
@@ -314,6 +325,12 @@ class Thirdparties extends DolibarrApi
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->company->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				continue;
+			}
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->company->array_options[$index] = $this->_checkValForAPI('extrafields', $val, $this->company);
+				}
 				continue;
 			}
 
