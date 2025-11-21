@@ -4,6 +4,7 @@
 #			on PHP source files before running Doxygen.
 # \author	Laurent Destailleur
 #--------------------------------------------------------------------
+## no critic (InputOutput::RequireBriefOpen)
 
 use strict;
 use warnings;

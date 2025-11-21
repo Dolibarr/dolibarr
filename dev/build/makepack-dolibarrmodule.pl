@@ -5,7 +5,7 @@
 # \author       (c)2005-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
 # \contributor  (c)2017 Nicolas ZABOURI <info@inovea-conseil.com>
 #----------------------------------------------------------------------------
-## no critic (InputOutput::ProhibitExplicitStdin)
+## no critic (InputOutput::ProhibitExplicitStdin,InputOutput::RequireBriefOpen)
 
 use strict;
 use warnings;

@@ -11,7 +11,7 @@
 # Pour les cles autoincrement:  rowid integer AUTO_INCREMENT PRIMARY KEY,
 # Mettre les index dans fichier.key.sql
 #------------------------------------------------------------------------------
-## no critic (InputOutput::ProhibitExplicitStdin)
+## no critic (InputOutput::ProhibitExplicitStdin,InputOutput::RequireBriefOpen)
 use Data::Dumper;
 use Getopt::Long;
 use strict;

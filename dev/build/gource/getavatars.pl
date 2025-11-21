@@ -1,4 +1,5 @@
 #!/usr/bin/perl
+## no critic (InputOutput::RequireBriefOpen)
 #fetch Gravatars
 
 use strict;
