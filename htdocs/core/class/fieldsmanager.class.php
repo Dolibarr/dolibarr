@@ -421,10 +421,12 @@ class FieldsManager
 		// Get extra fields
 		$fields = array();
 		if (isset($extrafields->attributes[$object->table_element]) && is_array($extrafields->attributes[$object->table_element])) {
-			$keyPrefix = 'options_';
-			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label) {
-				$fieldInfos = $this->getFieldInfosFromExtraField($object, $extrafields, $key, $mode, $params);
-				$fields[$keyPrefix . $key] = $fieldInfos;
+			if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label'])) {
+				$keyPrefix = 'options_';
+				foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label) {
+					$fieldInfos = $this->getFieldInfosFromExtraField($object, $extrafields, $key, $mode, $params);
+					$fields[$keyPrefix . $key] = $fieldInfos;
+				}
 			}
 		}
 
