@@ -43,6 +43,9 @@
 	// Private storage for secure tools (non-replaceable)
 	const _tools = {};
 
+	// Private storage for secure context vars or constants (non-replaceable)
+	const _contextVars = {};
+
 	// Native event dispatcher (standard DOM)
 	const _events = new EventTarget();
 
@@ -94,6 +97,64 @@
 		 */
 		checkToolExist(name) {
 			return Object.prototype.hasOwnProperty.call(_tools, name);
+		},
+
+		/**
+		 * Returns a read-only snapshot of all context variables.
+		 */
+		get ContextVars() {
+			return Object.freeze({ ..._contextVars });
+		},
+
+		/**
+		 * Defines a new context variable.
+		 * @param {string} key
+		 * @param {*} value
+		 * @param {boolean} [overwrite=false]  Set it to true to allow overwriting existing value
+		 */
+		setContextVar(key, value, overwrite = false) {
+			// Accept only string, number, or boolean
+			const type = typeof value;
+			if (type !== 'string' && type !== 'number' && type !== 'boolean') {
+				throw new TypeError(`Dolibarr: ContextVar '${key}' must be a string, number, or boolean`);
+			}
+
+			if (!overwrite && _contextVars.hasOwnProperty(key)) {
+				throw new Error(`Dolibarr: ContextVar '${key}' already defined`);
+			}
+
+			Object.defineProperty(_contextVars, key, {
+				value,
+				writable: false,
+				configurable: false,
+				enumerable: true
+			});
+
+			this.log(`ContextVar set: ${key} = ${value} (overwrite: ${overwrite})`);
+			this.executeHook('setContextVar', { key, value, overwrite });
+		},
+
+
+		/**
+		 * Sets multiple context variables at once
+		 * @param {Object} vars Object containing key/value pairs
+		 * @param {boolean} [overwrite=false] Allow overwriting existing values
+		 */
+		setContextVars(vars, overwrite = false) {
+			if (typeof vars !== 'object' || vars === null) {
+				throw new Error('Dolibarr: setContextVars expects an object');
+			}
+
+			for (const [key, value] of Object.entries(vars)) {
+				this.setContextVar(key, value, overwrite);
+			}
+		},
+
+		/**
+		 * Access a single context variable safely
+		 */
+		getContextVar(key, fallback = null) {
+			return _contextVars.hasOwnProperty(key) ? _contextVars[key] : fallback;
 		},
 
 		/**
@@ -166,6 +227,9 @@
 			enumerable: true,
 		});
 	}
+
+	// Init hook
+	Dolibarr.executeHook('Init', { context: Dolibarr });
 
 	// Restaurer debug mode depuis localStorage
 	if (typeof window !== "undefined" && window.localStorage) {
