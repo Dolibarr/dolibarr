@@ -368,6 +368,7 @@ ErrorNoValueForSelectListType=Error, a value for this type of field is mandatory
 ErrorPaymentAmountMustNotBeNull=Error, payment amount must be defined and not zero
 ErrorOneLineContainsADisactivatedProduct=Error, at least one product is not or no more on sale or for purchase
 ErrorCalendarIsNotYetOpenOrHasBeenClosed=This calendar is not yet open or has been closed
+ErrorFieldClassNotFoundForClassName=The class "%s" managing the field type "%s" is not found.
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
@@ -444,6 +445,8 @@ RequireANotEmptyValue = Is required
 RequireValidDuration = Require a valid duration
 RequireValidExistingElement = Require an existing value
 RequireValidBool = Require a valid boolean
+RequireMinValue=The value must be more than %s
+RequireMaxValue=The value must be less than %s
 BadSetupOfField = Error bad setup of field
 BadSetupOfFieldClassNotFoundForValidation = Error bad setup of field : Class not found for validation
 BadSetupOfFieldFileNotFound = Error bad setup of field : File not found for inclusion

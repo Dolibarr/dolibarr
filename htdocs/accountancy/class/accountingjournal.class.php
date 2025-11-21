@@ -759,7 +759,7 @@ class AccountingJournal extends CommonObject
 		}
 
 		// Build SQL - Customer invoices closed by discount
-		$sql = "SELECT f.rowid, f.ref, f.datef, f.fk_soc, f.total_ttc";
+		$sql = "SELECT f.rowid, f.ref, f.datef, f.date_closing, f.fk_soc, f.total_ttc";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 		$sql .= " WHERE f.entity IN (".getEntity('invoice', 0).')'; // We don't share object for accountancy, we use source object sharing
 		$sql .= " AND f.fk_statut > 0";
@@ -770,19 +770,21 @@ class AccountingJournal extends CommonObject
 		}
 		$sql .= " AND f.close_code = 'discount_vat'";
 		if ($date_start && $date_end) {
-			$sql .= " AND f.datef >= '".$this->db->idate($date_start)."' AND f.datef <= '".$this->db->idate($date_end)."'";
+			$sql .= " AND f.date_closing >= '".$this->db->idate($date_start)."' AND f.date_closing <= '".$this->db->idate($date_end)."'";
 		}
 		if (getDolGlobalString('ACCOUNTING_DATE_START_BINDING')) {
-			$sql .= " AND f.datef >= '".$this->db->idate(getDolGlobalInt('ACCOUNTING_DATE_START_BINDING'))."'";
+			$sql .= " AND f.date_closing >= '".$this->db->idate(getDolGlobalInt('ACCOUNTING_DATE_START_BINDING'))."'";
 		}
 		if ($in_bookkeeping == 'already') {
 			$sql .= " AND EXISTS (SELECT 1 FROM ".MAIN_DB_PREFIX."accounting_bookkeeping ab";
-			$sql .= "              WHERE ab.doc_type = 'customer_invoice' AND ab.fk_doc = f.rowid AND ab.piece_num LIKE 'OD-ESC-%')";
+			$sql .= "              WHERE ab.doc_type = 'customer_invoice' AND ab.fk_doc = f.rowid";
+			$sql .= "                AND ab.code_journal = '".$this->db->escape($this->code)."')";
 		} elseif ($in_bookkeeping == 'notyet') {
 			$sql .= " AND NOT EXISTS (SELECT 1 FROM ".MAIN_DB_PREFIX."accounting_bookkeeping ab";
-			$sql .= "                  WHERE ab.doc_type = 'customer_invoice' AND ab.fk_doc = f.rowid AND ab.piece_num LIKE 'OD-ESC-%')";
+			$sql .= "              WHERE ab.doc_type = 'customer_invoice' AND ab.fk_doc = f.rowid";
+			$sql .= "                AND ab.code_journal = '".$this->db->escape($this->code)."')";
 		}
-		$sql .= " ORDER BY f.datef";
+		$sql .= " ORDER BY f.date_closing";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -825,7 +827,8 @@ class AccountingJournal extends CommonObject
 			}
 
 			$bookkeeping_static = new BookKeeping($this->db);
-			$label_discount = $bookkeeping_static->accountingLabelForOperation($customer_static->getNomUrl(1, 'customer'), $invoice_static->ref, $langs->trans('DiscountGranted'));
+			$thirdpartyname = (string) $customer_static->name;
+			$label_discount = $bookkeeping_static->accountingLabelForOperation($thirdpartyname, $invoice_static->ref, $langs->trans('DiscountGranted'));
 
 			// Distribution including VAT by rate
 			$ttcByRate = array();
@@ -853,7 +856,9 @@ class AccountingJournal extends CommonObject
 				'blocks' => array(),
 			);
 
-			$docdate = $this->db->jdate($obj->datef);
+			$closingdate = !empty($obj->date_closing) ? $obj->date_closing : $obj->datef;
+
+			$docdate = $this->db->jdate($closingdate);
 			$docdate_fmt = dol_print_date($docdate, 'day');
 
 			$sumTTC = 0.0;
@@ -1063,7 +1068,7 @@ class AccountingJournal extends CommonObject
 		}
 
 		// SQL - Supplier invoices closed by discount
-		$sql = "SELECT ff.rowid, ff.ref, ff.datef, ff.fk_soc, ff.total_ttc";
+		$sql = "SELECT ff.rowid, ff.ref, ff.datef, ff.date_closing, ff.fk_soc, ff.total_ttc";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as ff";
 		$sql .= " WHERE ff.entity IN (".getEntity('facture_fourn', 0).")"; // We don't share object for accountancy
 		$sql .= " AND ff.fk_statut > 0";
@@ -1074,19 +1079,21 @@ class AccountingJournal extends CommonObject
 		}
 		$sql .= " AND ff.close_code = 'discount_vat'";
 		if ($date_start && $date_end) {
-			$sql .= " AND ff.datef >= '".$this->db->idate($date_start)."' AND ff.datef <= '".$this->db->idate($date_end)."'";
+			$sql .= " AND ff.date_closing >= '".$this->db->idate($date_start)."' AND ff.date_closing <= '".$this->db->idate($date_end)."'";
 		}
 		if (getDolGlobalString('ACCOUNTING_DATE_START_BINDING')) {
-			$sql .= " AND ff.datef >= '".$this->db->idate(getDolGlobalInt('ACCOUNTING_DATE_START_BINDING'))."'";
+			$sql .= " AND ff.date_closing >= '".$this->db->idate(getDolGlobalInt('ACCOUNTING_DATE_START_BINDING'))."'";
 		}
 		if ($in_bookkeeping == 'already') {
 			$sql .= " AND EXISTS (SELECT 1 FROM ".MAIN_DB_PREFIX."accounting_bookkeeping ab";
-			$sql .= "              WHERE ab.doc_type = 'supplier_invoice' AND ab.fk_doc = ff.rowid AND ab.piece_num LIKE 'OD-ESC-FRS-%')";
+			$sql .= "              WHERE ab.doc_type = 'supplier_invoice' AND ab.fk_doc = ff.rowid";
+			$sql .= "                AND ab.code_journal = '".$this->db->escape($this->code)."')";
 		} elseif ($in_bookkeeping == 'notyet') {
 			$sql .= " AND NOT EXISTS (SELECT 1 FROM ".MAIN_DB_PREFIX."accounting_bookkeeping ab";
-			$sql .= "                  WHERE ab.doc_type = 'supplier_invoice' AND ab.fk_doc = ff.rowid AND ab.piece_num LIKE 'OD-ESC-FRS-%')";
+			$sql .= "              WHERE ab.doc_type = 'supplier_invoice' AND ab.fk_doc = ff.rowid";
+			$sql .= "                AND ab.code_journal = '".$this->db->escape($this->code)."')";
 		}
-		$sql .= " ORDER BY ff.datef";
+		$sql .= " ORDER BY ff.date_closing";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -1129,7 +1136,8 @@ class AccountingJournal extends CommonObject
 			}
 
 			$bookkeeping_static = new BookKeeping($this->db);
-			$label_discount = $bookkeeping_static->accountingLabelForOperation($supplier_static->getNomUrl(1, 'supplier'), $invoicesupplier_static->ref, $langs->trans('DiscountReceived'));
+			$thirdpartyname = (string) $supplier_static->name;
+			$label_discount = $bookkeeping_static->accountingLabelForOperation($thirdpartyname, $invoicesupplier_static->ref, $langs->trans('DiscountReceived'));
 
 			// Distribution including VAT by rate
 			$ttcByRate = array();
@@ -1157,7 +1165,9 @@ class AccountingJournal extends CommonObject
 				'blocks' => array(),
 			);
 
-			$docdate = $this->db->jdate($obj->datef);
+			$closingdate = !empty($obj->date_closing) ? $obj->date_closing : $obj->datef;
+
+			$docdate = $this->db->jdate($closingdate);
 			$docdate_fmt = dol_print_date($docdate, 'day');
 
 			$sumTTC = 0.0;

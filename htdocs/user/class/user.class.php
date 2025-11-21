@@ -3113,7 +3113,7 @@ class User extends CommonObject
 	 *  Return a HTML link to the user card (with optionally the picto)
 	 * 	Use this->id,this->lastname, this->firstname
 	 *
-	 *	@param	int			$withpictoimg				Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small)
+	 *	@param	int			$withpictoimg				Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small, -4=Include photo very small into link)
 	 *	@param	string		$option						On what the link point to ('leave', 'accountancy', 'nolink', )
 	 *  @param  integer 	$infologin      			0=Add default info tooltip, 1=Add complete info tooltip, -1=No info tooltip
 	 *  @param	integer		$notooltip					1=Disable tooltip on picto and name
@@ -3205,7 +3205,7 @@ class User extends CommonObject
 		$result .= (($option == 'nolink') ? '' : $linkstart);
 		if ($withpictoimg) {
 			$paddafterimage = '';
-			if (abs((int) $withpictoimg) == 1) {
+			if (abs((int) $withpictoimg) == 1 || abs((int) $withpictoimg) == 4) {
 				$paddafterimage = 'style="margin-'.($langs->trans("DIRECTION") == 'rtl' ? 'left' : 'right').': 3px;"';
 			}
 			// Only picto
@@ -3213,11 +3213,11 @@ class User extends CommonObject
 				$picto = '<!-- picto user --><span class="nopadding userimg'.($morecss ? ' '.$morecss : '').'"><div class="valignmiddle userphoto inline-block center marginrightonlyshort"'.($paddafterimage ? ' '.$paddafterimage : '').'>'.img_object('', 'user', 'class=""', 0, 0, $notooltip ? 0 : 1).'</div></span>';
 			} else {
 				// Picto must be a photo
-				$picto = '<!-- picto photo user --><span class="nopadding userimg'.($morecss ? ' '.$morecss : '').'"'.($paddafterimage ? ' '.$paddafterimage : '').'>'.Form::showphoto('userphoto', $this, 0, 0, 0, 'userphoto'.($withpictoimg == -3 ? 'small' : ''), 'mini', 0, 1).'</span>';
+				$picto = '<!-- picto photo user --><span class="nopadding userimg'.($morecss ? ' '.$morecss : '').'"'.($paddafterimage ? ' '.$paddafterimage : '').'>'.Form::showphoto('userphoto', $this, 0, 0, 0, 'userphoto'.(($withpictoimg == -3 || $withpictoimg == -4) ? 'small' : ''), 'mini', 0, 1).'</span>';
 			}
 			$result .= $picto;
 		}
-		if ($withpictoimg > -2 && $withpictoimg != 2) {
+		if ($withpictoimg == -4 || ($withpictoimg > -2 && $withpictoimg != 2)) {
 			if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$result .= '<span class="nopadding usertext'.((!isset($this->status) || $this->status) ? '' : ' strikefordisabled').($morecss ? ' '.$morecss : '').'">';
 			}

@@ -1392,6 +1392,7 @@ Tools=Outils
 TMenuTools=Outils
 NeedHelpCenter=Besoin d'assistance ?
 Efficiency=Efficacité
+StarsFieldValue=%s étoiles
 AccordingToYourSetupTheFileWillBeConcatenated=Selon votre configuration, les fichiers fichier et %s (chargés lors de la configuration du module) seront concaténés à tout PDF généré.
 TransactionID=ID de transaction
 AllProjectContacts=Tous les contacts projet

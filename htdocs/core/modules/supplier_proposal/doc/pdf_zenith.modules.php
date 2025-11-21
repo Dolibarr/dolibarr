@@ -1467,16 +1467,16 @@ class pdf_zenith extends ModelePDFSupplierProposal
 	/**
 	 *   	Define Array Column Field
 	 *
-	 *   	@param	SupplierProposal			$object    		common object
+	 *   	@param	CommonObject	$object    		common object
 	 *   	@param	Translate		$outputlangs    langs
-	 *      @param	int			   $hidedetails		Do not show line details
-	 *      @param	int			   $hidedesc		Do not show desc
-	 *      @param	int			   $hideref			Do not show ref
+	 *      @param	int<0,1>		$hidedetails	Do not show line details
+	 *      @param	int<0,1>		$hidedesc		Do not show desc
+	 *      @param	int<0,1>		$hideref		Do not show ref
 	 *      @return	void
 	 */
 	public function defineColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
-		global $conf, $hookmanager;
+		global $hookmanager;
 
 		// Default field style for content
 		$this->defaultContentsFieldsStyle = array(

@@ -1898,8 +1898,11 @@ abstract class CommonInvoice extends CommonObject
 	{
 		global $mysoc;
 
-		// Convert total_ttc to a string with 2 decimal places
-		$totalTTCString = number_format($this->total_ttc, 2, '.', '');
+		// Get the amount to pay
+		$amount_to_pay = $this->getRemainToPay();
+
+		// Ensure numeric formatting for EPC QR code
+		$amount_to_pay = price2num($amount_to_pay, 'MT');
 
 		// Initialize an array to hold the lines of the QR code
 		$lines = array();
@@ -1940,7 +1943,7 @@ abstract class CommonInvoice extends CommonObject
 		}
 
 		// Add the amount and reference
-		$lines[] = 'EUR' . $totalTTCString; // Amount (optional)
+		$lines[] = 'EUR' . $amount_to_pay; // Amount (optional)
 		$lines[] = ''; // Purpose (optional)
 		$lines[] = ''; // Payment reference (optional)
 		$lines[] = $this->ref; // Remittance Information (optional)

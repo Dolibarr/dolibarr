@@ -57,7 +57,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies", "other", "commercial", "bills", "orders", "agenda", "mails"));
+$langs->loadLangs(["companies", "other", "commercial", "bills", "orders", "agenda", "mails"]);
 
 // Get Parameters
 $action = GETPOST('action', 'aZ09');
@@ -156,20 +156,32 @@ if (empty($action) && empty($object->id)) {
 }
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-$hookmanager->initHooks(array('actioncard', 'globalcard'));
+$hookmanager->initHooks(['actioncard', 'globalcard']);
 
 $TRemindTypes = [];
 if (getDolGlobalString('AGENDA_REMINDER_BROWSER')) {
-	$TRemindTypes['browser'] = array('label' => $langs->trans('BrowserPush'), 'disabled' => (getDolGlobalString('AGENDA_REMINDER_BROWSER') ? 0 : 1));
+	$TRemindTypes['browser'] = [
+		'label' => $langs->trans('BrowserPush'),
+		'disabled' => (getDolGlobalString('AGENDA_REMINDER_BROWSER') ? 0 : 1),
+		'type' => ActionCommReminder::TYPE_USER,
+		'data-html' => img_picto('', 'globe', 'class="pictofixedwidth"') . $langs->trans('BrowserPush'),
+	];
 }
 if (getDolGlobalString('AGENDA_REMINDER_EMAIL')) {
-	$TRemindTypes['email'] = array('label' => $langs->trans('EMail'), 'disabled' => (getDolGlobalString('AGENDA_REMINDER_EMAIL') ? 0 : 1));
+	$TRemindTypes['email'] = [
+		'label' => $langs->trans('EMail'),
+		'disabled' => (getDolGlobalString('AGENDA_REMINDER_EMAIL') ? 0 : 1),
+		'type' => ActionCommReminder::TYPE_USER,
+		'data-html' => img_picto('', 'email', 'class="pictofixedwidth"') . $langs->trans('EMail'),
+	];
 }
 if (getDolGlobalString('AGENDA_REMINDER_SMS')) {
 	$langs->load('sms');
 	$TRemindTypes['sms'] = [
 		'label' => $langs->trans('Sms'),
 		'disabled' => (getDolGlobalString('MAIN_SMS_SENDMODE') ? 0 : 1),
+		'type' => ActionCommReminder::TYPE_USER,
+		'data-html' => img_picto('', 'phoning_mobile', 'class="pictofixedwidth"') . $langs->trans('Sms'),
 	];
 }
 $TDurationTypes = $form->getDurationTypes($langs);
@@ -1551,30 +1563,24 @@ if ($action == 'create') {
 		print $langs->trans("Until")." ";
 		print $form->selectDate($repeateventlimitdate, 'limit', 0, 0, 0, "action", 1, 0, 0, '', '', '', '', 1, '', '', 'tzuserrel');
 		print '</div>';
-
-		print '<script type="text/javascript">
+		?>
+		<script type="text/javascript">
 			jQuery(document).ready(function() {
-				function init_repeat()
-				{
-					console.log("recurrule: " + "'.$object->recurrule.'");
-					console.log("reg1: " + "'.$selectedrecurrulefreq.'");
-					console.log("reg2: " + "'.$selectedrecurrulebymonthday.'");
-					console.log("reg3: " + "'.$selectedrecurrulebyday.'");
-					console.log("selectedrulefreq: " + "'.$selectedrecurrulefreq.'");
-					if (jQuery("#recurrulefreq").val() == \'MONTHLY\')
-					{
+				function init_repeat() {
+					console.log("recurrule: " + "<?php echo $object->recurrule; ?>");
+					console.log("reg1: " + "<?php echo $selectedrecurrulefreq; ?>");
+					console.log("reg2: " + "<?php echo $selectedrecurrulebymonthday; ?>");
+					console.log("reg3: " + "<?php echo $selectedrecurrulebyday; ?>");
+					console.log("selectedrulefreq: " + "<?php echo $selectedrecurrulefreq; ?>");
+					if (jQuery("#recurrulefreq").val() == 'MONTHLY') {
 						/* jQuery(".repeateventBYMONTHDAY").css("display", "inline-block");	*/	/* use this instead of show because we want inline-block and not block */
 						jQuery(".repeateventlimitdate").css("display", "inline-block");
 						jQuery(".repeateventBYDAY").hide();
-					}
-					else if (jQuery("#recurrulefreq").val() == \'WEEKLY\')
-					{
+					} else if (jQuery("#recurrulefreq").val() == 'WEEKLY') {
 						jQuery(".repeateventBYMONTHDAY").hide();
 						/* jQuery(".repeateventBYDAY").css("display", "inline-block"); */		/* use this instead of show because we want inline-block and not block */
 						jQuery(".repeateventlimitdate").css("display", "inline-block");
-					}
-					else
-					{
+					} else {
 						jQuery(".repeateventBYMONTHDAY").hide();
 						jQuery(".repeateventBYDAY").hide();
 						jQuery(".repeateventlimitdate").hide();
@@ -1585,9 +1591,10 @@ if ($action == 'create') {
 					init_repeat();
 				});
 			});
-			</script>';
+		</script>
+		<?php
 		print '</div>';
-		//print '</td></tr>';
+		// print '</td></tr>';
 	}
 
 	print '</td></tr>';
@@ -1774,18 +1781,20 @@ if ($action == 'create') {
 		$url = dol_buildpath('comm/action/card.php', 2).$urloption;
 
 		// update task list
-		print "\n".'<script type="text/javascript">';
-		print '$(document).ready(function () {
-	               $("#projectid").change(function () {
-                        var url = "'.DOL_URL_ROOT.'/projet/ajax/projects.php?mode=gettasks&socid="+$("#search_socid").val()+"&projectid="+$("#projectid").val();
-						console.log("Call url to get the new list of tasks: "+url);
-                        $.get(url, function(data) {
-                            console.log(data);
-                            if (data) $("#taskid").html(data).select2();
-                        })
-                  });
-               })';
-		print '</script>'."\n";
+		?>
+		<script type="text/javascript">
+			$(document).ready(function () {
+				$("#projectid").change(function () {
+					var url = "<?php echo DOL_URL_ROOT; ?>/projet/ajax/projects.php?mode=gettasks&socid="+$("#search_socid").val()+"&projectid="+$("#projectid").val();
+					console.log("Call url to get the new list of tasks: "+url);
+					$.get(url, function(data) {
+						console.log(data);
+						if (data) $("#taskid").html(data).select2();
+					})
+				});
+			});
+		</script>
+		<?php
 
 		print '</td></tr>';
 
@@ -1931,39 +1940,37 @@ if ($action == 'create') {
 				});
 		   })';
 		print '</script>'."\n";
-
-		print "\n".'<script type="text/javascript">';
-		print '$(document).ready(function () {
-	            		$("#addreminder").click(function(){
-							console.log("Click on addreminder");
-	            		    if (this.checked) {
-	            		    	$(".reminderparameters").show();
-                            } else {
-                            	$(".reminderparameters").hide();
-                            }
-							$("#selectremindertype").select2("destroy");
-							$("#selectremindertype").select2();
-							$("#select_offsetunittype_duration").select2("destroy");
-							$("#select_offsetunittype_duration").select2();
-							selectremindertype();
-	            		 });
-
-	            		$("#selectremindertype").change(function(){
-							selectremindertype();
-	            		});
-
-						function selectremindertype() {
-							console.log("Call selectremindertype");
-	            	        var selected_option = $("#selectremindertype option:selected").val();
-	            		    if(selected_option == "email") {
-	            		        $("#select_actioncommsendmodel_mail").closest("tr").show();
-	            		    } else {
-	            			    $("#select_actioncommsendmodel_mail").closest("tr").hide();
-	            		    }
-						}
-
-                   })';
-		print '</script>'."\n";
+		?>
+		<script type="text/javascript">
+			$(document).ready(function () {
+				$("#addreminder").click(function(){
+					console.log("Click on addreminder");
+					if (this.checked) {
+						$(".reminderparameters").show();
+					} else {
+						$(".reminderparameters").hide();
+					}
+					$("#selectremindertype").select2("destroy");
+					$("#selectremindertype").select2();
+					$("#select_offsetunittype_duration").select2("destroy");
+					$("#select_offsetunittype_duration").select2();
+					selectremindertype();
+				 });
+				$("#selectremindertype").change(function(){
+					selectremindertype();
+				});
+				function selectremindertype() {
+					console.log("Call selectremindertype");
+					var selected_option = $("#selectremindertype option:selected").val();
+					if(selected_option == "email") {
+						$("#select_actioncommsendmodel_mail").closest("tr").show();
+					} else {
+						$("#select_actioncommsendmodel_mail").closest("tr").hide();
+					}
+				}
+			});
+		</script>
+		<?php
 	}
 
 	print dol_get_fiche_end();
@@ -2349,17 +2356,19 @@ if ($id > 0 && $action != 'create') {
 				$url = DOL_URL_ROOT.'/comm/action/card.php'.$urloption;
 
 				// update task list
-				print "\n".'<script type="text/javascript" >';
-				print '$(document).ready(function () {
-	              $("#projectid").change(function () {
-                        var url = "'.$url.'&projectid="+$("#projectid").val();
-                        $.get(url, function(data) {
-                            console.log($( data ).find("#fk_element").html());
-                            if (data) $("#fk_element").html( $( data ).find("#taskid").html() ).select2();
-                        })
-                  });
-                })';
-				print '</script>'."\n";
+				?>
+				<script type="text/javascript" >
+					$(document).ready(function () {
+						$("#projectid").change(function () {
+							var url = "<?php echo $url; ?>&projectid="+$("#projectid").val();
+							$.get(url, function(data) {
+								console.log($( data ).find("#fk_element").html());
+								if (data) $("#fk_element").html( $( data ).find("#taskid").html() ).select2();
+							})
+						});
+					});
+				</script>
+				<?php
 
 				print $formproject->selectTasks((!empty($societe->id) ? $societe->id : -1), $object->elementid, 'fk_element', 24, 0, '', 1, 0, 0, 'maxwidth500', (string) $object->fk_project, 'all', null, 1);
 				print '<input type="hidden" name="elementtype" value="'.$object->elementtype.'">';
@@ -2372,18 +2381,20 @@ if ($id > 0 && $action != 'create') {
 					print '<td id="project-task-input-container" >';
 
 					// update task list
-					print "\n".'<script type="text/javascript">';
-					print '$(document).ready(function () {
+					?>
+					<script type="text/javascript">
+						$(document).ready(function () {
 							$("#projectid").change(function () {
-									var url = "'.DOL_URL_ROOT.'/projet/ajax/projects.php?mode=gettasks&socid="+$("#search_socid").val()+"&projectid="+$("#projectid").val();
-									console.log("Call url to get new list of tasks: "+url);
-									$.get(url, function(data) {
-										console.log(data);
-										if (data) $("#taskid").html(data).select2();
-									})
+								var url = "<?php echo DOL_URL_ROOT; ?>/projet/ajax/projects.php?mode=gettasks&socid="+$("#search_socid").val()+"&projectid="+$("#projectid").val();
+								console.log("Call url to get new list of tasks: "+url);
+								$.get(url, function(data) {
+									console.log(data);
+									if (data) $("#taskid").html(data).select2();
+								})
 							});
-						})';
-					print '</script>'."\n";
+						});
+					</script>
+					<?php
 
 					$tid = '';
 					if (GETPOSTISSET("projecttaskid") && GETPOSTINT("projecttaskid") > 0) {
@@ -2409,7 +2420,7 @@ if ($id > 0 && $action != 'create') {
 
 		// Description
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
-		// Editeur wysiwyg
+		// Wysiwyg editor
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$doleditor = new DolEditor('note', $object->note_private, '', 120, 'dolibarr_notes', 'In', true, true, isModEnabled('fckeditor'), ROWS_4, '90%');
 		$doleditor->Create();
@@ -2487,28 +2498,27 @@ if ($id > 0 && $action != 'create') {
 			}
 
 			print '</table>';
-
-			print "\n".'<script type="text/javascript">';
-			print '$(document).ready(function () {
-	            		$("#addreminder").click(function(){
-	            		    if (this.checked) {
-	            		      	$(".reminderparameters").show();
-                            } else {
-                            	$(".reminderparameters").hide();
-                            }
-	            		 });
-
-	            		$("#selectremindertype").change(function(){
-	            	        var selected_option = $("#selectremindertype option:selected").val();
-	            		    if(selected_option == "email") {
-	            		        $("#select_actioncommsendmodel_mail").closest("tr").show();
-	            		    } else {
-	            			    $("#select_actioncommsendmodel_mail").closest("tr").hide();
-	            		    }
-	            		});
-
-                   })';
-			print '</script>'."\n";
+			?>
+			<script type="text/javascript">
+				$(document).ready(function () {
+					$("#addreminder").click(function(){
+						if (this.checked) {
+							$(".reminderparameters").show();
+						} else {
+							$(".reminderparameters").hide();
+						}
+					});
+					$("#selectremindertype").change(function(){
+						var selected_option = $("#selectremindertype option:selected").val();
+						if(selected_option == "email") {
+							$("#select_actioncommsendmodel_mail").closest("tr").show();
+						} else {
+							$("#select_actioncommsendmodel_mail").closest("tr").hide();
+						}
+					});
+				});
+			</script>
+			<?php
 
 			$reminderDefaultEventTypes = getDolGlobalString('AGENDA_DEFAULT_REMINDER_EVENT_TYPES', '');
 			$reminderDefaultOffset = getDolGlobalString('AGENDA_DEFAULT_REMINDER_OFFSET', 30);

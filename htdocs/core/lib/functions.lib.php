@@ -126,11 +126,11 @@ if (!function_exists('str_contains')) {
  * Return the full path of the directory where a module (or an object of a module) stores its files.
  * Path may depends on the entity if a multicompany module is enabled.
  *
- * @param 	CommonObject|BlockedLog 	$object 	Dolibarr common object.
- * @param 	string 			$module 	Override object element, for example to use 'mycompany' instead of 'societe'
- * @param	int				$forobject	Return the more complete path for the given object instead of for the module only.
- * @param	string			$mode		'output' (full main dir) or 'outputrel' (relative dir) or 'temp' (full dir for temporary files) or 'version' (full dir for archived files)
- * @return 	string|null					The path of the relative directory of the module, ending with /
+ * @param 	CommonObject|BlockedLog	$object 	Dolibarr common object.
+ * @param 	string 					$module 	Override object element, for example to use 'mycompany' instead of 'societe'
+ * @param	int						$forobject	Return the more complete path for the given object instead of for the module only.
+ * @param	string					$mode		'output' (full main dir) or 'outputrel' (relative dir) or 'temp' (full dir for temporary files) or 'version' (full dir for archived files)
+ * @return 	string|null							The path of the relative directory of the module, ending with /
  * @since Dolibarr V18
  */
 function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'output')
@@ -394,6 +394,7 @@ define(
 
 /**
  * Is Dolibarr module enabled
+ * Note: "isModEnabled('delivery_note')" must be replacedwith "isModEnabled('shipping') && getDolGlobalString('MAIN_SUBMODULE_EXPEDITION')"
  *
  * @param 	string 	$module 	Module name to check
  * @return 	boolean				True if module is enabled
@@ -411,16 +412,6 @@ function isModEnabled($module)
 		$arrayconv['supplier_order'] = 'fournisseur';
 		$arrayconv['supplier_invoice'] = 'fournisseur';
 	}
-	// Special case.
-	// @TODO Replace isModEnabled('delivery_note') with
-	// isModEnabled('shipping') && getDolGlobalString('MAIN_SUBMODULE_EXPEDITION')
-	if ($module == 'delivery_note') {
-		if (!getDolGlobalString('MAIN_SUBMODULE_EXPEDITION')) {
-			return false;
-		} else {
-			$module = 'shipping';
-		}
-	}
 
 	$module_alt = $module;
 	if (!empty($arrayconv[$module])) {
@@ -432,7 +423,6 @@ function isModEnabled($module)
 	}
 
 	return !empty($conf->modules[$module]) || !empty($conf->modules[$module_alt]) || !empty($conf->modules[$module_bis]);
-	//return !empty($conf->$module->enabled);
 }
 
 /**
@@ -1783,34 +1773,34 @@ function dol_get_object_properties($obj, $properties = [])
  *
  *  @template T
  *
- *  @param	T      $object		Object to clone
- *  @param	int		          $native		0=Full isolation method, 1=Native PHP method, 2=Full isolation method keeping only scalar and array properties (recommended)
- *  @return T                	Clone object
+ *  @param	T		$srcobject		Object to clone
+ *  @param	int		$native			0=Full isolation method, 1=Native PHP method, 2=Full isolation method keeping only scalar and array properties (recommended)
+ *  @return T                		Clone object
  *
  *  @see https://php.net/manual/language.oop5.cloning.php
  *  @phan-suppress PhanTypeExpectedObjectPropAccess
  */
-function dol_clone($object, $native = 2)
+function dol_clone($srcobject, $native = 2)
 {
 	if ($native == 0) {
 		// deprecated method, use the method with native = 2 instead
 		dol_syslog("Warning, call to dol_clone() with the deprecated parameter native=0, use 2 instead", LOG_WARNING);
 
 		$tmpsavdb = null;
-		if (isset($object->db) && isset($object->db->db) && is_object($object->db->db) && get_class($object->db->db) == 'PgSql\Connection') {
-			$tmpsavdb = $object->db;
-			unset($object->db);		// Such property can not be serialized with pgsl (when object->db->db = 'PgSql\Connection')
+		if (isset($srcobject->db) && isset($srcobject->db->db) && is_object($srcobject->db->db) && get_class($srcobject->db->db) == 'PgSql\Connection') {
+			$tmpsavdb = $srcobject->db;
+			unset($srcobject->db);		// Such property can not be serialized with pgsl (when object->db->db = 'PgSql\Connection')
 		}
 
-		$myclone = unserialize(serialize($object));	// serialize then unserialize is a hack to be sure to have a new object for all fields
+		$myclone = unserialize(serialize($srcobject));	// serialize then unserialize is a hack to be sure to have a new object for all fields
 
 		if (!empty($tmpsavdb)) {
-			$object->db = $tmpsavdb;
+			$srcobject->db = $tmpsavdb;
 		}
 	} elseif ($native == 2) {
 		// recommended method to have a full secured isolated cloned object
 		$myclone = new stdClass();
-		$tmparray = get_object_vars($object);	// return only public properties
+		$tmparray = get_object_vars($srcobject);	// return only public properties
 
 		if (is_array($tmparray)) {
 			foreach ($tmparray as $propertykey => $propertyval) {
@@ -1820,11 +1810,41 @@ function dol_clone($object, $native = 2)
 			}
 		}
 	} else {
-		$myclone = clone $object; // PHP clone is a shallow copy only, not a real clone, so properties of references will keep the reference (referring to the same target/variable)
+		$myclone = clone $srcobject; // PHP clone is a shallow copy only, not a real clone, so properties of references will keep the reference (referring to the same target/variable)
 	}
 
 	return $myclone;
 }
+
+
+/**
+ *  Create a clone of instance of object into a full array, using recursive call.
+ *  It also cleans some properties.
+ *
+ *  @param	Object	$srcobject		Object to clone
+ *  @param	int		$startlevel		Start level to track recursive depth
+ *  @return array<string,mixed>		Array
+ */
+function dol_clone_in_array($srcobject, $startlevel = 0)
+{
+	if (is_object($srcobject)) {
+		$srcobject = get_object_vars($srcobject); // exclude private/protected properties
+	}
+
+	if (is_array($srcobject)) {
+		$result = [];
+		foreach ($srcobject as $key => $value) {
+			if (in_array($key, array('db', 'fields', 'error', 'errorhidden', 'errors', 'oldcopy', 'linkedObjects', 'linked_objects'))) {
+				continue;
+			}
+			$result[$key] = dol_clone_in_array($value, $startlevel + 1);
+		}
+		return $result;
+	}
+
+	return $srcobject;
+}
+
 
 /**
  *	Optimize a size for some browsers (phone, smarphone...)
@@ -11877,7 +11897,8 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 {
 	// Only this global variables can be read by eval function and returned to caller
 	// The less we have, the better it is.
-	// $conf is excluded. We can read $conf->global->xxx properties with getDolGlobalString(), $conf->currency with getDolCurrency(), $conf->entity with getDolEntity()
+
+	global $conf;	// TODO Remove this to exclude $conf. We can read $conf->module->enabled with isModEnabled(), $conf->global->xxx properties with getDolGlobalString(), $conf->currency with getDolCurrency(), $conf->entity with getDolEntity()
 	global $db, $langs, $user, $website, $websitepage;
 	global $action, $mainmenu, $leftmenu;
 	global $mysoc;
@@ -11894,7 +11915,13 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 		$onlysimplestring = '1';
 	}
 	if (!in_array($onlysimplestring, array('1', '2'))) {
-		return "Bad call of dol_eval. Parameter onlysimplestring must be '1' or '2'";
+		return "Bad call of dol_eval. Parameter onlysimplestring must be '1' or '2'.";
+	}
+	if (!is_scalar($s)) {
+		return "Bad call of dol_eval. First parameter must be a string, found ".var_export($s, true);
+	}
+	if (!is_scalar($s)) {
+		return "Bad call of dol_eval. First parameter must be a string, found ".var_export($s, true);
 	}
 
 	try {
@@ -11906,10 +11933,6 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 		}
 		//print '$dolibarr_main_restrict_eval_methods = '.$dolibarr_main_restrict_eval_methods."\n";
 		$dolibarr_main_restrict_eval_methods_array = explode(',', $dolibarr_main_restrict_eval_methods);
-
-		if (is_array($s) || $s === 'Array') {
-			return 'Bad string syntax to evaluate (value is Array): ' . var_export($s, true);
-		}
 
 		// Test on dangerous char (used for RCE), we allow only characters to make PHP variable testing
 		// We must accept with 1: '1 && getDolGlobalInt("doesnotexist1") && getDolGlobalString("MAIN_FEATURES_LEVEL")'
@@ -11997,7 +12020,9 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 		$scheck = $s;
 		while ($scheck && $savescheck != $scheck) {
 			$savescheck = $scheck;
+			$scheck = preg_replace('/\$conf->[a-z\_]+->enabled/', '__VARCONFENABLED__', $scheck);		// Remove this once $user->module->enabled has been replaced everywhere with isModEnabled.
 			$scheck = preg_replace('/\$user->hasRight/', '__VARUSERHASRIGHT__', $scheck);
+			$scheck = preg_replace('/\$user->rights/', '__VARUSERHASRIGHT__', $scheck);		// Remove this once $user->rights->xxx is removed everywhere.
 			$scheck = preg_replace('/\(\$db\)/', '__VARDB__', $scheck);
 			$scheck = preg_replace('/\$langs/', '__VARLANGSTRANS__', $scheck);
 			$scheck = preg_replace('/\$mysoc/', '__VARMYSOC__', $scheck);
