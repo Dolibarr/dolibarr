@@ -4,6 +4,7 @@
 # \brief        Script to build a theme Package for Dolibarr
 # \author       (c)2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
 #-----------------------------------------------------------------------------
+## no critic (InputOutput::ProhibitExplicitStdin)
 
 use Cwd;
 use Term::ANSIColor;

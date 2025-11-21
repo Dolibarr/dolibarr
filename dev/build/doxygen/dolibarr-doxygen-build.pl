@@ -33,7 +33,7 @@ if (! -s "dev/build/doxygen/$CONFFILE")
 $SOURCE=".";
 
 # Get version $MAJOR, $MINOR and $BUILD
-$result = open( IN, "< " . $SOURCE . "/htdocs/filefunc.inc.php" );
+$result = open( IN, "<", $SOURCE . "/htdocs/filefunc.inc.php" );
 if ( !$result ) { die "Error: Can't open descriptor file " . $SOURCE . "/htdocs/filefunc.inc.php\n"; }
 while (<IN>) {
 	if ( $_ =~ /define\('DOL_VERSION', '([\d\.a-z\-]+)'\)/ ) { $PROJVERSION = $1; break; }

@@ -5,6 +5,7 @@
 # \author       (c)2005-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
 # \contributor  (c)2017 Nicolas ZABOURI <info@inovea-conseil.com>
 #----------------------------------------------------------------------------
+## no critic (InputOutput::ProhibitExplicitStdin)
 
 use Cwd;
 use Term::ANSIColor;
@@ -136,10 +137,10 @@ foreach my $PROJECT (@PROJECTLIST) {
 
 	# Get version $MAJOR, $MINOR and $BUILD
 	print "Version detected for module ".$PROJECT." in file ".$SOURCE."/htdocs/".$PROJECTLC."/core/modules/mod".ucfirst($PROJECT).".class.php";
-	$result=open(IN,"<".$SOURCE."/htdocs/".$PROJECTLC."/core/modules/mod".ucfirst($PROJECT).".class.php");
+	$result=open(IN,"<",$SOURCE."/htdocs/".$PROJECTLC."/core/modules/mod".ucfirst($PROJECT).".class.php");
 	$custom=false;
 	if (! $result) {
-                $result=open(IN,"<".$SOURCE."/htdocs/custom/".$PROJECTLC."/core/modules/mod".ucfirst($PROJECT).".class.php");
+                $result=open(IN,"<",$SOURCE."/htdocs/custom/".$PROJECTLC."/core/modules/mod".ucfirst($PROJECT).".class.php");
                 if (! $result) {
                     die "Error: Can't open descriptor file ".$SOURCE."/htdocs/(or /htdocs/custom/)".$PROJECTLC."/core/modules/mod".ucfirst($PROJECT).".class.php for reading.\n";
                 }else{
@@ -254,7 +255,7 @@ foreach my $PROJECT (@PROJECTLIST) {
 
 				print "Now, we will copy all files declared in the makepack-".$PROJECT.".conf into the directory $BUILDROOT\n";
 
-				$result=open(IN,"<makepack-".$PROJECT.".conf");
+				$result=open(IN,"<","makepack-".$PROJECT.".conf");
 				if (! $result) { die "Error: Can't open conf file makepack-".$PROJECT.".conf for reading.\n"; }
 			    while(<IN>)
 			    {

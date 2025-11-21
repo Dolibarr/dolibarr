@@ -14,7 +14,7 @@ if (! $file)
 	exit;
 }
 
-open(FILE,$file) || die "Failed to open file $file";
+open(FILE,"<",$file) || die "Failed to open file $file";
 while (<FILE>)
 {
 	if ($_ =~ /\\version\s/i)

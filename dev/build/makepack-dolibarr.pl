@@ -12,6 +12,7 @@
 #DESTIDOLIMEDMODULES='/media/HDDATA1_LD/Mes Sites/Web/DoliCloud/dolimed.com/htdocs/files/modules'
 #DESTIDOLIMEDSTABLE='/media/HDDATA1_LD/Mes Sites/Web/DoliCloud/dolimed.com/htdocs/files/stable'
 #----------------------------------------------------------------------------
+## no critic (InputOutput::ProhibitExplicitStdin)
 
 use Cwd;
 use Term::ANSIColor;
@@ -163,13 +164,13 @@ $BUILDROOT="$TEMP/buildroot";
 
 
 # Get version $MAJOR, $MINOR and $BUILD
-$result = open( IN, "<" . $SOURCE . "/htdocs/version.inc.php" );
+$result = open( IN, "<", $SOURCE . "/htdocs/version.inc.php" );
 if ( !$result ) { die "Error: Can't open version file " . $SOURCE . "/htdocs/version.inc.php\n"; }
 while (<IN>) {
 	if ( $_ =~ /define\('DOL_MAJOR_VERSION',\s*'([\d\.a-z\-]+)'\)/ ) { $MAJORVERSION = $1; break; }
 }
 close IN;
-$result = open( IN, "<" . $SOURCE . "/htdocs/filefunc.inc.php" );
+$result = open( IN, "<", $SOURCE . "/htdocs/filefunc.inc.php" );
 if ( !$result ) { die "Error: Can't open version file " . $SOURCE . "/htdocs/filefunc.inc.php\n"; }
 while (<IN>) {
 	if ( $_ =~ /define\('DOL_MINOR_VERSION',\s*'([\d\.a-z\-]+)'\)/ ) { $MINORVERSION = $1; break; }
@@ -907,8 +908,8 @@ if ($nboftargetok) {
     		$changelogstring="* ".$datestring." Laurent Destailleur (eldy) $MAJOR.$MINOR.$REL1-$RPMSUBVERSION\n- Upstream release\n";
 
 			print "Generate file $BUILDROOT/$BUILDFIC from $SOURCE/dev/build/rpm/${BUILDFICSRC}\n";
-			open (SPECFROM,"<$SOURCE/dev/build/rpm/${BUILDFICSRC}") || die "Error";
-			open (SPECTO,">$BUILDROOT/$BUILDFIC") || die "Error";
+			open (SPECFROM,"<","$SOURCE/dev/build/rpm/${BUILDFICSRC}") || die "Error";
+			open (SPECTO,">","$BUILDROOT/$BUILDFIC") || die "Error";
 			while (<SPECFROM>) {
 				$_ =~ s/__FILENAMETGZ__/$FILENAMETGZ/;
 				$_ =~ s/__VERSION__/$MAJOR.$MINOR.$REL1/;
@@ -1046,8 +1047,8 @@ if ($nboftargetok) {
 			print "Copy $SOURCE/dev/build/debian/xxx to $BUILDROOT/$PROJECT.tmp/debian\n";
 			# Add files for dpkg-source (changelog)
 			#$ret=`cp -f  "$SOURCE/dev/build/debian/changelog"      "$BUILDROOT/$PROJECT.tmp/debian"`;
-			open (SPECFROM,"<$SOURCE/dev/build/debian/changelog") || die "Error";
-			open (SPECTO,">$BUILDROOT/$PROJECT.tmp/debian/changelog") || die "Error";
+			open (SPECFROM,"<","$SOURCE/dev/build/debian/changelog") || die "Error";
+			open (SPECTO,">","$BUILDROOT/$PROJECT.tmp/debian/changelog") || die "Error";
 			while (<SPECFROM>) {
 				$_ =~ s/__VERSION__/$MAJOR.$MINOR.$newbuild/;
 				print SPECTO $_;
@@ -1173,8 +1174,8 @@ if ($nboftargetok) {
     		print "Prepare file \"$SOURCEBACK\\dev\\build\\exe\\doliwamp\\doliwamp.tmp.iss\" from \"$SOURCEBACK\\dev\\build\\exe\\doliwamp\\doliwamp.iss\"\n";
 
     		#$ret=`cat "$SOURCE/dev/build/exe/doliwamp/doliwamp.iss" | sed -e 's/__FILENAMEEXEDOLIWAMP__/$FILENAMEEXEDOLIWAMP/g' > "$SOURCE/build/exe/doliwamp/doliwamp.tmp.iss"`;
-    		open(IN, '<' . $SOURCE."/dev/build/exe/doliwamp/doliwamp.iss") or die $!;
-			open(OUT, '>' . "$SOURCE/dev/build/exe/doliwamp/doliwamp.tmp.iss") or die $!;
+    		open(IN, '<', $SOURCE."/dev/build/exe/doliwamp/doliwamp.iss") or die $!;
+			open(OUT, '>', "$SOURCE/dev/build/exe/doliwamp/doliwamp.tmp.iss") or die $!;
 			while(<IN>)
 			{
 			    $_ =~ s/__FILENAMEEXEDOLIWAMP__/$FILENAMEEXEDOLIWAMP/g;

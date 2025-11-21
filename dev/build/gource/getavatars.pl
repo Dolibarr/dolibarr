@@ -14,7 +14,8 @@ die("no .git/ directory found in current path\n") unless -d './avatars';
 
 mkdir($output_dir) unless -d $output_dir;
 
-open(GITLOG, q/git log --pretty=format:"%ae|%an" |/) or die("failed to read git-log: $!\n");
+open(my $GITLOG, q|-|, q/git log --pretty=format:"%ae|%an"/) or die("failed to read git-log: $!\n");
+
 
 my %processed_authors;
 
