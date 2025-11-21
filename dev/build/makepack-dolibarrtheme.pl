@@ -6,6 +6,8 @@
 #-----------------------------------------------------------------------------
 ## no critic (InputOutput::ProhibitExplicitStdin)
 
+use strict;
+use warnings;
 use Cwd;
 use Term::ANSIColor;
 

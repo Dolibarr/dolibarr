@@ -7,6 +7,8 @@
 #----------------------------------------------------------------------------
 ## no critic (InputOutput::ProhibitExplicitStdin)
 
+use strict;
+use warnings;
 use Cwd;
 use Term::ANSIColor;
 
@@ -94,7 +96,7 @@ print "Target directory: $NEWDESTI\n";
 
 # Ask module
 print "Enter name for your module (mymodule, mywonderfulmondule, ... or 'all') : ";
-$PROJECTINPUT=<STDIN>;
+my $PROJECTINPUT=<STDIN>;
 chomp($PROJECTINPUT);
 print "Move to ".$DIR." directory.\n";
 chdir($DIR);
@@ -103,9 +105,9 @@ chdir($DIR);
 my @PROJECTLIST=();
 if ($PROJECTINPUT eq "all")
 {
-    opendir(DIR, $DIR) || return;
-    local @rv = grep { /^makepack\-(.*)\.conf$/ } sort readdir(DIR);
-    closedir(DIR);
+    opendir(my $DIR, $DIR) or return;
+    local @rv = grep { /^makepack\-(.*)\.conf$/ } sort readdir($DIR);
+    closedir($DIR);
     foreach my $xxx (0..@rv-1) {
     	if ($rv[$xxx] =~ /^makepack\-(.*)\.conf$/)
     	{
@@ -137,21 +139,19 @@ foreach my $PROJECT (@PROJECTLIST) {
 
 	# Get version $MAJOR, $MINOR and $BUILD
 	print "Version detected for module ".$PROJECT." in file ".$SOURCE."/htdocs/".$PROJECTLC."/core/modules/mod".ucfirst($PROJECT).".class.php";
-	$result=open(IN,"<",$SOURCE."/htdocs/".$PROJECTLC."/core/modules/mod".ucfirst($PROJECT).".class.php");
+	$result = open(my $IN, "<", $SOURCE."/htdocs/".$PROJECTLC."/core/modules/mod".ucfirst($PROJECT).".class.php") ;
 	$custom=false;
 	if (! $result) {
-                $result=open(IN,"<",$SOURCE."/htdocs/custom/".$PROJECTLC."/core/modules/mod".ucfirst($PROJECT).".class.php");
-                if (! $result) {
-                    die "Error: Can't open descriptor file ".$SOURCE."/htdocs/(or /htdocs/custom/)".$PROJECTLC."/core/modules/mod".ucfirst($PROJECT).".class.php for reading.\n";
-                }else{
-                    $custom = true;
-                }
-        }
-    while(<IN>)
+		$result = open(my $IN, "<", $SOURCE."/htdocs/custom/".$PROJECTLC."/core/modules/mod".ucfirst($PROJECT).".class.php");
+		if (!$result) { die "Error: Can't open descriptor file ".$SOURCE."/htdocs/(or /htdocs/custom/)".$PROJECTLC."/core/modules/mod".ucfirst($PROJECT).".class.php for reading.\n"; }
+	} else {
+		$custom = true;
+	}
+    while(<$IN>)
     {
     	if ($_ =~ /this->version\s*=\s*'([\d\.]+)'/) { $PROJVERSION=$1; break; }
     }
-    close IN;
+    close $IN;
 	print $PROJVERSION."\n";
 
 	($MAJOR,$MINOR,$BUILD)=split(/\./,$PROJVERSION,3);
@@ -255,9 +255,8 @@ foreach my $PROJECT (@PROJECTLIST) {
 
 				print "Now, we will copy all files declared in the makepack-".$PROJECT.".conf into the directory $BUILDROOT\n";
 
-				$result=open(IN,"<","makepack-".$PROJECT.".conf");
-				if (! $result) { die "Error: Can't open conf file makepack-".$PROJECT.".conf for reading.\n"; }
-			    while(<IN>)
+				open(my $IN2, "<", "makepack-".$PROJECT.".conf") or die "Error: Can't open conf file makepack-".$PROJECT.".conf for reading.\n";
+			    while(<$IN2>)
 			    {
 			    	$entry=$_;
 
@@ -284,7 +283,7 @@ foreach my $PROJECT (@PROJECTLIST) {
 			    	}
 
 				}
-				close IN;
+				close $IN2;
 
 				@timearray=localtime(time());
 				$fulldate=($timearray[5]+1900).'-'.($timearray[4]+1).'-'.$timearray[3].' '.$timearray[2].':'.$timearray[1];
@@ -308,11 +307,11 @@ foreach my $PROJECT (@PROJECTLIST) {
 		    $ret=`rm -fr $BUILDROOT/$PROJECTLC/htdocs/conf/conf.php.old`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECTLC/htdocs/conf/conf.php.postgres`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECTLC/htdocs/conf/conf*sav*`;
-		    if ($custom) {
-				$ret=`cp -r $BUILDROOT/$PROJECTLC/htdocs/custom/* $BUILDROOT/$PROJECTLC/htdocs/.`;
-		    }
-			$ret=`rm -fr $BUILDROOT/$PROJECTLC/htdocs/custom`;
-			$ret=`rm -fr $BUILDROOT/$PROJECTLC/htdocs/custom2`;
+                    if ($custom) {
+                        $ret=`cp -r $BUILDROOT/$PROJECTLC/htdocs/custom/* $BUILDROOT/$PROJECTLC/htdocs/.`;
+                    }
+		    $ret=`rm -fr $BUILDROOT/$PROJECTLC/htdocs/custom`;
+                    $ret=`rm -fr $BUILDROOT/$PROJECTLC/htdocs/custom2`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECTLC/test`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECTLC/Thumbs.db $BUILDROOT/$PROJECTLC/*/Thumbs.db $BUILDROOT/$PROJECTLC/*/*/Thumbs.db $BUILDROOT/$PROJECTLC/*/*/*/Thumbs.db $BUILDROOT/$PROJECTLC/*/*/*/*/Thumbs.db`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECTLC/CVS* $BUILDROOT/$PROJECTLC/*/CVS* $BUILDROOT/$PROJECTLC/*/*/CVS* $BUILDROOT/$PROJECTLC/*/*/*/CVS* $BUILDROOT/$PROJECTLC/*/*/*/*/CVS* $BUILDROOT/$PROJECTLC/*/*/*/*/*/CVS*`;

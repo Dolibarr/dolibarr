@@ -14,6 +14,8 @@
 #----------------------------------------------------------------------------
 ## no critic (InputOutput::ProhibitExplicitStdin)
 
+use strict;
+use warnings;
 use Cwd;
 use Term::ANSIColor;
 
@@ -164,18 +166,16 @@ $BUILDROOT="$TEMP/buildroot";
 
 
 # Get version $MAJOR, $MINOR and $BUILD
-$result = open( IN, "<", $SOURCE . "/htdocs/version.inc.php" );
-if ( !$result ) { die "Error: Can't open version file " . $SOURCE . "/htdocs/version.inc.php\n"; }
-while (<IN>) {
+open(my $IN, "<", $SOURCE . "/htdocs/version.inc.php") or die "Error: Can't open version file " . $SOURCE . "/htdocs/version.inc.php\n";
+while (<$IN>) {
 	if ( $_ =~ /define\('DOL_MAJOR_VERSION',\s*'([\d\.a-z\-]+)'\)/ ) { $MAJORVERSION = $1; break; }
 }
-close IN;
-$result = open( IN, "<", $SOURCE . "/htdocs/filefunc.inc.php" );
-if ( !$result ) { die "Error: Can't open version file " . $SOURCE . "/htdocs/filefunc.inc.php\n"; }
-while (<IN>) {
+close $IN;
+open(my $IN2, "<", $SOURCE . "/htdocs/filefunc.inc.php") or die "Error: Can't open version file " . $SOURCE . "/htdocs/filefunc.inc.php\n";
+while (<$IN2>) {
 	if ( $_ =~ /define\('DOL_MINOR_VERSION',\s*'([\d\.a-z\-]+)'\)/ ) { $MINORVERSION = $1; break; }
 }
-close IN;
+close $IN2;
 $PROJVERSION=$MAJORVERSION.".".$MINORVERSION;
 
 ($MAJOR,$MINOR,$BUILD)=split(/\./,$PROJVERSION,3);
@@ -908,17 +908,17 @@ if ($nboftargetok) {
     		$changelogstring="* ".$datestring." Laurent Destailleur (eldy) $MAJOR.$MINOR.$REL1-$RPMSUBVERSION\n- Upstream release\n";
 
 			print "Generate file $BUILDROOT/$BUILDFIC from $SOURCE/dev/build/rpm/${BUILDFICSRC}\n";
-			open (SPECFROM,"<","$SOURCE/dev/build/rpm/${BUILDFICSRC}") || die "Error";
-			open (SPECTO,">","$BUILDROOT/$BUILDFIC") || die "Error";
-			while (<SPECFROM>) {
+			open(my $SPECFROM, "<", "$SOURCE/dev/build/rpm/${BUILDFICSRC}") or die "Error";
+			open(my $SPECTO, ">", "$BUILDROOT/$BUILDFIC") or die "Error";
+			while (<$SPECFROM>) {
 				$_ =~ s/__FILENAMETGZ__/$FILENAMETGZ/;
 				$_ =~ s/__VERSION__/$MAJOR.$MINOR.$REL1/;
 				$_ =~ s/__RELEASE__/$RPMSUBVERSION/;
                 $_ =~ s/__CHANGELOGSTRING__/$changelogstring/;
-				print SPECTO $_;
+				print $SPECTO $_;
 			}
-			close SPECFROM;
-			close SPECTO;
+			close $SPECFROM;
+			close $SPECTO;
 
 			print "Copy patch file to $RPMDIR/SOURCES\n";
 			$ret=`cp "$SOURCE/dev/build/rpm/dolibarr-forrpm.patch" "$RPMDIR/SOURCES"`;
@@ -1047,14 +1047,14 @@ if ($nboftargetok) {
 			print "Copy $SOURCE/dev/build/debian/xxx to $BUILDROOT/$PROJECT.tmp/debian\n";
 			# Add files for dpkg-source (changelog)
 			#$ret=`cp -f  "$SOURCE/dev/build/debian/changelog"      "$BUILDROOT/$PROJECT.tmp/debian"`;
-			open (SPECFROM,"<","$SOURCE/dev/build/debian/changelog") || die "Error";
-			open (SPECTO,">","$BUILDROOT/$PROJECT.tmp/debian/changelog") || die "Error";
-			while (<SPECFROM>) {
+			open(my $SPECFROM2, "<", "$SOURCE/dev/build/debian/changelog") or die "Error";
+			open(my $SPECTO2, ">", "$BUILDROOT/$PROJECT.tmp/debian/changelog") or die "Error";
+			while (<$SPECFROM2>) {
 				$_ =~ s/__VERSION__/$MAJOR.$MINOR.$newbuild/;
-				print SPECTO $_;
+				print $SPECTO2 $_;
 			}
-			close SPECFROM;
-			close SPECTO;
+			close $SPECFROM2;
+			close $SPECTO2;
 			# Add files for dpkg-source
 			$ret=`cp -f  "$SOURCE/dev/build/debian/compat"         "$BUILDROOT/$PROJECT.tmp/debian"`;
 			$ret=`cp -f  "$SOURCE/dev/build/debian/control"        "$BUILDROOT/$PROJECT.tmp/debian"`;
@@ -1174,15 +1174,15 @@ if ($nboftargetok) {
     		print "Prepare file \"$SOURCEBACK\\dev\\build\\exe\\doliwamp\\doliwamp.tmp.iss\" from \"$SOURCEBACK\\dev\\build\\exe\\doliwamp\\doliwamp.iss\"\n";
 
     		#$ret=`cat "$SOURCE/dev/build/exe/doliwamp/doliwamp.iss" | sed -e 's/__FILENAMEEXEDOLIWAMP__/$FILENAMEEXEDOLIWAMP/g' > "$SOURCE/build/exe/doliwamp/doliwamp.tmp.iss"`;
-    		open(IN, '<', $SOURCE."/dev/build/exe/doliwamp/doliwamp.iss") or die $!;
-			open(OUT, '>', "$SOURCE/dev/build/exe/doliwamp/doliwamp.tmp.iss") or die $!;
-			while(<IN>)
+    		open(my $IN3, '<', $SOURCE."/dev/build/exe/doliwamp/doliwamp.iss") or die $!;
+			open(my $OUT, '>', "$SOURCE/dev/build/exe/doliwamp/doliwamp.tmp.iss") or die $!;
+			while(<$IN3>)
 			{
 			    $_ =~ s/__FILENAMEEXEDOLIWAMP__/$FILENAMEEXEDOLIWAMP/g;
-			    print OUT $_;
+			    print $OUT $_;
 			}
-			close(IN);
-			close(OUT);
+			close($IN3);
+			close($OUT);
 
     		print "Compil exe $FILENAMEEXEDOLIWAMP.exe file from iss file \"$SOURCEBACK\\dev\\build\\exe\\doliwamp\\doliwamp.tmp.iss\" on OS $OS\n";
 
