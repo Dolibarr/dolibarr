@@ -6,40 +6,210 @@ English Dolibarr ChangeLog
 
 For users:
 ----------
-
+NEW: Module datapolicy moved as stable (for anonimization features)
+NEW: #31723 - Improve project overview: Hide paid orders (#35524)
+NEW: #35700 : Throw an error when validating a propal, order, supplier with a product no more in sale/purchase… (#35709)
+NEW: Accountancy - Accounting by payment type (#34729)
+NEW: Accountancy - Add accounting for discounts (#35977)
+NEW: Accountancy - Add a protection on various payment for auxiliary account on general account not centralized (#35720)
+NEW: Accountancy - Add field centralized on import/export (#35872)
+NEW: Accountancy - Add hook on export filename (#35188)
+NEW: Accountancy - Add reconcile on general accounting account - SQL part (#35994)
+NEW: Accountancy - Analytical axis (SQL Structure) (#34738)
+NEW: Accountancy - Manual input - Add script to greyed out subledger_account if general ledger is not centralized (#35855)
+NEW: Accountancy - Transaction - Add verification on centralized account (#35824)
+NEW: Accountancy - Various payment - Add script to greyed out subledger_account if general ledger is not centralized (#35842)
+NEW: Add a boolean for lines in api and $properties (#34293)
+NEW: Add accounting export mode for ISTEA (#36006)
+NEW: add a limit to avoid too many answer in agenda view. Add warning if limit has been reached.
+NEW: Add a page to edit http security headers of application (#34941)
+NEW: Add auto-reference generation for tasks (like in project) in API (#35981)
+NEW: Add column ref_ext and note_private for membership
+NEW: Add column thirdparty ref_customer and ref_supplier in project list
+NEW: Add column title in emailing and add more filters
+NEW: add combining characters (accents, cedilla...) codes in dol_string_unaccent() (#35130)
+NEW: add company date birth (SQL structure) (#34854) (UI) (#34861)
+NEW: add conditional supplier price display (#35900)
+NEW: Add configuration for default timesheet menu (#35805)
+NEW: Add contact tab on product service (#35914)
+NEW: Add directory navigation to Web Portal Shared Documents (#35443)
+NEW: Added Messaging and agenda tabs on order and shipments (#34859)
+NEW: Add event when installing a module in the security event list.
+NEW: add extrafield option "empty on clone" (#34866)
+NEW: add fields usage_opportunity, usage_task, usage_bill_time for project import (#35301)
+NEW: Add filter on agenda event progression on agenda page
+NEW: add free numbering module for members (#35636)
+NEW: add global search for resource object (#36043)
+NEW: add hidden const to get response header in geturlcontent function (#34781) (#34824)
+NEW: add hook getListOfModels (#34626)
+NEW: Add hook on calcula_price() and get_default_tva()
+NEW: Add hooks in webportal (#35326)
+NEW: add hook when printing new card button on thirdparty list (#36350)
+NEW: add hourly rate in list of users
+NEW: Add missing parameters for menus on webportal hook (#35550)
+NEW: Add option PDF_PURCHASE_INVOICE_HIDE_VAT
+NEW: Add option PROJECT_CAN_ALWAYS_LINK_TO_ALL_CUSTOMERS
+NEW: Add option to create simple standalone shipment of non origin (#35651)
+NEW: Add option to create standalone reception (#36134)
+NEW: add private and public note on ticket (#35303)
+NEW: add product_type field on fichinter (preparing subtotal) (#36196)
+NEW: Add regions for CONGO, THE DEMOCRATIC REPUBLIC OF THE;CD (#36340)
+NEW: ADD Send mail for reception / Delivery (#34829)
+NEW: Add setup page to concat natively files on invoice PDF.
+NEW: add shipping address to propal (#34441)
+NEW: Add Sign feature on shipments (#34640)
+NEW: Add sms reminder in reminder of agenda events (#35239)
+NEW: Add SQL table for expensereport line extrafields support (#36251)
+NEW: add supplier invoice, order and supplier order tag filter and bulk insert and statistics order and supplier order (#35399)
+NEW: add supplier payment mail template  (#35877)
+NEW: add tags on proposals and supplier proposals and in statistics (#35553)
+NEW: Add task categories 1/3 (#35848)
+NEW: Add tasks card hooks (#35616)
+NEW: Add the "Dispute status" in list of invoice.
+NEW: add the option to not synchronize thirdparty <--> member (#36033)
+NEW: Add the widget funnel of opportunities
+NEW: Add tpl files for standalone shipment (#35624)
+NEW: Add tpl loader for discounts.tpl.php (#34798)
+NEW: Add Transfer Number (#35665)
+NEW: Add Type, Description columns to Project Overview Expense Reports (#36214)
+NEW: Add user permission for create/edit/delete supplier prices (#35940)
+NEW: Allow omission of ODT template name when generating ODT and PDF (#35701)
+NEW: Better navigation and report into database admin tools
+NEW: Button to create a proposal and sale order from a contract always on
+NEW: Can add info of main IT service provider in setup.
+NEW: can admin payments extrafields (#34822)
+NEW: Can drag and drop in BOM card
+NEW: Can force_install_dolibarrpassword for automatic installation (#34537)
+NEW: Can have a tooltip picto on title of column and keep autotruncation of label. Tooltip is show at begin of text.
+NEW: Can show both currency code and symbol into the select of currency
+NEW: Can sort on employee in holiday balance. Add link to go to history.
+NEW: Can update value of timespent with last task hourly rate (#36018)
+NEW: Can urlencode substitution variable of constants
+NEW: Can view/list/edit the dispute status of an invoice
+NEW: Change the path for the mailing files (#34878)
+NEW: Constant ORDER_MASS_ACTION_BILLED_LINK_EXPEDITIONS (#34617)
+NEW: const MENU_HIDE_EMAIL_TEMPLATES to hide email templates setup in Tools menu (#35739)
+NEW: Create simple shipment of non origin (#35604)
+NEW: Currency for the Democratic Republic of Congo added. (#36104)
+NEW: Customized step in duration select (#34652)
+NEW: Dashboard - Add option in ihm to disable MRP thumb (#36185)
+NEW: date function related to holiday can accept country id in addition to country code
+NEW: DEV Can set color of the on/off button.
+NEW: Disable by default obfuscation methods and function in extrafields evaluable strings. Can re-enable with MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL=1
+NEW: Discount split more than two parts (#34782)
+NEW: Display company logo on kanban view (#34520)
+NEW: dol_sort_array can be used with 2 sorting criteria.
+NEW: Enhanced layout feature for emailing
+NEW: Enhance popup for image preview (show size in title, can restore small view, always show the Rotate button).
+NEW: Enhance the system for warnings on module activation
+NEW: execute hook addMoreActionsButtons on bank card (#35598)
+NEW: extrafields: add field to link a field to a module (#34416)
+NEW: Feature to merge duplicate members (#35308)
+NEW: generate renewal proposal for contracts (#35120)
+NEW: Holiday - Allow to specify a specific mail address from (#36184)
+NEW: hook allowing external modules to replace the behavior of fetchObjectLinked() (#34724)
+NEW: hooks `showInputExtraField` and `showOutputExtraField` to override ExtraFields::show(Input|Output)Field (#35496)
+NEW: implement box on product and interventional index page (#34629)
+NEW: import subscriptions (#35612)
+NEW: Introduce getCurrency(). $conf is no more allowed into computed formulae.
+NEW: Invert logic of default date in proposal/order/invoice creation: Need option to NOT autofill instead of the opposite.
+NEW: line input multicurrency price with tax (#35064)
+NEW: Major overhaul of DataPolicyCron and add Recruitment policy (#34704)
+NEW: Make the public contact form with experimental status
+NEW: Minimal version of PHP is now 7.2
+NEW: More index for memberships table
+NEW: More information on the user credential section
+NEW: More webportal feature - Can add shared files and thirdparty documents (#35391)
+NEW: New hook mergePdf (#34707)
+NEW: On invoice, show also nb of credit notes notyet converted for consumption
+NEW: Option to clone parent categories on variant creation (#35806)
+NEW: Output of category tag is nicer for long subcategories.
+NEW: Parent project column in list of projects (#36177)
+NEW: Paymentok validate invoice if not already done (#35564)
+NEW: PDF Show customer balance on invoice date (#34800)
+NEW: possibility to define global entity in user param (#35908)
+NEW: Add messaging and agenda features to proposals (#34883)
+NEW: public and private note can be shown on contact list
+NEW: Public donation page (#35565)
+NEW: public pages donation, ticket and member use captcha setup (#35913)
+NEW: Rework of the management of the card and fields on the web portal (#36076)
+NEW: Save the BAN and RUM for SEPA into database not just file.
+NEW: search all facture rec (#34563)
+NEW: Show cron last result and output in info (#36028)
+NEW: Show full date with seconds in the tooltip of date of event
+NEW: Show the link to download the zip of a module on module setup
+NEW: Show warning on banner when an email is not valid
+NEW: The check file feature can limit check on unalterable files only
+NEW: The flag "Dispute open" make the status in Red.
+NEW: The PHP info is in a popup in install page.
+NEW: update country list (#34865)
+NEW: Update Incoterms to 2025 standards and add new terms (#36041)
+NEW: Upgrade ACE editor to 1.43.12
+NEW: User/Date in the Follow tab are more condensed.
+NEW: We added a hook to allow us to modify the Prospect Customer drop down… (#25635)
+NEW: Withholdingtax how VatRefund (#34649)
 
 
 For developers:
 ---------------
-* Introducing the TRIGGER_PREFIX property to force developers to use unique triggerkey per business object, limit also code to business CRUD events and identity when it is not.
-
+NEW: Introducing the TRIGGER_PREFIX property to force developers to use unique triggerkey per business object, to limit code to business CRUD events and report warning when it is not.
+NEW: add extraparams field in llx_categorie (#35975)
+NEW: Add prepare() method to DoliDB class (rebuild) (#35249)
+NEW: Add function to split a discount in 2 by API REST (#34786)
+NEW: Add a new API "product lots" (#36243)
+NEW: Add API for Holidays/Leaves
+NEW: add api for members statistics (#35851)
+NEW: add api List VAT (#35920)
+NEW: add api_paiements.class.php (#34756)
+NEW: Add contact management on project Api (#35459)
+NEW: Add contact support on products in REST API (#35925)
+NEW: Add country ID resolution from country code for thirdparty api (#36345)
+NEW: Add getcontacts on api of interventional and proposal (#35589)
+NEW: Add hook initialization for interventions API (#35203)
+NEW: Add option API_ENABLE_COUNT_CALLS
+NEW: Add thirdparty search on api list  (#34634)
+NEW: add timespent API endpoints for projects and tasks add also cascading assignment of contacts to tasks (#35897)
+NEW: add upload api feature for shipment (#34639)
+NEW: Allow creating contact via api with ISO code (#36322)
+NEW: API endpoint for getting products in a warehouse (#35918)
+NEW: API for getting, adding, deleting and/or modifying email templates (#35853)
+NEW: API for handling mass mailing targets (#35603)
+NEW: API GET endpoint for thirdparties types listing (c_typent) (#34751)
+NEW: Api mass emailing (#35531)
+NEW: API user/groups/ POST, PUT, DELETE + some hurl tests (#35903)
+NEW: API User - Remove user from group (#35453)
+NEW: Implement listTimespent method in api_projects.class.php (#36093)
+NEW: qual fixes on api contract (#36066)
+NEW: stock API GET movement (#36193)
 
 
 WARNING:
 --------
 The following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
-* The deprecated column egroupware_id has been dropped.
+* The deprecated column "egroupware_id" has been dropped from table llx_user.
 * The property $sumpayed (duplicated of $totalpaid), $sumdeposit (duplicate of $totaldeposits) and $sumcreditnote (duplicate of $totalcreditnotes) has
   been removed (there are replaced with the property that was a duplication of (same for $sumpayed_multicurrency, $sumdeposit_multicurrency, $sumcreditnote_multicurrency).
 * Parameters $maxlen and $notooltip of Contract have been inverted to follow the standard. It was breaking the common use of getNomUrl() but if you were
-  using the parameter maxlen (rare) by using the old signature, result may be a tooltip that is no more visible on ref printed by your module.
-* Removed array $MAP_ID_TO_CODE that was a duplicate of array "array_flip($categ->MAP_ID)"
+  using the parameter maxlen (rare) by using the old signature, result may be just a tooltip that is no more visible when mous over the contract ref shown by your module.
+* Removed array $MAP_ID_TO_CODE that was a duplicate of the array "array_flip($categ->MAP_ID)"
 * The signature of the Sale order ->cancel() method and shipment ->cancel() has been modified to introduce the $user param like for other methods that modify a status.
-* Adding new document templates must be done by adding files into the mymodule/core/modules/xxx/doc directory. Adding files into custom directory with the
-  same path than the core path, without using a "mymodule" directory is now forbidden.
-* The directory theme/common/octicons has been removed
-* The library timepicker.js has been removed. Was no more used by Dolibarr.
-* Because of new TRIGGER_PREFIX property triggers SUPPLIER_PRODUCT_BUYPRICE_XXX are renamed to PRODUCT_BUYPRICE_XXX.
-* Function img_pdf() has been removed. Replace it with img_picto('', 'pdf.png') if you were using it.
+* Adding new "document generation templates" must be done by adding files into the mymodule/core/modules/xxx/doc directory. Adding files into custom directory with the
+  same path than the core path, without using a "mymodule" directory, is now forbidden.
+* The directory theme/common/octicons has been removed. No resource was used by Dolibarrfrom this directory.
+* The library timepicker.js has been removed. Was no more used by Dolibarr since a long time.
+* Because of the new TRIGGER_PREFIX property, the triggers SUPPLIER_PRODUCT_BUYPRICE_XXX are renamed into PRODUCT_BUYPRICE_XXX.
+* Function img_pdf() has been removed. Replace it with img_picto('', 'pdf') if you were using it.
 * The method run_trigger() was deprecated 10+ years ago in favor of runTrigger(). It has been removed. Change your trigger file if you still use it.
 * Property ->picto of module descriptors must contains the image extension if it is not a font awesome tag. Example: $this->picto="mymoduleimg.png";
 * Stock movement API GET method output variable names has been harmonized with POST input parameter names
-* $conf is no more allowed into computed formulae. You ca replace use of $conf->currency by NEW Introduce getCurrency() and $conf->global->xxx by getDolGlobalString('xxx')
-* Concatenation into computed property of extrafields is off by default. You can enable it with $dolibarr_main_restrict_eval_methods = 'dol_concat'
-* Old variable $obj and $object are no more allowed into evaluated strings like computed extrafields or conditions. Use $objectoffield to get current object or $var123 to
-  instantiate a non existing object.
-* The hidden constant MAIN_ALLOW_UNSECURED_SPECIAL_CHARS_IN_DOL_EVAL has been replaced with the
-  variable $dolibarr_main_allow_unsecured_special_chars_in_dol_eval into conf.php
+* Concatenation into computed property of extrafields is off by default. You can enable it from conf.php file by adding dol_concat to list of allowed function in $dolibarr_main_restrict_eval_methods,
+  For example: $dolibarr_main_restrict_eval_methods='getDolGlobalString,getDolGlobalInt,getDolCurrency,fetchNoCompute,hasRight,isModEnabled,isStringVarMatching,abs,min,max,round,dol_now,dol_concat,preg_match';
+* Old variable $obj and $object are no more allowed into on the fly evaluated strings like computed or conditions on extrafields. Use $objectoffield to get current object
+  Also if you were using temporary variables int a computed extrafields, the nameot temporary variable must match $var123.
+* The hidden constant MAIN_ALLOW_UNSECURED_SPECIAL_CHARS_IN_DOL_EVAL in database has been replaced with the
+  variable $dolibarr_main_allow_unsecured_special_chars_in_dol_eval into file conf/conf.php
+* $conf use into "computed formulae" of etrafields is now deprecated (not yet forbidden). You can replace use of $conf->currency by the new method getCurrency() and $conf->global->xxx by getDolGlobalString('xxx').
+* $user->rights->module->perms is also deprecated. You can use $user->hasRight() instead.
 
 
 
