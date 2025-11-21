@@ -11920,6 +11920,9 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 	if (!is_scalar($s)) {
 		return "Bad call of dol_eval. First parameter must be a string, found ".var_export($s, true);
 	}
+	if (!is_scalar($s)) {
+		return "Bad call of dol_eval. First parameter must be a string, found ".var_export($s, true);
+	}
 
 	try {
 		global $dolibarr_main_restrict_eval_methods;

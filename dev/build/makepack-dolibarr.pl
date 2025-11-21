@@ -164,13 +164,21 @@ $BUILDROOT="$TEMP/buildroot";
 
 # Get version $MAJOR, $MINOR and $BUILD
 $result = open( IN, "<" . $SOURCE . "/htdocs/version.inc.php" );
-if ( !$result ) { die "Error: Can't open descriptor file " . $SOURCE . "/htdocs/version.inc.php\n"; }
+if ( !$result ) { die "Error: Can't open version file " . $SOURCE . "/htdocs/version.inc.php\n"; }
 while (<IN>) {
-	if ( $_ =~ /define\('DOL_VERSION',\s*'([\d\.a-z\-]+)'\)/ ) { $PROJVERSION = $1; break; }
+	if ( $_ =~ /define\('DOL_MAJOR_VERSION',\s*'([\d\.a-z\-]+)'\)/ ) { $MAJORVERSION = $1; break; }
 }
 close IN;
+$result = open( IN, "<" . $SOURCE . "/htdocs/filefunc.inc.php" );
+if ( !$result ) { die "Error: Can't open version file " . $SOURCE . "/htdocs/filefunc.inc.php\n"; }
+while (<IN>) {
+	if ( $_ =~ /define\('DOL_MINOR_VERSION',\s*'([\d\.a-z\-]+)'\)/ ) { $MINORVERSION = $1; break; }
+}
+close IN;
+$PROJVERSION=$MAJORVERSION.".".$MINORVERSION;
+
 ($MAJOR,$MINOR,$BUILD)=split(/\./,$PROJVERSION,3);
-if ($MINOR eq '') { die "Error can't detect version into ".$SOURCE . "/htdocs/version.inc.php"; }
+if ($MINOR eq '') { die "Error can't detect version"; }
 
 # Set vars for packaging
 $FILENAME            = "$PROJECT";
@@ -411,8 +419,7 @@ if ($nboftargetok) {
 			print 'cd ~/git/dolibarr_'.$MAJOR.'.'.$MINOR.'; git log '.$MAJOR.'.'.$MINOR.'.'.($BUILD-1).'.. | grep -v "Merge branch" | grep -v "Merge pull" | grep "^ " | sed -e "s/^[0-9a-z]* *//" | grep -e \'^FIX\|NEW\|PERF\|SEC\|QUAL\|CLOSE\' | sort -u | sed \'s/FIXED:/FIX:/g\' | sed \'s/FIXED :/FIX:/g\' | sed \'s/FIX :/FIX:/g\' | sed \'s/FIX /FIX: /g\' | sed \'s/CLOSE/NEW/g\' | sed \'s/NEW :/NEW:/g\' | sed \'s/NEW /NEW: /g\' | sed \'s/^* //g\' > /tmp/aaa';
 		}
 		print "\n";
-		if (! $ret)
-		{
+		if (! $ret) {
 			print "\nPress F to force and continue anyway (or other key to stop)... ";
 			my $WAITKEY=<STDIN>;
 			chomp($WAITKEY);
@@ -421,6 +428,10 @@ if ($nboftargetok) {
 				print "Canceled.\n";
 				exit;
 			}
+		} else {
+			print "\nPress a key to continue (or CTRL+C to stop)... ";
+			my $WAITKEY=<STDIN>;
+			chomp($WAITKEY);
 		}
 	}
 
