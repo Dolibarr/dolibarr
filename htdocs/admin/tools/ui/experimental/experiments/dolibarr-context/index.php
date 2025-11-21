@@ -191,6 +191,101 @@ $documentation->showSidebar(); ?>
 
 		</div>
 
+		<div class="documentation-section">
+			<h2 id="titlesection-await-hooks" class="documentation-title">Async Hooks (Await Hooks) - sequential execution</h2>
+
+			<p>
+				Dolibarr supports <strong>asynchronous hooks</strong> using <code>Dolibarr.onAwait()</code> and <code>Dolibarr.executeAwait()</code>.
+				These hooks allow you to register functions that execute <em>in sequence</em> and can modify data before passing it to the next hook.
+				They are useful for complex workflows where multiple modules or scripts need to process or enrich the same data asynchronously.
+			</p>
+
+			<p>
+				Each hook can optionally specify <code>before</code> or <code>after</code> to control the execution order relative to other hooks.
+				Every hook registration returns a unique <code>id</code>, which can be used to reference or unregister the hook later.
+			</p>
+
+			<p>
+				Unlike standard synchronous hooks registered with <code>Dolibarr.on()</code>, await hooks return a <code>Promise</code> when executed.
+				This means you can <code>await</code> their results in your code, and any asynchronous operations inside a hook (e.g., API calls, timers) will be handled correctly before moving to the next hook.
+			</p>
+
+			<div class="documentation-example">
+				<?php
+				$lines = array(
+					'<script nonce="<?php print getNonce() ?>">',
+					'    document.addEventListener(\'Dolibarr:Ready\', async function(e) {',
+					'',
+					'        // Register async hooks will be executed in first place',
+					'        Dolibarr.onAwait(\'calculateDiscount\', async function(order) {',
+					'            order.total *= 0.9; // Apply 10% discount',
+					'            return order;',
+					'        }, { id: \'discount10\' });',
+					'',
+					'        // Register async hooks will be executed in third place',
+					'        Dolibarr.onAwait(\'calculateDiscount\', async function(order) {',
+					'            if(order.total > 1000) order.total -= 50; // Extra discount over 1000',
+					'            return order;',
+					'        }, { id: \'discountOver1000\', after: \'discount10\' });',
+					'',
+					'        // Register async hooks will be executed in second place',
+					'        // this hook item as no id so plus10HookItemId will receive a unique random id ',
+					'        let plus10HookItemId = Dolibarr.onAwait(\'calculateDiscount\', async function(order) {',
+					'            order.newObjectAttribute = \'My value\';',
+					'            order.total += 10;',
+					'            return order;',
+					'        }, { before: \'discountOver1000\' });',
+					'',
+					'        document.getElementById(\'try-event-yourCustomAwaitHookName\').addEventListener(\'click\', async function(e) {',
+					'            // Execute all registered await hooks sequentially',
+					'            let order = {total: 1200};',
+					'            order = await Dolibarr.executeAwait(\'calculateDiscount\', order);',
+					'            console.log(order); // order.total : 1200 -> 1080 -> 1090 -> 1040',
+					'        });',
+					'',
+					'    });',
+					'</script>',
+				);
+				echo $documentation->showCode($lines, 'php'); ?>
+
+				Open your console <code>F12</code> and click on  <button class="button" id="try-event-yourCustomAwaitHookName">try</button>
+
+				<script nonce="<?php print getNonce() ?>">
+					document.addEventListener('Dolibarr:Ready', async function(e) {
+
+						// Register async hooks will be executed in first place
+						Dolibarr.onAwait('calculateDiscount', async function(order) {
+							order.total *= 0.9; // Apply 10% discount
+							return order;
+						}, { id: 'discount10' });
+
+						// Register async hooks will be executed in third place
+						Dolibarr.onAwait('calculateDiscount', async function(order) {
+							if(order.total > 1000) order.total -= 50; // Extra discount over 1000
+							return order;
+						}, { id: 'discountOver1000', after: 'discount10' });
+
+						// Register async hooks will be executed in second place
+						Dolibarr.onAwait('calculateDiscount', async function(order) {
+							order.newObjectAttribute = 'My value';
+							order.total+= 10;
+							return order;
+						}, { before: 'discountOver1000' });
+
+						document.getElementById('try-event-yourCustomAwaitHookName').addEventListener('click', async function(e) {
+							// Execute all registered await hooks sequentially
+							let order = {total: 1200};
+							order = await Dolibarr.executeAwait('calculateDiscount', order);
+							console.log(order); // order.total : 1200 -> 1080 -> 1090 -> 1040
+						});
+
+					});
+				</script>
+			</div>
+
+		</div>
+
+
 
 		<div  id="titlesection-event-init-vs-ready" class="documentation-section">
 			<h2 class="documentation-title">Difference between Dolibarr:Init and Dolibarr:Ready</h2>
@@ -258,10 +353,6 @@ $documentation->showSidebar(); ?>
 				'</script>',
 				);
 				echo $documentation->showCode($lines, 'php'); ?>
-				<script nonce="<?php print getNonce() ?>" >
-					// Define a simple tool
-					Dolibarr.defineTool('alertUser', (msg) => alert('[Dolibarr] ' + msg));
-				</script>
 			</div>
 
 			<h3>Protected Tools</h3>

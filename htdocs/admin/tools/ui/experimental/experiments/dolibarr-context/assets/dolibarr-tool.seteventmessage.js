@@ -1,5 +1,4 @@
 document.addEventListener('Dolibarr:Init', function(e) {
-
 	// this tool allow overwrite because of DISABLE_JQUERY_JNOTIFY conf
 	/**
 	 * status : 'mesgs' by default, 'warnings', 'errors'
