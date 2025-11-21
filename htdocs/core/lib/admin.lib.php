@@ -209,7 +209,7 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 
 				// restrict on database type
 				if (!empty($reg[1])) {
-					if (!preg_match('/'.preg_quote($reg[1]).'/i', $db->type)) {
+					if (!preg_match('/'.preg_quote($reg[1], '/').'/i', $db->type)) {
 						$qualified = 0;
 					}
 				}
@@ -842,10 +842,12 @@ function ihm_prepare_head()
 	$head[$h][2] = 'css';
 	$h++;
 
+	/* Not a user setup of a feature. Useless for an end users, so has been moved into the Modulebuilder main page (for dev).
 	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/tools/ui/index.php');
 	$head[$h][1] = $langs->trans("UxComponentsDoc").' '.img_picto('', 'external-link-square-alt');
 	$head[$h][2] = 'ux';
 	$h++;
+	*/
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'ihm_admin');
 
@@ -2083,7 +2085,7 @@ function company_admin_prepare_head()
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT."/admin/company.php";
-	$head[$h][1] = $langs->trans("Company");
+	$head[$h][1] = $langs->trans("MyOrganization");
 	$head[$h][2] = 'company';
 	$h++;
 
@@ -2097,9 +2099,9 @@ function company_admin_prepare_head()
 	$head[$h][2] = 'openinghours';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/accountant.php";
-	$head[$h][1] = $langs->trans("Accountant");
-	$head[$h][2] = 'accountant';
+	$head[$h][0] = DOL_URL_ROOT."/admin/subcontractors.php";
+	$head[$h][1] = $langs->trans("Subcontractors");
+	$head[$h][2] = 'subcontractors';
 	$h++;
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'mycompany_admin', 'add');

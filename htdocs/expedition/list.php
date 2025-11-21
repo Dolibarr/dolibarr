@@ -295,7 +295,7 @@ if (empty($reshook)) {
 
 				$objecttmp->date = $datefacture;
 				$objecttmp->origin_type    = 'shipping';
-				$objecttmp->origin_id = $id_sending;
+				$objecttmp->origin_id = (int) $id_sending;
 
 				$objecttmp->array_options = $expd->array_options; // Copy extrafields
 

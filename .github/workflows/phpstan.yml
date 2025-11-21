@@ -81,7 +81,7 @@ jobs:
           key: phpstan-cache-${{ matrix.php-version }}-${{ env.CACHE_KEY_PART }}-${{
             github.run_id }}
       - name: Provide phpstan log as artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: ${{ always() }}
         with:
           name: phpstan-srcrt

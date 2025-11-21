@@ -8,7 +8,8 @@ nav a, nav  [role=link] {
 }
 
 nav a:is([aria-current], :hover, :active, :focus), [role=link]:is([aria-current], :hover, :active, :focus) {
-	--color: hsl(289, 90%, 32%);
+	/* --color: hsl(289, 90%, 32%); */
+	--color: var(--primary-hover);
 }
 
 nav  a:focus, nav  [role=link]:focus {

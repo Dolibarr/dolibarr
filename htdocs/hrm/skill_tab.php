@@ -156,7 +156,7 @@ if (empty($reshook)) {
 			$ret = -1;
 			foreach ($TSkillsToAdd as $k => $v) {
 				$skillAdded = new SkillRank($db);
-				$skillAdded->fk_skill = $v;
+				$skillAdded->fk_skill = (int) $v;
 				$skillAdded->fk_object = $id;
 				$skillAdded->objecttype = $objecttype;
 				$ret = $skillAdded->create($user);
@@ -177,7 +177,7 @@ if (empty($reshook)) {
 						$objEval = $db->fetch_object($result);
 						$line = new EvaluationLine($db);
 						$line->fk_evaluation = $objEval->rowid;
-						$line->fk_skill = $v;
+						$line->fk_skill = (int) $v;
 						$line->required_rank = 0;
 						$line->fk_rank = 0;
 
@@ -467,9 +467,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$addadmin = '';
 			if (property_exists($object, 'admin')) {
 				if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
-					$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft valignmiddle"');
+					$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "superadmin", 'class="paddingleft valignmiddle"');
 				} elseif (!empty($object->admin)) {
-					$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft valignmiddle"');
+					$addadmin .= img_picto($langs->trans("AdministratorDesc"), "admin", 'class="paddingleft valignmiddle"');
 				}
 			}
 			print showValueWithClipboardCPButton(!empty($object->login) ? $object->login : '').$addadmin;

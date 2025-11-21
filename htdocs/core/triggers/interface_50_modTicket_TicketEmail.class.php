@@ -52,11 +52,11 @@ class InterfaceTicketEmail extends DolibarrTriggers
 	 *      Function called when a Dolibarr business event is done.
 	 *      All functions "runTrigger" are triggered if file is inside directory htdocs/core/triggers
 	 *
-	 *      @param  string    $action Event action code
-	 *      @param  Ticket    $object Object
-	 *      @param  User      $user   Object user
-	 *      @param  Translate $langs  Object langs
-	 *      @param  conf      $conf   Object conf
+	 *      @param  string    		$action Event action code
+	 *      @param  CommonObject    $object Object
+	 *      @param  User      		$user   Object user
+	 *      @param  Translate 		$langs  Object langs
+	 *      @param  Conf      		$conf   Object conf
 	 *      @return int                     Return integer <0 if KO, 0 if no triggered ran, >0 if OK
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
@@ -71,6 +71,8 @@ class InterfaceTicketEmail extends DolibarrTriggers
 
 		switch ($action) {
 			case 'TICKET_ASSIGNED':
+				/** @var Ticket $object */
+				'@phan-var-force Ticket $object';
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 				if ($object->fk_user_assign > 0) {
@@ -145,6 +147,8 @@ class InterfaceTicketEmail extends DolibarrTriggers
 				break;
 
 			case 'TICKET_CREATE':
+				/** @var Ticket $object */
+				'@phan-var-force Ticket $object';
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 				$langs->load('ticket');
@@ -232,14 +236,20 @@ class InterfaceTicketEmail extends DolibarrTriggers
 				break;
 
 			case 'TICKET_DELETE':
+				/** @var Ticket $object */
+				'@phan-var-force Ticket $object';
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 				break;
 
 			case 'TICKET_MODIFY':
+				/** @var Ticket $object */
+				'@phan-var-force Ticket $object';
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 				break;
 
 			case 'TICKET_CLOSE':
+				/** @var Ticket $object */
+				'@phan-var-force Ticket $object';
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 				$langs->load('ticket');
 
@@ -443,11 +453,11 @@ class InterfaceTicketEmail extends DolibarrTriggers
 			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $value) {
 				$enabled = 1;
 				if ($enabled && isset($extrafields->attributes[$object->table_element]['list'][$key])) {
-					$enabled = (int) dol_eval($extrafields->attributes[$object->table_element]['list'][$key], 1);
+					$enabled = (int) dol_eval((string) $extrafields->attributes[$object->table_element]['list'][$key], 1);
 				}
 				$perms = 1;
 				if ($perms && isset($extrafields->attributes[$object->table_element]['perms'][$key])) {
-					$perms = (int) dol_eval($extrafields->attributes[$object->table_element]['perms'][$key], 1);
+					$perms = (int) dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][$key], 1);
 				}
 
 				$qualified = true;

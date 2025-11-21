@@ -30,7 +30,7 @@
  */
 function webhookAdminPrepareHead()
 {
-	global $langs, $conf;
+	global $langs, $conf, $form;
 
 	$h = 0;
 	$head = array();
@@ -45,7 +45,7 @@ function webhookAdminPrepareHead()
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT . '/webhook/triggerhistory_list.php?mode=modulesetup';
-	$head[$h][1] = $langs->trans("TriggerHistory");
+	$head[$h][1] = $form->textwithpicto($langs->trans("TriggerHistory"), $langs->trans("TriggerHistoryAltWithLog"));
 	$head[$h][2] = 'triggerhistory';
 	$h++;
 

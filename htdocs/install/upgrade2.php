@@ -87,8 +87,8 @@ $error = 0;
 // This page can be long. We increase the allowed delay, but this does not work when we are in safe_mode.
 $err = error_reporting();
 error_reporting(0);
-if (getDolGlobalString('MAIN_OVERRIDE_TIME_LIMIT')) {
-	@set_time_limit((int) $conf->global->MAIN_OVERRIDE_TIME_LIMIT);
+if (getDolGlobalInt('MAIN_OVERRIDE_TIME_LIMIT')) {
+	@set_time_limit(getDolGlobalInt('MAIN_OVERRIDE_TIME_LIMIT'));
 } else {
 	@set_time_limit(600);
 }
@@ -198,6 +198,53 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 
 	// Load global conf
 	$conf->setValues($db);
+
+
+	// Reforce log activation (samecode than into the inc.php)
+	$conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;
+	$conf->modules['syslog'] = 'syslog';
+	$conf->global->SYSLOG_LEVEL = constant('LOG_DEBUG');
+	if (!defined('SYSLOG_HANDLERS')) {
+		define('SYSLOG_HANDLERS', '["mod_syslog_file"]');
+	}
+	if (!defined('SYSLOG_FILE')) {	// To avoid warning on systems with constant already defined
+		if (@is_writable('/tmp')) {
+			define('SYSLOG_FILE', '/tmp/dolibarr_install.log');
+		} elseif (!empty($_ENV["TMP"]) && @is_writable($_ENV["TMP"])) {
+			define('SYSLOG_FILE', $_ENV["TMP"].'/dolibarr_install.log');
+		} elseif (!empty($_ENV["TEMP"]) && @is_writable($_ENV["TEMP"])) {
+			define('SYSLOG_FILE', $_ENV["TEMP"].'/dolibarr_install.log');
+		} elseif (@is_writable('../../../../') && @file_exists('../../../../startdoliwamp.bat')) {
+			define('SYSLOG_FILE', '../../../../dolibarr_install.log'); // For DoliWamp
+		} elseif (@is_writable('../../')) {
+			define('SYSLOG_FILE', '../../dolibarr_install.log'); // For others
+		}
+		//print 'SYSLOG_FILE='.SYSLOG_FILE;exit;
+	}
+	if (defined('SYSLOG_FILE')) {
+		$conf->global->SYSLOG_FILE = constant('SYSLOG_FILE');
+	}
+	if (!defined('SYSLOG_FILE_NO_ERROR')) {
+		define('SYSLOG_FILE_NO_ERROR', 1);
+	}
+	// We init log handler for install
+	$handlers = array('mod_syslog_file');
+	foreach ($handlers as $handler) {
+		$file = DOL_DOCUMENT_ROOT.'/core/modules/syslog/'.$handler.'.php';
+		if (!file_exists($file)) {
+			throw new Exception('Missing log handler file '.$handler.'.php');
+		}
+
+		require_once $file;
+		$loghandlerinstance = new $handler();
+		if (!$loghandlerinstance instanceof LogHandler) {
+			throw new Exception('Log handler does not extend LogHandler');
+		}
+
+		if (empty($conf->loghandlers[$handler])) {
+			$conf->loghandlers[$handler] = $loghandlerinstance;
+		}
+	}
 
 
 	$listofentities = array(1);
@@ -610,7 +657,13 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			$afterversionarray = explode('.', '22.0.9');
 			$beforeversionarray = explode('.', '23.0.9');
 			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				dol_syslog("Run migrate_... versionto is between ".json_encode($afterversionarray)." and ".json_encode($beforeversionarray));
+
+				migrate_holiday_path();
+
 				migrate_apiresttokens();
+
+				migrate_blockedlog_add_hmac_key();
 			}
 		}
 
@@ -628,10 +681,8 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				'MAIN_MODULE_CRON' => 'newboxdefonly',
 				'MAIN_MODULE_COMMANDE' => 'newboxdefonly',
 				'MAIN_MODULE_BLOCKEDLOG' => 'noboxes',
-				'MAIN_MODULE_DEPLACEMENT' => 'newboxdefonly',
 				'MAIN_MODULE_DON' => 'newboxdefonly',
 				'MAIN_MODULE_ECM' => 'newboxdefonly',
-				'MAIN_MODULE_EXTERNALSITE' => 'newboxdefonly',
 				'MAIN_MODULE_EXPENSEREPORT' => 'newboxdefonly',
 				'MAIN_MODULE_FACTURE' => 'newboxdefonly',
 				'MAIN_MODULE_FOURNISSEUR' => 'newboxdefonly',
@@ -641,7 +692,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				'MAIN_MODULE_MARGIN' => 'menuonly',
 				'MAIN_MODULE_MRP' => 'menuonly',
 				'MAIN_MODULE_OPENSURVEY' => 'newboxdefonly',
-				'MAIN_MODULE_PAYBOX' => 'newboxdefonly',
+				'MAIN_MODULE_PARTNERSHIP' => 'newboxdefonly',
 				'MAIN_MODULE_PRINTING' => 'newboxdefonly',
 				'MAIN_MODULE_PRODUIT' => 'newboxdefonly',
 				'MAIN_MODULE_RECRUITMENT' => 'menuonly',
@@ -663,7 +714,8 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				$error++;
 			}
 
-			// Reload menus (this must be always and only into last targeted version)
+			// Reload menus (this must be always done, and only into last targeted version)
+			// This reload the auguria menu.To reload a dynamic menu defined into module descriptor, see previours step
 			$result = migrate_reload_menu($db, $langs, $conf);
 			if ($result < 0) {
 				$error++;
@@ -721,8 +773,8 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 	print '</table>';
 
 	if (!$error) {
-		// Set constant to ask to remake a new ping to inform about upgrade (if first ping was done and OK)
-		$sql = 'UPDATE '.MAIN_DB_PREFIX."const SET VALUE = 'torefresh' WHERE name = 'MAIN_FIRST_PING_OK_ID'";
+		// Set constant to ask to remake a new ping to inform about upgrade (if ping was already done and OK)
+		$sql = 'UPDATE '.MAIN_DB_PREFIX."const SET VALUE = 'torefresh' WHERE name = 'MAIN_FIRST_PING_OK_ID'";	// This should be useless now because constant is uniqueid+' v'+version
 		$db->query($sql, 1);
 	}
 
@@ -4323,7 +4375,7 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 		$user = new User($db);	// To avoid error during migration
 	}
 
-	dolibarr_install_syslog("upgrade2::migrate_reload_modules force=".$force.", listofmodule=".implode(',', array_keys($listofmodule)));
+	dolibarr_install_syslog("upgrade2::migrate_reload_modules force=".$force.", listofmodule=".implode(',', array_keys($listofmodule)), LOG_NOTICE);
 
 	$reloadactionformodules = array(
 		'MAIN_MODULE_AGENDA' => array('class' => 'modAgenda', 'remove' => 1),
@@ -4331,7 +4383,6 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 		'MAIN_MODULE_BARCODE' => array('class' => 'modBarcode', 'remove' => 1),
 		'MAIN_MODULE_BLOCKEDLOG' => array('class' => 'modBlockedLog', 'deleteinsertmenus' => 1),
 		'MAIN_MODULE_CRON' => array('class' => 'modCron', 'remove' => 1),
-		'MAIN_MODULE_EXTERNALSITE' => array('class' => 'modExternalSite', 'remove' => 1),
 		'MAIN_MODULE_SOCIETE' => array('class' => 'modSociete', 'remove' => 1),
 		'MAIN_MODULE_PRODUIT' => array('class' => 'modProduct'),
 		'MAIN_MODULE_SERVICE' => array('class' => 'modService'),
@@ -4393,7 +4444,7 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 					$moduletoreloadshort = $reg[1];
 				}
 
-				dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module ".$moduletoreloadshort." with mode ".$reloadmode." (generic code)");
+				dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module ".$moduletoreloadshort." with mode ".$reloadmode." (generic code)", LOG_NOTICE);
 
 				$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/mod'.$moduletoreloadshort.'.class.php';
 				if ($res) {
@@ -4405,7 +4456,7 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 					$mod->delete_menus(); // We must delete to be sure it is inserted with new values
 					$mod->init($reloadmode);
 				} else {
-					dolibarr_install_syslog('Failed to include '.DOL_DOCUMENT_ROOT.'/core/modules/mod'.$moduletoreloadshort.'.class.php');
+					dolibarr_install_syslog('Failed to include '.DOL_DOCUMENT_ROOT.'/core/modules/mod'.$moduletoreloadshort.'.class.php', LOG_ERR);
 
 					$res = @dol_include_once(strtolower($moduletoreloadshort).'/core/modules/mod'.$moduletoreloadshort.'.class.php');
 					if ($res) {
@@ -4711,6 +4762,96 @@ function migrate_user_photospath2()
 									//print $origin.'/'.$file.' -> '.$destin.'/'.$file.'<br>'."\n";
 									print '.';
 									dol_copy($origin.'/'.$file, $destin.'/'.$file, '0', 0);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	print '</td></tr>';
+}
+
+
+
+/**
+ * Migrate file from old path to new one for users
+ *
+ * @return	void
+ */
+function migrate_holiday_path()
+{
+	global $conf, $db, $langs;
+
+	print '<tr class="trforrunsql"><td>';
+
+	print '<b>'.$langs->trans('MigrationHolidayPath')."</b><br>\n";
+
+	include_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
+	$holiday = new Holiday($db);
+
+	$sql = "SELECT rowid as uid, ref, entity from ".MAIN_DB_PREFIX."holiday"; // Get list of all holiday
+
+	$resql = $db->query($sql);
+	if ($resql) {
+		while ($obj = $db->fetch_object($resql)) {
+			//$holiday->fetch($obj->uid);
+			$holiday->id = $obj->uid;
+			$holiday->ref = $obj->ref;
+			$holiday->entity = $obj->entity;
+
+			//echo '<hr>'.$holiday->id.' -> '.$holiday->entity;
+			$entity = (empty($holiday->entity) ? 1 : $holiday->entity);
+			if ($entity > 1) {
+				$dir = DOL_DATA_ROOT.'/'.$entity.'/holiday';
+			} else {
+				$dir = $conf->holiday->multidir_output[$entity]; // $conf->user->multidir_output[] for each entity is construct by the multicompany module
+			}
+
+			if ($dir) {
+				//print "Process holiday id ".$holiday->id."<br>\n";
+				$origin = $dir.'/'.get_exdir($holiday->id, 2, 0, 1, $holiday, 'holiday'); // Use old behaviour to get x/y path
+				$destin = $dir.'/'.$holiday->ref;
+
+				$origin_osencoded = dol_osencode($origin);
+
+				dol_mkdir($destin);
+
+				//echo $origin.' -> '.$destin."<br>\n";
+				if (dol_is_dir($origin)) {
+					$handle = opendir($origin_osencoded);
+					if (is_resource($handle)) {
+						while (($file = readdir($handle)) !== false) {
+							if ($file == '.' || $file == '..') {
+								continue;
+							}
+
+							if (dol_is_dir($origin.'/'.$file)) {	// it is a dir (like 'thumbs')
+								$thumbs = opendir($origin_osencoded.'/'.$file);
+								if (is_resource($thumbs)) {
+									dol_mkdir($destin.'/'.$file);
+									while (($thumb = readdir($thumbs)) !== false) {
+										if (!dol_is_file($destin.'/'.$file.'/'.$thumb)) {
+											if ($thumb == '.' || $thumb == '..') {
+												continue;
+											}
+
+											//print $origin.'/'.$file.'/'.$thumb.' -> '.$destin.'/'.$file.'/'.$thumb.'<br>'."\n";
+											print '.';
+											dol_copy($origin.'/'.$file.'/'.$thumb, $destin.'/'.$file.'/'.$thumb, '0', 0);
+											//var_dump('aaa');exit;
+										}
+									}
+									// dol_delete_dir($origin.'/'.$file);
+								}
+							} else { // it is a file
+								if (!dol_is_file($destin.'/'.$file)) {
+									//print $origin.'/'.$file.' -> '.$destin.'/'.$file.'<br>'."\n";
+									print '.';
+									dol_copy($origin.'/'.$file, $destin.'/'.$file, '0', 0);
+									//var_dump('eee');exit;
 								}
 							}
 						}
@@ -5391,7 +5532,7 @@ function migrate_apiresttokens()
 
 	$db->begin();
 
-	$sqlforalltokens = "SELECT oat.token";
+	$sqlforalltokens = "SELECT oat.tokenstring";
 	$sqlforalltokens .= " FROM ".$db->prefix()."oauth_token AS oat";
 	$sqlforalltokens .= " WHERE oat.service = 'dolibarr_rest_api'";
 
@@ -5399,7 +5540,7 @@ function migrate_apiresttokens()
 
 	if ($resalltoken) {
 		while ($tokenobj = $db->fetch_object($resalltoken)) {
-			$allexistingtokens[] = dolDecrypt($tokenobj->token);
+			$allexistingtokens[] = dolDecrypt($tokenobj->tokenstring);
 		}
 	} else {
 		$error++;
@@ -5408,7 +5549,7 @@ function migrate_apiresttokens()
 	}
 
 	if (!$error) {
-		$sql = "SELECT 'dolibarr_rest_api' AS service, u.api_key AS token, u.rowid AS fk_user, u.entity";
+		$sql = "SELECT 'dolibarr_rest_api' AS service, u.api_key AS tokenstring, u.rowid AS fk_user, u.entity";
 		$sql .= " FROM llx_user AS u";
 		$sql .= " WHERE u.api_key IS NOT NULL AND u.api_key <> ''";
 
@@ -5418,13 +5559,13 @@ function migrate_apiresttokens()
 			$tmpuser = new User($db);
 
 			while ($obj = $db->fetch_object($result)) {
-				if (!in_array(dolDecrypt($obj->token), $allexistingtokens)) {
+				if (!in_array(dolDecrypt($obj->tokenstring), $allexistingtokens)) {
 					// Load the object of the user of token so we can get the API_COUNT_CALL
 					unset($tmpuser->conf); $tmpuser->conf = new stdClass();
 					$tmpuser->fetch((int) $obj->fk_user, '', '', 1, ($obj->entity ? $obj->entity : $conf->entity));
 
 					$sqlforinsert = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, tokenstring, fk_user, datec, entity, apicount_total)";
-					$sqlforinsert .= " VALUES ('".$db->escape($obj->service)."', '".$db->escape(dolEncrypt(dolDecrypt($obj->token)))."', ";
+					$sqlforinsert .= " VALUES ('".$db->escape($obj->service)."', '".$db->escape(dolEncrypt(dolDecrypt($obj->tokenstring)))."', ";
 					$sqlforinsert .= ((int) $obj->fk_user).", '".$db->idate(dol_now())."', ".((int) $obj->entity).", ";
 					$sqlforinsert .= getDolUserInt('API_COUNT_CALL', 0, $tmpuser);
 					$sqlforinsert .= ")";
@@ -5456,4 +5597,62 @@ function migrate_apiresttokens()
 		print $langs->trans('MigratedTokens', $nbofmigration);
 	}
 	print '</td></tr>';
+}
+
+
+/**
+ * Add the HMAC key for blockedlog v2
+ *
+ * @return  int		Return -1 if KO, 1 if OK
+ */
+function migrate_blockedlog_add_hmac_key()
+{
+	global $conf, $db, $langs;
+
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+
+	print '<tr class="trforrunsql"><td colspan="4">';
+	print '<b>'.$langs->trans('InitAHMACKeyForBlockedLog')."</b>:\n";
+
+	$db->begin();
+
+	// Create HMAC if it does not exists yet
+	$hmac_encoded_secret_key = getDolGlobalString('BLOCKEDLOG_HMAC_KEY');
+	if (empty($hmac_encoded_secret_key)) {
+		// Add key
+		$hmac_secret_key = 'BLOCKEDLOGHMAC'.getRandomPassword(true);		// This is using random_int for 32 chars
+
+		$result = dolibarr_set_const($db, 'BLOCKEDLOG_HMAC_KEY', $hmac_secret_key, 'chaine', 0, 'The secret key for HMAC used for blockedlog record', 0);	// Will encrypt the value using dolCrypt and store it.
+
+		if ($result < 0) {
+			dol_print_error($db);
+			$db->rollback();
+
+			print '</td></tr>';
+			return -1;
+		}
+
+		print $langs->trans('Done');
+	} else {
+		// Decode the HMAC key
+		$hmac_secret_key = dolDecrypt($hmac_encoded_secret_key);
+
+		if (! preg_match('/^BLOCKEDLOGHMAC/', $hmac_secret_key)) {
+			print 'Error: Failed to decode the crypted value of the parameter BLOCKEDLOG_HMAC_KEY using the $dolibarr_main_crypt_key. A value was found in config parameters in database but decoding failed. May be the database data were restored onto another environment and the coding/decoding key $dolibarr_main_dolcrypt_key was not restored with the same value in conf.php file.';
+			print 'Restore the value of $dolibarr_main_crypt_key that was used for encryption in database and restart the migration.';
+			print 'If you don\'t use the Unalterable Log module, you can also remove the BLOCKEDLOG_HMAC_KEY entry from llx_const table. If you use the Unalterable Log, this is not possible because this will invalidate all past record.';
+			$db->rollback();
+
+			print '</td></tr>';
+			return -1;
+		}
+
+		print $langs->trans("NothingToDo")."\n";
+	}
+
+	$db->commit();
+
+	print '</td></tr>';
+	return 1;
 }
