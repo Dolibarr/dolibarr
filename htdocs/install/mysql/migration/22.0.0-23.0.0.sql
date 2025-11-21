@@ -150,6 +150,30 @@ ALTER TABLE llx_oauth_token ADD COLUMN apicount_total BIGINT UNSIGNED DEFAULT 0;
 
 ALTER TABLE llx_webhook_target ADD COLUMN entity integer DEFAULT 1 NOT NULL;
 
+CREATE TABLE llx_webhook_history(
+	-- BEGIN MODULEBUILDER FIELDS
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	--ref varchar(128) NOT NULL,
+	trigger_code varchar(128) NOT NULL,
+	trigger_data text NOT NULL,
+	fk_target integer NOT NULL,
+	url varchar(255) NOT NULL,
+	error_message text,
+	--note_public text,
+	note_private text,
+	date_creation datetime NOT NULL,
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	fk_user_creat integer NOT NULL,
+	--fk_user_modif integer,
+	import_key varchar(14),
+	status integer DEFAULT 1 NOT NULL
+	-- END MODULEBUILDER FIELDS
+) ENGINE=innodb;
+
+ALTER TABLE llx_webhook_history ADD COLUMN trigger_code varchar(128) NOT NULL DEFAULT 'UNKOWN';
+ALTER TABLE llx_webhook_history ADD COLUMN error_message text;
+
+
 ALTER TABLE llx_extrafields ADD COLUMN emptyonclone integer DEFAULT 0 AFTER alwayseditable;
 
 ALTER TABLE llx_blockedlog ADD COLUMN object_format varchar(16) DEFAULT 'V1' AFTER object_version;
@@ -365,5 +389,9 @@ CREATE TABLE llx_expensereport_det_extrafields
 	fk_object                 integer NOT NULL,
 	import_key                varchar(14)
 ) ENGINE=innodb;
+
+
+ALTER TABLE llx_blockedlog ADD INDEX idx_ref_object (ref_object);
+ALTER TABLE llx_blockedlog ADD CONSTRAINT fk_linktoref FOREIGN KEY (linktoref) REFERENCES llx_blockedlog(ref_object);
 
 -- end of migration

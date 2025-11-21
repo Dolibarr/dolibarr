@@ -5380,7 +5380,7 @@ abstract class CommonObject
 	 *	@param	string		$action				Action code
 	 *	@param  Societe		$seller            	Object of seller third party
 	 *	@param  ?Societe  	$buyer             	Object of buyer third party
-	 *	@param	int			$selected		   	ID line selected
+	 *	@param	int<0,max>	$selected		   	ID line selected
 	 *	@param  int	    	$dateSelector      	1=Show also date range input fields
 	 *  @param	string		$defaulttpldir		Directory where to find the template
 	 *	@return	void
@@ -5479,7 +5479,7 @@ abstract class CommonObject
 	 *	@param  int		    		$dateSelector      	1=Show also date range input fields
 	 *	@param  Societe	    		$seller            	Object of seller third party
 	 *	@param  ?Societe	    	$buyer             	Object of buyer third party
-	 *	@param	int					$selected		   	ID line selected
+	 *	@param	int<0,max>			$selected		   	ID line selected
 	 *  @param  ?ExtraFields		$extrafields		Object of extrafields
 	 *  @param	string				$defaulttpldir		Directory where to find the template (deprecated)
 	 *	@return	void

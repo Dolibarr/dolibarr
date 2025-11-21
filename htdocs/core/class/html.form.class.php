@@ -2593,8 +2593,10 @@ class Form
 			}
 
 			$out .= '<li>';
+
 			$userstatic->fetch($value['id']);
-			$out .= $userstatic->getNomUrl(-1);
+			$out .= $userstatic->getNomUrl(-4);
+
 			if ($i == 0) {
 				$ownerid = $value['id'];
 				$out .= ' (' . $langs->trans("Owner") . ')';
@@ -7878,8 +7880,8 @@ class Form
 
 					// Icon calendar
 					if ($disabled) {
-						$retstringbutton = '<button id="' . $prefix . 'Button" type="button" class="dpInvisibleButtons">' . img_object($langs->trans("Disabled"), 'calendarday', 'class="datecallink"') . '</button>';
-						$retstring = $retstringbutton . $retstring;
+						$retstringbutton = '<button id="' . $prefix . 'Button" type="button" class="dpInvisibleButtons">' . img_object($langs->trans("Disabled"), 'calendarday', 'class="datecallink ui-datepicker-notrigger"') . '</button>';
+						$retstring = $retstring . $retstringbutton;
 					}
 
 					$retstring .= '</div>';
@@ -10860,6 +10862,15 @@ class Form
 			$object->load_previous_next_ref((isset($object->next_prev_filter) ? $object->next_prev_filter : ''), $fieldid, $nodbprefix);
 
 			$navurl = $_SERVER["PHP_SELF"];
+
+			// Special case for token card
+			if ($paramid == 'api_token_card') {
+				if (preg_match('/\/user\/api_token/', $navurl)) {
+					$navurl = preg_replace('/card/', 'list', $navurl);
+					$paramid = 'id';
+				}
+			}
+
 			// Special case for project/task page
 			if ($paramid == 'project_ref') {
 				if (preg_match('/\/tasks\/(task|contact|note|document)\.php/', $navurl)) {     // TODO Remove this when nav with project_ref on task pages are ok

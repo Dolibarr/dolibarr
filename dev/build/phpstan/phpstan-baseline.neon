@@ -11761,18 +11761,6 @@ parameters:
 			path: ../../../htdocs/product/class/api_products.class.php
 
 		-
-			message: '#^Method Products\:\:getPurchasePrices\(\) should return array\<ProductFournisseur\> but returns object\.$#'
-			identifier: return.type
-			count: 1
-			path: ../../../htdocs/product/class/api_products.class.php
-
-		-
-			message: '#^Parameter \#1 \$object of method Products\:\:_cleanObjectDatas\(\) expects object, array\<ProductFournisseur\>\|int given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/product/class/api_products.class.php
-
-		-
 			message: '#^Strict comparison using \=\=\= between 2 and 2 will always evaluate to true\.$#'
 			identifier: identical.alwaysTrue
 			count: 1
@@ -12739,22 +12727,10 @@ parameters:
 			path: ../../../htdocs/projet/card.php
 
 		-
-			message: '#^Parameter \#1 \$object of method Projects\:\:_cleanObjectDatas\(\) expects object, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/projet/class/api_projects.class.php
-
-		-
-			message: '#^Method Tasks\:\:getRoles\(\) should return array\<int, string\> but returns list\<object\>\.$#'
+			message: '#^Method Projects\:\:getRoles\(\) should return array\<object\> but returns list\<string\>\.$#'
 			identifier: return.type
 			count: 1
-			path: ../../../htdocs/projet/class/api_tasks.class.php
-
-		-
-			message: '#^Parameter \#1 \$object of method Tasks\:\:_cleanObjectDatas\(\) expects object, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/projet/class/api_tasks.class.php
+			path: ../../../htdocs/projet/class/api_projects.class.php
 
 		-
 			message: '#^Call to function method_exists\(\) with \$this\(Project\) and ''getLibStatut'' will always evaluate to true\.$#'

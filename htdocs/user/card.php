@@ -1247,22 +1247,23 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print $valuetoshow;
 	print '</td></tr>';
 
-	if (isModEnabled('api')) {
-		// API key
-		//$generated_password = getRandomPassword(false);
-		print '<tr><td>'.$langs->trans("ApiKey").'</td>';
-		print '<td>';
-		print '<input class="minwidth300 maxwidth400 widthcentpercentminusx" minlength="12" maxlength="128" type="text" id="api_key" name="api_key" value="'.GETPOST('api_key', 'alphanohtml').'" autocomplete="off" spellcheck="false">';
-		if (!empty($conf->use_javascript_ajax)) {
-			print img_picto($langs->transnoentities('Generate'), 'refresh', 'id="generate_api_key" class="linkobject paddingleft"');
+	if (!getDolGlobalString('API_IN_TOKEN_TABLE')) {
+		if (isModEnabled('api')) {
+			// API key
+			//$generated_password = getRandomPassword(false);
+			print '<tr><td>'.$langs->trans("ApiKey").'</td>';
+			print '<td>';
+			print '<input class="minwidth300 maxwidth400 widthcentpercentminusx" minlength="12" maxlength="128" type="text" id="api_key" name="api_key" value="'.GETPOST('api_key', 'alphanohtml').'" autocomplete="off" spellcheck="false">';
+			if (!empty($conf->use_javascript_ajax)) {
+				print img_picto($langs->transnoentities('Generate'), 'refresh', 'id="generate_api_key" class="linkobject paddingleft"');
+			}
+			print '</td></tr>';
+		} else {
+			// PARTIAL WORKAROUND
+			$generated_fake_api_key = getRandomPassword(false);
+			print '<input type="hidden" name="api_key" value="'.$generated_fake_api_key.'">';
 		}
-		print '</td></tr>';
-	} else {
-		// PARTIAL WORKAROUND
-		$generated_fake_api_key = getRandomPassword(false);
-		print '<input type="hidden" name="api_key" value="'.$generated_fake_api_key.'">';
 	}
-
 
 	print '</table><hr><table class="border centpercent">';
 
@@ -1973,6 +1974,9 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			// Credentials section
 
+			// MAIN_SECURITY_ALLOW_TOTP=1 to enabled 2FA
+			// API_IN_TOKEN_TABLE=1 to enable use of oaut_token table for API tokens
+
 			print '<br>';
 			print '<!-- credential section -->'."\n";
 			print '<div class="div-table-responsive-no-min">';
@@ -1984,12 +1988,6 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '<div class="left inline-block">';
 			print img_picto('', 'security', 'class="paddingleft pictofixedwidth"').$langs->trans("SecurityForConnection");
 			print '</div>';
-			//print '</th>';
-			//print '<th class="liste_titre right">';
-			if (getDolGlobalString('MAIN_SECURITY_ALLOW_TOTP') && $permissiontoeditpasswordandsee) {
-				$s = '<!-- MAIN_SECURITY_ALLOW_TOTP --><span class="fa fa-plus-circle valignmiddle btnTitle-icon"></span>';
-				print dolButtonToOpenUrlInDialogPopup('openpopuptoaddcredential', $langs->transnoentitiesnoconv("AddCredential"), $s, '/user/credentials.php?userid='.$object->id.'&token='.newToken());
-			}
 			print '</div>';
 			print '</th>';
 			print '</tr>';
@@ -2046,6 +2044,19 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '</tr>'."\n";
 			}
 
+			// Token for 2FA
+			if (getDolGlobalString('MAIN_SECURITY_ALLOW_TOTP') && $permissiontoeditpasswordandsee) {
+				print '<tr class="nooddeven"><td>'.$langs->trans("2FA").'</td>';
+				print '<td>';
+				print '<div class="centpercent display-flex">';
+				print '<span class="badge badge-info">999</span>';
+				print '<div class="left inline-block">';
+				$s = '<!-- MAIN_SECURITY_ALLOW_TOTP --><span class="fa fa-pen valignmiddle btnTitle-icon"></span>';
+				print dolButtonToOpenUrlInDialogPopup('openpopuptoaddcredential', $langs->transnoentitiesnoconv("Edit"), $s, '/user/credentials.php?userid='.$object->id.'&token='.newToken());
+				print '</span></span>';
+				print '</td></tr>';
+			}
+
 			// Token for OAuth
 			$tmparrayofauthmode = explode(',', $dolibarr_main_authentication);
 			foreach ($tmparrayofauthmode as $tmpauthmode) {
@@ -2082,16 +2093,32 @@ if ($action == 'create' || $action == 'adduserldap') {
 			if (isModEnabled('api') && ($user->id == $id || $user->admin || $user->hasRight("api", "apikey", "generate"))) {
 				print '<tr class="nooddeven"><td>'.$langs->trans("ApiKey").'</td>';
 				print '<td>';
-				if (!empty($object->api_key)) {
-					print '<span class="opacitymedium">';
-					print showValueWithClipboardCPButton($object->api_key, 1, $langs->transnoentities("Hidden"));		// TODO Add an option to also reveal the hash, not only copy paste
-					print '</span>';
-				}
-				if (getDolGlobalString('API_ENABLE_COUNT_CALLS') || !empty($dolibarr_api_count_always_enabled)) {
-					print ' &nbsp; <span class="badge badge-info" title="'.$langs->trans("TotalAPICall").'">'.getDolUserInt('API_COUNT_CALL').'</span>';
+				if (getDolGlobalString('API_IN_TOKEN_TABLE')) {
+					print '<div class="centpercent display-flex">';
+					print '<span class="badge badge-info">999</span>';
+					/*print '<a href="'.DOL_URL_ROOT.'/user/api_token/list.php?id='.$object->id.'">';
+					print $langs->trans("APIKeys");
+					print '</a>';*/
+					print '<div class="left inline-block">';
+					$s = '<!-- MAIN_SECURITY_ALLOW_TOTP --><span class="fa fa-pen valignmiddle btnTitle-icon"></span>';
+					print dolButtonToOpenUrlInDialogPopup('openpopuptoaddapitoken', $langs->transnoentitiesnoconv("APIKeys"), $s, '/user/api_token/list.php?id='.$object->id.'&token='.newToken());
+					print '</div>';
+					print '</div>';
+				} else {
+					if (!empty($object->api_key)) {
+						print '<span class="opacitymedium">';
+						print showValueWithClipboardCPButton($object->api_key, 1, $langs->transnoentities("Hidden"));		// TODO Add an option to also reveal the hash, not only copy paste
+						print '</span>';
+					}
+					if (getDolGlobalString('API_ENABLE_COUNT_CALLS') || !empty($dolibarr_api_count_always_enabled)) {
+						print ' &nbsp; <span class="badge badge-info" title="'.$langs->trans("TotalAPICall").'">';
+						print getDolUserInt('API_COUNT_CALL');
+						print '</span>';
+					}
 				}
 				print '</td></tr>';
 			}
+
 			// Show private information about login
 			if ((getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0) || (getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 1 && $object->id == $user->id)) {
 				print '<tr class="nooddeven"><td>'.$langs->trans("LastConnexion").'</td>';
@@ -2686,16 +2713,18 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print "</td></tr>\n";
 
 			// API key
-			if (isModEnabled('api')) {
-				print '<tr><td>'.$langs->trans("ApiKey").'</td>';
-				print '<td>';
-				if ($permissiontoeditpasswordandsee || $user->hasRight("api", "apikey", "generate")) {
-					print '<input class="minwidth300 maxwidth400 widthcentpercentminusx" minlength="12" maxlength="128" type="text" id="api_key" name="api_key" value="'.$object->api_key.'" autocomplete="off" spellcheck="false">';
-					if (!empty($conf->use_javascript_ajax)) {
-						print img_picto($langs->transnoentities('Generate'), 'refresh', 'id="generate_api_key" class="linkobject paddingleft"');
+			if (!getDolGlobalString('API_IN_TOKEN_TABLE')) {
+				if (isModEnabled('api')) {
+					print '<tr><td>'.$langs->trans("ApiKey").'</td>';
+					print '<td>';
+					if ($permissiontoeditpasswordandsee || $user->hasRight("api", "apikey", "generate")) {
+						print '<input class="minwidth300 maxwidth400 widthcentpercentminusx" minlength="12" maxlength="128" type="text" id="api_key" name="api_key" value="'.$object->api_key.'" autocomplete="off" spellcheck="false">';
+						if (!empty($conf->use_javascript_ajax)) {
+							print img_picto($langs->transnoentities('Generate'), 'refresh', 'id="generate_api_key" class="linkobject paddingleft"');
+						}
 					}
+					print '</td></tr>';
 				}
-				print '</td></tr>';
 			}
 
 			// OpenID url

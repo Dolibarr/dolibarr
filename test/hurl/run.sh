@@ -23,8 +23,9 @@ Options:
   --apikey=APIKEY      Specify the API key for API tests.
   --suburl=SUBURL      Specify the suburl of the Dolibarr server.
   --exclude=PATTERN    Exclude tests that match the specified pattern.
-  --verbose            Verbose hurl output
+  --verbose | -v       Verbose hurl output
   --very-verbose       Very verbose hurl output
+  --quiet | -q         Disable info output
   --help               Display this help message and exit.
 
 Test Filters:
@@ -42,15 +43,21 @@ Examples:
 EOHELP
 }
 
-# Github compatible messages
-print_error() { printf "::error::%s\n" "$*" >&2 ; }
-print_warning() { printf "::warning::%s\n" "$*" >&2 ; }
-print_info() { printf "::notice::%s\n" "$*" >&2 ; }
-
+if [[ -n "${GITHUB_WORKSPACE}" ]]; then
+	# Github compatible messages
+	print_error() { printf "::error::%s\n" "$*" >&2; }
+	print_warning() { if [[ "${QUIET}" = false ]]; then printf "::warning::%s\n" "$*" >&2 ; fi; }
+	print_info() { if [[ "${QUIET}" = false ]]; then printf "::notice::%s\n" "$*" >&2 ; fi; }
+else
+	print_error() { printf "ERROR: %s\n" "$*" >&2; }
+	print_warning() { if [[ "${QUIET}" = false ]]; then printf "WARNING: %s\n" "$*" >&2 ; fi; }
+	print_info() { if [[ "${QUIET}" = false ]]; then printf "INFO: %s\n" "$*" >&2 ; fi; }
+fi
 
 # Parse command-line arguments as test filters
 test_filters=()
 exclude_patterns=()
+QUIET=false
 
 for arg in "$@"; do
 	case "$arg" in
@@ -83,6 +90,9 @@ for arg in "$@"; do
 			;;
 		--very-verbose|--verbose|-v)
 			VERBOSE=${arg}
+			;;
+		--quiet|-q)
+			QUIET=true
 			;;
 		--help)
 			display_help

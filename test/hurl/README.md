@@ -134,13 +134,23 @@ This will exclude all tests that contain either `setup_modules` or `status` in t
 
 ### Verbose Output
 
-You can enable verbose output by providing the `--verbose` or `--very-verbose` option to the `run.sh` script. For example:
+You can enable verbose output by providing the `--verbose` (also `-v`) or `--very-verbose` option to the `run.sh` script. For example:
 
 ```bash
 ./run.sh --verbose setup_modules
 ```
 
 This will run all tests that contain `setup_modules` in their name with verbose output.
+
+### Quiet Output
+
+You can disable part of the informational output by providing the `--quiet` (also `-q`) option to the `run.sh` script. For example:
+
+```bash
+./run.sh --quiet setup_modules
+```
+
+This will run all tests that contain `setup_modules` in their name with info output disabled.
 
 ## Directory and file structure for hurl tests
 
