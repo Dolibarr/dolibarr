@@ -1564,10 +1564,15 @@ class pdf_sponge extends ModelePDFFactures
 
 					$posy += 2;
 
-					// SHOW EPC QR CODE
-					if (getDolGlobalString('INVOICE_ADD_EPC_QR_CODE') == 'bottom') {
+					// SHOW EPC QR CODE - at bottom, but only if unpaid amount exists
+					if ((getDolGlobalString('INVOICE_ADD_EPC_QR_CODE') == 'bottom') && ($object->getRemainToPay() > 0)) {
 						$qrPosX = 120;
-						$qrPosY = $posy;
+						// Check for the existence of payment information
+						if ($object->getSommePaiement(0) > 0) {
+							$qrPosY = $posy+10;
+						} else {
+							$qrPosY = $posy;
+						}
 						$qrCodeColor = array('25', '25', '25');
 						$styleQr = array(
 							'border' => false,
@@ -1579,9 +1584,9 @@ class pdf_sponge extends ModelePDFFactures
 						);
 
 						$EPCQrCodeString = $object->buildEPCQrCodeString();
-						$pdf->write2DBarcode($EPCQrCodeString, 'QRCODE,M', $qrPosX, $qrPosY, 25, 25, $styleQr, 'N');
+						$pdf->write2DBarcode($EPCQrCodeString, 'QRCODE,M', $qrPosX, $qrPosY, 20, 20, $styleQr, 'N');
 
-						$pdf->SetXY($qrPosX + 30, $posy + 5);
+						$pdf->SetXY($qrPosX + 25, $qrPosY + 5);
 						$pdf->SetFont('', '', $default_font_size - 5);
 						$pdf->MultiCell(30, 3, $outputlangs->transnoentitiesnoconv("INVOICE_ADD_EPC_QR_CODEPay"), 0, 'L', false);
 						$posy = $pdf->GetY() + 2;
