@@ -100,11 +100,12 @@ HTTP 200
 # GET emailtemplates DOLAPIENTITY: 2
 GET http://{{hostnport}}/api/index.php/emailtemplates
 DOLAPIENTITY: 2
-HTTP 403
+HTTP 401
 [Asserts]
 jsonpath "$.error" exists
-jsonpath "$.error.code" == 403
-jsonpath "$.error.message" == "Forbidden: denied access to email templates"
+jsonpath "$.error.code" == 401
+jsonpath "$.error.message" contains "Unauthorized"
+jsonpath "$.error.message" contains "Token not valid (may be a typo or a wrong entity)"
 
 # GET id of first element
 GET http://{{hostnport}}/api/index.php/emailtemplates?limit=1&page=0
