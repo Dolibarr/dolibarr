@@ -90,8 +90,14 @@ class DateField extends CommonField
 			$value = '-1';
 		}
 
+		// Do not whow "add now link" (eg for birthday date)
+		$addnowlink = 1;
+		if (in_array($fieldInfos->key, array('birth'))) {
+			$addnowlink = 0;
+		}
+
 		// TODO Must also support $moreAttrib and $moreCss ?
-		return self::$form->selectDate($value, $htmlName, 0, 0, $required, '', 1, 1, 0, 1);
+		return self::$form->selectDate($value, $htmlName, 0, 0, $required, '', 1, $addnowlink, 0, 1);
 	}
 
 	/**
@@ -139,9 +145,10 @@ class DateField extends CommonField
 	{
 		$result = parent::verifyFieldValue($fieldInfos, $key, $value);
 		if ($result && !$this->isEmptyValue($fieldInfos, $value)) {
-			if (!self::$validator->isTimestamp($value)) {
+			// FIXME this check is not valid
+			/*if (!self::$validator->isTimestamp($value)) {
 				return false;
-			}
+			}*/
 
 			$result = true;
 		}
