@@ -44,16 +44,41 @@ if ( !$result ) {
 	die "Error: Can't open descriptor file " . $SOURCE
 	  . "/htdocs/filefunc.inc.php\n";
 }
+my $PROJVERSION = "";
 while (<$IN>) {
 	if ( $_ =~ /define\('DOL_VERSION', '([\d\.a-z\-]+)'\)/ ) {
-		my $PROJVERSION = $1;
+		$PROJVERSION = $1;
 		last;
 	}
 }
 close $IN;
+
+if ( $PROJVERSION eq "" ) {
+	my $DOL_MAJOR_VERSION;
+	my $DOL_MINOR_VERSION;
+	my @VERSION_FILES = ( "filefunc.inc.php", "version.inc.php" );
+	foreach my $file (@VERSION_FILES) {
+		$result = open( my $IN, "<", $SOURCE . "/htdocs/$file" );
+		if ( !$result ) {
+			die "Error: Can't open descriptor file " . $SOURCE
+			  . "/htdocs/$file\n";
+		}
+		while (<$IN>) {
+			if ( $_ =~ /define\('DOL_MAJOR_VERSION', '([\d\.a-z\-]+)'\)/ ) {
+				$DOL_MAJOR_VERSION = $1;
+			}
+			if ( $_ =~ /define\('DOL_MINOR_VERSION', '([\d\.a-z\-]+)'\)/ ) {
+				$DOL_MINOR_VERSION = $1;
+			}
+		}
+		close $IN;
+	}
+	$PROJVERSION = $DOL_MAJOR_VERSION . '.' . $DOL_MINOR_VERSION;
+}
+
 ( my $MAJOR, my $MINOR, my $BUILD ) = split( /\./, $PROJVERSION, 3 );
-if ( $MINOR eq '' ) {
-	die "Error can't detect version into " . $SOURCE
+if ( !defined($MINOR) || $MINOR eq '' ) {
+	die "Error can't detect version from " . $SOURCE
 	  . "/htdocs/filefunc.inc.php";
 }
 
