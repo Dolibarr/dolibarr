@@ -33,6 +33,14 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
@@ -47,16 +55,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Societe $mysoc
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "bills", "members", "users", "other", "paypal"));
@@ -135,7 +133,7 @@ if ($id) {
 $permissiontoeditextra = $canaddmember;
 if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
 	// For action 'update_extras', is there a specific permission set for the attribute to update
-	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+	$permissiontoeditextra = dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
 }
 
 // Security check
@@ -373,10 +371,14 @@ if (empty($reshook)) {
 			//$object->note = trim(GETPOST("comment", "restricthtml"));
 			$object->morphy = GETPOST("morphy", 'alpha');
 
-			if (GETPOST('deletephoto', 'alpha')) {
-				$object->photo = '';
-			} elseif (!empty($_FILES['photo']['name'])) {
+			$current_photo = '';
+			if (!empty($_FILES['photo']['name'])) {
+				$current_photo = $object->photo;
 				$object->photo = dol_sanitizeFileName($_FILES['photo']['name']);
+			}
+			if (GETPOST('deletephoto')) {
+				$current_photo = $object->photo;
+				$object->photo = '';
 			}
 
 			// Get status and public property
@@ -427,16 +429,21 @@ if (empty($reshook)) {
 					// Logo/Photo save
 					$dir = $conf->member->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, 'member').'/photos';
 					$file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
+					if (GETPOST('deletephoto') && $current_photo) {
+						$fileimg = $dir.'/'.$current_photo;
+						$dirthumbs = $dir.'/thumbs';
+						dol_delete_file($fileimg);
+						dol_delete_dir_recursive($dirthumbs);
+					}
 					if ($file_OK) {
-						if (GETPOST('deletephoto')) {
-							require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-							$fileimg = $conf->member->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, 'member').'/photos/'.$object->photo;
-							$dirthumbs = $conf->member->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, 'member').'/photos/thumbs';
-							dol_delete_file($fileimg);
-							dol_delete_dir_recursive($dirthumbs);
-						}
-
 						if (image_format_supported($_FILES['photo']['name']) > 0) {
+							if ($current_photo != $object->photo) {
+								$fileimg = $dir.'/'.$current_photo;
+								$dirthumbs = $dir.'/thumbs';
+								dol_delete_file($fileimg);
+								dol_delete_dir_recursive($dirthumbs);
+							}
+
 							dol_mkdir($dir);
 
 							if (@is_dir($dir)) {
@@ -446,6 +453,15 @@ if (empty($reshook)) {
 								} else {
 									// Create thumbs
 									$object->addThumbs($newfile);
+
+									// Index file in database
+									if (getDolGlobalString('MEMBER_PHOTO_ALLOW_EXTERNAL_DOWNLOAD')) {
+										require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+										// the dir dirname($newfile) is directory of logo, so we should have only one file at once into index, so we delete indexes for the dir
+										deleteFilesIntoDatabaseIndex(dirname($newfile), '', '', $object);
+										// now we index the uploaded logo file
+										addFileIntoDatabaseIndex(dirname($newfile), basename($newfile), '', 'uploaded', 1, $object);
+									}
 								}
 							}
 						} else {
@@ -1088,8 +1104,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$listetype_natures_json = json_encode($listetype_natures);
 
 		print '<tr><td class="fieldrequired">'.$langs->trans("MemberNature")."</td><td>\n";
-		print '<span id="spannature1" class="nonature-back spannature paddinglarge marginrightonly"><label for="phisicalinput" class="valignmiddle">'.$morphys["phy"].'<input id="phisicalinput" class="flat checkforselect marginleftonly valignmiddle" type="radio" name="morphy" value="phy"'.($checkednature == "phy" ? ' checked="checked"' : '').'></label></span>';
-		print '<span id="spannature2" class="nonature-back spannature paddinglarge marginrightonly"><label for="moralinput" class="valignmiddle">'.$morphys["mor"].'<input id="moralinput" class="flat checkforselect marginleftonly valignmiddle" type="radio" name="morphy" value="mor"'.($checkednature == "mor" ? ' checked="checked"' : '').'></label></span>';
+		print '<span id="spannature1" class="nonature-back spannature paddinglarge marginrightonly"><label for="phisicalinput" class="spanlabel">'.$morphys["phy"].'</label><input id="phisicalinput" class="flat checkforselect marginleftonly valignmiddle" type="radio" name="morphy" value="phy"'.($checkednature == "phy" ? ' checked="checked"' : '').'></span>';
+		print '<span id="spannature2" class="nonature-back spannature paddinglarge marginrightonly"><label for="moralinput" class="spanlabel">'.$morphys["mor"].'</label><input id="moralinput" class="flat checkforselect marginleftonly valignmiddle" type="radio" name="morphy" value="mor"'.($checkednature == "mor" ? ' checked="checked"' : '').'></span>';
 
 		// Add JS to manage the background of nature
 		if ($conf->use_javascript_ajax) {
@@ -1170,7 +1186,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print "</td>\n";
 
 		// Company
-		print '<tr><td id="tdcompany">'.$langs->trans("Company").'</td><td>'.img_picto('', 'company', 'class="pictofixedwidth"').'<input type="text" name="societe" class="minwidth300" maxlength="128" value="'.(GETPOSTISSET('societe') ? GETPOST('societe', 'alphanohtml') : $soc->name).'"></td></tr>';
+		print '<tr><td id="tdcompany">'.$langs->trans("Company").' / '.$langs->trans("Organization").'</td><td>'.img_picto('', 'company', 'class="pictofixedwidth"').'<input type="text" name="societe" class="minwidth300" maxlength="128" value="'.(GETPOSTISSET('societe') ? GETPOST('societe', 'alphanohtml') : $soc->name).'"></td></tr>';
 
 		// Civility
 		print '<tr><td>'.$langs->trans("UserTitle").'</td><td>';
@@ -1883,7 +1899,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/adherents/list.php', ['restore_lastsearch_values' => 1]).'">'.$langs->trans("BackToList").'</a>';
 
-		$morehtmlref = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/adherents/vcard.php', ['id' => $object->id]).'" class="refid">';
+		$morehtmlref = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/adherents/vcard.php', ['id' => $object->id]).'" class="refid valignmiddle">';
 		$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 		$morehtmlref .= '</a>';
 
@@ -1898,16 +1914,16 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Login
 		if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
-			print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.dol_escape_htmltag($object->login).'</td></tr>';
+			print '<tr><td class="titlefieldmiddle">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.dol_escape_htmltag($object->login).'</td></tr>';
 		}
 
 		// Type
-		print '<tr><td class="titlefield">'.$langs->trans("Type").'</td>';
+		print '<tr><td class="titlefieldmiddle">'.$langs->trans("Type").'</td>';
 		print '<td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
 
 		// Morphy
 		print '<tr><td>'.$langs->trans("MemberNature").'</td>';
-		print '<td class="valeur" >'.$object->getmorphylib('', 1).'</td>';
+		print '<td class="valeur">'.$object->getmorphylib('', 1).'</td>';
 		print '</tr>';
 
 		// Company
@@ -1972,13 +1988,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Tags / Categories
 		if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 			print '<tr><td>'.$langs->trans("Categories").'</td>';
-			print '<td colspan="2">';
+			print '<td>';
 			print $form->showCategories($object->id, Categorie::TYPE_MEMBER, 1);
 			print '</td></tr>';
 		}
 
 		// Birth Date
-		print '<tr><td class="titlefield">'.$langs->trans("DateOfBirth").'</td><td class="valeur">'.dol_print_date($object->birth, 'day').'</td></tr>';
+		print '<tr><td class="titlefieldmiddle">'.$langs->trans("DateOfBirth").'</td><td class="valeur">'.dol_print_date($object->birth, 'day').'</td></tr>';
 
 		// Default language
 		if (getDolGlobalInt('MAIN_MULTILANGS')) {

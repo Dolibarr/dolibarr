@@ -375,61 +375,45 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 }
 
 .spannature {
-	padding-top: 5px !important;
+	padding-top: 6px !important;
 	padding-bottom: 6px !important;
+	vertical-align: middle;
 }
 
 .nonature-back {
 	background-color: #EEE;
-	padding: 2px;
-	margin: 2px;
-	border-radius: 3px;
 }
 .prospect-back {
 	background-color: #a7c5b0 !important;
 	color: #FFF !important;
-	padding: 2px;
-	margin: 2px;
-	border-radius: 3px;
 }
 .customer-back {
 	background-color: #55955d !important;
 	color: #FFF !important;
-	padding: 2px;
-	margin: 2px;
-	border-radius: 3px;
 }
 .vendor-back {
 	background-color: #599caf !important;
 	color: #FFF !important;
-	padding: 2px;
-	margin: 2px;
-	border-radius: 3px;
 }
 .user-back {
 	background-color: #79633f !important;
 	color: #FFF !important;
-	padding: 2px;
-	margin: 2px;
-	border-radius: 3px;
 }
 .member-company-back {
-	padding: 2px;
-	margin: 2px;
 	background-color: #e4e4e4;
 	color: #666;
-	border-radius: 3px;
 	white-space: nowrap;
 }
 .member-individual-back {
-	padding: 2px;
-	margin: 2px;
 	background-color: #e4e4e4;
 	color: #666;
-	border-radius: 3px;
 	white-space: nowrap;
 }
-
+.nonature-back, .prospect-back, .customer-back, .vendor-back, .user-back, .member-company-back, .member-individual-back {
+	padding: 2px;
+	margin: 2px;
+	border-radius: 5px;
+}
 
 .bg-infobox-project{
 	<?php echo $prefix; ?>color: #6c6aa8 !important;
@@ -468,7 +452,7 @@ a.vmenu span, span.vmenu, span.vmenu span {
 	/* color: var(--colortextbackvmenu) !important; */
 }
 
-.infobox-adherent, .infobox-member {
+.infobox-adherent, .infobox-member, .infobox-expensereport {
 	color: #79633f;
 }
 .infobox-project{
@@ -495,14 +479,11 @@ a.vmenu span, span.vmenu, span.vmenu span {
 .infobox-bank_account{
 	color: #b0bb39;
 }
-.infobox-adherent, .infobox-member {
-	color: #79633f;
-}
-.infobox-expensereport{
-	color: #79633f;
-}
 .infobox-holiday{
 	color: #755114;
+}
+.infobox-portal {
+	color: #304;
 }
 
 

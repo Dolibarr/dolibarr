@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015		Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016		Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -233,7 +233,6 @@ class Contracts extends DolibarrApi
 	public function post($request_data = null)
 	{
 		global $conf;
-
 		if (!DolibarrApiAccess::$user->hasRight('contrat', 'creer')) {
 			throw new RestException(403, "Insufficient rights");
 		}
@@ -249,8 +248,8 @@ class Contracts extends DolibarrApi
 			if ($field == 'id') {
 				throw new RestException(400, 'Creating with id field is forbidden');
 			}
-			if ($field == 'entity' && $value != $conf->entity) {
-				throw new RestException(403, 'Creating entity not the same as your API user is forbidden');
+			if ($field == 'entity' && ((int) $value) != ((int) $conf->entity)) {
+				throw new RestException(403, 'Creating with entity='.((int) $value).' MUST be the same entity='.((int) $conf->entity).' as your API user/key belongs to');
 			}
 
 			if ($field == 'socid') {
@@ -936,9 +935,12 @@ class Contracts extends DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
+	 * @phpstan-template T
 	 *
 	 * @param   Object  $object     Object to clean
 	 * @return  Object              Object with cleaned properties
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	protected function _cleanObjectDatas($object)
 	{

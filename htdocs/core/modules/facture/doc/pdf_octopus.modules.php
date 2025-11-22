@@ -10,7 +10,7 @@
  * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Anthony Berton          <anthony.berton@bb2a.fr>
- * Copyright (C) 2022-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
+ * Copyright (C) 2022-2025  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2022-2024  Eric Seigne             <eric.seigne@cap-rel.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025	Nick Fragoulis
@@ -579,7 +579,7 @@ class pdf_octopus extends ModelePDFFactures
 				// Call hook printUnderHeaderPDFline
 				$parameters = array(
 					'object' => $object,
-					'i' => $i,
+					// 'i' => $i, // we aren't in lines
 					'pdf' => &$pdf,
 					'outputlangs' => $outputlangs,
 					'hidedetails' => $hidedetails
@@ -599,7 +599,12 @@ class pdf_octopus extends ModelePDFFactures
 				$nexY = $this->tab_top - 1;
 
 				// Specific stuff for situations invoices first page
-				$tab_top = 90;
+				if (getDolGlobalInt('INVOICE_SHOW_SHIPPING_ADDRESS')) {
+					$tab_top = 130;
+				} else {
+					$tab_top = 90;
+				}
+
 				$tab_height = 130;
 				$tab_height_newpage = 150;
 
@@ -1172,11 +1177,11 @@ class pdf_octopus extends ModelePDFFactures
 					$pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
 				}
 				// Add terms to sale
-				if (!empty($mysoc->termsofsale) && getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_INVOICE')) {
+				if (getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_INVOICE')) {
 					$termsofsalefilename = getDolGlobalString('MAIN_INFO_INVOICE_TERMSOFSALE');
-					$termsofsale = $conf->mycompany->dir_output.'/'.$termsofsalefilename;
-					if (!empty($conf->mycompany->multidir_output[$object->entity ?? $conf->entity])) {
-						$termsofsale = $conf->mycompany->multidir_output[$object->entity ?? $conf->entity].'/'.$mysoc->termsofsale;
+					$termsofsale = $conf->invoice->dir_output.'/'.$termsofsalefilename;
+					if (!empty($conf->invoice->multidir_output[$object->entity ?? $conf->entity])) {
+						$termsofsale = $conf->invoice->multidir_output[$object->entity ?? $conf->entity].'/'.$termsofsalefilename;
 					}
 					if (file_exists($termsofsale) && is_readable($termsofsale)) {
 						$pagecount = $pdf->setSourceFile($termsofsale);
@@ -1199,6 +1204,28 @@ class pdf_octopus extends ModelePDFFactures
 
 				if (getDolGlobalString('INVOICE_ADD_SWISS_QR_CODE') == 'bottom') {
 					$this->addBottomQRInvoice($pdf, $object, $outputlangs);
+				}
+
+				// Add terms to sale
+				if (getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_INVOICE')) {
+					$termsofsalefilename = getDolGlobalString('MAIN_INFO_INVOICE_TERMSOFSALE');
+					$termsofsale = $conf->invoice->dir_output.'/'.$termsofsalefilename;
+					if (!empty($conf->invoice->multidir_output[$object->entity ?? $conf->entity])) {
+						$termsofsale = $conf->invoice->multidir_output[$object->entity ?? $conf->entity].'/'.$termsofsalefilename;
+					}
+					if (file_exists($termsofsale) && is_readable($termsofsale)) {
+						$pagecount = $pdf->setSourceFile($termsofsale);
+						for ($i = 1; $i <= $pagecount; $i++) {
+							$tplIdx = $pdf->importPage($i);
+							if ($tplIdx !== false) {
+								$s = $pdf->getTemplatesize($tplIdx);
+								$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
+								$pdf->useTemplate($tplIdx);
+							} else {
+								setEventMessages(null, array($termsofsale.' cannot be added, probably protected PDF'), 'warnings');
+							}
+						}
+					}
 				}
 
 				$pdf->Close();
@@ -2717,11 +2744,11 @@ class pdf_octopus extends ModelePDFFactures
 	/**
 	 *  Define Array Column Field
 	 *
-	 *  @param	Facture		   $object    		common object
-	 *  @param	Translate	   $outputlangs     langs
-	 *  @param	int			   $hidedetails		Do not show line details
-	 *  @param	int			   $hidedesc		Do not show desc
-	 *  @param	int			   $hideref			Do not show ref
+	 *  @param	CommonObject	$object    		common object
+	 *  @param	Translate		$outputlangs    langs
+	 *  @param	int<0,1>		$hidedetails	Do not show line details
+	 *  @param	int<0,1>		$hidedesc		Do not show desc
+	 *  @param	int<0,1>		$hideref		Do not show ref
 	 *  @return	void
 	 */
 	public function defineColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
@@ -2764,7 +2791,7 @@ class pdf_octopus extends ModelePDFFactures
 			'width' => false, // only for desc
 			'status' => true,
 			'title' => array(
-				'textkey' => 'Designation', // use lang key is useful in somme case with module
+				'textkey' => 'Designation', // use lang key is useful in some case with module
 				'align' => 'L',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
@@ -2872,7 +2899,7 @@ class pdf_octopus extends ModelePDFFactures
 			),
 			'border-left' => true, // add left line separator
 			'overtitle' => array(
-				'textkey' => 'Chantier', // use lang key is useful in somme case with module
+				'textkey' => 'Chantier', // use lang key is useful in some case with module
 				'align' => 'C',
 				'padding' => array(0.5,0.5,0.5,0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 				'width' => 18
@@ -2902,7 +2929,7 @@ class pdf_octopus extends ModelePDFFactures
 				'textkey' => 'S'.$derniere_situation->situation_counter . ' - ' . dol_print_date($derniere_situation->date, "%d/%m/%Y"),
 				'align' => 'C',
 				'padding' => array(0.5,0.2,0.5,0.2), // Like css 0 => top, 1 => right, 2 => bottom, 3 => left
-				'width' => 10 + 15 //current width + amount cell width
+				'width' => 10 + 18 //current width + amount cell width
 			),
 		);
 		if ($this->situationinvoice && ! empty($this->TDataSituation['date_derniere_situation'])) {
@@ -2913,7 +2940,7 @@ class pdf_octopus extends ModelePDFFactures
 		$rank += 10;
 		$this->cols['prev_progress_amount'] = array(
 			'rank' => $rank,
-			'width' => 15, // in mm
+			'width' => 18, // in mm
 			'status' => false,
 			'title' => array(
 				'textkey' => $outputlangs->transnoentities('Amount')
@@ -2938,7 +2965,7 @@ class pdf_octopus extends ModelePDFFactures
 				'textkey' => 'S'.$object->situation_counter . ' - ' . dol_print_date($object->date, "%d/%m/%Y"),
 				'align' => 'C',
 				'padding' => array(0.5,0.2,0.5,0.2), // Like css 0 => top, 1 => right, 2 => bottom, 3 => left
-				'width' => 10 + 15
+				'width' => 10 + 18
 			),
 		);
 
@@ -2946,7 +2973,7 @@ class pdf_octopus extends ModelePDFFactures
 		$rank += 10;
 		$this->cols['progress_amount'] = array(
 			'rank' => $rank,
-			'width' => 15, // in mm
+			'width' => 18, // in mm
 			'status' => true,
 			'title' => array(
 				'textkey' => $outputlangs->transnoentities('Amount')
@@ -3763,9 +3790,12 @@ class pdf_octopus extends ModelePDFFactures
 
 			$ref = $outputlangs->transnoentities("InvoiceSituation").$outputlangs->convToOutputCharset(" n°".$invoice->situation_counter);
 
-			if ($invoice->situation_final) {
-				$ref .= ' - DGD';
-				$force_to_zero = true;
+			// TODO Discuss whether to declare a final invoice as a DGD (definitive general statement like 'décompte général définitif') or not.
+			if (getDolGlobalInt('INVOICE_SITUATION_USE_DGD')) {
+				if ($invoice->situation_final) {
+					$ref .= ' - DGD';
+					$force_to_zero = true;
+				}
 			}
 
 			$ref .= ' - '. $invoice->ref;
@@ -4013,7 +4043,8 @@ class pdf_octopus extends ModelePDFFactures
 				$posy = $this->tab_top_newpage + 1;
 			} else {
 				$idinv++;
-				$remain_to_pay_in_invoice = ($sign * $total_ht);
+
+				$remain_to_pay_in_invoice = ($sign * ($total_ht + (!empty($invoice->remise) ? $invoice->remise : 0)));
 
 				$rem = 0;
 				if (count($invoice->lines)) {

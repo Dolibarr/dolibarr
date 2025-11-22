@@ -474,7 +474,7 @@ class modStock extends DolibarrModules
 		$this->import_label[$r] = "Warehouses"; // Translation key
 		$this->import_icon[$r] = "warehouse";
 		$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
-		$this->import_tables_array[$r] = array('e' => MAIN_DB_PREFIX.'entrepot');
+		$this->import_tables_array[$r] = array('e' => MAIN_DB_PREFIX.'entrepot', 'extra' => MAIN_DB_PREFIX.'entrepot_extrafields');
 		$this->import_tables_creator_array[$r] = array('e' => 'fk_user_author');
 		$this->import_fields_array[$r] = array('e.ref' => "LocationSummary*",
 				'e.description' => "DescWareHouse",
@@ -495,7 +495,22 @@ class modStock extends DolibarrModules
 				'e.fk_parent' => array('rule' => 'fetchidfromref', 'classfile' => '/product/stock/class/entrepot.class.php', 'class' => 'Entrepot', 'method' => 'fetch', 'element' => 'ref')
 		);
 		$this->import_regex_array[$r] = array('e.statut' => '^[0|1]');
-		$this->import_examplevalues_array[$r] = array('e.ref' => "ALM001",
+		// Add extra fields
+		$import_extrafield_sample = array();
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'entrepot' AND entity IN (0, ".$conf->entity.")";
+		$resql = $this->db->query($sql);
+		if ($resql) {    // This can fail when class is used on old database (during migration for example)
+			while ($obj = $this->db->fetch_object($resql)) {
+				$fieldname = 'extra.'.$obj->name;
+				$fieldlabel = ucfirst($obj->label);
+				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
+				$import_extrafield_sample[$fieldname] = $fieldlabel;
+			}
+		}
+		// End add extra fields
+		$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'entrepot'); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
+
+		$this->import_examplevalues_array[$r] = array_merge(array('e.ref' => "ALM001",
 				'e.description' => "Central Warehouse",
 				'e.lieu' => "Central",
 				'e.address' => "Route 66",
@@ -506,7 +521,7 @@ class modStock extends DolibarrModules
 				'e.fax' => '(+33)(0)123456790',
 				'e.statut' => '1',
 				'e.fk_parent' => 'id or ref of warehouse'
-		);
+		), $import_extrafield_sample);
 		$this->import_updatekeys_array[$r] = array('p.ref' => 'Ref');
 
 		// Import stocks

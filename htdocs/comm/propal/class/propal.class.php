@@ -365,7 +365,7 @@ class Propal extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>,searchmulti?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -1155,7 +1155,8 @@ class Propal extends CommonObject
 	 */
 	public function create($user, $notrigger = 0)
 	{
-		global $conf, $hookmanager, $mysoc;
+		global $mysoc;
+
 		$error = 0;
 
 		$now = dol_now();
@@ -1179,7 +1180,7 @@ class Propal extends CommonObject
 			$this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
 		}
 		if (empty($this->fk_multicurrency)) {
-			$this->multicurrency_code = (string) $conf->currency;
+			$this->multicurrency_code = getDolCurrency();
 			$this->fk_multicurrency = 0;
 			$this->multicurrency_tx = 1;
 		}
@@ -1406,22 +1407,10 @@ class Propal extends CommonObject
 					}
 				}
 
-				// Set delivery address
-				/*if (! $error && $this->fk_delivery_address) {
-					$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
-					$sql.= " SET fk_delivery_address = ".((int) $this->fk_delivery_address);
-					$sql.= " WHERE ref = '".$this->db->escape($this->ref)."'";
-					$sql.= " AND entity = ".setEntity($this);
-
-					$result=$this->db->query($sql);
-				}*/
-
 				if (!$error) {
 					// Update denormalized data
 					$resql = $this->update_price(1, 'auto', 0, $mysoc);
 					if ($resql) {
-						$action = 'update';
-
 						// Actions on extra fields
 						$result = $this->insertExtraFields();
 						if ($result < 0) {
@@ -3642,7 +3631,7 @@ class Propal extends CommonObject
 		$this->note_private = 'This is a comment (private)';
 
 		$this->multicurrency_tx = 1;
-		$this->multicurrency_code = $conf->currency;
+		$this->multicurrency_code = getDolCurrency();
 
 		// Lines
 		$nbp = min(1000, GETPOSTINT('nblines') ? GETPOSTINT('nblines') : 5);	// We can force the nb of lines to test from command line (but not more than 1000)

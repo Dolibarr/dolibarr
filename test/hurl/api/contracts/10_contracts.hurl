@@ -100,13 +100,23 @@ HTTP 200
 # GET contracts DOLAPIENTITY: 2
 GET http://{{hostnport}}/api/index.php/contracts
 DOLAPIENTITY: 2
-HTTP 401
-{"error":{"code":401,"message":"Unauthorized: Error user not valid (not found with api key or bad status or bad validity dates) (conf->entity=2)"}}
+HTTP 403
+[Asserts]
+jsonpath "$.error" exists
+jsonpath "$.error.code" == 403
+jsonpath "$.error.message" == "Forbidden"
 
 # http://localhost:8080/api/index.php/contracts?sortfield=t.rowid&sortorder=ASC&limit=1
 
-# Capture a contract ID number
-GET http://{{hostnport}}/api/index.php/contracts?limit=1
-HTTP 200
-[Captures]
-contract_id: jsonpath "$[0]['id']"
+# POST socid 0
+POST http://{{hostnport}}/api/index.php/contracts
+{
+"entity" : "1",
+"socid": "0",
+"date_contrat": 1759738652,
+"commercial_signature_id": 1,
+"commercial_suivi_id": 1,
+"note_public": "TEST 22.0.2"
+}
+HTTP 404
+{"error":{"code":404,"message":"Not Found: Thirdparty with id=0 not found"}}

@@ -1,6 +1,6 @@
 
-This file describes changes made on external libraries after being included
-in Dolibarr root.
+This file describes the changes made on external libraries to fix some bugs, after they were included
+in Dolibarr external vendor dir (htdocs/includes).
 
 
 

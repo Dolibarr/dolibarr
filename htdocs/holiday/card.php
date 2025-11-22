@@ -10,6 +10,7 @@
  * Copyright (C) 2022		Anthony Berton				<anthony.berton@bb2a.fr>
  * Copyright (C) 2024		Charlene Benke				<charlene@patas-monkey.com>
  * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Julien Marchand				<julien.marchand@iouston.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +34,13 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -43,14 +51,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/holiday.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Get parameters
 $action = GETPOST('action', 'aZ09');
@@ -125,7 +125,7 @@ if ($user->hasRight('holiday', 'writeall')) {
 $permissiontoeditextra = $permissiontoadd;
 if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
 	// For action 'update_extras', is there a specific permission set for the attribute to update
-	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+	$permissiontoeditextra = dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
 }
 
 $candelete = 0;
@@ -259,8 +259,11 @@ if (empty($reshook)) {
 			$action = 'create';
 		}
 
+		$tmpUser = new User($db);
+		$tmpUser->fetch($fuserid);
+
 		// If there is no Business Days within request
-		$nbopenedday = num_open_day($date_debut_gmt, $date_fin_gmt, 0, 1, $halfday);
+		$nbopenedday = num_open_day($date_debut_gmt, $date_fin_gmt, 0, 1, $halfday, $tmpUser->country_id);
 		if ($nbopenedday < 0.5) {
 			setEventMessages($langs->trans("ErrorDureeCP"), null, 'errors'); // No working day
 			$error++;
@@ -401,8 +404,11 @@ if (empty($reshook)) {
 					$action = 'edit';
 				}
 
+				$tmpUser = new User($db);
+				$tmpUser->fetch($fuserid);
+
 				// If there is no Business Days within request
-				$nbopenedday = num_open_day($date_debut_gmt, $date_fin_gmt, 0, 1, $halfday);
+				$nbopenedday = num_open_day($date_debut_gmt, $date_fin_gmt, 0, 1, $halfday, $tmpUser->country_id);
 				if ($nbopenedday < 0.5) {
 					setEventMessages($langs->trans('ErrorDureeCP'), null, 'warnings');
 					$error++;
@@ -501,7 +507,9 @@ if (empty($reshook)) {
 				$expediteur = new User($db);
 				$expediteur->fetch($object->fk_user);
 				//$emailFrom = $expediteur->email;		Email of user can be an email into another company. Sending will fails, we must use the generic email.
-				$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
+
+				// You can specify a special address from for holiday
+				$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_HOLIDAY_FROM', getDolGlobalString('MAIN_MAIL_EMAIL_FROM'));
 
 				// Subject
 				$societeName = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
@@ -531,7 +539,10 @@ if (empty($reshook)) {
 
 				// option to notify the validator if the balance is less than the request
 				if (!getDolGlobalString('HOLIDAY_HIDE_APPROVER_ABOUT_NEGATIVE_BALANCE')) {
-					$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
+					$tmpUser = new User($db);
+					$tmpUser->fetch($object->fk_user);
+
+					$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday, $tmpUser->country_id);
 
 					if ($nbopenedday > $object->getCPforUser($object->fk_user, $object->fk_type)) {
 						$message .= "<p>".$langs->transnoentities("HolidaysToValidateAlertSolde")."</p>\n";
@@ -642,8 +653,11 @@ if (empty($reshook)) {
 
 			// If no SQL error, we redirect to the request form
 			if (!$error && empty($decrease)) {
+				$tmpUser = new User($db);
+				$tmpUser->fetch($object->fk_user);
+
 				// Calculate number of days consumed
-				$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
+				$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday, $tmpUser->country_id);
 				$soldeActuel = $object->getCpforUser($object->fk_user, $object->fk_type);
 				$newSolde = ($soldeActuel - $nbopenedday);
 				$label = $object->ref.' - '.$langs->transnoentitiesnoconv("HolidayConsumption");
@@ -716,13 +730,13 @@ if (empty($reshook)) {
 
 			if (!$error) {
 				$db->commit();
-
-				header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
-				exit;
 			} else {
 				$db->rollback();
 				$action = '';
 			}
+
+			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+			exit;
 		}
 	}
 
@@ -885,8 +899,11 @@ if (empty($reshook)) {
 					}
 				}
 
+				$tmpUser = new User($db);
+				$tmpUser->fetch($object->fk_user);
+
 				// Calculate number of days consumed
-				$nbopenedday = num_open_day($startDate, $endDate, 0, 1, $object->halfday);
+				$nbopenedday = num_open_day($startDate, $endDate, 0, 1, $object->halfday, $tmpUser->country_id);
 
 				$soldeActuel = $object->getCpforUser($object->fk_user, $object->fk_type);
 				$newSolde = ($soldeActuel + $nbopenedday);
@@ -1210,9 +1227,15 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		if (empty($include_users)) {
 			print img_warning().' '.$langs->trans("NobodyHasPermissionToValidateHolidays");
 		} else {
-			// Defined default approver (the forced approved of user or the supervisor if no forced value defined)
-			// Note: This use will be set only if the deinfed approvr has permission to approve so is inside include_users
+			// Defined default approver (the forced approver of edited user or the supervisor of user if no forced value defined)
+			// Note: This user will be set only if the defined approver has permission to approve so is inside include_users
 			$defaultselectuser = (empty($user->fk_user_holiday_validator) ? $user->fk_user : $user->fk_user_holiday_validator);
+			if ($fuserid != $user->id) {
+				$fuser = new User($db);
+				$fuser->fetch($fuserid);
+				$defaultselectuser = (empty($fuser->fk_user_holiday_validator) ? $fuser->fk_user : $fuser->fk_user_holiday_validator);
+			}
+
 			if (getDolGlobalString('HOLIDAY_DEFAULT_VALIDATOR')) {
 				$defaultselectuser = getDolGlobalString('HOLIDAY_DEFAULT_VALIDATOR'); // Can force default approver
 			}
@@ -1415,7 +1438,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 				print $form->textwithpicto($langs->trans('NbUseDaysCP'), $htmlhelp);
 				print '</td>';
 				print '<td>';
-				print num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, (int) $object->halfday);
+				print num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, (int) $object->halfday, $userRequest->country_id);
 				print '</td>';
 				print '</tr>';
 

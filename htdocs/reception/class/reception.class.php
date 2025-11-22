@@ -4,7 +4,7 @@
  * Copyright (C) 2007		Franky Van Liedekerke	<franky.van.liedekerke@telenet.be>
  * Copyright (C) 2006-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2011-2017	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
+ * Copyright (C) 2013       Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Cedric GROSS			<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2014-2020  Francis Appels          <francis.appels@yahoo.com>
@@ -116,19 +116,19 @@ class Reception extends CommonObject
 	public $billed;
 
 	/**
-	 * @var int|float
+	 * @var int|float|string|null
 	 */
 	public $weight;
 	/**
-	 * @var int|float
+	 * @var int|float|string|null
 	 */
 	public $trueWeight;
 	/**
-	 * @var null|float|int
+	 * @var int
 	 */
 	public $weight_units;
 	/**
-	 * @var int|float
+	 * @var int|float|string|null
 	 */
 	public $trueWidth;
 	/**
@@ -136,7 +136,7 @@ class Reception extends CommonObject
 	 */
 	public $width_units;
 	/**
-	 * @var int|float
+	 * @var int|float|string|null
 	 */
 	public $trueHeight;
 	/**
@@ -144,7 +144,7 @@ class Reception extends CommonObject
 	 */
 	public $height_units;
 	/**
-	 * @var int|float
+	 * @var int|float|string|null
 	 */
 	public $trueDepth;
 	/**
@@ -152,11 +152,11 @@ class Reception extends CommonObject
 	 */
 	public $depth_units;
 	/**
-	 * @var string A denormalized value
+	 * @var int|float|string|null	A denormalized value
 	 */
 	public $trueSize;
 	/**
-	 * @var int|string
+	 * @var int
 	 */
 	public $size_units;
 	/**
@@ -350,8 +350,8 @@ class Reception extends CommonObject
 		$sql .= ", ".(is_null($this->trueDepth) ? "NULL" : ((float) $this->trueDepth));
 		$sql .= ", ".(is_null($this->trueWidth) ? "NULL" : ((float) $this->trueWidth));
 		$sql .= ", ".(is_null($this->trueHeight) ? "NULL" : ((float) $this->trueHeight));
-		$sql .= ", ".(is_null($this->weight_units) ? "NULL" : ((float) $this->weight_units));
-		$sql .= ", ".(is_null($this->size_units) ? "NULL" : ((float) $this->size_units));
+		$sql .= ", ".((int) $this->weight_units);
+		$sql .= ", ".((int) $this->size_units);
 		$sql .= ", ".(!empty($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null");
 		$sql .= ", ".(!empty($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null");
 		$sql .= ", ".(!empty($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null");
@@ -383,7 +383,8 @@ class Reception extends CommonObject
 				for ($i = 0; $i < $num; $i++) {
 					$this->lines[$i]->fk_reception = $this->id;
 
-					if (!$this->lines[$i]->create($user) > 0) {
+					if ($this->lines[$i]->create($user) <= 0) {
+						$this->setErrorsFromObject($this->lines[$i]);
 						$error++;
 					}
 				}
@@ -493,7 +494,7 @@ class Reception extends CommonObject
 			return -1;
 		}
 
-		$sql = "SELECT e.rowid, e.entity, e.ref, e.fk_soc as socid, e.date_creation, e.ref_supplier, e.ref_ext, e.fk_user_author, e.fk_statut as status, e.billed";
+		$sql = "SELECT e.rowid, e.entity, e.ref, e.fk_soc as socid, e.date_creation, e.ref_supplier, e.ref_ext, e.fk_user_author, e.fk_statut as status, e.fk_projet as fk_project, e.billed";
 		$sql .= ", e.weight, e.weight_units, e.size, e.size_units, e.width, e.height";
 		$sql .= ", e.date_reception as date_reception, e.model_pdf, e.date_delivery, e.date_valid";
 		$sql .= ", e.fk_shipping_method, e.tracking_number";
@@ -526,20 +527,20 @@ class Reception extends CommonObject
 				$this->entity               = $obj->entity;
 				$this->ref                  = $obj->ref;
 				$this->socid                = $obj->socid;
-				$this->ref_supplier = $obj->ref_supplier;
-				$this->ref_ext = $obj->ref_ext;
+				$this->ref_supplier         = $obj->ref_supplier;
+				$this->ref_ext              = $obj->ref_ext;
 				$this->statut               = $obj->status;
 				$this->status               = $obj->status;
 				$this->billed               = $obj->billed;
-
+				$this->fk_project	    	= $obj->fk_project;
 				$this->user_author_id       = $obj->fk_user_author;
 				$this->date_creation        = $this->db->jdate($obj->date_creation);
-				$this->date = $this->db->jdate($obj->date_reception); // TODO deprecated
-				$this->date_reception = $this->db->jdate($obj->date_reception); // Date real
+				$this->date                 = $this->db->jdate($obj->date_reception); // TODO deprecated
+				$this->date_reception       = $this->db->jdate($obj->date_reception); // Date real
 				$this->date_delivery        = $this->db->jdate($obj->date_delivery); // Date planned
 				$this->date_valid        	= $this->db->jdate($obj->date_valid); // Date validation
 				$this->model_pdf            = $obj->model_pdf;
-				$this->shipping_method_id = $obj->fk_shipping_method;
+				$this->shipping_method_id   = $obj->fk_shipping_method;
 				$this->tracking_number      = $obj->tracking_number;
 				$this->origin               = ($obj->origin ? $obj->origin : 'commande'); // For compatibility
 				$this->origin_type          = ($obj->origin ? $obj->origin : 'commande'); // For compatibility
@@ -1228,8 +1229,8 @@ class Reception extends CommonObject
 				$line = new ReceptionLineBatch($this->db);
 
 				$line->rowid            = $objp->rowid;
-				$line->id              = $objp->rowid;
-				$line->fk_reception       = $this->id;
+				$line->id				= $objp->rowid;
+				$line->fk_reception		= $this->id;
 
 				$line->description      = $objp->description;
 				$line->qty              = $objp->qty;
@@ -1239,10 +1240,10 @@ class Reception extends CommonObject
 				$line->rang             = $objp->rang;
 
 
-				$line->fk_element = $objp->fk_element;
+				$line->fk_element 		= $objp->fk_element;
 				$line->fk_unit          = $objp->fk_unit;
-				$line->fk_elementdet = $objp->fk_elementdet;
-				$line->fk_element_type = $objp->element_type;
+				$line->fk_elementdet 	= $objp->fk_elementdet;
+				$line->fk_element_type	= $objp->element_type;
 				$line->fetch_optionals();
 
 
@@ -1313,23 +1314,21 @@ class Reception extends CommonObject
 			$this->statut = (int) $this->statut;
 		}
 		if (isset($this->trueDepth)) {
-			$this->trueDepth = (float) trim((string) $this->trueDepth);
+			$this->trueDepth = price2num($this->trueDepth);
 		}
 		if (isset($this->trueWidth)) {
-			$this->trueWidth = (float) trim((string) $this->trueWidth);
+			$this->trueWidth = price2num($this->trueWidth);
 		}
 		if (isset($this->trueHeight)) {
-			$this->trueHeight = (float) trim((string) $this->trueHeight);
+			$this->trueHeight = price2num($this->trueHeight);
 		}
-		if (isset($this->size_units)) {
-			$this->size_units = trim((string) $this->size_units);
-		}
-		if (isset($this->weight_units)) {
-			$this->weight_units = (float) trim((string) $this->weight_units);
-		}
+		$this->size_units = (int) $this->size_units;
+
 		if (isset($this->trueWeight)) {
-			$this->weight = (float) trim((string) $this->trueWeight);
+			$this->weight = price2num($this->trueWeight);
 		}
+		$this->weight_units = (int) $this->weight_units;
+
 		if (isset($this->note_private)) {
 			$this->note_private = trim($this->note_private);
 		}
@@ -1359,15 +1358,16 @@ class Reception extends CommonObject
 		$sql .= " fk_shipping_method=".((isset($this->shipping_method_id) && $this->shipping_method_id > 0) ? $this->shipping_method_id : "null").",";
 		$sql .= " tracking_number=".(isset($this->tracking_number) ? "'".$this->db->escape($this->tracking_number)."'" : "null").",";
 		$sql .= " fk_statut=".(isset($this->statut) ? $this->statut : "null").",";
-		$sql .= " height=".(($this->trueHeight != '') ? $this->trueHeight : "null").",";
-		$sql .= " width=".(($this->trueWidth != '') ? $this->trueWidth : "null").",";
-		$sql .= " size_units=".(isset($this->size_units) ? $this->size_units : "null").",";
-		$sql .= " size=".(($this->trueDepth != '') ? $this->trueDepth : "null").",";
-		$sql .= " weight_units=".(isset($this->weight_units) ? $this->weight_units : "null").",";
-		$sql .= " weight=".(($this->trueWeight != '') ? $this->trueWeight : "null").",";
+		$sql .= " height=".(($this->trueHeight != '') ? (float) $this->trueHeight : "null").",";
+		$sql .= " width=".(($this->trueWidth != '') ? (float) $this->trueWidth : "null").",";
+		$sql .= " size_units=".((int) $this->size_units).",";
+		$sql .= " size=".(($this->trueDepth != '') ? (float) $this->trueDepth : "null").",";
+		$sql .= " weight_units=".((int) $this->weight_units).",";
+		$sql .= " weight=".(($this->trueWeight != '') ? (float) $this->trueWeight : "null").",";
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
+		$sql .= " fk_projet=".((isset($this->fk_project) && $this->fk_project > 0) ? ((int) $this->fk_project) : "null").",";
 		$sql .= " entity = ".((int) $conf->entity);
 		$sql .= " WHERE rowid=".((int) $this->id);
 
@@ -1776,7 +1776,7 @@ class Reception extends CommonObject
 			$return .= '<br><div class="info-box-ref tdoverflowmax150">'.$this->thirdparty->getNomUrl(1).'</div>';
 		}
 		/*if (property_exists($this, 'total_ht')) {
-			$return .= '<div class="info-box-ref amount">'.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency).' '.$langs->trans('HT').'</div>';
+			$return .= '<div class="info-box-ref amount">'.price($this->total_ht, 0, $langs, 0, -1, -1, getDolCurrency()).' '.$langs->trans('HT').'</div>';
 		}*/
 		if (method_exists($this, 'getLibStatut')) {
 			$return .= '<div class="info-box-status">'.$this->getLibStatut(3).'</div>';
@@ -1818,22 +1818,16 @@ class Reception extends CommonObject
 		$this->date_creation        = $now;
 		$this->date_valid           = $now;
 		$this->date_delivery        = $now;
-		$this->date_reception = $now + 24 * 3600;
-
+		$this->date_reception 		= $now + 24 * 3600;
 		$this->entrepot_id          = 0;
 		$this->socid                = 1;
-
 		$this->origin_id            = 1;
 		$this->origin_type          = 'supplier_order';
 		$this->origin_object        = $order;
-
-		$this->note_private = 'Private note';
-		$this->note_public = 'Public note';
-
-		$this->tracking_number = 'TRACKID-ABC123';
-
-		$this->fk_incoterms = 1;
-
+		$this->note_private 		= 'Private note';
+		$this->note_public 			= 'Public note';
+		$this->tracking_number 		= 'TRACKID-ABC123';
+		$this->fk_incoterms 		= 1;
 		$nbp = min(1000, GETPOSTINT('nblines') ? GETPOSTINT('nblines') : 5);	// We can force the nb of lines to test from command line (but not more than 1000)
 		$xnbp = 0;
 		while ($xnbp < $nbp) {
@@ -1871,6 +1865,34 @@ class Reception extends CommonObject
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$this->date_delivery = $delivery_date;
+				return 1;
+			} else {
+				$this->error = $this->db->error();
+				return -1;
+			}
+		} else {
+			return -2;
+		}
+	}
+
+	/**
+	 *	Set the reception date
+	 *
+	 *	@param      User			$user        		Object user that modify
+	 *	@param      integer 		$reception_date		Date of reception
+	 *	@return     int         						Return integer <0 if KO, >0 if OK
+	 */
+	public function setReceptionDate($user, $reception_date)
+	{
+		if ($user->hasRight('reception', 'creer')) {
+			$sql = "UPDATE ".MAIN_DB_PREFIX."reception";
+			$sql .= " SET date_reception = ".($reception_date ? "'".$this->db->idate($reception_date)."'" : 'null');
+			$sql .= " WHERE rowid = ".((int) $this->id);
+
+			dol_syslog(get_class($this)."::setReceptionDate", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$this->date_reception = $reception_date;
 				return 1;
 			} else {
 				$this->error = $this->db->error();

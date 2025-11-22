@@ -1215,7 +1215,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
  */
 function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserlogin = 0)
 {
-	global $user, $conf, $extrafields, $hookmanager;
+	global $user, $extrafields, $hookmanager;
 	global $contextpage;
 
 	require_once DOL_DOCUMENT_ROOT . '/core/class/html.formcompany.class.php';
@@ -1802,8 +1802,6 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
  */
 function show_actions_todo($conf, $langs, $db, $filterobj, $objcon = null, $noprint = 0, $actioncode = '')
 {
-	global $user, $conf;
-
 	$out = show_actions_done($conf, $langs, $db, $filterobj, $objcon, 1, $actioncode, 'todo');
 
 	if ($noprint) {
@@ -1834,7 +1832,7 @@ function show_actions_todo($conf, $langs, $db, $filterobj, $objcon = null, $nopr
  */
 function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $noprint = 0, $actioncode = '', $donetodo = 'done', $filters = array(), $sortfield = 'a.datep,a.id', $sortorder = 'DESC', $module = '')
 {
-	global $user, $conf, $hookmanager;
+	global $hookmanager;
 	global $form;
 	global $param, $massactionbutton;
 
@@ -1877,6 +1875,14 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		$sortfield_new_list[] = $sortfield_label_list[trim($sortfield_value)];
 	}
 	$sortfield_new = implode(',', $sortfield_new_list);
+
+	$complete = (string) $filters['search_complete'];	// Can be 'na', '0', '50', '100'
+	$percent = $complete !== '' ? $complete : -1;
+	if ((string) $complete == '0') {
+		$percent = '0';
+	} elseif ((int) $complete == 100) {
+		$percent = '100';
+	}
 
 	$sql = '';
 
@@ -2153,6 +2159,9 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 			$imaxinloop = ($limit ? min($num, $limit) : $num);
 			while ($i < $imaxinloop) {
 				$obj = $db->fetch_object($resql);
+				if (empty($obj)) {
+					break;
+				}
 
 				if ($obj->type == 'action') {
 					$contactaction = new ActionComm($db);
@@ -2270,7 +2279,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		$out .= '<div class="div-table-responsive-no-min">';
 		$out .= '<table class="noborder centpercent">';
 
-		$out .= '<tr class="liste_titre">';
+		$out .= '<tr class="liste_titre_filter">';
 
 		// Action column
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -2300,7 +2309,10 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		$out .= '<td class="liste_titre maxwidth100onsmartphone"><input type="text" class="maxwidth100onsmartphone" name="search_agenda_label" value="' . $filters['search_agenda_label'] . '"></td>';
 		$out .= '<td class="liste_titre"></td>';
 		$out .= '<td class="liste_titre"></td>';
-		$out .= '<td class="liste_titre"></td>';
+		// Status ($percent can be 'na'or < 100 or 100)
+		$out .= '<td class="liste_titre parentonrightofpage">';
+		$out .= $formactions->form_select_status_action('formaction', $percent, 1, 'search_complete', 1, 2, 'search_status width100 onrightofpage', 1);
+		$out .= '</td>';
 		// Action column
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			$out .= '<td class="liste_titre" align="middle">';
@@ -2387,6 +2399,61 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 			$out .= '</td>';
 
 			// Date
+			$out .=  '<td class="center nowraponall nopaddingtopimp nopaddingbottomimp">';
+			if ($histo[$key]['dateend']) {	// There is also a end date
+				$tmpa = dol_getdate($histo[$key]['datestart']);
+				$tmpb = dol_getdate($histo[$key]['dateend']);
+				if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) {
+					// The same day
+					if ($tmpa['hours'] != $tmpb['hours'] || $tmpa['minutes'] != $tmpb['minutes']) {
+						$out .=  dol_print_date($histo[$key]['datestart'], 'dayreduceformat', 'tzuserrel');
+						$out .=  '<br><span class="small opacitymedium">';
+						$out .=  dol_print_date($histo[$key]['datestart'], 'hourreduceformat', 'tzuserrel');
+						$out .=  '-'.dol_print_date($histo[$key]['dateend'], 'hourreduceformat', 'tzuserrel');
+						$out .=  '</span>';
+					} else {
+						$out .=  dol_print_date($histo[$key]['datestart'], 'dayreduceformat', 'tzuserrel');
+						$out .=  '<br><span class="small opacitymedium">';
+						$out .=  dol_print_date($histo[$key]['datestart'], 'hourreduceformat', 'tzuserrel');
+						$out .=  '</span>';
+					}
+				} else {
+					// Not the same day
+					$out .=  '<div class="center inline-block">';
+					$out .=  dol_print_date($histo[$key]['datestart'], 'dayreduceformat', 'tzuserrel');
+					$out .=  '<br><span class="small opacitymedium">';
+					$out .=  dol_print_date($histo[$key]['datestart'], 'hourreduceformat', 'tzuserrel');
+					$out .=  '</span>';
+					$out .=  '</div>';
+					$out .=  ' ';
+					$out .=  '<div class="center inline-block">';
+					$out .=  dol_print_date($histo[$key]['dateend'], 'dayreduceformat', 'tzuserrel');
+					$out .=  '<br><span class="small opacitymedium">';
+					$out .=  dol_print_date($histo[$key]['dateend'], 'hourreduceformat', 'tzuserrel');
+					$out .=  '</span>';
+					$out .=  '</div>';
+				}
+			}
+			// Add the late warning
+			$late = 0;
+			if ($histo[$key]['percent'] == 0 && $histo[$key]['datestart'] && $histo[$key]['datestart'] < ($now - $delay_warning)) {
+				$late = 1;
+			}
+			if ($histo[$key]['percent'] == 0 && !$histo[$key]['datestart'] && $histo[$key]['dateend'] && $histo[$key]['datestart'] < ($now - $delay_warning)) {
+				$late = 1;
+			}
+			if ($histo[$key]['percent'] > 0 && $histo[$key]['percent'] < 100 && $histo[$key]['dateend'] && $histo[$key]['dateend'] < ($now - $delay_warning)) {
+				$late = 1;
+			}
+			if ($histo[$key]['percent'] > 0 && $histo[$key]['percent'] < 100 && !$histo[$key]['dateend'] && $histo[$key]['datestart'] && $histo[$key]['datestart'] < ($now - $delay_warning)) {
+				$late = 1;
+			}
+			if ($late) {
+				$out .= img_warning($langs->trans("Late")) . ' ';
+			}
+			$out .=  '</td>';
+
+			/*
 			$out .= '<td class="center nowraponall">';
 			$out .= dol_print_date($histo[$key]['datestart'], 'dayhour', 'tzuserrel');
 			if ($histo[$key]['dateend'] && $histo[$key]['dateend'] != $histo[$key]['datestart']) {
@@ -2398,6 +2465,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 					$out .= '-' . dol_print_date($histo[$key]['dateend'], 'dayhour', 'tzuserrel');
 				}
 			}
+			// Add the late warning
 			$late = 0;
 			if ($histo[$key]['percent'] == 0 && $histo[$key]['datestart'] && $histo[$key]['datestart'] < ($now - $delay_warning)) {
 				$late = 1;
@@ -2415,6 +2483,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 				$out .= img_warning($langs->trans("Late")) . ' ';
 			}
 			$out .= "</td>\n";
+			*/
 
 			// Author of event
 			$out .= '<td class="tdoverflowmax125">';
@@ -2461,9 +2530,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 
 			$out .= '<td class="tdoverflowmax125" title="' . $labelOfTypeToShowLong . '">';
 			$out .= $actionstatic->getTypePicto();
-			//if (empty($conf->dol_optimize_smallscreen)) {
 			$out .= $labelOfTypeToShow;
-			//}
 			$out .= '</td>';
 
 			// Title/Label of event
@@ -2537,7 +2604,9 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 			}
 
 			// Status / Progression
-			$out .= '<td class="nowrap center">' . $actionstatic->LibStatut($histo[$key]['percent'], 2, 0, $histo[$key]['datestart']) . '</td>';
+			$out .= '<td class="nowrap center">';
+			$out .= $actionstatic->LibStatut($histo[$key]['percent'], 2, 0, $histo[$key]['datestart']);
+			$out .= '</td>';
 
 			// Action column
 			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -2576,8 +2645,6 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
  */
 function show_subsidiaries($conf, $langs, $db, $object)
 {
-	global $user;
-
 	$i = -1;
 
 	$sql = "SELECT s.rowid, s.client, s.fournisseur, s.nom as name, s.name_alias, s.email, s.address, s.zip, s.town, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.canvas, s.status";
@@ -2694,7 +2761,7 @@ function addEventTypeSQL(&$sql, $actioncode, $sqlANDOR = "AND")
 }
 
 /**
- * 		Add Event Type SQL
+ * 		Add more SQL filters for event list
  *
  *		@param	string		$sql		    $sql modified
  * 		@param	string		$donetodo		donetodo
@@ -2710,6 +2777,21 @@ function addOtherFilterSQL(&$sql, $donetodo, $now, $filters)
 		$sql .= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '" . $db->idate($now) . "'))";
 	} elseif ($donetodo == 'done') {
 		$sql .= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep <= '" . $db->idate($now) . "'))";
+	}
+	if (is_array($filters) && isset($filters['search_complete']) && $filters['search_complete'] === 'na') {
+		$sql .= " AND a.percent = -1";
+	}
+	if (is_array($filters) && isset($filters['search_complete']) && $filters['search_complete'] === '0') {
+		$sql .= " AND a.percent = 0";
+	}
+	if (is_array($filters) && isset($filters['search_complete']) && $filters['search_complete'] === '50') {
+		$sql .= " AND a.percent > 0 AND a.percent < 100";
+	}
+	if (is_array($filters) && isset($filters['search_complete']) && $filters['search_complete'] === 'todo') {
+		$sql .= " AND a.percent >= 0 AND a.percent < 100";
+	}
+	if (is_array($filters) && isset($filters['search_complete']) && $filters['search_complete'] === '100') {
+		$sql .= " AND a.percent = 100";
 	}
 	if (is_array($filters) && !empty($filters['search_agenda_label'])) {
 		$sql .= natural_search('a.label', $filters['search_agenda_label']);
@@ -2864,7 +2946,7 @@ function htmlPrintOnlineFooter($fromcompany, $langs, $addformmessage = 0, $suffi
 	}
 	// Capital
 	if ($fromcompany->capital) {
-		$line1 .= ($line1 ? " - " : "") . $langs->transnoentities("CapitalOf", (string) $fromcompany->capital) . " " . $langs->transnoentities("Currency" . $conf->currency);
+		$line1 .= ($line1 ? " - " : "") . $langs->transnoentities("CapitalOf", (string) $fromcompany->capital) . " " . $langs->transnoentities("Currency" . getDolCurrency());
 	}
 	// Prof Id 1
 	if ($fromcompany->idprof1 && ($fromcompany->country_code != 'FR' || !$fromcompany->idprof2)) {

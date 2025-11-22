@@ -166,17 +166,30 @@ class DocumentController extends Controller
 			$moduleNameEn = 'invoice';
 		}
 		$moduleNameUpperEn = strtoupper($moduleNameEn);
-		// check config access
-		// and file mime type (only PDF)
-		// and check login access
-		if (getDolGlobalInt('WEBPORTAL_' . $moduleNameUpperEn . '_LIST_ACCESS')
-			&& in_array($type, array('application/pdf'))
-			&& ($context->logged_thirdparty && $context->logged_thirdparty->id > 0)
-			&& $context->logged_thirdparty->id == $socId
-		) {
-			if (isModEnabled($moduleName) && isset($conf->{$moduleName}->multidir_output[$entity])) {
-				$original_file = $conf->{$moduleName}->multidir_output[$entity] . '/' . $original_file;
-				$accessallowed = 1;
+		// Hooks
+		$hookmanager->initHooks(array('document'));
+		$parameters = array('ecmfile' => $ecmfile, 'modulepart' => $modulepart, 'original_file' => &$original_file, 'socId' => $socId,
+			'entity' => $entity, 'accessallowed' => &$accessallowed);
+		$object = new stdClass();
+		$reshook = $hookmanager->executeHooks('accessDownloadDocument', $parameters, $object, $action); // Note that $action and $object may have been
+		if ($reshook < 0) {
+			$errors = $hookmanager->error . (is_array($hookmanager->errors) ? (!empty($hookmanager->error) ? ', ' : '') . implode(', ', $hookmanager->errors) : '');
+			dol_syslog("document.php - Errors when executing the hook 'accessDownloadDocument' : " . $errors);
+			print "ErrorDownloadDocumentHooks: " . $errors;
+			exit;
+		} elseif (empty($reshook)) {
+			// check config access
+			// and file mime type (only PDF)
+			// and check login access
+			if (getDolGlobalInt('WEBPORTAL_' . $moduleNameUpperEn . '_LIST_ACCESS')
+				&& in_array($type, array('application/pdf'))
+				&& ($context->logged_thirdparty && $context->logged_thirdparty->id > 0)
+				&& $context->logged_thirdparty->id == $socId
+			) {
+				if (isModEnabled($moduleName) && isset($conf->{$moduleName}->multidir_output[$entity])) {
+					$original_file = $conf->{$moduleName}->multidir_output[$entity] . '/' . $original_file;
+					$accessallowed = 1;
+				}
 			}
 		}
 		$fullpath_original_file = $original_file; // $fullpath_original_file is now a full path name
@@ -214,9 +227,11 @@ class DocumentController extends Controller
 
 		$fileSize = dol_filesize($fullpath_original_file);
 		$fileSizeMax = getDolGlobalInt('MAIN_SECURITY_MAXFILESIZE_DOWNLOADED');
-		if ($fileSizeMax && $fileSize > $fileSizeMax) {
-			dol_syslog('ErrorFileSizeTooLarge: ' . $fileSize);
-			print 'ErrorFileSizeTooLarge: ' . $fileSize . ' (max ' . $fileSizeMax . ' Kb)';
+		if ($fileSizeMax && $fileSize > ($fileSizeMax * 1024)) {
+			// FIX: Convert limit from Ko to bytes for proper comparison
+			$fileSizeKb = round($fileSize / 1024, 2);
+			dol_syslog('ErrorFileSizeTooLarge: ' . $fileSize . ' bytes (' . $fileSizeKb . ' Kb) - max allowed: ' . $fileSizeMax . ' Kb');
+			print 'ErrorFileSizeTooLarge: ' . $fileSizeKb . ' Kb (max ' . $fileSizeMax . ' Kb)';
 			exit;
 		}
 

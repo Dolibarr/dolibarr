@@ -915,7 +915,7 @@ class Form
 		if (!empty($conf->use_javascript_ajax)) {
 			$ret .= '<!-- JS CODE TO ENABLE mass action select -->
     		<script nonce="' . getNonce() . '">
-				function initCheckForSelect(mode, name, cssclass) {	/* mode is 0 during init of page or click all, 1 when we click on 1 checkboxi, "name" refers to the class of the massaction button, "cssclass" to the class of the checkfor select boxes */
+				function initCheckForSelect(mode, name, cssclass) {	/* mode is 0 during init of page or click all, 1 when we click on 1 checkboxi, "name" refers to the class of the massaction button, "cssclass" to the class of the check for select boxes */
         			atleastoneselected=0;
 					jQuery("."+cssclass).each(function( index ) {
     	  				/* console.log( index + ": " + $( this ).text() ); */
@@ -936,7 +936,8 @@ class Form
 
         	jQuery(document).ready(function () {
                     initCheckForSelect(0, "' . $name . '", "' . $cssclass . '");
-                    jQuery(".' . $cssclass . '").click(function() {
+                    jQuery(".' . $cssclass . '").change(function() {
+						console.log("A change was done on .' . $cssclass . '");
                         initCheckForSelect(1, "' . $name . '", "' . $cssclass . '");
                     });
                     jQuery(".' . $name . 'select").change(function() {
@@ -1550,6 +1551,7 @@ class Form
 	 * @param int<0,1>			$showcode 		Show code in list
 	 * @return array<int,array{key:int,value:string,label:string,labelhtml:string}>|string            	HTML string with
 	 * @see select_company()
+	 * @phpstan-return ($outputmode is 1 ? array<int,array{key:int,value:string,label:string,labelhtml:string}> : string)
 	 */
 	public function select_thirdparty_list($selected = '', $htmlname = 'socid', $filter = '', $showempty = '', $showtype = 0, $forcecombo = 0, $events = array(), $filterkey = '', $outputmode = 0, $limit = 0, $morecss = 'minwidth100', $moreparam = '', $multiple = false, $excludeids = array(), $showcode = 0)
 	{
@@ -2591,8 +2593,10 @@ class Form
 			}
 
 			$out .= '<li>';
+
 			$userstatic->fetch($value['id']);
-			$out .= $userstatic->getNomUrl(-1);
+			$out .= $userstatic->getNomUrl(-4);
+
 			if ($i == 0) {
 				$ownerid = $value['id'];
 				$out .= ' (' . $langs->trans("Owner") . ')';
@@ -2614,7 +2618,7 @@ class Form
 				if ($canremoveassignee) {
 					// If user has all permission, he should be ableto remove a assignee.
 					// If user has not all permission, he can onlyremove assignee of other (he can't remove itself)
-					$out .= ' <input type="image" style="border: 0px;" src="' . img_picto($langs->trans("Remove"), 'delete', '', 0, 1) . '" value="' . $userstatic->id . '" class="removedassigned reposition" id="removedassigned_' . $userstatic->id . '" name="removedassigned_' . $userstatic->id . '">';
+					$out .= ' <input type="image" style="border: 0px;" src="' . img_picto($langs->trans("Remove"), 'delete', '', 0, 1) . '" value="' . $userstatic->id . '" class="noborderfocus removedassigned reposition" id="removedassigned_' . $userstatic->id . '" name="removedassigned_' . $userstatic->id . '">';
 				}
 			}
 			// Show my availability
@@ -2640,6 +2644,8 @@ class Form
 
 		// Method with no ajax
 		if ($action != 'view') {
+			// Section to add another user
+			$out .= '<div class="divadduser'.$htmlname.'">';
 			$out .= '<input type="hidden" class="removedassignedhidden" name="removedassigned" value="">';
 			$out .= '<script nonce="' . getNonce() . '" type="text/javascript">jQuery(document).ready(function () {';
 			$out .= 'jQuery(".removedassigned").click(function() { jQuery(".removedassignedhidden").val(jQuery(this).val()); });';
@@ -2648,9 +2654,11 @@ class Form
 			$out .= ' else { jQuery("#' . $action . 'assignedtouser").attr("disabled", true); }';
 			$out .= '});';
 			$out .= '})</script>';
-			$out .= $this->select_dolusers('', $htmlname, $show_empty, $exclude, $disabled, $include, $enableonly, $force_entity, $maxlength, $showstatus, $morefilter);
+			$out .= img_picto('', 'user', 'class="pictofixedwidth"');
+			$out .= $this->select_dolusers('', $htmlname, $show_empty, $exclude, $disabled, $include, $enableonly, $force_entity, $maxlength, $showstatus, $morefilter, 0, '', 'minwidth200');
 			$out .= ' <input type="submit" disabled class="button valignmiddle smallpaddingimp reposition" id="' . $action . 'assignedtouser" name="' . $action . 'assignedtouser" value="' . dol_escape_htmltag($langs->trans("Add")) . '">';
-			$out .= '<br>';
+			$out .= '</div>';
+			//$out .= '<br>';
 		}
 
 		return $out;
@@ -2743,8 +2751,12 @@ class Form
 			$out .= '})</script>';
 
 			$events = array();
-			$out .= img_picto('', 'resource', 'class="pictofixedwidth"');
-			$out .= $formresources->select_resource_list(0, $htmlname, '', 1, 1, 0, $events, '', 2, 0);
+			if ($nbassignetoresource) {
+				//$out .= img_picto('', 'add', 'class="pictofixedwidth"');
+			} else {
+				$out .= img_picto('', 'resource', 'class="pictofixedwidth"');
+			}
+			$out .= $formresources->select_resource_list(0, $htmlname, '', 1, 1, 0, $events, '', 2, 0, 'minwidth200');
 			//$out .= $this->select_dolusers('', $htmlname, $show_empty, $exclude, $disabled, $include, $enableonly, $force_entity, $maxlength, $showstatus, $morefilter);
 			$out .= ' <input type="submit" disabled class="button valignmiddle smallpaddingimp reposition" id="' . $action . 'assignedtoresource" name="' . $action . 'assignedtoresource" value="' . dol_escape_htmltag($langs->trans("Add")) . '">';
 			$out .= '<br>';
@@ -3031,7 +3043,6 @@ class Form
 	public function select_bom($selected = '', $htmlname = 'bom_id', $limit = 0, $status = 1, $type = 0, $showempty = '1', $morecss = '', $nooutput = '', $forcecombo = 0, $TProducts = [])
 	{
 		// phpcs:enable
-		global $db;
 
 		require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
@@ -3062,7 +3073,7 @@ class Form
 		if (!empty($limit)) {
 			$sql .= ' LIMIT ' . (int) $limit;
 		}
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($showempty) {
 				$out .= '<option value="-1"';
@@ -3071,7 +3082,7 @@ class Form
 				}
 				$out .= '>&nbsp;</option>';
 			}
-			while ($obj = $db->fetch_object($resql)) {
+			while ($obj = $this->db->fetch_object($resql)) {
 				$out .= '<option value="' . $obj->rowid . '"';
 				if ($obj->rowid == $selected) {
 					$out .= 'selected';
@@ -3080,7 +3091,7 @@ class Form
 			}
 		} else {
 			$error++;
-			dol_print_error($db);
+			dol_print_error($this->db);
 		}
 		$out .= '</select>';
 		if (empty($nooutput)) {
@@ -7193,7 +7204,7 @@ class Form
 	 * @param 	string 	$selected 				Preselected currency code
 	 * @param 	string 	$htmlname 				Name of HTML select list
 	 * @param 	integer $useempty 				1=Add empty line
-	 * @param 	string 	$filter 				Optional filters criteras (example: 'code <> x', ' in (1,3)')
+	 * @param 	string 	$filter 				Optional filters criteras (example: 'code <> x', ' in (1,3)'). Do not use external string here.
 	 * @param 	bool 	$excludeConfCurrency 	false = If company current currency not in table, we add it into list. Should always be available.
 	 *                                  		true = we are in currency_rate update , we don't want to see conf->currency in select
 	 * @param 	string 	$morecss 				More css
@@ -7778,11 +7789,22 @@ class Form
 		if ($d) {
 			// Show date with popup
 			if ($usecalendar != 'combo') {
+				// Set $format and $formatjs and $formatjquery
+				$reduceformat = (!empty($conf->dol_optimize_smallscreen) ? 1 : 0);	// Test on original $format param.
+				if ($reduceformat) {
+					$format = str_replace('%Y', '%y', $langs->transnoentitiesnoconv("FormatDateShortInput")); // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
+					$formatjs = str_replace('yyyy', 'yy', $langs->transnoentitiesnoconv("FormatDateShortJavaInput"));
+					$formatjquery = str_replace('yyyy', 'yy', $langs->trans("FormatDateShortJQueryInput"));
+				} else {
+					$format = $langs->transnoentitiesnoconv("FormatDateShortInput"); // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
+					$formatjs = $langs->transnoentitiesnoconv("FormatDateShortJavaInput"); // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
+					$formatjquery = $langs->trans("FormatDateShortJQueryInput");
+				}
+
+				// Set formatted_date (for example: '%d/%m/%Y', '%m-%d-%y', ...
 				$formatted_date = '';
-				//print "e".$set_time." t ".$conf->format_date_short;
 				if (strval($set_time) != '' && $set_time != -1) {
-					//$formatted_date=dol_print_date($set_time,$conf->format_date_short);
-					$formatted_date = dol_print_date($set_time, $langs->trans("FormatDateShortInput"), $gm); // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
+					$formatted_date = dol_print_date($set_time, $format, $gm); // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
 				}
 
 				// Calendrier popup version eldy
@@ -7821,7 +7843,7 @@ class Form
 
 						$retstring .= '<!-- datepicker usecalendar='.$usecalendar.' --><script nonce="' . getNonce() . '" type="text/javascript">';
 						$retstring .= "$(function(){ $('#" . $prefix . "').datepicker({
-							dateFormat: '" . $langs->trans("FormatDateShortJQueryInput") . "',
+							dateFormat: '" . dol_escape_js($formatjquery) . "',
 							autoclose: true,
 							todayHighlight: true,
 							yearRange: '" . $minYear . ":" . $maxYear . "',";
@@ -7853,13 +7875,13 @@ class Form
 					$retstring .= '<input id="'.$prefix.'" name="'.$prefix.'" type="'.($usecalendar == 'html' ? "date" : "text").'" class="maxwidthdate center" maxlength="11" value="'.$formatted_date.'"';
 					$retstring .= ($disabled ? ' disabled' : '');
 					$retstring .= ($placeholder ? ' placeholder="' . dol_escape_htmltag($placeholder) . '"' : '');
-					$retstring .= ' onChange="dpChangeDay(\'' . dol_escape_js($prefix) . '\',\'' . dol_escape_js($langs->trans("FormatDateShortJavaInput")) . '\'); "'; // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
+					$retstring .= ' onChange="dpChangeDay(\'' . dol_escape_js($prefix) . '\',\'' . dol_escape_js($formatjs) . '\'); "'; // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
 					$retstring .= ' autocomplete="off">';
 
 					// Icon calendar
 					if ($disabled) {
-						$retstringbutton = '<button id="' . $prefix . 'Button" type="button" class="dpInvisibleButtons">' . img_object($langs->trans("Disabled"), 'calendarday', 'class="datecallink"') . '</button>';
-						$retstring = $retstringbutton . $retstring;
+						$retstringbutton = '<button id="' . $prefix . 'Button" type="button" class="dpInvisibleButtons">' . img_object($langs->trans("Disabled"), 'calendarday', 'class="datecallink ui-datepicker-notrigger"') . '</button>';
+						$retstring .= $retstringbutton;
 					}
 
 					$retstring .= '</div>';
@@ -9154,10 +9176,11 @@ class Form
 	 * @param int 			$disabled 			1=Html component is disabled
 	 * @param string 		$sortfield 			Sort field
 	 * @param string 		$filter 			Add more filter (Universal Search Filter)
+	 * @param string 		$sortorder 			Sort order field
 	 * @return string|array<array{key:string,value:mixed,label:string}> Return HTML string
 	 * @see selectForForms()
 	 */
-	public function selectForFormsList($objecttmp, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $outputmode = 0, $disabled = 0, $sortfield = '', $filter = '')
+	public function selectForFormsList($objecttmp, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $outputmode = 0, $disabled = 0, $sortfield = '', $filter = '', $sortorder = 'ASC')
 	{
 		global $langs, $user, $hookmanager;
 
@@ -9172,7 +9195,7 @@ class Form
 		if (!empty($objecttmp->fields)) {    // For object that declare it, it is better to use declared fields (like societe, contact, ...)
 			$tmpfieldstoshow = '';
 			foreach ($objecttmp->fields as $key => $val) {
-				if (! (int) dol_eval($val['enabled'], 1, 1, '1')) {
+				if (! (int) dol_eval((string) $val['enabled'], 1, 1, '1')) {
 					continue;
 				}
 				if (!empty($val['showoncombobox'])) {
@@ -9182,6 +9205,8 @@ class Form
 			if ($tmpfieldstoshow) {
 				$fieldstoshow = $tmpfieldstoshow;
 			}
+		} elseif ($objecttmp->element === 'category') {
+			$fieldstoshow = 't.label';
 		} else {
 			// For backward compatibility
 			$objecttmp->fields['ref'] = array('type' => 'varchar(30)', 'label' => 'Ref', 'enabled' => 1, 'position' => 10, 'visible' => 4, 'showoncombobox' => 1);
@@ -9215,7 +9240,11 @@ class Form
 		// Search data
 		$sql = "SELECT t.rowid, " . $fieldstoshow . " FROM " . $this->db->prefix() . $this->db->sanitize($objecttmp->table_element) . " as t";
 		if (!empty($objecttmp->isextrafieldmanaged)) {
-			$sql .= " LEFT JOIN " . $this->db->prefix() . $this->db->sanitize($objecttmp->table_element) . "_extrafields as e ON t.rowid = e.fk_object";
+			$extrafieldTable = $objecttmp->table_element;
+			if ($extrafieldTable == 'categorie') {
+				$extrafieldTable = 'categories'; // For compatibility
+			}
+			$sql .= " LEFT JOIN " . $this->db->prefix() . $this->db->sanitize($extrafieldTable) . "_extrafields as e ON t.rowid = e.fk_object";
 		}
 		if (!empty($objecttmp->parent_element)) {	// If parent_element is defined
 			'@phan-var-force CommonObjectLine $objecttmp';
@@ -9294,7 +9323,7 @@ class Form
 				}
 			}
 		}
-		$sql .= $this->db->order($sortfield ? $sortfield : $fieldstoshow, "ASC");
+		$sql .= $this->db->order($sortfield ? $sortfield : $fieldstoshow, $sortorder);
 		//$sql.=$this->db->plimit($limit, 0);
 		//print $sql;
 
@@ -9563,6 +9592,7 @@ class Form
 				}
 				$out .= '<option value="' . $key . '"';
 				$out .= $style . $disabled;
+				$out .= is_array($tmpvalue) && !empty($tmpvalue['parent']) ? ' parent="' . dolPrintHTMLForAttribute($tmpvalue['parent']) . '"' : '';
 				if (is_array($id)) {
 					if (in_array($key, $id) && !$disabled) {
 						$out .= ' selected'; // To preselect a value
@@ -9904,6 +9934,7 @@ class Form
 					if (is_array($selected) && !empty($selected) && in_array((string) $tmpkey, $selected) && ((string) $tmpkey != '')) {
 						$out .= ' selected';
 					}
+					$out .= is_array($value) && array_key_exists('parent', $value) && !empty($value['parent']) ? ' parent="' . dolPrintHTMLForAttribute($value['parent']) . '"' : '';
 					if ($tmpdisabled) {
 						$out .= ' disabled="disabled"';
 					}
@@ -10152,7 +10183,7 @@ class Form
 				$ways = $c->print_all_ways('auto', ($nolink ? 'none' : ''), 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formatted text
 				foreach ($ways as $way) {
 					$color = $c->color;
-					$sfortag = '<li class="select2-search-choice-dolibarr noborderoncategories"' . ($color ? ' style="background: #' . $color . ';"' : ' style="background: #bbb"') . '>';
+					$sfortag = '<li class="select2-search-choice-dolibarr noborderoncategories'.(empty($toprint) ? ' nomarginleft' : '').'"' . ($color ? ' style="background: #' . $color . ';"' : ' style="background: #bbb"') . '>';
 					$sfortag .= $way;
 					$sfortag .= '</li>';
 					$toprint[] = $sfortag;
@@ -10831,6 +10862,15 @@ class Form
 			$object->load_previous_next_ref((isset($object->next_prev_filter) ? $object->next_prev_filter : ''), $fieldid, $nodbprefix);
 
 			$navurl = $_SERVER["PHP_SELF"];
+
+			// Special case for token card
+			if ($paramid == 'api_token_card') {
+				if (preg_match('/\/user\/api_token/', $navurl)) {
+					$navurl = preg_replace('/card/', 'list', $navurl);
+					$paramid = 'id';
+				}
+			}
+
 			// Special case for project/task page
 			if ($paramid == 'project_ref') {
 				if (preg_match('/\/tasks\/(task|contact|note|document)\.php/', $navurl)) {     // TODO Remove this when nav with project_ref on task pages are ok
@@ -10899,7 +10939,7 @@ class Form
 
 		// For thirdparty, contact, user, member, the ref is the id, so we show something else
 		if ($object->element == 'societe') {
-			$ret .= dol_htmlentities((string) $object->name);
+			$ret .= '<span class="valignmiddle">'.dol_htmlentities((string) $object->name).'</span>';
 
 			// List of extra languages
 			$arrayoflangcode = array();
@@ -10936,9 +10976,9 @@ class Form
 			$ret .= $object->ref . '<br>';
 			$fullname = $object->getFullName($langs);
 			if ($object->morphy == 'mor' && $object->societe) {
-				$ret .= dol_htmlentities((string) $object->societe) . ((!empty($fullname) && $object->societe != $fullname) ? ' (' . dol_htmlentities($fullname) . $addgendertxt . ')' : '');
+				$ret .= '<span class="valignmiddle">'.dol_htmlentities((string) $object->societe) . ((!empty($fullname) && $object->societe != $fullname) ? ' (' . dol_htmlentities($fullname) . $addgendertxt . ')' : '').'</span>';
 			} else {
-				$ret .= dol_htmlentities($fullname) . $addgendertxt . ((!empty($object->societe) && $object->societe != $fullname) ? ' (' . dol_htmlentities((string) $object->societe) . ')' : '');
+				$ret .= '<span class="valignmiddle">'.dol_htmlentities($fullname) . $addgendertxt . ((!empty($object->societe) && $object->societe != $fullname) ? ' (' . dol_htmlentities((string) $object->societe) . ')' : '').'</span>';
 			}
 		} elseif (in_array($object->element, array('contact', 'user'))) {
 			$ret .= '<span class="valignmiddle">'.dol_htmlentities($object->getFullName($langs)).'</span>'.$addgendertxt;
@@ -10952,9 +10992,9 @@ class Form
 		} elseif ($object->element == 'ecm_directories') {
 			$ret .= '';
 		} elseif ($object->element == 'accountingbookkeeping' && !empty($object->context['mode']) && $object->context['mode'] == '_tmp') {
-			$ret .= $langs->trans("Draft");
+			$ret .= '<span class="valignmiddle">'.$langs->trans("Draft").'</span>';
 		} elseif ($fieldref != 'none') {
-			$ret .= dol_htmlentities(!empty($object->$fieldref) ? $object->$fieldref : "");
+			$ret .= '<span class="valignmiddle">'.dol_htmlentities(!empty($object->$fieldref) ? $object->$fieldref : "").'</span>';
 		}
 		if ($morehtmlref) {
 			// don't add a additional space, when "$morehtmlref" starts with a HTML div tag
@@ -11027,7 +11067,7 @@ class Form
 	 */
 	public static function showphoto($modulepart, $object, $width = 100, $height = 0, $caneditfield = 0, $cssclass = 'photowithmargin', $imagesize = '', $addlinktofullsize = 1, $cache = 0, $forcecapture = '', $noexternsourceoverwrite = 0)
 	{
-		global $conf, $langs;
+		global $conf, $db, $langs;
 
 		$entity = (empty($object->entity) ? $conf->entity : $object->entity);
 		$id = (empty($object->id) ? $object->rowid : $object->id);  // @phan-suppress-current-line PhanUndeclaredProperty (->rowid)
@@ -11132,6 +11172,10 @@ class Form
 		$ret = '';
 
 		if ($dir) {
+			require_once DOL_DOCUMENT_ROOT . '/ecm/class/ecmfiles.class.php';
+			$ecmfiles = new EcmFiles($db);
+			$relativefile = str_replace(DOL_DATA_ROOT .'/', '', $dir.'/'.$originalfile);
+			$ecmfiles->fetch(0, '', $relativefile);
 			if ($file && file_exists($dir . "/" . $file)) {
 				if ($addlinktofullsize) {
 					$urladvanced = getAdvancedPreviewUrl($modulepart, $originalfile, 0, '&entity=' . $entity);
@@ -11141,7 +11185,11 @@ class Form
 						$ret .= '<a href="' . DOL_URL_ROOT . '/viewimage.php?modulepart=' . $modulepart . '&entity=' . $entity . '&file=' . urlencode($originalfile) . '&cache=' . $cache . '">';
 					}
 				}
-				$ret .= '<img alt="" class="photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . ' photologo' . (preg_replace('/[^a-z]/i', '_', $file)) . '" ' . ($width ? ' width="' . $width . '"' : '') . ($height ? ' height="' . $height . '"' : '') . ' src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=' . $modulepart . '&entity=' . $entity . '&file=' . urlencode($file) . '&cache=' . $cache . '">';
+				if (!empty($ecmfiles->share)) {
+					$ret .= '<img alt="" class="photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . ' photologo' . (preg_replace('/[^a-z]/i', '_', $file)) . '" ' . ($width ? ' width="' . $width . '"' : '') . ($height ? ' height="' . $height . '"' : '') . ' src="' . DOL_URL_ROOT . '/viewimage.php?hashp=' . urlencode($ecmfiles->share) . '&cache=' . $cache . '">';
+				} else {
+					$ret .= '<img alt="" class="photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . ' photologo' . (preg_replace('/[^a-z]/i', '_', $file)) . '" ' . ($width ? ' width="' . $width . '"' : '') . ($height ? ' height="' . $height . '"' : '') . ' src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=' . $modulepart . '&entity=' . $entity . '&file=' . urlencode($file) . '&cache=' . $cache . '">';
+				}
 				if ($addlinktofullsize) {
 					$ret .= '</a>';
 				}
@@ -11385,12 +11433,13 @@ class Form
 			$out .= 'if (typeof initCheckForSelect == \'function\') { initCheckForSelect(0, "' . $massactionname . '", "' . $cssclass . '"); } else { console.log("No function initCheckForSelect found. Call won\'t be done."); }';
 		}
 		$out .= '         });
+/*
         	        $(".' . $cssclass . '").change(function() {
 						console.log("We check and change the tr class highlight after a change on .'.$cssclass.'");
 						var $row = $(this).closest("tr");
 						if ($row.length) {
 	    					var anyChecked = $row.find(\'input[type="checkbox"].checkforselect:checked\').length > 0;
-							console.log(anyChecked);
+							console.log("anychecked="+anyChecked);
 							if (!anyChecked) {
 								$row.removeClass("highlight");
 							} else {
@@ -11398,6 +11447,7 @@ class Form
 							}
 						}
 					});
+*/
 		 	});
     	</script>';
 
@@ -12632,7 +12682,7 @@ class Form
 
 		foreach ($buttons as $button) {
 			$addclass = empty($button['addclass']) ? '' : $button['addclass'];
-			$retstring .= '<input type="submit" class="button button-' . $button['name'] . ($morecss ? ' ' . $morecss : '') . ' ' . $addclass . '" name="' . $button['name'] . '" value="' . dol_escape_htmltag($langs->transnoentities($button['label_key'])) . '">';
+			$retstring .= '<input type="submit" class="button marginleftonly marginrightonly button-' . $button['name'] . ($morecss ? ' ' . $morecss : '') . ' ' . $addclass . '" name="' . $button['name'] . '" value="' . dol_escape_htmltag($langs->transnoentities($button['label_key'])) . '">';
 		}
 		$retstring .= $withoutdiv ? '' : '</div>';
 
@@ -12807,5 +12857,418 @@ class Form
 
 
 		return '<div class="search-tool-container"><input '.$compiledAttributes.'></div>';
+	}
+
+	/**
+	 * Html for input with label
+	 *
+	 * @param	string	$type			Type of input : button, checkbox, color, email, hidden, month, number, password, radio, range, tel, text, time, url, week
+	 * @param	string	$name			Name
+	 * @param	string	$value			[=''] Value
+	 * @param	string	$id				[=''] Id
+	 * @param	string	$morecss		[=''] Class
+	 * @param	string	$moreparam		[=''] Add attributes (checked, required, etc)
+	 * @param	string	$label			[=''] Label
+	 * @param	string	$addInputLabel	[=''] Add label for input
+	 * @return	string					Html for input with label
+	 */
+	public function inputType($type, $name, $value = '', $id = '', $morecss = '', $moreparam = '', $label = '', $addInputLabel = '')
+	{
+		$out = '';
+		if ($label != '') {
+			$out .= '<label for="' . dolPrintHTMLForAttribute($id) . '">';
+		}
+		$out .= '<input type="' . dolPrintHTMLForAttribute($type) . '"';
+		$out .= ' class="flat valignmiddle maxwidthonsmartphone ' . dolPrintHTMLForAttribute($morecss) . '"';
+		if ($id != '') {
+			$out .= ' id="' . dolPrintHTMLForAttribute($id) . '"';
+		}
+		$out .= ' name="' . dolPrintHTMLForAttribute($name) . '"';
+		$out .= ' value="' . dolPrintHTMLForAttribute($value) . '" ';
+		$out .= ($moreparam ? ' ' . $moreparam : '');
+		$out .= ' />' . $addInputLabel;
+		if ($label != '') {
+			$out .= $label . '</label>';
+		}
+
+		return $out;
+	}
+
+	/**
+	 * Html for select with get options by AJAX
+	 *
+	 * @param	string					$htmlName		Name
+	 * @param	array<string,mixed>		$array			Array like array(key => value) or array(key=>array('label'=>..., 'data-...'=>..., 'disabled'=>..., 'css'=>...))
+	 * @param	string					$id				Preselected key or preselected keys for multiselect. Use 'ifone' to autoselect record if there is only one record.
+	 * @param	string					$ajaxUrl		Ajax page Url
+	 * @param	array<string,string>	$ajaxData		Additional data send to the AJAX page
+	 * @param	string					$morecss		[=''] Class
+	 * @param	string					$moreparam		[=''] Add attributes (checked, required, etc)
+	 * @return	string									Html for input with label
+	 */
+	public function inputSelectAjax($htmlName, $array, $id, $ajaxUrl, $ajaxData = [], $morecss = 'minwidth75', $moreparam = '')
+	{
+		$out = "
+					<script>
+					$(document).ready(function () {
+						$('#" . $htmlName . "').select2({
+							ajax: {
+								url: '" . $ajaxUrl . "',
+								dataType: 'json',
+								delay: 250, // wait 250 milliseconds before triggering the request
+								data: function (params) {
+									var query = {
+										search: params.term,
+										page: params.page || 1";
+		if (!empty($ajaxData) && is_array($ajaxData)) {
+			foreach ($ajaxData as $key => $value) {
+				$out .= ", " . $key . ": '" . $value . "'";
+			}
+		}
+		$out .= "
+									}
+									return query;
+								}
+							}
+						})
+					});
+					</script>";
+
+		$out .= $this->selectarray($htmlName, $array, $id, 0, 0, 0, $moreparam, 0, 0, 0, '', $morecss);
+
+		return $out;
+	}
+
+	/**
+	 * Html for HTML area
+	 *
+	 * @param	string	$htmlName		Html name
+	 * @param	string	$value			[=''] Value
+	 * @param	string	$morecss		[=''] Class
+	 * @param	string	$moreparam		[=''] Add attributes (checked, required, etc)
+	 * @return	string					Html for input with label
+	 */
+	public function inputHtml($htmlName, $value, $morecss = '', $moreparam = '')
+	{
+		require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
+		$doleditor = new DolEditor($htmlName, $value, '', 200, 'dolibarr_notes', 'In', false, false, isModEnabled('fckeditor') && getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_5, '90%');
+
+		return (string) $doleditor->Create(1, '', true, '', '', $moreparam, $morecss);
+	}
+
+	/**
+	 * Html for HTML area
+	 *
+	 * @param	string				$htmlName		Html name
+	 * @param	string				$value			[=''] Value
+	 * @param	string				$morecss		[=''] Class
+	 * @param	string				$moreparam		[=''] Add attributes (checked, required, etc)
+	 * @param	array<string,mixed>	$options		Array like array(key => value) or array(key=>array('label'=>..., 'data-...'=>..., 'disabled'=>..., 'css'=>...))
+	 * @return	string								Html for input with label
+	 */
+	public function inputText($htmlName, $value, $morecss = '', $moreparam = '', $options = array())
+	{
+		global $langs;
+
+		$out = '';
+		if (!empty($options)) {
+			// If the textarea field has a list of arrayofkeyval into its definition, we suggest a combo with possible values to fill the textarea.
+			$out .= $this->selectarray($htmlName . "_multiinput", $options, '', 1, 0, 0, $moreparam, 0, 0, 0, '', "flat maxwidthonphone" . $morecss);
+			$out .= '<input id="' . $htmlName . '_multiinputadd" type="button" class="button" value="' . $langs->trans("Add") . '">';
+			$out .= "<script>";
+			$out .= '
+					function handlemultiinputdisabling(htmlname){
+						console.log("We handle the disabling of used options for "+htmlname+"_multiinput");
+						multiinput = $("#"+htmlname+"_multiinput");
+						multiinput.find("option").each(function(){
+							tmpval = $("#"+htmlname).val();
+							tmpvalarray = tmpval.split("\n");
+							valtotest = $(this).val();
+							if(tmpvalarray.includes(valtotest)){
+								$(this).prop("disabled",true);
+							} else {
+								if($(this).prop("disabled") == true){
+									console.log(valtotest)
+									$(this).prop("disabled", false);
+								}
+							}
+						});
+					}
+
+					$(document).ready(function () {
+						$("#' . $htmlName . '_multiinputadd").on("click",function() {
+							tmpval = $("#' . $htmlName . '").val();
+							tmpvalarray = tmpval.split(",");
+							valtotest = $("#' . $htmlName . '_multiinput").val();
+							if(valtotest != -1 && !tmpvalarray.includes(valtotest)){
+								console.log("We add the selected value to the text area ' . $htmlName . '");
+								if(tmpval == ""){
+									tmpval = valtotest;
+								} else {
+									tmpval = tmpval + "\n" + valtotest;
+								}
+								$("#' . $htmlName . '").val(tmpval);
+								handlemultiinputdisabling("' . $htmlName . '");
+								$("#' . $htmlName . '_multiinput").val(-1);
+							} else {
+								console.log("We add nothing the text area ' . $htmlName . '");
+							}
+						});
+						$("#' . $htmlName . '").on("change",function(){
+							handlemultiinputdisabling("' . $htmlName . '");
+						});
+						handlemultiinputdisabling("' . $htmlName . '");
+					})';
+			$out .= "</script>";
+			$value = str_replace(',', "\n", $value);
+		}
+
+		require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
+		$doleditor = new DolEditor($htmlName, (string) $value, '', 200, 'dolibarr_notes', 'In', false, false, false, ROWS_5, '90%');
+		$out .= (string) $doleditor->Create(1, '', true, '', '', $moreparam, $morecss);
+
+		return $out;
+	}
+
+	/**
+	 * Html for input radio
+	 *
+	 * @param	string					$htmlName		Html name
+	 * @param	array<string,string>	$options		List of option
+	 * @param	string					$selectedValue	Selected value
+	 * @param	string					$morecss		[=''] Class
+	 * @param	string					$moreparam		[=''] Add attributes (checked, required, etc)
+	 * @return	string									Html for input radio
+	 */
+	public function inputRadio($htmlName, $options, $selectedValue, $morecss = '', $moreparam = '')
+	{
+		$out = '';
+		foreach ($options as $optionKey => $optionLabel) {
+			$selected = ((string) $selectedValue) === ((string) $optionKey) ? ' checked="checked"' : '';
+			$optionId = $htmlName . '_' . $optionKey;
+			$out .= '<input class="flat' . $morecss . '" type="radio" name="' . $htmlName . '" id="' . $optionId . '" value="' . dolPrintHTMLForAttribute((string) $optionKey) . '"' . $selected . $moreparam . '/><label for="' . $optionId . '">' . $optionLabel . '</label><br>';
+		}
+
+		return $out;
+	}
+
+	/**
+	 * Html for input stars
+	 *
+	 * @param	string		$htmlName		Html name
+	 * @param	int			$size			Number of stars
+	 * @param	int			$value			Value
+	 * @param	string		$morecss		[=''] Class
+	 * @param	string		$moreparam		[=''] Add attributes (checked, required, etc)
+	 * @return	string						Html for input stars
+	 */
+	public function inputStars($htmlName, $size, $value, $morecss = '', $moreparam = '')
+	{
+		$out = '<input type="hidden" class="flat ' . $morecss . '" name="' . $htmlName . '" id="' . $htmlName . '" value="' . dolPrintHTMLForAttribute((string) $value) . '"' . $moreparam . '>';
+		$out .= '<div class="star-selection" id="' . $htmlName . '_selection">';
+		for ($i = 1; $i <= $size; $i++) {
+			$out .= '<span class="star" data-value="' . $i . '">' . img_picto('', 'fontawesome_star_fas') . '</span>';
+		}
+		$out .= '</div>';
+		$out .= '<script>
+				jQuery(function($) {	/* commonobject.class.php 1 */
+					let container = $("#' . $htmlName . '_selection");
+					let selectedStars = parseInt($("#' . $htmlName . '").val()) || 0;
+					container.find(".star").each(function() {
+						$(this).toggleClass("active", $(this).data("value") <= selectedStars);
+					});
+					container.find(".star").on("mouseover", function() {
+						let selectedStar = $(this).data("value");
+						container.find(".star").each(function() {
+							$(this).toggleClass("active", $(this).data("value") <= selectedStar);
+						});
+					});
+					container.on("mouseout", function() {
+						container.find(".star").each(function() {
+							$(this).toggleClass("active", $(this).data("value") <= selectedStars);
+						});
+					});
+					container.find(".star").off("click").on("click", function() {
+						selectedStars = $(this).data("value");
+						if (selectedStars === 1 && $("#' . $htmlName . '").val() == 1) {
+							selectedStars = 0;
+						}
+						$("#' . $htmlName . '").val(selectedStars);
+						container.find(".star").each(function() {
+							$(this).toggleClass("active", $(this).data("value") <= selectedStars);
+						});
+					});
+				});
+			</script>';
+
+		return $out;
+	}
+
+	/**
+	 * Html for input icon
+	 *
+	 * @param	string		$htmlName		Html name
+	 * @param	string		$value			Value
+	 * @param	string		$morecss		[=''] Class
+	 * @param	string		$moreparam		[=''] Add attributes (checked, required, etc)
+	 * @return	string						Html for input icon
+	 */
+	public function inputIcon($htmlName, $value, $morecss = '', $moreparam = '')
+	{
+		global $langs;
+
+		/* External lib inclusion are not allowed in backoffice. Also lib is included several time if there is several icon file.
+		 Some code must be added into main when MAIN_ADD_ICONPICKER_JS is set to add of lib in html header
+		 $out ='<link rel="stylesheet" href="'.dol_buildpath('/myfield/css/fontawesome-iconpicker.min.css', 1).'">';
+		 $out.='<script src="'.dol_buildpath('/myfield/js/fontawesome-iconpicker.min.js', 1).'"></script>';
+		 */
+		$out = '<input type="text" class="form-control icp icp-auto iconpicker-element iconpicker-input flat ' . $morecss . ' maxwidthonsmartphone"';
+		$out .= ' name="' . $htmlName . '" id="' . $htmlName . '" value="' . dolPrintHTMLForAttribute((string) $value) . '" ' . ((string) $moreparam) . '>';
+		if (getDolGlobalInt('MAIN_ADD_ICONPICKER_JS')) {
+			$out .= '<script>';
+			$options = "{ title: '<b>" . $langs->trans("IconFieldSelector") . "</b>', placement: 'right', showFooter: false, templates: {";
+			$options .= "iconpicker: '<div class=\"iconpicker\"><div style=\"background-color:#EFEFEF;\" class=\"iconpicker-items\"></div></div>',";
+			$options .= "iconpickerItem: '<a role=\"button\" href=\"#\" class=\"iconpicker-item\" style=\"background-color:#DDDDDD;\"><i></i></a>',";
+			// $options.="buttons: '<button style=\"background-color:#FFFFFF;\" class=\"iconpicker-btn iconpicker-btn-cancel btn btn-default btn-sm\">".$langs->trans("Cancel")."</button>";
+			// $options.="<button style=\"background-color:#FFFFFF;\" class=\"iconpicker-btn iconpicker-btn-accept btn btn-primary btn-sm\">".$langs->trans("Save")."</button>',";
+			$options .= "footer: '<div class=\"popover-footer\" style=\"background-color:#EFEFEF;\"></div>',";
+			$options .= "search: '<input type=\"search\" class\"form-control iconpicker-search\" placeholder=\"" . $langs->trans("TypeToFilter") . "\" />',";
+			$options .= "popover: '<div class=\"iconpicker-popover popover\">";
+			$options .= "   <div class=\"arrow\" ></div>";
+			$options .= "   <div class=\"popover-title\" style=\"text-align:center;background-color:#EFEFEF;\"></div>";
+			$options .= "   <div class=\"popover-content \" ></div>";
+			$options .= "</div>'}}";
+			$out .= "$('#" . $htmlName . "').iconpicker(" . $options . ");";
+			$out .= '</script>';
+		}
+
+		return $out;
+	}
+
+	/**
+	 * Html for input geo point
+	 *
+	 * @param	string		$htmlName		Html name
+	 * @param	string		$value			Value
+	 * @param	string		$type			Type (linestrg, multipts, point, polygon)
+	 * @return	string						Html for input geo point
+	 */
+	public function inputGeoPoint($htmlName, $value, $type = '')
+	{
+		require_once DOL_DOCUMENT_ROOT . '/core/class/dolgeophp.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/core/class/geomapeditor.class.php';
+		$dolgeophp = new DolGeoPHP($this->db);
+		$geomapeditor = new GeoMapEditor();
+
+		$geojson = '{}';
+		$centroidjson = getDolGlobalString('MAIN_INFO_SOCIETE_GEO_COORDINATES', '{}');
+		if (!empty($value)) {
+			$tmparray = $dolgeophp->parseGeoString($value);
+			$geojson = $tmparray['geojson'];
+			$centroidjson = $tmparray['centroidjson'];
+		}
+
+		return $geomapeditor->getHtml($htmlName, $geojson, $centroidjson, $type);
+	}
+
+	/**
+	 * Html for show selected multiple values
+	 *
+	 * @param	string[]	$values		Values
+	 * @return	string					Html for show selected multiple values
+	 */
+	public function outputMultiValues($values)
+	{
+		$out = '';
+		$toPrint = array();
+		$values = is_array($values) ? $values : array();
+
+		foreach ($values as $value) {
+			$toPrint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">' . $value . '</li>';
+		}
+		if (!empty($toPrint)) {
+			$out = '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">' . implode(' ', $toPrint) . '</ul></div>';
+		}
+
+		return $out;
+	}
+
+	/**
+	 * Html for show stars
+	 *
+	 * @param	int			$size		Number of stars
+	 * @param	int			$value		Value
+	 * @return	string					Html for show stars
+	 */
+	public function outputStars($size, $value)
+	{
+		$out = '<div class="star-selection" data-value="' . dolPrintHTMLForAttribute((string) $value) . '">';
+		for ($i = 1; $i <= $size; $i++) {
+			$out .= '<span class="star' . ($i <= $value ? ' active' : '') . '" data-value="' . $i . '">' . img_picto('', 'fontawesome_star_fas') . '</span>';
+		}
+		$out .= '</div>';
+
+		return $out;
+	}
+
+	/**
+	 * Html for show icon
+	 *
+	 * @param	string		$value		Value
+	 * @return	string					Html for show icon
+	 */
+	public function outputIcon($value)
+	{
+		$out = '<span class="' . dolPrintHTMLForAttribute((string) $value) . '"></span>';
+
+		return $out;
+	}
+
+	/**
+	 * Html for show geo point
+	 *
+	 * @param	string		$value		Value
+	 * @param	string		$type		Type (linestrg, multipts, point, polygon)
+	 * @return	string					Html for show geo point
+	 */
+	public function outputGeoPoint($value, $type)
+	{
+		$out = '';
+
+		if (!empty($value)) {
+			require_once DOL_DOCUMENT_ROOT . '/core/class/dolgeophp.class.php';
+			$dolgeophp = new DolGeoPHP($this->db);
+			if ($type == 'point') {
+				$out = $dolgeophp->getXYString($value);
+			} else { // multipts, linestrg, polygon
+				$out = $dolgeophp->getPointString($value);
+			}
+		}
+
+		return $out;
+	}
+
+	/**
+	 * Return link of object
+	 *
+	 * @param	CommonObject	$object					Object handler
+	 * @param	int				$withpicto				Add picto into link
+	 * @param	string			$option					Where point the link ('stock', 'composition', 'category', 'supplier', '')
+	 * @param	int				$maxlength				Maxlength of ref
+	 * @param 	int				$save_lastsearch_value	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 * @param	int				$notooltip				No tooltip
+	 * @param  	string  		$morecss            	''=Add more css on link
+	 * @param	int				$add_label				0=Default, 1=Add label into string, >1=Add first chars into string
+	 * @param	string			$sep					' - '=Separator between ref and label if option 'add_label' is set
+	 * @return	string									String with URL
+	 */
+	public function getNomUrl(&$object, $withpicto = 0, $option = '', $maxlength = 0, $save_lastsearch_value = -1, $notooltip = 0, $morecss = '', $add_label = 0, $sep = ' - ')
+	{
+		if (is_object($object) && method_exists($object, 'getNomUrl')) {
+			$out = $object->getNomUrl($withpicto, $option, $maxlength, $save_lastsearch_value, $notooltip, $morecss, $add_label, $sep);
+			return $out;
+		} else {
+			return '';
+		}
 	}
 }

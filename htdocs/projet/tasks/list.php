@@ -1676,6 +1676,10 @@ if (isset($totalarray['totaldurationeffectivefield']) || isset($totalarray['tota
 	print '</tr>';
 }
 
+if ($num == 0) {
+	print '<tr><td colspan="'.$savnbfield.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+}
+
 $db->free($resql);
 
 $parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);

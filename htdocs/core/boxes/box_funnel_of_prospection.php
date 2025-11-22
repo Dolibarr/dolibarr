@@ -303,7 +303,8 @@ class box_funnel_of_prospection extends ModeleBoxes
 					'tr' => 'class="oddeven"',
 					'td' => 'class="left "',
 					'maxlength' => 500,
-					'text' => $langs->trans("OpportunityTotalAmount").' ('.$langs->trans("WonLostExcluded").')'
+					'asis' => 1,
+					'text' => $langs->trans("OpportunityTotalAmount").'  <span class="opacitymedium">('.$langs->trans("WonLostExcluded").')</span>'
 				);
 				$this->info_box_contents[$line][] = array(
 					'tr' => 'class="oddeven"',
@@ -316,7 +317,8 @@ class box_funnel_of_prospection extends ModeleBoxes
 					'tr' => 'class="oddeven"',
 					'td' => 'class="left "',
 					'maxlength' => 500,
-					'text' => $form->textwithpicto($langs->trans("OpportunityPonderatedAmount").' ('.$langs->trans("WonLostExcluded").')', $langs->trans("OpportunityPonderatedAmountDesc"), 1)
+					'asis' => 1,
+					'text' => $form->textwithpicto($langs->trans("OpportunityPonderatedAmount").' <span class="opacitymedium">('.$langs->trans("WonLostExcluded").')</span>', $langs->trans("OpportunityPonderatedAmountDesc"), 1)
 
 				);
 				$this->info_box_contents[$line][] = array(

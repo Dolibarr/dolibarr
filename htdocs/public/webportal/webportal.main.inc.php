@@ -107,6 +107,7 @@ require_once DOL_DOCUMENT_ROOT . '/webportal/class/webportalpartnership.class.ph
 //}
 
 $context = Context::getInstance();
+$context->initController();
 
 $hookmanager->initHooks(array('main', 'webportal'));
 
@@ -257,6 +258,7 @@ if (getDolGlobalInt('WEBPORTAL_LOGIN_BY_MODULE') && !empty($conf->modules_parts[
 					$logged_thirdparty = $websiteaccount->thirdparty;
 					if (!$logged_thirdparty || !($logged_thirdparty->id > 0)) {
 						$result = $websiteaccount->fetch_thirdparty();
+
 						if ($result < 0) {
 							$error_msg = $langs->transnoentitiesnoconv('WebPortalErrorFetchLoggedThirdParty', (string) $websiteaccount->fk_soc);
 							//dol_syslog("Can't load third-party (ID: ".$websiteaccount->fk_soc.") even if session logged.", LOG_ERR);
@@ -279,7 +281,7 @@ if (getDolGlobalInt('WEBPORTAL_LOGIN_BY_MODULE') && !empty($conf->modules_parts[
 							$context->setEventMessage($error_msg, 'errors');
 						}
 
-						if (!$error && $logged_member->id > 0) {
+						if (isModEnabled('partnership') && !$error && $logged_member->id > 0) {
 							// get partnership
 							$logged_partnership = new WebPortalPartnership($db);
 							// @phan-suppress-next-line PhanPluginSuspiciousParamPosition

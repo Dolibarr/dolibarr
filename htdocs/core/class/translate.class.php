@@ -1132,9 +1132,13 @@ class Translate
 	 *  @param	integer	$forceloadall		1=Force to load all currencies into cache. We know we need to use all of them. By default read and cache only the requested currency.
 	 *  @return	string						Currency symbol encoded into UTF8
 	 */
-	public function getCurrencySymbol($currency_code, $forceloadall = 0)
+	public function getCurrencySymbol($currency_code = '', $forceloadall = 0)
 	{
 		$currency_sign = ''; // By default return iso code
+
+		if (empty($currency_code)) {
+			$currency_code = getDolCurrency();
+		}
 
 		if (function_exists("mb_convert_encoding")) {
 			$this->loadCacheCurrencies($forceloadall ? '' : $currency_code);

@@ -1,6 +1,7 @@
 <?php
 /*
 /* Copyright (C) 2025  Jon Bendtsen         <jon.bendtsen.github@jonb.dk>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -323,6 +324,9 @@ class EmailTemplates extends DolibarrApi
 			if ($field == 'id') {
 				throw new RestException(400, 'Creating with id field is forbidden');
 			}
+			if ($field == 'tms') {
+				throw new RestException(400, 'Creating with tms field is forbidden');
+			}
 
 			$this->email_template->$field = $this->_checkValForAPI($field, $value, $this->email_template);
 		}
@@ -349,6 +353,7 @@ class EmailTemplates extends DolibarrApi
 	 *
 	 * @return	Object					Object with cleaned properties
 	 *
+	 * @throws	RestException 400
 	 * @throws	RestException 403
 	 * @throws	RestException 404
 	 * @throws	RestException 500
@@ -367,8 +372,12 @@ class EmailTemplates extends DolibarrApi
 
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
-				continue;
+				throw new RestException(400, 'Updating with id field is forbidden');
 			}
+			if ($field == 'datec') {
+				throw new RestException(400, 'Updating with datec field is forbidden');
+			}
+
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->email_template->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
@@ -400,7 +409,7 @@ class EmailTemplates extends DolibarrApi
 	 *
 	 * @return	Object					Object with cleaned properties
 	 *
-	 * @throws	RestException 403
+	 * @throws	RestException 400
 	 * @throws	RestException 404
 	 * @throws	RestException 500
 	 */
@@ -419,8 +428,12 @@ class EmailTemplates extends DolibarrApi
 		$newlabel = $label;
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
-				continue;
+				throw new RestException(400, 'Updating with id field is forbidden');
 			}
+			if ($field == 'datec') {
+				throw new RestException(400, 'Updating with datec field is forbidden');
+			}
+
 			if ($field == 'label') {
 				$newlabel = $this->_checkValForAPI($field, $value, $this->email_template);
 			}
@@ -488,14 +501,15 @@ class EmailTemplates extends DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
+	 * @phpstan-template T
 	 *
 	 * @param   Object  $object     	Object to clean
 	 * @phan-param		CEmailTemplate	$object
-	 * @phpstan-param	CEmailTemplate	$object
+	 * @phpstan-param	T	$object
 	 *
 	 * @return  Object	Object with cleaned properties
 	 * @phan-return		CEmailTemplate
-	 * @phpstan-return	CEmailTemplate
+	 * @phpstan-return	T
 	 */
 	protected function _cleanObjectDatas($object)
 	{

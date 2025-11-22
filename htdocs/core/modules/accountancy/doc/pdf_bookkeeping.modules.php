@@ -706,11 +706,11 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 	/**
 	 *   	Define Array Column Field
 	 *
-	 *   	@param	BookKeeping	   $object    	    common object
-	 *   	@param	Translate	   $outputlangs     langs
-	 *      @param	int			   $hidedetails		Do not show line details
-	 *      @param	int			   $hidedesc		Do not show desc
-	 *      @param	int			   $hideref			Do not show ref
+	 *   	@param	CommonObject	$object    	    common object
+	 *   	@param	Translate		$outputlangs    langs
+	 *      @param	int<0,1>		$hidedetails	Do not show line details
+	 *      @param	int<0,1>		$hidedesc		Do not show desc
+	 *      @param	int<0,1>		$hideref		Do not show ref
 	 *      @return	void
 	 */
 	public function defineColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
@@ -735,7 +735,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 			'width' => 10,
 			'status' => (bool) getDolGlobalInt('PDF_ACCOUNTANCY_LEDGER_ADD_POSITION'),
 			'title' => [
-				'textkey' => '#', // use lang key is useful in somme case with module
+				'textkey' => '#', // use lang key is useful in some case with module
 				'align' => 'C',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
@@ -753,7 +753,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 			'width' => 18, // only for desc
 			'status' => true,
 			'title' => [
-				'textkey' => 'Date', // use lang key is useful in somme case with module
+				'textkey' => 'Date', // use lang key is useful in some case with module
 				'align' => 'C',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
@@ -771,7 +771,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 			'width' => 14,
 			'status' => true,
 			'title' => [
-				'textkey' => 'Piece', // use lang key is useful in somme case with module
+				'textkey' => 'Piece', // use lang key is useful in some case with module
 				'align' => 'C',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
@@ -790,7 +790,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 			'width' => 15,
 			'status' => true,
 			'title' => [
-				'textkey' => 'Account', // use lang key is useful in somme case with module
+				'textkey' => 'Account', // use lang key is useful in some case with module
 				'align' => 'C',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
@@ -809,7 +809,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 			'width' => 30,
 			'status' => true,
 			'title' => [
-				'textkey' => 'LabelAccount', // use lang key is useful in somme case with module
+				'textkey' => 'LabelAccount', // use lang key is useful in some case with module
 				'align' => 'C',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
@@ -828,7 +828,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 			'width' => false,
 			'status' => true,
 			'title' => [
-				'textkey' => 'Label', // use lang key is useful in somme case with module
+				'textkey' => 'Label', // use lang key is useful in some case with module
 				'align' => 'C',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
@@ -847,7 +847,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 			'width' => 15,
 			'status' => true,
 			'title' => [
-				'textkey' => 'Debit', // use lang key is useful in somme case with module
+				'textkey' => 'Debit', // use lang key is useful in some case with module
 				'align' => 'C',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
@@ -866,7 +866,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 			'width' => 15,
 			'status' => true,
 			'title' => array(
-				'textkey' => 'Credit', // use lang key is useful in somme case with module
+				'textkey' => 'Credit', // use lang key is useful in some case with module
 				'align' => 'C',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label

@@ -185,10 +185,6 @@ if ($id > 0 || !empty($ref)) {
 		print yn($object->fournisseur);
 		print '</td></tr>';*/
 
-		if (getDolGlobalString('SOCIETE_USEPREFIX')) {  // Old not used prefix field
-			print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
-		}
-
 		if ($object->client) {
 			print '<tr><td class="titlefield">';
 			print $langs->trans('CustomerCode').'</td><td colspan="3">';
@@ -260,14 +256,14 @@ if ($id > 0 || !empty($ref)) {
 
 					print "<table class=\"noborder\" width=\"100%\">";
 					print '<tr class="liste_titre">';
-					print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "d.rowid", $param, "", "", $sortfield, $sortorder);
-					print_liste_field_titre("NameSlashCompany", $_SERVER["PHP_SELF"], "d.lastname", $param, "", "", $sortfield, $sortorder);
-					print_liste_field_titre("Login", $_SERVER["PHP_SELF"], "d.login", $param, "", "", $sortfield, $sortorder);
-					print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "t.libelle", $param, "", "", $sortfield, $sortorder);
-					print_liste_field_titre("Person", $_SERVER["PHP_SELF"], "d.morphy", $param, "", "", $sortfield, $sortorder);
-					print_liste_field_titre("EMail", $_SERVER["PHP_SELF"], "d.email", $param, "", "", $sortfield, $sortorder);
-					print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "d.statut,d.datefin", $param, "", "", $sortfield, $sortorder);
-					print_liste_field_titre("EndSubscription", $_SERVER["PHP_SELF"], "d.datefin", $param, "", '', $sortfield, $sortorder, 'center ');
+					print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "d.rowid", "", $param, "", $sortfield, $sortorder);
+					print_liste_field_titre("NameSlashCompany", $_SERVER["PHP_SELF"], "d.lastname", "", $param, "", $sortfield, $sortorder);
+					print_liste_field_titre("Login", $_SERVER["PHP_SELF"], "d.login", "", $param, "", $sortfield, $sortorder);
+					print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "t.libelle", "", $param, "", $sortfield, $sortorder);
+					print_liste_field_titre("Person", $_SERVER["PHP_SELF"], "d.morphy", "", $param, "", $sortfield, $sortorder);
+					print_liste_field_titre("EMail", $_SERVER["PHP_SELF"], "d.email", "", $param, "", $sortfield, $sortorder);
+					print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "d.statut,d.datefin", "", $param, "", $sortfield, $sortorder);
+					print_liste_field_titre("EndSubscription", $_SERVER["PHP_SELF"], "d.datefin", "", $param, '', $sortfield, $sortorder, 'center ');
 					print "</tr>\n";
 
 					$i = 0;

@@ -3,6 +3,7 @@
  * Copyright (C) 2020  		Lenin Rivas		   	<lenin@leninrivas.com>
  * Copyright (C) 2023-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Noé Cendrier		<noe.cendrier@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,7 +83,7 @@ class Mo extends CommonObject
 	 */
 
 	/**
-	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>,searchmulti?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'position' => 1, 'notnull' => 1, 'index' => 1, 'comment' => "Id",),
@@ -974,66 +975,65 @@ class Mo extends CommonObject
 
 		$this->db->begin();
 
-		if (!empty($arrayoflines)) {
-			// If there is child lines
+		if (!empty($fk_movement)) {
 			$stockmove = new MouvementStock($this->db);
 			$stockmove->setOrigin($this->element, $this->id);
 
-			if (!empty($fk_movement)) {
-				// The fk_movement was not recorded so we try to guess the product and quantity to restore.
-				$moline = new MoLine($this->db);
-				$TArrayMoLine = $moline->fetchAll('', '', 1, 0, '(fk_stock_movement:=:'.((int) $fk_movement).')');
-				$moline = array_shift($TArrayMoLine);
+			// The fk_movement was not recorded so we try to guess the product and quantity to restore.
+			$moline = new MoLine($this->db);
+			$TArrayMoLine = $moline->fetchAll('', '', 1, 0, '(fk_stock_movement:=:'.((int) $fk_movement).')');
+			$moline = array_shift($TArrayMoLine);
 
-				$movement = new MouvementStock($this->db);
-				$movement->fetch($fk_movement);
-				$productstatic->fetch($movement->product_id);
-				$qtytoprocess = $movement->qty;
+			$movement = new MouvementStock($this->db);
+			$movement->fetch($fk_movement);
+			$productstatic->fetch($movement->product_id);
+			$qtytoprocess = $movement->qty;
+
+			// Reverse stock movement
+			$labelmovementCancel = $langs->trans("CancelProductionForRef", $productstatic->ref);
+			$codemovementCancel = $langs->trans("StockIncrease");
+
+			if (($qtytoprocess >= 0)) {
+				$idstockmove = $stockmove->reception($user, $movement->product_id, $movement->warehouse_id, $qtytoprocess, 0, $labelmovementCancel, '', '', $movement->batch, dol_now(), 0, $codemovementCancel);
+			} else {
+				$idstockmove = $stockmove->livraison($user, $movement->product_id, $movement->warehouse_id, $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', $movement->batch, 0, $codemovementCancel);
+			}
+			if ($idstockmove < 0) {
+				$this->setErrorsFromObject($stockmove);
+			} else {
+				$result = $moline->delete($user, $notrigger);
+			}
+		} elseif (!empty($arrayoflines)) {
+			$stockmove = new MouvementStock($this->db);
+			$stockmove->setOrigin($this->element, $this->id);
+
+			// Loop on each child lines
+			foreach ($arrayoflines as $key => $arrayofline) {
+				$lineDetails = $arrayoflines[$key];
+				$productstatic->fetch($lineDetails['fk_product']);
+				$qtytoprocess = $lineDetails['qty'];
 
 				// Reverse stock movement
 				$labelmovementCancel = $langs->trans("CancelProductionForRef", $productstatic->ref);
 				$codemovementCancel = $langs->trans("StockIncrease");
 
-				if (($qtytoprocess >= 0)) {
-					$idstockmove = $stockmove->reception($user, $movement->product_id, $movement->warehouse_id, $qtytoprocess, 0, $labelmovementCancel, '', '', $movement->batch, dol_now(), 0, $codemovementCancel);
+
+				if ($qtytoprocess >= 0) {
+					$idstockmove = $stockmove->reception($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, '', '', $lineDetails['batch'], dol_now(), 0, $codemovementCancel);
 				} else {
-					$idstockmove = $stockmove->livraison($user, $movement->product_id, $movement->warehouse_id, $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', $movement->batch, 0, $codemovementCancel);
+					$idstockmove = $stockmove->livraison($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', $lineDetails['batch'], 0, $codemovementCancel);
 				}
 				if ($idstockmove < 0) {
 					$error++;
-					setEventMessages($stockmove->error, $stockmove->errors, 'errors');
+					$this->setErrorsFromObject($stockmove);
 				} else {
-					$result = $moline->delete($user, $notrigger);
-				}
-			} else {
-				// Loop on each child lines
-				foreach ($arrayoflines as $key => $arrayofline) {
-					$lineDetails = $arrayoflines[$key];
-					$productstatic->fetch($lineDetails['fk_product']);
-					$qtytoprocess = $lineDetails['qty'];
+					$moline = new MoLine($this->db);
+					$moline->fetch($lineDetails['rowid']);
 
-					// Reverse stock movement
-					$labelmovementCancel = $langs->trans("CancelProductionForRef", $productstatic->ref);
-					$codemovementCancel = $langs->trans("StockIncrease");
-
-
-					if ($qtytoprocess >= 0) {
-						$idstockmove = $stockmove->reception($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, '', '', $lineDetails['batch'], dol_now(), 0, $codemovementCancel);
-					} else {
-						$idstockmove = $stockmove->livraison($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', $lineDetails['batch'], 0, $codemovementCancel);
-					}
-					if ($idstockmove < 0) {
+					$resdel = $moline->delete($user, $notrigger);
+					if ($resdel < 0) {
 						$error++;
-						setEventMessages($stockmove->error, $stockmove->errors, 'errors');
-					} else {
-						$moline = new MoLine($this->db);
-						$moline->fetch($lineDetails['rowid']);
-
-						$resdel = $moline->delete($user, $notrigger);
-						if ($resdel < 0) {
-							$error++;
-							setEventMessages($moline->error, $moline->errors, 'errors');
-						}
+						$this->setErrorsFromObject($moline);
 					}
 				}
 
@@ -1042,7 +1042,7 @@ class Mo extends CommonObject
 				}
 			}
 		} else {
-			// No child lines
+			// No child lines and no associated movement
 			$result = $this->deleteLineCommon($user, $idline, $notrigger);
 		}
 

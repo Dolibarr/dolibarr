@@ -30,12 +30,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -44,6 +38,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Define if user can read permissions
 $permissiontoadd = ($user->admin || $user->hasRight("user", "user", "write"));
@@ -98,6 +97,7 @@ if (isModEnabled('multicompany') && $conf->entity > 1 && getDolGlobalString('MUL
 /**
  * Actions
  */
+
 $error = 0;
 $parameters = array('id' => $id, 'userid' => $userid, 'caneditperms' => $permissiontoedit);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -339,6 +339,7 @@ if ($action == 'create') {
 
 			print '<div class="fichecenter">';
 			print '<div class="fichehalfleft">';
+
 			print '<div class="underbanner clearboth"></div>';
 
 			print '<table class="border centpercent tableforfield">';
@@ -348,7 +349,7 @@ if ($action == 'create') {
 				print '<tr><td class="titlefield">'.$langs->trans("Name").'</td>';
 				print '<td class="valeur">'.dol_escape_htmltag($object->name);
 				if (empty($object->entity)) {
-					print img_picto($langs->trans("GlobalGroup"), 'redstar');
+					print img_picto($langs->trans("GlobalGroup"), 'superadmin');
 				}
 				print "</td></tr>\n";
 			}
@@ -466,9 +467,9 @@ if ($action == 'create') {
 						print '<td class="tdoverflowmax150">';
 						print $useringroup->getNomUrl(-1, '', 0, 0, 24, 0, 'login');
 						if (isModEnabled('multicompany') && $useringroup->admin && empty($useringroup->entity)) {
-							print img_picto($langs->trans("SuperAdministratorDesc"), 'redstar', 'class="valignmiddle paddingright paddingleft"');
+							print img_picto($langs->trans("SuperAdministratorDesc"), 'superadmin', 'class="valignmiddle paddingright paddingleft"');
 						} elseif ($useringroup->admin) {
-							print img_picto($langs->trans("AdministratorDesc"), 'star', 'class="valignmiddle paddingright paddingleft"');
+							print img_picto($langs->trans("AdministratorDesc"), 'admin', 'class="valignmiddle paddingright paddingleft"');
 						}
 						print '</td>';
 						print '<td>'.$useringroup->lastname.'</td>';
