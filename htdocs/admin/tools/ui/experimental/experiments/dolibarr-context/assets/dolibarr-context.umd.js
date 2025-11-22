@@ -43,12 +43,58 @@
 	// Private storage for secure tools (non-replaceable)
 	const _tools = {};
 
+	// Private storage for secure context vars or constants (non-replaceable)
+	const _contextVars = {};
+
 	// Native event dispatcher (standard DOM)
 	const _events = new EventTarget();
+
+	const _awaitHooks = {};  // Async hooks storage
 
 	// Debug flag (disabled by default)
 	let _debug = false;
 
+	// -------------------------
+	// Internal helper functions
+	// -------------------------
+	function _ensureEvent(name) { if (!_awaitHooks[name]) _awaitHooks[name] = []; }
+	function _generateId() { return 'hook_' + Math.random().toString(36).slice(2); }
+	function _idExists(name, id) { return _awaitHooks[name].some(h => h.id === id); }
+
+	/**
+	 * Insert a new hook entry in the array respecting optional before/after lists
+	 */
+	function _insertWithOrder(arr, entry, beforeList, afterList) {
+		if ((!beforeList || beforeList.length === 0) && (!afterList || afterList.length === 0)) {
+			arr.push(entry);
+			return arr;
+		}
+
+		let ordered = [...arr];
+		let index = ordered.length;
+
+		if (beforeList && beforeList.length > 0) {
+			for (const target of beforeList) {
+				const i = ordered.findIndex(h => h.id === target);
+				if (i !== -1 && i < index) index = i;
+			}
+		}
+
+		if (afterList && afterList.length > 0) {
+			for (const target of afterList) {
+				const i = ordered.findIndex(h => h.id === target);
+				if (i !== -1 && i >= index) index = i + 1;
+			}
+		}
+
+		if (index > ordered.length) index = ordered.length;
+		ordered.splice(index, 0, entry);
+		return ordered;
+	}
+
+	// -------------------------
+	// Dolibarr object
+	// -------------------------
 	const Dolibarr = {
 
 		/**
@@ -83,12 +129,12 @@
 
 			this.log(`Tool defined: ${name}, triggerHook: ${triggerHook}, overwrite: ${overwrite} `);
 			if(triggerHook) {
-				Dolibarr.executeHook('defineTool', { toolName: name, overwrite: overwrite });
+				this.executeHook('defineTool', { toolName: name, overwrite });
 			}
 		},
 
 		/**
-		 * Checks if a tool already exists.
+		 * Check if tool exists
 		 * @param {string} name Tool name
 		 * @returns {boolean} true if exists
 		 */
@@ -97,12 +143,73 @@
 		},
 
 		/**
-		 * Enables or disables debug mode.
-		 * When enabled, Dolibarr.log() writes to the console.
+		 * Get read-only snapshot of context variables
+		 */
+		get ContextVars() {
+			return Object.freeze({ ..._contextVars });
+		},
+
+		/**
+		 * Defines a new context variable.
+		 * @param {string} key
+		 * @param {string|number|boolean} value
+		 * @param {boolean} overwrite Allow overwriting existing value
+		 */
+		setContextVar(key, value, overwrite = false) {
+			// Accept only string, number, or boolean
+			const type = typeof value;
+			if (type !== 'string' && type !== 'number' && type !== 'boolean') {
+				throw new TypeError(`Dolibarr: ContextVar '${key}' must be a string, number, or boolean`);
+			}
+
+			if (!overwrite && _contextVars.hasOwnProperty(key)) {
+				throw new Error(`Dolibarr: ContextVar '${key}' already defined`);
+			}
+
+			Object.defineProperty(_contextVars, key, {
+				value,
+				writable: false,
+				configurable: false,
+				enumerable: true
+			});
+
+			this.log(`ContextVar set: ${key} = ${value} (overwrite: ${overwrite})`);
+			this.executeHook('setContextVar', { key, value, overwrite });
+		},
+
+
+		/**
+		 * Set multiple context variables
+		 * @param {Object} vars Object of key/value pairs
+		 * @param {boolean} overwrite Allow overwriting existing values
+		 */
+		setContextVars(vars, overwrite = false) {
+			if (typeof vars !== 'object' || vars === null) {
+				throw new Error('Dolibarr: setContextVars expects an object');
+			}
+
+			for (const [key, value] of Object.entries(vars)) {
+				this.setContextVar(key, value, overwrite);
+			}
+		},
+
+		/**
+		 * Get a context variable safely
+		 * @param {string} key
+		 * @param {*} fallback Optional fallback if variable not set
+		 * @returns {*}
+		 */
+		getContextVar(key, fallback = null) {
+			return _contextVars.hasOwnProperty(key) ? _contextVars[key] : fallback;
+		},
+
+		/**
+		 * Enable or disable debug mode
+		 * @param {boolean} state
 		 */
 		debugMode(state) {
 			_debug = !!state;
-			// Sauvegarde dans localStorage
+			// save in localStorage
 			if (typeof window !== "undefined" && window.localStorage) {
 				localStorage.setItem('DolibarrDebugMode', _debug ? '1' : '0');
 			}
@@ -110,7 +217,9 @@
 		},
 
 		/**
-		 * Internal logger (only active when debug mode is enabled).
+		 * Internal logger
+		 * Only prints when debug mode is enabled
+		 * @param {string} msg
 		 */
 		log(msg) {
 			if (_debug) console.log(`Dolibarr: ${msg}`);
@@ -145,16 +254,50 @@
 		},
 
 		/**
-		 * Unregisters an event listener.
-		 * @param {string} eventName Event name
-		 * @param {function} callback Listener previously added
+		 * Unregister an event listener
+		 * @param {string} eventName
+		 * @param {function} callback
 		 */
 		off(eventName, callback) {
 			_events.removeEventListener(eventName, callback);
+		},
+
+		/**
+		 * Register an asynchronous hook
+		 * @param {string} eventName
+		 * @param {function} fn Async function receiving previous result
+		 * @param {Object} opts Optional {before, after, id} to control order
+		 * @returns {string} The hook ID
+		 */
+		onAwait(eventName, fn, opts = {}) {
+			_ensureEvent(eventName);
+			let id = opts.id || _generateId();
+			if (_idExists(eventName, id)) throw new Error(`onAwait: ID '${id}' already used for '${eventName}'`);
+			const before = Array.isArray(opts.before) ? opts.before : (opts.before ? [opts.before] : []);
+			const after  = Array.isArray(opts.after)  ? opts.after  : (opts.after  ? [opts.after]  : []);
+			_awaitHooks[eventName] = _insertWithOrder(_awaitHooks[eventName], { id, fn }, before, after);
+			return id;
+		},
+
+		/**
+		 * Execute async hooks sequentially
+		 * @param {string} eventName
+		 * @param {*} data Input data for first hook
+		 * @returns {Promise<*>} Final result after all hooks
+		 */
+		async executeHookAwait(eventName, data) {
+			this.log(`Await Hook executed: ${eventName}`);
+
+			_ensureEvent(eventName);
+			let result = data;
+			for (const h of _awaitHooks[eventName]) {
+				result = await h.fn(result);
+			}
+			return result;
 		}
 	};
 
-	// Lock core object to prevent tampering
+	// Lock Dolibarr core object
 	Object.freeze(Dolibarr);
 
 	// Expose Dolibarr to window in a protected, non-writable way
@@ -167,7 +310,7 @@
 		});
 	}
 
-	// Restaurer debug mode depuis localStorage
+	// Restore debug mode from localStorage
 	if (typeof window !== "undefined" && window.localStorage) {
 		const saved = localStorage.getItem('DolibarrDebugMode');
 		if (saved === '1') {
@@ -175,6 +318,31 @@
 		}
 	}
 
+
+	// Force initialise hook init and Ready in good execution order
+	(function triggerDolibarrHooks() {
+		// Fire Init first
+		const fireInit = () => {
+			Dolibarr.executeHook('Init', { context: Dolibarr });
+			Dolibarr.log('Context Init done');
+
+			// Only after Init is done, fire Ready
+			fireReady();
+		};
+
+		const fireReady = () => {
+			Dolibarr.executeHook('Ready', { context: Dolibarr });
+			Dolibarr.log('Context Ready done');
+		};
+
+		if (document.readyState === 'complete' || document.readyState === 'interactive') {
+			// DOM already ready, trigger Init -> Ready in order
+			fireInit();
+		} else {
+			// Wait for DOM ready, then trigger Init -> Ready
+			document.addEventListener('DOMContentLoaded', fireInit);
+		}
+	})();
 
 	/**
 	 * Display help in console log
@@ -196,24 +364,6 @@
 	}, false, false);
 
 	Dolibarr.tools.showConsoleHelp();
-
-	// Trigger Dolibarr:Ready as DOM ready
-	(function triggerContextInit() {
-		const initHook = () => {
-			Dolibarr.executeHook('Ready', { context: Dolibarr });
-			Dolibarr.log('Context initialized');
-		};
-
-		if (document.readyState === 'complete' || document.readyState === 'interactive') {
-			// DOM is already ready
-			initHook();
-		} else {
-			// Wait for DOM to be ready
-			document.addEventListener('DOMContentLoaded', initHook);
-		}
-	})();
-
-
 
 	return Dolibarr;
 });

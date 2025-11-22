@@ -260,8 +260,11 @@ class Documentation
 						'Introduction' => '#titlesection-basicusage',
 						'ConsoleHelp' => '#titlesection-console-help',
 						'JSDolibarrhooks' => '#titlesection-hooks',
+						'JSDolibarrAwaitHooks' => '#titlesection-await-hooks',
+						'JSDolibarrhooksReadyVsInit' => '#titlesection-event-init-vs-ready',
 						'ExampleOfCreatingNewContextTool' => '#titlesection-create-tool-example',
 						'SetEventMessageTool' => '#titlesection-tool-seteventmessage',
+						'SetAndUseContextVars' => '#titlesection-contextvars',
 					),
 				),
 			)

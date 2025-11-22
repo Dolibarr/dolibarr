@@ -1676,9 +1676,9 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '<td>';
 				$addadmin = '';
 				if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
-					$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft valignmiddle"');
+					$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "superadmin", 'class="paddingleft valignmiddle"');
 				} elseif (!empty($object->admin)) {
-					$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft valignmiddle"');
+					$addadmin .= img_picto($langs->trans("AdministratorDesc"), "admin", 'class="paddingleft valignmiddle"');
 				}
 				print showValueWithClipboardCPButton($object->login).$addadmin;
 				print '</td>';
@@ -1801,7 +1801,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print $form->textwithpicto($text, $langs->trans("THMDescription"), 1, 'help', 'classthm');
 				print '</td>';
 				print '<td>';
-				print($object->thm != '' ? price($object->thm, 0, $langs, 1, -1, -1, $conf->currency) : '');
+				print($object->thm != '' ? '<span class="amount">'.price($object->thm, 0, $langs, 1, -1, -1, $conf->currency).'</span>' : '');
 				print '</td>';
 				print "</tr>\n";
 
@@ -1811,7 +1811,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print $form->textwithpicto($text, $langs->trans("TJMDescription"), 1, 'help', 'classtjm');
 				print '</td>';
 				print '<td>';
-				print($object->tjm != '' ? price($object->tjm, 0, $langs, 1, -1, -1, $conf->currency) : '');
+				print($object->tjm != '' ? '<span class="amount">'.price($object->tjm, 0, $langs, 1, -1, -1, $conf->currency).'</span>' : '');
 				print '</td>';
 				print "</tr>\n";
 			}

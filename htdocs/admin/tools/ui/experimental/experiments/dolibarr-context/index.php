@@ -140,7 +140,7 @@ $documentation->showSidebar(); ?>
 			</div>
 
 			<h3>Example of code usage</h3>
-			<div id="titlesection-create-tool-example" class="documentation-example">
+			<div  class="documentation-example">
 				<?php
 				$lines = array(
 					'<script>',
@@ -192,31 +192,167 @@ $documentation->showSidebar(); ?>
 		</div>
 
 		<div class="documentation-section">
-			<h2 id="titlesection-tool-seteventmessage" class="documentation-title">Example of creating a new context tool</h2>
+			<h2 id="titlesection-await-hooks" class="documentation-title">Async Hooks (Await Hooks) - sequential execution</h2>
+
+			<p>
+				Dolibarr supports <strong>asynchronous hooks</strong> using <code>Dolibarr.onAwait()</code> and <code>Dolibarr.executeHookAwait()</code>.
+				These hooks allow you to register functions that execute <em>in sequence</em> and can modify data before passing it to the next hook.
+				They are useful for complex workflows where multiple modules or scripts need to process or enrich the same data asynchronously.
+			</p>
+
+			<p>
+				Each hook can optionally specify <code>before</code> or <code>after</code> to control the execution order relative to other hooks.
+				Every hook registration returns a unique <code>id</code>, which can be used to reference or unregister the hook later.
+			</p>
+
+			<p>
+				Unlike standard synchronous hooks registered with <code>Dolibarr.on()</code>, await hooks return a <code>Promise</code> when executed.
+				This means you can <code>await</code> their results in your code, and any asynchronous operations inside a hook (e.g., API calls, timers) will be handled correctly before moving to the next hook.
+			</p>
+
+			<div class="documentation-example">
+				<?php
+				$lines = array(
+					'<script nonce="<?php print getNonce() ?>">',
+					'    document.addEventListener(\'Dolibarr:Ready\', async function(e) {',
+					'',
+					'        // Register async hooks will be executed in first place',
+					'        Dolibarr.onAwait(\'calculateDiscount\', async function(order) {',
+					'            order.total *= 0.9; // Apply 10% discount',
+					'            return order;',
+					'        }, { id: \'discount10\' });',
+					'',
+					'        // Register async hooks will be executed in third place',
+					'        Dolibarr.onAwait(\'calculateDiscount\', async function(order) {',
+					'            if(order.total > 1000) order.total -= 50; // Extra discount over 1000',
+					'            return order;',
+					'        }, { id: \'discountOver1000\', after: \'discount10\' });',
+					'',
+					'        // Register async hooks will be executed in second place',
+					'        // this hook item as no id so plus10HookItemId will receive a unique random id ',
+					'        let plus10HookItemId = Dolibarr.onAwait(\'calculateDiscount\', async function(order) {',
+					'            order.newObjectAttribute = \'My value\';',
+					'            order.total += 10;',
+					'            return order;',
+					'        }, { before: \'discountOver1000\' });',
+					'',
+					'        document.getElementById(\'try-event-yourCustomAwaitHookName\').addEventListener(\'click\', async function(e) {',
+					'            // Execute all registered await hooks sequentially',
+					'            let order = {total: 1200};',
+					'            order = await Dolibarr.executeHookAwait(\'calculateDiscount\', order);',
+					'            console.log(order); // order.total : 1200 -> 1080 -> 1090 -> 1040',
+					'        });',
+					'',
+					'    });',
+					'</script>',
+				);
+				echo $documentation->showCode($lines, 'php'); ?>
+
+				Open your console <code>F12</code> and click on  <button class="button" id="try-event-yourCustomAwaitHookName">try</button>
+
+				<script nonce="<?php print getNonce() ?>">
+					document.addEventListener('Dolibarr:Ready', async function(e) {
+
+						// Register async hooks will be executed in first place
+						Dolibarr.onAwait('calculateDiscount', async function(order) {
+							order.total *= 0.9; // Apply 10% discount
+							return order;
+						}, { id: 'discount10' });
+
+						// Register async hooks will be executed in third place
+						Dolibarr.onAwait('calculateDiscount', async function(order) {
+							if(order.total > 1000) order.total -= 50; // Extra discount over 1000
+							return order;
+						}, { id: 'discountOver1000', after: 'discount10' });
+
+						// Register async hooks will be executed in second place
+						Dolibarr.onAwait('calculateDiscount', async function(order) {
+							order.newObjectAttribute = 'My value';
+							order.total+= 10;
+							return order;
+						}, { before: 'discountOver1000' });
+
+						document.getElementById('try-event-yourCustomAwaitHookName').addEventListener('click', async function(e) {
+							// Execute all registered await hooks sequentially
+							let order = {total: 1200};
+							order = await Dolibarr.executeHookAwait('calculateDiscount', order);
+							console.log(order); // order.total : 1200 -> 1080 -> 1090 -> 1040
+						});
+
+					});
+				</script>
+			</div>
+
+		</div>
+
+
+
+		<div  id="titlesection-event-init-vs-ready" class="documentation-section">
+			<h2 class="documentation-title">Difference between Dolibarr:Init and Dolibarr:Ready</h2>
+
+			<p>
+				Dolibarr provides two main initialization events for its JavaScript context: <code>Dolibarr:Init</code> and <code>Dolibarr:Ready</code>.
+				Understanding their difference is important when developing modules or tools.
+			</p>
+
+			<ul>
+				<li>
+					<strong>Dolibarr:Init</strong> is triggered immediately when the Dolibarr context is created.
+					This event is intended for:
+					<ul>
+						<li>Defining or registering new tools via <code>Dolibarr.defineTool()</code>.</li>
+						<li>Setting context variables (<code>Dolibarr.setContextVar()</code> / <code>Dolibarr.setContextVars()</code>).</li>
+						<li>Preparing configuration that must be available before the DOM is fully loaded.</li>
+					</ul>
+					It occurs <em>before</em> <code>Dolibarr:Ready</code>, so it is ideal for setup tasks that other tools may depend on.
+				</li>
+
+				<li>
+					<strong>Dolibarr:Ready</strong> is triggered once the DOM is ready, similar to <code>$(document).ready()</code> in jQuery.
+					This event is intended for:
+					<ul>
+						<li>Running code that interacts with the DOM.</li>
+						<li>Attaching event listeners to elements on the page.</li>
+						<li>Executing functionality that requires all tools and context variables to be fully initialized.</li>
+					</ul>
+				</li>
+			</ul>
+
+			<p>
+				In short, use <code>Dolibarr:Init</code> for setting up tools and context variables, and <code>Dolibarr:Ready</code> for code that needs the DOM and fully initialized context.
+			</p>
+		</div>
+
+
+
+
+		<div class="documentation-section">
+			<h2 id="titlesection-create-tool-example" class="documentation-title">Example of creating a new context tool</h2>
 
 			<h3>Defining Tools</h3>
 			<p>
 				You can define reusable and protected tools in the Dolibarr context using <code>Dolibarr.defineTool</code>.
 			</p>
 			<p>See also <code>dolibarr-context.mock.js</code> for defining all standard Dolibarr tools and creating mock implementations to improve code completion and editor support.</p>
+			<p><b>Note :</b> a tool can be a class not only a function</p>
 
 			<div class="documentation-example">
 				<?php
 				$lines = array(
 				'<script>',
+					'document.addEventListener(\'Dolibarr:Init\', function(e) {',
 					'	// Define a simple tool',
 					'	let overwrite = false; // Once a tool is defined, it cannot be replaced.',
 					'	Dolibarr.defineTool(\'alertUser\', (msg) => alert(\'[Dolibarr] \' + msg), overwrite);',
+					'});',
 					'',
+					'document.addEventListener(\'Dolibarr:Ready\', function(e) {',
 					'	// Use the tool',
 					'	Dolibarr.tools.alertUser(\'hello world\');',
+					'});',
 				'</script>',
 				);
 				echo $documentation->showCode($lines, 'php'); ?>
-				<script nonce="<?php print getNonce() ?>" >
-					// Define a simple tool
-					Dolibarr.defineTool('alertUser', (msg) => alert('[Dolibarr] ' + msg));
-				</script>
 			</div>
 
 			<h3>Protected Tools</h3>
@@ -257,7 +393,7 @@ $documentation->showSidebar(); ?>
 		</div>
 
 		<div class="documentation-section">
-			<h2 class="documentation-title">Set event message tool</h2>
+			<h2 id="titlesection-tool-seteventmessage" class="documentation-title">Set event message tool</h2>
 
 			<p>
 				Instead of calling JNotify directly in your code, use Dolibarr’s setEventMessage tool.
@@ -276,7 +412,7 @@ $documentation->showSidebar(); ?>
 			<div class="documentation-example">
 				<?php
 				$lines = array(
-					'<script nonce="<?php print getNonce() ?>">',
+					'<script nonce="<?php print getNonce() ?>" >',
 					'	document.addEventListener(\'Dolibarr:Ready\', function(e) {',
 					'',
 					'		document.getElementById(\'setEventMessage-success\').addEventListener(\'click\', function(e) {',
@@ -324,6 +460,91 @@ $documentation->showSidebar(); ?>
 				<button id="setEventMessage-error" class="button">Alert error</button>
 				<button id="setEventMessage-error-sticky" class="button">Alert error sticky</button>
 				<button id="setEventMessage-warning" class="button">Alert warning</button>
+			</div>
+
+		</div>
+
+
+
+		<div class="documentation-section">
+			<h2 id="titlesection-contextvars" class="documentation-title">Set and use context vars</h2>
+
+			<p>
+				The <strong>Context Vars</strong> system allows you to define and manage variables that are globally accessible within the Dolibarr JavaScript context. These variables can store configuration data, URLs, tokens, user IDs, object references, or any other values needed by your frontend code and tools.
+				By using context vars, you can:
+			<ul>
+				<li>Pass server-side data (from PHP) to JavaScript safely and consistently.</li>
+				<li>Provide reusable configuration for Dolibarr tools, widgets, or modules without hardcoding values.</li>
+				<li>Define overridable or non-overridable vars to protect critical values while allowing flexible overrides when necessary.</li>
+				<li>Use <code>Dolibarr.setContextVar</code> for single values or <code>Dolibarr.setContextVars</code> to pass multiple values at once.</li>
+				<li>Access these variables anywhere in your code via <code>Dolibarr.getContextVar(key)</code>.</li>
+				<li>Ensure that all your modules and tools can rely on consistent and up-to-date context information, improving maintainability and interoperability.</li>
+			</ul>
+			This system is particularly useful for setting up base URLs, API endpoints, user-specific information, or runtime data that needs to be shared across multiple Dolibarr frontend tools.
+			</p>
+
+			<h3>Add  context var (overridable or not)</h3>
+			<div class="documentation-example">
+				<?php
+				$lines = array(
+					'<script nonce="<?php print getNonce() ?>" >',
+					'    document.addEventListener(\'Dolibarr:Init\', function(e) {',
+					'    	// Add no overridable context var',
+					'       Dolibarr.setContextVar(\'yourKey\', \'YourValue\');',
+					'',
+					'    	// Add overridable context var',
+					'       Dolibarr.setContextVar(\'yourKey2\', \'YourValue\', true);',
+					'    });',
+					'</script>',
+				);
+				echo $documentation->showCode($lines, 'php');
+				?>
+			</div>
+
+
+			<h3>Add multiple context vars (overridable or not)</h3>
+			<div class="documentation-example">
+				<?php
+				$lines = array(
+					'<?php',
+					'	$contextConst = [',
+					'		\'DOL_URL_ROOT\' => DOL_URL_ROOT,',
+					'		\'token\' => newToken(),',
+					'		\'cardObjectElement\' => $object->element,',
+					'		\'cardObjectId\' => $object->id,',
+					'		\'currentUserId\' => $user->id',
+					'		// ...',
+					'	];',
+					'',
+					'	$contextVars = [',
+					'		\'lastCardDataRefresh\' => time(),',
+					'		// ...',
+					'	]',
+					'?>',
+					'<script nonce="<?php print getNonce() ?>" >',
+					'    document.addEventListener(\'Dolibarr:Init\', function(e) {',
+					'        Dolibarr.setContextVars(<?php print json_encode($contextConst); ?>);',
+					'        Dolibarr.setContextVars(<?php print json_encode($contextVars); ?>, true);',
+					'    });',
+					'</script>',
+				);
+				echo $documentation->showCode($lines, 'php');
+				?>
+			</div>
+
+			<h3>Get context var</h3>
+			<div class="documentation-example">
+				<?php
+				$lines = array(
+					'<script nonce="<?php print getNonce() ?>" >',
+					'    document.addEventListener(\'Dolibarr:Ready\', function(e) {',
+					'        let url = Dolibarr.getContextVar(\'DOL_URL_ROOT\', \'The optional fallback value\'));',
+					'        console.log(url);',
+					'    });',
+					'</script>',
+				);
+				echo $documentation->showCode($lines, 'php');
+				?>
 			</div>
 
 		</div>

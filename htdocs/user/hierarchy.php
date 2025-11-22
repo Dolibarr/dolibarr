@@ -176,9 +176,9 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 
 		$li = $userstatic->getNomUrl(-1, '', 0, 1);
 		if (isModEnabled('multicompany') && $userstatic->admin && !$userstatic->entity) {
-			$li .= img_picto($langs->trans("SuperAdministratorDesc"), 'redstar', 'class="valignmiddle paddingright paddingleft"');
+			$li .= img_picto($langs->trans("SuperAdministratorDesc"), 'superadmin', 'class="valignmiddle paddingright paddingleft"');
 		} elseif ($userstatic->admin) {
-			$li .= img_picto($langs->trans("AdministratorDesc"), 'star', 'class="valignmiddle paddingright paddingleft"');
+			$li .= img_picto($langs->trans("AdministratorDesc"), 'admin', 'class="valignmiddle paddingright paddingleft"');
 		}
 		$li .= ' <span class="opacitymedium">('.$val['login'].($entitystring ? ' - '.$entitystring : '').')</span>';
 
@@ -233,9 +233,9 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 					$li = '<span class="opacitymedium">';
 					$li .= $userstatic->getNomUrl(-1, '', 0, 1);
 					if (isModEnabled('multicompany') && $userstatic->admin && !$userstatic->entity) {
-						$li .= img_picto($langs->trans("SuperAdministrator"), 'redstar');
+						$li .= img_picto($langs->trans("SuperAdministrator"), 'superadmin');
 					} elseif ($userstatic->admin) {
-						$li .= img_picto($langs->trans("Administrator"), 'star');
+						$li .= img_picto($langs->trans("Administrator"), 'admin');
 					}
 					$li .= ' <span class="opacitymedium">('.$val['login'].($entitystring ? ' - '.$entitystring : '').')</span>';
 					$li .= ' - <span class="opacitymedium">'.$langs->trans("ExcludedByFilter").'</span>';

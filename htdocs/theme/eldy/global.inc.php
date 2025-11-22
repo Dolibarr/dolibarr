@@ -5504,7 +5504,7 @@ img.boxhandle, img.boxclose {
 	transition: color 0.4s;
 }
 .star:hover, .star.active {
-	color: <?php echo $badgeWarning ?>;
+	color: var(--butactionbg);
 }
 
 .search-component-assistance {
@@ -7295,7 +7295,7 @@ div.dataTables_length select {
 /*  Select2                                                                       */
 /* ============================================================================== */
 
-.heightofcombo {
+.heightofcombo:not(.pageplusone) {
 	height: 28px;
 }
 .select2-container .select2-selection--single {

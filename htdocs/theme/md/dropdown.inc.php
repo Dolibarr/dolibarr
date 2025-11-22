@@ -304,14 +304,17 @@ a.top-menu-dropdown-link {
 
 
 .dropdown-menu > .user-body, .dropdown-body{
-	padding: 15px;
+	/* padding: 15px; */
 	border-bottom: 1px solid #f4f4f4;
 	border-top: 1px solid #f0f0f0;
 	white-space: normal;
 }
+#top-bookmark-search-nothing-found {
+	padding: 15px;
+	display: block;
+}
 
 .dropdown-menu > .bookmark-body, .dropdown-body{
-	padding: 10px 0;
 	overflow-y: auto;
 	max-height: 60vh ; /* fallback for browsers without support for calc() */
 	max-height: calc(90vh - 110px) ;
@@ -368,6 +371,8 @@ a.dropdown-item {
 	text-align: start;
 }
 .dropdown-item.bookmark-item {
+	padding-top: 10px;
+	padding-bottom: 10px;
 	padding-left: 14px;
 	padding-right: 14px;
 }

@@ -494,9 +494,9 @@ if ($result) {
 			$userstatic->email = $obj->email;
 
 			if (isModEnabled('multicompany') && $userstatic->admin && !$userstatic->entity) {
-				print img_picto($langs->trans("SuperAdministratorDesc"), 'redstar', 'class="valignmiddle paddingright"');
+				print img_picto($langs->trans("SuperAdministratorDesc"), 'superadmin', 'class="valignmiddle paddingright"');
 			} elseif ($userstatic->admin) {
-				print img_picto($langs->trans("AdministratorDesc"), 'star', 'class="valignmiddle paddingright"');
+				print img_picto($langs->trans("AdministratorDesc"), 'admin', 'class="valignmiddle paddingright"');
 			}
 
 			//print $userstatic->getLoginUrl(-1);

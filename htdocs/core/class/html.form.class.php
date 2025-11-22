@@ -7881,7 +7881,7 @@ class Form
 					// Icon calendar
 					if ($disabled) {
 						$retstringbutton = '<button id="' . $prefix . 'Button" type="button" class="dpInvisibleButtons">' . img_object($langs->trans("Disabled"), 'calendarday', 'class="datecallink ui-datepicker-notrigger"') . '</button>';
-						$retstring = $retstring . $retstringbutton;
+						$retstring .= $retstringbutton;
 					}
 
 					$retstring .= '</div>';
