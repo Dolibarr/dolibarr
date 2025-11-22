@@ -376,7 +376,7 @@ if (!empty($object->share)) {
 
 		print img_picto('', 'globe').' ';
 		if ($action != 'edit') {
-			print '<input type="text" class="maxquatrevingtpercent widthcentpercentminusxx nopadding small" id="downloadlink" name="downloadexternallink" value="'.dol_escape_htmltag($fulllink).'">';
+			print '<input type="text" class="maxquatrevingtpercent widthcentpercentminusxx nopadding small" id="downloadlink" name="downloadexternallink" value="'.dol_escape_htmltag($fulllink).'" spellcheck="false">';
 		} else {
 			print $fulllink;
 		}

@@ -3993,7 +3993,7 @@ div.blockvmenusearch, div.blockvmenubookmarks
 	text-decoration: none;
 	padding-left: 5px;
 	padding-right: 1px;
-	padding-top: 3px;
+	padding-top: 8px;
 	padding-bottom: 3px;
 	margin: 1px 0px 2px 0px;
 	background: var(--colorbackvmenu1);
@@ -5432,7 +5432,7 @@ img.boxhandle, img.boxclose {
 	transition: color 0.4s;
 }
 .star:hover, .star.active {
-	color: <?php echo $badgeWarning ?>;
+	color: var(--butactionbg);
 }
 
 .search-component-assistance {

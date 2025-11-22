@@ -123,7 +123,7 @@ if (isModEnabled('multicompany')) {
 	print '<tr><td class="titlefield">'.$langs->trans("Name").'</td>';
 	print '<td class="valeur">'.$object->name;
 	if (!$object->entity) {
-		print img_picto($langs->trans("GlobalGroup"), 'redstar');
+		print img_picto($langs->trans("GlobalGroup"), 'superadmin');
 	}
 	print "</td></tr>\n";
 }

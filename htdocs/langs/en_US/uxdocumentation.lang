@@ -180,9 +180,12 @@ DocTitleIconUsageMethod3=Use your image. You must set the 4th parameter to 1.
 DocTitleMoreContentDescription=You can further customize the headings by adding an ID or CSS class(es), or adding content. See the examples below.
 DocTitleWithFilters=Display title with filters, buttons or navigation
 DocTitleWithFiltersDescription=If you want to display a title with many navigation options like on list pages, you can use the print_barre_liste() function which is a bit more complex. See code below or core/lib/functions.lib.php file to see how it works.
+JSDolibarrhooksReadyVsInit = Difference between Dolibarr:Init and Dolibarr:Ready
+SetAndUseContextVars = Set and use context vars
 
 
 ConsoleHelp = Console help
 JSDolibarrhooks = JS Dolibarr hooks
-ExampleOfCreatingNewContextTool = Example of creating a new context tool
-SetEventMessageTool = Set event message tool
+JSDolibarrAwaitHooks = JS Dolibarr Async Hooks (Await Hooks) - sequential execution
+ExampleOfCreatingNewContextTool = Dolibarr Tool : Example of creating a new context tool
+SetEventMessageTool = Dolibarr Tool : Set event message
