@@ -18,9 +18,10 @@
  */
 
 // Following var can be set
-// $project_id	== 0 - all possible mass mailings will be shown, >= 1 - only mass mailings assigned to this project will be shown
+// $resql the result of asking the database with sql for mass mailings
+// $num the number of results of asking the database with sql for mass mailings
 
-print '<!-- Begin mass_mailings_actions_past_headers.tpl -->';
+print '<!-- Begin table_with_mass_mailings.tpl -->';
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -252,156 +253,11 @@ if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 }
 print '</tr>'."\n";
 
-// Loop on record
-// --------------------------------------------------------------------
-$i = 0;
-$savnbfield = $totalarray['nbfield'];
-$totalarray = array();
-$totalarray['nbfield'] = 0;
-$imaxinloop = ($limit ? min($num, $limit) : $num);
-while ($i < $imaxinloop) {
-	$obj = $db->fetch_object($resql);
-	if (empty($obj)) {
-		break; // Should not happen
-	}
+// include tpl that loops over the records in $resql
+print '<!-- pre include single_mass_mailing_row.tpl -->';
+include DOL_DOCUMENT_ROOT.'/comm/mailing/tpl/single_mass_mailing_row.tpl.php';
+print '<!-- post include single_mass_mailing_row.tpl -->';
 
-	$object->id = $obj->rowid;
-	$object->ref = $obj->rowid;
-
-	$projectstatic->id = $obj->project_id;
-	$projectstatic->ref = $obj->project_ref;
-	$projectstatic->title = $obj->project_label;
-
-	// Show here line of result
-	print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select">';
-	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-		print '<td class="nowrap center">';
-		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-			$selected = 0;
-			if (in_array($object->id, $arrayofselected)) {
-				$selected = 1;
-			}
-			print '<input id="cb'.$object->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$object->id.'"'.($selected ? ' checked="checked"' : '').'>';
-		}
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-
-	// Ref
-	print '<td>';
-	print $object->getNomUrl(1);
-	print '</td>';
-	if (!$i) {
-		$totalarray['nbfield']++;
-	}
-
-	// Message type
-	if (getDolGlobalInt('EMAILINGS_SUPPORT_ALSO_SMS')) {
-		print '<td>';
-		print dol_escape_htmltag($obj->messtype);
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-
-	// Title
-	print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($obj->title).'">';
-	$savref = $object->ref;
-	$object->ref = $obj->title;
-	print $object->getNomUrl(0);
-	$object->ref = $savref;
-	print '</td>';
-	if (!$i) {
-		$totalarray['nbfield']++;
-	}
-
-	// Topic
-	print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($obj->subject).'">';
-	print $obj->subject;
-	print '</td>';
-	if (!$i) {
-		$totalarray['nbfield']++;
-	}
-
-	// Date creation
-	print '<td class="center">';
-	print dol_print_date($db->jdate($obj->datec), 'day');
-	print '</td>';
-	if (!$i) {
-		$totalarray['nbfield']++;
-	}
-
-	// Project
-	print '<td class="nowraponall">';
-	print '<a href="/projet/card.php?id='.((int) $projectstatic->id).'">'.dol_escape_htmltag($projectstatic->title).'</a>';
-	print '</td>';
-	if (!$i) {
-		$totalarray['nbfield']++;
-	}
-
-	// Nb of email
-	if (!$filteremail) {
-		print '<td class="center nowraponall">';
-		$nbemail = $obj->nbemail;
-		/*if ($obj->status != 3 && !empty($conf->global->MAILING_LIMIT_SENDBYWEB) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail)
-		{
-			$text=$langs->trans('LimitSendingEmailing',$conf->global->MAILING_LIMIT_SENDBYWEB);
-			print $form->textwithpicto($nbemail,$text,1,'warning');
-		}
-		else
-		{
-			print $nbemail;
-		}*/
-		print $nbemail;
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-
-	// Last send
-	print '<td class="nowrap center">'.dol_print_date($db->jdate($obj->date_envoi), 'day').'</td>';
-	print '</td>';
-	if (!$i) {
-		$totalarray['nbfield']++;
-	}
-
-	// Status
-	print '<td class="nowrap center">';
-	if ($filteremail) {
-		print $object::libStatutDest($obj->sendstatut, 2);
-	} else {
-		print $object->LibStatut($obj->status, 5);
-	}
-	print '</td>';
-	if (!$i) {
-		$totalarray['nbfield']++;
-	}
-
-	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-		print '<td class="nowrap center">';
-		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-			$selected = 0;
-			if (in_array($object->id, $arrayofselected)) {
-				$selected = 1;
-			}
-			print '<input id="cb'.$object->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$object->id.'"'.($selected ? ' checked="checked"' : '').'>';
-		}
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-
-	print '</tr>'."\n";
-
-	$i++;
-}
 
 // Show total line
 include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
@@ -412,9 +268,6 @@ if (empty($num)) {
 	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 }
 
-
-$db->free($resql);
-
 $parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
 $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
@@ -424,5 +277,5 @@ print '</div>'."\n";
 
 print '</form>'."\n";
 
-print '<!-- End mass_mailings_actions_past_headers.tpl -->';
+print '<!-- End table_with_mass_mailings.tpl -->';
 

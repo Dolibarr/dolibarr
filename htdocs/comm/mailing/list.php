@@ -320,11 +320,12 @@ if ($filteremail) {
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
 
-// we want to show all possible mass mailings
-$project_id = 0;
-print '<!-- pre include mass_mailings_actions_past_headers.tpl';
-include DOL_DOCUMENT_ROOT.'/comm/mailing/tpl/mass_mailings_actions_past_headers.tpl.php';
-print '<!-- post include mass_mailings_actions_past_headers.tpl';
+print '<!-- pre include table_with_mass_mailings.tpl -->';
+include DOL_DOCUMENT_ROOT.'/comm/mailing/tpl/table_with_mass_mailings.tpl.php';
+print '<!-- post include table_with_mass_mailings.tpl -->';
+
+// the file that generates the data should preferably also free it
+$db->free($resql);
 
 llxFooter();
 $db->close();
