@@ -168,7 +168,6 @@ if (empty($reshook)) {
  */
 
 $form = new Form($db);
-$projectstatic = new Project($db);
 
 $now = dol_now();
 
@@ -180,13 +179,17 @@ $morecss = array();
 // Build and execute select
 // --------------------------------------------------------------------
 
-$resql = $object->listMailings($filteremail, $search_ref, $search_title, $search_subject, $search_messtype, $search_all, $search_refproject, $search_project, $sortorder, $sortfield, $page = 0, $limit = 100, $project_id = 0);
-if (!$resql) {
-	dol_print_error($this->error);
+dol_syslog("calling::listMailings", LOG_DEBUG);
+$arrayMailings = $object->listMailings($filteremail, $search_ref, $search_title, $search_subject, $search_messtype, $search_all, $search_refproject, $search_project, $sortorder, $sortfield, $page, $limit, $project_id = 0, $list = 0);
+if ($arrayMailings == -1 ) {
+	dol_syslog("DB error", LOG_DEBUG);
+	dol_print_error($db->error);
 	exit;
+} else {
+	$num = count($arrayMailings);
+	$nbtotalofrecords = $num;
+	dol_syslog("calling::listMailings::num=".((string) $num), LOG_DEBUG);
 }
-
-$num = $db->num_rows($resql);
 
 
 // Direct jump if only one record found
@@ -329,9 +332,6 @@ print '<div class="div-table-responsive" id="inside_list.php">';
 print '<!-- pre include table_with_mass_mailings.tpl -->';
 include DOL_DOCUMENT_ROOT.'/comm/mailing/tpl/table_with_mass_mailings.tpl.php';
 print '<!-- post include table_with_mass_mailings.tpl -->';
-
-// the file that generates the data should preferably also free it
-$db->free($resql);
 
 llxFooter();
 $db->close();

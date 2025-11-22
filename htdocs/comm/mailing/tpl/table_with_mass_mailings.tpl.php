@@ -18,7 +18,7 @@
  */
 
 // Following var can be set
-// $resql the result of asking the database with sql for mass mailings
+// $arrayMailings the result of asking the database with sql for mass mailings
 // $num the number of results of asking the database with sql for mass mailings
 
 print '<!-- Begin table_with_mass_mailings.tpl -->';
@@ -138,7 +138,7 @@ if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 }
 print '</tr>'."\n";
 
-// include tpl that loops over the records in $resql
+// include tpl that loops over the records in $arrayMailings
 print '<!-- pre include single_mass_mailing_row.tpl -->';
 include DOL_DOCUMENT_ROOT.'/comm/mailing/tpl/single_mass_mailing_row.tpl.php';
 print '<!-- post include single_mass_mailing_row.tpl -->';
@@ -153,7 +153,8 @@ if (empty($num)) {
 	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 }
 
-$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
+// WHY do we need the SQL statement and NOW at the very end of the table?
+$parameters = array('arrayfields' => $arrayfields, 'sql' => '');
 $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 

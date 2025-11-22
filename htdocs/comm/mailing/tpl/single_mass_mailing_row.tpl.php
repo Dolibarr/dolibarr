@@ -18,12 +18,12 @@
  */
 
 // Following var can be set
-// $resql the result of asking the database with sql for mass mailings
+// $arrayMailings the result of asking the database with sql for mass mailings
 // $num the number of results of asking the database with sql for mass mailings
 
 print '<!-- Begin single_mass_mailing_row.tpl -->';
 
-// Loops over the records in $resql
+// Loops over the records in $arrayMailings
 // --------------------------------------------------------------------
 $i = 0;
 $savnbfield = $totalarray['nbfield'];
@@ -31,17 +31,25 @@ $totalarray = array();
 $totalarray['nbfield'] = 0;
 $imaxinloop = ($limit ? min($num, $limit) : $num);
 while ($i < $imaxinloop) {
-	$obj = $db->fetch_object($resql);
+	$obj = $arrayMailings[$i];
 	if (empty($obj)) {
 		break; // Should not happen
 	}
 
-	$object->id = $obj->rowid;
-	$object->ref = $obj->rowid;
+	$object->id = $obj['rowid'];
+	$object->ref = $obj['rowid'];
+	$object->messtype = $obj['messtype'];
+	$object->title = $obj['title'];
+	$object->sujet = $obj['subject'];
+	$object->nbemail = $obj['nbemail'];
+	$object->status = $obj['status'];
+	$object->datec = $obj['datec'];
+	$object->date_envoi = $obj['date_envoi'];
 
-	$projectstatic->id = $obj->project_id;
-	$projectstatic->ref = $obj->project_ref;
-	$projectstatic->title = $obj->project_label;
+	$projectstatic = new Project($db);
+	$projectstatic->id = $obj['project_id'];
+	$projectstatic->ref = $obj['project_ref'];
+	$projectstatic->title = $obj['project_label'];
 
 	// Show here line of result
 	print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select">';
@@ -80,9 +88,9 @@ while ($i < $imaxinloop) {
 	}
 
 	// Title
-	print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($obj->title).'">';
+	print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($object->title).'">';
 	$savref = $object->ref;
-	$object->ref = $obj->title;
+	$object->ref = $object->title;
 	print $object->getNomUrl(0);
 	$object->ref = $savref;
 	print '</td>';
@@ -91,8 +99,8 @@ while ($i < $imaxinloop) {
 	}
 
 	// Topic
-	print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($obj->subject).'">';
-	print $obj->subject;
+	print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($object->sujet).'">';
+	print $object->sujet;
 	print '</td>';
 	if (!$i) {
 		$totalarray['nbfield']++;
@@ -100,7 +108,7 @@ while ($i < $imaxinloop) {
 
 	// Date creation
 	print '<td class="center">';
-	print dol_print_date($db->jdate($obj->datec), 'day');
+	print dol_print_date($object->datec, 'day');
 	print '</td>';
 	if (!$i) {
 		$totalarray['nbfield']++;
@@ -117,17 +125,16 @@ while ($i < $imaxinloop) {
 	// Nb of email
 	if (!$filteremail) {
 		print '<td class="center nowraponall">';
-		$nbemail = $obj->nbemail;
-		/*if ($obj->status != 3 && !empty($conf->global->MAILING_LIMIT_SENDBYWEB) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail)
+		/*if ($obj->status != 3 && !empty($conf->global->MAILING_LIMIT_SENDBYWEB) && $conf->global->MAILING_LIMIT_SENDBYWEB < $$object->nbemail)
 		{
 			$text=$langs->trans('LimitSendingEmailing',$conf->global->MAILING_LIMIT_SENDBYWEB);
-			print $form->textwithpicto($nbemail,$text,1,'warning');
+			print $form->textwithpicto($$object->nbemail,$text,1,'warning');
 		}
 		else
 		{
-			print $nbemail;
+			print $$object->nbemail;
 		}*/
-		print $nbemail;
+		print $object->nbemail;
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -135,7 +142,7 @@ while ($i < $imaxinloop) {
 	}
 
 	// Last send
-	print '<td class="nowrap center">'.dol_print_date($db->jdate($obj->date_envoi), 'day').'</td>';
+	print '<td class="nowrap center">'.dol_print_date($object->date_envoi, 'day').'</td>';
 	print '</td>';
 	if (!$i) {
 		$totalarray['nbfield']++;
@@ -144,9 +151,9 @@ while ($i < $imaxinloop) {
 	// Status
 	print '<td class="nowrap center">';
 	if ($filteremail) {
-		print $object::libStatutDest($obj->sendstatut, 2);
+		print $object::libStatutDest($obj['sendstatut'], 2);
 	} else {
-		print $object->LibStatut($obj->status, 5);
+		print $object->LibStatut($object->status, 5);
 	}
 	print '</td>';
 	if (!$i) {

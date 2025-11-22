@@ -493,12 +493,17 @@ class Mailing extends CommonObject
 	 *    @param	string	$sortorder          Sort order ('ASC' or 'DESC')
 	 *    @param	string	$sortfield          Sort field ('name', 'size', 'position', ...)
 	 *    @param	int		$page				0 (default) first page
-	 *    @param	int		$limit				100 is default, but else the limit of how many to ask for pr.
+	 *    @param	int		$limit				25 is default, but else the limit of how many mass mailings to ask for
 	 *    @param	int		$project_id			0 (default) means return any mass mailing, >0 means only return mass mailings with this project id
-	 *    @return array<string,mixed>|int<-1,-1>     Array of mass mailing, -1 if error
+	 *    @param    int     $list           	0:Return array contains all properties, 1:Return array contains just id
+	 *    @return array<int|array{int,string,string,string,int,int,int,int,int,string,string,int|NULL}>|int<-1,-1>        	Array of contacts, -1 if error
 	 */
-	public function listMailings($filteremail, $search_ref, $search_title, $search_subject, $search_messtype, $search_all, $search_refproject, $search_project, $sortorder, $sortfield, $page = 0, $limit = 100, $project_id = 0)
+	public function listMailings($filteremail, $search_ref, $search_title, $search_subject, $search_messtype, $search_all, $search_refproject, $search_project, $sortorder, $sortfield, $page = 0, $limit = 25, $project_id = 0, $list = 0)
 	{
+		global $conf, $langs, $hookmanager;
+		dol_syslog(get_class($this)."::listMailings", LOG_DEBUG);
+
+		$offset = $limit * $page;
 		$sql = "SELECT m.rowid, m.messtype, m.titre as title, m.sujet as subject, m.nbemail, m.statut as status, m.date_creat as datec, m.date_envoi as date_envoi,";
 		$sql .= " pr.rowid as project_id, pr.ref as project_ref, pr.title as project_label ";
 
@@ -517,7 +522,7 @@ class Mailing extends CommonObject
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as pr ON pr.rowid = m.fk_project";
 			$sql .= " WHERE 1";
 		}
-		$sql .= " AND m.entity = ".((int) $this->entity);
+		$sql .= " AND m.entity = ".((int) $conf->entity);
 
 		if ($project_id > 0) {
 			$sql .= " AND m.fk_project = ".((int) $project_id);
@@ -567,11 +572,9 @@ class Mailing extends CommonObject
 				dol_print_error($this->db);
 			}
 
-			if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
-				$page = 0;
+			if ($offset > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 				$offset = 0;
 			}
-			$this->db->free($resql);
 		}
 
 		// Complete request and execute it with limit
@@ -580,11 +583,43 @@ class Mailing extends CommonObject
 			$sql .= $this->db->plimit($limit + 1, $offset);
 		}
 
-		dol_syslog(get_class($this)."::listMailings", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			return $resql;
+			$listMailings = array();
+			$num = $this->db->num_rows($resql);
+			dol_syslog(get_class($this)."::listMailings::num=".((string) $num), LOG_DEBUG);
+			$i = 0;
+			while ($i < $num) {
+				$obj = $this->db->fetch_object($resql);
+
+				if (!$list) {
+					if ($filteremail) {
+						$sendstatut = (int) $obj->sendstatut;
+					} else {
+						$sendstatut = NULL;
+					}
+					$listMailings[$i] = array(
+						'rowid' => (int) $obj->rowid,
+						'messtype' => (string) $obj->messtype,
+						'title' => (string) $obj->title,
+						'subject' => (string) $obj->subject,
+						'nbemail' => (int) $obj->nbemail,
+						'status' => (int) $obj->status,
+						'datec' => (int) $this->db->jdate($obj->datec),
+						'date_envoi' => (int) $this->db->jdate($obj->datec),
+						'project_id' => (int) $obj->project_id,
+						'project_ref' => (string) $obj->project_ref,
+						'project_label' => (string) $obj->project_label,
+						'sendstatut' => $sendstatut);
+				} else {
+					$listMailings[$i] = (int) $obj->rowid;
+				}
+				$i++;
+			}
+			dol_syslog(get_class($this)."::listMailings::OKAY", LOG_DEBUG);
+			return $listMailings;
 		} else {
+			dol_syslog(get_class($this)."::listMailings::ERROR", LOG_DEBUG);
 			$this->error = $this->db->lasterror();
 			dol_print_error($this->db);
 			return -1;
