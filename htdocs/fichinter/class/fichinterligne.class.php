@@ -209,7 +209,7 @@ class FichinterLigne extends CommonObjectLine
 		$sql .= " ".((int) $this->duration).",";
 		$sql .= ' '.((int) $rangToUse).",";
 		$sql .= " ".((int) $this->product_type);
-		$sql .= " ".$this->db->escape($this->special_code);
+		$sql .= " ".((int) $this->special_code);
 		$sql .= ')';
 
 		dol_syslog("FichinterLigne::insert", LOG_DEBUG);
