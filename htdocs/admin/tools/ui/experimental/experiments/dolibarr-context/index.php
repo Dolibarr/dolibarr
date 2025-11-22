@@ -654,7 +654,7 @@ $documentation->showSidebar(); ?>
 				<?php
 				$lines = array(
 					'<script nonce="<?php print getNonce() ?>" >',
-					'    document.addEventListener(\'Dolibarr:Init\', function(e) {',
+					'    document.addEventListener(\'Dolibarr:Ready\', function(e) {',
 					'        let url = Dolibarr.getContextVar(\'DOL_URL_ROOT\', \'The optional fallback value\'));',
 					'        console.log(url);',
 					'    });',
