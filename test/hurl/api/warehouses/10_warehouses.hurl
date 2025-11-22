@@ -106,8 +106,12 @@ HTTP 200
 # GET warehouses DOLAPIENTITY: 2
 GET http://{{hostnport}}/api/index.php/warehouses
 DOLAPIENTITY: 2
-HTTP 403
-{"error":{"code":403,"message":"Forbidden"}}
+HTTP 401
+[Asserts]
+jsonpath "$.error" exists
+jsonpath "$.error.code" == 401
+jsonpath "$.error.message" contains "Unauthorized"
+jsonpath "$.error.message" contains "Token not valid (may be a typo or a wrong entity)"
 
 # http://localhost:8080/api/index.php/warehouses?sortfield=t.rowid&sortorder=ASC&limit=1
 
