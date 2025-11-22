@@ -11,11 +11,11 @@ use Digest::MD5 qw(md5_hex);
 my $size       = 90;
 my $output_dir = './avatars';
 
-die("no .git/ directory found in current path\n") unless -d './avatars';
+die("no .git repository found in current path\n") unless -r './.git';
 
 mkdir($output_dir) unless -d $output_dir;
 
-open( my $GITLOG, q|-|, q/git log --pretty=format:"%ae|%an"/ )
+open( my $GITLOG, '-|', q/git log --pretty=format:"%ae|%an" --reverse/ )
   or die("failed to read git-log: $!\n");
 
 my %processed_authors;
@@ -34,7 +34,7 @@ while (<$GITLOG>) {
 	#try and fetch image
 
 	my $grav_url =
-	    "http://www.gravatar.com/avatar/"
+	    "https://www.gravatar.com/avatar/"
 	  . md5_hex( lc $email )
 	  . "?d=404&size="
 	  . $size;
