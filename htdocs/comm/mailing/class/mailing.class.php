@@ -587,7 +587,6 @@ class Mailing extends CommonObject
 		if ($resql) {
 			$listMailings = array();
 			$num = $this->db->num_rows($resql);
-			dol_syslog(get_class($this)."::listMailings::num=".((string) $num), LOG_DEBUG);
 			$i = 0;
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
@@ -600,23 +599,23 @@ class Mailing extends CommonObject
 					}
 					$listMailings[$i] = array(
 						'rowid' => (int) $obj->rowid,
-						'messtype' => (string) $obj->messtype,
-						'title' => (string) $obj->title,
-						'subject' => (string) $obj->subject,
-						'nbemail' => (int) $obj->nbemail,
-						'status' => (int) $obj->status,
-						'datec' => (int) $this->db->jdate($obj->datec),
-						'date_envoi' => (int) $this->db->jdate($obj->datec),
-						'project_id' => (int) $obj->project_id,
-						'project_ref' => (string) $obj->project_ref,
-						'project_label' => (string) $obj->project_label,
+						'messtype' => $obj->messtype,
+						'title' => $obj->title,
+						'subject' => $obj->subject,
+						'nbemail' => $obj->nbemail,
+						'status' => $obj->status,
+						'datec' => $this->db->jdate($obj->datec),
+						'date_envoi' => $this->db->jdate($obj->date_envoi),
+						'project_id' => $obj->project_id,
+						'project_ref' => $obj->project_ref,
+						'project_label' => $obj->project_label,
 						'sendstatut' => $sendstatut);
 				} else {
 					$listMailings[$i] = (int) $obj->rowid;
 				}
 				$i++;
 			}
-			dol_syslog(get_class($this)."::listMailings::OKAY", LOG_DEBUG);
+			dol_syslog(get_class($this)."::listMailings::GOOD", LOG_DEBUG);
 			return $listMailings;
 		} else {
 			dol_syslog(get_class($this)."::listMailings::ERROR", LOG_DEBUG);

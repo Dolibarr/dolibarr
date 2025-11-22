@@ -179,7 +179,6 @@ $morecss = array();
 // Build and execute select
 // --------------------------------------------------------------------
 
-dol_syslog("calling::listMailings", LOG_DEBUG);
 $arrayMailings = $object->listMailings($filteremail, $search_ref, $search_title, $search_subject, $search_messtype, $search_all, $search_refproject, $search_project, $sortorder, $sortfield, $page, $limit, $project_id = 0, $list = 0);
 if ($arrayMailings == -1 ) {
 	dol_syslog("DB error", LOG_DEBUG);
@@ -188,7 +187,6 @@ if ($arrayMailings == -1 ) {
 } else {
 	$num = count($arrayMailings);
 	$nbtotalofrecords = $num;
-	dol_syslog("calling::listMailings::num=".((string) $num), LOG_DEBUG);
 }
 
 
