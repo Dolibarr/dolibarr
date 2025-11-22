@@ -18,7 +18,7 @@
  */
 
 // Following var can be set
-// $project
+// $project_id	== 0 - all possible mass mailings will be shown, >= 1 - only mass mailings assigned to this project will be shown
 
 print '<!-- Begin mass_mailings_actions_past_headers.tpl -->';
 

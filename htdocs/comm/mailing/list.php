@@ -320,6 +320,8 @@ if ($filteremail) {
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
 
+// we want to show all possible mass mailings
+$project_id = 0;
 print '<!-- pre include mass_mailings_actions_past_headers.tpl';
 include DOL_DOCUMENT_ROOT.'/comm/mailing/tpl/mass_mailings_actions_past_headers.tpl.php';
 print '<!-- post include mass_mailings_actions_past_headers.tpl';
