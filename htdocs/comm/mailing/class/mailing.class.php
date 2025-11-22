@@ -479,6 +479,117 @@ class Mailing extends CommonObject
 		}
 	}
 
+	/**
+	 *    Get array of mass mailings, possibly limited to a single project
+	 *
+	 *    @param	string	$filteremail		Filter include emails
+	 *    @param	string	$search_ref			Search for this mass mailing ref
+	 *    @param	string	$search_title		Search for this mass mailing title
+	 *    @param	string	$search_subject		Search for this mass mailing subject
+	 *    @param	string	$search_messtype	Search for this mass mailing message type
+	 *    @param	string	$search_all			Search for every field
+	 *    @param	string	$search_refproject	Search for this mass mailing ref for project
+	 *    @param	string	$search_project		Search for this mass mailing project title
+	 *    @param	string	$sortorder          Sort order ('ASC' or 'DESC')
+	 *    @param	string	$sortfield          Sort field ('name', 'size', 'position', ...)
+	 *    @param	int		$page				0 (default) first page
+	 *    @param	int		$limit				100 is default, but else the limit of how many to ask for pr.
+	 *    @param	int		$project_id			0 (default) means return any mass mailing, >0 means only return mass mailings with this project id
+	 *    @return array<string,mixed>|int<-1,-1>     Array of mass mailing, -1 if error
+	 */
+	public function listMailings($filteremail, $search_ref, $search_title, $search_subject, $search_messtype, $search_all, $search_refproject, $search_project, $sortorder, $sortfield, $page = 0, $limit = 100, $project_id = 0)
+	{
+		$sql = "SELECT m.rowid, m.messtype, m.titre as title, m.sujet as subject, m.nbemail, m.statut as status, m.date_creat as datec, m.date_envoi as date_envoi,";
+		$sql .= " pr.rowid as project_id, pr.ref as project_ref, pr.title as project_label ";
+
+		if ($filteremail) {
+			$sql .= " mc.statut as sendstatut";
+			$sqlfields = $sql; // $sql fields to remove for count total
+
+			$sql .= " FROM ".MAIN_DB_PREFIX."mailing as m, ".MAIN_DB_PREFIX."mailing_cibles as mc";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as pr ON pr.rowid = m.fk_project";
+			$sql .= " WHERE m.rowid = mc.fk_mailing";
+			$sql .= " AND mc.email = '".$this->db->escape($filteremail)."'";
+		} else {
+			$sqlfields = $sql; // $sql fields to remove for count total
+
+			$sql .= " FROM ".MAIN_DB_PREFIX."mailing as m";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as pr ON pr.rowid = m.fk_project";
+			$sql .= " WHERE 1";
+		}
+		$sql .= " AND m.entity = ".((int) $this->entity);
+
+		if ($project_id > 0) {
+			$sql .= " AND m.fk_project = ".((int) $project_id);
+		}
+
+		if ($search_ref) {
+			$sql .= natural_search("m.rowid", $search_ref, 1);
+		}
+		if ($search_title) {
+			$sql .= " AND m.titre LIKE '%".$this->db->escape($search_title)."%'";
+		}
+		if ($search_subject) {
+			$sql .= " AND m.sujet LIKE '%".$this->db->escape($search_subject)."%'";
+		}
+		if ($search_messtype) {
+			$sql .= " AND m.messtype LIKE '%".$this->db->escape($search_messtype)."%'";
+		}
+
+		if ($search_all) {
+			$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
+		}
+
+		if ($search_refproject) {
+			$sql .= natural_search('pr.ref', $search_refproject);
+		}
+		if ($search_project) {
+			$sql .= natural_search('pr.title', $search_project);
+		}
+		if (!$sortorder) {
+			$sortorder = "ASC";
+		}
+		if (!$sortfield) {
+			$sortfield = "m.rowid";
+		}
+
+		// Count total nb of records
+		$nbtotalofrecords = '';
+		if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
+			/* The fast and low memory method to get and count full list converts the sql into a sql count */
+			$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+			$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+			$resql = $this->db->query($sqlforcount);
+			if ($resql) {
+				$objforcount = $this->db->fetch_object($resql);
+				$nbtotalofrecords = $objforcount->nbtotalofrecords;
+			} else {
+				dol_print_error($this->db);
+			}
+
+			if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+				$page = 0;
+				$offset = 0;
+			}
+			$this->db->free($resql);
+		}
+
+		// Complete request and execute it with limit
+		$sql .= $this->db->order($sortfield, $sortorder);
+		if ($limit) {
+			$sql .= $this->db->plimit($limit + 1, $offset);
+		}
+
+		dol_syslog(get_class($this)."::listMailings", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			return $resql;
+		} else {
+			$this->error = $this->db->lasterror();
+			dol_print_error($this->db);
+			return -1;
+		}
+	}
 
 	/**
 	 *	Load an object from its id and create a new one in database

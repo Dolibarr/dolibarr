@@ -179,122 +179,10 @@ $morecss = array();
 
 // Build and execute select
 // --------------------------------------------------------------------
-if ($filteremail) {
-	$sql = "SELECT m.rowid, m.messtype, m.titre as title, m.sujet as subject, m.nbemail, m.statut as status, m.date_creat as datec, m.date_envoi as date_envoi,";
-	$sql .= " mc.statut as sendstatut,";
-	$sql .= " pr.rowid as project_id, pr.ref as project_ref, pr.title as project_label";
 
-	$sqlfields = $sql; // $sql fields to remove for count total
-
-	$sql .= " FROM ".MAIN_DB_PREFIX."mailing as m, ".MAIN_DB_PREFIX."mailing_cibles as mc";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as pr ON pr.rowid = m.fk_project";
-	$sql .= " WHERE m.rowid = mc.fk_mailing AND m.entity = ".$conf->entity;
-	$sql .= " AND mc.email = '".$db->escape($filteremail)."'";
-	if ($search_ref) {
-		$sql .= natural_search("m.rowid", $search_ref, 1);
-	}
-	if ($search_title) {
-		$sql .= " AND (m.titre LIKE '%".$db->escape($search_title)."%')";
-	}
-	if ($search_subject) {
-		$sql .= " AND (m.sujet LIKE '%".$db->escape($search_subject)."%')";
-	}
-	if ($search_messtype) {
-		$sql .= " AND m.messtype LIKE '".$db->escape($search_messtype)."'";
-	}
-	if ($search_all) {
-		$sql .= " AND (m.titre LIKE '%".$db->escape($search_all)."%' OR m.sujet LIKE '%".$db->escape($search_all)."%' OR m.body LIKE '%".$db->escape($search_all)."%')";
-	}
-	if ($search_refproject) {
-		$sql .= natural_search('pr.ref', $search_refproject);
-	}
-	if ($search_project) {
-		$sql .= natural_search('pr.title', $search_project);
-	}
-	if (!$sortorder) {
-		$sortorder = "ASC";
-	}
-	if (!$sortfield) {
-		$sortfield = "m.rowid";
-	}
-} else {
-	$sql = "SELECT m.rowid, m.messtype, m.titre as title, m.sujet as subject, m.nbemail, m.statut as status, m.date_creat as datec, m.date_envoi as date_envoi,";
-	$sql .= " pr.rowid as project_id, pr.ref as project_ref, pr.title as project_label";
-
-	$sqlfields = $sql; // $sql fields to remove for count total
-
-	$sql .= " FROM ".MAIN_DB_PREFIX."mailing as m";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as pr ON pr.rowid = m.fk_project";
-	$sql .= " WHERE m.entity = ".((int) $conf->entity);
-	if ($search_ref) {
-		$sql .= natural_search("m.rowid", $search_ref, 1);
-	}
-	if ($search_title) {
-		$sql .= " AND m.titre LIKE '%".$db->escape($search_title)."%'";
-	}
-	if ($search_subject) {
-		$sql .= " AND m.sujet LIKE '%".$db->escape($search_subject)."%'";
-	}
-	if ($search_messtype) {
-		$sql .= " AND m.messtype LIKE '%".$db->escape($search_messtype)."%'";
-	}
-	if ($search_all) {
-		$sql .= " AND (m.titre LIKE '%".$db->escape($search_all)."%' OR m.sujet LIKE '%".$db->escape($search_all)."%' OR m.body LIKE '%".$db->escape($search_all)."%')";
-	}
-	if ($search_refproject) {
-		$sql .= natural_search('pr.ref', $search_refproject);
-	}
-	if ($search_project) {
-		$sql .= natural_search('pr.title', $search_project);
-	}
-	if (!$sortorder) {
-		$sortorder = "ASC";
-	}
-	if (!$sortfield) {
-		$sortfield = "m.rowid";
-	}
-}
-if ($search_all) {
-	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
-}
-//$sql.= dolSqlDateFilter("t.field", $search_xxxday, $search_xxxmonth, $search_xxxyear);
-// Add where from extra fields
-include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
-// Add where from hooks
-$parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-$sql .= $hookmanager->resPrint;
-
-// Count total nb of records
-$nbtotalofrecords = '';
-if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
-	/* The fast and low memory method to get and count full list converts the sql into a sql count */
-	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
-	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
-	$resql = $db->query($sqlforcount);
-	if ($resql) {
-		$objforcount = $db->fetch_object($resql);
-		$nbtotalofrecords = $objforcount->nbtotalofrecords;
-	} else {
-		dol_print_error($db);
-	}
-
-	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
-		$page = 0;
-		$offset = 0;
-	}
-	$db->free($resql);
-}
-
-// Complete request and execute it with limit
-$sql .= $db->order($sortfield, $sortorder);
-if ($limit) {
-	$sql .= $db->plimit($limit + 1, $offset);
-}
-
-$resql = $db->query($sql);
+$resql = $object->listMailings($filteremail, $search_ref, $search_title, $search_subject, $search_messtype, $search_all, $search_refproject, $search_project, $sortorder, $sortfield, $page = 0, $limit = 100, $project_id = 0);
 if (!$resql) {
-	dol_print_error($db);
+	dol_print_error($this->error);
 	exit;
 }
 
@@ -319,6 +207,124 @@ if ($filteremail) {
 }
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
+
+$arrayofselected = is_array($toselect) ? $toselect : array();
+
+$param = "&search_all=".urlencode($search_all);
+if (!empty($mode)) {
+	$param .= '&mode='.urlencode($mode);
+}
+if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+	$param .= '&contextpage='.urlencode($contextpage);
+}
+if ($limit > 0 && $limit != $conf->liste_limit) {
+	$param .= '&limit='.((int) $limit);
+}
+if ($optioncss != '') {
+	$param .= '&optioncss='.urlencode($optioncss);
+}
+if ($search_ref != '') {
+	$param .= '&search_ref='.urlencode($search_ref);
+}
+if ($search_messtype != '') {
+	$param .= '&search_type='.urlencode($search_messtype);
+}
+if ($search_refproject != '') {
+	$param .= '&search_refproject='.urlencode($search_refproject);
+}
+if ($search_project != '') {
+	$param .= '&search_project='.urlencode($search_project);
+}
+if ($optioncss != '') {
+	$param .= '&optioncss='.urlencode($optioncss);
+}
+
+if ($filteremail) {
+	$param .= '&filteremail='.urlencode($filteremail);
+}
+// Add $param from extra fields
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+// Add $param from hooks
+$parameters = array('param' => &$param);
+$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object); // Note that $action and $object may have been modified by hook
+$param .= $hookmanager->resPrint;
+
+// List of mass actions available
+$arrayofmassactions = array(
+	//'validate'=>img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate"),
+	//'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
+	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
+	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
+);
+if (!empty($permissiontodelete)) {
+	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
+}
+if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete'))) {
+	$arrayofmassactions = array();
+}
+$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
+
+print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+if ($optioncss != '') {
+	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+}
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+print '<input type="hidden" name="action" value="list">';
+print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+print '<input type="hidden" name="page" value="'.$page.'">';
+print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+print '<input type="hidden" name="page_y" value="">';
+print '<input type="hidden" name="mode" value="'.$mode.'">';
+
+$newcardbutton = '';
+if ($user->hasRight('mailing', 'creer')) {
+	$newcardbutton .= dolGetButtonTitle($langs->trans('NewMailing'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/mailing/card.php?action=create');
+}
+
+print '<!-- Pre print_barre_liste -->';
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'object_email', 0, $newcardbutton, '', $limit, 0, 0, 1);
+print '<!-- Post print_barre_liste -->';
+
+// Add code for pre mass action (confirmation or email presend form)
+$topicmail = "SendMailingRef";
+$modelmail = "mailing";
+$objecttmp = new Mailing($db);
+$trackid = 'mailing'.$object->id;
+include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
+
+if ($search_all) {
+	$setupstring = '';
+	foreach ($fieldstosearchall as $key => $val) {
+		$fieldstosearchall[$key] = $langs->trans($val);
+		$setupstring .= $key."=".$val.";";
+	}
+	print '<!-- Search done like if MYOBJECT_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>'."\n";
+}
+
+$moreforfilter = '';
+
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+if (empty($reshook)) {
+	$moreforfilter .= $hookmanager->resPrint;
+} else {
+	$moreforfilter = $hookmanager->resPrint;
+}
+
+if (!empty($moreforfilter)) {
+	print '<div class="liste_titre liste_titre_bydiv centpercent">';
+	print $moreforfilter;
+	print '</div>';
+}
+
+$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
+$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
+
+print '<div class="div-table-responsive" id="inside_list.php">';
 
 print '<!-- pre include table_with_mass_mailings.tpl -->';
 include DOL_DOCUMENT_ROOT.'/comm/mailing/tpl/table_with_mass_mailings.tpl.php';
