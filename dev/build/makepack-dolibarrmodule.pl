@@ -99,7 +99,7 @@ print "Target directory: $NEWDESTI\n";
 
 # Ask module
 print
-  "Enter name for your module (mymodule, mywonderfulmondule, ... or 'all') : ";
+  "Enter name for your module (mymodule, mywonderfullmodule, ... or 'all') : ";
 my $PROJECTINPUT = <STDIN>;
 chomp($PROJECTINPUT);
 print "Move to " . $DIR . " directory.\n";
@@ -276,7 +276,7 @@ foreach my $PROJECT (@PROJECTLIST) {
 
 	print "\n";
 
-	# Check if there is at least on target to build
+	# Check if there is at least one target to build
 	#----------------------------------------------
 	$nboftargetok            = 0;
 	$nboftargetneedbuildroot = 0;

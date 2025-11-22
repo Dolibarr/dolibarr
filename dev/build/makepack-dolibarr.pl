@@ -87,7 +87,7 @@ if ( $SOURCE !~ /^\// && $SOURCE !~ /^[a-z]:/i ) {
 if ( !$ENV{"DESTIASSOLOGIN"} || !$ENV{"DESTISFLOGIN"} ) {
 	print "Error: Missing environment variables.\n";
 	print
-"You must define the environment variable DESTIASSOLOGIN and DESTISFLOGIN to define your login to connect to the dolibarr foundation server and/or mirrors servers.\n";
+"You must define the environment variable DESTIASSOLOGIN and DESTISFLOGIN to define your login to connect to the dolibarr foundation server and/or mirrors server.\n";
 	print "$PROG.$Extension aborted.\n";
 	print "\n";
 	print "You can set them with\n";
