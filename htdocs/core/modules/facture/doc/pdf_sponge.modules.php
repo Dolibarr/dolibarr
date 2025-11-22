@@ -1564,15 +1564,10 @@ class pdf_sponge extends ModelePDFFactures
 
 					$posy += 2;
 
-					// SHOW EPC QR CODE - at bottom, but only if unpaid amount exists
+					// SHOW EPC QR CODE at bottom, but only if unpaid amount exists
 					if ((getDolGlobalString('INVOICE_ADD_EPC_QR_CODE') == 'bottom') && ($object->getRemainToPay() > 0)) {
-						$qrPosX = 120;
-						// Check for the existence of payment information
-						if ($object->getSommePaiement(0) > 0) {
-							$qrPosY = $posy+10;
-						} else {
-							$qrPosY = $posy;
-						}
+						$qrPosX = $this->marge_gauche + 5;
+						$qrPosY = $posy;
 						$qrCodeColor = array('25', '25', '25');
 						$styleQr = array(
 							'border' => false,
