@@ -117,6 +117,56 @@ $documentation->showSidebar(); ?>
 			</p>
 		</div>
 
+		<div class="documentation-section">
+			<h2 class="documentation-title">Dolibarr.log() and debugMode()</h2>
+
+			<p>
+				<code>Dolibarr.log()</code> is a lightweight logging utility provided by the Dolibarr JS context.
+				It does <strong>not</strong> replace <code>console.log()</code>, but it gives an important advantage:
+				you can enable or disable all logs globally using <code>Dolibarr.debugMode()</code>.
+			</p>
+
+			<h3>Why use Dolibarr.log() instead of console.log()?</h3>
+			<ul>
+				<li>You can enable or disable logging dynamically from the browser console.</li>
+				<li>Avoid polluting the console for end-users: logs appear only when debug mode is enabled.</li>
+				<li>Ideal for module development: switch between quiet mode and verbose mode instantly.</li>
+				<li>Useful in production debugging: you can activate logs without modifying any code.</li>
+			</ul>
+
+			<h3>How it works</h3>
+			<p>
+				When <code>debugMode</code> is disabled (default state), calls to <code>Dolibarr.log()</code> do nothing.
+				When enabled, <code>Dolibarr.log()</code> behaves like <code>console.log()</code>.
+			</p>
+
+			<div class="documentation-example">
+				<?php
+				$lines = array(
+					'<script>',
+					'	// Log something (will only appear if debug mode is ON)',
+					'	Dolibarr.log("My debug message");',
+					'',
+					'	// Enable verbose logs',
+					'	Dolibarr.debugMode(true);',
+					'',
+					'	// Disable logs again',
+					'	Dolibarr.debugMode(false);',
+					'</script>',
+				);
+				echo $documentation->showCode($lines, 'php');
+				?>
+			</div>
+
+			<h3>Summary</h3>
+			<ul>
+				<li><code>console.log()</code> → always prints messages, noisy, not controllable, but useful during active development and debugging.</li>
+				<li><code>Dolibarr.log()</code> → prints messages only when debug mode is ON; fully controllable. Ideal for Dolibarr core logs or when you want to keep logs available but silent in production.</li>
+				<li><code>Dolibarr.debugMode(true)</code> → enable verbose logs, activating <code>Dolibarr.log()</code> output.</li>
+				<li><code>Dolibarr.debugMode(false)</code> → disable all <code>Dolibarr.log()</code> output, silencing debug messages.</li>
+			</ul>
+
+		</div>
 
 
 		<div class="documentation-section">
@@ -604,7 +654,7 @@ $documentation->showSidebar(); ?>
 				<?php
 				$lines = array(
 					'<script nonce="<?php print getNonce() ?>" >',
-					'    document.addEventListener(\'Dolibarr:Ready\', function(e) {',
+					'    document.addEventListener(\'Dolibarr:Init\', function(e) {',
 					'        let url = Dolibarr.getContextVar(\'DOL_URL_ROOT\', \'The optional fallback value\'));',
 					'        console.log(url);',
 					'    });',

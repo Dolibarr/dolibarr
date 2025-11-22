@@ -220,6 +220,14 @@
 		},
 
 		/**
+		 * Enable or disable debug mode
+		 * @returns {int}
+		 */
+		getDebugMode() {
+			return _debug ? 1 : 0
+		},
+
+		/**
 		 * Internal logger
 		 * Only prints when debug mode is enabled
 		 * @param {string} msg
@@ -376,21 +384,65 @@
 	 * Display help in console log
 	 */
 	Dolibarr.defineTool('showConsoleHelp', () => {
+
 		console.groupCollapsed(
 			"%cDolibarr JS Developers HELP",
-			"background-color: #95cf04 ; color: #ffffff ; font-weight: bold ; padding: 4px ;"
+			"background-color: #95cf04; color: #ffffff; font-weight: bold; padding: 4px;"
 		);
-		console.log( "Show this help : %cDolibarr.tools.showConsoleHelp();","font-weight: bold ;");
 
-		console.groupCollapsed('Dolibarr debug mode');
-		console.log( "Activate Dolibarr debug mode : %cDolibarr.debugMode(true);","font-weight: bold ;");
-		console.log( "Disable Dolibarr debug mode : %cDolibarr.debugMode(false);","font-weight: bold ;");
-		console.log( "Note : debug mode status is persistent");
+		console.log("Show this help : %cDolibarr.tools.showConsoleHelp();","font-weight: bold;");
+		console.log(`Documentation for admin only on :  %cModule builder ➜ UX Components Doc`,"font-weight: bold;");
+
+
+
+		// -----------------------------------------------------------------------------
+		// DEBUG MODE
+		// -----------------------------------------------------------------------------
+		console.groupCollapsed("Dolibarr debug mode");
+
+		console.log(
+			"When help was displayed, status was: %c" + (Dolibarr.getDebugMode() ? "ENABLED" : "DISABLED"),
+			"font-weight: bold; color:" + (Dolibarr.getDebugMode() ? "green" : "red") + ";"
+		);
+
+		console.log(
+			"Activate debug mode : %cDolibarr.debugMode(true);",
+			"font-weight: bold;"
+		);
+
+		console.log(
+			"Disable debug mode : %cDolibarr.debugMode(false);",
+			"font-weight: bold;"
+		);
+
+		console.log("Note : debug mode status is persistent.");
 		console.groupEnd();
 
+		// -----------------------------------------------------------------------------
+		// HOOKS
+		// -----------------------------------------------------------------------------
+		console.groupCollapsed("Hooks helpers");
+
+		console.log(
+			"Run a hook manually : %cDolibarr.executeHook('hookName', {...})",
+			"font-weight: bold;"
+		);
+
+		console.log(
+			"Run await hooks manually : %cawait Dolibarr.executeHookAwait('hookName', {...})",
+			"font-weight: bold;"
+		);
+
 		console.groupEnd();
+
+
+		console.groupEnd(); // END MAIN GROUP
 	}, false, false);
 
+
+
+
+// Auto-show help when console is opened
 	Dolibarr.tools.showConsoleHelp();
 
 	return Dolibarr;
