@@ -46,6 +46,9 @@
 	// Private storage for secure context vars or constants (non-replaceable)
 	const _contextVars = {};
 
+	// Internal map to track proxies for events
+	const _proxies = new Map();
+
 	// Native event dispatcher (standard DOM)
 	const _events = new EventTarget();
 
@@ -238,10 +241,14 @@
 			// Dispatch on internal EventTarget
 			_events.dispatchEvent(ev);
 
-			// Dispatch globally on document so document.addEventListener('Dolibarr:' + hookName) can catch it
+			// Dispatch globally on document for backward compatibility
 			if (typeof document !== "undefined") {
 				document.dispatchEvent(new CustomEvent('Dolibarr:' + hookName, { detail: data }));
 			}
+
+			// Notify Dolibarr.on() listeners with data directly
+			const listeners = _events.listeners?.[hookName] || [];
+			listeners.forEach(fn => fn(data));
 		},
 
 		/**
@@ -250,7 +257,17 @@
 		 * @param {function} callback Listener function
 		 */
 		on(eventName, callback) {
-			_events.addEventListener(eventName, callback);
+			// Create a proxy to extract e.detail
+			const proxy = function(e) {
+				callback(e.detail);
+			};
+
+			// Store the proxy so we can remove it later
+			if (!_proxies.has(eventName)) _proxies.set(eventName, new Map());
+			_proxies.get(eventName).set(callback, proxy);
+
+			// Attach proxy to the internal EventTarget
+			_events.addEventListener(eventName, proxy);
 		},
 
 		/**
@@ -259,7 +276,18 @@
 		 * @param {function} callback
 		 */
 		off(eventName, callback) {
-			_events.removeEventListener(eventName, callback);
+			const map = _proxies.get(eventName);
+			if (!map) return;
+
+			const proxy = map.get(callback);
+			if (!proxy) return;
+
+			// Remove proxy from EventTarget
+			_events.removeEventListener(eventName, proxy);
+			map.delete(callback);
+
+			// Cleanup if no proxies remain for this event
+			if (map.size === 0) _proxies.delete(eventName);
 		},
 
 		/**
