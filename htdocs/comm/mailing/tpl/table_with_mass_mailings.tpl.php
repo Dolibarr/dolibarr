@@ -164,4 +164,3 @@ print '</div>'."\n";
 print '</form>'."\n";
 
 print '<!-- End table_with_mass_mailings.tpl -->';
-

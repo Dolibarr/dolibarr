@@ -595,7 +595,7 @@ class Mailing extends CommonObject
 					if ($filteremail) {
 						$sendstatut = (int) $obj->sendstatut;
 					} else {
-						$sendstatut = NULL;
+						$sendstatut = null;
 					}
 					$listMailings[$i] = array(
 						'rowid' => (int) $obj->rowid,

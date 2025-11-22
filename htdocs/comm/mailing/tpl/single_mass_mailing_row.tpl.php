@@ -181,4 +181,3 @@ while ($i < $imaxinloop) {
 	$i++;
 }
 print '<!-- End single_mass_mailing_row.tpl -->';
-
