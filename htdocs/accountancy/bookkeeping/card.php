@@ -657,7 +657,7 @@ if ($action == 'create') {
 		print '<table class="nobordernopadding centpercent"><tr><td>';
 		print $langs->trans('Ref');
 		print '</td>';
-		if ($action != 'editref') {
+		if ($action != 'editref' && empty($object->date_validation)) {
 			print '<td class="right">';
 			if ($permissiontoadd && $numRefModel === 'mod_bookkeeping_neon') {
 				print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editref&token='.newToken().'&piece_num='.((int) $object->piece_num).'&mode='.urlencode((string) $mode).'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a>';
@@ -666,7 +666,7 @@ if ($action == 'create') {
 		}
 		print '</tr></table>';
 		print '</td><td>';
-		if ($action == 'editref') {
+		if ($action == 'editref' && empty($object->date_validation)) {
 			print '<form name="setref" action="'.$_SERVER["PHP_SELF"].'?piece_num='.((int) $object->piece_num).'" method="POST">';
 			if ($optioncss != '') {
 				print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -692,14 +692,14 @@ if ($action == 'create') {
 		print '</td>';
 		if ($action != 'editdocref') {
 			print '<td class="right">';
-			if ($permissiontoadd) {
+			if ($permissiontoadd && empty($object->date_validation)) {
 				print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editdocref&token='.newToken().'&piece_num='.((int) $object->piece_num).'&mode='.urlencode((string) $mode).'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a>';
 			}
 			print '</td>';
 		}
 		print '</tr></table>';
 		print '</td><td>';
-		if ($action == 'editdocref') {
+		if ($action == 'editdocref' && empty($object->date_validation)) {
 			print '<form name="setdocref" action="'.$_SERVER["PHP_SELF"].'?piece_num='.((int) $object->piece_num).'" method="POST">';
 			if ($optioncss != '') {
 				print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -725,14 +725,14 @@ if ($action == 'create') {
 		print '</td>';
 		if ($action != 'editdate') {
 			print '<td class="right">';
-			if ($permissiontoadd) {
+			if ($permissiontoadd && empty($object->date_validation)) {
 				print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editdate&token='.newToken().'&piece_num='.((int) $object->piece_num).'&mode='.urlencode((string) $mode).'">'.img_edit($langs->transnoentitiesnoconv('SetDate'), 1).'</a>';
 			}
 			print '</td>';
 		}
 		print '</tr></table>';
 		print '</td><td colspan="3">';
-		if ($action == 'editdate') {
+		if ($action == 'editdate' && empty($object->date_validation)) {
 			print '<form name="setdate" action="'.$_SERVER["PHP_SELF"].'?piece_num='.((int) $object->piece_num).'" method="POST">';
 			if ($optioncss != '') {
 				print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -758,14 +758,14 @@ if ($action == 'create') {
 		print '</td>';
 		if ($action != 'editjournal') {
 			print '<td class="right">';
-			if ($permissiontoadd) {
+			if ($permissiontoadd && empty($object->date_validation)) {
 				print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editjournal&token='.newToken().'&piece_num='.((int) $object->piece_num).'&mode='.urlencode((string) $mode).'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a>';
 			}
 			print '</td>';
 		}
 		print '</tr></table>';
 		print '</td><td>';
-		if ($action == 'editjournal') {
+		if ($action == 'editjournal' && empty($object->date_validation)) {
 			print '<form name="setjournal" action="'.$_SERVER["PHP_SELF"].'?piece_num='.((int) $object->piece_num).'" method="POST">';
 			if ($optioncss != '') {
 				print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
