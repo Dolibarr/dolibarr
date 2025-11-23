@@ -949,7 +949,7 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 }
 //print $sql;
 
-if ($errormessage) {
+if (isset($errormessage) and $errormessage) {
 	print '<div class="warning">';
 	print dol_escape_htmltag($errormessage);
 	//print '<br>'.dol_escape_htmltag('SQL is '.$sql);
