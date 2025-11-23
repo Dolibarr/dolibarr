@@ -11298,7 +11298,7 @@ function dol_eval_standard($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestr
 			// We can exclude $ char that are not in dol_eval global, so that are not:
 			// $db, $langs, $leftmenu, $topmenu, $user, $langs, $objectoffield, $object, $obj, ...,
 		}
-		if (is_array($s) || $s === 'Array') {
+		if ($s === 'Array') {
 			if ($returnvalue) {
 				return 'Bad string syntax to evaluate (value is Array): '.var_export($s, true);
 			} else {

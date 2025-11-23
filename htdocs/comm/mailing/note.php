@@ -58,7 +58,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
 if ($id > 0 || !empty($ref)) {
-	$upload_dir = $conf->mailing->multidir_output[$object->entity]."/".$object->id;
+	$upload_dir = $conf->mailing->multidir_output[$object->entity ?? $conf->entity]."/".$object->id;
 }
 
 $permissionnote = $user->hasRight('mailing', 'write'); // Used by the include of actions_setnotes.inc.php
