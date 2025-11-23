@@ -459,18 +459,20 @@ class Contrat extends CommonObject
 	 * @param	User		$user      		Object User making action
 	 * @param	int			$notrigger		1=Does not execute triggers, 0=Execute triggers
 	 * @param	string		$comment		Comment
+	 * @param	int			$nofetchlines	Use 1 to avoid to do a fetch_lines() on contract if you know it was already done
 	 * @return	int							Return integer <0 if KO, >0 if OK
 	 * @see activateAll()
 	 */
-	public function closeAll(User $user, $notrigger = 0, $comment = '')
+	public function closeAll(User $user, $notrigger = 0, $comment = '', $nofetchlines = 0)
 	{
 		dol_syslog("closeAll begin", LOG_DEBUG, 1);
 
 		$this->db->begin();
 
 		// Load lines
-		// TODO Should be useless if object was fetched without the noline param.
-		$this->fetch_lines();
+		if (empty($nofetchlines)) {
+			$this->fetch_lines();
+		}
 
 		$now = dol_now();
 

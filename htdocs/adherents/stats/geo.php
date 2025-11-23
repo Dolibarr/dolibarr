@@ -26,11 +26,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -38,12 +33,16 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
 $graphwidth = DolGraph::getDefaultGraphSizeForStats('width', '700');
 $mapratio = 0.5;
 $graphheight = round($graphwidth * $mapratio);
 
-$mode = GETPOST('mode') ? GETPOST('mode') : '';
+$mode = GETPOST('mode');
 
 
 // Security check
@@ -54,7 +53,7 @@ if ($user->socid > 0) {
 restrictedArea($user, 'adherent', '', '', 'cotisation');
 
 $year = (int) dol_print_date(dol_now('gmt'), "%Y", 'gmt');
-$startyear = $year - (!getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? 2 : max(1, min(10, getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS'))));
+$startyear = $year - (getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? max(1, min(10, getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS'))) : 2);
 $endyear = $year;
 
 // Load translation files required by the page
@@ -322,8 +321,8 @@ if ($mode) {
 			print '<td class="center">'.$val['label2'].'</td>';
 		}
 		print '<td class="right">'.$val['nb'].'</td>';
-		print '<td class="center">'.dol_print_date($val['lastdate'], 'dayhour').'</td>';
-		print '<td class="center">'.dol_print_date($val['lastsubscriptiondate'], 'dayhour').'</td>';
+		print '<td class="center">'.dol_print_date($val['lastdate'], 'dayhour', 'auto', null, false, 1).'</td>';
+		print '<td class="center">'.dol_print_date($val['lastsubscriptiondate'], 'dayhour', 'auto', null, false, 1).'</td>';
 		print '</tr>';
 	}
 

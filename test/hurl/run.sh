@@ -233,9 +233,14 @@ get_dolibarr_api_key() {
 
 	# If key is already set, return it
 	if [ -n "${current_key}" ]; then
-		print_info "Using existing DOLAPIKEY."
-		echo "${current_key}"
-		return 0
+		if [[ "${DOLAPIKEY}" != *": "* ]]; then
+			print_error "Environment variable DOLAPIKEY has the wrong format: '${DOLAPIKEY}'"
+			print_error "should perhaps be: 'DOLAPIKEY: ${DOLAPIKEY}'"
+		else
+			print_info "Using existing DOLAPIKEY."
+			echo "${current_key}"
+			return 0
+		fi
 	fi
 
 	# Check if credentials are available
@@ -282,8 +287,8 @@ API_URL=${hostnport}/api/index.php
 
 DOLAPIKEY=$(get_dolibarr_api_key "${API_URL}" "${DOLAPIKEY}" "${DOLIUSERNAME}" "${DOLIPASSWORD}")
 
-if [[ -z ${DOLAPIKEY+x} ]]; then
-	print_info "DOLAPIKEY bash variable is unset, no API tests that require authentication"
+if [[ -z "${DOLAPIKEY}" ]]; then
+	print_info "DOLAPIKEY bash variable is unset/empty, no API tests that require authentication"
 else
 	# Build the find command for the API tests that do require authentication
 	find_args=("api/" "-type" "f" "-iwholename" "*/10*.hurl" "-not" "-iwholename" "*/00*.hurl")

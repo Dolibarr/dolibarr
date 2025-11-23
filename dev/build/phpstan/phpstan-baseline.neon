@@ -663,7 +663,7 @@ parameters:
 		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
-			count: 4
+			count: 3
 			path: ../../../htdocs/admin/mails_templates.php
 
 		-
@@ -8399,12 +8399,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/core/tpl/filemanager.tpl.php
-
-		-
-			message: '#^Variable \$limit might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/core/tpl/list_print_total.tpl.php
 
 		-
 			message: '#^Variable \$num might not be defined\.$#'

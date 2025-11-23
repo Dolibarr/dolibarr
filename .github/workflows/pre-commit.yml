@@ -109,6 +109,10 @@ jobs:
           coverage: none # disable xdebug, pcov
           tools: phpcs
 
+      # Install perltidy and perlcritic
+      - name: Install perltidy and perlcritic
+        run: sudo apt-get update && sudo apt-get install -y perltidy libperl-critic-perl
+
       # Run all the precommit tools (defined into pre-commit-config.yaml).
       # We can force exclusion of some of them here.
       - name: Run pre-commit hooks
