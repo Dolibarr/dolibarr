@@ -96,11 +96,6 @@ if (!$sortfield) {
 	$sortfield = "m.date_creat";
 }
 
-// List of fields to search into when doing a "search in all"
-$fieldstosearchall = array(
-	'm.titre' => 'Ref',
-);
-
 $permissiontoread = $user->hasRight('mailing', 'lire');
 $permissiontoadd = $user->hasRight('mailing', 'creer');
 $permissiontodelete = $user->hasRight('mailing', 'delete');
@@ -192,7 +187,7 @@ if ($arrayMailings == -1 ) {
 
 // Direct jump if only one record found
 if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
-	$obj = $db->fetch_object($resql);
+	$obj = $arrayMailings[0];
 	$id = $obj->rowid;
 	header("Location: ".dol_buildpath('/comm/mailing/card.php', 1).'?id='.((int) $id));
 	exit;
@@ -296,6 +291,10 @@ $trackid = 'mailing'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 if ($search_all) {
+	// List of fields to search into when doing a "search in all"
+	$fieldstosearchall = array(
+		'm.titre' => 'Ref',
+	);
 	$setupstring = '';
 	foreach ($fieldstosearchall as $key => $val) {
 		$fieldstosearchall[$key] = $langs->trans($val);

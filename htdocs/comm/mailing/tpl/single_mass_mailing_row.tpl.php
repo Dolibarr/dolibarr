@@ -21,6 +21,8 @@
 // $arrayMailings the result of asking the database with sql for mass mailings
 // $num the number of results of asking the database with sql for mass mailings
 
+global $totalarray; // "import" from table tpl
+
 print '<!-- Begin single_mass_mailing_row.tpl -->';
 
 // Loops over the records in $arrayMailings
