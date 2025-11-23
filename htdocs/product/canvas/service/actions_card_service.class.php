@@ -286,8 +286,8 @@ class ActionsCardService
 		if ($action == 'view') {
 			// Photo
 			$this->tpl['nblines'] = 4;
-			if ($this->object->is_photo_available($conf->service->multidir_output[$this->object->entity])) {
-				$this->tpl['photos'] = $this->object->show_photos('product', $conf->service->multidir_output[$this->object->entity], 1, 1, 0, 0, 0, 80);
+			if ($this->object->is_photo_available($conf->service->multidir_output[(int) $this->object->entity])) {
+				$this->tpl['photos'] = $this->object->show_photos('product', $conf->service->multidir_output[(int) $this->object->entity], 1, 1, 0, 0, 0, 80);
 			}
 
 			// Duration
