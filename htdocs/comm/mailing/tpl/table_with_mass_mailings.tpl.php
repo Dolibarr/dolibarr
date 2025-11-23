@@ -21,7 +21,13 @@
 // $arrayMailings the result of asking the database with sql for mass mailings
 // $num the number of results of asking the database with sql for mass mailings
 
-global $arrayMailings; // "import" from list.php
+/**
+ * @var	array 		$arrayMailings
+ */
+
+ '
+ @phan-var-force array<array{int,string,string,string,int,int,int,int,int,string,string,int|NULL}> $arrayMailings
+ ';
 
 print '<!-- Begin table_with_mass_mailings.tpl -->';
 

@@ -21,12 +21,19 @@
 // $arrayMailings the result of asking the database with sql for mass mailings
 // $num the number of results of asking the database with sql for mass mailings
 
-global $totalarray; // "import" from table tpl
+/**
+ * @var	array 		$arrayMailings
+ */
+
+ '
+ @phan-var-force array<array{int,string,string,string,int,int,int,int,int,string,string,int|NULL}> $arrayMailings
+ ';
 
 print '<!-- Begin single_mass_mailing_row.tpl -->';
 
 // Loops over the records in $arrayMailings
 // --------------------------------------------------------------------
+$num = count($arrayMailings);
 $i = 0;
 $savnbfield = $totalarray['nbfield'];
 $totalarray = array();
@@ -37,6 +44,7 @@ while ($i < $imaxinloop) {
 	if (empty($obj)) {
 		break; // Should not happen
 	}
+	$object = new Mailing($db);
 
 	$object->id = $obj['rowid'];
 	$object->ref = $obj['rowid'];
