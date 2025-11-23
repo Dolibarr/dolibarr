@@ -21,6 +21,8 @@
 // $arrayMailings the result of asking the database with sql for mass mailings
 // $num the number of results of asking the database with sql for mass mailings
 
+global $arrayMailings; // "import" from list.php
+
 print '<!-- Begin table_with_mass_mailings.tpl -->';
 
 print '<table id="table_with_mass_mailings.tpl" class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";

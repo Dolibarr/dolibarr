@@ -496,7 +496,7 @@ class Mailing extends CommonObject
 	 *    @param	int		$limit				25 is default, but else the limit of how many mass mailings to ask for
 	 *    @param	int		$project_id			0 (default) means return any mass mailing, >0 means only return mass mailings with this project id
 	 *    @param    int     $list           	0:Return array contains all properties, 1:Return array contains just id
-	 *    @param    array	$fieldstosearchall	List of fields to search into when doing a "search in all", default is titre
+	 *    @param    array<string>	$fieldstosearchall	List of fields to search into when doing a "search in all", default is titre
 	 *    @return array<int|array{int,string,string,string,int,int,int,int,int,string,string,int|NULL}>|int<-1,-1>        	Array of contacts, -1 if error
 	 */
 	public function listMailings($filteremail, $search_ref, $search_title, $search_subject, $search_messtype, $search_all, $search_refproject, $search_project, $sortorder, $sortfield, $page = 0, $limit = 25, $project_id = 0, $list = 0, $fieldstosearchall = [])
