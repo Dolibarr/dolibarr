@@ -5,7 +5,7 @@
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2014-2020  Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015  		Benoit Bruchard			<benoitb21@gmail.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -172,7 +172,7 @@ class html_cerfafr extends ModeleDon
 				$form = str_replace('__DONATOR_ADDRESS__', $don->address, $form);
 				$form = str_replace('__DONATOR_ZIP__', $don->zip, $form);
 				$form = str_replace('__DONATOR_TOWN__', $don->town, $form);
-				$form = str_replace('__PAYMENTMODE_LIB__ ', $paymentmode, $form);
+				$form = str_replace('__PAYMENTMODE_LIB__ ', (string) $paymentmode, $form);
 				$form = str_replace('__NOW__', dol_print_date($now, 'day', false, $outputlangs), $form);
 				$form = str_replace('__DonationRef__', $outputlangs->trans("DonationRef"), $form);
 				$form = str_replace('__DonationTitle__', $outputlangs->trans("DonationTitle"), $form);
