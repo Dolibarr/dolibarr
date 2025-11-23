@@ -194,15 +194,26 @@ document.addEventListener('Dolibarr:Init', function(e) {
 			const text = translations[currentLocale]?.[key] || key;
 			if (!args.length) return text;
 
-			// Simple sprintf replacement (supports %% and %s)
+			// Utilisation de la fonction sprintf pour le formatage
+			return sprintf(text, ...args);
+		}
+
+		function sprintf(fmt, ...args) {
 			let i = 0;
-			return text.replace(/%%|%[sdf]/g, match => {
+			return fmt.replace(/%[%bcdeEfFgGosuxX]/g, (match) => {
 				if (match === '%%') return '%';
-				const val = args[i++];
+				const arg = args[i++];
 				switch (match) {
-					case '%s': return String(val);
-					case '%d': return parseInt(val, 10);
-					case '%f': return parseFloat(val);
+					case '%s': return String(arg);
+					case '%d':
+					case '%u': return Number(arg);
+					case '%f':
+					case '%F': return parseFloat(arg);
+					case '%b': return Number(arg).toString(2);
+					case '%o': return Number(arg).toString(8);
+					case '%x': return Number(arg).toString(16);
+					case '%X': return Number(arg).toString(16).toUpperCase();
+					case '%c': return String.fromCharCode(Number(arg));
 					default: return match;
 				}
 			});
