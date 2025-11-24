@@ -1453,7 +1453,7 @@ class Fichinter extends CommonObject
 	 *  @param      int  	$special_code       	Special code for subtotal lines
 	 *	@return    	int             				>0 if ok, <0 if ko
 	 */
-	public function addline($user, $fichinterid, $desc, $date_intervention, $duration, $array_options = [], $type = 0, $rang = -1, $special_code = "")
+	public function addline($user, $fichinterid, $desc, $date_intervention, $duration, $array_options = [], $type = 0, $rang = -1, $special_code = 0)
 	{
 		dol_syslog(get_class($this)."::addline $fichinterid, $desc, $date_intervention, $duration, $type, $rang, $special_code");
 
