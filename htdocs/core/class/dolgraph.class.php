@@ -664,7 +664,6 @@ class DolGraph
 		$min = null;
 
 		$nbseries = (empty($this->data[0]) ? 0 : count($this->data[0]) - 1);
-		$x = array();
 
 		foreach ($this->data as $x) {	// Loop on each x
 			for ($i = 0; $i < $nbseries; $i++) {	// Loop on each series
