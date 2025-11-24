@@ -18,7 +18,7 @@ jobs:
       contents: read
     steps:
       - name: Check out code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Cleanup
         run: |
           gh extension install actions/gh-actions-cache
