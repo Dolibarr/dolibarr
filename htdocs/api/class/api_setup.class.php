@@ -977,6 +977,10 @@ class Setup extends DolibarrApi
 	{
 		$list = array();
 
+		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'lire')) {
+			throw new RestException(403);
+		}
+
 		$sql = "SELECT id, code, label, accountancy_code, active, module, position";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_type_fees as t";
 		$sql .= " WHERE t.active = ".((int) $active);
@@ -1043,6 +1047,10 @@ class Setup extends DolibarrApi
 	{
 		global $langs;
 		$langs->loadLangs(array('holiday'));
+
+		if (!DolibarrApiAccess::$user->hasRight('holiday', 'lire')) {
+			throw new RestException(403);
+		}
 
 		$list = array();
 
@@ -1118,6 +1126,10 @@ class Setup extends DolibarrApi
 	{
 		global $langs;
 		$langs->loadLangs(array('hrm'));
+
+		if (!DolibarrApiAccess::$user->hasRight('holiday', 'lire')) {
+			throw new RestException(403);
+		}
 
 		$list = array();
 
