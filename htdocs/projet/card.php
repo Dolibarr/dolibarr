@@ -1099,11 +1099,11 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 				'name' => 'projectid',
 				'label' => $langs->trans('MergeOriginProject'),
 				'type' => 'other',
-				'value' => $form->selectProjects('', 'projectid', '', 0, 1, '','', array(), 0,1, '', 'minwidth200', 1),
+				'value' => $form->selectProjects('', 'projectid', '', 0, 1, '', 0, array(), 0, 1, 0, 'minwidth200', array()),
 			)
 		);
 
-		print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("MergeProjects"), $langs->trans("ConfirmMergeProjects"), "confirm_merge", $formquestion, '', 1, 250);
+		print $form->formconfirm($_SERVER["PHP_SELF"] . "?id=" . $object->id, $langs->trans("MergeProjects"), $langs->trans("ConfirmMergeProjects"), "confirm_merge", $formquestion, '', 1, 250);
 	}
 
 	// Call Hook formConfirm
