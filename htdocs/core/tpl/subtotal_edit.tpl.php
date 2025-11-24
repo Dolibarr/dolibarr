@@ -141,7 +141,7 @@ if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 		foreach ($line_options as $key => $value) {
 			if (in_array($line_type, $value['type'])) {
 				print '<li><label for="' . $key . '">' . $langs->trans($value['trans_key']) . '</label>';
-				print '<input style="float: left;" id="' . $key . '" type="checkbox" name="' . $key . '" value="' . $value['value'] . '" ';
+				print '<input style="float: left;margin-top: 9px;" id="' . $key . '" type="checkbox" name="' . $key . '" value="' . $value['value'] . '" ';
 				print $value['checked'] ? 'checked' : '';
 				print '></li>';
 			}

@@ -68,7 +68,7 @@ $documentation->showSidebar(); ?>
 
 	<div class="doc-content-wrapper">
 
-		<h1 class="documentation-title"><?php echo $langs->trans($experimentName); ?></h1>
+		<h1 class="documentation-title"><?php echo $langs->trans($experimentName); ?> : <?php echo $langs->trans('UxDolibarrContextHowItWork'); ?></h1>
 
 		<?php $documentation->showSummary(); ?>
 

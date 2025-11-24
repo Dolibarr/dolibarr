@@ -366,6 +366,22 @@ class ExternalModules
 
 		$this->numberTotalOfProducts = 0;
 
+		// Special case of category goodies
+		if ($this->categorie == 87) {
+			$html = '<div class="shop-container">
+                            <div class="shop-image">
+								<a href="https://merch.dolibarr.org/" target="_blank">
+	                                <img src="https://www.dolistore.com/medias/image/marketplace/img/goodies-shop.jpg" width="50%" alt="DoliStore Merch and Gifts" />
+	                                <div class="shop-overlay">
+	                                    <button target="new" class="shop-button">'.$langs->trans("GoodiesButtonTitle").' <i class="icon-chevron-right"></i></button>
+	                                </div>
+                                </a>
+                            </div>
+                        </div>';
+
+			return $html;
+		}
+
 		// Fetch the products from Dolistore source
 
 		$dolistoreProducts = array();
@@ -638,7 +654,7 @@ class ExternalModules
 
 		$this->numberOfProducts = count($this->products);
 
-		return $html ;
+		return $html;
 	}
 
 	/**

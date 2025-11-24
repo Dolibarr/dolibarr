@@ -393,11 +393,7 @@
 		console.log("Show this help : %cDolibarr.tools.showConsoleHelp();","font-weight: bold;");
 		console.log(`Documentation for admin only on :  %cModule builder ➜ UX Components Doc`,"font-weight: bold;");
 
-
-
-		// -----------------------------------------------------------------------------
 		// DEBUG MODE
-		// -----------------------------------------------------------------------------
 		console.groupCollapsed("Dolibarr debug mode");
 
 		console.log(
@@ -418,9 +414,7 @@
 		console.log("Note : debug mode status is persistent.");
 		console.groupEnd();
 
-		// -----------------------------------------------------------------------------
 		// HOOKS
-		// -----------------------------------------------------------------------------
 		console.groupCollapsed("Hooks helpers");
 
 		console.log(

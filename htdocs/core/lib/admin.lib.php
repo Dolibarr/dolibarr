@@ -1629,7 +1629,7 @@ function activateModulesRequiredByCountry($country_code)
 
 						if ($modulequalified) {
 							// Load languages files of module
-							if (property_exists($objMod, 'automatic_activation') && isset($objMod->automatic_activation) && is_array($objMod->automatic_activation) && isset($objMod->automatic_activation[$country_code])) {
+							if (isset($objMod->automatic_activation[$country_code])) {
 								activateModule($modName);
 
 								setEventMessages($objMod->automatic_activation[$country_code], null, 'warnings');

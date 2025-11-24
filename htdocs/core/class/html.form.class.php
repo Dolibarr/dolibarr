@@ -74,18 +74,25 @@ class Form
 	/** @var array<string,int> */
 	public $result;
 
-	/** @var int 	Number of line returned by method to generate combo select */
+	/** @var int 	Number of lines returned by method to generate combo select */
 	public $num;
 
 	// Cache arrays
+	/** @var array<string,array{id:int,code:string,label:string,type:int,entity:int,active:int}> */
 	public $cache_types_paiements = array();
+	/** @var array<string,array{code:string,label:string,deposit_percent:string,entity:int}> */
 	public $cache_conditions_paiements = array();
+	/** @var array<int,array{rowid:int,code:string,label:string,active:int}> */
 	public $cache_transport_mode = array();
 	/** @var array<int,array{code:string,label:string,position:int}> */
 	public $cache_availability = array();
+	/** @var array<int,array{id:int,code:string,label:string}> */
 	public $cache_demand_reason = array();
+	/** @var array<string,string> */
 	public $cache_types_fees = array();
+	/** @var array<int,array{rowid:int,type_vat:int,code:string,txtva:string,nprtva:int,localtax1:string|float|null,localtax1_type:string,localtax2:string|float|null,localtax2_type:string,label:string,labelallrates:string,labelpositiverates:string}> */
 	public $cache_vatrates = array();
+	/** @var array<int,array{rowid:int,code:string,label:string}> */
 	public $cache_invoice_subtype = array();
 	/** @var array<string,string> */
 	public $cache_rule_for_lines_dates = array();
@@ -4755,7 +4762,7 @@ class Form
 					$label = $langs->trans($obj->code); // So translation key SRC_XXX will work
 				}
 
-				$tmparray[$obj->rowid]['id'] = $obj->rowid;
+				$tmparray[$obj->rowid]['id'] = (int) $obj->rowid;
 				$tmparray[$obj->rowid]['code'] = $obj->code;
 				$tmparray[$obj->rowid]['label'] = $label;
 				$i++;
@@ -7300,7 +7307,7 @@ class Form
 					$obj = $this->db->fetch_object($resql);
 
 					$tmparray = array();
-					$tmparray['rowid']			= $obj->rowid;
+					$tmparray['rowid']			= (int) $obj->rowid;
 					$tmparray['type_vat']		= ($obj->type_vat <= 0 ? 0 : $obj->type_vat);	// Some version have type_vat corrupted with value -1
 					$tmparray['code']			= $obj->code;
 					$tmparray['txtva']			= $obj->taux;
@@ -7793,11 +7800,13 @@ class Form
 				$reduceformat = (!empty($conf->dol_optimize_smallscreen) ? 1 : 0);	// Test on original $format param.
 				if ($reduceformat) {
 					$format = str_replace('%Y', '%y', $langs->transnoentitiesnoconv("FormatDateShortInput")); // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
+					$formatjslong = $langs->transnoentitiesnoconv("FormatDateShortJavaInput");	// don't trust the name
 					$formatjs = str_replace('yyyy', 'yy', $langs->transnoentitiesnoconv("FormatDateShortJavaInput"));
 					$formatjquery = str_replace('yyyy', 'yy', $langs->trans("FormatDateShortJQueryInput"));
 				} else {
-					$format = $langs->transnoentitiesnoconv("FormatDateShortInput"); // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
-					$formatjs = $langs->transnoentitiesnoconv("FormatDateShortJavaInput"); // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
+					$format = $langs->transnoentitiesnoconv("FormatDateShortInput"); // FormatDateShortInput for dol_print_date is same than FormatDateShortJavaInput for javascript
+					$formatjslong = $langs->transnoentitiesnoconv("FormatDateShortJavaInput");	// don't trust the name
+					$formatjs = $langs->transnoentitiesnoconv("FormatDateShortJavaInput"); // FormatDateShortInput for dol_print_date is same than FormatDateShortJavaInput for javascript
 					$formatjquery = $langs->trans("FormatDateShortJQueryInput");
 				}
 
@@ -7810,13 +7819,12 @@ class Form
 				// Calendrier popup version eldy
 				if ($usecalendar == "eldy") {
 					// To have this manager working back, you must retrieve all functions showDP child found into the lib_head.js of v4 for example
-					// and use load the js so the call of showDP will works.
-
+					// and load the js that contains them so the call of showDP will works.
 					/*
 					// Input area to enter date manually
 					$retstring .= '<!-- datepicker usecalendar=eldy --><input id="' . $prefix . '" name="' . $prefix . '" type="text" class="maxwidthdate center" maxlength="11" value="' . $formatted_date . '"';
 					$retstring .= ($disabled ? ' disabled' : '');
-					$retstring .= ' onChange="dpChangeDay(\'' . dol_escape_js($prefix) . '\',\'' . dol_escape_js($langs->trans("FormatDateShortJavaInput")) . '\'); "'; // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
+					$retstring .= ' onChange="dpChangeDay(\'' . dol_escape_js($prefix) . '\',\'' . dol_escape_js($formatjslong")) . '\'); "'; // FormatDateShortInput for dol_print_date is same than FormatDateShortJavaInput for javascript
 					$retstring .= ' autocomplete="off">';
 
 					// Icon calendar
@@ -7875,7 +7883,7 @@ class Form
 					$retstring .= '<input id="'.$prefix.'" name="'.$prefix.'" type="'.($usecalendar == 'html' ? "date" : "text").'" class="maxwidthdate center" maxlength="11" value="'.$formatted_date.'"';
 					$retstring .= ($disabled ? ' disabled' : '');
 					$retstring .= ($placeholder ? ' placeholder="' . dol_escape_htmltag($placeholder) . '"' : '');
-					$retstring .= ' onChange="dpChangeDay(\'' . dol_escape_js($prefix) . '\',\'' . dol_escape_js($formatjs) . '\'); "'; // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
+					$retstring .= ' onChange="dpChangeDay(\'' . dol_escape_js($prefix) . '\',\'' . dol_escape_js($formatjslong) . '\'); "'; // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
 					$retstring .= ' autocomplete="off">';
 
 					// Icon calendar
@@ -12307,7 +12315,7 @@ class Form
 		$ret .= '</div>';
 
 		$ret .= "<!-- Field to enter a generic filter string: t.ref:like:'SO-%', t.date_creation:<:'20160101', t.date_creation:<:'2016-01-01 12:30:00', t.nature:is:NULL, t.field2:isnot:NULL -->\n";
-		$ret .= '<input type="text" placeholder="' . $langs->trans("Filters") . '" id="search_component_params_input" name="search_component_params_input" class="noborderbottom search_component_input" value="">';
+		$ret .= '<input type="text" placeholder="' . $langs->trans("Filters") . '" id="search_component_params_input" name="search_component_params_input" class="noborderall search_component_input" value="">';
 
 		$ret .= '</div>';
 		$ret .= '</div>';

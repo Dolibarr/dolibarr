@@ -389,19 +389,18 @@ span.massactionselect, input.inputsearch_dropdownselectedfields {
 	border: none;
 	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>: solid 1px var(<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '--colorbacktitle1' : '--inputbordercolor'; ?>);
 }
+
 .divadvancedsearchfieldcompinput,
 div.tabBar input, div.tabBar input.flat, div.tabBar textarea, div.tabBar textarea.flat, div.tabBar form.flat select, div.tabBar select, div.tabBar select.flat, div.tabBar .dataTables_length label select
 {
 	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>: solid 1px var(--inputbordercolor);
-	<?php
-	if (getDolGlobalString('THEME_ADD_BACKGROUND_ON_INPUT')) { ?>
+	<?php if (getDolGlobalString('THEME_ADD_BACKGROUND_ON_INPUT')) { ?>
 		background-color: #f8f8fa;
 		border-bottom-left-radius: 0;
 		border-bottom-right-radius: 0;
-								<?php
-	}
-	?>
+	<?php } ?>
 }
+
 .divadvancedsearchfieldcompinput {
 	background: #fff;
 	border-bottom: solid 1px var(--inputbordercolor);
@@ -4107,6 +4106,9 @@ div.tabBar table.tableforservicepart2:last-child {
 /* Payment Screen : Pointer cursor in the autofill image */
 .AutoFillAmount {
 	cursor:pointer;
+	padding-left: 5px;
+	padding-right: 5px;
+	padding-top: 2px;
 }
 
 div.popuptabset {
@@ -4440,6 +4442,9 @@ td.border, div.tagtable div div.border {
 }
 .borderbottom {
 	border-bottom: 1px solid var(--colortopbordertitle1);
+}
+.noborderall {
+	border: none !important;
 }
 
 table.noborder {

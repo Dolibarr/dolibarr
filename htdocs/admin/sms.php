@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 $langs->loadLangs(array("companies", "admin", "products", "sms", "other", "errors"));
 
 $action = GETPOST('action', 'aZ09');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel', 'alpha');
 
 if (!$user->admin) {
 	accessforbidden();

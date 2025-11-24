@@ -2180,7 +2180,6 @@ class Propal extends CommonObject
 
 			$this->ref = $num;
 			$this->statut = self::STATUS_VALIDATED;
-			$this->status = self::STATUS_VALIDATED;
 			$this->user_validation_id = $user->id;
 			$this->datev = $now;
 			$this->date_validation = $now;

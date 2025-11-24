@@ -44,7 +44,7 @@ $langs->loadLangs(array('compta', 'banks', 'bills'));
 
 $id = GETPOSTINT("id");
 $action = GETPOST("action", "aZ09");
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel', 'alpha');
 
 $refund = GETPOSTINT("refund");
 if (empty($refund)) {

@@ -1952,6 +1952,146 @@ class Invoices extends DolibarrApi
 		return $this->_fetchTemplateInvoice($id, '', '', $contact_list);
 	}
 
+
+	/**
+	 * List template invoices
+	 *
+	 * Get a list of template invoices
+	 *
+	 * @param string	$sortfield			Sort field
+	 * @param string	$sortorder			Sort order
+	 * @param int		$limit				Limit for list
+	 * @param int		$page				Page number
+	 * @param string	$thirdparty_ids		Thirdparty ids to filter orders of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
+	 * @param string	$status				Filter by template status: draft | active | suspended
+	 * @param string	$sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string	$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param bool		$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0
+	 * @param int		$loadlinkedobjects	Load also linked object
+	 * @param bool		$withLines			true or false to display or hide lines
+	 * @return array						Array of recurring invoice objects
+	 * @phan-return FactureRec[]|array{data:FactureRec[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phpstan-return FactureRec[]|array{data:FactureRec[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 *
+	 * @url GET templates
+	 *
+	 * @throws RestException 404 Not found
+	 * @throws RestException 503 Error
+	 */
+	public function indexTemplateInvoices($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $status = '', $sqlfilters = '', $properties = '', $pagination_data = false, $loadlinkedobjects = 0, $withLines = true)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('facture', 'lire')) {
+			throw new RestException(403);
+		}
+
+		$obj_ret = array();
+
+		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
+		$socids = DolibarrApiAccess::$user->socid ?: $thirdparty_ids;
+
+
+		// If the internal user must only see his customers, force searching by him
+		$search_sale = 0;
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socids) {
+			$search_sale = DolibarrApiAccess::$user->id;
+		}
+
+		$sql = "SELECT t.rowid";
+		$sql .= " FROM ".MAIN_DB_PREFIX."facture_rec AS t";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe AS s ON (s.rowid = t.fk_soc)";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture_rec_extrafields AS ef ON (ef.fk_object = t.rowid)";
+		$sql .= ' WHERE t.entity IN ('.getEntity('invoice').')';
+		if ($socids) {
+			$sql .= " AND t.fk_soc IN (".$this->db->sanitize($socids).")";
+		}
+
+		// Search on sale representative
+		if ($search_sale && $search_sale != '-1') {
+			if ($search_sale == -2) {
+				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux AS sc WHERE sc.fk_soc = t.fk_soc)";
+			} elseif ($search_sale > 0) {
+				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux AS sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+			}
+		}
+
+		// Filter by status
+		if ($status == 'active') {
+			$sql .= " AND t.suspended = 0 AND t.frequency IS NOT NULL";
+		}
+		if ($status == 'suspended') {
+			$sql .= " AND t.suspended = 1 AND t.frequency IS NOT NULL";
+		}
+		if ($status == 'draft') {
+			$sql .= " AND t.frequency IS NULL";
+		}
+		// add sql filters
+		if ($sqlfilters) {
+			$errormessage = '';
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			}
+		}
+
+		//this query will return total template invoices with the filters given
+		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+
+		$sql .= $this->db->order($sortfield, $sortorder);
+		if ($limit) {
+			if ($page < 0) {
+				$page = 0;
+			}
+			$offset = $limit * $page;
+
+			$sql .= $this->db->plimit($limit + 1, $offset);
+		}
+
+		$result = $this->db->query($sql);
+		if ($result) {
+			$i = 0;
+			$num = $this->db->num_rows($result);
+			$min = min($num, ($limit <= 0 ? $num : $limit));
+			while ($i < $min) {
+				$obj = $this->db->fetch_object($result);
+				$factureRec = new FactureRec($this->db);
+				if ($factureRec->fetch($obj->rowid) > 0) {
+					if ($loadlinkedobjects) {
+						// retrieve linked objects
+						$factureRec->fetchObjectLinked();
+					}
+
+					if (!$withLines) {
+						unset($factureRec->lines);
+					}
+
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanTemplateObjectDatas($factureRec), $properties);
+				}
+				$i++;
+			}
+		} else {
+			throw new RestException(503, 'Error when retrieving recurring invoice templates: '.$this->db->lasterror());
+		}
+
+		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		if ($pagination_data) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = array();
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = array(
+				'total' => (int) $total,
+				'page' => $page,
+				'page_count' => ceil((int) $total / $limit),
+				'limit' => $limit
+			);
+		}
+
+		return $obj_ret;
+	}
+
 	/**
 	 * Get properties of an invoice object
 	 *

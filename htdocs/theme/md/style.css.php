@@ -3106,6 +3106,9 @@ img.photorefnoborder {
 /* Payment Screen : Pointer cursor in the autofill image */
 .AutoFillAmount {
 	cursor:pointer;
+	padding-left: 5px;
+	padding-right: 5px;
+	padding-top: 2px;
 }
 
 
@@ -4480,6 +4483,9 @@ td.border, div.tagtable div div.border {
 }
 .borderbottom {
 	border-bottom: 1px solid var(--colortopbordertitle1);
+}
+.noborderall {
+	border: none !important;
 }
 
 .fichehalfright table.noborder {

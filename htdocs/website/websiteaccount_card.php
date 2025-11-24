@@ -44,7 +44,7 @@ $langs->loadLangs(array("companies", "website", "other"));
 // Get parameters
 $action     = GETPOST('action', 'aZ09');
 $confirm    = GETPOST('confirm', 'alpha');
-$cancel     = GETPOST('cancel', 'aZ09');
+$cancel     = GETPOST('cancel');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 $id         = GETPOSTINT('id');
