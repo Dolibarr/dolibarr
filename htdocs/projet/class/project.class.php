@@ -3117,7 +3117,6 @@ class Project extends CommonObject
 						'table' => 'mailing',
 						'field' => 'fk_project'
 					),
-
 				);
 
 				foreach ($objects as $objectInfo) {
