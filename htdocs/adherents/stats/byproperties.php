@@ -26,9 +26,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -36,6 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
 $graphwidth = 700;
 $mapratio = 0.5;
@@ -191,9 +190,9 @@ foreach ($data as $val) {
 	print '<td>'.$memberstatic->getmorphylib($val['label']).'</td>';
 	print '<td class="right">'.$nb.'</td>';
 	print '<td class="right">'.$nbactive.'</td>';
-	print '<td class="center">'.dol_print_date($val['lastdate'], 'dayhour').'</td>';
+	print '<td class="center">'.dol_print_date($val['lastdate'], 'dayhour', 'auto', null, false, 1).'</td>';
 	print '<td class="right">'.$nbsubscriptions.'</td>';
-	print '<td class="center">'.dol_print_date($val['lastsubscriptiondate'], 'dayhour').'</td>';
+	print '<td class="center">'.dol_print_date($val['lastsubscriptiondate'], 'dayhour', 'auto', null, false, 1).'</td>';
 	print '</tr>';
 }
 

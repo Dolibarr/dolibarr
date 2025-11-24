@@ -78,7 +78,7 @@ $htmltooltip .= $langs->trans("VersionLastInstall").': '.getDolGlobalString('MAI
 $htmltooltip .= $langs->trans("VersionLastUpgrade").': '.getDolGlobalString('MAIN_VERSION_LAST_UPGRADE').'<br>'."\n";
 
 print '<tr class="oddeven nohover"><td width="300">'.$langs->trans("VersionProgram").'</td><td>';
-print '<span class="valignmiddle">'.DOL_VERSION.'</span>';
+print '<span class="badge-text badge-secondary valignmiddle">'.DOL_VERSION.'</span>';
 // If current version differs from last upgrade
 if (!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE')) {
 	// Compare version with last install database version (upgrades never occurred)

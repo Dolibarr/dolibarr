@@ -4214,9 +4214,9 @@ if ($action == 'create') {
 				if (empty($user->socid)) {
 					if (($object->status == FactureFournisseur::STATUS_VALIDATED || $object->status == FactureFournisseur::STATUS_CLOSED)) {
 						if ($usercansend) {
-							print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
+							print dolGetButtonAction('', $langs->trans('SendMail'), 'default', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'presend', 'mode' => 'init'], true).'#formmailbeforetitle', '');
 						} else {
-							print '<span class="butActionRefused classfortooltip">'.$langs->trans('SendMail').'</span>';
+							print dolGetButtonAction('', $langs->trans('SendMail'), 'default', '#', '', false);
 						}
 					}
 				}

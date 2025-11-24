@@ -30,8 +30,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -39,6 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('commande', 'propal', 'bills', 'other', 'products'));
@@ -115,12 +114,12 @@ if ($mode != '') {
 $h = 0;
 $head = array();
 
-$head[$h][0] = DOL_URL_ROOT.'/product/stats/card.php?id=all';
+$head[$h][0] = DOL_URL_ROOT.'/product/stats/card.php'.($type != '' ? '?type='.((int) $type) : '');
 $head[$h][1] = $langs->trans("Chart");
 $head[$h][2] = 'chart';
 $h++;
 
-$head[$h][0] = DOL_URL_ROOT.'/product/popuprop.php';
+$head[$h][0] = DOL_URL_ROOT.'/product/popuprop.php'.($type != '' ? '?type='.((int) $type) : '');
 $head[$h][1] = $langs->trans("ProductsServicesPerPopularity");
 if ((string) $type == '0') {
 	$head[$h][1] = $langs->trans("ProductsPerPopularity");
@@ -198,7 +197,7 @@ $arrayofmode = array(
 	'facture' => 'Facture'
 	);
 $title .= ' '.$form->selectarray('mode', $arrayofmode, $mode, 1, 0, 0, '', 1);
-$title .= ' <input type="submit" class="button small" name="refresh" value="'.$langs->trans("Refresh").'">';
+$title .= ' <input type="submit" class="button smallpaddingimp" name="refresh" value="'.$langs->trans("Refresh").'">';
 
 
 print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
