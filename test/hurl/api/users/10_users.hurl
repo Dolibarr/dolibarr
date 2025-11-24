@@ -76,4 +76,8 @@ HTTP 200
 GET http://{{hostnport}}/api/index.php/users
 DOLAPIENTITY: 2
 HTTP 401
-{"error":{"code":401,"message":"Unauthorized: Error user not valid (not found with api key or bad status or bad validity dates) (conf->entity=2)"}}
+[Asserts]
+jsonpath "$.error" exists
+jsonpath "$.error.code" == 401
+jsonpath "$.error.message" contains "Unauthorized"
+jsonpath "$.error.message" contains "Token not valid (may be a typo or a wrong entity)"

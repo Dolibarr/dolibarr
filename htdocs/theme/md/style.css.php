@@ -580,7 +580,7 @@ select.vmenusearchselectcombo {
 textarea:focus {
 	border: 1px solid #aaa !important;
 }
-input:focus:not(.noborderfocus):not(.inputsearch_dropdownselectedfields):not(.button):not(.buttonwebsite):not(.buttonreset):not(.select2-search__field):not(#top-bookmark-search-input):not(.search_component_input):not(.input-nobottom),
+input:focus:not(.input-icon-user, .input-icon-password, .input-icon-security):not(.noborderfocus):not(.inputsearch_dropdownselectedfields):not(.button):not(.buttonwebsite):not(.buttonreset):not(.select2-search__field):not(#top-bookmark-search-input):not(.search_component_input):not(.input-nobottom),
  select:focus, .select2-container--open [aria-expanded="false"].select2-selection--single,
  .select2-container--focus span.selection span.select2-selection:not(.massactionselect) {
 <?php if (getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT')) { ?>
@@ -647,8 +647,12 @@ input {
 	padding: 4px;
 	padding-left: 5px;
 }
-input[type="text"] {
+input[type="text"]:not(.input-icon-security, .input-icon-user, .input-icon-password),
+input[type="password"]:not(.input-icon-security, .input-icon-user, .input-icon-password) {
 	height: 1.3em;
+}
+.login_table .input-icon-user, .login_table .input-icon-password {
+	padding-right: 42px !important;
 }
 select {
 	padding-top: 4px;
@@ -3102,6 +3106,9 @@ img.photorefnoborder {
 /* Payment Screen : Pointer cursor in the autofill image */
 .AutoFillAmount {
 	cursor:pointer;
+	padding-left: 5px;
+	padding-right: 5px;
+	padding-top: 2px;
 }
 
 
@@ -3573,7 +3580,7 @@ form#login {
 .login_table #tdpasswordlogin #togglepassword {
 	position: absolute;
 	top: 0.7em;
-	right: 11px;
+	right: 8px;
 	background: none;
 	border: none;
 	opacity: 0.3;
@@ -3989,7 +3996,7 @@ div.blockvmenusearch, div.blockvmenubookmarks
 	text-decoration: none;
 	padding-left: 5px;
 	padding-right: 1px;
-	padding-top: 3px;
+	padding-top: 8px;
 	padding-bottom: 3px;
 	margin: 1px 0px 2px 0px;
 	background: var(--colorbackvmenu1);
@@ -4476,6 +4483,9 @@ td.border, div.tagtable div div.border {
 }
 .borderbottom {
 	border-bottom: 1px solid var(--colortopbordertitle1);
+}
+.noborderall {
+	border: none !important;
 }
 
 .fichehalfright table.noborder {
@@ -5428,7 +5438,7 @@ img.boxhandle, img.boxclose {
 	transition: color 0.4s;
 }
 .star:hover, .star.active {
-	color: <?php echo $badgeWarning ?>;
+	color: var(--butactionbg);
 }
 
 .search-component-assistance {
@@ -5944,12 +5954,18 @@ img.datecallink { padding-left: 2px !important; padding-right: 2px !important; }
 select.ui-datepicker-year {
 	margin-left: 2px !important;
 }
-.ui-datepicker-trigger {
+.ui-datepicker-trigger, .ui-datepicker-notrigger {
 	vertical-align: middle;
-	cursor: pointer;
 	padding-left: 2px;
 	padding-right: 2px;
 }
+.ui-datepicker-notrigger {
+	cursor: default;
+}
+.ui-datepicker-trigger {
+	cursor: pointer;
+}
+
 /*
 .bodyline {
 	border-radius: 4px;

@@ -126,11 +126,11 @@ if (!function_exists('str_contains')) {
  * Return the full path of the directory where a module (or an object of a module) stores its files.
  * Path may depends on the entity if a multicompany module is enabled.
  *
- * @param 	CommonObject|BlockedLog 	$object 	Dolibarr common object.
- * @param 	string 			$module 	Override object element, for example to use 'mycompany' instead of 'societe'
- * @param	int				$forobject	Return the more complete path for the given object instead of for the module only.
- * @param	string			$mode		'output' (full main dir) or 'outputrel' (relative dir) or 'temp' (full dir for temporary files) or 'version' (full dir for archived files)
- * @return 	string|null					The path of the relative directory of the module, ending with /
+ * @param 	CommonObject|BlockedLog	$object 	Dolibarr common object.
+ * @param 	string 					$module 	Override object element, for example to use 'mycompany' instead of 'societe'
+ * @param	int						$forobject	Return the more complete path for the given object instead of for the module only.
+ * @param	string					$mode		'output' (full main dir) or 'outputrel' (relative dir) or 'temp' (full dir for temporary files) or 'version' (full dir for archived files)
+ * @return 	string|null							The path of the relative directory of the module, ending with /
  * @since Dolibarr V18
  */
 function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'output')
@@ -394,6 +394,7 @@ define(
 
 /**
  * Is Dolibarr module enabled
+ * Note: "isModEnabled('delivery_note')" must be replacedwith "isModEnabled('shipping') && getDolGlobalString('MAIN_SUBMODULE_EXPEDITION')"
  *
  * @param 	string 	$module 	Module name to check
  * @return 	boolean				True if module is enabled
@@ -411,16 +412,6 @@ function isModEnabled($module)
 		$arrayconv['supplier_order'] = 'fournisseur';
 		$arrayconv['supplier_invoice'] = 'fournisseur';
 	}
-	// Special case.
-	// @TODO Replace isModEnabled('delivery_note') with
-	// isModEnabled('shipping') && getDolGlobalString('MAIN_SUBMODULE_EXPEDITION')
-	if ($module == 'delivery_note') {
-		if (!getDolGlobalString('MAIN_SUBMODULE_EXPEDITION')) {
-			return false;
-		} else {
-			$module = 'shipping';
-		}
-	}
 
 	$module_alt = $module;
 	if (!empty($arrayconv[$module])) {
@@ -432,7 +423,6 @@ function isModEnabled($module)
 	}
 
 	return !empty($conf->modules[$module]) || !empty($conf->modules[$module_alt]) || !empty($conf->modules[$module_bis]);
-	//return !empty($conf->$module->enabled);
 }
 
 /**
@@ -1783,34 +1773,34 @@ function dol_get_object_properties($obj, $properties = [])
  *
  *  @template T
  *
- *  @param	T      $object		Object to clone
- *  @param	int		          $native		0=Full isolation method, 1=Native PHP method, 2=Full isolation method keeping only scalar and array properties (recommended)
- *  @return T                	Clone object
+ *  @param	T		$srcobject		Object to clone
+ *  @param	int		$native			0=Full isolation method, 1=Native PHP method, 2=Full isolation method keeping only scalar and array properties (recommended)
+ *  @return T                		Clone object
  *
  *  @see https://php.net/manual/language.oop5.cloning.php
  *  @phan-suppress PhanTypeExpectedObjectPropAccess
  */
-function dol_clone($object, $native = 2)
+function dol_clone($srcobject, $native = 2)
 {
 	if ($native == 0) {
 		// deprecated method, use the method with native = 2 instead
 		dol_syslog("Warning, call to dol_clone() with the deprecated parameter native=0, use 2 instead", LOG_WARNING);
 
 		$tmpsavdb = null;
-		if (isset($object->db) && isset($object->db->db) && is_object($object->db->db) && get_class($object->db->db) == 'PgSql\Connection') {
-			$tmpsavdb = $object->db;
-			unset($object->db);		// Such property can not be serialized with pgsl (when object->db->db = 'PgSql\Connection')
+		if (isset($srcobject->db) && isset($srcobject->db->db) && is_object($srcobject->db->db) && get_class($srcobject->db->db) == 'PgSql\Connection') {
+			$tmpsavdb = $srcobject->db;
+			unset($srcobject->db);		// Such property can not be serialized with pgsl (when object->db->db = 'PgSql\Connection')
 		}
 
-		$myclone = unserialize(serialize($object));	// serialize then unserialize is a hack to be sure to have a new object for all fields
+		$myclone = unserialize(serialize($srcobject));	// serialize then unserialize is a hack to be sure to have a new object for all fields
 
 		if (!empty($tmpsavdb)) {
-			$object->db = $tmpsavdb;
+			$srcobject->db = $tmpsavdb;
 		}
 	} elseif ($native == 2) {
 		// recommended method to have a full secured isolated cloned object
 		$myclone = new stdClass();
-		$tmparray = get_object_vars($object);	// return only public properties
+		$tmparray = get_object_vars($srcobject);	// return only public properties
 
 		if (is_array($tmparray)) {
 			foreach ($tmparray as $propertykey => $propertyval) {
@@ -1820,11 +1810,41 @@ function dol_clone($object, $native = 2)
 			}
 		}
 	} else {
-		$myclone = clone $object; // PHP clone is a shallow copy only, not a real clone, so properties of references will keep the reference (referring to the same target/variable)
+		$myclone = clone $srcobject; // PHP clone is a shallow copy only, not a real clone, so properties of references will keep the reference (referring to the same target/variable)
 	}
 
 	return $myclone;
 }
+
+
+/**
+ *  Create a clone of instance of object into a full array, using recursive call.
+ *  It also cleans some properties.
+ *
+ *  @param	Object	$srcobject		Object to clone
+ *  @param	int		$startlevel		Start level to track recursive depth
+ *  @return array<string,mixed>		Array
+ */
+function dol_clone_in_array($srcobject, $startlevel = 0)
+{
+	if (is_object($srcobject)) {
+		$srcobject = get_object_vars($srcobject); // exclude private/protected properties
+	}
+
+	if (is_array($srcobject)) {
+		$result = [];
+		foreach ($srcobject as $key => $value) {
+			if (in_array($key, array('db', 'fields', 'error', 'errorhidden', 'errors', 'oldcopy', 'linkedObjects', 'linked_objects'))) {
+				continue;
+			}
+			$result[$key] = dol_clone_in_array($value, $startlevel + 1);
+		}
+		return $result;
+	}
+
+	return $srcobject;
+}
+
 
 /**
  *	Optimize a size for some browsers (phone, smarphone...)
@@ -3774,24 +3794,25 @@ function dol_strftime($fmt, $ts = false, $is_gmt = false)
  *	Output date in a string format according to outputlangs (or langs if not defined).
  * 	Return charset is always UTF-8, except if encodetoouput is defined. In this case charset is output charset
  *
- *	@param	null|int|string	$time		GM Timestamps date
- *	@param	string		$format      	Output date format (tag of strftime function)
- *										"%d %b %Y",
- *										"%d/%m/%Y %H:%M",
- *										"%d/%m/%Y %H:%M:%S",
- *                                      "%B"=Long text of month, "%A"=Long text of day, "%b"=Short text of month, "%a"=Short text of day
- *										"day", "daytext", "dayhour", "dayhourldap", "dayhourtext", "dayrfc", "dayhourrfc", "...inputnoreduce", "...reduceformat"
- * 	@param	string|bool	$tzoutput		true or 'gmt' => string is for Greenwich location
- * 										false or 'tzserver' => output string is for local PHP server TZ usage
- * 										'tzuser' => output string is for user TZ (current browser TZ with current dst) => In a future, we should have same behaviour than 'tzuserrel'
- *                                      'tzuserrel' => output string is for user TZ (current browser TZ with dst or not, depending on date position)
- *	@param	?Translate	$outputlangs	Object lang that contains language for text translation.
- *  @param  boolean		$encodetooutput false=no convert into output pagecode
- * 	@return string      				Formatted date or '' if time is null
+ *	@param	null|int|string	$time			GM Timestamps date
+ *	@param	string			$format      	Output date format (tag of strftime function)
+ *											"%d %b %Y",
+ *											"%d/%m/%Y %H:%M",
+ *											"%d/%m/%Y %H:%M:%S",
+ *                              	        "%B"=Long text of month, "%A"=Long text of day, "%b"=Short text of month, "%a"=Short text of day
+ *											"day", "daytext", "dayhour", "dayhourldap", "dayhourtext", "dayrfc", "dayhourrfc", "...inputnoreduce", "...reduceformat"
+ * 	@param	string|bool		$tzoutput		true or 'gmt' => string is for Greenwich location
+ * 											false or 'tzserver' => output string is for local PHP server TZ usage
+ * 											'tzuser' => output string is for user TZ (current browser TZ with current dst) => In a future, we should have same behaviour than 'tzuserrel'
+ *                                  	    'tzuserrel' => output string is for user TZ (current browser TZ with dst or not, depending on date position)
+ *	@param	?Translate		$outputlangs	Object lang that contains language for text translation.
+ *  @param  boolean			$encodetooutput Use true to convert/encode string into the HTML rendering pagecode (false=keep UTF8 by default)
+ *  @param	int				$decorate		Use 1 to apply a HTML css style to decorate the date
+ * 	@return string      					Formatted date or '' if time is null
  *
  *  @see        dol_mktime(), dol_stringtotime(), dol_getdate(), selectDate()
  */
-function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = null, $encodetooutput = false)
+function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = null, $encodetooutput = false, $decorate = 0)
 {
 	global $conf, $langs;
 
@@ -4031,6 +4052,11 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 
 		$ret = str_replace('__A__', $dayweek, $ret);
 		$ret = str_replace('__a__', dol_substr($dayweek, 0, 3), $ret);
+	}
+
+	if ($decorate) {
+		$ret = preg_replace('/(\d\d:\d\d [AP]M)$/', '<span class="opacitymedium">\1</span>', $ret);
+		$ret = preg_replace('/(\d\d:\d\d)$/', '<span class="opacitymedium">\1</span>', $ret);
 	}
 
 	return $ret;
@@ -5664,6 +5690,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'accounting_account' => 'infobox-bank_account',
 				'accountline' => 'infobox-bank_account',
 				'accountancy' => 'infobox-bank_account',
+				'admin'=> 'opacitymedium',
 				'asset' => 'infobox-bank_account',
 				'bank_account' => 'infobox-bank_account',
 				'bill' => 'infobox-commande',
@@ -5902,6 +5929,7 @@ function getImgPictoConv($mode = 'fa')
 			'add' => 'plus-circle',
 			'address' => 'address-book',
 			'ai' => 'magic',
+			'admin' => 'star',
 			'asset' => 'money-check-alt',
 			'autofill' => 'fill',
 			'back' => 'arrow-left',
@@ -5979,6 +6007,7 @@ function getImgPictoConv($mode = 'fa')
 			'group' => 'users',
 			'movement' => 'people-carry',
 			'sign-out' => 'sign-out-alt',
+			'superadmin' => 'star',
 			'switch_off' => 'toggle-off',
 			'switch_off_grey' => 'toggle-off',
 			'switch_off_warning' => 'toggle-off',
@@ -7728,7 +7757,7 @@ function price2num($amount, $rounding = '', $option = 0)
 		} elseif ($rounding == 'MT') {
 			$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_TOT');		// usually 2 or 3
 		} elseif ($rounding == 'MS') {
-			$nbofdectoround = isset($conf->global->MAIN_MAX_DECIMALS_STOCK) ? getDolGlobalInt('MAIN_MAX_DECIMALS_STOCK') : 5;
+			$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_STOCK', 5);
 		} elseif ($rounding == 'CU') {
 			$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_CURRENCY_UNIT', getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT'));	// TODO Use param of currency
 		} elseif ($rounding == 'CT') {
@@ -11877,7 +11906,8 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 {
 	// Only this global variables can be read by eval function and returned to caller
 	// The less we have, the better it is.
-	// $conf is excluded. We can read $conf->global->xxx properties with getDolGlobalString(), $conf->currency with getDolCurrency(), $conf->entity with getDolEntity()
+
+	global $conf;	// TODO Remove this to exclude $conf. We can read $conf->module->enabled with isModEnabled(), $conf->global->xxx properties with getDolGlobalString(), $conf->currency with getDolCurrency(), $conf->entity with getDolEntity()
 	global $db, $langs, $user, $website, $websitepage;
 	global $action, $mainmenu, $leftmenu;
 	global $mysoc;
@@ -11894,7 +11924,10 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 		$onlysimplestring = '1';
 	}
 	if (!in_array($onlysimplestring, array('1', '2'))) {
-		return "Bad call of dol_eval. Parameter onlysimplestring must be '1' or '2'";
+		return "Bad call of dol_eval. Parameter onlysimplestring must be '1' or '2'.";
+	}
+	if (!is_scalar($s)) {
+		return "Bad call of dol_eval. First parameter must be a string, found ".var_export($s, true);
 	}
 
 	try {
@@ -11906,10 +11939,6 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 		}
 		//print '$dolibarr_main_restrict_eval_methods = '.$dolibarr_main_restrict_eval_methods."\n";
 		$dolibarr_main_restrict_eval_methods_array = explode(',', $dolibarr_main_restrict_eval_methods);
-
-		if (is_array($s) || $s === 'Array') {
-			return 'Bad string syntax to evaluate (value is Array): ' . var_export($s, true);
-		}
 
 		// Test on dangerous char (used for RCE), we allow only characters to make PHP variable testing
 		// We must accept with 1: '1 && getDolGlobalInt("doesnotexist1") && getDolGlobalString("MAIN_FEATURES_LEVEL")'
@@ -11997,7 +12026,9 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 		$scheck = $s;
 		while ($scheck && $savescheck != $scheck) {
 			$savescheck = $scheck;
+			$scheck = preg_replace('/\$conf->[a-z\_]+->enabled/', '__VARCONFENABLED__', $scheck);		// Remove this once $user->module->enabled has been replaced everywhere with isModEnabled.
 			$scheck = preg_replace('/\$user->hasRight/', '__VARUSERHASRIGHT__', $scheck);
+			$scheck = preg_replace('/\$user->rights/', '__VARUSERHASRIGHT__', $scheck);		// Remove this once $user->rights->xxx is removed everywhere.
 			$scheck = preg_replace('/\(\$db\)/', '__VARDB__', $scheck);
 			$scheck = preg_replace('/\$langs/', '__VARLANGSTRANS__', $scheck);
 			$scheck = preg_replace('/\$mysoc/', '__VARMYSOC__', $scheck);
@@ -14051,19 +14082,19 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  * // phpcs:disable
  * @param array{confirm?:array{url?:string,title?:string,content?:string,use_unsecured_unescapedattr?:bool|string[],action-btn-label?:string,cancel-btn-label?:string,modal?:bool},attr?:array<string,mixed>,areDropdownButtons?:bool,backtopage?:string,lang?:string,enabled?:bool,perm?:int<0,1>,label?:string,url?:string,isDropdown?:int<0,1>,isDropDown?:int<0,1>}	$params = [ // Various params for future : recommended rather than adding more function arguments
  *                                                                                                                                                                                                                                                                                                                                      'attr' => [ // to add or override button attributes
- *                                                                                                                                                                                                                                                                                                                                      'xxxxx' => '', // your xxxxx attribute you want
- *                                                                                                                                                                                                                                                                                                                                      'class' => 'reposition', // to add more css class to the button class attribute
- *                                                                                                                                                                                                                                                                                                                                      'classOverride' => '' // to replace class attribute of the button
+ *                                                                                                                                                                                                                                                                                                                                      	'xxxxx' => '', // your xxxxx attribute you want
+ *                                                                                                                                                                                                                                                                                                                                      	'class' => 'reposition', // to add more css class to the button class attribute
+ *                                                                                                                                                                                                                                                                                                                                      	'classOverride' => '' // to replace class attribute of the button
  *                                                                                                                                                                                                                                                                                                                                      ],
  *                                                                                                                                                                                                                                                                                                                                      'confirm' => [
- *                                                                                                                                                                                                                                                                                                                                      'url' => 'http://', // Override Url to go when user click on action btn, if empty default url is $url.?confirm=yes, for no js compatibility use $url for fallback confirm.
- *                                                                                                                                                                                                                                                                                                                                      'title' => '', // Override title of modal,  if empty default title use "ConfirmBtnCommonTitle" lang key
- *                                                                                                                                                                                                                                                                                                                                      'action-btn-label' => '', // Override label of action button,  if empty default label use "Confirm" lang key
- *                                                                                                                                                                                                                                                                                                                                      'cancel-btn-label' => '', // Override label of cancel button,  if empty default label use "CloseDialog" lang key
- *                                                                                                                                                                                                                                                                                                                                      'content' => '', // Override text of content,  if empty default content use "ConfirmBtnCommonContent" lang key
- *                                                                                                                                                                                                                                                                                                                                      'modal' => true, // true|false to display dialog as a modal (with dark background)
- *                                                                                                                                                                                                                                                                                                                                      'isDropDown' => false, // true|false to display dialog as a dropdown list (css dropdown-item with dark background)
- *                                                                                                                                                                                                                                                                                                                                      ],
+ *                                                                                                                                                                                                                                                                                                                                      	'url' => 'http://', // Override Url to go when user click on action btn, if empty default url is $url.?confirm=yes, for no js compatibility use $url for fallback confirm.
+ *                                                                                                                                                                                                                                                                                                                                      	'title' => '', // Override title of modal,  if empty default title use "ConfirmBtnCommonTitle" lang key
+ *                                                                                                                                                                                                                                                                                                                                      	'action-btn-label' => '', // Override label of action button,  if empty default label use "Confirm" lang key
+ *                                                                                                                                                                                                                                                                                                                                     		'cancel-btn-label' => '', // Override label of cancel button,  if empty default label use "CloseDialog" lang key
+ *                                                                                                                                                                                                                                                                                                                                     		'content' => '', // Override text of content,  if empty default content use "ConfirmBtnCommonContent" lang key
+ *                                                                                                                                                                                                                                                                                                                                      	'modal' => true, // true|false to display dialog as a modal (with dark background)
+ *                                                                                                                                                                                                                                                                                                                                      	'isDropDown' => false, // true|false to display dialog as a dropdown list (css dropdown-item with dark background)
+ *                                                                                                                                                                                                                                                                                                                                    	  ],
  *                                                                                                                                                                                                                                                                                                                                      ]
  * // phpcs:enable
  * @return string               		html button
@@ -16427,14 +16458,15 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 
 			// Date
 			$out .= '<span class="time"><i class="fa fa-clock-o valignmiddle"></i> <span class="valignmiddle">';
-			$out .= dol_print_date($histo[$key]['datestart'], 'dayhour', 'tzuserrel');
+			$out .= dol_print_date($histo[$key]['datestart'], 'day', 'tzuserrel');
+			$out .= ' &nbsp; '.dol_print_date($histo[$key]['datestart'], 'hour', 'tzuserrel', null, false, 1);
 			if ($histo[$key]['dateend'] && $histo[$key]['dateend'] != $histo[$key]['datestart']) {
 				$tmpa = dol_getdate($histo[$key]['datestart'], true);
 				$tmpb = dol_getdate($histo[$key]['dateend'], true);
 				if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) {
-					$out .= '-' . dol_print_date($histo[$key]['dateend'], 'hour', 'tzuserrel');
+					$out .= '-' . dol_print_date($histo[$key]['dateend'], 'hour', 'tzuserrel', null, false, 1);
 				} else {
-					$out .= '-' . dol_print_date($histo[$key]['dateend'], 'dayhour', 'tzuserrel');
+					$out .= '-' . dol_print_date($histo[$key]['dateend'], 'dayhour', 'tzuserrel', null, false, 1);
 				}
 			}
 			$late = 0;

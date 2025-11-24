@@ -123,6 +123,8 @@ class modCaptchaStandard extends ModeleCaptcha
 	{
 		global $langs;
 
+		$idofbutton ="actionlogin";
+
 		// Output the image by calling /core/antispamimage.php
 		// This antispamimage also record the value of code into $_SESSION['dol_antispam_value'] so we will be able to validate by calling
 		// validateCodeAfterLoginSubmit() later when we submit the login form.
@@ -154,8 +156,12 @@ class modCaptchaStandard extends ModeleCaptcha
 
 			// Submit the form if found
 			if (form) {
-				console.log("we set actionlogin to value \"disabled\"");
-				document.getElementById("actionlogin").value = "disabled";
+				console.log(\'we set '.dol_escape_js($idofbutton).' to value "disabled" if found\');		/* TODO Why this ? #actionlogn seems to not exists */
+				elementid = document.getElementById(\''.dol_escape_js($idofbutton).'\');
+				console.log(elementid);
+				if (elementid) {
+					elementid.value = "disabled";
+				}
 
 				form.submit();
 			}

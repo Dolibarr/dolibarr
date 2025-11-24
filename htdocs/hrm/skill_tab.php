@@ -467,9 +467,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$addadmin = '';
 			if (property_exists($object, 'admin')) {
 				if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
-					$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft valignmiddle"');
+					$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "superadmin", 'class="paddingleft valignmiddle"');
 				} elseif (!empty($object->admin)) {
-					$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft valignmiddle"');
+					$addadmin .= img_picto($langs->trans("AdministratorDesc"), "admin", 'class="paddingleft valignmiddle"');
 				}
 			}
 			print showValueWithClipboardCPButton(!empty($object->login) ? $object->login : '').$addadmin;

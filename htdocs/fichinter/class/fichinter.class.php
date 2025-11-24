@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2020  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2015-2020  Charlene Benke          <charlie@patas-monkey.com>
+ * Copyright (C) 2015-2025  Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2018       Nicolas ZABOURI	        <info@inovea-conseil.com>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023-2024  William Mead            <william.mead@manchenumerique.fr>
@@ -32,6 +32,8 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinterligne.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonsignedobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/subtotals/class/commonsubtotal.class.php';
+
 
 /**
  *	Class to manage interventions
@@ -40,7 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonsignedobject.class.php';
  */
 class Fichinter extends CommonObject
 {
-	use CommonSignedObject;
+	use CommonSignedObject, CommonSubtotal;
 
 	/**
 	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
@@ -291,8 +293,6 @@ class Fichinter extends CommonObject
 	 */
 	public function create($user, $notrigger = 0)
 	{
-		global $conf, $langs;
-
 		$error = 0;
 
 		dol_syslog(get_class($this)."::create ref=".$this->ref);

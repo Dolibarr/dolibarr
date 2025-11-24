@@ -2,7 +2,7 @@
 /* Copyright (C) 2015		Jean-François Ferry     	<jfefe@aternatik.fr>
  * Copyright (C) 2020-2025	Thibault FOUCART			<support@ptibogxiv.net>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2025		William Mead				<william@m34d.com>
  * Copyright (C) 2025		Jean François Baillette		<jean-francois@swiiptel.net>
  *
@@ -342,14 +342,14 @@ class Users extends DolibarrApi
 	public function post($request_data = null)
 	{
 		// Check user authorization
-		if (!DolibarrApiAccess::$user->hasRight('user', 'creer') && empty(DolibarrApiAccess::$user->admin)) {
+		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'creer') && empty(DolibarrApiAccess::$user->admin)) {
 			throw new RestException(403, "User creation not allowed for login ".DolibarrApiAccess::$user->login);
 		}
 
 		// check mandatory fields
-		/*if (!isset($request_data["login"]))
-			throw new RestException(400, "login field missing");
-		if (!isset($request_data["password"]))
+		if (!isset($request_data["login"]))
+			throw new RestException(500, "login field missing");
+		/*if (!isset($request_data["password"]))
 			throw new RestException(400, "password field missing");
 		if (!isset($request_data["lastname"]))
 			 throw new RestException(400, "lastname field missing");*/
@@ -640,7 +640,7 @@ class Users extends DolibarrApi
 	public function postGroups($request_data = null)
 	{
 		// Check user authorization
-		if (!DolibarrApiAccess::$user->hasRight('user', 'group_advance', 'creer') && empty(DolibarrApiAccess::$user->admin)) {
+		if (!DolibarrApiAccess::$user->hasRight('user', 'group_advance', 'write') && empty(DolibarrApiAccess::$user->admin)) {
 			throw new RestException(403, "Usergroup creation not allowed for login ".DolibarrApiAccess::$user->login);
 		}
 		$usergroup = new UserGroup($this->db);
@@ -1246,9 +1246,12 @@ class Users extends DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
+	 * @phpstan-template T
 	 *
 	 * @param   Object	$object		Object to clean
 	 * @return  Object				Object with cleaned properties
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	protected function _cleanObjectDatas($object)
 	{

@@ -692,7 +692,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				'MAIN_MODULE_MARGIN' => 'menuonly',
 				'MAIN_MODULE_MRP' => 'menuonly',
 				'MAIN_MODULE_OPENSURVEY' => 'newboxdefonly',
-				'MAIN_MODULE_PAYBOX' => 'newboxdefonly',
+				'MAIN_MODULE_PARTNERSHIP' => 'newboxdefonly',
 				'MAIN_MODULE_PRINTING' => 'newboxdefonly',
 				'MAIN_MODULE_PRODUIT' => 'newboxdefonly',
 				'MAIN_MODULE_RECRUITMENT' => 'menuonly',
@@ -714,7 +714,8 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				$error++;
 			}
 
-			// Reload menus (this must be always and only into last targeted version)
+			// Reload menus (this must be always done, and only into last targeted version)
+			// This reload the auguria menu.To reload a dynamic menu defined into module descriptor, see previours step
 			$result = migrate_reload_menu($db, $langs, $conf);
 			if ($result < 0) {
 				$error++;
@@ -4782,9 +4783,9 @@ function migrate_user_photospath2()
  */
 function migrate_holiday_path()
 {
-	global $conf, $db, $langs, $user;
+	global $conf, $db, $langs;
 
-	print '<tr><td colspan="4">';
+	print '<tr class="trforrunsql"><td>';
 
 	print '<b>'.$langs->trans('MigrationHolidayPath')."</b><br>\n";
 
@@ -4792,6 +4793,7 @@ function migrate_holiday_path()
 	$holiday = new Holiday($db);
 
 	$sql = "SELECT rowid as uid, ref, entity from ".MAIN_DB_PREFIX."holiday"; // Get list of all holiday
+
 	$resql = $db->query($sql);
 	if ($resql) {
 		while ($obj = $db->fetch_object($resql)) {

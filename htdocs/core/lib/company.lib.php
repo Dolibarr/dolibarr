@@ -2399,6 +2399,61 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 			$out .= '</td>';
 
 			// Date
+			$out .=  '<td class="center nowraponall nopaddingtopimp nopaddingbottomimp">';
+			if ($histo[$key]['dateend']) {	// There is also a end date
+				$tmpa = dol_getdate($histo[$key]['datestart']);
+				$tmpb = dol_getdate($histo[$key]['dateend']);
+				if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) {
+					// The same day
+					if ($tmpa['hours'] != $tmpb['hours'] || $tmpa['minutes'] != $tmpb['minutes']) {
+						$out .=  dol_print_date($histo[$key]['datestart'], 'dayreduceformat', 'tzuserrel');
+						$out .=  '<br><span class="small opacitymedium">';
+						$out .=  dol_print_date($histo[$key]['datestart'], 'hourreduceformat', 'tzuserrel');
+						$out .=  '-'.dol_print_date($histo[$key]['dateend'], 'hourreduceformat', 'tzuserrel');
+						$out .=  '</span>';
+					} else {
+						$out .=  dol_print_date($histo[$key]['datestart'], 'dayreduceformat', 'tzuserrel');
+						$out .=  '<br><span class="small opacitymedium">';
+						$out .=  dol_print_date($histo[$key]['datestart'], 'hourreduceformat', 'tzuserrel');
+						$out .=  '</span>';
+					}
+				} else {
+					// Not the same day
+					$out .=  '<div class="center inline-block">';
+					$out .=  dol_print_date($histo[$key]['datestart'], 'dayreduceformat', 'tzuserrel');
+					$out .=  '<br><span class="small opacitymedium">';
+					$out .=  dol_print_date($histo[$key]['datestart'], 'hourreduceformat', 'tzuserrel');
+					$out .=  '</span>';
+					$out .=  '</div>';
+					$out .=  ' ';
+					$out .=  '<div class="center inline-block">';
+					$out .=  dol_print_date($histo[$key]['dateend'], 'dayreduceformat', 'tzuserrel');
+					$out .=  '<br><span class="small opacitymedium">';
+					$out .=  dol_print_date($histo[$key]['dateend'], 'hourreduceformat', 'tzuserrel');
+					$out .=  '</span>';
+					$out .=  '</div>';
+				}
+			}
+			// Add the late warning
+			$late = 0;
+			if ($histo[$key]['percent'] == 0 && $histo[$key]['datestart'] && $histo[$key]['datestart'] < ($now - $delay_warning)) {
+				$late = 1;
+			}
+			if ($histo[$key]['percent'] == 0 && !$histo[$key]['datestart'] && $histo[$key]['dateend'] && $histo[$key]['datestart'] < ($now - $delay_warning)) {
+				$late = 1;
+			}
+			if ($histo[$key]['percent'] > 0 && $histo[$key]['percent'] < 100 && $histo[$key]['dateend'] && $histo[$key]['dateend'] < ($now - $delay_warning)) {
+				$late = 1;
+			}
+			if ($histo[$key]['percent'] > 0 && $histo[$key]['percent'] < 100 && !$histo[$key]['dateend'] && $histo[$key]['datestart'] && $histo[$key]['datestart'] < ($now - $delay_warning)) {
+				$late = 1;
+			}
+			if ($late) {
+				$out .= img_warning($langs->trans("Late")) . ' ';
+			}
+			$out .=  '</td>';
+
+			/*
 			$out .= '<td class="center nowraponall">';
 			$out .= dol_print_date($histo[$key]['datestart'], 'dayhour', 'tzuserrel');
 			if ($histo[$key]['dateend'] && $histo[$key]['dateend'] != $histo[$key]['datestart']) {
@@ -2410,6 +2465,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 					$out .= '-' . dol_print_date($histo[$key]['dateend'], 'dayhour', 'tzuserrel');
 				}
 			}
+			// Add the late warning
 			$late = 0;
 			if ($histo[$key]['percent'] == 0 && $histo[$key]['datestart'] && $histo[$key]['datestart'] < ($now - $delay_warning)) {
 				$late = 1;
@@ -2427,6 +2483,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 				$out .= img_warning($langs->trans("Late")) . ' ';
 			}
 			$out .= "</td>\n";
+			*/
 
 			// Author of event
 			$out .= '<td class="tdoverflowmax125">';

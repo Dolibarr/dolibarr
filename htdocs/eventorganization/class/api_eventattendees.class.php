@@ -1,6 +1,7 @@
 <?php
 /*
 /* Copyright (C) 2025  Jon Bendtsen         <jon.bendtsen.github@jonb.dk>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -485,14 +486,15 @@ class EventAttendees extends DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
+	 * @phpstan-template T
 	 *
 	 * @param   Object  $object     	Object to clean
 	 * @phan-param		ConferenceOrBoothAttendee	$object
-	 * @phpstan-param	ConferenceOrBoothAttendee	$object
+	 * @phpstan-param	T	$object
 	 *
 	 * @return  Object	Object with cleaned properties
 	 * @phan-return		ConferenceOrBoothAttendee
-	 * @phpstan-return	ConferenceOrBoothAttendee
+	 * @phpstan-return	T
 	 */
 	protected function _cleanObjectDatas($object)
 	{

@@ -83,10 +83,21 @@ if (getDolGlobalString('MAIN_MOTD_SETUPPAGE')) {
 print '<span class="opacitymedium hideonsmartphone">';
 print $langs->trans("SetupDescription1").'<br>';
 //print $langs->trans("AreaForAdminOnly").' ';
-print '<br>';
-print $langs->trans("SetupDescription2", $langs->transnoentities("MenuCompanySetup"), $langs->transnoentities("Modules"));
+
+if (!getDolGlobalString('MAIN_INFO_SOCIETE_NOM') || !getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY') || getDolGlobalString('MAIN_INFO_SOCIETE_SETUP_TODO_WARNING')) {
+	$setupcompanynotcomplete = 1;
+} else {
+	$setupcompanynotcomplete = 0;
+}
+
+if ($setupcompanynotcomplete) {
+	print '<br>';
+	print $langs->trans("SetupDescription2", $langs->transnoentities("MenuCompanySetup"), $langs->transnoentities("Modules"));
+}
+
 print "<br><br>";
 print '</span>';
+
 
 
 // Show info depending on country if defined
@@ -103,12 +114,6 @@ print '<br>';
 
 
 // Show info setup company
-
-if (!getDolGlobalString('MAIN_INFO_SOCIETE_NOM') || !getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY') || getDolGlobalString('MAIN_INFO_SOCIETE_SETUP_TODO_WARNING')) {
-	$setupcompanynotcomplete = 1;
-} else {
-	$setupcompanynotcomplete = 0;
-}
 
 print '<section class="setupsection setupcompany cursorpointer">';
 

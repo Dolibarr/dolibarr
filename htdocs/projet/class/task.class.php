@@ -2107,7 +2107,8 @@ class Task extends CommonObjectLine
 
 		$timespent->element_date = $this->timespent_date;
 		$timespent->element_datehour = $this->timespent_datehour;
-		$timespent->element_date_withhour = $this->timespent_withhour;
+
+		$timespent->element_date_withhour = $this->timespent_withhour;		// 0 or 1
 		$timespent->element_duration = $this->timespent_duration;
 		if ($this->timespent_fk_user > 0) {
 			$timespent->fk_user = $this->timespent_fk_user;
@@ -2118,7 +2119,9 @@ class Task extends CommonObjectLine
 		$timespent->invoice_line_id = $this->timespent_invoicelineid;
 
 		dol_syslog(get_class($this)."::updateTimeSpent", LOG_DEBUG);
-		if ($timespent->update($user) > 0) {
+
+		$resupdate = $timespent->update($user);
+		if ($resupdate > 0) {
 			if (!$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('TASK_TIMESPENT_MODIFY', $user);

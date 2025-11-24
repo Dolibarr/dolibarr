@@ -1986,9 +1986,10 @@ if ($action == 'create') {
 			print '</tr>';
 
 			// List of payments already done
+			$canSeeBankAccount = isModEnabled('bank') && $user->hasRight('banque', 'lire');
 			$nbcols = 3;
 			$nbrows = 0;
-			if (isModEnabled("bank")) {
+			if ($canSeeBankAccount) {
 				$nbrows++;
 				$nbcols++;
 			}
@@ -1999,7 +2000,7 @@ if ($action == 'create') {
 			print '<td class="liste_titre">'.$langs->trans('Payments').'</td>';
 			print '<td class="liste_titre">'.$langs->trans('Date').'</td>';
 			print '<td class="liste_titre">'.$langs->trans('Type').'</td>';
-			if (isModEnabled("bank")) {
+			if ($canSeeBankAccount) {
 				print '<td class="liste_titre right">'.$langs->trans('BankAccount').'</td>';
 			}
 			print '<td class="liste_titre right">'.$langs->trans('Amount').'</td>';
@@ -2042,7 +2043,7 @@ if ($action == 'create') {
 					$labeltype = $langs->trans("PaymentType".$objp->payment_code) != "PaymentType".$objp->payment_code ? $langs->trans("PaymentType".$objp->payment_code) : $objp->payment_type;
 					print "<td>".$labeltype.' '.$objp->num_payment."</td>\n";
 					// Bank account
-					if (isModEnabled("bank")) {
+					if ($canSeeBankAccount) {
 						$bankaccountstatic->id = $objp->baid;
 						$bankaccountstatic->ref = $objp->baref;
 						$bankaccountstatic->label = $objp->baref;
@@ -2807,10 +2808,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 	// Send
 	if (empty($user->socid)) {
 		if ($object->status > ExpenseReport::STATUS_DRAFT) {
-			//if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->expensereport->expensereport_advance->send)) {
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
-			//} else
-			//	print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">' . $langs->trans('SendMail') . '</a></div>';
+			print dolGetButtonAction('', $langs->trans('SendMail'), 'default', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'presend', 'mode' => 'init'], true).'#formmailbeforetitle', '');
 		}
 	}
 

@@ -1095,11 +1095,11 @@ class pdf_sponge extends ModelePDFFactures
 					$pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
 				}
 				// Add terms to sale
-				if (!empty($mysoc->termsofsale) && getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_INVOICE')) {
+				if (getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_INVOICE')) {
 					$termsofsalefilename = getDolGlobalString('MAIN_INFO_INVOICE_TERMSOFSALE');
-					$termsofsale = $conf->mycompany->dir_output.'/'.$termsofsalefilename;
-					if (!empty($conf->mycompany->multidir_output[$object->entity ?? $conf->entity])) {
-						$termsofsale = $conf->mycompany->multidir_output[$object->entity ?? $conf->entity].'/'.$mysoc->termsofsale;
+					$termsofsale = $conf->invoice->dir_output.'/'.$termsofsalefilename;
+					if (!empty($conf->invoice->multidir_output[$object->entity ?? $conf->entity])) {
+						$termsofsale = $conf->invoice->multidir_output[$object->entity ?? $conf->entity].'/'.$termsofsalefilename;
 					}
 					if (file_exists($termsofsale) && is_readable($termsofsale)) {
 						$pagecount = $pdf->setSourceFile($termsofsale);
@@ -1658,9 +1658,9 @@ class pdf_sponge extends ModelePDFFactures
 
 					$posy += 2;
 
-					// SHOW EPC QR CODE
-					if (getDolGlobalString('INVOICE_ADD_EPC_QR_CODE') == 'bottom') {
-						$qrPosX = 120;
+					// SHOW EPC QR CODE at bottom, but only if unpaid amount exists
+					if ((getDolGlobalString('INVOICE_ADD_EPC_QR_CODE') == 'bottom') && ($object->getRemainToPay() > 0)) {
+						$qrPosX = $this->marge_gauche + 5;
 						$qrPosY = $posy;
 						$qrCodeColor = array('25', '25', '25');
 						$styleQr = array(
@@ -1673,9 +1673,9 @@ class pdf_sponge extends ModelePDFFactures
 						);
 
 						$EPCQrCodeString = $object->buildEPCQrCodeString();
-						$pdf->write2DBarcode($EPCQrCodeString, 'QRCODE,M', $qrPosX, $qrPosY, 25, 25, $styleQr, 'N');
+						$pdf->write2DBarcode($EPCQrCodeString, 'QRCODE,M', $qrPosX, $qrPosY, 20, 20, $styleQr, 'N');
 
-						$pdf->SetXY($qrPosX + 30, $posy + 5);
+						$pdf->SetXY($qrPosX + 25, $qrPosY + 5);
 						$pdf->SetFont('', '', $default_font_size - 5);
 						$pdf->MultiCell(30, 3, $outputlangs->transnoentitiesnoconv("INVOICE_ADD_EPC_QR_CODEPay"), 0, 'L', false);
 						$posy = $pdf->GetY() + 2;
@@ -2843,11 +2843,11 @@ class pdf_sponge extends ModelePDFFactures
 	/**
 	 *  Define Array Column Field
 	 *
-	 *  @param	Facture		   $object    		common object
-	 *  @param	Translate	   $outputlangs     langs
-	 *  @param	int			   $hidedetails		Do not show line details
-	 *  @param	int			   $hidedesc		Do not show desc
-	 *  @param	int			   $hideref			Do not show ref
+	 *  @param	CommonObject	$object    		common object
+	 *  @param	Translate		$outputlangs	langs
+	 *  @param	int<0,1>		$hidedetails	Do not show line details
+	 *  @param	int<0,1>		$hidedesc		Do not show desc
+	 *  @param	int<0,1>		$hideref		Do not show ref
 	 *  @return	void
 	 */
 	public function defineColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
