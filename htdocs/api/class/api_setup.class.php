@@ -1051,7 +1051,7 @@ class Setup extends DolibarrApi
 		$sql .= " WHERE t.active = ".((int) $active);
 		if ($fk_country) {
 			$sql .= " AND (t.fk_country = ".((int) $fk_country);
-			$sql .= " OR t.fk_country is null)"; 
+			$sql .= " OR t.fk_country is null)";
 		}
 		// Add sql filters
 		if ($sqlfilters) {
@@ -1126,7 +1126,7 @@ class Setup extends DolibarrApi
 		$sql .= " WHERE t.active = ".((int) $active);
 		if ($fk_country) {
 			$sql .= " AND (t.fk_country = ".((int) $fk_country);
-			$sql .= " OR t.fk_country is null)"; 
+			$sql .= " OR t.fk_country is null)";
 		}
 		// Add sql filters
 		if ($sqlfilters) {
