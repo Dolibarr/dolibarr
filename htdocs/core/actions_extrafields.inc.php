@@ -492,7 +492,7 @@ if ($action == 'encrypt') {
 						$sql .= " AND te.".$attributekey." IS NOT NULL";
 						$sql .= " AND te.".$attributekey." <> ''";
 						if ($extrafields->attributes[$elementtype]['entityid'][$attributekey] == $conf->entity) {
-							$sql .= " AND t.entity = ".getEntity($arrayofelement['table_element'], 0);
+							$sql .= " AND t.entity = ".getEntity($arrayofelement['element'], 0);
 						}
 
 						//print $sql;
