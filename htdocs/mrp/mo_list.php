@@ -253,36 +253,32 @@ if (empty($reshook)) {
 			if (!empty($toselect)) {
 				foreach ($toselect as $key => $idMo) {
 					if ($objMo->fetch($idMo)) {
-						if ($objMo->status == Mo::STATUS_DRAFT) {
-							if (!empty($changeDate)) {
-								if ($action == 'changedatestart_confirm') {
-									// La date de début peut être définie SI (la date de fin est vide OU la nouvelle date est AVANT la date de fin existante).
-									if (empty($objMo->date_end_planned) || $newDate < $objMo->date_end_planned) {
-										$objMo->date_start_planned = $newDate;
-									} else {
-										setEventMessages($langs->trans('ErrorModifyMoDateStart', $objMo->ref), null, 'errors');
-										break;
-									}
-								} elseif ($action == 'changedateend_confirm') {
-									// La date de fin peut être définie SI (la date de début est vide OU la nouvelle date est APRÈS la date de début existante).
-									if (empty($objMo->date_start_planned) || $newDate > $objMo->date_start_planned) {
-										$objMo->date_end_planned = $newDate;
-									} else {
-										setEventMessages($langs->trans('ErrorModifyMoDateEnd', $objMo->ref), null, 'errors');
-										break;
-									}
-								}
-								if ($objMo->update($user)) {
-									setEventMessages($langs->trans('ModifyMoDate', $objMo->ref), null, 'mesgs');
+						if (!empty($changeDate)) {
+							if ($action == 'changedatestart_confirm') { 		// Test on permission
+								// The start date can be set IF (the end date is empty OR the new date is BEFORE the existing end date).
+								if (empty($objMo->date_end_planned) || $newDate < $objMo->date_end_planned) {
+									$objMo->date_start_planned = $newDate;
 								} else {
-									setEventMessages($langs->trans('ErrorModifyMoDate', $objMo->ref), null, 'errors');
+									setEventMessages($langs->trans('ErrorModifyMoDateStart', $objMo->ref), null, 'errors');
+									break;
 								}
+							} elseif ($action == 'changedateend_confirm') {
+								// The end date can be set IF (the start date is empty OR the new date is AFTER the existing start date).
+								if (empty($objMo->date_start_planned) || $newDate > $objMo->date_start_planned) {
+									$objMo->date_end_planned = $newDate;
+								} else {
+									setEventMessages($langs->trans('ErrorModifyMoDateEnd', $objMo->ref), null, 'errors');
+									break;
+								}
+							}
+							if ($objMo->update($user)) {
+								setEventMessages($langs->trans('ModifyMoDate', $objMo->ref), null, 'mesgs');
 							} else {
-								setEventMessages($langs->trans('ErrorEmptyChangeDate'), null, 'errors');
-								break;
+								setEventMessages($langs->trans('ErrorModifyMoDate', $objMo->ref), null, 'errors');
 							}
 						} else {
-							setEventMessages($langs->trans('ErrorObjectMustHaveStatusDraftToModifyDate', $objMo->ref), null, 'errors');
+							setEventMessages($langs->trans('ErrorEmptyChangeDate'), null, 'errors');
+							break;
 						}
 					}
 				}
