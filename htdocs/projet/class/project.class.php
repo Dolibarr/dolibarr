@@ -2841,9 +2841,6 @@ class Project extends CommonObject
 	 */
 	public function contactExistsInCurrentList(array $contactListExternalCurrent, array $contactTmp) : bool
 	{
-		if (!is_array($contactListExternalCurrent)) {
-			return false;
-		}
 
 		foreach ($contactListExternalCurrent as $contactCurrent) {
 			if ($contactCurrent['id'] == $contactTmp['id']) {
@@ -2872,7 +2869,7 @@ class Project extends CommonObject
 
 		dol_syslog("mergeProject merge project id=".$projectId." (will be deleted) into the project id=".$this->id);
 
-		if ($error == 0 && $tmpProject->fetch($projectId) < 1) {
+		if ($tmpProject->fetch($projectId) < 1) {
 			$this->error = $langs->trans('ErrorRecordNotFound');
 			$error++;
 		} elseif ($projectId == $this->id) {
@@ -2900,7 +2897,7 @@ class Project extends CommonObject
 			}
 
 			// Merge project contacts - keep current project contacts and roles in case of duplicates
-			if ($error == 0) {
+			if (!$error) {
 				// Get contacts from both projects
 				$contactlistExternalTmp = $tmpProject->liste_contact(-1);
 				$contactlistInternalTmp = $tmpProject->liste_contact(-1, 'internal');
@@ -2988,7 +2985,7 @@ class Project extends CommonObject
 			}
 
 			// Merge categories if they exist for projects
-			if (class_exists('Categorie') && isModEnabled('categorie')) {
+			if (class_exists('Categorie') && isModEnabled('category')) {
 				$static_cat = new Categorie($this->db);
 
 				$cats_ori = $static_cat->containing($tmpProject->id, 'project', 'id');
@@ -3164,9 +3161,10 @@ class Project extends CommonObject
 			}
 
 			$uploadDirCurrent = '';
+			$uploadDirTmp = '';
 			$filearray = [];
 			// Merge attached files from project upload directories
-			if ($error == 0) {
+			if (!$error) {
 				// Get upload directories for both projects
 				$uploadDirTmp = $conf->project->multidir_output[$tmpProject->entity] . '/' . get_exdir(0, 0, 0, 1, $tmpProject, 'project');
 				$uploadDirCurrent = $conf->project->multidir_output[$this->entity] . '/' . get_exdir(0, 0, 0, 1, $this, 'project');
