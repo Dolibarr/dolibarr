@@ -369,9 +369,9 @@ if ($result > 0) {
 	if ($user->socid == 0 && $action != 'presend') {
 		$usercansend = (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight("fournisseur", "supplier_invoice_advance", "send")));
 		if ($usercansend) {
-			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
+			print dolGetButtonAction('', $langs->trans('SendMail'), 'default', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'presend', 'mode' => 'init'], true).'#formmailbeforetitle', '');
 		} else {
-			print '<span class="butActionRefused classfortooltip">'.$langs->trans('SendMail').'</span>';
+			print dolGetButtonAction('', $langs->trans('SendMail'), 'default', '#', '', false);
 		}
 	}
 

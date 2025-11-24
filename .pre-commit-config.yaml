@@ -274,3 +274,21 @@ repos:
           |htdocs/install/pgsql/functions/functions.*\.sql
           |htdocs/modulebuilder/template/sql/.*\.sql
           )$
+
+  - repo: https://github.com/perltidy/perltidy
+    rev: '20250105.03'
+    hooks:
+      - id: perltidy
+        # virtualmin excuded - reason https://github.com/Dolibarr/dolibarr/pull/36370#issuecomment-3565101823
+        exclude: (?x)^
+          (dev/build/perl/virtualmin/dolibarr.pl
+          )$
+        args: [ --tabs, --nola ]
+  - repo: https://github.com/henryykt/pre-commit-perl
+    rev: v0.0.5
+    hooks:
+      - id: perlcritic
+        # virtualmin excuded - reason https://github.com/Dolibarr/dolibarr/pull/36370#issuecomment-3565101823
+        exclude: (?x)^
+          (dev/build/perl/virtualmin/dolibarr.pl
+          )$

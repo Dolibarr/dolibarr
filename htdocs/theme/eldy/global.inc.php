@@ -4441,6 +4441,9 @@ td.border, div.tagtable div div.border {
 .borderbottom {
 	border-bottom: 1px solid var(--colortopbordertitle1);
 }
+.noborderall {
+	border: none !important;
+}
 
 table.noborder {
 	background: var(--colorbacktabcard1);

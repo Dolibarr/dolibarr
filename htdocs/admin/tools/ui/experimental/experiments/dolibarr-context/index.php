@@ -68,7 +68,7 @@ $documentation->showSidebar(); ?>
 
 	<div class="doc-content-wrapper">
 
-		<h1 class="documentation-title"><?php echo $langs->trans($experimentName); ?></h1>
+		<h1 class="documentation-title"><?php echo $langs->trans($experimentName); ?> : <?php echo $langs->trans('UxDolibarrContextHowItWork'); ?></h1>
 
 		<?php $documentation->showSummary(); ?>
 
@@ -91,7 +91,7 @@ $documentation->showSidebar(); ?>
 			<p>
 				Beyond DOM-based events, DolibarrContext allows monitoring and reacting to business events using a
 				hook-like mechanism. For instance, you can listen to events such as
-				<code>Dolibarr.on('addline:load:productPricesList', function(e) { ... });</code>
+				<code>Dolibarr.on('addline:load:productPricesList', function(data) { ... });</code>
 				without relying on DOM changes. This enables creating logic that reacts directly to application state changes.
 			</p>
 
@@ -118,18 +118,87 @@ $documentation->showSidebar(); ?>
 		</div>
 
 		<div class="documentation-section">
+			<h2 class="documentation-title">Dolibarr.log() and debugMode()</h2>
+
+			<p>
+				<code>Dolibarr.log()</code> is a lightweight logging utility provided by the Dolibarr JS context.
+				It does <strong>not</strong> replace <code>console.log()</code>, but it gives an important advantage:
+				you can enable or disable all logs globally using <code>Dolibarr.debugMode()</code>.
+			</p>
+
+			<h3>Why use Dolibarr.log() instead of console.log()?</h3>
+			<ul>
+				<li>You can enable or disable logging dynamically from the browser console.</li>
+				<li>Avoid polluting the console for end-users: logs appear only when debug mode is enabled.</li>
+				<li>Ideal for module development: switch between quiet mode and verbose mode instantly.</li>
+				<li>Useful in production debugging: you can activate logs without modifying any code.</li>
+			</ul>
+
+			<h3>How it works</h3>
+			<p>
+				When <code>debugMode</code> is disabled (default state), calls to <code>Dolibarr.log()</code> do nothing.
+				When enabled, <code>Dolibarr.log()</code> behaves like <code>console.log()</code>.
+			</p>
+
+			<div class="documentation-example">
+				<?php
+				$lines = array(
+					'<script>',
+					'	// Log something (will only appear if debug mode is ON)',
+					'	Dolibarr.log("My debug message");',
+					'',
+					'	// Enable verbose logs',
+					'	Dolibarr.debugMode(true);',
+					'',
+					'	// Disable logs again',
+					'	Dolibarr.debugMode(false);',
+					'</script>',
+				);
+				echo $documentation->showCode($lines, 'php');
+				?>
+			</div>
+
+			<h3>Summary</h3>
+			<ul>
+				<li><code>console.log()</code> → always prints messages, noisy, not controllable, but useful during active development and debugging.</li>
+				<li><code>Dolibarr.log()</code> → prints messages only when debug mode is ON; fully controllable. Ideal for Dolibarr core logs or when you want to keep logs available but silent in production.</li>
+				<li><code>Dolibarr.debugMode(true)</code> → enable verbose logs, activating <code>Dolibarr.log()</code> output.</li>
+				<li><code>Dolibarr.debugMode(false)</code> → disable all <code>Dolibarr.log()</code> output, silencing debug messages.</li>
+			</ul>
+
+		</div>
+
+
+		<div class="documentation-section">
 			<h2 id="titlesection-hooks"  class="documentation-title">JS Dolibarr hooks</h2>
 
-			<h3>Event listener : the Dolibarr ready like</h3>
+			<p>
+				Dolibarr provides a hook system to allow modules and scripts to communicate with each other
+				through named events. There are two ways to listen to these events in JS:
+				<code>Dolibarr.on()</code> and <code>document.addEventListener()</code>.
+			</p>
+
+			<h3>Event listener example</h3>
+			<p>
+				You can use <code>Dolibarr.on()</code> to listen to a hook. The main difference with standard
+				document events is that the callback receives <strong>directly the data object</strong> passed
+				when the hook is executed, without needing to access <code>e.detail</code>.
+			</p>
+			<p>
+				For backward compatibility and standard DOM integration, the same hook can also be caught
+				using <code>document.addEventListener()</code>, but in this case the data is inside
+				<code>e.detail</code> and the event name is prefixed by <code>Dolibarr:</code> so for a hook named A event name is <code>Dolibarr:A</code>
+			</p>
+
 			<div class="documentation-example">
 				<?php
 				$lines = array(
 					'<script>',
 					'	// Add a listener to the Dolibarr theEventName event',
-					'	Dolibarr.on(\'theEventName\', function(e) {',
-					'		console.log(\'Dolibarr theEventName\', e.detail);',
+					'	Dolibarr.on(\'theEventName\', function(data) {',
+					'		console.log(\'Dolibarr theEventName\', data);',
 					'	});',
-
+					'',
 					'	// But this  work too on document',
 					'	document.addEventListener(\'Dolibarr:theEventName\', function(e) {',
 					'		console.log(\'Dolibarr theEventName\', e.detail);',
@@ -139,7 +208,13 @@ $documentation->showSidebar(); ?>
 				echo $documentation->showCode($lines, 'php'); ?>
 			</div>
 
-			<h3>Example of code usage</h3>
+			<h3>Practical usage</h3>
+			<p>
+				When Dolibarr is ready (DOM loaded and JS context initialized), you can register your hooks
+				or trigger them. Both <code>Dolibarr.on()</code> and <code>document.addEventListener()</code>
+				are valid, but <code>Dolibarr.on()</code> is simpler and more convenient because you get the
+				data directly.
+			</p>
 			<div  class="documentation-example">
 				<?php
 				$lines = array(
@@ -150,9 +225,14 @@ $documentation->showSidebar(); ?>
 					'		// Do your stuff',
 					'		...',
 					'',
-					'		// Add a listener to the yourCustomHookName event',
-					'		Dolibarr.on(\'yourCustomHookName\', function(e) {',
-					'			console.log(\'e.detail will contain { data01: \'stuff\', data02: \'other stuff\' }\', e.detail);',
+					'		// Add a listener to the yourCustomHookName event with dolibarr.on()',
+					'		Dolibarr.on(\'yourCustomHookName\', function(data) {',
+					'			console.log(\'With Dolibarr.on : data will contain { data01: \'stuff\', data02: \'other stuff\' }\', data);',
+					'		});',
+					'',
+					'		// Or you can do : Add a listener to the yourCustomHookName document.addEventListener()',
+					'		document.addEventListener(\'Dolibarr:yourCustomHookName\', function(e) {',
+					'			console.log(\'With document.addEventListener :  e.detail will contain { data01: \'stuff\', data02: \'other stuff\' }\', e.detail);',
 					'		});',
 					'',
 					'		// you can trigger js hooks',
@@ -174,10 +254,13 @@ $documentation->showSidebar(); ?>
 					document.addEventListener('Dolibarr:Ready', function(e) {
 						// the dom is ready and you are sure Dolibarr js context is loaded
 						// Add a listener to the yourCustomHookName event
-						Dolibarr.on('yourCustomHookName', function(e) {
-							console.log('e.detail will contain { data01: stuff, data02: other stuff }', e.detail);
+						Dolibarr.on('yourCustomHookName', function(data) {
+							console.log('With Dolibarr.on : data will contain { data01: stuff, data02: other stuff }', data);
 						});
 
+						document.addEventListener('Dolibarr:yourCustomHookName', function(e) {
+							console.log('With document.addEventListener : e.detail will contain { data01: stuff, data02: other stuff }', e.detail);
+						});
 
 						document.getElementById('try-event-yourCustomHookName').addEventListener('click', function(e) {
 							// you can create js hooks
@@ -189,6 +272,80 @@ $documentation->showSidebar(); ?>
 
 			</div>
 
+		</div>
+
+
+
+		<div  id="titlesection-event-init-vs-ready" class="documentation-section">
+			<h2 class="documentation-title">Difference between Dolibarr:Init and Dolibarr:Ready event</h2>
+
+			<p>
+				Dolibarr provides two main initialization events for its JavaScript context: <code>Dolibarr:Init</code> and <code>Dolibarr:Ready</code>.
+				Understanding their difference is important when developing modules or tools.
+			</p>
+
+			<ul>
+				<li>
+					<strong>Dolibarr:Init</strong> is triggered immediately when the Dolibarr context is created.
+					This event is intended for:
+					<ul>
+						<li>Defining or registering new tools via <code>Dolibarr.defineTool()</code>.</li>
+						<li>Setting context variables (<code>Dolibarr.setContextVar()</code> / <code>Dolibarr.setContextVars()</code>).</li>
+						<li>Preparing configuration that must be available before the DOM is fully loaded.</li>
+					</ul>
+					It occurs <em>before</em> <code>Dolibarr:Ready</code>, so it is ideal for setup tasks that other tools may depend on.
+				</li>
+
+				<li>
+					<strong>Dolibarr:Ready</strong> is triggered once the DOM is ready, similar to <code>$(document).ready()</code> in jQuery.
+					This event is intended for:
+					<ul>
+						<li>Running code that interacts with the DOM.</li>
+						<li>Attaching event listeners to elements on the page.</li>
+						<li>Executing functionality that requires all tools and context variables to be fully initialized.</li>
+					</ul>
+				</li>
+			</ul>
+
+			<p>
+				In short, use <code>Dolibarr:Init</code> for setting up tools and context variables, and <code>Dolibarr:Ready</code> for code that needs the DOM and fully initialized context.
+			</p>
+
+			<h3>Examples of usage</h3>
+			<div class="documentation-example">
+				<?php
+				$lines = array(
+					'<script>',
+					'	// Example: Dolibarr:Init - define a tool and set context variables early',
+					'	document.addEventListener(\'Dolibarr:Init\', function(e) {',
+					'		console.log("Init event fired, Dolibarr is initialised and receive context vars a tools");',
+					'	});',
+					'',
+					'	// Example: Dolibarr:Ready - interact with DOM and use tools',
+					'	document.addEventListener(\'Dolibarr:Ready\', function(e) {',
+					'		console.log("Ready event fired, DOM is ready");',
+					'',
+					'',
+					'		// Attach event listener to a DOM element',
+					'		const btn = document.getElementById("myButton");',
+					'		if(btn) {',
+					'			btn.addEventListener("click", function() {',
+					'				alert("Button clicked! Context value: " + Dolibarr.getContextVar("mySetting"));',
+					'			});',
+					'		}',
+					'	});',
+					'</script>',
+				);
+				echo $documentation->showCode($lines, 'php'); ?>
+			</div>
+
+			<p>
+				In summary:
+			<ul>
+				<li><code>Dolibarr:Init</code> → early setup, tools, context variables, configuration.</li>
+				<li><code>Dolibarr:Ready</code> → DOM is ready, safe to manipulate elements and use tools defined in Init.</li>
+			</ul>
+			</p>
 		</div>
 
 		<div class="documentation-section">
@@ -284,46 +441,6 @@ $documentation->showSidebar(); ?>
 			</div>
 
 		</div>
-
-
-
-		<div  id="titlesection-event-init-vs-ready" class="documentation-section">
-			<h2 class="documentation-title">Difference between Dolibarr:Init and Dolibarr:Ready</h2>
-
-			<p>
-				Dolibarr provides two main initialization events for its JavaScript context: <code>Dolibarr:Init</code> and <code>Dolibarr:Ready</code>.
-				Understanding their difference is important when developing modules or tools.
-			</p>
-
-			<ul>
-				<li>
-					<strong>Dolibarr:Init</strong> is triggered immediately when the Dolibarr context is created.
-					This event is intended for:
-					<ul>
-						<li>Defining or registering new tools via <code>Dolibarr.defineTool()</code>.</li>
-						<li>Setting context variables (<code>Dolibarr.setContextVar()</code> / <code>Dolibarr.setContextVars()</code>).</li>
-						<li>Preparing configuration that must be available before the DOM is fully loaded.</li>
-					</ul>
-					It occurs <em>before</em> <code>Dolibarr:Ready</code>, so it is ideal for setup tasks that other tools may depend on.
-				</li>
-
-				<li>
-					<strong>Dolibarr:Ready</strong> is triggered once the DOM is ready, similar to <code>$(document).ready()</code> in jQuery.
-					This event is intended for:
-					<ul>
-						<li>Running code that interacts with the DOM.</li>
-						<li>Attaching event listeners to elements on the page.</li>
-						<li>Executing functionality that requires all tools and context variables to be fully initialized.</li>
-					</ul>
-				</li>
-			</ul>
-
-			<p>
-				In short, use <code>Dolibarr:Init</code> for setting up tools and context variables, and <code>Dolibarr:Ready</code> for code that needs the DOM and fully initialized context.
-			</p>
-		</div>
-
-
 
 
 		<div class="documentation-section">

@@ -6603,7 +6603,8 @@ if ($action == 'create') {
 			if (empty($user->socid)) {
 				if (($object->status == Facture::STATUS_VALIDATED || $object->status == Facture::STATUS_CLOSED) || getDolGlobalString('FACTURE_SENDBYEMAIL_FOR_ALL_STATUS')) {
 					if ($objectidnext) {
-						print '<span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('SendMail').'</span>';
+						$params['attr']['title'] = $langs->trans("DisabledBecauseReplacedInvoice");
+						print dolGetButtonAction('', $langs->trans('SendMail'), 'default', '#', '', false, $params);
 					} else {
 						if ($usercansend) {
 							unset($params['attr']['title']);

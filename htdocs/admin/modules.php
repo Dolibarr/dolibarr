@@ -724,9 +724,6 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 		$deschelp .= '<br>';
 	}
 }
-//if ($mode == 'marketplace') {
-//	$deschelp = '<div class="info hideonsmartphone">'.$langs->trans("ModulesMarketPlaceDesc")."<br></div><br>\n";
-//}
 if ($mode == 'deploy') {
 	$deschelp = '<div class="info hideonsmartphone">'.$langs->trans("ModulesDeployDesc", $langs->transnoentitiesnoconv("AvailableModules"))."<br></div><br>\n";
 }
@@ -801,7 +798,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	$moreforfilter .= '<input type="submit" name="buttonsubmit" class="button small nomarginleft" value="'.dolPrintHTMLForAttribute($langs->trans("Refresh")).'">';
 	if ($search_keyword || ($search_nature && $search_nature != '-1') || ($search_version && $search_version != '-1') || ($search_status && $search_status != '-1')) {
 		$moreforfilter .= ' ';
-		$moreforfilter .= '<input type="submit" name="buttonreset" class="buttonreset noborderbottom nomargintop nomarginbottom" value="'.dolPrintHTMLForAttribute($langs->trans("Reset")).'">';
+		$moreforfilter .= '<input type="submit" name="buttonreset" class="buttonreset noborderall nomargintop nomarginbottom" value="'.dolPrintHTMLForAttribute($langs->trans("Reset")).'">';
 	}
 	$moreforfilter .= '</div>';
 	$moreforfilter .= '</div>';
@@ -1421,7 +1418,7 @@ if ($mode == 'marketplace') {
 			<div id="listing-content" class="div-table-responsive" <?php if (empty($categories_tree)) { ?>style="width:100%;"<?php } ?>>
 				<table summary="list_of_modules" id="list_of_modules" class="productlist centpercent">
 					<tbody id="listOfModules">
-						<?php //echo $remotestore->get_products($nbmaxtoshow); ?>
+						<!-- $product_list is $remotestore->getProducts($options) done previously -->
 						<?php print $products_list; ?>
 					</tbody>
 				</table>
