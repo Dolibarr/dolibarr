@@ -633,7 +633,8 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 
 
 	foreach ($newarrayoftype as $tmpkey => $tmpval) {
-		$newarrayoftype[$tmpkey]['label'] = img_picto('', $tmpval['picto'], 'class="pictofixedwidth"').$langs->trans($tmpval['label']);
+		$newarrayoftype[$tmpkey]['data-html'] = img_picto('', $tmpval['picto'], 'class="pictofixedwidth"').$langs->trans($tmpval['label']);
+		$newarrayoftype[$tmpkey]['label'] = $langs->trans($tmpval['label']);
 	}
 
 	print '<div class="liste_titre liste_titre_bydiv liste_titre_bydiv_inlineblock liste_titre_bydiv_nothingafter centpercent">';

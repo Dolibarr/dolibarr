@@ -49,7 +49,7 @@ $langs->loadLangs(array("ecm", "companies", "other", "users", "orders", "propal"
 // Get parameters
 $socid      = GETPOSTINT('socid');
 $action     = GETPOST('action', 'alpha');
-$cancel     = GETPOST('cancel', 'aZ09');
+$cancel     = GETPOST('cancel');
 $backtopage = GETPOST('backtopage', 'alpha');
 $confirm    = GETPOST('confirm', 'alpha');
 

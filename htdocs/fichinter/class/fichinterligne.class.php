@@ -72,6 +72,11 @@ class FichinterLigne extends CommonObjectLine
 	public $duration;
 
 	/**
+	 * @var int Special code for subtotal lines
+	 */
+	public $special_code;
+
+	/**
 	 * @var int Line rang
 	 */
 	public $rang = 0;
@@ -124,7 +129,7 @@ class FichinterLigne extends CommonObjectLine
 	{
 		dol_syslog("FichinterLigne::fetch", LOG_DEBUG);
 
-		$sql = 'SELECT ft.rowid, ft.fk_fichinter, ft.description, ft.duree, ft.rang, ft.date, ft.product_type, ft.extraparams';
+		$sql = 'SELECT ft.rowid, ft.fk_fichinter, ft.description, ft.duree, ft.rang, ft.date, ft.product_type, ft.special_code, ft.extraparams';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'fichinterdet as ft';
 		$sql .= ' WHERE ft.rowid = '.((int) $rowid);
 
@@ -140,6 +145,7 @@ class FichinterLigne extends CommonObjectLine
 			$this->product_type     = $objp->product_type;
 			$this->duration       	= $objp->duree;
 			$this->rang           	= $objp->rang;
+			$this->special_code     = $objp->special_code;
 
 			$this->extraparams = !empty($objp->extraparams) ? (array) json_decode($objp->extraparams, true) : array();
 
@@ -196,13 +202,14 @@ class FichinterLigne extends CommonObjectLine
 
 		// Insertion dans base de la ligne
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'fichinterdet';
-		$sql .= ' (fk_fichinter, description, date, duree, rang, product_type)';
+		$sql .= ' (fk_fichinter, description, date, duree, rang, product_type, special_code)';
 		$sql .= " VALUES (".((int) $this->fk_fichinter).",";
 		$sql .= " '".$this->db->escape($this->desc)."',";
 		$sql .= " '".$this->db->idate($this->date)."',";
 		$sql .= " ".((int) $this->duration).",";
 		$sql .= ' '.((int) $rangToUse).",";
 		$sql .= " ".((int) $this->product_type);
+		$sql .= " ".((int) $this->special_code);
 		$sql .= ')';
 
 		dol_syslog("FichinterLigne::insert", LOG_DEBUG);
@@ -324,6 +331,7 @@ class FichinterLigne extends CommonObjectLine
 		$sql = "SELECT SUM(duree) as total_duration, min(date) as dateo, max(date) as datee ";
 		$sql .= " FROM ".MAIN_DB_PREFIX."fichinterdet";
 		$sql .= " WHERE fk_fichinter=".((int) $this->fk_fichinter);
+		$sql .= " AND product_type <> 9";
 
 		dol_syslog("FichinterLigne::update_total", LOG_DEBUG);
 		$resql = $this->db->query($sql);

@@ -649,6 +649,52 @@ if (empty($reshook)) {
 				$db->rollback();
 			}
 		}
+	} elseif ($action == 'confirm_addtitleline' && $permissiontoadd) {
+		// Handling adding a new title line for subtotals module
+
+		$langs->load('subtotals');
+
+		$desc = GETPOST('subtotallinedesc', 'alphanohtml');
+		$depth = GETPOSTINT('subtotallinelevel') ?? 1;
+
+		$subtotal_options = array();
+
+		foreach (Fichinter::$TITLE_OPTIONS as $option) {
+			$value = GETPOST($option, 'alphanohtml');
+			if ($value) {
+				$subtotal_options[$option] = $value == 'on' ? 1 : $value;
+			}
+		}
+
+		// Insert line
+		$result = $object->addSubtotalLine($langs, $desc, (int) $depth, $subtotal_options);
+
+		if ($result >= 0) {
+			if ($result == 0) {
+				setEventMessages($object->error, $object->errors, 'warnings');
+			}
+			$ret = $object->fetch($object->id); // Reload to get new records
+			$object->fetch_thirdparty();
+
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+				// Define output language
+				$outputlangs = $langs;
+				$newlang = GETPOST('lang_id', 'alpha');
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+					$newlang = $object->thirdparty->default_lang;
+				}
+				if (!empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+
+				$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			}
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
+		exit();
 	} elseif ($action == 'classifybilled' && $permissiontoadd) {
 		// Classify Billed
 		$result = $object->setStatut(Fichinter::STATUS_BILLED);
@@ -1499,6 +1545,7 @@ if ($action == 'create') {
 
 		// Intervention lines
 		$sql = 'SELECT ft.rowid, ft.description, ft.fk_fichinter, ft.duree, ft.rang,';
+		$sql .= ' ft.special_code, ft.product_type,';
 		$sql .= ' ft.date as date_intervention';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'fichinterdet as ft';
 		$sql .= ' WHERE ft.fk_fichinter = '.((int) $object->id);
@@ -1540,34 +1587,49 @@ if ($action == 'create') {
 					if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
 						print '<td class="center linecolnum">'.($i + 1).'</td>';
 					}
+					if (!empty($objp->special_code) || $objp->product_type == 9) {
+						$line_color = $object->getSubtotalColors($objp->duree);
+						$line_options = json_decode($objp->extraparams, true);
+						$line_options = is_array($line_options) ? $line_options['subtotal'] : array();
+						print '<td colspan="3" ><strong>'.dol_htmlentitiesbr($objp->description).'</strong>';
+						if (array_key_exists('titleshowuponpdf', $line_options)) {
+							echo '&nbsp;' . img_picto($langs->trans("ShowUPOnPDF"), 'invoicing');
+						}
+						if (array_key_exists('titleshowtotalexludingvatonpdf', $line_options)) {
+							echo '&nbsp; <span title="' . $langs->trans("ShowTotalExludingVATOnPDF") . '">%</span>';
+						}
+						if (array_key_exists('titleforcepagebreak', $line_options)) {
+							echo '&nbsp;' . img_picto($langs->trans("ForcePageBreak"), 'file');
+						}
+						print "</td>";
+					} else {
+						print '<td>';
+						print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
+						print dol_htmlentitiesbr($objp->description);
 
-					print '<td>';
-					print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
-					print dol_htmlentitiesbr($objp->description);
+						$objectline = new FichinterLigne($db);
+						$objectline->fetch($objp->rowid);
+						$objectline->fetch_optionals();
 
-					$objectline = new FichinterLigne($db);
-					$objectline->fetch($objp->rowid);
-					$objectline->fetch_optionals();
+						$extrafields->fetch_name_optionals_label($objectline->table_element);
 
-					$extrafields->fetch_name_optionals_label($objectline->table_element);
+						$temps = $objectline->showOptionals($extrafields, 'view', array(), '', '', '1', 'line');
+						if (!empty($temps)) {
+							print '<div style="padding-top: 10px" id="extrafield_lines_area_'.$objp->rowid.'" name="extrafield_lines_area_'.$objp->rowid.'">';
+							print $temps;
+							print '</div>';
+						}
 
-					$temps = $objectline->showOptionals($extrafields, 'view', array(), '', '', '1', 'line');
-					if (!empty($temps)) {
-						print '<div style="padding-top: 10px" id="extrafield_lines_area_'.$objp->rowid.'" name="extrafield_lines_area_'.$objp->rowid.'">';
-						print $temps;
-						print '</div>';
+						print '</td>';
+
+						// Date
+						print '<td class="center" width="150">'.(!getDolGlobalString('FICHINTER_DATE_WITHOUT_HOUR') ? dol_print_date($db->jdate($objp->date_intervention), 'dayhour') : dol_print_date($db->jdate($objp->date_intervention), 'day')).'</td>';
+
+						// Duration
+						print '<td class="right" width="150">'.(!getDolGlobalString('FICHINTER_WITHOUT_DURATION') ? convertSecondToTime($objp->duree) : '').'</td>';
+
+						print "</td>\n";
 					}
-
-					print '</td>';
-
-					// Date
-					print '<td class="center" width="150">'.(!getDolGlobalString('FICHINTER_DATE_WITHOUT_HOUR') ? dol_print_date($db->jdate($objp->date_intervention), 'dayhour') : dol_print_date($db->jdate($objp->date_intervention), 'day')).'</td>';
-
-					// Duration
-					print '<td class="right" width="150">'.(!getDolGlobalString('FICHINTER_WITHOUT_DURATION') ? convertSecondToTime($objp->duree) : '').'</td>';
-
-					print "</td>\n";
-
 					// Icon to edit and delete
 					if ($object->status == 0 && $user->hasRight('ficheinter', 'creer')) {
 						print '<td class="center">';

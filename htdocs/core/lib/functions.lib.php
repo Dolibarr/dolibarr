@@ -3840,7 +3840,8 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 				$offsetdst = 0;	// Dst offset with server timezone (because to_gmt is false), so 0
 			} elseif ($tzoutput == 'tzuser' || $tzoutput == 'tzuserrel') {
 				$to_gmt = true;
-				$offsettzstring = (empty($_SESSION['dol_tz_string']) ? 'UTC' : $_SESSION['dol_tz_string']); // Example 'Europe/Berlin' or 'Indian/Reunion'
+				// if no session (by example in cron) may use MAIN_DOLIBARR_USER_TIMEZONE instead UTC
+				$offsettzstring = (empty($_SESSION['dol_tz_string']) ? getDolGlobalString('MAIN_DOLIBARR_USER_TIMEZONE', 'UTC') : $_SESSION['dol_tz_string']); // Example 'Europe/Berlin' or 'Indian/Reunion'
 
 				if (class_exists('DateTimeZone')) {
 					try {
@@ -10510,6 +10511,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__EVENT_TYPE__'] = $outputlangs->trans("Action" . $object->type_code);
 				$substitutionarray['__EVENT_DATE__'] = dol_print_date($object->datep, 'day', 'auto', $outputlangs);
 				$substitutionarray['__EVENT_TIME__'] = dol_print_date($object->datep, 'hour', 'auto', $outputlangs);
+				$substitutionarray['__EVENT_DATE_TZUSER__'] = dol_print_date($object->datep, 'day', 'tzuserrel', $outputlangs);
+				$substitutionarray['__EVENT_TIME_TZUSER__'] = dol_print_date($object->datep, 'hour', 'tzuserrel', $outputlangs);
 			}
 		}
 	}

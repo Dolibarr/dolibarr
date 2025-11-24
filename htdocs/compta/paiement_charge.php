@@ -42,7 +42,7 @@ $langs->loadLangs(array("banks", "bills", "compta"));
 
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$cancel = GETPOST('cancel');
+$cancel = GETPOST('cancel', 'alpha');
 
 $chid = GETPOSTINT("id");
 $amounts = array();
