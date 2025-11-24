@@ -84,8 +84,13 @@ HTTP 200
 # GET orders DOLAPIENTITY: 2
 GET http://{{hostnport}}/api/index.php/orders
 DOLAPIENTITY: 2
-HTTP 403
-{"error":{"code":403,"message":"Forbidden"}}
+HTTP 401
+[Asserts]
+jsonpath "$.error" exists
+jsonpath "$.error.code" == 401
+jsonpath "$.error.message" contains "Unauthorized"
+jsonpath "$.error.message" contains "Token not valid (may be a typo or a wrong entity)"
+
 
 # Capture a order ID number
 GET http://{{hostnport}}/api/index.php/orders?limit=1
