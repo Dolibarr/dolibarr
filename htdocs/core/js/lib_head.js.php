@@ -203,7 +203,7 @@ jQuery(function($){
 		dayNamesMin: tradDaysMin,
 		weekHeader: '<?php echo $langs->trans("Week"); ?>',
 		dateFormat: '<?php echo $langs->trans("FormatDateShortJQuery"); ?>',	/* Note dd/mm/yy means year on 4 digit in jquery format */
-		firstDay: <?php echo(isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : '1'); ?>,
+		firstDay: <?php echo getDolGlobalInt('MAIN_START_WEEK', 1); ?>,
 		isRTL: <?php echo($langs->trans("DIRECTION") == 'rtl' ? 'true' : 'false'); ?>,
 		showMonthAfterYear: false,  	/* TODO add specific to country	*/
 		 yearSuffix: ''			/* TODO add specific to country */
@@ -1376,7 +1376,7 @@ function pricejs(amount, mode = 'MT', currency_code = '', force_locale = '') {
 	var amountAsLocalizedString;
 	var useIntl = Boolean(Intl && Intl.NumberFormat);
 	var nDigits;
-	if (currency_code === 'auto') currency_code = <?php echo json_encode($conf->currency) ?>;
+	if (currency_code === 'auto') currency_code = <?php echo json_encode(getDolCurrency()) ?>;
 
 	if (mode === 'MU') nDigits = main_rounding_unit;
 	else if (mode === 'MT') nDigits = main_rounding_tot;
@@ -1585,14 +1585,20 @@ jQuery(document).ready(function() {
 
 // Code to manage the js for combo list with dependencies (called by extrafields_view.tpl.php)
 function showOptions(child_list, parent_list) {
-		   var val = $("select[name="+parent_list+"]").val();
-		   var parentVal = parent_list + ":" + val;
-		if(val > 0) {
-			$("select[name=\""+child_list+"\"] option[parent]").hide();
-			$("select[name=\""+child_list+"\"] option[parent=\""+parentVal+"\"]").show();
+	var parentInput = $("select[name="+parent_list+"]");
+	if (parentInput.length === 0) { // when parent extra-field is in view mode and the child is edited directly on card (on line edit)
+		parentInput = $("input[name="+parent_list+"]");
+	}
+	if (parentInput.length > 0) {
+		var val = parentInput.val();
+		var parentVal = parent_list + ":" + val;
+		if (val > 0) {
+			$("select[name=\""+child_list+"\"] option[parent]").prop("disabled", true).hide(); // hide not work with select2 element so disabled it
+			$("select[name=\""+child_list+"\"] option[parent=\""+parentVal+"\"]").prop('disabled', false).show(); // show not work with select2 element so enabled it
 		} else {
-			$("select[name=\""+child_list+"\"] option").show();
+			$("select[name=\""+child_list+"\"] option").prop("disabled", false).show(); // show not work with select2 element so enabled it
 		}
+	}
 }
 function setListDependencies() {
 		console.log("setListDependencies");
@@ -1739,6 +1745,7 @@ $(function() {
 
 		// this part of code prevent weird behavior when user (ctrl or maj) + click directly on checkbox
 		// We simulate a click on the parent line
+		console.log("Emulate click on parent line");
 		parentRow.trigger({
 			type: "click",
 			ctrlKey: !e.shiftKey, // simulate ctrlKey click will automatically prop activate the checkbox with parent event but not if shift key is pressed.
@@ -1750,12 +1757,14 @@ $(function() {
 	});
 
 	$(document).on("click", ".row-with-select", function (e) {
+		console.log("A click on line was done");
+
 		let checkBox = $(this).find('.checkforselect');
 		let nextCheckStatus = !checkBox.is(':checked')
 
 		if (e.ctrlKey || e.metaKey) {
 			// Add line to selection
-			if(checkBox){
+			if (checkBox) {
 				checkBox.prop('checked', nextCheckStatus).trigger('change');
 			}
 			setLastClickedRowStatus($(this), 1);
@@ -1764,13 +1773,13 @@ $(function() {
 		if (e.shiftKey) {
 			let lastLastChanged = $(this).closest('table').find('.row-with-select[data-is-last-changed="1"]');
 
-			if(lastLastChanged.length>0){
-				// Add all lines to selection betwin last selected line
-				if($(this).index() === lastLastChanged.index()) {
+			if (lastLastChanged.length>0) {
+				// Add all lines to selection beetwin last selected line
+				if ($(this).index() === lastLastChanged.index()) {
 					return null;
 				}
 
-				if($(this).index() < lastLastChanged.index()) {
+				if ($(this).index() < lastLastChanged.index()) {
 					$(this).nextUntil(lastLastChanged, ".row-with-select" ).find('.checkforselect').prop('checked', nextCheckStatus).trigger('change');
 				}else{
 					lastLastChanged.nextUntil($(this), ".row-with-select" ).find('.checkforselect').prop('checked', nextCheckStatus).trigger('change');

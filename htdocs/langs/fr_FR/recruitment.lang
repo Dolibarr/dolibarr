@@ -68,3 +68,4 @@ ApplyJobCandidature=Postuler à ce poste
 ErrorRecruitmmentCandidatureAlreadyExists= Une candidature existe déjà avec cet email %s
 RecruitmentCandidatureSaved=La candidature est enregistrée
 NoOpenJobOffer=Pas d'offres d'emploi pour le moment
+ShowPositionToBeFilled=Afficher le poste à pourvoir

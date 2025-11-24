@@ -36,7 +36,6 @@ if (!defined('DOL_INC_FOR_VERSION_ERROR')) {
 require_once '../filefunc.inc.php';
 
 
-
 // Define DOL_DOCUMENT_ROOT used for install/upgrade process
 if (!defined('DOL_DOCUMENT_ROOT')) {
 	define('DOL_DOCUMENT_ROOT', '..');

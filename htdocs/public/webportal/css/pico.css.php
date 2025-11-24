@@ -58,6 +58,27 @@ if (empty($dolibarr_nocache)) {
 } else {
 	header('Cache-Control: no-cache');
 }
+
+
+/**
+ _____   ____   _____   ____
+|_   _| |  _ \ |_   _| |  _ \
+  | |   | | | |  | |   | | | |
+  | |   | |_| |  | |   | |_| |
+  |_|   |____/   |_|   |____/
+
+TODO: This is a CSS file — remove all PHP.
+If you want customizations, use custom.css.php.
+Before doing so, ask yourself if it’s really necessary.
+
+You can also add a body class such as:
+  - direction-ltr
+  - direction-rtl
+  - login-form-right
+to change CSS behavior based on context.
+*/
+
+
 ?>
 @charset "UTF-8";
 /*!
@@ -286,10 +307,11 @@ kbd {
 	--muted-color: hsl(205, 10%, 50%);
 	--muted-border-color: hsl(205, 20%, 94%);
 
+	--outline-button-background: var(--background-color);
 	--banner-background : #ededed;
-	--primary-color-hue : <?php echo $webPortalTheme->primaryColorHsl['h']; ?>;
-	--primary-color-saturation : <?php echo $webPortalTheme->primaryColorHsl['s']; ?>%;
-	--primary-color-lightness : <?php echo $webPortalTheme->primaryColorHsl['l']; ?>%;
+	--primary-color-hue : <?php echo $webPortalTheme->primaryColorHsl['h']; /* TODO : WHY ?? this is already in custom.css.php */ ?>;
+	--primary-color-saturation : <?php echo $webPortalTheme->primaryColorHsl['s']; /* TODO : WHY ?? this is already in custom.css.php */ ?>%;
+	--primary-color-lightness : <?php echo $webPortalTheme->primaryColorHsl['l']; /* TODO : WHY ?? this is already in custom.css.php */  ?>%;
 	--primary : hsl(var(--primary-color-hue), var(--primary-color-saturation), var(--primary-color-lightness));
 	--primary-hover: hsl(var(--primary-color-hue), 90%, 32%);
 	--primary-focus:  hsl(var(--primary-color-hue), var(--primary-color-saturation), var(--primary-color-lightness), 0.125);
@@ -1124,12 +1146,12 @@ input[type=reset]:focus {
 
 :is(button, input[type=submit], input[type=button], [role=button]).outline,
 input[type=reset].outline {
-	--background-color: transparent;
+	--background-color: var(--outline-button-background);
 	--color: var(--primary);
 }
 :is(button, input[type=submit], input[type=button], [role=button]).outline:is([aria-current], :hover, :active, :focus),
 input[type=reset].outline:is([aria-current], :hover, :active, :focus) {
-	--background-color: transparent;
+	--background-color: var(--outline-button-background);
 	--color: var(--primary-hover);
 }
 

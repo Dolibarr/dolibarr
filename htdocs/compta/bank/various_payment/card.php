@@ -431,6 +431,19 @@ if ($action == 'create') {
             					$(\'#fieldchqemetteur\').val(\'\');
             				}
             			}
+						function toggleSubledger() {
+							var isCentral = $("#accountancy_code option:selected").data("centralized");
+							console.log("the selected general ledger account is centralised?", isCentral);
+							if (isCentral) {
+								$("#subledger_account").prop("disabled", false);
+							} else {
+								$("#subledger_account").prop("disabled", true);
+							}
+						}
+						toggleSubledger();
+
+						$("#accountancy_code").on("change", toggleSubledger);
+						$("#accountancy_code").on("select2:select", toggleSubledger);
 			';
 
 		print '	});'."\n";

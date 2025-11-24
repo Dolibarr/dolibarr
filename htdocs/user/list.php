@@ -31,11 +31,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-if (isModEnabled('category')) {
-	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-}
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -43,6 +38,10 @@ if (isModEnabled('category')) {
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+if (isModEnabled('category')) {
+	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+}
 
 // Load translation files required by page
 $langs->loadLangs(array('users', 'companies', 'hrm', 'salaries'));
@@ -153,6 +152,7 @@ $arrayfields = array(
 	'u.national_registration_number' => array('label' => "NationalRegistrationNumber", 'checked' => '-1', 'position' => 51, 'enabled' => (string) (int) (isModEnabled('hrm') && $permissiontoreadhr)),
 	'u.job' => array('label' => "PostOrFunction", 'checked' => '-1', 'position' => 60),
 	'u.salary' => array('label' => "Salary", 'checked' => '-1', 'position' => 80, 'enabled' => (string) (int) (isModEnabled('salaries') && $user->hasRight("salaries", "readall")), 'isameasure' => 1),
+	'u.thm' => array('label' => "THM", 'langs' => 'salaries', 'checked' => '-1', 'position' => 82, 'enabled' => '1', 'isameasure' => 1),
 	'u.datec' => array('label' => "DateCreation", 'checked' => '0', 'position' => 500),
 	'date_modification' => array('label' => "DateModificationShort", 'checked' => '0', 'position' => 500),
 	'u.statut' => array('label' => "Status", 'checked' => '1', 'position' => 1000),
@@ -389,7 +389,7 @@ $morehtmlright = "";
 // --------------------------------------------------------------------
 $sql = "SELECT DISTINCT u.rowid, u.lastname, u.firstname, u.admin, u.fk_soc, u.login, u.office_phone, u.user_mobile, u.email, u.api_key, u.accountancy_code, u.gender, u.employee, u.photo,";
 $sql .= " u.fk_user,";
-$sql .= " u.ref_employee, u.national_registration_number, u.job, u.salary, u.datelastlogin, u.datepreviouslogin,";
+$sql .= " u.ref_employee, u.national_registration_number, u.job, u.salary, u.thm, u.datelastlogin, u.datepreviouslogin,";
 $sql .= " u.datestartvalidity, u.dateendvalidity,";
 $sql .= " u.ldap_sid, u.statut as status, u.entity,";
 $sql .= " GREATEST(u.tms, ef.tms) as date_modification, u.datec as date_creation,";
@@ -575,70 +575,70 @@ $arrayofselected = is_array($toselect) ? $toselect : array();
 
 $param = '';
 if (!empty($mode)) {
-	$param .= '&amp;mode='.urlencode($mode);
+	$param .= '&mode='.urlencode($mode);
 }
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
-	$param .= '&amp;contextpage='.urlencode($contextpage);
+	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&amp;limit='.((int) $limit);
+	$param .= '&limit='.((int) $limit);
 }
 if ($optioncss != '') {
-	$param .= '&amp;optioncss='.urlencode($optioncss);
+	$param .= '&optioncss='.urlencode($optioncss);
 }
 if ($search_all != '') {
-	$param .= '&amp;search_all='.urlencode($search_all);
+	$param .= '&search_all='.urlencode($search_all);
 }
 if ($search_user != '') {
-	$param .= "&amp;search_user=".urlencode($search_user);
+	$param .= "&search_user=".urlencode($search_user);
 }
 if ($search_rowid != '') {
-	$param .= "&amp;search_rowid=".urlencode($search_rowid);
+	$param .= "&search_rowid=".urlencode($search_rowid);
 }
 if ($search_login != '') {
-	$param .= "&amp;search_login=".urlencode($search_login);
+	$param .= "&search_login=".urlencode($search_login);
 }
 if ($search_lastname != '') {
-	$param .= "&amp;search_lastname=".urlencode($search_lastname);
+	$param .= "&search_lastname=".urlencode($search_lastname);
 }
 if ($search_firstname != '') {
-	$param .= "&amp;search_firstname=".urlencode($search_firstname);
+	$param .= "&search_firstname=".urlencode($search_firstname);
 }
 if ($search_gender != '' && $search_gender != '-1') {
-	$param .= "&amp;search_gender=".urlencode($search_gender);
+	$param .= "&search_gender=".urlencode($search_gender);
 }
 if ($search_employee != '' && $search_employee != '-1') {
-	$param .= "&amp;search_employee=".urlencode($search_employee);
+	$param .= "&search_employee=".urlencode($search_employee);
 }
 if ($search_accountancy_code != '') {
-	$param .= "&amp;search_accountancy_code=".urlencode($search_accountancy_code);
+	$param .= "&search_accountancy_code=".urlencode($search_accountancy_code);
 }
 if ($search_phonepro != '') {
-	$param .= "&amp;search_phonepro=".urlencode($search_phonepro);
+	$param .= "&search_phonepro=".urlencode($search_phonepro);
 }
 if ($search_phonemobile != '') {
-	$param .= "&amp;search_phonemobile=".urlencode($search_phonemobile);
+	$param .= "&search_phonemobile=".urlencode($search_phonemobile);
 }
 if ($search_email != '') {
-	$param .= "&amp;search_email=".urlencode($search_email);
+	$param .= "&search_email=".urlencode($search_email);
 }
 if ($search_country != '') {
-	$param .= "&amp;search_country=".urlencode($search_country);
+	$param .= "&search_country=".urlencode($search_country);
 }
 if ($search_api_key != '') {
-	$param .= "&amp;search_api_key=".urlencode($search_api_key);
+	$param .= "&search_api_key=".urlencode($search_api_key);
 }
 if ($search_supervisor > 0) {
-	$param .= "&amp;search_supervisor=".urlencode($search_supervisor);
+	$param .= "&search_supervisor=".urlencode($search_supervisor);
 }
 if ($search_status != '') {
-	$param .= "&amp;search_status=".urlencode($search_status);
+	$param .= "&search_status=".urlencode($search_status);
 }
 if ($search_categ > 0) {
-	$param .= '&amp;search_categ='.urlencode((string) ($search_categ));
+	$param .= '&search_categ='.urlencode((string) ($search_categ));
 }
 if ($search_warehouse > 0) {
-	$param .= '&amp;search_warehouse='.urlencode($search_warehouse);
+	$param .= '&search_warehouse='.urlencode($search_warehouse);
 }
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -708,7 +708,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 if (!empty($catid)) {
 	print "<div id='ways'>";
 	$c = new Categorie($db);
-	$ways = $c->print_all_ways(' &gt; ', 'user/list.php');
+	$ways = $c->print_all_ways('auto', 'user/list.php');
 	print " &gt; ".$ways[0]."<br>\n";
 	print "</div><br>";
 }
@@ -844,6 +844,9 @@ if (!empty($arrayfields['u.job']['checked'])) {
 if (!empty($arrayfields['u.salary']['checked'])) {
 	print '<td class="liste_titre"></td>';
 }
+if (!empty($arrayfields['u.thm']['checked'])) {
+	print '<td class="liste_titre"></td>';
+}
 if (!empty($arrayfields['u.datelastlogin']['checked']) && getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0) {
 	print '<td class="liste_titre"></td>';
 }
@@ -893,87 +896,91 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 }
 if (!empty($arrayfields['u.rowid']['checked'])) {
 	// @phan-suppress-next-line PhanTypeInvalidDimOffset
-	print_liste_field_titre($arrayfields['u.rowid']['label'], $_SERVER['PHP_SELF'], "u.rowid", $param, "", "", $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['u.rowid']['label'], $_SERVER['PHP_SELF'], "u.rowid", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['u.login']['checked'])) {
-	print_liste_field_titre($arrayfields['u.login']['label'], $_SERVER['PHP_SELF'], "u.login", $param, "", "", $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['u.login']['label'], $_SERVER['PHP_SELF'], "u.login", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['u.lastname']['checked'])) {
-	print_liste_field_titre("Lastname", $_SERVER['PHP_SELF'], "u.lastname", $param, "", "", $sortfield, $sortorder);
+	print_liste_field_titre("Lastname", $_SERVER['PHP_SELF'], "u.lastname", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['u.firstname']['checked'])) {
-	print_liste_field_titre("FirstName", $_SERVER['PHP_SELF'], "u.firstname", $param, "", "", $sortfield, $sortorder);
+	print_liste_field_titre("FirstName", $_SERVER['PHP_SELF'], "u.firstname", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['u.gender']['checked'])) {
-	print_liste_field_titre("Gender", $_SERVER['PHP_SELF'], "u.gender", $param, "", "", $sortfield, $sortorder, 'center ');
+	print_liste_field_titre("Gender", $_SERVER['PHP_SELF'], "u.gender", "", $param, "", $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['u.employee']['checked'])) {
-	print_liste_field_titre("Employee", $_SERVER['PHP_SELF'], "u.employee", $param, "", "", $sortfield, $sortorder, 'center ');
+	print_liste_field_titre("Employee", $_SERVER['PHP_SELF'], "u.employee", "", $param, "", $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['u.fk_user']['checked'])) {
-	print_liste_field_titre("HierarchicalResponsible", $_SERVER['PHP_SELF'], "u.fk_user", $param, "", "", $sortfield, $sortorder);
+	print_liste_field_titre("HierarchicalResponsible", $_SERVER['PHP_SELF'], "u.fk_user", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['u.accountancy_code']['checked'])) {
-	print_liste_field_titre("AccountancyCode", $_SERVER['PHP_SELF'], "u.accountancy_code", $param, "", "", $sortfield, $sortorder);
+	print_liste_field_titre("AccountancyCode", $_SERVER['PHP_SELF'], "u.accountancy_code", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['u.office_phone']['checked'])) {
-	print_liste_field_titre("PhonePro", $_SERVER['PHP_SELF'], "u.office_phone", $param, "", "", $sortfield, $sortorder);
+	print_liste_field_titre("PhonePro", $_SERVER['PHP_SELF'], "u.office_phone", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['u.user_mobile']['checked'])) {
-	print_liste_field_titre("PhoneMobile", $_SERVER['PHP_SELF'], "u.user_mobile", $param, "", "", $sortfield, $sortorder);
+	print_liste_field_titre("PhoneMobile", $_SERVER['PHP_SELF'], "u.user_mobile", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['u.email']['checked'])) {
-	print_liste_field_titre("EMail", $_SERVER['PHP_SELF'], "u.email", $param, "", "", $sortfield, $sortorder);
+	print_liste_field_titre("EMail", $_SERVER['PHP_SELF'], "u.email", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['co.label']['checked'])) {
-	print_liste_field_titre("Country", $_SERVER['PHP_SELF'], "co.label", $param, "", "", $sortfield, $sortorder);
+	print_liste_field_titre("Country", $_SERVER['PHP_SELF'], "co.label", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['u.api_key']['checked'])) {
-	print_liste_field_titre("ApiKey", $_SERVER['PHP_SELF'], "u.api_key", $param, "", "", $sortfield, $sortorder);
+	print_liste_field_titre("ApiKey", $_SERVER['PHP_SELF'], "u.api_key", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['u.fk_soc']['checked'])) {
-	print_liste_field_titre("Company", $_SERVER['PHP_SELF'], "u.fk_soc", $param, "", "", $sortfield, $sortorder);
+	print_liste_field_titre("Company", $_SERVER['PHP_SELF'], "u.fk_soc", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['u.entity']['checked'])) {
-	print_liste_field_titre($arrayfields['u.entity']['label'], $_SERVER['PHP_SELF'], "u.entity", $param, "", "", $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['u.entity']['label'], $_SERVER['PHP_SELF'], "u.entity", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['u.ref_employee']['checked'])) {
-	print_liste_field_titre("RefEmployee", $_SERVER['PHP_SELF'], "u.ref_employee", $param, "", "", $sortfield, $sortorder);
+	print_liste_field_titre("RefEmployee", $_SERVER['PHP_SELF'], "u.ref_employee", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['u.national_registration_number']['checked'])) {
-	print_liste_field_titre("NationalRegistrationNumber", $_SERVER['PHP_SELF'], "u.national_registration_number", $param, "", "", $sortfield, $sortorder);
+	print_liste_field_titre("NationalRegistrationNumber", $_SERVER['PHP_SELF'], "u.national_registration_number", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['u.job']['checked'])) {
-	print_liste_field_titre($arrayfields['u.job']['label'], $_SERVER['PHP_SELF'], "u.job", $param, "", "", $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['u.job']['label'], $_SERVER['PHP_SELF'], "u.job", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['u.salary']['checked'])) {
-	print_liste_field_titre("Salary", $_SERVER['PHP_SELF'], "u.salary", $param, "", "", $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("Salary", $_SERVER['PHP_SELF'], "u.salary", "", $param, "", $sortfield, $sortorder, 'right ');
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['u.thm']['checked'])) {
+	print_liste_field_titre("THM", $_SERVER['PHP_SELF'], "u.thm", '', $param, "", $sortfield, $sortorder, 'right ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['u.datelastlogin']['checked']) && getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0) {
-	print_liste_field_titre("LastConnexion", $_SERVER['PHP_SELF'], "u.datelastlogin", $param, "", '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre("LastConnexion", $_SERVER['PHP_SELF'], "u.datelastlogin", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['u.datepreviouslogin']['checked']) && getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0) {
-	print_liste_field_titre("PreviousConnexion", $_SERVER['PHP_SELF'], "u.datepreviouslogin", $param, "", '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre("PreviousConnexion", $_SERVER['PHP_SELF'], "u.datepreviouslogin", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 // Extra fields
@@ -1113,9 +1120,9 @@ while ($i < $imaxinloop) {
 			print '<td class="nowraponall tdoverflowmax150">';
 			print $li;
 			if (isModEnabled('multicompany') && $obj->admin && !$obj->entity) {
-				print img_picto($langs->trans("SuperAdministratorDesc"), 'redstar', 'class="valignmiddle paddingright paddingleft"');
+				print img_picto($langs->trans("SuperAdministratorDesc"), 'superadmin', 'class="valignmiddle paddingright paddingleft"');
 			} elseif ($obj->admin) {
-				print img_picto($langs->trans("AdministratorDesc"), 'star', 'class="valignmiddle paddingright paddingleft"');
+				print img_picto($langs->trans("AdministratorDesc"), 'admin', 'class="valignmiddle paddingright paddingleft"');
 			}
 			print '</td>';
 			if (!$i) {
@@ -1187,9 +1194,9 @@ while ($i < $imaxinloop) {
 				$user2->statut = $obj->status2;
 				$user2->status = $obj->status2;
 				if (isModEnabled('multicompany') && $obj->admin2 && !$obj->entity2) {
-					print img_picto($langs->trans("SuperAdministratorDesc"), 'redstar', 'class="valignmiddle paddingright"');
+					print img_picto($langs->trans("SuperAdministratorDesc"), 'superadmin', 'class="valignmiddle paddingright"');
 				} elseif ($obj->admin2) {
-					print img_picto($langs->trans("AdministratorDesc"), 'star', 'class="valignmiddle paddingright"');
+					print img_picto($langs->trans("AdministratorDesc"), 'admin', 'class="valignmiddle paddingright"');
 				}
 				print $user2->getNomUrl(-1, '', 0, 0, 24, 0, '', '', 1);
 			}
@@ -1341,6 +1348,18 @@ while ($i < $imaxinloop) {
 				$totalarray['val']['u.salary'] = 0;
 			}
 			$totalarray['val']['u.salary'] += $obj->salary;
+		}
+
+		// Hourly rate
+		if (!empty($arrayfields['u.thm']['checked'])) {
+			print '<td class="nowraponall right amount">';
+			if (!is_null($obj->thm)) {
+				print price($obj->thm);
+			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 
 		// Date last login

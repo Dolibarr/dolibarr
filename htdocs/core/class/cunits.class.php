@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2007-2011 Laurent Destailleur      <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,8 +92,8 @@ class CUnits extends CommonDict
 
 		// Clean parameters
 
-		if (isset($this->id)) {
-			$this->id = (int) $this->id;
+		if (empty($this->id)) {
+			return -1;
 		}
 		if (isset($this->code)) {
 			$this->code = trim($this->code);
@@ -126,7 +126,7 @@ class CUnits extends CommonDict
 		$sql .= "unit_type,";
 		$sql .= "scale";
 		$sql .= ") VALUES (";
-		$sql .= " ".(!isset($this->id) ? 'NULL' : "'".$this->db->escape((string) $this->id)."'").",";
+		$sql .= (int) $this->id . ",";
 		$sql .= " ".(!isset($this->code) ? 'NULL' : "'".$this->db->escape($this->code)."'").",";
 		$sql .= " ".(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'").",";
 		$sql .= " ".(!isset($this->short_label) ? 'NULL' : "'".$this->db->escape($this->short_label)."'").",";

@@ -1082,7 +1082,7 @@ class FormOther
 	 *
 	 *      @param  int|string  $selected          	Preselected value
 	 *      @param  string      $htmlname          	Name of HTML select object
-	 *      @param  int         $useempty          	Show empty in list
+	 *      @param  int|string  $useempty          	Show empty in list
 	 *      @param  int         $longlabel         	Show long label (1) or short label (0)
 	 *      @param	string		$morecss			More Css
 	 *  	@param  bool		$addjscombo			Add js combo
@@ -1103,7 +1103,11 @@ class FormOther
 
 		$select_month = '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'" id="'.$htmlname.'">';
 		if ($useempty) {
-			$select_month .= '<option value="0">&nbsp;</option>';
+			if (is_numeric($useempty)) {
+				$select_month .= '<option value="0">&nbsp;</option>';
+			} else {
+				$select_month .= '<option value="-1">'.$useempty.'</option>';
+			}
 		}
 		foreach ($montharray as $key => $val) {
 			if ((int) $selected == $key) {

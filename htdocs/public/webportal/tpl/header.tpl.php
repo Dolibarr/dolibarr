@@ -66,10 +66,10 @@ top_httphead();
 	// JQuery
 	//$jQueryJSUrl = $context->rootUrl.'includes/jquery/js/jquery.js';
 	//$jQueryJSUrl = dol_buildpath('/includes/jquery/js/jquery.js', 2);
-	$jQueryJSUrl = dirname($context->rootUrl).'/includes/jquery/jquery.min.js';
+	$jQueryJSUrl = dirname($context->rootUrl).'/includes/jquery/js/jquery.min.js';
 	print '<script src="'.$jQueryJSUrl.'"></script>'."\n";
 
-	$jQueryUIJSUrl = dirname($context->rootUrl).'/includes/jquery/jquery-ui.min.js';
+	$jQueryUIJSUrl = dirname($context->rootUrl).'/includes/jquery/js/jquery-ui.min.js';
 	print '<script src="'.$jQueryUIJSUrl.'"></script>'."\n";
 
 	// JNotify
@@ -77,6 +77,10 @@ top_httphead();
 	//$jNotifyJSUrl = dol_buildpath('/includes/jquery/plugins/jnotify/jquery.jnotify.min.js', 2);
 	$jNotifyJSUrl = dirname($context->rootUrl).'/includes/jquery/plugins/jnotify/jquery.jnotify.min.js';
 	print '<script src="'.$jNotifyJSUrl.'"></script>'."\n";
+
+	// Modal script
+	$ModalJSUrl = $context->rootUrl.'js/modal.js';
+	print '<script src="'.$ModalJSUrl.'"></script>'."\n";
 
 	// Common dolibarr js functions
 	$jQueryUIJSUrl = $context->rootUrl.'js/lib_head.js.php';

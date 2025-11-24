@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +31,7 @@
  * @property	string				$error
  * @property	string				$table_element
  * @property	array<string,mixed>	$context
- * @method		int					call_trigger(string $triggerName, User $user)
+ * @method		int					call_trigger(string $triggerName, ?User $user)
  */
 trait CommonSignedObject
 {
@@ -137,7 +138,7 @@ trait CommonSignedObject
 			$statusfield = 'signed_status';
 
 			$sql = "UPDATE ".$this->db->prefix().$this->table_element;
-			$sql .= " SET ".$statusfield." = ".((int) $status);
+			$sql .= " SET ".$this->db->sanitize($statusfield)." = ".((int) $status);
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			if ($this->db->query($sql)) {

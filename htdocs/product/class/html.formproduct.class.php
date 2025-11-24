@@ -564,7 +564,7 @@ class FormProduct
 	 *
 	 *  @param  string		$name                Name of HTML field
 	 *  @param  string		$measuring_style     Unit to show: weight, size, surface, volume, time
-	 *  @param  string		$selected            Preselected value
+	 *  @param  int|string	$selected            Preselected value. Can be a numeric -3, 0, 3, ... 60, 3600, ... for time or a short label like 'm', 'm2', ...
 	 *  @param  int|string	$adddefault			 1=Add empty unit called "Default", ''=Add empty value
 	 *  @param  int<0,2>	$mode                1=Use short label as value, 0=Use rowid, 2=Use scale (power)
 	 *  @param	string		$morecss			 More CSS
@@ -575,6 +575,8 @@ class FormProduct
 		global $langs, $db;
 
 		$langs->load("other");
+
+		$selected = (string) $selected;
 
 		$return = '';
 		$placeholderID = ($mode == 2 ? '99999999' : '-1'); // we don't want ajaxcombobox replace clearing option in mode 2
@@ -624,9 +626,9 @@ class FormProduct
 				}
 				$return .= '>';
 				if ($measuring_style == 'time') {
-					$return .= $langs->trans(ucfirst($lines->label));
+					$return .= $langs->trans(ucfirst((string) $lines->label));
 				} else {
-					$return .= $langs->trans($lines->label);
+					$return .= $langs->trans((string) $lines->label);
 				}
 				$return .= '</option>';
 			}
@@ -695,7 +697,7 @@ class FormProduct
 					}
 
 					$return .= '>';
-					$return .= $langs->trans($lines->label);
+					$return .= $langs->trans((string) $lines->label);
 					$return .= '</option>';
 				}
 			}

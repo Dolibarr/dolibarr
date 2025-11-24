@@ -29,19 +29,18 @@
 /**
  *	\file       htdocs/filefunc.inc.php
  * 	\ingroup	core
- *  \brief      File that include conf.php file and commons lib like functions.lib.php
+ *  \brief      File that include the conf.php file and commons lib like functions.lib.php
  */
+
+
+define('DOL_MINOR_VERSION', '0.0-beta');
 
 if (!defined('DOL_APPLICATION_TITLE')) {
 	define('DOL_APPLICATION_TITLE', 'Dolibarr');
 }
-if (!defined('DOL_VERSION')) {
-	define('DOL_VERSION', '23.0.0-alpha'); // a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
-}
 
-if (!defined('EURO')) {
-	define('EURO', chr(128));
-}
+require_once 'version.inc.php';		// Define the DOL_VERSION
+
 
 // Define syslog constants
 if (!defined('LOG_DEBUG')) {
@@ -196,23 +195,9 @@ $result = @include_once $conffile; // Keep @ because with some error reporting m
 @phan-var-force ?string $dolibarr_lib_TCPDI_PATH
 ';
 
-// Disable some not used PHP stream
-$listofwrappers = stream_get_wrappers();
-// We need '.phar' for geoip2. TODO Replace phar in geoip with exploded files so we can disable phar by default.
-// phar stream does not auto unserialize content (possible code execution) since PHP 8.1
-// zip stream is necessary by excel import module
-$arrayofstreamtodisable = array('compress.zlib', 'compress.bzip2', 'ftp', 'ftps', 'glob', 'data', 'expect', 'ogg', 'rar', 'zlib');
-if (!empty($dolibarr_main_stream_to_disable) && is_array($dolibarr_main_stream_to_disable)) {
-	$arrayofstreamtodisable = $dolibarr_main_stream_to_disable;
-}
-foreach ($arrayofstreamtodisable as $streamtodisable) {
-	if (!empty($listofwrappers) && in_array($streamtodisable, $listofwrappers)) {
-		/*if (!empty($dolibarr_main_stream_do_not_disable) && is_array($dolibarr_main_stream_do_not_disable) && in_array($streamtodisable, $dolibarr_main_stream_do_not_disable)) {
-			continue;	// We do not disable this stream
-		}*/
-		stream_wrapper_unregister($streamtodisable);
-	}
-}
+/*
+ * Redirect if install not done
+ */
 
 if (!$result && !empty($_SERVER["GATEWAY_INTERFACE"])) {    // If install not done and we are in a web session
 	if (!empty($_SERVER["CONTEXT_PREFIX"])) {    // CONTEXT_PREFIX and CONTEXT_DOCUMENT_ROOT are not defined on all apache versions
@@ -331,8 +316,13 @@ if (empty($dolibarr_strict_mode)) {
 
 define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root); // Filesystem core php (htdocs)
 
-if (!file_exists(DOL_DOCUMENT_ROOT."/core/lib/functions.lib.php")) {
-	print "Error: Dolibarr config file content seems to be not correctly defined (file ".DOL_DOCUMENT_ROOT."/core/lib/functions.lib.php not found).<br>\n";
+if (empty(DOL_DOCUMENT_ROOT) || !file_exists(DOL_DOCUMENT_ROOT."/core/lib/functions.lib.php")) {
+	print "Error: Dolibarr config file content seems to be not correctly defined";
+	if (empty($dolibarr_main_document_root)) {
+		print " (dolibarr_main_document_root can't be known).<br>\n";
+	} else {
+		print " (file ".DOL_DOCUMENT_ROOT."/core/lib/functions.lib.php not found).<br>\n";
+	}
 	print "Please run dolibarr setup by calling page <b>/install</b>.<br>\n";
 	exit(1);
 }
@@ -494,7 +484,7 @@ if (!defined('DOL_DEFAULT_TTF_BOLD')) {
 
 
 /*
- * Include functions
+ * Decode values read in conf file
  */
 
 // If password is encoded, we decode it. Note: When page is called for install, $dolibarr_main_db_pass may not be defined yet.

@@ -192,29 +192,30 @@ $dolibarr_main_db_collation='utf8_unicode_ci';
 $dolibarr_main_db_readonly=0;
 
 
-// dolibarr_main_instance_unique_id
-// ================================
-// An secret ID that is unique for each installation.
-// This value is also never visible and never propagated outside of Dolibarr, so it can be used as a salt / key for some encryption (For example to get
-// a unique hashed key, application will hash the value concatenated with a string. Example: sha256('dolibarr'+dolibarr_main_instance_unique_id)
-// WARNING: Changing this value will also make some sensitive values encrypted in database wrong.
-// Default value: randomly defined during installation
-// Examples:
-// $dolibarr_main_instance_unique_id='84b5bc91f83b56e458db71e0adac2b62';
-//
-$dolibarr_main_instance_unique_id='84b5bc91f83b56e458db71e0adac2b62';
-
-
 // dolibarr_main_dolcrypt_key
 // ==========================
 // An secret key to encrypt/decrypt data with the dolcrypt() method, for reversible encryption.
 // This value is also never visible and never propagated outside of Dolibarr, it is used as key for the dolcrypt encryption.
-// WARNING: Changing this value will also make some sensitive values encrypted in database wrong.
+// If you restore a complete system backup (from a SQL dump), you must also restore this value because some data are encrypted into database by using this key.
+// WARNING: Changing this value will make some sensitive encrypted values in database wrong (no way to read it without the correct key, so you
+// must also save this key when you make a database backup).
 // Default value: ''. When not defined, the $dolibarr_main_instance_unique_id will be used instead.
 // Examples:
 // $dolibarr_main_dolcrypt_key='';
 //
 $dolibarr_main_dolcrypt_key='';
+
+
+// dolibarr_main_instance_unique_id
+// ================================
+// An ID that is unique for each installation.
+// This value is also never visible and never propagated outside of Dolibarr. It can be used as a salt/key for some encryption (For example to get
+// a unique hashed key for URLs, application will hash the value to hash concatenated with this string. Example: sha256('dolibarr'+dolibarr_main_instance_unique_id)
+// Default value: randomly defined during installation
+// Examples:
+// $dolibarr_main_instance_unique_id='84b5bc91f83b56e458db71e0adac2b62';
+//
+$dolibarr_main_instance_unique_id='84b5bc91f83b56e458db71e0adac2b62';
 
 
 //##################
@@ -310,6 +311,16 @@ $dolibarr_main_prod='1';
 // $dolibarr_main_restrict_os_commands='mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pg_restore, clamdscan, clamdscan.exe';
 //
 $dolibarr_main_restrict_os_commands='mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pg_restore, clamdscan, clamdscan.exe';
+
+// dolibarr_main_restrict_eval_methods
+// ==================================
+// A whitelist of functions and methods to restrict the commands you can execute in a custom calculated fields, like "computed fields" of
+// extrafields or string conditions of extrafields.
+// Default value: 'getDolGlobalString,getDolGlobalInt,getDolCurrency,fetchNoCompute,hasRight,isModEnabled,isStringVarMatching,abs,round,dol_now,preg_match'
+// Examples:
+// $dolibarr_main_restrict_eval_methods='getDolGlobalString,getDolGlobalInt,getDolCurrency,fetchNoCompute,hasRight,isModEnabled,isStringVarMatching,abs,min,max,round,dol_now,dol_concat,preg_match';
+//
+$dolibarr_main_restrict_eval_methods='getDolGlobalString,getDolGlobalInt,getDolCurrency,fetchNoCompute,hasRight,isModEnabled,isStringVarMatching,abs,min,max,round,dol_now,preg_match';
 
 // dolibarr_main_disabled_modules
 // ==================================

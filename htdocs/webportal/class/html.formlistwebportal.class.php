@@ -2,7 +2,7 @@
 /* Copyright (C) 2023-2024 	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
  * Copyright (C) 2023-2024	Patrice Andreani		<pandreani@easya.solutions>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -92,7 +92,7 @@ class FormListWebPortal
 	public $contextpage = '';
 
 	/**
-	 * @var string[] Search filters
+	 * @var array<string|int> Search filters
 	 */
 	public $search = array();
 
@@ -200,7 +200,7 @@ class FormListWebPortal
 				$arrayfields['t.' . $key] = array(
 					'label' => $val['label'],
 					'checked' => (($visible < 0) ? 0 : 1),
-					'enabled' => (int) (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
+					'enabled' => (int) (abs($visible) != 3 && (bool) dol_eval((string) $val['enabled'], 1)),
 					'position' => $val['position'],
 					'help' => isset($val['help']) ? $val['help'] : ''
 				);

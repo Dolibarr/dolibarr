@@ -395,6 +395,7 @@ class Invoices extends DolibarrApi
 	 *
 	 * @throws RestException 400
 	 * @throws RestException 401
+	 * @throws RestException 403		Access not allowed for login
 	 * @throws RestException 404
 	 * @throws RestException 405
 	 */
@@ -410,6 +411,9 @@ class Invoices extends DolibarrApi
 		}
 		if (empty($orderid)) {
 			throw new RestException(400, 'Order ID is mandatory');
+		}
+		if (!DolibarrApi::_checkAccessToResource('commande', $orderid)) {
+			throw new RestException(403, 'Access not allowed on order for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$order = new Commande($this->db);
@@ -1883,9 +1887,12 @@ class Invoices extends DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
+	 * @phpstan-template T
 	 *
 	 * @param   Object  $object     Object to clean
 	 * @return  Object              Object with cleaned properties
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	protected function _cleanObjectDatas($object)
 	{

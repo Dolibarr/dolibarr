@@ -101,8 +101,8 @@ if (!empty($action) && preg_match('/upgrade/i', $action)) {
 $langs->loadLangs(array("admin", "install"));
 
 $login = GETPOST('login', 'alpha') ? GETPOST('login', 'alpha') : (empty($argv[5]) ? '' : $argv[5]);
-$pass = GETPOST('pass', 'alpha') ? GETPOST('pass', 'alpha') : (empty($argv[6]) ? '' : $argv[6]);
-$pass_verif = GETPOST('pass_verif', 'alpha') ? GETPOST('pass_verif', 'alpha') : (empty($argv[7]) ? '' : $argv[7]);
+$pass = GETPOST('pass', 'password') ? GETPOST('pass', 'password') : (empty($argv[6]) ? '' : $argv[6]);
+$pass_verif = GETPOST('pass_verif', 'password') ? GETPOST('pass_verif', 'password') : (empty($argv[7]) ? '' : $argv[7]);
 
 $success = 0;
 
@@ -178,7 +178,7 @@ if ($action == "set") {		// Test on permissions not required here
 
 $morehtml = '';
 
-pHeader($langs->trans("DolibarrSetup").' - '.$langs->trans("SetupEnd"), "step5", 'set', '', '', 'main-inside main-inside-borderbottom');
+pHeader($langs->trans("DolibarrSetup"), "step5", 'set', '', '', 'main-inside main-inside-borderbottom');
 print '<br>';
 
 // Test if we can run a first install process

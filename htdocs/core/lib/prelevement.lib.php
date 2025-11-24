@@ -3,6 +3,7 @@
  * Copyright (C) 2010		Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2011      	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +49,7 @@ function prelevement_prepare_head(BonPrelevement $object)
 		$titleoftab = "BankTransferReceipts";
 	}
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/prelevement/card.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans($titleoftab);
 	$head[$h][2] = 'prelevement';
 	$h++;
@@ -61,17 +62,17 @@ function prelevement_prepare_head(BonPrelevement $object)
 		$titleoftab = $langs->trans("Salaries");
 	}
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/factures.php?id='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/prelevement/factures.php', ['id' => $object->id]);
 	$head[$h][1] = $titleoftab;
 	$head[$h][2] = 'invoices';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche-rejet.php?id='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/prelevement/fiche-rejet.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans("Rejects");
 	$head[$h][2] = 'rejects';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche-stat.php?id='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/prelevement/fiche-stat.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans("Statistics");
 	$head[$h][2] = 'statistics';
 	$h++;
@@ -132,14 +133,14 @@ function bon_prelevement_prepare_head(BonPrelevement $object, $nbOfInvoices, $nb
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/create.php?type=bank-transfer';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/prelevement/create.php', ['type' => 'bank-transfer']);
 	$head[$h][1] = ($nbOfInvoices <= 0 ? $langs->trans("Invoices") : $langs->trans("Invoices").'<span class="badge marginleftonlyshort">'.$nbOfInvoices.'</span>');
 	$head[$h][2] = 'invoice';
 	$h++;
 
 	// Salaries
 
-	$head[$h][0] = DOL_URL_ROOT."/compta/prelevement/create.php?type=bank-transfer&sourcetype=salary";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/prelevement/create.php', ['type' => 'bank-transfer', 'sourcetype' => 'salary']);
 	$head[$h][1] = ($nbOfSalaryInvoice <= 0 ? $langs->trans("Salaries") : $langs->trans("Salaries").'<span class="badge marginleftonlyshort">'.$nbOfSalaryInvoice.'</span>');
 	$head[$h][2] = 'salary';
 	$h++;

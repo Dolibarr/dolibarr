@@ -3,6 +3,7 @@
  * Copyright (C) 2014       Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Rafael San José     <rsanjose@alxarafe.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,7 +68,7 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
 		require_once DOL_DOCUMENT_ROOT."/mailmanspip/class/mailmanspip.class.php";
 		require_once DOL_DOCUMENT_ROOT."/user/class/usergroup.class.php";
 
-		if ($action == 'CATEGORY_MODIFY') {
+		if ($action == 'CATEGORY_MODIFY' && $object instanceof Categorie) {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 			$return = 1;
@@ -87,7 +88,7 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
 			}
 
 			return $return;
-		} elseif ($action == 'MEMBER_VALIDATE') {
+		} elseif ($action == 'MEMBER_VALIDATE' && $object instanceof Adherent) {
 			'@phan-var-force Adherent $object';
 			// Members
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
@@ -104,7 +105,7 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
 			}
 
 			return $return;
-		} elseif ($action == 'MEMBER_MODIFY') {
+		} elseif ($action == 'MEMBER_MODIFY' && $object instanceof Adherent) {
 			'@phan-var-force Adherent $object';
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
@@ -138,7 +139,7 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
 			}
 
 			return $return;
-		} elseif ($action == 'MEMBER_RESILIATE' || $action == 'MEMBER_DELETE') {
+		} elseif (($action == 'MEMBER_RESILIATE' || $action == 'MEMBER_DELETE') && $object instanceof Adherent) {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 			$return = 0;

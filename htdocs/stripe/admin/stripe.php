@@ -258,7 +258,7 @@ if (empty($conf->stripeconnect->enabled)) {
 	$url = dol_buildpath('/public/stripe/ipn.php', 3);
 	$url .= '?test=1';
 	//global $dolibarr_main_instance_unique_id;
-	//$url .= '&securitykey='.dol_hash('stripeipn-'.$dolibarr_main_instance_unique_id.'-'.$conf->global->STRIPE_TEST_PUBLISHABLE_KEY, 'md5');
+	//$url .= '&securitykey='.dol_hash('stripeipn-'.$dolibarr_main_instance_unique_id.'-'.getDolGlobalString('STRIPE_TEST_PUBLISHABLE_KEY'), 'md5');
 	$out .= '<input type="text" id="onlinetestwebhookurl" class="minwidth500" value="'.$url.'" disabled>';
 	$out .= ajax_autoselect("onlinetestwebhookurl");
 	print '<br>'.$out;
@@ -307,7 +307,7 @@ if (empty($conf->stripeconnect->enabled)) {
 	print price(getDolGlobalString('STRIPE_APPLICATION_FEE_PERCENT'));
 	print '% + ';
 	print price(getDolGlobalString('STRIPE_APPLICATION_FEE'));
-	print ' '.$langs->getCurrencySymbol($conf->currency).' '.$langs->trans("minimum").' '.price(getDolGlobalString('STRIPE_APPLICATION_FEE_MINIMAL')).' '.$langs->getCurrencySymbol($conf->currency);
+	print ' '.$langs->getCurrencySymbol(getDolCurrency()).' '.$langs->trans("minimum").' '.price(getDolGlobalString('STRIPE_APPLICATION_FEE_MINIMAL')).' '.$langs->getCurrencySymbol(getDolCurrency());
 	print '</td><td></td></tr>';
 }
 
@@ -332,7 +332,7 @@ if (empty($conf->stripeconnect->enabled)) {
 	$out = img_picto('', 'globe', 'class="pictofixedwidth"').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForLiveWebhook").'</span> ';
 	$url = dol_buildpath('/public/stripe/ipn.php', 3);
 	//global $dolibarr_main_instance_unique_id;
-	//$url .= '?securitykey='.dol_hash('stripeipn-'.$dolibarr_main_instance_unique_id.'-'.$conf->global->STRIPE_LIVE_PUBLISHABLE_KEY, 'md5');
+	//$url .= '?securitykey='.dol_hash('stripeipn-'.$dolibarr_main_instance_unique_id.'-'.getDolGlobalString('STRIPE_LIVE_PUBLISHABLE_KEY'), 'md5');
 	$out .= '<input type="text" id="onlinelivewebhookurl" class="minwidth500" value="'.$url.'" disabled>';
 	$out .= ajax_autoselect("onlinelivewebhookurl", '0');
 	print '<br>'.$out;

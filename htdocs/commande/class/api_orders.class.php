@@ -179,6 +179,8 @@ class Orders extends DolibarrApi
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $sqlfilterlines = '', $properties = '', $pagination_data = false, $loadlinkedobjects = 0)
 	{
+		global $hookmanager;
+
 		if (!DolibarrApiAccess::$user->hasRight('commande', 'lire')) {
 			throw new RestException(403);
 		}
@@ -210,6 +212,9 @@ class Orders extends DolibarrApi
 				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
 			}
 		}
+		$parameters = array();
+		$hookmanager->executeHooks('printFieldListWhere', $parameters, $this->commande); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
@@ -1188,9 +1193,12 @@ class Orders extends DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
+	 * @phpstan-template T
 	 *
 	 * @param   Object  $object			Object to clean
 	 * @return  Object					Object with cleaned properties
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	protected function _cleanObjectDatas($object)
 	{

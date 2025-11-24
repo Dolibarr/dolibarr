@@ -99,17 +99,17 @@ class CommandeFournisseur extends CommonOrder
 	public $id;
 
 	/**
-	 * @var string Supplier order reference
+	 * @var ?string Supplier order reference
 	 */
 	public $ref;
 
 	/**
-	 * @var string Supplier reference
+	 * @var ?string Supplier reference
 	 */
 	public $ref_supplier;
 
 	/**
-	 * @var string ref supplier
+	 * @var ?string ref supplier
 	 * @deprecated
 	 * @see $ref_supplier
 	 */
@@ -132,38 +132,38 @@ class CommandeFournisseur extends CommonOrder
 	public $billed;
 
 	/**
-	 * @var int Company ID
+	 * @var ?int Company ID
 	 */
 	public $socid;
 
 	/**
-	 * @var int Supplier ID
+	 * @var ?int Supplier ID
 	 */
 	public $fourn_id;
 
 	/**
-	 * @var int Date
+	 * @var int|'' Date
 	 */
 	public $date;
 
 	/**
-	 * @var int Date of the purchase order validation
+	 * @var int|'' Date of the purchase order validation
 	 */
 	public $date_valid;
 
 	/**
-	 * @var int Date of the purchase order approval
+	 * @var int|'' Date of the purchase order approval
 	 */
 	public $date_approve;
 
 	/**
-	 * @var int Date of the purchase order second approval
+	 * @var int|'' Date of the purchase order second approval
 	 * Used when SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED is set
 	 */
 	public $date_approve2;
 
 	/**
-	 * @var int Date of the purchase order ordering
+	 * @var int|'' Date of the purchase order ordering
 	 */
 	public $date_commande;
 
@@ -264,17 +264,17 @@ class CommandeFournisseur extends CommonOrder
 	public $mode_reglement;
 
 	/**
-	 * @var int User ID of the purchase order author
+	 * @var ?int User ID of the purchase order author
 	 */
 	public $user_author_id;
 
 	/**
-	 * @var int User ID of the purchase order approver
+	 * @var ?int User ID of the purchase order approver
 	 */
 	public $user_approve_id;
 
 	/**
-	 * @var int User ID of the purchase order second approver
+	 * @var ?int User ID of the purchase order second approver
 	 * Used when SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED is set
 	 */
 	public $user_approve_id2;
@@ -313,6 +313,7 @@ class CommandeFournisseur extends CommonOrder
 	 * @var int Date of the purchase order payment deadline
 	 */
 	public $date_lim_reglement;
+
 	/**
 	 * @var array<int,float>
 	 */
@@ -806,10 +807,10 @@ class CommandeFournisseur extends CommonOrder
 			}
 			// Definition of supplier order numbering model name
 			$soc = new Societe($this->db);
-			$soc->fetch($this->fourn_id);
+			$soc->fetch((int) $this->fourn_id);
 
 			// Check if object has a temporary ref
-			if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
+			if (preg_match('/^[\(]?PROV/i', (string) $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
 				$num = $this->getNextNumRef($soc);
 			} else {
 				$num = (string) $this->ref;
@@ -1212,14 +1213,12 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= " WHERE rowid = ".((int) $this->id).' AND fk_statut > '.self::STATUS_DRAFT;
 
 		if ($this->db->query($sql)) {
-			if (!$error) {
-				// Call trigger
-				$result = $this->call_trigger('ORDER_SUPPLIER_CLASSIFY_BILLED', $user);
-				if ($result < 0) {
-					$error++;
-				}
-				// End call triggers
+			// Call trigger
+			$result = $this->call_trigger('ORDER_SUPPLIER_CLASSIFY_BILLED', $user);
+			if ($result < 0) {
+				$error++;
 			}
+			// End call triggers
 
 			if (!$error) {
 				$this->billed = 1;
@@ -1301,7 +1300,7 @@ class CommandeFournisseur extends CommonOrder
 
 			// Definition of order numbering model name
 			$soc = new Societe($this->db);
-			$soc->fetch($this->fourn_id);
+			$soc->fetch((int) $this->fourn_id);
 
 			// Check if object has a temporary ref
 			if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
@@ -1741,7 +1740,7 @@ class CommandeFournisseur extends CommonOrder
 						}
 
 						// Add object linked
-						if (!$error && $this->id && !empty($this->linked_objects) && is_array($this->linked_objects)) {
+						if (!empty($this->linked_objects) && is_array($this->linked_objects)) {
 							foreach ($this->linked_objects as $origin => $tmp_origin_id) {
 								if (is_array($tmp_origin_id)) {       // New behaviour, if linked_object can have several links per type, so is something like array('contract'=>array(id1, id2, ...))
 									foreach ($tmp_origin_id as $origin_id) {
@@ -2703,7 +2702,7 @@ class CommandeFournisseur extends CommonOrder
 			// Some checks to accept the record
 			if (getDolGlobalString('SUPPLIER_ORDER_USE_DISPATCH_STATUS')) {
 				// If option SUPPLIER_ORDER_USE_DISPATCH_STATUS is on, we check all reception are approved to allow status "total/done"
-				if (!$error && ($type == 'tot')) {
+				if ($type == 'tot') {
 					$dispatchedlinearray = $this->getDispachedLines(0);
 					if (count($dispatchedlinearray) > 0) {
 						$result = -1;

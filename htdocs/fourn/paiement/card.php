@@ -5,6 +5,7 @@
  * Copyright (C) 2014      Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		Vincent Maury				<vmaury@timgroup.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -368,9 +369,9 @@ if ($result > 0) {
 	if ($user->socid == 0 && $action != 'presend') {
 		$usercansend = (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight("fournisseur", "supplier_invoice_advance", "send")));
 		if ($usercansend) {
-			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
+			print dolGetButtonAction('', $langs->trans('SendMail'), 'default', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'presend', 'mode' => 'init'], true).'#formmailbeforetitle', '');
 		} else {
-			print '<span class="butActionRefused classfortooltip">'.$langs->trans('SendMail').'</span>';
+			print dolGetButtonAction('', $langs->trans('SendMail'), 'default', '#', '', false);
 		}
 	}
 
@@ -427,7 +428,7 @@ if ($result > 0) {
 	}
 
 	// Presend form
-	$modelmail = ''; //TODO: Add new 'payment receipt' model in email models
+	$modelmail = 'supplier_payment_send';
 	$defaulttopic = 'SendPaymentReceipt';
 	$diroutput = $conf->fournisseur->payment->dir_output;
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO';

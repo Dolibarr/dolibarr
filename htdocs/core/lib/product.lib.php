@@ -163,7 +163,21 @@ function product_prepare_head($object)
 			$h++;
 		}
 	}
-
+	if (!getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB')) {
+		$objectsrc = $object;
+		if ($object->origin == 'product' && $object->origin_id > 0) {
+			$objectsrc = new Product($db);
+			$objectsrc->fetch($object->origin_id);
+		}
+		$nbContact = count($objectsrc->liste_contact(-1, 'internal')) + count($objectsrc->liste_contact(-1, 'external'));
+		$head[$h][0] = DOL_URL_ROOT."/product/contact.php?id=".$object->id;
+		$head[$h][1] = $langs->trans("ContactsAddresses");
+		if ($nbContact > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
+		}
+		$head[$h][2] = 'contact';
+		$h++;
+	}
 	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/stats/facture.php', ['showmessage' => 1, 'id' => $object->id]);
 	$head[$h][1] = $langs->trans('Referers');
 	$head[$h][2] = 'referers';
@@ -957,9 +971,9 @@ function measuringUnitString($unitid, $measuring_style = '', $unitscale = null, 
 				if ($use_short_label == 1) {
 					$labeltoreturn = $measuringUnits->records[key($measuringUnits->records)]->short_label;
 				} elseif ($use_short_label == 2) {
-					$labeltoreturn = $outputlangs->transnoentitiesnoconv(ucfirst($measuringUnits->records[key($measuringUnits->records)]->label).'Short');
+					$labeltoreturn = $outputlangs->transnoentitiesnoconv(ucfirst((string) $measuringUnits->records[key($measuringUnits->records)]->label).'Short');
 				} else {
-					$labeltoreturn = $outputlangs->transnoentitiesnoconv($measuringUnits->records[key($measuringUnits->records)]->label);
+					$labeltoreturn = $outputlangs->transnoentitiesnoconv((string) $measuringUnits->records[key($measuringUnits->records)]->label);
 				}
 			} else {
 				$labeltoreturn = '';

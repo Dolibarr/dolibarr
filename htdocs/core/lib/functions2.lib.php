@@ -1692,28 +1692,31 @@ function weight_convert($weight, &$from_unit, $to_unit)
 /**
  *	Save personal parameter
  *
- *	@param	DoliDB	$db         Handler database
- *	@param	Conf	$conf		Object conf
- *	@param	User	$user      	Object user
- *	@param	array<string,string|int>	$tab        Array (key=>value) with all parameters to save/update
- *	@return int         		Return integer <0 if KO, >0 if OK
+ *	@param	DoliDB						$db			Handler database
+ *	@param	Conf						$conf		Object conf
+ *	@param	User						$user		Object user
+ *	@param	array<string,string|int>	$tab		Array (key=>value) with all parameters to save/update
+ *	@param  int							$entity		If a value is >= 0, we force the search on a specific entity. If -1, means search depends on default setup.
+ *	@return int										Return integer <0 if KO, >0 if OK
  *
  *	@see		dolibarr_get_const(), dolibarr_set_const(), dolibarr_del_const()
  */
-function dol_set_user_param($db, $conf, &$user, $tab)
+function dol_set_user_param($db, $conf, &$user, $tab, $entity = -1)
 {
 	// Verification parameters
 	if (count($tab) < 1) {
 		return -1;
 	}
 
+	$entity = ($entity == -1 ? ((int) $conf->entity) : ((int) $entity));
+
 	$db->begin();
 
 	// We remove old parameters for all keys in $tab
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_param";
 	$sql .= " WHERE fk_user = ".((int) $user->id);
-	$sql .= " AND entity = ".((int) $conf->entity);
-	$sql .= " AND param in (";
+	$sql .= " AND entity = ".((int) $entity);
+	$sql .= " AND param IN (";
 	$i = 0;
 	foreach ($tab as $key => $value) {
 		if ($i > 0) {
@@ -1742,8 +1745,8 @@ function dol_set_user_param($db, $conf, &$user, $tab)
 			$value = $value["value"];
 		}
 		if ($forcevalue == 1 || $value) {
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_param(fk_user,entity,param,value)";
-			$sql .= " VALUES (".((int) $user->id).",".((int) $conf->entity).",";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_param (fk_user, entity, param, value)";
+			$sql .= " VALUES (".((int) $user->id).",".((int) $entity).",";
 			$sql .= " '".$db->escape($key)."','".$db->escape($value)."')";
 
 			dol_syslog("functions2.lib::dol_set_user_param", LOG_DEBUG);
@@ -2068,7 +2071,7 @@ function getSoapParams()
  * Return link url to an object
  *
  * @param 	int		$objectid		Id of record
- * @param 	string	$objecttype		Type of object ('invoice', 'order', 'expedition_bon', 'user', 'myobject@mymodule', ...)
+ * @param 	string	$objecttype		Type of object ('invoice', 'order', 'expedition', 'user', 'myobject@mymodule', ...)
  * @param 	int		$withpicto		Picto to show
  * @param 	string	$option			More options
  * @return	string					URL of link to object id/type
@@ -2120,7 +2123,7 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 		$langs->load('sendings');
 		$classpath = 'expedition/class';
 		$myobject = 'expedition';
-		$module = 'expedition_bon';
+		$module = 'expedition';
 	} elseif ($objecttype == 'delivery') {
 		$langs->load('sendings');
 		$classpath = 'delivery/class';
@@ -2149,7 +2152,7 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 		$langs->load('projects');
 		$classpath = 'projet/class';
 		$module = 'projet';
-	} elseif ($objecttype == 'task') {
+	} elseif ($objecttype == 'project_task') {
 		$langs->load('projects');
 		$classpath = 'projet/class';
 		$module = 'projet';
@@ -2651,17 +2654,17 @@ function getModuleDirForApiClass($moduleobject)
 
 	if ($moduleobject == 'contracts') {
 		$moduledirforclass = 'contrat';
-	} elseif (in_array($moduleobject, array('admin', 'login', 'setup', 'access', 'status', 'tools', 'documents', 'objectlinks'))) {
+	} elseif (in_array($moduleobject, array('admin', 'login', 'setup', 'access', 'status', 'tools', 'documents', 'objectlinks', 'emailtemplates'))) {
 		$moduledirforclass = 'api';
-	} elseif ($moduleobject == 'contact' || $moduleobject == 'contacts' || $moduleobject == 'customer' || $moduleobject == 'thirdparty' || $moduleobject == 'thirdparties') {
+	} elseif (in_array($moduleobject, ['contact', 'contacts', 'customer', 'thirdparty', 'thirdparties'])) {
 		$moduledirforclass = 'societe';
 	} elseif ($moduleobject == 'propale' || $moduleobject == 'proposals') {
 		$moduledirforclass = 'comm/propal';
 	} elseif ($moduleobject == 'agenda' || $moduleobject == 'agendaevents') {
 		$moduledirforclass = 'comm/action';
-	} elseif ($moduleobject == 'mailing') {
+	} elseif ($moduleobject == 'mailing' || $moduleobject == 'mailings') {
 		$moduledirforclass = 'comm/mailing';
-	} elseif ($moduleobject == 'adherent' || $moduleobject == 'members' || $moduleobject == 'memberstypes' || $moduleobject == 'subscriptions') {
+	} elseif (in_array($moduleobject, ['adherent', 'members', 'memberstypes', 'subscriptions'])) {
 		$moduledirforclass = 'adherents';
 	} elseif ($moduleobject == 'don' || $moduleobject == 'donations') {
 		$moduledirforclass = 'don';
@@ -2679,7 +2682,7 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'compta/facture';
 	} elseif ($moduleobject == 'project' || $moduleobject == 'projects' || $moduleobject == 'task' || $moduleobject == 'tasks') {
 		$moduledirforclass = 'projet';
-	} elseif ($moduleobject == 'stock' || $moduleobject == 'stockmovements' || $moduleobject == 'warehouses') {
+	} elseif ($moduleobject == 'stock' || $moduleobject == 'stockmovements' || $moduleobject == 'warehouses' || $moduleobject == 'productlots') {
 		$moduledirforclass = 'product/stock';
 	} elseif ($moduleobject == 'supplierproposals' || $moduleobject == 'supplierproposal' || $moduleobject == 'supplier_proposal') {
 		$moduledirforclass = 'supplier_proposal';
@@ -2701,6 +2704,10 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'salaries';
 	} elseif ($moduleobject == 'paymentexpensereports') {
 		$moduledirforclass = 'expensereport';
+	} elseif ($moduleobject == 'eventattendees') {
+		$moduledirforclass = 'eventorganization';
+	} elseif ($moduleobject == 'holidays') {
+		$moduledirforclass = 'holiday';
 	}
 
 	return $moduledirforclass;
@@ -3105,4 +3112,90 @@ function csvClean($newvalue, $charset = '', $separator = '')
 	}
 
 	return ($addquote ? '"' : '').$newvalue.($addquote ? '"' : '');
+}
+
+
+/**
+ * Function to output HTML to make an ajax call to make registration
+ *
+ * @param	string	$constanttosavelastko		Name of constant to save the last call that failed
+ * @param	string	$constanttosavefirstok		Name of cosntant to save the first try that succeed
+ * @param	array<string,string>	$arrayofdata				Array of key-value to add as parameter in the ajax call
+ * @param	int		$forceping					Value 1 to force the ping, even if it was already done
+ * @return 	void
+ */
+function printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayofdata = array(), $forceping = 0)
+{
+	global $dolibarr_distrib;
+	global $db, $conf;
+
+	$hash_unique_id = dol_hash('dolibarr'.$conf->file->instance_unique_id, 'sha256');	// Note: if the global salt changes, this hash changes too so ping may be counted twice. We don't mind. It is for statistics and inventory purpose only.
+
+	// Disable ping if $constanttosavelastpingko is set and is recent (this month)
+	if (getDolGlobalString($constanttosavelastko) && substr(getDolGlobalString($constanttosavelastko), 0, 6) == dol_print_date(dol_now(), '%Y%m') && !$forceping) {
+		print "\n<!-- NO JS CODE TO ENABLE the call for ".$constanttosavefirstok.". An error already occurred this month (".$constanttosavelastko." is set), we will re-try next month. -->\n";
+	} else {
+		print "\n".'<!-- Includes JS to make ajax call for '.$constanttosavefirstok.'. forceping='.$forceping.' '.$constanttosavefirstok.'='.getDolGlobalString($constanttosavefirstok).' '.$constanttosavelastko.'='.getDolGlobalString($constanttosavelastko).' -->'."\n";
+		print "<!-- JS CODE TO ENABLE the call -->\n";
+		$url_for_ping = getDolGlobalString('MAIN_URL_FOR_PING', "https://ping.dolibarr.org/");
+		// Try to guess the distrib used
+		$distrib = 'standard';
+		if (isset($_SERVER["SERVER_ADMIN"]) && $_SERVER["SERVER_ADMIN"] == 'doliwamp@localhost') {
+			$distrib = 'doliwamp';
+		}
+		if (!empty($dolibarr_distrib)) {
+			$distrib = $dolibarr_distrib;
+		}
+		?>
+			<script>
+			jQuery(document).ready(function (tmp) {
+				console.log("Try remote call with hash_unique_id is dol_hash('dolibarr'+instance_unique_id, 'sha256')");
+				$.ajax({
+					method: "POST",
+					url: "<?php echo $url_for_ping ?>",
+					timeout: 500,     // timeout milliseconds
+					cache: false,
+					data: {
+						<?php
+						foreach ($arrayofdata as $datakey => $dataval) {
+							print $datakey.": '".dol_escape_js($dataval)."',\n";
+						}
+						?>
+						hash_algo: 'dol_hash-sha256',
+						hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>',
+						version: '<?php echo (float) DOL_VERSION; ?>',
+						version_full: '<?php echo DOL_VERSION; ?>',
+						entity: '<?php echo (int) $conf->entity; ?>',
+						dbtype: '<?php echo dol_escape_js($db->type); ?>',
+						php_version: '<?php echo dol_escape_js(phpversion()); ?>',
+						os_version: '<?php echo dol_escape_js(version_os('smr')); ?>',
+						db_version: '<?php echo dol_escape_js(version_db()); ?>',
+						distrib: '<?php echo dol_escape_js($distrib); ?>',
+						token: 'notrequired'
+					},
+					success: function (data, status, xhr) {   // success callback function (data contains body of response)
+							console.log("Ping ok");
+							$.ajax({
+								method: 'GET',
+								url: '<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>',
+								timeout: 500,     // timeout milliseconds
+								cache: false,
+								data: { hash_algo: 'dol_hash-sha256', hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>', action: '<?php echo $constanttosavefirstok ?>', token: '<?php echo currentToken(); ?>' },	// for update
+							});
+					},
+					error: function (data,status,xhr) {   // error callback function
+							console.log("Ping ko: " + data);
+							$.ajax({
+								method: 'GET',
+								url: '<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>',
+								timeout: 500,     // timeout milliseconds
+								cache: false,
+								data: { hash_algo: 'dol_hash-sha256', hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>', action: '<?php echo $constanttosavelastko ?>', token: '<?php echo currentToken(); ?>' },
+							});
+					}
+				});
+			});
+			</script>
+		<?php
+	}
 }

@@ -78,10 +78,12 @@ if (!$sortfield) {
 }
 
 $object = new Facture($db);
-if ($object->fetch($id, $ref)) {
+if ($object->fetch($id, $ref) > 0) {
 	$object->fetch_thirdparty();
-	$upload_dir = $conf->facture->dir_output."/".dol_sanitizeFileName($object->ref);
 }
+
+$upload_dir = $conf->invoice->multidir_output[empty($object->entity) ? 1 : $object->entity].'/'.dol_sanitizeFileName($object->ref);
+
 
 $permissiontoadd = $user->hasRight('facture', 'creer');
 
@@ -136,7 +138,7 @@ if ($id > 0 || !empty($ref)) {
 	if ($object->fetch($id, $ref) > 0) {
 		$object->fetch_thirdparty();
 
-		$upload_dir = $conf->facture->multidir_output[$object->entity ?? $conf->entity].'/'.dol_sanitizeFileName($object->ref);
+		$upload_dir = $conf->invoice->multidir_output[$object->entity ?? $conf->entity].'/'.dol_sanitizeFileName($object->ref);
 
 		$head = facture_prepare_head($object);
 		print dol_get_fiche_head($head, 'documents', $langs->trans('InvoiceCustomer'), -1, $object->picto);
