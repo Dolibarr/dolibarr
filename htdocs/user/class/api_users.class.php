@@ -5,6 +5,7 @@
  * Copyright (C) 2024-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2025		William Mead				<william@m34d.com>
  * Copyright (C) 2025		Jean François Baillette		<jean-francois@swiiptel.net>
+ * Copyright (C) 2025		Charlene Benke				<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1241,6 +1242,58 @@ class Users extends DolibarrApi
 		}
 
 		return $this->_cleanObjectDatas($notification);
+	}
+
+	/**
+	 * List elements linked to a user
+	 *
+	 * @since	23.0.0	Initial implementation
+	 *
+	 * @param int 		$id     		Id of user
+	 * @param string 	$elementType 	Type of linked elements to retrieve (empty : all elements)
+	 * @param string	$dateFrom		Only elements linked after this date (YYYY-MM-DD)
+	 * @return array      Array of group objects
+	 * @phan-return Object[]
+	 * @phpstan-return Object[]
+	 *
+	 * @throws RestException 403 Not allowed
+	 * @throws RestException 404 Not found
+	 *
+	 * @url GET {id}/elements/
+	 */
+	public function getElement($id, $elementType = "", $dateFrom = "")
+	{
+		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'lire') && empty(DolibarrApiAccess::$user->admin)) {
+			throw new RestException(403);
+		}
+
+		$user = new User($this->db);
+		$result = $user->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'user not found');
+		}
+
+		$sql = "SELECT DISTINCT ec.element_id, ctc.element, ctc.libelle, ctc.code, ec.datecreate";
+		$sql .= " FROM ".MAIN_DB_PREFIX."element_contact as ec";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."c_type_contact as ctc ON ec.fk_c_type_contact = ctc.rowid";
+		$sql .= " WHERE ec.fk_socpeople = ".((int) $id);
+		$sql .= " AND source = 'internal'";
+		if ($elementType) {
+			$sql .= " AND ctc.element = '".$this->db->escape($elementType)."'";
+		}
+		if ($dateFrom) {
+			$timestampFrom = dol_mktime(0, 0, 0, (int) substr($dateFrom, 5, 2), (int) substr($dateFrom, 8, 2), (int) substr($dateFrom, 0, 4));
+			$sql .= " AND ec.datecreate >= '".$this->db->idate($timestampFrom)."'";
+		}
+		$result = $this->db->query($sql);
+		if (!$result) {
+			throw new RestException(500, 'Error retrieving linked elements: '.$this->db->lasterror());
+		}
+		$elementList = array();
+		while ($obj = $this->db->fetch_object($result)) {
+			$elementList[] = $obj;
+		}
+		return $elementList;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
