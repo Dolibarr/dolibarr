@@ -8369,7 +8369,7 @@ abstract class CommonObject
 									$isDependList = 1;
 								}
 
-								$data[(int) $obj->rowid] = $labeltoshow;
+								$data[$obj->rowid] = $labeltoshow;
 							}
 
 							$i++;
