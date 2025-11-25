@@ -683,8 +683,8 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 		print "\n".'<script type="text/javascript">'."\n";
 		print 'jQuery(document).ready(function () {
 			jQuery("#selectcountry_id").change(function() {
-				document.formsoc.action.value="create";
-				document.formsoc.submit();
+				document.newmember.action.value="create";
+				document.newmember.submit();
 			});
 			function initfieldrequired() {
 				jQuery("#tdcompany").removeClass("fieldrequired");
