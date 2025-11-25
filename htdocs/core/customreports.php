@@ -493,28 +493,30 @@ if (is_array($search_groupby) && count($search_groupby)) {
 			}
 
 			$regs = array();
-			if (!empty($object->fields[$gvalwithoutprefix]['arrayofkeyval'])) {
-				$valuetranslated = $object->fields[$gvalwithoutprefix]['arrayofkeyval'][$obj->val];
-				if (is_null($valuetranslated)) {
-					$valuetranslated = $langs->transnoentitiesnoconv("UndefinedKey");
-				}
-				$valuetranslated = $langs->trans($valuetranslated);
-			} elseif (preg_match('/integer:([^:]+):([^:]+)$/', $object->fields[$gvalwithoutprefix]['type'], $regs)) {
-				$classname = $regs[1];
-				$classpath = $regs[2];
-				dol_include_once($classpath);
-				if (class_exists($classname)) {
-					$tmpobject = new $classname($db);
-					'@phan-var-force CommonObject $tmpobject';
-					$tmpobject->fetch($obj->val);
-					foreach ($tmpobject->fields as $fieldkey => $field) {
-						if ($field['showoncombobox']) {
-							$valuetranslated = $tmpobject->$fieldkey;
-							//if ($valuetranslated == '-') $valuetranslated = $langs->transnoentitiesnoconv("Unknown")
-							break;
-						}
+			if (isset($object->fields[$gvalwithoutprefix])) {
+				if (!empty($object->fields[$gvalwithoutprefix]['arrayofkeyval'])) {
+					$valuetranslated = $object->fields[$gvalwithoutprefix]['arrayofkeyval'][$obj->val];
+					if (is_null($valuetranslated)) {
+						$valuetranslated = $langs->transnoentitiesnoconv("UndefinedKey");
 					}
-					//$valuetranslated = $tmpobject->ref.'eee';
+					$valuetranslated = $langs->trans($valuetranslated);
+				} elseif (preg_match('/integer:([^:]+):([^:]+)$/', $object->fields[$gvalwithoutprefix]['type'], $regs)) {
+					$classname = $regs[1];
+					$classpath = $regs[2];
+					dol_include_once($classpath);
+					if (class_exists($classname)) {
+						$tmpobject = new $classname($db);
+						'@phan-var-force CommonObject $tmpobject';
+						$tmpobject->fetch($obj->val);
+						foreach ($tmpobject->fields as $fieldkey => $field) {
+							if ($field['showoncombobox']) {
+								$valuetranslated = $tmpobject->$fieldkey;
+								//if ($valuetranslated == '-') $valuetranslated = $langs->transnoentitiesnoconv("Unknown")
+								break;
+							}
+						}
+						//$valuetranslated = $tmpobject->ref.'eee';
+					}
 				}
 			}
 
@@ -522,7 +524,7 @@ if (is_array($search_groupby) && count($search_groupby)) {
 		}
 		// Add also the possible NULL value if field is a parent field that is not a strict join
 		$tmpfield = explode('.', $gval);
-		if ($tmpfield[0] != 't' || (is_array($object->fields[$tmpfield[1]]) && empty($object->fields[$tmpfield[1]]['notnull']))) {
+		if ($tmpfield[0] != 't' || (isset($object->fields[$tmpfield[1]]) && is_array($object->fields[$tmpfield[1]]) && empty($object->fields[$tmpfield[1]]['notnull']))) {
 			dol_syslog("The group by field ".$gval." may be null (because field is null or it is a left join), so we add __NULL__ entry in list of possible values");
 			//var_dump($gval); var_dump($object->fields);
 			$arrayofvaluesforgroupby['g_'.$gkey]['__NULL__'] = $langs->transnoentitiesnoconv("NotDefined");
