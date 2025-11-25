@@ -35,6 +35,11 @@ require '../../main.inc.php';
  * @var string 		$conffile 				// $conffile is defined into filefunc.inc.php
  * @var string 		$dolibarr_main_prod
  * @var string		$dolibarr_main_document_root
+ * @var string		$dolibarr_main_restrict_os_commands
+ * @var string		$dolibarr_main_restrict_eval_methods
+ * @var string		$dolibarr_main_restrict_ip
+ * @var string		$dolibarr_main_db_pass
+ * @var string		$dolibarr_main_db_encrypted_pass
  */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -385,6 +390,15 @@ if (empty($dolibarr_main_restrict_os_commands)) {
 	print $dolibarr_main_restrict_os_commands;
 }
 print ' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'mysqldump, mysql, pg_dump, pg_restore, mariadb, mariadb-dump, clamdscan').')</span>';
+print '<br>';
+
+print '<strong>$dolibarr_main_restrict_eval_methods</strong>: ';
+if (empty($dolibarr_main_restrict_eval_methods)) {
+	print $langs->trans("None");
+} else {
+	print $dolibarr_main_restrict_eval_methods;
+}
+print ' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'getDolGlobalString,getDolGlobalInt,getDolCurrency,fetchNoCompute,hasRight,isModEnabled,isStringVarMatching,abs,min,max,round,dol_now,dol_concat,preg_match').')</span>';
 print '<br>';
 
 if (!getDolGlobalString('SECURITY_DISABLE_TEST_ON_OBFUSCATED_CONF')) {

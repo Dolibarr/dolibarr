@@ -6,6 +6,7 @@ English Dolibarr ChangeLog
 
 For users:
 ----------
+NEW: Need PHP 7.2 as minimum version
 NEW: Module datapolicy moved as stable (for anonimization features)
 NEW: #31723 - Improve project overview: Hide paid orders (#35524)
 NEW: #35700 : Throw an error when validating a propal, order, supplier with a product no more in sale/purchase… (#35709)
@@ -210,7 +211,7 @@ The following changes may create regressions for some external modules, but were
   variable $dolibarr_main_allow_unsecured_special_chars_in_dol_eval into file conf/conf.php
 * $conf use into "computed formulae" of etrafields is now deprecated (not yet forbidden). You can replace use of $conf->currency by the new method getCurrency() and $conf->global->xxx by getDolGlobalString('xxx').
 * $user->rights->module->perms is also deprecated. You can use $user->hasRight() instead.
-
+* The API endpoint /proposals/{id}/contact/{contactid}/{type}/{source} is now {id}/contact/{contactid}/{type} to match same behaviour than order and invoices.
 
 
 ***** ChangeLog for 22.0.3 compared to 22.0.2 *****
