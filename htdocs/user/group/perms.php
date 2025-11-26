@@ -500,47 +500,31 @@ foreach ($arrayofpermission as $i => $obj) {
 	print '</td>';
 
 	// Permission and tick (2 columns)
-	if (isset($permsgroupbyentitypluszero) && is_array($permsgroupbyentitypluszero)) {
-		print '<!-- permsgroupbyentitypluszero -->';
-		if (in_array($obj->id, $permsgroupbyentitypluszero)) {
-			// Own permission by group
-			if ($permissiontoedit) {
-				print '<td class="center nowrap">';
-				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delrights&token='.newToken().'&entity='.$entity.'&rights='.$obj->id.'&confirm=yes&updatedmodulename='.$obj->module.'">';
-				//print img_edit_remove($langs->trans("Remove"));
-				print img_picto($langs->trans("Remove"), 'switch_on');
-				print '</a>';
-				print '</td>';
-			} else {
-				print '<td></td>';
-			}
+	print '<!-- permsgroupbyentitypluszero -->';
+	if (in_array($obj->id, $permsgroupbyentitypluszero)) {
+		// Own permission by group
+		if ($permissiontoedit) {
 			print '<td class="center nowrap">';
-			print img_picto($langs->trans("Active"), 'tick');
+			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delrights&token='.newToken().'&entity='.$entity.'&rights='.$obj->id.'&confirm=yes&updatedmodulename='.$obj->module.'">';
+			//print img_edit_remove($langs->trans("Remove"));
+			print img_picto($langs->trans("Remove"), 'switch_on');
+			print '</a>';
 			print '</td>';
 		} else {
-			// Do not own permission
-			if ($permissiontoedit) {
-				print '<td class="center nowrap">';
-				print '<a class="reposition addexpandedmodulesinparamlist" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addrights&token='.newToken().'&entity='.$entity.'&rights='.$obj->id.'&confirm=yes&updatedmodulename='.$obj->module.'">';
-				//print img_edit_add($langs->trans("Add"));
-				print img_picto($langs->trans("Add"), 'switch_off');
-				print '</a>';
-				print '</td>';
-			} else {
-				print '<td></td>';
-			}
-			print '<td>';
-			print '</td>';
+			print '<td></td>';
 		}
+		print '<td class="center nowrap">';
+		print img_picto($langs->trans("Active"), 'tick');
+		print '</td>';
 	} else {
 		// Do not own permission
-		print '<!-- do not own permission -->';
 		if ($permissiontoedit) {
 			print '<td class="center nowrap">';
 			print '<a class="reposition addexpandedmodulesinparamlist" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addrights&token='.newToken().'&entity='.$entity.'&rights='.$obj->id.'&confirm=yes&updatedmodulename='.$obj->module.'">';
 			//print img_edit_add($langs->trans("Add"));
 			print img_picto($langs->trans("Add"), 'switch_off');
-			print '</a></td>';
+			print '</a>';
+			print '</td>';
 		} else {
 			print '<td></td>';
 		}

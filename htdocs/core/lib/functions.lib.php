@@ -9540,22 +9540,44 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 				$out = 'ErrorHTMLLinksNotAllowed';
 			}
 		} elseif (getDolGlobalInt('MAIN_DISALLOW_URL_INTO_DESCRIPTIONS') == 1) {
+			// Refuse any links except it they are to the wrapper document.php or viewimage.php
 			$nblinks = 0;
+
 			// Loop on each url in src= and url(
 			$pattern = '/src=["\']?(http[^"\']+)|url\(["\']?(http[^\)]+)/';
+
+			global $dolibarr_main_url_root;
 
 			$matches = array();
 			if (preg_match_all($pattern, $out, $matches)) {
 				// URLs are into $matches[1]
 				$urls = $matches[1];
 
-				// Affiche les URLs
+				// Show URLs
+				$firstexturl = '';
+				$secondexturl = '';
 				foreach ($urls as $url) {
-					$nblinks++;
-					echo "Found url = " . $url . "\n";
+					$urlok = 0;
+					$parsedurl = parse_url($url);
+					if (!empty($parsedurl)) {
+						if (preg_match('/'.preg_quote($dolibarr_main_url_root, '/').'/', $url)
+							//&& preg_match('/(document|viewimage)\.php$/', $parsedurl['path']) && preg_match('/modulepart=(media|mycompany)/', $parsedurl['query'])
+						) {
+							$urlok = 1;
+						}
+					}
+					if (!$urlok) {
+						$nblinks++;
+						if (empty($firstexturl)) {
+							$firstexturl = $url;
+						} elseif (empty($secondexturl)) {
+							$secondexturl = $url;
+						}
+						//echo "Found url = ".$url . "\n";
+					}
 				}
 				if ($nblinks > 0) {
-					$out = 'ErrorHTMLExternalLinksNotAllowed';
+					$out = 'ErrorHTMLExternalLinksNotAllowed (Example: '.$firstexturl.($secondexturl ? ' '.$secondexturl : '').')';
 				}
 			}
 		}

@@ -83,7 +83,7 @@ if ($action == 'print_file' && $user->hasRight('printing', 'read')) {
 					$filetoprint = GETPOST('file', 'alpha');		//Example FAYYMM-123/FAYYMM-123-xxx.pdf
 					if ($module == 'facture') {
 						require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-						$refinvoice = preg_replace('/[\\\/].*$/', '', $filetoprint);
+						$refinvoice = preg_replace('/[\/\\\\].*$/', '', $filetoprint);
 						$tmpinvoice = new Facture($db);
 						$tmpinvoice->fetch(0, $refinvoice);
 						if ($tmpinvoice->id > 0) {

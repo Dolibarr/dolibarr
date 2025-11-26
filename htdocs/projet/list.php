@@ -130,8 +130,15 @@ if (GETPOSTISSET('formfilteraction')) {
 } elseif (getDolGlobalString('MAIN_SEARCH_CAT_USER_OR_BY_DEFAULT')) {
 	$searchCategoryUserOperator = getDolGlobalString('MAIN_SEARCH_CAT_USER_OR_BY_DEFAULT');
 }
-$searchCategoryUserList = GETPOST('search_category_user_list', 'array:int');
 
+$searchCategoryProjectOperator = 0;
+if (GETPOSTISSET('formfilteraction')) {
+	$searchCategoryUserOperator = GETPOSTINT('search_category_project_operator');
+} elseif (getDolGlobalString('MAIN_SEARCH_CAT_PROJECT_OR_BY_DEFAULT')) {
+	$searchCategoryUserOperator = getDolGlobalString('MAIN_SEARCH_CAT_PROJECT_OR_BY_DEFAULT');
+}
+
+/*
 $searchCategoryCustomerOperator = 0;
 if (GETPOSTISSET('formfilteraction')) {
 	$searchCategoryCustomerOperator = GETPOSTINT('search_category_customer_operator');
@@ -139,6 +146,7 @@ if (GETPOSTISSET('formfilteraction')) {
 	$searchCategoryCustomerOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
 }
 $searchCategoryCustomerList = GETPOST('search_category_customer_list', 'array:int');
+*/
 
 $search_omitChildren = 0;
 if (getDolGlobalInt('PROJECT_ENABLE_SUB_PROJECT')) {
@@ -819,8 +827,7 @@ if (getDolGlobalInt('PROJECT_ENABLE_SUB_PROJECT')) {
 }
 
 // Search for tag/category of User ($searchCategoryUserList is an array of ID)
-$searchCategoryUserSqlList = $search_category_user_array;
-$searchCategoryUserOperator = 0;
+$searchCategoryUserList = $search_category_user_array;
 if (!empty($searchCategoryUserList)) {
 	$searchCategoryUserSqlList = array();
 	$listofcategoryid = '';
@@ -851,7 +858,6 @@ if (!empty($searchCategoryUserList)) {
 
 // Search for tag/category or Project ($searchCategoryProjectList is an array of ID)
 $searchCategoryProjectList = $search_category_array;
-$searchCategoryProjectOperator = 0;
 if (!empty($searchCategoryProjectList)) {
 	$searchCategoryProjectSqlList = array();
 	$listofcategoryid = '';
@@ -1136,12 +1142,12 @@ if ($search_date_modif_end) {
 }
 if (!empty($search_category_user_array)) {
 	foreach ($search_category_user_array as $tmpval) {
-		$param .= '&search_categegory_user_list[]='.urlencode($tmpval);
+		$param .= '&search_category_user_list[]='.urlencode($tmpval);
 	}
 }
 if (!empty($search_category_array)) {
 	foreach ($search_category_array as $tmpval) {
-		$param .= '&search_categegory_project_list[]='.urlencode($tmpval);
+		$param .= '&search_category_project_list[]='.urlencode($tmpval);
 	}
 }
 if (!empty($searchCategoryCustomerList)) {
