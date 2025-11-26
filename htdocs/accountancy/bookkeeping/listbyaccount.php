@@ -1420,6 +1420,12 @@ while ($i < min($num, $limit)) {
 		$object->piece_num = $line->piece_num;
 		$object->ref = $line->ref;
 		print $object->getNomUrl(1, '', 0, '', 1);
+		if (!empty($line->date_export)) {
+			print img_picto($langs->trans("DateExport").": ".dol_print_date($line->date_export, 'dayhour')." (".$langs->trans("TransactionExportDesc").")", 'fa-file-export', 'class="paddingleft pictofixedwidth"');
+		}
+		if (!empty($line->date_validation)) {
+			print img_picto($langs->trans("DateValidation").": ".dol_print_date($line->date_validation, 'dayhour')." (".$langs->trans("TransactionBlockedLockedDesc").")", 'fa-lock', 'class="paddingleft pictofixedwidth"');
+		}
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;

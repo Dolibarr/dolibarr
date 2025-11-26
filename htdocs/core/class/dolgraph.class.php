@@ -750,7 +750,9 @@ class DolGraph
 		foreach ($this->data as $x) {	// Loop on each x
 			for ($i = 0; $i < $nbseries; $i++) {	// Loop on each series
 				if (is_null($max)) {
-					$max = $x[$i + 1];		// $i+1 because the index 0 is the legend
+					if (isset($x[$i + 1])) {
+						$max = $x[$i + 1];		// $i+1 because the index 0 is the legend
+					}
 				} elseif ($max < $x[$i + 1]) {
 					$max = $x[$i + 1];
 				}
@@ -780,7 +782,9 @@ class DolGraph
 		foreach ($this->data as $x) {	// Loop on each x
 			for ($i = 0; $i < $nbseries; $i++) {	// Loop on each series
 				if (is_null($min)) {
-					$min = $x[$i + 1];		// $i+1 because the index 0 is the legend
+					if (isset($x[$i + 1])) {
+						$min = $x[$i + 1];		// $i+1 because the index 0 is the legend
+					}
 				} elseif ($min > $x[$i + 1]) {
 					$min = $x[$i + 1];
 				}

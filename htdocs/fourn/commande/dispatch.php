@@ -381,7 +381,7 @@ if ($action == 'dispatch' && $permissiontoreceive) {
 								$sql = "UPDATE ".MAIN_DB_PREFIX."product_fournisseur_price";
 								$sql .= " SET unitprice = ".price2num(GETPOST($pu), 'MU', 2);
 								$sql .= ", price = ".price2num(GETPOST($pu), 'MU', 2)." * quantity";
-								$sql .= ", remise_percent = ".price2num((empty($dto) ? 0 : $dto), 3, 2)."'";
+								$sql .= ", remise_percent = ".price2num((empty($dto) ? 0 : $dto), 3, 2);
 								$sql .= " WHERE fk_soc = ".((int) $object->socid);
 								$sql .= " AND fk_product=".((int) $productId);
 

@@ -111,9 +111,12 @@ if ($facid > 0 && !GETPOST('specimen')) {
 }
 print '<body>';
 
+
 // Record entry in blocked logs each time we print a receipt
+//
 // This will also increase the counter of printings of the receipt
 // DOL_DOCUMENT_ROOT.'/blockedlog/ajax/block-add.php?id='.$object->id.'&element='.$object->element.'&action=DOC_PREVIEW&token='.newToken();
+
 print "
 <script>
 jQuery(document).ready(function () {

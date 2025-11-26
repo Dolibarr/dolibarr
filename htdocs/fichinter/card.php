@@ -1897,9 +1897,9 @@ if ($action == 'create') {
 				if (empty($user->socid)) {
 					if ($object->status > Fichinter::STATUS_DRAFT) {
 						if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || $user->hasRight('ficheinter', 'ficheinter_advance', 'send')) {
-							print dolGetButtonAction('', $langs->trans('SendMail'), 'default', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'presend', 'mode' => 'init'], true).'#formmailbeforetitle', '');
+							print dolGetButtonAction('', $langs->trans('SendMail'), 'email', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'presend', 'mode' => 'init'], true).'#formmailbeforetitle', '');
 						} else {
-							print dolGetButtonAction('', $langs->trans('SendMail'), 'default', '#', '', false);
+							print dolGetButtonAction('', $langs->trans('SendMail'), 'email', '#', '', false);
 						}
 					}
 				}

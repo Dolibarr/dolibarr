@@ -3726,9 +3726,9 @@ if ($action == 'create' && $usercancreate) {
 			if (empty($user->socid)) {
 				if ($object->status > 0) {
 					if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || $user->hasRight('expedition', 'shipping_advance', 'send')) {
-						print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"] . '?action=presend&token=' . newToken() . '&id=' . $object->id . '&mode=init#formmailbeforetitle', '');
+						print dolGetButtonAction('', $langs->trans('SendMail'), 'email', $_SERVER["PHP_SELF"] . '?action=presend&token=' . newToken() . '&id=' . $object->id . '&mode=init#formmailbeforetitle', '');
 					} else {
-						print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER['PHP_SELF'] . '#', '', false);
+						print dolGetButtonAction('', $langs->trans('SendMail'), 'email', $_SERVER['PHP_SELF'] . '#', '', false);
 					}
 				}
 			}
