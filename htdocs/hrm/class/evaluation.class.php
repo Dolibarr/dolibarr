@@ -225,7 +225,11 @@ class Evaluation extends CommonObject
 		}
 
 		if (!$user->hasRight('hrm', 'evaluation', 'readall')) {
-			$this->fields['fk_user']['type'] .= ':t.rowid:IN:'.$this->db->sanitize(implode(",", $user->getAllChildIds(1)));
+			$childIds = $user->getAllChildIds(1);
+
+			if (!empty($childIds)) {
+				$this->fields['fk_user']['type'] .= ':t.rowid:IN:' . $this->db->sanitize(implode(",", $childIds));
+			}
 		}
 
 		$this->date_eval = dol_now();
