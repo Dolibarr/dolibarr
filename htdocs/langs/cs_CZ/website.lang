@@ -64,7 +64,7 @@ YouCanCreatePageOrImportTemplate=Můžete vytvořit novou stránku nebo importov
 SyntaxHelp=Nápověda ke konkrétním tipům pro syntaxi
 YouCanEditHtmlSourceckeditor=Zdrojový kód HTML můžete upravit pomocí tlačítka "Zdroj" v editoru.
 YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> Do tohoto zdrojového kódu můžete vložit PHP kód pomocí tagů <strong>&lt;?php ?&gt;</strong>. K dispozici jsou následující globální proměnné: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> Můžete také zahrnout obsah jiné stránky/kontejneru s následující syntaxí:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> Přesměrování na jinou stránku/kontejner můžete provést pomocí následující syntaxe (Poznámka: před přesměrováním nevyvádějte žádný obsah):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>Přesměrování můžete provést také pomocí parametrů GET:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> Chcete-li přidat odkaz na jinou stránku, použijte syntaxi:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;můj odkaz&lt;a&gt;</strong><br><br>
-YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> Můžete dynamicky nastavit <strong>SEO title a meta tagy </strong> (title, klíčová slova, popis). Jednoduše definujte následující proměnné:<br> <code>$__PAGE_TITLE__ = "Hodnota názvu …";</code><br> <code>$__PAGE_KEYWORDS__ = "klíčové slovo1, klíčové slovo2, klíčové slovo3 …"; // Odděleno čárkou</code><br> TXPROTECT-9d957777_TX_END31> "Popis…";></code><br>
+YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> You can dynamically set <strong>SEO title and meta tags</strong> (title, keywords, description). Simply define the following variables:<br> <code>define('__SEO_PAGE_TITLE__', "Title value …");</code><br> <code>define('__SEO_PAGE_KEYWORDS__', 'keyword1, keyword2, keyword3 …');</code><br> <code>define('__SEO_PAGE_DESC__', "Description …");</code><br>
 YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> Chcete-li přidat odkaz <strong>pro stažení souboru</strong> uloženého v adresáři <strong>dokumenty</strong>, použijte <strong>document.php</strong> wrapper:<br>Příklad pro soubor v documents/ecm (nutno protokolovat), syntaxe je:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>Pro soubor do dokumentů/médií (otevřený adresář pro veřejný přístup) je syntaxe:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
 YouCanEditHtmlSourced=Pro soubor sdílený pomocí odkazu pro sdílení (otevřený přístup pomocí hash klíče pro sdílení souboru) je syntaxe:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
 YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> Chcete-li zahrnout obrázek <strong></strong> uložený v adresáři <strong>medias</strong> (adresář otevřený pro veřejný přístup), Použijte relativní cestu začínající na <strong>/medias</strong>, například:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
@@ -81,7 +81,7 @@ LanguageMustNotBeSameThanClonedPage=Klonujete stránku jako překlad. Jazyk nov�
 ParentPageId=ID domovské stránky
 WebsiteId=ID webových stránek
 CreateByFetchingExternalPage=Vytvoření stránky / kontejneru načtením stránky z externí adresy URL ...
-OrEnterPageInfoManually=Nebo vytvořit stránku od začátku nebo ze šablony stránky ...
+OrEnterPageInfoManually=Create page from scratch or from a page template...
 FetchAndCreate=Načíst a vytvořit
 ExportSite=Exportovat webové stránky
 ImportSite=Importujte šablonu webových stránek
@@ -99,7 +99,7 @@ SorryWebsiteIsCurrentlyOffLine=Je nám líto, ale tento web je nyní offline. Vr
 WEBSITE_USE_WEBSITE_ACCOUNTS=Povolit tabulku účtů webových stránek pro třetí strany
 WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Povolit tabulku pro ukládání webových účtů (přihlašovací jméno/heslo) pro každou třetí stranu
 YouMustDefineTheHomePage=Nejprve musíte definovat výchozí domovskou stránku
-OnlyEditionOfSourceForGrabbedContentFuture=Varování: Vytváření webové stránky importem externí webové stránky je vyhrazeno pro zkušené uživatele. V závislosti na složitosti zdrojové stránky se výsledek importu může lišit od originálu. Pokud zdrojová stránka používá běžné styly CSS nebo konfliktní JavaScript, může to při práci na této stránce narušit vzhled nebo funkce editoru webových stránek. Tato metoda je rychlejší způsob, jak vytvořit stránku, ale doporučuje se vytvořit novou stránku od nuly nebo z doporučené šablony stránky.<br>Upozorňujeme také, že inline editor nemusí fungovat správně, pokud je použit na načtené externí stránce.
+OnlyEditionOfSourceForGrabbedContentFuture=Warning: Creating a web page by importing an external web page is reserved for experienced users and can work only pages rendered with HTML and CSS only. Importing pages rendered by JS frameworks are NOT supported. Depending on the complexity of the source page, the result of importation will probably differ from the original page. Also if the source page uses common CSS styles or conflicting JavaScript, it may break the look or features of the Website editor when working on this page. This method is a quick way to create a page for very advanced users when source page allows it, but it is recommended to create your new page from scratch or from a suggested page template.<br>Note also that the inline editor might not work correctly when used on a page that was grabbed.
 OnlyEditionOfSourceForGrabbedContent=Úprava zdrojového kódu HTML je možná pouze při načtení obsahu z externího webu.
 GrabImagesInto=Uchopte také obrázky do css a stránky.
 ImagesShouldBeSavedInto=Obrázky je třeba uložit do adresáře
@@ -424,7 +424,7 @@ contactFormSubjectEntered = Předmět zadán
 contactFormMessageLabel = Zpráva
 contactFormSuccessAlert = Děkujeme za vaši zprávu. Brzy se vám ozveme.
 socials=Sociální sítě
-rgpd=RGPD
+rgpd=GDPR
 joinUs=Připojte se k nám
 home=Domů
 anonymous=Anonymní
@@ -455,3 +455,4 @@ SampleGoalOne=Podporovat spolupráci a solidaritu mezi členy.
 SampleGoaltwo=Podporujte zodpovědné a udržitelné postupy ve všech činnostech.
 SampleGoalthree=Podporujte projekty s pozitivním dopadem, které prospívají celé společnosti.
 SHOW_LANG_SELECTOR=Rozbalovací nabídka pro výběr jazyka zobrazení
+ForAdvancedWebmastersOnly=For technical webmasters only

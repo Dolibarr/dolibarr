@@ -167,6 +167,21 @@ class GetUrlLibTest extends CommonClassTest
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('with.dolimed.com.mx', $result, 'Test dolimed.com.mx 2');
 
+
+		// Test with url with login/pass
+
+		$result = getDomainFromURL('https://mylogin:mypass@aaa.abc.mydomain.com', 2);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('abc.mydomain.com', $result, 'Test https://mylogin:mypass@mydomain.com');
+
+
+		// Test with email
+
+		$result = getDomainFromURL('myemail@mydomain.com', 1);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('mydomain.com', $result, 'Test myemail@mydomain.com');
+
+
 		return 1;
 	}
 

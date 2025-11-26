@@ -47,6 +47,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/vcard.class.php';
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
+ * @var string $dolibarr_main_url_root
  */
 
 // Load translation files required by the page

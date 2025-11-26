@@ -50,4 +50,5 @@ ToReplace=Nahradit
 CantMoveNonExistantSerial=Chyba. Žádáte o přesun záznamu pro sériové číslo, které již neexistuje. Možná jste stejné sériové číslo několikrát převzali ve stejném skladu v rámci jedné zásilky, nebo bylo použito jinou zásilkou. Odeberte tuto zásilku a připravte jinou.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Oprava neúplného běhu tabulky šarží s parametrem '...repair.php?standard=confirmed'
 IlligalQtyForSerialNumbers= Nutná korekce zásob z důvodu unikátního sériového čísla.
-ErrorBatchesNeedStockManagement=Chyba. Produkt se správou dávek/šarží musí být spravován skladem.
+ErrorBatchesNeedStockManagement=Error. A product with batch/lot management must also be managed in stock.
+ForceBatchesNeedStockManagement=A product with batch/lot management must be managed in stock (stock management force to yes)

@@ -8,7 +8,6 @@ ImportModelName=Nome do perfil de importação
 DatasetToImport=Conjunto de dados a importar
 NoImportableData=Não existe tipo de dados importavel (não existe nenhum módulo com definições de dados importavel ativado)
 FileSuccessfullyBuilt=Arquivo gerado
-LineId=Id da Linha
 LineLabel=Rótulo de linha
 LineDescription=Descrição da Linha
 LineUnitPrice=Preço Unitário da Linha

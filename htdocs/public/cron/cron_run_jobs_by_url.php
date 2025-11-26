@@ -61,7 +61,7 @@ if (is_numeric($entity)) {
 // Error if CLI mode
 if (php_sapi_name() == "cli") {
 	echo "Error: This page can't be used as a CLI script. For the CLI version of script, launch cron_run_job.php available into scripts/cron/ directory.\n";
-	exit(-1);
+	exit(1);
 }
 
 // core library
@@ -179,12 +179,12 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 				if ($result < 0) {
 					echo "\nUser Error: ".$user->error."\n";
 					dol_syslog("cron_run_jobs.php:: User Error:".$user->error, LOG_ERR);
-					exit(-1);
+					exit(1);
 				} else {
 					if ($result == 0) {
 						echo "\nUser login: ".$userlogin." does not exists for entity ".$conf->entity."\n";
 						dol_syslog("User login:".$userlogin." does not exists", LOG_ERR);
-						exit(-1);
+						exit(1);
 					}
 				}
 				$user->loadRights();

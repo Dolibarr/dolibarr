@@ -52,6 +52,7 @@ if (empty($conf) || !is_object($conf)) {
 }
 
 $fileparams = array();
+$file = null;
 
 if ($action == 'presend') {
 	$langs->load("mails");

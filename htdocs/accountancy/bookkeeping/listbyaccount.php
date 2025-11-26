@@ -3,7 +3,7 @@
  * Copyright (C) 2013-2016	Olivier Geffroy			<jeff@jeffinfo.com>
  * Copyright (C) 2013-2020	Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2013-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
- * Copyright (C) 2018-2024	Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Nicolas Barrouillet		<nicolas@pragma-tech.fr>
  *
@@ -60,7 +60,7 @@ $socid = GETPOSTINT('socid');
 $mode = (GETPOST('mode', 'alpha') ? GETPOST('mode', 'alpha') : 'customer'); // Only for tab view
 $massaction = GETPOST('massaction', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:int');
 $type = GETPOST('type', 'alpha');
 if ($type == 'sub') {
 	$context_default = 'bookkeepingbysubaccountlist';
@@ -200,19 +200,19 @@ if (empty($search_date_start) && empty($search_date_end) && !GETPOSTISSET('searc
 
 $arrayfields = array(
 	// 't.subledger_account'=>array('label'=>$langs->trans("SubledgerAccount"), 'checked'=>1),
-	't.piece_num' => array('label' => $langs->trans("TransactionNumShort"), 'checked' => '1'),
-	't.code_journal' => array('label' => $langs->trans("Codejournal"), 'checked' => '1'),
-	't.doc_date' => array('label' => $langs->trans("Docdate"), 'checked' => '1'),
-	't.doc_ref' => array('label' => $langs->trans("Piece"), 'checked' => '1'),
-	't.label_operation' => array('label' => $langs->trans("Label"), 'checked' => '1'),
-	't.lettering_code' => array('label' => $langs->trans("Lettering"), 'checked' => '1'),
-	't.debit' => array('label' => $langs->trans("AccountingDebit"), 'checked' => '1'),
-	't.credit' => array('label' => $langs->trans("AccountingCredit"), 'checked' => '1'),
-	't.balance' => array('label' => $langs->trans("Balance"), 'checked' => '1'),
-	't.date_export' => array('label' => $langs->trans("DateExport"), 'checked' => '-1'),
-	't.date_validated' => array('label' => $langs->trans("DateValidation"), 'checked' => '-1', 'enabled' => (string) (int) !getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE")),
-	't.date_lim_reglement' => array('label' => $langs->trans("DateDue"), 'checked' => '0'),
-	't.import_key' => array('label' => $langs->trans("ImportId"), 'checked' => '-1', 'position' => 1100),
+	't.piece_num' => array('label' => "TransactionNumShort", 'checked' => '1'),
+	't.code_journal' => array('label' => "Codejournal", 'checked' => '1'),
+	't.doc_date' => array('label' => "Docdate", 'checked' => '1'),
+	't.doc_ref' => array('label' => "Piece", 'checked' => '1'),
+	't.label_operation' => array('label' => "Label", 'checked' => '1'),
+	't.lettering_code' => array('label' => "Lettering", 'checked' => '1'),
+	't.debit' => array('label' => "AccountingDebit", 'checked' => '1'),
+	't.credit' => array('label' => "AccountingCredit", 'checked' => '1'),
+	't.balance' => array('label' => "Balance", 'checked' => '1'),
+	't.date_export' => array('label' => "DateExport", 'checked' => '-1'),
+	't.date_validated' => array('label' => "DateValidation", 'checked' => '-1', 'enabled' => (string) (int) !getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE")),
+	't.date_lim_reglement' => array('label' => "DateDue", 'checked' => '0'),
+	't.import_key' => array('label' => "ImportId", 'checked' => '-1', 'position' => 1100),
 );
 
 if (!getDolGlobalString('ACCOUNTING_ENABLE_LETTERING')) {
@@ -463,11 +463,17 @@ if (empty($reshook)) {
 
 	// Actions
 	if ($action === 'exporttopdf' && $permissiontoadd) {
-		$object->fetchAllByAccount($sortorder, $sortfield, 0, 0, $filter);
+		if ($type == "sub") {
+			$object->fetchAllByAccount($sortorder, $sortfield, 0, 0, $filter, 'AND', 1);
+		} else {
+			$object->fetchAllByAccount($sortorder, $sortfield, 0, 0, $filter);
+		}
 		require_once DOL_DOCUMENT_ROOT . '/core/modules/accountancy/doc/pdf_ledger.modules.php';
 		$pdf = new pdf_ledger($db);
 		$pdf->fromDate = $search_date_start;
 		$pdf->toDate = $search_date_end;
+		$pdf->ledgerType = $type;
+
 		$result = $pdf->write_file($object, $langs);
 
 		if ($result < 0) {
@@ -860,7 +866,7 @@ if (GETPOSTINT('nomassaction') || in_array($massaction, array('preunletteringaut
 }
 $massactionbutton = $form->selectMassAction($massaction, $arrayofmassactions);
 
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="list">';
 if ($optioncss != '') {
@@ -895,14 +901,14 @@ if (empty($reshook)) {
 			$newcardbutton .= dolGetButtonTitle($langs->trans('GroupBySubAccountAccounting'), '', 'fa fa-align-left vmirror paddingleft imgforviewmode', DOL_URL_ROOT . '/accountancy/bookkeeping/listbyaccount.php?type=sub&' . $url_param, '', 1, array('morecss' => 'marginleftonly'));
 		}
 	}
-	$newcardbutton .= dolGetButtonTitle($langs->trans('ExportToPdf'), '', 'fa fa-file-pdf paddingleft', $_SERVER['PHP_SELF'] . '?action=exporttopdf&' . $url_param, '', 1, array('morecss' => 'marginleftonly'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ExportToPdf'), '', 'fa fa-file-pdf paddingleft', $_SERVER['PHP_SELF'] . '?action=exporttopdf'.(!empty($type) ? '&type=sub' : '').'&' . $url_param, '', 1, array('morecss' => 'marginleftonly'));
 
 	$newcardbutton .= dolGetButtonTitleSeparator();
 
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle paddingleft', DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?action=create'.(!empty($type) ? '&type=sub' : '').'&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
 }
 
-if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+if ($contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
@@ -1004,16 +1010,8 @@ if ($type == 'sub') {
 }
 
 if (empty($socid)) {
-	$stringforfirstkey = $langs->trans("KeyboardShortcut");
-	if ($conf->browser->name == 'chrome') {
-		$stringforfirstkey .= ' ALT +';
-	} elseif ($conf->browser->name == 'firefox') {
-		$stringforfirstkey .= ' ALT + SHIFT +';
-	} else {
-		$stringforfirstkey .= ' CTL +';
-	}
-	$moreforfilter .= '&nbsp;&nbsp;&nbsp;<a id="previous_account" accesskey="p" title="' . $stringforfirstkey . ' p" class="classfortooltip" href="#"><i class="fa fa-chevron-left"></i></a>';
-	$moreforfilter .= '&nbsp;&nbsp;&nbsp;<a id="next_account" accesskey="n" title="' . $stringforfirstkey . ' n" class="classfortooltip" href="#"><i class="fa fa-chevron-right"></i></a>';
+	$moreforfilter .= '&nbsp;&nbsp;&nbsp;<a id="previous_account" accesskey="p" title="' . $conf->browser->stringforfirstkey . ' p" class="classfortooltip" href="#"><i class="fa fa-chevron-left"></i></a>';
+	$moreforfilter .= '&nbsp;&nbsp;&nbsp;<a id="next_account" accesskey="n" title="' . $conf->browser->stringforfirstkey . ' n" class="classfortooltip" href="#"><i class="fa fa-chevron-right"></i></a>';
 	$moreforfilter .= <<<SCRIPT
 <script type="text/javascript">
 	jQuery(document).ready(function() {
@@ -1104,7 +1102,7 @@ if (!empty($arrayfields['t.doc_ref']['checked'])) {
 if (!empty($arrayfields['t.label_operation']['checked'])) {
 	print '<td class="liste_titre"><input type="text" size="7" class="flat" name="search_label_operation" value="'.dol_escape_htmltag($search_label_operation).'"/></td>';
 }
-// Lettering code
+// Matching code
 if (!empty($arrayfields['t.lettering_code']['checked'])) {
 	print '<td class="liste_titre center">';
 	print '<input type="text" size="3" class="flat" name="search_lettering_code" value="'.$search_lettering_code.'"/>';
@@ -1422,6 +1420,12 @@ while ($i < min($num, $limit)) {
 		$object->piece_num = $line->piece_num;
 		$object->ref = $line->ref;
 		print $object->getNomUrl(1, '', 0, '', 1);
+		if (!empty($line->date_export)) {
+			print img_picto($langs->trans("DateExport").": ".dol_print_date($line->date_export, 'dayhour')." (".$langs->trans("TransactionExportDesc").")", 'fa-file-export', 'class="paddingleft pictofixedwidth"');
+		}
+		if (!empty($line->date_validation)) {
+			print img_picto($langs->trans("DateValidation").": ".dol_print_date($line->date_validation, 'dayhour')." (".$langs->trans("TransactionBlockedLockedDesc").")", 'fa-lock', 'class="paddingleft pictofixedwidth"');
+		}
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -1528,7 +1532,7 @@ while ($i < min($num, $limit)) {
 		}
 	}
 
-	// Lettering code
+	// Matching code
 	if (!empty($arrayfields['t.lettering_code']['checked'])) {
 		print '<td class="center">'.dol_escape_htmltag((string) $line->lettering_code).'</td>';
 		if (!$i) {

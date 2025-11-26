@@ -607,6 +607,8 @@ class pdf_vinci extends ModelePDFMo
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
+					dolChmod($file);
+					return -1;
 				}
 
 				dolChmod($file);
@@ -1097,7 +1099,7 @@ class pdf_vinci extends ModelePDFMo
 
 		// product info
 		$prodToMake = new Product($this->db);
-		$resProdToMake = $prodToMake->fetch($object->fk_product);
+		$resProdToMake = $prodToMake->fetch((int) $object->fk_product);
 
 		if ($resProdToMake > 0) {
 			// ref
@@ -1299,11 +1301,11 @@ class pdf_vinci extends ModelePDFMo
 	/**
 	 *   	Define Array Column Field
 	 *
-	 *   	@param	Mo				$object    		common object
+	 *   	@param	CommonObject	$object    		common object
 	 *   	@param	Translate		$outputlangs    langs
-	 *      @param	int				$hidedetails		Do not show line details
-	 *      @param	int				$hidedesc		Do not show desc
-	 *      @param	int				$hideref			Do not show ref
+	 *      @param	int<0,1>		$hidedetails	Do not show line details
+	 *      @param	int<0,1>		$hidedesc		Do not show desc
+	 *      @param	int<0,1>		$hideref		Do not show ref
 	 *      @return	void
 	 */
 	public function defineColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
@@ -1362,7 +1364,7 @@ class pdf_vinci extends ModelePDFMo
 			'width' => false, // only for desc
 			'status' => true,
 			'title' => array(
-				'textkey' => 'Designation', // use lang key is useful in somme case with module
+				'textkey' => 'Designation', // use lang key is useful in some case with module
 				'align' => 'L',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label

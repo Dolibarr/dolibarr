@@ -125,3 +125,5 @@ Signed=firmato
 SignedOnly=Solo firmato
 ExpeditionSigned=Spedizione firmata
 SignExpedition=Firma la spedizione
+PROPOSAL_SHOW_SHIPPING_ADDRESS=Mostra l'indirizzo di spedizione
+PROPOSAL_SHOW_SHIPPING_ADDRESSMore=Compulsory indication in some countries (France, ...)

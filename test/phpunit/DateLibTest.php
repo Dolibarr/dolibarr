@@ -102,12 +102,6 @@ class DateLibTest extends CommonClassTest
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals(3, $result);
 
-		/*
-		$result = num_between_day(1514332800, 1538265600, 0);
-		print __METHOD__." result=".$result."\n";
-		$this->assertEquals(277, $result);
-		*/
-
 		return $result;
 	}
 
@@ -192,6 +186,15 @@ class DateLibTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
+
+		// Check for sunday/sunday with time changing - Sunday 25 october 2025 - Sunday 1 november 2025
+		$date1 = dol_mktime(0, 0, 0, 10, 26, 2025, 'gmt');
+		$date2 = dol_mktime(0, 0, 0, 11, 1, 2025, 'gmt');
+		$result = num_open_day($date1, $date2, 0, 1, 0, 'FR');
+		print __METHOD__." result ".$result."\n";
+		$this->assertEquals(5, $result, 'NumPublicHoliday for FR with date start before date change end inding after');
+
+
 		// With same hours - Tuesday/Wednesday jan 2013
 		$date1 = dol_mktime(0, 0, 0, 1, 1, 2013, 'gmt');	// tuesday
 		$date2 = dol_mktime(0, 0, 0, 1, 2, 2013, 'gmt');	// wednesday
@@ -231,6 +234,42 @@ class DateLibTest extends CommonClassTest
 		$result = num_open_day($date1, $date2, 'XX', 1);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals(3, $result, 'NumOpenDay for XX when saturday + sunday are working days');   // 3 opened day, 0 closes (even if country unknown)
+
+		// Define specific dates for these tests
+		$date_friday_4 = dol_mktime(0, 0, 0, 1, 4, 2013, 'gmt');   // Friday
+		$date_saturday_5 = dol_mktime(0, 0, 0, 1, 5, 2013, 'gmt'); // Saturday
+		$date_monday_7 = dol_mktime(0, 0, 0, 1, 7, 2013, 'gmt');   // Monday
+		$date_friday_11 = dol_mktime(0, 0, 0, 1, 11, 2013, 'gmt');  // Following Friday
+
+		// Case 1: Weekend Boundary (Friday morning -> Saturday morning)
+		// Expected: 1 day. No half-day deduction for end date on a non-working day.
+		// $starthalfday = 'morning', $endhalfday = 'morning' -> $halfday = 1
+		$conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY = 1;
+		$conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY = 1;
+		$result = num_open_day($date_friday_4, $date_saturday_5, 0, 1, 1, 'FR');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals(1, $result, 'Case 1: Friday morning to Saturday morning should be 1 day');
+
+		// Case 2: Full week with half-day (Friday morning -> Following Friday morning)
+		// Expected: 5.5 days.
+		// $starthalfday = 'morning', $endhalfday = 'morning' -> $halfday = 1
+		$result = num_open_day($date_friday_4, $date_friday_11, 0, 1, 1, 'FR');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals(5.5, $result, 'Case 2: Friday morning to next Friday morning should be 5.5 days');
+
+		// Case 3: Single Half-Day (Monday afternoon)
+		// Expected: 0.5 days.
+		// $starthalfday = 'afternoon' -> $halfday = -1
+		$result = num_open_day($date_monday_7, $date_monday_7, 0, 1, -1, 'FR');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals(0.5, $result, 'Case 3: A single Monday afternoon should be 0.5 days');
+
+		// Case 4: Standard Leave (Monday morning -> Friday evening)
+		// Expected: 5 days.
+		// $starthalfday = 'morning', $endhalfday = 'evening' -> $halfday = 0
+		$result = num_open_day($date_monday_7, $date_friday_11, 0, 1, 0, 'FR');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals(5, $result, 'Case 4: Monday morning to Friday evening should be 5 days');
 	}
 
 	/**
@@ -365,6 +404,15 @@ class DateLibTest extends CommonClassTest
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('Thu Jan January', $result);
 
+		// Check date output in a use timezone
+		$_SESSION['dol_tz'] = 1;
+		$_SESSION['dol_dst'] = 0;
+		$_SESSION['dol_tz_string'] = 'Europe/Paris';
+
+		$result = dol_print_date(0, '%H', 'tzuserrel', $outputlangs);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('01', $result);
+
 		return $result;
 	}
 
@@ -386,9 +434,14 @@ class DateLibTest extends CommonClassTest
 		$outputlangs->setDefaultLang('fr_FR');
 		$outputlangs->load("main");
 
-		$result = dol_print_date(dol_time_plus_duree(dol_time_plus_duree(dol_time_plus_duree(0, 1, 'm'), 1, 'y'), 1, 'd'), 'dayhour', true, $outputlangs);
+		$result = dol_print_date(dol_time_plus_duree(dol_time_plus_duree(dol_time_plus_duree(0, 1, 'm'), 1, 'y'), 1, 'd'), 'dayhour', 'gmt', $outputlangs);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('02/02/1971 00:00', $result);
+
+		// Add 4 days on a date just before daylight change
+		$result = dol_print_date(dol_time_plus_duree(dol_mktime(0, 0, 0, 10, 24, 2025, 'gmt'), 4, 'd'), 'dayhour', 'gmt', $outputlangs);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('28/10/2025 00:00', $result);
 
 		return $result;
 	}

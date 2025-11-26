@@ -80,7 +80,7 @@ $hookmanager = new HookManager($db);
 
 $hookmanager->initHooks(array('newpayment'));
 
-$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paybox", "paypal", "stripe"));
+$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paypal", "stripe"));
 
 $PAYPALTOKEN = "";
 $PAYPALPAYERID = "";
@@ -226,7 +226,7 @@ if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
 
 		$companylangs = new Translate('', $conf);
 		$companylangs->setDefaultLang($myCompanyDefaultLang);
-		$companylangs->loadLangs(array('main', 'members', 'bills', 'paypal', 'paybox', 'stripe'));
+		$companylangs->loadLangs(array('main', 'members', 'bills', 'paypal', 'stripe'));
 
 		$from = getDolGlobalString("MAIN_MAIL_EMAIL_FROM");
 		$sendto = $sendemail;

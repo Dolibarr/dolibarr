@@ -99,7 +99,7 @@ $search_num_releve = GETPOST("search_num_releve", 'alpha');
 $search_conciliated = GETPOST("search_conciliated", 'int');
 $search_fk_bordereau = GETPOST("search_fk_bordereau", 'int');
 $optioncss = GETPOST('optioncss', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:int');
 $num_releve = GETPOST("num_releve", "alpha");
 if (empty($dateop)) {
 	$dateop = -1;
@@ -247,7 +247,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
-$rowids = GETPOST('rowid', 'array');
+$rowids = GETPOST('rowid', 'array:int');
 
 // Conciliation
 if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', 'alpha'))
@@ -262,7 +262,7 @@ if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', '
 	if ($num_releve) {
 		$bankline = new AccountLine($db);
 
-		$rowids = GETPOST('rowid', 'array');
+		$rowids = GETPOST('rowid', 'array:int');
 
 		if (!empty($rowids) && is_array($rowids)) {
 			foreach ($rowids as $row) {
@@ -402,6 +402,19 @@ if (GETPOST('save') && !$cancel && $user->hasRight('banque', 'modifier')) {
 	}
 }
 
+if ($action == 'confirm_deleteonreconcile' && $confirm == 'yes' && $user->hasRight('banque', 'modifier')) {
+	$accline = new AccountLine($db);
+	$result = $accline->fetch(GETPOSTINT("rowid"));
+	$result = $accline->delete($user);
+	if ($result <= 0) {
+		setEventMessages($accline->error, $accline->errors, 'errors');
+	} else {
+		setEventMessages('RecordDeleted', null, 'mesgs');
+	}
+
+	$action = 'reconcile';
+}
+
 if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('banque', 'modifier')) {
 	$accline = new AccountLine($db);
 	$result = $accline->fetch(GETPOSTINT("rowid"));
@@ -412,6 +425,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('banque'
 		setEventMessages('RecordDeleted', null, 'mesgs');
 	}
 }
+
 
 /*
  * View
@@ -514,7 +528,7 @@ if (GETPOSTINT("search_thirdparty")) {
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
-if ($action == 'reconcile') {
+if ($action == 'reconcile' || $action == 'confirm_deleteonreconcile') {
 	$param .= '&action=reconcile';
 }
 $totalarray = array(
@@ -553,7 +567,7 @@ if ($id > 0 || !empty($ref)) {
 	// Bank card
 	$head = bank_prepare_head($object);
 	$activetab = 'journal';
-	if ($action == 'reconcile') {
+	if ($action == 'reconcile' || $action == 'confirm_deleteonreconcile') {
 		$activetab = 'reconcile';
 	}
 	print dol_get_fiche_head($head, $activetab, $langs->trans("FinancialAccount"), 0, 'account');
@@ -563,44 +577,6 @@ if ($id > 0 || !empty($ref)) {
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
 
 	print dol_get_fiche_end();
-
-
-	/*
-	 * Buttons actions
-	 */
-	/* Moved into tab
-	if ($action != 'reconcile') {
-		if ($object->canBeConciliated() > 0) {
-			$allowautomaticconciliation = false; // TODO
-			$titletoconciliatemanual = $langs->trans("Conciliate");
-			$titletoconciliateauto = $langs->trans("Conciliate");
-			if ($allowautomaticconciliation) {
-				$titletoconciliatemanual .= ' ('.$langs->trans("Manual").')';
-				$titletoconciliateauto .= ' ('.$langs->trans("Auto").')';
-			}
-
-			// If not cash account and can be reconciliate
-			if ($user->hasRight('banque', 'consolidate')) {
-				$newparam = $param;
-				$newparam = preg_replace('/search_conciliated=\d+/i', '', $newparam);
-				$buttonreconcile = '<a class="butAction" style="margin-bottom: 5px !important; margin-top: 5px !important" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&sortorder=asc,asc,asc&search_conciliated=0'.$newparam.'">'.$titletoconciliatemanual.'</a>';
-			} else {
-				$buttonreconcile = '<a class="butActionRefused" style="margin-bottom: 5px !important; margin-top: 5px !important" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$titletoconciliatemanual.'</a>';
-			}
-
-			if ($allowautomaticconciliation) {
-				// If not cash account and can be reconciliate
-				if ($user->hasRight('banque', 'consolidate')) {
-					$newparam = $param;
-					$newparam = preg_replace('/search_conciliated=\d+/i', '', $newparam);
-					$buttonreconcile .= ' <a class="butAction" style="margin-bottom: 5px !important; margin-top: 5px !important" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&sortorder=asc,asc,asc&search_conciliated=0'.$newparam.'">'.$titletoconciliateauto.'</a>';
-				} else {
-					$buttonreconcile .= ' <a class="butActionRefused" style="margin-bottom: 5px !important; margin-top: 5px !important" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$titletoconciliateauto.'</a>';
-				}
-			}
-		}
-	}
-	*/
 }
 
 $sql = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro as conciliated, b.num_releve, b.num_chq,";
@@ -710,7 +686,7 @@ if (!empty($search_type)) {
 }
 // Search criteria amount
 if ($search_debit) {
-	$sql .= natural_search('ABS(b.amount)', $search_debit, 1);
+	$sql .= natural_search('-b.amount', $search_debit, 1);
 	$sql .= ' AND b.amount <= 0';
 }
 if ($search_credit) {
@@ -820,8 +796,8 @@ if ($resql) {
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="'.($action != 'delete' ? $action : 'search').'">';
-	if (!empty($view)) {
-		print '<input type="hidden" name="view" value="'.dol_escape_htmltag($view).'">';
+	if (!empty($mode)) {
+		print '<input type="hidden" name="mode" value="'.dol_escape_htmltag($mode).'">';
 	}
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
@@ -869,7 +845,7 @@ if ($resql) {
 		print '</td>';
 		print '<td>&nbsp;</td>';
 		print '<td class="nowrap">';
-		$form->select_types_paiements((GETPOST('operation') ? GETPOST('operation') : ($object->type == Account::TYPE_CASH ? 'LIQ' : '')), 'operation', '1,2', 2, 1);
+		print $form->select_types_paiements((GETPOST('operation') ? GETPOST('operation') : ($object->type == Account::TYPE_CASH ? 'LIQ' : '')), 'operation', '1,2', 2, 1, 0, 0, 1, '', 1);
 		print '</td>';
 		print '<td>';
 		print '<input name="num_chq" class="flat" type="text" size="4" value="'.GETPOST("num_chq", "alpha").'">';
@@ -877,7 +853,7 @@ if ($resql) {
 		//if (! $search_account > 0)
 		//{
 		print '<td class=right>';
-		$form->select_comptes(GETPOSTINT('add_account') ? GETPOSTINT('add_account') : $search_account, 'add_account', 0, '', 1, ($id > 0 || !empty($ref) ? ' disabled="disabled"' : ''));
+		print $form->select_comptes(GETPOSTINT('add_account') ? GETPOSTINT('add_account') : $search_account, 'add_account', 0, '', 1, ($id > 0 || !empty($ref) ? ' disabled="disabled"' : ''), 0, '', 1);
 		print '</td>';
 		//}
 		print '<td class="right"><input name="adddebit" class="flat" type="text" size="4" value="'.GETPOST("adddebit", "alpha").'"></td>';
@@ -943,14 +919,8 @@ if ($resql) {
 	}
 
 	$morehtml = '';
-	/*$morehtml = '<div class="inline-block '.(($buttonreconcile || $newcardbutton) ? 'marginrightonly' : '').'">';
-	$morehtml .= '<label for="pageplusone">'.$langs->trans("Page")."</label> "; // ' Page ';
-	$morehtml .= '<input type="text" name="pageplusone" id="pageplusone" class="flat right width25 pageplusone" value="'.($page + 1).'">';
-	$morehtml .= '/'.$nbtotalofpages.' ';
-	$morehtml .= '</div>';
-	*/
 
-	if ($action != 'addline' && $action != 'reconcile') {
+	if ($action != 'addline' && $action != 'reconcile' && $action != 'confirm_deleteonreconcile') {
 		$morehtml .= $buttonreconcile;
 	}
 
@@ -965,7 +935,7 @@ if ($resql) {
 	print_barre_liste($langs->trans("BankTransactions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton.$morehtml, $num, $nbtotalofrecords, $picto, 0, $morehtmlright, '', $limit, 0, 0, 1);
 
 	// Form to reconcile
-	if ($user->hasRight('banque', 'consolidate') && $action == 'reconcile') {
+	if ($user->hasRight('banque', 'consolidate') && ($action == 'reconcile' || $action == 'confirm_deleteonreconcile')) {
 		// Show last bank statements
 		$nbmax = 12; // We show last 12 receipts (so we can have more than one year)
 		$listoflastreceipts = '';
@@ -1128,10 +1098,10 @@ if ($resql) {
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 	$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
 	$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
-	$selectedfields .= ($action == 'reconcile' ? $form->showCheckAddButtons('checkforselect', 1) : '');
+	$selectedfields .= (($action == 'reconcile' || $action == 'confirm_deleteonreconcile') ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 	// When action is 'reconcile', we force to have the column num_releve always enabled (otherwise we can't make reconciliation).
-	if ($action == 'reconcile') {
+	if ($action == 'reconcile' || $action == 'confirm_deleteonreconcile') {
 		$arrayfields['b.num_releve']['checked'] = 1;
 	}
 
@@ -1168,7 +1138,7 @@ if ($resql) {
 	}
 	// Type
 	if (!empty($arrayfields['type']['checked'])) {
-		print '<td class="liste_titre center">';
+		print '<td class="liste_titre">';
 		print $form->select_types_paiements(empty($search_type) ? '' : $search_type, 'search_type', '', 2, 1, 1, 0, 1, 'maxwidth100', 1);
 		print '</td>';
 	}
@@ -1270,7 +1240,7 @@ if ($resql) {
 		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['type']['checked'])) {
-		print_liste_field_titre($arrayfields['type']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'center ');
+		print_liste_field_titre($arrayfields['type']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
 		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['b.num_chq']['checked'])) {
@@ -1392,7 +1362,7 @@ if ($resql) {
 			$balancecalculated = true;
 
 			// Output a line with start balance
-			if ($user->hasRight('banque', 'consolidate') && $action == 'reconcile') {
+			if ($user->hasRight('banque', 'consolidate') && ($action == 'reconcile' || $action == 'confirm_deleteonreconcile')) {
 				$tmpnbfieldbeforebalance = 0;
 				$tmpnbfieldafterbalance = 0;
 				$balancefieldfound = 0;
@@ -1514,7 +1484,7 @@ if ($resql) {
 		// Action column
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td class="center">';
-			if (!$objp->conciliated && $action == 'reconcile') {
+			if (!$objp->conciliated && ($action == 'reconcile' || $action == 'confirm_deleteonreconcile')) {
 				print '<input class="flat checkforselect" name="rowid['.$objp->rowid.']" type="checkbox" name="toselect[]" value="'.$objp->rowid.'" size="1"'.(!empty($tmparray[$objp->rowid]) ? ' checked' : '').'>';
 			}
 			print '</td>';
@@ -1700,13 +1670,13 @@ if ($resql) {
 		if (!empty($arrayfields['type']['checked'])) {
 			$labeltype = ($langs->transnoentitiesnoconv("PaymentTypeShort".$objp->fk_type) != "PaymentTypeShort".$objp->fk_type) ? $langs->transnoentitiesnoconv("PaymentTypeShort".$objp->fk_type) : $langs->getLabelFromKey($db, $objp->fk_type, 'c_paiement', 'code', 'libelle', '', 1);
 			if (empty($arrayfields['b.num_chq']['checked'])) {
-				$labeltype .= ($objp->num_chq ? ' - '.$objp->num_chq : '');
+				$labeltype .= ($objp->num_chq ? ' <span class="opacitymedium">- '.$objp->num_chq.'</span>' : '');
 			}
 			print '<td class="tdoverflowmax100" title="'.dolPrintLabel($labeltype).'">';
 			if ($labeltype == 'SOLD') {
 				print '&nbsp;'; //$langs->trans("InitialBankBalance");
 			} else {
-				print dolPrintLabel($labeltype);
+				print dolPrintHTML($labeltype);
 			}
 			print "</td>\n";
 			if (!$i) {
@@ -1942,7 +1912,8 @@ if ($resql) {
 				}
 			}
 			if ($user->hasRight('banque', 'modifier')) {
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&rowid='.$objp->rowid.'&page='.$page.$param.($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : '').'">';
+				$parambis = preg_replace('/action=reconcile/', '', $param);
+				print '<a href="'.$_SERVER["PHP_SELF"].'?action='.($action == 'reconcile' ? 'confirm_deleteonreconcile&confirm=yes' : 'delete').'&token='.newToken().'&rowid='.$objp->rowid.'&page='.$page.$parambis.($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : '').'">';
 				print img_delete('', 'class="marginleftonly"');
 				print '</a>';
 			}
@@ -1955,7 +1926,7 @@ if ($resql) {
 		// Action column
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td class="center">';
-			if (!$objp->conciliated && $action == 'reconcile') {
+			if (!$objp->conciliated && ($action == 'reconcile' || $action == 'confirm_deleteonreconcile')) {
 				print '<input class="flat checkforselect" name="rowid['.$objp->rowid.']" type="checkbox" value="'.$objp->rowid.'" size="1"'.(!empty($tmparray[$objp->rowid]) ? ' checked' : '').'>';
 			}
 			print '</td>';
@@ -1987,9 +1958,6 @@ if ($resql) {
 				print '<td class="right"><span class="amount">'.price($totalarray['totalcred']).'</span></td>';
 			} elseif ($i == $posconciliatecol) {
 				print '<td class="center">';
-				/*if ($user->hasRight('banque', 'consolidate') && $action == 'reconcile') {
-					print '<input class="button smallpaddingimp" name="confirm_reconcile" type="submit" value="'.$langs->trans("Conciliate").'">';
-				}*/
 				print '</td>';
 			} else {
 				print '<td></td>';

@@ -355,6 +355,7 @@ class Translate
 				if (!$found) {
 					if ($fp = @fopen($file_lang, "rt")) {
 						// $tabtranslatedomain = array(); // To save lang content in cache when enabled (commented because initial = argument to function)
+						//print "Process file_lang=$file_lang\n";
 
 						/**
 						 * Read each lines until a '=' (with any combination of spaces around it)
@@ -673,7 +674,7 @@ class Translate
 				$tmparray = explode(';', getDolGlobalString($replacekey));
 				foreach ($tmparray as $tmp) {
 					$tmparray2 = explode(':', $tmp);
-					$str = preg_replace('/' . preg_quote($tmparray2[0]) . '/', $tmparray2[1], $str);
+					$str = preg_replace('/' . preg_quote($tmparray2[0], '/') . '/', $tmparray2[1], $str);
 				}
 			}
 
@@ -691,7 +692,6 @@ class Translate
 			}
 
 			$str = str_replace('__percent_with_bad_specifier__', '%', $str);
-
 
 			// We replace some HTML tags by __xx__ to avoid having them encoded by htmlentities because
 			// we want to keep '"' '<b>' '</b>' '<u>' '</u>' '<i>' '</i>' '<center> '</center>' '<strong' '</strong>' '<a ' '</a>' '<br>' '<span' '</span>' '< ' that are reliable HTML tags inside translation strings.
@@ -792,7 +792,7 @@ class Translate
 				$tmparray = explode(';', getDolGlobalString($replacekey));
 				foreach ($tmparray as $tmp) {
 					$tmparray2 = explode(':', $tmp);
-					$str = preg_replace('/' . preg_quote($tmparray2[0]) . '/', $tmparray2[1], $str);
+					$str = preg_replace('/' . preg_quote($tmparray2[0], '/') . '/', $tmparray2[1], $str);
 				}
 			}
 
@@ -1132,9 +1132,13 @@ class Translate
 	 *  @param	integer	$forceloadall		1=Force to load all currencies into cache. We know we need to use all of them. By default read and cache only the requested currency.
 	 *  @return	string						Currency symbol encoded into UTF8
 	 */
-	public function getCurrencySymbol($currency_code, $forceloadall = 0)
+	public function getCurrencySymbol($currency_code = '', $forceloadall = 0)
 	{
 		$currency_sign = ''; // By default return iso code
+
+		if (empty($currency_code)) {
+			$currency_code = getDolCurrency();
+		}
 
 		if (function_exists("mb_convert_encoding")) {
 			$this->loadCacheCurrencies($forceloadall ? '' : $currency_code);

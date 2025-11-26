@@ -99,7 +99,7 @@ class mod_stocktransfer_standard extends ModeleNumRefStockTransfer
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
 		if ($object->ismultientitymanaged == 1) {
 			$sql .= " AND entity = ".$conf->entity;
-		} elseif ($object->ismultientitymanaged == 2) {
+		} elseif (!is_numeric($object->ismultientitymanaged)) {
 			// TODO
 		}
 
@@ -137,7 +137,7 @@ class mod_stocktransfer_standard extends ModeleNumRefStockTransfer
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
 		if ($object->ismultientitymanaged == 1) {
 			$sql .= " AND entity = ".$conf->entity;
-		} elseif ($object->ismultientitymanaged == 2) {
+		} elseif (!is_numeric($object->ismultientitymanaged)) {
 			// TODO
 		}
 

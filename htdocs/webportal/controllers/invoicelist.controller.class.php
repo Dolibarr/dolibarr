@@ -30,7 +30,7 @@ class InvoiceListController extends Controller
 	/**
 	 * @var FormListWebPortal Form for list
 	 */
-	protected $formList;
+	public $formList;
 
 
 	/**

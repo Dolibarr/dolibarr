@@ -48,6 +48,7 @@ $langs->loadLangs(array("companies", "bills", "orders", "suppliers", "propal", "
 
 $action = GETPOST('action', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'thirdpartylist';
+$optioncss 	= GETPOST('optioncss', 'alpha');
 
 // Security check
 $socid = GETPOSTINT('socid');
@@ -56,7 +57,7 @@ if ($user->socid) {
 }
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-$hookmanager->initHooks(array('consumptionthirdparty', 'globalcard'));
+$hookmanager->initHooks(array('thirdpartyconsumption', 'consumptionthirdparty', 'globalcard'));
 
 $result = restrictedArea($user, 'societe', $socid, '&societe');
 $object = new Societe($db);
@@ -69,11 +70,10 @@ $limit 		= GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield 	= GETPOST('sortfield', 'aZ09comma');
 $sortorder 	= GETPOST('sortorder', 'aZ09comma');
 $page 		= GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
-$optioncss 	= GETPOST('optioncss', 'alpha');
 
 if (empty($page) || $page == -1) {
 	$page = 0;
-}     // If $page is not defined, or '' or -1
+}
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -150,10 +150,6 @@ print '<table class="border centpercent tableforfield">';
 print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
 print $object->getTypeUrl(1);
 print '</td></tr>';
-
-if (getDolGlobalString('SOCIETE_USEPREFIX')) {  // Old not used prefix field
-	print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
-}
 
 //if (isModEnabled('agenda') && $user->hasRight('agenda', 'myactions', 'read')) $elementTypeArray['action']=$langs->transnoentitiesnoconv('Events');
 $elementTypeArray = array();
@@ -288,7 +284,7 @@ if ($type_element == 'propal') {
 	$tables_from = MAIN_DB_PREFIX."propal as c,".MAIN_DB_PREFIX."propaldet as d";
 	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".((int) $socid);
 	$where .= " AND d.fk_propal = c.rowid";
-	$where .= " AND c.entity = ".$conf->entity;
+	$where .= " AND c.entity IN (".getEntity('propal').")";
 	$dateprint = 'c.datep';
 	$doc_number = 'c.ref';
 	$thirdTypeSelect = 'customer';
@@ -301,7 +297,7 @@ if ($type_element == 'order') {
 	$tables_from = MAIN_DB_PREFIX."commande as c,".MAIN_DB_PREFIX."commandedet as d";
 	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".((int) $socid);
 	$where .= " AND d.fk_commande = c.rowid";
-	$where .= " AND c.entity = ".$conf->entity;
+	$where .= " AND c.entity IN (".getEntity('commande').")";
 	$dateprint = 'c.date_commande';
 	$doc_number = 'c.ref';
 	$thirdTypeSelect = 'customer';
@@ -439,7 +435,7 @@ if (!empty($sql_select)) {
 		$sql .= ")";
 	}
 
-	$parameters = array();
+	$parameters = array('type_element' => $type_element);
 	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	$sql .= $hookmanager->resPrint;
 

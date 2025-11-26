@@ -195,6 +195,11 @@ class Import
 
 			// Search module files
 			while (($file = readdir($handle)) !== false) {
+				// Ignore Module Builder backup files (*.php.back)
+				if (preg_match('/\.back$/i', $file)) {
+					continue;
+				}
+
 				if (!preg_match("/^(mod.*)\.class\.php/i", $file, $reg)) {
 					continue;
 				}

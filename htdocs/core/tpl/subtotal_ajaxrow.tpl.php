@@ -27,17 +27,19 @@
  * $object->fk_element or $fk_element must be defined
  * you must have ($nboflines or count($object->lines) or count($taskarray) > 0)
  * you must have $table_element_line = 'tablename' or $object->table_element_line with line to move
- *
  */
+
 /**
  * @var Conf $conf
  * @var CommonObject $object
  * @var Translate $langs
  *
+ * @var ?string	$table_element_line
  * @var ?string $filepath
  * @var ?string $fk_element
- * @var ?int $nboflines
+ * @var ?int 	$nboflines
  * @var ?string $tagidfortablednd
+ * @var ?string $urltorefreshaftermove
  */
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
@@ -57,7 +59,7 @@ $id = $object->id;
 $fk_element = empty($object->fk_element) ? $fk_element : $object->fk_element;
 $table_element_line = (empty($table_element_line) ? $object->table_element_line : $table_element_line);
 $nboflines = count($object->lines);
-$forcereloadpage = !getDolGlobalString('MAIN_FORCE_RELOAD_PAGE') ? 0 : 1;
+$forcereloadpage = getDolGlobalInt('MAIN_FORCE_RELOAD_PAGE');
 $tagidfortablednd = (empty($tagidfortablednd) ? 'tablelines' : $tagidfortablednd);
 $filepath = (empty($filepath) ? '' : $filepath);
 $langs->load("subtotals");

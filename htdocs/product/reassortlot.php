@@ -394,8 +394,8 @@ if ($search_toolowstock) {
 	$sql_having .= " HAVING SUM(".$db->ifsql('ps.reel IS NULL', '0', 'ps.reel').") < p.seuil_stock_alerte"; // Not used yet
 }
 if ($search_stock_physique != '') {
-	$natural_search_physique = natural_search('SUM(' . $db->ifsql('pb.qty IS NULL', $db->ifsql('ps.reel IS NULL', '0', 'ps.reel'), 'pb.qty') . ')', $search_stock_physique, 1, 1);
-	$natural_search_physique = " " . substr($natural_search_physique, 1, -1); // remove first "(" and last ")" characters
+	$natural_search_physique = natural_search('__SEARCH_PHYSIQUE__', $search_stock_physique, 1, 1);
+	$natural_search_physique = " " . substr(str_replace('__SEARCH_PHYSIQUE__', 'SUM(COALESCE(pb.qty, ps.reel, 0))', $natural_search_physique), 1, -1); // remove first "(" and last ")" characters
 	if (!empty($sql_having)) {
 		$sql_having .= " AND";
 	} else {
@@ -406,14 +406,15 @@ if ($search_stock_physique != '') {
 // Add HAVING from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object); // Note that $action and $object may have been modified by hook
-if (!empty($hookmanager->resPrint)) {
-	if (!empty($sql_having)) {
-		$sql_having .= " AND";
-	} else {
-		$sql_having .= " HAVING";
+if (empty($reshook)) {
+	if (empty($sql_having)) {
+		$sql_having .= " HAVING 1=1";
 	}
 	$sql_having .= $hookmanager->resPrint;
+} else {
+	$sql_having = $hookmanager->resPrint;
 }
+
 if (!empty($sql_having)) {
 	$sql .= $sql_having;
 }
@@ -426,7 +427,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -563,7 +564,7 @@ if ($search_categ > 0) {
 	print "<div id='ways'>";
 	$c = new Categorie($db);
 	$c->fetch($search_categ);
-	$ways = $c->print_all_ways(' &gt; ', 'product/reassortlot.php');
+	$ways = $c->print_all_ways('auto', 'product/reassortlot.php');
 	print " &gt; ".$ways[0]."<br>\n";
 	print "</div><br>";
 }
@@ -765,8 +766,8 @@ while ($i < $imaxinloop) {
 	}
 
 	// Ref
-	print '<td class="nowrap">';
-	print $product_static->getNomUrl(1, '', 16);
+	print '<td class="tdoverflowmax250">';
+	print $product_static->getNomUrl(1);
 	//if ($objp->stock_theorique < $objp->seuil_stock_alerte) print ' '.img_warning($langs->trans("StockTooLow"));
 	print '</td>';
 	if (!$i) {
@@ -774,7 +775,7 @@ while ($i < $imaxinloop) {
 	}
 
 	// Label
-	print '<td>'.$objp->label.'</td>';
+	print '<td class="tdoverflowmax150">'.$objp->label.'</td>';
 	if (!$i) {
 		$totalarray['nbfield']++;
 	}

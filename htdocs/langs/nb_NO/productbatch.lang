@@ -50,3 +50,5 @@ ToReplace=Erstatt
 CantMoveNonExistantSerial=Feil. Du ber om et trekk på en post for en serie som ikke eksisterer lenger. Det kan være at du tar samme serie på samme lager flere ganger i samme forsendelse, eller den ble brukt av en annen forsendelse. Fjern denne forsendelsen og klargjør en ny.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Lottabell ufullstendig kjørereparasjon med parameteren '...repair.php?standard=confirmed'
 IlligalQtyForSerialNumbers= Beholdningskorrigering kreves på grunn av unikt serienummer.
+ErrorBatchesNeedStockManagement=Error. A product with batch/lot management must also be managed in stock.
+ForceBatchesNeedStockManagement=En vare med batch-/lot-administrasjon må administreres i beholdning (beholdningsadministrasjon tvinges til ja)

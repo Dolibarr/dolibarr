@@ -77,9 +77,10 @@ ClickHereToTryAgain= <a href="%s"> دوبارہ کوشش کرنے کے لیے ی
 CreationOfPaymentModeMustBeDoneFromStripeInterface=مضبوط کسٹمر تصدیقی اصولوں کی وجہ سے، کارڈ کی تخلیق سٹرائپ بیک آفس سے کی جانی چاہیے۔ آپ اسٹرائپ کسٹمر ریکارڈ پر سوئچ کرنے کے لیے یہاں کلک کر سکتے ہیں: %s
 STRIPE_CARD_PRESENT=پٹی والے ٹرمینلز کے لیے کارڈ پیش کیا گیا۔
 TERMINAL_LOCATION=پٹی والے ٹرمینلز کے لیے مقام (پتہ)
-RequestDirectDebitWithStripe=پٹی کے ساتھ براہ راست ڈیبٹ کی درخواست کریں۔
-RequesCreditTransferWithStripe=Request Credit Transfer with Stripe
-STRIPE_SEPA_DIRECT_DEBIT=اسٹرائپ کے ذریعے ڈائریکٹ ڈیبٹ ادائیگیوں کو فعال کریں۔
+RequestDirectDebitWithStripe=Request SEPA Direct Debit with Stripe
+RequesCreditTransferWithStripe=Make SEPA Credit Transfer with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable SEPA Direct Debit payments with Stripe
+STRIPE_SEPA_CREDIT_TRANSFER=Enable SEPA Credit Transfer payments with Stripe
 STRIPE_KLARNA=Enable the payments using Klarna
 STRIPE_BANCONTACT=Enable the payments using BANCONTACT
 STRIPE_IDEAL=Enable the payments using IDEAL

@@ -119,3 +119,4 @@ HolidayRecordIncreased=Le solde des congés a augmenté
 ConfirmMassIncreaseHoliday=Augmentation du solde des congés en masse
 ConfirmMassIncreaseHolidayQuestion=Êtes-vous sûr de vouloir augmenter les vacances des %s enregistrements sélectionnés ?
 ConsumeHolidaysAtTheEndOfTheMonthTheyAreTakenAt=Consommez les vacances à la fin du mois où elles sont prises
+PleaseDefineSomeTypeOfHolidayFirst=Veuillez d'abord définir quelques types de vacances dans le dictionnaire (Menu Accueil - Configuration - dictionnaires)

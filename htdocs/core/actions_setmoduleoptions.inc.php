@@ -29,16 +29,21 @@
 // $nomessageinupdate can be set to 1
 // $nomessageinsetmoduleoptions can be set to 1
 // $formSetup may be defined
+
 /**
  * @var Conf $conf
  * @var DoliDB $db
  * @var FormSetup $formSetup
  * @var Translate $langs
  * @var User $user
+ *
  * @var string $action
  * @var int $error
  * @var ?int $nomessageinupdate
  * @var ?int $nomessageinsetmoduleoptions
+ * @var ?string $modulepart
+ * @var ?string $websitetemplateconf
+ * @var ?array<string,mixed> $arrayofparameters
  */
 
 '

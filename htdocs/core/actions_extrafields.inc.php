@@ -239,7 +239,8 @@ if ($action == 'add') {
 					(GETPOST('totalizable', 'alpha') ? 1 : 0),
 					GETPOSTINT('printable'),
 					array('css' => $css, 'cssview' => $cssview, 'csslist' => $csslist),
-					GETPOST("ai_prompt")
+					GETPOST("ai_prompt"),
+					(GETPOST('emptyonclone', 'alpha') ? 1 : 0)
 				);
 				if ($result > 0) {
 					setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');
@@ -424,7 +425,8 @@ if ($action == 'update') {
 					(GETPOST('totalizable', 'alpha') ? 1 : 0),
 					GETPOSTINT('printable'),
 					array('css' => $css, 'cssview' => $cssview, 'csslist' => $csslist),
-					GETPOST("ai_prompt")
+					GETPOST("ai_prompt"),
+					(GETPOST('emptyonclone', 'alpha') ? 1 : 0)
 				);
 				if ($result > 0) {
 					setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');
@@ -492,7 +494,7 @@ if ($action == 'encrypt') {
 						$sql .= " AND te.".$attributekey." IS NOT NULL";
 						$sql .= " AND te.".$attributekey." <> ''";
 						if ($extrafields->attributes[$elementtype]['entityid'][$attributekey] == $conf->entity) {
-							$sql .= " AND t.entity = ".getEntity($arrayofelement['table_element'], 0);
+							$sql .= " AND t.entity = ".getEntity($arrayofelement['element'], 0);
 						}
 
 						//print $sql;

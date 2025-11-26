@@ -490,13 +490,13 @@ class SecurityGETPOSTTest extends CommonClassTest
 		$_POST["pagecontentwithnowrapperlinks"] = '<img src="https://aaa">';
 		$result = GETPOST("pagecontentwithnowrapperlinks", 'restricthtml');
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('ErrorHTMLExternalLinksNotAllowed', $result, 'Test on MAIN_DISALLOW_URL_INTO_DESCRIPTIONS = 1 (no links to http allowed)');
+		$this->assertEquals('ErrorHTMLExternalLinksNotAllowed (Example: https://aaa)', $result, 'Test on MAIN_DISALLOW_URL_INTO_DESCRIPTIONS = 1 (no links to http allowed)');
 
 		// Test that links not on wrapper and not data are disallowed
 		$_POST["pagecontentwithnowrapperlinks"] = '<span style="background: url(http://ddd)"></span>';
 		$result = GETPOST("pagecontentwithnowrapperlinks", 'restricthtml');
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('ErrorHTMLExternalLinksNotAllowed', $result, 'Test on MAIN_DISALLOW_URL_INTO_DESCRIPTIONS = 1 (no links to http allowed)');
+		$this->assertEquals('ErrorHTMLExternalLinksNotAllowed (Example: http://ddd)', $result, 'Test on MAIN_DISALLOW_URL_INTO_DESCRIPTIONS = 1 (no links to http allowed)');
 
 
 		// Test substitution in GET url

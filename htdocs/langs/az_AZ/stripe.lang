@@ -77,9 +77,10 @@ ClickHereToTryAgain=<a href="%s">Yenidən cəhd etmək üçün bura klikləyin..
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Güclü Müştəri Doğrulama qaydalarına görə, kartın yaradılması Stripe-in arxa ofisindən həyata keçirilməlidir. Stripe müştəri qeydinə keçmək üçün bura klikləyə bilərsiniz: %s
 STRIPE_CARD_PRESENT=Stripe Terminallar üçün Kart Hədiyyəsi
 TERMINAL_LOCATION=Zolaqlı Terminallar üçün yer (ünvan).
-RequestDirectDebitWithStripe=Stripe ilə birbaşa debit tələb edin
-RequesCreditTransferWithStripe=Stripe ilə kredit köçürməsini tələb edin
-STRIPE_SEPA_DIRECT_DEBIT=Stripe vasitəsilə birbaşa debet ödənişlərini aktivləşdirin
+RequestDirectDebitWithStripe=Request SEPA Direct Debit with Stripe
+RequesCreditTransferWithStripe=Make SEPA Credit Transfer with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable SEPA Direct Debit payments with Stripe
+STRIPE_SEPA_CREDIT_TRANSFER=Enable SEPA Credit Transfer payments with Stripe
 STRIPE_KLARNA=Klarna istifadə edərək ödənişləri aktivləşdirin
 STRIPE_BANCONTACT=BANCONTACT istifadə edərək ödənişləri aktivləşdirin
 STRIPE_IDEAL=İDEAL istifadə edərək ödənişləri aktivləşdirin

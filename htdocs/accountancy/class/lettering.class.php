@@ -557,7 +557,7 @@ class Lettering extends BookKeeping
 				$group_error++;
 			}
 
-			// Lettering/Unlettering the group of bookkeeping lines
+			// Matching/Unmatching the group of bookkeeping lines
 			if (!$group_error && $do_it) {
 				if ($unlettering) {
 					$result = $this->deleteLettering($bookkeeping_lines);
@@ -649,7 +649,7 @@ class Lettering extends BookKeeping
 
 		$grouped_lines = array();
 		foreach (self::$doc_type_infos as $doc_type => $doc_type_info) {
-			if (!is_array($bookkeeping_lines_by_type[$doc_type])) {
+			if (empty($bookkeeping_lines_by_type[$doc_type]) || !is_array($bookkeeping_lines_by_type[$doc_type])) {
 				continue;
 			}
 
@@ -929,6 +929,10 @@ class Lettering extends BookKeeping
 			// Save list when is the first step of the recursive recursive function
 			$save_link_by_element = $link_by_element;
 			$save_element_by_link = $element_by_link;
+		} else {
+			// To satisfy static analysis (phpstan)
+			$save_link_by_element = null;
+			$save_element_by_link = null;
 		}
 
 		do {

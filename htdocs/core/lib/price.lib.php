@@ -89,7 +89,7 @@
  */
 function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocaltax1_rate, $uselocaltax2_rate, $remise_percent_global, $price_base_type, $info_bits, $type, $seller = null, $localtaxes_array = [], $progress = 100, $multicurrency_tx = 1, $pu_devise = 0, $multicurrency_code = '') // @phpstan-ignore-line
 {
-	global $conf, $mysoc, $db;
+	global $conf, $mysoc, $db, $hookmanager;
 
 	$result = array();
 
@@ -387,16 +387,16 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 	// If rounding is not using base 10 (rare)
 	if (getDolGlobalString('MAIN_ROUNDING_RULE_TOT')) {
 		if ($price_base_type == 'HT') {
-			$result[0] = price2num(round((float) $result[0] / (float) $conf->global->MAIN_ROUNDING_RULE_TOT, 0) * (float) $conf->global->MAIN_ROUNDING_RULE_TOT, 'MT');
-			$result[1] = price2num(round((float) $result[1] / (float) $conf->global->MAIN_ROUNDING_RULE_TOT, 0) * (float) $conf->global->MAIN_ROUNDING_RULE_TOT, 'MT');
-			$result[9] = price2num(round((float) $result[9] / (float) $conf->global->MAIN_ROUNDING_RULE_TOT, 0) * (float) $conf->global->MAIN_ROUNDING_RULE_TOT, 'MT');
-			$result[10] = price2num(round((float) $result[10] / (float) $conf->global->MAIN_ROUNDING_RULE_TOT, 0) * (float) $conf->global->MAIN_ROUNDING_RULE_TOT, 'MT');
+			$result[0] = price2num(round((float) $result[0] / getDolGlobalFloat('MAIN_ROUNDING_RULE_TOT'), 0) * getDolGlobalFloat('MAIN_ROUNDING_RULE_TOT'), 'MT');
+			$result[1] = price2num(round((float) $result[1] / getDolGlobalFloat('MAIN_ROUNDING_RULE_TOT'), 0) * getDolGlobalFloat('MAIN_ROUNDING_RULE_TOT'), 'MT');
+			$result[9] = price2num(round((float) $result[9] / getDolGlobalFloat('MAIN_ROUNDING_RULE_TOT'), 0) * getDolGlobalFloat('MAIN_ROUNDING_RULE_TOT'), 'MT');
+			$result[10] = price2num(round((float) $result[10] / getDolGlobalFloat('MAIN_ROUNDING_RULE_TOT'), 0) * getDolGlobalFloat('MAIN_ROUNDING_RULE_TOT'), 'MT');
 			$result[2] = price2num((float) $result[0] + (float) $result[1] + (float) $result[9] + (float) $result[10], 'MT');
 		} else {
-			$result[1] = price2num(round((float) $result[1] / (float) $conf->global->MAIN_ROUNDING_RULE_TOT, 0) * (float) $conf->global->MAIN_ROUNDING_RULE_TOT, 'MT');
-			$result[2] = price2num(round((float) $result[2] / (float) $conf->global->MAIN_ROUNDING_RULE_TOT, 0) * (float) $conf->global->MAIN_ROUNDING_RULE_TOT, 'MT');
-			$result[9] = price2num(round((float) $result[9] / (float) $conf->global->MAIN_ROUNDING_RULE_TOT, 0) * (float) $conf->global->MAIN_ROUNDING_RULE_TOT, 'MT');
-			$result[10] = price2num(round((float) $result[10] / (float) $conf->global->MAIN_ROUNDING_RULE_TOT, 0) * (float) $conf->global->MAIN_ROUNDING_RULE_TOT, 'MT');
+			$result[1] = price2num(round((float) $result[1] / getDolGlobalFloat('MAIN_ROUNDING_RULE_TOT'), 0) * getDolGlobalFloat('MAIN_ROUNDING_RULE_TOT'), 'MT');
+			$result[2] = price2num(round((float) $result[2] / getDolGlobalFloat('MAIN_ROUNDING_RULE_TOT'), 0) * getDolGlobalFloat('MAIN_ROUNDING_RULE_TOT'), 'MT');
+			$result[9] = price2num(round((float) $result[9] / getDolGlobalFloat('MAIN_ROUNDING_RULE_TOT'), 0) * getDolGlobalFloat('MAIN_ROUNDING_RULE_TOT'), 'MT');
+			$result[10] = price2num(round((float) $result[10] / getDolGlobalFloat('MAIN_ROUNDING_RULE_TOT'), 0) * getDolGlobalFloat('MAIN_ROUNDING_RULE_TOT'), 'MT');
 			$result[0] = price2num((float) $result[2] - (float) $result[1] - (float) $result[9] - (float) $result[10], 'MT');
 		}
 	}
@@ -453,7 +453,17 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 		$result[25] = $result[9];
 		$result[26] = $result[10];
 	}
+
 	dol_syslog('Price.lib::calcul_price_total MAIN_ROUNDING_RULE_TOT='.getDolGlobalString('MAIN_ROUNDING_RULE_TOT').' pu='.$pu.' qty='.$qty.' price_base_type='.$price_base_type.' total_ht='.$result[0].'-total_vat='.$result[1].'-total_ttc='.$result[2]);
+
+	// Allow an external module to bypass the calculation of prices
+	$parameters = array('result' => $result);
+	$tmpobject = null; $tmpaction = '';
+	// @phan-suppress-next-line PhanPluginConstantVariableNull
+	$reshook = $hookmanager->executeHooks('calcul_price_total', $parameters, $tmpobject, $tmpaction);	// @phan-suppress-current-line PhanPluginConstantVariableNull
+	if ($reshook > 0 && !empty($hookmanager->resArray['result'])) {
+		$result = $hookmanager->resArray['result'];
+	}
 
 	return $result;
 }

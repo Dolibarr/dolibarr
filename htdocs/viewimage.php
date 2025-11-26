@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2016 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -61,32 +61,33 @@ $needlogin = 1;
 if (isset($_GET["modulepart"])) {
 	// Some value of modulepart can be used to get resources that are public so no login are required.
 
-	// For logo of company
+	// For logo of company (by definition, the company logo is public)
 	if ($_GET["modulepart"] == 'mycompany' && preg_match('/^\/?logos\//', $_GET['file'])) {
 		$needlogin = 0;
 	}
-	// For barcode live generation
+	// For barcode live generation (barcode are just a graph of a value, so can be public)
 	if ($_GET["modulepart"] == 'barcode') {
 		$needlogin = 0;
 	}
-	// Medias files
+	// Medias files (by definition medias files are for website so are public)
 	if ($_GET["modulepart"] == 'medias') {
 		$needlogin = 0;
 	}
-	// Common files (files into /public/theme/common)
+	// Common files (public files embedded into /public/theme/common)
 	if ($_GET["modulepart"] == 'common') {
 		$needlogin = 0;
 	}
-	// User photo when user has made its profile public (for virtual credi card)
+	// User photo when user has made its profile public (for virtual credit card)
 	if ($_GET["modulepart"] == 'userphotopublic') {
 		$needlogin = 0;
 	}
-	// Used by TakePOS Auto Order
-	if ($_GET["modulepart"] == 'product' && isset($_GET["publictakepos"])) {
+	// Used by TakePOS Auto Order. TODO Image product may became public in this case. A security check to check that product is in takepos tree must be done later.
+	// isModEnabled is not defined, DOL_DOCUMENT_ROOT is not defined
+	if ($_GET["modulepart"] == 'product' /* && isModEnabled('takepos') */ && isset($_GET["publictakepos"])) {
 		$needlogin = 0;
 	}
 }
-// For direct external download link, we don't need to load/check we are into a login session
+// For direct external download link (when files was shared for download using a hash link), we don't need to load/check we are into a login session
 if (isset($_GET["hashp"])) {
 	$needlogin = 0;
 }

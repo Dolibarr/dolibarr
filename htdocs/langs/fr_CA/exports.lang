@@ -31,7 +31,6 @@ FormatedExportDesc3=Lorsque les données à exporter sont sélectionnées, vous 
 Sheet=Drap
 NoImportableData=Aucune donnée importable (aucun module avec des définitions permettant d'importer des données)
 SQLUsedForExport=Requête SQL utilisée pour extraire des données
-LineId=Id de ligne
 LineLabel=Étiquette de ligne
 LineDescription=Description de la ligne
 LineUnitPrice=Prix ​​unitaire de la ligne

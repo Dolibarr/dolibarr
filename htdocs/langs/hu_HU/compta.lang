@@ -3,10 +3,10 @@ MenuFinancial=Számlázás | Fizetés
 TaxModuleSetupToModifyRules=Lépjen az <a href="%s">adómodul beállításához</a> a számítási szabályok módosításához
 TaxModuleSetupToModifyRulesLT=Lépjen a <a href="%s">Vállalati beállítás</a> oldalra a számítási szabályok módosításához
 OptionMode=Opció a könyveléshez
-OptionModeTrue=eredmény szemléletű könyvelés
-OptionModeVirtual=Pénzügyi elszámolás
-OptionModeTrueDesc=Ebben az összefüggésben a forgalmat a kifizetések (fizetések dátuma) alapján számítják ki. Az adatok érvényessége csak akkor biztosított, ha a könyvelést a kifizetések bemenete/kimenete alapján ellenőrzik.
+OptionModeVirtual=Accrual accounting
+OptionModeTrue=Cash accounting
 OptionModeVirtualDesc=Ebben az összefüggésben a forgalom a számlák alapján kerül kiszámításra (érvényesítés dátuma). Amikor ezek a számlák esedékesek, függetlenül attól, hogy kifizették-e vagy sem, a forgalom kibocsátása között szerepelnek.
+OptionModeTrueDesc=Ebben az összefüggésben a forgalmat a kifizetések (fizetések dátuma) alapján számítják ki. Az adatok érvényessége csak akkor biztosított, ha a könyvelést a kifizetések bemenete/kimenete alapján ellenőrzik.
 FeatureIsSupportedInInOutModeOnly=A szolgáltatás csak CREDITS-DEBTS könyvelési módban érhető el (lásd: Könyvelési modul konfigurációja)
 VATReportBuildWithOptionDefinedInModule=Az itt látható összegek az Adómodul beállításai által meghatározott szabályok alapján lettek kiszámítva.
 LTReportBuildWithOptionDefinedInModule=Az itt látható összegek a vállalati beállítások által meghatározott szabályok alapján lettek kiszámítva.
@@ -302,7 +302,6 @@ ByVatRate=A forgalmi adó mértéke szerint
 TurnoverbyVatrate=A forgalmi adó mértéke szerint számlázott forgalom
 TurnoverCollectedbyVatrate=A forgalmi adó mértéke alapján beszedett forgalom
 PurchasebyVatrate=Vásárlás forgalmi adókulcs szerint
-LabelToShow=Rövid címke
 PurchaseTurnover=Vásárlási forgalom
 PurchaseTurnoverCollected=Vásárlási forgalom begyűjtve
 RulesPurchaseTurnoverDue=- Tartalmazza a szállító esedékes számláit, függetlenül attól, hogy azokat kifizették-e vagy sem. <br>- Ezeknek a számláknak a számla dátumán alapul.<br>
@@ -329,3 +328,4 @@ RuleForLinesDates=Szabály a sorok dátumaira vonatkozóan
 Prepaid=Előre kifizetett
 Postpaid=Utólagos fizetés
 SetRuleForLinesDates=Sorok dátumaira vonatkozó szabály beállítása
+SomeNotConvertedCreditNoteExists=There is <b>%s</b> credit notes not yet converted for consumption

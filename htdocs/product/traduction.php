@@ -98,7 +98,8 @@ if (empty($reshook)) {
 	if ($action == 'delete' && GETPOST('langtodelete', 'alpha') && $usercancreate) {
 		$object->delMultiLangs(GETPOST('langtodelete', 'alpha'), $user);
 		setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
-		$action = '';
+		header('Location:'.$_SERVER['PHP_SELF'].'?id='.$id);
+		exit;
 	}
 
 	// Add translation
@@ -127,7 +128,8 @@ if (empty($reshook)) {
 		}
 
 		if ($result > 0) {
-			$action = '';
+			header('Location:'.$_SERVER['PHP_SELF'].'?id='.$id);
+			exit;
 		} else {
 			$action = 'add';
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -154,7 +156,8 @@ if (empty($reshook)) {
 
 		$result = $object->setMultiLangs($user);
 		if ($result > 0) {
-			$action = '';
+			header('Location:'.$_SERVER['PHP_SELF'].'?id='.$id);
+			exit;
 		} else {
 			$action = 'edit';
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -167,7 +170,8 @@ if (empty($reshook)) {
 
 		$result = $object->delMultiLangs($langtodelete, $user);
 		if ($result > 0) {
-			$action = '';
+			header('Location:'.$_SERVER['PHP_SELF'].'?id='.$id);
+			exit;
 		} else {
 			$action = 'edit';
 			setEventMessages($object->error, $object->errors, 'errors');

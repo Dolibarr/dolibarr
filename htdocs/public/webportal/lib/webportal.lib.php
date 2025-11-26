@@ -12,7 +12,7 @@
 /**
  * Get nav menu
  *
- * @param	array<string,array{id:string,rank:int,url:string,name:string,group:string,override?:int<0,1>,children?:array<array{id:string,rank:int,url:string,name:string,group:string,override?:int<0,1>}>}>|array<user_logout,array{id:string,rank:int,url:string,name:string}>	$Tmenu	Array of menu
+ * @param	array<string,array{id:string,rank:int,url:string|false,name:string,group:string,override?:int<0,1>,children?:array<array{id:string,rank:int,url:string,name:string,group:string,override?:int<0,1>}>}>|array<user_logout,array{id:string,rank:int,url:string,name:string}>	$Tmenu	Array of menu
  * @return  string
  */
 function getNav($Tmenu)
@@ -80,7 +80,13 @@ function getNavItem($item, $deep = 0)
 				$menuChildren .= getNavItem($child, $deep + 1);
 				$menuChildren .= "\n\r" . '<!-- print sub menu -->' . "\n\r";
 			} else {
-				$menuChildren .= '<li class="dropdown-item '.$item['class'].'" data-deep="' . $deep . '" ><a href="' . $child['url'] . '" class="' . (!empty($child['active']) ? 'active' : '') . '" ">' . $child['name'] . '</a></li>';
+				$menuChildren .= '<li class="dropdown-item '.$item['class'].'" data-deep="' . $deep . '" ></li>';
+				if (empty($child['url'])) {
+					$menuChildren .= '<span  class="' . (!empty($child['active']) ? 'active' : '') . '" >' . $child['name'] . '</span>';
+				} else {
+					$menuChildren .= '<a href="' . $child['url'] . '" class="' . (!empty($child['active']) ? 'active' : '') . '" >' . $child['name'] . '</a>';
+				}
+				$menuChildren .= '</li>';
 			}
 		}
 
@@ -94,7 +100,14 @@ function getNavItem($item, $deep = 0)
 		$menu .= '<ul class="dropdown-menu ">' . $menuChildren . '</ul>';
 		$menu .= '</li>';
 	} else {
-		$menu .= '<li data-deep="' . $deep . '" class="'.$item['class'].' ' . ($deep > 0 ? 'dropdown-item' : 'nav-item ') . ' ' . ($item['active'] ? 'active' : '') . '"><a  href="' . $item['url'] . '" class="' . ($deep > 0 ? '' : 'nav-link') . '" >' . $item['name'] . '</a></li>';
+		$menu .= '<li data-deep="' . $deep . '" class="'.$item['class'].' ' . ($deep > 0 ? 'dropdown-item' : 'nav-item ') . ' ' . ($item['active'] ? 'active' : '') . '">';
+		if (empty($item['url'])) {
+			$menu .= '<span class="' . ($deep > 0 ? '' : 'nav-link') . '" >' . $item['name'] . '</span>';
+		} else {
+			$menu .= '<a  href="' . $item['url'] . '" class="' . ($deep > 0 ? '' : 'nav-link') . '" >' . $item['name'] . '</a>';
+		}
+
+		$menu .= '</li>';
 	}
 
 	return $menu;

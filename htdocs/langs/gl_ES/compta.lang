@@ -3,10 +3,10 @@ MenuFinancial=Financieira
 TaxModuleSetupToModifyRules=Ir á <a href="%s">configuración do módulo de impostos</a> para modificar as regras de cálculo
 TaxModuleSetupToModifyRulesLT=Ir á <a href="%s">configuración da Empresa</a> para modificar as regras de cálculo
 OptionMode=Opción de contabilidade
-OptionModeTrue=Contabilidade de devengo
-OptionModeVirtual=Contabilidade de caixa
-OptionModeTrueDesc=Neste contexto, o volume de negocio calcúlase sobre pagamentos (data dos pagamentos). A validez das cifras só se asegura se se analiza a contabilidade a través da entrada/saída dos pagamentos
+OptionModeVirtual=Contabilidade de devengo
+OptionModeTrue=Contabilidade de caixa
 OptionModeVirtualDesc=Neste contexto, o volume de negocio calcúlase sobre facturas (data de validación). Cando se paguen estas facturas, xa sexan pagadas ou non, aparecen na saída do volume de negocio.
+OptionModeTrueDesc=Neste contexto, o volume de negocio calcúlase sobre pagamentos (data dos pagamentos). A validez das cifras só se asegura se se analiza a contabilidade a través da entrada/saída dos pagamentos
 FeatureIsSupportedInInOutModeOnly=Función só dispoñible no modo de contabilidade DEBEDAS DE CRÉDITOS (Ver configuración do módulo de contabilidade)
 VATReportBuildWithOptionDefinedInModule=As cantidades que se amosan aquí calcúlanse empregando regras definidas pola configuración do módulo Tributario.
 LTReportBuildWithOptionDefinedInModule=As cantidades que se amosan aquí calcúlanse empregando regras definidas pola configuración da empresa.
@@ -302,7 +302,6 @@ ByVatRate=Por taxa de imposto
 TurnoverbyVatrate=Volume de vendas emitidas por tipo de imposto
 TurnoverCollectedbyVatrate=Volume de vendas cobradas por tipo de imposto
 PurchasebyVatrate=Compra por taxa de impostos
-LabelToShow=Etiqueta curta
 PurchaseTurnover=Volume de compras
 PurchaseTurnoverCollected=Volume de compras recollido
 RulesPurchaseTurnoverDue=- Inclúe as facturas vencidas do provedor se se pagan ou non. <br>- Baséase na data da factura destas facturas<br>
@@ -329,3 +328,4 @@ RuleForLinesDates=Regra para as datas das liñas
 Prepaid=Prepago
 Postpaid=Postpago
 SetRuleForLinesDates=Establece unha regra para as datas das liñas
+SomeNotConvertedCreditNoteExists=Hai notas de crédito <b>%s</b> que aínda non foron convertidas para o seu consumo

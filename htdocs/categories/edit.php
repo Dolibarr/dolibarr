@@ -23,7 +23,7 @@
 /**
  *      \file       htdocs/categories/edit.php
  *      \ingroup    category
- *      \brief      Page d'edition de categorie produit
+ *      \brief      Page to edit a category
  */
 
 // Load Dolibarr environment
@@ -49,11 +49,12 @@ $action = (GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'edit');
 $confirm = GETPOST('confirm');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
+$dol_openinpopup = GETPOST('dol_openinpopup', 'aZ');
 
 $socid = GETPOSTINT('socid');
 $label = (string) GETPOST('label', 'alphanohtml');
 $description = (string) GETPOST('description', 'restricthtml');
-$color = preg_replace('/^#/', '', preg_replace('/[^0-9a-f#]/i', '', (string) GETPOST('color', 'alphanohtml')));
+$color = preg_replace('/[^0-9a-f]/i', '', (string) GETPOST('color', 'alphanohtml'));
 $position = GETPOSTINT('position');
 $visible = GETPOSTINT('visible');
 $parent = GETPOSTINT('parent');
@@ -90,6 +91,7 @@ $error = 0;
 /*
  * Actions
  */
+
 $parameters = array('id' => $id, 'ref' => $ref, 'cancel' => $cancel, 'backtopage' => $backtopage, 'socid' => $socid, 'label' => $label, 'description' => $description, 'color' => $color, 'position' => $position, 'visible' => $visible, 'parent' => $parent);
 // Note that $action and $object may be modified by some hooks
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
@@ -103,7 +105,7 @@ if (empty($reshook)) {
 			header("Location: ".$backtopage);
 			exit;
 		} else {
-			header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.$object->id.'&type='.$type);
+			header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.((int) $object->id).'&type='.urlencode($type).($dol_openinpopup ? '&dol_openinpopup='.urlencode($dol_openinpopup) : ''));
 			exit;
 		}
 	}
@@ -136,7 +138,7 @@ if (empty($reshook)) {
 					header("Location: ".$backtopage);
 					exit;
 				} else {
-					header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.$object->id.'&type='.$type);
+					header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.((int) $object->id).'&type='.urlencode($type).($dol_openinpopup ? '&dol_openinpopup='.urlencode($dol_openinpopup) : ''));
 					exit;
 				}
 			} else {
@@ -170,6 +172,7 @@ print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="id" value="'.$object->id.'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
 print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+print '<input type="hidden" name="dol_openinpopup" value="'.$dol_openinpopup.'">';
 
 print dol_get_fiche_head([]);
 

@@ -77,9 +77,10 @@ ClickHereToTryAgain=<a href="%s">Klik her for at prøve igen ...</a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=På grund af Strong Customer Authentication-regler skal oprettelsen af et kort ske fra Stripe back office. Du kan klikke her for at slå Stripe kunderegistrering til: %s
 STRIPE_CARD_PRESENT=Kort til stede til Stripe-terminaler
 TERMINAL_LOCATION=Placering (adresse) for Stripe Terminals
-RequestDirectDebitWithStripe=Anmod om direkte debitering med Stripe
-RequesCreditTransferWithStripe=Anmod om kreditoverførsel med Stripe
-STRIPE_SEPA_DIRECT_DEBIT=Aktiver direkte debitering via Stripe
+RequestDirectDebitWithStripe=Request SEPA Direct Debit with Stripe
+RequesCreditTransferWithStripe=Make SEPA Credit Transfer with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable SEPA Direct Debit payments with Stripe
+STRIPE_SEPA_CREDIT_TRANSFER=Enable SEPA Credit Transfer payments with Stripe
 STRIPE_KLARNA=Aktiver betalingerne med Klarna
 STRIPE_BANCONTACT=Aktiver betalingerne ved hjælp af BANCONTACT
 STRIPE_IDEAL=Aktiver betalingerne med IDEAL
@@ -91,3 +92,19 @@ ExampleOnlyForDECustomers=Kun for tyske kunder
 ExampleOnlyForNLCustomers=Kun for hollandske kunder
 ExampleOnlyForATBEDEITNLESCustomers=Kun for kunder fra Østrig, Belgien, Tyskland, Italien, Holland, Spanien
 ListOfSupportedHooksToActivate=Liste over understøttede hooks, der skal aktiveres
+# Paybox
+PayBoxSetup=PayBox modul opsætning
+PayBoxDesc=Dette modul tilbyder sider for at tillade betaling på <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external"> Paybox </a> af kunder. Dette kan bruges til en gratis betaling eller til en betaling på et bestemt Dolibarr-objekt (faktura, ordre, ...)
+PayBoxDoPayment=Betal med Paybox
+YouWillBeRedirectedOnPayBox=Du bliver omdirigeret om sikret Paybox siden til input du kreditkort informationer
+SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
+YourPaymentHasBeenRecorded=Denne side bekræfter, at din betaling er registreret. Tak.
+YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.
+PAYBOX_CGI_URL_V2=URL PAYBOX CGI-modul til betaling
+NewPayboxPaymentReceived=Ny Paybox modtaget
+NewPayboxPaymentFailed=Ny Paybox betaling forsøgt men mislykkedes
+PAYBOX_PAYONLINE_SENDEMAIL=E-mail-meddelelse efter betalingsforsøg (succes eller fiasko)
+PAYBOX_PBX_SITE=Value for PBX SITE
+PAYBOX_PBX_RANG=Value for PBX Rang
+PAYBOX_PBX_IDENTIFIANT=Value for PBX ID
+PAYBOX_HMAC_KEY=HMAC-nøgle

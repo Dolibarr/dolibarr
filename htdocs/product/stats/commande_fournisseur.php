@@ -279,6 +279,7 @@ if ($id > 0 || !empty($ref)) {
 
 						$supplierorderstatic->id = $objp->commandeid;
 						$supplierorderstatic->ref = $objp->ref;
+
 						$supplierorderstatic->statut = $objp->status;	// deprecated
 						$supplierorderstatic->status = $objp->status;
 						$supplierorderstatic->billed = $objp->billed;

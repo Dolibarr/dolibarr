@@ -159,3 +159,4 @@ TF_TRAIN=Tog
 TF_TRIP=Transport
 FailedToSetPaid=Kunne ikke indstille som betalt
 FailedToSetToCancel=Kunne ikke annullere
+NobodyHasPermissionToValidateExpenseReport=Ingen har tilladelse til at validere udgiftsrapporter
