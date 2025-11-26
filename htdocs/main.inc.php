@@ -1273,13 +1273,15 @@ if (!defined('NOREQUIRETRAN')) {
 
 	// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
 	// accesskey is for Mac:               CTRL + Option + key for all browsers
+
+	// Note: $con->browser->os and $conf->browser->name may not be defined if we are in CLI mode.
 	$conf->browser->stringforfirstkey = $langs->trans("KeyboardShortcut");
-	if ($conf->browser->os == 'macintosh') {
+	if (!empty($conf->browser->os) && $conf->browser->os == 'macintosh') {
 		$conf->browser->stringforfirstkey .= ' CTRL + Option +';
 	} else {
-		if ($conf->browser->name == 'chrome') {
+		if (!empty($conf->browser->name) && $conf->browser->name == 'chrome') {
 			$conf->browser->stringforfirstkey .= ' ALT +';
-		} elseif ($conf->browser->name == 'firefox') {
+		} elseif (!empty($conf->browser->name) && $conf->browser->name == 'firefox') {
 			$conf->browser->stringforfirstkey .= ' ALT + SHIFT +';
 		} else {
 			$conf->browser->stringforfirstkey .= ' CTL +';

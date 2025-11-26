@@ -2480,7 +2480,7 @@ if ($action == 'create' && $permissiontoadd) {
 			$origin = 'supplier_order';
 		}
 
-		if ($origin && $origin_id > 0) {
+		if ($origin_id > 0) {
 			$sql = "SELECT obj.rowid, obj.fk_product, obj.label, obj.description, obj.product_type as fk_product_type, obj.qty as qty_asked, obj.date_start, obj.date_end";
 			$sql .= ", ed.rowid as receptionline_id, ed.qty, ed.fk_reception as reception_id,  ed.fk_entrepot";
 			$sql .= ", e.rowid as reception_id, e.ref as reception_ref, e.date_creation, e.date_valid, e.date_delivery, e.date_reception";

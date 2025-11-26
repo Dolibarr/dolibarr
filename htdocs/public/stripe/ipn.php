@@ -376,8 +376,8 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 	$currencyCodeType = strtoupper($object->currency);
 	$paymentmethodstripeid = $object->payment_method;
 	$customer_id = $object->customer;
-	$invoice_id = "";
-	$supplierinvoice_id = "";
+	$invoice_id = 0;
+	$supplierinvoice_id = 0;
 	$salary_id = "";
 	$paymentTypeCode = "";				// payment type according to Stripe
 	$paymentTypeCodeInDolibarr = "";	// payment type according to Dolibarr
@@ -656,14 +656,16 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 			if (!$error) {
 				if (getDolGlobalString('STRIPE_IPN_SEND_EMAIL_ON_DIRECT_DEBIT_CONFIRMATION')) {
 					// If option to send email after confirmation of direct debit is on, we send the email (template must exists
-					$labeltouse = getDolGlobalString('STRIPE_IPN_SEND_EMAIL_ON_DIRECT_DEBIT_CONFIRMATION');		// Example: 'InvoicePaymentSuccess'
+					$labeltouse = getDolGlobalString('STRIPE_IPN_SEND_EMAIL_ON_DIRECT_DEBIT_CONFIRMATION');
+					// Example: $labeltouse = 'InvoicePaymentSuccess'
 
 					$invoice = new Facture($db);
 					$invoice->fetch($invoice_id);
+					$invoice->fetch_thirdparty();
 
 					// Set output language
 					$outputlangs = new Translate('', $conf);
-					$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+					$outputlangs->setDefaultLang(empty($invoice->thirdparty->default_lang) ? $mysoc->default_lang : $invoice->thirdparty->default_lang);
 					$outputlangs->loadLangs(array("main", "members", "bills"));
 
 					// Get email content from template
@@ -672,16 +674,18 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 					$formmail=new FormMail($db);
 
-					if (! empty($labeltouse)) {
-						$arraydefaultmessage = $formmail->getEMailTemplate($db, 'facture_send', $user, $outputlangs, 0, 1, $labeltouse);
-					}
+					$arraydefaultmessage = $formmail->getEMailTemplate($db, 'facture_send', $user, $outputlangs, 0, 1, $labeltouse);
 
-					if (! empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
+					$appli = $mysoc->name;
+
+					$subject = '['.$appli.'] Invoice direct debit payment recevied';
+					$msg =  'An invoice direct debit payment for invoice '.$invoice->ref.' has been recevied';
+					if (is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
 						$subject = $arraydefaultmessage->topic;
 						$msg     = $arraydefaultmessage->content;
 					}
 
-					$substitutionarray=getCommonSubstitutionArray($outputlangs, 0, null, $object);
+					$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $invoice);
 
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
 
@@ -692,11 +696,12 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 
 					if (is_array($invoice->linkedObjects['contrat']) && count($invoice->linkedObjects['contrat']) > 0) {
 						//dol_sort_array($object->linkedObjects['facture'], 'date');
-						foreach ($invoice->linkedObjects['contrat'] as $idcontract => $contract) {
-							$substitutionarray['__CONTRACT_REF__']=$contract->ref_customer;
-							$substitutionarray['__REFCLIENT__']=$contract->ref_customer;	// For backward compatibility
-							$substitutionarray['__REF_CLIENT__']=$contract->ref_customer;
-							$substitutionarray['__REF_CUSTOMER__']=$contract->ref_customer;
+						foreach ($invoice->linkedObjects['contrat'] as $contract) {
+							/** @var Contrat $contract */
+							$substitutionarray['__CONTRACT_REF__'] = $contract->ref_customer;
+							$substitutionarray['__REFCLIENT__'] = $contract->ref_customer;	// For backward compatibility
+							$substitutionarray['__REF_CLIENT__'] = $contract->ref_customer;
+							$substitutionarray['__REF_CUSTOMER__'] = $contract->ref_customer;
 							$foundcontract = $contract;
 							break;
 						}
@@ -704,40 +709,31 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 
 					dol_syslog('__DIRECTDOWNLOAD_URL_INVOICE__='.$substitutionarray['__DIRECTDOWNLOAD_URL_INVOICE__']);
 
-					$urlforsellyoursaasaccount = getRootUrlForAccount($foundcontract);
-					if ($urlforsellyoursaasaccount) {
-						$tmpforurl=preg_replace('/.*document.php/', '', $substitutionarray['__DIRECTDOWNLOAD_URL_INVOICE__']);
-						if ($tmpforurl) {
-							$substitutionarray['__DIRECTDOWNLOAD_URL_INVOICE__']=$urlforsellyoursaasaccount.'/source/document.php'.$tmpforurl;
-						} else {
-							$substitutionarray['__DIRECTDOWNLOAD_URL_INVOICE__']=$urlforsellyoursaasaccount;
-						}
-					}
-
 					$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
 					$texttosend = make_substitutions($msg, $substitutionarray, $outputlangs);
 
 					// Attach a file ?
-					$file='';
 					$listofpaths=array();
 					$listofnames=array();
 					$listofmimes=array();
-					if (is_object($invoice)) {
-						$invoicediroutput = $conf->invoice->dir_output;
-						$fileparams = dol_most_recent_file($invoicediroutput . '/' . $invoice->ref, preg_quote($invoice->ref, '/').'[^\-]+');
-						$file = $fileparams['fullname'];
-						$file = '';		// Disable attachment of invoice in emails
 
-						if ($file) {
-							$listofpaths=array($file);
-							$listofnames=array(basename($file));
-							$listofmimes=array(dol_mimetype($file));
-						}
+					/*
+					$invoicediroutput = $conf->invoice->dir_output;
+					$fileparams = dol_most_recent_file($invoicediroutput . '/' . $invoice->ref, preg_quote($invoice->ref, '/').'[^\-]+');
+					$file = $fileparams['fullname'];
+					$file = '';		// Disable attachment of invoice in emails
+
+					if ($file) {
+						$listofpaths=array($file);
+						$listofnames=array(basename($file));
+						$listofmimes=array(dol_mimetype($file));
 					}
+					*/
+
 					$from = getDolGlobalString('MAIN_INFO_SOCIETE_MAIL');
 
 					$trackid = 'inv'.$invoice->id;
-					$moreinheader = 'X-Dolibarr-Info: doTakeStripePaymentForThirdParty'."\r\n";
+					$moreinheader = 'X-Dolibarr-Info: public stripe ipn.php'."\r\n";
 					$addr_cc = '';
 					if (!empty($invoice->thirdparty->array_options['options_emailccinvoice'])) {
 						dol_syslog("We add the recipient ".$invoice->thirdparty->array_options['options_emailccinvoice']." as CC", LOG_DEBUG);

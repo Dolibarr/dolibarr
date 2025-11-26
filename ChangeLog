@@ -6,6 +6,7 @@ English Dolibarr ChangeLog
 
 For users:
 ----------
+NEW: Need PHP 7.2 as minimum version
 NEW: Module datapolicy moved as stable (for anonimization features)
 NEW: #31723 - Improve project overview: Hide paid orders (#35524)
 NEW: #35700 : Throw an error when validating a propal, order, supplier with a product no more in sale/purchase… (#35709)
