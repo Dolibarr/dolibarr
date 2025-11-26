@@ -3,7 +3,7 @@
  * Copyright (C) 2014       Juanjo Menent	        <jmenent@2byte.es>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024       Christophe Battarel	    <christophe@altairis.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -590,8 +590,8 @@ class ReceptionLineBatch extends CommonObjectLine
 		$sql .= " status=".(isset($this->status) ? $this->status : "null").",";
 		$sql .= " tms=".(dol_strlen((string) $this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
 		$sql .= " batch=".(isset($this->batch) ? "'".$this->db->escape($this->batch)."'" : "null").",";
-		$sql .= " eatby=".(dol_strlen((string) $this->eatby) != 0 ? "'".$this->db->idate($this->eatby)."'" : 'null').",";
-		$sql .= " sellby=".(dol_strlen((string) $this->sellby) != 0 ? "'".$this->db->idate($this->sellby)."'" : 'null').",";
+		$sql .= " eatby=".(dol_strlen((string) $this->eatby) != 0 ? "'".$this->db->idate((int) $this->eatby)."'" : 'null').",";
+		$sql .= " sellby=".(dol_strlen((string) $this->sellby) != 0 ? "'".$this->db->idate((int) $this->sellby)."'" : 'null').",";
 		$sql .= " fk_unit = ".((int) $this->fk_unit);
 		$sql .= " WHERE rowid=".((int) $this->id);
 

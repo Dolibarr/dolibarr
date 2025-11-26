@@ -23,7 +23,7 @@
 /**
  *      \file       htdocs/categories/edit.php
  *      \ingroup    category
- *      \brief      Page d'edition de categorie produit
+ *      \brief      Page to edit a category
  */
 
 // Load Dolibarr environment
@@ -54,7 +54,7 @@ $dol_openinpopup = GETPOST('dol_openinpopup', 'aZ');
 $socid = GETPOSTINT('socid');
 $label = (string) GETPOST('label', 'alphanohtml');
 $description = (string) GETPOST('description', 'restricthtml');
-$color = preg_replace('/^#/', '', preg_replace('/[^0-9a-f#]/i', '', (string) GETPOST('color', 'alphanohtml')));
+$color = preg_replace('/[^0-9a-f]/i', '', (string) GETPOST('color', 'alphanohtml'));
 $position = GETPOSTINT('position');
 $visible = GETPOSTINT('visible');
 $parent = GETPOSTINT('parent');
@@ -91,6 +91,7 @@ $error = 0;
 /*
  * Actions
  */
+
 $parameters = array('id' => $id, 'ref' => $ref, 'cancel' => $cancel, 'backtopage' => $backtopage, 'socid' => $socid, 'label' => $label, 'description' => $description, 'color' => $color, 'position' => $position, 'visible' => $visible, 'parent' => $parent);
 // Note that $action and $object may be modified by some hooks
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);

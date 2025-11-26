@@ -124,7 +124,9 @@ class Orders extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('commande', 'lire')) {
 			throw new RestException(403);
 		}
-
+		if ($id == 0) {
+			throw new RestException(400, 'No order with id=0 can exist');
+		}
 		$result = $this->commande->fetch($id, $ref, $ref_ext);
 		if (!$result) {
 			throw new RestException(404, 'Order not found');
@@ -313,6 +315,7 @@ class Orders extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
+		global $conf;
 		if (!DolibarrApiAccess::$user->hasRight('commande', 'creer')) {
 			throw new RestException(403, "Insufficiant rights");
 		}
@@ -324,6 +327,12 @@ class Orders extends DolibarrApi
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->commande->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
+			}
+			if ($field == 'id') {
+				throw new RestException(400, 'Creating with id field is forbidden');
+			}
+			if ($field == 'entity' && ((int) $value) != ((int) $conf->entity)) {
+				throw new RestException(403, 'Creating with entity='.((int) $value).' MUST be the same entity='.((int) $conf->entity).' as your API user/key belongs to');
 			}
 
 			$this->commande->$field = $this->_checkValForAPI($field, $value, $this->commande);
@@ -622,19 +631,21 @@ class Orders extends DolibarrApi
 	/**
 	 * Add a contact type of given order
 	 *
-	 * @param int    $id             Id of order to update
-	 * @param int    $contactid      Id of contact to add
-	 * @param string $type           Type of the contact (BILLING, SHIPPING, CUSTOMER)
-	 * @param   string  $source		 external=Contact extern (llx_socpeople), internal=Contact intern (llx_user)
-	 * @param   int     $notrigger   Disable all triggers
+	 * @param int    $id            Id of order to update
+	 * @param int    $contactid     Id of contact to add
+	 * @param string $type          Type (code in dictionary) of the contact (BILLING, SHIPPING, CUSTOMER + possibly your own)
+	 * @param string $source		internal=Contact intern (llx_user), external=Contact extern (llx_socpeople)
+	 * @param int    $notrigger		0=Enable all triggers (default), 1=Disable all triggers
 	 * @return array
 	 * @phan-return array{success:array{code:int,message:string}}
 	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
 	 * @url	POST {id}/contact/{contactid}/{type}
 	 *
+	 * @throws RestException 400
 	 * @throws RestException 401
 	 * @throws RestException 404
+	 * @throws RestException 503
 	 */
 	public function postContact($id, $contactid, $type, $source = "external", $notrigger = 0)
 	{
@@ -642,29 +653,100 @@ class Orders extends DolibarrApi
 			throw new RestException(403);
 		}
 
+		// test source
+		if (empty($source)) {
+			throw new RestException(400, 'Source can not be empty');
+		}
+		$sql_distinct_source = "SELECT DISTINCT source";
+		$sql_distinct_source .= " FROM ".MAIN_DB_PREFIX."c_type_contact";
+		$sql_distinct_source .= " WHERE element LIKE 'commande'";
+		$sql_distinct_source .= " AND source is NOT NULL";
+		$sql_distinct_source .= " AND active != 0";
+		$source_result = $this->db->query($sql_distinct_source);
+		$source_array = array();
+
+		if ($source_result) {
+			$num = $this->db->num_rows($source_result);
+			$i = 0;
+			while ($i < $num) {
+				$obj = $this->db->fetch_object($source_result);
+				$source_kind = (string) $obj->source;
+				array_push($source_array, $source_kind);
+				dol_syslog("source_kind=".$source_kind);
+				$i++;
+			}
+		} else {
+			throw new RestException(503, 'Error when retrieving a list of order contact sources: '.$this->db->lasterror());
+		}
+		if (!in_array($source, (array) $source_array, true)) {
+			throw new RestException(400, 'Combo of Source='.$source.' and Type='.$type.' not found in dictionary with active order contact types');
+		}
+
+		// test type
+		if (empty($type)) {
+			throw new RestException(400, 'type can not be empty');
+		}
+		// variable called type here, but code in dictionary and database
+		$sql_distinct_type = "SELECT DISTINCT code";
+		$sql_distinct_type .= " FROM ".MAIN_DB_PREFIX."c_type_contact";
+		$sql_distinct_type .= " WHERE element LIKE 'commande'";
+		$sql_distinct_type .= " AND source='".$this->db->escape($source)."'";
+		$sql_distinct_type .= " AND code is NOT NULL";
+		$sql_distinct_type .= " AND active != 0";
+		$type_result = $this->db->query($sql_distinct_type);
+		$type_array = array();
+
+		if ($type_result) {
+			$num = $this->db->num_rows($type_result);
+			$i = 0;
+			while ($i < $num) {
+				$obj = $this->db->fetch_object($type_result);
+				// variable called type here, but code in dictionary and database
+				$type_kind = (string) $obj->code;
+				array_push($type_array, $type_kind);
+				dol_syslog("type_kind=".$type_kind);
+				$i++;
+			}
+		} else {
+			throw new RestException(503, 'Error when retrieving a list of order contact types: '.$this->db->lasterror());
+		}
+		if (!in_array($type, (array) $type_array, true)) {
+			throw new RestException(400, 'Combo of Type='.$type.' and Source='.$source.' not found in dictionary with active order contact types');
+		}
+
+		// tests done, let's get it
 		$result = $this->commande->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'Order not found');
 		}
-
 		if (!DolibarrApi::_checkAccessToResource('commande', $this->commande->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->commande->add_contact($contactid, $type, $source, $notrigger);
 
-		if ($result < 0) {
-			throw new RestException(500, 'Error when added the contact');
-		}
-
 		if ($result == 0) {
-			throw new RestException(304, 'contact already added');
+			throw new RestException(400, 'Already exists: Contact='.$contactid.' is already linked to the order='.$id.' as source='.$source.' and type='.$type);
+		} elseif ($result == -1) {
+			throw new RestException(400, 'Wrong contact='.$contactid);
+		} elseif ($result == -2) {
+			throw new RestException(400, 'Wrong type='.$type);
+		} elseif ($result == -3) {
+			throw new RestException(400, 'Not allowed contacts');
+		} elseif ($result == -4) {
+			throw new RestException(400, 'ErrorCommercialNotAllowedForThirdparty');
+		} elseif ($result == -5) {
+			throw new RestException(400, 'Trigger failed');
+		} elseif ($result == -6) {
+			throw new RestException(400, 'DB_ERROR_RECORD_ALREADY_EXISTS');
+		} elseif ($result == -7) {
+			throw new RestException(400, 'Some other error');
 		}
 
 		return array(
 			'success' => array(
 				'code' => 200,
-				'message' => 'Contact linked to the order'
+				'message' => 'Contact='.$contactid.' linked to the order='.$id.' as '.$source.' '.$type
 			)
 		);
 	}
@@ -736,7 +818,9 @@ class Orders extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('commande', 'creer')) {
 			throw new RestException(403);
 		}
-
+		if ($id == 0) {
+			throw new RestException(400, 'No order with id=0 can exist');
+		}
 		$result = $this->commande->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'Order not found');
@@ -790,6 +874,9 @@ class Orders extends DolibarrApi
 	{
 		if (!DolibarrApiAccess::$user->hasRight('commande', 'supprimer')) {
 			throw new RestException(403);
+		}
+		if ($id == 0) {
+			throw new RestException(400, 'No order with id=0 can exist');
 		}
 		$result = $this->commande->fetch($id);
 		if (!$result) {

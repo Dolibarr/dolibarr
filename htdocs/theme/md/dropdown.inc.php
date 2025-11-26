@@ -302,9 +302,10 @@ a.top-menu-dropdown-link {
 	text-align: start;
 }
 
-
+.dropdown-menu > .user-body {
+	padding: 15px;
+}
 .dropdown-menu > .user-body, .dropdown-body{
-	/* padding: 15px; */
 	border-bottom: 1px solid #f4f4f4;
 	border-top: 1px solid #f0f0f0;
 	white-space: normal;

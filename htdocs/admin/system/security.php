@@ -35,6 +35,13 @@ require '../../main.inc.php';
  * @var string 		$conffile 				// $conffile is defined into filefunc.inc.php
  * @var string 		$dolibarr_main_prod
  * @var string		$dolibarr_main_document_root
+ * @var string		$dolibarr_main_restrict_os_commands
+ * @var string		$dolibarr_main_restrict_eval_methods
+ * @var string		$dolibarr_main_restrict_ip
+ * @var string		$dolibarr_main_db_pass
+ * @var string		$dolibarr_main_db_encrypted_pass
+ * @var string		$dolibarr_main_stream_to_disable
+ * @var string		$dolibarr_nocsrfcheck
  */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -385,6 +392,15 @@ if (empty($dolibarr_main_restrict_os_commands)) {
 	print $dolibarr_main_restrict_os_commands;
 }
 print ' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'mysqldump, mysql, pg_dump, pg_restore, mariadb, mariadb-dump, clamdscan').')</span>';
+print '<br>';
+
+print '<strong>$dolibarr_main_restrict_eval_methods</strong>: ';
+if (empty($dolibarr_main_restrict_eval_methods)) {
+	print $langs->trans("None");
+} else {
+	print $dolibarr_main_restrict_eval_methods;
+}
+print ' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'getDolGlobalString,getDolGlobalInt,getDolCurrency,fetchNoCompute,hasRight,isAdmin,isModEnabled,isStringVarMatching,abs,min,max,round,dol_now,dol_concat,preg_match').')</span>';
 print '<br>';
 
 if (!getDolGlobalString('SECURITY_DISABLE_TEST_ON_OBFUSCATED_CONF')) {
@@ -964,9 +980,9 @@ print '<strong>MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES</strong> = '.(getDol
 print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").": 1 - does not work on HTML5 with some old libxml libs)</span><br>";
 print '<br>';
 
-// MAIN_DISALLOW_URL_INTO_DESCRIPTIONS = 1, disallow url links except if on /medias
-// MAIN_DISALLOW_URL_INTO_DESCRIPTIONS = 2, disallow all external urls link
-print '<strong>MAIN_DISALLOW_URL_INTO_DESCRIPTIONS</strong> = '.getDolGlobalString('MAIN_DISALLOW_URL_INTO_DESCRIPTIONS', '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': 1=only local links allowed or 2=no links at all)</span>')."<br>";
+// MAIN_DISALLOW_URL_INTO_DESCRIPTIONS = 1, disallow url links except if on the local wrapper document.php or viewimage.php
+// MAIN_DISALLOW_URL_INTO_DESCRIPTIONS = 2, disallow all urls link
+print '<strong>MAIN_DISALLOW_URL_INTO_DESCRIPTIONS</strong> = '.getDolGlobalString('MAIN_DISALLOW_URL_INTO_DESCRIPTIONS', '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': 1=only local links allowed (to wrapper document.php or image.php) or 2=no links at all)</span>')."<br>";
 print '<br>';
 
 print '<strong>MAIN_ALLOW_SVG_FILES_AS_EXTERNAL_LINKS</strong> = '.getDolGlobalString('MAIN_ALLOW_SVG_FILES_AS_EXTERNAL_LINKS', '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 0)</span>')."<br>";

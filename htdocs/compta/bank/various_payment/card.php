@@ -55,7 +55,7 @@ $langs->loadLangs(array("accountancy", "banks", "bills", "categories", "compta",
 $id = GETPOSTINT('id');
 $action = GETPOST('action', 'alpha');
 $confirm = GETPOST('confirm');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 $accountid = GETPOSTINT("accountid") > 0 ? GETPOSTINT("accountid") : 0;

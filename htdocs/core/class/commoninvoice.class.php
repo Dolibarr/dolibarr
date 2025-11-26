@@ -1901,6 +1901,9 @@ abstract class CommonInvoice extends CommonObject
 		// Get the amount to pay
 		$amount_to_pay = $this->getRemainToPay();
 
+		// Prevent negative values (e.g. overpayments)
+		$amount_to_pay = max(0, $amount_to_pay);
+
 		// Ensure numeric formatting for EPC QR code
 		$amount_to_pay = price2num($amount_to_pay, 'MT');
 

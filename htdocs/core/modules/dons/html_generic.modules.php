@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2020  Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015  		Benoit Bruchard			<benoitb21@gmail.com>
  * Copyright (C) 2015  		Benjamin Neumann <btdn@sigsoft.org>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -97,7 +97,7 @@ class html_generic extends ModeleDon
 		$formclass->load_cache_types_paiements();
 
 		if ($don->mode_reglement_id) {
-			$paymentmode = $formclass->cache_types_paiements[$don->mode_reglement_id]['label'];
+			$paymentmode = (string) $formclass->cache_types_paiements[$don->mode_reglement_id]['label'];
 		} else {
 			$paymentmode = '';
 		}

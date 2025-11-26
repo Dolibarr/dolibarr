@@ -1538,10 +1538,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if (empty($user->socid)) {
 				if (!empty($object->email)) {
 					$langs->load("mails");
-					print dolGetButtonAction('', $langs->trans('SendMail'), 'default', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'presend', 'mode' => 'init'], true).'#formmailbeforetitle', '');
+					print dolGetButtonAction('', $langs->trans('SendMail'), 'email', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'presend', 'mode' => 'init'], true).'#formmailbeforetitle', '');
 				} else {
 					$langs->load("mails");
-					print dolGetButtonAction('', $langs->trans('SendMail'), 'default', '#', '', false);
+					print dolGetButtonAction('', $langs->trans('SendMail'), 'email', '#', '', false);
 				}
 			}
 

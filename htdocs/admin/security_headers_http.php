@@ -45,7 +45,7 @@ if (!$user->admin) {
 }
 
 $action = GETPOST('action', 'aZ09');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel', 'alpha');
 
 $forceCSP = getDolGlobalString("MAIN_SECURITY_FORCECSP");
 $selectarrayCSPDirectives = GetContentPolicyDirectives();

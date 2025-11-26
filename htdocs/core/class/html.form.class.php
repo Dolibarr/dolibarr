@@ -74,18 +74,25 @@ class Form
 	/** @var array<string,int> */
 	public $result;
 
-	/** @var int 	Number of line returned by method to generate combo select */
+	/** @var int 	Number of lines returned by method to generate combo select */
 	public $num;
 
 	// Cache arrays
+	/** @var array<string,array{id:int,code:string,label:string,type:int,entity:int,active:int}> */
 	public $cache_types_paiements = array();
+	/** @var array<string,array{code:string,label:string,deposit_percent:string,entity:int}> */
 	public $cache_conditions_paiements = array();
+	/** @var array<int,array{rowid:int,code:string,label:string,active:int}> */
 	public $cache_transport_mode = array();
 	/** @var array<int,array{code:string,label:string,position:int}> */
 	public $cache_availability = array();
+	/** @var array<int,array{id:int,code:string,label:string}> */
 	public $cache_demand_reason = array();
+	/** @var array<string,string> */
 	public $cache_types_fees = array();
+	/** @var array<int,array{rowid:int,type_vat:int,code:string,txtva:string,nprtva:int,localtax1:string|float|null,localtax1_type:string,localtax2:string|float|null,localtax2_type:string,label:string,labelallrates:string,labelpositiverates:string}> */
 	public $cache_vatrates = array();
+	/** @var array<int,array{rowid:int,code:string,label:string}> */
 	public $cache_invoice_subtype = array();
 	/** @var array<string,string> */
 	public $cache_rule_for_lines_dates = array();
@@ -4755,7 +4762,7 @@ class Form
 					$label = $langs->trans($obj->code); // So translation key SRC_XXX will work
 				}
 
-				$tmparray[$obj->rowid]['id'] = $obj->rowid;
+				$tmparray[$obj->rowid]['id'] = (int) $obj->rowid;
 				$tmparray[$obj->rowid]['code'] = $obj->code;
 				$tmparray[$obj->rowid]['label'] = $label;
 				$i++;
@@ -7300,7 +7307,7 @@ class Form
 					$obj = $this->db->fetch_object($resql);
 
 					$tmparray = array();
-					$tmparray['rowid']			= $obj->rowid;
+					$tmparray['rowid']			= (int) $obj->rowid;
 					$tmparray['type_vat']		= ($obj->type_vat <= 0 ? 0 : $obj->type_vat);	// Some version have type_vat corrupted with value -1
 					$tmparray['code']			= $obj->code;
 					$tmparray['txtva']			= $obj->taux;
@@ -9243,7 +9250,7 @@ class Form
 			$parent_properties = getElementProperties($objecttmp->parent_element);
 			$sql .= " INNER JOIN " . $this->db->prefix() . $this->db->sanitize($parent_properties['table_element']) . " as o ON o.rowid = t.".$objecttmp->fk_parent_attribute;
 		}
-		if (in_array($objecttmp->parent_element, ['commande', 'propal', 'facture', 'expedition'])) {
+		if (!empty($objecttmp->parent_element) && in_array($objecttmp->parent_element, ['commande', 'propal', 'facture', 'expedition'])) {
 			$sql .= " LEFT JOIN " . $this->db->prefix() . "product as p ON p.rowid = t.fk_product";
 		}
 		if (!empty($objecttmp->ismultientitymanaged)) {
@@ -9273,7 +9280,7 @@ class Form
 			// If table need a multientity restriction
 			if (!empty($objecttmp->ismultientitymanaged)) {
 				if ($objecttmp->ismultientitymanaged == 1) {
-					$sql .= " AND t.entity IN (" . getEntity($objecttmp->table_element) . ")";
+					$sql .= " AND t.entity IN (" . getEntity($objecttmp->element) . ")";
 				}
 				if (!is_numeric($objecttmp->ismultientitymanaged)) {
 					$sql .= " AND parenttable.entity = t." . $this->db->sanitize($tmparray[0]);
@@ -12299,7 +12306,7 @@ class Form
 		$ret .= '</div>';
 
 		$ret .= "<!-- Field to enter a generic filter string: t.ref:like:'SO-%', t.date_creation:<:'20160101', t.date_creation:<:'2016-01-01 12:30:00', t.nature:is:NULL, t.field2:isnot:NULL -->\n";
-		$ret .= '<input type="text" placeholder="' . $langs->trans("Filters") . '" id="search_component_params_input" name="search_component_params_input" class="noborderbottom search_component_input" value="">';
+		$ret .= '<input type="text" placeholder="' . $langs->trans("Filters") . '" id="search_component_params_input" name="search_component_params_input" class="noborderall search_component_input" value="">';
 
 		$ret .= '</div>';
 		$ret .= '</div>';

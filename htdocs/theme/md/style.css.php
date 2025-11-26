@@ -1980,6 +1980,7 @@ select.flat.selectlimit {
 .amountpaymentcomplete {
 	color: var(--amountpaymentcomplete);
 	font-weight: bold;
+	font-size: 1.7em;
 	white-space: nowrap;
 }
 .amountpaymentcompletenoresize {
@@ -1989,6 +1990,7 @@ select.flat.selectlimit {
 .amountremaintopay {
 	color: var(--amountremaintopaycolor);
 	font-weight: bold;
+	font-size: 1.7em;
 	white-space: nowrap;
 }
 .amountremaintopaynoresize {
@@ -1997,6 +1999,7 @@ select.flat.selectlimit {
 }
 .amountremaintopayback {
 	font-weight: bold;
+	font-size: 1.7em;
 	white-space: nowrap;
 }
 .amountremaintopaybacknoresize {
@@ -2005,7 +2008,7 @@ select.flat.selectlimit {
 .amountpaymentneutral {
 	color: var(--amountremaintopaybackcolor);
 	font-weight: bold;
-	font-size: 1.4em;
+	font-size: 1.7em;
 	white-space: nowrap;
 }
 .amountpaymentneutralnoresize {
@@ -2233,7 +2236,7 @@ tr.nobottom td {
 .maxwidth40  { max-width: 40px; }
 .maxwidth50  { max-width: 50px; }
 .maxwidth75  { max-width: 75px; }
-.maxwidthdate  { max-width: 105px; }
+.maxwidthdate  { max-width: 90px; }
 .maxwidth100 { max-width: 100px; }
 .maxwidth125 { max-width: 125px; }
 .maxwidth150 { max-width: 150px; }
@@ -4246,7 +4249,7 @@ div.divButAction {
 	margin-bottom: 1.4em;
 }
 div.tabsAction {
-	margin: 20px 0em 20px 0em;
+	margin: 30px 0em 30px 0em;
 	padding: 0em 0em;
 	text-align: right;
 }
@@ -4557,7 +4560,7 @@ table.nointerlines tr:not(:last-child) td {
 
 /* Management of border radius */
 <?php $borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobalInt('THEME_ELDY_BORDER_RADIUS', 6) : 0; ?>
-table.noborder:not(.cal_month, .paymenttable) {
+table.noborder:not(.cal_month, .paymenttable, .margintable) {
 	border-radius: <?php echo $borderradius; ?>px;
 }
 table.noborder.cal_month {

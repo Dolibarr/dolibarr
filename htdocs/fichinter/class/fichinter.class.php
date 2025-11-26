@@ -1448,11 +1448,14 @@ class Fichinter extends CommonObject
 	 *	@param      int		$date_intervention  	Intervention date
 	 *	@param      int		$duration            	Intervention duration
 	 *  @param		array<string,?mixed>	$array_options	Array option
+	 *  @param      int     $type               	Type of line (0=product, other for subtotal).
+	 *  @param      int     $rang                   Position of line
+	 *  @param      int  	$special_code       	Special code for subtotal lines
 	 *	@return    	int             				>0 if ok, <0 if ko
 	 */
-	public function addline($user, $fichinterid, $desc, $date_intervention, $duration, $array_options = [])
+	public function addline($user, $fichinterid, $desc, $date_intervention, $duration, $array_options = [], $type = 0, $rang = -1, $special_code = 0)
 	{
-		dol_syslog(get_class($this)."::addline $fichinterid, $desc, $date_intervention, $duration");
+		dol_syslog(get_class($this)."::addline $fichinterid, $desc, $date_intervention, $duration, $type, $rang, $special_code");
 
 		if ($this->status == self::STATUS_DRAFT) {
 			$this->db->begin();
@@ -1465,6 +1468,10 @@ class Fichinter extends CommonObject
 			$line->date         = $date_intervention;
 			$line->datei        = $date_intervention;	// For backward compatibility
 			$line->duration     = $duration;
+			$line->product_type = $type;
+			$line->rang         = $rang;
+			$line->special_code = $special_code;
+
 
 			if (is_array($array_options) && count($array_options) > 0) {
 				$line->array_options = $array_options;
