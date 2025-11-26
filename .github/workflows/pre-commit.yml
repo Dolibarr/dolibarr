@@ -30,7 +30,7 @@ jobs:
       #  if: false
 
       # Checkout git sources to analyze
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       # Try to get the list of modified files into steps.changed-php.outputs.all_changed_files
       #- name: Get changed files
@@ -108,6 +108,10 @@ jobs:
           php-version: ${{ env.PHP_VERSION }}  # Version from check.php
           coverage: none # disable xdebug, pcov
           tools: phpcs
+
+      # Install perltidy and perlcritic
+      - name: Install perltidy and perlcritic
+        run: sudo apt-get update && sudo apt-get install -y perltidy libperl-critic-perl
 
       # Run all the precommit tools (defined into pre-commit-config.yaml).
       # We can force exclusion of some of them here.

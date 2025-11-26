@@ -469,7 +469,7 @@ while ($i < $imaxinloop) {
 		print '<td class="tdoverflowmax200">';
 		print $object->getNomUrl(1);
 		if (isModEnabled('multicompany') && !$obj->entity) {
-			print img_picto($langs->trans("GlobalGroup"), 'redstar');
+			print img_picto($langs->trans("GlobalGroup"), 'superadmin');
 		}
 		print "</td>";
 		if (!$i) {

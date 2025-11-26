@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2015       Jean-François Ferry         <jfefe@aternatik.fr>
- * Copyright (C) 2019-2024  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2019-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		William Mead				<william@m34d.com>
  *
@@ -343,6 +343,16 @@ class Contacts extends DolibarrApi
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
 
+		// External api user does not know internal country ID
+		if (!isset($request_data['country_id']) && isset($request_data['country_code'])) {
+			$field = strlen($request_data['country_code']) > 2 ? 'code_iso' : 'code';
+			$id = dol_getIdFromCode($this->db, $request_data['country_code'], "c_country", $field, "rowid");
+			if ($id < 0) {
+				throw new RestException(404, 'Country code not found in database: ' . $this->db->error);
+			}
+			$request_data['country_id'] = $id;
+		}
+
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
@@ -642,9 +652,12 @@ class Contacts extends DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object data
+	 * @phpstan-template T
 	 *
 	 * @param	Object	$object		Object to clean
 	 * @return	Object				Object with cleaned properties
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	protected function _cleanObjectDatas($object)
 	{

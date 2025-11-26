@@ -2,7 +2,7 @@
 /* Copyright (c) 2008-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2018 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -57,62 +57,69 @@ class FormActions
 	/**
 	 *  Show list of action status
 	 *
-	 * 	@param	string	$formname		Name of form where select is included
-	 * 	@param	string	$selected		Preselected value (-1..100)
-	 * 	@param	int		$canedit		1=can edit, 0=read only
-	 *  @param  string	$htmlname   	Name of html prefix for html fields (selectX and valX)
-	 *  @param	integer	$showempty		Show an empty line if select is used
-	 *  @param	integer	$onlyselect		0=Standard, 1=Hide percent of completion and force usage of a select list, 2=Same than 1 and add "Incomplete (Todo+Running)
-	 *  @param  string  $morecss        More css on select field
-	 * 	@return	void
+	 * 	@param	string		$formname		Name of form where select is included
+	 * 	@param	string		$selected		Preselected value (-1..100)
+	 * 	@param	int<0,1>	$canedit		1=can edit, 0=read only
+	 *  @param  string		$htmlname   	Name of html prefix for html fields (selectX and valX)
+	 *  @param	integer		$showempty		Show an empty line if select is used
+	 *  @param	integer		$onlyselect		0=Standard, 1=Hide percent of completion and force usage of a select list, 2=Same than 1 and add "Incomplete (Todo+Running)
+	 *  @param  string  	$morecss        More css on select field
+	 *  @param	int<0,1>	$nooutput		1=No output, return string. 0=Print on output
+	 * 	@return	void|string
+	 *  @phpstan-return ($nooutput is 1 ? void : string)
 	 */
-	public function form_select_status_action($formname, $selected, $canedit = 1, $htmlname = 'complete', $showempty = 0, $onlyselect = 0, $morecss = 'maxwidth100')
+	public function form_select_status_action($formname, $selected, $canedit = 1, $htmlname = 'complete', $showempty = 0, $onlyselect = 0, $morecss = 'maxwidth100', $nooutput = 0)
 	{
 		// phpcs:enable
 		global $langs, $conf;
 
-		$listofstatus = array(
+		$listofstatus = [
 			'na' => $langs->trans("ActionNotApplicable"),
 			'0' => $langs->trans("ActionsToDoShort"),
 			'50' => $langs->trans("ActionRunningShort"),
 			'100' => $langs->trans("ActionDoneShort")
-		);
+		];
 		// +ActionUncomplete
+
+		$out = '';
 
 		if (!empty($conf->use_javascript_ajax) || $onlyselect) {
 			//var_dump($selected);
 			if ($selected == 'done') {
 				$selected = '100';
 			}
-			print '<select '.($canedit ? '' : 'disabled ').'name="'.$htmlname.'" id="select'.$htmlname.'" class="flat'.($morecss ? ' '.$morecss : '').'">';
+			$out .= '<select '.($canedit ? '' : 'disabled ').'name="'.$htmlname.'" id="select'.$htmlname.'" class="flat'.($morecss ? ' '.$morecss : '').'">';
 			if ($showempty) {
-				print '<option value="-1"'.($selected == '' ? ' selected' : '').'>&nbsp;</option>';
+				$out .= '<option value="-1"'.($selected == '' ? ' selected' : '').'>&nbsp;</option>';
 			}
 			foreach ($listofstatus as $key => $val) {
-				print '<option value="'.$key.'"'.(($selected == $key && strlen($selected) == strlen($key)) || (($selected > 0 && $selected < 100) && $key == '50') ? ' selected' : '').'>'.$val.'</option>';
-				if ($key == '50' && $onlyselect == 2) {
-					print '<option value="todo"'.($selected == 'todo' ? ' selected' : '').'>'.$langs->trans("ActionUncomplete").' ('.$langs->trans("ActionsToDoShort")."+".$langs->trans("ActionRunningShort").')</option>';
+				$out .= '<option value="'.$key.'"'.(($selected == $key && strlen($selected) == strlen($key)) || (($selected > 0 && $selected < 100) && $key == '50') ? ' selected' : '').'>';
+				$out .= $val;
+				$out .= '</option>';
+				// Add a choice "Incomplete" at second position
+				if ($key === 'na' && $onlyselect == 2) {
+					$out .= '<option value="todo"'.($selected == 'todo' ? ' selected' : '').'>'.$langs->trans("ActionUncomplete").' ('.$langs->trans("ActionsToDoShort")." + ".$langs->trans("ActionRunningShort").')</option>';
 				}
 			}
-			print '</select>';
+			$out .= '</select>';
 			if ($selected == 0 || $selected == 100) {
 				$canedit = 0;
 			}
 
-			print ajax_combobox('select'.$htmlname, array(), 0, 0, 'resolve', '-1', $morecss);
+			$out .= ajax_combobox('select'.$htmlname, array(), 0, 0, 'resolve', '-1', $morecss);
 
 			if (empty($onlyselect)) {
-				print ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat hideifna heightofcombo" value="'.($selected >= 0 ? $selected : '').'" size="2"'.($canedit && ($selected >= 0) ? '' : ' disabled').'>';
-				print '<span class="hideonsmartphone hideifna">%</span>';
+				$out .= ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat hideifna heightofcombo" value="'.($selected >= 0 ? $selected : '').'" size="2"'.($canedit && ($selected >= 0) ? '' : ' disabled').'>';
+				$out .= '<span class="hideonsmartphone hideifna">%</span>';
 			}
 		} else {
-			print ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat" value="'.($selected >= 0 ? $selected : '').'" size="2"'.($canedit ? '' : ' disabled').'>%';
+			$out .= ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat" value="'.($selected >= 0 ? $selected : '').'" size="2"'.($canedit ? '' : ' disabled').'>%';
 		}
 
 		if (!empty($conf->use_javascript_ajax)) {
-			print "\n";
-			print '<script nonce="'.getNonce().'" type="text/javascript">';
-			print "
+			$out .= "\n";
+			$out .= '<script nonce="'.getNonce().'" type="text/javascript">';
+			$out .= "
                 var htmlname = '".dol_escape_js($htmlname)."';
 
                 $(document).ready(function () {
@@ -154,6 +161,12 @@ class FormActions
                     }
                 }
                 </script>\n";
+		}
+
+		if ($nooutput) {
+			return $out;
+		} else {
+			print $out;
 		}
 	}
 
@@ -284,16 +297,39 @@ class FormActions
 					print '<td class="nowraponall nopaddingrightimp">'.$actioncomm->getNomUrl(1, -1).'</td>';
 
 					// Date
-					print '<td class="center nowraponall">'.dol_print_date($actioncomm->datep, 'dayhourreduceformat', 'tzuserrel');
-					if ($actioncomm->datef) {
+					print '<td class="center nowraponall nopaddingtopimp nopaddingbottomimp">';
+					if ($actioncomm->datef) {	// There is also a end date
 						$tmpa = dol_getdate($actioncomm->datep);
 						$tmpb = dol_getdate($actioncomm->datef);
 						if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) {
+							// The same day
 							if ($tmpa['hours'] != $tmpb['hours'] || $tmpa['minutes'] != $tmpb['minutes']) {
-								print '-'.dol_print_date($actioncomm->datef, 'hour', 'tzuserrel');
+								print dol_print_date($actioncomm->datep, 'dayreduceformat', 'tzuserrel');
+								print '<br><span class="small opacitymedium">';
+								print dol_print_date($actioncomm->datep, 'hourreduceformat', 'tzuserrel');
+								print '-'.dol_print_date($actioncomm->datef, 'hourreduceformat', 'tzuserrel');
+								print '</span>';
+							} else {
+								print dol_print_date($actioncomm->datep, 'dayreduceformat', 'tzuserrel');
+								print '<br><span class="small opacitymedium">';
+								print dol_print_date($actioncomm->datep, 'hourreduceformat', 'tzuserrel');
+								print '</span>';
 							}
 						} else {
-							print '-'.dol_print_date($actioncomm->datef, 'dayhourreduceformat', 'tzuserrel');
+							// Not the same day
+							print '<div class="center inline-block">';
+							print dol_print_date($actioncomm->datep, 'dayreduceformat', 'tzuserrel');
+							print '<br><span class="small opacitymedium">';
+							print dol_print_date($actioncomm->datep, 'hourreduceformat', 'tzuserrel');
+							print '</span>';
+							print '</div>';
+							print ' ';
+							print '<div class="center inline-block">';
+							print dol_print_date($actioncomm->datef, 'dayreduceformat', 'tzuserrel');
+							print '<br><span class="small opacitymedium">';
+							print dol_print_date($actioncomm->datef, 'hourreduceformat', 'tzuserrel');
+							print '</span>';
+							print '</div>';
 						}
 					}
 					print '</td>';

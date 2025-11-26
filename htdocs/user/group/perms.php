@@ -239,7 +239,7 @@ if ($object->id > 0) {
 		print '<tr><td class="titlefield">'.$langs->trans("Name").'</td>';
 		print '<td class="valeur">'.dol_escape_htmltag($object->name);
 		if (empty($object->entity)) {
-			print img_picto($langs->trans("GlobalGroup"), 'redstar');
+			print img_picto($langs->trans("GlobalGroup"), 'superadmin');
 		}
 		print "</td></tr>\n";
 	}

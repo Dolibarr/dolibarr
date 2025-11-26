@@ -1080,10 +1080,12 @@ abstract class CommonDocGenerator
 			$array_shipment = $this->fill_substitutionarray_with_extrafields($object, $array_shipment, $extrafields, $array_key, $outputlangs);
 		}
 
-		// Add info from $object->xxx where xxx has been loaded by fetch_origin() of shipment
-		if (is_object($object->commande) && !empty($object->commande->ref)) {
-			$array_shipment['order_ref'] = $object->commande->ref;
-			$array_shipment['order_ref_customer'] = $object->commande->ref_customer;
+		// Add info from $object->origin_object which has been loaded by fetch() of shipment
+		if ($object->origin_type == 'commande' && is_object($object->origin_object) && !empty($object->origin_object->ref)) {
+			$originOrder = $object->origin_object;
+			'@phan-var-force Commande $originOrder';
+			$array_shipment['order_ref'] = $originOrder->ref;
+			$array_shipment['order_ref_customer'] = $originOrder->ref_customer;
 		}
 
 		// Load dim data
@@ -1302,7 +1304,7 @@ abstract class CommonDocGenerator
 	 * @param float       $w            Width of the rectangle
 	 * @param float       $h            Height of the rectangle
 	 * @param float       $r            Corner radius (can be an array for different radii per corner)
-	 * @param int         $hidetop      1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
+	 * @param int<-1,1>   $hidetop      1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
 	 * @param int         $hidebottom   Hide bottom
 	 * @param string      $style        Draw style (e.g. 'D' for draw, 'F' for fill, 'DF' for both)
 	 * @return void
@@ -2028,9 +2030,9 @@ abstract class CommonDocGenerator
 	/**
 	 *  Define Array Column Field for extrafields
 	 *
-	 *  @param	object			$object    		common object det
+	 *  @param	CommonObject	$object    		common object det
 	 *  @param	Translate		$outputlangs    langs
-	 *  @param	int			   $hidedetails		Do not show line details
+	 *  @param	int<0,1>		$hidedetails	Do not show line details
 	 *  @return	int								Return integer <0 if KO, >=0 if OK
 	 */
 	public function defineColumnExtrafield($object, $outputlangs, $hidedetails = 0)
@@ -2118,11 +2120,11 @@ abstract class CommonDocGenerator
 	 *   Define Array Column Field into $this->cols
 	 *   This method must be implemented by the module that generate the document with its own columns.
 	 *
-	 *   @param		Object			$object    		Common object
+	 *   @param		CommonObject	$object    		Common object
 	 *   @param		Translate		$outputlangs    Langs
-	 *   @param		int			   	$hidedetails	Do not show line details
-	 *   @param		int			   	$hidedesc		Do not show desc
-	 *   @param		int			   	$hideref		Do not show ref
+	 *   @param		int<0,1>		$hidedetails	Do not show line details
+	 *   @param		int<0,1>		$hidedesc		Do not show desc
+	 *   @param		int<0,1>		$hideref		Do not show ref
 	 *   @return	void
 	 */
 	public function defineColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)

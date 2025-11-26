@@ -2,6 +2,8 @@
 /* Copyright (C) 2014-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
+
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,17 +78,13 @@ trait CommonSubtotal
 	public function addSubtotalLine($langs, $desc, $depth, $options = array(), $parent_line = 0)
 	{
 		if (empty($desc)) {
-			if (isset($this->errors)) {
-				$this->errors[] = $langs->trans("TitleNeedDesc");
-			}
+			$this->errors[] = $langs->trans("TitleNeedDesc");
 			return -1;
 		}
 		$current_module = $this->element;
 		// Ensure the object is one of the supported types
 		if (!in_array($current_module, self::$ALLOWED_TYPES)) {
-			if (isset($this->errors)) {
-				$this->errors[] = $langs->trans("UnsupportedModuleError");
-			}
+			$this->errors[] = $langs->trans("UnsupportedModuleError");
 			return -1; // Unsupported type
 		}
 		$error = 0;
@@ -123,9 +121,7 @@ trait CommonSubtotal
 
 			if ($max_existing_level+1 < $depth) {
 				$depth = $max_existing_level+1;
-				if (isset($this->errors)) {
-					$this->errors[] = $langs->trans("TitleAddedLevelTooHigh", $depth);
-				}
+				$this->errors[] = $langs->trans("TitleAddedLevelTooHigh", $depth);
 
 				$error ++;
 			}
@@ -216,7 +212,20 @@ trait CommonSubtotal
 				SUBTOTALS_SPECIAL_CODE	// Special code
 			);
 			$this->fetch_lines();
+		} elseif ($current_module == 'fichinter') {
+			$result = $this->addline( // @phpstan-ignore-line
+				$user,					// user @phpstan-ignore-line
+				$this->id,				// fk_fichinter @phpstan-ignore-line
+				$desc,					// Description @phpstan-ignore-line
+				0,						// dateintervention  @phpstan-ignore-line
+				$depth,					// duration  @phpstan-ignore-line
+				[],						// arrayoption  @phpstan-ignore-line
+				self::$PRODUCT_TYPE,	// Type @phpstan-ignore-line
+				$rang,					// Rang @phpstan-ignore-line
+				SUBTOTALS_SPECIAL_CODE	// Special code @phpstan-ignore-line
+			);
 		}
+
 
 		if ($current_module != 'shipping') {
 			foreach ($this->lines as $line) {
@@ -254,9 +263,7 @@ trait CommonSubtotal
 		$current_module = $this->element;
 		// Ensure the object is one of the supported types
 		if (!in_array($current_module, self::$ALLOWED_TYPES)) {
-			if (isset($this->errors)) {
-				$this->errors[] = $langs->trans("UnsupportedModuleError");
-			}
+			$this->errors[] = $langs->trans("UnsupportedModuleError");
 			return -1; // Unsupported type
 		}
 
@@ -320,9 +327,7 @@ trait CommonSubtotal
 		$current_module = $this->element;
 		// Ensure the object is one of the supported types
 		if (!in_array($current_module, self::$ALLOWED_TYPES)) {
-			if (isset($this->errors)) {
-				$this->errors[] = $langs->trans("UnsupportedModuleError");
-			}
+			$this->errors[] = $langs->trans("UnsupportedModuleError");
 			return -1; // Unsupported type
 		}
 
@@ -341,9 +346,7 @@ trait CommonSubtotal
 
 		if ($max_existing_level+1 < $depth) {
 			$depth = $max_existing_level+1;
-			if (isset($this->errors)) {
-				$this->errors[] = $langs->trans("TitleEditedLevelTooHigh");
-			}
+			$this->errors[] = $langs->trans("TitleEditedLevelTooHigh");
 			$error ++;
 		}
 
@@ -484,9 +487,7 @@ trait CommonSubtotal
 		$current_module = $this->element;
 		// Ensure the object is one of the supported types
 		if (!in_array($current_module, self::$ALLOWED_TYPES)) {
-			if (isset($this->errors)) {
-				$this->errors[] = $langs->trans("UnsupportedModuleError");
-			}
+			$this->errors[] = $langs->trans("UnsupportedModuleError");
 			return -1; // Unsupported type
 		}
 

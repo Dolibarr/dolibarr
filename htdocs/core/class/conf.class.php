@@ -1201,7 +1201,7 @@ class Conf extends stdClass
 			}
 			if (isset($this->projet)) {
 				$this->projet->warning_delay = (getDolGlobalInt('MAIN_DELAY_PROJECT_TO_CLOSE', 7) * 86400);
-				$this->projet->task = new StdClass();
+				$this->projet->task = new stdClass();
 				$this->projet->task->warning_delay = (getDolGlobalInt('MAIN_DELAY_TASKS_TODO', 7) * 86400);
 			}
 

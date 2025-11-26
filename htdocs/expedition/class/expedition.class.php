@@ -110,6 +110,12 @@ class Expedition extends CommonObject
 	public $fk_user_author;
 
 	/**
+	 * @var ?int ID of user that validates
+	 * @deprecated use $user_validation_id
+	 */
+	public $fk_user_valid;
+
+	/**
 	 * @var ?int
 	 */
 	public $socid;
@@ -1551,8 +1557,7 @@ class Expedition extends CommonObject
 		if (isset($this->fk_user_author)) {
 			$this->fk_user_author = (int) $this->fk_user_author;
 		}
-		if (isset($this->fk_user_valid)) { // @phan-ignore-current-line PhanUndeclaredProperty
-			// If set, then accept @phan-ignore-next-line PhanUndeclaredProperty
+		if (isset($this->fk_user_valid)) {
 			$this->fk_user_valid = (int) $this->fk_user_valid;
 		}
 		if (isset($this->fk_delivery_address)) {
@@ -2618,7 +2623,7 @@ class Expedition extends CommonObject
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
 		$return .= '<br><div class="info-box-ref tdoverflowmax150">'.$this->thirdparty->getNomUrl(1).'</div>';
-		$return .= '<div class="info-box-ref amount">'.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency).' '.$langs->trans('HT').'</div>';
+		$return .= '<div class="info-box-ref amount">'.price($this->total_ht, 0, $langs, 0, -1, -1, getDolCurrency()).' '.$langs->trans('HT').'</div>';
 		$return .= '<div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		$return .= '</div>';
 		$return .= '</div>';

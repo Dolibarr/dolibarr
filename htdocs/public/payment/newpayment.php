@@ -109,7 +109,7 @@ $action = GETPOST('action', 'aZ09');
 $suffix = GETPOST("suffix", 'aZ09');
 $amount = price2num(GETPOST("amount", 'alpha'));
 if (!GETPOST("currency", 'alpha')) {
-	$currency = $conf->currency;
+	$currency = getDolCurrency();
 } else {
 	$currency = GETPOST("currency", 'aZ09');
 }
@@ -541,7 +541,7 @@ if ($action == 'dopayment') {	// Test on permission not required here (anonymous
 			dol_syslog("newpayment.php call paybox api and do redirect", LOG_DEBUG, 0, '_payment');
 
 			include_once DOL_DOCUMENT_ROOT.'/paybox/lib/paybox.lib.php';
-			print_paybox_redirect((float) $PRICE, $conf->currency, $email, $urlok, $urlko, $FULLTAG);
+			print_paybox_redirect((float) $PRICE, getDolCurrency(), $email, $urlok, $urlko, $FULLTAG);
 
 			session_destroy();
 			exit;

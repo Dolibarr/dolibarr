@@ -41,21 +41,20 @@ require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'banks', 'bills', 'blockedlog', 'other'));
 
-// Access Control
-if ((!$user->admin && !$user->hasRight('blockedlog', 'read')) || empty($conf->blockedlog->enabled)) {
-	accessforbidden();
-}
-
 // Get Parameters
 $action      = GETPOST('action', 'aZ09');
+$confirm     = GETPOST('confirm', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : getDolDefaultContextPage(__FILE__); // To manage different context of search
 $backtopage  = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss   = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+
+$hmacexportkey = GETPOST('hmacexportkey', 'password');
 
 $search_showonlyerrors = GETPOSTINT('search_showonlyerrors');
 if ($search_showonlyerrors < 0) {
@@ -113,6 +112,14 @@ if (empty($sortorder)) {
 $block_static = new BlockedLog($db);
 $block_static->loadTrackedEvents();
 
+// Access Control
+if ((!$user->admin && !$user->hasRight('blockedlog', 'read')) || !isModEnabled('blockedlog')) {
+	accessforbidden();
+}
+
+// We force also permission to write because it does not exists and we need it to upload a file
+$user->rights->blockedlog->create = 1;
+
 $result = restrictedArea($user, 'blockedlog', 0, '');
 
 // Execution Time
@@ -125,6 +132,14 @@ if ($max_time && $max_time < $max_execution_time_for_importexport) {
 
 $MAXLINES = getDolGlobalInt('BLOCKEDLOG_MAX_LINES', 10000);
 $MAXFORSHOWNLINKS = getDolGlobalInt('BLOCKEDLOG_MAX_FOR_SHOWN_LINKS', 100);
+
+$permission = $user->hasRight('blockedlog', 'read');
+$permissiontoadd = $user->hasRight('blockedlog', 'read');	// Permission is to upload new files to scan them
+$permtoedit = $permissiontoadd;
+
+$upload_dir = getMultidirOutput($block_static, 'blockedlog').'/archives';
+
+dol_mkdir($upload_dir);
 
 
 /*
@@ -152,7 +167,9 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_array_options = array();
 }
 
-if (GETPOST('downloadcsv', 'alpha')) {
+include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+
+if (GETPOST('action') == 'upload' && $user->hasRight('blockedlog', 'read')) {		// read is read/upload for blockedlog
 	$error = 0;
 
 	$previoushash = '';
@@ -161,7 +178,13 @@ if (GETPOST('downloadcsv', 'alpha')) {
 	if (! (GETPOSTINT('yeartoexport') > 0)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Year")), null, "errors");
 		$error++;
-	} else {
+	}
+	if (empty($hmacexportkey)) {
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Password")), null, "errors");
+		$error++;
+	}
+
+	if (!$error) {
 		// Get the ID of the first line qualified
 		$sql = "SELECT rowid,date_creation,tms,user_fullname,action,amounts,element,fk_object,date_object,ref_object,signature,fk_user,object_data";
 		$sql .= " FROM ".MAIN_DB_PREFIX."blockedlog";
@@ -191,7 +214,7 @@ if (GETPOST('downloadcsv', 'alpha')) {
 		}
 	}
 
-	if (! $error) {
+	if (!$error) {
 		// We record the export as a new line into the unalterable logs
 		require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 		$b = new BlockedLog($db);
@@ -237,28 +260,32 @@ if (GETPOST('downloadcsv', 'alpha')) {
 
 		$resql = $db->query($sql);
 		if ($resql) {
-			$nameofdownoadedfile = "unalterable-log-archive-".$dolibarr_main_db_name."-".(GETPOSTINT('yeartoexport') > 0 ? GETPOSTINT('yeartoexport').(GETPOSTINT('monthtoexport') > 0 ? sprintf("%02d", GETPOSTINT('monthtoexport')) : '').'-' : '').dol_print_date(dol_now(), 'dayhourlog', 'gmt').'UTC-DONOTMODIFY';
+			$yearmonthtoexport = GETPOSTINT('yeartoexport').(GETPOSTINT('monthtoexport') > 0 ? sprintf("%02d", GETPOSTINT('monthtoexport')) : '');
+			$yearmonthdateofexport = dol_print_date(dol_now(), 'dayhourlog', 'gmt');
 
-			$tmpfile = $conf->admin->dir_temp.'/unalterable-log-archive-tmp-'.$user->id.'.csv';
+			$nameofdownoadedfile = "unalterable-log-archive-".$dolibarr_main_db_name."-".$yearmonthtoexport.'-'.$yearmonthdateofexport.'UTC-DONOTMODIFY.csv';
+
+			//$tmpfile = $conf->admin->dir_temp.'/unalterable-log-archive-tmp-'.$user->id.'.csv';
+			$tmpfile = getMultidirOutput($block_static, 'blockedlog').'/archives/'.$nameofdownoadedfile;
 
 			$fh = fopen($tmpfile, 'w');
 
 			// Print line with title
-			fwrite($fh, $langs->transnoentities('Id')
+			fwrite($fh, "BEGIN - date=".$yearmonthdateofexport
+				.';'.$langs->transnoentities('Id')
+				.';'.$langs->transnoentities('DateCreation')
+				.';'.$langs->transnoentities('Action')
+				.';'.$langs->transnoentities('Amounts')
+				.';'.$langs->transnoentities('Ref')
 				.';'.$langs->transnoentities('Date')
 				.';'.$langs->transnoentities('User')
-				.';'.$langs->transnoentities('Action')
-				.';'.$langs->transnoentities('Element')
-				.';'.$langs->transnoentities('Amounts')
-				.';'.$langs->transnoentities('ObjectId')
-				.';'.$langs->transnoentities('Date')
-				.';'.$langs->transnoentities('Ref')
+				.';'.$langs->transnoentities('LinkTo')
+				.';'.$langs->transnoentities('LinkType')
+				.';'.$langs->transnoentities('FullData')
+				.';'.$langs->transnoentities('Version')
 				.';'.$langs->transnoentities('Fingerprint')
 				.';'.$langs->transnoentities('Status')
-				.';'.$langs->transnoentities('Note')
-				.';'.$langs->transnoentities('Version')
-				.';'.$langs->transnoentities('FullData')
-				.';'.$langs->transnoentities('DebugInfo')
+				.';'.$langs->transnoentities('FingerprintExport')
 				."\n");
 
 			$loweridinerror = 0;
@@ -323,21 +350,24 @@ if (GETPOST('downloadcsv', 'alpha')) {
 					$statusofrecordnote = $langs->trans("PreviousFingerprint").': '.$previoushash.($statusofrecordnote ? ' - '.$statusofrecordnote : '');
 				}
 
-				fwrite($fh, $block_static->id
+				$signatureexport = 'TODO';
+
+				fwrite($fh,
+					';'.$block_static->id
 					.';'.$block_static->date_creation
-					.';"'.str_replace('"', '""', $block_static->user_fullname).'";'
-					.$block_static->action
-					.';'.$block_static->element
+					.';'.$block_static->action
 					.';'.$block_static->amounts			// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
-					.';'.$block_static->fk_object
-					.';'.$block_static->date_object
-					.';"'.str_replace('"', '""', $block_static->ref_object).'";"'
-					.$block_static->signature.'";'
-					.$statusofrecord
-					.';'.$statusofrecordnote
-					.';'.$block_static->object_version
-					.';"'.str_replace('"', '""', $obj->object_data).'"'				// We must the string to decode into object with dolDecodeBlockedData
-					.';"'.str_replace('"', '""', $block_static->debuginfo).'"'
+					.';"'.str_replace('"', '""', $block_static->ref_object).'";'
+					.$block_static->date_object
+					.';"'.str_replace('"', '""', $block_static->user_fullname).'";"'
+					.str_replace('"', '""', $block_static->linktoref).'";"'
+					.str_replace('"', '""', $block_static->linktype).'";"'
+					.str_replace('"', '""', $obj->object_data).'"'				// We must the string to decode into object with dolDecodeBlockedData
+					.';"'.str_replace('"', '""', $block_static->object_version).'";"'
+					.str_replace('"', '""', $block_static->signature).'";"'
+					.str_replace('"', '""', $statusofrecord).'";"'
+					.str_replace('"', '""', $signatureexport).'"'
+					//.';'.$statusofrecordnote
 					."\n");
 
 				// Set new previous hash for next fetch
@@ -349,18 +379,14 @@ if (GETPOST('downloadcsv', 'alpha')) {
 			fclose($fh);
 
 			// Calculate the md5 of the file (the last line has a return line)
-			$md5value = md5_file($tmpfile);
+			$algo = 'sha256';
+			$secretkey = 'TODOASKBEFOREEXPORT';
+			$hmacsha256 = hash_hmac_file($algo, $tmpfile, $secretkey);
 
 			// Now add a signature to check integrity at end of file
-			file_put_contents($tmpfile, 'END - md5='.$md5value, FILE_APPEND);
+			file_put_contents($tmpfile, 'END - hmac_sha256='.$hmacsha256, FILE_APPEND);
 
-			header('Content-Type: application/octet-stream');
-			header("Content-Transfer-Encoding: Binary");
-			header("Content-disposition: attachment; filename=\"".$nameofdownoadedfile.".csv\"");
-
-			readfile($tmpfile);
-
-			exit;
+			setEventMessages($langs->trans("FileGenerated"), null);
 		} else {
 			setEventMessages($db->lasterror, null, 'errors');
 		}
@@ -476,14 +502,37 @@ if (GETPOST('withtab', 'alpha')) {
 // Add $param from extra fields
 //include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'?output=file">';
+if ($action == 'deletefile') {
+	$langs->load("companies"); // Need for string DeleteFile+ConfirmDeleteFiles
+	print $form->formconfirm(
+		$_SERVER["PHP_SELF"].'?urlfile='.urlencode(GETPOST("urlfile")).'&linkid='.GETPOSTINT('linkid').(empty($param) ? '' : $param),
+		$langs->trans('DeleteFile'),
+		$langs->trans('ConfirmDeleteFile'),
+		'confirm_deletefile',
+		'',
+		'',
+		1
+	);
+}
+
+
+print '<form method="POST" id="exportArchives" action="'.$_SERVER["PHP_SELF"].'?output=file">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="upload">';
 
 print '<div class="right">';
+
 print $langs->trans("RestrictYearToExport").': ';
 // Month
-print $formother->select_month((string) GETPOSTINT('monthtoexport'), 'monthtoexport', 1, 0, 'minwidth50 maxwidth75imp valignmiddle', true);
+print $formother->select_month((string) GETPOSTINT('monthtoexport'), 'monthtoexport', $langs->trans("Month"), 0, 'minwidth50 maxwidth75imp valignmiddle', true);
 print '<input type="text" name="yeartoexport" class="valignmiddle maxwidth75imp" value="'.GETPOST('yeartoexport').'" placeholder="'.$langs->trans("Year").'">';
+
+print ' ';
+
+print '<input type="text" name="hmacexportkey" class="valignmiddle minwidth150imp maxwidth300imp" required value="'.GETPOST('hmacexportkey').'" placeholder="'.$langs->trans("Password").'">';
+
+print ' ';
+
 print '<input type="hidden" name="withtab" value="'.GETPOST('withtab', 'alpha').'">';
 print '<input type="submit" name="downloadcsv" class="button" value="'.$langs->trans('DownloadLogCSV').'">';
 /*if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY')) {
@@ -493,6 +542,8 @@ print ' </div><br>';
 
 print '</form>';
 
+
+/*
 print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 
 if ($optioncss != '') {
@@ -508,13 +559,85 @@ print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 print '<input type="hidden" name="withtab" value="'.GETPOST('withtab', 'alpha').'">';
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
+*/
 
-// TODO List of archive files into blockedlog/archives
+$filearray = dol_dir_list($upload_dir, 'files', 0, '', null, 'name', SORT_ASC, 1);
 
+$modulepart = 'blockedlog';
+$relativepathwithnofile = 'archives/';
+$disablemove = 1;
+/*
+$param = '&id='.$object->id.'&entity='.(empty($object->entity) ? getDolEntity() : $object->entity);
+include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+*/
 
+include_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+$formfile = new FormFile($db);
+
+$savingdocmask = '';
+
+$object = $block_static;
+
+// Get the form to add files (upload and links)
+$tmparray = $formfile->form_attach_new_file(
+	$_SERVER["PHP_SELF"],
+	'',
+	0,
+	0,
+	$permission,
+	$conf->browser->layout == 'phone' ? 40 : 60,
+	$object,
+	'',
+	1,
+	$savingdocmask,
+	1,
+	'formuserfile',
+	'',
+	'',
+	0,
+	0,
+	0,
+	2
+);
+
+$formToUploadAFile = '';
+
+if (is_array($tmparray) && !empty($tmparray)) {
+	$formToUploadAFile = $tmparray['formToUploadAFile'];
+}
+
+// List of document
+// TODO Replace with specific code to list files with mass action, ...
+$formfile->list_of_documents(
+	$filearray,
+	null,
+	$modulepart,
+	$param,
+	0,
+	$relativepathwithnofile, // relative path with no file. For example "0/1"
+	$permission,
+	0,
+	'',
+	0,
+	$langs->transnoentitiesnoconv('Archives'),
+	'',
+	0,
+	$permtoedit,
+	$upload_dir,
+	$sortfield,
+	$sortorder,
+	$disablemove,
+	0,
+	-1,
+	'',
+	array('afteruploadtitle' => $formToUploadAFile, 'showhideaddbutton' => 1)
+);
+
+/*
 print '</div>';
 
 print '</form>';
+*/
 
 // Javascript to manage the showinfo popup
 print '<script type="text/javascript">

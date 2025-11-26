@@ -723,7 +723,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 							$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails);
 							$this->printStdColumnContent($pdf, $curY, 'totalexcltax', $total_excl_tax);
 						} elseif ($object->lines[$i]->qty < 0 && isset($sub_options['subtotalshowtotalexludingvatonpdf'])) {
-							if (isModEnabled('multicurrency') && $object->multicurrency_code != $conf->currency) {
+							if (isModEnabled('multicurrency') && $object->multicurrency_code != getDolCurrency()) {
 								$total_excl_tax = $object->getSubtotalLineMulticurrencyAmount($object->lines[$i]);
 							} else {
 								$total_excl_tax = $object->getSubtotalLineAmount($object->lines[$i]);
@@ -1535,7 +1535,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 			$hidetop = -1;
 		}
 
-		$currency = !empty($currency) ? $currency : $conf->currency;
+		$currency = !empty($currency) ? $currency : getDolCurrency();
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		// Amount in (at tab_top - 1)
@@ -1934,7 +1934,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 	/**
 	 *   	Define Array Column Field
 	 *
-	 *   	@param	Commande		$object    		common object
+	 *   	@param	CommonObject	$object    		common object
 	 *   	@param	Translate		$outputlangs    langs
 	 *      @param	int<0,1>		$hidedetails	Do not show line details
 	 *      @param	int<0,1>		$hidedesc		Do not show desc

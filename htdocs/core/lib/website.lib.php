@@ -729,7 +729,7 @@ function getStructuredData($type, $data = array())
 			"offers": {
 				"@type": "Offer",
 				"price": "'.dol_escape_json($data['price']).'",
-				"priceCurrency": "'.dol_escape_json($data['currency'] ? $data['currency'] : $conf->currency).'"
+				"priceCurrency": "'.dol_escape_json($data['currency'] ? $data['currency'] : getDolCurrency()).'"
 			}
 		}'."\n";
 		$ret .= '</script>'."\n";
@@ -864,7 +864,7 @@ function getStructuredData($type, $data = array())
 				"offers": {
 					"@type": "Offer",
 					"url": "https://example.com/anvil",
-					"priceCurrency": "'.dol_escape_json($data['currency'] ? $data['currency'] : $conf->currency).'",
+					"priceCurrency": "'.dol_escape_json($data['currency'] ? $data['currency'] : getDolCurrency()).'",
 					"price": "'.dol_escape_json($data['price']).'",
 					"itemCondition": "https://schema.org/UsedCondition",
 					"availability": "https://schema.org/InStock",

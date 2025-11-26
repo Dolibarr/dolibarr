@@ -1155,7 +1155,8 @@ class Propal extends CommonObject
 	 */
 	public function create($user, $notrigger = 0)
 	{
-		global $conf, $hookmanager, $mysoc;
+		global $mysoc;
+
 		$error = 0;
 
 		$now = dol_now();
@@ -1179,7 +1180,7 @@ class Propal extends CommonObject
 			$this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
 		}
 		if (empty($this->fk_multicurrency)) {
-			$this->multicurrency_code = (string) $conf->currency;
+			$this->multicurrency_code = getDolCurrency();
 			$this->fk_multicurrency = 0;
 			$this->multicurrency_tx = 1;
 		}
@@ -1406,22 +1407,10 @@ class Propal extends CommonObject
 					}
 				}
 
-				// Set delivery address
-				/*if (! $error && $this->fk_delivery_address) {
-					$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
-					$sql.= " SET fk_delivery_address = ".((int) $this->fk_delivery_address);
-					$sql.= " WHERE ref = '".$this->db->escape($this->ref)."'";
-					$sql.= " AND entity = ".setEntity($this);
-
-					$result=$this->db->query($sql);
-				}*/
-
 				if (!$error) {
 					// Update denormalized data
 					$resql = $this->update_price(1, 'auto', 0, $mysoc);
 					if ($resql) {
-						$action = 'update';
-
 						// Actions on extra fields
 						$result = $this->insertExtraFields();
 						if ($result < 0) {
@@ -2191,7 +2180,6 @@ class Propal extends CommonObject
 
 			$this->ref = $num;
 			$this->statut = self::STATUS_VALIDATED;
-			$this->status = self::STATUS_VALIDATED;
 			$this->user_validation_id = $user->id;
 			$this->datev = $now;
 			$this->date_validation = $now;
@@ -3642,7 +3630,7 @@ class Propal extends CommonObject
 		$this->note_private = 'This is a comment (private)';
 
 		$this->multicurrency_tx = 1;
-		$this->multicurrency_code = $conf->currency;
+		$this->multicurrency_code = getDolCurrency();
 
 		// Lines
 		$nbp = min(1000, GETPOSTINT('nblines') ? GETPOSTINT('nblines') : 5);	// We can force the nb of lines to test from command line (but not more than 1000)

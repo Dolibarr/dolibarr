@@ -341,7 +341,7 @@ foreach ($rules as $rule) {
 	if ($action == 'edit' && $object->id == $rule->id) {
 		echo '<input type="text" value="' . price2num($object->amount) . '" name="amount" class="amount width50 right" />';
 	} else {
-		echo price($rule->amount, 0, $langs, 1, -1, -1, $conf->currency);
+		echo price($rule->amount, 0, $langs, 1, -1, -1, getDolCurrency());
 	}
 	echo '</td>';
 

@@ -18,19 +18,18 @@
 
 CREATE TABLE llx_blockedlog
 (
-	rowid integer AUTO_INCREMENT PRIMARY KEY,
-	entity integer DEFAULT 1 NOT NULL,
 	-- fields included into signature
+	rowid integer AUTO_INCREMENT PRIMARY KEY,	-- field included into line signature
+	entity integer DEFAULT 1 NOT NULL,	-- field included into line signature
 	date_creation	datetime,			-- field included into line signature
-	action varchar(50),				-- field included into line signature
-	amounts double(24,8) NOT NULL,			-- field included into line signature
-	vat double(24,8) NULL,			-- TODO
-	ref_object varchar(255),			-- field included into line signature
-	date_object	datetime,			-- field included into line signature
-	user_fullname varchar(255),			-- field included into line signature
+	action varchar(50),				-- The type of event. field included into line signature
+	amounts double(24,8) NOT NULL,			-- field included into line signature (denormalized data from object_data)
+	ref_object varchar(255),			-- field included into line signature (denormalized data from object_data)
+	date_object	datetime,			-- field included into line signature (denormalized data from object_data)
+	user_fullname varchar(255),			-- field included into line signature (denormalized data from object_data)
 	object_data	mediumtext,			-- field included into line signature
-	linktoref varchar(255),				-- TODO
-	linktype varchar(16),				-- TODO
+	linktoref varchar(255),				-- Link to ref. field included into line signature
+	linktype varchar(16),				-- Link type. field included into line signature
 	-- the signature of line
 	signature varchar(100) NOT NULL,  		-- the hash of the key for signature with previous hash before
 	-- fields used for debug only or to retreive link to more complete business events

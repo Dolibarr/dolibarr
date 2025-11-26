@@ -93,8 +93,10 @@ HTTP 400
 # GET products in warehouse with ID 0 - which should not exist
 GET http://{{hostnport}}/api/index.php/warehouses/0/products
 HTTP 400
-{"error":{"code":400,"message":"Bad Request: No warehouse with id=0 can exist"}}
-
+[Asserts]
+jsonpath "$.error" exists
+jsonpath "$.error.code" == 400
+jsonpath "$.error.message" == "Bad Request: Invalid value specified for `id`. Minimum required value is 1."
 
 # GET warehouses DOLAPIENTITY: 1
 GET http://{{hostnport}}/api/index.php/warehouses
@@ -105,7 +107,11 @@ HTTP 200
 GET http://{{hostnport}}/api/index.php/warehouses
 DOLAPIENTITY: 2
 HTTP 401
-{"error":{"code":401,"message":"Unauthorized: Error user not valid (not found with api key or bad status or bad validity dates) (conf->entity=2)"}}
+[Asserts]
+jsonpath "$.error" exists
+jsonpath "$.error.code" == 401
+jsonpath "$.error.message" contains "Unauthorized"
+jsonpath "$.error.message" contains "Token not valid (may be a typo or a wrong entity)"
 
 # http://localhost:8080/api/index.php/warehouses?sortfield=t.rowid&sortorder=ASC&limit=1
 

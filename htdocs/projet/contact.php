@@ -242,7 +242,7 @@ if (empty($reshook)) {
 					$task_to_affect = explode(',', $affecttotask);
 					if (!empty($task_to_affect)) {
 						foreach ($task_to_affect as $task_id) {
-							if (GETPOSTISSET('person_'.$task_id) && GETPOST('person_'.$task_id, 'san_alpha')) {
+							if (GETPOSTISSET('person_'.$task_id) && GETPOST('person_'.$task_id, 'aZ09comma')) {
 								$tasksToAffect = new Task($db);
 								$result = $tasksToAffect->fetch((int) $task_id);
 								if ($result < 0) {

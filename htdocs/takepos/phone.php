@@ -111,7 +111,7 @@ if ($action == "productinfo" && $user->hasRight('takepos', 'run')) {
 	print "<br><b>".$prod->label."</b><br>";
 	print '<img class="imgwrapper" width="60%" src="'.DOL_URL_ROOT.'/takepos/public/auto_order.php?genimg=pro&query=pro&id='.$idproduct.'">';
 	print "<br>".$prod->description;
-	print "<br><b>".price($prod->price_ttc, 1, $langs, 1, -1, -1, $conf->currency)."</b>";
+	print "<br><b>".price($prod->price_ttc, 1, $langs, 1, -1, -1, getDolCurrency())."</b>";
 	print '<br>';
 } elseif ($action == "editline" && $user->hasRight('takepos', 'run')) {
 	$placeid = GETPOSTINT('placeid');
@@ -125,7 +125,7 @@ if ($action == "productinfo" && $user->hasRight('takepos', 'run')) {
 			print "<b>".$prod->label."</b><br>";
 			print '<img class="imgwrapper" width="60%" src="'.DOL_URL_ROOT.'/takepos/public/auto_order.php?genimg=pro&query=pro&id='.$line->fk_product.'">';
 			print "<br>".$prod->description;
-			print "<br><b>".price($prod->price_ttc, 1, $langs, 1, -1, -1, $conf->currency)."</b>";
+			print "<br><b>".price($prod->price_ttc, 1, $langs, 1, -1, -1, getDolCurrency())."</b>";
 			print '<br>';
 			print '<button type="button" class="publicphonebutton2 phonered width24" onclick="SetQty(place, '.$selectedline.', '.($line->qty - 1).')">-</button>';
 			print '<button type="button" class="publicphonebutton2 phonegreen width24" onclick="SetQty(place, '.$selectedline.', '.($line->qty + 1).')">+</button>';

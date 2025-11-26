@@ -202,8 +202,9 @@ MigrationFieldsSocialNetworks=Migration of users fields social networks (%s)
 MigrationReloadModule=Reload module %s
 MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
 MigrationImportOrExportProfiles=Migration of import or export profiles (%s)
-ShowNotAvailableOptions=Show unavailable options
-HideNotAvailableOptions=Hide unavailable options
+MigrationHolidayPath=Migration of file paths for holidays
+ShowNotAvailableOptions=Show unavailable or not recommended options
+HideNotAvailableOptions=Hide unavailable or not recommended options
 ErrorFoundDuringMigration=Error(s) were reported during the migration process so next step is not available. To ignore errors, you can <a href="%s">click here</a>, but the application or some features may not work correctly until the errors are resolved.
 YouTryInstallDisabledByDirLock=The install/upgrade pages have been disabled for security (directory renamed with .lock suffix).<br>
 YouTryInstallDisabledByFileLock=The install/upgrade pages have been disabled for security (by the existence of a lock file <strong>install.lock</strong> in the dolibarr documents directory).<br>
@@ -222,3 +223,4 @@ InvoiceExportModelsMigration=Migrate invoice export models
 MigrationApiRestTokens=Migrate user's API keys to llx_oauth_token
 MigratedTokens=%s token(s) migrated
 InitAHMACKeyForBlockedLog=Init the BLOCKEDLOG_HMAC_KEY constant for new encryption of Unalterable Log module
+MigrationAlreadyDone=This migration appears to have already been completed.

@@ -42,12 +42,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 $langs->loadLangs(array('companies', 'products', 'admin'));
 
 $action = GETPOST('action', 'aZ09');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel', 'alpha');
 $currencycode = GETPOST('currencycode', 'alpha');
 
 if (isModEnabled('multicompany') && getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY')) {
 	// When MULTICURRENCY_USE_LIMIT_BY_CURRENCY is on, we use always a defined currency code instead of '' even for default.
-	$currencycode = (!empty($currencycode) ? $currencycode : $conf->currency);
+	$currencycode = (!empty($currencycode) ? $currencycode : getDolCurrency());
 }
 
 $mainmaxdecimalsunit = 'MAIN_MAX_DECIMALS_UNIT'.(!empty($currencycode) ? '_'.$currencycode : '');
@@ -137,14 +137,14 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-admin page-limits');
 
 print load_fiche_titre($title, '', 'title_setup');
 
-$aCurrencies = array($conf->currency); // Default currency always first position
+$aCurrencies = array(getDolCurrency()); // Default currency always first position
 
 if (isModEnabled('multicompany') && getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY')) {
 	require_once DOL_DOCUMENT_ROOT . '/core/lib/multicurrency.lib.php';
 
 	$sql = "SELECT rowid, code FROM " . MAIN_DB_PREFIX . "multicurrency";
 	$sql .= " WHERE entity = " . ((int) $conf->entity);
-	$sql .= " AND code <> '" . $db->escape($conf->currency) . "'"; // Default currency always first position
+	$sql .= " AND code <> '" . $db->escape(getDolCurrency()) . "'"; // Default currency always first position
 	$resql = $db->query($sql);
 	if ($resql) {
 		while ($obj = $db->fetch_object($resql)) {

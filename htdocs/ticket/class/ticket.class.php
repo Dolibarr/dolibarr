@@ -3202,8 +3202,8 @@ class Ticket extends CommonObject
 				} else {
 					$langs->load("other");
 					if ($mailfile->error) {
-						setEventMessages($langs->trans('ErrorFailedToSendMail', $from, $receiver), null, 'errors');
-						dol_syslog($langs->trans('ErrorFailedToSendMail', $from, $receiver).' : '.$mailfile->error);
+						setEventMessages($langs->trans('ErrorFailedToSendMail', $from, $receiverstring), null, 'errors');
+						dol_syslog($langs->trans('ErrorFailedToSendMail', $from, $receiverstring).' : '.$mailfile->error);
 					} else {
 						setEventMessages('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', null, 'errors');
 					}

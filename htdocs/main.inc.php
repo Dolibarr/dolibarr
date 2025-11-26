@@ -1273,13 +1273,15 @@ if (!defined('NOREQUIRETRAN')) {
 
 	// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
 	// accesskey is for Mac:               CTRL + Option + key for all browsers
+
+	// Note: $con->browser->os and $conf->browser->name may not be defined if we are in CLI mode.
 	$conf->browser->stringforfirstkey = $langs->trans("KeyboardShortcut");
-	if ($conf->browser->os == 'macintosh') {
+	if (!empty($conf->browser->os) && $conf->browser->os == 'macintosh') {
 		$conf->browser->stringforfirstkey .= ' CTRL + Option +';
 	} else {
-		if ($conf->browser->name == 'chrome') {
+		if (!empty($conf->browser->name) && $conf->browser->name == 'chrome') {
 			$conf->browser->stringforfirstkey .= ' ALT +';
-		} elseif ($conf->browser->name == 'firefox') {
+		} elseif (!empty($conf->browser->name) && $conf->browser->name == 'firefox') {
 			$conf->browser->stringforfirstkey .= ' ALT + SHIFT +';
 		} else {
 			$conf->browser->stringforfirstkey .= ' CTL +';
@@ -1925,7 +1927,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.js?' . $ext . '"></script>'."\n";
 				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.ui-datepicker.js?' . $ext . '"></script>'."\n";
 				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.ui-autocomplete.js?' . $ext . '"></script>'."\n";
-				print '<script>'."\n";
+				print '<script nonce="'.getNonce().'" >'."\n";
 				print 'var urlSaveInPlace = \''.DOL_URL_ROOT.'/core/ajax/saveinplace.php\';'."\n";
 				print 'var urlLoadInPlace = \''.DOL_URL_ROOT.'/core/ajax/loadinplace.php\';'."\n";
 				print 'var tooltipInPlace = \''.$langs->transnoentities('ClickToEdit').'\';'."\n"; // Added in title attribute of span
@@ -2404,7 +2406,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	$dropdownBody .= '<br><b>'.$langs->trans("VATIntraShort").'</b>: <span>'.dol_print_profids(getDolGlobalString("MAIN_INFO_TVAINTRA"), 'VAT').'</span>';
 	$dropdownBody .= '<br><b>'.$langs->trans("Country").'</b>: <span>'.($mysoc->country_code ? $langs->trans("Country".$mysoc->country_code) : '').'</span>';
 	if (isModEnabled('multicurrency')) {
-		$dropdownBody .= '<br><b>'.$langs->trans("Currency").'</b>: <span>'.$conf->currency.'</span>';
+		$dropdownBody .= '<br><b>'.$langs->trans("Currency").'</b>: <span>'.getDolCurrency().'</span>';
 	}
 	$dropdownBody .= '</div>';
 

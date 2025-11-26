@@ -876,7 +876,7 @@ if (isModEnabled('stock')) {
 print '<!-- Begin PROFIT table -->';
 print load_fiche_titre($langs->trans("Profit"), '', 'title_accountancy');
 
-PRINT '<div class="div-table-responsive">';
+print '<div class="div-table-responsive">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td class="left" width="200">';
@@ -945,6 +945,7 @@ foreach ($listofreferent as $key => $value) {
 		if (is_array($elementarray) && count($elementarray) > 0) {
 			$total_ht = 0;
 			$total_ttc = 0;
+			$i = 0;
 
 			// Loop on each object for the current element type
 			$num = count($elementarray);
@@ -1386,6 +1387,7 @@ foreach ($listofreferent as $key => $value) {
 		if (is_array($elementarray) && count($elementarray) > 0) {
 			$total_ht = 0;
 			$total_ttc = 0;
+			$i = 0;
 
 			$total_ht_by_third = 0;
 			$total_ttc_by_third = 0;

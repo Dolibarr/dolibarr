@@ -367,6 +367,7 @@ ErrorFilenameExtensionNotAllowed=Le fichier %s a une extension interdite
 ErrorNoValueForSelectListType=Erreur, une valeur pour ce type de champ est obligatoire
 ErrorPaymentAmountMustNotBeNull=Erreur : le montant du paiement doit être défini (et) et non égal à zéro.
 ErrorOneLineContainsADisactivatedProduct=Erreur : au moins un produit n'est plus disponible à la vente.
+ErrorFieldClassNotFoundForClassName=La classe "%s" gérant le type de champ "%s" n'a pas été trouvée.
 ErrorCalendarIsNotYetOpenOrHasBeenClosed=Ce calendrier n'est pas encore ouvert ou a été fermé.
 
 # Warnings
@@ -444,6 +445,8 @@ RequireANotEmptyValue = Est requis
 RequireValidDuration = Une durée valide est requise
 RequireValidExistingElement = Une valeur existante est requise
 RequireValidBool = Un booléen valide est requis
+RequireMinValue=La valeur doit être supérieure à %s
+RequireMaxValue=La valeur doit être inférieure à %s
 BadSetupOfField = Erreur mauvaise configuration du champ
 BadSetupOfFieldClassNotFoundForValidation = Erreur mauvaise configuration du champ : Classe introuvable pour validation
 BadSetupOfFieldFileNotFound = Erreur mauvaise configuration du champ : Fichier introuvable pour l'inclusion

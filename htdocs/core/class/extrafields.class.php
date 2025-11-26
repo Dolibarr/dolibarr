@@ -6,7 +6,7 @@
  * Copyright (C) 2009-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Florian Henry           <forian.henry@open-concept.pro>
- * Copyright (C) 2015-2023  Charlene BENKE          <charlene@patas-monkey.com>
+ * Copyright (C) 2015-2025  Charlene BENKE          <charlene@patas-monkey.com>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
@@ -1987,8 +1987,8 @@ class ExtraFields
 				$element = 'project';
 			}
 
-			//$objectdesc = $param_list[0];				// Example: 'ObjectName:classPath:1:(status:=:1)'	Replaced by next line: this was propagated also a filter by ajax call that was blocked by some WAF
-			$objectdesc = $tmparray[0];					// Example: 'ObjectName:classPath'					To not propagate any filter (selectForForms do ajax call and propagating SQL filter is blocked by some WAF). Also we should use the one into the definition in the ->fields of $elem if found.
+			//$objectdesc = $param_list[0];				                                    // Example: 'ObjectName:classPath:1:(status:=:1)'	Replaced by next line: old line propagated also the filter to ajax call that was blocked by some WAF
+			$objectdesc = $tmparray[0].(empty($tmparray[1]) ? "" : ":".$tmparray[1]);	// Example: 'ObjectName:classPath'					      To not propagate any filter (selectForForms do ajax call and propagating SQL filter is blocked by some WAF). Also we should use the filter into the definition in the ->fields of $elem if found.
 			$objectfield = $element.':options_'.$key;	// Example: 'actioncomm:options_fff'				To be used in priority to know object linked with all its definition (including filters)
 
 			$out = $form->selectForForms($objectdesc, $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, '', 0, 0, '', $objectfield);

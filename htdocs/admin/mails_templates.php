@@ -38,6 +38,13 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
@@ -46,14 +53,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/cemailtemplate.class.php';
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langsArray = array("errors", "admin", "mails", "languages");
@@ -115,6 +114,26 @@ if (empty($sortorder)) {
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('emailtemplates'));
 
+$object = new CEmailTemplate($db);
+
+// Definition of array of fields for columns from ->fields
+$tableprefix = 't';
+$arrayfields = array();
+foreach ($object->fields as $key => $val) {
+	// If $val['visible']==0, then we never show the field
+	if (!empty($val['visible'])) {
+		$visible = (int) dol_eval((string) $val['visible'], 1);
+		$arrayfields[$tableprefix.'.'.$key] = array(
+			'label' => $val['label'],
+			'checked' => (($visible < 0) ? '0' : '1'),
+			'enabled' => (string) (int) (abs($visible) != 3 && (bool) dol_eval((string) $val['enabled'], 1)),
+			'position' => $val['position'],
+			'help' => isset($val['help']) ? $val['help'] : ''
+		);
+	}
+}
+
+// Old way to define field.
 
 // Name of SQL tables of dictionaries
 $tabname = array();
@@ -123,7 +142,7 @@ $tabname[25] = MAIN_DB_PREFIX."c_email_templates";
 // Nom des champs en resultat de select pour affichage du dictionnaire
 // Names of fields in select results for dictionary display (AI translated)
 $tabfield = array();
-$tabfield[25] = "label,lang,type_template,fk_user,private,position,module,topic,joinfiles,defaultfortype,content";
+$tabfield[25] = "label,lang,type_template,fk_user,position,module,topic,joinfiles,defaultfortype,content";
 if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES')) {
 	$tabfield[25] .= ',content_lines';
 }
@@ -144,10 +163,6 @@ if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES')) {
 	$tabfieldinsert[25] .= ',content_lines';
 }
 $tabfieldinsert[25] .= ',entity'; // Must be at end because not into other arrays
-
-// Condition to show dictionary in setup page
-$tabcond = array();
-$tabcond[25] = true;
 
 // List of help for fields
 // Set MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES to allow edit of template for lines
@@ -638,7 +653,8 @@ if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu
 $morejs = array();
 $morecss = array();
 
-$sql = "SELECT rowid as rowid, module, label, type_template, lang, fk_user, private, position, topic, email_from,joinfiles, defaultfortype, content_lines, content, enabled, active, tms, datec";
+$sql = "SELECT rowid as rowid, module, label, type_template, lang, fk_user, private, position, topic, email_from, joinfiles, defaultfortype,";
+$sql .= " content_lines, content, enabled, active, tms, datec";
 $sql .= " FROM ".MAIN_DB_PREFIX."c_email_templates";
 $sql .= " WHERE entity IN (".getEntity('email_template').")";
 if (!$user->admin) {
@@ -1025,9 +1041,14 @@ foreach ($fieldlist as $field => $value) {
 }*/
 // Status
 print '<td></td>';
+
 // Have to expand the id="Title line with search boxes" with 2 extra fields because the line below id="Title of lines" are 2 fields longer
-print '<td></td>'; // tms / Modif. date
-print '<td></td>'; // datec / Date creation
+if (!empty($arrayfields['t.tms']['checked'])) {
+	print '<td></td>'; // tms / Modif. date
+}
+if (!empty($arrayfields['t.datec']['checked'])) {
+	print '<td></td>'; // datec / Date creation
+}
 // Action column
 if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print '<td class="liste_titre center" width="64">';
@@ -1104,6 +1125,12 @@ foreach ($fieldlist as $field => $value) {
 		$valuetoshow = $langs->trans("ContentForLines");
 		$showfield = 0;
 	}
+	if ($value == 'tms' && empty($arrayfields['t'.$value]['checked'])) {
+		$showfield = 0;
+	}
+	if ($value == 'datec' && empty($arrayfields['t.'.$value]['checked'])) {
+		$showfield = 0;
+	}
 
 	// Show fields
 	if ($showfield) {
@@ -1153,16 +1180,19 @@ if ($num) {
 
 				$colspan = 0;
 
+				print '<tr><td colspan="12">';
+					print '<input type="hidden" name="page" value="'.$page.'">';
+					print '<input type="hidden" name="rowid" value="'.$rowid.'">';
+					print '<div name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'"></div>';
+				if ($action == 'edit') {
+					print '<input type="submit" class="button buttongen button-save" name="actionmodify" value="'.$langs->trans("Save").'">';
+				}
+					print '<input type="submit" class="button buttongen button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'">';
+				print '</td></tr>';
+
 				// Action column
 				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 					print '<td class="center">';
-					print '<input type="hidden" name="page" value="'.$page.'">';
-					print '<input type="hidden" name="rowid" value="'.$rowid.'">';
-					if ($action == 'edit') {
-						print '<input type="submit" class="button buttongen button-save" name="actionmodify" value="'.$langs->trans("Modify").'">';
-					}
-					print '<div name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'"></div>';
-					print '<input type="submit" class="button buttongen button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'">';
 					print '</td>';
 					$colspan++;
 				}
@@ -1348,6 +1378,11 @@ if ($num) {
 								$fuser = new User($db);
 								$fuser->fetch($valuetoshow);
 								$valuetoshow = $fuser->getNomUrl(-1);
+
+								if ($obj->private) {
+									$valuetoshow = img_picto($langs->transnoentitiesnoconv("Private"), 'lock', 'class="pictofixedwidth"').$valuetoshow;
+								}
+
 								$class .= ' tdoverflowmax100';
 							}
 						}
@@ -1373,6 +1408,13 @@ if ($num) {
 						}
 						if ($css) {
 							$class .= ' '.$css;
+						}
+
+						if ($value == 'tms' && empty($arrayfields['t'.$value]['checked'])) {
+							$showfield = 0;
+						}
+						if ($value == 'datec' && empty($arrayfields['t.'.$value]['checked'])) {
+							$showfield = 0;
 						}
 
 						// Show value for field

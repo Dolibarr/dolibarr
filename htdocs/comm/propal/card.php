@@ -2206,7 +2206,7 @@ $now = dol_now();
 
 // Add new proposal
 if ($action == 'create') {
-	$currency_code = $conf->currency;
+	$currency_code = getDolCurrency();
 
 	print load_fiche_titre($langs->trans("NewProp"), '', 'propal');
 
@@ -2214,8 +2214,6 @@ if ($action == 'create') {
 	if ($socid > 0) {
 		$res = $soc->fetch($socid);
 	}
-
-	$currency_code = $conf->currency;
 
 	$cond_reglement_id = GETPOSTINT('cond_reglement_id');
 	$deposit_percent = GETPOSTFLOAT('cond_reglement_id_deposit_percent');

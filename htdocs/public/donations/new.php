@@ -547,7 +547,7 @@ if (!$action || $action == 'create') {
 		print ' <span>*</span></td><td class="nowrap">';
 
 		print '<input type="text" name="amount" id="amount" class="flat amount width50" value="'.$showedamount.'">';
-		print ' '.$langs->trans("Currency".$conf->currency).'<span class="opacitymedium hideifautoturnover"> - ';
+		print ' '.$langs->trans("Currency".getDolCurrency()).'<span class="opacitymedium hideifautoturnover"> - ';
 		print $langs->trans("AnyAmountForDonation");
 		print '</span>';
 
