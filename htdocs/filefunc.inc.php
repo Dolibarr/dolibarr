@@ -142,7 +142,6 @@ $result = @include_once $conffile; // Keep @ because with some error reporting m
  * @var ?string $dolibarr_main_url_root_alt
  * @var ?string $dolibarr_main_document_root
  * @var ?string $dolibarr_main_document_root_alt
- * @var ?string $dolibarr_main_stream_to_disable
  * @var ?string $dolibarr_main_instance_unique_id
  * @var ?string $dolibarr_strict_mode
  * @var ?string $dolibarr_main_data_root

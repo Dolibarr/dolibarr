@@ -40,7 +40,7 @@ require '../../main.inc.php';
  * @var string		$dolibarr_main_restrict_ip
  * @var string		$dolibarr_main_db_pass
  * @var string		$dolibarr_main_db_encrypted_pass
- * @var string		$dolibarr_main_stream_to_disable
+ * @var string|string[]		$dolibarr_main_stream_to_disable
  * @var string		$dolibarr_nocsrfcheck
  */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
