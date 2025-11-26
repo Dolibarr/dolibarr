@@ -1139,7 +1139,7 @@ class FormSetupItem
 			require_once DOL_DOCUMENT_ROOT."/core/modules/security/generate/".$nomfichier;
 			$genhandler = new $nomclass($this->db, $conf, $langs, $user);
 			$min = $genhandler->length;
-			$max = $genhandler->length2;
+			// $max = $genhandler->length2; // length2 is not used for max length
 		}
 		$out = '<input required="required" type="password" class="flat" id="'.$this->confKey.'" name="'.$this->confKey.'" value="'.(GETPOST($this->confKey, 'alpha') ? GETPOST($this->confKey, 'alpha') : $this->fieldValue).'"';
 		if ($min) {
