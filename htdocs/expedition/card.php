@@ -96,7 +96,7 @@ if (empty($origin_id) && !empty($origin)) {
 if (empty($origin_id) && !empty($origin)) {
 	$origin_id  = GETPOSTINT('object_id'); // Id of order or propal
 }
-$socid  =  GETPOSTINT('socid');
+$socid = GETPOSTINT('socid');
 $ref = GETPOST('ref', 'alpha');
 $line_id = GETPOSTINT('lineid');
 $facid = GETPOSTINT('facid');
@@ -105,8 +105,8 @@ $projectid = GETPOSTINT('projectid');
 $action = GETPOST('action', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
-$rank      = (GETPOSTINT('rank') > 0) ? GETPOSTINT('rank') : -1;
-$lineid    =  GETPOSTINT('lineid');
+$rank = (GETPOSTINT('rank') > 0) ? GETPOSTINT('rank') : -1;
+$lineid = GETPOSTINT('lineid');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 //PDF
@@ -308,10 +308,10 @@ if (empty($reshook)) {
 			$object->origin_type = $origin;
 			$object->origin_id = $origin_id;
 			$object->fk_project = GETPOSTINT('projectid');
-			$object->weight = GETPOSTINT('weight') == '' ? "NULL" : GETPOSTINT('weight');
-			$object->sizeH = GETPOSTINT('sizeH') == '' ? "NULL" : GETPOSTINT('sizeH');
-			$object->sizeW = GETPOSTINT('sizeW') == '' ? "NULL" : GETPOSTINT('sizeW');
-			$object->sizeS = GETPOSTINT('sizeS') == '' ? "NULL" : GETPOSTINT('sizeS');
+			$object->weight = GETPOST('weight') == '' ? '' : GETPOSTFLOAT('weight');
+			$object->sizeH = GETPOST('sizeH') == '' ? '' : GETPOSTFLOAT('sizeH');
+			$object->sizeW = GETPOST('sizeW') == '' ? '' : GETPOSTFLOAT('sizeW');
+			$object->sizeS = GETPOST('sizeS') == '' ? '' : GETPOSTFLOAT('sizeS');
 			$object->size_units = GETPOSTINT('size_units');
 			$object->weight_units = GETPOSTINT('weight_units');
 			$object->ref_customer = GETPOST('ref_customer', 'alpha');
@@ -350,10 +350,10 @@ if (empty($reshook)) {
 			$object->origin_type = $origin;
 			$object->origin_id = $origin_id;
 			$object->fk_project = GETPOSTINT('projectid');
-			$object->weight = GETPOSTINT('weight') == '' ? "NULL" : GETPOSTINT('weight');
-			$object->sizeH = GETPOSTINT('sizeH') == '' ? "NULL" : GETPOSTINT('sizeH');
-			$object->sizeW = GETPOSTINT('sizeW') == '' ? "NULL" : GETPOSTINT('sizeW');
-			$object->sizeS = GETPOSTINT('sizeS') == '' ? "NULL" : GETPOSTINT('sizeS');
+			$object->weight = GETPOST('weight') == '' ? '' : GETPOSTFLOAT('weight');
+			$object->sizeH = GETPOST('sizeH') == '' ? '' : GETPOSTFLOAT('sizeH');
+			$object->sizeW = GETPOST('sizeW') == '' ? '' : GETPOSTFLOAT('sizeW');
+			$object->sizeS = GETPOST('sizeS') == '' ? '' : GETPOSTFLOAT('sizeS');
 			$object->size_units = GETPOSTINT('size_units');
 			$object->weight_units = GETPOSTINT('weight_units');
 			$object->ref_customer = GETPOST('ref_customer', 'alpha');
@@ -767,18 +767,18 @@ if (empty($reshook)) {
 			$object->tracking_url = trim(GETPOST('tracking_url', 'restricthtml'));
 		}
 		if ($action == 'settrueWeight') {		// Test on permission not required
-			$object->trueWeight = GETPOSTINT('trueWeight');
+			$object->trueWeight = GETPOSTFLOAT('trueWeight');
 			$object->weight_units = GETPOSTINT('weight_units');
 		}
 		if ($action == 'settrueWidth') {		// Test on permission not required
-			$object->trueWidth = GETPOSTINT('trueWidth');
+			$object->trueWidth = GETPOSTFLOAT('trueWidth');
 		}
 		if ($action == 'settrueHeight') {		// Test on permission not required
-			$object->trueHeight = GETPOSTINT('trueHeight');
+			$object->trueHeight = GETPOSTFLOAT('trueHeight');
 			$object->size_units = GETPOSTINT('size_units');
 		}
 		if ($action == 'settrueDepth') {		// Test on permission not required
-			$object->trueDepth = GETPOSTINT('trueDepth');
+			$object->trueDepth = GETPOSTFLOAT('trueDepth');
 		}
 		if ($action == 'setshipping_method_id') {	// Test on permission not required
 			$object->shipping_method_id = GETPOSTINT('shipping_method_id');

@@ -323,7 +323,7 @@ class modBookCal extends DolibarrModules
 			'langs' => 'bookcal',
 			'position' => 1100 + $r,
 			'enabled' => '1',
-			'perms' => '$user->rights->bookcal->calendar->read',
+			'perms' => '$user->hasRight("bookcal", "calendar", "read")',
 			'user' => 0
 		);
 
@@ -340,9 +340,9 @@ class modBookCal extends DolibarrModules
 			'langs' => 'bookcal',
 			'position' => 1100 + $r,
 			// Define condition to show or hide menu entry. Use '$conf->bookcal->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'enabled' => '$conf->bookcal->enabled',
+			'enabled' => 'isModEnabled("bookcal")',
 			// Use 'perms'=>'$user->rights->bookcal->level1->level2' if you want your menu with a permission rules
-			'perms' => '$user->rights->bookcal->calendar->read',
+			'perms' => '$user->hasRight("bookcal", "calendar", "read")',
 			'target' => '',
 			// 0=Menu for internal users, 1=external users, 2=both
 			'user' => 2,
@@ -360,9 +360,9 @@ class modBookCal extends DolibarrModules
 			'langs' => 'bookcal',
 			'position' => 1100 + $r,
 			// Define condition to show or hide menu entry. Use '$conf->bookcal->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'enabled' => '$conf->bookcal->enabled',
+			'enabled' => 'isModEnabled("bookcal")',
 			// Use 'perms'=>'$user->rights->bookcal->level1->level2' if you want your menu with a permission rules
-			'perms' => '$user->rights->bookcal->calendar->read',
+			'perms' => '$user->hasRight("bookcal", "calendar", "read")',
 			'target' => '',
 			// 0=Menu for internal users, 1=external users, 2=both
 			'user' => 2
@@ -384,9 +384,9 @@ class modBookCal extends DolibarrModules
 			'langs' => 'bookcal',
 			'position' => 1200 + $r,
 			// Define condition to show or hide menu entry. Use '$conf->bookcal->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'enabled' => '$conf->bookcal->enabled',
+			'enabled' => 'isModEnabled("bookcal")',
 			// Use 'perms'=>'$user->rights->bookcal->level1->level2' if you want your menu with a permission rules
-			'perms' => '$user->rights->bookcal->availabilities->read',
+			'perms' => '$user->hasRight("bookcal", "availabilities", "read")',
 			'target' => '',
 			// 0=Menu for internal users, 1=external users, 2=both
 			'user' => 2,
@@ -404,9 +404,9 @@ class modBookCal extends DolibarrModules
 			'langs' => 'bookcal',
 			'position' => 1200 + $r,
 			// Define condition to show or hide menu entry. Use '$conf->bookcal->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'enabled' => '$conf->bookcal->enabled',
+			'enabled' => 'isModEnabled("bookcal")',
 			// Use 'perms'=>'$user->rights->bookcal->level1->level2' if you want your menu with a permission rules
-			'perms' => '$user->rights->bookcal->availabilities->read',
+			'perms' => '$user->hasRight("bookcal", "availabilities", "read")',
 			'target' => '',
 			// 0=Menu for internal users, 1=external users, 2=both
 			'user' => 2

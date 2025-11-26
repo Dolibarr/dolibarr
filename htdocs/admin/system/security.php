@@ -40,6 +40,8 @@ require '../../main.inc.php';
  * @var string		$dolibarr_main_restrict_ip
  * @var string		$dolibarr_main_db_pass
  * @var string		$dolibarr_main_db_encrypted_pass
+ * @var string		$dolibarr_main_stream_to_disable
+ * @var string		$dolibarr_nocsrfcheck
  */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -398,7 +400,7 @@ if (empty($dolibarr_main_restrict_eval_methods)) {
 } else {
 	print $dolibarr_main_restrict_eval_methods;
 }
-print ' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'getDolGlobalString,getDolGlobalInt,getDolCurrency,fetchNoCompute,hasRight,isModEnabled,isStringVarMatching,abs,min,max,round,dol_now,dol_concat,preg_match').')</span>';
+print ' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'getDolGlobalString,getDolGlobalInt,getDolCurrency,fetchNoCompute,hasRight,isAdmin,isModEnabled,isStringVarMatching,abs,min,max,round,dol_now,dol_concat,preg_match').')</span>';
 print '<br>';
 
 if (!getDolGlobalString('SECURITY_DISABLE_TEST_ON_OBFUSCATED_CONF')) {

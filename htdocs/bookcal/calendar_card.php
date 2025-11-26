@@ -118,6 +118,8 @@ if (!$permissiontoread) {
 	accessforbidden();
 }
 
+$error = 0;
+
 
 /*
  * Actions
@@ -130,8 +132,6 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	$error = 0;
-
 	$backurlforlist = dol_buildpath('/bookcal/calendar_list.php', 1);
 
 	if (empty($backtopage) || ($cancel && empty($id))) {

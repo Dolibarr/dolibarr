@@ -870,6 +870,18 @@ class User extends CommonObject
 	}
 
 	/**
+	 *  Return if a user is an admin user
+	 *  It replaces old syntax: if ($user->admin)
+	 *
+	 *  @return int<0,1>				Return integer 1 if user is admin, 0 if not.
+	 */
+	public function isAdmin()
+	{
+		return $this->admin;
+	}
+
+
+	/**
 	 *  Return if a user has a permission.
 	 *  You can use it like this: if ($user->hasRight('module', 'level11')).
 	 *  It replaces old syntax: if ($user->rights->module->level1)

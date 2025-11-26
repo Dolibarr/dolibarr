@@ -9550,8 +9550,18 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 
 			$matches = array();
 			if (preg_match_all($pattern, $out, $matches)) {
-				// URLs are into $matches[1]
-				$urls = $matches[1];
+				// URLs are into $matches[1] or $matches[2]
+				$urls = array();
+				foreach ($matches[1] as $tmpval) {
+					if (!empty($tmpval)) {
+						$urls[] = $tmpval;
+					}
+				}
+				foreach ($matches[2] as $tmpval) {
+					if (!empty($tmpval)) {
+						$urls[] = $tmpval;
+					}
+				}
 
 				// Show URLs
 				$firstexturl = '';
@@ -11960,7 +11970,7 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 
 		// Set $dolibarr_main_restrict_eval_methods_array
 		if (!isset($dolibarr_main_restrict_eval_methods)) {
-			$dolibarr_main_restrict_eval_methods = 'getDolGlobalString, getDolGlobalInt, getDolCurrency, fetchNoCompute, hasRight, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, preg_match';
+			$dolibarr_main_restrict_eval_methods = 'getDolGlobalString, getDolGlobalInt, getDolCurrency, fetchNoCompute, hasRight, isAdmin, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, preg_match';
 		}
 		//print '$dolibarr_main_restrict_eval_methods = '.$dolibarr_main_restrict_eval_methods."\n";
 		$dolibarr_main_restrict_eval_methods_array = explode(',', str_replace(" ", "", $dolibarr_main_restrict_eval_methods));
@@ -12053,13 +12063,14 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 			$savescheck = $scheck;
 			$scheck = preg_replace('/\$conf->[a-z\_]+->enabled/', '__VARCONFENABLED__', $scheck);		// Remove this once $user->module->enabled has been replaced everywhere with isModEnabled.
 			$scheck = preg_replace('/\$user->hasRight/', '__VARUSERHASRIGHT__', $scheck);
-			$scheck = preg_replace('/\$user->rights/', '__VARUSERHASRIGHT__', $scheck);		// Remove this once $user->rights->xxx is removed everywhere.
+			$scheck = preg_replace('/\$user->rights/', '__VARUSERHASRIGHT__', $scheck);		// Remove this once $user->rights->xxx is replaced everywhere with $user->hasRight()
+			$scheck = preg_replace('/\$user->admin/', '__VARUSERISADMIN__', $scheck);		// Remove this once $user->admin is replaced everywhere with $user->isAdmin()
 			$scheck = preg_replace('/\(\$db\)/', '__VARDB__', $scheck);
 			$scheck = preg_replace('/\$langs/', '__VARLANGSTRANS__', $scheck);
 			$scheck = preg_replace('/\$mysoc/', '__VARMYSOC__', $scheck);
 			$scheck = preg_replace('/\$action/', '__VARACTION__', $scheck);
-			$scheck = preg_replace('/\$mainmenu/', '__VARMAINMENU__', $scheck);
-			$scheck = preg_replace('/\$leftmenu/', '__VARLEFTMENU__', $scheck);
+			$scheck = preg_replace('/\$mainmenu/', '__VARMAINMENU__', $scheck);				// Remove this once all tests on $mainmenu has been replaced with isStringVarMatching
+			$scheck = preg_replace('/\$leftmenu/', '__VARLEFTMENU__', $scheck);				// Remove this once all tests on $mainmenu has been replaced with isStringVarMatching
 			$scheck = preg_replace('/\$websitepage/', '__VARWEBSITEPAGE__', $scheck);
 			$scheck = preg_replace('/\$website/', '__VARWEBSITE__', $scheck);
 			$scheck = preg_replace('/\$objectoffield/', '__VAROBJECTOFFIELD__', $scheck);
