@@ -925,43 +925,45 @@ class AccountancyExport
 
 			$tab = array();
 
-			if (!empty($line->subledger_account)) {
-				$tab['type_ligne'] = 'C';
-				$tab['num_compte'] = str_pad(self::trunc($line->subledger_account, 8), 8);
-				$tab['lib_compte'] = str_pad(self::trunc($line->subledger_label, 30), 30);
+			if (!getDolGlobalString('ACCOUNTANCY_EXPORT_DISABLE_COMPANY_SYNC')) {
+				if (!empty($line->subledger_account)) {
+					$tab['type_ligne'] = 'C';
+					$tab['num_compte'] = str_pad(self::trunc($line->subledger_account, 8), 8);
+					$tab['lib_compte'] = str_pad(self::trunc($line->subledger_label, 30), 30);
 
-				if ($line->doc_type == 'customer_invoice') {
-					$tab['lib_alpha'] = strtoupper(str_pad('C'.self::trunc(dol_string_unaccent($line->subledger_label), 6), 7));
-					$tab['filler'] = str_repeat(' ', 52);
-					$tab['coll_compte'] = str_pad(self::trunc(getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER'), 8), 8);
-				} elseif ($line->doc_type == 'supplier_invoice') {
-					$tab['lib_alpha'] = strtoupper(str_pad('F'.self::trunc(dol_string_unaccent($line->subledger_label), 6), 7));
-					$tab['filler'] = str_repeat(' ', 52);
-					$tab['coll_compte'] = str_pad(self::trunc(getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER'), 8), 8);
-				} else {
-					$tab['filler'] = str_repeat(' ', 59);
-					$tab['coll_compte'] = str_pad(' ', 8);
-				}
+					if ($line->doc_type == 'customer_invoice') {
+						$tab['lib_alpha'] = strtoupper(str_pad('C'.self::trunc(dol_string_unaccent($line->subledger_label), 6), 7));
+						$tab['filler'] = str_repeat(' ', 52);
+						$tab['coll_compte'] = str_pad(self::trunc(getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER'), 8), 8);
+					} elseif ($line->doc_type == 'supplier_invoice') {
+						$tab['lib_alpha'] = strtoupper(str_pad('F'.self::trunc(dol_string_unaccent($line->subledger_label), 6), 7));
+						$tab['filler'] = str_repeat(' ', 52);
+						$tab['coll_compte'] = str_pad(self::trunc(getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER'), 8), 8);
+					} else {
+						$tab['filler'] = str_repeat(' ', 59);
+						$tab['coll_compte'] = str_pad(' ', 8);
+					}
 
-				$tab['filler2'] = str_repeat(' ', 110);
-				$tab['Maj'] = 2; // Partial update (alpha key, label, address, collectif, RIB)
+					$tab['filler2'] = str_repeat(' ', 110);
+					$tab['Maj'] = 2; // Partial update (alpha key, label, address, collectif, RIB)
 
-				if ($line->doc_type == 'customer_invoice') {
-					$tab['type_compte'] = 'C';
-				} elseif ($line->doc_type == 'supplier_invoice') {
-					$tab['type_compte'] = 'F';
-				} else {
-					$tab['type_compte'] = 'G';
-				}
+					if ($line->doc_type == 'customer_invoice') {
+						$tab['type_compte'] = 'C';
+					} elseif ($line->doc_type == 'supplier_invoice') {
+						$tab['type_compte'] = 'F';
+					} else {
+						$tab['type_compte'] = 'G';
+					}
 
-				$tab['filler3'] = str_repeat(' ', 235);
+					$tab['filler3'] = str_repeat(' ', 235);
 
-				$tab['end_line'] = $end_line;
+					$tab['end_line'] = $end_line;
 
-				if ($exportFile) {
-					fwrite($exportFile, implode($tab));
-				} else {
-					print implode($tab);
+					if ($exportFile) {
+						fwrite($exportFile, implode($tab));
+					} else {
+						print implode($tab);
+					}
 				}
 			}
 
