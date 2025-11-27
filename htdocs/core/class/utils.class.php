@@ -219,8 +219,9 @@ class Utils
 			$this->output = $langs->trans("PurgeNothingToDelete").(in_array('tempfilesold', $choicesarray) ? ' (older than 24h for temp files)' : '');
 		}
 
-		// Recreate temp dir that are not automatically recreated by core code for performance purpose, we need them
+		// Recreate temp dir that are not automatically recreated by core code, we need them
 		if (isModEnabled('api')) {
+			// We should create also dir x/api/temp for multicompany dirs, but this has become useless because dir is now recreated by constructor of api.class.php
 			dol_mkdir($conf->api->dir_temp);
 		}
 		dol_mkdir($conf->user->dir_temp);
@@ -411,6 +412,8 @@ class Utils
 					$handle = fopen($outputfile, 'w');
 				}
 			} else {
+				// TODO Add a pipe into script to decrypt dolCrypted values
+
 				if ($compression == 'none') {
 					$fullcommandclear .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." > "'.dol_sanitizePathName($outputfile).'"';
 					$fullcommandcrypted .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." > "'.dol_sanitizePathName($outputfile).'"';
@@ -479,6 +482,8 @@ class Utils
 								// Now check into the result file, that the file end with "-- Dump completed"
 								// This is possible only if $output_arr is the clear dump file, so not possible with $lowmemorydump set because file is already compressed.
 								if (!$lowmemorydump) {
+									// TODO decrypt dolCrypted values from $read
+
 									fwrite($handle, $read.($execmethod == 2 ? '' : "\n"));
 									if (preg_match('/'.preg_quote('-- Dump completed', '/').'/i', $read)) {
 										$ok = 1;
@@ -507,9 +512,9 @@ class Utils
 								continue;
 							}
 							fwrite($handle, $read);
-							if (preg_match('/'.preg_quote('-- Dump completed').'/i', $read)) {
+							if (preg_match('/'.preg_quote('-- Dump completed', '/').'/i', $read)) {
 								$ok = 1;
-							} elseif (preg_match('/'.preg_quote('SET SQL_NOTES=@OLD_SQL_NOTES').'/i', $read)) {
+							} elseif (preg_match('/'.preg_quote('SET SQL_NOTES=@OLD_SQL_NOTES', '/').'/i', $read)) {
 								$ok = 1;
 							}
 						}

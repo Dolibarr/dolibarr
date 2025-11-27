@@ -93,7 +93,7 @@ $invoicestatic = new Facture($db);
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("Margins").' - '.$langs->trans("Clients"), '', '', 0, 0, '', '', '', 'mod-margin page-customermargins');
+llxHeader('', $langs->trans("Margins").' - '.$langs->trans("ThirdPartyCustomers"), '', '', 0, 0, '', '', '', 'mod-margin page-customermargins');
 
 $text = $langs->trans("Margins");
 //print load_fiche_titre($text);
@@ -198,7 +198,7 @@ print '<table class="border centpercent">';
 
 // Total Margin
 print '<tr><td class="titlefield">'.$langs->trans("TotalMargin").'</td><td colspan="4">';
-print '<span id="totalMargin" class="amount"></span> <span class="amount">'.$langs->getCurrencySymbol($conf->currency).'</span>'; // set by jquery (see below)
+print '<span id="totalMargin" class="amount"></span> <span class="amount">'.$langs->getCurrencySymbol(getDolCurrency()).'</span>'; // set by jquery (see below)
 print '</td></tr>';
 
 // Margin Rate

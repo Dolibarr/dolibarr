@@ -4,6 +4,7 @@
  * Copyright (C) 2012       Charles-Fr BENKE    <charles.fr@benke.fr>
  * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,7 +81,7 @@ class Export
 	/**
 	 * @var string[]
 	 */
-	public $array_export_label = array(); // Tableau de "libelle de lots"
+	public $array_export_label = array(); // Array of "Translation key" to use for each export profile
 	/**
 	 * @var string[]
 	 */
@@ -117,7 +118,7 @@ class Export
 	/**
 	 * @var array<array<array{rule:string,file:string,classfile:string,class:string,method:string,method_params:string[]}>>
 	 */
-	public $array_export_special = array(); // array of special operations to do on field
+	public $array_export_special = array(); // array of special operations to do on fields
 	/**
 	 * @var array<array<string,string>>
 	 */
@@ -194,6 +195,11 @@ class Export
 			if (is_resource($handle)) {
 				// Search module files
 				while (($file = readdir($handle)) !== false) {
+					// Ignore Module Builder backup files (*.php.back)
+					if (preg_match('/\.back$/i', $file)) {
+						continue;
+					}
+
 					$reg = array();
 					if (is_readable($dir.$file) && preg_match("/^(mod.*)\.class\.php$/i", $file, $reg)) {
 						$modulename = $reg[1];
@@ -269,13 +275,13 @@ class Export
 									$this->array_export_perms[$i] = $bool;
 									// Icon
 									$this->array_export_icon[$i] = (isset($module->export_icon[$r]) ? $module->export_icon[$r] : $module->picto);
-									// Code of the export dataset / Code du dataset export
+									// Code of the export dataset
 									$this->array_export_code[$i] = $module->export_code[$r];
 									// Define a key for sort
 									$this->array_export_code_for_sort[$i] = $module->module_position.'_'.$module->export_code[$r]; // Add a key into the module
-									// Export Dataset Label / Libelle du dataset export
+									// Export Dataset Label
 									$this->array_export_label[$i] = $module->getExportDatasetLabel($r);
-									// Table of fields to export / Tableau des champ a exporter (cle=champ, valeur=libelle)
+									// Table of fields to export
 									$this->array_export_fields[$i] = $module->export_fields_array[$r];
 									// Table of fields to be filtered (key=field, value1=data type) Verifies that the module has filters
 									$this->array_export_TypeFields[$i] = (isset($module->export_TypeFields_array[$r]) ? $module->export_TypeFields_array[$r] : '');
@@ -283,7 +289,7 @@ class Export
 									$this->array_export_entities[$i] = $module->export_entities_array[$r];
 									// Table of entities requiring to abandon DISTINCT (key=entity, valeur=field id child records)
 									$this->array_export_dependencies[$i] = (!empty($module->export_dependencies_array[$r]) ? $module->export_dependencies_array[$r] : '');
-									// Table of special field operations / Tableau des operations speciales sur champ
+									// Table of special field operations
 									$this->array_export_special[$i] = (!empty($module->export_special_array[$r]) ? $module->export_special_array[$r] : '');
 									// Array of examples
 									$this->array_export_examplevalues[$i] = (!empty($module->export_examplevalues_array[$r]) ? $module->export_examplevalues_array[$r] : null);
@@ -697,10 +703,10 @@ class Export
 		$classname = "Export".$model;
 		require_once $dir.$file;
 		$objmodel = new $classname($this->db);
+		/** @var ModeleExports $objmodel */
 		'@phan-var-force ModeleExports $objmodel';
 
-		if (in_array($model, array('csvutf8', 'csviso')) && !empty($separator) && property_exists($objmodel, 'separator')) {
-			// @phan-suppress-next-line PhanUndeclaredProperty
+		if (in_array($model, array('csvutf8', 'csviso')) && !empty($separator) && empty($objmodel->separator)) {
 			$objmodel->separator = $separator;
 		}
 
@@ -754,7 +760,14 @@ class Export
 				// Generate title line
 				$objmodel->write_title($this->array_export_fields[$indice], $array_selected, $outputlangs, isset($this->array_export_TypeFields[$indice]) ? $this->array_export_TypeFields[$indice] : null);
 
+				//$MAXFORTEST = getDolGlobalInt('MAX_FOR_TEST_EXPORT');	// For test on large database, we can set it to a non zero value and uncomment code that use it later to limit the export size
+				$counterlineexported = 0;
 				while ($obj = $this->db->fetch_object($resql)) {
+					$counterlineexported++;
+					/*if ($MAXFORTEST && $counterlineexported >= $MAXFORTEST) {
+						break;
+					}*/
+
 					// Process special operations
 					if (!empty($this->array_export_special[$indice])) {
 						foreach ($this->array_export_special[$indice] as $key => $value) {
@@ -781,9 +794,15 @@ class Export
 							} elseif (is_string($item) && $item == 'getNumOpenDays') {
 								// Operation GETNUMOPENDAYS (for Holiday module)
 								include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
 								//$alias=$this->array_export_alias[$indice][$key];
 								$alias = str_replace(array('.', '-', '(', ')'), '_', $key);
-								$obj->$alias = num_open_day(dol_stringtotime($obj->d_date_debut, 1), dol_stringtotime($obj->d_date_fin, 1), 0, 1, $obj->d_halfday, $mysoc->country_code);
+								$country_id = $mysoc->country_id;
+								if ($obj->u_fk_country > 0) {				// When special field getNumOpenDays is set, we must have a u.fk_country in field list.
+									$country_id = $obj->u_fk_country;
+								}
+
+								$obj->$alias = num_open_day(dol_stringtotime($obj->d_date_debut, 1), dol_stringtotime($obj->d_date_fin, 1), 0, 1, $obj->d_halfday, $country_id);
 							} elseif (is_string($item) && $item == 'getRemainToPay') {
 								// Operation INVOICEREMAINTOPAY
 								//$alias=$this->array_export_alias[$indice][$key];
@@ -846,13 +865,13 @@ class Export
 								$obj->$alias = $value;
 							} else {
 								// TODO FIXME
-								// Export of compute field does not work. $obj contains $obj->alias_field and formula may contains $obj->field
+								// Export of computed extra field does not work. $obj contains $obj->alias_field and formula may contains $obj->field
 								// Also the formula may contains objects of class that are not loaded.
 								//$computestring = is_string($item) ? $item : json_encode($item);
-								//$tmp = (string) dol_eval($computestring, 1, 0, '2');
+								//$tmp = (string) dol_eval((string) $computestring, 1, 0, '2');
 								//$obj->$alias = $tmp;
 
-								$this->error = "ERRORNOTSUPPORTED. Operation not supported. Export of ".var_export($key, true).' '.var_export($item, true)." extrafields is not yet supported, please remove field.";
+								$this->error = "ERRORNOTSUPPORTED. Operation not supported. Export of ".var_export($key, true).' '.var_export($item, true)." computed extrafields is not yet supported, please remove field.";
 								return -1;
 							}
 						}

@@ -41,7 +41,6 @@ if (!defined('NOREQUIREHTML')) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -49,6 +48,8 @@ require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
+
 
 $id = GETPOSTINT('id');
 $block = new BlockedLog($db);
@@ -57,7 +58,7 @@ if ((!$user->admin && !$user->hasRight('blockedlog', 'read')) || empty($conf->bl
 	accessforbidden();
 }
 
-$langs->loadLangs(array("admin", "bills", "cashdesk", "companies"));
+$langs->loadLangs(array("admin", "bills", "blockedlog", "cashdesk", "companies", "members", "products"));
 
 
 /*
@@ -115,7 +116,7 @@ function formatObject($objtoshow, $prefix)
 		$arrayoffields = $tmpobject->fields;
 	}
 
-
+	// Convert the key stored into blocked log into the key used into ->fields
 	$convertkey = array(
 		'name' => 'nom',
 		'country_code' => 'fk_pays',
@@ -129,7 +130,46 @@ function formatObject($objtoshow, $prefix)
 		'posmodule' => 'POSModule',
 		'posnumber' => 'POSTerminal',
 		'managers' => 'Managers',
-		'type_code' => 'PaymentMode'
+		'type_code' => 'PaymentMode',
+		'datec' => 'DateCreation',
+		'dateh' => 'DateSubscription',
+		'datef' => 'DateEndSubscription',
+		'fk_adherent' => 'MemberId',
+		'amount' => 'Amount',
+		'id' => 'ID',
+		'ref' => 'Ref',
+		'element' => 'TypeOfEvent',
+		'entity' => 'Entity',
+		'label' => 'Label',
+		'date' => 'Date',
+		'total_ht' => 'TotalHT',
+		'total_ttc' => 'TotalTTC',
+		'total_tva' => 'TotalVAT',
+		'total_localtax1' => 'TotalTax2',
+		'total_localtax2' => 'TotalTax3',
+		'multicurrency_total_ht' => 'TotalHTShortCurrency',
+		'multicurrency_total_ttc' => 'TotalTTCShortCurrency',
+		'multicurrency_total_tva' => 'TotalVATShortCurrency',
+		'tva_tx' => 'VatRate',
+		'localtax1_tx' => 'Localtax1Rate',
+		'localtax2_tx' => 'Localtax2Rate',
+		'multicurrency_code' => 'Currency',
+		'qty' => 'Quantity',
+		'nom' => 'Name',
+		'name' => 'Name',
+		'email' => 'Email',
+		'revenuestamp' => 'RevenueStamp',
+		'code_client' => 'CustomerCode',
+		'capital' => 'Capital',
+		'localtax1_assuj' => 'UseLocalTax1',
+		'localtax2_assuj' => 'UseLocalTax2',
+		'localtax1_value' => 'LocalTax1DefaultValue',
+		'localtax2_value' => 'LocalTax2DefaultValue',
+		'subprice' => 'UnitPrice',
+		'product_type' => 'ProductType',
+		'type' => 'InvoiceType',
+		'info_bits' => 'TVA NPR or NOT',
+		'special_code' => 'Special line (WEEE line, option, id of module...)'
 	);
 
 	if (is_object($newobjtoshow) || is_array($newobjtoshow)) {
@@ -148,7 +188,7 @@ function formatObject($objtoshow, $prefix)
 
 				// Label
 				$s .= '<td>';
-				$label = ''.$convertkey[$key];
+				$label = '';
 				if (isset($arrayoffields[$key]['label'])) {
 					$label = $langs->trans($tmpobject->fields[$key]['label']);
 				} elseif (!empty($convertkey[$key]) && isset($arrayoffields[$convertkey[$key]]['label'])) {
@@ -163,6 +203,12 @@ function formatObject($objtoshow, $prefix)
 				if (empty($label) && !empty($otherlabels[$key])) {
 					$label = $langs->trans($otherlabels[$key]);
 				}
+				if (empty($label) && array_key_exists($key, $convertkey) && array_key_exists((string) $convertkey[$key], $otherlabels)) {
+					$label = $langs->trans((string) $otherlabels[(string) $convertkey[$key]]);
+				}
+				if (empty($label)) {
+					$label = array_key_exists($key, $convertkey) ? $convertkey[$key] : '';
+				}
 				if (!empty($label)) {
 					$s .= '<span class="opacitymedium">'.$label.'</span>';
 				}
@@ -173,6 +219,10 @@ function formatObject($objtoshow, $prefix)
 					$s .= dol_print_date($val, 'day');
 				} elseif (in_array($key, array('dateh', 'datec', 'date_creation', 'datem', 'tms', 'date_valid', 'datep'))) {
 					$s .= dol_print_date($val, 'dayhour');
+				} elseif (in_array($key, array('tva_assuj', 'localtax1_assuj', 'localtax2_assuj'))) {
+					$s .= yn($val);
+				} elseif (in_array($key, array('product_type'))) {
+					$s .= $val ? 'Product' : 'Service';
 				} elseif (in_array($key, array(
 					'qty', 'subprice',
 					'tva_tx', 'localtax1_tx', 'localtax2_tx', 'total_ht', 'total_ttc', 'total_tva', 'total_localtax1', 'total_localtax2', 'localtax2', 'localtax2', 'revenuestamp',

@@ -90,8 +90,10 @@ jQuery(document).ready(function() {
 print load_fiche_titre($langs->trans("Restore"), '', 'title_setup');
 
 print '<div class="center">';
-print $langs->trans("RestoreDesc", DOL_DATA_ROOT);
+print $langs->trans("RestoreDesc", 3);
 print '</div>';
+print '<br>';
+print '<span class="small opacitymedium">'.$langs->trans("RestoreDescMore").'</span><br>';
 print '<br>';
 
 ?>
@@ -142,6 +144,7 @@ print '</span>';
 	}
 	?>
 </fieldset>
+<br>
 </div>
 <?php } ?>
 
@@ -184,7 +187,9 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 	}
 	//else print '<br><a href="'.$_SERVER["PHP_SELF"].'?radio_dump=mysql_options">'.$langs->trans("HidePassword").'</a>';
 	print '</div>';
+
 	print '</fieldset>';
+	print '<br>';
 } elseif (in_array($type, array('pgsql'))) {
 	print '<fieldset id="postgresql_options">';
 	print '<legend>Restore PostgreSQL</legend>';
@@ -230,6 +235,35 @@ print '</div>';
 
 print '</td></tr></table>';
 print '</fieldset>';
+
+
+
+print "<br>\n";
+print "<!-- Save setup conf -->\n";
+
+print '<fieldset><legend class="legendforfieldsetstep" style="font-size: 3em">3</legend>';
+
+print '<br>';
+
+print '<span class="opacitymedium">';
+print $langs->trans("RestoreDesc4", 'dolibarr_main_dolcrypt_key').'<br>';
+print '</span>';
+
+print '<br>';
+
+print '<div id="backupfileright">';
+
+print $langs->trans("SeeValueIntoConfPhp");
+//print $langs->trans("SeeValueIntoConfPhp2");
+print '<br>';
+
+print '<br>';
+
+print '</div>';
+
+print '</fieldset>';
+
+
 
 // End of page
 llxFooter();

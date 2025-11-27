@@ -363,7 +363,7 @@ if ($usergroup > 0) {
 if ($socid > 0) {
 	$param .= "&search_socid=".urlencode((string) ($socid));
 }
-if ($showbirthday) {  // Always false @phpstan-suppress-current-line
+if ($showbirthday) {  // Always false @phpstan-ignore-line
 	$param .= "&search_showbirthday=1";
 }
 if ($pid) {
@@ -589,12 +589,12 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 	$s .= '</script>'."\n";
 
 	// Local calendar
-	$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_mytasks" name="check_mytasks" value="1" checked disabled><label class="labelcalendar"><span class="check_holiday_text"> '.$langs->trans("LocalAgenda").' &nbsp; </span></label></div>';
+	$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_mytasks" name="check_mytasks" value="1" class="check_mytasks" checked disabled><label class="labelcalendar"><span class="check_holiday_text"> '.$langs->trans("LocalAgenda").' &nbsp; </span></label></div>';
 
 	// Holiday calendar
 	if ($user->hasRight("holiday", "read")) {
 		$s .= '
-            <div class="nowrap inline-block minheight30"><input type="checkbox" id="check_holiday" name="check_holiday" value="1" class="check_holiday"' . ($check_holiday ? ' checked' : '') . '>
+            <div class="nowrap inline-block minheight30"><input type="checkbox" id="check_holiday" name="check_holiday" value="1" class="marginleftonly check_holiday"' . ($check_holiday ? ' checked' : '') . '>
                 <label for="check_holiday" class="labelcalendar">
                     <span class="check_holiday_text">' . $langs->trans("Holidays") . '</span>
                 </label> &nbsp;
@@ -1591,7 +1591,7 @@ while ($currentdaytoshow < $lastdaytoshow) {
 			continue;
 		}
 		echo '<td align="center" colspan="'.($end_h - $begin_h).'">';
-		echo '<span class="bold spandayofweek">'.$langs->trans("Day".(($i + (isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1)) % 7)).'</span>';
+		echo '<span class="bold spandayofweek">'.$langs->trans("Day".(($i + getDolGlobalInt('MAIN_START_WEEK', 1)) % 7)).'</span>';
 		print "<br>";
 		if ($i) {
 			print dol_print_date(dol_time_plus_duree($currentdaytoshow, $i, 'd'), 'day', 'tzuserrel');
@@ -1900,6 +1900,19 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 	$cases2 = array(); // Color second half hour
 	$cases3 = array(); // Color third half hour
 	$cases4 = array(); // Color 4th half hour
+
+	/**
+	 * @var array<int,array<int,array<string,string|int|bool>>> $cases1
+	 * @var array<int,array<int,array<string,string|int|bool>>> $cases2
+	 * @var array<int,array<int,array<string,string|int|bool>>> $cases3
+	 * @var array<int,array<int,array<string,string|int|bool>>> $cases4
+	 */
+	'
+   @phan-var-force array<int,array<int,array<string,string|int|bool>>> $cases1
+   @phan-var-force array<int,array<int,array<string,string|int|bool>>> $cases2
+   @phan-var-force array<int,array<int,array<string,string|int|bool>>> $cases3
+   @phan-var-force array<int,array<int,array<string,string|int|bool>>> $cases4
+   ';
 
 	$i = 0;
 	$numother = 0;
@@ -2296,7 +2309,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		$title2 = '';
 		$title3 = '';
 		$title4 = '';
-		if (isset($cases1[$h]) && $cases1[$h] != '') {
+		if (isset($cases1[$h])) {
 			//$title1.=count($cases1[$h]).' '.(count($cases1[$h])==1?$langs->trans("Event"):$langs->trans("Events"));
 			if (count($cases1[$h]) > 1) {
 				$title1 .= count($cases1[$h]).' '.(count($cases1[$h]) == 1 ? $langs->trans("Event") : $langs->trans("Events"));
@@ -2308,15 +2321,15 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				$style1 .= 'peruser_busy ';
 			}
 			foreach ($cases1[$h] as $id => $ev) {
-				if ($ev['busy']) {
-					$style1 .= 'peruser_busy ';
+				if (!empty($ev['busy'])) {
+					$style1 .= ' peruser_busy';
 				}
 				if (!empty($ev['css'])) {
 					$style1 .= $ev['css'].' ';
 				}
 			}
 		}
-		if (isset($cases2[$h]) && $cases2[$h] != '') {
+		if (isset($cases2[$h])) {
 			//$title2.=count($cases2[$h]).' '.(count($cases2[$h])==1?$langs->trans("Event"):$langs->trans("Events"));
 			if (count($cases2[$h]) > 1) {
 				$title2 .= count($cases2[$h]).' '.(count($cases2[$h]) == 1 ? $langs->trans("Event") : $langs->trans("Events"));
@@ -2328,15 +2341,15 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				$style2 .= 'peruser_busy ';
 			}
 			foreach ($cases2[$h] as $id => $ev) {
-				if ($ev['busy']) {
-					$style2 .= 'peruser_busy ';
+				if (!empty($ev['busy'])) {
+					$style2 .= ' peruser_busy';
 				}
 				if (!empty($ev['css'])) {
 					$style2 .= $ev['css'].' ';
 				}
 			}
 		}
-		if (isset($cases3[$h]) && $cases3[$h] != '') {
+		if (isset($cases3[$h])) {
 			//$title3.=count($cases3[$h]).' '.(count($cases3[$h])==1?$langs->trans("Event"):$langs->trans("Events"));
 			if (count($cases3[$h]) > 1) {
 				$title3 .= count($cases3[$h]).' '.(count($cases3[$h]) == 1 ? $langs->trans("Event") : $langs->trans("Events"));
@@ -2348,15 +2361,15 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				$style3 .= 'peruser_busy ';
 			}
 			foreach ($cases3[$h] as $id => $ev) {
-				if ($ev['busy']) {
-					$style3 .= 'peruser_busy ';
+				if (!empty($ev['busy'])) {
+					$style3 .= ' peruser_busy';
 				}
 				if (!empty($ev['css'])) {
 					$style3 .= $ev['css'].' ';
 				}
 			}
 		}
-		if (isset($cases4[$h]) && $cases4[$h] != '') {
+		if (isset($cases4[$h])) {
 			//$title4.=count($cases3[$h]).' '.(count($cases3[$h])==1?$langs->trans("Event"):$langs->trans("Events"));
 			if (count($cases4[$h]) > 1) {
 				$title4 .= count($cases4[$h]).' '.(count($cases4[$h]) == 1 ? $langs->trans("Event") : $langs->trans("Events"));
@@ -2368,8 +2381,8 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				$style4 .= 'peruser_busy ';
 			}
 			foreach ($cases4[$h] as $id => $ev) {
-				if ($ev['busy']) {
-					$style4 .= 'peruser_busy ';
+				if (!empty($ev['busy'])) {
+					$style4 .= ' peruser_busy';
 				}
 				if (!empty($ev['css'])) {
 					$style4 .= $ev['css'].' ';

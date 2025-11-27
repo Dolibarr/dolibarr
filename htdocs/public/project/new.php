@@ -77,7 +77,7 @@ $action = GETPOST('action', 'aZ09');
 $langs->loadLangs(array("members", "companies", "install", "other", "projects"));
 
 if (!getDolGlobalString('PROJECT_ENABLE_PUBLIC')) {
-	print $langs->trans("Form for public lead registration has not been enabled");
+	print $langs->trans("FormForPublicLeadRegistrationHasNotBeenEnabled");
 	exit;
 }
 

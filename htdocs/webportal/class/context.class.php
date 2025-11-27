@@ -202,13 +202,13 @@ class Context
 
 		//$this->generateNewToken();
 
-		$this->initController();
+		$this->initController(false);
 
 		// Init of base URL. Must be the public URL.
 		$this->rootUrl = self::getRootConfigUrl();
 
 
-		$this->theme = new WebPortalTheme();
+		$this->theme = new WebPortalTheme(false);
 	}
 
 	/**
@@ -228,9 +228,10 @@ class Context
 	/**
 	 * Init controller
 	 *
+	 * @param	bool	$init_theme		Init theme properties
 	 * @return  void
 	 */
-	public function initController()
+	public function initController($init_theme = true)
 	{
 		global $hookmanager;
 
@@ -249,6 +250,7 @@ class Context
 		$this->addControllerDefinition('documentlist', $defaultControllersPath . 'documentlist.controller.class.php', 'DocumentListController');
 		//** Below is the addition to the menu of the DocumentUtileController.class.php controller in order to share via the GED (documents) "Documentscomptes"
 		$this->addControllerDefinition('documentutile', $defaultControllersPath . 'documentutile.controller.class.php', 'DocumentUtileController');
+		$this->addControllerDefinition('viewimage', $defaultControllersPath . 'viewimage.controller.class.php', 'ViewImageController');
 
 		// Hooks for init controller
 		$hookmanager->initHooks(array('webportaldao'));
@@ -264,6 +266,10 @@ class Context
 				$this->controllerInstance = new $this->controllers[$this->controller]->class();
 				$this->setControllerFound();
 			}
+		}
+
+		if ($init_theme) {
+			$this->theme->init();
 		}
 	}
 
@@ -469,6 +475,8 @@ class Context
 		}
 
 		if (!empty($_SESSION["webportal_logged_thirdparty_account_id"])) {
+			return true;
+		} elseif (!empty($_SESSION["webportal_logged_member_account_id"])) {
 			return true;
 		} else {
 			return false;
@@ -714,35 +722,74 @@ class Context
 				if ($obj) {
 					$passcrypted = $obj->pass_crypted;
 
-					// Check crypted password
-					$cryptType = '';
-					if (getDolGlobalString('DATABASE_PWD_ENCRYPTED')) {
-						$cryptType = getDolGlobalString('DATABASE_PWD_ENCRYPTED');
-					}
-
-					// By default, we use default setup for encryption rule
-					if (!in_array($cryptType, array('auto'))) {
-						$cryptType = 'auto';
-					}
-
 					// Check crypted password according to crypt algorithm
-					if ($cryptType == 'auto') {
-						if ($passcrypted && dol_verifyHash($pass, $passcrypted, '0')) {
-							$passok = true;
-						}
+					if ($passcrypted && dol_verifyHash($pass, $passcrypted, '0')) {
+						$passok = true;
 					}
 
 					// Password ok ?
 					if ($passok) {
 						$id = $obj->id;
 					} else {
-						dol_syslog(__METHOD__ .' Authentication KO bad password for ' . $login . ', cryptType=' . $cryptType, LOG_NOTICE);
+						dol_syslog(__METHOD__ .' Authentication KO bad password for ' . $login . ', cryptType=auto', LOG_NOTICE);
 						sleep(1); // Brut force protection. Must be same delay when login is not valid
 						return -3;
 					}
 				}
 			} else {
 				dol_syslog(__METHOD__ . ' Many third-party account found for login"' . $login . '" and site="dolibarr_portal"', LOG_ERR);
+				return -2;
+			}
+		} else {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+
+		return $id;
+	}
+
+	/**
+	 * Try to find the member account id from
+	 *
+	 * @param	string	$login		Login
+	 * @param	string	$pass		Password
+	 * @return  int		Member account id || <0 if error
+	 */
+	public function getMemberAccountFromLogin($login, $pass)
+	{
+		$id = 0;
+
+		$sql = "SELECT a.rowid as id, a.pass_crypted";
+		$sql .= " FROM " . $this->db->prefix() . "adherent as a";
+		$sql .= " WHERE a.login = '" . $this->db->escape($login) . "'";
+		$sql .= " AND a.statut = 1";
+		$sql .= " AND a.entity IN (" . getEntity('member') . ")";
+
+		dol_syslog(__METHOD__ . ' Try to find the member account id for login"' . $login . '"', LOG_DEBUG);
+		$result = $this->db->query($sql);
+		if ($result) {
+			if ($this->db->num_rows($result) == 1) {
+				$passok = false;
+				$obj = $this->db->fetch_object($result);
+				if ($obj) {
+					$passcrypted = $obj->pass_crypted;
+
+					// Check crypted password according to crypt algorithm
+					if ($passcrypted && dol_verifyHash($pass, $passcrypted, '0')) {
+						$passok = true;
+					}
+
+					// Password ok ?
+					if ($passok) {
+						$id = $obj->id;
+					} else {
+						dol_syslog(__METHOD__ .' Authentication KO bad password for ' . $login . ', cryptType=auto', LOG_NOTICE);
+						sleep(1); // Brut force protection. Must be same delay when login is not valid
+						return -3;
+					}
+				}
+			} else {
+				dol_syslog(__METHOD__ . ' Many member account found for login"' . $login . '"', LOG_ERR);
 				return -2;
 			}
 		} else {

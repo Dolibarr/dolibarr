@@ -242,9 +242,9 @@ if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords) {
 
 
 
-$newcardbutton = '<a class="marginrightonly" href="'.DOL_URL_ROOT.'/compta/prelevement/index.php">'.$langs->trans("Back").'</a>';
+$newcardbutton = '<a class="marginrightonly" href="'.DOL_URL_ROOT.'/compta/prelevement/index.php">'.$langs->trans("GoBack").'</a>';
 if ($type == 'bank-transfer') {
-	$newcardbutton = '<a class="marginrightonly" href="'.DOL_URL_ROOT.'/compta/paymentbybanktransfer/index.php">'.$langs->trans("Back").'</a>';
+	$newcardbutton = '<a class="marginrightonly" href="'.DOL_URL_ROOT.'/compta/paymentbybanktransfer/index.php">'.$langs->trans("GoBack").'</a>';
 }
 if ($sourcetype != 'salary') {
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST"  id="searchFormList" name="searchFormList">';
@@ -334,7 +334,7 @@ while ($i < min($num, $limit) && $resql !== null) {
 	}
 
 	// Ref facture
-	print '<td>';
+	print '<td class="tdoverflowmax125">';
 	if ($sourcetype != 'salary') {
 		print $invoicestatic->getNomUrl(1, 'withdraw');
 	} else {
@@ -342,7 +342,7 @@ while ($i < min($num, $limit) && $resql !== null) {
 	}
 	print '</td>';
 
-	print '<td>';
+	print '<td class="tdoverflowmax150">';
 	if ($sourcetype != 'salary') {
 		$thirdpartystatic->id = $obj->socid;
 		$thirdpartystatic->name = $obj->name;

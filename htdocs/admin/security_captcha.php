@@ -120,8 +120,7 @@ foreach ($dirModCaptcha as $dirroot) {
 		closedir($handle);
 	}
 }
-asort($arrayhandler);
-
+$arrayhandler = dol_sort_array($arrayhandler, 'position');
 
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -134,6 +133,7 @@ print dol_get_fiche_head($head, 'captcha', '', -1);
 
 print '<br>';
 
+print '<div class="div-table-responsive">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Captcha").'</td>';
@@ -208,7 +208,23 @@ if (isModEnabled('don')) {
 }
 print '</td></tr>';
 
+if (isModEnabled('recruitment')) {
+	print '<tr class="oddeven"><td>' . $langs->trans("UseCaptchaCode").' - Recruitment public form</td><td class="right" width="100">';
+	if (!empty($conf->use_javascript_ajax)) {
+		print ajax_constantonoff('MAIN_SECURITY_ENABLECAPTCHA_RECRUITMENT', array(), null, 0, 0, 1);
+	} else {
+		if (!getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_RECRUITMENT')) {
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_MAIN_SECURITY_ENABLECAPTCHA_RECRUITMENT&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+		} else {
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MAIN_SECURITY_ENABLECAPTCHA_RECRUITMENT&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+		}
+	}
+}
+print '</td></tr>';
+
 print '</table>';
+print '</div>';
+
 // Set if a captcha is used on at least one place
 $showavailablecaptcha = 0;
 if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA')) {
@@ -235,9 +251,10 @@ if ($showavailablecaptcha) {
 	print '<br>';
 
 	// List of all available captcha
+	print '<div class="div-table-responsive">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td colspan="2">'.$langs->trans("Captcha").'</td>';
+	print '<td colspan="3">'.$langs->trans("Captcha").'</td>';
 	print '<td>'.$langs->trans("Example").'</td>';
 	print '<td class="right" width="100">'.$langs->trans("Status").'</td>';
 	print '</tr>';
@@ -245,8 +262,10 @@ if ($showavailablecaptcha) {
 	// Loop on each available captcha
 	foreach ($arrayhandler as $key => $module) {
 		print '<tr class="oddeven">';
+		print '<td style="width: 26px" class="center">';
+		print img_picto('', $module->picto, 'class="width25 size15x"');
+		print '</td>';
 		print '<td>';
-		print img_picto('', $module->picto, 'class="width25 size15x marginrightonly"').' ';
 		print ucfirst($key);
 		print '</td>';
 		print '<td>';
@@ -275,7 +294,7 @@ if ($showavailablecaptcha) {
 	}
 
 	print '</table>';
-
+	print '</div>';
 	//print $form->buttonsSaveCancel("Modify", '');
 }
 

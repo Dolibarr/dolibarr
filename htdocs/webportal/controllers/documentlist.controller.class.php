@@ -48,7 +48,7 @@ class DocumentListController extends AbstractDocumentController
 	/**
 	 * Action method is called before HTML output.
 	 *
-	 * @return int Returns >0 on success, 0 if no action, <0 on error.
+	 * @return int Returns >0 on success, <0 on error.
 	 */
 	public function action(): int
 	{
@@ -102,17 +102,21 @@ class DocumentListController extends AbstractDocumentController
 			 * @param	array<string, mixed> $file  File (array) to get url for
 			 * @return	string						Url for file
 			 */
-			$linkBuilder
-				= static function (array $file) use ($client_dir_name) {
-					return DOL_URL_ROOT . '/document.php?modulepart=societe&attachment=1&file=' . urlencode($client_dir_name . '/' . $file['name']);
-				};
+			$linkBuilder = static function (array $file) use ($client_dir_name) {
+				return DOL_URL_ROOT . '/document.php?modulepart=societe&attachment=1&file=' . urlencode($client_dir_name . '/' . $file['name']);
+			};
 
-			// 3. Call the parent method to display the table
+			// 3. Encapsulate the link builder in an array, as required by displayDocumentTable
+			$linkBuilderArray = [
+				'file' => $linkBuilder
+			];
+
+			// 4. Call the correct parent method (displayDocumentTable) with the correct parameter type
 			$this->displayDocumentTable(
 				$langs->trans('MyDocuments'),
 				$fileList,
 				$langs->trans('NoDocumentAvailable'),
-				$linkBuilder
+				$linkBuilderArray
 			);
 		}
 

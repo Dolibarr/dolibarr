@@ -58,22 +58,18 @@ top_httphead();
 	print '<link rel="stylesheet" href="'.$jNotifyCSSUrl.' ">'."\n";
 
 	?>
-	<link rel="stylesheet" href="<?php print $context->rootUrl.'css/style.css.php'; ?>">
-	<?php
-	if (getDolGlobalString('WEBPORTAL_CUSTOM_CSS')) {
-		print '<link rel="stylesheet" type="text/css" href="'.$context->rootUrl.'css/themes/custom.css.php?revision='.getDolGlobalInt('WEBPORTAL_PARAMS_REV').'">'."\n";
-	}
-	?>
+	<link rel="stylesheet" href="<?php print $context->rootUrl.'css/style.css.php?revision='.getDolGlobalInt('WEBPORTAL_PARAMS_REV'); ?>">
+	<link rel="stylesheet" type="text/css" href="<?php print $context->rootUrl.'css/themes/custom.css.php?revision='.getDolGlobalInt('WEBPORTAL_PARAMS_REV'); ?>">
 
 	<link rel="stylesheet" href="<?php print dirname($context->rootUrl).'/theme/common/fontawesome-5/css/all.min.css?layout=classic'; ?>">
 	<?php
 	// JQuery
 	//$jQueryJSUrl = $context->rootUrl.'includes/jquery/js/jquery.js';
 	//$jQueryJSUrl = dol_buildpath('/includes/jquery/js/jquery.js', 2);
-	$jQueryJSUrl = dirname($context->rootUrl).'/includes/jquery/jquery.min.js';
+	$jQueryJSUrl = dirname($context->rootUrl).'/includes/jquery/js/jquery.min.js';
 	print '<script src="'.$jQueryJSUrl.'"></script>'."\n";
 
-	$jQueryUIJSUrl = dirname($context->rootUrl).'/includes/jquery/jquery-ui.min.js';
+	$jQueryUIJSUrl = dirname($context->rootUrl).'/includes/jquery/js/jquery-ui.min.js';
 	print '<script src="'.$jQueryUIJSUrl.'"></script>'."\n";
 
 	// JNotify
@@ -81,6 +77,10 @@ top_httphead();
 	//$jNotifyJSUrl = dol_buildpath('/includes/jquery/plugins/jnotify/jquery.jnotify.min.js', 2);
 	$jNotifyJSUrl = dirname($context->rootUrl).'/includes/jquery/plugins/jnotify/jquery.jnotify.min.js';
 	print '<script src="'.$jNotifyJSUrl.'"></script>'."\n";
+
+	// Modal script
+	$ModalJSUrl = $context->rootUrl.'js/modal.js';
+	print '<script src="'.$ModalJSUrl.'"></script>'."\n";
 
 	// Common dolibarr js functions
 	$jQueryUIJSUrl = $context->rootUrl.'js/lib_head.js.php';

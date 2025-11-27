@@ -573,28 +573,21 @@ input {
 	padding-right: 6px !important;
 }
 
-/*
-input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
-	background-color: #FDFDFD;
-}
-*/
 select.vmenusearchselectcombo {
 	background-color: unset;
 }
 
 textarea:focus {
-	/* v6 box-shadow: 0 0 4px #8091BF; */
 	border: 1px solid #aaa !important;
-	/*
-	padding-left: 3px;
-	padding-right: 3px;
-	padding-top: 3px;
-	*/
 }
-input:focus, textarea:focus,
-button:focus:not(.button_search_x):not(.button_search):not(.button_removefilter), select:focus,
-.select2-container--focus span.selection span.select2-selection {
+input:focus:not(.input-icon-user, .input-icon-password, .input-icon-security):not(.noborderfocus):not(.inputsearch_dropdownselectedfields):not(.button):not(.buttonwebsite):not(.buttonreset):not(.select2-search__field):not(#top-bookmark-search-input):not(.search_component_input):not(.input-nobottom),
+ select:focus, .select2-container--open [aria-expanded="false"].select2-selection--single,
+ .select2-container--focus span.selection span.select2-selection:not(.massactionselect) {
+<?php if (getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT')) { ?>
+	border: 1px solid #666 !important;
+<?php } else { ?>
 	border-bottom: 1px solid #666;
+<?php } ?>
 }
 
 textarea.cke_source:focus
@@ -627,7 +620,6 @@ input, input.flat, form.flat select, select, select.flat, .dataTables_length lab
 	border: none;
 }
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
-	border<?php echo !getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
 	color: var(--colortext);
 	font-family: <?php print $fontlist ?>;
 	outline: none;
@@ -635,13 +627,32 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
 	background-color: var(--inputbackgroundcolor);
 	<?php if (!getDolGlobalString('THEME_ADD_BACKGROUND_ON_INPUT')) { ?>
 		border<?php echo !getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
+	<?php }
+	if (getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT')) { ?>
+		border-radius: 5px;
 	<?php } ?>
+}
+
+/* this cases always use an input with only a background border */
+span.massactionselect, input.inputsearch_dropdownselectedfields {
+	border-radius: 0 !important;
+	border-top: 0 !important;
+	border-left: 0 !important;
+	border-right: 0 !important;
+	background-color: unset !important;
 }
 
 input {
 	line-height: 1.3em;
-	padding: 5px;
+	padding: 4px;
 	padding-left: 5px;
+}
+input[type="text"]:not(.input-icon-security, .input-icon-user, .input-icon-password),
+input[type="password"]:not(.input-icon-security, .input-icon-user, .input-icon-password) {
+	height: 1.3em;
+}
+.login_table .input-icon-user, .login_table .input-icon-password {
+	padding-right: 42px !important;
 }
 select {
 	padding-top: 4px;
@@ -899,6 +910,10 @@ input.pageplusone {
 	padding-top: 4px;
 	margin-right: 4px;
 	margin-left: 3px;
+	width: 32px;
+}
+.paginationlastpage a {
+	padding-left: 6px;
 }
 
 .saturatemedium {
@@ -945,6 +960,9 @@ input.pageplusone {
 }
 .hmirror {
 	transform: scale(-1, 1);
+}
+.undertopmenu {
+	scroll-margin-top: 80px;
 }
 
 select:invalid, select.--error {
@@ -1392,9 +1410,6 @@ td.wordbreak img, td.wordbreakimp img {
 .cursorpointer {
 	cursor: pointer;
 }
-.classfortooltiponclick .fa-question-circle {
-	cursor: pointer;
-}
 .cursormove {
 	cursor: move;
 }
@@ -1440,6 +1455,14 @@ div.urllink {
 	/* width: fit-content; */
 	background-color: #e0e0e8;
 	opacity: 0.8;
+	/* to sort content vertically */
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	height: 2em;
+}
+div.urllink span.fa, div.urllink span.fas, div.urllink span.far {
+	width: 22px;
 }
 div.urllink, div.urllink a {
 	color: #339 !important;
@@ -1957,6 +1980,7 @@ select.flat.selectlimit {
 .amountpaymentcomplete {
 	color: var(--amountpaymentcomplete);
 	font-weight: bold;
+	font-size: 1.7em;
 	white-space: nowrap;
 }
 .amountpaymentcompletenoresize {
@@ -1966,6 +1990,7 @@ select.flat.selectlimit {
 .amountremaintopay {
 	color: var(--amountremaintopaycolor);
 	font-weight: bold;
+	font-size: 1.7em;
 	white-space: nowrap;
 }
 .amountremaintopaynoresize {
@@ -1974,6 +1999,7 @@ select.flat.selectlimit {
 }
 .amountremaintopayback {
 	font-weight: bold;
+	font-size: 1.7em;
 	white-space: nowrap;
 }
 .amountremaintopaybacknoresize {
@@ -1982,7 +2008,7 @@ select.flat.selectlimit {
 .amountpaymentneutral {
 	color: var(--amountremaintopaybackcolor);
 	font-weight: bold;
-	font-size: 1.4em;
+	font-size: 1.7em;
 	white-space: nowrap;
 }
 .amountpaymentneutralnoresize {
@@ -2163,6 +2189,8 @@ tr.nobottom td {
 .minwidth25  { min-width: 25px; }
 .minwidth50  { min-width: 50px; }
 .minwidth75  { min-width: 75px; }
+.minwidth100  { min-width: 75px; }
+.minwidth125  { min-width: 125px; }
 .nominwidth { min-width: fit-content !important; }
 /* rule for not too small screen only */
 @media only screen and (min-width: <?php echo getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC3', round($nbtopmenuentries * 47, 0) + 130); ?>px)
@@ -2208,7 +2236,7 @@ tr.nobottom td {
 .maxwidth40  { max-width: 40px; }
 .maxwidth50  { max-width: 50px; }
 .maxwidth75  { max-width: 75px; }
-.maxwidthdate  { max-width: 95px; }
+.maxwidthdate  { max-width: 90px; }
 .maxwidth100 { max-width: 100px; }
 .maxwidth125 { max-width: 125px; }
 .maxwidth150 { max-width: 150px; }
@@ -2293,7 +2321,7 @@ select.widthcentpercentminusx, span.widthcentpercentminusx:not(.select2-selectio
 	min-width: 100px;
 }
 select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-selection), input.widthcentpercentminusxx {
-	width: calc(100% - 70px) !important;
+	width: calc(100% - 76px) !important;
 	display: inline-block;
 	min-width: 100px;
 }
@@ -2327,11 +2355,11 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	.margintoponsmartphone { margin-top: 6px; }
 
 	select.minwidth100imp, select.minwidth100, select.minwidth200, select.minwidth200imp, select.minwidth300 {
-		width: calc(100% - 40px) !important;
+		width: calc(100% - 44px) !important;
 		display: inline-block;
 	}
 	select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-selection), input.widthcentpercentminusxx {
-		width: calc(100% - 70px) !important;
+		width: calc(100% - 76px) !important;
 		display: inline-block;
 		min-width: 100px;
 	}
@@ -2448,6 +2476,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	.maxwidth250onsmartphone { max-width: 250px; }
 	.maxwidth300onsmartphone { max-width: 300px; }
 	.maxwidth400onsmartphone { max-width: 400px; }
+	.minwidth125 { min-width: 100px !important; }
 	.minwidth150 { min-width: 110px !important; }
 	.minwidth50imp  { min-width: 50px !important; }
 	.minwidth75imp  { min-width: 75px !important; }
@@ -2979,6 +3008,7 @@ img.pictofixedwidth {
 	padding-bottom: 1px;
 	width: 50px;
 	text-align:center;
+	border-radius: 5px;
 }
 div.attacharea {
 	padding-top: 18px;
@@ -3079,6 +3109,9 @@ img.photorefnoborder {
 /* Payment Screen : Pointer cursor in the autofill image */
 .AutoFillAmount {
 	cursor:pointer;
+	padding-left: 5px;
+	padding-right: 5px;
+	padding-top: 2px;
 }
 
 
@@ -3550,7 +3583,7 @@ form#login {
 .login_table #tdpasswordlogin #togglepassword {
 	position: absolute;
 	top: 0.7em;
-	right: 11px;
+	right: 8px;
 	background: none;
 	border: none;
 	opacity: 0.3;
@@ -3966,7 +3999,7 @@ div.blockvmenusearch, div.blockvmenubookmarks
 	text-decoration: none;
 	padding-left: 5px;
 	padding-right: 1px;
-	padding-top: 3px;
+	padding-top: 8px;
 	padding-bottom: 3px;
 	margin: 1px 0px 2px 0px;
 	background: var(--colorbackvmenu1);
@@ -4216,7 +4249,7 @@ div.divButAction {
 	margin-bottom: 1.4em;
 }
 div.tabsAction {
-	margin: 20px 0em 20px 0em;
+	margin: 30px 0em 30px 0em;
 	padding: 0em 0em;
 	text-align: right;
 }
@@ -4454,6 +4487,9 @@ td.border, div.tagtable div div.border {
 .borderbottom {
 	border-bottom: 1px solid var(--colortopbordertitle1);
 }
+.noborderall {
+	border: none !important;
+}
 
 .fichehalfright table.noborder {
 	margin: 0px 0px 0px 0px;
@@ -4524,7 +4560,7 @@ table.nointerlines tr:not(:last-child) td {
 
 /* Management of border radius */
 <?php $borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobalInt('THEME_ELDY_BORDER_RADIUS', 6) : 0; ?>
-table.noborder:not(.cal_month, .paymenttable) {
+table.noborder:not(.cal_month, .paymenttable, .margintable) {
 	border-radius: <?php echo $borderradius; ?>px;
 }
 table.noborder.cal_month {
@@ -4588,11 +4624,11 @@ div.liste_titre_bydiv_nothingafter {
 	border-bottom-style: solid;
 }
 table.liste tr:last-child td:first-child,
-table.liste tr:last-child th:first-child {
+table.liste > tr:last-child th:first-child, table.liste tfoot tr:last-child th:first-child {
 	border-bottom-left-radius: <?php echo $borderradius; ?>px;
 }
 table.liste tr:last-child td:last-child,
-table.liste tr:last-child th:last-child {
+table.liste > tr:last-child th:last-child, table.liste tfoot tr:last-child th:last-child {
 	border-bottom-right-radius: <?php echo $borderradius; ?>px;
 }
 
@@ -5405,7 +5441,7 @@ img.boxhandle, img.boxclose {
 	transition: color 0.4s;
 }
 .star:hover, .star.active {
-	color: <?php echo $badgeWarning ?>;
+	color: var(--butactionbg);
 }
 
 .search-component-assistance {
@@ -5921,12 +5957,18 @@ img.datecallink { padding-left: 2px !important; padding-right: 2px !important; }
 select.ui-datepicker-year {
 	margin-left: 2px !important;
 }
-.ui-datepicker-trigger {
+.ui-datepicker-trigger, .ui-datepicker-notrigger {
 	vertical-align: middle;
-	cursor: pointer;
 	padding-left: 2px;
 	padding-right: 2px;
 }
+.ui-datepicker-notrigger {
+	cursor: default;
+}
+.ui-datepicker-trigger {
+	cursor: pointer;
+}
+
 /*
 .bodyline {
 	border-radius: 4px;
@@ -6428,6 +6470,9 @@ table.jPicker tr:first-of-type td {
 	height: 2px !important;
 	line-height: 2px;
 }
+.jPicker .Icon {
+	margin-left: 2px;
+}
 .jPicker .Move {
 	background: unset !important;
 	border: unset !important;
@@ -6446,6 +6491,9 @@ table.jPicker {
 	background-color: var(--colorbackbody) !important;
 	box-shadow: 0px 0px 10px #ccc;
 	width: 300px !important;
+}
+span.jPicker {
+	vertical-align: middle;
 }
 .jPicker .Grid {
 	background-image: unset !important;
@@ -6468,6 +6516,9 @@ table.jPicker {
 	border-radius: 4px;
 	border-collapse: collapse;
 	border: none;
+}
+.jPicker td.Text input {
+	width: 35px !important;
 }
 
 A.color, A.color:active, A.color:visited {
@@ -7213,15 +7264,20 @@ input.select2-input {
 	border-top: 1px solid #ccc;
 	border-bottom: 1px solid #ccc;
 }
-.select2-container--default .select2-selection--single
-{
+.select2-container--default .select2-selection--single {
 	outline: none;
+	<?php if (!getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT')) { ?>
 	border-top: none;
 	border-left: none;
 	border-right: none;
-	border-bottom: solid 1px rgba(0,0,0,.2);
+	border-radius: 3px;
+	<?php } else { ?>
+	border-radius: 5px;
+	<?php } ?>
+
+	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>: solid 1px var(--inputbordercolor);
+
 	box-shadow: none !important;
-	border-radius: 0 !important;
 }
 .select2-container--default.select2-container--focus .select2-selection--multiple {
 	border-top: none;
@@ -7457,11 +7513,13 @@ select.multiselectononeline {
 {
 	/* CSS to have the dropdown boxes larger that the input search area */
 	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem):not(.yesno) .select2-dropdown.ui-dialog {
-		min-width: 240px !important;
+		min-width: 260px !important;
+		padding: 8px;
 	}
 	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem):not(.yesno) .select2-dropdown--below:not(.onrightofpage),
 	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem):not(.yesno) .select2-dropdown--above:not(.onrightofpage) {
-		min-width: 240px !important;
+		min-width: 260px !important;
+		padding: 8px;
 	}
 	.onrightofpage span.select2-dropdown.ui-dialog.select2-dropdown--below,
 	.onrightofpage span.select2-dropdown.ui-dialog.select2-dropdown--above {
@@ -7669,10 +7727,10 @@ dl.dropdown {
 	white-space: nowrap;
 	font-weight: normal;
 	padding: 7px 8px 7px 8px;
-	/* color: rgb(<?php print $colortext; ?>); */
-	color: #000;
+	/* color: var(--colortext); */
+	color: var(--colortext);
 }
-.dropdown dd ul li:hover {
+.dropdown dd ul li:hover:not(.liinputsearch) {
 	background: #eee;
 }
 .dropdown dd ul li input[type="checkbox"] {
@@ -8610,11 +8668,14 @@ table.jPicker {
 }
 .bookcalform {
 	border: 1px solid #000;
-	padding: 15px;
+	padding: 20px;
 	border-radius: 5px;
 	margin-bottom: 15px;
+	box-shadow: 10px 10px 10px #ddd;
 }
-
+.bookcalsearch {
+	padding-bottom: 10px;
+}
 
 
 /* ============================================================================== */
@@ -8865,6 +8926,10 @@ table.jPicker {
 
 @media only screen and (max-width: 767px)
 {
+	body {
+		font-size: 0.91em;
+	}
+
 	td.widthpictotitle,	table.titlemodulehelp tr td img.widthpictotitle {
 		width: 30px;
 	}
@@ -8878,6 +8943,10 @@ table.jPicker {
 	#tooltip {
 		position: absolute;
 		width: <?php print dol_size(350, 'width'); ?>px;
+	}
+
+	.maxwidthdate  {
+		max-width: 105px;	/* lower than 105, text is truncated with some smartphone resolution and date on 4 digits, but we use 2 digits on smartphone */
 	}
 
 	div.tabBar {
@@ -8966,6 +9035,7 @@ include dol_buildpath($path.'/theme/'.$theme.'/info-box.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/progress.inc.php', 0);
 include dol_buildpath($path.'/theme/eldy/timeline.inc.php', 0); // actually md use same style as eldy theme
 include dol_buildpath($path.'/theme/'.$theme.'/search-input.inc.css', 0); // actually md use same style as eldy theme
+include dol_buildpath($path.'/theme/'.$theme.'/tooltips.inc.css', 0);
 
 if (getDolGlobalString('THEME_CUSTOM_CSS')) {
 	print getDolGlobalString('THEME_CUSTOM_CSS');

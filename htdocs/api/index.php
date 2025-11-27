@@ -63,7 +63,7 @@ if (!empty($_SERVER['HTTP_DOLAPIENTITY'])) {
 if (!empty($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == 'OPTIONS' && !empty($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS'])) {
 	header('Access-Control-Allow-Origin: *');
 	header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
-	header('Access-Control-Allow-Headers: Content-Type, Authorization, api_key, DOLAPIKEY');
+	header('Access-Control-Allow-Headers: Content-Type, Authorization, api_key, DOLAPIKEY, DOLAPIENTITY');
 	http_response_code(204);
 	exit;
 }
@@ -72,13 +72,13 @@ if (!empty($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == 'OPTIONS
 if (preg_match('/\/explorer\/swagger\.json/', $_SERVER["PHP_SELF"])) {
 	header('Access-Control-Allow-Origin: *');
 	header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
-	header('Access-Control-Allow-Headers: Content-Type, Authorization, api_key, DOLAPIKEY');
+	header('Access-Control-Allow-Headers: Content-Type, Authorization, api_key, DOLAPIKEY, DOLAPIENTITY');
 }
 // When we request url to get an API, we accept Cross site so we can make js API call inside another website
 if (preg_match('/\/api\/index\.php/', $_SERVER["PHP_SELF"])) {
 	header('Access-Control-Allow-Origin: *');
 	header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
-	header('Access-Control-Allow-Headers: Content-Type, Authorization, api_key, DOLAPIKEY');
+	header('Access-Control-Allow-Headers: Content-Type, Authorization, api_key, DOLAPIKEY, DOLAPIENTITY');
 }
 header('X-Frame-Options: SAMEORIGIN');
 
@@ -255,6 +255,8 @@ if (!empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $
 						$modulenameforenabled = 'supplier_proposal';
 					} elseif ($module == 'ficheinter') {
 						$modulenameforenabled = 'intervention';
+					} elseif ($module == 'product' && !isModEnabled('product') && isModEnabled('service')) {
+						$modulenameforenabled = 'service';
 					}
 
 					dol_syslog("Found module file ".$file." - module=".$module." - modulenameforenabled=".$modulenameforenabled." - moduledirforclass=".$moduledirforclass);
@@ -328,11 +330,6 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 	$moduleobject = strtolower($moduleobject);
 	$moduledirforclass = getModuleDirForApiClass($moduleobject);
 
-	// this works, but is only necessary because I don't know how to get getModuleDirForApiClass to answer correctly with comm/mailing
-	if ($moduleobject == 'mailings') {
-		$moduledirforclass = 'comm/mailing';
-	}
-
 	// Load a dedicated API file
 	dol_syslog("Load a dedicated API file moduleobject=".$moduleobject." moduledirforclass=".$moduledirforclass);
 
@@ -357,9 +354,6 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 	}
 	if ($moduleobject == 'interventions') {
 		$classfile = 'interventions';
-	}
-	if ($moduleobject == 'eventattendees') {
-		$moduledirforclass = 'eventorganization';
 	}
 
 	$dir_part_file = dol_buildpath('/'.$moduledirforclass.'/class/api_'.$classfile.'.class.php', 0, 2);
@@ -440,7 +434,11 @@ if ($usecompression) {
 	}
 }
 
-//dol_syslog('We found some compression algorithm: '.$foundonealgorithm.' -> usecompression='.$usecompression, LOG_DEBUG);
+
+if (getDolGlobalString('MAIN_API_DEBUG')) {
+		dol_syslog('We found some compression algorithm: '.$foundonealgorithm.' -> usecompression='.(int) $usecompression, LOG_DEBUG, 0, '_api');
+}
+
 
 Luracast\Restler\Defaults::$returnResponse = $usecompression;
 

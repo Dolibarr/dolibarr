@@ -897,6 +897,11 @@ class Documents extends DolibarrApi
 				require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 				$object = new Societe($this->db);
 				$fetchbyid = true;
+			} elseif ($modulepart == 'knowledgemanagement' ) {
+				$modulepart = 'knowledgemanagement';
+				require_once DOL_DOCUMENT_ROOT.'/knowledgemanagement/class/knowledgerecord.class.php';
+				$object = new KnowledgeRecord($this->db);
+				$fetchbyid = true;
 			} elseif ($modulepart == 'ticket' ) {
 				$modulepart = 'ticket';
 				require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';

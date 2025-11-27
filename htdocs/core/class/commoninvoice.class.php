@@ -48,7 +48,7 @@ abstract class CommonInvoice extends CommonObject
 	public $type = self::TYPE_STANDARD;
 
 	/**
-	 * @var int		Sub type of invoice (A subtype code coming from llx_invoice_subtype table. May be used by some countries like Greece)
+	 * @var ?int		Sub type of invoice (A subtype code coming from llx_invoice_subtype table, we store the rowid. May be used by some countries like Greece)
 	 */
 	public $subtype;
 
@@ -1022,12 +1022,19 @@ abstract class CommonInvoice extends CommonObject
 			}
 		}
 
+		$paramsBadge = array('badgeParams' => array('attr' => array(
+			'data-status-element' => $this->element,
+			'data-already-paid' => $alreadypaid > 0 ? 1 : 0,
+			'data-status' => (int) $status
+		)));
+
 		$parameters = array(
 			'status'      => $status,
 			'mode'        => $mode,
 			'paye'        => $paye,
 			'alreadypaid' => $alreadypaid,
-			'type'        => $type
+			'type'        => $type,
+			'paramsBadge'=>& $paramsBadge
 		);
 
 		$reshook = $hookmanager->executeHooks('LibStatut', $parameters, $this); // Note that $action and $object may have been modified by hook
@@ -1052,9 +1059,7 @@ abstract class CommonInvoice extends CommonObject
 			}
 
 			//$paramsbutton = array('badgeParams' => array('attr' => array('title' => 'rrrr')));
-			$paramsbutton = array('badgeParams' => array('attr' => array('title' => $titlestringtoshow)));
-		} else {
-			$paramsbutton = array();
+			$paramsBadge['badgeParams' ]['attr']['title'] = $titlestringtoshow;
 		}
 
 		/*
@@ -1067,7 +1072,7 @@ abstract class CommonInvoice extends CommonObject
 			$statusType = 'status8';
 		}
 
-		$statusbadge = dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode, '', $paramsbutton);
+		$statusbadge = dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode, '', $paramsBadge);
 
 		return $statusbadge;
 	}
@@ -1893,8 +1898,14 @@ abstract class CommonInvoice extends CommonObject
 	{
 		global $mysoc;
 
-		// Convert total_ttc to a string with 2 decimal places
-		$totalTTCString = number_format($this->total_ttc, 2, '.', '');
+		// Get the amount to pay
+		$amount_to_pay = $this->getRemainToPay();
+
+		// Prevent negative values (e.g. overpayments)
+		$amount_to_pay = max(0, $amount_to_pay);
+
+		// Ensure numeric formatting for EPC QR code
+		$amount_to_pay = price2num($amount_to_pay, 'MT');
 
 		// Initialize an array to hold the lines of the QR code
 		$lines = array();
@@ -1909,9 +1920,18 @@ abstract class CommonInvoice extends CommonObject
 
 		// Add the bank account information
 		include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-		$bankAccount = new Account($this->db);
-		if ($this->fk_account > 0) {
-			$bankAccount->fetch($this->fk_account);
+
+		$idofbankaccountouse = $this->fk_account;
+		if (empty($idofbankaccountouse)) {
+			$idofbankaccountouse = $this->fk_bank;	// for backward compatibility
+		}
+		if (empty($idofbankaccountouse)) {
+			$idofbankaccountouse = getDolGlobalInt('FACTURE_RIB_NUMBER');
+		}
+
+		if ($idofbankaccountouse > 0) {
+			$bankAccount = new Account($this->db);
+			$bankAccount->fetch($idofbankaccountouse);
 			$lines[] = $bankAccount->bic; //BIC (required)
 			if (!empty($bankAccount->owner_name)) {
 				$lines[] = $bankAccount->owner_name; //Owner of the bank account, if present (required)
@@ -1926,7 +1946,7 @@ abstract class CommonInvoice extends CommonObject
 		}
 
 		// Add the amount and reference
-		$lines[] = 'EUR' . $totalTTCString; // Amount (optional)
+		$lines[] = 'EUR' . $amount_to_pay; // Amount (optional)
 		$lines[] = ''; // Purpose (optional)
 		$lines[] = ''; // Payment reference (optional)
 		$lines[] = $this->ref; // Remittance Information (optional)

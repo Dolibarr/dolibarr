@@ -68,7 +68,6 @@ print "<br>\n";
 $interfaces = new Interfaces($db);
 $triggers = $interfaces->getTriggersList();
 $param = '';
-$align = '';
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder">';

@@ -835,7 +835,6 @@ class Ldap
 	/**
 	 * Build an LDAP message
 	 *
-	 * @see dump_content renamed
 	 * @param	string		$dn			DN entry key
 	 * @param	array<string,string[]>	$info	Attributes array
 	 * @return	string					Content of file
@@ -1358,8 +1357,8 @@ class Ldap
 	 * 	Do not use for search of a given properties list because of upper-lower case conflict.
 	 *	Only use for pages.
 	 *	'Fiche LDAP' shows readable fields by default.
-	 * 	@see bind
-	 * 	@see bindauth
+	 * 	@see bind()
+	 * 	@see bindauth()
 	 *
 	 * 	@param	string		$checkDn		Search DN (Ex: ou=users,cn=my-domain,cn=com)
 	 * 	@param 	string		$filter			Search filter (ex: (sn=name_person) )

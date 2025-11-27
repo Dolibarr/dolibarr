@@ -713,7 +713,6 @@ ListOfSecurityEvents=Lista de eventos de seguridad de Dolibarr
 LogEventDesc=Habilitar el registro para eventos de seguridad específicos. Administradores el registro a través del menú <b>%s - %s</b> . Advertencia, esta característica puede generar una gran cantidad de datos en la base de datos.
 AreaForAdminOnly=Los parámetros de configuración solo pueden modificarse por <b>usuarios administradores</b>.
 SystemInfoDesc=La información del sistema es información técnica miscelánea que obtienes en modo solo lectura y visible solo para los administradores.
-AccountantDesc=Si tiene un contador / contador externo, puede editar aquí su información.
 AvailableModules=Aplicación / módulos disponibles
 ToActivateModule=Para activar los módulos, vaya al Área de configuración (Inicio-> Configuración-> Módulos).
 SessionTimeOut=Tiempo de espera para la sesión

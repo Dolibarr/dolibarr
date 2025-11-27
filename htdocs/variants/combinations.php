@@ -4,6 +4,7 @@
  * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2022   	Open-Dsi			<support@open-dsi.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		William Mead		<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,6 +56,7 @@ $level_price_impact = array_map('price2num', $level_price_impact);
 $level_price_impact = array_map('floatval', $level_price_impact);
 $level_price_impact_percent = GETPOST('level_price_impact_percent', 'array');
 $level_price_impact_percent = array_map('boolval', $level_price_impact_percent);
+$clone_categories =  (bool) GETPOST('clone_categories');
 
 $form = new Form($db);
 
@@ -196,7 +198,7 @@ if (($action == 'add' || $action == 'create') && $usercancreate && empty($massac
 		// sanit_feature is an array with 1 (and only 1) value per attribute.
 		// For example:  Color->blue, Size->Small, Option->2
 		if (!$prodcomb->fetchByProductCombination2ValuePairs($id, $sanit_features)) {
-			$result = $prodcomb->createProductCombination($user, $object, $sanit_features, array(), $level_price_impact_percent, $level_price_impact, (float) $weight_impact, $reference);
+			$result = $prodcomb->createProductCombination($user, $object, $sanit_features, array(), $level_price_impact_percent, $level_price_impact, (float) $weight_impact, $reference, '', $clone_categories);
 			if ($result > 0) {
 				setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 				unset($_SESSION['addvariant_'.$object->id]);
@@ -758,6 +760,11 @@ if (!empty($id) || !empty($ref)) {
 				print '<td><input type="text" id="weight_impact" name="weight_impact" value="'.price($weight_impact).'"></td>';
 				print '</tr>';
 			}
+
+			print '<tr>';
+			print '<td><label for="clone_categories">'.$langs->trans('CloneCategoriesProduct').'</label></td>';
+			print '<td><input type="checkbox" id="clone_categories" name="clone_categories"></td>';
+			print '</tr>';
 
 			print '</table>';
 		}

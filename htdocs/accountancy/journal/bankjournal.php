@@ -388,7 +388,7 @@ if ($result) {
 		if (getDolGlobalString('FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS') && ($lineisapurchase == 1 || $lineisasale == 1) ) {
 			if ($lineisapurchase == 1) {
 				$sqlamount = "SELECT SUM(pf.amount) as amount";
-				$sqlamount .= " FROM ".MAIN_DB_PREFIX."paiementfounr_facturefourn AS pf";
+				$sqlamount .= " FROM ".MAIN_DB_PREFIX."paiementfourn_facturefourn AS pf";
 				$sqlamount .= " INNER JOIN ".MAIN_DB_PREFIX."paiementfourn AS p ON pf.fk_paiementfourn = p.rowid";
 				$sqlamount .= " RIGHT JOIN ".MAIN_DB_PREFIX."facture AS f ON pf.fk_facturefourn = f.rowid";
 				$sqlamount .= " WHERE p.fk_bank = ".((int) $obj->rowid);

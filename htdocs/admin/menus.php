@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -121,7 +121,7 @@ if ($action == 'update' && !$cancel) {
 		$db->close();
 
 		// We make a header redirect because we need to change menu NOW.
-		header("Location: ".$_SERVER["PHP_SELF"]);
+		header("Location: ".dolBuildUrl($_SERVER["PHP_SELF"]));
 		exit;
 	}
 }
@@ -143,17 +143,17 @@ print load_fiche_titre($langs->trans("Menus"), '', 'title_setup');
 $h = 0;
 
 $head = array();
-$head[$h][0] = DOL_URL_ROOT."/admin/menus.php";
+$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/admin/menus.php");
 $head[$h][1] = $langs->trans("MenuHandlers");
 $head[$h][2] = 'handler';
 $h++;
 
-$head[$h][0] = DOL_URL_ROOT."/admin/menus/index.php";
+$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/admin/menus/index.php");
 $head[$h][1] = $langs->trans("MenuAdmin");
 $head[$h][2] = 'editor';
 $h++;
 
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 

@@ -87,14 +87,14 @@ function ticket_prepare_head($object)
 
 	$h = 0;
 	$head = array();
-	$head[$h][0] = DOL_URL_ROOT.'/ticket/card.php?track_id='.$object->track_id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/ticket/card.php', ['track_id' => $object->track_id]);
 	$head[$h][1] = $langs->trans("Ticket");
 	$head[$h][2] = 'tabTicket';
 	$h++;
 
 	if (!getDolGlobalInt('MAIN_DISABLE_CONTACTS_TAB') && empty($user->socid) && isModEnabled("societe")) {
 		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
-		$head[$h][0] = DOL_URL_ROOT.'/ticket/contact.php?track_id='.$object->track_id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/ticket/contact.php', ['track_id' => $object->track_id]);
 		$head[$h][1] = $langs->trans('ContactsAddresses');
 		if ($nbContact > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
@@ -112,7 +112,7 @@ function ticket_prepare_head($object)
 		if (!empty($object->note_public)) {
 			$nbNote++;
 		}
-		$head[$h][0] = DOL_URL_ROOT.'/ticket/note.php?id='.$object->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/ticket/note.php', ['id' => $object->id]);
 		$head[$h][1] = $langs->trans('Notes');
 		if ($nbNote > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
@@ -139,7 +139,7 @@ function ticket_prepare_head($object)
 		}
 	}
 	*/
-	$head[$h][0] = DOL_URL_ROOT.'/ticket/document.php?id='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/ticket/document.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans("Documents");
 	if ($nbFiles > 0) {
 		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbFiles.'</span>';
@@ -158,10 +158,10 @@ function ticket_prepare_head($object)
 	}
 
 	if ($ticketViewType == "messaging") {
-		$head[$h][0] = DOL_URL_ROOT.'/ticket/messaging.php?track_id='.$object->track_id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/ticket/messaging.php', ['track_id' => $object->track_id]);
 	} else {
 		// $ticketViewType == "list"
-		$head[$h][0] = DOL_URL_ROOT.'/ticket/agenda.php?track_id='.$object->track_id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/ticket/agenda.php', ['track_id' => $object->track_id]);
 	}
 	$head[$h][1] = $langs->trans('Events');
 	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {

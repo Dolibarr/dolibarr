@@ -1130,6 +1130,7 @@ class FormCompany extends Form
 	 *  @param  string		$filter		optional filters criteras
 	 *  @param  int<0,1>	$nooutput	No print output. Return it only.
 	 *  @return	void|string
+	 *  @phpstan-return ($nooutput is 1 ? string : void)
 	 */
 	public function formThirdpartyType($page, $selected = '', $htmlname = 'socid', $filter = '', $nooutput = 0)
 	{
@@ -1141,7 +1142,7 @@ class FormCompany extends Form
 			$out .= '<form method="post" action="' . $page . '">';
 			$out .= '<input type="hidden" name="action" value="set_thirdpartytype">';
 			$out .= '<input type="hidden" name="token" value="' . newToken() . '">';
-			$sortparam = (!getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT); // NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on label.
+			$sortparam = getDolGlobalString('SOCIETE_SORT_ON_TYPEENT', 'ASC'); // NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on label.
 			$out .= $this->selectarray($htmlname, $this->typent_array(0, $filter), $selected, 1, 0, 0, '', 0, 0, 0, $sortparam, '', 1);
 			$out .= '<input type="submit" class="button smallpaddingimp valignmiddle" value="' . $langs->trans("Modify") . '">';
 			$out .= '</form>';

@@ -68,11 +68,11 @@ class AdherentStats extends Stats
 
 
 	/**
-	 *	Constructor
+	 * Constructor
 	 *
-	 *	@param 		DoliDB		$db			Database handler
-	 * 	@param 		int			$socid	   	Id third party
-	 * 	@param   	int			$userid    	Id user for filter
+	 * @param 		DoliDB		$db			Database handler
+	 * @param 		int			$socid	   	Id third party
+	 * @param   	int			$userid    	Id user for filter
 	 */
 	public function __construct($db, $socid = 0, $userid = 0)
 	{
@@ -97,11 +97,11 @@ class AdherentStats extends Stats
 
 
 	/**
-	 * Return the number of proposition by month for a given year
+	 * Return the number of members by month for a given year
 	 *
-	 *	@param	int		$year       Year
-	 *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 *	@return	array<int<0,11>,array{0:int<1,12>,1:int}>	Array of nb each month
+	 * @param	int		$year       Year
+	 * @param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+	 * @return	array<int<0,11>,array{0:int<1,12>,1:int}>	Array of nb each month
 	 */
 	public function getNbByMonth($year, $format = 0)
 	{
@@ -136,7 +136,7 @@ class AdherentStats extends Stats
 	 *
 	 * @param   int		$year       Year
 	 * @param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 *	@return	array<int<0,11>,array{0:int<1,12>,1:int|float}>	Array of values by month
+	 * @return	array<int<0,11>,array{0:int<1,12>,1:int|float}>	Array of values by month
 	 */
 	public function getAmountByMonth($year, $format = 0)
 	{
@@ -193,8 +193,6 @@ class AdherentStats extends Stats
 	 */
 	public function countMembersByTypeAndStatus($numberYears = 0)
 	{
-		global $user;
-
 		$now = dol_now();
 		$endYear = (int) date('Y');
 		$startYear = $endYear - $numberYears;
@@ -268,8 +266,6 @@ class AdherentStats extends Stats
 	 */
 	public function countMembersByTagAndStatus($numberYears = 0)
 	{
-		global $user;
-
 		$now = dol_now();
 		$endYear = (int) date('Y');
 		$startYear = $endYear - $numberYears;
@@ -337,5 +333,63 @@ class AdherentStats extends Stats
 		}
 
 		return $MembersCountArray;
+	}
+
+	/**
+	 *	Return array of last modified members
+	 *
+	 * @param	int		$max    Max Number of result
+	 * @return	array<int,array{id:int,ref:string,firstname:string,lastname:string,company:string,fk_soc:?int,datec:int|'',datem:int|'',status:int,date_end_subscription:int|'',photo:null|string,email:string,gender:string,morphy:string,typeid:int,need_subscription:0|1|null,subscription:'0'|'1'|null,label:string}>		Array of last modified members
+	 */
+	public function getLastModifiedMembers($max = 0)
+	{
+		$lastModifiedMembers = [];
+
+		$sql = "SELECT a.rowid, a.ref, a.lastname, a.firstname, a.societe as company, a.fk_soc,";
+		$sql .= " a.datec, GREATEST(a.tms, aef.tms) as datem, a.statut as status, a.datefin as date_end_subscription,";
+		$sql .= ' a.photo, a.email, a.gender, a.morphy,';
+		$sql .= " t.rowid as typeid, t.subscription, t.libelle as label";
+		$sql .= " FROM ".MAIN_DB_PREFIX."adherent as a";
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'adherent_extrafields as aef ON aef.fk_object = a.rowid';
+		$sql .= ", ".MAIN_DB_PREFIX."adherent_type as t";
+		$sql .= " WHERE a.entity IN (".getEntity('member').")";
+		$sql .= " AND a.fk_adherent_type = t.rowid";
+		$sql .= " ORDER BY datem DESC";
+		$sql .= $this->db->plimit($max, 0);
+
+		$result = $this->db->query($sql);
+		if ($result) {
+			$num = $this->db->num_rows($result);
+
+			$line = 0;
+			while ($line < $num) {
+				$objp = $this->db->fetch_object($result);
+				$lastModifiedMembers[] = [
+					'id' => (int) $objp->rowid,
+					'ref' => (string) $objp->ref,
+					'lastname' => (string) $objp->lastname,
+					'firstname' => (string) $objp->firstname,
+					'company' => (string) $objp->company,
+					'fk_soc' => $objp->fk_soc ? (int) $objp->fk_soc : null,
+					'datec' => $this->db->jdate($objp->datec),
+					'datem' => $this->db->jdate($objp->datem),
+					'status' => (int) $objp->status,
+					'date_end_subscription' => $this->db->jdate($objp->date_end_subscription),
+					'photo' => isset($objp->photo) ? (string) $objp->photo : null,
+					'email' => $objp->email,
+					'gender' => $objp->gender,
+					'morphy' => $objp->morphy,
+					'typeid' => $objp->typeid,
+					'need_subscription' => isset($objp->subscription) ? ($objp->subscription ? 1 : 0) : null,
+					'subscription' => isset($objp->subscription) ? ($objp->subscription ? '1' : '0') : null,
+					'label' => (string) $objp->label,
+				];
+
+				$line++;
+			}
+			$this->db->free($result);
+		}
+
+		return $lastModifiedMembers;
 	}
 }

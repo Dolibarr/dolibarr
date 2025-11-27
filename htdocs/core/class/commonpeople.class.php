@@ -316,7 +316,7 @@ trait CommonPeople
 		}
 		$outdone = 0;
 		if (!empty($this->email)) {
-			$out .= dol_print_email($this->email, $this->id, $object->id, 1, 0, 0, 1);
+			$out .= dol_print_email($this->email, $this->id, $object->id, 1, 0, 1, 1);
 			$outdone++;
 		}
 		if (!empty($this->url)) {

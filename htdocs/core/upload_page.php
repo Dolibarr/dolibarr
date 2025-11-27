@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This file is a modified version of datepicker.php from phpBSM to fix some
@@ -242,7 +242,7 @@ $uploadform .= '<br>';
 // Show all forms
 print "\n";
 print "<!-- Begin UploadForm -->\n";
-print '<form id="uploadform" enctype="multipart/form-data" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form id="uploadform" enctype="multipart/form-data" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="uploadfile">';
 print '<input type="hidden" name="sendit" value="1">';

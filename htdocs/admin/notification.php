@@ -45,7 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_50_modNotification_Noti
 $langs->loadLangs(array('admin', 'other', 'orders', 'propal', 'bills', 'errors', 'mails', 'contracts'));
 
 // Security check
-if (!$user->admin) {
+if (!$user->admin) { // after this test, $user->admin is always true
 	accessforbidden();
 }
 
@@ -58,10 +58,10 @@ $error = 0;
  */
 
 // Action to update or add a constant
-if ($action == 'settemplates' && $user->admin) {
+if ($action == 'settemplates') { // Test on permission already done
 	$db->begin();
 
-	if (!$error && is_array($_POST)) {
+	if (is_array($_POST)) {
 		$reg = array();
 		foreach ($_POST as $key => $val) {
 			if (!preg_match('/^constvalue_(.*)_TEMPLATE/', $key, $reg)) {
@@ -75,8 +75,6 @@ if ($action == 'settemplates' && $user->admin) {
 			if (!empty($tmparray[0]) && !empty($tmparray[1])) {
 				$constvalue = $tmparray[0];
 				$consttype = 'emailtemplate:'.$tmparray[1];
-				//var_dump($constvalue);
-				//var_dump($consttype);
 				$res = dolibarr_set_const($db, $triggername.'_TEMPLATE', $constvalue, $consttype, 0, '', $conf->entity);
 				if ($res < 0) {
 					$error++;
@@ -100,7 +98,7 @@ if ($action == 'settemplates' && $user->admin) {
 	}
 }
 
-if ($action == 'setvalue' && $user->admin) {
+if ($action == 'setvalue') { // Test on permission already done
 	$db->begin();
 
 	$result = dolibarr_set_const($db, "NOTIFICATION_EMAIL_FROM", GETPOST("email_from", "alphawithlgt"), 'chaine', 0, '', $conf->entity);
@@ -125,10 +123,10 @@ if ($action == 'setvalue' && $user->admin) {
 }
 
 
-if ($action == 'setfixednotif' && $user->admin) {
+if ($action == 'setfixednotif') { // Test on permission already done
 	$db->begin();
 
-	if (!$error && is_array($_POST)) {
+	if (is_array($_POST)) {
 		$reg = array();
 		foreach ($_POST as $key => $val) {
 			if (!preg_match('/^NOTIF_(.*)_key$/', $key, $reg)) {
@@ -181,7 +179,7 @@ $notify = new Notify($db);
 
 llxHeader('', $langs->trans("NotificationSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-notification');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
 print load_fiche_titre($langs->trans("NotificationSetup"), $linkback, 'title_setup');
 
@@ -195,7 +193,7 @@ print $langs->trans("NotificationsDescGlobal").' - '.$langs->trans("YouAreHere")
 print '</span>';
 print '<br>';
 
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setvalue">';
 
@@ -271,7 +269,7 @@ print '<br><br>';
 
 // Emails templates for notification
 
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="settemplates">';
 
@@ -399,7 +397,7 @@ print '</form>';
 print '<br><br>';
 
 
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setfixednotif">';
 print '<input type="hidden" name="page_y" value="">';

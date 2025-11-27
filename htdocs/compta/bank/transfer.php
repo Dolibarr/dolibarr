@@ -5,7 +5,7 @@
  * Copyright (C) 2012	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2018-2024  Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2023      Maxime Nicolas          <maxime@oarces.com>
  * Copyright (C) 2023      Benjamin GREMBI         <benjamin@oarces.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
@@ -292,7 +292,7 @@ print load_fiche_titre($langs->trans("MenuBankInternalTransfer"), '', 'bank_acco
 print '<span class="opacitymedium">'.$langs->trans("TransferDesc").'</span>';
 print '<br><br>';
 
-print '<form name="add" method="post" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form name="add" method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="add">';
 

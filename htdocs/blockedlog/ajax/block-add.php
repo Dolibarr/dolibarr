@@ -48,7 +48,11 @@ require '../../main.inc.php';
 
 $id = GETPOSTINT('id');
 $element = GETPOST('element', 'alpha');
-$action = GETPOST('action', 'aZ09');
+$action = GETPOST('action', 'aZ09');	// Can be DOC_PREVIEW or DOC_DOWNLOAD
+
+if (! in_array($action, array('DOC_PREVIEW', 'DOC_DOWNLOAD'))) {
+	accessforbidden('Bad value for action. Must be DOC_PREVIEW or DOC_DOWNLOAD');
+}
 
 if ($element === 'facture') {
 	restrictedArea($user, 'facture', $id, '', '', 'fk_soc', 'rowid', 0);
@@ -63,17 +67,20 @@ if ($element === 'facture') {
 
 top_httphead();
 
-if (empty($action)) {
-	print 'No action logged. Empty action code.';
-	exit;
-}
-
 if ($element === 'facture') {	// Test on permission done in top of page
 	require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 	$facture = new Facture($db);
 	if ($facture->fetch($id) > 0) {
+		// Increase counter by 1
+		$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET pos_print_counter = pos_print_counter + 1";
+		$sql .= " WHERE rowid = ".((int) $facture->id);
+		$db->query($sql);
+
+		//$facture->pos_print_counter += 1;
+		//$facture->update($user, 1);	// We disable trigger here because we already call the trigger $action = DOC_PREVIEW or DOC_DOWNLOAD just after
+
 		$facture->call_trigger($action, $user);
 	}
 
