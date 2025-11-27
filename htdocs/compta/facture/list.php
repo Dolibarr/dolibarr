@@ -379,6 +379,7 @@ if (GETPOST('cancel', 'alpha')) {
 	$massaction = '';
 }
 $massactionstoclearmassactionvalue = array('presend', 'confirm_presend');
+$parameters = array();
 $reshook = $hookmanager->executeHooks('addMoreMassActionsToClearMassActionValue', $parameters, $object, $action);
 
 if ($reshook < 0) {
@@ -1482,6 +1483,7 @@ if ($user->hasRight('facture', 'supprimer')) {
 }
 
 $massactionstohidemassactionsbutton = array('presend', 'predelete', 'makepayment');
+$parameters = array();
 $reshook = $hookmanager->executeHooks('addMoreMassActionsToHideMassActionsButton', $parameters, $object, $action);
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
