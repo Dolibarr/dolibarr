@@ -428,7 +428,7 @@ if (empty($reshook)) {
 								$rang = $TFactThirdNbLines[$expd->socid];
 							}
 							// if we insert first line of sending we must insert comment before first line
-							if($i == 0) {
+							if ($i == 0) {
 							$titleexped = dol_concatdesc("", $langs->trans("Order").': '.$expdCmdSrc->ref. ' - '. $langs->trans("Shipment").': '.$expd->ref.($expd->date_shipping ? ' - '.dol_print_date($expd->date_shipping, 'day') : '')."id".$id_sending);
 							$depth = 1;
 							$subtotal_options = array();
