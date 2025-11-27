@@ -1207,11 +1207,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
                         is_private=' . $private.';
 						if (is_private) {
 							$(".individualline").show();
+							$(".professionalline").hide();
 						} else {
 							$(".individualline").hide();
+							$(".professionalline").show();
 						}
                         $("#radiocompany").click(function() {
                         	$(".individualline").hide();
+							$(".professionalline").show();
                         	$("#typent_id").val(0);
                         	$("#typent_id").change();
                         	$("#effectif_id").val(0);
@@ -1221,6 +1224,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
                         });
                         $("#radioprivate").click(function() {
                         	$(".individualline").show();
+							$(".professionalline").hide();
                         	$("#typent_id").val(id_te_private);
                         	$("#typent_id").change();
                         	$("#effectif_id").val(id_ef15);
@@ -1746,7 +1750,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					$key = 'idprof'.$i;
 
 					if (($j % $NBCOLS) == 0) {
-						print '<tr>';
+						print '<tr class="professionalline">';
 					}
 
 					$idprof_mandatory = 'SOCIETE_IDPROF'.($i).'_MANDATORY';
