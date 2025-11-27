@@ -254,7 +254,7 @@ if (empty($reshook)) {
 				foreach ($toselect as $key => $idMo) {
 					if ($objMo->fetch($idMo)) {
 						if (!empty($changeDate)) {
-							if ($action == 'changedatestart_confirm') { 		// Test on permission
+							if ($action == 'changedatestart_confirm') { 		// Test on permission not required
 								// The start date can be set IF (the end date is empty OR the new date is BEFORE the existing end date).
 								if (empty($objMo->date_end_planned) || $newDate < $objMo->date_end_planned) {
 									$objMo->date_start_planned = $newDate;
