@@ -694,9 +694,9 @@ class FactureFournisseurRec extends CommonInvoice
 				$keyforref = $this->table_ref_field;
 
 				$this->id                       = $obj->rowid;
-				$this->titre                    = $obj->title;
+				$this->titre                    = $obj->title;	// deprecated
 				$this->title                    = $obj->title;
-				$this->subtype				          = $obj->subtype;
+				$this->subtype				    = $obj->subtype;
 				$this->ref                      = $obj->title;
 				$this->ref_supplier             = $obj->ref_supplier;
 				$this->entity                   = $obj->entity;
@@ -704,9 +704,9 @@ class FactureFournisseurRec extends CommonInvoice
 				$this->date_creation            = $obj->datec;
 				$this->date_modification        = $obj->tms;
 				$this->suspended                = $obj->suspended;
-				$this->statut                	= $obj->suspended; //for compatibility
-				$this->status                   = $obj->suspended; //for compatibility
-				$this->libelle                  = $obj->label;
+				$this->statut                	= $obj->suspended;	//deprecated
+				$this->status                   = $obj->suspended;	//for compatibility
+				$this->libelle                  = $obj->label;	// deprecated
 				$this->label                    = $obj->label;
 				$this->vat_src_code             = $obj->vat_src_code;
 				$this->total_localtax1          = $obj->localtax1;
@@ -723,7 +723,7 @@ class FactureFournisseurRec extends CommonInvoice
 				$this->mode_reglement           = $obj->mode_reglement_libelle;
 				$this->cond_reglement_id        = $obj->fk_cond_reglement;
 				$this->cond_reglement_code      = $obj->cond_reglement_code;
-				$this->cond_reglement           = $obj->cond_reglement_libelle;
+				$this->cond_reglement           = $obj->cond_reglement_libelle;	// deprecated
 				$this->cond_reglement_doc       = $obj->cond_reglement_libelle_doc;
 				$this->date_lim_reglement       = $this->db->jdate($obj->date_lim_reglement);
 				$this->note_private             = $obj->note_private;
