@@ -11,3 +11,4 @@ jobs:
       token: ${{ secrets.WORKFLOW_TOKEN }}
       repository: Dolibarr/dolibarr-docker
       event-type: new-release
+      client-payload: '{"version": "${{ github.event.release.tag_name }}"}'
