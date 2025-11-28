@@ -16919,7 +16919,7 @@ function array_merge_recursive_distinct(array $array1, array $array2): array
 /**
  * Function to redirect search list forms from POST to GET request
  * The redirection is done only for search list forms following these conditions :
- * - $action must end by 'list'
+ * - request parameter 'action' must be 'list'
  * - request parameter 'formfilteraction' must be 'list'
  * - request method must be 'POST'
  * - request must not be a massaction request
