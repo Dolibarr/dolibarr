@@ -945,6 +945,9 @@ if (empty($reshook)) {
 	$upload_dir = !empty($conf->societe->multidir_output[$object->entity ?? $conf->entity]) ? $conf->societe->multidir_output[$object->entity ?? $conf->entity] : $conf->societe->dir_output;
 	$permissiontoadd = $user->hasRight('societe', 'creer');
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+
+	// Actions when printing a doc from card
+	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 }
 
 
@@ -1094,12 +1097,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			}
 		}
 
-		$object->phone				= GETPOST('phone', 'alpha');
-		$object->phone_mobile       = (string) GETPOST("phone_mobile", 'alpha');
-		$object->fax				= GETPOST('fax', 'alpha');
-		$object->email				= GETPOST('email', 'email');
-		$object->url				= GETPOST('url', 'url');
-		$object->capital			= GETPOST('capital');	// can be null or 0 or a float value
+		$object->phone = GETPOST('phone', 'alpha');
+		$object->phone_mobile = (string) GETPOST("phone_mobile", 'alpha');
+		$object->fax = GETPOST('fax', 'alpha');
+		$object->email = GETPOST('email', 'email');
+		$object->url = GETPOST('url', 'url');
+		$object->capital = GETPOST('capital');	// can be null or 0 or a float value
 		$paymentTermId = GETPOSTINT('cond_reglement_id'); // can be set by default values on create page and not already in get or post variables
 		if (empty($paymentTermId) && !GETPOSTISSET('cond_reglement_id')) {
 			$paymentTermId = getDolGlobalString('MAIN_DEFAULT_PAYMENT_TERM_ID');
@@ -1109,28 +1112,28 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 		if (empty($paymentTypeId) && !GETPOSTISSET('mode_reglement_id')) {
 			$paymentTypeId = getDolGlobalString('MAIN_DEFAULT_PAYMENT_TYPE_ID');
 		}
-		$object->mode_reglement_id 	= $paymentTypeId;
-		$object->barcode			= GETPOST('barcode', 'alphanohtml');
-		$object->idprof1			= GETPOST('idprof1', 'alphanohtml');
-		$object->idprof2			= GETPOST('idprof2', 'alphanohtml');
-		$object->idprof3			= GETPOST('idprof3', 'alphanohtml');
-		$object->idprof4			= GETPOST('idprof4', 'alphanohtml');
-		$object->idprof5			= GETPOST('idprof5', 'alphanohtml');
-		$object->idprof6			= GETPOST('idprof6', 'alphanohtml');
+		$object->mode_reglement_id = $paymentTypeId;
+		$object->barcode = GETPOST('barcode', 'alphanohtml');
+		$object->idprof1 = GETPOST('idprof1', 'alphanohtml');
+		$object->idprof2 = GETPOST('idprof2', 'alphanohtml');
+		$object->idprof3 = GETPOST('idprof3', 'alphanohtml');
+		$object->idprof4 = GETPOST('idprof4', 'alphanohtml');
+		$object->idprof5 = GETPOST('idprof5', 'alphanohtml');
+		$object->idprof6 = GETPOST('idprof6', 'alphanohtml');
 		$object->typent_id = GETPOSTINT('typent_id');
-		$object->effectif_id		= GETPOSTINT('effectif_id');
-		$object->civility_id		= GETPOST('civility_id', 'alpha');
+		$object->effectif_id = GETPOSTINT('effectif_id');
+		$object->civility_id = GETPOST('civility_id', 'alpha');
 
 		$object->tva_assuj = GETPOSTINT('assujtva_value');
 		$object->vat_reverse_charge	= GETPOST('vat_reverse_charge') == 'on' ? 1 : 0;
 		$object->status = GETPOSTINT('status');
 
 		//Local Taxes
-		$object->localtax1_assuj	= GETPOSTINT('localtax1assuj_value');
-		$object->localtax2_assuj	= GETPOSTINT('localtax2assuj_value');
+		$object->localtax1_assuj = GETPOSTINT('localtax1assuj_value');
+		$object->localtax2_assuj = GETPOSTINT('localtax2assuj_value');
 
-		$object->localtax1_value	= GETPOST('lt1', 'alpha');
-		$object->localtax2_value	= GETPOST('lt2', 'alpha');
+		$object->localtax1_value = GETPOST('lt1', 'alpha');
+		$object->localtax2_value = GETPOST('lt2', 'alpha');
 
 		$object->tva_intra = GETPOST('tva_intra', 'alphanohtml');
 
@@ -1147,7 +1150,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			}
 		}
 		if (GETPOSTISSET('accountancy_code_buy')) {
-			$accountancy_code_buy   = GETPOST('accountancy_code_buy', 'alpha');
+			$accountancy_code_buy = GETPOST('accountancy_code_buy', 'alpha');
 
 			if (empty($accountancy_code_buy) || $accountancy_code_buy == '-1') {
 				$object->accountancy_code_buy = '';
@@ -1159,7 +1162,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 		$object->logo = (isset($_FILES['photo']) ? dol_sanitizeFileName($_FILES['photo']['name']) : '');
 
 		// Company logo management
-		$dir     = $conf->societe->multidir_output[$conf->entity]."/".$object->id."/logos";
+		$dir = $conf->societe->multidir_output[$conf->entity]."/".$object->id."/logos";
 		$file_OK = (isset($_FILES['photo']) ? is_uploaded_file($_FILES['photo']['tmp_name']) : false);
 		if ($file_OK) {
 			if (image_format_supported($_FILES['photo']['name'])) {

@@ -879,6 +879,9 @@ if (empty($reshook)) {
 	// Actions to build doc
 	$upload_dir = $conf->user->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+
+	// Actions when printing a doc from card
+	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 }
 
 
