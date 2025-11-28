@@ -16918,14 +16918,14 @@ function array_merge_recursive_distinct(array $array1, array $array2): array
 
 /**
  * Function to redirect search list forms from POST to GET request
- * The redirection is done only for search list forms following these conditions : 
+ * The redirection is done only for search list forms following these conditions :
  * - $action must end by 'list'
  * - request parameter 'formfilteraction' must be 'list'
  * - request method must be 'POST'
  * - request must not be a massaction request
  * - string length of the redirection URL must be <= 2000
  * If conditions are not met, Dolibarr will use standard mode and return search list page content directly in POST request response
- * 
+ *
  * The goal of this function is to be able to avoid browser warning when going back to a search list page result
  * when navigating in browser history.
  * Typical case :
@@ -16933,21 +16933,21 @@ function array_merge_recursive_distinct(array $array1, array $array2): array
  * - click on a propal item
  * - go back in browser history
  * - browser ask to resend post action (because search form list page return directly html content in the POST response)
- * 
+ *
  * By redirecting POST request to a GET one, there will be not problem to go back to
  * the search list page (because browser is going back to a GET page)
  *
  * @param string $context The current page context name
- * 
+ *
  * @return void
  */
-function dolRedirectPostSearchListRequestToGetIfPossible($context): void	
+function dolRedirectPostSearchListRequestToGetIfPossible($context): void
 {
 	if (preg_match('/list$/', $context) &&
 		GETPOST('action') == 'list' &&
 		in_array(GETPOST('formfilteraction'), array('list', 'listafterchangingselectedfields')) &&
-		$_SERVER['REQUEST_METHOD'] == 'POST') {
-
+		$_SERVER['REQUEST_METHOD'] == 'POST'
+	) {
 		// Detect if it is a simple search (not an massaction)
 		if (GETPOSTINT('massaction') == 0) {
 			$postData = $_POST;
