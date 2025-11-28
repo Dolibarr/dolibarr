@@ -429,15 +429,14 @@ if (empty($reshook)) {
 							}
 							// if we insert first line of sending we must insert comment before first line
 							if ($i == 0) {
-							$titleexped = dol_concatdesc("", $langs->trans("Order").': '.$expdCmdSrc->ref. ' - '. $langs->trans("Shipment").': '.$expd->ref.($expd->date_shipping ? ' - '.dol_print_date($expd->date_shipping, 'day') : '')."id".$id_sending);
-							$depth = 1;
-							$subtotal_options = array();
-							$restitle = $objecttmp->addSubtotalLine($langs, $titleexped, (int) $depth, $subtotal_options);
-							$rang++;
-							$TFactThirdNbLines[$expd->socid]++;
+								$titleexped = dol_concatdesc("", $langs->trans("Order").': '.$expdCmdSrc->ref. ' - '. $langs->trans("Shipment").': '.$expd->ref.($expd->date_shipping ? ' - '.dol_print_date($expd->date_shipping, 'day') : '')."id".$id_sending);
+								$depth = 1;
+								$subtotal_options = array();
+								$restitle = $objecttmp->addSubtotalLine($langs, $titleexped, (int) $depth, $subtotal_options);
+								$rang++;
+								$TFactThirdNbLines[$expd->socid]++;
 							}
 							
-
 							$result = $objecttmp->addline(
 								$desc,
 								$lines[$i]->subprice,
