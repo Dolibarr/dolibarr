@@ -1056,9 +1056,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 								$qtyhourforline = convertDurationtoHour($line->qty, $unitforline);
 							}
 
-							if ($qtyhourservice && $qtyhourforline) {
-								$linecost = price2num(($qtyhourforline / $qtyhourservice * $costprice) / $object->qty, 'MT');	// price for line for all quantities
-								$bomcostupdated += price2num(($qtyhourforline / $qtyhourservice * $costprice) / $object->qty, 'MU');	// same but with full accuracy
+							if (isModEnabled('workstation') && $line->fk_default_workstation > 0) {
+								$workstation = new Workstation($db);
+								$res = $workstation->fetch($line->fk_default_workstation);
+								$line->total_cost = (float) $qtyhourforline * ($workstation->thm_operator_estimated + $workstation->thm_machine_estimated);
+								$bomcostupdated += $line->total_cost;
 							} else {
 								$linecost = price2num(($line->qty * $costprice) / $object->qty, 'MT');	// price for line for all quantities
 								$bomcostupdated += price2num(($line->qty * $costprice) / $object->qty, 'MU');	// same but with full accuracy
