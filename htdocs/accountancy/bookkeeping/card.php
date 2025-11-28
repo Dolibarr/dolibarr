@@ -842,7 +842,7 @@ if ($action == 'create') {
 			$journal = $accountingjournalstatic->code;
 			$journal_label = $accountingjournalstatic->label;
 
-			print $accountingjournalstatic->getNomUrl(0,1,1);
+			print $accountingjournalstatic->getNomUrl(1, 1, 1);
 		}
 		print '</td>';
 		print '</tr>';
