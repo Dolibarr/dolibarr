@@ -1039,7 +1039,7 @@ if ($action == 'create') {
 		print "<tr><td>" . $langs->trans('Model') . "</td><td>";
 		include_once DOL_DOCUMENT_ROOT . '/core/modules/supplier_invoice/modules_facturefournisseur.php';
 		$list = ModelePDFSuppliersInvoices::liste_modeles($db);
-		print $form->selectarray('modelpdf', $list, $conf->global->INVOICE_SUPPLIER_ADDON_PDF);
+		print $form->selectarray('modelpdf', $list, getDolGlobalString('INVOICE_SUPPLIER_ADDON_PDF'));
 		print "</td></tr>";
 
 		// Public note
@@ -1525,7 +1525,7 @@ if ($action == 'create') {
         	<input type="hidden" name="id" value="' . $object->id . '">
         	';
 
-		if (!empty($conf->use_javascript_ajax) && $object->statut == 0) {
+		if (!empty($conf->use_javascript_ajax) && $object->statut == FactureFournisseurRec::STATUS_NOTSUSPENDED) {
 			include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
 		}
 

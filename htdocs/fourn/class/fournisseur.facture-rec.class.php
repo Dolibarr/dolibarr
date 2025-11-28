@@ -704,6 +704,8 @@ class FactureFournisseurRec extends CommonInvoice
 				$this->date_creation            = $obj->datec;
 				$this->date_modification        = $obj->tms;
 				$this->suspended                = $obj->suspended;
+				$this->statut                	= $obj->suspended; //for compatibility
+				$this->status                   = $obj->suspended; //for compatibility
 				$this->libelle                  = $obj->label;
 				$this->label                    = $obj->label;
 				$this->vat_src_code             = $obj->vat_src_code;
@@ -852,8 +854,8 @@ class FactureFournisseurRec extends CommonInvoice
 				$line->total_localtax2          = $objp->total_localtax2;
 				$line->total_ttc                = $objp->total_ttc;
 				$line->product_type             = $objp->product_type;
-				$line->date_start               = $this->db->jdate($objp->date_start);
-				$line->date_end                 = $this->db->jdate($objp->date_end);
+				$line->date_start               = $objp->date_start; // integer (not a date))
+				$line->date_end                 = $objp->date_end; // integer (not a date)
 				$line->info_bits                = $objp->info_bits	;
 				$line->special_code             = $objp->special_code;
 				$line->rang                     = $objp->rang;
@@ -1180,7 +1182,7 @@ class FactureFournisseurRec extends CommonInvoice
 			return -1;
 		}
 
-		if ($this->status == self::STATUS_SUSPENDED) {
+		if ($this->status == self::STATUS_NOTSUSPENDED) {
 			// Clean parameters
 			$fk_product = empty($fk_product) ? 0 : $fk_product;
 			$label = empty($label) ? '' : $label;
@@ -1269,7 +1271,7 @@ class FactureFournisseurRec extends CommonInvoice
 			$sql .= ', special_code = ' . (int) $special_code;
 			$sql .= ', rang = ' . (int) $rang;
 			$sql .= ', fk_unit = ' . ($fk_unit ? "'" . $this->db->escape($fk_unit) . "'" : 'null');
-			$sql .= ', fk_user_modif = ' . (int) $user;
+			$sql .= ', fk_user_modif = ' . (int) $user->id;
 			$sql .= ', multicurrency_subprice = '.price2num($pu_ht_devise);
 			$sql .= ', multicurrency_total_ht = '.price2num($multicurrency_total_ht);
 			$sql .= ', multicurrency_total_tva = '.price2num($multicurrency_total_tva);
