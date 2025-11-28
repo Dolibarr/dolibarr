@@ -378,8 +378,22 @@ if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
 	$massaction = '';
 }
-if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
-	$massaction = '';
+
+$parameters = array();
+$reshook = $hookmanager->executeHooks('addMoreMassActionsToClearMassActionValue', $parameters, $object, $action);
+
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+} else {
+	if (!empty($hookmanager->resArray)) {
+		if (isset($hookmanager->resArray['massactionstoclearmassactionvalue'])) {
+				$massactionstoclearmassactionvalue = array_merge($massactionstoclearmassactionvalue, $hookmanager->resArray['massactionstoclearmassactionvalue']);
+		}
+	}
+}
+
+if (!GETPOST('confirmmassaction', 'alpha') && !in_array($massaction, $massactionstoclearmassactionvalue)) {
+		$massaction = '';
 }
 
 $parameters = array('socid' => $socid, 'arrayfields' => &$arrayfields);
@@ -1467,7 +1481,20 @@ if ($user->hasRight('facture', 'supprimer')) {
 		$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 	}
 }
-if (in_array($massaction, array('presend', 'predelete', 'makepayment'))) {
+$parameters = array();
+$massactionstohidemassactionsbutton = array('presend', 'predelete', 'makepayment');
+$reshook = $hookmanager->executeHooks('addMoreMassActionsToHideMassActionsButton', $parameters, $object, $action);
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+} else {
+	if (!empty($hookmanager->resArray)) {
+		if (isset($hookmanager->resArray['massactionstohidemassactionsbutton'])) {
+				$massactionstohidemassactionsbutton = array_merge($massactionstohidemassactionsbutton, $hookmanager->resArray['massactionstohidemassactionsbutton']);
+		}
+	}
+}
+
+if (in_array($massaction, $massactionstohidemassactionsbutton)) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
