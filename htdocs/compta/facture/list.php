@@ -378,7 +378,7 @@ if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
 	$massaction = '';
 }
-
+$massactionstoclearmassactionvalue = array('presend', 'confirm_presend');
 $parameters = array();
 $reshook = $hookmanager->executeHooks('addMoreMassActionsToClearMassActionValue', $parameters, $object, $action);
 
