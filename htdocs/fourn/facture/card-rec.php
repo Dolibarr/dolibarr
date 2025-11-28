@@ -1291,7 +1291,7 @@ if ($action == 'create') {
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 		print $langs->trans('BankAccount');
 		print '<td>';
-		if ($action != 'editbankaccount' && $usercancreate && $object->statut == FactureFournisseurRec::STATUS_NOTSUSPENDED) {
+		if ($action != 'editbankaccount' && $usercancreate && $object->status == FactureFournisseurRec::STATUS_NOTSUSPENDED) {
 			print '<td class="right"><a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=editbankaccount&token=' . newToken() . '&id=' . $object->id . '">' . img_edit($langs->trans('SetBankAccount'), 1) . '</a></td>';
 		}
 		print '</tr></table>';
@@ -1312,7 +1312,7 @@ if ($action == 'create') {
 		print '<table class="nobordernopadding centpercent"><tr><td class="nowrap">';
 		print $langs->trans('Model');
 		print '<td>';
-		if ($action != 'editmodelpdf' && $usercancreate && $object->statut == FactureFournisseurRec::STATUS_NOTSUSPENDED) {
+		if ($action != 'editmodelpdf' && $usercancreate && $object->status == FactureFournisseurRec::STATUS_NOTSUSPENDED) {
 			print '<td class="right"><a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=editmodelpdf&token=' . newToken() . '&id=' . $object->id . '">' . img_edit($langs->trans('SetModel'), 1) . '</a></td>';
 		}
 		print '</tr></table>';
@@ -1419,7 +1419,7 @@ if ($action == 'create') {
 			}
 			//var_dump(dol_print_date($object->date_when+60, 'dayhour').' - '.dol_print_date($now, 'dayhour'));
 			if (! $object->isMaxNbGenReached()) {
-				if (! $object->suspended && $action != 'editdate_when' && $object->frequency > 0 && $object->date_when && $object->date_when < $now) {
+				if (empty($object->suspended) && $action != 'editdate_when' && $object->frequency > 0 && $object->date_when && $object->date_when < $now) {
 					print img_warning($langs->trans("Late"));
 				}
 			} else {
@@ -1525,7 +1525,7 @@ if ($action == 'create') {
         	<input type="hidden" name="id" value="' . $object->id . '">
         	';
 
-		if (!empty($conf->use_javascript_ajax) && $object->statut == FactureFournisseurRec::STATUS_NOTSUSPENDED) {
+		if (!empty($conf->use_javascript_ajax) && $object->status == FactureFournisseurRec::STATUS_NOTSUSPENDED) {
 			include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
 		}
 
@@ -1537,13 +1537,12 @@ if ($action == 'create') {
 			global $canchangeproduct;
 			$canchangeproduct = 0;
 
-			$object->statut = $object->suspended;
 			$object->printObjectLines($action, $object->thirdparty, $mysoc, $lineid, 0); // No date selector for template invoice
 		}
 
 		// Form to add new line
 		//TODO : Droits
-		if ($object->statut == $object::STATUS_DRAFT && $usercancreate && $action != 'valid' && $action != 'editline') {
+		if ($object->status == FactureFournisseurRec::STATUS_NOTSUSPENDED && $usercancreate && $action != 'valid' && $action != 'editline') {
 			if ($action != 'editline') {
 				// Add free products/services
 
