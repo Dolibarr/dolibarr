@@ -201,6 +201,7 @@ if (!empty($socid)) {
 	$dbtable = '&societe';
 }
 $hookmanager->initHooks(array('propallist'));
+dolRedirectPostSearchListRequestToGetIfPossible('propallist');
 $result = restrictedArea($user, $module, $objectid, $dbtable);
 
 $diroutputmassaction = $conf->propal->multidir_output[$conf->entity].'/temp/massgeneration/'.$user->id;
