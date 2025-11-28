@@ -1048,7 +1048,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 								$qtyhourforline = convertDurationtoHour($line->qty, $unitforline);
 							}
 
-							if ($qtyhourservice && $qtyhourforline) {
+							// Add the workstation cost for the manufacturing order cost when a workstation is set
+							if (isModEnabled('workstation') && $line->fk_default_workstation > 0) {
+								$workstation = new Workstation($db);
+								$workstation->fetch($line->fk_default_workstation);
+								$line->total_cost = (float) $qtyhourforline * ($workstation->thm_operator_estimated + $workstation->thm_machine_estimated);
+								$bomcostupdated += $line->total_cost;
+							}
+							elseif ($qtyhourservice && $qtyhourforline) {
 								$linecost = price2num(($qtyhourforline / $qtyhourservice * $costprice) / $object->qty, 'MT');	// price for line for all quantities
 								$bomcostupdated += price2num(($qtyhourforline / $qtyhourservice * $costprice) / $object->qty, 'MU');	// same but with full accuracy
 							} else {
