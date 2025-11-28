@@ -62,7 +62,7 @@ $langs->loadLangs(array("stocks", "margins", "products"));
  * View
  */
 
-top_httphead();
+top_httphead('application/json');
 
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
