@@ -683,6 +683,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				'MAIN_MODULE_BLOCKEDLOG' => 'noboxes',
 				'MAIN_MODULE_DON' => 'newboxdefonly',
 				'MAIN_MODULE_ECM' => 'newboxdefonly',
+				'MAIN_MODULE_EVENTORGANIZATION' => 'newboxdefonly',
 				'MAIN_MODULE_EXPENSEREPORT' => 'newboxdefonly',
 				'MAIN_MODULE_FACTURE' => 'newboxdefonly',
 				'MAIN_MODULE_FOURNISSEUR' => 'newboxdefonly',
