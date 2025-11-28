@@ -436,7 +436,6 @@ if (empty($reshook)) {
 								$rang++;
 								$TFactThirdNbLines[$expd->socid]++;
 							}
-							
 							$result = $objecttmp->addline(
 								$desc,
 								$lines[$i]->subprice,
