@@ -169,7 +169,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 
 include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
-if (GETPOST('action') == 'upload' && $user->hasRight('blockedlog', 'read')) {		// read is read/upload for blockedlog
+if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is read/export for blockedlog
 	$error = 0;
 
 	$previoushash = '';
@@ -184,16 +184,20 @@ if (GETPOST('action') == 'upload' && $user->hasRight('blockedlog', 'read')) {		/
 		$error++;
 	}
 
+	$dates = dol_get_first_day(GETPOSTINT('yeartoexport'), GETPOSTINT('monthtoexport') ? GETPOSTINT('monthtoexport') : 1);
+	$datee = dol_get_last_day(GETPOSTINT('yeartoexport'), GETPOSTINT('monthtoexport') ? GETPOSTINT('monthtoexport') : 12);
+
+	if ($datee >= dol_now()) {
+		setEventMessages($langs->trans("ErrorPeriodMustBePastToAllowExport"), null, "errors");
+		$error++;
+	}
+
 	if (!$error) {
 		// Get the ID of the first line qualified
 		$sql = "SELECT rowid,date_creation,tms,user_fullname,action,amounts,element,fk_object,date_object,ref_object,signature,fk_user,object_data";
 		$sql .= " FROM ".MAIN_DB_PREFIX."blockedlog";
 		$sql .= " WHERE entity = ".((int) $conf->entity);
-		if (GETPOSTINT('monthtoexport') > 0 || GETPOSTINT('yeartoexport') > 0) {
-			$dates = dol_get_first_day(GETPOSTINT('yeartoexport'), GETPOSTINT('monthtoexport') ? GETPOSTINT('monthtoexport') : 1);
-			$datee = dol_get_last_day(GETPOSTINT('yeartoexport'), GETPOSTINT('monthtoexport') ? GETPOSTINT('monthtoexport') : 12);
-			$sql .= " AND date_creation BETWEEN '".$db->idate($dates)."' AND '".$db->idate($datee)."'";
-		}
+		$sql .= " AND date_creation BETWEEN '".$db->idate($dates)."' AND '".$db->idate($datee)."'";
 		$sql .= " ORDER BY rowid ASC"; // Required so we get the first one
 		$sql .= $db->plimit(1);
 
@@ -518,7 +522,7 @@ if ($action == 'deletefile') {
 
 print '<form method="POST" id="exportArchives" action="'.$_SERVER["PHP_SELF"].'?output=file">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="upload">';
+print '<input type="hidden" name="action" value="export">';
 
 print '<div class="right">';
 

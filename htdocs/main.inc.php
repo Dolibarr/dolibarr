@@ -1273,13 +1273,15 @@ if (!defined('NOREQUIRETRAN')) {
 
 	// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
 	// accesskey is for Mac:               CTRL + Option + key for all browsers
+
+	// Note: $con->browser->os and $conf->browser->name may not be defined if we are in CLI mode.
 	$conf->browser->stringforfirstkey = $langs->trans("KeyboardShortcut");
-	if ($conf->browser->os == 'macintosh') {
+	if (!empty($conf->browser->os) && $conf->browser->os == 'macintosh') {
 		$conf->browser->stringforfirstkey .= ' CTRL + Option +';
 	} else {
-		if ($conf->browser->name == 'chrome') {
+		if (!empty($conf->browser->name) && $conf->browser->name == 'chrome') {
 			$conf->browser->stringforfirstkey .= ' ALT +';
-		} elseif ($conf->browser->name == 'firefox') {
+		} elseif (!empty($conf->browser->name) && $conf->browser->name == 'firefox') {
 			$conf->browser->stringforfirstkey .= ' ALT + SHIFT +';
 		} else {
 			$conf->browser->stringforfirstkey .= ' CTL +';
@@ -3678,7 +3680,9 @@ if (!function_exists("llxFooter")) {
 			print '<script src="'.DOL_URL_ROOT.'/core/js/lib_foot.js.php?lang='.$langs->defaultlang . '&' . $ext .'"></script>'."\n";
 		}
 
-		// JS wrapper to add log when clicking on download or preview
+		// JS wrapper to add an unalterable log when clicking on Download or Preview
+		// This is done on customer invoices only.
+		// This add a log and increase the pos_print_counter too (done by block-add.php).
 		if (isModEnabled('blockedlog') && is_object($object) && !empty($object->id) && $object->id > 0) {
 			if (in_array($object->element, array('facture')) && $object->statut > 0) {       // Restrict for the moment to element 'facture'
 				print "\n<!-- JS CODE TO ENABLE log when making a download or a preview of a document -->\n";
@@ -3689,9 +3693,9 @@ if (!function_exists("llxFooter")) {
 						console.log("Call /blockedlog/ajax/block-add on a.documentpreview");
 						$.post('<?php echo DOL_URL_ROOT."/blockedlog/ajax/block-add.php" ?>'
 								, {
-									id:<?php echo $object->id; ?>
-									, element:'<?php echo dol_escape_js($object->element) ?>'
-									, action:'DOC_PREVIEW'
+									id: <?php echo $object->id; ?>
+									, element: '<?php echo dol_escape_js($object->element) ?>'
+									, action: 'DOC_PREVIEW'
 									, token: '<?php echo currentToken(); ?>'
 								}
 						);
@@ -3700,9 +3704,9 @@ if (!function_exists("llxFooter")) {
 						console.log("Call /blockedlog/ajax/block-add a.documentdownload");
 						$.post('<?php echo DOL_URL_ROOT."/blockedlog/ajax/block-add.php" ?>'
 								, {
-									id:<?php echo $object->id; ?>
-									, element:'<?php echo dol_escape_js($object->element) ?>'
-									, action:'DOC_DOWNLOAD'
+									id: <?php echo $object->id; ?>
+									, element: '<?php echo dol_escape_js($object->element) ?>'
+									, action: 'DOC_DOWNLOAD'
 									, token: '<?php echo currentToken(); ?>'
 								}
 						);

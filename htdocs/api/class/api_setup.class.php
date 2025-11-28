@@ -1,13 +1,13 @@
 <?php
-/* Copyright (C) 2016       Xebax Christy           <xebax@wanadoo.fr>
- * Copyright (C) 2016	    Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2017	    Regis Houssin	        <regis.houssin@inodbox.com>
- * Copyright (C) 2017	    Neil Orley	            <neil.orley@oeris.fr>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2018-2022  Thibault FOUCART        <support@ptibogxiv.net>
- * Copyright (C) 2024       Jon Bendtsen            <jon.bendtsen.github@jonb.dk>
+/* Copyright (C) 2016		Xebax Christy			<xebax@wanadoo.fr>
+ * Copyright (C) 2016		Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2017-2025	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2017		Neil Orley				<neil.orley@oeris.fr>
+ * Copyright (C) 2018-2025	Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2018-2022	Thibault FOUCART		<support@ptibogxiv.net>
+ * Copyright (C) 2024		Jon Bendtsen			<jon.bendtsen.github@jonb.dk>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Charlene Benke          <charlene@patas-monkey.com>
+ * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
  *
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1056,7 +1056,8 @@ class Setup extends DolibarrApi
 
 		$sql = "SELECT rowid, code, label, affect, delay, newbymonth, fk_country";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_holiday_types as t";
-		$sql .= " WHERE t.active = ".((int) $active);
+		$sql .= " WHERE t.entity IN (".getEntity('c_holiday_types').")";
+		$sql .= " AND t.active = ".((int) $active);
 		if ($fk_country) {
 			$sql .= " AND (t.fk_country = ".((int) $fk_country);
 			$sql .= " OR t.fk_country is null)";
@@ -1135,7 +1136,8 @@ class Setup extends DolibarrApi
 
 		$sql = "SELECT id, code, dayrule, day, month, year, fk_country, code as label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_hrm_public_holiday as t";
-		$sql .= " WHERE t.active = ".((int) $active);
+		$sql .= " WHERE t.entity IN (".getEntity('c_hrm_public_holiday').")";
+		$sql .= " AND t.active = ".((int) $active);
 		if ($fk_country) {
 			$sql .= " AND (t.fk_country = ".((int) $fk_country);
 			$sql .= " OR t.fk_country is null)";

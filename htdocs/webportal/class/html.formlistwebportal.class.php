@@ -37,69 +37,117 @@ require_once DOL_DOCUMENT_ROOT . '/webportal/class/html.formwebportal.class.php'
 class FormListWebPortal
 {
 	/**
-	 * @var string Action
-	 */
-	public $action = '';
-
-	/**
 	 * @var DoliDB Database
 	 */
 	public $db;
 
 	/**
+	 * @var	AbstractListController Controller handler
+	 */
+	public $controller;
+	/**
+	 * @var string Element (english) : "propal", "order", "invoice"
+	 */
+	public $element = '';
+	/**
+	 * @var string Page context
+	 */
+	public $contextpage = '';
+	/**
+	 * @var string Action
+	 */
+	public $action = '';
+
+	/**
 	 * @var FormWebPortal  Instance of the Form
 	 */
 	public $form;
-
 	/**
 	 * @var CommonObject Object
 	 */
 	public $object;
 
 	/**
-	 * @var int Limit (-1 to get limit from conf, 0 no limit, or Nb to show)
-	 */
-	public $limit = -1;
-
-	/**
-	 * @var int Page (1 by default)
-	 */
-	public $page = 1;
-
-	/**
-	 * @var string Sort field
-	 */
-	public $sortfield = '';
-
-	/**
-	 * @var string Sort order
-	 */
-	public $sortorder = '';
-
-	/**
 	 * @var string Title key to translate
 	 */
 	public $titleKey = '';
-
 	/**
 	 * @var string Title desc key to translate
 	 */
 	public $titleDescKey = '';
 
 	/**
-	 * @var string Page context
+	 * @var int Limit (-1 to get limit from conf, 0 no limit, or Nb to show)
 	 */
-	public $contextpage = '';
+	public $limit = -1;
+	/**
+	 * @var int Page (1 by default)
+	 */
+	public $page = 1;
 
 	/**
-	 * @var array<string|int> Search filters
+	 * @var string		Request SQL for SELECT part
 	 */
-	public $search = array();
+	public $sql_select = '';
+	/**
+	 * @var string		Request SQL for body part (FROM, LEFT JOIN, WHERE, ...)
+	 */
+	public $sql_body = '';
+	/**
+	 * @var string		Request SQL for ORDER BY part (and LIMIT, ...)
+	 */
+	public $sql_order = '';
+	/**
+	 * @var string		Empty value for select filters
+	 */
+	public $emptyValueKey = '';
 
 	/**
-	 * @var array<string,array{type?:string,label:string,checked:int<0,1>,visible:int<0,1>,enabled:int<0,1>,position:int,help:string}>	Array of fields
+	 * @var int Offset (0 by default)
+	 */
+	public $offset = 0;
+	/**
+	 * @var string Sort field
+	 */
+	public $sortfield = '';
+	/**
+	 * @var string Sort order
+	 */
+	public $sortorder = '';
+
+	/**
+	 * @var array<string,array{type?:string,label:string,checked:int<0,1>,visible:int<0,1>,enabled:bool|int<0,1>,position:int,help:string}>	Array of fields
 	 */
 	public $arrayfields = array();
+	/**
+	 * @var array<string,mixed> Search filters
+	 */
+	public $search = array();
+	/**
+	 * @var string Search all
+	 */
+	public $search_all = '';
+	/**
+	 * @var array<string,string> Fields for search all
+	 */
+	public $fields_to_search_all = array();
+	/**
+	 * @var string Params for links
+	 */
+	public $params = '';
+
+	/**
+	 * @var int Nb total results (0 by default)
+	 */
+	public $nbtotalofrecords = 0;
+	/**
+	 * @var array<int,stdClass> Object records from the SQL request
+	 */
+	public $records = [];
+	/**
+	 * @var int Nb column in the table
+	 */
+	public $nbColumn = 0;
 
 	/**
 	 * @var array<int,Societe> Company static list (cache)
@@ -121,11 +169,16 @@ class FormListWebPortal
 	/**
 	 * Init
 	 *
-	 * @param	string		$elementEn		Element (english) : "propal", "order", "invoice"
+	 * @param	AbstractListController	$controller		Controller handler
+	 * @param	string					$elementEn		Element (english) : "propal", "order", "invoice"
 	 * @return	void
 	 */
-	public function init($elementEn)
+	public function init(&$controller, $elementEn)
 	{
+		global $conf;
+
+		$this->controller = &$controller;
+
 		// keep compatibility
 		if ($elementEn == 'commande') {
 			$elementEn = 'order';
@@ -133,91 +186,56 @@ class FormListWebPortal
 			$elementEn = 'invoice';
 		}
 
-		// load module libraries
-		dol_include_once('/webportal/class/webportal' . $elementEn . '.class.php');
-
-		// Initialize a technical objects
 		$objectclass = 'WebPortal' . ucfirst($elementEn);
-		$object = new $objectclass($this->db);
+		if (!is_object($this->object) && dol_include_once('/webportal/class/webportal' . $elementEn . '.class.php') > 0) {
+			// Initialize a technical objects
+			$this->object = new $objectclass($this->db);
+		}
 
-		// set form list
+		// Set form list
+		$this->element = $elementEn;
 		$this->action = GETPOST('action', 'aZ09');
-		$this->object = $object;
 		$this->limit = GETPOSTISSET('limit') ? GETPOSTINT('limit') : -1;
 		$this->sortfield = GETPOST('sortfield', 'aZ09comma');
 		$this->sortorder = GETPOST('sortorder', 'aZ09comma');
 		$this->page = GETPOSTISSET('page') ? GETPOSTINT('page') : 1;
-		$this->titleKey = $objectclass . 'ListTitle';
+		if (empty($this->titleKey)) {
+			$this->titleKey = $objectclass . 'ListTitle';
+		}
+		if (empty($this->titleDescKey)) {
+			$this->titleDescKey = $objectclass . 'ListDesc';
+		}
+		$this->fields_to_search_all = array();
+		if ($this->limit < 0) {
+			$this->limit = $conf->liste_limit;
+		}
+		if ($this->page <= 0) {
+			$this->limit = 1;
+		}
+		if (!$this->sortfield && is_object($this->object)) {
+			reset($this->object->fields); // Reset is required to avoid key() to return null.
+			$key = key($this->object->fields);
+			$alias = $this->object->fields[$key]['alias'] ?? 't.';
+			$this->sortfield = $alias . $key; // Set here default search field. By default 1st field in definition.
+		}
+		if (!$this->sortorder) {
+			$this->sortorder = 'DESC';
+		}
+		$this->emptyValueKey = ($elementEn == 'order' ? "-5" : "-1");
+
+		// Sort object fields
+		if (is_object($this->object)) {
+			$this->object->fields = dol_sort_array($this->object->fields, 'position');
+		}
 
 		// Initialize array of search criteria
-		//$search_all = GETPOST('search_all', 'alphanohtml');
-		$search = array();
-		foreach ($object->fields as $key => $val) {
-			if (GETPOST('search_' . $key, 'alpha') !== '') {
-				$search[$key] = GETPOST('search_' . $key, 'alpha');
-			}
-			if (preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
-				/* Fix: this is not compatible with multilangage date format, replaced with dolibarr method
-				$postDateStart = GETPOST('search_' . $key . '_dtstart', 'alphanohtml');
-				$postDateEnd = GETPOST('search_' . $key . '_dtend', 'alphanohtml');
-				// extract date YYYY-MM-DD for year, month and day
-				$dateStartArr = explode('-', $postDateStart);
-				$dateEndArr = explode('-', $postDateEnd);
-				if (count($dateStartArr) == 3) {
-					$dateStartYear = (int) $dateStartArr[0];
-					$dateStartMonth = (int) $dateStartArr[1];
-					$dateStartDay = (int) $dateStartArr[2];
-					$search[$key . '_dtstart'] = dol_mktime(0, 0, 0, $dateStartMonth, $dateStartDay, $dateStartYear);
-				}
-				if (count($dateEndArr) == 3) {
-					$dateEndYear = (int) $dateEndArr[0];
-					$dateEndMonth = (int) $dateEndArr[1];
-					$dateEndDay = (int) $dateEndArr[2];
-					$search[$key . '_dtend'] = dol_mktime(23, 59, 59, $dateEndMonth, $dateEndDay, $dateEndYear);
-				}
-				*/
-				$search[$key . '_dtstart'] = dol_mktime(0, 0, 0, GETPOSTINT('search_'.$key.'_dtstartmonth'), GETPOSTINT('search_'.$key.'_dtstartday'), GETPOSTINT('search_'.$key.'_dtstartyear'));
-				$search[$key . '_dtend'] = dol_mktime(23, 59, 59, GETPOSTINT('search_'.$key.'_dtendmonth'), GETPOSTINT('search_'.$key.'_dtendday'), GETPOSTINT('search_'.$key.'_dtendyear'));
-				$search[$key . '_dtstartmonth'] = GETPOSTINT('search_' . $key . '_dtstartmonth');
-				$search[$key . '_dtstartday'] = GETPOSTINT('search_' . $key . '_dtstartday');
-				$search[$key . '_dtstartyear'] = GETPOSTINT('search_' . $key . '_dtstartyear');
-				$search[$key . '_dtendmonth'] = GETPOSTINT('search_' . $key . '_dtendmonth');
-				$search[$key . '_dtendday'] = GETPOSTINT('search_' . $key . '_dtendday');
-				$search[$key . '_dtendyear'] = GETPOSTINT('search_' . $key . '_dtendyear');
-			}
-		}
-		$this->search = $search;
-
-		// List of fields to search into when doing a "search in all"
-		//$fieldstosearchall = array();
+		$this->setSearchValues();
 
 		// Definition of array of fields for columns
-		$arrayfields = array();
-		foreach ($object->fields as $key => $val) {
-			// If $val['visible']==0, then we never show the field
-			if (!empty($val['visible'])) {
-				$visible = (int) dol_eval((string) $val['visible'], 1);
-				$arrayfields['t.' . $key] = array(
-					'label' => $val['label'],
-					'checked' => (($visible < 0) ? 0 : 1),
-					'enabled' => (int) (abs($visible) != 3 && (bool) dol_eval((string) $val['enabled'], 1)),
-					'position' => $val['position'],
-					'help' => isset($val['help']) ? $val['help'] : ''
-				);
-			}
-		}
-		if ($elementEn == 'invoice') {
-			$arrayfields['remain_to_pay'] = array('type' => 'price', 'label' => 'RemainderToPay', 'checked' => 1, 'enabled' => 1, 'visible' => 1, 'position' => 10000, 'help' => '',);
-		}
-		$arrayfields['download_link'] = array('label' => 'File', 'checked' => 1, 'enabled' => 1, 'visible' => 1, 'position' => 10001, 'help' => '',);
-		if ($elementEn == "propal" && getDolGlobalString("PROPOSAL_ALLOW_ONLINESIGN") != 0) {
-			$arrayfields['signature_link'] = array('label' => 'Signature', 'checked' => 1, 'enabled' => 1, 'visible' => 1, 'position' => 10002, 'help' => '',);
-		}
-		$object->fields = dol_sort_array($object->fields, 'position');
-		//$arrayfields['anotherfield'] = array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>1, 'enabled'=>1, 'position'=>90, 'csslist'=>'right');
-		$arrayfields = dol_sort_array($arrayfields, 'position');
+		$this->setArrayFields();
 
-		$this->arrayfields = $arrayfields;
+		// Sort array of fields for columns
+		$this->arrayfields = dol_sort_array($this->arrayfields, 'position');
 	}
 
 	/**
@@ -227,624 +245,493 @@ class FormListWebPortal
 	 */
 	public function doActions()
 	{
-		$object = $this->object;
-		$search = $this->search;
-
 		// Purge search criteria
 		if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
-			foreach ($object->fields as $key => $val) {
-				$search[$key] = '';
-				if (preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
-					//$search[$key . '_dtstart'] = '';
-					//$search[$key . '_dtend'] = '';
-					$search[$key . '_dtstartmonth'] = '';
-					$search[$key . '_dtendmonth'] = '';
-					$search[$key . '_dtstartday'] = '';
-					$search[$key . '_dtendday'] = '';
-					$search[$key . '_dtstartyear'] = '';
-					$search[$key . '_dtendyear'] = '';
-				}
-			}
-			$this->search = $search;
+			$this->setSearchValues(true);
 		}
 	}
 
 	/**
-	 * List for an element in the page context
+	 * Set array fields
 	 *
-	 * @param	Context		$context		Context object
-	 * @return	string		Html output
+	 * @return	void
 	 */
-	public function elementList($context)
+	public function setArrayFields()
 	{
-		global $conf, $hookmanager, $langs;
-
-		$html = '';
-		$nbpages = 0;
-
-		// initialize
-		$action = $this->action;
-		$object = $this->object;
-		$limit = $this->limit;
-		$page = $this->page;
-		$sortfield = $this->sortfield;
-		$sortorder = $this->sortorder;
-		$titleKey = $this->titleKey;
-		$contextpage = $this->contextpage;
-		$search = $this->search;
-		$arrayfields = $this->arrayfields;
-		$elementEn = $object->element;
-		if ($object->element == 'commande') {
-			$elementEn = 'order';
-		} elseif ($object->element == 'facture') {
-			$elementEn = 'invoice';
-		}
-
-		// specific for invoice and remain to pay
-		$discount = null;
-		if ($elementEn == 'invoice') {
-			$discount = new DiscountAbsolute($this->db);
-		}
-
-		// empty value for select
-		$emptyValueKey = ($elementEn == 'order' ? -5 : -1);
-
-		if ($limit < 0) {
-			$limit = $conf->liste_limit;
-		}
-		if ($page <= 0) {
-			$page = 1;
-		}
-		$offset = $limit * ($page - 1);
-		if (!$sortfield) {
-			reset($object->fields); // Reset is required to avoid key() to return null.
-			$sortfield = 't.' . key($object->fields); // Set here default search field. By default 1st field in definition.
-		}
-		if (!$sortorder) {
-			$sortorder = 'DESC';
-		}
-
-		$socid = (int) $context->logged_thirdparty->id;
-
-		// Build and execute select
-		// --------------------------------------------------------------------
-		$sql = "SELECT ";
-		$sql .= $object->getFieldList('t');
-		$sql .= ", t.entity as element_entity";
-		// Add fields from hooks
-		$parameters = array();
-		$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-		$sql .= $hookmanager->resPrint;
-		$sql = preg_replace('/,\s*$/', '', $sql);
-
-		$sqlfields = $sql; // $sql fields to remove for count total
-
-		$sql .= " FROM " . $this->db->prefix() . $object->table_element . " as t";
-		// Add table from hooks
-		$parameters = array();
-		$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-		$sql .= $hookmanager->resPrint;
-		if ($object->ismultientitymanaged == 1) {
-			$sql .= " WHERE t.entity IN (" . getEntity($object->element, (GETPOSTINT('search_current_entity') ? 0 : 1)) . ")";
-		} else {
-			$sql .= " WHERE 1 = 1";
-		}
-		// filter on logged third-party
-		$sql .= " AND t.fk_soc = " . ((int) $socid);
-		// discard record with status draft
-		$sql .= " AND t.fk_statut <> 0";
-
-		foreach ($search as $key => $val) {
-			if (array_key_exists($key, $object->fields)) {
-				if (($key == 'status' || $key == 'fk_statut') && $search[$key] == $emptyValueKey) {
-					continue;
+		// Definition of array of fields for columns
+		$this->arrayfields = array();
+		if (is_object($this->object)) {
+			foreach ($this->object->fields as $key => $val) {
+				// If $val['visible']==0, then we never show the field
+				if (!empty($val['visible'])) {
+					$visible = (int) dol_eval((string) $val['visible'], 1);
+					$alias = $val['alias'] ?? 't.';
+					$this->arrayfields[$alias . $key] = array(
+						'label' => $val['label'],
+						'checked' => (($visible < 0) ? 0 : 1),
+						'enabled' => (int) (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
+						'position' => $val['position'],
+						'help' => isset($val['help']) ? $val['help'] : ''
+					);
 				}
-				$mode_search = (($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key])) ? 1 : 0);
-				if ((strpos($object->fields[$key]['type'], 'integer:') === 0) || (strpos($object->fields[$key]['type'], 'sellist:') === 0) || !empty($object->fields[$key]['arrayofkeyval'])) {
-					if ($search[$key] == "$emptyValueKey" || ($search[$key] === '0' && (empty($object->fields[$key]['arrayofkeyval']) || !array_key_exists('0', $object->fields[$key]['arrayofkeyval'])))) {
-						$search[$key] = '';
+			}
+		}
+		$this->arrayfields['remain_to_pay'] = array('type' => 'price', 'label' => 'RemainderToPay', 'checked' => 1, 'enabled' => $this->element == 'invoice' && isModEnabled('invoice'), 'visible' => 1, 'position' => 10000, 'help' => '',);
+		$this->arrayfields['download_link'] = array('type' => '', 'label' => 'File', 'checked' => 1, 'enabled' => ($this->element == 'propal' && isModEnabled('propal')) || ($this->element == 'order' && isModEnabled('order')) || ($this->element == 'invoice' && isModEnabled('invoice')), 'visible' => 1, 'position' => 10001, 'help' => '',);
+		$this->arrayfields['signature_link'] = array('type' => '', 'label' => 'Signature', 'checked' => 1, 'enabled' => $this->element == 'propal' && isModEnabled('propal') && getDolGlobalString("PROPOSAL_ALLOW_ONLINESIGN") != 0, 'visible' => 1, 'position' => 10002, 'help' => '',);
+
+		$this->controller->listSetArrayFields();
+	}
+
+	/**
+	 * Set columns visibility
+	 *
+	 * @return	void
+	 */
+	public function setColumnsVisibility()
+	{
+		// Overwrite checked property for columns visibility
+		if (!empty($this->arrayfields)) {
+			foreach ($this->arrayfields as $key => $val) {
+				$this->arrayfields[$key]['checked'] &= $val['enabled'];
+			}
+		}
+	}
+
+	/**
+	 * Set search values
+	 *
+	 * @param	bool		$clear		Clear search values
+	 * @return	void
+	 */
+	public function setSearchValues($clear = false)
+	{
+		// Initialize array of search criteria
+		$this->search = array();
+		if (is_object($this->object)) {
+			foreach ($this->object->fields as $key => $val) {
+				if ($clear) {
+					$this->search[$key] = '';
+					if (preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
+						$this->search[$key . '_dtstart'] = '';
+						$this->search[$key . '_dtend'] = '';
+						$this->search[$key . '_dtstartmonth'] = '';
+						$this->search[$key . '_dtendmonth'] = '';
+						$this->search[$key . '_dtstartday'] = '';
+						$this->search[$key . '_dtendday'] = '';
+						$this->search[$key . '_dtstartyear'] = '';
+						$this->search[$key . '_dtendyear'] = '';
 					}
-					$mode_search = 2;
+				} else {
+					if (GETPOST('search_' . $key, 'alpha') !== '') {
+						$this->search[$key] = GETPOST('search_' . $key, 'alpha');
+					}
+					if (preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
+						/* Fix: this is not compatible with multilangage date format, replaced with dolibarr method
+						$postDateStart = GETPOST('search_' . $key . '_dtstart', 'alphanohtml');
+						$postDateEnd = GETPOST('search_' . $key . '_dtend', 'alphanohtml');
+						// extract date YYYY-MM-DD for year, month and day
+						$dateStartArr = explode('-', $postDateStart);
+						$dateEndArr = explode('-', $postDateEnd);
+						if (count($dateStartArr) == 3) {
+							$dateStartYear = (int) $dateStartArr[0];
+							$dateStartMonth = (int) $dateStartArr[1];
+							$dateStartDay = (int) $dateStartArr[2];
+							$this->search[$key . '_dtstart'] = dol_mktime(0, 0, 0, $dateStartMonth, $dateStartDay, $dateStartYear);
+						}
+						if (count($dateEndArr) == 3) {
+							$dateEndYear = (int) $dateEndArr[0];
+							$dateEndMonth = (int) $dateEndArr[1];
+							$dateEndDay = (int) $dateEndArr[2];
+							$this->search[$key . '_dtend'] = dol_mktime(23, 59, 59, $dateEndMonth, $dateEndDay, $dateEndYear);
+						}
+						*/
+						$this->search[$key . '_dtstart'] = dol_mktime(0, 0, 0, GETPOSTINT('search_'.$key.'_dtstartmonth'), GETPOSTINT('search_'.$key.'_dtstartday'), GETPOSTINT('search_'.$key.'_dtstartyear'));
+						$this->search[$key . '_dtend'] = dol_mktime(23, 59, 59, GETPOSTINT('search_'.$key.'_dtendmonth'), GETPOSTINT('search_'.$key.'_dtendday'), GETPOSTINT('search_'.$key.'_dtendyear'));
+						$this->search[$key . '_dtstartmonth'] = GETPOSTINT('search_' . $key . '_dtstartmonth');
+						$this->search[$key . '_dtstartday'] = GETPOSTINT('search_' . $key . '_dtstartday');
+						$this->search[$key . '_dtstartyear'] = GETPOSTINT('search_' . $key . '_dtstartyear');
+						$this->search[$key . '_dtendmonth'] = GETPOSTINT('search_' . $key . '_dtendmonth');
+						$this->search[$key . '_dtendday'] = GETPOSTINT('search_' . $key . '_dtendday');
+						$this->search[$key . '_dtendyear'] = GETPOSTINT('search_' . $key . '_dtendyear');
+					}
 				}
-				if ($search[$key] != '') {
-					$sql .= natural_search("t." . $this->db->escape($key), $search[$key], (($key == 'status' || $key == 'fk_statut') ? ($search[$key] < 0 ? 1 : 2) : $mode_search));
-				}
+			}
+		}
+
+		// List of fields to search into when doing a "search in all"
+		$this->search_all = GETPOST('search_all', 'alphanohtml');
+
+		$this->controller->listSetSearchValues($clear);
+	}
+
+	/**
+	 * set SQL request
+	 *
+	 * @return	void
+	 */
+	public function setSqlRequest()
+	{
+		global $hookmanager;
+
+		if (is_object($this->object)) {
+			$context = Context::getInstance();
+
+			// Build and execute select
+			// --------------------------------------------------------------------
+			$this->sql_select = "SELECT ";
+			$this->sql_select .= $this->object->getFieldList('t');
+			if ($this->object->ismultientitymanaged == 1) {
+				$this->sql_select .= ", t.entity as element_entity, t.entity";
+			}
+			// Add fields from hooks
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $context);
+			$this->sql_select .= $hookmanager->resPrint;
+			$this->sql_select = preg_replace('/,\s*$/', '', $this->sql_select);
+
+			$this->sql_body = " FROM " . $this->db->prefix() . $this->object->table_element . " as t";
+			// Add table from hooks
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $context);
+			$this->sql_body .= $hookmanager->resPrint;
+			if ($this->object->ismultientitymanaged == 1) {
+				$this->sql_body .= " WHERE t.entity IN (" . getEntity($this->object->element, (GETPOSTINT('search_current_entity') ? 0 : 1)) . ")";
 			} else {
-				if (preg_match('/(_dtstart|_dtend)$/', $key) && $search[$key] != '') {
+				$this->sql_body .= " WHERE 1 = 1";
+			}
+
+			foreach ($this->search as $key => $val) {
+				if (array_key_exists($key, $this->object->fields)) {
+					if (($key == 'status' || $key == 'fk_statut') && $val == $this->emptyValueKey) {
+						continue;
+					}
+					if (!isset($this->object->fields[$key])) {
+						continue;
+					}
+					$field_spec = $this->object->fields[$key];
+					//  @phpstan-ignore-next-line
+					$alias = $field_spec['alias'] ?? 't.';
+					$mode_search = (($this->object->isInt($field_spec) || $this->object->isFloat($field_spec)) ? 1 : 0);
+					if ((strpos($field_spec['type'], 'integer:') === 0) || (strpos($field_spec['type'], 'sellist:') === 0) || !empty($field_spec['arrayofkeyval'])) {
+						if ($val == "$this->emptyValueKey" || ($val === '0' && (empty($field_spec['arrayofkeyval']) || !array_key_exists('0', $field_spec['arrayofkeyval'])))) {
+							$val = '';
+						}
+						$mode_search = 2;
+					}
+					if ($field_spec['type'] === 'boolean') {
+						$mode_search = 1;
+						if ($val == "$this->emptyValueKey") {
+							$val = '';
+						}
+					}
+					//  @phpstan-ignore-next-line
+					if (empty($field_spec['searchmulti'])) {
+						if (!is_array($val) && $val != '') {
+							$this->sql_body .= natural_search($alias . $this->db->escape($key), $val, (($key == 'status') ? 2 : $mode_search));
+						}
+					} else {
+						if (is_array($val) && !empty($val)) {
+							$this->sql_body .= natural_search($alias . $this->db->escape($key), implode(',', $val), (($key == 'status') ? 2 : $mode_search));
+						}
+					}
+				} elseif (preg_match('/(_dtstart|_dtend)$/', $key) && $val != '') {
 					$columnName = preg_replace('/(_dtstart|_dtend)$/', '', $key);
-					if (preg_match('/^(date|timestamp|datetime)/', $object->fields[$columnName]['type'])) {
-						if (preg_match('/_dtstart$/', $key)) {
-							$sql .= " AND t." . $this->db->escape($columnName) . " >= '" . $this->db->idate((int) $search[$key]) . "'";
-						}
-						if (preg_match('/_dtend$/', $key)) {
-							$sql .= " AND t." . $this->db->escape($columnName) . " <= '" . $this->db->idate((int) $search[$key]) . "'";
+					if (array_key_exists($columnName, $this->object->fields)) {
+						$field_spec = $this->object->fields[$columnName];
+						//  @phpstan-ignore-next-line
+						$alias = $field_spec['alias'] ?? 't.';
+						if (preg_match('/^(date|timestamp|datetime)/', $field_spec['type'])) {
+							if (preg_match('/_dtstart$/', $key)) {
+								$this->sql_body .= " AND " . $alias . $this->db->sanitize($columnName) . " >= '" . $this->db->idate((int) $val) . "'";
+							}
+							if (preg_match('/_dtend$/', $key)) {
+								$this->sql_body .= " AND " . $alias . $this->db->sanitize($columnName) . " <= '" . $this->db->idate((int) $val) . "'";
+							}
 						}
 					}
 				}
 			}
-		}
-		//if ($search_all) {
-		//    $sql .= natural_search(array_keys($fieldstosearchall), $search_all);
-		//}
-		// Add where from hooks
-		$parameters = array();
-		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-		$sql .= $hookmanager->resPrint;
-
-		// Count total nb of records
-		$nbtotalofrecords = 0;
-		if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
-			/* The fast and low memory method to get and count full list converts the sql into a sql count */
-			$sqlforcount = preg_replace('/^' . preg_quote($sqlfields, '/') . '/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
-			$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
-			$resql = $this->db->query($sqlforcount);
-			if ($resql) {
-				$objforcount = $this->db->fetch_object($resql);
-				$nbtotalofrecords = (int) $objforcount->nbtotalofrecords;
-			} else {
-				dol_print_error($this->db);
+			if (!empty($this->search_all) && !empty($this->fields_to_search_all)) {
+				$this->sql_body .= natural_search(array_keys($this->fields_to_search_all), $this->search_all);
 			}
+			// Add where from hooks
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $context);
+			$this->sql_body .= $hookmanager->resPrint;
 
-			if ($offset > $nbtotalofrecords) {    // if total resultset is smaller than the paging size (filtering), goto and load page 1
-				$page = 1;
-				$offset = 0;
+			if ($this->page <= 0) {
+				$this->page = 1;
 			}
+			$this->offset = $this->limit * ($this->page - 1);
 
-			$this->db->free($resql);
+			$this->sql_order = $this->db->order($this->sortfield, $this->sortorder);
+			if ($this->limit) {
+				$this->sql_order .= $this->db->plimit($this->limit, $this->offset);
+			}
 		}
+	}
 
-		// Complete request and execute it with limit
-		$sql .= $this->db->order($sortfield, $sortorder);
-		if ($limit) {
-			$sql .= $this->db->plimit($limit, $offset);
-		}
+	/**
+	 * Load record from SQL request
+	 *
+	 * @return	void
+	 */
+	public function loadRecords()
+	{
+		$this->records = [];
+		$this->nbtotalofrecords = 0;
 
-		$resql = $this->db->query($sql);
-		if (!$resql) {
-			dol_print_error($this->db);
-			return '';
-		}
-
-		$num = $this->db->num_rows($resql);
-		if ($limit > 0) {
-			$nbpages = ceil($nbtotalofrecords / $limit);
-		}
-		if ($nbpages <= 0) {
-			$nbpages = 1;
-		}
-
-		// make array[sort field => sort order] for this list
-		$sortList = array();
-		$sortFieldList = explode(",", $sortfield);
-		$sortOrderList = explode(",", $sortorder);
-		$sortFieldIndex = 0;
-		if (!empty($sortFieldList)) {
-			foreach ($sortFieldList as $sortField) {
-				if (isset($sortOrderList[$sortFieldIndex])) {
-					$sortList[$sortField] = $sortOrderList[$sortFieldIndex];
+		if (!empty($this->sql_select) && !empty($this->sql_body)) {
+			// Count total nb of records
+			if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
+				/* The fast and low memory method to get and count full list converts the sql into a sql count */
+				$resql = $this->db->query('SELECT COUNT(*) as nbtotalofrecords' . $this->sql_body);
+				if ($resql) {
+					$obj = $this->db->fetch_object($resql);
+					$this->nbtotalofrecords = (int) $obj->nbtotalofrecords;
+					$this->db->free($resql);
+				} else {
+					dol_print_error($this->db);
 				}
-				$sortFieldIndex++;
+
+				if ($this->offset > $this->nbtotalofrecords) {    // if total resultset is smaller than the paging size (filtering), goto and load page 1
+					$this->page = 1;
+					$this->offset = 0;
+				}
+			}
+
+			$resql = $this->db->query($this->sql_select . $this->sql_body . $this->sql_order);
+			if (!$resql) {
+				dol_print_error($this->db);
+			} else {
+				// Load records
+				while ($obj = $this->db->fetch_object($resql)) {
+					$this->records[] = $obj;
+				}
+				$this->db->free($resql);
 			}
 		}
+	}
 
-		$param = '';
-		$param .= '&contextpage=' . urlencode($contextpage);
-		$param .= '&limit=' . $limit;
-		foreach ($search as $key => $val) {
-			if (is_array($search[$key])) {
-				foreach ($search[$key] as $skey) {
+	/**
+	 * Set params
+	 *
+	 * @return	void
+	 */
+	public function setParams()
+	{
+		global $hookmanager;
+
+		$context = Context::getInstance();
+
+		$this->params = '&amp;contextpage=' . urlencode($this->contextpage);
+		$this->params .= '&amp;limit=' . $this->limit;
+		foreach ($this->search as $key => $val) {
+			if (is_array($val)) {
+				foreach ($val as $skey) {
 					if ($skey != '') {
-						$param .= '&search_' . $key . '[]=' . urlencode($skey);
+						$this->params .= '&amp;search_' . $key . '[]=' . urlencode($skey);
 					}
 				}
 			} elseif (preg_match('/(_dtstart|_dtend)$/', $key) && !empty($val)) {
-				$param .= '&search_' . $key . 'month=' . (GETPOSTINT('search_' . $key . 'month'));
-				$param .= '&search_' . $key . 'day=' . (GETPOSTINT('search_' . $key . 'day'));
-				$param .= '&search_' . $key . 'year=' . (GETPOSTINT('search_' . $key . 'year'));
-			} elseif ($search[$key] != '') {
-				$param .= '&search_' . $key . '=' . urlencode($search[$key]);
+				$this->params .= '&amp;search_' . $key . 'month=' . urlencode($this->search['search_' . $key . 'month']);
+				$this->params .= '&amp;search_' . $key . 'day=' . urlencode($this->search['search_' . $key . 'day']);
+				$this->params .= '&amp;search_' . $key . 'year=' . urlencode($this->search['search_' . $key . 'year']);
+			} elseif ($val != '') {
+				$this->params .= '&amp;search_' . $key . '=' . urlencode($val);
 			}
 		}
+
 		// Add $param from hooks
 		$parameters = array();
-		$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-		$param .= $hookmanager->resPrint;
-
-		$url_file = $context->getControllerUrl($context->controller);
-		$html .= '<form method="POST" id="searchFormList" action="' . $url_file . '">' . "\n";
-		$html .= $context->getFormToken();
-		$html .= '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
-		$html .= '<input type="hidden" name="action" value="list">';
-		$html .= '<input type="hidden" name="sortfield" value="' . $sortfield . '">';
-		$html .= '<input type="hidden" name="sortorder" value="' . $sortorder . '">';
-		$html .= '<input type="hidden" name="page" value="' . $page . '">';
-		$html .= '<input type="hidden" name="contextpage" value="' . $contextpage . '">';
-
-		// pagination
-		$pagination_param = $param . '&sortfield=' . $sortfield . '&sortorder=' . $sortorder;
-		$html .= '<nav id="webportal-' . $elementEn . '-pagination">';
-		$html .= '<ul>';
-		$html .= '<li><strong>' . $langs->trans($titleKey) . '</strong> (' . $nbtotalofrecords . ')</li>';
-		$html .= '</ul>';
-
-		/* Generate pagination list */
-		$html .= static::generatePageListNav($url_file . $pagination_param, $nbpages, $page);
-
-		$html .= '</nav>';
-
-		// table with search filters and column titles
-		$html .= '<table id="webportal-' . $elementEn . '-list" responsive="scroll" role="grid">';
-		// title and desc for table
-		//if ($titleKey != '') {
-		//    $html .= '<caption id="table-collapse-responsive">';
-		//    $html .= $langs->trans($titleKey) . '<br/>';
-		//    if ($titleDescKey != '') {
-		//        $html .= '<small>' . $langs->trans($titleDescKey) . '</small>';
-		//    }
-		//    $html .= '</caption>';
-		//}
-
-		$html .= '<thead>';
-
-		// Fields title search
-		// --------------------------------------------------------------------
-		$html .= '<tr role="search-row">';
-		// Action column
-		// if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-		$html .= '<td data-col="row-checkbox" >';
-		$html .= '	<button class="btn-filter-icon btn-search-filters-icon" type="submit" name="button_search_x" value="x" aria-label="'.dol_escape_htmltag($langs->trans('Search')).'" ></button>';
-		$html .= '	<button class="btn-filter-icon btn-remove-search-filters-icon" type="submit" name="button_removefilter_x" value="x" aria-label="'.dol_escape_htmltag($langs->trans('RemoveSearchFilters')).'"></button>';
-		$html .= '</td>';
-		// }
-		foreach ($object->fields as $key => $val) {
-			if (!empty($arrayfields['t.' . $key]['checked'])) {
-				$html .= '<td data-label="' . $arrayfields['t.' . $key]['label'] . '" data-col="'.dol_escape_htmltag($key).'" >';
-				if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
-					$html .= $this->form->selectarray('search_' . $key, $val['arrayofkeyval'], (isset($search[$key]) ? $search[$key] : ''), $val['notnull'], 0, 0, '', 1, 0, 0, '', '');
-				} elseif (preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
-					$postDateStart = dol_mktime(0, 0, 0, (int) $search[$key . '_dtstartmonth'], (int) $search[$key . '_dtstartday'], (int) $search[$key . '_dtstartyear']);
-					$postDateEnd = dol_mktime(0, 0, 0, (int) $search[$key . '_dtendmonth'], (int) $search[$key . '_dtendday'], (int) $search[$key . '_dtendyear']);
-
-					$html .= '<div class="grid width150">';
-					$html .= $this->form->inputDate('search_' . $key . '_dtstart', $postDateStart ? $postDateStart : '', $langs->trans('From'));
-					$html .= '</div>';
-					$html .= '<div class="grid width150">';
-					$html .= $this->form->inputDate('search_' . $key . '_dtend', $postDateEnd ? $postDateEnd : '', $langs->trans('to'));
-					$html .= '</div>';
-				} else {
-					$html .= '<input type="text" name="search_' . $key . '" value="' . dol_escape_htmltag(isset($search[$key]) ? $search[$key] : '') . '">';
-				}
-				$html .= '</td>';
-			}
-		}
-		// Fields from hook
-		$parameters = array('arrayfields' => $arrayfields);
-		$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-		$html .= $hookmanager->resPrint;
-		// Remain to pay
-		if (array_key_exists('remain_to_pay', $arrayfields) && !empty($arrayfields['remain_to_pay']['checked'])) {
-			$html .= '<td data-label="' . $arrayfields['remain_to_pay']['label'] . '">';
-			$html .= '</td>';
-		}
-		// Download link
-		if (array_key_exists('download_link', $arrayfields) && !empty($arrayfields['download_link']['checked'])) {
-			$html .= '<td data-label="' . $arrayfields['download_link']['label'] . '">';
-			$html .= '</td>';
-		}
-		// Signature link
-		if ($elementEn == "propal" && getDolGlobalString("PROPOSAL_ALLOW_ONLINESIGN") != 0) {
-			if (array_key_exists('signature_link', $arrayfields) && !empty($arrayfields['signature_link']['checked'])) {
-				$html .= '<td data-label="' . $arrayfields['signature_link']['label'] . '">';
-				$html .= '</td>';
-			}
-		}
-		$html .= '</tr>';
-
-		$totalarray = array();
-		$totalarray['nbfield'] = 0;
-
-		// Fields title label
-		// --------------------------------------------------------------------
-		$html .= '<tr>';
-		// Action column
-		// if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-		$html .= '<th  data-col="row-checkbox"  ></th>';
-		$totalarray['nbfield']++;
-		// }
-		foreach ($object->fields as $key => $val) {
-			$tableKey = 't.' . $key;
-			if (!empty($arrayfields[$tableKey]['checked'])) {
-				$tableOrder = '';
-				if (array_key_exists($tableKey, $sortList)) {
-					$tableOrder = strtolower($sortList[$tableKey]);
-				}
-				$url_param = $url_file . '&sortfield=' . $tableKey . '&sortorder=' . ($tableOrder == 'desc' ? 'asc' : 'desc') . $param;
-				$html .= '<th data-col="'.dol_escape_htmltag($key).'"  scope="col"' . ($tableOrder != '' ? ' table-order="' . $tableOrder . '"' : '') . '>';
-				$html .= '<a href="' . $url_param . '">';
-				$html .= $langs->trans($arrayfields['t.' . $key]['label']);
-				$html .= '</a>';
-				$html .= '</th>';
-				$totalarray['nbfield']++;
-			}
-		}
-		// Remain to pay
-		if (array_key_exists('remain_to_pay', $arrayfields) && !empty($arrayfields['remain_to_pay']['checked'])) {
-			$html .= '<th scope="col">';
-			// @phan-suppress-next-line PhanTypeInvalidDimOffset
-			$html .= $langs->trans((string) $arrayfields['remain_to_pay']['label']);
-			$html .= '</th>';
-			$totalarray['nbfield']++;
-		}
-		// Download link
-		if (array_key_exists('download_link', $arrayfields) && !empty($arrayfields['download_link']['checked'])) {
-			$html .= '<th scope="col">';
-			$html .= $langs->trans($arrayfields['download_link']['label']);
-			$html .= '</th>';
-			$totalarray['nbfield']++;
-		}
-		// Signature link
-		if ($elementEn == "propal" && getDolGlobalString("PROPOSAL_ALLOW_ONLINESIGN") != 0) {
-			if (array_key_exists('signature_link', $arrayfields) && !empty($arrayfields['signature_link']['checked'])) {
-				$html .= '<th scope="col">';
-				$html .= $langs->trans($arrayfields['signature_link']['label']);
-				$html .= '</th>';
-				$totalarray['nbfield']++;
-			}
-		}
-
-		// Hook fields
-		$parameters = array('arrayfields' => $arrayfields, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'sortList' => $sortList, 'totalarray' => &$totalarray);
-		$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-		$html .= $hookmanager->resPrint;
-		$html .= '</tr>';
-
-		$html .= '</thead>';
-
-		$html .= '<tbody>';
-
-		// Store company
-		$idCompany = (int) $socid;
-		if (!isset($this->companyStaticList[$socid])) {
-			$companyStatic = new Societe($this->db);
-			$companyStatic->fetch($idCompany);
-			$this->companyStaticList[$idCompany] = $companyStatic;
-		}
-		$companyStatic = $this->companyStaticList[$socid];
-
-		// Loop on record
-		// --------------------------------------------------------------------
-		$i = 0;
-		$totalarray = [
-			'nbfield' => 0,
-			'totalizable' => [],
-		];
-		$remaintopay = 0;
-		$imaxinloop = ($limit ? min($num, $limit) : $num);
-		while ($i < $imaxinloop) {
-			$obj = $this->db->fetch_object($resql);
-			if (empty($obj)) {
-				break; // Should not happen
-			}
-
-			// Store properties in $object
-			$object->setVarsFromFetchObj($obj);
-
-			// specific to get invoice status (depends on payment)
-			$payment = -1;
-			if ($elementEn == 'invoice') {
-				'@phan-var-force Facture $object';
-				// paid sum
-				$payment = $object->getSommePaiement();
-				$totalcreditnotes = $object->getSumCreditNotesUsed();
-				$totaldeposits = $object->getSumDepositsUsed();
-
-				// remain to pay
-				$totalpay = $payment + $totalcreditnotes + $totaldeposits;
-				$remaintopay = price2num($object->total_ttc - $totalpay);
-				if ($object->status == Facture::STATUS_CLOSED && $object->close_code == 'discount_vat') {        // If invoice closed with discount for anticipated payment
-					$remaintopay = 0;
-				}
-				if ($object->type == Facture::TYPE_CREDIT_NOTE && $obj->paye == 1 && $discount) {
-					$remaincreditnote = $discount->getAvailableDiscounts($companyStatic, null, 'rc.fk_facture_source=' . $object->id);
-					$remaintopay = -$remaincreditnote;
-				}
-			}
-
-			// Show line of result
-			$html .= '<tr data-rowid="' . $object->id . '">';
-			// if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-			$html .= '<td class="nowraponall">';
-			$html .= '</td>';
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
-			// }
-			foreach ($object->fields as $key => $val) {
-				if (!empty($arrayfields['t.' . $key]['checked'])) {
-					$html .= '<td class="nowraponall" data-label="' . $arrayfields['t.' . $key]['label'] . '">';
-					if ($key == 'status' || $key == 'fk_statut') {
-						if ($elementEn == 'invoice') {
-							// specific to get invoice status (depends on payment)
-							$html .= $object->getLibStatut(5, $payment);
-						} else {
-							$html .= $object->getLibStatut(5);
-						}
-					} elseif ($key == 'rowid') {
-						$html .= $this->form->showOutputFieldForObject($object, $val, $key, (string) $object->id, '');
-					} else {
-						$html .= $this->form->showOutputFieldForObject($object, $val, $key, $object->$key, '');
-					}
-					$html .= '</td>';
-
-
-					if (!$i) {
-						$totalarray['nbfield']++;
-					}
-					if (!empty($val['isameasure']) && $val['isameasure'] == 1) {
-						if (!$i) {
-							$totalarray['pos'][$totalarray['nbfield']] = 't.' . $key;
-						}
-						if (!isset($totalarray['val'])) {
-							$totalarray['val'] = array();
-						}
-						if (!isset($totalarray['val']['t.' . $key])) {
-							$totalarray['val']['t.' . $key] = 0;
-						}
-						$totalarray['val']['t.' . $key] += $object->$key;
-					}
-				}
-			}
-			// Remain to pay
-			if (array_key_exists('remain_to_pay', $arrayfields) && !empty($arrayfields['remain_to_pay']['checked'])) {
-				// @phan-suppress-next-line PhanTypeInvalidDimOffset
-				$html .= '<td class="nowraponall" data-label="' . dolPrintHTMLForAttribute((string) $arrayfields['remain_to_pay']['label']) . '">';
-				// @phan-suppress-next-line PhanTypeMismatchArgument PhanTypeInvalidDimOffset
-				$html .= $this->form->showOutputFieldForObject($object, $arrayfields['remain_to_pay'], 'remain_to_pay', $remaintopay, '');
-				//$html .= price($remaintopay);
-				$html .= '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			// Download link
-			if (array_key_exists('download_link', $arrayfields) && !empty($arrayfields['download_link']['checked'])) {
-				$element = $object->element;
-				$html .= '<td class="nowraponall" data-label="' . $arrayfields['download_link']['label'] . '">';
-				$filename = dol_sanitizeFileName($obj->ref);
-				$filedir = $conf->{$element}->multidir_output[$obj->element_entity] . '/' . dol_sanitizeFileName($obj->ref);
-				$html .= $this->form->getDocumentsLink($element, $filename, $filedir);
-				$html .= '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			// Signature link
-			if ($elementEn == "propal" && getDolGlobalString("PROPOSAL_ALLOW_ONLINESIGN") != 0) {
-				'@phan-var-force Propal $object';
-				if (!empty($arrayfields['signature_link']['checked'])) {
-					$html .= '<td class="nowraponall" data-label="' . $arrayfields['signature_link']['label'] . '">';
-					if ($object->fk_statut == Propal::STATUS_VALIDATED) {
-						$html .= $this->form->getSignatureLink('proposal', $object);
-					}
-					$html .= '</td>';
-					if (!$i) {
-						$totalarray['nbfield']++;
-					}
-				}
-			}
-			// Fields from hook
-			$parameters = array('arrayfields' => $arrayfields, 'object' => $object, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
-			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-			$html .= $hookmanager->resPrint;
-
-			$html .= '</tr>';
-
-			$i++;
-		}
-
-		// Move fields of totalizable into the common array pos and val
-		if (!empty($totalarray['totalizable']) && is_array($totalarray['totalizable'])) {
-			foreach ($totalarray['totalizable'] as $keytotalizable => $valtotalizable) {
-				$totalarray['pos'][$valtotalizable['pos']] = $keytotalizable;
-				$totalarray['val'][$keytotalizable] = isset($valtotalizable['total']) ? $valtotalizable['total'] : 0;
-			}
-		}
-		// Show total line
-		if (isset($totalarray['pos'])) {
-			$html .= '<tr>';
-			$i = 0;
-			while ($i < $totalarray['nbfield']) {
-				$i++;
-				if (!empty($totalarray['pos'][$i])) {
-					$html .= '<td class="nowraponall essai">';
-					$html .= price(!empty($totalarray['val'][$totalarray['pos'][$i]]) ? $totalarray['val'][$totalarray['pos'][$i]] : 0);
-					$html .= '</td>';
-				} else {
-					if ($i == 1) {
-						$html .= '<td>' . $langs->trans("Total") . '</td>';
-					} else {
-						$html .= '<td></td>';
-					}
-				}
-			}
-			$html .= '</tr>';
-		}
-
-		// If no record found
-		if ($num == 0) {
-			$colspan = 1;
-			foreach ($arrayfields as $key => $val) {
-				if (!empty($val['checked'])) {
-					$colspan++;
-				}
-			}
-			$html .= '<tr><td colspan="' . $colspan . '"><span class="opacitymedium">' . $langs->trans("NoRecordFound") . '</span></td></tr>';
-		}
-
-		$html .= '</tbody>';
-
-		$this->db->free($resql);
-
-		$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
-		$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-		$html .= $hookmanager->resPrint;
-
-		$html .= '</table>';
-
-		$html .= '</form>';
-
-		return $html;
+		$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $context);
+		$this->params .= $hookmanager->resPrint;
 	}
 
 	/**
-	 * Generate with pagination navigaion
+	 * Print input field for search list
 	 *
-	 * @param 	string	$url			Url of current page
-	 * @param	int 	$nbPages		Total of pages results
-	 * @param	int 	$currentPage	Number of current page
-	 * @return	string
+	 * @param	string					$field_key		Field key
+	 * @param	array<string,mixed>		$field_spec		Field specification
+	 * @return	string									HTML input
 	 */
-	public static function generatePageListNav(string $url, int $nbPages, int $currentPage)
+	public function printSearchInput($field_key, $field_spec)
 	{
 		global $langs;
 
-		// Return nothing (no navigation bar), if there is only 1 page.
-		if ($nbPages <= 1) {
-			return '';
+		if (!empty($field_spec['arrayofkeyval']) && is_array($field_spec['arrayofkeyval'])) {
+			$out = $this->form->selectarray('search_' . $field_key, $field_spec['arrayofkeyval'], (isset($this->search[$field_key]) ? $this->search[$field_key] : ''), $field_spec['notnull'], 0, 0, '', 1, 0, 0, '', '');
+		} elseif (preg_match('/^(date|timestamp|datetime)/', $field_spec['type'])) {
+			$postDateStart = dol_mktime(0, 0, 0, (int) $this->search[$field_key . '_dtstartmonth'], (int) $this->search[$field_key . '_dtstartday'], (int) $this->search[$field_key . '_dtstartyear']);
+			$postDateEnd = dol_mktime(0, 0, 0, (int) $this->search[$field_key . '_dtendmonth'], (int) $this->search[$field_key . '_dtendday'], (int) $this->search[$field_key . '_dtendyear']);
+
+			$out = '<div class="grid width150">';
+			$out .= $this->form->inputDate('search_' . $field_key . '_dtstart', $postDateStart ? $postDateStart : '', $langs->trans('From'));
+			$out .= '</div>';
+			$out .= '<div class="grid width150">';
+			$out .= $this->form->inputDate('search_' . $field_key . '_dtend', $postDateEnd ? $postDateEnd : '', $langs->trans('to'));
+			$out .= '</div>';
+		} else {
+			$out = '<input type="text" name="search_' . $field_key . '" value="' . dol_escape_htmltag(isset($this->search[$field_key]) ? $this->search[$field_key] : '') . '">';
 		}
 
-		$pSep = strpos($url, '?') === false ? '?' : '&amp;';
+		return $out;
+	}
 
-		$html = '<ul class="pages-nav-list">';
+	/**
+	 * Function to load data from a SQL pointer into properties of current object $this
+	 *
+	 * @param   stdClass    $record    Contain data of object from database
+	 * @return	void
+	 */
+	public function setVarsFromFetchObj(&$record)
+	{
+		if (is_object($this->object)) {
+			$this->object->setVarsFromFetchObj($record);
 
-		if ($currentPage > 1) {
-			$html .= '<li><a class="pages-nav-list__icon --prev" aria-label="' . dol_escape_htmltag($langs->trans('AriaPrevPage')) . '" href="' . $url . $pSep . 'page=' . ($currentPage - 1) . '" ' . ($currentPage <= 1 ? ' disabled' : '') . '></a></li>';
+			// specific to get invoice status (depends on payment)
+			if ($this->element == 'invoice') {
+				$discount = new DiscountAbsolute($this->db);
+
+				// Store company
+				$idCompany = (int) $this->object->socid;
+				if (!isset($this->companyStaticList[$idCompany])) {
+					$companyStatic = new Societe($this->db);
+					$companyStatic->fetch($idCompany);
+					$this->companyStaticList[$idCompany] = $companyStatic;
+				}
+				$companyStatic = $this->companyStaticList[$idCompany];
+
+				// paid sum
+				$payment = $this->object->getSommePaiement();
+				$totalcreditnotes = $this->object->getSumCreditNotesUsed();
+				$totaldeposits = $this->object->getSumDepositsUsed();
+
+				// remain to pay
+				$totalpay = $payment + $totalcreditnotes + $totaldeposits;
+				$remaintopay = price2num($this->object->total_ttc - $totalpay);
+				if ($this->object->status == Facture::STATUS_CLOSED && $this->object->close_code == 'discount_vat') {        // If invoice closed with discount for anticipated payment
+					$remaintopay = 0;
+				}
+				if ($this->object->type == Facture::TYPE_CREDIT_NOTE && $this->object->paye == 1) {
+					// @phan-suppress-next-line PhanTypeMismatchArgumentProbablyReal
+					$remaincreditnote = $discount->getAvailableDiscounts($companyStatic, '', 'rc.fk_facture_source=' . $this->object->id);
+					$remaintopay = -$remaincreditnote;
+				}
+
+				$record->invoice_payment = $payment;
+				$record->invoice_remaintopay = $remaintopay;
+			}
+		}
+	}
+
+	/**
+	 * Print value for list
+	 *
+	 * @param	string					$field_key		Field key
+	 * @param	array<string,mixed>		$field_spec		Field specification
+	 * @param	stdClass				$record			Contain data of object from database
+	 * @param	int						$i				Index line (0, 1, 2, ...)
+	 * @param	array<string,mixed>		$totalarray		Array for total line
+	 * @return	string									HTML input
+	 */
+	public function printValue($field_key, $field_spec, &$record, $i, &$totalarray)
+	{
+		global $conf;
+
+		$out = '';
+		if (is_object($this->object)) {
+			$out = $this->controller->listPrintValueBefore($field_key, $field_spec, $record);
+			if (empty($out)) {
+				if ($field_key == 'status' || $field_key == 'fk_statut') {
+					if ($this->element == 'invoice') {
+						// specific to get invoice status (depends on payment)
+						$out = $this->object->getLibStatut(5, $record->invoice_payment);
+					} else {
+						$out = $this->object->getLibStatut(5);
+					}
+				} elseif ($field_key == 'rowid') {
+					$out = $this->form->showOutputFieldForObject($this->object, $field_spec, $field_key, (string) $this->object->id, '');
+				} elseif ($field_key == 'remain_to_pay') {
+					if ($this->element == 'invoice') {
+						$out = $this->form->showOutputFieldForObject($this->object, $this->arrayfields['remain_to_pay'], 'remain_to_pay', $record->invoice_remaintopay, '');
+					}
+				} elseif ($field_key == 'download_link') {
+					$element = $this->element;
+					$filename = dol_sanitizeFileName($this->object->ref);
+					$filedir = $conf->{$element}->multidir_output[$this->object->entity] . '/' . dol_sanitizeFileName($this->object->ref);
+					$out = $this->form->getDocumentsLink($element, $filename, $filedir);
+				} elseif ($field_key == 'signature_link') {
+					if ($this->object->fk_statut == Propal::STATUS_VALIDATED) {
+						$out = $this->form->getSignatureLink('proposal', $this->object);
+					}
+				} else {
+					$out = $this->form->showOutputFieldForObject($this->object, $field_spec, $field_key, $this->object->$field_key, '');
+				}
+			}
+
+			$out = $this->controller->listPrintValueAfter($field_key, $field_spec, $record, $out);
 		}
 
-		$maxPaginItem = min($nbPages, 5);
-		$minPageNum = max(1, $currentPage - 3);
-		$maxPageNum = min($nbPages, $currentPage + 3);
+		return $out;
+	}
 
-		if ($minPageNum > 1) {
-			$html .= '<li><a class="pages-nav-list__link ' . ($currentPage == 1 ? '--active' : '') . '" aria-label="' . dol_escape_htmltag($langs->trans('AriaPageX', 1)) . '" href="' . $url . $pSep . 'page=1" >1</a></li>';
-			$html .= '<li>&hellip;</li>';
+	/**
+	 * Set total value for list
+	 *
+	 * @param	string					$field_key		Field key
+	 * @param	array<string,mixed>		$field_spec		Field specification
+	 * @param	stdClass				$record			Contain data of object from database
+	 * @param	int						$i				Index line (0, 1, 2, ...)
+	 * @param	array<string,mixed>		$totalarray		Array for total line
+	 * @return	void
+	 */
+	public function setTotalValue($field_key, $field_spec, &$record, $i, &$totalarray)
+	{
+		if (is_object($this->object)) {
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+			if (!empty($field_spec['isameasure']) && $field_spec['isameasure'] == 1) {
+				$alias = $field_spec['alias'] ?? 't.';
+				if (!$i) {
+					$totalarray['pos'][$totalarray['nbfield']] = $alias . $field_key;
+				}
+				if (!isset($totalarray['val'])) {
+					$totalarray['val'] = array();
+				}
+				if (!isset($totalarray['val'][$alias . $field_key])) {
+					$totalarray['val'][$alias . $field_key] = 0;
+				}
+				$totalarray['val'][$alias . $field_key] += $this->object->$field_key;
+			}
+		}
+	}
+
+	/**
+	 * Get class css list
+	 *
+	 * @param	string					$field_key		Field key
+	 * @param	array<string,mixed>		$field_spec		Field specification
+	 * @param	bool					$for_value		For td of value
+	 * @return	string									Class used for list <td class="xxxx">
+	 */
+	public function getClasseCssList($field_key, $field_spec, $for_value = false)
+	{
+		$cssforfield = (empty($field_spec['csslist']) ? (empty($field_spec['css']) ? '' : $field_spec['css']) : $field_spec['csslist']);
+		if ($field_key == 'status') {
+			$cssforfield .= ($cssforfield ? ' ' : '') . 'center';
+		} elseif (in_array($field_spec['type'], array('date', 'datetime', 'timestamp'))) {
+			$cssforfield .= ($cssforfield ? ' ' : '') . 'center';
+		} elseif (in_array($field_spec['type'], array('timestamp'))) {
+			$cssforfield .= ($cssforfield ? ' ' : '') . ($for_value ? 'nowraponall' : 'nowrap');
+		} elseif ($for_value && $field_key == 'ref') {
+			$cssforfield .= ($cssforfield ? ' ' : '') . 'nowraponall';
+		} elseif (in_array($field_spec['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && !in_array($field_key, array('id', 'rowid', 'ref', 'status')) && empty($field_spec['arrayofkeyval'])) {
+			$cssforfield .= ($cssforfield ? ' ' : '') . 'right';
 		}
 
-		for ($p = $minPageNum; $p <= $maxPageNum; $p++) {
-			$html .= '<li><a class="pages-nav-list__link ' . ($currentPage === $p ? '--active' : '') . '" aria-label="' . dol_escape_htmltag($langs->trans('AriaPageX', $p)) . '"  href="' . $url . $pSep . 'page=' . $p . '">' . $p . '</a></li>';
-		}
-
-		if ($maxPaginItem < $nbPages) {
-			$html .= '<li>&hellip;</li>';
-			$html .= '<li><a class="pages-nav-list__link ' . ($currentPage == $nbPages ? '--active' : '') . '" aria-label="' . dol_escape_htmltag($langs->trans('AriaPageX', $nbPages)) . '" href="' . $url . $pSep . 'page=' . $nbPages . '">' . $nbPages . '</a></li>';
-		}
-
-		if ($currentPage < $nbPages) {
-			$html .= '<li><a class="pages-nav-list__icon --next" aria-label="' . dol_escape_htmltag($langs->trans('AriaNextPage')) . '" href="' . $url . $pSep . 'page=' . ($currentPage + 1) . '" ' . ($currentPage >= $nbPages ? ' disabled' : '') . '></a></li>';
-		}
-
-		$html .= '</ul>';
-
-		return $html;
+		return $cssforfield;
 	}
 }
