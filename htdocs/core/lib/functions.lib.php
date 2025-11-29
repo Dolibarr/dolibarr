@@ -166,6 +166,8 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 		$subdirectory = '/commande';
 	} elseif ($module == 'expedition') {
 		$subdirectory = '/sending';
+	} elseif ($module == 'company') {
+		$module = 'societe';
 	}
 
 	// Get the relative path of directory
