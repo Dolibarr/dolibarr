@@ -614,6 +614,9 @@ if (empty($reshook)) {
 		}
 	}
 
+	// Actions when printing a doc from card
+	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
+
 	// Actions to send emails
 	$triggersendname = 'PROJECT_SENTBYMAIL';
 	$paramname = 'id';
@@ -1666,7 +1669,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			// Send
 			if (empty($user->socid)) {
 				if ($object->status != Project::STATUS_CLOSED) {
-					print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"].'?action=presend&token='.newToken().'&id='.$object->id.'&mode=init#formmailbeforetitle', '');
+					print dolGetButtonAction('', $langs->trans('SendMail'), 'email', $_SERVER["PHP_SELF"].'?action=presend&token='.newToken().'&id='.$object->id.'&mode=init#formmailbeforetitle', '');
 				}
 			}
 

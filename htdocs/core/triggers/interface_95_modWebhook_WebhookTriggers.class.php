@@ -69,6 +69,7 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
+		global $dolibarr_main_db_pass;
 		if (!isModEnabled('webhook')) {
 			return 0; // If module is not enabled, we do nothing
 		}
@@ -92,6 +93,9 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 			// No webhook found
 			return 0;
 		}
+
+		// Create new instance of db for webhook history save
+		$dbhistory = getDoliDBInstance($conf->db->type, $conf->db->host, (string) $conf->db->user, $dolibarr_main_db_pass, $conf->db->name, (int) $conf->db->port);
 
 		$sendmanualtriggers = (!empty($object->context['sendmanualtriggers']) ? $object->context['sendmanualtriggers'] : "");
 		foreach ($target_url as $key => $tmpobject) {
@@ -146,7 +150,8 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 					}*/
 				}
 
-				$triggerhistory = new TriggerHistory($this->db);
+				$dbhistory->begin();
+				$triggerhistory = new TriggerHistory($dbhistory);
 				$triggerhistory->trigger_code = $action;
 				$triggerhistory->trigger_data = $jsonstr;
 				$triggerhistory->fk_target = $tmpobject->id;
@@ -157,10 +162,14 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 				if (!$resql) {
 					$errors++;
 					$this->errors = array_merge($this->errors, $triggerhistory->errors);
+					$dbhistory->rollback();
+				} else {
+					$dbhistory->commit();
 				}
 			}
 		}
 
+		$dbhistory->close();
 		dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id." -> nbPost=".$nbPosts);
 
 		if (!empty($errors)) {

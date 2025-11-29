@@ -1039,18 +1039,6 @@ parameters:
 			path: ../../../htdocs/admin/website.php
 
 		-
-			message: '#^Parameter \#1 \$array of function dol_sort_array contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: ../../../htdocs/admin/workflow.php
-
-		-
-			message: '#^Return type of call to function dol_sort_array contains unresolvable type\.$#'
-			identifier: function.unresolvableReturnType
-			count: 1
-			path: ../../../htdocs/admin/workflow.php
-
-		-
 			message: '#^Loose comparison using \=\= between ''edit'' and ''edit'' will always evaluate to true\.$#'
 			identifier: equal.alwaysTrue
 			count: 1
@@ -1589,30 +1577,6 @@ parameters:
 			identifier: identical.alwaysFalse
 			count: 1
 			path: ../../../htdocs/categories/categorie_list.php
-
-		-
-			message: '#^Method Categorie\:\:get_full_arbo\(\) should return \-1\|array\<int, array\{rowid\: int, id\: int, fk_parent\: int, label\: string, description\: string, color\: string, position\: string, visible\: int, \.\.\.\}\> but returns array\<array\{rowid\: mixed, id\: mixed, fk_parent\: mixed, label\: mixed, description\: mixed, color\: mixed, position\: mixed, visible\: mixed, \.\.\.\}\>\.$#'
-			identifier: return.type
-			count: 1
-			path: ../../../htdocs/categories/class/categorie.class.php
-
-		-
-			message: '#^Parameter \#1 \$array of function dol_sort_array contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: ../../../htdocs/categories/class/categorie.class.php
-
-		-
-			message: '#^Property Categorie\:\:\$cats \(array\<int, array\{rowid\: int, id\: int, fk_parent\: int, label\: string, description\: string, color\: string, position\: string, visible\: int, \.\.\.\}\>\) does not accept array\<array\{rowid\: mixed, id\: mixed, fk_parent\: mixed, label\: mixed, description\: mixed, color\: mixed, position\: mixed, visible\: mixed, \.\.\.\}\>\.$#'
-			identifier: assign.propertyType
-			count: 2
-			path: ../../../htdocs/categories/class/categorie.class.php
-
-		-
-			message: '#^Return type of call to function dol_sort_array contains unresolvable type\.$#'
-			identifier: function.unresolvableReturnType
-			count: 1
-			path: ../../../htdocs/categories/class/categorie.class.php
 
 		-
 			message: '#^If condition is always true\.$#'
@@ -5647,12 +5611,6 @@ parameters:
 			path: ../../../htdocs/core/class/html.form.class.php
 
 		-
-			message: '#^Parameter \#1 \$array of function dol_sort_array contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 3
-			path: ../../../htdocs/core/class/html.form.class.php
-
-		-
 			message: '#^Parameter \#15 \$excludeids of method Form\:\:select_company\(\) expects array\<string\>, array\<int\> given\.$#'
 			identifier: argument.type
 			count: 1
@@ -5674,54 +5632,6 @@ parameters:
 			message: '#^Property CommonObject\:\:\$next_prev_filter \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
-			path: ../../../htdocs/core/class/html.form.class.php
-
-		-
-			message: '#^Property Form\:\:\$cache_conditions_paiements has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/html.form.class.php
-
-		-
-			message: '#^Property Form\:\:\$cache_demand_reason has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/html.form.class.php
-
-		-
-			message: '#^Property Form\:\:\$cache_invoice_subtype has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/html.form.class.php
-
-		-
-			message: '#^Property Form\:\:\$cache_transport_mode has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/html.form.class.php
-
-		-
-			message: '#^Property Form\:\:\$cache_types_fees has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/html.form.class.php
-
-		-
-			message: '#^Property Form\:\:\$cache_types_paiements has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/html.form.class.php
-
-		-
-			message: '#^Property Form\:\:\$cache_vatrates has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/html.form.class.php
-
-		-
-			message: '#^Return type of call to function dol_sort_array contains unresolvable type\.$#'
-			identifier: function.unresolvableReturnType
-			count: 3
 			path: ../../../htdocs/core/class/html.form.class.php
 
 		-
@@ -5761,20 +5671,8 @@ parameters:
 			path: ../../../htdocs/core/class/html.formcompany.class.php
 
 		-
-			message: '#^Parameter \#1 \$array of function dol_sort_array contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: ../../../htdocs/core/class/html.formcompany.class.php
-
-		-
 			message: '#^Parameter \#3 \$selected of method Form\:\:multiselectarray\(\) expects array\<string\>, array\<array\<string, int\>\|int\> given\.$#'
 			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/class/html.formcompany.class.php
-
-		-
-			message: '#^Return type of call to function dol_sort_array contains unresolvable type\.$#'
-			identifier: function.unresolvableReturnType
 			count: 1
 			path: ../../../htdocs/core/class/html.formcompany.class.php
 
@@ -10795,18 +10693,6 @@ parameters:
 			path: ../../../htdocs/main.inc.php
 
 		-
-			message: '#^Parameter \#1 \$array of function dol_sort_array contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: ../../../htdocs/margin/agentMargins.php
-
-		-
-			message: '#^Return type of call to function dol_sort_array contains unresolvable type\.$#'
-			identifier: function.unresolvableReturnType
-			count: 1
-			path: ../../../htdocs/margin/agentMargins.php
-
-		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 1
@@ -14065,18 +13951,6 @@ parameters:
 			path: ../../../htdocs/reception/card.php
 
 		-
-			message: '#^Loose comparison using \=\= between ''''\|''CommandeFournisseur'' and ''commande'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 2
-			path: ../../../htdocs/reception/card.php
-
-		-
-			message: '#^Loose comparison using \=\= between ''''\|''CommandeFournisseur'' and ''propal'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 2
-			path: ../../../htdocs/reception/card.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
@@ -14086,12 +13960,6 @@ parameters:
 			message: '#^Property ReceptionLineBatch\:\:\$batch \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
-			path: ../../../htdocs/reception/card.php
-
-		-
-			message: '#^Result of && is always false\.$#'
-			identifier: booleanAnd.alwaysFalse
-			count: 8
 			path: ../../../htdocs/reception/card.php
 
 		-
@@ -14243,24 +14111,6 @@ parameters:
 			identifier: variable.undefined
 			count: 2
 			path: ../../../htdocs/reception/contact.php
-
-		-
-			message: '#^Loose comparison using \=\= between ''''\|''CommandeFournisseur'' and ''commande'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/reception/dispatch.php
-
-		-
-			message: '#^Loose comparison using \=\= between ''''\|''CommandeFournisseur'' and ''propal'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/reception/dispatch.php
-
-		-
-			message: '#^Result of && is always false\.$#'
-			identifier: booleanAnd.alwaysFalse
-			count: 4
-			path: ../../../htdocs/reception/dispatch.php
 
 		-
 			message: '#^Variable \$objectsrc might not be defined\.$#'
@@ -15667,12 +15517,6 @@ parameters:
 			path: ../../../htdocs/user/class/user.class.php
 
 		-
-			message: '#^Parameter \#1 \$array of function dol_sort_array contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: ../../../htdocs/user/class/user.class.php
-
-		-
 			message: '#^Property User\:\:\$rights \(stdClass\) in empty\(\) is not falsy\.$#'
 			identifier: empty.property
 			count: 1
@@ -15724,12 +15568,6 @@ parameters:
 			message: '#^Result of \|\| is always true\.$#'
 			identifier: booleanOr.alwaysTrue
 			count: 4
-			path: ../../../htdocs/user/class/user.class.php
-
-		-
-			message: '#^Return type of call to function dol_sort_array contains unresolvable type\.$#'
-			identifier: function.unresolvableReturnType
-			count: 1
 			path: ../../../htdocs/user/class/user.class.php
 
 		-
@@ -16117,12 +15955,6 @@ parameters:
 			path: ../../../htdocs/webhook/triggerhistory_list.php
 
 		-
-			message: '#^Loose comparison using \=\= between ''auto'' and ''auto'' will always evaluate to true\.$#'
-			identifier: equal.alwaysTrue
-			count: 1
-			path: ../../../htdocs/webportal/class/context.class.php
-
-		-
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
 			count: 1
@@ -16133,24 +15965,6 @@ parameters:
 			identifier: empty.variable
 			count: 1
 			path: ../../../htdocs/webportal/class/html.formcardwebportal.class.php
-
-		-
-			message: '#^Comparison operation "\<\=" between int\<2, max\> and 1 is always false\.$#'
-			identifier: smallerOrEqual.alwaysFalse
-			count: 1
-			path: ../../../htdocs/webportal/class/html.formlistwebportal.class.php
-
-		-
-			message: '#^Offset ''total'' on \*NEVER\* in isset\(\) always exists and is not nullable\.$#'
-			identifier: isset.offset
-			count: 1
-			path: ../../../htdocs/webportal/class/html.formlistwebportal.class.php
-
-		-
-			message: '#^Result of && is always false\.$#'
-			identifier: booleanAnd.alwaysFalse
-			count: 1
-			path: ../../../htdocs/webportal/class/html.formlistwebportal.class.php
 
 		-
 			message: '#^Call to function is_array\(\) with list\<string\> will always evaluate to true\.$#'

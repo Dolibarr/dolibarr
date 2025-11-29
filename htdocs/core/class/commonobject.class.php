@@ -1296,7 +1296,7 @@ abstract class CommonObject
 					$langs->load("companies");
 					$this->error = $langs->trans("ErrorCommercialNotAllowedForThirdparty", $user->id);
 					dol_syslog(get_class($this)."::add_contact ".$this->error, LOG_ERR);
-					return -3;
+					return -4;
 				}
 			}
 		}
@@ -1357,7 +1357,7 @@ abstract class CommonObject
 					$result = $this->call_trigger($triggerPrefix.'_ADD_CONTACT', $user);
 					if ($result < 0) {
 						$this->db->rollback();
-						return -1;
+						return -5;
 					}
 				}
 
@@ -1367,11 +1367,11 @@ abstract class CommonObject
 				if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 					$this->error = $this->db->errno();
 					$this->db->rollback();
-					return -2;
+					return -6;
 				} else {
 					$this->error = $this->db->lasterror();
 					$this->db->rollback();
-					return -1;
+					return -7;
 				}
 			}
 		} else {
@@ -8369,7 +8369,7 @@ abstract class CommonObject
 									$isDependList = 1;
 								}
 
-								$data[(int) $obj->rowid] = $labeltoshow;
+								$data[$obj->rowid] = $labeltoshow;	// Warning: $obj->rowid is an alias and can be an int, but also a string ref.
 							}
 
 							$i++;

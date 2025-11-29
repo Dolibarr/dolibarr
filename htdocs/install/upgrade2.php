@@ -683,6 +683,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				'MAIN_MODULE_BLOCKEDLOG' => 'noboxes',
 				'MAIN_MODULE_DON' => 'newboxdefonly',
 				'MAIN_MODULE_ECM' => 'newboxdefonly',
+				'MAIN_MODULE_EVENTORGANIZATION' => 'newboxdefonly',
 				'MAIN_MODULE_EXPENSEREPORT' => 'newboxdefonly',
 				'MAIN_MODULE_FACTURE' => 'newboxdefonly',
 				'MAIN_MODULE_FOURNISSEUR' => 'newboxdefonly',
@@ -4567,8 +4568,8 @@ function migrate_productlot_path()
 			}
 
 			if ($dir) {
-				$lot->id = $obj->rowid;
-				$lot->ref = $obj->id;		// No ref for the moment
+				$lot->id = (int) $obj->rowid;
+				$lot->ref = (string) $obj->rowid;		// No ref for the moment
 				$lot->batch = $obj->batch;
 				$lot->entity = $obj->entity;
 				$lot->fk_product = $obj->fk_product;

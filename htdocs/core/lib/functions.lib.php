@@ -5691,7 +5691,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'accounting_account' => 'infobox-bank_account',
 				'accountline' => 'infobox-bank_account',
 				'accountancy' => 'infobox-bank_account',
-				'admin'=> 'opacitymedium',
+				'admin' => 'opacitymedium',
 				'asset' => 'infobox-bank_account',
 				'bank_account' => 'infobox-bank_account',
 				'bill' => 'infobox-commande',
@@ -8445,7 +8445,8 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 	}
 
 	// If the (seller country = buyer country) then the default VAT = VAT of the product sold. End of rule.
-	if (empty($vatrule) && (($seller_country_code == $buyer_country_code)
+	if (empty($vatrule) && (
+		($seller_country_code == $buyer_country_code)
 		|| (in_array($seller_country_code, array('FR', 'MC')) && in_array($buyer_country_code, array('FR', 'MC')))
 		|| (in_array($seller_country_code, array('MQ', 'GP')) && in_array($buyer_country_code, array('MQ', 'GP')))	// We should be able to manage the case of MQ, GP, ... with a deicated vat rate at previous step.
 	)) { // Warning ->country_code not always defined
@@ -8517,7 +8518,8 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 
 	// Allow an external module to bypass the calculation of prices
 	$parameters = array('vatvalue' => $vatvalue, 'vatrule' => $vatrule);
-	$tmpobject = null; $tmpaction = '';
+	$tmpobject = null;
+	$tmpaction = '';
 	// @phan-suppress-next-line PhanPluginConstantVariableNull
 	$reshook = $hookmanager->executeHooks('get_default_tva', $parameters, $tmpobject, $tmpaction);	// @phan-suppress-current-line PhanPluginConstantVariableNull
 	if ($reshook > 0 && !empty($hookmanager->resArray['vatvalue'])) {
@@ -9540,22 +9542,54 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 				$out = 'ErrorHTMLLinksNotAllowed';
 			}
 		} elseif (getDolGlobalInt('MAIN_DISALLOW_URL_INTO_DESCRIPTIONS') == 1) {
+			// Refuse any links except it they are to the wrapper document.php or viewimage.php
 			$nblinks = 0;
+
 			// Loop on each url in src= and url(
 			$pattern = '/src=["\']?(http[^"\']+)|url\(["\']?(http[^\)]+)/';
 
+			global $dolibarr_main_url_root;
+
 			$matches = array();
 			if (preg_match_all($pattern, $out, $matches)) {
-				// URLs are into $matches[1]
-				$urls = $matches[1];
+				// URLs are into $matches[1] or $matches[2]
+				$urls = array();
+				foreach ($matches[1] as $tmpval) {
+					if (!empty($tmpval)) {
+						$urls[] = $tmpval;
+					}
+				}
+				foreach ($matches[2] as $tmpval) {
+					if (!empty($tmpval)) {
+						$urls[] = $tmpval;
+					}
+				}
 
-				// Affiche les URLs
+				// Show URLs
+				$firstexturl = '';
+				$secondexturl = '';
 				foreach ($urls as $url) {
-					$nblinks++;
-					echo "Found url = " . $url . "\n";
+					$urlok = 0;
+					$parsedurl = parse_url($url);
+					if (!empty($parsedurl)) {
+						if (preg_match('/'.preg_quote($dolibarr_main_url_root, '/').'/', $url)
+							//&& preg_match('/(document|viewimage)\.php$/', $parsedurl['path']) && preg_match('/modulepart=(media|mycompany)/', $parsedurl['query'])
+						) {
+							$urlok = 1;
+						}
+					}
+					if (!$urlok) {
+						$nblinks++;
+						if (empty($firstexturl)) {
+							$firstexturl = $url;
+						} elseif (empty($secondexturl)) {
+							$secondexturl = $url;
+						}
+						//echo "Found url = ".$url . "\n";
+					}
 				}
 				if ($nblinks > 0) {
-					$out = 'ErrorHTMLExternalLinksNotAllowed';
+					$out = 'ErrorHTMLExternalLinksNotAllowed (Example: '.$firstexturl.($secondexturl ? ' '.$secondexturl : '').')';
 				}
 			}
 		}
@@ -11938,10 +11972,10 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 
 		// Set $dolibarr_main_restrict_eval_methods_array
 		if (!isset($dolibarr_main_restrict_eval_methods)) {
-			$dolibarr_main_restrict_eval_methods = 'getDolGlobalString,getDolGlobalInt,getDolCurrency,fetchNoCompute,hasRight,isModEnabled,isStringVarMatching,abs,min,max,round,dol_now,preg_match';
+			$dolibarr_main_restrict_eval_methods = 'getDolGlobalString, getDolGlobalInt, getDolCurrency, fetchNoCompute, hasRight, isAdmin, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, preg_match';
 		}
 		//print '$dolibarr_main_restrict_eval_methods = '.$dolibarr_main_restrict_eval_methods."\n";
-		$dolibarr_main_restrict_eval_methods_array = explode(',', $dolibarr_main_restrict_eval_methods);
+		$dolibarr_main_restrict_eval_methods_array = explode(',', str_replace(" ", "", $dolibarr_main_restrict_eval_methods));
 
 		// Test on dangerous char (used for RCE), we allow only characters to make PHP variable testing
 		// We must accept with 1: '1 && getDolGlobalInt("doesnotexist1") && getDolGlobalString("MAIN_FEATURES_LEVEL")'
@@ -12031,13 +12065,14 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 			$savescheck = $scheck;
 			$scheck = preg_replace('/\$conf->[a-z\_]+->enabled/', '__VARCONFENABLED__', $scheck);		// Remove this once $user->module->enabled has been replaced everywhere with isModEnabled.
 			$scheck = preg_replace('/\$user->hasRight/', '__VARUSERHASRIGHT__', $scheck);
-			$scheck = preg_replace('/\$user->rights/', '__VARUSERHASRIGHT__', $scheck);		// Remove this once $user->rights->xxx is removed everywhere.
+			$scheck = preg_replace('/\$user->rights/', '__VARUSERHASRIGHT__', $scheck);		// Remove this once $user->rights->xxx is replaced everywhere with $user->hasRight()
+			$scheck = preg_replace('/\$user->admin/', '__VARUSERISADMIN__', $scheck);		// Remove this once $user->admin is replaced everywhere with $user->isAdmin()
 			$scheck = preg_replace('/\(\$db\)/', '__VARDB__', $scheck);
 			$scheck = preg_replace('/\$langs/', '__VARLANGSTRANS__', $scheck);
 			$scheck = preg_replace('/\$mysoc/', '__VARMYSOC__', $scheck);
 			$scheck = preg_replace('/\$action/', '__VARACTION__', $scheck);
-			$scheck = preg_replace('/\$mainmenu/', '__VARMAINMENU__', $scheck);
-			$scheck = preg_replace('/\$leftmenu/', '__VARLEFTMENU__', $scheck);
+			$scheck = preg_replace('/\$mainmenu/', '__VARMAINMENU__', $scheck);				// Remove this once all tests on $mainmenu has been replaced with isStringVarMatching
+			$scheck = preg_replace('/\$leftmenu/', '__VARLEFTMENU__', $scheck);				// Remove this once all tests on $mainmenu has been replaced with isStringVarMatching
 			$scheck = preg_replace('/\$websitepage/', '__VARWEBSITEPAGE__', $scheck);
 			$scheck = preg_replace('/\$website/', '__VARWEBSITE__', $scheck);
 			$scheck = preg_replace('/\$objectoffield/', '__VAROBJECTOFFIELD__', $scheck);
@@ -14072,7 +14107,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  *
  * @param string    	$label      	Label or tooltip of button if $text is provided. Also used as tooltip in title attribute. Can be escaped HTML content or full simple text.
  * @param string    	$text       	Optional : short label on button. Can be escaped HTML content or full simple text.
- * @param string 		$actionType 	'default', 'danger', 'email', 'clone', 'cancel', 'delete', ...
+ * @param string 		$actionType 	'default', 'edit', 'danger', 'email', 'clone', 'cancel', 'delete', ...
  * @param string|array<int,array{lang:string,enabled:bool,perm:bool|int,label:string,url:string,urlroot?:string,isDropDown?:int<0,1>}> 	$url        	Url for link or array of subbutton description
  *                                                                                                                                                      Example when an array is used:
  *                                                                                                                                                      $arrayforbutaction = array(
@@ -14182,13 +14217,18 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 	}
 
 	// Here, $url is a simple link
-
 	if (!empty($params['isDropdown']) || !empty($params['isDropDown'])) {	// Use the dropdown-item style (not for action button)
 		$class = "dropdown-item";
 	} else {
 		$class = 'butAction';
-		if ($actionType == 'danger' || $actionType == 'delete') {
-			$class = 'butActionDelete';
+		if ($actionType == 'edit') {
+			$class = 'butAction butActionEdit';
+		} elseif ($actionType == 'email') {
+			$class = 'butAction butActionEmail';
+		} elseif ($actionType == 'clone') {
+			$class = 'butAction butActionClone';
+		} elseif ($actionType == 'danger' || $actionType == 'delete') {
+			$class = 'butAction butActionDelete';
 			if (!empty($url) && strpos($url, 'token=') === false) {
 				$url .= '&token=' . newToken();
 			}
@@ -14322,7 +14362,7 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
  * using `dolPrintHTMLForAttributeUrl()`. All other attributes are escaped using
  * `dolPrintHTMLForAttribute()`.
  *
- * ⚠️ Note: Disabling escaping (via `$unescapedAttr`) is **not recommended** unless you
+ * Note: Disabling escaping (via `$unescapedAttr`) is **not recommended** unless you
  * fully trust the input data, as it may lead to XSS vulnerabilities.
  *
  * Example:
@@ -14651,7 +14691,7 @@ function getElementProperties($elementType)
 		$classpath = $module . '/class';
 		$classfile = $module;
 		$classname = preg_replace('/det$/', 'Line', $element);
-		if (in_array($module, array('expedition', 'propale', 'facture', 'contrat', 'fichinter', 'commandefournisseur'))) {
+		if (in_array($module, array('expedition', 'propale', 'facture', 'contrat', 'fichinter', 'supplier_order', 'commandefournisseur'))) {
 			$classname = preg_replace('/det$/', 'Ligne', $element);
 		}
 	}

@@ -851,7 +851,7 @@ if ($action == 'create') {
 			print '<tr>';
 			print '<td class="titlefield">' . $langs->trans("DateExport") . '</td>';
 			print '<td>';
-			print $object->date_export ? dol_print_date($object->date_export, 'dayhour') : '&nbsp;';
+			print $object->date_export ? img_picto($langs->trans("TransactionExportDesc"), 'fa-file-export', 'class="pictofixedwidth opacitymedium"').dol_print_date($object->date_export, 'dayhour') : '&nbsp;';
 			print '</td>';
 			print '</tr>';
 
@@ -859,7 +859,7 @@ if ($action == 'create') {
 			print '<tr>';
 			print '<td class="titlefield">' . $langs->trans("DateValidation") . '</td>';
 			print '<td>';
-			print $object->date_validation ? dol_print_date($object->date_validation, 'dayhour') : '&nbsp;';
+			print $object->date_validation ? img_picto($langs->trans("TransactionBlockedLockedDesc"), 'fa-lock', 'class="pictofixedwidth opacitymedium"').dol_print_date($object->date_validation, 'dayhour') : '&nbsp;';
 			print '</td>';
 			print '</tr>';
 
@@ -966,21 +966,23 @@ if ($action == 'create') {
 			// List of movements
 			print load_fiche_titre($langs->trans("ListeMvts"), '', '');
 
-			print '<form action="'.$_SERVER["PHP_SELF"].'?piece_num='.((int) $object->piece_num).'" method="POST">';
-			if ($optioncss != '') {
-				print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+			if (empty($object->date_validation)) {
+				print '<form action="' . $_SERVER["PHP_SELF"] . '?piece_num=' . ((int) $object->piece_num) . '" method="POST">';
+				if ($optioncss != '') {
+					print '<input type="hidden" name="optioncss" value="' . $optioncss . '">';
+				}
+				print '<input type="hidden" name="token" value="' . newToken() . '">';
+				print '<input type="hidden" name="doc_date" value="' . $object->doc_date . '">' . "\n";
+				print '<input type="hidden" name="doc_type" value="' . $object->doc_type . '">' . "\n";
+				print '<input type="hidden" name="doc_ref" value="' . $object->doc_ref . '">' . "\n";
+				print '<input type="hidden" name="ref" value="' . $object->ref . '">' . "\n";
+				print '<input type="hidden" name="code_journal" value="' . $object->code_journal . '">' . "\n";
+				print '<input type="hidden" name="fk_doc" value="' . $object->fk_doc . '">' . "\n";
+				print '<input type="hidden" name="fk_docdet" value="' . $object->fk_docdet . '">' . "\n";
+				print '<input type="hidden" name="mode" value="' . $mode . '">' . "\n";
+				print '<input type="hidden" name="backtopage" value="' . $backtopage . '">';
+				print '<input type="hidden" name="type" value="' . $type . '">';
 			}
-			print '<input type="hidden" name="token" value="'.newToken().'">';
-			print '<input type="hidden" name="doc_date" value="'.$object->doc_date.'">'."\n";
-			print '<input type="hidden" name="doc_type" value="'.$object->doc_type.'">'."\n";
-			print '<input type="hidden" name="doc_ref" value="'.$object->doc_ref.'">'."\n";
-			print '<input type="hidden" name="ref" value="'.$object->ref.'">'."\n";
-			print '<input type="hidden" name="code_journal" value="'.$object->code_journal.'">'."\n";
-			print '<input type="hidden" name="fk_doc" value="'.$object->fk_doc.'">'."\n";
-			print '<input type="hidden" name="fk_docdet" value="'.$object->fk_docdet.'">'."\n";
-			print '<input type="hidden" name="mode" value="'.$mode.'">'."\n";
-			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-			print '<input type="hidden" name="type" value="'.$type.'">';
 
 			if (count($object->linesmvt) > 0) {
 				print '<div class="div-table-responsive-no-min">';
@@ -1005,7 +1007,7 @@ if ($action == 'create') {
 				print "</tr>\n";
 
 				// Add an empty line if there is not yet
-				if (!empty($object->linesmvt[0])) {
+				if (!empty($object->linesmvt[0]) && empty($object->date_validation)) {
 					$tmpline = $object->linesmvt[0];
 					if (!empty($tmpline->numero_compte)) {
 						$line = new BookKeepingLine($db);
@@ -1017,7 +1019,7 @@ if ($action == 'create') {
 					$total_debit += $line->debit;
 					$total_credit += $line->credit;
 
-					if ($action == 'update' && $line->id == $id) {
+					if ($action == 'update' && $line->id == $id && empty($object->date_validation)) {
 						print '<tr class="oddeven" data-lineid="'.((int) $line->id).'">';
 						print '<!-- td columns in edit mode -->';
 						print '<td>';
@@ -1044,7 +1046,7 @@ if ($action == 'create') {
 						print '<input type="submit" class="button" name="update" value="'.$langs->trans("Update").'">';
 						print '</td>';
 						print "</tr>\n";
-					} elseif (empty($line->numero_compte) || (empty($line->debit) && empty($line->credit))) {
+					} elseif ((empty($line->numero_compte) || (empty($line->debit) && empty($line->credit))) && empty($object->date_validation)) {
 						if (($action == "" || $action == 'add') && $permissiontoadd) {
 							print '<tr class="oddeven" data-lineid="'.((int) $line->id).'">';
 							print '<!-- td columns in add mode -->';

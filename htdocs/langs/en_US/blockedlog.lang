@@ -49,6 +49,7 @@ TotalTTCIfInvoiceSeeCompleteDataForDetail=Amount of event. Total including tax i
 TypeOfEvent=Type of event
 TotalForAction=Total for event %s
 SecretKey=Secret key
+ErrorPeriodMustBePastToAllowExport=Export into archives is allowed only if period is completely past
 
 ## logTypes
 logBILL_DELETE=Customer invoice logically deleted

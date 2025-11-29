@@ -284,6 +284,8 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
+	// Actions when printing a doc from card
+	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 	// Actions to build doc
 	$upload_dir = $conf->stock->dir_output;

@@ -453,6 +453,13 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 
 						// Call of triggers (you should have set $triggersendname to execute trigger.
 						if (!empty($triggersendname)) {
+							if ($triggersendname == 'BILL_SENTBYMAIL' && $object instanceof Facture) {
+								// If sending email for invoice, we increase the counter of invoices sent by email
+								$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET email_sent_counter = email_sent_counter + 1";
+								$sql .= " WHERE rowid = ".((int) $object->id);
+								$db->query($sql);
+							}
+
 							$result = $object->call_trigger($triggersendname, $user);  // @phan-suppress-current-line PhanPossiblyUndeclaredGlobalVariable
 							if ($result < 0) {
 								$error++;
