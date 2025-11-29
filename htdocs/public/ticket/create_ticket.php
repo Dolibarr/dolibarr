@@ -445,7 +445,7 @@ if (empty($reshook)) {
 						$mimetype = $attachedfiles['mimes'];
 
 						// Send email to customer if option enabled
-						if(getDolGlobalInt('TICKET_SENDMAIL_ON_CREATION')) {
+						if (getDolGlobalInt('TICKET_SENDMAIL_ON_CREATION')) {
 							$appli = $mysoc->name;
 
 							$subject = '['.$appli.'] '.$langs->transnoentities('TicketNewEmailSubject', $object->ref, $object->track_id);
