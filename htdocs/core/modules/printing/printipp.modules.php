@@ -218,11 +218,11 @@ class printing_printipp extends PrintingDriver
 			$html .= '<td>'.$langs->trans('STATE_IPP_'.$printer_det->printer_state->_value0).'</td>';
 			$html .= '<td>'.$langs->trans('STATE_IPP_'.$printer_det->printer_state_reasons->_value0).'</td>';
 			$html .= '<td>'.(!empty($printer_det->printer_state_reasons->_value1) ? $langs->trans('STATE_IPP_'.$printer_det->printer_state_reasons->_value1) : '').'</td>';
-			$html .= '<td>'.$langs->trans('IPP_COLOR_'.$printer_det->printer_type->_value2).'</td>';
-			$html .= '<td>'.$langs->trans('IPP_COLOR_'.$printer_det->printer_type->_value3).'</td>';
+			$html .= '<td>'.(!empty($printer_det->printer_type->_value2) ? $langs->trans('IPP_COLOR_'.$printer_det->printer_type->_value2) : '').'</td>';
+			$html .= '<td>'.(!empty($printer_det->printer_type->_value3) ? $langs->trans('IPP_COLOR_'.$printer_det->printer_type->_value3) : '').'</td>';
 			//$html.= '<td>'.$printer_det->device_uri->_value0.'</td>';
 			$html .= '<td>'.$printer_det->media_default->_value0.'</td>';
-			$html .= '<td>'.$langs->trans('MEDIA_IPP_'.$printer_det->media_type_supported->_value1).'</td>';
+			$html .= '<td>'.(!empty($printer_det->media_type_supported->_value1) ? $langs->trans('MEDIA_IPP_'.$printer_det->media_type_supported->_value1) : '').'</td>';
 			// Default
 			$html .= '<td class="center">';
 			if (getDolGlobalString('PRINTIPP_URI_DEFAULT') == $value) {
