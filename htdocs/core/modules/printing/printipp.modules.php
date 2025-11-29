@@ -224,7 +224,7 @@ class printing_printipp extends PrintingDriver
 			if (getDolGlobalString('PRINTIPP_URI_DEFAULT') == $value) {
 				$html .= img_picto($langs->trans("Default"), 'on');
 			} else {
-				$html .= '<a href="'.$_SERVER["PHP_SELF"].'?action=setvalue&token='.newToken().'&mode=test&varname=PRINTIPP_URI_DEFAULT&driver=printipp&value='.urlencode($value).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+				$html .= '<a href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'setvalue', 'mode' => 'test', 'varname' => 'PRINTIPP_URI_DEFAULT', 'driver' => 'printipp', 'value' => $value], true).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 			}
 			$html .= '</td>';
 			$html .= '</tr>'."\n";
