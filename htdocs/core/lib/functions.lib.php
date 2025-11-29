@@ -161,6 +161,11 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 	} elseif ($module == 'knowledgerecord') {
 		$module = 'knowledgemanagement';
 		$subdirectory = '/knowledgerecord';
+	} elseif ($module == 'commande_fournisseur') {
+		$module = 'fournisseur';
+		$subdirectory = '/commande';
+	} elseif ($module == 'expedition') {
+		$subdirectory = '/sending';
 	}
 
 	// Get the relative path of directory

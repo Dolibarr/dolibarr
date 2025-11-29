@@ -163,11 +163,7 @@ class printing_printipp extends PrintingDriver
 			dol_print_error($this->db);
 		}
 
-		$fileprint = $conf->{$module}->dir_output;
-		if ($subdir != '') {
-			$fileprint .= '/'.$subdir;
-		}
-		$fileprint .= '/'.$file;
+		$fileprint = getMultidirOutput(null, $module) . '/' . $file;
 		$ipp->setData($fileprint);
 		try {
 			$ipp->printJob();
