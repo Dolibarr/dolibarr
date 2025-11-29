@@ -1591,17 +1591,30 @@ if ($action == 'create') {
 						$line_color = $object->getSubtotalColors($objp->duree);
 						$line_options = json_decode($objp->extraparams, true);
 						$line_options = is_array($line_options) ? $line_options['subtotal'] : array();
-						print '<td colspan="3" ><strong>'.dol_htmlentitiesbr($objp->description).'</strong>';
-						if (array_key_exists('titleshowuponpdf', $line_options)) {
-							echo '&nbsp;' . img_picto($langs->trans("ShowUPOnPDF"), 'invoicing');
+						if ($objp->duree > 0) {
+							print '<td colspan="3" >';
+							print str_repeat('&nbsp;', (int) (abs($objp->duree/3600) - 1) * 8); 
+							print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
+							print '<strong>'.dol_htmlentitiesbr($objp->description).'</strong>';
+							if (array_key_exists('titleshowuponpdf', $line_options)) {
+								echo '&nbsp;' . img_picto($langs->trans("ShowUPOnPDF"), 'invoicing');
+							}
+							if (array_key_exists('titleshowtotalexludingvatonpdf', $line_options)) {
+								echo '&nbsp; <span title="' . $langs->trans("ShowTotalExludingVATOnPDF") . '">%</span>';
+							}
+							if (array_key_exists('titleforcepagebreak', $line_options)) {
+								echo '&nbsp;' . img_picto($langs->trans("ForcePageBreak"), 'file');
+							}
+							print "</td>";
+						} else {
+							print '<td colspan="2" align="right">';
+							print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
+							print '<strong>'.dol_htmlentitiesbr($objp->description).' :</strong>';
+							print '</td>';
+							print '<td class="right">';
+							print '<strong>'.convertSecondToTime($object->getSubtotalLineAmount($object->lines[$i])).'</strong>';
+							print '</td>';
 						}
-						if (array_key_exists('titleshowtotalexludingvatonpdf', $line_options)) {
-							echo '&nbsp; <span title="' . $langs->trans("ShowTotalExludingVATOnPDF") . '">%</span>';
-						}
-						if (array_key_exists('titleforcepagebreak', $line_options)) {
-							echo '&nbsp;' . img_picto($langs->trans("ForcePageBreak"), 'file');
-						}
-						print "</td>";
 					} else {
 						print '<td>';
 						print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
