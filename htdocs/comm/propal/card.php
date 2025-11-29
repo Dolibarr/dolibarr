@@ -2492,7 +2492,7 @@ if ($action == 'create') {
 		}
 		print '</td><td class="valuefieldcreate">';
 		print img_picto('', 'clock', 'class="pictofixedwidth"');
-		$form->selectAvailabilityDelay((GETPOSTISSET('availability_id') ? GETPOSTINT('availability_id') : ''), 'availability_id', '', 1, 'maxwidth200 widthcentpercentminusx');
+		$form->selectAvailabilityDelay(GETPOSTINT('availability_id'), 'availability_id', '', 1, 'maxwidth200 widthcentpercentminusx');
 		print '</td></tr>';
 
 		// Delivery date (or manufacturing)
