@@ -725,7 +725,7 @@ $jsConf = [
 
 if ( !empty($object->thirdparty) ) {
 	$jsConf['docObject']['thirdparty'] = [
-		'state_code' => $object->thirdparty->state_code ?? null,
+		'state_code' => $object->thirdparty->state_code,
 		'country_code' => $object->thirdparty->country_code,
 	];
 }
