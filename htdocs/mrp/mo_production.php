@@ -1052,7 +1052,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							if (isModEnabled('workstation') && $line->fk_default_workstation > 0) {
 								$workstation = new Workstation($db);
 								$workstation->fetch($line->fk_default_workstation);
-								$line->total_cost = (float) $qtyhourforline * ($workstation->thm_operator_estimated + $workstation->thm_machine_estimated);
+								$line->total_cost = (float) $qtyhourforline * ($workstation->thm_operator_estimated + $workstation->thm_machine_estimated) / $object->qty; // Divide by object quantity to get a correct per unit price
 								$bomcostupdated += $line->total_cost;
 							} elseif ($qtyhourservice && $qtyhourforline) {
 								$linecost = price2num(($qtyhourforline / $qtyhourservice * $costprice) / $object->qty, 'MT');	// price for line for all quantities
