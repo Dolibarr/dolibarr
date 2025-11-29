@@ -1699,4 +1699,32 @@ class Fichinter extends CommonObject
 		$return .= '</div>';
 		return $return;
 	}
+
+	/**
+	 * Return the total_ht of lines that are above the current line (excluded) and that are not a subtotal line
+	 * until a title line of the same level is found
+	 *
+	 * @param object	$line	Line that needs the subtotal amount.
+	 * @return string	$final_duration
+	 *
+	 * @phan-suppress PhanUndeclaredProperty
+	 */
+	public function getSubtotalLineAmount($line)
+	{
+		$final_duration = 0;
+		for ($i = $line->rang-1; $i > 0; $i--) {
+			if (empty($this->lines[$i-1]) || $this->lines[$i-1]->rang >= $line->rang) {
+				continue;
+			}
+			if ($this->lines[$i-1]->special_code == SUBTOTALS_SPECIAL_CODE && $this->lines[$i-1]->qty > 0) {
+				if ($this->lines[$i-1]->qty <= abs($line->qty)) {
+					return $final_duration;
+				}
+			} else {
+				$final_duration += $this->lines[$i-1]->duration;
+			}
+		}
+		return $final_duration;
+	}
+
 }
