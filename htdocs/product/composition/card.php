@@ -7,7 +7,7 @@
  * Copyright (C) 2011-2014  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2023		Benjamin Falière		<benjamin.faliere@altairis.fr>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -434,9 +434,10 @@ if ($id > 0 || !empty($ref)) {
 			print '<th class="liste_titre right">'.$langs->trans("Qty").'</td>';
 			print '<th class="center">'.$langs->trans('ComposedProductIncDecStock').'</th>';
 			print '</tr>';
+			$i = 0;
+			$num = 0;
 			if ($resql) {
 				$num = $db->num_rows($resql);
-				$i = 0;
 
 				if ($num == 0) {
 					print '<tr><td colspan="4"><span class="opacitymedium">'.$langs->trans("NoMatchFound").'</span></td></tr>';

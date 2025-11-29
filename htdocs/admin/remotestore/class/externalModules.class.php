@@ -101,6 +101,16 @@ class ExternalModules
 	public $githubFileStatus;
 
 	/**
+	 * @var string
+	 */
+	public $githubFileError;
+
+	/**
+	 * @var string
+	 */
+	public $error;
+
+	/**
 	 * @var int // number of online providers
 	 */
 	public $numberOfProviders;
@@ -169,6 +179,7 @@ class ExternalModules
 
 			$this->getRemoteYamlFile($this->file_source_url, $cachedelayforgithubrepo);
 
+			$this->githubFileError = $this->error;
 			$this->githubFileStatus = dol_is_file($this->cache_file) ? 1 : 0;
 		}
 
@@ -355,6 +366,22 @@ class ExternalModules
 
 		$this->numberTotalOfProducts = 0;
 
+		// Special case of category goodies
+		if ($this->categorie == 87) {
+			$html = '<div class="shop-container">
+                            <div class="shop-image">
+								<a href="https://merch.dolibarr.org/" target="_blank">
+	                                <img src="https://www.dolistore.com/medias/image/marketplace/img/goodies-shop.jpg" width="50%" alt="DoliStore Merch and Gifts" />
+	                                <div class="shop-overlay">
+	                                    <button target="new" class="shop-button">'.$langs->trans("GoodiesButtonTitle").' <i class="icon-chevron-right"></i></button>
+	                                </div>
+                                </a>
+                            </div>
+                        </div>';
+
+			return $html;
+		}
+
 		// Fetch the products from Dolistore source
 
 		$dolistoreProducts = array();
@@ -447,7 +474,11 @@ class ExternalModules
 					$price = '<h3><a href="'.$urlview.'" target="_blank">'.$langs->trans('SeeOnDoliStore').'</a></h3>';
 				} elseif ($product['source'] === 'githubcommunity') {
 					if (array_key_exists('price_ht', $product) && empty($product['price_ht'])) {
-						$price = '<h3>'.$langs->trans('Free').'</h3>';
+						if ($product['status'] == 'soon') {
+							$price = '<h3>'.$langs->trans('StillInDevelopment').'</h3>';
+						} else {
+							$price = '<h3>'.$langs->trans('Free').'</h3>';
+						}
 					} else {
 						if ($product["dolistore-download"]) {
 							$price = '<h3><a href="'.$product["dolistore-download"].'" target="_blank">'.$langs->trans('SeeOnDoliStore').'</a></h3>';
@@ -623,7 +654,7 @@ class ExternalModules
 
 		$this->numberOfProducts = count($this->products);
 
-		return $html ;
+		return $html;
 	}
 
 	/**
@@ -892,7 +923,10 @@ class ExternalModules
 			$result = getURLContent($file_source_url, 'GET', '', 1, $addheaders);	// TODO Force timeout to 5 s on both connect and response.
 			if (!empty($result) && $result['http_code'] == 200) {
 				$yaml = $result['content'];
-				file_put_contents($cache_file, $yaml);
+				$result = file_put_contents($cache_file, $yaml);
+				if ($result === false) {
+					$this->error = 'Failed to create cache file: ' . $cache_file;
+				}
 			}
 		} else {
 			$yaml = file_get_contents($cache_file);

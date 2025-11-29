@@ -30,7 +30,7 @@ jobs:
       #  if: false
 
       # Checkout git sources to analyze
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       # Try to get the list of modified files into steps.changed-php.outputs.all_changed_files
       #- name: Get changed files
@@ -109,6 +109,10 @@ jobs:
           coverage: none # disable xdebug, pcov
           tools: phpcs
 
+      # Install perltidy and perlcritic
+      - name: Install perltidy and perlcritic
+        run: sudo apt-get update && sudo apt-get install -y perltidy libperl-critic-perl
+
       # Run all the precommit tools (defined into pre-commit-config.yaml).
       # We can force exclusion of some of them here.
       - name: Run pre-commit hooks
@@ -153,7 +157,7 @@ jobs:
           ls -l ~/.cache/pre-commit/
 
       - name: Convert Raw Log to Annotations
-        uses: mdeweerd/logToCheckStyle@v2025.1.1
+        uses: mdeweerd/logToCheckStyle@v2025.11.2
         if: ${{ failure() }}
         with:
           in: ${{ env.RAW_LOG }}

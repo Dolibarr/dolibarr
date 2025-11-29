@@ -168,6 +168,12 @@ foreach ($categories as $key => $categorycursor) {
 $maincategories = dol_sort_array($maincategories, 'label');
 $subcategories = dol_sort_array($subcategories, 'label');
 ?>
+<?php
+$keyCodeForEnter = '';
+if (!empty($_SESSION['takeposterminal'])) {
+	$keyCodeForEnter = getDolGlobalInt('CASHDESK_READER_KEYCODE_FOR_ENTER'.$_SESSION['takeposterminal']) > 0 ? getDolGlobalString('CASHDESK_READER_KEYCODE_FOR_ENTER'.$_SESSION['takeposterminal']) : '';
+}
+?>
 
 <body class="bodytakepos" style="overflow: hidden;">
 
@@ -472,7 +478,7 @@ function MoreProducts(moreorless) {
 	var nb_cat_shown = $('.div5 div.wrapper2[data-iscat=1]').length;
 	var offset = <?php echo($MAXPRODUCT - 2); ?> * pageproducts - nb_cat_shown;
 	// Only show products for sale (tosell=1)
-	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&token=<?php echo newToken();?>&category='+currentcat+'&tosell=1&limit='+limit+'&offset='+offset, function(data) {
+	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&token=<?php echo newToken();?>&thirdpartyid=' + jQuery('#thirdpartyid').val() + '&category='+currentcat+'&tosell=1&limit='+limit+'&offset='+offset, function(data) {
 		console.log("Call ajax.php (in MoreProducts) to get Products of category "+currentcat);
 
 		if (typeof (data[0]) == "undefined" && moreorless=="more"){ // Return if no more pages
@@ -592,7 +598,7 @@ function Contact() {
 function History()
 {
 	console.log("Open box to select the history");
-	$.colorbox({href:"../compta/facture/list.php?contextpage=poslist", width:"90%", height:"80%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("History"); ?>"});
+	$.colorbox({href:"../compta/facture/list.php?contextpage=poslist&search_module_source=takepos", width:"90%", height:"80%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("History"); ?>"});
 }
 
 function Reduction() {
@@ -1146,12 +1152,6 @@ $( document ).ready(function() {
 });
 </script>
 
-<?php
-$keyCodeForEnter = '';
-if (!empty($_SESSION['takeposterminal'])) {
-	$keyCodeForEnter = getDolGlobalInt('CASHDESK_READER_KEYCODE_FOR_ENTER'.$_SESSION['takeposterminal']) > 0 ? getDolGlobalString('CASHDESK_READER_KEYCODE_FOR_ENTER'.$_SESSION['takeposterminal']) : '';
-}
-?>
 <div class="container">
 
 <?php
@@ -1492,13 +1492,13 @@ if ($reshook == 0) {  //add buttons
 				$menus[$r++] = $butmenu;
 			}
 		}
-	} elseif ($reshook == 1) {
-		$r = 0; //replace buttons
-		if (is_array($hookmanager->resArray)) {
-			foreach ($hookmanager->resArray as $resArray) {
-				foreach ($resArray as $butmenu) {
-					$menus[$r++] = $butmenu;
-				}
+	}
+} elseif ($reshook == 1) {
+	$r = 0; //replace buttons
+	if (is_array($hookmanager->resArray) ) {
+		foreach ($hookmanager->resArray as $resArray) {
+			foreach ($resArray as $butmenu) {
+				$menus[$r++] = $butmenu;
 			}
 		}
 	}
@@ -1618,14 +1618,14 @@ if (getDolGlobalString('TAKEPOS_WEIGHING_SCALE')) {
 
 	while ($count < $MAXPRODUCT) {
 		print '<div class="wrapper2'.(($count >= ($MAXPRODUCT - 2)) ? ' arrow' : '').'" id="prodiv'.$count.'" '; ?>
-												<?php if ($count == ($MAXPRODUCT - 2)) {
-													?> onclick="MoreProducts('less')" <?php
-												}
-												if ($count == ($MAXPRODUCT - 1)) {
-													?> onclick="MoreProducts('more')" <?php
-												} else {
-													echo 'onclick="ClickProduct('.((int) $count).')"';
-												} ?>>
+													<?php if ($count == ($MAXPRODUCT - 2)) {
+														?> onclick="MoreProducts('less')" <?php
+													}
+													if ($count == ($MAXPRODUCT - 1)) {
+														?> onclick="MoreProducts('more')" <?php
+													} else {
+														echo 'onclick="ClickProduct('.((int) $count).')"';
+													} ?>>
 					<?php
 					if ($count == ($MAXPRODUCT - 2)) {
 						//echo '<img class="imgwrapper" src="img/arrow-prev-top.png" height="100%" id="proimg'.$count.'" />';

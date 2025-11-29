@@ -52,6 +52,13 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	box-sizing: border-box;
 }
 
+.badge-text {
+	padding: 3px;
+	padding-left: 5px;
+	padding-right: 5px;
+	border-radius: 5px;
+}
+
 .badge-status {
 	font-size: 1em;
 	padding: .19em .35em;			/* more than 0.19 generate a change into height of lines */

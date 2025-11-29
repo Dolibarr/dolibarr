@@ -25,17 +25,13 @@
  */
 
 require_once DOL_DOCUMENT_ROOT . '/webportal/class/html.formcardwebportal.class.php';
+require_once DOL_DOCUMENT_ROOT . '/webportal/controllers/abstractcard.controller.class.php';
 
 /**
  * Class for MemberCardController
  */
-class MemberCardController extends Controller
+class MemberCardController extends AbstractCardController
 {
-	/**
-	 * @var FormCardWebPortal Form for card
-	 */
-	public $formCard;
-
 	/**
 	 * Check current access to controller
 	 *
@@ -91,32 +87,5 @@ class MemberCardController extends Controller
 		$this->formCard = $formCardWebPortal;
 
 		return 1;
-	}
-
-	/**
-	 * Display
-	 *
-	 * @return  void
-	 */
-	public function display()
-	{
-		$context = Context::getInstance();
-		if (!$context->controllerInstance->checkAccess()) {
-			$this->display404();
-			return;
-		}
-
-		$this->loadTemplate('header');
-		$this->loadTemplate('menu');
-		$this->loadTemplate('hero-header-banner');
-
-		$hookRes = $this->hookPrintPageView();
-		if (empty($hookRes)) {
-			print '<main class="container">';
-			print $this->formCard->elementCard($context);
-			print '</main>';
-		}
-
-		$this->loadTemplate('footer');
 	}
 }

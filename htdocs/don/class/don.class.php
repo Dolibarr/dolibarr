@@ -639,7 +639,7 @@ class Don extends CommonObject
 				// For remove dir
 				if (dol_is_dir($dir)) {
 					if (!dol_delete_dir_recursive($dir)) {
-						$this->errors[] = $this->error;
+						$this->errors[] = 'ErrorFailToDeleteDir';
 					}
 				}
 			}
@@ -1089,10 +1089,7 @@ class Don extends CommonObject
 		$file = '';
 		$classname = '';
 		$filefound = 0;
-		$dirmodels = array('/');
-		if (is_array($conf->modules_parts['models'])) {
-			$dirmodels = array_merge($dirmodels, $conf->modules_parts['models']);
-		}
+		$dirmodels = array_merge(['/'], (array) $conf->modules_parts['models']);
 		foreach ($dirmodels as $reldir) {
 			foreach (array('html', 'doc', 'pdf') as $prefix) {
 				$file = $prefix."_".preg_replace('/^html_/', '', $modele).".modules.php";
@@ -1124,7 +1121,7 @@ class Don extends CommonObject
 			// We save charset_output to restore it because write_file can change it if needed for
 			// output format that does not support UTF8.
 			$sav_charset_output = $outputlangs->charset_output;
-			if ($obj->write_file($object, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref) > 0) {
+			if ($obj->write_file($object, $outputlangs /*, $currency */) > 0) {
 				$outputlangs->charset_output = $sav_charset_output;
 
 				// we delete preview files
@@ -1217,7 +1214,7 @@ class Don extends CommonObject
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("Company").'</span> : <span class="info-box-label">'.$this->societe.'</span>';
 		}
 		if (!empty($this->amount)) {
-			$return .= '<br><span class="info-box-label amount">'.price($this->amount, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
+			$return .= '<br><span class="info-box-label amount">'.price($this->amount, 1, $langs, 1, -1, -1, getDolCurrency()).'</span>';
 		}
 		if (isset($this->status)) {
 			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';

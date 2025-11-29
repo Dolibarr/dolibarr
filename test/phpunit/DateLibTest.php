@@ -404,6 +404,15 @@ class DateLibTest extends CommonClassTest
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('Thu Jan January', $result);
 
+		// Check date output in a use timezone
+		$_SESSION['dol_tz'] = 1;
+		$_SESSION['dol_dst'] = 0;
+		$_SESSION['dol_tz_string'] = 'Europe/Paris';
+
+		$result = dol_print_date(0, '%H', 'tzuserrel', $outputlangs);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('01', $result);
+
 		return $result;
 	}
 

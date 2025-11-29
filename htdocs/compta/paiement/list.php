@@ -868,6 +868,7 @@ while ($i < $imaxinloop) {
 
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
+
 		// Status
 		if (!empty($arrayfields['p.statut']['checked'])) {
 			print '<td class="right">';

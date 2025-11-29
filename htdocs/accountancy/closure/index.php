@@ -146,7 +146,7 @@ if (empty($reshook)) {
 			if ($result > 0) {
 				setEventMessages($langs->trans("AllMovementsWereRecordedAsValidated"), null, 'mesgs');
 
-				header("Location: " . $_SERVER['PHP_SELF'] . (isset($current_fiscal_period) ? '?fiscal_period_id=' . $current_fiscal_period['id'] : ''));
+				header("Location: " . $_SERVER['PHP_SELF'] . '?fiscal_period_id=' . $current_fiscal_period['id']);
 				exit;
 			} else {
 				setEventMessages($langs->trans("NotAllMovementsCouldBeRecordedAsValidated"), null, 'errors');
@@ -176,7 +176,7 @@ if (empty($reshook)) {
 				} else {
 					setEventMessages($langs->trans("AccountancyClosureCloseSuccessfully"), null, 'mesgs');
 
-					header("Location: " . $_SERVER['PHP_SELF'] . (isset($current_fiscal_period) ? '?fiscal_period_id=' . $current_fiscal_period['id'] : ''));
+					header("Location: " . $_SERVER['PHP_SELF'] . '?fiscal_period_id=' . $current_fiscal_period['id']);
 					exit;
 				}
 			}
@@ -192,7 +192,7 @@ if (empty($reshook)) {
 			} else {
 				setEventMessages($langs->trans("AccountancyClosureInsertAccountingReversalSuccessfully"), null, 'mesgs');
 
-				header("Location: " . $_SERVER['PHP_SELF'] . (isset($current_fiscal_period) ? '?fiscal_period_id=' . $current_fiscal_period['id'] : ''));
+				header("Location: " . $_SERVER['PHP_SELF'] . '?fiscal_period_id=' . $current_fiscal_period['id']);
 				exit;
 			}
 		}
@@ -345,7 +345,7 @@ $fiscal_period_nav_text = $langs->trans("FiscalPeriod");
 $fiscal_period_nav_text .= '&nbsp;<a href="' . (isset($last_fiscal_period) ? $_SERVER["PHP_SELF"] . '?fiscal_period_id=' . $last_fiscal_period['id'] : '#" class="disabled') . '">' . img_previous() . '</a>';
 $fiscal_period_nav_text .= '&nbsp;<a href="' . (isset($next_fiscal_period) ? $_SERVER["PHP_SELF"] . '?fiscal_period_id=' . $next_fiscal_period['id'] : '#" class="disabled') . '">' . img_next() . '</a>';
 if (!empty($current_fiscal_period)) {
-	$fiscal_period_nav_text .= $current_fiscal_period['label'].' &nbsp;(' . (isset($current_fiscal_period) ? dol_print_date($current_fiscal_period['date_start'], 'day') . '&nbsp;-&nbsp;' . dol_print_date($current_fiscal_period['date_end'], 'day') . ')' : '');
+	$fiscal_period_nav_text .= $current_fiscal_period['label'].' &nbsp;(' . dol_print_date($current_fiscal_period['date_start'], 'day') . '&nbsp;-&nbsp;' . dol_print_date($current_fiscal_period['date_end'], 'day') . ')';
 }
 
 print load_fiche_titre($langs->trans("Closure") . " - " . $fiscal_period_nav_text, '', 'title_accountancy');

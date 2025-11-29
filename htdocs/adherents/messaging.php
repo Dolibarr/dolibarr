@@ -195,7 +195,7 @@ if (isModEnabled('agenda')) {
 if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allaactions', 'read'))) {
 	print '<br>';
 	$param = '&userid='.urlencode((string) ($id));
-	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+	if ($contextpage != $_SERVER["PHP_SELF"]) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {

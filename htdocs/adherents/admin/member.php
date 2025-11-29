@@ -372,7 +372,8 @@ foreach ($arrayofmodules as $file => $modCodeMember) {
 		print img_picto($langs->trans("Activated"), 'switch_on');
 		print "</td>\n";
 	} else {
-		$disabled = isModEnabled('multicompany') && ((is_object($mc) && !empty($mc->sharings['referent']) && $mc->sharings['referent'] != $conf->entity));
+		$isshareonotherentity = (is_object($mc) && !empty($mc->sharings['referent']) && $mc->sharings['referent'] != $conf->entity);	// @phpstan-ignore-line
+		$disabled = (isModEnabled('multicompany') && $isshareonotherentity);
 		print '<td class="center">';
 		if (!$disabled) {
 			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setcodemember&token='.newToken().'&value='.urlencode($file).'">';

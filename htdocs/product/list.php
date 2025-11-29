@@ -309,11 +309,11 @@ if (! empty($conf->stock->enabled)) {
 /*foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
-		$visible = dol_eval($val['visible'], 1, 1, '1');
+		$visible = dol_eval((string) $val['visible'], 1, 1, '1');
 		$arrayfields['p.'.$key] = array(
 			'label'=>$val['label'],
 			'checked'=>(($visible < 0) ? '0' : '1'),
-			'enabled'=>(abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
+			'enabled'=>(abs($visible) != 3 && (bool) dol_eval((string) $val['enabled'], 1)),
 			'position'=>$val['position']
 		);
 	}

@@ -44,7 +44,7 @@ $langs->loadLangs(array("knowledgemanagement", "companies"));
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 // Initialize a technical objects
@@ -68,7 +68,7 @@ $permissiontoadd = $user->hasRight('knowledgemanagement', 'knowledgerecord', 'wr
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
-restrictedArea($user, $object->module, $object->id, $object->table_element, $object->element, '', 'rowid', $isdraft);
+restrictedArea($user, $object->module, $object->id, $object->table_element.'&'.$object->element, $object->element, '', 'rowid', $isdraft);
 
 
 /*

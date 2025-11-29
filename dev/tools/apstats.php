@@ -221,13 +221,13 @@ foreach (array('proj', 'dep') as $source) {
 			$arrayofmetrics[$source]['Bytes'] = $reg[1];
 		}
 
-		if (preg_match('/^(.*)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)$/', $line, $reg)) {
-			$arrayoflineofcode[$source][$reg[1]]['Files'] = $reg[2];
-			$arrayoflineofcode[$source][$reg[1]]['Lines'] = $reg[3];
-			$arrayoflineofcode[$source][$reg[1]]['Blanks'] = $reg[4];
-			$arrayoflineofcode[$source][$reg[1]]['Comments'] = $reg[5];
-			$arrayoflineofcode[$source][$reg[1]]['Code'] = $reg[6];
-			$arrayoflineofcode[$source][$reg[1]]['Complexity'] = $reg[7];
+		if (preg_match('/^(.*)\s+([\d,]+)\s+([\d,]+)\s+([\d,]+)\s+([\d,]+)\s+([\d,]+)\s+([\d,]+)$/', $line, $reg)) {
+			$arrayoflineofcode[$source][$reg[1]]['Files'] = str_replace(array(',', ' '), array('', ''), $reg[2]);
+			$arrayoflineofcode[$source][$reg[1]]['Lines'] = str_replace(array(',', ' '), array('', ''), $reg[3]);
+			$arrayoflineofcode[$source][$reg[1]]['Blanks'] = str_replace(array(',', ' '), array('', ''), $reg[4]);
+			$arrayoflineofcode[$source][$reg[1]]['Comments'] = str_replace(array(',', ' '), array('', ''), $reg[5]);
+			$arrayoflineofcode[$source][$reg[1]]['Code'] = str_replace(array(',', ' '), array('', ''), $reg[6]);
+			$arrayoflineofcode[$source][$reg[1]]['Complexity'] = str_replace(array(',', ' '), array('', ''), $reg[7]);
 		}
 	}
 

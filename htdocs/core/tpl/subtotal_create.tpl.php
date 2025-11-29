@@ -20,8 +20,8 @@
 
 /**
  * @var CommonObject $this
- * @var CommonObject $object
- * @var CommonObjectLine $line
+ * @var Propal|Commande|Facture|FactureRec|Expedition|SupplierProposal|CommandeFournisseur|FactureFournisseur|Fichinter $object
+ * @var PropaleLigne|ContratLigne|OrderLine|FactureLigne|ExpeditionLigne|DeliveryLine|CommandeFournisseurLigne|SupplierInvoiceLine|SupplierProposalLine|FichinterLigne $line
  * @var Form $form
  * @var HookManager $hookmanager
  * @var Translate $langs
@@ -65,7 +65,7 @@ $page = $_SERVER["PHP_SELF"];
 
 if ($object->element == 'facture') {
 	$page .= '?facid=' . $object->id;
-} elseif (in_array($object->element, array('propal', 'commande', 'facturerec', 'shipping'))) {
+} elseif (in_array($object->element, $object::$ALLOWED_TYPES)) {
 	$page .= '?id=' . $object->id;
 }
 

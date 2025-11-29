@@ -31,6 +31,14 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
@@ -40,15 +48,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Societe $mysoc
- * @var Translate $langs
- * @var User $user
- */
 
 $langs->loadLangs(array("companies", "bills", "members", "users", "mails", 'other'));
 
@@ -61,7 +60,7 @@ $id = GETPOSTINT('rowid') ? GETPOSTINT('rowid') : GETPOSTINT('id');
 $rowid = $id;
 $ref = GETPOST('ref', 'alphanohtml');
 $typeid = GETPOSTINT('typeid');
-$cancel = GETPOST('cancel');
+$cancel = GETPOST('cancel', 'alpha');
 
 // Load variable for pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -509,11 +508,11 @@ print '<table class="border centpercent tableforfield">';
 
 // Login
 if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
-	print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.dol_escape_htmltag($object->login).'</td></tr>';
+	print '<tr><td class="titlefieldmiddle">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.dol_escape_htmltag($object->login).'</td></tr>';
 }
 
 // Type
-print '<tr><td class="titlefield">'.$langs->trans("Type").'</td>';
+print '<tr><td class="titlefieldmiddle">'.$langs->trans("Type").'</td>';
 print '<td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
 
 // Morphy
@@ -589,7 +588,7 @@ if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 }
 
 // Birth Date
-print '<tr><td class="titlefield">'.$langs->trans("DateOfBirth").'</td><td class="valeur">'.dol_print_date($object->birth, 'day').'</td></tr>';
+print '<tr><td class="titlefieldmiddle">'.$langs->trans("DateOfBirth").'</td><td class="valeur">'.dol_print_date($object->birth, 'day').'</td></tr>';
 
 // Default language
 if (getDolGlobalInt('MAIN_MULTILANGS')) {
@@ -1021,7 +1020,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 	if ($adht->subscription) {
 		// Amount
 		print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td>';
-		print '<td><input autofocus class="width50" type="text" name="subscription" value="'.(GETPOSTISSET('subscription') ? GETPOST('subscription') : (is_null($adht->amount) ? '' : price($adht->amount, 0, '', 0))).'"> '.$langs->trans("Currency".$conf->currency) .'</td></tr>';
+		print '<td><input autofocus class="width50" type="text" name="subscription" value="'.(GETPOSTISSET('subscription') ? GETPOST('subscription') : (is_null($adht->amount) ? '' : price($adht->amount, 0, '', 0))).'"> '.$langs->trans("Currency".getDolCurrency()) .'</td></tr>';
 
 		// Label
 		print '<tr><td>'.$langs->trans("Label").'</td>';

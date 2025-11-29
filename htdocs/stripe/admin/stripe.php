@@ -307,7 +307,7 @@ if (empty($conf->stripeconnect->enabled)) {
 	print price(getDolGlobalString('STRIPE_APPLICATION_FEE_PERCENT'));
 	print '% + ';
 	print price(getDolGlobalString('STRIPE_APPLICATION_FEE'));
-	print ' '.$langs->getCurrencySymbol($conf->currency).' '.$langs->trans("minimum").' '.price(getDolGlobalString('STRIPE_APPLICATION_FEE_MINIMAL')).' '.$langs->getCurrencySymbol($conf->currency);
+	print ' '.$langs->getCurrencySymbol(getDolCurrency()).' '.$langs->trans("minimum").' '.price(getDolGlobalString('STRIPE_APPLICATION_FEE_MINIMAL')).' '.$langs->getCurrencySymbol(getDolCurrency());
 	print '</td><td></td></tr>';
 }
 

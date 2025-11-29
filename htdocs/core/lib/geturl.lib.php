@@ -30,7 +30,7 @@
  * - you can set MAIN_SECURITY_ANTI_SSRF_SERVER_IP to set static ip of server
  * - common local lookup ips like 127.*.*.* are automatically added
  *
- * You can enable constant MAIN_CURL_DEBUG to get detail of output/input into dolibarr_curl.logfile.
+ * You can enable constant MAIN_CURL_DEBUG to get detail of output/input into dolibarr_curl.log file.
  *
  * @param	string	  	$url 			    URL to call.
  * @param	'POST'|'GET'|'HEAD'|'PUT'|'PATCH'|'PUTALREADYFORMATED'|'POSTALREADYFORMATED'|'PATCHALREADYFORMATED'|'DELETE'	$postorget		    'POST', 'GET', 'HEAD', 'PUT', 'PATCH', 'PUTALREADYFORMATED', 'POSTALREADYFORMATED', 'PATCHALREADYFORMATED', 'DELETE'
@@ -54,9 +54,15 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	$PROXY_USER = getDolGlobalString('MAIN_PROXY_USER');
 	$PROXY_PASS = getDolGlobalString('MAIN_PROXY_PASS');
 
-	dol_syslog("getURLContent postorget=".$postorget." URL=".$url." param=".$param);
+	dol_syslog("getURLContent postorget=".$postorget." URL=".$url);
+	if (getDolGlobalInt('MAIN_CURL_DEBUG')) {
+		dol_syslog("getURLContent postorget=".$postorget." URL=".$url." param=".$param, LOG_DEBUG, 0, '_curl');
+	}
 
 	if (!function_exists('curl_init')) {
+		if (getDolGlobalInt('MAIN_CURL_DEBUG')) {
+			dol_syslog("getURLContent PHP curl library must be installed", LOG_DEBUG, 0, '_curl');
+		}
 		return array('http_code' => 500, 'content' => '', 'curl_error_no' => 1, 'curl_error_msg' => 'PHP curl library must be installed');
 	}
 
@@ -133,7 +139,9 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	$newtimeoutconnect = ($timeoutconnect ? $timeoutconnect : getDolGlobalInt('MAIN_USE_CONNECT_TIMEOUT', 5));
 	$newtimeoutresponse = ($timeoutresponse ? $timeoutresponse : getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 30));
 
-	dol_syslog("getURLContent newtimeoutconnect=".$newtimeoutconnect." newtimeoutresponse=".$newtimeoutresponse);
+	if (getDolGlobalInt('MAIN_CURL_DEBUG')) {
+		dol_syslog("getURLContent newtimeoutconnect=".$newtimeoutconnect." newtimeoutresponse=".$newtimeoutresponse, LOG_DEBUG, 0, '_curl');
+	}
 
 	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $newtimeoutconnect);
 	curl_setopt($ch, CURLOPT_TIMEOUT, $newtimeoutresponse);
@@ -213,6 +221,9 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 	do {
 		if ($maxRedirection < 1) {
+			if (getDolGlobalInt('MAIN_CURL_DEBUG')) {
+				dol_syslog("getURLContent http_code=400 Maximum number of redirections reached", LOG_DEBUG, 0, '_curl');
+			}
 			return array('http_code' => 400, 'content' => 'Maximum number of redirections reached', 'curl_error_no' => 1, 'curl_error_msg' => 'Maximum number of redirections reached');
 		}
 
@@ -227,6 +238,9 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		if (in_array($hosttocheck, array('metadata.google.internal'))) {
 			$info['http_code'] = 400;
 			$info['content'] = 'Error bad hostname '.$hosttocheck.' (Used by Google metadata). This value for hostname is not allowed.';
+			if (getDolGlobalInt('MAIN_CURL_DEBUG')) {
+				dol_syslog("getURLContent http_code=400 ".$info['content'], LOG_DEBUG, 0, '_curl');
+			}
 			return array('http_code' => 400, 'content' => $info['content'], 'curl_error_no' => 1, 'curl_error_msg' => $info['content']);
 		}
 
@@ -255,6 +269,9 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 			if ($tmpresult) {
 				$info['http_code'] = 400;
 				$info['content'] = $tmpresult;
+				if (getDolGlobalInt('MAIN_CURL_DEBUG')) {
+					dol_syslog("getURLContent http_code=400 ".$info['content'], LOG_DEBUG, 0, '_curl');
+				}
 				return array('http_code' => 400, 'content' => $tmpresult, 'curl_error_no' => 1, 'curl_error_msg' => $tmpresult);
 			}
 		}
@@ -293,15 +310,15 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		}
 
 		$http_code = 0;
-	} while ($http_code);
+	} while ($http_code);	// Stop if http_code is 0
 
 	$request = curl_getinfo($ch, CURLINFO_HEADER_OUT); // Reading of request must be done after sending request
 
-	dol_syslog("getURLContent request=".$request);
+	dol_syslog("getURLContent request without content body=".$request);
 	if (getDolGlobalInt('MAIN_CURL_DEBUG')) {
 		// This may contains binary data, so we don't output response by default.
-		dol_syslog("getURLContent request=".$request, LOG_DEBUG, 0, '_curl');
-		dol_syslog("getURLContent response =".$response, LOG_DEBUG, 0, '_curl');
+		dol_syslog("getURLContent request without body=".$request, LOG_DEBUG, 0, '_curl');
+		dol_syslog("getURLContent response=".$response, LOG_DEBUG, 0, '_curl');
 	}
 	dol_syslog("getURLContent response size=".strlen($response)); // This may contains binary data, so we don't output it
 
@@ -319,6 +336,9 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		$rep['curl_error_msg'] = curl_error($ch);
 
 		dol_syslog("getURLContent response array is ".implode(',', $rep));
+		if (getDolGlobalInt('MAIN_CURL_DEBUG')) {
+			dol_syslog("getURLContent curl_error_no=".$rep['curl_error_no']." curl_error_msg=".$rep['curl_error_msg'], LOG_DEBUG, 0, '_curl');
+		}
 	} else {
 		//$info = curl_getinfo($ch);
 

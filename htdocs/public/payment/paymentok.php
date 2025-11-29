@@ -1644,7 +1644,7 @@ if ($ispaymentok) {
 								$cc = ($cc ? ', ' : '').$attendeetovalidate->email_company;
 							}
 
-							$from = getDolGlobalString('MAILING_EMAIL_FROM') ? $conf->global->MAILING_EMAIL_FROM : getDolGlobalString("MAIN_MAIL_EMAIL_FROM");
+							$from = getDolGlobalString('MAILING_EMAIL_FROM', getDolGlobalString("MAIN_MAIL_EMAIL_FROM"));
 
 							$urlback = $_SERVER["REQUEST_URI"];
 

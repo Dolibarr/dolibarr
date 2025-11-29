@@ -25,22 +25,26 @@
 /**
  *  Define head array for tabs of blockedlog tools setup pages
  *
+ *  @param	string		$withtabsetup					Add also the tab "Setup"
  *  @return	array<array{0:string,1:string,2:string}>	Array of head
  */
-function blockedlogadmin_prepare_head()
+function blockedlogadmin_prepare_head($withtabsetup)
 {
 	global $db, $langs, $conf;
+
+	$langs->load("blockedlog");
 
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog.php?withtab=1";
-	$head[$h][1] = $langs->trans("Setup");
-	$head[$h][2] = 'blockedlog';
-	$h++;
+	if ($withtabsetup) {
+		$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog.php?withtab=".$withtabsetup;
+		$head[$h][1] = $langs->trans("Setup");
+		$head[$h][2] = 'blockedlog';
+		$h++;
+	}
 
-	$langs->load("blockedlog");
-	$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog_list.php?withtab=1";
+	$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog_list.php?withtab=".$withtabsetup;
 	$head[$h][1] = $langs->trans("BrowseBlockedLog");
 
 	require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
@@ -50,6 +54,14 @@ function blockedlogadmin_prepare_head()
 	}
 	$head[$h][2] = 'fingerprints';
 	$h++;
+
+
+	$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog_archives.php?withtab=".$withtabsetup;
+	$head[$h][1] = $langs->trans("Archives");
+	// TODO Add number of archive files in badge
+	$head[$h][2] = 'archives';
+	$h++;
+
 
 	$object = new stdClass();
 
@@ -65,11 +77,38 @@ function blockedlogadmin_prepare_head()
 }
 
 
+/**
+ * Return if the KYC mandatory parameters are set
+ *
+ * @return boolean		True or false
+ */
+function isRegistrationRecorded()
+{
+	global $mysoc;
+
+	$companyname = getDolGlobalString('BLOCKEDLOG_REGISTRATION_NAME', $mysoc->name);
+	$companyemail = getDolGlobalString('BLOCKEDLOG_REGISTRATION_EMAIL', $mysoc->email);
+	$companycountrycode = getDolGlobalString('BLOCKEDLOG_REGISTRATION_COUNTRY_CODE', $mysoc->country_code);
+	$companyidprof1 = getDolGlobalString('BLOCKEDLOG_REGISTRATION_IDPROF1', $mysoc->idprof1);
+	//$companytel = getDolGlobalString('BLOCKEDLOG_REGISTRATION_TEL', $mysoc->phone);
+
+	if (empty($companyname) || empty($companycountrycode) || empty($companyidprof1) || empty($companyemail)) {
+		return false;
+	}
+
+	$providerset = getDolGlobalString('MAIN_INFO_ITPROVIDER_NAME');	// Can be 'myself'
+
+	if (empty($providerset)) {
+		return false;
+	}
+
+	return true;
+}
 
 /**
  * Return if the version is a candidate version to get the LNE certification and if the prerequisites are OK.
- * The difference between isALNEQualifiedVersion() and isALNERunningVersion() is that this one checks if has a sense or not to
- * activate the restrictions (not a strict check) and the second one is a strict check to say restrictions are enabled and can't be disabled.
+ * The difference between isALNEQualifiedVersion() and isALNERunningVersion() is that this one just check if it has a sense or not to
+ * activate the restrictions (it is not a strict check) and the second one is a strict check to say restrictions must be enabled and can't be disabled.
  *
  * @return boolean		True or false
  */
@@ -82,6 +121,7 @@ function isALNEQualifiedVersion()
 	if (defined('CERTIF_LNE') && (int) constant('CERTIF_LNE') === 2) {
 		return true;
 	}
+
 	if (preg_match('/\-/', DOL_VERSION)) {	// This is not a stable version
 		return false;
 	}

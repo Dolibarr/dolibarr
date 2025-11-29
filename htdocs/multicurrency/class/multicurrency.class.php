@@ -633,8 +633,8 @@ class MultiCurrency extends CommonObject
 	{
 		global $conf;
 
-		if ($conf->currency != getDolGlobalString('MULTICURRENCY_APP_SOURCE')) {
-			$alternate_source = 'USD'.$conf->currency;
+		if (getDolCurrency() != getDolGlobalString('MULTICURRENCY_APP_SOURCE')) {
+			$alternate_source = 'USD'.getDolCurrency();
 			if (!empty($TRate->$alternate_source)) {
 				$coef = 1 / $TRate->$alternate_source;
 				foreach ($TRate as $attr => &$rate) {

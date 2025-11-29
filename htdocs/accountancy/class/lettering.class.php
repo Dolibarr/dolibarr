@@ -929,6 +929,10 @@ class Lettering extends BookKeeping
 			// Save list when is the first step of the recursive recursive function
 			$save_link_by_element = $link_by_element;
 			$save_element_by_link = $element_by_link;
+		} else {
+			// To satisfy static analysis (phpstan)
+			$save_link_by_element = null;
+			$save_element_by_link = null;
 		}
 
 		do {

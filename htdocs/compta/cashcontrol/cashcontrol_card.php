@@ -34,6 +34,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/cashcontrol/class/cashcontrol.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 /**
  * @var Conf $conf
@@ -355,7 +356,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 			$sql .= " WHERE pf.fk_facture = f.rowid AND p.rowid = pf.fk_paiement AND cp.id = p.fk_paiement";
 			$sql .= " AND f.module_source = '".$db->escape($posmodule)."'";
 			$sql .= " AND f.pos_source = '".$db->escape($terminalid)."'";
-			$sql .= " AND f.paye = 1";
+			$sql .= " AND (f.fk_statut = ".Facture::STATUS_VALIDATED." OR f.fk_statut = ".Facture::STATUS_CLOSED.")";
 			$sql .= " AND p.entity IN (".getEntity('facture').")";
 			if ($key == 'cash') {
 				$sql .= " AND cp.code = 'LIQ'";

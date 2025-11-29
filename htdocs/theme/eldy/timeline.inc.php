@@ -70,18 +70,18 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 
 
 .timeline > li > .timeline-item > .time{
-	color: #6f6f6f;
+	/* color: #6f6f6f; */
 	float: right;
 	padding: 10px;
-	font-size: 12px;
+	/* font-size: 12px; */
 }
 
 
 .timeline > li > .timeline-item > .timeline-header-action{
-	color: #6f6f6f;
+	/* color: #6f6f6f; */
 	float: right;
 	padding: 7px;
-	font-size: 12px;
+	/* font-size: 12px;*/
 }
 
 
@@ -224,17 +224,19 @@ a.timeline-btn:hover
 	display: none;
 }
 
-.read-less-link, .read-more-link{
+.read-less-link, .read-more-link {
 	font-weight: bold;
+	opacity: 0.5;
+	padding-top: 5px;
 }
 
-.read-less-link{
+.read-less-link, .read-more-link {
 	display: block;
-	text-align: center;
+	/* text-align: center; */
 }
 
 
-	.read-less-link .fa, .read-more-link .fa{
+.read-less-link .fa, .read-more-link .fa {
 	color: inherit;
 }
 

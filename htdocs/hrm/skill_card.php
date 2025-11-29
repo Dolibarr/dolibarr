@@ -53,7 +53,7 @@ $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'skillcard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
@@ -605,7 +605,7 @@ if ($action != "create" && $action != "edit") {
 			$arrayfields['t.' . $key] = array(
 				'label' => $val['label'],
 				'checked' => (($visible < 0) ? 0 : 1),
-				'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
+				'enabled' => (abs($visible) != 3 && (bool) dol_eval((string) $val['enabled'], 1)),
 				'position' => $val['position'],
 				'help' => isset($val['help']) ? $val['help'] : ''
 			);

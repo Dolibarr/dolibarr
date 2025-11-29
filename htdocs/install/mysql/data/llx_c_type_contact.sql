@@ -103,6 +103,12 @@ insert into llx_c_type_contact (element, source, code, libelle, active, module) 
 insert into llx_c_type_contact (element, source, code, libelle, active, module) values ('ticket', 'external', 'SUPPORTCLI',  'Contact client suivi incident', 1, NULL);
 insert into llx_c_type_contact (element, source, code, libelle, active, module) values ('ticket', 'external', 'CONTRIBUTOR', 'Intervenant', 1, NULL);
 
+-- Product / Service
+insert into llx_c_type_contact (element, source, code, libelle, active ) values ('product', 'internal', 'SALESREPFOLL',  'Responsable produit', 1);
+insert into llx_c_type_contact (element, source, code, libelle, active ) values ('product', 'internal', 'BILLING',       'Responsable production', 1);
+insert into llx_c_type_contact (element, source, code, libelle, active ) values ('product', 'external', 'CUSTOMER',      'Contact fournisseur', 1);
+insert into llx_c_type_contact (element, source, code, libelle, active ) values ('product', 'external', 'SHIPPING',      'Contact sous-traitance', 1);
+
 -- Projects / Projet - All project code can start with 'PROJECT'
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('project', 'internal', 'PROJECTLEADER',      'Chef de Projet', 1);
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('project', 'internal', 'PROJECTCONTRIBUTOR', 'Intervenant', 1);

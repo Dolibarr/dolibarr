@@ -408,14 +408,15 @@ class ObjectLinks extends DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
+	 * @phpstan-template T
 	 *
 	 * @param   Object  $object     	Object to clean
 	 * @phan-param		ObjectLink	$object
-	 * @phpstan-param	ObjectLink	$object
+	 * @phpstan-param	T	$object
 	 *
 	 * @return  Object	Object with cleaned properties
 	 * @phan-return		ObjectLink
-	 * @phpstan-return	ObjectLink
+	 * @phpstan-return	T
 	 */
 	protected function _cleanObjectDatas($object)
 	{

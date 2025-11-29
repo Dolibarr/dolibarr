@@ -89,7 +89,10 @@ foreach ($categstatic->MAP_ID as $key => $idtype) {
 $arrayofcateg = dol_sort_array($arrayofcateg, 'labelwithoutaccent', 'asc', 1, 0, 1);
 
 // Get number of tags per category type
-$sql = "SELECT type as idtype, COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."categorie GROUP BY type";
+$sql = "SELECT type as idtype, COUNT(rowid) as nb";
+$sql .= " FROM ".MAIN_DB_PREFIX."categorie";
+$sql .= " WHERE entity IN (".getEntity('category').")";
+$sql .= " GROUP BY type";
 $resql = $db->query($sql);
 if ($resql) {
 	while ($obj = $db->fetch_object($resql)) {
@@ -163,7 +166,11 @@ foreach ($arrayofcateg as $idtype => $val) {
 	print dolPrintHTML($arrayofcateg[$idtype]['label']);
 	print '</td>';
 	print '<td class="center">';
-	print $arrayofcateg[$idtype]['nb'];
+	if (empty($arrayofcateg[$idtype]['nb'])) {
+		print '<span class="opacitymedium">'.$arrayofcateg[$idtype]['nb'].'</span>';
+	} else {
+		print $arrayofcateg[$idtype]['nb'];
+	}
 	print '</td>';
 	print '<td class="center"><a class="editfielda" href="'.dolBuildUrl(DOL_URL_ROOT.'/categories/categorie_list.php', ['mode' => 'hierarchy', 'type' => $key]).'">'.img_picto('', 'edit').'</a></td>';
 	print '</tr>';

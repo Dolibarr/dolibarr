@@ -219,8 +219,9 @@ class Utils
 			$this->output = $langs->trans("PurgeNothingToDelete").(in_array('tempfilesold', $choicesarray) ? ' (older than 24h for temp files)' : '');
 		}
 
-		// Recreate temp dir that are not automatically recreated by core code for performance purpose, we need them
+		// Recreate temp dir that are not automatically recreated by core code, we need them
 		if (isModEnabled('api')) {
+			// We should create also dir x/api/temp for multicompany dirs, but this has become useless because dir is now recreated by constructor of api.class.php
 			dol_mkdir($conf->api->dir_temp);
 		}
 		dol_mkdir($conf->user->dir_temp);

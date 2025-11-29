@@ -147,11 +147,11 @@ if (is_object($adht)) {
 	}
 
 	// Type
-	print '<tr><td>'.$langs->trans("Type").'</td>';
+	print '<tr><td class="titlefield">'.$langs->trans("Type").'</td>';
 	print '<td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
 
 	// Morphy
-	print '<tr><td class="titlefield">'.$langs->trans("MemberNature").'</td>';
+	print '<tr><td>'.$langs->trans("MemberNature").'</td>';
 	print '<td class="valeur" >'.$object->getmorphylib('', 1).'</td>';
 	print '</tr>';
 

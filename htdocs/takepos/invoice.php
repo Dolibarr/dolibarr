@@ -395,7 +395,7 @@ if (empty($reshook)) {
 					// var_dump('fk_product='.$line->fk_product.' batch='.$line->batch.' warehouse='.$line->fk_warehouse.' qty='.$line->qty);
 					if ($line->batch != '' && $warehouseid > 0) {
 						$prod_batch = new Productbatch($db);
-						$prod_batch->find(0, '', '', $line->batch, $warehouseid);
+						$prod_batch->find(0, '', '', $line->batch, $warehouseid, (int) $line->fk_product);
 
 						$mouvP = new MouvementStock($db);
 						$mouvP->setOrigin($invoice->element, $invoice->id);

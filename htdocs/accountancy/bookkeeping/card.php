@@ -50,7 +50,7 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/lettering.class.php';
 $langs->loadLangs(array("accountancy", "bills", "compta"));
 
 $action = GETPOST('action', 'aZ09');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 
 $type = GETPOST('type', 'alpha');
@@ -451,44 +451,14 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'clonebookkeepingwriting' && $permissiontoadd) {
+	if ($action == 'clonebookkeepingwriting' && $confirm == "yes" && $permissiontoadd) {
+		// Reread the values sent by the validated form
 		$piece_num = GETPOST('piece_num', 'alpha');
-		$formaccounting = new FormAccounting($db);
+		$journal_code = GETPOST('code_journal', 'alpha');
 
-		$form = new Form($db);
-		$input1 = $form->selectDate('', 'clonedate', 0, 0, 0, "create_mvt", 1, 1);
-		$input2 = $formaccounting->select_journal($journal_code, 'code_journal', 0, 0, 1, 1).'</td>';
-		$inputHidden = '<input type="hidden" name="piece_num_hidden" id="piece_num_hidden" value="'.$piece_num.'">';
+		// Reconstruct the selected date
+		$clonedate = dol_mktime(0, 0, 0, GETPOSTINT('clonedatemonth'), GETPOSTINT('clonedateday'), GETPOSTINT('clonedateyear'));
 
-		$formquestion = array(
-			array(
-				'type' => 'date',
-				'name' => 'clonedate',
-				'label' => '<span class="fieldrequired">' . $langs->trans("Docdate") . '</span>',
-				'value' => $input1
-			)
-		);
-
-		if (getDolGlobalString('ACCOUNTING_CLONING_ENABLE_INPUT_JOURNAL')) {
-			$formquestion[] = array(
-				'type' => 'text',
-				'name' => 'code_journal',
-				'label' => '<span class="fieldrequired">' . $langs->trans("Codejournal") . '</span>',
-				'value' => $input2
-			);
-		}
-
-		print $form->formconfirm(
-			$_SERVER["PHP_SELF"],
-			$langs->trans("ConfirmMassCloneBookkeepingWriting"),
-			$langs->trans("ConfirmMassCloneBookkeepingWritingQuestion", count($toselect)),
-			"clonebookkeepingwriting",
-			$formquestion,
-			'', 0, 300, 1000, 1
-		);
-	}
-
-	if ($action == 'preclonebookkeepingwriting' && $confirm == "yes" && $permissiontoadd) {
 		$result = $object->newClone($piece_num, $journal_code, $clonedate);
 
 		if ($result == -1) {
@@ -497,7 +467,7 @@ if (empty($reshook)) {
 
 		if (!$error) {
 			$db->commit();
-			header("Location: " . $_SERVER['PHP_SELF'] . "?piece_num=" . $object->getNextNumMvt() - 1);
+			header("Location: " . $_SERVER['PHP_SELF'] . "?piece_num=" . ($object->getNextNumMvt() - 1));
 			exit();
 		} else {
 			$db->rollback();
@@ -635,6 +605,7 @@ if ($action == 'create') {
 		}*/
 
 		$head = accounting_transaction_prepare_head($object, $mode, $type, $backtopage);
+
 		print dol_get_fiche_head($head, 'transaction', '', -1);
 
 		//$object->label = $object->doc_ref;
@@ -650,6 +621,46 @@ if ($action == 'create') {
 		$morehtmlref .= '</div>';
 
 		dol_banner_tab($object, 'ref', $backlink, 1, 'piece_num', 'piece_num', $morehtmlref);
+
+
+		if ($action == 'clonebookkeepingwriting' && $confirm != 'yes' && $permissiontoadd) {
+			$piece_num = GETPOST('piece_num', 'alpha');
+			$formaccounting = new FormAccounting($db);
+
+			$form = new Form($db);
+			$input1 = $form->selectDate('', 'clonedate', 0, 0, 0, "", 1, 1);
+			$input2 = $formaccounting->select_journal($journal_code, 'code_journal', 0, 0, 1, 1);
+
+			$formquestion = array(
+				array(
+					'type' => 'other',
+					'name' => 'clonedate',
+					'label' => '<span class="fieldrequired">' . $langs->trans("Docdate") . '</span>',
+					'value' => $input1
+				)
+			);
+
+			$formquestion[] = array('type' => 'hidden', 'name' => 'piece_num', 'value' => $piece_num);
+
+			if (getDolGlobalString('ACCOUNTING_CLONING_ENABLE_INPUT_JOURNAL')) {
+				$formquestion[] = array(
+					'type' => 'text',
+					'name' => 'code_journal',
+					'label' => '<span class="fieldrequired">' . $langs->trans("Codejournal") . '</span>',
+					'value' => $input2
+				);
+			}
+
+			print $form->formconfirm(
+				$_SERVER["PHP_SELF"],
+				$langs->trans("ConfirmMassCloneBookkeepingWriting"),
+				$langs->trans("ConfirmMassCloneBookkeepingWritingQuestion", 1),
+				"clonebookkeepingwriting",
+				$formquestion,
+				'', 0, 300, 1000, 0
+			);
+		}
+
 
 		print '<div class="fichecenter">';
 
@@ -671,7 +682,7 @@ if ($action == 'create') {
 		print '<table class="nobordernopadding centpercent"><tr><td>';
 		print $langs->trans('Ref');
 		print '</td>';
-		if ($action != 'editref') {
+		if ($action != 'editref' && empty($object->date_validation)) {
 			print '<td class="right">';
 			if ($permissiontoadd && $numRefModel === 'mod_bookkeeping_neon') {
 				print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editref&token='.newToken().'&piece_num='.((int) $object->piece_num).'&mode='.urlencode((string) $mode).'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a>';
@@ -680,7 +691,7 @@ if ($action == 'create') {
 		}
 		print '</tr></table>';
 		print '</td><td>';
-		if ($action == 'editref') {
+		if ($action == 'editref' && empty($object->date_validation)) {
 			print '<form name="setref" action="'.$_SERVER["PHP_SELF"].'?piece_num='.((int) $object->piece_num).'" method="POST">';
 			if ($optioncss != '') {
 				print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -706,14 +717,14 @@ if ($action == 'create') {
 		print '</td>';
 		if ($action != 'editdocref') {
 			print '<td class="right">';
-			if ($permissiontoadd) {
+			if ($permissiontoadd && empty($object->date_validation)) {
 				print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editdocref&token='.newToken().'&piece_num='.((int) $object->piece_num).'&mode='.urlencode((string) $mode).'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a>';
 			}
 			print '</td>';
 		}
 		print '</tr></table>';
 		print '</td><td>';
-		if ($action == 'editdocref') {
+		if ($action == 'editdocref' && empty($object->date_validation)) {
 			print '<form name="setdocref" action="'.$_SERVER["PHP_SELF"].'?piece_num='.((int) $object->piece_num).'" method="POST">';
 			if ($optioncss != '') {
 				print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -739,14 +750,14 @@ if ($action == 'create') {
 		print '</td>';
 		if ($action != 'editdate') {
 			print '<td class="right">';
-			if ($permissiontoadd) {
+			if ($permissiontoadd && empty($object->date_validation)) {
 				print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editdate&token='.newToken().'&piece_num='.((int) $object->piece_num).'&mode='.urlencode((string) $mode).'">'.img_edit($langs->transnoentitiesnoconv('SetDate'), 1).'</a>';
 			}
 			print '</td>';
 		}
 		print '</tr></table>';
 		print '</td><td colspan="3">';
-		if ($action == 'editdate') {
+		if ($action == 'editdate' && empty($object->date_validation)) {
 			print '<form name="setdate" action="'.$_SERVER["PHP_SELF"].'?piece_num='.((int) $object->piece_num).'" method="POST">';
 			if ($optioncss != '') {
 				print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -772,14 +783,14 @@ if ($action == 'create') {
 		print '</td>';
 		if ($action != 'editjournal') {
 			print '<td class="right">';
-			if ($permissiontoadd) {
+			if ($permissiontoadd && empty($object->date_validation)) {
 				print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editjournal&token='.newToken().'&piece_num='.((int) $object->piece_num).'&mode='.urlencode((string) $mode).'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a>';
 			}
 			print '</td>';
 		}
 		print '</tr></table>';
 		print '</td><td>';
-		if ($action == 'editjournal') {
+		if ($action == 'editjournal' && empty($object->date_validation)) {
 			print '<form name="setjournal" action="'.$_SERVER["PHP_SELF"].'?piece_num='.((int) $object->piece_num).'" method="POST">';
 			if ($optioncss != '') {
 				print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -840,7 +851,7 @@ if ($action == 'create') {
 			print '<tr>';
 			print '<td class="titlefield">' . $langs->trans("DateExport") . '</td>';
 			print '<td>';
-			print $object->date_export ? dol_print_date($object->date_export, 'dayhour') : '&nbsp;';
+			print $object->date_export ? img_picto($langs->trans("TransactionExportDesc"), 'fa-file-export', 'class="pictofixedwidth opacitymedium"').dol_print_date($object->date_export, 'dayhour') : '&nbsp;';
 			print '</td>';
 			print '</tr>';
 
@@ -848,7 +859,7 @@ if ($action == 'create') {
 			print '<tr>';
 			print '<td class="titlefield">' . $langs->trans("DateValidation") . '</td>';
 			print '<td>';
-			print $object->date_validation ? dol_print_date($object->date_validation, 'dayhour') : '&nbsp;';
+			print $object->date_validation ? img_picto($langs->trans("TransactionBlockedLockedDesc"), 'fa-lock', 'class="pictofixedwidth opacitymedium"').dol_print_date($object->date_validation, 'dayhour') : '&nbsp;';
 			print '</td>';
 			print '</tr>';
 
@@ -955,21 +966,23 @@ if ($action == 'create') {
 			// List of movements
 			print load_fiche_titre($langs->trans("ListeMvts"), '', '');
 
-			print '<form action="'.$_SERVER["PHP_SELF"].'?piece_num='.((int) $object->piece_num).'" method="POST">';
-			if ($optioncss != '') {
-				print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+			if (empty($object->date_validation)) {
+				print '<form action="' . $_SERVER["PHP_SELF"] . '?piece_num=' . ((int) $object->piece_num) . '" method="POST">';
+				if ($optioncss != '') {
+					print '<input type="hidden" name="optioncss" value="' . $optioncss . '">';
+				}
+				print '<input type="hidden" name="token" value="' . newToken() . '">';
+				print '<input type="hidden" name="doc_date" value="' . $object->doc_date . '">' . "\n";
+				print '<input type="hidden" name="doc_type" value="' . $object->doc_type . '">' . "\n";
+				print '<input type="hidden" name="doc_ref" value="' . $object->doc_ref . '">' . "\n";
+				print '<input type="hidden" name="ref" value="' . $object->ref . '">' . "\n";
+				print '<input type="hidden" name="code_journal" value="' . $object->code_journal . '">' . "\n";
+				print '<input type="hidden" name="fk_doc" value="' . $object->fk_doc . '">' . "\n";
+				print '<input type="hidden" name="fk_docdet" value="' . $object->fk_docdet . '">' . "\n";
+				print '<input type="hidden" name="mode" value="' . $mode . '">' . "\n";
+				print '<input type="hidden" name="backtopage" value="' . $backtopage . '">';
+				print '<input type="hidden" name="type" value="' . $type . '">';
 			}
-			print '<input type="hidden" name="token" value="'.newToken().'">';
-			print '<input type="hidden" name="doc_date" value="'.$object->doc_date.'">'."\n";
-			print '<input type="hidden" name="doc_type" value="'.$object->doc_type.'">'."\n";
-			print '<input type="hidden" name="doc_ref" value="'.$object->doc_ref.'">'."\n";
-			print '<input type="hidden" name="ref" value="'.$object->ref.'">'."\n";
-			print '<input type="hidden" name="code_journal" value="'.$object->code_journal.'">'."\n";
-			print '<input type="hidden" name="fk_doc" value="'.$object->fk_doc.'">'."\n";
-			print '<input type="hidden" name="fk_docdet" value="'.$object->fk_docdet.'">'."\n";
-			print '<input type="hidden" name="mode" value="'.$mode.'">'."\n";
-			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-			print '<input type="hidden" name="type" value="'.$type.'">';
 
 			if (count($object->linesmvt) > 0) {
 				print '<div class="div-table-responsive-no-min">';
@@ -994,7 +1007,7 @@ if ($action == 'create') {
 				print "</tr>\n";
 
 				// Add an empty line if there is not yet
-				if (!empty($object->linesmvt[0])) {
+				if (!empty($object->linesmvt[0]) && empty($object->date_validation)) {
 					$tmpline = $object->linesmvt[0];
 					if (!empty($tmpline->numero_compte)) {
 						$line = new BookKeepingLine($db);
@@ -1006,7 +1019,7 @@ if ($action == 'create') {
 					$total_debit += $line->debit;
 					$total_credit += $line->credit;
 
-					if ($action == 'update' && $line->id == $id) {
+					if ($action == 'update' && $line->id == $id && empty($object->date_validation)) {
 						print '<tr class="oddeven" data-lineid="'.((int) $line->id).'">';
 						print '<!-- td columns in edit mode -->';
 						print '<td>';
@@ -1033,7 +1046,7 @@ if ($action == 'create') {
 						print '<input type="submit" class="button" name="update" value="'.$langs->trans("Update").'">';
 						print '</td>';
 						print "</tr>\n";
-					} elseif (empty($line->numero_compte) || (empty($line->debit) && empty($line->credit))) {
+					} elseif ((empty($line->numero_compte) || (empty($line->debit) && empty($line->credit))) && empty($object->date_validation)) {
 						if (($action == "" || $action == 'add') && $permissiontoadd) {
 							print '<tr class="oddeven" data-lineid="'.((int) $line->id).'">';
 							print '<!-- td columns in add mode -->';
