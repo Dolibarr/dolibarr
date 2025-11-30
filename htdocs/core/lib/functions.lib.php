@@ -16917,6 +16917,25 @@ function array_merge_recursive_distinct(array $array1, array $array2): array
 }
 
 /**
+ * Function to remove parameters having their default value.
+ * By example, it could be usefull to filter useless params from $_GET.
+ *
+ * @param array $parameters An array containing a list of parameters to filter
+ *
+ * @return array The filtered array cleaned from its default values.
+ */
+function dolRemoveDefaultParameters(array $parameters): array
+{
+	foreach ($parameters as $key => $value) {
+		if ($value == '' || $value == '-1') {
+			unset($parameters[$key]);
+		}
+	}
+
+	return $parameters;
+}
+
+/**
  * Function to redirect search list forms from POST to GET request
  * The redirection is done only for search list forms following these conditions :
  * - request parameter 'action' must be 'list'
@@ -16949,7 +16968,7 @@ function dolRedirectPostSearchListRequestToGetIfPossible($context): void
 		$_SERVER['REQUEST_METHOD'] == 'POST'
 	) {
 		// Detect if it is a simple search (not an massaction)
-		if (GETPOSTINT('massaction') == 0) {
+		if (!GETPOST('massaction')) {
 			$postData = $_POST;
 
 			// Remove useless data for a simple search list request
@@ -16957,13 +16976,7 @@ function dolRedirectPostSearchListRequestToGetIfPossible($context): void
 			unset($postData['confirmmassactioninvisible']);
 			unset($postData['token']);
 
-			// Remove parameters with default value
-			$postData = array_filter($postData, function ($value) {
-				if ($value == '' || $value == '-1') {
-					return false;
-				}
-				return true;
-			});
+			$postData = dolRemoveDefaultParameters($postData);
 
 			// Prepare redirection URL
 			$newLocationUrl = $_SERVER['SCRIPT_NAME'];
