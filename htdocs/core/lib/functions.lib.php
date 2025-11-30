@@ -16918,7 +16918,7 @@ function array_merge_recursive_distinct(array $array1, array $array2): array
 
 /**
  * Function to remove parameters having their default value.
- * By example, it could be usefull to filter useless params from $_GET.
+ * By example, it could be useful to filter useless params from $_GET.
  *
  * @param array $parameters An array containing a list of parameters to filter
  *
