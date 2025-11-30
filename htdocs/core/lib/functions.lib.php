@@ -16920,9 +16920,9 @@ function array_merge_recursive_distinct(array $array1, array $array2): array
  * Function to remove parameters having their default value.
  * By example, it could be useful to filter useless params from $_GET.
  *
- * @param array $parameters An array containing a list of parameters to filter
+ * @param array<string,string> $parameters An array containing a list of parameters to filter
  *
- * @return array The filtered array cleaned from its default values.
+ * @return array<string,string> The filtered array cleaned from its default values.
  */
 function dolRemoveDefaultParameters(array $parameters): array
 {
@@ -16960,7 +16960,7 @@ function dolRemoveDefaultParameters(array $parameters): array
  *
  * @return void
  */
-function dolRedirectPostSearchListRequestToGetIfPossible($context): void
+function dolRedirectPostSearchListRequestToGetIfPossible(string $context): void
 {
 	if (preg_match('/list$/', $context) &&
 		GETPOST('action') == 'list' &&
