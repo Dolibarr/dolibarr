@@ -51,10 +51,11 @@ if (!$user->hasRight('opensurvey', 'write')) {
 
 $arrayofchoices = GETPOST('choix', 'array');
 $arrayoftypecolumn = GETPOST('typecolonne', 'array');
+$nbrecases = GETPOST('nbrecases', 'int');
 
 // Set session vars
-if (isset($_SESSION["nbrecases"])) {
-	for ($i = 0; $i < $_SESSION["nbrecases"]; $i++) {
+if (isset($nbrecases)) {
+	for ($i = 0; $i < $nbrecases; $i++) {
 		if (isset($arrayofchoices[$i])) {
 			$_SESSION["choix".$i] = $arrayofchoices[$i];
 		}
@@ -63,19 +64,19 @@ if (isset($_SESSION["nbrecases"])) {
 		}
 	}
 } else { //nombre de cases par défaut
-	$_SESSION["nbrecases"] = 5;
+	$nbrecases= 5;
 }
 
 if (GETPOST("ajoutcases") || GETPOST("ajoutcases_x")) {
-	if ($_SESSION["nbrecases"] < 100) {
-		$_SESSION["nbrecases"] += 5;
+	if ($nbrecases < 100) {
+		$nbrecases += 5;
 	}
 }
 
 // Create survey into database
 if (GETPOSTISSET("confirmecreation")) {
 	$toutchoix = '';
-	for ($i = 0; $i < $_SESSION["nbrecases"] + 1; $i++) {
+	for ($i = 0; $i < $nbrecases; $i++) {
 		$tmpchoice = $arrayofchoices[$i];
 		$tmptypecolumn = GETPOST('typecolonne'.$i, 'alphanohtml');
 		if (!empty($tmpchoice)) {
@@ -89,7 +90,7 @@ if (GETPOSTISSET("confirmecreation")) {
 
 	//test de remplissage des cases
 	$testremplissage = '';
-	for ($i = 0; $i < $_SESSION["nbrecases"]; $i++) {
+	for ($i = 0; $i < $nbrecases; $i++) {
 		if (isset($arrayofchoices[$i])) {
 			$testremplissage = "ok";
 		}
