@@ -151,14 +151,14 @@ print '<table class="border centpercent">'."\n";
 
 print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("PollTitle").'</td>';
 
-print '<td><input type="text" name="title" class="minwidth300" maxlength="80" value="'.$_SESSION["title"].'" autofocus></td>'."\n";
-if (!$_SESSION["title"] && (GETPOST('creation_sondage_date') || GETPOST('creation_sondage_autre'))) {
+print '<td><input type="text" name="title" class="minwidth300" maxlength="80" value="'.GETPOST("title", "alpha").'" autofocus></td>'."\n";
+if (!GETPOST("title", "alpha") && (GETPOST('creation_sondage_date') || GETPOST('creation_sondage_autre'))) {
 	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("PollTitle")), null, 'errors');
 }
 
 print '</tr>'."\n";
 print '<tr><td>'.$langs->trans("Description").'</td><td>';
-$doleditor = new DolEditor('description', $_SESSION["description"], '', 120, 'dolibarr_notes', 'In', true, 1, 1, ROWS_7, '90%');
+$doleditor = new DolEditor('description', GETPOST("description", "restricthtml"), '', 120, 'dolibarr_notes', 'In', true, 1, 1, ROWS_7, '90%');
 $doleditor->Create(0, '');
 print '</td>'."\n";
 print '</tr>'."\n";
@@ -175,26 +175,20 @@ print dol_get_fiche_end();
 print '<br>'."\n";
 
 // Check or not
-
-if ($_SESSION["mailsonde"]) {
+$cochemail = '';
+if (GETPOSTISSET("mailsonde")) {
 	$cochemail = "checked";
 }
 
 print '<input type="checkbox" id="mailsonde" name="mailsonde" '.$cochemail.'> <label for="mailsonde">'.$langs->trans("ToReceiveEMailForEachVote").'</label><br>'."\n";
 
 $allow_comments = '';
-if ($_SESSION['allow_comments']) {
-	$allow_comments = 'checked';
-}
 if (GETPOSTISSET('allow_comments')) {
 	$allow_comments = GETPOST('allow_comments') ? 'checked' : '';
 }
 print '<input type="checkbox" id="allow_comments" name="allow_comments" '.$allow_comments.'"> <label for="allow_comments">'.$langs->trans('CanComment').'</label><br>'."\n";
 
 $allow_spy = '';
-if ($_SESSION['allow_spy']) {
-	$allow_spy = 'checked';
-}
 if (GETPOSTISSET('allow_spy')) {
 	$allow_spy = GETPOST('allow_spy') ? 'checked' : '';
 }
