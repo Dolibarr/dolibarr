@@ -778,6 +778,8 @@ if ( !empty($object->thirdparty) ) {
 	 * @property {string} docObject.element
 	 * @property {string} docObject.multicurrency_code
 	 * @property {Object|false} docObject.thirdparty
+	 * @property {string} docObject.thirdparty.country_code
+	 * @property {string} docObject.thirdparty.state_code
 	 * @property {number} docObject.socid
 	 * @property {boolean} docObject.senderissupplier
 	 *
@@ -994,7 +996,7 @@ if ( !empty($object->thirdparty) ) {
 					}
 
 					// Get the price for the product and display it
-					console.log("Load unit price and set it into #price_ht or #price_ttc for product id="+$(this).val()+" socid=<?php print $object->socid; ?>");
+					console.log("Load unit price and set it into #price_ht or #price_ttc for product id="+$(this).val()+" socid=" + jsConf.docObject.socid);
 					$.post(jsConf.url.fetchProductUrl,
 						{ 'id': $(this).val(), 'socid': jsConf.docObject.socid, 'token': jsConf.conf.newtoken, 'addalsovatforthirdpartyid': 1 },
 						function(data) {
@@ -1053,7 +1055,7 @@ if ( !empty($object->thirdparty) ) {
 
 								if (jsConf.conf.MAIN_SALETAX_AUTOSWITCH_I_CS_FOR_INDIA) {
 									console.log("MAIN_SALETAX_AUTOSWITCH_I_CS_FOR_INDIA is on so we check if we need to autoswith the vat code");
-									console.log("mysoc->country_code=<?php echo $mysoc->country_code; ?> thirdparty->country_code=<?php echo $object->thirdparty->country_code; ?>");
+									console.log("mysoc->country_code=" + jsConf.mySoc.country_code + " thirdparty->country_code=" + jsConf.docObject.thirdparty.country_code);
 									new_default_vat_code = default_vat_code;
 
 									if (jsConf.mySoc.country_code === 'IN'
@@ -1302,7 +1304,7 @@ if ( !empty($object->thirdparty) ) {
 				var has_multicurrency_up = false;
 
 				if(jsConf.modules.multicurrency && jsConf.docObject.multicurrency_code !== jsConf.conf.currency) {
-					var object_multicurrency_code = '<?php print dol_escape_js($object->multicurrency_code); ?>';
+					var object_multicurrency_code = jsConf.docObject.multicurrency_code;
 
 					var multicurrency_code = $('option:selected', this).attr('data-multicurrency-code');                                			// When select is done from HTML select
 					if (multicurrency_code == undefined) { multicurrency_code = jQuery('#idprodfournprice').attr('data-multicurrency-code'); }  	// When select is done from HTML input with ajax autocomplete
