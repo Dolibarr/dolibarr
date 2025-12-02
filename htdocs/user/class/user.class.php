@@ -372,7 +372,7 @@ class User extends CommonObject
 	public $lastsearch_values; // To store last saved search criteria for user
 
 	/**
-	 *	@var array<int,User>|array<int,array{rowid:int,id:int,fk_user:int,fk_soc:int,firstname:string,lastname:string,login:string,statut:int,entity:int,email:string,gender:string|int<-1,-1>,admin:int<0,1>,photo:string,fullpath:string,fullname:string,level:int}>  Array of User (filled from fetchAll) or Array with hierarchy of user information (filled with get_full_tree()
+	 *	@var array<int,User>|array<int,array{rowid:int,id:int,fk_user:int,fk_soc:int,firstname:string,lastname:string,login:string,statut:int,entity:int,email:string,gender:string|int<-1,-1>,admin:int<0,1>,photo:string,fullpath:string,fullname:string,level:int}>  Array of User (filled from fetchAll) or Array with hierarchy of user information (filled with get_full_tree())
 	 */
 	public $users = array();
 	/**
@@ -3923,23 +3923,26 @@ class User extends CommonObject
 		if ($resql) {
 			$i = 0;
 			while ($obj = $this->db->fetch_object($resql)) {
-				$this->users[$obj->rowid]['rowid'] = $obj->rowid;
-				$this->users[$obj->rowid]['id'] = $obj->rowid;
-				$this->users[$obj->rowid]['fk_user'] = $obj->fk_user;
-				$this->users[$obj->rowid]['fk_soc'] = $obj->fk_soc;
-				$this->users[$obj->rowid]['firstname'] = $obj->firstname;
-				$this->users[$obj->rowid]['lastname'] = $obj->lastname;
-				$this->users[$obj->rowid]['login'] = $obj->login;
-				$this->users[$obj->rowid]['statut'] = $obj->statut;
-				$this->users[$obj->rowid]['entity'] = $obj->entity;
-				$this->users[$obj->rowid]['email'] = $obj->email;
-				$this->users[$obj->rowid]['gender'] = $obj->gender;
-				$this->users[$obj->rowid]['admin'] = $obj->admin;
-				$this->users[$obj->rowid]['photo'] = $obj->photo;
-				// fields are filled with build_path_from_id_user
-				$this->users[$obj->rowid]['fullpath'] = '';
-				$this->users[$obj->rowid]['fullname'] = '';
-				$this->users[$obj->rowid]['level'] = 0;
+				$this->users[(int) $obj->rowid]
+					= array(
+						'rowid' => (int) $obj->rowid,
+						'id' => (int) $obj->rowid,
+						'fk_user' => (int) $obj->fk_user,
+						'fk_soc' => (int) $obj->fk_soc,
+						'firstname' => (string) $obj->firstname,
+						'lastname' => (string) $obj->lastname,
+						'login' => (string) $obj->login,
+						'statut' => (int) $obj->statut,
+						'entity' => (int) $obj->entity,
+						'email' => (string) $obj->email,
+						'gender' => (string) $obj->gender,
+						'admin' => (int) $obj->admin,
+						'photo' => (string) $obj->photo,
+						// fields are filled with build_path_from_id_user
+						'fullpath' => '',
+						'fullname' => '',
+						'level' => 0,
+					);
 				$i++;
 			}
 		} else {

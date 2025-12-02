@@ -294,7 +294,16 @@ if (empty($reshook)) {
 	if ($action == 'add' && $permissiontoadd) {
 		$db->begin();
 
-		if (GETPOSTINT('socid') < 1) {
+		if ($origin && $origin_id > 0) {
+			// We will loop on each line of the original document to complete the shipping object with various info and quantity to deliver
+			$classname = ucfirst($origin);
+			$objectsrc = new $classname($db);
+			'@phan-var-force Facture|Commande $objectsrc';
+			$objectsrc->fetch($origin_id);
+			$object->socid = $objectsrc->socid;
+		}
+
+		if (GETPOSTINT('socid') < 1 && $object->socid < 1) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdParty")), null, 'errors');
 			$action = 'create';
@@ -1418,7 +1427,7 @@ $product_static = new Product($db);
 $shipment_static = new Expedition($db);
 $warehousestatic = new Entrepot($db);
 
-if ($action == 'create' && !getDolGlobalString('SHIPMENT_STANDALONE')) {
+if (!$origin && $action == 'create' && !getDolGlobalString('SHIPMENT_STANDALONE')) {
 	print load_fiche_titre($langs->trans("CreateShipment"), '', 'dolly');
 
 	print '<br>'  .$langs->trans("ShipmentCreationIsDoneFromOrder");
@@ -2257,7 +2266,7 @@ if ($action == 'create' && $usercancreate) {
 						}
 					} else {
 						// ship from multiple locations
-						if (isModEnabled('productbatch') || !$product->hasbatch()) {
+						if (!isModEnabled('productbatch') || !$product->hasbatch()) {
 							print '<!-- Case warehouse not already known and product does not need lot -->';
 							print '<td></td><td></td>';
 							if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
@@ -2464,6 +2473,7 @@ if ($action == 'create' && $usercancreate) {
 
 										print '<!-- Show details of lot -->';
 										print '<input name="batchl' . $indiceAsked . '_' . $subj . '" type="hidden" value="' . $dbatch->id . '">';
+										print '<input name="entl' . $indiceAsked . '_'.$subj.'" type="hidden" value="' . $tmpwarehouseObject->id . '">';
 
 										//print '|'.$line->fk_product.'|'.$dbatch->batch.'|<br>';
 										print $langs->trans("Batch") . ': ';

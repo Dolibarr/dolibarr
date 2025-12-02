@@ -172,6 +172,11 @@ class Facture extends CommonInvoice
 	public $pos_print_counter = 0;
 
 	/**
+	 * @var int			counter used to track how many times the invoice was sent by email
+	 */
+	public $email_sent_counter = 0;
+
+	/**
 	 * @var int 		id of template invoice when generated from a template invoice
 	 */
 	public $fk_fac_rec_source;

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2014-2016  Laurent Destailleur  	<eldy@users.sourceforge.net>
- * Copyright (C) 2014-2024	Frédéric France      	<frederic.france@free.fr>
+ * Copyright (C) 2014-2025  Frédéric France      	<frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -65,6 +65,7 @@ if ($action == 'print_file' && $user->hasRight('printing', 'read')) {
 
 				$subdir = '';
 				$module = GETPOST('printer', 'alpha');
+				// TODO make conversion in printing module
 				switch ($module) {
 					case 'livraison':
 						$subdir = 'receipt';
@@ -74,7 +75,7 @@ if ($action == 'print_file' && $user->hasRight('printing', 'read')) {
 						$subdir = 'sending';
 						break;
 					case 'commande_fournisseur':
-						$module = 'fournisseur';
+						$module = 'commande_fournisseur';
 						$subdir = 'commande';
 						break;
 				}

@@ -369,6 +369,10 @@ ErrorPaymentAmountMustNotBeNull=Error, payment amount must be defined and not ze
 ErrorOneLineContainsADisactivatedProduct=Error, at least one product is not or no more on sale or for purchase
 ErrorCalendarIsNotYetOpenOrHasBeenClosed=This calendar is not yet open or has been closed
 ErrorFieldClassNotFoundForClassName=The class "%s" managing the field type "%s" is not found.
+ErrorBlockLogNeedAmountsValue=The unalterbale log object needs amounts values to be set
+ErrorBlockLogNeedElement=The unalterbale log object needs element type to be set
+ErrorBlockLogNeedObject=The unalterbale log object needs object to be set
+ErrorBadParameterWhenCallingCreateOfBlockedLog=Bad parameter when calling create of blocked log
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.

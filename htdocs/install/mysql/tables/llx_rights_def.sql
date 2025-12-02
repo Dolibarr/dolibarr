@@ -25,7 +25,7 @@ create table llx_rights_def
   module			varchar(64),
   module_origin		varchar(64),				-- if the permission is for a module but provided by another module, we add here the name of the module that provides the permission
   module_position	integer DEFAULT 0 NOT NULL,
-  family            varchar(16) NULL,
+  family            varchar(64) NULL,
   family_position	integer DEFAULT 0 NOT NULL,
   perms				varchar(50),
   subperms			varchar(50),

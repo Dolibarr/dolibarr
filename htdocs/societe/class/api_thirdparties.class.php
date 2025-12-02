@@ -1094,6 +1094,7 @@ class Thirdparties extends DolibarrApi
 	 * @since	7.0.0	Initial implementation
 	 *
 	 * @param	int		$id				ID of the third party
+	 * @param	string	$mode			'customer' or 'supplier'
 	 * @param	string	$filter			Filter exceptional discount. "none" will return every discount, "available" returns unapplied discounts, "used" returns applied discounts   {@choice none,available,used}
 	 * @param	string	$sortfield		Sort field
 	 * @param	string	$sortorder		Sort order
@@ -1109,7 +1110,7 @@ class Thirdparties extends DolibarrApi
 	 * @throws RestException 404
 	 * @throws RestException 503
 	 */
-	public function getFixedAmountDiscounts($id, $filter = "none", $sortfield = "f.type", $sortorder = 'ASC')
+	public function getFixedAmountDiscounts($id, $mode = 'customer', $filter = "none", $sortfield = "f.type", $sortorder = 'ASC')
 	{
 		$obj_ret = array();
 
@@ -1130,15 +1131,27 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(404, 'Thirdparty not found');
 		}
 
-
-		$sql = "SELECT f.ref, f.type as factype, re.fk_facture_source, re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc, re.description, re.fk_facture, re.fk_facture_line";
-		$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as re, ".MAIN_DB_PREFIX."facture as f";
-		$sql .= " WHERE f.rowid = re.fk_facture_source AND re.fk_soc = ".((int) $id);
-		if ($filter == "available") {
-			$sql .= " AND re.fk_facture IS NULL AND re.fk_facture_line IS NULL";
-		}
-		if ($filter == "used") {
-			$sql .= " AND (re.fk_facture IS NOT NULL OR re.fk_facture_line IS NOT NULL)";
+		$sql = '';
+		if ($mode === 'customer') {
+			$sql = "SELECT f.ref, f.type as factype, re.fk_facture_source, re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc, re.description, re.fk_facture, re.fk_facture_line";
+			$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as re, ".MAIN_DB_PREFIX."facture as f";
+			$sql .= " WHERE f.rowid = re.fk_facture_source AND re.fk_soc = ".((int) $id);
+			if ($filter == "available") {
+				$sql .= " AND re.fk_facture IS NULL AND re.fk_facture_line IS NULL";
+			}
+			if ($filter == "used") {
+				$sql .= " AND (re.fk_facture IS NOT NULL OR re.fk_facture_line IS NOT NULL)";
+			}
+		} elseif ($mode === 'supplier') {
+			$sql = "SELECT f.ref, f.type as factype, re.fk_invoice_supplier_source, re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc, re.description, re.fk_invoice_supplier, re.fk_invoice_supplier_line";
+			$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as re, ".MAIN_DB_PREFIX."facture_fourn as f";
+			$sql .= " WHERE f.rowid = re.fk_invoice_supplier_source AND re.fk_soc = ".((int) $id);
+			if ($filter == "available") {
+				$sql .= " AND re.fk_invoice_supplier IS NULL AND re.fk_invoice_supplier_line IS NULL";
+			}
+			if ($filter == "used") {
+				$sql .= " AND (re.fk_invoice_supplier IS NOT NULL OR re.fk_invoice_supplier_line IS NOT NULL)";
+			}
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);

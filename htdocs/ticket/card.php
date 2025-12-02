@@ -688,6 +688,8 @@ if (empty($reshook)) {
 		$action = 'view';
 	}
 
+	// Actions when printing a doc from card
+	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 	$permissiondellink = $user->hasRight('ticket', 'write');
 	include DOL_DOCUMENT_ROOT . '/core/actions_dellink.inc.php'; // Must be 'include', not 'include_once'

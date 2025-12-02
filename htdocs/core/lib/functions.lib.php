@@ -4514,8 +4514,8 @@ function dol_print_socialnetworks($value, $contactid, $socid, $type, $dictsocial
 				$link = str_replace('{socialid}', $value, getDolGlobalString($networkconstname));
 				$valuetoshow = $value;
 				if (preg_match('/^https?:\/\//i', $link)) {
-					$valuetoshow = preg_replace('/https:\/\/www\.linkedin\./', 'linkedin.', $valuetoshow);
-					//$valuetoshow = preg_replace('/www\.twitter\./', 'twitter.', $valuetoshow);
+					$valuetoshow = preg_replace('/https:\/\/www\.linkedin\.com\/?/', '', $valuetoshow);
+					//$valuetoshow = preg_replace('/www\.twitter\.com\/?/', '', $valuetoshow);
 					$htmllink .= '<a href="' . dol_sanitizeUrl($link, 0) . '" target="_blank" rel="noopener noreferrer">' . dol_escape_htmltag($valuetoshow) . '</a>';
 				} elseif ($link) {
 					$htmllink .= '<a href="' . dol_sanitizeUrl($link, 1) . '" target="_blank" rel="noopener noreferrer">' . dol_escape_htmltag($valuetoshow) . '</a>';
@@ -5691,7 +5691,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'accounting_account' => 'infobox-bank_account',
 				'accountline' => 'infobox-bank_account',
 				'accountancy' => 'infobox-bank_account',
-				'admin'=> 'opacitymedium',
+				'admin' => 'opacitymedium',
 				'asset' => 'infobox-bank_account',
 				'bank_account' => 'infobox-bank_account',
 				'bill' => 'infobox-commande',
@@ -8445,7 +8445,8 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 	}
 
 	// If the (seller country = buyer country) then the default VAT = VAT of the product sold. End of rule.
-	if (empty($vatrule) && (($seller_country_code == $buyer_country_code)
+	if (empty($vatrule) && (
+		($seller_country_code == $buyer_country_code)
 		|| (in_array($seller_country_code, array('FR', 'MC')) && in_array($buyer_country_code, array('FR', 'MC')))
 		|| (in_array($seller_country_code, array('MQ', 'GP')) && in_array($buyer_country_code, array('MQ', 'GP')))	// We should be able to manage the case of MQ, GP, ... with a deicated vat rate at previous step.
 	)) { // Warning ->country_code not always defined
@@ -8517,7 +8518,8 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 
 	// Allow an external module to bypass the calculation of prices
 	$parameters = array('vatvalue' => $vatvalue, 'vatrule' => $vatrule);
-	$tmpobject = null; $tmpaction = '';
+	$tmpobject = null;
+	$tmpaction = '';
 	// @phan-suppress-next-line PhanPluginConstantVariableNull
 	$reshook = $hookmanager->executeHooks('get_default_tva', $parameters, $tmpobject, $tmpaction);	// @phan-suppress-current-line PhanPluginConstantVariableNull
 	if ($reshook > 0 && !empty($hookmanager->resArray['vatvalue'])) {
@@ -9390,19 +9392,41 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 						//$out = '<html><head><meta charset="utf-8"></head><body><div class="tricktoremove">'.dol_nl2br($out).'</div></body></html>';
 					}
 
+					// Note: <a href="https://[__aaa__]/aaa.html"> is transformed into <a href="https://[__aaa__]/aaa.html">
+					// We don't want that, so we protect [__xxx__] by replacing [ and ] before loadHTML and restore them after saveHTML
+					$out = preg_replace_callback(
+						'/\[__([0-9a-zA-Z_]+)__\]/',
+						/**
+						 * @param 	array<int,string> $m	Array of matches
+						 * @return 	string 					Translated string for the key
+						 */
+						function ($m) {
+							return 'BRACKETSTART__' . $m[1] . '__BRACKETEND'; },
+						$out);
+
 					$dom->loadHTML($out, LIBXML_HTML_NODEFDTD | LIBXML_ERR_NONE | LIBXML_HTML_NOIMPLIED | LIBXML_NONET | LIBXML_NOWARNING | LIBXML_NOERROR | LIBXML_NOXMLDECL);
 
 					$dom->encoding = 'UTF-8';
 
 					$out = trim($dom->saveHTML());
 
+					// Restore [ and ] that were protected before loadHTML
+					$out = preg_replace_callback(
+						'/BRACKETSTART__([0-9a-zA-Z_]+)__BRACKETEND/',
+						/**
+						 * @param 	array<int,string> $m	Array of matches
+						 * @return 	string 					Translated string for the key
+						 */
+						function ($m) {
+							return '[__' . $m[1] . '__]'; },
+						$out);
+
 					// Remove the trick added to solve pb with text in utf8 and text without parent tag
 					//$out = preg_replace('/^'.preg_quote('<?xml encoding="UTF-8">', '/').'/', '', $out);
 					$out = preg_replace('/^' . preg_quote('<html><head><', '/') . '[^<>]+' . preg_quote('></head><body><div class="tricktoremove">', '/') . '/', '', $out);
 					$out = preg_replace('/' . preg_quote('</div></body></html>', '/') . '$/', '', trim($out));
-					//                  $out = preg_replace('/^<\?xml encoding="UTF-8"><div class="tricktoremove">/', '', $out);
-					//                  $out = preg_replace('/<\/div>$/', '', $out);
-					//                  var_dump('rrrrrrrrrrrrrrrrrrrrrrrrrrrrr'.$out);
+					//$out = preg_replace('/^<\?xml encoding="UTF-8"><div class="tricktoremove">/', '', $out);
+					//$out = preg_replace('/<\/div>$/', '', $out);
 
 					if (!$outishtml) {		// If $out was not HTML content we made before a dol_nl2br so we must do the opposite operation now
 						$out = str_replace('<br>', '', $out);

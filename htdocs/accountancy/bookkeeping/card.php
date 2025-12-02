@@ -851,7 +851,7 @@ if ($action == 'create') {
 			print '<tr>';
 			print '<td class="titlefield">' . $langs->trans("DateExport") . '</td>';
 			print '<td>';
-			print $object->date_export ? img_picto($langs->trans("TransactionExportDesc"), 'fa-file-export', 'class="pictofixedwidth"').dol_print_date($object->date_export, 'dayhour') : '&nbsp;';
+			print $object->date_export ? img_picto($langs->trans("TransactionExportDesc"), 'fa-file-export', 'class="pictofixedwidth opacitymedium"').dol_print_date($object->date_export, 'dayhour') : '&nbsp;';
 			print '</td>';
 			print '</tr>';
 
@@ -859,7 +859,7 @@ if ($action == 'create') {
 			print '<tr>';
 			print '<td class="titlefield">' . $langs->trans("DateValidation") . '</td>';
 			print '<td>';
-			print $object->date_validation ? img_picto($langs->trans("TransactionBlockedLockedDesc"), 'fa-lock', 'class="pictofixedwidth"').dol_print_date($object->date_validation, 'dayhour') : '&nbsp;';
+			print $object->date_validation ? img_picto($langs->trans("TransactionBlockedLockedDesc"), 'fa-lock', 'class="pictofixedwidth opacitymedium"').dol_print_date($object->date_validation, 'dayhour') : '&nbsp;';
 			print '</td>';
 			print '</tr>';
 

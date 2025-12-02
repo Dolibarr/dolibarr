@@ -309,6 +309,13 @@ function analyseVarsForSqlAndScriptsInjection(&$var, $type, $stopcode = 1)
 	}
 }
 
+// Prevent the use of method TRACE
+if ($_SERVER["REQUEST_METHOD"] == "TRACE") {
+	print 'Access refused with request method TRACE';
+	http_response_code(405);
+	exit();
+}
+
 // Sanity check on URL
 if (!defined('NOSCANPHPSELFFORINJECTION') && !empty($_SERVER["PHP_SELF"])) {
 	$morevaltochecklikepost = array($_SERVER["PHP_SELF"]);

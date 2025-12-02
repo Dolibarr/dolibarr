@@ -6144,7 +6144,7 @@ if ($action == 'create') {
 					print $invoice->getNomUrl(0);
 					print '</span>';
 					print '</td>';
-					// Delete
+					// Delete discount
 					print '<td class="right">';
 					print '<a href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&action=unlinkdiscount&token='.newToken().'&discountid='.$obj->rowid.'">';
 					print img_picto($langs->transnoentitiesnoconv("RemoveDiscount"), 'unlink');
@@ -6788,8 +6788,13 @@ if ($action == 'create') {
 
 			// Delete
 			$isErasable = $object->is_erasable();
+
 			$htmltooltip = '';
-			if ($isErasable == -4) {
+			if ($isErasable == -6) {
+				$htmltooltip = $langs->trans('DisabledBecauseAlreadySentByEmail');
+			} elseif ($isErasable == -5) {
+				$htmltooltip = $langs->trans('DisabledBecauseAlreadyPrintedOnce');
+			} elseif ($isErasable == -4) {
 				$htmltooltip = $langs->trans('DisabledBecausePayments');
 			} elseif ($isErasable == -3) {
 				$htmltooltip = $langs->trans('DisabledBecauseNotLastSituationInvoice');
