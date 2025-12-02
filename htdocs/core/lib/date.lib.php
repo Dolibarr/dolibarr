@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2018-2024 Charlene Benke       <charlene@patas-monkey.com>
+ * Copyright (C) 2018-2025 Charlene Benke       <charlene@patas-monkey.com>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
  *
@@ -774,7 +774,10 @@ function num_public_holiday($timestampStart, $timestampEnd, $countryCodeOrId = '
 	$nbFerie = 0;
 
 	// Check to ensure we use correct parameters
-	if (($timestampEnd - $timestampStart) % 86400 != 0) {
+	// Allow a tolerance of +/- 1 hour (3600 seconds) to account for DST (Daylight Saving Time) changes
+	$timeDiff = abs($timestampEnd - $timestampStart);
+	$remainder = $timeDiff % 86400;
+	if ($remainder != 0 && $remainder != 3600 && $remainder != 82800) {
 		return 'Error Dates must use same hours and must be GMT dates';
 	}
 
@@ -1037,7 +1040,10 @@ function listPublicHoliday($timestampStart, $timestampEnd, $countryCodeOrId = ''
 	global $conf, $db, $mysoc;
 
 	// Check to ensure we use correct parameters
-	if (($timestampEnd - $timestampStart) % 86400 != 0) {
+	// Allow a tolerance of +/- 1 hour (3600 seconds) to account for DST (Daylight Saving Time) changes
+	$timeDiff = abs($timestampEnd - $timestampStart);
+	$remainder = $timeDiff % 86400;
+	if ($remainder != 0 && $remainder != 3600 && $remainder != 82800) {
 		return 'Error Dates must use same hours and must be GMT dates';
 	}
 
