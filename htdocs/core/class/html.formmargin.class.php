@@ -104,7 +104,7 @@ class FormMargin
 			// $line->pa_ht is always positive in database, so we guess the correct sign
 
 			'@phan-var-force Facture|FactureFournisseur $object';
-			$pa_ht = (($pv < 0 || ($pv == 0 && in_array($object->element, array('facture', 'facture_fourn')) && $object->type == $object::TYPE_CREDIT_NOTE)) ? -$line->pa_ht : $line->pa_ht);
+			$pa_ht = ((($pv < 0 && $line->pa_ht > 0) || ($pv == 0 && in_array($object->element, array('facture', 'facture_fourn')) && $object->type == $object::TYPE_CREDIT_NOTE)) ? -$line->pa_ht : $line->pa_ht);
 			'@phan-var-force CommonObject $object';
 
 			if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {	// Special case for old situation mode
