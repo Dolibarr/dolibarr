@@ -3083,10 +3083,14 @@ class Form
 		} elseif ($finished == 1) {
 			$sql .= " AND p.finished = ".((int) $finished);
 		}
-		if ($status >= 0) {
+		if (getDolGlobalString('PRODUIT_FORCE_HIDE_NOT_FOR_SALE')) {
+			$sql .= " AND p.tosell = 1";
+		} elseif ($status >= 0) {
 			$sql .= " AND p.tosell = ".((int) $status);
 		}
-		if ($status_purchase >= 0) {
+		if (getDolGlobalString('PRODUIT_FORCE_HIDE_NOT_FOR_PURCHASE')) {
+			$sql .= " AND p.tobuy = 1";
+		} elseif ($status_purchase >= 0) {
 			$sql .= " AND p.tobuy = " . ((int) $status_purchase);
 		}
 		// Filter by product type
