@@ -131,7 +131,7 @@ $item = $formSetup->newItem('MYMODULE_MYPARAM4');
 $item->setAsThirdpartyType();
 
 // Setup conf for a selection of a boolean
-$formSetup->newItem('MYMODULE_MYPARAM5')->setAsYesNo();
+$formSetup->newItem('MYMODULE_MYPARAM5')->setAsYesNo();	 // ->fieldParams['alertifoff'] = 1 or ->fieldParams['alertifon'] = 1;
 
 // Setup conf for a selection of an Email template of type thirdparty
 $formSetup->newItem('MYMODULE_MYPARAM6')->setAsEmailTemplate('thirdparty');

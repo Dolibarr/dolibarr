@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2019	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2023	Benjamin Falière	<benjamin.faliere@altairis.fr>
- * Copyright (C) 2023	Charlene Benke		<charlene@patas-monkey.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2019	    Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2023	    Benjamin Falière	    <benjamin.faliere@altairis.fr>
+ * Copyright (C) 2023	    Charlene Benke		    <charlene@patas-monkey.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,7 +67,7 @@ class BOM extends CommonObject
 	public $picto = 'bom';
 
 	/**
-	 * @var Product	Object product of the BOM
+	 * @var ?Product	Object product of the BOM
 	 */
 	public $product;
 
@@ -105,7 +105,7 @@ class BOM extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>,searchmulti?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'position' => 1, 'notnull' => 1, 'index' => 1, 'comment' => "Id",),
@@ -940,7 +940,11 @@ class BOM extends CommonObject
 
 		// Define new ref
 		if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
-			$this->fetch_product();
+			$res = $this->fetch_product();
+			if ($res < 0 || !is_object($this->product)) {
+				$this->db->rollback();
+				return -1;
+			}
 			$num = $this->getNextNumRef($this->product);
 		} else {
 			$num = (string) $this->ref;
@@ -1439,7 +1443,7 @@ class BOM extends CommonObject
 							return -1;
 						}
 
-						$line->total_cost = (float) price2num($line->unit_cost * $line->qty / $line->efficiency, 'MT');
+						$line->total_cost = (float) $line->unit_cost * $line->qty / $line->efficiency;
 
 						$this->total_cost += $line->total_cost;
 					} else {
@@ -1448,7 +1452,7 @@ class BOM extends CommonObject
 						if ($res > 0) {
 							$bom_child->calculateCosts();
 							$line->childBom[] = $bom_child;
-							$line->total_cost = (float) price2num($bom_child->unit_cost * $line->qty / $line->efficiency, 'MT');
+							$line->total_cost = (float) $bom_child->unit_cost * $line->qty / $line->efficiency;
 							$this->total_cost += $line->total_cost;
 						} else {
 							$this->error = $bom_child->error;
@@ -1469,7 +1473,7 @@ class BOM extends CommonObject
 						$res = $workstation->fetch($line->fk_default_workstation);
 
 						if ($res > 0) {
-							$line->total_cost = (float) price2num($qtyhourforline * ($workstation->thm_operator_estimated + $workstation->thm_machine_estimated), 'MT');
+							$line->total_cost = (float) $qtyhourforline * ($workstation->thm_operator_estimated + $workstation->thm_machine_estimated);
 						} else {
 							$this->error = $workstation->error;
 							return -3;
@@ -1483,9 +1487,9 @@ class BOM extends CommonObject
 						}
 
 						if ($qtyhourservice) {
-							$line->total_cost = (float) price2num($qtyhourforline / $qtyhourservice * $line->unit_cost, 'MT');
+							$line->total_cost = (float) $qtyhourforline / $qtyhourservice * $line->unit_cost;
 						} else {
-							$line->total_cost = (float) price2num($line->qty * $line->unit_cost, 'MT');
+							$line->total_cost = (float) $line->qty * $line->unit_cost;
 						}
 					}
 

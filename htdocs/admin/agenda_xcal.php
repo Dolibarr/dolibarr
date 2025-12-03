@@ -49,21 +49,23 @@ if (!$user->admin) {
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "other", "agenda"));
 
-$def = array();
 $actionsave = GETPOST('save', 'alpha');
+
+// Get value in setup
 $MAIN_AGENDA_XCAL_EXPORTKEY = getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY');
-$MAIN_AGENDA_EXPORT_PAST_DELAY = getDolGlobalString('MAIN_AGENDA_EXPORT_PAST_DELAY', 100);
+$MAIN_AGENDA_EXPORT_PAST_DELAY = getDolGlobalInt('MAIN_AGENDA_EXPORT_PAST_DELAY', 100);
 $MAIN_AGENDA_EXPORT_CACHE = getDolGlobalInt('MAIN_AGENDA_EXPORT_CACHE');
 $AGENDA_EXPORT_FIX_TZ = getDolGlobalString('AGENDA_EXPORT_FIX_TZ');
 
+// Overwrite with post values
 if (GETPOSTISSET('MAIN_AGENDA_XCAL_EXPORTKEY')) {
 	$MAIN_AGENDA_XCAL_EXPORTKEY = trim(GETPOST('MAIN_AGENDA_XCAL_EXPORTKEY', 'alpha'));
 }
 if (GETPOSTISSET('MAIN_AGENDA_EXPORT_PAST_DELAY')) {
-	$MAIN_AGENDA_EXPORT_PAST_DELAY = intval(GETPOSTINT('MAIN_AGENDA_EXPORT_PAST_DELAY'));
+	$MAIN_AGENDA_EXPORT_PAST_DELAY = GETPOSTINT('MAIN_AGENDA_EXPORT_PAST_DELAY');
 }
 if (GETPOSTISSET('MAIN_AGENDA_EXPORT_CACHE')) {
-	$MAIN_AGENDA_EXPORT_CACHE = intval(GETPOSTINT('MAIN_AGENDA_EXPORT_CACHE'));
+	$MAIN_AGENDA_EXPORT_CACHE = GETPOSTINT('MAIN_AGENDA_EXPORT_CACHE');
 }
 if (GETPOSTISSET('AGENDA_EXPORT_FIX_TZ')) {
 	$AGENDA_EXPORT_FIX_TZ = trim(GETPOST('AGENDA_EXPORT_FIX_TZ', 'alpha'));
@@ -97,14 +99,10 @@ if ($actionsave) {
 
 $form = new Form($db);
 
-if (!isset($conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY)) {
-	$conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY = 100;
-}
-
 $wikihelp = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda|DE:Modul_Terminplanung';
 llxHeader('', $langs->trans("AgendaSetup"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-agenda_xcal');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
 print load_fiche_titre($langs->trans("AgendaSetup"), $linkback, 'title_setup');
 
@@ -241,8 +239,6 @@ $message .= $langs->trans("AgendaUrlOptionsProject", $user->login, $user->login)
 $message .= $langs->trans("AgendaUrlOptionsType", 'systemauto|system').'<br>';
 $message .= $langs->trans("AgendaUrlOptionsCode", 'AC_COMPANY_CREATE,AC_PROPAL_VALIDATE,AC_CODE...').'<br>';
 $message .= $langs->trans("AgendaUrlOptionsIncludeHolidays", '1', '1').'<br>';
-//$defaultnotolderthan = getDolGlobalString('MAIN_AGENDA_EXPORT_PAST_DELAY', 100);
-//$message .= $langs->trans("AgendaUrlOptionsLimitDays", 'X', 'X', $defaultnotolderthan).'<br>';	// This option is hidden because already set and defined into previous options
 $message .= $langs->trans("AgendaUrlOptionsLimit", '1000').'<br>';
 
 print info_admin($message);

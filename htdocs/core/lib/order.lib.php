@@ -180,7 +180,7 @@ function commande_prepare_head(Commande $object)
  */
 function order_admin_prepare_head()
 {
-	global $langs, $conf, $user, $db;
+	global $langs, $conf, $db;
 
 	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('commande');
@@ -192,11 +192,6 @@ function order_admin_prepare_head()
 	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/admin/order.php');
 	$head[$h][1] = $langs->trans("Miscellaneous");
 	$head[$h][2] = 'general';
-	$h++;
-
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/admin/order_pdf.php');
-	$head[$h][1] = $langs->trans("PDF");
-	$head[$h][2] = 'pdf';
 	$h++;
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'order_admin');
@@ -234,7 +229,7 @@ function order_admin_prepare_head()
  */
 function getCustomerOrderPieChart($socid = 0)
 {
-	global $conf, $db, $langs, $user;
+	global $conf, $db, $langs, $user, $hookmanager;
 
 	$result = '';
 
@@ -262,6 +257,10 @@ function getCustomerOrderPieChart($socid = 0)
 	if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
+	// Add where from hooks
+	$parameters = array('socid' => $user->socid);
+	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $commandestatic); // Note that $action and $object may have been modified by hook
+	$sql .= $hookmanager->resPrint;
 	$sql .= " GROUP BY c.fk_statut";
 
 	$resql = $db->query($sql);

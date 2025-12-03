@@ -76,7 +76,7 @@ $formSetup = new FormSetup($db);
 
 // Setup conf BOOKCAL_PUBLIC_INTERFACE_TOPIC
 $item = $formSetup->newItem('BOOKCAL_PUBLIC_INTERFACE_TOPIC');
-$item->defaultFieldValue = 'MyBigCompany public interface for Bookcal';
+$item->fieldAttr['placeholder'] = 'MyBigCompany public interface for Bookcal';
 $item->cssClass = 'minwidth300';
 
 $setupnotempty = + count($formSetup->items);
@@ -180,8 +180,7 @@ print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 $head = bookcalAdminPrepareHead();
 print dol_get_fiche_head($head, 'settings', $langs->trans($page_name), -1, "fa-calendar-check");
 
-// Setup page goes here
-//echo '<span class="opacitymedium">'.$langs->trans("BookCalSetupPage").'</span><br><br>';
+print '<br>';
 
 if ($action == 'edit') {
 	print $formSetup->generateOutput(true);

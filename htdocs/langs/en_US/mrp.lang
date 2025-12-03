@@ -170,3 +170,4 @@ ErrorModifyMoDateEnd = You must choose an end date later than the start date. %s
 ErrorCancelMo=Error updating cancellation
 ErrorModifyMoDate=Error updating date modification
 BOM_SUB_BOM=Use sub-boms
+UseSearchToSelectBom=Wait until a key is pressed before loading content of Boms combo list.<br>This may improve performance if you have a large number of projects, but it is less convenient.

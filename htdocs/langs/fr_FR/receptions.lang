@@ -55,3 +55,7 @@ ReceptionUpdated=Réception mise à jour avec succès
 ReceptionDistribution=Distribution de réception
 ReceptionMustBeInTheSameCurrencyThanOther=La réception doit être dans la même devise que l'autre
 AutoValidationNotPossibleWhenStockIsDecreasedOnInvoiceValidation=La validation automatique n'est pas possible lorsque le stock est réduit sur facture validation
+ReceptionSentByEMail=Réception envoyée par courriel
+ReceptionValidated=Réception validée
+DateReception=Date de réception
+SetReceptionDate=Fixer la date de réception

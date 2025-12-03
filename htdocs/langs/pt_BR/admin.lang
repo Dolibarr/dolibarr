@@ -898,7 +898,6 @@ LogEventDesc=Ative o registro para eventos de segurança específicos. Administr
 AreaForAdminOnly=Os parâmetros de configuração só podem ser definidos pelos <b>usuários administradores</b>.
 SystemInfoDesc=Informações do sistema está faltando informações, técnicas você consegue em modo de leitura e é visivel somente para administradores.
 SystemAreaForAdminOnly=Esta área está disponível apenas para usuários administradores. As permissões de usuário do Dolibarr não podem alterar essa restrição.
-AccountantDesc=Se você tiver um contador / contador externo, poderá editar aqui suas informações.
 AccountantFileNumber=Código do contador
 DisplayDesc=Parâmetros que modificam a parte visual do aplicativo podem ser modificados aqui
 AvailableModules=App/Módulos disponíveis

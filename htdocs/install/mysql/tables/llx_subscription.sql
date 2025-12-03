@@ -31,5 +31,6 @@ create table llx_subscription
   fk_user_valid   integer DEFAULT NULL,
   ref_ext 		  varchar(128),				-- reference into an external system (not used by dolibarr)
   note            text,						-- public note
-  note_private    text						-- private note
+  note_private    text,						-- private note
+  import_key       varchar(14)                    -- Import key
 )ENGINE=innodb;

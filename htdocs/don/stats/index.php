@@ -208,7 +208,7 @@ print dol_get_fiche_head($head, 'byyear', '', -1);
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 // Show filter box
-print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form name="stats" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print '<table class="noborder centpercent">';
@@ -263,6 +263,7 @@ print $form->selectarray('status', $liststatus, 4, 1);
 // Year
 print '<tr><td>'.$langs->trans("Year").'</td><td>';
 arsort($arrayyears);
+print img_picto('', 'calendar', 'class="pictofixedwidth"');
 print $form->selectarray('year', $arrayyears, $year, 0, 0, 0, '', 0, 0, 0, '', 'width75');
 
 print '</td></tr>';

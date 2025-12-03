@@ -78,6 +78,9 @@ print load_fiche_titre($langs->trans("BookcalBookingTitle"), '', 'fa-calendar-ch
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
+print '<span class="opacitymedium">';
+print $langs->trans("BookCalInitHelp");
+print '</span>';
 
 // BEGIN MODULEBUILDER DRAFT MYOBJECT
 // Draft MyObject

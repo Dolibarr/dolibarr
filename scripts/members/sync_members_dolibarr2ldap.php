@@ -91,7 +91,7 @@ if (!empty($dolibarr_main_db_readonly)) {
 $now = $argv[1];
 
 print "Mails sending disabled (useless in batch mode)\n";
-$conf->global->MAIN_DISABLE_ALL_MAILS = 1; // On bloque les mails
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1; 	// We block email sending
 print "\n";
 print "----- Synchronize all records from Dolibarr database:\n";
 print "type=".$conf->db->type."\n";

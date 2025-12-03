@@ -4,8 +4,8 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2016       Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2020       Tobias Sekan			<tobias.sekan@startmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -104,14 +104,10 @@ if ($maxphp > 0 && $maxphp2 > 0 && $maxphp > $maxphp2) {
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td></td></tr>';
 
-$ErrorPicturePath = "../../theme/eldy/img/error.png";
-$WarningPicturePath = "../../theme/eldy/img/warning.png";
-$OkayPicturePath = "../../theme/eldy/img/tick.png";
-
 print '<tr><td>'.$langs->trans("Version").'</td><td>';
 
-$arrayphpminversionerror = array(5, 5, 0);
-$arrayphpminversionwarning = array(5, 6, 0);
+$arrayphpminversionerror = array(7, 1, 0);
+$arrayphpminversionwarning = array(7, 1, 0);
 
 if (versioncompare(versionphparray(), $arrayphpminversionerror) < 0) {
 	print img_picto('Error', 'error').' '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionerror));

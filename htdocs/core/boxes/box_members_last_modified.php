@@ -82,96 +82,71 @@ class box_members_last_modified extends ModeleBoxes
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedMembers", $max));
 
 		if ($user->hasRight('adherent', 'lire')) {
-			$sql = "SELECT a.rowid, a.ref, a.lastname, a.firstname, a.societe as company, a.fk_soc,";
-			$sql .= " a.datec, GREATEST(a.tms, aef.tms) as datem, a.statut as status, a.datefin as date_end_subscription,";
-			$sql .= ' a.photo, a.email, a.gender, a.morphy,';
-			$sql .= " t.rowid as typeid, t.subscription, t.libelle as label";
-			$sql .= " FROM ".MAIN_DB_PREFIX."adherent as a";
-			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'adherent_extrafields as aef ON aef.fk_object = a.rowid';
-			$sql .= ", ".MAIN_DB_PREFIX."adherent_type as t";
-			$sql .= " WHERE a.entity IN (".getEntity('member').")";
-			$sql .= " AND a.fk_adherent_type = t.rowid";
-			$sql .= " ORDER BY datem DESC";
-			$sql .= $this->db->plimit($max, 0);
-
-			$result = $this->db->query($sql);
-			if ($result) {
-				$num = $this->db->num_rows($result);
-
-				$line = 0;
-				while ($line < $num) {
-					$objp = $this->db->fetch_object($result);
-					$datec = $this->db->jdate($objp->datec);
-					$datem = $this->db->jdate($objp->datem);
-
-					$memberstatic->lastname = $objp->lastname;
-					$memberstatic->firstname = $objp->firstname;
-					$memberstatic->id = $objp->rowid;
-					$memberstatic->ref = $objp->ref;
-					$memberstatic->photo = $objp->photo;
-					$memberstatic->gender = $objp->gender;
-					$memberstatic->email = $objp->email;
-					$memberstatic->morphy = $objp->morphy;
-					$memberstatic->company = $objp->company;
-					$memberstatic->status = $objp->status;
-					$memberstatic->date_creation = $datec;
-					$memberstatic->date_modification = $datem;
-					$memberstatic->need_subscription = $objp->subscription;
-					$memberstatic->datefin = $this->db->jdate($objp->date_end_subscription);
-					if (!empty($objp->fk_soc)) {
-						$memberstatic->socid = $objp->fk_soc;
-						$memberstatic->fetch_thirdparty();
-						$memberstatic->name = $memberstatic->thirdparty->name;
-					} else {
-						$memberstatic->name = $objp->company;
-					}
-					$statictype->id = $objp->typeid;
-					$statictype->label = $objp->label;
-					$statictype->subscription = $objp->subscription;
-
-					$this->info_box_contents[$line][] = array(
-						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
-						'text' => $memberstatic->getNomUrl(-1),
-						'asis' => 1,
-					);
-
-					$this->info_box_contents[$line][] = array(
-						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
-						'text' => $memberstatic->company,
-					);
-
-					$this->info_box_contents[$line][] = array(
-						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
-						'text' => $statictype->getNomUrl(1, 32),
-						'asis' => 1,
-					);
-
-					$this->info_box_contents[$line][] = array(
-						'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'"',
-						'text' => dol_print_date($datem, "day", 'tzuserrel'),
-					);
-
-					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right" width="18"',
-						'text' => $memberstatic->LibStatut($objp->status, $objp->subscription, $this->db->jdate($objp->date_end_subscription), 3),
-					);
-
-					$line++;
+			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherentstats.class.php';
+			$stats = new AdherentStats($this->db, $user->socid, $user->id);
+			// Show array
+			$listOfMembers = $stats->getLastModifiedMembers($max);
+			$line = 0;
+			$num = count($listOfMembers);
+			foreach ($listOfMembers as $data) {
+				$memberstatic->lastname = $data['lastname'];
+				$memberstatic->firstname = $data['firstname'];
+				$memberstatic->id = $data['id'];
+				$memberstatic->ref = $data['ref'];
+				$memberstatic->photo = $data['photo'];
+				$memberstatic->gender = $data['gender'];
+				$memberstatic->email = $data['email'];
+				$memberstatic->morphy = $data['morphy'];
+				$memberstatic->company = $data['company'];
+				$memberstatic->status = $data['status'];
+				$memberstatic->date_creation = $data['datec'];
+				$memberstatic->date_modification = $data['datem'];
+				$memberstatic->need_subscription = (int) $data['need_subscription'];
+				$memberstatic->datefin = $data['date_end_subscription'];
+				if (!empty($data['fk_soc'])) {
+					$memberstatic->socid = $data['fk_soc'];
+					$memberstatic->fetch_thirdparty();
+					$memberstatic->name = $memberstatic->thirdparty->name;
+				} else {
+					$memberstatic->name = $data['company'];
 				}
+				$statictype->id = $data['typeid'];
+				$statictype->label = $data['label'];
+				$statictype->subscription = $data['subscription'];
 
-				if ($num == 0) {
-					$this->info_box_contents[$line][0] = array(
-						'td' => 'class="center"',
-						'text' => $langs->trans("NoRecordedCustomers"),
-					);
-				}
+				$this->info_box_contents[$line][] = array(
+					'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
+					'text' => $memberstatic->getNomUrl(-1),
+					'asis' => 1,
+				);
 
-				$this->db->free($result);
-			} else {
-				$this->info_box_contents[0][0] = array(
-					'td' => '',
-					'maxlength' => 500,
-					'text' => ($this->db->error().' sql='.$sql),
+				$this->info_box_contents[$line][] = array(
+					'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
+					'text' => $memberstatic->company,
+				);
+
+				$this->info_box_contents[$line][] = array(
+					'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
+					'text' => $statictype->getNomUrl(1, 32),
+					'asis' => 1,
+				);
+
+				$this->info_box_contents[$line][] = array(
+					'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($data['datem'], 'dayhour', 'tzuserrel')).'"',
+					'text' => dol_print_date($data['datem'], "day", 'tzuserrel'),
+				);
+
+				$this->info_box_contents[$line][] = array(
+					'td' => 'class="right" width="18"',
+					'text' => $memberstatic->LibStatut($data['status'], $data['need_subscription'], $data['date_end_subscription'], 3),
+				);
+				$line ++;
+			}
+
+			if ($num == 0) {
+				$this->info_box_contents[$line][0] = array(
+					'td' => 'class="center"',
+					'text' => $langs->trans("NoRecordedCustomers"),
 				);
 			}
 		} else {

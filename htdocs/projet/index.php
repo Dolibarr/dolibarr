@@ -125,7 +125,7 @@ if ($user->hasRight('projet', 'all', 'lire') && !$socid) {
 	$titleall = $langs->trans("AllAllowedProjects").'<br><br>';
 }
 
-$morehtml = '<form name="projectform" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+$morehtml = '<form name="projectform" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 $morehtml .= '<input type="hidden" name="token" value="'.newToken().'">';
 $morehtml .= '<input type="hidden" name="action" value="refresh_search_project_user">';
 
@@ -313,12 +313,12 @@ if ($resql) {
 			print '</td>';
 
 			// Label
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->title).'">';
+			print '<td class="tdoverflowmax175" title="'.dol_escape_htmltag($obj->title).'">';
 			print dol_escape_htmltag($projectstatic->title);
 			print '</td>';
 
 			// Thirdparty
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companystatic->name).'">';
+			print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($companystatic->name).'">';
 			if ($companystatic->id > 0) {
 				print $companystatic->getNomUrl(1, 'company', 16);
 			}

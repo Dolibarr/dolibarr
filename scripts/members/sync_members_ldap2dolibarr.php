@@ -84,32 +84,32 @@ dol_syslog($script_file." launched with arg ".implode(',', $argv));
 
 // List of fields to get from LDAP
 $required_fields = array(
-	$conf->global->LDAP_KEY_MEMBERS,
-	$conf->global->LDAP_FIELD_FULLNAME,
-	$conf->global->LDAP_FIELD_LOGIN,
-	$conf->global->LDAP_FIELD_LOGIN_SAMBA,
-	$conf->global->LDAP_FIELD_PASSWORD,
-	$conf->global->LDAP_FIELD_PASSWORD_CRYPTED,
-	$conf->global->LDAP_FIELD_NAME,
-	$conf->global->LDAP_FIELD_FIRSTNAME,
-	$conf->global->LDAP_FIELD_MAIL,
-	$conf->global->LDAP_FIELD_PHONE,
-	$conf->global->LDAP_FIELD_PHONE_PERSO,
-	$conf->global->LDAP_FIELD_MOBILE,
-	$conf->global->LDAP_FIELD_FAX,
-	$conf->global->LDAP_FIELD_ADDRESS,
-	$conf->global->LDAP_FIELD_ZIP,
-	$conf->global->LDAP_FIELD_TOWN,
-	$conf->global->LDAP_FIELD_COUNTRY,
-	$conf->global->LDAP_FIELD_DESCRIPTION,
-	$conf->global->LDAP_FIELD_BIRTHDATE,
-	$conf->global->LDAP_FIELD_MEMBER_STATUS,
-	$conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION,
+	getDolGlobalString('LDAP_KEY_MEMBERS'),
+	getDolGlobalString('LDAP_FIELD_FULLNAME'),
+	getDolGlobalString('LDAP_FIELD_LOGIN'),
+	getDolGlobalString('LDAP_FIELD_LOGIN_SAMBA'),
+	getDolGlobalString('LDAP_FIELD_PASSWORD'),
+	getDolGlobalString('LDAP_FIELD_PASSWORD_CRYPTED'),
+	getDolGlobalString('LDAP_FIELD_NAME'),
+	getDolGlobalString('LDAP_FIELD_FIRSTNAME'),
+	getDolGlobalString('LDAP_FIELD_MAIL'),
+	getDolGlobalString('LDAP_FIELD_PHONE'),
+	getDolGlobalString('LDAP_FIELD_PHONE_PERSO'),
+	getDolGlobalString('LDAP_FIELD_MOBILE'),
+	getDolGlobalString('LDAP_FIELD_FAX'),
+	getDolGlobalString('LDAP_FIELD_ADDRESS'),
+	getDolGlobalString('LDAP_FIELD_ZIP'),
+	getDolGlobalString('LDAP_FIELD_TOWN'),
+	getDolGlobalString('LDAP_FIELD_COUNTRY'),
+	getDolGlobalString('LDAP_FIELD_DESCRIPTION'),
+	getDolGlobalString('LDAP_FIELD_BIRTHDATE'),
+	getDolGlobalString('LDAP_FIELD_MEMBER_STATUS'),
+	getDolGlobalString('LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION'),
 	// Subscriptions
-	$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE,
-	$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT,
-	$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE,
-	$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT
+	getDolGlobalString('LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE'),
+	getDolGlobalString('LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT'),
+	getDolGlobalString('LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE'),
+	getDolGlobalString('LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT')
 );
 
 // Remove from required_fields all entries not configured in LDAP (empty) and duplicated
@@ -125,6 +125,7 @@ foreach ($argv as $key => $val) {
 	if ($val == 'commitiferror') {
 		$forcecommit = 1;
 	}
+	$reg = array();
 	if (preg_match('/--server=([^\s]+)$/', $val, $reg)) {
 		$conf->global->LDAP_SERVER_HOST = $reg[1];
 	}

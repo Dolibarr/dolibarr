@@ -43,7 +43,7 @@ class InterfaceZapierTriggers extends DolibarrTriggers
 		$this->family = "technic";
 		$this->description = "Zapier triggers.";
 		$this->version = self::VERSIONS['dev'];
-		$this->picto = 'zapier';
+		$this->picto = 'zapier.png';
 	}
 
 	/**

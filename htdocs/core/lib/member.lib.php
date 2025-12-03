@@ -39,7 +39,7 @@ function member_prepare_head(Adherent $object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/adherents/card.php', ['rowid' => $object->id]);
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/adherents/card.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans("Member");
 	$head[$h][2] = 'general';
 	$h++;
@@ -56,7 +56,7 @@ function member_prepare_head(Adherent $object)
 
 	if ($user->hasRight('adherent', 'cotisation', 'lire')) {
 		$nbSubscription = is_array($object->subscriptions) ? count($object->subscriptions) : 0;
-		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/adherents/subscription.php', ['rowid' => $object->id]);
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/adherents/subscription.php', ['id' => $object->id]);
 		$head[$h][1] = $langs->trans("Subscriptions");
 		$head[$h][2] = 'subscription';
 		if ($nbSubscription > 0) {
@@ -68,7 +68,7 @@ function member_prepare_head(Adherent $object)
 	if (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') {
 		if ($user->hasRight('partnership', 'read')) {
 			$nbPartnership = is_array($object->partnerships) ? count($object->partnerships) : 0;
-			$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/partnership/partnership_list.php', ['rowid' => $object->id]);
+			$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/partnership/partnership_list.php', ['id' => $object->id]);
 			$head[$h][1] = $langs->trans("Partnerships");
 			$nbNote = 0;
 			$sql = "SELECT COUNT(n.rowid) as nb";

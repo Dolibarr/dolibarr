@@ -106,7 +106,7 @@ class Adherent extends CommonObject
 	public $civility_code;
 
 	/**
-	 * @var int
+	 * @var string Human readable civility
 	 */
 	public $civility;
 
@@ -210,7 +210,7 @@ class Adherent extends CommonObject
 	public $datevalid;
 
 	/**
-	 * @var string gender
+	 * @var ?string gender
 	 */
 	public $gender;
 
@@ -268,7 +268,7 @@ class Adherent extends CommonObject
 	public $first_subscription_date_end;
 
 	/**
-	 * @var int|string|null date
+	 * @var null|float|string amount
 	 */
 	public $first_subscription_amount;
 
@@ -288,7 +288,7 @@ class Adherent extends CommonObject
 	public $last_subscription_date_end;
 
 	/**
-	 * @var null|float|string date, null until set
+	 * @var null|float|string amount, null until set
 	 */
 	public $last_subscription_amount;
 
@@ -313,7 +313,6 @@ class Adherent extends CommonObject
 	 * @var ?Facture	To store the created invoice into subscriptionComplementaryActions()
 	 */
 	public $invoice;
-
 
 	/**
 	 *  'type' field format:
@@ -712,23 +711,20 @@ class Adherent extends CommonObject
 			$id = $this->db->last_insert_id(MAIN_DB_PREFIX."adherent");
 			if ($id > 0) {
 				$this->id = $id;
-				if (getDolGlobalString('MEMBER_CODEMEMBER_ADDON') == '') {
-					// keep old numbering
-					$this->ref = (string) $id;
-				} else {
-					// auto code
-					$modfile = dol_buildpath('core/modules/member/'.getDolGlobalString('MEMBER_CODEMEMBER_ADDON').'.php', 0);
-					try {
-						require_once $modfile;
-						$modname = getDolGlobalString('MEMBER_CODEMEMBER_ADDON');
-						$modCodeMember = new $modname();
-						'@phan-var-force ModeleNumRefMembers $modCodeMember';
-						/** @var ModeleNumRefMembers $modCodeMember */
-						$this->ref = $modCodeMember->getNextValue($mysoc, $this);
-					} catch (Exception $e) {
-						dol_syslog($e->getMessage(), LOG_ERR);
-						$error++;
-					}
+
+				$modulenum = getDolGlobalString('MEMBER_CODEMEMBER_ADDON', 'mod_member_simple');
+
+				$modfile = dol_buildpath('core/modules/member/'.$modulenum.'.php', 0);
+				try {
+					require_once $modfile;
+					$modname = $modulenum;
+					$modCodeMember = new $modname();
+					'@phan-var-force ModeleNumRefMembers $modCodeMember';
+					/** @var ModeleNumRefMembers $modCodeMember */
+					$this->ref = $modCodeMember->getNextValue($mysoc, $this);
+				} catch (Exception $e) {
+					dol_syslog($e->getMessage(), LOG_ERR);
+					$error++;
 				}
 
 				// Update minor fields
@@ -814,7 +810,9 @@ class Adherent extends CommonObject
 		// Clean parameters
 		$this->lastname = trim($this->lastname) ? trim($this->lastname) : trim($this->lastname);
 		$this->firstname = trim($this->firstname) ? trim($this->firstname) : trim($this->firstname);
-		$this->gender = trim($this->gender);
+		if (isset($this->gender)) {
+			$this->gender = trim($this->gender);
+		}
 		// $this->address = ($this->address ? $this->address : $this->address);
 		// $this->zip = ($this->zip ? $this->zip : $this->zip);
 		// $this->town = ($this->town ? $this->town : $this->town);
@@ -2166,6 +2164,7 @@ class Adherent extends CommonObject
 				// Generate PDF (whatever is option MAIN_DISABLE_PDF_AUTOUPDATE) so we can include it into email
 				//if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE'))
 
+				$invoice->fetch($invoice->id); // Reload invoice object data
 				$invoice->generateDocument($invoice->model_pdf, $outputlangs);
 			}
 		}
@@ -2778,10 +2777,10 @@ class Adherent extends CommonObject
 				$warning_delay = getWarningDelay('member', 'subscription') / 60 / 60 / 24;
 				$label = $langs->trans("MembersWithSubscriptionToReceive");
 				$labelShort = $langs->trans("MembersWithSubscriptionToReceiveShort");
-				$url = DOL_URL_ROOT.'/adherents/list.php?mainmenu=members&amp;statut='.self::STATUS_VALIDATED.'&amp;filter=outofdate';
+				$url = dolBuildUrl(DOL_URL_ROOT.'/adherents/list.php', ['mainmenu' => 'members', 'statut' => self::STATUS_VALIDATED, 'filter' => 'outofdate']);
 			} elseif ($mode == 'shift') {
 				$warning_delay = getWarningDelay('member', 'subscription') / 60 / 60 / 24;
-				$url = DOL_URL_ROOT.'/adherents/list.php?mainmenu=members&amp;statut='.self::STATUS_DRAFT;
+				$url = dolBuildUrl(DOL_URL_ROOT.'/adherents/list.php', ['mainmenu' => 'members', 'statut' => self::STATUS_DRAFT]);
 				$label = $langs->trans("MembersListToValid");
 				$labelShort = $langs->trans("ToValidate");
 			}
@@ -3101,10 +3100,10 @@ class Adherent extends CommonObject
 
 
 	/**
-	 *      Load type info information in the member object
+	 *  Load type info information in the member object
 	 *
-	 *      @param  int		$id       Id of member to load
-	 *      @return	void
+	 *  @param  int		$id       Id of member to load
+	 *  @return	void
 	 */
 	public function info($id)
 	{
@@ -3204,7 +3203,7 @@ class Adherent extends CommonObject
 		global $conf;
 
 		//Only valid members
-		if ($this->statut != self::STATUS_VALIDATED) {
+		if ($this->status != self::STATUS_VALIDATED) {
 			return false;
 		}
 		if (!$this->datefin) {

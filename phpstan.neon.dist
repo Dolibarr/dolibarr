@@ -1,6 +1,7 @@
 includes:
 	- dev/build/phpstan/phpstan-baseline.neon
 parameters:
+	phpVersion: 80200 # PHP 8.2
 	tmpDir: ./.github/tmp
 	parallel:
 		# Commented some of the settings, reminding the defaults:
@@ -52,9 +53,13 @@ parameters:
 	# checkAlwaysTrueCheckTypeFunctionCall: false
 	# checkAlwaysTrueInstanceof: false
 	# checkAlwaysTrueStrictComparison: false
+	polluteScopeWithLoopInitialAssignments: false
+	polluteScopeWithAlwaysIterableForeach: false
+	polluteScopeWithBlock: false
 	checkClassCaseSensitivity: true
 	checkFunctionArgumentTypes: true
 	checkFunctionNameCase: true
+	checkInternalClassCaseSensitivity: true
 	checkArgumentsPassedByReference: true
 	checkMaybeUndefinedVariables: true
 	checkNullables: false
@@ -64,8 +69,6 @@ parameters:
 	reportMaybes: false
 	reportMaybesInMethodSignatures: false
 	reportStaticMethodSignatures: false
-	polluteScopeWithLoopInitialAssignments: true
-	polluteScopeWithAlwaysIterableForeach: true
 	reportMagicMethods: false
 	reportMagicProperties: false
 	treatPhpDocTypesAsCertain: false

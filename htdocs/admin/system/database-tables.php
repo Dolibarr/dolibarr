@@ -121,7 +121,7 @@ if ($action == 'convertdynamic') {
 
 llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-database_tables');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/system/database.php?restore_lastsearch_values=1">'.img_picto($langs->trans("Back"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("Back").'</span></a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/system/database.php?restore_lastsearch_values=1">'.img_picto($langs->trans("GoBack"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("GoBack").'</span></a>';
 
 print load_fiche_titre($langs->trans("Tables")." ".ucfirst($conf->db->type), $linkback, 'title_setup');
 

@@ -43,12 +43,12 @@ function bank_prepare_head(Account $object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/bank/card.php?id='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/bank/card.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans("BankAccount");
 	$head[$h][2] = 'bankname';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/compta/bank/bankentries_list.php?id=".$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/bank/bankentries_list.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans("BankTransactions");
 	$head[$h][2] = 'journal';
 	$h++;
@@ -66,7 +66,15 @@ function bank_prepare_head(Account $object)
 
 		// If not cash account and can be reconciliate
 		if ($user->hasRight('banque', 'consolidate')) {
-			$head[$h][0] = DOL_URL_ROOT."/compta/bank/bankentries_list.php?id=".$object->id.'&action=reconcile&sortfield=b.datev,b.dateo,b.rowid&sortorder=asc,asc,asc&search_conciliated=0&search_account='.$object->id.$param;
+			$query = [
+				'id' => $object->id,
+				'action' => 'reconcile',
+				'sortfield' => 'b.datev,b.dateo,b.rowid',
+				'sortorder' => 'asc,asc,asc',
+				'search_conciliated' => 0,
+				'search_account' => $object->id,
+			];
+			$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/bank/bankentries_list.php', $query).$param;
 			$head[$h][1] = $titletoconciliatemanual;
 			$head[$h][2] = 'reconcile';
 			$h++;
@@ -109,7 +117,7 @@ function bank_prepare_head(Account $object)
 			$db->free($resql);
 		}
 
-		$head[$h][0] = DOL_URL_ROOT."/compta/bank/releve.php?account=".((int) $object->id);
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/bank/releve.php', ['account' => $object->id]);
 		$head[$h][1] = $langs->trans("AccountStatements");
 		if (($nbReceipts) > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbReceipts).'</span>';
@@ -124,7 +132,7 @@ function bank_prepare_head(Account $object)
 	$upload_dir = $conf->bank->dir_output."/".dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 	$nbLinks = Link::count($db, $object->element, $object->id);
-	$head[$h][0] = DOL_URL_ROOT."/compta/bank/document.php?account=".$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/bank/document.php', ['account' => $object->id]);
 	$head[$h][1] = $langs->trans("Documents");
 	if (($nbFiles + $nbLinks) > 0) {
 		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
@@ -132,12 +140,12 @@ function bank_prepare_head(Account $object)
 	$head[$h][2] = 'document';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/compta/bank/annuel.php?account=".$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/bank/annuel.php', ['account' => $object->id]);
 	$head[$h][1] = $langs->trans("Reports");
 	$head[$h][2] = 'annual';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/compta/bank/treso.php?account=".$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/bank/treso.php', ['account' => $object->id]);
 	$head[$h][1] = $langs->trans("PlannedTransactions");
 	$head[$h][2] = 'cash';
 	$h++;
@@ -171,12 +179,12 @@ function bank_report_prepare_head(Account $object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT."/compta/bank/annuel.php?account=".$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/bank/annuel.php', ['account' => $object->id]);
 	$head[$h][1] = $langs->trans("IOMonthlyReporting");
 	$head[$h][2] = 'annual';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/compta/bank/graph.php?account=".$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/bank/graph.php', ['account' => $object->id]);
 	$head[$h][1] = $langs->trans("Graph");
 	$head[$h][2] = 'graph';
 	$h++;
@@ -203,12 +211,12 @@ function bank_admin_prepare_head($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/admin/bank.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/bank.php');
 	$head[$h][1] = $langs->trans("Miscellaneous");
 	$head[$h][2] = 'general';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/admin/chequereceipts.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/chequereceipts.php');
 	$head[$h][1] = $langs->trans("CheckReceiptShort");
 	$head[$h][2] = 'checkreceipts';
 	$h++;
@@ -220,7 +228,7 @@ function bank_admin_prepare_head($object)
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'bank_admin');
 
-	$head[$h][0] = DOL_URL_ROOT.'/admin/bank_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/bank_extrafields.php');
 	$head[$h][1] = $langs->trans("ExtraFields").' ('.$langs->trans("BankAccounts").')';
 	$nbExtrafields = $extrafields->attributes['bank_account']['count'];
 	if ($nbExtrafields > 0) {
@@ -229,7 +237,7 @@ function bank_admin_prepare_head($object)
 	$head[$h][2] = 'attributes';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/admin/bankline_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/bankline_extrafields.php');
 	$head[$h][1] = $langs->trans("ExtraFields").' ('.$langs->trans("BankTransactions").')';
 	$nbExtrafields = $extrafields->attributes['bank']['count'];
 	if ($nbExtrafields > 0) {
@@ -238,7 +246,7 @@ function bank_admin_prepare_head($object)
 	$head[$h][2] = 'bankline_extrafields';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/admin/bank_payments_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/bank_payments_extrafields.php');
 	$head[$h][1] = $langs->trans("ExtraFields").' ('.$langs->trans("Payments").')';
 	$nbExtrafields = $extrafields->attributes['paiement']['count'];
 	if ($nbExtrafields > 0) {
@@ -266,7 +274,7 @@ function account_statement_prepare_head($object, $num)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/bank/releve.php?account='.$object->id.'&num='.$num;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/bank/releve.php', ['account' => $object->id, 'num' => $num]);
 	$head[$h][1] = $langs->trans("AccountStatement");
 	$head[$h][2] = 'statement';
 	$h++;
@@ -278,7 +286,7 @@ function account_statement_prepare_head($object, $num)
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 	$nbLinks = Link::count($db, $object->element, $object->id);
 
-	$head[$h][0] = DOL_URL_ROOT."/compta/bank/account_statement_document.php?account=".$object->id."&num=".$num;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/bank/account_statement_document.php', ['account' => $object->id, 'num' => $num]);
 	$head[$h][1] = $langs->trans("Documents");
 	if (($nbFiles + $nbLinks) > 0) {
 		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';

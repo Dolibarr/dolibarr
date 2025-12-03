@@ -74,6 +74,16 @@ if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias')) {
 	if (!defined("NOIPCHECK")) {
 		define("NOIPCHECK", 1); // Do not check IP defined into conf $dolibarr_main_restrict_ip
 	}
+} elseif (isset($_GET["modulepart"]) && $_GET["modulepart"] == 'ticket' && strpos($_SERVER['HTTP_REFERER'], 'public/ticket') !== false) {
+	if (!defined("NOLOGIN")) {
+		define("NOLOGIN", 1);
+	}
+	if (!defined("NOCSRFCHECK")) {
+		define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
+	}
+	if (!defined("NOIPCHECK")) {
+		define("NOIPCHECK", 1); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+	}
 }
 
 /**
@@ -119,9 +129,6 @@ function llxFooter($comment = '', $zone = 'private', $disabledoutputofmessages =
 }
 
 require 'main.inc.php'; // Load $user and permissions
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -129,6 +136,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
 $encoding = '';
 $action = GETPOST('action', 'aZ09');
@@ -269,7 +278,7 @@ if (empty($modulepart)) {
 }
 
 // Check security and set return info with full path of file
-$check_access = dol_check_secure_access_document($modulepart, $original_file, ($entity ?? 1), $user, '');
+$check_access = dol_check_secure_access_document($modulepart, $original_file, (int) $entity, $user, '');
 $accessallowed              = $check_access['accessallowed'];
 $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 $fullpath_original_file     = $check_access['original_file']; // $fullpath_original_file is now a full path name
@@ -293,6 +302,16 @@ if (!empty($hashp)) {
 						break;
 					}
 					$i++;
+				}
+			}
+		}
+	} elseif ($modulepart == 'ticket' && !getDolGlobalString('TICKET_EMAIL_MUST_EXISTS')) {
+		if ($sqlprotectagainstexternals) {
+			$resql = $db->query($sqlprotectagainstexternals);
+			if ($resql) {
+				$num = $db->num_rows($resql);
+				if ($num > 0) {
+					$accessallowed = 1;
 				}
 			}
 		}

@@ -155,6 +155,7 @@ $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.
 
 $builddate = dol_now();
 
+$description = '';
 if (getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'invoice') {
 	$description = $langs->trans("RulesVATDueProducts");
 }

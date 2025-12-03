@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2004-2023  Laurent Destailleur      <eldy@users.sourceforge.net>
- * Copyright (C) 2011-2024  Alexandre Spangaro       <aspangaro@easya.solutions>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2004-2023	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2011-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -909,7 +909,6 @@ if ($resql) {
 				print '<td class="center" class="nowrap">';
 				if ($canbedisabled) {
 					print '<a class="reposition" href="'.$url.'action='.urlencode($acts[$obj->active]).'&token='.newToken().'">'.$actl[$obj->active].'</a>';
-					print '<a class="reposition" href="'.$url.'action='.$acts[$obj->active].'&token='.newToken().'">'.$actl[$obj->active].'</a>';
 				} else {
 					print $langs->trans("AlwaysActive");
 				}

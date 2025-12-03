@@ -55,12 +55,12 @@ abstract class CommonDict
 	public $entity;
 
 	/**
-	 * @var string 		The code
+	 * @var ?string 		The code
 	 */
 	public $code;
 
 	/**
-	 * @var string 		The label
+	 * @var ?string 		The label
 	 */
 	public $label;
 

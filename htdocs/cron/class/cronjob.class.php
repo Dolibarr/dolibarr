@@ -1024,6 +1024,7 @@ class Cronjob extends CommonObject
 		$object->datelastrun = null;
 		$object->lastresult = '';
 		$object->datelastresult = null;
+		$object->datenextrun = dol_now();
 		$object->lastoutput = '';
 		$object->nbrun = 0;
 

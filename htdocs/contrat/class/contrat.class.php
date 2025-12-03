@@ -257,7 +257,7 @@ class Contrat extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>,searchmulti?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -431,8 +431,7 @@ class Contrat extends CommonObject
 				$result = $contratline->active_line($user, $date_start, !empty($date_end) ? $date_end : -1, $comment);	// This call trigger LINECONTRACT_ACTIVATE
 				if ($result < 0) {
 					$error++;
-					$this->error = $contratline->error;
-					$this->errors = $contratline->errors;
+					$this->setErrorsFromObject($contratline);
 					break;
 				}
 			}
@@ -460,18 +459,20 @@ class Contrat extends CommonObject
 	 * @param	User		$user      		Object User making action
 	 * @param	int			$notrigger		1=Does not execute triggers, 0=Execute triggers
 	 * @param	string		$comment		Comment
+	 * @param	int			$nofetchlines	Use 1 to avoid to do a fetch_lines() on contract if you know it was already done
 	 * @return	int							Return integer <0 if KO, >0 if OK
 	 * @see activateAll()
 	 */
-	public function closeAll(User $user, $notrigger = 0, $comment = '')
+	public function closeAll(User $user, $notrigger = 0, $comment = '', $nofetchlines = 0)
 	{
 		dol_syslog("closeAll begin", LOG_DEBUG, 1);
 
 		$this->db->begin();
 
 		// Load lines
-		// TODO Should be useless if object was fetched without the noline param.
-		$this->fetch_lines();
+		if (empty($nofetchlines)) {
+			$this->fetch_lines();
+		}
 
 		$now = dol_now();
 
@@ -1272,7 +1273,9 @@ class Contrat extends CommonObject
 		// Delete record into ECM index and physically
 		if (!$error) {
 			$res = $this->deleteEcmFiles(0); // Deleting files physically is done later with the dol_delete_dir_recursive
-			if ($res) $res = $this->deleteEcmFiles(1); // Deleting files physically is done later with the dol_delete_dir_recursive
+			if ($res) {
+				$res = $this->deleteEcmFiles(1);
+			} // Deleting files physically is done later with the dol_delete_dir_recursive
 			if (!$res) {
 				$error++;
 			}
@@ -1451,29 +1454,29 @@ class Contrat extends CommonObject
 	/**
 	 *  Ajoute une ligne de contrat en base
 	 *
-	 *  @param	string		$desc            	Description of line
-	 *  @param  float		$pu_ht              Unit price net
-	 *  @param  float	 	$qty             	Quantity
-	 *  @param  float		$txtva           	Vat rate
-	 *  @param  float		$txlocaltax1        Local tax 1 rate
-	 *  @param  float		$txlocaltax2        Local tax 2 rate
-	 *  @param  int			$fk_product      	Id produit
-	 *  @param  float		$remise_percent  	Percentage discount of the line
-	 *  @param  int			$date_start      	Date de debut prevue
-	 *  @param  int			$date_end        	Date de fin prevue
-	 *	@param	string		$price_base_type	HT or TTC
-	 * 	@param  float		$pu_ttc             Prix unitaire TTC
-	 * 	@param  int			$info_bits			Bits of type of lines
-	 * 	@param  int			$fk_fournprice		Fourn price id
+	 *  @param	string			$desc            	Description of line
+	 *  @param  float			$pu_ht              Unit price net
+	 *  @param  float	 		$qty             	Quantity
+	 *  @param  float|string	$txtva           	Vat rate. Can be '19.6' or '19.6 (CODE)'
+	 *  @param  float			$txlocaltax1        Local tax 1 rate
+	 *  @param  float			$txlocaltax2        Local tax 2 rate
+	 *  @param  int				$fk_product      	Id produit
+	 *  @param  float			$remise_percent  	Percentage discount of the line
+	 *  @param  int				$date_start      	Date de debut prevue
+	 *  @param  int				$date_end        	Date de fin prevue
+	 *	@param	string			$price_base_type	HT or TTC
+	 * 	@param  float			$pu_ttc             Prix unitaire TTC
+	 * 	@param  int				$info_bits			Bits of type of lines
+	 * 	@param  int				$fk_fournprice		Fourn price id
 	 *  @param  float|string			$pa_ht				Buying price HT (Can be '' to keep AWP unchanged or a float value)
 	 *  @param	array<string,mixed>		$array_options		extrafields array
-	 * 	@param 	?int		$fk_unit 			Code of the unit to use. Null to use the default one
-	 * 	@param 	int			$rang 				Position
-	 *  @return int             				Return integer <0 if KO, >0 if OK
+	 * 	@param 	?int			$fk_unit 			Code of the unit to use. Null to use the default one
+	 * 	@param 	int				$rang 				Position
+	 *  @return int             					Return integer <0 if KO, >0 if OK
 	 */
 	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type = 'HT', $pu_ttc = 0.0, $info_bits = 0, $fk_fournprice = null, $pa_ht = 0, $array_options = array(), $fk_unit = null, $rang = 0)
 	{
-		global $user, $langs, $conf, $mysoc;
+		global $user, $langs, $mysoc;
 		$error = 0;
 
 		dol_syslog(get_class($this)."::addline $desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type, $pu_ttc, $info_bits, $rang");
@@ -1642,8 +1645,7 @@ class Contrat extends CommonObject
 				$contractline->id = $contractlineid;
 				$result = $contractline->insertExtraFields();
 				if ($result < 0) {
-					$this->errors = array_merge($this->errors, $contractline->errors);
-					$this->error = $contractline->error;
+					$this->setErrorsFromObject($contractline);
 					$error++;
 				}
 
@@ -1678,26 +1680,26 @@ class Contrat extends CommonObject
 	/**
 	 *  Update a contract line
 	 *
-	 *  @param	int			$rowid            	Id of contract line
-	 *  @param  string		$desc             	Description of line
-	 *  @param  float		$pu               	Prix unitaire
-	 *  @param  float		$qty              	Quantite
-	 *  @param  float		$remise_percent   	Percentage discount of the line
-	 *  @param  int			$date_start       	Date de debut prevue
-	 *  @param  int			$date_end         	Date de fin prevue
-	 *  @param  float		$tvatx            	Taux TVA
-	 *  @param  float		$localtax1tx      	Local tax 1 rate
-	 *  @param  float		$localtax2tx      	Local tax 2 rate
-	 *  @param  int|string	$date_start_real  	Date de debut reelle
-	 *  @param  int|string	$date_end_real    	Date de fin reelle
-	 *	@param	string		$price_base_type	HT or TTC
-	 * 	@param  int			$info_bits			Bits of type of lines
-	 * 	@param  int			$fk_fournprice		Fourn price id
+	 *  @param	int				$rowid            	Id of contract line
+	 *  @param  string			$desc             	Description of line
+	 *  @param  float			$pu               	Prix unitaire
+	 *  @param  float			$qty              	Quantite
+	 *  @param  float			$remise_percent   	Percentage discount of the line
+	 *  @param  int				$date_start       	Date de debut prevue
+	 *  @param  int				$date_end         	Date de fin prevue
+	 *  @param  float|string	$tvatx            	VAT Rate (Can be '1.23' or '1.23 (ABC)')
+	 *  @param  float			$localtax1tx      	Local tax 1 rate
+	 *  @param  float			$localtax2tx      	Local tax 2 rate
+	 *  @param  int|string		$date_start_real  	Date de debut reelle
+	 *  @param  int|string		$date_end_real    	Date de fin reelle
+	 *	@param	string			$price_base_type	HT or TTC
+	 * 	@param  int				$info_bits			Bits of type of lines
+	 * 	@param  int				$fk_fournprice		Fourn price id
 	 *  @param  float|string	$pa_ht				Buying price HT (Can be '' to keep AWP unchanged or a float value)
 	 *  @param	array<string,mixed>		$array_options		extrafields array
-	 * 	@param 	string		$fk_unit 			Code of the unit to use. Null to use the default one
-	 * 	@param 	int			$rang 				Position
-	 *  @return int              				Return integer <0 if KO, >0 if OK
+	 * 	@param 	string			$fk_unit 			Code of the unit to use. Null to use the default one
+	 * 	@param 	int				$rang 				Position
+	 *  @return int             	 				Return integer <0 if KO, >0 if OK
 	 */
 	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $tvatx, $localtax1tx = 0.0, $localtax2tx = 0.0, $date_start_real = '', $date_end_real = '', $price_base_type = 'HT', $info_bits = 0, $fk_fournprice = null, $pa_ht = 0, $array_options = array(), $fk_unit = null, $rang = 0)
 	{
@@ -2680,8 +2682,7 @@ class Contrat extends CommonObject
 				$result = $clonedObj->addline($line->description, $line->subprice, $line->qty, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->fk_product, $line->remise_percent, $line->date_start, $line->date_cloture, 'HT', 0, $line->info_bits, $line->fk_fournprice, $line->pa_ht, $line->array_options, $line->fk_unit, $line->rang);
 				if ($result < 0) {
 					$error++;
-					$this->error = $clonedObj->error;
-					$this->errors[] = $clonedObj->error;
+					$this->setErrorsFromObject($clonedObj);
 				}
 			}
 		}

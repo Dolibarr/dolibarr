@@ -26,9 +26,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -36,6 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
 $graphwidth = 700;
 $mapratio = 0.5;
@@ -65,7 +64,7 @@ $langs->loadLangs(array("companies", "members"));
 
 $memberstatic = new Adherent($db);
 
-$title = $langs->trans("MembersStatisticsByProperties");
+$title = $langs->trans("MembershipStatistics");
 $help_url = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios|DE:Modul_Mitglieder';
 
 llxHeader('', $title, $help_url, '', 0, 0, array('https://www.google.com/jsapi'), '', '', 'mod-member page-stats_byproperties');
@@ -84,6 +83,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."subscription as s ON s.fk_adherent = d.row
 $sql .= " WHERE d.entity IN (".getEntity('adherent').")";
 $sql .= " AND d.statut <> ".Adherent::STATUS_DRAFT;
 $sql .= " GROUP BY d.morphy";
+
 $foundphy = $foundmor = 0;
 
 // Define $data array
@@ -190,9 +190,9 @@ foreach ($data as $val) {
 	print '<td>'.$memberstatic->getmorphylib($val['label']).'</td>';
 	print '<td class="right">'.$nb.'</td>';
 	print '<td class="right">'.$nbactive.'</td>';
-	print '<td class="center">'.dol_print_date($val['lastdate'], 'dayhour').'</td>';
+	print '<td class="center">'.dol_print_date($val['lastdate'], 'dayhour', 'auto', null, false, 1).'</td>';
 	print '<td class="right">'.$nbsubscriptions.'</td>';
-	print '<td class="center">'.dol_print_date($val['lastsubscriptiondate'], 'dayhour').'</td>';
+	print '<td class="center">'.dol_print_date($val['lastsubscriptiondate'], 'dayhour', 'auto', null, false, 1).'</td>';
 	print '</tr>';
 }
 
