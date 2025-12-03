@@ -729,7 +729,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 				price = ((bpjs / (1 - ratejs / 100)) / (1 - remisejs / 100));
 		}
 
-		$("input[name='price_ht']:first").val(price);	// TODO Must use a function like php price to have here a formatted value
+		$("input[name='price_ht']:first").val(price.toFixed(2));	// TODO Must use a function like php price to have here a formatted value
 
 		return true;
 	}
