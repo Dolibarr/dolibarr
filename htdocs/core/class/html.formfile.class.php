@@ -842,7 +842,9 @@ class FormFile
 			$out .= '<input type="hidden" name="page_y" value="">';
 			$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 
-			$out .= load_fiche_titre($titletoshow, '', '');
+			if ($titletoshow) {
+				$out .= load_fiche_titre($titletoshow, '', '');
+			}
 			$out .= '<div class="div-table-responsive-no-min">';
 			$out .= '<table class="liste formdoc noborder centpercent">';
 

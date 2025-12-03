@@ -990,19 +990,29 @@ class BlockedLog
 
 		// Check parameters/properties
 		if (!isset($this->amounts)) {	// amount can be 0 for some events (like when module is disabled)
-			$this->error = $langs->trans("BlockLogNeedAmountsValue");
+			$langs->load("errors");
+			$this->error = $langs->trans("ErrorBlockLogNeedAmountsValue");
 			dol_syslog($this->error, LOG_WARNING);
 			return -1;
 		}
 
 		if (empty($this->element)) {
-			$this->error = $langs->trans("BlockLogNeedElement");
+			$langs->load("errors");
+			$this->error = $langs->trans("ErrorBlockLogNeedElement");
+			dol_syslog($this->error, LOG_WARNING);
+			return -2;
+		}
+
+		if (empty($this->object_data)) {
+			$langs->load("errors");
+			$this->error = $langs->trans("ErrorBlockLogNeedObject");
 			dol_syslog($this->error, LOG_WARNING);
 			return -2;
 		}
 
 		if (empty($this->action)) {
-			$this->error = $langs->trans("BadParameterWhenCallingCreateOfBlockedLog");
+			$langs->load("errors");
+			$this->error = $langs->trans("ErrorBadParameterWhenCallingCreateOfBlockedLog");
 			dol_syslog($this->error, LOG_WARNING);
 			return -3;
 		}

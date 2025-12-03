@@ -524,9 +524,6 @@ if (empty($reshook)) {
 					}
 
 					// Rename some POST variables into a generic name
-					if ($field == 'fk_user' && !(GETPOSTINT('fk_user') > 0)) {
-						$_POST['fk_user'] = '';
-					}
 					if ($field == 'topic') {
 						$_POST['topic'] = GETPOST('topic-'.$rowid);
 					}
@@ -548,7 +545,7 @@ if (empty($reshook)) {
 					}
 					$sql .= $field."=";
 
-					if (GETPOST($keycode) == '' || (!in_array($keycode, array('langcode', 'position', 'private', 'defaultfortype')) && !GETPOST($keycode))) {
+					if ((GETPOST($keycode) == '' && in_array($keycode, array('langcode'))) || (!in_array($keycode, array('langcode', 'position', 'private', 'defaultfortype')) && !GETPOST($keycode))) {
 						$sql .= "null"; // langcode,... must be '' if not defined so the unique key that include lang will work
 					} elseif (GETPOST($keycode) == '0' && $keycode == 'langcode') {
 						$sql .= "''"; // langcode must be '' if not defined so the unique key that include lang will work
@@ -560,7 +557,9 @@ if (empty($reshook)) {
 						}
 					} elseif ($keycode == 'content') {
 						$sql .= "'".$db->escape(GETPOST($keycode, 'restricthtml'))."'";
-					} elseif (in_array($keycode, array('joinfiles', 'defaultfortype', 'private', 'position'))) {
+					} elseif ($keycode == 'position') {
+						$sql .= (GETPOSTINT($keycode) > 0 ? GETPOSTINT($keycode) : 1);
+					} elseif (in_array($keycode, array('joinfiles', 'defaultfortype', 'private'))) {
 						$sql .= GETPOSTINT($keycode);
 					} else {
 						$sql .= "'".$db->escape(GETPOST($keycode, 'alphanohtml'))."'";
@@ -572,10 +571,10 @@ if (empty($reshook)) {
 				if (!$user->admin) {	// A non admin user can only edit its own template
 					$sql .= " AND fk_user  = ".((int) $user->id);
 				}
-				//print $sql;exit;
+
 				dol_syslog("actionmodify", LOG_DEBUG);
 
-				//print $sql;
+				//print $sql; exit;
 				$resql = $db->query($sql);
 				if (!$resql) {
 					$error++;
@@ -731,7 +730,6 @@ $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, 
 $param .= $hookmanager->resPrint;
 
 
-$linkback = '';
 $titlepicto = 'title_setup';
 
 
@@ -1164,7 +1162,8 @@ if ($num) {
 
 		if ($obj) {
 			if (($action == 'edit' || $action == 'preview') && ($rowid == (!empty($obj->rowid) ? $obj->rowid : $obj->code))) {
-				print '<tr class="nohover oddeven" id="rowid-'.$obj->rowid.'">';
+				// TODO Move this 2 lines into a popup
+				print '<tr class="nohover oddeven noborderbottom" id="rowid-'.$obj->rowid.'" name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'">';
 
 				$tmpaction = 'edit';
 				if ($action == 'edit') {
@@ -1180,16 +1179,6 @@ if ($num) {
 
 				$colspan = 0;
 
-				print '<tr><td colspan="12">';
-					print '<input type="hidden" name="page" value="'.$page.'">';
-					print '<input type="hidden" name="rowid" value="'.$rowid.'">';
-					print '<div name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'"></div>';
-				if ($action == 'edit') {
-					print '<input type="submit" class="button buttongen button-save" name="actionmodify" value="'.$langs->trans("Save").'">';
-				}
-					print '<input type="submit" class="button buttongen button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'">';
-				print '</td></tr>';
-
 				// Action column
 				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 					print '<td class="center">';
@@ -1203,20 +1192,16 @@ if ($num) {
 				// Action column
 				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 					print '<td class="center">';
-					print '<input type="hidden" name="page" value="'.$page.'">';
-					print '<input type="hidden" name="rowid" value="'.$rowid.'">';
-					if ($action == 'edit') {
-						print '<input type="submit" class="button buttongen button-save" name="actionmodify" value="'.$langs->trans("Modify").'">';
-					}
-					print '<div name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'"></div>';
-					print '<input type="submit" class="button buttongen button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'">';
 					print '</td>';
 					$colspan++;
 				}
 				print "</tr>\n";
 
 				print '<tr class="oddeven nohover" id="tr-aaa-'.$rowid.'">';
-				print '<td colspan="'.$colspan.'" class="" style="padding-left: 20px; padding-right: 20px;">';
+				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="center"></td>';
+				}
+				print '<td colspan="'.($colspan - 1).'" class="" style="padding-left: 20px; padding-right: 20px;">';
 
 				$fieldsforcontent = array('topic', 'email_from','joinfiles', 'content');
 				if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES')) {
@@ -1259,7 +1244,7 @@ if ($num) {
 							if (!getDolGlobalString('FCKEDITOR_ENABLE_MAIL')) {
 								$okforextended = false;
 							}
-							$doleditor = new DolEditor($tmpfieldlist.'-'.$rowid, (!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 500, 'dolibarr_mailings', 'In', false, $acceptlocallinktomedia, $okforextended, ROWS_6, '90%', ($action != 'edit' ? 1 : 0));
+							$doleditor = new DolEditor($tmpfieldlist.'-'.$rowid, (!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 450, 'dolibarr_mailings', 'In', false, $acceptlocallinktomedia, $okforextended, ROWS_6, '80%', ($action != 'edit' ? 1 : 0));
 							print $doleditor->Create(1);
 						}
 						if ($tmpfieldlist == 'content_lines') {
@@ -1269,16 +1254,27 @@ if ($num) {
 							if (!getDolGlobalString('FCKEDITOR_ENABLE_MAIL')) {
 								$okforextended = false;
 							}
-							$doleditor = new DolEditor($tmpfieldlist.'-'.$rowid, (!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 140, 'dolibarr_mailings', 'In', false, $acceptlocallinktomedia, $okforextended, ROWS_6, '90%');
+							$doleditor = new DolEditor($tmpfieldlist.'-'.$rowid, (!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 140, 'dolibarr_mailings', 'In', false, $acceptlocallinktomedia, $okforextended, ROWS_6, '80%');
 							print $doleditor->Create(1);
 						}
 						print '</div>';
 					}
 				}
 				print '</div>';
+				print '<center><input type="hidden" name="page" value="'.$page.'">';
+				print '<input type="hidden" name="rowid" value="'.$rowid.'">';
+				if ($action == 'edit') {
+					print '<input type="submit" class="button buttongen button-save" name="actionmodify" value="'.$langs->trans("Save").'">';
+				}
+				print '<input type="submit" class="button buttongen button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'">';
+				print '</center>';
 				print '</td>';
 
-				print "</tr>\n";
+				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="center"></td>';
+				}
+
+				print '</tr>';
 
 				$nbqualified++;
 			} else {
@@ -1509,7 +1505,7 @@ function fieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 		} elseif ($value == 'fk_user') {
 			print '<td>';
 			if ($user->admin && $context != 'preview') {
-				print $form->select_dolusers(GETPOSTISSET('fk_user') ? GETPOSTINT('fk_user') : (empty($obj->$value) ? '' : $obj->$value), 'fk_user', 1, array(), 0, ($user->admin ? '' : 'hierarchyme'), array(), '0', 0, 0, '', 0, '', 'minwidth75 maxwidth100');
+				print $form->select_dolusers(GETPOSTISSET('fk_user') ? GETPOSTINT('fk_user') : (empty($obj->$value) ? '' : $obj->$value), 'fk_user', $langs->trans("Owner"), array(), 0, ($user->admin ? '' : 'hierarchyme'), array(), '0', 0, 0, '', 0, '', 'minwidth75 maxwidth100');
 			} else {
 				if ($context == 'add') {	// I am not admin and we show the add form
 					print $user->getNomUrl(-1); // Me
@@ -1536,7 +1532,7 @@ function fieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 				if ($context == 'edit') {
 					$selectedlang = $obj->lang;
 				}
-				print $formadmin->select_language($selectedlang, 'langcode', 0, array(), 1, 0, 0, 'maxwidth100');
+				print $formadmin->select_language($selectedlang, 'langcode', 0, array(), $langs->trans("Language"), 0, 0, 'maxwidth100');
 			} else {
 				if (!empty($obj->lang)) {
 					print $obj->lang.' - '.$langs->trans('Language_'.$obj->lang);

@@ -4514,8 +4514,8 @@ function dol_print_socialnetworks($value, $contactid, $socid, $type, $dictsocial
 				$link = str_replace('{socialid}', $value, getDolGlobalString($networkconstname));
 				$valuetoshow = $value;
 				if (preg_match('/^https?:\/\//i', $link)) {
-					$valuetoshow = preg_replace('/https:\/\/www\.linkedin\./', 'linkedin.', $valuetoshow);
-					//$valuetoshow = preg_replace('/www\.twitter\./', 'twitter.', $valuetoshow);
+					$valuetoshow = preg_replace('/https:\/\/www\.linkedin\.com\/?/', '', $valuetoshow);
+					//$valuetoshow = preg_replace('/www\.twitter\.com\/?/', '', $valuetoshow);
 					$htmllink .= '<a href="' . dol_sanitizeUrl($link, 0) . '" target="_blank" rel="noopener noreferrer">' . dol_escape_htmltag($valuetoshow) . '</a>';
 				} elseif ($link) {
 					$htmllink .= '<a href="' . dol_sanitizeUrl($link, 1) . '" target="_blank" rel="noopener noreferrer">' . dol_escape_htmltag($valuetoshow) . '</a>';
@@ -7124,14 +7124,14 @@ function print_fiche_titre($title, $mesg = '', $picto = 'generic', $pictoisfullp
 /**
  *	Load a title with picto
  *
- *	@param	string	$title				Title to show (HTML sanitized content). Can be a string with a <br> as a substring.
- *	@param	string	$morehtmlright		Added message to show on right
- *	@param	string	$picto				Icon to use before title (should be a 32x32 transparent png file)
+ *	@param	string		$title				Title to show (HTML sanitized content). Can be a string with a <br> as a second string shown under the fmain title.
+ *	@param	string		$morehtmlright		Added message to show on right
+ *	@param	string		$picto				Icon to use before title (should be a 32x32 transparent png file)
  *	@param	int<0,1>	$pictoisfullpath	1=Icon name is a full absolute url of image
- * 	@param	string	$id					To force an id on html objects
- *  @param  string  $morecssontable     More css on table
- *	@param	string	$morehtmlcenter		Added message to show on center
- *  @param	string	$morecssonpicto		More css on picto
+ * 	@param	string		$id					To force an id on html objects
+ *  @param  string  	$morecssontable     More css on table
+ *	@param	string		$morehtmlcenter		Added message to show on center
+ *  @param	string		$morecssonpicto		More css on picto
  * 	@return	string
  *  @see print_barre_liste()
  */
@@ -9392,19 +9392,41 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 						//$out = '<html><head><meta charset="utf-8"></head><body><div class="tricktoremove">'.dol_nl2br($out).'</div></body></html>';
 					}
 
+					// Note: <a href="https://[__aaa__]/aaa.html"> is transformed into <a href="https://[__aaa__]/aaa.html">
+					// We don't want that, so we protect [__xxx__] by replacing [ and ] before loadHTML and restore them after saveHTML
+					$out = preg_replace_callback(
+						'/\[__([0-9a-zA-Z_]+)__\]/',
+						/**
+						 * @param 	array<int,string> $m	Array of matches
+						 * @return 	string 					Translated string for the key
+						 */
+						function ($m) {
+							return 'BRACKETSTART__' . $m[1] . '__BRACKETEND'; },
+						$out);
+
 					$dom->loadHTML($out, LIBXML_HTML_NODEFDTD | LIBXML_ERR_NONE | LIBXML_HTML_NOIMPLIED | LIBXML_NONET | LIBXML_NOWARNING | LIBXML_NOERROR | LIBXML_NOXMLDECL);
 
 					$dom->encoding = 'UTF-8';
 
 					$out = trim($dom->saveHTML());
 
+					// Restore [ and ] that were protected before loadHTML
+					$out = preg_replace_callback(
+						'/BRACKETSTART__([0-9a-zA-Z_]+)__BRACKETEND/',
+						/**
+						 * @param 	array<int,string> $m	Array of matches
+						 * @return 	string 					Translated string for the key
+						 */
+						function ($m) {
+							return '[__' . $m[1] . '__]'; },
+						$out);
+
 					// Remove the trick added to solve pb with text in utf8 and text without parent tag
 					//$out = preg_replace('/^'.preg_quote('<?xml encoding="UTF-8">', '/').'/', '', $out);
 					$out = preg_replace('/^' . preg_quote('<html><head><', '/') . '[^<>]+' . preg_quote('></head><body><div class="tricktoremove">', '/') . '/', '', $out);
 					$out = preg_replace('/' . preg_quote('</div></body></html>', '/') . '$/', '', trim($out));
-					//                  $out = preg_replace('/^<\?xml encoding="UTF-8"><div class="tricktoremove">/', '', $out);
-					//                  $out = preg_replace('/<\/div>$/', '', $out);
-					//                  var_dump('rrrrrrrrrrrrrrrrrrrrrrrrrrrrr'.$out);
+					//$out = preg_replace('/^<\?xml encoding="UTF-8"><div class="tricktoremove">/', '', $out);
+					//$out = preg_replace('/<\/div>$/', '', $out);
 
 					if (!$outishtml) {		// If $out was not HTML content we made before a dol_nl2br so we must do the opposite operation now
 						$out = str_replace('<br>', '', $out);

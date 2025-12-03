@@ -426,19 +426,26 @@ if (!is_array($blocks)) {
 
 $linkback = '';
 if (GETPOST('withtab', 'alpha')) {
-	$linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php').'">'.$langs->trans("BackToModuleList").'</a>';
+	$linkback = '<a href="'.dolBuildUrl($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 }
 
-print load_fiche_titre($title, $linkback, 'blockedlog');
+$morehtmlcenter = '';
+
+$registrationnumber = getHashUniqueIdOfRegistration();
+$texttop = '<small class="opacitymedium">'.$langs->trans("RegistrationNumber").':</small> <small>'.dol_trunc($registrationnumber, 10).'</small>';
+
+print load_fiche_titre($title, $linkback, 'blockedlog', 0, '', '', $morehtmlcenter);
 
 $head = blockedlogadmin_prepare_head(GETPOST('withtab', 'alpha'));
 
 print dol_get_fiche_head($head, 'archives', '', -1);
 
+print $texttop;
+print '<br><br>';
+
 print '<div class="opacitymedium hideonsmartphone justify">';
 
 print $langs->trans("ArchivesDesc")."<br>";
-print "<br>\n";
 
 print "</div>\n";
 
@@ -451,7 +458,7 @@ if ($mysoc->country_code == 'FR') {
 //$htmltext .= $langs->trans("UnalterableLogTool1");
 //$htmltext .= $langs->trans("UnalterableLogTool3")."<br>";
 
-print info_admin($htmltext);
+print info_admin($htmltext, 0, 0, 'warning');
 
 
 print '<br>';
