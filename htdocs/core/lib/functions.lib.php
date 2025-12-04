@@ -12713,6 +12713,7 @@ function printCommonFooter($zone = 'private')
 
 	$parameters = array('zone' => $zone);
 	$tmpobject = null;
+	// @phan-suppress-next-line PhanPluginConstantVariableNull
 	$reshook = $hookmanager->executeHooks('printCommonFooter', $parameters, $tmpobject, $action); // Note that $action and $object may have been modified by some hooks
 	if (empty($reshook)) {
 		if (getDolGlobalString('MAIN_HTML_FOOTER')) {
