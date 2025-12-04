@@ -528,7 +528,7 @@ foreach ($modulesdir as $dir) {
 	//print $dir."\n<br>";
 	dol_syslog("Scan directory ".$dir." for module descriptor files (modXXX.class.php)");
 	$handle = @opendir($dir);
-	$timestart = microtime();
+	$timestart = microtime(true);
 	if (is_resource($handle)) {
 		while (($file = readdir($handle)) !== false) {
 			//print "$i ".$file."\n<br>";
@@ -596,7 +596,7 @@ foreach ($modulesdir as $dir) {
 								// Define an array $categ with categ with at least one qualified module
 								$filename[$i] = $modName;
 								$modules[$modName] = $objMod;
-								$timestoinit[$modName] = round((microtime() - $timestart) * 1000, 3);
+								$timestoinit[$modName] = round((microtime(true) - $timestart) * 1000, 3);
 
 								// Gives the possibility to the module, to provide his own family info and position of this family
 								if (is_array($objMod->familyinfo) && !empty($objMod->familyinfo)) {
