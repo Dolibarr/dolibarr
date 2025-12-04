@@ -1217,6 +1217,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			print '<a href="javascript:document_preview(\''.DOL_URL_ROOT.'/admin/modulehelp.php?id='.((int) $objMod->numero).'\',\'text/html\',\''.dol_escape_js($langs->trans("Module")).'\')">';
 			print img_picto(($objMod->isCoreOrExternalModule() == 'external' ? $langs->trans("ExternalModule").' - ' : '').$langs->trans("ClickToShowDescription"), $imginfo, '', 0, 0, 0, '', 'purple');
 			print '</a>';
+			print ($timestoinit[$modName] > 500 ? img_picto($langs->trans('InitModuleIsSlow'), 'fa-exclamation-circle') : '');
 			print '</td>';
 
 			// Version
