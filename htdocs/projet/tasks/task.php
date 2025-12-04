@@ -95,6 +95,7 @@ restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
 /*
  * Actions
  */
+
 $error = 0;
 
 if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('projet', 'creer')) {
@@ -320,7 +321,6 @@ if ($id > 0 || !empty($ref)) {
 		$object->fetchComments();
 	}
 
-
 	if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) {
 		$projectstatic->fetchComments();
 	}
@@ -474,9 +474,6 @@ if ($id > 0 || !empty($ref)) {
 		print '<br>';
 	}
 
-	/*
-	 * Actions
-	 */
 
 	// To verify role of users
 	//$userAccess = $projectstatic->restrictedProjectArea($user); // We allow task affected to user even if a not allowed project
@@ -493,6 +490,16 @@ if ($id > 0 || !empty($ref)) {
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 
 		print dol_get_fiche_head($head, 'task_task', $langs->trans("Task"), 0, 'projecttask', 0, '', '');
+
+		$param = (GETPOST('withproject') ? '&withproject=1' : '');
+		$linkback = GETPOST('withproject') ? '<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'">'.$langs->trans("BackToList").'</a>' : '';
+
+		if (!GETPOST('withproject') || empty($projectstatic->id)) {
+			$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
+			$object->next_prev_filter = "fk_projet:IN:".$db->sanitize($projectsListId);
+		} else {
+			$object->next_prev_filter = "fk_projet:=:".((int) $projectstatic->id);
+		}
 
 		print '<table class="border centpercent">';
 

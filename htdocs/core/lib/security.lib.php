@@ -1004,6 +1004,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		}
 		if ($feature == 'task' || $feature == 'projet_task') {
 			$feature = 'project_task';
+			$dbtablename = 'projet_task';
 		}
 		if ($feature == 'eventorganization') {
 			$feature = 'agenda';
@@ -1080,6 +1081,9 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				if ($user->socid != $objectid) {
 					return false;
 				}
+			} elseif (isModEnabled('societe') && !$user->hasRight('societe', 'lire') && !$user->hasRight('societe', 'client', 'voir')) {
+				dol_syslog("security.lib.php::checkUserAccessToObject Deny access due: (isModEnabled('societe') && !user->hasRight('societe', 'lire') && !user->hasRight('societe', 'client', 'voir'))", LOG_DEBUG);
+				return false;
 			} elseif (isModEnabled("societe") && ($user->hasRight('societe', 'lire') && !$user->hasRight('societe', 'client', 'voir'))) {
 				// If internal user: Check permission for internal users that are restricted on their objects
 				$sql = "SELECT COUNT(sc.fk_soc) as nb";
@@ -1264,7 +1268,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 					// the user can't view any evaluations
 					return false;
 				}
-				// the user can only their own evaluations or their subordinates'
+				// the user can only see their own evaluations or their subordinates'
 				return in_array($useridtocheck, $childids);
 			}
 		}
@@ -1286,12 +1290,13 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 					return false;
 				}
 			} else {
-				dol_syslog("Bad forged sql in checkUserAccessToObject", LOG_WARNING);
+				dol_syslog("Bad forged sql in security.lib.php::checkUserAccessToObject", LOG_WARNING);
 				return false;
 			}
 		}
 	}
 
+	dol_syslog("security.lib.php::checkUserAccessToObject::return True", LOG_DEBUG);
 	return true;
 }
 

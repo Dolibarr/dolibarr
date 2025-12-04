@@ -473,24 +473,24 @@ $head = project_timesheet_prepare_head($mode, $usertoprocess);
 print dol_get_fiche_head($head, 'inputpermonth', $langs->trans('TimeSpent'), -1, $picto);
 
 // Show description of content
-print '<div class="hideonsmartphone opacitymedium">';
+$s = '';
 if ($mine || ($usertoprocess->id == $user->id)) {
-	print $langs->trans("MyTasksDesc").'.'.($onlyopenedproject ? ' '.$langs->trans("OnlyOpenedProject") : '').'<br>';
+	$s .= $langs->trans("MyTasksDesc").'.'.($onlyopenedproject ? ' '.$langs->trans("OnlyOpenedProject") : '').'<br>';
 } else {
 	if (empty($usertoprocess->id) || $usertoprocess->id < 0) {
 		if ($user->hasRight('projet', 'all', 'lire') && !$socid) {
-			print $langs->trans("ProjectsDesc").'.'.($onlyopenedproject ? ' '.$langs->trans("OnlyOpenedProject") : '').'<br>';
+			$s .= $langs->trans("ProjectsDesc").'.'.($onlyopenedproject ? ' '.$langs->trans("OnlyOpenedProject") : '').'<br>';
 		} else {
-			print $langs->trans("ProjectsPublicTaskDesc").'.'.($onlyopenedproject ? ' '.$langs->trans("OnlyOpenedProject") : '').'<br>';
+			$s .= $langs->trans("ProjectsPublicTaskDesc").'.'.($onlyopenedproject ? ' '.$langs->trans("OnlyOpenedProject") : '').'<br>';
 		}
 	}
 }
 if ($mine || ($usertoprocess->id == $user->id)) {
-	print $langs->trans("OnlyYourTaskAreVisible").'<br>';
+	$s .= $langs->trans("OnlyYourTaskAreVisible").'<br>';
 } else {
-	print $langs->trans("AllTaskVisibleButEditIfYouAreAssigned").'<br>';
+	$s .= $langs->trans("AllTaskVisibleButEditIfYouAreAssigned").'<br>';
 }
-print '</div>';
+print info_admin($s, 0, 0, 'info', 'nomargintop');
 
 print dol_get_fiche_end();
 

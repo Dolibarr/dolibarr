@@ -23,11 +23,8 @@
  *	\brief      Page to show information on a task
  */
 
-require "../../main.inc.php";
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
-
+// Load Dolibarr environment
+require '../../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -35,9 +32,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 
 // Load translation files required by the page
-$langs->load('projects');
+$langs->loadLangs(array('projects'));
 
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -88,7 +88,8 @@ if (!empty($project_ref) && !empty($withproject)) {
 			$id = $tasksarray[0]->id;
 			$object->fetch($id);
 		} else {
-			header("Location: ".DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.(empty($mode) ? '' : '&mode='.$mode));
+			header("Location: ".DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.($withproject ? '&withproject=1' : '').(empty($mode) ? '' : '&mode='.$mode));
+			exit;
 		}
 	}
 }
@@ -134,6 +135,8 @@ $help_url = '';
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-project project-tasks page-task_note');
 
 if ($object->id > 0) {
+	$projectstatic->fetch_thirdparty();
+
 	$userWrite = $projectstatic->restrictedProjectArea($user, 'write');
 
 	if (!empty($withproject)) {
@@ -245,7 +248,7 @@ if ($object->id > 0) {
 		print '<div class="fichehalfright">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border centpercent tableforfield">';
+		print '<table class="border tableforfield centpercent">';
 
 		// Categories
 		if (isModEnabled('category')) {
@@ -285,9 +288,9 @@ if ($object->id > 0) {
 
 	if (!GETPOST('withproject') || empty($projectstatic->id)) {
 		$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
-		$object->next_prev_filter = " fk_projet:IN:".$db->sanitize($projectsListId);
+		$object->next_prev_filter = "fk_projet:IN:".$db->sanitize($projectsListId);
 	} else {
-		$object->next_prev_filter = " fk_projet:=:".((int) $projectstatic->id);
+		$object->next_prev_filter = "fk_projet:=:".((int) $projectstatic->id);
 	}
 
 	$morehtmlref = '';
@@ -301,7 +304,9 @@ if ($object->id > 0) {
 
 		// Third party
 		$morehtmlref .= $langs->trans("ThirdParty").': ';
-		$morehtmlref .= $projectstatic->thirdparty->getNomUrl(1);
+		if (is_object($projectstatic->thirdparty) && $projectstatic->thirdparty->id > 0) {
+			$morehtmlref .= $projectstatic->thirdparty->getNomUrl(1);
+		}
 		$morehtmlref .= '</div>';
 	}
 
