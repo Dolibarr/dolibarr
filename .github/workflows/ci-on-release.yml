@@ -6,6 +6,8 @@ on:
 
 jobs:
   trigger-docker:
+    runs-on: ubuntu-latest
+
     steps:
       - name: Generate a token
         id: generate-token
