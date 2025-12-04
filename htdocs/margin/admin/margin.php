@@ -74,14 +74,17 @@ if ($action == 'update') {
 	$error = 0;
 	if (dolibarr_set_const($db, 'MARGIN_METHODE_FOR_DISCOUNT', GETPOST('MARGIN_METHODE_FOR_DISCOUNT'), 'chaine', 0, '', $conf->entity) <= 0) {
 		dol_print_error($db);
+		$error++;
 	}
 
 	if (dolibarr_set_const($db, 'MARGIN_TYPE', GETPOST('MARGIN_TYPE'), 'chaine', 0, '', $conf->entity) <= 0) {
 		dol_print_error($db);
+		$error++;
 	}
 
 	if (dolibarr_set_const($db, 'AGENT_CONTACT_TYPE', GETPOST('AGENT_CONTACT_TYPE'), 'chaine', 0, '', $conf->entity) <= 0) {
 		dol_print_error($db);
+		$error++;
 	}
 
 	if (!$error) {

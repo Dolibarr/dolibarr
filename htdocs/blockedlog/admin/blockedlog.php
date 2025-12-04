@@ -120,9 +120,8 @@ print '<span class="opacitymedium">'.$langs->trans("BlockedLogDesc")."</span><br
 
 if ($mysoc->country_code == 'FR') {
 	$htmltext = $langs->trans("UnalterableLogTool1FR").'<br>';
+	print info_admin($htmltext, 0, 0, 'warning');
 }
-
-print info_admin($htmltext, 0, 0, 'warning');
 
 print '<br>';
 

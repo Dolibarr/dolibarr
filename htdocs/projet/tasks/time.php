@@ -61,7 +61,7 @@ if (isModEnabled('eventorganization')) {
 
 $langs->loadLangs($langsLoad);
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
@@ -72,9 +72,9 @@ $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'alpha');
 
 $id = GETPOSTINT('id');						// Id of task
+$ref = GETPOST('ref', 'alpha');				// Ref of task
 $projectid = GETPOSTINT('projectid');		// Id of project
 $lineid = GETPOSTINT('lineid');				// Id of time spent line
-$ref = GETPOST('ref', 'alpha');
 $withproject = GETPOSTINT('withproject');
 $project_ref = GETPOST('project_ref', 'alpha');
 $tab = GETPOST('tab', 'aZ09');
@@ -140,6 +140,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Load task
 if ($id > 0 || $ref) {
 	$object->fetch($id, $ref);
+	$id = $object->id; // So when doing a search from ref, id is also set correctly.
 }
 
 
@@ -1162,7 +1163,8 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		$head = task_prepare_head($object);
 		print dol_get_fiche_head($head, 'task_time', $langs->trans("Task"), -1, 'projecttask', 0, '', 'reposition');
 
-		$linkback = $withproject ? '<a href="' . DOL_URL_ROOT . '/projet/tasks.php?id=' . $projectstatic->id . '">' . $langs->trans("BackToList") . '</a>' : '';
+		$param = (GETPOST('withproject') ? '&withproject=1' : '');
+		$linkback = GETPOST('withproject') ? '<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'">'.$langs->trans("BackToList").'</a>' : '';
 
 		if ($action == 'deleteline') {
 			$urlafterconfirm = $_SERVER["PHP_SELF"] . "?" . ($object->id > 0 ? "id=" . $object->id : 'projectid=' . $projectstatic->id) . '&lineid=' . GETPOSTINT("lineid") . $param;
@@ -1202,7 +1204,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		print '<table class="border centpercent tableforfield">';
 
 		// Task parent
-		print '<tr><td>' . $langs->trans("ChildOfTask") . '</td><td>';
+		print '<tr><td>' . $langs->trans("ParentTask") . '</td><td>';
 		if ($object->fk_task_parent > 0) {
 			$tasktmp = new Task($db);
 			$tasktmp->fetch($object->fk_task_parent);
@@ -1323,6 +1325,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		if ($limit > 0 && $limit != $conf->liste_limit) {
 			$param .= '&limit='.((int) $limit);
 		}
+		if ($id > 0) {
+			$param .= '&id='.((int) $id);
+		}
 		if ($search_month > 0) {
 			$param .= '&search_month=' . urlencode((string) ($search_month));
 		}
@@ -1336,16 +1341,16 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			$param .= '&search_task_ref=' . urlencode($search_task_ref);
 		}
 		if ($search_company != '') {
-			$param .= '&amp;$search_company=' . urlencode($search_company);
+			$param .= '&search_company=' . urlencode($search_company);
 		}
 		if ($search_company_alias != '') {
-			$param .= '&amp;$search_company_alias=' . urlencode($search_company_alias);
+			$param .= '&search_company_alias=' . urlencode($search_company_alias);
 		}
 		if ($search_project_ref != '') {
-			$param .= '&amp;$search_project_ref=' . urlencode($search_project_ref);
+			$param .= '&search_project_ref=' . urlencode($search_project_ref);
 		}
 		if ($search_project_label != '') {
-			$param .= '&amp;$search_project_label=' . urlencode($search_project_label);
+			$param .= '&search_project_label=' . urlencode($search_project_label);
 		}
 		if ($search_task_label != '') {
 			$param .= '&search_task_label=' . urlencode($search_task_label);
@@ -1354,7 +1359,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			$param .= '&search_note=' . urlencode($search_note);
 		}
 		if ($search_duration != '') {
-			$param .= '&amp;search_field2=' . urlencode((string) ($search_duration));
+			$param .= '&search_field2=' . urlencode((string) ($search_duration));
 		}
 		if ($optioncss != '') {
 			$param .= '&optioncss=' . urlencode($optioncss);
@@ -1389,7 +1394,6 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		if ($search_timespent_endmin) {
 			$param .= '&search_timespent_duration_endmin=' . urlencode((string) ($search_timespent_endmin));
 		}
-
 		/*
 		 // Add $param from extra fields
 		 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -2043,7 +2047,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		// --------------------------------------------------------------------
 		print '<tr class="liste_titre">';
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-			print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+			print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'center maxwidthsearch ');
 			$totalarray['nbfield']++;
 		}
 		if (!empty($arrayfields['t.element_date']['checked'])) {
@@ -2113,7 +2117,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-			print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'width="80"', $sortfield, $sortorder, 'center maxwidthsearch ');
+			print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'center maxwidthsearch ');
 			$totalarray['nbfield']++;
 		}
 		print "</tr>\n";
