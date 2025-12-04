@@ -707,6 +707,7 @@ class FactureFournisseurRec extends CommonInvoice
 				$this->socid                    = $obj->fk_soc;
 				$this->date_creation            = $obj->datec;
 				$this->date_modification        = $obj->tms;
+				$this->status	                = $obj->suspended;
 				$this->suspended                = $obj->suspended;
 				$this->libelle                  = $obj->label;
 				$this->label                    = $obj->label;
@@ -1186,7 +1187,7 @@ class FactureFournisseurRec extends CommonInvoice
 			return -1;
 		}
 
-		if ($this->status == self::STATUS_SUSPENDED) {
+		if ($this->suspended == self::STATUS_SUSPENDED) {
 			// Clean parameters
 			$fk_product = empty($fk_product) ? 0 : $fk_product;
 			$label = empty($label) ? '' : $label;

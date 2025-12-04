@@ -1352,6 +1352,12 @@ td.wordbreak img, td.wordbreakimp img {
 .nopaddingbottomimp {
 	padding-bottom: 0 !important;
 }
+.padding2 {
+	padding: 2px;
+}
+.padding3 {
+	padding: 3px;
+}
 .paddingleft {
 	padding-<?php print $left; ?>: 4px;
 }

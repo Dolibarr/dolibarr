@@ -91,6 +91,13 @@ class NumberingModulesTest extends CommonClassTest
 		print __METHOD__." is_erasable=".$result."\n";
 		$this->assertGreaterThanOrEqual(1, $result, 'Test for is_erasable, 1st invoice');						    // Can be deleted
 
+		// We emulate print on invoice 3 times
+		$localobject->pos_print_counter = 3;
+		$result = $localobject->is_erasable();
+		print __METHOD__." is_erasable=".$result."\n";
+		$this->assertGreaterThanOrEqual(-6, $result, 'Test for is_erasable, 1st invoice already printed');						    // Can be deleted
+
+
 		$localobject2 = new Facture($db);
 		$localobject2->initAsSpecimen();
 		$localobject2->fetch_thirdparty();

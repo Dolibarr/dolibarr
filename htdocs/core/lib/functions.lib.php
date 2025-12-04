@@ -1261,7 +1261,7 @@ function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto', $saverestore = '')
 	if ($hourTime === 'getpost' || $hourTime === 'getpostend') {
 		$hour   = (GETPOSTISSET($prefix . 'hour') && GETPOSTINT($prefix . 'hour') >= 0) ? GETPOSTINT($prefix . 'hour') : ($hourTime === 'getpostend' ? 23 : 0);
 		$minute = (GETPOSTISSET($prefix . 'min') && GETPOSTINT($prefix . 'min') >= 0) ? GETPOSTINT($prefix . 'min') : ($hourTime === 'getpostend' ? 59 : 0);
-		$second = (GETPOSTISSET($prefix . 'second') && GETPOSTINT($prefix . 'second') >= 0) ? GETPOSTINT($prefix . 'second') : ($hourTime === 'getpostend' ? 59 : 0);
+		$second = (GETPOSTISSET($prefix . 'sec') && GETPOSTINT($prefix . 'sec') >= 0) ? GETPOSTINT($prefix . 'sec') : ($hourTime === 'getpostend' ? 59 : 0);
 	} elseif (preg_match('/^(\d\d):(\d\d):(\d\d)$/', $hourTime, $m)) {
 		$hour   = intval($m[1]);
 		$minute = intval($m[2]);
@@ -7124,14 +7124,14 @@ function print_fiche_titre($title, $mesg = '', $picto = 'generic', $pictoisfullp
 /**
  *	Load a title with picto
  *
- *	@param	string	$title				Title to show (HTML sanitized content). Can be a string with a <br> as a substring.
- *	@param	string	$morehtmlright		Added message to show on right
- *	@param	string	$picto				Icon to use before title (should be a 32x32 transparent png file)
+ *	@param	string		$title				Title to show (HTML sanitized content). Can be a string with a <br> as a second string shown under the fmain title.
+ *	@param	string		$morehtmlright		Added message to show on right
+ *	@param	string		$picto				Icon to use before title (should be a 32x32 transparent png file)
  *	@param	int<0,1>	$pictoisfullpath	1=Icon name is a full absolute url of image
- * 	@param	string	$id					To force an id on html objects
- *  @param  string  $morecssontable     More css on table
- *	@param	string	$morehtmlcenter		Added message to show on center
- *  @param	string	$morecssonpicto		More css on picto
+ * 	@param	string		$id					To force an id on html objects
+ *  @param  string  	$morecssontable     More css on table
+ *	@param	string		$morehtmlcenter		Added message to show on center
+ *  @param	string		$morecssonpicto		More css on picto
  * 	@return	string
  *  @see print_barre_liste()
  */
@@ -7579,7 +7579,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 	//print $amount."-";
 	$data = explode('.', $amount);
 	$decpart = isset($data[1]) ? $data[1] : '';
-	$decpart = preg_replace('/0+$/i', '', $decpart); // Supprime les 0 de fin de partie decimale
+	$decpart = preg_replace('/0+$/i', '', $decpart); // Remove 0 at end of decimal part
 	//print "decpart=".$decpart."<br>";
 	$end = '';
 
@@ -7662,7 +7662,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
  */
 function price2num($amount, $rounding = '', $option = 0)
 {
-	global $langs, $conf;
+	global $langs;
 
 	// Clean parameters
 	if (is_null($amount)) {
@@ -12698,7 +12698,6 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 function printCommonFooter($zone = 'private')
 {
 	global $conf, $hookmanager, $user, $langs;
-	global $debugbar;
 	global $action;
 	global $micro_start_time;
 
@@ -12712,8 +12711,10 @@ function printCommonFooter($zone = 'private')
 	print "\n<!-- A div to store page_y POST parameter -->\n";
 	print '<div id="page_y" style="display: none;">' . (GETPOST('page_y') ? GETPOST('page_y') : '') . '</div>' . "\n";
 
-	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printCommonFooter', $parameters); // Note that $action and $object may have been modified by some hooks
+	$parameters = array('zone' => $zone);
+	$tmpobject = null;
+	// @phan-suppress-next-line PhanPluginConstantVariableNull
+	$reshook = $hookmanager->executeHooks('printCommonFooter', $parameters, $tmpobject, $action); // Note that $action and $object may have been modified by some hooks
 	if (empty($reshook)) {
 		if (getDolGlobalString('MAIN_HTML_FOOTER')) {
 			print getDolGlobalString('MAIN_HTML_FOOTER') . "\n";
@@ -12907,7 +12908,7 @@ function printCommonFooter($zone = 'private')
 			print "\n" . '</script>' . "\n";
 
 			// Google Analytics
-			// TODO Add a hook here
+			// TODO Remove this, can be replaced with the hook printCommonFooter
 			if (isModEnabled('google') && getDolGlobalString('MAIN_GOOGLE_AN_ID')) {
 				$tmptagarray = explode(',', getDolGlobalString('MAIN_GOOGLE_AN_ID'));
 				foreach ($tmptagarray as $tmptag) {
@@ -12933,15 +12934,23 @@ function printCommonFooter($zone = 'private')
 			print_r(xdebug_get_code_coverage());
 		}
 
+		// Output string from hooks
+		if (!empty($hookmanager->resPrint)) {
+			print $hookmanager->resPrint;
+		}
+
 		// Add DebugBar data
-		if ($user->hasRight('debugbar', 'read') && $debugbar instanceof DebugBar\DebugBar) {
-			if (isset($debugbar['time'])) {
-				// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
-				$debugbar['time']->stopMeasure('pageaftermaster');
+		if ($user->hasRight('debugbar', 'read')) {
+			global $debugbar;
+			if ($debugbar instanceof DebugBar\DebugBar) {
+				if (isset($debugbar['time'])) {
+					// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
+					$debugbar['time']->stopMeasure('pageaftermaster');
+				}
+				print '<!-- Output debugbar data -->' . "\n";
+				$renderer = $debugbar->getJavascriptRenderer();
+				print $renderer->render();
 			}
-			print '<!-- Output debugbar data -->' . "\n";
-			$renderer = $debugbar->getJavascriptRenderer();
-			print $renderer->render();
 		} elseif (count($conf->logbuffer)) {    // If there is some logs in buffer to show
 			print "\n";
 			print "<!-- Start of log output\n";
@@ -16819,8 +16828,8 @@ function buildParamDate($prefix, $timestamp = null, $hourTime = '', $gm = 'auto'
 	if ($hourTime === 'getpost' || ($timestamp !== null && dol_print_date($timestamp, '%H:%M:%S') !== '00:00:00')) {
 		$TParam = array_merge($TParam, array(
 			$prefix . 'hour'   => intval(dol_print_date($timestamp, '%H')),
-			$prefix . 'minute' => intval(dol_print_date($timestamp, '%M')),
-			$prefix . 'second' => intval(dol_print_date($timestamp, '%S'))
+			$prefix . 'min' => intval(dol_print_date($timestamp, '%M')),
+			$prefix . 'sec' => intval(dol_print_date($timestamp, '%S'))
 		));
 	}
 

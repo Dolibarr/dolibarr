@@ -30,6 +30,7 @@ require '../../main.inc.php';
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
+ * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
  */
@@ -90,25 +91,37 @@ $form = new Form($db);
 $block_static = new BlockedLog($db);
 $block_static->loadTrackedEvents();
 
-$title = $langs->trans("BlockedLogSetup");
+$title = $langs->trans("ModuleSetup").' '.$langs->trans('BlockedLog');
 $help_url="EN:Module_Unalterable_Archives_-_Logs|FR:Module_Archives_-_Logs_Inaltérable";
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-blockedlog page-admin_blockedlog');
 
 $linkback = '';
 if ($withtab) {
-	$linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php').'">'.$langs->trans("BackToModuleList").'</a>';
+	$linkback = '<a href="'.dolBuildUrl($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 }
 
-print load_fiche_titre($langs->trans("ModuleSetup").' '.$langs->trans('BlockedLog'), $linkback, 'blockedlog');
+$morehtmlcenter = '';
+
+$registrationnumber = getHashUniqueIdOfRegistration();
+$texttop = '<small class="opacitymedium">'.$langs->trans("RegistrationNumber").':</small> <small>'.dol_trunc($registrationnumber, 10).'</small>';
+
+print load_fiche_titre($title, $linkback, 'blockedlog', 0, '', '', $morehtmlcenter);
 
 if ($withtab) {
 	$head = blockedlogadmin_prepare_head(GETPOST('withtab', 'alpha'));
 	print dol_get_fiche_head($head, 'blockedlog', '', -1);
 }
 
+print $texttop;
+print '<br><br>';
 
 print '<span class="opacitymedium">'.$langs->trans("BlockedLogDesc")."</span><br>\n";
+
+if ($mysoc->country_code == 'FR') {
+	$htmltext = $langs->trans("UnalterableLogTool1FR").'<br>';
+	print info_admin($htmltext, 0, 0, 'warning');
+}
 
 print '<br>';
 
