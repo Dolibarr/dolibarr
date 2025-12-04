@@ -1261,7 +1261,7 @@ function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto', $saverestore = '')
 	if ($hourTime === 'getpost' || $hourTime === 'getpostend') {
 		$hour   = (GETPOSTISSET($prefix . 'hour') && GETPOSTINT($prefix . 'hour') >= 0) ? GETPOSTINT($prefix . 'hour') : ($hourTime === 'getpostend' ? 23 : 0);
 		$minute = (GETPOSTISSET($prefix . 'min') && GETPOSTINT($prefix . 'min') >= 0) ? GETPOSTINT($prefix . 'min') : ($hourTime === 'getpostend' ? 59 : 0);
-		$second = (GETPOSTISSET($prefix . 'second') && GETPOSTINT($prefix . 'second') >= 0) ? GETPOSTINT($prefix . 'second') : ($hourTime === 'getpostend' ? 59 : 0);
+		$second = (GETPOSTISSET($prefix . 'sec') && GETPOSTINT($prefix . 'sec') >= 0) ? GETPOSTINT($prefix . 'sec') : ($hourTime === 'getpostend' ? 59 : 0);
 	} elseif (preg_match('/^(\d\d):(\d\d):(\d\d)$/', $hourTime, $m)) {
 		$hour   = intval($m[1]);
 		$minute = intval($m[2]);
@@ -12713,6 +12713,7 @@ function printCommonFooter($zone = 'private')
 
 	$parameters = array('zone' => $zone);
 	$tmpobject = null;
+	// @phan-suppress-next-line PhanPluginConstantVariableNull
 	$reshook = $hookmanager->executeHooks('printCommonFooter', $parameters, $tmpobject, $action); // Note that $action and $object may have been modified by some hooks
 	if (empty($reshook)) {
 		if (getDolGlobalString('MAIN_HTML_FOOTER')) {
@@ -16827,8 +16828,8 @@ function buildParamDate($prefix, $timestamp = null, $hourTime = '', $gm = 'auto'
 	if ($hourTime === 'getpost' || ($timestamp !== null && dol_print_date($timestamp, '%H:%M:%S') !== '00:00:00')) {
 		$TParam = array_merge($TParam, array(
 			$prefix . 'hour'   => intval(dol_print_date($timestamp, '%H')),
-			$prefix . 'minute' => intval(dol_print_date($timestamp, '%M')),
-			$prefix . 'second' => intval(dol_print_date($timestamp, '%S'))
+			$prefix . 'min' => intval(dol_print_date($timestamp, '%M')),
+			$prefix . 'sec' => intval(dol_print_date($timestamp, '%S'))
 		));
 	}
 
