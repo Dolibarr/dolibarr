@@ -1048,7 +1048,7 @@ class Setup extends DolibarrApi
 		global $langs;
 		$langs->loadLangs(array('holiday'));
 
-		if (!DolibarrApiAccess::$user->hasRight('holiday', 'lire')) {
+		if (!DolibarrApiAccess::$user->hasRight('holiday', 'read')) {
 			throw new RestException(403);
 		}
 
