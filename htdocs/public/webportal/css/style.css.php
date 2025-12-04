@@ -104,65 +104,9 @@ This file can overwrite default pico css
  */
 
 
-/**
- * Navs
- */
-
-body > nav {
-  --nav-link-spacing-vertical: 1rem;
-  -webkit-backdrop-filter: saturate(180%) blur(10px);
-  z-index: 99;
-  position: fixed;
-  top: 0;
-  right: 0;
-  left: 0;
-  backdrop-filter: blur(60px) ;
-  background-color: var(--nav-background-color);
-  box-shadow: 0px 1px 0 var(--nav-border-color);
-}
-
-nav.primary-top-nav ul:first-of-type {
-	clear: both;
-	min-width: 100px;
-}
-
-.primary-top-nav{
-  --border-radius: 0;
-}
-
-ul.brand {
-	max-width:	80px;
-}
-nav.primary-top-nav ul:first-of-type {
-	margin-left: unset !important;
-}
-
-ul.menu-entries li {
-	display: block;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-}
-ul.menu-entries-alt {
-	display: none;
-}
-
 .maxwidthdate {
 	max-width: 110px;
 }
-
-@media (max-width: 576px) {
-	ul.brand li.brand {
-		padding-left: 0px;
-	}
-	ul.menu-entries li {
-		display: none;
-	}
-	ul.menu-entries-alt {
-		display: block;
-	}
-}
-
 
 
 
