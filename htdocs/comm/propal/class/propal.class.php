@@ -607,7 +607,7 @@ class Propal extends CommonObject
 	 * 		@param    	string		$desc				Description of line
 	 * 		@param    	float		$pu_ht				Unit price
 	 * 		@param    	float		$qty             	Quantity
-	 * 		@param    	float|string	$txtva           	Force Vat rate, -1 for auto (Can contain the vat_src_code too with syntax '9.9 (CODE)')
+	 * 		@param    	float|string	$txtva          Force Vat rate, -1 for auto (Can contain the vat_src_code too with syntax '9.9 (CODE)')
 	 * 		@param		float		$txlocaltax1		Local tax 1 rate (deprecated, use instead txtva with code inside)
 	 *  	@param		float		$txlocaltax2		Local tax 2 rate (deprecated, use instead txtva with code inside)
 	 *		@param    	int			$fk_product      	Product/Service ID predefined
@@ -2206,7 +2206,6 @@ class Propal extends CommonObject
 
 			$this->ref = $num;
 			$this->statut = self::STATUS_VALIDATED;
-			$this->status = self::STATUS_VALIDATED;
 			$this->user_validation_id = $user->id;
 			$this->datev = $now;
 			$this->date_validation = $now;

@@ -2989,13 +2989,14 @@ class Form
 		if (!$forcecombo) {
 			include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 			$events = array();
-			$out .= ajax_combobox($htmlname, $events, getDolGlobalInt("PRODUIT_USE_SEARCH_TO_SELECT"));
+			$out .= ajax_combobox($htmlname, $events, getDolGlobalInt("BOM_USE_SEARCH_TO_SELECT"));
 		}
 
 		$out .= '<select class="flat' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '" id="' . $htmlname . '">';
 
-		$sql = 'SELECT b.rowid, b.ref, b.label, b.fk_product';
-		$sql .= ' FROM ' . MAIN_DB_PREFIX . 'bom_bom as b';
+		$sql = 'SELECT b.rowid, b.ref, b.label as bomLabel, p.label as productLabel';
+		$sql .= ' FROM ' . $this->db->prefix() . 'bom_bom as b';
+		$sql .= ' INNER JOIN ' . $this->db->prefix() . 'product as p ON b.fk_product = p.rowid';
 		$sql .= ' WHERE b.entity IN (' . getEntity('bom') . ')';
 		if (!empty($status)) {
 			$sql .= ' AND status = ' . (int) $status;
@@ -3019,13 +3020,11 @@ class Form
 				$out .= '>&nbsp;</option>';
 			}
 			while ($obj = $db->fetch_object($resql)) {
-				$product = new Product($db);
-				$res = $product->fetch($obj->fk_product);
 				$out .= '<option value="' . $obj->rowid . '"';
 				if ($obj->rowid == $selected) {
 					$out .= 'selected';
 				}
-				$out .= '>' . $obj->ref . ' - ' . $product->label . ' - ' . $obj->label . '</option>';
+				$out .= '>' . $obj->ref . ' - ' . $obj->productLabel . ' - ' . $obj->bomLabel . '</option>';
 			}
 		} else {
 			$error++;
@@ -4168,7 +4167,7 @@ class Form
 						$outvallabel .= ' ' . $langs->transnoentities("Units");
 					}
 
-					if ($objp->quantity > 1) {
+					if ($objp->quantity != 1) {
 						$optlabel .= " (" . price($objp->unitprice * (getDolGlobalString('DISPLAY_DISCOUNTED_SUPPLIER_PRICE') ? (1 - $objp->remise_percent / 100) : 1), 1, $langs, 0, 0, -1, $conf->currency) . "/" . $langs->trans("Unit") . ")"; // Do not use strtolower because it breaks utf8 encoding
 						$outvallabel .= " (" . price($objp->unitprice * (getDolGlobalString('DISPLAY_DISCOUNTED_SUPPLIER_PRICE') ? (1 - $objp->remise_percent / 100) : 1), 0, $langs, 0, 0, -1, $conf->currency) . "/" . $langs->transnoentities("Unit") . ")"; // Do not use strtolower because it breaks utf8 encoding
 					}
@@ -9013,6 +9012,7 @@ class Form
 		if ($prefixforautocompletemode == 'product') {
 			$prefixforautocompletemode = 'produit';
 		}
+
 		$confkeyforautocompletemode = strtoupper($prefixforautocompletemode) . '_USE_SEARCH_TO_SELECT'; // For example COMPANY_USE_SEARCH_TO_SELECT
 
 		dol_syslog(get_class($this) . "::selectForForms filter=" . $filter, LOG_DEBUG);
@@ -9095,7 +9095,7 @@ class Form
 		if (!empty($objecttmp->fields)) {    // For object that declare it, it is better to use declared fields (like societe, contact, ...)
 			$tmpfieldstoshow = '';
 			foreach ($objecttmp->fields as $key => $val) {
-				if (! (int) dol_eval($val['enabled'], 1, 1, '1')) {
+				if (! (int) dol_eval((string) $val['enabled'], 1, 1, '1')) {
 					continue;
 				}
 				if (!empty($val['showoncombobox'])) {
@@ -9105,6 +9105,8 @@ class Form
 			if ($tmpfieldstoshow) {
 				$fieldstoshow = $tmpfieldstoshow;
 			}
+		} elseif ($objecttmp->element === 'category') {
+			$fieldstoshow = 't.label';
 		} else {
 			// For backward compatibility
 			$objecttmp->fields['ref'] = array('type' => 'varchar(30)', 'label' => 'Ref', 'showoncombobox' => 1);
@@ -9138,7 +9140,11 @@ class Form
 		// Search data
 		$sql = "SELECT t.rowid, " . $fieldstoshow . " FROM " . $this->db->prefix() . $this->db->sanitize($objecttmp->table_element) . " as t";
 		if (!empty($objecttmp->isextrafieldmanaged)) {
-			$sql .= " LEFT JOIN " . $this->db->prefix() . $this->db->sanitize($objecttmp->table_element) . "_extrafields as e ON t.rowid = e.fk_object";
+			$extrafieldTable = $objecttmp->table_element;
+			if ($extrafieldTable == 'categorie') {
+				$extrafieldTable = 'categories'; // For compatibility
+			}
+			$sql .= " LEFT JOIN " . $this->db->prefix() . $this->db->sanitize($extrafieldTable) . "_extrafields as e ON t.rowid = e.fk_object";
 		}
 		if (!empty($objecttmp->parent_element)) {	// If parent_element is defined
 			$parent_properties = getElementProperties($objecttmp->parent_element);
@@ -9174,7 +9180,7 @@ class Form
 			// If table need a multientity restriction
 			if (!empty($objecttmp->ismultientitymanaged)) {
 				if ($objecttmp->ismultientitymanaged == 1) {
-					$sql .= " AND t.entity IN (" . getEntity($objecttmp->table_element) . ")";
+					$sql .= " AND t.entity IN (" . getEntity($objecttmp->element) . ")";
 				}
 				if (!is_numeric($objecttmp->ismultientitymanaged)) {
 					$sql .= " AND parenttable.entity = t." . $this->db->sanitize($tmparray[0]);

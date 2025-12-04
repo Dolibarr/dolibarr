@@ -419,7 +419,7 @@ class SupplierProposal extends CommonObject
 	 * 		@param    	string		$desc				Description de la ligne
 	 * 		@param    	float		$pu_ht				Prix unitaire
 	 * 		@param    	float		$qty             	Quantite
-	 * 		@param    	float		$txtva           	Taux de tva
+	 * 		@param    	float|string	$txtva          Force Vat rate, -1 for auto (Can contain the vat_src_code too with syntax '9.9 (CODE)')
 	 * 		@param		float		$txlocaltax1		Local tax 1 rate
 	 *  	@param		float		$txlocaltax2		Local tax 2 rate
 	 *		@param    	int			$fk_product      	Product/Service ID predefined
@@ -707,7 +707,7 @@ class SupplierProposal extends CommonObject
 	 *  @param      float		$pu		     	  	Unit price (HT or TTC depending on price_base_type)
 	 *  @param      float		$qty            	Quantity
 	 *  @param      float		$remise_percent  	Discount on line
-	 *  @param      float		$txtva	          	VAT rate
+	 *  @param      float|string	$txtva          Force Vat rate, -1 for auto (Can contain the vat_src_code too with syntax '9.9 (CODE)')
 	 * 	@param	  	float		$txlocaltax1		Local tax 1 rate
 	 *  @param	  	float		$txlocaltax2		Local tax 2 rate
 	 *  @param      string		$desc            	Description

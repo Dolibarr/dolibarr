@@ -69,7 +69,7 @@ $langs->loadLangs(array("companies", "other", "ticket"));
 
 // Get parameters
 $action = GETPOST('action', 'aZ09');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel');
 
 $track_id = GETPOST('track_id', 'alpha');
 $email = strtolower(GETPOST('email', 'alpha'));

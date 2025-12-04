@@ -368,7 +368,7 @@ class FactureLigne extends CommonInvoiceLine
 						if (empty($conf->disable_compute)) {
 							global $objectoffield;
 							$objectoffield = $this;
-							$this->array_options['options_' . $key] = dol_eval($extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '2');
+							$this->array_options['options_' . $key] = dol_eval((string) $extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '2');
 						}
 					}
 				}

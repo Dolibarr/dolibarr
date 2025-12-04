@@ -187,7 +187,7 @@ $permissiontoadd = $usercancreate; // Used by the include of actions_addupdatede
 $permissiontoeditextra = $usercancreate;
 if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
 	// For action 'update_extras', is there a specific permission set for the attribute to update
-	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+	$permissiontoeditextra = dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
 }
 
 // retained warranty invoice available type
@@ -2776,8 +2776,10 @@ if (empty($reshook)) {
 					}
 				}
 
+				$situation_percent = GETPOSTISSET('progress') ? GETPOSTINT('progress') : 100;
+
 				// Insert line
-				$result = $object->addline($desc, $pu_ht, (float) $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $date_start, $date_end, 0, $info_bits, 0, $price_base_type, $pu_ttc, $type, min($rank, count($object->lines) + 1), $special_code, '', 0, GETPOSTINT('fk_parent_line'), (int) $fournprice, $buyingprice, $label, $array_options, GETPOSTINT('progress'), 0, $fk_unit, (float) $pu_ht_devise);
+				$result = $object->addline($desc, $pu_ht, (float) $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $date_start, $date_end, 0, $info_bits, 0, $price_base_type, $pu_ttc, $type, min($rank, count($object->lines) + 1), $special_code, '', 0, GETPOSTINT('fk_parent_line'), (int) $fournprice, $buyingprice, $label, $array_options, $situation_percent, 0, $fk_unit, (float) $pu_ht_devise);
 
 				if ($result > 0) {
 					// Define output language and generate document
@@ -5748,6 +5750,7 @@ if ($action == 'create') {
 			print '<td>'.$langs->trans('ListOfSituationInvoices').'</td>';
 			print '<td></td>';
 			print '<td class="center">'.$langs->trans('Situation').'</td>';
+
 			if (isModEnabled("bank")) {
 				print '<td class="right"></td>';
 			}
@@ -5848,7 +5851,6 @@ if ($action == 'create') {
 					$totalpaid = $next_invoice->getSommePaiement(0);
 					$totalcreditnotes = $next_invoice->getSumCreditNotesUsed(0);
 					$totaldeposits = $next_invoice->getSumDepositsUsed(0);
-
 					$total_next_ht += $next_invoice->total_ht;
 					$total_next_ttc += $next_invoice->total_ttc;
 

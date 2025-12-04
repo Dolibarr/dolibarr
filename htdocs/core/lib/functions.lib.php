@@ -6504,7 +6504,7 @@ function dol_print_error_email($prefixcode, $errormessage = '', $errormessages =
  *	@param	string	$file        Url used when we click on sort picto
  *	@param	string	$field       Field to use for new sorting
  *	@param	string	$begin       ("" by default)
- *	@param	string	$moreparam   Add more parameters on sort url links ("" by default)
+ *	@param	string	$param       Add more parameters on sort url links ("" by default)
  *	@param  string	$moreattrib  Options of attribute td ("" by default)
  *	@param  ?string	$sortfield   Current field used to sort
  *	@param  ?string	$sortorder   Current sort order
@@ -6513,9 +6513,9 @@ function dol_print_error_email($prefixcode, $errormessage = '', $errormessages =
  *  @param	int		$forcenowrapcolumntitle		No need for use 'wrapcolumntitle' css style
  *	@return	void
  */
-function print_liste_field_titre($name, $file = "", $field = "", $begin = "", $moreparam = "", $moreattrib = "", $sortfield = "", $sortorder = "", $prefix = "", $tooltip = "", $forcenowrapcolumntitle = 0)
+function print_liste_field_titre($name, $file = "", $field = "", $begin = "", $param = "", $moreattrib = "", $sortfield = "", $sortorder = "", $prefix = "", $tooltip = "", $forcenowrapcolumntitle = 0)
 {
-	print getTitleFieldOfList($name, 0, $file, $field, $begin, $moreparam, $moreattrib, $sortfield, $sortorder, $prefix, 0, $tooltip, $forcenowrapcolumntitle);
+	print getTitleFieldOfList($name, 0, $file, $field, $begin, $param, $moreattrib, $sortfield, $sortorder, $prefix, 0, $tooltip, $forcenowrapcolumntitle);
 }
 
 /**
@@ -8793,6 +8793,12 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 		do {
 			$oldstringtoclean = $out;
 
+			$outishtml = 0;
+			if (dol_textishtml($out)) {
+				$outishtml = 1;
+			}
+
+			// HTML sanitizer by DOMDocument
 			if (!empty($out) && getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML') && $check != 'restricthtmlallowunvalid') {
 				try {
 					libxml_use_internal_errors(false);	// Avoid to fill memory with xml errors
@@ -8809,7 +8815,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 					//  like 'abc' that wrongly ends up, without the trick, with '<p>abc</p>'
 					// Add also a trick <html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> to solve utf8 lost.
 					// I don't know what the xml encoding is the trick for
-					if (dol_textishtml($out)) {
+					if ($outishtml) {
 						//$out = '<?xml encoding="UTF-8"><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body><div class="tricktoremove">'.$out.'</div></body></html>';
 						$out = '<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body><div class="tricktoremove">'.$out.'</div></body></html>';
 						//$out = '<html><head><meta charset="utf-8"></head><body><div class="tricktoremove">'.$out.'</div></body></html>';
@@ -8832,6 +8838,10 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 					//                  $out = preg_replace('/^<\?xml encoding="UTF-8"><div class="tricktoremove">/', '', $out);
 					//                  $out = preg_replace('/<\/div>$/', '', $out);
 					//                  var_dump('rrrrrrrrrrrrrrrrrrrrrrrrrrrrr'.$out);
+
+					if (!$outishtml) {		// If $out was not HTML content we made before a dol_nl2br so we must do the opposite operation now
+						$out = str_replace('<br>', '', $out);
+					}
 				} catch (Exception $e) {
 					// If error, invalid HTML string with no way to clean it
 					//print $e->getMessage();
@@ -8839,8 +8849,10 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 				}
 			}
 
-			if (!empty($out) && getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY') && !in_array($check, array('restricthtmlallowunvalid', 'restricthtmlallowlinkscript'))) {
-				// Tidy can't be used for restricthtmlallowunvalid and restricthtmlallowlinkscript
+			// HTML sanitizer by Tidy
+			// Tidy can't be used for restricthtmlallowunvalid and restricthtmlallowlinkscript
+			// Tidy can't be used for non html text content as it is corrupting the new lines fields.
+			if (!empty($out) && getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY') && !in_array($check, array('restricthtmlallowunvalid', 'restricthtmlallowlinkscript')) && $outishtml) {
 				// TODO Try to implement a hack for restricthtmlallowlinkscript by renaming tag <link> and <script> ?
 				try {
 					//var_dump($out);
@@ -9253,6 +9265,8 @@ function dol_textishtml($msg, $option = 0)
 			return true; // Html entities names (http://www.w3schools.com/tags/ref_entities.asp)
 		} elseif (preg_match('/&#[0-9]{2,3};/i', $msg)) {
 			return true; // Html entities numbers (http://www.w3schools.com/tags/ref_entities.asp)
+		} elseif (preg_match('/&#x[a-f0-9][a-f0-9];/i', $msg)) {
+			return true; // Html entities numbers in hexa
 		}
 
 		return false;
@@ -11192,6 +11206,9 @@ function dol_eval_standard($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestr
 	if (!in_array($onlysimplestring, array('0', '1', '2'))) {
 		return "Bad call of dol_eval. Parameter onlysimplestring must be '0' (deprecated), '1' or '2'";
 	}
+	if (!is_scalar($s)) {
+		return "Bad call of dol_eval. First parameter must be a string, found ".var_export($s, true);
+	}
 
 	try {
 		// Test on dangerous char (used for RCE), we allow only characters to make PHP variable testing
@@ -11281,7 +11298,7 @@ function dol_eval_standard($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestr
 			// We can exclude $ char that are not in dol_eval global, so that are not:
 			// $db, $langs, $leftmenu, $topmenu, $user, $langs, $objectoffield, $object, $obj, ...,
 		}
-		if (is_array($s) || $s === 'Array') {
+		if ($s === 'Array') {
 			if ($returnvalue) {
 				return 'Bad string syntax to evaluate (value is Array): '.var_export($s, true);
 			} else {
@@ -15640,12 +15657,12 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 			if (isset($histo[$key]['socpeopleassigned']) && is_array($histo[$key]['socpeopleassigned']) && count($histo[$key]['socpeopleassigned']) > 0) {
 				$contactList = '';
 				foreach ($histo[$key]['socpeopleassigned'] as $cid => $Tab) {
-					if (empty($conf->cache['contact'][$histo[$key]['contact_id']])) {
+					if (empty($conf->cache['contact'][$cid])) {
 						$contact = new Contact($db);
 						$contact->fetch($cid);
-						$conf->cache['contact'][$histo[$key]['contact_id']] = $contact;
+						$conf->cache['contact'][$cid] = $contact;
 					} else {
-						$contact = $conf->cache['contact'][$histo[$key]['contact_id']];
+						$contact = $conf->cache['contact'][$cid];
 					}
 
 					if ($contact) {

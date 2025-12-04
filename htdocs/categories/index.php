@@ -89,7 +89,10 @@ foreach ($categstatic->MAP_ID as $key => $idtype) {
 $arrayofcateg = dol_sort_array($arrayofcateg, 'labelwithoutaccent', 'asc', 1, 0, 1);
 
 // Get number of tags per category type
-$sql = "SELECT type as idtype, COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."categorie GROUP BY type";
+$sql = "SELECT type as idtype, COUNT(rowid) as nb";
+$sql .= " FROM ".MAIN_DB_PREFIX."categorie";
+$sql .= " WHERE entity IN (".getEntity('category').")";
+$sql .= " GROUP BY type";
 $resql = $db->query($sql);
 if ($resql) {
 	while ($obj = $db->fetch_object($resql)) {

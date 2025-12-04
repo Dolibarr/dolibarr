@@ -2093,8 +2093,8 @@ class FactureFournisseur extends CommonInvoice
 	 *	already have the right value (the caller has to manage the multilanguage).
 	 *
 	 *	@param      string      $desc                   Description of the line
-	 *	@param      float      $pu                     Unit price (HT or TTC according to price_base_type, > 0 even for credit note)
-	 *	@param      float      $txtva                  Force Vat rate to use, -1 for auto.
+	 *	@param      float      $pu                      Unit price (HT or TTC according to price_base_type, > 0 even for credit note)
+	 *	@param      float|string	$txtva           	Force Vat rate, -1 for auto (Can contain the vat_src_code too with syntax '9.9 (CODE)')
 	 *	@param      float      $txlocaltax1            LocalTax1 Rate
 	 *	@param      float      $txlocaltax2            LocalTax2 Rate
 	 *	@param      float      $qty                    Quantity

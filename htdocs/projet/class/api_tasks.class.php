@@ -22,7 +22,7 @@ use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-
+require_once DOL_DOCUMENT_ROOT.'/core/class/timespent.class.php';
 
 /**
  * API class for projects
@@ -528,6 +528,44 @@ class Tasks extends DolibarrApi
 		);
 	}
 
+	/**
+	 * Get time spent of a task
+	 *
+	 * @param int   $id                     Id of task
+	 * @param int   $timespent_id           Id of timespent
+	 *
+	 * @url	GET {id}/getTimeSpent/{timespent_id}
+	 *
+	 * @return  TimeSpent
+	 *
+	 * @throws	RestException
+	 */
+	public function getTimeSpent($id, $timespent_id)
+	{
+		dol_syslog("API Rest request::getTimeSpent", LOG_DEBUG);
+		if (! DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
+			throw new RestException(403);
+		}
+
+		$taskresult = $this->task->fetch($id);
+		if (!$taskresult ) {
+			throw new RestException(404, 'Task with id='.$id.' not found');
+		}
+		if (!DolibarrApi::_checkAccessToResource('task', $this->task->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$timespent = new TimeSpent($this->db);
+		$timeresult = $timespent->fetch($timespent_id);
+		if (!$timeresult ) {
+			throw new RestException(404, 'Timespent with id='.$timespent_id.' not found');
+		}
+		if (!DolibarrApi::_checkAccessToResource('time', $timespent->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		return $this->_cleanTimeSpentObjectDatas($timespent);
+	}
 
 	/**
 	 * Add time spent to a task of a project.
@@ -538,6 +576,7 @@ class Tasks extends DolibarrApi
 	 * @param   datetime    $date               Date (YYYY-MM-DD HH:MI:SS in GMT)
 	 * @phan-param string $date
 	 * @param   int         $duration           Duration in seconds (3600 = 1h)
+	 * @param   int         $product_id         The product id that is used, default is null
 	 * @param   int         $user_id            User (Use 0 for connected user)
 	 * @param   string      $note               Note
 	 *
@@ -548,7 +587,7 @@ class Tasks extends DolibarrApi
 	 * @phan-return array{success:array{code:int,message:string}}
 	 * @phpstan-return array{success:array{code:int,message:string}}
 	 */
-	public function addTimeSpent($id, $date, $duration, $user_id = 0, $note = '')
+	public function addTimeSpent($id, $date, $duration, $product_id = null, $user_id = 0, $note = '')
 	{
 		if (!DolibarrApiAccess::$user->hasRight('projet', 'creer')) {
 			throw new RestException(403);
@@ -572,6 +611,7 @@ class Tasks extends DolibarrApi
 		$this->task->timespent_datehour = $newdate;
 		$this->task->timespent_withhour = 1;
 		$this->task->timespent_duration = $duration;
+		$this->task->timespent_fk_product  = $product_id;
 		$this->task->timespent_fk_user  = $uid;
 		$this->task->timespent_note     = $note;
 
@@ -601,6 +641,7 @@ class Tasks extends DolibarrApi
 	 * @param   datetime    $date               Date (YYYY-MM-DD HH:MI:SS in GMT)
 	 * @phan-param string $date
 	 * @param   int         $duration           Duration in seconds (3600 = 1h)
+	 * @param   int         $product_id         The product id that is used, default is null
 	 * @param   int         $user_id            User (Use 0 for connected user)
 	 * @param   string      $note               Note
 	 *
@@ -610,7 +651,7 @@ class Tasks extends DolibarrApi
 	 * @phan-return array{success:array{code:int,message:string}}
 	 * @phpstan-return array{success:array{code:int,message:string}}
 	 */
-	public function putTimeSpent($id, $timespent_id, $date, $duration, $user_id = 0, $note = '')
+	public function putTimeSpent($id, $timespent_id, $date, $duration, $product_id = null, $user_id = 0, $note = '')
 	{
 		if (!DolibarrApiAccess::$user->hasRight('projet', 'creer')) {
 			throw new RestException(403);
@@ -626,6 +667,7 @@ class Tasks extends DolibarrApi
 		$this->task->timespent_datehour = $newdate;
 		$this->task->timespent_withhour = 1;
 		$this->task->timespent_duration = $duration;
+		$this->task->timespent_fk_product  = $product_id;
 		$this->task->timespent_fk_user  = $user_id ?? DolibarrApiAccess::$user->id;
 		$this->task->timespent_note     = $note;
 
@@ -689,8 +731,9 @@ class Tasks extends DolibarrApi
 	 *
 	 * @return void
 	 */
-	protected function timespentRecordChecks($id, $timespent_id)
+	private function timespentRecordChecks($id, $timespent_id)
 	{
+		dol_syslog("API Rest request::timespentRecordChecks", LOG_DEBUG);
 		if ($this->task->fetch($id) <= 0) {
 			throw new RestException(404, 'Task not found');
 		}
@@ -751,6 +794,132 @@ class Tasks extends DolibarrApi
 		unset($object->total_ttc);
 
 		unset($object->comments);
+
+		return $object;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	/**
+	 * Clean sensitive object data
+	 * @phpstan-template T of Object
+	 *
+	 * @param   Object  $object     Object to clean
+	 * @return  Object              Object with cleaned properties
+	 *
+	 * @phpstan-param T $object
+	 * @phpstan-return T
+	 */
+	protected function _cleanTimeSpentObjectDatas($object)
+	{
+		if (!$object->note_private) {
+			$object->note_private = $object->note;
+			// unsure if we should use note_private or note_public, but note_private should be more secure
+		}
+		$saving_fk_element = $object->fk_element;
+		// because calling parent::_cleanObjectDatas clears fk_element
+
+		// phpcs:enable
+		$object = parent::_cleanObjectDatas($object);
+
+		unset($object->barcode_type);
+		unset($object->barcode_type_code);
+		unset($object->barcode_type_label);
+		unset($object->barcode_type_coder);
+		unset($object->cond_reglement_id);
+		unset($object->cond_reglement);
+		unset($object->fk_delivery_address);
+		unset($object->shipping_method_id);
+		unset($object->fk_account);
+		unset($object->fk_incoterms);
+		unset($object->label_incoterms);
+		unset($object->location_incoterms);
+		unset($object->name);
+		unset($object->lastname);
+		unset($object->firstname);
+		unset($object->civility_id);
+		unset($object->mode_reglement_id);
+		unset($object->country);
+		unset($object->country_id);
+		unset($object->country_code);
+
+		unset($object->weekWorkLoad);
+		unset($object->weekWorkLoad);
+
+		unset($object->actiontypecode);
+		unset($object->array_languages);
+		unset($object->array_options);
+		unset($object->canvas);
+		unset($object->civility_code);
+		unset($object->cond_reglement_supplier_id);
+		unset($object->contact_id);
+		unset($object->contacts_ids);
+		unset($object->contacts_ids_internal);
+		unset($object->date_cloture);
+		unset($object->date_validation);
+		unset($object->demand_reason_id);
+		unset($object->deposit_percent);
+		unset($object->entity);
+		unset($object->extraparams);
+		unset($object->fk_multicurrency);
+		unset($object->fk_project);
+		unset($object->fk_user_creat);
+		unset($object->fk_user_modif);
+		unset($object->last_main_doc);
+		unset($object->lines);
+		unset($object->linkedObjectsIds);
+		unset($object->module);
+		unset($object->multicurrency_code);
+		unset($object->multicurrency_total_ht);
+		unset($object->multicurrency_total_localtax1);
+		unset($object->multicurrency_total_localtax2);
+		unset($object->multicurrency_total_ttc);
+		unset($object->multicurrency_total_tva);
+		unset($object->multicurrency_tx);
+		unset($object->note_public);
+		unset($object->origin_id);
+		unset($object->origin_type);
+		unset($object->product);
+		unset($object->ref);
+		unset($object->region_id);
+		unset($object->retained_warranty_fk_cond_reglement);
+		unset($object->rowid);
+		unset($object->shipping_method);
+		unset($object->specimen);
+		unset($object->state_id);
+		unset($object->status);
+		unset($object->statut);
+		unset($object->totalpaid);
+		unset($object->transport_mode_id);
+		unset($object->user);
+		unset($object->user_author);
+		unset($object->user_closing_id);
+		unset($object->user_creation);
+		unset($object->user_creation_id);
+		unset($object->user_modification);
+		unset($object->user_modification_id);
+		unset($object->user_valid);
+		unset($object->user_validation);
+		unset($object->user_validation_id);
+		unset($object->warehouse_id);
+
+		unset($object->total_ht);
+		unset($object->total_tva);
+		unset($object->total_localtax1);
+		unset($object->total_localtax2);
+		unset($object->total_ttc);
+
+		unset($object->comments);
+
+		if (!$object->date_creation) {
+			$object->date_creation = $object->datec;
+		}
+		if (!$object->date_modification) {
+			$object->date_modification = $object->tms;
+		}
+		if (!$object->fk_element) {
+			$object->fk_element = $saving_fk_element;
+			// because calling parent::_cleanObjectDatas clears fk_element
+		}
 
 		return $object;
 	}

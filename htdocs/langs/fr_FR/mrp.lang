@@ -169,3 +169,4 @@ ErrorModifyMoDateStart = Vous devez choisir une date de début antérieure à la
 ErrorModifyMoDateEnd = Vous devez choisir une date de fin postérieure à la date de début. %s
 ErrorCancelMo=Erreur lors de la mise à jour de l'annulation
 ErrorModifyMoDate=Erreur lors de la mise à jour de la modification de la date
+UseSearchToSelectBom=Attendre que vous ayez appuyé sur une touche avant de charger le contenu de la liste déroulante des nomenclatures (Cela peut augmenter les performances si vous avez un grand nombre de nomenclatures, mais cela est moins convivial)
