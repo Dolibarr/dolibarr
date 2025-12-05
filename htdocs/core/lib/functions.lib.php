@@ -1228,7 +1228,7 @@ function GETPOSTINT($paramname, $method = 0)
 
 /**
  *  Return the value of a $_GET or $_POST supervariable, converted into float.
- *  Warning: This function assumes by default that the input is a number enterd by end user in user format in local language (with possible thousands separator and decimal separator).
+ *  Warning: This function assumes by default that the input is a number entered by end user in user format in local language (with possible thousands separator and decimal separator).
  *  If it is not the case, use the parameter $option = 1 instead.
  *
  *  @param  string          $paramname      Name of the $_GET or $_POST parameter
@@ -1241,7 +1241,7 @@ function GETPOSTINT($paramname, $method = 0)
  */
 function GETPOSTFLOAT($paramname, $rounding = '', $option = 2)
 {
-	// price2num() is used to sanitize any valid user input (such as "1 234.5", "1 234,5", "1'234,5", "1·234,5", "1,234.5", etc.)
+	// price2num() can be used to round to an expected accuracy and/or to sanitize any valid user input (such as "1 234.5", "1 234,5", "1'234,5", "1·234,5", "1,234.5", etc.)
 	return (float) price2num(GETPOST($paramname), $rounding, $option);
 }
 

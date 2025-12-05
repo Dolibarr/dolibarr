@@ -1,0 +1,61 @@
+.header-card-block {
+
+	--photo-size : 128px;
+
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 10px;
+	align-items: center;
+}
+
+/* If a photo is present */
+.header-card-block:has(.header-card-photo) {
+	grid-template-columns: var(--photo-size) 1fr auto;
+}
+
+/* Photo */
+.header-card-photo {
+	grid-column: 1;
+	width: var(--photo-size);
+}
+
+/* main information */
+.header-card-main-information {
+	grid-column: 2;
+}
+
+/* Status */
+.header-card-status {
+	grid-column: 3;
+	justify-self: end;
+	align-self: start; /* Align the content to the top */
+}
+
+/* Responsive for smartphone */
+@media (max-width: 600px) {
+	.header-card-block{
+		--photo-size : 64px;
+	}
+
+	.header-card-block:has(.header-card-photo) {
+		grid-template-columns: var(--photo-size) 1fr;
+		grid-template-rows: auto auto; /* 2 rows: status first, then main info */
+	}
+
+	.header-card-photo {
+		grid-column: 1;
+		grid-row: 1 / span 2; /* photo spans 2 rows */
+	}
+
+	.header-card-status {
+		grid-column: 2;
+		grid-row: 1;
+		justify-self: start;
+		align-self: start; /* Align the content to the top */
+	}
+
+	.header-card-main-information {
+		grid-column: 2;
+		grid-row: 2;
+	}
+}

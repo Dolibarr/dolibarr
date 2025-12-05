@@ -99,6 +99,7 @@ if (empty($dolibarr_nocache)) {
 @import "badges.css";
 @import "title-buttons.css";
 @import "nav.css";
+@import "card.css";
 @import "dialog.css";
 @import "btn.css";
 /**
