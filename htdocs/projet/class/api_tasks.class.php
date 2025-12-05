@@ -4,6 +4,7 @@
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025   	Jessica Kowal			<jessicakowal69@gmail.com>
+ * Copyright (C) 2025   	Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -572,7 +573,7 @@ class Tasks extends DolibarrApi
 	 *
 	 * @url	GET {id}/getTimeSpent/{timespent_id}
 	 *
-	 * @return  TimeSpent
+	 * @return	Object                      data without useless information
 	 *
 	 * @throws	RestException
 	 */
@@ -623,7 +624,7 @@ class Tasks extends DolibarrApi
 	 * @phan-return array{success:array{code:int,message:string}}
 	 * @phpstan-return array{success:array{code:int,message:string}}
 	 */
-	public function addTimeSpent($id, $date, $duration, $product_id = null, $user_id = 0, $note = '', $progress = null)
+	public function addTimeSpent($id, $date, $duration, $product_id = null, $user_id = 0, $note = '', $progress = -1)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('projet', 'creer')) {
 			throw new RestException(403);
@@ -651,8 +652,9 @@ class Tasks extends DolibarrApi
 		$this->task->timespent_fk_product  = $product_id;
 		$this->task->timespent_fk_user  = $uid;
 		$this->task->timespent_note     = $note;
-		if (!empty($this->task->progress))
+		if (!empty($progress) && $progress >= 0 && $progress <= 100) {
 			$this->task->progress  		= $progress;
+		}
 
 		$result = $this->task->addTimeSpent(DolibarrApiAccess::$user, 0);
 		if ($result == 0) {
@@ -1113,7 +1115,4 @@ class Tasks extends DolibarrApi
 
 		return $this->_cleanObjectDatas($this->task);
 	}
-
-	// \todo
-	// getSummaryOfTimeSpent
 }

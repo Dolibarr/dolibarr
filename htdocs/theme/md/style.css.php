@@ -911,6 +911,9 @@ input.pageplusone {
 	margin-right: 4px;
 	margin-left: 3px;
 	width: 32px;
+	border-top: 0;
+	border-left: 0;
+	border-right: 0;
 }
 .paginationlastpage a {
 	padding-left: 6px;
@@ -1145,9 +1148,6 @@ button:focus {
 .fa-info-circle {
 	padding-<?php echo $left; ?>: 3px;
 }
-.line-height-large {
-	line-height: 1.8em;
-}
 
 th .button {
 	box-shadow: none !important;
@@ -1208,6 +1208,9 @@ textarea.centpercent {
 }
 .lineheightsmall {
 	line-height: 1.2em;
+}
+.line-height-large {
+	line-height: 1.8em;
 }
 .large {
 	font-size: 125%;

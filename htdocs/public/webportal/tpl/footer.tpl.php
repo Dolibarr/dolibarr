@@ -117,44 +117,60 @@ if (empty($conf->browser->layout) || $conf->browser->layout != 'phone') { ?>
 		jQuery(document).ready(function () {
 			jQuery(".modal_card").click(function (event) {
 				console.log("We click on card link for element with href=" + $(this).attr('href'));
-				modal_card($(this).attr('href'));
+				const modalTitle = $(this).data('modal-title') || $(this).attr('title') || '';
+				modal_card($(this).attr('href'), modalTitle);
 				event.preventDefault();
 				return false;
 			});
 		});
 
 		/**
-		 * Function show modal card. It uses the "modal" function.
+		 * Show modal card using Pico.css modal system
 		 *
-		 * @param 	url 		Url
-		 * @param   title       Dialog box title
-		 * @return	void
-		 * @see newpopup()
+		 * @param {string} url   - URL to load in the iframe
+		 * @param {string} title - Modal title
 		 */
-		function modal_card(url, title) {
-			console.log("modal_card A click was done: url=" + url);
+		function modal_card(url, title = '') {
+			console.log("modal_card called: url=" + url);
 
-			let width = "85%";
-			let object_width = '100%';
-			let height = ($(window).height() - 60) * 0.90;
-			let object_height = '98%';
-			let newElem = '<a href="#close" aria-label="Close" class="close" onClick="close_modal_card()"></a><iframe id="card-frame" title="' +
-				title + '" width="' + object_width + '" height="' + object_height + '" src="' + url + '"></iframe>';
+			const modal = document.getElementById('modalforcard'); // Pico.css modal container
+			if (!modal) {
+				console.error('Modal container not found');
+				return;
+			}
 
-			$('#modalforcard article').css('width', width).css('height', height).html(newElem);
-			let modal = document.getElementById('modalforcard');
+			// Insert structured modal content
+			modal.querySelector('article').innerHTML = `
+				<div class="dialog-header">
+					<div class="dialog-header-title-container" >
+						<h2 class="dialog-header-title">${title}</h2>
+					</div>
+					<div class="dialog-header-action-container" >
+						<button class="dialog-header-btn dialog-close-btn btn-low-emphasis close"></button>
+					</div>
+				</div>
+				<div class="dialog-body">
+					<iframe class="dialog-iframe" src="${url}" title="${title}"></iframe>
+				</div>
+			`;
+
+			// Add close button handler
+			const closeBtn = modal.querySelector('.dialog-close-btn');
+			if (closeBtn) {
+				closeBtn.addEventListener('click', () => close_modal_card());
+			}
+
+			// Open modal via Pico.css function
 			openModal(modal);
 		}
 
 		/**
-		 * Function close modal card. It uses the "modal" function.
-		 *
-		 * @return	void
+		 * Close modal card using Pico.css modal system
 		 */
 		function close_modal_card() {
-			console.log("close_modal_card A click was done");
+			const modal = document.getElementById('modalforcard');
+			if (!modal) return;
 
-			let modal = document.getElementById('modalforcard');
 			closeModal(modal);
 		}
 
@@ -215,6 +231,7 @@ if (empty($conf->browser->layout) || $conf->browser->layout != 'phone') { ?>
 			}
 
 			function show_preview(mode) {
+				// TODO : rebuild dialog tpl show modal_card
 				let newElem = '<a href="#close" aria-label="Close" class="close" data-target="modalforpopup" onClick="toggleModal(event)"></a><object name="objectpreview" data="' +
 					file + '" type="' + type + '" width="' + object_width + '" height="' + object_height + '" param="noparam"></object>';
 				if (mode == 'image' && showOriginalSizeButton) {
@@ -252,8 +269,8 @@ if (empty($conf->browser->layout) || $conf->browser->layout != 'phone') { ?>
 	</script>
 
 	<!-- A div to allow modal popup by modal -->
-	<dialog id="modalforcard"><article></article></dialog>
-	<dialog id="modalforpopup"><article></article></dialog>
+	<dialog id="modalforcard" class="dialog-full-screen" ><article></article></dialog>
+	<dialog id="modalforpopup" class="dialog-popup" ><article></article></dialog>
 <?php } ?>
 
 </body>

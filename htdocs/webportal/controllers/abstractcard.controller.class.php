@@ -47,7 +47,10 @@ abstract class AbstractCardController extends Controller
 			return;
 		}
 
-		$this->loadTemplate('header');
+		$this->loadTemplate('header', [
+			'body-class' => empty($this->formCard->modal) ? '' : '--is-modal'
+		]);
+
 		if (empty($this->formCard->modal)) {
 			$this->loadTemplate('menu');
 			$this->loadTemplate('hero-header-banner');
