@@ -169,6 +169,15 @@ class FormMargin
 				}
 			}
 		}
+
+		// Prevent rounding error and division by zero
+		$marginInfos['pa_products'] = (float) price2num($marginInfos['pa_products'], 'MAIN_MAX_DECIMALS_TOT');
+		$marginInfos['pv_products'] = (float) price2num($marginInfos['pv_products'], 'MAIN_MAX_DECIMALS_TOT');
+		$marginInfos['pa_services'] = (float) price2num($marginInfos['pa_services'], 'MAIN_MAX_DECIMALS_TOT');
+		$marginInfos['pv_services'] = (float) price2num($marginInfos['pv_services'], 'MAIN_MAX_DECIMALS_TOT');
+		$marginInfos['pa_total'] = (float) price2num($marginInfos['pa_total'], 'MAIN_MAX_DECIMALS_TOT');
+		$marginInfos['pv_total'] = (float) price2num($marginInfos['pv_total'], 'MAIN_MAX_DECIMALS_TOT');
+
 		if ($marginInfos['pa_products'] > 0) {
 			$marginInfos['margin_rate_products'] = 100 * $marginInfos['margin_on_products'] / $marginInfos['pa_products'];
 		}
@@ -187,7 +196,7 @@ class FormMargin
 		//if ($marginInfos['pv_total'] < 0)
 		//	$marginInfos['total_margin'] = -1 * (abs($marginInfos['pv_total']) - $marginInfos['pa_total']);
 		//else
-			$marginInfos['total_margin'] = $marginInfos['pv_total'] - $marginInfos['pa_total'];
+		$marginInfos['total_margin'] = $marginInfos['pv_total'] - $marginInfos['pa_total'];
 		if ($marginInfos['pa_total'] > 0) {
 			$marginInfos['total_margin_rate'] = 100 * $marginInfos['total_margin'] / $marginInfos['pa_total'];
 		}
