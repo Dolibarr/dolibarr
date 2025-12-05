@@ -1712,12 +1712,12 @@ class CommandeFournisseur extends CommonOrder
 						$line->date_end,
 						$line->array_options,
 						$line->fk_unit,
-							$line->multicurrency_subprice,  // pu_ht_devise
-							$line->origin,     // origin
-							$line->origin_id,  // origin_id
-							$line->rang,       // rang
-							$line->special_code,
-							isset($line->label) ? $line->label : ''
+						$line->multicurrency_subprice,  // pu_ht_devise
+						$line->origin,     // origin
+						$line->origin_id,  // origin_id
+						$line->rang,       // rang
+						$line->special_code,
+						isset($line->label) ? $line->label : ''
 						);
 					if ($result < 0) {
 						dol_syslog(get_class($this)."::create ".$this->error, LOG_WARNING); // do not use dol_print_error here as it may be a functional error
