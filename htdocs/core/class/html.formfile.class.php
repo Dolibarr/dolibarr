@@ -1430,9 +1430,11 @@ class FormFile
 				// TODO: Remove inline JavaScript from this link. Do not use "javascript:" handlers.
 				//  This must be replaced with a proper event listener in a separate JS file.
 				//  Also, implement a generic toggle UX behavior with button feedback, such as changing the icon
+				//  Suggestion for improvement: add drag-and-drop detection to automatically open .divattachnewfile.
 				//  Example: add an class or data-attribute to the link and bind the click event in a js script.
 				//  -
 				// 	Important: Do not trigger a click event on the input, as it will break the drag-and-drop functionality, forcing the user to close the prompt window before they can drag and drop files.
+				//  Suggestion of improvement : add a drag and drop detection to open .divattachnewfile
 				$tmpurlforbutton = 'javascript:console.log("open add file form");jQuery(".divattachnewfile").toggle(); void(0);';
 				$morehtmlright .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $tmpurlforbutton, '', $permtoeditline);
 			}
