@@ -563,19 +563,30 @@ class Facture extends CommonInvoice
 			$previousdaynextdatewhen = null;
 
 			if ($originaldatewhen) {
-				if ($_facrec->rule_for_lines_dates == 'prepaid') {
-					$nextdatewhen = dol_time_plus_duree($originaldatewhen, (int) $_facrec->frequency, $_facrec->unit_frequency);
+				if ($_facrec->rule_for_lines_dates == 'prepaid_alignedmonth') {
+					// Align the $originaldatewhen date to the first day of the next month, unless we are already on the first day of the month
+					if ((int) strftime("%d", $originaldatewhen) != 1) {
+						$tmpNextMonth = dol_time_plus_duree($originaldatewhen, 1, 'm');
+						$originaldatewhen = dol_mktime(0, 0, 0, (int) strftime("%m", $tmpNextMonth), 1, (int) strftime("%Y", $tmpNextMonth));
+					}
 				}
 
+				if ($_facrec->rule_for_lines_dates == 'prepaid' || $_facrec->rule_for_lines_dates == 'prepaid_alignedmonth') {
+					$nextdatewhen = dol_time_plus_duree($originaldatewhen, (int) $_facrec->frequency, $_facrec->unit_frequency);
+				}
 				if ($_facrec->rule_for_lines_dates == 'postpaid') {
 					$previousdaynextdatewhen = dol_time_plus_duree($originaldatewhen, -1, 'd');
 				} elseif ($nextdatewhen) {
-					$previousdaynextdatewhen = dol_time_plus_duree($nextdatewhen, -1, 'd');
+					if ($_facrec->rule_for_lines_dates == 'prepaid_alignedmonth') {
+						$previousdaynextdatewhen = $nextdatewhen; // We want to have a nice "01/01/2026 to 01/07/2026" invoice, not "01/01/2026 to 30/06/2026"
+					} else {
+						$previousdaynextdatewhen = dol_time_plus_duree($nextdatewhen, -1, 'd');
+					}
 				}
 
 				$originaldatewhen = $_facrec->rule_for_lines_dates == 'postpaid'
-					? dol_time_plus_duree($originaldatewhen, -$_facrec->frequency, $_facrec->unit_frequency)
-					: $originaldatewhen;
+				? dol_time_plus_duree($originaldatewhen, -$_facrec->frequency, $_facrec->unit_frequency)
+				: $originaldatewhen;
 			}
 
 			// Define thirdparty
