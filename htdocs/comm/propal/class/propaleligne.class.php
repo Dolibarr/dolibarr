@@ -184,19 +184,19 @@ class PropaleLigne extends CommonObjectLine
 	public $info_bits = 0;
 
 	/**
-	 * Total amount excluding taxes (HT = "Hors Taxe" in French) including discounts
+	 * Total amount excluding taxes HT including discounts
 	 * @var float
 	 */
 	public $total_ht;
 
 	/**
-	 * Total VAT amount (TVA = "Taxe sur la Valeur Ajoutée" in French)
+	 * Total VAT amount
 	 * @var float
 	 */
 	public $total_tva;
 
 	/**
-	 * Total amount including taxes (TTC = "Toutes Taxes Comprises" in French)
+	 * Total amount including taxes
 	 * @var float
 	 */
 	public $total_ttc;
