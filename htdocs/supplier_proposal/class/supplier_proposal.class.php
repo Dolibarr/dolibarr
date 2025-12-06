@@ -384,7 +384,7 @@ class SupplierProposal extends CommonObject
 			$supplier_proposalligne->desc = $remise->description; // Description ligne
 			$supplier_proposalligne->tva_tx = $remise->tva_tx;
 			$supplier_proposalligne->subprice = -(float) $remise->amount_ht;
-			$supplier_proposalligne->fk_product = 0; // Id produit predefini
+			$supplier_proposalligne->fk_product = 0; // Predefined Product ID
 			$supplier_proposalligne->qty = 1;
 			$supplier_proposalligne->remise_percent = 0;
 			$supplier_proposalligne->rang = -1;
@@ -1075,7 +1075,7 @@ class SupplierProposal extends CommonObject
 				}
 
 				/*
-				 *  Insertion du detail des produits dans la base
+				 *  Insert products details into database
 				 */
 				if (!$error) {
 					$fk_parent_line = 0;
@@ -2995,7 +2995,7 @@ class SupplierProposalLine extends CommonObjectLine
 	/**
 	 * @var int ID
 	 */
-	public $fk_product; // Id produit predefini
+	public $fk_product; // Predefined Product ID
 
 	/**
 	 * @deprecated Use $product_type
@@ -3068,21 +3068,21 @@ class SupplierProposalLine extends CommonObjectLine
 	 * @var int
 	 */
 	public $info_bits = 0; // Liste d'options cumulables:
-	// Bit 0: 	0 si TVA normal - 1 if TVA NPR
-	// Bit 1:	0 ligne normal - 1 if fixed reduction
+	// Bit 0: 	0 if TVA normal - 1 if TVA NPR
+	// Bit 1:	0 normal line - 1 if fixed reduction
 
 	/**
 	 * @var float
 	 */
-	public $total_ht; // Total HT de la ligne toute quantite et incluant la remise ligne
+	public $total_ht; // Line Net Total (HT), including all quantity and the line discount
 	/**
 	 * @var float
 	 */
-	public $total_tva; // Total TVA de la ligne toute quantite et incluant la remise ligne
+	public $total_tva; // Line Net Total (VAT), including all quantity and the line discount
 	/**
 	 * @var float
 	 */
-	public $total_ttc; // Total TTC de la ligne toute quantite et incluant la remise ligne
+	public $total_ttc; // Line Net Total (TTC), including all quantity and the line discount
 
 	/**
 	 * @var int|string

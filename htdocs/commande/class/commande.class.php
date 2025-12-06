@@ -84,7 +84,7 @@ class Commande extends CommonOrder
 	public $fk_element = 'fk_commande';
 
 	/**
-	 * @var string String with name of icon for commande class. Here is object_order.png
+	 * @var string String with name of icon for order class. Here is object_order.png
 	 */
 	public $picto = 'order';
 
@@ -1707,10 +1707,9 @@ class Commande extends CommonOrder
 					}
 				}
 			}
-			// Calcul du total TTC et de la TVA pour la ligne a partir de
-			// qty, pu, remise_percent et txtva
-			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
-			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
+			// Calculation of the gross total (TTC) and VAT for the line from qty, pu, remise_percent and txtva
+			// VERY IMPORTANT: It's at the time of line insertion that we must store the net, VAT, and gross amounts,
+			// and this is done at the line level, which has its own VAT rate
 
 			$localtaxes_type = getLocalTaxesFromRate($txtva, 0, $this->thirdparty, $mysoc);
 
@@ -2163,7 +2162,7 @@ class Commande extends CommonOrder
 			$line->tva_tx = $remise->tva_tx;
 			$line->subprice = -(float) $remise->amount_ht;
 			$line->price = -(float) $remise->amount_ht;
-			$line->fk_product = 0; // Id produit predefini
+			$line->fk_product = 0; // Predefined Product ID
 			$line->qty = 1;
 			$line->remise_percent = 0;
 			$line->rang = -1;
