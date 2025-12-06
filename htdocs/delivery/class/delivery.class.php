@@ -789,7 +789,7 @@ class Delivery extends CommonObject
 	 *
 	 *	@param	int<0,2>	$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
 	 *  @param  int<-1,1>	$save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *	@return	string								Chaine avec URL
+	 *	@return	string								String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $save_lastsearch_value = -1)
 	{

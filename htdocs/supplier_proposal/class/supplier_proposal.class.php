@@ -105,13 +105,13 @@ class SupplierProposal extends CommonObject
 	public $author;
 
 	/**
-	 * @var string
+	 * @var string Reference entered when adding a line to the request
 	 */
-	public $ref_fourn; Reference entered when adding a line to the request
+	public $ref_fourn;
 	/**
-	 * @var string
+	 * @var string Reference entered when adding a line to the request
 	 */
-	public $ref_supplier; Reference entered when adding a line to the request
+	public $ref_supplier;
 
 	/**
 	 * @var int
@@ -417,10 +417,9 @@ class SupplierProposal extends CommonObject
 
 	/**
 	 *    	Add a proposal line into database (linked to product/service or not)
-	 * 		Les parameters sont deja cense etre juste et avec valeurs finales a l'appel
-	 *		de cette methode. Aussi, pour le taux tva, il doit deja avoir ete defini
-	 *		par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,'',produit)
-	 *		et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
+	 * 		The parameters are already supposed to be correct and with final values upon calling this method.
+	 *      Also, for the VAT rate, it must have already been defined by the caller using the method get_default_tva(societe_vendeuse, societe_acheteuse, produit)
+	 *      and the description (desc) must already have the correct value (it's up to the caller to manage multilanguage)
 	 *
 	 * 		@param    	string			$desc				Description of line
 	 * 		@param    	float			$pu_ht				Unit price
@@ -557,10 +556,9 @@ class SupplierProposal extends CommonObject
 				$product_type = $type;
 			}
 
-			// Calcul du total TTC et de la TVA pour la ligne a partir de
-			// qty, pu, remise_percent et txtva
-			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
-			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
+			// Calculation of the gross total (TTC) and VAT for the line from qty, pu, remise_percent and txtva
+			// VERY IMPORTANT: It's at the time of line insertion that we must store the net, VAT, and gross amounts,
+			// and this is done at the line level, which has its own VAT rate
 
 			$localtaxes_type = getLocalTaxesFromRate($txtva, 0, $this->thirdparty, $mysoc);
 
@@ -690,7 +688,7 @@ class SupplierProposal extends CommonObject
 					}
 				}
 
-				// Mise a jour information denormalisees au niveau de la propale meme
+				// Update denormalized information at the present proposal level
 				$result = $this->update_price(1, 'auto', 0, $this->thirdparty); // This method is designed to add line from user input so total calculation must be done using 'auto' mode.
 				if ($result > 0) {
 					$this->db->commit();
@@ -764,10 +762,9 @@ class SupplierProposal extends CommonObject
 		if ($this->status == 0) {
 			$this->db->begin();
 
-			// Calcul du total TTC et de la TVA pour la ligne a partir de
-			// qty, pu, remise_percent et txtva
-			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
-			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
+			// Calculation of the gross total (TTC) and VAT for the line from qty, pu, remise_percent and txtva
+			// VERY IMPORTANT: It's at the time of line insertion that we must store the net, VAT, and gross amounts,
+			// and this is done at the line level, which has its own VAT rate
 
 			$localtaxes_type = getLocalTaxesFromRate($txtva, 0, $mysoc, $this->thirdparty);
 
@@ -1268,7 +1265,7 @@ class SupplierProposal extends CommonObject
 	}
 
 	/**
-	 *	Load a proposal from database and its ligne array
+	 *	Load a proposal from database and its lines array
 	 *
 	 *	@param      int			$rowid		id of object to load
 	 *	@param		string		$ref		Ref of proposal
