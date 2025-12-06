@@ -459,7 +459,7 @@ class OrderLine extends CommonOrderLine
 
 		$this->db->begin();
 
-		// Insertion dans base de la ligne
+		// Insert line into database
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commandedet';
 		$sql .= ' (fk_commande, fk_parent_line, label, description, qty, ref_ext,';
 		$sql .= ' vat_src_code, tva_tx, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type,';

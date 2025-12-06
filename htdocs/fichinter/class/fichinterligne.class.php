@@ -200,7 +200,7 @@ class FichinterLigne extends CommonObjectLine
 			}
 		}
 
-		// Insertion dans base de la ligne
+		// Insert line into database
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'fichinterdet';
 		$sql .= ' (fk_fichinter, description, date, duree, rang, product_type, special_code)';
 		$sql .= " VALUES (".((int) $this->fk_fichinter).",";
