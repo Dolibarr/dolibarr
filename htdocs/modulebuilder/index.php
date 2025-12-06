@@ -5424,7 +5424,7 @@ if ($module == 'initmodule') {
 				$htmltextenabled .= 'isModEnabled(\''.dol_escape_htmltag(strtolower($module)).'\') <span class="opacitymedium">(enabled when module is enabled)</span>';
 				$htmltextperms = '<u>'.$langs->trans("Examples").':</u><br>';
 				$htmltextperms .= '1 <span class="opacitymedium">(access always allowed)</span><br>';
-				$htmltextperms .= '$user->hasright(\''.dol_escape_htmltag(strtolower($module)).'\', \'myobject\', \'read\') <span class="opacitymedium">(access allowed if user has permission module->object->read)</span>';
+				$htmltextperms .= '$user->hasRight(\''.dol_escape_htmltag(strtolower($module)).'\', \'myobject\', \'read\') <span class="opacitymedium">(access allowed if user has permission module->object->read)</span>';
 
 				print '<tr class="liste_titre">';
 				print_liste_field_titre("#", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, 'center tdsticky tdstickygray ');
