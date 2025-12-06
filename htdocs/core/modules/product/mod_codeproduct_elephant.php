@@ -172,7 +172,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	 * Return next value
 	 *
 	 * @param	Product		$objproduct     Object product
-	 * @param  	int		    $type       Produit ou service (0:product, 1:service)
+	 * @param  	int		    $type       Product or service (0:product, 1:service)
 	 * @return 	string|-1      			Value if OK, '' if module not configured, -1 if KO
 	 */
 	public function getNextValue($objproduct = null, $type = -1)

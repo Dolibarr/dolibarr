@@ -2286,7 +2286,7 @@ class Commande extends CommonOrder
 				$line->product_custom_country_id = $objp->country_id;
 				$line->product_custom_country_code = $objp->country_code;
 
-				$line->fk_product_type  = $objp->fk_product_type; // Produit ou service
+				$line->fk_product_type  = $objp->fk_product_type; // Product or service
 				$line->fk_unit          = $objp->fk_unit;
 
 				$line->extraparams = !empty($objp->extraparams) ? (array) json_decode($objp->extraparams, true) : array();

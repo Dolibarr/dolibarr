@@ -178,7 +178,7 @@ class PropaleLigne extends CommonObjectLine
 	/**
 	 * Some other info:
 	 * Bit 0: 	0 si TVA normal - 1 if TVA NPR
-	 * Bit 1:	0 ligne normal - 1 if line with fixed discount
+	 * Bit 1:	0 if normal line - 1 if line with fixed discount
 	 * @var ?int
 	 */
 	public $info_bits = 0;
