@@ -565,7 +565,7 @@ class Propal extends CommonObject
 
 			$line->fk_propal = $this->id;
 			$line->fk_remise_except = $remise->id;
-			$line->desc = $remise->description; // Description ligne
+			$line->desc = $remise->description; // Line Description
 			$line->vat_src_code = $remise->vat_src_code;
 			$line->tva_tx = $remise->tva_tx;
 			$line->subprice = -(float) $remise->amount_ht;
@@ -614,7 +614,7 @@ class Propal extends CommonObject
 	 * 		@param		float			$txlocaltax1		Local tax 1 rate (deprecated, use instead txtva with code inside)
 	 *  	@param		float			$txlocaltax2		Local tax 2 rate (deprecated, use instead txtva with code inside)
 	 *		@param    	int				$fk_product      	Product/Service ID predefined
-	 * 		@param    	float			$remise_percent  	Pourcentage de remise de la ligne
+	 * 		@param    	float			$remise_percent  	Line discount percentage
 	 * 		@param    	string			$price_base_type	HT or TTC
 	 * 		@param    	float			$pu_ttc             Prix unitaire TTC
 	 * 		@param    	int				$info_bits			Bits for type of lines
@@ -734,10 +734,9 @@ class Propal extends CommonObject
 				}
 			}
 
-			// Calcul du total TTC et de la TVA pour la ligne a partir de
-			// qty, pu, remise_percent et txtva
-			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
-			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
+			// Calculation of the gross total (TTC) and VAT for the line from qty, pu, remise_percent and txtva
+			// VERY IMPORTANT: It's at the time of line insertion that we must store the net, VAT, and gross amounts,
+			// and this is done at the line level, which has its own VAT rate
 
 			$localtaxes_type = getLocalTaxesFromRate($txtva, 0, $this->thirdparty, $mysoc);
 

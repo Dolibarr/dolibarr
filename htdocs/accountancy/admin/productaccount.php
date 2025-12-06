@@ -1,12 +1,12 @@
 <?php
-/* Copyright (C) 2013-2014  Olivier Geffroy     <jeff@jeffinfo.com>
- * Copyright (C) 2013-2024  Alexandre Spangaro  <aspangaro@easya.solutions>
- * Copyright (C) 2014       Florian Henry       <florian.henry@open-concept.pro>
- * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
- * Copyright (C) 2015       Ari Elbaz (elarifr) <github@accedinfo.com>
- * Copyright (C) 2021       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
+ * Copyright (C) 2013-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
+ * Copyright (C) 2014       Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2015       Ari Elbaz (elarifr)     <github@accedinfo.com>
+ * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -552,10 +552,12 @@ if ($resql) {
 
 	if ($massaction == 'set_default_account') {
 		$formquestion = array();
-		$formquestion[] = array('type' => 'other',
+		$formquestion[] = array(
+			'type' => 'other',
 			'name' => 'set_default_account',
 			'label' => $langs->trans("AccountancyCode"),
-			'value' => $form->select_account('', 'default_account', 1, array(), 0, 0, 'maxwidth200 maxwidthonsmartphone', 'cachewithshowemptyone'));
+			'value' => $form->select_account('', 'default_account', 1, array(), 0, 0, 'maxwidth200 maxwidthonsmartphone', 'cachewithshowemptyone')
+		);
 		print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmPreselectAccount"), $langs->trans("ConfirmPreselectAccountQuestion", $nbselected), "confirm_set_default_account", $formquestion, 1, 0, 200, 500, 1);
 	}
 
@@ -907,49 +909,48 @@ if ($resql) {
 	}
 	print '</table>';
 	print '</div>';
+	?>
+	<script type="text/javascript">
+		jQuery(document).ready(function() {
+			function init_savebutton() {
+				console.log("We check if at least one line is checked")
 
-	print '<script type="text/javascript">
-        jQuery(document).ready(function() {
-        	function init_savebutton()
-        	{
-	            console.log("We check if at least one line is checked")
+				atleastoneselected = 0;
+				jQuery(".checkforselect").each(function(index) {
+					/* console.log( index + ": " + $( this ).text() ); */
+					if ($(this).is(':checked')) atleastoneselected++;
+				});
 
-    			atleastoneselected=0;
-	    		jQuery(".checkforselect").each(function( index ) {
-	  				/* console.log( index + ": " + $( this ).text() ); */
-	  				if ($(this).is(\':checked\')) atleastoneselected++;
-	  			});
+				if (atleastoneselected) jQuery("#changeaccount").removeAttr('disabled');
+				else jQuery("#changeaccount").attr('disabled', 'disabled');
+				if (atleastoneselected) jQuery("#changeaccount").attr('class', 'button');
+				else jQuery("#changeaccount").attr('class', 'button');
+			}
 
-	            if (atleastoneselected) jQuery("#changeaccount").removeAttr(\'disabled\');
-	            else jQuery("#changeaccount").attr(\'disabled\',\'disabled\');
-	            if (atleastoneselected) jQuery("#changeaccount").attr(\'class\',\'button\');
-	            else jQuery("#changeaccount").attr(\'class\',\'button\');
-        	}
-
-        	jQuery(".checkforselect").change(function() {
-        		init_savebutton();
-        	});
-        	jQuery(".productforselect").change(function() {
-				console.log($(this).attr("id")+" "+$(this).val());
+			jQuery(".checkforselect").change(function() {
+				init_savebutton();
+			});
+			jQuery(".productforselect").change(function() {
+				console.log($(this).attr("id") + " " + $(this).val());
 				if ($(this).val() && $(this).val() != -1) {
-					$(".productforselect"+$(this).attr("id")).prop(\'checked\', true);
+					$(".productforselect"+$(this).attr("id")).prop('checked', true);
 				} else {
-					$(".productforselect"+$(this).attr("id")).prop(\'checked\', false);
+					$(".productforselect"+$(this).attr("id")).prop('checked', false);
 				}
-        		init_savebutton();
-        	});
+				init_savebutton();
+			});
 
-        	init_savebutton();
+			init_savebutton();
 
-            jQuery("#search_current_account").keyup(function() {
-        		if (jQuery("#search_current_account").val() != \'\')
-                {
-                    console.log("We set a value of account to search "+jQuery("#search_current_account").val()+", so we disable the other search criteria on account");
-                    jQuery("#search_current_account_valid").val(-1);
-                }
-        	});
-        });
-        </script>';
+			jQuery("#search_current_account").keyup(function() {
+				if (jQuery("#search_current_account").val() != '') {
+					console.log("We set a value of account to search " + jQuery("#search_current_account").val() + ", so we disable the other search criteria on account");
+					jQuery("#search_current_account_valid").val(-1);
+				}
+			});
+		});
+	</script>
+	<?php
 
 	print '</form>';
 
