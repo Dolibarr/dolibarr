@@ -4509,23 +4509,12 @@ function dol_print_socialnetworks($value, $contactid, $socid, $type, $dictsocial
 				$addlink = 'AC_SKYPE';
 				$link = '';
 				if (getDolGlobalString('AGENDA_ADDACTIONFORSKYPE')) {
-					$link = '<a href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create&amp;backtopage=1&amp;actioncode=' . $addlink . '&amp;contactid=' . $contactid . '&amp;socid=' . $socid . '">' . img_object($langs->trans("AddAction"), "calendar") . '</a>';
+					$link = '<a href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create&backtopage=1&actioncode=' . $addlink . '&contactid=' . $contactid . '&socid=' . $socid . '">' . img_object($langs->trans("AddAction"), "calendar") . '</a>';
 				}
 				$htmllink .= ($link ? ' ' . $link : '');
 			}
 		} else {
-			$networkconstname = 'MAIN_INFO_SOCIETE_' . strtoupper($type) . '_URL';
-			if (getDolGlobalString($networkconstname)) {
-				$link = str_replace('{socialid}', $value, getDolGlobalString($networkconstname));
-				$valuetoshow = $value;
-				if (preg_match('/^https?:\/\//i', $link)) {
-					$valuetoshow = preg_replace('/https:\/\/www\.linkedin\.com\/?/', '', $valuetoshow);
-					//$valuetoshow = preg_replace('/www\.twitter\.com\/?/', '', $valuetoshow);
-					$htmllink .= '<a href="' . dol_sanitizeUrl($link, 0) . '" target="_blank" rel="noopener noreferrer">' . dol_escape_htmltag($valuetoshow) . '</a>';
-				} elseif ($link) {
-					$htmllink .= '<a href="' . dol_sanitizeUrl($link, 1) . '" target="_blank" rel="noopener noreferrer">' . dol_escape_htmltag($valuetoshow) . '</a>';
-				}
-			} elseif (!empty($dictsocialnetworks[$type]['url'])) {
+			if (!empty($dictsocialnetworks[$type]['url'])) {
 				$tmpvirginurl = preg_replace('/\/?{socialid}/', '', $dictsocialnetworks[$type]['url']);
 				if ($tmpvirginurl) {
 					$value = preg_replace('/^www\.' . preg_quote($tmpvirginurl, '/') . '\/?/', '', $value);
@@ -4543,11 +4532,17 @@ function dol_print_socialnetworks($value, $contactid, $socid, $type, $dictsocial
 						$value = preg_replace('/^' . preg_quote($tmpvirginurl2, '/') . '\/?/', '', $value);
 					}
 				}
-				$link = str_replace('{socialid}', $value, $dictsocialnetworks[$type]['url']);
-				if (preg_match('/^https?:\/\//i', $link)) {
-					$htmllink .= '<a href="' . dol_sanitizeUrl($link, 0) . '" target="_blank" rel="noopener noreferrer">' . dol_escape_htmltag($value) . '</a>';
+				if (preg_match('/^https?:\/\//i', $value)) {
+					$link = $value;
 				} else {
-					$htmllink .= '<a href="' . dol_sanitizeUrl($link, 1) . '" target="_blank" rel="noopener noreferrer">' . dol_escape_htmltag($value) . '</a>';
+					$link = str_replace('{socialid}', $value, $dictsocialnetworks[$type]['url']);
+				}
+				$valuetoshow = $value;
+				$valuetoshow = preg_replace('/https:\/\/www\.(twitter|x|linkedin)\.com\/?/', '', $valuetoshow);
+				if (preg_match('/^https?:\/\//i', $link)) {
+					$htmllink .= '<a href="' . dol_sanitizeUrl($link, 0) . '" target="_blank" rel="noopener noreferrer">' . dol_escape_htmltag($valuetoshow) . '</a>';
+				} else {
+					$htmllink .= '<a href="' . dol_sanitizeUrl($link, 1) . '" target="_blank" rel="noopener noreferrer">' . dol_escape_htmltag($valuetoshow) . '</a>';
 				}
 			} else {
 				$htmllink .= dol_escape_htmltag($value);
@@ -11608,7 +11603,7 @@ function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid =
  *	Check if a variable with name $var start with $regextext.
  *  Can be used to forge dol_eval() conditions.
  *
- *  @param	string			$var		Variable
+ *  @param	string			$var		Variable name ('mainmenu' or 'leftmenu', ...)
  *  @param	string			$regextext	Text that must be a valid regex string
  *  @param	int<0,1>		$matchrule	1=Test if start with, 0=Test if equal
  *  @return	boolean|string				True or False, text if bad usage.

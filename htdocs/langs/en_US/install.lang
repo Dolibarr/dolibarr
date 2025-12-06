@@ -222,5 +222,5 @@ MigrationAccountancyBookkeeping=Migrate accountancy bookkeeping to use a ref
 InvoiceExportModelsMigration=Migrate invoice export models
 MigrationApiRestTokens=Migrate user's API keys to llx_oauth_token
 MigratedTokens=%s token(s) migrated
-InitAHMACKeyForBlockedLog=Init the BLOCKEDLOG_HMAC_KEY constant for new encryption of Unalterable Log module
+InitAHMACKeyForBlockedLog=Initialization of the BLOCKEDLOG_HMAC_KEY constant for the new HMAC encryption of Unalterable Log module
 MigrationAlreadyDone=This migration appears to have already been completed.
