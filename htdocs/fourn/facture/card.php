@@ -3679,9 +3679,9 @@ if ($action == 'create') {
 				$s = '<span class="hideonsmartphone opacitymedium">' . $langs->trans("ReCalculate") . ' </span>';
 				$s .= '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=calculate&token='.newToken().'&calculationrule=totalofround">' . $langs->trans("Mode1") . '</a>';
 				$s .= ' / ';
-				$s .= '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=calculate&token='.newToken().'&calculationrule=roundoftotal">' . $langs->trans("Mode2") . '</a>';
+				$s .= '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=calculate&token='.newToken().'&calculationrule=roundoftotal">' . ($conf->dol_optimize_smallscreen ? "2" : $langs->trans("Mode2")) . '</a>';
 				print '<div class="inline-block">';
-				print $form->textwithtooltip($s, $langs->trans("CalculationRuleDesc", $calculationrulenum) . '<br>' . $langs->trans("CalculationRuleDescSupplier"), 2, 1, img_picto('', 'help'), '', 3, '', 0, 'recalculate');
+				print $form->textwithtooltip($s, $langs->trans("CalculationRuleDesc", $calculationrulenum) . '<br>' . $langs->trans("CalculationRuleDescSupplier"), 2, 1, img_picto('', 'help', 'class="paddingleft paddingright"'), '', 3, '', 0, 'recalculate');
 				print '&nbsp; &nbsp; &nbsp; &nbsp;';
 				print '</div>';
 			}
@@ -3817,7 +3817,7 @@ if ($action == 'create') {
 								$bankaccountstatic->accountancy_journal = $accountingjournal->getNomUrl(0, 1, 1, '', 1);
 							}
 
-							print '<td class="right">';
+							print '<td class="right nowraponall">';
 							if ($objp->baid > 0) {
 								print $bankaccountstatic->getNomUrl(1, 'transactions');
 							}

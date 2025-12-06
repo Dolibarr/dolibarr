@@ -19,6 +19,7 @@
  * Copyright (C) 2023		William Mead				<william.mead@manchenumerique.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2025		Benjamin Falière			<benjamin@faliere.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1956,6 +1957,12 @@ if (empty($reshook)) {
 
 			$type = $product->type;
 			$price_base_type = $product->price_base_type;
+
+			// If base type TTc, we change pu value to define the TTC one
+			if ($price_base_type == 'TTC' && !empty($pu_ttc)) {
+				$pu = $pu_ttc;
+			}
+
 			$label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label') : '');
 
 			$price_min = $product->price_min;
@@ -3521,14 +3528,15 @@ if ($action == 'create') {
 		if (empty($reshook)) {
 			if ($action != 'editline') {
 				// Subtotal
-				if ($object->status == Propal::STATUS_DRAFT && isModEnabled('subtotals') && getDolGlobalString('SUBTOTAL_TITLE_' . strtoupper($object->element))) {
+				if ($object->status == Propal::STATUS_DRAFT && isModEnabled('subtotals')
+					&& (getDolGlobalInt('SUBTOTAL_TITLE_'.strtoupper($object->element)) || getDolGlobalInt('SUBTOTAL_'.strtoupper($object->element)))) {
 					$langs->load('subtotals');
 
 					$url_button = array();
 
 					$url_button[] = array(
 						'lang' => 'subtotals',
-						'enabled' => (isModEnabled('propal') && $object->status == Propal::STATUS_DRAFT),
+						'enabled' => (isModEnabled('propal') && $object->status == Propal::STATUS_DRAFT && getDolGlobalInt('SUBTOTAL_TITLE_'.strtoupper($object->element))),
 						'perm' => (bool) $usercancreate,
 						'label' => $langs->trans('AddTitleLine'),
 						'url' => '/comm/propal/card.php?id=' . $object->id . '&action=add_title_line&token=' . newToken()
@@ -3536,7 +3544,7 @@ if ($action == 'create') {
 
 					$url_button[] = array(
 						'lang' => 'subtotals',
-						'enabled' => (isModEnabled('propal') && $object->status == Propal::STATUS_DRAFT),
+						'enabled' => (isModEnabled('propal') && $object->status == Propal::STATUS_DRAFT && getDolGlobalInt('SUBTOTAL_'.strtoupper($object->element))),
 						'perm' => (bool) $usercancreate,
 						'label' => $langs->trans('AddSubtotalLine'),
 						'url' => '/comm/propal/card.php?id=' . $object->id . '&action=add_subtotal_line&token=' . newToken()

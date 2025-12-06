@@ -193,7 +193,7 @@ class BlockedLog
 
 		$sep = 0;
 
-		// Customer Invoice/Facture / Payment
+		// Customer Invoice/Facture / Payment (For most VAT antifraud laws)
 		if (isModEnabled('invoice')) {
 			$sep++;
 			$this->trackedevents['separator_'.$sep] = array('id' => 'separator_'.$sep, 'label' => '----------', 'labelhtml' => '<span class="opacitymedium">----- '.$langs->trans("Invoices").' | '.$langs->trans("Payments").'</span>', 'disabled' => 1);
@@ -221,7 +221,7 @@ class BlockedLog
 		 */
 
 		// Donation
-		if (isModEnabled('don')) {
+		if (isModEnabled('don') && getDolGlobalString('BLOCKEDLOG_ENABLE_DONATION')) {	// For countries that need unalterable logs for donations
 			if (!empty($this->trackedevents)) {
 				$sep++;
 				$this->trackedevents['separator_'.$sep] = array('id' => 'separator_'.$sep, 'label' => '----------', 'labelhtml' => '<span class="opacitymedium">-----  '.$langs->trans("Donations").' | '.$langs->trans("Payments").'</span>', 'disabled' => 1);
@@ -244,7 +244,7 @@ class BlockedLog
 		 */
 
 		// Members
-		if (isModEnabled('member')) {
+		if (isModEnabled('member') && getDolGlobalString('BLOCKEDLOG_ENABLE_MEMBER')) {	// For countries that need unalterable logs for membership management
 			if (!empty($this->trackedevents)) {
 				$sep++;
 				$this->trackedevents['separator_'.$sep] = array('id' => 'separator_'.$sep, 'label' => '----------', 'labelhtml' => '<span class="opacitymedium">----- '.$langs->trans("MenuMembers").'</span>', 'disabled' => 1);
@@ -256,6 +256,7 @@ class BlockedLog
 		}
 
 		// Bank
+		/*
 		if (isModEnabled("bank")) {
 			if (!empty($this->trackedevents)) {
 				$sep++;
@@ -266,6 +267,7 @@ class BlockedLog
 			$this->trackedevents['PAYMENT_VARIOUS_MODIFY'] = array('id' => 'PAYMENT_VARIOUS_MODIFY', 'label' => 'logPAYMENT_VARIOUS_MODIFY', 'labelhtml' => img_picto('', 'bank', 'class="pictofixedwidth").').$langs->trans('logPAYMENT_VARIOUS_MODIFY'));
 			$this->trackedevents['PAYMENT_VARIOUS_DELETE'] = array('id' => 'PAYMENT_VARIOUS_DELETE', 'label' => 'logPAYMENT_VARIOUS_DELETE', 'labelhtml' => img_picto('', 'bank', 'class="pictofixedwidth").').$langs->trans('logPAYMENT_VARIOUS_DELETE'));
 		}
+		*/
 
 		// Cash register closing
 		// $conf->global->BANK_ENABLE_POS_CASHCONTROL must be set to 1 by all external POS modules
@@ -279,8 +281,8 @@ class BlockedLog
 			$this->trackedevents['CASHCONTROL_VALIDATE'] = array('id' => 'CASHCONTROL_VALIDATE', 'label' => 'logCASHCONTROL_VALIDATE', 'labelhtml' => img_picto('', 'pos', 'class="pictofixedwidth").').$langs->trans('logCASHCONTROL_VALIDATE'));
 		}
 
-		// Add more action to track from a conf variable
-		// For example: STOCK_MOVEMENT,...
+		// Add more action to track from a conf variable. For the case we want to track other actions into the unalterable log.
+		// For example: STOCK_MOVEMENT, ...
 		if (getDolGlobalString('BLOCKEDLOG_ADD_ACTIONS_SUPPORTED')) {
 			if (!empty($this->trackedevents)) {
 				$sep++;
@@ -515,7 +517,8 @@ class BlockedLog
 			'table_element', 'fields',
 			'ref_previous', 'ref_next',
 			'origin', 'origin_id',
-			'oldcopy', 'picto', 'error', 'errors', 'model_pdf', 'modelpdf', 'last_main_doc', 'civility_id', 'contact', 'contact_id',
+			'oldcopy', 'picto', 'error', 'errors',
+			'model_pdf', 'modelpdf', 'last_main_doc', 'civility_id', 'contact', 'contact_id',
 			'table_element_line', 'ismultientitymanaged', 'isextrafieldmanaged',
 			'array_languages',
 			'childtables',
@@ -554,17 +557,32 @@ class BlockedLog
 				// List of fields qualified
 				if (!in_array($key, array(
 				'name', 'name_alias', 'ref_ext', 'address', 'zip', 'town', 'state_code', 'country_code', 'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6', 'phone', 'fax', 'email', 'barcode',
-				'tva_intra', 'tva_assuj', 'localtax1_assuj', 'localtax1_value', 'localtax2_assuj', 'localtax2_value', 'managers', 'capital', 'typent_code', 'forme_juridique_code', 'code_client', 'code_fournisseur'
+				'tva_intra', 'tva_assuj', 'localtax1_assuj', 'localtax2_assuj', 'managers', 'capital', 'typent_code', 'forme_juridique_code', 'code_client', 'code_fournisseur'
 				))) {
 					continue; // Discard if not into this dedicated list
 				}
-				if (!is_object($value) && !is_null($value) && $value !== '') {
+
+				$valuequalifiedforstorage = false;
+				if (!is_object($value)) {
+					if (empty($value) && in_array($key, array('country_code', 'idprof1', 'idprof2', 'tva_intra'))) {
+						$valuequalifiedforstorage = true; // We accept '' value for some fields
+						$value = (string) $value;
+					}
+					if (!is_null($value) && empty($value) && in_array($key, array('tva_assuj', 'localtax1_assuj', 'localtax2_assuj'))) {
+						$valuequalifiedforstorage = true; // We accept zero value for amounts
+					}
+					if (!is_null($value) && (string) $value !== '') {
+						$valuequalifiedforstorage = true;
+					}
+				}
+
+				if ($valuequalifiedforstorage) {
 					$this->object_data->thirdparty->$key = $value;
 				}
 			}
 		}
 
-		// Add company info
+		// Add my company info
 		if (!empty($mysoc)) {
 			$this->object_data->mycompany = new stdClass();
 
@@ -572,14 +590,29 @@ class BlockedLog
 				if (in_array($key, $arrayoffieldstoexclude)) {
 					continue; // Discard some properties
 				}
-				// List of fields qualified
+				// List of fields qualified to keep
 				if (!in_array($key, array(
 				'name', 'name_alias', 'ref_ext', 'address', 'zip', 'town', 'state_code', 'country_code', 'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6', 'phone', 'fax', 'email', 'barcode',
 				'tva_assuj', 'tva_intra', 'localtax1_assuj', 'localtax1_value', 'localtax2_assuj', 'localtax2_value', 'managers', 'capital', 'typent_code', 'forme_juridique_code', 'code_client', 'code_fournisseur'
 				))) {
 					continue; // Discard if not into this dedicated list
 				}
-				if (!is_object($value) && !is_null($value) && $value !== '') {
+
+				$valuequalifiedforstorage = false;
+				if (!is_object($value)) {
+					if (empty($value) && in_array($key, array('country_code', 'idprof1', 'idprof2', 'tva_intra'))) {
+						$valuequalifiedforstorage = true; // We accept '' value for some fields
+						$value = (string) $value;
+					}
+					if (!is_null($value) && empty($value) && in_array($key, array('tva_assuj'))) {
+						$valuequalifiedforstorage = true; // We accept zero value for amounts
+					}
+					if (!is_null($value) && (string) $value !== '') {
+						$valuequalifiedforstorage = true;
+					}
+				}
+
+				if ($valuequalifiedforstorage) {
 					$this->object_data->mycompany->$key = $value;
 				}
 			}
@@ -600,10 +633,14 @@ class BlockedLog
 				}
 				// List of fields qualified
 				if (!in_array($key, array(
-					'ref', 'ref_client', 'ref_supplier', 'date', 'datef', 'datev', 'type', 'total_ht', 'total_tva', 'total_ttc', 'localtax1', 'localtax2', 'revenuestamp', 'datepointoftax', 'note_public', 'lines',
-					'module_source', 'pos_source'
+					'ref', 'ref_client', 'ref_supplier', 'date', 'datef', 'datev', 'type',
+					//'vat_src_code', 'tva_tx', 'localtax1_tx', 'localtax2_tx',  There is no rate at full doc level
+					'total_ht', 'total_tva', 'total_ttc', 'localtax1', 'localtax2',
+					'revenuestamp', 'datepointoftax', 'note_public',
+					'lines',
+					'module_source', 'pos_source', 'pos_print_counter', 'email_sent_counter'
 				))) {
-					continue; // Discard if not into a dedicated list
+					continue; // Discarded if not into the dedicated list
 				}
 				if ($key == 'lines') {
 					$lineid = 0;
@@ -612,8 +649,7 @@ class BlockedLog
 						foreach ($tmpline as $keyline => $valueline) {
 							if (!in_array($keyline, array(
 								'ref', 'product_type', 'product_label',
-								'qty',
-								'subprice',
+								'qty', 'subprice',
 								'vat_src_code', 'tva_tx', 'localtax1_tx', 'localtax2_tx',
 								'total_ht', 'total_tva', 'total_ttc', 'total_localtax1', 'total_localtax2',
 								'multicurrency_code', 'multicurrency_total_ht', 'multicurrency_total_tva', 'multicurrency_total_ttc',
@@ -626,13 +662,43 @@ class BlockedLog
 								$this->object_data->invoiceline[$lineid] = new stdClass();
 							}
 
-							if (!is_object($valueline) && !is_null($valueline) && $valueline !== '') {
+							$valuequalifiedforstorage = false;
+							if (!is_object($valueline)) {
+								if (!is_null($valueline) && empty($valueline) && in_array($key, array('tva_tx', 'localtax1_tx', 'localtax2_tx', 'total_ht', 'total_tva', 'total_ttc', 'total_localtax1', 'total_localtax2'))) {
+									$valuequalifiedforstorage = true; // We accept zero value for amounts
+								}
+								if (!is_null($valueline) && (string) $valueline !== '') {
+									$valuequalifiedforstorage = true;
+								}
+							}
+							if ($keyline == 'product_label' && empty($valueline)) {
+								$valueline = dol_trunc(dolGetFirstLineOfText($tmpline->desc)); // Fallback on description if label is empty
+								$valuequalifiedforstorage = true;
+							}
+
+							if ($valuequalifiedforstorage) {
 								$this->object_data->invoiceline[$lineid]->$keyline = $valueline;
 							}
 						}
 					}
-				} elseif (!is_object($value) && !is_null($value) && $value !== '') {
-					$this->object_data->$key = $value;
+				} else {
+					$valuequalifiedforstorage = false;
+					if (!is_object($value)) {
+						if (empty($value) && in_array($key, array('pos_source', 'module_source'))) {
+							$valuequalifiedforstorage = true; // We accept '' value for some fields
+							$value = (string) $value;
+						}
+						if (!is_null($value) && empty($value) && in_array($key, array('total_ht', 'total_tva', 'total_ttc', 'localtax1', 'localtax2', 'pos_print_counter', 'email_sent_counter'))) {
+							$valuequalifiedforstorage = true; // We accept zero value for amounts
+						}
+						if (!is_null($value) && (string) $value !== '') {
+							$valuequalifiedforstorage = true;
+						}
+					}
+
+					if ($valuequalifiedforstorage) {
+						$this->object_data->$key = $value;
+					}
 				}
 			}
 
@@ -651,7 +717,22 @@ class BlockedLog
 				))) {
 					continue; // Discard if not into a dedicated list
 				}
-				if (!is_object($value) && !is_null($value) && $value !== '') {
+
+				$valuequalifiedforstorage = false;
+				if (!is_object($value)) {
+					if (empty($value) && in_array($key, array('pos_source', 'module_source'))) {
+						$valuequalifiedforstorage = true; // We accept '' value for some fields
+						$value = (string) $value;
+					}
+					if (!is_null($value) && empty($value) && in_array($key, array('total_ht', 'total_tva', 'total_ttc', 'localtax1', 'localtax2', 'pos_print_counter', 'email_sent_counter'))) {
+						$valuequalifiedforstorage = true; // We accept zero value for amounts
+					}
+					if (!is_null($value) && (string) $value !== '') {
+						$valuequalifiedforstorage = true;
+					}
+				}
+
+				if ($valuequalifiedforstorage) {
 					$this->object_data->$key = $value;
 				}
 			}
@@ -679,7 +760,7 @@ class BlockedLog
 
 			$totalamount = 0;
 
-			// Loop on each invoice payment amount (payment_part)
+			// Loop on each invoice payment amount (the payment_part)
 			if (is_array($object->amounts) && !empty($object->amounts)) {
 				$paymentpartnumber = 0;
 				foreach ($object->amounts as $objid => $amount) {
@@ -738,7 +819,7 @@ class BlockedLog
 							if (in_array($key, $arrayoffieldstoexclude)) {
 								continue; // Discard some properties
 							}
-							// List of fields qualified
+							// List of thirdparty fields qualified
 							if (!in_array($key, array(
 							'name', 'name_alias', 'ref_ext', 'address', 'zip', 'town', 'state_code', 'country_code', 'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6', 'phone', 'fax', 'email', 'barcode',
 							'tva_intra', 'localtax1_assuj', 'localtax1_value', 'localtax2_assuj', 'localtax2_value', 'managers', 'capital', 'typent_code', 'forme_juridique_code', 'code_client', 'code_fournisseur'
@@ -754,6 +835,8 @@ class BlockedLog
 					// Init object to avoid warnings
 					if ($this->element == 'payment_donation') {
 						$paymentpart->donation = new stdClass();
+					} elseif ($this->element == 'payment_various') {
+						$paymentpart->various = new stdClass();
 					} else {
 						$paymentpart->invoice = new stdClass();
 					}
@@ -765,11 +848,27 @@ class BlockedLog
 							}
 							// List of fields qualified
 							if (!in_array($key, array(
-							'ref', 'ref_client', 'ref_supplier', 'date', 'datef', 'type', 'total_ht', 'total_tva', 'total_ttc', 'localtax1', 'localtax2', 'revenuestamp', 'datepointoftax', 'note_public'
+							'ref', 'ref_client', 'ref_supplier', 'date', 'datef', 'type', 'total_ht', 'total_tva', 'total_ttc', 'localtax1', 'localtax2', 'revenuestamp', 'datepointoftax', 'note_public',
+							'pos_source', 'module_source', 'pos_print_counter', 'email_sent_counter'
 							))) {
 								continue; // Discard if not into a dedicated list
 							}
-							if (!is_object($value) && !is_null($value) && $value !== '') {
+
+							$valuequalifiedforstorage = false;
+							if (!is_object($value)) {
+								if (empty($value) && in_array($key, array('pos_source', 'module_source'))) {
+									$valuequalifiedforstorage = true; // We accept '' value for some fields
+									$value = (string) $value;
+								}
+								if (!is_null($value) && empty($value) && in_array($key, array('total_ht', 'total_tva', 'total_ttc', 'localtax1', 'localtax2', 'pos_print_counter', 'email_sent_counter'))) {
+									$valuequalifiedforstorage = true; // We accept zero value for amounts
+								}
+								if (!is_null($value) && (string) $value !== '') {
+									$valuequalifiedforstorage = true;
+								}
+							}
+
+							if ($valuequalifiedforstorage) {
 								if ($this->element == 'payment_donation') {
 									$paymentpart->donation->$key = $value;
 								} elseif ($this->element == 'payment_various') {
