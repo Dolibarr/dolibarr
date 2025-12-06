@@ -107,11 +107,11 @@ class SupplierProposal extends CommonObject
 	/**
 	 * @var string
 	 */
-	public $ref_fourn; //Reference saisie lors de l'ajout d'une ligne à la demande
+	public $ref_fourn; Reference entered when adding a line to the request
 	/**
 	 * @var string
 	 */
-	public $ref_supplier; //Reference saisie lors de l'ajout d'une ligne à la demande
+	public $ref_supplier; Reference entered when adding a line to the request
 
 	/**
 	 * @var int
