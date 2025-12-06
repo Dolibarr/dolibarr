@@ -3579,7 +3579,7 @@ class SupplierProposalLine extends CommonObjectLine
 
 		$this->db->begin();
 
-		// Mise a jour ligne en base
+		// Update line in database
 		$sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposaldet SET";
 		$sql .= " description = '".$this->db->escape($this->desc)."'";
 		$sql .= " , label = ".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null");
@@ -3663,7 +3663,7 @@ class SupplierProposalLine extends CommonObjectLine
 		// phpcs:enable
 		$this->db->begin();
 
-		// Mise a jour ligne en base
+		// Update line in database
 		$sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposaldet SET";
 		$sql .= " total_ht = ".(float) price2num($this->total_ht, 'MT');
 		$sql .= ",total_tva = ".(float) price2num($this->total_tva, 'MT');

@@ -834,7 +834,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 		// phpcs:enable
 		$this->db->begin();
 
-		// Mise a jour ligne en base
+		// Update line in database
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_det SET";
 		$sql .= "  total_ht = ".price2num($this->total_ht);
 		$sql .= ", tva= ".price2num($this->total_tva);
