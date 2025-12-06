@@ -205,7 +205,7 @@ DELETE FROM llx_user_rights WHERE fk_id IN (SELECT id FROM llx_rights_def WHERE 
 DELETE FROM llx_usergroup_rights WHERE fk_id IN (SELECT id FROM llx_rights_def WHERE module = 'eventorganization');
 DELETE FROM llx_rights_def WHERE module = 'eventorganization';
 
-ALTER TABLE llx_rights_def ADD COLUMN family VARCHAR(16) AFTER module_position;
+ALTER TABLE llx_rights_def ADD COLUMN family VARCHAR(64) AFTER module_position;
 
 -- Reorder some permission
 UPDATE llx_rights_def SET module_position = 64 WHERE module = 'intracommreport' AND module_position <> 64;
