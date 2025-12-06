@@ -35,9 +35,10 @@ class LanguageOfCommentsSniff implements Sniff
 		' ligne ',
 		' lignes ',
 		' pourcentage ',
-		' facture ',
+		' contrats ',
+		// ' facture ', // avoid french name of dolibarr object
 		' factures ',
-		' commande ',
+		// ' commande ',
 		' commandes ',
 		' valeur ',
 	];
