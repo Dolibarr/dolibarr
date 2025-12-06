@@ -569,7 +569,7 @@ class Propal extends CommonObject
 			$line->vat_src_code = $remise->vat_src_code;
 			$line->tva_tx = $remise->tva_tx;
 			$line->subprice = -(float) $remise->amount_ht;
-			$line->fk_product = 0; // Id produit predefined
+			$line->fk_product = 0; // Product Id predefined
 			$line->qty = 1;
 			$line->remise_percent = 0;
 			$line->rang = -1;

@@ -26,7 +26,7 @@ class LanguageOfCommentsSniff implements Sniff
 {
 	// List of words that betray a comment in French
 	public $frenchWords = [
-		' avec ', ' depuis ', 'valeur', ' chaine ', ' entier ',
+		' avec ', ' depuis ', 'valeur', ' chaine ', ' entier ', ' produit ', ' ligne ',
 	];
 
 	/**

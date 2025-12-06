@@ -6,7 +6,7 @@
  * Copyright (C) 2015       Ari Elbaz (elarifr) <github@accedinfo.com>
  * Copyright (C) 2021       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -662,7 +662,7 @@ if ($resql) {
 	while ($i < min($num, $limit)) {
 		$obj = $db->fetch_object($resql);
 
-		// Ref produit as link
+		// Product ref as link
 		$product_static->ref = $obj->ref;
 		$product_static->id = $obj->rowid;
 		$product_static->type = $obj->product_type;
