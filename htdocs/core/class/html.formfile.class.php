@@ -507,8 +507,32 @@ class FormFile
 		}
 
 		$printer = 0;
+		$supportedmoduleparts = [
+			'company',
+			'member',
+			'product',
+			'stock',
+			'ficheinter',
+			'user',
+			'project',
+			'contract',
+			'facture',
+			'supplier_proposal',
+			'propal',
+			'proposal',
+			'order',
+			'commande',
+			'expedition',
+			'commande_fournisseur',
+			'facture_fournisseur',
+			'expensereport',
+			'delivery',
+			'ticket',
+			'bom',
+			'mrp:mo',
+		];
 		// The direct print feature is implemented only for such elements
-		if (in_array($modulepart, array('contract', 'facture', 'supplier_proposal', 'propal', 'proposal', 'order', 'commande', 'expedition', 'commande_fournisseur', 'expensereport', 'delivery', 'ticket'))) {
+		if (in_array($modulepart, $supportedmoduleparts)) {
 			$printer = ($user->hasRight('printing', 'read') && isModEnabled('printing'));
 		}
 
@@ -818,7 +842,9 @@ class FormFile
 			$out .= '<input type="hidden" name="page_y" value="">';
 			$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 
-			$out .= load_fiche_titre($titletoshow, '', '');
+			if ($titletoshow) {
+				$out .= load_fiche_titre($titletoshow, '', '');
+			}
 			$out .= '<div class="div-table-responsive-no-min">';
 			$out .= '<table class="liste formdoc noborder centpercent">';
 

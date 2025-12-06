@@ -582,6 +582,7 @@ class FormCompany extends Form
 			if ($num) {
 				$i = 0;
 				$country = '';
+				/** @var array<int,array{code:int,label:string,label_sort:string,country_code:string,country:string}> $arraydata */
 				$arraydata = array();
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($resql);
@@ -589,7 +590,7 @@ class FormCompany extends Form
 					if ($obj->code) {		// We exclude empty line, we will add it later
 						$labelcountry = (($langs->trans("Country" . $obj->country_code) != "Country" . $obj->country_code) ? $langs->trans("Country" . $obj->country_code) : $obj->country);
 						$labeljs = (($langs->trans("JuridicalStatus" . $obj->code) != "JuridicalStatus" . $obj->code) ? $langs->trans("JuridicalStatus" . $obj->code) : ($obj->label != '-' ? $obj->label : '')); // $obj->label is already in output charset (converted by database driver)
-						$arraydata[$obj->code] = array('code' => $obj->code, 'label' => $labeljs, 'label_sort' => $labelcountry . '_' . $labeljs, 'country_code' => $obj->country_code, 'country' => $labelcountry);
+						$arraydata[(int) $obj->code] = array('code' => (int) $obj->code, 'label' => $labeljs, 'label_sort' => $labelcountry . '_' . $labeljs, 'country_code' => (string) $obj->country_code, 'country' => $labelcountry);
 					}
 					$i++;
 				}

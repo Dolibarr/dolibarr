@@ -27,15 +27,6 @@
  */
 
 require "../../main.inc.php";
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -44,6 +35,14 @@ require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'users', 'companies'));
@@ -161,6 +160,7 @@ $search_array_options_task = $extrafields->getOptionalsFromPost($object->table_e
 /*
  * Actions
  */
+
 $error = 0;
 $parameters = array('id' => $id, 'taskid' => $taskid, 'projectid' => $projectid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -460,24 +460,24 @@ $head = project_timesheet_prepare_head($mode, $usertoprocess);
 print dol_get_fiche_head($head, 'inputperday', $langs->trans('TimeSpent'), -1, $picto);
 
 // Show description of content
-print '<div class="hideonsmartphone opacitymedium">';
+$s = '';
 if ($mine || ($usertoprocess->id == $user->id)) {
-	print $langs->trans("MyTasksDesc").'.'.($onlyopenedproject ? ' '.$langs->trans("OnlyOpenedProject") : '').'<br>';
+	$s .= $langs->trans("MyTasksDesc").'.'.($onlyopenedproject ? ' '.$langs->trans("OnlyOpenedProject") : '').'<br>';
 } else {
 	if (empty($usertoprocess->id) || $usertoprocess->id < 0) {
 		if ($user->hasRight('projet', 'all', 'lire') && !$socid) {
-			print $langs->trans("ProjectsDesc").'.'.($onlyopenedproject ? ' '.$langs->trans("OnlyOpenedProject") : '').'<br>';
+			$s .= $langs->trans("ProjectsDesc").'.'.($onlyopenedproject ? ' '.$langs->trans("OnlyOpenedProject") : '').'<br>';
 		} else {
-			print $langs->trans("ProjectsPublicTaskDesc").'.'.($onlyopenedproject ? ' '.$langs->trans("OnlyOpenedProject") : '').'<br>';
+			$s .= $langs->trans("ProjectsPublicTaskDesc").'.'.($onlyopenedproject ? ' '.$langs->trans("OnlyOpenedProject") : '').'<br>';
 		}
 	}
 }
 if ($mine || ($usertoprocess->id == $user->id)) {
-	print $langs->trans("OnlyYourTaskAreVisible").'<br>';
+	$s .= $langs->trans("OnlyYourTaskAreVisible").'<br>';
 } else {
-	print $langs->trans("AllTaskVisibleButEditIfYouAreAssigned").'<br>';
+	$s .= $langs->trans("AllTaskVisibleButEditIfYouAreAssigned").'<br>';
 }
-print '</div>';
+print info_admin($s, 0, 0, 'info', 'nomargintop');
 
 print dol_get_fiche_end();
 
@@ -700,7 +700,6 @@ if ($conf->use_javascript_ajax && count($tasksarray) >= getDolGlobalInt('NBLINES
 		print '<td class="liste_total"></td>';
 	}
 	print '<td class="liste_total leftborder">';
-	//print '  - '.$langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0).'</strong>';
 	print '</td>';
 
 	print '<td class="liste_total center'.($cssonholiday ? ' '.$cssonholiday : '').($cssweekend ? ' '.$cssweekend : '').'"><div class="totalDay0">&nbsp;</div></td>';
@@ -764,14 +763,11 @@ if (count($tasksarray) > 0) {
 		print '<td class="leftborder"></td>';
 		print '<td class="right">';
 		$timeonothertasks = ($totalforeachday[$daytoparse] - $totalforvisibletasks[$daytoparse]);
-		//if ($timeonothertasks)
-		//{
 		print '<span class="timesheetalreadyrecorded" title="texttoreplace"><input type="text" class="center width50" disabled="" id="timespent[-1][0]" name="task[-1][0]" value="';
 		if ($timeonothertasks) {
 			print convertSecondToTime($timeonothertasks, 'allhourmin');
 		}
 		print '"></span>';
-		//}
 		print '</td>';
 		print ' <td class="liste_total borderleft"></td>';
 		print ' <td class="liste_total"></td>';
@@ -793,9 +789,9 @@ if (count($tasksarray) > 0) {
 
 		print '<td class="liste_total center'.($cssonholiday ? ' '.$cssonholiday : '').($cssweekend ? ' '.$cssweekend : '').'"><div class="totalDay0">&nbsp;</div></td>';
 
-		print '<td class="liste_total"></td>
-                <td class="liste_total"></td>
-                </tr>';
+		print '<td class="liste_total"></td>';
+		print '<td class="liste_total"></td>';
+		print '</tr>';
 	}
 } else {
 	print '<tr><td colspan="14"><span class="opacitymedium">'.$langs->trans("NoAssignedTasks").'</span></td></tr>';

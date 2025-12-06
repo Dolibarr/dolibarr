@@ -5936,16 +5936,6 @@ if ($action == 'create') {
 
 			if (count($object->tab_next_situation_invoice) > 0) {
 				// List of next invoices
-				/*print '<tr class="liste_titre">';
-				 print '<td>' . $langs->trans('ListOfNextSituationInvoices') . '</td>';
-				 print '<td></td>';
-				 print '<td></td>';
-				 if (isModEnabled('banque')) print '<td class="right"></td>';
-				 print '<td class="right">' . $langs->trans('AmountHT') . '</td>';
-				 print '<td class="right">' . $langs->trans('AmountTTC') . '</td>';
-				 print '<td width="18">&nbsp;</td>';
-				 print '</tr>';*/
-
 				$total_next_ht = $total_next_ttc = 0;
 
 				foreach ($object->tab_next_situation_invoice as $next_invoice) {
@@ -6144,7 +6134,7 @@ if ($action == 'create') {
 					print $invoice->getNomUrl(0);
 					print '</span>';
 					print '</td>';
-					// Delete
+					// Delete discount
 					print '<td class="right">';
 					print '<a href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&action=unlinkdiscount&token='.newToken().'&discountid='.$obj->rowid.'">';
 					print img_picto($langs->transnoentitiesnoconv("RemoveDiscount"), 'unlink');
@@ -6560,14 +6550,15 @@ if ($action == 'create') {
 			}
 
 			// Subtotal
-			if ($object->status == Facture::STATUS_DRAFT && isModEnabled('subtotals') && getDolGlobalString('SUBTOTAL_TITLE_'.strtoupper($object->element))) {
+			if ($object->status == Facture::STATUS_DRAFT && isModEnabled('subtotals')
+				&& (getDolGlobalInt('SUBTOTAL_TITLE_'.strtoupper($object->element)) || getDolGlobalInt('SUBTOTAL_'.strtoupper($object->element)))) {
 				$langs->load("subtotals");
 
 				$url_button = array();
 
 				$url_button[] = array(
 					'lang' => 'subtotals',
-					'enabled' => (isModEnabled('invoice') && $object->status == Facture::STATUS_DRAFT),
+					'enabled' => (isModEnabled('invoice') && $object->status == Facture::STATUS_DRAFT && getDolGlobalInt('SUBTOTAL_TITLE_'.strtoupper($object->element))),
 					'perm' => (bool) $usercancreate,
 					'label' => $langs->trans('AddTitleLine'),
 					'url' => '/compta/facture/card.php?facid='.$object->id.'&action=add_title_line&token='.newToken()
@@ -6575,7 +6566,7 @@ if ($action == 'create') {
 
 				$url_button[] = array(
 					'lang' => 'subtotals',
-					'enabled' => (isModEnabled('invoice') && $object->status == Facture::STATUS_DRAFT),
+					'enabled' => (isModEnabled('invoice') && $object->status == Facture::STATUS_DRAFT  && getDolGlobalInt('SUBTOTAL_'.strtoupper($object->element))),
 					'perm' => (bool) $usercancreate,
 					'label' => $langs->trans('AddSubtotalLine'),
 					'url' => '/compta/facture/card.php?facid='.$object->id.'&action=add_subtotal_line&token='.newToken()
@@ -6729,7 +6720,7 @@ if ($action == 'create') {
 				}
 			}
 
-			// For situation invoice with excess received
+			// For situation invoice
 			if ($object->status > Facture::STATUS_DRAFT
 				&& $object->isSituationInvoice()
 				&& ($object->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits) > 0
@@ -6788,8 +6779,13 @@ if ($action == 'create') {
 
 			// Delete
 			$isErasable = $object->is_erasable();
+
 			$htmltooltip = '';
-			if ($isErasable == -4) {
+			if ($isErasable == -6) {
+				$htmltooltip = $langs->trans('DisabledBecauseAlreadySentByEmail');
+			} elseif ($isErasable == -5) {
+				$htmltooltip = $langs->trans('DisabledBecauseAlreadyPrintedOnce');
+			} elseif ($isErasable == -4) {
 				$htmltooltip = $langs->trans('DisabledBecausePayments');
 			} elseif ($isErasable == -3) {
 				$htmltooltip = $langs->trans('DisabledBecauseNotLastSituationInvoice');

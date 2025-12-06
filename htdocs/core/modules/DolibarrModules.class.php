@@ -139,16 +139,16 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 */
 	public $rights_class;
 
-	public const URL_FOR_BLACKLISTED_MODULES = 'https://ping.dolibarr.org/modules-blacklist.txt';
+	const URL_FOR_BLACKLISTED_MODULES = 'https://ping.dolibarr.org/modules-blacklist.txt';
 
-	public const KEY_ID = 0;
-	public const KEY_LABEL = 1;
-	public const KEY_TYPE = 2;	// deprecated
-	public const KEY_DEFAULT = 3;
-	public const KEY_FIRST_LEVEL = 4;
-	public const KEY_SECOND_LEVEL = 5;
-	public const KEY_MODULE = 6;
-	public const KEY_ENABLED = 7;
+	const KEY_ID = 0;
+	const KEY_LABEL = 1;
+	const KEY_TYPE = 2;	// deprecated
+	const KEY_DEFAULT = 3;
+	const KEY_FIRST_LEVEL = 4;
+	const KEY_SECOND_LEVEL = 5;
+	const KEY_MODULE = 6;
+	const KEY_ENABLED = 7;
 
 	/**
 	 * @var array<array{commentgroup?:string,mainmenu:string,leftmenu:string,langs:string,enabled:int|string,target:string,titre:string,user:int,fk_menu:string,fk_parent:string,url:string,position:int,positionfull:int|string,perms:string,type:string}>|int<1,1> 	Module menu entries (1 means the menu entries are not declared into module descriptor but are hardcoded into menu manager)
@@ -782,9 +782,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	/**
 	 * Gives the translated module description if translation exists in admin.lang or the default module description
 	 *
-	 * @return string  Translated module description
+	 * @param 	int<0,1>	$foruseinpopupdesc  	If 1, we return a short description for use into popup window
+	 * @return 	string  							Translated module description
 	 */
-	public function getDesc()
+	public function getDesc($foruseinpopupdesc = 0)
 	{
 		global $langs;
 		$langs->load("admin");

@@ -172,6 +172,11 @@ class Facture extends CommonInvoice
 	public $pos_print_counter = 0;
 
 	/**
+	 * @var int			counter used to track how many times the invoice was sent by email
+	 */
+	public $email_sent_counter = 0;
+
+	/**
 	 * @var int 		id of template invoice when generated from a template invoice
 	 */
 	public $fk_fac_rec_source;
@@ -5583,7 +5588,8 @@ class Facture extends CommonInvoice
 		$this->fk_incoterms = 0;
 		$this->location_incoterms = '';
 
-		$this->pos_print_counter = 3;	// Already printed 3 times
+		$this->pos_print_counter = 0;	// Already printed 0 times
+		$this->email_sent_counter = 0;	// Already sent by email 0 times
 
 		$this->status = 0;
 

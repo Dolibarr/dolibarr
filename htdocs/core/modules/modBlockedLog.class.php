@@ -23,6 +23,8 @@
  *  \brief      Description and activation file for the module BlockedLog
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+
 
 /**
  *	Class to describe a BlockedLog module
@@ -51,6 +53,7 @@ class modBlockedLog extends DolibarrModules
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Enable a log on some business events into an unalterable log. This module may be mandatory for some countries.";
+
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
@@ -173,6 +176,15 @@ class modBlockedLog extends DolibarrModules
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 
+		// Check that the HTTPS is forced
+		global $dolibarr_main_force_https;
+
+		if (isALNEQualifiedVersion(0, 1) && empty($dolibarr_main_force_https)) {
+			$this->error = 'Error: The HTTPS must be forced by setting the $dolibarr_main_force_https into Dolibarr conf/conf.php file to allow the use of this module in France.';
+
+			return 0;
+		}
+
 		// Create HMAC if it does not exists yet
 		$hmac_encoded_secret_key = getDolGlobalString('BLOCKEDLOG_HMAC_KEY');
 		if (empty($hmac_encoded_secret_key)) {
@@ -290,5 +302,31 @@ class modBlockedLog extends DolibarrModules
 		}
 
 		return $this->_remove($sql, $options);
+	}
+
+
+	/**
+	 * Overwrite the common getDesc() method
+	 *
+	 * @param 	int<0,1>	$foruseinpopupdesc  	If 1, we return a short description for use into popup window
+	 * @return 	string  							Translated module description
+	 */
+	public function getDesc($foruseinpopupdesc = 0)
+	{
+		global $langs;
+		$langs->load("admin");
+
+		// If module description translation exists
+		$s = $langs->transnoentitiesnoconv("Module".$this->numero."Desc");
+
+		if ($foruseinpopupdesc) {
+			$langs->load("blockedlog");
+			$s .= '<br><br>';
+			if (isALNEQualifiedVersion(1, 1)) {
+				$s .= info_admin($langs->trans("UnalterableLogTool1FR"), 0, 0, 'warning');
+			}
+		}
+
+		return $s;
 	}
 }

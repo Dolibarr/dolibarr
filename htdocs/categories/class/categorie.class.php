@@ -1342,19 +1342,23 @@ class Categorie extends CommonObject
 			$nbcateg = $this->db->num_rows($resql);
 
 			while ($obj = $this->db->fetch_object($resql)) {
-				$this->cats[$obj->rowid]['rowid'] = $obj->rowid;
-				$this->cats[$obj->rowid]['id'] = $obj->rowid;
-				$this->cats[$obj->rowid]['fk_parent'] = $obj->fk_parent;
-				$this->cats[$obj->rowid]['label'] = !empty($obj->label_trans) ? $obj->label_trans : $obj->label;
-				$this->cats[$obj->rowid]['description'] = !empty($obj->description_trans) ? $obj->description_trans : $obj->description;
-				$this->cats[$obj->rowid]['color'] = $obj->color;
-				$this->cats[$obj->rowid]['position'] = $obj->position;
-				$this->cats[$obj->rowid]['visible'] = $obj->visible;
-				$this->cats[$obj->rowid]['ref_ext'] = $obj->ref_ext;
-				$this->cats[$obj->rowid]['picto'] = 'category';
-				// fields are filled with buildPathFromId later
-				$this->cats[$obj->rowid]['fullpath'] = '';
-				$this->cats[$obj->rowid]['fulllabel'] = '';
+				$this->cats[(int) $obj->rowid]
+					= array(
+						'rowid' => (int) $obj->rowid,
+						'id' => (int) $obj->rowid,
+						'fk_parent' => (int) $obj->fk_parent,
+						'label' => !empty($obj->label_trans) ? (string) $obj->label_trans : (string) $obj->label,
+						'description' => !empty($obj->description_trans) ? (string) $obj->description_trans : (string) $obj->description,
+						'color' => (string) $obj->color,
+						'position' => (string) $obj->position,
+						'visible' => (int) $obj->visible,
+						'ref_ext' => (string) $obj->ref_ext,
+						'picto' => 'category',
+						// fields are filled with buildPathFromId later
+						'fullpath' => '',
+						'fulllabel' => '',
+						'level' => null,
+					);
 				$i++;
 			}
 		} else {
