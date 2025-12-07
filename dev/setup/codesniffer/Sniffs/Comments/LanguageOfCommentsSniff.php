@@ -26,11 +26,16 @@ class LanguageOfCommentsSniff implements Sniff
 {
 	// List of words that betray a comment in French
 	public $frenchWords = [
+		' arrondir ',
 		' avec ',
+		' calculer ',
 		' chaine ',
 		' chercher ',
+		' chiffre ',
+		' chiffres ',
 		// ' commande ',
 		' commandes ',
+		' compteur ',
 		' contrats ',
 		' depuis ',
 		' entier ',
@@ -44,9 +49,11 @@ class LanguageOfCommentsSniff implements Sniff
 		' pourcentage ',
 		' produit ',
 		' produits ',
+		' quand ',
 		' rechercher ',
 		' sinon ',
 		' stocker ',
+		' soustraire ',
 		' valeur ',
 		' valeurs ',
 	];

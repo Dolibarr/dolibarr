@@ -3,7 +3,7 @@
  * Copyright (C) 2006-2009  Laurent Destailleur  	<eldy@users.sourceforge.net>
  * Copyright (C) 2007-2012  Regis Houssin        	<regis.houssin@inodbox.com>
  * Copyright (C) 2011       Juanjo Menent	    	<jmenent@2byte.es>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -47,12 +47,12 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	// variables not inherited
 
 	/**
-	 *  @var string			String de recherche
+	 *  @var string			Search String
 	 */
 	public $searchcode;
 
 	/**
-	 *  @var int			Nombre de chiffres du compteur
+	 *  @var int			Number of digits in the counter
 	 */
 	public $numbitcounter;
 
