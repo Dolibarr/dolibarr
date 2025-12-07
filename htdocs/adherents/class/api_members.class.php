@@ -321,12 +321,51 @@ class Members extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('member', $member->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(401, 'Access to member='.$member->id.' not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
+		$newcompanyname = null;
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
 				continue;
+			}
+			if ($field == 'societe') {
+				throw new RestException(400, "Deprecated field societe, use company");
+			}
+			if ($field == 'company') {
+				$newcompanyname = (string) $value;
+			}
+			if ($field == 'socid') {
+				if ($value == 0) {
+					$setThirdPartyIdResult = $member->setThirdPartyId(0);
+					if (!$setThirdPartyIdResult) {
+						throw new RestException(500, 'id=0 setThirdPartyIdResult='.$value.' failed with error='.$member->error);
+					}
+					$member->societe = '';
+					$member->company = '';
+				} elseif ($value > 0) {
+					$oldsocid = (int) $member->socid;
+					if ($oldsocid > 1 and $oldsocid != $value) {
+						throw new RestException(400, 'Not allowed to change old socid='.$oldsocid.' directly, first reset with socid=0, then change to new socid='.$value);
+					}
+					$newthirdparty = new Societe($this->db);
+					$newresult = $newthirdparty->fetch($value);
+					if (!$newresult) {
+						throw new RestException(404, 'Thirdparty='.$value.' not found');
+					}
+					if (!DolibarrApi::_checkAccessToResource('societe', $value)) {
+						throw new RestException(401, 'Access to socid='.$value.' not allowed for login '.DolibarrApiAccess::$user->login);
+					}
+					if (!$newcompanyname) {
+						$newcompanyname = $newthirdparty->name;
+					}
+					$setThirdPartyIdResult = $member->setThirdPartyId($value, $newcompanyname);
+					if (!$setThirdPartyIdResult) {
+						throw new RestException(500, 'id='.$value.' setThirdPartyIdResult='.$value.' failed with error='.$member->error);
+					}
+				} else {
+					throw new RestException(400, 'Socid has to be 0 (remove link to thirdparty) or larger than 0, and you specificied socid='.$value);
+				}
 			}
 			// Process the status separately because it must be updated using
 			// the validate(), resiliate() and exclude() methods of the class Adherent.
@@ -356,6 +395,11 @@ class Members extends DolibarrApi
 				}
 				$member->$field = $value;
 			}
+		}
+
+		if ($newcompanyname) {
+			// set to either the value specified in json or to the company name found using the socid
+			$member->company = $newcompanyname;
 		}
 
 		// If there is no error, update() returns the number of affected rows

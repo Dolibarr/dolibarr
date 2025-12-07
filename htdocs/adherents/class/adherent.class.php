@@ -1004,15 +1004,26 @@ class Adherent extends CommonObject
 						$lthirdparty->default_lang = $this->default_lang;
 
 						$result = $lthirdparty->update($this->fk_soc, $user, 0, 1, 1, 'update'); // Use sync to 0 to avoid cyclic updates
-
 						if ($result < 0) {
-							$this->error = $lthirdparty->error;
+							if ($lthirdparty->error) {
+								$this->error = $lthirdparty->error;
+								dol_syslog(get_class($this)."::update::error=".$this->error, LOG_ERR);
+							} else {
+								$this->error = join(',', $lthirdparty->errors);
+								dol_syslog(get_class($this)."::update::errors=".$this->error, LOG_ERR);
+							}
 							$this->errors = $lthirdparty->errors;
-							dol_syslog(get_class($this)."::update ".$this->error, LOG_ERR);
+							dol_syslog(get_class($this)."::update::lthirdparty->errors=".join(',', $this->errors), LOG_ERR);
 							$error++;
 						}
 					} elseif ($result < 0) {
-						$this->error = $lthirdparty->error;
+						if ($lthirdparty->error) {
+							$this->error = $lthirdparty->error;
+							dol_syslog(get_class($this)."::update::error=".$this->error, LOG_ERR);
+						} else {
+							$this->error = join(',', $this->errors);
+							dol_syslog(get_class($this)."::update::errors=".$this->error, LOG_ERR);
+						}
 						$error++;
 					}
 				}
@@ -1335,10 +1346,11 @@ class Adherent extends CommonObject
 	/**
 	 *    Set link to a third party
 	 *
-	 *    @param     int	$thirdpartyid		Id of user to link to
+	 *    @param     int		$thirdpartyid	Id of thirdparty to link to
+	 *    @param     string		$societe		Name of thirdparty to link to
 	 *    @return    int						1=OK, -1=KO
 	 */
-	public function setThirdPartyId($thirdpartyid)
+	public function setThirdPartyId($thirdpartyid, $societe = '')
 	{
 		global $conf, $langs;
 
@@ -1346,18 +1358,24 @@ class Adherent extends CommonObject
 
 		// Remove link to third party onto any other members
 		if ($thirdpartyid > 0) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET fk_soc = null";
+			$sql = "UPDATE ".MAIN_DB_PREFIX."adherent";
+			$sql .= " SET fk_soc = null, societe = null";
 			$sql .= " WHERE fk_soc = ".((int) $thirdpartyid);
 			$sql .= " AND entity = ".$conf->entity;
-			dol_syslog(get_class($this)."::setThirdPartyId", LOG_DEBUG);
+			dol_syslog(get_class($this)."::setThirdPartyId=".$thirdpartyid." Remove link to third party onto any other members", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 		}
 
 		// Add link to third party for current member
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET fk_soc = ".($thirdpartyid > 0 ? $thirdpartyid : 'null');
+		if ($thirdpartyid == 0) {
+			$sql .= ", societe = null";
+		} else {
+			$sql .= ", societe = .($societe != '' ? $societe : 'null')";
+		}
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
-		dol_syslog(get_class($this)."::setThirdPartyId", LOG_DEBUG);
+		dol_syslog(get_class($this)."::setThirdPartyId=".$thirdpartyid, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$this->db->commit();
