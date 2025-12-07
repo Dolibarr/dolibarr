@@ -46,6 +46,7 @@ class LanguageOfCommentsSniff implements Sniff
 		' modèle ',
 		' niveau ',
 		' nombre ',
+		' parametrage ',
 		' pourcentage ',
 		' produit ',
 		' produits ',

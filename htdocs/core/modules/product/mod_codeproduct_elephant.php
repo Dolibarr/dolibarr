@@ -102,7 +102,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 		$tooltip .= $langs->trans("GenericMaskCodes5");
 		//$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
-		// Parametrage du prefix customers
+		// Stetting of prefix customers
 		$texte .= '<tr><td>'.$langs->trans("ProductCodeModel").'</td>';
 		$texte .= '<td class="right nowraponall">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="value1" placeholder="'.$langs->trans("Mask").'" value="'.getDolGlobalString('PRODUCT_ELEPHANT_MASK_PRODUCT').'"'.$disabled.'>', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name).'</td>';
 
@@ -110,7 +110,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 
 		$texte .= '</tr>';
 
-		// Parametrage du prefix suppliers
+		// Setting of prefix suppliers
 		$texte .= '<tr><td>'.$langs->trans("ServiceCodeModel").'</td>';
 		$texte .= '<td class="right nowraponall">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="value2" placeholder="'.$langs->trans("Mask").'" value="'.getDolGlobalString('PRODUCT_ELEPHANT_MASK_SERVICE').'"'.$disabled.'>', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name).'</td>';
 		$texte .= '</tr>';
