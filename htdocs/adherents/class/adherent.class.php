@@ -1004,6 +1004,7 @@ class Adherent extends CommonObject
 						$lthirdparty->default_lang = $this->default_lang;
 
 						$result = $lthirdparty->update($this->fk_soc, $user, 0, 1, 1, 'update'); // Use sync to 0 to avoid cyclic updates
+
 						if ($result < 0) {
 							if ($lthirdparty->error) {
 								$this->error = $lthirdparty->error;
@@ -1371,7 +1372,11 @@ class Adherent extends CommonObject
 		if ($thirdpartyid == 0) {
 			$sql .= ", societe = null";
 		} else {
-			$sql .= ", societe = .($societe != '' ? $societe : 'null')";
+			if (empty($societe)) {
+				$sql .= ", societe = null";
+			} else {
+				$sql .= ", societe = ".$this->db->escape($societe);
+			}
 		}
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
