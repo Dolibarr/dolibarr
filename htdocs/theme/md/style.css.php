@@ -5248,16 +5248,12 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	padding-left: 0px;
 	padding-bottom: 12px;
 }
-.boxstatsborder {
-	/* border: 1px solid #CCC !important; */
-}
 .boxstats, .boxstats130 {
 	display: inline-block;
 	margin: 8px;
-	/* border: 1px solid #CCC; */
 	text-align: center;
-	border-radius: 2px;
-	background: #eee;
+	border-radius: 6px;
+	background: var(--colorbackbody);
 }
 .boxstats, .boxstats130, .boxstatscontent {
 	white-space: nowrap;
@@ -5265,15 +5261,16 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	text-overflow: ellipsis;
 }
 .boxstats {
-	padding: 3px;
+	padding: 8px;
 	width: 100px;
 	min-height: 40px;
 }
 .boxstats130 {
 	width: 135px;
 	height: 54px;
-	padding: 3px;
+	padding: 8px;
 }
+
 @media only screen and (max-width: 768px)
 {
 	.tabBar .arearef .pagination.paginationref {
@@ -5330,9 +5327,10 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.20);
 }
 span.boxstatstext {
-	/* opacity: 0.7; */		/* a bug if browser make z-index infintie when opacity is set so we disable it */
+	opacity: 0.5;		/* a bug if browser make z-index was discovered when opacity is set, if still present, we must disable it */
 	line-height: 18px;
 	color: #000;
+	font-size: 0.8em;
 }
 .boxstatsindicator.thumbstat150 {	/* If we remove this, box position is ko on ipad */
 	display: inline-flex;

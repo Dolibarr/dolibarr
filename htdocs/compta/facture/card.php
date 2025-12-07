@@ -5936,16 +5936,6 @@ if ($action == 'create') {
 
 			if (count($object->tab_next_situation_invoice) > 0) {
 				// List of next invoices
-				/*print '<tr class="liste_titre">';
-				 print '<td>' . $langs->trans('ListOfNextSituationInvoices') . '</td>';
-				 print '<td></td>';
-				 print '<td></td>';
-				 if (isModEnabled('banque')) print '<td class="right"></td>';
-				 print '<td class="right">' . $langs->trans('AmountHT') . '</td>';
-				 print '<td class="right">' . $langs->trans('AmountTTC') . '</td>';
-				 print '<td width="18">&nbsp;</td>';
-				 print '</tr>';*/
-
 				$total_next_ht = $total_next_ttc = 0;
 
 				foreach ($object->tab_next_situation_invoice as $next_invoice) {
@@ -6730,7 +6720,7 @@ if ($action == 'create') {
 				}
 			}
 
-			// For situation invoice with excess received
+			// For situation invoice
 			if ($object->status > Facture::STATUS_DRAFT
 				&& $object->isSituationInvoice()
 				&& ($object->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits) > 0

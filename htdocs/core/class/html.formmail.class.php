@@ -658,9 +658,9 @@ class FormMail extends Form
 						continue;
 					}
 					if (is_array($val)) $val = implode(', ', $val); // key __MULTICURRENCY_CODE__ is an array and crashes dolGetFirstLineOfText function which accept only text
-					$helpforsubstitution .= $key.' -> '.$langs->trans(dol_string_nohtmltag(dolGetFirstLineOfText($val))).'<br>';
-					$helpforsubstitution .= '</span>';
+					$helpforsubstitution .= $key.' -> '.$langs->trans(dol_string_nohtmltag(dolGetFirstLineOfText((string) $val))).'<br>';
 				}
+				$helpforsubstitution .= '</span>';
 			}
 
 			/*
