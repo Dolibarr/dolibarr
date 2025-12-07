@@ -42,7 +42,7 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 {
 	global $db;
 
-	if (getDolGlobalInt('MAIN_MODULE_OPENIDCONNECT', 0) <= 0) {
+	if (getDolGlobalInt('MAIN_AUTHENTICATION_OIDC_ON', 0) <= 0) {
 		$_SESSION["dol_loginmesg"] = "OpenID Connect is disabled";
 		dol_syslog("functions_openid_connect::check_user_password_openid_connect Module disabled");
 		return false;
@@ -75,7 +75,7 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 		return false;
 	}
 
-	$auth_code = GETPOST('code', 'aZ09');
+	$auth_code = GETPOST('code', 'password');
 	$state = GETPOST('state', 'aZ09');
 	dol_syslog('functions_openid_connect::check_user_password_openid_connect code='.$auth_code.' state='.$state);
 

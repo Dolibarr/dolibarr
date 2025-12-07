@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ class ExpenseReportTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		// Create supplier order with a too low quantity
+		// Create expense report
 		$localobject = new ExpenseReport($db);
 		$localobject->initAsSpecimen();         // Init a specimen with lines
 		$localobject->status = 0;
@@ -77,7 +77,7 @@ class ExpenseReportTest extends CommonClassTest
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."expensereport where ref=''";
 		$db->query($sql);
 
-		// Create supplier order
+		// Create expense report
 		$localobject2 = new ExpenseReport($db);
 		$localobject2->initAsSpecimen();        // Init a specimen with lines
 		$localobject2->status = 0;
@@ -94,7 +94,7 @@ class ExpenseReportTest extends CommonClassTest
 	/**
 	 * testExpenseReportFetch
 	 *
-	 * @param   int $id     Id of supplier order
+	 * @param   int $id     Id of expense report
 	 * @return  void
 	 *
 	 * @depends testExpenseReportCreate

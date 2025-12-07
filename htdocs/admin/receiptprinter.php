@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2016 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2015-2024  Frédéric France       <frederic.france@free.fr>
+ * Copyright (C) 2015-2025  Frédéric France       <frederic.france@free.fr>
  * Copyright (C) 2016      Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2020      Andreu Bisquerra Gaya <jove@bisquerra.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
@@ -28,12 +28,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/receiptprinter.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -41,6 +35,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/receiptprinter.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "receiptprinter"));
@@ -54,6 +52,7 @@ $mode = GETPOST('mode', 'alpha');
 
 $printername = GETPOST('printername', 'alpha');
 $printerid = GETPOSTINT('printerid');
+$printertypeid = GETPOSTINT('printertypeid');
 $parameter = GETPOST('parameter', 'alpha');
 
 $template = GETPOST('template', 'alphanohtml');
@@ -86,20 +85,20 @@ if (!function_exists('gzdecode')) {
  * Action
  */
 
-if ($action == 'addprinter' && $user->admin) {
+if ($action == 'addprinter') {
 	$error = 0;
 	if (empty($printername)) {
 		$error++;
 		setEventMessages($langs->trans("PrinterNameEmpty"), null, 'errors');
 	}
 
-	if (empty($parameter)) {
+	if (empty($parameter) && $printertypeid > 1) {
 		setEventMessages($langs->trans("PrinterParameterEmpty"), null, 'warnings');
 	}
 
 	if (!$error) {
 		$db->begin();
-		$result = $printer->addPrinter($printername, GETPOSTINT('printertypeid'), GETPOSTINT('printerprofileid'), $parameter);
+		$result = $printer->addPrinter($printername, $printertypeid, GETPOSTINT('printerprofileid'), $parameter);
 		if ($result > 0) {
 			$error++;
 		}
@@ -109,13 +108,13 @@ if ($action == 'addprinter' && $user->admin) {
 			setEventMessages($langs->trans("PrinterAdded", $printername), null);
 		} else {
 			$db->rollback();
-			dol_print_error($db);
+			setEventMessages($printer->error, $printer->errors, 'errors');
 		}
 	}
 	$action = '';
 }
 
-if ($action == 'deleteprinter' && $user->admin) {
+if ($action == 'deleteprinter') {
 	$error = 0;
 	if (empty($printerid)) {
 		$error++;
@@ -140,7 +139,7 @@ if ($action == 'deleteprinter' && $user->admin) {
 	$action = '';
 }
 
-if ($action == 'updateprinter' && $user->admin) {
+if ($action == 'updateprinter') {
 	$error = 0;
 	if (empty($printerid)) {
 		$error++;
@@ -165,7 +164,7 @@ if ($action == 'updateprinter' && $user->admin) {
 	$action = '';
 }
 
-if ($action == 'testprinter' && $user->admin) {
+if ($action == 'testprinter') {
 	$error = 0;
 	if (empty($printerid)) {
 		$error++;
@@ -184,7 +183,7 @@ if ($action == 'testprinter' && $user->admin) {
 	$action = '';
 }
 
-if ($action == 'testprinter2' && $user->admin) {
+if ($action == 'testprinter2') {
 	$error = 0;
 	if (empty($printerid)) {
 		$error++;
@@ -203,7 +202,7 @@ if ($action == 'testprinter2' && $user->admin) {
 	$action = '';
 }
 
-if ($action == 'testtemplate' && $user->admin) {
+if ($action == 'testtemplate') {
 	$error = 0;
 	// if (empty($printerid)) {
 	//     $error++;
@@ -227,7 +226,7 @@ if ($action == 'testtemplate' && $user->admin) {
 	$action = '';
 }
 
-if ($action == 'updatetemplate' && $user->admin) {
+if ($action == 'updatetemplate') {
 	$error = 0;
 	if (empty($templateid)) {
 		$error++;
@@ -252,7 +251,7 @@ if ($action == 'updatetemplate' && $user->admin) {
 	$action = '';
 }
 
-if ($action == 'addtemplate' && $user->admin) {
+if ($action == 'addtemplate') {
 	$error = 0;
 	if (empty($templatename)) {
 		$error++;
@@ -277,7 +276,7 @@ if ($action == 'addtemplate' && $user->admin) {
 	$action = '';
 }
 
-if ($action == 'deletetemplate' && $user->admin) {
+if ($action == 'deletetemplate') {
 	$error = 0;
 	if (empty($templateid)) {
 		$error++;
@@ -311,7 +310,7 @@ $form = new Form($db);
 
 llxHeader('', $langs->trans("ReceiptPrinterSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-receiptprinter');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
 print load_fiche_titre($langs->trans("ReceiptPrinterSetup"), $linkback, 'title_setup');
 
@@ -319,7 +318,7 @@ $head = receiptprinteradmin_prepare_head($mode);
 $line = -1;
 
 // mode = config
-if ($mode == 'config' && $user->admin) {
+if ($mode == 'config') {
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?mode=config" autocomplete="off">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	if ($action != 'editprinter') {
@@ -451,7 +450,7 @@ if ($mode == 'config' && $user->admin) {
 }
 
 // mode = template
-if ($mode == 'template' && $user->admin) {
+if ($mode == 'template') {
 	print dol_get_fiche_head($head, $mode, $langs->trans("ModuleSetup"), -1, 'technic');
 
 	//print info_admin($langs->trans("ThisFeatureIsForESCPOSPrintersOnly"));

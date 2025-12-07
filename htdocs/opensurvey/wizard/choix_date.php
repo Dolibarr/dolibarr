@@ -363,7 +363,7 @@ if (is_int($_SESSION["mois"]) && $_SESSION["mois"] > 0 && $_SESSION["mois"] < 13
 
 
 // Start form
-print '<form name="formulaire" action="" method="POST">'."\n";
+print '<form name="formulaire" id="surveyform" action="" method="POST">'."\n";
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print load_fiche_titre($langs->trans("CreatePoll").' (2 / 2)');
@@ -575,7 +575,28 @@ if (issetAndNoEmpty('totalchoixjour', $_SESSION) || $erreur) {
 	}
 
 	if ($_SESSION["nbrecaseshoraires"] < 10) {
-		print '<td class="somme"><input type="image" name="ajoutcases" src="../img/add-16.png"></td>'."\n";
+		print '<td class="somme">';
+		if ($conf->use_javascript_ajax) {
+			print '<div id="addchoice" class="inline-block">';
+			print img_picto('', 'add', '', 0, 0, 0, '', 'valignmiddle btnTitle-icon cursorpointer');
+			print '</div>';
+
+			print '<input type="hidden" name="ajoutcases" id="ajoutcases" value="">';
+			print '<script>
+			// jQuery code to handle the div click event
+			$(document).ready(function() {
+				$("#addchoice").on("click", function() {
+					console.log("Click on adchoice");
+					$("#ajoutcases").val("ajoutcases");
+					$("#surveyform").submit();
+				});
+			});
+			</script>';
+		} else {
+			print '<input type="image" name="ajoutcases" src="../img/add-16.png">';
+		}
+		//print '<input type="image" name="ajoutcases" src="../img/add-16.png">';
+		print'</td>'."\n";
 	}
 
 	print '</tr>'."\n";

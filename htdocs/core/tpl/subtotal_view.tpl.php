@@ -2,6 +2,7 @@
 /* Copyright (C) 2014-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025  		Charlene Benke          <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,7 +77,7 @@ if ($line->qty > 0) { ?>
 			if (GETPOST('mode', 'aZ09') == 'vatforblocklines' && GETPOSTINT('lineid') == $line->id) {
 				$type_tva = $type_tva ?? 0;
 				print '<div class="inline-block nowraponall">';
-				print $form->load_tva('vatforblocklines', '', $mysoc, $object->thirdparty, 0, $line->info_bits, $line->product_type, false, 1, $type_tva);
+				print $form->load_tva('vatforblocklines', '', $mysoc, $object->thirdparty, 0, (int) $line->info_bits, $line->product_type, false, 1, $type_tva);
 				print '<input type="hidden" name="lineid" value="' . $line->id . '">';
 				print '<input class="inline-block button smallpaddingimp" type="submit" name="updateallvatlinesblock" value="' . $langs->trans("Update") . '">';
 				print '</div>';
@@ -94,7 +95,7 @@ if ($line->qty > 0) { ?>
 	</td>
 	<td class="linecoluht"></td>
 	<?php
-	if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency) {
+	if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency) {
 		print '<td class="linecoluht_currency"></td>';
 	}
 	// Handling colspan if MAIN_NO_INPUT_PRICE_WITH_TAX conf is enabled
@@ -149,18 +150,18 @@ if ($line->qty > 0) { ?>
 	// Handling colspan if margin module is enabled
 	if (!empty($object->element) && in_array($object->element, array('facture', 'facturerec', 'propal', 'commande')) && isModEnabled('margin') && empty($user->socid)) {
 		if ($user->hasRight('margins', 'creer')) {
-			print '<td class="linecolmargin1"></td>';
+			print '<td class="linecolmargin1 nowrap margininfos right"></td>';
 		}
 		if (getDolGlobalString('DISPLAY_MARGIN_RATES') && $user->hasRight('margins', 'liretous')) {
-			print '<td class="linecolmargin2"></td>';
+			print '<td class="linecolmargin2 nowrap margininfos right"></td>';
 		}
 		if (getDolGlobalString('DISPLAY_MARK_RATES') && $user->hasRight('margins', 'liretous')) {
-			print '<td class="linecolmark1"></td>';
+			print '<td class="linecolmark1 nowrap margininfos right"></td>';
 		}
 	}
 	?>
 	<td class="linecolht"></td>
-	<?php if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency) { ?>
+	<?php if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency) { ?>
 		<td class="linecolutotalht_currency"></td>
 	<?php } ?>
 <?php } elseif ($line->qty < 0) {

@@ -323,9 +323,18 @@ drop table tmp_accounting_account_double;
 drop table tmp_commande_extrafields_double;
 --select fk_object, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_links where label is not null group by fk_object having count(rowid) >= 2;
 create table tmp_commande_extrafields_double as (select fk_object, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_commande_extrafields group by fk_object having count(rowid) >= 2);
---select * from tmp_links_double;
+--select * from tmp_commande_extrafields_double;
 delete from llx_commande_extrafields where (rowid) in (select max_rowid from tmp_commande_extrafields_double);	--update to avoid duplicate, delete to delete
 drop table tmp_commande_extrafields_double;
+
+
+-- Sequence to removed duplicated values of llx_c_transport_mode. Run several times if you still have duplicate.
+drop table tmp_c_transport_mode;
+--select code, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_c_transport_mode group by code having count(rowid) >= 2
+create table tmp_c_transport_mode as (select code, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_c_transport_mode group by code having count(rowid) >= 2);
+--select * from tmp_c_transport_mode;
+delete from llx_c_transport_mode where (rowid) in (select max_rowid from tmp_c_transport_mode);
+drop table tmp_c_transport_mode;
 
 
 UPDATE llx_projet_task SET fk_task_parent = 0 WHERE fk_task_parent = rowid;
@@ -585,6 +594,11 @@ UPDATE llx_facturedet SET situation_percent = 100 WHERE situation_percent IS NUL
 DELETE FROM llx_rights_def WHERE module = 'hrm' AND perms = 'employee';
 
 
+-- Clean templates that does not exists
+DELETE FROM llx_document_model WHERE TYPE = 'bom' AND nom = 'alpha';
+DELETE FROM llx_const WHERE name = 'BOM_ADDON_PDF' AND value = 'alpha';
+DELETE FROM llx_const WHERE name = 'MRP_MO_ADDON_PDF' AND value = 'alpha';
+
 
 -- Sequence to fix the content of llx_bank.amount_main_currency (value was empty and should not for payment on bank account with a different currency so when amount_main_currency is different than amount)
 -- Note: amount is amount in the currency of the bank account
@@ -618,6 +632,10 @@ DELETE from llx_c_regions WHERE fk_pays NOT IN (select rowid from llx_c_country)
 
 UPDATE llx_mrp_production SET disable_stock_change = 0 WHERE disable_stock_change IS NULL;
 
+
+-- Fix status of thirdparty when there is at least one win opportunity
+UPDATE llx_societe as s SET s.client = 1 WHERE s.client = 0 AND EXISTS (SELECT rowid FROM llx_projet as p WHERE p.fk_soc = s.rowid AND p.fk_opp_status IN (SELECT rowid FROM llx_c_lead_status as ls WHERE ls.code = 'WON'));
+UPDATE llx_societe as s SET s.client = 3 WHERE s.client = 2 AND EXISTS (SELECT rowid FROM llx_projet as p WHERE p.fk_soc = s.rowid AND p.fk_opp_status IN (SELECT rowid FROM llx_c_lead_status as ls WHERE ls.code = 'WON'));
 
 -- Drop duplicate indexes not named correctly and create the only one we should have
 alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combination;
@@ -688,4 +706,11 @@ ALTER TABLE llx_product_attribute_combination_price_level ADD UNIQUE INDEX uk_pr
 -- delete a constant that should not be set
 DELETE FROM llx_const WHERE name = 'INVOICE_USE_RETAINED_WARRANTY' AND value = -1;
 
+
 DELETE FROM llx_hrm_skilldet WHERE rankorder = 0;
+
+UPDATE llx_c_tva SET type_vat = 0 WHERE type_vat < 0;
+
+-- We can't have this on by default because we may have old payment mode using something else than stripe and account matching the pk_xxx rule.
+--update llx_societe_rib set ext_payment_site = 'StripeLive' where stripe_account like '%pk_live%' AND ext_payment_site IS NULL;
+--update llx_societe_rib set ext_payment_site = 'StripeTest' where stripe_account like '%pk_test%' AND ext_payment_site IS NULL;

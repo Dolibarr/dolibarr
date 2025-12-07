@@ -156,7 +156,6 @@ BasedOnTwoFirstLettersOfVATNumberBeingTheSameAsYourCompanyCountry=Com base nas d
 LinkedFichinter=Vincular a uma intervenção
 ImportDataset_tax_contrib=Contribuições fiscais/sociais
 FiscalYearClosedShort=Encerrada
-LabelToShow=Etiqueta curta
 PurchaseTurnoverCollected=Rotatividade de compras coletadas
 RulesPurchaseTurnoverDue=- Inclui as faturas de fornecedores, pagas ou não. <br>- É baseado na data da fatura.<br>
 RulesPurchaseTurnoverIn=- Inclui todos os pagamentos efetivos das faturas feitas aos fornecedores. <br>- É baseado na data de pagamento dessas faturas.<br>

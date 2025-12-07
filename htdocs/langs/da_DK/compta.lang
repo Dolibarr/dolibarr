@@ -3,10 +3,10 @@ MenuFinancial=Fakturering | Betaling
 TaxModuleSetupToModifyRules=Gå til <a href="%s"> opsætning af skatter modul </a> for at ændre regler for beregning
 TaxModuleSetupToModifyRulesLT=Gå til <a href="%s"> Firmaopsætning </a> for at ændre regler for beregning
 OptionMode=Indstilling for regnskab
-OptionModeTrue=Periodiseringsregnskab
-OptionModeVirtual=Kontantregnskab
-OptionModeTrueDesc=I denne sammenhæng opgøres omsætningen over betalinger (betalingsdato). Tallenes gyldighed er kun sikret, hvis bogføringen granskes gennem input/output på betalinger.
+OptionModeVirtual=Periodiseringsregnskab
+OptionModeTrue=Kontantregnskab
 OptionModeVirtualDesc=Ved dette valg beregnes omsætningen ud fra fakturaerne (bekræftelsesdato). Når fakturaerne er bekræftet, uanset om de er betalt eller ej, vil de indgå i beregningen af omsætningen.
+OptionModeTrueDesc=I denne sammenhæng opgøres omsætningen over betalinger (betalingsdato). Tallenes gyldighed er kun sikret, hvis bogføringen granskes gennem input/output på betalinger.
 FeatureIsSupportedInInOutModeOnly=Funktionen kun tilgængelig i CREDITS-FORDRINGER regnskabspool mode (Se Regnskabsmæssig modul konfiguration)
 VATReportBuildWithOptionDefinedInModule=Beløb, der vises her, er baseret på de regler, der er defineret i opsætningen under Moms.
 LTReportBuildWithOptionDefinedInModule=Beløb, der vises her, er baseret på de regler, der er defineret i opsætningen under Firma.
@@ -302,7 +302,6 @@ ByVatRate=Med Moms sats
 TurnoverbyVatrate=Omsætning faktureret ved salgskurs
 TurnoverCollectedbyVatrate=Omsætning opkrævet ved salgskurs
 PurchasebyVatrate=Køb ved salgskurs
-LabelToShow=Kort etiket
 PurchaseTurnover=Køb omsætning
 PurchaseTurnoverCollected=Køb af omsætning samlet
 RulesPurchaseTurnoverDue=- Det inkluderer leverandørens forfaldne fakturaer, uanset om de er betalt eller ej. <br>- Det er baseret på fakturadato for disse fakturaer.<br>
@@ -329,3 +328,4 @@ RuleForLinesDates=Regel for linjers datoer
 Prepaid=Forudbetalt
 Postpaid=Efterbetalt
 SetRuleForLinesDates=Indstil regel for linjers datoer
+SomeNotConvertedCreditNoteExists=There is <b>%s</b> credit notes not yet converted for consumption

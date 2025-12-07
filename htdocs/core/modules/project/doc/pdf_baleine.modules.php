@@ -2,7 +2,7 @@
 /* Copyright (C) 2010-2012 Regis Houssin          <regis.houssin@inodbox.com>
  * Copyright (C) 2018      Laurent Destailleur    <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025	MDW					  <mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024      Frédéric France        <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France        <frederic.france@free.fr>
  * Copyright (C) 2024	    Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -168,11 +168,11 @@ class pdf_baleine extends ModelePDFProjects
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "projects"));
 
-		if ($conf->project->multidir_output[$object->entity]) {
+		if ($conf->project->multidir_output[$object->entity ?? $conf->entity]) {
 			//$nblines = count($object->lines);  // This is set later with array of tasks
 
 			$objectref = dol_sanitizeFileName($object->ref);
-			$dir = $conf->project->multidir_output[$object->entity];
+			$dir = $conf->project->multidir_output[$object->entity ?? $conf->entity];
 			if (!preg_match('/specimen/i', $objectref)) {
 				$dir .= "/".$objectref;
 			}
@@ -492,6 +492,8 @@ class pdf_baleine extends ModelePDFProjects
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
+					dolChmod($file);
+					return -1;
 				}
 
 				dolChmod($file);

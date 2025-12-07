@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2019  Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019       Destailleur Laurent     <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Charlene Benke     		<charlene@patas-monkey.com>
  *
@@ -125,10 +125,9 @@ class modMrp extends DolibarrModules
 		$this->langfiles = array("mrp");
 		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(8, 0); // Minimum version of Dolibarr required by module
-		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
-		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
+		$this->warnings_activation = array();
+		$this->warnings_activation_ext = array();
 		//$this->automatic_activation = array('FR'=>'MrpWasAutomaticallyActivatedBecauseOfYourCountryChoice');
-		//$this->always_enabled = true;								// If true, can't be disabled
 
 		// Constants
 		// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
@@ -329,7 +328,7 @@ class modMrp extends DolibarrModules
 			'm.date_valid'=>'DateValidation',
 			'm.note_private'=>'NotePrivate',
 			'm.note_public'=>'Note',
-			'm.fk_soc'=>'Tiers',
+			'm.fk_soc'=>'ThirdParty',
 			'm.qty'=>'Qty',
 			'm.date_creation'=>'DateCreation',
 			'm.tms'=>'DateModification',
@@ -450,7 +449,7 @@ class modMrp extends DolibarrModules
 			'm.date_valid'=>'DateValidation',
 			'm.note_private'=>'NotePrivate',
 			'm.note_public'=>'Note',
-			'm.fk_soc'=>'Tiers',
+			'm.fk_soc'=>'ThirdParty',
 			'm.fk_warehouse'=>'Warehouse',
 			'm.qty'=>'Qty*',
 			'm.date_creation'=>'DateCreation',

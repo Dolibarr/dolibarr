@@ -47,7 +47,7 @@ $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$TSelectedCats = GETPOST('categories', 'array');
+$TSelectedCats = GETPOST('categories', 'array:int');
 $socid = 0;
 
 $mesg = '';
@@ -162,7 +162,7 @@ print '<table class="border centpercent">';
 
 // Total Margin
 print '<tr><td class="titlefield">'.$langs->trans("TotalMargin").'</td><td colspan="4">';
-print '<span id="totalMargin" class="amount"></span> <span class="amount">'.$langs->getCurrencySymbol($conf->currency).'</span>'; // set by jquery (see below)
+print '<span id="totalMargin" class="amount"></span> <span class="amount">'.$langs->getCurrencySymbol(getDolCurrency()).'</span>'; // set by jquery (see below)
 print '</td></tr>';
 
 // Margin Rate

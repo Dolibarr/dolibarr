@@ -369,6 +369,7 @@ WebPortalSetupNotComplete=Configurarea Portal web nu este finalizată
 DeleteWebsiteAccount=Șterge cont site web
 ConfirmDeleteWebsiteAccount=Sigur vrei să ștergi acest cont.
 ConfirmDeleteWebsiteAccount2=Dacă acest cont a fost folosit pentru a te autentifica pe portalul public sau pe orice alt site web alimentat de Dolibarr, este posibil ca autentificarea să nu mai fie posibilă.
+WebsiteSecurityOptions=Opțiuni de securitate website
 ContentSecurityPolicy=HTTP "Content-Security-Policy" website
 WebsiteSecurityForceRP=HTTP "Referer-Policy" website
 WebsiteSecurityForceSTS=HTTP "Strict-Transport-Security" website

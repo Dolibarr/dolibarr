@@ -58,14 +58,6 @@ if (is_numeric($entity)) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-if (isModEnabled('paypal')) {
-	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
-	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypalfunctions.lib.php';
-}
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -76,13 +68,20 @@ if (isModEnabled('paypal')) {
  *
  * @var string $dolibarr_main_url_root
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+if (isModEnabled('paypal')) {
+	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
+	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypalfunctions.lib.php';
+}
 
 // Hook to be used by external payment modules (ie Payzen, ...)
 $hookmanager = new HookManager($db);
 
 $hookmanager->initHooks(array('newpayment'));
 
-$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paybox", "paypal", "stripe"));
+$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paypal", "stripe"));
 
 // Clean parameters
 $PAYPAL_API_USER = "";
@@ -159,7 +158,7 @@ if (getDolGlobalString($paramcreditorlong)) {
 
 $ispaymentok = false;
 // If payment is ok
-$PAYMENTSTATUS = $TRANSACTIONID = $TAXAMT = $NOTE = '';
+$PAYMENTSTATUS = $TRANSACTIONID = $LONGTRANSACTIONID = $TAXAMT = $NOTE = '';
 // If payment is ko
 $ErrorCode = $ErrorShortMsg = $ErrorLongMsg = $ErrorSeverityCode = '';
 
@@ -437,6 +436,20 @@ if (isModEnabled('stripe') && $paymentmethod === 'stripe') {
 					$errmsg = 'Stripe payment not succeeded. Status: ' . $paymentIntent->status;
 					dol_syslog($errmsg, LOG_ERR, 0, '_payment');
 				}
+
+				// Get $customerid and $pkey to forge $LONGTRANSACTIONID
+				$customerid = '';
+				$pkey = '';
+				if ($paymentIntent instanceof \Stripe\PaymentIntent) {
+					$customerid = $paymentIntent->customer;
+				}
+				if (isset($stripearrayofkeysbyenv[$servicestatus]['publishable_key'])) {
+					$pkey = $stripearrayofkeysbyenv[$servicestatus]['publishable_key'];
+				}
+
+				if ($customerid && $pkey) {
+					$LONGTRANSACTIONID = $TRANSACTIONID.':'.$customerid.'@'.$pkey;
+				}
 			} catch (\Stripe\Exception\ApiErrorException $e) {
 				$error++;
 				$errormessage = "Stripe API error: ".$e->getMessage();
@@ -480,6 +493,8 @@ if (!in_array($paymentmethod, array('paypal', 'paybox', 'stripe'))) {
 			dol_syslog('ispaymentok overwrite by hook return with value='.$hookmanager->resArray['ispaymentok'], LOG_DEBUG, 0, '_payment');
 			$ispaymentok = $hookmanager->resArray['ispaymentok'];
 		}
+	} else {
+		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 	}
 }
 
@@ -1050,23 +1065,26 @@ if ($ispaymentok) {
 				$paiement->num_payment = '';
 				$paiement->note_public  = 'Online payment '.dol_print_date($now, 'standard').' from '.$ipaddress;
 
-				// Get $customerid and $pkey
-				$customerid = '';
-				if ($paymentIntent instanceof \Stripe\PaymentIntent) {
-					$customerid = $paymentIntent->customer;
-				}
-				$pkey = '';
-				if (isset($stripearrayofkeysbyenv[$servicestatus]['publishable_key'])) {
-					$pkey = $stripearrayofkeysbyenv[$servicestatus]['publishable_key'];
-				}
-
 				// May be we should store py_... instead of pi_... but we started with pi_... so we continue.
-				if ($customerid && $pkey) {
-					$paiement->ext_payment_id = $TRANSACTIONID.':'.$customerid.'@'.$pkey;
+				if ($LONGTRANSACTIONID) {
+					$paiement->ext_payment_id = $LONGTRANSACTIONID;
 				} else {
 					$paiement->ext_payment_id = $TRANSACTIONID;
 				}
 				$paiement->ext_payment_site = $service;
+
+				// Validate invoice if not already validated (this can happen for automatically generated invoices with a free amount)
+				if (!$error && $object->status == Facture::STATUS_DRAFT) {
+					$result = $object->validate($user);
+					if ($result < 0) {
+						$postactionmessages[] = $object->error;
+						$ispostactionok = -1;
+						$error++;
+					} else {
+						$postactionmessages[] = 'Invoice validated';
+						$ispostactionok = 1;
+					}
+				}
 
 				if (!$error) {
 					$paiement_id = $paiement->create($user, 1); // This include closing invoices and regenerating documents
@@ -1210,19 +1228,9 @@ if ($ispaymentok) {
 						$paiement->num_payment = '';
 						$paiement->note_public = 'Online payment ' . dol_print_date($now, 'standard') . ' from ' . $ipaddress;
 
-						// Get $customerid and $pkey
-						$customerid = '';
-						if ($paymentIntent instanceof \Stripe\PaymentIntent) {
-							$customerid = $paymentIntent->customer;
-						}
-						$pkey = '';
-						if (isset($stripearrayofkeysbyenv[$servicestatus]['publishable_key'])) {
-							$pkey = $stripearrayofkeysbyenv[$servicestatus]['publishable_key'];
-						}
-
 						// May be we should store py_... instead of pi_... but we started with pi_... so we continue.
-						if ($customerid && $pkey) {
-							$paiement->ext_payment_id = $TRANSACTIONID.':'.$customerid.'@'.$pkey;
+						if ($LONGTRANSACTIONID) {
+							$paiement->ext_payment_id = $LONGTRANSACTIONID;
 						} else {
 							$paiement->ext_payment_id = $TRANSACTIONID;
 						}
@@ -1360,19 +1368,9 @@ if ($ispaymentok) {
 				$paiement->num_payment = '';
 				$paiement->note_public  = 'Online payment '.dol_print_date($now, 'standard').' from '.$ipaddress;
 
-				// Get $customerid and $pkey
-				$customerid = '';
-				if ($paymentIntent instanceof \Stripe\PaymentIntent) {
-					$customerid = $paymentIntent->customer;
-				}
-				$pkey = '';
-				if (isset($stripearrayofkeysbyenv[$servicestatus]['publishable_key'])) {
-					$pkey = $stripearrayofkeysbyenv[$servicestatus]['publishable_key'];
-				}
-
 				// May be we should store py_... instead of pi_... but we started with pi_... so we continue.
-				if ($customerid && $pkey) {
-					$paiement->ext_payment_id = $TRANSACTIONID.':'.$customerid.'@'.$pkey;
+				if ($LONGTRANSACTIONID) {
+					$paiement->ext_payment_id = $LONGTRANSACTIONID;
 				} else {
 					$paiement->ext_payment_id = $TRANSACTIONID;
 				}
@@ -1511,19 +1509,9 @@ if ($ispaymentok) {
 					$paiement->num_payment = '';
 					$paiement->note_public  = 'Online payment '.dol_print_date($now, 'standard').' from '.$ipaddress.' for event registration';
 
-					// Get $customerid and $pkey
-					$customerid = '';
-					if ($paymentIntent instanceof \Stripe\PaymentIntent) {
-						$customerid = $paymentIntent->customer;
-					}
-					$pkey = '';
-					if (isset($stripearrayofkeysbyenv[$servicestatus]['publishable_key'])) {
-						$pkey = $stripearrayofkeysbyenv[$servicestatus]['publishable_key'];
-					}
-
 					// May be we should store py_... instead of pi_... but we started with pi_... so we continue.
-					if ($customerid && $pkey) {
-						$paiement->ext_payment_id = $TRANSACTIONID.':'.$customerid.'@'.$pkey;
+					if ($LONGTRANSACTIONID) {
+						$paiement->ext_payment_id = $LONGTRANSACTIONID;
 					} else {
 						$paiement->ext_payment_id = $TRANSACTIONID;
 					}
@@ -1655,7 +1643,7 @@ if ($ispaymentok) {
 								$cc = ($cc ? ', ' : '').$attendeetovalidate->email_company;
 							}
 
-							$from = getDolGlobalString('MAILING_EMAIL_FROM') ? $conf->global->MAILING_EMAIL_FROM : getDolGlobalString("MAIN_MAIL_EMAIL_FROM");
+							$from = getDolGlobalString('MAILING_EMAIL_FROM', getDolGlobalString("MAIN_MAIL_EMAIL_FROM"));
 
 							$urlback = $_SERVER["REQUEST_URI"];
 
@@ -1760,19 +1748,9 @@ if ($ispaymentok) {
 					$paiement->num_payment = '';
 					$paiement->note_public  = 'Online payment '.dol_print_date($now, 'standard').' from '.$ipaddress;
 
-					// Get $customerid and $pkey
-					$customerid = '';
-					if ($paymentIntent instanceof \Stripe\PaymentIntent) {
-						$customerid = $paymentIntent->customer;
-					}
-					$pkey = '';
-					if (isset($stripearrayofkeysbyenv[$servicestatus]['publishable_key'])) {
-						$pkey = $stripearrayofkeysbyenv[$servicestatus]['publishable_key'];
-					}
-
 					// May be we should store py_... instead of pi_... but we started with pi_... so we continue.
-					if ($customerid && $pkey) {
-						$paiement->ext_payment_id = $TRANSACTIONID.':'.$customerid.'@'.$pkey;
+					if ($LONGTRANSACTIONID) {
+						$paiement->ext_payment_id = $LONGTRANSACTIONID;
 					} else {
 						$paiement->ext_payment_id = $TRANSACTIONID;
 					}
@@ -1992,19 +1970,9 @@ if ($ispaymentok) {
 						$paiement->num_payment = '';
 						$paiement->note_public = 'Online payment ' . dol_print_date($now, 'standard') . ' from ' . $ipaddress;
 
-						// Get $customerid and $pkey
-						$customerid = '';
-						if ($paymentIntent instanceof \Stripe\PaymentIntent) {
-							$customerid = $paymentIntent->customer;
-						}
-						$pkey = '';
-						if (isset($stripearrayofkeysbyenv[$servicestatus]['publishable_key'])) {
-							$pkey = $stripearrayofkeysbyenv[$servicestatus]['publishable_key'];
-						}
-
 						// May be we should store py_... instead of pi_... but we started with pi_... so we continue.
-						if ($customerid && $pkey) {
-							$paiement->ext_payment_id = $TRANSACTIONID.':'.$customerid.'@'.$pkey;
+						if ($LONGTRANSACTIONID) {
+							$paiement->ext_payment_id = $LONGTRANSACTIONID;
 						} else {
 							$paiement->ext_payment_id = $TRANSACTIONID;
 						}
@@ -2150,10 +2118,18 @@ if (empty($doactionsthenredirect)) {
 		}
 	} else {
 		print $langs->trans('DoExpressCheckoutPaymentAPICallFailed')."<br>\n";
-		print $langs->trans('DetailedErrorMessage').": ".$ErrorLongMsg."<br>\n";
-		print $langs->trans('ShortErrorMessage').": ".$ErrorShortMsg."<br>\n";
-		print $langs->trans('ErrorCode').": ".$ErrorCode."<br>\n";
-		print $langs->trans('ErrorSeverityCode').": ".$ErrorSeverityCode."<br>\n";
+		if ($ErrorLongMsg) {
+			print $langs->trans('DetailedErrorMessage').": ".$ErrorLongMsg."<br>\n";
+		}
+		if ($ErrorShortMsg) {
+			print $langs->trans('ShortErrorMessage').": ".$ErrorShortMsg."<br>\n";
+		}
+		if ($ErrorCode) {
+			print $langs->trans('ErrorCode').": ".$ErrorCode."<br>\n";
+		}
+		if ($ErrorSeverityCode) {
+			print $langs->trans('ErrorSeverityCode').": ".$ErrorSeverityCode."<br>\n";
+		}
 
 		if ($mysoc->email) {
 			print "\nPlease, send a screenshot of this page to ".$mysoc->email."<br>\n";

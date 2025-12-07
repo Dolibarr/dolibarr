@@ -25,6 +25,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
  * @var string $butactionbg
  * @var string $colortextlink
  * @var int $dol_optimize_smallscreen
+ * @var string $fontlist
  * @var string $textbutaction
  * @var int<0,max> $nbtopmenuentries
  * @var string $right

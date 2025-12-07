@@ -1,8 +1,7 @@
 # Dolibarr language file - Source file is en_US - other
+# THIS FILE MUST CONTAINS ENTRIES THAT ARE RARELY USED
 SecurityCode=Sikkerhetskode
 NumberingShort=Nr
-Tools=Verktøy
-TMenuTools=Verktøy
 ToolsDesc=Alle verktøy som ikke er inkludert i andre menyoppføringer, er gruppert her. <br> Alle verktøyene kan nås via menyen til venstre.
 Birthday=Fødselsdag
 BirthdayAlert=Fødselsdagsvarsel
@@ -384,3 +383,25 @@ FillExtrafieldWithAi=Fyll ekstrafeltet med AI-innhold
 ExtrafieldFiller=Ekstrafeltfyll
 OurProductSelection=Vårt utvalg av nye varer
 NoSupportedModulesHaveBeenActivated=The reporting tool can generate dynamic reports for some modules only. There is no supported module enabled yet.
+# Bookmarks
+AddThisPageToBookmarks = Legg til nåværende side i bokmerker
+BehaviourOnClick = Atferd når en bokmerke-URL er valgt
+BookmarkTargetNewWindowShort = Ny fane
+BookmarkTargetReplaceWindowShort = Gjeldende fane
+BookmarkTitle = Bokmerke navn
+BookmarksManagement = Behandling av bokmerker
+BookmarksMenuShortCut = Ctrl + shift + m
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark = Velg om den koblede siden skal åpnes i den nåværende kategorien eller en ny kategori
+CreateBookmark = Opprett bokmerke
+EditBookmarks = Vis/rediger bokmerker
+ListOfBookmarks = Oversikt over bokmerker
+NewBookmark = Legg til bokmerke
+NoBookmarkFound = Finner ingen bokmerker
+NoBookmarks = Ingen bokmerker definert
+OpenANewWindow = Åpne en ny fane
+ReplaceWindow = Erstatt nåværende fane
+SetHereATitleForLink = Angi et navn for bokmerket
+ShowBookmark = Vis bokmerke
+UrlOrLink = URL
+UseAnExternalHttpLinkOrRelativeDolibarrLink = Bruk en ekstern/absolutt lenke (https://externalurl.com) eller en intern/relativ lenke (/mypage.php). Du kan også bruke telefon som tlf:0123456.
+SubscribeToFoundation=Hjelp Dolibarr-prosjektet, bli en abonnent

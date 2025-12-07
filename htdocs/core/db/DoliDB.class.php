@@ -322,7 +322,7 @@ abstract class DoliDB implements Database
 	/**
 	 * Define sort criteria of request
 	 *
-	 * @param	string		$sortfield		List of sort fields, separated by comma. Example: 't1.fielda,t2.fieldb'
+	 * @param	string		$sortfield		List of sort fields, separated by comma. Example: 't1.fielda,t2.fieldb' or 't1.fielda,concat(a,b,c) as abc,t2.fieldb'
 	 * @param	string		$sortorder		Sort order, separated by comma. Example: 'ASC,DESC'. Note: If the quantity for sortorder values is lower than sortfield, we used the last value for missing values.
 	 * @return	string						String to provide syntax of a sort sql string
 	 */
@@ -331,17 +331,30 @@ abstract class DoliDB implements Database
 		if (!empty($sortfield)) {
 			$oldsortorder = '';
 			$return = '';
+
+			// If text is "field1, f(a,b,c) as xxx, field2", we must convert string into 'field1,xxx,field2'
+			$sortfield = preg_replace('/[a-z_]+\([^\)]*\) as ([\w]+)/i', '\1', $sortfield);
+
 			$fields = explode(',', $sortfield);
 			$orders = (!empty($sortorder) ? explode(',', $sortorder) : array());
 			$i = 0;
+
+
 			foreach ($fields as $val) {
+				// Sanitized fieldname
+				$fieldname = preg_replace('/[^0-9a-z_\.]/i', '', $val);
+				if (!$fieldname) {
+					continue;
+				}
+
 				if (!$return) {
 					$return .= ' ORDER BY ';
 				} else {
 					$return .= ', ';
 				}
 
-				$return .= preg_replace('/[^0-9a-z_\.]/i', '', $val); // Add field
+				// Add field
+				$return .= $fieldname;
 
 				$tmpsortorder = (empty($orders[$i]) ? '' : trim($orders[$i]));
 
@@ -456,6 +469,21 @@ abstract class DoliDB implements Database
 			$this->free($resql);
 			return $results;
 		}
+
+		return false;
+	}
+
+	/**
+	 * Prepare a SQL statement for execution
+	 *
+	 * This method must be implemented by subclasses.
+	 *
+	 * @param string $sql SQL query to prepare
+	 * @return mixed Driver-specific prepared statement object or false on failure
+	 */
+	public function prepare($sql)
+	{
+		$this->lasterror = 'prepare() not implemented for this driver. Failed to prepare '.$sql;
 
 		return false;
 	}

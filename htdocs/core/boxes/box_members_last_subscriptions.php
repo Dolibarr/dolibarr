@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2007  Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2024  Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2015-2025  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -48,7 +48,7 @@ class box_members_last_subscriptions extends ModeleBoxes
 	 */
 	public function __construct($db, $param = '')
 	{
-		global $conf, $user;
+		global $user;
 
 		$this->db = $db;
 
@@ -72,7 +72,7 @@ class box_members_last_subscriptions extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $user, $langs, $conf;
+		global $user, $langs;
 		$langs->load("boxes");
 
 		$this->max = $max;
@@ -140,10 +140,10 @@ class box_members_last_subscriptions extends ModeleBoxes
 						'asis' => 1,
 					);
 
-					$daterange = get_date_range($this->db->jdate($obj->date_start), $this->db->jdate($obj->date_end));
+					$daterange = get_date_range($this->db->jdate($obj->date_start), $this->db->jdate($obj->date_end), '', null, 0);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone" title="'.dol_escape_htmltag($daterange).'"',
-						'text' => $daterange,
+						'text' => '<span class="opacitymedium small">'.$daterange.'</span>',
 					);
 
 					$this->info_box_contents[$line][] = array(
@@ -151,10 +151,11 @@ class box_members_last_subscriptions extends ModeleBoxes
 						'text' => price($obj->subscription),
 					);
 
-					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right tdoverflowmax150 maxwidth150onsmartphone" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($obj->datem, 'dayhour', 'tzuserrel')).'"',
-						'text' => dol_print_date($this->db->jdate($obj->datem ? $obj->datem : $obj->datec), 'dayhour', 'tzuserrel'),
-					);
+					$datetoprint = dol_print_date($this->db->jdate($obj->datem ? $obj->datem : $obj->datec), 'dayhour', 'tzuserrel');
+					$this->info_box_contents[$line][] = [
+						'td' => 'class="right tdoverflowmax150 maxwidth150onsmartphone" title="' . dol_escape_htmltag($langs->trans("DateModification") . ': ' . $datetoprint).'"',
+						'text' => $datetoprint,
+					];
 
 					$line++;
 				}

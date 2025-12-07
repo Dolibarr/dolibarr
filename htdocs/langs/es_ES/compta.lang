@@ -3,10 +3,10 @@ MenuFinancial=Financiera
 TaxModuleSetupToModifyRules=Ir a la <a href="%s">configuración del módulo de impuestos</a> para modificar las reglas de cálculo
 TaxModuleSetupToModifyRulesLT=Ir a la <a href="%s">configuración de la Empresa</a> para modificar las reglas de cálculo
 OptionMode=Opción de gestión contable
-OptionModeTrue=Contabilidad de acumulación
-OptionModeVirtual=Contabilidad de caja
-OptionModeTrueDesc=En este contexto, el volumen de negocios se calcula sobre la base de los pagos (fecha de pago). La validez de las cifras solo se garantiza si se examina la contabilidad mediante la entrada/salida de los pagos.
+OptionModeVirtual=Contabilidad de acumulación
+OptionModeTrue=Contabilidad de caja
 OptionModeVirtualDesc=En este método, el balance se calcula sobre la base de las facturas validadas. Pagadas o no, aparecen en el resultado en cuanto sean dispuestas.
+OptionModeTrueDesc=En este contexto, el volumen de negocios se calcula sobre la base de los pagos (fecha de pago). La validez de las cifras solo se garantiza si se examina la contabilidad mediante la entrada/salida de los pagos.
 FeatureIsSupportedInInOutModeOnly=Función disponible solamente en el modo cuentas CREDITOS-DEUDAS (Véase la configuración del módulo cuentas)
 VATReportBuildWithOptionDefinedInModule=Los importes obtenidos se calculan según la configuración del módulo Impuestos.
 LTReportBuildWithOptionDefinedInModule=Los importes obtenidos se calculan según la configuración de la Empresa.
@@ -302,7 +302,6 @@ ByVatRate=Por tasa de impuesto
 TurnoverbyVatrate=Volumen de ventas emitidas por tipo de impuesto
 TurnoverCollectedbyVatrate=Volumen de ventas cobradas por tipo de impuesto
 PurchasebyVatrate=Compra por tasa de impuestos
-LabelToShow=Etiqueta corta
 PurchaseTurnover=Volumen de compras
 PurchaseTurnoverCollected=Volumen de compras pagadas
 RulesPurchaseTurnoverDue=- Incluye las facturas vencidas del proveedor, ya sean pagadas o no.<br> - Se basa en la fecha de facturación de estas facturas.<br>
@@ -329,3 +328,4 @@ RuleForLinesDates=Regla para fechas de líneas
 Prepaid=Pagado
 Postpaid=Pospago
 SetRuleForLinesDates=Establecer reglas para fechas de líneas
+SomeNotConvertedCreditNoteExists=There is <b>%s</b> credit notes not yet converted for consumption

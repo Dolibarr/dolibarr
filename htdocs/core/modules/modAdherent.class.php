@@ -399,6 +399,31 @@ class modAdherent extends DolibarrModules
 		}
 		$this->import_updatekeys_array[$r] = array('a.ref'=>'MemberRef', 'a.login'=>'Login');
 
+		// Import subscriptions
+		$r++;
+		$this->import_code[$r] = $this->rights_class.'_'.$r;
+		$this->import_label[$r] = "Subscriptions"; // Translation key
+		$this->import_icon[$r] = $this->picto;
+		$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
+		$this->import_tables_array[$r] = array('c'=>MAIN_DB_PREFIX.'subscription');
+		$this->import_fields_array[$r] = array(
+			'c.fk_adherent' => 'MemberRef*',
+			'c.note'=>'Note', 'c.dateadh'=>'SubscriptionStart', 'c.datef'=>'SubscriptionEnd', 'c.subscription'=>'Amount', 'c.fk_type' => 'MemberType', 'c.fk_bank' => 'Bank'
+		);
+		$this->import_convertvalue_array[$r] = array(
+			'c.fk_adherent' => array(
+				'rule'=>'fetchidfromref',
+				'classfile'=>'/adherents/class/adherent.class.php',
+				'class'=>'Adherent',
+				'method'=>'fetch',
+				'element'=>'member'
+			)
+		);
+		$this->import_examplevalues_array[$r] = array(
+			'c.fk_adherent' => 'member ref',
+			'c.note'=>'Subscription #33', 'c.dateadh'=>'2025-09-01', 'c.datef'=>'2026-08-31', 'c.subscription'=>'50'
+		);
+
 		// Cronjobs
 		$arraydate = dol_getdate(dol_now());
 		$datestart = dol_mktime(22, 0, 0, $arraydate['mon'], $arraydate['mday'], $arraydate['year']);

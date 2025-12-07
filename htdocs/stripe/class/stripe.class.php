@@ -448,7 +448,7 @@ class Stripe extends CommonObject
 					$pkeyindb = (isset($ext_payment_intent_array[2]) ? $ext_payment_intent_array[2] : '');
 					// TODO Test that $pkeyindb and $customerindb match
 
-					dol_syslog(get_class($this)."::getPaymentIntent found existing payment intent record with intent="+$intent);
+					dol_syslog(get_class($this)."::getPaymentIntent found existing payment intent record with intent=".$intent);
 
 					// Force to use the correct API key
 					global $stripearrayofkeysbyenv;
@@ -592,7 +592,7 @@ class Stripe extends CommonObject
 
 				$paymentintent = \Stripe\PaymentIntent::create($dataforintent, $arrayofoptions);
 
-				if ($paymentintent instanceOf \Stripe\PaymentIntent) {
+				if ($paymentintent instanceof \Stripe\PaymentIntent) {
 					dol_syslog(get_class($this)."::getPaymentIntent paymentintent is a defined object");
 
 					// Store the payment intent

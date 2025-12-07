@@ -166,3 +166,4 @@ NoPreviousBillForCustomer=Non hai factura previa para o cliente
 Sumup=Sumup
 SumupAffiliate=Afiliado de Sumup
 SumupAppId=Sumup AppId
+NotAvailableForCountryWhenModuleIsOn=Non dispoñible para o país %s cando o módulo %s está activado

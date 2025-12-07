@@ -182,7 +182,7 @@ class pdf_standard_stock extends ModelePDFStock
 		}
 
 		// Load traductions files required by page
-		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "stocks", "orders", "deliveries"));
+		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "stocks", "orders", "sendings"));
 
 		if ($conf->stock->dir_output) {
 			// Definition of $dir and $file
@@ -194,10 +194,6 @@ class pdf_standard_stock extends ModelePDFStock
 				$dir = $conf->stock->dir_output."/".$objectref;
 				$file = $dir."/".$objectref.".pdf";
 			}
-
-			$stockFournisseur = new ProductFournisseur($this->db);
-			$supplierprices = $stockFournisseur->list_product_fournisseur_price($object->id);
-			$object->supplierprices = $supplierprices;
 
 			$productstatic = new Product($this->db);
 
@@ -593,6 +589,8 @@ class pdf_standard_stock extends ModelePDFStock
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
+					dolChmod($file);
+					return -1;
 				}
 
 				dolChmod($file);

@@ -77,9 +77,10 @@ ClickHereToTryAgain=<a href="%s"> Faga clic aquí para tentalo de novo ... </a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Debido as fortes regras de autenticación do cliente, a creación dunha tarxeta debe facerse desde o backoffice de Stripe. Pode premer aquí para activar o rexistro de cliente de Stripe:%s
 STRIPE_CARD_PRESENT=Transacción de tarxeta presente para terminais Stripe
 TERMINAL_LOCATION=Localización (enderezo) para terminais Stripe
-RequestDirectDebitWithStripe=Solicite domiciliación bancaria con Stripe
-RequesCreditTransferWithStripe=Solicite transferencia bancaria con Stripe
-STRIPE_SEPA_DIRECT_DEBIT=Activa os pagamentos por domiciliación bancaria a través de Stripe
+RequestDirectDebitWithStripe=Solicitar débito directo SEPA con Stripe
+RequesCreditTransferWithStripe=Realizar unha transferencia de crédito SEPA con Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Activar os pagamentos por débito directo SEPA con Stripe
+STRIPE_SEPA_CREDIT_TRANSFER=Activar os pagamentos por transferencia de crédito SEPA con Stripe
 STRIPE_KLARNA=Activa os pagamentos usando Klarna
 STRIPE_BANCONTACT=Activa os pagamentos mediante BANCONTACT
 STRIPE_IDEAL=Activa os pagamentos usando IDEAL
@@ -91,3 +92,19 @@ ExampleOnlyForDECustomers=Só para clientes alemáns
 ExampleOnlyForNLCustomers=Só para clientes holandeses
 ExampleOnlyForATBEDEITNLESCustomers=Só para clientes de Austria, Bélxica, Alemaña, Italia, Países Baixos e España
 ListOfSupportedHooksToActivate=Listaxe de hooks compatibles para activar
+# Paybox
+PayBoxSetup=Configuración do módulo PayBox
+PayBoxDesc=Este módulo ofrece páxinas para permitir o pagamento en <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external"> PayPal</a>. Pódese utilizar para un pagamento gratuito ou para un pagamento dun obxecto Dolibarr (factura, pedidmento, ...)
+PayBoxDoPayment=Pagamento con Paybox
+YouWillBeRedirectedOnPayBox=Será redirixido á páxina segura de PayBox para introducir a información da súa tarxeta de crédito
+SetupPayBoxToHavePaymentCreatedAutomatically=Configure a súa caixa de pagamento coa url <b>%s</b> para que o pagamento se cree automaticamente cando o valide PayBox.
+YourPaymentHasBeenRecorded=Esta páxina confirma que se rexistrou o seu pagamento. Grazas.
+YourPaymentHasNotBeenRecorded=O seu pagamento NON se rexistrou e cancelouse a transacción. Grazas.
+PAYBOX_CGI_URL_V2=URL do módulo CGI de PayBox para pagamento
+NewPayboxPaymentReceived=Novo pagamento de PayBox recibido
+NewPayboxPaymentFailed=Novo intento de pagamento de PayBox pero fallou
+PAYBOX_PAYONLINE_SENDEMAIL=Nnotificación por correo electrónico despois do intento de pagamento (éxito ou fallo)
+PAYBOX_PBX_SITE=Valor para PBX SITE
+PAYBOX_PBX_RANG=Valor para PBX Rang
+PAYBOX_PBX_IDENTIFIANT=Valor para Id PBX
+PAYBOX_HMAC_KEY=Chave HMAC

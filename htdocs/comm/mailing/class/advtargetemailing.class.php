@@ -1013,9 +1013,9 @@ class AdvanceTargetingMailing extends CommonObject
 	 */
 	public function transformToSQL($column_to_test, $criteria)
 	{
-		$return_sql_criteria = '(';
+		$return_sql_criteria = "(";
 
-		//This is a multiple value test
+		// This is a multiple value test
 		if (preg_match('/;/', $criteria)) {
 			$return_sql_not_like = array();
 			$return_sql_like = array();
@@ -1023,23 +1023,23 @@ class AdvanceTargetingMailing extends CommonObject
 			$criteria_array = explode(';', $criteria);
 			foreach ($criteria_array as $inter_criteria) {
 				if (preg_match('/!/', $inter_criteria)) {
-					$return_sql_not_like[] = '('.$column_to_test.' NOT LIKE \''.str_replace('!', '', $inter_criteria).'\')';
+					$return_sql_not_like[] = "(".$this->db->sanitize($column_to_test)." NOT LIKE '".$this->db->sanitize(str_replace('!', '', $inter_criteria))."')";
 				} else {
-					$return_sql_like[] = '('.$column_to_test.' LIKE \''.$inter_criteria.'\')';
+					$return_sql_like[] = "(".$this->db->sanitize($column_to_test)." LIKE '".$this->db->sanitize($inter_criteria)."')";
 				}
 			}
 
 			if (count($return_sql_like) > 0) {
-				$return_sql_criteria .= '('.implode(' OR ', $return_sql_like).')';
+				$return_sql_criteria .= "(".implode(" OR ", $return_sql_like).")";	// element in arrays were sanitized previously
 			}
 			if (count($return_sql_not_like) > 0) {
-				$return_sql_criteria .= ' AND ('.implode(' AND ', $return_sql_not_like).')';
+				$return_sql_criteria .= " AND (".implode(" AND ", $return_sql_not_like).")";	// element in arrays were sanitized previously
 			}
 		} else {
-			$return_sql_criteria .= $column_to_test.' LIKE \''.$this->db->escape($criteria).'\'';
+			$return_sql_criteria .= $this->db->sanitize($column_to_test)." LIKE '".$this->db->escape($criteria)."'";
 		}
 
-		$return_sql_criteria .= ')';
+		$return_sql_criteria .= ")";
 
 		return $return_sql_criteria;
 	}

@@ -145,6 +145,15 @@ if (empty($reshook)) {
 				$result = $edituser->fetch(0, '', '', 1, $conf->entity, $username);
 			}
 
+			// If the user does not have the right to change his own password
+			if ($result > 0) {
+				$edituser->loadRights('user');
+				if (!$edituser->hasRight('user', 'self', 'password')) {
+					$result = 0;
+					$edituser->error = 'USERNOTALLOWEDTOCHANGEPASS';
+				}
+			}
+
 			// Set the message to show (must be the same if login/email exists or not to avoid to guess them.
 			$messagewarning = '<div class="warning paddingtopbottom'.(!getDolGlobalString('MAIN_LOGIN_BACKGROUND') ? '' : ' backgroundsemitransparent boxshadow').'">';
 			if (!$isanemail) {
@@ -154,7 +163,7 @@ if (empty($reshook)) {
 			}
 			$messagewarning .= '</div>';
 
-			if ($result <= 0 && $edituser->error == 'USERNOTFOUND') {
+			if ($result <= 0 && ($edituser->error == 'USERNOTFOUND' || $edituser->error == 'USERNOTALLOWEDTOCHANGEPASS')) {
 				usleep(20000);	// add delay to simulate setPassword() and send_password() actions delay (0.02s)
 				$message .= $messagewarning;
 				$username = '';

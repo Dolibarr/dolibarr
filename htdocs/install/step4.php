@@ -81,7 +81,7 @@ if (!is_writable($conffile)) {
 }
 
 
-print '<h3><img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/key.svg" width="20" alt="Database"> '.$langs->trans("DolibarrAdminLogin").'</h3>';
+print '<h3><img class="valignmiddle inline-block paddingright" src="../public/theme/common/key.svg" width="20" alt="Database"> '.$langs->trans("DolibarrAdminLogin").'</h3>';
 
 print $langs->trans("LastStepDesc").'<br><br>';
 

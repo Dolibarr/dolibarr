@@ -87,6 +87,7 @@ ErrorBadFormatValueList=O valor da listaxe non pode ter máis dunha coma: <u>%s<
 ErrorFieldCanNotContainSpecialCharacters=O campo <b>%s</b> non debe conter caracteres especiais.
 ErrorFieldCanNotContainSpecialNorUpperCharacters=O campo <b> %s </b> non debe conter caracteres especiais, nin maiúsculas, e debe comezar cun carácter alfabético (a-z)
 ErrorFieldMustHaveXChar=O campo <b>%s</b> debe ter polo menos %s caracteres.
+ErrorFieldMustHaveLessThanXChar=O campo <b>%s</b> debe ter un máximo de %s caracteres.
 ErrorNoAccountancyModuleLoaded=Non hai ningún módulo de contabilidade activado
 ErrorExportDuplicateProfil=Este nome de perfil xa existe para este conxunto de exportacións.
 ErrorLDAPSetupNotComplete=A concordancia Dolibarr-LDAP non está completada.

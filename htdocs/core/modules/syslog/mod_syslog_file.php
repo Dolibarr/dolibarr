@@ -206,7 +206,7 @@ class mod_syslog_file extends LogHandler
 			global $dolibarr_main_prod;
 			// Do not break dolibarr usage if log fails
 			//throw new Exception('Failed to open log file '.basename($logfile));
-			print 'Failed to write to log file '.($dolibarr_main_prod ? basename($logfile) : $logfile);
+			print 'Failed to write to log file '.($dolibarr_main_prod ? basename($logfile) : $logfile)."\n";
 		}
 	}
 }

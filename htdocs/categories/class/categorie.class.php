@@ -69,6 +69,9 @@ class Categorie extends CommonObject
 	const TYPE_INVOICE				= 'invoice';
 	const TYPE_SUPPLIER_ORDER		= 'supplier_order';
 	const TYPE_SUPPLIER_INVOICE		= 'supplier_invoice';
+	const TYPE_SUPPLIER_PROPOSAL	= 'supplier_proposal';
+	const TYPE_PROPOSAL	            = 'propal';
+	const TYPE_PROJECT_TASK			= 'project_task';
 
 
 	/**
@@ -99,7 +102,10 @@ class Categorie extends CommonObject
 		'order'					=> 16,
 		'invoice'				=> 17,
 		'supplier_order'		=> 20,
-		'supplier_invoice'		=> 21
+		'supplier_invoice'		=> 21,
+		'supplier_proposal'		=> 22,
+		'propal'				=> 23,
+		'project_task'			=> 24,
 	);
 
 	/**
@@ -127,7 +133,10 @@ class Categorie extends CommonObject
 		16 => 'order',
 		17 => 'invoice',
 		20 => 'supplier_order',
-		21 => 'supplier_invoice'
+		21 => 'supplier_invoice',
+		22 => 'supplier_proposal',
+		23 => 'propal',
+		24 => 'project_task'
 	);
 	*/
 
@@ -172,7 +181,10 @@ class Categorie extends CommonObject
 		'order'					=> 'Commande',
 		'invoice'				=> 'Facture',
 		'supplier_order'		=> 'CommandeFournisseur',
-		'supplier_invoice'		=> 'FactureFournisseur'
+		'supplier_invoice'		=> 'FactureFournisseur',
+		'supplier_proposal' 	=> 'SupplierProposal',
+		'propal' 				=> 'Propal',
+		'project_task'			=> 'Task',
 	);
 
 	/**
@@ -180,7 +192,7 @@ class Categorie extends CommonObject
 	 */
 	public static $MAP_TYPE_TITLE_AREA = array(
 		'product'				=> 'Products',
-		'customer'				=> 'Customers',
+		'customer'				=> 'ProspectsOrCustomers',
 		'supplier'				=> 'Suppliers',
 		'member'				=> 'Members',
 		'contact'				=> 'Contacts',
@@ -198,7 +210,10 @@ class Categorie extends CommonObject
 		'order'					=> 'Orders',
 		'invoice'				=> 'Invoices',
 		'supplier_order'		=> 'SuppliersOrders',
-		'supplier_invoice'		=> 'SuppliersInvoices'
+		'supplier_invoice'		=> 'SuppliersInvoices',
+		'propal' 				=> 'Proposals',
+		'supplier_proposal' 	=> 'SupplierProposals',
+		'project_task'			=> 'Tasks'
 	);
 
 	/**
@@ -218,7 +233,8 @@ class Categorie extends CommonObject
 		'order'					=> 'commande',
 		'invoice'				=> 'facture',
 		'supplier_order'		=> 'commande_fournisseur',
-		'supplier_invoice'		=> 'facture_fourn'
+		'supplier_invoice'		=> 'facture_fourn',
+		'project_task'			=> 'projet_task'
 	);
 
 	/**
@@ -287,6 +303,7 @@ class Categorie extends CommonObject
 	 * @see Categorie::TYPE_INVOICE
 	 * @see Categorie::TYPE_SUPPLIER_ORDER
 	 * @see Categorie::TYPE_SUPPLIER_INVOICE
+	 * @see Categorie::TYPE_PROJECT_TASK
 	 */
 	public $type;
 
@@ -329,7 +346,7 @@ class Categorie extends CommonObject
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -374,12 +391,16 @@ class Categorie extends CommonObject
 
 		$this->db = $db;
 
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 1;
+
 		if (is_object($hookmanager)) {
 			$hookmanager->initHooks(array('category'));
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('constructCategory', $parameters, $this); // Note that $action and $object may have been modified by some hooks
 			if ($reshook >= 0 && !empty($hookmanager->resArray)) {
 				foreach ($hookmanager->resArray as $mapList) {
+					/** @var array{id:int,code:string,cat_fk:string|null,cat_table:string|null,obj_class:string,obj_table:string,label:string|null} $mapList */
 					$mapId = $mapList['id'];
 					$mapCode = $mapList['code'];
 					//self::$MAP_ID_TO_CODE[$mapId] = $mapCode;
@@ -388,7 +409,7 @@ class Categorie extends CommonObject
 					$this->MAP_CAT_TABLE[$mapCode] = isset($mapList['cat_table']) ? $mapList['cat_table'] : null;
 					$this->MAP_OBJ_CLASS[$mapCode] = $mapList['obj_class'];
 					$this->MAP_OBJ_TABLE[$mapCode] = $mapList['obj_table'];
-					self::$MAP_TYPE_TITLE_AREA[$mapCode] =  $mapList['label'];
+					self::$MAP_TYPE_TITLE_AREA[$mapCode] = isset($mapList['label']) ? $mapList['label'] : null;
 				}
 			}
 		}
@@ -757,6 +778,7 @@ class Categorie extends CommonObject
 			'categorie_user' => 'fk_categorie',
 			'categorie_product' => 'fk_categorie',
 			'categorie_project' => 'fk_categorie',
+			'categorie_project_task' => 'fk_categorie',
 			'categorie_societe' => 'fk_categorie',
 			'categorie_ticket' => array('field' => 'fk_categorie', 'enabled' => isModEnabled('ticket')),
 			'categorie_warehouse' => 'fk_categorie',
@@ -976,66 +998,69 @@ class Categorie extends CommonObject
 		$objs = array();
 
 		$classnameforobj = $this->MAP_OBJ_CLASS[$type];
-		$obj = new $classnameforobj($this->db);
+		if (!empty($classnameforobj) && class_exists($classnameforobj)) {
+			$tmpobj = new $classnameforobj($this->db);
+			/** @var CommonObject $tmpobj */
 
-		$sql = "SELECT c.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." as fk_object";
-		$sql .= " FROM ".MAIN_DB_PREFIX."categorie_".(empty($this->MAP_CAT_TABLE[$type]) ? $type : $this->MAP_CAT_TABLE[$type])." as c";
-		$sql .= ", ".MAIN_DB_PREFIX.(empty($this->MAP_OBJ_TABLE[$type]) ? $type : $this->MAP_OBJ_TABLE[$type])." as o";
-		if (!empty($filterlang)) {
-			$sql .= ", ".MAIN_DB_PREFIX.(empty($this->MAP_OBJ_TABLE[$type]) ? $type : $this->MAP_OBJ_TABLE[$type])."_lang as ol";
-		}
-		$sql .= " WHERE o.entity IN (".getEntity($obj->element).")";
-		$sql .= " AND c.fk_categorie = ".((int) $this->id);
-		// Compatibility with actioncomm table which has id instead of rowid
-		if ((array_key_exists($type, $this->MAP_OBJ_TABLE) && $this->MAP_OBJ_TABLE[$type] == "actioncomm") || $type == "actioncomm") {
-			$sql .= " AND c.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = o.id";
-		} else {
-			$sql .= " AND c.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = o.rowid";
-		}
-		if (!empty($filterlang)) {
-			$sql .= " AND ol.fk_".(empty($this->MAP_OBJ_TABLE[$type]) ? $type : $this->MAP_OBJ_TABLE[$type])." = o.rowid";
-			$sql .= " AND ol.lang = '".$this->db->escape($filterlang)."'";
-		}
-		// Protection for external users
-		if (($type == 'customer' || $type == 'supplier') && $user->socid > 0) {
-			$sql .= " AND o.rowid = ".((int) $user->socid);
-		}
+			$sql = "SELECT c.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." as fk_object";
+			$sql .= " FROM ".MAIN_DB_PREFIX."categorie_".(empty($this->MAP_CAT_TABLE[$type]) ? $type : $this->MAP_CAT_TABLE[$type])." as c";
+			$sql .= ", ".MAIN_DB_PREFIX.(empty($this->MAP_OBJ_TABLE[$type]) ? $type : $this->MAP_OBJ_TABLE[$type])." as o";
+			if (!empty($filterlang)) {
+				$sql .= ", ".MAIN_DB_PREFIX.(empty($this->MAP_OBJ_TABLE[$type]) ? $type : $this->MAP_OBJ_TABLE[$type])."_lang as ol";
+			}
+			$sql .= " WHERE o.entity IN (".getEntity($tmpobj->element).")";
+			$sql .= " AND c.fk_categorie = ".((int) $this->id);
+			// Compatibility with actioncomm table which has id instead of rowid
+			if ((array_key_exists($type, $this->MAP_OBJ_TABLE) && $this->MAP_OBJ_TABLE[$type] == "actioncomm") || $type == "actioncomm") {
+				$sql .= " AND c.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = o.id";
+			} else {
+				$sql .= " AND c.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = o.rowid";
+			}
+			if (!empty($filterlang)) {
+				$sql .= " AND ol.fk_".(empty($this->MAP_OBJ_TABLE[$type]) ? $type : $this->MAP_OBJ_TABLE[$type])." = o.rowid";
+				$sql .= " AND ol.lang = '".$this->db->escape($filterlang)."'";
+			}
+			// Protection for external users
+			if (($type == 'customer' || $type == 'supplier') && $user->socid > 0) {
+				$sql .= " AND o.rowid = ".((int) $user->socid);
+			}
 
-		$errormessage = '';
-		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
-		if ($errormessage) {
-			$this->errors[] = $errormessage;
-			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
-			return -1;
-		}
+			$errormessage = '';
+			$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+			if ($errormessage) {
+				$this->errors[] = $errormessage;
+				dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+				return -1;
+			}
 
-		$sql .= $this->db->order($sortfield, $sortorder);
-		if ($limit > 0 || $offset > 0) {
-			$sql .= $this->db->plimit($limit + 1, $offset);
-		}
+			$sql .= $this->db->order($sortfield, $sortorder);
+			if ($limit > 0 || $offset > 0) {
+				$sql .= $this->db->plimit($limit + 1, $offset);
+			}
 
-		dol_syslog(get_class($this)."::getObjectsInCateg", LOG_DEBUG);
+			dol_syslog(get_class($this)."::getObjectsInCateg", LOG_DEBUG);
 
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			while ($rec = $this->db->fetch_array($resql)) {
-				if ($onlyids) {
-					$objs[] = $rec['fk_object'];
-				} else {
-					$classnameforobj = $this->MAP_OBJ_CLASS[$type];
-
-					$obj = new $classnameforobj($this->db);
-					$obj->fetch($rec['fk_object']);
-					if ($obj->id > 0) {		// Failing fetch may happen for example when a category supplier was set and third party was moved as customer only. The object supplier can't be loaded.
-						$objs[] = $obj;
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				while ($rec = $this->db->fetch_array($resql)) {
+					if ($onlyids) {
+						$objs[] = $rec['fk_object'];
+					} else {
+						$tmpobj->id = 0;
+						$tmpobj->fetch($rec['fk_object']);	// The fetch will erase $tmpobj->id only if it succeed.
+						// @phpstan-ignore-next-line
+						if ($tmpobj->id > 0) {		// Failing fetch may happen for example when a category supplier was set and third party was moved as customer only. The object supplier can't be loaded.
+							$objs[] = clone $tmpobj;
+						}
 					}
 				}
+			} else {
+				$this->error = $this->db->error().' sql='.$sql;
+				return -1;
 			}
-			return $objs;
-		} else {
-			$this->error = $this->db->error().' sql='.$sql;
-			return -1;
 		}
+
+		return $objs;
 	}
 
 	/**
@@ -1118,7 +1143,11 @@ class Categorie extends CommonObject
 				dol_print_error($this->db);
 			}
 
-			if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+			if (($limit >= (int) $nbtotalofrecords) && $page > 0) {
+				return [];
+			}
+
+			if (($page * $limit) >= (int) $nbtotalofrecords) {	// if total resultset is smaller or equal then paging size (filtering), goto and load page 0
 				$page = 0;
 				$offset = 0;
 			}
@@ -1313,19 +1342,23 @@ class Categorie extends CommonObject
 			$nbcateg = $this->db->num_rows($resql);
 
 			while ($obj = $this->db->fetch_object($resql)) {
-				$this->cats[$obj->rowid]['rowid'] = $obj->rowid;
-				$this->cats[$obj->rowid]['id'] = $obj->rowid;
-				$this->cats[$obj->rowid]['fk_parent'] = $obj->fk_parent;
-				$this->cats[$obj->rowid]['label'] = !empty($obj->label_trans) ? $obj->label_trans : $obj->label;
-				$this->cats[$obj->rowid]['description'] = !empty($obj->description_trans) ? $obj->description_trans : $obj->description;
-				$this->cats[$obj->rowid]['color'] = $obj->color;
-				$this->cats[$obj->rowid]['position'] = $obj->position;
-				$this->cats[$obj->rowid]['visible'] = $obj->visible;
-				$this->cats[$obj->rowid]['ref_ext'] = $obj->ref_ext;
-				$this->cats[$obj->rowid]['picto'] = 'category';
-				// fields are filled with buildPathFromId later
-				$this->cats[$obj->rowid]['fullpath'] = '';
-				$this->cats[$obj->rowid]['fulllabel'] = '';
+				$this->cats[(int) $obj->rowid]
+					= array(
+						'rowid' => (int) $obj->rowid,
+						'id' => (int) $obj->rowid,
+						'fk_parent' => (int) $obj->fk_parent,
+						'label' => !empty($obj->label_trans) ? (string) $obj->label_trans : (string) $obj->label,
+						'description' => !empty($obj->description_trans) ? (string) $obj->description_trans : (string) $obj->description,
+						'color' => (string) $obj->color,
+						'position' => (string) $obj->position,
+						'visible' => (int) $obj->visible,
+						'ref_ext' => (string) $obj->ref_ext,
+						'picto' => 'category',
+						// fields are filled with buildPathFromId later
+						'fullpath' => '',
+						'fulllabel' => '',
+						'level' => null,
+					);
 				$i++;
 			}
 		} else {
@@ -1520,16 +1553,21 @@ class Categorie extends CommonObject
 	 * Returns the path of the category, with the names of the categories
 	 * separated by $sep (" >> " by default)
 	 *
-	 * @param	string	$sep	     Separator
-	 * @param	string	$url	     Url ('', 'none' or 'urltouse')
-	 * @param   int     $nocolor     0
-	 * @param	int		$addpicto	 Add picto into link
+	 * @param	string		$sep	     Separator
+	 * @param	string		$url	     Url ('', 'none' or 'urltouse')
+	 * @param   int     	$nocolor     0
+	 * @param	int			$addpicto	 Add picto into link
+	 * @param	int			$notrunc	 Do not truncate names of parent categories
 	 * @return	string[]
 	 */
-	public function print_all_ways($sep = '&gt;&gt;', $url = '', $nocolor = 0, $addpicto = 0)
+	public function print_all_ways($sep = 'auto', $url = '', $nocolor = 0, $addpicto = 0, $notrunc = 0)
 	{
 		// phpcs:enable
 		$ways = array();
+
+		if ($sep == 'auto') {
+			$sep = '&gt;';
+		}
 
 		$all_ways = $this->get_all_ways(); // Load array of categories to reach this->id
 
@@ -1554,13 +1592,29 @@ class Categorie extends CommonObject
 				}
 
 				if ($url == '') {
-					$link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.((int) $cat->id).'&type='.urlencode($cat->type).'" class="'.($i < count($way) ? 'small ' : '').$forced_color.'">';
-					$linkend = '</a>';
-					$w[] = $link.(($addpicto && $i == 1) ? img_object('', 'category', 'class="paddingright"') : '').$cat->label.$linkend;
+					if (($i < count($way) && empty($notrunc)) && $i > 1) {
+						$link = '';
+						$linkend = '';
+					} else {
+						$link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.((int) $cat->id).'&type='.urlencode($cat->type).'" class="'.(($i < count($way) && empty($notrunc)) ? 'small ' : '').$forced_color.'">';
+						$linkend = '</a>';
+					}
+					$s = $link.(($addpicto && $i == 1) ? img_object('', 'category', 'class="paddingright"') : '');
+					$s .= (($i < count($way) && empty($notrunc)) ? ($i == 1 ? dol_trunc($cat->label, 3) : '') : $cat->label);
+					$s .= $linkend;
+					$w[] = $s;
 				} elseif ($url == 'none') {
-					$link = '<span class="valignmiddle '.($i < count($way) ? 'small ' : '').$forced_color.'">';
-					$linkend = '</span>';
-					$w[] = $link.(($addpicto && $i == 1) ? img_object('', 'category', 'class="paddingright"') : '').$cat->label.$linkend;
+					if (($i < count($way) && empty($notrunc)) && $i > 1) {
+						$link = '';
+						$linkend = '';
+					} else {
+						$link = '<span class="valignmiddle '.($i < count($way) ? 'small ' : '').$forced_color.'">';
+						$linkend = '</span>';
+					}
+					$s = $link.(($addpicto && $i == 1) ? img_object('', 'category', 'class="paddingright"') : '');
+					$s .= (($i < count($way) && empty($notrunc)) ? ($i == 1 ? dol_trunc($cat->label, 3) : '') : $cat->label);
+					$s .= $linkend;
+					$w[] = $s;
 				} else {
 					$w[] = '<a class="valignmiddle '.($i < count($way) ? 'small ' : '').$forced_color.'" href="'.DOL_URL_ROOT.'/'.$url.'?catid='.((int) $cat->id).'">'.($addpicto ? img_object('', 'category') : '').$cat->label.'</a>';
 				}
@@ -1883,7 +1937,7 @@ class Categorie extends CommonObject
 		$linkclose = '';
 		if (empty($notooltip)) {
 			if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER')) {
-				$label = $langs->trans("ShowMyObject");
+				$label = $langs->trans("ShowCategory");
 				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
 			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
@@ -2052,7 +2106,7 @@ class Categorie extends CommonObject
 		$filename = preg_replace('/'.preg_quote($dir, '/').'/i', '', $file); // Nom du fichier
 
 		// On efface l'image d'origine
-		dol_delete_file($file, 1);
+		dol_delete_file($file, 0); // do not use disableglob, ecmfiles will not be deleted
 
 		// Si elle existe, on efface la vignette
 		$regs = array();

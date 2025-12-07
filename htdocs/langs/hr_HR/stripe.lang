@@ -77,9 +77,10 @@ ClickHereToTryAgain=<a href="%s">Kliknite ovdje da pokušate ponovno...</a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Zbog pravila Strong Customer Ovjera vjerodostojnosti, izrada kartice mora se izvršiti iz pozadinskog ureda Stripe. Možete kliknuti ovdje da uključite evidenciju korisnika Stripea: %s
 STRIPE_CARD_PRESENT=Kartica prisutna za Stripe terminale
 TERMINAL_LOCATION=Lokacija (adresa) za Stripe terminale
-RequestDirectDebitWithStripe=Zahtjev za izravno terećenje uz Stripe
-RequesCreditTransferWithStripe=Zatražite prijenos kredita sa Stripeom
-STRIPE_SEPA_DIRECT_DEBIT=Omogućite plaćanja izravnim zaduženjem putem Stripea
+RequestDirectDebitWithStripe=Request SEPA Direct Debit with Stripe
+RequesCreditTransferWithStripe=Make SEPA Credit Transfer with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable SEPA Direct Debit payments with Stripe
+STRIPE_SEPA_CREDIT_TRANSFER=Enable SEPA Credit Transfer payments with Stripe
 STRIPE_KLARNA=Omogućite plaćanja putem Klarna
 STRIPE_BANCONTACT=Omogućite plaćanja koristeći BANCONTACT
 STRIPE_IDEAL=Omogućite plaćanja koristeći IDEAL
@@ -91,3 +92,19 @@ ExampleOnlyForDECustomers=Samo za njemačke kupce
 ExampleOnlyForNLCustomers=Samo za nizozemske kupce
 ExampleOnlyForATBEDEITNLESCustomers=Samo za kupce iz Austrije, Belgije, Njemačke, Italije, Nizozemske, Španjolske
 ListOfSupportedHooksToActivate=Popis podržanih kuka za aktiviranje
+# Paybox
+PayBoxSetup=Podešavanje PayBox modula
+PayBoxDesc=Ovaj modul nudi stranice koje omogućuju plaćanje na <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external"> Paybox </a> od strane kupaca. Ovo se može koristiti za besplatno plaćanje ili za plaćanje na određenom Dolibarr objektu (račun, narudžba, ...)
+PayBoxDoPayment=Platite Payboxom
+YouWillBeRedirectedOnPayBox=Biti ćete preusmjereni na sigurnu stranicu PayBox servisa gdje možete unijeti podatke o svojoj kreditnoj kartici
+SetupPayBoxToHavePaymentCreatedAutomatically=Postavite svoj Paybox s url-om <b> %s </b> da se plaćanje automatski kreira kada ga Paybox potvrdi.
+YourPaymentHasBeenRecorded=Ova stranica potvrđuje da je vaše plaćanje pohranjeno. Hvala Vam.
+YourPaymentHasNotBeenRecorded=Vaše plaćanje NIJE zabilježeno i transakcija je otkazana. Hvala vam.
+PAYBOX_CGI_URL_V2=URL PayBox CGI modula za plaćanje
+NewPayboxPaymentReceived=Primljena nova PayBox uplata
+NewPayboxPaymentFailed=PayBox uplata probana ali s greškom
+PAYBOX_PAYONLINE_SENDEMAIL=Obavijest e-poštom nakon pokušaja plaćanja (uspješan ili neuspješan)
+PAYBOX_PBX_SITE=Value for PBX SITE
+PAYBOX_PBX_RANG=Value for PBX Rang
+PAYBOX_PBX_IDENTIFIANT=Value for PBX ID
+PAYBOX_HMAC_KEY=HMAC ključ

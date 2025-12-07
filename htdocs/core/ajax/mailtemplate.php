@@ -84,7 +84,7 @@ if (GETPOSTISSET('template')) {
 	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
-	$mycompanyaddress = $mysoc->getFullAddress(0, '<br>', 1, '');
+	$mycompanyaddress = $mysoc->getFullAddress(0, ',', 1, '');
 
 	$specificSubstitutionArray = array(
 		'__TITLEOFMAILHOLDER__' => $langs->trans('TitleOfMailHolder'),
@@ -193,10 +193,10 @@ if (GETPOSTISSET('template')) {
 		}
 
 		$content = str_replace('__NEWS_LIST__', $newsList, $content);
-		$content = str_replace('__PRODUCTS_LIST__', $newsList, $content);
+		$content = str_replace('__PRODUCT_SELECTED__', $newsList, $content);
 	} else {
 		$content = str_replace('__NEWS_LIST__', $langs->trans("SelectSomeArticlesOrEnterYourOwnContent"), $content);
-		$content = str_replace('__PRODUCTS_LIST__', $langs->trans("SelectSomeArticlesOrEnterYourOwnContent"), $content);
+		$content = str_replace('__PRODUCT_SELECTED__', $langs->trans("SelectOneArticleOrEnterYourOwnContent"), $content);
 	}
 
 	print $content;

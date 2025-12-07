@@ -41,7 +41,7 @@ $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
 $langs->load("interventions");
 
-$linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date', 'desc', 0, 0, 1);
+$linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date,ref', 'desc', 0, 0, 1);
 '@phan-var-force Fichinter[] $linkedObjectBlock';  // Repeat because type lost after dol_sort_array)
 /** @var Fichinter[] $linkedObjectBlock */
 

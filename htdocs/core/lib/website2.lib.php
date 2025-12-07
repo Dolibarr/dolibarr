@@ -332,6 +332,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 		$tplcontent .= '<!-- Include link to common JS file -->'."\n";
 		$tplcontent .= '<script nonce="'.getNonce().'" async src="/javascript.js.php?website=<?php echo $websitekey; ?>"></script>'."\n";
 		$tplcontent .= '</head>'."\n";
+		$tplcontent .= "\n";
 
 		// Page content
 		$tplcontent .= '<!-- File content defined in Dolibarr website module editor -->'."\n";

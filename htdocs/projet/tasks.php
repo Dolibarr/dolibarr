@@ -57,13 +57,13 @@ $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 //$show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'projecttasklist';
 $backtopage = GETPOST('backtopage', 'alpha');					// if not set, a default page will be used
 //$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');	// if not set, $backtopage will be used
 $optioncss  = GETPOST('optioncss', 'aZ');
 $backtopage = GETPOST('backtopage', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:int');
 
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
@@ -116,8 +116,6 @@ $search_date_end_endmonth = GETPOSTINT('search_date_end_endmonth');
 $search_date_end_endyear = GETPOSTINT('search_date_end_endyear');
 $search_date_end_endday = GETPOSTINT('search_date_end_endday');
 $search_date_end_end = dol_mktime(23, 59, 59, $search_date_end_endmonth, $search_date_end_endday, $search_date_end_endyear);	// Use tzserver
-
-//if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
 $object = new Project($db);
 $taskstatic = new Task($db);
@@ -393,7 +391,21 @@ if ($action == 'createtask' && $user->hasRight('projet', 'creer')) {
 			$taskid = $task->create($user);
 
 			if ($taskid > 0) {
-				$result = $task->add_contact(GETPOSTINT("userid"), 'TASKEXECUTIVE', 'internal');
+				$userid = GETPOSTINT("userid");
+				if ($userid == -4) {
+					if (empty($object->id)) {
+						$object->fetch($projectid);
+					}
+					$contactlist = array();
+					foreach (array('internal', 'external') as $source) {
+						$contactlist = array_merge($contactlist, $object->liste_contact(-1, $source));
+					}
+					foreach ($contactlist as $key => $contact) {
+						$result = $task->add_contact(((int) $contact["id"]), ($contact["code"] == "PROJECTLEADER" ? 'TASKEXECUTIVE' : "TASKCONTRIBUTOR"), $contact["source"]);
+					}
+				} else {
+					$result = $task->add_contact(GETPOSTINT("userid"), 'TASKEXECUTIVE', 'internal');
+				}
 			} else {
 				if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 					$langs->load("projects");
@@ -821,12 +833,12 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 	print '<tr><td>'.$langs->trans("AffectedTo").'</td><td>';
 	print img_picto('', 'user', 'class="pictofixedwidth"');
 	if (is_array($contactsofproject) && count($contactsofproject)) {
-		print $form->select_dolusers($user->id, 'userid', 0, null, 0, '', $contactsofproject, '0', 0, 0, '', 0, '', 'maxwidth500 widthcentpercentminusx');
+		print $form->select_dolusers('-4', 'userid', 0, null, 0, '', $contactsofproject, '0', 0, 0, '(statut:=:1)', 4, '', 'maxwidth500 widthcentpercentminusx');
 	} else {
 		if ((isset($projectid) && $projectid > 0) || $object->id > 0) {
 			print '<span class="opacitymedium">'.$langs->trans("NoUserAssignedToTheProject").'</span>';
 		} else {
-			print $form->select_dolusers($user->id, 'userid', 0, null, 0, '', '', '0', 0, 0, '', 0, '', 'maxwidth500 widthcentpercentminusx');
+			print $form->select_dolusers('-4', 'userid', 0, null, 0, '', '', '0', 0, 0, '(statut:=:1)', 4, '', 'maxwidth500 widthcentpercentminusx');
 		}
 	}
 	print '</td></tr>';
