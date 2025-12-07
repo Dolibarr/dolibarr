@@ -42,6 +42,7 @@ class LanguageOfCommentsSniff implements Sniff
 		' pourcentage ',
 		' produit ',
 		' produits ',
+		' sinon ',
 		' stocker ',
 		' valeur ',
 		' valeurs ',
