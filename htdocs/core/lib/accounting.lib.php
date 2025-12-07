@@ -299,7 +299,7 @@ function getDefaultDatesForTransfer()
 			$obj = $db->fetch_object($res);
 
 			$date_start = $db->jdate($obj->date_start);
-			$date_end = $db->jdate($obj->date_end);
+			$date_end = dol_get_last_hour($db->jdate($obj->date_end));
 		} else {
 			$month_start = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
 			$year_start = (int) dol_print_date(dol_now(), '%Y');
@@ -313,7 +313,8 @@ function getDefaultDatesForTransfer()
 				$year_end--;
 			}
 			$date_start = dol_mktime(0, 0, 0, $month_start, 1, $year_start);
-			$date_end = dol_get_last_day($year_end, $month_end);
+			$lastday = dol_get_last_day($year_end, $month_end);
+			$date_end = dol_mktime(23, 59, 59, $month_end, (int) dol_print_date($lastday, '%d'), $year_end);
 		}
 	} elseif ($periodbydefaultontransfer == 1) {	// current month
 		$year_current = (int) dol_print_date(dol_now('gmt'), "%Y", 'gmt');
