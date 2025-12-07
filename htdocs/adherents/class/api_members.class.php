@@ -364,7 +364,7 @@ class Members extends DolibarrApi
 						throw new RestException(500, 'id='.$value.' setThirdPartyIdResult='.$value.' failed with error='.$member->error);
 					}
 				} else {
-					throw new RestException(400, 'Socid has to be 0 (remove link to thirdparty) or larger than 0, and you specificied socid='.$value);
+					throw new RestException(400, 'Socid has to be 0 (remove link to thirdparty) or larger than 0, and you specified socid='.$value);
 				}
 			}
 			// Process the status separately because it must be updated using
