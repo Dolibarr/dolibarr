@@ -37,6 +37,7 @@ ClassifyInCategory=Ajouter tag/catégorie
 RemoveCategory=Supprimer la catégorie
 NotCategorized=Sans tag/catégorie
 CategoryExistsAtSameLevel=Ce tag existe déjà avec cette référence
+ErrorCategoryParentIsDescendant=Une catégorie ne peut pas avoir un de ses descendants comme parent (référence circulaire)
 ContentsVisibleByAllShort=Contenu visible par tous
 ContentsNotVisibleByAllShort=Contenu non visible par tous
 DeleteCategory=Effacer le(a) libellé/catégorie
