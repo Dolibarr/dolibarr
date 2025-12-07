@@ -28,6 +28,7 @@ class LanguageOfCommentsSniff implements Sniff
 	public $frenchWords = [
 		' avec ',
 		' chaine ',
+		' chercher ',
 		// ' commande ',
 		' commandes ',
 		' contrats ',
@@ -42,6 +43,7 @@ class LanguageOfCommentsSniff implements Sniff
 		' pourcentage ',
 		' produit ',
 		' produits ',
+		' rechercher ',
 		' sinon ',
 		' stocker ',
 		' valeur ',
