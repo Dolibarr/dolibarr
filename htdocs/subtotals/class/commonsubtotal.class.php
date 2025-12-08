@@ -289,6 +289,7 @@ trait CommonSubtotal
 				SUBTOTALS_SPECIAL_CODE	// Special code
 			);
 		} elseif ($current_module == 'fichinter' && $this instanceof Fichinter) {
+			global $user;
 			$result = $this->addline(
 				$user,					// user
 				$this->id,				// fk_fichinter
@@ -669,7 +670,8 @@ trait CommonSubtotal
 						'HT',
 						$this->lines[$i]->info_bits,
 						$this->lines[$i]->product_type,
-						$this->lines[$i]->fk_parent_line, 0,
+						$this->lines[$i]->fk_parent_line,
+						0,
 						$this->lines[$i]->fk_fournprice,
 						$this->lines[$i]->pa_ht,
 						$this->lines[$i]->label,
@@ -694,7 +696,8 @@ trait CommonSubtotal
 						$this->lines[$i]->date_start,
 						$this->lines[$i]->date_end,
 						$this->lines[$i]->product_type,
-						$this->lines[$i]->fk_parent_line, 0,
+						$this->lines[$i]->fk_parent_line,
+						0,
 						$this->lines[$i]->fk_fournprice,
 						$this->lines[$i]->pa_ht,
 						$this->lines[$i]->label,
@@ -716,7 +719,8 @@ trait CommonSubtotal
 						'HT',
 						$this->lines[$i]->info_bits,
 						$this->lines[$i]->special_code,
-						$this->lines[$i]->fk_parent_line, 0,
+						$this->lines[$i]->fk_parent_line,
+						0,
 						$this->lines[$i]->fk_fournprice,
 						$this->lines[$i]->pa_ht,
 						$this->lines[$i]->label,
