@@ -4,6 +4,7 @@
  * Copyright (C) 2020-2025  Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025	William Mead			<william@m34d.com>
+ * Copyright (C) 2025	Kowal Jessica			<jessicakowal69@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -422,40 +423,61 @@ class ExpenseReports extends DolibarrApi
 	*/
 
 	/**
-	 * Delete a line of given Expense Report
+	 * Delete a line from an expense report
 	 *
-	 * @param int   $id             Id of Expense Report to update
-	 * @param int   $lineid         Id of line to delete
+	 * @since	23.0.0	Initial implementation
+	 *
+	 * @param	int		$id				ID of the expense report to update
+	 * @param	int		$lineid			ID of line to delete
 	 *
 	 * @url	DELETE {id}/lines/{lineid}
 	 *
-	 * @return int
+	 * @return object
+	 *
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 500
 	 */
-	/*
 	public function deleteLine($id, $lineid)
 	{
-	  if(! DolibarrApiAccess::$user->hasRight('expensereport', 'creer')) {
-			  throw new RestException(403);
-		  }
+		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'creer')) {
+			throw new RestException(403);
+		}
 
-	  $result = $this->expensereport->fetch($id);
-	  if( ! $result ) {
-		 throw new RestException(404, 'expensereport not found');
-	  }
+		$result = $this->expensereport->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Expense report not found');
+		}
 
-		  if( ! DolibarrApi::_checkAccessToResource('expensereport',$this->expensereport->id)) {
-			  throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-	  }
+		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
 
-	  // TODO Check the lineid $lineid is a line of object
+		// Check if line exists
+		$lineExists = false;
+		$this->expensereport->fetch_lines();
+		foreach ($this->expensereport->lines as $line) {
+			if ($line->id == $lineid) {
+				$lineExists = true;
+				break;
+			}
+		}
 
-	  $updateRes = $this->expensereport->deleteLine($lineid);
-	  if ($updateRes == 1) {
-		return $this->get($id);
-	  }
-	  return false;
+		if (!$lineExists) {
+			throw new RestException(404, 'Line not found');
+		}
+
+		if ($this->expensereport->status != ExpenseReport::STATUS_DRAFT) {
+			throw new RestException(403, 'Expense report must be in draft status to delete lines');
+		}
+
+		$result = $this->expensereport->deleteLine($lineid);
+		if ($result > 0) {
+			return $this->get($id);
+		} else {
+			throw new RestException(500, 'Error deleting line: '.$this->expensereport->error);
+		}
 	}
-	*/
 
 	/**
 	 * Update expense report general fields
