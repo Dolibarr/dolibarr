@@ -5906,8 +5906,6 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 	return '<img src="' . $fullpathpicto . '"' . ($notitle ? '' : ' alt="' . dolPrintHTMLForAttribute($alt, 0, $allowothertags) . '"') . (($notitle || empty($titlealt)) ? '' : ' title="' . dolPrintHTMLForAttribute($titlealt, 0, $allowothertags) . '"') . ($moreatt ? ' ' . $moreatt . ($morecss ? ' class="' . $morecss . '"' : '') : ' class="inline-block' . ($morecss ? ' ' . $morecss : '') . '"') . '>'; // Alt is used for accessibility, title for popup
 }
 
-
-
 /**
  * Get array to convert the Dolibarr picto keys into Font awesome keys
  *
@@ -10991,7 +10989,7 @@ function print_date_range($date_start, $date_end, $format = '', $outputlangs = n
  *    @param    int			$date_end      		End date
  *    @param    string		$format        		Output date format ('day', 'dayhour', ...)
  *    @param	Translate	$outputlangs   		Output language
- *    @param	integer		$withparenthesis	1=Add parenthesis, 0=no parenthesis
+ *    @param	integer		$withparenthesis	1=Add space and parenthesis, 0=no parenthesis, 2=Add parenthesis
  *    @return	string							String
  */
 function get_date_range($date_start, $date_end, $format = '', $outputlangs = null, $withparenthesis = 1)
@@ -11005,13 +11003,13 @@ function get_date_range($date_start, $date_end, $format = '', $outputlangs = nul
 	}
 
 	if ($date_start && $date_end) {
-		$out .= ($withparenthesis ? ' (' : '') . $outputlangs->transnoentitiesnoconv('DateFromTo', dol_print_date($date_start, $format, false, $outputlangs), dol_print_date($date_end, $format, false, $outputlangs)) . ($withparenthesis ? ')' : '');
+		$out .= ($withparenthesis ? ($withparenthesis == 1 ? ' ' : '').'(' : '') . $outputlangs->transnoentitiesnoconv('DateFromTo', dol_print_date($date_start, $format, false, $outputlangs), dol_print_date($date_end, $format, false, $outputlangs)) . ($withparenthesis ? ')' : '');
 	}
 	if ($date_start && !$date_end) {
-		$out .= ($withparenthesis ? ' (' : '') . $outputlangs->transnoentitiesnoconv('DateFrom', dol_print_date($date_start, $format, false, $outputlangs)) . ($withparenthesis ? ')' : '');
+		$out .= ($withparenthesis ? ($withparenthesis == 1 ? ' ' : '').'(' : '') . $outputlangs->transnoentitiesnoconv('DateFrom', dol_print_date($date_start, $format, false, $outputlangs)) . ($withparenthesis ? ')' : '');
 	}
 	if (!$date_start && $date_end) {
-		$out .= ($withparenthesis ? ' (' : '') . $outputlangs->transnoentitiesnoconv('DateUntil', dol_print_date($date_end, $format, false, $outputlangs)) . ($withparenthesis ? ')' : '');
+		$out .= ($withparenthesis ? ($withparenthesis == 1 ? ' ' : '').'(' : '') . $outputlangs->transnoentitiesnoconv('DateUntil', dol_print_date($date_end, $format, false, $outputlangs)) . ($withparenthesis ? ')' : '');
 	}
 
 	return $out;
@@ -11027,8 +11025,6 @@ function get_date_range($date_start, $date_end, $format = '', $outputlangs = nul
  */
 function dolGetFirstLastname($firstname, $lastname, $nameorder = -1)
 {
-	global $conf;
-
 	$ret = '';
 	// If order not defined, we use the setup
 	if ($nameorder < 0) {
