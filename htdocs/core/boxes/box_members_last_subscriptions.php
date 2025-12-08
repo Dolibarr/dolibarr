@@ -48,7 +48,7 @@ class box_members_last_subscriptions extends ModeleBoxes
 	 */
 	public function __construct($db, $param = '')
 	{
-		global $conf, $user;
+		global $user;
 
 		$this->db = $db;
 
@@ -72,7 +72,7 @@ class box_members_last_subscriptions extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $user, $langs, $conf;
+		global $user, $langs;
 		$langs->load("boxes");
 
 		$this->max = $max;
@@ -140,10 +140,10 @@ class box_members_last_subscriptions extends ModeleBoxes
 						'asis' => 1,
 					);
 
-					$daterange = get_date_range($this->db->jdate($obj->date_start), $this->db->jdate($obj->date_end));
+					$daterange = get_date_range($this->db->jdate($obj->date_start), $this->db->jdate($obj->date_end), '', null, 0);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone" title="'.dol_escape_htmltag($daterange).'"',
-						'text' => $daterange,
+						'text' => '<span class="opacitymedium small">'.$daterange.'</span>',
 					);
 
 					$this->info_box_contents[$line][] = array(

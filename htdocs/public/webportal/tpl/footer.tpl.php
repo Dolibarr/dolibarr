@@ -108,7 +108,8 @@ if (empty($conf->browser->layout) || $conf->browser->layout != 'phone') { ?>
 		jQuery(document).ready(function () {
 			jQuery(".documentpreview").click(function () {
 				console.log("We click on preview for element with href=" + $(this).attr('href') + " mime=" + $(this).attr('mime'));
-				document_preview($(this).attr('href'), $(this).attr('mime'), '<?php print dol_escape_js($langs->transnoentities("Preview")) ?>');
+				const modalTitle = $(this).data('modal-title') || $(this).attr('title') || '<?php print dol_escape_js($langs->transnoentities("Preview")) ?>';
+				document_preview($(this).attr('href'), $(this).attr('mime'), modalTitle);
 				return false;
 			});
 		});
@@ -146,7 +147,7 @@ if (empty($conf->browser->layout) || $conf->browser->layout != 'phone') { ?>
 						<h2 class="dialog-header-title">${title}</h2>
 					</div>
 					<div class="dialog-header-action-container" >
-						<button class="dialog-header-btn dialog-close-btn btn-low-emphasis close"></button>
+						<button data-role="close-dialog" class="dialog-header-btn dialog-close-btn btn-low-emphasis close"></button>
 					</div>
 				</div>
 				<div class="dialog-body">
@@ -231,28 +232,40 @@ if (empty($conf->browser->layout) || $conf->browser->layout != 'phone') { ?>
 			}
 
 			function show_preview(mode) {
-				// TODO : rebuild dialog tpl show modal_card
-				let newElem = '<a href="#close" aria-label="Close" class="close" data-target="modalforpopup" onClick="toggleModal(event)"></a><object name="objectpreview" data="' +
-					file + '" type="' + type + '" width="' + object_width + '" height="' + object_height + '" param="noparam"></object>';
+
+				let moreButtons = '';
 				if (mode == 'image' && showOriginalSizeButton) {
-					newElem += '<footer>';
-					newElem += '<a href="#cancel" role="button" onClick="document_preview_original_size()"><?php print dol_escape_js($langs->trans("OriginalSize"), 1) ?></a>';
-					newElem += '<a href="#close" role="button" class="secondary" data-target="modalforpopup" onClick="toggleModal(event)"><?php print dol_escape_js($langs->trans("CloseWindow"), 1) ?></a>';
-					newElem += '</footer>';
+					// TODO remove PHP in js...
+					moreButtons += `
+					<button  class="dialog-header-btn btn-low-emphasis" onClick="document_preview_original_size()" ><?php print dol_escape_js($langs->trans("OriginalSize"), 1) ?></button>
+					`;
 				}
 
-				$('#modalforpopup article').css('width', width).css('height', height).html(newElem);
-				if (showOriginalSizeButton) {
-					jQuery("#modalforpopup article > object").css({
-						"max-height": "100%",
-						"width": "auto",
-						"margin-left": "auto",
-						"margin-right": "auto",
-						"display": "block"
-					});
-				}
+				let newElem = `
+					<div class="dialog-header">
+						<div class="dialog-header-title-container" >
+							<h2 class="dialog-header-title">${title}</h2>
+						</div>
+						<div class="dialog-header-action-container" >
+							<button data-role="close-dialog" class="dialog-header-btn dialog-close-btn btn-low-emphasis close"></button>
+							${moreButtons}
+						</div>
+					</div>
+					<div class="dialog-body">
+						<object class="object-preview" name="objectpreview" data="${file}" type="${type}"  width="${object_width}" height="${object_height}" param="noparam" ></object>
+					</div>
+				`;
+
+				$('#modalforpopup article').html(newElem);
 
 				let modal = document.getElementById('modalforpopup');
+
+				// Add close button handler
+				const closeBtn = modal.querySelector('.dialog-close-btn');
+				if (closeBtn) {
+					closeBtn.addEventListener('click', () => closeModal(modal));
+				}
+
 				openModal(modal);
 			}
 		}
@@ -264,7 +277,7 @@ if (empty($conf->browser->layout) || $conf->browser->layout != 'phone') { ?>
 		 */
 		function document_preview_original_size() {
 			console.log("document_preview_original_size A click on original size");
-			jQuery("#modalforpopup article > object").css({ "max-height": "none" });
+			jQuery("#modalforpopup object.object-preview").toggleClass('--show-original-size');
 		}
 	</script>
 

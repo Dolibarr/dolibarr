@@ -1,5 +1,5 @@
 /* Dialog container */
-.dialog-full-screen article {
+:is(.dialog-full-screen,.dialog-popup) article {
 	width: 80vw;
 	max-width: 95vw;
 	height: 90vh;
@@ -16,18 +16,36 @@
 	align-content: normal;
 }
 
-.dialog-full-screen article:has(.dialog-header) {
+
+:is(.dialog-full-screen,.dialog-popup)  article:has(.dialog-header) {
 	padding: 0;
 }
 
 
-.dialog-full-screen article .dialog-body {
+:is(.dialog-full-screen,.dialog-popup) article .dialog-body {
 	display: block;
 	flex-grow: 2;
 	flex-shrink: 1;
 	flex-basis: auto;
 	align-self: auto;
 	order: 0;
+	max-width: 100%;
+	overflow: auto;
+}
+
+
+object.object-preview {
+	width: 100%;
+	height: calc(100% - 8px);
+	object-fit:scale-down;
+}
+
+object.object-preview.--show-original-size {
+	max-width: none;
+	max-height: none;
+	width: auto;
+	height: auto;
+	object-fit: unset;
 }
 
 @media (min-width: 576px) {
