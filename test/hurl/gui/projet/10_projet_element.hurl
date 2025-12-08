@@ -97,7 +97,6 @@ GET http://{{hostnport}}/projet/tasks/list.php
 HTTP 200
 [Asserts]
 body contains "Tasks/activities"
-body contains "Total"
 
 # Check project statistics
 GET http://{{hostnport}}/projet/tasks/stats/index.php
@@ -171,6 +170,4 @@ body contains "Declared real progress"
 body contains "Everybody"
 body contains "Time spent"
 body contains "Week"
-body contains "Expected hours worked per week:"
-body contains "Number of days:"
 

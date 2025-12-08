@@ -263,6 +263,7 @@ print $form->selectarray('status', $liststatus, 4, 1);
 // Year
 print '<tr><td>'.$langs->trans("Year").'</td><td>';
 arsort($arrayyears);
+print img_picto('', 'calendar', 'class="pictofixedwidth"');
 print $form->selectarray('year', $arrayyears, $year, 0, 0, 0, '', 0, 0, 0, '', 'width75');
 
 print '</td></tr>';

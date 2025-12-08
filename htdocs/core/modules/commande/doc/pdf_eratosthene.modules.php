@@ -1934,7 +1934,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 	/**
 	 *   	Define Array Column Field
 	 *
-	 *   	@param	Commande		$object    		common object
+	 *   	@param	CommonObject	$object    		common object
 	 *   	@param	Translate		$outputlangs    langs
 	 *      @param	int<0,1>		$hidedetails	Do not show line details
 	 *      @param	int<0,1>		$hidedesc		Do not show desc

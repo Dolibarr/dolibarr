@@ -372,7 +372,7 @@ class User extends CommonObject
 	public $lastsearch_values; // To store last saved search criteria for user
 
 	/**
-	 *	@var array<int,User>|array<int,array{rowid:int,id:int,fk_user:int,fk_soc:int,firstname:string,lastname:string,login:string,statut:int,entity:int,email:string,gender:string|int<-1,-1>,admin:int<0,1>,photo:string,fullpath:string,fullname:string,level:int}>  Array of User (filled from fetchAll) or Array with hierarchy of user information (filled with get_full_tree()
+	 *	@var array<int,User>|array<int,array{rowid:int,id:int,fk_user:int,fk_soc:int,firstname:string,lastname:string,login:string,statut:int,entity:int,email:string,gender:string|int<-1,-1>,admin:int<0,1>,photo:string,fullpath:string,fullname:string,level:int}>  Array of User (filled from fetchAll) or Array with hierarchy of user information (filled with get_full_tree())
 	 */
 	public $users = array();
 	/**
@@ -868,6 +868,18 @@ class User extends CommonObject
 		}
 		return 1;
 	}
+
+	/**
+	 *  Return if a user is an admin user
+	 *  It replaces old syntax: if ($user->admin)
+	 *
+	 *  @return int<0,1>				Return integer 1 if user is admin, 0 if not.
+	 */
+	public function isAdmin()
+	{
+		return $this->admin;
+	}
+
 
 	/**
 	 *  Return if a user has a permission.
@@ -3113,7 +3125,7 @@ class User extends CommonObject
 	 *  Return a HTML link to the user card (with optionally the picto)
 	 * 	Use this->id,this->lastname, this->firstname
 	 *
-	 *	@param	int			$withpictoimg				Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small)
+	 *	@param	int			$withpictoimg				Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small, -4=Include photo very small into link)
 	 *	@param	string		$option						On what the link point to ('leave', 'accountancy', 'nolink', )
 	 *  @param  integer 	$infologin      			0=Add default info tooltip, 1=Add complete info tooltip, -1=No info tooltip
 	 *  @param	integer		$notooltip					1=Disable tooltip on picto and name
@@ -3205,7 +3217,7 @@ class User extends CommonObject
 		$result .= (($option == 'nolink') ? '' : $linkstart);
 		if ($withpictoimg) {
 			$paddafterimage = '';
-			if (abs((int) $withpictoimg) == 1) {
+			if (abs((int) $withpictoimg) == 1 || abs((int) $withpictoimg) == 4) {
 				$paddafterimage = 'style="margin-'.($langs->trans("DIRECTION") == 'rtl' ? 'left' : 'right').': 3px;"';
 			}
 			// Only picto
@@ -3213,11 +3225,11 @@ class User extends CommonObject
 				$picto = '<!-- picto user --><span class="nopadding userimg'.($morecss ? ' '.$morecss : '').'"><div class="valignmiddle userphoto inline-block center marginrightonlyshort"'.($paddafterimage ? ' '.$paddafterimage : '').'>'.img_object('', 'user', 'class=""', 0, 0, $notooltip ? 0 : 1).'</div></span>';
 			} else {
 				// Picto must be a photo
-				$picto = '<!-- picto photo user --><span class="nopadding userimg'.($morecss ? ' '.$morecss : '').'"'.($paddafterimage ? ' '.$paddafterimage : '').'>'.Form::showphoto('userphoto', $this, 0, 0, 0, 'userphoto'.($withpictoimg == -3 ? 'small' : ''), 'mini', 0, 1).'</span>';
+				$picto = '<!-- picto photo user --><span class="nopadding userimg'.($morecss ? ' '.$morecss : '').'"'.($paddafterimage ? ' '.$paddafterimage : '').'>'.Form::showphoto('userphoto', $this, 0, 0, 0, 'userphoto'.(($withpictoimg == -3 || $withpictoimg == -4) ? 'small' : ''), 'mini', 0, 1).'</span>';
 			}
 			$result .= $picto;
 		}
-		if ($withpictoimg > -2 && $withpictoimg != 2) {
+		if ($withpictoimg == -4 || ($withpictoimg > -2 && $withpictoimg != 2)) {
 			if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$result .= '<span class="nopadding usertext'.((!isset($this->status) || $this->status) ? '' : ' strikefordisabled').($morecss ? ' '.$morecss : '').'">';
 			}
@@ -3390,9 +3402,9 @@ class User extends CommonObject
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(0, '', 0, 0, 24, 0, '', 'valignmiddle') : $this->ref);
 		if (isModEnabled('multicompany') && $this->admin && !$this->entity) {
-			$return .= img_picto($langs->trans("SuperAdministratorDesc"), 'redstar', 'class="valignmiddle paddingright paddingleft"');
+			$return .= img_picto($langs->trans("SuperAdministratorDesc"), 'superadmin', 'class="valignmiddle paddingright paddingleft"');
 		} elseif ($this->admin) {
-			$return .= img_picto($langs->trans("AdministratorDesc"), 'star', 'class="valignmiddle paddingright paddingleft"');
+			$return .= img_picto($langs->trans("AdministratorDesc"), 'admin', 'class="valignmiddle paddingright paddingleft"');
 		}
 		$return .= '</span>';
 		if ($selected >= 0) {
@@ -3911,23 +3923,26 @@ class User extends CommonObject
 		if ($resql) {
 			$i = 0;
 			while ($obj = $this->db->fetch_object($resql)) {
-				$this->users[$obj->rowid]['rowid'] = $obj->rowid;
-				$this->users[$obj->rowid]['id'] = $obj->rowid;
-				$this->users[$obj->rowid]['fk_user'] = $obj->fk_user;
-				$this->users[$obj->rowid]['fk_soc'] = $obj->fk_soc;
-				$this->users[$obj->rowid]['firstname'] = $obj->firstname;
-				$this->users[$obj->rowid]['lastname'] = $obj->lastname;
-				$this->users[$obj->rowid]['login'] = $obj->login;
-				$this->users[$obj->rowid]['statut'] = $obj->statut;
-				$this->users[$obj->rowid]['entity'] = $obj->entity;
-				$this->users[$obj->rowid]['email'] = $obj->email;
-				$this->users[$obj->rowid]['gender'] = $obj->gender;
-				$this->users[$obj->rowid]['admin'] = $obj->admin;
-				$this->users[$obj->rowid]['photo'] = $obj->photo;
-				// fields are filled with build_path_from_id_user
-				$this->users[$obj->rowid]['fullpath'] = '';
-				$this->users[$obj->rowid]['fullname'] = '';
-				$this->users[$obj->rowid]['level'] = 0;
+				$this->users[(int) $obj->rowid]
+					= array(
+						'rowid' => (int) $obj->rowid,
+						'id' => (int) $obj->rowid,
+						'fk_user' => (int) $obj->fk_user,
+						'fk_soc' => (int) $obj->fk_soc,
+						'firstname' => (string) $obj->firstname,
+						'lastname' => (string) $obj->lastname,
+						'login' => (string) $obj->login,
+						'statut' => (int) $obj->statut,
+						'entity' => (int) $obj->entity,
+						'email' => (string) $obj->email,
+						'gender' => (string) $obj->gender,
+						'admin' => (int) $obj->admin,
+						'photo' => (string) $obj->photo,
+						// fields are filled with build_path_from_id_user
+						'fullpath' => '',
+						'fullname' => '',
+						'level' => 0,
+					);
 				$i++;
 			}
 		} else {

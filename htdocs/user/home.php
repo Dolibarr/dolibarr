@@ -189,9 +189,9 @@ if ($resql) {
 		$lastcreatedbox .= '<td class="nowraponall tdoverflowmax150">';
 		$lastcreatedbox .= $fuserstatic->getNomUrl(-1);
 		if (isModEnabled('multicompany') && $obj->admin && !$obj->entity) {
-			$lastcreatedbox .= img_picto($langs->trans("SuperAdministratorDesc"), 'redstar');
+			$lastcreatedbox .= img_picto($langs->trans("SuperAdministratorDesc"), 'superadmin');
 		} elseif ($obj->admin) {
-			$lastcreatedbox .= img_picto($langs->trans("AdministratorDesc"), 'star');
+			$lastcreatedbox .= img_picto($langs->trans("AdministratorDesc"), 'admin');
 		}
 		$lastcreatedbox .= "</td>";
 		$lastcreatedbox .= '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->login).'">'.dol_escape_htmltag($obj->login).'</td>';
@@ -287,7 +287,7 @@ if ($permissiontoreadgroup) {
 			$lastgroupbox .= '<td>';
 			$lastgroupbox .= $grouptemp->getNomUrl(1);
 			if (!$obj->entity) {
-				$lastgroupbox .= img_picto($langs->trans("GlobalGroup"), 'redstar');
+				$lastgroupbox .= img_picto($langs->trans("GlobalGroup"), 'superadmin');
 			}
 			$lastgroupbox .= "</td>";
 			if (isModEnabled('multicompany') && is_object($mc)) {

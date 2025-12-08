@@ -10,13 +10,13 @@
 return [
     // # Issue statistics:
     // PhanUndeclaredProperty : 420+ occurrences
-    // PhanTypeMismatchProperty : 100+ occurrences
+    // PhanTypeMismatchProperty : 95+ occurrences
     // PhanTypeMismatchArgument : 65+ occurrences
     // PhanUndeclaredGlobalVariable : 60+ occurrences
     // PhanTypeMismatchArgumentNullable : 20+ occurrences
     // PhanTypeInvalidDimOffset : 15+ occurrences
     // PhanTypeMismatchDimFetch : 10+ occurrences
-    // PhanUndeclaredMethod : 7 occurrences
+    // PhanUndeclaredMethod : 6 occurrences
     // PhanTypeArraySuspiciousNull : 5 occurrences
     // PhanTypeExpectedObjectPropAccess : 5 occurrences
     // PhanPluginDuplicateArrayKey : 4 occurrences
@@ -253,11 +253,9 @@ return [
         'htdocs/user/class/usergroup.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/variants/tpl/productattributevalueline_edit.tpl.php' => ['PhanUndeclaredProperty'],
         'htdocs/variants/tpl/productattributevalueline_view.tpl.php' => ['PhanUndeclaredProperty'],
-        'htdocs/viewimage.php' => ['PhanUndeclaredMethod'],
         'htdocs/webhook/class/target.class.php' => ['PhanUndeclaredMethod'],
         'htdocs/webhook/target_card.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/webportal/admin/setup.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/webportal/class/html.formcardwebportal.class.php' => ['PhanTypeMismatchArgument', 'PhanUndeclaredProperty'],
         'htdocs/webportal/class/html.formlistwebportal.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/webportal/class/webportalpropal.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/webservices/server_project.php' => ['PhanUndeclaredProperty'],

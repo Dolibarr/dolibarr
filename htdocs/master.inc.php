@@ -62,7 +62,7 @@ require_once 'filefunc.inc.php';
  * @var string $dolibarr_main_url_root
  * @var string $dolibarr_main_url_root_alt
  * @var string $dolibarr_main_document_root_alt
- * @var string $dolibarr_main_stream_to_disable
+ * @var string|string[] $dolibarr_main_stream_to_disable
  */
 '
 @phan-var-force ?string $dolibarr_main_db_prefix

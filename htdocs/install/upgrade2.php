@@ -683,6 +683,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				'MAIN_MODULE_BLOCKEDLOG' => 'noboxes',
 				'MAIN_MODULE_DON' => 'newboxdefonly',
 				'MAIN_MODULE_ECM' => 'newboxdefonly',
+				'MAIN_MODULE_EVENTORGANIZATION' => 'newboxdefonly',
 				'MAIN_MODULE_EXPENSEREPORT' => 'newboxdefonly',
 				'MAIN_MODULE_FACTURE' => 'newboxdefonly',
 				'MAIN_MODULE_FOURNISSEUR' => 'newboxdefonly',
@@ -692,7 +693,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				'MAIN_MODULE_MARGIN' => 'menuonly',
 				'MAIN_MODULE_MRP' => 'menuonly',
 				'MAIN_MODULE_OPENSURVEY' => 'newboxdefonly',
-				'MAIN_MODULE_PAYBOX' => 'newboxdefonly',
+				'MAIN_MODULE_PARTNERSHIP' => 'newboxdefonly',
 				'MAIN_MODULE_PRINTING' => 'newboxdefonly',
 				'MAIN_MODULE_PRODUIT' => 'newboxdefonly',
 				'MAIN_MODULE_RECRUITMENT' => 'menuonly',
@@ -714,7 +715,8 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				$error++;
 			}
 
-			// Reload menus (this must be always and only into last targeted version)
+			// Reload menus (this must be always done, and only into last targeted version)
+			// This reload the auguria menu.To reload a dynamic menu defined into module descriptor, see previours step
 			$result = migrate_reload_menu($db, $langs, $conf);
 			if ($result < 0) {
 				$error++;
@@ -4566,8 +4568,8 @@ function migrate_productlot_path()
 			}
 
 			if ($dir) {
-				$lot->id = $obj->rowid;
-				$lot->ref = $obj->id;		// No ref for the moment
+				$lot->id = (int) $obj->rowid;
+				$lot->ref = (string) $obj->rowid;		// No ref for the moment
 				$lot->batch = $obj->batch;
 				$lot->entity = $obj->entity;
 				$lot->fk_product = $obj->fk_product;
@@ -4782,9 +4784,9 @@ function migrate_user_photospath2()
  */
 function migrate_holiday_path()
 {
-	global $conf, $db, $langs, $user;
+	global $conf, $db, $langs;
 
-	print '<tr><td colspan="4">';
+	print '<tr class="trforrunsql"><td>';
 
 	print '<b>'.$langs->trans('MigrationHolidayPath')."</b><br>\n";
 
@@ -4792,6 +4794,7 @@ function migrate_holiday_path()
 	$holiday = new Holiday($db);
 
 	$sql = "SELECT rowid as uid, ref, entity from ".MAIN_DB_PREFIX."holiday"; // Get list of all holiday
+
 	$resql = $db->query($sql);
 	if ($resql) {
 		while ($obj = $db->fetch_object($resql)) {

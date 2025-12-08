@@ -1065,7 +1065,7 @@ class pdf_standard_asset extends ModelePDFAsset
 	/**
 	 *  Define Array Column Field
 	 *
-	 *  @param	Asset			$object    		common object
+	 *  @param	CommonObject	$object    		common object
 	 *  @param	Translate		$outputlangs    langs
 	 *  @param	int<0,1>		$hidedetails	Do not show line details
 	 *  @param	int<0,1>		$hidedesc		Do not show desc

@@ -712,9 +712,9 @@ class Account extends CommonObject
 	/**
 	 *  Create bank account into database
 	 *
-	 *  @param	User	$user		Object user making creation
-	 *  @param  int     $notrigger  1=Disable triggers
-	 *  @return int        			Return integer < 0 if KO, > 0 if OK
+	 *  @param	User		$user		Object user making creation
+	 *  @param  int<0,1>    $notrigger  1=Disable triggers
+	 *  @return int        				Return integer < 0 if KO, > 0 if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{

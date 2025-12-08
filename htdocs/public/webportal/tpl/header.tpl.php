@@ -19,6 +19,8 @@
 /**
  * @var Context $context	Object context for webportal
  * @var Translate $langs
+ * @@var string[] $vars['body-class'] more CSS classes  for body
+ * @@var string[] $vars['body-theme'] theme css to apply default is custom
  */
 
 // Protection to avoid direct call of template
@@ -85,6 +87,18 @@ top_httphead();
 	// Common dolibarr js functions
 	$jQueryUIJSUrl = $context->rootUrl.'js/lib_head.js.php';
 	print '<script src="'.$jQueryUIJSUrl.'"></script>'."\n";
+
+	$bodyAttributes = [
+		'data-theme' => $vars['body-theme']??'custom',
+		'data-controller' => $context->controller,
+	];
+
+	if (!empty($vars['body-class'])) {
+		$bodyAttributes['class'] = $vars['body-class'];
+	}
+
+	$bodyCompiledAttributes = commonHtmlAttributeBuilder($bodyAttributes);
+
 	?>
 </head>
-<body data-theme="custom" data-controller="<?php print dol_escape_htmltag($context->controller); ?>">
+<body <?php print empty($bodyCompiledAttributes) ? '' : implode(' ', $bodyCompiledAttributes); ?> >

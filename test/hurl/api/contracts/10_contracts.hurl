@@ -101,15 +101,13 @@ HTTP 200
 GET http://{{hostnport}}/api/index.php/contracts
 DOLAPIENTITY: 2
 HTTP 401
-{"error":{"code":401,"message":"Unauthorized: Error user not valid (not found with api key or bad status or bad validity dates) (conf->entity=2)"}}
+[Asserts]
+jsonpath "$.error" exists
+jsonpath "$.error.code" == 401
+jsonpath "$.error.message" contains "Unauthorized"
+jsonpath "$.error.message" contains "Token not valid (may be a typo or a wrong entity)"
 
 # http://localhost:8080/api/index.php/contracts?sortfield=t.rowid&sortorder=ASC&limit=1
-
-# Capture a contract ID number
-GET http://{{hostnport}}/api/index.php/contracts?limit=1
-HTTP 200
-[Captures]
-contract_id: jsonpath "$[0]['id']"
 
 # POST socid 0
 POST http://{{hostnport}}/api/index.php/contracts

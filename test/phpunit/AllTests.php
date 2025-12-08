@@ -253,6 +253,9 @@ class AllTests
 		require_once dirname(__FILE__).'/AssetModelTest.php';
 		$suite->addTestSuite('AssetModelTest');
 
+		require_once dirname(__FILE__).'/BlockedLogAndLNETest.php';
+		$suite->addTestSuite('BlockedLogAndLNETest');
+
 		// Rest
 		require_once dirname(__FILE__).'/RestAPIUserTest.php';
 		$suite->addTestSuite('RestAPIUserTest');

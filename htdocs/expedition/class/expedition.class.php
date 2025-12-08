@@ -152,7 +152,7 @@ class Expedition extends CommonObject
 	public $billed;
 
 	/**
-	 * @var null|int|string
+	 * @var null|int|float|''
 	 */
 	public $trueWeight;
 	/**
@@ -160,7 +160,7 @@ class Expedition extends CommonObject
 	 */
 	public $weight_units;
 	/**
-	 * @var null|int|string
+	 * @var null|int|float|''
 	 */
 	public $trueWidth;
 	/**
@@ -168,7 +168,7 @@ class Expedition extends CommonObject
 	 */
 	public $width_units;
 	/**
-	 * @var null|int|string
+	 * @var null|int|float|''
 	 */
 	public $trueHeight;
 	/**
@@ -176,7 +176,7 @@ class Expedition extends CommonObject
 	 */
 	public $height_units;
 	/**
-	 * @var null|int|string
+	 * @var null|int|float|''
 	 */
 	public $trueDepth;
 	/**
@@ -184,7 +184,7 @@ class Expedition extends CommonObject
 	 */
 	public $depth_units;
 	/**
-	 * @var null|string A denormalized value
+	 * @var null|string A denormalized value ex '1x2x4'
 	 */
 	public $trueSize;
 

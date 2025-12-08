@@ -96,7 +96,7 @@ if (empty($origin_id) && !empty($origin)) {
 if (empty($origin_id) && !empty($origin)) {
 	$origin_id  = GETPOSTINT('object_id'); // Id of order or propal
 }
-$socid  =  GETPOSTINT('socid');
+$socid = GETPOSTINT('socid');
 $ref = GETPOST('ref', 'alpha');
 $line_id = GETPOSTINT('lineid');
 $facid = GETPOSTINT('facid');
@@ -105,8 +105,8 @@ $projectid = GETPOSTINT('projectid');
 $action = GETPOST('action', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
-$rank      = (GETPOSTINT('rank') > 0) ? GETPOSTINT('rank') : -1;
-$lineid    =  GETPOSTINT('lineid');
+$rank = (GETPOSTINT('rank') > 0) ? GETPOSTINT('rank') : -1;
+$lineid = GETPOSTINT('lineid');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 //PDF
@@ -294,7 +294,16 @@ if (empty($reshook)) {
 	if ($action == 'add' && $permissiontoadd) {
 		$db->begin();
 
-		if (GETPOSTINT('socid') < 1) {
+		if ($origin && $origin_id > 0) {
+			// We will loop on each line of the original document to complete the shipping object with various info and quantity to deliver
+			$classname = ucfirst($origin);
+			$objectsrc = new $classname($db);
+			'@phan-var-force Facture|Commande $objectsrc';
+			$objectsrc->fetch($origin_id);
+			$object->socid = $objectsrc->socid;
+		}
+
+		if (GETPOSTINT('socid') < 1 && $object->socid < 1) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdParty")), null, 'errors');
 			$action = 'create';
@@ -308,10 +317,10 @@ if (empty($reshook)) {
 			$object->origin_type = $origin;
 			$object->origin_id = $origin_id;
 			$object->fk_project = GETPOSTINT('projectid');
-			$object->weight = GETPOSTINT('weight') == '' ? "NULL" : GETPOSTINT('weight');
-			$object->sizeH = GETPOSTINT('sizeH') == '' ? "NULL" : GETPOSTINT('sizeH');
-			$object->sizeW = GETPOSTINT('sizeW') == '' ? "NULL" : GETPOSTINT('sizeW');
-			$object->sizeS = GETPOSTINT('sizeS') == '' ? "NULL" : GETPOSTINT('sizeS');
+			$object->weight = GETPOST('weight') == '' ? '' : GETPOSTFLOAT('weight');
+			$object->sizeH = GETPOST('sizeH') == '' ? '' : GETPOSTFLOAT('sizeH');
+			$object->sizeW = GETPOST('sizeW') == '' ? '' : GETPOSTFLOAT('sizeW');
+			$object->sizeS = GETPOST('sizeS') == '' ? '' : GETPOSTFLOAT('sizeS');
 			$object->size_units = GETPOSTINT('size_units');
 			$object->weight_units = GETPOSTINT('weight_units');
 			$object->ref_customer = GETPOST('ref_customer', 'alpha');
@@ -320,15 +329,13 @@ if (empty($reshook)) {
 			$object->date_shipping = $date_shipping; // Sending date
 			$object->shipping_method_id = GETPOSTINT('shipping_method_id');
 			$object->tracking_number = GETPOST('tracking_number', 'alpha');
-			$object->note = GETPOST('note', 'restricthtml'); // deprecated
+			$object->note = GETPOST('note_private', 'restricthtml'); // deprecated
 			$object->note_private = GETPOST('note_private', 'restricthtml');
 			$object->note_public = GETPOST('note_public', 'restricthtml');
 			$object->fk_incoterms = GETPOSTINT('incoterm_id');
 			$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 
 			$product = new Product($db);
-
-
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -350,10 +357,10 @@ if (empty($reshook)) {
 			$object->origin_type = $origin;
 			$object->origin_id = $origin_id;
 			$object->fk_project = GETPOSTINT('projectid');
-			$object->weight = GETPOSTINT('weight') == '' ? "NULL" : GETPOSTINT('weight');
-			$object->sizeH = GETPOSTINT('sizeH') == '' ? "NULL" : GETPOSTINT('sizeH');
-			$object->sizeW = GETPOSTINT('sizeW') == '' ? "NULL" : GETPOSTINT('sizeW');
-			$object->sizeS = GETPOSTINT('sizeS') == '' ? "NULL" : GETPOSTINT('sizeS');
+			$object->weight = GETPOST('weight') == '' ? '' : GETPOSTFLOAT('weight');
+			$object->sizeH = GETPOST('sizeH') == '' ? '' : GETPOSTFLOAT('sizeH');
+			$object->sizeW = GETPOST('sizeW') == '' ? '' : GETPOSTFLOAT('sizeW');
+			$object->sizeS = GETPOST('sizeS') == '' ? '' : GETPOSTFLOAT('sizeS');
 			$object->size_units = GETPOSTINT('size_units');
 			$object->weight_units = GETPOSTINT('weight_units');
 			$object->ref_customer = GETPOST('ref_customer', 'alpha');
@@ -362,7 +369,7 @@ if (empty($reshook)) {
 			$object->date_shipping = $date_shipping; // Sending date
 			$object->shipping_method_id = GETPOSTINT('shipping_method_id');
 			$object->tracking_number = GETPOST('tracking_number', 'alpha');
-			$object->note = GETPOST('note', 'restricthtml'); // deprecated
+			$object->note = GETPOST('note_private', 'restricthtml'); // deprecated
 			$object->note_private = GETPOST('note_private', 'restricthtml');
 			$object->note_public = GETPOST('note_public', 'restricthtml');
 			$object->fk_incoterms = GETPOSTINT('incoterm_id');
@@ -767,18 +774,18 @@ if (empty($reshook)) {
 			$object->tracking_url = trim(GETPOST('tracking_url', 'restricthtml'));
 		}
 		if ($action == 'settrueWeight') {		// Test on permission not required
-			$object->trueWeight = GETPOSTINT('trueWeight');
+			$object->trueWeight = GETPOSTFLOAT('trueWeight');
 			$object->weight_units = GETPOSTINT('weight_units');
 		}
 		if ($action == 'settrueWidth') {		// Test on permission not required
-			$object->trueWidth = GETPOSTINT('trueWidth');
+			$object->trueWidth = GETPOSTFLOAT('trueWidth');
 		}
 		if ($action == 'settrueHeight') {		// Test on permission not required
-			$object->trueHeight = GETPOSTINT('trueHeight');
+			$object->trueHeight = GETPOSTFLOAT('trueHeight');
 			$object->size_units = GETPOSTINT('size_units');
 		}
 		if ($action == 'settrueDepth') {		// Test on permission not required
-			$object->trueDepth = GETPOSTINT('trueDepth');
+			$object->trueDepth = GETPOSTFLOAT('trueDepth');
 		}
 		if ($action == 'setshipping_method_id') {	// Test on permission not required
 			$object->shipping_method_id = GETPOSTINT('shipping_method_id');
@@ -1418,7 +1425,7 @@ $product_static = new Product($db);
 $shipment_static = new Expedition($db);
 $warehousestatic = new Entrepot($db);
 
-if ($action == 'create' && !getDolGlobalString('SHIPMENT_STANDALONE')) {
+if (!$origin && $action == 'create' && !getDolGlobalString('SHIPMENT_STANDALONE')) {
 	print load_fiche_titre($langs->trans("CreateShipment"), '', 'dolly');
 
 	print '<br>'  .$langs->trans("ShipmentCreationIsDoneFromOrder");
@@ -2257,7 +2264,7 @@ if ($action == 'create' && $usercancreate) {
 						}
 					} else {
 						// ship from multiple locations
-						if (isModEnabled('productbatch') || !$product->hasbatch()) {
+						if (!isModEnabled('productbatch') || !$product->hasbatch()) {
 							print '<!-- Case warehouse not already known and product does not need lot -->';
 							print '<td></td><td></td>';
 							if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
@@ -2464,6 +2471,7 @@ if ($action == 'create' && $usercancreate) {
 
 										print '<!-- Show details of lot -->';
 										print '<input name="batchl' . $indiceAsked . '_' . $subj . '" type="hidden" value="' . $dbatch->id . '">';
+										print '<input name="entl' . $indiceAsked . '_'.$subj.'" type="hidden" value="' . $tmpwarehouseObject->id . '">';
 
 										//print '|'.$line->fk_product.'|'.$dbatch->batch.'|<br>';
 										print $langs->trans("Batch") . ': ';
@@ -3726,9 +3734,9 @@ if ($action == 'create' && $usercancreate) {
 			if (empty($user->socid)) {
 				if ($object->status > 0) {
 					if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || $user->hasRight('expedition', 'shipping_advance', 'send')) {
-						print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"] . '?action=presend&token=' . newToken() . '&id=' . $object->id . '&mode=init#formmailbeforetitle', '');
+						print dolGetButtonAction('', $langs->trans('SendMail'), 'email', $_SERVER["PHP_SELF"] . '?action=presend&token=' . newToken() . '&id=' . $object->id . '&mode=init#formmailbeforetitle', '');
 					} else {
-						print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER['PHP_SELF'] . '#', '', false);
+						print dolGetButtonAction('', $langs->trans('SendMail'), 'email', $_SERVER['PHP_SELF'] . '#', '', false);
 					}
 				}
 			}

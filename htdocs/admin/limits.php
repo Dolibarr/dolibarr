@@ -42,7 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 $langs->loadLangs(array('companies', 'products', 'admin'));
 
 $action = GETPOST('action', 'aZ09');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel', 'alpha');
 $currencycode = GETPOST('currencycode', 'alpha');
 
 if (isModEnabled('multicompany') && getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY')) {

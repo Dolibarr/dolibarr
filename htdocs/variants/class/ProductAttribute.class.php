@@ -1359,7 +1359,7 @@ class ProductAttribute extends CommonObject
 	 *	@param	string		$action				Action code
 	 *	@param  Societe		$seller            	Object of seller third party
 	 *	@param  ?Societe  	$buyer             	Object of buyer third party
-	 *	@param	int			$selected		   	Object line selected
+	 *	@param	int<0,max>	$selected		   	Object line selected
 	 *	@param  int	    	$dateSelector      	1=Show also date range input fields
 	 *  @param	string		$defaulttpldir		Directory where to find the template
 	 *  @param	int			$addcreateline		1=Add create line
@@ -1446,7 +1446,7 @@ class ProductAttribute extends CommonObject
 	 *	@param  int		    		$dateSelector      	1=Show also date range input fields
 	 *	@param  Societe	    		$seller            	Object of seller third party
 	 *	@param  ?Societe	   		$buyer             	Object of buyer third party
-	 *	@param	int<0,1>			$selected		   	Object line selected
+	 *	@param	int<0,max>			$selected		   	ID line selected
 	 *  @param  ?Extrafields		$extrafields		Object of extrafields
 	 *  @param	string				$defaulttpldir		Directory where to find the template (deprecated)
 	 *	@return	void
