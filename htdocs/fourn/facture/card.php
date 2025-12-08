@@ -4183,14 +4183,14 @@ if ($action == 'create') {
 			// modified by hook
 			if (empty($reshook)) {
 				// Subtotal
-				if ($object->status == FactureFournisseur::STATUS_DRAFT && isModEnabled('subtotals') && getDolGlobalString('SUBTOTAL_TITLE_'.strtoupper($object->element))) {
+				if ($object->status === FactureFournisseur::STATUS_DRAFT && isModEnabled('subtotals') && getDolGlobalString('SUBTOTAL_TITLE_'.strtoupper($object->element))) {
 					$langs->load('subtotals');
 
 					$url_button = array();
 
 					$url_button[] = array(
 						'lang' => 'subtotals',
-						'enabled' => $object->status == FactureFournisseur::STATUS_DRAFT,
+						'enabled' => true,
 						'perm' => (bool) $usercancreate,
 						'label' => $langs->trans('AddTitleLine'),
 						'url' => dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'add_title_line'], true)
@@ -4198,7 +4198,7 @@ if ($action == 'create') {
 
 					$url_button[] = array(
 						'lang' => 'subtotals',
-						'enabled' => $object->status == FactureFournisseur::STATUS_DRAFT,
+						'enabled' => true,
 						'perm' => (bool) $usercancreate,
 						'label' => $langs->trans('AddSubtotalLine'),
 						'url' => dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'add_subtotal_line'], true)
