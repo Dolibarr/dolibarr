@@ -287,17 +287,18 @@ trait CommonSubtotal
 				0,						// pu ht devise
 				'',						// ref supplier
 				SUBTOTALS_SPECIAL_CODE	// Special code
-		} elseif ($current_module == 'fichinter') {
-			$result = $this->addline( // @phpstan-ignore-line
-				$user,					// user @phpstan-ignore-line
-				$this->id,				// fk_fichinter @phpstan-ignore-line
-				$desc,					// Description @phpstan-ignore-line
-				0,						// dateintervention  @phpstan-ignore-line
-				$depth,					// duration  @phpstan-ignore-line
-				[],						// arrayoption  @phpstan-ignore-line
-				self::$PRODUCT_TYPE,	// Type @phpstan-ignore-line
-				$rang,					// Rang @phpstan-ignore-line
-				SUBTOTALS_SPECIAL_CODE	// Special code @phpstan-ignore-line
+			);
+		} elseif ($current_module == 'fichinter' && $this instanceof Fichinter) {
+			$result = $this->addline(
+				$user,					// user
+				$this->id,				// fk_fichinter
+				$desc,					// Description
+				0,						// dateintervention
+				$depth,					// duration
+				[],						// arrayoption
+				self::$PRODUCT_TYPE,	// Type
+				$rang,					// Rang
+				SUBTOTALS_SPECIAL_CODE	// Special code
 			);
 		}
 
@@ -589,8 +590,6 @@ trait CommonSubtotal
 			$objectline = new SupplierInvoiceLine($this->db);
 			$objectline->fetch($lineid);
 			$line_rang = $objectline->rang;
-			// TODO TO FIX parameters
-			/** @var FactureFournisseur $this */
 			$result = $this->updateline(
 				$lineid,				// ID of line to change
 				$desc,					// Description
