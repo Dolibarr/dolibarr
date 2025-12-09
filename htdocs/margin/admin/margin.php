@@ -23,13 +23,7 @@
  *		\brief      Page to setup margin module
  */
 
-include '../../main.inc.php';
-
-require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php";
-
+require_once '../../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -37,6 +31,10 @@ require_once DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php";
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php";
 
 $langs->loadLangs(array("admin", "bills", "margins", "stocks"));
 
@@ -72,29 +70,28 @@ if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg)) {
 	}
 }
 
-if ($action == 'remises') {
-	if (dolibarr_set_const($db, 'MARGIN_METHODE_FOR_DISCOUNT', GETPOST('MARGIN_METHODE_FOR_DISCOUNT'), 'chaine', 0, '', $conf->entity) > 0) {
-		setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
-	} else {
+if ($action == 'update') {
+	$error = 0;
+	if (dolibarr_set_const($db, 'MARGIN_METHODE_FOR_DISCOUNT', GETPOST('MARGIN_METHODE_FOR_DISCOUNT'), 'chaine', 0, '', $conf->entity) <= 0) {
 		dol_print_error($db);
+		$error++;
+	}
+
+	if (dolibarr_set_const($db, 'MARGIN_TYPE', GETPOST('MARGIN_TYPE'), 'chaine', 0, '', $conf->entity) <= 0) {
+		dol_print_error($db);
+		$error++;
+	}
+
+	if (dolibarr_set_const($db, 'AGENT_CONTACT_TYPE', GETPOST('AGENT_CONTACT_TYPE'), 'chaine', 0, '', $conf->entity) <= 0) {
+		dol_print_error($db);
+		$error++;
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 	}
 }
 
-if ($action == 'typemarges') {
-	if (dolibarr_set_const($db, 'MARGIN_TYPE', GETPOST('MARGIN_TYPE'), 'chaine', 0, '', $conf->entity) > 0) {
-		setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
-	} else {
-		dol_print_error($db);
-	}
-}
-
-if ($action == 'contact') {
-	if (dolibarr_set_const($db, 'AGENT_CONTACT_TYPE', GETPOST('AGENT_CONTACT_TYPE'), 'chaine', 0, '', $conf->entity) > 0) {
-		setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
-	} else {
-		dol_print_error($db);
-	}
-}
 
 /*
  * View
@@ -113,53 +110,49 @@ $head = marges_admin_prepare_head();
 
 print dol_get_fiche_head($head, 'parameters', $langs->trans("Margins"), -1, 'margin');
 
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="update">';
+
+print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td width=300>'.$langs->trans("MemberMainOptions").'</td>';
-print '<td colspan="2">'.$langs->trans("Value").'</td>'."\n";
-print '<td class="left">'.$langs->trans("Description").'</td>'."\n";
+print '<td colspan="3">'.$langs->trans("MemberMainOptions").'</td>';
 print '</tr>';
 
 // GLOBAL DISCOUNT MANAGEMENT
-print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print "<input type=\"hidden\" name=\"action\" value=\"typemarges\">";
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MARGIN_TYPE").'</td>';
-print '<td>';
-print ' <input type="radio" name="MARGIN_TYPE" value="1" ';
+print '<td class="minwidth150">';
+print ' <input type="radio" name="MARGIN_TYPE" id="MARGIN_TYPE1" value="1" ';
 if (getDolGlobalString('MARGIN_TYPE') == '1') {
 	print 'checked ';
 }
 print '/> ';
-print $langs->trans('MargeType1');
+print '<label for="MARGIN_TYPE1">'.$langs->trans('MargeType1').'</label>';
 print '<br>';
-print ' <input type="radio" name="MARGIN_TYPE" value="pmp" ';
+print ' <input type="radio" name="MARGIN_TYPE" id="MARGIN_TYPE2" value="pmp" ';
 if (getDolGlobalString('MARGIN_TYPE') == 'pmp') {
 	print 'checked ';
 }
 print '/> ';
-print $langs->trans('MargeType2');
+print '<label for="MARGIN_TYPE2">'.$langs->trans('MargeType2').'</label>';
 print '<br>';
-print ' <input type="radio" name="MARGIN_TYPE" value="costprice" ';
+print ' <input type="radio" name="MARGIN_TYPE" id="MARGIN_TYPE3" value="costprice" ';
 if (getDolGlobalString('MARGIN_TYPE') == 'costprice') {
 	print 'checked ';
 }
 print '/> ';
-print $langs->trans('MargeType3');
+print '<label for="MARGIN_TYPE3">'.$langs->trans('MargeType3').'</label>';
 print '</td>';
-print '<td>';
-print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'" class="button">';
-print '</td>';
-print '<td>'.$langs->trans('MarginTypeDesc');
+print '<td class="minwidth200"><span class="small">'.$langs->trans('MarginTypeDesc').'</span>';
 print '</td>';
 print '</tr>';
-print '</form>';
 
 // DISPLAY MARGIN RATES
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DisplayMarginRates").'</td>';
-print '<td colspan="2">';
+print '<td>';
 if (!empty($conf->use_javascript_ajax)) {
 	print ajax_constantonoff('DISPLAY_MARGIN_RATES');
 } else {
@@ -170,13 +163,13 @@ if (!empty($conf->use_javascript_ajax)) {
 	}
 }
 print '</td>';
-print '<td>'.$langs->trans('MarginRate').' = '.$langs->trans('Margin').' / '.$langs->trans('BuyingPrice').'</td>';
+print '<td><span class="small">'.$langs->trans('MarginRate').' = '.$langs->trans('Margin').' / '.$langs->trans('BuyingPrice').'</span></td>';
 print '</tr>';
 
 // DISPLAY MARK RATES
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DisplayMarkRates").'</td>';
-print '<td colspan="2">';
+print '<td>';
 if (!empty($conf->use_javascript_ajax)) {
 	print ajax_constantonoff('DISPLAY_MARK_RATES');
 } else {
@@ -187,13 +180,13 @@ if (!empty($conf->use_javascript_ajax)) {
 	}
 }
 print '</td>';
-print '<td>'.$langs->trans('MarkRate').' = '.$langs->trans('Margin').' / '.$langs->trans('SellingPrice').'</td>';
+print '<td><span class="small">'.$langs->trans('MarkRate').' = '.$langs->trans('Margin').' / '.$langs->trans('SellingPrice').'</span></td>';
 print '</tr>';
 
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ForceBuyingPriceIfNull").'</td>';
-print '<td colspan="2">';
+print '<td>';
 if (!empty($conf->use_javascript_ajax)) {
 	print ajax_constantonoff('ForceBuyingPriceIfNull');
 } else {
@@ -204,7 +197,7 @@ if (!empty($conf->use_javascript_ajax)) {
 	}
 }
 print '</td>';
-print '<td>'.$langs->trans('ForceBuyingPriceIfNullDetails').'</td>';
+print '<td><span class="small">'.$langs->trans('ForceBuyingPriceIfNullDetails').'</span></td>';
 print '</tr>';
 
 // GLOBAL DISCOUNT MANAGEMENT
@@ -215,25 +208,15 @@ $methods = array(
 );
 
 
-print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="remises">';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MARGIN_METHODE_FOR_DISCOUNT").'</td>';
 print '<td class="left">';
 print Form::selectarray('MARGIN_METHODE_FOR_DISCOUNT', $methods, getDolGlobalString('MARGIN_METHODE_FOR_DISCOUNT'));
 print '</td>';
-print '<td>';
-print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
-print '</td>';
-print '<td>'.$langs->trans('MARGIN_METHODE_FOR_DISCOUNT_DETAILS').'</td>';
+print '<td><span class="small">'.$langs->trans('MARGIN_METHODE_FOR_DISCOUNT_DETAILS').'</span></td>';
 print '</tr>';
-print '</form>';
 
 // INTERNAL CONTACT TYPE USED AS COMMERCIAL AGENT
-print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="contact">';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AgentContactType").'</td>';
 print '<td class="left">';
@@ -241,14 +224,15 @@ $formcompany = new FormCompany($db);
 $facture = new Facture($db);
 print $formcompany->selectTypeContact($facture, getDolGlobalString('AGENT_CONTACT_TYPE'), "AGENT_CONTACT_TYPE", "internal", "code", 1, "maxwidth250");
 print '</td>';
-print '<td>';
-print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
-print '</td>';
-print '<td>'.$langs->trans('AgentContactTypeDetails').'</td>';
+print '<td><span class="small">'.$langs->trans('AgentContactTypeDetails').'</span></td>';
 print '</tr>';
-print '</form>';
 
 print '</table>';
+print '</div>';
+
+print '<center><input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'" class="button"></center>';
+
+print '</form>';
 
 print dol_get_fiche_end();
 

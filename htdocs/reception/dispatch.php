@@ -322,7 +322,6 @@ llxHeader('', $title, $help_url, '', 0, 0, $morejs, '', '', 'mod-reception page-
 if ($id > 0 || !empty($ref)) {
 	$typeobject = '';
 	if (!empty($object->origin) && $object->origin_id > 0) {
-		$object->origin = 'CommandeFournisseur';
 		$typeobject = $object->origin;
 		$origin = $object->origin;
 		$origin_id = $object->origin_id;
@@ -418,7 +417,7 @@ if ($id > 0 || !empty($ref)) {
 		print "</td>\n";
 		print '</tr>';
 	}
-	if ($typeobject == 'CommandeFournisseur' && $object->origin_object->id && isModEnabled("propal")) {
+	if (($typeobject == 'supplier_order' || $typeobject == 'order_supplier') && $object->origin_object->id && isModEnabled("propal")) {
 		print '<tr><td>';
 		print $langs->trans("SupplierOrder").'</td>';
 		print '<td colspan="3">';

@@ -100,11 +100,12 @@ HTTP 200
 # GET contracts DOLAPIENTITY: 2
 GET http://{{hostnport}}/api/index.php/contracts
 DOLAPIENTITY: 2
-HTTP 403
+HTTP 401
 [Asserts]
 jsonpath "$.error" exists
-jsonpath "$.error.code" == 403
-jsonpath "$.error.message" == "Forbidden"
+jsonpath "$.error.code" == 401
+jsonpath "$.error.message" contains "Unauthorized"
+jsonpath "$.error.message" contains "Token not valid (may be a typo or a wrong entity)"
 
 # http://localhost:8080/api/index.php/contracts?sortfield=t.rowid&sortorder=ASC&limit=1
 

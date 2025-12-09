@@ -129,6 +129,8 @@ function formatObject($objtoshow, $prefix)
 		'pos_source' => "POSTerminal",
 		'posmodule' => 'POSModule',
 		'posnumber' => 'POSTerminal',
+		'pos_print_counter' => "NumberOfPrints",
+		'email_sent_counter' => "NumberOfEmailsSent",
 		'managers' => 'Managers',
 		'type_code' => 'PaymentMode',
 		'datec' => 'DateCreation',
@@ -153,11 +155,13 @@ function formatObject($objtoshow, $prefix)
 		'tva_tx' => 'VatRate',
 		'localtax1_tx' => 'Localtax1Rate',
 		'localtax2_tx' => 'Localtax2Rate',
+		'vat_src_code' => 'VatCode',
 		'multicurrency_code' => 'Currency',
 		'qty' => 'Quantity',
 		'nom' => 'Name',
 		'name' => 'Name',
 		'email' => 'Email',
+		'state_code' => 'State',
 		'revenuestamp' => 'RevenueStamp',
 		'code_client' => 'CustomerCode',
 		'capital' => 'Capital',
@@ -167,9 +171,10 @@ function formatObject($objtoshow, $prefix)
 		'localtax2_value' => 'LocalTax2DefaultValue',
 		'subprice' => 'UnitPrice',
 		'product_type' => 'ProductType',
+		'product_label' => 'ProductLabel',
 		'type' => 'InvoiceType',
 		'info_bits' => 'TVA NPR or NOT',
-		'special_code' => 'Special line (WEEE line, option, id of module...)'
+		'special_code' => 'Special line (WEEE line, option, id of module...)',
 	);
 
 	if (is_object($newobjtoshow) || is_array($newobjtoshow)) {

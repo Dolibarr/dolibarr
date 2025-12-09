@@ -60,7 +60,7 @@ $id = GETPOSTINT('rowid') ? GETPOSTINT('rowid') : GETPOSTINT('id');
 $rowid = $id;
 $ref = GETPOST('ref', 'alphanohtml');
 $typeid = GETPOSTINT('typeid');
-$cancel = GETPOST('cancel');
+$cancel = GETPOST('cancel', 'alpha');
 
 // Load variable for pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;

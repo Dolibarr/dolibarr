@@ -130,21 +130,12 @@ print '
         display: none;
     }
 
-	ul li.lilevel2 {
-		padding-'.$left.': 60px;		/* width = 20 for level0, 20 for level1 */
-	}
-	ul li.lilevel3 {
-		padding-'.$left.': 60px;		/* width = 20 for level0, 20 for level1 */
-	}
-	ul li.lilevel4 {
-		padding-'.$left.': 60px;		/* width = 20 for level0, 20 for level1 */
-	}
-	ul li.lilevel5 {
-		padding-'.$left.': 60px;		/* width = 20 for level0, 20 for level1 */
-	}
-
 	.getmenudiv a:hover {
 		text-decoration: none;
+	}
+
+	.ulmenu li.lilevel0 {
+    	border-bottom: 1px solid #ccc;
 	}
 
 	.pictofixedwidth {
@@ -159,10 +150,13 @@ print '
 		padding-'.$left.': 60px !important;
 	}
 	li.lilevel3 a {
-		padding-'.$left.': 85px !important;
+		padding-'.$left.': 40px !important;
 	}
 	li.lilevel4 a {
-		padding-'.$left.': 105px !important;
+		padding-'.$left.': 0px !important;
+	}
+	li.lilevel5 a {
+		padding-'.$left.': 0px !important;
 	}
 
     a.alilevel0, span.spanlilevel0 {
@@ -263,12 +257,12 @@ print '	background-position-y: 1px;
 
 <script nonce="'.getNonce().'" type="text/javascript">
 $(document).ready(function(){
-    $("body ul").click(function(){
-        console.log("We click on body ul");
+    $("body li").click(function(){
+        console.log("We click on a li");
 
-        $(this).siblings().find("li ul").slideUp(0);
+        $(this).siblings().find("ul").slideUp(0);
 
-        $(this).find("li ul").slideToggle(200);
+        $(this).find("ul").slideToggle(200);
 
         var target = $(this);
         $(\'html, body\').animate({

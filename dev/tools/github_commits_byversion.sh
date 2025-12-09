@@ -12,19 +12,24 @@ cp "$0" /tmp/github_commits_perversion.sh
 
 TEMP_DIR=/tmp/git
 DOL_GIT="$TEMP_DIR/dolibarr"
+
 if ! git rev-parse ; then
-	echo "Delete $TEMP_DIR"
+	echo "/tmp/git/dolibarr is not a git repo. Delete $TEMP_DIR"
 	rm -fr "$TEMP_DIR"
 	echo "Create '$TEMP_DIR' and cd to it"
-	mkdir "$TEMP_DIR"
+	mkdir -p "$TEMP_DIR"
 	cd "$TEMP_DIR" || exit
 	git clone https://github.com/Dolibarr/dolibarr.git
 	cd "${DOL_GIT}" || exit
 else
+	echo "/tmp/git/dolibarr is a git repo."
+	mkdir -p ${DOL_GIT}
 	if [ -r "${DOL_GIT}" ] ; then
+		echo git worktree remove "${DOL_GIT}"
 		git worktree remove "${DOL_GIT}"
 		rm -rf "${DOL_GIT}" >& /dev/null
 	fi
+	echo git worktree add --force "${DOL_GIT}" develop
 	git worktree add --force "${DOL_GIT}" develop
 	cd "$DOL_GIT" || exit
 	git pull
@@ -36,7 +41,10 @@ Releases=("3.9" "4.0" "5.0" "6.0" "7.0" "8.0" "9.0" "10.0" "11.0" "12.0" "13.0" 
 target_version=$(sed -n "s/.*define('DOL_VERSION',[[:space:]]*'\\([0-9]*\\.[0-9]*\\).*/\\1/p" htdocs/version.inc.php)
 
 # Default target version in case getting it from filefunc.inc failed
-target_version=${target_version:=20.0}
+target_version=${target_version:=23}
+
+echo "Last version to test target_version = $target_version";
+
 
 # Setup loop to append required versions
 target_major=${target_version%%.*}
@@ -90,8 +98,9 @@ do
 done
 
 # Clean up git directory if it is a worktree
-if [ "$(git rev-parse --git-dir)" != "$(git rev-parse --git-common-dir)" ] ; then
-	cd "$TEMP_DIR" || exit
-	git -C "$DOL_GIT" worktree remove "$DOL_GIT"
-fi
+#if [ "$(git rev-parse --git-dir)" != "$(git rev-parse --git-common-dir)" ] ; then
+#	cd "$TEMP_DIR" || exit
+#	git -C "$DOL_GIT" worktree remove "$DOL_GIT"
+#fi
+
 exit

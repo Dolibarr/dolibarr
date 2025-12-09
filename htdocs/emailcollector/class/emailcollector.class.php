@@ -1395,17 +1395,17 @@ class EmailCollector extends CommonObject
 					array_push($criteria, array($not."CC" => $rule['rulevalue']));
 				}
 				if ($rule['type'] == 'subject') {
-					if (strpos($rule['rulevalue'], '!') === 0) {
+					if ($not) {
 						//array_push($criteria, array("NOT SUBJECT" => $rule['rulevalue']));
-						$searchfilterexcludesubjectarray[] = preg_replace('/^!/', '', $rule['rulevalue']);
+						$searchfilterexcludesubjectarray[] = $rule['rulevalue'];
 					} else {
 						array_push($criteria, array("SUBJECT" => $rule['rulevalue']));
 					}
 				}
 				if ($rule['type'] == 'body') {
-					if (strpos($rule['rulevalue'], '!') === 0) {
+					if ($not) {
 						//array_push($criteria, array("NOT BODY" => $rule['rulevalue']));
-						$searchfilterexcludebodyarray[] = preg_replace('/^!/', '', $rule['rulevalue']);
+						$searchfilterexcludebodyarray[] = $rule['rulevalue'];
 					} else {
 						array_push($criteria, array("BODY" => $rule['rulevalue']));
 					}
@@ -3768,7 +3768,7 @@ class EmailCollector extends CommonObject
 	 * @param 	IMAP\Connection|resource $mbox   	Structure
 	 * @param 	int				$mid		Message Id / Message Number  Email
 	 * @param 	string			$destdir    Target dir for attachments. Leave blank to parse without writing to disk.
-	 * @return 	int
+	 * @return 	-1|1						Return -1 if error, 1 if OK
 	 */
 	private function getmsg($mbox, $mid, $destdir = ''): int
 	{

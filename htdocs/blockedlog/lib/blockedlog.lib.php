@@ -82,7 +82,7 @@ function blockedlogadmin_prepare_head($withtabsetup)
  *
  * @return boolean		True or false
  */
-function isRegistrationRecorded()
+function isRegistrationDataSaved()
 {
 	global $mysoc;
 
@@ -105,24 +105,41 @@ function isRegistrationRecorded()
 	return true;
 }
 
+
 /**
- * Return if the version is a candidate version to get the LNE certification and if the prerequisites are OK.
- * The difference between isALNEQualifiedVersion() and isALNERunningVersion() is that this one just check if it has a sense or not to
- * activate the restrictions (it is not a strict check) and the second one is a strict check to say restrictions must be enabled and can't be disabled.
+ * Return a hash unique identifier of the registration
  *
- * @return boolean		True or false
+ * @return string		Hash unique ID (used to idenfiy the registration without disclosing personal data)
  */
-function isALNEQualifiedVersion()
+function getHashUniqueIdOfRegistration()
+{
+	global $conf;
+
+	return dol_hash('dolibarr'.$conf->file->instance_unique_id, 'sha256', 1);
+}
+
+
+/**
+ * Return if the version is a candidate version to get the LNE certification and if the prerequisites are OK in production to be switched to LNE certified mode.
+ * The difference with isALNERunningVersion() is that isALNEQualifiedVersion() just checks if it has a sense or not to activate
+ * the restrictions (it is not a check to say if we are or not in a mode with restrictions activated, but if we are in a context that has a sense to activate them).
+ * It can be used to show warnings or alerts to end users.
+ *
+ * @param   int<0,1>	$ignoredev			Set this to 1 to ignore the fact the version is an alpha or beta version
+ * @param   int<0,1>	$ignoremodule		Set this to 1 to not take into account if module BlockedLog is on, so function can be used during module activation.
+ * @return 	boolean							True or false
+ */
+function isALNEQualifiedVersion($ignoredev = 0, $ignoremodule = 0)
 {
 	global $mysoc;
 
 	// For Debug help: Constant set by developer to force all LNE restrictions even if country is not France so we can test them on any dev instance.
-	// Note that you can force, with this option, to enabling of the LNE restrictions but you can't force the disabling of the LNE restriction.
+	// Note that you can force, with this option, the enabling of the LNE restrictions, but there is no way to force the disabling of the LNE restriction.
 	if (defined('CERTIF_LNE') && (int) constant('CERTIF_LNE') === 2) {
 		return true;
 	}
 
-	if (preg_match('/\-/', DOL_VERSION)) {	// This is not a stable version
+	if (!$ignoredev && preg_match('/\-/', DOL_VERSION)) {	// This is not a stable version
 		return false;
 	}
 	if ($mysoc->country_code != 'FR') {
@@ -131,7 +148,7 @@ function isALNEQualifiedVersion()
 	if (!defined('CERTIF_LNE') || (int) constant('CERTIF_LNE') === 0) {
 		return false;
 	}
-	if (!isModEnabled('blockedlog')) {
+	if (!$ignoremodule && !isModEnabled('blockedlog')) {
 		return false;
 	}
 
@@ -140,16 +157,15 @@ function isALNEQualifiedVersion()
 
 
 /**
- * Return if the application is executed with the LNE features on.
- * This function is used to disabled some features like disabling custom receipts, or showing the mandatory information "Certified LNE"
- * on tickets when it is not true.
+ * Return if the application is executed with the LNE requirements on.
+ * This function can be used to disable some features like custom receipts, or to enable others like showing the information "Certified LNE".
  *
- * @return boolean		True or false
+ * @return 	boolean		True or false
  */
 function isALNERunningVersion()
 {
 	// For Debug help: Constant set by developer to force all LNE restrictions even if country is not France so we can test them on any dev instance.
-	// Note that you can force, with this option, to enabling of the LNE restrictions but you can't force the disabling of the LNE restriction.
+	// Note that you can force, with this option, the enabling of the LNE restrictions, but there is no way to force the disabling of the LNE restriction.
 	if (defined('CERTIF_LNE') && (int) constant('CERTIF_LNE') === 2) {
 		return true;
 	}

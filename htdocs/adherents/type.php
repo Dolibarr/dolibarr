@@ -485,7 +485,13 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 					print '<td class="center">'.yn($objp->subscription).'</td>';
 				}
 				if (!empty($arrayfields['t.amount']['checked'])) {
-					print '<td class="center"><span class="amount">'.(is_null($objp->amount) || $objp->amount === '' ? '' : price($objp->amount)).'</span></td>';
+					print '<td class="center">';
+					$amount = (is_null($objp->amount) || $objp->amount === '' ? '' : price($objp->amount));
+					print '<span class="amount">'.$amount.'</span>';
+					if ($amount && $amount < (float) getDolGlobalInt("MEMBER_MIN_AMOUNT")) {
+						print img_warning('Amount lower than minimum of '.price(getDolGlobalInt("MEMBER_MIN_AMOUNT")).' defined in setup');
+					}
+					print '</td>';
 				}
 				if (!empty($arrayfields['t.caneditamount']['checked'])) {
 					print '<td class="center">'.yn($objp->caneditamount).'</td>';
@@ -645,7 +651,11 @@ if ($rowid > 0) {
 
 		// Amount
 		print '<tr><td class="titlefield">'.$langs->trans("Amount").'</td><td>';
-		print((is_null($object->amount) || $object->amount === '') ? '' : '<span class="amount">'.price($object->amount).'</span>');
+		$amount = ((is_null($object->amount) || $object->amount === '') ? '' : price($object->amount));
+		print '<span class="amount">'.$amount.'</span>';
+		if ($amount && $amount < (float) getDolGlobalInt("MEMBER_MIN_AMOUNT")) {
+			print ' '.img_warning('Amount lower than minimum of '.price(getDolGlobalInt("MEMBER_MIN_AMOUNT")).' defined in setup');
+		}
 		print '</tr>';
 
 		print '<tr><td>'.$form->textwithpicto($langs->trans("CanEditAmountShort"), $langs->transnoentities("CanEditAmount")).'</td><td>';
@@ -944,7 +954,6 @@ if ($rowid > 0) {
 				$adh->firstname = $objp->firstname;
 				$adh->datefin = $datefin;
 				$adh->need_subscription = $objp->subscription;
-				$adh->statut = $objp->status;
 				$adh->status = $objp->status;
 				$adh->email = $objp->email;
 				$adh->photo = $objp->photo;
@@ -1089,8 +1098,9 @@ if ($rowid > 0) {
 		print '</td></tr>';
 
 		print '<tr><td>'.$langs->trans("Amount").'</td><td>';
+		$amount = ((is_null($object->amount) || $object->amount === '') ? '' : price($object->amount));
 		print '<input name="amount" size="5" value="';
-		print((is_null($object->amount) || $object->amount === '') ? '' : price($object->amount));
+		print $amount;
 		print '">';
 		print '</td></tr>';
 

@@ -2456,15 +2456,31 @@ function pdf_getlineprogress($object, $i, $outputlangs, $hidedetails = 0, $hookm
 			return '';
 		}
 		if (empty($hidedetails) || $hidedetails > 1) {
-			if (getDolGlobalString('SITUATION_DISPLAY_DIFF_ON_PDF')) {
+			// 2 = situation_percent is non-cumulative (delta of current situation)
+			// 1 = (old mode): situation_percent is cumulative (state at situation)
+			$isCumulative = getDolGlobalInt('INVOICE_USE_SITUATION') === 1;
+			$showDelta = (bool) getDolGlobalInt('SITUATION_DISPLAY_DIFF_ON_PDF');
+
+			if ($isCumulative xor $showDelta) {
+				// Either:
+				// - old mode and we want to show a total or
+				// - new mode and we want to show a delta
+				$result = $object->lines[$i]->situation_percent;
+			} else {
+				// Either:
+				// - old mode but we want to show a delta or
+				// - new mode but we want to show a total
 				$prev_progress = 0;
 				if (method_exists($object->lines[$i], 'get_prev_progress')) {
 					$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
 				}
-				$result = round($object->lines[$i]->situation_percent - $prev_progress, 1).'%';
-			} else {
-				$result = round($object->lines[$i]->situation_percent, 1).'%';
+				$result = $isCumulative ?
+					// old mode: we need to compute the delta (total - sum of previous)
+					$object->lines[$i]->situation_percent - $prev_progress :
+					// new mode: we need to compute the total (sum of previous + delta)
+					$prev_progress + $object->lines[$i]->situation_percent;
 			}
+			$result = round($result, 1).'%';
 		}
 	}
 	return $result;
@@ -2510,17 +2526,9 @@ function pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails = 0)
 		} elseif (empty($hidedetails) || $hidedetails > 1) {
 			$total_ht = (isModEnabled("multicurrency") && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_total_ht : $object->lines[$i]->total_ht);
 			if (!empty($object->lines[$i]->situation_percent) && $object->lines[$i]->situation_percent > 0) {
-				// TODO Remove this. The total should be saved correctly in database instead of being modified here.
-				$prev_progress = 0;
-				$progress = 1;
-				if (method_exists($object->lines[$i], 'get_prev_progress')) {
-					$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
-					$progress = ($object->lines[$i]->situation_percent - $prev_progress) / 100;
-				}
-				$result .= price($sign * ($total_ht / ($object->lines[$i]->situation_percent / 100)) * $progress, 0, $outputlangs);
-			} else {
-				$result .= price($sign * $total_ht, 0, $outputlangs);
+				$total_ht *= $object->lines[$i]->getSituationRatio();
 			}
+			$result .= price($sign * $total_ht, 0, $outputlangs);
 		}
 	}
 	return $result;
@@ -2566,17 +2574,9 @@ function pdf_getlinetotalwithtax($object, $i, $outputlangs, $hidedetails = 0)
 		} elseif (empty($hidedetails) || $hidedetails > 1) {
 			$total_ttc = (isModEnabled("multicurrency") && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_total_ttc : $object->lines[$i]->total_ttc);
 			if (isset($object->lines[$i]->situation_percent) && $object->lines[$i]->situation_percent > 0) {
-				// TODO Remove this. The total should be saved correctly in database instead of being modified here.
-				$prev_progress = 0;
-				$progress = 1;
-				if (method_exists($object->lines[$i], 'get_prev_progress')) {
-					$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
-					$progress = ($object->lines[$i]->situation_percent - $prev_progress) / 100;
-				}
-				$result .= price($sign * ($total_ttc / ($object->lines[$i]->situation_percent / 100)) * $progress, 0, $outputlangs);
-			} else {
-				$result .= price($sign * $total_ttc, 0, $outputlangs);
+				$total_ttc *= $object->lines[$i]->getSituationRatio();
 			}
+			$result .= price($sign * $total_ttc, 0, $outputlangs);
 		}
 	}
 	return $result;

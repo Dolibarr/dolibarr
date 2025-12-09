@@ -46,7 +46,7 @@ require_once DOL_DOCUMENT_ROOT.'/ecm/class/htmlecm.form.class.php';
 $langs->loadLangs(array('ecm', 'companies', 'other'));
 
 $action     = GETPOST('action', 'alpha');
-$cancel     = GETPOST('cancel', 'aZ09');
+$cancel     = GETPOST('cancel');
 $backtopage = GETPOST('backtopage', 'alpha');
 $confirm    = GETPOST('confirm', 'alpha');
 

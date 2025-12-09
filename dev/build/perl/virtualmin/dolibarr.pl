@@ -1,7 +1,7 @@
 #----------------------------------------------------------------------------
 # \file         dolibarr.pl
 # \brief        Dolibarr script install for Virtualmin Pro
-# \author       (c)2009-2020 Regis Houssin  <regis.houssin@inodbox.com>
+# \author       (c)2009-2025 Regis Houssin  <regis.houssin@inodbox.com>
 #----------------------------------------------------------------------------
 
 
@@ -30,12 +30,25 @@ return "Regis Houssin";
 # script_dolibarr_versions()
 sub script_dolibarr_versions
 {
-return ( "14.0.5", "13.0.5", "12.0.5", "11.0.5", "10.0.7", "9.0.4", "8.0.6", "7.0.5" );
+return ( "22.0.3", "21.0.4", "20.0.4", "19.0.4", "18.0.8", "17.0.4", "16.0.5" );
+}
+
+sub script_dolibarr_version_desc
+{
+local ($ver) = @_;
+my ($major_ver) = $ver =~ /^(\d+)\..*/;
+return $major_ver == 22 ? "$ver (Latest)" :
+       $major_ver == 18 ? "$ver (LTS)" : "$ver";
 }
 
 sub script_dolibarr_release
 {
 return 2;	# for mysqli fix
+}
+
+sub script_dolibarr_testable
+{
+return 1;
 }
 
 sub script_dolibarr_category
@@ -45,14 +58,23 @@ return "Commerce";
 
 sub script_dolibarr_php_vers
 {
-return ( 5 );
+return ( 7 );
 }
+
+sub script_dolibarr_php_vars
+{
+return ( [ 'memory_limit', '128M', '+' ] );
+}
+
 
 sub script_dolibarr_php_modules
 {
 local ($d, $ver, $phpver, $opts) = @_;
 local ($dbtype, $dbname) = split(/_/, $opts->{'db'}, 2);
-return $dbtype eq "mysql" ? ("mysql") : ("pgsql");
+local @modules = ("xml", "mbstring", "gd", "iconv",
+                  "curl", "intl", "zip");
+push(@modules, ($dbtype eq "mysql" ? "mysql" : "pgsql"));
+return @modules;
 }
 
 sub script_dolibarr_dbs
@@ -61,34 +83,10 @@ local ($d, $ver) = @_;
 return ("mysql", "postgres");
 }
 
-# script_dolibarr_depends(&domain, version)
-sub script_dolibarr_depends
+sub script_dolibarr_php_fullver
 {
-local ($d, $ver, $sinfo, $phpver) = @_;
-local @rv;
-
-if ($ver >= 3.6) {
-	# Check for PHP 5.3+
-	local $phpv = &get_php_version($phpver || 5, $d);
-	if (!$phpv) {
-		push(@rv, "Could not work out exact PHP version");
-		}
-	elsif ($phpv < 5.3) {
-		push(@rv, "Dolibarr requires PHP version 5.3 or later");
-		}
-	}
-if ($ver >= 12.0) {
-	# Check for PHP 5.6+
-	local $phpv = &get_php_version($phpver || 5, $d);
-	if (!$phpv) {
-		push(@rv, "Could not work out exact PHP version");
-		}
-	elsif ($phpv < 5.6) {
-		push(@rv, "Dolibarr requires PHP version 5.6 or later");
-		}
-	}
-
-return @rv;
+local ($d, $ver, $sinfo) = @_;
+return "7.1";
 }
 
 # script_dolibarr_params(&domain, version, &upgrade-info)
@@ -195,7 +193,7 @@ local $dbpass = $dbtype eq "mysql" ? &mysql_pass($d) : &postgres_pass($d, 1);
 local $dbphptype = $dbtype eq "mysql" && $version < 3.6 ? "mysql" :
 		   $dbtype eq "mysql" ? "mysqli" : "pgsql";
 local $dbhost = &get_database_host($dbtype, $d);
-local $dberr = &check_script_db_connection($dbtype, $dbname, $dbuser, $dbpass);
+local $dberr = &check_script_db_connection($d, $dbtype, $dbname, $dbuser, $dbpass);
 return (0, "Database connection failed : $dberr") if ($dberr);
 
 # Extract tar file to temp dir and copy to target
@@ -252,7 +250,7 @@ if ($upgrade) {
 	&copy_source_dest_as_domain_user($d, $oldcfile, $cfile);
 	&copy_source_dest_as_domain_user($d, $olddocdir, $docdir);
 	&copy_source_dest_as_domain_user($d, $oldaltdir, $altdir);
-
+	
 	# First page (Update database schema)
 	local @params = ( [ "action", "upgrade" ],
 			  [ "versionfrom", $upgrade->{'version'} ],
@@ -260,7 +258,7 @@ if ($upgrade) {
 	 		 );
 	local $err = &call_dolibarr_wizard_page(\@params, "upgrade", $d, $opts);
 	return (-1, "Dolibarr wizard failed : $err") if ($err);
-
+	
 	# Second page (Migrate some data)
 	local @params = ( [ "action", "upgrade" ],
 			  [ "versionfrom", $upgrade->{'version'} ],
@@ -268,7 +266,7 @@ if ($upgrade) {
 			 );
 	local $err = &call_dolibarr_wizard_page(\@params, "upgrade2", $d, $opts);
 	return (-1, "Dolibarr wizard failed : $err") if ($err);
-
+	
 	# Third page (Update version number)
 	local @params = ( [ "action", "upgrade" ],
 			  [ "versionfrom", $upgrade->{'version'} ],
@@ -278,12 +276,12 @@ if ($upgrade) {
 	local $p = $ver >= 3.8 ? "step5" : "etape5";
 	local $err = &call_dolibarr_wizard_page(\@params, $p, $d, $opts);
 	return (-1, "Dolibarr wizard failed : $err") if ($err);
-
+	
 	# Remove the installation directory. (deprecated)
 	# local $dinstall = "$opts->{'dir'}/install";
 	# $dinstall  =~ s/\/$//;
 	# $out = &run_as_domain_user($d, "rm -rf ".quotemeta($dinstall));
-
+	
 	}
 else {
 	# First page (Db connection and config file creation)
@@ -295,6 +293,9 @@ else {
 			  [ "db_name", $dbname ],
 			  [ "db_user", $dbuser ],
 			  [ "db_pass", $dbpass ],
+			  [ "db_prefix", 'llx_' ],
+			  [ "db_port", '3306' ],
+			  [ "selectlang", 'en_US' ],
 			  [ "action", "set" ],
 			  [ "main_force_https", $opts->{'forcehttps'} ],
 			  [ "dolibarr_main_db_character_set", $charset ],
@@ -305,13 +306,13 @@ else {
 	local $p = $ver >= 3.8 ? "step1" : "etape1";
 	local $err = &call_dolibarr_wizard_page(\@params, $p, $d, $opts);
 	return (-1, "Dolibarr wizard failed : $err") if ($err);
-
+	
 	# Second page (Populate database)
 	local @params = ( [ "action", "set" ] );
 	local $p = $ver >= 3.8 ? "step2" : "etape2";
 	local $err = &call_dolibarr_wizard_page(\@params, $p, $d, $opts);
 	return (-1, "Dolibarr wizard failed : $err") if ($err);
-
+	
 	# Third page (Add administrator account)
 	local @params = ( [ "action", "set" ],
 			  [ "login", "admin" ],
@@ -322,17 +323,17 @@ else {
 	local $p = $ver >= 3.8 ? "step5" : "etape5";
 	local $err = &call_dolibarr_wizard_page(\@params, $p, $d, $opts);
 	return (-1, "Dolibarr wizard failed : $err") if ($err);
-
+	
 	# Remove the installation directory (deprecated)
 	# local $dinstall = "$opts->{'dir'}/install";
 	# $dinstall  =~ s/\/$//;
 	# $out = &run_as_domain_user($d, "rm -rf ".quotemeta($dinstall));
-
+	
 	# Protect config file
 	&set_permissions_as_domain_user($d, 0644, $cfile);
 	&set_permissions_as_domain_user($d, 0755, $cfiledir);
 	}
-
+ 
 # Return a URL for the user
 local $rp = $opts->{'dir'};
 $rp =~ s/^$d->{'home'}\///;
@@ -400,24 +401,32 @@ sub script_dolibarr_check_latest
 {
 local ($ver) = @_;
 local @vers = &osdn_package_versions("dolibarr",
-				$ver >= 14.0 ? "dolibarr\\-(12\\.0\\.[0-9\\.]+)\\.tgz" :
-				$ver >= 13.0 ? "dolibarr\\-(12\\.0\\.[0-9\\.]+)\\.tgz" :
-				$ver >= 12.0 ? "dolibarr\\-(12\\.0\\.[0-9\\.]+)\\.tgz" :
-				$ver >= 11.0 ? "dolibarr\\-(11\\.0\\.[0-9\\.]+)\\.tgz" :
-				$ver >= 10.0 ? "dolibarr\\-(10\\.0\\.[0-9\\.]+)\\.tgz" :
-				$ver >= 9.0 ? "dolibarr\\-(9\\.0\\.[0-9\\.]+)\\.tgz" :
-				$ver >= 8.0 ? "dolibarr\\-(8\\.0\\.[0-9\\.]+)\\.tgz" :
-				$ver >= 7.0 ? "dolibarr\\-(7\\.0\\.[0-9\\.]+)\\.tgz" :
-				$ver >= 6.0 ? "dolibarr\\-(6\\.0\\.[0-9\\.]+)\\.tgz" :
-				$ver >= 5.0 ? "dolibarr\\-(5\\.0\\.[0-9\\.]+)\\.tgz" :
-				$ver >= 4.0 ? "dolibarr\\-(4\\.0\\.[0-9\\.]+)\\.tgz" :
-				$ver >= 3.9 ? "dolibarr\\-(3\\.9\\.[0-9\\.]+)\\.tgz" :
-				$ver >= 3.8 ? "dolibarr\\-(3\\.8\\.[0-9\\.]+)\\.tgz" :
-				$ver >= 3.7 ? "dolibarr\\-(3\\.7\\.[0-9\\.]+)\\.tgz" :
-				$ver >= 3.6 ? "dolibarr\\-(3\\.6\\.[0-9\\.]+)\\.tgz" :
-				$ver >= 3.5 ? "dolibarr\\-(3\\.5\\.[0-9\\.]+)\\.tgz" :
-				$ver >= 2.9 ? "dolibarr\\-(2\\.9\\.[0-9\\.]+)\\.tgz" :
-                              "dolibarr\\-(2\\.8\\.[0-9\\.]+)\\.tgz");
+			$ver >= 22.0 ? "dolibarr\\-(22\\.0\\.[0-9\\.]+)\\.tgz" :
+			$ver >= 21.0 ? "dolibarr\\-(21\\.0\\.[0-9\\.]+)\\.tgz" :
+			$ver >= 20.0 ? "dolibarr\\-(20\\.0\\.[0-9\\.]+)\\.tgz" :
+			$ver >= 19.0 ? "dolibarr\\-(19\\.0\\.[0-9\\.]+)\\.tgz" :
+			$ver >= 18.0 ? "dolibarr\\-(18\\.0\\.[0-9\\.]+)\\.tgz" :
+			$ver >= 17.0 ? "dolibarr\\-(17\\.0\\.[0-9\\.]+)\\.tgz" :
+			$ver >= 16.0 ? "dolibarr\\-(16\\.0\\.[0-9\\.]+)\\.tgz" :
+			$ver >= 15.0 ? "dolibarr\\-(15\\.0\\.[0-9\\.]+)\\.tgz" :
+			$ver >= 14.0 ? "dolibarr\\-(14\\.0\\.[0-9\\.]+)\\.tgz" :
+			$ver >= 13.0 ? "dolibarr\\-(13\\.0\\.[0-9\\.]+)\\.tgz" :
+			$ver >= 12.0 ? "dolibarr\\-(12\\.0\\.[0-9\\.]+)\\.tgz" :
+			$ver >= 11.0 ? "dolibarr\\-(11\\.0\\.[0-9\\.]+)\\.tgz" :
+			$ver >= 10.0 ? "dolibarr\\-(10\\.0\\.[0-9\\.]+)\\.tgz" :
+			$ver >= 9.0 ? "dolibarr\\-(9\\.0\\.[0-9\\.]+)\\.tgz" :
+			$ver >= 8.0 ? "dolibarr\\-(8\\.0\\.[0-9\\.]+)\\.tgz" :
+			$ver >= 7.0 ? "dolibarr\\-(7\\.0\\.[0-9\\.]+)\\.tgz" :
+			$ver >= 6.0 ? "dolibarr\\-(6\\.0\\.[0-9\\.]+)\\.tgz" :
+			$ver >= 5.0 ? "dolibarr\\-(5\\.0\\.[0-9\\.]+)\\.tgz" :
+			$ver >= 4.0 ? "dolibarr\\-(4\\.0\\.[0-9\\.]+)\\.tgz" :
+			$ver >= 3.9 ? "dolibarr\\-(3\\.9\\.[0-9\\.]+)\\.tgz" :
+			$ver >= 3.8 ? "dolibarr\\-(3\\.8\\.[0-9\\.]+)\\.tgz" :
+			$ver >= 3.7 ? "dolibarr\\-(3\\.7\\.[0-9\\.]+)\\.tgz" :
+			$ver >= 3.6 ? "dolibarr\\-(3\\.6\\.[0-9\\.]+)\\.tgz" :
+			$ver >= 3.5 ? "dolibarr\\-(3\\.5\\.[0-9\\.]+)\\.tgz" :
+			$ver >= 2.9 ? "dolibarr\\-(2\\.9\\.[0-9\\.]+)\\.tgz" :
+				      "dolibarr\\-(2\\.8\\.[0-9\\.]+)\\.tgz");
 return "Failed to find versions" if (!@vers);
 return $ver eq $vers[0] ? undef : $vers[0];
 }
@@ -430,6 +439,28 @@ return 'https://www.dolibarr.org/';
 sub script_dolibarr_passmode
 {
 return 2;
+}
+
+sub script_dolibarr_db_conn_desc
+{
+my $db_conn_desc = 
+    { 'conf/conf.php' =>
+        {
+           'dbpass' =>
+           {
+               'func'        => 'php_quotemeta',
+               'func_params' => 1,
+               'replace'     => [ '\$dolibarr_main_db_pass\s*=' =>
+                                  '$dolibarr_main_db_pass=\'$$sdbpass\';' ],
+           },
+           'dbuser' =>
+           {
+               'replace'     => [ '\$dolibarr_main_db_user\s*=' =>
+                                  '$dolibarr_main_db_user=\'$$sdbuser\';' ],
+           },
+        }
+    };
+return $db_conn_desc;
 }
 
 1;

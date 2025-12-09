@@ -197,13 +197,13 @@ class Workstations extends DolibarrApi
 	{
 		// phpcs:enable
 		$object = parent::_cleanObjectDatas($object);
+		/** @var Workstation $object */
 
 		unset($object->statut);
 
 		unset($object->regeximgext);
 		unset($object->price_by_qty);
 		unset($object->prices_by_qty_id);
-		unset($object->libelle);
 		unset($object->product_id_already_linked);
 		unset($object->reputations);
 		unset($object->db);
