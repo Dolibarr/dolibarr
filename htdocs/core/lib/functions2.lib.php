@@ -2701,7 +2701,9 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'salaries';
 	} elseif ($moduleobject == 'paymentexpensereports') {
 		$moduledirforclass = 'expensereport';
-	}
+	} elseif ($moduleobject == 'opensurveysondages') {
+        $moduledirforclass = 'opensurvey';
+    }
 
 	return $moduledirforclass;
 }
