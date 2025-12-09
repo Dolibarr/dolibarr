@@ -1726,5 +1726,4 @@ class Fichinter extends CommonObject
 		}
 		return $final_duration;
 	}
-
 }
