@@ -1701,7 +1701,7 @@ class Fichinter extends CommonObject
 	}
 
 	/**
-	 * Return the total_ht of lines that are above the current line (excluded) and that are not a subtotal line
+	 * Return the total duration of lines that are above the current line (excluded) and that are not a subtotal line
 	 * until a title line of the same level is found
 	 *
 	 * @param object	$line	Line that needs the subtotal amount.
