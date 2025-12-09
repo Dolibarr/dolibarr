@@ -1593,7 +1593,7 @@ if ($action == 'create') {
 						$line_options = is_array($line_options) ? $line_options['subtotal'] : array();
 						if ($objp->duree > 0) {
 							print '<td colspan="3" >';
-							print str_repeat('&nbsp;', (int) (abs($objp->duree/3600) - 1) * 8); 
+							print str_repeat('&nbsp;', (int) (abs($objp->duree/3600) - 1) * 8);
 							print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
 							print '<strong>'.dol_htmlentitiesbr($objp->description).'</strong>';
 							if (array_key_exists('titleshowuponpdf', $line_options)) {
