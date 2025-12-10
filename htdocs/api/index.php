@@ -149,6 +149,11 @@ $reg = array();
 preg_match('/index\.php\/([^\/]+)(.*)$/', $url, $reg);
 // .../index.php/categories?sortfield=t.rowid&sortorder=ASC
 
+//check if cache dir exists to prevent such errors
+//PHP Fatal error:  Uncaught Exception: The cache directory documents/22/api/temp should exist with write permission
+if (isModEnabled('multicompany') && !is_dir(DOL_DATA_ROOT . '/' . $conf->entity . '/api/temp')) {
+	dol_mkdir($conf->entity . '/api/temp', DOL_DATA_ROOT);
+}
 
 // When in production mode, a file api/temp/routes.php is created with the API available of current call.
 // But, if we set $refreshcache to false, so it may have only one API in the routes.php file if we make a call for one API without
