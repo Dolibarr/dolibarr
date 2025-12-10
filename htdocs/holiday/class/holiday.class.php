@@ -891,16 +891,58 @@ class Holiday extends CommonObject
 	 */
 	public function approve($user = null, $notrigger = 0)
 	{
+		global $db;
 		$error = 0;
 
 		$checkBalance = getDictionaryValue('c_holiday_types', 'block_if_negative', $this->fk_type, true);
 
 		if ($checkBalance > 0) {
-			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
 
-			$days = num_between_day($this->date_debut, $this->date_fin);
-			if ($balance - $days < 0 && getDolGlobalString('HOLIDAY_DISALLOW_NEGATIVE_BALANCE')) {
-				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
+			$leaveStartDate = $this->date_debut;
+			$leaveEndDate   = $this->date_fin;
+			$leaveType      = (int) $this->fk_type;
+
+			$blockIfNegative = 0;
+
+			$sql  = "SELECT block_if_negative";
+            $sql .= " FROM ".$db->prefix()."c_holiday_types";
+            $sql .= " WHERE rowid = ".$leaveType;
+
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$obj = $this->db->fetch_object($resql);
+				if ($obj) {
+					$blockIfNegative = (int) $obj->block_if_negative;
+				}
+			}
+
+			if (empty($blockIfNegative)) {
+				return 1;
+			}
+
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
+			$noWorkingDays = num_public_holiday($leaveStartDate, $leaveEndDate, 'FR');
+
+			$startDate = is_numeric($leaveStartDate) ? date('Y-m-d H:i:s', $leaveStartDate) : $leaveStartDate;
+			$endDate   = is_numeric($leaveEndDate)   ? date('Y-m-d H:i:s', $leaveEndDate)   : $leaveEndDate;
+
+			$start = new DateTime($startDate);
+			$end   = new DateTime($endDate);
+
+			$difference   = $start->diff($end);
+			$numberOfDays = $difference->days + 1;
+
+			$numberOfDays -= $noWorkingDays;
+
+			$nbLeave = $this->getCPforUser($this->fk_user, $leaveType);
+
+			if (($nbLeave - $numberOfDays) < 0) {
+				global $langs;
+				$langs->load('holiday');
+
+				$this->error = $langs->trans('LeaveRequestCreationBlockedBecauseBalanceIsNegative');
+
 				return -1;
 			}
 		}
