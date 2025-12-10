@@ -824,9 +824,9 @@ class Translate
 	/**
 	 *  Return translation of a key depending on country
 	 *
-	 *  @param	string	$str            string root to translate
-	 *  @param  string	$countrycode    country code (FR, ...)
-	 *  @return	string         			translated string
+	 *  @param	string	$str            String root to translate. Example 'TotalHT', 'AmountLT1', 'ProfId1', 'ProfId2', 'LocalTax1IsUsedExample', ...
+	 *  @param  string	$countrycode    Country code (FR, ...)
+	 *  @return	string         			Translated string
 	 *  @see transcountrynoentities(), picto_from_langcode()
 	 */
 	public function transcountry($str, $countrycode)

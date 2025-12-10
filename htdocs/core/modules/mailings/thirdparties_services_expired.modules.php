@@ -57,7 +57,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 	/**
 	 * @var array<int,string>
 	 */
-	public $arrayofproducts = array();
+	//public $arrayofproducts = array();
 
 
 	/**
@@ -67,14 +67,13 @@ class mailing_thirdparties_services_expired extends MailingTargets
 	 */
 	public function __construct($db)
 	{
-		global $conf;
-
 		$this->db = $db;
 
+		/*
 		$this->arrayofproducts = array();
 
 		// List of services
-		$sql = "SELECT ref FROM ".MAIN_DB_PREFIX."product";
+		$sql = "SELECT id, ref FROM ".MAIN_DB_PREFIX."product";
 		$sql .= " WHERE entity IN (".getEntity('product').")";
 		if (!getDolGlobalString('CONTRACT_SUPPORT_PRODUCTS')) {
 			$sql .= " AND fk_product_type = 1"; // By default, only services
@@ -89,11 +88,12 @@ class mailing_thirdparties_services_expired extends MailingTargets
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($result);
 				$i++;
-				$this->arrayofproducts[$i] = $obj->ref;
+				$this->arrayofproducts[$obj->id] = $obj->ref;
 			}
 		} else {
 			dol_print_error($this->db);
 		}
+		*/
 	}
 
 
@@ -106,40 +106,37 @@ class mailing_thirdparties_services_expired extends MailingTargets
 	 */
 	public function add_to_target($mailing_id)
 	{
-		global $conf;
+		global $conf, $langs;
 
 		// phpcs:enable
-		$key = GETPOSTINT('filter');
+		$productid = GETPOSTINT('productid');
 
 		$cibles = array();
 		$j = 0;
 
-		$product = '';
-		if ($key == '0') {
-			$this->error = "Error: You must choose a filter";
+		if ($productid <= 0) {
+			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ProductOrService"));
 			$this->errors[] = $this->error;
 			return -1;
 		}
 
-		$product = $this->arrayofproducts[$key];
-
 		$now = dol_now();
 
-		// La requete doit retourner: id, email, name
+		// Request must return: id, email, name
 		$sql = "SELECT s.rowid as id, s.email, s.nom as name, cd.rowid as cdid, cd.date_ouverture as date_start_real, cd.date_fin_validite as date_end, cd.fk_contrat";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
 		$sql .= ", ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."product as p";
 		$sql .= " WHERE s.entity IN (".getEntity('societe').")";
-		$sql .= " AND s.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".((int) $mailing_id).")";
+		$sql .= " AND s.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing = ".((int) $mailing_id).")";
 		$sql .= " AND s.rowid = c.fk_soc AND cd.fk_contrat = c.rowid AND s.email != ''";
-		$sql .= " AND cd.statut= 4 AND cd.fk_product=p.rowid AND p.ref = '".$this->db->escape($product)."'";
+		$sql .= " AND cd.statut= 4 AND cd.fk_product = p.rowid AND p.rowid = ".((int) $productid);
 		$sql .= " AND cd.date_fin_validite < '".$this->db->idate($now)."'";
 		if (empty($this->evenunsubscribe)) {
 			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = s.email and mu.entity = ".((int) $conf->entity).")";
 		}
 		$sql .= " ORDER BY s.email";
 
-		// Stocke destinataires dans cibles
+		// Save target emails
 		$result = $this->db->query($sql);
 		if ($result) {
 			$num = $this->db->num_rows($result);
@@ -153,8 +150,8 @@ class mailing_thirdparties_services_expired extends MailingTargets
 				if ($old != $obj->email) {
 					$cibles[$j] = array(
 					'email' => $obj->email,
-					'lastname' => $obj->name, // For thirdparties, lastname must be name
-					'firstname' => '', // For thirdparties, firstname is ''
+					'lastname' => $obj->name, 	// For thirdparties, lastname must be name
+					'firstname' => '', 			// For thirdparties, firstname is ''
 					'other' =>
 					('DateStart='.dol_print_date($this->db->jdate($obj->date_start_real), 'day')).';'.	// date start real
 					('DateEnd='.dol_print_date($this->db->jdate($obj->date_end), 'day')).';'.			// date end planned
@@ -241,9 +238,20 @@ class mailing_thirdparties_services_expired extends MailingTargets
 	 */
 	public function formFilter()
 	{
-		global $langs;
+		global $form, $langs, $user;
 
-		$s = img_picto('', 'product', 'class="pictofixedwidth"').'<select id="filter_services_expired" name="filter" class="flat">';
+		$socid = 0;
+		if (!empty($user->socid)) {
+			$socid = $user->socid;
+		}
+
+		$filtertype = (getDolGlobalString('CONTRACT_SUPPORT_PRODUCTS') ? '' : 1);	// '' in select_produits means all, 1 means services only
+		$showempty = $langs->trans("ProductOrService");
+
+		$s = img_picto('', 'product', 'class="pictofixedwidth"');
+		$s .= $form->select_produits(GETPOSTINT('productid'), 'productid', $filtertype, 0, 0, -1, 2, '', 0, array(), $socid, $showempty, 0, '', 0, '', null, 1);
+		/*
+		.'<select id="filter_services_expired" name="filter" class="flat">';
 		if (count($this->arrayofproducts)) {
 			$langs->loadLangs(array("products"));
 			$s .= '<option value="-1">'.$langs->trans("ProductOrService").'</option>';
@@ -255,6 +263,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 		}
 		$s .= '</select>';
 		$s .= ajax_combobox("filter_services_expired");
+		*/
 
 		return $s;
 	}

@@ -980,15 +980,15 @@ class BlockedLog
 				$this->id 				= $obj->rowid;
 				$this->entity 			= $obj->entity;
 
-				$this->date_creation 	= $this->db->jdate($obj->date_creation);	// TODO Use gmt ?
-				$this->date_modification = $this->db->jdate($obj->tms);				// TODO Use gmt ?
+				$this->date_creation 	= $this->db->jdate($obj->date_creation);	// jdate(date_creation)is UTC
+				$this->date_modification = $this->db->jdate($obj->tms);				// jdate(tms) is UTC
 
 				$this->amounts			= (float) $obj->amounts;
 				$this->action 			= $obj->action;
 				$this->element			= $obj->element;
 
 				$this->fk_object = $obj->fk_object;
-				$this->date_object = $this->db->jdate($obj->date_object);			// TODO Use gmt ?
+				$this->date_object = $this->db->jdate($obj->date_object);			// jdate(date_object) is UTC
 				$this->ref_object = $obj->ref_object;
 
 				$this->fk_user = $obj->fk_user;
@@ -1132,9 +1132,9 @@ class BlockedLog
 		try {
 			$previoushash = $this->getPreviousHash(1, 0); // This get last record and lock database until insert is done and transaction closed
 
-			$concatenatedata = $this->buildKeyForSignature();	// All the information for the hash (meta data + data saved)
+			$concatenateddata = $this->buildKeyForSignature();	// All the information for the hash (meta data + data saved)
 
-			$this->signature = $this->buildFinalSignatureHash($previoushash.$concatenatedata);	// Build the hmac signature
+			$this->signature = $this->buildFinalSignatureHash($previoushash.$concatenateddata);	// Build the hmac signature
 
 			// For debug:
 			$this->debuginfo = $this->buildFirstPartOfKeyForSignature();	// Not used
@@ -1150,7 +1150,7 @@ class BlockedLog
 		if ($forcesignature) {
 			$this->signature = $forcesignature;
 		}
-		//var_dump($concatenatedata);var_dump($previoushash);var_dump($this->signature);
+		//var_dump($concatenateddata);var_dump($previoushash);var_dump($this->signature);
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."blockedlog (";
 		$sql .= " date_creation,";
@@ -1232,15 +1232,15 @@ class BlockedLog
 			$previoushash = $this->getPreviousHash(0, $this->id);
 		}
 
-		$concatenatedata = '';
+		$concatenateddata = '';
 		$signature = '';
 
 		// Recalculate the signature
 		try {
 			// Build the string for the signature
-			$concatenatedata = $this->buildKeyForSignature();
+			$concatenateddata = $this->buildKeyForSignature();
 
-			$signature = $this->buildFinalSignatureHash($previoushash.$concatenatedata);
+			$signature = $this->buildFinalSignatureHash($previoushash.$concatenateddata);
 		} catch (Exception $e) {
 			$res = ($signature === $this->signature);
 			$this->error = $e->getMessage();
@@ -1262,13 +1262,13 @@ class BlockedLog
 
 		if ($returnarray) {
 			if ($returnarray == 1) {
-				unset($concatenatedata);
+				unset($concatenateddata);
 				return array('checkresult' => $res, 'calculatedsignature' => $signature, 'previoushash' => $previoushash);
-			} else {	// Consume much memory ($concatenatedata is a large var)
-				return array('checkresult' => $res, 'calculatedsignature' => $signature, 'previoushash' => $previoushash, 'keyforsignature' => $concatenatedata);
+			} else {	// Consume much memory ($concatenateddata is a large var)
+				return array('checkresult' => $res, 'calculatedsignature' => $signature, 'previoushash' => $previoushash, 'keyforsignature' => $concatenateddata);
 			}
 		} else {
-			unset($concatenatedata);
+			unset($concatenateddata);
 			return $res;
 		}
 	}
@@ -1299,12 +1299,10 @@ class BlockedLog
 
 	/**
 	 * Return the string for signature (clear data).
-	 * Note: rowid of line not included as it is not a business data and this allow to make backup of a year
-	 * and restore it into another database with different ids without comprimising checksums
 	 *
 	 * @return string		Key for signature
 	 */
-	private function buildKeyForSignature()
+	public function buildKeyForSignature()
 	{
 		//print_r($this->object_data);
 		if ($this->object_format == '') {
@@ -1415,7 +1413,7 @@ class BlockedLog
 	 *	Return array of log objects (with criteria)
 	 *
 	 *	@param	string 					$element      		Element to search
-	 *	@param	int		 				$fk_object			Id of object to search
+	 *	@param	string|int				$fk_object			Id of object to search. Can be a UFS search criteria.
 	 *	@param	int<0,max> 				$limit      		Max number of element, 0 for all
 	 *	@param	string 					$sortfield     		Sort field
 	 *	@param	string 					$sortorder     		Sort order
