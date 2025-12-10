@@ -2708,7 +2708,9 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'eventorganization';
 	} elseif ($moduleobject == 'holidays') {
 		$moduledirforclass = 'holiday';
-	}
+	} elseif ($moduleobject == 'opensurveysondages') {
+        $moduledirforclass = 'opensurvey';
+    }
 
 	return $moduledirforclass;
 }
