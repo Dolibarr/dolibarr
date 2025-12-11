@@ -4,7 +4,7 @@
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,7 +81,7 @@ abstract class ModeleProductCode extends CommonNumRefGenerator
 	/**
 	 *  Return next value available
 	 *
-	 *	@param	Product|string	$objproduct	Object product
+	 *	@param	Product|''		$objproduct	Object product
 	 *	@param	int				$type		Type
 	 *  @return string      				Value
 	 */
@@ -124,8 +124,8 @@ abstract class ModeleProductCode extends CommonNumRefGenerator
 	 *  Return description of module parameters
 	 *
 	 *  @param	Translate	$langs      Output language
-	 *  @param	Product		$product	Product object
-	 *  @param	int			$type		-1=Nothing, 0=Customer, 1=Supplier
+	 *  @param	Product|''	$product	Product object
+	 *  @param	int<-1,1>	$type		-1=Nothing, 0=Customer, 1=Supplier
 	 *  @return	string					HTML translated description
 	 */
 	public function getToolTip($langs, $product, $type)
@@ -205,7 +205,7 @@ abstract class ModeleProductCode extends CommonNumRefGenerator
 	 * Return an example of result returned by getNextValue
 	 *
 	 * @param	?Translate		$langs		Object langs
-	 * @param	Product|string	$objproduct	Object product
+	 * @param	Product|''		$objproduct	Object product
 	 * @param	int<-1,2>		$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 * @return	string						Return string example
 	 */

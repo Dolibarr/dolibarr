@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - exports
+ImportExportArea=Imports / Exports
 ExportsArea=導出
 ImportArea=導入
 NewExport=新導出
@@ -31,10 +32,10 @@ ExportCsvSeparator=CSV 字元分隔符號
 ImportCsvSeparator=CSV 字元分隔符號
 Step=步驟
 FormatedImport=導入助理
-FormatedImportDesc1=該模塊允許您使用助手更新現有數據或將新對像從文件添加到數據庫中，而無需技術知識。
+FormatedImportDesc1=Click here to use the assistant to update existing data or add new objects into the database from a file.
 FormatedImportDesc2=第一步是選擇要導入的數據類型，然後選擇源文件的格式，然後選擇要導入的字段。
 FormatedExport=導出助理
-FormatedExportDesc1=這些工具允許使用助手導出個性化數據，從而在整個過程中為您提供幫助，而無需技術知識。
+FormatedExportDesc1=Click here to use the assistant to export data in a supported format
 FormatedExportDesc2=第一步是選擇預定義的數據集，然後選擇要導出的字段以及導出的順序。
 FormatedExportDesc3=選擇要導出的數據後，您可以選擇輸出文件的格式。
 Sheet=張紙

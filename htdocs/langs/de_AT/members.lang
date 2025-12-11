@@ -15,6 +15,5 @@ SubscriptionEndDate=Abonnementauslaufdatum
 NewMemberType=Neue Mitgliedsart
 Filehtpasswd=htpasswd-Datei
 HTPasswordExport=htpassword-Dateierstellung
-MembersByCountryDesc=This screen shows you the statistics of members by country.
 MenuMembersStats=Statistiken
 NameOrCompany=Name / Firma

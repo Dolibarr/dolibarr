@@ -2,6 +2,7 @@
 /* Copyright (C) 2012	   Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -150,7 +151,7 @@ if ($action == 'convert') {
 							$newlevel = $level;
 
 							//print "$objectstatic->id $newprice, $price_base_type, $newvat, $newminprice, $newlevel, $newnpr<br>\n";
-							$retm = $objectstatic->updatePrice($newprice, $price_base_type, $user, $newvatrateclean, $newminprice, $newlevel, $newnpr, 0, 0, $localtaxes_type, $newdefaultvatcode);
+							$retm = $objectstatic->updatePrice((float) $newprice, $price_base_type, $user, (float) $newvatrateclean, $newminprice, $newlevel, $newnpr, 0, 0, $localtaxes_type, $newdefaultvatcode);
 							if ($retm < 0) {
 								$error++;
 								break;
@@ -180,7 +181,7 @@ if ($action == 'convert') {
 						$newlevel = 0;
 						if (!empty($price_base_type) && !$updatelevel1) {
 							//print "$objectstatic->id $newprice, $price_base_type, $newvat, $newminprice, $newlevel, $newnpr<br>\n";
-							$ret = $objectstatic->updatePrice($newprice, $price_base_type, $user, $newvatrateclean, $newminprice, $newlevel, $newnpr, 0, 0, $localtaxes_type, $newdefaultvatcode);
+							$ret = $objectstatic->updatePrice((float) $newprice, $price_base_type, $user, (float) $newvatrateclean, $newminprice, $newlevel, $newnpr, 0, 0, $localtaxes_type, $newdefaultvatcode);
 						}
 
 						if ($ret < 0 || $retm < 0) {
@@ -236,8 +237,8 @@ if ($action == 'convert') {
 					//}
 					//else
 					//{
-						$newprice = price2num($obj->price, 'MU'); // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
-						//$newminprice=$objectstatic2->fourn_price_min;
+					$newprice = price2num($obj->price, 'MU'); // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
+					//$newminprice=$objectstatic2->fourn_price_min;
 					//}
 					//if ($newminprice > $newprice) $newminprice=$newprice;
 					$newvat = str_replace('*', '', $newvatrate);
@@ -254,7 +255,7 @@ if ($action == 'convert') {
 					if (!empty($price_base_type) && !$updatelevel1) {
 						//print "$objectstatic2->id $newprice, $price_base_type, $newvat, $newminprice, $newlevel, $newnpr<br>\n";
 						$fourn->id = $obj->fk_soc;
-						$ret = $objectstatic2->update_buyprice($obj->qty, $newprice, $user, $price_base_type, $fourn, $obj->fk_availability, $obj->ref_fourn, $newvat, '', $newpercent, 0, $newnpr, $newdeliverydelay, $newsupplierreputation, $localtaxes_type, $newdefaultvatcode);
+						$ret = $objectstatic2->update_buyprice($obj->qty, (float) $newprice, $user, $price_base_type, $fourn, $obj->fk_availability, $obj->ref_fourn, (float) $newvat, '', $newpercent, 0, $newnpr, $newdeliverydelay, $newsupplierreputation, $localtaxes_type, $newdefaultvatcode);
 					}
 
 					if ($ret < 0 || $retm < 0) {

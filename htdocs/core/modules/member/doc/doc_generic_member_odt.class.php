@@ -146,7 +146,7 @@ class doc_generic_member_odt extends ModelePDFMember
 
 		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
 		$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
-		$texte .= '<textarea class="flat" cols="60" name="value1">';
+		$texte .= '<textarea class="flat textareafordir" spellcheck="false" cols="60" name="value1">';
 		$texte .= getDolGlobalString('MEMBER_ADDON_PDF_ODT_PATH');
 		$texte .= '</textarea>';
 		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
@@ -202,7 +202,7 @@ class doc_generic_member_odt extends ModelePDFMember
 	public function write_file($object, $outputlangs, $srctemplatepath = '', $mode = 'member', $nooutput = 0, $filename = 'tmp_cards')
 	{
 		// phpcs:enable
-		global $user, $langs, $conf, $mysoc, $hookmanager;
+		global $langs, $conf, $mysoc, $hookmanager;
 
 		if (empty($srctemplatepath)) {
 			dol_syslog("doc_generic_odt::write_file parameter srctemplatepath empty", LOG_WARNING);
@@ -343,6 +343,7 @@ class doc_generic_member_odt extends ModelePDFMember
 
 				$tmparray = array_merge($array_member, $array_soc, $array_thirdparty, $array_other, $array_thirdparty_contact);
 				complete_substitutions_array($tmparray, $outputlangs, $object);
+
 				// Call the ODTSubstitution hook
 				$parameters = array(
 					'file' => $file,
@@ -351,12 +352,20 @@ class doc_generic_member_odt extends ModelePDFMember
 					'substitutionarray' => &$tmparray
 				);
 				$reshook = $hookmanager->executeHooks('ODTSubstitution', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+
+				// retrieve the constant to apply a ratio for image size or set the ratio to 1
+				if (getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO')) {
+					$ratio = (float) getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO');
+				} else {
+					$ratio = 1;
+				}
+
 				foreach ($tmparray as $key => $value) {
 					try {
 						if (preg_match('/logo$/', $key)) {
 							// Image
 							if (file_exists($value)) {
-								$odfHandler->setImage($key, $value);
+								$odfHandler->setImage($key, $value, $ratio);
 							} else {
 								$odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
 							}

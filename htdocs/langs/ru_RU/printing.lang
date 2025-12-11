@@ -32,6 +32,7 @@ PRINTIPP_HOST=Сервер печати
 PRINTIPP_PORT=Порт
 PRINTIPP_USER=Авторизоваться
 PRINTIPP_PASSWORD=Пароль
+PRINTIPP_SSL=Использовать SSL
 NoDefaultPrinterDefined=Принтер по умолчанию не определен
 DefaultPrinter=Принтер по умолчанию
 Printer=Принтер
@@ -52,3 +53,4 @@ PrintingDriverDescprintgcp=Настройки для драйвера серви
 PrintingDriverDescprintipp=Переменные конфигурации для драйвера печати Cups.
 PrintTestDescprintgcp=Список принтеров для сервиса Google Cloud Print
 PrintTestDescprintipp=Список принтеров для чашек.
+Testbbbb

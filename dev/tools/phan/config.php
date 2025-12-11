@@ -1,7 +1,10 @@
 <?php
-/* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ *
+ * This is the phan config file used by .github/workflows/phan.yml
  */
+
 define('DOL_PROJECT_ROOT', __DIR__.'/../../..');
 define('DOL_DOCUMENT_ROOT', DOL_PROJECT_ROOT.'/htdocs');
 define('PHAN_DIR', __DIR__);
@@ -32,7 +35,8 @@ $sanitizeRegex
 			'restricthtmlallowclass',
 			'restricthtmlallowunvalid',
 			'restricthtmlnolink',
-			'restricthtmlallowlinkscript'
+			'restricthtmlallowlinkscript',
+			'url',
 		)
 	).')*$/';
 
@@ -158,6 +162,7 @@ $VALID_MODULE_MAPPING = array(
 	'stock' => 'Stock',
 	'stocktransfer' => 'StockTransfer',
 	'stripe' => 'Stripe',
+	'subtotals' => 'Subtotals',
 	'supplier_invoice' => null,  // Special case, uses invoice
 	'supplier_order' => null,  // Special case, uses invoice
 	'supplier_proposal' => 'SupplierProposal',
@@ -223,17 +228,22 @@ return [
 	'simplify_ast' => true,
 	'analyzed_file_extensions' => ['php','inc'],
 	'globals_type_map' => [
-		'_Avery_Labels' => 'array<string,array{name:string,paper-size:string|array{0:float,1:float},orientation:string,metric:string,marginLeft:float,marginTop:float,NX:int,NY:int,SpaceX:float,SpaceY:float,width:float,height:float,font-size:float,custom_x:float,custom_y:float}>',
+		'_Avery_Labels' => 'array<string,array{name:string,paper-size:string|array{0:float,1:float},orientation:string,metric:string,marginLeft:float,marginTop:float,NX:int,NY:int,SpaceX:float,SpaceY:float,width:float,height:float,font-size:int,custom_x:float,custom_y:float}>',
 		'action' => 'string',
 		'actioncode' => 'string',
 		'badgeStatus0' => 'string',
 		'badgeStatus1' => 'string',
-		'badgeStatus11' => 'string',
 		'badgeStatus3' => 'string',
 		'badgeStatus4' => 'string',
+		'badgeStatus5' => 'string',
 		'badgeStatus6' => 'string',
+		'badgeStatus7' => 'string',
 		'badgeStatus8' => 'string',
 		'badgeStatus9' => 'string',
+		'badgeStatus10' => 'string',
+		'badgeStatus11' => 'string',
+		'badgeStatus4b' => 'string',
+		'badgeStatus8b' => 'string',
 		'classname' => 'string',
 		'conf' => '\Conf',
 		'conffile' => 'string',
@@ -267,7 +277,7 @@ return [
 		'linkedObjectBlock' => '\CommonObject[]', // See htdocs/core/class/html.form.class.php
 		'mainmenu' => 'string',
 		'menumanager' => '\MenuManager',
-		'mysoc' => '?\Societe',
+		'mysoc' => '\Societe',
 		'nblines' => '\int',
 		'objectoffield' => '\CommonObject',
 		'objsoc' => '\Societe',
@@ -299,7 +309,8 @@ return [
 	// your application should be included in this list.
 	'directory_list' => [
 		'htdocs',
-		PHAN_DIR . '/stubs/',
+		'scripts',
+		PHAN_DIR . '/stubs',
 	],
 
 	// A directory list that defines files that will be excluded
@@ -367,7 +378,7 @@ return [
 		// can also be written as 'vendor/phan/phan/.phan/plugins/AlwaysReturnPlugin.php'
 		'DeprecateAliasPlugin',
 		//'EmptyMethodAndFunctionPlugin',
-		// 'InvalidVariableIssetPlugin',
+		'InvalidVariableIssetPlugin',
 		//'MoreSpecificElementTypePlugin',
 		'NoAssertPlugin',
 		'NotFullyQualifiedUsagePlugin',
@@ -441,7 +452,7 @@ return [
 
 		'PhanPluginNonBoolBranch',			// Not essential - 31240+ occurrences
 		'PhanPluginNumericalComparison',	// Not essential - 19870+ occurrences
-		'PhanTypeMismatchArgument',			// Also reported by phpstan < lvl6 - 12300+ occurrences
+		// 'PhanTypeMismatchArgument',		// Can detect missing array keys, invalid types, objects being passed when scalar expected - Not all reported by phpstan - <=3800 cases (was: 12300+ before)
 		'PhanPluginNonBoolInLogicalArith',	// Not essential - 11040+ occurrences
 		'PhanPluginConstantVariableScalar',	// Not essential - 5180+ occurrences
 		'PhanPluginDuplicateAdjacentStatement',
@@ -451,8 +462,10 @@ return [
 		'PhanPluginRedundantAssignment',				// Not essential, useless
 		'PhanPluginDuplicateCatchStatementBody',  // Requires PHP7.1 - 50+ occurrences
 
-		// 'PhanPluginUnknownArrayMethodParamType',	// Too many troubles to manage. Is enabled in config_extended only.
-		// 'PhanPluginUnknownArrayMethodReturnType',	// Too many troubles to manage. Is enabled in config_extended only.
+		'PhanPluginUnknownClosureReturnType',	// When we use closure (we must avoid), we do not have PHP doc
+
+		// 'PhanPluginUnknownArrayMethodParamType',	// All fixed
+		// 'PhanPluginUnknownArrayMethodReturnType',	// All fixed
 		// 'PhanUndeclaredGlobalVariable',			// Helps identify variables that are not set/defined - add '@phan-var-force TYPE $varname' in tpl or includes to help type the variable
 		// 'PhanPluginUnknownObjectMethodCall',	// False positive for some class. Is enabled in config_extended only.
 		'PhanTypeSuspiciousNonTraversableForeach',  // Reports on `foreach ($object as $key => $value)` which works without php notices, so we ignore it because this is intentional in the code.
@@ -467,7 +480,7 @@ return [
 	// Note: The array key must be the same as the extension name reported by `php -m`,
 	// so that phan can skip loading the stubs if the extension is actually available.
 	'autoload_internal_extension_signatures' => [
-				// Stubs may be available at https://github.com/JetBrains/phpstorm-stubs/tree/master
+		// Stubs may be available at https://github.com/JetBrains/phpstorm-stubs/tree/master
 
 		// Xdebug stubs are bundled with Phan 0.10.1+/0.8.9+ for usage,
 		// because Phan disables xdebug by default.

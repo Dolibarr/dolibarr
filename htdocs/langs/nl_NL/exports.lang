@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - exports
+ImportExportArea=Import/Export
 ExportsArea=Exports
 ImportArea=Importeren
 NewExport=Nieuwe export
@@ -31,10 +32,10 @@ ExportCsvSeparator=Csv-tekenscheidingsteken
 ImportCsvSeparator=Csv-tekenscheidingsteken
 Step=Stap
 FormatedImport=Importassistent
-FormatedImportDesc1=Met deze module kunt u bestaande gegevens bijwerken of nieuwe objecten vanuit een bestand toevoegen aan de database zonder technische kennis, met behulp van een assistent.
+FormatedImportDesc1=Klik hier om de assistent te gebruiken om bestaande gegevens bij te werken of nieuwe objecten vanuit een bestand aan de database toe te voegen.
 FormatedImportDesc2=De eerste stap is het kiezen van het soort gegevens dat u wilt importeren, vervolgens het formaat van het bronbestand en vervolgens de velden die u wilt importeren.
 FormatedExport=Exportassistent
-FormatedExportDesc1=Met deze tools kunt u gepersonaliseerde gegevens exporteren met behulp van een assistent, om u te helpen in het proces zonder technische kennis.
+FormatedExportDesc1=Klik hier om de assistent te gebruiken om gegevens te exporteren in een ondersteund formaat
 FormatedExportDesc2=De eerste stap is het kiezen van een vooraf gedefinieerde gegevensset, vervolgens welke velden u wilt exporteren en in welke volgorde.
 FormatedExportDesc3=Wanneer te exporteren gegevens zijn geselecteerd, kunt u de indeling van het uitvoerbestand kiezen.
 Sheet=Werkblad

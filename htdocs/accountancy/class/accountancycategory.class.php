@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2016		Jamal Elbaz			<jamelbaz@gmail.pro>
  * Copyright (C) 2016-2017	Alexandre Spangaro	<aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2024	Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,47 +69,47 @@ class AccountancyCategory // extends CommonObject
 	public $id;
 
 	/**
-	 * @var string Accountancy code
+	 * @var ?string Accountancy code
 	 */
 	public $code;
 
 	/**
-	 * @var string Accountancy Category label
+	 * @var ?string Accountancy Category label
 	 */
 	public $label;
 
 	/**
-	 * @var string Accountancy range account
+	 * @var ?string Accountancy range account
 	 */
 	public $range_account;
 
 	/**
-	 * @var int Sens of the account:  0: credit - debit, 1: debit - credit
+	 * @var ?int Sens of the account:  0: credit - debit, 1: debit - credit
 	 */
 	public $sens;
 
 	/**
-	 * @var int Category type of accountancy
+	 * @var ?int Category type of accountancy
 	 */
 	public $category_type;
 
 	/**
-	 * @var string Formula
+	 * @var ?string Formula
 	 */
 	public $formula;
 
 	/**
-	 * @var int     Position
+	 * @var ?int     Position
 	 */
 	public $position;
 
 	/**
-	 * @var int country id
+	 * @var ?int country id
 	 */
 	public $fk_country;
 
 	/**
-	 * @var int Is active
+	 * @var ?int Is active
 	 */
 	public $active;
 
@@ -215,8 +215,8 @@ class AccountancyCategory // extends CommonObject
 		$sql .= " ".(!isset($this->code) ? "NULL" : "'".$this->db->escape($this->code)."'").",";
 		$sql .= " ".(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'").",";
 		$sql .= " ".(!isset($this->range_account) ? 'NULL' : "'".$this->db->escape($this->range_account)."'").",";
-		$sql .= " ".(!isset($this->sens) ? 'NULL' : "'".$this->db->escape($this->sens)."'").",";
-		$sql .= " ".(!isset($this->category_type) ? 'NULL' : "'".$this->db->escape($this->category_type)."'").",";
+		$sql .= " ".(!isset($this->sens) ? 'NULL' : "'".$this->db->escape((string) $this->sens)."'").",";
+		$sql .= " ".(!isset($this->category_type) ? 'NULL' : "'".$this->db->escape((string) $this->category_type)."'").",";
 		$sql .= " ".(!isset($this->formula) ? 'NULL' : "'".$this->db->escape($this->formula)."'").",";
 		$sql .= " ".(!isset($this->position) ? 'NULL' : ((int) $this->position)).",";
 		$sql .= " ".(!isset($this->fk_country) ? 'NULL' : ((int) $this->fk_country)).",";
@@ -399,7 +399,6 @@ class AccountancyCategory // extends CommonObject
 	 */
 	public function delete($user, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		$sql = "DELETE FROM ".$this->db->prefix().$this->table_element;
@@ -438,6 +437,7 @@ class AccountancyCategory // extends CommonObject
 	public function display($id)
 	{
 		global $conf;
+
 		$sql = "SELECT t.rowid, t.account_number, t.label";
 		$sql .= " FROM ".$this->db->prefix()."accounting_account as t";
 		$sql .= " WHERE t.fk_accounting_category = ".((int) $id);
@@ -663,7 +663,7 @@ class AccountancyCategory // extends CommonObject
 		if (is_array($cpt)) {
 			$sql .= " AND t.numero_compte IN (".$this->db->sanitize($listofaccount, 1).")";
 		} else {
-			$sql .= " AND t.numero_compte = '".$this->db->escape($cpt)."'";
+			$sql .= " AND t.numero_compte = '".$this->db->escape((string) $cpt)."'";
 		}
 		if (!empty($date_start) && !empty($date_end) && (empty($month) || empty($year))) {	// If month/year provided, it is stronger than filter date_start/date_end
 			$sql .= " AND (t.doc_date BETWEEN '".$this->db->idate($date_start)."' AND '".$this->db->idate($date_end)."')";

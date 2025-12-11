@@ -1,8 +1,10 @@
 <?php
-/* Copyright (C) 2008-2021 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2008-2021 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2020	   Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+
+/* Copyright (C) 2008-2021  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2008-2021  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2020	    Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +35,7 @@
  *
  *	@param   string		$chain		string to encode
  *	@param   string		$key		rule to use for delta ('0', '1' or 'myownkey')
- *	@return  string					encoded string
+ *	@return  string					encoded string with format 'passcrypted'
  *  @see dol_decode(), dolEncrypt()
  */
 function dol_encode($chain, $key = '1')
@@ -119,7 +121,7 @@ define('MAIN_SECURITY_REVERSIBLE_ALGO', 'AES-256-CTR');
  *	@param   string		$key		If '', we use $conf->file->instance_unique_id (so $dolibarr_main_instance_unique_id in conf.php)
  *  @param	 string		$ciphering	Default ciphering algorithm
  *  @param	 string		$forceseed	To force the seed
- *	@return  string					encoded string
+ *	@return  string					encoded string, with format 'dolcrypt:CIPHERING:seed:cryptedpass'
  *  @since v17
  *  @see dolDecrypt(), dol_hash()
  */
@@ -177,7 +179,7 @@ function dolEncrypt($chain, $key = '', $ciphering = '', $forceseed = '')
  *  Note: If a backup is restored onto another instance with a different $conf->file->instance_unique_id, then decoded value will differ.
  *
  *	@param   string		$chain		string to decode
- *	@param   string		$key		If '', we use $conf->file->instance_unique_id
+ *	@param   string		$key		If '', we use $conf->file->dolcrypt_key else $conf->file->instance_unique_id
  *	@return  string					encoded string
  *  @since v17
  *  @see dolEncrypt(), dol_hash()
@@ -192,15 +194,14 @@ function dolDecrypt($chain, $key = '')
 
 	if (empty($key)) {
 		if (!empty($conf->file->dolcrypt_key)) {
-			// If dolcrypt_key is defined, we used it in priority
+			// If dolcrypt_key is defined, we used it in priority (coming from $dolibarr_main_instance_unique_id)
 			$key = $conf->file->dolcrypt_key;
 		} else {
-			// We fall back on the instance_unique_id
+			// We fall back on the instance_unique_id (coming from $dolibarr_main_instance_unique_id)
 			$key = !empty($conf->file->instance_unique_id) ? $conf->file->instance_unique_id : "";
 		}
 	}
 
-	//var_dump('key='.$key);
 	$reg = array();
 	if (preg_match('/^dolcrypt:([^:]+):(.+)$/', $chain, $reg)) {
 		// Do not enable this log, except during debug
@@ -218,6 +219,11 @@ function dolDecrypt($chain, $key = '')
 			} else {
 				$newchain = openssl_decrypt((string) $tmpexplode[0], $ciphering, $key, 0, '');
 			}
+			// Test validity of decryption
+			if (!ascii_check($newchain)) {
+				dol_syslog("Error dolDecrypt failed: The key dolibarr_main_dolcrypt or dolibarr_main_instance_unique_id, found in conf.php file, is the the one used to encrypt this encrypted string", LOG_ERR);
+				return $chain;
+			}
 		} else {
 			dol_syslog("Error dolDecrypt openssl_decrypt is not available", LOG_ERR);
 			return $chain;
@@ -234,15 +240,15 @@ function dolDecrypt($chain, $key = '')
  *  If constant MAIN_SECURITY_SALT is defined, we use it as a salt (used only if hashing algorithm is something else than 'password_hash').
  *
  * 	@param 		string		$chain		String to hash
- * 	@param		string		$type		Type of hash:
- *                                      'auto' or '0': will use MAIN_SECURITY_HASH_ALGO else md5
- *                                      'sha1' or '1': sha1
- *                                      'sha1md5' or '2': sha1md5
- *                                      'md5' or '3': md5
- *                                      'openldapxxx' or '4': for OpenLdap
- *                                      'sha256' or '5': sha256
- *                                      'password_hash' or '6': password_hash
- * 										Use 'md5' if hash is not needed for security purpose. For security need, prefer 'auto'.
+ * 	@param		'auto'|'0'|'sha1'|'1'|'sha1md5'|'2'|'md5'|'3'|'openldap'|'4'|'sha256'|'5'|'password_hash'|'6'	$type		Type of hash:
+ *                                                                                                                          'auto' or '0': will use MAIN_SECURITY_HASH_ALGO else md5
+ *                                                                                                                          'sha1' or '1': sha1
+ *                                                                                                                          'sha1md5' or '2': sha1md5
+ *                                                                                                                          'md5' or '3': md5
+ *                                                                                                                          'openldapxxx' or '4': for OpenLdap
+ *                                                                                                                          'sha256' or '5': sha256
+ *                                                                                                                          'password_hash' or '6': password_hash
+ *                                                                                                                          Use 'md5' if hash is not needed for security purpose. For security need, prefer 'auto'.
  * 	@param 		int 		$nosalt		Do not include any salt
  *  @param		int			$mode		0=Return encoded password, 1=Return array with encoding password + encoding algorithm
  * 	@return		string|array{pass_encrypted:string,pass_encoding:string}	Hash of string or array with pass_encrypted and pass_encoding
@@ -534,10 +540,22 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	// 	$features = substr($features, 0, -4);
 	// }
 
-	//print $features.' - '.$tableandshare.' - '.$feature2.' - '.$dbt_select."\n";
+	// print $features.' - '.$tableandshare.' - '.$feature2.' - '.$dbt_select."\n";
 
 	// Get more permissions checks from hooks
-	$parameters = array('features' => $features, 'originalfeatures' => $originalfeatures, 'objectid' => $objectid, 'dbt_select' => $dbt_select, 'idtype' => $dbt_select, 'isdraft' => $isdraft);
+	$parameters = array(
+		'features' => $features,
+		'feature2' => $feature2,
+		'originalfeatures' => $originalfeatures,
+		'tableandshare' => $tableandshare,
+		'object' => $object,
+		'objectid' => $objectid,
+		'dbt_keyfield' => $dbt_keyfield,
+		'dbt_select' => $dbt_select,
+		'idtype' => $dbt_select,
+		'isdraft' => $isdraft,
+		'mode' => $mode,
+	);
 	if (!empty($hookmanager)) {
 		$reshook = $hookmanager->executeHooks('restrictedArea', $parameters);
 
@@ -629,6 +647,11 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 			}
 		} elseif ($feature == 'payment_sc') {
 			if (!$user->hasRight('tax', 'charges', 'lire')) {
+				$readok = 0;
+				$nbko++;
+			}
+		} elseif ($feature == 'webhook') {
+			if (empty($user->admin)) {
 				$readok = 0;
 				$nbko++;
 			}
@@ -730,6 +753,11 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 				}
 			} elseif ($feature == 'modulebuilder') {
 				if (!$user->hasRight('modulebuilder', 'run')) {
+					$createok = 0;
+					$nbko++;
+				}
+			} elseif ($feature == 'webhook') {
+				if (empty($user->admin)) {
 					$createok = 0;
 					$nbko++;
 				}
@@ -976,6 +1004,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		}
 		if ($feature == 'task' || $feature == 'projet_task') {
 			$feature = 'project_task';
+			$dbtablename = 'projet_task';
 		}
 		if ($feature == 'eventorganization') {
 			$feature = 'agenda';
@@ -999,7 +1028,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		$checktask = array('projet_task', 'project_task'); // Test for task object
 		$checkhierarchy = array('expensereport', 'holiday', 'hrm');	// check permission among the hierarchy of user
 		$checkuser = array('bookmark');	// check permission among the fk_user (must be myself or null)
-		$nocheck = array('barcode'); // No test
+		$nocheck = array('barcode', 'webhook'); // No test
 
 		//$checkdefault = 'all other not already defined'; // Test on entity + link to third party on field $dbt_keyfield. Not allowed if link is empty (Ex: invoice, orders...).
 
@@ -1052,6 +1081,9 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				if ($user->socid != $objectid) {
 					return false;
 				}
+			} elseif (isModEnabled('societe') && !$user->hasRight('societe', 'lire') && !$user->hasRight('societe', 'client', 'voir')) {
+				dol_syslog("security.lib.php::checkUserAccessToObject Deny access due: (isModEnabled('societe') && !user->hasRight('societe', 'lire') && !user->hasRight('societe', 'client', 'voir'))", LOG_DEBUG);
+				return false;
 			} elseif (isModEnabled("societe") && ($user->hasRight('societe', 'lire') && !$user->hasRight('societe', 'client', 'voir'))) {
 				// If internal user: Check permission for internal users that are restricted on their objects
 				$sql = "SELECT COUNT(sc.fk_soc) as nb";
@@ -1121,10 +1153,10 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			}
 			$checkonentitydone = 1;
 		}
-		if (in_array($feature, $checktask) && $objectid > 0) {
+		if (in_array($feature, $checktask) && (int) $objectid > 0) {
 			if (isModEnabled('project') && !$user->hasRight('projet', 'all', 'lire')) {
 				$task = new Task($db);
-				$task->fetch($objectid);
+				$task->fetch((int) $objectid);
 				$projectid = $task->fk_project;
 
 				include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -1194,12 +1226,12 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		}
 
 		// For events, check on users assigned to event
-		if ($feature === 'agenda' && $objectid > 0) {
+		if ($feature === 'agenda' && ((int) $objectid) > 0) {
 			// Also check owner or attendee for users without allactions->read
-			if ($objectid > 0 && !$user->hasRight('agenda', 'allactions', 'read')) {
+			if (/* $objectid > 0 && */ !$user->hasRight('agenda', 'allactions', 'read')) {
 				require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 				$action = new ActionComm($db);
-				$action->fetch($objectid);
+				$action->fetch((int) $objectid);
 				if ($action->authorid != $user->id && $action->userownerid != $user->id && !(array_key_exists($user->id, $action->userassigned))) {
 					return false;
 				}
@@ -1236,7 +1268,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 					// the user can't view any evaluations
 					return false;
 				}
-				// the user can only their own evaluations or their subordinates'
+				// the user can only see their own evaluations or their subordinates'
 				return in_array($useridtocheck, $childids);
 			}
 		}
@@ -1258,12 +1290,13 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 					return false;
 				}
 			} else {
-				dol_syslog("Bad forged sql in checkUserAccessToObject", LOG_WARNING);
+				dol_syslog("Bad forged sql in security.lib.php::checkUserAccessToObject", LOG_WARNING);
 				return false;
 			}
 		}
 	}
 
+	dol_syslog("security.lib.php::checkUserAccessToObject::return True", LOG_DEBUG);
 	return true;
 }
 
@@ -1274,7 +1307,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
  *	Calling this function terminate execution of PHP.
  *
  *	@param	string		$message					Force error message
- *	@param	int			$http_response_code			HTTP response code
+ *	@param	int			$http_response_code			HTTP response code (403 for forbidden access, 400 bad parameters or request)
  *  @param	int<0,1>	$stringalreadysanitized		1 if string is already sanitized with HTML entities
  *  @return	never
  *  @see accessforbidden()

@@ -89,7 +89,7 @@ $help_url = "EN:Module_Expense_Reports|FR:Module_Notes_de_frais";
 llxHeader('', $langs->trans("TripsAndExpenses"), $help_url);
 
 
-$label = $somme = $nb = array();
+$label = $somme = array();
 
 $totalnb = $totalsum = 0;
 $sql = "SELECT tf.code, tf.label, count(de.rowid) as nb, sum(de.total_ht) as km";
@@ -102,7 +102,6 @@ if (!$user->hasRight('expensereport', 'readall') && !$user->hasRight('expenserep
 	$childids[] = $user->id;
 	$sql .= " AND d.fk_user_author IN (".$db->sanitize(implode(',', $childids)).")\n";
 }
-
 $sql .= " GROUP BY tf.code, tf.label";
 
 $result = $db->query($sql);
@@ -230,8 +229,8 @@ if ($result) {
 	print '<th class="right">'.$langs->trans("AmountTTC").'</th>';
 	print '<th class="right">'.$langs->trans("DateModificationShort").'</th>';
 	print '<th>';
-	print '<a href="'.DOL_URL_ROOT.'/expensereport/list.php?sortfield=d.tms&sortorder=DESC">';
-	print img_picto($langs->trans("FullList"), 'expensereport');
+	print '<a class="badge" title="'.$langs->trans("FullList").'" href="'.DOL_URL_ROOT.'/expensereport/list.php?sortfield=d.tms&sortorder=DESC">';
+	print '...';
 	print '</a>';
 	print '</th>';
 	print '</tr>';

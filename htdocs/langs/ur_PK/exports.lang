@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - exports
+ImportExportArea=Imports / Exports
 ExportsArea=برآمدات
 ImportArea=درآمد کریں۔
 NewExport=نئی ایکسپورٹ
@@ -31,10 +32,10 @@ ExportCsvSeparator=Csv کریکٹر الگ کرنے والا
 ImportCsvSeparator=Csv کریکٹر الگ کرنے والا
 Step=قدم
 FormatedImport=اسسٹنٹ درآمد کریں۔
-FormatedImportDesc1=یہ ماڈیول آپ کو اسسٹنٹ کا استعمال کرتے ہوئے، تکنیکی معلومات کے بغیر فائل سے موجودہ ڈیٹا کو اپ ڈیٹ کرنے یا ڈیٹا بیس میں نئی اشیاء شامل کرنے کی اجازت دیتا ہے۔
+FormatedImportDesc1=Click here to use the assistant to update existing data or add new objects into the database from a file.
 FormatedImportDesc2=پہلا قدم یہ ہے کہ آپ جس قسم کے ڈیٹا کو درآمد کرنا چاہتے ہیں اس کا انتخاب کریں، پھر سورس فائل کا فارمیٹ، پھر وہ فیلڈز جو آپ درآمد کرنا چاہتے ہیں۔
 FormatedExport=ایکسپورٹ اسسٹنٹ
-FormatedExportDesc1=یہ ٹولز اسسٹنٹ کا استعمال کرتے ہوئے ذاتی ڈیٹا برآمد کرنے کی اجازت دیتے ہیں، تاکہ تکنیکی معلومات کی ضرورت کے بغیر آپ کو اس عمل میں مدد ملے۔
+FormatedExportDesc1=Click here to use the assistant to export data in a supported format
 FormatedExportDesc2=پہلا قدم پہلے سے طے شدہ ڈیٹاسیٹ کا انتخاب کرنا ہے، پھر آپ کن فیلڈز کو ایکسپورٹ کرنا چاہتے ہیں، اور کس ترتیب میں۔
 FormatedExportDesc3=جب برآمد کرنے کے لیے ڈیٹا منتخب کیا جاتا ہے، تو آپ آؤٹ پٹ فائل کا فارمیٹ منتخب کر سکتے ہیں۔
 Sheet=چادر

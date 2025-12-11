@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2010-2011 Regis Houssin <regis.houssin@inodbox.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2010-2011  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
  * @var Canvas $this
  * @var Conf $conf
  * @var CommonObject $this
+ * @var DoliDB $db
  * @var Translate $langs
  * @var User $user
  *
@@ -57,13 +58,6 @@ if ($this->control->tpl['js_checkVatPopup']) {
 	<td width="20%"><?php echo $langs->trans('ThirdPartyName'); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['showrefnav']; ?></td>
 </tr>
-
-<?php if (getDolGlobalString('SOCIETE_USEPREFIX')) { ?>
-<tr>
-	<td><?php echo $langs->trans('Prefix'); ?></td>
-	<td colspan="3"><?php echo $this->control->tpl['prefix_comm']; ?></td>
-</tr>
-<?php } ?>
 
 <?php if ($this->control->tpl['client']) { ?>
 <tr>

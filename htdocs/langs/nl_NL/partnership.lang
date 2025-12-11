@@ -74,3 +74,5 @@ NewPartnershipRequest=Nieuw partnerschapsverzoek
 NewPartnershipRequestDesc=Met dit formulier kunt u een aanvraag indienen om deel uit te maken van een van onze partnerprogramma's. Als je hulp nodig hebt bij het invullen van dit formulier, neem dan contact op via e-mail <b> %s </b> .
 ThisUrlMustContainsAtLeastOneLinkToWebsite=Deze pagina moet ten minste één link naar een van de volgende domeinen bevatten: %s
 IPOfApplicant=IP van aanvrager
+PartnershipToReopen=Om te heropenen
+PartnershipConfirmReOpenAsk=Weet u zeker dat u dit partnerschap <b> %s</b> opnieuw wilt openen?

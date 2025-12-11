@@ -5,8 +5,8 @@
  * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015-2017	Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -139,7 +139,7 @@ print dol_get_fiche_head($head, 'consumption', $langs->trans("ContactsAddresses"
 $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 $morehtmlref = '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$object->id.'" class="refid">';
-$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 $morehtmlref .= '</a>';
 
 $morehtmlref .= '<div class="refidno">';
@@ -365,6 +365,9 @@ if (!empty($sql_select)) {
 		}
 		$sql .= ")";
 	}
+	$parameters = array('type_element' => $type_element);
+	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	$sql .= $hookmanager->resPrint;
 	$sql .= $db->order($sortfield, $sortorder);
 	$resql = $db->query($sql);
 	$totalnboflines = $db->num_rows($resql);
@@ -437,8 +440,8 @@ if ($sql_select && $documentstatic !== null) {
 	print '<input class="flat" type="text" name="sref" size="8" value="'.$sref.'">';
 	print '</td>';
 	print '<td class="liste_titre nowrap center">'; // date
-	print $formother->select_month($month ? $month : -1, 'month', 1, 0, 'valignmiddle');
-	print $formother->selectyear($year ? $year : -1, 'year', 1, 20, 1);
+	print $formother->select_month($month ? (string) $month : '-1', 'month', 1, 0, 'valignmiddle');
+	print $formother->selectyear($year ? (string) $year : '-1', 'year', 1, 20, 1);
 	print '</td>';
 	print '<td class="liste_titre center">';
 	print '</td>';
@@ -481,9 +484,10 @@ if ($sql_select && $documentstatic !== null) {
 		$documentstatic->fk_statut = $objp->status;
 		$documentstatic->statut = $objp->status;
 		$documentstatic->status = $objp->status;
-
-		$documentstatic->paye = $objp->paid;
-		$documentstatic->paid = $objp->paid;
+		if ($type_element == 'invoice' || $type_element == 'supplier_invoice') {
+			$documentstatic->paye = $objp->paid;
+			$documentstatic->paid = $objp->paid;
+		}
 
 		if (is_object($documentstaticline)) {
 			$documentstaticline->statut = $objp->status;
@@ -593,7 +597,7 @@ if ($sql_select && $documentstatic !== null) {
 			}
 		} else {
 			if ($objp->fk_product > 0) {
-				echo $form->textwithtooltip($text, $description, 3, 0, '', $i, 0, '');
+				echo $form->textwithtooltip($text, $description, 3, 0, '', (string) $i, 0, '');
 
 				// Show range
 				echo get_date_range($objp->date_start, $objp->date_end);
@@ -612,7 +616,7 @@ if ($sql_select && $documentstatic !== null) {
 
 					if (!empty($objp->label)) {
 						$text .= ' <strong>'.$objp->label.'</strong>';
-						echo $form->textwithtooltip($text, dol_htmlentitiesbr($objp->description), 3, 0, '', $i, 0, '');
+						echo $form->textwithtooltip($text, dol_htmlentitiesbr($objp->description), 3, 0, '', (string) $i, 0, '');
 					} else {
 						echo $text.' '.dol_htmlentitiesbr($objp->description);
 					}

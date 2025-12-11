@@ -307,7 +307,7 @@ class modTicket extends DolibarrModules
 			'langs' => 'ticket',
 			'position' => 102,
 			'enabled' => 'isModEnabled("ticket")',
-			'perms' => '$user->rights->ticket->write',
+			'perms' => '$user->hasRight("ticket", "write")',
 			'target' => '',
 			'user' => 2);
 		$r++;
@@ -357,7 +357,7 @@ class modTicket extends DolibarrModules
 			'type' => 'left',
 			'titre' => 'Categories',
 			'mainmenu' => 'ticket',
-			'url' => '/categories/index.php?type=12',
+			'url' => '/categories/categorie_list.php?type=12',
 			'langs' => 'ticket',
 			'position' => 107,
 			'enabled' => 'isModEnabled("ticket") && isModEnabled("categorie")',

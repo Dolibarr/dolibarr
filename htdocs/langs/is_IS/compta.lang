@@ -3,9 +3,9 @@ MenuFinancial=Billing | Payment
 TaxModuleSetupToModifyRules=Go to <a href="%s">Taxes module setup</a> to modify rules for calculation
 TaxModuleSetupToModifyRulesLT=Go to <a href="%s">Company setup</a> to modify rules for calculation
 OptionMode=Valkostur fyrir bókhalds
-OptionModeTrue=Valkostur Input-Output
-OptionModeVirtual=Valkostur Credits-skuldfærslur
-OptionModeTrueDesc=Í þessu samhengi er velta reiknuð yfir greiðslur (dagsetning greiðslur). \\ NThe gildi tölum er tryggt aðeins ef bókhaldi er yfirfarið með inntak og úttak á reikninga í reikningum.
+OptionModeTrue=Accrual accounting
+OptionModeVirtual=Cash accounting
+OptionModeTrueDesc=In this context, the turnover is calculated over payments (date of payments). The validity of the figures is assured only if the book-keeping is scrutinized through the input/output on payments.
 OptionModeVirtualDesc=Í þessu samhengi er velta reiknuð á reikningum (dagsetning fullgildingar). Þegar þessir reikningar eru vegna, hvort sem þeir hafa verið greidd eða ekki, þeir eru skráðir í veltu framleiðsla.
 FeatureIsSupportedInInOutModeOnly=Lögun aðeins í boði í Credits-skuldir bókhalds ham (Sjá bókhalds mát uppsetning)
 VATReportBuildWithOptionDefinedInModule=Upphæðir sem sýnt er hér er reiknað með því að nota reglur skilgreindar eftir Tax mát skipulag.
@@ -325,3 +325,7 @@ InvoiceToPay30Days=To pay (> 30 days)
 ConfirmPreselectAccount=Preselect accountancy code
 ConfirmPreselectAccountQuestion=Are you sure you want to preselect the %s selected lines with this accountancy code ?
 AmountPaidMustMatchAmountOfDownPayment=Amount paid must match amount of down payment
+RuleForLinesDates=Rule for lines dates
+Prepaid=Prepaid
+Postpaid=Postpaid
+SetRuleForLinesDates=Set rule for lines dates

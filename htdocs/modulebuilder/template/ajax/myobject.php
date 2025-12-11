@@ -66,7 +66,7 @@ dol_include_once('/mymodule/class/myobject.class.php');
  */
 
 $mode = GETPOST('mode', 'aZ09');
-$objectId = GETPOST('objectId', 'aZ09');
+$objectId = GETPOSTINT('objectId');
 $field = GETPOST('field', 'aZ09');
 $value = GETPOST('value', 'aZ09');
 

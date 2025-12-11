@@ -1,5 +1,5 @@
 /* Create an inline datepicker which leverages the
-   jQuery UI datepicker 
+   jQuery UI datepicker
 */
 $.editable.addInputType('datepicker', {
   element: function(settings, original) {
@@ -10,7 +10,7 @@ $.editable.addInputType('datepicker', {
           $(this).parents("form").submit();
         }
       });
-      
+
       $(this).append(input);
       return (input);
   }

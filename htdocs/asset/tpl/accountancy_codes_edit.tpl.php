@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2021  Open-Dsi  <support@open-dsi.fr>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,7 +68,7 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	foreach ($assetaccountancycodes->accountancy_codes_fields as $mode_key => $mode_info) {
 		//if (empty($object->enabled_modes[$mode_key])) continue;
-		$width = ($mode_key == "economic")? "width50p pull-left" : "width50p";
+		$width = ($mode_key == "economic") ? "width50p pull-left" : "width50p";
 		print '<table class="border '. $width .'" id="block_' . $mode_key . '">';
 		print '<tr><td class="info-box-title">'.$langs->trans($mode_info['label']).'</td></tr>';
 		foreach ($mode_info['fields'] as $field_key => $field_info) {
@@ -75,7 +76,7 @@ if (empty($reshook)) {
 			print '<tr><td class="width40p">' . $langs->trans($field_info['label']) . '</td><td>';
 			$accountancy_code = GETPOSTISSET($html_name) ? GETPOST($html_name, 'aZ09') : (!empty($assetaccountancycodes->accountancy_codes[$mode_key][$field_key]) ? $assetaccountancycodes->accountancy_codes[$mode_key][$field_key] : '');
 			if (isModEnabled('accounting')) {
-				print $formaccounting->select_account($accountancy_code, $html_name, 1, null, 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 1);
+				print $formaccounting->select_account($accountancy_code, $html_name, 1, array(), 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', '1');
 			} else {
 				print '<input name="' . $html_name . '" class="maxwidth200 " value="' . dol_escape_htmltag($accountancy_code) . '">';
 			}

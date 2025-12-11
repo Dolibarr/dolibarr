@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2021 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024      MDW                  <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024      William Mead         <william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -196,7 +196,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 					}
 
 					$usertmp = new User($db);
-					$resultFetchUser = $usertmp->fetch(0, $login, $sid, 1, ($entitytotest > 0 ? $entitytotest : -1));
+					$resultFetchUser = $usertmp->fetch(0, $login, (string) $sid, 1, ($entitytotest > 0 ? $entitytotest : -1));
 					if ($resultFetchUser > 0) {
 						dol_syslog("functions_ldap::check_user_password_ldap Sync user found user id=".$usertmp->id);
 						// Verify if the login changed and update the Dolibarr attributes
@@ -219,7 +219,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 					$usertmp = new User($db);
 					$usertmp->fetch(0, $login);
 					if (is_object($mc)) {
-						$ret = $mc->checkRight($usertmp->id, $entitytotest);
+						$ret = $mc->checkRight($usertmp->id, (string) $entitytotest);
 						if ($ret < 0) {
 							dol_syslog("functions_ldap::check_user_password_ldap Authentication KO entity '".$entitytotest."' not allowed for user id '".$usertmp->id."'", LOG_NOTICE);
 							$login = ''; // force authentication failure

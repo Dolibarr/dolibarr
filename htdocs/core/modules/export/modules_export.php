@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,6 +91,11 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	 * @var string enclosure
 	 */
 	public $enclosure;
+
+	/**
+	 * @var string separator
+	 */
+	public $separator;
 
 	/**
 	 * @var int col
@@ -239,7 +245,7 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	 *  Output record line into file
 	 *
 	 *  @param	array<string,string>	$array_selected_sorted	Array with list of field to export
-	 *  @param	Resource				$objp					A record from a fetch with all fields from select
+	 *  @param	Resource|Object			$objp					A record from a fetch with all fields from select
 	 *  @param	Translate				$outputlangs			Object lang to translate values
 	 *  @param	array<string,string>	$array_types			Array with types of fields
 	 * 	@return	int												Return integer <0 if KO, >0 if OK

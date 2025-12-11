@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2018 Nicolas ZABOURI   <info@inovea-conseil.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024       Benjamin Falière		<benjamin@faliere.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -144,61 +145,61 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 }
 
 print '<tr class="oddeven">';
-print '<td>'.$langs->trans("UseSpecificEditorName").'</td>';
+print '<td><label for="MODULEBUILDER_SPECIFIC_EDITOR_NAME" class="block">'.$langs->trans("UseSpecificEditorName").'</label></td>';
 print '<td>';
-print '<input type="text" name="MODULEBUILDER_SPECIFIC_EDITOR_NAME" value="'.getDolGlobalString('MODULEBUILDER_SPECIFIC_EDITOR_NAME').'">';
+print '<input id="MODULEBUILDER_SPECIFIC_EDITOR_NAME" type="text" name="MODULEBUILDER_SPECIFIC_EDITOR_NAME" value="'.getDolGlobalString('MODULEBUILDER_SPECIFIC_EDITOR_NAME').'">';
 print '</td>';
 print '</tr>';
 
 print '<tr class="oddeven">';
-print '<td>'.$langs->trans("UseSpecificEditorURL").'</td>';
+print '<td><label for="MODULEBUILDER_SPECIFIC_EDITOR_URL" class="block">'.$langs->trans("UseSpecificEditorURL").'</label></td>';
 print '<td>';
-print '<input type="text" name="MODULEBUILDER_SPECIFIC_EDITOR_URL" value="'.getDolGlobalString('MODULEBUILDER_SPECIFIC_EDITOR_URL').'">';
+print '<input id="MODULEBUILDER_SPECIFIC_EDITOR_URL" type="text" name="MODULEBUILDER_SPECIFIC_EDITOR_URL" value="'.getDolGlobalString('MODULEBUILDER_SPECIFIC_EDITOR_URL').'">';
 print '</td>';
 print '</tr>';
 
 if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("UseSpecificFamily").'</td>';
+	print '<td><label for="MODULEBUILDER_SPECIFIC_FAMILY" class="block">'.$langs->trans("UseSpecificFamily").'</label></td>';
 	print '<td>';
-	print '<input type="text" name="MODULEBUILDER_SPECIFIC_FAMILY" value="'.getDolGlobalString('MODULEBUILDER_SPECIFIC_FAMILY').'">';
+	print '<input id="MODULEBUILDER_SPECIFIC_FAMILY" type="text" name="MODULEBUILDER_SPECIFIC_FAMILY" value="'.getDolGlobalString('MODULEBUILDER_SPECIFIC_FAMILY').'">';
 	print '</td>';
 	print '</tr>';
 
 	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("UseSpecificAuthor").'</td>';
+	print '<td><label for="MODULEBUILDER_SPECIFIC_AUTHOR" class="block">'.$langs->trans("UseSpecificAuthor").'</label></td>';
 	print '<td>';
-	print '<input type="text" name="MODULEBUILDER_SPECIFIC_AUTHOR" value="'.getDolGlobalString('MODULEBUILDER_SPECIFIC_AUTHOR').'">';
+	print '<input id="MODULEBUILDER_SPECIFIC_AUTHOR" type="text" name="MODULEBUILDER_SPECIFIC_AUTHOR" value="'.getDolGlobalString('MODULEBUILDER_SPECIFIC_AUTHOR').'">';
 	print '</td>';
 	print '</tr>';
 
 	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("UseSpecificVersion").'</td>';
+	print '<td><label for="MODULEBUILDER_SPECIFIC_VERSION" class="block">'.$langs->trans("UseSpecificVersion").'</label></td>';
 	print '<td>';
-	print '<input type="text" name="MODULEBUILDER_SPECIFIC_VERSION" value="'.getDolGlobalString('MODULEBUILDER_SPECIFIC_VERSION').'">';
+	print '<input id="MODULEBUILDER_SPECIFIC_VERSION" type="text" name="MODULEBUILDER_SPECIFIC_VERSION" value="'.getDolGlobalString('MODULEBUILDER_SPECIFIC_VERSION').'">';
 	print '</td>';
 	print '</tr>';
 }
 
 print '<tr class="oddeven">';
-print '<td>'.$langs->trans("UseSpecificReadme").'</td>';
+print '<td><label for="MODULEBUILDER_SPECIFIC_README" class="block">'.$langs->trans("UseSpecificReadme").'</label></td>';
 print '<td>';
-print '<textarea class="centpercent" rows="20" name="MODULEBUILDER_SPECIFIC_README">'.getDolGlobalString('MODULEBUILDER_SPECIFIC_README').'</textarea>';
+print '<textarea id="MODULEBUILDER_SPECIFIC_README" class="centpercent" rows="20" name="MODULEBUILDER_SPECIFIC_README">'.getDolGlobalString('MODULEBUILDER_SPECIFIC_README').'</textarea>';
 print '</td>';
 print '</tr>';
 
 print '<tr class="oddeven">';
-print '<td>'.$langs->trans("AsciiToHtmlConverter").'</td>';
+print '<td><label for="MODULEBUILDER_ASCIIDOCTOR" class="block">'.$langs->trans("AsciiToHtmlConverter").'</label></td>';
 print '<td>';
-print '<input type="text" name="MODULEBUILDER_ASCIIDOCTOR" value="'.getDolGlobalString('MODULEBUILDER_ASCIIDOCTOR').'">';
+print '<input id="MODULEBUILDER_ASCIIDOCTOR" type="text" name="MODULEBUILDER_ASCIIDOCTOR" value="'.getDolGlobalString('MODULEBUILDER_ASCIIDOCTOR').'">';
 print ' '.$langs->trans("Example").': asciidoc, asciidoctor';
 print '</td>';
 print '</tr>';
 
 print '<tr class="oddeven">';
-print '<td>'.$langs->trans("AsciiToPdfConverter").'</td>';
+print '<td><label for="MODULEBUILDER_ASCIIDOCTORPDF" class="block">'.$langs->trans("AsciiToPdfConverter").'</label></td>';
 print '<td>';
-print '<input type="text" name="MODULEBUILDER_ASCIIDOCTORPDF" value="'.getDolGlobalString('MODULEBUILDER_ASCIIDOCTORPDF').'">';
+print '<input id="MODULEBUILDER_ASCIIDOCTORPDF" type="text" name="MODULEBUILDER_ASCIIDOCTORPDF" value="'.getDolGlobalString('MODULEBUILDER_ASCIIDOCTORPDF').'">';
 print ' '.$langs->trans("Example").': asciidoctor-pdf';
 print '</td>';
 print '</tr>';

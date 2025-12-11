@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2013       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,7 +78,7 @@ $hookmanager->initHooks(array('cli'));
 
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
-dol_syslog($script_file." launched with arg ".join(',', $argv));
+dol_syslog($script_file." launched with arg ".implode(',', $argv));
 
 $now = dol_now('tzserver');
 $duration_value = isset($argv[3]) ? $argv[3] : 'none';
@@ -165,7 +165,7 @@ if ($resql) {
 			if ($startbreak) {
 				// Break onto sales representative (new email or cid)
 				if (dol_strlen($oldemail) && $oldemail != 'none' && empty($trackthirdpartiessent[$oldsid.'|'.$oldemail])) {
-					envoi_mail($mode, $oldemail, $message, price2num($total), $oldlang, $oldtarget);
+					sendMailCustomerUnpaid($mode, $oldemail, $message, price2num($total), $oldlang, $oldtarget);
 					$trackthirdpartiessent[$oldsid.'|'.$oldemail] = 'contact id '.$oldcid;
 				} else {
 					if ($oldemail != 'none') {
@@ -197,7 +197,7 @@ if ($resql) {
 			$outputlangs->loadLangs(array("main", "bills"));
 
 			if (dol_strlen($newemail)) {
-				$message .= $outputlangs->trans("Invoice")." ".$obj->ref." : ".price($obj->total_ttc, 0, $outputlangs, 0, 0, -1, $conf->currency)."\n";
+				$message .= $outputlangs->trans("Invoice")." ".$obj->ref." : ".price($obj->total_ttc, 0, $outputlangs, 0, 0, -1, getDolCurrency())."\n";
 				dol_syslog("email_unpaid_invoices_to_customers.php: ".$newemail." ".$message);
 				$foundtoprocess++;
 			}
@@ -219,7 +219,7 @@ if ($resql) {
 		// If there are remaining messages to send in the buffer
 		if ($foundtoprocess) {
 			if (dol_strlen($oldemail) && $oldemail != 'none' && empty($trackthirdpartiessent[$oldsid.'|'.$oldemail])) { // Break onto email (new email)
-				envoi_mail($mode, $oldemail, $message, price2num($total), $oldlang, $oldtarget);
+				sendMailCustomerUnpaid($mode, $oldemail, $message, price2num($total), $oldlang, $oldtarget);
 				$trackthirdpartiessent[$oldsid.'|'.$oldemail] = 'contact id '.$oldcid;
 			} else {
 				if ($oldemail != 'none') {
@@ -254,7 +254,7 @@ if ($resql) {
  * @param string $oldtarget			Target name
  * @return int 						Int <0 if KO, >0 if OK
  */
-function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldtarget)
+function sendMailCustomerUnpaid($mode, $oldemail, $message, $total, $userlang, $oldtarget)
 {
 	global $conf, $langs;
 
@@ -286,14 +286,14 @@ function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldtarget)
 
 	$allmessage = '';
 	if (getDolGlobalString('SCRIPT_EMAIL_UNPAID_INVOICES_CUSTOMERS_HEADER')) {
-		$allmessage .= $conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_CUSTOMERS_HEADER;
+		$allmessage .= getDolGlobalString('SCRIPT_EMAIL_UNPAID_INVOICES_CUSTOMERS_HEADER');
 	} else {
 		$allmessage .= "Dear customer".($usehtml ? "<br>\n" : "\n").($usehtml ? "<br>\n" : "\n");
 		$allmessage .= "Please, find a summary of the bills with pending payments from you.".($usehtml ? "<br>\n" : "\n").($usehtml ? "<br>\n" : "\n");
 		$allmessage .= "Note: This list contains only unpaid invoices.".($usehtml ? "<br>\n" : "\n");
 	}
 	$allmessage .= $message.($usehtml ? "<br>\n" : "\n");
-	$allmessage .= $langs->trans("Total")." = ".price($total, 0, $userlang, 0, 0, -1, $conf->currency).($usehtml ? "<br>\n" : "\n");
+	$allmessage .= $langs->trans("Total")." = ".price($total, 0, $userlang, 0, 0, -1, getDolCurrency()).($usehtml ? "<br>\n" : "\n");
 	if (getDolGlobalString('SCRIPT_EMAIL_UNPAID_INVOICES_CUSTOMERS_FOOTER')) {
 		$allmessage .= getDolGlobalString('SCRIPT_EMAIL_UNPAID_INVOICES_CUSTOMERS_FOOTER');
 		if (dol_textishtml(getDolGlobalString('SCRIPT_EMAIL_UNPAID_INVOICES_CUSTOMERS_FOOTER'))) {

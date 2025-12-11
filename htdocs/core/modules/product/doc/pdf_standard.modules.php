@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2017 	Laurent Destailleur		<eldy@products.sourceforge.net>
  * Copyright (C) 2023 	Anthony Berton			<anthony.berton@bb2a.fr>
- * Copyright (C) 2024	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024   Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024	Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -140,7 +140,7 @@ class pdf_standard extends ModelePDFProduct
 		}
 
 		// Load traductions files required by page
-		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "orders", "deliveries"));
+		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "orders", "sendings"));
 
 		if (is_array($object->lines)) {
 			$nblines = count($object->lines);
@@ -158,10 +158,6 @@ class pdf_standard extends ModelePDFProduct
 				$dir = $conf->product->dir_output."/".$objectref;
 				$file = $dir."/".$objectref.".pdf";
 			}
-
-			$productFournisseur = new ProductFournisseur($this->db);
-			$supplierprices = $productFournisseur->list_product_fournisseur_price($object->id);
-			$object->supplierprices = $supplierprices;
 
 			if (!file_exists($dir)) {
 				if (dol_mkdir($dir) < 0) {
@@ -184,7 +180,7 @@ class pdf_standard extends ModelePDFProduct
 				// Create pdf instance
 				$pdf = pdf_getInstance($this->format);
 				$default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance
-				$pdf->SetAutoPageBreak(1, 0);
+				$pdf->setAutoPageBreak(true, 0);
 
 				$heightforinfotot = 40; // Height reserved to output the info and total part
 				$heightforfreetext = getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT', 5); // Height reserved to output the free text on last page
@@ -257,7 +253,7 @@ class pdf_standard extends ModelePDFProduct
 				foreach ($pdir as $midir) {
 					if (!$arephoto) {
 						if ($conf->entity != $object->entity) {
-							$dir = $conf->product->multidir_output[$object->entity].'/'.$midir; //Check repertories of current entities
+							$dir = $conf->product->multidir_output[$object->entity ?? $conf->entity].'/'.$midir; //Check repertories of current entities
 						} else {
 							$dir = $conf->product->dir_output.'/'.$midir; //Check repertory of the current product
 						}
@@ -278,6 +274,7 @@ class pdf_standard extends ModelePDFProduct
 				}
 				// Define size of image if we need it
 				$imglinesize = array();
+				$nexyafterphoto = null;
 				if (!empty($realpath) && $arephoto) {
 					$imgsize = pdf_getSizeForImage($realpath);
 					$imgsizewidth = $imgsize['width'] + 20;
@@ -590,6 +587,8 @@ class pdf_standard extends ModelePDFProduct
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
+					dolChmod($file);
+					return -1;
 				}
 
 				dolChmod($file);
@@ -759,8 +758,8 @@ class pdf_standard extends ModelePDFProduct
 		if (!getDolGlobalInt('PDF_DISABLE_MYCOMPANY_LOGO')) {
 			if ($this->emetteur->logo) {
 				$logodir = $conf->mycompany->dir_output;
-				if (!empty($conf->mycompany->multidir_output[$object->entity])) {
-					$logodir = $conf->mycompany->multidir_output[$object->entity];
+				if (!empty($conf->mycompany->multidir_output[$object->entity ?? $conf->entity])) {
+					$logodir = $conf->mycompany->multidir_output[$object->entity ?? $conf->entity];
 				}
 				if (!getDolGlobalInt('MAIN_PDF_USE_LARGE_LOGO')) {
 					$logo = $logodir.'/logos/thumbs/'.$this->emetteur->logo_small;
@@ -832,39 +831,39 @@ class pdf_standard extends ModelePDFProduct
 		// Show list of linked objects
 		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, 100, 3, 'R', $default_font_size);
 
-		if ($showaddress) {
-			/*
-			// Sender properties
-			$carac_emetteur = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty);
+		//if ($showaddress) {
+		/*
+		// Sender properties
+		$carac_emetteur = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty);
 
-			// Show sender
-			$posy=42;
-			$posx=$this->marge_gauche;
-			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) $posx=$this->page_largeur-$this->marge_droite-80;
-			$hautcadre=40;
+		// Show sender
+		$posy=42;
+		$posx=$this->marge_gauche;
+		if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) $posx=$this->page_largeur-$this->marge_droite-80;
+		$hautcadre=40;
 
-			// Show sender frame
-			$pdf->SetTextColor(0,0,0);
-			$pdf->SetFont('','', $default_font_size - 2);
-			$pdf->SetXY($posx,$posy-5);
-			$pdf->MultiCell(80, 5, $outputlangs->transnoentities("BillFrom"), 0, 'L');
-			$pdf->SetXY($posx,$posy);
-			$pdf->SetFillColor(230,230,230);
-			$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
-			$pdf->SetTextColor(0,0,60);
+		// Show sender frame
+		$pdf->SetTextColor(0,0,0);
+		$pdf->SetFont('','', $default_font_size - 2);
+		$pdf->SetXY($posx,$posy-5);
+		$pdf->MultiCell(80, 5, $outputlangs->transnoentities("BillFrom"), 0, 'L');
+		$pdf->SetXY($posx,$posy);
+		$pdf->SetFillColor(230,230,230);
+		$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
+		$pdf->SetTextColor(0,0,60);
 
-			// Show sender name
-			$pdf->SetXY($posx+2,$posy+3);
-			$pdf->SetFont('','B', $default_font_size);
-			$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
-			$posy=$pdf->getY();
+		// Show sender name
+		$pdf->SetXY($posx+2,$posy+3);
+		$pdf->SetFont('','B', $default_font_size);
+		$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
+		$posy=$pdf->getY();
 
-			// Show sender information
-			$pdf->SetXY($posx+2,$posy);
-			$pdf->SetFont('','', $default_font_size - 1);
-			$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
-			*/
-		}
+		// Show sender information
+		$pdf->SetXY($posx+2,$posy);
+		$pdf->SetFont('','', $default_font_size - 1);
+		$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
+		*/
+		//}
 
 		$pdf->SetTextColor(0, 0, 0);
 

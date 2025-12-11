@@ -19,16 +19,14 @@
 /**
  * \file    core/triggers/interface_99_modMyModule_MyModuleTriggers.class.php
  * \ingroup mymodule
- * \brief   Example trigger.
+ * \brief   Example of trigger file.
  *
- * Put detailed description here.
- *
- * \remarks You can create other triggers by copying this one.
+ * You can create other triggered files by copying this one.
  * - File name should be either:
  *      - interface_99_modMyModule_MyTrigger.class.php
  *      - interface_99_all_MyTrigger.class.php
  * - The file must stay in core/triggers
- * - The class name must be InterfaceMytrigger
+ * - The class name must be InterfaceMyTrigger
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
@@ -55,8 +53,7 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 
 	/**
 	 * Function called when a Dolibarr business event is done.
-	 * All functions "runTrigger" are triggered if file
-	 * is inside directory core/triggers
+	 * All functions "runTrigger" are triggered if the file is inside the directory core/triggers
 	 *
 	 * @param string 		$action 	Event action code
 	 * @param CommonObject 	$object 	Object

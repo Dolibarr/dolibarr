@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - exports
+ImportExportArea=Imports / Exports
 ExportsArea=Eksporter
 ImportArea=Import
 NewExport=Ny eksport
@@ -31,10 +32,10 @@ ExportCsvSeparator=Csv-tegnseparator
 ImportCsvSeparator=Csv-tegnseparator
 Step=Trinn
 FormatedImport=Importassistent
-FormatedImportDesc1=Denne modulen lar deg oppdatere eksisterende data eller legge til nye objekter i databasen fra en fil, ved hjelp av en assistent.
+FormatedImportDesc1=Click here to use the assistant to update existing data or add new objects into the database from a file.
 FormatedImportDesc2=Første trinn er å velge hvilken type data du vil importere, deretter formatet til kildefilen, og deretter feltene du vil importere.
 FormatedExport=Eksportassistent
-FormatedExportDesc1=Disse verktøyene tillater eksport av personlige data ved hjelp av en assistent, for å hjelpe deg i prosessen uten å kreve teknisk kunnskap.
+FormatedExportDesc1=Click here to use the assistant to export data in a supported format
 FormatedExportDesc2=Første trinn er å velge et forhåndsdefinert datasett, hvilke felt du vil eksportere, og i hvilken rekkefølge.
 FormatedExportDesc3=Når data for eksport er valgt, kan du velge formatet for utdatafilen.
 Sheet=Ark

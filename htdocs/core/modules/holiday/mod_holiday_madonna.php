@@ -2,7 +2,7 @@
 /* Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2018-2023 Charlene Benke		<charlene@patas-monkey.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -113,7 +113,7 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 	/**
 	 *	Return next value
 	 *
-	 *	@param	Societe			$objsoc     third party object
+	 *	@param	?Societe		$objsoc     third party object
 	 *	@param	Holiday			$holiday	holiday object
 	 *	@return string|int<-1,0>   			Value if OK, <=0 if KO
 	 */

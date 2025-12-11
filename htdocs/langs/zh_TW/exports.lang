@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - exports
+ImportExportArea=Imports / Exports
 ExportsArea=匯出
 ImportArea=匯入
 NewExport=新匯出
@@ -31,10 +32,10 @@ ExportCsvSeparator=Csv character separator
 ImportCsvSeparator=Csv character separator
 Step=步驟
 FormatedImport=匯入小幫手
-FormatedImportDesc1=此模組允許您更新現有資料或增加新項目到資料庫中而不需要專業技術知識,只須使用小幫手。
+FormatedImportDesc1=Click here to use the assistant to update existing data or add new objects into the database from a file.
 FormatedImportDesc2=首先選擇您所想要匯入的檔案類型,然後選擇來源檔案格式,接著選擇您想要匯入的欄位.
 FormatedExport=匯出小幫手
-FormatedExportDesc1=這些工具允許您使用小幫手匯出個人化資料,使您不需要具備任何專業知識來進行.
+FormatedExportDesc1=Click here to use the assistant to export data in a supported format
 FormatedExportDesc2=首先與則一個預定義資料集,然後選擇您想匯出的欄位,最後選擇在哪一個訂單
 FormatedExportDesc3=當已選擇想要匯出的檔案後，您可以選擇輸出檔案的格式。
 Sheet=表單

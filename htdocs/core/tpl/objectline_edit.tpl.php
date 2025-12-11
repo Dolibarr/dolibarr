@@ -5,10 +5,11 @@
  * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2018-2024	Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2022		OpenDSI				<support@open-dsi.fr>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Alexandre Spangaro  <alexandre@inovea-conseil.com>
+ * Copyright (C) 2025       Lenin Rivas			<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,28 +37,40 @@
  */
 
 /**
- * @var CommonObject $this
- * @var CommonObject $object
- * @var CommonObjectLine $line
+ * @var Conf $conf
  * @var Form $form
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ * @var ExtraFields $extrafields
+ * @var CommonObject $this
+ * @var CommonObject $object
+ * @var CommonObjectLine $line
+ * @var Societe $seller
+ * @var Societe $buyer
+ *
+ * @var string $action
+ * @var int	$dateSelector
  */
 
- // Protection to avoid direct call of template
+// Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
 
 '
-@phan-var-force Propal|Contrat|Commande|Facture|Expedition|Delivery|FactureFournisseur|FactureFournisseur|SupplierProposal $object
+@phan-var-force Propal|Contrat|Commande|Facture|Expedition|Delivery|CommandeFournisseur|FactureFournisseur|SupplierProposal $object
 @phan-var-force PropaleLigne|ContratLigne|CommonObjectLine|CommonInvoiceLine|CommonOrderLine|ExpeditionLigne|DeliveryLine|FactureFournisseurLigneRec|SupplierInvoiceLine|SupplierProposalLine $line
-@phan-var-force ThirdParty $seller
-@phan-var-force ThirdParty $buyer
+@phan-var-force Societe $seller
+@phan-var-force Societe $buyer
 @phan-var-force string $var
 ';
+
+// Handle subtotals line edit
+if (defined('SUBTOTALS_SPECIAL_CODE') && $line->special_code == SUBTOTALS_SPECIAL_CODE) {
+	return require DOL_DOCUMENT_ROOT.'/core/tpl/subtotal_edit.tpl.php';
+}
 
 $usemargins = 0;
 if (isModEnabled('margin') && !empty($object->element) && in_array($object->element, array('facture', 'facturerec', 'propal', 'commande'))) {
@@ -89,7 +102,7 @@ if (!empty($inputalsopricewithtax)) {
 if (in_array($object->element, array('propal', 'supplier_proposal', 'facture', 'facturerec', 'invoice', 'commande', 'order', 'order_supplier', 'invoice_supplier', 'invoice_supplier_rec'))) {
 	$colspan++; // With this, there is a column move button
 }
-if (isModEnabled("multicurrency") && $object->multicurrency_code != $conf->currency) {
+if (isModEnabled("multicurrency") && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
 	$colspan += 2;
 }
 if (isModEnabled('asset') && $object->element == 'invoice_supplier') {
@@ -176,12 +189,12 @@ $coldisplay++;
 		if (getDolGlobalString('MAIN_INPUT_DESC_HEIGHT')) {
 			$nbrows = getDolGlobalString('MAIN_INPUT_DESC_HEIGHT');
 		}
-		$enable = (isset($conf->global->FCKEDITOR_ENABLE_DETAILS) ? $conf->global->FCKEDITOR_ENABLE_DETAILS : 0);
+		$enable = getDolGlobalInt('FCKEDITOR_ENABLE_DETAILS');
 		$toolbarname = 'dolibarr_details';
 		if (getDolGlobalString('FCKEDITOR_ENABLE_DETAILS_FULL')) {
 			$toolbarname = 'dolibarr_notes';
 		}
-		$doleditor = new DolEditor('product_desc', GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description, '', (!getDolGlobalString('MAIN_DOLEDITOR_HEIGHT') ? 164 : $conf->global->MAIN_DOLEDITOR_HEIGHT), $toolbarname, '', false, true, $enable, $nbrows, '98%');
+		$doleditor = new DolEditor('product_desc', GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description, '', getDolGlobalInt('MAIN_DOLEDITOR_HEIGHT', 164), $toolbarname, '', false, true, $enable, $nbrows, '98%');
 		$doleditor->Create();
 	} else {
 		print '<textarea id="product_desc" class="flat" name="product_desc" readonly style="width: 200px; height:80px;">';
@@ -191,7 +204,7 @@ $coldisplay++;
 
 	//Line extrafield
 	if (!empty($extrafields)) {
-		$temps = $line->showOptionals($extrafields, 'edit', array('class' => 'tredited'), '', '', 1, 'line');
+		$temps = $line->showOptionals($extrafields, 'edit', array('class' => 'tredited'), '', '', '1', 'line');
 		if (!empty($temps)) {
 			print '<div style="padding-top: 10px" id="extrafield_lines_area_edit" name="extrafield_lines_area_edit">';
 			print $temps;
@@ -234,7 +247,7 @@ $coldisplay++;
 	}
 	if (!$situationinvoicelinewithparent) {
 		print '<td class="right">';
-		print $form->load_tva('tva_tx', GETPOSTISSET('tva_tx') ? GETPOST('tva_tx', 'alpha') : ($line->tva_tx.($line->vat_src_code ? (' ('.$line->vat_src_code.')') : '')), $seller, $buyer, 0, $line->info_bits, $line->product_type, false, 1, $type_tva);
+		print $form->load_tva('tva_tx', GETPOSTISSET('tva_tx') ? GETPOST('tva_tx', 'alpha') : ($line->tva_tx.($line->vat_src_code ? (' ('.$line->vat_src_code.')') : '')), $seller, $buyer, 0, $line->info_bits, $line->product_type, false, 1, (int) $type_tva);
 		print '</td>';
 	} else {
 		print '<td class="right"><input size="1" type="text" class="flat right" name="tva_tx" value="'.price($line->tva_tx).'" readonly />%</td>';
@@ -247,7 +260,7 @@ $coldisplay++;
 	}
 	print '></td>';
 
-	if (isModEnabled("multicurrency") && $object->multicurrency_code != $conf->currency) {
+	if (isModEnabled("multicurrency") && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
 		$coldisplay++;
 		print '<td class="right"><input rel="'.$object->multicurrency_tx.'" type="text" class="flat right width50" id="multicurrency_subprice" name="multicurrency_subprice" value="'.(GETPOSTISSET('multicurrency_subprice') ? GETPOST('multicurrency_subprice', 'alpha') : price($line->multicurrency_subprice)).'" /></td>';
 	}
@@ -263,6 +276,15 @@ $coldisplay++;
 			print ' readonly';
 		}
 		print '></td>';
+	}
+
+	if (isModEnabled("multicurrency") && $object->multicurrency_code && $object->multicurrency_code != $conf->currency && !empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
+		$coldisplay++;
+		$multicurrency_upinctax = $line->multicurrency_subprice_ttc ? $line->multicurrency_subprice_ttc : null;
+		if (!$multicurrency_upinctax) {
+			$multicurrency_upinctax = price2num($line->multicurrency_subprice * (1 + ($line->tva_tx / 100)), 'MU'); // One tax
+		}
+		print '<td class="right"><input rel="'.$object->multicurrency_tx.'" type="text" class="flat right width50" id="multicurrency_price_ttc" name="multicurrency_price_ttc" value="'. ($multicurrency_upinctax ? $multicurrency_upinctax : price($line->multicurrency_subprice)).'" /></td>';
 	}
 	?>
 	<td class="right">
@@ -401,7 +423,7 @@ $coldisplay++;
 			}
 		}
 	}
-	$hourmin = (isset($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? $conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE : '');
+	$hourmin = getDolGlobalInt('MAIN_USE_HOURMIN_IN_DATE_RANGE');
 	print $form->selectDate($line->date_start, 'date_start', $hourmin, $hourmin, $line->date_start ? 0 : 1, "updateline", 1, 0);
 	print ' '.$langs->trans('to').' ';
 	print $form->selectDate($line->date_end, 'date_end', $hourmin, $hourmin, $line->date_end ? 0 : 1, "updateline", 1, 0);
@@ -428,12 +450,10 @@ $coldisplay++;
 		<?php
 	}
 	if (!$line->date_start) {
-		if (isset($conf->global->MAIN_DEFAULT_DATE_START_HOUR)) {
+		if (getDolGlobalString('MAIN_DEFAULT_DATE_START_HOUR') != '') {
 			print 'jQuery("#date_starthour").val("' . getDolGlobalString('MAIN_DEFAULT_DATE_START_HOUR').'");';
 		}
-
-
-		if (isset($conf->global->MAIN_DEFAULT_DATE_START_MIN)) {
+		if (getDolGlobalString('MAIN_DEFAULT_DATE_START_MIN') != '') {
 			print 'jQuery("#date_startmin").val("' . getDolGlobalString('MAIN_DEFAULT_DATE_START_MIN').'");';
 		}
 
@@ -448,10 +468,10 @@ $coldisplay++;
 		}
 	}
 	if (!$line->date_end) {
-		if (isset($conf->global->MAIN_DEFAULT_DATE_END_HOUR)) {
+		if (getDolGlobalString('MAIN_DEFAULT_DATE_END_HOUR') != '') {
 			print 'jQuery("#date_endhour").val("' . getDolGlobalString('MAIN_DEFAULT_DATE_END_HOUR').'");';
 		}
-		if (isset($conf->global->MAIN_DEFAULT_DATE_END_MIN)) {
+		if (getDolGlobalString('MAIN_DEFAULT_DATE_END_MIN') != '') {
 			print 'jQuery("#date_endmin").val("' . getDolGlobalString('MAIN_DEFAULT_DATE_END_MIN').'");';
 		}
 

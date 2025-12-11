@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - exports
+ImportExportArea=Imports / Exports
 ExportsArea=Экспорттау
 ImportArea=Импорттау
 NewExport=Жаңа экспорт
@@ -31,10 +32,10 @@ ExportCsvSeparator=Csv таңба бөлгіші
 ImportCsvSeparator=Csv таңба бөлгіші
 Step=Қадам
 FormatedImport=Импорт көмекшісі
-FormatedImportDesc1=Бұл модуль ассистент көмегімен техникалық мәліметі жоқ файлдан бар деректерді жаңартуға немесе мәліметтер базасына жаңа объектілерді қосуға мүмкіндік береді.
+FormatedImportDesc1=Click here to use the assistant to update existing data or add new objects into the database from a file.
 FormatedImportDesc2=Бірінші қадам - импорттағыңыз келетін деректер түрін, содан кейін бастапқы файлдың форматын, содан кейін импорттағыңыз келетін өрістерді таңдау.
 FormatedExport=Экспорт көмекшісі
-FormatedExportDesc1=Бұл құралдар көмекші көмегімен дербес деректерді экспорттауға мүмкіндік береді, бұл процесте сізге техникалық білімді қажет етпей.
+FormatedExportDesc1=Click here to use the assistant to export data in a supported format
 FormatedExportDesc2=Бірінші қадам - алдын ала анықталған деректер жиынтығын таңдау, содан кейін қай өрістерді экспорттағыңыз келеді және қандай тәртіппен.
 FormatedExportDesc3=Экспортталатын деректер таңдалған кезде, шығыс файлының пішімін таңдауға болады.
 Sheet=Парақ

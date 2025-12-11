@@ -44,7 +44,7 @@ $langs->loadLangs(array("assets", "companies"));
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');	// if not set, $backtopage will be used
 
@@ -151,7 +151,7 @@ if ($id > 0 || !empty($ref)) {
 
 	// Object card
 	// ------------------------------------------------------------
-	$linkback = '<a href="'.DOL_URL_ROOT.'/asset/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/asset/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
 	$morehtmlref .= '</div>';
@@ -161,6 +161,8 @@ if ($id > 0 || !empty($ref)) {
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 	print '</div>';
+
+	print '<br>';
 
 	if ($action == 'edit') {
 		print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '">';
@@ -173,11 +175,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<input type="hidden" name="backtopageforcancel" value="' . $backtopageforcancel . '">';
 		}
 
-		print dol_get_fiche_head(array(), '');
-
 		include DOL_DOCUMENT_ROOT . '/asset/tpl/depreciation_options_edit.tpl.php';
-
-		print dol_get_fiche_end();
 
 		print $form->buttonsSaveCancel();
 

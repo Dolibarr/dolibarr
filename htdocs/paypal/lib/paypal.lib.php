@@ -459,7 +459,7 @@ function hash_call($methodName, $nvpStr)
 
 	// TODO problem with triggers
 	$API_version = "98.0";
-	if (getDolGlobalString('PAYPAL_API_SANDBOX') || GETPOST('forcesandbox', 'alpha')) {		// We can force sand box with param 'forcesandbox'
+	if (getDolGlobalString('PAYPAL_API_SANDBOX')/* || GETPOST('forcesandbox', 'alpha') */) {		// We can force sand box with param 'forcesandbox'
 		$API_Endpoint = "https://api-3t.sandbox.paypal.com/nvp";
 		$API_Url = "https://www.sandbox.paypal.com/webscr?cmd=_express-checkout&token=";
 	} else {

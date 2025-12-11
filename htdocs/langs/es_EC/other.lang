@@ -1,7 +1,5 @@
 # Dolibarr language file - Source file is en_US - other
 SecurityCode=Código de seguridad
-Tools=Herramientas
-TMenuTools=Herramientas
 ToolsDesc=Todas las herramientas no incluidas en otras entradas del menú se agrupan aquí. <br> Se puede acceder a todas las herramientas a través del menú de la izquierda.
 Birthday=Cumpleaños
 BirthdayAlertOn=alerta de cumpleaños activa
@@ -66,6 +64,7 @@ DemoFundation=Administrar miembros de una fundación
 DemoFundation2=Administrar miembros y cuenta bancaria de una fundación
 DemoCompanyServiceOnly=Empresa o servicio de venta independiente solamente
 DemoCompanyAll=Empresa con múltiples actividades (todos los módulos principales)
+CreatedBy=Creado por%s
 ModifiedBy=Modificado por%s
 ValidatedBy=Validado por%s
 ClosedBy=Cerrado por%s
@@ -156,3 +155,9 @@ ExampleMyMenuEntry=Mi entrada en el menú
 FTPFailedToRemoveFile=Error al eliminar el archivo <b>%s</b>.
 FTPFailedToRemoveDir=Error al eliminar el directorio <b>%s</b>: verifique los permisos y que el directorio esté vacío.
 FailedToGetFile=Error al obtener los archivos %s
+AddThisPageToBookmarks =Añadir página actual a favoritos
+BookmarksManagement =Administración de marcadores
+EditBookmarks =Mostrar/editar marcadores
+ListOfBookmarks =Lista de marcadores
+ShowBookmark =Mostrar marcador
+SubscribeToFoundation=Ayuda al proyecto Dolibarr, suscríbete a la fundación.

@@ -4,7 +4,8 @@
  * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2017		Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,6 +47,8 @@ if (isModEnabled('project')) {
 // Load translation files required by the page
 $langs->loadLangs(array('supplier_proposal', 'compta'));
 
+$action = GETPOST('action', 'aZ09');
+
 $id = GETPOSTINT('id');
 $socid = GETPOSTINT('socid');
 
@@ -53,7 +56,7 @@ $socid = GETPOSTINT('socid');
 if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'supplier_proposal', $id);
+restrictedArea($user, 'supplier_proposal', $id);
 
 $permissiontoadd = $user->hasRight('supplier_proposal', 'creer');
 
@@ -98,10 +101,10 @@ $morehtmlref .= $object->thirdparty->getNomUrl(1);
 if (isModEnabled('project')) {
 	$langs->load("projects");
 	$morehtmlref .= '<br>';
-	if (0) {
+	if (0) {	// @phpstan-ignore-line
 		$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 		if ($action != 'classify') {
-			$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+			$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 		}
 		$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 	} else {

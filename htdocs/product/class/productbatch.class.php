@@ -1,9 +1,9 @@
 <?php
 /* Copyright (C) 2007-2023  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2013-2014  Cedric GROSS            <c.gross@kreiz-it.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024       Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ class Productbatch extends CommonObject
 	public $fk_product_stock;
 
 	/**
-	 * @var string batch number
+	 * @var null|string batch number
 	 */
 	public $batch = '';
 
@@ -75,19 +75,19 @@ class Productbatch extends CommonObject
 	public $fk_product;
 
 	/**
-	 *
 	 * @var int Properties of the lot
 	 *          ID in table of the details of properties of each lots
 	 */
 	public $lotid;
 
 	/**
-	 * @var int|string
+	 * @var int|''|null
 	 * @deprecated
 	 */
 	public $sellby = '';	// dlc
+
 	/**
-	 * @var int|string
+	 * @var int|''|null
 	 * @deprecated
 	 */
 	public $eatby = '';		// dmd/dluo
@@ -107,9 +107,9 @@ class Productbatch extends CommonObject
 	/**
 	 *  Create object into database
 	 *
-	 *  @param	User	$user        User that creates
-	 *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
-	 *  @return int      		   	 Return integer <0 if KO, Id of created object if OK
+	 *  @param	User		$user		User that creates
+	 *  @param  int<0,1>	$notrigger	0=launch triggers after, 1=disable triggers
+	 *  @return int						Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -336,8 +336,7 @@ class Productbatch extends CommonObject
 
 		// Other options
 		if ($result < 0) {
-			$this->error = $object->error;
-			$this->errors = array_merge($this->errors, $object->errors);
+			$this->setErrorsFromObject($object);
 			$error++;
 		}
 
@@ -399,16 +398,18 @@ class Productbatch extends CommonObject
 	}
 
 	/**
-	 *  Find first detailed record that match either eat-by, sell-by or batch within the warehouse
+	 *  Load first detailed record that match batch within the warehouse (for a given product or not). Can also retrieve the detailed record
+	 *  from the rowid in product_stock directly.
 	 *
 	 *  @param	int			$fk_product_stock   id product_stock for object
-	 *  @param	integer		$eatby    			eat-by date for object - deprecated: a search must be done on batch number
-	 *  @param	integer		$sellby   			sell-by date for object - deprecated: a search must be done on batch number
+	 *  @param	int|''		$eatby    			eat-by date for object - deprecated: a search must be done on batch number
+	 *  @param	int|''		$sellby   			sell-by date for object - deprecated: a search must be done on batch number
 	 *  @param	string		$batch_number   	batch number for object
 	 *  @param	int			$fk_warehouse		filter on warehouse (use it if you don't have $fk_product_stock)
+	 *  @param	int			$fk_product			filter on product (use it if you don't have $fk_product_stock)
 	 *  @return int          					Return integer <0 if KO, >0 if OK
 	 */
-	public function find($fk_product_stock = 0, $eatby = null, $sellby = null, $batch_number = '', $fk_warehouse = 0)
+	public function find($fk_product_stock = 0, $eatby = '', $sellby = '', $batch_number = '', $fk_warehouse = 0, $fk_product = 0)
 	{
 		$where = array();
 
@@ -427,6 +428,9 @@ class Productbatch extends CommonObject
 		} else {
 			$sql .= ", ".$this->db->prefix()."product_stock as ps";
 			$sql .= " WHERE t.fk_product_stock = ps.rowid AND ps.fk_entrepot = ".((int) $fk_warehouse);
+			if ($fk_product > 0) {
+				 $sql .= " AND ps.fk_product = ".((int) $fk_product);
+			}
 		}
 		if (!empty($eatby)) {
 			array_push($where, " eatby = '".$this->db->idate($eatby)."'"); // deprecated
@@ -442,8 +446,10 @@ class Productbatch extends CommonObject
 		if (!empty($where)) {
 			$sql .= " AND (".$this->db->sanitize(implode(" OR ", $where), 1, 1, 1).")";
 		}
+		// Take the first one found
+		$sql .= $this->db->order("t.tms,t.rowid");
+		$sql .= $this->db->plimit(1);
 
-		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($this->db->num_rows($resql)) {
@@ -453,7 +459,7 @@ class Productbatch extends CommonObject
 
 				$this->tms = $this->db->jdate($obj->tms);
 				$this->fk_product_stock = $obj->fk_product_stock;
-				$this->sellby = $this->db->jdate($obj->sellby);	// deprecated. do no tuse this data.
+				$this->sellby = $this->db->jdate($obj->sellby);	// deprecated. do not use this data.
 				$this->eatby = $this->db->jdate($obj->eatby);	// deprecated. do not use this data.
 				$this->batch = $obj->batch;
 				$this->qty = $obj->qty;
@@ -472,7 +478,7 @@ class Productbatch extends CommonObject
 	 *
 	 * @param	DoliDB		$dbs    			database object
 	 * @param	int			$fk_product_stock	id product_stock for object
-	 * @param	int			$with_qty    		1 = doesn't return line with 0 quantity
+	 * @param	int<0,1>	$with_qty    		1 = doesn't return line with 0 quantity
 	 * @param  	int         $fk_product         If set to a product id, get eatby and sellby from table llx_product_lot
 	 * @return 	Productbatch[]|int         				Return integer <0 if KO, array of batch
 	 */

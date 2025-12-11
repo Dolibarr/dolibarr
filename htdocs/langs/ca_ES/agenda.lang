@@ -2,6 +2,7 @@
 IdAgenda=ID d'esdeveniments
 Actions=Esdeveniments
 Agenda=Agenda
+AgendaEvents=Agenda d'actes
 TMenuAgenda=Agenda
 Agendas=Agendes
 LocalAgenda=Calendari per defecte
@@ -44,12 +45,13 @@ PropalClosedRefusedInDolibarr=Pressupost %s rebutjat
 PropalValidatedInDolibarr=Pressupost %s validat
 PropalBackToDraftInDolibarr=El pressupost %s ha tornat a l'estat d'esborrany
 PropalClassifiedBilledInDolibarr=Pressupost %s classificat facturat
+InvoiceCreatedInDolibarr=S'ha creat la factura %s
 InvoiceValidatedInDolibarr=Factura %s validada
 InvoiceValidatedInDolibarrFromPos=Factura %s validada al TPV
 InvoiceBackToDraftInDolibarr=La factura %s ha tornat a l'estat d'esborrany
 InvoiceDeleteDolibarr=Factura %s eliminada
 InvoicePaidInDolibarr=Factura %s passada a pagada
-InvoiceCanceledInDolibarr=Factura %s cancel·lada
+InvoiceCanceledInDolibarr=La factura %s s'ha anul·lat
 MemberValidatedInDolibarr=Soci %s validat
 MemberModifiedInDolibarr=Soci %s modificat
 MemberResiliatedInDolibarr=Membre %s acabat
@@ -63,7 +65,7 @@ ShipmentClassifyClosedInDolibarr=Enviament %s marcat com a tancat
 ShipmentUnClassifyCloseddInDolibarr=Enviament %s classificat de nou com a obert
 ShipmentBackToDraftInDolibarr=L'enviament %s ha tornat a l'estat d'esborrany
 ShipmentDeletedInDolibarr=Expedició %s eliminada
-ShipmentCanceledInDolibarr=Enviament %s cancel·lat
+ShipmentCanceledInDolibarr=Enviament %s anul·lat
 ReceptionValidatedInDolibarr=S'ha validat la recepció %s
 ReceptionDeletedInDolibarr=S'ha suprimit la recepció %s
 ReceptionClassifyClosedInDolibarr=Recepció %s classificada tancada
@@ -125,10 +127,10 @@ MRP_MO_VALIDATEInDolibarr=OF validada
 MRP_MO_UNVALIDATEInDolibarr=OF definida a l'estat d'esborrany
 MRP_MO_PRODUCEDInDolibarr=OF fabricada
 MRP_MO_DELETEInDolibarr=OF eliminada
-MRP_MO_CANCELInDolibarr=OF cancel·lada
+MRP_MO_CANCELInDolibarr=OF anul·lada
 PAIDInDolibarr=%s pagat
 ENABLEDISABLEInDolibarr=Usuari habilitat o desactivat
-CANCELInDolibarr=Cancel·lat
+CANCELInDolibarr=Anul·lat
 ##### End agenda events #####
 AgendaModelModule=Plantilles de documents per esdeveniments
 DateActionStart=Data inicial
@@ -137,11 +139,11 @@ AgendaUrlOptions1=Podeu també afegir aquests paràmetres al filtre de sortida:
 AgendaUrlOptions3=<b>logina=%s</b> per restringir la sortida a les accions propietat d'un usuari <b>%s</b> (utilitza </b>) logina=!%s</b> per a esdeveniments que no són propietat de l'usuari).
 AgendaUrlOptions4=<b>logint=%s</b> per a restringir la producció d'accions assignades a l'usuari <b>%s</b> (propietari i altres).
 AgendaUrlOptionsProject= <b> project=__PROJECT_ID__</b> per a restringir la sortida a accions vinculades al projecte <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsType=<b>actiontype=%s</b> per obtenir esdeveniments automàtics o manuals
-AgendaUrlOptionsCode=<b>actioncode=%s</b> per obtenir només esdeveniments amb un codi determinat
+AgendaUrlOptionsType=<b>actiontype=%s</b> per a obtenir esdeveniments automàtics o manuals
+AgendaUrlOptionsCode=<b>actioncode=%s</b> per a obtenir només esdeveniments amb un codi determinat
 AgendaUrlOptionsIncludeHolidays= <b>includeholidays=1</b> per a incloure esdeveniments de vacances.
-AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> per limitar els esdeveniments de l'últim %s dies (el valor predeterminat és %s).
-AgendaUrlOptionsLimit=<b>limit=50</b> per limitar als darrers 50 esdeveniments (el valor per defecte i el màxim és %s ).
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> per a limitar els esdeveniments en els últims %s dies (el valor predeterminat és %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> per a limitar als darrers 50 esdeveniments (el valor per defecte i el màxim és %s).
 AgendaShowBirthdayEvents=Aniversaris de contactes
 AgendaHideBirthdayEvents=Amaga els aniversaris dels contactes
 Busy=Ocupat
@@ -195,8 +197,8 @@ BookCalAbout = Sobre BookCal
 BookCalAboutPage = BookCal sobre la pàgina
 Calendars=Calendaris
 Availabilities=Disponibilitats
-NewAvailabilities=Noves disponibilitats
-NewCalendar=Nou calendari
+NewAvailabilities=Disponibilitats noves
+NewCalendar=Calendari nou
 ThirdPartyBookCalHelp=L'esdeveniment reservat en aquest calendari s'enllaçarà automàticament amb aquest tercer.
 AppointmentDuration = Durada de la cita: %s
 BookingSuccessfullyBooked=La teva reserva s'ha desat
@@ -205,3 +207,6 @@ BookcalBookingTitle=Cita en línia
 Transparency = Transparència
 ReadMore = Llegeix més
 ReadLess = Llegeix menys
+RecurringEvent=Esdeveniment recurrent
+EventPartOfARecurringSerie=L'esdeveniment forma part d'una sèrie recurrent amb l'ID %s
+BookCalSystem=Reserva en línia

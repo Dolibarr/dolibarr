@@ -2,6 +2,7 @@
 IdAgenda=Etkinlik kimliği
 Actions=Etkinlikler
 Agenda=Gündem
+AgendaEvents=Gündem etkinlikleri
 TMenuAgenda=Gündem
 Agendas=Gündemler
 LocalAgenda=Varsayılan takvim
@@ -206,3 +207,6 @@ BookcalBookingTitle=Çevrimiçi randevu
 Transparency = Şeffaflık
 ReadMore = Devamını oku
 ReadLess = Daha az oku
+RecurringEvent=Tekrarlayan etkinlik
+EventPartOfARecurringSerie=Etkinlik, KİMLİK %s ile tekrar eden bir dizinin parçasıdır
+BookCalSystem=Çevrimiçi rezervasyon

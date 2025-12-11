@@ -5,7 +5,7 @@
  * Copyright (C) 2020		Maxime DEMAREST				<maxime@indelog.fr>
  * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2022-2025	Alexandre Spangaro          <alexandre@inovea-conseil.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -673,7 +673,7 @@ if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 	$langs->load('projects');
 	print '<span class="marginrightonly">'.$langs->trans('Project').":</span>";
-	print img_picto('', 'project').$formproject->select_projects(($socid > 0 ? $socid : -1), $projectid, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 1, 0, '');
+	print img_picto('', 'project').$formproject->select_projects(($socid > 0 ? $socid : -1), (string) $projectid, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 1, 0, '');
 	print '<span class="classfortooltip" style="padding: 0px; padding: 0px; padding-right: 3px !important;" title="'.$langs->trans('ExportAccountingProjectHelp').'"><span class="fas fa-info-circle  em088 opacityhigh" style=" vertical-align: middle; cursor: help"></span></span>';
 	print '<br>';
 }
@@ -840,7 +840,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 			} elseif ($data['item'] == 'ExpenseReport') {
 				$expensereport->id = (int) $data['id'];
 				$expensereport->ref = $data['ref'];
-				print $expensereport->getNomUrl(1, 0, 0, 0, 0, 0);
+				print $expensereport->getNomUrl(1, '0', 0, 0, '0', 0);
 			} elseif ($data['item'] == 'SalaryPayment') {
 				$salary_payment->id = (int) $data['id'];
 				$salary_payment->ref = $data['ref'];
@@ -852,7 +852,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 			} elseif ($data['item'] == 'SocialContributions') {
 				$charge_sociales->id = (int) $data['id'];
 				$charge_sociales->ref = $data['ref'];
-				print $charge_sociales->getNomUrl(1, 0, 0, 0, 0);
+				print $charge_sociales->getNomUrl(1, '0', 0, 0, 0);
 			} elseif ($data['item'] == 'VariousPayment') {
 				$various_payment->id = (int) $data['id'];
 				$various_payment->ref = $data['ref'];

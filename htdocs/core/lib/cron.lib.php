@@ -2,6 +2,7 @@
 /* Copyright (C) 2012 Nicolas Villa aka Boyquotes http://informetic.fr
  * Copyright (C) 2013 Florian Henry <florian.henry@opn-concept.pro>
  * Copyright (C) 2024		MDW				<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,12 +36,12 @@ function cronadmin_prepare_head()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/cron/admin/cron.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/cron/admin/cron.php');
 	$head[$h][1] = $langs->trans("Miscellaneous");
 	$head[$h][2] = 'setup';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/cron/list.php?mode=modulesetup';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/cron/list.php', ['mode' => 'modulesetup']);
 	$head[$h][1] = $langs->trans("Module2300Name");
 	$head[$h][2] = 'jobs';
 	$h++;
@@ -65,12 +66,12 @@ function cron_prepare_head(Cronjob $object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/cron/card.php?id='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/cron/card.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans("CronTask");
 	$head[$h][2] = 'card';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/cron/info.php?id='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/cron/info.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
 	$h++;
@@ -100,13 +101,18 @@ function dol_print_cron_urls()
 	// Cron launch
 	print '<div class="div-table-responsive-no-min">';
 	print $langs->trans("URLToLaunchCronJobs").':<br>';
-	$url = $urlwithroot.'/public/cron/cron_run_jobs_by_url.php?'.(!getDolGlobalString('CRON_KEY') ? '' : 'securitykey=' . getDolGlobalString('CRON_KEY').'&').'userlogin='.$user->login;
+	$query = [
+		'securitykey' => getDolGlobalString('CRON_KEY'),
+		'userlogin' => $user->login,
+	];
+	$url = dolBuildUrl($urlwithroot.'/public/cron/cron_run_jobs_by_url.php', $query);
 	print '<div class="urllink">';
 	print '<input type="text" id="publicurlmember" class="quatrevingtpercentminusx" value="'.$url.'">';
 	print ' <a href="'.$url.'" target="_blank" rel="noopener noreferrer">'.img_picto('', 'globe')."</a>\n";
 	print '</div>';
 	print '<br> '.$langs->trans("OrToLaunchASpecificJob").'<br>';
-	$url = $urlwithroot.'/public/cron/cron_run_jobs_by_url.php?'.(!getDolGlobalString('CRON_KEY') ? '' : 'securitykey=' . getDolGlobalString('CRON_KEY').'&').'userlogin='.$user->login.'&id=cronjobid';
+	$query += ['id' => 'cronjobid'];
+	$url = dolBuildUrl($urlwithroot.'/public/cron/cron_run_jobs_by_url.php', $query);
 	print '<div class="urllink">';
 	print '<input type="text" id="publicurlmemberall" class="quatrevingtpercentminusx" value="'.$url.'">';
 	print ' <a href="'.$url.'" target="_blank" rel="noopener noreferrer">'.img_picto('', 'globe')."</a>\n";

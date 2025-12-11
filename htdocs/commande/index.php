@@ -117,7 +117,10 @@ if (isModEnabled('order')) {
 	if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
-
+	// Add where from hooks
+	$parameters = array('socid' => $user->socid);
+	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $commandestatic); // Note that $action and $object may have been modified by hook
+	$sql .= $hookmanager->resPrint;
 	$resql = $db->query($sql);
 	if ($resql) {
 		print '<div class="div-table-responsive-no-min">';
@@ -183,6 +186,10 @@ if ($socid) {
 if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
+// Add where from hooks
+$parameters = array('socid' => $user->socid);
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $commandestatic); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql .= " ORDER BY c.tms DESC";
 $sql .= $db->plimit($max, 0);
 
@@ -269,6 +276,10 @@ if (isModEnabled('order')) {
 	if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
+	// Add where from hooks
+	$parameters = array('socid' => $user->socid);
+	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $commandestatic); // Note that $action and $object may have been modified by hook
+	$sql .= $hookmanager->resPrint;
 	$sql .= " ORDER BY c.rowid DESC";
 
 	$resql = $db->query($sql);
@@ -358,6 +369,10 @@ if (isModEnabled('order')) {
 	if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
+	// Add where from hooks
+	$parameters = array('socid' => $user->socid);
+	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $commandestatic); // Note that $action and $object may have been modified by hook
+	$sql .= $hookmanager->resPrint;
 	$sql .= " ORDER BY c.rowid DESC";
 
 	$resql = $db->query($sql);

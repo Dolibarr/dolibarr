@@ -1,11 +1,11 @@
 <?php
-/* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
- * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2019-2024  Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2005       Matthieu Valleton       <mv@seeschloss.org>
+ * Copyright (C) 2005       Eric Seigne             <eric.seigne@ryxeo.com>
+ * Copyright (C) 2006-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2007       Patrick Raguin          <patrick.raguin@gmail.com>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,8 +118,8 @@ $filters = [];
 if (($search_status != '' && $search_status >= 0)) {
 	$filters[] = "statut = ".((int) $search_status);
 }
-if (($search_employee != '' && $search_employee >= 0)) {
-	$filters[] = "employee = ".((int) $search_employee);
+if ($search_employee == 1) {
+	$filters[] = "employee = 1";
 }
 $sqlfilter = '';
 if (!empty($filters)) {
@@ -176,9 +176,9 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 
 		$li = $userstatic->getNomUrl(-1, '', 0, 1);
 		if (isModEnabled('multicompany') && $userstatic->admin && !$userstatic->entity) {
-			$li .= img_picto($langs->trans("SuperAdministratorDesc"), 'redstar', 'class="valignmiddle paddingright paddingleft"');
+			$li .= img_picto($langs->trans("SuperAdministratorDesc"), 'superadmin', 'class="valignmiddle paddingright paddingleft"');
 		} elseif ($userstatic->admin) {
-			$li .= img_picto($langs->trans("AdministratorDesc"), 'star', 'class="valignmiddle paddingright paddingleft"');
+			$li .= img_picto($langs->trans("AdministratorDesc"), 'admin', 'class="valignmiddle paddingright paddingleft"');
 		}
 		$li .= ' <span class="opacitymedium">('.$val['login'].($entitystring ? ' - '.$entitystring : '').')</span>';
 
@@ -233,9 +233,9 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 					$li = '<span class="opacitymedium">';
 					$li .= $userstatic->getNomUrl(-1, '', 0, 1);
 					if (isModEnabled('multicompany') && $userstatic->admin && !$userstatic->entity) {
-						$li .= img_picto($langs->trans("SuperAdministrator"), 'redstar');
+						$li .= img_picto($langs->trans("SuperAdministrator"), 'superadmin');
 					} elseif ($userstatic->admin) {
-						$li .= img_picto($langs->trans("Administrator"), 'star');
+						$li .= img_picto($langs->trans("Administrator"), 'admin');
 					}
 					$li .= ' <span class="opacitymedium">('.$val['login'].($entitystring ? ' - '.$entitystring : '').')</span>';
 					$li .= ' - <span class="opacitymedium">'.$langs->trans("ExcludedByFilter").'</span>';

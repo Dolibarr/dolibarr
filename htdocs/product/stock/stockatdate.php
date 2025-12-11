@@ -4,8 +4,8 @@
  * Copyright (C) 2014		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2016		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2016		ATM Consulting		<support@atm-consulting.fr>
- * Copyright (C) 2019-2024  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2019-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -426,7 +426,7 @@ if ($ext == 'csv') {
 	print '<span class="opacitymedium">'.$desc.'</span><br>'."\n";
 	print '<br>'."\n";
 
-	print '<form name="formFilterWarehouse" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form name="formFilterWarehouse" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="filter">';
 	print '<input type="hidden" name="mode" value="'.$mode.'">';
@@ -560,25 +560,25 @@ if ($ext == 'csv') {
 	print '<tr class="liste_titre">';
 	// Action column
 	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-		print_liste_field_titre('', $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'left ');
+		print_liste_field_titre('', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'left ');
 	}
-	print_liste_field_titre('ProductRef', $_SERVER["PHP_SELF"], 'p.ref', $param, '', '', $sortfield, $sortorder);
-	print_liste_field_titre('Label', $_SERVER["PHP_SELF"], 'p.label', $param, '', '', $sortfield, $sortorder);
+	print_liste_field_titre('ProductRef', $_SERVER["PHP_SELF"], 'p.ref', '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre('Label', $_SERVER["PHP_SELF"], 'p.label', '', $param, '', $sortfield, $sortorder);
 
 	if ($mode == 'future') {
-		print_liste_field_titre('CurrentStock', $_SERVER["PHP_SELF"], $fieldtosortcurrentstock, $param, '', '', $sortfield, $sortorder, 'right ');
+		print_liste_field_titre('CurrentStock', $_SERVER["PHP_SELF"], $fieldtosortcurrentstock, '', $param, '', $sortfield, $sortorder, 'right ');
 		print_liste_field_titre('', $_SERVER["PHP_SELF"]);
-		print_liste_field_titre($stocklabel, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ', 'VirtualStockAtDateDesc');
-		print_liste_field_titre('VirtualStock', $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ', 'VirtualStockDesc');
+		print_liste_field_titre($stocklabel, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ', 'VirtualStockAtDateDesc');
+		print_liste_field_titre('VirtualStock', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ', 'VirtualStockDesc');
 	} else {
-		print_liste_field_titre($stocklabel, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ');
+		print_liste_field_titre($stocklabel, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
 		$tooltiptext = $langs->trans("QtyAtDate").' x '.$langs->trans("AverageUnitPricePMPShort").' ('.$langs->trans("Currently").')';
 		print_liste_field_titre("EstimatedStockValue", $_SERVER["PHP_SELF"], "currentvalue", '', $param, '', $sortfield, $sortorder, 'right ', $tooltiptext, 1);
 		$tooltiptext = $langs->trans("QtyAtDate").' x '.$langs->trans("SellingPrice").' ('.$langs->trans("Currently").')';
 		print_liste_field_titre("EstimatedStockValueSell", $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'right ', $tooltiptext, 1);
 		$tooltiptext = $langs->trans("MovementsSinceDate");
 		print_liste_field_titre('', $_SERVER["PHP_SELF"], '', '', $param, '', '', '', 'right ', $tooltiptext, 1);
-		print_liste_field_titre('CurrentStock', $_SERVER["PHP_SELF"], $fieldtosortcurrentstock, $param, '', '', $sortfield, $sortorder, 'right ');
+		print_liste_field_titre('CurrentStock', $_SERVER["PHP_SELF"], $fieldtosortcurrentstock, '', $param, '', $sortfield, $sortorder, 'right ');
 	}
 
 	// Hook fields
@@ -588,7 +588,7 @@ if ($ext == 'csv') {
 
 	// Action column
 	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-		print_liste_field_titre('', $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ');
+		print_liste_field_titre('', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
 	}
 
 	print "</tr>\n";
@@ -644,6 +644,8 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			//}
 		}
 
+		$nbofmovement = 0;
+		$virtualstock = 0;
 		if ($mode == 'future') {
 			$prod->load_stock('warehouseopen,warehouseinternal,nobatch', 0, $dateendofday);
 			$stock = $prod->stock_theorique;		// virtual stock at a date
@@ -651,7 +653,6 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			$virtualstock = $prod->stock_theorique;	// virtual stock in infinite future
 		} else {
 			$stock = $currentstock;
-			$nbofmovement = 0;
 			if (!empty($search_fk_warehouse)) {
 				foreach ($search_fk_warehouse as $val) {
 					$stock -= empty($movements_prod_warehouse[$objp->rowid][$val]) ? 0 : $movements_prod_warehouse[$objp->rowid][$val];

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -147,7 +147,8 @@ if ($usesublevelpermission && !isset($user->rights->$module->$element)) {	// The
 $searchkey = (($id && GETPOST((string) $id, 'alpha')) ? GETPOST((string) $id, 'alpha') : (($htmlname && GETPOST($htmlname, 'alpha')) ? GETPOST($htmlname, 'alpha') : ''));
 
 // Add a security test to avoid to get content of all tables
-if ($objecttmp !== null && !empty($objecttmp->module)) {
+$allowModules = ['bom'];
+if ($objecttmp !== null && !empty($objecttmp->module) && !in_array($objecttmp->module, $allowModules)) {
 	restrictedArea($user, $objecttmp->module, $id, $objecttmp->table_element, $objecttmp->element);
 } else {
 	restrictedArea($user, $objecttmp !== null ? $objecttmp->element : '', $id);
@@ -164,7 +165,7 @@ top_httphead($outjson ? 'application/json' : 'text/html');
 
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
-$arrayresult = $form->selectForFormsList($objecttmp, $htmlname, 0, 0, $searchkey, '', '', '', 0, 1, 0, '', $filter);
+$arrayresult = $form->selectForFormsList($objecttmp, (string) $htmlname, 0, 0, $searchkey, '', '', '', 0, 1, 0, '', $filter);
 
 $db->close();
 

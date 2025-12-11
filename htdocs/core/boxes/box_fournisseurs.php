@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2006 Destailleur Laurent  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2019 Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2015-2025  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2020      Pierre Ardoin      <mapiolca@me.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
