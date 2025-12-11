@@ -1229,7 +1229,7 @@ class User extends CommonObject
 
 			// Where clause for the list of permissions to delete
 			$wherefordel = "id=".((int) $rid);
-			// Suppression des droits induits
+			// Removal of induced rights
 			if ($subperms == 'lire' || $subperms == 'read') {
 				$wherefordel .= " OR (module='".$this->db->escape($module)."' AND perms='".$this->db->escape($perms)."' AND subperms IS NOT NULL)";
 			}
