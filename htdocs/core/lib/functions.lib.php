@@ -9385,8 +9385,10 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 						 * @return 	string 					Translated string for the key
 						 */
 						function ($m) {
-							return '__BRACKETSTART' . $m[1] . 'BRACKETEND__'; },
-						$out);
+							return '__BRACKETSTART' . $m[1] . 'BRACKETEND__';
+						},
+						$out
+					);
 
 					$dom->loadHTML($out, LIBXML_HTML_NODEFDTD | LIBXML_ERR_NONE | LIBXML_HTML_NOIMPLIED | LIBXML_NONET | LIBXML_NOWARNING | LIBXML_NOERROR | LIBXML_NOXMLDECL);
 
@@ -9402,8 +9404,10 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 						 * @return 	string 					Translated string for the key
 						 */
 						function ($m) {
-							return '__[' . $m[1] . ']__'; },
-						$out);
+							return '__[' . $m[1] . ']__';
+						},
+						$out
+					);
 
 					// Remove the trick added to solve pb with text in utf8 and text without parent tag
 					//$out = preg_replace('/^'.preg_quote('<?xml encoding="UTF-8">', '/').'/', '', $out);
@@ -10973,8 +10977,8 @@ function print_date_range($date_start, $date_end, $format = '', $outputlangs = n
  *    @param	int			$date_start    		Start date
  *    @param    int			$date_end      		End date
  *    @param    string		$format        		Output date format ('day', 'dayhour', ...)
- *    @param	Translate	$outputlangs   		Output language
- *    @param	integer		$withparenthesis	1=Add space and parenthesis, 0=no parenthesis, 2=Add parenthesis
+ *    @param	?Translate	$outputlangs   		Output language
+ *    @param	int<0,2>	$withparenthesis	1=Add space and parenthesis, 0=no parenthesis, 2=Add parenthesis
  *    @return	string							String
  */
 function get_date_range($date_start, $date_end, $format = '', $outputlangs = null, $withparenthesis = 1)

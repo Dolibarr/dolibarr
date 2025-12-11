@@ -258,7 +258,7 @@ class mailing_partnership extends MailingTargets
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 
-			if (!isModenabled("partnership")) {
+			if (!isModEnabled("partnership")) {
 				$num = 0;   // Force empty list if module is not enabled
 			}
 

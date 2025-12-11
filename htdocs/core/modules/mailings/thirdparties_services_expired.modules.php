@@ -54,11 +54,6 @@ class mailing_thirdparties_services_expired extends MailingTargets
 	 */
 	public $picto = 'company';
 
-	/**
-	 * @var array<int,string>
-	 */
-	//public $arrayofproducts = array();
-
 
 	/**
 	 *	Constructor
@@ -214,12 +209,14 @@ class mailing_thirdparties_services_expired extends MailingTargets
 		// Example: return parent::getNbOfRecipients("SELECT count(*) as nb from dolibarr_table");
 		// Example: return 500;
 		$sql = "SELECT count(*) as nb";
-		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
-		$sql .= ", ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."product as p";
+		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c,";
+		$sql .= " ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."product as p";
 		$sql .= " WHERE s.entity IN (".getEntity('societe').")";
 		$sql .= " AND s.rowid = c.fk_soc AND cd.fk_contrat = c.rowid AND s.email != ''";
-		$sql .= " AND cd.statut= 4 AND cd.fk_product=p.rowid";
-		$sql .= " AND p.ref IN (".$this->db->sanitize("'".implode("','", $this->arrayofproducts)."'", 1).")";
+		$sql .= " AND cd.statut= 4 AND cd.fk_product = p.rowid";
+		if (!getDolGlobalString('CONTRACT_SUPPORT_PRODUCTS')) {
+			$sql .= " AND p.fk_product_type = 1"; // By default, only services
+		}
 		$sql .= " AND cd.date_fin_validite < '".$this->db->idate($now)."'";
 		if (empty($this->evenunsubscribe)) {
 			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = s.email and mu.entity = ".((int) $conf->entity).")";
