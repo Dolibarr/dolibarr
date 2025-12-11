@@ -138,6 +138,7 @@ $usercancreatecontract = $user->hasRight("contrat", "creer");
 // Advanced permissions
 $usercanvalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($usercancreate)) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight("fournisseur", "supplier_invoice_advance", "validate")));
 $usercansend = (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || $user->hasRight("fournisseur", "supplier_invoice_advance", "send"));
+$usercancreatecreditransfer = $user->hasRight('paymentbybanktransfer', 'create');
 
 // Permissions for includes
 $permissionnote = $usercancreate; // Used by the include of actions_setnotes.inc.php
@@ -4218,6 +4219,24 @@ if ($action == 'create') {
 						} else {
 							print dolGetButtonAction('', $langs->trans('SendMail'), 'email', '#', '', false);
 						}
+					}
+				}
+
+				// Request a direct debit order
+				if ($object->status > FactureFournisseur::STATUS_DRAFT && $object->paid == 0) {
+					$langs->load("withdrawals");
+					if ($resteapayer > 0) {
+						if ($usercancreatecreditransfer) {
+							if (!$objectidnext && $object->close_code != 'replaced') { 				// Not replaced by another invoice
+								print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$object->id.'&type=bank-transfer" title="'.dol_escape_htmltag($langs->trans("MakeBankTransferOrder")).'">'.$langs->trans("MakeBankTransferOrder").'</a>';
+							} else {
+								print '<span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('MakeBankTransferOrder').'</span>';
+							}
+						} else {
+							//print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
+						}
+					} else {
+						//print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("AmountMustBePositive")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
 					}
 				}
 

@@ -431,7 +431,6 @@ $tasksrole = $taskstatic->getUserRolesForProjectsOrTasks(null, $usertoprocess, (
 
 llxHeader("", $title, "", '', 0, 0, array('/core/js/timesheet.js'), '', '', 'mod-project project-activity page-activity_perweek');
 
-//print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num, '', 'project');
 
 $param = '';
 $param .= ($mode ? '&mode='.urlencode($mode) : '');
@@ -489,7 +488,7 @@ if ($mine || ($usertoprocess->id == $user->id)) {
 } else {
 	$s .= $langs->trans("AllTaskVisibleButEditIfYouAreAssigned").'<br>';
 }
-print info_admin($s, 0, 0, 'info', 'nomargintop');
+print info_admin($s, 0, 0, 'info', 'nomargintop hideonsmartphone');
 
 print dol_get_fiche_end();
 
