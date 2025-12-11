@@ -91,7 +91,7 @@ class CheckIsModEnabledArgumentSniff implements Sniff
 		$argContent = str_replace(["'", '"'], '', $tokens[$firstArgTokenPtr]['content']);
 		$argCode = $tokens[$firstArgTokenPtr]['code'];
 
-		if (in_array($argContent, $this->deprecatedModulesNames)) {
+		if (array_key_exists($argContent, $this->deprecatedModulesNames)) {
 			$phpcsFile->addError(
 				'The function "%s" has deprecated argument ("%s") to replace with "%s".',
 				$firstArgTokenPtr,
