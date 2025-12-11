@@ -20,17 +20,32 @@ namespace codesniffer\Sniffs\Dolibarr;
 use PHP_CodeSniffer\Sniffs\Sniff;
 use PHP_CodeSniffer\Files\File;
 
+/**
+ * CheckIsModEnabledArgumentSniff
+ */
 class CheckIsModEnabledArgumentSniff implements Sniff
 {
 	// Nom de la fonction cible
 	protected $targetFunction = 'isModEnabled';
 
+	/**
+	 * register
+	 *
+	 * @return void
+	 */
 	public function register()
 	{
 		// We are listening function calls (T_STRING)
 		return [T_STRING];
 	}
 
+	/**
+	 * process
+	 *
+	 * @param  File $phpcsFile file to process
+	 * @param  mixed $stackPtr pointer
+	 * @return void
+	 */
 	public function process(File $phpcsFile, $stackPtr)
 	{
 		$tokens = $phpcsFile->getTokens();
@@ -56,17 +71,16 @@ class CheckIsModEnabledArgumentSniff implements Sniff
 		// check value of argument
 		$argContent = $tokens[$firstArgTokenPtr]['content'];
 		$argCode    = $tokens[$firstArgTokenPtr]['code'];
-		var_dump($argContent);exit;
 
-		if ($argCode === T_LNUMBER) {
-			if (intval($argContent) <= 0) {
+		//if ($argCode === T_LNUMBER) {
+		//	if (intval($argContent) <= 0) {
 				$phpcsFile->addError(
 					'La fonction "%s" ne doit pas être appelée avec une valeur <= 0 (%s).',
 					$firstArgTokenPtr,
 					'InvalidNumericArgument',
 					[$this->targetFunction, $argContent]
 				);
-			}
-		}
+		//	}
+		//}
 	}
 }

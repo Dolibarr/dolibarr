@@ -63,7 +63,7 @@ class LanguageOfCommentsSniff implements Sniff
 	 * Which tokens to listen ?
 	 * T_COMMENT = comments // or #
 	 * T_DOC_COMMENT_STRING = text in block comments
-	 * @return void
+	 * @return int[]
 	 */
 	public function register()
 	{
