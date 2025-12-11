@@ -102,7 +102,7 @@ class modStripe extends DolibarrModules
 			'url'=>'/stripe/importpayments.php',
 			'langs'=>'stripe',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 500,
-			'enabled' => 'isModEnabled("stripe") && isModEnabled("banque") && getDolGlobalString("MAIN_FEATURES_LEVEL") >= 2',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+			'enabled' => 'isModEnabled("stripe") && isModEnabled("bank") && getDolGlobalString("MAIN_FEATURES_LEVEL") >= 2',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 			'perms' => '$user->hasRight("banque", "modifier")',	// Use 'perms' => '$user->hasRight("mymodule","level1","level2")' if you want your menu with a permission rules
 			'target'=>'',
 			'user'=>2
@@ -119,7 +119,7 @@ class modStripe extends DolibarrModules
 			'url' => '',
 			'langs' => 'stripe',
 			'position' => 100,
-			'enabled' => 'isModEnabled("stripe") && isModEnabled("banque")',
+			'enabled' => 'isModEnabled("stripe") && isModEnabled("bank")',
 			'perms' => '$user->hasRight("banque", "read")',
 			'target' => '',
 			'user' => 0
@@ -133,7 +133,7 @@ class modStripe extends DolibarrModules
 			'url' => '/stripe/charge.php',
 			'langs' => 'stripe',
 			'position' => 102,
-			'enabled' => 'isModEnabled("stripe") && isModEnabled("banque") && getDolGlobalInt("MAIN_FEATURES_LEVEL") >= 1',
+			'enabled' => 'isModEnabled("stripe") && isModEnabled("bank") && getDolGlobalInt("MAIN_FEATURES_LEVEL") >= 1',
 			'perms' => '$user->hasRight("banque", "read")',
 			'target' => '',
 			'user' => 0
@@ -147,7 +147,7 @@ class modStripe extends DolibarrModules
 			'url' => '/stripe/transaction.php',
 			'langs' => 'stripe',
 			'position' => 102,
-			'enabled' => 'isModEnabled("stripe") && isModEnabled("banque") && getDolGlobalInt("MAIN_FEATURES_LEVEL") >= 2',
+			'enabled' => 'isModEnabled("stripe") && isModEnabled("bank") && getDolGlobalInt("MAIN_FEATURES_LEVEL") >= 2',
 			'perms' => '$user->hasRight("banque", "read")',
 			'target' => '',
 			'user' => 0
@@ -161,7 +161,7 @@ class modStripe extends DolibarrModules
 			'url' => '/stripe/payout.php',
 			'langs' => 'stripe',
 			'position' => 103,
-			'enabled' => 'isModEnabled("stripe") && isModEnabled("banque")',
+			'enabled' => 'isModEnabled("stripe") && isModEnabled("bank")',
 			'perms' => '$user->hasRight("banque", "read")',
 			'target' => '',
 			'user' => 0

@@ -2356,11 +2356,11 @@ class ExpenseReport extends CommonObject
 	 * deleteline
 	 *
 	 * @param   int			$rowid      	Row id
-	 * @param   User|string	$fuser      	User
+	 * @param   ?User		$fuser      	User
 	 * @param   int<0,1>	$notrigger      1=No trigger
 	 * @return  int<-1,1>                 	Return integer <0 if KO, >0 if OK
 	 */
-	public function deleteLine($rowid, $fuser = '', $notrigger = 0)
+	public function deleteLine($rowid, $fuser = null, $notrigger = 0)
 	{
 		$error = 0;
 

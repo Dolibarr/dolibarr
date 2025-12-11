@@ -2107,10 +2107,10 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
-		// Title
+		// Project title
 		if (!empty($arrayfields['p.title']['checked'])) {
-			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->title).'">';
-			print dol_escape_htmltag($obj->title);
+			print '<td class="tdoverflowmax250" title="'.dolPrintHTMLForAttribute($obj->title).'">';
+			print dolPrintHTML($obj->title);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
