@@ -7357,24 +7357,6 @@ parameters:
 			path: ../../../htdocs/core/modules/import/import_csv.modules.php
 
 		-
-			message: '#^Property ModeleImports\:\:\$errors \(array\<string\>\) does not accept array\<array\<string, mixed\>\|string\>\.$#'
-			identifier: assign.propertyType
-			count: 3
-			path: ../../../htdocs/core/modules/import/import_csv.modules.php
-
-		-
-			message: '#^Property ModeleImports\:\:\$errors \(array\<string\>\) does not accept array\<array\<string, string\>\|string\>\.$#'
-			identifier: assign.propertyType
-			count: 3
-			path: ../../../htdocs/core/modules/import/import_csv.modules.php
-
-		-
-			message: '#^Property ModeleImports\:\:\$warnings \(array\<string\>\) does not accept array\<array\<string, mixed\>\|string\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/import/import_csv.modules.php
-
-		-
 			message: '#^Variable \$key might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -7419,24 +7401,6 @@ parameters:
 		-
 			message: '#^Property ImportXlsx\:\:\$nbupdate has no type specified\.$#'
 			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/import/import_xlsx.modules.php
-
-		-
-			message: '#^Property ModeleImports\:\:\$errors \(array\<string\>\) does not accept array\<array\<string, mixed\>\|string\>\.$#'
-			identifier: assign.propertyType
-			count: 3
-			path: ../../../htdocs/core/modules/import/import_xlsx.modules.php
-
-		-
-			message: '#^Property ModeleImports\:\:\$errors \(array\<string\>\) does not accept array\<array\<string, string\>\|string\>\.$#'
-			identifier: assign.propertyType
-			count: 3
-			path: ../../../htdocs/core/modules/import/import_xlsx.modules.php
-
-		-
-			message: '#^Property ModeleImports\:\:\$warnings \(array\<string\>\) does not accept array\<array\<string, mixed\>\|string\>\.$#'
-			identifier: assign.propertyType
 			count: 1
 			path: ../../../htdocs/core/modules/import/import_xlsx.modules.php
 

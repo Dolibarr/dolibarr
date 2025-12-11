@@ -258,6 +258,10 @@ if (empty($conf->browser->layout) || $conf->browser->layout != 'phone') { ?>
 
 				$('#modalforpopup article').html(newElem);
 
+				if (mode == 'image' && showOriginalSizeButton) {
+					dragToScroll($('#modalforpopup .dialog-body'), '--drag-to-scroll');
+				}
+
 				let modal = document.getElementById('modalforpopup');
 
 				// Add close button handler
@@ -278,6 +282,7 @@ if (empty($conf->browser->layout) || $conf->browser->layout != 'phone') { ?>
 		function document_preview_original_size() {
 			console.log("document_preview_original_size A click on original size");
 			jQuery("#modalforpopup object.object-preview").toggleClass('--show-original-size');
+			jQuery("#modalforpopup .dialog-body").toggleClass('--drag-to-scroll');
 		}
 	</script>
 
