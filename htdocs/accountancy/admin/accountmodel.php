@@ -245,7 +245,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 	if ($ok && GETPOST('actionmodify', 'alpha')) {
 		// Modify entry
 		$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET ";
-		// Modifie valeur des champs
+		// Change field's value
 
 		$i = 0;
 		foreach ($listfieldmodify as $field) {
@@ -268,7 +268,6 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		$sql .= " WHERE rowid = ".((int) $rowid);
 
 		dol_syslog("actionmodify", LOG_DEBUG);
-		//print $sql;
 		$resql = $db->query($sql);
 		if (!$resql) {
 			setEventMessages($db->error(), null, 'errors');
@@ -327,13 +326,13 @@ $linkback = '';
 print load_fiche_titre($titre, $linkback, 'title_accountancy');
 
 
-// Confirmation de la suppression de la ligne
+// Confirmation of line deletion
 if ($action == 'delete') {
 	print $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['page'=> $page, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'rowid' => $rowid, 'code' => $code, 'id' => $id]), $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete', '', 0, 1);
 }
 
 
-// Complete requete recherche valeurs avec critere de tri
+// Complete the values search query with the sort order
 $sql = $tabsql[$id];
 
 if ($search_country_id > 0) {

@@ -55,6 +55,7 @@ class LanguageOfCommentsSniff implements Sniff
 		' sinon ',
 		' stocker ',
 		' soustraire ',
+		' suppression ',
 		' valeur ',
 		' valeurs ',
 	];
