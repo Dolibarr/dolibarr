@@ -64,7 +64,7 @@ $search_startday = GETPOSTINT('search_startday');
 $search_endyear = GETPOSTINT('search_endyear');
 $search_endmonth = GETPOSTINT('search_endmonth');
 $search_endday = GETPOSTINT('search_endday');
-$search_id = GETPOST('search_id', 'alpha');
+$search_id = GETPOST('search_id', 'alpha');					// Can be a USF search string
 $search_fk_user = GETPOST('search_fk_user', 'intcomma');
 $search_start = -1;
 if (GETPOST('search_startyear') != '') {
@@ -384,7 +384,7 @@ $help_url = "EN:Module_Unalterable_Archives_-_Logs|FR:Module_Archives_-_Logs_Ina
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-blockedlog page-admin_blockedlog_list');
 
-$blocks = $block_static->getLog('all', (int) $search_id, $MAXLINES, $sortfield, $sortorder, (int) $search_fk_user, $search_start, $search_end, $search_ref, $search_amount, $search_code, $search_signature);
+$blocks = $block_static->getLog('all', (string) $search_id, $MAXLINES, $sortfield, $sortorder, (int) $search_fk_user, $search_start, $search_end, $search_ref, $search_amount, $search_code, $search_signature);
 if (!is_array($blocks)) {
 	if ($blocks == -2) {
 		setEventMessages($langs->trans("TooManyRecordToScanRestrictFilters", $MAXLINES), null, 'errors');

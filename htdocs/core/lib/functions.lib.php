@@ -850,6 +850,107 @@ function GETPOSTISARRAY($paramname, $method = 0)
 	return is_array($val);
 }
 
+
+/**
+ *  Return the value of a $_GET or $_POST supervariable, converted into integer.
+ *  Use the property $user->default_values[path]['creatform'] and/or $user->default_values[path]['filters'] and/or $user->default_values[path]['sortorder']
+ *  Note: The property $user->default_values is loaded by main.php when loading the user.
+ *
+ *  @param  string		$paramname	Name of the $_GET or $_POST parameter
+ *  @param  int<0,3>	$method		Type of method (0 = $_GET then $_POST, 1 = only $_GET, 2 = only $_POST, 3 = $_POST then $_GET)
+ *  @return int						Value converted into integer
+ */
+function GETPOSTINT($paramname, $method = 0)
+{
+	return (int) GETPOST($paramname, 'int', $method, null, null, 0);
+}
+
+/**
+ *  Return the value of a $_GET or $_POST supervariable, converted into float.
+ *  Warning: This function assumes by default that the input is a number entered by end user in user format in local language (with possible thousands separator and decimal separator).
+ *  If it is not the case, use the parameter $option = 1 instead.
+ *
+ *  @param  string          $paramname      Name of the $_GET or $_POST parameter
+ *	@param	''|'MU'|'MT'|'MS'|'CU'|'CT'|int	$rounding	Type of rounding ('', 'MU', 'MT, 'MS', 'CU', 'CT', integer) {@see price2num()}
+ * 	@param	int<0,2>		$option			Put 1 if you know that content is already universal format number (so no correction on decimal will be done)
+ * 											Put 2 if you know that number is a user input (so we know we have to fix decimal separator).
+ * 					                        Use 0 if unknown (never use this anymore, automatic detection is not reliable with some languages).
+ *  @return float                           Value converted into float
+ *  @since	Dolibarr V20
+ */
+function GETPOSTFLOAT($paramname, $rounding = '', $option = 2)
+{
+	// price2num() can be used to round to an expected accuracy and/or to sanitize any valid user input (such as "1 234.5", "1 234,5", "1'234,5", "1·234,5", "1,234.5", etc.)
+	return (float) price2num(GETPOST($paramname), $rounding, $option);
+}
+
+/**
+ * Helper function that combines values of a dolibarr DatePicker (such as Form::selectDate) for year, month, day (and
+ * optionally hour, minute, second) fields to return a timestamp.
+ *
+ * @param 	string 		$prefix 		Prefix used to build the date selector (for instance using Form::selectDate). Example: 'select_datec'
+ * @param 	string 		$hourTime		'getpost' or 'getpostend' to include hour, minute, second values from the HTTP request,
+ * 										or 'XX:YY:ZZ' to set hour, minute, second respectively, for example '23:59:59'
+ * 										or 'end' means '23:59:59'
+ * 										or '' means '00:00:00' (default)
+ * @param 	int|string 	$gm 			Passed to dol_mktime. In most cases, when used with 'getpost' or 'getpostend', it should be 'tzuserrel'. Use 'auto' if you need dates related to 'tzserver' (like in accountancy).
+ * @param	string		$saverestore	Use a string family context to save retrieved date so it will be used on the next retrieval for the same family context (if value not already defined in parameters).
+ * @return 	int|string  				Date as a timestamp, '' or false if error
+ *
+ * @see dol_mktime()
+ */
+function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto', $saverestore = '')
+{
+	$m = array();
+	if ($hourTime === 'getpost' || $hourTime === 'getpostend') {
+		$hour   = (GETPOSTISSET($prefix . 'hour') && GETPOSTINT($prefix . 'hour') >= 0) ? GETPOSTINT($prefix . 'hour') : ($hourTime === 'getpostend' ? 23 : 0);
+		$minute = (GETPOSTISSET($prefix . 'min') && GETPOSTINT($prefix . 'min') >= 0) ? GETPOSTINT($prefix . 'min') : ($hourTime === 'getpostend' ? 59 : 0);
+		$second = (GETPOSTISSET($prefix . 'sec') && GETPOSTINT($prefix . 'sec') >= 0) ? GETPOSTINT($prefix . 'sec') : ($hourTime === 'getpostend' ? 59 : 0);
+	} elseif (preg_match('/^(\d\d):(\d\d):(\d\d)$/', $hourTime, $m)) {
+		$hour   = intval($m[1]);
+		$minute = intval($m[2]);
+		$second = intval($m[3]);
+	} elseif ($hourTime === 'end') {
+		$hour = 23;
+		$minute = 59;
+		$second = 59;
+	} else {
+		$hour = $minute = $second = 0;
+	}
+
+	if (
+		$saverestore
+		&& !GETPOSTISSET($prefix . 'day')
+		&& !GETPOSTISSET($prefix . 'month')
+		&& !GETPOSTISSET($prefix . 'year')
+		&& isset($_SESSION['DOLDATE_' . $saverestore . '_day'])
+		&& isset($_SESSION['DOLDATE_' . $saverestore . '_month'])
+		&& isset($_SESSION['DOLDATE_' . $saverestore . '_year'])
+	) {
+		$day = $_SESSION['DOLDATE_' . $saverestore . '_day'];
+		$month = $_SESSION['DOLDATE_' . $saverestore . '_month'];
+		$year = $_SESSION['DOLDATE_' . $saverestore . '_year'];
+	} else {
+		$month = GETPOSTINT($prefix . 'month');
+		$day = GETPOSTINT($prefix . 'day');
+		$year = GETPOSTINT($prefix . 'year');
+	}
+
+	// normalize out of range values
+	$hour = (int) min($hour, 23);
+	$minute = (int) min($minute, 59);
+	$second = (int) min($second, 59);
+
+	if ($saverestore) {
+		$_SESSION['DOLDATE_' . $saverestore . '_day'] = $day;
+		$_SESSION['DOLDATE_' . $saverestore . '_month'] = $month;
+		$_SESSION['DOLDATE_' . $saverestore . '_year'] = $year;
+	}
+
+	//print "$hour, $minute, $second, $month, $day, $year, $gm<br>";
+	return dol_mktime($hour, $minute, $second, $month, $day, $year, $gm);
+}
+
 /**
  *  Return value of a param into GET or POST supervariable.
  *  Use the property $user->default_values[path]['createform'] and/or $user->default_values[path]['filters'] and/or $user->default_values[path]['sortorder']
@@ -1210,122 +1311,6 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 	}
 
 	return $out;
-}
-
-/**
- *  Return the value of a $_GET or $_POST supervariable, converted into integer.
- *  Use the property $user->default_values[path]['creatform'] and/or $user->default_values[path]['filters'] and/or $user->default_values[path]['sortorder']
- *  Note: The property $user->default_values is loaded by main.php when loading the user.
- *
- *  @param  string		$paramname	Name of the $_GET or $_POST parameter
- *  @param  int<0,3>	$method		Type of method (0 = $_GET then $_POST, 1 = only $_GET, 2 = only $_POST, 3 = $_POST then $_GET)
- *  @return int						Value converted into integer
- */
-function GETPOSTINT($paramname, $method = 0)
-{
-	return (int) GETPOST($paramname, 'int', $method, null, null, 0);
-}
-
-/**
- *  Return the value of a $_GET or $_POST supervariable, converted into float.
- *  Warning: This function assumes by default that the input is a number entered by end user in user format in local language (with possible thousands separator and decimal separator).
- *  If it is not the case, use the parameter $option = 1 instead.
- *
- *  @param  string          $paramname      Name of the $_GET or $_POST parameter
- *	@param	''|'MU'|'MT'|'MS'|'CU'|'CT'|int	$rounding	Type of rounding ('', 'MU', 'MT, 'MS', 'CU', 'CT', integer) {@see price2num()}
- * 	@param	int<0,2>		$option			Put 1 if you know that content is already universal format number (so no correction on decimal will be done)
- * 											Put 2 if you know that number is a user input (so we know we have to fix decimal separator).
- * 					                        Use 0 if unknown (never use this anymore, automatic detection is not reliable with some languages).
- *  @return float                           Value converted into float
- *  @since	Dolibarr V20
- */
-function GETPOSTFLOAT($paramname, $rounding = '', $option = 2)
-{
-	// price2num() can be used to round to an expected accuracy and/or to sanitize any valid user input (such as "1 234.5", "1 234,5", "1'234,5", "1·234,5", "1,234.5", etc.)
-	return (float) price2num(GETPOST($paramname), $rounding, $option);
-}
-
-/**
- * Helper function that combines values of a dolibarr DatePicker (such as Form::selectDate) for year, month, day (and
- * optionally hour, minute, second) fields to return a timestamp.
- *
- * @param 	string 		$prefix 		Prefix used to build the date selector (for instance using Form::selectDate). Example: 'select_datec'
- * @param 	string 		$hourTime		'getpost' or 'getpostend' to include hour, minute, second values from the HTTP request,
- * 										or 'XX:YY:ZZ' to set hour, minute, second respectively, for example '23:59:59'
- * 										or 'end' means '23:59:59'
- * 										or '' means '00:00:00' (default)
- * @param 	int|string 	$gm 			Passed to dol_mktime. In most cases, when used with 'getpost' or 'getpostend', it should be 'tzuserrel'. Use 'auto' if you need dates related to 'tzserver' (like in accountancy).
- * @param	string		$saverestore	Use a string family context to save retrieved date so it will be used on the next retrieval for the same family context (if value not already defined in parameters).
- * @return 	int|string  				Date as a timestamp, '' or false if error
- *
- * @see dol_mktime()
- */
-function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto', $saverestore = '')
-{
-	$m = array();
-	if ($hourTime === 'getpost' || $hourTime === 'getpostend') {
-		$hour   = (GETPOSTISSET($prefix . 'hour') && GETPOSTINT($prefix . 'hour') >= 0) ? GETPOSTINT($prefix . 'hour') : ($hourTime === 'getpostend' ? 23 : 0);
-		$minute = (GETPOSTISSET($prefix . 'min') && GETPOSTINT($prefix . 'min') >= 0) ? GETPOSTINT($prefix . 'min') : ($hourTime === 'getpostend' ? 59 : 0);
-		$second = (GETPOSTISSET($prefix . 'sec') && GETPOSTINT($prefix . 'sec') >= 0) ? GETPOSTINT($prefix . 'sec') : ($hourTime === 'getpostend' ? 59 : 0);
-	} elseif (preg_match('/^(\d\d):(\d\d):(\d\d)$/', $hourTime, $m)) {
-		$hour   = intval($m[1]);
-		$minute = intval($m[2]);
-		$second = intval($m[3]);
-	} elseif ($hourTime === 'end') {
-		$hour = 23;
-		$minute = 59;
-		$second = 59;
-	} else {
-		$hour = $minute = $second = 0;
-	}
-
-	if (
-		$saverestore
-		&& !GETPOSTISSET($prefix . 'day')
-		&& !GETPOSTISSET($prefix . 'month')
-		&& !GETPOSTISSET($prefix . 'year')
-		&& isset($_SESSION['DOLDATE_' . $saverestore . '_day'])
-		&& isset($_SESSION['DOLDATE_' . $saverestore . '_month'])
-		&& isset($_SESSION['DOLDATE_' . $saverestore . '_year'])
-	) {
-		$day = $_SESSION['DOLDATE_' . $saverestore . '_day'];
-		$month = $_SESSION['DOLDATE_' . $saverestore . '_month'];
-		$year = $_SESSION['DOLDATE_' . $saverestore . '_year'];
-	} else {
-		$month = GETPOSTINT($prefix . 'month');
-		$day = GETPOSTINT($prefix . 'day');
-		$year = GETPOSTINT($prefix . 'year');
-	}
-
-	// normalize out of range values
-	$hour = (int) min($hour, 23);
-	$minute = (int) min($minute, 59);
-	$second = (int) min($second, 59);
-
-	if ($saverestore) {
-		$_SESSION['DOLDATE_' . $saverestore . '_day'] = $day;
-		$_SESSION['DOLDATE_' . $saverestore . '_month'] = $month;
-		$_SESSION['DOLDATE_' . $saverestore . '_year'] = $year;
-	}
-
-	//print "$hour, $minute, $second, $month, $day, $year, $gm<br>";
-	return dol_mktime($hour, $minute, $second, $month, $day, $year, $gm);
-}
-
-
-/**
- *  Return a sanitized or empty value after checking value against a rule.
- *
- *  @param  string|array<mixed>	$out	Value to check/clear.
- *  @param  string  		$check		Type of check/sanitizing
- *  @param  ?int     		$filter		Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
- *  @param  ?mixed   		$options	Options to pass to filter_var when $check is set to 'custom'
- *  @return string|array<mixed>			Value sanitized (string or array). It may be '' if format check fails.
- *  @deprecated
- */
-function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = null)
-{
-	return sanitizeVal($out, $check, $filter, $options);
 }
 
 /**
@@ -6598,7 +6583,7 @@ function img_allow($allow, $titlealt = 'default')
  *  @param  string	$morecss	More CSS
  *	@return string     			Return img tag
  */
-function img_credit_card($brand, $morecss = null)
+function img_credit_card($brand, $morecss = 'fa-2x inline-block valignmiddle')
 {
 	if (is_null($morecss)) {
 		$morecss = 'fa-2x';
@@ -9391,17 +9376,19 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 						//$out = '<html><head><meta charset="utf-8"></head><body><div class="tricktoremove">'.dol_nl2br($out).'</div></body></html>';
 					}
 
-					// Note: <a href="https://[__aaa__]/aaa.html"> is transformed into <a href="https://[__aaa__]/aaa.html">
-					// We don't want that, so we protect [__xxx__] by replacing [ and ] before loadHTML and restore them after saveHTML
+					// Note: <a href="https://__[aaa]__/aaa.html"> is transformed into <a href="https://__[aaa]__/aaa.html">
+					// We don't want that, so we protect __[xxx]__ by replacing [ and ] before loadHTML and restore them after saveHTML
 					$out = preg_replace_callback(
-						'/\[__([0-9a-zA-Z_]+)__\]/',
+						'/__\[([0-9a-zA-Z_]+)\]__/',
 						/**
 						 * @param 	array<int,string> $m	Array of matches
 						 * @return 	string 					Translated string for the key
 						 */
 						function ($m) {
-							return 'BRACKETSTART__' . $m[1] . '__BRACKETEND'; },
-						$out);
+							return '__BRACKETSTART' . $m[1] . 'BRACKETEND__';
+						},
+						$out
+					);
 
 					$dom->loadHTML($out, LIBXML_HTML_NODEFDTD | LIBXML_ERR_NONE | LIBXML_HTML_NOIMPLIED | LIBXML_NONET | LIBXML_NOWARNING | LIBXML_NOERROR | LIBXML_NOXMLDECL);
 
@@ -9411,14 +9398,16 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 
 					// Restore [ and ] that were protected before loadHTML
 					$out = preg_replace_callback(
-						'/BRACKETSTART__([0-9a-zA-Z_]+)__BRACKETEND/',
+						'/__BRACKETSTART([0-9a-zA-Z_]+)BRACKETEND__/',
 						/**
 						 * @param 	array<int,string> $m	Array of matches
 						 * @return 	string 					Translated string for the key
 						 */
 						function ($m) {
-							return '[__' . $m[1] . '__]'; },
-						$out);
+							return '__[' . $m[1] . ']__';
+						},
+						$out
+					);
 
 					// Remove the trick added to solve pb with text in utf8 and text without parent tag
 					//$out = preg_replace('/^'.preg_quote('<?xml encoding="UTF-8">', '/').'/', '', $out);
@@ -10988,8 +10977,8 @@ function print_date_range($date_start, $date_end, $format = '', $outputlangs = n
  *    @param	int			$date_start    		Start date
  *    @param    int			$date_end      		End date
  *    @param    string		$format        		Output date format ('day', 'dayhour', ...)
- *    @param	Translate	$outputlangs   		Output language
- *    @param	integer		$withparenthesis	1=Add space and parenthesis, 0=no parenthesis, 2=Add parenthesis
+ *    @param	?Translate	$outputlangs   		Output language
+ *    @param	int<0,2>	$withparenthesis	1=Add space and parenthesis, 0=no parenthesis, 2=Add parenthesis
  *    @return	string							String
  */
 function get_date_range($date_start, $date_end, $format = '', $outputlangs = null, $withparenthesis = 1)

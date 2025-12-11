@@ -490,7 +490,7 @@ if ($mine || ($usertoprocess->id == $user->id)) {
 } else {
 	$s .= $langs->trans("AllTaskVisibleButEditIfYouAreAssigned").'<br>';
 }
-print info_admin($s, 0, 0, 'info', 'nomargintop');
+print info_admin($s, 0, 0, 'info', 'nomargintop hideonsmartphone');
 
 print dol_get_fiche_end();
 
