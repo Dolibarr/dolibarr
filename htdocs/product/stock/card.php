@@ -649,36 +649,36 @@ if ($action == 'create') {
 			$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 
-			print_liste_field_titre("Products", "", "p.ref", "&amp;id=".$id, "", "", $sortfield, $sortorder);
-			print_liste_field_titre("Label", "", "p.label", "&amp;id=".$id, "", "", $sortfield, $sortorder);
-			print_liste_field_titre("NumberOfUnit", "", "ps.reel", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+			print_liste_field_titre("Products", "", "p.ref", "", "&id=".$id, "", $sortfield, $sortorder);
+			print_liste_field_titre("Label", "", "p.label", "", "&id=".$id, "", $sortfield, $sortorder);
+			print_liste_field_titre("NumberOfUnit", "", "ps.reel", "", "&id=".$id, '', $sortfield, $sortorder, 'right ');
 			$totalarray['nbfield'] += 3;
 			$totalarray['pos'][$totalarray['nbfield']] = 'totalunit';
 			$totalarray['type'][$totalarray['nbfield']] = 'stock';
 
 			if (getDolGlobalString('PRODUCT_USE_UNITS')) {
-				print_liste_field_titre("Unit", "", "p.fk_unit", "&amp;id=".$id, "", 'align="left"', $sortfield, $sortorder);
+				print_liste_field_titre("Unit", "", "p.fk_unit", "", "&id=".$id, 'align="left"', $sortfield, $sortorder);
 				$totalarray['nbfield']++;
 				$totalarray['pos'][$totalarray['nbfield']] = 'units';
 				$totalarray['type'][$totalarray['nbfield']] = 'string';
 			}
 			$usercancreadsupplierprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'read_supplier_prices') : $user->hasRight('product', 'read');
 			if ($usercancreadsupplierprice) {
-				print_liste_field_titre($form->textwithpicto($langs->trans("AverageUnitPricePMPShort"), $langs->trans("AverageUnitPricePMPDesc")), "", "p.pmp", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+				print_liste_field_titre($form->textwithpicto($langs->trans("AverageUnitPricePMPShort"), $langs->trans("AverageUnitPricePMPDesc")), "", "p.pmp", "", "&id=".$id, '', $sortfield, $sortorder, 'right ');
 				$totalarray['nbfield']++;
 
-				print_liste_field_titre("EstimatedStockValueShort", "", "svalue", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+				print_liste_field_titre("EstimatedStockValueShort", "", "svalue", "", "&id=".$id, '', $sortfield, $sortorder, 'right ');
 				$totalarray['nbfield']++;
 				$totalarray['pos'][$totalarray['nbfield']] = 'totalvalue';
 				$totalarray['type'][$totalarray['nbfield']] = '';
 			}
 
 			if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
-				print_liste_field_titre("SellPriceMin", "", "p.price", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+				print_liste_field_titre("SellPriceMin", "", "p.price", "", "&id=".$id, '', $sortfield, $sortorder, 'right ');
 				$totalarray['nbfield']++;
 			}
 			if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
-				print_liste_field_titre("EstimatedStockValueSellShort", "", "", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+				print_liste_field_titre("EstimatedStockValueSellShort", "", "", "", "&id=".$id, '', $sortfield, $sortorder, 'right ');
 				$totalarray['nbfield']++;
 				$totalarray['pos'][$totalarray['nbfield']] = 'totalvaluesell';
 				$totalarray['type'][$totalarray['nbfield']] = '';

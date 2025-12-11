@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2017  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2025  Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -140,7 +140,7 @@ class box_members_last_subscriptions extends ModeleBoxes
 						'asis' => 1,
 					);
 
-					$daterange = get_date_range($this->db->jdate($obj->date_start), $this->db->jdate($obj->date_end), '', null, 0);
+					$daterange = get_date_range($this->db->jdate($obj->date_start), $this->db->jdate($obj->date_end), '', $langs, 0);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone" title="'.dol_escape_htmltag($daterange).'"',
 						'text' => '<span class="opacitymedium small">'.$daterange.'</span>',

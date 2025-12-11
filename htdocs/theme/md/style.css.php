@@ -2398,6 +2398,10 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	.nopaddingbottomonsmartphone {
 		padding-bottom: 0 !important;
 	}
+
+	#dolpublictable {
+		padding: 10px;
+	}
 }
 
 /* Force values for small screen 570 */
@@ -5756,14 +5760,22 @@ span.buttonpaymentsmall {
 }
 
 #dolpublictable {
-	min-width: 300px; font-size: 16px;
+	min-width: 300px;
+	max-width: 800px;
+	font-size: 16px;
 	padding: 6px;
 }
 #dolpaymenttable {
 	min-width: 320px; font-size: 16px;
 }	/* Width must have min to make stripe input area visible. Lower than 320 makes input area crazy for credit card that need zip code */
 
-#tablepublicpayment { border: 1px solid #CCCCCC !important; width: 100%; padding: 20px; margin-bottom: 20px; }
+#tablepublicpayment {
+	border: 1px solid #CCCCCC !important;
+	width: 100%;
+	padding: 20px;
+	margin-bottom: 20px;
+	border-radius: 4px;
+}
 #tablepublicpayment .CTableRow1  { background-color: #F0F0F0 !important; }
 #tablepublicpayment tr.liste_total { border-bottom: 1px solid #CCCCCC !important; }
 #tablepublicpayment tr.liste_total td { border-top: none; }
