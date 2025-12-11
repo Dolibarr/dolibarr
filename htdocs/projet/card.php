@@ -364,15 +364,13 @@ if (empty($reshook)) {
 				setEventMessages($langs->trans("ErrorOppStatusRequiredIfAmount"), null, 'errors');
 			}
 
-			if (!$error) {
-				if ((int) $object->thirdparty->client == 0 || (int) $object->thirdparty->client == 2) {		// If not yet customer
-					// Get ID of the special opportunity status code 'WON'
-					$idoppstatuswon = (int) dol_getIdFromCode($db, 'WON', 'c_lead_status', 'code', 'rowid');
+			if (!$error && !is_null($object->thirdparty) && ((int) $object->thirdparty->client == 0 || (int) $object->thirdparty->client == 2)) {		// If not yet customer
+				// Get ID of the special opportunity status code 'WON'
+				$idoppstatuswon = (int) dol_getIdFromCode($db, 'WON', 'c_lead_status', 'code', 'rowid');
 
-					if ($object->opp_status == $idoppstatuswon) {
-						// Switch the thirdparty into a customer
-						$object->thirdparty->setAsCustomer();
-					}
+				if ($object->opp_status == $idoppstatuswon) {
+					// Switch the thirdparty into a customer
+					$object->thirdparty->setAsCustomer();
 				}
 			}
 		}
@@ -461,7 +459,7 @@ if (empty($reshook)) {
 			}
 
 			// If opportunities are used and the customer is not yet a customer
-			if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') && $object->usage_opportunity) {
+			if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') && $object->usage_opportunity && !is_null($object->thirdparty)) {
 				if ((int) $object->thirdparty->client == 0 || (int) $object->thirdparty->client == 2) {		// If not yet customer
 					// Get ID of the special opportunity status code 'WON'
 					$idoppstatuswon = (int) dol_getIdFromCode($db, 'WON', 'c_lead_status', 'code', 'rowid');

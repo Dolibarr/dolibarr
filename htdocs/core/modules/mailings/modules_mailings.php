@@ -414,7 +414,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 				$widget[$j]['relpath'] = $relpath[$key];
 				$widget[$j]['iscoreorexternal'] = $iscoreorexternal[$key];
 				$widget[$j]['version'] = empty($objMod->version) ? '' : $objMod->version;
-				$widget[$j]['status'] = img_picto($langs->trans("Active"), 'tick');
+				$widget[$j]['status'] = img_picto($langs->trans("Active"), 'tick', 'class="pictofixedwidth"');
 				if ($disabledbyname > 0 || $disabledbymodule > 1) {
 					$widget[$j]['status'] = '';
 				}

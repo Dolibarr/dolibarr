@@ -543,17 +543,17 @@ if (empty($reshook)) {
 					if ($i) {
 						$sql .= ", ";
 					}
-					$sql .= $field."=";
+					$sql .= $field." = ";
 
 					if ((GETPOST($keycode) == '' && in_array($keycode, array('langcode'))) || (!in_array($keycode, array('langcode', 'position', 'private', 'defaultfortype')) && !GETPOST($keycode))) {
 						$sql .= "null"; // langcode,... must be '' if not defined so the unique key that include lang will work
-					} elseif (GETPOST($keycode) == '0' && $keycode == 'langcode') {
+					} elseif ($keycode == 'langcode' && (GETPOST($keycode) == '0' || GETPOST($keycode) == '-1')) {
 						$sql .= "''"; // langcode must be '' if not defined so the unique key that include lang will work
 					} elseif ($keycode == 'fk_user') {
 						if (!$user->admin) {	// A non admin user can only edit its own template
-							$sql .= " ".((int) $user->id);
+							$sql .= ((int) $user->id);
 						} else {
-							$sql .= " ".(GETPOSTINT($keycode));
+							$sql .= (GETPOSTINT($keycode) > 0 ? GETPOSTINT($keycode) : "null");
 						}
 					} elseif ($keycode == 'content') {
 						$sql .= "'".$db->escape(GETPOST($keycode, 'restricthtml'))."'";
