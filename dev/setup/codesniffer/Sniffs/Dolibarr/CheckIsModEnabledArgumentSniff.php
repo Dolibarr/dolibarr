@@ -26,7 +26,12 @@ use PHP_CodeSniffer\Files\File;
 class CheckIsModEnabledArgumentSniff implements Sniff
 {
 	// Nom de la fonction cible
-	protected $targetFunction = 'isModEnabled';
+	protected $targetFunction = 'ismodenabled';
+
+	protected $validModules = [
+		'asset',
+		'notification',
+	];
 
 	/**
 	 * register
@@ -72,15 +77,13 @@ class CheckIsModEnabledArgumentSniff implements Sniff
 		$argContent = $tokens[$firstArgTokenPtr]['content'];
 		$argCode    = $tokens[$firstArgTokenPtr]['code'];
 
-		//if ($argCode === T_LNUMBER) {
-		//	if (intval($argContent) <= 0) {
-				$phpcsFile->addError(
-					'La fonction "%s" ne doit pas être appelée avec une valeur <= 0 (%s).',
-					$firstArgTokenPtr,
-					'InvalidNumericArgument',
-					[$this->targetFunction, $argContent]
-				);
-		//	}
-		//}
+		if (!in_array($argContent, $this->validModules)) {
+			$phpcsFile->addError(
+				'The function "%s" has invalid argument (%s).',
+				$firstArgTokenPtr,
+				'InvalidNumericArgument',
+				[$this->targetFunction, $argContent]
+			);
+		}
 	}
 }
