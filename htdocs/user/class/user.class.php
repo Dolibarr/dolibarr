@@ -1968,7 +1968,7 @@ class User extends CommonObject
 				return -1;
 			}
 		} else {
-			// $this->error deja positionne
+			// $this->error already set
 			dol_syslog(get_class($this)."::create_from_contact - 0");
 
 			$this->db->rollback();
