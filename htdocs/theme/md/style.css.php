@@ -911,6 +911,9 @@ input.pageplusone {
 	margin-right: 4px;
 	margin-left: 3px;
 	width: 32px;
+	border-top: 0;
+	border-left: 0;
+	border-right: 0;
 }
 .paginationlastpage a {
 	padding-left: 6px;
@@ -1145,9 +1148,6 @@ button:focus {
 .fa-info-circle {
 	padding-<?php echo $left; ?>: 3px;
 }
-.line-height-large {
-	line-height: 1.8em;
-}
 
 th .button {
 	box-shadow: none !important;
@@ -1208,6 +1208,9 @@ textarea.centpercent {
 }
 .lineheightsmall {
 	line-height: 1.2em;
+}
+.line-height-large {
+	line-height: 1.8em;
 }
 .large {
 	font-size: 125%;
@@ -1351,6 +1354,12 @@ td.wordbreak img, td.wordbreakimp img {
 }
 .nopaddingbottomimp {
 	padding-bottom: 0 !important;
+}
+.padding2 {
+	padding: 2px;
+}
+.padding3 {
+	padding: 3px;
 }
 .paddingleft {
 	padding-<?php print $left; ?>: 4px;
@@ -2388,6 +2397,10 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	}
 	.nopaddingbottomonsmartphone {
 		padding-bottom: 0 !important;
+	}
+
+	#dolpublictable {
+		padding: 10px;
 	}
 }
 
@@ -4489,7 +4502,7 @@ td.border, div.tagtable div div.border {
 .nobordertop, .nobordertop tr:first-of-type td {
 	border-top: none !important;
 }
-.noborderbottom, .noborderbottom tr:last-of-type td {
+.noborderbottom, tr.noborderbottom td, .noborderbottom tr:last-of-type td {
 	border-bottom: none !important;
 }
 .bordertop {
@@ -5239,16 +5252,12 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	padding-left: 0px;
 	padding-bottom: 12px;
 }
-.boxstatsborder {
-	/* border: 1px solid #CCC !important; */
-}
 .boxstats, .boxstats130 {
 	display: inline-block;
 	margin: 8px;
-	/* border: 1px solid #CCC; */
 	text-align: center;
-	border-radius: 2px;
-	background: #eee;
+	border-radius: 6px;
+	background: var(--colorbackbody);
 }
 .boxstats, .boxstats130, .boxstatscontent {
 	white-space: nowrap;
@@ -5256,15 +5265,16 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	text-overflow: ellipsis;
 }
 .boxstats {
-	padding: 3px;
+	padding: 8px;
 	width: 100px;
 	min-height: 40px;
 }
 .boxstats130 {
 	width: 135px;
 	height: 54px;
-	padding: 3px;
+	padding: 8px;
 }
+
 @media only screen and (max-width: 768px)
 {
 	.tabBar .arearef .pagination.paginationref {
@@ -5321,9 +5331,10 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.20);
 }
 span.boxstatstext {
-	/* opacity: 0.7; */		/* a bug if browser make z-index infintie when opacity is set so we disable it */
+	opacity: 0.5;		/* a bug if browser make z-index was discovered when opacity is set, if still present, we must disable it */
 	line-height: 18px;
 	color: #000;
+	font-size: 0.8em;
 }
 .boxstatsindicator.thumbstat150 {	/* If we remove this, box position is ko on ipad */
 	display: inline-flex;
@@ -5749,14 +5760,22 @@ span.buttonpaymentsmall {
 }
 
 #dolpublictable {
-	min-width: 300px; font-size: 16px;
+	min-width: 300px;
+	max-width: 800px;
+	font-size: 16px;
 	padding: 6px;
 }
 #dolpaymenttable {
 	min-width: 320px; font-size: 16px;
 }	/* Width must have min to make stripe input area visible. Lower than 320 makes input area crazy for credit card that need zip code */
 
-#tablepublicpayment { border: 1px solid #CCCCCC !important; width: 100%; padding: 20px; margin-bottom: 20px; }
+#tablepublicpayment {
+	border: 1px solid #CCCCCC !important;
+	width: 100%;
+	padding: 20px;
+	margin-bottom: 20px;
+	border-radius: 4px;
+}
 #tablepublicpayment .CTableRow1  { background-color: #F0F0F0 !important; }
 #tablepublicpayment tr.liste_total { border-bottom: 1px solid #CCCCCC !important; }
 #tablepublicpayment tr.liste_total td { border-top: none; }

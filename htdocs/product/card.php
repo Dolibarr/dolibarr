@@ -21,6 +21,7 @@
  * Copyright (C) 2020       Pierre Ardoin           <mapiolca@me.com>
  * Copyright (C) 2022       Vincent de Grandpré     <vincent@de-grandpre.quebec>
  * Copyright (C) 2024-2025	MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1717,7 +1718,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				if (!getDolGlobalString('PRODUCT_DISABLE_NATURE')) {
 					// Nature
 					print '<tr><td>'.$form->textwithpicto($langs->trans("NatureOfProductShort"), $langs->trans("NatureOfProductDesc")).'</td><td>';
-					print $formproduct->selectProductNature('finished', (string) $object->finished);
+					print $formproduct->selectProductNature('finished', (GETPOSTISSET('finished') ? GETPOST('finished') : (string) $object->finished));
 					print '</td></tr>';
 				}
 			}
@@ -1857,19 +1858,19 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 					// Price
 					print '<tr><td class="titlefieldcreate">'.$langs->trans("SellingPrice").'</td>';
-					print '<td><input name="price" class="maxwidth50" value="'.$object->price.'">';
+					print '<td><input name="price" class="maxwidth50" value="'.(GETPOSTISSET('price') ? GETPOST('price') : $object->price).'">';
 					print $form->selectPriceBaseType(getDolGlobalString('PRODUCT_PRICE_BASE_TYPE'), "price_base_type");
 					print ajax_combobox("select_price_base_type");
 					print '</td></tr>';
 
 					// Min price
 					print '<tr><td>'.$langs->trans("MinPrice").'</td>';
-					print '<td><input name="price_min" class="maxwidth50" value="'.$object->price_min.'">';
+					print '<td><input name="price_min" class="maxwidth50" value="'.(GETPOSTISSET('price_min') ? GETPOST('price_min') : $object->price_min).'">';
 					print '</td></tr>';
 
 					// VAT
 					print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
-					$defaultva = get_default_tva($mysoc, $mysoc);
+					$defaultva = GETPOSTISSET('tva_tx') ? GETPOST('tva_tx') : get_default_tva($mysoc, $mysoc);
 					print $form->load_tva("tva_tx", $defaultva, $mysoc, $mysoc, 0, 0, '', false, 1);
 					print ajax_combobox("tva_tx");
 					print '</td></tr>';

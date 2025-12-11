@@ -857,6 +857,107 @@ function GETPOSTISARRAY($paramname, $method = 0)
 	return is_array($val);
 }
 
+
+/**
+ *  Return the value of a $_GET or $_POST supervariable, converted into integer.
+ *  Use the property $user->default_values[path]['creatform'] and/or $user->default_values[path]['filters'] and/or $user->default_values[path]['sortorder']
+ *  Note: The property $user->default_values is loaded by main.php when loading the user.
+ *
+ *  @param  string		$paramname	Name of the $_GET or $_POST parameter
+ *  @param  int<0,3>	$method		Type of method (0 = $_GET then $_POST, 1 = only $_GET, 2 = only $_POST, 3 = $_POST then $_GET)
+ *  @return int						Value converted into integer
+ */
+function GETPOSTINT($paramname, $method = 0)
+{
+	return (int) GETPOST($paramname, 'int', $method, null, null, 0);
+}
+
+/**
+ *  Return the value of a $_GET or $_POST supervariable, converted into float.
+ *  Warning: This function assumes by default that the input is a number entered by end user in user format in local language (with possible thousands separator and decimal separator).
+ *  If it is not the case, use the parameter $option = 1 instead.
+ *
+ *  @param  string          $paramname      Name of the $_GET or $_POST parameter
+ *	@param	''|'MU'|'MT'|'MS'|'CU'|'CT'|int	$rounding	Type of rounding ('', 'MU', 'MT, 'MS', 'CU', 'CT', integer) {@see price2num()}
+ * 	@param	int<0,2>		$option			Put 1 if you know that content is already universal format number (so no correction on decimal will be done)
+ * 											Put 2 if you know that number is a user input (so we know we have to fix decimal separator).
+ * 					                        Use 0 if unknown (never use this anymore, automatic detection is not reliable with some languages).
+ *  @return float                           Value converted into float
+ *  @since	Dolibarr V20
+ */
+function GETPOSTFLOAT($paramname, $rounding = '', $option = 2)
+{
+	// price2num() can be used to round to an expected accuracy and/or to sanitize any valid user input (such as "1 234.5", "1 234,5", "1'234,5", "1·234,5", "1,234.5", etc.)
+	return (float) price2num(GETPOST($paramname), $rounding, $option);
+}
+
+/**
+ * Helper function that combines values of a dolibarr DatePicker (such as Form::selectDate) for year, month, day (and
+ * optionally hour, minute, second) fields to return a timestamp.
+ *
+ * @param 	string 		$prefix 		Prefix used to build the date selector (for instance using Form::selectDate). Example: 'select_datec'
+ * @param 	string 		$hourTime		'getpost' or 'getpostend' to include hour, minute, second values from the HTTP request,
+ * 										or 'XX:YY:ZZ' to set hour, minute, second respectively, for example '23:59:59'
+ * 										or 'end' means '23:59:59'
+ * 										or '' means '00:00:00' (default)
+ * @param 	int|string 	$gm 			Passed to dol_mktime. In most cases, when used with 'getpost' or 'getpostend', it should be 'tzuserrel'. Use 'auto' if you need dates related to 'tzserver' (like in accountancy).
+ * @param	string		$saverestore	Use a string family context to save retrieved date so it will be used on the next retrieval for the same family context (if value not already defined in parameters).
+ * @return 	int|string  				Date as a timestamp, '' or false if error
+ *
+ * @see dol_mktime()
+ */
+function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto', $saverestore = '')
+{
+	$m = array();
+	if ($hourTime === 'getpost' || $hourTime === 'getpostend') {
+		$hour   = (GETPOSTISSET($prefix . 'hour') && GETPOSTINT($prefix . 'hour') >= 0) ? GETPOSTINT($prefix . 'hour') : ($hourTime === 'getpostend' ? 23 : 0);
+		$minute = (GETPOSTISSET($prefix . 'min') && GETPOSTINT($prefix . 'min') >= 0) ? GETPOSTINT($prefix . 'min') : ($hourTime === 'getpostend' ? 59 : 0);
+		$second = (GETPOSTISSET($prefix . 'sec') && GETPOSTINT($prefix . 'sec') >= 0) ? GETPOSTINT($prefix . 'sec') : ($hourTime === 'getpostend' ? 59 : 0);
+	} elseif (preg_match('/^(\d\d):(\d\d):(\d\d)$/', $hourTime, $m)) {
+		$hour   = intval($m[1]);
+		$minute = intval($m[2]);
+		$second = intval($m[3]);
+	} elseif ($hourTime === 'end') {
+		$hour = 23;
+		$minute = 59;
+		$second = 59;
+	} else {
+		$hour = $minute = $second = 0;
+	}
+
+	if (
+		$saverestore
+		&& !GETPOSTISSET($prefix . 'day')
+		&& !GETPOSTISSET($prefix . 'month')
+		&& !GETPOSTISSET($prefix . 'year')
+		&& isset($_SESSION['DOLDATE_' . $saverestore . '_day'])
+		&& isset($_SESSION['DOLDATE_' . $saverestore . '_month'])
+		&& isset($_SESSION['DOLDATE_' . $saverestore . '_year'])
+	) {
+		$day = $_SESSION['DOLDATE_' . $saverestore . '_day'];
+		$month = $_SESSION['DOLDATE_' . $saverestore . '_month'];
+		$year = $_SESSION['DOLDATE_' . $saverestore . '_year'];
+	} else {
+		$month = GETPOSTINT($prefix . 'month');
+		$day = GETPOSTINT($prefix . 'day');
+		$year = GETPOSTINT($prefix . 'year');
+	}
+
+	// normalize out of range values
+	$hour = (int) min($hour, 23);
+	$minute = (int) min($minute, 59);
+	$second = (int) min($second, 59);
+
+	if ($saverestore) {
+		$_SESSION['DOLDATE_' . $saverestore . '_day'] = $day;
+		$_SESSION['DOLDATE_' . $saverestore . '_month'] = $month;
+		$_SESSION['DOLDATE_' . $saverestore . '_year'] = $year;
+	}
+
+	//print "$hour, $minute, $second, $month, $day, $year, $gm<br>";
+	return dol_mktime($hour, $minute, $second, $month, $day, $year, $gm);
+}
+
 /**
  *  Return value of a param into GET or POST supervariable.
  *  Use the property $user->default_values[path]['createform'] and/or $user->default_values[path]['filters'] and/or $user->default_values[path]['sortorder']
@@ -1217,117 +1318,6 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 	}
 
 	return $out;
-}
-
-/**
- *  Return the value of a $_GET or $_POST supervariable, converted into integer.
- *  Use the property $user->default_values[path]['creatform'] and/or $user->default_values[path]['filters'] and/or $user->default_values[path]['sortorder']
- *  Note: The property $user->default_values is loaded by main.php when loading the user.
- *
- *  @param  string		$paramname	Name of the $_GET or $_POST parameter
- *  @param  int<0,3>	$method		Type of method (0 = $_GET then $_POST, 1 = only $_GET, 2 = only $_POST, 3 = $_POST then $_GET)
- *  @return int						Value converted into integer
- */
-function GETPOSTINT($paramname, $method = 0)
-{
-	return (int) GETPOST($paramname, 'int', $method, null, null, 0);
-}
-
-/**
- *  Return the value of a $_GET or $_POST supervariable, converted into float.
- *
- *  @param  string          $paramname      Name of the $_GET or $_POST parameter
- *	@param	''|'MU'|'MT'|'MS'|'CU'|'CT'|int	$rounding	Type of rounding ('', 'MU', 'MT, 'MS', 'CU', 'CT', integer) {@see price2num()}
- *  @return float                           Value converted into float
- *  @since	Dolibarr V20
- */
-function GETPOSTFLOAT($paramname, $rounding = '')
-{
-	// price2num() is used to sanitize any valid user input (such as "1 234.5", "1 234,5", "1'234,5", "1·234,5", "1,234.5", etc.)
-	return (float) price2num(GETPOST($paramname), $rounding, 2);
-}
-
-/**
- * Helper function that combines values of a dolibarr DatePicker (such as Form::selectDate) for year, month, day (and
- * optionally hour, minute, second) fields to return a timestamp.
- *
- * @param 	string 		$prefix 		Prefix used to build the date selector (for instance using Form::selectDate). Example: 'select_datec'
- * @param 	string 		$hourTime		'getpost' or 'getpostend' to include hour, minute, second values from the HTTP request,
- * 										or 'XX:YY:ZZ' to set hour, minute, second respectively, for example '23:59:59'
- * 										or 'end' means '23:59:59'
- * 										or '' means '00:00:00' (default)
- * @param 	int|string 	$gm 			Passed to dol_mktime. In most cases, when used with 'getpost' or 'getpostend', it should be 'tzuserrel'. Use 'auto' if you need dates related to 'tzserver' (like in accountancy).
- * @param	string		$saverestore	Use a string family context to save retrieved date so it will be used on the next retrieval for the same family context (if value not already defined in parameters).
- * @return 	int|string  				Date as a timestamp, '' or false if error
- *
- * @see dol_mktime()
- */
-function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto', $saverestore = '')
-{
-	$m = array();
-	if ($hourTime === 'getpost' || $hourTime === 'getpostend') {
-		$hour   = (GETPOSTISSET($prefix . 'hour') && GETPOSTINT($prefix . 'hour') >= 0) ? GETPOSTINT($prefix . 'hour') : ($hourTime === 'getpostend' ? 23 : 0);
-		$minute = (GETPOSTISSET($prefix . 'min') && GETPOSTINT($prefix . 'min') >= 0) ? GETPOSTINT($prefix . 'min') : ($hourTime === 'getpostend' ? 59 : 0);
-		$second = (GETPOSTISSET($prefix . 'second') && GETPOSTINT($prefix . 'second') >= 0) ? GETPOSTINT($prefix . 'second') : ($hourTime === 'getpostend' ? 59 : 0);
-	} elseif (preg_match('/^(\d\d):(\d\d):(\d\d)$/', $hourTime, $m)) {
-		$hour   = intval($m[1]);
-		$minute = intval($m[2]);
-		$second = intval($m[3]);
-	} elseif ($hourTime === 'end') {
-		$hour = 23;
-		$minute = 59;
-		$second = 59;
-	} else {
-		$hour = $minute = $second = 0;
-	}
-
-	if (
-		$saverestore
-		&& !GETPOSTISSET($prefix . 'day')
-		&& !GETPOSTISSET($prefix . 'month')
-		&& !GETPOSTISSET($prefix . 'year')
-		&& isset($_SESSION['DOLDATE_' . $saverestore . '_day'])
-		&& isset($_SESSION['DOLDATE_' . $saverestore . '_month'])
-		&& isset($_SESSION['DOLDATE_' . $saverestore . '_year'])
-	) {
-		$day = $_SESSION['DOLDATE_' . $saverestore . '_day'];
-		$month = $_SESSION['DOLDATE_' . $saverestore . '_month'];
-		$year = $_SESSION['DOLDATE_' . $saverestore . '_year'];
-	} else {
-		$month = GETPOSTINT($prefix . 'month');
-		$day = GETPOSTINT($prefix . 'day');
-		$year = GETPOSTINT($prefix . 'year');
-	}
-
-	// normalize out of range values
-	$hour = (int) min($hour, 23);
-	$minute = (int) min($minute, 59);
-	$second = (int) min($second, 59);
-
-	if ($saverestore) {
-		$_SESSION['DOLDATE_' . $saverestore . '_day'] = $day;
-		$_SESSION['DOLDATE_' . $saverestore . '_month'] = $month;
-		$_SESSION['DOLDATE_' . $saverestore . '_year'] = $year;
-	}
-
-	//print "$hour, $minute, $second, $month, $day, $year, $gm<br>";
-	return dol_mktime($hour, $minute, $second, $month, $day, $year, $gm);
-}
-
-
-/**
- *  Return a sanitized or empty value after checking value against a rule.
- *
- *  @param  string|array<mixed>	$out	Value to check/clear.
- *  @param  string  		$check		Type of check/sanitizing
- *  @param  ?int     		$filter		Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
- *  @param  ?mixed   		$options	Options to pass to filter_var when $check is set to 'custom'
- *  @return string|array<mixed>			Value sanitized (string or array). It may be '' if format check fails.
- *  @deprecated
- */
-function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = null)
-{
-	return sanitizeVal($out, $check, $filter, $options);
 }
 
 /**
@@ -4511,23 +4501,12 @@ function dol_print_socialnetworks($value, $contactid, $socid, $type, $dictsocial
 				$addlink = 'AC_SKYPE';
 				$link = '';
 				if (getDolGlobalString('AGENDA_ADDACTIONFORSKYPE')) {
-					$link = '<a href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create&amp;backtopage=1&amp;actioncode=' . $addlink . '&amp;contactid=' . $contactid . '&amp;socid=' . $socid . '">' . img_object($langs->trans("AddAction"), "calendar") . '</a>';
+					$link = '<a href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create&backtopage=1&actioncode=' . $addlink . '&contactid=' . $contactid . '&socid=' . $socid . '">' . img_object($langs->trans("AddAction"), "calendar") . '</a>';
 				}
 				$htmllink .= ($link ? ' ' . $link : '');
 			}
 		} else {
-			$networkconstname = 'MAIN_INFO_SOCIETE_' . strtoupper($type) . '_URL';
-			if (getDolGlobalString($networkconstname)) {
-				$link = str_replace('{socialid}', $value, getDolGlobalString($networkconstname));
-				$valuetoshow = $value;
-				if (preg_match('/^https?:\/\//i', $link)) {
-					$valuetoshow = preg_replace('/https:\/\/www\.linkedin\./', 'linkedin.', $valuetoshow);
-					//$valuetoshow = preg_replace('/www\.twitter\./', 'twitter.', $valuetoshow);
-					$htmllink .= '<a href="' . dol_sanitizeUrl($link, 0) . '" target="_blank" rel="noopener noreferrer">' . dol_escape_htmltag($valuetoshow) . '</a>';
-				} elseif ($link) {
-					$htmllink .= '<a href="' . dol_sanitizeUrl($link, 1) . '" target="_blank" rel="noopener noreferrer">' . dol_escape_htmltag($valuetoshow) . '</a>';
-				}
-			} elseif (!empty($dictsocialnetworks[$type]['url'])) {
+			if (!empty($dictsocialnetworks[$type]['url'])) {
 				$tmpvirginurl = preg_replace('/\/?{socialid}/', '', $dictsocialnetworks[$type]['url']);
 				if ($tmpvirginurl) {
 					$value = preg_replace('/^www\.' . preg_quote($tmpvirginurl, '/') . '\/?/', '', $value);
@@ -4545,11 +4524,17 @@ function dol_print_socialnetworks($value, $contactid, $socid, $type, $dictsocial
 						$value = preg_replace('/^' . preg_quote($tmpvirginurl2, '/') . '\/?/', '', $value);
 					}
 				}
-				$link = str_replace('{socialid}', $value, $dictsocialnetworks[$type]['url']);
-				if (preg_match('/^https?:\/\//i', $link)) {
-					$htmllink .= '<a href="' . dol_sanitizeUrl($link, 0) . '" target="_blank" rel="noopener noreferrer">' . dol_escape_htmltag($value) . '</a>';
+				if (preg_match('/^https?:\/\//i', $value)) {
+					$link = $value;
 				} else {
-					$htmllink .= '<a href="' . dol_sanitizeUrl($link, 1) . '" target="_blank" rel="noopener noreferrer">' . dol_escape_htmltag($value) . '</a>';
+					$link = str_replace('{socialid}', $value, $dictsocialnetworks[$type]['url']);
+				}
+				$valuetoshow = $value;
+				$valuetoshow = preg_replace('/https:\/\/www\.(twitter|x|linkedin)\.com\/?/', '', $valuetoshow);
+				if (preg_match('/^https?:\/\//i', $link)) {
+					$htmllink .= '<a href="' . dol_sanitizeUrl($link, 0) . '" target="_blank" rel="noopener noreferrer">' . dol_escape_htmltag($valuetoshow) . '</a>';
+				} else {
+					$htmllink .= '<a href="' . dol_sanitizeUrl($link, 1) . '" target="_blank" rel="noopener noreferrer">' . dol_escape_htmltag($valuetoshow) . '</a>';
 				}
 			} else {
 				$htmllink .= dol_escape_htmltag($value);
@@ -5913,8 +5898,6 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 	return '<img src="' . $fullpathpicto . '"' . ($notitle ? '' : ' alt="' . dolPrintHTMLForAttribute($alt, 0, $allowothertags) . '"') . (($notitle || empty($titlealt)) ? '' : ' title="' . dolPrintHTMLForAttribute($titlealt, 0, $allowothertags) . '"') . ($moreatt ? ' ' . $moreatt . ($morecss ? ' class="' . $morecss . '"' : '') : ' class="inline-block' . ($morecss ? ' ' . $morecss : '') . '"') . '>'; // Alt is used for accessibility, title for popup
 }
 
-
-
 /**
  * Get array to convert the Dolibarr picto keys into Font awesome keys
  *
@@ -6607,7 +6590,7 @@ function img_allow($allow, $titlealt = 'default')
  *  @param  string	$morecss	More CSS
  *	@return string     			Return img tag
  */
-function img_credit_card($brand, $morecss = null)
+function img_credit_card($brand, $morecss = 'fa-2x inline-block valignmiddle')
 {
 	if (is_null($morecss)) {
 		$morecss = 'fa-2x';
@@ -7131,14 +7114,14 @@ function print_fiche_titre($title, $mesg = '', $picto = 'generic', $pictoisfullp
 /**
  *	Load a title with picto
  *
- *	@param	string	$title				Title to show (HTML sanitized content). Can be a string with a <br> as a substring.
- *	@param	string	$morehtmlright		Added message to show on right
- *	@param	string	$picto				Icon to use before title (should be a 32x32 transparent png file)
+ *	@param	string		$title				Title to show (HTML sanitized content). Can be a string with a <br> as a second string shown under the fmain title.
+ *	@param	string		$morehtmlright		Added message to show on right
+ *	@param	string		$picto				Icon to use before title (should be a 32x32 transparent png file)
  *	@param	int<0,1>	$pictoisfullpath	1=Icon name is a full absolute url of image
- * 	@param	string	$id					To force an id on html objects
- *  @param  string  $morecssontable     More css on table
- *	@param	string	$morehtmlcenter		Added message to show on center
- *  @param	string	$morecssonpicto		More css on picto
+ * 	@param	string		$id					To force an id on html objects
+ *  @param  string  	$morecssontable     More css on table
+ *	@param	string		$morehtmlcenter		Added message to show on center
+ *  @param	string		$morecssonpicto		More css on picto
  * 	@return	string
  *  @see print_barre_liste()
  */
@@ -7586,7 +7569,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 	//print $amount."-";
 	$data = explode('.', $amount);
 	$decpart = isset($data[1]) ? $data[1] : '';
-	$decpart = preg_replace('/0+$/i', '', $decpart); // Supprime les 0 de fin de partie decimale
+	$decpart = preg_replace('/0+$/i', '', $decpart); // Remove 0 at end of decimal part
 	//print "decpart=".$decpart."<br>";
 	$end = '';
 
@@ -7658,6 +7641,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
  *                                                                  Numeric = Nb of digits for rounding (For example 2 for a percentage)
  * 	@param	int<0,2>		$option			Put 1 if you know that content is already universal format number (so no correction on decimal will be done)
  * 											Put 2 if you know that number is a user input (so we know we have to fix decimal separator).
+ * 					                        Default 0 if unknown.
  *	@return	string							Amount with universal numeric format (Example: '99.99999'), or error message.
  *											If conversion fails to return a numeric, it returns:
  *											- text unchanged or partial if ($rounding = ''): price2num('W9ç', '', 0)   => '9ç', price2num('W9ç', '', 1)   => 'W9ç', price2num('W9ç', '', 2)   => '9ç'
@@ -7669,7 +7653,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
  */
 function price2num($amount, $rounding = '', $option = 0)
 {
-	global $langs, $conf;
+	global $langs;
 
 	// Clean parameters
 	if (is_null($amount)) {
@@ -9399,19 +9383,45 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 						//$out = '<html><head><meta charset="utf-8"></head><body><div class="tricktoremove">'.dol_nl2br($out).'</div></body></html>';
 					}
 
+					// Note: <a href="https://__[aaa]__/aaa.html"> is transformed into <a href="https://__[aaa]__/aaa.html">
+					// We don't want that, so we protect __[xxx]__ by replacing [ and ] before loadHTML and restore them after saveHTML
+					$out = preg_replace_callback(
+						'/__\[([0-9a-zA-Z_]+)\]__/',
+						/**
+						 * @param 	array<int,string> $m	Array of matches
+						 * @return 	string 					Translated string for the key
+						 */
+						function ($m) {
+							return '__BRACKETSTART' . $m[1] . 'BRACKETEND__';
+						},
+						$out
+					);
+
 					$dom->loadHTML($out, LIBXML_HTML_NODEFDTD | LIBXML_ERR_NONE | LIBXML_HTML_NOIMPLIED | LIBXML_NONET | LIBXML_NOWARNING | LIBXML_NOERROR | LIBXML_NOXMLDECL);
 
 					$dom->encoding = 'UTF-8';
 
 					$out = trim($dom->saveHTML());
 
+					// Restore [ and ] that were protected before loadHTML
+					$out = preg_replace_callback(
+						'/__BRACKETSTART([0-9a-zA-Z_]+)BRACKETEND__/',
+						/**
+						 * @param 	array<int,string> $m	Array of matches
+						 * @return 	string 					Translated string for the key
+						 */
+						function ($m) {
+							return '__[' . $m[1] . ']__';
+						},
+						$out
+					);
+
 					// Remove the trick added to solve pb with text in utf8 and text without parent tag
 					//$out = preg_replace('/^'.preg_quote('<?xml encoding="UTF-8">', '/').'/', '', $out);
 					$out = preg_replace('/^' . preg_quote('<html><head><', '/') . '[^<>]+' . preg_quote('></head><body><div class="tricktoremove">', '/') . '/', '', $out);
 					$out = preg_replace('/' . preg_quote('</div></body></html>', '/') . '$/', '', trim($out));
-					//                  $out = preg_replace('/^<\?xml encoding="UTF-8"><div class="tricktoremove">/', '', $out);
-					//                  $out = preg_replace('/<\/div>$/', '', $out);
-					//                  var_dump('rrrrrrrrrrrrrrrrrrrrrrrrrrrrr'.$out);
+					//$out = preg_replace('/^<\?xml encoding="UTF-8"><div class="tricktoremove">/', '', $out);
+					//$out = preg_replace('/<\/div>$/', '', $out);
 
 					if (!$outishtml) {		// If $out was not HTML content we made before a dol_nl2br so we must do the opposite operation now
 						$out = str_replace('<br>', '', $out);
@@ -10974,8 +10984,8 @@ function print_date_range($date_start, $date_end, $format = '', $outputlangs = n
  *    @param	int			$date_start    		Start date
  *    @param    int			$date_end      		End date
  *    @param    string		$format        		Output date format ('day', 'dayhour', ...)
- *    @param	Translate	$outputlangs   		Output language
- *    @param	integer		$withparenthesis	1=Add parenthesis, 0=no parenthesis
+ *    @param	?Translate	$outputlangs   		Output language
+ *    @param	int<0,2>	$withparenthesis	1=Add space and parenthesis, 0=no parenthesis, 2=Add parenthesis
  *    @return	string							String
  */
 function get_date_range($date_start, $date_end, $format = '', $outputlangs = null, $withparenthesis = 1)
@@ -10989,13 +10999,13 @@ function get_date_range($date_start, $date_end, $format = '', $outputlangs = nul
 	}
 
 	if ($date_start && $date_end) {
-		$out .= ($withparenthesis ? ' (' : '') . $outputlangs->transnoentitiesnoconv('DateFromTo', dol_print_date($date_start, $format, false, $outputlangs), dol_print_date($date_end, $format, false, $outputlangs)) . ($withparenthesis ? ')' : '');
+		$out .= ($withparenthesis ? ($withparenthesis == 1 ? ' ' : '').'(' : '') . $outputlangs->transnoentitiesnoconv('DateFromTo', dol_print_date($date_start, $format, false, $outputlangs), dol_print_date($date_end, $format, false, $outputlangs)) . ($withparenthesis ? ')' : '');
 	}
 	if ($date_start && !$date_end) {
-		$out .= ($withparenthesis ? ' (' : '') . $outputlangs->transnoentitiesnoconv('DateFrom', dol_print_date($date_start, $format, false, $outputlangs)) . ($withparenthesis ? ')' : '');
+		$out .= ($withparenthesis ? ($withparenthesis == 1 ? ' ' : '').'(' : '') . $outputlangs->transnoentitiesnoconv('DateFrom', dol_print_date($date_start, $format, false, $outputlangs)) . ($withparenthesis ? ')' : '');
 	}
 	if (!$date_start && $date_end) {
-		$out .= ($withparenthesis ? ' (' : '') . $outputlangs->transnoentitiesnoconv('DateUntil', dol_print_date($date_end, $format, false, $outputlangs)) . ($withparenthesis ? ')' : '');
+		$out .= ($withparenthesis ? ($withparenthesis == 1 ? ' ' : '').'(' : '') . $outputlangs->transnoentitiesnoconv('DateUntil', dol_print_date($date_end, $format, false, $outputlangs)) . ($withparenthesis ? ')' : '');
 	}
 
 	return $out;
@@ -11011,8 +11021,6 @@ function get_date_range($date_start, $date_end, $format = '', $outputlangs = nul
  */
 function dolGetFirstLastname($firstname, $lastname, $nameorder = -1)
 {
-	global $conf;
-
 	$ret = '';
 	// If order not defined, we use the setup
 	if ($nameorder < 0) {
@@ -11587,7 +11595,7 @@ function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid =
  *	Check if a variable with name $var start with $regextext.
  *  Can be used to forge dol_eval() conditions.
  *
- *  @param	string			$var		Variable
+ *  @param	string			$var		Variable name ('mainmenu' or 'leftmenu', ...)
  *  @param	string			$regextext	Text that must be a valid regex string
  *  @param	int<0,1>		$matchrule	1=Test if start with, 0=Test if equal
  *  @return	boolean|string				True or False, text if bad usage.
@@ -12683,7 +12691,6 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 function printCommonFooter($zone = 'private')
 {
 	global $conf, $hookmanager, $user, $langs;
-	global $debugbar;
 	global $action;
 	global $micro_start_time;
 
@@ -12697,8 +12704,10 @@ function printCommonFooter($zone = 'private')
 	print "\n<!-- A div to store page_y POST parameter -->\n";
 	print '<div id="page_y" style="display: none;">' . (GETPOST('page_y') ? GETPOST('page_y') : '') . '</div>' . "\n";
 
-	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printCommonFooter', $parameters); // Note that $action and $object may have been modified by some hooks
+	$parameters = array('zone' => $zone);
+	$tmpobject = null;
+	// @phan-suppress-next-line PhanPluginConstantVariableNull
+	$reshook = $hookmanager->executeHooks('printCommonFooter', $parameters, $tmpobject, $action); // Note that $action and $object may have been modified by some hooks
 	if (empty($reshook)) {
 		if (getDolGlobalString('MAIN_HTML_FOOTER')) {
 			print getDolGlobalString('MAIN_HTML_FOOTER') . "\n";
@@ -12892,7 +12901,7 @@ function printCommonFooter($zone = 'private')
 			print "\n" . '</script>' . "\n";
 
 			// Google Analytics
-			// TODO Add a hook here
+			// TODO Remove this, can be replaced with the hook printCommonFooter
 			if (isModEnabled('google') && getDolGlobalString('MAIN_GOOGLE_AN_ID')) {
 				$tmptagarray = explode(',', getDolGlobalString('MAIN_GOOGLE_AN_ID'));
 				foreach ($tmptagarray as $tmptag) {
@@ -12918,15 +12927,23 @@ function printCommonFooter($zone = 'private')
 			print_r(xdebug_get_code_coverage());
 		}
 
+		// Output string from hooks
+		if (!empty($hookmanager->resPrint)) {
+			print $hookmanager->resPrint;
+		}
+
 		// Add DebugBar data
-		if ($user->hasRight('debugbar', 'read') && $debugbar instanceof DebugBar\DebugBar) {
-			if (isset($debugbar['time'])) {
-				// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
-				$debugbar['time']->stopMeasure('pageaftermaster');
+		if ($user->hasRight('debugbar', 'read')) {
+			global $debugbar;
+			if ($debugbar instanceof DebugBar\DebugBar) {
+				if (isset($debugbar['time'])) {
+					// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
+					$debugbar['time']->stopMeasure('pageaftermaster');
+				}
+				print '<!-- Output debugbar data -->' . "\n";
+				$renderer = $debugbar->getJavascriptRenderer();
+				print $renderer->render();
 			}
-			print '<!-- Output debugbar data -->' . "\n";
-			$renderer = $debugbar->getJavascriptRenderer();
-			print $renderer->render();
 		} elseif (count($conf->logbuffer)) {    // If there is some logs in buffer to show
 			print "\n";
 			print "<!-- Start of log output\n";
@@ -16804,8 +16821,8 @@ function buildParamDate($prefix, $timestamp = null, $hourTime = '', $gm = 'auto'
 	if ($hourTime === 'getpost' || ($timestamp !== null && dol_print_date($timestamp, '%H:%M:%S') !== '00:00:00')) {
 		$TParam = array_merge($TParam, array(
 			$prefix . 'hour'   => intval(dol_print_date($timestamp, '%H')),
-			$prefix . 'minute' => intval(dol_print_date($timestamp, '%M')),
-			$prefix . 'second' => intval(dol_print_date($timestamp, '%S'))
+			$prefix . 'min' => intval(dol_print_date($timestamp, '%M')),
+			$prefix . 'sec' => intval(dol_print_date($timestamp, '%S'))
 		));
 	}
 

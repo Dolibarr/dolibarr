@@ -138,6 +138,7 @@ $usercancreatecontract = $user->hasRight("contrat", "creer");
 // Advanced permissions
 $usercanvalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($usercancreate)) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight("fournisseur", "supplier_invoice_advance", "validate")));
 $usercansend = (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || $user->hasRight("fournisseur", "supplier_invoice_advance", "send"));
+$usercancreatecreditransfer = $user->hasRight('paymentbybanktransfer', 'create');
 
 // Permissions for includes
 $permissionnote = $usercancreate; // Used by the include of actions_setnotes.inc.php
@@ -3679,9 +3680,9 @@ if ($action == 'create') {
 				$s = '<span class="hideonsmartphone opacitymedium">' . $langs->trans("ReCalculate") . ' </span>';
 				$s .= '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=calculate&token='.newToken().'&calculationrule=totalofround">' . $langs->trans("Mode1") . '</a>';
 				$s .= ' / ';
-				$s .= '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=calculate&token='.newToken().'&calculationrule=roundoftotal">' . $langs->trans("Mode2") . '</a>';
+				$s .= '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=calculate&token='.newToken().'&calculationrule=roundoftotal">' . ($conf->dol_optimize_smallscreen ? "2" : $langs->trans("Mode2")) . '</a>';
 				print '<div class="inline-block">';
-				print $form->textwithtooltip($s, $langs->trans("CalculationRuleDesc", $calculationrulenum) . '<br>' . $langs->trans("CalculationRuleDescSupplier"), 2, 1, img_picto('', 'help'), '', 3, '', 0, 'recalculate');
+				print $form->textwithtooltip($s, $langs->trans("CalculationRuleDesc", $calculationrulenum) . '<br>' . $langs->trans("CalculationRuleDescSupplier"), 2, 1, img_picto('', 'help', 'class="paddingleft paddingright"'), '', 3, '', 0, 'recalculate');
 				print '&nbsp; &nbsp; &nbsp; &nbsp;';
 				print '</div>';
 			}
@@ -3817,7 +3818,7 @@ if ($action == 'create') {
 								$bankaccountstatic->accountancy_journal = $accountingjournal->getNomUrl(0, 1, 1, '', 1);
 							}
 
-							print '<td class="right">';
+							print '<td class="right nowraponall">';
 							if ($objp->baid > 0) {
 								print $bankaccountstatic->getNomUrl(1, 'transactions');
 							}
@@ -4218,6 +4219,24 @@ if ($action == 'create') {
 						} else {
 							print dolGetButtonAction('', $langs->trans('SendMail'), 'email', '#', '', false);
 						}
+					}
+				}
+
+				// Request a direct debit order
+				if ($object->status > FactureFournisseur::STATUS_DRAFT && $object->paid == 0) {
+					$langs->load("withdrawals");
+					if ($resteapayer > 0) {
+						if ($usercancreatecreditransfer) {
+							if (!$objectidnext && $object->close_code != 'replaced') { 				// Not replaced by another invoice
+								print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$object->id.'&type=bank-transfer" title="'.dol_escape_htmltag($langs->trans("MakeBankTransferOrder")).'">'.$langs->trans("MakeBankTransferOrder").'</a>';
+							} else {
+								print '<span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('MakeBankTransferOrder').'</span>';
+							}
+						} else {
+							//print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
+						}
+					} else {
+						//print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("AmountMustBePositive")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
 					}
 				}
 

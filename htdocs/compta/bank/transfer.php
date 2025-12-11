@@ -86,7 +86,6 @@ if ($action == 'add' && $user->hasRight('banque', 'transfer')) {
 	$type = array();
 	$number = array();
 	$tabnum = array();
-	$maxtab = 1;
 
 	while ($i < $MAXLINESFORTRANSFERT) {
 		$dateo[$i] = dol_mktime(12, 0, 0, GETPOSTINT($i.'_month'), GETPOSTINT($i.'_day'), GETPOSTINT($i.'_year'));
@@ -101,7 +100,6 @@ if ($action == 'add' && $user->hasRight('banque', 'transfer')) {
 		$tabnum[$i] = 0;
 		if (!empty($label[$i]) || !($amount[$i] <= 0) || !($accountfrom[$i] < 0) || !($accountto[$i]  < 0)) {
 			$tabnum[$i] = 1;
-			$maxtab = $i;
 		}
 		$i++;
 	}
@@ -306,7 +304,9 @@ print '<th>'.$langs->trans("TransferFrom").'</th>';
 print '<th>'.$langs->trans("TransferTo").'</th>';
 print '<th>'.$langs->trans("Type").'</th>';
 print '<th>'.$langs->trans("Date").'</th>';
-print '<th>'.$langs->trans("Number").'</th>';
+if (getDolGlobalString('BANK_TRANSFER_ASK_CHQ_NUMBER_OF_SRC_ACCOUNT')) {
+	print '<th>'.$langs->trans("ChequeNumber").'</th>';
+}
 print '<th>'.$langs->trans("Description").'</th>';
 print '<th class="right">'.$langs->trans("Amount").'</th>';
 print '<td class="hideobject multicurrency right">'.$langs->trans("AmountToOthercurrency").'</td>';
@@ -354,8 +354,10 @@ for ($i = 1 ; $i < $MAXLINESFORTRANSFERT; $i++) {
 	print $form->selectDate((!empty($dateo[$i]) ? $dateo[$i] : ''), $i.'_', 0, 0, 0, 'add');
 	print "</td>\n";
 
-	// Number
-	print '<td><input name="'.$i.'_num_chq" class="flat quatrevingtpercent selectjs" type="text" value="'.dol_escape_htmltag($number).'"></td>';
+	// Cheque Number
+	if (getDolGlobalString('BANK_TRANSFER_ASK_CHQ_NUMBER_OF_SRC_ACCOUNT')) {
+		print '<td><input name="'.$i.'_num_chq" class="flat quatrevingtpercent selectjs" type="text" value="'.dol_escape_htmltag($number).'"></td>';
+	}
 
 	// Description
 	print '<td><input name="'.$i.'_label" class="flat quatrevingtpercent selectjs" type="text" value="'.dol_escape_htmltag($label).'"></td>';

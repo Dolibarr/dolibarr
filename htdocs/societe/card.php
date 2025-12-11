@@ -1004,7 +1004,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 		 *  Creation
 		 */
 		$private = GETPOSTINT("private");
-		if (getDolGlobalString('THIRDPARTY_DEFAULT_CREATE_CONTACT') && !GETPOSTISSET('private')) {
+		if (getDolGlobalString('THIRDPARTY_DEFAULT_CREATE_CONTACT') && !GETPOSTISSET('private') && GETPOST("type", 'aZ') != 'f') {
 			$private = 1;
 		}
 		if (empty($private)) {

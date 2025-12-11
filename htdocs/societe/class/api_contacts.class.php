@@ -22,6 +22,7 @@ use Luracast\Restler\RestException;
 
 //require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 //require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 
 /**
@@ -365,6 +366,17 @@ class Contacts extends DolibarrApi
 				}
 				continue;
 			}
+			if ($field == 'socid') {
+				$new_socid = (int) $value;
+				$loopthirdpartytmp = new Societe($this->db);
+				$new_thirdparty_result = $loopthirdpartytmp->fetch($new_socid);
+				if ($new_thirdparty_result < 1) {
+					throw new RestException(404, 'Thirdparty with id='.$new_socid.' not found or not allowed');
+				}
+				if (!DolibarrApi::_checkAccessToResource('societe', $new_socid)) {
+					throw new RestException(403, 'Access to socid/thirdparty='.$new_socid.' is not allowed for login '.DolibarrApiAccess::$user->login);
+				}
+			}
 
 			$this->contact->$field = $this->_checkValForAPI($field, $value, $this->contact);
 		}
@@ -421,6 +433,17 @@ class Contacts extends DolibarrApi
 					$this->contact->array_options[$index] = $this->_checkValForAPI($field, $val, $this->contact);
 				}
 				continue;
+			}
+			if ($field == 'socid') {
+				$new_socid = (int) $value;
+				$loopthirdpartytmp = new Societe($this->db);
+				$new_thirdparty_result = $loopthirdpartytmp->fetch($new_socid);
+				if ($new_thirdparty_result < 1) {
+					throw new RestException(404, 'Thirdparty with id='.$new_socid.' not found or not allowed');
+				}
+				if (!DolibarrApi::_checkAccessToResource('societe', $new_socid)) {
+					throw new RestException(403, 'Access to socid/thirdparty='.$new_socid.' is not allowed for login '.DolibarrApiAccess::$user->login);
+				}
 			}
 
 			$this->contact->$field = $this->_checkValForAPI($field, $value, $this->contact);

@@ -129,9 +129,13 @@ if ($action == 'add') {
 		} else {
 			$jsonData = json_encode($socialNetworkData);
 			$result = dolibarr_set_const($db, "SOCIAL_NETWORKS_DATA_".$socialNetworkName, $jsonData, 'chaine', 0, '', $conf->entity);
+			if ($result <= 0) {
+				$error++;
+				setEventMessages($langs->trans("ErrorInputRequired"), null, 'errors');
+			}
 		}
 	}
-	if ($result) {
+	if (!$error) {
 		$db->commit();
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;

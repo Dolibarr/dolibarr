@@ -329,15 +329,13 @@ if (empty($reshook)) {
 			$object->date_shipping = $date_shipping; // Sending date
 			$object->shipping_method_id = GETPOSTINT('shipping_method_id');
 			$object->tracking_number = GETPOST('tracking_number', 'alpha');
-			$object->note = GETPOST('note', 'restricthtml'); // deprecated
+			$object->note = GETPOST('note_private', 'restricthtml'); // deprecated
 			$object->note_private = GETPOST('note_private', 'restricthtml');
 			$object->note_public = GETPOST('note_public', 'restricthtml');
 			$object->fk_incoterms = GETPOSTINT('incoterm_id');
 			$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 
 			$product = new Product($db);
-
-
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -371,7 +369,7 @@ if (empty($reshook)) {
 			$object->date_shipping = $date_shipping; // Sending date
 			$object->shipping_method_id = GETPOSTINT('shipping_method_id');
 			$object->tracking_number = GETPOST('tracking_number', 'alpha');
-			$object->note = GETPOST('note', 'restricthtml'); // deprecated
+			$object->note = GETPOST('note_private', 'restricthtml'); // deprecated
 			$object->note_private = GETPOST('note_private', 'restricthtml');
 			$object->note_public = GETPOST('note_public', 'restricthtml');
 			$object->fk_incoterms = GETPOSTINT('incoterm_id');

@@ -34,10 +34,6 @@ if (!defined('NOTOKENRENEWAL')) {
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -45,6 +41,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('errors', 'admin', 'modulebuilder', 'exports'));
@@ -268,7 +267,7 @@ $head = modulehelp_prepare_head($objMod);
 
 // Check filters
 $modulename = $objMod->getName();
-$moduledesc = $objMod->getDesc();
+$moduledesc = $objMod->getDesc(1);
 $moduleauthor = $objMod->getPublisher();
 $moduledir = strtolower(preg_replace('/^mod/i', '', get_class($objMod)));
 
