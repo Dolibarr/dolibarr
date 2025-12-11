@@ -28,9 +28,23 @@ class CheckIsModEnabledArgumentSniff implements Sniff
 	// Nom de la fonction cible
 	protected $targetFunction = 'ismodenabled';
 
-	protected $validModules = [
-		'asset',
-		'notification',
+	protected $deprecatedModulesNames = [
+		'actioncomm' => 'agenda',
+		'adherent' => 'member',
+		'adherent_type' => 'member_type',
+		'banque' => 'bank',
+		'categorie' => 'category',
+		'commande' => 'order',
+		'contrat' => 'contract',
+		'entrepot' => 'stock',
+		'expedition' => 'shipping',
+		'facture' => 'invoice',
+		'ficheinter' => 'intervention',
+		'product_fournisseur_price' => 'productsupplierprice',
+		'product_price' => 'productprice',
+		'projet'  => 'project',
+		'propale' => 'propal',
+		'socpeople' => 'contact',
 	];
 
 	/**
@@ -74,15 +88,15 @@ class CheckIsModEnabledArgumentSniff implements Sniff
 		}
 
 		// check value of argument
-		$argContent = $tokens[$firstArgTokenPtr]['content'];
-		$argCode    = $tokens[$firstArgTokenPtr]['code'];
+		$argContent = str_replace(["'", '"'], '', $tokens[$firstArgTokenPtr]['content']);
+		$argCode = $tokens[$firstArgTokenPtr]['code'];
 
-		if (!in_array($argContent, $this->validModules)) {
+		if (in_array($argContent, $this->deprecatedModulesNames)) {
 			$phpcsFile->addError(
-				'The function "%s" has invalid argument (%s).',
+				'The function "%s" has deprecated argument ("%s") to replace with "%s".',
 				$firstArgTokenPtr,
 				'InvalidNumericArgument',
-				[$this->targetFunction, $argContent]
+				[$tokens[$stackPtr]['content'], $argContent, $this->deprecatedModulesNames[$argContent]]
 			);
 		}
 	}
