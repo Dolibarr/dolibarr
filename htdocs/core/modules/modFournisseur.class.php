@@ -942,7 +942,7 @@ class modFournisseur extends DolibarrModules
 			'cd.fk_product'         => 'rowid@'.MAIN_DB_PREFIX.'product',
 			'cd.multicurrency_code' => 'code@'.MAIN_DB_PREFIX.'multicurrency'
 		);
-		$this->import_updatekeys_array[$r] = array('cd.fk_commande' => 'Purchase Order Id');
+		$this->import_updatekeys_array[$r] = array('cd.fk_commande' => 'Purchase Order Id', 'cd.rang' => 'LinePosition');
 		$this->import_convertvalue_array[$r] = array(
 			'cd.fk_commande' => array(
 				'rule'    => 'fetchidfromref',
