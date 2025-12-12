@@ -54,7 +54,7 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : get
 $backtopage  = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss   = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
-$hmacexportkey = GETPOST('hmacexportkey', 'password');
+//$hmacexportkey = GETPOST('hmacexportkey', 'password');
 
 $search_showonlyerrors = GETPOSTINT('search_showonlyerrors');
 if ($search_showonlyerrors < 0) {
@@ -179,13 +179,15 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Year")), null, "errors");
 		$error++;
 	}
+	/*
 	if (empty($hmacexportkey)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Password")), null, "errors");
 		$error++;
 	}
+	*/
 
-	$dates = dol_get_first_day(GETPOSTINT('yeartoexport'), GETPOSTINT('monthtoexport') ? GETPOSTINT('monthtoexport') : 1);
-	$datee = dol_get_last_day(GETPOSTINT('yeartoexport'), GETPOSTINT('monthtoexport') ? GETPOSTINT('monthtoexport') : 12);
+	$dates = dol_get_first_day(GETPOSTINT('yeartoexport'), GETPOSTINT('monthtoexport') > 0 ? GETPOSTINT('monthtoexport') : 1);
+	$datee = dol_get_last_day(GETPOSTINT('yeartoexport'), GETPOSTINT('monthtoexport') > 0 ? GETPOSTINT('monthtoexport') : 12);
 
 	if ($datee >= dol_now()) {
 		setEventMessages($langs->trans("ErrorPeriodMustBePastToAllowExport"), null, "errors");
@@ -256,14 +258,17 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 		$sql .= " FROM ".MAIN_DB_PREFIX."blockedlog";
 		$sql .= " WHERE entity = ".((int) $conf->entity);
 		if (GETPOSTINT('monthtoexport') > 0 || GETPOSTINT('yeartoexport') > 0) {
-			$dates = dol_get_first_day(GETPOSTINT('yeartoexport'), GETPOSTINT('monthtoexport') ? GETPOSTINT('monthtoexport') : 1);
-			$datee = dol_get_last_day(GETPOSTINT('yeartoexport'), GETPOSTINT('monthtoexport') ? GETPOSTINT('monthtoexport') : 12);
+			$dates = dol_get_first_day(GETPOSTINT('yeartoexport'), GETPOSTINT('monthtoexport') > 0 ? GETPOSTINT('monthtoexport') : 1);
+			$datee = dol_get_last_day(GETPOSTINT('yeartoexport'), GETPOSTINT('monthtoexport') > 0 ? GETPOSTINT('monthtoexport') : 12);
 			$sql .= " AND date_creation BETWEEN '".$db->idate($dates)."' AND '".$db->idate($datee)."'";
 		}
 		$sql .= " ORDER BY rowid ASC"; // Required so later we can use the parameter $previoushash of checkSignature()
 
 		$resql = $db->query($sql);
 		if ($resql) {
+			$registrationnumber = getHashUniqueIdOfRegistration();
+			$secretkey = $registrationnumber;
+
 			$yearmonthtoexport = GETPOSTINT('yeartoexport').(GETPOSTINT('monthtoexport') > 0 ? sprintf("%02d", GETPOSTINT('monthtoexport')) : '');
 			$yearmonthdateofexport = dol_print_date(dol_now(), 'dayhourlog', 'gmt');
 
@@ -275,7 +280,7 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 			$fh = fopen($tmpfile, 'w');
 
 			// Print line with title
-			fwrite($fh, "BEGIN - date=".$yearmonthdateofexport
+			fwrite($fh, "BEGIN - date=".$yearmonthdateofexport." - period=".$yearmonthtoexport." - format=V1"
 				.';'.$langs->transnoentities('Id')
 				.';'.$langs->transnoentities('DateCreation')
 				.';'.$langs->transnoentities('Action')
@@ -290,6 +295,8 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 				.';'.$langs->transnoentities('Fingerprint')
 				.';'.$langs->transnoentities('Status')
 				.';'.$langs->transnoentities('FingerprintExport')
+				.';'.$langs->transnoentities('FingerprintFormat')
+				//.';'.$langs->transnoentities('FingerprintExportHMAC')
 				."\n");
 
 			$loweridinerror = 0;
@@ -301,14 +308,13 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 				$block_static->id = $obj->rowid;
 				$block_static->entity = $obj->entity;
 
-
-				$block_static->date_creation = $db->jdate($obj->date_creation);		// TODO Use gmt
+				$block_static->date_creation = $db->jdate($obj->date_creation);		// jdate(date_creation) is UTC
 
 				$block_static->amounts = (float) $obj->amounts;						// Database store value with 8 digits, we cut ending 0 them with (flow)
 				$block_static->vat = $obj->vat;
 
 				$block_static->action = $obj->action;
-				$block_static->date_object = $db->jdate($obj->date_object);			// TODO Use gmt ?
+				$block_static->date_object = $db->jdate($obj->date_object);			// jdate(date_object) is UTC
 				$block_static->ref_object = $obj->ref_object;
 
 				$block_static->user_fullname = $obj->user_fullname;
@@ -335,7 +341,7 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 				$block_static->debuginfo = $obj->debuginfo;
 
 				//var_dump($block->id.' '.$block->signature, $block->object_data);
-				$checksignature = $block_static->checkSignature($previoushash); // If $previoushash is not defined, checkSignature will search it
+				$checksignature = $block_static->checkSignature($previoushash); 	// If $previoushash is not defined, checkSignature will search it
 
 				if ($checksignature) {
 					$statusofrecord = 'Valid';
@@ -354,7 +360,11 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 					$statusofrecordnote = $langs->trans("PreviousFingerprint").': '.$previoushash.($statusofrecordnote ? ' - '.$statusofrecordnote : '');
 				}
 
-				$signatureexport = 'TODO';
+				$concatenateddata = $block_static->buildKeyForSignature();
+
+				// Version archive V1=sha256
+				$signatureexport = dol_hash($previoushash.$concatenateddata, 'sha256');		// SHA256
+				//$signatureexporthmac = 'TODO';
 
 				fwrite($fh,
 					';'.$block_static->id
@@ -370,7 +380,9 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 					.';"'.str_replace('"', '""', $block_static->object_version).'";"'
 					.str_replace('"', '""', $block_static->signature).'";"'
 					.str_replace('"', '""', $statusofrecord).'";"'
-					.str_replace('"', '""', $signatureexport).'"'
+					.str_replace('"', '""', $signatureexport).'";"'
+					.str_replace('"', '""', $block_static->object_format).'";'
+					//.str_replace('"', '""', $signatureexporthmac).'"'
 					//.';'.$statusofrecordnote
 					."\n");
 
@@ -384,11 +396,11 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 
 			// Calculate the md5 of the file (the last line has a return line)
 			$algo = 'sha256';
-			$secretkey = 'TODOASKBEFOREEXPORT';
+			$sha256 = hash_file($algo, $tmpfile);
 			$hmacsha256 = hash_hmac_file($algo, $tmpfile, $secretkey);
 
 			// Now add a signature to check integrity at end of file
-			file_put_contents($tmpfile, 'END - hmac_sha256='.$hmacsha256, FILE_APPEND);
+			file_put_contents($tmpfile, 'END - sha256='.$sha256.' - hmac_sha256='.$hmacsha256, FILE_APPEND);
 
 			setEventMessages($langs->trans("FileGenerated"), null);
 		} else {
@@ -540,7 +552,8 @@ print '<input type="text" name="yeartoexport" class="valignmiddle maxwidth75imp"
 
 print ' ';
 
-print '<input type="text" name="hmacexportkey" class="valignmiddle minwidth150imp maxwidth300imp" required value="'.GETPOST('hmacexportkey').'" placeholder="'.$langs->trans("Password").'">';
+// Disabled, we will use the getHashUniqueIdOfRegistration() as secret HMAC
+//print '<input type="text" name="hmacexportkey" class="valignmiddle minwidth150imp maxwidth300imp" required value="'.GETPOST('hmacexportkey').'" placeholder="'.$langs->trans("Password").'">';
 
 print ' ';
 

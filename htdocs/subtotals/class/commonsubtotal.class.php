@@ -212,17 +212,18 @@ trait CommonSubtotal
 				SUBTOTALS_SPECIAL_CODE	// Special code
 			);
 			$this->fetch_lines();
-		} elseif ($current_module == 'fichinter') {
-			$result = $this->addline( // @phpstan-ignore-line
-				$user,					// user @phpstan-ignore-line
-				$this->id,				// fk_fichinter @phpstan-ignore-line
-				$desc,					// Description @phpstan-ignore-line
-				0,						// dateintervention  @phpstan-ignore-line
-				$depth,					// duration  @phpstan-ignore-line
-				[],						// arrayoption  @phpstan-ignore-line
-				self::$PRODUCT_TYPE,	// Type @phpstan-ignore-line
-				$rang,					// Rang @phpstan-ignore-line
-				SUBTOTALS_SPECIAL_CODE	// Special code @phpstan-ignore-line
+		} elseif ($current_module == 'fichinter' && $this instanceof Fichinter) {
+			global $user;
+			$result = $this->addline(
+				$user,					// user
+				$this->id,				// fk_fichinter
+				$desc,					// Description
+				0,						// dateintervention
+				$depth,					// duration
+				[],						// arrayoption
+				self::$PRODUCT_TYPE,	// Type
+				$rang,					// Rang
+				SUBTOTALS_SPECIAL_CODE	// Special code
 			);
 		}
 

@@ -9,11 +9,11 @@
  */
 return [
     // # Issue statistics:
-    // PhanUndeclaredProperty : 420+ occurrences
-    // PhanTypeMismatchProperty : 95+ occurrences
+    // PhanUndeclaredProperty : 410+ occurrences
     // PhanTypeMismatchArgument : 65+ occurrences
     // PhanUndeclaredGlobalVariable : 60+ occurrences
     // PhanTypeMismatchArgumentNullable : 20+ occurrences
+    // PhanTypeMismatchProperty : 20+ occurrences
     // PhanTypeInvalidDimOffset : 15+ occurrences
     // PhanTypeMismatchDimFetch : 10+ occurrences
     // PhanUndeclaredMethod : 6 occurrences
@@ -116,10 +116,8 @@ return [
         'htdocs/core/modules/facture/doc/pdf_octopus.modules.php' => ['PhanTypeMismatchArgument', 'PhanUndeclaredProperty'],
         'htdocs/core/modules/fichinter/doc/pdf_soleil.modules.php' => ['PhanTypeMismatchArgumentNullable'],
         'htdocs/core/modules/holiday/mod_holiday_immaculate.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/core/modules/hrm/doc/pdf_standard_evaluation.modules.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/modules/hrm/mod_evaluation_advanced.php' => ['PhanUndeclaredProperty'],
-        'htdocs/core/modules/import/import_csv.modules.php' => ['PhanPossiblyUndeclaredVariable', 'PhanTypeMismatchProperty'],
-        'htdocs/core/modules/import/import_xlsx.modules.php' => ['PhanTypeMismatchProperty'],
+        'htdocs/core/modules/import/import_csv.modules.php' => ['PhanPossiblyUndeclaredVariable'],
         'htdocs/core/modules/member/modules_cards.php' => ['PhanTypeMismatchArgument'],
         'htdocs/core/modules/mrp/doc/pdf_vinci.modules.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/modules/mrp/mod_mo_advanced.php' => ['PhanUndeclaredProperty'],

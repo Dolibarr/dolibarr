@@ -747,25 +747,9 @@ class Asset extends CommonObject
 			return -1;
 		}
 
-		// Old request with 'WITH'
-		/*
-		$sql = "WITH in_accounting_bookkeeping(fk_docdet) AS (";
-		$sql .= " SELECT DISTINCT fk_docdet";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping";
-		$sql .= " WHERE doc_type = 'asset'";
-		$sql .= ")";
-		$sql .= "SELECT ad.rowid, ad.depreciation_mode, ad.ref, ad.depreciation_date, ad.depreciation_ht, ad.cumulative_depreciation_ht";
-		$sql .= ", " . $this->db->ifsql('iab.fk_docdet IS NOT NULL', 1, 0) . " AS bookkeeping";
+		$sql = "SELECT ad.rowid, ad.depreciation_mode, ad.ref, ad.depreciation_date, ad.depreciation_ht, ad.cumulative_depreciation_ht,";
+		$sql .= " " . $this->db->ifsql('EXISTS (SELECT fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab WHERE ab.doc_type = \'asset\' AND ab.fk_docdet = ad.rowid)', '1', '0') . " AS bookkeeping";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "asset_depreciation AS ad";
-		$sql .= " LEFT JOIN in_accounting_bookkeeping as iab ON iab.fk_docdet = ad.rowid";
-		$sql .= " WHERE ad.fk_asset = " . (int) $this->id;
-		$sql .= " ORDER BY ad.depreciation_date ASC";
-		*/
-
-		$sql = "SELECT ad.rowid, ad.depreciation_mode, ad.ref, ad.depreciation_date, ad.depreciation_ht, ad.cumulative_depreciation_ht";
-		$sql .= ", " . $this->db->ifsql('iab.fk_docdet IS NOT NULL', '1', '0') . " AS bookkeeping";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "asset_depreciation AS ad";
-		$sql .= " LEFT JOIN (SELECT DISTINCT fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE doc_type = 'asset') AS iab ON iab.fk_docdet = ad.rowid";
 		$sql .= " WHERE ad.fk_asset = " . (int) $this->id;
 		$sql .= " ORDER BY ad.depreciation_date ASC";
 

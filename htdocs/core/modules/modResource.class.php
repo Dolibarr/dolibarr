@@ -196,7 +196,7 @@ class modResource extends DolibarrModules
 			'langs' => 'resource',
 			'position' => 100,
 			'enabled' => '1',
-			'perms' => '$user->rights->resource->read',
+			'perms' => '$user->hasRight("resource", "read")',
 			'user' => 0
 		);
 		$r++;
@@ -211,7 +211,7 @@ class modResource extends DolibarrModules
 			'langs' => 'resource',
 			'position' => 101,
 			'enabled' => '1',
-			'perms' => '$user->rights->resource->write',
+			'perms' => '$user->hasRight("resource", "write")',
 			'target' => '',
 			'user' => 0
 		);
@@ -226,7 +226,7 @@ class modResource extends DolibarrModules
 			'langs' => 'resource',
 			'position' => 102,
 			'enabled' => '1',
-			'perms' => '$user->rights->resource->read',
+			'perms' => '$user->hasRight("resource", "read")',
 			'target' => '',
 			'user' => 0
 		);
