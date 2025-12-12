@@ -100,9 +100,9 @@ class mod_codeproduct_elephant extends ModeleProductCode
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4c");
 		$tooltip .= $langs->trans("GenericMaskCodes5");
-		//$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
+		// $tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
-		// Stetting of prefix customers
+		// Setting of prefix customers
 		$texte .= '<tr><td>'.$langs->trans("ProductCodeModel").'</td>';
 		$texte .= '<td class="right nowraponall">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="value1" placeholder="'.$langs->trans("Mask").'" value="'.getDolGlobalString('PRODUCT_ELEPHANT_MASK_PRODUCT').'"'.$disabled.'>', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name).'</td>';
 
@@ -171,7 +171,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	/**
 	 * Return next value
 	 *
-	 * @param	Product		$objproduct     Object product
+	 * @param	Product		$objproduct Object product
 	 * @param  	int		    $type       Product or service (0:product, 1:service)
 	 * @return 	string|-1      			Value if OK, '' if module not configured, -1 if KO
 	 */
@@ -302,7 +302,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	 *
 	 *  @param	DoliDB		$db			Handler access base
 	 *  @param	string		$code		Code a verifier
-	 *  @param	Product		$product		Object product
+	 *  @param	Product		$product	Object product
 	 *  @return	int						0 if available, <0 if KO
 	 */
 	public function verif_dispo($db, $code, $product)
