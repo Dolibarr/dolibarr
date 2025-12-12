@@ -536,7 +536,7 @@ class Tasks extends DolibarrApi
 	 *
 	 * @url	GET {id}/getTimeSpent/{timespent_id}
 	 *
-	 * @return  TimeSpent
+	 * @return	Object                      data without useless information
 	 *
 	 * @throws	RestException
 	 */
@@ -945,8 +945,4 @@ class Tasks extends DolibarrApi
 		}
 		return $object;
 	}
-
-
-	// \todo
-	// getSummaryOfTimeSpent
 }

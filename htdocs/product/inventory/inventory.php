@@ -72,9 +72,9 @@ $totalExpectedValuation = 0;
 $totalRealValuation = 0;
 $hookmanager->initHooks(array('inventorycard')); // Note that conf->hooks_modules contains array
 if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
-	$result = restrictedArea($user, 'stock', $id);
+	$result = restrictedArea($user, 'stock', $id, 'inventory&stock');
 } else {
-	$result = restrictedArea($user, 'stock', $id, '', 'inventory_advance');
+	$result = restrictedArea($user, 'stock', $id, 'inventory&stock', 'inventory_advance');
 }
 
 // Initialize a technical objects

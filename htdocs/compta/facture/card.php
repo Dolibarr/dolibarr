@@ -6390,14 +6390,15 @@ if ($action == 'create') {
 			}
 
 			// Subtotal
-			if ($object->status == Facture::STATUS_DRAFT && isModEnabled('subtotals') && getDolGlobalString('SUBTOTAL_TITLE_'.strtoupper($object->element))) {
+			if ($object->status == Facture::STATUS_DRAFT && isModEnabled('subtotals')
+				&& (getDolGlobalInt('SUBTOTAL_TITLE_'.strtoupper($object->element)) || getDolGlobalInt('SUBTOTAL_'.strtoupper($object->element)))) {
 				$langs->load("subtotals");
 
 				$url_button = array();
 
 				$url_button[] = array(
 					'lang' => 'subtotals',
-					'enabled' => (isModEnabled('invoice') && $object->status == Facture::STATUS_DRAFT),
+					'enabled' => (isModEnabled('invoice') && $object->status == Facture::STATUS_DRAFT && getDolGlobalInt('SUBTOTAL_TITLE_'.strtoupper($object->element))),
 					'perm' => (bool) $usercancreate,
 					'label' => $langs->trans('AddTitleLine'),
 					'url' => '/compta/facture/card.php?facid='.$object->id.'&action=add_title_line&token='.newToken()
@@ -6405,7 +6406,7 @@ if ($action == 'create') {
 
 				$url_button[] = array(
 					'lang' => 'subtotals',
-					'enabled' => (isModEnabled('invoice') && $object->status == Facture::STATUS_DRAFT),
+					'enabled' => (isModEnabled('invoice') && $object->status == Facture::STATUS_DRAFT  && getDolGlobalInt('SUBTOTAL_'.strtoupper($object->element))),
 					'perm' => (bool) $usercancreate,
 					'label' => $langs->trans('AddSubtotalLine'),
 					'url' => '/compta/facture/card.php?facid='.$object->id.'&action=add_subtotal_line&token='.newToken()
@@ -6558,7 +6559,7 @@ if ($action == 'create') {
 				}
 			}
 
-			// For situation invoice with excess received
+			// For situation invoice
 			if ($object->status > Facture::STATUS_DRAFT
 				&& $object->isSituationInvoice()
 				&& ($object->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits) > 0

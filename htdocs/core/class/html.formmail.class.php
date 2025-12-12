@@ -657,7 +657,7 @@ class FormMail extends Form
 				if (in_array($key, array('__NEWREF__', '__REFCLIENT__', '__REFSUPPLIER__', '__SUPPLIER_ORDER_DATE_DELIVERY__', '__SUPPLIER_ORDER_DELAY_DELIVERY__'))) {
 					continue;
 				}
-				$helpforsubstitution .= $key.' -> '.$langs->trans(dol_string_nohtmltag(dolGetFirstLineOfText($val))).'<br>';
+				$helpforsubstitution .= $key.' -> '.$langs->trans(dol_string_nohtmltag(dolGetFirstLineOfText((string) $val))).'<br>';
 			}
 			if (is_array($this->substit) && count($this->substit)) {
 				$helpforsubstitution .= '</span>';

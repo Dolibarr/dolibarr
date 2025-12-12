@@ -294,7 +294,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 	}
 
 	//dol_syslog("price.lib::calcul_price_total $qty, $pu, $remise_percent_ligne, $txtva, $price_base_type $info_bits");
-	if ($price_base_type == 'HT') {
+	if ($price_base_type != 'TTC') {
 		// We work to define prices using the price without tax
 		$result[6] = price2num($tot_sans_remise, 'MT');
 		$result[8] = price2num($tot_sans_remise * (1 + ((($info_bits & 1) ? 0 : $txtva) / 100)) + $localtaxes[0], 'MT'); // Selon TVA NPR ou non
@@ -386,7 +386,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 
 	// If rounding is not using base 10 (rare)
 	if (getDolGlobalString('MAIN_ROUNDING_RULE_TOT')) {
-		if ($price_base_type == 'HT') {
+		if ($price_base_type != 'TTC') {
 			$result[0] = price2num(round((float) $result[0] / (float) $conf->global->MAIN_ROUNDING_RULE_TOT, 0) * (float) $conf->global->MAIN_ROUNDING_RULE_TOT, 'MT');
 			$result[1] = price2num(round((float) $result[1] / (float) $conf->global->MAIN_ROUNDING_RULE_TOT, 0) * (float) $conf->global->MAIN_ROUNDING_RULE_TOT, 'MT');
 			$result[9] = price2num(round((float) $result[9] / (float) $conf->global->MAIN_ROUNDING_RULE_TOT, 0) * (float) $conf->global->MAIN_ROUNDING_RULE_TOT, 'MT');

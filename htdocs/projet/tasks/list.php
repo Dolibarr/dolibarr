@@ -70,7 +70,7 @@ $search_project_user = GETPOST('search_project_user', 'intcomma');
 $search_task_user = GETPOST('search_task_user', 'intcomma');
 $search_task_progress = GETPOST('search_task_progress');
 $search_task_budget_amount = GETPOST('search_task_budget_amount');
-$search_task_status = GETPOST('search_task_status');
+$search_task_status = GETPOSTISSET('search_task_status') ? GETPOSTINT('search_task_status') : -1;
 $search_societe = GETPOST('search_societe');
 $search_societe_alias = GETPOST('search_societe_alias');
 $search_opp_status = GETPOST("search_opp_status", 'alpha');
@@ -272,9 +272,10 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
-if (empty($search_projectstatus) && $search_projectstatus == '') {
-	$search_projectstatus = 1;
-}
+// already done at line 85
+// if (empty($search_projectstatus) && $search_projectstatus == '') {
+// 	$search_projectstatus = 1;
+// }
 
 /*
  * View
@@ -576,7 +577,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}

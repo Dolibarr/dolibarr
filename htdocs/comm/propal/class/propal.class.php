@@ -18,8 +18,8 @@
  * Copyright (C) 2022       ATM Consulting          <contact@atm-consulting.fr>
  * Copyright (C) 2022       OpenDSI                 <support@open-dsi.fr>
  * Copyright (C) 2022      	Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -272,12 +272,12 @@ class Propal extends CommonObject
 	public $address;
 
 	/**
-	 * @var int availability ID
+	 * @var ?int availability ID can be null in db
 	 */
 	public $availability_id;
 
 	/**
-	 * @var int availability ID
+	 * @var ?int availability ID
 	 * @deprecated
 	 * @see $availability_id
 	 */
@@ -1909,11 +1909,14 @@ class Propal extends CommonObject
 		$sql .= " fk_statut = ".(isset($this->status) ? (int) $this->status : "null").",";
 		$sql .= " fk_user_author = ".(!empty($this->user_author_id) ? (int) $this->user_author_id : "null").",";
 		$sql .= " fk_user_valid = ".(!empty($this->user_validation_id) ? (int) $this->user_validation_id : "null").",";
+
 		$sql .= " fk_projet = ".(!empty($this->fk_project) ? (int) $this->fk_project : "null").",";
 		$sql .= " fk_cond_reglement = ".(!empty($this->cond_reglement_id) ? (int) $this->cond_reglement_id : "null").",";
 		$sql .= " deposit_percent = ".(!empty($this->deposit_percent) ? "'".$this->db->escape($this->deposit_percent)."'" : "null").",";
 		$sql .= " fk_mode_reglement = ".(!empty($this->mode_reglement_id) ? (int) $this->mode_reglement_id : "null").",";
 		$sql .= " fk_input_reason = ".(!empty($this->demand_reason_id) ? (int) $this->demand_reason_id : "null").",";
+		$sql .= " fk_shipping_method=".(isset($this->shipping_method_id) ? (int) $this->shipping_method_id : "null").",";
+		$sql .= " fk_availability=".(isset($this->availability_id) ? (int) $this->availability_id : "null").",";
 		$sql .= " note_private = ".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " note_public = ".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " model_pdf = ".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
