@@ -501,7 +501,7 @@ class Don extends CommonObject
 	/**
 	 *  Update a donation record
 	 *
-	 *  @param 		User	$user   Object utilisateur qui met a jour le don
+	 *  @param 		User	$user   Object User which updates the donation
 	 *  @param      int		$notrigger	Disable triggers
 	 *  @return     int      		>0 if OK, <0 if KO
 	 */

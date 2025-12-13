@@ -95,7 +95,7 @@ class CheckIsModEnabledArgumentSniff implements Sniff
 			$phpcsFile->addError(
 				'The function "%s" has deprecated argument ("%s") to replace with "%s".',
 				$firstArgTokenPtr,
-				'InvalidNumericArgument',
+				'DeprecatedArgument',
 				[$tokens[$stackPtr]['content'], $argContent, $this->deprecatedModulesNames[$argContent]]
 			);
 		}
