@@ -42,6 +42,7 @@ class LanguageOfCommentsSniff implements Sniff
 		' contrats ',
 		' depuis ',
 		' diviser ',
+		' donnée ',
 		' entier ',
 		// ' facture ', // avoid french name of dolibarr object
 		' factures ',
