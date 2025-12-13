@@ -493,12 +493,6 @@ parameters:
 			path: ../../../htdocs/admin/fediverse.php
 
 		-
-			message: '#^Variable \$result might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/admin/fediverse.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 2
@@ -561,12 +555,6 @@ parameters:
 		-
 			message: '#^Variable \$arrayofparameters in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/admin/hrm.php
-
-		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/admin/hrm.php
 
@@ -827,12 +815,6 @@ parameters:
 			identifier: isset.variable
 			count: 1
 			path: ../../../htdocs/admin/security_file.php
-
-		-
-			message: '#^Variable \$smsfile might not be defined\.$#'
-			identifier: variable.undefined
-			count: 5
-			path: ../../../htdocs/admin/sms.php
 
 		-
 			message: '#^Loose comparison using \=\= between ''add'' and ''add'' will always evaluate to true\.$#'

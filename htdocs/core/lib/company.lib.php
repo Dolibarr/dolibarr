@@ -1876,7 +1876,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 	}
 	$sortfield_new = implode(',', $sortfield_new_list);
 
-	$complete = (string) $filters['search_complete'];	// Can be 'na', '0', '50', '100'
+	$complete = (string) ($filters['search_complete'] ?? '');	// Can be 'na', '0', '50', '100'
 	$percent = $complete !== '' ? $complete : -1;
 	if ((string) $complete == '0') {
 		$percent = '0';
