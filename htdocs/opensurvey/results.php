@@ -1059,7 +1059,7 @@ if (empty($testligneamodifier)) {
 		print '</td>'."\n";
 	}
 
-	// Affichage du bouton de formulaire pour inscrire un nouvel utilisateur dans la base
+	// Display of the form button to register a new user in the database
 	print '<td><input type="image" name="boutonp" class="borderimp classfortooltip" title="'.dolPrintHTML($langs->trans("AddTheVote")).'" value="'.$langs->trans("Vote").'" src="'.img_picto('', 'edit_add', '', 0, 1).'"></td>'."\n";
 	print '</tr>'."\n";
 }
