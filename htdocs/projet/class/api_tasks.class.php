@@ -62,6 +62,8 @@ class Tasks extends DolibarrApi
 		global $db, $conf;
 		$this->db = $db;
 		$this->task = new Task($this->db);
+		$this->project = new Project($this->db);
+
 	}
 
 	/**
@@ -85,7 +87,9 @@ class Tasks extends DolibarrApi
 		if (!$result) {
 			throw new RestException(404, 'Task not found');
 		}
-
+		$result = $this->project->fetch($$this->task->fk_project);
+		
+		
 		if ($this->project->public == 0 && !DolibarrApi::_checkAccessToResource('task', $this->task->id)) {
 			throw new RestException(403, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
 		}
