@@ -321,6 +321,16 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 		if (!$errorforline) {
 			foreach ($tabht[$key] as $k => $mt) {
 				if ($mt) {
+					if (empty($conf->cache['accountingaccountincurrententity'][$k])) {
+						$accountingaccount = new AccountingAccount($db);
+						$accountingaccount->fetch(0, $k, true);
+						$conf->cache['accountingaccountincurrententity'][$k] = $accountingaccount;
+					} else {
+						$accountingaccount = $conf->cache['accountingaccountincurrententity'][$k];
+					}
+
+					$account_label = $accountingaccount->label;
+
 					// get compte id and label
 					if ($accountingaccount->fetch(null, $k, true)) {
 						$bookkeeping = new BookKeeping($db);
@@ -335,9 +345,9 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 						$bookkeeping->subledger_label = '';
 
 						$bookkeeping->numero_compte = $k;
-						$bookkeeping->label_compte = $accountingaccount->label;
+						$bookkeeping->label_compte = $account_label;
 
-						$bookkeeping->label_operation = $accountingaccount->label;
+						$bookkeeping->label_operation = $account_label;
 						$bookkeeping->montant = $mt;
 						$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
 						$bookkeeping->debit = ($mt > 0) ? $mt : 0;
@@ -383,12 +393,12 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 
 				foreach ($arrayofvat[$key] as $k => $mt) {
 					if ($mt) {
-						if (empty($conf->cache['accountingaccountincurrententity'][$k])) {
+						if (empty($conf->cache['accountingaccountincurrententity_vat'][$k])) {
 							$accountingaccount = new AccountingAccount($db);
 							$accountingaccount->fetch(0, $k, true);
-							$conf->cache['accountingaccountincurrententity'][$k] = $accountingaccount;
+							$conf->cache['accountingaccountincurrententity_vat'][$k] = $accountingaccount;
 						} else {
-							$accountingaccount = $conf->cache['accountingaccountincurrententity'][$k];
+							$accountingaccount = $conf->cache['accountingaccountincurrententity_vat'][$k];
 						}
 
 						$account_label = $accountingaccount->label;

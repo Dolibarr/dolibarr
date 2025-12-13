@@ -122,8 +122,10 @@ function getAttachments($jk, $mbox)
 
 	$fpos = 2;
 	$attachments = array();
-	$nb = count($parts);
-	if ($nb && !empty($parts)) {
+
+	if (!empty($parts)) {
+		$nb = count($parts);
+
 		for ($i = 1; $i < $nb; $i++) {
 			$part = $parts[$i];
 
@@ -140,6 +142,7 @@ function getAttachments($jk, $mbox)
 			$fpos++;
 		}
 	}
+
 	return $attachments;
 }
 

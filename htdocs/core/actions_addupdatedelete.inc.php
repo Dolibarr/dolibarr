@@ -396,7 +396,7 @@ if ($action == "update_extras" && GETPOSTINT('id') > 0 && !empty($permissiontoad
 
 	$object->oldcopy = dol_clone($object, 2);
 
-	$attribute = GETPOST('attribute', 'alphanohtml');
+	$attribute = GETPOST('attribute', 'aZ09');
 
 	$error = 0;
 

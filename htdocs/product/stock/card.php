@@ -73,8 +73,7 @@ if (!$sortorder) {
 }
 
 // Security check
-//$result=restrictedArea($user,'stock', $id, 'entrepot&stock');
-$result = restrictedArea($user, 'stock');
+$result=restrictedArea($user, 'stock', $id, 'entrepot&stock');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('warehousecard', 'stocklist', 'globalcard'));
