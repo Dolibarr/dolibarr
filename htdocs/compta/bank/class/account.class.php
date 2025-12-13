@@ -1389,7 +1389,7 @@ class Account extends CommonObject
 		global $conf, $langs;
 
 		if ($user->socid) {
-			return -1; // protection pour eviter appel par utilisateur externe
+			return -1; // Protection to prevent calls by external users
 		}
 
 		$sql = "SELECT b.rowid, b.datev as datefin";
@@ -1444,7 +1444,7 @@ class Account extends CommonObject
 		global $user;
 
 		if ($user->socid) {
-			return -1; // protection pour eviter appel par utilisateur externe
+			return -1; // Protection to prevent calls by external users
 		}
 
 		$sql = "SELECT count(b.rowid) as nb";
