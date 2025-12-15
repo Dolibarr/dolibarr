@@ -171,12 +171,12 @@ class FormMargin
 		}
 
 		// Prevent rounding error and division by zero
-		$marginInfos['pa_products'] = (float) price2num($marginInfos['pa_products'], 'MAIN_MAX_DECIMALS_TOT');
-		$marginInfos['pv_products'] = (float) price2num($marginInfos['pv_products'], 'MAIN_MAX_DECIMALS_TOT');
-		$marginInfos['pa_services'] = (float) price2num($marginInfos['pa_services'], 'MAIN_MAX_DECIMALS_TOT');
-		$marginInfos['pv_services'] = (float) price2num($marginInfos['pv_services'], 'MAIN_MAX_DECIMALS_TOT');
-		$marginInfos['pa_total'] = (float) price2num($marginInfos['pa_total'], 'MAIN_MAX_DECIMALS_TOT');
-		$marginInfos['pv_total'] = (float) price2num($marginInfos['pv_total'], 'MAIN_MAX_DECIMALS_TOT');
+		$marginInfos['pa_products'] = (float) price2num($marginInfos['pa_products'], 'MT');
+		$marginInfos['pv_products'] = (float) price2num($marginInfos['pv_products'], 'MT');
+		$marginInfos['pa_services'] = (float) price2num($marginInfos['pa_services'], 'MT');
+		$marginInfos['pv_services'] = (float) price2num($marginInfos['pv_services'], 'MT');
+		$marginInfos['pa_total'] = (float) price2num($marginInfos['pa_total'], 'MT');
+		$marginInfos['pv_total'] = (float) price2num($marginInfos['pv_total'], 'MT');
 
 		if ($marginInfos['pa_products'] > 0) {
 			$marginInfos['margin_rate_products'] = 100 * $marginInfos['margin_on_products'] / $marginInfos['pa_products'];
