@@ -993,7 +993,7 @@ if (empty($reshook)) {
 
 						if (!$error && isModEnabled('bom') && $user->hasRight('bom', 'write')) {
 							$defbomidac = 0; // to avoid cloning same BOM twice
-							$clone_defbom = GETPOSTISSET('clone_defbom') ? 1 : 0;
+							$clone_defbom = (int) GETPOST('clone_defbom', 'int');
 							if ($clone_defbom && $object->fk_default_bom > 0) {
 								$bomstatic = new BOM($db);
 								$bomclone = $bomstatic->createFromClone($user, $object->fk_default_bom);
