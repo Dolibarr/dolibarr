@@ -25,6 +25,7 @@
  * Copyright (C) 2024		Lenin Rivas					<lenin.rivas777@gmail.com>
  * Copyright (C) 2024		Josep Lluís Amador Teruel	<joseplluis@lliuretic.cat>
  * Copyright (C) 2024		Benoît PASCAL				<contact@p-ben.com>
+ * Copyright (C) 2020-2025	BERTON Anthony 				<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15015,7 +15016,7 @@ function getActionCommEcmList($object)
  *	@param  string				$sortorder	Sort order
  *	@return	?string							Return html part or void if noprint is 1
  */
-function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, $noprint = 0, $actioncode = '', $donetodo = 'done', $filters = array(), $sortfield = 'a.datep,a.id', $sortorder = 'DESC')
+function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, $noprint = 0, $actioncode = '', $donetodo = 'done', $filters = array(), $sortfield = 'a.datep,a.id', $sortorder = 'DESC', $module = '')
 {
 	global $user, $conf;
 	global $form;
@@ -15104,6 +15105,10 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 			$sql .= ", ".MAIN_DB_PREFIX."facture as o";
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'FactureFournisseur') {
 			$sql .= ", ".MAIN_DB_PREFIX."facture_fourn as o";
+		} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid'])
+		&& ((!empty($filterobj->fields['ref']) && is_array($filterobj->fields['ref'])) || (!empty($filterobj->fields['label']) && is_array($filterobj->fields['label'])) || (!empty($filterobj->fields['titre']) && is_array($filterobj->fields['titre'])))  // @phan-suppress-current-line PhanTypeInvalidDimOffset
+		&& $filterobj->table_element && $filterobj->element) {
+			$sql .= ", ".MAIN_DB_PREFIX.$filterobj->table_element." as o";
 		}
 
 		$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
@@ -15162,6 +15167,14 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 				if ($filterobj->id) {
 					$sql .= " AND a.fk_element = ".((int) $filterobj->id)." AND a.elementtype = 'invoice_supplier'";
 				}
+			} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid'])
+				&& ((!empty($filterobj->fields['ref']) && is_array($filterobj->fields['ref'])) || (!empty($filterobj->fields['label']) && is_array($filterobj->fields['label'])) || (!empty($filterobj->fields['titre']) && is_array($filterobj->fields['titre'])))  // ref, titre, label do not exist on $fields - @phan-suppress-current-line PhanTypeInvalidDimOffset
+				&& $filterobj->table_element && $filterobj->element) {
+				// Generic case (if there is a $filterobj and a field rowid and (ref or label) exists.
+				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = '".$db->escape($filterobj->element).($module ? "@".$module : "")."'";
+				if ($filterobj->id) {
+					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
+				}
 			}
 		} else {
 			$sql .= " AND u.rowid = ". ((int) $filterobj->id);
@@ -15187,7 +15200,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 				} elseif ($actioncode == 'AC_ALL_AUTO') {
 					$sql .= " AND c.type = 'systemauto'";
 				} else {
-					$sql .= " AND c.code = '".$db->escape($actioncode)."'";
+					$sql .= " AND c.code = '".$db->escape($actioncode[0])."'";
 				}
 			}
 		}

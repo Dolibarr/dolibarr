@@ -1,5 +1,7 @@
 <?php
-/* Copyright (C) ---Replace with your own copyright and developer email---
+/* Copyright (C) 2017		Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2020-2025	BERTON Anthony 			<anthony.berton@bb2a.fr>
+ * Copyright (C) ---Replace with your own copyright and developer email---
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,7 +90,11 @@ function myobjectPrepareHead($object)
 	}
 
 	if ($showtabofpageagenda) {
-		$head[$h][0] = dol_buildpath("/mymodule/myobject_agenda.php", 1).'?id='.$object->id;
+		if (dolversion_compare(DOL_VERSION, '22.0.0') >= 0) {
+			$head[$h][0] = dol_buildpath("/mymodule/myobject_messaging.php", 1).'?id='.$object->id;
+		} else {
+			$head[$h][0] = dol_buildpath("/mymodule/myobject_agenda.php", 1).'?id='.$object->id;
+		}
 		$head[$h][1] = $langs->trans("Events");
 		$head[$h][2] = 'agenda';
 		$h++;
