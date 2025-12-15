@@ -1404,3 +1404,5 @@ Archives=Archives
 LastMainDoc=Last generated document
 OK=OK
 KO=KO
+AddThisPageToBookmarks = Add current page to bookmarks
+EditBookmarks = List/edit bookmarks

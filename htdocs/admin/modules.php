@@ -452,7 +452,7 @@ if ($action == 'set' && $user->admin) {
 	header("Location: ".$_SERVER["PHP_SELF"]."?mode=".$mode.$param.($page_y ? '&page_y='.$page_y : ''));
 	exit;
 } elseif (getDolGlobalInt("MAIN_FEATURES_LEVEL") > 1 && $action == 'reload' && $user->admin && GETPOST('confirm') == 'yes') {
-	$result = unActivateModule($value, 0);
+	$result = unActivateModule($value, 0, 'newboxdefonly');		// unactivate all module features but for widget, we reload only definition and we do not change position or setup
 	dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1, 'chaine', 0, '', $conf->entity);
 	if ($result) {
 		setEventMessages($result, null, 'errors');
