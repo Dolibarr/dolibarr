@@ -1959,7 +1959,7 @@ if (empty($reshook)) {
 			$price_base_type = $product->price_base_type;
 
 			// If base type TTc, we change pu value to define the TTC one
-			if ($price_base_type == 'TTC') {
+			if ($price_base_type == 'TTC' && !empty($pu_ttc)) {
 				$pu = $pu_ttc;
 			}
 

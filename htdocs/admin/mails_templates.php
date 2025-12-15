@@ -543,17 +543,17 @@ if (empty($reshook)) {
 					if ($i) {
 						$sql .= ", ";
 					}
-					$sql .= $field."=";
+					$sql .= $field." = ";
 
 					if ((GETPOST($keycode) == '' && in_array($keycode, array('langcode'))) || (!in_array($keycode, array('langcode', 'position', 'private', 'defaultfortype')) && !GETPOST($keycode))) {
 						$sql .= "null"; // langcode,... must be '' if not defined so the unique key that include lang will work
-					} elseif (GETPOST($keycode) == '0' && $keycode == 'langcode') {
+					} elseif ($keycode == 'langcode' && (GETPOST($keycode) == '0' || GETPOST($keycode) == '-1')) {
 						$sql .= "''"; // langcode must be '' if not defined so the unique key that include lang will work
 					} elseif ($keycode == 'fk_user') {
 						if (!$user->admin) {	// A non admin user can only edit its own template
-							$sql .= " ".((int) $user->id);
+							$sql .= ((int) $user->id);
 						} else {
-							$sql .= " ".(GETPOSTINT($keycode));
+							$sql .= (GETPOSTINT($keycode) > 0 ? GETPOSTINT($keycode) : "null");
 						}
 					} elseif ($keycode == 'content') {
 						$sql .= "'".$db->escape(GETPOST($keycode, 'restricthtml'))."'";
@@ -1024,7 +1024,7 @@ foreach ($fieldlist as $field => $value) {
 		print $form->select_dolusers($search_fk_user, 'search_fk_user', 1, null, 0, ($user->admin ? '' : 'hierarchyme'), array(), '0', 0, 0, '', 0, '', 'maxwidth100', 1);
 		print '</td>';
 	} elseif ($value == 'topic') {
-		print '<td class="liste_titre"><input type="text" name="search_topic" value="'.dol_escape_htmltag($search_topic).'" spellcheck="false"></td>';
+		print '<td class="liste_titre"><input type="text" class="maxwidth150" name="search_topic" value="'.dol_escape_htmltag($search_topic).'" spellcheck="false"></td>';
 	} elseif ($value == 'type_template') {
 		print '<td class="liste_titre center">';
 		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
@@ -1594,7 +1594,7 @@ function fieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 			}
 
 			print '<td'.($classtd ? ' class="'.$classtd.'"' : '').'>';
-			if ($value == 'private' && $context != 'preview') {
+			if (in_array($value, array('defaultfortype', 'private')) && $context != 'preview') {
 				if (empty($user->admin)) {
 					// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 					print $form->selectyesno($value, GETPOSTISSET($value) ? GETPOSTINT($value) : (($context != 'add' && isset($obj->$value)) ? $obj->$value : '1'), 1, false, 0, 1);

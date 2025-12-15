@@ -186,8 +186,8 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 	}
 	*/
 
-	$dates = dol_get_first_day(GETPOSTINT('yeartoexport'), GETPOSTINT('monthtoexport') ? GETPOSTINT('monthtoexport') : 1);
-	$datee = dol_get_last_day(GETPOSTINT('yeartoexport'), GETPOSTINT('monthtoexport') ? GETPOSTINT('monthtoexport') : 12);
+	$dates = dol_get_first_day(GETPOSTINT('yeartoexport'), GETPOSTINT('monthtoexport') > 0 ? GETPOSTINT('monthtoexport') : 1);
+	$datee = dol_get_last_day(GETPOSTINT('yeartoexport'), GETPOSTINT('monthtoexport') > 0 ? GETPOSTINT('monthtoexport') : 12);
 
 	if ($datee >= dol_now()) {
 		setEventMessages($langs->trans("ErrorPeriodMustBePastToAllowExport"), null, "errors");
@@ -280,7 +280,7 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 			$fh = fopen($tmpfile, 'w');
 
 			// Print line with title
-			fwrite($fh, "BEGIN - date=".$yearmonthdateofexport." - period=".$yearmonthtoexport
+			fwrite($fh, "BEGIN - date=".$yearmonthdateofexport." - period=".$yearmonthtoexport." - format=V1"
 				.';'.$langs->transnoentities('Id')
 				.';'.$langs->transnoentities('DateCreation')
 				.';'.$langs->transnoentities('Action')
@@ -295,6 +295,7 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 				.';'.$langs->transnoentities('Fingerprint')
 				.';'.$langs->transnoentities('Status')
 				.';'.$langs->transnoentities('FingerprintExport')
+				.';'.$langs->transnoentities('FingerprintFormat')
 				//.';'.$langs->transnoentities('FingerprintExportHMAC')
 				."\n");
 
@@ -307,14 +308,13 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 				$block_static->id = $obj->rowid;
 				$block_static->entity = $obj->entity;
 
-
-				$block_static->date_creation = $db->jdate($obj->date_creation);		// TODO Use gmt
+				$block_static->date_creation = $db->jdate($obj->date_creation);		// jdate(date_creation) is UTC
 
 				$block_static->amounts = (float) $obj->amounts;						// Database store value with 8 digits, we cut ending 0 them with (flow)
 				$block_static->vat = $obj->vat;
 
 				$block_static->action = $obj->action;
-				$block_static->date_object = $db->jdate($obj->date_object);			// TODO Use gmt ?
+				$block_static->date_object = $db->jdate($obj->date_object);			// jdate(date_object) is UTC
 				$block_static->ref_object = $obj->ref_object;
 
 				$block_static->user_fullname = $obj->user_fullname;
@@ -341,7 +341,7 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 				$block_static->debuginfo = $obj->debuginfo;
 
 				//var_dump($block->id.' '.$block->signature, $block->object_data);
-				$checksignature = $block_static->checkSignature($previoushash); // If $previoushash is not defined, checkSignature will search it
+				$checksignature = $block_static->checkSignature($previoushash); 	// If $previoushash is not defined, checkSignature will search it
 
 				if ($checksignature) {
 					$statusofrecord = 'Valid';
@@ -360,8 +360,11 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 					$statusofrecordnote = $langs->trans("PreviousFingerprint").': '.$previoushash.($statusofrecordnote ? ' - '.$statusofrecordnote : '');
 				}
 
-				$signatureexport = 'TODO';
-				$signatureexporthmac = 'TODO';
+				$concatenateddata = $block_static->buildKeyForSignature();
+
+				// Version archive V1=sha256
+				$signatureexport = dol_hash($previoushash.$concatenateddata, 'sha256');		// SHA256
+				//$signatureexporthmac = 'TODO';
 
 				fwrite($fh,
 					';'.$block_static->id
@@ -377,7 +380,8 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 					.';"'.str_replace('"', '""', $block_static->object_version).'";"'
 					.str_replace('"', '""', $block_static->signature).'";"'
 					.str_replace('"', '""', $statusofrecord).'";"'
-					.str_replace('"', '""', $signatureexport).'";'
+					.str_replace('"', '""', $signatureexport).'";"'
+					.str_replace('"', '""', $block_static->object_format).'";'
 					//.str_replace('"', '""', $signatureexporthmac).'"'
 					//.';'.$statusofrecordnote
 					."\n");

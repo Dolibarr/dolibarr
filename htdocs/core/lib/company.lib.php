@@ -1876,7 +1876,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 	}
 	$sortfield_new = implode(',', $sortfield_new_list);
 
-	$complete = (string) $filters['search_complete'];	// Can be 'na', '0', '50', '100'
+	$complete = (string) ($filters['search_complete'] ?? '');	// Can be 'na', '0', '50', '100'
 	$percent = $complete !== '' ? $complete : -1;
 	if ((string) $complete == '0') {
 		$percent = '0';
@@ -2406,29 +2406,33 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 				if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) {
 					// The same day
 					if ($tmpa['hours'] != $tmpb['hours'] || $tmpa['minutes'] != $tmpb['minutes']) {
-						$out .=  dol_print_date($histo[$key]['datestart'], 'dayreduceformat', 'tzuserrel');
-						$out .=  '<br><span class="small opacitymedium">';
-						$out .=  dol_print_date($histo[$key]['datestart'], 'hourreduceformat', 'tzuserrel');
-						$out .=  '-'.dol_print_date($histo[$key]['dateend'], 'hourreduceformat', 'tzuserrel');
-						$out .=  '</span>';
+						$out .= '<div class="center inline-block lineheightsmall">';
+						$out .= dol_print_date($histo[$key]['datestart'], 'dayreduceformat', 'tzuserrel');
+						$out .= '<br><span class="opacitymedium hourspan">';
+						$out .= dol_print_date($histo[$key]['datestart'], 'hourreduceformat', 'tzuserrel');
+						$out .= '-'.dol_print_date($histo[$key]['dateend'], 'hourreduceformat', 'tzuserrel');
+						$out .= '</span>';
+						$out .= '</div>';
 					} else {
-						$out .=  dol_print_date($histo[$key]['datestart'], 'dayreduceformat', 'tzuserrel');
-						$out .=  '<br><span class="small opacitymedium">';
-						$out .=  dol_print_date($histo[$key]['datestart'], 'hourreduceformat', 'tzuserrel');
-						$out .=  '</span>';
+						$out .= '<div class="center inline-block lineheightsmall">';
+						$out .= dol_print_date($histo[$key]['datestart'], 'dayreduceformat', 'tzuserrel');
+						$out .= '<br><span class="opacitymedium hourspan">';
+						$out .= dol_print_date($histo[$key]['datestart'], 'hourreduceformat', 'tzuserrel');
+						$out .= '</span>';
+						$out .= '</div>';
 					}
 				} else {
 					// Not the same day
-					$out .=  '<div class="center inline-block">';
+					$out .=  '<div class="center inline-block lineheightsmall">';
 					$out .=  dol_print_date($histo[$key]['datestart'], 'dayreduceformat', 'tzuserrel');
-					$out .=  '<br><span class="small opacitymedium">';
+					$out .=  '<br><span class="opacitymedium hourspan">';
 					$out .=  dol_print_date($histo[$key]['datestart'], 'hourreduceformat', 'tzuserrel');
 					$out .=  '</span>';
 					$out .=  '</div>';
 					$out .=  ' ';
-					$out .=  '<div class="center inline-block">';
+					$out .=  '<div class="center inline-block lineheightsmall">';
 					$out .=  dol_print_date($histo[$key]['dateend'], 'dayreduceformat', 'tzuserrel');
-					$out .=  '<br><span class="small opacitymedium">';
+					$out .=  '<br><span class="opacitymedium hourspan">';
 					$out .=  dol_print_date($histo[$key]['dateend'], 'hourreduceformat', 'tzuserrel');
 					$out .=  '</span>';
 					$out .=  '</div>';

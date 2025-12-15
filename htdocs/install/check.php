@@ -640,7 +640,7 @@ if (!file_exists($conffile)) {
 		print '</table>'."\n";
 
 		if (count($notavailable_choices)) {
-			print '<br><div id="AShowChoices" style="opacity: 0.5">';
+			print '<br><div id="AShowChoices" class="opacitymedium cursorpointer">';
 			print '> '.$langs->trans('ShowNotAvailableOptions').'...';
 			print '</div>';
 

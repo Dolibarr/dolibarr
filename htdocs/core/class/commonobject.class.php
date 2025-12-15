@@ -3377,13 +3377,7 @@ abstract class CommonObject
 				$this->context['bankaccountupdate'] = 1;
 
 				$triggerName = (empty($this->TRIGGER_PREFIX) ? strtoupper(get_class($this)) : $this->TRIGGER_PREFIX);
-				if (get_class($this) == 'Commande') {
-					$triggerName = 'ORDER';	// TODO Remove this when TRIGGER_PREFI in order is implemented
-				}
-				if ($triggerName == 'FACTUREREC_MODIFY') {	// TODO Use the $this->TRIGGER_PREFIX when implemented
-					$triggerName = 'BILLREC_MODIFY';
-				}
-				$result = $this->call_trigger($triggerName, $userused);
+				$result = $this->call_trigger($triggerName . '_MODIFY', $userused);
 				if ($result < 0) {
 					$error++;
 				}

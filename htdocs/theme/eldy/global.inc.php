@@ -351,7 +351,7 @@ table.liste th.wrapcolumntitle.liste_titre_sel:not(.maxwidthsearch), table.liste
 }
 th.wrapcolumntitle dl dt a span.fas.fa-list {
 	vertical-align: middle;
-	padding-bottom: 1px;
+	padding-bottom: 4px;
 }
 
 .liste_titre input[name=search_month], .liste_titre input[name=search_month_start], .liste_titre input[name=search_month_end] {
@@ -735,6 +735,9 @@ input.pageplusone {
 	margin-right: 4px;
 	margin-left: 3px;
 	width: 32px;
+	border-top: 0;
+	border-left: 0;
+	border-right: 0;
 }
 .paginationlastpage a {
 	padding-left: 6px;
@@ -980,9 +983,6 @@ button:focus {
 .fa-info-circle {
 	padding-<?php echo $left; ?>: 3px;
 }
-.line-height-large {
-	line-height: 1.8em;
-}
 
 th .button {
 	box-shadow: none !important;
@@ -1046,6 +1046,9 @@ textarea.centpercent {
 }
 .lineheightsmall {
 	line-height: 1.2em;
+}
+.line-height-large {
+	line-height: 1.8em;
 }
 .large {
 	font-size: 125%;
@@ -1117,6 +1120,12 @@ textarea.centpercent {
 .liste_titre .nowrap {
 	white-space: nowrap;
 }
+.liste_titre.sticky {
+	position: sticky;
+	top:0;
+	z-index: 2;
+}
+
 .nowraponall {	/* no wrap on all devices */
 	white-space: nowrap;
 }
@@ -2729,9 +2738,10 @@ div.fiche {
 	margin-<?php print $left; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '24' : '6')); ?>px;
 	margin-top: 0px;
 }
-
 .page-modulehelp div.fiche {
 	width: 100%;
+	margin-left: 15px;
+	margin-right: 20px;
 }
 body.onlinepaymentbody div.fiche {	/* For online payment page */
 	margin: 20px !important;
@@ -2739,6 +2749,7 @@ body.onlinepaymentbody div.fiche {	/* For online payment page */
 div.fiche>table:first-child {
 	margin-bottom: 15px;
 }
+
 div.fichecenter {
 	width: 100%;
 	clear: both;	/* This is to have div fichecenter that are true rectangles */
@@ -5208,6 +5219,7 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 .boxstatsborder {
 	/* border: 1px solid #CCC !important; */
 }
+/* .boxstats, .boxstats130, .boxstatsempty { */
 .boxstats, .boxstats130 {
 	display: inline-block;
 	margin-left: 8px;
@@ -5233,10 +5245,12 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	/* padding: 3px; */
 }
 .boxstats {
-	padding-left: 6px;
-	padding-right: 6px;
 	padding-top: 2px;
 	padding-bottom: 2px;
+}
+.boxstats, .boxstatsempty {
+	padding-left: 6px;
+	padding-right: 6px;
 	width: 118px;
 }
 
@@ -5250,13 +5264,6 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 }
 .boxstatscontent {
 	padding: 3px;
-}
-.boxstatsempty {
-	width: 121px;
-	padding-left: 3px;
-	padding-right: 3px;
-	margin-left: 8px;
-	margin-right: 8px;
 }
 .boxstats150empty {
 	width: 158px;
@@ -5348,8 +5355,10 @@ span.boxstatstext span:not(.fas) {
 	opacity: 0.5;
 }
 span.boxstatstext {
+	opacity: 0.5;		/* a bug if browser make z-index was discovered when opacity is set, if still present, we must disable it */
 	line-height: 18px;
 	color: var(--colortext);
+	font-size: 0.8em;
 }
 span.boxstatstext img, a.dashboardlineindicatorlate img {
 	border: 0;
@@ -5840,10 +5849,11 @@ div.backgreypublicpayment {
 }	/* Width must have min to make stripe input area visible. Lower than 320 makes input area crazy for credit card that need zip code */
 
 #tablepublicpayment {
-	border: 1px solid #CCCCCC !important;
+	border: 2px solid #CCCCCC !important;
 	width: 100%;
 	padding: 20px;
 	margin-bottom: 25px;
+	border-radius: 4px;
 }
 #tablepublicpayment .CTableRow1  { background-color: #F0F0F0 !important; }
 #tablepublicpayment tr.liste_total { border-bottom: 1px solid #CCCCCC !important; }
@@ -5914,7 +5924,10 @@ div#card-errors {
 /* Form confirmation (When Ajax JQuery is used) and Dialog popups                 */
 /* ============================================================================== */
 
-.ui-dialog-titlebar {
+button.ui-button-icon-only.ui-dialog-titlebar-close {
+	padding: 12px;
+	margin-top: -15px;
+	margin-right: 15px;
 }
 .ui-dialog-content {
 	margin-bottom: 10px;	/* same than .ui-widget-header */
@@ -5942,13 +5955,10 @@ div#card-errors {
 	border-bottom: 1px solid #AAA;
 	margin-bottom: 12px;
 }
-button.ui-button-icon-only.ui-dialog-titlebar-close {
-	padding: 12px;
-	margin-top: -15px;
-}
 .ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-dialog-buttons.ui-draggable {
 	box-shadow: 5px 5px 20px #AAA;
 }
+
 .ui-dialog .ui-dialog-buttonpane {
 	padding: .5em 1em .3em .4em;
 }
@@ -9224,7 +9234,7 @@ table.jPicker {
 	}
 	#tablepublicpayment {
 		width:	auto !important;
-		border: none !important;
+		/* border: none !important; */
 	}
 	.poweredbypublicpayment {
 		float: unset !important;
@@ -9259,7 +9269,7 @@ table.jPicker {
 	}
 
 	#dolpublictable {
-		padding: 10px;
+		padding: 14px;
 	}
 
 	input[type=checkbox], input[type=radio] {
