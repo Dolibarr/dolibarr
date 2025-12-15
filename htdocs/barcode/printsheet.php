@@ -291,12 +291,12 @@ if (empty($reshook)) {
 			if ($mode == 'label') {
 				$txtforsticker = "%PHOTO%"; // Photo will be barcode image, %BARCODE% possible when using TCPDF generator
 				$textleft = make_substitutions(getDolGlobalString('BARCODE_LABEL_LEFT_TEXT', $txtforsticker), $substitutionarray);
-				if ($label_product_ref_option) {
+				if ((GETPOSTINT('productid') > 0) && $label_product_ref_option) {
 					$textheader = $label_product_ref;
 				} else {
 					$textheader = make_substitutions(getDolGlobalString('BARCODE_LABEL_HEADER_TEXT'), $substitutionarray);
 				}
-				if ($label_product_label_option) {
+				if ((GETPOSTINT('productid') > 0) && $label_product_label_option) {
 					$textfooter = $label_product_label;
 				} else {
 					$textfooter = make_substitutions(getDolGlobalString('BARCODE_LABEL_FOOTER_TEXT'), $substitutionarray);
