@@ -539,14 +539,14 @@ if ($producttmp->id > 0) {
 	print '	<div class="tagtr">';
 	print '	<div class="tagtd" style="overflow: hidden; white-space: nowrap; max-width: 300px;">';
 	print '<input id="label_product_ref_option" name="label_product_ref_option" type="checkbox" '.(GETPOSTISSET("label_product_ref_option") ? 'checked ' : '').' class="checkforselect"><label for="label_product_ref_option"> '.$langs->trans("BarcodeLabelProductRef").'</label>';
-	print '</div><div class="tagtd" style="overflow: hidden; white-space: nowrap; max-width: 300px;">';
-	print '<input size="16" type="text" name="label_product_ref" id="label_product_ref" value="'.$label_product_ref.'">';
+	print '</div><div class="tagtd" style="overflow: hidden; white-space: nowrap; max-width: 500px;">';
+	print '<input type="text" name="label_product_ref" id="label_product_ref" placeholder="'.$langs->trans("BarcodeLabelProductRefPlaceholder").'" value="'.$label_product_ref.'">';
 	print '</div></div>';
 	print '	<div class="tagtr">';
 	print '	<div class="tagtd" style="overflow: hidden; white-space: nowrap; max-width: 300px;">';
 	print '<input id="label_product_label_option" name="label_product_label_option" type="checkbox" '.(GETPOSTISSET("label_product_label_option") ? 'checked ' : '').' class="checkforselect"><label for="label_product_label_option"> '.$langs->trans("BarcodeLabelProductLabel").'</label>';
-	print '</div><div class="tagtd" style="overflow: hidden; white-space: nowrap; max-width: 300px;">';
-	print '<input size="16" type="text" name="label_product_label" id="label_product_label" value="'.$label_product_label.'">';
+	print '</div><div class="tagtd" style="overflow: hidden; white-space: nowrap; max-width: 500px;">';
+	print '<input type="text" name="label_product_label" id="label_product_label" placeholder="'.$langs->trans("BarcodeLabelProductLabelPlaceholder").'" value="'.$label_product_label.'">';
 	print '</div></div>';
 }
 
