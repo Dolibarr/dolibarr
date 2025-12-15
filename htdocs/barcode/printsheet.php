@@ -135,11 +135,11 @@ if (empty($reshook)) {
 				setEventMessages($langs->trans("DefinitionOfBarCodeForProductNotComplete", $producttmp->getNomUrl()), null, 'warnings');
 			}
 
-			if(empty($label_product_ref) && $label_product_ref_option) {
+			if (empty($label_product_ref) && $label_product_ref_option) {
 				$label_product_ref = $producttmp->ref;
 			}
 
-			if(empty($label_product_label) && $label_product_label_option) {
+			if (empty($label_product_label) && $label_product_label_option) {
 				$label_product_label = $producttmp->label;
 			}
 		}
@@ -184,11 +184,11 @@ if (empty($reshook)) {
 			if ($result < 0) {
 				setEventMessage($producttmp->error, 'errors');
 			}
-			if(empty($label_product_ref) && $label_product_ref_option) {
+			if (empty($label_product_ref) && $label_product_ref_option) {
 				$label_product_ref = $producttmp->ref;
 			}
 
-			if(empty($label_product_label) && $label_product_label_option) {
+			if (empty($label_product_label) && $label_product_label_option) {
 				$label_product_label = $producttmp->label;
 			}
 		}
