@@ -2676,6 +2676,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						print '</form>';
 					} else {
 						print showValueWithClipboardCPButton($object->barcode);
+						print '<span class="paddingleft valignmiddle"><a href="'.dolBuildUrl(DOL_URL_ROOT . '/barcode/printsheet.php', ['productid' => $object->id, 'selectorforbarcode' => 'fillfromproduct', 'submitproduct' => '1']).'">'.$langs->trans("BarCodePrintsheet").'</a></span>';
 					}
 					print '</td></tr>'."\n";
 				}
@@ -3108,11 +3109,6 @@ if ($action != 'create' && $action != 'edit') {
 		if ($usercancreate) {
 			if (!isset($hookmanager->resArray['no_button_edit']) || $hookmanager->resArray['no_button_edit'] != 1) {
 				print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id, '', $usercancreate);
-			}
-
-			// Barcode
-			if (isModEnabled('barcode')) {
-				print dolGetButtonAction('', $langs->trans('BarCodePrintsheet'), 'default', dolBuildUrl(DOL_URL_ROOT . '/barcode/printsheet.php', ['productid' => $object->id, 'selectorforbarcode' => 'fillfromproduct', 'submitproduct' => '1']), '', $user->hasRight('barcode', 'read'));
 			}
 
 			//Send
