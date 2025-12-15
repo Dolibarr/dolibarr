@@ -7,6 +7,7 @@
  * Copyright (C) 2019-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2023       Lenin Rivas         <lenin.rivas777@gmail.com>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		William Mead		<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -3334,7 +3335,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->societe->multidir_output[$entity].'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT rowid as fk_soc FROM ".MAIN_DB_PREFIX."societe WHERE rowid='".$db->escape($refname)."' AND entity IN (".getEntity('societe').")";
-	} elseif ($modulepart == 'contact' && !empty($conf->societe->multidir_output[$entity])) {
+	} elseif (($modulepart == 'contact' || $modulepart == 'socpeople') && !empty($conf->societe->multidir_output[$entity])) {
 		// Wrapping for contact
 		if (empty($entity) || empty($conf->societe->multidir_output[$entity])) {
 			return array('accessallowed' => 0, 'error' => 'Value entity must be provided');

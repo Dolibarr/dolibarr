@@ -2738,9 +2738,10 @@ div.fiche {
 	margin-<?php print $left; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '24' : '6')); ?>px;
 	margin-top: 0px;
 }
-
 .page-modulehelp div.fiche {
 	width: 100%;
+	margin-left: 15px;
+	margin-right: 20px;
 }
 body.onlinepaymentbody div.fiche {	/* For online payment page */
 	margin: 20px !important;
@@ -2748,6 +2749,7 @@ body.onlinepaymentbody div.fiche {	/* For online payment page */
 div.fiche>table:first-child {
 	margin-bottom: 15px;
 }
+
 div.fichecenter {
 	width: 100%;
 	clear: both;	/* This is to have div fichecenter that are true rectangles */
@@ -5922,7 +5924,10 @@ div#card-errors {
 /* Form confirmation (When Ajax JQuery is used) and Dialog popups                 */
 /* ============================================================================== */
 
-.ui-dialog-titlebar {
+button.ui-button-icon-only.ui-dialog-titlebar-close {
+	padding: 12px;
+	margin-top: -15px;
+	margin-right: 15px;
 }
 .ui-dialog-content {
 	margin-bottom: 10px;	/* same than .ui-widget-header */
@@ -5950,13 +5955,10 @@ div#card-errors {
 	border-bottom: 1px solid #AAA;
 	margin-bottom: 12px;
 }
-button.ui-button-icon-only.ui-dialog-titlebar-close {
-	padding: 12px;
-	margin-top: -15px;
-}
 .ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-dialog-buttons.ui-draggable {
 	box-shadow: 5px 5px 20px #AAA;
 }
+
 .ui-dialog .ui-dialog-buttonpane {
 	padding: .5em 1em .3em .4em;
 }

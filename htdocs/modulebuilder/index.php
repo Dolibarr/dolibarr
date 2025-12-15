@@ -2759,7 +2759,7 @@ if ($action == 'reset' && $user->admin /* && $user->hasRight("modulebuilder", "r
 	$param .= '&tabobj='.urlencode($tabobj);
 
 	$value = GETPOST('value', 'alpha');
-	$result = unActivateModule($value);
+	$result = unActivateModule(strtolower($value));
 	if ($result) {
 		setEventMessages($result, null, 'errors');
 	}
@@ -2767,7 +2767,7 @@ if ($action == 'reset' && $user->admin /* && $user->hasRight("modulebuilder", "r
 	exit;
 }
 
-// delete menu
+// Delete menu
 if ($dirins && $action == 'confirm_deletemenu' && GETPOSTINT('menukey') /* && $user->hasRight("modulebuilder", "run") // already checked */) {
 	// check if module is enabled
 	if (isModEnabled(strtolower($module))) {

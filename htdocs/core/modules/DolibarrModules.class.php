@@ -541,8 +541,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 *
 	 * @param array<array{sql:string,ignoreerror:int<0,1>}>|string[]	$array_sql 	SQL requests to be executed when enabling module
 	 * @param string	$options   	String with options when disabling module:
-	 *                          	- 'noboxes' = Do all actions but do not insert boxes
-	 *                          	- 'newboxdefonly' = Do all actions but for boxes, insert def of boxes only and not boxes activation
+	 *                          	- 'noboxes' = Do all actions except for actions related to widgets/boxes
+	 *                          	- 'newboxdefonly' = Do all actions but for widgets/boxes we only insert their declaration and we do not change widgets activation or position
 	 * @return int                  1 if OK, 0 if KO
 	 */
 	protected function _init($array_sql, $options = '')
@@ -568,7 +568,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			$err += $this->insert_module_parts();
 		}
 
-		// Insert constant defined by modules (into llx_const)
+		// Insert constant defined by modules (into llx_const) if no existing yet
 		if (!$err && !preg_match('/newboxdefonly/', $options)) {
 			$err += $this->insert_const(); // Test on newboxdefonly to avoid to erase value during upgrade
 		}
@@ -1873,12 +1873,15 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		foreach ($this->const as $key => $value) {
+			// Property to search if entry exists
 			$name      = $this->const[$key][0];
+			$entity    = (!empty($this->const[$key][5]) && $this->const[$key][5] != 'current') ? 0 : $conf->entity;
+
+			// Property to update if it does not exists
 			$type      = $this->const[$key][1];
 			$val       = $this->const[$key][2];
 			$note      = isset($this->const[$key][3]) ? $this->const[$key][3] : '';
 			$visible   = isset($this->const[$key][4]) ? $this->const[$key][4] : 0;
-			$entity    = (!empty($this->const[$key][5]) && $this->const[$key][5] != 'current') ? 0 : $conf->entity;
 
 			// Clean
 			if (empty($visible)) {
@@ -2602,10 +2605,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 	/**
 	 * Function called when module is disabled.
-	 * The remove function removes tabs, constants, boxes, permissions and menus from Dolibarr database.
+	 * The remove() function removes tabs, constants, boxes, permissions and menus from Dolibarr database.
 	 * Data directories are not deleted
 	 *
-	 * @param  string $options Options when enabling module ('', 'noboxes')
+	 * @param  string $options Options when enabling module ('', 'noboxes', 'newboxdefonly')
 	 * @return int                     1 if OK, 0 if KO
 	 */
 	public function remove($options = '')

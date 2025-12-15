@@ -2006,11 +2006,11 @@ class CommandeFournisseur extends CommonOrder
 	 *	@param      int				$fk_prod_fourn_price	Id supplier price
 	 *	@param      string			$ref_supplier			Supplier reference price
 	 *	@param      float			$remise_percent  		Remise
-	 *	@param      string			$price_base_type		HT or TTC
+	 *	@param      'HT'|'TTC'		$price_base_type		HT or TTC
 	 *	@param		float			$pu_ttc					Unit price TTC (used if $price_base_type is 'TTC')
-	 *	@param		int				$type					Type of line (0=product, 1=service)
+	 *	@param		int<0,1>		$type					Type of line (0=product, 1=service)
 	 *	@param		int				$info_bits				More information
-	 *	@param		int				$notrigger				Disable triggers
+	 *	@param		int<0,1>		$notrigger				Disable triggers
 	 *	@param		?int			$date_start				Date start of service
 	 *	@param		?int			$date_end				Date end of service
 	 *	@param		array<string,null|int|float|string>	$array_options	extrafields array

@@ -394,7 +394,6 @@ define(
 
 /**
  * Is Dolibarr module enabled
- * Note: "isModEnabled('delivery_note')" must be replacedwith "isModEnabled('shipping') && getDolGlobalString('MAIN_SUBMODULE_EXPEDITION')"
  *
  * @param 	string 	$module 	Module name to check
  * @return 	boolean				True if module is enabled

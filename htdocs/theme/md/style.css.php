@@ -2822,6 +2822,12 @@ body.onlinepaymentbody div.fiche {	/* For online payment page */
 div.fiche>table:first-child {
 	margin-bottom: 15px !important;
 }
+.page-modulehelp div.fiche {
+	width: 100%;
+	margin-left: 15px;
+	margin-right: 20px;
+}
+
 div.fichecenter {
 	width: 100%;
 	clear: both;	/* This is to have div fichecenter that are true rectangles */
@@ -5843,7 +5849,10 @@ div#card-errors {
 /* Form confirmation (When Ajax JQuery is used) and Dialog popups                 */
 /* ============================================================================== */
 
-.ui-dialog-titlebar {
+button.ui-button-icon-only.ui-dialog-titlebar-close {
+	padding: 12px;
+	margin-top: -15px;
+	margin-right: 15px;
 }
 .ui-dialog-content {
 	maring-bottom: 10px;	/* same than .ui-widget-header */
