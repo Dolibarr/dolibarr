@@ -4410,7 +4410,7 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 	);
 
 	foreach ($listofmodule as $moduletoreload => $reloadmode) {	// reloadmodule can be 'noboxes', 'newboxdefonly', 'forceactivate'
-		if (empty($moduletoreload) || (empty($conf->global->$moduletoreload) && !$force)) {
+		if (empty($moduletoreload) || (!isModEnabled($moduletoreload) && !$force)) {
 			continue; // Discard reload if module not enabled
 		}
 

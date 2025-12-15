@@ -386,7 +386,6 @@ ExtrafieldFiller=Extrafield filler
 OurProductSelection=The product to discover
 NoSupportedModulesHaveBeenActivated=The reporting tool can generate dynamic reports for some modules only. There is no supported module enabled yet.
 # Bookmarks
-AddThisPageToBookmarks = Add current page to bookmarks
 BehaviourOnClick = Behavior when a bookmark URL is selected
 BookmarkTargetNewWindowShort = New tab
 BookmarkTargetReplaceWindowShort = Current tab
@@ -395,7 +394,6 @@ BookmarksManagement = Bookmarks management
 BookmarksMenuShortCut = Ctrl + shift + m
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark = Choose if the linked page should open in the current tab or a new tab
 CreateBookmark = Create bookmark
-EditBookmarks = List/edit bookmarks
 ListOfBookmarks = List of bookmarks
 NewBookmark = New bookmark
 NoBookmarkFound = No bookmark found
