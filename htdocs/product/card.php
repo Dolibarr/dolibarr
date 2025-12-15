@@ -3110,6 +3110,11 @@ if ($action != 'create' && $action != 'edit') {
 				print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id, '', $usercancreate);
 			}
 
+			// Barcode
+			if (isModEnabled('barcode')) {
+				print dolGetButtonAction('', $langs->trans('BarCodePrintsheet'), 'default', dolBuildUrl(DOL_URL_ROOT . '/barcode/printsheet.php', ['productid' => $object->id, 'selectorforbarcode' => 'fillfromproduct', 'submitproduct' => '1']), '', $user->hasRight('barcode', 'read'));
+			}
+
 			//Send
 			print dolGetButtonAction('', $langs->trans('SendMail'), 'email', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init&token=' . newToken() . '#formmailbeforetitle');
 
