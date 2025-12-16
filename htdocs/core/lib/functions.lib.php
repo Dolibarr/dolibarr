@@ -17,7 +17,7 @@
  * Copyright (C) 2019-2023  Thibault Foucart            <support@ptibogxiv.net>
  * Copyright (C) 2020       Open-Dsi         			<support@open-dsi.fr>
  * Copyright (C) 2021       Gauthier VERDOL         	<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2022       Anthony Berton	         	<anthony.berton@bb2a.fr>
+ * Copyright (C) 2022-2025  Anthony Berton	         	<anthony.berton@bb2a.fr>
  * Copyright (C) 2022       Ferran Marcet           	<fmarcet@2byte.es>
  * Copyright (C) 2022-2025  Charlene Benke           	<charlene@patas-monkey.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
@@ -4679,7 +4679,22 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 				$newphoneaend .= '</a>';
 			}
 		}
+		if (isModEnabled('stock') && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER') && is_object($user) && !empty($user->fk_warehouse)) {
+			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+			$useridwarehouse = $user->fk_warehouse;
+			$warehousestatic = new entrepot($db);
+			$warehousestatic->fetch($useridwarehouse);
+		
 
+			$substitutionarray['__USER_WAREHOUSE_ID__'] = isset($warehousestatic->rowid) ? $warehousestatic->rowid : '';
+			$substitutionarray['__USER_WAREHOUSE_REF__'] = isset($warehousestatic->ref) ? $warehousestatic->ref : '';
+			$substitutionarray['__USER_WAREHOUSE_DESCRIPTION__'] = isset($warehousestatic->description) ? $warehousestatic->description : '';
+			$substitutionarray['__USER_WAREHOUSE_ADDRESS__'] = isset($warehousestatic->address) ? $warehousestatic->address : '';
+			$substitutionarray['__USER_WAREHOUSE_ZIP__'] = isset($warehousestatic->zip) ? $warehousestatic->zip : '';
+			$substitutionarray['__USER_WAREHOUSE_TOWN__'] = isset($warehousestatic->town) ? $warehousestatic->town : '';
+			$substitutionarray['__USER_WAREHOUSE_PHONE__'] = isset($warehousestatic->phone) ? (string) dol_print_phone($warehousestatic->phone, '', 0, 0, '', " ", '', '', -1) : '';
+			$substitutionarray['__USER_WAREHOUSE_FAX__'] = isset($warehousestatic->fax) ? (string) dol_print_phone($warehousestatic->fax, '', 0, 0, '', " ", '', '', -1) : '';
+		}
 		//if (($cid || $socid) && isModEnabled('agenda') && $user->hasRight('agenda', 'myactions', 'create'))
 		if (isModEnabled('agenda') && $user->hasRight("agenda", "myactions", "create")) {
 			$type = 'AC_TEL';
