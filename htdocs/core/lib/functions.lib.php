@@ -385,6 +385,7 @@ define(
 		'propale' => 'propal', // Has old directory
 		'socpeople' => 'contact', // Has old directory
 		'fournisseur' => 'supplier',  // Has old directory
+		'produit' => 'product',	// Prevented boxes to display
 
 		'actioncomm' => 'agenda',  // NO module directory (public dir agenda)
 		'product_price' => 'productprice', // NO directory
