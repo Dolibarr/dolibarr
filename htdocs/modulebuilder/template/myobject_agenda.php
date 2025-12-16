@@ -294,12 +294,12 @@ if ($object->id > 0) {
 	}
 
 	$morehtmlright = '';
-
-	$messagingUrl = dol_buildpath("/mymodule/myobject_messaging.php", 1).'?id='.$object->id;
-	$morehtmlright .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 1);
-	$messagingUrl = dol_buildpath("/mymodule/myobject_agenda.php", 1).'?id='.$object->id;
-	$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 2);
-
+	if (dolversion_compare(DOL_VERSION, '22.0.0') >= 0) {
+		$messagingUrl = dol_buildpath("/mymodule/myobject_messaging.php", 1).'?id='.$object->id;
+		$morehtmlright .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 1);
+		$messagingUrl = dol_buildpath("/mymodule/myobject_agenda.php", 1).'?id='.$object->id;
+		$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 2);
+	}
 	if (isModEnabled('agenda')) {
 		if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
 			$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out);
