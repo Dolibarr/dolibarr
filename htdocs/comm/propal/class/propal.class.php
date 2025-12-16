@@ -1480,7 +1480,7 @@ class Propal extends CommonObject
 
 		// If option enabled, shift line dates when cloning with a different delivery date.
 		// We read the new date from $this->context (set by the UI before calling createFromClone()).
-		if (getDolGlobalString('PROPAL_CLONE_DATE_DELIVERY') && !empty($this->context['clone_delivery_date'])) {
+		if (!empty($this->context['clone_delivery_date'])) {
 			$newdeliverydate = (int) $this->context['clone_delivery_date'];
 			$olddeliverydate = $object->delivery_date;
 

@@ -214,15 +214,13 @@ if (empty($reshook)) {
 				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('IdThirdParty')), null, 'errors');
 			} else {
 				if ($object->id > 0) {
-					if (getDolGlobalString('PROPAL_CLONE_DATE_DELIVERY')) {
-						// If a new delivery date is provided when cloning, shift line start/end dates accordingly.
-						// The effective update is done inside createFromClone() (source object is re-fetched there).
-						$datedeliveryyear = GETPOSTINT('date_deliveryyear');
-						$datedeliverymonth = GETPOSTINT('date_deliverymonth');
-						$datedeliveryday = GETPOSTINT('date_deliveryday');
-						if ($datedeliveryyear > 0 && $datedeliverymonth > 0 && $datedeliveryday > 0) {
-							$object->context['clone_delivery_date'] = dol_mktime(12, 0, 0, $datedeliverymonth, $datedeliveryday, $datedeliveryyear);
-						}
+					// If a new delivery date is provided when cloning, shift line start/end dates accordingly.
+					// The effective update is done inside createFromClone() (source object is re-fetched there).
+					$datedeliveryyear = GETPOSTINT('date_deliveryyear');
+					$datedeliverymonth = GETPOSTINT('date_deliverymonth');
+					$datedeliveryday = GETPOSTINT('date_deliveryday');
+					if ($datedeliveryyear > 0 && $datedeliverymonth > 0 && $datedeliveryday > 0) {
+						$object->context['clone_delivery_date'] = dol_mktime(12, 0, 0, $datedeliverymonth, $datedeliveryday, $datedeliveryyear);
 					}
 
 					$result = $object->createFromClone($user, $socid, (GETPOSTISSET('entity') ? GETPOSTINT('entity') : null), (GETPOST('update_prices') == 'on'), (GETPOST('update_desc') == 'on'));
@@ -2718,9 +2716,9 @@ if ($action == 'create') {
 			array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans('PuttingPricesUpToDate'), 'value' => 0),
 			array('type' => 'checkbox', 'name' => 'update_desc', 'label' => $langs->trans('PuttingDescUpToDate'), 'value' => 0),
 		);
-		if (getDolGlobalString('PROPAL_CLONE_DATE_DELIVERY') && !empty($object->delivery_date)) {
-			$formquestion[] = array('type' => 'date', 'name' => 'date_delivery', 'label' => $langs->trans("DeliveryDate"), 'value' => $object->delivery_date);
-		}
+			if (!empty($object->delivery_date)) {
+				$formquestion[] = array('type' => 'date', 'name' => 'date_delivery', 'label' => $langs->trans("DeliveryDate"), 'value' => $object->delivery_date);
+			}
 		// Incomplete payment. We ask if reason = discount or other
 		$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('ToClone'), $langs->trans('ConfirmClonePropal', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 250, 600);
 	}
