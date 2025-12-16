@@ -444,6 +444,9 @@ if (empty($reshook)) {
 						$filename = $attachedfiles['names'];
 						$mimetype = $attachedfiles['mimes'];
 
+						$sendtocc = '';
+						$deliveryreceipt = 0;
+
 						// Send email to customer if option enabled
 						if (getDolGlobalInt('TICKET_SENDMAIL_ON_CREATION')) {
 							$appli = $mysoc->name;
@@ -463,8 +466,6 @@ if (empty($reshook)) {
 
 							$from = getDolGlobalString('MAIN_INFO_SOCIETE_NOM') . ' <'.getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM').'>';
 							$replyto = $from;
-							$sendtocc = '';
-							$deliveryreceipt = 0;
 
 							$old_MAIN_MAIL_AUTOCOPY_TO = getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO');
 							if ($old_MAIN_MAIL_AUTOCOPY_TO !== '') {
