@@ -142,7 +142,7 @@ if ($id > 0 || !empty($ref)) {
 		$now = dol_now();
 
 		foreach ($assetdepreciationoptions->deprecation_options_fields as $mode_key => $fields) {
-			$lines = $object->depreciation_lines[$mode_key];
+			$lines = $object->depreciation_lines[$mode_key] ?? array();
 			if (!empty($lines)) {
 				$mode_info = $assetdepreciationoptions->deprecation_options_fields[$mode_key];
 				$depreciation_info = $assetdepreciationoptions->getGeneralDepreciationInfoForMode($mode_key);
