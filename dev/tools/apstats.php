@@ -973,6 +973,18 @@ if ($fh) {
 	}
 	fwrite($fh, '</image>'."\n");
 
+
+	// Loop on arrayofalert to remove alerts that are on develop
+	foreach ($arrayofalerts as $tmpkey => $alert) {
+		$arrayuniquetmp = array_unique($alert['branch']);
+		if (count($arrayuniquetmp) == 1 && in_array('develop', $arrayuniquetmp)) {
+			// The alert has been fixed into develop only, so we discard it for RSS alert
+			print 'The alert with key '.$tmpkey.' is fixed into branch develop only, so we discard it for RSS'."\n";
+			unset($arrayofalerts[$tmpkey]);
+		}
+	}
+
+	// Loop on array of alerts on stable branches
 	foreach ($arrayofalerts as $alert) {
 		$alert['url_commit'] = 'https://github.com/Dolibarr/dolibarr/commit/'.$alert['commitid'];
 

@@ -191,24 +191,24 @@ $(document).ready(function() {
 });
 
 jQuery(function($){
-	$.datepicker.regional['<?php echo $langs->defaultlang ?>'] = {
-		closeText: '<?php echo $langs->trans("Close2") ?>',
-		prevText: '<?php echo $langs->trans("Previous") ?>',
-		nextText: '<?php echo $langs->trans("Next") ?>',
-		currentText: '<?php echo $langs->trans("Now") ?>',
+	$.datepicker.regional['<?php echo dol_escape_js($langs->defaultlang) ?>'] = {
+		closeText: '<?php echo dol_escape_js($langs->trans("Close2")) ?>',
+		prevText: '<?php echo dol_escape_js($langs->trans("Previous")) ?>',
+		nextText: '<?php echo dol_escape_js($langs->trans("Next")) ?>',
+		currentText: '<?php echo dol_escape_js($langs->trans("Now")) ?>',
 		monthNames: tradMonths,
 		monthNamesShort: tradMonthsShort,
 		dayNames: tradDays,
 		dayNamesShort: tradDaysShort,
 		dayNamesMin: tradDaysMin,
-		weekHeader: '<?php echo $langs->trans("Week"); ?>',
-		dateFormat: '<?php echo $langs->trans("FormatDateShortJQuery"); ?>',	/* Note dd/mm/yy means year on 4 digit in jquery format */
+		weekHeader: '<?php echo dol_escape_js($langs->trans("Week")); ?>',
+		dateFormat: '<?php echo dol_escape_js($langs->trans("FormatDateShortJQuery")); ?>',	/* Note dd/mm/yy means year on 4 digit in jquery format */
 		firstDay: <?php echo getDolGlobalInt('MAIN_START_WEEK', 1); ?>,
 		isRTL: <?php echo($langs->trans("DIRECTION") == 'rtl' ? 'true' : 'false'); ?>,
 		showMonthAfterYear: false,  	/* TODO add specific to country	*/
 		 yearSuffix: ''			/* TODO add specific to country */
 	};
-	$.datepicker.setDefaults($.datepicker.regional['<?php echo $langs->defaultlang ?>']);
+	$.datepicker.setDefaults($.datepicker.regional['<?php echo dol_escape_js($langs->defaultlang) ?>']);
 });
 
 
@@ -566,29 +566,49 @@ function cleanSerialize(expr) {
 
 
 /*
- * =================================================================
- * Purpose: Fonction to open a confirm popup on a clie of a link
+ * Purpose: Fonction to open a confirm popup on a click of a link
  * Input:   msg
- * Input:   width
+ * Input:   id
+ * Input:   popupWidth
+ * Input:   disableCancelButton
  * Licence: GPL
- * ==================================================================
+ * See also document_preview() that also maje a dialogforpopup.dialog().
+ * See also newpopup that use window.open.
  */
-function confirmDolibarr(msg, id, width = 400) {
-  let alink = document.getElementById(id);
-  if (alink.getAttribute("data-alreadyclicked") === "0") {
-	  new Promise(res => {
-		$("#dialogforpopup").text(msg).dialog({
-		  modal: true,
-		  width: width,
-		  buttons: {
-			OK() { $(this).dialog("close"); res(false); alink.setAttribute("data-alreadyclicked", "1"); alink.click(); },
-		  }
+function confirmDolibarr(msg, id, popupWidth = 400, disableCancelButton = 0) {
+	let alink = document.getElementById(id);
+	let popupHeight = 200;
+	let title = '<?php echo dol_escape_js($langs->trans("Note")); ?>';
+
+	if (alink.getAttribute("data-alreadyclicked") === "1") {
+		return true;
+	}
+
+	console.log("Call confirmDolibarr disableCancelButton="+disableCancelButton);
+
+	let buttons = {};
+	if (disableCancelButton === 0) {
+		buttons['<?php echo dol_escape_js($langs->trans("Cancel")); ?>'] = function () {
+		   $(this).dialog("close");
+		};
+	}
+	buttons['<?php echo dol_escape_js($langs->trans("OK")); ?>'] = function () {
+		console.log("We click OK"); $(this).dialog("close"); alink.setAttribute("data-alreadyclicked", "1"); alink.click(); return false;
+	};
+
+	new Promise(res => {
+			$("#dialogforpopup").text(msg).dialog({
+			  closeOnEscape: true,
+			  resizable: true,
+			  modal: true,
+			  width: popupWidth,
+			  height: popupHeight,
+			  title: title,
+			  buttons: buttons
+			});
 		});
-	  });
-	  return false;
-  } else {
-	  return true;
-  }
+
+	return false;
 }
 
 
@@ -1015,7 +1035,7 @@ function copyToClipboard(text,text2)
  * @param	url			Url
  * @param	title  		Title of popup
  * @return	boolean		False
- * @see document_preview()
+ * @see document_preview() and confirmDolibarr()
  */
 function newpopup(url, title) {
 	var argv = newpopup.arguments;
@@ -1040,7 +1060,8 @@ function newpopup(url, title) {
  * @param 	type 		Mime file type ("image/jpeg", "application/pdf", "text/html")
  * @param 	title		Title of popup
  * @return	void
- * @see newpopup()
+ * @see also confirmDolibarr() that also make a dialogforpopup.dialog()
+ * @see also newpopup()that use window.open
  */
 function document_preview(file, type, title)
 {

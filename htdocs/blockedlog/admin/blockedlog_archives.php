@@ -401,6 +401,7 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 
 			// Now add a signature to check integrity at end of file
 			file_put_contents($tmpfile, 'END - sha256='.$sha256.' - hmac_sha256='.$hmacsha256, FILE_APPEND);
+			dolChmod($tmpfile);
 
 			setEventMessages($langs->trans("FileGenerated"), null);
 		} else {

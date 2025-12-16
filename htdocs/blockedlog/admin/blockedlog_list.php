@@ -354,6 +354,7 @@ if (GETPOST('downloadcsv', 'alpha')) {
 
 			// Now add a signature to check integrity at end of file
 			file_put_contents($tmpfile, 'END - md5='.$md5value, FILE_APPEND);
+			dolChmod($tmpfile);
 
 			header('Content-Type: application/octet-stream');
 			header("Content-Transfer-Encoding: Binary");

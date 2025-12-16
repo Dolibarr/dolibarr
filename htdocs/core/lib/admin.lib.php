@@ -1334,11 +1334,12 @@ function activateModule($value, $withdeps = 1, $noconfverification = 0)
 /**
  *  Disable a module
  *
- *  @param      string		$value               Nom du module a desactiver
- *  @param      int			$requiredby          1=Desactive aussi modules dependants
- *  @return     string     				         Error message or '';
+ *  @param      string		$value              Name of module to disable
+ *  @param      int			$requiredby         1=Disable also the dependency modules
+ *  @param  	string 		$options 			Options when enabling module ('', 'noboxes', 'newboxdefonly')
+ *  @return     string     				        Error message or '';
  */
-function unActivateModule($value, $requiredby = 1)
+function unActivateModule($value, $requiredby = 1, $options = '')
 {
 	global $db;
 
@@ -1369,13 +1370,13 @@ function unActivateModule($value, $requiredby = 1)
 		$objMod = new $modName($db);
 		'@phan-var-force DolibarrModules $objMod';
 		/** @var DolibarrModules $objMod */
-		$result = $objMod->remove();
+		$result = $objMod->remove($options);
 		if ($result <= 0) {
 			$ret = $objMod->error;
 		}
 	} else { // We come here when we try to unactivate a module when module does not exists anymore in sources
 		//print $dir.$modFile;exit;
-		// TODO Replace this after DolibarrModules is moved as abstract class with a try catch to show module we try to disable has not been found or could not be loaded
+		// TODO Replace this after DolibarrModules is moved as abstract class with a try catch, to show if the module we try to disable has not been found or could not be loaded
 		include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 		$genericMod = new DolibarrModules($db);
 		$genericMod->name = preg_replace('/^mod/i', '', $modName);
@@ -1390,7 +1391,7 @@ function unActivateModule($value, $requiredby = 1)
 		$countrb = count($objMod->requiredby);
 		for ($i = 0; $i < $countrb; $i++) {
 			//var_dump($objMod->requiredby[$i]);
-			unActivateModule($objMod->requiredby[$i]);
+			unActivateModule($objMod->requiredby[$i], $requiredby, $options);
 		}
 	}
 
