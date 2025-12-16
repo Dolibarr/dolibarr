@@ -242,6 +242,11 @@ class SupplierProposal extends CommonObject
 	 */
 	public $multicurrency_total_ttc;
 
+	public $fields = array(
+		'ref' => array('type' => 'varchar(255)', 'label' => 'Ref', 'enabled' => 1, 'visible' => 1, 'showoncombobox' => 1, 'position' => 25, 'searchall' => 1),
+		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 750, 'searchall' => 1),
+	);
+
 	/**
 	 * Draft status
 	 */

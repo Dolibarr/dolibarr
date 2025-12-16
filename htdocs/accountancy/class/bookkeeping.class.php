@@ -2735,9 +2735,12 @@ class BookKeeping extends CommonObject
 
 				$list = array();
 				while ($obj = $this->db->fetch_object($resql)) {
+					$date_start = $this->db->jdate($obj->date_start);
+					$date_end_base = $this->db->jdate($obj->date_end);
+					$date_end = dol_get_last_hour($date_end_base);
 					$list[] = array(
-						'date_start' => $this->db->jdate($obj->date_start),
-						'date_end' => $this->db->jdate($obj->date_end),
+						'date_start' => $date_start,
+						'date_end' => $date_end,
 					);
 				}
 				$conf->cache['active_fiscal_period_cached'] = $list;
@@ -2758,9 +2761,13 @@ class BookKeeping extends CommonObject
 
 				$list = array();
 				while ($obj = $this->db->fetch_object($resql)) {
+					$date_start = $this->db->jdate($obj->date_start);
+					$date_end_base = $this->db->jdate($obj->date_end);
+					$date_end = dol_get_last_hour($date_end_base);
+
 					$list[] = array(
-						'date_start' => $this->db->jdate($obj->date_start),
-						'date_end' => $this->db->jdate($obj->date_end),
+						'date_start' => $date_start,
+						'date_end' => $date_end,
 					);
 				}
 				$conf->cache['closed_fiscal_period_cached'] = $list;

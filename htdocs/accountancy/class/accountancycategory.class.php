@@ -443,7 +443,7 @@ class AccountancyCategory // extends CommonObject
 
 		$sql = "SELECT t.rowid, t.account_number, t.label";
 		$sql .= " FROM ".$this->db->prefix()."accounting_account as t";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON t.fk_pcg_version = asy.pcg_version AND asy.rowid = ".((int) $pcgver);
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON t.fk_pcg_version = asy.pcg_version AND asy.rowid = ".((int) $pcgver);
 		$sql .= " WHERE t.fk_accounting_category = ".((int) $id);
 		$sql .= " AND t.entity = ".$conf->entity;
 
