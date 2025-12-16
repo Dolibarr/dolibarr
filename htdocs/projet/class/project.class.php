@@ -888,7 +888,9 @@ class Project extends CommonObject
 		} elseif ($type == 'expensereport') {
 			$sql = "SELECT ed.rowid FROM ".MAIN_DB_PREFIX."expensereport as e, ".MAIN_DB_PREFIX."expensereport_det as ed WHERE e.rowid = ed.fk_expensereport AND e.entity IN (".getEntity('expensereport').") AND ed.fk_projet IN (".$this->db->sanitize((string) $ids).")";
 		} elseif ($type == 'project_task') {
-			$sql = "SELECT DISTINCT pt.rowid FROM ".MAIN_DB_PREFIX."projet_task as pt WHERE pt.fk_projet IN (".$this->db->sanitize((string) $ids).")";
+			// DISTINCT is not required here (rowid is unique) and may break ORDER BY on some MySQL setups.
+			$sql = "SELECT pt.rowid FROM ".MAIN_DB_PREFIX."projet_task as pt WHERE pt.fk_projet IN (".$this->db->sanitize((string) $ids).")";
+			$sql .= " ORDER BY pt.rang ASC, pt.rowid ASC";
 		} elseif ($type == 'element_time') {	// Case we want to duplicate line foreach user
 			$sql = "SELECT DISTINCT pt.rowid, ptt.fk_user FROM ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."element_time as ptt WHERE pt.rowid = ptt.fk_element AND ptt.elementtype = 'task' AND pt.fk_projet IN (".$this->db->sanitize((string) $ids).")";
 		} elseif ($type == 'stocktransfer_stocktransfer') {
@@ -1050,6 +1052,21 @@ class Project extends CommonObject
 		$ret = $this->deleteTasks($user);
 		if ($ret < 0) {
 			$error++;
+		}
+
+		// Delete user-defined ordering of referrers (if table exists)
+		if (!$error) {
+			$infotable = $this->db->DDLInfoTable(MAIN_DB_PREFIX.'projet_elementorder');
+			if (!empty($infotable)) {
+				$sql = "DELETE FROM ".MAIN_DB_PREFIX."projet_elementorder";
+				$sql .= " WHERE entity = ".((int) $conf->entity);
+				$sql .= " AND fk_projet = ".((int) $this->id);
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$this->errors[] = $this->db->lasterror();
+					$error++;
+				}
+			}
 		}
 
 
@@ -2071,6 +2088,30 @@ class Project extends CommonObject
 			$this->error = $this->db->lasterror();
 			return -1;
 		} else {
+			// Store a default ordering entry for project referrers list (if feature/table is available).
+			$infotable = $this->db->DDLInfoTable(MAIN_DB_PREFIX.'projet_elementorder');
+			if (!empty($infotable)) {
+				global $conf;
+
+				$sqlmax = "SELECT MAX(rang) as maxrank";
+				$sqlmax .= " FROM ".MAIN_DB_PREFIX."projet_elementorder";
+				$sqlmax .= " WHERE entity = ".((int) $conf->entity);
+				$sqlmax .= " AND fk_projet = ".((int) $this->id);
+				$sqlmax .= " AND elementtype = '".$this->db->escape($tableName)."'";
+
+				$maxrank = 0;
+				$resmax = $this->db->query($sqlmax);
+				if ($resmax) {
+					$objmax = $this->db->fetch_object($resmax);
+					$maxrank = (int) (!empty($objmax->maxrank) ? $objmax->maxrank : 0);
+				}
+
+				$sqlins = "INSERT INTO ".MAIN_DB_PREFIX."projet_elementorder(entity, fk_projet, elementtype, fk_element, rang)";
+				$sqlins .= " VALUES (".((int) $conf->entity).", ".((int) $this->id).", '".$this->db->escape($tableName)."', ".((int) $elementSelectId).", ".((int) ($maxrank + 1)).")";
+				$sqlins .= " ON DUPLICATE KEY UPDATE rang = rang";
+				$this->db->query($sqlins); // Best-effort (do not fail link action if ordering is not available)
+			}
+
 			return 1;
 		}
 	}
@@ -2104,6 +2145,18 @@ class Project extends CommonObject
 			$this->error = $this->db->lasterror();
 			return -1;
 		} else {
+			// Cleanup ordering entry (if feature/table is available).
+			$infotable = $this->db->DDLInfoTable(MAIN_DB_PREFIX.'projet_elementorder');
+			if (!empty($infotable)) {
+				global $conf;
+				$sqldel = "DELETE FROM ".MAIN_DB_PREFIX."projet_elementorder";
+				$sqldel .= " WHERE entity = ".((int) $conf->entity);
+				$sqldel .= " AND fk_projet = ".((int) $this->id);
+				$sqldel .= " AND elementtype = '".$this->db->escape($tableName)."'";
+				$sqldel .= " AND fk_element = ".((int) $elementSelectId);
+				$this->db->query($sqldel); // Best-effort
+			}
+
 			return 1;
 		}
 	}
