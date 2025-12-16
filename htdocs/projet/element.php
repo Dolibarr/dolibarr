@@ -215,6 +215,143 @@ if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->tabl
 	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
 }
 
+/**
+ * Return true if table llx_projet_elementorder exists.
+ *
+ * @return boolean
+ */
+function isProjectElementOrderAvailable()
+{
+	global $db;
+
+	static $cached = null;
+	if ($cached === null) {
+		$cached = !empty($db->DDLInfoTable(MAIN_DB_PREFIX.'projet_elementorder'));
+	}
+
+	return (bool) $cached;
+}
+
+/**
+ * Return true if at least one ordering row exists for a project and element type.
+ *
+ * @param int    $entity
+ * @param int    $projectid
+ * @param string $elementtype
+ * @return boolean
+ */
+function hasProjectElementOrder($entity, $projectid, $elementtype)
+{
+	global $db;
+
+	static $cache = array();
+	$cachekey = ((int) $entity).'|'.((int) $projectid).'|'.$elementtype;
+	if (array_key_exists($cachekey, $cache)) {
+		return $cache[$cachekey];
+	}
+
+	$sql = "SELECT 1";
+	$sql .= " FROM ".MAIN_DB_PREFIX."projet_elementorder";
+	$sql .= " WHERE entity = ".((int) $entity);
+	$sql .= " AND fk_projet = ".((int) $projectid);
+	$sql .= " AND elementtype = '".$db->escape($elementtype)."'";
+	$sql .= $db->plimit(1);
+
+	$resql = $db->query($sql);
+	$cache[$cachekey] = ($resql && $db->num_rows($resql) > 0);
+
+	return $cache[$cachekey];
+}
+
+/**
+ * Sort an element array according to user-defined ordering table for a project.
+ *
+ * @param int                 $entity
+ * @param int                 $projectid
+ * @param string              $elementtype
+ * @param array<int,string>   $elementarray
+ * @return array<int,string>
+ */
+function sortElementArrayByProjectOrder($entity, $projectid, $elementtype, $elementarray)
+{
+	global $db;
+
+	if (!is_array($elementarray) || count($elementarray) < 2) {
+		return $elementarray;
+	}
+
+	$sql = "SELECT fk_element, rang";
+	$sql .= " FROM ".MAIN_DB_PREFIX."projet_elementorder";
+	$sql .= " WHERE entity = ".((int) $entity);
+	$sql .= " AND fk_projet = ".((int) $projectid);
+	$sql .= " AND elementtype = '".$db->escape($elementtype)."'";
+	$sql .= " ORDER BY rang ASC";
+
+	$resql = $db->query($sql);
+	if (!$resql) {
+		return $elementarray;
+	}
+
+	$rankbyid = array();
+	while ($obj = $db->fetch_object($resql)) {
+		$rankbyid[(int) $obj->fk_element] = (int) $obj->rang;
+	}
+
+	if (empty($rankbyid)) {
+		return $elementarray;
+	}
+
+	$originalindex = array();
+	foreach ($elementarray as $idx => $value) {
+		$originalindex[(string) $value] = $idx;
+	}
+
+	usort($elementarray, function ($a, $b) use ($rankbyid, $originalindex) {
+		$ida = (int) explode('_', (string) $a)[0];
+		$idb = (int) explode('_', (string) $b)[0];
+
+		$hasa = array_key_exists($ida, $rankbyid);
+		$hasb = array_key_exists($idb, $rankbyid);
+
+		if ($hasa && $hasb) {
+			$cmp = $rankbyid[$ida] <=> $rankbyid[$idb];
+			if ($cmp !== 0) {
+				return $cmp;
+			}
+		} elseif ($hasa) {
+			return -1;
+		} elseif ($hasb) {
+			return 1;
+		}
+
+		return ($originalindex[(string) $a] ?? 0) <=> ($originalindex[(string) $b] ?? 0);
+	});
+
+	return $elementarray;
+}
+
+$projectElementOrderSupported = array_flip(array(
+	'propal',
+	'commande',
+	'facture',
+	'facture_rec',
+	'supplier_proposal',
+	'commande_fournisseur',
+	'facture_fourn',
+	'facture_fourn_rec',
+	'contrat',
+	'fichinter',
+	'expedition',
+	'loan',
+	'don',
+	'chargesociales',
+	'salary',
+	'payment_various',
+	'entrepot',
+	'mrp_mo',
+	'stocktransfer_stocktransfer',
+));
+
 /*
  * Actions
  */
@@ -942,6 +1079,11 @@ foreach ($listofreferent as $key => $value) {
 
 		$elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee, !empty($project_field) ? $project_field : 'fk_projet');
 
+		// Apply user-defined ordering for this project (if available and compatible with current list).
+		if (isset($projectElementOrderSupported[$tablename]) && isProjectElementOrderAvailable() && $tablename !== 'projet_task' && is_array($elementarray) && count($elementarray) > 1) {
+			$elementarray = sortElementArrayByProjectOrder($conf->entity, $object->id, $tablename, $elementarray);
+		}
+
 		if (is_array($elementarray) && count($elementarray) > 0) {
 			$total_ht = 0;
 			$total_ttc = 0;
@@ -1217,6 +1359,10 @@ foreach ($listofreferent as $key => $value) {
 
 		$elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee, !empty($project_field) ? $project_field : 'fk_projet');
 
+		// Apply user-defined ordering for this project (if available).
+		if (isset($projectElementOrderSupported[$tablename]) && isProjectElementOrderAvailable() && $tablename !== 'projet_task' && is_array($elementarray) && count($elementarray) > 1) {
+			$elementarray = sortElementArrayByProjectOrder($conf->entity, $object->id, $tablename, $elementarray);
+		}
 
 		if (!getDolGlobalString('PROJECT_LINK_ON_OVERWIEW_DISABLED') && $idtofilterthirdparty && !in_array($tablename, $exclude_select_element)) {
 			$selectList = $formproject->select_element($tablename, $idtofilterthirdparty, 'minwidth300 minwidth75imp', -2, empty($project_field) ? 'fk_projet' : $project_field, $langs->trans("SelectElement"));
@@ -1301,11 +1447,40 @@ foreach ($listofreferent as $key => $value) {
 		print '<a id="table_'.$tablename.'"></a>';
 		print load_fiche_titre($langs->trans($title), $addform, '');
 
+		$enablednd = false;
+		$dndtableid = '';
+		$dndmode = '';
+		if (is_array($elementarray) && count($elementarray) > 1 && $user->hasRight('projet', 'creer') && $conf->browser->layout != 'phone') {
+			if ($tablename === 'projet_task' && $key === 'project_task') {
+				$enablednd = true;
+				$dndmode = 'taskrang';
+				$dndtableid = 'tablelines_'.$tablename.'_'.$key;
+			} elseif (isset($projectElementOrderSupported[$tablename]) && isProjectElementOrderAvailable() && $tablename !== 'projet_task') {
+				$dndidsupported = true;
+				foreach ($elementarray as $tmpid) {
+					if (strpos((string) $tmpid, '_') !== false) {
+						$dndidsupported = false;
+						break;
+					}
+				}
+				if ($dndidsupported) {
+					$enablednd = true;
+					$dndmode = 'projectelementorder';
+					$dndtableid = 'tableelements_'.$tablename.'_'.$key;
+				}
+			}
+		}
+
 		print "\n".'<!-- Table for tablename = '.$tablename.' -->'."\n";
 		print '<div class="div-table-responsive">';
-		print '<table class="noborder centpercent">';
+		print '<table class="noborder centpercent"'.($enablednd ? ' id="'.$dndtableid.'"' : '').'>';
 
-		print '<tr class="liste_titre">';
+		print '<thead>';
+		print '<tr class="liste_titre nodrop">';
+		// Move column (drag and drop)
+		if ($enablednd) {
+			print '<td style="width: 24px"></td>';
+		}
 		// Remove link column
 		print '<td style="width: 24px"></td>';
 		// Ref
@@ -1378,16 +1553,19 @@ foreach ($listofreferent as $key => $value) {
 		}
 		// Status
 		if (in_array($tablename, array('projet_task'))) {
-			print '<td class="right" width="200">'.$langs->trans("ProgressDeclared").'</td>';
+		print '<td class="right" width="200">'.$langs->trans("ProgressDeclared").'</td>';
 		} else {
 			print '<td class="right" width="200">'.$langs->trans("Status").'</td>';
 		}
 		print '</tr>';
+		print '</thead>';
+		print '<tbody>';
 
 		if (is_array($elementarray) && count($elementarray) > 0) {
 			$total_ht = 0;
 			$total_ttc = 0;
 			$i = 0;
+			$footerrow = '';
 
 			$total_ht_by_third = 0;
 			$total_ttc_by_third = 0;
@@ -1397,7 +1575,9 @@ foreach ($listofreferent as $key => $value) {
 
 			if (canApplySubtotalOn($tablename)) {
 				// Sort
-				$elementarray = sortElementsByClientName($elementarray);
+				if (!(isset($projectElementOrderSupported[$tablename]) && isProjectElementOrderAvailable() && hasProjectElementOrder($conf->entity, $object->id, $tablename))) {
+					$elementarray = sortElementsByClientName($elementarray);
+				}
 			}
 
 			$num = count($elementarray);
@@ -1446,11 +1626,16 @@ foreach ($listofreferent as $key => $value) {
 				}
 
 				if ($key == "order_supplier" && ($element->status == 6 || $element->status == 7)) {
-					print '<tr class="oddeven tr_canceled">';
+					print '<tr class="oddeven'.($enablednd ? ' drag' : '').' tr_canceled"'.($enablednd ? ' id="row-'.$idofelement.'"' : '').'>';
 				} else {
-					print '<tr class="oddeven" >';
+					print '<tr class="oddeven'.($enablednd ? ' drag' : '').'"'.($enablednd ? ' id="row-'.$idofelement.'"' : '').'>';
 				}
 
+
+				// Move handle
+				if ($enablednd) {
+					print '<td class="linecolmove tdlineupdown center"></td>';
+				}
 
 				// Remove link
 				print '<td style="width: 24px">';
@@ -1832,8 +2017,8 @@ foreach ($listofreferent as $key => $value) {
 				}
 
 				if (canApplySubtotalOn($tablename)) {
-					$breakline = '<tr class="liste_total liste_sub_total">';
-					$breakline .= '<td colspan="2">';
+					$breakline = '<tr class="liste_total liste_sub_total nodrag nodrop">';
+					$breakline .= '<td colspan="'.($enablednd ? 3 : 2).'">';
 					$breakline .= '</td>';
 					$breakline .= '<td>';
 					$breakline .= '</td>';
@@ -1862,62 +2047,144 @@ foreach ($listofreferent as $key => $value) {
 				if (in_array($tablename, array('projet_task'))) {
 					$colspan = 2;
 				}
-
-				print '<tr class="liste_total"><td colspan="'.$colspan.'">'.$langs->trans("Number").': '.$i.'</td>';
+				if ($enablednd) {
+					$colspan++;
+				}
+				$footerrow .= '<tr class="liste_total nodrag nodrop"><td colspan="'.$colspan.'">'.$langs->trans("Number").': '.$i.'</td>';
 				if (in_array($tablename, array('projet_task'))) {
-					print '<td class="center">';
-					print convertSecondToTime((int) $total_time, 'allhourmin');
-					print '</td>';
-					print '<td>';
-					print '</td>';
+					$footerrow .= '<td class="center">'.convertSecondToTime((int) $total_time, 'allhourmin').'</td>';
+					$footerrow .= '<td></td>';
 				}
 				//if (empty($value['disableamount']) && ! in_array($tablename, array('projet_task'))) print '<td class="right" width="100">'.$langs->trans("TotalHT").' : '.price($total_ht).'</td>';
 				//elseif (empty($value['disableamount']) && in_array($tablename, array('projet_task'))) print '<td class="right" width="100">'.$langs->trans("Total").' : '.price($total_ht).'</td>';
 				// If fichinter add the total_duration
 				if ($tablename == 'fichinter') {
-					print '<td class="left">'.convertSecondToTime($total_duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
+					$footerrow .= '<td class="left">'.convertSecondToTime($total_duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
 				}
-				print '<td class="right">';
+				$footerrow .= '<td class="right">';
 				if (empty($value['disableamount'])) {
 					if ($key == 'loan') {
-						print $langs->trans("Total").' '.$langs->trans("LoanCapital").' : '.price($total_ttc);
+						$footerrow .= $langs->trans("Total").' '.$langs->trans("LoanCapital").' : '.price($total_ttc);
 					} elseif ($tablename != 'projet_task' || isModEnabled('salaries')) {
-						print ''.$langs->trans("TotalHT").' : '.price($total_ht);
+						$footerrow .= ''.$langs->trans("TotalHT").' : '.price($total_ht);
 					}
 				}
-				print '</td>';
+				$footerrow .= '</td>';
 				//if (empty($value['disableamount']) && ! in_array($tablename, array('projet_task'))) print '<td class="right" width="100">'.$langs->trans("TotalTTC").' : '.price($total_ttc).'</td>';
 				//elseif (empty($value['disableamount']) && in_array($tablename, array('projet_task'))) print '<td class="right" width="100"></td>';
-				print '<td class="right">';
+				$footerrow .= '<td class="right">';
 				if (empty($value['disableamount'])) {
 					if ($key == 'loan') {
-						print $langs->trans("Total").' '.$langs->trans("RemainderToPay").' : '.price($total_ttc);
+						$footerrow .= $langs->trans("Total").' '.$langs->trans("RemainderToPay").' : '.price($total_ttc);
 					} elseif ($tablename != 'projet_task' || isModEnabled('salaries')) {
-						print $langs->trans("TotalTTC").' : '.price($total_ttc);
+						$footerrow .= $langs->trans("TotalTTC").' : '.price($total_ttc);
 					}
 				}
-				print '</td>';
-				print '<td>&nbsp;</td>';
+				$footerrow .= '</td>';
+				$footerrow .= '<td>&nbsp;</td>';
 				// Because of the added Type and Description columns to Expense Reports
 				if ($tablename == 'expensereport_det') {
-					print '<td>&nbsp;</td>';
-					print '<td>&nbsp;</td>';
+					$footerrow .= '<td>&nbsp;</td>';
+					$footerrow .= '<td>&nbsp;</td>';
 				}
-				print '</tr>';
+				$footerrow .= '</tr>';
 			}
 		} else {
 			if (!is_array($elementarray)) {	// error
-				print '<tr><td>'.$elementarray.'</td></tr>';
+				$colspan = 7;
+				if ($tablename == 'fichinter') {
+					$colspan++;
+				}
+				if ($tablename == 'expensereport_det') {
+					$colspan += 2;
+				}
+				if ($enablednd) {
+					$colspan++;
+				}
+				print '<tr><td colspan="'.$colspan.'">'.$elementarray.'</td></tr>';
 			} else {
 				$colspan = 7;
 				if ($tablename == 'fichinter') {
 					$colspan++;
 				}
+				if ($tablename == 'expensereport_det') {
+					$colspan += 2;
+				}
+				if ($enablednd) {
+					$colspan++;
+				}
 				print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 			}
 		}
+		print '</tbody>';
+		if (!empty($footerrow)) {
+			print '<tfoot>';
+			print $footerrow;
+			print '</tfoot>';
+		}
 		print "</table>";
 		print '</div>';
+
+		if ($enablednd) {
+			$forcereloadpage = getDolGlobalInt('MAIN_FORCE_RELOAD_PAGE');
+			$urlpost = '';
+			if ($dndmode === 'taskrang') {
+				$urlpost = DOL_URL_ROOT.'/core/ajax/row.php';
+			} elseif ($dndmode === 'projectelementorder') {
+				$urlpost = DOL_URL_ROOT.'/projet/ajax/reorderreferrers.php';
+			}
+
+			print "\n".'<script>';
+			print "\n".'$(document).ready(function(){';
+			print "\n".'	var forcereloadpage = "'.((int) $forcereloadpage).'";';
+			print "\n".'	var tagidfortablednd = "'.dol_escape_js($dndtableid).'";';
+			print "\n".'	console.log("Prepare tableDnD for #"+tagidfortablednd);';
+			print "\n".'	$("#"+tagidfortablednd+" .tdlineupdown")';
+			print "\n".'		.css("background-image", "url('.dol_escape_js(DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/grip.png').')")';
+			print "\n".'		.css("background-repeat", "no-repeat")';
+			print "\n".'		.css("background-position", "center center")';
+			print "\n".'		.hover(function(){ $(this).addClass("showDragHandle"); }, function(){ $(this).removeClass("showDragHandle"); });';
+			print "\n".'	$("#"+tagidfortablednd).tableDnD({';
+			print "\n".'		onDrop: function(table, row) {';
+			print "\n".'			var page_y = jQuery(document).scrollTop();';
+			print "\n".'			$("#"+tagidfortablednd+" tr[data-element=extrafield]").attr("id", "");';
+			print "\n".'			$("#"+tagidfortablednd+" tr[data-ignoreidfordnd=1]").attr("id", "");';
+			print "\n".'			var roworder = cleanSerialize(decodeURI($("#"+tagidfortablednd).tableDnDSerialize()));';
+			print "\n".'			var token = "'.dol_escape_js(currentToken()).'";';
+
+			if ($dndmode === 'taskrang') {
+				print "\n".'			$.post("'.dol_escape_js($urlpost).'", {';
+				print "\n".'				roworder: roworder,';
+				print "\n".'				table_element_line: "projet_task",';
+				print "\n".'				fk_element: "fk_projet",';
+				print "\n".'				element_id: "'.((int) $object->id).'",';
+				print "\n".'				filepath: "",';
+				print "\n".'				token: token';
+				print "\n".'			}, function() {';
+			} else {
+				print "\n".'			$.post("'.dol_escape_js($urlpost).'", {';
+				print "\n".'				projectid: "'.((int) $object->id).'",';
+				print "\n".'				elementtype: "'.dol_escape_js($tablename).'",';
+				print "\n".'				roworder: roworder,';
+				print "\n".'				token: token';
+				print "\n".'			}, function() {';
+			}
+
+			print "\n".'				if (forcereloadpage == 1) {';
+			$redirectURL = $_SERVER['PHP_SELF'].'?'.$_SERVER['QUERY_STRING'];
+			$redirectURL = preg_replace('/(&|\\?)action=[^&#]*/', '', $redirectURL);
+			$redirectURL = preg_replace('/(&|\\?)page_y=[^&#]*/', '', $redirectURL);
+			print "\n".'					location.href = "'.dol_escape_js($redirectURL).'&page_y="+page_y;';
+			print "\n".'				}';
+			print "\n".'			});';
+			print "\n".'		},';
+			print "\n".'		onDragClass: "dragClass",';
+			print "\n".'		dragHandle: "td.tdlineupdown"';
+			print "\n".'	});';
+			print "\n".'});';
+			print "\n".'</script>'."\n";
+		}
+
 		print "<br>\n";
 	}
 }
