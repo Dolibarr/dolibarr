@@ -294,7 +294,7 @@ if ($object->id > 0) {
 	}
 
 	$morehtmlright = '';
-	if (dolversion_compare(DOL_VERSION, '22.0.0') >= 0) {
+	if (version_compare(DOL_VERSION, '22.0.0') >= 0) {
 		$messagingUrl = dol_buildpath("/mymodule/myobject_messaging.php", 1).'?id='.$object->id;
 		$morehtmlright .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 1);
 		$messagingUrl = dol_buildpath("/mymodule/myobject_agenda.php", 1).'?id='.$object->id;
