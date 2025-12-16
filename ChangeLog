@@ -162,6 +162,7 @@ NEW: Add API for Holidays/Leaves
 NEW: add api for members statistics (#35851)
 NEW: add api List VAT (#35920)
 NEW: add api_paiements.class.php (#34756)
+NEW: document API builddoc product
 NEW: Add contact management on project Api (#35459)
 NEW: Add contact support on products in REST API (#35925)
 NEW: Add country ID resolution from country code for thirdparty api (#36345)

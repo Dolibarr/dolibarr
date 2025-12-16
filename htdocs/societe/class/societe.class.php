@@ -5343,7 +5343,7 @@ class Societe extends CommonObject
 					$arrayofrefopened[$obj->rowid] = $obj->ref;
 				}
 			}
-			return array('opened' => $outstandingOpened, 'total_ht' => $outstandingTotal, 'total_ttc' => $outstandingTotalIncTax, 'refs' => $arrayofref, 'refsopened' => $arrayofrefopened); // 'opened' is 'incl taxes'
+			return array('opened' => $outstandingOpened, 'total_ht' => $outstandingTotal, 'total_ttc' => $outstandingTotalIncTax, 'refs' => $arrayofref, 'refsopened' => $arrayofrefopened); // 'opened' is 'amount incl taxes' > 0
 		} else {
 			dol_syslog("Sql error ".$this->db->lasterror, LOG_ERR);
 			return array();

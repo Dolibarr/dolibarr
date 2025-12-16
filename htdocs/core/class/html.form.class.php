@@ -10735,7 +10735,7 @@ class Form
 	 * @param string 		$labelno 		Label for No
 	 * @return	string                      See option
 	 */
-	public function selectyesno($htmlname, $value = '', $option = 0, $disabled = false, $useempty = 0, $addjscombo = 0, $morecss = 'width75', $labelyes = 'Yes', $labelno = 'No')
+	public function selectyesno($htmlname, $value = '', $option = 0, $disabled = false, $useempty = 0, $addjscombo = 0, $morecss = 'yesno width75', $labelyes = 'Yes', $labelno = 'No')
 	{
 		global $langs;
 

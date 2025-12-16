@@ -775,6 +775,9 @@ class modProduct extends DolibarrModules
 				)
 			);
 
+			if (!is_array($this->import_convertvalue_array[$r])) {
+				$this->import_convertvalue_array[$r] = array();
+			}
 			$this->import_convertvalue_array[$r] = array_merge($this->import_convertvalue_array[$r], array(
 				'p.fk_unit' => array(
 					'rule' => 'fetchidfromcodeorlabel',
@@ -843,7 +846,8 @@ class modProduct extends DolibarrModules
 				'sp.default_vat_code' => 'VATCode',
 				'sp.delivery_time_days' => 'NbDaysToDelivery',
 				'sp.supplier_reputation' => 'SupplierReputation',
-				'sp.status' => 'Status'
+				'sp.status' => 'Status',
+				'sp.datec' => 'DateCreation'
 			);
 			if (is_object($mysoc) && $usenpr) {
 				$this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array('sp.recuperableonly' => 'VATNPR'));
@@ -887,11 +891,20 @@ class modProduct extends DolibarrModules
 				}
 			}
 			// End add extra fields
-			$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'product_fournisseur_price'); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
+
+			// Add some field automatically (if they are not yet provided explicitly)
+			$this->import_fieldshidden_array[$r] = array(
+				'sp.datec' => 'const-'.dol_print_date(dol_now(), 'standard'),
+				'extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'product_fournisseur_price'
+			); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent or 'const-xxxx')
 
 			$this->import_convertvalue_array[$r] = array(
 					'sp.fk_soc' => array('rule' => 'fetchidfromref', 'classfile' => '/societe/class/societe.class.php', 'class' => 'Societe', 'method' => 'fetch', 'element' => 'ThirdParty'),
 					'sp.fk_product' => array('rule' => 'fetchidfromref', 'classfile' => '/product/class/product.class.php', 'class' => 'Product', 'method' => 'fetch', 'element' => 'Product')
+			);
+
+			$this->import_regex_array[$r] = array(
+				'sp.datec' => '^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]$'
 			);
 
 			$this->import_examplevalues_array[$r] = array(
@@ -906,7 +919,8 @@ class modProduct extends DolibarrModules
 				'sp.default_vat_code' => '',
 				'sp.delivery_time_days' => '5',
 				'sp.supplier_reputation' => 'FAVORITE / NOTTHGOOD / DONOTORDER',
-				'sp.status' => '1'
+				'sp.status' => '1',
+				'sp.datec' => dol_print_date(dol_now(), '%Y-%m-%d %H:%M:%S'),
 			);
 			if (is_object($mysoc) && $usenpr) {
 				$this->import_examplevalues_array[$r] = array_merge($this->import_examplevalues_array[$r], array('sp.recuperableonly' => ''));
@@ -925,7 +939,7 @@ class modProduct extends DolibarrModules
 			));
 			if (isModEnabled("multicurrency")) {
 				$this->import_examplevalues_array[$r] = array_merge($this->import_examplevalues_array[$r], array(
-					'sp.fk_multicurrency' => 'eg: 2, rowid for code of multicurrency currency',
+					'sp.fk_multicurrency' => 'eg: 2 = the rowid for code of multicurrency currency',
 					'sp.multicurrency_code' => 'GBP',
 					'sp.multicurrency_tx' => '1.12345',
 					'sp.multicurrency_unitprice' => '',

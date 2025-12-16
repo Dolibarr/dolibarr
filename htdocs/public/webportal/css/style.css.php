@@ -102,6 +102,7 @@ if (empty($dolibarr_nocache)) {
 @import "card.css";
 @import "dialog.css";
 @import "btn.css";
+@import "form-input-special.css";
 /**
 This file can overwrite default pico css
  */
