@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2025
+/* Copyright (C) 2025 Braito <braito4@hotmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  */
 
 if (!defined('NOTOKENRENEWAL')) {
-	define('NOTOKENRENEWAL', '1'); // Disable token renewal
+	define('NOTOKENRENEWAL', 1); // Disables token renewal
 }
 if (!defined('NOREQUIREMENU')) {
 	define('NOREQUIREMENU', '1');
@@ -44,14 +44,15 @@ if (!defined('CSRFCHECK_WITH_TOKEN')) {
 
 require '../../main.inc.php';
 
-$projectid = GETPOSTINT('projectid', 3);
-$elementtype = GETPOST('elementtype', 'aZ09', 3);
-$roworder = GETPOST('roworder', 'alpha', 3);
+$projectid = GETPOSTINT('projectid');
+$elementtype = GETPOST('elementtype', 'aZ09');
+$roworder = GETPOST('roworder', 'alphanohtml');
 
-top_httphead();
+top_httphead('application/json');
 
 if (empty($projectid) || empty($elementtype)) {
 	http_response_code(400);
+	print json_encode(array('result' => 'error', 'message' => 'Missing projectid/elementtype'));
 	exit;
 }
 
@@ -64,7 +65,7 @@ if (!$user->hasRight('projet', 'creer')) {
 $infotable = $db->DDLInfoTable(MAIN_DB_PREFIX.'projet_elementorder');
 if (empty($infotable)) {
 	http_response_code(409);
-	print 'Missing table '.MAIN_DB_PREFIX.'projet_elementorder';
+	print json_encode(array('result' => 'error', 'message' => 'Missing table '.MAIN_DB_PREFIX.'projet_elementorder'));
 	exit;
 }
 
@@ -92,6 +93,7 @@ $allowed = array(
 
 if (empty($allowed[$elementtype])) {
 	http_response_code(403);
+	print json_encode(array('result' => 'error', 'message' => 'Unsupported elementtype'));
 	exit;
 }
 
@@ -109,6 +111,7 @@ foreach (explode(',', (string) $roworder) as $value) {
 $ids = array_values($ids);
 
 if (empty($ids)) {
+	print json_encode(array('result' => 'ok'));
 	exit;
 }
 
@@ -120,11 +123,12 @@ $tablename = MAIN_DB_PREFIX.$elementtype;
 $sql = "SELECT ".$idfield." as rowid";
 $sql .= " FROM ".$tablename;
 $sql .= " WHERE ".$projectfield." = ".((int) $projectid);
-$sql .= " AND ".$idfield." IN (".$db->sanitize(implode(',', $ids)).")";
+$sql .= " AND ".$idfield." IN (".implode(',', $ids).")";
 
 $resql = $db->query($sql);
 if (!$resql) {
 	http_response_code(500);
+	print json_encode(array('result' => 'error', 'message' => 'Database error'));
 	exit;
 }
 
@@ -134,6 +138,7 @@ while ($obj = $db->fetch_object($resql)) {
 }
 
 if (empty($validids)) {
+	print json_encode(array('result' => 'ok'));
 	exit;
 }
 
@@ -153,6 +158,7 @@ foreach ($ids as $id) {
 	if (!$res) {
 		$db->rollback();
 		http_response_code(500);
+		print json_encode(array('result' => 'error', 'message' => 'Database error'));
 		exit;
 	}
 	$rank++;
@@ -160,3 +166,4 @@ foreach ($ids as $id) {
 
 $db->commit();
 
+print json_encode(array('result' => 'ok'));

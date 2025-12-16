@@ -215,6 +215,143 @@ if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->tabl
 	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
 }
 
+/**
+ * Return true if table llx_projet_elementorder exists.
+ *
+ * @return boolean
+ */
+function isProjectElementOrderAvailable()
+{
+	global $db;
+
+	static $cached = null;
+	if ($cached === null) {
+		$cached = !empty($db->DDLInfoTable(MAIN_DB_PREFIX.'projet_elementorder'));
+	}
+
+	return (bool) $cached;
+}
+
+/**
+ * Return true if at least one ordering row exists for a project and element type.
+ *
+ * @param int    $entity
+ * @param int    $projectid
+ * @param string $elementtype
+ * @return boolean
+ */
+function hasProjectElementOrder($entity, $projectid, $elementtype)
+{
+	global $db;
+
+	static $cache = array();
+	$cachekey = ((int) $entity).'|'.((int) $projectid).'|'.$elementtype;
+	if (array_key_exists($cachekey, $cache)) {
+		return $cache[$cachekey];
+	}
+
+	$sql = "SELECT 1";
+	$sql .= " FROM ".MAIN_DB_PREFIX."projet_elementorder";
+	$sql .= " WHERE entity = ".((int) $entity);
+	$sql .= " AND fk_projet = ".((int) $projectid);
+	$sql .= " AND elementtype = '".$db->escape($elementtype)."'";
+	$sql .= $db->plimit(1);
+
+	$resql = $db->query($sql);
+	$cache[$cachekey] = ($resql && $db->num_rows($resql) > 0);
+
+	return $cache[$cachekey];
+}
+
+/**
+ * Sort an element array according to user-defined ordering table for a project.
+ *
+ * @param int                 $entity
+ * @param int                 $projectid
+ * @param string              $elementtype
+ * @param array<int,string>   $elementarray
+ * @return array<int,string>
+ */
+function sortElementArrayByProjectOrder($entity, $projectid, $elementtype, $elementarray)
+{
+	global $db;
+
+	if (!is_array($elementarray) || count($elementarray) < 2) {
+		return $elementarray;
+	}
+
+	$sql = "SELECT fk_element, rang";
+	$sql .= " FROM ".MAIN_DB_PREFIX."projet_elementorder";
+	$sql .= " WHERE entity = ".((int) $entity);
+	$sql .= " AND fk_projet = ".((int) $projectid);
+	$sql .= " AND elementtype = '".$db->escape($elementtype)."'";
+	$sql .= " ORDER BY rang ASC";
+
+	$resql = $db->query($sql);
+	if (!$resql) {
+		return $elementarray;
+	}
+
+	$rankbyid = array();
+	while ($obj = $db->fetch_object($resql)) {
+		$rankbyid[(int) $obj->fk_element] = (int) $obj->rang;
+	}
+
+	if (empty($rankbyid)) {
+		return $elementarray;
+	}
+
+	$originalindex = array();
+	foreach ($elementarray as $idx => $value) {
+		$originalindex[(string) $value] = $idx;
+	}
+
+	usort($elementarray, function ($a, $b) use ($rankbyid, $originalindex) {
+		$ida = (int) explode('_', (string) $a)[0];
+		$idb = (int) explode('_', (string) $b)[0];
+
+		$hasa = array_key_exists($ida, $rankbyid);
+		$hasb = array_key_exists($idb, $rankbyid);
+
+		if ($hasa && $hasb) {
+			$cmp = $rankbyid[$ida] <=> $rankbyid[$idb];
+			if ($cmp !== 0) {
+				return $cmp;
+			}
+		} elseif ($hasa) {
+			return -1;
+		} elseif ($hasb) {
+			return 1;
+		}
+
+		return ($originalindex[(string) $a] ?? 0) <=> ($originalindex[(string) $b] ?? 0);
+	});
+
+	return $elementarray;
+}
+
+$projectElementOrderSupported = array_flip(array(
+	'propal',
+	'commande',
+	'facture',
+	'facture_rec',
+	'supplier_proposal',
+	'commande_fournisseur',
+	'facture_fourn',
+	'facture_fourn_rec',
+	'contrat',
+	'fichinter',
+	'expedition',
+	'loan',
+	'don',
+	'chargesociales',
+	'salary',
+	'payment_various',
+	'entrepot',
+	'mrp_mo',
+	'stocktransfer_stocktransfer',
+));
+
 /*
  * Actions
  */
@@ -1171,28 +1308,6 @@ print '<br>';
 
 $total_time = 0;
 
-$projectElementOrderSupported = array_flip(array(
-	'propal',
-	'commande',
-	'facture',
-	'facture_rec',
-	'supplier_proposal',
-	'commande_fournisseur',
-	'facture_fourn',
-	'facture_fourn_rec',
-	'contrat',
-	'fichinter',
-	'expedition',
-	'loan',
-	'don',
-	'chargesociales',
-	'salary',
-	'payment_various',
-	'entrepot',
-	'mrp_mo',
-	'stocktransfer_stocktransfer',
-));
-
 // Detail
 foreach ($listofreferent as $key => $value) {
 	$parameters = array(
@@ -1244,6 +1359,10 @@ foreach ($listofreferent as $key => $value) {
 
 		$elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee, !empty($project_field) ? $project_field : 'fk_projet');
 
+		// Apply user-defined ordering for this project (if available).
+		if (isset($projectElementOrderSupported[$tablename]) && isProjectElementOrderAvailable() && $tablename !== 'projet_task' && is_array($elementarray) && count($elementarray) > 1) {
+			$elementarray = sortElementArrayByProjectOrder($conf->entity, $object->id, $tablename, $elementarray);
+		}
 
 		if (!getDolGlobalString('PROJECT_LINK_ON_OVERWIEW_DISABLED') && $idtofilterthirdparty && !in_array($tablename, $exclude_select_element)) {
 			$selectList = $formproject->select_element($tablename, $idtofilterthirdparty, 'minwidth300 minwidth75imp', -2, empty($project_field) ? 'fk_projet' : $project_field, $langs->trans("SelectElement"));
@@ -1515,7 +1634,7 @@ foreach ($listofreferent as $key => $value) {
 
 				// Move handle
 				if ($enablednd) {
-					print '<td class="linecolmove tdlineupdown center"><img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/grip.png" alt="" style="opacity:0.7;"></td>';
+					print '<td class="linecolmove tdlineupdown center"></td>';
 				}
 
 				// Remove link
@@ -1898,7 +2017,7 @@ foreach ($listofreferent as $key => $value) {
 				}
 
 				if (canApplySubtotalOn($tablename)) {
-					$breakline = '<tr class="liste_total liste_sub_total nodrop">';
+					$breakline = '<tr class="liste_total liste_sub_total nodrag nodrop">';
 					$breakline .= '<td colspan="'.($enablednd ? 3 : 2).'">';
 					$breakline .= '</td>';
 					$breakline .= '<td>';
@@ -1931,7 +2050,7 @@ foreach ($listofreferent as $key => $value) {
 				if ($enablednd) {
 					$colspan++;
 				}
-				$footerrow .= '<tr class="liste_total nodrop"><td colspan="'.$colspan.'">'.$langs->trans("Number").': '.$i.'</td>';
+				$footerrow .= '<tr class="liste_total nodrag nodrop"><td colspan="'.$colspan.'">'.$langs->trans("Number").': '.$i.'</td>';
 				if (in_array($tablename, array('projet_task'))) {
 					$footerrow .= '<td class="center">'.convertSecondToTime((int) $total_time, 'allhourmin').'</td>';
 					$footerrow .= '<td></td>';
@@ -2005,6 +2124,67 @@ foreach ($listofreferent as $key => $value) {
 		}
 		print "</table>";
 		print '</div>';
+
+		if ($enablednd) {
+			$forcereloadpage = getDolGlobalInt('MAIN_FORCE_RELOAD_PAGE');
+			$urlpost = '';
+			if ($dndmode === 'taskrang') {
+				$urlpost = DOL_URL_ROOT.'/core/ajax/row.php';
+			} elseif ($dndmode === 'projectelementorder') {
+				$urlpost = DOL_URL_ROOT.'/projet/ajax/reorderreferrers.php';
+			}
+
+			print "\n".'<script>';
+			print "\n".'$(document).ready(function(){';
+			print "\n".'	var forcereloadpage = "'.((int) $forcereloadpage).'";';
+			print "\n".'	var tagidfortablednd = "'.dol_escape_js($dndtableid).'";';
+			print "\n".'	console.log("Prepare tableDnD for #"+tagidfortablednd);';
+			print "\n".'	$("#"+tagidfortablednd+" .tdlineupdown")';
+			print "\n".'		.css("background-image", "url('.dol_escape_js(DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/grip.png').')")';
+			print "\n".'		.css("background-repeat", "no-repeat")';
+			print "\n".'		.css("background-position", "center center")';
+			print "\n".'		.hover(function(){ $(this).addClass("showDragHandle"); }, function(){ $(this).removeClass("showDragHandle"); });';
+			print "\n".'	$("#"+tagidfortablednd).tableDnD({';
+			print "\n".'		onDrop: function(table, row) {';
+			print "\n".'			var page_y = jQuery(document).scrollTop();';
+			print "\n".'			$("#"+tagidfortablednd+" tr[data-element=extrafield]").attr("id", "");';
+			print "\n".'			$("#"+tagidfortablednd+" tr[data-ignoreidfordnd=1]").attr("id", "");';
+			print "\n".'			var roworder = cleanSerialize(decodeURI($("#"+tagidfortablednd).tableDnDSerialize()));';
+			print "\n".'			var token = "'.dol_escape_js(currentToken()).'";';
+
+			if ($dndmode === 'taskrang') {
+				print "\n".'			$.post("'.dol_escape_js($urlpost).'", {';
+				print "\n".'				roworder: roworder,';
+				print "\n".'				table_element_line: "projet_task",';
+				print "\n".'				fk_element: "fk_projet",';
+				print "\n".'				element_id: "'.((int) $object->id).'",';
+				print "\n".'				filepath: "",';
+				print "\n".'				token: token';
+				print "\n".'			}, function() {';
+			} else {
+				print "\n".'			$.post("'.dol_escape_js($urlpost).'", {';
+				print "\n".'				projectid: "'.((int) $object->id).'",';
+				print "\n".'				elementtype: "'.dol_escape_js($tablename).'",';
+				print "\n".'				roworder: roworder,';
+				print "\n".'				token: token';
+				print "\n".'			}, function() {';
+			}
+
+			print "\n".'				if (forcereloadpage == 1) {';
+			$redirectURL = $_SERVER['PHP_SELF'].'?'.$_SERVER['QUERY_STRING'];
+			$redirectURL = preg_replace('/(&|\\?)action=[^&#]*/', '', $redirectURL);
+			$redirectURL = preg_replace('/(&|\\?)page_y=[^&#]*/', '', $redirectURL);
+			print "\n".'					location.href = "'.dol_escape_js($redirectURL).'&page_y="+page_y;';
+			print "\n".'				}';
+			print "\n".'			});';
+			print "\n".'		},';
+			print "\n".'		onDragClass: "dragClass",';
+			print "\n".'		dragHandle: "td.tdlineupdown"';
+			print "\n".'	});';
+			print "\n".'});';
+			print "\n".'</script>'."\n";
+		}
+
 		print "<br>\n";
 	}
 }

@@ -1,5 +1,5 @@
 -- ===========================================================================
--- Copyright (C) 2025
+-- Copyright (C) 2025 Braito <braito4@hotmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -26,4 +26,3 @@ create table llx_projet_elementorder
   rang					integer DEFAULT 0,
   tms					timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 )ENGINE=innodb;
-

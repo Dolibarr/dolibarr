@@ -1,5 +1,5 @@
 -- ============================================================================
--- Copyright (C) 2025
+-- Copyright (C) 2025 Braito <braito4@hotmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -21,4 +21,3 @@ ALTER TABLE llx_projet_elementorder ADD UNIQUE INDEX uk_projet_elementorder (ent
 ALTER TABLE llx_projet_elementorder ADD INDEX idx_projet_elementorder_rank (entity, fk_projet, elementtype, rang);
 
 ALTER TABLE llx_projet_elementorder ADD CONSTRAINT fk_projet_elementorder_fk_projet FOREIGN KEY (fk_projet) REFERENCES llx_projet (rowid);
-
