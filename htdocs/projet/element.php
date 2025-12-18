@@ -968,7 +968,7 @@ foreach ($listofreferent as $key => $value) {
 					if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS') && $element->type == Facture::TYPE_DEPOSIT) {
 						$qualifiedfortotal = false; // If hidden option to use deposits as payment (deprecated, not recommended to use this), deposits are not included
 					}
-					if (getDolGlobalString('PROJECT_ONLY_PAYED_INVOICE_ON_PROFIT') && $element->type != Facture::STATUS_CLOSED) {
+					if (getDolGlobalString('PROJECT_ONLY_PAYED_INVOICE_ON_PROFIT') && $element->status != Facture::STATUS_CLOSED) {
 						$qualifiedfortotal = false; // Only paid invoices qualify
 					}
 				}
