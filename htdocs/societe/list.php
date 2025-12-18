@@ -1949,7 +1949,7 @@ while ($i < $imaxinloop) {
 				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 				if ($permissiontoadd){
 					if (!getDolGlobalString('THIRDPARTY_EDIT_IN_MENU_NOT_IN_POPUP')) {
-						$htmlname = 'societe'.$object->id;
+						$htmlname = 'societe'.$obj->rowid;
 						$urltoopen = '/societe/card.php?id='.$obj->rowid.'&action=edit';
 						// Add html code to add the edit button and go back
 						$jsonclose = 'location.reload();';
@@ -2378,7 +2378,7 @@ while ($i < $imaxinloop) {
 				}
 				if ($permissiontoadd){
 					if (!getDolGlobalString('THIRDPARTY_EDIT_IN_MENU_NOT_IN_POPUP')) {
-						$htmlname = 'societe'.$object->id;
+						$htmlname = 'societe'.$obj->rowid;
 						$urltoopen = '/societe/card.php?id='.$obj->rowid.'&action=edit';
 						// Add html code to add the edit button and go back
 						$jsonclose = 'location.reload();';
