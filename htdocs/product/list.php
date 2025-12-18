@@ -16,7 +16,8 @@
  * Copyright (C) 2020-2023	Alexandre Spangaro      <aspangaro@easya.solutions>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière		<benjamin.faliere@altairis.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2020-2025	Anthony Berton			<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1707,6 +1708,10 @@ while ($i < $imaxinloop) {
 					$selected = 1;
 				}
 				print '<input id="cb'.$object->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+				if ($permissiontoadd){
+					$url = dol_buildpath('/product/card.php', 1).'?id='.$obj->rowid.'&action=edit&backtopage='.urlencode($_SERVER['PHP_SELF'].'?'.$param);
+					print '<a href="'.$url.'">'.img_picto('', 'edit', 'class="pictofixedwidth"').'</a>';
+				}
 			}
 			print '</td>';
 			if (!$i) {
@@ -2359,6 +2364,10 @@ while ($i < $imaxinloop) {
 				$selected = 0;
 				if (in_array($object->id, $arrayofselected)) {
 					$selected = 1;
+				}
+				if ($permissiontoadd){
+					$url = dol_buildpath('/product/card.php', 1).'?id='.$obj->rowid.'&action=edit&backtopage='.urlencode($_SERVER['PHP_SELF'].'?'.$param);
+					print '<a href="'.$url.'">'.img_picto('', 'edit', 'class="pictofixedwidth"').'</a>';
 				}
 				print '<input id="cb'.$object->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 			}

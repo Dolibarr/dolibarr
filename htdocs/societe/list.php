@@ -12,7 +12,7 @@
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2020       Open-Dsi                <support@open-dsi.fr>
  * Copyright (C) 2021-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2022       Anthony Berton          <anthony.berton@bb2a.fr>
+ * Copyright (C) 2020-2025	Anthony Berton			<anthony.berton@bb2a.fr>
  * Copyright (C) 2023       William Mead            <william.mead@manchenumerique.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière		<benjamin.faliere@altairis.fr>
@@ -1947,6 +1947,10 @@ while ($i < $imaxinloop) {
 					$selected = 1;
 				}
 				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+				if ($permissiontoadd){
+					$url = dol_buildpath('/societe/card.php', 1).'?id='.$obj->rowid.'&action=edit&backtopage='.urlencode($_SERVER['PHP_SELF'].'?'.$param);
+					print '<a href="'.$url.'">'.img_picto('', 'edit', 'class="pictofixedwidth"').'</a>';
+				}
 			}
 			print '</td>';
 			if (!$i) {
@@ -2363,6 +2367,10 @@ while ($i < $imaxinloop) {
 				$selected = 0;
 				if (in_array($obj->rowid, $arrayofselected)) {
 					$selected = 1;
+				}
+				if ($permissiontoadd){
+					$url = dol_buildpath('/societe/card.php', 1).'?id='.$obj->rowid.'&action=edit&backtopage='.urlencode($_SERVER['PHP_SELF'].'?'.$param);
+					print '<a href="'.$url.'">'.img_picto('', 'edit', 'class="pictofixedwidth"').'</a>';
 				}
 				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
