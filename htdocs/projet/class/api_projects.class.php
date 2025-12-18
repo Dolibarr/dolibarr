@@ -742,6 +742,50 @@ class Projects extends DolibarrApi
 	}
 
 	/**
+	 * Get projects associated with a user based on expense reports
+	 *
+	 * @param int           $userId         ID of the user
+	 * @param string        $properties     Restrict the data returned to theses properties.
+	 *					Ignored if empty. Comma separated list of properties names
+	 *
+	 * @url GET users/{userId}
+	 *
+	 * @return  array   Array of projects
+	 */
+	public function getUserProjects($userId, $properties = '')
+	{
+		if (!DolibarrApiAccess::$user->rights->projet->lire) {
+			throw new RestException(401, 'Not allowed');
+		}
+
+		$userId = intval($userId);
+
+		$sql = "SELECT t.rowid, s.nom as thirdparty_name FROM llx_projet as t JOIN llx_societe as s ON t.fk_soc = s.rowid WHERE t.rowid IN ( SELECT ec.element_id FROM llx_element_contact as ec WHERE ec.statut = 4 AND ec.fk_socpeople = $userId)";
+		$result = $this->db->query($sql);
+
+		if ($result) {
+			$num = $this->db->num_rows($result);
+			$min = min($num, ($limit <= 0 ? $num : $limit));
+			$i = 0;
+			while ($i < $min) {
+				$obj = $this->db->fetch_object($result);
+				$project_static = new Project($this->db);
+				if ($project_static->fetch($obj->rowid)) {
+					$filteredData = $this->_filterObjectProperties($this->_cleanObjectDatas($project_static), $properties);
+					$filteredData->thirdparty_name = $obj->thirdparty_name;
+					$obj_ret[] = $filteredData;
+				}
+				$i++;
+			}
+		} else {
+			throw new RestException(503, 'Error when retrieve project list : '.$this->db->lasterror());
+		}
+
+		return $obj_ret;
+	}
+
+
+	/**
 	 * Delete project
 	 *
 	 * @param   int     $id         Project ID
