@@ -1494,8 +1494,16 @@ while ($i < $imaxinloop) {
 				}
 				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 				if ($permissiontoadd){
-					$url = dol_buildpath('/contact/card.php', 1).'?id='.$obj->rowid.'&action=edit&backtopage='.urlencode($_SERVER['PHP_SELF'].'?'.$param);
-					print '<a href="'.$url.'">'.img_picto('', 'edit', 'class="pictofixedwidth"').'</a>';
+					if (!getDolGlobalString('CONTACT_EDIT_IN_MENU_NOT_IN_POPUP')) {
+						$htmlname = 'contact'.$object->id;
+						$urltoopen = '/contact/card.php?id='.$obj->rowid.'&action=edit';
+						// Add html code to add the edit button and go back
+						$jsonclose = 'location.reload();';
+						print dolButtonToOpenUrlInDialogPopup($htmlname, $langs->transnoentitiesnoconv("Contact"), img_picto('', 'edit', 'class="pictofixedwidth"'), $urltoopen, '', '', '', $jsonclose);
+					}else{
+						$url = dol_buildpath('/contact/card.php', 1).'?id='.$obj->rowid.'&action=edit&backtopage='.urlencode($_SERVER['PHP_SELF'].'?'.$param);
+						print '<a href="'.$url.'">'.img_picto('', 'edit', 'class="pictofixedwidth"').'</a>';
+					}
 				}
 			}
 			print '</td>';
@@ -1827,8 +1835,16 @@ while ($i < $imaxinloop) {
 					$selected = 1;
 				}
 				if ($permissiontoadd){
-					$url = dol_buildpath('/contact/card.php', 1).'?id='.$obj->rowid.'&action=edit&backtopage='.urlencode($_SERVER['PHP_SELF'].'?'.$param);
-					print '<a href="'.$url.'">'.img_picto('', 'edit', 'class="pictofixedwidth"').'</a>';
+					if (!getDolGlobalString('CONTACT_EDIT_IN_MENU_NOT_IN_POPUP')) {
+						$htmlname = 'contact'.$object->id;
+						$urltoopen = '/contact/card.php?id='.$obj->rowid.'&action=edit';
+						// Add html code to add the edit button and go back
+						$jsonclose = 'location.reload();';
+						print dolButtonToOpenUrlInDialogPopup($htmlname, $langs->transnoentitiesnoconv("Contact"), img_picto('', 'edit', 'class="pictofixedwidth"'), $urltoopen, '', '', '', $jsonclose);
+					}else{
+						$url = dol_buildpath('/contact/card.php', 1).'?id='.$obj->rowid.'&action=edit&backtopage='.urlencode($_SERVER['PHP_SELF'].'?'.$param);
+						print '<a href="'.$url.'">'.img_picto('', 'edit', 'class="pictofixedwidth"').'</a>';
+					}
 				}
 				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
