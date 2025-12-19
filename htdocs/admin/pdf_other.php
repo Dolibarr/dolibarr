@@ -580,7 +580,7 @@ if (isModEnabled('invoice')) {
 	print '</td></tr>';
 	
 	print '<tr class="oddeven"><td>';
-	print $form->textwithpicto($langs->trans("INVOICE_HIDE_VIR_BAN"), ''));
+	print $form->textwithpicto($langs->trans("INVOICE_HIDE_VIR_BAN"), '');
 	print '</td><td>';
 	if ($conf->use_javascript_ajax) {
 		print ajax_constantonoff('INVOICE_HIDE_VIR_BAN');
