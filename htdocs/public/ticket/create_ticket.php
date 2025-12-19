@@ -484,25 +484,34 @@ if (empty($reshook)) {
 						if ($sendto) {
 							$appli = $mysoc->name;
 
-							$subject = '['.$appli.'] '.$langs->transnoentities('TicketNewEmailSubjectAdmin', $object->ref, $object->track_id);
-							$message_admin = $langs->transnoentities('TicketNewEmailBodyAdmin', $object->track_id).'<br><br>';
-							$message_admin .= '<ul><li>'.$langs->trans('Title').' : '.$object->subject.'</li>';
-							$message_admin .= '<li>'.$langs->trans('Type').' : '.$object->type_label.'</li>';
-							$message_admin .= '<li>'.$langs->trans('Category').' : '.$object->category_label.'</li>';
-							$message_admin .= '<li>'.$langs->trans('Severity').' : '.$object->severity_label.'</li>';
-							$message_admin .= '<li>'.$langs->trans('From').' : '.$object->origin_email.'</li>';
-							// Extrafields
-							$extrafields->fetch_name_optionals_label($object->table_element);
-							if (is_array($object->array_options) && count($object->array_options) > 0) {
-								foreach ($object->array_options as $key => $value) {
-									$key = substr($key, 8); // remove "options_"
-									$message_admin .= '<li>'.$langs->trans($extrafields->attributes[$object->table_element]['label'][$key]).' : '.$extrafields->showOutputField($key, $value, '', $object->table_element).'</li>';
-								}
-							}
-							$message_admin .= '</ul>';
+							if (getDolGlobalInt('TICKET_NOTIFICATION_EMAIL_TEMPLATE')) {
+								$arraydefaultmessage = $formmail->getEMailTemplate($db, $object->element.'_send', $user, $langs, getDolGlobalInt('TICKET_NOTIFICATION_EMAIL_TEMPLATE'), -1);
+								$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $object);
+								$subject = make_substitutions($arraydefaultmessage->topic, $substitutionarray);
+								$message_admin = make_substitutions($arraydefaultmessage->content, $substitutionarray);
+							} else {
+								$subject = '['.$appli.'] '.$langs->transnoentities('TicketNewEmailSubjectAdmin', $object->ref, $object->track_id);
 
-							$message_admin .= '<p>'.$langs->trans('Message').' : <br>'.$object->message.'</p>';
-							$message_admin .= '<p><a href="'.dol_buildpath('/ticket/card.php', 2).'?track_id='.$object->track_id.'" rel="nofollow noopener">'.$langs->trans('SeeThisTicketIntomanagementInterface').'</a></p>';
+
+								$message_admin = $langs->transnoentities('TicketNewEmailBodyAdmin', $object->track_id).'<br><br>';
+								$message_admin .= '<ul><li>'.$langs->trans('Title').' : '.$object->subject.'</li>';
+								$message_admin .= '<li>'.$langs->trans('Type').' : '.$object->type_label.'</li>';
+								$message_admin .= '<li>'.$langs->trans('Category').' : '.$object->category_label.'</li>';
+								$message_admin .= '<li>'.$langs->trans('Severity').' : '.$object->severity_label.'</li>';
+								$message_admin .= '<li>'.$langs->trans('From').' : '.$object->origin_email.'</li>';
+								// Extrafields
+								$extrafields->fetch_name_optionals_label($object->table_element);
+								if (is_array($object->array_options) && count($object->array_options) > 0) {
+									foreach ($object->array_options as $key => $value) {
+										$key = substr($key, 8); // remove "options_"
+										$message_admin .= '<li>'.$langs->trans($extrafields->attributes[$object->table_element]['label'][$key]).' : '.$extrafields->showOutputField($key, $value, '', $object->table_element).'</li>';
+									}
+								}
+								$message_admin .= '</ul>';
+
+								$message_admin .= '<p>'.$langs->trans('Message').' : <br>'.$object->message.'</p>';
+								$message_admin .= '<p><a href="'.dol_buildpath('/ticket/card.php', 2).'?track_id='.$object->track_id.'" rel="nofollow noopener">'.$langs->trans('SeeThisTicketIntomanagementInterface').'</a></p>';
+							}
 
 							$from = getDolGlobalString('MAIN_INFO_SOCIETE_NOM') . ' <' . getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM').'>';
 							$replyto = $from;

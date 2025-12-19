@@ -54,3 +54,7 @@ INSERT INTO llx_c_email_templates (entity, module, type_template, label, lang, p
 
 -- Supplier
 INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, enabled, active, topic, content, content_lines, joinfiles) VALUES (0, 'supplier_invoice','invoice_supplier_send','',0,null,null,'(SendingReminderEmailOnUnpaidSupplierInvoice)',100, 'isModEnabled("supplier_invoice")',1,'[__[MAIN_INFO_SOCIETE_NOM]__] - __(SupplierInvoice)__','__(Hello)__,<br /><br />__(SupplierInvoiceUnpaidContent)__<br />__URL_SUPPLIER_INVOICE__<br /><br />__(Sincerely)__<br />__SENDEREMAIL_SIGNATURE__',null, 0);
+
+
+-- Ticket
+INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, enabled, active, topic, joinfiles, content) VALUES (0, 'ticket', 'ticket_send', '', 0, null, '2025-12-19 10:40:07', 'Creation ticket', 100, 1,1, '[__MYCOMPANY_NAME__] __(TicketNewEmailSubjectAdmin|ticket)__ __TICKET_TRACKID__', 0, '__(TicketNewEmailBodyAdmin|ticket)__ :__TICKET_TRACKID__<br><br> __(Title|ticket)__ : __TICKET_SUBJECT__<br> <br> __(Type|ticket) : __(__TICKET_TYPE__)__<br>__(Category|ticket)__ : __(__TICKET_CATEGORY__)__<br>__(Severity|ticket)__ : __(__TICKET_SEVERITY__)__<br><br>__(Message|ticket)__ : __TICKET_MESSAGE__');
