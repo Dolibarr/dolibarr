@@ -123,6 +123,7 @@ $search_dispute_status = GETPOST('search_dispute_status', 'intcomma');
 $search_status = GETPOST('search_status', 'intcomma');
 $search_paymentmode = GETPOST('search_paymentmode', 'intcomma');
 $search_paymentterms = GETPOST('search_paymentterms', 'intcomma');
+$search_bankaccount = GETPOST('search_bankaccount', 'intcomma');
 $search_fk_input_reason = GETPOSTINT('search_fk_input_reason');
 $search_module_source = GETPOST('search_module_source', 'alpha');
 $search_pos_source = GETPOST('search_pos_source', 'alpha');
@@ -265,6 +266,7 @@ $arrayfields = array(
 	'typent.code' => array('label' => "ThirdPartyType", 'checked' => $checkedtypetiers, 'position' => 75),
 	'f.fk_mode_reglement' => array('label' => "PaymentMode", 'checked' => '1', 'position' => 80),
 	'f.fk_cond_reglement' => array('label' => "PaymentConditionsShort", 'checked' => '1', 'position' => 85),
+	'ba.label' => array('label' => "BankAccount", 'langfile' => 'banks', 'checked' => '0', (!isModEnabled('bank') ? '0' : '1'), 'position' => 87),
 	'f.fk_input_reason' => array('label' => "Source", 'checked' => 0, 'enabled' => 1, 'position' => 88),
 	'f.module_source' => array('label' => "POSModule", 'langfile' => 'cashdesk', 'checked' => ($contextpage == 'poslist' ? '1' : '0'), 'enabled' => "(isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('INVOICE_SHOW_POS'))", 'position' => 90),
 	'f.pos_source' => array('label' => "POSTerminal", 'langfile' => 'cashdesk', 'checked' => ($contextpage == 'poslist' ? '1' : '0'), 'enabled' => "(isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('INVOICE_SHOW_POS'))", 'position' => 91),
@@ -420,6 +422,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_status = '';
 	$search_paymentmode = '';
 	$search_paymentterms = '';
+	$search_bankaccount = '';
 	$search_fk_input_reason = '';
 	$search_module_source = '';
 	$search_pos_source = '';
@@ -751,7 +754,7 @@ $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfi
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = 'SELECT';
-$sql .= ' f.rowid as id, f.ref, f.ref_client, f.fk_soc, f.type, f.subtype, f.note_private, f.note_public, f.increment, f.fk_mode_reglement, f.fk_cond_reglement, f.total_ht, f.total_tva, f.total_ttc,';
+$sql .= ' f.rowid as id, f.ref, f.ref_client, f.fk_soc, f.type, f.subtype, f.note_private, f.note_public, f.increment, f.fk_mode_reglement, f.fk_cond_reglement, ba.label, f.total_ht, f.total_tva, f.total_ttc,';
 $sql .= ' f.localtax1 as total_localtax1, f.localtax2 as total_localtax2,';
 $sql .= ' f.fk_user_author,';
 $sql .= ' f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva as multicurrency_total_vat, f.multicurrency_total_ttc,';
@@ -820,6 +823,7 @@ if (!empty($search_fac_rec_source_title)) {
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = f.fk_projet";
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user AS u ON f.fk_user_author = u.rowid';
+$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON ba.rowid = f.fk_account';
 // Add table from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -968,6 +972,9 @@ if ($search_paymentmode > 0) {
 }
 if ($search_paymentterms > 0) {
 	$sql .= " AND f.fk_cond_reglement = ".((int) $search_paymentterms);
+}
+if ($search_bankaccount > 0) {
+	$sql .= " AND ba.label = ".((int) $search_bankaccount);
 }
 if ($search_fk_input_reason > 0) {
 	$sql .= " AND f.fk_input_reason = ".((int) $search_fk_input_reason);
@@ -1411,6 +1418,9 @@ if ($search_paymentmode > 0) {
 if ($search_paymentterms > 0) {
 	$param .= '&search_paymentterms='.urlencode((string) ($search_paymentterms));
 }
+if ($search_bankaccount > 0) {
+	$param .= '&search_bankaccount='.urlencode((string) ($search_bankaccount));
+}
 if ($search_fk_input_reason > 0) {
 	$param .= '&search_fk_input_reason='.urlencode((string) $search_fk_input_reason);
 }
@@ -1751,6 +1761,12 @@ if (!empty($arrayfields['f.fk_mode_reglement']['checked'])) {
 if (!empty($arrayfields['f.fk_cond_reglement']['checked'])) {
 	print '<td class="liste_titre left">';
 	print $form->getSelectConditionsPaiements((int) $search_paymentterms, 'search_paymentterms', -1, 1, 1, 'minwidth100 maxwidth100');
+	print '</td>';
+}
+// Bank account
+if (!empty($arrayfields['ba.label']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input class="flat maxwidth50imp" type="text" name="search_state" value="'.dol_escape_htmltag($search_bankaccount).'">';
 	print '</td>';
 }
 // Channel
