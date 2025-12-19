@@ -1767,7 +1767,7 @@ if (!empty($arrayfields['f.fk_cond_reglement']['checked'])) {
 // Bank account
 if (!empty($arrayfields['ba.label']['checked'])) {
 	print '<td class="liste_titre">';
-	print '<input class="flat maxwidth75imp" type="text" name="search_bankaccount" value="'.dol_escape_htmltag($search_bankaccount).'">';
+	$form->select_comptes($search_bankaccount, 'search_bankaccount', 0, '', 1, '', 0, 'maxwidth125');
 	print '</td>';
 }
 // Channel
