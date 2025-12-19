@@ -37,7 +37,7 @@ class box_propales extends ModeleBoxes
 	public $boxcode = "lastpropals";
 	public $boximg = "object_propal";
 	public $boxlabel = "BoxLastProposals";
-	public $depends = array("propal"); // conf->propal->enabled
+	public $depends = array("propal");
 
 	/**
 	 *  Constructor

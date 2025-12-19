@@ -213,6 +213,7 @@ The following changes may create regressions for some external modules, but were
 * $conf use into "computed formulae" of etrafields is now deprecated (not yet forbidden). You can replace use of $conf->currency by the new method getCurrency() and $conf->global->xxx by getDolGlobalString('xxx').
 * $user->rights->module->perms is also deprecated. You can use $user->hasRight() instead.
 * The API endpoint /proposals/{id}/contact/{contactid}/{type}/{source} is now {id}/contact/{contactid}/{type} to match same behaviour than order and invoices.
+* The API endpoint /interventions/{id}/reopen hase been removed in favor of /interventions/{id}/settodraft
 
 
 ***** ChangeLog for 22.0.3 compared to 22.0.2 *****

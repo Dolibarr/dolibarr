@@ -54,6 +54,8 @@ class BlockedLogAndLNETest extends CommonClassTest
 	/**
 	 * testBlockedLogAndLNETest
 	 *
+	 * #LNE8-QU2507-0048
+	 *
 	 * @return int
 	 */
 	public function testBlockedLogAndLNETest()
@@ -82,4 +84,5 @@ class BlockedLogAndLNETest extends CommonClassTest
 
 
 	// TODO Add more tests
+	// #LNExxx
 }

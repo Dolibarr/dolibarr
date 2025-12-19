@@ -300,7 +300,6 @@ NonPercuRecuperable=Non-recoverable
 SetConditions=Set Payment Terms
 SetMode=Set Payment Type
 SetRevenuStamp=Set revenue stamp
-Billed=Billed
 RecurringInvoices=Recurring invoices
 RecurringInvoice=Recurring invoice
 RecurringInvoiceSource=Source recurring invoice

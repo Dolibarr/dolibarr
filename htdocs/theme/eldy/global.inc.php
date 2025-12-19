@@ -3796,6 +3796,7 @@ div.vmenu, td.vmenu {
 .vmenu {
 	width: <?php echo $leftmenuwidth; ?>px;
 	margin-left: 8px;
+	text-transform: capitalize;
 	<?php if (GETPOST('optioncss', 'aZ09') == 'print') { ?>
 	display: none;
 	<?php } ?>
@@ -5965,6 +5966,11 @@ button.ui-button-icon-only.ui-dialog-titlebar-close {
 .ui-dialog .ui-dialog-content, .ui-dialog .ui-dialog-titlebar.ui-widget-header {
 	padding-left: 1em !important;
 }
+/*
+.ui-dialog .ui-dialog-content {
+	text-align: justify;
+}
+*/
 
 
 /* ============================================================================== */

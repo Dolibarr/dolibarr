@@ -3565,6 +3565,17 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		if (isModEnabled('stock')) {
 			$original_file = $conf->stock->multidir_output[$entity].'/movement/'.$original_file;
 		}
+	} elseif ($modulepart == 'entrepot') {
+		// Wrapping for stock warehouse
+		if (empty($entity) || empty($conf->stock->multidir_output[$entity])) {
+			return array('accessallowed' => 0, 'error' => 'Value entity must be provided');
+		}
+		if (($fuser->hasRight('stock', $lire) || $fuser->hasRight('stock', 'movement', $lire) || $fuser->hasRight('stock', 'mouvement', $lire)) || preg_match('/^specimen/i', $original_file)) {
+			$accessallowed = 1;
+		}
+		if (isModEnabled('stock')) {
+			$original_file = $conf->stock->multidir_output[$entity].'/'.$original_file;
+		}
 	} elseif ($modulepart == 'contract' && !empty($conf->contract->multidir_output[$entity])) {
 		// Wrapping pour les contrats
 		if ($fuser->hasRight('contrat', $lire) || preg_match('/^specimen/i', $original_file)) {

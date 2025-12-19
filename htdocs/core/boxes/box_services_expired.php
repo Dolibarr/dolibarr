@@ -33,7 +33,7 @@ class box_services_expired extends ModeleBoxes
 	public $boxcode = "expiredservices"; // id of box
 	public $boximg = "object_contract";
 	public $boxlabel = "BoxOldestExpiredServices";
-	public $depends = array("contrat"); // conf->propal->enabled
+	public $depends = array("contract");
 
 	/**
 	 *  Constructor

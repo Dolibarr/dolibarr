@@ -271,7 +271,7 @@ $nbofmonth = 6;
 $delay = (3600 * 24 * 30 * $nbofmonth);
 $arrayofalerts = array();
 
-$commandcheck = "git log --all --shortstat --no-renames --use-mailmap --pretty=".escapeshellarg('format:%cI;%H;%aN;%aE;%ce;%s')." --since=".escapeshellarg(dol_print_date(dol_now() - $delay, '%Y-%m-%d'))." | grep -i -E ".escapeshellarg("(#yogosha|CVE|Sec:|Sec |^Sec$)");
+$commandcheck = "git log --all --shortstat --no-renames --use-mailmap --pretty=".escapeshellarg('format:%cI;%H;%aN;%aE;%ce;%s')." --since=".escapeshellarg(dol_print_date(dol_now() - $delay, '%Y-%m-%d'))." | grep -i -E ".escapeshellarg("(#ghsa|#yogosha|CVE|Sec:|Sec |^Sec$)");
 print 'Execute git log to get commits related to security: '.$commandcheck."\n";
 $output_arrglpu = array();
 $resexecglpu = 0;
@@ -280,12 +280,12 @@ foreach ($output_arrglpu as $valgitlog) {		// The most recent lines are first.
 	// Parse the line to split interesting data
 	$tmpval = cleanVal2($valgitlog);
 
-	if (preg_match('/(#yogosha|CVE[\s\-]*\d|Sec:|Sec\s|^Sec$)/i', $tmpval['title'])) {	// Recommended git comment:  "Sec: Fix #..."
+	if (preg_match('/(#ghsa|#yogosha|CVE[\s\-]*\d|Sec:|Sec\s|^Sec$)/i', $tmpval['title'])) {	// Recommended git comment:  "Fix #..."
 		$alreadyfound = '';
 		$alreadyfoundcommitid = '';
 		foreach ($arrayofalerts as $val) {	// Loop on already found alerts
-			if ($val['issueidyogosha'] && $val['issueidyogosha'] == $tmpval['issueidyogosha']) {	// Already in list
-				$alreadyfound = 'yogosha';
+			if ($val['issueidvdp'] && $val['issueidvdp'] == $tmpval['issueidvdp']) {	// Already in list
+				$alreadyfound = 'vdp';
 				$alreadyfoundcommitid = $val['commitid'];
 				break;
 			}
@@ -841,10 +841,10 @@ $html .= '<h2><span class="fas fa-code pictofixedwidth"></span>'.$title_security
 $html .= '<div class="boxallwidth">'."\n";
 $html .= '<div class="div-table-responsive">'."\n";
 $html .= '<table class="list_technical_debt centpercent">'."\n";
-$html .= '<tr class="trgroup"><td>Commit ID</td><td>Date</td><td style="white-space: nowrap">Reported on<br>Yogosha</td><td style="white-space: nowrap">Reported on<br>GIT</td><td style="white-space: nowrap"><a href="https://www.cve.org/CVERecord/SearchResults?query=dolibarr">Reported on<br>CVE</a></td><td>Title</td><td>Branch of fix</td></tr>'."\n";
+$html .= '<tr class="trgroup"><td>Commit ID</td><td>Date</td><td style="white-space: nowrap">Reported on a<br>VDP (GHSA, Yogosha...)</td><td style="white-space: nowrap">Reported on<br>GitHub issues</td><td style="white-space: nowrap"><a href="https://www.cve.org/CVERecord/SearchResults?query=dolibarr">Reported on<br>CVE</a></td><td>Title</td><td>Branch of fix</td></tr>'."\n";
 foreach ($arrayofalerts as $key => $alert) {
 	$cve = '';
-	$yogosha = empty($alert['issueidyogosha']) ? '' : $alert['issueidyogosha'];
+	$vdp = empty($alert['issueidvdp']) ? '' : $alert['issueidvdp'];
 	$arrayofalerts[$key]['url_commit'] = 'https://github.com/Dolibarr/dolibarr/commit/'.$alert['commitid'];
 	if (!empty($alert['issueid'])) {
 		$arrayofalerts[$key]['url_issue'] = 'https://github.com/Dolibarr/dolibarr/issues/'.$alert['issueid'];
@@ -853,7 +853,7 @@ foreach ($arrayofalerts as $key => $alert) {
 		$cve = preg_replace('/\s+/', '-', trim($alert['issueidcve']));
 		$arrayofalerts[$key]['url_cve'] = 'https://nvd.nist.gov/vuln/detail/CVE-'.$cve;
 	}
-	$arrayofalerts[$key]['title'] = ($project ? "[".$project."] " : "").'Security alert - '.($yogosha ? ' Yogosha #'.$yogosha.' - ' : '').($cve ? 'CVE-'.$cve.' - ' : '');
+	$arrayofalerts[$key]['title'] = ($project ? "[".$project."] " : "").'Security alert - '.($vdp ? ' VDP #'.$vdp.' - ' : '').($cve ? 'CVE-'.$cve.' - ' : '');
 	$arrayofalerts[$key]['title'] .= 'Fix committed as: '.dol_trunc($alert['commitid'], 8);
 
 	$arrayofalerts[$key]['description'] = '<![CDATA[Security alert<br>';
@@ -880,13 +880,11 @@ foreach ($arrayofalerts as $key => $alert) {
 	$html .= preg_replace('/T.*$/', '', $alert['created_at']);
 	$html .= '</td>';
 
-	// Yogosha ID
+	// VDP ID
 	$html .= '<td style="white-space: nowrap">';
-	if (!empty($alert['issueidyogosha'])) {
-		//$html .= '<a target="_blank" href="https://yogosha.com?'.$alert['issueidyogosha'].'">';
-		$html .= '#yogosha'.$alert['issueidyogosha'];
-		$arrayofalerts[$key]['description'] .= "\n<br>".'Yogosha ID #'.$alert['issueidyogosha'];
-		//$html .= '</a>';
+	if (!empty($alert['issueidvdp'])) {
+		$html .= '#vdp'.$alert['issueidvdp'];
+		$arrayofalerts[$key]['description'] .= "\n<br>".'VDP ID #'.$alert['issueidvdp'];
 	} else {
 		//$html .= '<span class="opacitymedium">public issue</span>';
 	}
@@ -932,7 +930,7 @@ $html .= '</div>';
 $html .= '</div>';
 
 $html .= '<br>';
-$html .= 'Note:Search is done in git repository on regex string "#yogosha|CVE[\s\-]*\d|Sec:|Sec |^Sec\s" (not case sensitive)<br>';
+$html .= 'Note:Search is done in git repository on regex string "#ghsa|#yogosha|CVE[\s\-]*\d|Sec:|Sec |^Sec\s" (not case sensitive)<br>';
 $html .= 'You can use this URL for RSS notifications: <a href="/'.$outputfilerss.'">'.$outputfilerss.'</a><br><br>';
 
 $html .= '</section>';
@@ -1147,7 +1145,7 @@ function cleanVal2($val)
 	$tmpval['commitid'] = $tmp[1];
 	$tmpval['url'] = '';
 	$tmpval['issueid'] = '';
-	$tmpval['issueidyogosha'] = '';
+	$tmpval['issueidvdp'] = '';
 	$tmpval['issueidcve'] = '';
 	$tmpval['title'] = array_key_exists(5, $tmp) ? preg_replace('/\.$/', '', $tmp[5]) : '';
 	$tmpval['created_at'] = array_key_exists(0, $tmp) ? $tmp[0] : '';
@@ -1161,7 +1159,10 @@ function cleanVal2($val)
 		$tmpval['issueidcve'] = preg_replace('/^\-/', '', preg_replace('/\s+/', '-', trim($reg[1])));
 	}
 	if (preg_match('/#yogosha(\d+)/i', $tmpval['title'], $reg)) {
-		$tmpval['issueidyogosha'] = $reg[1];
+		$tmpval['issueidvdp'] = $reg[1];
+	}
+	if (preg_match('/#ghsa([a-z\-\d]+)/i', $tmpval['title'], $reg)) {
+		$tmpval['issueidvdp'] = $reg[1];
 	}
 
 	return $tmpval;
