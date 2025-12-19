@@ -30,6 +30,7 @@
 // Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT."/core/class/html.formcategory.class.php";
+require_once DOL_DOCUMENT_ROOT."/core/class/html.formmail.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/ticket.lib.php";
 require_once DOL_DOCUMENT_ROOT."/ticket/class/ticket.class.php";
@@ -226,6 +227,17 @@ if ($action == 'updateMask') {
 		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_TO', $notification_email_to, 'chaine', 0, $notification_email_to_description, $conf->entity);
 	} else {
 		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_TO', '', 'chaine', 0, $notification_email_to_description, $conf->entity);
+	}
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	$notification_email_template = GETPOST('TICKET_NOTIFICATION_EMAIL_TEMPLATE', 'int');
+
+	if (!empty($notification_email_template)) {
+		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_TEMPLATE', $notification_email_template, 'chaine', 0, '', $conf->entity);
+	} else {
+		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_TEMPLATE', '', 'chaine', 0, '', $conf->entity);
 	}
 	if (!($res > 0)) {
 		$error++;
@@ -698,6 +710,39 @@ print '<td class="center">';
 print $formcategory->textwithpicto('', $langs->trans("TicketEmailNotificationToHelp"), 1, 'help');
 print '</td>';
 print '</tr>';
+
+// Email for notification of TICKET_CREATE
+print '<tr class="oddeven"><td><label for="TICKET_NOTIFICATION_EMAIL_TEMPLATE" class="block">'.$langs->trans("TicketEmailCreationNotificationTemplate").'</label></td>';
+print '<td class="left">';
+print img_picto('', 'email', 'class="pictofixedwidth"');
+$formmail = new FormMail($db);
+$result = $formmail->fetchAllEMailTemplate('ticket_send', $user, $langs);
+if ($result < 0) {
+	setEventMessages($this->error, $this->errors, 'errors');
+} else {
+	$modelmail_array=[];
+
+	foreach ($formmail->lines_model as $line) {
+		$reg = array();
+		if (preg_match('/\((.*)\)/', $line->label, $reg)) {
+			$labeltouse = $langs->trans($reg[1]); // langs->trans when label is __(xxx)__
+		} else {
+			$labeltouse = $line->label;
+		}
+		$modelmail_array[$line->id] = dol_escape_htmltag($labeltouse);
+		if ($line->lang) {
+			$modelmail_array[$line->id] .= ' ' . picto_from_langcode($line->lang);
+		}
+	}
+	print $form->selectarray('TICKET_NOTIFICATION_EMAIL_TEMPLATE', $modelmail_array, getDolGlobalInt('TICKET_NOTIFICATION_EMAIL_TEMPLATE'), $langs->trans('SelectMailModel'), 0, 0, '', 0, 0, 0, '', 'minwidth100', 1, '', 0, 1);
+}
+
+//print '<input type="text" class="minwidth200" id="TICKET_NOTIFICATION_EMAIL_TEMPLATE" name="TICKET_NOTIFICATION_EMAIL_TEMPLATE" value="'.getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TEMPLATE').'"></td>';
+print '<td class="center">';
+print $formcategory->textwithpicto('', $langs->trans("TicketEmailNotificationToHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
+
 
 // Check "Notify thirdparty" by default on ticket creation
 print '<tr class="oddeven"><td>'.$langs->trans("TicketAutoCheckNotifyThirdParty").'</td>';

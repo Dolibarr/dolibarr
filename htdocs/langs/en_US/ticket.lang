@@ -51,6 +51,7 @@ EmailReplyto=Reply-To in Email
 EmailReferences=References in Emails
 Notify_TICKET_SENTBYMAIL=Send ticket message by email
 ExportDataset_ticket_1=Tickets
+TicketEmailCreationNotificationTemplate=Email template used when ticket is created
 # Status
 Read=Read
 Assigned=Assigned

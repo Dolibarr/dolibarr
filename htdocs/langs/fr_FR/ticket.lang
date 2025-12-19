@@ -51,6 +51,7 @@ EmailReplyto=Répondre à par e-mail
 EmailReferences=Références dans les e-mails
 Notify_TICKET_SENTBYMAIL=Envoi d'un message du ticket par e-mail
 ExportDataset_ticket_1=Tickets
+TicketEmailCreationNotificationTemplate=Modèle de courriel utilisé pour la notification de création d'un ticket
 # Status
 Read=Lu
 Assigned=Assigné
