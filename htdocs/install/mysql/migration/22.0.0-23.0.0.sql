@@ -397,4 +397,8 @@ ALTER TABLE llx_blockedlog ADD CONSTRAINT fk_linktoref FOREIGN KEY (linktoref) R
 ALTER TABLE llx_fichinterdet ADD COLUMN special_code integer DEFAULT 0 AFTER fk_parent_line;
 ALTER TABLE llx_fichinterdet ADD COLUMN product_type integer DEFAULT 0 AFTER special_code;
 
+ALTER TABLE llx_pos_cash_fence ADD COLUMN hour_close INTEGER DEFAULT null after year_close;
+ALTER TABLE llx_pos_cash_fence ADD COLUMN min_close INTEGER DEFAULT null after hour_close;
+ALTER TABLE llx_pos_cash_fence ADD COLUMN sec_close INTEGER DEFAULT null after min_close;
+
 -- end of migration

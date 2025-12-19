@@ -280,7 +280,7 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 			$fh = fopen($tmpfile, 'w');
 
 			// Print line with title
-			fwrite($fh, "BEGIN - date=".$yearmonthdateofexport." - period=".$yearmonthtoexport." - format=V1"
+			fwrite($fh, "BEGIN - date=".$yearmonthdateofexport." - period=".$yearmonthtoexport." - format=V1 - user=".$user->getFullName($langs)
 				.';'.$langs->transnoentities('Id')
 				.';'.$langs->transnoentities('DateCreation')
 				.';'.$langs->transnoentities('Action')
