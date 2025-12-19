@@ -266,7 +266,7 @@ $arrayfields = array(
 	'typent.code' => array('label' => "ThirdPartyType", 'checked' => $checkedtypetiers, 'position' => 75),
 	'f.fk_mode_reglement' => array('label' => "PaymentMode", 'checked' => '1', 'position' => 80),
 	'f.fk_cond_reglement' => array('label' => "PaymentConditionsShort", 'checked' => '1', 'position' => 85),
-	'ba.label' => array('label' => "BankAccount", 'langfile' => 'banks', 'checked' => '0', 'enabled' => (string) (int) (isModEnabled('bank')), 'position' => 87),
+	'ba.label' => array('label' => "BankAccount", 'langfile' => 'banks', 'checked' => '0', 'enabled' => (string) (int) (isModEnabled('bank')), 'position' => 192),
 	'f.fk_input_reason' => array('label' => "Source", 'checked' => 0, 'enabled' => 1, 'position' => 88),
 	'f.module_source' => array('label' => "POSModule", 'langfile' => 'cashdesk', 'checked' => ($contextpage == 'poslist' ? '1' : '0'), 'enabled' => "(isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('INVOICE_SHOW_POS'))", 'position' => 90),
 	'f.pos_source' => array('label' => "POSTerminal", 'langfile' => 'cashdesk', 'checked' => ($contextpage == 'poslist' ? '1' : '0'), 'enabled' => "(isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('INVOICE_SHOW_POS'))", 'position' => 91),
@@ -1767,7 +1767,7 @@ if (!empty($arrayfields['f.fk_cond_reglement']['checked'])) {
 // Bank account
 if (!empty($arrayfields['ba.label']['checked'])) {
 	print '<td class="liste_titre">';
-	$form->select_comptes($search_bankaccount, 'search_bankaccount', 0, '', 1, '', 0, 'maxwidth125', 1);
+	print '<input class="flat maxwidth75imp" type="text" name="search_bankaccount" value="'.dol_escape_htmltag($search_bankaccount).'">';
 	print '</td>';
 }
 // Channel
