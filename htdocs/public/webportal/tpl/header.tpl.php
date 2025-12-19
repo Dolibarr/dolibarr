@@ -85,6 +85,30 @@ top_httphead();
 	print '<link rel="stylesheet" href="'.$context->cdnUrl . '/jquery/plugins/select2/dist/css/select2.css">'."\n";
 	print '<script nonce="'.getNonce().'" src="'.$context->cdnUrl . '/jquery/plugins/select2/dist/js/select2.full.min.js"></script>'."\n";
 
+
+	// CKEditor
+	if ((isModEnabled('fckeditor') && (!getDolGlobalString('FCKEDITOR_EDITORNAME') || getDolGlobalString('FCKEDITOR_EDITORNAME') == 'ckeditor') && !defined('DISABLE_CKEDITOR')) || defined('FORCE_CKEDITOR')) {
+		$pathckeditor =  $context->cdnUrl . '/ckeditor/ckeditor/';
+		$jsckeditor = 'ckeditor.js';
+		if (defined('JS_CKEDITOR_FOR_WEBPORTAL')) {
+			// To use external ckeditor 4 js lib
+			$pathckeditor = constant('JS_CKEDITOR_FOR_WEBPORTAL');
+		}
+
+		?>
+		<!-- Includes JS for CKEditor -->
+		<script nonce="<?php print getNonce() ?>">
+			/* enable ckeditor by header.tpl.php */
+			var CKEDITOR_BASEPATH = <?php print json_encode($pathckeditor); ?>;
+			var ckeditorConfig = <?php print json_encode($context->rootUrl . 'js/ck-editor-config.js'); ?>;
+		</script>
+		<script nonce="<?php print getNonce() ?>" src="<?php print $pathckeditor . $jsckeditor ?>"></script>
+		<script nonce="<?php print getNonce() ?>" >
+			CKEDITOR.disableAutoInline = false;
+		</script>
+		<?php
+	}
+
 	// Modal script
 	$ModalJSUrl = $context->rootUrl.'js/modal.js';
 	print '<script nonce="'.getNonce().'" src="'.$ModalJSUrl.'"></script>'."\n";
