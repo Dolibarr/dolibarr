@@ -2479,6 +2479,7 @@ SUPPLIER_PROPOSAL_ADD_BILLING_CONTACT=Show billing contact on proposal
 SUPPLIER_PROPOSAL_ADD_BILLING_CONTACTMore=By default the contact only appears for billing
 INVOICE_HIDE_LINKED_OBJECT=Hide linked object
 INVOICE_HIDE_LINKED_OBJECTMore=This feature prevents linked objects from being displayed on the generated PDF invoice document.
+INVOICE_HIDE_VIR_BAN=Hide payment with BAN
 UrlSocialNetworksDesc=Url link of social network. Use {socialid} for the variable part that contains the social network ID.
 IfThisCategoryIsChildOfAnother=If this category is a child of another one
 DarkThemeMode=Dark theme mode

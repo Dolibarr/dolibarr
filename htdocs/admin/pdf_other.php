@@ -157,6 +157,9 @@ if ($action == 'update') {
 	if (GETPOSTISSET('INVOICE_HIDE_LINKED_OBJECT')) {
 		dolibarr_set_const($db, "INVOICE_HIDE_LINKED_OBJECT", GETPOSTINT("INVOICE_HIDE_LINKED_OBJECT"), 'chaine', 0, '', $conf->entity);
 	}
+	if (GETPOSTISSET('INVOICE_HIDE_VIR_BAN')) {
+		dolibarr_set_const($db, "INVOICE_HIDE_VIR_BAN", GETPOSTINT("INVOICE_HIDE_VIR_BAN"), 'chaine', 0, '', $conf->entity);
+	}
 	if (GETPOSTISSET('BARCODE_ON_SHIPPING_PDF')) {
 		dolibarr_set_const($db, "BARCODE_ON_SHIPPING_PDF", GETPOSTINT("BARCODE_ON_SHIPPING_PDF"), 'chaine', 0, '', $conf->entity);
 	}
@@ -573,6 +576,17 @@ if (isModEnabled('invoice')) {
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 		print $form->selectarray("INVOICE_HIDE_LINKED_OBJECT", $arrval, getDolGlobalString('INVOICE_HIDE_LINKED_OBJECT'));
+	}
+	print '</td></tr>';
+	
+	print '<tr class="oddeven"><td>';
+	print $form->textwithpicto($langs->trans("INVOICE_HIDE_VIR_BAN"), ''));
+	print '</td><td>';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('INVOICE_HIDE_VIR_BAN');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("INVOICE_HIDE_VIR_BAN", $arrval, getDolGlobalString('INVOICE_HIDE_VIR_BAN'));
 	}
 	print '</td></tr>';
 

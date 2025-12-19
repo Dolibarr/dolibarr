@@ -1655,51 +1655,53 @@ class pdf_sponge extends ModelePDFFactures
 			}
 
 			// If payment mode not forced or forced to VIR, show payment with BAN
-			if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'VIR') {
-				if ($object->fk_account > 0 || $object->fk_bank > 0 || getDolGlobalInt('FACTURE_RIB_NUMBER')) {
-					$bankid = ($object->fk_account <= 0 ? getDolGlobalInt('FACTURE_RIB_NUMBER') : (int) $object->fk_account);
-					if ($object->fk_bank > 0) {
-						$bankid = $object->fk_bank; // For backward compatibility when object->fk_account is forced with object->fk_bank
-					}
-					$account = new Account($this->db);
-					$account->fetch($bankid);
+			if (!getDolGlobalString('INVOICE_HIDE_VIR_BAN')) {
+				if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'VIR') {
+					if ($object->fk_account > 0 || $object->fk_bank > 0 || getDolGlobalInt('FACTURE_RIB_NUMBER')) {
+						$bankid = ($object->fk_account <= 0 ? getDolGlobalInt('FACTURE_RIB_NUMBER') : (int) $object->fk_account);
+						if ($object->fk_bank > 0) {
+							$bankid = $object->fk_bank; // For backward compatibility when object->fk_account is forced with object->fk_bank
+						}
+						$account = new Account($this->db);
+						$account->fetch($bankid);
 
-					$curx = $this->marge_gauche;
-					$cury = $posy;
+						$curx = $this->marge_gauche;
+						$cury = $posy;
 
-					$posy = pdf_bank($pdf, $outputlangs, $curx, $cury, $account, 0, $default_font_size);
+						$posy = pdf_bank($pdf, $outputlangs, $curx, $cury, $account, 0, $default_font_size);
 
-					$posy += 2;
+						$posy += 2;
 
-					// SHOW EPC QR CODE at bottom, but only if unpaid amount exists
-					if ((getDolGlobalString('INVOICE_ADD_EPC_QR_CODE') == 'bottom') && ($object->getRemainToPay() > 0)) {
-						$qrPosX = $this->marge_gauche + 5;
-						$qrPosY = $posy;
-						$qrCodeColor = array('25', '25', '25');
-						$styleQr = array(
-							'border' => false,
-							'padding' => 0,
-							'fgcolor' => $qrCodeColor,
-							'bgcolor' => false, //array(255,255,255)
-							'module_width' => 1, // width of a single module in points
-							'module_height' => 1 // height of a single module in points
-						);
+						// SHOW EPC QR CODE at bottom, but only if unpaid amount exists
+						if ((getDolGlobalString('INVOICE_ADD_EPC_QR_CODE') == 'bottom') && ($object->getRemainToPay() > 0)) {
+							$qrPosX = $this->marge_gauche + 5;
+							$qrPosY = $posy;
+							$qrCodeColor = array('25', '25', '25');
+							$styleQr = array(
+								'border' => false,
+								'padding' => 0,
+								'fgcolor' => $qrCodeColor,
+								'bgcolor' => false, //array(255,255,255)
+								'module_width' => 1, // width of a single module in points
+								'module_height' => 1 // height of a single module in points
+							);
 
-						$EPCQrCodeString = $object->buildEPCQrCodeString();
-						$pdf->write2DBarcode($EPCQrCodeString, 'QRCODE,M', $qrPosX, $qrPosY, 20, 20, $styleQr, 'N');
+							$EPCQrCodeString = $object->buildEPCQrCodeString();
+							$pdf->write2DBarcode($EPCQrCodeString, 'QRCODE,M', $qrPosX, $qrPosY, 20, 20, $styleQr, 'N');
 
-						$pdf->SetXY($qrPosX + 25, $qrPosY + 5);
-						$pdf->SetFont('', '', $default_font_size - 5);
-						$pdf->MultiCell(30, 3, $outputlangs->transnoentitiesnoconv("INVOICE_ADD_EPC_QR_CODEPay"), 0, 'L', false);
-						$posy = $pdf->GetY() + 2;
-					}
+							$pdf->SetXY($qrPosX + 25, $qrPosY + 5);
+							$pdf->SetFont('', '', $default_font_size - 5);
+							$pdf->MultiCell(30, 3, $outputlangs->transnoentitiesnoconv("INVOICE_ADD_EPC_QR_CODEPay"), 0, 'L', false);
+							$posy = $pdf->GetY() + 2;
+						}
 
-					// Show structured communication
-					if (getDolGlobalString('INVOICE_PAYMENT_ENABLE_STRUCTURED_COMMUNICATION')) {
-						include_once DOL_DOCUMENT_ROOT.'/core/lib/functions_be.lib.php';
-						$invoicePaymentKey = dolBECalculateStructuredCommunication($object->ref, $object->type);
+						// Show structured communication
+						if (getDolGlobalString('INVOICE_PAYMENT_ENABLE_STRUCTURED_COMMUNICATION')) {
+							include_once DOL_DOCUMENT_ROOT.'/core/lib/functions_be.lib.php';
+							$invoicePaymentKey = dolBECalculateStructuredCommunication($object->ref, $object->type);
 
-						$pdf->MultiCell(100, 3, $outputlangs->transnoentities('StructuredCommunication').": " . $outputlangs->convToOutputCharset($invoicePaymentKey), 0, 'L', false);
+							$pdf->MultiCell(100, 3, $outputlangs->transnoentities('StructuredCommunication').": " . $outputlangs->convToOutputCharset($invoicePaymentKey), 0, 'L', false);
+						}
 					}
 				}
 			}
