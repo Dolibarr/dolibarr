@@ -76,7 +76,7 @@ if (isModEnabled('category')) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array('bills', 'companies', 'products', 'categories'));
+$langs->loadLangs(array('bills', 'companies', 'products', 'categories', 'banks'));
 
 $search_all = trim(GETPOST('search_all', 'alphanohtml'));
 
@@ -266,7 +266,7 @@ $arrayfields = array(
 	'typent.code' => array('label' => "ThirdPartyType", 'checked' => $checkedtypetiers, 'position' => 75),
 	'f.fk_mode_reglement' => array('label' => "PaymentMode", 'checked' => '1', 'position' => 80),
 	'f.fk_cond_reglement' => array('label' => "PaymentConditionsShort", 'checked' => '1', 'position' => 85),
-	'ba.label' => array('label' => "BankAccount", 'langfile' => 'banks', 'checked' => '0', (!isModEnabled('bank') ? '0' : '1'), 'position' => 87),
+	'ba.label' => array('label' => "BankAccount", 'langfile' => 'banks', 'checked' => '0', 'enabled' => (string) (int) (isModEnabled('bank')), 'position' => 87),
 	'f.fk_input_reason' => array('label' => "Source", 'checked' => 0, 'enabled' => 1, 'position' => 88),
 	'f.module_source' => array('label' => "POSModule", 'langfile' => 'cashdesk', 'checked' => ($contextpage == 'poslist' ? '1' : '0'), 'enabled' => "(isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('INVOICE_SHOW_POS'))", 'position' => 90),
 	'f.pos_source' => array('label' => "POSTerminal", 'langfile' => 'cashdesk', 'checked' => ($contextpage == 'poslist' ? '1' : '0'), 'enabled' => "(isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('INVOICE_SHOW_POS'))", 'position' => 91),
@@ -729,6 +729,7 @@ $formother = new FormOther($db);
 $formfile = new FormFile($db);
 $formmargin = new FormMargin($db);
 $facturestatic = new Facture($db);
+$accountstatic = new Account($db);
 $formcompany = new FormCompany($db);
 $companystatic = new Societe($db);
 $companyparent = new Societe($db);
@@ -754,7 +755,7 @@ $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfi
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = 'SELECT';
-$sql .= ' f.rowid as id, f.ref, f.ref_client, f.fk_soc, f.type, f.subtype, f.note_private, f.note_public, f.increment, f.fk_mode_reglement, f.fk_cond_reglement, ba.label, f.total_ht, f.total_tva, f.total_ttc,';
+$sql .= ' f.rowid as id, f.ref, f.ref_client, f.fk_soc, f.type, f.subtype, f.note_private, f.note_public, f.increment, f.fk_mode_reglement, f.fk_cond_reglement, ba.rowid as bid, ba.ref as bref, ba.label as blabel, ba.number as bnumber, ba.account_number as baccount_number, ba.fk_accountancy_journal as baccountancy_journal, f.total_ht, f.total_tva, f.total_ttc,';
 $sql .= ' f.localtax1 as total_localtax1, f.localtax2 as total_localtax2,';
 $sql .= ' f.fk_user_author,';
 $sql .= ' f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva as multicurrency_total_vat, f.multicurrency_total_ttc,';
@@ -974,7 +975,7 @@ if ($search_paymentterms > 0) {
 	$sql .= " AND f.fk_cond_reglement = ".((int) $search_paymentterms);
 }
 if ($search_bankaccount > 0) {
-	$sql .= " AND ba.label = ".((int) $search_bankaccount);
+	$sql .= " AND ba.rowid = ".((int) $search_bankaccount);
 }
 if ($search_fk_input_reason > 0) {
 	$sql .= " AND f.fk_input_reason = ".((int) $search_fk_input_reason);
@@ -1766,7 +1767,7 @@ if (!empty($arrayfields['f.fk_cond_reglement']['checked'])) {
 // Bank account
 if (!empty($arrayfields['ba.label']['checked'])) {
 	print '<td class="liste_titre">';
-	print '<input class="flat maxwidth50imp" type="text" name="search_state" value="'.dol_escape_htmltag($search_bankaccount).'">';
+	$form->select_comptes($search_bankaccount, 'search_bankaccount', 0, '', 1, '', 0, 'maxwidth125', 1);
 	print '</td>';
 }
 // Channel
@@ -2069,6 +2070,10 @@ if (!empty($arrayfields['f.fk_mode_reglement']['checked'])) {
 }
 if (!empty($arrayfields['f.fk_cond_reglement']['checked'])) {
 	print_liste_field_titre($arrayfields['f.fk_cond_reglement']['label'], $_SERVER["PHP_SELF"], "f.fk_cond_reglement", "", $param, "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['ba.label']['checked'])) {
+	print_liste_field_titre($arrayfields['ba.label']['label'], $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['f.fk_input_reason']['checked'])) {
@@ -2671,6 +2676,24 @@ if ($num > 0) {
 				$s = $form->form_conditions_reglement($_SERVER['PHP_SELF'], $obj->fk_cond_reglement, 'none', 0, '', -1, -1, 1);
 				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($s).'">';
 				print $s;
+				print '</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
+
+			// Bank account
+			if (!empty($arrayfields['ba.label']['checked'])) {
+				print '<td>';
+				if (!empty($obj->bid)) {
+					$accountstatic->id = $obj->bid;
+					$accountstatic->ref = $obj->bref;
+					$accountstatic->label = $obj->blabel;
+					$accountstatic->number = $obj->bnumber;
+					$accountstatic->account_number = $obj->baccount_number;
+					$accountstatic->accountancy_journal = $obj->baccountancy_journal;
+					print $accountstatic->getNomUrl(1);
+				}
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
