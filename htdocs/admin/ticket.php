@@ -711,7 +711,7 @@ print $formcategory->textwithpicto('', $langs->trans("TicketEmailNotificationToH
 print '</td>';
 print '</tr>';
 
-// Email for notification of TICKET_CREATE
+// Email template for notification of TICKET_CREATE
 print '<tr class="oddeven"><td><label for="TICKET_NOTIFICATION_EMAIL_TEMPLATE" class="block">'.$langs->trans("TicketEmailCreationNotificationTemplate").'</label></td>';
 print '<td class="left">';
 print img_picto('', 'email', 'class="pictofixedwidth"');
