@@ -90,7 +90,7 @@ function myobjectPrepareHead($object)
 	}
 
 	if ($showtabofpageagenda) {
-		if (version_compare(DOL_VERSION, '22.0.0') >= 0) {
+		if (version_compare(DOL_VERSION, '22.0.0', '>=')) {
 			$head[$h][0] = dol_buildpath("/mymodule/myobject_messaging.php", 1).'?id='.$object->id;
 		} else {
 			$head[$h][0] = dol_buildpath("/mymodule/myobject_agenda.php", 1).'?id='.$object->id;
