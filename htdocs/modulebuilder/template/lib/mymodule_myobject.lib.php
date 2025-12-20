@@ -90,11 +90,11 @@ function myobjectPrepareHead($object)
 	}
 
 	if ($showtabofpageagenda) {
+		$mode = 'list';
 		if (version_compare(DOL_VERSION, '22.0.0', '>=')) {
-			$head[$h][0] = dol_buildpath("/mymodule/myobject_messaging.php", 1).'?id='.$object->id;
-		} else {
-			$head[$h][0] = dol_buildpath("/mymodule/myobject_agenda.php", 1).'?id='.$object->id;
+			$mode = 'messaging';
 		}
+		$head[$h][0] = dol_buildpath("/mymodule/myobject_agenda.php", 1).'?id='.$object->id.'&mode='.$mode;
 		$head[$h][1] = $langs->trans("Events");
 		$head[$h][2] = 'agenda';
 		$h++;
