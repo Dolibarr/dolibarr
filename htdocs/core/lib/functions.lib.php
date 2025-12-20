@@ -2871,8 +2871,13 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 {
 	global $conf, $langs, $hookmanager;
 
+	if (!empty($title)) {
+		print load_fiche_titre($title, '', 'object_'.$picto);
+	}
+
 	// Show title
 	$showtitle = 1;
+	
 	if (!empty($conf->dol_optimize_smallscreen)) {
 		$showtitle = 0;
 	}
