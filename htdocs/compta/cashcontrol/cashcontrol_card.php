@@ -31,11 +31,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/cashcontrol/class/cashcontrol.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -43,6 +38,10 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/cashcontrol/class/cashcontrol.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 $langs->loadLangs(array("install", "cashdesk", "admin", "banks"));
 
@@ -175,9 +174,18 @@ if ($action == "start" && $permissiontoadd) {
 	}
 
 	if (!$error) {
-		$object->day_close = GETPOSTINT('closeday');
-		$object->month_close = GETPOSTINT('closemonth');
-		$object->year_close = GETPOSTINT('closeyear');
+		$dateclosegmt = dol_mktime(GETPOSTISSET('closehour') ? GETPOSTINT('closehour') : 23, GETPOSTISSET('closemin') ? GETPOSTINT('closemin') : 59, GETPOSTISSET('closesec') ? GETPOSTINT('closesec') : 59, GETPOSTINT('closemonth'), GETPOSTINT('closeday'), GETPOSTINT('closeyear'), 'tzuserrel');
+		dol_syslog('The closing date must be '.dol_print_date($dateclosegmt, 'standard', 'gmt').' UTC');
+
+		$tmparray = dol_getdate($dateclosegmt, false, 'gmt');
+
+		$object->day_close = $tmparray['mday'];
+		$object->month_close = $tmparray['mon'];
+		$object->year_close = $tmparray['year'];
+
+		$object->hour_close = $tmparray['hours'];
+		$object->min_close = $tmparray['minutes'];
+		$object->sec_close = $tmparray['seconds'];
 
 		$object->opening = (float) price2num(GETPOST('opening', 'alpha'));
 		$object->posmodule = GETPOST('posmodule', 'alpha');
@@ -284,6 +292,7 @@ llxHeader('', $langs->trans("CashControl"));
 $terminalid = '';
 $terminaltouse = '';
 
+// Calculate initial amount estimation and final amount
 if ($action == "create" || $action == "start" || $action == 'close') {
 	if ($action == 'close') {
 		$posmodule = $object->posmodule;
@@ -309,6 +318,12 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 		}
 	}
 
+	// TODO Ask hours to use for initial amount estimation
+	$shour = 0;
+	$smin = 0;
+	$ssec = 0;
+	$datestart = null;
+
 	if (isset($terminalid) && $terminalid != '' && isset($posmodule)) {
 		// Calculate $initialbalanceforterminal for terminal 0
 		foreach ($arrayofpaymentmode as $key => $val) {
@@ -321,15 +336,23 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 			$vartouse = 'CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse;
 			$bankid = getDolGlobalInt($vartouse);
 
+			// Get the amount in bank before the period date to pre-fill the "initial amount".
+			// The user is still free to prefill with the correct value
 			if ($bankid > 0) {
 				$sql = "SELECT SUM(amount) as total FROM ".MAIN_DB_PREFIX."bank";
 				$sql .= " WHERE fk_account = ".((int) $bankid);
 				if ($syear && !$smonth) {
-					$sql .= " AND dateo < '".$db->idate(dol_get_first_day($syear, 1))."'";
+					$datestart = dol_get_first_day($syear, 1);
+					$dateend = dol_get_last_day($syear, 12);
+					$sql .= " AND dateo < '".$db->idate($datestart)."'";
 				} elseif ($syear && $smonth && !$sday) {
-					$sql .= " AND dateo < '".$db->idate(dol_get_first_day($syear, $smonth))."'";
+					$datestart = dol_get_first_day($syear, $smonth);
+					$dateend = dol_get_last_day($syear, $smonth);
+					$sql .= " AND dateo < '".$db->idate($datestart)."'";
 				} elseif ($syear && $smonth && $sday) {
-					$sql .= " AND dateo < '".$db->idate(dol_mktime(0, 0, 0, $smonth, $sday, $syear))."'";
+					$datestart = dol_mktime($shour, $smin, $ssec, $smonth, $sday, $syear);
+					$dateend = dol_mktime(23, 59, 59, $smonth, $sday, $syear);
+					$sql .= " AND dateo < '".$db->idate($datestart)."'";
 				} else {
 					setEventMessages($langs->trans('YearNotDefined'), null, 'errors');
 				}
@@ -349,7 +372,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 			}
 		}
 
-		// Calculate $theoricalamountforterminal
+		// Calculate $theoricalamountforterminal at end of period
 		foreach ($arrayofpaymentmode as $key => $val) {
 			$sql = "SELECT SUM(pf.amount) as total, COUNT(*) as nb";
 			$sql .= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."c_paiement as cp";
@@ -368,15 +391,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 				dol_print_error(null, 'Value for key = '.$key.' not supported');
 				exit;
 			}
-			if ($syear && !$smonth) {
-				$sql .= " AND datep BETWEEN '".$db->idate(dol_get_first_day($syear, 1))."' AND '".$db->idate(dol_get_last_day($syear, 12))."'";
-			} elseif ($syear && $smonth && !$sday) {
-				$sql .= " AND datep BETWEEN '".$db->idate(dol_get_first_day($syear, $smonth))."' AND '".$db->idate(dol_get_last_day($syear, $smonth))."'";
-			} elseif ($syear && $smonth && $sday) {
-				$sql .= " AND datep BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $smonth, $sday, $syear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $smonth, $sday, $syear))."'";
-			} else {
-				setEventMessages($langs->trans('YearNotDefined'), null, 'errors');
-			}
+			$sql .= " AND datep BETWEEN '".$db->idate($datestart)."' AND '".$db->idate($dateend)."'";
 
 			$resql = $db->query($sql);
 			if ($resql) {
@@ -392,7 +407,9 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 			}
 		}
 	}
+}
 
+if ($action == "create" || $action == "start") {
 	//var_dump($theoricalamountforterminal); var_dump($theoricalnbofinvoiceforterminal);
 	if ($action != 'close') {
 		print load_fiche_titre($langs->trans("CashControl")." - ".$langs->trans("New"), '', 'cash-register');
@@ -499,6 +516,8 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 			print '<tr class="liste_titre">';
 			print '<td></td>';
 			print '<td class="center">'.$langs->trans("InitialBankBalance");
+			print '<br>';
+			print '<span class="small opacitymedium">'.$langs->trans("at").' '.dol_print_date($datestart, 'standard', 'gmt').' UTC</span>';
 			//print '<br>'.$langs->trans("TheoricalAmount").'<br>'.$langs->trans("RealAmount");
 			print '</td>';
 
@@ -597,7 +616,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 			print '<td class="center">';
 			print '<input type="submit" name="cancel" class="button button-cancel" value="'.$langs->trans("Cancel").'">';
 			if ($action == 'start') {
-				print '<input type="submit" name="add" class="button button-save" value="'.$langs->trans("Save").'">';
+				print '<input type="submit" name="add" class="button button-save" value="'.$langs->trans("Start").'">';
 			} elseif ($action == 'close') {
 				print '<input type="submit" name="valid" class="button" value="'.$langs->trans("Validate").'">';
 			}
@@ -658,6 +677,26 @@ if (empty($action) || $action == "view" || $action == "close") {
 		print $object->year_close;
 		print($object->month_close ? "-" : "").$object->month_close;
 		print($object->day_close ? "-" : "").$object->day_close;
+
+		$dateend = dol_mktime($object->hour_close, $object->min_close, $object->sec_close, $object->month_close, $object->day_close, $object->year_close, 'gmt');
+		if (empty($object->day_close) && !empty($object->month_close)) {
+			$datestart = dol_get_last_day(($object->month_close == 1 ? $object->year_close - 1 : $object->year_close), ($object->month_close == 1 ? 12 : $object->month_close - 1), 'gmt');
+		} elseif (empty($object->day_close) && empty($object->month_close)) {
+			$datestart = dol_get_last_day($object->year_close - 1, $object->month_close, 'gmt');
+		} else {
+			$datestart = dol_time_plus_duree($dateend, -1, 'd', 'gmt');
+		}
+		$datestart += 1;	// Add 1 second
+
+		//print ' &nbsp;  &nbsp; ';
+		$htmltooltip = '';
+		$htmltooltip .= dol_print_date($datestart, 'standard', 'tzuserrel').' - ';
+		$htmltooltip .= dol_print_date($dateend, 'standard', 'tzuserrel');
+		$htmltooltip .= '<br><span class="small opacitymedium">UTC : ';
+		$htmltooltip .= dol_print_date($datestart, 'standard', 'gmt').' - ';
+		$htmltooltip .= dol_print_date($dateend, 'standard', 'gmt');
+		$htmltooltip .= '</span>';
+		print $form->textwithpicto('', $htmltooltip);
 		print '</td></tr>';
 
 		print '</table>';
@@ -727,57 +766,6 @@ if (empty($action) || $action == "view" || $action == "close") {
 				print '<input type="hidden" name="action" value="start">';
 			}
 
-			/*
-			print '<div class="div-table-responsive-no-min">';
-			print '<table class="noborder centpercent">';
-			print '<tr class="liste_titre">';
-			print '<td>'.$langs->trans("Module").'</td>';
-			print '<td>'.$langs->trans("Terminal").'</td>';
-			print '<td>'.$langs->trans("Year").'</td>';
-			print '<td>'.$langs->trans("Month").'</td>';
-			print '<td>'.$langs->trans("Day").'</td>';
-			print '<td></td>';
-			print "</tr>\n";
-
-			$disabled = 1;
-			$prefix = 'close';
-
-			print '<tr class="oddeven">';
-			print '<td>'.$form->selectarray('posmodulebis', $arrayofposavailable, $object->posmodule, (count($arrayofposavailable) > 1 ? 1 : 0), 0, 0, '', 0, 0, $disabled).'</td>';
-			print '<input type="hidden" name="posmodule" value="'.$object->posmodule.'">';
-			print '<td>';
-
-			$array = array();
-			$numterminals = max(1, $conf->global->TAKEPOS_NUM_TERMINALS);
-			for($i = 1; $i <= $numterminals; $i++) {
-				$array[$i] = $i;
-			}
-			$selectedposnumber = $object->posnumber; $showempty = 1;
-			//print $form->selectarray('posnumber', $array, GETPOSTISSET('posnumber') ?GETPOST('posnumber', 'int') : $selectedposnumber, $showempty, 0, 0, '', 0, 0, $disabled);
-			print '<input name="posnumberbis" disabled="disabled" type="text" class="maxwidth50" value="'.$object->posnumber.'">';
-			print '<input type="hidden" name="posnumber" value="'.$object->posmodule.'">';
-			print '</td>';
-			// Year
-			print '<td>';
-			print '<input name="yearbis" disabled="disabled" type="text" class="maxwidth50" value="'.$object->year_close.'">';
-			print '<input type="hidden" name="year_close" value="'.$object->year_close.'">';
-			print '</td>';
-			// Month
-			print '<td>';
-			print '<input name="monthbis" disabled="disabled" type="text" class="maxwidth50" value="'.$object->month_close.'">';
-			print '<input type="hidden" name="month_close" value="'.$object->month_close.'">';
-			print '</td>';
-			// Day
-			print '<td>';
-			print '<input name="daybis" disabled="disabled" type="text" class="maxwidth50" value="'.$object->date_close.'">';
-			print '<input type="hidden" name="day_close" value="'.$object->date_close.'">';
-			print '</td>';
-
-			print '<td></td>';
-			print '</table>';
-			print '</div>';
-			*/
-
 			// Table to see/enter balance
 			if (($action == 'start' && GETPOST('posnumber') != '' && GETPOST('posnumber') != '' && GETPOST('posnumber') != '-1') || $action == 'close') {
 				$posmodule = $object->posmodule;
@@ -791,11 +779,14 @@ if (empty($action) || $action == "view" || $action == "close") {
 				print '<tr class="liste_titre">';
 				print '<td></td>';
 				print '<td class="center">'.$langs->trans("InitialBankBalance");
-				//print '<br>'.$langs->trans("TheoricalAmount").'<br>'.$langs->trans("RealAmount");
+				print '<br>';
+				print '<span class="small opacitymedium">'.$langs->trans("at").' '.dol_print_date($datestart, 'standard', 'gmt').' UTC</span>';
 				print '</td>';
 
 				print '<td align="center" class="hide0" colspan="'.count($arrayofpaymentmode).'">';
 				print $langs->trans("AmountAtEndOfPeriod");
+				print '<br>';
+				print '<span class="small opacitymedium">'.$langs->trans("at").' '.dol_print_date($dateend, 'standard', 'gmt').' UTC</span>';
 				print '</td>';
 				print '<td></td>';
 				print '</tr>';

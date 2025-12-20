@@ -738,7 +738,7 @@ class Form
 		if ($tooltipon == 2 || $tooltipon == 3) {
 			$paramfortooltipimg = ' class="' . $classfortooltip . ($notabs != 3 ? ' inline-block' : '') . ($extracss ? ' ' . $extracss : '') . '" style="padding: 0px;' . ($extrastyle ? ' ' . $extrastyle : '') . '"';
 			if ($tooltiptrigger == '') {
-				$paramfortooltipimg .= ' title="' . ($noencodehtmltext ? $htmltext : dol_escape_htmltag($htmltext, 1)) . '"'; // Attribute to put on img tag to store tooltip
+				$paramfortooltipimg .= ' title="' . ($noencodehtmltext ? $htmltext : dol_escape_htmltag($htmltext, 1, 0, 'span', 0, 1)) . '"'; // Attribute to put on img tag to store tooltip
 			} else {
 				$paramfortooltipimg .= ' dolid="' . $tooltiptrigger . '"';
 			}
@@ -748,7 +748,7 @@ class Form
 		if ($tooltipon == 1 || $tooltipon == 3) {
 			$paramfortooltiptd = ' class="' . ($tooltipon == 3 ? 'cursorpointer ' : '') . $classfortooltip . ($tag != 'td' ? ' inline-block' : '') . ($extracss ? ' ' . $extracss : '') . '" style="padding: 0px;' . ($extrastyle ? ' ' . $extrastyle : '') . '" ';
 			if ($tooltiptrigger == '') {
-				$paramfortooltiptd .= ' title="' . ($noencodehtmltext ? $htmltext : dol_escape_htmltag($htmltext, 1)) . '"'; // Attribute to put on td tag to store tooltip
+				$paramfortooltiptd .= ' title="' . ($noencodehtmltext ? $htmltext : dol_escape_htmltag($htmltext, 1, 0, 'span', 0, 1)) . '"'; // Attribute to put on td tag to store tooltip
 			} else {
 				$paramfortooltiptd .= ' dolid="' . $tooltiptrigger . '"';
 			}
@@ -794,7 +794,7 @@ class Form
 	 * Show a text with a picto and a tooltip on picto
 	 *
 	 * @param 	string 		$text 				Text to show
-	 * @param 	string 		$htmltooltip 		Content of tooltip
+	 * @param 	string 		$htmltooltip 		Content of tooltip. Warning: By default we keep only <b> tags.
 	 * @param 	int<-1,1>	$direction 			1=Icon is after text, -1=Icon is before text, 0=no icon
 	 * @param 	string 		$type 				Type of picto ('info', 'infoclickable', 'help', 'helpclickable', 'warning', 'superadmin', 'mypicto@mymodule', ...) or image filepath or 'none'
 	 * @param 	string 		$extracss 			Add a CSS style to td, div or span tag
