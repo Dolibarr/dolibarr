@@ -205,7 +205,7 @@ $form = new Form($db);
 if ($object->id > 0) {
 	$title = $langs->trans("MyObject")." - ".$langs->trans('Agenda');
 	//$title = $object->ref." - ".$langs->trans("Agenda");
-	if (getDolGlobalInt('MAIN_HTML_TITLE') && getDolGlobalString('MAIN_APPLICATION_TITLE')) $title = $conf->global->MAIN_APPLICATION_TITLE . " - " . $title;
+	if (getDolGlobalInt('MAIN_HTML_TITLE') && getDolGlobalString('MAIN_APPLICATION_TITLE')) $title = getDolGlobalString('MAIN_APPLICATION_TITLE') . " - " . $title;
 	$help_url = 'EN:Module_Agenda_En|DE:Modul_Terminplanung';
 
 	llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-mymodule page-card_agenda');
