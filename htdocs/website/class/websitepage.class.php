@@ -118,6 +118,16 @@ class WebsitePage extends CommonObject
 	public $allowed_in_frames;
 
 	/**
+	 * @var int 		Use meta robot tag "index" (else "noindex")
+	 */
+	public $index = 1;
+
+	/**
+	 * @var string 		Use meta robot tag "follow" (else "nofollow")
+	 */
+	public $follow = 1;
+
+	/**
 	 * @var string		Disable WAF ('all', 'NOSCANAUDIOFORINJECTION,NOSCANIFRAMEFORINJECTION,NOSCANOBJECTFORINJECTION')
 	 */
 	public $disable_waf = 'NOSCANAUDIOFORINJECTION,NOSCANIFRAMEFORINJECTION,NOSCANOBJECTFORINJECTION';	// TODO Manage field in page setup

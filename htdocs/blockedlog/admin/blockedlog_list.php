@@ -405,14 +405,14 @@ $morehtmlcenter = '';
 $registrationnumber = getHashUniqueIdOfRegistration();
 $texttop = '<small class="opacitymedium">'.$langs->trans("RegistrationNumber").':</small> <small>'.dol_trunc($registrationnumber, 10).'</small>';
 
-print load_fiche_titre($title, $linkback, 'blockedlog', 0, '', '', $morehtmlcenter);
+print load_fiche_titre($title.'<br>'.$texttop, $linkback, 'blockedlog', 0, '', '', $morehtmlcenter);
 
 $head = blockedlogadmin_prepare_head(GETPOST('withtab', 'alpha'));
 
 print dol_get_fiche_head($head, 'fingerprints', '', -1);
 
-print $texttop;
-print '<br><br>';
+//print $texttop;
+//print '<br><br>';
 
 print '<div class="opacitymedium hideonsmartphone justify">';
 

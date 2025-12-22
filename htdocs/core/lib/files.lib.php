@@ -3875,12 +3875,12 @@ function dirbasename($pathfile)
  * Function to get list of updated or modified files.
  * $file_list is used as global variable
  *
- * @param array{}|array{insignature:string[],missing?:array<array{filename:string,expectedmd5:string,expectedsize:string}>,updated:array<array{filename:string,expectedmd5:string,expectedsize:string,md5:string}>}	$file_list	Array for response
+ * @param array{}|array{insignature:string[],missing?:array<array{filename:string,expectedhash:string,expectedsize:string,algo:string}>,updated:array<array{filename:string,expectedhash:string,expectedsize:string,hash:string,algo:string}>}	$file_list	Array for response
  * @param   SimpleXMLElement	$dir    	        SimpleXMLElement of files to test
  * @param   string				$path   	        Path of files relative to $pathref. We start with ''. Used by recursive calls.
  * @param   string				$pathref            Path ref (DOL_DOCUMENT_ROOT)
  * @param   string[]			$checksumconcat     Array of checksum
- * @return	array{insignature:string[],missing?:array<array{filename:string,expectedmd5:string,expectedsize:string}>,updated:array<array{filename:string,expectedmd5:string,expectedsize:string,md5:string}>}	$file_list	Array of filenames
+ * @return	array{insignature:string[],missing?:array<array{filename:string,expectedhash:string,expectedsize:string,algo:string}>,updated:array<array{filename:string,expectedhash:string,expectedsize:string,hash:string,algo:string}>}	$file_list	Array of filenames
  */
 function getFilesUpdated(&$file_list, SimpleXMLElement $dir, $path = '', $pathref = '', &$checksumconcat = array())
 {
@@ -3888,24 +3888,33 @@ function getFilesUpdated(&$file_list, SimpleXMLElement $dir, $path = '', $pathre
 
 	//$exclude = 'install';
 
-	foreach ($dir->md5file as $file) {    // $file is a simpleXMLElement
+	$entry = array();
+	if (!empty($dir->md5file)) {
+		$entry = $dir->md5file;
+		$algo = 'md5';
+	} elseif (!empty($dir->sha256file)) {
+		$entry = $dir->sha256file;
+		$algo = 'sha256';
+	}
+
+	foreach ($entry as $file) {    // $file is a simpleXMLElement
 		$filename = $path.$file['name'];
 		$file_list['insignature'][] = $filename;
 		$expectedsize = (empty($file['size']) ? '' : $file['size']);
-		$expectedmd5 = (string) $file;
+		$expectedhash = (string) $file;
 
 		if (!file_exists($pathref.'/'.$filename)) {
-			$file_list['missing'][] = array('filename' => $filename, 'expectedmd5' => $expectedmd5, 'expectedsize' => $expectedsize);
+			$file_list['missing'][] = array('filename' => $filename, 'expectedhash' => $expectedhash, 'expectedsize' => $expectedsize, 'algo' => (string) $algo);
 		} else {
-			$md5_local = md5_file($pathref.'/'.$filename);
+			$hash_local = hash_file($algo, $pathref.'/'.$filename);
 
 			if ($conffile == '/etc/dolibarr/conf.php' && $filename == '/filefunc.inc.php') {	// For install with deb or rpm, we ignore test on filefunc.inc.php that was modified by package
-				$checksumconcat[] = $expectedmd5;
+				$checksumconcat[] = $expectedhash;
 			} else {
-				if ($md5_local != $expectedmd5) {
-					$file_list['updated'][] = array('filename' => $filename, 'expectedmd5' => $expectedmd5, 'expectedsize' => $expectedsize, 'md5' => (string) $md5_local);
+				if ($hash_local != $expectedhash) {
+					$file_list['updated'][] = array('filename' => $filename, 'expectedhash' => $expectedhash, 'expectedsize' => $expectedsize, 'hash' => (string) $hash_local, 'algo' => (string) $algo);
 				}
-				$checksumconcat[] = $md5_local;
+				$checksumconcat[] = $hash_local;
 			}
 		}
 	}
