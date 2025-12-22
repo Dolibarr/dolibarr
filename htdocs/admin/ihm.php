@@ -254,10 +254,14 @@ if ($action == 'update') {
 		} else {
 			dolibarr_set_const($db, 'THEME_ELDY_TEXTBTNACTION', $val, 'chaine', 0, '', $conf->entity);
 		}
+
+		setEventMessages($langs->trans("SetupSaved"), null);
 	}
 
 	if ($mode == 'dashboard') {
 		dolibarr_set_const($db, "MAIN_MOTD", dol_htmlcleanlastbr(GETPOST("main_motd", 'restricthtml')), 'chaine', 0, '', $conf->entity);
+
+		setEventMessages($langs->trans("SetupSaved"), null);
 	}
 
 	if ($mode == 'other') {
@@ -282,6 +286,9 @@ if ($action == 'update') {
 		dolibarr_set_const($db, "MAIN_BUGTRACK_ENABLELINK", GETPOST("MAIN_BUGTRACK_ENABLELINK", 'alpha'), 'chaine', 0, '', $conf->entity);
 
 		dolibarr_set_const($db, "MAIN_FIRSTNAME_NAME_POSITION", GETPOST("MAIN_FIRSTNAME_NAME_POSITION", 'aZ09'), 'chaine', 0, '', $conf->entity);
+
+
+		setEventMessages($langs->trans("SetupSaved"), null);
 	}
 
 	if ($mode == 'login') {
@@ -320,6 +327,10 @@ if ($action == 'update') {
 				}
 			}
 		}
+
+		if (!$error) {
+			setEventMessages($langs->trans("SetupSaved"), null);
+		}
 	}
 
 	if ($mode == 'css') {
@@ -330,7 +341,7 @@ if ($action == 'update') {
 
 		dolibarr_set_const($db, "MAIN_IHM_CUSTOM_CSS", $csscontent, 'chaine', 0, '', $conf->entity);
 
-		setEventMessages($langs->trans("RecordSaved"), null);
+		setEventMessages($langs->trans("SetupSaved"), null);
 	}
 
 	$_SESSION["mainmenu"] = ""; // The menu manager may have changed

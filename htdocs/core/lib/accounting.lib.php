@@ -410,3 +410,37 @@ function getCurrentPeriodOfFiscalYear($db, $conf, $from_time = null, $gm = 'tzse
 		'date_end' => $date_end,
 	);
 }
+
+/**
+ * Get next fiscal year period after a given date
+ *
+ * @param  DoliDB   $db             Database handler
+ * @param  int      $after_date     Get fiscal period that starts after this date
+ * @param  'tzserver'|'gmt' $gm     'gmt' => we return GMT timestamp, 'tzserver' => PHP server timezone
+ * @return array{date_start:int,date_end:int}|null Period of next fiscal year or null if not found
+ */
+function getNextFiscalYear($db, $after_date, $gm = 'tzserver')
+{
+	// Find the fiscal year that starts strictly after the given date
+	$sql = "SELECT date_start, date_end FROM ".$db->prefix()."accounting_fiscalyear";
+	$sql .= " WHERE date_start > '".$db->idate($after_date, $gm)."'";
+	$sql .= " AND entity IN (".getEntity('accounting_fiscalyear').")";
+	$sql .= $db->order('date_start', 'ASC');  // Get the first one (earliest)
+	$sql .= $db->plimit(1);
+
+	$res = $db->query($sql);
+
+	if ($res && $db->num_rows($res) > 0) {
+		$obj = $db->fetch_object($res);
+
+		$date_start = $db->jdate($obj->date_start, $gm);
+		$date_end = $db->jdate($obj->date_end, $gm);  // Without dol_get_last_hour to avoid the bug
+
+		return array(
+			'date_start' => $date_start,
+			'date_end' => $date_end,
+		);
+	}
+
+	return null;  // No next fiscal year found
+}
