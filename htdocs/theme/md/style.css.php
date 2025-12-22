@@ -674,7 +674,7 @@ input, select {
 	text-shadow: none;
 	text-transform: uppercase;
 	/* font-weight: bold; */
-	margin: 0em 0.8em;
+	margin: 0 2px;
 	padding: 0.6em 0.7em;
 	line-height: 17px;
 }
@@ -1156,6 +1156,8 @@ th .button {
 .maxwidthsearch {		/* Max width of column with the search picto */
 	width: 54px;
 	min-width: 54px;
+	padding-left: 4px !important;
+	padding-right: 4px !important;
 }
 
 .valigntop {
@@ -2822,6 +2824,12 @@ body.onlinepaymentbody div.fiche {	/* For online payment page */
 div.fiche>table:first-child {
 	margin-bottom: 15px !important;
 }
+.page-modulehelp div.fiche {
+	width: 100%;
+	margin-left: 15px;
+	margin-right: 20px;
+}
+
 div.fichecenter {
 	width: 100%;
 	clear: both;	/* This is to have div fichecenter that are true rectangles */
@@ -4431,7 +4439,7 @@ tr.liste_titre.box_titre td table td, .bordernooddeven tr td {
 }
 
 table.border td, table.bordernooddeven td, div.border div div.tagtd {
-	padding: 3px 4px 3px 4px;
+	padding: 3px 8px 3px 8px;
 	/* border: 1px solid #f0f0f0; */
 	border-collapse: collapse;
 }
@@ -5843,7 +5851,10 @@ div#card-errors {
 /* Form confirmation (When Ajax JQuery is used) and Dialog popups                 */
 /* ============================================================================== */
 
-.ui-dialog-titlebar {
+button.ui-button-icon-only.ui-dialog-titlebar-close {
+	padding: 12px;
+	margin-top: -15px;
+	margin-right: 15px;
 }
 .ui-dialog-content {
 	maring-bottom: 10px;	/* same than .ui-widget-header */
@@ -5868,6 +5879,14 @@ div#dialogforpopup {
 .ui-dialog .ui-dialog-buttonpane {
 	padding: .5em 1em .3em .4em;
 }
+.ui-dialog .ui-dialog-content, .ui-dialog .ui-dialog-titlebar.ui-widget-header {
+	padding-left: 1em !important;
+}
+/*
+.ui-dialog .ui-dialog-content {
+	text-align: justify;
+}
+*/
 
 
 /* ============================================================================== */

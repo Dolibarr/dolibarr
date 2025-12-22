@@ -59,6 +59,11 @@ abstract class CommonDocGenerator
 	public $errors = array();
 
 	/**
+	 * @var string[]    Array of warnings strings
+	 */
+	public $warnings = array();
+
+	/**
 	 * @var DoliDB Database handler.
 	 */
 	protected $db;

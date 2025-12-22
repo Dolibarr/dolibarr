@@ -143,6 +143,7 @@ if ($id > 0 || !empty($ref)) {
 
 		foreach ($assetdepreciationoptions->deprecation_options_fields as $mode_key => $fields) {
 			$lines = isset($object->depreciation_lines[$mode_key]) ? $object->depreciation_lines[$mode_key] : '';
+
 			if (!empty($lines)) {
 				$mode_info = $assetdepreciationoptions->deprecation_options_fields[$mode_key];
 				$depreciation_info = $assetdepreciationoptions->getGeneralDepreciationInfoForMode($mode_key);

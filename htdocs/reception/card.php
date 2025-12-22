@@ -2320,8 +2320,6 @@ if ($action == 'create' && $permissiontoadd) {
 
 	print '<div class="clearboth"></div>';
 
-	print dol_get_fiche_end();
-
 	/*
 	* Lines of simple reception
 	*/

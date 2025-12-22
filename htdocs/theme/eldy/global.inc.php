@@ -991,6 +991,8 @@ th .button {
 .maxwidthsearch {		/* Max width of column with the search picto */
 	width: 54px;
 	min-width: 54px;
+	padding-left: 4px !important;
+	padding-right: 4px !important;
 }
 .valigntop {
 	vertical-align: top;
@@ -2738,9 +2740,10 @@ div.fiche {
 	margin-<?php print $left; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '24' : '6')); ?>px;
 	margin-top: 0px;
 }
-
 .page-modulehelp div.fiche {
 	width: 100%;
+	margin-left: 15px;
+	margin-right: 20px;
 }
 body.onlinepaymentbody div.fiche {	/* For online payment page */
 	margin: 20px !important;
@@ -2748,6 +2751,7 @@ body.onlinepaymentbody div.fiche {	/* For online payment page */
 div.fiche>table:first-child {
 	margin-bottom: 15px;
 }
+
 div.fichecenter {
 	width: 100%;
 	clear: both;	/* This is to have div fichecenter that are true rectangles */
@@ -3794,6 +3798,7 @@ div.vmenu, td.vmenu {
 .vmenu {
 	width: <?php echo $leftmenuwidth; ?>px;
 	margin-left: 8px;
+	text-transform: capitalize;
 	<?php if (GETPOST('optioncss', 'aZ09') == 'print') { ?>
 	display: none;
 	<?php } ?>
@@ -4665,7 +4670,7 @@ td.linecoldescription {
 	padding: 6px 10px 6px 12px !important;			/* t r b l */
 }
 table.tableforfield td, .tagtr.table-border-row .tagtd, table.border.margintable .trforfield td {
-	padding: 2px 4px 2px 10px;			/* t r b l */
+	padding: 2px 8px 2px 10px;			/* t r b l */
 }
 table.liste td, table.noborder > tr > td,
 table.noborder > tbody > tr > td,
@@ -5922,7 +5927,10 @@ div#card-errors {
 /* Form confirmation (When Ajax JQuery is used) and Dialog popups                 */
 /* ============================================================================== */
 
-.ui-dialog-titlebar {
+button.ui-button-icon-only.ui-dialog-titlebar-close {
+	padding: 12px;
+	margin-top: -15px;
+	margin-right: 15px;
 }
 .ui-dialog-content {
 	margin-bottom: 10px;	/* same than .ui-widget-header */
@@ -5950,19 +5958,21 @@ div#card-errors {
 	border-bottom: 1px solid #AAA;
 	margin-bottom: 12px;
 }
-button.ui-button-icon-only.ui-dialog-titlebar-close {
-	padding: 12px;
-	margin-top: -15px;
-}
 .ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-dialog-buttons.ui-draggable {
 	box-shadow: 5px 5px 20px #AAA;
 }
+
 .ui-dialog .ui-dialog-buttonpane {
 	padding: .5em 1em .3em .4em;
 }
 .ui-dialog .ui-dialog-content, .ui-dialog .ui-dialog-titlebar.ui-widget-header {
 	padding-left: 1em !important;
 }
+/*
+.ui-dialog .ui-dialog-content {
+	text-align: justify;
+}
+*/
 
 
 /* ============================================================================== */

@@ -14,7 +14,7 @@
 #----------------------------------------------------------------------------
 ## no critic (InputOutput::ProhibitExplicitStdin,InputOutput::RequireBriefOpen)
 
-use strict;
+#use strict;
 use warnings;
 use Cwd;
 use Term::ANSIColor;

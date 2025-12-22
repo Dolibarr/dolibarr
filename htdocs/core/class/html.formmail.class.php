@@ -1661,7 +1661,7 @@ class FormMail extends Form
 				var csrfToken = "' .newToken().'";
 				$.ajax({
 					type: "POST",
-					url: "/core/ajax/getnews.php",
+					url: "'.dol_buildpath('/core/ajax/getnews.php', 1).'",
 					data: {
 						selectedIds: JSON.stringify(selectedIds),
 						token : csrfToken
@@ -1669,21 +1669,16 @@ class FormMail extends Form
 					success: function(response) {
 						var selectedPosts = JSON.parse(response);
 						var subject = $("#subject").val();
-
 						contentHtml = contentHtml.replace(/__SUBJECT__/g, subject);
-
+						template = $(".template-option.selected").data("template");
 						$.ajax({
 							type: "POST",
-							url: "/core/ajax/mailtemplate.php",
+							url: "'.dol_buildpath('/core/ajax/mailtemplate.php', 1).'",
 							data: {
 								token: csrfToken,
 								template: template,
 								subject: subject,
-								fromtype: fromtype,
-								sendto: sendto,
-								sendtocc: sendtocc,
-								sendtoccc: sendtoccc,
-								selectedPosts: selectedIds.join(",")
+								selectedPosts: JSON.stringify(selectedIds)
 							},
 							success: function(response) {
 								jQuery("#'.$htmlContent.'").val(response);

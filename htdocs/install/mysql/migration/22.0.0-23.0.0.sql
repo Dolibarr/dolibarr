@@ -400,5 +400,8 @@ ALTER TABLE llx_fichinterdet ADD COLUMN product_type integer DEFAULT 0 AFTER spe
 ALTER TABLE llx_adherent_type ADD COLUMN minimumamount double(24,8) DEFAULT NULL AFTER caneditamount;
 ALTER TABLE llx_adherent_type ADD COLUMN amountformuladescription text AFTER minimumamount;
 
+ALTER TABLE llx_pos_cash_fence ADD COLUMN hour_close INTEGER DEFAULT null after year_close;
+ALTER TABLE llx_pos_cash_fence ADD COLUMN min_close INTEGER DEFAULT null after hour_close;
+ALTER TABLE llx_pos_cash_fence ADD COLUMN sec_close INTEGER DEFAULT null after min_close;
 
 -- end of migration

@@ -55,7 +55,6 @@ ErrorPeriodMustBePastToAllowExport=Export into archives is allowed only if perio
 RegistrationNumber=Registration number
 NumberOfPrints=Number of prints
 NumberOfEmailsSent=Number of emails sent
-VatCode=Vat code
 
 ## logTypes
 logBILL_DELETE=Customer invoice logically deleted

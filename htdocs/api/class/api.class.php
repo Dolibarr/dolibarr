@@ -225,6 +225,7 @@ class DolibarrApi
 		unset($object->error);
 		unset($object->errors);
 		unset($object->errorhidden);
+		unset($object->warnings);
 		unset($object->TRIGGER_PREFIX);
 
 		unset($object->ref_previous);
