@@ -1288,7 +1288,8 @@ class BlockedLog
 		} elseif ($this->object_format == 'V1') {	// Note: $this->amounts can be '0', '1.1', '1.123';  // All 0 at end should have been removed already
 			return $this->date_creation.'|'.$this->action.'|'.$this->amounts.'|'.$this->ref_object.'|'.$this->date_object.'|'.$this->user_fullname;
 		} elseif ($this->object_format == 'V2') {
-			$s = $this->date_creation.'|'.$this->action.'|'.$this->amounts.'|'.$this->ref_object.'|'.$this->date_object.'|'.$this->user_fullname;
+			$s = $this->entity;
+			$s .= '|'.$this->date_creation.'|'.$this->action.'|'.$this->amounts.'|'.$this->ref_object.'|'.$this->date_object.'|'.$this->user_fullname;
 			$s .= '|'.(string) $this->linktoref;
 			$s .= '|'.(string) $this->linktype;
 			return $s;

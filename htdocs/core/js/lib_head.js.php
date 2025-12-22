@@ -570,14 +570,14 @@ function cleanSerialize(expr) {
  * Input:   msg
  * Input:   id
  * Input:   popupWidth
+ * Input:   popupHeight
  * Input:   disableCancelButton
  * Licence: GPL
  * See also document_preview() that also maje a dialogforpopup.dialog().
  * See also newpopup that use window.open.
  */
-function confirmDolibarr(msg, id, popupWidth = 400, disableCancelButton = 0) {
+function confirmDolibarr(msg, id, popupWidth = 400, popupHeight = 300, disableCancelButton = 0) {
 	let alink = document.getElementById(id);
-	let popupHeight = 200;
 	let title = '<?php echo dol_escape_js($langs->trans("Note")); ?>';
 
 	if (alink.getAttribute("data-alreadyclicked") === "1") {

@@ -1172,7 +1172,7 @@ if ($search_pos_source) {
 	$sql .= natural_search("c.pos_source", $search_pos_source);
 }
 if ($search_import_key) {
-	$sql .= natural_search("s.import_key", $search_import_key);
+	$sql .= natural_search("c.import_key", $search_import_key);
 }
 // Search on user
 if ($search_user > 0) {

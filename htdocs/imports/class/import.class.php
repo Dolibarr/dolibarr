@@ -357,8 +357,6 @@ class Import
 	 */
 	public function create($user)
 	{
-		global $conf;
-
 		dol_syslog("Import.class.php::create");
 
 		// Check parameters

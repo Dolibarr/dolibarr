@@ -148,10 +148,10 @@ if ($pay == 'cheque') {
 	$paycode = 'CHQ'; // For backward compatibility
 }
 
-// Retrieve paiementid
+// Retrieve paiementid and paiementcode
 $paiementid = 0;
 if ($paycode) {
-	$sql = "SELECT id FROM ".MAIN_DB_PREFIX."c_paiement";
+	$sql = "SELECT id, code FROM ".MAIN_DB_PREFIX."c_paiement";
 	$sql .= " WHERE entity IN (".getEntity('c_paiement').")";
 	$sql .= " AND code = '".$db->escape($paycode)."'";
 	$resql = $db->query($sql);
@@ -243,6 +243,8 @@ if (empty($reshook)) {
 
 		$invoice = new Facture($db);
 		$invoice->fetch($placeid);
+
+		$invoice->oldcopy = dol_clone($invoice, 2);
 
 		$db->begin();
 
@@ -338,18 +340,25 @@ if (empty($reshook)) {
 				// We do not set $payments->multicurrency_amounts because we want payment to be in main currency.
 
 				$payment->paiementid = $paiementid;
+				$payment->paiementcode = $paycode;
 				$payment->num_payment = $invoice->ref;
 
 				if ($pay != "delayed") {
-					$res = $payment->create($user);
+					$res = $payment->create($user);		// This record payment and regenerate the PDF
 					if ($res < 0) {
 						$error++;
-						dol_htmloutput_errors($langs->trans('Error').' '.$payment->error, $payment->errors, 1);
+						//setEventMessages($payment->error, $payment->errors, 'error');
+						dol_htmloutput_mesg($payment->error, $payment->errors, 'error', 1);
 					} else {
+						//setEventMessages(null, $payment->warnings, 'warnings');
+						if (!empty($payment->warnings)) {
+							dol_htmloutput_mesg('', $payment->warnings, 'warning', 1);
+						}
+
 						$res = $payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccount, '', '');
 						if ($res < 0) {
 							$error++;
-							dol_htmloutput_errors($langs->trans('ErrorNoPaymentDefined').' '.$payment->error, $payment->errors, 1);
+							dol_htmloutput_mesg($langs->trans('ErrorNoPaymentDefined').' '.$payment->error, $payment->errors, 'error', 1);
 						}
 					}
 					$remaintopay = $invoice->getRemainToPay(); // Recalculate remain to pay after the payment is recorded
@@ -364,6 +373,7 @@ if (empty($reshook)) {
 				if ($result > 0) {
 					$invoice->paye = 1;
 					$invoice->status = $invoice::STATUS_CLOSED;
+					$invoice->close_code = '';
 				}
 				// set payment method
 				$invoice->setPaymentMethods($paiementid);
@@ -373,6 +383,7 @@ if (empty($reshook)) {
 		} else {
 			dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
 		}
+
 
 		$warehouseid = 0;
 		// Update stock for batch products
@@ -422,6 +433,11 @@ if (empty($reshook)) {
 		if (!$error && $res >= 0) {
 			$db->commit();
 		} else {
+			$invoice->ref = $invoice->oldcopy->ref;
+			$invoice->paye = $invoice->oldcopy->paye;
+			$invoice->status = $invoice->oldcopy->status;
+			$invoice->statut = $invoice->oldcopy->statut;
+
 			$db->rollback();
 		}
 	}
@@ -1321,34 +1337,36 @@ if (empty($reshook)) {
 			$customprinttemplateallowed = false;	// Custom printer may be allowed if mandatory information in template are guaranteed. For the moment, we prefer not allow this.
 		}
 
-		if (getDolGlobalInt('TAKEPOS_PRINT_INVOICE_DOC_INSTEAD_OF_RECEIPT')) {
-			$sectionwithinvoicelink .= ' <a target="_blank" class="button" href="' . DOL_URL_ROOT . '/document.php?token=' . newToken() . '&modulepart=facture&file=' . $invoice->ref . '/' . $invoice->ref . '.pdf">'.$langs->trans("Invoice").'</a>';
-		} elseif (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
-			// Used when the external addon takeposconnector is installed. Deprecated.
-			if (getDolGlobalString('TAKEPOS_PRINT_SERVER') && filter_var(getDolGlobalString('TAKEPOS_PRINT_SERVER'), FILTER_VALIDATE_URL) == true) {
-				$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="TakeposConnector('.$placeid.')">'.$langs->trans('PrintTicket').'</button>';
+		if ($invoice->status == $invoice::STATUS_CLOSED) {
+			if (getDolGlobalInt('TAKEPOS_PRINT_INVOICE_DOC_INSTEAD_OF_RECEIPT')) {
+				$sectionwithinvoicelink .= ' <a target="_blank" class="button" href="' . DOL_URL_ROOT . '/document.php?token=' . newToken() . '&modulepart=facture&file=' . $invoice->ref . '/' . $invoice->ref . '.pdf">'.$langs->trans("Invoice").'</a>';
+			} elseif (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
+				// Used when the external addon takeposconnector is installed. Deprecated.
+				if (getDolGlobalString('TAKEPOS_PRINT_SERVER') && filter_var(getDolGlobalString('TAKEPOS_PRINT_SERVER'), FILTER_VALIDATE_URL) == true) {
+					$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="TakeposConnector('.$placeid.')">'.$langs->trans('PrintTicket').'</button>';
+				} else {
+					$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="TakeposPrinting('.$placeid.')">'.$langs->trans('PrintTicket').'</button>';
+				}
+			} elseif ($customprinterallowed && (isModEnabled('receiptprinter') && getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0) || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {	// @phpstan-ignore-line
+				// If we set to use a specific receipt printer
+				$nameOfPrinter = dol_getIdFromCode($db, getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term), 'printer_receipt', 'rowid', 'name', 1);
+				$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="DolibarrTakeposPrinting('.$placeid.')" title="'.dolPrintHTMLForAttribute($langs->trans("SentToPrinter").' '.$nameOfPrinter).'">'.$langs->trans('PrintTicket').'</button>';
 			} else {
-				$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="TakeposPrinting('.$placeid.')">'.$langs->trans('PrintTicket').'</button>';
+				$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="Print('.$placeid.')">'.$langs->trans('PrintTicket').'</button>';
+				if (getDolGlobalString('TAKEPOS_PRINT_WITHOUT_DETAILS')) {
+					$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="PrintBox('.$placeid.', \'without_details\')">'.$langs->trans('PrintWithoutDetails').'</button>';
+				}
+				if (getDolGlobalString('TAKEPOS_GIFT_RECEIPT')) {
+					$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="Print('.$placeid.', 1)">'.$langs->trans('GiftReceipt').'</button>';
+				}
 			}
-		} elseif ($customprinterallowed && (isModEnabled('receiptprinter') && getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0) || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {	// @phpstan-ignore-line
-			// If we set to use a specific receipt printer
-			$nameOfPrinter = dol_getIdFromCode($db, getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term), 'printer_receipt', 'rowid', 'name', 1);
-			$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="DolibarrTakeposPrinting('.$placeid.')" title="'.dolPrintHTMLForAttribute($langs->trans("SentToPrinter").' '.$nameOfPrinter).'">'.$langs->trans('PrintTicket').'</button>';
-		} else {
-			$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="Print('.$placeid.')">'.$langs->trans('PrintTicket').'</button>';
-			if (getDolGlobalString('TAKEPOS_PRINT_WITHOUT_DETAILS')) {
-				$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="PrintBox('.$placeid.', \'without_details\')">'.$langs->trans('PrintWithoutDetails').'</button>';
+			if (getDolGlobalString('TAKEPOS_EMAIL_TEMPLATE_INVOICE') && getDolGlobalInt('TAKEPOS_EMAIL_TEMPLATE_INVOICE') > 0) {
+				$sectionwithinvoicelink .= ' <button id="buttonsend" type="button" onclick="SendTicket('.$placeid.')">'.$langs->trans('SendTicket').'</button>';
 			}
-			if (getDolGlobalString('TAKEPOS_GIFT_RECEIPT')) {
-				$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="Print('.$placeid.', 1)">'.$langs->trans('GiftReceipt').'</button>';
-			}
-		}
-		if (getDolGlobalString('TAKEPOS_EMAIL_TEMPLATE_INVOICE') && getDolGlobalInt('TAKEPOS_EMAIL_TEMPLATE_INVOICE') > 0) {
-			$sectionwithinvoicelink .= ' <button id="buttonsend" type="button" onclick="SendTicket('.$placeid.')">'.$langs->trans('SendTicket').'</button>';
-		}
 
-		if ($remaintopay <= 0 && getDolGlobalString('TAKEPOS_AUTO_PRINT_TICKETS') && $action != "history") {
-			$sectionwithinvoicelink .= '<script type="text/javascript">console.log("Emulate click on #buttonprint"); $("#buttonprint").click();</script>';
+			if ($remaintopay <= 0 && getDolGlobalString('TAKEPOS_AUTO_PRINT_TICKETS') && $action != "history") {
+				$sectionwithinvoicelink .= '<script type="text/javascript">console.log("Emulate click on #buttonprint"); $("#buttonprint").click();</script>';
+			}
 		}
 	}
 }

@@ -884,7 +884,7 @@ class AccountancyExport
 	/**
 	 * Export format : Quadratus (Format ASCII)
 	 * Format since 2015 compatible QuadraCOMPTA
-	 * Last review for this format : 2023/10/12 Alexandre Spangaro (aspangaro@open-dsi.fr)
+	 * Last review for this format : 2025/12/21 Alexandre Spangaro (alexandre@inovea-conseil.com)
 	 *
 	 * Information on format: https://docplayer.fr/20769649-Fichier-d-entree-ascii-dans-quadracompta.html
 	 * Help to import in Quadra: https://wiki.dolibarr.org/index.php?title=Module_Comptabilit%C3%A9_en_Partie_Double#Import_vers_CEGID_Quadra
@@ -931,11 +931,11 @@ class AccountancyExport
 				$tab['lib_compte'] = str_pad(self::trunc($line->subledger_label, 30), 30);
 
 				if ($line->doc_type == 'customer_invoice') {
-					$tab['lib_alpha'] = strtoupper(str_pad('C'.self::trunc(dol_string_unaccent($line->subledger_label), 6), 7));
+					$tab['lib_alpha'] = strtoupper(self::trunc(dol_string_unaccent($line->subledger_label), 7));
 					$tab['filler'] = str_repeat(' ', 52);
 					$tab['coll_compte'] = str_pad(self::trunc(getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER'), 8), 8);
 				} elseif ($line->doc_type == 'supplier_invoice') {
-					$tab['lib_alpha'] = strtoupper(str_pad('F'.self::trunc(dol_string_unaccent($line->subledger_label), 6), 7));
+					$tab['lib_alpha'] = strtoupper(self::trunc(dol_string_unaccent($line->subledger_label), 7));
 					$tab['filler'] = str_repeat(' ', 52);
 					$tab['coll_compte'] = str_pad(self::trunc(getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER'), 8), 8);
 				} else {

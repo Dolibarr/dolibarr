@@ -428,7 +428,8 @@ if ($dirins && $action == 'initmodule' && $modulename /* && $user->hasRight("mod
 		if (getDolGlobalString('MODULEBUILDER_SPECIFIC_README')) {
 			setEventMessages($langs->trans("ContentOfREADMECustomized"), null, 'warnings');
 			dol_delete_file($destdir.'/README.md');
-			file_put_contents($destdir.'/README.md', $conf->global->MODULEBUILDER_SPECIFIC_README);
+			file_put_contents($destdir.'/README.md', getDolGlobalString("MODULEBUILDER_SPECIFIC_README"));
+			dolChmod($destdir.'/README.md');
 		}
 		// for create file to add properties
 		// file_put_contents($destdir.'/'.strtolower($modulename).'propertycard.php','');

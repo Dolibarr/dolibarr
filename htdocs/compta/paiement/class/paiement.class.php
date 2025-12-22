@@ -631,6 +631,8 @@ class Paiement extends CommonObject
 
 							dol_syslog(get_class($this).'::create Regenerate end result='.$result, LOG_DEBUG);
 
+							$this->warnings = $invoice->warnings;
+
 							if ($result < 0) {
 								$this->error = $invoice->error;
 								$this->errors = $invoice->errors;
