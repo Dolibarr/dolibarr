@@ -3055,7 +3055,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 
 	// Show title
 	$showtitle = 1;
-	
+
 	if (!empty($conf->dol_optimize_smallscreen)) {
 		$showtitle = 0;
 	}
