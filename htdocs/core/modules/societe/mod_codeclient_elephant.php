@@ -50,7 +50,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	public $searchcode;
 
 	/**
-	 * @var int Nombre de chiffres du compteur
+	 * @var int Number of digits n counter
 	 */
 	public $numbitcounter;
 

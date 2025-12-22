@@ -38,7 +38,7 @@ class box_task extends ModeleBoxes
 	 * @var string
 	 */
 	public $boxlabel;
-	public $depends = array("projet");
+	public $depends = array("project");
 
 	public $enabled = 1;
 
@@ -50,7 +50,7 @@ class box_task extends ModeleBoxes
 	 */
 	public function __construct($db, $param = '')
 	{
-		global $conf, $user, $langs;
+		global $user, $langs;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array('boxes', 'projects'));

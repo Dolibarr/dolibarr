@@ -180,8 +180,8 @@ if ($object instanceof CommonObject) {
 		}
 
 		if (!$filter_categorie) {
-			$fields_label = explode('|', $InfoFieldList[1]);
-			if (count($fields_label) > 0) {
+			$fields_label = isset($InfoFieldList[1]) ? explode('|', $InfoFieldList[1]) : array();
+			if (!empty($fields_label)) {
 				$keyList .= ', ';
 				$keyList .= implode(', ', $fields_label);
 			}
@@ -305,14 +305,16 @@ if ($object instanceof CommonObject) {
 							$labeltoshow = '(not defined)';
 						}
 
+						/*
 						if (!empty($InfoFieldList[3]) && $parentField) {
 							$parent = $parentName . ':' . $obj->{$parentField};
 						}
 
-						// $out .= '<option value="'.$obj->rowid.'"';
-						// $out .= ($value == $obj->rowid ? ' selected' : '');
-						// $out .= (!empty($parent) ? ' parent="'.$parent.'"' : '');
-						// $out .= '>'.$labeltoshow.'</option>';
+						$out .= '<option value="'.$obj->rowid.'"';
+						$out .= ($value == $obj->rowid ? ' selected' : '');
+						$out .= (!empty($parent) ? ' data-parent="'.$parent.'"' : '');
+						$out .= '>'.$labeltoshow.'</option>';
+						*/
 						$data['results'][] = [
 							'id' => $obj->rowid,
 							'text' => $labeltoshow,

@@ -64,7 +64,7 @@ YouCanCreatePageOrImportTemplate=新規ページを作成するか、完全なWe
 SyntaxHelp=特定の構文のヒントに関するヘルプ
 YouCanEditHtmlSourceckeditor=エディタの "ソース" ボタンを使用して、HTMLソースコードを編集できる。
 YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> このソースに PHP コード を含めるには、タグ <strong>&lt;?php ?&gt;</strong>。以下のグローバル変数が利用可能。: $conf、$db、$mysoc、$ユーザ、$ウェブサイト、$websitepage、$weblangs、$pagelangs。<br><br><span class="fa fa-bug paddingright"></span> また、次の構文を使用して、別のページ/コンテナーのコンテンツを含めることもできる。:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> 次の構文を使用して、別のページ/コンテナーにリダイレクトできる (注意: リダイレクト前にコンテンツを出力しないこと):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>GET パラメータを使用してリダイレクトすることもできる:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> 別のページへのリンクを追加するには、構文:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br>
-YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> <strong>SEO タイトルとメタ タグ</strong> (タイトル、キーワード、説明) を動的に設定できる。次の変数を定義するだけ:<br> <code>$__PAGE_TITLE__ = "タイトルの値…";</code><br> <code>$__PAGE_KEYWORDS__ = "keyword1、keyword2、keyword3 …"; // カンマ区切り</code><br> <code>$__PAGE_DESC__ = "Description …";</code><br>
+YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> You can dynamically set <strong>SEO title and meta tags</strong> (title, keywords, description). Simply define the following variables:<br> <code>define('__SEO_PAGE_TITLE__', "Title value …");</code><br> <code>define('__SEO_PAGE_KEYWORDS__', 'keyword1, keyword2, keyword3 …');</code><br> <code>define('__SEO_PAGE_DESC__', "Description …");</code><br>
 YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> <strong>documents</strong>ディレクトリに保存されている ファイル<strong>ダウンロードへのリンク</strong>を含めるには、<strong>document.php</strong> ラッパーを使用する:<br>たとえば、ファイル を documents/ecm にエクスポートする場合 (ログに記録する必要あり)、構文は次のようになる:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>documents/medias（パブリックアクセス用のオープンディレクトリ）への ファイル の場合、構文は次のようになる。:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
 YouCanEditHtmlSourced=共有リンクで共有された ファイル の場合 (共有ハッシュ キー ファイル を使用してアクセスを開く)、構文は :<br><strong>&lt;a href="/ドキュメント.php?hashp=publicsharekeyoffile"&gt;</strong><br>
 YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span><strong>medias</strong>ディレクトリ（パブリックアクセスに公開されているディレクトリ）に保存されている <strong>image</strong> を含めるには、<strong>/medias</strong>、例:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
@@ -81,7 +81,7 @@ LanguageMustNotBeSameThanClonedPage=ページを翻訳として複製する。�
 ParentPageId=親ページID
 WebsiteId=ウェブサイトID
 CreateByFetchingExternalPage=外部URLからページをフェッチしてページ/コンテナを作成する...
-OrEnterPageInfoManually=または、最初から、またはページテンプレートからページを作成する...
+OrEnterPageInfoManually=Create page from scratch or from a page template...
 FetchAndCreate=フェッチして作成
 ExportSite=ウェブサイトをエクスポート
 ImportSite=ウェブサイトテンプレートをインポートする
@@ -99,7 +99,7 @@ SorryWebsiteIsCurrentlyOffLine=申し訳ありませんが、このウェブサ�
 WEBSITE_USE_WEBSITE_ACCOUNTS=サードパーティのウェブサイトアカウントのテーブルを有効にする
 WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=テーブルを有効にして、各 取引先 の Web サイト アカウント (ログイン/パスワード) を保存する。
 YouMustDefineTheHomePage=最初にデフォルトのホームページを定義する必要がある
-OnlyEditionOfSourceForGrabbedContentFuture=警告: 外部 Web ページをインポートして Web ページを作成するのは、経験豊富なユーザー向けだ。ソース ページの複雑さによっては、インポートの結果が元のものと異なる場合がある。また、ソース ページで一般的な CSS スタイルや競合する JavaScript が使用されている場合、このページで作業しているときに ウェブサイト エディターの外観や機能が損なわれる可能性がある。この方法はページを作成するためのより迅速な方法だが、新規ページを最初から作成するか、提案されたページ テンプレートから作成することをお勧めする。<br>また、取得した外部ページで使用すると、インライン エディターが正しく機能しない可能性があることにも注意すること。
+OnlyEditionOfSourceForGrabbedContentFuture=Warning: Creating a web page by importing an external web page is reserved for experienced users and can work only pages rendered with HTML and CSS only. Importing pages rendered by JS frameworks are NOT supported. Depending on the complexity of the source page, the result of importation will probably differ from the original page. Also if the source page uses common CSS styles or conflicting JavaScript, it may break the look or features of the Website editor when working on this page. This method is a quick way to create a page for very advanced users when source page allows it, but it is recommended to create your new page from scratch or from a suggested page template.<br>Note also that the inline editor might not work correctly when used on a page that was grabbed.
 OnlyEditionOfSourceForGrabbedContent=外部サイトからコンテンツを取得する場合は、HTML ソースの変更のみが可能だ。
 GrabImagesInto=cssとページにある画像も取得する。
 ImagesShouldBeSavedInto=画像はディレクトリに保存する必要がある
@@ -423,8 +423,8 @@ contactFormPhone = 電話
 contactFormSubjectEntered = 件名を入力
 contactFormMessageLabel = メッセージ
 contactFormSuccessAlert = メッセージをありがとうございます。すぐにご返信いたします。
-socials=社会的なリソース
-rgpd=RGPD
+socials=ソーシャルネットワーク
+rgpd=GDPR
 joinUs=参加しませんか
 home=ホーム
 anonymous=匿名
@@ -455,3 +455,4 @@ SampleGoalOne=メンバー間の協力と連帯を促進します。
 SampleGoaltwo=すべての活動において、責任ある持続可能な慣行を奨励します。
 SampleGoalthree=社会全体に利益をもたらす影響力のある プロジェクト をサポートしてください。
 SHOW_LANG_SELECTOR=言語 選択ドロップダウンを表示します
+ForAdvancedWebmastersOnly=For technical webmasters only

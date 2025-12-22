@@ -141,9 +141,6 @@ DocForLabels=توليد بطاقات عناوين
 LastSubscriptionDate=تاريخ آخر مساهمة مدفوعة
 LastSubscriptionAmount=قيمة آخر مساهمة
 LastMemberType=آخر نوع عضوية
-MembersStatisticsByCountries=إحصائيات الأعضاء حسب الدولة
-MembersStatisticsByState=إحصائيات الأعضاء حسب الولاية/المقاطعة
-MembersStatisticsByTown=إحصائيات الأعضاء حسب المدينة
 NbOfActiveMembers=إجمالي عدد الأعضاء النشطين حاليًا
 NoValidatedMemberYet=لم يتم العثور على أعضاء معتمدين
 MembersByCountryDesc=تعرض هذه الشاشة إحصائيات الأعضاء حسب الدول.
@@ -159,7 +156,6 @@ LatestSubscriptionDate=تاريخ أحدث مساهمة
 Public=%s يمكنه نشر عضويتي في <a target="_blank" href="%s">السجل العام</a>
 NewMemberbyWeb=تمت إضافة عضو جديد. بانتظار الاعتماد
 NewMemberForm=نموذج عضو جديد
-SubscriptionsStatistics=إحصائيات المساهمات
 AmountOfSubscriptions=قيمة المساهمات المُجمعة
 TurnoverOrBudget=الإيرادات (للشركات) أو الميزانية (للمؤسسات)
 DefaultAmount=المبلغ الافتراضي للمساهمة (يُستخدم فقط إذا لم يتم تحديد مبلغ على مستوى نوع العضو)

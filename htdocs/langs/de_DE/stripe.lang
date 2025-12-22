@@ -77,9 +77,10 @@ ClickHereToTryAgain=<a href="%s">Hier klicken und nochmal versuchen...</a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Aufgrund strenger Kundenauthentifizierungs-Regeln muss die Erstellung einer Karte im Stripe-Backoffice erfolgen. Sie können hier klicken, um zum Stripe-Kundendatensatz zu wechseln: %s
 STRIPE_CARD_PRESENT='Card present' für Stripe-Terminals
 TERMINAL_LOCATION=Standort (Adresse) für Stripe-Terminals
-RequestDirectDebitWithStripe=Lastschrift über Stripe anfordern
-RequesCreditTransferWithStripe=Anfrage für eine Stripe-Guthabenauszahlung
-STRIPE_SEPA_DIRECT_DEBIT=Aktivieren Sie die Lastschriftzahlungen über Stripe
+RequestDirectDebitWithStripe=SEPA Lastschrifteinzug über Stripe anfordern
+RequesCreditTransferWithStripe=SEPA-Überweisung mit Stripe durchführen
+STRIPE_SEPA_DIRECT_DEBIT=Zahlungen per SEPA-Lastschrifteinzug mit Stripe aktivieren
+STRIPE_SEPA_CREDIT_TRANSFER=Zahlungen per SEPA-Überweisung mit Stripe aktivieren
 STRIPE_KLARNA=Zahlungen mit Klarna aktivieren
 STRIPE_BANCONTACT=Zahlungen mit BANCONTACT aktivieren
 STRIPE_IDEAL=Zahlungen mit IDEAL aktivieren
@@ -91,3 +92,19 @@ ExampleOnlyForDECustomers=Nur für Kunden aus Deutschland
 ExampleOnlyForNLCustomers=Nur für Kunden aus den Niederlanden
 ExampleOnlyForATBEDEITNLESCustomers=Nur für Kunden aus Österreich, Belgien, Deutschland, Italien, den Niederlanden, Spanien
 ListOfSupportedHooksToActivate=Liste der unterstützten Hooks zum Aktivieren
+# Paybox
+PayBoxSetup=PayBox-Moduleinstellungen
+PayBoxDesc=Dieses Modul bietet Online-Zahlungsseiten, um Kunden die Bezahlung mittels <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Paybox</a> zu ermöglichen. Dies kann sowohl für eine allgemeine Zahlung als auch für eine Zahlung bezogen auf ein bestimmtes Dolibarr-Objekt (Rechnung, Bestellung, ...) verwendet werden.
+PayBoxDoPayment=Zahlen Sie mit Paybox
+YouWillBeRedirectedOnPayBox=Zur Eingabe Ihrer Kreditkartendaten werden Sie an eine sichere Bezahlseite weitergeleitet.
+SetupPayBoxToHavePaymentCreatedAutomatically=Richten Sie Ihre Paybox mit der URL <b> %s </b> ein, damit die Zahlung bei der Validierung durch Paybox automatisch erstellt wird.
+YourPaymentHasBeenRecorded=Ihre Zahlung wurde erfasst, vielen Dank!
+YourPaymentHasNotBeenRecorded=Ihre Zahlung wurde NICHT erfasst und die Transaktion wurde abgebrochen. Vielen Dank.
+PAYBOX_CGI_URL_V2=URL für das Paybox Zahlungsmodul "CGI Modul"
+NewPayboxPaymentReceived=Neue Paybox-Zahlung erhalten
+NewPayboxPaymentFailed=Neue Paybox-Zahlungen probiert, aber fehlgeschlagen
+PAYBOX_PAYONLINE_SENDEMAIL=E-Mail Benachrichtigung nach Zahlungsversuch (erfolgreich oder fehlgeschlagen)
+PAYBOX_PBX_SITE=Wert für PayBox Seite
+PAYBOX_PBX_RANG=Wert für PBX Rang
+PAYBOX_PBX_IDENTIFIANT=Wert für PBX ID
+PAYBOX_HMAC_KEY=HMAC-Schlüssel

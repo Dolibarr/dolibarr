@@ -53,4 +53,5 @@ RestoreWithCurrentQtySaved=Mengen mit den zuletzt gespeicherten Werten füllen
 ReceptionsRecorded=Wareneingänge wurden aufgezeichnet
 ReceptionUpdated=Wareneingang erfolgreich aktualisiert
 ReceptionDistribution=Verteilung Wareneingang
+ReceptionMustBeInTheSameCurrencyThanOther=Der Wareneingang muss in der gleichen Währung erfolgen wie die anderen
 AutoValidationNotPossibleWhenStockIsDecreasedOnInvoiceValidation=Eine automatische Freigabe ist nicht möglich, wenn der Lagerbestand bei der Rechnungsfreigabe verringert wird.

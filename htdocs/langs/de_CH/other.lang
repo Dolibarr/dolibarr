@@ -1,7 +1,5 @@
 # Dolibarr language file - Source file is en_US - other
 NumberingShort=Nr
-Tools=Hilfsprogramme
-TMenuTools=Hilfsprogramme
 ToolsDesc=Alle Werkzeuge, die nicht in anderen Menüeinträgen enthalten sind, werden hier gruppiert. <br> Alle Werkzeuge können über das linke Menü aufgerufen werden.
 Notify_COMPANY_CREATE=Durch Dritte erstellt
 Notify_FICHINTER_VALIDATE=Eingriff freigegeben
@@ -39,3 +37,13 @@ ExternalSiteModuleNotComplete=Module ExternalSite wurde nicht richtig konfigurie
 FTPFailedToRemoveFile=Konnte Datei <b>%s</b> nicht entfernen.
 FTPFailedToRemoveDir=Ich kann das Verzeichnis <b>%s</b> nicht löschen.. Prüfe, ob du die Löschberechtigung hast und stelle sicher, dass es leer ist.
 FailedToGetFile=Folgende Dateien konnten nicht geladen werden: %s
+AddThisPageToBookmarks =Füge diese Seite zu deinen Lesezeichen hinzu.
+BookmarkTitle =Name des Lesezeichens
+BookmarksManagement =Lesezeichen - Verwaltung
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark =Gib an, ob der Link im selben- oder einem neuen Fenster geladen werden soll.
+EditBookmarks =Lesezeichen anzeigen und bearbeiten
+ListOfBookmarks =Liste der Lesezeichen
+OpenANewWindow =Neuen Tab öffnen
+SetHereATitleForLink =Gib dem Lesezeichen einen Namen
+UrlOrLink =Link
+SubscribeToFoundation=Unterstütze Dolibarr mit deiner Spende

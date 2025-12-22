@@ -87,6 +87,7 @@ ErrorBadFormatValueList=Die Listewerte kann nicht mehr als ein Komma:<u>%s</u> ,
 ErrorFieldCanNotContainSpecialCharacters=Das Feld <b>%s</b> darf keine Sonderzeichen enthalten.
 ErrorFieldCanNotContainSpecialNorUpperCharacters=Das Feld <b>%s</b> darf weder Sonderzeichen noch Großbuchstaben enthalten und muss mit einem Buchstaben (a-z) beginnen
 ErrorFieldMustHaveXChar=Das Feld <b>%s</b> muss aus mindestens %s Zeichen bestehen.
+ErrorFieldMustHaveLessThanXChar=Der Feld <b>%s</b> darf maximal %s Zeichen lang sein.
 ErrorNoAccountancyModuleLoaded=Kein Buchhaltungsmodul aktiviert
 ErrorExportDuplicateProfil=Dieser Profilname existiert bereits für dieses Exportprofil.
 ErrorLDAPSetupNotComplete=Der LDAP-Abgleich für dieses System ist nicht vollständig eingerichtet.

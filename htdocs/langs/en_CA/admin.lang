@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
 LocalTax1Management=PST Management
+DriverType=Driver type
 CompanyZip=Postal code
 LDAPFieldZip=Postal code
 FormatZip=Postal code

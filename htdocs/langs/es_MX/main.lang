@@ -348,3 +348,5 @@ ErrorFailedToUpdateLink=Error al actualizar el vínculo '<b> %s </b>'
 URLToLink=URL para vincular
 Settings=Configuración
 AllTime=Desde el principio
+Tools=Herramientas
+TMenuTools=Herramientas

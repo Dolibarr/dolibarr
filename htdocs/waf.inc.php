@@ -92,9 +92,9 @@ function realCharForNumericEntities($matches)
 }
 
 /**
- * Security: WAF layer for SQL Injection and XSS Injection (scripts) protection (Filters on GET, POST, PHP_SELF).
- * Warning: Such a protection can't be enough. It is not reliable as it will always be possible to bypass this. Good protection can
- * only be guaranteed by escaping data during output.
+ * Security: WAF layer for SQL Injection and XSS Injection (scripts) protection (Filters on GET, POST, SERVER['PHP_SELF']).
+ * Warning: Such a protection seems enough for SERVER['PHP_SELF'] but can't be enough for GET and POST. It is not reliable as it will always be possible
+ * to bypass this. Good protection can only be guaranteed by escaping data during output.
  *
  * @param		string		$val		Brute value found into $_GET, $_POST or PHP_SELF
  * @param		int<0, 3>	$type		0=POST, 1=GET, 2=PHP_SELF, 3=GET without sql reserved keywords (the less tolerant test)
@@ -235,7 +235,7 @@ function testSqlAndScriptInject($val, $type)
 		}
 	}
 	if ($type == 2) {
-		$inj += preg_match('/[:;"\'<>\?\(\){}\$%]/', $val); // PHP_SELF is a file system (or url path without parameters). It can contains spaces.
+		$inj += preg_match('/[:;"\'<>\?\(\){}\$%#]/', $val); // PHP_SELF is a file system (or url path without parameters). It can contains spaces.
 	}
 
 	return $inj;
@@ -307,6 +307,13 @@ function analyseVarsForSqlAndScriptsInjection(&$var, $type, $stopcode = 1)
 	} else {
 		return (testSqlAndScriptInject($var, $type) <= 0);
 	}
+}
+
+// Prevent the use of method TRACE in case of the web server authorizes it (some do it by default). TRACE method can be used by attacker to steal cookies or other sensitive information.
+if (!empty($_SERVER["REQUEST_METHOD"]) && $_SERVER["REQUEST_METHOD"] == "TRACE") {
+	print 'Access refused with request method TRACE';
+	http_response_code(405);
+	exit();
 }
 
 // Sanity check on URL

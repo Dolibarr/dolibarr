@@ -63,7 +63,7 @@ class LoginController extends Controller
 	}
 
 	/**
-	 * Display
+	 * Display the login page
 	 *
 	 * @return	void
 	 */

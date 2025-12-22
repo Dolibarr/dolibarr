@@ -240,6 +240,10 @@ class CodingSqlTest extends CommonClassTest
 			print 'Check sql file '.$file."\n";
 			$filecontent = file_get_contents(DOL_DOCUMENT_ROOT.'/../dev/initdemo/'.$file);
 
+			$result = strpos($filecontent, 'dolcrypt:');
+			print __METHOD__." Result for checking we don't have a crypted value that could not be decrypted on a restored instance with other key = ".$result."\n";
+			$this->assertTrue($result === false, 'Found a "dolcrypt:" into file '.$file);
+
 			$result = strpos($filecontent, '@gmail.com');
 			print __METHOD__." Result for checking we don't have personal data = ".$result."\n";
 			$this->assertTrue($result === false, 'Found a bad key @gmail into file '.$file);

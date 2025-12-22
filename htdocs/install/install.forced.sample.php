@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2025       Charlene Benke      	<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,6 +66,9 @@ $force_install_databaserootpass = '';
 
 /** @var string $force_install_dolibarrlogin		Dolibarr super-administrator username */
 $force_install_dolibarrlogin = 'admin';
+
+/** @var string $force_install_dolibarrpassword		Dolibarr super-administrator password */
+$force_install_dolibarrpassword = '';
 
 /** @var bool $force_install_lockinstall			Force install locking */
 $force_install_lockinstall = true;

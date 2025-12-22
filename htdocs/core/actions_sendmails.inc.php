@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025	MDW				<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
 *  Copyright (C) 2013 Juanjo Menent		   <jmenent@2byte.es>
 *
 * This program is free software; you can redistribute it and/or modify
@@ -136,6 +136,9 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 	$subject = '';
 	//$actionmsg = '';
 	$actionmsg2 = '';
+	$thirdparty = null;
+	$contact = null;
+	$result = 0;
 
 	$langs->load('mails');
 
@@ -145,7 +148,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 		$result = $object->fetch($id);
 
 		if (method_exists($object, "fetch_thirdparty") && !in_array($object->element, array('member', 'user', 'expensereport', 'societe', 'contact'))) {
-			$resultthirdparty = $object->fetch_thirdparty();
+			$object->fetch_thirdparty();
 			$thirdparty = $object->thirdparty;
 			if (is_object($thirdparty)) {
 				$sendtosocid = $thirdparty->id;
@@ -189,6 +192,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 	}
 
 	if ($result > 0) {
+		$from = '';
 		$sendto = '';
 		$sendtocc = '';
 		$sendtobcc = '';
@@ -271,10 +275,10 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 			foreach ($receivercc as $key => $val) {
 				if ($val == 'thirdparty') {	// Key selected means current thirdparty (may be usd for current member or current user too)
 					// Recipient was provided from combo list
-					$tmparray[] = dol_string_nospecial($thirdparty->name, ' ', array(",")).' <'.$thirdparty->email.'>';
+					$tmparray[] = dol_string_nospecial((string) $thirdparty->name, ' ', array(",")).' <'.$thirdparty->email.'>';
 				} elseif ($val == 'contact') {	// Key selected means current contact
 					// Recipient was provided from combo list
-					$tmparray[] = dol_string_nospecial($contact->name, ' ', array(",")).' <'.$contact->email.'>';
+					$tmparray[] = dol_string_nospecial((string) $contact->name, ' ', array(",")).' <'.$contact->email.'>';
 					//$sendtoid[] = $contact->id;  TODO Add also id of contact in CC ?
 				} elseif ($val) {				// $val is the Id of a contact
 					$tmparray[] = $thirdparty->contact_get_property((int) $val, 'email');
@@ -449,6 +453,13 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 
 						// Call of triggers (you should have set $triggersendname to execute trigger.
 						if (!empty($triggersendname)) {
+							if ($triggersendname == 'BILL_SENTBYMAIL' && $object instanceof Facture) {
+								// If sending email for invoice, we increase the counter of invoices sent by email
+								$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET email_sent_counter = email_sent_counter + 1";
+								$sql .= " WHERE rowid = ".((int) $object->id);
+								$db->query($sql);
+							}
+
 							$result = $object->call_trigger($triggersendname, $user);  // @phan-suppress-current-line PhanPossiblyUndeclaredGlobalVariable
 							if ($result < 0) {
 								$error++;

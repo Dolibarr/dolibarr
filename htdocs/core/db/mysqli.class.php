@@ -603,7 +603,7 @@ class DoliDBMysqli extends DoliDB
 	/**
 	 * Get last ID after an insert INSERT
 	 *
-	 * @param   string	$tab    	Table name concerned by insert. Ne sert pas sous MySql mais requis pour compatibilite avec Postgresql
+	 * @param   string	$tab    	Table name concerned by insert. Use of this could be avoided with MySql as last inset id is stored into the Mysqli object but we use it for compatibility with Postgresql
 	 * @param	string	$fieldid	Field name
 	 * @return  int|string			Id of row
 	 */
@@ -1293,6 +1293,50 @@ class DoliDBMysqli extends DoliDB
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Get the last ID of an auto-increment field of a table
+	 *
+	 * @param 	string 		$table 	Name of table
+	 * @return 	int		 			Next ID or < 0 if error
+	 */
+	public function getNextAutoIncrementId($table)
+	{
+		// Request to get last status of table
+		$sql = "SHOW TABLE STATUS LIKE '".$this->escape($table)."'";
+		$result = $this->query($sql);
+
+		if ($result) {
+			$obj = $this->fetch_object($result);
+			if ($obj && isset($obj->Auto_increment)) {
+				return (int) $obj->Auto_increment;
+			}
+		}
+
+		return -1;
+	}
+
+	/**
+	 * Prepare a SQL statement for execution
+	 *
+	 * @param string $sql SQL query to prepare
+	 * @return false|mysqli_stmt
+	 */
+	public function prepare($sql)
+	{
+		if (!$this->connected) {
+			$this->lasterror = 'Not connected to database';
+			return false;
+		}
+		$stmt = $this->db->prepare($sql);
+		if ($stmt === false) {
+			$this->lasterror = $this->db->error;
+			$this->lastqueryerror = $sql;
+			return false;
+		}
+
+		return $stmt;
 	}
 }
 

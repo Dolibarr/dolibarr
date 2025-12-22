@@ -4,7 +4,7 @@
  * Copyright (C) 2016 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018 Andreu Bisquerra     <jove@bisquerra.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ class CashControl extends CommonObject
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -85,6 +85,9 @@ class CashControl extends CommonObject
 	'year_close' => array('type' => 'integer', 'label' => 'Year', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 50, 'css' => 'center'),
 	'month_close' => array('type' => 'integer', 'label' => 'Month', 'enabled' => 1, 'visible' => 1, 'position' => 55, 'css' => 'center'),
 	'day_close' => array('type' => 'integer', 'label' => 'Day', 'enabled' => 1, 'visible' => 1, 'position' => 60, 'css' => 'center'),
+	'hour_close' => array('type' => 'integer', 'label' => 'Hour', 'enabled' => 1, 'visible' => -1, 'position' => 62, 'css' => 'center'),
+	'min_close' => array('type' => 'integer', 'label' => 'Min', 'enabled' => 1, 'visible' => -1, 'position' => 63, 'css' => 'center'),
+	'sec_close' => array('type' => 'integer', 'label' => 'Sec', 'enabled' => 1, 'visible' => -1, 'position' => 64, 'css' => 'center'),
 	'date_creation' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 500),
 	'date_valid' => array('type' => 'datetime', 'label' => 'DateValidation', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 502),
 	'tms' => array('type' => 'timestamp', 'label' => 'Tms', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'position' => 505),
@@ -128,6 +131,21 @@ class CashControl extends CommonObject
 	 * @var int Day close
 	 */
 	public $day_close;
+
+	/**
+	 * @var int Hour close
+	 */
+	public $hour_close;
+
+	/**
+	 * @var int Minute close
+	 */
+	public $min_close;
+
+	/**
+	 * @var int Second close
+	 */
+	public $sec_close;
 
 	/**
 	 * @var string posmodule
@@ -225,9 +243,13 @@ class CashControl extends CommonObject
 		$sql .= ", day_close";
 		$sql .= ", month_close";
 		$sql .= ", year_close";
+		$sql .= ", hour_close";
+		$sql .= ", min_close";
+		$sql .= ", sec_close";
 		$sql .= ", cash";
 		$sql .= ", cheque";
 		$sql .= ", card";
+		$sql .= ", fk_user_creat";
 		$sql .= ") VALUES (";
 		//$sql .= "'(PROV)', ";
 		$sql .= ((int) $conf->entity);
@@ -239,9 +261,13 @@ class CashControl extends CommonObject
 		$sql .= ", ".($this->day_close > 0 ? $this->day_close : "null");
 		$sql .= ", ".($this->month_close > 0 ? $this->month_close : "null");
 		$sql .= ", ".((int) $this->year_close);
+		$sql .= ", ".(isset($this->hour_close) ? (int) $this->hour_close : 23);
+		$sql .= ", ".(isset($this->min_close) ? (int) $this->min_close : 59);
+		$sql .= ", ".(isset($this->sec_close) ? (int) $this->sec_close : 59);
 		$sql .= ", ".price2num($this->cash, 'MT');
 		$sql .= ", ".price2num($this->cheque, 'MT');
 		$sql .= ", ".price2num($this->card, 'MT');
+		$sql .= ", ".((int) $user->id);
 		$sql .= ")";
 
 		$this->db->begin();

@@ -1,0 +1,117 @@
+
+:root{
+	--form-input-margin-bottom : calc(var(--form-element-spacing-vertical)*3);
+}
+
+/**
+ * STARS INPUT
+ */
+.star-selection {
+	font-size: 1rem;
+	cursor: pointer;
+	display: flex;
+	white-space: nowrap;
+}
+.star {
+	color: #ccc;
+	transition: color 0.4s;
+}
+.star:hover, .star.active {
+	color: var(--butactionbg);
+}
+
+/**
+ * SELECT 2
+ */
+
+.select2-container, .select2-container .selection, .select2-selection.select2-selection--single{
+	height: calc(1rem * var(--line-height) + var(--form-element-spacing-vertical) * 2 + var(--border-width) * 2) !important;
+}
+.select2.select2-container{
+	margin-bottom: var(--form-input-margin-bottom);
+}
+.select2-selection--single .select2-selection__rendered, .select2-selection__arrow{
+	line-height: calc(1rem * var(--line-height) + var(--form-element-spacing-vertical) * 2 + var(--border-width) * 2) !important;
+	height: calc(1rem * var(--line-height) + var(--form-element-spacing-vertical) * 2 + var(--border-width) * 2) !important;
+}
+
+.select2-selection--multiple .select2-selection__rendered{
+	line-height: calc(1rem * var(--line-height) + var(--form-element-spacing-vertical) + var(--border-width) * 2) !important;
+	height: calc(1rem * var(--line-height) + var(--form-element-spacing-vertical) * 3 + var(--border-width) * 2 ) !important;
+}
+
+.select2-search__field[type="search"] {
+	margin-bottom: 3px;
+}
+.select2-search.select2-search--dropdown{
+	border-bottom : 1px solid rgba(0,0,0,0.1);
+}
+
+.select2-container--default.select2-container--focus .select2-selection--multiple {
+	border :var(--border-width) solid var(--border-color) !important; /* fix select 2 to be compatible pico css */
+}
+
+.select2-container--default.select2-container--focus .select2-selection--multiple{
+	--border-color: var(--primary);
+}
+
+.select2-container .select2-selection--multiple .select2-selection__rendered {
+	display: block !important; /* fix select 2 to be compatible pico css */
+	overflow: auto;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice{
+	border: 0px solid #aaa !important; /* fix select 2 to be compatible pico css */
+}
+
+/**
+ * DATE
+ */
+
+[class*="fieldname_options_"] > input {
+	width: auto;
+	max-width: none;
+	box-sizing: border-box; /* pour que padding/border ne débordent pas */
+}
+
+[class*="fieldname_options_"] .nowraponall {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.25rem;
+}
+
+
+
+[class*="fieldname_options_"] .dpInvisibleButtons{
+	display: inline-block;
+	width: auto;
+	vertical-align: baseline;
+}
+
+/**
+* Inlines forms
+ */
+
+.nowraponall :is(input:not([type=checkbox], [type=radio]), select, textarea){
+	margin-bottom: 0;
+}
+
+.nowraponall:has(input:not([type=checkbox], [type=radio]), select, textarea){
+	margin-bottom: var(--form-input-margin-bottom);
+}
+
+
+/**
+ * Form currency
+ */
+.form-select-price-currency-container {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	line-height: 1;
+	gap: 0.25rem;
+	margin-bottom: var(--form-input-margin-bottom);
+}
+.form-select-price-currency-container > input {
+	text-align: right;
+}

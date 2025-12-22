@@ -292,9 +292,8 @@ if (!getDolGlobalString('PRODUCT_STOCK_LIST_SHOW_WITH_PRECALCULATED_DENORMALIZED
 		$sql_having .= " HAVING SUM(" . $db->ifsql('s.reel IS NULL', '0', 's.reel') . ") < p.seuil_stock_alerte";
 	}
 	if ($search_stock_physique != '') {
-		//$natural_search_physique = natural_search('HAVING SUM(' . $db->ifsql('s.reel IS NULL', '0', 's.reel') . ')', $search_stock_physique, 1, 1);
-		$natural_search_physique = natural_search('SUM(' . $db->ifsql('s.reel IS NULL', '0', 's.reel') . ')', $search_stock_physique, 1, 1);
-		$natural_search_physique = " " . substr($natural_search_physique, 1, -1); // remove first "(" and last ")" characters
+		$natural_search_physique = natural_search('__SUM_OF_REEL__', $search_stock_physique, 1, 1);
+		$natural_search_physique = " " . substr(str_replace('__SUM_OF_REEL__', 'SUM(COALESCE(s.reel, 0))', $natural_search_physique), 1, -1); // remove first "(" and last ")" characters
 		if (!empty($sql_having)) {
 			$sql_having .= " AND";
 		} else {
@@ -307,18 +306,19 @@ if (!getDolGlobalString('PRODUCT_STOCK_LIST_SHOW_WITH_PRECALCULATED_DENORMALIZED
 // Add HAVING from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object); // Note that $action and $object may have been modified by hook
-if (!empty($hookmanager->resPrint)) {
-	if (!empty($sql_having)) {
-		$sql_having .= " AND";
-	} else {
-		$sql_having .= " HAVING";
+if (empty($reshook)) {
+	if (empty($sql_having)) {
+		$sql_having .= " HAVING 1=1";
 	}
 	$sql_having .= $hookmanager->resPrint;
+} else {
+	$sql_having = $hookmanager->resPrint;
 }
 
 if (!empty($sql_having)) {
 	$sql .= $sql_having;
 }
+
 $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
@@ -326,7 +326,7 @@ $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -413,7 +413,7 @@ if ($resql) {
 		print "<div id='ways'>";
 		$c = new Categorie($db);
 		$c->fetch($search_categ);
-		$ways = $c->print_all_ways(' &gt; ', 'product/reassort.php');
+		$ways = $c->print_all_ways('auto', 'product/reassort.php');
 		print " &gt; ".$ways[0]."<br>\n";
 		print "</div><br>";
 	}
@@ -443,6 +443,7 @@ if ($resql) {
 	$warehouses_list = $formProduct->cache_warehouses;
 	$nb_warehouse = count($warehouses_list);
 	$colspan_warehouse = 1;
+	$colspan = 0;
 	if (getDolGlobalString('STOCK_DETAIL_ON_WAREHOUSE')) {
 		$colspan_warehouse = $nb_warehouse > 1 ? $nb_warehouse + 1 : 1;
 	}
@@ -458,40 +459,56 @@ if ($resql) {
 		$searchpicto = $form->showFilterAndCheckAddButtons(0);
 		print $searchpicto;
 		print '</td>';
+		$colspan++;
 	}
 	print '<td class="liste_titre">';
 	print '<input class="flat" type="text" name="sref" size="6" value="'.$sref.'">';
 	print '</td>';
+	$colspan++;
 	print '<td class="liste_titre">';
 	print '<input class="flat" type="text" name="snom" size="8" value="'.$snom.'">';
 	print '</td>';
+	$colspan++;
 	// Duration
 	if (isModEnabled("service") && $type == 1) {
 		print '<td class="liste_titre">';
 		print '&nbsp;';
 		print '</td>';
+		$colspan++;
 	}
 	// Stock limit
 	print '<td class="liste_titre">&nbsp;</td>';
+	$colspan++;
 	print '<td class="liste_titre right">&nbsp;</td>';
+	$colspan++;
 	// Physical stock
 	print '<td class="liste_titre right">';
 	print '<input class="flat" type="text" size="5" name="search_stock_physique" value="'.dol_escape_htmltag($search_stock_physique).'">';
 	print '</td>';
+	$colspan++;
 	if ($virtualdiffersfromphysical) {
 		print '<td class="liste_titre">&nbsp;</td>';
+		$colspan++;
 	}
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	print '<td class="liste_titre">&nbsp;</td>';
+	$colspan++;
 	print '<td class="liste_titre" colspan="'.$colspan_warehouse.'">&nbsp;</td>';
+	$colspan++;
 	print '<td class="liste_titre"></td>';
+	$colspan++;
 	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print '<td class="liste_titre maxwidthsearch">';
 		$searchpicto = $form->showFilterAndCheckAddButtons(0);
 		print $searchpicto;
 		print '</td>';
+		$colspan++;
+	}
+	if (getDolGlobalString('PRODUCT_USE_UNITS')) {
+		print '<td class="liste_titre"></td>';
+		$colspan++;
 	}
 	print '</tr>';
 
@@ -557,6 +574,7 @@ if ($resql) {
 
 		if (isModEnabled("service") && $type == 1) {
 			print '<td class="center">';
+			$regs = array();
 			if (preg_match('/([0-9]+)y/i', $objp->duration, $regs)) {
 				print $regs[1].' '.$langs->trans("DurationYear");
 			} elseif (preg_match('/([0-9]+)m/i', $objp->duration, $regs)) {
@@ -636,6 +654,9 @@ if ($resql) {
 
 		print "</tr>\n";
 		$i++;
+	}
+	if ($num == 0) {
+		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	}
 
 	print "</table>";

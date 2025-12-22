@@ -64,7 +64,7 @@ YouCanCreatePageOrImportTemplate=Voit luo uuden sivun tai tuoda täyden verkkosi
 SyntaxHelp=Ohje tiettyihin syntaksivinkkeihin
 YouCanEditHtmlSourceckeditor=Voit muokata HTML-lähdekoodia käyttämällä "Lähde"-painiketta editorissa.
 YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> Voit sisällyttää PHP-koodia tähän lähdekoodiin käyttämällä tageja <strong>&lt;?php ?&gt;</strong>. Seuraavat globaalit muuttujat ovat käytettävissä: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> Voit myös sisällyttää toisen sivun/säilön sisältöä seuraavalla syntaksilla:<br><strong>&lt;?php includeContainer('sisältö_lisättävän_säilön_alias'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> Voit tehdä uudelleenohjauksen toiselle sivulle/säilölle seuraavalla syntaksilla (Huomaa: älä tuota mitään sisältöä ennen uudelleenohjausta):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>Voit myös tehdä uudelleenohjauksen GET-parametreilla:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> Voit lisätä linkin toiselle sivulle käyttämällä seuraavaa syntaksia:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br>
-YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> You can dynamically set <strong>SEO title and meta tags</strong> (title, keywords, description). Simply define the following variables:<br> <code>$__PAGE_TITLE__ = "Title value …";</code><br> <code>$__PAGE_KEYWORDS__ = "keyword1, keyword2, keyword3 …"; // Comma separated</code><br> <code>$__PAGE_DESC__ = "Description …";</code><br>
+YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> You can dynamically set <strong>SEO title and meta tags</strong> (title, keywords, description). Simply define the following variables:<br> <code>define('__SEO_PAGE_TITLE__', "Title value …");</code><br> <code>define('__SEO_PAGE_KEYWORDS__', 'keyword1, keyword2, keyword3 …');</code><br> <code>define('__SEO_PAGE_DESC__', "Description …");</code><br>
 YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
 YouCanEditHtmlSourced=Jakolinkillä jaetulle tiedosto-objektille (avoin pääsy jakamisavaimella tiedosto) syntaksi on:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
 YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> Sisällyttääksesi <strong>kuvan</strong> tallennettuna <strong>medias</strong>-hakemistoon (julkisesti käytettävissä oleva hakemisto), käytä suhteellista polkua, joka alkaa <strong>/medias</strong>, esimerkki:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
@@ -81,7 +81,7 @@ LanguageMustNotBeSameThanClonedPage=Kloonat sivun käännökseksi. Uuden sivun K
 ParentPageId=Pääsivun tunnus
 WebsiteId=Sivuston ID
 CreateByFetchingExternalPage=luo sivu/säilö hakemalla sivu ulkoisesta URL-osoitteesta...
-OrEnterPageInfoManually=Tai luo sivu tyhjästä tai sivumallista...
+OrEnterPageInfoManually=Create page from scratch or from a page template...
 FetchAndCreate=Hae ja luo
 ExportSite=Vie verkkosivusto
 ImportSite=Tuo verkkosivustomalli
@@ -99,7 +99,7 @@ SorryWebsiteIsCurrentlyOffLine=Valitettavasti tämä sivusto on tällä hetkell�
 WEBSITE_USE_WEBSITE_ACCOUNTS=Ota verkkosivustotilien taulukko käyttöön kolmansille osapuolille
 WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Ota käyttöön taulukko, joka tallentaa kunkin kolmannen osapuolen verkkosivustotilien (kirjautumistiedot/salasanat) tiedot.
 YouMustDefineTheHomePage=Sinun on ensin määritettävä oletus Kotisivu
-OnlyEditionOfSourceForGrabbedContentFuture=Varoitus: Verkkosivun luominen ulkoisen verkkosivun tuonnin avulla on varattu kokeneille käyttäjille. Lähdesivun monimutkaisuudesta riippuen tuonnin tulos voi poiketa alkuperäisestä. Myös jos lähdesivu käyttää yleisiä CSS-tyylejä tai ristiriitaista JavaScriptiä, se voi rikkoa verkkosivustoeditorin ulkoasun tai ominaisuudet työskenneltäessä tällä sivulla. Tämä menetelmä on nopeampi tapa luo luoda sivu, mutta on suositeltavaa luo luoda uusi sivu tyhjästä tai ehdotetusta sivumallista.<br>Huomaa myös, että sisäinen editori ei välttämättä toimi oikein, kun sitä käytetään kaapatulla ulkoisella sivulla.
+OnlyEditionOfSourceForGrabbedContentFuture=Warning: Creating a web page by importing an external web page is reserved for experienced users and can work only pages rendered with HTML and CSS only. Importing pages rendered by JS frameworks are NOT supported. Depending on the complexity of the source page, the result of importation will probably differ from the original page. Also if the source page uses common CSS styles or conflicting JavaScript, it may break the look or features of the Website editor when working on this page. This method is a quick way to create a page for very advanced users when source page allows it, but it is recommended to create your new page from scratch or from a suggested page template.<br>Note also that the inline editor might not work correctly when used on a page that was grabbed.
 OnlyEditionOfSourceForGrabbedContent=Vain HTML-lähdekoodin muokkaus on mahdollista, kun sisältö noudetaan ulkoiselta sivustolta
 GrabImagesInto=Nappaa myös kuvia, jotka löytyvät css:n ja -sivulta.
 ImagesShouldBeSavedInto=Kuvat tulee tallentaa hakemistoon
@@ -423,8 +423,8 @@ contactFormPhone = Puhelin
 contactFormSubjectEntered = Aihe syötetty
 contactFormMessageLabel = Viesti
 contactFormSuccessAlert = Kiitos viestistäsi. Otamme sinuun pian yhteyttä.
-socials=Tutkimusyhteisö
-rgpd=RGPD
+socials=Sosiaalinen media
+rgpd=GDPR
 joinUs=Liity meihin
 home=Koti
 anonymous=Anonyymi
@@ -455,3 +455,4 @@ SampleGoalOne=Edistää yhteistyötä ja ja solidaarisuutta jäsenten keskuudess
 SampleGoaltwo=Kannusta vastuullisia ja kestäviä käytäntöjä kaikissa toiminnoissa.
 SampleGoalthree=Tue vaikuttavia Projektit-hankkeita, jotka hyödyttävät koko yhteiskuntaa.
 SHOW_LANG_SELECTOR=Näytä Kieli-valintavalikko
+ForAdvancedWebmastersOnly=For technical webmasters only

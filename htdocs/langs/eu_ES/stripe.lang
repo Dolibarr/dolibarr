@@ -77,9 +77,10 @@ ClickHereToTryAgain=<a href="%s">Egin klik hemen berriro saiatzeko...</a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Bezeroen Autentifikazio Sendoaren arauak direla eta, txartelaren sorrera Stripe bulego nagusitik egin behar da. Hemen klik egin dezakezu Stripe bezeroen erregistroa aktibatzeko: %s
 STRIPE_CARD_PRESENT=Txartelaren aurkezpena Stripe terminaletarako
 TERMINAL_LOCATION=Stripe terminalen kokapena (helbidea)
-RequestDirectDebitWithStripe=Eskatu zordunketa zuzena Stripe-rekin
-RequesCreditTransferWithStripe=Eskatu kreditu-transferentzia Stripe-rekin
-STRIPE_SEPA_DIRECT_DEBIT=Gaitu Stripe bidezko zordunketa zuzeneko ordainketak
+RequestDirectDebitWithStripe=Request SEPA Direct Debit with Stripe
+RequesCreditTransferWithStripe=Make SEPA Credit Transfer with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable SEPA Direct Debit payments with Stripe
+STRIPE_SEPA_CREDIT_TRANSFER=Enable SEPA Credit Transfer payments with Stripe
 STRIPE_KLARNA=Gaitu ordainketak Klarna erabiliz
 STRIPE_BANCONTACT=Gaitu ordainketak BANCONTACT erabiliz
 STRIPE_IDEAL=Gaitu ordainketak IDEAL erabiliz

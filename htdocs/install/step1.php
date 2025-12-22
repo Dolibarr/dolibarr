@@ -32,11 +32,26 @@ define('DONOTLOADCONF', 1); // To avoid loading conf by file inc.php
 
 include 'inc.php';
 
-global $langs;
-
 /**
+ * @var string	$conffile
+ * @var string	$conffiletoshow
+ *
+ * @var Conf $conf
  * @var Translate $langs
+ *
+ * @var string	$dolibarr_main_db_type
+ * @var string	$dolibarr_main_db_host
+ * @var string	$dolibarr_main_db_port
+ * @var string	$dolibarr_main_db_name
+ * @var string	$dolibarr_main_db_user
+ * @var string	$dolibarr_main_db_pass
+ * @var string	$dolibarr_main_document_root
+ * @var string	$dolibarr_main_db_encryption
+ * @var string	$dolibarr_main_db_encrypted_pass
+ * @var string	$dolibarr_main_db_cryptkey
  */
+
+global $langs;
 
 $action = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : (empty($argv[1]) ? '' : $argv[1]);
 $setuplang = GETPOST('selectlang', 'aZ09', 3) ? GETPOST('selectlang', 'aZ09', 3) : (empty($argv[2]) ? 'auto' : $argv[2]);
@@ -87,6 +102,23 @@ if ($conffile == "/etc/dolibarr/conf.php") {
 if (@file_exists($forcedfile)) {
 	$useforcedwizard = true;
 	include_once $forcedfile;
+	/**
+	 * @var string	$force_install_noedit
+	 * @var string	$force_install_main_data_root
+	 * @var string	$force_install_databaserootlogin
+	 * @var string	$force_install_databaserootpass
+	 * @var string	$force_install_type
+	 * @var string	$force_install_dbserver
+	 * @var string	$force_install_database
+	 * @var string	$force_install_databaselogin
+	 * @var string	$force_install_databasepass
+	 * @var string	$force_install_port
+	 * @var string	$force_install_prefix
+	 * @var string	$force_install_createdatabase
+	 * @var string	$force_install_createuser
+	 * @var string	$force_install_mainforcehttps
+	 * @var string	$force_install_distrib
+	 */
 	// If forced install is enabled, replace the post values. These are empty because form fields are disabled.
 	if ($force_install_noedit) {
 		$main_dir = detect_dolibarr_main_document_root();
@@ -396,7 +428,7 @@ if (!$error && $db->connected && $action == "set") {	// Test on permission not r
 	}
 
 	// Show title of step
-	print '<h3><img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/gear.svg" width="20" alt="Configuration"> '.$langs->trans("ConfigurationFile").'</h3>';
+	print '<h3><img class="valignmiddle inline-block paddingright" src="../public/theme/common/gear.svg" width="20" alt="Configuration"> '.$langs->trans("ConfigurationFile").'</h3>';
 	print '<table cellspacing="0" class="centpercent" cellpadding="1">';
 
 	// Check parameter main_dir

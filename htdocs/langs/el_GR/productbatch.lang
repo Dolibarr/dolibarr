@@ -14,7 +14,7 @@ atleast1batchfield=Ημερομηνία λήξης Ανάλωσης ή Πώλη�
 batch_number=Παρτίδα/Σειριακός αριθμός
 BatchNumberShort=Παρτίδα/Σειριακός αριθμός
 EatByDate=Ημερομηνία λήξης ανάλωσης
-SellByDate=Ημερομηνία προθεσμίας πώλησης
+SellByDate=Ημερομηνία λήξης πώλησης
 DetailBatchNumber=Χαρακτηριστικά  παρτίδας/σειριακού αριθμού
 printBatch=Παρτίδα/Σειριακός αριθμός: %s
 printEatby=Λήξη ανάλωσης: %s
@@ -50,4 +50,5 @@ ToReplace=Προς αντικατάσταση
 CantMoveNonExistantSerial=Σφάλμα. Ζητάτε κίνηση σε μια εγγραφή για ένα σειριακό αριθμό που δεν υπάρχει πια. Μπορεί να χρησιμοποιήσατε τον ίδιο σειριακό αριθμό στην ίδια αποθήκη αρκετές φορές στην ίδια αποστολή ή να έχει χρησιμοποιηθεί από άλλη αποστολή. Αφαιρέστε αυτήν την αποστολή και ετοιμάστε άλλη.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Επισκευή ελλιπούς εκτέλεσης πίνακα παρτίδων με την παράμετρο "...repair.php?standard=confirmed"
 IlligalQtyForSerialNumbers= Απαιτείται διόρθωση αποθέματος λόγω μοναδικού αριθμού σειράς.
-ErrorBatchesNeedStockManagement=Σφάλμα. Ένα προϊόν παρτίδας πρέπει να έχει διαχείριση αποθέματος.
+ErrorBatchesNeedStockManagement=Error. A product with batch/lot management must also be managed in stock.
+ForceBatchesNeedStockManagement=Σε ένα προϊόν με διαχείριση παρτίδας/Σειριακού αριθμού θα πρέπει να γίνεται και διαχείριση αποθέματος (εξαναγκασμός διαχείρισης αποθέματος)
