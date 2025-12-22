@@ -1111,6 +1111,9 @@ class FormCompany extends Form
 			if (!getDolGlobalString('SOCIETE_DISABLE_PROSPECTS') && !getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS') && !getDolGlobalString('SOCIETE_DISABLE_PROSPECTSCUSTOMERS')) {
 				$out .= '<option value="3"' . ($selected == 3 ? ' selected' : '') . '>' . $langs->trans('ProspectCustomer') . '</option>';
 			}
+			if (!getDolGlobalString('SOCIETE_DISABLE_PROSPECTS')) {
+				$out .= '<option value="2"' . ($selected == 2 ? ' selected' : '') . '>' . $langs->trans('Prospect') . '</option>';
+			}
 			if (!getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS')) {
 				$out .= '<option value="1"' . ($selected == 1 ? ' selected' : '') . '>' . $langs->trans('Customer') . '</option>';
 			}

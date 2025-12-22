@@ -961,18 +961,18 @@ if (getDolGlobalString('SOCIETE_DISABLE_PROSPECTSCUSTOMERS')) {
 print '</a></td>';
 print '</tr>';
 
-if (!getDolGlobalString('SOCIETE_DISABLE_PROSPECTSCUSTOMERS')) {
-	// Default Prospect/Customer thirdparty type on customer création
-	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("DefaultCustomerType", $langs->transnoentitiesnoconv("MenuNewThirdParty"), $langs->transnoentitiesnoconv("MenuNewCustomer")).'</td>';
-	print '<td>';
-	print $formcompany->selectProspectCustomerType(getDolGlobalInt('THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT'), 'defaultcustomertype', 'defaultcustomertype', 'admin');
-	print '</td>';
-	print '<td class="center">';
-	print '<input type="submit" class="button small reposition" name="THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT" value="'.$langs->trans("Modify").'">';
-	print '</td>';
-	print '</tr>';
-}
+
+// Default Prospect/Customer thirdparty type on customer création
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("DefaultCustomerType").'</td>';
+print '<td>';
+print $formcompany->selectProspectCustomerType(getDolGlobalInt('THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT'), 'defaultcustomertype', 'defaultcustomertype', 'admin');
+print '</td>';
+print '<td class="center">';
+print '<input type="submit" class="button small reposition" name="THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT" value="'.$langs->trans("Modify").'">';
+print '</td>';
+print '</tr>';
+
 
 if (getDolGlobalString('THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION')) {
 	print '<tr class="oddeven">';
