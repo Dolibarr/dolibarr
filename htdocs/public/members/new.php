@@ -1111,7 +1111,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 				var amountFormulaDescriptionByType = ' . $amountformuladescriptionbytype_json . ';
 				var minimumAmountByType = ' . $minimumamountbytype_json . ';
 				var memberMinAmount = ' . getDolGlobalInt("MEMBER_MIN_AMOUNT") . ';
-				var currencySymbol = ' . json_encode(currencysymbol) . ';
+				var currencySymbol = ' . json_encode($currencysymbol) . ';
 
 				// Translations prepared by PHP
 				var langs = {
