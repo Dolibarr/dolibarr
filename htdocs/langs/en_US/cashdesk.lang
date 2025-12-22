@@ -171,3 +171,5 @@ Printers=Printers
 PrintOn=Print on printer %s
 SentToPrinter=Sent to printer
 FailedToSendToPrinter=Failed to send to printer
+TemporaryReceipt=Temporary
+SignatureID=Signature ID

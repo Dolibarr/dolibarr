@@ -138,10 +138,12 @@ if ($action == "importSignature") {
 			}
 
 			if (!$error) {
-				$return = file_put_contents($upload_dir . $filename, $data);
-				if ($return == false) {
+				$return = file_put_contents($upload_dir.$filename, $data);
+				if ($return === false) {
 					$error++;
 					$response = 'Error file_put_content: failed to create signature file.';
+				} else {
+					dolChmod($upload_dir.$filename);
 				}
 			}
 
@@ -353,9 +355,11 @@ if ($action == "importSignature") {
 
 			if (!$error) {
 				$return = file_put_contents($upload_dir . $filename, $data);
-				if ($return == false) {
+				if ($return === false) {
 					$error++;
 					$response = 'Error file_put_content: failed to create signature file.';
+				} else {
+					dolChmod($upload_dir.$filename);
 				}
 			}
 
@@ -490,9 +494,11 @@ if ($action == "importSignature") {
 
 			if (!$error) {
 				$return = file_put_contents($upload_dir . $filename, $data);
-				if ($return == false) {
+				if ($return === false) {
 					$error++;
 					$response = 'Error file_put_content: failed to create signature file.';
+				} else {
+					dolChmod($upload_dir.$filename);
 				}
 			}
 
@@ -637,9 +643,11 @@ if ($action == "importSignature") {
 
 				if (!$error) {
 					$return = file_put_contents($upload_dir . $filename, $data);
-					if ($return == false) {
+					if ($return === false) {
 						$error++;
 						$response = 'Error file_put_content: failed to create signature file.';
+					} else {
+						dolChmod($upload_dir.$filename);
 					}
 				}
 
@@ -834,9 +842,11 @@ if ($action == "importSignature") {
 
 			if (!$error) {
 				$return = file_put_contents($upload_dir . $filename, $data);
-				if ($return == false) {
+				if ($return === false) {
 					$error++;
 					$response = 'Error file_put_content: failed to create signature file.';
+				} else {
+					dolChmod($upload_dir.$filename);
 				}
 			}
 

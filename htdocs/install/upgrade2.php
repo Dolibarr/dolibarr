@@ -270,6 +270,8 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 	 *
 	 ***************************************************************************************/
 
+	dol_syslog("Process upgrade2 (step common to all entities)");
+
 	// Force to execute this at begin to avoid the new core code into Dolibarr to be broken.
 	$sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'user ADD COLUMN birth date';
 	$db->query($sql, 1);
@@ -298,7 +300,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 	$db->begin();
 
 	foreach ($listofentities as $entity) {
-		dol_syslog("Process upgrade2 for entity ".$entity);
+		dol_syslog("Process upgrade2 (step a) for entity ".$entity);
 
 		// Set $conf context for entity
 		$conf->setEntityValues($db, $entity);
@@ -313,7 +315,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 		$versiontoarray = array();
 		$versionranarray = array();
 
-		dol_syslog("Process upgrade2 d for entity ".$entity);
+		dol_syslog("Process upgrade2 (step b) for entity ".$entity);
 
 		if (!$error) {
 			if (count($listofentities) > 1) {

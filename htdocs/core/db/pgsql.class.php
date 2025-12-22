@@ -855,18 +855,20 @@ class DoliDBPgsql extends DoliDB
 	/**
 	 * Get last ID after an insert INSERT
 	 *
-	 * @param   string	$tab    	Table name concerned by insert. Ne sert pas sous MySql mais requis pour compatibilite avec PostgreSQL
+	 * @param   string	$table    	Table name concerned by insert.
 	 * @param	string	$fieldid	Field name
-	 * @return  int     			Id of row
+	 * @return  int     			Id of row or -1 if error
 	 */
-	public function last_insert_id($tab, $fieldid = 'rowid')
+	public function last_insert_id($table, $fieldid = 'rowid')
 	{
 		// phpcs:enable
-		//$result = pg_query($this->db,"SELECT MAX(".$fieldid.") FROM ".$tab);
-		$result = pg_query($this->db, "SELECT currval('".$tab."_".$fieldid."_seq')");
+		$sequencename = $table."_".$fieldid."_seq";
+
+		//$result = pg_query($this->db,"SELECT MAX(".$fieldid.") FROM ".$table);
+		$result = pg_query($this->db, "SELECT currval('".$sequencename."')");
 		if (!$result) {
 			print pg_last_error($this->db);
-			exit;
+			return -1;
 		}
 		//$nbre = pg_num_rows($result);
 		$row = pg_fetch_result($result, 0, 0);
@@ -1512,6 +1514,18 @@ class DoliDBPgsql extends DoliDB
 
 		return array();
 	}
+
+	/**
+	 * Get the last ID of an auto-increment field of a table
+	 *
+	 * @param 	string 		$table 	Name of table
+	 * @return 	int		 			Next ID or < 0 if error
+	 */
+	public function getNextAutoIncrementId($table)
+	{
+		return $this->last_insert_id($table, 'rowid') + 1;
+	}
+
 
 	/**
 	 * Prepare a SQL statement for execution (PostgreSQL prepared statement)

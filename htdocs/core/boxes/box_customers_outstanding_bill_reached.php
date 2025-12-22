@@ -36,7 +36,7 @@ class box_customers_outstanding_bill_reached extends ModeleBoxes
 	public $boxcode = "customersoutstandingbillreached";
 	public $boximg = "object_company";
 	public $boxlabel = "BoxCustomersOutstandingBillReached";
-	public $depends = array("facture", "societe");
+	public $depends = array("invoice", "societe");
 
 	public $enabled = 1;
 
