@@ -3889,6 +3889,7 @@ function getFilesUpdated(&$file_list, SimpleXMLElement $dir, $path = '', $pathre
 	//$exclude = 'install';
 
 	$entry = array();
+	$algo = '';
 	if (!empty($dir->md5file)) {
 		$entry = $dir->md5file;
 		$algo = 'md5';

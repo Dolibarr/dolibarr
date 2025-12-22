@@ -395,7 +395,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 				dol_print_error(null, 'Value for key = '.$key.' not supported');
 				exit;
 			}
-			$sql .= " AND datep BETWEEN '".$db->idate($datestart)."' AND '".$db->idate($dateend)."'";
+			$sql .= " AND datep BETWEEN '".$db->idate((int) $datestart)."' AND '".$db->idate((int) $dateend)."'";
 
 			$resql = $db->query($sql);
 			if ($resql) {

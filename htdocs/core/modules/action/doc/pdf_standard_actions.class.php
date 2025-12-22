@@ -54,6 +54,11 @@ class pdf_standard_actions
 	public $errors;
 
 	/**
+	 * @var string[] array of warnings messages
+	 */
+	public $warnings;
+
+	/**
 	 * @var string description
 	 */
 	public $description;

@@ -123,7 +123,7 @@ class WebsitePage extends CommonObject
 	public $index = 1;
 
 	/**
-	 * @var string 		Use meta robot tag "follow" (else "nofollow")
+	 * @var int 		Use meta robot tag "follow" (else "nofollow")
 	 */
 	public $follow = 1;
 

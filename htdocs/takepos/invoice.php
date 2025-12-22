@@ -352,7 +352,7 @@ if (empty($reshook)) {
 					} else {
 						//setEventMessages(null, $payment->warnings, 'warnings');
 						if (!empty($payment->warnings)) {
-							dol_htmloutput_mesg(null, $payment->warnings, 'warning', 1);
+							dol_htmloutput_mesg('', $payment->warnings, 'warning', 1);
 						}
 
 						$res = $payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccount, '', '');

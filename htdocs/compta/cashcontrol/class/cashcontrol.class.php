@@ -133,17 +133,17 @@ class CashControl extends CommonObject
 	public $day_close;
 
 	/**
-	 * @var int Hour close
+	 * @var ?int Hour close
 	 */
 	public $hour_close;
 
 	/**
-	 * @var int Minute close
+	 * @var ?int Minute close
 	 */
 	public $min_close;
 
 	/**
-	 * @var int Second close
+	 * @var ?int Second close
 	 */
 	public $sec_close;
 
