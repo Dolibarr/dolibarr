@@ -21,7 +21,7 @@ AppVerName=__FILENAMEEXEDOLIWAMP__
 ; Replace key with DoliWamp-x.x x or DoliWamp-x.x.x-alpha or DoliWamp-x.x.x-beta or DoliWamp-x.x.x-rc or DoliWamp-x.x.x
 OutputBaseFilename=__FILENAMEEXEDOLIWAMP__
 ; ----- End of change
-;OutputManifestFile=build\doliwampbuild.log
+;OutputManifestFile=dev\build\doliwampbuild.log
 ; Define full path from which all relative path are defined
 ; You must modify this to put here your dolibarr root directory
 SourceDir=..\..\..\..
@@ -48,7 +48,7 @@ ChangesEnvironment=no
 CreateUninstallRegKey=yes
 ;UseSetupLdr=no
 ;UninstallDisplayIcon={app}\bidon
-OutputDir=build
+OutputDir=dev\build
 ShowLanguageDialog=auto
 ShowUndisplayableLanguages=no
 LanguageDetectionMethod=uilanguage
