@@ -51,7 +51,7 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/lettering.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("accountancy", "compta"));
+$langs->loadLangs(array("accountancy", "categories", "compta"));
 
 // Get Parameters
 $socid = GETPOSTINT('socid');
@@ -339,7 +339,12 @@ if (empty($reshook)) {
 				$listofaccountsforgroup2[] = "'".$db->escape((string) $tmpval['account_number'])."'";
 			}
 		}
-		$filter['t.search_accounting_code_in'] = implode(',', $listofaccountsforgroup2);
+		if (!empty($listofaccountsforgroup2)) {
+			$filter['t.search_accounting_code_in'] = implode(',', $listofaccountsforgroup2);
+		} else {
+			$filter['t.search_accounting_code_in'] = "''";
+			setEventMessages($langs->trans("ThisCategoryHasNoItems"), null, 'warnings');
+		}
 		$param .= '&search_account_category='.urlencode((string) ($search_account_category));
 	}
 	if (!empty($search_accountancy_code)) {
@@ -742,13 +747,13 @@ if (count($filter) > 0) {
 			$sqlwhere[] = natural_search($key, $value, 1, 1);
 		} elseif ($key == 't.reconciled_option') {
 			$sqlwhere[] = 't.lettering_code IS NULL';
-		} elseif ($key == 't.code_journal' && !empty($value)) {
+		} elseif ($key == 't.code_journal' && !empty($value)) {					// @phpstan-ignore-line false positive on !empty
 			if (is_array($value)) {
 				$sqlwhere[] = natural_search("t.code_journal", implode(',', $value), 3, 1);
 			} else {
 				$sqlwhere[] = natural_search("t.code_journal", $value, 3, 1);
 			}
-		} elseif ($key == 't.search_accounting_code_in' && !empty($value)) {
+		} elseif ($key == 't.search_accounting_code_in' && !empty($value)) {	// @phpstan-ignore-line false positive on !empty
 			$sqlwhere[] = 't.numero_compte IN ('.$db->sanitize($value, 1).')';
 		} else {
 			$sqlwhere[] = natural_search($key, $value, 0, 1);

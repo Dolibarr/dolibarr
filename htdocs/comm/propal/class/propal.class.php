@@ -272,12 +272,12 @@ class Propal extends CommonObject
 	public $address;
 
 	/**
-	 * @var int availability ID
+	 * @var ?int availability ID can be null in db
 	 */
 	public $availability_id;
 
 	/**
-	 * @var int availability ID
+	 * @var ?int availability ID
 	 * @deprecated
 	 * @see $availability_id
 	 */
