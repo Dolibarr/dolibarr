@@ -2043,6 +2043,7 @@ while ($i < $imaxinloop) {
 				$sqlp = "SELECT p.rowid, p.fk_product, p.price, p.price_ttc, p.price_level, p.date_price, p.price_base_type";
 				$sqlp .= " FROM ".MAIN_DB_PREFIX."product_price as p";
 				$sqlp .= " WHERE fk_product = ".((int) $obj->rowid);
+				$sqlp .= " AND entity IN (" . getEntity('productprice') . ")";
 				$sqlp .= " ORDER BY p.date_price DESC, p.rowid DESC, p.price_level ASC";
 				$resultp = $db->query($sqlp);
 				if ($resultp) {
