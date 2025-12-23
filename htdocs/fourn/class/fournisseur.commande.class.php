@@ -2009,7 +2009,7 @@ class CommandeFournisseur extends CommonOrder
 	 *	@param      int				$fk_prod_fourn_price	Id supplier price
 	 *	@param      string			$ref_supplier			Supplier reference price
 	 *	@param      float			$remise_percent  		Remise
-	 *	@param      'HT'|'TTC'		$price_base_type		HT or TTC
+	 *	@param      'HT'|'TTC'|''	$price_base_type		HT or TTC or '' for subtotals
 	 *	@param		float			$pu_ttc					Unit price TTC (used if $price_base_type is 'TTC')
 	 *	@param		int<0,1>		$type					Type of line (0=product, 1=service)
 	 *	@param		int				$info_bits				More information
