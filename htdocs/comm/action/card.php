@@ -1211,7 +1211,7 @@ if (empty($reshook) && $action == 'confirm_delete' && GETPOST("confirm") == 'yes
 	if (!$usercandelete) {
 		accessforbidden();
 	}
-	
+
 	$object->fetch($id);
 	$object->fetch_optionals();
 	$object->fetch_userassigned();
