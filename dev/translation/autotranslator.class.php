@@ -53,7 +53,7 @@ class autoTranslator
 	public function __construct($_destlang, $_refLang, $_langDir, $_limittofile, $_apikey)
 	{
 
-		// Set enviorment variables
+		// Set environment variables
 		$this->_destlang = $_destlang;
 		$this->_refLang = $_refLang;
 		$this->_langDir = $_langDir.self::DIR_SEPARATOR;
@@ -206,7 +206,7 @@ class autoTranslator
 	}
 
 	/**
-	 * Put in array _translatedFiles[$file], line of a new tranlated pair
+	 * Put in array _translatedFiles[$file], line of a new translated pair
 	 *
 	 * @param 	string	$content		Existing content of dest file
 	 * @param 	string	$file			Target file name translated (xxxx.lang)

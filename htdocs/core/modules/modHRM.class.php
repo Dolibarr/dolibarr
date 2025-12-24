@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015-2021  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +40,7 @@ class modHRM extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $langs, $conf;
+		global $conf;
 
 		$this->db = $db;
 
@@ -125,7 +126,7 @@ class modHRM extends DolibarrModules
 
 		// Array to add new pages in new tabs
 		$this->tabs = array();
-		$this->tabs[] = array('data'=>'user:+skill_tab:Skills:hrm:1:/hrm/skill_tab.php?id=__ID__&objecttype=user');  					// To add a new tab identified by code tabname1
+		$this->tabs[] = array('data' => 'user:+skill_tab:Skills:hrm:1:/hrm/skill_tab.php?id=__ID__&objecttype=user');  					// To add a new tab identified by code tabname1
 		//$this->tabs[] = array('data'=>'job:+tabname1:Poste:mylangfile@hrm:1:/hrm/poste_list.php?fk_job=__ID__');  					// To add a new tab identified by code tabname1
 		// Example:
 		// $this->tabs[] = array('data'=>'objecttype:+tabname1:Title1:mylangfile@hrm:$user->rights->hrm->read:/hrm/mynewtab1.php?id=__ID__');  					// To add a new tab identified by code tabname1
@@ -140,7 +141,7 @@ class modHRM extends DolibarrModules
 		// 'intervention'     to add a tab in intervention view
 		// 'invoice'          to add a tab in customer invoice view
 		// 'invoice_supplier' to add a tab in supplier invoice view
-		// 'member'           to add a tab in fundation member view
+		// 'member'           to add a tab in foundation member view
 		// 'opensurveypoll'	  to add a tab in opensurvey poll view
 		// 'order'            to add a tab in sales order view
 		// 'order_supplier'   to add a tab in supplier order view
@@ -296,8 +297,8 @@ class modHRM extends DolibarrModules
 		}
 
 		$sql = array(
-			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'standard' AND type='evaluation' AND entity = ".((int) $conf->entity),
-			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('standard','evaluation',".((int) $conf->entity).")"
+			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'standard_evaluation' AND type='evaluation' AND entity = ".((int) $conf->entity),
+			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('standard_evaluation','evaluation',".((int) $conf->entity).")"
 		);
 
 		return $this->_init($sql, $options);

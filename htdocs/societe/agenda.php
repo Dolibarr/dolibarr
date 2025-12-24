@@ -6,6 +6,7 @@
  * Copyright (C) 2007      Patrick Raguin  		<patrick.raguin@gmail.com>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,13 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -38,10 +46,11 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('agenda', 'bills', 'companies', 'orders', 'propal'));
 
+$action = GETPOST('action', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'thirdpartyagenda';
 
-if (GETPOST('actioncode', 'array')) {
-	$actioncode = GETPOST('actioncode', 'array', 3);
+if (GETPOSTISARRAY('actioncode')) {
+	$actioncode = GETPOST('actioncode', 'array:alpha', 3);
 	if (!count($actioncode)) {
 		$actioncode = '0';
 	}
@@ -51,14 +60,18 @@ if (GETPOST('actioncode', 'array')) {
 
 $search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
+$search_complete = GETPOST('search_complete');
+$search_dateevent_start = GETPOSTDATE('dateevent_start');
+$search_dateevent_end = GETPOSTDATE('dateevent_end');
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) {
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT('page');
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
-}     // If $page is not defined, or '' or -1
+}
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -69,14 +82,23 @@ if (!$sortorder) {
 	$sortorder = 'DESC,DESC';
 }
 
-// Initialize technical objects
+if (GETPOST('actioncode', 'array')) {
+	$actioncode = GETPOST('actioncode', 'array', 3);
+	if (!count($actioncode)) {
+		$actioncode = '0';
+	}
+} else {
+	$actioncode = GETPOST("actioncode", "alpha", 3) ? GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT'));
+}
+
+// Initialize a technical objects
 $object = new Societe($db);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('agendathirdparty', 'globalcard'));
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -94,7 +116,7 @@ $result = restrictedArea($user, 'societe', $socid, '&societe');
  *	Actions
  */
 
-$parameters = array('id'=>$socid);
+$parameters = array('id' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -110,7 +132,9 @@ if (empty($reshook)) {
 	// Purge search criteria
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 		$actioncode = '';
+		$search_rowid = '';
 		$search_agenda_label = '';
+		$search_complete = '';
 	}
 }
 
@@ -123,15 +147,12 @@ if (empty($reshook)) {
 $form = new Form($db);
 
 $title = $langs->trans("Agenda");
-if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
 	$title = $object->name." - ".$title;
 }
 $help_url = '';
 llxHeader('', $title, $help_url);
 
-if (isModEnabled('notification')) {
-	$langs->load("mails");
-}
 $head = societe_prepare_head($object);
 
 
@@ -152,6 +173,8 @@ dol_print_object_info($object, 1);
 
 print '</div>';
 
+print '<div class="clearboth"></div>';
+
 print dol_get_fiche_end();
 
 
@@ -165,10 +188,10 @@ $out = '';
 $permok = $user->hasRight('agenda', 'myactions', 'create');
 if ((!empty($objthirdparty->id) || !empty($objcon->id)) && $permok) {
 	if (is_object($objthirdparty) && get_class($objthirdparty) == 'Societe') {
-		$out .= '&amp;originid='.$objthirdparty->id.($objthirdparty->id > 0 ? '&amp;socid='.$objthirdparty->id : '').'&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].($objthirdparty->id > 0 ? '?socid='.$objthirdparty->id : ''));
+		$out .= '&originid='.$objthirdparty->id.($objthirdparty->id > 0 ? '&socid='.$objthirdparty->id : '').'&backtopage='.urlencode($_SERVER['PHP_SELF'].($objthirdparty->id > 0 ? '?socid='.$objthirdparty->id : ''));
 	}
-	$out .= (!empty($objcon->id) ? '&amp;contactid='.$objcon->id : '');
-	$out .= '&amp;datep='.dol_print_date(dol_now(), 'dayhourlog', 'tzuserrel');
+	$out .= (!empty($objcon->id) ? '&contactid='.$objcon->id : '');
+	$out .= '&datep='.dol_print_date(dol_now(), 'dayhourlog', 'tzuserrel');
 }
 
 $morehtmlright = '';
@@ -197,12 +220,34 @@ if (isModEnabled('agenda')) {
 if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 	print '<br>';
 
-	$param = '&socid='.urlencode($socid);
+	$param = '&socid='.urlencode((string) ($socid));
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
 		$param .= '&limit='.((int) $limit);
+	}
+	if ($search_rowid) {
+		$param .= '&search_rowid='.urlencode($search_rowid);
+	}
+	if ($actioncode !== '' && $actioncode !== '-1') {
+		$param .= '&actioncode='.urlencode($actioncode);
+	}
+	if ($search_agenda_label) {
+		$param .= '&search_agenda_label='.urlencode($search_agenda_label);
+	}
+	if ($search_complete != '') {
+		$param .= '&search_complete='.urlencode($search_complete);
+	}
+	if ($search_dateevent_start != '') {
+		$param .= '&dateevent_startyear='.GETPOSTINT('dateevent_startyear');
+		$param .= '&dateevent_startmonth='.GETPOSTINT('dateevent_startmonth');
+		$param .= '&dateevent_startday='.GETPOSTINT('dateevent_startday');
+	}
+	if ($search_dateevent_end != '') {
+		$param .= '&dateevent_endyear='.GETPOSTINT('dateevent_endyear');
+		$param .= '&dateevent_endmonth='.GETPOSTINT('dateevent_endmonth');
+		$param .= '&dateevent_endday='.GETPOSTINT('dateevent_endday');
 	}
 
 	// Try to know count of actioncomm from cache
@@ -215,12 +260,13 @@ if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') ||
 		$titlelist = $langs->trans("Actions").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>' : '');
 	}
 
-	print_barre_liste($titlelist, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 0);
+	print_barre_liste($titlelist, 0, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 0);
 
 	// List of all actions
 	$filters = array();
 	$filters['search_agenda_label'] = $search_agenda_label;
 	$filters['search_rowid'] = $search_rowid;
+	$filters['search_complete'] = $search_complete;		// Can be 'na', '0', '100', '50'
 
 	// TODO Replace this with same code than into list.php
 	show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder, $object->module);

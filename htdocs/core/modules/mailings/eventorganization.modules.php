@@ -1,7 +1,9 @@
 <?php
-/* Copyright (C) 2018-2018 Andre Schild        <a.schild@aarboard.ch>
- * Copyright (C) 2005-2010 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin       <regis.houssin@inodbox.com>
+/* Copyright (C) 2018-2018  Andre Schild        	<a.schild@aarboard.ch>
+ * Copyright (C) 2005-2010  Laurent Destailleur 	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin       	<regis.houssin@inodbox.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This file is an example to follow to add your own email selector inside
  * the Dolibarr email tool.
@@ -30,15 +32,24 @@ class mailing_eventorganization extends MailingTargets
 	public $name = 'AttendeesOfOrganizedEvent';
 	public $desc = "Attendees of an organized event";
 
+	/**
+	 * @var int
+	 */
 	public $require_admin = 0;
 
-	public $require_module = array(); // This module allows to select by categories must be also enabled if category module is not activated
+	/**
+	 * @var string[] This module allows to select by categories must be also enabled if category module is not activated
+	 */
+	public $require_module = array();
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'conferenceorbooth';
 
+	/**
+	 * @var string condition to enable module
+	 */
 	public $enabled = 'isModEnabled("eventorganization")';
 
 
@@ -79,8 +90,8 @@ class mailing_eventorganization extends MailingTargets
 		$sql .= " AND e.fk_project = p.rowid";
 		$sql .= " AND p.entity IN (".getEntity('project').")";
 		$sql .= " AND e.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".((int) $mailing_id).")";
-		if (GETPOST('filter_eventorganization', 'int') > 0) {
-			$sql .= " AND e.fk_project = ".((int) GETPOST('filter_eventorganization', 'int'));
+		if (GETPOSTINT('filter_eventorganization') > 0) {
+			$sql .= " AND e.fk_project = ".(GETPOSTINT('filter_eventorganization'));
 		}
 		if (empty($this->evenunsubscribe)) {
 			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = e.email and mu.entity = ".((int) $conf->entity).")";
@@ -107,12 +118,12 @@ class mailing_eventorganization extends MailingTargets
 					$otherTxt .= $addDescription;
 					$cibles[$j] = array(
 								'email' => $obj->email,
-								'fk_project' => $obj->fk_project,
+								'fk_project' => (int) $obj->fk_project,
 								'lastname' => $obj->lastname,
 								'firstname' => $obj->firstname,
 								'other' => $otherTxt,
 								'source_url' => $this->url($obj->id, $obj->source),
-								'source_id' => $obj->id,
+								'source_id' => (int) $obj->id,
 								'source_type' => $obj->source
 					);
 					$old = $obj->email;
@@ -137,11 +148,11 @@ class mailing_eventorganization extends MailingTargets
 	 *	array of SQL request that returns two field:
 	 *	One called "label", One called "nb".
 	 *
-	 *	@return		array		Array with SQL requests
+	 *	@return		string[]		Array with SQL requests
 	 */
 	public function getSqlArrayForStats()
 	{
-		// CHANGE THIS: Optionnal
+		// CHANGE THIS: Optional
 
 		//var $statssql=array();
 		//$this->statssql[0]="SELECT field1 as label, count(distinct(email)) as nb FROM mytable WHERE email IS NOT NULL";
@@ -193,7 +204,7 @@ class mailing_eventorganization extends MailingTargets
 		$formproject = new FormProjets($this->db);
 
 		$s = img_picto($langs->trans("OrganizedEvent"), 'project', 'class="pictofixedwidth"');
-		$s .= $formproject->select_projects(-1, 0, "filter_eventorganization", 0, 0, $langs->trans("OrganizedEvent"), 1, 0, 0, 0, '', 1, 0, '', '', 'usage_organize_event=1');
+		$s .= $formproject->select_projects(-1, '0', "filter_eventorganization", 0, 0, $langs->trans("OrganizedEvent"), 1, 0, 0, 0, '', 1, 0, '', '', 'usage_organize_event=1');
 
 		return $s;
 	}

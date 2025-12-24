@@ -1,6 +1,8 @@
 #!/usr/bin/env php
 <?php
 /* Copyright (C) 2020 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,9 +19,9 @@
  */
 
 /**
- * \file scripts/website/regenerate-pages.php
+ * \file 	scripts/website/regenerate-pages.php
  * \ingroup scripts
- * \brief Regenerate all pages of a web site
+ * \brief 	Regenerate all pages of a web site on disk. Note: this can also be done from the website module.
  */
 
 if (!defined('NOSESSION')) {
@@ -33,7 +35,7 @@ $path = __DIR__.'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+	exit(1);
 }
 
 @set_time_limit(0); // No timeout for this script
@@ -43,20 +45,28 @@ $error = 0;
 
 $mode = empty($argv[1]) ? '' : $argv[1];
 $websiteref = empty($argv[2]) ? '' : $argv[2];
-$max = (!isset($argv[3]) || (empty($argv[3]) && $argv[3] !== '0')) ? '10' : $argv[3];
+$max = (int) ((!isset($argv[3]) || (empty($argv[3]) && $argv[3] !== '0')) ? '10' : $argv[3]);
 
 if (empty($argv[2]) || !in_array($argv[1], array('test', 'confirm')) || empty($websiteref)) {
 	print '***** '.$script_file.' *****'."\n";
 	print "Usage: $script_file (test|confirm) website [nbmaxrecord]\n";
 	print "\n";
 	print "Regenerate all pages of a web site.\n";
-	exit(-1);
+	exit(1);
 }
 
 require $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
 include_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/website2.lib.php';
+/**
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ */
+
+$hookmanager->initHooks(array('cli'));
 
 
 /*
@@ -67,19 +77,17 @@ $langs->load('main');
 
 if (!empty($dolibarr_main_db_readonly)) {
 	print "Error: instance in read-onyl mode\n";
-	exit(-1);
+	exit(1);
 }
 
 $website = new Website($db);
 $result = $website->fetch(0, $websiteref);
 if ($result <= 0) {
 	print 'Error, web site '.$websiteref.' not found'."\n";
-	exit(-1);
+	exit(1);
 }
 
 $websitepagestatic = new WebsitePage($db);
-
-$db->begin();
 
 $listofpages = $websitepagestatic->fetchAll($website->id, '', '', $max);
 

@@ -44,12 +44,6 @@ source_file = htdocs/langs/en_US/blockedlog.lang
 source_lang = en_US
 type        = MOZILLAPROPERTIES
 
-[o:dolibarr-association:p:dolibarr:r:bookmarks]
-file_filter = htdocs/langs/<lang>/bookmarks.lang
-source_file = htdocs/langs/en_US/bookmarks.lang
-source_lang = en_US
-type        = MOZILLAPROPERTIES
-
 [o:dolibarr-association:p:dolibarr:r:boxes]
 file_filter = htdocs/langs/<lang>/boxes.lang
 source_file = htdocs/langs/en_US/boxes.lang
@@ -104,12 +98,6 @@ source_file = htdocs/langs/en_US/datapolicy.lang
 source_lang = en_US
 type        = MOZILLAPROPERTIES
 
-[o:dolibarr-association:p:dolibarr:r:deliveries]
-file_filter = htdocs/langs/<lang>/deliveries.lang
-source_file = htdocs/langs/en_US/deliveries.lang
-source_lang = en_US
-type        = MOZILLAPROPERTIES
-
 [o:dolibarr-association:p:dolibarr:r:dict]
 file_filter = htdocs/langs/<lang>/dict.lang
 source_file = htdocs/langs/en_US/dict.lang
@@ -143,12 +131,6 @@ type        = MOZILLAPROPERTIES
 [o:dolibarr-association:p:dolibarr:r:exports]
 file_filter = htdocs/langs/<lang>/exports.lang
 source_file = htdocs/langs/en_US/exports.lang
-source_lang = en_US
-type        = MOZILLAPROPERTIES
-
-[o:dolibarr-association:p:dolibarr:r:help]
-file_filter = htdocs/langs/<lang>/help.lang
-source_file = htdocs/langs/en_US/help.lang
 source_lang = en_US
 type        = MOZILLAPROPERTIES
 
@@ -284,12 +266,6 @@ source_file = htdocs/langs/en_US/partnership.lang
 source_lang = en_US
 type        = MOZILLAPROPERTIES
 
-[o:dolibarr-association:p:dolibarr:r:paybox]
-file_filter = htdocs/langs/<lang>/paybox.lang
-source_file = htdocs/langs/en_US/paybox.lang
-source_lang = en_US
-type        = MOZILLAPROPERTIES
-
 [o:dolibarr-association:p:dolibarr:r:paypal]
 file_filter = htdocs/langs/<lang>/paypal.lang
 source_file = htdocs/langs/en_US/paypal.lang
@@ -380,6 +356,12 @@ source_file = htdocs/langs/en_US/stripe.lang
 source_lang = en_US
 type        = MOZILLAPROPERTIES
 
+[o:dolibarr-association:p:dolibarr:r:subtotals]
+file_filter = htdocs/langs/<lang>/subtotals.lang
+source_file = htdocs/langs/en_US/subtotals.lang
+source_lang = en_US
+type        = MOZILLAPROPERTIES
+
 [o:dolibarr-association:p:dolibarr:r:supplier_proposal]
 file_filter = htdocs/langs/<lang>/supplier_proposal.lang
 source_file = htdocs/langs/en_US/supplier_proposal.lang
@@ -425,12 +407,6 @@ type        = MOZILLAPROPERTIES
 [o:dolibarr-association:p:dolibarr:r:workflow]
 file_filter = htdocs/langs/<lang>/workflow.lang
 source_file = htdocs/langs/en_US/workflow.lang
-source_lang = en_US
-type        = MOZILLAPROPERTIES
-
-[o:dolibarr-association:p:dolibarr:r:zapier]
-file_filter = htdocs/langs/<lang>/zapier.lang
-source_file = htdocs/langs/en_US/zapier.lang
 source_lang = en_US
 type        = MOZILLAPROPERTIES
 

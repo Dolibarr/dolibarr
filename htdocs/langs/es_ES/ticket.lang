@@ -5,35 +5,27 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 Module56000Name=Tickets
 Module56000Desc=Sistema de tickets para administrar incidencias o solicitudes
-
 Permission56001=Ver tickets
 Permission56002=Modificar tickets
 Permission56003=Eliminar tickets
 Permission56004=Administrar tickets
 Permission56005=Ver tickets de todos los terceros (no aplicable para usuarios externos, siempre estará limitada al tercero del que dependen)
 Permission56006=Exportar tickets
-
 Tickets=Tickets
 TicketDictType=Tipo de tickets
 TicketDictCategory=Entrada - Grupos
 TicketDictSeverity=Gravedad de los tickets
 TicketDictResolution=Ticket - Resolución
-
 TicketTypeShortCOM=Pregunta comercial
 TicketTypeShortHELP=Solicitud de ayuda funcional
 TicketTypeShortISSUE=Problema o error
@@ -41,61 +33,51 @@ TicketTypeShortPROBLEM=Problema
 TicketTypeShortREQUEST=Solicitud de cambio o mejora
 TicketTypeShortPROJET=Proyecto
 TicketTypeShortOTHER=Otro
-
 TicketSeverityShortLOW=Bajo
 TicketSeverityShortNORMAL=Normal
 TicketSeverityShortHIGH=Alto
 TicketSeverityShortBLOCKING=Crítico, Bloqueo
-
 TicketCategoryShortOTHER=Otro
-
 ErrorBadEmailAddress=El campo '%s' es incorrecto
 MenuTicketMyAssign=Mis tickets
 MenuTicketMyAssignNonClosed=Mis tickets abiertos
 MenuListNonClosed=Tickets abiertos
-
 TypeContact_ticket_internal_CONTRIBUTOR=Participante
 TypeContact_ticket_internal_SUPPORTTEC=Usuario asignado
 TypeContact_ticket_external_SUPPORTCLI=Contacto cliente / seguimiento de incidentes
 TypeContact_ticket_external_CONTRIBUTOR=Contribuidor externo
-
 OriginEmail=Email del emisor
+EmailReplyto=Reply-To in Email
+EmailReferences=Referencias en correos electrónicos
 Notify_TICKET_SENTBYMAIL=Enviar mensaje de ticket por e-mail
-
 ExportDataset_ticket_1=Tickets
-
 # Status
 Read=Leido
 Assigned=Asignado
 NeedMoreInformation=Esperando comentarios del remitente
 NeedMoreInformationShort=Esperando comentarios
-TicketAnswered=Contestado
 Waiting=En espera
-SolvedClosed=Resuelto
+SolvedClosed=Cerrado
 Deleted=Eliminado
-
 # Dict
-Type=Tasa
 Severity=Gravedad
 TicketGroupIsPublic=El grupo es público
 TicketGroupIsPublicDesc=Si un grupo de tickets es público, será visible en el formulario al crear un ticket desde la interfaz pública.
-
 # Email templates
 MailToSendTicketMessage=Enviar e-mail desde ticket
-
-#
 # Admin page
-#
 TicketSetup=Configuración del módulo de ticket
 TicketSettings=Configuraciones
 TicketPublicAccess=Una interfaz pública que no requiere identificación está disponible en la siguiente url
 TicketSetupDictionaries=Los tipos de categorías y  los niveles de gravedad se pueden configurar en los diccionarios
 TicketParamModule=Configuración de variables del módulo
 TicketParamMail=Configuración de E-Mail
-TicketEmailNotificationFrom=E-mail del remitente para notificación de respuestas
-TicketEmailNotificationFromHelp=Correo electrónico del remitente que se utilizará para enviar el correo electrónico de notificación cuando se proporcione una respuesta dentro del back office. Por ejemplo noreply@ejemplo.com
+TicketEmailNotificationFrom=E-mail of sender allowed to send technical notification about tickets ("From" email for creation of ticket or update of messages)
+TicketEmailNotificationFromHelp=Sender e-mail to use as the From to send the notification emails for tickets creation or message addition. For example: noreply@example.com or robot@example.com
+TicketEmailNotificationReplyTo=E-mail that must appears to recipient as the sender of the notification ("Reply-To" email for creation of ticket or update of messages)
+TicketEmailNotificationReplyToHelp=Sender e-mail to use as the Reply-To to send the notification emails for tickets creation or message addition. If defined, this is the email that the recipient will reply to instead of the From. For example: support@example.com
 TicketEmailNotificationTo=Notificar creación de ticket a esta dirección de correo electrónico
-TicketEmailNotificationToHelp=Si está presente, esta dirección de correo electrónico será notificada de la creación de un ticket.
+TicketEmailNotificationToHelp=Si está presente, esta dirección de correo electrónico recibirá una notificación sobre la creación de un ticket (además de cualquier otro destinatario predeterminado)
 TicketNewEmailBodyLabel=Mensaje de texto enviado después de crear un ticket
 TicketNewEmailBodyHelp=El texto especificado aquí se insertará en el e-mail de confirmación de creación de un nuevo ticket desde la interfaz pública. La información sobre la consulta del ticket se agrega automáticamente.
 TicketParamPublicInterface=Configuración de interfaz pública
@@ -116,7 +98,9 @@ TicketPublicInterfaceTextHelpMessageHelpAdmin=Este texto aparecerá sobre el ár
 ExtraFieldsTicket=Campos adicionales
 TicketCkEditorEmailNotActivated=El editor de HTML no está activado. Ponga la constante FCKEDITOR_ENABLE_MAIL a 1
 TicketsDisableEmail=No enviar e-mails de creación de tickets o mensajes
-TicketsDisableEmailHelp=Por defecto, los e-mail se envían cuando se crean nuevos tickets o mensajes. Habilite esta opción para deshabilitar *todas* las notificaciones por e-mail
+TicketsDisableEmailHelp=De forma predeterminada, se envían correos electrónicos de notificación a terceros cuando se crean nuevos tickets o mensajes, tanto para el backoffice como para la interfaz pública. Active esta opción para desactivar las notificaciones por correo electrónico a terceros cuando se crean desde el backoffice.
+TicketsNotifyThirdPartyFromBackOfficeByDefault=Notificar a terceros de forma predeterminada sobre la creación de un ticket desde el backoffice
+TicketsNotifyThirdPartyFromBackOfficeByDefaultHelp=Al crear un ticket desde el backoffice, la opción "Notificar a terceros" estará marcada por defecto
 TicketsLogEnableEmail=Activar alerta por e-mail
 TicketsLogEnableEmailHelp=En cada cambio, se enviará un e-mail **a cada contacto** asociado con el ticket.
 TicketParams=Parámetros
@@ -133,11 +117,13 @@ TicketsLimitViewAssignedOnlyHelp=Solo los tickets asignados al usuario actual se
 TicketsActivatePublicInterface=Activar interfaz pública.
 TicketsActivatePublicInterfaceHelp=La interfaz pública permite a cualquier visitante crear tickets.
 TicketsAutoAssignTicket=Asignar automáticamente al usuario que creó el ticket
-TicketsAutoAssignTicketHelp=Al crear un ticket, el usuario puede asignarse automáticamente al ticket.
+TicketsAutoAssignTicketHelp=Al crear un ticket, el usuario puede ser asignado automáticamente al ticket<br>Ejemplos: 0=Nunca se asigna automáticamente al ticket, 1=Se asigna automáticamente al ticket si no hay nadie asignado, 2=Se asigna automáticamente al ticket incluso si se definió alguien
+TicketAutoChangeStatusOnAnswer=Asignar automáticamente un estado al responder un ticket
+TicketAutoChangeStatusOnAnswerHelp=Cuando un usuario responde a un ticket, el estado se aplicará automáticamente al ticket.
 TicketNumberingModules=Módulo de numeración de tickets
 TicketsModelModule=Plantillas de documentos para tickets
 TicketNotifyTiersAtCreation=Notificar a los terceros en la creación
-TicketsDisableCustomerEmail=Desactivar siempre los e-mails al crear tickets desde la interfaz pública
+TicketsDisableCustomerEmail=Deshabilite siempre los correos electrónicos a terceros cuando se crea un ticket desde el backoffice
 TicketsPublicNotificationNewMessage=Enviar correo electrónico (s) cuando se agrega un nuevo mensaje / comentario a un ticket
 TicketsPublicNotificationNewMessageHelp=Enviar e-mail(s) cuando se añade un nuevo mensaje desde la interfaz pública (al usuario asignado o al e-mail de notificaciones (actualización) y o el e-mail de notificaciones a)
 TicketPublicNotificationNewMessageDefaultEmail=Notificaciones por e-mail a (actualización)
@@ -152,15 +138,16 @@ TicketsAutoNotifyClose=Notificar automáticamente al tercero al cerrar un ticket
 TicketsAutoNotifyCloseHelp=Al cerrar un ticket, se le propondrá enviar un mensaje a uno de los contactos de terceros. En caso de cierre masivo, se enviará un mensaje a un contacto del tercero vinculado al ticket.
 TicketWrongContact=El contacto proporcionado no forma parte de los contactos del ticket actual. E-Mail no enviado.
 TicketChooseProductCategory=Categoría de producto para soporte de tickets
-TicketChooseProductCategoryHelp=Seleccione la categoría de producto de soporte de tickets. Esto se usará para vincular automáticamente un contrato a un boleto.
+TicketChooseProductCategoryHelp=Seleccione la categoría del producto para recibir asistencia. La categoría se utilizará para buscar todos los contratos que incluyan un producto de esta categoría. Todos los contratos encontrados se vincularán al ticket creado.
 TicketUseCaptchaCode=Usar código gráfico (CAPTCHA) al crear un ticket
 TicketUseCaptchaCodeHelp=Agrega verificación de CAPTCHA al crear un nuevo ticket.
 TicketsAllowClassificationModificationIfClosed=Permitir modificar clasificación de tickets cerrados
 TicketsAllowClassificationModificationIfClosedHelp=Permitir modificar la clasificación (tipo, grupo de tickets, gravedad) incluso si los tickets están cerrados.
-
-#
+TicketAutoCheckNotifyThirdParty=Marcar por defecto “Notificar a terceros” al crear un ticket
+TicketAutoCheckNotifyThirdPartyHelp=Al crear un ticket, se marcará automáticamente la opción “Notificar a terceros”.
+TicketAssignContactToMessage=Asignar un contacto externo a un mensaje
+TicketAssignContactToMessageHelp=Cuando un contacto conocido responde a un mensaje, su nombre se muestra en la lista de mensajes del ticket.
 # Index & list page
-#
 TicketsIndex=Área de tickets
 TicketList=Listado de tickets
 TicketAssignedToMeInfos=Esta página muestra el listado de tickets que están asignados al usuario actual
@@ -171,14 +158,9 @@ TicketViewNonClosedOnly=Ver solo tickets abiertos
 TicketStatByStatus=Tickets por estado
 OrderByDateAsc=Ordenar por fecha ascendente
 OrderByDateDesc=Ordenar por fecha descendente
-ShowAsConversation=Mostrar como lista de conversación
-MessageListViewType=Mostrar como lista de tabla
 ConfirmMassTicketClosingSendEmail=Envíar e-mails automáticamente al cerrar tickets
 ConfirmMassTicketClosingSendEmailQuestion=¿Quiere avisar a los terceros al cerrar estos tickets?
-
-#
 # Ticket card
-#
 Ticket=Ticket
 TicketCard=Ficha ticket
 CreateTicket=Crear ticket
@@ -220,8 +202,8 @@ ConfirmAbandonTicket=¿Confirma el cierre del ticket al estado 'Abandonado'?
 ConfirmDeleteTicket=Confirme la eliminación del ticket
 TicketDeletedSuccess=Ticket eliminado con éxito
 TicketMarkedAsClosed=Ticket marcado como cerrado
-TicketDurationAuto=Duración calculada
-TicketDurationAutoInfos=Duración calculada automáticamente a partir de la intervención relacionada
+TicketDurationAuto=Duración de las intervenciones
+TicketDurationAutoInfos=Duración calculada automáticamente a partir de intervenciones relacionadas
 TicketUpdated=Ticket actualizado
 SendMessageByEmail=Enviar mensaje por e-mail
 TicketNewMessage=Nuevo mensaje
@@ -278,20 +260,14 @@ TicketsDelayFromLastResponseTooLong=Ha transcurrido demasiado tiempo desde la ú
 TicketNoContractFoundToLink=No se encontró ningún contrato vinculado automáticamente a este ticket. Vincule un contrato manualmente.
 TicketManyContractsLinked=Muchos contratos se han vinculado automáticamente a este ticket. Asegúrese de verificar cuál debe elegir.
 TicketRefAlreadyUsed=La referencia [%s] ya está en uso, su nueva referencia es [%s]
-
-#
 # Logs
-#
 TicketLogMesgReadBy=Ticket %s leído por %s
 NoLogForThisTicket=Aún no hay registro para este ticket
 TicketLogAssignedTo=Ticket %s asignado a %s
 TicketLogPropertyChanged=Ticket %s modificado: clasificación: de %s a %s
 TicketLogClosedBy=Ticket %s cerrado por %s
 TicketLogReopen=Ticket %s reabierto
-
-#
 # Public pages
-#
 TicketSystem=Sistema de tickets
 ShowListTicketWithTrackId=Mostrar listado de tickets con track ID
 ShowTicketWithTrackId=Mostrar ticket desde id de seguimiento
@@ -306,13 +282,14 @@ TicketNewEmailBodyCustomer=Este es un e-mail automático para confirmar que se a
 TicketNewEmailBodyInfosTicket=Información para monitorear el ticket
 TicketNewEmailBodyInfosTrackId=Número de seguimiento del ticket: %s
 TicketNewEmailBodyInfosTrackUrl=Puede ver el progreso del ticket haciendo clic en el siguiente enlace
-TicketNewEmailBodyInfosTrackUrlCustomer=Puede ver el progreso del ticket en la interfaz específica haciendo clic en el siguiente enlace
+TicketNewEmailBodyInfosTrackUrlCustomer=Puede ver el progreso del ticket en el portal público de tickets haciendo clic en el siguiente enlace
 TicketCloseEmailBodyInfosTrackUrlCustomer=Puede consultar el historial de este ticket haciendo clic en el siguiente enlace
 TicketEmailPleaseDoNotReplyToThisEmail=¡Por favor no responda directamente a este correo! Use el enlace para responder.
+TicketEmailPleaseDoNotReplyToThisEmailNoInterface=¡Por favor no responda directamente a este correo electrónico!
 TicketPublicInfoCreateTicket=Este formulario le permite registrar un ticket de soporte en nuestro sistema.
 TicketPublicPleaseBeAccuratelyDescribe=Por favor describa con precisión su solicitud. Proporcione la mayor cantidad de información posible para permitirnos identificar correctamente su solicitud.
 TicketPublicMsgViewLogIn=Ingrese el ID de seguimiento del ticket
-TicketTrackId=ID Público de seguimiento
+TicketTrackId=Identificación de seguimiento
 OneOfTicketTrackId=Una de sus ID de seguimiento
 ErrorTicketNotFound=¡No se encontró el ticket con id de seguimiento %s!
 Subject=Asunto
@@ -330,7 +307,6 @@ NumberOfTicketsByMonth=Número de tickets por mes
 NbOfTickets=Número de tickets
 ExternalContributors=Colaboradores externos
 AddContributor=Agregar colaborador externo
-
 # notifications
 TicketCloseEmailSubjectCustomer=Ticket cerrado
 TicketCloseEmailBodyCustomer=Este es un mensaje automático para notificarle que el ticket %s acaba de cerrarse.
@@ -342,12 +318,8 @@ TicketNotificationRecipient=Recipiente de notificación
 TicketNotificationLogMessage=Mensaje de registro
 TicketNotificationEmailBodyInfosTrackUrlinternal=Ver ticket en la interfaz
 TicketNotificationNumberEmailSent=Se envió un e-mail de notificación: %s
-
 ActionsOnTicket=Eventos en el ticket
-
-#
 # Boxes
-#
 BoxLastTicket=Últimos tickets creados
 BoxLastTicketDescription=Últimos %s tickets creados
 BoxLastTicketContent=
@@ -366,4 +338,7 @@ BoxNumberOfTicketByDay=Número de tickets nuevos por día
 BoxNewTicketVSClose=Número de tickets / tickets cerrados (hoy)
 TicketCreatedToday=Ticket creado hoy
 TicketClosedToday=Ticket cerrado hoy
-KMFoundForTicketGroup=Encontramos temas y preguntas frecuentes que pueden responder a su pregunta, gracias por consultarlos antes de enviar el ticket
+KMFoundForTicketGroup=Checkout our FAQ
+SetTitle=Establecer título
+TicketSendToInternalCC=Forzar un correo electrónico como destinatario CC para todos los mensajes enviados desde la página del ticket.
+TicketSendToInternalCCHelp=Ingrese el correo electrónico que desea utilizar automáticamente como destinatario de Carbon Copy al enviar un correo electrónico desde la página del ticket.

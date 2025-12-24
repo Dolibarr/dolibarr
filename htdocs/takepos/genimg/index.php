@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2018	Andreu Bisquerra	<jove@bisquerra.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +17,7 @@
  */
 
 // This page return an image of public photos of a category or product.
-// Test to check image can be publically viewed is done inside the viewimage.php wrapper.
+// Test to check image can be publicly viewed is done inside the viewimage.php wrapper.
 
 //if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
@@ -40,10 +41,12 @@ if (!defined('NOREQUIREAJAX')) {
 if (!defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 	require '../../main.inc.php'; // Load $user and permissions
 }
-
-$id = GETPOST('id', 'int');
-$w = GETPOST('w', 'int');
-$h = GETPOST('h', 'int');
+/**
+ * @var Conf $conf
+ */
+$id = GETPOSTINT('id');
+$w = GETPOSTINT('w');
+$h = GETPOSTINT('h');
 $query = GETPOST('query', 'alpha');
 
 if (!isModEnabled('takepos')) {
@@ -62,7 +65,7 @@ if ($query == "cat") {
 	$object = new Categorie($db);
 	$result = $object->fetch($id);
 
-	$upload_dir = $conf->categorie->multidir_output[$object->entity];
+	$upload_dir = $conf->categorie->multidir_output[$object->entity ?? $conf->entity];
 	$pdir = get_exdir($object->id, 2, 0, 0, $object, 'category').$object->id."/photos/";
 	$dir = $upload_dir.'/'.$pdir;
 
@@ -83,7 +86,7 @@ if ($query == "cat") {
 
 	$objProd = new Product($db);
 	$objProd->fetch($id);
-	$image = $objProd->show_photos('product', $conf->product->multidir_output[$objProd->entity], 'small', 1);
+	$image = $objProd->show_photos('product', $conf->product->multidir_output[$objProd->entity ?? $conf->entity], 'small', 1);
 
 	$match = array();
 	preg_match('@src="([^"]+)"@', $image, $match);

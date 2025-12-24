@@ -1,0 +1,18 @@
+# Dolibarr language file - Source file is en_US - knowledgemanagement
+ModuleKnowledgeManagementName =Système de gestion des connaissances
+ModuleKnowledgeManagementDesc=Gérer une base de Knowledge Management (KM) ou Help-Desk
+KnowledgeManagementSetup =Mise en place du système de gestion des connaissances
+KnowledgeManagementSetupPage =Page de configuration du système de gestion des connaissances
+KnowledgeManagementAbout =À propos de la gestion des connaissances
+KnowledgeManagementAboutPage =Gestion des connaissances à propos de la page
+KnowledgeManagementArea =Gestion des connaissances
+MenuKnowledgeRecord =Base de connaissances
+MenuKnowledgeRecordShort =Base de connaissances
+ValidateReply =Valider la solution
+KnowledgeRecordExtraFields =Champs supplémentaires pour l'article
+GroupOfTicket=Groupe de billets
+ConfirmReopenKM=Voulez-vous restaurer cet article au statut « Validée » ?
+BoxLastKnowledgerecordDescription=Derniers articles de %s
+BoxLastKnowledgerecordModifiedContent=Articles modifiés récemment
+BoxLastModifiedKnowledgerecordDescription=Derniers articles modifiés par %s
+BoxLastModifiedKnowledgerecord=Articles modifiés récemment

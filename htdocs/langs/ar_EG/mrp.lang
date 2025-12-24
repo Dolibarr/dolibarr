@@ -1,0 +1,4 @@
+# Dolibarr language file - Source file is en_US - mrp
+StatusMrpValidated=تم الاعتماد
+ConfirmMassChangeDateStartQuestion =هل أنت متأكد أنك تريد تعديل %s سجل(ات) محدد(ة)؟
+ConfirmMassChangeDateEndQuestion =هل أنت متأكد أنك تريد تعديل %s سجل(ات) محدد(ة)؟

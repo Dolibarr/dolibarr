@@ -29,3 +29,5 @@ LDAPPasswordHashType=Paroles jaukšanas veids
 LDAPPasswordHashTypeExample=Serverī izmantotā paroles jaukšanas veids
 SupportedForLDAPExportScriptOnly=To atbalsta tikai ldap eksporta skripts
 SupportedForLDAPImportScriptOnly=To atbalsta tikai ldap importēšanas skripts
+LDAPUserAccountControl = userAccountControl izveides laikā (aktīvais direktorijs)
+LDAPUserAccountControlExample = 512 parasts konts / 546 parasts konts + bez ieejas + atspējots (skatiet: https://fr.wikipedia.org/wiki/Active_Directory)

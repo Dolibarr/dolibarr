@@ -1,6 +1,8 @@
 <?php
-/* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2018 Alexandre Spangaro   <aspangaro@open-dsi.fr>
+/* Copyright (C) 2017		Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2018-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,20 +31,28 @@ require_once DOL_DOCUMENT_ROOT.'/asset/class/asset.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("assets", "other"));
 
 // Get parameters
-$id         = GETPOST('id', 'int');
+$id         = GETPOSTINT('id');
 $ref        = GETPOST('ref', 'alpha');
 $action     = GETPOST('action', 'aZ09');
 $confirm    = GETPOST('confirm', 'alpha');
-$cancel     = GETPOST('cancel', 'aZ09');
+$cancel     = GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'assetcard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Asset($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->asset->dir_output.'/temp/massgeneration/'.$user->id;
@@ -53,7 +63,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-// Initialize array of search criterias
+// Initialize array of search criteria
 $search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val) {
@@ -67,7 +77,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 $permissiontoread = $user->hasRight('asset', 'read');
 $permissiontoadd = $user->hasRight('asset', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
@@ -118,15 +128,15 @@ if (empty($reshook)) {
 		}
 	}
 
-	$object->oldcopy = dol_clone($object, 2);
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 	$triggermodname = 'ASSET_MODIFY'; // Name of trigger action code to execute when we modify record
 
 	// Action dispose object
 	if ($action == 'confirm_disposal' && $confirm == 'yes' && $permissiontoadd) {
-		$object->disposal_date = dol_mktime(12, 0, 0, GETPOST('disposal_datemonth', 'int'), GETPOST('disposal_dateday', 'int'), GETPOST('disposal_dateyear', 'int')); // for date without hour, we use gmt
-		$object->disposal_amount_ht = GETPOST('disposal_amount', 'int');
-		$object->fk_disposal_type = GETPOST('fk_disposal_type', 'int');
-		$disposal_invoice_id = GETPOST('disposal_invoice_id', 'int');
+		$object->disposal_date = dol_mktime(0, 0, 0, GETPOSTINT('disposal_datemonth'), GETPOSTINT('disposal_dateday'), GETPOSTINT('disposal_dateyear'), 'gmt'); // for date without hour, we use gmt
+		$object->disposal_amount_ht = GETPOSTINT('disposal_amount');
+		$object->fk_disposal_type = GETPOSTINT('fk_disposal_type');
+		$disposal_invoice_id = GETPOSTINT('disposal_invoice_id');
 		$object->disposal_depreciated = ((GETPOST('disposal_depreciated') == '1' || GETPOST('disposal_depreciated') == 'on') ? 1 : 0);
 		$object->disposal_subject_to_vat = ((GETPOST('disposal_subject_to_vat') == '1' || GETPOST('disposal_subject_to_vat') == 'on') ? 1 : 0);
 
@@ -135,8 +145,8 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 		$action = '';
-	} elseif ($action == "add") {
-		$object->supplier_invoice_id = GETPOST('supplier_invoice_id', 'int');
+	} elseif ($action == "add" && $permissiontoadd) {
+		$object->supplier_invoice_id = GETPOSTINT('supplier_invoice_id');
 	}
 
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
@@ -172,13 +182,13 @@ $formfile = new FormFile($db);
 
 $title = $langs->trans("Asset").' - '.$langs->trans("Card");
 $help_url = '';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-asset page-card');
 
 // Part to create
 if ($action == 'create') {
-	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("Asset")), '', 'object_'.$object->picto);
+	print load_fiche_titre($langs->trans("NewAsset"), '', 'object_'.$object->picto);
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	if ($backtopage) {
@@ -188,14 +198,12 @@ if ($action == 'create') {
 		print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
 	}
 	if (GETPOSTISSET('supplier_invoice_id')) {
-		$object->fields['supplier_invoice_id'] = array('type' => 'integer:FactureFournisseur:fourn/class/fournisseur.facture.class.php:1:entity IN (__SHARED_ENTITIES__)', 'label' => 'SupplierInvoice', 'enabled' => '1', 'noteditable' => '1', 'position' => 280, 'notnull' => 0, 'visible' => 1, 'index' => 1, 'validate' => '1',);
-		print '<input type="hidden" name="supplier_invoice_id" value="' . GETPOST('supplier_invoice_id', 'int') . '">';
+		$object->fields['supplier_invoice_id'] = array('type' => 'integer:FactureFournisseur:fourn/class/fournisseur.facture.class.php:1:entity IN (__SHARED_ENTITIES__)', 'label' => 'SupplierInvoice', 'enabled' => '1', 'noteditable' => 1, 'position' => 280, 'notnull' => 0, 'visible' => 1, 'index' => 1, 'validate' => '1',);
+		print '<input type="hidden" name="supplier_invoice_id" value="' . GETPOSTINT('supplier_invoice_id') . '">';
 	}
 
 	print dol_get_fiche_head(array(), '');
 
-	// Set some default values
-	//if (! GETPOSTISSET('fieldname')) $_POST['fieldname'] = 'myvalue';
 
 	print '<table class="border centpercent tableforfieldcreate">'."\n";
 
@@ -220,7 +228,7 @@ if ($action == 'create') {
 if (($id || $ref) && $action == 'edit') {
 	print load_fiche_titre($langs->trans("Asset"), '', 'object_'.$object->picto);
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
@@ -262,21 +270,47 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Confirmation to delete
 	if ($action == 'delete') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteAsset'), $langs->trans('ConfirmDeleteObject'), 'confirm_delete', '', 0, 1);
-	} elseif ($action == 'disposal') {
+	}
+
+	// Confirmation of validation
+	if ($action == 'validate') {
+		// We check that object has a temporary ref
+		$ref = substr($object->ref, 1, 4);
+		if ($ref == 'PROV') {
+			$numref = $object->getNextNumRef();
+		} else {
+			$numref = (string) $object->ref;
+		}
+
+		$text = $langs->trans('ConfirmValidateAsset', $numref);
+		if (isModEnabled('notification')) {
+			require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
+			$notify = new Notify($db);
+			$text .= '<br>';
+			$text .= $notify->confirmMessage('ASSET_VALIDATE', 0, $object);
+		}
+
+		$formquestion = array();
+
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('Validate'), $text, 'confirm_validate', $formquestion, 0, 1, 220);
+	}
+
+	// Confirmation of disposal
+	if ($action == 'disposal') {
 		// Disposal
 		$langs->load('bills');
 
-		$disposal_date = dol_mktime(12, 0, 0, GETPOST('disposal_datemonth', 'int'), GETPOST('disposal_dateday', 'int'), GETPOST('disposal_dateyear', 'int')); // for date without hour, we use gmt
-		$disposal_amount = GETPOST('disposal_amount', 'int');
-		$fk_disposal_type = GETPOST('fk_disposal_type', 'int');
-		$disposal_invoice_id = GETPOST('disposal_invoice_id', 'int');
+		$disposal_date = dol_mktime(0, 0, 0, GETPOSTINT('disposal_datemonth'), GETPOSTINT('disposal_dateday'), GETPOSTINT('disposal_dateyear'), 'gmt'); // for date without hour, we use gmt
+		$disposal_amount = GETPOSTINT('disposal_amount');
+		$fk_disposal_type = GETPOSTINT('fk_disposal_type');
+		$disposal_invoice_id = GETPOSTINT('disposal_invoice_id');
 		$disposal_depreciated = GETPOSTISSET('disposal_depreciated') ? GETPOST('disposal_depreciated') : 1;
 		$disposal_depreciated = !empty($disposal_depreciated) ? 1 : 0;
 		$disposal_subject_to_vat = GETPOSTISSET('disposal_subject_to_vat') ? GETPOST('disposal_subject_to_vat') : 1;
 		$disposal_subject_to_vat = !empty($disposal_subject_to_vat) ? 1 : 0;
 
 		$object->fields['fk_disposal_type']['visible'] = 1;
-		$disposal_type_form = $object->showInputField(null, 'fk_disposal_type', $fk_disposal_type, '', '', '', 0);
+		$disposal_type_form = $object->showInputField(null, 'fk_disposal_type', (string) $fk_disposal_type, '', '', '', 0);
 		$object->fields['fk_disposal_type']['visible'] = -2;
 
 		$disposal_invoice_form = $form->selectForForms('Facture:compta/facture/class/facture.class.php::(entity:IN:__SHARED_ENTITIES__)', 'disposal_invoice_id', $disposal_invoice_id);
@@ -284,19 +318,31 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// Create an array for form
 		$formquestion = array(
 			array('type' => 'date', 'name' => 'disposal_date', 'tdclass' => 'fieldrequired', 'label' => $langs->trans("AssetDisposalDate"), 'value' => $disposal_date),
-			array('type' => 'text', 'name' => 'disposal_amount', 'tdclass' => 'fieldrequired', 'label' => $langs->trans("AssetDisposalAmount"), 'value' => $disposal_amount),
+			array('type' => 'text', 'name' => 'disposal_amount', 'tdclass' => 'fieldrequired', 'label' => $langs->trans("AssetDisposalAmount"), 'value' => $disposal_amount, 'morecss' => 'maxwidth100'),
 			array('type' => 'other', 'name' => 'fk_disposal_type', 'tdclass' => 'fieldrequired', 'label' => $langs->trans("AssetDisposalType"), 'value' => $disposal_type_form),
 			array('type' => 'other', 'name' => 'disposal_invoice_id', 'label' => $langs->trans("InvoiceCustomer"), 'value' => $disposal_invoice_form),
 			array('type' => 'checkbox', 'name' => 'disposal_depreciated', 'label' => $langs->trans("AssetDisposalDepreciated"), 'value' => $disposal_depreciated),
 			array('type' => 'checkbox', 'name' => 'disposal_subject_to_vat', 'label' => $langs->trans("AssetDisposalSubjectToVat"), 'value' => $disposal_subject_to_vat),
 		);
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('AssetDisposal'), $langs->trans('AssetConfirmDisposalAsk', $object->ref . ' - ' . $object->label), 'confirm_disposal', $formquestion, 'yes', 1);
-	} elseif ($action == 'reopen') {
+		$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('AssetDisposal'), $langs->trans('AssetConfirmDisposalAsk', $object->ref . ' - ' . $object->label), 'confirm_disposal', $formquestion, 'yes', 1, 350);
+	}
+
+	// Confirmation of reopen
+	if ($action == 'reopen') {
 		// Re-open
 		// Create an array for form
 		$formquestion = array();
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ReOpen'), $langs->trans('AssetConfirmReOpenAsk', $object->ref), 'confirm_reopen', $formquestion, 'yes', 1);
 	}
+
+	// Confirmation of setdraft
+	if ($action == 'setdraft') {
+		$text = $langs->trans('ConfirmSetToDraft', $object->ref);
+
+		$formquestion = array();
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('SetToDraft'), $text, 'confirm_setdraft', $formquestion, 0, 1, 220);
+	}
+
 	// Clone confirmation
 	/*  elseif ($action == 'clone') {
 		// Create an array for form
@@ -334,7 +380,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<table class="border centpercent tableforfield">'."\n";
 
 	// Common attributes
-	$keyforbreak='date_acquisition';	// We change column just before this field
+	$keyforbreak = 'date_acquisition';	// We change column just before this field
 	//unset($object->fields['fk_project']);				// Hide field already shown in banner
 	//unset($object->fields['fk_soc']);					// Hide field already shown in banner
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
@@ -362,21 +408,37 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if (empty($reshook)) {
 			// Send
 			if (empty($user->socid)) {
-				print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init&token=' . newToken() . '#formmailbeforetitle');
+				print dolGetButtonAction('', $langs->trans('SendMail'), 'email', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init&token=' . newToken() . '#formmailbeforetitle');
 			}
 
+			// Back to draft
+			if ($object->status == $object::STATUS_VALIDATED) {
+				if ($permissiontoadd) {
+					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=setdraft&token='.newToken().'">'.$langs->trans("SetToDraft").'</a>'."\n";
+				}
+			}
+
+			// Modify
 			if ($object->status == $object::STATUS_DRAFT) {
 				print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=edit&token=' . newToken(), '', $permissiontoadd);
 			}
 
-			// Clone
-			//print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=clone&token=' . newToken(), '', false && $permissiontoadd);
-
+			// Validate
 			if ($object->status == $object::STATUS_DRAFT) {
+				print dolGetButtonAction($langs->trans('Validate'), '', 'default', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=validate&token=' . newToken(), '', $permissiontoadd);
+			}
+
+			if ($object->status == $object::STATUS_VALIDATED) {
 				print dolGetButtonAction($langs->trans('AssetDisposal'), '', 'default', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=disposal&token=' . newToken(), '', $permissiontoadd);
-			} else {
+			}
+
+			// Re-open
+			if ($permissiontoadd && $object->status == $object::STATUS_DISPOSED) {
 				print dolGetButtonAction($langs->trans('ReOpen'), '', 'default', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=reopen&token=' . newToken(), '', $permissiontoadd);
 			}
+
+			// Clone
+			//print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=clone&token=' . newToken(), '', false && $permissiontoadd);
 
 			// Delete (need delete permission, or if draft, just need create/modify permission)
 			print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=delete&token=' . newToken(), '', $permissiontodelete || ($object->status == $object::STATUS_DRAFT && $permissiontoadd));
@@ -407,7 +469,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 
 		// Show links to link elements
-		$linktoelem = $form->showLinkToObjectBlock($object, null, array('asset'));
+		$tmparray = $form->showLinkToObjectBlock($object, array(), array('asset'), 1);
+		$linktoelem = $tmparray['linktoelem'];
+		$htmltoenteralink = $tmparray['htmltoenteralink'];
+		print $htmltoenteralink;
+
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 

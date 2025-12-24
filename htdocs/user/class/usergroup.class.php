@@ -1,13 +1,15 @@
 <?php
-/* Copyright (c) 2005       Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (c) 2005-2018	Laurent Destailleur	 <eldy@users.sourceforge.net>
- * Copyright (c) 2005-2018	Regis Houssin		 <regis.houssin@inodbox.com>
- * Copyright (C) 2012		Florian Henry		 <florian.henry@open-concept.pro>
- * Copyright (C) 2014		Juanjo Menent		 <jmenent@2byte.es>
- * Copyright (C) 2014		Alexis Algoud		 <alexis@atm-consulting.fr>
- * Copyright (C) 2018       Nicolas ZABOURI		 <info@inovea-conseil.com>
+/* Copyright (c) 2005       Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (c) 2005-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (c) 2005-2018	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2012		Florian Henry			<florian.henry@open-concept.pro>
+ * Copyright (C) 2014		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2014		Alexis Algoud			<alexis@atm-consulting.fr>
+ * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2019       Abbes Bahfir            <dolipar@dolipar.org>
- * Copyright (C) 2023       Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2023-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Charlene Benke          <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,24 +52,13 @@ class UserGroup extends CommonObject
 	public $table_element = 'usergroup';
 
 	/**
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 * @var int
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'group';
 
 	/**
-	 * @var int Entity of group
-	 */
-	public $entity;
-
-	/**
 	 * @var string
-	 * @deprecated
+	 * @deprecated Use $name
 	 * @see $name
 	 */
 	public $nom;
@@ -77,27 +68,23 @@ class UserGroup extends CommonObject
 	 */
 	public $name; // Name of group
 
+	/**
+	 * @var int<0,1> global group  Does not seem to be used
+	 */
 	public $globalgroup; // Global group
 
 	/**
-	 * @var array		Entity in table llx_user_group
-	 * @deprecated		Seems not used.
+	 * @var array<int>		Entity in table llx_user_group
+	 * @deprecated			Seems not used.
 	 */
 	public $usergroup_entity;
 
 	/**
 	 * Date creation record (datec)
 	 *
-	 * @var integer
+	 * @var int
 	 */
 	public $datec;
-
-	/**
-	 * Date modification record (tms)
-	 *
-	 * @var integer
-	 */
-	public $tms;
 
 	/**
 	 * @var string Description
@@ -105,15 +92,33 @@ class UserGroup extends CommonObject
 	public $note;
 
 	/**
-	 * @var User[]
+	 * @var string Color
 	 */
-	public $members = array(); // Array of users
+	public $color;
 
-	public $nb_rights; // Number of rights granted to the user
-	public $nb_users;  // Number of users in the group
+	/**
+	 * @var User[]  Array of users
+	 */
+	public $members = array();
 
-	public $rights;	// Permissions of the group
+	/**
+	 * @var int Number of rights granted to the user
+	 */
+	public $nb_rights;
 
+	/**
+	 * @var int Number of users in the group
+	 */
+	public $nb_users;
+
+	/**
+	 * @var stdClass Permissions of the group
+	 */
+	public $rights;
+
+	/**
+	 * @var array<string,int> Cache array of already loaded permissions
+	 */
 	private $_tab_loaded = array(); // Array of cache of already loaded permissions
 
 	/**
@@ -121,16 +126,15 @@ class UserGroup extends CommonObject
 	 */
 	public $all_permissions_are_loaded;
 
-	public $oldcopy; // To contains a clone of this when we need to save old properties of object
-
 	public $fields = array(
-		'rowid'=>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),
-		'entity' => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'notnull'=> 1, 'default'=>1, 'index'=>1, 'position'=>5),
-		'nom'=>array('type'=>'varchar(180)', 'label'=>'Name', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Group name'),
-		'note' => array('type'=>'html', 'label'=>'Description', 'enabled'=>1, 'visible'=>1, 'position'=>20, 'notnull'=>-1, 'searchall'=>1),
-		'datec' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'position'=>50, 'notnull'=>1,),
-		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'position'=>60, 'notnull'=>1,),
-		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'ModelPDF', 'enabled'=>1, 'visible'=>0, 'position'=>100),
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'default' => '1', 'index' => 1, 'position' => 5),
+		'nom' => array('type' => 'varchar(180)', 'label' => 'Name', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 10, 'searchall' => 1, 'comment' => 'Group name'),
+		'note' => array('type' => 'html', 'label' => 'Description', 'enabled' => 1, 'visible' => 1, 'position' => 20, 'notnull' => -1, 'searchall' => 1),
+		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -2, 'position' => 50, 'notnull' => 1,),
+		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -2, 'position' => 60, 'notnull' => 1,),
+		'color' => array('type' => 'varchar(6)', 'label' => 'Color', 'enabled' => 1, 'visible' => 1, 'position' => 70, 'notnull' => -1, 'comment' => 'Color for pictogram'),
+		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'ModelPDF', 'enabled' => 1, 'visible' => 0, 'position' => 100),
 	);
 
 	/**
@@ -139,30 +143,32 @@ class UserGroup extends CommonObject
 	public $fk_element = 'fk_usergroup';
 
 	/**
-	 * @var array	List of child tables. To test if we can delete object.
+	 * @var array<string, array<string>>	List of child tables. To test if we can delete object.
 	 */
 	protected $childtables = array();
 
 	/**
-	 * @var array	List of child tables. To know object to delete on cascade.
+	 * @var string[]	List of child tables. To know object to delete on cascade.
 	 */
 	protected $childtablesoncascade = array('usergroup_rights', 'usergroup_user');
 
 
 	/**
-	 *    Constructor de la classe
+	 *    Class constructor
 	 *
-	 *    @param   DoliDb  $db     Database handler
+	 *    @param   DoliDB  $db     Database handler
 	 */
 	public function __construct($db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
 		$this->nb_rights = 0;
 	}
 
 
 	/**
-	 *  Charge un objet group avec toutes ses caracteristiques (except ->members array)
+	 *  Load a group object with all properties (except ->members array that is array of users in group)
 	 *
 	 *	@param      int		$id				Id of group to load
 	 *	@param      string	$groupname		Name of group to load
@@ -171,8 +177,6 @@ class UserGroup extends CommonObject
 	 */
 	public function fetch($id = 0, $groupname = '', $load_members = false)
 	{
-		global $conf;
-
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		if (!empty($groupname)) {
 			$result = $this->fetchCommon(0, '', ' AND nom = \''.$this->db->escape($groupname).'\'');
@@ -181,10 +185,12 @@ class UserGroup extends CommonObject
 		}
 
 		$this->name = $this->nom; // For compatibility with field name
+		$this->note_private = $this->note; // For compatibility with old field note
 
 		if ($result) {
 			if ($load_members) {
-				$this->members = $this->listUsersForGroup();	// This make a lot of subrequests
+				$excludefilter = '';
+				$this->members = $this->listUsersForGroup($excludefilter, 0);	// This make a request to get list of users but may also do subrequest to fetch each users on some versions
 			}
 
 			return 1;
@@ -198,9 +204,9 @@ class UserGroup extends CommonObject
 	/**
 	 *  Return array of groups objects for a particular user
 	 *
-	 *  @param		int			$userid 		User id to search
-	 *  @param		boolean		$load_members	Load all members of the group
-	 *  @return		array|int     				Array of groups objects
+	 *  @param		int			$userid 			User id to search
+	 *  @param		boolean		$load_members		Load all members of the group
+	 *  @return		array<int,UserGroup>|int<-1,-1>	Array of groups objects
 	 */
 	public function listGroupsForUser($userid, $load_members = true)
 	{
@@ -229,11 +235,11 @@ class UserGroup extends CommonObject
 					$newgroup->fetch($obj->rowid, '', $load_members);
 					$ret[$obj->rowid] = $newgroup;
 				}
-
 				if (!is_array($ret[$obj->rowid]->usergroup_entity)) {
 					$ret[$obj->rowid]->usergroup_entity = array();
 				}
-				$ret[$obj->rowid]->usergroup_entity[] = $obj->usergroup_entity;
+				// $ret[$obj->rowid] is instance of UserGroup
+				$ret[$obj->rowid]->usergroup_entity[] = (int) $obj->usergroup_entity;
 			}
 
 			$this->db->free($result);
@@ -248,9 +254,9 @@ class UserGroup extends CommonObject
 	/**
 	 * 	Return array of User objects for group this->id (or all if this->id not defined)
 	 *
-	 * 	@param	string	$excludefilter		Filter to exclude. Do not use here a string coming from user input.
-	 *  @param	int		$mode				0=Return array of user instance, 1=Return array of users id only
-	 * 	@return	mixed						Array of users or -1 on error
+	 * 	@param	string		$excludefilter		Filter to exclude. Do not use here a string coming from user input.
+	 *  @param	int<0,1>	$mode				0=Return array of user instance, 1=Return array of users id only
+	 * 	@return	array<int,User>|array<int,int>|int<-1,-1>	Array of users or -1 on error
 	 */
 	public function listUsersForGroup($excludefilter = '', $mode = 0)
 	{
@@ -308,10 +314,11 @@ class UserGroup extends CommonObject
 					}
 				}
 				if ($mode != 1 && !empty($obj->usergroup_entity)) {
+					// $ret[$obj->rowid] is instance of User
 					if (!is_array($ret[$obj->rowid]->usergroup_entity)) {
 						$ret[$obj->rowid]->usergroup_entity = array();
 					}
-					$ret[$obj->rowid]->usergroup_entity[] = $obj->usergroup_entity;
+					$ret[$obj->rowid]->usergroup_entity[] = (int) $obj->usergroup_entity;
 				}
 			}
 
@@ -426,7 +433,7 @@ class UserGroup extends CommonObject
 
 			if (!$error) {
 				$langs->load("other");
-				$this->context = array('audit'=>$langs->trans("PermissionsAdd").($rid ? ' (id='.$rid.')' : ''));
+				$this->context = array('audit' => $langs->trans("PermissionsAdd").($rid ? ' (id='.$rid.')' : ''));
 
 				// Call trigger
 				$result = $this->call_trigger('USERGROUP_MODIFY', $user);
@@ -470,7 +477,7 @@ class UserGroup extends CommonObject
 		if (!empty($rid)) {
 			$module = $perms = $subperms = '';
 
-			// Si on a demande supression d'un droit en particulier, on recupere
+			// Si on a demande suppression d'un droit en particulier, on recupere
 			// les caracteristiques module, perms et subperms de ce droit.
 			$sql = "SELECT module, perms, subperms";
 			$sql .= " FROM ".$this->db->prefix()."rights_def";
@@ -501,7 +508,7 @@ class UserGroup extends CommonObject
 			}
 
 			// Pour compatibilite, si lowid = 0, on est en mode suppression de tout
-			// TODO A virer quand sera gere par l'appelant
+			// TODO To remove when this will be implemented by the caller
 			//if (substr($rid,-1,1) == 0) $wherefordel="module='$module'";
 		} else {
 			// Add permission of the list $wherefordel
@@ -555,7 +562,7 @@ class UserGroup extends CommonObject
 
 			if (!$error) {
 				$langs->load("other");
-				$this->context = array('audit'=>$langs->trans("PermissionsDelete").($rid ? ' (id='.$rid.')' : ''));
+				$this->context = array('audit' => $langs->trans("PermissionsDelete").($rid ? ' (id='.$rid.')' : ''));
 
 				// Call trigger
 				$result = $this->call_trigger('USERGROUP_MODIFY', $user);
@@ -575,14 +582,28 @@ class UserGroup extends CommonObject
 		}
 	}
 
-
 	/**
-	 *  Charge dans l'objet group, la liste des permissions auquels le groupe a droit
+	 *  Load the list of permissions for the user into the group object
 	 *
 	 *  @param      string	$moduletag	 	Name of module we want permissions ('' means all)
-	 *	@return     int						Return integer <0 if KO, >=0 if OK
+	 *  @return     int						Return integer <0 if KO, >=0 if OK
+	 *  @deprecated
+	 *  TODO Remove this method. It has a name conflict with getRights() in CommonObject and was replaced in v20 with loadRights()
+	 *
+	 *  @phpstan-ignore-next-line
 	 */
 	public function getrights($moduletag = '')
+	{
+		return $this->loadRights($moduletag);
+	}
+
+	/**
+	 *  Load the list of permissions for the user into the group object
+	 *
+	 *  @param      string	$moduletag	 	Name of module we want permissions ('' means all)
+	 *  @return     int						Return integer <0 if KO, >=0 if OK
+	 */
+	public function loadRights($moduletag = '')
 	{
 		global $conf;
 
@@ -596,9 +617,7 @@ class UserGroup extends CommonObject
 			return 0;
 		}
 
-		/*
-		 * Recuperation des droits
-		 */
+		// Load permission from group
 		$sql = "SELECT r.module, r.perms, r.subperms ";
 		$sql .= " FROM ".$this->db->prefix()."usergroup_rights as u, ".$this->db->prefix()."rights_def as r";
 		$sql .= " WHERE r.id = u.fk_id";
@@ -689,6 +708,9 @@ class UserGroup extends CommonObject
 		if (!empty($this->name)) {
 			$this->nom = $this->name; // Field for 'name' is called 'nom' in database
 		}
+		if (!empty($this->note_private)) {
+			$this->note = $this->note_private; // Field for 'note_private' is called 'note' in database
+		}
 
 		if (!isset($this->entity)) {
 			$this->entity = $conf->entity; // If not defined, we use default value
@@ -709,6 +731,10 @@ class UserGroup extends CommonObject
 
 		if (!empty($this->name)) {
 			$this->nom = $this->name; // Field for 'name' is called 'nom' in database
+		}
+
+		if (!empty($this->note_private)) {
+			$this->note = $this->note_private; // Field for 'note_private' is called 'note' in database
 		}
 
 		return $this->updateCommon($user, $notrigger);
@@ -742,7 +768,7 @@ class UserGroup extends CommonObject
 			}
 		}
 
-		$ret .= dolGetFirstLastname($firstname, $lastname, $nameorder);
+		$ret .= dolGetFirstLastname((string) $firstname, (string) $lastname, $nameorder);
 
 		return dol_trunc($ret, $maxlen);
 	}
@@ -776,10 +802,9 @@ class UserGroup extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 *
-	 * @param array $params ex option, infologin
+	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
-	 * @return array
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -802,7 +827,7 @@ class UserGroup extends CommonObject
 	}
 
 	/**
-	 *  Return a link to the user card (with optionaly the picto)
+	 *  Return a link to the user card (with optionally the picto)
 	 *  Use this->id,this->lastname, this->firstname
 	 *
 	 *  @param  int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small)
@@ -837,10 +862,11 @@ class UserGroup extends CommonObject
 		}
 
 		if ($option == 'permissions') {
-			$url = DOL_URL_ROOT.'/user/group/perms.php?id='.$this->id;
+			$baseurl = DOL_URL_ROOT.'/user/group/perms.php';
 		} else {
-			$url = DOL_URL_ROOT.'/user/group/card.php?id='.$this->id;
+			$baseurl = DOL_URL_ROOT.'/user/group/card.php';
 		}
+		$query = ['id' => $this->id];
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
@@ -849,9 +875,10 @@ class UserGroup extends CommonObject
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+				$query = array_merge($query, ['save_lastsearch_values' => 1]);
 			}
 		}
+		$url = dolBuildUrl($baseurl, $query);
 
 		$linkclose = "";
 		if (empty($notooltip)) {
@@ -860,7 +887,7 @@ class UserGroup extends CommonObject
 				$label = $langs->trans("ShowGroup");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		}
 
@@ -879,7 +906,7 @@ class UserGroup extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array('groupdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -895,11 +922,11 @@ class UserGroup extends CommonObject
 	/**
 	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
 	 *
-	 *	@param		array	$info		Info array loaded by _load_ldap_info
-	 *	@param		int		$mode		0=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
+	 *	@param	array<string,mixed>	$info	Info array loaded by _load_ldap_info
+	 *	@param	int<0,2>	$mode		0=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
 	 *									1=Return DN without key inside (ou=xxx,dc=aaa,dc=bbb)
 	 *									2=Return key only (uid=qqq)
-	 *	@return		string				DN
+	 *	@return	string				DN
 	 */
 	public function _load_ldap_dn($info, $mode = 0)
 	{
@@ -910,7 +937,7 @@ class UserGroup extends CommonObject
 			$dn = getDolGlobalString('LDAP_KEY_GROUPS') . "=".$info[getDolGlobalString('LDAP_KEY_GROUPS')]."," . getDolGlobalString('LDAP_GROUP_DN');
 		}
 		if ($mode == 1) {
-			$dn = $conf->global->LDAP_GROUP_DN;
+			$dn = getDolGlobalString('LDAP_GROUP_DN');
 		}
 		if ($mode == 2) {
 			$dn = getDolGlobalString('LDAP_KEY_GROUPS') . "=".$info[getDolGlobalString('LDAP_KEY_GROUPS')];
@@ -924,7 +951,7 @@ class UserGroup extends CommonObject
 	/**
 	 *	Initialize the info array (array of LDAP values) that will be used to call LDAP functions
 	 *
-	 *	@return		array		Tableau info des attributs
+	 *	@return		array<string,mixed>		Tableau info des attributes
 	 */
 	public function _load_ldap_info()
 	{
@@ -966,13 +993,13 @@ class UserGroup extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
 		global $conf, $user, $langs;
 
-		// Initialise parametres
+		// Initialise parameters
 		$this->id = 0;
 		$this->ref = 'SPECIMEN';
 		$this->specimen = 1;
@@ -986,6 +1013,8 @@ class UserGroup extends CommonObject
 		$this->members = array(
 			$user->id => $user
 		);
+
+		return 1;
 	}
 
 	/**
@@ -993,10 +1022,10 @@ class UserGroup extends CommonObject
 	 *
 	 * 	@param	    string		$modele			Force model to use ('' to not force)
 	 * 	@param		Translate	$outputlangs	Object langs to use for output
-	 *  @param      int			$hidedetails    Hide details of lines
-	 *  @param      int			$hidedesc       Hide description
-	 *  @param      int			$hideref        Hide ref
-	 *  @param      null|array  $moreparams     Array to provide more information
+	 *  @param      int<0,1>	$hidedetails    Hide details of lines
+	 *  @param      int<0,1>	$hidedesc       Hide description
+	 *  @param      int<0,1>	$hideref        Hide ref
+	 *  @param      ?array<string,mixed>  $moreparams     Array to provide more information
 	 * 	@return     int         				0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
@@ -1008,7 +1037,7 @@ class UserGroup extends CommonObject
 		// Positionne le modele sur le nom du modele a utiliser
 		if (!dol_strlen($modele)) {
 			if (getDolGlobalString('USERGROUP_ADDON_PDF')) {
-				$modele = $conf->global->USERGROUP_ADDON_PDF;
+				$modele = getDolGlobalString('USERGROUP_ADDON_PDF');
 			} else {
 				$modele = 'grass';
 			}
@@ -1020,11 +1049,11 @@ class UserGroup extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param	string	    			$option		Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param	?array<string,mixed>	$arraydata	Array of data
+	 *  @return	string								HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{

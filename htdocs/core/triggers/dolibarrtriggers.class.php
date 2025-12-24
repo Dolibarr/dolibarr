@@ -1,5 +1,8 @@
 <?php
-/* Copyright (C) 2014 Marcos García         <marcosgdf@gmail.com>
+/* Copyright (C) 2014		Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2023-2024	William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +19,7 @@
  */
 
 /**
- * Class that all the triggers must extend
+ * Class that all triggers must inherit
  */
 abstract class DolibarrTriggers
 {
@@ -30,31 +33,31 @@ abstract class DolibarrTriggers
 	 * Name of the trigger
 	 * @var mixed|string
 	 */
-	public $name = '';
+	public $name;
 
 	/**
 	 * Description of the trigger
 	 * @var string
 	 */
-	public $description = '';
+	public $description;
 
 	/**
 	 * Version of the trigger
-	 * @var string
+	 * @var ''|'development'|'dolibarr'|'experimental'
 	 */
-	public $version = self::VERSION_DEVELOPMENT;
+	public $version;
 
 	/**
 	 * Image of the trigger
 	 * @var string
 	 */
-	public $picto = 'technic';
+	public $picto;
 
 	/**
 	 * Category of the trigger
 	 * @var string
 	 */
-	public $family = '';
+	public $family;
 
 	/**
 	 * Error reported by the trigger
@@ -62,28 +65,49 @@ abstract class DolibarrTriggers
 	 * @deprecated Use $this->errors
 	 * @see $errors
 	 */
-	public $error = '';
+	public $error;
 
 	/**
 	 * Errors reported by the trigger
-	 * @var array
+	 * @var string[]
 	 */
-	public $errors = array();
+	public $errors;
+
+	/**
+	 * Warnings reported by the trigger
+	 * @var string[]
+	 */
+	public $warnings;
 
 	/**
 	 * @var string module is in development
+	 * @deprecated Use self::VERSIONS
+	 * @see self::VERSIONS
 	 */
 	const VERSION_DEVELOPMENT = 'development';
 
 	/**
 	 * @var string module is experimental
+	 * @deprecated Use self::VERSIONS
+	 * @see self::VERSIONS
 	 */
 	const VERSION_EXPERIMENTAL = 'experimental';
 
 	/**
 	 * @var string module is dolibarr ready
+	 * @deprecated Use self::VERSIONS
+	 * @see self::VERSIONS
 	 */
 	const VERSION_DOLIBARR = 'dolibarr';
+
+	/**
+	 * @var array<string,string> dictionary of possible module states
+	 */
+	const VERSIONS = [
+		'dev' => 'development',
+		'exp' => 'experimental',
+		'prod' => 'dolibarr'
+	];
 
 	/**
 	 * Constructor
@@ -93,10 +117,13 @@ abstract class DolibarrTriggers
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
-
-		if (empty($this->name)) {
-			$this->name = preg_replace('/^Interface/i', '', get_class($this));
-		}
+		$this->name = preg_replace('/^Interface/i', '', get_class($this));
+		$this->description = '';
+		$this->version = self::VERSIONS['dev'];
+		$this->picto = 'technic';
+		$this->family = '';
+		$this->error = '';
+		$this->errors = [];
 	}
 
 	/**
@@ -128,46 +155,52 @@ abstract class DolibarrTriggers
 	{
 		global $langs;
 		$langs->load("admin");
-
-		if ($this->version == self::VERSION_DEVELOPMENT) {
-			return $langs->trans("VersionDevelopment");
-		} elseif ($this->version == self::VERSION_EXPERIMENTAL) {
-			return $langs->trans("VersionExperimental");
-		} elseif ($this->version == self::VERSION_DOLIBARR) {
-			return DOL_VERSION;
-		} elseif ($this->version) {
-			return $this->version;
-		} else {
-			return $langs->trans("Unknown");
+		switch ($this->version) { // TODO use a match expression @ Dolibarr minimum PHP v8.0
+			case self::VERSIONS['dev']:
+				return $langs->trans("VersionDevelopment");
+			case self::VERSIONS['exp']:
+				return $langs->trans("VersionExperimental");
+			case self::VERSIONS['prod']:
+				return DOL_VERSION;
+			default:
+				return $this->version;
 		}
 	}
 
 	/**
 	 * setErrorsFromObject
 	 *
-	 * @param CommonObject $object commonobject
-	 * @return void
+	 * @param	CommonObject|BlockedLog	$object		Object
+	 * @return	void
 	 */
 	public function setErrorsFromObject($object)
 	{
 		if (!empty($object->error)) {
-			$this->errors = array_merge($this->errors, array($object->error));
+			if (is_array($this->errors)) {
+				$this->errors = array_merge($this->errors, array($object->error));
+			} else {
+				$this->errors = array($object->error);
+			}
 		}
 		if (!empty($object->errors)) {
-			$this->errors = array_merge($this->errors, $object->errors);
+			if (is_array($this->errors)) {
+				$this->errors = array_merge($this->errors, $object->errors);
+			} else {
+				$this->errors = $object->errors;
+			}
 		}
 	}
 
 	/**
-	 *  Function called when a Dolibarrr business event is done.
+	 *  Function called when a Dolibarr business event is done.
 	 *  All functions "runTrigger" are triggered if file is inside directory htdocs/core/triggers or htdocs/module/code/triggers (and declared)
 	 *
 	 *  @param string       $action     Event action code
-	 *  @param Object       $object     Object
+	 *  @param CommonObject $object     CommonObject
 	 *  @param User         $user       Object user
 	 *  @param Translate    $langs      Object langs
-	 *  @param conf         $conf       Object conf
-	 *  @return int                     Return integer <0 if KO, 0 if no triggered ran, >0 if OK
+	 *  @param Conf         $conf       Object conf
+	 *  @return int                     if KO: <0 || if no trigger ran: 0 || if OK: >0
 	 */
 	abstract public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf);
 }

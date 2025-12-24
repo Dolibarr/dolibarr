@@ -1,5 +1,7 @@
 <?php
-/* Copyright (C) 2009-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2009-2012  Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,46 +36,60 @@
 class DolGeoIP
 {
 	/**
-	 * @var GeoIp2\Database\Reader
+	 * @var \GeoIp2\Database\Reader|\GeoIP|string
 	 */
 	public $gi;
 
+	/**
+	 * @var string
+	 */
 	public $error;
+
+	/**
+	 * @var string
+	 */
 	public $errorlabel;
 
 	/**
 	 * Constructor
 	 *
-	 * @param 	string	$type		'country' or 'city'
+	 * @param 	'country'|'city'	$type		'country' or 'city'
 	 * @param	string	$datfile	Data file
 	 */
 	public function __construct($type, $datfile)
 	{
-		global $conf;
+		$datfile = str_replace('DOL_DATA_ROOT', DOL_DATA_ROOT, $datfile);
 
 		$geoipversion = '2'; // 'php', or geoip version '2'
 		if (getDolGlobalString('GEOIP_VERSION')) {
-			$geoipversion = $conf->global->GEOIP_VERSION;
+			$geoipversion = getDolGlobalString('GEOIP_VERSION');
 		}
 
-		if ($type == 'country') {
-			// geoip may have been already included with PEAR
-			if ($geoipversion == '2' || ($geoipversion != 'php' && !function_exists('geoip_country_code_by_name'))) {
-				if (function_exists('stream_wrapper_restore')) {
-					stream_wrapper_restore('phar');
+		try {
+			if ($type == 'country') {
+				// geoip may have been already included with PEAR
+				if ($geoipversion == '2' || ($geoipversion != 'php' && !function_exists('geoip_country_code_by_name'))) {
+					if (function_exists('stream_wrapper_restore')) {
+						stream_wrapper_restore('phar');
+					}
+					include_once DOL_DOCUMENT_ROOT.'/includes/geoip2/geoip2.phar';
 				}
-				require_once DOL_DOCUMENT_ROOT.'/includes/geoip2/geoip2.phar';
-			}
-		} elseif ($type == 'city') {
-			// geoip may have been already included with PEAR
-			if ($geoipversion == '2' || ($geoipversion != 'php' && !function_exists('geoip_country_code_by_name'))) {
-				if (function_exists('stream_wrapper_restore')) {
-					stream_wrapper_restore('phar');
+			} elseif ($type == 'city') {
+				// geoip may have been already included with PEAR
+				if ($geoipversion == '2' || ($geoipversion != 'php' && !function_exists('geoip_country_code_by_name'))) {
+					if (function_exists('stream_wrapper_restore')) {
+						stream_wrapper_restore('phar');
+					}
+					include_once DOL_DOCUMENT_ROOT.'/includes/geoip2/geoip2.phar';
 				}
-				require_once DOL_DOCUMENT_ROOT.'/includes/geoip2/geoip2.phar';
+			} else {
+				print 'ErrorBadParameterInConstructor';
+				return;
 			}
-		} else {
-			print 'ErrorBadParameterInConstructor';
+		} catch (Exception $e) {
+			$this->error = $e->getMessage();
+			$this->errorlabel = 'Exception '.$this->error;
+			dol_syslog('DolGeoIP '.$this->errorlabel, LOG_ERR);
 			return;
 		}
 
@@ -118,11 +134,9 @@ class DolGeoIP
 	 */
 	public function getCountryCodeFromIP($ip)
 	{
-		global $conf;
-
 		$geoipversion = '2'; // 'php', or '2'
 		if (getDolGlobalString('GEOIP_VERSION')) {
-			$geoipversion = $conf->global->GEOIP_VERSION;
+			$geoipversion = getDolGlobalString('GEOIP_VERSION');
 		}
 
 		if (empty($this->gi)) {
@@ -176,11 +190,9 @@ class DolGeoIP
 	 */
 	public function getCountryCodeFromName($name)
 	{
-		global $conf;
-
 		$geoipversion = '2'; // 'php', or '2'
 		if (getDolGlobalString('GEOIP_VERSION')) {
-			$geoipversion = $conf->global->GEOIP_VERSION;
+			$geoipversion = getDolGlobalString('GEOIP_VERSION');
 		}
 
 		if (empty($this->gi)) {
@@ -201,17 +213,15 @@ class DolGeoIP
 	}
 
 	/**
-	 * Return verion of data file
+	 * Return version of data file
 	 *
 	 * @return  string      Version of datafile
 	 */
 	public function getVersion()
 	{
-		global $conf;
-
 		$geoipversion = '2'; // 'php', or '2'
 		if (getDolGlobalString('GEOIP_VERSION')) {
-			$geoipversion = $conf->global->GEOIP_VERSION;
+			$geoipversion = getDolGlobalString('GEOIP_VERSION');
 		}
 
 		if ($geoipversion == 'php') {

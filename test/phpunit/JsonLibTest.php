@@ -24,10 +24,15 @@
  *      \remarks    To run this script as CLI:  phpunit filename.php
  */
 
+if (! defined('NOREQUIREUSER')) {
+	define('PHPUNIT_MODE', 1);
+}
+
 global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (! defined('NOREQUIREUSER')) {
 	define('NOREQUIREUSER', '1');
@@ -68,87 +73,8 @@ if (! defined("NOLOGIN")) {
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class JsonLibTest extends PHPUnit\Framework\TestCase
+class JsonLibTest extends CommonClassTest
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
-
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @param 	string	$name		Name
-	 * @return CoreTest
-	 */
-	public function __construct($name = '')
-	{
-		parent::__construct($name);
-
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
-
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
-
-	/**
-	 * setUpBeforeClass
-	 *
-	 * @return void
-	 */
-	public static function setUpBeforeClass(): void
-	{
-		global $conf,$user,$langs,$db;
-		//$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * tearDownAfterClass
-	 *
-	 * @return	void
-	 */
-	public static function tearDownAfterClass(): void
-	{
-		global $conf,$user,$langs,$db;
-		//$db->rollback();
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return	void
-	 */
-	protected function setUp(): void
-	{
-		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-		print __METHOD__."\n";
-	}
-	/**
-	 * End phpunit tests
-	 *
-	 * @return	void
-	 */
-	protected function tearDown(): void
-	{
-		print __METHOD__."\n";
-	}
-
 	/**
 	 * testJsonEncode
 	 *
@@ -158,55 +84,69 @@ class JsonLibTest extends PHPUnit\Framework\TestCase
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
+		$this->savconf = $conf;
+		$this->savuser = $user;
+		$this->savlangs = $langs;
+		$this->savdb = $db;
 
 		// Try to decode a string encoded with serialize
 		$encoded = 'a:1:{s:7:"options";a:3:{s:3:"app";s:11:"Application";s:6:"system";s:6:"System";s:6:"option";s:6:"Option";}}';
-		$decoded=json_decode($encoded, true);
+		$decoded = json_decode($encoded, true);
 		$this->assertEquals(null, $decoded, 'test to json_decode() a string that was encoded with serialize()');
 
 		$encoded = 'rubishstring!aa{bcd';
-		$decoded=json_decode($encoded, true);
+		$decoded = json_decode($encoded, true);
 		$this->assertEquals(null, $decoded, 'test to json_decode() a string that was encoded with serialize()');
 
 		// Do a test with an array starting with 0
-		$arraytotest=array(0=>array('key'=>1,'value'=>'PRODREF','label'=>'Product ref with é and special chars \\ \' "'));
-		$arrayencodedexpected='[{"key":1,"value":"PRODREF","label":"Product ref with \u00e9 and special chars \\\\ \' \""}]';
+		$arraytotest = array(0 => array('key' => 1,'value' => 'PRODREF','label' => 'Product ref with é and special chars \\ \' "'));
+		$arrayencodedexpected = '[{"key":1,"value":"PRODREF","label":"Product ref with \u00e9 and special chars \\\\ \' \""}]';
 
-		$encoded=json_encode($arraytotest);
+		$encoded = json_encode($arraytotest);
 		$this->assertEquals($arrayencodedexpected, $encoded);
-		$decoded=json_decode($encoded, true);
+		$decoded = json_decode($encoded, true);
 		$this->assertEquals($arraytotest, $decoded, 'test for json_xxx');
 
-		$encoded=dol_json_encode($arraytotest);
+		/*
+		$encoded = dol_json_encode($arraytotest);
 		$this->assertEquals($arrayencodedexpected, $encoded);
-		$decoded=dol_json_decode($encoded, true);
+		$decoded = dol_json_decode($encoded, true);
 		$this->assertEquals($arraytotest, $decoded, 'test for dol_json_xxx');
+		*/
 
 		// Same test but array start with 2 instead of 0
-		$arraytotest=array(2=>array('key'=>1,'value'=>'PRODREF','label'=>'Product ref with é and special chars \\ \' "'));
-		$arrayencodedexpected='{"2":{"key":1,"value":"PRODREF","label":"Product ref with \u00e9 and special chars \\\\ \' \""}}';
+		$arraytotest = array(2 => array('key' => 1,'value' => 'PRODREF','label' => 'Product ref with é and special chars \\ \' "'));
+		$arrayencodedexpected = '{"2":{"key":1,"value":"PRODREF","label":"Product ref with \u00e9 and special chars \\\\ \' \""}}';
 
-		$encoded=json_encode($arraytotest);
+		$encoded = json_encode($arraytotest);
 		$this->assertEquals($arrayencodedexpected, $encoded);
-		$decoded=json_decode($encoded, true);
+		$decoded = json_decode($encoded, true);
 		$this->assertEquals($arraytotest, $decoded, 'test for json_xxx');
 
-		$encoded=dol_json_encode($arraytotest);
+		/*
+		$encoded = dol_json_encode($arraytotest);
 		$this->assertEquals($arrayencodedexpected, $encoded);
-		$decoded=dol_json_decode($encoded, true);
+		$decoded = dol_json_decode($encoded, true);
 		$this->assertEquals($arraytotest, $decoded, 'test for dol_json_xxx');
+		*/
+
+		$encoded = json_encode(123);
+		$this->assertEquals(123, $encoded);
+		$decoded = json_decode($encoded, true);
+		$this->assertEquals(123, $decoded, 'test for json_xxx 123');
+
+		$encoded = json_encode('abc');
+		$this->assertEquals('"abc"', $encoded);
+		$decoded = json_decode($encoded, true);
+		$this->assertEquals('abc', $decoded, "test for json_xxx 'abc'");
 
 		// Test with object
-		$now=gmmktime(12, 0, 0, 1, 1, 1970);
-		$objecttotest=new stdClass();
-		$objecttotest->property1='abc';
-		$objecttotest->property2=1234;
-		$objecttotest->property3=$now;
-		$encoded=dol_json_encode($objecttotest);
+		$now = gmmktime(12, 0, 0, 1, 1, 1970);
+		$objecttotest = new stdClass();
+		$objecttotest->property1 = 'abc';
+		$objecttotest->property2 = 1234;
+		$objecttotest->property3 = $now;
+		$encoded = json_encode($objecttotest);
 		$this->assertEquals('{"property1":"abc","property2":1234,"property3":43200}', $encoded);
 	}
 }

@@ -1,9 +1,0 @@
-README (English)
-##################################################
-Building a Patch file
-##################################################
-
-This directory contains tools to build a patch after a developer has made changes on files in its Dolibarr tree. 
-The output patch file can then be submited on Dolibarr dev mailing-list, with explanation on its goal, for inclusion in main branch.
-
-Using this tool is now deprecated. You must use git pull requests to submit contributions.

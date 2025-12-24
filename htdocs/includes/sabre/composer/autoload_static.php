@@ -4,15 +4,15 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit60b9ac98a8448ede6c445b0fd4bd31e0
+class ComposerStaticInit51cd53f153efda61d1f1f814155d1c4a
 {
     public static $files = array (
         '383eaff206634a77a1be54e64e6459c7' => __DIR__ . '/..' . '/sabre/uri/lib/functions.php',
-        '3569eecfeed3bcf0bad3c998a494ecb8' => __DIR__ . '/..' . '/sabre/xml/lib/Deserializer/functions.php',
-        '93aa591bc4ca510c520999e34229ee79' => __DIR__ . '/..' . '/sabre/xml/lib/Serializer/functions.php',
         '2b9d0f43f9552984cfa82fee95491826' => __DIR__ . '/..' . '/sabre/event/lib/coroutine.php',
         'd81bab31d3feb45bfe2f283ea3c8fdf7' => __DIR__ . '/..' . '/sabre/event/lib/Loop/functions.php',
         'a1cce3d26cc15c00fcd0b3354bd72c88' => __DIR__ . '/..' . '/sabre/event/lib/Promise/functions.php',
+        '3569eecfeed3bcf0bad3c998a494ecb8' => __DIR__ . '/..' . '/sabre/xml/lib/Deserializer/functions.php',
+        '93aa591bc4ca510c520999e34229ee79' => __DIR__ . '/..' . '/sabre/xml/lib/Serializer/functions.php',
         'ebdb698ed4152ae445614b69b5e4bb6a' => __DIR__ . '/..' . '/sabre/http/lib/functions.php',
     );
 
@@ -24,10 +24,7 @@ class ComposerStaticInit60b9ac98a8448ede6c445b0fd4bd31e0
             'Sabre\\Uri\\' => 10,
             'Sabre\\HTTP\\' => 11,
             'Sabre\\Event\\' => 12,
-            'Sabre\\DAV\\' => 10,
-            'Sabre\\DAVACL\\' => 13,
-            'Sabre\\CardDAV\\' => 14,
-            'Sabre\\CalDAV\\' => 13,
+            'Sabre\\' => 6,
         ),
         'P' => 
         array (
@@ -56,21 +53,9 @@ class ComposerStaticInit60b9ac98a8448ede6c445b0fd4bd31e0
         array (
             0 => __DIR__ . '/..' . '/sabre/event/lib',
         ),
-        'Sabre\\DAV\\' => 
+        'Sabre\\' => 
         array (
-            0 => __DIR__ . '/..' . '/sabre/dav/lib/DAV',
-        ),
-        'Sabre\\DAVACL\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/sabre/dav/lib/DAVACL',
-        ),
-        'Sabre\\CardDAV\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/sabre/dav/lib/CardDAV',
-        ),
-        'Sabre\\CalDAV\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/sabre/dav/lib/CalDAV',
+            0 => __DIR__ . '/..' . '/sabre/dav/lib',
         ),
         'Psr\\Log\\' => 
         array (
@@ -78,11 +63,16 @@ class ComposerStaticInit60b9ac98a8448ede6c445b0fd4bd31e0
         ),
     );
 
+    public static $classMap = array (
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+    );
+
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit60b9ac98a8448ede6c445b0fd4bd31e0::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit60b9ac98a8448ede6c445b0fd4bd31e0::$prefixDirsPsr4;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit51cd53f153efda61d1f1f814155d1c4a::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit51cd53f153efda61d1f1f814155d1c4a::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit51cd53f153efda61d1f1f814155d1c4a::$classMap;
 
         }, null, ClassLoader::class);
     }

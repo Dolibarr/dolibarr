@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2023	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +28,7 @@ use DebugBar\DataCollector\Renderable;
 /**
  * Class PhpCollector
  *
- * This class collects all PHP errors, notice, advices, trigger_error,...
+ * This class collects all PHP errors, notices, advice, trigger_error,...
  * Supports 15 different types included.
  */
 class PhpCollector extends DataCollector implements Renderable
@@ -43,7 +44,8 @@ class PhpCollector extends DataCollector implements Renderable
 	 * List of messages. Each item includes:
 	 *  'message', 'message_html', 'is_string', 'label', 'time'.
 	 *
-	 * @var array
+	 *
+	 * @var array<array{message:string,message_html:?string,is_string:bool,label:string,time:float}>
 	 */
 	protected $messages = [];
 
@@ -61,7 +63,7 @@ class PhpCollector extends DataCollector implements Renderable
 	/**
 	 * Called by the DebugBar when data needs to be collected.
 	 *
-	 * @return array Collected data.
+	 * @return array{count:int,messages:array<array{message:string,message_html:?string,is_string:bool,label:string,time:float}>}		Array of collected data
 	 */
 	public function collect()
 	{
@@ -75,18 +77,26 @@ class PhpCollector extends DataCollector implements Renderable
 	/**
 	 * Returns a list of messages ordered by their timestamp.
 	 *
-	 * @return array A list of messages ordered by time.
+	 * @return array<array{message:string,message_html:?string,is_string:bool,label:string,time:float}>		A list of messages ordered by time.
 	 */
 	public function getMessages()
 	{
 		$messages = $this->messages;
 
-		usort($messages, function ($itemA, $itemB) {
-			if ($itemA['time'] === $itemB['time']) {
-				return 0;
+		usort(
+			$messages,
+			/**
+			 * @param array{time:int} $itemA Message A information
+			 * @param array{time:int} $itemB Message B information
+			 * @return int<-1,1> -1 if Item A before Item B, 0 if same, 1 if later.
+			 */
+			static function ($itemA, $itemB) {
+				if ($itemA['time'] === $itemB['time']) {
+					return 0;
+				}
+				return $itemA['time'] < $itemB['time'] ? -1 : 1;
 			}
-			return $itemA['time'] < $itemB['time'] ? -1 : 1;
-		});
+		);
 
 		return $messages;
 	}
@@ -95,7 +105,7 @@ class PhpCollector extends DataCollector implements Renderable
 	 * Returns a hash where keys are control names and their values an array of options as defined in
 	 * {@see DebugBar\JavascriptRenderer::addControl()}
 	 *
-	 * @return array Needed details to render the widget.
+	 * @return array<array{icon:string,widget:string,map:string,default:string}|array{map:string,default:string}> 	Array of details to render the widget.
 	 */
 	public function getWidgets()
 	{
@@ -137,7 +147,7 @@ class PhpCollector extends DataCollector implements Renderable
 	public function errorHandler($severity, $message, $fileName, $line)
 	{
 		for ($i = 0; $i < 15; $i++) {
-			if ($type = $severity & (2 ** $i)) {
+			if ($type = $severity & (1 << $i)) {
 				$label = $this->friendlyErrorType($type);
 				$this->messages[] = [
 					'message' => $message . ' (' . $fileName . ':' . $line . ')',

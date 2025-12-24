@@ -10,14 +10,11 @@ INTRACOMMREPORT_ROLE_ACTEUR=Rôle joué par l'acteur
 INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les ievads
 INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expéditions
 INTRACOMMREPORT_CATEG_FRAISDEPORT=Catégorie de services de type "Frais de port"
-
 INTRACOMMREPORT_NUM_DECLARATION=Numéro de déclarant
-
 # Menu
 MenuIntracommReport=Intracomm ziņojums
 MenuIntracommReportNew=Jauna deklarācija
 MenuIntracommReportList=Saraksts
-
 # View
 NewDeclaration=Jauna deklarācija
 Declaration=Deklarācija
@@ -25,16 +22,13 @@ AnalysisPeriod=Analīzes periods
 TypeOfDeclaration=Deklarācijas veids
 DEB=Preču apmaiņas deklarācija (DEB)
 DES=Pakalpojumu apmaiņas deklarācija (DES)
-
 # Export page
 IntracommReportTitle=XML faila sagatavošana ProDouane formātā
-
 # List
 IntracommReportList=Ģenerēto deklarāciju saraksts
 IntracommReportNumber=Deklarācijas numurs
-IntracommReportPeriod=Nalīzes periods
+IntracommReportPeriod=Analīzes periods
 IntracommReportTypeDeclaration=Deklarācijas veids
 IntracommReportDownload=lejupielādēt XML failu
-
 # Invoice
 IntracommReportTransportMode=Transporta veids

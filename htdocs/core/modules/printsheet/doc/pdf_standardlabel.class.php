@@ -5,6 +5,7 @@
  * Copyright (C) 2002-2003  Jean-Louis Bergamo      <jlb@j1b.org>
  * Copyright (C) 2006-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Francis Appels          <francis.appels@yahoo.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +24,7 @@
 /**
  *  \file       htdocs/core/modules/printsheet/doc/pdf_standardlabel.class.php
  *  \ingroup    core
- *  \brief      Fichier de la classe permettant d'editer au format PDF des etiquettes au format Avery ou personnalise
+ *  \brief      Fichier de la class permettant d'editer au format PDF des etiquettes au format Avery ou personnalise
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonstickergenerator.class.php';
@@ -38,7 +39,7 @@ class pdf_standardlabel extends CommonStickerGenerator
 	 *
 	 * @param	TCPDF		$pdf			PDF reference
 	 * @param	Translate	$outputlangs	Output langs
-	 * @param	array		$param			Associative array containing label content and optional parameters
+	 * @param	array<string,string>	$param		Associative array containing label content and optional parameters
 	 * @return	void
 	 */
 	public function addSticker(&$pdf, $outputlangs, $param)
@@ -225,14 +226,14 @@ class pdf_standardlabel extends CommonStickerGenerator
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Function to build PDF on disk, then output on HTTP strem.
+	 *	Function to build PDF on disk, then output on HTTP stream.
 	 *
-	 *	@param	array		$arrayofrecords		Array of record informations (array('textleft'=>,'textheader'=>, ..., 'id'=>,'photo'=>)
+	 *	@param	array<array{textleft:string,textheader:string,textfooter:string,textright:string,id:string,photo:string}>	$arrayofrecords		Array of record information (array('textleft'=>,'textheader'=>, ..., 'id'=>,'photo'=>)
 	 *	@param	Translate	$outputlangs		Lang object for output language
 	 *	@param	string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *	@param	string		$outputdir			Output directory for pdf file
 	 *  @param  string      $filename           Short file name of PDF output file
-	 *	@return int								1=OK, 0=KO
+	 *  @return int<-1,1>                       1=OK, <=0=KO
 	 */
 	public function write_file($arrayofrecords, $outputlangs, $srctemplatepath, $outputdir = '', $filename = 'tmp_address_sheet.pdf')
 	{
@@ -242,13 +243,14 @@ class pdf_standardlabel extends CommonStickerGenerator
 		$this->code = $srctemplatepath;
 		$this->Tformat = $_Avery_Labels[$this->code];
 		if (empty($this->Tformat)) {
-			dol_print_error('', 'ErrorBadTypeForCard'.$this->code);
+			dol_print_error(null, 'ErrorBadTypeForCard'.$this->code);
 			exit;
 		}
 		$this->type = 'pdf';
 		// standard format or custom
-		if ($this->Tformat['paper-size'] != 'custom') {
-			$this->format = $this->Tformat['paper-size'];
+		$paper_size = $this->Tformat['paper-size'];
+		if (!is_string($paper_size) || $paper_size != 'custom') {
+			$this->format = $paper_size;
 		} else {
 			//custom
 			$resolution = array($this->Tformat['custom_x'], $this->Tformat['custom_y']);
@@ -297,10 +299,10 @@ class pdf_standardlabel extends CommonStickerGenerator
 		}
 
 		$pdf->SetMargins(0, 0);
-		$pdf->SetAutoPageBreak(false);
+		$pdf->setAutoPageBreak(false);
 
 		$this->_Metric_Doc = $this->Tformat['metric'];
-		// Permet de commencer l'impression de l'etiquette desiree dans le cas ou la page a deja servie
+		// Enable  printing the label when the page was already started
 		$posX = 1;
 		$posY = 1;
 		if ($posX > 0) {
@@ -337,7 +339,7 @@ class pdf_standardlabel extends CommonStickerGenerator
 
 		dolChmod($file);
 
-		$this->result = array('fullpath'=>$file);
+		$this->result = array('fullpath' => $file);
 
 		return 1;
 	}

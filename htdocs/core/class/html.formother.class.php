@@ -10,6 +10,8 @@
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerker@telenet.be>
  * Copyright (C) 2007      Patrick Raguin 		<patrick.raguin@gmail.com>
  * Copyright (C) 2019       Thibault FOUCART        <support@ptibogxiv.net>
+ * Copyright (C) 2024-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,16 +30,19 @@
 /**
  *	\file       htdocs/core/class/html.formother.class.php
  *  \ingroup    core
- *	\brief      Fichier de la classe des fonctions predefinie de composants html autre
+ *	\brief      Fichier de la class des functions predefinie de composants html autre
  */
 
 
 /**
- *	Classe permettant la generation de composants html autre
+ *	Class permettant la generation de composants html autre
  *	Only common components are here.
  */
 class FormOther
 {
+	/**
+	 * @var DoliDB
+	 */
 	private $db;
 
 	/**
@@ -395,7 +400,7 @@ class FormOther
 	/**
 	 * Return select list for categories (to use in form search selectors)
 	 *
-	 * @param	int			$type			Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
+	 * @param	string		$type			Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
 	 * @param   integer		$selected     	Preselected value
 	 * @param   string		$htmlname      	Name of combo list
 	 * @param	int			$nocateg		Show also an entry "Not categorized"
@@ -467,7 +472,7 @@ class FormOther
 	/**
 	 *  Return select list for categories (to use in form search selectors)
 	 *
-	 *  @param	string		$selected     		Preselected value
+	 *  @param	int|string	$selected     		Preselected value
 	 *  @param  string		$htmlname      		Name of combo list (example: 'search_sale')
 	 *  @param  User		$user           	Object user
 	 *  @param	int			$showstatus			0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
@@ -522,8 +527,17 @@ class FormOther
 		if (!empty($user->socid)) {
 			$sql_usr .= " AND u.fk_soc = ".((int) $user->socid);
 		}
+		if (getDolUserString('USER_HIDE_NONEMPLOYEE_IN_COMBOBOX', getDolGlobalString('USER_HIDE_NONEMPLOYEE_IN_COMBOBOX'))) {
+			$sql_usr .= " AND u.employee <> 0";
+		}
+		if (getDolUserString('USER_HIDE_EXTERNAL_IN_COMBOBOX', getDolGlobalString('USER_HIDE_EXTERNAL_IN_COMBOBOX'))) {
+			$sql_usr .= " AND u.fk_soc IS NULL";
+		}
+		if (getDolUserString('USER_HIDE_INACTIVE_IN_COMBOBOX', getDolGlobalString('USER_HIDE_INACTIVE_IN_COMBOBOX'))) {	// Can be set in setup of module User.
+			$sql_usr .= " AND u.statut <> 0";
+		}
 
-		//Add hook to filter on user (for exemple on usergroup define in custom modules)
+		//Add hook to filter on user (for example on usergroup define in custom modules)
 		if (!empty($reshook)) {
 			$sql_usr .= $hookmanager->resArray[0];
 		}
@@ -546,7 +560,7 @@ class FormOther
 
 			$sql_usr .= " AND u2.rowid = sc.fk_user AND sc.fk_soc = ".((int) $user->socid);
 
-			//Add hook to filter on user (for exemple on usergroup define in custom modules)
+			//Add hook to filter on user (for example on usergroup define in custom modules)
 			if (!empty($reshook)) {
 				$sql_usr .= $hookmanager->resArray[1];
 			}
@@ -568,7 +582,7 @@ class FormOther
 				$userstatic->lastname = $obj_usr->lastname;
 				$userstatic->firstname = $obj_usr->firstname;
 				$userstatic->photo = $obj_usr->photo;
-				$userstatic->statut = $obj_usr->status;
+				$userstatic->status = $obj_usr->status;
 				$userstatic->entity = $obj_usr->entity;
 				$userstatic->admin = $obj_usr->admin;
 
@@ -653,7 +667,7 @@ class FormOther
 	 *  @param	string	$morecss				More css
 	 *  @return	void
 	 */
-	public function selectProjectTasks($selectedtask = '', $projectid = 0, $htmlname = 'task_parent', $modeproject = 0, $modetask = 0, $mode = 0, $useempty = 0, $disablechildoftaskid = 0, $filteronprojstatus = '', $morecss = '')
+	public function selectProjectTasks($selectedtask = 0, $projectid = 0, $htmlname = 'task_parent', $modeproject = 0, $modetask = 0, $mode = 0, $useempty = 0, $disablechildoftaskid = 0, $filteronprojstatus = '', $morecss = '')
 	{
 		global $user, $langs;
 
@@ -683,7 +697,7 @@ class FormOther
 	 *
 	 * @param 	int		$inc					Cursor counter
 	 * @param 	int		$parent					Id of parent task we want to see
-	 * @param 	array	$lines					Array of task lines
+	 * @param 	Task[]	$lines					Array of task lines
 	 * @param 	int		$level					Level
 	 * @param 	int		$selectedtask			Id selected task
 	 * @param 	int		$selectedproject		Id selected project
@@ -820,12 +834,12 @@ class FormOther
 	 *  @param	string		$prefix			Name of HTML field
 	 *  @param	string		$form_name		Deprecated. Not used.
 	 *  @param	int			$showcolorbox	1=Show color code and color box, 0=Show only color code
-	 *  @param 	array		$arrayofcolors	Array of colors. Example: array('29527A','5229A3','A32929','7A367A','B1365F','0D7813')
+	 *  @param 	string[]	$arrayofcolors	Array of colors. Example: array('29527A','5229A3','A32929','7A367A','B1365F','0D7813')
 	 *  @return	void
-	 *  @deprecated Use instead selectColor
+	 *  @deprecated Use selectColor()
 	 *  @see selectColor()
 	 */
-	public function select_color($set_color = '', $prefix = 'f_color', $form_name = '', $showcolorbox = 1, $arrayofcolors = '')
+	public function select_color($set_color = '', $prefix = 'f_color', $form_name = '', $showcolorbox = 1, $arrayofcolors = [])
 	{
 		// phpcs:enable
 		print $this->selectColor($set_color, $prefix, $form_name, $showcolorbox, $arrayofcolors);
@@ -836,16 +850,16 @@ class FormOther
 	 *
 	 *  @param	string		$set_color				Pre-selected color with format '#......'
 	 *  @param	string		$prefix					Name of HTML field
-	 *  @param	string		$form_name				Deprecated. Not used.
+	 *  @param	null|''		$form_name				Deprecated. Not used.
 	 *  @param	int			$showcolorbox			1=Show color code and color box, 0=Show only color code
-	 *  @param 	array		$arrayofcolors			Array of possible colors to choose in the selector. All colors are possible if empty. Example: array('29527A','5229A3','A32929','7A367A','B1365F','0D7813')
+	 *  @param 	string[]	$arrayofcolors			Array of possible colors to choose in the selector. All colors are possible if empty. Example: array('29527A','5229A3','A32929','7A367A','B1365F','0D7813')
 	 *  @param	string		$morecss				Add css style into input field
-	 *  @param	string		$setpropertyonselect	Set this property after selecting a color
+	 *  @param	string		$setpropertyonselect	Set this CSS property after selecting a color
 	 *  @param	string		$default				Default color
 	 *  @return	string
 	 *  @see showColor()
 	 */
-	public static function selectColor($set_color = '', $prefix = 'f_color', $form_name = '', $showcolorbox = 1, $arrayofcolors = '', $morecss = '', $setpropertyonselect = '', $default = '')
+	public static function selectColor($set_color = '', $prefix = 'f_color', $form_name = '', $showcolorbox = 1, $arrayofcolors = [], $morecss = '', $setpropertyonselect = '', $default = '')
 	{
 		// Deprecation warning
 		if ($form_name) {
@@ -980,7 +994,7 @@ class FormOther
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Creae an image for color
+	 *	Create an image for color
 	 *
 	 *	@param	string	$color		Color of image
 	 *	@param	string	$module 	Name of module
@@ -989,7 +1003,7 @@ class FormOther
 	 *	@param	int		$y      	Hauteur de l'image en pixels
 	 *	@return	void
 	 */
-	public function CreateColorIcon($color, $module, $name, $x = '12', $y = '12')
+	public function CreateColorIcon($color, $module, $name, $x = 12, $y = 12)
 	{
 		// phpcs:enable
 		global $conf;
@@ -1006,16 +1020,16 @@ class FormOther
 
 		$color = substr($color, 1, 6);
 
-		$rouge = hexdec(substr($color, 0, 2)); //conversion du canal rouge
-		$vert  = hexdec(substr($color, 2, 2)); //conversion du canal vert
-		$bleu  = hexdec(substr($color, 4, 2)); //conversion du canal bleu
+		$red = hexdec(substr($color, 0, 2));    // Red channel conversion
+		$green  = hexdec(substr($color, 2, 2)); // Green channel conversion
+		$blue  = hexdec(substr($color, 4, 2));  // Blue channel conversion
 
-		$couleur = imagecolorallocate($image, $rouge, $vert, $bleu);
-		//print $rouge.$vert.$bleu;
-		imagefill($image, 0, 0, $couleur); //on remplit l'image
-		// On cree la couleur et on l'attribue a une variable pour ne pas la perdre
-		ImagePng($image, $file); //renvoie une image sous format png
-		ImageDestroy($image);
+		$couleur = imagecolorallocate($image, $red, $green, $blue);
+		//print $red.$green.$blue;
+		imagefill($image, 0, 0, $couleur); // Fill the image
+		// Create the colr and store it in a variable to maintain it
+		imagepng($image, $file); // Returns an image in PNG format
+		imagedestroy($image);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1033,13 +1047,13 @@ class FormOther
 		global $langs;
 
 		$week = array(
-			0=>$langs->trans("Day0"),
-			1=>$langs->trans("Day1"),
-			2=>$langs->trans("Day2"),
-			3=>$langs->trans("Day3"),
-			4=>$langs->trans("Day4"),
-			5=>$langs->trans("Day5"),
-			6=>$langs->trans("Day6")
+			0 => $langs->trans("Day0"),
+			1 => $langs->trans("Day1"),
+			2 => $langs->trans("Day2"),
+			3 => $langs->trans("Day3"),
+			4 => $langs->trans("Day4"),
+			5 => $langs->trans("Day5"),
+			6 => $langs->trans("Day6")
 		);
 
 		$select_week = '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
@@ -1066,10 +1080,10 @@ class FormOther
 	/**
 	 *      Return HTML combo list of month
 	 *
-	 *      @param  string      $selected          	Preselected value
+	 *      @param  int|string  $selected          	Preselected value
 	 *      @param  string      $htmlname          	Name of HTML select object
-	 *      @param  int         $useempty          	Show empty in list
-	 *      @param  int         $longlabel         	Show long label
+	 *      @param  int|string  $useempty          	Show empty in list
+	 *      @param  int         $longlabel         	Show long label (1) or short label (0)
 	 *      @param	string		$morecss			More Css
 	 *  	@param  bool		$addjscombo			Add js combo
 	 *      @return string
@@ -1082,17 +1096,21 @@ class FormOther
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 		if ($longlabel) {
-			$montharray = monthArray($langs, 0); // Get array
+			$montharray = monthArray($langs, 0); // Get array of month with long labels
 		} else {
-			$montharray = monthArray($langs, 1);
+			$montharray = monthArray($langs, 1); // Get array of month with short labels
 		}
 
 		$select_month = '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'" id="'.$htmlname.'">';
 		if ($useempty) {
-			$select_month .= '<option value="0">&nbsp;</option>';
+			if (is_numeric($useempty)) {
+				$select_month .= '<option value="0">&nbsp;</option>';
+			} else {
+				$select_month .= '<option value="-1">'.$useempty.'</option>';
+			}
 		}
 		foreach ($montharray as $key => $val) {
-			if ($selected == $key) {
+			if ((int) $selected == $key) {
 				$select_month .= '<option value="'.$key.'" selected>';
 			} else {
 				$select_month .= '<option value="'.$key.'">';
@@ -1138,23 +1156,23 @@ class FormOther
 	/**
 	 *	Return HTML combo list of years
 	 *
-	 *  @param  string	$selected       Preselected value (''=current year, -1=none, year otherwise)
-	 *  @param  string	$htmlname       Name of HTML select object
-	 *  @param  int	    $useempty       Affiche valeur vide dans liste
-	 *  @param  int	    $min_year		Offset of minimum year into list (by default current year -10)
-	 *  @param  int	    $max_year       Offset of maximum year into list (by default current year + 5)
-	 *  @param	int		$offset			Offset
-	 *  @param	int		$invert			Invert
-	 *  @param	string	$option			Option
-	 *  @param	string	$morecss		More css
-	 *  @param  bool	$addjscombo		Add js combo
+	 *  @param  int|string	$selected       Preselected value (''=current year, -1=none, year otherwise)
+	 *  @param  string		$htmlname       Name of HTML select object
+	 *  @param  int	    	$useempty       Affiche valeur vide dans liste
+	 *  @param  int	    	$min_year		Offset of minimum year into list (by default current year -10)
+	 *  @param  int	    	$max_year       Offset of maximum year into list (by default current year + 5)
+	 *  @param	int			$offset			Offset
+	 *  @param	int			$invert			Invert
+	 *  @param	string		$option			Option
+	 *  @param	string		$morecss		More css
+	 *  @param  bool		$addjscombo		Add js combo
 	 *  @return	string
 	 */
 	public function selectyear($selected = '', $htmlname = 'yearid', $useempty = 0, $min_year = 10, $max_year = 5, $offset = 0, $invert = 0, $option = '', $morecss = 'valignmiddle width75', $addjscombo = false)
 	{
 		$out = '';
 
-		$currentyear = date("Y") + $offset;
+		$currentyear = idate("Y") + $offset;
 		$max_year = $currentyear + $max_year;
 		$min_year = $currentyear - $min_year;
 		if (empty($selected) && empty($useempty)) {
@@ -1164,7 +1182,7 @@ class FormOther
 		$out .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.'"'.$option.' >';
 		if ($useempty) {
 			$selected_html = '';
-			if ($selected == '') {
+			if ((string) $selected == '') {
 				$selected_html = ' selected';
 			}
 			$out .= '<option value=""'.$selected_html.'>&nbsp;</option>';
@@ -1172,7 +1190,7 @@ class FormOther
 		if (!$invert) {
 			for ($y = $max_year; $y >= $min_year; $y--) {
 				$selected_html = '';
-				if ($selected > 0 && $y == $selected) {
+				if ((int) $selected > 0 && $y == (int) $selected) {
 					$selected_html = ' selected';
 				}
 				$out .= '<option value="'.$y.'"'.$selected_html.' >'.$y.'</option>';
@@ -1180,7 +1198,7 @@ class FormOther
 		} else {
 			for ($y = $min_year; $y <= $max_year; $y++) {
 				$selected_html = '';
-				if ($selected > 0 && $y == $selected) {
+				if ((int) $selected > 0 && $y == (int) $selected) {
 					$selected_html = ' selected';
 				}
 				$out .= '<option value="'.$y.'"'.$selected_html.' >'.$y.'</option>';
@@ -1200,33 +1218,46 @@ class FormOther
 
 
 	/**
-	 * 	Get array with HTML tabs with boxes of a particular area including personalized choices of user.
+	 * 	Get array with HTML tabs with widgets/boxes of a particular area including personalized choices of user.
 	 *  Class 'Form' must be known.
 	 *
 	 * 	@param	   User         $user		 Object User
-	 * 	@param	   String       $areacode    Code of area for pages - 0 = Home page ... See getListOfPagesForBoxes()
-	 *	@return    array                     array('selectboxlist'=>, 'boxactivated'=>, 'boxlista'=>, 'boxlistb'=>)
+	 * 	@param	   string       $areacode    Code of area for pages - 0 = Home page ... See getListOfPagesForBoxes()
+	 *	@return array{selectboxlist:string,boxactivated:ModeleBoxes[],boxlista:string,boxlistb:string}
 	 */
 	public static function getBoxesArea($user, $areacode)
 	{
 		global $conf, $langs, $db;
 
 		include_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
+		// From include
+		'
+		@phan-var-force ModeleBoxes[] $boxactivated
+		@phan-var-force int[] $boxidactivatedforuser
+		';
 
 		$confuserzone = 'MAIN_BOXES_'.$areacode;
 
+
+
 		// $boxactivated will be array of boxes enabled into global setup
-		// $boxidactivatedforuser will be array of boxes choosed by user
+		// $boxidactivatedforuser will be array of boxes chose by user
 
 		$selectboxlist = '';
-		$boxactivated = InfoBox::listBoxes($db, 'activated', $areacode, (empty($user->conf->$confuserzone) ? null : $user), array(), 0); // Search boxes of common+user (or common only if user has no specific setup)
+		$boxactivated = InfoBox::listBoxes($db, 'activated', (int) $areacode, (empty($user->conf->$confuserzone) ? null : $user), array(), 0); // Search boxes of common+user (or common only if user has no specific setup)
 
 		$boxidactivatedforuser = array();
 		foreach ($boxactivated as $box) {
 			if (empty($user->conf->$confuserzone) || $box->fk_user == $user->id) {
 				$boxidactivatedforuser[$box->id] = $box->id; // We keep only boxes to show for user
 			}
+
+			if (!empty($box->lang)) {
+				$langs->loadLangs(array($box->lang));
+				$box->boxlabel = $langs->transnoentitiesnoconv($box->boxlabel);
+			}
 		}
+
 
 		// Define selectboxlist
 		$arrayboxtoactivatelabel = array();
@@ -1237,12 +1268,13 @@ class FormOther
 				if (!empty($boxidactivatedforuser[$box->id])) {
 					continue; // Already visible for user
 				}
+
 				$label = $langs->transnoentitiesnoconv($box->boxlabel);
 				//if (preg_match('/graph/',$box->class)) $label.=' ('.$langs->trans("Graph").')';
 				if (preg_match('/graph/', $box->class) && $conf->browser->layout != 'phone') {
-					$label = $label.' <span class="fas fa-chart-bar"></span>';
+					$label .= ' <span class="fas fa-chart-bar"></span>';
 				}
-				$arrayboxtoactivatelabel[$box->id] = array('label'=>$label, 'data-html'=>img_picto('', $box->boximg, 'class="pictofixedwidth"').$langs->trans($label)); // We keep only boxes not shown for user, to show into combo list
+				$arrayboxtoactivatelabel[$box->id] = array('label' => $label, 'data-html' => img_picto('', $box->boximg, 'class="pictofixedwidth valignmiddle"').'<span class="valignmiddle">'.$langs->trans($label).'</span>'); // We keep only boxes not shown for user, to show into combo list
 			}
 			foreach ($boxidactivatedforuser as $boxid) {
 				if (empty($boxorder)) {
@@ -1255,13 +1287,13 @@ class FormOther
 
 			// Class Form must have been already loaded
 			$selectboxlist .= '<!-- Form with select box list -->'."\n";
-			$selectboxlist .= '<form id="addbox" name="addbox" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+			$selectboxlist .= '<form id="addbox" name="addbox" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 			$selectboxlist .= '<input type="hidden" name="token" value="'.newToken().'">';
 			$selectboxlist .= '<input type="hidden" name="addbox" value="addbox">';
 			$selectboxlist .= '<input type="hidden" name="userid" value="'.$user->id.'">';
 			$selectboxlist .= '<input type="hidden" name="areacode" value="'.$areacode.'">';
 			$selectboxlist .= '<input type="hidden" name="boxorder" value="'.$boxorder.'">';
-			$selectboxlist .= Form::selectarray('boxcombo', $arrayboxtoactivatelabel, -1, $langs->trans("ChooseBoxToAdd").'...', 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth150onsmartphone hideonprint', 0, 'hidden selected', 0, 0);
+			$selectboxlist .= Form::selectarray('boxcombo', $arrayboxtoactivatelabel, -1, $langs->trans("ChooseBoxToAdd").'...', 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth300 hideonprint', 0, 'hidden selected', 0, 0);
 			if (empty($conf->use_javascript_ajax)) {
 				$selectboxlist .= ' <input type="submit" class="button" value="'.$langs->trans("AddBox").'">';
 			}
@@ -1362,10 +1394,7 @@ class FormOther
 			$boxlista .= "\n<!-- Box left container -->\n";
 
 			// Define $box_max_lines
-			$box_max_lines = 5;
-			if (getDolGlobalString('MAIN_BOXES_MAXLINES')) {
-				$box_max_lines = $conf->global->MAIN_BOXES_MAXLINES;
-			}
+			$box_max_lines = getDolUserInt('MAIN_SIZE_SHORTLIST_LIMIT', getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5));
 
 			$ii = 0;
 			foreach ($boxactivated as $key => $box) {
@@ -1423,7 +1452,7 @@ class FormOther
 			$boxlistb .= "<!-- End box right container -->\n";
 		}
 
-		return array('selectboxlist'=>count($boxactivated) ? $selectboxlist : '', 'boxactivated'=>$boxactivated, 'boxlista'=>$boxlista, 'boxlistb'=>$boxlistb);
+		return array('selectboxlist' => count($boxactivated) ? $selectboxlist : '', 'boxactivated' => $boxactivated, 'boxlista' => $boxlista, 'boxlistb' => $boxlistb);
 	}
 
 
@@ -1526,12 +1555,12 @@ class FormOther
 	/**
 	 * Return HTML select list to select a group by field
 	 *
-	 * @param 	mixed	$object				Object analyzed
-	 * @param	array	$search_groupby		Array of preselected fields
-	 * @param	array	$arrayofgroupby		Array of groupby to fill
-	 * @param	string	$morecss			More CSS
-	 * @param	string  $showempty          '1' or 'text'
-	 * @return string						HTML string component
+	 * @param 	mixed		$object				Object analyzed
+	 * @param	string[]	$search_groupby		Array of preselected fields
+	 * @param	array<string,array{label:string}>	$arrayofgroupby		Array of groupby to fill
+	 * @param	string		$morecss			More CSS
+	 * @param	string  	$showempty          '1' or 'text'
+	 * @return	string						HTML string component
 	 */
 	public function selectGroupByField($object, $search_groupby, &$arrayofgroupby, $morecss = 'minwidth200 maxwidth250', $showempty = '1')
 	{
@@ -1550,8 +1579,8 @@ class FormOther
 	 * Return HTML select list to select a group by field
 	 *
 	 * @param 	mixed	$object				Object analyzed
-	 * @param	array	$search_xaxis		Array of preselected fields
-	 * @param	array	$arrayofxaxis		Array of groupby to fill
+	 * @param	string[]	$search_xaxis	Array of preselected fields
+	 * @param	array<string,array{label:string}>	$arrayofxaxis		Array of groupby to fill
 	 * @param	string  $showempty          '1' or 'text'
 	 * @param	string	$morecss			More css
 	 * @return 	string						HTML string component

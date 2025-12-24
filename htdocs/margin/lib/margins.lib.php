@@ -2,6 +2,7 @@
 /* Copyright (C) 2012      Christophe Battarel <christophe.battarel@altairis.fr>
  * Copyright (C) 2014-2015 Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2016	   Florian Henry       <florian.henry@open-concept.pro>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +27,7 @@
 /**
  *  Define head array for tabs of marges tools setup pages
  *
- *  @return			Array of head
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function marges_admin_prepare_head()
 {
@@ -54,7 +55,7 @@ function marges_admin_prepare_head()
 /**
  * Return array of tabs to used on pages for third parties cards.
  *
- * @return 	array				Array of tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function marges_prepare_head()
 {
@@ -106,55 +107,55 @@ function marges_prepare_head()
 /**
  * Return an array with margins information of a line
  *
- * @param 	float 	$pvht				Selling price without tax
+ * @param 	float 	$pv_ht				Selling price without tax
  * @param 	float	$remise_percent		Discount percent on line
  * @param 	float	$tva_tx				Vat rate (not used)
  * @param 	float	$localtax1_tx		Vat rate special 1 (not used)
  * @param 	float	$localtax2_tx		Vat rate special 2 (not used)
- * @param 	int		$fk_pa				Id of buying price (prefer set this to 0 and provide $paht instead. With id, buying price may have change)
- * @param 	float	$paht				Buying price without tax
- * @return	array						Array of margin info (buying price, marge rate, marque rate)
+ * @param 	int		$fk_pa				Id of buying price (prefer set this to 0 and provide $pa_ht instead. With id, buying price may have change)
+ * @param 	float	$pa_ht				Buying price without tax
+ * @return	array{0:float,1:float,2:float}	Array of margin info (buying price, marge rate, marque rate)
  */
-function getMarginInfos($pvht, $remise_percent, $tva_tx, $localtax1_tx, $localtax2_tx, $fk_pa, $paht)
+function getMarginInfos($pv_ht, $remise_percent, $tva_tx, $localtax1_tx, $localtax2_tx, $fk_pa, $pa_ht)
 {
 	global $db, $conf;
 
 	$marge_tx_ret = '';
 	$marque_tx_ret = '';
 
-	if ($fk_pa > 0 && empty($paht)) {
+	if ($fk_pa > 0 && empty($pa_ht)) {
 		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 		$product = new ProductFournisseur($db);
 		if ($product->fetch_product_fournisseur_price($fk_pa)) {
-			$paht_ret = $product->fourn_unitprice * (1 - $product->fourn_remise_percent / 100);
+			$pa_ht_ret = $product->fourn_unitprice * (1 - $product->fourn_remise_percent / 100);
 		} else {
-			$paht_ret = $paht;
+			$pa_ht_ret = $pa_ht;
 		}
 	} else {
-		$paht_ret = $paht;
+		$pa_ht_ret = $pa_ht;
 	}
 
 	// Calculate selling unit price including line discount
 	// We don't use calculate_price, because this function is dedicated to calculation of total with accuracy of total. We need an accuracy of a unit price.
 	// Also we must not apply rounding on non decimal rule defined by option MAIN_ROUNDING_RULE_TOT
-	$pu_ht_remise = $pvht * (1 - ($remise_percent / 100));
+	$pu_ht_remise = $pv_ht * (1 - ($remise_percent / 100));
 	$pu_ht_remise = price2num($pu_ht_remise, 'MU');
 
 	// calcul marge
 	if ($pu_ht_remise < 0) {
-		$marge = -1 * (abs($pu_ht_remise) - $paht_ret);
+		$marge = -1 * (abs((float) $pu_ht_remise) - $pa_ht_ret);
 	} else {
-		$marge = $pu_ht_remise - $paht_ret;
+		$marge = (float) $pu_ht_remise - $pa_ht_ret;
 	}
 
 	// calcul taux marge
-	if ($paht_ret != 0) {
-		$marge_tx_ret = (100 * $marge) / $paht_ret;
+	if ($pa_ht_ret != 0) {
+		$marge_tx_ret = (100 * $marge) / $pa_ht_ret;
 	}
 	// calcul taux marque
 	if ($pu_ht_remise != 0) {
-		$marque_tx_ret = (100 * $marge) / $pu_ht_remise;
+		$marque_tx_ret = (100 * $marge) / (float) $pu_ht_remise;
 	}
 
-	return array($paht_ret, $marge_tx_ret, $marque_tx_ret);
+	return array($pa_ht_ret, $marge_tx_ret, $marque_tx_ret);
 }

@@ -101,7 +101,6 @@ DispatchSupplierOrder=Recibiendo orden de compra %s
 FirstApprovalAlreadyDone=Primera aprobación ya hecha
 SecondApprovalAlreadyDone=Segunda aprobación ya hecha
 SupplierOrderReceivedInDolibarr=Pedido de compra %s recibido %s
-SupplierOrderSubmitedInDolibarr=Purchase Order %s submitted (%s)
 SupplierOrderClassifiedBilled=Orden de compra %s conjunto facturado
 TypeContact_commande_internal_SALESREPFOLL=Representante de seguimiento de pedidos de venta.
 TypeContact_commande_internal_SHIPPING=Envío de seguimiento representativo

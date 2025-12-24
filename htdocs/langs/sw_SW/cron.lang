@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
-# About page
-# Right
+# Permissions
 Permission23101 = Soma kazi iliyopangwa
 Permission23102 = Unda/sasisha Kazi iliyoratibiwa
 Permission23103 = Futa Kazi Iliyoratibiwa
@@ -14,7 +13,7 @@ FileToLaunchCronJobs=Mstari wa amri ili kuangalia na kuzindua kazi zilizohitimu 
 CronExplainHowToRunUnix=Kwenye mazingira ya Unix unapaswa kutumia kiingilio kifuatacho cha crontab kuendesha safu ya amri kila dakika 5
 CronExplainHowToRunWin=Kwenye Microsoft(tm) mazingira ya Windows unaweza kutumia zana za Task Iliyoratibiwa kuendesha safu ya amri kila baada ya dakika 5
 CronMethodDoesNotExists=Darasa %s haina mbinu yoyote %s
-CronMethodNotAllowed=Mbinu %s ya darasa %s iko katika orodha nyeusi ya njia zilizokatazwa
+CronMethodNotAllowed=Method %s of class %s is in blocklist of forbidden methods
 CronJobDefDesc=Profaili za kazi za Cron zimefafanuliwa kwenye faili ya maelezo ya moduli. Sehemu inapowashwa, hupakiwa na inapatikana ili uweze kusimamia kazi kutoka kwenye menyu ya zana za msimamizi %s.
 CronJobProfiles=Orodha ya profaili za kazi za cron zilizoainishwa awali
 # Menu
@@ -30,7 +29,8 @@ CronExecute=Zindua sasa
 CronConfirmExecute=Je, una uhakika unataka kutekeleza kazi hizi zilizoratibiwa sasa?
 CronInfo=Moduli ya kazi iliyoratibiwa inaruhusu kupanga kazi ili kuzitekeleza kiotomatiki. Kazi zinaweza pia kuanza kwa mikono.
 CronTask=Kazi
-CronNone=Hakuna
+CronNone=Next run of scheduled task
+CronNotYetRan=Never executed
 CronDtStart=Si kabla
 CronDtEnd=Sio baada
 CronDtNextLaunch=Utekelezaji unaofuata
@@ -49,8 +49,8 @@ CronEach=Kila
 JobFinished=Kazi ilizinduliwa na kumaliza
 Scheduled=Imepangwa
 #Page card
-CronAdd= Ongeza kazi
-CronEvery=Tekeleza kazi kila mmoja
+CronAdd=Ongeza kazi
+CronEvery=Run job every
 CronObject=Mfano/Kitu cha kuunda
 CronArgs=Vigezo
 CronSaveSucess=Imefaulu kuhifadhi
@@ -67,7 +67,7 @@ CronModuleHelp=Jina la saraka ya moduli ya Dolibarr (pia fanya kazi na moduli ya
 CronClassFileHelp=Njia ya jamaa na jina la faili kupakia (njia inahusiana na saraka ya mizizi ya seva ya wavuti). <BR>  Kwa mfano kuita mbinu ya kuleta bidhaa ya Dolibarr htdocs/product/class/ <u> product.class.php </u> , thamani ya jina la faili la darasa ni <br>  <i> product/class/product.class.php </i> 
 CronObjectHelp=Jina la kitu cha kupakia. <BR>  Kwa mfano kupiga simu njia ya kuleta ya bidhaa ya Dolibarr /htdocs/product/class/product.class.php, thamani ya jina la faili la darasa ni <br>  <i> Bidhaa </i> 
 CronMethodHelp=Mbinu ya kipengee cha kuzindua. <BR>  Kwa mfano kupiga simu njia ya kuleta bidhaa ya Dolibarr Product /htdocs/product/class/product.class.php, thamani ya mbinu ni <br>  <i> leta </i> 
-CronArgsHelp=Hoja za mbinu. <BR>  Kwa mfano kupiga simu njia ya kuleta bidhaa ya Dolibarr Product /htdocs/product/class/product.class.php, thamani ya vigezo inaweza kuwa <br>  <i> 0, Ref ya Bidhaa </i> 
+CronArgsHelp=The method arguments. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for parameters can be<br><i>0, ProductRef</i>
 CronCommandHelp=Mstari wa amri ya mfumo wa kutekeleza.
 CronCreateJob=Unda Kazi Mpya Iliyoratibiwa
 CronFrom=Kutoka
@@ -91,6 +91,7 @@ WarningCronDelayed=Tahadhari, kwa madhumuni ya utendakazi, tarehe yoyote inayofu
 DATAPOLICYJob=Kisafishaji data na kitambulisho
 JobXMustBeEnabled=Kazi %s lazima kuwezeshwa
 EmailIfError=Barua pepe kwa onyo juu ya hitilafu
+JobNotFound=Job %s not found in list of jobs (try to disable/enabled module)
 ErrorInBatch=Hitilafu wakati wa kutekeleza kazi %s
 
 # Cron Boxes

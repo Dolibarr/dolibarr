@@ -7,7 +7,7 @@ multicurrency_syncronize_error=Greška pri sinhronizaciji: %s
 MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE=Koristite datum dokumenta da pronađete kurs valute, umesto da koristite najnoviji poznati kurs
 multicurrency_useOriginTx=Kada je objekt kreiran od drugog, zadržite izvornu stopu od izvornog objekta (inače koristite najnoviju poznatu stopu)
 CurrencyLayerAccount=CurrencyLayer API
-CurrencyLayerAccount_help_to_synchronize=Morate kreirati račun na web stranici %s da biste koristili ovu funkciju.<br>Nabavite svoj <b> /span>API ključ<span class='notranslate'></b>.<br>Ako koristite besplatni račun, ne možete promijeniti <b>izvorna valuta</b> (USD prema zadanim postavkama).<br>Ako vaša glavna valuta nije USD, aplikacija će ga automatski ponovo izračunati.<br><br>Ograničeni ste na 1000 sinhronizacija mjesečno.
+CurrencyLayerAccount_help_to_synchronize=You must create an account on website %s to use this functionality.<br>Get your <b>API key</b>.<br>If you use a free account, you can't change the <b>source currency</b> (USD by default).<br>If your main currency is not USD, the application will automatically recalculate it.<br><br>You are limited to 1000 synchronizations per month.
 multicurrency_appId=API ključ
 multicurrency_appCurrencySource=Izvorna valuta
 multicurrency_alternateCurrencySource=Alternativni izvor valute

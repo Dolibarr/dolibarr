@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2022   Open-Dsi		<support@open-dsi.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Need to have following variables defined:
+ * Need to have the following variables defined:
  * $object (invoice, order, ...)
  * $conf
  * $langs
@@ -26,10 +28,30 @@
  * $canchangeproduct (0 by default, 1 to allow to change the product if it is a predefined product)
  */
 
+/**
+ * @var CommonObject $this
+ * @var CommonObject $object
+ * @var CommonObjectLine $line
+ * @var Conf $conf
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $action
+ * @var int $i
+ * @var int $num
+ */
+
+'
+@phan-var-force string $action
+@phan-var-force int $i
+@phan-var-force int $num
+';
+
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 // Define colspan for the button 'Add'

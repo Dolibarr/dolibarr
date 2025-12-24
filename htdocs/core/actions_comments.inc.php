@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2011-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +24,20 @@
  *	\file			htdocs/core/actions_comments.inc.php
  *  \brief			Code for actions on comments pages
  */
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $contextpage
+ */
 
+// Next should be define in the including php source file
+'
+@phan-var-force int $withproject
+@phan-var-force int $idcomment
+';
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/comment.class.php';
 
@@ -38,7 +53,7 @@ if ($action == 'addcomment') {
 	if (!empty($description)) {
 		$comment->description = $description;
 		$comment->datec = dol_now();
-		$comment->fk_element = GETPOST('id', 'int');
+		$comment->fk_element = GETPOSTINT('id');
 		$comment->element_type = GETPOST('comment_element_type', 'alpha');
 		$comment->fk_user_author = $user->id;
 		$comment->entity = $conf->entity;

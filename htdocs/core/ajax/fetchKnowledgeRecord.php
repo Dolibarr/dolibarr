@@ -1,5 +1,6 @@
 <?php
-/*
+/* Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -15,8 +16,8 @@
  */
 
 /**
- *	\file       /htdocs/core/ajax/fetchKnowledgeRecord.php
- *	\brief      File to make Ajax action on Knowledge Management
+ *	\file       htdocs/core/ajax/fetchKnowledgeRecord.php
+ *	\brief      File to fetch km record
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -35,8 +36,8 @@ if (!defined('NOREQUIRESOC')) {
 if (!defined('NOREQUIREMENU')) {
 	define('NOREQUIREMENU', '1');
 }
-// If there is no need to load and show top and left menu
-if (!empty($_GET['public'])) {	// GETPOST() is not yet defined so we use $_GET
+// If we need access without being logged.
+if (!empty($_GET['public'])) {	// Keep $_GET here. GETPOST() is not yet defined so we use $_GET
 	if (!defined("NOLOGIN")) {
 		define("NOLOGIN", '1');
 	}
@@ -48,6 +49,14 @@ if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
 include '../../main.inc.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $action = GETPOST('action', 'aZ09');
 $idticketgroup = GETPOST('idticketgroup', 'aZ09');
@@ -75,7 +84,7 @@ top_httphead('application/json');
 
 if ($action == "getKnowledgeRecord") {
 	$response = '';
-	$sql = "SELECT kr.rowid, kr.ref, kr.question, kr.answer,kr.url,ctc.code";
+	$sql = "SELECT kr.rowid, kr.ref, kr.question, kr.answer, kr.url, ctc.code";
 	$sql .= " FROM ".MAIN_DB_PREFIX."knowledgemanagement_knowledgerecord as kr ";
 	$sql .= " JOIN ".MAIN_DB_PREFIX."c_ticket_category as ctc ON ctc.rowid = kr.fk_c_ticket_category";
 	$sql .= " WHERE ctc.code = '".$db->escape($idticketgroup)."'";
@@ -93,12 +102,13 @@ if ($action == "getKnowledgeRecord") {
 		$response = array();
 		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
-			$response[] = array('title'=>$obj->question,'ref'=>$obj->ref,'answer'=>dol_escape_htmltag(preg_replace('/\\r|\\r\\n|\\n/', "", $obj->answer)),'url'=>$obj->url);
+			$response[] = array('title' => dol_escape_htmltag($obj->question), 'ref' => dol_escape_htmltag($obj->ref), 'answer' => dol_escape_htmltag(preg_replace('/\\r|\\r\\n|\\n/', "", $obj->answer)), 'url' => $obj->url);
 			$i++;
 		}
 	} else {
 		dol_print_error($db);
 	}
+
 	$response =json_encode($response);
 	echo $response;
 }

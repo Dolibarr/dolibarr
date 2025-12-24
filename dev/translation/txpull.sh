@@ -7,6 +7,8 @@
 # Usage: txpull.sh (all|xx_XX) [-r dolibarr.file] [-f]
 #------------------------------------------------------
 
+# shellcheck disable=2006,2044,2086,2164,2268
+
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 cd $DIR/../..
 
@@ -33,24 +35,24 @@ if [ "x$1" = "xall" ]
 then
 	if [ "x$2" = "x" ]
 	then
-	    echo "tx pull -a"
-	    tx pull -a
-	    
-	    echo "Remove some language directories (not enough translated) like ach, br_FR, en, frp, fy_NL, ..."
-	    rm -fr htdocs/langs/ach
-	    rm -fr htdocs/langs/br_FR
-	    rm -fr htdocs/langs/en
-	    rm -fr htdocs/langs/frp
-	    rm -fr htdocs/langs/fy_NL
-	    
+		echo "tx pull -a"
+		tx pull -a
+
+		echo "Remove some language directories (not enough translated) like ach, br_FR, en, frp, fy_NL, ..."
+		rm -fr htdocs/langs/ach
+		rm -fr htdocs/langs/br_FR
+		rm -fr htdocs/langs/en
+		rm -fr htdocs/langs/frp
+		rm -fr htdocs/langs/fy_NL
+
 	else
 		for dir in `find htdocs/langs/* -type d`
 		do
-		    fic=`basename $dir`
-		    if [ $fic != "en_US" ]
-		    then
-			    echo "tx pull -l $fic $2 $3"
-			    tx pull -l $fic $2 $3
+			fic=`basename $dir`
+			if [ $fic != "en_US" ]
+			then
+				echo "tx pull -l $fic $2 $3"
+				tx pull -l $fic $2 $3
 			fi
 		done
 	fi
@@ -60,7 +62,7 @@ else
 	tx pull -l $1 $2 $3 $4 $5
 fi
 
-echo Think to launch also: 
+echo Think to launch also:
 echo "> dev/tools/fixaltlanguages.sh fix all"
 #echo "For v11: Replace also regex \(.*(sponge|cornas|eratosthene|cyan).*\) with '' on *.lang files"
 

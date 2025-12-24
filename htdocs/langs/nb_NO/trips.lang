@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - trips
+# Dolibarr language file - Source file is en_US - trips.lang
 AUTHOR=Registrert av
 AUTHORPAIEMENT=Betalt av
 AddTrip=Opprett reiseregning
@@ -13,6 +13,8 @@ byEX_EXP=etter linje (begrensning til %s)
 byEX_MON=etter måned (begrensning til %s)
 byEX_YEA=etter år (begrensning til %s)
 CANCEL_USER=Slettet av
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Konto (fra kontoplanen) brukes som standard for "brukere" på utgiftsrapporter
+ACCOUNTING_ACCOUNT_EXPENSEREPORT_Desc=Den dedikerte kontoen som er definert på brukerkortet vil kun brukes til sub-reskontro. Denne vil bli brukt for hovedbok, og også som standardverdien for hovedbokføring hvis ingen dedikert regnskapskonto er definert på brukeren.
 CarCategory=Kjøretøyskategori
 ClassifyRefunded=Klassifisert 'refundert'
 CompanyVisited=Selskap/organisasjon besøkt
@@ -24,7 +26,7 @@ ConfirmPaidTrip=Er du sikker på at du vil endre status på denne utgiftsrapport
 ConfirmRefuseTrip=Er du sikker på at du vil avvise denne utgiftsrapporten?
 ConfirmSaveTrip=Er du sikker på at du vil validere denne utgiftsrapporten?
 ConfirmValideTrip=Er du sikker på at du vil godkjenne denne utgiftsrapporten?
-DATE_CANCEL=Kansellert dato
+DATE_CANCEL=Kanselleringsdato
 DATE_PAIEMENT=Betalt dato
 DATE_REFUS=Avvist dato
 DATE_SAVE=Godkjennelsesdato
@@ -39,7 +41,7 @@ expenseReportCoef=Koeffisient
 expenseReportCoefUndefined=(verdi ikke definert)
 expenseReportOffset=Forskyvning
 expenseReportPrintExample=offset + (d x coef) = %s
-expenseReportRangeDisabled=Område deaktivert - se c_exp_tax_range bibliotek
+expenseReportRangeDisabled=Område deaktivert - se c_exp_tax_range-ordboken
 expenseReportRangeFromTo=fra %d til %d
 expenseReportRangeMoreThan=mer enn %d
 expenseReportTotalForFive=Eksempel med <u> d </u> = 5
@@ -91,9 +93,9 @@ nolimitbyEX_EXP=etter linje (ingen begrensning)
 nolimitbyEX_MON=etter måned (ingen begrensning)
 nolimitbyEX_YEA=etter år (ingen begrensning)
 NoTripsToExportCSV=Ingen reiseregning å eksportere for denne perioden
-NOT_AUTHOR=Reiseregningener ikke opprettet av deg. Operasjonen avbrutt.
+NOT_AUTHOR=Du er ikke forfatteren av denne utgiftsrapporten. Operasjonen avbrutt.
 OnExpense=Utgiftslinje
-PDFStandardExpenseReports=Standardmal for å generere PDF av reiseregning
+PDFStandardExpenseReports=Standard mal for å generere et PDF-dokument for en utgiftsrapport
 PaidTrip=Betal en reiseregning
 REFUSEUR=Avvist av
 RangeIk=Kilometerstand
@@ -103,10 +105,10 @@ ShowExpenseReport=Vis utgiftsrapport
 ShowTrip=Vis utgiftsrapport
 TripCard=Skjema for reiseregninger
 TripId=Reiseregnings - ID
-TripNDF=Informasjon om reiseregning
+TripNDF=Informasjon utgiftsrapport
 TripSociete=Firmainformasjon
 Trips=Reiseregninger
-TripsAndExpenses=Reiseregninger
+TripsAndExpenses=Utgiftsrapporter
 TripsAndExpensesStatistics=Reiseregninger - statistikk
 TypeFees=Avgiftstyper
 UploadANewFileNow=Last opp et nytt dokument nå
@@ -115,6 +117,10 @@ VALIDOR=Godkjent av
 ValidateAndSubmit=Valider og send til godkjenning
 ValidatedWaitingApproval=Validert (venter på godkjenning)
 ValideTrip=Godkjenn reiseregning
+ExpenseReportPayments=Utgiftsrapportbetalinger
+TaxUndefinedForThisCategory = Mva er udefinert for denne kategorien
+errorComputeTtcOnMileageExpense=Feil ved beregning av kjøreutgifter
+ErrorOnlyDraftStatusCanBeDeletedInMassAction=Bare elementer med utkaststatus kan slettes i masseaksjon
 
 ## Dictionary
 EX_BRE=Frokost

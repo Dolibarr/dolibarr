@@ -2,7 +2,7 @@ Module Builder
 ==============
 
 This is a module to provide embedded tools to develop your own application/features inside Dolibarr ERP CRM software.
-It provide tools for module developers to kickstart their project and give an hands-on sample of which features Dolibarr
+It provides tools for module developers to kickstart their project and give an hands-on sample of which features Dolibarr
 has to offer for module development.
 
 If you don't need to develop your own module/application, you just don't need this.

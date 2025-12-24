@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
-# About page
-# Right
+# Permissions
 Permission23101 = خواندن وظایف زمان‌بندی‌شده
 Permission23102 = ساخت/ویرایش  وظایف زمان‌بندی‌شده
 Permission23103 = حذف  وظایف زمان‌بندی‌شده
@@ -14,7 +13,7 @@ FileToLaunchCronJobs=خطفرمان برای بررسی و اجرای وظایف
 CronExplainHowToRunUnix=در فضای لینوکس شما باید ورودی crontab زیر را استفاده کنید تا در هر 5 دقیقه فرمان اجرا شود
 CronExplainHowToRunWin=در فضای مایکروسافت ویندوز شما می‌توانید از ابزارهای وظایف زمان‌بندی شده استفاده کنید تا در هر 5 دقیقه دستور را اجرا کنید
 CronMethodDoesNotExists=Class %s does not contain any method %s
-CronMethodNotAllowed=Method %s of class %s is in blacklist of forbidden methods
+CronMethodNotAllowed=Method %s of class %s is in blocklist of forbidden methods
 CronJobDefDesc=نمایه‌های وظایف زمانی‌بندی شده در فایل توضیح واحد مربوطه تعریف می‌شوند. در هنگامی که این واحد فعال شد، این فایل‌ها بارگذاری شده و در دسترس خواهند بود و در نتیجه شما می‌توانید واظیف را از فهرست ابزارهای مدیر %s مدیریت کنید.
 CronJobProfiles=نمایه‌های از پیش تعیین شدۀ وظایف‌زمان‌بندی‌شده
 # Menu
@@ -30,7 +29,8 @@ CronExecute=Launch now
 CronConfirmExecute=آیا مطمئن هستید می‌خواهید اکنون این وظیفۀ برنامه‌ریزی شده را اجرا کنید؟
 CronInfo=واحد وظایف‌برنامه‌ریزی‌شده  به شما امکان اجرای خودکار و زمان‌بندی‌شدۀ وظایف را می‌دهد. این وظایف همچنین امکان اجرای دلخواه دستی نیز دارند.
 CronTask=وظیفه
-CronNone=هیچ
+CronNone=Next run of scheduled task
+CronNotYetRan=Never executed
 CronDtStart=قبل نیست
 CronDtEnd=بعد نیست
 CronDtNextLaunch=اجرای بعدی
@@ -49,8 +49,8 @@ CronEach=هر
 JobFinished=وظیفه اجرا شده و به سرانجام رسید
 Scheduled=Scheduled
 #Page card
-CronAdd= اضافه‌کردن وظیفه
-CronEvery=اجرای وظیفه در هر
+CronAdd=اضافه‌کردن وظیفه
+CronEvery=Run job every
 CronObject=نمونه/شیء برای ساخت
 CronArgs=مؤلفه‌ها
 CronSaveSucess=ذخیره با موفقیت
@@ -67,7 +67,7 @@ CronModuleHelp=نام فهرست واحدهای Dolibarr (که همچنین با
 CronClassFileHelp=مسیر نسبی و نام فایل برای بارگذاری (مسیر به ریشۀ سرور وب نسبی است).<BR> برای مثال برای فراخوان متند fetch از شیء محصول Dolibarr از htdocs/product/class/<u>product.class.php</u>  استفاده می‌شود، مقدار مربوط به نام فایل کلاس برابر است با: <br><i> product/class/product.class.php </i>
 CronObjectHelp=نام شیء برای بارگذاری. <BR>برای مثال برای فراخوان متد fetch از شیء محصول Dolibarr از /htdocs/product/class/product.class.php استفاده شده، مقدار برای نام فایل کلاس برابر است با <br><i>Product</i>
 CronMethodHelp=نام شیء برای بارگذاری. <BR> برای مثال برای فراخوان متد fetch از شیء محصول Dolibarr از /htdocs/product/class/product.class.php استفاده شده، مقدار برای نام فایل کلاس برابر است با <br><i>fetch</i>
-CronArgsHelp=نشان‌وندهای-آرگومان‌های متد. <BR> برای مثال برای فراخوان یک متد از شیء محصولات Dolibarr از  /htdocs/product/class/product.class.php استفاده می‌شوند، مقادیر برای مؤلفه‌ها-پارامترها می‌تواند به شکل <br><i>0, ProductRef</i> باشد
+CronArgsHelp=The method arguments. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for parameters can be<br><i>0, ProductRef</i>
 CronCommandHelp=خط‌فرمان سامان برای اجرا
 CronCreateJob=ساخت یک وظیفۀ برنامه ریزی شدۀ جدید
 CronFrom=از
@@ -91,6 +91,7 @@ WarningCronDelayed=توجه، برای مقاصد بهینه‌سازی، زما
 DATAPOLICYJob=Data cleaner and anonymizer
 JobXMustBeEnabled=Job %s must be enabled
 EmailIfError=Email for warning on error
+JobNotFound=Job %s not found in list of jobs (try to disable/enabled module)
 ErrorInBatch=Error when running the job %s
 
 # Cron Boxes

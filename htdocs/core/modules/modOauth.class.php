@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2014-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2015-2025  Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,9 +88,9 @@ class modOauth extends DolibarrModules
 
 		$r = 0;
 		// $this->rights[$r][0]     Id permission (unique tous modules confondus)
-		// $this->rights[$r][1]     Libelle par defaut si traduction de cle "PermissionXXX" non trouvee (XXX = Id permission)
+		// $this->rights[$r][1]     Libelle par default si traduction de cle "PermissionXXX" non trouvee (XXX = Id permission)
 		// $this->rights[$r][2]     Non utilise
-		// $this->rights[$r][3]     1=Permis par defaut, 0=Non permis par defaut
+		// $this->rights[$r][3]     1=Permis par default, 0=Non permis par default
 		// $this->rights[$r][4]     Niveau 1 pour nommer permission dans code
 		// $this->rights[$r][5]     Niveau 2 pour nommer permission dans code
 
@@ -113,7 +114,7 @@ class modOauth extends DolibarrModules
 		//                        'langs'=>'oauth',            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 		//                        'position'=>300,
 		//                        'enabled'=>'$conf->oauth->enabled && preg_match(\'/^(admintools|all)/\',$leftmenu)',
-		//                        'perms'=>'$user->rights->oauth->read',    // Use 'perms'=>'1' if you want your menu with no permission rules
+		//                        'perms'=>'$user->hasRight("oauth", "read")',    // Use 'perms'=>'1' if you want your menu with no permission rules
 		//                        'target'=>'',
 		//                        'user'=>0);                     // 0=Menu for internal users, 1=external users, 2=both
 
@@ -131,8 +132,6 @@ class modOauth extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
-		global $conf;
-
 		// Clean before activation
 		$this->remove($options);
 

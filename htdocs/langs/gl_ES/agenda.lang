@@ -2,6 +2,7 @@
 IdAgenda=ID de evento
 Actions=Eventos
 Agenda=Axenda
+AgendaEvents=Agenda de eventos
 TMenuAgenda=Axenda
 Agendas=Axendas
 LocalAgenda=Calendario por defecto
@@ -21,7 +22,6 @@ MenuDoneMyActions=Meus eventos rematados
 ListOfEvents=Listaxe de eventos (calendario por defecto)
 ActionsAskedBy=Eventos rexistrados por
 ActionsToDoBy=Eventos asignados a
-ActionsDoneBy=Eventos realizados por
 ActionAssignedTo=Evento asignado a
 ViewCal=Vista mensual
 ViewDay=Vista diaria
@@ -34,6 +34,7 @@ AgendaSetupOtherDesc= Esta páxina ten opcións que permiten a configuración da
 AgendaExtSitesDesc=Esta páxina permite configurar fontes externas de calendarios para ver os seus eventos dentro da axenda Dolibarr.
 ActionsEvents=Eventos para que Dolibarr cre unha acción na axenda automáticamente
 EventRemindersByEmailNotEnabled=Lembranzas de eventos por correo non foron activados na configuración do módulo %s.
+EventRemindersBySmsNotEnabled=Os recordatorios de eventos por SMS non estaban activados na configuración do módulo %s.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Terceiro %s creado
 COMPANY_MODIFYInDolibarr=Terceiro %s modificado
@@ -45,12 +46,13 @@ PropalClosedRefusedInDolibarr=Orzamento %s rexeitado
 PropalValidatedInDolibarr=Orzamento %s validado
 PropalBackToDraftInDolibarr=O orzamento %s volve ao estado de borrador
 PropalClassifiedBilledInDolibarr=Orzamento %s clasificado como facturado
+InvoiceCreatedInDolibarr=Creouse a factura %s
 InvoiceValidatedInDolibarr=Factura %s validada
 InvoiceValidatedInDolibarrFromPos=Factura %s validada desde TPV
 InvoiceBackToDraftInDolibarr=Factura %s de volta a borrador
 InvoiceDeleteDolibarr=Factura %s eliminada
 InvoicePaidInDolibarr=Factura %s cambiada a pagada
-InvoiceCanceledInDolibarr=Factura %s cancelada
+InvoiceCanceledInDolibarr=Factura %s anulada
 MemberValidatedInDolibarr=Membro %s validado
 MemberModifiedInDolibarr=Membro %s modificado
 MemberResiliatedInDolibarr=Membro %s rematado
@@ -135,12 +137,14 @@ AgendaModelModule=Padróns de documentos para eventos
 DateActionStart=Data de inicio
 DateActionEnd=Data finalización
 AgendaUrlOptions1=Pode tamén engadir os seguintes parámetros ao filtro de saida:
-AgendaUrlOptions3=<b>logina=%s</b> para restrinxir saída as accións pertencentes ao usuario <b>%s</b>.
-AgendaUrlOptionsNotAdmin=<b> logina =!%s</b> para restrinxir saída as accións que non pertencen ao usuario <b>%s</b>.
+AgendaUrlOptions3=<b>logina=%s</b> para restrinxir a saída ás accións propias dun usuario <b>%s</b> (utilice<b> logina=!%s</b> para eventos que non son propiedade do usuario).
 AgendaUrlOptions4=<b>logint=%s</b>para restrinxir saída as accións asignadas ao usuario <b>%s</b>(propietario e outros).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> para restrinxir saída de accións asociadas ao proxecto <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype = systemauto</b> para excluir o evento automáticamente.
+AgendaUrlOptionsType=<b>actiontype=%s</b> para obter eventos automáticos ou manuais
+AgendaUrlOptionsCode=<b>actioncode=%s</b> para obter só eventos cun código determinado
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> a incluir eventos de vacacións.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> para limitar aos eventos dos últimos %s días (o predeterminado é %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> para limitar aos últimos 50 eventos recentes (o valor predeterminado e máximo é  %s).
 AgendaShowBirthdayEvents=Aniversarios dos contactos
 AgendaHideBirthdayEvents=Ocultar cumpreanos dos contactos
 Busy=Ocupado
@@ -201,4 +205,9 @@ AppointmentDuration = Duración da cita: %s
 BookingSuccessfullyBooked=A súa reserva foi gardada
 BookingReservationHourAfter=Confirmamos a reserva da súa reunión na data %s
 BookcalBookingTitle=Cita en liña
-Transparency = Transparency
+Transparency = Transparencia
+ReadMore = Ler máis
+ReadLess = Ler menos
+RecurringEvent=Evento recorrente
+EventPartOfARecurringSerie=O evento forma parte dunha serie recorrente co ID %s
+BookCalSystem=Reserva en liña

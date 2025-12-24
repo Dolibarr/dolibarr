@@ -1,4 +1,33 @@
 <?php
+/* Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/**
+ * @var int $colspan
+ * @var string $action
+ * @var string $filenamelinked
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var CommonObject $object
+ * @var Translate $langs
+ */
+'
+@phan-var-force int $colspan
+';
 
 // Add line to select existing file
 if (!getDolGlobalString('EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES')) {
@@ -27,6 +56,7 @@ if (!getDolGlobalString('EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES')) {
 		$maxheightmini = 48;
 		$relativepath = (!empty($object->ref) ? dol_sanitizeFileName($object->ref) : '').'/';
 		$filei = 0;
+		$minifile = null;
 		// Loop on each attached file
 		foreach ($arrayoffiles as $file) {
 			$urlforhref = array();
@@ -39,7 +69,7 @@ if (!getDolGlobalString('EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES')) {
 				//print $file['path'].'/'.$minifile.'<br>';
 				$urlforhref = getAdvancedPreviewUrl($modulepart, $relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']), 1, '&entity='.(empty($object->entity) ? $conf->entity : $object->entity));
 				if (empty($urlforhref)) {
-					$urlforhref = DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(empty($object->entity) ? $conf->entity : $object->entity).'&file='.urlencode($fileinfo['relativename'].'.'.strtolower($fileinfo['extension']));
+					$urlforhref = DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(empty($object->entity) ? $conf->entity : $object->entity).'&file='.urlencode($file['relativename'].'.'.strtolower($fileinfo['extension']));
 					print '<a href="'.$urlforhref.'" class="aphoto" target="_blank" rel="noopener noreferrer">';
 				} else {
 					print '<a href="'.$urlforhref['url'].'" class="'.$urlforhref['css'].'" target="'.$urlforhref['target'].'" mime="'.$urlforhref['mime'].'">';
@@ -62,7 +92,7 @@ if (!getDolGlobalString('EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES')) {
 					$pdfexists = file_exists($filepdf);
 
 					if ($pdfexists) {
-						// Conversion du PDF en image png si fichier png non existant
+						// Conversion du PDF en image png si fichier png non existent
 						if (!file_exists($fileimage) || (filemtime($fileimage) < filemtime($filepdf))) {
 							if (!getDolGlobalString('MAIN_DISABLE_PDF_THUMBS')) {		// If you experience trouble with pdf thumb generation and imagick, you can disable here.
 								include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -93,7 +123,8 @@ if (!getDolGlobalString('EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES')) {
 				}
 				print '<div class="photoref backgroundblank">';
 
-				print $thumbshown ? $thumbshown : img_mime($minifile);
+				// TODO: Check that $minifile has a proper value here (set in true part of if, not else part).
+				print $thumbshown ? $thumbshown : (empty($minifile) ? '' : img_mime($minifile));
 
 				print '</div>';
 				if (empty($urlforhref) || empty($thumbshown)) {
@@ -150,7 +181,7 @@ if (!getDolGlobalString('EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES')) {
 			print '<td></td>';
 		}
 		print '<td colspan="'.($newcolspan).'">';
-		print '<span class="opacitymedium">'.$langs->trans("NoFilesUploadedYet").'</span>';
+		print '<span class="opacitymedium">'.$langs->trans("NoFilesUploadedYet").'...</span>';
 		print '</td></tr>';
 	}
 }

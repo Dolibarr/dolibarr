@@ -12,6 +12,7 @@ YourEMail=ອີເມວເພື່ອຮັບການຢືນຢັນກ�
 STRIPE_PAYONLINE_SENDEMAIL=ແຈ້ງອີເມລ after ຫຼັງຈາກການພະຍາຍາມຊໍາລະເງິນ (ສໍາເລັດຫຼືຫຼົ້ມເຫຼວ)
 Creditor=ເຈົ້າ ໜີ້
 PaymentCode=ລະຫັດການຊໍາລະເງິນ
+StripeAutoRecordPayout=Enable the auto recording of bank transfer (when Stripe is doing a payout and is calling the webhook IPN payout.create/payout.paid)
 StripeDoPayment=ຈ່າຍດ້ວຍ Stripe
 YouWillBeRedirectedOnStripe=ເຈົ້າຈະຖືກປ່ຽນເສັ້ນທາງໄປທີ່ ໜ້າ Stripe ທີ່ປອດໄພເພື່ອປ້ອນຂໍ້ມູນບັດເຄຣດິດເຂົ້າເຈົ້າ
 Continue=ຕໍ່ໄປ
@@ -22,7 +23,8 @@ ToOfferALinkForOnlinePaymentOnContractLine=URL ເພື່ອສະ ເໜີ %
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL ເພື່ອສະ ເໜີ %s ໜ້າ ການຊໍາລະເງິນອອນໄລນ of ຂອງຈໍານວນໃດ ໜຶ່ງ ທີ່ບໍ່ມີວັດຖຸທີ່ມີຢູ່ແລ້ວ
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL ເພື່ອສະ ເໜີ %s ໜ້າ ການຊໍາລະເງິນອອນໄລນ for ສໍາລັບການສະmemberັກສະມາຊິກ
 ToOfferALinkForOnlinePaymentOnDonation=URL ເພື່ອສະ ເໜີ %s ໜ້າ ການຊໍາລະເງິນອອນໄລນ for ສໍາລັບການຊໍາລະເງິນບໍລິຈາກ
-YouCanAddTagOnUrl=ເຈົ້າສາມາດເພີ່ມພາລາມິເຕີ url <b> & tag = <i> ຄ່າ </i> </b> ໃສ່ໃນ URL ເຫຼົ່ານັ້ນ (ບັງຄັບໃຊ້ສໍາລັບການຈ່າຍເງິນເທົ່ານັ້ນບໍ່ໄດ້ເຊື່ອມຕໍ່ກັບວັດຖຸ) ເພື່ອເພີ່ມແທັກຄໍາເຫັນການຊໍາລະຂອງເຈົ້າເອງ. <br> ສໍາລັບ URL ຂອງການຊໍາລະທີ່ບໍ່ມີວັດຖຸທີ່ມີຢູ່, ເຈົ້າອາດຈະເພີ່ມພາຣາມິເຕີ <strong> & noidempotency = 1 </strong> ສະນັ້ນການເຊື່ອມຕໍ່ດຽວກັນທີ່ມີແທັກອັນດຽວກັນສາມາດໃຊ້ໄດ້ຫຼາຍຄັ້ງ (ບາງຮູບແບບການຈ່າຍເງິນອາດຈໍາກັດການຊໍາລະເປັນ 1 ສໍາລັບແຕ່ລະລິ້ງທີ່ແຕກຕ່າງກັນໂດຍບໍ່ມີອັນນີ້) ພາລາມິເຕີ)
+YouCanAddTagOnUrl=You can also add url parameter <b>&tag=value</b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
+YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful of failed online payment.
 SetupStripeToHavePaymentCreatedAutomatically=ຕັ້ງຄ່າ Stripe ຂອງເຈົ້າດ້ວຍ url <b> %s </b> ເພື່ອໃຫ້ມີການຊໍາລະເງິນໂດຍອັດຕະໂນມັດເມື່ອຖືກກວດສອບໂດຍ Stripe.
 AccountParameter=ຕົວກໍານົດການບັນຊີ
 UsageParameter=ຕົວກໍານົດການນໍາໃຊ້
@@ -32,6 +34,7 @@ CSSUrlForPaymentForm=url ແຜ່ນສະໄຕລ CSS CSS ສຳ ລັບແ
 NewStripePaymentReceived=ໄດ້ຮັບການຈ່າຍເງິນ Stripe ໃ່
 NewStripePaymentFailed=ການຊໍາລະ Stripe ໃtried່ໄດ້ພະຍາຍາມແຕ່ບໍ່ສໍາເລັດ
 FailedToChargeCard=ຮຽກເກັບເງິນບັດບໍ່ ສຳ ເລັດ
+FailedToChargeSEPA=Failed to charge SEPA
 STRIPE_TEST_SECRET_KEY=ລະຫັດທົດສອບລັບ
 STRIPE_TEST_PUBLISHABLE_KEY=ລະຫັດທົດສອບທີ່ເຜີຍແຜ່ໄດ້
 STRIPE_TEST_WEBHOOK_KEY=ລະຫັດທົດສອບ Webhook
@@ -74,7 +77,18 @@ ClickHereToTryAgain= <a href="%s"> ຄລິກທີ່ນີ້ເພື່ອ
 CreationOfPaymentModeMustBeDoneFromStripeInterface=ເນື່ອງຈາກກົດລະບຽບການກວດສອບລູກຄ້າທີ່ເຂັ້ມແຂງ, ການສ້າງບັດຕ້ອງເຮັດຈາກ Stripe back office. ທ່ານສາມາດຄລິກບ່ອນນີ້ເພື່ອສະຫຼັບບັນທຶກລູກຄ້າ Stripe: %s
 STRIPE_CARD_PRESENT=ບັດປະຈຸບັນສໍາລັບ Stripe Terminals
 TERMINAL_LOCATION=ສະຖານທີ່ (ທີ່ຢູ່) ສໍາລັບ Stripe Terminals
-RequestDirectDebitWithStripe=ຮ້ອງຂໍການຫັກເງິນໂດຍກົງດ້ວຍເສັ້ນດ່າງ
-RequesCreditTransferWithStripe=ຮ້ອງຂໍການໂອນສິນເຊື່ອດ້ວຍ Stripe
-STRIPE_SEPA_DIRECT_DEBIT=ເປີດໃຊ້ການຊໍາລະເດບິດໂດຍກົງຜ່ານ Stripe
+RequestDirectDebitWithStripe=Request SEPA Direct Debit with Stripe
+RequesCreditTransferWithStripe=Make SEPA Credit Transfer with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable SEPA Direct Debit payments with Stripe
+STRIPE_SEPA_CREDIT_TRANSFER=Enable SEPA Credit Transfer payments with Stripe
+STRIPE_KLARNA=Enable the payments using Klarna
+STRIPE_BANCONTACT=Enable the payments using BANCONTACT
+STRIPE_IDEAL=Enable the payments using IDEAL
+STRIPE_GIROPAY=Enable the payments using GIROPAY
+STRIPE_SOFORT=Enable the payments using SOFORT
 StripeConnect_Mode=ໂໝດ Stripe Connect
+ExampleOnlyForBECustomers=Only for belgium customers
+ExampleOnlyForDECustomers=Only for german customers
+ExampleOnlyForNLCustomers=Only for dutch customers
+ExampleOnlyForATBEDEITNLESCustomers=Only for customers from Austria, Belgium, Germany, Italy, Netherlands, Spain
+ListOfSupportedHooksToActivate=List of supported hooks to activate

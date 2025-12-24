@@ -47,6 +47,7 @@ DateContract=Келісім шарт күні
 DateServiceActivate=Қызметті қосу күні
 ListOfServices=Қызметтер тізімі
 ListOfInactiveServices=Белсенді емес қызметтердің тізімі
+ListOfNotExpiredServices=Мерзімі аяқталмаған белсенді қызметтердің тізімі
 ListOfExpiredServices=Мерзімі өткен белсенді қызметтердің тізімі
 ListOfClosedServices=Жабық қызметтер тізімі
 ListOfRunningServices=Іске қосылған қызметтер тізімі

@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2022-2023 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2023-2024	Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,33 +40,9 @@ class mod_lot_free extends ModeleNumRefBatch
 	 */
 
 
-	/**
-	 * @var string model name
-	 */
+	// variables inherited from ModeleNumRefBatch class
 	public $name = 'lot_free';
-
-	/**
-	 * @var string Code modifiable
-	 */
-	public $code_modifiable;
-
-	public $code_modifiable_invalide; // Code modifiable si il est invalide
-
-	public $code_modifiable_null; // Code modifiables si il est null
-
-	public $code_null; // Code facultatif
-
-	/**
-	 * Dolibarr version of the loaded document
-	 * @var string
-	 */
-	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
-
-	/**
-	 * @var int Automatic numbering
-	 */
-	public $code_auto;
-
+	public $version = 'dolibarr';
 
 	/**
 	 *	Constructor
@@ -104,11 +81,11 @@ class mod_lot_free extends ModeleNumRefBatch
 	}
 
 	/**
-	 * Return an example of result returned by getNextValue
+	 * 	Return next free value
 	 *
-	 * @param	Societe		$objsoc	    Object thirdparty
-	 * @param   Productlot	$object		Object we need next value for
-	 * @return	string					Return next value
+	 *  @param	?Societe		$objsoc		Object thirdparty
+	 *  @param  ?Productlot	$object		Object we need next value for
+	 *  @return string|int<-1,0>		Value if OK, <=0 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{

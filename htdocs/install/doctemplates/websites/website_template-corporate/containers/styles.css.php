@@ -5,8 +5,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';
 ob_start();
 if (! headers_sent()) {	/* because file is included inline when in edit mode and we don't want warning */
-	header('Cache-Control: max-age=3600, public, must-revalidate');
-	header('Content-type: text/css');
+header('Cache-Control: max-age=3600, public, must-revalidate');
+header('Content-type: text/css');
 }
 // END PHP ?>
 /* CSS content (all pages) */
@@ -20605,4 +20605,4 @@ html .bodywebsite:not(.lt-ie10) .not-animated {
 }
 <?php // BEGIN PHP
 $tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "css");
-// END PHP ?>
+// END PHP

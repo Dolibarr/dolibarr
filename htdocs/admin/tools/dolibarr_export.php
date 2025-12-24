@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2006-2018	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2006-2021	Regis Houssin		<regis.houssin@inodbox.com>
+/* Copyright (C) 2006-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2021	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +20,9 @@
 /**
  *		\file 		htdocs/admin/tools/dolibarr_export.php
  *		\ingroup	core
- *		\brief      Page to export database
+ *		\brief      Page to export database.
+ *				    See the file export_files.php for code to build a zip of documents
+ *					See the file export.php for code to build a dump file.
  */
 
 // Load Dolibarr environment
@@ -28,13 +31,23 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
+/**
+ * @var string $dolibarr_main_db_name
+ * @var string $dolibarr_main_db_user
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $langs->load("admin");
 
 $action = GETPOST('action', 'aZ09');
 
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (!$sortorder) {
 	$sortorder = "DESC";
 }
@@ -44,7 +57,7 @@ if (!$sortfield) {
 if (empty($page) || $page == -1) {
 	$page = 0;
 }
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $offset = $limit * $page;
 
 if (!$user->admin) {
@@ -90,7 +103,7 @@ $type = $db->type;
 //var_dump($db);
 
 $help_url = 'EN:Backups|FR:Sauvegardes|ES:Copias_de_seguridad';
-llxHeader('', '', $help_url);
+llxHeader('', '', $help_url, '', 0, 0, '', '', '', 'mod-admin page-tools_dolibarr_export');
 
 print '<script type="text/javascript">
 jQuery(document).ready(function() {';
@@ -135,15 +148,14 @@ print "</script>\n";
 $title = $langs->trans("Backup");
 
 print load_fiche_titre($title, '', 'title_setup');
-//print_barre_liste($langs->trans("Backup"), '', '', '', '', '', $langs->trans("BackupDesc",DOL_DATA_ROOT), 0, 0, 'title_setup');
 
 print '<div class="center">';
-print $langs->trans("BackupDesc", DOL_DATA_ROOT);
+print $langs->trans("BackupDesc", 3);
 print '</div>';
 print '<br>';
 
 print "<!-- Dump of a server -->\n";
-print '<form method="post" action="export.php" name="dump">';
+print '<form method="post" action="'.DOL_URL_ROOT.'/admin/tools/export.php" name="dump">';
 print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="export_type" value="server" />';
 print '<input type="hidden" name="page_y" value="" />';
@@ -191,7 +203,7 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 	print '<label for="radio_dump_postgresql">PostgreSQL Dump (pg_dump)</label>';
 	print '</div>';
 } else {
-	print 'No method available with database '.$label;
+	print 'No method available with database '.dol_escape_htmltag($label);
 }
 print '</fieldset>';
 print '</div>';
@@ -238,9 +250,9 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 	if (!getDolGlobalString('SYSTEMTOOLS_MYSQLDUMP')) {
 		$fullpathofmysqldump = $db->getPathOfDump();
 	} else {
-		$fullpathofmysqldump = $conf->global->SYSTEMTOOLS_MYSQLDUMP;
+		$fullpathofmysqldump = getDolGlobalString('SYSTEMTOOLS_MYSQLDUMP');
 	}
-	print '<input type="text" name="mysqldump" style="width: 80%" value="'.$fullpathofmysqldump.'">';
+	print '<input type="text" name="mysqldump" style="width: 80%" value="'.$fullpathofmysqldump.'" spellcheck="false">';
 	print '</fieldset>';
 
 	print '<br>';
@@ -287,14 +299,14 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 
 	$execmethod = 0;
 	if (getDolGlobalString('MAIN_EXEC_USE_POPEN')) {
-		$execmethod = $conf->global->MAIN_EXEC_USE_POPEN;
+		$execmethod = getDolGlobalString('MAIN_EXEC_USE_POPEN');
 	}
 	if (empty($execmethod)) {
 		$execmethod = 1;
 	}
 	if ($execmethod == 1) {
 		// If we use the "exec" method for shell, we ask if we need to use the alternative low memory exec mode.
-		print '<input type="checkbox" name="lowmemorydump" value="yes" id="lowmemorydump"'.((GETPOSTISSET('lowmemorydump') ? GETPOST('lowmemorydump', 'alpha') : getDolGlobalString('MAIN_LOW_MEMORY_DUMP')) ? ' checked="checked"' : '').'" />';
+		print '<input type="checkbox" name="lowmemorydump" value="1" id="lowmemorydump"'.((GETPOSTISSET('lowmemorydump') ? GETPOSTINT('lowmemorydump') : getDolGlobalInt('MAIN_LOW_MEMORY_DUMP')) ? ' checked="checked"' : '').'" />';
 		print '<label for="lowmemorydump">';
 		print $form->textwithpicto($langs->trans('ExportUseLowMemoryMode'), $langs->trans('ExportUseLowMemoryModeHelp'));
 		print '</label>';
@@ -415,7 +427,7 @@ if (in_array($type, array('pgsql'))) {
 	if (!getDolGlobalString('SYSTEMTOOLS_POSTGRESQLDUMP')) {
 		$fullpathofpgdump = $db->getPathOfDump();
 	} else {
-		$fullpathofpgdump = $conf->global->SYSTEMTOOLS_POSTGRESQLDUMP;
+		$fullpathofpgdump = getDolGlobalString('SYSTEMTOOLS_POSTGRESQLDUMP');
 	}
 	print '<br>';
 	print '<input type="text" name="postgresqldump" style="width: 80%" value="'.$fullpathofpgdump.'" />';
@@ -583,7 +595,7 @@ if (!empty($_SESSION["commandbackuplastdone"])) {
 if (!empty($_SESSION["commandbackuptorun"])) {
 	print '<br><span class="warning">'.$langs->trans("YouMustRunCommandFromCommandLineAfterLoginToUser", $dolibarr_main_db_user, $dolibarr_main_db_user).':</span><br>'."\n";
 	print '<textarea id="commandbackuptoruntext" rows="'.ROWS_2.'" class="centpercent">'.$_SESSION["commandbackuptorun"].'</textarea><br>'."\n";
-	print ajax_autoselect("commandbackuptoruntext", 0);
+	print ajax_autoselect("commandbackuptoruntext", '');
 	print '<br>';
 
 	//print $paramclear;
@@ -604,7 +616,7 @@ print "</div> 	<!-- end div fichehalfleft -->\n";
 print '<div id="backupdatabaseright" class="fichehalfright">';
 
 $filearray = dol_dir_list($conf->admin->dir_output.'/backup', 'files', 0, '', '', $sortfield, (strtolower($sortorder) == 'asc' ? SORT_ASC : SORT_DESC), 1);
-$result = $formfile->list_of_documents($filearray, null, 'systemtools', '', 1, 'backup/', 1, 0, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousDumpFiles"), '', 0, -1, '', '', 'ASC', 1, 0, -1, 'style="height:250px; overflow: auto;"');
+$result = $formfile->list_of_documents($filearray, null, 'systemtools', '', 1, 'backup/', 1, 3, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousDumpFiles"), '', 0, -1, '', '', 'ASC', 1, 0, -1, 'style="height:250px; overflow: auto;"');
 print '<br>';
 
 print '</div>';
@@ -617,7 +629,7 @@ $title = $langs->trans("BackupZipWizard");
 print "<br>\n";
 print "<!-- Dump of a server -->\n";
 
-print '<form method="post" action="export_files.php" name="dump">';
+print '<form method="post" action="'.DOL_URL_ROOT.'/admin/tools/export_files.php" name="dump">';
 print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="export_type" value="server" />';
 print '<input type="hidden" name="page_y" value="" />';
@@ -683,7 +695,7 @@ print '</div>';
 print '<div id="backupfileright" class="fichehalfright">';
 
 $filearray = dol_dir_list($conf->admin->dir_output.'/documents', 'files', 0, '', '', $sortfield, (strtolower($sortorder) == 'asc' ? SORT_ASC : SORT_DESC), 1);
-$result = $formfile->list_of_documents($filearray, null, 'systemtools', '', 1, 'documents/', 1, 0, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousArchiveFiles"), '', 0, -1, '', '', 'ASC', 1, 0, -1, 'style="height:250px; overflow: auto;"');
+$result = $formfile->list_of_documents($filearray, null, 'systemtools', '', 1, 'documents/', 1, 3, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousArchiveFiles"), '', 0, -1, '', '', 'ASC', 1, 0, -1, 'style="height:250px; overflow: auto;"');
 print '<br>';
 
 print '</div>';
@@ -692,6 +704,33 @@ print '</fieldset>';
 print '</form>';
 
 print '<br>';
+
+
+print "<br>\n";
+print "<!-- Save setup conf -->\n";
+
+print '<fieldset><legend class="legendforfieldsetstep" style="font-size: 3em">3</legend>';
+
+print '<br>';
+
+print '<span class="opacitymedium">';
+print $langs->trans("BackupDesc4", 'dolibarr_main_dolcrypt_key').'<br>';
+print '</span>';
+
+print '<br>';
+
+print '<div id="backupfileright">';
+
+print $langs->trans("SeeValueIntoConfPhp").'<br>';
+print $langs->trans("SeeValueIntoConfPhp2");
+print '<br>';
+
+print '<br>';
+
+print '</div>';
+
+print '</fieldset>';
+
 
 // End of page
 llxFooter();

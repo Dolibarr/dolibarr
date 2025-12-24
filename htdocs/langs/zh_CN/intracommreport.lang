@@ -1,3 +1,6 @@
+IntraCommReport=内部报表
+IntraCommReports=Intracomm reports
+
 Module68000Name = 内部报表
 Module68000Desc = 内部报表管理（支持法国DEB/DES格式）
 IntracommReportSetup = 内部报表模块设置
@@ -10,14 +13,11 @@ INTRACOMMREPORT_ROLE_ACTEUR=Rôle joué par l'acteur
 INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les introductions
 INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expéditions
 INTRACOMMREPORT_CATEG_FRAISDEPORT=Catégorie de services de type "Frais de port"
-
 INTRACOMMREPORT_NUM_DECLARATION=Numéro de déclarant
-
 # Menu
 MenuIntracommReport=内部报表
 MenuIntracommReportNew=New declaration
 MenuIntracommReportList=名单
-
 # View
 NewDeclaration=New declaration
 Declaration=Declaration
@@ -25,16 +25,14 @@ AnalysisPeriod=Analysis period
 TypeOfDeclaration=Type of declaration
 DEB=Goods exchange declaration (DEB)
 DES=Services exchange declaration (DES)
-
 # Export page
 IntracommReportTitle=Preparation of an XML file in ProDouane format
-
 # List
 IntracommReportList=List of generated declarations
 IntracommReportNumber=Numero of declaration
 IntracommReportPeriod=Period of analysis
 IntracommReportTypeDeclaration=Type of declaration
 IntracommReportDownload=download XML file
-
 # Invoice
 IntracommReportTransportMode=Transport mode
+DeleteIntraCommReport=Delete IntraComm report

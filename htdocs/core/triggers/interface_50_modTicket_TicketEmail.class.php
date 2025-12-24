@@ -1,7 +1,8 @@
 <?php
-/*
- * Copyright (C) 2014-2016  Jean-François Ferry	<hello@librethic.io>
+/* Copyright (C) 2014-2016  Jean-François Ferry	<hello@librethic.io>
  * Copyright (C) 2016       Christophe Battarel <christophe@altairis.fr>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2023-2025	Benjamin Falière	<benjamin@faliere.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,6 +25,7 @@
  *  \brief      File of trigger for ticket module
  */
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 
 
 /**
@@ -43,19 +45,19 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		$this->name = preg_replace('/^Interface/i', '', get_class($this));
 		$this->family = "ticket";
 		$this->description = "Triggers of the module ticket to send notifications to internal users and to third-parties";
-		$this->version = self::VERSION_DOLIBARR; // 'development', 'experimental', 'dolibarr' or version
+		$this->version = self::VERSIONS['prod'];
 		$this->picto = 'ticket';
 	}
 
 	/**
-	 *      Function called when a Dolibarrr business event is done.
+	 *      Function called when a Dolibarr business event is done.
 	 *      All functions "runTrigger" are triggered if file is inside directory htdocs/core/triggers
 	 *
-	 *      @param  string    $action Event action code
-	 *      @param  Ticket    $object Object
-	 *      @param  User      $user   Object user
-	 *      @param  Translate $langs  Object langs
-	 *      @param  conf      $conf   Object conf
+	 *      @param  string    		$action Event action code
+	 *      @param  CommonObject    $object Object
+	 *      @param  User      		$user   Object user
+	 *      @param  Translate 		$langs  Object langs
+	 *      @param  Conf      		$conf   Object conf
 	 *      @return int                     Return integer <0 if KO, 0 if no triggered ran, >0 if OK
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
@@ -64,12 +66,14 @@ class InterfaceTicketEmail extends DolibarrTriggers
 
 		$ok = 0;
 
-		if (empty($conf->ticket) || !isModEnabled('ticket')) {
+		if (!isModEnabled('ticket')) {
 			return 0; // Module not active, we do nothing
 		}
 
 		switch ($action) {
 			case 'TICKET_ASSIGNED':
+				/** @var Ticket $object */
+				'@phan-var-force Ticket $object';
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 				if ($object->fk_user_assign > 0) {
@@ -79,21 +83,15 @@ class InterfaceTicketEmail extends DolibarrTriggers
 						if ($res > 0) {
 							// Send email to notification email
 							if (!getDolGlobalString('TICKET_DISABLE_ALL_MAILS')) {
-								// Init to avoid errors
-								$filepath = array();
-								$filename = array();
-								$mimetype = array();
-
-								$appli = $mysoc->name;
-
 								// Send email to assigned user
 								$sendto = $userstat->email;
 								$subject_assignee = 'TicketAssignedToYou';
 								$body_assignee = 'TicketAssignedEmailBody';
 								$see_ticket_assignee = 'SeeThisTicketIntomanagementInterface';
 
+								$old_MAIN_MAIL_AUTOCOPY_TO = null;  // For static analysis
 								if (getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO')) {
-									$old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
+									$old_MAIN_MAIL_AUTOCOPY_TO = getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO');
 									$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
 								}
 								if (!empty($sendto)) {
@@ -150,6 +148,8 @@ class InterfaceTicketEmail extends DolibarrTriggers
 				break;
 
 			case 'TICKET_CREATE':
+				/** @var Ticket $object */
+				'@phan-var-force Ticket $object';
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 				$langs->load('ticket');
@@ -165,12 +165,22 @@ class InterfaceTicketEmail extends DolibarrTriggers
 				$body_assignee = 'TicketAssignedEmailBody';
 				$see_ticket_assignee = 'SeeThisTicketIntomanagementInterface';
 
+				// We send files that were just uploaded because they were not moved to ticket document directory
+				//@see Ticket::copyFilesForTicket()
+				//@see ticket/card.php call to Ticket::copyFilesForTicket()
+				$formmail = new FormMail($this->db);
+				$formmail->trackid = ('');
+				$attachedfiles = $formmail->get_attached_files();
+				$filepaths = $attachedfiles['paths'];
+				$filenames = $attachedfiles['names'];
+				$mimetypes = $attachedfiles['mimes'];
+
 				// Send email to notification email
+				// Note: $object->context['disableticketemail'] is set to 1 by public interface at creation because email sending is already managed by page
+				// $object->context['createdfrompublicinterface'] may also be defined when creation done from public interface
 				if (getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO') && empty($object->context['disableticketemail'])) {
-					$sendto = !getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO') ? '' : $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
-					if ($sendto) {
-						$this->composeAndSendAdminMessage($sendto, $subject_admin, $body_admin, $object, $langs);
-					}
+					$sendto = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO');
+					$this->composeAndSendAdminMessage($sendto, $subject_admin, $body_admin, $object, $langs, $filepaths, $mimetypes, $filenames);
 				}
 
 				// Send email to assignee if an assignee was set at creation
@@ -182,13 +192,15 @@ class InterfaceTicketEmail extends DolibarrTriggers
 						if (!getDolGlobalString('TICKET_DISABLE_ALL_MAILS')) {
 							// Send email to assigned user
 							$sendto = $userstat->email;
+
+							$old_MAIN_MAIL_AUTOCOPY_TO = '';
 							if (!getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO')) {
-								$old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
+								$old_MAIN_MAIL_AUTOCOPY_TO = getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO');
 								$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
 							}
 
 							if (!empty($sendto)) {
-								$this->composeAndSendAssigneeMessage($sendto, $subject_assignee, $body_assignee, $see_ticket_assignee, $object, $langs);
+								$this->composeAndSendAssigneeMessage($sendto, $subject_assignee, $body_assignee, $see_ticket_assignee, $object, $langs, $filepaths, $mimetypes, $filenames);
 							}
 
 							if (!getDolUserString('TICKET_DISABLE_MAIL_AUTOCOPY_TO')) {
@@ -196,34 +208,36 @@ class InterfaceTicketEmail extends DolibarrTriggers
 							}
 						}
 					} else {
-						$this->error = $userstat->error;
-						$this->errors = $userstat->errors;
+						$this->setErrorsFromObject($userstat);
 					}
 				}
 
 				// Send email to customer
-				if (!getDolGlobalString('TICKET_DISABLE_CUSTOMER_MAILS') && empty($object->context['disableticketemail']) && $object->notify_tiers_at_create) {
+				// Note: $object->context['disableticketemail'] is set to 1 by public interface at creation because email sending is already managed by page
+				// $object->context['createdfrompublicinterface'] may also be defined when creation done from public interface
+				if (empty($object->context['disableticketemail']) && $object->notify_tiers_at_create) {
 					$sendto = '';
 
-					//if contact selected send to email's contact else send to email's thirdparty
+					// if contact selected send to email's contact else send to email's thirdparty
 
-					$contactid = GETPOST('contactid', 'alpha');
+					$contactid = empty($object->context['contact_id']) ? 0 : $object->context['contact_id'];
 					$res = 0;
+					$contactObj = null;
 
 					if (!empty($contactid)) {
-						$contact = new Contact($this->db);
-						$res = $contact->fetch($contactid);
+						$contactObj = new Contact($this->db);
+						$res = $contactObj->fetch($contactid);
 					}
 
-					if ($res > 0 && !empty($contact->email) && !empty($contact->statut)) {
-						$sendto = $contact->email;
+					if ($contactObj !== null && !empty($contactObj->email) && !empty($contactObj->statut)) {
+						$sendto = $contactObj->email;
 					} elseif (!empty($object->fk_soc)) {
 						$object->fetch_thirdparty();
 						$sendto = $object->thirdparty->email;
 					}
 
 					if ($sendto) {
-						$this->composeAndSendCustomerMessage($sendto, $subject_customer, $body_customer, $see_ticket_customer, $object, $langs);
+						$this->composeAndSendCustomerMessage($sendto, $subject_customer, $body_customer, $see_ticket_customer, $object, $langs, $filepaths, $mimetypes, $filenames);
 					}
 				}
 
@@ -231,14 +245,20 @@ class InterfaceTicketEmail extends DolibarrTriggers
 				break;
 
 			case 'TICKET_DELETE':
+				/** @var Ticket $object */
+				'@phan-var-force Ticket $object';
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 				break;
 
 			case 'TICKET_MODIFY':
+				/** @var Ticket $object */
+				'@phan-var-force Ticket $object';
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 				break;
 
 			case 'TICKET_CLOSE':
+				/** @var Ticket $object */
+				'@phan-var-force Ticket $object';
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 				$langs->load('ticket');
 
@@ -249,15 +269,17 @@ class InterfaceTicketEmail extends DolibarrTriggers
 				$see_ticket_customer = 'TicketCloseEmailBodyInfosTrackUrlCustomer';
 
 				// Send email to notification email
+				// Note: $object->context['disableticketemail'] is set to 1 by public interface at creation but not at closing
 				if (getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO') && empty($object->context['disableticketemail'])) {
-					$sendto = !getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO') ? '' : $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
-					if ($sendto) {
-						$this->composeAndSendAdminMessage($sendto, $subject_admin, $body_admin, $object, $langs);
-					}
+					$sendto = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO');
+					// if ($sendto) { // already test, can't be empty
+					$this->composeAndSendAdminMessage($sendto, $subject_admin, $body_admin, $object, $langs);
+					// }
 				}
 
 				// Send email to customer.
-				if (!getDolGlobalString('TICKET_DISABLE_CUSTOMER_MAILS') && empty($object->context['disableticketemail'])) {
+				// Note: $object->context['disableticketemail'] is set to 1 by public interface at creation but not at closing
+				if (empty($object->context['disableticketemail'])) {
 					$linked_contacts = $object->listeContact(-1, 'thirdparty');
 					$linked_contacts = array_merge($linked_contacts, $object->listeContact(-1, 'internal'));
 					if (empty($linked_contacts) && getDolGlobalString('TICKET_NOTIFY_AT_CLOSING') && !empty($object->fk_soc)) {
@@ -265,15 +287,43 @@ class InterfaceTicketEmail extends DolibarrTriggers
 						$linked_contacts[]['email'] = $object->thirdparty->email;
 					}
 
-					$contactid = GETPOST('contactid', 'int');
+					$contactid = empty($object->context['contact_id']) ? 0 : $object->context['contact_id'];
 					$res = 0;
+					$contactObj = null;
 
 					if ($contactid > 0) {
-						// TODO This security test has no sens. We must check that $contactid is inside $linked_contacts[]['id'] when $linked_contacts[]['source'] = 'external' or 'thirdparty'
-						// Refuse email if not
-						$contact = new Contact($this->db);
-						$res = $contact->fetch($contactid);
-						if (! in_array($contact, $linked_contacts)) {
+						// Security test:
+						// Check that $contactid is inside $linked_contacts[]['id'] when $linked_contacts[]['source'] = 'external' or 'thirdparty'
+						$is_linked_contact_id = in_array(
+							$contactid,
+							array_column(  // Get 'id' value from contacts (that are external or thirdparty)
+								array_filter(  // Filter contacts with 'external' or 'thirdparty' source:
+									$linked_contacts,
+									/**
+									 * Return if contact source is external or thirdparty
+									 *
+									 * @param array{source:string,id:int,rowid:int,email:string,civility:string,firstname:string,lastname:string,labeltype:string,libelle:string,socid:int,code:string,status:int,statuscontact:int,fk_c_typecontact:int,phone:string,phone_mobile:string,phone_perso?:string,nom:string} $contact
+									 * @return bool
+									 */
+									static function ($contact) {
+										return in_array($contact['source'], ['external', 'thirdparty']);
+									}
+								),
+								'id'
+							)
+						);
+
+						if ($is_linked_contact_id) {
+							// Seems accepted contact, try to fetch it.
+							$contactObj = new Contact($this->db);
+							$res = $contactObj->fetch($contactid);
+							if ($res <= 0) {
+								// Could not fetch contact, so bad contact anyway (should not happen)
+								$contactObj = null;
+							}
+						}
+
+						if ($contactObj === null) {
 							$error_msg = $langs->trans('Error'). ': ';
 							$error_msg .= $langs->transnoentities('TicketWrongContact');
 							setEventMessages($error_msg, [], 'errors');
@@ -283,8 +333,8 @@ class InterfaceTicketEmail extends DolibarrTriggers
 					}
 
 					$sendto = '';
-					if ($res > 0 && !empty($contact->email) && !empty($contact->statut)) {
-						$sendto = $contact->email;
+					if ($contactObj !== null && !empty($contactObj->email) && !empty($contactObj->statut)) {
+						$sendto = $contactObj->email;
 					} elseif (!empty($linked_contacts) && ($contactid == -2 || (GETPOST('massaction', 'alpha') == 'close' && GETPOST('confirm', 'alpha') == 'yes'))) {
 						// if sending to all contacts or sending to contacts while mass closing
 						$temp_emails = [];
@@ -312,18 +362,16 @@ class InterfaceTicketEmail extends DolibarrTriggers
 	 * @param string 	$sendto			Addresses to send the mail, format "first@address.net, second@address.net," etc.
 	 * @param string 	$base_subject	email subject. Non-translated string.
 	 * @param string 	$body			email body (first line). Non-translated string.
-	 * @param Ticket 	$object			the ticket thet the email refers to
+	 * @param Ticket 	$object			the ticket that the email refers to
 	 * @param Translate $langs			the translation object
+	 * @param array<string> 	$filepaths		File paths
+	 * @param array<string> 	$mimetypes		Mime types
+	 * @param array<string> 	$filenames		File names
 	 * @return void
 	 */
-	private function composeAndSendAdminMessage($sendto, $base_subject, $body, Ticket $object, Translate $langs)
+	private function composeAndSendAdminMessage($sendto, $base_subject, $body, Ticket $object, Translate $langs, $filepaths = array(), $mimetypes = array(), $filenames = array())
 	{
 		global $conf, $mysoc;
-
-		// Init to avoid errors
-		$filepath = array();
-		$filename = array();
-		$mimetype = array();
 
 		$appli = $mysoc->name;
 
@@ -357,16 +405,17 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		$message_admin .= '<p>'.$langs->trans('Message').' : <br><br>'.$message.'</p><br>';
 		$message_admin .= '<p><a href="'.dol_buildpath('/ticket/card.php', 2).'?track_id='.$object->track_id.'">'.$langs->trans('SeeThisTicketIntomanagementInterface').'</a></p>';
 
-		$from = getDolGlobalString('MAIN_INFO_SOCIETE_NOM') . '<' . getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM').'>';
+		$from = (getDolGlobalString('MAIN_INFO_SOCIETE_NOM') ? getDolGlobalString('MAIN_INFO_SOCIETE_NOM') . ' ' : '') . '<' . getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM').'>';
 
 		$trackid = 'tic'.$object->id;
 
+		$old_MAIN_MAIL_AUTOCOPY_TO = null;
 		if (getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO')) {
-			$old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
+			$old_MAIN_MAIL_AUTOCOPY_TO = getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO');
 			$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
 		}
 		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-		$mailfile = new CMailFile($subject, $sendto, $from, $message_admin, $filepath, $mimetype, $filename, '', '', 0, -1, '', '', $trackid, '', 'ticket');
+		$mailfile = new CMailFile($subject, $sendto, $from, $message_admin, $filepaths, $mimetypes, $filenames, '', '', 0, -1, '', '', $trackid, '', 'ticket');
 		if ($mailfile->error) {
 			dol_syslog($mailfile->error, LOG_DEBUG);
 		} else {
@@ -384,18 +433,16 @@ class InterfaceTicketEmail extends DolibarrTriggers
 	 * @param string 	$base_subject	email subject. Non-translated string.
 	 * @param string	$body			email body (first line). Non-translated string.
 	 * @param string 	$see_ticket		string indicating the ticket public address
-	 * @param Ticket 	$object			the ticket thet the email refers to
+	 * @param Ticket 	$object			the ticket that the email refers to
 	 * @param Translate $langs			the translation object
+	 * @param array<string> 	$filepaths		File paths
+	 * @param array<string> 	$mimetypes		Mime types
+	 * @param array<string> 	$filenames		File names
 	 * @return void
 	 */
-	private function composeAndSendCustomerMessage($sendto, $base_subject, $body, $see_ticket, Ticket $object, Translate $langs)
+	private function composeAndSendCustomerMessage($sendto, $base_subject, $body, $see_ticket, Ticket $object, Translate $langs, $filepaths = array(), $mimetypes = array(), $filenames = array())
 	{
 		global $conf, $extrafields, $mysoc, $user;
-
-		// Init to avoid errors
-		$filepath = array();
-		$filename = array();
-		$mimetype = array();
 
 		$appli = $mysoc->name;
 
@@ -411,11 +458,11 @@ class InterfaceTicketEmail extends DolibarrTriggers
 			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $value) {
 				$enabled = 1;
 				if ($enabled && isset($extrafields->attributes[$object->table_element]['list'][$key])) {
-					$enabled = dol_eval($extrafields->attributes[$object->table_element]['list'][$key], 1);
+					$enabled = (int) dol_eval((string) $extrafields->attributes[$object->table_element]['list'][$key], 1);
 				}
 				$perms = 1;
 				if ($perms && isset($extrafields->attributes[$object->table_element]['perms'][$key])) {
-					$perms = dol_eval($extrafields->attributes[$object->table_element]['perms'][$key], 1);
+					$perms = (int) dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][$key], 1);
 				}
 
 				$qualified = true;
@@ -448,18 +495,18 @@ class InterfaceTicketEmail extends DolibarrTriggers
 			$message_customer .= '<p>'.$langs->trans('TicketEmailPleaseDoNotReplyToThisEmailNoInterface').'</p>';
 		}
 
-		$from = (!getDolGlobalString('MAIN_INFO_SOCIETE_NOM') ? '' : getDolGlobalString('MAIN_INFO_SOCIETE_NOM') . ' ').'<' . getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM').'>';
+		$from = (getDolGlobalString('MAIN_INFO_SOCIETE_NOM') ? getDolGlobalString('MAIN_INFO_SOCIETE_NOM') . ' ' : '').'<' . getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM').'>';
 
 		$trackid = 'tic'.$object->id;
 
-		$old_MAIN_MAIL_AUTOCOPY_TO = getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO');
-
+		$old_MAIN_MAIL_AUTOCOPY_TO = null;
 		if (getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO')) {
+			$old_MAIN_MAIL_AUTOCOPY_TO = getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO');
 			$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
 		}
 
 		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-		$mailfile = new CMailFile($subject, $sendto, $from, $message_customer, $filepath, $mimetype, $filename, '', '', 0, -1, '', '', $trackid, '', 'ticket');
+		$mailfile = new CMailFile($subject, $sendto, $from, $message_customer, $filepaths, $mimetypes, $filenames, '', '', 0, -1, '', '', $trackid, '', 'ticket');
 		if ($mailfile->error) {
 			dol_syslog($mailfile->error, LOG_DEBUG);
 		} else {
@@ -483,18 +530,16 @@ class InterfaceTicketEmail extends DolibarrTriggers
 	 * @param string 	$base_subject	email subject. Non-translated string.
 	 * @param string	$body			email body (first line). Non-translated string.
 	 * @param string 	$see_ticket		string indicating the ticket public address
-	 * @param Ticket 	$object			the ticket thet the email refers to
+	 * @param Ticket 	$object			the ticket that the email refers to
 	 * @param Translate $langs			the translation object
+	 * @param array<string> 	$filepaths		File paths
+	 * @param array<string> 	$mimetypes		Mime types
+	 * @param array<string> 	$filenames		File names
 	 * @return void
 	 */
-	private function composeAndSendAssigneeMessage($sendto, $base_subject, $body, $see_ticket, Ticket $object, Translate $langs)
+	private function composeAndSendAssigneeMessage($sendto, $base_subject, $body, $see_ticket, Ticket $object, Translate $langs, $filepaths = array(), $mimetypes = array(), $filenames = array())
 	{
 		global $conf, $user, $mysoc;
-
-		// Init to avoid errors
-		$filepath = array();
-		$filename = array();
-		$mimetype = array();
 
 		// Send email to assigned user
 		$appli = $mysoc->name;
@@ -527,7 +572,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		}
 
 		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-		$mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, '', '', 0, -1);
+		$mailfile = new CMailFile($subject, $sendto, $from, $message, $filepaths, $mimetypes, $filenames, '', '', 0, -1);
 		if ($mailfile->error) {
 			setEventMessages($mailfile->error, $mailfile->errors, 'errors');
 		} else {

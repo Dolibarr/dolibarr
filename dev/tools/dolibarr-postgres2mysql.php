@@ -3,6 +3,7 @@
 /*
  * Copyright (C) 2005-2011 James Grant 			<james@lightbox.org> 			Lightbox Technologies Inc.
  * Copyright (C) 2020 	   Laurent Destailleur 	<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -95,7 +96,7 @@ function getfieldname($l)
  * formatsize
  *
  * @param  string $s Size to format
- * @return string      Formated size
+ * @return string      Formatted size
  */
 function formatsize($s)
 {
@@ -417,9 +418,9 @@ function pg2mysql(&$input, &$arrayofprimaryalreadyintabledef, $header = true)
 
 				$before = str_replace("\"", "`", $before);
 
-				// in after, we need to watch out for escape format strings, ie (E'escaped \r in a string'), and ('bla',E'escaped \r in a string'), but could also be (number, E'string'); so we cant search for the previoous '
+				// in after, we need to watch out for escape format strings, ie (E'escaped \r in a string'), and ('bla',E'escaped \r in a string'), but could also be (number, E'string'); so we can't search for the previous '
 				// ugh i guess its possible these strings could exist IN the data as well, but the only way to solve that is to process these lines one character
-				// at a time, and thats just stupid, so lets just hope this doesnt appear anywhere in the actual data
+				// at a time, and that's just stupid, so let's just hope this doesn't appear anywhere in the actual data
 				$after = str_replace(" (E'", " ('", $after);
 				$after = str_replace(", E'", ", '", $after);
 
@@ -439,7 +440,7 @@ function pg2mysql(&$input, &$arrayofprimaryalreadyintabledef, $header = true)
 
 				// in after, we need to watch out for escape format strings, ie (E'escaped \r in a string'), and ('bla',E'escaped \r in a string')
 				// ugh i guess its possible these strings could exist IN the data as well, but the only way to solve that is to process these lines one character
-				// at a time, and thats just stupid, so lets just hope this doesnt appear anywhere in the actual data
+				// at a time, and that's just stupid, so let's just hope this doesn't appear anywhere in the actual data
 				$after = str_replace(" (E'", " ('", $after);
 				$after = str_replace(", E'", ", '", $after);
 
@@ -457,9 +458,9 @@ function pg2mysql(&$input, &$arrayofprimaryalreadyintabledef, $header = true)
 
 					// in after, we need to watch out for escape format strings, ie (E'escaped \r in a string'), and ('bla',E'escaped \r in a string')
 					// ugh i guess its possible these strings could exist IN the data as well, but the only way to solve that is to process these lines one character
-					// at a time, and thats just stupid, so lets just hope this doesnt appear anywhere in the actual data
+					// at a time, and that's just stupid, so let's just hope this doesn't appear anywhere in the actual data
 
-					// after the first line, we only need to check for it in the middle, not at the beginning of an insert (becuase the beginning will be on the first line)
+					// after the first line, we only need to check for it in the middle, not at the beginning of an insert (because the beginning will be on the first line)
 					// $after=str_replace(" (E'","' ('",$after);
 					$line = $lines[$linenumber];
 					$line = str_replace("', E'", "', '", $line);
@@ -497,7 +498,7 @@ function pg2mysql(&$input, &$arrayofprimaryalreadyintabledef, $header = true)
 				$reg2 = array();
 				if (preg_match('/ALTER TABLE ([^\s]+)/', $pkey, $reg2)) {
 					if (empty($arrayofprimaryalreadyintabledef[$reg2[1]])) {
-						// looks like we have a single line PRIMARY KEY definition, lets go ahead and add it
+						// looks like we have a single line PRIMARY KEY definition, let's go ahead and add it
 						$output .= str_replace("\n", "", $pkey);
 						// the postgres and mysql syntax for this is (at least, in the example im looking at)
 						// identical, so we can just add it as is.

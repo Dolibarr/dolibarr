@@ -24,7 +24,7 @@
 -- Notes
 --
 -- Do not place a comment at the end of the line, this file is parsed when
--- of the install and all the acronyms '-' are removed. 
+-- of the install and all the acronyms '-' are removed.
 --
 -- Ne pas placer de commentaire en fin de ligne, ce fichier est parsé lors
 -- de l'install et tous les sigles '--' sont supprimés.
@@ -33,10 +33,10 @@
 --
 -- The types of contact of an element
 --
--- The unique key is set on (element, source, code) 
+-- The unique key is set on (element, source, code)
 --
 
--- Contract / Contrat 
+-- Contract / Contrat
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('contrat', 'internal', 'SALESREPSIGN',  'Commercial signataire du contrat', 1);
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('contrat', 'internal', 'SALESREPFOLL',  'Commercial suivi du contrat', 1);
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('contrat', 'external', 'BILLING',       'Contact client facturation contrat', 1);
@@ -73,6 +73,13 @@ insert into llx_c_type_contact (element, source, code, libelle, active ) values 
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('commande', 'external', 'CUSTOMER',      'Contact client suivi commande', 1);
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('commande', 'external', 'SHIPPING',      'Contact client livraison commande', 1);
 
+-- Shipment / Expedition
+insert into llx_c_type_contact (element, source, code, libelle, active ) values ('shipping', 'internal', 'SALESREPFOLL',  'Representative following-up shipping', 1);
+INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES ('shipping', 'external', 'BILLING',       'Customer invoice contact', 1);
+insert into llx_c_type_contact (element, source, code, libelle, active ) values ('shipping', 'external', 'CUSTOMER',      'Customer shipping contact', 1);
+insert into llx_c_type_contact (element, source, code, libelle, active ) values ('shipping', 'external', 'SHIPPING',      'Loading facility', 1);
+insert into llx_c_type_contact (element, source, code, libelle, active ) values ('shipping', 'external', 'DELIVERY',      'Delivery facility', 1);
+
 -- Intervention / Fichinter
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('fichinter', 'internal', 'INTERREPFOLL',  'Responsable suivi de l''intervention', 1);
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('fichinter', 'internal', 'INTERVENING',   'Intervenant', 1);
@@ -96,6 +103,12 @@ insert into llx_c_type_contact (element, source, code, libelle, active, module) 
 insert into llx_c_type_contact (element, source, code, libelle, active, module) values ('ticket', 'external', 'SUPPORTCLI',  'Contact client suivi incident', 1, NULL);
 insert into llx_c_type_contact (element, source, code, libelle, active, module) values ('ticket', 'external', 'CONTRIBUTOR', 'Intervenant', 1, NULL);
 
+-- Product / Service
+insert into llx_c_type_contact (element, source, code, libelle, active ) values ('product', 'internal', 'SALESREPFOLL',  'Responsable produit', 1);
+insert into llx_c_type_contact (element, source, code, libelle, active ) values ('product', 'internal', 'BILLING',       'Responsable production', 1);
+insert into llx_c_type_contact (element, source, code, libelle, active ) values ('product', 'external', 'CUSTOMER',      'Contact fournisseur', 1);
+insert into llx_c_type_contact (element, source, code, libelle, active ) values ('product', 'external', 'SHIPPING',      'Contact sous-traitance', 1);
+
 -- Projects / Projet - All project code can start with 'PROJECT'
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('project', 'internal', 'PROJECTLEADER',      'Chef de Projet', 1);
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('project', 'internal', 'PROJECTCONTRIBUTOR', 'Intervenant', 1);
@@ -118,3 +131,6 @@ insert into llx_c_type_contact (element, source, code, libelle, active ) values 
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('conferenceorbooth', 'internal', 'MANAGER',      'Conference or Booth manager', 1);
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('conferenceorbooth', 'external', 'SPEAKER',      'Conference Speaker', 1);
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('conferenceorbooth', 'external', 'RESPONSIBLE',  'Booth responsible', 1);
+
+-- Thirdparty
+insert into llx_c_type_contact (element, source, code, libelle, active ) values ('societe', 'external', 'SALESREPTHIRD',  'Sales Representative', 1);

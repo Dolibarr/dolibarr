@@ -1,6 +1,7 @@
 #!/usr/bin/env php
 <?php
 /* Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,6 +44,8 @@ $error = 0;
 require_once $path."../../../htdocs/master.inc.php";
 // After this $db, $mysoc, $langs and $conf->entity are defined. Opened handler to database will be closed at end of file.
 
+global $db, $conf, $langs;
+
 //$langs->setDefaultLang('en_US'); 	// To change default language of $langs
 $langs->load("main");				// To load language file for default language
 @set_time_limit(0);
@@ -50,10 +53,10 @@ $langs->load("main");				// To load language file for default language
 // Load user and its permissions
 $result = $user->fetch('', 'admin');	// Load user for login 'admin'. Comment line to run as anonymous user.
 if (!$result > 0) {
-	dol_print_error('', $user->error);
+	dol_print_error(null, $user->error);
 	exit;
 }
-$user->getrights();
+$user->loadRights();
 
 
 print "***** ".$script_file." (".$version.") *****\n";

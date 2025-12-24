@@ -5,6 +5,8 @@
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2014-2020  Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015  		Benoit Bruchard			<benoitb21@gmail.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +40,7 @@ class html_cerfafr extends ModeleDon
 	/**
 	 *  Constructor
 	 *
-	 *  @param      DoliDb      $db      Database handler
+	 *  @param      DoliDB      $db      Database handler
 	 */
 	public function __construct($db)
 	{
@@ -68,10 +70,10 @@ class html_cerfafr extends ModeleDon
 	/**
 	 *  Write the object to document file to disk
 	 *
-	 *	@param	Don			$don	        Donation object
-	 *  @param  Translate	$outputlangs    Lang object for output language
+	 *	@param	Don			$don			Donation object
+	 *  @param  Translate	$outputlangs	Lang object for output language
 	 *  @param	string		$currency		Currency code
-	 *	@return	int             			>0 if OK, <0 if KO
+	 *	@return	int<-1,1>					>0 if OK, <0 if KO
 	 */
 	public function write_file($don, $outputlangs, $currency = '')
 	{
@@ -151,7 +153,7 @@ class html_cerfafr extends ModeleDon
 				// Define contents
 				$donmodel = DOL_DOCUMENT_ROOT."/core/modules/dons/html_cerfafr.html";
 				$form = implode('', file($donmodel));
-				$form = str_replace('__REF__', $don->id, $form);
+				$form = str_replace('__REF__', (string) $don->id, $form);
 				$form = str_replace('__DATE__', dol_print_date($don->date, 'day', false, $outputlangs), $form);
 				//$form = str_replace('__IP__',$user->ip,$form); // TODO $user->ip not exist
 				$form = str_replace('__AMOUNT__', price($don->amount), $form);
@@ -166,11 +168,11 @@ class html_cerfafr extends ModeleDon
 				$form = str_replace('__DONATOR_FIRSTNAME__', $don->firstname, $form);
 				$form = str_replace('__DONATOR_LASTNAME__', $don->lastname, $form);
 				$form = str_replace('__DONATOR_SOCIETE__', $don->societe, $form);
-				$form = str_replace('__DONATOR_STATUT__', $don->statut, $form);
+				$form = str_replace('__DONATOR_STATUT__', (string) $don->statut, $form);
 				$form = str_replace('__DONATOR_ADDRESS__', $don->address, $form);
 				$form = str_replace('__DONATOR_ZIP__', $don->zip, $form);
 				$form = str_replace('__DONATOR_TOWN__', $don->town, $form);
-				$form = str_replace('__PAYMENTMODE_LIB__ ', $paymentmode, $form);
+				$form = str_replace('__PAYMENTMODE_LIB__ ', (string) $paymentmode, $form);
 				$form = str_replace('__NOW__', dol_print_date($now, 'day', false, $outputlangs), $form);
 				$form = str_replace('__DonationRef__', $outputlangs->trans("DonationRef"), $form);
 				$form = str_replace('__DonationTitle__', $outputlangs->trans("DonationTitle"), $form);
@@ -242,7 +244,7 @@ class html_cerfafr extends ModeleDon
 				fclose($handle);
 				dolChmod($file);
 
-				$this->result = array('fullpath'=>$file);
+				$this->result = array('fullpath' => $file);
 
 				return 1;
 			} else {
@@ -259,8 +261,8 @@ class html_cerfafr extends ModeleDon
 	 * numbers to letters
 	 *
 	 * @param   mixed   $montant    amount
-	 * @param   mixed   $devise1    devise 1 ex: euro
-	 * @param   mixed   $devise2    devise 2 ex: centimes
+	 * @param   string  $devise1    devise 1 ex: euro
+	 * @param   string  $devise2    devise 2 ex: centimes
 	 * @return string               amount in letters
 	 */
 	private function amountToLetters($montant, $devise1 = '', $devise2 = '')
@@ -294,6 +296,14 @@ class html_cerfafr extends ModeleDon
 		$chif = array('', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf', 'dix', 'onze', 'douze', 'treize', 'quatorze', 'quinze', 'seize', 'dix sept', 'dix huit', 'dix neuf');
 		$secon_c = '';
 		$trio_c = '';
+		$prim = array();
+		$secon = array();
+		$trio = array();
+		// @phpstan-ignore-next-line
+		'@phan-var string[] $prim
+		 @phan-var string[] $secon
+		 @phan-var string[] $trio
+		';
 		for ($i = 1; $i <= 3; $i++) {
 			$prim[$i] = '';
 			$secon[$i] = '';
@@ -394,16 +404,16 @@ class html_cerfafr extends ModeleDon
 		}
 
 		if (($cent[2] == 0 || $cent[2] == '') && ($dix[2] == 0 || $dix[2] == '') && ($unite[2] == 1)) {
-			$somme = $somme.' mille ';
+			$somme .= ' mille ';
 		} elseif (($cent[2] != 0 && $cent[2] != '') || ($dix[2] != 0 && $dix[2] != '') || ($unite[2] != 0 && $unite[2] != '')) {
-			$somme = $somme.$trio[2].' '.$secon[2].' '.$prim[2].' milles ';
+			$somme .= $trio[2].' '.$secon[2].' '.$prim[2].' milles ';
 		} else {
-			$somme = $somme.$trio[2].' '.$secon[2].' '.$prim[2];
+			$somme .= $trio[2].' '.$secon[2].' '.$prim[2];
 		}
 
-		$somme = $somme.$trio[1].' '.$secon[1].' '.$prim[1];
+		$somme .= $trio[1].' '.$secon[1].' '.$prim[1];
 
-		$somme = $somme.' '.$dev1.' ';
+		$somme .= ' '.$dev1.' ';
 
 		if (($cent_c == '0' || $cent_c == '') && ($dix_c == '0' || $dix_c == '')) {
 			return $somme.' et z&eacute;ro '.$dev2;

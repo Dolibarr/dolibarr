@@ -14,7 +14,7 @@ ModuleName=মডিউল নাম
 ModuleKey=মডিউল কী
 ObjectKey=অবজেক্ট কী
 DicKey=অভিধান কী
-ModuleInitialized=মডিউল আরম্ভ করা হয়েছে
+ModuleInitialized=মডিউল ফাইলগুলি ডিরেক্টরিতে ইনিশিয়ালাইজ করা হয়েছে <b>%s</b>
 FilesForObjectInitialized=নতুন অবজেক্টের জন্য ফাইলগুলি '%s' শুরু করা হয়েছে
 FilesForObjectUpdated=অবজেক্টের জন্য ফাইলগুলি '%s' আপডেট করা হয়েছে (.sql ফাইল এবং .class.php ফাইল)
 ModuleBuilderDescdescription=এখানে সমস্ত সাধারণ তথ্য লিখুন যা আপনার মডিউল বর্ণনা করে।
@@ -27,7 +27,7 @@ ModuleBuilderDeschooks=এই ট্যাবটি হুকের জন্য
 ModuleBuilderDescwidgets=এই ট্যাবটি উইজেট পরিচালনা/বিল্ড করার জন্য নিবেদিত।
 ModuleBuilderDescbuildpackage=আপনি এখানে আপনার মডিউলের একটি "বন্টন করার জন্য প্রস্তুত" প্যাকেজ ফাইল (একটি স্বাভাবিক .zip ফাইল) এবং একটি "বন্টন করার জন্য প্রস্তুত" ডকুমেন্টেশন ফাইল তৈরি করতে পারেন। প্যাকেজ বা ডকুমেন্টেশন ফাইল তৈরি করতে শুধু বোতামে ক্লিক করুন।
 EnterNameOfModuleToDeleteDesc=আপনি আপনার মডিউল মুছে ফেলতে পারেন। সতর্কতা: মডিউলের সমস্ত কোডিং ফাইল (ম্যানুয়ালি তৈরি বা তৈরি) এবং কাঠামোগত ডেটা এবং ডকুমেন্টেশন মুছে ফেলা হবে!
-EnterNameOfObjectToDeleteDesc=You can delete an object. WARNING: All coding files (generated or created manually) related to the object will be deleted!
+EnterNameOfObjectToDeleteDesc=আপনি একটি বস্তু মুছে ফেলতে পারেন। সতর্কতা: বস্তুর সাথে সম্পর্কিত সমস্ত কোডিং ফাইল (ম্যানুয়ালি তৈরি বা তৈরি) মুছে ফেলা হবে!
 DangerZone=বিপদজনক এলাকা
 BuildPackage=প্যাকেজ তৈরি করুন
 BuildPackageDesc=আপনি আপনার অ্যাপ্লিকেশনের একটি জিপ প্যাকেজ তৈরি করতে পারেন যাতে আপনি এটিকে যেকোনো ডলিবারে বিতরণ করতে প্রস্তুত হন। এছাড়াও আপনি এটি বিতরণ করতে পারেন বা বাজারে বিক্রি করতে পারেন যেমন <a href="https://www.dolistore.com">DoliStore.com</a>।
@@ -94,7 +94,7 @@ SeeExamples=এখানে উদাহরণ দেখুন
 EnabledDesc=এই ক্ষেত্রটি সক্রিয় থাকার শর্ত।<br><br>উদাহরণ:<br>1<br>isModEnabled('anothermodule')<br>getDolGlobalString('MYMODULE_OPTION')==2
 VisibleDesc=মাঠ কি দৃশ্যমান? (উদাহরণ: 0=কখনও দৃশ্যমান নয়, 1=তালিকায় দৃশ্যমান এবং ফর্মগুলি তৈরি/আপডেট/দেখুন, 2=শুধু তালিকায় দৃশ্যমান, 3=শুধুমাত্র তৈরি/আপডেট/দেখার ফর্মে দৃশ্যমান (তালিকায় নয়), 4=তালিকায় দৃশ্যমান এবং শুধুমাত্র ফর্ম আপডেট/দেখুন (তৈরি নয়), 5=তালিকাতে দৃশ্যমান এবং শুধুমাত্র ফর্ম দেখুন (তৈরি নয়, আপডেট নয়)।<br><br> একটি নেতিবাচক মান ব্যবহার করার অর্থ হল তালিকায় ডিফল্টভাবে ক্ষেত্র দেখানো হয় না তবে দেখার জন্য নির্বাচন করা যেতে পারে)।
 ItCanBeAnExpression=এটি একটি অভিব্যক্তি হতে পারে. উদাহরণ:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>$user ->অধিকার আছে('ছুটি', 'নির্ধারিত_ছুটির')?1:5
-DisplayOnPdfDesc=সামঞ্জস্যপূর্ণ PDF নথিতে এই ক্ষেত্রটি প্রদর্শন করুন, আপনি "পজিশন" ক্ষেত্রের সাথে অবস্থান পরিচালনা করতে পারেন।<br><strong>নথির জন্য :<span ক্লাস ='notranslate'></strong></span><br>0 = প্রদর্শিত হয় না <br>1 =<br>2 = শুধুমাত্র খালি না থাকলে প্রদর্শন করুন<br><br>b0e7849434 span>নথি লাইনের জন্য :<span class='notranslate'></strong><br>0 = প্রদর্শিত হয় না <br>1 = একটি কলামে প্রদর্শিত হয়<br>3 = বর্ণনার পরে লাইন বর্ণনা কলামে প্রদর্শিত হয়<br>4 = বর্ণনার পরে বিবরণ কলামে প্রদর্শন শুধুমাত্র যদি খালি না হয়
+DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br><strong>For document :</strong><br>0 = not displayed <br>1 = display<br>2 = display only if not empty<br><br><strong>For document lines :</strong><br>0 = not displayed <br>1 = displayed in a column<br>3 = display in line description column after the description<br>4 = display in description column after the description only if not empty
 DisplayOnPdf=PDF এ
 IsAMeasureDesc=তালিকায় মোট পেতে ক্ষেত্রের মান কি কম্পুলেট করা যেতে পারে? (উদাহরণ: 1 বা 0)
 SearchAllDesc=ক্ষেত্রটি কি দ্রুত অনুসন্ধান সরঞ্জাম থেকে অনুসন্ধান করতে ব্যবহৃত হয়? (উদাহরণ: 1 বা 0)
@@ -111,7 +111,7 @@ TriggerDefDesc=আপনার মডিউলের বাহ্যিক এ�
 SeeIDsInUse=আপনার ইনস্টলেশন ব্যবহার করা আইডি দেখুন
 SeeReservedIDsRangeHere=সংরক্ষিত আইডি পরিসীমা দেখুন
 ToolkitForDevelopers=ডলিবার ডেভেলপারদের জন্য টুলকিট
-TryToUseTheModuleBuilder=আপনার যদি SQL এবং PHP সম্পর্কে জ্ঞান থাকে, আপনি স্থানীয় মডিউল নির্মাতা উইজার্ড ব্যবহার করতে পারেন।<br>মডিউলটি সক্ষম করুন <strong><span ক্লাস ='notranslate'>%s</span></strong> এবং <span class="fa fa-bug"><span class='notranslate' এ ক্লিক করে উইজার্ড ব্যবহার করুন ></span></span> উপরের ডানদিকের মেনুতে।<br>সতর্কতা: এটি একটি উন্নত ডেভেলপার বৈশিষ্ট্য, করুন <b><span>no span class='notranslate'></b> আপনার প্রোডাকশন সাইটে পরীক্ষা!
+TryToUseTheModuleBuilder=If you have knowledge of SQL and PHP, you may use the native module builder wizard.<br>Enable the module <strong>%s</strong> and use the wizard by clicking the <span class="fa fa-bug"></span> on the top right menu.<br>Warning: This is an advanced developer feature, do <b>not</b> experiment on your production site!
 SeeTopRightMenu=উপরের ডানদিকের মেনুতে <span class="fa fa-bug"></span> দেখুন
 AddLanguageFile=ভাষা ফাইল যোগ করুন
 YouCanUseTranslationKey=আপনি এখানে একটি কী ব্যবহার করতে পারেন যা ভাষা ফাইলে পাওয়া অনুবাদ কী (ট্যাব "ভাষা" দেখুন)
@@ -148,7 +148,7 @@ CSSListClass=তালিকার জন্য CSS
 NotEditable=সম্পাদনাযোগ্য নয়
 ForeignKey=বিদেশী চাবি
 ForeignKeyDesc=যদি এই ক্ষেত্রের মান অবশ্যই অন্য টেবিলে উপস্থিত থাকার নিশ্চয়তা দিতে হবে। এখানে একটি মান মেলে সিনট্যাক্স লিখুন: tablename.parentfieldtocheck
-TypeOfFieldsHelp=উদাহরণ:<br>varchar(99)<br>ইমেল<br>ফোন<span ক্লাস ='notranslate'><br></span>ip<br>url<br>পাসওয়ার্ড<br> span>ডাবল(24,8)<br>real<br>পাঠ্য<br>html <br>তারিখ<br>তারিখের সময়<br>টাইমস্ট্যাম্প<span class'>'notranslate' <br></span>পূর্ণসংখ্যা<br>পূর্ণসংখ্যা:ClassName:relativepath/to/classfile.class.php[:1[:filter]]b0342fcc<b0342f /span><span class='notranslate'><br>'1' মানে আমরা রেকর্ড তৈরি করতে কম্বোর পরে একটি + বোতাম যোগ করি<br>'ফিল্টার' হল একটি ইউনিভার্সাল ফিল্টার সিনট্যাক্স শর্ত, উদাহরণ: '((status:=:1) AND (fk_user:=:__USER_ID__) AND (entity:IN:(__SHARED_ENTITIES__))'
+TypeOfFieldsHelp=Example:<br>varchar(99)<br>email<br>phone<br>ip<br>url<br>password<br>double(24,8)<br>real<br>text<br>html<br>date<br>datetime<br>timestamp<br>stars(NumberOfStars) NumberOfStars must be between 1 and 10.<br>integer<br>integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br><br>'1' means we add a + button after the combo to create the record<br>'filter' is an Universal Filter syntax condition, example: '((status:=:1) AND (fk_user:=:__USER_ID__) AND (entity:IN:(__SHARED_ENTITIES__))'
 TypeOfFieldsHelpIntro=এটি হল ক্ষেত্র/বিশিষ্টের ধরন।
 AsciiToHtmlConverter=Ascii থেকে HTML রূপান্তরকারী
 AsciiToPdfConverter=Ascii থেকে পিডিএফ কনভার্টার
@@ -173,6 +173,7 @@ PermissionAddedSuccesfuly=অনুমতি সফলভাবে যোগ ক
 MenuDeletedSuccessfuly=মেনু সফলভাবে মুছে ফেলা হয়েছে
 MenuAddedSuccessfuly=মেনু সফলভাবে যোগ করা হয়েছে
 MenuUpdatedSuccessfuly=মেনু সফলভাবে আপডেট করা হয়েছে
+AddAPIsForThisObject=এই অবজেক্টের জন্য API যোগ করুন
 ApiObjectDeleted=বস্তুর জন্য API %s সফলভাবে মুছে ফেলা হয়েছে
 CRUDRead=পড়ুন
 CRUDCreateWrite=তৈরি করুন বা আপডেট করুন
@@ -180,9 +181,17 @@ FailedToAddCodeIntoDescriptor=বর্ণনাকারীতে কোড য
 DictionariesCreated=অভিধান <b>%s</b> সফলভাবে তৈরি করা হয়েছে
 DictionaryDeleted=অভিধান <b>%s</b> সফলভাবে সরানো হয়েছে
 PropertyModuleUpdated=সম্পত্তি <b>%s</b> সফলভাবে আপডেট করা হয়েছে
-InfoForApiFile=* আপনি যখন প্রথমবার ফাইল তৈরি করবেন তখন প্রতিটি বস্তুর জন্য সমস্ত পদ্ধতি <strong> তৈরি হবে।</strong><br>* আপনি যখন <strong>এ ক্লিক করুন</strong> আপনি শুধু <span ক্লাসের সমস্ত পদ্ধতি সরিয়ে ফেলবেন ='notranslate'><strong></span>নির্বাচিত বস্তু</strong>।
+InfoForApiFile=* When you generate file for the first time then all methods will be created <strong>for each object.</strong><br>* When you click in <strong>remove</strong> you just remove all methods for the <strong>selected object</strong>.
+AboutFile="মডিউল সম্পর্কে" পৃষ্ঠা
 SetupFile=মডিউল সেটআপের জন্য পৃষ্ঠা
-EmailingSelectors=Emails selectors
+EmailingSelectors=ইমেল নির্বাচক
 EmailingSelectorDesc=আপনি গণ ইমেল মডিউলের জন্য নতুন ইমেল লক্ষ্য নির্বাচক প্রদান করতে এখানে ক্লাস ফাইলগুলি তৈরি এবং সম্পাদনা করতে পারেন
 EmailingSelectorFile=ইমেল নির্বাচক ফাইল
 NoEmailingSelector=কোনো ইমেল নির্বাচক ফাইল নেই
+ModuleTranslatedIntoLangForKeyInto=%s কী-এর জন্য একটি .lang ফাইলে "%s" তে অনুবাদ করা হয়েছে
+PageLinkedByAMenuEntry=কমপক্ষে একটি মেনু এন্ট্রি দ্বারা লিঙ্ক করা পৃষ্ঠা
+FieldsEdit=ক্ষেত্র সম্পাদনা
+FieldsInsert=ক্ষেত্র সন্নিবেশ করান
+FieldsView=ক্ষেত্রের দৃশ্য
+AIPromptExtrafield=AI প্রম্পট
+AIPromptExtrafieldDesc=এই ক্ষেত্রে ব্যবহৃত ধ্রুবকগুলি সংশ্লিষ্ট মান দিয়ে প্রতিস্থাপিত হবে।

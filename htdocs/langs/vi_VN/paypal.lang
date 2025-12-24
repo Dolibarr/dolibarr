@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=Thiết lập mô-đun PayPal
-PaypalDesc=Mô-đun này cho phép thanh toán của khách hàng thông qua <a href="http://www.paypal.com" target="_blank">PayPal</a> . Điều này có thể được sử dụng cho thanh toán đặc biệt hoặc thanh toán liên quan đến đối tượng Dolibarr (hóa đơn, đơn đặt hàng, ...)
+PaypalDesc=Mô-đun này cho phép khách hàng thanh toán qua <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. Điều này có thể được sử dụng để thanh toán không dự tính trước hoặc thanh toán liên quan đến đối tượng Dolibarr (hóa đơn, đơn đặt hàng, ...)
 PaypalOrCBDoPayment=Thanh toán bằng PayPal (Thẻ hoặc PayPal)
 PaypalDoPayment=Thanh toán bằng PayPal
 PAYPAL_API_SANDBOX=Chế độ kiểm tra / hộp cát
@@ -34,3 +34,4 @@ ARollbackWasPerformedOnPostActions=Một rollback đã được thực hiện tr
 ValidationOfPaymentFailed=Xác thực thanh toán không thành công
 CardOwner=Chủ thẻ
 PayPalBalance=Tín dụng Paypal
+OnlineSubscriptionPaymentLine=Đăng ký trực tuyến được ghi lại trên %s<br>Được thanh toán qua %s<br>Địa chỉ IP gốc: %s<br>ID giao dịch: %s

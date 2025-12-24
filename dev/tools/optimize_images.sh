@@ -1,6 +1,10 @@
 #!/bin/bash
+# Copyright (C) 2025		MDW	<mdeweerd@users.noreply.github.com>
+
 # Borrowed from https://gist.github.com/lgiraudel/6065155
 # Inplace mode added by Raphaël Doursenaud <rdoursenaud@gpcsolutions.fr>
+
+# shellcheck disable=2003,2006,2034,2046,2086,2166,2268,2327,2328
 
 PROGNAME=${0##*/}
 INPUT=''
@@ -13,7 +17,7 @@ max_output_size=0
 
 usage()
 {
-  cat <<EO
+	cat <<EO
 Usage:   $PROGNAME (list|fix) [options]
 Example: optimize_images.sh (list|fix) -i dirtoscan
 
@@ -21,13 +25,13 @@ Script to optimize JPG and PNG images in a directory.
 
 Options:
 EO
-cat <<EO | column -s\& -t
+	cat <<EO | column -s\& -t
 	-h, --help  	   & shows this help
 	-q, --quiet 	   & disables output
 	-i, --input [dir]  & specify input directory (current directory by default)
 	-o, --output [dir] & specify output directory ("output" by default)
-	-ns, --no-stats	& no stats at the end
 	-p, --inplace	  & optimizes files inplace
+	-ns, --no-stats	& no stats at the end
 EO
 }
 
@@ -74,19 +78,19 @@ main()
 	test=`type pngcrush >/dev/null 2>&1`
 	result=$?
 	if [ "x$result" == "x1" ]; then
-		echo "Tool pngcrush not found" && exit 
+		echo "Tool pngcrush not found" && exit
 	fi
-	
+
 	test=`type optipng >/dev/null 2>&1`
 	result=$?
 	if [ "x$result" == "x1" ]; then
-		echo "Tool optipng not found" && exit 
+		echo "Tool optipng not found" && exit
 	fi
 
 	test=`type jpegtran >/dev/null 2>&1`
 	result=$?
 	if [ "x$result" == "x1" ]; then
-		echo "Tool jpegtran not found" && exit 
+		echo "Tool jpegtran not found" && exit
 	fi
 
 
@@ -105,7 +109,7 @@ main()
 	fi
 
 	echo "Mode is $INPLACE (1=Images are replaced, 0=New images are stored into $OUTPUT)"
-	
+
 	# We create the output directory
 	mkdir -p $OUTPUT
 
@@ -125,7 +129,7 @@ main()
 	#echo "Scan $INPUT to find images with find $INPUT -regextype posix-extended -regex '.*\.(jpg|jpeg|png)' | grep -v '/gource/' | grep -v '/includes/' | grep -v '/custom/'"
 	IMAGES=$(find $INPUT -regextype posix-extended -regex '.*\.(jpg|jpeg|png)' | grep -v '/gource/' | grep -v '/includes/' | grep -v '/custom/' | grep -v '/documents/' | grep -v $OUTPUT)
 	#IMAGES=$(find $INPUT -regextype posix-extended -regex '.*\.(jpg|jpeg|png)' | grep -v '/gource/' | grep -v '/includes/' | grep -v '/custom/')
-	
+
 	if [ "$QUIET" == "0" ]; then
 		echo --- Optimizing $INPUT ---
 		echo
@@ -169,7 +173,7 @@ main()
 
 human_readable_filesize()
 {
-echo -n $1 | awk 'function human(x) {
+	echo -n $1 | awk 'function human(x) {
 	 s=" b  Kb Mb Gb Tb"
 	 while (x>=1024 && length(s)>1)
 		   {x/=1024; s=substr(s,4)}
@@ -177,7 +181,7 @@ echo -n $1 | awk 'function human(x) {
 	 xf=(s==" b ")?"%5d   ":"%.2f"
 	 return sprintf( xf"%s", x, s)
   }
-  {gsub(/^[0-9]+/, human($1)); print}'
+	{gsub(/^[0-9]+/, human($1)); print}'
 }
 
 SHORTOPTS="h,i:,o:,q,s,p"
@@ -234,4 +238,3 @@ then
 fi
 
 main
-

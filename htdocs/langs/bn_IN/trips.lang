@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - trips
+# Dolibarr language file - Source file is en_US - trips.lang
 AUTHOR=দ্বারা নথিভুক্ত
 AUTHORPAIEMENT=দ্বারা পরিশোধ করা হয়
 AddTrip=ব্যয় প্রতিবেদন তৈরি করুন
@@ -13,6 +13,8 @@ byEX_EXP=লাইন দ্বারা (%s এর সীমাবদ্ধত�
 byEX_MON=মাস অনুসারে (%s এর সীমাবদ্ধতা)
 byEX_YEA=বছর অনুসারে (%s এর সীমাবদ্ধতা)
 CANCEL_USER=দ্বারা মুছে ফেলা হয়েছে
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=খরচের প্রতিবেদনে "ব্যবহারকারীদের" জন্য ডিফল্টরূপে ব্যবহৃত অ্যাকাউন্ট (অ্যাকাউন্টের চার্ট থেকে)
+ACCOUNTING_ACCOUNT_EXPENSEREPORT_Desc=ব্যবহারকারী কার্ডে সংজ্ঞায়িত ডেডিকেটেড অ্যাকাউন্টটি শুধুমাত্র সাবলেজার অ্যাকাউন্টিংয়ের জন্য ব্যবহার করা হবে। এটি জেনারেল লেজারের জন্য ব্যবহার করা হবে, এবং যদি ব্যবহারকারীর উপর কোনও ডেডিকেটেড অ্যাকাউন্টিং অ্যাকাউন্ট সংজ্ঞায়িত না থাকে তবে সাবলেজার অ্যাকাউন্টিংয়ের ডিফল্ট মান হিসাবেও ব্যবহার করা হবে।
 CarCategory=যানবাহন বিভাগ
 ClassifyRefunded='ফেরত' শ্রেণীবদ্ধ করুন
 CompanyVisited=কোম্পানি/সংস্থা পরিদর্শন করা হয়েছে
@@ -45,9 +47,9 @@ expenseReportRangeMoreThan=%d এর চেয়ে বেশি
 expenseReportTotalForFive=<u>d</u> = 5 সহ উদাহরণ
 ExpenseReportApplyTo=আবেদন করতে
 ExpenseReportApproved=একটি ব্যয় রিপোর্ট অনুমোদিত হয়
-ExpenseReportApprovedMessage=ব্যয় প্রতিবেদন %s অনুমোদিত হয়েছে।<br> - ব্যবহারকারী: %s<span> class='notranslate'><br></span> - এর দ্বারা অনুমোদিত: %s<br>খরচ প্রতিবেদন দেখানোর জন্য এখানে ক্লিক করুন:  span class='notranslate'>%s
+ExpenseReportApprovedMessage=The expense report %s was approved.<br> - User: %s<br> - Approved by: %s<br>Click here to show the expense report: %s
 ExpenseReportCanceled=একটি খরচ রিপোর্ট বাতিল করা হয়েছে
-ExpenseReportCanceledMessage=ব্যয় প্রতিবেদন %s বাতিল করা হয়েছে।<br> - ব্যবহারকারী: %s<span><span> class='notranslate'><br></span> - এর দ্বারা বাতিল করা হয়েছে: %s<br> - বাতিলের উদ্দেশ্য: <span class= class= 'notranslate'>%s</span><br>ব্যয় প্রতিবেদন দেখানোর জন্য এখানে ক্লিক করুন: %s
+ExpenseReportCanceledMessage=The expense report %s was canceled.<br> - User: %s<br> - Canceled by: %s<br> - Motive for cancellation: %s<br>Click here to show the expense report: %s
 ExpenseReportConstraintViolationError=সর্বাধিক পরিমাণ ছাড়িয়ে গেছে (নিয়ম %s): %s %s থেকে বেশি ( হারাম ছাড়িয়ে যাওয়া)
 ExpenseReportConstraintViolationWarning=সর্বাধিক পরিমাণ ছাড়িয়ে গেছে (নিয়ম %s): %s %s থেকে বেশি ( অনুমোদনের চেয়ে বেশি)
 ExpenseReportDateEnd=তারিখ শেষ
@@ -62,15 +64,16 @@ ExpenseReportPaidMessage=খরচের রিপোর্ট %s দেওয�
 ExpenseReportPayment=ব্যয় প্রতিবেদন প্রদান
 ExpenseReportRef=রেফ. ব্যয় রিপোর্ট
 ExpenseReportRefused=একটি খরচ রিপোর্ট প্রত্যাখ্যান করা হয়েছে
-ExpenseReportRefusedMessage=ব্যয়ের প্রতিবেদন %s প্রত্যাখ্যান করা হয়েছে।<br> - ব্যবহারকারী: %s<span><span> class='notranslate'><br></span> - প্রত্যাখ্যান করেছেন: %s<br> - প্রত্যাখ্যানের উদ্দেশ্য: <span class=class= 'notranslate'>%s</span><br>ব্যয় প্রতিবেদন দেখানোর জন্য এখানে ক্লিক করুন: %s
+ExpenseReportRefusedMessage=The expense report %s was refused.<br> - User: %s<br> - Refused by: %s<br> - Motive for refusal: %s<br>Click here to show the expense report: %s
 ExpenseReportRestrictive=হারাম ছাড়িয়ে গেছে
 ExpenseReportRuleErrorOnSave=ত্রুটি: %s
 ExpenseReportRuleSave=খরচ রিপোর্ট নিয়ম সংরক্ষিত
 ExpenseReportRulesDesc=আপনি ব্যয় প্রতিবেদনের জন্য সর্বাধিক পরিমাণের নিয়ম নির্ধারণ করতে পারেন। এই নিয়মগুলি প্রয়োগ করা হবে যখন একটি নতুন ব্যয় একটি ব্যয় প্রতিবেদনে যোগ করা হয়
 ExpenseReportWaitingForApproval=একটি নতুন ব্যয় প্রতিবেদন অনুমোদনের জন্য জমা দেওয়া হয়েছে
-ExpenseReportWaitingForApprovalMessage=একটি নতুন ব্যয় প্রতিবেদন জমা দেওয়া হয়েছে এবং অনুমোদনের জন্য অপেক্ষা করছে৷<br> - ব্যবহারকারী: %s <br> - সময়কাল: %s<br>বৈধকরণ করতে এখানে ক্লিক করুন: <span class='notranslate'>b0849fz span>
+ExpenseReportWaitingForApprovalMessage=A new expense report has been submitted and is waiting for approval.<br> - User: %s<br> - Period: %s<br>Click here to validate: %s
 ExpenseReportWaitingForReApproval=পুনঃঅনুমোদনের জন্য একটি ব্যয় প্রতিবেদন জমা দেওয়া হয়েছে
-ExpenseReportWaitingForReApprovalMessage=একটি ব্যয় প্রতিবেদন জমা দেওয়া হয়েছে এবং পুনরায় অনুমোদনের জন্য অপেক্ষা করছে৷<br>The %s, আপনি এর জন্য ব্যয় প্রতিবেদন অনুমোদন করতে অস্বীকার করেছেন এই কারণে: %s।<br>একটি নতুন সংস্করণ প্রস্তাব করা হয়েছে এবং আপনার অনুমোদনের জন্য অপেক্ষা করছে। <br> - ব্যবহারকারী: %s<br> - সময়কাল: b0ecb2ecb9fz84 <br>প্রমাণিত করতে এখানে ক্লিক করুন: %s
+ExpenseReportWaitingForReApprovalMessage=An expense report has been submitted and is waiting for re-approval.<br>The %s, you refused to approve the expense report for this reason: %s.<br>A new version has been proposed and waiting for your approval.<br> - User: %s<br> - Period: %s<br>
+ExpenseReportWaitingForReApprovalMessage2=যাচাই করতে এখানে ক্লিক করুন: %s
 ExpenseReportsIk=মাইলেজ চার্জ কনফিগারেশন
 ExpenseReportsRules=ব্যয় প্রতিবেদনের নিয়ম
 ExpenseReportsToApprove=অনুমোদনের জন্য ব্যয়ের প্রতিবেদন
@@ -93,7 +96,7 @@ nolimitbyEX_YEA=বছরের দ্বারা (কোন সীমাবদ
 NoTripsToExportCSV=এই সময়ের জন্য রপ্তানি করার জন্য কোন খরচের রিপোর্ট নেই।
 NOT_AUTHOR=আপনি এই ব্যয় প্রতিবেদনের লেখক নন। অপারেশন বাতিল করা হয়েছে।
 OnExpense=ব্যয়ের লাইন
-PDFStandardExpenseReports=ব্যয় প্রতিবেদনের জন্য একটি পিডিএফ নথি তৈরি করতে স্ট্যান্ডার্ড টেমপ্লেট
+PDFStandardExpenseReports=ব্যয় প্রতিবেদনের জন্য একটি PDF ডকুমেন্ট তৈরি করার জন্য স্ট্যান্ডার্ড টেমপ্লেট
 PaidTrip=একটি খরচ রিপোর্ট প্রদান
 REFUSEUR=দ্বারা অস্বীকার করা হয়েছে
 RangeIk=মাইলেজ পরিসীমা
@@ -106,7 +109,7 @@ TripId=আইডি খরচ রিপোর্ট
 TripNDF=তথ্য ব্যয় প্রতিবেদন
 TripSociete=তথ্য সংস্থা
 Trips=খরচ রিপোর্ট
-TripsAndExpenses=খরচ রিপোর্ট
+TripsAndExpenses=ব্যয়ের প্রতিবেদন
 TripsAndExpensesStatistics=খরচ রিপোর্ট পরিসংখ্যান
 TypeFees=ফি এর প্রকার
 UploadANewFileNow=এখন একটি নতুন নথি আপলোড করুন
@@ -115,6 +118,10 @@ VALIDOR=দ্বারা অনুমোদিত
 ValidateAndSubmit=যাচাই করুন এবং অনুমোদনের জন্য জমা দিন
 ValidatedWaitingApproval=বৈধ (অনুমোদনের জন্য অপেক্ষা করা হচ্ছে)
 ValideTrip=ব্যয় প্রতিবেদন অনুমোদন করুন
+ExpenseReportPayments=ব্যয়ের প্রতিবেদন প্রদান
+TaxUndefinedForThisCategory = এই বিভাগের জন্য কর অনির্ধারিত
+errorComputeTtcOnMileageExpense=মাইলেজ খরচ গণনা করার সময় ত্রুটি
+ErrorOnlyDraftStatusCanBeDeletedInMassAction=গণ-অ্যাকশনে শুধুমাত্র খসড়া স্ট্যাটাসের উপাদানগুলি মুছে ফেলা যাবে
 
 ## Dictionary
 EX_BRE=সকালের নাস্তা
@@ -150,3 +157,5 @@ TF_PEAGE=টোল
 TF_TAXI=ট্যাক্সি
 TF_TRAIN=ট্রেন
 TF_TRIP=পরিবহন
+FailedToSetPaid=পেমেন্ট হিসেবে সেট করা যায়নি
+FailedToSetToCancel=বাতিল করতে ব্যর্থ হয়েছে

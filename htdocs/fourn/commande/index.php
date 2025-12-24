@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2012		Vinicius Nogueira	<viniciusvgn@gmail.com>
  * Copyright (C) 2019		Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +22,7 @@
 
 /**
  *    \file	      htdocs/fourn/commande/index.php
- *    \ingroup    commande fournisseur
+ *    \ingroup    supplier order
  *    \brief      Home page of supplier's orders area
  */
 
@@ -33,29 +34,36 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("suppliers", "orders"));
 
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('orderssuppliersindex'));
+
+$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 
 // Security check
 $orderid = GETPOST('orderid');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'fournisseur', $orderid, '', 'commande');
-
-$hookmanager = new HookManager($db);
-
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
-$hookmanager->initHooks(array('orderssuppliersindex'));
-
 
 
 /*
  * 	View
  */
 
-llxHeader('', $langs->trans("SuppliersOrdersArea"));
+llxHeader('', $langs->trans("SuppliersOrdersArea"), '', '', 0, 0, '', '', '', 'mod-supplier-order page-stats');
 
 $commandestatic = new CommandeFournisseur($db);
 $userstatic = new User($db);
@@ -92,9 +100,10 @@ if ($resql) {
 
 	$total = 0;
 	$dataseries = array();
+	$colorseries = array();
 	$vals = array();
-	//	0=Draft -> 1=Validated -> 2=Approved -> 3=Process runing -> 4=Received partially -> 5=Received totally -> (reopen) 4=Received partially
-	//	-> 7=Canceled/Never received -> (reopen) 3=Process runing
+	//	0=Draft -> 1=Validated -> 2=Approved -> 3=Process running -> 4=Received partially -> 5=Received totally -> (reopen) 4=Received partially
+	//	-> 7=Canceled/Never received -> (reopen) 3=Process running
 	//	-> 6=Canceled -> (reopen) 2=Approved
 	while ($i < $num) {
 		$obj = $db->fetch_object($resql);
@@ -108,7 +117,13 @@ if ($resql) {
 	$db->free($resql);
 
 	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
-
+	/**
+	 * @var string $badgeStatus0
+	 * @var string $badgeStatus1
+	 * @var string $badgeStatus4
+	 * @var string $badgeStatus6
+	 * @var string $badgeStatus9
+	 */
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder nohover centpercent">';
 	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("SuppliersOrders").'</th></tr>';
@@ -220,14 +235,14 @@ if (isModEnabled("supplier_order")) {
 
 
 /*
- * List of users allowed
+ * List of users allowed to approve
  */
 
 $sql = "SELECT";
 if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 	$sql .= " DISTINCT";
 }
-$sql .= " u.rowid, u.lastname, u.firstname, u.email, u.statut";
+$sql .= " u.rowid, u.login, u.lastname, u.firstname, u.email, u.photo, u.statut";
 $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 	$sql .= ",".MAIN_DB_PREFIX."usergroup_user as ug";
@@ -237,7 +252,7 @@ if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_
 } else {
 	$sql .= " WHERE (u.entity IN (".getEntity('user')."))";
 }
-$sql .= " AND u.fk_soc IS NULL"; // An external user can not approved
+$sql .= " AND u.fk_soc IS NULL"; // An external user can not approve
 
 $resql = $db->query($sql);
 if ($resql) {
@@ -249,27 +264,40 @@ if ($resql) {
 	print '<tr class="liste_titre"><th>'.$langs->trans("UserWithApproveOrderGrant").'</th>';
 	print "</tr>\n";
 
+	print '<tr class="oddeven">';
+	print '<td>';
+
 	while ($i < $num) {
 		$obj = $db->fetch_object($resql);
 
 		$userstatic = new User($db);
 		$userstatic->id = $obj->rowid;
-		$userstatic->getrights('fournisseur');
+		$userstatic->loadRights('fournisseur');
 
 		if ($userstatic->hasRight('fournisseur', 'commande', 'approuver')) {
-			print '<tr class="oddeven">';
-			print '<td>';
+			if ($i > 0) {
+				print ', ';
+			}
+
 			$userstatic->lastname = $obj->lastname;
 			$userstatic->firstname = $obj->firstname;
 			$userstatic->email = $obj->email;
-			$userstatic->statut = $obj->statut;
-			print $userstatic->getNomUrl(1);
-			print '</td>';
-			print "</tr>\n";
+			$userstatic->login = $obj->login;
+			$userstatic->photo = $obj->photo;
+			$userstatic->status = $obj->statut;
+
+			print $userstatic->getNomUrl(-1);
 		}
 
 		$i++;
 	}
+	if ($i == 0) {
+		print '<span class="opacitymedium">'.$langs->trans("Nobody").'</span>';
+	}
+
+	print '</td>';
+	print "</tr>\n";
+
 	print "</table></div><br>";
 	$db->free($resql);
 } else {
@@ -283,7 +311,6 @@ print '</div><div class="fichetwothirdright">';
 /*
  * Last modified orders
 */
-$max = 5;
 
 $sql = "SELECT c.rowid, c.ref, c.fk_statut as status, c.tms, c.billed, s.nom as name, s.rowid as socid";
 $sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
@@ -308,7 +335,11 @@ if ($resql) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<th colspan="4">'.$langs->trans("LastModifiedOrders", $max).'</th></tr>';
+	print '<th colspan="4">'.$langs->trans("LastModifiedOrders", $max).' ';
+	print '<a href="'.DOL_URL_ROOT.'/fourn/commande/list.php?sortfield=cf.tms&sortorder=DESC">';
+	print '<span class="badge">...</span>';
+	print '</a>';
+	print '</th></tr>';
 
 	$num = $db->num_rows($resql);
 	if ($num) {

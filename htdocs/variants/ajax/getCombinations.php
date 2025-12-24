@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
  * Copyright (C) 2022   Open-Dsi		<support@open-dsi.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +38,14 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Security check
 if (!isModEnabled('variants')) {
 	accessforbidden('Module not enabled');
@@ -53,7 +62,7 @@ $result = restrictedArea($user, 'variants');
 
 top_httphead('application/json');
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 
 if (!$id) {
 	print json_encode(array(

@@ -14,7 +14,7 @@ ModuleName=Modul adı
 ModuleKey=Modul açarı
 ObjectKey=Obyekt açarı
 DicKey=Lüğət açarı
-ModuleInitialized=Modul işə salındı
+ModuleInitialized=Modul faylları <b>%s>TXPROTECT-9a47b78-9a4789- kataloqunda işə salındı
 FilesForObjectInitialized='%s' yeni obyekt üçün fayllar işə salındı
 FilesForObjectUpdated='%s' obyekti üçün fayllar yeniləndi (.sql faylları və .class.php faylı)
 ModuleBuilderDescdescription=Modulunuzu təsvir edən bütün ümumi məlumatları buraya daxil edin.
@@ -27,7 +27,7 @@ ModuleBuilderDeschooks=Bu nişan qarmaqlara həsr olunub.
 ModuleBuilderDescwidgets=Bu tab vidjetləri idarə etmək/qurmaq üçün ayrılmışdır.
 ModuleBuilderDescbuildpackage=Siz burada modulunuzun "paylamaq üçün hazır" paket faylını (normallaşdırılmış .zip faylı) və "paylanmağa hazır" sənəd faylını yarada bilərsiniz. Paketi və ya sənəd faylını yaratmaq üçün sadəcə düyməni basın.
 EnterNameOfModuleToDeleteDesc=Modulunuzu silə bilərsiniz. XƏBƏRDARLIQ: Modulun bütün kodlaşdırma faylları (əl ilə yaradılmış və ya yaradılmış) VƏ strukturlaşdırılmış məlumat və sənədlər silinəcək!
-EnterNameOfObjectToDeleteDesc=You can delete an object. WARNING: All coding files (generated or created manually) related to the object will be deleted!
+EnterNameOfObjectToDeleteDesc=Bir obyekti silə bilərsiniz. XƏBƏRDARLIQ: Obyektlə əlaqəli bütün kodlaşdırma faylları (əllə yaradılan və ya yaradılan) silinəcək!
 DangerZone=Təhlükəli zona
 BuildPackage=Paket qurmaq
 BuildPackageDesc=Siz tətbiqinizin zip paketini yarada bilərsiniz ki, onu istənilən Dolibarr-da yaymağa hazırsınız. Siz həmçinin onu yaymaq və ya <a href="https://www.dolistore.com">DoliStore.com</a> kimi bazarda sata bilərsiniz.
@@ -91,10 +91,10 @@ ListOfMenusEntries=Menyu girişlərinin siyahısı
 ListOfDictionariesEntries=Lüğətlərə daxil olanların siyahısı
 ListOfPermissionsDefined=Müəyyən edilmiş icazələrin siyahısı
 SeeExamples=Burada nümunələrə baxın
-EnabledDesc=Bu sahənin aktiv olması şərt.<br><br>Nümunələr:<br>1<span>1 span class='notranslate'><br></span>isModEnabled('anothermodule')<br>getDolGlobalString('MYMODULE_OPTION')==2
+EnabledDesc=Condition to have this field active.<br><br>Examples:<br>1<br>isModEnabled('anothermodule')<br>getDolGlobalString('MYMODULE_OPTION')==2
 VisibleDesc=Sahə görünürmü? (Nümunələr: 0=Heç vaxt görünmür, 1=Siyahıda görünür və formalar yaradın/yeniləyin/baxın, 2=Yalnız siyahıda görünür, 3=Yalnız forma yaratdıqda/yenilədikdə/görünürdə görünür (siyahılarda deyil), 4=Siyahılarda görünür və yalnız formanı yeniləmək/baxmaq (yaratmaq deyil), 5=Yalnız siyahıda görünür və formaya baxmaq (yaratmaq deyil, yeniləmək deyil).<br><br> Mənfi dəyərdən istifadə o deməkdir ki, sahə standart olaraq siyahıda göstərilmir, lakin baxmaq üçün seçilə bilər).
 ItCanBeAnExpression=ifadə ola bilər. Nümunə:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>$user ->HasRight('bayram', 'bayrami_müəyyən et')?1:5
-DisplayOnPdfDesc=Bu sahəni uyğun PDF sənədlərində göstərin, siz "Mövqe" sahəsi ilə mövqeyi idarə edə bilərsiniz.<br><strong>Sənəd üçün:</strong><br>0 = göstərilmir <br>1 = display<spante class='translate ><br></span>2 = yalnız boş deyilsə göstərin<br><br>b09078 span>Sənəd xətləri üçün :<span class='notranslate'></strong><br>0 = göstərilmir <br> = sütunda göstərilir<br>3 = təsvirdən sonra sətir təsviri sütununda göstərilir<br>4 = təsvirdən sonra təsvir sütununda göstərilir yalnız boş olmasa
+DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br><strong>For document :</strong><br>0 = not displayed <br>1 = display<br>2 = display only if not empty<br><br><strong>For document lines :</strong><br>0 = not displayed <br>1 = displayed in a column<br>3 = display in line description column after the description<br>4 = display in description column after the description only if not empty
 DisplayOnPdf=PDF üzərində
 IsAMeasureDesc=Cəmi siyahıya daxil etmək üçün sahənin dəyəri toplana bilərmi? (Nümunələr: 1 və ya 0)
 SearchAllDesc=Sahə sürətli axtarış alətindən axtarış etmək üçün istifadə olunur? (Nümunələr: 1 və ya 0)
@@ -111,7 +111,7 @@ TriggerDefDesc=Modulunuzdan kənar biznes hadisəsi (digər modullar tərəfind�
 SeeIDsInUse=Quraşdırmanızda istifadə edilən ID-lərə baxın
 SeeReservedIDsRangeHere=Qorunan ID-lər sırasına baxın
 ToolkitForDevelopers=Dolibarr tərtibatçıları üçün alətlər dəsti
-TryToUseTheModuleBuilder=SQL və PHP bilikləriniz varsa, doğma modul qurucusu sehrbazından istifadə edə bilərsiniz.<br>Modulu aktivləşdirin <strong>%s</strong> və <span class="fa fa-bug"><spante'notranslate'notranslate klikləməklə sehrbazdan istifadə edin ></span></span> yuxarı sağ menyuda.<br>Xəbərdarlıq: Bu qabaqcıl tərtibatçı funksiyasıdır, <b>edin. span class='notranslate'></b></span> istehsal saytınızda sınaqdan keçirin!
+TryToUseTheModuleBuilder=If you have knowledge of SQL and PHP, you may use the native module builder wizard.<br>Enable the module <strong>%s</strong> and use the wizard by clicking the <span class="fa fa-bug"></span> on the top right menu.<br>Warning: This is an advanced developer feature, do <b>not</b> experiment on your production site!
 SeeTopRightMenu=Üst sağ menyuda <span class="fa fa-bug"></span>-a baxın
 AddLanguageFile=Dil faylı əlavə edin
 YouCanUseTranslationKey=Burada dil faylında olan tərcümə açarı olan açardan istifadə edə bilərsiniz ("Dillər" sekmesine baxın)
@@ -148,7 +148,7 @@ CSSListClass=Siyahı üçün css
 NotEditable=Redaktə edilə bilməz
 ForeignKey=Xarici Açar
 ForeignKeyDesc=Bu sahənin dəyərinin başqa bir cədvəldə mövcud olmasına zəmanət verilməlidir. Buraya dəyərə uyğun sintaksisi daxil edin: tablename.parentfieldtocheck
-TypeOfFieldsHelp=Nümunə:<br>varchar(99)<br>e-poçt<br>telefon ='notranslate'><br></span>ip<br>url<br>parol<span class='notranslate419b>b span>double(24,8)<br>real<br>mətn<br> <span class='notranslate'><br>date<br>datetime<br>zaman damgası<spante class='no <br></span>integer<br>integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]cc2fdaf03<b01 /span><span class='notranslate'><br>'1' o deməkdir ki, biz qeyd yaratmaq üçün kombinasiyadan sonra + düyməsi əlavə edirik<br>'filtr' Universal Filtr sintaksisi şərti, misal: '((status:=:1) AND (fk_user:=:__USER_ID__) AND (obyekt:IN:(__SHARED_ENTITIES__))'
+TypeOfFieldsHelp=Example:<br>varchar(99)<br>email<br>phone<br>ip<br>url<br>password<br>double(24,8)<br>real<br>text<br>html<br>date<br>datetime<br>timestamp<br>stars(NumberOfStars) NumberOfStars must be between 1 and 10.<br>integer<br>integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br><br>'1' means we add a + button after the combo to create the record<br>'filter' is an Universal Filter syntax condition, example: '((status:=:1) AND (fk_user:=:__USER_ID__) AND (entity:IN:(__SHARED_ENTITIES__))'
 TypeOfFieldsHelpIntro=Bu sahənin/atributun növüdür.
 AsciiToHtmlConverter=Ascii-dən HTML-ə çevirici
 AsciiToPdfConverter=Ascii-dən PDF-ə çevirici
@@ -173,6 +173,7 @@ PermissionAddedSuccesfuly=İcazə uğurla əlavə edildi
 MenuDeletedSuccessfuly=Menyu uğurla silindi
 MenuAddedSuccessfuly=Menyu uğurla əlavə edildi
 MenuUpdatedSuccessfuly=Menyu uğurla yeniləndi
+AddAPIsForThisObject=Bu obyekt üçün API əlavə edin
 ApiObjectDeleted=%s obyekti üçün API uğurla silindi
 CRUDRead=Oxuyun
 CRUDCreateWrite=Yaradın və ya Yeniləyin
@@ -180,9 +181,17 @@ FailedToAddCodeIntoDescriptor=Kodu deskriptora əlavə etmək alınmadı. Faylda
 DictionariesCreated=Lüğət <b>%s</b> uğurla yaradıldı
 DictionaryDeleted=Lüğət <b>%s</b> uğurla silindi
 PropertyModuleUpdated=<b>%s</b> mülkiyyəti uğurla yeniləndi
-InfoForApiFile=* İlk dəfə fayl yaratdığınız zaman bütün üsullar hər obyekt üçün <strong> yaradılacaq.</strong><br>* <strong>sil</strong> üzərinə kliklədiyiniz zaman, sadəcə olaraq <span sinfi üçün bütün üsulları silirsiniz. ='notranslate'><strong></span>seçilmiş obyekt</strong>.
+InfoForApiFile=* When you generate file for the first time then all methods will be created <strong>for each object.</strong><br>* When you click in <strong>remove</strong> you just remove all methods for the <strong>selected object</strong>.
+AboutFile="Modul haqqında" səhifəsi
 SetupFile=Modul quraşdırma səhifəsi
-EmailingSelectors=Emails selectors
+EmailingSelectors=E-poçt seçiciləri
 EmailingSelectorDesc=Kütləvi e-poçt göndərmə modulu üçün yeni e-poçt hədəf seçicilərini təmin etmək üçün burada sinif fayllarını yarada və redaktə edə bilərsiniz
 EmailingSelectorFile=E-poçt seçici faylı
 NoEmailingSelector=E-poçt seçici faylı yoxdur
+ModuleTranslatedIntoLangForKeyInto=%s açarı üçün .lang faylına "%s" dilinə tərcümə edildi
+PageLinkedByAMenuEntry=Ən azı bir menyu girişi ilə əlaqələndirilmiş səhifə
+FieldsEdit=Sahələri redaktə edin
+FieldsInsert=Sahələr daxil edin
+FieldsView=Sahələrin görünüşü
+AIPromptExtrafield=AI sorğusu
+AIPromptExtrafieldDesc=Bu sahədə istifadə olunan sabitlər müvafiq qiymətlə əvəz olunacaq.

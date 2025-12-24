@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2017 ATM Consulting       <contact@atm-consulting.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,11 +37,28 @@ if (!defined('NOREQUIREHTML')) {
 	define('NOREQUIREHTML', '1');
 }
 
-$res = require '../../main.inc.php';
+require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $element = GETPOST('element', 'alpha');
-$action = GETPOST('action', 'aZ09');
+$action = GETPOST('action', 'aZ09');	// Can be DOC_PREVIEW or DOC_DOWNLOAD
+
+if (! in_array($action, array('DOC_PREVIEW', 'DOC_DOWNLOAD'))) {
+	accessforbidden('Bad value for action. Must be DOC_PREVIEW or DOC_DOWNLOAD');
+}
+
+if ($element === 'facture') {
+	restrictedArea($user, 'facture', $id, '', '', 'fk_soc', 'rowid', 0);
+} else {
+	accessforbidden('Bad value for element');
+}
 
 
 /*
@@ -49,12 +67,22 @@ $action = GETPOST('action', 'aZ09');
 
 top_httphead();
 
-if ($element === 'facture') {
+if ($element === 'facture') {	// Test on permission done in top of page
 	require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 	$facture = new Facture($db);
 	if ($facture->fetch($id) > 0) {
+		// Increase counter by 1
+		$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET pos_print_counter = pos_print_counter + 1";
+		$sql .= " WHERE rowid = ".((int) $facture->id);
+		$db->query($sql);
+
+		//$facture->pos_print_counter += 1;
+		//$facture->update($user, 1);	// We disable trigger here because we already call the trigger $action = DOC_PREVIEW or DOC_DOWNLOAD just after
+
 		$facture->call_trigger($action, $user);
 	}
+
+	print 'Object '.$element.' logged with action code = '.$action;
 }

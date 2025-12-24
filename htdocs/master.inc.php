@@ -10,6 +10,8 @@
  * Copyright (C) 2010		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2014		Teddy Andreotti			<125155@supinfo.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,12 +31,46 @@
  *	\file       htdocs/master.inc.php
  * 	\ingroup	core
  *  \brief      File that defines environment for all Dolibarr process (pages or scripts)
- * 				This script reads the conf file, init $lang, $db and and empty $user
+ * 				This script reads the conf file, init $lang, $db and an empty $user
  */
 
 // Include the conf.php and functions.lib.php and security.lib.php. This defined the constants like DOL_DOCUMENT_ROOT, DOL_DATA_ROOT, DOL_URL_ROOT...
 // This file may have been already required by main.inc.php. But may not by scripts. So, here the require_once must be kept.
 require_once 'filefunc.inc.php';
+/**
+ * @var string $dolibarr_main_db_host
+ * @var string $dolibarr_main_db_port
+ * @var string $dolibarr_main_db_name
+ * @var string $dolibarr_main_db_user
+ * @var string $dolibarr_main_db_pass
+ * @var string $dolibarr_main_db_type
+ * @var string $dolibarr_main_db_prefix
+ * @var string $dolibarr_main_db_character_set
+ * @var string $dolibarr_main_db_collation
+ * @var string $dolibarr_main_db_encryption
+ * @var string $dolibarr_main_db_cryptkey
+ * @var string $dolibarr_main_document_root_alt
+ * @var string $dolibarr_main_limit_users
+ * @var string $dolibarr_mailing_limit_sendbyweb
+ * @var string $dolibarr_mailing_limit_sendbycli
+ * @var	string $dolibarr_mailing_limit_sendbyday
+ * @var string $dolibarr_main_authentication
+ * @var string $dolibarr_main_force_https
+ * @var string $dolibarr_strict_mode
+ * @var string $dolibarr_main_instance_unique_id
+ * @var string $dolibarr_main_cookie_cryptkey
+ * @var string $dolibarr_main_url_root
+ * @var string $dolibarr_main_url_root_alt
+ * @var string $dolibarr_main_document_root_alt
+ * @var string|string[] $dolibarr_main_stream_to_disable
+ */
+'
+@phan-var-force ?string $dolibarr_main_db_prefix
+@phan-var-force ?string $dolibarr_main_db_encryption
+@phan-var-force ?string $dolibarr_main_db_cryptkey
+@phan-var-force ?string $dolibarr_main_limit_users
+@phan-var-force ?string $dolibarr_main_url_root_alt
+';
 require_once DOL_DOCUMENT_ROOT.'/core/class/conf.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 
@@ -44,12 +80,58 @@ if (!function_exists('is_countable')) {
 	 * function is_countable (to remove when php version supported will be >= 7.3)
 	 * @param mixed $c data to check if countable
 	 * @return bool
+	 * @phan-suppress PhanRedefineFunctionInternal
 	 */
 	function is_countable($c)
 	{
 		return is_array($c) || $c instanceof Countable;
 	}
 }
+
+
+/*
+ * Define some constants
+ */
+
+if (!defined('EURO')) {
+	define('EURO', chr(128));
+}
+
+// Define syslog constants
+if (!defined('LOG_DEBUG')) {
+	if (!function_exists("syslog")) {
+		// For PHP versions without syslog (like running on Windows OS)
+		define('LOG_EMERG', 0);
+		define('LOG_ALERT', 1);
+		define('LOG_CRIT', 2);
+		define('LOG_ERR', 3);
+		define('LOG_WARNING', 4);
+		define('LOG_NOTICE', 5);
+		define('LOG_INFO', 6);
+		define('LOG_DEBUG', 7);
+	}
+}
+
+/*
+ * Disable some not used PHP stream
+ */
+$listofwrappers = stream_get_wrappers();
+// We need '.phar' for geoip2. TODO Replace phar in geoip with exploded files so we can disable phar by default.
+// phar stream does not auto unserialize content (possible code execution) since PHP 8.1
+// zip stream is necessary by excel import module
+$arrayofstreamtodisable = array('compress.zlib', 'compress.bzip2', 'ftp', 'ftps', 'glob', 'data', 'expect', 'ogg', 'rar', 'zlib');
+if (!empty($dolibarr_main_stream_to_disable) && is_array($dolibarr_main_stream_to_disable)) {
+	$arrayofstreamtodisable = $dolibarr_main_stream_to_disable;
+}
+foreach ($arrayofstreamtodisable as $streamtodisable) {
+	if (!empty($listofwrappers) && in_array($streamtodisable, $listofwrappers)) {
+		/*if (!empty($dolibarr_main_stream_do_not_disable) && is_array($dolibarr_main_stream_do_not_disable) && in_array($streamtodisable, $dolibarr_main_stream_do_not_disable)) {
+			continue;	// We do not disable this stream
+		}*/
+		stream_wrapper_unregister($streamtodisable);
+	}
+}
+
 
 /*
  * Create $conf object
@@ -83,8 +165,8 @@ $conf->file->main_force_https = empty($dolibarr_main_force_https) ? '' : $doliba
 $conf->file->strict_mode = empty($dolibarr_strict_mode) ? '' : $dolibarr_strict_mode; // Force php strict mode (for debug)
 $conf->file->instance_unique_id = empty($dolibarr_main_instance_unique_id) ? (empty($dolibarr_main_cookie_cryptkey) ? '' : $dolibarr_main_cookie_cryptkey) : $dolibarr_main_instance_unique_id; // Unique id of instance
 $conf->file->dol_main_url_root = $dolibarr_main_url_root;	// Define url inside the config file
-$conf->file->dol_document_root = array('main' => (string) DOL_DOCUMENT_ROOT); // Define array of document root directories ('/home/htdocs')
-$conf->file->dol_url_root = array('main' => (string) DOL_URL_ROOT); // Define array of url root path ('' or '/dolibarr')
+$conf->file->dol_document_root = array('main' => (string) DOL_DOCUMENT_ROOT); // Define an array of document root directories ('/home/htdocs')
+$conf->file->dol_url_root = array('main' => (string) DOL_URL_ROOT); // Define an array of url root path ('' or '/dolibarr')
 if (!empty($dolibarr_main_document_root_alt)) {
 	// dolibarr_main_document_root_alt can contains several directories
 	$values = preg_split('/[;,]/', $dolibarr_main_document_root_alt);
@@ -92,7 +174,7 @@ if (!empty($dolibarr_main_document_root_alt)) {
 	foreach ($values as $value) {
 		$conf->file->dol_document_root['alt'.($i++)] = (string) $value;
 	}
-	$values = preg_split('/[;,]/', $dolibarr_main_url_root_alt);
+	$values = preg_split('/[;,]/', (string) $dolibarr_main_url_root_alt);
 	$i = 0;
 	foreach ($values as $value) {
 		if (preg_match('/^http(s)?:/', $value)) {
@@ -114,7 +196,7 @@ if (!empty($dolibarr_main_document_root_alt)) {
 	}
 }
 
-// Chargement des includes principaux de librairies communes
+// Load the main includes of common libraries
 if (!defined('NOREQUIREUSER')) {
 	require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php'; // Need 500ko memory
 }
@@ -127,20 +209,28 @@ if (!defined('NOREQUIRESOC')) {
 
 
 /*
- * Creation objet $langs (must be before all other code)
+ * Create object $langs (must be before all other code)
  */
+$langs = null;
 if (!defined('NOREQUIRETRAN')) {
 	$langs = new Translate('', $conf); // Must be after reading conf
 }
 
+
 /*
- * Object $db
+ * Create object $db
  */
 $db = null;
 if (!defined('NOREQUIREDB')) {
 	$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, (int) $conf->db->port);
+	/**
+	 * @var DoliDB $db
+	 */
 
 	if ($db->error) {
+		if (is_object($langs)) {
+			$langs->setDefaultLang('auto');
+		}
 		// If we were into a website context
 		if (!defined('USEDOLIBARREDITOR') && !defined('USEDOLIBARRSERVER') && !empty($_SERVER['SCRIPT_FILENAME']) && (strpos($_SERVER['SCRIPT_FILENAME'], DOL_DATA_ROOT.'/website') === 0)) {
 			$sapi_type = php_sapi_name();
@@ -149,27 +239,26 @@ if (!defined('NOREQUIREDB')) {
 			}
 			print '<div class="center" style="text-align: center; margin: 100px;">';
 			if (is_object($langs)) {
-				$langs->setDefaultLang('auto');
 				$langs->load("website");
 				print $langs->trans("SorryWebsiteIsCurrentlyOffLine");
 			} else {
 				print "SorryWebsiteIsCurrentlyOffLine";
 			}
 			print '</div>';
-			exit;
+			exit(1);
 		}
 		dol_print_error($db, "host=".$conf->db->host.", port=".$conf->db->port.", user=".$conf->db->user.", databasename=".$conf->db->name.", ".$db->error);
-		exit;
+		exit(1);
 	}
 }
 
-// Now database connexion is known, so we can forget password
+// Now database connection is known, so we can forget password
 //unset($dolibarr_main_db_pass); 	// We comment this because this constant is used in some other pages
 unset($conf->db->pass); // This is to avoid password to be shown in memory/swap dump
 
 
 /*
- * Object $user
+ * Create object $user
  */
 if (!defined('NOREQUIREUSER')) {
 	$user = new User($db);
@@ -178,7 +267,9 @@ if (!defined('NOREQUIREUSER')) {
 /*
  * Create the global $hookmanager object
  */
-$hookmanager = new HookManager($db);
+if (!defined('NOHOOKMANAGER')) {
+	$hookmanager = new HookManager($db);
+}
 
 
 /*
@@ -192,9 +283,9 @@ if (session_id() && !empty($_SESSION["dol_entity"])) {
 } elseif (!empty($_ENV["dol_entity"])) {
 	// Entity inside a CLI script
 	$conf->entity = $_ENV["dol_entity"];
-} elseif (GETPOSTISSET("loginfunction") && (GETPOST("entity", 'int') || GETPOST("switchentity", 'int'))) {
+} elseif (GETPOSTISSET("loginfunction") && (GETPOSTINT("entity") || GETPOSTINT("switchentity"))) {
 	// Just after a login page
-	$conf->entity = (GETPOSTISSET("entity") ? GETPOST("entity", 'int') : GETPOST("switchentity", 'int'));
+	$conf->entity = (GETPOSTISSET("entity") ? GETPOSTINT("entity") : GETPOSTINT("switchentity"));
 } elseif (defined('DOLENTITY') && is_numeric(constant('DOLENTITY'))) {
 	// For public page with MultiCompany module
 	$conf->entity = constant('DOLENTITY');
@@ -203,12 +294,25 @@ if (session_id() && !empty($_SESSION["dol_entity"])) {
 if (!is_numeric($conf->entity)) {
 	$conf->entity = 1;
 }
-// Here we read database (llx_const table) and define $conf->global->XXX var.
+// Here we read database (llx_const table) and define conf var $conf->global->XXX.
 //print "We work with data into entity instance number '".$conf->entity."'";
-$conf->setValues($db);
+if ($db !== null) {
+	$conf->setValues($db);
+}
+
+
+// Set default language (must be after the setValues setting global conf 'MAIN_LANG_DEFAULT'. Page main.inc.php will overwrite langs->defaultlang with user value later)
+if (!defined('NOREQUIRETRAN')) {
+	$langcode = (GETPOST('lang', 'aZ09') ? GETPOST('lang', 'aZ09', 1) : getDolGlobalString('MAIN_LANG_DEFAULT', 'auto'));
+	if (defined('MAIN_LANG_DEFAULT')) {	// So a page can force the language whatever is setup and parameters in URL
+		$langcode = constant('MAIN_LANG_DEFAULT');
+	}
+	$langs->setDefaultLang($langcode);
+}
+
 
 // Create object $mysoc (A thirdparty object that contains properties of companies managed by Dolibarr.
-if (!defined('NOREQUIREDB') && !defined('NOREQUIRESOC')) {
+if (!defined('NOREQUIREDB') && !defined('NOREQUIRESOC') && $db != null) {
 	require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 	$mysoc = new Societe($db);
@@ -252,20 +356,4 @@ if (!defined('NOREQUIREDB') && !defined('NOREQUIRESOC')) {
 		// Work In Progress to support all taxes into unit price entry when MAIN_UNIT_PRICE_WITH_TAX_IS_FOR_ALL_TAXES is set.
 		$conf->global->MAIN_NO_INPUT_PRICE_WITH_TAX = 1;
 	}
-}
-
-
-// Set default language (must be after the setValues setting global $conf->global->MAIN_LANG_DEFAULT. Page main.inc.php will overwrite langs->defaultlang with user value later)
-if (!defined('NOREQUIRETRAN')) {
-	$langcode = (GETPOST('lang', 'aZ09') ? GETPOST('lang', 'aZ09', 1) : getDolGlobalString('MAIN_LANG_DEFAULT', 'auto'));
-	if (defined('MAIN_LANG_DEFAULT')) {	// So a page can force the language whatever is setup and parameters in URL
-		$langcode = constant('MAIN_LANG_DEFAULT');
-	}
-	$langs->setDefaultLang($langcode);
-}
-
-
-
-if (!defined('MAIN_LABEL_MENTION_NPR')) {
-	define('MAIN_LABEL_MENTION_NPR', 'NPR');
 }

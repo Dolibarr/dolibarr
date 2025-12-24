@@ -1,0 +1,46 @@
+---
+# This is a basic workflow to check code with PHPSTAN tool
+name: Phan
+
+on:
+  # workflow called by the parent workflow ci.yml
+  workflow_call:
+    inputs:
+      gh_event:
+        required: true
+        type: string
+  # can run job manually
+  workflow_dispatch:
+
+concurrency:
+  group: phan-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  gh_event: ${{ inputs.gh_event || github.event_name }}
+  PHAN_CONFIG: dev/tools/phan/config.php
+  PHAN_BASELINE: dev/tools/phan/baseline.txt
+  PHAN_MIN_PHP: 7.2
+  PHAN_QUICK: ${{ github.event.schedule && '' || '--quick' }}
+  GITHUB_JSON: ${{ toJSON(github) }} # Helps in debugging Github Action
+
+jobs:
+  phan:
+    name: Run phan
+    runs-on: ubuntu-latest
+    # Do not run schedule on forks
+    if: |
+      github.repository == 'Dolibarr/dolibarr'
+      || github.event.schedule == false
+    steps:
+      - uses: actions/checkout@v6
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.2
+          coverage: none # disable xdebug, pcov
+          tools: phan
+      - name: Run Phan analysis
+        run: |
+          # shellcheck disable=2086
+          phan $PHAN_QUICK -k "$PHAN_CONFIG" -B "$PHAN_BASELINE" --analyze-twice --minimum-target-php-version "$PHAN_MIN_PHP" --output-mode=github

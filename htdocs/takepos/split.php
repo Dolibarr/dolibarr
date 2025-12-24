@@ -1,5 +1,7 @@
 <?php
-/* Copyright (C) 2021	Andreu Bisquerra	<jove@bisquerra.com>
+/* Copyright (C) 2021		Andreu Bisquerra		<jove@bisquerra.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +43,12 @@ if (!defined('NOREQUIREAJAX')) {
 // Load Dolibarr environment
 require '../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Translate $langs
+ * @var User $user
+ */
 $langs->loadLangs(array("main", "bills", "cashdesk", "banks"));
 
 $action = GETPOST('action', 'aZ09');
@@ -56,41 +63,14 @@ if (!$user->hasRight('takepos', 'run')) {
  * Actions
  */
 
-if ($action=="split") {
-	$line = GETPOST('line', 'int');
-	$split = GETPOST('split', 'int');
-	if ($split==1) { // Split line
+if ($action == "split" && $user->hasRight('takepos', 'run')) {
+	$line = GETPOSTINT('line');
+	$split = GETPOSTINT('split');
+	$invoice = null;
+	$placeid = 0;
+	if ($split == 1) { // Split line
 		$invoice = new Facture($db);
-		$ret = $invoice->fetch('', '(PROV-POS'.$_SESSION["takeposterminal"].'-SPLIT)');
-		if ($ret > 0) {
-			$placeid = $invoice->id;
-		} else {
-			$constforcompanyid = 'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"];
-			$invoice->socid =getDolGlobalInt($constforcompanyid);
-			$invoice->date = dol_now();
-			$invoice->module_source = 'takepos';
-			$invoice->pos_source = $_SESSION["takeposterminal"];
-			$invoice->entity = !empty($_SESSION["takeposinvoiceentity"]) ? $_SESSION["takeposinvoiceentity"] : $conf->entity;
-			if ($invoice->socid <= 0) {
-				$langs->load('errors');
-				dol_htmloutput_errors($langs->trans("ErrorModuleSetupNotComplete", "TakePos"), null, 1);
-			} else {
-				$placeid = $invoice->create($user);
-				if ($placeid < 0) {
-					dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
-				}
-				$sql = "UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS".$_SESSION["takeposterminal"]."-SPLIT)' where rowid=".$placeid;
-				$db->query($sql);
-			}
-		}
-		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set fk_facture=".$placeid." where rowid=".$line;
-		$db->query($sql);
-	} elseif ($split==0) { // Unsplit line
-		$invoice = new Facture($db);
-		if ($place=="SPLIT") {
-			$place="0";
-		} // Avoid move line to the same place (from SPLIT to SPLIT place)
-		$ret = $invoice->fetch('', '(PROV-POS'.$_SESSION["takeposterminal"].'-'.$place.')');
+		$ret = $invoice->fetch(0, '(PROV-POS'.$_SESSION["takeposterminal"].'-SPLIT)');
 		if ($ret > 0) {
 			$placeid = $invoice->id;
 		} else {
@@ -102,23 +82,58 @@ if ($action=="split") {
 			$invoice->entity = !empty($_SESSION["takeposinvoiceentity"]) ? $_SESSION["takeposinvoiceentity"] : $conf->entity;
 			if ($invoice->socid <= 0) {
 				$langs->load('errors');
-				dol_htmloutput_errors($langs->trans("ErrorModuleSetupNotComplete", "TakePos"), null, 1);
+				dol_htmloutput_errors($langs->trans("ErrorModuleSetupNotComplete", "TakePos"), [], 1);
 			} else {
 				$placeid = $invoice->create($user);
 				if ($placeid < 0) {
 					dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
 				}
-				$sql = "UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")' where rowid=".$placeid;
+				$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET ref='(PROV-POS".$_SESSION["takeposterminal"]."-SPLIT)'";
+				$sql .= " WHERE rowid = ".((int) $placeid);
+				$db->query($sql);
+			}
+		}
+		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET fk_facture = ".((int) $placeid)." WHERE rowid = ".((int) $line);
+		$db->query($sql);
+	} elseif ($split == 0) { // Unsplit line
+		$invoice = new Facture($db);
+		if ($place == "SPLIT") {
+			$place = "0";
+		} // Avoid move line to the same place (from SPLIT to SPLIT place)
+		$ret = $invoice->fetch(0, '(PROV-POS'.$_SESSION["takeposterminal"].'-'.$place.')');
+		if ($ret > 0) {
+			$placeid = $invoice->id;
+		} else {
+			$constforcompanyid = 'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"];
+			$invoice->socid = getDolGlobalInt($constforcompanyid);
+			$invoice->date = dol_now();
+			$invoice->module_source = 'takepos';
+			$invoice->pos_source = $_SESSION["takeposterminal"];
+			$invoice->entity = !empty($_SESSION["takeposinvoiceentity"]) ? $_SESSION["takeposinvoiceentity"] : $conf->entity;
+			if ($invoice->socid <= 0) {
+				$langs->load('errors');
+				dol_htmloutput_errors($langs->trans("ErrorModuleSetupNotComplete", "TakePos"), [], 1);
+			} else {
+				$placeid = $invoice->create($user);
+				if ($placeid < 0) {
+					dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
+				}
+
+				$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
+				$sql .= " WHERE rowid = ".((int) $placeid);
 				$db->query($sql);
 			}
 		}
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set fk_facture=".$placeid." where rowid=".$line;
 		$db->query($sql);
 	}
-	$invoice->fetch('', '(PROV-POS'.$_SESSION["takeposterminal"].'-SPLIT)');
-	$invoice->update_price();
-	$invoice->fetch('', '(PROV-POS'.$_SESSION["takeposterminal"].'-'.$place.')');
-	$invoice->update_price();
+	if ($invoice !== null) {
+		$invoice->fetch(0, '(PROV-POS'.$_SESSION["takeposterminal"].'-SPLIT)');
+		$invoice->update_price();
+
+		$invoice->fetch(0, '(PROV-POS'.$_SESSION["takeposterminal"].'-'.$place.')');
+		$invoice->update_price();
+	}
 }
 
 

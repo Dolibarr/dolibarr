@@ -15,12 +15,12 @@ ErrorGroupAlreadyExists=ቡድን %s አስቀድሞ አለ።
 ErrorEmailAlreadyExists=ኢሜይል %s አስቀድሞ አለ።
 ErrorRecordNotFound=መዝገብ አልተገኘም።
 ErrorRecordNotFoundShort=አልተገኘም
-ErrorFailToCopyFile=ፋይል '<b>%s</b> ወደ "መቅዳት አልተሳካም ='notranslate'><b></span>%s</b>'።
-ErrorFailToCopyDir=ማውጫ '<b>%s</b> ወደ 'ክፍል መቅዳት አልተሳካም ='notranslate'><b></span>%s</b>'።
-ErrorFailToRenameFile=የፋይሉን ስም መቀየር አልተሳካም <b>%s</b> ወደ 'ክፍል' ='notranslate'><b></span>%s</b>'።
+ErrorFailToCopyFile=Failed to copy file '<b>%s</b>' into '<b>%s</b>'.
+ErrorFailToCopyDir=Failed to copy directory '<b>%s</b>' into '<b>%s</b>'.
+ErrorFailToRenameFile=Failed to rename file '<b>%s</b>' into '<b>%s</b>'.
 ErrorFailToDeleteFile=ፋይል '<b>%s</b>' ማስወገድ አልተሳካም።
 ErrorFailToCreateFile=ፋይል መፍጠር አልተሳካም '<b>%s</b>'።
-ErrorFailToRenameDir=ማውጫ '<b>%s</b> ክፍል ውስጥ እንደገና መሰየም አልተሳካም ='notranslate'><b></span>%s</b>'።
+ErrorFailToRenameDir=Failed to rename directory '<b>%s</b>' into '<b>%s</b>'.
 ErrorFailToCreateDir=ማውጫ '<b>%s</b>' ማውጫ መፍጠር አልተሳካም።
 ErrorFailToDeleteDir=ማውጫ '<b>%s</b>' መሰረዝ አልተሳካም።
 ErrorFailToMakeReplacementInto=በፋይል '<b>%s</b>' ፋይል ማድረግ አልተሳካም።
@@ -31,6 +31,7 @@ ErrorFromToAccountsMustDiffers=ምንጭ እና ኢላማዎች የባንክ ሂ
 ErrorBadThirdPartyName=ለሶስተኛ ወገን ስም መጥፎ እሴት
 ForbiddenBySetupRules=በማዋቀር ደንቦች የተከለከለ
 ErrorProdIdIsMandatory=የ%s ግዴታ ነው
+ErrorProdIdIsMandatoryForEuThirdparties=The %s is mandatory for customers in EEC
 ErrorAccountancyCodeCustomerIsMandatory=የደንበኛ የሂሳብ አያያዝ ኮድ %s ግዴታ ነው
 ErrorAccountancyCodeSupplierIsMandatory=የአቅራቢው የሂሳብ አያያዝ ኮድ %s ግዴታ ነው
 ErrorBadCustomerCodeSyntax=ለደንበኛ ኮድ መጥፎ አገባብ
@@ -51,13 +52,16 @@ ErrorBadDateFormat=እሴት %s የተሳሳተ የቀን ቅርጸት አለው
 ErrorWrongDate=ቀኑ ትክክል አይደለም!
 ErrorFailedToWriteInDir=ማውጫ %s ውስጥ መጻፍ አልተሳካም
 ErrorFailedToBuildArchive=የማህደር ፋይል %s መገንባት አልተሳካም
-ErrorFoundBadEmailInFile=በፋይል ውስጥ ለ%s መስመሮች ትክክል ያልሆነ የኢሜይል አገባብ ተገኝቷል (ምሳሌ መስመር %sከኢሜይል ጋር=<span class='notranslate'>b0ecb42ec / span>)
+ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=%s)
 ErrorUserCannotBeDelete=ተጠቃሚ ሊሰረዝ አይችልም። ምናልባት ከዶሊባርር አካላት ጋር የተያያዘ ሊሆን ይችላል.
 ErrorFieldsRequired=አንዳንድ አስፈላጊ መስኮች ባዶ ቀርተዋል።
 ErrorSubjectIsRequired=የኢሜል ርዕሰ ጉዳይ ያስፈልጋል
+ErrorInAddAttachmentsImageBaseOnMedia=Error in creating image files into media directory for attachment
+ErrorInAddAttachmentsImageBaseIsSrcData=Error in creating image files (found as data:) into temp directory for attachment
 ErrorFailedToCreateDir=ማውጫ መፍጠር አልተሳካም። የድር አገልጋይ ተጠቃሚ ወደ Dolibarr ሰነዶች ማውጫ ውስጥ የመፃፍ ፍቃድ እንዳለው ያረጋግጡ። ፓራሜትር <b>safe_mode</b> በዚህ ፒኤችፒ ላይ ከነቃ የዶሊባርር php ፋይሎች ባለቤት መሆናቸውን ያረጋግጡ የድር አገልጋይ ተጠቃሚ (ወይም ቡድን)።
 ErrorNoMailDefinedForThisUser=ለዚህ ተጠቃሚ ምንም ደብዳቤ አልተገለጸም።
 ErrorSetupOfEmailsNotComplete=ኢሜይሎችን ማዋቀር አልተጠናቀቀም።
+ErrorAccountingClosureSetupNotComplete=Setup of closure accounts not complete
 ErrorFeatureNeedJavascript=ይህ ባህሪ ለመስራት ጃቫስክሪፕት እንዲነቃ ያስፈልገዋል። ይህንን በማዋቀር - ማሳያ ይለውጡ።
 ErrorTopMenuMustHaveAParentWithId0=የ«ከፍተኛ» ዓይነት ምናሌ የወላጅ ምናሌ ሊኖረው አይችልም። በወላጅ ምናሌ ውስጥ 0 ን ያስቀምጡ ወይም የ'ግራ' አይነት ምናሌን ይምረጡ።
 ErrorLeftMenuMustHaveAParentId=የ'ግራ' አይነት ሜኑ የወላጅ መታወቂያ ሊኖረው ይገባል።
@@ -74,6 +78,7 @@ ErrorUploadBlockedByAddon=ሰቀላ በPHP/Apache ተሰኪ ታግዷል።
 ErrorFileSizeTooLarge=የፋይል መጠን በጣም ትልቅ ነው ወይም ፋይል አልተሰጠም።
 ErrorFieldTooLong=መስክ %s በጣም ረጅም ነው።
 ErrorSizeTooLongForIntType=ለ int አይነት መጠኑ በጣም ረጅም ነው (%s ከፍተኛ አሃዞች)
+ErrorSizeForStarsType=The star size must be a number between 1 and 10
 ErrorSizeTooLongForVarcharType=ለሕብረቁምፊ አይነት መጠኑ በጣም ረጅም ነው (%s ቻርልስ ከፍተኛ)
 ErrorNoValueForSelectType=እባክዎ ለተመረጠው ዝርዝር ዋጋ ይሙሉ
 ErrorNoValueForCheckBoxType=እባክዎን የአመልካች ሳጥን ዝርዝር ዋጋ ይሙሉ
@@ -81,7 +86,7 @@ ErrorNoValueForRadioType=እባክዎ ለሬዲዮ ዝርዝር ዋጋ ይሙሉ
 ErrorBadFormatValueList=የዝርዝሩ እሴት ከአንድ በላይ ነጠላ ሰረዝ ሊኖረው አይችልም፡ <u>%s</u>, ግን ቢያንስ አንድ ያስፈልግዎታል: ቁልፍ ፣ እሴት
 ErrorFieldCanNotContainSpecialCharacters=መስኩ <b>%s</b> ልዩ ቁምፊዎችን መያዝ የለበትም።
 ErrorFieldCanNotContainSpecialNorUpperCharacters=መስኩ <b>%s</b> ልዩ ቁምፊዎችን መያዝ የለበትም ቁምፊዎች፣ እና በፊደል ፊደል (a-z) መጀመር አለበት።
-ErrorFieldMustHaveXChar=መስኩ <b>%s</b> ቢያንስ <span ክፍል ሊኖረው ይገባል notranslate'>%s</span> ቁምፊዎች።
+ErrorFieldMustHaveXChar=The field <b>%s</b> must have at least %s characters.
 ErrorNoAccountancyModuleLoaded=ምንም የሂሳብ ሞጁል አልነቃም።
 ErrorExportDuplicateProfil=ይህ የመገለጫ ስም አስቀድሞ ለዚህ ወደ ውጭ መላኪያ ስብስብ አለ።
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP ማዛመድ አልተጠናቀቀም።
@@ -94,11 +99,11 @@ ErrorRecordIsUsedCantDelete=መዝገብ መሰረዝ አልተቻለም። አ�
 ErrorModuleRequireJavascript=ይህ ባህሪ እንዲሰራ JavaScript መሰናከል የለበትም። ጃቫ ስክሪፕትን ለማንቃት/ለማሰናከል ወደ ሜኑ መነሻ->ማዋቀር->ማሳያ ይሂዱ።
 ErrorPasswordsMustMatch=ሁለቱም የተተየቡ የይለፍ ቃሎች እርስ በእርስ መመሳሰል አለባቸው
 ErrorContactEMail=የቴክኒክ ስህተት ተከስቷል። እባኮትን ለሚከተለው ኢሜል አስተዳዳሪን ያግኙ <b>%s</b>እና ስህተቱን ያቅርቡ code <b>%s</b>በመልዕክትህ ውስጥ ወይም ስክሪን ኮፒ ጨምር። ይህ ገጽ.
-ErrorWrongValueForField=መስክ <b>%s</b>: '<span' class=' <b></span>%s</b>' ከ regex ህግ ጋር አይዛመድም <span class='notranslate3>7f8f8f8s %s</b>
+ErrorWrongValueForField=Field <b>%s</b>: '<b>%s</b>' does not match regex rule <b>%s</b>
 ErrorHtmlInjectionForField=መስክ <b>%s</b>= እሴቱ '<slate' '><b></span>%s</b>' የማይፈቀድ ተንኮል አዘል ውሂብ ይዟል።
-ErrorFieldValueNotIn=መስክ <b>%s</b>: '<span' class=' <b></span>%s</b> በመስክ ላይ የተገኘ እሴት አይደለም <span class='notranslate'7f8f8f85z0 span>%s</b> የ b0aee833365837fz0<span' class=' %s</span></b>
-ErrorFieldRefNotIn=መስክ <b>%s</b>: '<span' class=' <b></span>%s</b>የ<span class><span><span><span class="verse"> 30838 class='notranslate'>%s</span></b> ነባር ማጣቀሻ
-ErrorMultipleRecordFoundFromRef=ከ ref <b>%s</b><span class='notranslate'></b>s ሲፈለግ ብዙ ሪከርዶች ተገኝተዋል። የትኛውን መታወቂያ መጠቀም እንዳለብን ለማወቅ ምንም መንገድ የለም።
+ErrorFieldValueNotIn=Field <b>%s</b>: '<b>%s</b>' is not a value found in field <b>%s</b> of <b>%s</b>
+ErrorFieldRefNotIn=Field <b>%s</b>: '<b>%s</b>' is not a <b>%s</b> existing ref
+ErrorMultipleRecordFoundFromRef=Several record found when searching from ref <b>%s</b>. No way to know which ID to use.
 ErrorsOnXLines=%s ስህተቶች ተገኝተዋል
 ErrorFileIsInfectedWithAVirus=የጸረ-ቫይረስ ፕሮግራሙ ፋይሉን ማረጋገጥ አልቻለም (ፋይሉ በቫይረስ ሊጠቃ ይችላል)
 ErrorFileIsAnInfectedPDFWithJSInside=ፋይሉ በውስጡ በአንዳንድ ጃቫ ስክሪፕት የተበከለ ፒዲኤፍ ነው።
@@ -136,8 +141,9 @@ ErrorBadValueForCode=ለደህንነት ኮድ መጥፎ እሴት። በአዲ�
 ErrorBothFieldCantBeNegative=መስኮች %s እና %s ሁለቱም አሉታዊ ሊሆኑ አይችሉም
 ErrorFieldCantBeNegativeOnInvoice=መስክ <strong>%s</strong> በዚህ አይነት ላይ አሉታዊ ሊሆን አይችልም። የቅናሽ መስመር ማከል ከፈለጉ መጀመሪያ ቅናሹን ይፍጠሩ (ከመስክ '%s በሶስተኛ ወገን ካርድ ውስጥ) እና በክፍያ መጠየቂያው ላይ ይተግብሩ።
 ErrorLinesCantBeNegativeForOneVATRate=የመስመሮች ጠቅላላ (የታክስ የተጣራ) ለተሰጠ ዋጋ ቢስ ያልሆነ የተጨማሪ እሴት ታክስ ዋጋ አሉታዊ ሊሆን አይችልም (ለተእታ መጠን አሉታዊ ድምር ተገኝቷል <b>%s </b>%%)።
-ErrorLinesCantBeNegativeOnDeposits=መስመሮች በተቀማጭ ገንዘብ ውስጥ አሉታዊ ሊሆኑ አይችሉም። ይህን ካደረግክ በመጨረሻ ደረሰኝ ላይ ተቀማጩን መጠቀም ስትፈልግ ችግሮች ያጋጥሙሃል።
+ErrorLinesCantBeNegativeOnDeposits=Lines can't be negative in a down payment. You will face problems when you will need to consume the deposit in final invoice if you do so.
 ErrorQtyForCustomerInvoiceCantBeNegative=የደንበኛ ደረሰኞች የመስመር መጠን አሉታዊ ሊሆን አይችልም።
+ErrorQtyForSupplierInvoiceCantBeNegative=Quantity for line into supplier invoices can't be negative
 ErrorWebServerUserHasNotPermission=የተጠቃሚ መለያ <b>%s</b>የድር አገልጋይ ለማስፈጸም ምንም ፍቃድ የለውም የሚለውን ነው።
 ErrorNoActivatedBarcode=ምንም አይነት የአሞሌ ኮድ አልነቃም።
 ErrUnzipFails=በዚፕ ማህደር %sን ዚፕ መክፈት አልተሳካም
@@ -219,14 +225,15 @@ ErrorPhpMailDelivery=በጣም ብዙ የተቀባዮችን ቁጥር እንደ�
 ErrorUserNotAssignedToTask=ተጠቃሚው የሚፈጀውን ጊዜ ማስገባት እንዲችል ለተግባር መመደብ አለበት።
 ErrorTaskAlreadyAssigned=ተግባር አስቀድሞ ለተጠቃሚ ተሰጥቷል።
 ErrorModuleFileSeemsToHaveAWrongFormat=የሞጁሉ ጥቅል የተሳሳተ ቅርጸት ያለው ይመስላል።
-ErrorModuleFileSeemsToHaveAWrongFormat2=ቢያንስ አንድ የግዴታ ማውጫ ወደ ሞጁል ዚፕ ውስጥ መኖር አለበት፡ <strong>%sb0a65d09z071fs > ወይም <span class='notranslate'><strong>%s</strong>
-ErrorFilenameDosNotMatchDolibarrPackageRules=የሞጁሉ ጥቅል ስም (<strong>%s</strong> አይመሳሰልም የሚጠበቀው ስም አገባብ፡ <strong>%s</strong>
+ErrorModuleFileSeemsToHaveAWrongFormat2=At least one mandatory directory must exists into zip of module: <strong>%s</strong> or <strong>%s</strong>
+ErrorFilenameDosNotMatchDolibarrPackageRules=The file name of the module package (<strong>%s</strong>) does not match the expected name syntax: <strong>%s</strong>
 ErrorDuplicateTrigger=ስህተት፣ የተባዛ የማስነሻ ስም %s። ቀድሞውንም ከ%s ተጭኗል።
 ErrorNoWarehouseDefined=ስህተት፣ ምንም መጋዘኖች አልተገለጹም።
 ErrorBadLinkSourceSetButBadValueForRef=የሚጠቀሙበት አገናኝ ልክ አይደለም። የመክፈያ 'ምንጭ' ይገለጻል፣ የ'ref' ዋጋ ግን ልክ አይደለም።
 ErrorTooManyErrorsProcessStopped=በጣም ብዙ ስህተቶች። ሂደቱ ቆሟል።
 ErrorMassValidationNotAllowedWhenStockIncreaseOnAction=በዚህ ድርጊት ላይ አክሲዮን የመጨመር/መቀነስ አማራጭ ሲዘጋጅ የጅምላ ማረጋገጥ አይቻልም (መጋዘኑን ለመጨመር/ለመቀነስ መወሰን እንድትችሉ አንድ በአንድ ማረጋገጥ አለባችሁ)
 ErrorObjectMustHaveStatusDraftToBeValidated=ነገር %s ለመረጋገጥ 'ረቂቅ' ደረጃ ሊኖረው ይገባል።
+ErrorObjectHasWrongStatus=Object %s must have another status for this operation.
 ErrorObjectMustHaveLinesToBeValidated=ነገር %s ለመረጋገጥ መስመሮች ሊኖሩት ይገባል።
 ErrorOnlyInvoiceValidatedCanBeSentInMassAction=የተረጋገጡ ደረሰኞች ብቻ "በኢሜል ላክ" የጅምላ እርምጃን በመጠቀም መላክ ይቻላል.
 ErrorChooseBetweenFreeEntryOrPredefinedProduct=ጽሑፉ አስቀድሞ የተወሰነ ምርት መሆኑን ወይም አለመሆኑን መምረጥ አለብዎት
@@ -260,12 +267,12 @@ ErrorBatchNoFoundEnoughQuantityForProductInWarehouse=ለዚህ ሎጥ/ተከታ�
 ErrorOnlyOneFieldForGroupByIsPossible=ለ'ግሩፕ በ' 1 መስክ ብቻ ይቻላል (ሌሎች ይጣላሉ)
 ErrorTooManyDifferentValueForSelectedGroupBy=በጣም ብዙ የተለያዩ እሴቶች ተገኝተዋል (ከ<b>%s</b> ለ) መስክ '<b>%s</b>' ስለዚህ ልንጠቀምበት አንችልም። ለግራፊክስ እንደ 'ቡድን'። መስክ 'Group By' ተወግዷል። እንደ X-Axis ሊጠቀሙበት ይፈልጉ ይሆናል?
 ErrorReplaceStringEmpty=ስህተት፣ የሚተካው ሕብረቁምፊ ባዶ ነው።
-ErrorProductNeedBatchNumber=ስህተት፣ ምርት '<b>%s<span class='notranslate'></b></spanse>ቁጥር ብዙ ያስፈልገዋል
+ErrorProductNeedBatchNumber=Error, product '<b>%s</b>' need a lot/serial number
 ErrorProductDoesNotNeedBatchNumber=ስህተት፣ ምርት '<b>%s</b>ዕጣ አይቀበልም ተከታታይ ቁጥር
 ErrorFailedToReadObject=ስህተት፣ የነገር አይነት ማንበብ አልተሳካም <b>%s</b>
-ErrorParameterMustBeEnabledToAllwoThisFeature=ስህተት፣ ፓራሜትር <b>%s</b>=span> ክፍል መንቃት አለበት 'notranslate'><b>conf/conf.php<> የትእዛዝ መስመር በይነገጽን በውስጣዊ የስራ መርሐግብር ለመጠቀም ያስችላል።
+ErrorParameterMustBeEnabledToAllwoThisFeature=Error, parameter <b>%s</b> must be enabled into <b>conf/conf.php</b> to allow use of Command Line Interface by the internal job scheduler
 ErrorLoginDateValidity=ስህተት፣ ይህ መግቢያ ከትክክለኛው የቀን ክልል ውጭ ነው።
-ErrorValueLength=የመስክ ርዝመት '<b>%s</b>ከ'' በላይ መሆን አለበት<span> span class='notranslate'><b></span>%s</b>'
+ErrorValueLength=Length of field '<b>%s</b>' must be higher than '<b>%s</b>'
 ErrorReservedKeyword=<b>%s</b> የሚለው ቃል የተያዘ ቁልፍ ቃል ነው።
 ErrorFilenameReserved=የፋይል ስም <b>%s</b> ጥቅም ላይ ሊውል አይችልም. የተጠበቀ እና የተጠበቀ ትእዛዝ.
 ErrorNotAvailableWithThisDistribution=በዚህ ስርጭት አይገኝም
@@ -301,7 +308,8 @@ ErrorThirpdartyOrMemberidIsMandatory=የሶስተኛ ወገን ወይም የአ�
 ErrorFailedToWriteInTempDirectory=በ temp ማውጫ ውስጥ መፃፍ አልተሳካም።
 ErrorQuantityIsLimitedTo=መጠኑ በ%s የተገደበ ነው።
 ErrorFailedToLoadThirdParty=ከ id=%s, email=%s, name= ማግኘት/ መጫን አልተቻለም %s
-ErrorThisPaymentModeIsNotSepa=ይህ የክፍያ ሁነታ የባንክ ሂሳብ አይደለም።
+ErrorThisPaymentModeIsNotDirectDebit=The payment mode is not direct debit
+ErrorThisPaymentModeIsNotCreditTransfer=The payment mode is not credit transfer
 ErrorStripeCustomerNotFoundCreateFirst=Stripe ደንበኛ ለዚህ ሶስተኛ አካል አልተዘጋጀም (ወይንም በ Stripe በኩል ወደ ተሰረዘ እሴት ተቀናብሯል)። መጀመሪያ ይፍጠሩ (ወይም እንደገና አያይዘው)።
 ErrorCharPlusNotSupportedByImapForSearch=የIMAP ፍለጋ ቁምፊ + የያዘ ሕብረቁምፊ ላኪ ወይም ተቀባይ መፈለግ አይችልም።
 ErrorTableNotFound=ሰንጠረዥ <b>%s</b> አልተገኘም
@@ -322,40 +330,62 @@ ErrorFixThisHere=<a href="%s">ይህንን እዚህ አስተካክል</a>
 ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=ስህተት፡ የአሁን ምሳሌህ (%s) በእርስዎ OAuth2 መግቢያ ማዋቀር (%s) ላይ ከተገለጸው ዩአርኤል ጋር አይዛመድም። በእንደዚህ አይነት ውቅር ውስጥ OAuth2 መግባት አይፈቀድም።
 ErrorMenuExistValue=ከዚህ ርዕስ ወይም URL ያለው ምናሌ አስቀድሞ አለ።
 ErrorSVGFilesNotAllowedAsLinksWithout=የኤስቪጂ ፋይሎች ያለ አማራጭ %s እንደ ውጫዊ አገናኞች አይፈቀዱም
-ErrorTypeMenu=በ navbar ላይ ለተመሳሳይ ሞጁል ሌላ ምናሌ ማከል አይቻልም፣ እስካሁን አያያዘም።
+ErrorTypeMenu=Impossible to add another menu for the same module on the navbar, not handled yet
+ErrorGeneratingBarcode=Error while generating the barcode (probably invalid code shape)
 ErrorObjectNotFound = ነገሩ <b>%s</b> አልተገኘም እባኮትን የእርስዎን url ያረጋግጡ።
 ErrorCountryCodeMustBe2Char=የአገር ኮድ ባለ 2 ቁምፊ ሕብረቁምፊ መሆን አለበት።
 ErrorABatchShouldNotContainsSpaces=A lot or serial number should not contains spaces
-
 ErrorTableExist=ሰንጠረዥ <b>%s</b> አስቀድሞ አለ
 ErrorDictionaryNotFound=መዝገበ ቃላት <b>%s</b> አልተገኘም
 ErrorFailedToCreateSymLinkToMedias=ወደ %s ለመጠቆም የ%s ተምሳሌታዊ አገናኝ መፍጠር አልተሳካም
 ErrorCheckTheCommandInsideTheAdvancedOptions=ወደ ውጭ ለመላክ ጥቅም ላይ የዋለውን ትዕዛዝ ወደ ውጭ የላቁ አማራጮች ያረጋግጡ
+ErrorEndTimeMustBeGreaterThanStartTime=End time must be greater than start time
+ErrorIncoherentDates=Start date must be earlier than end date
+ErrorEndHourIsNull=End date field cannot be empty
+ErrorStartHourIsNull=Start date field cannot be empty
+ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=Too many lines to process. Please use a more selective filter.
+ErrorEmptyValueForQty=Quantity cannot be zero.
+ErrorNoCloneWithoutName=The new user must have a name
+ErrorNoCloneWithoutEmail=The new user must have an email
+ErrorUserClone=Error in user clone categories
+ErrorQtyOrderedLessQtyShipped = The quantity ordered cannot be less than the quantity shipped.
+ErrorVariousPaymentOnBankAccountWithADifferentCurrencyNotYetSupported=Error, creating a various payment on a bank account with a currency different than the currency of the company is not yet supported.
+ErrorStreamMustBeEnabled=The PHP stream %s is not available. Check your PHP modules and Dolibarr parameter $dolibarr_main_stream_to_disable.
+ErrorYouTryToPayInvoicesWithDifferentCurrenciesInSamePayment=Error, you try to pay different invoices with different currencies in the same payment
+ErrorLinkNotFoundWithSharedLink=Error, link not found with this shared key
+ErrorBadNumberOfLinesMustHaveAtLeastOneLinePlusTitle=Wrong number of lines. The files must have at least 2 lines (1 line for title and 1 line for data)
+ErrorTooManyAttempts= በጣም ብዙ ሙከራዎች፣ እባክዎ ቆይተው እንደገና ይሞክሩ
+ErrorThisContactXIsAlreadyDefinedAsThisType=%s is already defined as contact for this type.
+ErrorThisGroupIsAlreadyDefinedAsThisType=The contacts with this group are already defined as contact for this type.
+ErrorIsNotInError=%s is not in error
+ErrorFilenameExtensionNotAllowed=File %s has a forbidden file extension
+ErrorNoValueForSelectListType=Error, a value for this type of field is mandatory
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=የእርስዎ ፒኤችፒ መለኪያ upload_max_filesize (%s) ከPHP መለኪያ post_max_size (%s) ከፍ ያለ ነው። ይህ ወጥነት ያለው ማዋቀር አይደለም።
 WarningPasswordSetWithNoAccount=ለዚህ አባል የይለፍ ቃል ተቀናብሯል። ሆኖም የተጠቃሚ መለያ አልተፈጠረም። ስለዚህ ይህ የይለፍ ቃል ተከማችቷል ነገር ግን ወደ ዶሊባርር ለመግባት መጠቀም አይቻልም። በውጫዊ ሞጁል/በይነገጽ ጥቅም ላይ ሊውል ይችላል ነገር ግን ለአባል ምንም አይነት መግቢያም ሆነ የይለፍ ቃል መግለጽ ካላስፈለገዎት ከአባላት ሞጁል ቅንብር "ለእያንዳንዱ አባል መግቢያን ያስተዳድሩ" የሚለውን አማራጭ ማሰናከል ይችላሉ። መግቢያን ማስተዳደር ከፈለጉ ነገር ግን ምንም የይለፍ ቃል የማይፈልጉ ከሆነ ይህንን ማስጠንቀቂያ ለማስወገድ ይህንን መስክ ባዶ ማቆየት ይችላሉ። ማሳሰቢያ፡ አባሉ ከተጠቃሚ ጋር የተገናኘ ከሆነ ኢሜል እንደ መግቢያ መጠቀምም ይችላል።
 WarningMandatorySetupNotComplete=ዋና መለኪያዎችን ለማዘጋጀት እዚህ ጠቅ ያድርጉ
 WarningEnableYourModulesApplications=የእርስዎን ሞጁሎች እና መተግበሪያዎች ለማንቃት እዚህ ጠቅ ያድርጉ
-WarningSafeModeOnCheckExecDir=ማስጠንቀቂያ፣ የPHP አማራጭ <b>safe_mode</b> ስላለ ትዕዛዙ በ php መለኪያ በተገለጸው ማውጫ ውስጥ መቀመጥ አለበት <span class='' notranslate'><b></span>safe_mode_exec_dir</b>።
+WarningSafeModeOnCheckExecDir=Warning, PHP option <b>safe_mode</b> is on so command must be stored inside a directory declared by php parameter <b>safe_mode_exec_dir</b>.
 WarningBookmarkAlreadyExists=ይህ ርዕስ ወይም ይህ ኢላማ (ዩአርኤል) ያለው ዕልባት አስቀድሞ አለ።
 WarningPassIsEmpty=ማስጠንቀቂያ፣ የውሂብ ጎታ ይለፍ ቃል ባዶ ነው። ይህ የደህንነት ጉድጓድ ነው. ይህንን ለማንፀባረቅ የይለፍ ቃል ወደ የውሂብ ጎታዎ ማከል እና የእርስዎን conf.php ፋይል መለወጥ አለብዎት።
 WarningConfFileMustBeReadOnly=ማስጠንቀቂያ፣ የእርስዎ የማዋቀር ፋይል (<b>htdocs/conf/conf.php</b>) በድር አገልጋይ ሊገለበጥ ይችላል። ይህ ከባድ የደህንነት ጉድጓድ ነው. በድር አገልጋይ ለሚጠቀመው የስርዓተ ክወና ተጠቃሚ የፋይል ፈቃዶችን በንባብ ብቻ ሁነታ ላይ ቀይር። ለዲስክዎ ዊንዶውስ እና ፋት (FAT) ቅርፀትን የሚጠቀሙ ከሆነ ይህ የፋይል ስርዓት በፋይል ላይ ፍቃዶችን ለመጨመር እንደማይፈቅድ ማወቅ አለብዎት ስለዚህ ሙሉ በሙሉ ደህንነቱ የተጠበቀ ሊሆን አይችልም.
 WarningsOnXLines=ማስጠንቀቂያዎች በ<b>%s</b>ምንጭ መዝገቦች(ዎች)
 WarningNoDocumentModelActivated=ለሰነድ ማመንጨት ምንም ሞዴል አልነቃም። የሞጁሉን ማዋቀር እስኪያረጋግጡ ድረስ ሞዴል በነባሪነት ይመረጣል።
 WarningLockFileDoesNotExists=ማስጠንቀቂያ፣ አንዴ ማዋቀሩ እንደጨረሰ፣ ፋይል <b>install.lock</b> ወደ ማውጫ ውስጥ በማከል የመጫኛ/ፍልሰት መሳሪያዎችን ማሰናከል አለቦት። <b>%s</b>። የዚህ ፋይል መፈጠርን መተው ከባድ የደህንነት አደጋ ነው።
+WarningUpgradeHasBeenUnlocked=Warning, upgrade process has been unlocked for everybody
 WarningUntilDirRemoved=ይህ የደህንነት ማስጠንቀቂያ ተጋላጭነቱ እስካለ ድረስ ንቁ ሆኖ ይቆያል።
 WarningCloseAlways=ማስጠንቀቂያ፣ መጠኑ በምንጭ እና በዒላማ አካላት መካከል ቢለያይም መዝጋት ይከናወናል። ይህን ባህሪ በጥንቃቄ አንቃው።
 WarningUsingThisBoxSlowDown=ማስጠንቀቂያ፣ ይህን ሳጥን በመጠቀም ሳጥኑን የሚያሳዩ ሁሉንም ገጾች በቁም ነገር ይቀንሱ።
 WarningClickToDialUserSetupNotComplete=ለተጠቃሚዎ የ ClickToDial መረጃ ማዋቀር አልተጠናቀቀም (በተጠቃሚ ካርድዎ ላይ ጠቅ ለማድረግ ጠቅ ያድርጉ)።
 WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=የማሳያ ማዋቀር ለዓይነ ስውራን ወይም ለጽሑፍ አሳሾች ሲመቻች ባህሪው ተሰናክሏል።
-WarningPaymentDateLowerThanInvoiceDate=የክፍያ ቀን (%s) ከክፍያ መጠየቂያ ቀን (%s) ለክፍያ መጠየቂያ <span class='notranslate'>b0ecb2fz007fe span>
+WarningPaymentDateLowerThanInvoiceDate=Payment date (%s) is earlier than invoice date (%s) for invoice %s.
 WarningTooManyDataPleaseUseMoreFilters=በጣም ብዙ ውሂብ (ከ%s መስመሮች በላይ)። እባክዎ ተጨማሪ ማጣሪያዎችን ይጠቀሙ ወይም ቋሚውን %s ወደ ከፍተኛ ገደብ ያቀናብሩ።
 WarningSomeLinesWithNullHourlyRate=አንዳንድ ጊዜ በአንዳንድ ተጠቃሚዎች የተመዘገቡ ሲሆን የሰዓት ታሪካቸው አልተገለጸም። በሰዓት 0 %s ዋጋ ጥቅም ላይ ውሏል ነገር ግን ይህ ያጠፋውን ጊዜ የተሳሳተ ግምትን ሊያስከትል ይችላል።
 WarningYourLoginWasModifiedPleaseLogin=መግቢያህ ተስተካክሏል። ለደህንነት አላማ ከሚቀጥለው እርምጃ በፊት በአዲሱ መግቢያህ መግባት አለብህ።
 WarningYourPasswordWasModifiedPleaseLogin=የይለፍ ቃልህ ተስተካክሏል። ለደህንነት ሲባል በአዲሱ የይለፍ ቃልዎ አሁን መግባት ይኖርብዎታል።
 WarningAnEntryAlreadyExistForTransKey=ለዚህ ቋንቋ ለትርጉም ቁልፍ መግቢያ አስቀድሞ አለ።
-WarningNumberOfRecipientIsRestrictedInMassAction=ማስጠንቀቂያ፣ የተለያዩ ተቀባይዎች ቁጥር በ<b>%s<span class='notranslate'>b09a4b739f17f80 በመጠቀም የተገደበ ነው። በዝርዝሮች ላይ የጅምላ ድርጊቶች
+WarningNumberOfRecipientIsRestrictedInMassAction=Warning, number of different recipient is limited to <b>%s</b> when using the mass actions on lists
 WarningDateOfLineMustBeInExpenseReportRange=ማስጠንቀቂያ፣ የመስመሩ ቀን በወጪ ሪፖርቱ ክልል ውስጥ አይደለም።
 WarningProjectDraft=ፕሮጀክቱ አሁንም በረቂቅ ሁነታ ላይ ነው። ተግባሮችን ለመጠቀም ካቀዱ ማረጋገጥዎን አይርሱ።
 WarningProjectClosed=ፕሮጀክቱ ተዘግቷል። መጀመሪያ እንደገና መክፈት አለብህ።
@@ -373,8 +403,15 @@ WarningModuleNeedRefresh = ሞጁል <b>%s</b> ተሰናክሏል። እሱን �
 WarningPermissionAlreadyExist=ለዚህ ነገር ነባር ፈቃዶች
 WarningGoOnAccountancySetupToAddAccounts=ይህ ዝርዝር ባዶ ከሆነ ወደ ሜኑ ይሂዱ %s - %s - %s ለመለያ ገበታዎ መለያዎችን ለመጫን ወይም ለመፍጠር።
 WarningCorrectedInvoiceNotFound=የተስተካከለ ደረሰኝ አልተገኘም።
-WarningCommentNotFound=እባክዎ ለ<b>%s</b> ውስጥ ለ<span class='notranslate'>አስተያየቶች አቀማመጥን ያረጋግጡ። እርምጃዎን ከማስገባትዎ በፊት ፋይል <span class='notranslate'><b>%s</b>
+WarningCommentNotFound=Warning: Can't find the start and/or end comments for the section <b>%s</b> into the file <b>%s</b>
 WarningAlreadyReverse=የአክሲዮን እንቅስቃሴ አስቀድሞ ተቀልብሷል
+WarningParentIDDoesNotExistAnymore=This parent ID does not exists anymore
+WarningReadBankAlsoAllowedIfUserHasPermission=Warning, reading bank account is also allowed with the permission to Manage chart of account
+WarningNoDataTransferedInAccountancyYet=Please note, there is no data in the accounting table. Please transfer your data recorded in the application to the accounting section or change the calculation mode to analyze the data recorded outside of accounting.
+WarningChangingThisMayBreakStopTaskScheduler=Warning, changing this value may disable the scheduler
+WarningAmountOfFileDiffersFromSumOfLines=Warning, amount of file (%s) differs from the sum of lines (%s)
+WarningModuleAffiliatedToAReportedCompany=Warning, this module has been reported to the Dolibarr foundation as being published by a company using illegal practices (non-compliance with the rules for using the Dolibarr brand, collecting your data without your consent or deploying malware).
+WarningModuleAffiliatedToAPiratPlatform=Be careful when getting a module (paid or free) from a suspicious non official platform like %s
 
 SwissQrOnlyVIR = የስዊስQR ደረሰኝ በክሬዲት ማስተላለፍ ክፍያዎች እንዲከፈሉ በተዘጋጁ ደረሰኞች ላይ ብቻ መጨመር ይችላል።
 SwissQrCreditorAddressInvalid = የአበዳሪው አድራሻ ልክ ያልሆነ ነው (ዚፕ እና ከተማ ተቀናብረዋል? (%s)
@@ -382,7 +419,6 @@ SwissQrCreditorInformationInvalid = የአበዳሪው መረጃ ለ IBAN (%s) �
 SwissQrIbanNotImplementedYet = QR-IBAN እስካሁን አልተተገበረም።
 SwissQrPaymentInformationInvalid = የክፍያ መረጃ ለጠቅላላ %s : %s ልክ ያልሆነ ነበር
 SwissQrDebitorAddressInvalid = የተበዳሪው መረጃ ልክ ያልሆነ ነበር (%s)
-
 # Validate
 RequireValidValue = ዋጋ ልክ አይደለም።
 RequireAtLeastXString = ቢያንስ %s ቁምፊ(ዎች) ይፈልጋል
@@ -403,11 +439,9 @@ BadSetupOfField = የተሳሳተ የመስክ ማዋቀር ላይ ስህተት
 BadSetupOfFieldClassNotFoundForValidation = ስህተት የመስክ ማዋቀር ስህተት፡ ክፍል ለማረጋገጫ አልተገኘም።
 BadSetupOfFieldFileNotFound = ስህተት የመስክ ማዋቀር ስህተት፡ ፋይሉ ለመካተት አልተገኘም።
 BadSetupOfFieldFetchNotCallable = ስህተት የመስክ ማዋቀር ስህተት፡ በክፍል ውስጥ መጥራት አይቻልም
-ErrorTooManyAttempts= በጣም ብዙ ሙከራዎች፣ እባክዎ ቆይተው እንደገና ይሞክሩ
-
 TotalAmountEmpty=Total Amount Empty
 FailedToFoundTheConversionRateForInvoice=Failed to found the conversion rate for invoice
 ThisIdNotDefined=Id not defined
 OperNotDefined=Payment method not defined
-ErrorThisContactXIsAlreadyDefinedAsThisType=%s is already defined as contact for this type.
-ErrorThisGroupIsAlreadyDefinedAsThisType=The contacts with this group are already defined as contact for this type.
+EmptyMessageNotAllowedError=Empty message is not allowed
+SomeShipmentExists=Error, there is some shipment linked to the order. Deletion refused.

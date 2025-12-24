@@ -18,7 +18,7 @@
 /**
  *	\file       htdocs/societe/canvas/individual/actions_card_individual.class.php
  *	\ingroup    thirdparty
- *	\brief      Fichier de la classe Thirdparty card controller (individual canvas)
+ *	\brief      File for class for Thirdparty card controller with individual canvas
  */
 include_once DOL_DOCUMENT_ROOT.'/societe/canvas/actions_card_common.class.php';
 
@@ -33,7 +33,7 @@ class ActionsCardIndividual extends ActionsCardCommon
 	/**
 	 *    Constructor
 	 *
-	 *    @param	DoliDB	$db				Handler acces base de donnees
+	 *    @param	DoliDB	$db				Handler access base de donnees
 	 *    @param	string	$dirmodule		Name of directory of module
 	 *    @param	string	$targetmodule	Name of directory of module where canvas is stored
 	 *    @param	string	$canvas			Name of canvas

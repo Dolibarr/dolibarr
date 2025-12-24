@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2011		Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,20 +20,20 @@
 /**
  *	\file       htdocs/contact/canvas/default/actions_contactcard_default.class.php
  *	\ingroup    thirdparty
- *	\brief      Fichier de la classe Thirdparty contact card controller (default canvas)
+ *	\brief      File for the class Thirdparty contact card controller (default canvas)
  */
 include_once DOL_DOCUMENT_ROOT.'/contact/canvas/actions_contactcard_common.class.php';
 
 /**
  *	\class      ActionsContactCardDefault
- *	\brief      Classe permettant la gestion des contacts par defaut
+ *	\brief      Default Class to manage contacts
  */
 class ActionsContactCardDefault extends ActionsContactCardCommon
 {
 	/**
 	 *  Constructor
 	 *
-	 *	@param	DoliDB	$db				Handler acces base de donnees
+	 *	@param	DoliDB	$db				Handler access base de donnees
 	 *	@param	string	$dirmodule		Name of directory of module
 	 *	@param	string	$targetmodule	Name of directory of module where canvas is stored
 	 *	@param	string	$canvas			Name of canvas
@@ -77,10 +78,11 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 	 *  Assign custom values for canvas
 	 *
 	 *  @param	string		$action    	Type of action
-	 *  @param	int			$id				Id
+	 *  @param	int			$id			Id
+	 * 	@param	string		$ref		Object ref (if id not provided) / Unused here
 	 *  @return	void
 	 */
-	public function assign_values(&$action, $id)
+	public function assign_values(&$action, $id, $ref = '')
 	{
 		// phpcs:enable
 		global $conf, $db, $langs, $user;
@@ -88,7 +90,7 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 
 		$ret = $this->getObject($id);
 
-		parent::assign_values($action, $id);
+		parent::assign_values($action, $id, $ref);
 
 		$this->tpl['title'] = $this->getTitle($action);
 		$this->tpl['error'] = $this->error;

@@ -5,6 +5,8 @@
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +35,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "other"));
@@ -41,13 +50,13 @@ $langs->loadLangs(array("companies", "other"));
 // Get parameters
 $action 	= GETPOST('action', 'aZ09');
 $confirm 	= GETPOST('confirm');
-$id 		= (GETPOST('socid', 'int') ? GETPOST('socid', 'int') : GETPOST('id', 'int'));
+$id 		= (GETPOSTINT('socid') ? GETPOSTINT('socid') : GETPOSTINT('id'));
 $ref 		= GETPOST('ref', 'alpha');
 
-$limit 		= GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit 		= GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield 	= GETPOST('sortfield', 'aZ09comma');
 $sortorder 	= GETPOST('sortorder', 'aZ09comma');
-$page 		= GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page 		= GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -58,10 +67,10 @@ $pageprev 	= $page - 1;
 $pagenext 	= $page + 1;
 
 if (getDolGlobalString('MAIN_DOC_SORT_FIELD')) {
-	$sortfield = $conf->global->MAIN_DOC_SORT_FIELD;
+	$sortfield = getDolGlobalString('MAIN_DOC_SORT_FIELD');
 }
 if (getDolGlobalString('MAIN_DOC_SORT_ORDER')) {
-	$sortorder = $conf->global->MAIN_DOC_SORT_ORDER;
+	$sortorder = getDolGlobalString('MAIN_DOC_SORT_ORDER');
 }
 
 if (!$sortorder) {
@@ -73,14 +82,15 @@ if (!$sortfield) {
 
 // Initialize objects
 $object = new Societe($db);
+$upload_dir = null;
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref);
 
-	$upload_dir = $conf->societe->multidir_output[$object->entity]."/".$object->id;
-	$courrier_dir = $conf->societe->multidir_output[$object->entity]."/courrier/".get_exdir($object->id, 0, 0, 0, $object, 'thirdparty');
+	$upload_dir = $conf->societe->multidir_output[$object->entity ?? $conf->entity]."/".$object->id;
+	$courrier_dir = $conf->societe->multidir_output[$object->entity ?? $conf->entity]."/courrier/".get_exdir($object->id, 0, 0, 0, $object, 'thirdparty');
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('thirdpartydocument', 'globalcard'));
 
 $permissiontoadd = $user->hasRight('societe', 'creer'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
@@ -92,7 +102,7 @@ if ($user->socid > 0) {
 }
 $result = restrictedArea($user, 'societe', $object->id, '&societe');
 
-if (empty($object->id)) {
+if (empty($object->id) || $upload_dir === null) {
 	accessforbidden();
 }
 
@@ -111,16 +121,13 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 $form = new Form($db);
 
 $title = $langs->trans("ThirdParty").' - '.$langs->trans("Files");
-if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
 	$title = $object->name.' - '.$langs->trans("Files");
 }
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('', $title, $help_url);
 
 // Show tabs
-if (isModEnabled('notification')) {
-	$langs->load("mails");
-}
 $head = societe_prepare_head($object);
 
 print dol_get_fiche_head($head, 'document', $langs->trans("ThirdParty"), -1, 'company');
@@ -146,11 +153,6 @@ print '<table class="border tableforfield centpercent">';
 print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
 print $object->getTypeUrl(1);
 print '</td></tr>';
-
-// Prefix
-if (getDolGlobalString('SOCIETE_USEPREFIX')) {  // Old not used prefix field
-	print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
-}
 
 if ($object->client) {
 	print '<tr><td class="titlefield">';
@@ -186,10 +188,11 @@ print '</div>';
 
 print dol_get_fiche_end();
 
-$modulepart = 'societe';
+$modulepart = 'company';
 $permissiontoadd = $user->hasRight('societe', 'creer');
 $permtoedit = $user->hasRight('societe', 'creer');
 $param = '&id='.$object->id;
+$relativepathwithnofile = $object->id . '/';
 include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 
 // End of page

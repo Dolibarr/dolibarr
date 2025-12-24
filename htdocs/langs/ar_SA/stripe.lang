@@ -12,6 +12,7 @@ YourEMail=البريد الالكتروني لتأكيد الدفع
 STRIPE_PAYONLINE_SENDEMAIL=إشعار بالبريد الإلكتروني بعد محاولة الدفع (نجاح أو فشل)
 Creditor=الدائن
 PaymentCode=دفع رمز
+StripeAutoRecordPayout=تمكين التسجيل التلقائي للتحويل البنكي (عندما يقوم Stripe بإجراء عملية دفع، يقوم و باستدعاء webhook IPN payout.create/payout.paid)
 StripeDoPayment=الدفع باستخدام Stripe
 YouWillBeRedirectedOnStripe=ستتم إعادة توجيهك إلى صفحة Stripe الآمنة لإدخال معلومات بطاقة الائتمان الخاصة بك
 Continue=التالى
@@ -22,7 +23,8 @@ ToOfferALinkForOnlinePaymentOnContractLine=URL لتقديم صفحة دفع عب
 ToOfferALinkForOnlinePaymentOnFreeAmount=عنوان URL لعرض صفحة دفع عبر الإنترنت %s بأي مبلغ مع عدم وجود عنصر موجود
 ToOfferALinkForOnlinePaymentOnMemberSubscription=عنوان URL لتقديم صفحة دفع عبر الإنترنت %s لاشتراك عضو
 ToOfferALinkForOnlinePaymentOnDonation=عنوان URL لعرض صفحة دفع عبر الإنترنت %s لدفع تبرع
-YouCanAddTagOnUrl=يمكنك أيضًا إضافة معلمة url <b> & tag = <i> قيمة </i> </b> إلى أي من عناوين URL هذه (إلزامي فقط للدفع غير المرتبط بكائن) لإضافة علامة تعليق الدفع الخاصة بك. <br> بالنسبة إلى عنوان URL للدفعات التي لا تحتوي على كائن موجود ، يمكنك أيضًا إضافة المعلمة <strong> & noidempotency = 1 </strong> بحيث يمكن استخدام نفس الرابط مع نفس العلامة عدة مرات (قد تقصر بعض أوضاع الدفع الدفع على 1 لكل رابط مختلف بدون ذلك معامل)
+YouCanAddTagOnUrl=يمكنك أيضًا إضافة معلمة عنوان رابط <b>&tag=value</b> إلى أي من عناوين URL هذه (إلزامية فقط للدفع غير المرتبط بكائن) لإضافة علامة تعليق الدفع الخاصة بك.<br> بالنسبة لعنوان URL للمدفوعات التي لا تحتوي على كائن موجود، يمكنك أيضًا إضافة المعلمة <strong>&noidempotency=1</strong> حتى يمكن استخدام نفس الرابط مع نفس العلامة عدة مرات (قد تحد بعض طرق الدفع من الدفع إلى 1 لكل رابط مختلف بدون هذه المعلمة)
+YouCanEmbedOnWebsite=إذا كنت تريد دمج صفحة الدفع في موقع دوليبار -Dolibarr-، فيمكنك تضمين المعلمة: <b>&ws=website_ref</b>. <br>بالإضافة إلى ذلك، يجب إنشاء صفحتين باسم <b>paymentok</b> و <b>paymentko</b> في موقع الويب لتلقي إعادة التوجيه بعد الدفع عبر الإنترنت الناجح أو الفاشل.
 SetupStripeToHavePaymentCreatedAutomatically=قم بإعداد Stripe باستخدام عنوان url <b> %s </b> ليتم إنشاء الدفع تلقائيًا عند التحقق من صحته بواسطة Stripe.
 AccountParameter=حساب المعلمات
 UsageParameter=استخدام المعلمات
@@ -32,6 +34,7 @@ CSSUrlForPaymentForm=عزيزي ورقة النمط المغلق للنموذج 
 NewStripePaymentReceived=تم استلام دفعة Stripe جديدة
 NewStripePaymentFailed=تمت محاولة دفع New Stripe لكنها فشلت
 FailedToChargeCard=فشل في شحن البطاقة
+FailedToChargeSEPA=فشل في تحصيل رسوم منطقة المدفوعات باليورو الموحد -SEPA-
 STRIPE_TEST_SECRET_KEY=مفتاح الاختبار السري
 STRIPE_TEST_PUBLISHABLE_KEY=مفتاح اختبار قابل للنشر
 STRIPE_TEST_WEBHOOK_KEY=مفتاح اختبار Webhook
@@ -74,6 +77,34 @@ ClickHereToTryAgain= <a href="%s"> انقر هنا للمحاولة مرة أخ�
 CreationOfPaymentModeMustBeDoneFromStripeInterface=نظرًا لقواعد المصادقة القوية العميل، يجب أن يتم إنشاء البطاقة من المكتب الخلفي لشركة Stripe. يمكنك النقر هنا لتشغيل سجل الشريط العميل: %s
 STRIPE_CARD_PRESENT=البطاقة موجودة للمحطات الشريطية
 TERMINAL_LOCATION=الموقع (العنوان) لـ Stripe Terminals
-RequestDirectDebitWithStripe=طلب الخصم المباشر مع الشريط
-STRIPE_SEPA_DIRECT_DEBIT=تمكين مدفوعات الخصم المباشر من خلال Stripe
+RequestDirectDebitWithStripe=Request SEPA Direct Debit with Stripe
+RequesCreditTransferWithStripe=Make SEPA Credit Transfer with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable SEPA Direct Debit payments with Stripe
+STRIPE_SEPA_CREDIT_TRANSFER=Enable SEPA Credit Transfer payments with Stripe
+STRIPE_KLARNA=تمكين الدفع باستخدام كلارنا -Klarna-
+STRIPE_BANCONTACT=تمكين الدفع باستخدام بانكونتاكت -BANCONTACT-
+STRIPE_IDEAL=تمكين الدفع باستخدام أيديل -IDEAL-
+STRIPE_GIROPAY=تمكين الدفع باستخدام جيروباي -GIROPAY-
+STRIPE_SOFORT=تمكين الدفع باستخدام سوفورت -SOFORT-
 StripeConnect_Mode=وضع ربط الشريط
+ExampleOnlyForBECustomers=فقط للعملاء البلجيكيين
+ExampleOnlyForDECustomers=فقط للعملاء الألمان
+ExampleOnlyForNLCustomers=فقط للعملاء الهولنديين
+ExampleOnlyForATBEDEITNLESCustomers=مخصص فقط للعملاء من النمسا وبلجيكا وألمانيا وإيطاليا وهولندا وأسبانيا
+ListOfSupportedHooksToActivate=قائمة الخطافات المدعومة للتفعيل
+# Paybox
+PayBoxSetup=إعداد وحدة PayBox
+PayBoxDesc=This module offer pages to allow payment on <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Paybox</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
+PayBoxDoPayment=Pay with Paybox
+YouWillBeRedirectedOnPayBox=سيتم إعادة توجيهك على صفحة Paybox الأمنة لإدخال معلومات بطاقة الائتمان الخاصة بك
+SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
+YourPaymentHasBeenRecorded=تؤكد هذه الصفحة أنه قد تم تسجيل دفعتك. شكرا لكم.
+YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.
+PAYBOX_CGI_URL_V2=Url من Paybox CGI وحدة للدفع
+NewPayboxPaymentReceived=تلقى الدفع Paybox الجديد
+NewPayboxPaymentFailed=دفع Paybox جديد حاول ولكنه فشل
+PAYBOX_PAYONLINE_SENDEMAIL=Email notification after payment attempt (success or fail)
+PAYBOX_PBX_SITE=قيمة PBX SITE
+PAYBOX_PBX_RANG=قيمة PBX رانج
+PAYBOX_PBX_IDENTIFIANT=قيمة PBX ID
+PAYBOX_HMAC_KEY=HMAC key

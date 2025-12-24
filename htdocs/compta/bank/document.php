@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2017 Regis Houssin         <regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +22,7 @@
 /**
  * 	\file       htdocs/compta/bank/document.php
  * 	\ingroup    banque
- * 	\brief      Page de gestion des documents attaches a un compte bancaire
+ * 	\brief      Page to manage documents attached to a bank account
  */
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/bank.lib.php";
@@ -30,15 +31,23 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/images.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php";
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'companies', 'other'));
 
-$id = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('account', 'int'));
+$id = (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('account'));
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('bankaccountdocuments', 'globalcard'));
 
 // Security check
@@ -51,11 +60,12 @@ if ($user->socid) {
 }
 
 // Get parameters
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) {
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT('page');
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
 }
 $offset = $limit * $page;
@@ -76,7 +86,7 @@ if ($id > 0 || !empty($ref)) {
 
 $result = restrictedArea($user, 'banque', $object->id, 'bank_account', '', '');
 
-$permissiontoadd = $user->rights->banque->modifier;	// Used by the include of actions_dellink.inc.php
+$permissiontoadd = $user->hasRight('banque', 'modifier');	// Used by the include of actions_dellink.inc.php
 
 
 /*
@@ -139,15 +149,15 @@ if ($id > 0 || !empty($ref)) {
 
 
 		$modulepart = 'bank';
-		$permissiontoadd = $user->rights->banque->modifier;
-		$permtoedit = $user->rights->banque->modifier;
+		$permissiontoadd = $user->hasRight('banque', 'modifier');
+		$permtoedit = $user->hasRight('banque', 'modifier');
 		$param = '&id='.$object->id;
 		include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 	} else {
 		dol_print_error($db);
 	}
 } else {
-	Header('Location: index.php');
+	header('Location: index.php');
 	exit;
 }
 

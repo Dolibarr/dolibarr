@@ -28,22 +28,29 @@ create table llx_fichinter
   ref_client		varchar(255),				-- customer intervention number
   entity			integer DEFAULT 1 NOT NULL, -- multi company id
   tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  datec				datetime,                   -- date de creation 
-  date_valid		datetime,                   -- date de validation
-  datei				date,						-- date de livraison du bon d'intervention
+  datec				datetime,                   -- date of creation
+  date_valid		datetime,                   -- date of validation
+  datei				date,						-- date of delivery of the intervention receipt
   fk_user_author	integer,					-- user making creation
   fk_user_modif     integer,                    -- user making last change
   fk_user_valid		integer,                    -- user validating record
   fk_statut			smallint  DEFAULT 0,
-  dateo				date,						-- date de début d'intervention
-  datee				date,						-- date de fin d'intervention
-  datet				date,						-- date de terminaison de l'intervention
-  duree				real,                       -- duree totale de l'intervention
+  dateo				date,						-- date start intervention
+  datee				date,						-- date end intervention (diff with datet ?)
+  datet				date,						-- date end intervention (diff with datee ?)
+  duree				real,                       -- duration total of  intervention
   description		text,
+
+  signed_status     smallint DEFAULT NULL,      -- signed status NULL, 0 or 1
+  online_sign_ip	varchar(48),
+  online_sign_name	varchar(64),
+
   note_private		text,
   note_public		text,
+
   model_pdf			varchar(255),
   last_main_doc		varchar(255),				-- relative filepath+filename of last main generated document
+
   import_key        varchar(14),
   extraparams		varchar(255)				-- for other parameters with json format
 )ENGINE=innodb;

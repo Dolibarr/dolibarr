@@ -1,6 +1,9 @@
 <?php
 /* Copyright (C) 2007-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2023-2024	William Mead		<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,19 +50,9 @@ class Cronjob extends CommonObject
 	public $picto = 'cron';
 
 	/**
-	 * @var int Entity
-	 */
-	public $entity;
-
-	/**
-	 * @var string Job type
+	 * @var ?string Job type
 	 */
 	public $jobtype;
-
-	/**
-	 * @var string|int     Date for last cron object update
-	 */
-	public $tms = '';
 
 	/**
 	 * @var string|int     Date for cron job create
@@ -67,84 +60,105 @@ class Cronjob extends CommonObject
 	public $datec = '';
 
 	/**
-	 * @var string Cron Job label
+	 * @var ?string Cron Job label
 	 */
 	public $label;
 
 	/**
-	 * @var string Job command
+	 * @var ?string Job command
 	 */
 	public $command;
+	/**
+	 * @var null|string
+	 */
 	public $classesname;
+	/**
+	 * @var null|string
+	 */
 	public $objectname;
+	/**
+	 * @var null|string
+	 */
 	public $methodename;
+	/**
+	 * @var null|string
+	 */
 	public $params;
+	/**
+	 * @var null|string
+	 */
 	public $md5params;
+	/**
+	 * @var null|string
+	 */
 	public $module_name;
+	/**
+	 * @var null|int|string
+	 */
 	public $priority;
 
 	/**
-	 * @var string|int     Date for last job execution
+	 * @var string|int|null		Date for last job execution
 	 */
 	public $datelastrun = '';
 
 	/**
-	 * @var string|int     Date for next job execution
+	 * @var string|int|null			Date for next job execution
 	 */
 	public $datenextrun = '';
 
 	/**
-	 * @var string|int     Date for end job execution
+	 * @var string|int|null			Date for end job execution
 	 */
 	public $dateend = '';
 
 	/**
-	 * @var string|int     Date for first start job execution
+	 * @var string|int|null			Date for first start job execution
 	 */
 	public $datestart = '';
 
 	/**
-	 * @var string|int     Date for last result job execution
+	 * @var string|int|null		Date for last result job execution
 	 */
 	public $datelastresult = '';
 
 	/**
-	 * @var string 			Last result from end job execution
+	 * @var ?string			Last result from end job execution
 	 */
 	public $lastresult;
 
 	/**
-	 * @var string 			Last output from end job execution
+	 * @var ?string 			Last output from end job execution
 	 */
 	public $lastoutput;
 
 	/**
-	 * @var int 			Unit frequency of job execution (60, 86400, ...)
+	 * @var ?string 			Unit frequency of job execution ('60', '86400', 'd', 'm', ...)
 	 */
 	public $unitfrequency;
 
 	/**
-	 * @var int 			Frequency of job execution
+	 * @var ?int 			Frequency of job execution
 	 */
 	public $frequency;
 
 	/**
-	 * @var int 			Status
+	 * @var ?int 			Status
 	 */
 	public $status;
 
 	/**
-	 * @var int 			Is job running ?
+	 * @var ?int 			Is job running ?
 	 */
 	public $processing;
 
 	/**
-	 * @var int 			The job current PID
+	 * @var int|null		The job current PID
 	 */
 	public $pid;
 
 	/**
-	 * @var string 			Email when an error occurs
+	 * @var ?string 			Email when an error occurs
 	 */
 	public $email_alert;
 
@@ -154,34 +168,39 @@ class Cronjob extends CommonObject
 	public $fk_user_author;
 
 	/**
-	 * @var int 			User ID of last modification
+	 * @var ?int 			User ID of last modification
 	 */
 	public $fk_user_mod;
 
 	/**
-	 * @var int 			Number of run job execution
+	 * @var ?int 			Number of run job execution
 	 */
 	public $nbrun;
 
 	/**
-	 * @var int 			Maximum run job execution
+	 * @var ?int 			Maximum run job execution
 	 */
 	public $maxrun;
 
 	/**
-	 * @var string 			Libname
+	 * @var ?string 			Libname
 	 */
 	public $libname;
 
 	/**
-	 * @var string 			A test condition to know if job is visible/qualified
+	 * @var ?string 			A test condition to know if job is visible/qualified
 	 */
 	public $test;
 
 	/**
-	 * @var string 			Autodelete
+	 * @var ?string 			Autodelete
 	 */
 	public $autodelete;
+
+	/**
+	 * @var CommonObjectLine[] 			Cronjob
+	 */
+	public $lines;
 
 
 	const STATUS_DISABLED = 0;
@@ -191,24 +210,112 @@ class Cronjob extends CommonObject
 
 
 	/**
+	 *  'type' field format:
+	 *  	'integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]',
+	 *  	'select' (list of values are in 'options'. for integer list of values are in 'arrayofkeyval'),
+	 *  	'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:CategoryIdType[:CategoryIdList[:SortField]]]]]]',
+	 *  	'chkbxlst:...',
+	 *  	'varchar(x)',
+	 *  	'text', 'text:none', 'html',
+	 *   	'double(24,8)', 'real', 'price', 'stock',
+	 *  	'date', 'datetime', 'timestamp', 'duration',
+	 *  	'boolean', 'checkbox', 'radio', 'array',
+	 *  	'email', 'phone', 'url', 'password', 'ip'
+	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
+	 *  'length' the length of field. Example: 255, '24,8'
+	 *  'label' the translation key.
+	 *  'langfile' the key of the language file for translation.
+	 *  'alias' the alias used into some old hard coded SQL requests
+	 *  'picto' is code of a picto to show before value in forms
+	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalInt("MY_SETUP_PARAM")' or 'isModEnabled("multicurrency")' ...)
+	 *  'position' is the sort order of field.
+	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
+	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form (not create). 5=Visible on list and view form (not create/not update). 6=visible on list and update/view form (not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
+	 *  'noteditable' says if field is not editable (1 or 0)
+	 *  'alwayseditable' says if field can be modified also when status is not draft ('1' or '0')
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'index' if we want an index in database.
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
+	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
+	 *  'isameasure' must be set to 1 or 2 if field can be used for measure. Field type must be summable like integer or double(24,8). Use 1 in most cases, or 2 if you don't want to see the column total into list (for example for percentage)
+	 *  'css' and 'cssview' and 'csslist' is the CSS style to use on field. 'css' is used in creation and update. 'cssview' is used in view mode. 'csslist' is used for columns in lists. For example: 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'cssview'=>'wordbreak', 'csslist'=>'tdoverflowmax200'
+	 *  'placeholder' to set the placeholder of a varchar field.
+	 *  'help' and 'helplist' is a 'TranslationString' to use to show a tooltip on field. You can also use 'TranslationString:keyfortooltiponlick' for a tooltip on click.
+	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
+	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code like the constructor of the class.
+	 *  'arrayofkeyval' to set a list of values if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel"). Note that type can be 'integer' or 'varchar'
+	 *  'autofocusoncreate' to have field having the focus on a create form. Only 1 field should have this property set to 1.
+	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
+	 *	'validate' is 1 if you need to validate the field with $this->validateField(). Need MAIN_ACTIVATE_VALIDATION_RESULT.
+	 *  'copytoclipboard' is 1 or 2 to allow to add a picto to copy value into clipboard (1=picto after label, 2=picto after value)
+	 *
+	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
+	 */
+
+	// BEGIN MODULEBUILDER PROPERTIES
+	/**
+	 * @inheritdoc
+	 * Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 */
+	public $fields = array(
+		"rowid" => array("type" => "integer", "label" => "Ref", "enabled" => "1", 'position' => 10, 'notnull' => 1, "visible" => "1",),
+		"label" => array("type" => "varchar(255)", "label" => "Label", "enabled" => "1", 'position' => 30, 'notnull' => 1, "visible" => "1", "alwayseditable" => "1", "css" => "minwidth300", "cssview" => "wordbreak", "csslist" => "tdoverflowmax150",),
+		"params" => array("type" => "text", "label" => "Params", "enabled" => "1", 'position' => 55, 'notnull' => 0, "visible" => "0",),
+		"md5params" => array("type" => "varchar(32)", "label" => "Md5params", "enabled" => "1", 'position' => 60, 'notnull' => 0, "visible" => "0",),
+		"module_name" => array("type" => "varchar(255)", "label" => "Module", "enabled" => "1", 'position' => 65, 'notnull' => 0, "visible" => "1",),
+		"jobtype" => array("type" => "varchar(10)", "label" => "Type", "enabled" => "1", 'position' => 68, 'notnull' => 1, "visible" => "1",),
+		//"command" => array("type" => "varchar(255)", "label" => "Command", "enabled" => "1", 'position' => 35, 'notnull' => 0, "visible" => "-1",),
+		//"classesname" => array("type" => "varchar(255)", "label" => "Classesname", "enabled" => "1", 'position' => 40, 'notnull' => 0, "visible" => "-1",),
+		//"objectname" => array("type" => "varchar(255)", "label" => "Objectname", "enabled" => "1", 'position' => 45, 'notnull' => 0, "visible" => "-1",),
+		//"methodename" => array("type" => "varchar(255)", "label" => "Methodename", "enabled" => "1", 'position' => 50, 'notnull' => 0, "visible" => "-1",),
+		"priority" => array("type" => "integer", "label" => "Priority", "enabled" => "1", 'position' => 70, 'notnull' => 0, "visible" => "0",),
+		"datelastrun" => array("type" => "datetime", "label" => "Datelastrun", "enabled" => "1", 'position' => 75, 'notnull' => 0, "visible" => "-1",),
+		"datenextrun" => array("type" => "datetime", "label" => "Datenextrun", "enabled" => "1", 'position' => 80, 'notnull' => 0, "visible" => "1",),
+		//"datestart" => array("type" => "datetime", "label" => "Datestart", "enabled" => "1", 'position' => 85, 'notnull' => 0, "visible" => "0",),
+		//"dateend" => array("type" => "datetime", "label" => "Dateend", "enabled" => "1", 'position' => 90, 'notnull' => 0, "visible" => "0",),
+		"datelastresult" => array("type" => "datetime", "label" => "Datelastresult", "enabled" => "1", 'position' => 95, 'notnull' => 0, "visible" => "0",),
+		"lastresult" => array("type" => "text", "label" => "Lastresult", "enabled" => "1", 'position' => 100, 'notnull' => 0, "visible" => "1",),
+		"lastoutput" => array("type" => "text", "label" => "Lastoutput", "enabled" => "1", 'position' => 105, 'notnull' => 0, "visible" => "-1",),
+		//"frequency" => array("type" => "integer", "label" => "Frequency", "enabled" => "1", 'position' => 115, 'notnull' => 1, "visible" => "1",),
+		//"unitfrequency" => array("type" => "varchar(255)", "label" => "Unitfrequency", "enabled" => "1", 'position' => 116, 'notnull' => 1, "visible" => "1",),
+		"nbrun" => array("type" => "integer", "label" => "Nbrun", "enabled" => "1", 'position' => 120, 'notnull' => 0, "visible" => "1",),
+		"fk_user_author" => array("type" => "integer", "label" => "UserCreation", "picto" => "user", "enabled" => "1", 'position' => 130, 'notnull' => 0, "visible" => "-1", "css" => "maxwidth500 widthcentpercentminusxx",),
+		"fk_user_mod" => array("type" => "integer", "label" => "UserModification", "picto" => "user", "enabled" => "1", 'position' => 135, 'notnull' => 0, "visible" => "-1", "css" => "maxwidth500 widthcentpercentminusxx",),
+		"note" => array("type" => "text", "label" => "Note", "enabled" => "1", 'position' => 140, 'notnull' => 0, "visible" => "0",),
+		"libname" => array("type" => "varchar(255)", "label" => "Libname", "enabled" => "1", 'position' => 145, 'notnull' => 0, "visible" => "0",),
+		"maxrun" => array("type" => "integer", "label" => "Maxrun", "enabled" => "1", 'position' => 155, 'notnull' => 1, "visible" => "0",),
+		"autodelete" => array("type" => "integer", "label" => "Autodelete", "enabled" => "1", 'position' => 160, 'notnull' => 0, "visible" => "0",),
+		"fk_mailing" => array("type" => "integer", "label" => "Fkmailing", "enabled" => "1", 'position' => 165, 'notnull' => 0, "visible" => "0", "css" => "maxwidth500 widthcentpercentminusxx",),
+		"test" => array("type" => "varchar(255)", "label" => "Test", "enabled" => "1", 'position' => 170, 'notnull' => 0, "visible" => "0",),
+		"processing" => array("type" => "integer", "label" => "Processing", "enabled" => "1", 'position' => 175, 'notnull' => 1, "visible" => "0",),
+		"email_alert" => array("type" => "varchar(128)", "label" => "Emailalert", "enabled" => "1", 'position' => 180, 'notnull' => 0, "visible" => "0",),
+		"pid" => array("type" => "integer", "label" => "Pid", "enabled" => "1", 'position' => 185, 'notnull' => 0, "visible" => "0",),
+		"tms" => array("type" => "timestamp", "label" => "DateModification", "enabled" => "1", 'position' => 300, 'notnull' => 1, "visible" => "-1",),
+		"datec" => array("type" => "datetime", "label" => "DateCreation", "enabled" => "1", 'position' => 301, 'notnull' => 0, "visible" => "-1",),
+		"status" => array("type" => "integer", "label" => "Status", "enabled" => "1", 'position' => 500, 'notnull' => 1, "visible" => "1",),
+	);
+	// END MODULEBUILDER PROPERTIES
+
+
+	/**
 	 *  Constructor
 	 *
-	 *  @param	DoliDb		$db      Database handler
+	 *  @param	DoliDB		$db		Database handler
 	 */
-	public function __construct($db)
+	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
 	}
 
 
 	/**
-	 *  Create object into database
+	 * Create object into database
 	 *
-	 *  @param	User	$user        User that creates
-	 *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
-	 *  @return int      		   	 Return integer <0 if KO, Id of created object if OK
+	 * @param	User	$user		User that creates
+	 * @param  int		$notrigger	0=launch triggers after, 1=disable triggers
+	 * @return int					if KO: <0 || if OK: Id of created object
 	 */
-	public function create($user, $notrigger = 0)
+	public function create(User $user, int $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error = 0;
@@ -216,7 +323,6 @@ class Cronjob extends CommonObject
 		$now = dol_now();
 
 		// Clean parameters
-
 		if (isset($this->label)) {
 			$this->label = trim($this->label);
 		}
@@ -244,9 +350,6 @@ class Cronjob extends CommonObject
 		if (isset($this->module_name)) {
 			$this->module_name = trim($this->module_name);
 		}
-		if (isset($this->priority)) {
-			$this->priority = trim($this->priority);
-		}
 		if (isset($this->lastoutput)) {
 			$this->lastoutput = trim($this->lastoutput);
 		}
@@ -257,10 +360,10 @@ class Cronjob extends CommonObject
 			$this->unitfrequency = trim($this->unitfrequency);
 		}
 		if (isset($this->frequency)) {
-			$this->frequency = trim($this->frequency);
+			$this->frequency = (int) $this->frequency;
 		}
 		if (isset($this->status)) {
-			$this->status = trim($this->status);
+			$this->status = (int) $this->status;
 		}
 		if (isset($this->note_private)) {
 			$this->note_private = trim($this->note_private);
@@ -349,7 +452,7 @@ class Cronjob extends CommonObject
 		$sql .= "libname,";
 		$sql .= "test";
 		$sql .= ") VALUES (";
-		$sql .= " ".(!isset($this->entity) ? $conf->entity : $this->db->escape($this->entity)).",";
+		$sql .= " ".(!isset($this->entity) ? (int) $conf->entity : (int) $this->entity).",";
 		$sql .= " '".$this->db->idate($now)."',";
 		$sql .= " ".(!isset($this->jobtype) ? 'NULL' : "'".$this->db->escape($this->jobtype)."'").",";
 		$sql .= " ".(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'").",";
@@ -360,7 +463,7 @@ class Cronjob extends CommonObject
 		$sql .= " ".(!isset($this->params) ? 'NULL' : "'".$this->db->escape($this->params)."'").",";
 		$sql .= " ".(!isset($this->md5params) ? 'NULL' : "'".$this->db->escape($this->md5params)."'").",";
 		$sql .= " ".(!isset($this->module_name) ? 'NULL' : "'".$this->db->escape($this->module_name)."'").",";
-		$sql .= " ".(!isset($this->priority) ? '0' : $this->priority).",";
+		$sql .= " ".(is_numeric($this->priority) ? (int) $this->priority : 50).",";
 		$sql .= " ".(!isset($this->datelastrun) || dol_strlen($this->datelastrun) == 0 ? 'NULL' : "'".$this->db->idate($this->datelastrun)."'").",";
 		$sql .= " ".(!isset($this->datenextrun) || dol_strlen($this->datenextrun) == 0 ? 'NULL' : "'".$this->db->idate($this->datenextrun)."'").",";
 		$sql .= " ".(!isset($this->dateend) || dol_strlen($this->dateend) == 0 ? 'NULL' : "'".$this->db->idate($this->dateend)."'").",";
@@ -405,14 +508,15 @@ class Cronjob extends CommonObject
 
 
 	/**
-	 *  Load object in memory from the database
+	 * Load object in memory from the database
 	 *
-	 *  @param	int		$id    			Id object
-	 *  @param	string	$objectname		Object name
-	 *  @param	string	$methodname		Method name
-	 *  @return int          			Return integer <0 if KO, >0 if OK
+	 * @param	int			$id				Id object
+	 * @param	string		$objectname		Object name
+	 * @param	string		$methodname		Method name
+	 * @param	string		$label			Label
+	 * @return	int							if KO: <0 || if OK: >0
 	 */
-	public function fetch($id, $objectname = '', $methodname = '')
+	public function fetch(int $id, string $objectname = '', string $methodname = '', string $label = '')
 	{
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
@@ -452,13 +556,15 @@ class Cronjob extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."cronjob as t";
 		if ($id > 0) {
 			$sql .= " WHERE t.rowid = ".((int) $id);
+		} elseif ($label) {
+			$sql .= " WHERE t.entity IN(0, ".getEntity('cron').")";
+			$sql .= " AND t.label = '".$this->db->escape($label)."'";
 		} else {
 			$sql .= " WHERE t.entity IN(0, ".getEntity('cron').")";
 			$sql .= " AND t.objectname = '".$this->db->escape($objectname)."'";
 			$sql .= " AND t.methodename = '".$this->db->escape($methodname)."'";
 		}
 
-		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($this->db->num_rows($resql)) {
@@ -468,6 +574,7 @@ class Cronjob extends CommonObject
 				$this->ref = $obj->rowid;
 				$this->entity = $obj->entity;
 				$this->tms = $this->db->jdate($obj->tms);
+				$this->date_modification = $this->db->jdate($obj->tms);
 				$this->datec = $this->db->jdate($obj->datec);
 				$this->label = $obj->label;
 				$this->jobtype = $obj->jobtype;
@@ -483,7 +590,7 @@ class Cronjob extends CommonObject
 				$this->datenextrun = $this->db->jdate($obj->datenextrun);
 				$this->dateend = $this->db->jdate($obj->dateend);
 				$this->datestart = $this->db->jdate($obj->datestart);
-				$this->lastresult = $obj->lastresult;
+				$this->lastresult = (string) $obj->lastresult;
 				$this->lastoutput = $obj->lastoutput;
 				$this->datelastresult = $this->db->jdate($obj->datelastresult);
 				$this->unitfrequency = $obj->unitfrequency;
@@ -510,19 +617,18 @@ class Cronjob extends CommonObject
 	}
 
 	/**
-	 *  Load list of cron jobs in a memory array from the database
-	 *  @TODO Use object CronJob and not CronJobLine.
+	 * Load list of cron jobs in a memory array from the database
 	 *
-	 *  @param	string		$sortorder      sort order
-	 *  @param	string		$sortfield      sort field
-	 *  @param	int			$limit		    limit page
-	 *  @param	int			$offset    	    page
-	 *  @param	int			$status    	    display active or not
-	 *  @param	array		$filter    	    filter output
-	 *  @param  int         $processing     Processing or not
-	 *  @return int          			    Return integer <0 if KO, >0 if OK
+	 * @param	string			$sortorder		Sort order
+	 * @param	string			$sortfield		Sort field
+	 * @param	int				$limit			Limit page
+	 * @param	int				$offset			Offset ppage
+	 * @param	int<-1,2>		$status			Display active or not (-1=no filter, 0=not active, 1=active, 2=archived)
+	 * @param	string|array<string,string>	$filter	Filter USF.
+	 * @param	int<-1,1>		$processing		Processing or not (-1=all, 0=not in progress, 1=in progress)
+	 * @return	int								if KO: <0 || if OK: >0
 	 */
-	public function fetchAll($sortorder = 'DESC', $sortfield = 't.rowid', $limit = 0, $offset = 0, $status = 1, $filter = '', $processing = -1)
+	public function fetchAll(string $sortorder = 'DESC', string $sortfield = 't.rowid', int $limit = 0, int $offset = 0, int $status = 1, $filter = '', int $processing = -1)
 	{
 		$this->lines = array();
 
@@ -558,6 +664,7 @@ class Cronjob extends CommonObject
 		$sql .= " t.fk_user_mod,";
 		$sql .= " t.note as note_private,";
 		$sql .= " t.nbrun,";
+		$sql .= " t.maxrun,";
 		$sql .= " t.libname,";
 		$sql .= " t.test";
 		$sql .= " FROM ".MAIN_DB_PREFIX."cronjob as t";
@@ -570,26 +677,34 @@ class Cronjob extends CommonObject
 		} elseif ($status == 2) {
 			$sql .= " AND t.status = 2";
 		}
+
 		// Manage filter
-		if (is_array($filter) && count($filter) > 0) {
-			foreach ($filter as $key => $value) {
-				if ($key == 't.rowid') {
-					$sql .= " AND ".$key." = ".((int) $value);
-				} else {
-					$sql .= " AND ".$key." LIKE '%".$this->db->escape($value)."%'";
+		if (is_array($filter)) {
+			if (count($filter) > 0) {
+				foreach ($filter as $key => $value) {
+					if ($key == 't.rowid') {
+						$sql .= " AND ".$this->db->sanitize($key)." = ".((int) $value);
+					} else {
+						$sql .= " AND ".$this->db->sanitize($key)." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
+					}
 				}
 			}
+
+			$filter = '';
+		}
+
+		// Manage filter
+		$errormessage = '';
+		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+		if ($errormessage) {
+			$this->errors[] = $errormessage;
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			return -1;
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if (!empty($limit) && !empty($offset)) {
 			$sql .= $this->db->plimit($limit + 1, $offset);
-		}
-
-		$sqlwhere = array();
-
-		if (count($sqlwhere) > 0) {
-			$sql .= " WHERE ".implode(' AND ', $sqlwhere);
 		}
 
 		dol_syslog(get_class($this)."::fetchAll", LOG_DEBUG);
@@ -600,45 +715,46 @@ class Cronjob extends CommonObject
 
 			if ($num) {
 				while ($i < $num) {
-					$line = new Cronjobline();
-
 					$obj = $this->db->fetch_object($resql);
+					$cronjob_obj = new Cronjob($this->db);
 
-					$line->id = $obj->rowid;
-					$line->ref = $obj->rowid;
-					$line->entity = $obj->entity;
-					$line->tms = $this->db->jdate($obj->tms);
-					$line->datec = $this->db->jdate($obj->datec);
-					$line->label = $obj->label;
-					$line->jobtype = $obj->jobtype;
-					$line->command = $obj->command;
-					$line->classesname = $obj->classesname;
-					$line->objectname = $obj->objectname;
-					$line->methodename = $obj->methodename;
-					$line->params = $obj->params;
-					$line->md5params = $obj->md5params;
-					$line->module_name = $obj->module_name;
-					$line->priority = $obj->priority;
-					$line->datelastrun = $this->db->jdate($obj->datelastrun);
-					$line->datenextrun = $this->db->jdate($obj->datenextrun);
-					$line->dateend = $this->db->jdate($obj->dateend);
-					$line->datestart = $this->db->jdate($obj->datestart);
-					$line->lastresult = $obj->lastresult;
-					$line->datelastresult = $this->db->jdate($obj->datelastresult);
-					$line->lastoutput = $obj->lastoutput;
-					$line->unitfrequency = $obj->unitfrequency;
-					$line->frequency = $obj->frequency;
-					$line->status = $obj->status;
-					$line->processing = $obj->processing;
-					$line->pid = $obj->pid;
-					$line->email_alert = $obj->email_alert;
-					$line->fk_user_author = $obj->fk_user_author;
-					$line->fk_user_mod = $obj->fk_user_mod;
-					$line->note_private = $obj->note_private;
-					$line->nbrun = $obj->nbrun;
-					$line->libname = $obj->libname;
-					$line->test = $obj->test;
-					$this->lines[] = $line;
+					$cronjob_obj->id = $obj->rowid;
+					$cronjob_obj->ref = $obj->rowid;
+					$cronjob_obj->entity = $obj->entity;
+					$cronjob_obj->tms = $this->db->jdate($obj->tms);
+					$cronjob_obj->datec = $this->db->jdate($obj->datec);
+					$cronjob_obj->label = $obj->label;
+					$cronjob_obj->jobtype = $obj->jobtype;
+					$cronjob_obj->command = $obj->command;
+					$cronjob_obj->classesname = $obj->classesname;
+					$cronjob_obj->objectname = $obj->objectname;
+					$cronjob_obj->methodename = $obj->methodename;
+					$cronjob_obj->params = $obj->params;
+					$cronjob_obj->md5params = $obj->md5params;
+					$cronjob_obj->module_name = $obj->module_name;
+					$cronjob_obj->priority = $obj->priority;
+					$cronjob_obj->datelastrun = $this->db->jdate($obj->datelastrun);
+					$cronjob_obj->datenextrun = $this->db->jdate($obj->datenextrun);
+					$cronjob_obj->dateend = $this->db->jdate($obj->dateend);
+					$cronjob_obj->datestart = $this->db->jdate($obj->datestart);
+					$cronjob_obj->lastresult = $obj->lastresult;
+					$cronjob_obj->lastoutput = $obj->lastoutput;
+					$cronjob_obj->datelastresult = $this->db->jdate($obj->datelastresult);
+					$cronjob_obj->unitfrequency = $obj->unitfrequency;
+					$cronjob_obj->frequency = $obj->frequency;
+					$cronjob_obj->status = $obj->status;
+					$cronjob_obj->processing = $obj->processing;
+					$cronjob_obj->pid = $obj->pid;
+					$cronjob_obj->email_alert = $obj->email_alert;
+					$cronjob_obj->fk_user_author = $obj->fk_user_author;
+					$cronjob_obj->fk_user_mod = $obj->fk_user_mod;
+					$cronjob_obj->note_private = $obj->note_private;
+					$cronjob_obj->nbrun = $obj->nbrun;
+					$cronjob_obj->maxrun = $obj->maxrun;
+					$cronjob_obj->libname = $obj->libname;
+					$cronjob_obj->test = $obj->test;
+
+					$this->lines[] = $cronjob_obj;
 
 					$i++;
 				}
@@ -654,13 +770,13 @@ class Cronjob extends CommonObject
 
 
 	/**
-	 *  Update object into database
+	 * Update object into database
 	 *
-	 *  @param	User	$user        User that modifies
-	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return int     		   	 Return integer <0 if KO, >0 if OK
+	 * @param	?User		$user		User that modifies
+	 * @param	int<0,1>	$notrigger	0=launch triggers after, 1=disable triggers
+	 * @return	int						if KO: <0 || if OK: >0
 	 */
-	public function update($user = null, $notrigger = 0)
+	public function update($user = null, int $notrigger = 0)
 	{
 		global $conf, $langs;
 
@@ -709,16 +825,16 @@ class Cronjob extends CommonObject
 			$this->unitfrequency = trim($this->unitfrequency);
 		}
 		if (isset($this->frequency)) {
-			$this->frequency = trim($this->frequency);
+			$this->frequency = (int) $this->frequency;
 		}
 		if (isset($this->status)) {
-			$this->status = trim($this->status);
+			$this->status = (int) $this->status;
 		}
 		if (isset($this->note_private)) {
 			$this->note_private = trim($this->note_private);
 		}
 		if (isset($this->nbrun)) {
-			$this->nbrun = trim($this->nbrun);
+			$this->nbrun = (is_numeric($this->nbrun)) ? (int) trim((string) $this->nbrun) : 0;
 		}
 		if (isset($this->libname)) {
 			$this->libname = trim($this->libname);
@@ -804,9 +920,9 @@ class Cronjob extends CommonObject
 		$sql .= " datelastresult=".(dol_strlen($this->datelastresult) != 0 ? "'".$this->db->idate($this->datelastresult)."'" : 'null').",";
 		$sql .= " lastresult=".(isset($this->lastresult) ? "'".$this->db->escape($this->lastresult)."'" : "null").",";
 		$sql .= " lastoutput=".(isset($this->lastoutput) ? "'".$this->db->escape($this->lastoutput)."'" : "null").",";
-		$sql .= " unitfrequency=".(isset($this->unitfrequency) ? $this->unitfrequency : "null").",";
-		$sql .= " frequency=".(isset($this->frequency) ? $this->frequency : "null").",";
-		$sql .= " status=".(isset($this->status) ? $this->status : "null").",";
+		$sql .= " unitfrequency=".(isset($this->unitfrequency) ? "'".$this->db->escape($this->unitfrequency)."'" : "null").",";
+		$sql .= " frequency=".(isset($this->frequency) ? ((int) $this->frequency) : "null").",";
+		$sql .= " status=".(isset($this->status) ? ((int) $this->status) : "null").",";
 		$sql .= " processing=".((isset($this->processing) && $this->processing > 0) ? $this->processing : "0").",";
 		$sql .= " pid=".(isset($this->pid) ? ((int) $this->pid) : "null").",";
 		$sql .= " email_alert = ".(isset($this->email_alert) ? "'".$this->db->escape($this->email_alert)."'" : "null").",";
@@ -843,13 +959,13 @@ class Cronjob extends CommonObject
 
 
 	/**
-	 *  Delete object in database
+	 * Delete object in database
 	 *
-	 *	@param  User	$user        User that deletes
-	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return	int					 Return integer <0 if KO, >0 if OK
+	 * @param	User	$user		User that deletes
+	 * @param	int		$notrigger	0=launch triggers after, 1=disable triggers
+	 * @return	int					if KO: <0 || if OK: >0
 	 */
-	public function delete($user, $notrigger = 0)
+	public function delete(User $user, int $notrigger = 0)
 	{
 		$error = 0;
 
@@ -882,13 +998,13 @@ class Cronjob extends CommonObject
 
 
 	/**
-	 *	Load an object from its id and create a new one in database
+	 * Load an object from its id and create a new one in database
 	 *
-	 *  @param	User	$user		User making the clone
-	 *	@param	int		$fromid     Id of object to clone
-	 * 	@return	int					New id of clone
+	 * @param	User	$user		User making the clone
+	 * @param	int		$fromid		Id of object to clone
+	 * @return	int					New id of clone
 	 */
-	public function createFromClone(User $user, $fromid)
+	public function createFromClone(User $user, int $fromid)
 	{
 		global $langs;
 
@@ -908,6 +1024,7 @@ class Cronjob extends CommonObject
 		$object->datelastrun = null;
 		$object->lastresult = '';
 		$object->datelastresult = null;
+		$object->datenextrun = dol_now();
 		$object->lastoutput = '';
 		$object->nbrun = 0;
 
@@ -936,17 +1053,17 @@ class Cronjob extends CommonObject
 
 
 	/**
-	 *	Initialise object with example values
-	 *	Id must be 0 if object instance is a specimen
+	 * Initialise object with example values
+	 * Id must be 0 if object instance is a specimen
 	 *
-	 *	@return	void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
-		$this->ref = 0;
+		$this->ref = '';
 		$this->entity = 0;
-		$this->tms = '';
+		$this->date_modification = dol_now();
 		$this->datec = '';
 		$this->label = '';
 		$this->jobtype = '';
@@ -965,8 +1082,8 @@ class Cronjob extends CommonObject
 		$this->datelastresult = '';
 		$this->lastoutput = '';
 		$this->lastresult = '';
-		$this->unitfrequency = '';
-		$this->frequency = '';
+		$this->unitfrequency = '86400';
+		$this->frequency = 0;
 		$this->status = 0;
 		$this->processing = 0;
 		$this->pid = null;
@@ -974,17 +1091,19 @@ class Cronjob extends CommonObject
 		$this->fk_user_author = 0;
 		$this->fk_user_mod = 0;
 		$this->note_private = '';
-		$this->nbrun = '';
+		$this->nbrun = 0;
 		$this->maxrun = 100;
 		$this->libname = '';
+
+		return 1;
 	}
 
 
 	/**
 	 * getTooltipContentArray
-	 * @param array $params params to construct tooltip data
+	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
-	 * @return array
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -1024,18 +1143,18 @@ class Cronjob extends CommonObject
 	}
 
 	/**
-	 *  Return a link to the object card (with optionaly the picto)
+	 * Return a link to the object card (with optionally the picto)
 	 *
-	 *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
-	 *	@param	string	$option						On what the link point to ('nolink', ...)
-	 *  @param	int  	$notooltip					1=Disable tooltip
-	 *  @param  string  $morecss            		Add more css on link
-	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *	@return	string								String with URL
+	 * @param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+	 * @param	string	$option						On what the link point to ('nolink', ...)
+	 * @param	int		$notooltip					1=Disable tooltip
+	 * @param	string	$morecss					Add more css on link
+	 * @param	int		$save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 * @return	string								String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
+	public function getNomUrl($withpicto = 0, string $option = '', int $notooltip = 0, string $morecss = '', int $save_lastsearch_value = -1)
 	{
-		global $db, $conf, $langs;
+		global $conf, $langs;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -1074,9 +1193,9 @@ class Cronjob extends CommonObject
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowCronJob");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -1088,7 +1207,7 @@ class Cronjob extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), (($withpicto != 2) ? 'class="paddingright"' : ''), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ?: 'generic'), (($withpicto != 2) ? 'class="paddingright"' : ''), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;
@@ -1101,12 +1220,12 @@ class Cronjob extends CommonObject
 
 
 	/**
-	 *	Load object information
+	 * Load object information
 	 *
-	 *  @param	int		$id		ID
-	 *	@return	int				Return integer <0 if KO, >0 if OK
+	 * @param	int		$id		ID
+	 * @return	int				if KO: <0 || if OK: >0
 	 */
-	public function info($id)
+	public function info(int $id)
 	{
 		$sql = "SELECT";
 		$sql .= " f.rowid, f.datec, f.tms, f.fk_user_mod, f.fk_user_author";
@@ -1142,10 +1261,10 @@ class Cronjob extends CommonObject
 	 * Once job is finished, status and nb of run is updated.
 	 * This function does not plan the next run. This is done by function ->reprogram_jobs
 	 *
-	 * @param   string		$userlogin    	User login
-	 * @return	int					 		Return integer <0 if KO, >0 if OK
+	 * @param	string		$userlogin		User login
+	 * @return	int					 		if KO: <0 || if OK: >0
 	 */
-	public function run_jobs($userlogin)
+	public function run_jobs(string $userlogin)
 	{
 		// phpcs:enable
 		global $langs, $conf, $hookmanager;
@@ -1154,7 +1273,6 @@ class Cronjob extends CommonObject
 
 		$now = dol_now();
 		$error = 0;
-		$retval = '';
 
 		$langs->load('cron');
 
@@ -1175,7 +1293,7 @@ class Cronjob extends CommonObject
 
 		require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 		$user = new User($this->db);
-		$result = $user->fetch('', $userlogin);
+		$result = $user->fetch(0, $userlogin);
 		if ($result < 0) {
 			$this->error = "User Error:".$user->error;
 			dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
@@ -1193,7 +1311,7 @@ class Cronjob extends CommonObject
 		dol_syslog(get_class($this)."::run_jobs jobtype=".$this->jobtype." userlogin=".$userlogin, LOG_DEBUG);
 
 		// Increase limit of time. Works only if we are not in safe mode
-		$ExecTimeLimit = 600;
+		$ExecTimeLimit = getDolGlobalInt('MAIN_CRON_EXEC_TIME_LIMIT', 600);
 		if (!empty($ExecTimeLimit)) {
 			$err = error_reporting();
 			error_reporting(0); // Disable all errors
@@ -1201,7 +1319,7 @@ class Cronjob extends CommonObject
 			@set_time_limit($ExecTimeLimit); // Need more than 240 on Windows 7/64
 			error_reporting($err);
 		}
-		$MemoryLimit = 0;
+		$MemoryLimit = getDolGlobalString('MAIN_CRON_MEMORY_LIMIT');
 		if (!empty($MemoryLimit)) {
 			@ini_set('memory_limit', $MemoryLimit);
 		}
@@ -1213,7 +1331,7 @@ class Cronjob extends CommonObject
 		$this->lastresult = '';
 		$this->processing = 1; // To know job was started
 		$this->pid = function_exists('getmypid') ? getmypid() : null; // Avoid dol_getmypid to get null if the function is not available
-		$this->nbrun = $this->nbrun + 1;
+		$this->nbrun += 1;
 		$result = $this->update($user); // This include begin/commit
 		if ($result < 0) {
 			dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
@@ -1223,6 +1341,15 @@ class Cronjob extends CommonObject
 
 		// Run a method
 		if ($this->jobtype == 'method') {
+			// Deny to launch a method from a deactivated module
+			if (!empty($this->entity) && !empty($this->module_name) && !isModEnabled(strtolower($this->module_name))) {
+				$this->error = $langs->transnoentitiesnoconv('CronModuleNotEnabledInThisEntity', $this->methodename, $this->objectname);
+				dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
+				$this->lastoutput = $this->error;
+				$this->lastresult = '-1';
+				$error++;
+			}
+
 			// load classes
 			if (!$error) {
 				$ret = dol_include_once($this->classesname);
@@ -1234,8 +1361,7 @@ class Cronjob extends CommonObject
 					}
 					dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
 					$this->lastoutput = $this->error;
-					$this->lastresult = -1;
-					$retval = $this->lastresult;
+					$this->lastresult = '-1';
 					$error++;
 				}
 			}
@@ -1246,16 +1372,14 @@ class Cronjob extends CommonObject
 					$this->error = $langs->transnoentitiesnoconv('CronMethodDoesNotExists', $this->objectname, $this->methodename);
 					dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
 					$this->lastoutput = $this->error;
-					$this->lastresult = -1;
-					$retval = $this->lastresult;
+					$this->lastresult = '-1';
 					$error++;
 				}
 				if (in_array(strtolower(trim($this->methodename)), array('executecli'))) {
 					$this->error = $langs->transnoentitiesnoconv('CronMethodNotAllowed', $this->methodename, $this->objectname);
 					dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
 					$this->lastoutput = $this->error;
-					$this->lastresult = -1;
-					$retval = $this->lastresult;
+					$this->lastresult = '-1';
 					$error++;
 				}
 			}
@@ -1269,17 +1393,16 @@ class Cronjob extends CommonObject
 					dol_syslog(get_class($this)."::run_jobs Cannot load module lang file - ".$langs->error, LOG_ERR);
 					$this->error = $langs->error;
 					$this->lastoutput = $this->error;
-					$this->lastresult = -1;
-					$retval = $this->lastresult;
+					$this->lastresult = '-1';
 					$error++;
 				}
 			}
 
 			if (!$error) {
-				dol_syslog(get_class($this)."::run_jobs START ".$this->objectname."->".$this->methodename."(".$this->params."); !!! Log for job may be into a different log file...", LOG_DEBUG);
+				dol_syslog(get_class($this)."::run_jobs START ".$this->objectname."->".$this->methodename."(".$this->params."); (Note: Log for cron jobs may be into a different log file)", LOG_DEBUG);
 
 				// Create Object for the called module
-				$nameofclass = $this->objectname;
+				$nameofclass = (string) $this->objectname;
 				$object = new $nameofclass($this->db);
 				if ($this->entity > 0) {
 					$object->entity = $this->entity; // We work on a dedicated entity
@@ -1303,7 +1426,7 @@ class Cronjob extends CommonObject
 						$errmsg .= $object->error;
 					}
 					if (is_array($object->errors) && count($object->errors)) {
-						$errmsg .= (($errmsg ? ', ' : '').join(', ', $object->errors));
+						$errmsg .= (($errmsg ? ', ' : '').implode(', ', $object->errors));
 					}
 					if (empty($errmsg)) {
 						$errmsg = $langs->trans('ErrorUnknown');
@@ -1313,14 +1436,12 @@ class Cronjob extends CommonObject
 
 					$this->error = $errmsg;
 					$this->lastoutput = dol_substr((empty($object->output) ? "" : $object->output."\n").$errmsg, 0, $this::MAXIMUM_LENGTH_FOR_LASTOUTPUT_FIELD, 'UTF-8', 1);
-					$this->lastresult = is_numeric($result) ? $result : -1;
-					$retval = $this->lastresult;
+					$this->lastresult = is_numeric($result) ? var_export($result, true) : '-1';
 					$error++;
 				} else {
 					dol_syslog(get_class($this)."::run_jobs END");
 					$this->lastoutput = dol_substr((empty($object->output) ? "" : $object->output."\n"), 0, $this::MAXIMUM_LENGTH_FOR_LASTOUTPUT_FIELD, 'UTF-8', 1);
 					$this->lastresult = var_export($result, true);
-					$retval = $this->lastresult;
 				}
 			}
 		}
@@ -1358,13 +1479,11 @@ class Cronjob extends CommonObject
 				dol_syslog(get_class($this)."::run_jobs result=".$result, LOG_ERR);
 				$this->error = $langs->trans('ErrorUnknown');
 				$this->lastoutput = $this->error;
-				$this->lastresult = is_numeric($result) ? $result : -1;
-				$retval = $this->lastresult;
+				$this->lastresult = is_numeric($result) ? var_export($result, true) : '-1';
 				$error++;
 			} else {
 				$this->lastoutput = var_export($result, true);
 				$this->lastresult = var_export($result, true); // Return code
-				$retval = $this->lastresult;
 			}
 		}
 
@@ -1392,10 +1511,9 @@ class Cronjob extends CommonObject
 					$utils = new Utils($this->db);
 					$arrayresult = $utils->executeCLI($this->command, $outputfile);
 
-					$retval = $arrayresult['result'];
 					$this->error      = $arrayresult['error'];
 					$this->lastoutput = $arrayresult['output'];
-					$this->lastresult = $arrayresult['result'];
+					$this->lastresult = (string) $arrayresult['result'];
 				}
 			}
 		}
@@ -1416,8 +1534,8 @@ class Cronjob extends CommonObject
 
 		if ($error && !empty($this->email_alert)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-			$subject = $langs->trans("ErrorInBatch", $this->label);
-			$msg = $langs->trans("ErrorInBatch", $this->label);
+			$subject = $langs->transnoentitiesnoconv("ErrorInBatch", $this->label);
+			$msg = $langs->transnoentitiesnoconv("ErrorInBatch", $this->label);
 			$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
 			$cmailfile = new CMailFile($subject, $this->email_alert, $from, $msg);
 			$result = $cmailfile->sendfile();	// Do not test result
@@ -1431,18 +1549,18 @@ class Cronjob extends CommonObject
 	/**
 	 * Reprogram a job
 	 *
-	 * @param  string		$userlogin      User login
-	 * @param  integer      $now            Date returned by dol_now()
-	 * @return int					        Return integer <0 if KO, >0 if OK
+	 * @param	string		$userlogin		User login
+	 * @param	integer		$now			Date returned by dol_now()
+	 * @return	int							if KO: <0 || if OK: >0
 	 */
-	public function reprogram_jobs($userlogin, $now)
+	public function reprogram_jobs(string $userlogin, int $now)
 	{
 		// phpcs:enable
 		dol_syslog(get_class($this)."::reprogram_jobs userlogin:$userlogin", LOG_DEBUG);
 
 		require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 		$user = new User($this->db);
-		$result = $user->fetch('', $userlogin);
+		$result = $user->fetch(0, $userlogin);
 		if ($result < 0) {
 			$this->error = "User Error : ".$user->error;
 			dol_syslog(get_class($this)."::reprogram_jobs ".$this->error, LOG_ERR);
@@ -1459,27 +1577,27 @@ class Cronjob extends CommonObject
 
 		if (empty($this->datenextrun)) {
 			if (empty($this->datestart)) {
-				if ($this->unitfrequency == 2678400) {
+				if (!is_numeric($this->frequency) || (int) $this->unitfrequency == 2678400) {
 					$this->datenextrun = dol_time_plus_duree($now, $this->frequency, 'm');
 				} else {
-					$this->datenextrun = $now + ($this->frequency * $this->unitfrequency);
+					$this->datenextrun = $now + ($this->frequency * (int) $this->unitfrequency);
 				}
 			} else {
-				if ($this->unitfrequency == 2678400) {
+				if (!is_numeric($this->frequency) || (int) $this->unitfrequency == 2678400) {
 					$this->datenextrun = dol_time_plus_duree($this->datestart, $this->frequency, 'm');
 				} else {
-					$this->datenextrun = $this->datestart + ($this->frequency * $this->unitfrequency);
+					$this->datenextrun = $this->datestart + ($this->frequency * (int) $this->unitfrequency);
 				}
 			}
 		}
 
-		if ($this->datenextrun < $now && $this->frequency > 0 && $this->unitfrequency > 0) {
+		if ($this->datenextrun < $now && $this->frequency > 0 && !empty($this->unitfrequency)) {
 			// Loop until date is after future
 			while ($this->datenextrun < $now) {
-				if ($this->unitfrequency == 2678400) {
+				if (!is_numeric($this->unitfrequency) || (int) $this->unitfrequency == 2678400 || (int) $this->unitfrequency <= 0) {
 					$this->datenextrun = dol_time_plus_duree($this->datenextrun, $this->frequency, 'm');
 				} else {
-					$this->datenextrun += ($this->frequency * $this->unitfrequency);
+					$this->datenextrun += ($this->frequency * (int) $this->unitfrequency);
 				}
 			}
 		} else {
@@ -1506,27 +1624,27 @@ class Cronjob extends CommonObject
 	}
 
 	/**
-	 *  Return label of status of user (active, inactive)
+	 * Return label of status of user (active, inactive)
 	 *
-	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-	 *  @return	string 			       Label of status
+	 * @param	int		$mode			0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 * @return	string					Label of status
 	 */
-	public function getLibStatut($mode = 0)
+	public function getLibStatut(int $mode = 0)
 	{
 		return $this->LibStatut($this->status, $mode, $this->processing, $this->lastresult);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Return label of a giver status
+	 * Return label of a giver status
 	 *
-	 *  @param	int		$status        	Id statut
-	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-	 *	@param	int		$processing		0=Not running, 1=Running
-	 *  @param	int		$lastresult		Value of last result (0=no error, error otherwise)
-	 *  @return string 			       	Label of status
+	 * @param	int		$status				Id status
+	 * @param	int		$mode				0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 * @param	int		$processing			0=Not running, 1=Running
+	 * @param	string	$lastResult			Value of last result (''=no error, error otherwise)
+	 * @return	string						Label of status
 	 */
-	public function LibStatut($status, $mode = 0, $processing = 0, $lastresult = 0)
+	public function LibStatut(int $status, int $mode = 0, int $processing = 0, string $lastResult = '')
 	{
 		// phpcs:enable
 		$this->labelStatus = array(); // Force reset o array because label depends on other fields
@@ -1536,106 +1654,30 @@ class Cronjob extends CommonObject
 			global $langs;
 			$langs->load('users');
 
-			$moretext = '';
+			$moreText = '';
 			if ($processing) {
-				$moretext = ' ('.$langs->trans("Running").')';
-			} elseif ($lastresult) {
-				$moretext .= ' ('.$langs->trans("Error").')';
+				$moreText = ' ('.$langs->trans("Running").')';
+			} elseif ($lastResult) {
+				$moreText .= ' ('.$langs->trans("Error").')';
 			}
 
-			$this->labelStatus[self::STATUS_DISABLED] = $langs->transnoentitiesnoconv('Disabled').$moretext;
-			$this->labelStatus[self::STATUS_ENABLED] = $langs->transnoentitiesnoconv('Scheduled').$moretext;
+			$this->labelStatus[self::STATUS_DISABLED] = $langs->transnoentitiesnoconv('Disabled').$moreText;
+			$this->labelStatus[self::STATUS_ENABLED] = $langs->transnoentitiesnoconv('Scheduled').$moreText;
 			$this->labelStatusShort[self::STATUS_DISABLED] = $langs->transnoentitiesnoconv('Disabled');
 			$this->labelStatusShort[self::STATUS_ENABLED] = $langs->transnoentitiesnoconv('Scheduled');
 		}
 
 		$statusType = 'status4';
-		if ($status == 1 && $processing) {
+		if ($status == self::STATUS_ENABLED && $processing) {
 			$statusType = 'status1';
 		}
-		if ($status == 0) {
+		if ($status == self::STATUS_DISABLED) {
 			$statusType = 'status5';
 		}
-		if ($this->lastresult) {
+		if ($status == self::STATUS_ENABLED && $this->lastresult) {
 			$statusType = 'status8';
 		}
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
-	}
-}
-
-
-/**
- *	Crob Job line class
- */
-class Cronjobline
-{
-	/**
-	 * @var int ID
-	 */
-	public $id;
-
-	public $entity;
-
-	/**
-	 * @var string Ref
-	 */
-	public $ref;
-
-	public $tms = '';
-	public $datec = '';
-
-	/**
-	 * @var string Cron Job Line label
-	 */
-	public $label;
-
-	public $jobtype;
-	public $command;
-	public $classesname;
-	public $objectname;
-	public $methodename;
-	public $params;
-	public $md5params;
-	public $module_name;
-	public $priority;
-	public $datelastrun = '';
-	public $datenextrun = '';
-	public $dateend = '';
-	public $datestart = '';
-	public $datelastresult = '';
-	public $lastresult = '';
-	public $lastoutput;
-	public $unitfrequency;
-	public $frequency;
-	public $processing;
-
-	/**
-	 * @var int Status
-	 */
-	public $status;
-
-	/**
-	 * @var int ID
-	 */
-	public $fk_user_author;
-
-	/**
-	 * @var int ID
-	 */
-	public $fk_user_mod;
-
-	public $note;
-	public $note_private;
-	public $nbrun;
-	public $libname;
-	public $test;
-
-	/**
-	 *  Constructor
-	 *
-	 */
-	public function __construct()
-	{
 	}
 }

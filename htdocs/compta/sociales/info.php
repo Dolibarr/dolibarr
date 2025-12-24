@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,10 +33,18 @@ if (isModEnabled('project')) {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
 
 $object = new ChargeSociales($db);
@@ -43,7 +53,7 @@ if ($id > 0) {
 }
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -56,7 +66,7 @@ $result = restrictedArea($user, 'tax', $object->id, 'chargesociales', 'charges')
 
 if ($action == 'setlib' && $user->hasRight('tax', 'charges', 'creer')) {
 	$object->fetch($id);
-	$result = $object->setValueFrom('libelle', GETPOST('lib'), '', '', 'text', '', $user, 'TAX_MODIFY');
+	$result = $object->setValueFrom('libelle', GETPOST('lib'), '', null, 'text', '', $user, 'TAX_MODIFY');
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
@@ -111,8 +121,8 @@ $linkback = '<a href="'.DOL_URL_ROOT.'/compta/sociales/list.php?restore_lastsear
 
 $object->totalpaid = $alreadypayed; // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
-$morehtmlright = '';
-dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
+$morehtmlstatus = '';
+dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlstatus);
 
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';

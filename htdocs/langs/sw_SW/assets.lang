@@ -122,7 +122,6 @@ AssetDepreciationOptionDepreciationTypeLinear=Linear
 AssetDepreciationOptionDepreciationTypeDegressive=Degressive
 AssetDepreciationOptionDepreciationTypeExceptional=Kipekee
 AssetDepreciationOptionDegressiveRate=Kiwango cha kushuka
-AssetDepreciationOptionAcceleratedDepreciation=Kushuka kwa thamani kwa kasi (kodi)
 AssetDepreciationOptionDuration=Muda
 AssetDepreciationOptionDurationType=Muda wa aina
 AssetDepreciationOptionDurationTypeAnnual=Mwaka
@@ -168,7 +167,7 @@ AssetDepreciationReversal=Kugeuza
 #
 # Errors
 #
-AssetErrorAssetOrAssetModelIDNotProvide=Kitambulisho cha kipengee au sauti ya mfano haijatolewa
+AssetErrorAssetOrAssetModelIDNotProvide=Id of the asset or the model found has not been provided
 AssetErrorFetchAccountancyCodesForMode=Hitilafu wakati wa kurejesha akaunti za uhasibu za '%s' hali ya kushuka kwa thamani
 AssetErrorDeleteAccountancyCodesForMode=Hitilafu wakati wa kufuta akaunti za uhasibu kutoka kwa '%s' hali ya kushuka kwa thamani
 AssetErrorInsertAccountancyCodesForMode=Hitilafu wakati wa kuingiza akaunti za uhasibu za hali ya uchakavu '%s'

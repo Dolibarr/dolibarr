@@ -52,6 +52,9 @@ define('ISLOADEDBYSTEELSHEET', '1');
 session_cache_limiter('public');
 
 require_once __DIR__.'/../../main.inc.php'; // __DIR__ allow this script to be included in custom themes
+/**
+ * @var Conf $conf
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 // Define css type
@@ -117,6 +120,10 @@ button.calcbutton {
 	margin: 1px;
 	font-size: 14pt;
 	border-radius: 3px;
+}
+
+div.wrapper, div.wrapper2 {
+	border-radius: 5px;
 }
 
 button.calcbutton2 {
@@ -450,10 +457,8 @@ div.paymentbordline
 	padding-right: 8px;
 }
 
-
 tr.selected, tr.selected td {
-	/* font-weight: bold; */
-	background-color: rgb(240,230,210) !important;
+	background-color: var(--colorbacklinepairchecked) !important;
 }
 .order td {
 	color: green;
@@ -596,6 +601,12 @@ div.description_content {
 	max-width: 250px;
 	border-radius: 5px;
 }
+
+
+.login_block_other.takepos {
+	margin-top: 5px;
+}
+
 
 div#moreinfo, div#infowarehouse {
 	color: #aaa;

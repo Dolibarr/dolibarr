@@ -52,10 +52,10 @@ class EmptyGlobalToFunction extends AbstractRector
 	public function getRuleDefinition(): RuleDefinition
 	{
 		return new RuleDefinition(
-			'Change $conf->global to getDolGlobal',
+			'Change empty($conf->global->...) to getDolGlobal',
 			[new CodeSample(
-				'$conf->global->CONSTANT',
-				'getDolGlobalInt(\'CONSTANT\')'
+				'empty($conf->global->CONSTANT)',
+				'!getDolGlobalInt(\'CONSTANT\')'
 			)]
 		);
 	}
@@ -82,10 +82,10 @@ class EmptyGlobalToFunction extends AbstractRector
 			if (!$node->expr instanceof Node\Expr\Empty_) {
 				return null;
 			}
-			// node is !empty(...) so we set node to ...
-			$newnode = $node->expr->expr;
+			// node is !empty(...) so we set newnode to ...
+			$newnode = $node->expr->expr;		// newnode is conf->global->...
 
-			$tmpglobal = $newnode->var;
+			$tmpglobal = $newnode->var;			// tmpglobal is global->...
 			if (is_null($tmpglobal)) {
 				return null;
 			}
@@ -93,7 +93,7 @@ class EmptyGlobalToFunction extends AbstractRector
 				return null;
 			}
 
-			$tmpconf = $tmpglobal->var;
+			$tmpconf = $tmpglobal->var;			// tmpconf is conf->
 			if (!$this->isName($tmpconf, 'conf')) {
 				return null;
 			}
@@ -113,10 +113,10 @@ class EmptyGlobalToFunction extends AbstractRector
 
 
 		if ($node instanceof Node\Expr\Empty_) {
-			// node is empty(...) so we set node to ...
-			$newnode = $node->expr;
+			// node is empty(...) so we set newnode to ...
+			$newnode = $node->expr;			// newnode is conf->global->...
 
-			$tmpglobal = $newnode->var;
+			$tmpglobal = $newnode->var;		// tmpglobal is global->...
 			if (is_null($tmpglobal)) {
 				return null;
 			}
@@ -124,7 +124,7 @@ class EmptyGlobalToFunction extends AbstractRector
 				return null;
 			}
 
-			$tmpconf = $tmpglobal->var;
+			$tmpconf = $tmpglobal->var;		// tmpconf is conf->
 			if (!$this->isName($tmpconf, 'conf')) {
 				return null;
 			}
@@ -178,7 +178,7 @@ class EmptyGlobalToFunction extends AbstractRector
 	 * Check if node is a global access with format conf->global->XXX
 	 *
 	 * @param Node 	$node 	A node
-	 * @return bool			Return true if noe is conf->global->XXX
+	 * @return bool			Return true if node is conf->global->XXX
 	 */
 	private function isGlobalVar($node)
 	{

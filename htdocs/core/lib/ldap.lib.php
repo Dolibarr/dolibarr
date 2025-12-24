@@ -1,6 +1,8 @@
 <?php
-/* Copyright (C) 2006		Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2006-2021	Regis Houssin		<regis.houssin@inodbox.com>
+/* Copyright (C) 2006		Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2021	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,14 +21,14 @@
 
 /**
  * \file       htdocs/core/lib/ldap.lib.php
- * \brief      Ensemble de fonctions de base pour le module LDAP
+ * \brief      Ensemble de functions de base pour le module LDAP
  * \ingroup    ldap
  */
 
 /**
  * Initialize the array of tabs for customer invoice
  *
- * @return	array					Array of head tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function ldap_prepare_head()
 {
@@ -64,14 +66,14 @@ function ldap_prepare_head()
 		$h++;
 	}
 
-	if (isModEnabled('adherent') && getDolGlobalString('LDAP_MEMBER_ACTIVE')) {
+	if (isModEnabled('member') && getDolGlobalString('LDAP_MEMBER_ACTIVE')) {
 		$head[$h][0] = DOL_URL_ROOT."/admin/ldap_members.php";
 		$head[$h][1] = $langs->trans("LDAPMembersSynchro");
 		$head[$h][2] = 'members';
 		$h++;
 	}
 
-	if (isModEnabled('adherent') && getDolGlobalString('LDAP_MEMBER_TYPE_ACTIVE')) {
+	if (isModEnabled('member') && getDolGlobalString('LDAP_MEMBER_TYPE_ACTIVE')) {
 		$head[$h][0] = DOL_URL_ROOT."/admin/ldap_members_types.php";
 		$head[$h][1] = $langs->trans("LDAPMembersTypesSynchro");
 		$head[$h][2] = 'memberstypes';
@@ -121,18 +123,16 @@ function show_ldap_test_button($butlabel, $testlabel, $key, $dn, $objectclass)
 /**
  * Show a LDAP array into an HTML output array.
  *
- * @param	array	$result	    Array to show. This array is already encoded into charset_output
- * @param   int		$level		Level
- * @param   int		$count		Count
- * @param   string	$var		Var
- * @param   int		$hide		Hide
- * @param   int		$subcount	Subcount
+ * @param	array<'count'|int|string,int|string|mixed[]>	$result	Array to show. This array is already encoded into charset_output
+ * @param   int			$level		Level
+ * @param   int			$count		Count
+ * @param   bool		$var		Var deprecated (replaced by css oddeven)
+ * @param   int<0,1>	$hide		Hide
+ * @param   int			$subcount	Subcount
  * @return  int
  */
 function show_ldap_content($result, $level, $count, $var, $hide = 0, $subcount = 0)
 {
-	global $bc, $conf;
-
 	$count--;
 	if ($count == 0) {
 		return -1; // To stop loop
@@ -140,6 +140,8 @@ function show_ldap_content($result, $level, $count, $var, $hide = 0, $subcount =
 	if (!is_array($result)) {
 		return -1;
 	}
+
+	$lastkey = array();
 
 	foreach ($result as $key => $val) {
 		if ("$key" == "objectclass") {

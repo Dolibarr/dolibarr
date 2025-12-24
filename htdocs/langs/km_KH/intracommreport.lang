@@ -1,40 +1,34 @@
-Module68000Name = Intracomm report
-Module68000Desc = Intracomm report management (Support for French DEB/DES format)
-IntracommReportSetup = Intracommreport module setup
-IntracommReportAbout = About intracommreport
+Module68000Name = របាយការណ៍ Intracomm
+Module68000Desc = ការគ្រប់គ្រងរបាយការណ៍ Intracomm (គាំទ្រទម្រង់ DEB/DES បារាំង)
+IntracommReportSetup = ការដំឡើងម៉ូឌុល Intracommreport
+IntracommReportAbout = អំពី Intracommreport
 
 # Setup
 INTRACOMMREPORT_NUM_AGREMENT=Numéro d'agrément (délivré par le CISD de rattachement)
-INTRACOMMREPORT_TYPE_ACTEUR=Type d'acteur
+INTRACOMMREPORT_TYPE_ACTEUR=ប្រភេទអ្នកសំដែង
 INTRACOMMREPORT_ROLE_ACTEUR=Rôle joué par l'acteur
-INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les introductions
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les ការណែនាំ
 INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expéditions
-INTRACOMMREPORT_CATEG_FRAISDEPORT=Catégorie de services de type "Frais de port"
-
-INTRACOMMREPORT_NUM_DECLARATION=Numéro de déclarant
-
+INTRACOMMREPORT_CATEG_FRAISDEPORT=ប្រភេទសេវាកម្មនៃប្រភេទ "Frais de port"
+INTRACOMMREPORT_NUM_DECLARATION=លេខ ដឺ ប្រកាស
 # Menu
-MenuIntracommReport=Intracomm report
-MenuIntracommReportNew=New declaration
+MenuIntracommReport=របាយការណ៍ Intracomm
+MenuIntracommReportNew=សេចក្តីប្រកាសថ្មី។
 MenuIntracommReportList=List
-
 # View
-NewDeclaration=New declaration
-Declaration=Declaration
-AnalysisPeriod=Analysis period
-TypeOfDeclaration=Type of declaration
-DEB=Goods exchange declaration (DEB)
-DES=Services exchange declaration (DES)
-
+NewDeclaration=សេចក្តីប្រកាសថ្មី។
+Declaration=សេចក្តីប្រកាស
+AnalysisPeriod=រយៈពេលវិភាគ
+TypeOfDeclaration=ប្រភេទនៃសេចក្តីប្រកាស
+DEB=សេចក្តីថ្លែងការណ៍ផ្លាស់ប្តូរទំនិញ (DEB)
+DES=សេចក្តីប្រកាសអំពីការផ្លាស់ប្តូរសេវាកម្ម (DES)
 # Export page
-IntracommReportTitle=Preparation of an XML file in ProDouane format
-
+IntracommReportTitle=ការរៀបចំឯកសារ XML ជាទម្រង់ ProDouane
 # List
-IntracommReportList=List of generated declarations
-IntracommReportNumber=Numero of declaration
-IntracommReportPeriod=Period of nalysis
-IntracommReportTypeDeclaration=Type of declaration
-IntracommReportDownload=download XML file
-
+IntracommReportList=បញ្ជីនៃសេចក្តីប្រកាសដែលបានបង្កើត
+IntracommReportNumber=ចំនួននៃការប្រកាស
+IntracommReportPeriod=រយៈពេលនៃការវិភាគ
+IntracommReportTypeDeclaration=ប្រភេទនៃសេចក្តីប្រកាស
+IntracommReportDownload=ទាញយកឯកសារ XML
 # Invoice
-IntracommReportTransportMode=Transport mode
+IntracommReportTransportMode=របៀបដឹកជញ្ជូន

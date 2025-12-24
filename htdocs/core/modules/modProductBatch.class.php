@@ -1,8 +1,10 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2013-2014 Cedric GROSS         <c.gross@kreiz-it.fr>
+/* Copyright (C) 2003       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2013-2014  Cedric GROSS            <c.gross@kreiz-it.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,27 +75,25 @@ class modProductBatch extends DolibarrModules
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
 		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
-		$this->need_dolibarr_version = array(3, 0); // Minimum version of Dolibarr required by module
 		$this->langfiles = array("productbatch");
 
 		// Constants
-		// Constants
-		$this->const = array();
-		$r = 0;
-
-		$this->const[$r][0] = "PRODUCTBATCH_LOT_ADDON";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "mod_lot_free";
-		$this->const[$r][3] = 'Module to control lot number';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "PRODUCTBATCH_SN_ADDON";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "mod_sn_free";
-		$this->const[$r][3] = 'Module to control serial number';
-		$this->const[$r][4] = 0;
-		$r++;
+		$this->const = [
+			[
+				"PRODUCTBATCH_LOT_ADDON",
+				"chaine",
+				"mod_lot_free",
+				"Module to control lot number",
+				0,
+			],
+			[
+				"PRODUCTBATCH_SN_ADDON",
+				"chaine",
+				"mod_sn_free",
+				"Module to control serial number",
+				0,
+			],
+		];
 
 		$this->tabs = array();
 
@@ -135,7 +135,7 @@ class modProductBatch extends DolibarrModules
 
 		$sql = array();
 
-		if (!empty($conf->cashdesk->enabled)) {
+		if (isModEnabled('cashdesk')) {
 			if (!getDolGlobalString('CASHDESK_NO_DECREASE_STOCK')) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 				$res = dolibarr_set_const($db, "CASHDESK_NO_DECREASE_STOCK", 1, 'chaine', 0, '', $conf->entity);

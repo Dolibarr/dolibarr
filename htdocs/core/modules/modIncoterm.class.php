@@ -2,6 +2,7 @@
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -84,16 +85,16 @@ class modIncoterm extends DolibarrModules
 			$conf->incoterm->enabled = 0;
 		}
 		$this->dictionaries = array(
-			'langs'=>'incoterm',
-			'tabname'=>array("c_incoterms"), // List of tables we want to see into dictonnary editor
-			'tablib'=>array("Incoterms"), // Label of tables
-			'tabsql'=>array('SELECT rowid, code, libelle, active FROM '.MAIN_DB_PREFIX.'c_incoterms'), // Request to select fields
-			'tabsqlsort'=>array("rowid ASC"), // Sort order
-			'tabfield'=>array("code,libelle"), // List of fields (result of select to show dictionary)
-			'tabfieldvalue'=>array("code,libelle"), // List of fields (list of fields to edit a record)
-			'tabfieldinsert'=>array("code,libelle"), // List of fields (list of fields for insert)
-			'tabrowid'=>array("rowid"), // Name of columns with primary key (try to always name it 'rowid')
-			'tabcond'=>array($conf->incoterm->enabled),
+			'langs' => 'incoterm',
+			'tabname' => array("c_incoterms"), // List of tables we want to see into dictionary editor
+			'tablib' => array("Incoterms"), // Label of tables
+			'tabsql' => array('SELECT rowid, code, libelle, active FROM '.MAIN_DB_PREFIX.'c_incoterms'), // Request to select fields
+			'tabsqlsort' => array("rowid ASC"), // Sort order
+			'tabfield' => array("code,libelle"), // List of fields (result of select to show dictionary)
+			'tabfieldvalue' => array("code,libelle"), // List of fields (list of fields to edit a record)
+			'tabfieldinsert' => array("code,libelle"), // List of fields (list of fields for insert)
+			'tabrowid' => array("rowid"), // Name of columns with primary key (try to always name it 'rowid')
+			'tabcond' => array($conf->incoterm->enabled),
 			'tabhelp' => array(array())
 		);
 

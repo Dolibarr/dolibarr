@@ -70,9 +70,9 @@ all_changed_files=$(IFS=" " ; echo "${changed_php_files[*]}")
 
 # Determine changed files flag
 if [ -z "$all_changed_files" ]; then
-	any_changed="false"
+    any_changed="false"
 else
-	any_changed="true"
+    any_changed="true"
 fi
 
 # Set outputs for GitHub Actions if GITHUB_OUTPUT is available

@@ -15,11 +15,11 @@
     ],
     "require": {
         "php": "^7.1.0 || ^8.0",
-        "sabre/vobject": "^4.5.1",
-        "sabre/event" : "^5.0.0",
-        "sabre/xml"  : "^2.5.5",
+        "sabre/vobject": "^4.2.1",
+        "sabre/event" : "^5.0",
+        "sabre/xml"  : "^2.0.1",
         "sabre/http" : "^5.0.5",
-        "sabre/uri" : "^2.2.3",
+        "sabre/uri" : "^2.0",
         "ext-dom": "*",
         "ext-pcre": "*",
         "ext-spl": "*",
@@ -33,11 +33,11 @@
         "ext-json": "*"
     },
     "require-dev" : {
-        "friendsofphp/php-cs-fixer": "^2.17.1",
-        "phpstan/phpstan": "^0.12",
-        "phpunit/phpunit" : "^7.5 || ^8.5 || ^9.0",
-        "evert/phpdoc-md" : "~0.1.0",
-        "monolog/monolog": "^1.18"
+        "friendsofphp/php-cs-fixer": "^2.19",
+        "monolog/monolog": "^1.27 || ^2.0",
+        "phpstan/phpstan": "^0.12 || ^1.0",
+        "phpstan/phpstan-phpunit": "^1.0",
+        "phpunit/phpunit": "^7.5 || ^8.5 || ^9.6"
     },
     "suggest" : {
         "ext-curl" : "*",
@@ -46,21 +46,12 @@
     },
     "autoload": {
         "psr-4" : {
-            "Sabre\\DAV\\"     : "lib/DAV/",
-            "Sabre\\DAVACL\\"  : "lib/DAVACL/",
-            "Sabre\\CalDAV\\"  : "lib/CalDAV/",
-            "Sabre\\CardDAV\\" : "lib/CardDAV/"
+            "Sabre\\" : "lib/"
         }
     },
     "autoload-dev" : {
         "psr-4" : {
-            "Sabre\\" : "tests/Sabre/",
-            "Sabre\\CalDAV\\" : "tests/Sabre/CalDAV",
-            "Sabre\\CardDAV\\" : "tests/Sabre/CardDAV",
-            "Sabre\\DAV\\" : "tests/Sabre/DAV",
-            "Sabre\\DAV\\Property\\" : "tests/Sabre/DAV/Xml/Property",
-            "Sabre\\DAVACL\\" : "tests/Sabre/DAVACL",
-            "Sabre\\HTTP\\" : "tests/Sabre/HTTP"
+            "Sabre\\" : "tests/Sabre/"
         }
     },
     "support" : {

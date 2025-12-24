@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) ---Put here your own copyright and developer email---
+/* Copyright (C) 2023		Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) ---Replace with your own copyright and developer email---
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,16 +19,14 @@
 /**
  * \file    core/triggers/interface_99_modMyModule_MyModuleTriggers.class.php
  * \ingroup mymodule
- * \brief   Example trigger.
+ * \brief   Example of trigger file.
  *
- * Put detailed description here.
- *
- * \remarks You can create other triggers by copying this one.
+ * You can create other triggered files by copying this one.
  * - File name should be either:
  *      - interface_99_modMyModule_MyTrigger.class.php
  *      - interface_99_all_MyTrigger.class.php
  * - The file must stay in core/triggers
- * - The class name must be InterfaceMytrigger
+ * - The class name must be InterfaceMyTrigger
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
@@ -45,41 +44,16 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 	 */
 	public function __construct($db)
 	{
-		$this->db = $db;
-
-		$this->name = preg_replace('/^Interface/i', '', get_class($this));
+		parent::__construct($db);
 		$this->family = "demo";
 		$this->description = "MyModule triggers.";
-		// 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'development';
+		$this->version = self::VERSIONS['dev'];
 		$this->picto = 'mymodule@mymodule';
 	}
 
 	/**
-	 * Trigger name
-	 *
-	 * @return string Name of trigger file
-	 */
-	public function getName()
-	{
-		return $this->name;
-	}
-
-	/**
-	 * Trigger description
-	 *
-	 * @return string Description of trigger file
-	 */
-	public function getDesc()
-	{
-		return $this->description;
-	}
-
-
-	/**
-	 * Function called when a Dolibarrr business event is done.
-	 * All functions "runTrigger" are triggered if file
-	 * is inside directory core/triggers
+	 * Function called when a Dolibarr business event is done.
+	 * All functions "runTrigger" are triggered if the file is inside the directory core/triggers
 	 *
 	 * @param string 		$action 	Event action code
 	 * @param CommonObject 	$object 	Object
@@ -110,7 +84,7 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 		}
 
 		// Or you can execute some code here
-		switch ($action) {
+		switch ($action) {  // @phan-suppress-current-line PhanNoopSwitchCases
 			// Users
 			//case 'USER_CREATE':
 			//case 'USER_MODIFY':
@@ -147,7 +121,7 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 			//case 'PRODUCT_SET_MULTILANGS':
 			//case 'PRODUCT_DEL_MULTILANGS':
 
-			//Stock mouvement
+			//Stock movement
 			//case 'STOCK_MOVEMENT':
 
 			//MYECMDIR
@@ -162,7 +136,8 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 			//case 'ORDER_DELETE':
 			//case 'ORDER_CANCEL':
 			//case 'ORDER_SENTBYMAIL':
-			//case 'ORDER_CLASSIFY_BILLED':
+			//case 'ORDER_CLASSIFY_BILLED':		// TODO Replace it with ORDER_BILLED
+			//case 'ORDER_CLASSIFY_UNBILLED':	// TODO Replace it with ORDER_UNBILLED
 			//case 'ORDER_SETDRAFT':
 			//case 'LINEORDER_INSERT':
 			//case 'LINEORDER_MODIFY':
@@ -174,6 +149,8 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 			//case 'ORDER_SUPPLIER_VALIDATE':
 			//case 'ORDER_SUPPLIER_DELETE':
 			//case 'ORDER_SUPPLIER_APPROVE':
+			//case 'ORDER_SUPPLIER_CLASSIFY_BILLED':		// TODO Replace with ORDER_SUPPLIER_BILLED
+			//case 'ORDER_SUPPLIER_CLASSIFY_UNBILLED':		// TODO Replace with ORDER_SUPPLIER_UNBILLED
 			//case 'ORDER_SUPPLIER_REFUSE':
 			//case 'ORDER_SUPPLIER_CANCEL':
 			//case 'ORDER_SUPPLIER_SENTBYMAIL':
@@ -188,6 +165,8 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 			//case 'PROPAL_MODIFY':
 			//case 'PROPAL_VALIDATE':
 			//case 'PROPAL_SENTBYMAIL':
+			//case 'PROPAL_CLASSIFY_BILLED':		// TODO Replace it with PROPAL_BILLED
+			//case 'PROPAL_CLASSIFY_UNBILLED':		// TODO Replace it with PROPAL_UNBILLED
 			//case 'PROPAL_CLOSE_SIGNED':
 			//case 'PROPAL_CLOSE_REFUSED':
 			//case 'PROPAL_DELETE':
@@ -231,6 +210,13 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 			//case 'LINEBILL_MODIFY':
 			//case 'LINEBILL_DELETE':
 
+			// Recurring Bills
+			//case 'BILLREC_MODIFY':
+			//case 'BILLREC_DELETE':
+			//case 'BILLREC_AUTOCREATEBILL':
+			//case 'LINEBILLREC_MODIFY':
+			//case 'LINEBILLREC_DELETE':
+
 			//Supplier Bill
 			//case 'BILL_SUPPLIER_CREATE':
 			//case 'BILL_SUPPLIER_MODIFY':
@@ -263,6 +249,8 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 			//case 'FICHINTER_CREATE':
 			//case 'FICHINTER_MODIFY':
 			//case 'FICHINTER_VALIDATE':
+			//case 'FICHINTER_CLASSIFY_BILLED':			// TODO Replace it with FICHINTER_BILLED
+			//case 'FICHINTER_CLASSIFY_UNBILLED':		// TODO Replace it with FICHINTER_UNBILLED
 			//case 'FICHINTER_DELETE':
 			//case 'LINEFICHINTER_CREATE':
 			//case 'LINEFICHINTER_MODIFY':

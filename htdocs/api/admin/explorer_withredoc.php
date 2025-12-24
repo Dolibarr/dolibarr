@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016   Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,17 +15,25 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
- *
- * @deprecated      Old explorer. Not using Swagger. See instead explorer in htdocs/api/index.php.
  */
 
 /**
  * 	\defgroup   api     Module DolibarrApi
  *  \brief      API explorer using the swagger.json file
  *  \file       htdocs/api/admin/explorer_withredoc.php
+ *
+ * @deprecated      Old explorer. Not using Swagger. See instead explorer in htdocs/api/index.php.
  */
 
 require_once '../../main.inc.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Enable and test if module Api is enabled
 if (!isModEnabled('api')) {
