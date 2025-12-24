@@ -1995,7 +1995,7 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 	print '<br>';
 
 	print '<div class="div-table-responsive-no-min">';
-	print '<table class="border centpercent">';
+	print '<table class="border tableforfield centpercent">';
 
 	print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Label").'</td>';
 	print '<td><input class="minwidth300" type="text" name="label" value="'.$companybankaccount->label.'"></td></tr>';
@@ -2061,7 +2061,7 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 	}
 
 	print '<tr><td class="tdtop">'.$langs->trans("BankAccountDomiciliation").'</td><td>';
-	print '<textarea name="address" rows="4" cols="40" maxlength="255">';
+	print '<textarea name="address" rows="'.ROWS_4.'" cols="40" maxlength="255" spellcheck="false">';
 	print $companybankaccount->address;
 	print "</textarea></td></tr>";
 
@@ -2070,7 +2070,7 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 	print "</td></tr>\n";
 
 	print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerAddress").'</td><td>';
-	print '<textarea name="owner_address" rows="'.ROWS_4.'" cols="40" maxlength="255">';
+	print '<textarea name="owner_address" rows="'.ROWS_4.'" cols="40" maxlength="255" spellcheck="false">';
 	print $companybankaccount->owner_address;
 	print "</textarea></td></tr>";
 
@@ -2078,14 +2078,17 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 	print '</div>';
 
 	if (isModEnabled('prelevement')) {
-		print '<br>';
+		print '<hr>';
 
 		print '<div class="div-table-responsive-no-min">';
-		print '<table class="border centpercent">';
+		print '<table class="border tableforfield centpercent">';
 
 		if (empty($companybankaccount->rum)) {
 			$companybankaccount->rum = $prelevement->buildRumNumber($object->code_client, $companybankaccount->datec, (string) $companybankaccount->id);
 		}
+
+		// Title
+		print '<tr><td class="titlefieldcreate" colspan="5">'.$langs->trans("WithdrawalsSetup").'</td></tr>';
 
 		// RUM
 		print '<tr><td class="titlefield">'.$langs->trans("RUM").'</td>';
@@ -2177,7 +2180,7 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 	print '<br>';
 
 	print '<div class="div-table-responsive-no-min">';
-	print '<table class="border centpercent">';
+	print '<table class="border tableforfield centpercent">';
 
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td>';
 	print '<td><input class="minwidth250" type="text" id="label" name="label" value="'.(GETPOSTISSET('label') ? GETPOST('label') : $langs->trans("Bank").' '.$object->name).'"></td></tr>';
@@ -2256,10 +2259,13 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 	print '</div>';
 
 	if (isModEnabled('prelevement')) {
-		print '<br>';
+		print '<hr>';
 
 		print '<div class="div-table-responsive-no-min">';
-		print '<table class="border centpercent">';
+		print '<table class="border tableforfield centpercent">';
+
+		// Title
+		print '<tr><td class="titlefieldcreate" colspan="5">'.$langs->trans("WithdrawalsSetup").'</td></tr>';
 
 		// RUM
 		print '<tr><td class="titlefieldcreate">'.$form->textwithpicto($langs->trans("RUM"), $langs->trans("RUMLong").'<br>'.$langs->trans("RUMWillBeGenerated")).'</td>';
