@@ -782,31 +782,33 @@ $listofreferent = array(
 		 'testnew'=>$user->rights->agenda->myactions->create,
 		'test'=> isModEnabled('agenda') && $user->hasRight('agenda', 'myactions', 'read')),
 		*/
-);
+	);
 
-// Change rules for profit/benefit calculation
-if (getDolGlobalString('PROJECT_ELEMENTS_FOR_PLUS_MARGIN')) {
-	foreach ($listofreferent as $key => $element) {
-		if ($listofreferent[$key]['margin'] == 'add') {
-			unset($listofreferent[$key]['margin']);
+	// Change rules for profit/benefit calculation
+	$confElementsForPlusMargin = getDolGlobalString('PROJECT_ELEMENTS_FOR_PLUS_MARGIN');
+	if (!empty($confElementsForPlusMargin)) {
+		foreach ($listofreferent as $key => $element) {
+			if ($listofreferent[$key]['margin'] == 'add') {
+				unset($listofreferent[$key]['margin']);
+			}
+		}
+		$newelementforplusmargin = explode(',', (string) $confElementsForPlusMargin);
+		foreach ($newelementforplusmargin as $value) {
+			$listofreferent[trim($value)]['margin'] = 'add';
 		}
 	}
-	$newelementforplusmargin = explode(',', getDolGlobalString('PROJECT_ELEMENTS_FOR_PLUS_MARGIN'));
-	foreach ($newelementforplusmargin as $value) {
-		$listofreferent[trim($value)]['margin'] = 'add';
-	}
-}
-if (getDolGlobalString('PROJECT_ELEMENTS_FOR_MINUS_MARGIN')) {
-	foreach ($listofreferent as $key => $element) {
-		if ($listofreferent[$key]['margin'] == 'minus') {
-			unset($listofreferent[$key]['margin']);
+	$confElementsForMinusMargin = getDolGlobalString('PROJECT_ELEMENTS_FOR_MINUS_MARGIN');
+	if (!empty($confElementsForMinusMargin)) {
+		foreach ($listofreferent as $key => $element) {
+			if ($listofreferent[$key]['margin'] == 'minus') {
+				unset($listofreferent[$key]['margin']);
+			}
+		}
+		$newelementforminusmargin = explode(',', (string) $confElementsForMinusMargin);
+		foreach ($newelementforminusmargin as $value) {
+			$listofreferent[trim($value)]['margin'] = 'minus';
 		}
 	}
-	$newelementforminusmargin = explode(',', getDolGlobalString('PROJECT_ELEMENTS_FOR_MINUS_MARGIN'));
-	foreach ($newelementforminusmargin as $value) {
-		$listofreferent[trim($value)]['margin'] = 'minus';
-	}
-}
 
 
 $parameters = array('listofreferent' => $listofreferent);
