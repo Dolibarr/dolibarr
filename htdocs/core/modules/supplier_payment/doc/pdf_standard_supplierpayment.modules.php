@@ -42,14 +42,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functionsnumtoword.lib.php';
 /**
  *	Class to generate the supplier invoices payment file with the standard model
  */
-	class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
+class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
+{
+	/**
+	 * @param  int<0,max> $socid Thirdparty id
+	 * @return string           IBAN (decrypted), empty if none
+	 */
+	protected function getDefaultThirdpartyIban($socid)
 	{
-		/**
-		 * @param  int<0,max> $socid Thirdparty id
-		 * @return string           IBAN (decrypted), empty if none
-		 */
-		protected function getDefaultThirdpartyIban($socid)
-		{
 		$iban = '';
 		if ((int) $socid <= 0) {
 			return '';
@@ -72,12 +72,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functionsnumtoword.lib.php';
 		return (string) $iban;
 	}
 
-		/**
-		 * @param  object[] $lines Lines with a possible ref_supplier property
-		 * @return string[]        Unique list of supplier references
-		 */
-		protected function getSupplierRefsFromLines($lines)
-		{
+	/**
+	 * @param  object[] $lines Lines with a possible ref_supplier property
+	 * @return string[]        Unique list of supplier references
+	 */
+	protected function getSupplierRefsFromLines($lines)
+	{
 		$out = array();
 		if (!is_array($lines)) {
 			return $out;
