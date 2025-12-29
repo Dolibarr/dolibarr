@@ -656,7 +656,6 @@ class modProduct extends DolibarrModules
 			'p.fk_product_type'=>'^[0|1]$',
 			'p.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$',
 			'p.recuperableonly' => '^[0|1]$',
-			'p.finished' => '^[0|1]$'
 		);
 		// field order as per structure of table llx_product
 		$import_sample = array(
