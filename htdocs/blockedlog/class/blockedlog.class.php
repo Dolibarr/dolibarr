@@ -456,7 +456,9 @@ class BlockedLog
 	}
 
 	/**
-	 *	Populate properties of an unalterable log entry from object data
+	 *	Populate properties of an unalterable log entry from object data.
+	 *  This populates ->object_data but also other fields like ->action, ->amounts and ->linktoref and ->linktype
+	 *  It also populates some debug info like ->element and ->fk_object
 	 *
 	 *	@param	CommonObject|stdClass	$object		object to store
 	 *	@param	string					$action		action
@@ -482,6 +484,25 @@ class BlockedLog
 		if ($object->element == 'payment' || $object->element == 'payment_supplier') {
 			'@phan-var-force Paiement|PaiementFourn $object';
 			$this->date_object = empty($object->datepaye) ? $object->date : $object->datepaye;
+			if ($object->element == 'payment') {
+				$this->linktype = 'payment_invoice';
+				$this->linktoref = '';
+				foreach ($this->amounts as $fk_invoice => $amount) {
+					$invoice = new Facture($this->db);
+					if ($invoice->fetch($fk_invoice) > 0) {
+						$this->linktoref .= ($this->linktoref ? ',' : '').$invoice->ref;
+					}
+				}
+			} elseif ($object->element == 'payment_supplier') {
+				$this->linktype = 'payment_supplier_invoice';
+				$this->linktoref = '';
+				foreach ($this->amounts as $fk_invoice => $amount) {
+					$invoice = new FactureFournisseur($this->db);
+					if ($invoice->fetch($fk_invoice) > 0) {
+						$this->linktoref .= ($this->linktoref ? ',' : '').$invoice->ref;
+					}
+				}
+			}
 		} elseif ($object->element == 'payment_salary') {
 			'@phan-var-force PaymentSalary $object';
 			$this->date_object = $object->datev;
@@ -502,6 +523,30 @@ class BlockedLog
 			$this->date_object = $object->datem; // @phan-suppress-current-line PhanUndeclaredProperty
 		}
 
+		// In case of credit note, we add link to source invoice to have more tracking info when doing tracking later
+		if ($object->element == 'invoice_supplier') {
+			'@phan-var-force FactureFournisseur $object';
+			if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
+				$invoice = new FactureFournisseur($this->db);
+				$invoice->fetch($this->fk_facture_source);
+				if ($invoice->id > 0) {
+					$this->linktype = 'credit_note_of';
+					$this->linktoref = $invoice->ref;
+				}
+			}
+		}
+		if ($object->element == 'facture') {
+			'@phan-var-force Facture $object';
+			if ($object->type == Facture::TYPE_CREDIT_NOTE) {
+				$invoice = new Facture($this->db);
+				$invoice->fetch($this->fk_facture_source);
+				if ($invoice->id > 0) {
+					$this->linktype = 'credit_note_of';
+					$this->linktoref = $invoice->ref;
+				}
+			}
+		}
+
 		// ref
 		$this->ref_object = ((!empty($object->newref)) ? $object->newref : $object->ref); // newref is set when validating a draft, ref is set in other cases
 		// type of object
@@ -509,10 +554,16 @@ class BlockedLog
 		// id of object
 		$this->fk_object = $object->id;
 
+		// Add thirdparty info if not yet done
+		if (empty($object->thirdparty) && method_exists($object, 'fetch_thirdparty')) {
+			$object->fetch_thirdparty();
+		}
+
 
 		// Set object_data
 		$this->object_data = new stdClass();
-		// Add fields to exclude
+
+		// Add fields to exclude (this has become useless because we now use a list fields to keep later).
 		$arrayoffieldstoexclude = array(
 			'table_element', 'fields',
 			'ref_previous', 'ref_next',
@@ -534,6 +585,7 @@ class BlockedLog
 			'restrictiononfksoc',
 			'specimen',
 		);
+
 		// Add more fields to exclude depending on object type
 		if ($this->element == 'cashcontrol') {
 			$arrayoffieldstoexclude = array_merge($arrayoffieldstoexclude, array(
@@ -543,10 +595,6 @@ class BlockedLog
 				'fk_incoterms', 'label_incoterms', 'location_incoterms', 'lines'));
 		}
 
-		// Add thirdparty info
-		if (empty($object->thirdparty) && method_exists($object, 'fetch_thirdparty')) {
-			$object->fetch_thirdparty();
-		}
 		if (!empty($object->thirdparty)) {
 			$this->object_data->thirdparty = new stdClass();
 
@@ -1136,8 +1184,10 @@ class BlockedLog
 
 			$this->signature = $this->buildFinalSignatureHash($previoushash.$concatenateddata);	// Build the hmac signature
 
-			// For debug:
-			$this->debuginfo = $this->buildFirstPartOfKeyForSignature();	// Not used
+			// For debug info (we can clean this field later)
+			if (getDolGlobalString('BLOCKEDLOG_ADD_DEBUG_INFO')) {
+				$this->debuginfo = $this->buildFirstPartOfKeyForSignature();	// Not used
+			}
 		} catch (Exception $e) {
 			$this->error = $e->getMessage();
 

@@ -190,6 +190,9 @@ $search_job = GETPOST('search_job', 'alpha');
 $search_warehouse = GETPOST('search_warehouse', 'alpha');
 $search_supervisor = GETPOST('search_supervisor', 'intcomma');
 $search_categ = GETPOST("search_categ", 'intcomma');
+$search_datelastlogin = GETPOSTDATE('search_datelastlogin', '', 'tzuserrel');
+$search_datepreviouslogin = GETPOSTDATE('search_datepreviouslogin', '', 'tzuserrel');
+
 $searchCategoryUserOperator = 0;
 if (GETPOSTISSET('formfilteraction')) {
 	$searchCategoryUserOperator = GETPOSTINT('search_category_user_operator');
@@ -284,9 +287,8 @@ if (empty($reshook)) {
 		$search_warehouse = "";
 		$search_supervisor = "";
 		$search_api_key = "";
-		$search_date_creation = "";
-		$search_date_modification = "";
 		$search_categ = 0;
+		$search_all = '';
 		$toselect = array();
 		$search_array_options = array();
 		if (getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0) {

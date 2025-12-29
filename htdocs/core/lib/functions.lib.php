@@ -5095,7 +5095,12 @@ function dolGetCountryCodeFromIp($ip)
 	$countrycode = '';
 
 	if (isModEnabled('geoipmaxmind')) {
-		$datafile = getDolGlobalString('GEOIPMAXMIND_COUNTRY_DATAFILE');
+		if (getDolGlobalString('GEOIP_VERSION') == 'php') {
+			$datafile = getDolGlobalString('GEOIPMAXMIND_COUNTRY_DATAFILE');
+		} else {
+			$diroffile = getMultidirOutput(null, 'geoipmaxmind');
+			$datafile = $diroffile . '/' . getDolGlobalString('GEOIPMAXMIND_COUNTRY_DATAFILE_EMBEDDED');
+		}
 		//$ip='24.24.24.24';
 		//$datafile='/usr/share/GeoIP/GeoIP.dat';    Note that this must be downloaded datafile (not same than datafile provided with ubuntu packages)
 		if ($datafile) {

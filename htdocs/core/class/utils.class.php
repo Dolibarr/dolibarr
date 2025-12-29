@@ -723,7 +723,7 @@ class Utils
 	 */
 	public function executeCLI($command, $outputfile, $execmethod = 0, $redirectionfile = null, $noescapecommand = 0, $redirectionfileerr = null)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$result = 0;
 		$output = '';
