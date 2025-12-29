@@ -1150,6 +1150,43 @@ class FormOther
 	}
 
 	/**
+	 *      Return HTML combo list of day
+	 *
+	 *      @param  int|string  $selected           Preselected value
+	 *      @param  string      $htmlname           Name of HTML select object
+	 *      @param  int         $useempty           Show empty in list
+	 *      @param  string      $morecss            More Css
+	 *      @param  bool        $addjscombo         Add js combo
+	 *      @return string
+	 */
+	public function select_day($selected = '', $htmlname = 'dayid', $useempty = 0, $morecss = 'minwidth50 maxwidth75imp valignmiddle', $addjscombo = false)
+	{
+		$select_day = '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'" id="'.$htmlname.'">';
+		if ($useempty) {
+			$select_day .= '<option value="0">&nbsp;</option>';
+		}
+		for ($i = 1; $i <= 31; $i++) {
+			if ((int) $selected == $i) {
+				$select_day .= '<option value="'.$i.'" selected>';
+			} else {
+				$select_day .= '<option value="'.$i.'">';
+			}
+			$select_day .= sprintf("%02d", $i);
+			$select_day .= '</option>';
+		}
+		$select_day .= '</select>';
+
+		// Add code for jquery to use multiselect
+		if ($addjscombo) {
+			// Enhance with select2
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+			$select_day .= ajax_combobox($htmlname);
+		}
+
+		return $select_day;
+	}
+
+	/**
 	 *	Return HTML combo list of years
 	 *
 	 *  @param  int|string	$selected       Preselected value (''=current year, -1=none, year otherwise)
