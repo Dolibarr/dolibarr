@@ -729,7 +729,6 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 
 	// Moral/Physic attribute
 	$morphys = [
-		// "" => $langs->trans("MorAndPhy"),
 		"phy" => $langs->trans("Physical"),
 		"mor" => $langs->trans("Moral"),
 	];
@@ -1034,14 +1033,20 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 		if ($caneditamount === "1") {
 			print '<input type="text" name="amount" id="amount" class="flat amount width50" value="'.$showedamount.'">';
 			print '<input type="text" name="amount" id="amounthidden" class="flat amount width50 hidden" disabled value="'.$showedamount.'">';
-			print ' '.$langs->trans("Currency".$conf->currency).'<span class="opacitymedium hideifautoturnover"> - ';
-			print $amount > 0 ? $langs->trans("AnyAmountWithAdvisedAmount", price($amount, 0, $langs, 1, -1, -1, $conf->currency)) : $langs->trans("AnyAmountWithoutAdvisedAmount");
+			print ' '.$langs->trans("Currency".$conf->currency).'<span class="opacitymedium hideifautoturnover">';
+			if (!getDolGlobalString('MEMBER_NEWFORM_DOLIBARRTURNOVER')) {
+				print ' - ';
+				print $amount > 0 ? $langs->trans("AnyAmountWithAdvisedAmount", price($amount, 0, $langs, 1, -1, -1, $conf->currency)) : $langs->trans("AnyAmountWithoutAdvisedAmount");
+			}
 			print '</span>';
 		} else {
 			print '<input type="text" name="amount" id="amount" class="flat amount width50 hidden" value="'.$showedamount.'">';
 			print '<input type="text" name="amount" id="amounthidden" class="flat amount width50" disabled value="'.$showedamount.'">';
-			print ' '.$langs->trans("Currency".$conf->currency).'<span class="opacitymedium hideifautoturnover hidden"> - ';
-			print $amount > 0 ? $langs->trans("AnyAmountWithAdvisedAmount", price($amount, 0, $langs, 1, -1, -1, $conf->currency)) : $langs->trans("AnyAmountWithoutAdvisedAmount");
+			print ' '.$langs->trans("Currency".$conf->currency).'<span class="opacitymedium hideifautoturnover hidden">';
+			if (!getDolGlobalString('MEMBER_NEWFORM_DOLIBARRTURNOVER')) {
+				print ' - ';
+				print $amount > 0 ? $langs->trans("AnyAmountWithAdvisedAmount", price($amount, 0, $langs, 1, -1, -1, $conf->currency)) : $langs->trans("AnyAmountWithoutAdvisedAmount");
+			}
 			print '</span>';
 		}
 		print '</td></tr>';

@@ -152,3 +152,4 @@ MandatoryTargetFieldsNotMapped=Einige Pflicht-Zielfelder sind nicht zugeordnet
 AllTargetMandatoryFieldsAreMapped=Alle Pflicht-Zielfelder sind zugeordnet
 ResultOfSimulationNoError=Simulationsergebnis: Kein Fehler
 NumberOfLinesLimited=Zeilenanzahl begrenzt
+ErrorFileLinesReachEOF=Die Datei enthält %s Zeilen. Allerdings wird das Ende der Datei oder ein leerer Datensatz bei Zeile %s erreicht. Dies kann vorkommen, wenn einige Datensätze auf mehrere Zeilen aufgeteilt sind, weil sie nicht korrekt mit einer entsprechenden Textkennzeichnung (" ") versehen sind, oder wenn ein Zeile vorhanden ist, bei der in allen Feldern keine Daten enthalten sind.
