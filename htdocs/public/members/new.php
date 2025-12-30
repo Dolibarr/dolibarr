@@ -673,8 +673,8 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 	print '<input type="hidden" name="action" value="add" />';
 	print '<br>';
 
-	$messagemandatory = '<span class="">'.$langs->trans("FieldsWithAreMandatory", '*').'</span>';
-	//print '<br><span class="opacitymedium">'.$langs->trans("FieldsWithAreMandatory", '*').'</span><br>';
+	//$messagemandatory = '<span class="">'.$langs->trans("FieldsWithAreMandatory", '*').'</span>';
+	//print '<br>'.$messagemandatory.'<br>';
 	//print $langs->trans("FieldsWithIsForPublic",'**').'<br>';
 
 	print dol_get_fiche_head();
@@ -683,10 +683,12 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 		print "\n".'<script type="text/javascript">'."\n";
 		print 'jQuery(document).ready(function () {
 			jQuery("#selectcountry_id").change(function() {
+				console.log("We change country, so we reload page");
 				document.newmember.action.value="create";
 				document.newmember.submit();
 			});
 			function initfieldrequired() {
+				console.log("initfieldrequired");
 				jQuery("#tdcompany").removeClass("fieldrequired");
 				jQuery("#tdlastname").removeClass("fieldrequired");
 				jQuery("#tdfirstname").removeClass("fieldrequired");
@@ -732,7 +734,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 		"mor" => $langs->trans("Moral"),
 	];
 	$checkednature = GETPOST("morphy", 'alpha');
-	$listetype_natures = $adht->morphyByType(1);		// Load the array of morphy per type
+	$listetype_natures = $adht->morphyByType(1);		// Load the array of morphy per typeof membership
 	$listetype_natures_json = json_encode($listetype_natures);
 
 	if (!getDolGlobalString('MEMBER_NEWFORM_FORCEMORPHY')) {
@@ -746,10 +748,9 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 
 		// Add JS to manage the background of nature
 		if ($conf->use_javascript_ajax) {
-			print "<script>
-				var listetype_natures = $listetype_natures_json;
-			</script>";
 			print '<script>
+				var listetype_natures = '.$listetype_natures_json.';
+
 				jQuery(function($) {
 					function refreshNatureCss() {
 						$(".spannature").each(function(index) {
@@ -775,7 +776,9 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 					});
 
 					$("#typeid").on("change", function() {
+						console.log("Type of member is modified");
 						let morphy = listetype_natures[$(this).val()];
+						console.log("morphy="+morphy);
 
 						let $phyInput = $("#phisicalinput");
 						let $morInput = $("#moralinput");
@@ -807,7 +810,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 								break;
 
 							default:';
-			if ($action != "subscription") {
+			if ($action != "subscription" && !GETPOST('morphy')) {
 				print ' $phyInput.prop({disabled: false, checked: false});
 				$morInput.prop({disabled: false, checked: false});
 				$span1.removeClass("member-individual-back").addClass("nonature-back");
@@ -953,6 +956,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 		print '<script type="text/javascript">
 		jQuery(document).ready(function () {
 			initturnover();
+
 			jQuery("#morphy").change(function() {
 				initturnover();
 			});
@@ -960,15 +964,9 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 					if (jQuery("#budget").val() > 0) { jQuery(".amount").val(jQuery("#budget").val()); }
 					else { jQuery("#budget").val(\'\'); }
 			});
-			/*jQuery("#typeid").change(function() {
-				if (jQuery("#typeid").val()==1) { jQuery("#morphy").val(\'mor\'); }
-				if (jQuery("#typeid").val()==2) { jQuery("#morphy").val(\'phy\'); }
-				if (jQuery("#typeid").val()==3) { jQuery("#morphy").val(\'mor\'); }
-				if (jQuery("#typeid").val()==4) { jQuery("#morphy").val(\'mor\'); }
-				initturnover();
-			});*/
+
 			function initturnover() {
-				console.log("Switch mor/phy");
+				console.log("Set fields according to nature mor/phy");
 				if (jQuery("#morphy").val()==\'phy\') {
 					jQuery(".amount").val(20);
 					jQuery("#trbudget").hide();
