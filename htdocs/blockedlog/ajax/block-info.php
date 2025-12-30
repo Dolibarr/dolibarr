@@ -155,7 +155,7 @@ function formatObject($objtoshow, $prefix)
 		'tva_tx' => 'VatRate',
 		'localtax1_tx' => 'Localtax1Rate',
 		'localtax2_tx' => 'Localtax2Rate',
-		'vat_src_code' => 'VatCode',
+		'vat_src_code' => 'VATCode',
 		'multicurrency_code' => 'Currency',
 		'qty' => 'Quantity',
 		'nom' => 'Name',

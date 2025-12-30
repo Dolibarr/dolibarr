@@ -369,8 +369,10 @@ if (empty($reshook)) {
 				$idoppstatuswon = (int) dol_getIdFromCode($db, 'WON', 'c_lead_status', 'code', 'rowid');
 
 				if ($object->opp_status == $idoppstatuswon) {
-					// Switch the thirdparty into a customer
-					$object->thirdparty->setAsCustomer();
+					// Switch the thirdparty into a customer (only if thirdparty exists)
+					if (!empty($object->thirdparty) && !empty($object->thirdparty->id)) {
+						$object->thirdparty->setAsCustomer();
+					}
 				}
 			}
 		}
@@ -465,8 +467,10 @@ if (empty($reshook)) {
 					$idoppstatuswon = (int) dol_getIdFromCode($db, 'WON', 'c_lead_status', 'code', 'rowid');
 
 					if (!$error && $object->opp_status == $idoppstatuswon) {
-						// Switch the thirdparty into a customer
-						$object->thirdparty->setAsCustomer();
+						// Switch the thirdparty into a customer (only if thirdparty exists)
+						if (!empty($object->thirdparty) && !empty($object->thirdparty->id)) {
+							$object->thirdparty->setAsCustomer();
+						}
 					}
 				}
 			}

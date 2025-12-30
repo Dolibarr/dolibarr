@@ -18,6 +18,7 @@
 
 /**
  * @var Context $context	Object context for webportal
+ * @var HookManager	$hookmanager
  * @var Translate $langs
  * @@var string[] $vars['body-class'] more CSS classes  for body
  * @@var string[] $vars['body-theme'] theme css to apply default is custom
@@ -101,8 +102,13 @@ top_httphead();
 		$bodyAttributes['class'] = $vars['body-class'];
 	}
 
-	$bodyCompiledAttributes = commonHtmlAttributeBuilder($bodyAttributes);
+	$parameters = array(
+		'bodyAttributes' => &$bodyAttributes
+	);
+	$hookmanager->executeHooks('webPortalHeader', $parameters, $context);
+	print $hookmanager->resPrint;
 
+	$bodyCompiledAttributes = commonHtmlAttributeBuilder($bodyAttributes);
 	?>
 </head>
 <body <?php print empty($bodyCompiledAttributes) ? '' : implode(' ', $bodyCompiledAttributes); ?> >

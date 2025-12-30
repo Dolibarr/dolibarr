@@ -428,7 +428,8 @@ if ($dirins && $action == 'initmodule' && $modulename /* && $user->hasRight("mod
 		if (getDolGlobalString('MODULEBUILDER_SPECIFIC_README')) {
 			setEventMessages($langs->trans("ContentOfREADMECustomized"), null, 'warnings');
 			dol_delete_file($destdir.'/README.md');
-			file_put_contents($destdir.'/README.md', $conf->global->MODULEBUILDER_SPECIFIC_README);
+			file_put_contents($destdir.'/README.md', getDolGlobalString("MODULEBUILDER_SPECIFIC_README"));
+			dolChmod($destdir.'/README.md');
 		}
 		// for create file to add properties
 		// file_put_contents($destdir.'/'.strtolower($modulename).'propertycard.php','');
@@ -2759,7 +2760,7 @@ if ($action == 'reset' && $user->admin /* && $user->hasRight("modulebuilder", "r
 	$param .= '&tabobj='.urlencode($tabobj);
 
 	$value = GETPOST('value', 'alpha');
-	$result = unActivateModule($value);
+	$result = unActivateModule(strtolower($value));
 	if ($result) {
 		setEventMessages($result, null, 'errors');
 	}
@@ -2767,7 +2768,7 @@ if ($action == 'reset' && $user->admin /* && $user->hasRight("modulebuilder", "r
 	exit;
 }
 
-// delete menu
+// Delete menu
 if ($dirins && $action == 'confirm_deletemenu' && GETPOSTINT('menukey') /* && $user->hasRight("modulebuilder", "run") // already checked */) {
 	// check if module is enabled
 	if (isModEnabled(strtolower($module))) {
@@ -3420,7 +3421,7 @@ if ($module == 'initmodule') {
 	//print '<span class="opacitymedium">'.$langs->trans("ModuleBuilderDesc2", 'conf/conf.php', $newdircustom).'</span><br>';
 	print '<br>';
 
-	print '<div class="tagtable">';
+	print '<div class="tagtable table-border">';
 
 	print '<div class="tagtr"><div class="tagtd paddingright">';
 	print '<span class="opacitymedium">'.$langs->trans("IdModule").'</span>';

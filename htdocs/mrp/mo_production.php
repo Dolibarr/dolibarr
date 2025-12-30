@@ -391,7 +391,7 @@ if (empty($reshook)) {
 							$moline->batch = GETPOST('batchtoproduce-'.$line->id.'-'.$i);
 							$moline->role = 'produced';
 							$moline->fk_mrp_production = $line->id;
-							$moline->fk_stock_movement = $idstockmove;
+							$moline->fk_stock_movement = (($idstockmove == 0) ? null : $idstockmove);
 							$moline->fk_user_creat = $user->id;
 
 							$resultmoline = $moline->create($user);

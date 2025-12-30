@@ -443,6 +443,7 @@ if ($resql) {
 	$warehouses_list = $formProduct->cache_warehouses;
 	$nb_warehouse = count($warehouses_list);
 	$colspan_warehouse = 1;
+	$colspan = 0;
 	if (getDolGlobalString('STOCK_DETAIL_ON_WAREHOUSE')) {
 		$colspan_warehouse = $nb_warehouse > 1 ? $nb_warehouse + 1 : 1;
 	}
@@ -458,40 +459,56 @@ if ($resql) {
 		$searchpicto = $form->showFilterAndCheckAddButtons(0);
 		print $searchpicto;
 		print '</td>';
+		$colspan++;
 	}
 	print '<td class="liste_titre">';
 	print '<input class="flat" type="text" name="sref" size="6" value="'.$sref.'">';
 	print '</td>';
+	$colspan++;
 	print '<td class="liste_titre">';
 	print '<input class="flat" type="text" name="snom" size="8" value="'.$snom.'">';
 	print '</td>';
+	$colspan++;
 	// Duration
 	if (isModEnabled("service") && $type == 1) {
 		print '<td class="liste_titre">';
 		print '&nbsp;';
 		print '</td>';
+		$colspan++;
 	}
 	// Stock limit
 	print '<td class="liste_titre">&nbsp;</td>';
+	$colspan++;
 	print '<td class="liste_titre right">&nbsp;</td>';
+	$colspan++;
 	// Physical stock
 	print '<td class="liste_titre right">';
 	print '<input class="flat" type="text" size="5" name="search_stock_physique" value="'.dol_escape_htmltag($search_stock_physique).'">';
 	print '</td>';
+	$colspan++;
 	if ($virtualdiffersfromphysical) {
 		print '<td class="liste_titre">&nbsp;</td>';
+		$colspan++;
 	}
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	print '<td class="liste_titre">&nbsp;</td>';
+	$colspan++;
 	print '<td class="liste_titre" colspan="'.$colspan_warehouse.'">&nbsp;</td>';
+	$colspan++;
 	print '<td class="liste_titre"></td>';
+	$colspan++;
 	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print '<td class="liste_titre maxwidthsearch">';
 		$searchpicto = $form->showFilterAndCheckAddButtons(0);
 		print $searchpicto;
 		print '</td>';
+		$colspan++;
+	}
+	if (getDolGlobalString('PRODUCT_USE_UNITS')) {
+		print '<td class="liste_titre"></td>';
+		$colspan++;
 	}
 	print '</tr>';
 
@@ -639,7 +656,7 @@ if ($resql) {
 		$i++;
 	}
 	if ($num == 0) {
-		print '<tr><td colspan="">'.$langs->trans("None").'</td></tr>';
+		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	}
 
 	print "</table>";

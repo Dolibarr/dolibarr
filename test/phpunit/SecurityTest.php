@@ -74,6 +74,8 @@ print "Memory limit: ". ini_get('memory_limit')."\n";
 /**
  * Class for PHPUnit tests
  *
+ * #LNE1-QU2507-0005
+ *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.

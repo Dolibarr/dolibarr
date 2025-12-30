@@ -139,11 +139,13 @@ class FormSetup
 	/**
 	 * Generate the form (in read or edit mode depending on $editMode)
 	 *
-	 * @param 	bool 	$editMode 	true will display output on edit mod
-	 * @param	bool	$hideTitle	True to hide the first title line
-	 * @return 	string				Html output
+	 * @param 	bool 	$editMode 		True will display output on edit mod
+	 * @param	bool	$hideTitle		True to hide the first title line
+	 * @param	string	$title			Title of first line
+	 * @param	string	$cssfirstcolumn	CSS first column
+	 * @return 	string					Html output
 	 */
-	public function generateOutput($editMode = false, $hideTitle = false)
+	public function generateOutput($editMode = false, $hideTitle = false, $title = '', $cssfirstcolumn = '')
 	{
 		global $hookmanager, $action;
 
@@ -175,7 +177,7 @@ class FormSetup
 			}
 
 			// generate output table
-			$out .= $this->generateTableOutput($editMode, $hideTitle);
+			$out .= $this->generateTableOutput($editMode, $hideTitle, $title, $cssfirstcolumn);
 
 
 			$reshook = $hookmanager->executeHooks('formSetupBeforeGenerateOutputButton', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
@@ -208,11 +210,13 @@ class FormSetup
 	/**
 	 * generateTableOutput
 	 *
-	 * @param 	bool 	$editMode 	True will display output on edit modECM
-	 * @param	bool	$hideTitle	True to hide the first title line
-	 * @return 	string				Html output
+	 * @param 	bool 	$editMode 		True will display output on edit modECM
+	 * @param	bool	$hideTitle		True to hide the first title line
+	 * @param	string	$title			Title of first line
+	 * @param	string	$cssfirstcolumn	CSS first column
+	 * @return 	string					Html output
 	 */
-	public function generateTableOutput($editMode = false, $hideTitle = false)
+	public function generateTableOutput($editMode = false, $hideTitle = false, $title = '', $cssfirstcolumn = '')
 	{
 		global $hookmanager, $action;
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
@@ -230,9 +234,12 @@ class FormSetup
 		} else {
 			$out = '<table class="noborder centpercent">';
 			if (empty($hideTitle)) {
+				if (empty($title)) {
+					$title = $this->langs->transnoentitiesnoconv("Parameter");
+				}
 				$out .= '<thead>';
 				$out .= '<tr class="liste_titre">';
-				$out .= '	<td>' . $this->langs->trans("Parameter") . '</td>';
+				$out .= '	<td'.($cssfirstcolumn ? ' class="'.$cssfirstcolumn.'"' : '').'>' . dolPrintHTML($title) . '</td>';
 				$out .= '	<td></td>';
 				$out .= '</tr>';
 				$out .= '</thead>';
