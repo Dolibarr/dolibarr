@@ -82,7 +82,6 @@ if (getDolGlobalString('MAIN_MOTD_SETUPPAGE')) {
 
 print '<span class="opacitymedium hideonsmartphone">';
 print $langs->trans("SetupDescription1").'<br>';
-//print $langs->trans("AreaForAdminOnly").' ';
 
 if (!getDolGlobalString('MAIN_INFO_SOCIETE_NOM') || !getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY') || getDolGlobalString('MAIN_INFO_SOCIETE_SETUP_TODO_WARNING')) {
 	$setupcompanynotcomplete = 1;
@@ -91,7 +90,6 @@ if (!getDolGlobalString('MAIN_INFO_SOCIETE_NOM') || !getDolGlobalString('MAIN_IN
 }
 
 if ($setupcompanynotcomplete) {
-	print '<br>';
 	print $langs->trans("SetupDescription2", $langs->transnoentities("MenuCompanySetup"), $langs->transnoentities("Modules"));
 }
 

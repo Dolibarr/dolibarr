@@ -3421,7 +3421,7 @@ if ($module == 'initmodule') {
 	//print '<span class="opacitymedium">'.$langs->trans("ModuleBuilderDesc2", 'conf/conf.php', $newdircustom).'</span><br>';
 	print '<br>';
 
-	print '<div class="tagtable">';
+	print '<div class="tagtable table-border">';
 
 	print '<div class="tagtr"><div class="tagtd paddingright">';
 	print '<span class="opacitymedium">'.$langs->trans("IdModule").'</span>';

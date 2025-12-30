@@ -1226,6 +1226,7 @@ WebServer=Web server
 DocumentRootServer=Web server's root directory
 DataRootServer=Data files directory
 IP=IP
+CurrentIP=Current IP
 Port=Port
 VirtualServerName=Virtual server name
 OS=OS
