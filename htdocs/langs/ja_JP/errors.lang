@@ -18,7 +18,7 @@ ErrorRecordNotFoundShort=見つからない
 ErrorFailToCopyFile=<b>&quot;%s&quot;</b>にファイル<b>&quot;%s&quot;を</b>コピーに失敗した。
 ErrorFailToCopyDir=ディレクトリ '<b> %s</b>'を '<b> %s</b>'にコピーできなかった。
 ErrorFailToRenameFile=<b>&quot;%s&quot;</b>にファイル<b>&quot;%s&quot;を</b>リネームに失敗した。
-ErrorFailToEditFile=ファイル '<b>%s<span の編集に失敗したclass='notranslate'></b>'。
+ErrorFailToEditFile=ファイル '<b>%s の編集に失敗した</b>'。
 ErrorFailToDeleteFile=ファイル<b>'%s'を</b>削除できなかった。
 ErrorFailToCreateFile=ファイル<b>'%s'を</b>作成できなかった。
 ErrorFailToRenameDir=<b>&quot;%s&quot;</b>にディレクトリ<b>&quot;%s&quot;を</b>リネームに失敗した。
