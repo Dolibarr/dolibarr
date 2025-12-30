@@ -9093,7 +9093,8 @@ table.jPicker {
 		width: 260px;
 	}
 
-	.side-nav-vert .user-menu .dropdown-menu, #topmenu-bookmark-dropdown .dropdown-menu, #topmenu-quickadd-dropdown .dropdown-menu {
+	.side-nav-vert .user-menu .dropdown-menu,
+	#topmenu-global-search-dropdown .dropdown-menu, #topmenu-bookmark-dropdown .dropdown-menu, #topmenu-quickadd-dropdown .dropdown-menu {
 		width: 285px !important;	/* must be width of menu + padding + padding of sidenav */
 		min-width: unset !important;
 	}

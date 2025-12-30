@@ -396,7 +396,7 @@ print 'fontsize='.$fontsize."\n";
 print 'nbtopmenuentries='.$nbtopmenuentries."\n";
 print '*/'."\n";
 
-$leftmenuwidth = 242;
+$leftmenuwidth = 254;
 
 ?>
 
