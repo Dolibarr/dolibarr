@@ -3942,7 +3942,7 @@ class CommandeFournisseur extends CommonOrder
 			$return .= '<br><span class="info-box-label">'.$arraydata['thirdparty'].'</span>';
 		}
 		if (!empty($this->date)) {
-			$return .= '<br><span class="info-box-label">'.dol_print_date($this->date ? $this->date : $this->date_creation, 'day').'</span>';
+			$return .= '<br><span class="info-box-label">'.dol_print_date($this->date, 'day').'</span>';
 		}
 		if (!empty($this->total_ht)) {
 			$return .= ' &nbsp; <span class="info-box-label amount" title="'.dol_escape_htmltag($langs->trans("AmountHT")).'">'.price($this->total_ht);
