@@ -1474,7 +1474,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 			switch ($uploaderrorcode) {
 				case UPLOAD_ERR_INI_SIZE:	// 1
 					return 'ErrorFileSizeTooLarge';
-				case UPLOAD_ERR_FORM_SIZE:	// 2
+				case UPLOAD_ERR_FORM_SIZE:	// 2 - Exceed the MAX_FILE_SIZE specified into a field in form
 					return 'ErrorFileSizeTooLarge';
 				case UPLOAD_ERR_PARTIAL:	// 3
 					return 'ErrorPartialFile';

@@ -1,7 +1,5 @@
 # Dolibarr language file - Source file is en_US - admin
 BoldRefAndPeriodOnPDF=Imprimir en PDF referencia y período de producto
-VersionProgram=Versión del programa
-VersionLastInstall=Versión de instalación inicial
 VersionLastUpgrade=Versión de actualización más reciente.
 VersionUnknown=Desconocido
 VersionRecommanded=Recomendado
@@ -28,7 +26,6 @@ WebUserGroup=Usuario / grupo del servidor web
 PermissionsOnFilesInWebRoot=Permisos sobre archivos en el directorio raíz web
 PermissionsOnFile=Permisos en el archivo %s
 NoSessionFound=Su configuración de PHP parece no permitir el listado de sesiones activas. El directorio utilizado para guardar sesiones ( <b>%s</b> ) puede estar protegido (por ejemplo, por permisos del sistema operativo o por la directiva PHP open_basedir).
-DBStoringCharset=Juego de caracteres de base de datos para almacenar datos
 DBSortingCharset=Juego de caracteres de base de datos para ordenar los datos
 HostCharset=Juego de caracteres de host
 WarningModuleNotActive=El módulo <b>%s</b> debe estar habilitado.

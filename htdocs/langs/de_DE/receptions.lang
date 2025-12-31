@@ -55,3 +55,7 @@ ReceptionUpdated=Wareneingang erfolgreich aktualisiert
 ReceptionDistribution=Verteilung Wareneingang
 ReceptionMustBeInTheSameCurrencyThanOther=Der Wareneingang muss in der gleichen Währung erfolgen wie die anderen
 AutoValidationNotPossibleWhenStockIsDecreasedOnInvoiceValidation=Eine automatische Freigabe ist nicht möglich, wenn der Lagerbestand bei der Rechnungsfreigabe verringert wird.
+ReceptionSentByEMail=Wareneingang per E-Mail gesendet
+ReceptionValidated=Wareneingang freigegeben
+DateReception=Datum Wareneingang
+SetReceptionDate=Dateum Wareneingang setzen

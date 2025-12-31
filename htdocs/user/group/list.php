@@ -377,7 +377,7 @@ if ($conf->main_checkbox_left_column) {
 print_liste_field_titre("Group", $_SERVER["PHP_SELF"], "g.nom", '', $param, "", $sortfield, $sortorder);
 $totalarray['nbfield']++;
 //multicompany
-if (isModEnabled('multicompany') && !getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity == 1) {
+if (isModEnabled('multicompany') && is_object($mc) && !getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity == 1) {
 	print_liste_field_titre("Entity", $_SERVER["PHP_SELF"], "g.entity", '', $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
@@ -448,7 +448,6 @@ while ($i < $imaxinloop) {
 		}
 	} else {
 		// Show line of result
-		$j = 0;
 		print '<tr data-rowid="'.$object->id.'" class="oddeven">';
 		// Action column
 		if ($conf->main_checkbox_left_column) {
@@ -475,7 +474,8 @@ while ($i < $imaxinloop) {
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
-		//multicompany
+
+		// Multicompany column
 		if (isModEnabled('multicompany') && is_object($mc) && !getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity == 1) {
 			$mc->getInfo($obj->entity);
 			print '<td class="center">'.dol_escape_htmltag($mc->label).'</td>';
@@ -483,7 +483,9 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
-		print '<td class="center">'.dol_escape_htmltag($obj->nb).'</td>';
+
+		// Nb of users in group
+		print '<td class="center">'.($obj->nb ? dol_escape_htmltag($obj->nb) : '').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

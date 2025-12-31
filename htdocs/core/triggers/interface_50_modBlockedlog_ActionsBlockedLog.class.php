@@ -96,8 +96,8 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			|| $action === 'MEMBER_SUBSCRIPTION_CREATE' || $action === 'MEMBER_SUBSCRIPTION_MODIFY' || $action === 'MEMBER_SUBSCRIPTION_DELETE'
 			|| $action === 'DON_VALIDATE' || (($action === 'DON_MODIFY' || $action === 'DON_DELETE') && ($object->statut != 0 || $object->status != 0))
 			|| $action === 'CASHCONTROL_VALIDATE'
-			|| (in_array($object->element, array('facture', 'supplier_invoice')) && $action === 'DOC_DOWNLOAD' && ($object->statut != 0 || $object->status != 0))
-			|| (in_array($object->element, array('facture', 'supplier_invoice')) && $action === 'DOC_PREVIEW' && ($object->statut != 0 || $object->status != 0))
+			|| (in_array($object->element, array('facture', 'supplier_invoice')) && $action === 'DOC_PREVIEW' && ($object->statut != 0 || $object->status != 0 || $object->module_source != ''))
+			|| (in_array($object->element, array('facture', 'supplier_invoice')) && $action === 'DOC_DOWNLOAD' && ($object->statut != 0 || $object->status != 0 || $object->module_source != ''))
 			|| (getDolGlobalString('BLOCKEDLOG_ADD_ACTIONS_SUPPORTED') && in_array($action, explode(',', getDolGlobalString('BLOCKEDLOG_ADD_ACTIONS_SUPPORTED'))))
 		) {
 			$qualified++;

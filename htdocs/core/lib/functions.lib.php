@@ -5095,7 +5095,12 @@ function dolGetCountryCodeFromIp($ip)
 	$countrycode = '';
 
 	if (isModEnabled('geoipmaxmind')) {
-		$datafile = getDolGlobalString('GEOIPMAXMIND_COUNTRY_DATAFILE');
+		if (getDolGlobalString('GEOIP_VERSION') == 'php') {
+			$datafile = getDolGlobalString('GEOIPMAXMIND_COUNTRY_DATAFILE');
+		} else {
+			$diroffile = getMultidirOutput(null, 'geoipmaxmind');
+			$datafile = $diroffile . '/' . getDolGlobalString('GEOIPMAXMIND_COUNTRY_DATAFILE_EMBEDDED');
+		}
 		//$ip='24.24.24.24';
 		//$datafile='/usr/share/GeoIP/GeoIP.dat';    Note that this must be downloaded datafile (not same than datafile provided with ubuntu packages)
 		if ($datafile) {
@@ -10019,6 +10024,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			'__MYCOMPANY_CAPITAL__' => $mysoc->capital,
 			'__MYCOMPANY_FULLADDRESS__' => (method_exists($mysoc, 'getFullAddress') ? $mysoc->getFullAddress(1, ', ') : ''),	// $mysoc may be stdClass
 			'__MYCOMPANY_ADDRESS__' => $mysoc->address,
+			'__MYCOMPANY_VATNUMBER__' => $mysoc->tva_intra,
 			'__MYCOMPANY_ZIP__'     => $mysoc->zip,
 			'__MYCOMPANY_TOWN__'    => $mysoc->town,
 			'__MYCOMPANY_STATE__'    => $mysoc->state,
@@ -10656,6 +10662,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		}
 
 		$substitutionarray['__AMOUNT_MULTICURRENCY__']          = (is_object($object) && isset($object->multicurrency_total_ttc)) ? $object->multicurrency_total_ttc : '';
+		$substitutionarray['__AMOUNT_MULTICURRENCY_FORMATED__']	= (is_object($object) && isset($object->multicurrency_total_ttc)) ? price($object->multicurrency_total_ttc, 0, $outputlangs, 0, -1, -1, $object->multicurrency_code) : '';
 		$substitutionarray['__AMOUNT_MULTICURRENCY_TEXT__']     = (is_object($object) && isset($object->multicurrency_total_ttc)) ? dol_convertToWord($object->multicurrency_total_ttc, $outputlangs, '', true) : '';
 		$substitutionarray['__AMOUNT_MULTICURRENCY_TEXTCURRENCY__'] = (is_object($object) && isset($object->multicurrency_total_ttc)) ? dol_convertToWord($object->multicurrency_total_ttc, $outputlangs, $object->multicurrency_code, true) : '';
 		$substitutionarray['__MULTICURRENCY_CODE__']          = (is_object($object) && isset($object->multicurrency_code)) ? $object->multicurrency_code : '';
@@ -16964,4 +16971,22 @@ function array_merge_recursive_distinct(array $array1, array $array2): array
 	}
 
 	return $merged;
+}
+
+/**
+ * Get the socid of an object, supporting legacy attribute names.
+ *
+ * @param object $obj The Dolibarr object
+ * @return int|null Returns the socid if found, null otherwise
+ */
+function getObjectSocId($obj)
+{
+	if (!empty($obj->socid)) {
+		return (int) $obj->socid;
+	} elseif (!empty($obj->soc_id)) {
+		return (int) $obj->soc_id;
+	} elseif (!empty($obj->societe_id)) {
+		return (int) $obj->societe_id;
+	}
+	return null;
 }

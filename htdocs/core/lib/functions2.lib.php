@@ -1989,7 +1989,7 @@ function is_ip($ip)
 		return 1;
 	}
 
-	return 0;
+	return 0;	// If not valid
 }
 
 /**

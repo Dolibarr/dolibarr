@@ -251,6 +251,7 @@ if (!empty($force_install_noedit)) {
 	<?php
 	if (empty($dolibarr_main_url_root)) {
 		$dolibarr_main_url_root = GETPOSTISSET('main_url') ? GETPOST('main_url') : detect_dolibarr_main_url_root();
+		$dolibarr_main_url_root = trim($dolibarr_main_url_root);
 	}
 	?>
 	<tr>
@@ -261,7 +262,7 @@ if (!empty($force_install_noedit)) {
 				   class="minwidth300"
 				   id="main_url"
 				   name="main_url"
-				   value="<?php print $dolibarr_main_url_root; ?> "
+				   value="<?php print $dolibarr_main_url_root; ?>"
 <?php if (!empty($force_install_noedit) && $force_install_noedit != 3) {
 	print ' disabled';
 }

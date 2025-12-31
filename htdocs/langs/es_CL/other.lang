@@ -141,7 +141,5 @@ WebsiteSetup=Configuración del sitio web del módulo
 WEBSITE_KEYWORDS=Palabras clave
 LinesToImport=Líneas para importar
 FTPFailedToRemoveFile=Falló al eliminar el archivo <b>%s</b>.
-AddThisPageToBookmarks =Agregar página actual a marcadores
-EditBookmarks =Listar/editar Marcadores
 ListOfBookmarks =Lista de marcadores
 ShowBookmark =Mostrar marcador

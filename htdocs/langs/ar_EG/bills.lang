@@ -30,7 +30,6 @@ Rest=قيد الانتظار
 SendReminderBillByMail=إرسل تذكير عن طريق البريد الإلكتروني
 SupplierBillsToPay=فواتير المورد غير المدفوعة
 CustomerBillsUnpaid=فواتير العميل غير المدفوعة
-Billed=مفوتر
 AbsoluteDiscount=الخصم المطلق
 PaymentConditionShortPT_ORDER=طلب
 PaymentTypeCB=بطاقة ائتمان

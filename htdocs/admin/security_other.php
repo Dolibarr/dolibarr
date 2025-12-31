@@ -177,7 +177,7 @@ if (ini_get("session.gc_probability") == 0) {
 }
 print '</td>';
 print '<td class="nowrap">';
-print '<input class="flat right width50" name="MAIN_SESSION_TIMEOUT" type="text" value="'.getDolGlobalInt('MAIN_SESSION_TIMEOUT').'"> '.strtolower($langs->trans("Seconds"));
+print '<input class="flat right width75" name="MAIN_SESSION_TIMEOUT" type="text" value="'.getDolGlobalInt('MAIN_SESSION_TIMEOUT').'"> '.strtolower($langs->trans("Seconds"));
 print '</td>';
 print '</tr>';
 
