@@ -1055,7 +1055,9 @@ if (empty($reshook)) {
 			}
 		}
 
-		if (!$error && ($qty >= 0) && (!empty($line_desc) || (!empty($idprod) && $idprod > 0))) {
+		$commande_qty_requirement = !empty(getDolGlobalString('COMMANDE_ENABLE_NEGATIVE_QTY')) ? ($qty >= 0 || $qty <= 0) : $qty >= 0;
+
+		if (!$error && $commande_qty_requirement && (!empty($line_desc) || (!empty($idprod) && $idprod > 0))) {
 			// Clean parameters
 			$date_start = dol_mktime(GETPOSTINT('date_start' . $predef . 'hour'), GETPOSTINT('date_start' . $predef . 'min'), GETPOSTINT('date_start' . $predef . 'sec'), GETPOSTINT('date_start' . $predef . 'month'), GETPOSTINT('date_start' . $predef . 'day'), GETPOSTINT('date_start' . $predef . 'year'));
 			$date_end = dol_mktime(GETPOSTINT('date_end' . $predef . 'hour'), GETPOSTINT('date_end' . $predef . 'min'), GETPOSTINT('date_end' . $predef . 'sec'), GETPOSTINT('date_end' . $predef . 'month'), GETPOSTINT('date_end' . $predef . 'day'), GETPOSTINT('date_end' . $predef . 'year'));
@@ -1673,7 +1675,9 @@ if (empty($reshook)) {
 			}
 		}
 
-		if ($qty < 0) {
+		$commande_qty_requirement = !empty(getDolGlobalString('COMMANDE_ENABLE_NEGATIVE_QTY')) ? ($qty >= 0 || $qty <= 0) : $qty >= 0;
+
+		if (!$commande_qty_requirement) {
 			setEventMessages($langs->trans('FieldCannotBeNegative', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 			$error++;
 			$action = 'editline';

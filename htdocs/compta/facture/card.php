@@ -2548,7 +2548,10 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 			$error++;
 		}
-		if ($qty < 0) {
+
+		$facture_qty_requirement = !empty(getDolGlobalString('FACTURE_ENABLE_NEGATIVE_QTY')) ? ($qty >= 0 || $qty <= 0) : $qty >= 0;
+
+		if (!$facture_qty_requirement) {
 			$langs->load("errors");
 			setEventMessages($langs->trans('ErrorQtyForCustomerInvoiceCantBeNegative'), null, 'errors');
 			$error++;
@@ -2569,7 +2572,7 @@ if (empty($reshook)) {
 		}
 
 		$price_base_type = null;
-		if (!$error && ($qty >= 0) && (!empty($line_desc) || (!empty($idprod) && $idprod > 0))) {
+		if (!$error && $facture_qty_requirement && (!empty($line_desc) || (!empty($idprod) && $idprod > 0))) {
 			$ret = $object->fetch($id);
 			if ($ret < 0) {
 				dol_print_error($db, $object->error);
@@ -3174,7 +3177,10 @@ if (empty($reshook)) {
 				$error++;
 			}
 		}
-		if ($qty < 0) {
+
+		$facture_qty_requirement = !empty(getDolGlobalString('FACTURE_ENABLE_NEGATIVE_QTY')) ? ($qty >= 0 || $qty <= 0) : $qty >= 0;
+
+		if (!$facture_qty_requirement) {
 			$langs->load("errors");
 			setEventMessages($langs->trans('ErrorQtyForCustomerInvoiceCantBeNegative'), null, 'errors');
 			$error++;
