@@ -69,6 +69,10 @@ $error = 0;
 /*
  * View
  */
+
+$now = dol_now();
+$nowlasthour = dol_get_last_hour($now);
+
 $form = new Form($db);
 
 $datetime = dol_now();
@@ -123,8 +127,8 @@ if ($result < 0) {
 	if ($resql) {
 		$num = $db->num_rows($resql);
 		$obj = $db->fetch_object($resql);
-		$min = $db->jdate($obj->min);
-		$max = $db->jdate($obj->max);
+		$min = dol_get_first_hour($db->jdate($obj->min));
+		$max = dol_get_last_hour($db->jdate($obj->max));
 	} else {
 		dol_print_error($db);
 	}
@@ -217,7 +221,7 @@ if ($result < 0) {
 		$dataall = array();
 		while ($xmonth == $month) {
 			$subtotal += (isset($amounts[$textdate]) ? $amounts[$textdate] : 0);
-			if ($day > time()) {
+			if ($day > $nowlasthour) {
 				$datas[$i] = ''; // Valeur speciale permettant de ne pas tracer le graph
 			} else {
 				$datas[$i] = $solde + $subtotal;
@@ -355,7 +359,7 @@ if ($result < 0) {
 		$dataall = array();
 
 		$subtotal = 0;
-		$now = time();
+
 		$day = dol_mktime(12, 0, 0, 1, 1, (int) $year);
 		//$textdate = strftime("%Y%m%d", $day);
 		$textdate = dol_print_date($day, "%Y%m%d");
@@ -365,7 +369,7 @@ if ($result < 0) {
 		$i = 0;
 		while ($xyear == $year && $day <= $datetime) {
 			$subtotal += (isset($amounts[$textdate]) ? $amounts[$textdate] : 0);
-			if ($day > $now) {
+			if ($day > $nowlasthour) {
 				$datas[$i] = ''; // Valeur speciale permettant de ne pas tracer le graph
 			} else {
 				$datas[$i] = $solde + $subtotal;
