@@ -879,6 +879,9 @@ if (empty($reshook)) {
 	// Actions to build doc
 	$upload_dir = $conf->user->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+
+	// Actions when printing a doc from card
+	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 }
 
 
@@ -2177,7 +2180,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 						$langs->load("mails");
 						$params['attr']['title'] = $langs->trans('NoEMail');
 					}
-					print dolGetButtonAction('', $langs->trans('SendMail'), 'default', dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'presend', 'mode' => 'init']) . '#formmailbeforetitle', '', $canSendMail, $params);
+					print dolGetButtonAction('', $langs->trans('SendMail'), 'email', dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'presend', 'mode' => 'init']) . '#formmailbeforetitle', '', $canSendMail, $params);
 				}
 
 				if ($permissiontoedit && (!isModEnabled('multicompany') || !$user->entity || ($object->entity == $conf->entity) || (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $object->entity == 1))) {

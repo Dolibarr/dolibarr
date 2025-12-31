@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2014-2016  Laurent Destailleur  	<eldy@users.sourceforge.net>
- * Copyright (C) 2014-2024	Frédéric France      	<frederic.france@free.fr>
+ * Copyright (C) 2014-2025  Frédéric France      	<frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,13 +20,12 @@
 
 /**
  *  \file           htdocs/core/actions_printing.inc.php
- *  \brief          Code for actions print_file to print file with calling trigger
+ *  \ingroup        core
+ *  \brief          Code for actions print_file to print file (with calling trigger) when using the Direct Print feature.
+ *  				The relative filename to print must be provided into GETPOST('file', 'alpha') parameter
  */
 
 
-// $action must be defined
-// $db, $user, $conf, $langs must be defined
-// Filename to print must be provided into 'file' parameter
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -36,6 +35,7 @@
  *
  * @var string $action
  */
+
 // Print file
 if ($action == 'print_file' && $user->hasRight('printing', 'read')) {
 	$langs->load("printing");
@@ -44,7 +44,6 @@ if ($action == 'print_file' && $user->hasRight('printing', 'read')) {
 	$list = $objectprint->listDrivers($db, 10);
 	$dirmodels = array_merge(array('/core/modules/printing/'), (array) $conf->modules_parts['printing']);
 	if (!empty($list)) {
-		$errorprint = 0;
 		$printerfound = 0;
 		foreach ($list as $driver) {
 			foreach ($dirmodels as $dir) {
@@ -66,6 +65,7 @@ if ($action == 'print_file' && $user->hasRight('printing', 'read')) {
 
 				$subdir = '';
 				$module = GETPOST('printer', 'alpha');
+				// TODO make conversion in printing module
 				switch ($module) {
 					case 'livraison':
 						$subdir = 'receipt';
@@ -75,12 +75,31 @@ if ($action == 'print_file' && $user->hasRight('printing', 'read')) {
 						$subdir = 'sending';
 						break;
 					case 'commande_fournisseur':
-						$module = 'fournisseur';
+						$module = 'commande_fournisseur';
 						$subdir = 'commande';
 						break;
 				}
 				try {
-					$ret = $printer->printFile(GETPOST('file', 'alpha'), $module, $subdir);
+					// Case of printing an invoice
+					$filetoprint = GETPOST('file', 'alpha');		//Example FAYYMM-123/FAYYMM-123-xxx.pdf
+					if ($module == 'facture') {
+						require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+						$refinvoice = preg_replace('/[\/\\\\].*$/', '', $filetoprint);
+						$tmpinvoice = new Facture($db);
+						$tmpinvoice->fetch(0, $refinvoice);
+						if ($tmpinvoice->id > 0) {
+							// Increase counter by 1
+							$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET pos_print_counter = pos_print_counter + 1";
+							$sql .= " WHERE rowid = ".((int) $tmpinvoice->id);
+							$db->query($sql);
+
+							//$tmpinvoice->pos_print_counter += 1;
+							//$tmpinvoice->update($user, 1);	// We disable trigger here because we already call the trigger $action = DOC_PREVIEW or DOC_DOWNLOAD just after
+						}
+					}
+
+
+					$ret = $printer->printFile($filetoprint, $module, $subdir);
 					if ($ret > 0) {
 						//print '<pre>'.print_r($printer->errors, true).'</pre>';
 						setEventMessages($printer->error, $printer->errors, 'errors');

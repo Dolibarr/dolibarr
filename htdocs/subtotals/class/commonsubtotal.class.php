@@ -2,6 +2,8 @@
 /* Copyright (C) 2014-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
+
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -210,7 +212,21 @@ trait CommonSubtotal
 				SUBTOTALS_SPECIAL_CODE	// Special code
 			);
 			$this->fetch_lines();
+		} elseif ($current_module == 'fichinter' && $this instanceof Fichinter) {
+			global $user;
+			$result = $this->addline(
+				$user,					// user
+				$this->id,				// fk_fichinter
+				$desc,					// Description
+				0,						// dateintervention
+				$depth,					// duration
+				[],						// arrayoption
+				self::$PRODUCT_TYPE,	// Type
+				$rang,					// Rang
+				SUBTOTALS_SPECIAL_CODE	// Special code
+			);
 		}
+
 
 		if ($current_module != 'shipping') {
 			foreach ($this->lines as $line) {

@@ -2654,7 +2654,7 @@ if ($action == 'create') {
 				if (empty($user->socid)) {
 					if (in_array($object->status, array(CommandeFournisseur::STATUS_ACCEPTED, 3, 4, 5)) || getDolGlobalString('SUPPLIER_ORDER_SENDBYEMAIL_FOR_ALL_STATUS')) {
 						if ($usercanorder) {
-							print dolGetButtonAction('', $langs->trans('SendMail'), 'default', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'presend', 'mode' => 'init'], true).'#formmailbeforetitle', '');
+							print dolGetButtonAction('', $langs->trans('SendMail'), 'email', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'presend', 'mode' => 'init'], true).'#formmailbeforetitle', '');
 						}
 					}
 				}

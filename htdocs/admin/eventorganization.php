@@ -44,7 +44,7 @@ $langs->loadLangs(array("admin", "eventorganization", "categories"));
 
 // Parameters
 $action = GETPOST('action', 'aZ09');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 $value = GETPOST('value', 'alpha');

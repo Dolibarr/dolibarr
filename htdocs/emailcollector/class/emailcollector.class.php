@@ -1395,17 +1395,17 @@ class EmailCollector extends CommonObject
 					array_push($criteria, array($not."CC" => $rule['rulevalue']));
 				}
 				if ($rule['type'] == 'subject') {
-					if (strpos($rule['rulevalue'], '!') === 0) {
+					if ($not) {
 						//array_push($criteria, array("NOT SUBJECT" => $rule['rulevalue']));
-						$searchfilterexcludesubjectarray[] = preg_replace('/^!/', '', $rule['rulevalue']);
+						$searchfilterexcludesubjectarray[] = $rule['rulevalue'];
 					} else {
 						array_push($criteria, array("SUBJECT" => $rule['rulevalue']));
 					}
 				}
 				if ($rule['type'] == 'body') {
-					if (strpos($rule['rulevalue'], '!') === 0) {
+					if ($not) {
 						//array_push($criteria, array("NOT BODY" => $rule['rulevalue']));
-						$searchfilterexcludebodyarray[] = preg_replace('/^!/', '', $rule['rulevalue']);
+						$searchfilterexcludebodyarray[] = $rule['rulevalue'];
 					} else {
 						array_push($criteria, array("BODY" => $rule['rulevalue']));
 					}
@@ -3903,6 +3903,7 @@ class EmailCollector extends CommonObject
 				$destination = dol_sanitizePathName($destination);
 
 				file_put_contents($destination, $data);
+				dolChmod($destination);
 			}
 		}
 
@@ -4019,12 +4020,15 @@ class EmailCollector extends CommonObject
 		$quality = $tmparraysize['quality'];
 
 		file_put_contents($destdir.'/'.$filename, $content);
+		dolChmod($destdir.'/'.$filename);
+
 		if (image_format_supported($filename) == 1) {
 			// Create thumbs
 			vignette($destdir.'/'.$filename, $maxwidthsmall, $maxheightsmall, '_small', $quality, "thumbs");
 			// Create mini thumbs for image (Ratio is near 16/9)
 			vignette($destdir.'/'.$filename, $maxwidthmini, $maxheightmini, '_mini', $quality, "thumbs");
 		}
+
 		addFileIntoDatabaseIndex($destdir, $filename);
 	}
 

@@ -1070,4 +1070,38 @@ class FactureLigne extends CommonInvoiceLine
 			return $cumulated_percent;
 		}
 	}
+
+	/**
+	 * Determines if we are using situation invoices.
+	 * If so, determines if we are using the new mode (2) or legacy mode (1).
+	 *
+	 * Legacy mode means invoice line fields store the state of the cycle at the current
+	 * situation (a cumulative value) rather than the delta between the previous situation
+	 * and the current one. In that case, we need a ratio to convert those values.
+	 *
+	 * New mode = the values on the line already represent the delta between the previous
+	 * state and the current state, so we don't need a conversion (we return 1).
+	 *
+	 * @return float
+	 */
+	public function getSituationRatio()
+	{
+		if (getDolGlobalInt('INVOICE_USE_SITUATION') === 1) {
+			// in legacy mode, the situation invoice line stores the (cumulative) state of the
+			// cycle at the current situation. To get the delta, we need to subtract the
+			// state at the previous situation (if applicable).
+			$prevProgress = $this->get_prev_progress($this->fk_facture);
+
+			if ($this->situation_percent == 0) {
+				// should not happen
+				return 0;
+			}
+
+			return ($this->situation_percent - $prevProgress) / $this->situation_percent;
+		}
+		// new mode (INVOICE_USE_SITUATION == 2):
+		// no ratio needed (data stored on line is already a delta)
+		// or not a situation invoice: no ratio needed either
+		return 1;
+	}
 }

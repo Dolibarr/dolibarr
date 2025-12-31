@@ -31,13 +31,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
-
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -45,6 +38,11 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'bills', 'companies', 'suppliers'));
@@ -195,8 +193,9 @@ if ($result > 0) {
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/paiement/list.php'.(!empty($socid) ? '?socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
+	$morehtmlref = '';
 
-	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref');
+	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref);
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
@@ -279,7 +278,9 @@ if ($result > 0) {
 
 	print '</div>';
 
-	print '<br>';
+
+	print '<br><br>';
+
 
 	/**
 	 *	List of seller's invoices
@@ -369,9 +370,9 @@ if ($result > 0) {
 	if ($user->socid == 0 && $action != 'presend') {
 		$usercansend = (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight("fournisseur", "supplier_invoice_advance", "send")));
 		if ($usercansend) {
-			print dolGetButtonAction('', $langs->trans('SendMail'), 'default', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'presend', 'mode' => 'init'], true).'#formmailbeforetitle', '');
+			print dolGetButtonAction('', $langs->trans('SendMail'), 'email', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'presend', 'mode' => 'init'], true).'#formmailbeforetitle', '');
 		} else {
-			print dolGetButtonAction('', $langs->trans('SendMail'), 'default', '#', '', false);
+			print dolGetButtonAction('', $langs->trans('SendMail'), 'email', '#', '', false);
 		}
 	}
 

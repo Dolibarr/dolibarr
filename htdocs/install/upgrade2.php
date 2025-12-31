@@ -270,6 +270,8 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 	 *
 	 ***************************************************************************************/
 
+	dol_syslog("Process upgrade2 (step common to all entities)");
+
 	// Force to execute this at begin to avoid the new core code into Dolibarr to be broken.
 	$sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'user ADD COLUMN birth date';
 	$db->query($sql, 1);
@@ -298,7 +300,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 	$db->begin();
 
 	foreach ($listofentities as $entity) {
-		dol_syslog("Process upgrade2 for entity ".$entity);
+		dol_syslog("Process upgrade2 (step a) for entity ".$entity);
 
 		// Set $conf context for entity
 		$conf->setEntityValues($db, $entity);
@@ -313,7 +315,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 		$versiontoarray = array();
 		$versionranarray = array();
 
-		dol_syslog("Process upgrade2 d for entity ".$entity);
+		dol_syslog("Process upgrade2 (step b) for entity ".$entity);
 
 		if (!$error) {
 			if (count($listofentities) > 1) {
@@ -683,6 +685,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				'MAIN_MODULE_BLOCKEDLOG' => 'noboxes',
 				'MAIN_MODULE_DON' => 'newboxdefonly',
 				'MAIN_MODULE_ECM' => 'newboxdefonly',
+				'MAIN_MODULE_EVENTORGANIZATION' => 'newboxdefonly',
 				'MAIN_MODULE_EXPENSEREPORT' => 'newboxdefonly',
 				'MAIN_MODULE_FACTURE' => 'newboxdefonly',
 				'MAIN_MODULE_FOURNISSEUR' => 'newboxdefonly',
@@ -4409,7 +4412,7 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 	);
 
 	foreach ($listofmodule as $moduletoreload => $reloadmode) {	// reloadmodule can be 'noboxes', 'newboxdefonly', 'forceactivate'
-		if (empty($moduletoreload) || (empty($conf->global->$moduletoreload) && !$force)) {
+		if (empty($moduletoreload) || (!isModEnabled($moduletoreload) && !$force)) {
 			continue; // Discard reload if module not enabled
 		}
 
@@ -4567,8 +4570,8 @@ function migrate_productlot_path()
 			}
 
 			if ($dir) {
-				$lot->id = $obj->rowid;
-				$lot->ref = $obj->id;		// No ref for the moment
+				$lot->id = (int) $obj->rowid;
+				$lot->ref = (string) $obj->rowid;		// No ref for the moment
 				$lot->batch = $obj->batch;
 				$lot->entity = $obj->entity;
 				$lot->fk_product = $obj->fk_product;

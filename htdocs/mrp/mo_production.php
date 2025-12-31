@@ -60,7 +60,7 @@ $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'mocard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $lineid = GETPOSTINT('lineid');
@@ -391,7 +391,7 @@ if (empty($reshook)) {
 							$moline->batch = GETPOST('batchtoproduce-'.$line->id.'-'.$i);
 							$moline->role = 'produced';
 							$moline->fk_mrp_production = $line->id;
-							$moline->fk_stock_movement = $idstockmove;
+							$moline->fk_stock_movement = (($idstockmove == 0) ? null : $idstockmove);
 							$moline->fk_user_creat = $user->id;
 
 							$resultmoline = $moline->create($user);

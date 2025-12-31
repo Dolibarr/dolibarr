@@ -94,7 +94,7 @@ class PricecyField extends CommonField
 		$out = self::$form->inputType('text', $htmlName, (string) $value, $htmlName, $moreCss, $moreAttrib . $autoFocus);
 		$out .= self::$form->selectCurrency($currency, $htmlName . 'currency_id');
 
-		return $out;
+		return '<span class="form-select-price-currency-container">'.$out.'</span>';
 	}
 
 	/**

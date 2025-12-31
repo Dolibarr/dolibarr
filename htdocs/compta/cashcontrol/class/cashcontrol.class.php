@@ -85,6 +85,9 @@ class CashControl extends CommonObject
 	'year_close' => array('type' => 'integer', 'label' => 'Year', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 50, 'css' => 'center'),
 	'month_close' => array('type' => 'integer', 'label' => 'Month', 'enabled' => 1, 'visible' => 1, 'position' => 55, 'css' => 'center'),
 	'day_close' => array('type' => 'integer', 'label' => 'Day', 'enabled' => 1, 'visible' => 1, 'position' => 60, 'css' => 'center'),
+	'hour_close' => array('type' => 'integer', 'label' => 'Hour', 'enabled' => 1, 'visible' => -1, 'position' => 62, 'css' => 'center'),
+	'min_close' => array('type' => 'integer', 'label' => 'Min', 'enabled' => 1, 'visible' => -1, 'position' => 63, 'css' => 'center'),
+	'sec_close' => array('type' => 'integer', 'label' => 'Sec', 'enabled' => 1, 'visible' => -1, 'position' => 64, 'css' => 'center'),
 	'date_creation' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 500),
 	'date_valid' => array('type' => 'datetime', 'label' => 'DateValidation', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 502),
 	'tms' => array('type' => 'timestamp', 'label' => 'Tms', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'position' => 505),
@@ -128,6 +131,21 @@ class CashControl extends CommonObject
 	 * @var int Day close
 	 */
 	public $day_close;
+
+	/**
+	 * @var ?int Hour close
+	 */
+	public $hour_close;
+
+	/**
+	 * @var ?int Minute close
+	 */
+	public $min_close;
+
+	/**
+	 * @var ?int Second close
+	 */
+	public $sec_close;
 
 	/**
 	 * @var string posmodule
@@ -225,6 +243,9 @@ class CashControl extends CommonObject
 		$sql .= ", day_close";
 		$sql .= ", month_close";
 		$sql .= ", year_close";
+		$sql .= ", hour_close";
+		$sql .= ", min_close";
+		$sql .= ", sec_close";
 		$sql .= ", cash";
 		$sql .= ", cheque";
 		$sql .= ", card";
@@ -240,6 +261,9 @@ class CashControl extends CommonObject
 		$sql .= ", ".($this->day_close > 0 ? $this->day_close : "null");
 		$sql .= ", ".($this->month_close > 0 ? $this->month_close : "null");
 		$sql .= ", ".((int) $this->year_close);
+		$sql .= ", ".(isset($this->hour_close) ? (int) $this->hour_close : 23);
+		$sql .= ", ".(isset($this->min_close) ? (int) $this->min_close : 59);
+		$sql .= ", ".(isset($this->sec_close) ? (int) $this->sec_close : 59);
 		$sql .= ", ".price2num($this->cash, 'MT');
 		$sql .= ", ".price2num($this->cheque, 'MT');
 		$sql .= ", ".price2num($this->card, 'MT');

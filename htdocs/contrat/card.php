@@ -1410,7 +1410,7 @@ if ($action == 'create') {
 				array('type' => 'date', 'name' => 'd_end', 'label' => $langs->trans("DateEndPlanned"), 0 => '', 1 => ''),
 				array('type' => 'text', 'name' => 'comment', 'label' => $langs->trans("Comment"), 'value' => '', 0 => '', 1 => '', 'class' => 'minwidth300', 'moreattr' => 'autofocus')
 			);
-			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id, $langs->trans("ActivateAllOnContract"), $langs->trans("ConfirmActivateAllOnContract"), "confirm_activate", $formquestion, 'yes', 1, 280);
+			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id, $langs->trans("ActivateAllOnContract"), $langs->trans("ConfirmActivateAllOnContract"), "confirm_activate", $formquestion, 'yes', 1, 300);
 		} elseif ($action == 'clone') {
 			$filter = '(s.client:IN:1,2,3)';
 			// Clone confirmation
@@ -2253,9 +2253,9 @@ if ($action == 'create') {
 				if (empty($user->socid)) {
 					if ($object->status == $object::STATUS_VALIDATED) {
 						if ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || $user->hasRight('contrat', 'creer'))) {
-							print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&token='.newToken().'&mode=init#formmailbeforetitle', '', true, $params);
+							print dolGetButtonAction('', $langs->trans('SendMail'), 'email', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&token='.newToken().'&mode=init#formmailbeforetitle', '', true, $params);
 						} else {
-							print dolGetButtonAction('', $langs->trans('SendMail'), 'default', '#', '', false, $params);
+							print dolGetButtonAction('', $langs->trans('SendMail'), 'email', '#', '', false, $params);
 						}
 					}
 				}

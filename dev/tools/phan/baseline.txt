@@ -9,16 +9,16 @@
  */
 return [
     // # Issue statistics:
-    // PhanUndeclaredProperty : 420+ occurrences
-    // PhanTypeMismatchProperty : 95+ occurrences
+    // PhanUndeclaredProperty : 410+ occurrences
     // PhanTypeMismatchArgument : 65+ occurrences
     // PhanUndeclaredGlobalVariable : 60+ occurrences
     // PhanTypeMismatchArgumentNullable : 20+ occurrences
+    // PhanTypeMismatchProperty : 20+ occurrences
     // PhanTypeInvalidDimOffset : 15+ occurrences
     // PhanTypeMismatchDimFetch : 10+ occurrences
-    // PhanUndeclaredMethod : 6 occurrences
     // PhanTypeArraySuspiciousNull : 5 occurrences
     // PhanTypeExpectedObjectPropAccess : 5 occurrences
+    // PhanUndeclaredMethod : 5 occurrences
     // PhanPluginDuplicateArrayKey : 4 occurrences
     // PhanPluginUndeclaredVariableIsset : 2 occurrences
     // PhanPossiblyUndeclaredGlobalVariable : 2 occurrences
@@ -30,7 +30,6 @@ return [
 
     // Currently, file_suppressions and directory_suppressions are the only supported suppressions
     'file_suppressions' => [
-        'htdocs/bookcal/class/calendar.class.php' => ['PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
         'htdocs/categories/viewcat.php' => ['PhanUndeclaredProperty'],
         'htdocs/comm/action/index.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchProperty'],
         'htdocs/comm/action/pertype.php' => ['PhanTypeExpectedObjectPropAccess'],
@@ -116,10 +115,8 @@ return [
         'htdocs/core/modules/facture/doc/pdf_octopus.modules.php' => ['PhanTypeMismatchArgument', 'PhanUndeclaredProperty'],
         'htdocs/core/modules/fichinter/doc/pdf_soleil.modules.php' => ['PhanTypeMismatchArgumentNullable'],
         'htdocs/core/modules/holiday/mod_holiday_immaculate.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/core/modules/hrm/doc/pdf_standard_evaluation.modules.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/modules/hrm/mod_evaluation_advanced.php' => ['PhanUndeclaredProperty'],
-        'htdocs/core/modules/import/import_csv.modules.php' => ['PhanPossiblyUndeclaredVariable', 'PhanTypeMismatchProperty'],
-        'htdocs/core/modules/import/import_xlsx.modules.php' => ['PhanTypeMismatchProperty'],
+        'htdocs/core/modules/import/import_csv.modules.php' => ['PhanPossiblyUndeclaredVariable'],
         'htdocs/core/modules/member/modules_cards.php' => ['PhanTypeMismatchArgument'],
         'htdocs/core/modules/mrp/doc/pdf_vinci.modules.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/modules/mrp/mod_mo_advanced.php' => ['PhanUndeclaredProperty'],
@@ -149,7 +146,6 @@ return [
         'htdocs/delivery/class/delivery.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/emailcollector/class/emailcollector.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/eventorganization/class/conferenceorboothattendee.class.php' => ['PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
-        'htdocs/eventorganization/conferenceorbooth_list.php' => ['PhanTypeMismatchArgument'],
         'htdocs/eventorganization/core/actions_massactions_mail.inc.php' => ['PhanUndeclaredProperty'],
         'htdocs/expedition/card.php' => ['PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
         'htdocs/expedition/class/expedition.class.php' => ['PhanUndeclaredProperty'],

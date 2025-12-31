@@ -85,6 +85,7 @@ class Categorie extends CommonObject
 	 */
 	public $MAP_ID = array(
 		'product'				=> 0,
+		'service'				=> 0,
 		'supplier'				=> 1,
 		'customer'				=> 2,
 		'member'				=> 3,
@@ -164,6 +165,7 @@ class Categorie extends CommonObject
 	 */
 	public $MAP_OBJ_CLASS = array(
 		'product'				=> 'Product',
+		'service'				=> 'Product',
 		'customer'				=> 'Societe',
 		'supplier'				=> 'Fournisseur',
 		'member'				=> 'Adherent',
@@ -192,6 +194,7 @@ class Categorie extends CommonObject
 	 */
 	public static $MAP_TYPE_TITLE_AREA = array(
 		'product'				=> 'Products',
+		'service'				=> 'Services',
 		'customer'				=> 'ProspectsOrCustomers',
 		'supplier'				=> 'Suppliers',
 		'member'				=> 'Members',
@@ -431,7 +434,7 @@ class Categorie extends CommonObject
 				'cat_fk'    => (empty($this->MAP_CAT_FK[$mapCode]) ? $mapCode : $this->MAP_CAT_FK[$mapCode]),
 				'cat_table' => (empty($this->MAP_CAT_TABLE[$mapCode]) ? $mapCode : $this->MAP_CAT_TABLE[$mapCode]),
 				'obj_class' => (empty($this->MAP_OBJ_CLASS[$mapCode]) ? $mapCode : $this->MAP_OBJ_CLASS[$mapCode]),
-				'obj_table' => (empty($this->MAP_OBJ_TABLE[$mapCode]) ? $mapCode : $this->MAP_OBJ_TABLE[$mapCode])
+				'obj_table' => (empty($this->MAP_OBJ_TABLE[$mapCode]) ? $mapCode : $this->MAP_OBJ_TABLE[$mapCode]),
 			);
 		}
 
@@ -469,7 +472,7 @@ class Categorie extends CommonObject
 		}
 
 		$sql = "SELECT rowid, fk_parent, entity, label, description, color, position, fk_soc, visible, type, ref_ext";
-		$sql .= ", date_creation, tms, fk_user_creat, fk_user_modif";
+		$sql .= ", date_creation, tms, fk_user_creat, fk_user_modif, import_key";
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie";
 		if ($id) {
 			$sql .= " WHERE rowid = ".((int) $id);
@@ -502,8 +505,9 @@ class Categorie extends CommonObject
 				$this->date_modification = $this->db->jdate($res['tms']);
 				$this->user_creation_id = (int) $res['fk_user_creat'];
 				$this->user_modification_id = (int) $res['fk_user_modif'];
+				$this->import_key = $res['import_key'];
 
-				// Retrieve all extrafield
+				// Retrieve all extrafields
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 
@@ -1342,19 +1346,23 @@ class Categorie extends CommonObject
 			$nbcateg = $this->db->num_rows($resql);
 
 			while ($obj = $this->db->fetch_object($resql)) {
-				$this->cats[$obj->rowid]['rowid'] = $obj->rowid;
-				$this->cats[$obj->rowid]['id'] = $obj->rowid;
-				$this->cats[$obj->rowid]['fk_parent'] = $obj->fk_parent;
-				$this->cats[$obj->rowid]['label'] = !empty($obj->label_trans) ? $obj->label_trans : $obj->label;
-				$this->cats[$obj->rowid]['description'] = !empty($obj->description_trans) ? $obj->description_trans : $obj->description;
-				$this->cats[$obj->rowid]['color'] = $obj->color;
-				$this->cats[$obj->rowid]['position'] = $obj->position;
-				$this->cats[$obj->rowid]['visible'] = $obj->visible;
-				$this->cats[$obj->rowid]['ref_ext'] = $obj->ref_ext;
-				$this->cats[$obj->rowid]['picto'] = 'category';
-				// fields are filled with buildPathFromId later
-				$this->cats[$obj->rowid]['fullpath'] = '';
-				$this->cats[$obj->rowid]['fulllabel'] = '';
+				$this->cats[(int) $obj->rowid]
+					= array(
+						'rowid' => (int) $obj->rowid,
+						'id' => (int) $obj->rowid,
+						'fk_parent' => (int) $obj->fk_parent,
+						'label' => !empty($obj->label_trans) ? (string) $obj->label_trans : (string) $obj->label,
+						'description' => !empty($obj->description_trans) ? (string) $obj->description_trans : (string) $obj->description,
+						'color' => (string) $obj->color,
+						'position' => (string) $obj->position,
+						'visible' => (int) $obj->visible,
+						'ref_ext' => (string) $obj->ref_ext,
+						'picto' => 'category',
+						// fields are filled with buildPathFromId later
+						'fullpath' => '',
+						'fulllabel' => '',
+						'level' => null,
+					);
 				$i++;
 			}
 		} else {

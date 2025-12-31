@@ -100,11 +100,6 @@ $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');					// if not set, a default page will be used
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');	// if not set, $backtopage will be used
 $lineid = GETPOSTINT('lineid');
-$userid = GETPOSTINT('userid');
-$search_ref = GETPOST('sf_ref', 'alpha') ? GETPOST('sf_ref', 'alpha') : GETPOST('search_ref', 'alpha');
-$search_societe = GETPOST('search_societe', 'alpha');
-$search_montant_ht = GETPOST('search_montant_ht', 'alpha');
-$search_montant_ttc = GETPOST('search_montant_ttc', 'alpha');
 $origin = GETPOST('origin', 'alpha');
 $originid = (GETPOSTINT('originid') ? GETPOSTINT('originid') : GETPOSTINT('origin_id')); // For backward compatibility
 $fac_rec = GETPOSTINT('fac_rec');
@@ -122,8 +117,6 @@ $hideref = (GETPOSTINT('hideref') ? GETPOSTINT('hideref') : (getDolGlobalString(
 
 // Number of lines for predefined product/service choices
 $NBLINES = 4;
-
-$usehm = getDolGlobalInt('MAIN_USE_HOURMIN_IN_DATE_RANGE');
 
 $object = new Facture($db);
 $extrafields = new ExtraFields($db);
@@ -1274,7 +1267,7 @@ if (empty($reshook)) {
 			$sourceinvoice = GETPOSTINT('fac_avoir');
 			if (!($sourceinvoice > 0) && !getDolGlobalString('INVOICE_CREDIT_NOTE_STANDALONE')) {
 				$error++;
-				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CorrectInvoice")), null, 'errors');
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("InvoiceAvoirAskCombo")), null, 'errors');
 				$action = 'create';
 			}
 
@@ -1732,7 +1725,7 @@ if (empty($reshook)) {
 						$srcobject = new $classname($db);
 						'@phan-var-force CommonObject $srcobject';
 
-						dol_syslog("Try to find source object origin=".$object->origin." originid=".$object->origin_id." to add lines or deposit lines");
+						dol_syslog("Try to find source object origin_type=".$object->origin_type." origin_id=".$object->origin_id." to add lines or deposit lines");
 						$result = $srcobject->fetch($object->origin_id);
 
 						$i = -1;  // Ensure initialised for static analysis, but with invalid idx.
@@ -1846,7 +1839,7 @@ if (empty($reshook)) {
 									0, // product_type
 									1,
 									$i >= 0 ? $lines[$i]->special_code : 0,
-									$object->origin,
+									$object->origin_type,
 									0,
 									0,
 									0,
@@ -2032,7 +2025,7 @@ if (empty($reshook)) {
 											$product_type,
 											$lines[$i]->rang,
 											$lines[$i]->special_code,
-											$object->origin,
+											$object->origin_type,
 											$lines[$i]->rowid,
 											$fk_parent_line,
 											isset($lines[$i]->fk_fournprice) ? $lines[$i]->fk_fournprice : null,
@@ -3733,19 +3726,19 @@ if ($action == 'create') {
 			$projectid = (!empty($projectid) ? $projectid : $objectsrc->fk_project);
 
 			// Propagate ref customer of src object to the invoice ?
-			if (getDolGlobalString("INVOICE_DO_NOT_PROPAGATE_REF_CUSTOMER_Of_SRC_TO_INVOICE")) {
+			if (getDolGlobalString("INVOICE_DO_NOT_PROPAGATE_REF_CUSTOMER_OF_SRC_TO_INVOICE")) {
 				$ref_client = "";
 			} else {
 				$ref_client = (!empty($objectsrc->ref_client) ? $objectsrc->ref_client : (!empty($objectsrc->ref_customer) ? $objectsrc->ref_customer : ''));
 			}
 
-			// only if socid not filled else it's already done above
+			// Only if socid not filled else it's already done above
 			if (empty($socid)) {
 				$soc = $objectsrc->thirdparty;
 			}
 
 			if ($element == 'expedition') {
-				$elem = $subelem = $objectsrc->origin;
+				$elem = $subelem = $objectsrc->origin_type;
 				$expeoriginid = $objectsrc->origin_id;
 				dol_include_once('/'.$elem.'/class/'.$subelem.'.class.php');
 				$classname = ucfirst($subelem);
@@ -4309,7 +4302,7 @@ if ($action == 'create') {
 					});
 					</script>';
 					$text = '<label>'.$tmp.$langs->transnoentities("InvoiceAvoirAsk").'</label> ';
-					$text .= '<select class="flat valignmiddle" name="fac_avoir" id="fac_avoir"';
+					$text .= '<select class="flat valignmiddle minwidth200" name="fac_avoir" id="fac_avoir"';
 					if (!$optionsav || $invoice_predefined->id > 0) {
 						$text .= ' disabled';
 					}
@@ -4325,9 +4318,10 @@ if ($action == 'create') {
 					print $desc;
 
 					print '<div id="credit_note_options" class="clearboth paddingtop marginbottomonly">';
-					print '<div class="marginleftlarge"><input type="checkbox" name="invoiceAvoirWithLines" id="invoiceAvoirWithLines" value="1" onclick="$(\'#credit_note_options input[type=checkbox]\').not(this).prop(\'checked\', false);" '.(GETPOSTINT('invoiceAvoirWithLines') > 0 ? 'checked' : '').' /> <label for="invoiceAvoirWithLines" class="small">'.$langs->trans('invoiceAvoirWithLines')."</label></div>";
-					//print '<br>';
-					print '<div class="marginleftlarge"><input type="checkbox" name="invoiceAvoirWithPaymentRestAmount" id="invoiceAvoirWithPaymentRestAmount" value="1" onclick="$(\'#credit_note_options input[type=checkbox]\').not(this).prop(\'checked\', false);" '.(GETPOSTINT('invoiceAvoirWithPaymentRestAmount') > 0 ? 'checked' : '').' /> <label for="invoiceAvoirWithPaymentRestAmount" class="small">'.$langs->trans('invoiceAvoirWithPaymentRestAmount')."</label></div>";
+					print '<div class="marginleftlargeondesktop"><input type="checkbox" name="invoiceAvoirWithLines" id="invoiceAvoirWithLines" value="1" onclick="$(\'#credit_note_options input[type=checkbox]\').not(this).prop(\'checked\', false);" '.(GETPOSTINT('invoiceAvoirWithLines') > 0 ? 'checked' : '').' /> <label for="invoiceAvoirWithLines" class="small">'.$langs->trans('invoiceAvoirWithLines')."</label></div>";
+					print '<div class="marginleftlargeondesktop"><input type="checkbox" name="invoiceAvoirWithPaymentRestAmount" id="invoiceAvoirWithPaymentRestAmount" value="1" onclick="$(\'#credit_note_options input[type=checkbox]\').not(this).prop(\'checked\', false);" '.(GETPOSTINT('invoiceAvoirWithPaymentRestAmount') > 0 ? 'checked' : '').' /> <label for="invoiceAvoirWithPaymentRestAmount" class="small">'.$langs->trans('invoiceAvoirWithPaymentRestAmount')."</label></div>";
+					// Adding a checkbox: "Automatically consume the credit note to close the corrected invoice" is better to be into
+					// the confirm popup when we validate the credit note
 					print '</div>';
 
 					print '</div></div>'."\n";
@@ -4521,10 +4515,14 @@ if ($action == 'create') {
 		}
 
 		// Source / Channel - What trigger creation
-		print '<tr><td>'.$langs->trans('Source').'</td><td>';
-		print img_picto('', 'question', 'class="pictofixedwidth"');
-		$form->selectInputReason((string) $inputReasonId, 'input_reason_id', '', 1, 'maxwidth200 widthcentpercentminusx');
-		print '</td></tr>';
+		if (!getDolGlobalInt('INVOICE_DISABLE_SOURCE')) {
+			print '<tr><td>'.$langs->trans('Source').'</td><td>';
+			print img_picto('', 'question', 'class="pictofixedwidth"');
+			$form->selectInputReason((string) $inputReasonId, 'input_reason_id', '', 1, 'maxwidth250 widthcentpercentminusx');
+			print '</td></tr>';
+		} else {
+			print '<input type="hidden" name="input_reason_id" value="'.((string) $inputReasonId).'">';
+		}
 
 		// Project
 		if (isModEnabled('project') && is_object($formproject)) {
@@ -5428,15 +5426,17 @@ if ($action == 'create') {
 		}
 
 		// Source reason (why we have an invoice)
-		print '<tr><td>';
-		print $form->editfieldkey('Source', 'input_reason', '', $object, (int) $usercancreate);
-		print '</td><td class="valuefield">';
-		if ($action == 'editinput_reason') {
-			$form->formInputReason($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->demand_reason_id, 'input_reason_id', 1);
-		} else {
-			$form->formInputReason($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->demand_reason_id, 'none');
+		if (!getDolGlobalInt('INVOICE_DISABLE_SOURCE')) {
+			print '<tr><td>';
+			print $form->editfieldkey('Source', 'input_reason', '', $object, (int) $usercancreate);
+			print '</td><td class="valuefield">';
+			if ($action == 'editinput_reason') {
+				$form->formInputReason($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->demand_reason_id, 'input_reason_id', 1, 'maxwidth250 widthcentpercentminusx');
+			} else {
+				$form->formInputReason($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->demand_reason_id, 'none');
+			}
+			print '</td></tr>';
 		}
-		print '</td></tr>';
 
 		// Payment term
 		print '<tr><td>';
@@ -5942,16 +5942,6 @@ if ($action == 'create') {
 
 			if (count($object->tab_next_situation_invoice) > 0) {
 				// List of next invoices
-				/*print '<tr class="liste_titre">';
-				 print '<td>' . $langs->trans('ListOfNextSituationInvoices') . '</td>';
-				 print '<td></td>';
-				 print '<td></td>';
-				 if (isModEnabled('banque')) print '<td class="right"></td>';
-				 print '<td class="right">' . $langs->trans('AmountHT') . '</td>';
-				 print '<td class="right">' . $langs->trans('AmountTTC') . '</td>';
-				 print '<td width="18">&nbsp;</td>';
-				 print '</tr>';*/
-
 				$total_next_ht = $total_next_ttc = 0;
 
 				foreach ($object->tab_next_situation_invoice as $next_invoice) {
@@ -6150,7 +6140,7 @@ if ($action == 'create') {
 					print $invoice->getNomUrl(0);
 					print '</span>';
 					print '</td>';
-					// Delete
+					// Delete discount
 					print '<td class="right">';
 					print '<a href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&action=unlinkdiscount&token='.newToken().'&discountid='.$obj->rowid.'">';
 					print img_picto($langs->transnoentitiesnoconv("RemoveDiscount"), 'unlink');
@@ -6566,14 +6556,15 @@ if ($action == 'create') {
 			}
 
 			// Subtotal
-			if ($object->status == Facture::STATUS_DRAFT && isModEnabled('subtotals') && getDolGlobalString('SUBTOTAL_TITLE_'.strtoupper($object->element))) {
+			if ($object->status == Facture::STATUS_DRAFT && isModEnabled('subtotals')
+				&& (getDolGlobalInt('SUBTOTAL_TITLE_'.strtoupper($object->element)) || getDolGlobalInt('SUBTOTAL_'.strtoupper($object->element)))) {
 				$langs->load("subtotals");
 
 				$url_button = array();
 
 				$url_button[] = array(
 					'lang' => 'subtotals',
-					'enabled' => (isModEnabled('invoice') && $object->status == Facture::STATUS_DRAFT),
+					'enabled' => (isModEnabled('invoice') && $object->status == Facture::STATUS_DRAFT && getDolGlobalInt('SUBTOTAL_TITLE_'.strtoupper($object->element))),
 					'perm' => (bool) $usercancreate,
 					'label' => $langs->trans('AddTitleLine'),
 					'url' => '/compta/facture/card.php?facid='.$object->id.'&action=add_title_line&token='.newToken()
@@ -6581,7 +6572,7 @@ if ($action == 'create') {
 
 				$url_button[] = array(
 					'lang' => 'subtotals',
-					'enabled' => (isModEnabled('invoice') && $object->status == Facture::STATUS_DRAFT),
+					'enabled' => (isModEnabled('invoice') && $object->status == Facture::STATUS_DRAFT  && getDolGlobalInt('SUBTOTAL_'.strtoupper($object->element))),
 					'perm' => (bool) $usercancreate,
 					'label' => $langs->trans('AddSubtotalLine'),
 					'url' => '/compta/facture/card.php?facid='.$object->id.'&action=add_subtotal_line&token='.newToken()
@@ -6604,14 +6595,14 @@ if ($action == 'create') {
 				if (($object->status == Facture::STATUS_VALIDATED || $object->status == Facture::STATUS_CLOSED) || getDolGlobalString('FACTURE_SENDBYEMAIL_FOR_ALL_STATUS')) {
 					if ($objectidnext) {
 						$params['attr']['title'] = $langs->trans("DisabledBecauseReplacedInvoice");
-						print dolGetButtonAction('', $langs->trans('SendMail'), 'default', '#', '', false, $params);
+						print dolGetButtonAction('', $langs->trans('SendMail'), 'email', '#', '', false, $params);
 					} else {
 						if ($usercansend) {
 							unset($params['attr']['title']);
-							print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER['PHP_SELF'].'?facid='.$object->id.'&action=presend&mode=init#formmailbeforetitle', '', true, $params);
+							print dolGetButtonAction('', $langs->trans('SendMail'), 'email', $_SERVER['PHP_SELF'].'?facid='.$object->id.'&action=presend&mode=init#formmailbeforetitle', '', true, $params);
 						} else {
 							unset($params['attr']['title']);
-							print dolGetButtonAction('', $langs->trans('SendMail'), 'default', '#', '', false, $params);
+							print dolGetButtonAction('', $langs->trans('SendMail'), 'email', '#', '', false, $params);
 						}
 					}
 				}
@@ -6735,7 +6726,7 @@ if ($action == 'create') {
 				}
 			}
 
-			// For situation invoice with excess received
+			// For situation invoice
 			if ($object->status > Facture::STATUS_DRAFT
 				&& $object->isSituationInvoice()
 				&& ($object->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits) > 0
@@ -6751,18 +6742,18 @@ if ($action == 'create') {
 				}
 			}
 
-			// Clone
-			if (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA) && $usercancreate) {
-				unset($params['attr']['title']);
-				print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $_SERVER['PHP_SELF'].'?facid='.$object->id.'&action=clone&object=invoice&token='.newToken(), '', true, $params);
-			}
-
 			// Clone as predefined / Create template
 			if (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA) && $object->status == 0 && $usercancreate) {
 				if (!$objectidnext && count($object->lines) > 0) {
 					unset($params['attr']['title']);
 					print dolGetButtonAction($langs->trans('ChangeIntoRepeatableInvoice'), '', 'default', DOL_URL_ROOT.'/compta/facture/card-rec.php?facid='.$object->id.'&action=create', '', true, $params);
 				}
+			}
+
+			// Clone
+			if (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA) && $usercancreate) {
+				unset($params['attr']['title']);
+				print dolGetButtonAction($langs->trans('ToClone'), '', 'clone', $_SERVER['PHP_SELF'].'?facid='.$object->id.'&action=clone&object=invoice&token='.newToken(), '', true, $params);
 			}
 
 			// Remove situation from cycle
@@ -6794,8 +6785,13 @@ if ($action == 'create') {
 
 			// Delete
 			$isErasable = $object->is_erasable();
+
 			$htmltooltip = '';
-			if ($isErasable == -4) {
+			if ($isErasable == -6) {
+				$htmltooltip = $langs->trans('DisabledBecauseAlreadySentByEmail');
+			} elseif ($isErasable == -5) {
+				$htmltooltip = $langs->trans('DisabledBecauseAlreadyPrintedOnce');
+			} elseif ($isErasable == -4) {
 				$htmltooltip = $langs->trans('DisabledBecausePayments');
 			} elseif ($isErasable == -3) {
 				$htmltooltip = $langs->trans('DisabledBecauseNotLastSituationInvoice');

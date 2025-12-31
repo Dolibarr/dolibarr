@@ -49,7 +49,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("accountancy", "compta"));
+$langs->loadLangs(array("accountancy", "categories", "compta"));
 
 $journal_code = GETPOST('code_journal', 'alpha');
 $account = GETPOST("account", 'int');
@@ -359,7 +359,12 @@ if (empty($reshook)) {
 				$listofaccountsforgroup2[] = "'".$db->escape((string) $tmpval['account_number'])."'";
 			}
 		}
-		$filter['t.search_accounting_code_in'] = implode(',', $listofaccountsforgroup2);
+		if (!empty($listofaccountsforgroup2)) {
+			$filter['t.search_accounting_code_in'] = implode(',', $listofaccountsforgroup2);
+		} else {
+			$filter['t.search_accounting_code_in'] = "''";
+			setEventMessages($langs->trans("ThisCategoryHasNoItems"), null, 'warnings');
+		}
 		$param .= '&search_account_category='.urlencode((string) ($search_account_category));
 	}
 	if (!empty($search_accountancy_code_start)) {
@@ -1420,6 +1425,12 @@ while ($i < min($num, $limit)) {
 		$object->piece_num = $line->piece_num;
 		$object->ref = $line->ref;
 		print $object->getNomUrl(1, '', 0, '', 1);
+		if (!empty($line->date_export)) {
+			print img_picto($langs->trans("DateExport").": ".dol_print_date($line->date_export, 'dayhour')." (".$langs->trans("TransactionExportDesc").")", 'fa-file-export', 'class="paddingleft pictofixedwidth opacitymedium"');
+		}
+		if (!empty($line->date_validation)) {
+			print img_picto($langs->trans("DateValidation").": ".dol_print_date($line->date_validation, 'dayhour')." (".$langs->trans("TransactionBlockedLockedDesc").")", 'fa-lock', 'class="paddingleft pictofixedwidth opacitymedium"');
+		}
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;

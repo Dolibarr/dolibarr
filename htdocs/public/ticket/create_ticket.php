@@ -85,7 +85,7 @@ $socid = GETPOSTINT('socid');
 $suffix = "";
 
 $action = GETPOST('action', 'aZ09');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel');
 
 
 $backtopage = '';

@@ -307,7 +307,7 @@ class modTicket extends DolibarrModules
 			'langs' => 'ticket',
 			'position' => 102,
 			'enabled' => 'isModEnabled("ticket")',
-			'perms' => '$user->rights->ticket->write',
+			'perms' => '$user->hasRight("ticket", "write")',
 			'target' => '',
 			'user' => 2);
 		$r++;

@@ -688,7 +688,7 @@ if (empty($reshook)) {
 	if ($user->hasRight('adherent', 'supprimer') && $action == 'confirm_delete' && $confirm == 'yes') {
 		$result = $object->delete($user);
 		if ($result > 0) {
-			setEventMessages($langs->trans("RecordDeleted"), null, 'errors');
+			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 			if (!empty($backtopage) && !preg_match('/'.preg_quote($_SERVER["PHP_SELF"], '/').'/', $backtopage)) {
 				header("Location: ".$backtopage);
 				exit;
@@ -2095,7 +2095,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				// Send
 				if (empty($user->socid)) {
 					if (Adherent::STATUS_VALIDATED == $object->status) {
-						print dolGetButtonAction('', $langs->trans('SendMail'), 'default', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'presend', 'mode' => 'init'], true).'#formmailbeforetitle', '');
+						print dolGetButtonAction('', $langs->trans('SendMail'), 'email', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'presend', 'mode' => 'init'], true).'#formmailbeforetitle', '');
 					}
 				}
 

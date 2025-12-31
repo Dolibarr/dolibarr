@@ -13,7 +13,7 @@
  * Copyright (C) 2022		Charlene Benke				<charlene@patas-monkey.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025	Nick Fragoulis
- * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -387,6 +387,32 @@ class pdf_crabe extends ModelePDFFactures
 					if ($object->lines[$i]->remise_percent) {
 						$this->atleastonediscount++;
 					}
+
+					// Do not take into account lines of the type “deposit.”
+					$is_deposit = false;
+					if (preg_match('/^\((.*)\)$/', $object->lines[$i]->desc, $reg)) {
+						if ($reg[1] == 'DEPOSIT') {
+							$is_deposit = true;
+						}
+					}
+
+					// If DEPOSIT, this line is completely ignored for calculations.
+					if ($is_deposit) {
+						continue;
+					}
+
+					// determine category of operation
+					$is_deposit = false;
+					if (preg_match('/^\((.*)\)$/', $object->lines[$i]->desc, $reg)) {
+						if ($reg[1] == 'DEPOSIT') {
+							$is_deposit = true;
+						}
+					}
+					// If DEPOSIT, this line is completely ignored for calculations.
+					if ($is_deposit) {
+						continue;
+					}
+
 
 					// determine category of operation
 					if ($categoryOfOperation < 2) {
@@ -919,6 +945,7 @@ class pdf_crabe extends ModelePDFFactures
 				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+				$this->warnings = $hookmanager->warnings;
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;

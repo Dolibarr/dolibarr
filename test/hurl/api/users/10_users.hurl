@@ -45,7 +45,10 @@ HTTP 400
 POST http://{{hostnport}}/api/index.php/users
 {}
 HTTP 500
-{"error":{"code":500,"message":"Internal Server Error: Error creating","0":"Email address  is incorrect"}}
+[Asserts]
+jsonpath "$.error" exists
+jsonpath "$.error.code" == 500
+jsonpath "$.error.message" == "Internal Server Error: login field missing"
 
 # DELETE
 DELETE http://{{hostnport}}/api/index.php/users/

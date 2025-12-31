@@ -396,7 +396,7 @@ print 'fontsize='.$fontsize."\n";
 print 'nbtopmenuentries='.$nbtopmenuentries."\n";
 print '*/'."\n";
 
-$leftmenuwidth = 242;
+$leftmenuwidth = 254;
 
 ?>
 
@@ -582,7 +582,7 @@ textarea:focus {
 }
 input:focus:not(.input-icon-user, .input-icon-password, .input-icon-security):not(.noborderfocus):not(.inputsearch_dropdownselectedfields):not(.button):not(.buttonwebsite):not(.buttonreset):not(.select2-search__field):not(#top-bookmark-search-input):not(.search_component_input):not(.input-nobottom),
  select:focus, .select2-container--open [aria-expanded="false"].select2-selection--single,
- .select2-container--focus span.selection span.select2-selection:not(.massactionselect) {
+ .select2-container--focus span.selection span.select2-selection:not(.noborderfocus):not(.massactionselect) {
 <?php if (getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT')) { ?>
 	border: 1px solid #666 !important;
 <?php } else { ?>
@@ -674,7 +674,7 @@ input, select {
 	text-shadow: none;
 	text-transform: uppercase;
 	/* font-weight: bold; */
-	margin: 0em 0.8em;
+	margin: 0 2px;
 	padding: 0.6em 0.7em;
 	line-height: 17px;
 }
@@ -911,6 +911,9 @@ input.pageplusone {
 	margin-right: 4px;
 	margin-left: 3px;
 	width: 32px;
+	border-top: 0;
+	border-left: 0;
+	border-right: 0;
 }
 .paginationlastpage a {
 	padding-left: 6px;
@@ -1145,9 +1148,6 @@ button:focus {
 .fa-info-circle {
 	padding-<?php echo $left; ?>: 3px;
 }
-.line-height-large {
-	line-height: 1.8em;
-}
 
 th .button {
 	box-shadow: none !important;
@@ -1156,6 +1156,8 @@ th .button {
 .maxwidthsearch {		/* Max width of column with the search picto */
 	width: 54px;
 	min-width: 54px;
+	padding-left: 4px !important;
+	padding-right: 4px !important;
 }
 
 .valigntop {
@@ -1206,8 +1208,15 @@ textarea.centpercent {
 .small, small {
 	font-size: 85%;
 }
+.select2-results__option .smallincombo {
+	font-size: 95%;
+	font-weight: bold;
+}
 .lineheightsmall {
 	line-height: 1.2em;
+}
+.line-height-large {
+	line-height: 1.8em;
 }
 .large {
 	font-size: 125%;
@@ -1352,6 +1361,12 @@ td.wordbreak img, td.wordbreakimp img {
 .nopaddingbottomimp {
 	padding-bottom: 0 !important;
 }
+.padding2 {
+	padding: 2px;
+}
+.padding3 {
+	padding: 3px;
+}
 .paddingleft {
 	padding-<?php print $left; ?>: 4px;
 }
@@ -1397,6 +1412,9 @@ td.wordbreak img, td.wordbreakimp img {
 .marginleftlarge {
 	margin-<?php print $left; ?>: 20px !important;
 }
+.marginleftlargeondesktop {
+	margin-<?php print $left; ?>: 20px;
+}
 .paddinglarge {
 	padding: 6px !important;
 }
@@ -1431,9 +1449,6 @@ td.wordbreak img, td.wordbreakimp img {
 }
 .borderimp {
 	border: 1px solid #888 !important;
-}
-.text-warning{
-	color : <?php print $textWarning; ?>
 }
 /* CSS used for extrafield text */
 .shortmessagecut {
@@ -1587,8 +1602,12 @@ span.fa.fa-plus-circle.paddingleft {
 	margin-left: 1px;
 }
 .listofinvoicetype {
-	height: 28px;
+	min-height: 1.8em;
 	vertical-align: middle;
+	padding-top: 7px;
+	padding-bottom: 1px;
+	display: flex;
+	align-items: center;
 }
 .divsocialnetwork:not(:last-child) {
 	padding-<?php print $right; ?>: 20px;
@@ -1980,6 +1999,7 @@ select.flat.selectlimit {
 .amountpaymentcomplete {
 	color: var(--amountpaymentcomplete);
 	font-weight: bold;
+	font-size: 1.7em;
 	white-space: nowrap;
 }
 .amountpaymentcompletenoresize {
@@ -1989,6 +2009,7 @@ select.flat.selectlimit {
 .amountremaintopay {
 	color: var(--amountremaintopaycolor);
 	font-weight: bold;
+	font-size: 1.7em;
 	white-space: nowrap;
 }
 .amountremaintopaynoresize {
@@ -1997,6 +2018,7 @@ select.flat.selectlimit {
 }
 .amountremaintopayback {
 	font-weight: bold;
+	font-size: 1.7em;
 	white-space: nowrap;
 }
 .amountremaintopaybacknoresize {
@@ -2005,7 +2027,7 @@ select.flat.selectlimit {
 .amountpaymentneutral {
 	color: var(--amountremaintopaybackcolor);
 	font-weight: bold;
-	font-size: 1.4em;
+	font-size: 1.7em;
 	white-space: nowrap;
 }
 .amountpaymentneutralnoresize {
@@ -2233,7 +2255,7 @@ tr.nobottom td {
 .maxwidth40  { max-width: 40px; }
 .maxwidth50  { max-width: 50px; }
 .maxwidth75  { max-width: 75px; }
-.maxwidthdate  { max-width: 105px; }
+.maxwidthdate  { max-width: 90px; }
 .maxwidth100 { max-width: 100px; }
 .maxwidth125 { max-width: 125px; }
 .maxwidth150 { max-width: 150px; }
@@ -2379,6 +2401,10 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	.nopaddingbottomonsmartphone {
 		padding-bottom: 0 !important;
 	}
+
+	#dolpublictable {
+		padding: 10px;
+	}
 }
 
 /* Force values for small screen 570 */
@@ -2390,6 +2416,10 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 
 	div.refidno {
 		font-size: <?php print is_numeric($fontsize) ? ($fontsize).'px' : $fontsize; ?> !important;
+	}
+
+	.marginleftlargeondesktop {
+		margin-<?php print $left; ?>: 0;
 	}
 
 	.login_vertical_align {
@@ -2433,7 +2463,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 		height: 40px !important;
 	}
 	div.tabBar .listofinvoicetype table tr, div.tabBar .listofinvoicetype table tr td {
-		height: 28px !important;
+		height: 2.2em !important;
 	}
 
 	div.tabs div.tab a.tab  {
@@ -2795,6 +2825,12 @@ body.onlinepaymentbody div.fiche {	/* For online payment page */
 div.fiche>table:first-child {
 	margin-bottom: 15px !important;
 }
+.page-modulehelp div.fiche {
+	width: 100%;
+	margin-left: 15px;
+	margin-right: 20px;
+}
+
 div.fichecenter {
 	width: 100%;
 	clear: both;	/* This is to have div fichecenter that are true rectangles */
@@ -2990,7 +3026,7 @@ img.hideonsmartphone.pictoactionview {
 
 .pictofixedwidth {
 	text-align: start;
-	width: 20px;	/* do not use em unit here */
+	width: 22px;	/* do not use em unit here */
 	/* padding-right: 0; */
 }
 img.pictofixedwidth {
@@ -3119,7 +3155,6 @@ img.photorefnoborder {
 <?php
 $minwidthtmenu = 66; /* minimum width for one top menu entry */
 $heightmenu = 48; /* height of top menu, part with image */
-$heightmenu2 = 48; /* height of top menu, ârt with login  */
 $disableimages = 0;
 $maxwidthloginblock = 110;
 if (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 1 || !empty($user->conf->MAIN_OPTIMIZEFORTEXTBROWSER)) {
@@ -3641,6 +3676,7 @@ table.login_table_securitycode tr td {
 #img_logo, .img_logo {
 	max-width: 160px;
 	max-height: 90px;
+	border-radius: 4px;
 }
 .loginbuttonexternal {
 	width: 300px;
@@ -3854,6 +3890,11 @@ div.vmenu, td.vmenu {
 
 .vmenusearchselectcombo {
 	width: <?php echo $leftmenuwidth - 20; ?>px;
+	height: 38px !important;
+}
+.vmenusearchselectcombo > .select2-selection__rendered, .vmenusearchselectcombo > .select2-selection__arrow {
+	line-height: 38px !important;
+	height: 38px !important;
 }
 
 .menu_contenu {
@@ -4246,7 +4287,7 @@ div.divButAction {
 	margin-bottom: 1.4em;
 }
 div.tabsAction {
-	margin: 20px 0em 20px 0em;
+	margin: 30px 0em 30px 0em;
 	padding: 0em 0em;
 	text-align: right;
 }
@@ -4403,8 +4444,8 @@ tr.liste_titre.box_titre td table td, .bordernooddeven tr td {
 	height: 4em !important;
 }
 
-table.border td, table.bordernooddeven td, div.border div div.tagtd {
-	padding: 3px 4px 3px 4px;
+table.border td, table.bordernooddeven td, div.border div div.tagtd, div.table-border div div.tagtd {
+	padding: 3px 8px 3px 8px;
 	/* border: 1px solid #f0f0f0; */
 	border-collapse: collapse;
 }
@@ -4475,7 +4516,7 @@ td.border, div.tagtable div div.border {
 .nobordertop, .nobordertop tr:first-of-type td {
 	border-top: none !important;
 }
-.noborderbottom, .noborderbottom tr:last-of-type td {
+.noborderbottom, tr.noborderbottom td, .noborderbottom tr:last-of-type td {
 	border-bottom: none !important;
 }
 .bordertop {
@@ -4557,7 +4598,7 @@ table.nointerlines tr:not(:last-child) td {
 
 /* Management of border radius */
 <?php $borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobalInt('THEME_ELDY_BORDER_RADIUS', 6) : 0; ?>
-table.noborder:not(.cal_month, .paymenttable) {
+table.noborder:not(.cal_month, .paymenttable, .margintable) {
 	border-radius: <?php echo $borderradius; ?>px;
 }
 table.noborder.cal_month {
@@ -4680,8 +4721,8 @@ table.liste th, table.noborder th, table.noborder tr.liste_titre td, table.nobor
 table.liste td, table.noborder > tr > td,
 table.noborder > tbody > tr > td,
 div.noborder form div, table.tableforservicepart1 td, table.tableforservicepart2 td {
-	padding: 4px 8px 4px 10px;			/* t r b l */
-	height: 28px;
+	padding: 8px 12px 8px 12px;			/* t r b l */
+	height: 32px;
 }
 table.liste tr.trkanban td {
 	padding: 12px 15px 12px 15px;			/* t r b l */
@@ -5225,16 +5266,12 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	padding-left: 0px;
 	padding-bottom: 12px;
 }
-.boxstatsborder {
-	/* border: 1px solid #CCC !important; */
-}
 .boxstats, .boxstats130 {
 	display: inline-block;
 	margin: 8px;
-	/* border: 1px solid #CCC; */
 	text-align: center;
-	border-radius: 2px;
-	background: #eee;
+	border-radius: 6px;
+	background: var(--colorbackbody);
 }
 .boxstats, .boxstats130, .boxstatscontent {
 	white-space: nowrap;
@@ -5242,15 +5279,16 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	text-overflow: ellipsis;
 }
 .boxstats {
-	padding: 3px;
+	padding: 8px;
 	width: 100px;
 	min-height: 40px;
 }
 .boxstats130 {
 	width: 135px;
 	height: 54px;
-	padding: 3px;
+	padding: 8px;
 }
+
 @media only screen and (max-width: 768px)
 {
 	.tabBar .arearef .pagination.paginationref {
@@ -5307,9 +5345,10 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.20);
 }
 span.boxstatstext {
-	/* opacity: 0.7; */		/* a bug if browser make z-index infintie when opacity is set so we disable it */
+	opacity: 0.5;		/* a bug if browser make z-index was discovered when opacity is set, if still present, we must disable it */
 	line-height: 18px;
 	color: #000;
+	font-size: 0.8em;
 }
 .boxstatsindicator.thumbstat150 {	/* If we remove this, box position is ko on ipad */
 	display: inline-flex;
@@ -5505,12 +5544,13 @@ img.boxhandle, img.boxclose {
 .warning { color: #887711 !important; }
 .error   { color: #550000 !important; font-weight: bold; }
 .green   { color: #118822 !important; }
+.neutral { color: #444 !important; }
 
 div.ok {
   color: #114466;
 }
 
-div.info, div.warning, div.error {
+div.info, div.warning, div.error, div.green, div.neutral {
 	padding-top: 8px;
 	padding-left: 10px;
 	padding-right: 4px;
@@ -5519,15 +5559,15 @@ div.info, div.warning, div.error {
 	border-radius: 1px;
 }
 
-/* Info admin */
-div.info {
-	border-<?php print $left; ?>: solid 5px #87cfd2;
-	background: #eff8fc;
-	color: #558;
-}
-div.fiche div.info, div.fiche div.warning {
-	box-shadow: 4px 4px 12px #e4e4e4;
+div.fiche div.info, div.fiche div.warning, div.fiche div.neutral {
+	box-shadow: 1px 1px 6px #e4e4e4;
 	margin: 1em 0em 1.2em 0em;
+}
+
+/* Info message */
+div.neutral {
+	border-<?php print $left; ?>: solid 5px #aaa;
+	background: #f8f8f8;
 }
 
 /* Ok message */
@@ -5735,14 +5775,22 @@ span.buttonpaymentsmall {
 }
 
 #dolpublictable {
-	min-width: 300px; font-size: 16px;
+	min-width: 300px;
+	max-width: 800px;
+	font-size: 16px;
 	padding: 6px;
 }
 #dolpaymenttable {
 	min-width: 320px; font-size: 16px;
 }	/* Width must have min to make stripe input area visible. Lower than 320 makes input area crazy for credit card that need zip code */
 
-#tablepublicpayment { border: 1px solid #CCCCCC !important; width: 100%; padding: 20px; margin-bottom: 20px; }
+#tablepublicpayment {
+	border: 1px solid #CCCCCC !important;
+	width: 100%;
+	padding: 20px;
+	margin-bottom: 20px;
+	border-radius: 4px;
+}
 #tablepublicpayment .CTableRow1  { background-color: #F0F0F0 !important; }
 #tablepublicpayment tr.liste_total { border-bottom: 1px solid #CCCCCC !important; }
 #tablepublicpayment tr.liste_total td { border-top: none; }
@@ -5810,7 +5858,10 @@ div#card-errors {
 /* Form confirmation (When Ajax JQuery is used) and Dialog popups                 */
 /* ============================================================================== */
 
-.ui-dialog-titlebar {
+button.ui-button-icon-only.ui-dialog-titlebar-close {
+	padding: 12px;
+	margin-top: -15px;
+	margin-right: 15px;
 }
 .ui-dialog-content {
 	maring-bottom: 10px;	/* same than .ui-widget-header */
@@ -5835,6 +5886,14 @@ div#dialogforpopup {
 .ui-dialog .ui-dialog-buttonpane {
 	padding: .5em 1em .3em .4em;
 }
+.ui-dialog .ui-dialog-content, .ui-dialog .ui-dialog-titlebar.ui-widget-header {
+	padding-left: 1em !important;
+}
+/*
+.ui-dialog .ui-dialog-content {
+	text-align: justify;
+}
+*/
 
 
 /* ============================================================================== */
@@ -7205,7 +7264,10 @@ input.select2-input {
 	border: none;
 }
 
-.blockvmenusearch .select2-container--default .select2-selection--single,
+.blockvmenusearch .select2-container--default .select2-selection--single
+{
+	/* background-color: var(--colorbackvmenu1); */
+}
 .blockvmenubookmarks .select2-container--default .select2-selection--single
 {
 	background-color: var(--colorbackvmenu1);
@@ -7261,7 +7323,7 @@ input.select2-input {
 	border-top: 1px solid #ccc;
 	border-bottom: 1px solid #ccc;
 }
-.select2-container--default .select2-selection--single {
+.select2-container--default .select2-selection--single:not(.selectwidget) {
 	outline: none;
 	<?php if (!getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT')) { ?>
 	border-top: none;
@@ -7274,6 +7336,17 @@ input.select2-input {
 
 	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>: solid 1px var(--inputbordercolor);
 
+	box-shadow: none !important;
+}
+.select2-container--default .select2-selection--single.selectwidget,
+.select2-container--default .select2-selection--single.selectwidget:hover,
+.select2-container--default .select2-selection--single.selectwidget:focus {
+	outline: none;
+	border-top: none;
+	border-left: none;
+	border-right: none;
+	border-bottom: solid 1px var(--inputbordercolor);
+	border-radius: 0;
 	box-shadow: none !important;
 }
 .select2-container--default.select2-container--focus .select2-selection--multiple {
@@ -7796,6 +7869,10 @@ div.kanban.column div.ui-sortable-helper {
 }
 .searchpage .searchform input {
 	font-size: 1.15em;
+	height: inherit;
+}
+.searchpage :focus-visible {
+  outline: none;
 }
 
 li.ui-li-divider .ui-link {
