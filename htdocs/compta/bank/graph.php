@@ -71,9 +71,7 @@ $error = 0;
  */
 
 $now = dol_now();
-$nowlasthour = dol_get_last_hour($now);
-
-$form = new Form($db);
+$nowlasthourmidday = dol_get_last_hour($now) + 1 + (12 * 3600);	// +1 to get next day at 00:00:00. We add 12 hours to be at midday.
 
 $datetime = dol_now();
 $year = dol_print_date($datetime, "%Y");
@@ -221,7 +219,7 @@ if ($result < 0) {
 		$dataall = array();
 		while ($xmonth == $month) {
 			$subtotal += (isset($amounts[$textdate]) ? $amounts[$textdate] : 0);
-			if ($day > $nowlasthour) {
+			if ($day > $nowlasthourmidday) {
 				$datas[$i] = ''; // Valeur speciale permettant de ne pas tracer le graph
 			} else {
 				$datas[$i] = $solde + $subtotal;
@@ -232,6 +230,7 @@ if ($result < 0) {
 			$labels[$i] = $xday;
 
 			$day += 86400;
+
 			//$textdate = strftime("%Y%m%d", $day);
 			$textdate = dol_print_date($day, "%Y%m%d");
 			$xyear = substr($textdate, 0, 4);
@@ -367,25 +366,22 @@ if ($result < 0) {
 		$xday = substr($textdate, 6, 2);
 
 		$i = 0;
-		while ($xyear == $year && $day <= $datetime) {
+		while ($xyear == $year && $day <= $nowlasthourmidday) {
 			$subtotal += (isset($amounts[$textdate]) ? $amounts[$textdate] : 0);
-			if ($day > $nowlasthour) {
-				$datas[$i] = ''; // Valeur speciale permettant de ne pas tracer le graph
-			} else {
-				$datas[$i] = $solde + $subtotal;
-			}
+
+			$datas[$i] = $solde + $subtotal;
+
 			$datamin[$i] = $object->min_desired;
 			$dataall[$i] = $object->min_allowed;
-			/*if ($xday == '15')	// Set only some label for jflot
-			{
-				$labels[$i] = dol_print_date($day, "%b");
-			}*/
+
 			$labels[$i] = dol_print_date($day, "%Y%m");
+
 			$day += 86400;
-			//$textdate = strftime("%Y%m%d", $day);
+
 			$textdate = dol_print_date($day, "%Y%m%d");
 			$xyear = substr($textdate, 0, 4);
 			$xday = substr($textdate, 6, 2);
+
 			$i++;
 		}
 
