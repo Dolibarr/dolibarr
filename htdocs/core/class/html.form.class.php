@@ -7895,7 +7895,7 @@ class Form
 					$retstring .= '<input id="'.$prefix.'" name="'.$prefix.'" type="'.($usecalendar == 'html' ? "date" : "text").'" class="maxwidthdate'.(getDolUserString('MAIN_OPTIMIZEFORTEXTBROWSER') ? ' textbrowser' : '').' center" maxlength="11" value="'.$formatted_date.'"';
 					$retstring .= ($disabled ? ' disabled' : '');
 					$retstring .= ($placeholder ? ' placeholder="' . dol_escape_htmltag($placeholder) . '"' : '');
-					$retstring .= ' onChange="dpChangeDay(\'' . dol_escape_js($prefix) . '\',\'' . dol_escape_js($formatjslong) . '\'); "'; // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
+					$retstring .= ' onChange="dpChangeDay(\'' . dol_escape_js($prefix) . '\',\'' . dol_escape_js($usecalendar == 'html' ? 'yyyy-mm-dd' : $formatjslong) . '\'); "'; // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
 					$retstring .= ' autocomplete="off">';
 
 					// Icon calendar

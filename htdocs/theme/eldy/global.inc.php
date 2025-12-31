@@ -1667,6 +1667,9 @@ select.flat.selectlimit {
 	border-bottom: 1px solid var(--inputbordercolor);
 	border-bottom-left-radius: 0;
 	border-bottom-right-radius: 0;
+	padding-bottom: 4px;
+	padding-top: 4px;
+	height: 28px;
 }
 .nomarginleft {
 	margin-<?php echo $left; ?>: 0px !important;
