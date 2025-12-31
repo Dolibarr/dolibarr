@@ -156,6 +156,7 @@ function dol_setcache($memoryid, $data, $expire = 0, $filecache = 0, $replace = 
 		$cachejson = dolEncrypt(json_encode($cachedata));
 		if (!dol_is_file($pathcache.'/'.$memoryid.'.cache') || $replace > 0) {
 			$result = file_put_contents($pathcache.'/'.$memoryid.'.cache', $cachejson);
+			dolChmod($pathcache.'/'.$memoryid.'.cache');
 		} else {
 			return 0;
 		}

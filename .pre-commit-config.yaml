@@ -284,11 +284,12 @@ repos:
           (dev/build/perl/virtualmin/dolibarr.pl
           )$
         args: [ --tabs, --nola ]
-  - repo: https://github.com/henryykt/pre-commit-perl
-    rev: v0.0.5
-    hooks:
-      - id: perlcritic
-        # virtualmin excuded - reason https://github.com/Dolibarr/dolibarr/pull/36370#issuecomment-3565101823
-        exclude: (?x)^
-          (dev/build/perl/virtualmin/dolibarr.pl
-          )$
+
+  #- repo: https://github.com/henryykt/pre-commit-perl
+  #  rev: v0.0.5
+  #  hooks:
+  #    - id: perlcritic
+  #      # virtualmin excluded - reason https://github.com/Dolibarr/dolibarr/pull/36370#issuecomment-3565101823
+  #      exclude: (?x)^
+  #        (dev/build/perl/virtualmin/dolibarr.pl
+  #        )$

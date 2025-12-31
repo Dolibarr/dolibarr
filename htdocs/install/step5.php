@@ -528,7 +528,7 @@ if ($action == "set") {
 
 			print $langs->trans("YouNeedToPersonalizeSetup")."<br><br><br>";
 
-			print '<div class="center">&gt; <a href="../admin/index.php?mainmenu=home&leftmenu=setup'.(isset($login) ? '&username='.urlencode($login) : '').'">';
+			print '<div class="center divlinktogotosetup"><a href="../admin/index.php?mainmenu=home&leftmenu=setup'.(isset($login) ? '&username='.urlencode($login) : '').'">';
 			print '<span class="fas fa-external-link-alt"></span> '.$langs->trans("GoToSetupArea");
 			print '</a></div><br>';
 		} else {

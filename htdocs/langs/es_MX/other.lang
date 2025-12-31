@@ -7,7 +7,6 @@ ExampleMyMenuEntry=Mi entrada en el menú
 FTPFailedToRemoveFile=Error al eliminar el archivo <b> %s </b>.
 FTPFailedToRemoveDir=Error al eliminar el directorio <b> %s </b>: verifique los permisos y que el directorio esté vacío.
 FailedToGetFile=Error al obtener archivos %s
-AddThisPageToBookmarks =Agregar página actual a marcadores
 BookmarksManagement =Gestor de marcadores
 BookmarksMenuShortCut =Ctrl + Mayús + m
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark =Elija si la página vinculada debe abrirse en la pestaña actual o en una pestaña nueva

@@ -30,7 +30,7 @@
  */
 
 
-// Include main (when file in included into send.php, $action is set and main was already loaded)
+// Include the main.inc.php (note: when file is included into send.php, $action is already set and main.inc.php was already loaded)
 /**
  * @var string $action
  */
@@ -249,23 +249,42 @@ if (getDolGlobalString('TAKEPOS_SHOW_CUSTOMER')) {
 		print "<br>".$langs->trans("Customer").': '.$soc->name;
 	}
 }
-// Transaction ID
-if (isALNERunningVersion()) {
-	$unalterablelogid = 'TODO';
-	print "<br>".$langs->trans("TransactionID").': '.$unalterablelogid.'<br>';
-}
 // Date
-print $langs->trans('Date')." ".dol_print_date($object->date ? $object->date : dol_now(), 'day');
+print "<br>".$langs->trans('Date').": ".dol_print_date($object->date ? $object->date : dol_now(), 'day');
 // Date of printing
 if (isALNERunningVersion() || !getDolGlobalString('TAKEPOS_HIDE_DATE_OF_PRINTING')) {
-	print "<br>".$langs->trans("DateOfPrinting").': '.dol_print_date(dol_now(), 'dayhour', 'tzuserrel').'<br>';
+	print "<br>".$langs->trans("DateOfPrinting").': '.dol_print_date(dol_now(), 'dayhour', 'tzuserrel');
+}
+// Transaction ID
+if (isALNERunningVersion() && isModEnabled('blockedlog')) {
+	if ($object->status == $object::STATUS_CLOSED) {
+		$unalterablelogid = 'UNDEFINED';
+		$sql = "SELECT signature FROM ".MAIN_DB_PREFIX."blockedlog";
+		$sql .= " WHERE action = 'BILL_VALIDATE' AND element = 'facture' AND ref_object = '".$db->escape($object->ref)."'";
+		$sql .= $db->order('rowid', 'DESC');
+		$sql .= $db->plimit(1);
+
+		$resql = $db->query($sql);
+		if ($resql) {
+			$obj = $db->fetch_object($resql);
+			if ($obj) {
+				$unalterablelogid = $obj->signature;
+			}
+		}
+
+		print "<br>".$langs->trans("SignatureID").': '.dol_trunc(strtoupper($unalterablelogid), 10);
+	}
 }
 
 // TODO Show if it is a duplicata
 $isADuplicata = $object->pos_print_counter;
 
-if ($isADuplicata) {
-	print '<b>*** DUPLICATA***</b>';	// Hard coded string
+if ($object->status == $object::STATUS_CLOSED) {
+	if ($isADuplicata) {
+		print '<br><b>*** DUPLICATA***</b>';	// Hard coded string
+	}
+} else {
+	print '<br><b>*** '.strtoupper($langs->trans("TemporaryReceipt")).' ***</b>';	// Hard coded string
 }
 ?>
 </p>
@@ -274,7 +293,7 @@ if ($isADuplicata) {
 <table class="centpercent" style="border-top-style: double;">
 	<thead>
 	<tr>
-		<th class="center"><?php print $langs->trans("Label"); ?></th>
+		<th class="left"><?php print $langs->trans("Label"); ?></th>
 		<th class="right"><?php print $langs->trans("Qty"); ?></th>
 		<th class="right"><?php if ($gift != 1) {
 			print $langs->trans("Price");
