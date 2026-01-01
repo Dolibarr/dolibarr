@@ -203,27 +203,22 @@ abstract class CommonClassTest extends TestCase
 		}
 		print "##[endgroup]".PHP_EOL;
 
-		// Print last line of file /var/log/apache2/travis_error_log
-		$logFile = '/var/log/apache2/travis_error_log';
+		// Print last line of file /var/log/apache2/travis_error_log (Unix only)
+		if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
+			$logFile = '/var/log/apache2/travis_error_log';
 
-		// Check if the file exists and is readable
-		if (@file_exists($logFile) && is_readable($logFile)) {
-			// Read the file into an array
-			$lines = file($logFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-
-			// Get the last 5 lines
-			$lastFiveLines = array_slice($lines, -10);
-
-			// Print the last 5 lines
-			print "Content of ".$logFile."\n";
-			echo "Last 5 lines of $logFile:\n";
-			foreach ($lastFiveLines as $line) {
-				echo $line . "\n";
+			if (file_exists($logFile) && is_readable($logFile)) {
+				$lines = file($logFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+				$lastFiveLines = array_slice($lines, -10);
+				print "\n";
+				echo "Last 10 lines of $logFile:\n";
+				foreach ($lastFiveLines as $line) {
+					echo $line . "\n";
+				}
+			} else {
+				echo "Error: File $logFile does not exist or is not readable.\n";
 			}
-		} else {
-			//echo "File $logFile does not exist or is not readable so we can't show more information.\n";
 		}
-
 
 		parent::onNotSuccessfulTest($t);
 	}
