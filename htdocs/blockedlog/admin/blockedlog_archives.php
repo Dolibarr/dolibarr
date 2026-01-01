@@ -42,6 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Load translation files required by the page
@@ -196,16 +197,18 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 
 	if (!$error) {
 		// Get the ID of the first line qualified
-		$sql = "SELECT rowid,date_creation,tms,user_fullname,action,amounts,element,fk_object,date_object,ref_object,signature,fk_user,object_data";
+		$sql = "SELECT rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."blockedlog";
 		$sql .= " WHERE entity = ".((int) $conf->entity);
+		// For unalterable log, we are using the date of creation of the log. Note that a bookkeeper may decide to dispatch an invoice
+		// on different periods for example to manage depreciation.
 		$sql .= " AND date_creation BETWEEN '".$db->idate($dates)."' AND '".$db->idate($datee)."'";
-		$sql .= " ORDER BY rowid ASC"; // Required so we get the first one
+		$sql .= " ORDER BY date_creation ASC, rowid ASC"; // Required so we get the first one
 		$sql .= $db->plimit(1);
 
 		$res = $db->query($sql);
 		if ($res) {
-			// Make the first fetch to get first line
+			// Make the first fetch to get first line and then get the previous hash.
 			$obj = $db->fetch_object($res);
 			if ($obj) {
 				$firstid = $obj->rowid;
@@ -220,87 +223,74 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 		}
 	}
 
+	// Define file name
+	$registrationnumber = getHashUniqueIdOfRegistration();
+	$secretkey = $registrationnumber;
+
+	$yearmonthtoexport = GETPOSTINT('yeartoexport').'-'.(GETPOSTINT('monthtoexport') > 0 ? sprintf("%02d", GETPOSTINT('monthtoexport')) : '');
+	$yearmonthdateofexport = dol_print_date(dol_now(), 'dayhourrfc', 'gmt');
+	$yearmonthdateofexportstandard = dol_print_date(dol_now(), 'dayhourlog', 'gmt');
+
+	$nameofdownoadedfile = "unalterable-log-archive-".$dolibarr_main_db_name."-".str_replace('-', '', $yearmonthtoexport).'-'.$yearmonthdateofexportstandard.'UTC-DONOTMODIFY.csv';
+
+	//$tmpfile = $conf->admin->dir_temp.'/unalterable-log-archive-tmp-'.$user->id.'.csv';
+	$tmpfile = getMultidirOutput($block_static, 'blockedlog').'/archives/'.$nameofdownoadedfile;
+
+	$formatexport = 'VE1';
+
+
+	// Init var for totals
+	$totalhtamountalllines = array('BILL_VALIDATE' => 0, 'PAYMENT_CUSTOMER_CREATE' => 0);
+	$totalvatamountalllines = array('BILL_VALIDATE' => 0, 'PAYMENT_CUSTOMER_CREATE' => 0);
+	$totalamountalllines = array('BILL_VALIDATE' => 0, 'PAYMENT_CUSTOMER_CREATE' => 0);
+	$totalhtamountlifetime = array('BILL_VALIDATE' => 0, 'PAYMENT_CUSTOMER_CREATE' => 0);
+	$totalvatamountlifetime = array('BILL_VALIDATE' => 0, 'PAYMENT_CUSTOMER_CREATE' => 0);
+	$totalamountlifetime = array('BILL_VALIDATE' => 0, 'PAYMENT_CUSTOMER_CREATE' => 0);
+
+
 	if (!$error) {
-		// We record the export as a new line into the unalterable logs
-		require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
-		$b = new BlockedLog($db);
-
-		$object = new stdClass();
-		$object->id = 0;
-		$object->element = 'module';
-		$object->ref = 'systemevent';
-		$object->entity = $conf->entity;
-		$object->date = dol_now();
-
-		$object->label = 'Export unalterable logs - Period: year='.GETPOSTINT('yeartoexport').(GETPOSTINT('monthtoexport') ? ' month='.GETPOSTINT('monthtoexport') : '');
-
-		$action = 'BLOCKEDLOG_EXPORT';
-		$result = $b->setObjectData($object, $action, 0, $user);
-		//var_dump($b); exit;
-
-		if ($result < 0) {
-			setEventMessages('Failed to insert the export int the unalterable log', null, 'errors');
-			$error++;
-		}
-
-		$res = $b->create($user);
-
-		if ($res < 0) {
-			setEventMessages('Failed to insert the export int the unalterable log', null, 'errors');
-			$error++;
-		}
+		$fh = fopen($tmpfile, 'w');
 	}
 
-	if (!$error) {
-		// Now restart request with all data, si without the limit(1) in sql request
-		$sql = "SELECT rowid, date_creation, tms, user_fullname, action, amounts, element, fk_object, date_object, ref_object,";
+	if (!$error && $fh) {
+		// Now restart request with all data, so without the limit(1) in sql request
+		$sql = "SELECT rowid, date_creation, tms, user_fullname, action, amounts_taxexcl, amounts, element, fk_object, date_object, ref_object,";
 		$sql .= " signature, fk_user, object_data, object_version, object_format, debuginfo";
 		$sql .= " FROM ".MAIN_DB_PREFIX."blockedlog";
 		$sql .= " WHERE entity = ".((int) $conf->entity);
-		if (GETPOSTINT('monthtoexport') > 0 || GETPOSTINT('yeartoexport') > 0) {
-			$dates = dol_get_first_day(GETPOSTINT('yeartoexport'), GETPOSTINT('monthtoexport') > 0 ? GETPOSTINT('monthtoexport') : 1);
-			$datee = dol_get_last_day(GETPOSTINT('yeartoexport'), GETPOSTINT('monthtoexport') > 0 ? GETPOSTINT('monthtoexport') : 12);
-			$sql .= " AND date_creation BETWEEN '".$db->idate($dates)."' AND '".$db->idate($datee)."'";
-		}
-		$sql .= " ORDER BY rowid ASC"; // Required so later we can use the parameter $previoushash of checkSignature()
+		// For unalterable log, we are using the date of creation of the log. Note that a bookkeeper may decide to dispatch an invoice
+		// on different periods for example to manage depreciation.
+		$sql .= " AND date_creation BETWEEN '".$db->idate($dates)."' AND '".$db->idate($datee)."'";
+		$sql .= " ORDER BY date_creation ASC, rowid ASC"; // Required so later we can use the parameter $previoushash of checkSignature()
 
 		$resql = $db->query($sql);
 		if ($resql) {
-			$registrationnumber = getHashUniqueIdOfRegistration();
-			$secretkey = $registrationnumber;
-
-			$yearmonthtoexport = GETPOSTINT('yeartoexport').(GETPOSTINT('monthtoexport') > 0 ? sprintf("%02d", GETPOSTINT('monthtoexport')) : '');
-			$yearmonthdateofexport = dol_print_date(dol_now(), 'dayhourlog', 'gmt');
-
-			$nameofdownoadedfile = "unalterable-log-archive-".$dolibarr_main_db_name."-".$yearmonthtoexport.'-'.$yearmonthdateofexport.'UTC-DONOTMODIFY.csv';
-
-			//$tmpfile = $conf->admin->dir_temp.'/unalterable-log-archive-tmp-'.$user->id.'.csv';
-			$tmpfile = getMultidirOutput($block_static, 'blockedlog').'/archives/'.$nameofdownoadedfile;
-
-			$fh = fopen($tmpfile, 'w');
-
 			// Print line with title
-			fwrite($fh, "BEGIN - date=".$yearmonthdateofexport." - period=".$yearmonthtoexport." - format=V1 - user=".$user->getFullName($langs)
+			fwrite($fh, "BEGIN - date=".$yearmonthdateofexport." - period=".$yearmonthtoexport." - formatexport=".$formatexport." - user=".$user->getFullName($langs)
 				.';'.$langs->transnoentities('Id')
 				.';'.$langs->transnoentities('DateCreation')
 				.';'.$langs->transnoentities('Action')
-				.';'.$langs->transnoentities('Amounts')
+				.';'.$langs->transnoentities('AmountHT')
+				.';'.$langs->transnoentities('AmountTTC')
 				.';'.$langs->transnoentities('Ref')
 				.';'.$langs->transnoentities('Date')
 				.';'.$langs->transnoentities('User')
 				.';'.$langs->transnoentities('LinkTo')
 				.';'.$langs->transnoentities('LinkType')
 				.';'.$langs->transnoentities('FullData')
-				.';'.$langs->transnoentities('Version')
-				.';'.$langs->transnoentities('Fingerprint')
+				.';'.$langs->transnoentities('Version')				// Version Dolibarr, example 22.0.0
+				.';'.$langs->transnoentities('VersionSignature')	// Rule used for fingerprint calculation
+				.';'.$langs->transnoentities('FingerprintDatabase')			// Signature
 				.';'.$langs->transnoentities('Status')
 				.';'.$langs->transnoentities('FingerprintExport')
-				.';'.$langs->transnoentities('FingerprintFormat')
-				//.';'.$langs->transnoentities('FingerprintExportHMAC')
 				."\n");
 
 			$loweridinerror = 0;
 			$i = 0;
+
+			$totalhtamount = array();
+			$totalvatamount = array();
+			$totalamount = array();
 
 			while ($obj = $db->fetch_object($resql)) {
 				// We set here all data used into signature calculation (see checkSignature method) and more
@@ -310,8 +300,8 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 
 				$block_static->date_creation = $db->jdate($obj->date_creation);		// jdate(date_creation) is UTC
 
+				$block_static->amounts_excl = (float) $obj->amounts_excl;			// Database store value with 8 digits, we cut ending 0 them with (flow)
 				$block_static->amounts = (float) $obj->amounts;						// Database store value with 8 digits, we cut ending 0 them with (flow)
-				$block_static->vat = $obj->vat;
 
 				$block_static->action = $obj->action;
 				$block_static->date_object = $db->jdate($obj->date_object);			// jdate(date_object) is UTC
@@ -366,46 +356,296 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 				$signatureexport = dol_hash($previoushash.$concatenateddata, 'sha256');		// SHA256
 				//$signatureexporthmac = 'TODO';
 
-				fwrite($fh,
-					';'.$block_static->id
-					.';'.$block_static->date_creation
-					.';'.$block_static->action
-					.';'.$block_static->amounts			// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
-					.';"'.str_replace('"', '""', $block_static->ref_object).'";'
-					.$block_static->date_object
-					.';"'.str_replace('"', '""', $block_static->user_fullname).'";"'
-					.str_replace('"', '""', $block_static->linktoref).'";"'
-					.str_replace('"', '""', $block_static->linktype).'";"'
-					.str_replace('"', '""', $obj->object_data).'"'				// We must the string to decode into object with dolDecodeBlockedData
-					.';"'.str_replace('"', '""', $block_static->object_version).'";"'
-					.str_replace('"', '""', $block_static->signature).'";"'
-					.str_replace('"', '""', $statusofrecord).'";"'
-					.str_replace('"', '""', $signatureexport).'";"'
-					.str_replace('"', '""', $block_static->object_format).'";'
-					//.str_replace('"', '""', $signatureexporthmac).'"'
-					//.';'.$statusofrecordnote
-					."\n");
+
+				// Define $totalhtamount, $totalvatamount, $totalamount for $block->action event code
+				$total_ht = $total_vat = $total_ttc = 0;
+				sumAmountsForUnalterableEvent($block_static, $totalhtamount, $totalvatamount, $totalamount, $total_ht, $total_vat, $total_ttc);
+
+
+				fwrite($fh, ";"
+					.csvClean($block_static->id).';'
+					.csvClean($block_static->date_creation).';'
+					.csvClean($block_static->action).';'
+					.csvClean($block_static->amounts_taxexcl).';'	// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
+					.csvClean($block_static->amounts).';'			// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
+					.csvClean($block_static->ref_object).';'
+					.csvClean($block_static->date_object).';'
+					.csvClean($block_static->user_fullname).';'
+					.csvClean($block_static->linktoref).';'
+					.csvClean($block_static->linktype).';'
+					.csvClean($obj->object_data).';'				// We must the string to decode into object with dolDecodeBlockedData
+					.csvClean($block_static->object_version).';'
+					.csvClean($block_static->object_format).';'
+					.csvClean($block_static->signature).';'
+					.csvClean($statusofrecord).';'
+					.csvClean($signatureexport).';'."\n");
 
 				// Set new previous hash for next fetch
 				$previoushash = $obj->signature;
 
 				$i++;
 			}
-
-			fclose($fh);
-
-			// Calculate the md5 of the file (the last line has a return line)
-			$algo = 'sha256';
-			$sha256 = hash_file($algo, $tmpfile);
-			$hmacsha256 = hash_hmac_file($algo, $tmpfile, $secretkey);
-
-			// Now add a signature to check integrity at end of file
-			file_put_contents($tmpfile, 'END - sha256='.$sha256.' - hmac_sha256='.$hmacsha256, FILE_APPEND);
-			dolChmod($tmpfile);
-
-			setEventMessages($langs->trans("FileGenerated"), null);
 		} else {
+			$error++;
 			setEventMessages($db->lasterror, null, 'errors');
+		}
+
+		// Now calculate cumulative total of all invoices validated
+		if (array_key_exists('BILL_VALIDATE', $totalhtamount)) {
+			foreach ($totalhtamount['BILL_VALIDATE'] as $key => $val) {
+				$totalhtamountalllines['BILL_VALIDATE'] += $val;
+			}
+			foreach ($totalvatamount['BILL_VALIDATE'] as $key => $val) {
+				$totalvatamountalllines['BILL_VALIDATE'] += $val;
+			}
+			foreach ($totalamount['BILL_VALIDATE'] as $key => $val) {
+				$totalamountalllines['BILL_VALIDATE'] += $val;
+			}
+		}
+		if (array_key_exists('PAYMENT_CUSTOMER_CREATE', $totalhtamount)) {
+			foreach ($totalhtamount['PAYMENT_CUSTOMER_CREATE'] as $key => $val) {
+				$totalhtamountalllines['PAYMENT_CUSTOMER_CREATE'] += $val;
+			}
+			foreach ($totalvatamount['PAYMENT_CUSTOMER_CREATE'] as $key => $val) {
+				$totalvatamountalllines['PAYMENT_CUSTOMER_CREATE'] += $val;
+			}
+			foreach ($totalamount['PAYMENT_CUSTOMER_CREATE'] as $key => $val) {
+				$totalamountalllines['PAYMENT_CUSTOMER_CREATE'] += $val;
+			}
+		}
+
+
+		// Add a final line with cumulative total of invoices validated (BILL_VALIDATE)
+		$block_static->id = '';
+		$block_static->date_creation = '';
+		$block_static->action = 'BILL_VALIDATE';
+		$block_static->amounts_taxexcl = $totalhtamountalllines['BILL_VALIDATE'];
+		$block_static->amounts = $totalamountalllines['BILL_VALIDATE'];
+		$block_static->ref_object = $langs->transnoentitiesnoconv("VAT").': '.$totalvatamountalllines['BILL_VALIDATE'];
+		$block_static->date_object = '';
+		$block_static->user_fullname = '';
+		$block_static->linktoref = '';
+		$block_static->linktype = '';
+		$block_static->object_data = '';
+		$block_static->object_version = '';
+		$block_static->signature = '';
+
+		$statusofrecord = '';
+		$signatureexport = '';
+
+		$block_static->object_format = '';
+
+		fwrite($fh, 'Cumulative total - Invoice validations;'
+			.csvClean($block_static->id).';'
+			.csvClean($block_static->date_creation).';'
+			.csvClean($block_static->action).';'
+			.csvClean($block_static->amounts_taxexcl).';'	// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
+			.csvClean($block_static->amounts).';'			// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
+			.csvClean($block_static->ref_object).';'
+			.csvClean($block_static->date_object).';'
+			.csvClean($block_static->user_fullname).';'
+			.csvClean($block_static->linktoref).';'
+			.csvClean($block_static->linktype).';'
+			.csvClean($obj->object_data).';'				// We must the string to decode into object with dolDecodeBlockedData
+			.csvClean($block_static->object_version).';'
+			.csvClean($block_static->object_format).';'
+			.csvClean($block_static->signature).';'
+			.csvClean($statusofrecord).';'
+			.csvClean($signatureexport).';'."\n");
+
+
+		// Add a final line with cumulative total of invoices validated (PAYMENT_CUSTOMER_CREATE)
+		$block_static->id = '';
+		$block_static->date_creation = '';
+		$block_static->action = 'PAYMENT_CUSTOMER_CREATE';
+		$block_static->amounts_taxexcl = '';
+		$block_static->amounts = $totalamountalllines['PAYMENT_CUSTOMER_CREATE'];
+		$block_static->ref_object = '';
+		$block_static->date_object = '';
+		$block_static->user_fullname = '';
+		$block_static->linktoref = '';
+		$block_static->linktype = '';
+		$block_static->object_data = '';
+		$block_static->object_version = '';
+		$block_static->signature = '';
+
+		$statusofrecord = '';
+		$signatureexport = '';
+
+		$block_static->object_format = '';
+
+		fwrite($fh, 'Cumulative total - Invoice payments;'
+			.csvClean($block_static->id).';'
+			.csvClean($block_static->date_creation).';'
+			.csvClean($block_static->action).';'
+			.csvClean($block_static->amounts_taxexcl).';'	// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
+			.csvClean($block_static->amounts).';'			// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
+			.csvClean($block_static->ref_object).';'
+			.csvClean($block_static->date_object).';'
+			.csvClean($block_static->user_fullname).';'
+			.csvClean($block_static->linktoref).';'
+			.csvClean($block_static->linktype).';'
+			.csvClean($obj->object_data).';'				// We must the string to decode into object with dolDecodeBlockedData
+			.csvClean($block_static->object_version).';'
+			.csvClean($block_static->object_format).';'
+			.csvClean($block_static->signature).';'
+			.csvClean($statusofrecord).';'
+			.csvClean($signatureexport).';'."\n");
+
+
+		// Calculate perpetual totals
+		$sql = "SELECT action, object_format, MIN(date_creation) as datemin, SUM(amounts_taxexcl) as sumamounts_taxexcl, SUM(amounts) as sumamounts";
+		$sql .= " FROM ".MAIN_DB_PREFIX."blockedlog";
+		$sql .= " WHERE entity = ".((int) $conf->entity);
+		$sql .= " AND action IN ('BILL_VALIDATE', 'PAYMENT_CUSTOMER_CREATE')";
+		$sql .= " GROUP BY action, object_format";
+
+		$foundoldformat = 0;
+		$firstrecorddate = array();
+		$resql = $db->query($sql);
+		if ($resql) {
+			while ($obj = $db->fetch_object($resql)) {
+				if (!empty($firstrecorddate[$obj->action])) {
+					$firstrecorddate[$obj->action] = min($firstrecorddate[$obj->action], $db->jdate($obj->datemin));
+				} else {
+					$firstrecorddate[$obj->action] = $db->jdate($obj->datemin);
+				}
+				$totalamountlifetime[$obj->action] += $obj->sumamounts;
+				// If format of line is old, the sumamounts_taxexcl was not recorded. So we flag this case.
+				if (empty($obj->object_format) || $obj->object_format == 'V1') {
+					$foundoldformat = 1;
+				} else {
+					$totalhtamountlifetime[$obj->action] += $obj->sumamounts_taxexcl;
+				}
+			}
+		} else {
+			$error++;
+			setEventMessages($db->lasterror, null, 'errors');
+		}
+
+
+		// Add a final line with perpetual total for invoice validations
+		$block_static->id = '';
+		$block_static->date_creation = '';
+		$block_static->action = 'BILL_VALIDATE';
+		// if an old format was found, we do not have reliable amount excluding tax for lifetime value, we do not show it
+		$block_static->amounts_taxexcl = ($foundoldformat ? '' : $totalhtamountlifetime['BILL_VALIDATE']);
+		$block_static->amounts = $totalamountlifetime['BILL_VALIDATE'];
+		// if an old format was found, we do not have reliable VAT amount for lifetime value, we do not show it
+		$block_static->ref_object = ($foundoldformat ? '' : $langs->transnoentitiesnoconv("VAT").': '.($block_static->amounts - $totalhtamountlifetime['BILL_VALIDATE']));
+		$block_static->date_object = '';
+		$block_static->user_fullname = '';
+		$block_static->linktoref = '';
+		$block_static->linktype = '';
+		$block_static->object_data = '';
+		$block_static->object_version = '';
+		$block_static->signature = '';
+
+		$statusofrecord = '';
+		$signatureexport = '';
+
+		$block_static->object_format = '';
+
+		fwrite($fh, 'Lifetime total (>= '.dol_print_date($firstrecorddate['BILL_VALIDATE'], 'standard').') - Invoice validations;'
+			.csvClean($block_static->id).';'
+			.csvClean($block_static->date_creation).';'
+			.csvClean($block_static->action).';'
+			.csvClean($block_static->amounts_taxexcl).';'	// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
+			.csvClean($block_static->amounts).';'			// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
+			.csvClean($block_static->ref_object).';'
+			.csvClean($block_static->date_object).';'
+			.csvClean($block_static->user_fullname).';'
+			.csvClean($block_static->linktoref).';'
+			.csvClean($block_static->linktype).';'
+			.csvClean($obj->object_data).';'				// We must the string to decode into object with dolDecodeBlockedData
+			.csvClean($block_static->object_version).';'
+			.csvClean($block_static->object_format).';'
+			.csvClean($block_static->signature).';'
+			.csvClean($statusofrecord).';'
+			.csvClean($signatureexport).';'."\n");
+
+		// Add a final line with perpetual total for customer payments
+		$block_static->id = '';
+		$block_static->date_creation = '';
+		$block_static->action = 'PAYMENT_CUSTOMER_CREATE';
+		$block_static->amounts_taxtecl = '';
+		$block_static->amounts = $totalamountlifetime['PAYMENT_CUSTOMER_CREATE'];
+		$block_static->ref_object = '';
+		$block_static->date_object = '';
+		$block_static->user_fullname = '';
+		$block_static->linktoref = '';
+		$block_static->linktype = '';
+		$block_static->object_data = '';
+		$block_static->object_version = '';
+		$block_static->signature = '';
+
+		$statusofrecord = '';
+		$signatureexport = '';
+
+		$block_static->object_format = '';
+
+		fwrite($fh, 'Lifetime total (>= '.dol_print_date($firstrecorddate['PAYMENT_CUSTOMER_CREATE'], 'standard').') - Invoice payments;'
+			.csvClean($block_static->id).';'
+			.csvClean($block_static->date_creation).';'
+			.csvClean($block_static->action).';'
+			.csvClean($block_static->amounts_taxexcl).';'	// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
+			.csvClean($block_static->amounts).';'			// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
+			.csvClean($block_static->ref_object).';'
+			.csvClean($block_static->date_object).';'
+			.csvClean($block_static->user_fullname).';'
+			.csvClean($block_static->linktoref).';'
+			.csvClean($block_static->linktype).';'
+			.csvClean($obj->object_data).';'				// We must the string to decode into object with dolDecodeBlockedData
+			.csvClean($block_static->object_version).';'
+			.csvClean($block_static->object_format).';'
+			.csvClean($block_static->signature).';'
+			.csvClean($statusofrecord).';'
+			.csvClean($signatureexport).';'."\n");
+
+		fclose($fh);
+
+		// Calculate the md5 of the file (the last line has a return line)
+		$algo = 'sha256';
+		$sha256 = hash_file($algo, $tmpfile);
+		$hmacsha256 = hash_hmac_file($algo, $tmpfile, $secretkey);
+
+		// Now add a signature to check integrity at end of file
+		file_put_contents($tmpfile, 'END - sha256='.$sha256.' - hmac_sha256='.$hmacsha256, FILE_APPEND);
+		dolChmod($tmpfile);
+
+		if (!$error) {
+			setEventMessages($langs->trans("FileGenerated"), null);
+		}
+	}
+
+	if (!$error) {
+		// We record the export as a new line into the unalterable logs
+		require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
+		$b = new BlockedLog($db);
+
+		$object = new stdClass();
+		$object->id = 0;
+		$object->element = 'module';
+		$object->ref = 'systemevent';
+		$object->entity = $conf->entity;
+		$object->date = dol_now();
+
+		$object->label = 'Export unalterable logs - Period: year='.GETPOSTINT('yeartoexport').(GETPOSTINT('monthtoexport') ? ' month='.GETPOSTINT('monthtoexport') : '');
+
+		$action = 'BLOCKEDLOG_EXPORT';
+		$result = $b->setObjectData($object, $action, 0, $user, null);
+		//var_dump($b); exit;
+
+		if ($result < 0) {
+			setEventMessages('Failed to insert the export int the unalterable log', null, 'errors');
+			$error++;
+		}
+
+		$res = $b->create($user);
+
+		if ($res < 0) {
+			setEventMessages('Failed to insert the export int the unalterable log', null, 'errors');
+			$error++;
 		}
 	}
 }
