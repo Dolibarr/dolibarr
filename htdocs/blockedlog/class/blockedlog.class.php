@@ -456,7 +456,9 @@ class BlockedLog
 	}
 
 	/**
-	 *	Populate properties of an unalterable log entry from object data
+	 *	Populate properties of an unalterable log entry from object data.
+	 *  This populates ->object_data but also other fields like ->action, ->amounts and ->linktoref and ->linktype
+	 *  It also populates some debug info like ->element and ->fk_object
 	 *
 	 *	@param	CommonObject|stdClass	$object		object to store
 	 *	@param	string					$action		action
@@ -482,6 +484,25 @@ class BlockedLog
 		if ($object->element == 'payment' || $object->element == 'payment_supplier') {
 			'@phan-var-force Paiement|PaiementFourn $object';
 			$this->date_object = empty($object->datepaye) ? $object->date : $object->datepaye;
+			if ($object->element == 'payment') {
+				$this->linktype = 'payment_invoice';
+				$this->linktoref = '';
+				foreach ($this->amounts as $fk_invoice => $amount) {
+					$invoice = new Facture($this->db);
+					if ($invoice->fetch($fk_invoice) > 0) {
+						$this->linktoref .= ($this->linktoref ? ',' : '').$invoice->ref;
+					}
+				}
+			} elseif ($object->element == 'payment_supplier') {
+				$this->linktype = 'payment_supplier_invoice';
+				$this->linktoref = '';
+				foreach ($this->amounts as $fk_invoice => $amount) {
+					$invoice = new FactureFournisseur($this->db);
+					if ($invoice->fetch($fk_invoice) > 0) {
+						$this->linktoref .= ($this->linktoref ? ',' : '').$invoice->ref;
+					}
+				}
+			}
 		} elseif ($object->element == 'payment_salary') {
 			'@phan-var-force PaymentSalary $object';
 			$this->date_object = $object->datev;
@@ -502,17 +523,47 @@ class BlockedLog
 			$this->date_object = $object->datem; // @phan-suppress-current-line PhanUndeclaredProperty
 		}
 
-		// ref
+		// In case of credit note, we add link to source invoice to have more tracking info when doing tracking later
+		if ($object->element == 'invoice_supplier') {
+			'@phan-var-force FactureFournisseur $object';
+			if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
+				$invoice = new FactureFournisseur($this->db);
+				$invoice->fetch($this->fk_facture_source);
+				if ($invoice->id > 0) {
+					$this->linktype = 'credit_note_of';
+					$this->linktoref = $invoice->ref;
+				}
+			}
+		}
+		if ($object->element == 'facture') {
+			'@phan-var-force Facture $object';
+			if ($object->type == Facture::TYPE_CREDIT_NOTE) {
+				$invoice = new Facture($this->db);
+				$invoice->fetch($this->fk_facture_source);
+				if ($invoice->id > 0) {
+					$this->linktype = 'credit_note_of';
+					$this->linktoref = $invoice->ref;
+				}
+			}
+		}
+
+		// ref object
 		$this->ref_object = ((!empty($object->newref)) ? $object->newref : $object->ref); // newref is set when validating a draft, ref is set in other cases
 		// type of object
 		$this->element = $object->element;
 		// id of object
 		$this->fk_object = $object->id;
 
+		// Add thirdparty info if not yet done
+		if (empty($object->thirdparty) && method_exists($object, 'fetch_thirdparty')) {
+			$object->fetch_thirdparty();
+		}
+
 
 		// Set object_data
 		$this->object_data = new stdClass();
-		// Add fields to exclude
+
+		// Add fields to exclude (this has become useless because we now use a list fields to keep later).
 		$arrayoffieldstoexclude = array(
 			'table_element', 'fields',
 			'ref_previous', 'ref_next',
@@ -534,6 +585,7 @@ class BlockedLog
 			'restrictiononfksoc',
 			'specimen',
 		);
+
 		// Add more fields to exclude depending on object type
 		if ($this->element == 'cashcontrol') {
 			$arrayoffieldstoexclude = array_merge($arrayoffieldstoexclude, array(
@@ -543,11 +595,13 @@ class BlockedLog
 				'fk_incoterms', 'label_incoterms', 'location_incoterms', 'lines'));
 		}
 
-		// Add thirdparty info
-		if (empty($object->thirdparty) && method_exists($object, 'fetch_thirdparty')) {
-			$object->fetch_thirdparty();
+		// For customer payment and supplier payment, the thirdparty can be added in payment detail
+		$addthirdpartyatpaymentlevel = 0;
+		if (!empty($object->thirdparty) && !in_array($this->element, array('payment', 'payment_supplier'))) {
+			$addthirdpartyatpaymentlevel = 1;
 		}
-		if (!empty($object->thirdparty)) {
+
+		if (!empty($object->thirdparty) && !$addthirdpartyatpaymentlevel) {
 			$this->object_data->thirdparty = new stdClass();
 
 			foreach ($object->thirdparty as $key => $value) {
@@ -604,7 +658,7 @@ class BlockedLog
 						$valuequalifiedforstorage = true; // We accept '' value for some fields
 						$value = (string) $value;
 					}
-					if (!is_null($value) && empty($value) && in_array($key, array('tva_assuj'))) {
+					if (!is_null($value) && empty($value) && in_array($key, array('tva_assuj', 'localtax1_assuj', 'localtax2_assuj'))) {
 						$valuequalifiedforstorage = true; // We accept zero value for amounts
 					}
 					if (!is_null($value) && (string) $value !== '') {
@@ -705,6 +759,33 @@ class BlockedLog
 			if (!empty($object->newref)) {
 				$this->object_data->ref = $object->newref;
 			}
+
+			// Add data for action emails
+			if ($action == 'BILL_SENTBYMAIL') {
+				$emailobj = new stdClass();
+				$emailobj->email_from = $object->email_from;
+				//$emailobj->email_to = $object->email_to;
+				$emailobj->email_msgid = $object->email_msgid;
+				$emailobj->email_subject = $object->email_subject;
+
+				$this->object_data->action_email_sent = $emailobj;
+			}
+
+			// Add data for action doc_preview
+			if ($action == 'DOC_PREVIEW') {
+				$docpreviewobj = new stdClass();
+				$docpreviewobj->pos_print_counter = $object->pos_print_counter;
+
+				//$this->object_data->action_doc_preview = $docpreviewobj;
+			}
+
+			// Add data for action doc_download
+			if ($action == 'DOC_DOWNLOAD') {
+				$docdownloadobj = new stdClass();
+				$docdownloadobj->pos_print_counter = $object->pos_print_counter;
+
+				//$this->object_data->action_doc_download = $docdownloadobj;
+			}
 		} elseif ($this->element == 'invoice_supplier') {
 			'@phan-var-force FactureFournisseur $object';
 			foreach ($object as $key => $value) {
@@ -801,7 +882,9 @@ class BlockedLog
 					$paymentpart = new stdClass();
 					$paymentpart->amount = $amount;
 
-					if (!in_array($this->element, array('payment_donation', 'payment_various'))) {
+					// If we want to add thirdparty on each payment level
+					// (seems not necessary as we have one thirdparty per payment on invoice level)
+					if ($addthirdpartyatpaymentlevel) {
 						$result = $tmpobject->fetch_thirdparty();
 						if ($result == 0) {
 							$this->error = 'Failed to fetch thirdparty for object with id '.$tmpobject->id;
@@ -822,7 +905,7 @@ class BlockedLog
 							// List of thirdparty fields qualified
 							if (!in_array($key, array(
 							'name', 'name_alias', 'ref_ext', 'address', 'zip', 'town', 'state_code', 'country_code', 'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6', 'phone', 'fax', 'email', 'barcode',
-							'tva_intra', 'localtax1_assuj', 'localtax1_value', 'localtax2_assuj', 'localtax2_value', 'managers', 'capital', 'typent_code', 'forme_juridique_code', 'code_client', 'code_fournisseur'
+							'tva_intra', 'tva_assuj', 'localtax1_assuj', 'localtax1_value', 'localtax2_assuj', 'localtax2_value', 'managers', 'capital', 'typent_code', 'forme_juridique_code', 'code_client', 'code_fournisseur'
 							))) {
 								continue; // Discard if not into a dedicated list
 							}
@@ -1136,8 +1219,10 @@ class BlockedLog
 
 			$this->signature = $this->buildFinalSignatureHash($previoushash.$concatenateddata);	// Build the hmac signature
 
-			// For debug:
-			$this->debuginfo = $this->buildFirstPartOfKeyForSignature();	// Not used
+			// For debug info (we can clean this field later)
+			if (getDolGlobalString('BLOCKEDLOG_ADD_DEBUG_INFO')) {
+				$this->debuginfo = $this->buildFirstPartOfKeyForSignature();	// Not used
+			}
 		} catch (Exception $e) {
 			$this->error = $e->getMessage();
 

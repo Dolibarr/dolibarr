@@ -1247,7 +1247,7 @@ if ($type == Categorie::TYPE_WAREHOUSE) {
 				print '<table class="noborder centpercent">';
 				print '<tr class="liste_titre"><td>';
 				print $langs->trans("AddTicketIntoCategory").' &nbsp;';
-				print $form->selectForForms('Entrepot:product/stock/class/entrepot.class.php', 'elemid', '', 1, '', '', 'maxwidth500');
+				print $form->selectForForms('Entrepot:product/stock/class/entrepot.class.php', 'elemid', 0, 1, '', '', 'maxwidth500');
 				print '<input type="submit" class="button buttongen" name="addintocategory" value="'.$langs->trans("ClassifyInCategory").'"></td>';
 				print '</tr>';
 				print '</table>';
@@ -1399,7 +1399,7 @@ if ($type == Categorie::TYPE_FICHINTER) {
 				print '<table class="noborder centpercent">';
 				print '<tr class="liste_titre"><td>';
 				print $langs->trans("AddFichinterIntoCategory").' &nbsp;';
-				print $form->selectForForms('Fichinter:fichinter/class/fichinter.class.php', 'elemid', '', 1, '', '', 'maxwidth500');
+				print $form->selectForForms('Fichinter:fichinter/class/fichinter.class.php', 'elemid', 0, 1, '', '', 'maxwidth500');
 				print '<input type="submit" class="button buttongen" value="'.$langs->trans("ClassifyInCategory").'"></td>';
 				print '</tr>';
 				print '</table>';
@@ -1486,7 +1486,7 @@ if ($type == Categorie::TYPE_ORDER) {
 			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre"><td>';
 			print $langs->trans("AddOrderIntoCategory").' &nbsp;';
-			print $form->selectForForms('Commande:commande/class/commande.class.php', 'elemid', '', 1, '', '', 'maxwidth500');
+			print $form->selectForForms('Commande:commande/class/commande.class.php', 'elemid', 0, 1, '', '', 'maxwidth500');
 			print '<input type="submit" class="button buttongen" value="'.$langs->trans("ClassifyInCategory").'"></td>';
 			print '</tr>';
 			print '</table>';
@@ -1567,7 +1567,7 @@ if ($type == Categorie::TYPE_INVOICE) {
 			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre"><td>';
 			print $langs->trans("AddInvoiceIntoCategory").' &nbsp;';
-			print $form->selectForForms('Facture:compta/facture/class/facture.class.php', 'elemid', '', 1, '', '', 'maxwidth500');
+			print $form->selectForForms('Facture:compta/facture/class/facture.class.php', 'elemid', 0, 1, '', '', 'maxwidth500');
 			print '<input type="submit" class="button buttongen" value="'.$langs->trans("ClassifyInCategory").'"></td>';
 			print '</tr>';
 			print '</table>';
@@ -1649,7 +1649,7 @@ if ($type == Categorie::TYPE_SUPPLIER_ORDER) {
 			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre"><td>';
 			print $langs->trans("AddSupplierOrderIntoCategory").' &nbsp;';
-			print $form->selectForForms('CommandeFournisseur:fourn/class/fournisseur.commande.class.php', 'elemid', '', 1, '', '', 'maxwidth500');
+			print $form->selectForForms('CommandeFournisseur:fourn/class/fournisseur.commande.class.php', 'elemid', 0, 1, '', '', 'maxwidth500');
 			print '<input type="submit" class="button buttongen" value="'.$langs->trans("ClassifyInCategory").'"></td>';
 			print '</tr>';
 			print '</table>';
@@ -1730,7 +1730,7 @@ if ($type == Categorie::TYPE_SUPPLIER_INVOICE) {
 			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre"><td>';
 			print $langs->trans("AddSupplierInvoiceIntoCategory").' &nbsp;';
-			print $form->selectForForms('FactureFournisseur:fourn/class/fournisseur.facture.class.php', 'elemid', '', 1, '', '', 'maxwidth500');
+			print $form->selectForForms('FactureFournisseur:fourn/class/fournisseur.facture.class.php', 'elemid', 0, 1, '', '', 'maxwidth500');
 			print '<input type="submit" class="button buttongen" value="'.$langs->trans("ClassifyInCategory").'"></td>';
 			print '</tr>';
 			print '</table>';

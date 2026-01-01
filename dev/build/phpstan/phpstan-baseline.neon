@@ -7,12 +7,6 @@ parameters:
 			path: ../../../htdocs/accountancy/admin/categories.php
 
 		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 2
-			path: ../../../htdocs/accountancy/admin/categories_list.php
-
-		-
 			message: '#^Loose comparison using \=\= between 32 and 32 will always evaluate to true\.$#'
 			identifier: equal.alwaysTrue
 			count: 1
@@ -37,22 +31,10 @@ parameters:
 			path: ../../../htdocs/accountancy/admin/journals_list.php
 
 		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/accountancy/admin/productaccount.php
-
-		-
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 1
 			path: ../../../htdocs/accountancy/admin/productaccount.php
-
-		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/accountancy/admin/report_list.php
 
 		-
 			message: '#^Loose comparison using \=\= between 45 and 45 will always evaluate to true\.$#'

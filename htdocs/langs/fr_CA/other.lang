@@ -222,4 +222,3 @@ Post-Prompt=Post-invite
 AIProcessingPleaseWait=AI (%s) traite votre demande, veuillez patienter...
 PayOfBankTransferInvoice=Vous allez effectuer un paiement en ligne pour cette facture. Cependant, cette facture a été paramétrée pour être payée en mode "Virement bancaire", donc pour éviter de payer deux fois, veuillez vérifier qu'aucun virement bancaire en cours n'a déjà été initié avant de continuer.
 OurProductSelection=Notre sélection de nouveautés
-AddThisPageToBookmarks =Ajouter la page actuelle aux favoris

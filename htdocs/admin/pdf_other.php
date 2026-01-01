@@ -235,10 +235,8 @@ print "<br>\n";
 
 $maxfilesizearray = getMaxFileSizeArray();
 $tooltipconcatpdf = ($maxfilesizearray['maxmin'] > 0) ? $langs->trans('MaxSize').' : '.$maxfilesizearray['maxmin'].' '.$langs->trans('Kb') : '';
-$documenturl = DOL_URL_ROOT.'/document.php';
-if (isset($conf->global->DOL_URL_ROOT_DOCUMENT_PHP)) {
-	$documenturl = getDolGlobalString('DOL_URL_ROOT_DOCUMENT_PHP');
-}
+
+$documenturl = getDolGlobalString('DOL_URL_ROOT_DOCUMENT_PHP', DOL_URL_ROOT.'/document.php');
 
 
 print '<form enctype="multipart/form-data" method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
@@ -315,11 +313,13 @@ if (isModEnabled('propal')) {
 		$modulepart = 'propal';
 		print '<div class="inline-block nobordernopadding valignmiddle "><div class="inline-block marginrightonly">';
 		print '<input type="file" class="flat minwidth100 maxwidthinputfileonsmartphone" name="MAIN_INFO_PROPAL_TERMSOFSALE" id="MAIN_INFO_PROPAL_TERMSOFSALE" accept="application/pdf">';
+		print '</div>';
 		if (getDolGlobalString("MAIN_INFO_PROPAL_TERMSOFSALE")) {
 			$termofsale = getDolGlobalString("MAIN_INFO_PROPAL_TERMSOFSALE");
 			if (file_exists($conf->propal->dir_output.'/'.$termofsale)) {
 				$file = dol_dir_list($conf->propal->dir_output, 'files', 0, $termofsale);
-				print '<div class="inline-block valignmiddle marginrightonly"><a href="'.$documenturl.'?modulepart='.$modulepart.'&file='.urlencode($termofsale).'">'.$termofsale.'</a>'.$formfile->showPreview($file[0], $modulepart, $termofsale, 0, '');
+				print ' ';
+				print '<div class="inline-block valignmiddle marginrightonly"><a href="'.$documenturl.'?modulepart='.$modulepart.'&file='.urlencode($termofsale).'">'.$termofsale.'</a>'.$formfile->showPreview($file[0], $modulepart, $termofsale, 0, '').'</div>';
 				print '<div class="inline-block valignmiddle marginrightonly"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removetermsofsale&modulepart='.$modulepart.'&token='.newToken().'">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a></div>';
 			}
 		}
@@ -392,11 +392,13 @@ if (isModEnabled('order')) {
 		$modulepart = 'order';
 		print '<div class="inline-block nobordernopadding valignmiddle "><div class="inline-block marginrightonly">';
 		print '<input type="file" class="flat minwidth100 maxwidthinputfileonsmartphone" name="MAIN_INFO_ORDER_TERMSOFSALE" id="MAIN_INFO_ORDER_TERMSOFSALE" accept="application/pdf">';
+		print '</div>';
 		if (getDolGlobalString("MAIN_INFO_ORDER_TERMSOFSALE")) {
 			$termofsale = getDolGlobalString("MAIN_INFO_ORDER_TERMSOFSALE");
 			if (file_exists($conf->order->dir_output.'/'.$termofsale)) {
 				$file = dol_dir_list($conf->order->dir_output, 'files', 0, $termofsale);
-				print '<div class="inline-block valignmiddle marginrightonly"><a href="'.$documenturl.'?modulepart='.$modulepart.'&file='.urlencode($termofsale).'">'.$termofsale.'</a>'.$formfile->showPreview($file[0], $modulepart, $termofsale, 0, '');
+				print ' ';
+				print '<div class="inline-block valignmiddle marginrightonly"><a href="'.$documenturl.'?modulepart='.$modulepart.'&file='.urlencode($termofsale).'">'.$termofsale.'</a>'.$formfile->showPreview($file[0], $modulepart, $termofsale, 0, '').'</div>';
 				print '<div class="inline-block valignmiddle marginrightonly"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removetermsofsale&modulepart='.$modulepart.'&token='.newToken().'">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a></div>';
 			}
 		}
@@ -467,13 +469,15 @@ if (isModEnabled('invoice')) {
 
 	if (getDolGlobalString("MAIN_PDF_ADD_TERMSOFSALE_INVOICE")) {
 		$modulepart = 'invoice';
-		print '<div class="inline-block nobordernopadding valignmiddle "><div class="inline-block marginrightonly">';
+		print '<div class="inline-block nobordernopadding valignmiddle"><div class="inline-block marginrightonly">';
 		print '<input type="file" class="flat minwidth100 maxwidthinputfileonsmartphone" name="MAIN_INFO_INVOICE_TERMSOFSALE" id="MAIN_INFO_INVOICE_TERMSOFSALE" accept="application/pdf">';
+		print '</div>';
 		if (getDolGlobalString("MAIN_INFO_INVOICE_TERMSOFSALE")) {
 			$termofsale = getDolGlobalString("MAIN_INFO_INVOICE_TERMSOFSALE");
 			if (file_exists($conf->invoice->dir_output.'/'.$termofsale)) {
 				$file = dol_dir_list($conf->invoice->dir_output, 'files', 0, $termofsale);
-				print '<div class="inline-block valignmiddle marginrightonly"><a href="'.$documenturl.'?modulepart='.$modulepart.'&file='.urlencode($termofsale).'">'.$termofsale.'</a>'.$formfile->showPreview($file[0], $modulepart, $termofsale, 0, '');
+				print ' ';
+				print '<div class="inline-block valignmiddle marginrightonly"><a href="'.$documenturl.'?modulepart='.$modulepart.'&file='.urlencode($termofsale).'">'.$termofsale.'</a>'.$formfile->showPreview($file[0], $modulepart, $termofsale, 0, '').'</div>';
 				print '<div class="inline-block valignmiddle marginrightonly"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removetermsofsale&modulepart='.$modulepart.'&token='.newToken().'">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a></div>';
 			}
 		}

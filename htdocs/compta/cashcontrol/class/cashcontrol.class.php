@@ -133,17 +133,17 @@ class CashControl extends CommonObject
 	public $day_close;
 
 	/**
-	 * @var int Hour close
+	 * @var ?int Hour close
 	 */
 	public $hour_close;
 
 	/**
-	 * @var int Minute close
+	 * @var ?int Minute close
 	 */
 	public $min_close;
 
 	/**
-	 * @var int Second close
+	 * @var ?int Second close
 	 */
 	public $sec_close;
 
@@ -261,9 +261,9 @@ class CashControl extends CommonObject
 		$sql .= ", ".($this->day_close > 0 ? $this->day_close : "null");
 		$sql .= ", ".($this->month_close > 0 ? $this->month_close : "null");
 		$sql .= ", ".((int) $this->year_close);
-		$sql .= ", ".((int) isset($this->hour_close) ? $this->hour_close : 23);
-		$sql .= ", ".((int) isset($this->min_close) ? $this->min_close : 59);
-		$sql .= ", ".((int) isset($this->sec_close) ? $this->sec_close : 59);
+		$sql .= ", ".(isset($this->hour_close) ? (int) $this->hour_close : 23);
+		$sql .= ", ".(isset($this->min_close) ? (int) $this->min_close : 59);
+		$sql .= ", ".(isset($this->sec_close) ? (int) $this->sec_close : 59);
 		$sql .= ", ".price2num($this->cash, 'MT');
 		$sql .= ", ".price2num($this->cheque, 'MT');
 		$sql .= ", ".price2num($this->card, 'MT');

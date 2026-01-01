@@ -1595,7 +1595,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
 
 		// If project has usage "Bill time", we force visibility of field "billed"
-		if (!empty($projectstatic) && $projectstatic->usage_bill_time) {
+		if ($projectstatic->usage_bill_time) {
 			$arrayfields['valuebilled']['checked'] = 1;
 		}
 
@@ -1934,7 +1934,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		$selectedfields .= (is_array($arrayofmassactions) && count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 		// If project has usage "Bill time", we force visibility of field "billed"
-		if (!empty($projectstatic) && $projectstatic->usage_bill_time) {
+		if ($projectstatic->usage_bill_time) {
 			$arrayfields['valuebilled']['checked'] = 1;
 		}
 

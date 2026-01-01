@@ -1,6 +1,19 @@
 <?php
 /* Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
@@ -9,27 +22,28 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
  * @var Conf $conf
  * @var User $user
  *
- * @var int $dol_optimize_smallscreen
- * @var string $colortextlink
  * @var string $butactionbg
- * @var string $textbutaction
+ * @var string $colorbackhmenu1
+ * @var string $colortextlink
+ * @var int $dol_optimize_smallscreen
  * @var string $fontlist
  * @var string $fontsize
  * @var string $left
- * @var string $right
  * @var int<0,max> $nbtopmenuentries
+ * @var string $right
+ * @var string $textbutaction
  */
 '
 @phan-var-force string $butactionbg
+@phan-var-force string $colorbackhmenu1
 @phan-var-force string $colortextlink
-@phan-var-force int $dol_optimize_smallscreen
+@phan-var-force int<0,1> $dol_optimize_smallscreen
 @phan-var-force string $fontlist
 @phan-var-force string $fontsize
 @phan-var-force string $left
-@phan-var-force int $nbtopmenuentries
+@phan-var-force int<0,max> $nbtopmenuentries
 @phan-var-force string $right
 @phan-var-force string $textbutaction
-@phan-var-force int<0,max> $nbtopmenuentries
 ';
 ?>
 
@@ -295,6 +309,10 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 .butActionTransparent {
 	color: #222 ! important;
 	background-color: transparent ! important;
+}
+
+.butActionLogin {
+	background-color: rgb(<?php echo $colorbackhmenu1; ?>);
 }
 
 
