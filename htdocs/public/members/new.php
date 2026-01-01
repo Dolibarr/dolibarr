@@ -1045,15 +1045,15 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 			print ' '.$langs->trans("Currency".$conf->currency).'<span class="opacitymedium hideifautoturnover">';
 			if (!getDolGlobalString('MEMBER_NEWFORM_DOLIBARRTURNOVER')) {
 				print ' - ';
-        if (empty($amountformuladescription)) {
-				  print $amount > 0 ? $langs->trans("AnyAmountWithAdvisedAmount", price($amount, 0, $langs, 1, -1, -1, $conf->currency)) : $langs->trans("AnyAmountWithoutAdvisedAmount");
-			  } else {
-				  print $amountformuladescription;
-			  }
-      }
-      if (getDolGlobalInt("MEMBER_MIN_AMOUNT") > 0 || $minimumamount > 0) {
+				if (empty($amountformuladescription)) {
+					print $amount > 0 ? $langs->trans("AnyAmountWithAdvisedAmount", price($amount, 0, $langs, 1, -1, -1, $conf->currency)) : $langs->trans("AnyAmountWithoutAdvisedAmount");
+				} else {
+					print $amountformuladescription;
+				}
+			}
+			if (getDolGlobalInt("MEMBER_MIN_AMOUNT") > 0 || $minimumamount > 0) {
 				print '</span><br/><span id="minimumamount" class="opacitymedium">'.$langs->trans("MinimumAmountShort").' : '.price(max(getDolGlobalInt("MEMBER_MIN_AMOUNT"), $minimumamount), 0, $langs, 1, -1, -1, $conf->currency);
-      }
+			}
 			print '</span>';
 		} else {
 			print '<input type="text" name="amount" id="amount" class="flat amount width50 hidden" value="'.$showedamount.'">';
