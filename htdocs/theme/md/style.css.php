@@ -1629,7 +1629,7 @@ div.divsearchfield {
 .divsearchfieldfilter {
 	text-overflow: clip;
 	overflow: auto;
-	white-space: nowrap;
+	/* white-space: nowrap; */
 	padding-bottom: 5px;
 	opacity: 0.6;
 	font-size: small;
@@ -3808,7 +3808,8 @@ img.login, img.printer, img.entity {
 	color: white;
 	font-weight: bold;
 }
-.userimg.atoplogin img.userphoto, .userimgatoplogin img.userphoto {		/* size for user photo in login bar */
+.userimg.atoplogin img.userphoto, .userimgatoplogin img.userphoto,
+.userimg.atoplogin span.userphoto, .userimgatoplogin span.userphoto {		/* size for user photo in login bar */
 	/* border-radius: 8px; */
 	width: <?php echo $disableimages ? '26' : '30'; ?>px;
 	height: <?php echo $disableimages ? '26' : '30'; ?>px;
@@ -3823,6 +3824,16 @@ img.userphoto {			/* size for user photo in lists */
 	background-size: contain;
 	vertical-align: middle;
 }
+.userimg.atoplogin span.userphoto, .userimgatoplogin span.userphoto {
+	vertical-align: middle;
+	color: unset;
+}
+.userimg.atoplogin span.userphoto::before, .userimgatoplogin span.userphoto::before {
+	margin-top: 7px;
+	display: inline-block;
+	margin-right: 1px;
+}
+
 span.userimg div.userphoto {
 	background-color: #eee;
 	border-radius: 0.72em;
@@ -5564,10 +5575,17 @@ div.fiche div.info, div.fiche div.warning, div.fiche div.neutral {
 	margin: 1em 0em 1.2em 0em;
 }
 
-/* Info message */
+/* Neutral message */
 div.neutral {
 	border-<?php print $left; ?>: solid 5px #aaa;
 	background: #f8f8f8;
+}
+
+/* Info message */
+div.info {
+	border-<?php print $left; ?>: solid 5px #87cfd2;
+	background: #eff8fc;
+	color: #558;
 }
 
 /* Ok message */
@@ -6654,6 +6672,10 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 }
 .colorselector {
 	border: solid 1px #ddd !important;
+}
+input.colorpicker {
+	color: unset !important;
+	background-color: unset !important;
 }
 
 
