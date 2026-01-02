@@ -193,7 +193,7 @@ if ($what == 'postgresql') {
 	} */
 
 	if (!$errormsg && $cmddump) {
-		dolibarr_set_const($db, 'SYSTEMTOOLS_POSTGRESQLDUMP', $cmddump, 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, 'SYSTEMTOOLS_POSTGRESQLDUMP', $cmddump, 'chaine', 0, '', 0);
 	}
 
 	if (!$errormsg) {
