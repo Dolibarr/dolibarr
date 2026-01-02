@@ -125,7 +125,7 @@ class modProductBatch extends DolibarrModules
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'creer';
 		$r++;
-		
+
 		$this->rights[$r][0] = 453; // id de la permission
 		$this->rights[$r][1] = 'Delete batchlot'; // libelle de la permission
 		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
