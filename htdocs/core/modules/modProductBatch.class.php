@@ -5,6 +5,7 @@
  * Copyright (C) 2013-2014  Cedric GROSS            <c.gross@kreiz-it.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Charlene Benke         <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -111,7 +112,26 @@ class modProductBatch extends DolibarrModules
 		$this->rights = array(); // Permission array used by this module
 		$r = 0;
 
+		$this->rights[$r][0] = 451; // id de la permission
+		$this->rights[$r][1] = 'Read batchlot'; // libelle de la permission
+		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][4] = 'lire';
+		$r++;
 
+		$this->rights[$r][0] = 452; // id de la permission
+		$this->rights[$r][1] = 'Create/modify batchlot'; // libelle de la permission
+		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][4] = 'creer';
+		$r++;
+		
+		$this->rights[$r][0] = 453; // id de la permission
+		$this->rights[$r][1] = 'Delete batchlot'; // libelle de la permission
+		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][4] = 'supprimer';
+		$r++;
 		// Menus
 		//-------
 		$this->menu = 1; // This module add menu entries. They are coded into menu manager.
