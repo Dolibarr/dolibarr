@@ -173,3 +173,4 @@ SentToPrinter=Sent to printer
 FailedToSendToPrinter=Failed to send to printer
 TemporaryReceipt=Temporary
 SignatureID=Signature ID
+CashRegisterAlertFR=Warning: According to French law, when using a Point Of Sale system, you must make a cash control every day, every month and every year. Cash controls are done manually from the menu %s - %s.

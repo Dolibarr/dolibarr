@@ -28,6 +28,13 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php'; // Load $user and permissions
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
@@ -41,14 +48,6 @@ if (GETPOST('CASHDESK_ID_THIRDPARTY_id', 'alpha')) {
 	$_POST['CASHDESK_ID_THIRDPARTY'] = GETPOST('CASHDESK_ID_THIRDPARTY_id', 'alpha');
 	$_REQUEST['CASHDESK_ID_THIRDPARTY'] = GETPOST('CASHDESK_ID_THIRDPARTY_id', 'alpha');
 }
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Security check
 if (!$user->admin) {
@@ -145,6 +144,14 @@ llxHeader('', $langs->trans("CashDeskSetup"), $help_url, '', 0, 0, '', '', '', '
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("CashDeskSetup").' (TakePOS)', $linkback, 'title_setup');
+
+
+if (in_array($mysoc->country_code, array('FR'))) {
+	$htmltext = $langs->trans("CashRegisterAlertFR", $langs->transnoentitiesnoconv("Bank"), $langs->transnoentitiesnoconv("CashControl")).'<br>';
+	print info_admin($htmltext, 0, 0, 'warning');
+}
+
+
 $head = takepos_admin_prepare_head();
 print dol_get_fiche_head($head, 'setup', 'TakePOS', -1, 'cash-register');
 

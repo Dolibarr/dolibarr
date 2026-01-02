@@ -777,6 +777,7 @@ abstract class CommonInvoice extends CommonObject
 					$this->fetch_thirdparty(); // We need to have this->thirdparty defined, in case of the numbering rule uses tags that depend on thirdparty (like {t} tag).
 				}
 				$maxref = $this->getNextNumRef($this->thirdparty, 'last');
+				// $maxref can be '' (means not found) if there is no invoice yet, but also if there is no invoice for the new period when there is a reset at each period
 
 				// If invoice to delete is not the last one, we refuse
 				if ($maxref != '' && $maxref != $this->ref) {
