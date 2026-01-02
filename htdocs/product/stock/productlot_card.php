@@ -5,6 +5,7 @@
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025		Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -120,7 +121,7 @@ $upload_dir = $conf->productbatch->multidir_output[$conf->entity];
 
 $usercanread = $user->hasRight('produit', 'lire');
 $usercancreate = $user->hasRight('produit', 'creer');
-$usercandelete = $user->hasRight('produit', 'supprimer');
+$usercandelete = $user->hasRight('productbatch', 'supprimer');
 
 $permissiontoread = $usercanread;
 $permissiontoadd = $usercancreate;
