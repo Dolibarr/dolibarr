@@ -4419,6 +4419,7 @@ table.nointerlines tr:not(:last-child) td {
 /* Management of border radius */
 table.noborder:not(.cal_month, .paymenttable) {
 	border-radius: <?php echo $borderradius; ?>px;
+	overflow: hidden
 }
 table.noborder.cal_month {
 	border-bottom-left-radius: <?php echo $borderradius; ?>px;
