@@ -41,6 +41,8 @@ class modExpenseReport extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
+		global $conf, $user; // Required by the extrafieldsinexport.inc.php
+
 		$this->db = $db;
 		$this->numero = 770;
 

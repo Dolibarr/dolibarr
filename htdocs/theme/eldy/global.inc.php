@@ -654,6 +654,10 @@ span.userimg.notfirst, div.userimg.notfirst {
 div.userimg.notfirst {
 	display: block-inline;
 }
+.center.inline-block.dateheight {
+	line-height: 1.2em;
+}
+
 
 /* Used by timesheets */
 span.timesheetalreadyrecorded input {

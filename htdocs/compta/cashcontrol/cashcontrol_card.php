@@ -1,11 +1,11 @@
 <?php
 /* Copyright (C) 2001-2005  Rodolphe Quiedeville 	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2013      Charles-Fr BENKE     <charles.fr@benke.fr>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2018      Andreu Bisquerra		<jove@bisquerra.com>
+ * Copyright (C) 2004-2013	Laurent Destailleur  	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009	Regis Houssin        	<regis.houssin@capnetworks.com>
+ * Copyright (C) 2013		Charles-Fr BENKE     	<charles.fr@benke.fr>
+ * Copyright (C) 2015      	Jean-François Ferry		<jfefe@aternatik.fr>
+ * Copyright (C) 2016      	Marcos García        	<marcosgdf@gmail.com>
+ * Copyright (C) 2018      	Andreu Bisquerra		<jove@bisquerra.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
@@ -415,6 +415,24 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 if ($action == "create" || $action == "start") {
 	print load_fiche_titre($langs->trans("CashControl")." - ".$langs->trans("New"), '', 'cash-register');
 
+
+	if ($action == 'start') {
+		if (empty(GETPOSTINT('closeday'))) {
+			$endperiod = dol_get_last_day(GETPOSTINT('closeyear'), GETPOSTINT('closemonth') ? GETPOSTINT('closemonth') : 12, 'gmt');
+			if ($endperiod >= dol_now()) {
+				setEventMessages($langs->trans("CashControlEndDateMustBeBeforeNow"), null, 'errors');
+				$action = 'create';
+			}
+		} else {
+			$endperiod = dol_get_first_hour(GETPOSTDATE('close', 'getpostend'));
+			if ($endperiod >= dol_now()) {
+				setEventMessages($langs->trans("CashControlEndDayMustNotBeInPast"), null, 'errors');
+				$action = 'create';
+			}
+		}
+	}
+
+
 	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	if ($contextpage == 'takepos') {
@@ -504,6 +522,7 @@ if ($action == "create" || $action == "start") {
 	print '</td>';
 	print '</table>';
 	print '</div>';
+
 
 	// Table to see/enter balance
 	if ($action == 'start' && GETPOST('posnumber') != '' && GETPOST('posnumber') != '' && GETPOST('posnumber') != '-1') {
