@@ -55,7 +55,6 @@ ErrorPeriodMustBePastToAllowExport=Només es permet l'exportació a arxius si el
 RegistrationNumber=Número de registre
 NumberOfPrints=Nombre d'impressions
 NumberOfEmailsSent=Nombre de correus electrònics enviats
-VatCode=Codi d'IVA
 
 ## logTypes
 logBILL_DELETE=S'ha suprimit la factura del client lògicament

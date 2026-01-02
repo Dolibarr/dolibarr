@@ -28,6 +28,13 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php'; // Load $user and permissions
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
@@ -41,14 +48,6 @@ if (GETPOST('CASHDESK_ID_THIRDPARTY_id', 'alpha')) {
 	$_POST['CASHDESK_ID_THIRDPARTY'] = GETPOST('CASHDESK_ID_THIRDPARTY_id', 'alpha');
 	$_REQUEST['CASHDESK_ID_THIRDPARTY'] = GETPOST('CASHDESK_ID_THIRDPARTY_id', 'alpha');
 }
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Security check
 if (!$user->admin) {
@@ -137,14 +136,23 @@ if ($action != '') {
  */
 
 $form = new Form($db);
-$formproduct = new FormProduct($db);
 
 $help_url = 'EN:Module_Point_of_sale_(TakePOS)';
 
 llxHeader('', $langs->trans("CashDeskSetup"), $help_url, '', 0, 0, '', '', '', 'mod-takepos page-admin_setup');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/system/database.php?restore_lastsearch_values=1">'.img_picto($langs->trans("GoBack"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("GoBack").'</span></a>';
+
 print load_fiche_titre($langs->trans("CashDeskSetup").' (TakePOS)', $linkback, 'title_setup');
+
+
+if (in_array($mysoc->country_code, array('FR'))) {
+	$htmltext = $langs->trans("CashRegisterAlertFR", $langs->transnoentitiesnoconv("Bank"), $langs->transnoentitiesnoconv("CashControl")).' ';
+	$htmltext .= $langs->trans("CashRegisterAlertFR2").'<br>';
+	print info_admin($htmltext, 0, 0, 'warning');
+}
+
+
 $head = takepos_admin_prepare_head();
 print dol_get_fiche_head($head, 'setup', 'TakePOS', -1, 'cash-register');
 
@@ -172,8 +180,6 @@ foreach ($dirmodels as $reldir) {
 	if (is_dir($dir)) {
 		$handle = opendir($dir);
 		if (is_resource($handle)) {
-			$var = true;
-
 			while (($file = readdir($handle)) !== false) {
 				if (substr($file, 0, 16) == 'mod_takepos_ref_' && substr($file, dol_strlen($file) - 3, 3) == 'php') {
 					$file = substr($file, 0, dol_strlen($file) - 4);
@@ -304,7 +310,6 @@ print "</td></tr>\n";
 print '<tr class="oddeven"><td>';
 print $langs->trans("SortProductField");
 print '<td>';
-$prod = new Product($db);
 $array = array('rowid' => 'ID', 'ref' => 'Ref', 'label' => 'Label', 'datec' => 'DateCreation', 'tms' => 'DateModification');
 print $form->selectarray('TAKEPOS_SORTPRODUCTFIELD', $array, getDolGlobalString('TAKEPOS_SORTPRODUCTFIELD', 'rowid'), 0, 0, 0, '', 1);
 print "</td></tr>\n";
@@ -361,8 +366,7 @@ print $langs->trans('EmailTemplate');
 print '<td>';
 include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 $formmail = new FormMail($db);
-$nboftemplates = $formmail->fetchAllEMailTemplate('facture_send', $user, null, -1); // We set lang=null to get in priority record with no lang
-//$arraydefaultmessage = $formmail->getEMailTemplate($db, $tmp[1], $user, null, 0, 1, '');
+$formmail->fetchAllEMailTemplate('facture_send', $user, null, -1); // We set lang=null to get in priority record with no lang
 $arrayofmessagename = array();
 if (is_array($formmail->lines_model)) {
 	foreach ($formmail->lines_model as $modelmail) {

@@ -90,6 +90,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 
 		// Event/record is qualified
 		$qualified = 0;
+		$amounts_taxexcl = null;
 		$amounts = 0;
 		if ($action === 'BILL_VALIDATE' || (($action === 'BILL_DELETE' || $action === 'BILL_SENTBYMAIL') && ($object->statut != 0 || $object->status != 0))
 			|| $action === 'BILL_SUPPLIER_VALIDATE' || (($action === 'BILL_SUPPLIER_DELETE' || $action === 'BILL_SUPPLIER_SENTBYMAIL') && ($object->statut != 0 || $object->status != 0))
@@ -105,13 +106,18 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			if (in_array($action, array(
 				'MEMBER_SUBSCRIPTION_CREATE', 'MEMBER_SUBSCRIPTION_MODIFY', 'MEMBER_SUBSCRIPTION_DELETE',
 				'DON_VALIDATE', 'DON_MODIFY', 'DON_DELETE'))) {
-					/** @var Don|Subscription $object */
+				/** @var Don|Subscription $object */
 				$amounts = (float) $object->amount;
 			} elseif ($action == 'CASHCONTROL_VALIDATE') {
 				/** @var CashControl $object */
 				$amounts = (float) $object->cash + (float) $object->cheque + (float) $object->card;
-			} elseif (property_exists($object, 'total_ttc')) {
-				$amounts = (float) $object->total_ttc;
+			} else {
+				if (property_exists($object, 'total_ht')) {
+					$amounts_taxexcl = (float) $object->total_ht;
+				}
+				if (property_exists($object, 'total_ttc')) {
+					$amounts = (float) $object->total_ttc;
+				}
 			}
 		}
 		/*if ($action === 'BILL_PAYED' || $action==='BILL_UNPAYED'
@@ -123,7 +129,6 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 		if ($action === 'PAYMENT_CUSTOMER_CREATE' || $action === 'PAYMENT_SUPPLIER_CREATE' || $action === 'DONATION_PAYMENT_CREATE'
 			|| $action === 'PAYMENT_CUSTOMER_DELETE' || $action === 'PAYMENT_SUPPLIER_DELETE' || $action === 'DONATION_PAYMENT_DELETE') {
 			$qualified++;
-			$amounts = 0;
 			if (!empty($object->amounts)) {
 				foreach ($object->amounts as $amount) {
 					$amounts += (float) $amount;
@@ -143,7 +148,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 		}
 
 		// Set field date_object, ref_object, fk_object, element, object_data
-		$result = $b->setObjectData($object, $action, $amounts, $user);
+		$result = $b->setObjectData($object, $action, $amounts, $user, $amounts_taxexcl);
 
 		if ($result < 0) {
 			$this->setErrorsFromObject($b);

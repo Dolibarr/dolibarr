@@ -74,6 +74,11 @@ class BlockedLog
 	/**
 	 * @var float|string|null
 	 */
+	public $amounts_taxexcl = null;
+
+	/**
+	 * @var float|string|null
+	 */
 	public $vat = null;
 
 	/**
@@ -457,16 +462,17 @@ class BlockedLog
 
 	/**
 	 *	Populate properties of an unalterable log entry from object data.
-	 *  This populates ->object_data but also other fields like ->action, ->amounts and ->linktoref and ->linktype
+	 *  This populates ->object_data but also other fields like ->action, ->amounts_taxexcl,  ->amounts and ->linktoref and ->linktype
 	 *  It also populates some debug info like ->element and ->fk_object
 	 *
-	 *	@param	CommonObject|stdClass	$object		object to store
-	 *	@param	string					$action		action
-	 *	@param	float|int				$amounts	amounts
-	 *	@param	?User					$fuser		User object (forced)
-	 *	@return	int<-1,-1>|int<1,1>					>0 if OK, <0 if KO
+	 *	@param	CommonObject|stdClass	$object				Object to store
+	 *	@param	string					$action				Action code
+	 *	@param	float|int				$amounts			amounts (incl tax)
+	 *	@param	?User					$fuser				User object (forced)
+	 *	@param	float|int|null			$amounts_taxexcl	amounts (excl tax or null if not relevant)
+	 *	@return	int<-1,-1>|int<1,1>							>0 if OK, <0 if KO
 	 */
-	public function setObjectData(&$object, $action, $amounts, $fuser = null)
+	public function setObjectData(&$object, $action, $amounts, $fuser = null, $amounts_taxexcl = null)
 	{
 		global $langs, $user, $mysoc;
 
@@ -479,6 +485,7 @@ class BlockedLog
 		// action
 		$this->action = $action;
 		// amount
+		$this->amounts_taxexcl = $amounts_taxexcl;
 		$this->amounts = $amounts;
 		// date
 		if ($object->element == 'payment' || $object->element == 'payment_supplier') {
@@ -1049,7 +1056,7 @@ class BlockedLog
 			return -1;
 		}
 
-		$sql = "SELECT b.rowid, b.date_creation, b.signature, b.amounts, b.action, b.element, b.fk_object, b.entity,";
+		$sql = "SELECT b.rowid, b.date_creation, b.signature, b.amounts_taxexcl, b.amounts, b.action, b.element, b.fk_object, b.entity,";
 		$sql .= " b.certified, b.tms, b.fk_user, b.user_fullname, b.date_object, b.ref_object, b.object_data, b.object_version, b.object_format";
 		$sql .= " FROM ".MAIN_DB_PREFIX."blockedlog as b";
 		if ($id) {
@@ -1066,6 +1073,7 @@ class BlockedLog
 				$this->date_creation 	= $this->db->jdate($obj->date_creation);	// jdate(date_creation)is UTC
 				$this->date_modification = $this->db->jdate($obj->tms);				// jdate(tms) is UTC
 
+				$this->amounts_taxecl	= (is_null($obj->amounts_taxexcl) ? null : (float) $obj->amounts);
 				$this->amounts			= (float) $obj->amounts;
 				$this->action 			= $obj->action;
 				$this->element			= $obj->element;
@@ -1240,6 +1248,7 @@ class BlockedLog
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."blockedlog (";
 		$sql .= " date_creation,";
 		$sql .= " action,";
+		$sql .= " amounts_taxexcl,";
 		$sql .= " amounts,";
 		$sql .= " signature,";
 		$sql .= " element,";
@@ -1257,7 +1266,8 @@ class BlockedLog
 		$sql .= ") VALUES (";
 		$sql .= "'".$this->db->idate($this->date_creation)."',";
 		$sql .= "'".$this->db->escape($this->action)."',";
-		$sql .= $this->amounts.",";
+		$sql .= (is_null($this->amounts_taxexcl) ? "null" : (float) $this->amounts_taxexcl).",";
+		$sql .= (float) $this->amounts.",";
 		$sql .= "'".$this->db->escape($this->signature)."',";
 		$sql .= "'".$this->db->escape($this->element)."',";
 		$sql .= (int) $this->fk_object.",";
@@ -1374,7 +1384,7 @@ class BlockedLog
 			return $this->date_creation.'|'.$this->action.'|'.$this->amounts.'|'.$this->ref_object.'|'.$this->date_object.'|'.$this->user_fullname;
 		} elseif ($this->object_format == 'V2') {
 			$s = $this->entity;
-			$s .= '|'.$this->date_creation.'|'.$this->action.'|'.$this->amounts.'|'.$this->ref_object.'|'.$this->date_object.'|'.$this->user_fullname;
+			$s .= '|'.$this->date_creation.'|'.$this->action.'|'.$this->amounts_taxexcl.'|'.$this->amounts.'|'.$this->ref_object.'|'.$this->date_object.'|'.$this->user_fullname;
 			$s .= '|'.(string) $this->linktoref;
 			$s .= '|'.(string) $this->linktype;
 			return $s;
@@ -1547,7 +1557,8 @@ class BlockedLog
 			$sql .= " AND date_creation <= '".$this->db->idate($search_end)."'";
 		}
 		if ($search_ref != '') {
-			$sql .= natural_search("ref_object", $search_ref);
+			$sql .= " AND (".natural_search("ref_object", $search_ref, 0, 1);
+			$sql .= " OR ".natural_search("linktoref", $search_ref, 0, 1).")";
 		}
 		if ($search_amount != '') {
 			$sql .= natural_search("amounts", $search_amount, 1);
@@ -1637,6 +1648,6 @@ class BlockedLog
 	public function alreadyUsed($ignoresystem = 0)
 	{
 		include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
-		return isBlockedLogused($ignoresystem);
+		return isBlockedLogUsed($ignoresystem);
 	}
 }
