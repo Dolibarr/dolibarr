@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2012      Nicolas Villa aka Boyquotes http://informetic.fr
- * Copyright (C) 2013      Florian Henry	<florian.henry@open-concept.pro>
- * Copyright (C) 2022		Anthony Berton	<anthony.berton@bb2a.fr>
+/* Copyright (C)	2012			Nicolas Villa aka Boyquotes http://informetic.fr
+ * Copyright (C)	2013			Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C)	2022-2025		Anthony Berton		<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
