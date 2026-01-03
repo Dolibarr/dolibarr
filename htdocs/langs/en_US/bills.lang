@@ -681,6 +681,7 @@ MentionCategoryOfOperations0=Delivery of goods
 MentionCategoryOfOperations1=Provision of services
 MentionCategoryOfOperations2=Mixed - Delivery of goods & provision of services
 Salaries=Salaries
+InvoiceType=Invoice type
 InvoiceSubtype=Invoice Subtype
 SalaryInvoice=Salary
 BillsAndSalaries=Bills & Salaries

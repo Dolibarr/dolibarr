@@ -255,19 +255,24 @@ function pdfCertifMentionblockedLog(&$pdf, $outputlangs, $seller, $default_font_
  *      sumAmountsForUnalterableEvent
  *
  *      @param	BlockedLog			$block				Object BlockedLog
- *      @param  array<string,float>	$totalhtamount		Array of total per code event
- *      @param  array<string,float>	$totalvatamount		Array of total per code event
- *      @param  array<string,float>	$totalamount		Array of total per code event
+ *      @param	array<string,int>	$refinvoicefound	Array of ref of invoice already found (to avoid duplicates. Should be useless but just in case of)
+ *      @param  array<string,float>	$totalhtamount		Array of total per code event and module
+ *      @param  array<string,float>	$totalvatamount		Array of total per code event and module
+ *      @param  array<string,float>	$totalamount		Array of total per code event and module
  *      @param  float				$total_ht			Total HT
  *      @param  float				$total_vat			Total VAT
  *      @param  float				$total_ttc			Total TTC
  *      @return	int                                 	Return > 0
  */
-function sumAmountsForUnalterableEvent($block, &$totalhtamount, &$totalvatamount, &$totalamount, &$total_ht, &$total_vat, &$total_ttc)
+function sumAmountsForUnalterableEvent($block, &$refinvoicefound, &$totalhtamount, &$totalvatamount, &$totalamount, &$total_ht, &$total_vat, &$total_ttc)
 {
-	if (empty($totalamount[$block->action])) {
-		$totalamount[$block->action] = array();
+	// Init to avoid warnings if not initialized yet
+	if (!isset($totalamount[$block->action][$block->module_source])) {
+		$totalhtamount[$block->action][$block->module_source] = 0;
+		$totalvatamount[$block->action][$block->module_source] = 0;
+		$totalamount[$block->action][$block->module_source] = 0;
 	}
+
 	if ($block->action == 'BILL_VALIDATE') {
 		$total_ht = $block->object_data->total_ht;
 		$total_vat = $block->object_data->total_tva;
@@ -275,32 +280,23 @@ function sumAmountsForUnalterableEvent($block, &$totalhtamount, &$totalvatamount
 
 		// We add total for the invoice if "invoice validate event" not yet met.
 		// If we already met the event for this object, we keep only first one but this should not happen because edition of validated invoice is not allowed on secured versions.
-		if (empty($totalamount[$block->action][$block->ref_object])) {
-			$totalhtamount[$block->action][$block->ref_object] = $total_ht;
-			$totalvatamount[$block->action][$block->ref_object] = $total_vat;
-			$totalamount[$block->action][$block->ref_object] = $total_ttc;
+		if (empty($refinvoicefound[$block->ref_object])) {
+			$totalhtamount[$block->action][$block->module_source] += $total_ht;
+			$totalvatamount[$block->action][$block->module_source] += $total_vat;
+			$totalamount[$block->action][$block->module_source] += $total_ttc;
 		}
+		$refinvoicefound[$block->ref_object] = 1;
 	} elseif ($block->action == 'PAYMENT_CUSTOMER_CREATE') {
 		$total_ht = $block->object_data->amount;
 		$total_vat = 0;
 		$total_ttc = $block->object_data->amount;
 
-		if (empty($totalhtamount[$block->action][$block->ref_object])) {
-			$totalhtamount[$block->action][$block->ref_object] = 0;
-		}
-		if (empty($totalvatamount[$block->action][$block->ref_object])) {
-			$totalvatamount[$block->action][$block->ref_object] = 0;
-		}
-		if (empty($totalamount[$block->action][$block->ref_object])) {
-			$totalamount[$block->action][$block->ref_object] = 0;
-		}
-		$totalhtamount[$block->action][$block->ref_object] = $total_ht;
-		$totalvatamount[$block->action][$block->ref_object] = $total_vat;
-		$totalamount[$block->action][$block->ref_object] = $total_ttc;
+		$totalhtamount[$block->action][$block->module_source] += $total_ht;
+		$totalvatamount[$block->action][$block->module_source] += $total_vat;
+		$totalamount[$block->action][$block->module_source] += $total_ttc;
 	} else {
 		$total_ttc = $block->amounts;
 	}
-
 
 	return 1;
 }

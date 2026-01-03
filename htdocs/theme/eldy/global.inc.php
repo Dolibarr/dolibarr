@@ -657,6 +657,9 @@ div.userimg.notfirst {
 .center.inline-block.dateheight {
 	line-height: 1.2em;
 }
+.smallheight {
+	line-height: 1em;
+}
 
 
 /* Used by timesheets */

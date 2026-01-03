@@ -18,20 +18,20 @@
 
 CREATE TABLE llx_blockedlog
 (
+	rowid integer AUTO_INCREMENT PRIMARY KEY,	-- Automatic sequence ID
 	-- fields included into signature
-	rowid integer AUTO_INCREMENT PRIMARY KEY,	-- field included into line signature
-	entity integer DEFAULT 1 NOT NULL,			-- field included into line signature
-	date_creation	datetime,					-- field included into line signature
-	action varchar(50),							-- The type of event. field included into line signature
-	module_source varchar(32) DEFAULT '',		-- If the event was recorded from a POS module or another module
+	module_source varchar(32) DEFAULT '',		-- field included into line signature. If the event was recorded from a POS module or another module.
+	action varchar(50),							-- field included into line signature. The type of event.
+	entity integer DEFAULT 1 NOT NULL,			-- field included into line signature. For future usage of multi-entity.
+	date_creation	datetime,					-- field included into line signature. Date and time of event.
 	amounts double(24,8) NOT NULL,				-- field included into line signature (denormalized data from object_data)
 	amounts_taxexcl double(24,8) NULL,			-- field included into line signature (denormalized data from object_data)
 	ref_object varchar(255),					-- field included into line signature (denormalized data from object_data)
 	date_object	datetime,						-- field included into line signature (denormalized data from object_data)
-	user_fullname varchar(255),					-- field included into line signature (denormalized data from object_data)
+	user_fullname varchar(255),					-- field included into line signature. User recording the event.
+	linktoref varchar(255),						-- field included into line signature. Link to another ref_object.
+	linktype varchar(16),						-- field included into line signature. Link type.
 	object_data	mediumtext,						-- field included into line signature
-	linktoref varchar(255),						-- Link to ref. field included into line signature
-	linktype varchar(16),						-- Link type. field included into line signature
 	-- the signature of line
 	signature varchar(100) NOT NULL,  			-- the hash of the key for signature with previous hash before
 	-- fields used for debug only
