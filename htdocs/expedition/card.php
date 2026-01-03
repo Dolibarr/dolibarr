@@ -3687,10 +3687,8 @@ if ($action == 'create' && $usercancreate) {
 			print '<tr><td colspan="8"><span class="opacitymedium">' . $langs->trans("NoLineGoOnTabToAddSome", $langs->transnoentitiesnoconv("ShipmentDistribution")) . '</span></td></tr>';
 		}
 
-		print "</table>\n";
 		print '</tbody>';
-		print '</div>';
-
+		print "</table>\n";
 
 		print dol_get_fiche_end();
 
