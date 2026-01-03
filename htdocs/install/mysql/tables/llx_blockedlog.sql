@@ -23,6 +23,7 @@ CREATE TABLE llx_blockedlog
 	entity integer DEFAULT 1 NOT NULL,			-- field included into line signature
 	date_creation	datetime,					-- field included into line signature
 	action varchar(50),							-- The type of event. field included into line signature
+	module_source varchar(32) DEFAULT '',		-- If the event was recorded from a POS module or another module
 	amounts double(24,8) NOT NULL,				-- field included into line signature (denormalized data from object_data)
 	amounts_taxexcl double(24,8) NULL,			-- field included into line signature (denormalized data from object_data)
 	ref_object varchar(255),					-- field included into line signature (denormalized data from object_data)

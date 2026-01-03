@@ -172,6 +172,12 @@ class BlockedLog
 	 */
 	public $trackedevents = array();
 
+	/**
+	 * Array of tracked modules
+	 * @var array<string,string|mixed>
+	 */
+	public $trackedmodules = array();
+
 
 
 	/**
@@ -195,8 +201,14 @@ class BlockedLog
 		global $langs;
 
 		$this->trackedevents = array();
+		$this->trackedmodules = array();
 
 		$sep = 0;
+
+		$this->trackedmodules = array('' => 'None');
+		if (isModEnabled('takepos')) {
+			$this->trackedmodules['takepos'] = 'TakePOS';
+		}
 
 		// Customer Invoice/Facture / Payment (For most VAT antifraud laws)
 		if (isModEnabled('invoice')) {

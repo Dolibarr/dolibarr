@@ -75,6 +75,7 @@ if (GETPOST('search_endyear') != '') {
 	$search_end = dol_mktime(23, 59, 59, $search_endmonth, $search_endday, $search_endyear);
 }
 $search_code = GETPOST('search_code', 'array:alpha');
+$search_module_source = GETPOST('search_module_source', 'array:alpha');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
 $search_signature = GETPOST('search_signature', 'alpha');
@@ -139,6 +140,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_start = -1;
 	$search_end = -1;
 	$search_code = array();
+	$search_module_source = '';
 	$search_ref = '';
 	$search_amount = '';
 	$search_signature = '';
@@ -395,7 +397,7 @@ $help_url = "EN:Module_Unalterable_Archives_-_Logs|FR:Module_Archives_-_Logs_Ina
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-blockedlog page-admin_blockedlog_list');
 
-$blocks = $block_static->getLog('all', (string) $search_id, $MAXLINES, $sortfield, $sortorder, (int) $search_fk_user, $search_start, $search_end, $search_ref, $search_amount, $search_code, $search_signature);
+$blocks = $block_static->getLog('all', (string) $search_id, $MAXLINES, $sortfield, $sortorder, (int) $search_fk_user, $search_start, $search_end, $search_ref, $search_amount, $search_code, $search_signature, $search_module_source);
 if (!is_array($blocks)) {
 	if ($blocks == -2) {
 		setEventMessages($langs->trans("TooManyRecordToScanRestrictFilters", $MAXLINES), null, 'errors');
@@ -533,6 +535,11 @@ print '</td>';
 // User
 print '<td class="liste_titre">';
 print $form->select_dolusers($search_fk_user, 'search_fk_user', 1, null, 0, '', '', '0', 0, 0, '', 0, '', 'maxwidth150');
+print '</td>';
+
+// Module source
+print '<td class="liste_titre">';
+print $form->multiselectarray('search_module_source', $block_static->trackedmodules, $search_code, 0, 0, 'maxwidth150', 1);
 print '</td>';
 
 // Actions code
