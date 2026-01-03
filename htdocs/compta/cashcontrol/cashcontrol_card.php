@@ -1,11 +1,11 @@
 <?php
 /* Copyright (C) 2001-2005  Rodolphe Quiedeville 	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2013      Charles-Fr BENKE     <charles.fr@benke.fr>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2018      Andreu Bisquerra		<jove@bisquerra.com>
+ * Copyright (C) 2004-2013	Laurent Destailleur  	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009	Regis Houssin        	<regis.houssin@capnetworks.com>
+ * Copyright (C) 2013		Charles-Fr BENKE     	<charles.fr@benke.fr>
+ * Copyright (C) 2015      	Jean-François Ferry		<jfefe@aternatik.fr>
+ * Copyright (C) 2016      	Marcos García        	<marcosgdf@gmail.com>
+ * Copyright (C) 2018      	Andreu Bisquerra		<jove@bisquerra.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
@@ -37,6 +37,7 @@ require '../../main.inc.php';
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ * @var Societe $mysoc
  */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -119,6 +120,7 @@ $permissiontodelete = ($user->hasRight("cashdesk", "run") || $user->hasRight("ta
 /*
  * Actions
  */
+
 $error = 0;
 
 if (empty($backtopage)) {
@@ -228,6 +230,9 @@ if ($action == "valid" && $permissiontoadd) {	// validate = close
 	$object->cash = (float) price2num(GETPOST('cash_amount', 'alpha'));
 	$object->card = (float) price2num(GETPOST('card_amount', 'alpha'));
 	$object->cheque = (float) price2num(GETPOST('cheque_amount', 'alpha'));
+
+	// TODO Add pepetual amount
+
 
 	$result = $object->update($user);
 
@@ -376,6 +381,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 		}
 
 		// Calculate $theoricalamountforterminal at end of period
+		// Sum of payment + Initial amount in bank
 		foreach ($arrayofpaymentmode as $key => $val) {
 			$sql = "SELECT SUM(pf.amount) as total, COUNT(*) as nb";
 			$sql .= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."c_paiement as cp";
@@ -414,6 +420,22 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 
 if ($action == "create" || $action == "start") {
 	print load_fiche_titre($langs->trans("CashControl")." - ".$langs->trans("New"), '', 'cash-register');
+
+	if ($action == 'start') {
+		if (empty(GETPOSTINT('closeday'))) {
+			$endperiod = dol_get_last_day(GETPOSTINT('closeyear'), GETPOSTINT('closemonth') ? GETPOSTINT('closemonth') : 12, 'gmt');
+			if ($endperiod >= dol_now()) {
+				setEventMessages($langs->trans("CashControlEndDateMustBeBeforeNow"), null, 'errors');
+				$action = 'create';
+			}
+		} else {
+			$endperiod = dol_get_first_hour(GETPOSTDATE('close', 'getpostend'));
+			if ($endperiod >= dol_now() && $mysoc->country_code == 'FR') {	// For other countries we may need to make 2 cash control in the same day (one at opening and one at closing)
+				setEventMessages($langs->trans("CashControlEndDayMustNotBeInPast"), null, 'errors');
+				$action = 'create';
+			}
+		}
+	}
 
 	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -504,6 +526,7 @@ if ($action == "create" || $action == "start") {
 	print '</td>';
 	print '</table>';
 	print '</div>';
+
 
 	// Table to see/enter balance
 	if ($action == 'start' && GETPOST('posnumber') != '' && GETPOST('posnumber') != '' && GETPOST('posnumber') != '-1') {

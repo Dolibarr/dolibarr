@@ -7892,10 +7892,10 @@ class Form
 
 					// Input area to enter date manually
 					$retstring .= '<div class="nowraponall inline-block divfordateinput">';
-					$retstring .= '<input id="'.$prefix.'" name="'.$prefix.'" type="'.($usecalendar == 'html' ? "date" : "text").'" class="maxwidthdate center" maxlength="11" value="'.$formatted_date.'"';
+					$retstring .= '<input id="'.$prefix.'" name="'.$prefix.'" type="'.($usecalendar == 'html' ? "date" : "text").'" class="maxwidthdate'.(getDolUserString('MAIN_OPTIMIZEFORTEXTBROWSER') ? ' textbrowser' : '').' center" maxlength="11" value="'.$formatted_date.'"';
 					$retstring .= ($disabled ? ' disabled' : '');
 					$retstring .= ($placeholder ? ' placeholder="' . dol_escape_htmltag($placeholder) . '"' : '');
-					$retstring .= ' onChange="dpChangeDay(\'' . dol_escape_js($prefix) . '\',\'' . dol_escape_js($formatjslong) . '\'); "'; // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
+					$retstring .= ' onChange="dpChangeDay(\'' . dol_escape_js($prefix) . '\',\'' . dol_escape_js($usecalendar == 'html' ? 'yyyy-mm-dd' : $formatjslong) . '\'); "'; // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
 					$retstring .= ' autocomplete="off">';
 
 					// Icon calendar
@@ -11246,7 +11246,7 @@ class Form
 				if (isModEnabled('gravatar') && $email && empty($noexternsourceoverwrite)) {
 					// see https://gravatar.com/site/implement/images/php/
 					$ret .= '<!-- Put link to gravatar -->';
-					$ret .= '<img class="photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . '" alt="" title="' . $email . ' Gravatar avatar" ' . ($width ? ' width="' . $width . '"' : '') . ($height ? ' height="' . $height . '"' : '') . ' src="https://www.gravatar.com/avatar/' . dol_hash(strtolower(trim($email)), 'sha256', 1) . '?s=' . $width . '&d=' . $defaultimg . '">'; // gravatar need md5 hash
+					$ret .= '<img class="gravatar photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . '" alt="" title="'.dolPrintHTMLForAttribute('Gravatar avatar - '.$email).'" ' . ($width ? ' width="' . $width . '"' : '') . ($height ? ' height="' . $height . '"' : '') . ' src="https://www.gravatar.com/avatar/' . dol_hash(strtolower(trim($email)), 'sha256', 1) . '?s=' . $width . '&d=' . $defaultimg . '">'; // gravatar need md5 hash
 				} else {
 					if ($nophoto == 'company') {
 						$ret .= '<div class="divforspanimg valignmiddle center photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . '" alt="" ' . ($width ? ' width="' . $width . '"' : '') . ($height ? ' height="' . $height . '"' : '') . '>' . img_picto('', 'company') . '</div>';

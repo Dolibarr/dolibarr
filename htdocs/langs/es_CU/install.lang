@@ -176,6 +176,4 @@ MigrationFieldsSocialNetworks=Migración de campos de usuarios redes sociales (%
 MigrationReloadModule=Módulo de recarga %s
 MigrationResetBlockedLog=Restablecer módulo BlockedLog para algoritmo v7
 ErrorFoundDuringMigration=Se informaron errores durante el proceso de migración, por lo que el siguiente paso no está disponible. Para ignorar los errores, puede <a href="%s"> hacer clic aquí </a> , pero es posible que la aplicación o algunas funciones no funcionen correctamente hasta que se resuelvan los errores.
-YouTryInstallDisabledByDirLock=La aplicación intentó autoactualizarse, pero las páginas de instalación/actualización se han deshabilitado por seguridad (el directorio cambió de nombre con el sufijo .lock). <br>
-YouTryInstallDisabledByFileLock=La aplicación intentó autoactualizarse, pero las páginas de instalación/actualización se han deshabilitado por seguridad (por la existencia de un archivo de bloqueo <strong> install.lock </strong> en el directorio de documentos de dolibarr). <br>
 ClickOnLinkOrRemoveManualy=Si hay una actualización en curso, espere. Si no es así, haga clic en el siguiente enlace. Si siempre ve esta misma página, debe eliminar/renombrar el archivo install.lock en el directorio de documentos.
