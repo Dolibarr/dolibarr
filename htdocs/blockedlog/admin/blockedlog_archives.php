@@ -300,7 +300,7 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 
 				$block_static->date_creation = $db->jdate($obj->date_creation);		// jdate(date_creation) is UTC
 
-				$block_static->amounts_taxexcl = (float) $obj->amounts_excl;			// Database store value with 8 digits, we cut ending 0 them with (flow)
+				$block_static->amounts_taxexcl = (float) $obj->amounts_taxexcl;		// Database store value with 8 digits, we cut ending 0 them with (flow)
 				$block_static->amounts = (float) $obj->amounts;						// Database store value with 8 digits, we cut ending 0 them with (flow)
 
 				$block_static->action = $obj->action;
