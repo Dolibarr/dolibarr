@@ -279,7 +279,6 @@ AccountancyClosureGenerateClosureBookkeepingRecords=Generar entradas de “Ganan
 AccountancyClosureSeparateAuxiliaryAccounts=Al generar los asientos de “Ganancias retenidas”, detalle las cuentas del sublibro mayor
 AccountancyClosureInsertAccountingReversalSuccessfully=Se han insertado correctamente las entradas contables para "Ganancias retenidas"
 ConfirmMassUnletteringQuestion=¿Está seguro de que desea anular la conciliación de los registros seleccionados %s?
-ConfirmMassDeleteBookkeepingWriting=Confirmación de eliminación masiva
 ConfirmMassDeleteBookkeepingWritingQuestion=Esto eliminará la transacción de la contabilidad (se eliminarán todas las entradas de línea relacionadas con la misma transacción). ¿Está seguro de que desea eliminar las entradas seleccionadas de %s?
 AccountancyClosureConfirmClose=¿Está seguro de que desea cerrar el período fiscal actual? <span class="warning">Usted comprende que cerrar el período fiscal es una acción irreversible y bloqueará permanentemente cualquier modificación o eliminación de entradas durante este período</span>.
 SomeMandatoryStepsOfSetupWereNotDone=Algunos pasos obligatorios de configuración no se realizaron, por favor complete

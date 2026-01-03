@@ -214,6 +214,7 @@ The following changes may create regressions for some external modules, but were
 * $user->rights->module->perms is also deprecated. You can use $user->hasRight() instead.
 * The API endpoint /proposals/{id}/contact/{contactid}/{type}/{source} is now {id}/contact/{contactid}/{type} to match same behaviour than order and invoices.
 * The API endpoint /interventions/{id}/reopen hase been removed in favor of /interventions/{id}/settodraft
+* If the module geoipmaxmind is used, you must resubmit the geoip data file as it is now stored differently.
 
 
 ***** ChangeLog for 22.0.4 compared to 22.0.3 *****

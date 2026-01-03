@@ -24,6 +24,7 @@ CREATE TABLE llx_blockedlog
 	date_creation	datetime,					-- field included into line signature
 	action varchar(50),							-- The type of event. field included into line signature
 	amounts double(24,8) NOT NULL,				-- field included into line signature (denormalized data from object_data)
+	amounts_taxexcl double(24,8) NULL,			-- field included into line signature (denormalized data from object_data)
 	ref_object varchar(255),					-- field included into line signature (denormalized data from object_data)
 	date_object	datetime,						-- field included into line signature (denormalized data from object_data)
 	user_fullname varchar(255),					-- field included into line signature (denormalized data from object_data)
@@ -37,6 +38,7 @@ CREATE TABLE llx_blockedlog
 	fk_user	integer,
 	fk_object integer,
 	object_version varchar(32) DEFAULT '',		-- in which version did the line was recorded
+	object_format varchar(16) DEFAULT 'V1',     -- format of data stored in object_data
 	certified integer,							-- not used, reserved for future use
 	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	debuginfo mediumtext

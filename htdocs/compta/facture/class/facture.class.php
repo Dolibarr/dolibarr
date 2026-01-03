@@ -2232,7 +2232,7 @@ class Facture extends CommonInvoice
 		$sql .= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
 		$sql .= ', c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_doc';
 		$sql .= ', f.fk_incoterms, f.location_incoterms';
-		$sql .= ', f.module_source, f.pos_source, f.pos_print_counter';
+		$sql .= ', f.module_source, f.pos_source, f.pos_print_counter, f.email_sent_counter';
 		$sql .= ", i.libelle as label_incoterms";
 		$sql .= ", f.retained_warranty as retained_warranty, f.retained_warranty_date_limit as retained_warranty_date_limit, f.retained_warranty_fk_cond_reglement as retained_warranty_fk_cond_reglement";
 		$sql .= ", f.payment_reference, f.dispute_status";
@@ -2361,6 +2361,7 @@ class Facture extends CommonInvoice
 				$this->module_source = $obj->module_source;
 				$this->pos_source = $obj->pos_source;
 				$this->pos_print_counter = $obj->pos_print_counter;
+				$this->email_sent_counter = $obj->email_sent_counter;
 
 				// Multicurrency
 				$this->fk_multicurrency 		= $obj->fk_multicurrency;

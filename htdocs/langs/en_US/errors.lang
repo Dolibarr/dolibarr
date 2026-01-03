@@ -374,6 +374,7 @@ ErrorBlockLogNeedElement=The unalterbale log object needs element type to be set
 ErrorBlockLogNeedObject=The unalterbale log object needs object to be set
 ErrorBadParameterWhenCallingCreateOfBlockedLog=Bad parameter when calling create of blocked log
 ErrorMaxDecimalsShownTooLowComparedToUnitOrTotal=Value for 'Max. decimals for prices shown on screen' (%s) must be equal to or greater than both 'Max. decimals for unit prices' (%s) and 'Max. decimals for total prices' (%s). This is required to prevent rounding inconsistencies on documents.
+ErrorOnlyDraftStatusCanBeDeletedInMassAction=Only elements in draft status can be deleted in mass action
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.

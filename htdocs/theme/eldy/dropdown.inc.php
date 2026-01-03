@@ -228,13 +228,15 @@ div#topmenu-global-search-dropdown a::after, div#topmenu-quickadd-dropdown a::af
 }
 
 #topmenu-global-search-dropdown .dropdown-menu{
-	width: 310px;
-	max-width: 100%;
+	width: 370px;
+	max-width: 370px;
 }
 
 div#topmenu-global-search-dropdown, div#topmenu-bookmark-dropdown, div#topmenu-quickadd-dropdown {
 	<?php if (!$disableimages) { ?>
 		line-height: 46px;
+	<?php } else { ?>
+		margin-top: -2px;
 	<?php } ?>
 }
 a.top-menu-dropdown-link {

@@ -457,7 +457,11 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 								// If sending email for invoice, we increase the counter of invoices sent by email
 								$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET email_sent_counter = email_sent_counter + 1";
 								$sql .= " WHERE rowid = ".((int) $object->id);
-								$db->query($sql);
+
+								$resql = $db->query($sql);
+								if ($resql) {
+									$object->email_sent_counter += 1;
+								}
 							}
 
 							$result = $object->call_trigger($triggersendname, $user);  // @phan-suppress-current-line PhanPossiblyUndeclaredGlobalVariable
