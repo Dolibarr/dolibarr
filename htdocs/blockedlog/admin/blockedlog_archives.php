@@ -142,6 +142,8 @@ $upload_dir = getMultidirOutput($block_static, 'blockedlog').'/archives';
 
 dol_mkdir($upload_dir);
 
+$fh = null;
+
 
 /*
  * Actions
@@ -254,7 +256,7 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 		$fh = fopen($tmpfile, 'w');
 	}
 
-	if (!$error && isset($fh) && $fh) {
+	if (!$error && $fh) {
 		// Now restart request with all data, so without the limit(1) in sql request
 		$sql = "SELECT rowid, date_creation, tms, user_fullname, action, amounts_taxexcl, amounts, element, fk_object, date_object, ref_object,";
 		$sql .= " signature, fk_user, object_data, object_version, object_format, debuginfo";
