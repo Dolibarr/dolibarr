@@ -2,7 +2,7 @@
 #----------------------------------------------------------------------------
 # \file         dev/build/makepack-dolibarr.pl
 # \brief        Dolibarr package builder (tgz, zip, rpm, deb, exe, aps)
-# \author       (c)2004-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
+# \author       (c)2004-2025 Laurent Destailleur  <eldy@users.sourceforge.net>
 #
 # This is list of constant you can set to have generated packages moved into a specific dir:
 #DESTIBETARC='/media/HDDATA1_LD/Mes Sites/Web/Dolibarr/dolibarr.org/files/lastbuild'
@@ -14,7 +14,7 @@
 #----------------------------------------------------------------------------
 ## no critic (InputOutput::ProhibitExplicitStdin,InputOutput::RequireBriefOpen)
 
-use strict;
+#use strict;
 use warnings;
 use Cwd;
 use Term::ANSIColor;
@@ -137,6 +137,15 @@ if ( !$ENV{"GITREMOTENAME"} ) {
 	print
 "Error: environment variable GITREMOTENAME does not exist. You can set it to 'origin' or any other git remote name.\n";
 	print "$PROG.$Extension aborted.\n";
+	print "\n";
+	print "You can set it with\n";
+	print "On Linux:\n";
+	print "export GITREMOTENAME='origin'";
+	print "On Windows:\n";
+	print "set GITREMOTENAME=origin\n";
+	print "\n";
+	print "Example in .bashrc:\n";
+	print "export GITREMOTENAME='origin'\n";
 	sleep 2;
 	exit 1;
 }
@@ -540,7 +549,7 @@ if ($nboftargetok) {
 		chdir("$SOURCE");
 
 		print "Clean $SOURCE/htdocs/includes/autoload.php\n";
-		$ret = `rm -f  $SOURCE/htdocs/includes/autoload.php`;
+		unlink("$SOURCE/htdocs/includes/autoload.php");
 
 		$ret = `git ls-files . --exclude-standard --others`;
 		if ($ret) {

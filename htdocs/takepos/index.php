@@ -998,23 +998,12 @@ function DolibarrOpenDrawer() {
 	});
 }
 
-function MoreActions(totalactions){
-	if (pageactions==0){
-		pageactions=1;
-		for (i = 0; i <= totalactions; i++){
-			if (i<12) $("#action"+i).hide();
-			else $("#action"+i).show();
-		}
+function MoreActions(totalactions) {
+	for (i = 0; i <= totalactions; i++) {
+		$("#action" + i).toggle();
 	}
-	else if (pageactions==1){
-		pageactions=0;
-		for (i = 0; i <= totalactions; i++){
-			if (i<12) $("#action"+i).show();
-			else $("#action"+i).hide();
-		}
-	}
-
-	return true;
+	$("#actionnext").toggle();
+	$("#actionprevious").toggle();
 }
 
 function ControlCashOpening()
@@ -1483,6 +1472,14 @@ if ($resql) {
 	}
 }
 
+if (getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
+	$menus[$r++] = array('title' => '<span class="fa fa-sign-out-alt pictofixedwidth"></span><div class="trunc">'.$langs->trans("Logout").'</div>', 'action' => 'window.location.href=\''.DOL_URL_ROOT.'/user/logout.php?token='.newToken().'\';');
+}
+
+if (getDolGlobalString('TAKEPOS_WEIGHING_SCALE')) {
+	$menus[$r++] = array('title' => '<span class="fa fa-balance-scale pictofixedwidth"></span><div class="trunc">'.$langs->trans("WeighingScale").'</div>', 'action' => 'WeighingScale();');
+}
+
 $parameters = array('menus' => $menus);
 $reshook = $hookmanager->executeHooks('ActionButtons', $parameters);
 if ($reshook == 0) {  //add buttons
@@ -1502,18 +1499,6 @@ if ($reshook == 0) {  //add buttons
 			}
 		}
 	}
-}
-
-if ($r % 3 == 2) {
-	$menus[$r++] = array('title' => '', 'style' => 'visibility: hidden;');
-}
-
-if (getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
-	$menus[$r++] = array('title' => '<span class="fa fa-sign-out-alt pictofixedwidth"></span><div class="trunc">'.$langs->trans("Logout").'</div>', 'action' => 'window.location.href=\''.DOL_URL_ROOT.'/user/logout.php?token='.newToken().'\';');
-}
-
-if (getDolGlobalString('TAKEPOS_WEIGHING_SCALE')) {
-	$menus[$r++] = array('title' => '<span class="fa fa-balance-scale pictofixedwidth"></span><div class="trunc">'.$langs->trans("WeighingScale").'</div>', 'action' => 'WeighingScale();');
 }
 
 ?>
@@ -1543,9 +1528,11 @@ if (getDolGlobalString('TAKEPOS_WEIGHING_SCALE')) {
 			$i++;
 			if (count($menus) > 12 and $i == 12) {
 				echo '<button style="'.(empty($menu['style']) ? '' : $menu['style']).'" type="button" id="actionnext" class="actionbutton" onclick="MoreActions('.count($menus).')">'.$langs->trans("Next").'</button>';
+				echo '<button style="display: none;" type="button" id="actionprevious" class="actionbutton" onclick="MoreActions('.count($menus).')">'.$langs->trans("Previous").'</button>';
 				echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton" onclick="'.(empty($menu['action']) ? '' : $menu['action']).'">'.$menu['title'].'</button>';
 			} elseif ($i > 12) {
 				echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton" onclick="'.(empty($menu['action']) ? '' : $menu['action']).'">'.$menu['title'].'</button>';
+				// TODO keep style but hide button
 			} else {
 				echo '<button style="'.(empty($menu['style']) ? '' : $menu['style']).'" type="button" id="action'.$i.'" class="actionbutton" onclick="'.(empty($menu['action']) ? '' : $menu['action']).'">'.$menu['title'].'</button>';
 			}

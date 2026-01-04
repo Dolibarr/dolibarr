@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2016		Jamal Elbaz			<jamelbaz@gmail.pro>
- * Copyright (C) 2016-2017	Alexandre Spangaro	<aspangaro@open-dsi.fr>
+ * Copyright (C) 2016-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
@@ -438,8 +438,11 @@ class AccountancyCategory // extends CommonObject
 	{
 		global $conf;
 
+		$pcgver = getDolGlobalInt('CHARTOFACCOUNTS');
+
 		$sql = "SELECT t.rowid, t.account_number, t.label";
 		$sql .= " FROM ".$this->db->prefix()."accounting_account as t";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON t.fk_pcg_version = asy.pcg_version AND asy.rowid = ".((int) $pcgver);
 		$sql .= " WHERE t.fk_accounting_category = ".((int) $id);
 		$sql .= " AND t.entity = ".$conf->entity;
 

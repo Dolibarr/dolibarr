@@ -233,6 +233,9 @@ if (empty($error) && !empty($xml)) {
 	$file_list = array();
 	$out = '';
 
+	//$algo = 'md5';		// For v22-
+	$algo = 'sha256';		// For v23+
+
 	// Forced constants
 	if (is_object($xml->dolibarr_constants[0]) || $mode == 'unalterable') {
 		$out .= load_fiche_titre($langs->trans("ForcedConstants"));
@@ -349,6 +352,7 @@ if (empty($error) && !empty($xml)) {
 		$onlymodifiedorremoved = 0;
 	}
 
+
 	// Scan htdocs
 	if (is_object($listoffilestoanalyze)) {
 		// @phan-suppress-next-line PhanTypeArraySuspicious
@@ -361,15 +365,15 @@ if (empty($error) && !empty($xml)) {
 
 		// Fill file_list with files in signature, new files, modified files
 		getFilesUpdated($file_list, $listoffilestoanalyze, '', DOL_DOCUMENT_ROOT, $checksumconcat); // Fill array $file_list
-		'@phan-var-force array{insignature:string[],missing?:array<array{filename:string,expectedmd5:string,expectedsize:string}>,updated:array<array{filename:string,expectedmd5:string,expectedsize:string,md5:string}>} $file_list';
+		'@phan-var-force array{insignature:string[],missing?:array<array{filename:string,expectedhash:string,expectedsize:string,algo:string}>,updated:array<array{filename:string,expectedhash:string,expectedsize:string,hash:string,algo:string}>} $file_list';
 
 		// Complete with list of new files into $file_list['added']
-		if ($onlymodifiedorremoved) {
+		if (empty($onlymodifiedorremoved)) {
 			foreach ($scanfiles as $valfile) {
 				$tmprelativefilename = preg_replace('/^'.preg_quote(DOL_DOCUMENT_ROOT, '/').'/', '', $valfile['fullname']);
 				if (!in_array($tmprelativefilename, $file_list['insignature'])) {
-					$md5newfile = @md5_file($valfile['fullname']); // Can fails if we don't have permission to open/read file
-					$file_list['added'][] = array('filename' => $tmprelativefilename, 'md5' => $md5newfile);
+					$hashnewfile = @hash_file($algo, $valfile['fullname']); // Can fails if we don't have permission to open/read file
+					$file_list['added'][] = array('filename' => $tmprelativefilename, 'hash' => $hashnewfile, 'algo' => $algo);
 				}
 			}
 		}
@@ -398,7 +402,7 @@ if (empty($error) && !empty($xml)) {
 					$out .= dol_print_size((int) $file['expectedsize']);
 				}
 				$out .= '</td>'."\n";
-				$out .= '<td class="center">'.dol_escape_htmltag($file['expectedmd5']).'</td>'."\n";
+				$out .= '<td class="center">'.dol_escape_htmltag($file['expectedhash']).'</td>'."\n";
 				$out .= "</tr>\n";
 			}
 		} else {
@@ -432,8 +436,8 @@ if (empty($error) && !empty($xml)) {
 				$out .= '<tr class="oddeven">';
 				$out .= '<td>'.$i.'</td>'."\n";
 				$out .= '<td>'.dol_escape_htmltag($file['filename']).'</td>'."\n";
-				$out .= '<td class="center">'.dol_escape_htmltag($file['expectedmd5']).'</td>'."\n";
-				$out .= '<td class="center">'.dol_escape_htmltag($file['md5']).'</td>'."\n";
+				$out .= '<td class="center">'.dol_escape_htmltag($file['expectedhash']).'</td>'."\n";
+				$out .= '<td class="center">'.dol_escape_htmltag($file['hash']).'</td>'."\n";
 				$out .= '<td class="right">';
 				if ($file['expectedsize']) {
 					$out .= dol_print_size((int) $file['expectedsize']);
@@ -490,8 +494,8 @@ if (empty($error) && !empty($xml)) {
 						$out .= ' '.$form->textwithpicto('', $htmltext, 1, 'help', '', 0, 2, 'helprm'.$i);
 					}
 					$out .= '</td>'."\n";
-					$out .= '<td class="center">'.dol_escape_htmltag((string) $file['expectedmd5']).'</td>'."\n";  // @phan-suppress-current-line PhanTypeInvalidDimOffset
-					$out .= '<td class="center">'.dol_escape_htmltag($file['md5']).'</td>'."\n";
+					$out .= '<td class="center">'.dol_escape_htmltag((string) $file['expectedhash']).'</td>'."\n";  // @phan-suppress-current-line PhanTypeInvalidDimOffset
+					$out .= '<td class="center">'.dol_escape_htmltag($file['hash']).'</td>'."\n";
 					$size = dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename']);
 					$totalsize += $size;
 					$out .= '<td class="right">'.dol_print_size($size).'</td>'."\n";
@@ -525,14 +529,14 @@ if (empty($error) && !empty($xml)) {
 	if (is_object($xml->dolibarr_scripts_dir[0])) {
 		$file_list = array();
 		$ret = getFilesUpdated($file_list, $xml->dolibarr_htdocs_dir[0], '', ???, $checksumconcat);		// Fill array $file_list
-		'@phan-var-force array{insignature:string[],missing?:array<array{filename:string,expectedmd5:string,expectedsize:string}>,updated:array<array{filename:string,expectedmd5:string,expectedsize:string,md5:string}>} $file_list';
+		'@phan-var-force array{insignature:string[],missing?:array<array{filename:string,expectedhash:string,expectedsize:string,algo:string}>,updated:array<array{filename:string,expectedhash:string,expectedsize:string,hash:string,algo:string}>} $file_list';
 	}*/
 
 
 	// Section Globalchecksum
 	asort($checksumconcat); // Sort list of checksum
 
-	$checksumget = md5(implode(',', $checksumconcat));
+	$checksumget = hash($algo, implode(',', $checksumconcat));
 
 	if ($mode == 'unalterable') {
 		$nameofsection = 'dolibarr_unalterable_files_checksum';
@@ -585,7 +589,16 @@ if (empty($error) && !empty($xml)) {
 		$outforlistoffiles .= '<textarea id="listofunalterablefiles" class="hideobject quatrevingtpercent" rows="12">';
 		$i = 0;
 		foreach ($listoffilestoanalyze as $dirtoanalyze) {
-			foreach ($dirtoanalyze->md5file as $filetoanalyze) {
+			$entry = array();
+			if (!empty($dirtoanalyze->md5file)) {
+				$entry = $dirtoanalyze->md5file;
+				$algo = 'md5';
+			} elseif (!empty($dirtoanalyze->sha256file)) {
+				$entry = $dirtoanalyze->sha256file;
+				$algo = 'sha256';
+			}
+
+			foreach ($entry as $filetoanalyze) {
 				if ($i) {
 					$outforlistoffiles .= "\n";
 				}

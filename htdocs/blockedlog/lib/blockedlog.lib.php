@@ -82,7 +82,7 @@ function blockedlogadmin_prepare_head($withtabsetup)
  *
  * @return boolean		True or false
  */
-function isRegistrationRecorded()
+function isRegistrationDataSaved()
 {
 	global $mysoc;
 
@@ -105,24 +105,41 @@ function isRegistrationRecorded()
 	return true;
 }
 
+
 /**
- * Return if the version is a candidate version to get the LNE certification and if the prerequisites are OK.
- * The difference between isALNEQualifiedVersion() and isALNERunningVersion() is that this one just check if it has a sense or not to
- * activate the restrictions (it is not a strict check) and the second one is a strict check to say restrictions must be enabled and can't be disabled.
+ * Return a hash unique identifier of the registration
  *
- * @return boolean		True or false
+ * @return string		Hash unique ID (used to idenfiy the registration without disclosing personal data)
  */
-function isALNEQualifiedVersion()
+function getHashUniqueIdOfRegistration()
+{
+	global $conf;
+
+	return dol_hash('dolibarr'.$conf->file->instance_unique_id, 'sha256', 1);
+}
+
+
+/**
+ * Return if the version is a candidate version to get the LNE certification and if the prerequisites are OK in production to be switched to LNE certified mode.
+ * The difference with isALNERunningVersion() is that isALNEQualifiedVersion() just checks if it has a sense or not to activate
+ * the restrictions (it is not a check to say if we are or not in a mode with restrictions activated, but if we are in a context that has a sense to activate them).
+ * It can be used to show warnings or alerts to end users.
+ *
+ * @param   int<0,1>	$ignoredev			Set this to 1 to ignore the fact the version is an alpha or beta version
+ * @param   int<0,1>	$ignoremodule		Set this to 1 to not take into account if module BlockedLog is on, so function can be used during module activation.
+ * @return 	boolean							True or false
+ */
+function isALNEQualifiedVersion($ignoredev = 0, $ignoremodule = 0)
 {
 	global $mysoc;
 
 	// For Debug help: Constant set by developer to force all LNE restrictions even if country is not France so we can test them on any dev instance.
-	// Note that you can force, with this option, to enabling of the LNE restrictions but you can't force the disabling of the LNE restriction.
+	// Note that you can force, with this option, the enabling of the LNE restrictions, but there is no way to force the disabling of the LNE restriction.
 	if (defined('CERTIF_LNE') && (int) constant('CERTIF_LNE') === 2) {
 		return true;
 	}
 
-	if (preg_match('/\-/', DOL_VERSION)) {	// This is not a stable version
+	if (!$ignoredev && preg_match('/\-/', DOL_VERSION)) {	// This is not a stable version
 		return false;
 	}
 	if ($mysoc->country_code != 'FR') {
@@ -131,7 +148,7 @@ function isALNEQualifiedVersion()
 	if (!defined('CERTIF_LNE') || (int) constant('CERTIF_LNE') === 0) {
 		return false;
 	}
-	if (!isModEnabled('blockedlog')) {
+	if (!$ignoremodule && !isModEnabled('blockedlog')) {
 		return false;
 	}
 
@@ -140,20 +157,19 @@ function isALNEQualifiedVersion()
 
 
 /**
- * Return if the application is executed with the LNE features on.
- * This function is used to disabled some features like disabling custom receipts, or showing the mandatory information "Certified LNE"
- * on tickets when it is not true.
+ * Return if the application is executed with the LNE requirements on.
+ * This function can be used to disable some features like custom receipts, or to enable others like showing the information "Certified LNE".
  *
- * @return boolean		True or false
+ * @return 	boolean		True or false
  */
 function isALNERunningVersion()
 {
 	// For Debug help: Constant set by developer to force all LNE restrictions even if country is not France so we can test them on any dev instance.
-	// Note that you can force, with this option, to enabling of the LNE restrictions but you can't force the disabling of the LNE restriction.
+	// Note that you can force, with this option, the enabling of the LNE restrictions, but there is no way to force the disabling of the LNE restriction.
 	if (defined('CERTIF_LNE') && (int) constant('CERTIF_LNE') === 2) {
 		return true;
 	}
-	if (isModEnabled('blockedlog') && isBlockedLogused()) {
+	if (isModEnabled('blockedlog') && isBlockedLogUsed()) {
 		return true;
 	}
 
@@ -166,17 +182,21 @@ function isALNERunningVersion()
  * @param   int<0,1>	$ignoresystem       Ignore system events for the test
  * @return 	boolean							True if blocked log was already used, false if not
  */
-function isBlockedLogused($ignoresystem = 0)
+function isBlockedLogUsed($ignoresystem = 0)
 {
 	global $conf, $db;
 
 	$result = true;	// by default restrictions are on, so we can't disable them
 
-	// For the moment, we don't need this. We already have a feature that does not allow to disable the LNE rstriction by
-	// adding an inalterable event in the log.
+	// Note: if module on, we suppose it is used, if not, we check in case of it was disabled.
 	if (!isModEnabled('blockedlog')) {
+		// Test the cache key
+		if (array_key_exists('isblockedlogused', $conf->cache)) {
+			return $conf->cache['isblockedlogused'.$ignoresystem];
+		}
+
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog";
-		$sql .= " WHERE entity = ".((int) $conf->entity);	// Sharing entity in blocked is disallowed
+		$sql .= " WHERE entity = ".((int) $conf->entity);	// Sharing entity in blocked log is disallowed
 		if ($ignoresystem) {
 			$sql .= " AND action NOT IN ('MODULE_SET', 'MODULE_RESET')";
 		}
@@ -191,9 +211,11 @@ function isBlockedLogused($ignoresystem = 0)
 		} else {
 			dol_print_error($db);
 		}
+
+		$conf->cache['isblockedlogused'.$ignoresystem] = $result;
 	}
 
-	dol_syslog("isBlockedLogused: ignoresystem=".$ignoresystem." returns ".(string) $result);
+	dol_syslog("isBlockedLogUsed: ignoresystem=".$ignoresystem." returns ".(string) $result);
 
 	return $result;
 }
@@ -227,4 +249,54 @@ function pdfCertifMentionblockedLog(&$pdf, $outputlangs, $seller, $default_font_
 	}
 
 	return $result;
+}
+
+/**
+ *      sumAmountsForUnalterableEvent
+ *
+ *      @param	BlockedLog			$block				Object BlockedLog
+ *      @param	array<string,int>	$refinvoicefound	Array of ref of invoice already found (to avoid duplicates. Should be useless but just in case of)
+ *      @param  array<string,float>	$totalhtamount		Array of total per code event and module
+ *      @param  array<string,float>	$totalvatamount		Array of total per code event and module
+ *      @param  array<string,float>	$totalamount		Array of total per code event and module
+ *      @param  float				$total_ht			Total HT
+ *      @param  float				$total_vat			Total VAT
+ *      @param  float				$total_ttc			Total TTC
+ *      @return	int                                 	Return > 0
+ */
+function sumAmountsForUnalterableEvent($block, &$refinvoicefound, &$totalhtamount, &$totalvatamount, &$totalamount, &$total_ht, &$total_vat, &$total_ttc)
+{
+	// Init to avoid warnings if not initialized yet
+	if (!isset($totalamount[$block->action][$block->module_source])) {
+		$totalhtamount[$block->action][$block->module_source] = 0;
+		$totalvatamount[$block->action][$block->module_source] = 0;
+		$totalamount[$block->action][$block->module_source] = 0;
+	}
+
+	if ($block->action == 'BILL_VALIDATE') {
+		$total_ht = $block->object_data->total_ht;
+		$total_vat = $block->object_data->total_tva;
+		$total_ttc = $block->object_data->total_ttc;
+
+		// We add total for the invoice if "invoice validate event" not yet met.
+		// If we already met the event for this object, we keep only first one but this should not happen because edition of validated invoice is not allowed on secured versions.
+		if (empty($refinvoicefound[$block->ref_object])) {
+			$totalhtamount[$block->action][$block->module_source] += $total_ht;
+			$totalvatamount[$block->action][$block->module_source] += $total_vat;
+			$totalamount[$block->action][$block->module_source] += $total_ttc;
+		}
+		$refinvoicefound[$block->ref_object] = 1;
+	} elseif ($block->action == 'PAYMENT_CUSTOMER_CREATE') {
+		$total_ht = $block->object_data->amount;
+		$total_vat = 0;
+		$total_ttc = $block->object_data->amount;
+
+		$totalhtamount[$block->action][$block->module_source] += $total_ht;
+		$totalvatamount[$block->action][$block->module_source] += $total_vat;
+		$totalamount[$block->action][$block->module_source] += $total_ttc;
+	} else {
+		$total_ttc = $block->amounts;
+	}
+
+	return 1;
 }

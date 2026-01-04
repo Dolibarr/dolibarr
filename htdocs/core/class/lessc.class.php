@@ -2246,7 +2246,9 @@ class Lessc
 		$this->importDir = $oldImport;
 
 		if ($outFname !== null) {
-			return file_put_contents($outFname, $out);
+			$res = file_put_contents($outFname, $out);
+			dolChmod($outFname);
+			return $res;
 		}
 
 		return $out;

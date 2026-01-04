@@ -35,7 +35,7 @@ class box_factures_fourn extends ModeleBoxes
 	public $boxcode = "lastsupplierbills";
 	public $boximg = "object_bill";
 	public $boxlabel = "BoxLastSupplierBills";
-	public $depends = array("facture", "fournisseur");
+	public $depends = array("invoice", "fournisseur");
 
 	/**
 	 *  Constructor

@@ -107,7 +107,7 @@ if ($action == 'update' && !$cancel) {
 	if (! $error && ((float) $valmainmaxdecimalsshown < $valmainmaxdecimalsunit || (float) $valmainmaxdecimalsshown < $valmainmaxdecimalstot)) {
 		$langs->load("errors");
 		$error++;
-		setEventMessages($langs->trans("ErrorValueForTooLow", dol_trunc(dol_string_nohtmltag($langs->transnoentitiesnoconv("MAIN_MAX_DECIMALS_SHOWN")), 40)), null, 'errors');
+		setEventMessages($langs->trans("ErrorMaxDecimalsShownTooLowComparedToUnitOrTotal", $valmainmaxdecimalsshown, $valmainmaxdecimalsunit, $valmainmaxdecimalstot), null, 'errors');
 		$action = 'edit';
 	}
 
