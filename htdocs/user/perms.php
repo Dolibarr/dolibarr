@@ -8,7 +8,7 @@
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
+ * Copyright (C) 2025-2026  Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -503,7 +503,7 @@ if ($result) {
 		if (empty($obj->family)) {
 			$obj->family = 'other';
 		}
-		
+
 		// Si la famille n'existe pas dans $familyinfo, on utilise 'other'
 		if (!empty($obj->family) && !isset($familyinfo[$obj->family])) {
 			$obj->family = 'other';
