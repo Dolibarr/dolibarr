@@ -111,39 +111,17 @@ llxHeader('', $title, '', '', 0, 0, array(), array(), $param);
 
 print '<!-- Begin div id-container --><div id="id-container" class="id-container center">';
 
-/*$sql = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro as conciliated, b.num_releve, b.num_chq,";
-$sql.= " b.fk_account, b.fk_type,";
-$sql.= " ba.rowid as bankid, ba.ref as bankref,";
-$sql.= " bu.url_id,";
-$sql.= " f.module_source, f.ref as ref";
-$sql.= " FROM ";
-//if ($bid) $sql.= MAIN_DB_PREFIX."category_bankline as l,";
-$sql.= " ".MAIN_DB_PREFIX."bank_account as ba,";
-$sql.= " ".MAIN_DB_PREFIX."bank as b";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu ON bu.fk_bank = b.rowid AND type = 'payment'";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON bu.url_id = f.rowid";
-$sql.= " WHERE b.fk_account = ba.rowid";
-// Define filter on invoice
-$sql.= " AND f.module_source = '".$db->escape($object->posmodule)."'";
-$sql.= " AND f.pos_source = '".$db->escape($object->posnumber)."'";
-$sql.= " AND f.entity IN (".getEntity('facture').")";
-// Define filter on data
-if ($syear && ! $smonth)              $sql.= " AND dateo BETWEEN '".$db->idate(dol_get_first_day($syear, 1))."' AND '".$db->idate(dol_get_last_day($syear, 12))."'";
-elseif ($syear && $smonth && ! $sday) $sql.= " AND dateo BETWEEN '".$db->idate(dol_get_first_day($syear, $smonth))."' AND '".$db->idate(dol_get_last_day($syear, $smonth))."'";
-elseif ($syear && $smonth && $sday)   $sql.= " AND dateo BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $smonth, $sday, $syear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $smonth, $sday, $syear))."'";
-else dol_print_error(null, 'Year not defined');
-// Define filter on bank account
-$sql.=" AND (b.fk_account = ".((int) $conf->global->CASHDESK_ID_BANKACCOUNT_CASH);
-$sql.=" OR b.fk_account = ".((int) $conf->global->CASHDESK_ID_BANKACCOUNT_CB);
-$sql.=" OR b.fk_account = ".((int) $conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE);
-$sql.=")";
-*/
-$sql = "SELECT f.rowid as facid, f.ref, f.datef as datef, p.datep as datep, pf.amount as amount, b.fk_account as bankid, cp.code";
-$sql .= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."c_paiement as cp, ".MAIN_DB_PREFIX."bank as b";
+$sql = "SELECT p.rowid, p.datep as datep, cp.code,";
+$sql .= " f.rowid as facid, f.ref, f.datef as datef, pf.amount as amount, b.fk_account as bankid,";
+$sql .= "bl.signature";
+$sql .= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."facture as f,";
+$sql .= " ".MAIN_DB_PREFIX."paiement as p";
+//$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."blockedlog as bl ON bl.ref_object = p.ref AND bl.entity = ".((int) $conf->entity).",";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."blockedlog as bl ON bl.element = 'payment' AND bl.fk_object = p.rowid AND bl.entity = ".((int) $conf->entity).",";
+$sql .= " ".MAIN_DB_PREFIX."c_paiement as cp, ".MAIN_DB_PREFIX."bank as b";
 $sql .= " WHERE pf.fk_facture = f.rowid AND p.rowid = pf.fk_paiement AND cp.id = p.fk_paiement AND p.fk_bank = b.rowid";
 $sql .= " AND f.module_source = '".$db->escape($posmodule)."'";
 $sql .= " AND f.pos_source = '".$db->escape($terminalid)."'";
-//$sql .= " AND f.paye = 1";
 $sql .= " AND p.entity = ".$conf->entity; // Never share entities for features related to accountancy
 /*if ($key == 'cash')       $sql.=" AND cp.code = 'LIQ'";
 elseif ($key == 'cheque') $sql.=" AND cp.code = 'CHQ'";
@@ -168,7 +146,7 @@ if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	print "<!-- title of cash fence -->\n";
+	print "<!-- title of cash control -->\n";
 	print '<center>';
 	print '<h2>';
 
@@ -190,7 +168,7 @@ if ($resql) {
 		$uservalid->fetch($userauthor);
 		print '<br>'.$langs->trans("Author").': '.$uservalid->getFullName($langs);
 	}
-	print '<br>'.$langs->trans("Period").': '.$object->year_close.($object->month_close ? '-'.$object->month_close : '').($object->day_close ? '-'.$object->day_close : '');
+	print '<br>'.$langs->trans("Period").': '.$object->year_close.($object->month_close ? '-'.sprintf("%02d", $object->month_close) : '').($object->day_close ? '-'.sprintf("%02d", $object->day_close) : '');
 	print '</center>';
 
 	$invoicetmp = new Facture($db);
@@ -213,7 +191,7 @@ if ($resql) {
 		print '<tr class="liste_titre">';
 		print_liste_field_titre($arrayfields['b.rowid']['label'], $_SERVER['PHP_SELF'], 'b.rowid', '', $param, '', $sortfield, $sortorder);
 		print_liste_field_titre($arrayfields['b.dateo']['label'], $_SERVER['PHP_SELF'], 'b.dateo', '', $param, '"', $sortfield, $sortorder, 'center ');
-		print_liste_field_titre($arrayfields['ba.ref']['label'], $_SERVER['PHP_SELF'], 'ba.ref', '', $param, '', $sortfield, $sortorder, 'right ');
+		print_liste_field_titre($arrayfields['ba.ref']['label'], $_SERVER['PHP_SELF'], 'ba.ref', '', $param, '', $sortfield, $sortorder, '');
 		print_liste_field_titre($arrayfields['cp.code']['label'], $_SERVER['PHP_SELF'], 'cp.code', '', $param, '', $sortfield, $sortorder, 'right ');
 		print_liste_field_titre($arrayfields['b.debit']['label'], $_SERVER['PHP_SELF'], 'b.amount', '', $param, '', $sortfield, $sortorder, 'right ');
 		print_liste_field_titre($arrayfields['b.credit']['label'], $_SERVER['PHP_SELF'], 'b.amount', '', $param, '', $sortfield, $sortorder, 'right ');
@@ -319,15 +297,16 @@ if ($resql) {
 			print '<tr class="oddeven">';
 
 			// Ref
-			print '<td class="nowrap left">';
+			print '<td class="nowrap left smallheight">';
 			print $invoicetmp->getNomUrl(1);
+			print '<br><span class="small opacitymedium" title="'.$langs->trans("Signature").': '.$objp->signature.'">'.dol_trunc($objp->signature, 16).'</span>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 
 			// Date ope
-			print '<td class="nowrap left">';
+			print '<td class="nowrap center">';
 			print '<span id="dateoperation_'.$objp->facid.'">'.dol_print_date($db->jdate($objp->datep), "day")."</span>";
 			print "</td>\n";
 			if (!$i) {
@@ -335,7 +314,7 @@ if ($resql) {
 			}
 
 			// Bank account
-			print '<td class="nowrap right">';
+			print '<td class="nowrap left">';
 			print $bankaccount->getNomUrl(1);
 			print "</td>\n";
 			if (!$i) {

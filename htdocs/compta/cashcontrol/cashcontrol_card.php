@@ -679,7 +679,7 @@ if (empty($action) || $action == "view" || $action == "close") {
 		print '<div class="fichecenter">';
 		print '<div class="fichehalfleft">';
 		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border tableforfield" width="100%">';
+		print '<table class="border tableforfield centpercent">';
 
 		print '<tr><td class="titlefield nowrap">';
 		print $langs->trans("Ref");
@@ -699,8 +699,8 @@ if (empty($action) || $action == "view" || $action == "close") {
 		print $langs->trans("Period");
 		print '</td><td>';
 		print $object->year_close;
-		print($object->month_close ? "-" : "").$object->month_close;
-		print($object->day_close ? "-" : "").$object->day_close;
+		print($object->month_close ? "-" : "").sprintf("%02d", $object->month_close);
+		print($object->day_close ? "-" : "").sprintf("%02d", $object->day_close);
 
 		$dateend = dol_mktime($object->hour_close, $object->min_close, $object->sec_close, $object->month_close, $object->day_close, $object->year_close, 'gmt');
 		if (empty($object->day_close) && !empty($object->month_close)) {

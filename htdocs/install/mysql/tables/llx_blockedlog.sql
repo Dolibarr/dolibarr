@@ -41,6 +41,7 @@ CREATE TABLE llx_blockedlog
 	object_version varchar(32) DEFAULT '',		-- in which version did the line was recorded
 	object_format varchar(16) DEFAULT 'V1',     -- format of data stored in object_data
 	certified integer,							-- not used, reserved for future use
+	actionrefisunique varchar(16) DEFAULT NULL,	-- not used, reserved for future use
 	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	debuginfo mediumtext
 ) ENGINE=innodb;

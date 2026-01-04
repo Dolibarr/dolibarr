@@ -59,6 +59,8 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
+		global $mysoc;
+
 		if (!isModEnabled('blockedlog')) {
 			return 0; // Module not active, we do nothing
 		}
@@ -86,6 +88,15 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 		// Tracked events
 		if (!in_array($action, array_keys($b->trackedevents))) {
 			return 0;
+		}
+
+		if ($action === 'PAYMENT_CUSTOMER_CREATE' && $object->element == 'payment') {
+			if (isALNERunningVersion() && $mysoc->country_code == 'FR') {
+				if (!in_array($object->paiementcode, array('LIQ', 'CB', 'CHQ'))) {
+					$this->errors[] = 'The payment mode '.$object->paiementcode.' is not available in this version.';
+					return -1;
+				}
+			}
 		}
 
 		// Event/record is qualified
