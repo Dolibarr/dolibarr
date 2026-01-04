@@ -13204,7 +13204,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0, $sqltoadd =
 					$listofcodes = '';
 					foreach ($tmparray as $val) {
 						$val = trim($val);
-						if ($val) {
+						if ($val) {	// TODO Test with if ($val !== '') {
 							$listofcodes .= ($listofcodes ? ',' : '');
 							$listofcodes .= "'" . $db->escape($val) . "'";
 						}

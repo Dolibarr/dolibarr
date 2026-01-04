@@ -3864,7 +3864,7 @@ function migrate_reset_blocked_log($db, $langs, $conf)
 							$object->date = dol_now();
 
 							$b = new BlockedLog($db);
-							$b->setObjectData($object, 'MODULE_SET', 0);
+							$b->setObjectData($object, 'MODULE_SET', 0, $user, null);
 
 							$res = $b->create($user);
 							if ($res <= 0) {

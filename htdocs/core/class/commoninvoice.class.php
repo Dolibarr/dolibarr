@@ -689,6 +689,29 @@ abstract class CommonInvoice extends CommonObject
 		return $retarray;
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Return if an invoice can be set back to draft.
+	 *	Rule is:
+	 *  If invoice is draft and has a temporary ref -> yes (1)
+	 *  If hidden option INVOICE_CAN_NEVER_BE_REMOVED is 1 -> no (0)
+	 *  If invoice is transferred in bookkeeping -> no (-1)
+	 *  If invoice has a definitive ref, is not last in ref -> no (-2)
+	 *  If invoice has a definitive ref, is not last in a situation cycle -> no (-3)
+	 *  If there is one payment -> no (-4)
+	 *  If already sent by email -> no (-5)
+	 *  If already printed -> no (-6)
+	 *  If running a LNE version and customer invoice was validated -> no (-7)
+	 *  Otherwise -> yes (2)
+	 *
+	 *  @return    int         Return integer <=0 if no, >0 if yes
+	 */
+	public function isEditable()
+	{
+		$test = $this->is_erasable();
+
+		return $test;
+	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -702,6 +725,7 @@ abstract class CommonInvoice extends CommonObject
 	 *  If there is one payment -> no (-4)
 	 *  If already sent by email -> no (-5)
 	 *  If already printed -> no (-6)
+	 *  If running a LNE version and customer invoice was validated -> no (-7)
 	 *  Otherwise -> yes (2)
 	 *
 	 *  @return    int         Return integer <=0 if no, >0 if yes
@@ -734,6 +758,11 @@ abstract class CommonInvoice extends CommonObject
 				if ((int) $this->pos_print_counter > 0) {
 					return -6;
 				}
+
+				include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+				if (isALNERunningVersion()) {
+					return -7;
+				}
 			}
 
 			// If in accountancy, we refuse
@@ -748,6 +777,7 @@ abstract class CommonInvoice extends CommonObject
 					$this->fetch_thirdparty(); // We need to have this->thirdparty defined, in case of the numbering rule uses tags that depend on thirdparty (like {t} tag).
 				}
 				$maxref = $this->getNextNumRef($this->thirdparty, 'last');
+				// $maxref can be '' (means not found) if there is no invoice yet, but also if there is no invoice for the new period when there is a reset at each period
 
 				// If invoice to delete is not the last one, we refuse
 				if ($maxref != '' && $maxref != $this->ref) {

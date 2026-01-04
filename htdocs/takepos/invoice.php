@@ -1353,10 +1353,10 @@ if (empty($reshook)) {
 				$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="DolibarrTakeposPrinting('.$placeid.')" title="'.dolPrintHTMLForAttribute($langs->trans("SentToPrinter").' '.$nameOfPrinter).'">'.$langs->trans('PrintTicket').'</button>';
 			} else {
 				$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="Print('.$placeid.')">'.$langs->trans('PrintTicket').'</button>';
-				if (getDolGlobalString('TAKEPOS_PRINT_WITHOUT_DETAILS')) {
+				if ($customprinttemplateallowed && getDolGlobalString('TAKEPOS_PRINT_WITHOUT_DETAILS')) {
 					$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="PrintBox('.$placeid.', \'without_details\')">'.$langs->trans('PrintWithoutDetails').'</button>';
 				}
-				if (getDolGlobalString('TAKEPOS_GIFT_RECEIPT')) {
+				if ($customprinttemplateallowed && getDolGlobalString('TAKEPOS_GIFT_RECEIPT')) {
 					$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="Print('.$placeid.', 1)">'.$langs->trans('GiftReceipt').'</button>';
 				}
 			}
