@@ -7,6 +7,7 @@
  * Copyright (C) 2024-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024       Alexandre Spangaro  <alexandre@inovea-conseil.com>
  * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Charlene Benke		<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -604,18 +605,55 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// liste des evaluation liées
 	if ($objecttype == 'user' && $permissiontoadd) {
+		$page = 0;
+		$skilltmp = new Skill($db);
 		$evaltmp = new Evaluation($db);
 		$job = new Job($db);
-		$sql = "select e.rowid,e.ref,e.fk_user,e.fk_job,e.date_eval,ed.rankorder,ed.required_rank,ed.fk_skill,s.label";
-		$sql .= " FROM ".MAIN_DB_PREFIX."hrm_evaluation as e";
-		$sql .= ", ".MAIN_DB_PREFIX."hrm_evaluationdet as ed";
-		$sql .= ", ".MAIN_DB_PREFIX."hrm_skill as s";
-		$sql .= " WHERE e.rowid = ed.fk_evaluation";
-		$sql .= " AND s.rowid = ed.fk_skill";
-		$sql .= " AND e.fk_user = ".((int) $id);
+		$sql = "select e.rowid,e.ref,e.fk_user,e.fk_job,e.date_eval,ed.rankorder,ed.required_rank,ed.fk_skill,s.label s.skill_type, sd.description";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."hrm_evaluationdet as ed ON e.rowid = ed.fk_evaluation";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."hrm_skill as s ON s.rowid = ed.fk_skill";
+		$sql .= ' INNER JOIN ' . MAIN_DB_PREFIX . 'hrm_skilldet as sd ON (sd.fk_skill = s.rowid AND sd.rankorder = ed.rankorder)';
+		$sql .= " WHERE e.fk_user = ".((int) $id);
+		$sql .= " ORDER BY e.date_eval DESC, s.skill_type ASC, s.label ASC";
 
 		$resql = $db->query($sql);
 		$num = $db->num_rows($resql);
+
+		print_barre_liste($langs->trans("Skills"), $page, $_SERVER["PHP_SELF"], '', '', '', '', $num, $num, $skilltmp->picto, 0);
+		print '<div class="div-table-responsive-no-min">';
+		print '<table id="tablelines" class="noborder centpercent">';
+		print '<tr class="liste_titre">';
+		print '<th>'.$langs->trans('SkillType').'</th>';
+		print '<th>'.$langs->trans('Skill').'</th>';
+		print '<th>'.$langs->trans('DateEval').'</th>';
+		print '<th>'.$langs->trans('SkillRank').'</th>';
+		print '</tr>';
+		if (!$resql) {
+			print '<tr><td><span class="opacitymedium">' . $langs->trans("NoRecordFound") . '</span></td></tr>';
+		} else {
+			$i=0;
+			while ($i < $num) {
+				$obj = $db->fetch_object($resql);
+				print '<tr>';
+				print '<td class="nowraponall">';
+				$evaltmp->fetch($obj->rowid);
+				$skilltmp->fetch($obj->fk_skill);
+				print Skill::typeCodeToLabel($skilltmp->skill_type);
+				print '</td>';
+				print '<td class="nowraponall">';
+				$evaltmp->fetch($obj->rowid);
+				$skilltmp->fetch($obj->fk_skill);
+				print $skilltmp->getNomUrl(1);
+				print '</td>';
+				print '<td>';
+				print dol_print_date($obj->date_eval, 'day', 'tzserver');
+				print '</td><td>';
+				print '<span title="'.$obj->description.'" class="radio_js_bloc_number TNote_1">' . ($obj->rankorder == 0 ? 'NA' : $obj->rankorder) . '</span>';
+				print '</td>';
+				print '</tr>';
+				$i++;
+			}
+		}
 
 		//num of evaluations for each user
 		$sqlEval = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."hrm_evaluation as e";
@@ -627,7 +665,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$numEval = $tmpobj->nb;
 		}
 
-		$page = 0;
 		print_barre_liste($langs->trans("Evaluations"), $page, $_SERVER["PHP_SELF"], '', '', '', '', $numEval, $numEval, $evaltmp->picto, 0);
 
 		print '<div class="div-table-responsive-no-min">';
@@ -639,6 +676,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<th>'.$langs->trans('Status').'</th>';
 		print '<th>'.$langs->trans("Result").' ' .$form->textwithpicto('', GetLegendSkills(), 1) .'</th>';
 		print '</tr>';
+		$resql = $db->query($sql);
 		if (!$resql) {
 			print '<tr><td><span class="opacitymedium">' . $langs->trans("NoRecordFound") . '</span></td></tr>';
 		} else {
