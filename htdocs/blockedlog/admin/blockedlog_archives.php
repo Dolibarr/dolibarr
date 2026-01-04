@@ -254,7 +254,7 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 		$fh = fopen($tmpfile, 'w');
 	}
 
-	if (!$error && $fh) {
+	if (!$error && isset($fh) && $fh) {
 		// Now restart request with all data, so without the limit(1) in sql request
 		$sql = "SELECT rowid, date_creation, tms, user_fullname, action, amounts_taxexcl, amounts, element, fk_object, date_object, ref_object,";
 		$sql .= " signature, fk_user, object_data, object_version, object_format, debuginfo";
@@ -306,7 +306,7 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 
 				$block_static->module_source = $obj->module_source;
 
-				$block_static->amounts_excl = (float) $obj->amounts_excl;			// Database store value with 8 digits, we cut ending 0 them with (flow)
+				$block_static->amounts_taxexcl = (float) $obj->amounts_taxexcl;		// Database store value with 8 digits, we cut ending 0 them with (flow)
 				$block_static->amounts = (float) $obj->amounts;						// Database store value with 8 digits, we cut ending 0 them with (flow)
 
 				$block_static->action = $obj->action;
