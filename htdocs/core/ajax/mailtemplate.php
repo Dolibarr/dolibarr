@@ -194,7 +194,7 @@ if (GETPOSTISSET('template')) {
 							</div>';
 			} elseif ($template == "product") {
 				$product = getProductForEmailTemplate($Id);
-				
+
 				$productList .= '<div style="width:100%; padding: 20px;">
 									<div>
 									' . (!empty($product['image']) ? dol_htmlentitiesbr($product['image']) : '<img alt="Gray rectangle" width="130px" height="130px" style="border-radius: 10px;" src="__GRAY_RECTANGLE__">') . '
@@ -207,7 +207,7 @@ if (GETPOSTISSET('template')) {
 				';
 			}
 		}
-		
+
 		$content = str_replace('__NEWS_LIST__', $newsList, $content);
 		$content = str_replace('__PRODUCT_SELECTED__', $productList, $content);
 	} else {
