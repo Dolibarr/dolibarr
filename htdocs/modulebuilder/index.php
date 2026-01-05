@@ -3426,7 +3426,7 @@ if ($module == 'initmodule') {
 	print '<div class="tagtr"><div class="tagtd paddingright">';
 	print '<span class="opacitymedium">'.$langs->trans("IdModule").'</span>';
 	print '</div><div class="tagtd">';
-	print '<input type="number" min="100000" name="idmodule" class="width75" value="500000">';
+	print '<input type="number" min="100000" name="idmodule" class="width100" value="500000">';
 	print '<span class="opacitymedium small">';
 	print ' &nbsp; &nbsp; ';
 	print dolButtonToOpenUrlInDialogPopup('popup_modules_id', $langs->transnoentitiesnoconv("SeeIDsInUse"), $langs->transnoentitiesnoconv("SeeIDsInUse"), '/admin/system/modules.php?mainmenu=home&leftmenu=admintools_info&hidetitle=1', '', '');

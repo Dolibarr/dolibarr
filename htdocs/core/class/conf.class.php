@@ -987,6 +987,12 @@ class Conf extends stdClass
 			if (!isset($this->global->MAIN_ENABLE_AJAX_TOOLTIP)) {
 				$this->global->MAIN_ENABLE_AJAX_TOOLTIP = 1;	// Try to have it enabled by default with v21+
 			}
+			if (!isset($this->global->THEME_SHOW_BORDER_ON_INPUT)) {
+				$this->global->THEME_SHOW_BORDER_ON_INPUT = 1;
+			}
+			if (!isset($this->global->THEME_ELDY_BORDER_RADIUS)) {
+				$this->global->THEME_ELDY_BORDER_RADIUS = 6;
+			}
 
 			// By default, suppliers objects can be linked to all projects
 			if (!isset($this->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS)) {

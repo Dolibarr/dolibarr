@@ -29,6 +29,7 @@ global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/admin.lib.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
@@ -71,7 +72,7 @@ class NumberingModulesTest extends CommonClassTest
 		$conf->global->FACTURE_MERCURE_MASK_CREDIT = '{yyyy}-{0000}';
 		$conf->global->FACTURE_MERCURE_MASK_DEPOSIT = '{yyyy}-{0000}';
 		$conf->global->FACTURE_MERCURE_MASK_REPLACEMENT = '{yyyy}-{0000}';
-		$conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED = 0;
+		$conf->global->FAC_FORCE_DATE_VALIDATION = 0;		// We disable option "Force date on validation", so we can make test on old dates
 
 		$localobject = new Facture($db);
 		$localobject->initAsSpecimen();
@@ -87,16 +88,26 @@ class NumberingModulesTest extends CommonClassTest
 		$result3 = $localobject->validate($user, $result);		// create invoice by forcing ref
 		print __METHOD__." result3=".$result."\n";
 		$this->assertEquals(1, $result3, 'Test validation of invoice with forced ref is ok');	// counter must start to 1
+
+		// Force enable of BlockedLog (not possible from application, but required to allow the test with sample data))
+		activateModule('modBlockedLog', 1, 1);
+
 		$result = $localobject->is_erasable();
 		print __METHOD__." is_erasable=".$result."\n";
-		$this->assertGreaterThanOrEqual(1, $result, 'Test for is_erasable, 1st invoice');						    // Can be deleted
+		$this->assertEquals(-7, $result, 'Test for is_erasable, 1st invoice without other invoice');			    // Can be deleted
+
+		// Disable module BlockedLog (not possible from application, but required to allow the test with sample data))
+		unActivateModule('modBlockedLog');
+
+		$result = $localobject->is_erasable();
+		print __METHOD__." is_erasable=".$result."\n";
+		$this->assertGreaterThanOrEqual(1, $result, 'Test for is_erasable, 1st invoice without other invoice');	    // Can be deleted
 
 		// We emulate print on invoice 3 times
 		$localobject->pos_print_counter = 3;
 		$result = $localobject->is_erasable();
 		print __METHOD__." is_erasable=".$result."\n";
-		$this->assertGreaterThanOrEqual(-6, $result, 'Test for is_erasable, 1st invoice already printed');						    // Can be deleted
-
+		$this->assertGreaterThanOrEqual(-6, $result, 'Test for is_erasable, 1st invoice already printed');			// Can be deleted
 
 		$localobject2 = new Facture($db);
 		$localobject2->initAsSpecimen();
@@ -220,6 +231,7 @@ class NumberingModulesTest extends CommonClassTest
 		$result = $numbering->getNextValue($mysoc, $localobject2);
 		$result2 = $localobject2->create($user, 1);
 		$result3 = $localobject2->validate($user, $result);
+
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('0125-0002', $result, 'Test for {mm}{yy}-{0000@1} 2nd invoice');			// counter must be now 2
 		$result = $localobject2->is_erasable();
@@ -227,7 +239,7 @@ class NumberingModulesTest extends CommonClassTest
 		$this->assertGreaterThanOrEqual(1, $result);						// Can be deleted
 		$result = $localobject->is_erasable();
 		print __METHOD__." is_erasable=".$result."\n";
-		$this->assertLessThanOrEqual(0, $result);						// Case 1 can not be deleted (because there is an invoice 2)
+		$this->assertLessThanOrEqual(0, $result, 'Test that invoice '.$localobject->ref.' is not erasable failed');						// Invoice 1 can not be deleted (because there is an invoice 2)
 
 		$localobject3 = new Facture($db);
 		$localobject3->initAsSpecimen();
@@ -609,11 +621,11 @@ class NumberingModulesTest extends CommonClassTest
 		$localobject->initAsSpecimen();
 		$localobject->fetch_thirdparty();
 
-		$localobject->date_creation = dol_mktime(12, 0, 0, 1, 1, 1980);	// we use year 1915 to be sure to not have existing invoice for this year (useful only if numbering is {0000@1}
+		$localobject->date_creation = dol_mktime(12, 0, 0, 1, 1, 1980);	// we use year 1980 to be sure to not have existing invoice for this year (useful only if numbering is {0000@1}
 		$numbering = new mod_expedition_safor();
 		$result = $numbering->getNextValue($mysoc, $localobject);
 
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('SH8001-0003', $result);	// counter must start to 1
+		$this->assertEquals('SH8001-0003', $result);	// SH8001-0003 is valid with dataset demo
 	}
 }

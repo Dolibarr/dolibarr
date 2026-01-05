@@ -15,7 +15,7 @@
  * Copyright (C) 2013       Cedric Gross            <c.gross@kreiz-it.fr>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2016-2025  Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2018-2025  Alexandre Spangaro      <alexandre@inovea-conseil.com>
+ * Copyright (C) 2018-2026  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2022       Sylvain Legrand         <contact@infras.fr>
  * Copyright (C) 2022-2023	Solution Libre SAS		<contact@solution-libre.fr>
@@ -2232,7 +2232,7 @@ class Facture extends CommonInvoice
 		$sql .= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
 		$sql .= ', c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_doc';
 		$sql .= ', f.fk_incoterms, f.location_incoterms';
-		$sql .= ', f.module_source, f.pos_source, f.pos_print_counter';
+		$sql .= ', f.module_source, f.pos_source, f.pos_print_counter, f.email_sent_counter';
 		$sql .= ", i.libelle as label_incoterms";
 		$sql .= ", f.retained_warranty as retained_warranty, f.retained_warranty_date_limit as retained_warranty_date_limit, f.retained_warranty_fk_cond_reglement as retained_warranty_fk_cond_reglement";
 		$sql .= ", f.payment_reference, f.dispute_status";
@@ -2361,6 +2361,7 @@ class Facture extends CommonInvoice
 				$this->module_source = $obj->module_source;
 				$this->pos_source = $obj->pos_source;
 				$this->pos_print_counter = $obj->pos_print_counter;
+				$this->email_sent_counter = $obj->email_sent_counter;
 
 				// Multicurrency
 				$this->fk_multicurrency 		= $obj->fk_multicurrency;
@@ -2585,7 +2586,7 @@ class Facture extends CommonInvoice
 				$line->fk_warehouse = $objp->fk_warehouse;
 
 				// Accountancy
-				$line->fk_accounting_account = $objp->fk_code_ventilation;
+				$line->fk_code_ventilation = $objp->fk_code_ventilation;
 
 				// Multicurrency
 				$line->fk_multicurrency = $objp->fk_multicurrency;
@@ -6443,6 +6444,7 @@ class Facture extends CommonInvoice
 							$actioncomm->userownerid = $user->id; // Owner of action
 							// Fields when action is an email (content should be added into note)
 							$actioncomm->email_msgid = $cMailFile->msgid;
+							$actioncomm->email_subject = $sendTopic;
 							$actioncomm->email_from = $from;
 							$actioncomm->email_sender = '';
 							$actioncomm->email_to = $to;
