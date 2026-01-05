@@ -59,6 +59,8 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
+		global $mysoc;
+
 		if (!isModEnabled('blockedlog')) {
 			return 0; // Module not active, we do nothing
 		}
@@ -88,6 +90,15 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			return 0;
 		}
 
+		if ($action === 'PAYMENT_CUSTOMER_CREATE' && $object->element == 'payment') {
+			if (isALNERunningVersion() && $mysoc->country_code == 'FR') {
+				if (!in_array($object->paiementcode, array('LIQ', 'CB', 'CHQ'))) {
+					$this->errors[] = 'The payment mode '.$object->paiementcode.' is not available in this version.';
+					return -1;
+				}
+			}
+		}
+
 		// Event/record is qualified
 		$qualified = 0;
 		$amounts_taxexcl = null;
@@ -96,7 +107,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			|| $action === 'BILL_SUPPLIER_VALIDATE' || (($action === 'BILL_SUPPLIER_DELETE' || $action === 'BILL_SUPPLIER_SENTBYMAIL') && ($object->statut != 0 || $object->status != 0))
 			|| $action === 'MEMBER_SUBSCRIPTION_CREATE' || $action === 'MEMBER_SUBSCRIPTION_MODIFY' || $action === 'MEMBER_SUBSCRIPTION_DELETE'
 			|| $action === 'DON_VALIDATE' || (($action === 'DON_MODIFY' || $action === 'DON_DELETE') && ($object->statut != 0 || $object->status != 0))
-			|| $action === 'CASHCONTROL_VALIDATE'
+			|| $action === 'CASHCONTROL_CLOSE'
 			|| (in_array($object->element, array('facture', 'supplier_invoice')) && $action === 'DOC_PREVIEW' && ($object->statut != 0 || $object->status != 0 || $object->module_source != ''))
 			|| (in_array($object->element, array('facture', 'supplier_invoice')) && $action === 'DOC_DOWNLOAD' && ($object->statut != 0 || $object->status != 0 || $object->module_source != ''))
 			|| (getDolGlobalString('BLOCKEDLOG_ADD_ACTIONS_SUPPORTED') && in_array($action, explode(',', getDolGlobalString('BLOCKEDLOG_ADD_ACTIONS_SUPPORTED'))))
@@ -108,7 +119,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 				'DON_VALIDATE', 'DON_MODIFY', 'DON_DELETE'))) {
 				/** @var Don|Subscription $object */
 				$amounts = (float) $object->amount;
-			} elseif ($action == 'CASHCONTROL_VALIDATE') {
+			} elseif ($action == 'CASHCONTROL_CLOSE') {
 				/** @var CashControl $object */
 				$amounts = (float) $object->cash + (float) $object->cheque + (float) $object->card;
 			} else {

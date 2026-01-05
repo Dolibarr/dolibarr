@@ -64922,7 +64922,7 @@ INSERT INTO `llx_const` VALUES
 (10436,'ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT',1,'-1','chaine',0,'','2023-01-24 11:09:30'),
 (10437,'ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT',1,'-1','chaine',0,'','2023-01-24 11:09:30'),
 (10615,'MAIN_ALLOW_SVG_FILES_AS_IMAGES',1,'1','chaine',1,'','2023-01-25 16:12:52'),
-(10618,'MAIN_HOME',1,'__(NoteSomeFeaturesAreDisabled)__<br />\r\n__(SomeTranslationAreUncomplete)__','chaine',0,'','2023-01-30 18:23:00'),
+(10618,'MAIN_HOME',1,'<span style=\"font-size:11px;\">__(NoteSomeFeaturesAreDisabled)__</span>','chaine',0,'','2023-01-30 18:23:00'),
 (11246,'MEMBER_ENABLE_PUBLIC',1,'1','chaine',0,'','2023-02-09 13:31:03'),
 (11247,'MEMBER_NEWFORM_AMOUNT',1,'20','chaine',0,'','2023-02-09 13:31:03'),
 (11248,'MEMBER_MIN_AMOUNT',1,'15','chaine',0,'','2023-02-09 13:31:03'),
