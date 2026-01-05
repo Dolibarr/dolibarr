@@ -126,11 +126,11 @@ if (!function_exists('str_contains')) {
  * Return the full path of the directory where a module (or an object of a module) stores its files.
  * Path may depends on the entity if a multicompany module is enabled.
  *
- * @param 	CommonObject|BlockedLog	$object 	Dolibarr common object.
- * @param 	string 					$module 	Override object element, for example to use 'mycompany' instead of 'societe'
- * @param	int						$forobject	Return the more complete path for the given object instead of for the module only.
- * @param	string					$mode		'output' (full main dir) or 'outputrel' (relative dir) or 'temp' (full dir for temporary files) or 'version' (full dir for archived files)
- * @return 	string|null							The path of the relative directory of the module, ending with /
+ * @param 	CommonObject|BlockedLog|null	$object 	Dolibarr common object.
+ * @param 	string 							$module 	Override object element, for example to use 'mycompany' instead of 'societe'
+ * @param	int								$forobject	Return the more complete path for the given object instead of for the module only.
+ * @param	string							$mode		'output' (full main dir) or 'outputrel' (relative dir) or 'temp' (full dir for temporary files) or 'version' (full dir for archived files)
+ * @return 	string|null									The path of the relative directory of the module, ending with /
  * @since Dolibarr V18
  */
 function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'output')
@@ -324,6 +324,17 @@ function getDolEntity()
 {
 	global $conf;
 	return (int) $conf->entity;
+}
+
+/**
+ * Return the current entity
+ *
+ * @return 	int							Value returned
+ */
+function getDolDBType()
+{
+	global $conf;
+	return $conf->db->type;
 }
 
 /**
@@ -12011,7 +12022,7 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 
 		// Set $dolibarr_main_restrict_eval_methods_array
 		if (!isset($dolibarr_main_restrict_eval_methods)) {
-			$dolibarr_main_restrict_eval_methods = 'getDolGlobalString, getDolGlobalInt, getDolCurrency, fetchNoCompute, hasRight, isAdmin, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, preg_match';
+			$dolibarr_main_restrict_eval_methods = 'getDolGlobalString, getDolGlobalInt, getDolCurrency, getDolEntity, getDolDBType, fetchNoCompute, hasRight, isAdmin, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, preg_match';
 		}
 		//print '$dolibarr_main_restrict_eval_methods = '.$dolibarr_main_restrict_eval_methods."\n";
 		$dolibarr_main_restrict_eval_methods_array = explode(',', str_replace(" ", "", $dolibarr_main_restrict_eval_methods));
@@ -13896,7 +13907,7 @@ function getDictionaryValue($tablename, $field, $id, $checkentity = false, $rowi
  *	Return true if the color is light
  *
  *  @param	string	$stringcolor		String with hex (FFFFFF) or comma RGB ('255,255,255')
- *  @return	int<-1,1>					-1 : Error with argument passed |0 : color is dark | 1 : color is light
+ *  @return	int<-1,1>					-1 : Error with argument passed | 0 : color is dark | 1 : color is light
  */
 function colorIsLight($stringcolor)
 {
@@ -13935,8 +13946,6 @@ function colorIsLight($stringcolor)
  */
 function isVisibleToUserType($type_user, &$menuentry, &$listofmodulesforexternal)
 {
-	global $conf;
-
 	//print 'type_user='.$type_user.' module='.$menuentry['module'].' enabled='.$menuentry['enabled'].' perms='.$menuentry['perms'];
 	//print 'ok='.in_array($menuentry['module'], $listofmodulesforexternal);
 	if (empty($menuentry['enabled'])) {

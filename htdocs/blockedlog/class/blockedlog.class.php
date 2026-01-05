@@ -295,8 +295,10 @@ class BlockedLog
 				$sep++;
 				$this->trackedevents['separator_'.$sep] = array('id' => 'separator_'.$sep, 'label' => '----------', 'labelhtml' => '<span class="opacitymedium">-----   '.$langs->trans("CashControl").'</span>', 'disabled' => 1);
 			}
-
-			$this->trackedevents['CASHCONTROL_VALIDATE'] = array('id' => 'CASHCONTROL_VALIDATE', 'label' => 'logCASHCONTROL_VALIDATE', 'labelhtml' => img_picto('', 'pos', 'class="pictofixedwidth").').$langs->trans('logCASHCONTROL_VALIDATE'));
+			if (getDolGlobalString('BLOCKEDLOG_ADD_OLD_CASHCONTROL_VALIDATE')) {
+				$this->trackedevents['CASHCONTROL_VALIDATE'] = array('id' => 'CASHCONTROL_VALIDATE', 'label' => 'logCASHCONTROL_VALIDATE', 'labelhtml' => img_picto('', 'pos', 'class="pictofixedwidth").').$langs->trans('logCASHCONTROL_VALIDATE'));
+			}
+			$this->trackedevents['CASHCONTROL_CLOSE'] = array('id' => 'CASHCONTROL_CLOSE', 'label' => 'logCASHCONTROL_CLOSE', 'labelhtml' => img_picto('', 'pos', 'class="pictofixedwidth").').$langs->trans('logCASHCONTROL_CLOSE'));
 		}
 
 		// Add more action to track from a conf variable. For the case we want to track other actions into the unalterable log.
@@ -597,7 +599,10 @@ class BlockedLog
 				'name', 'lastname', 'firstname', 'region', 'region_id', 'region_code', 'state', 'state_id', 'state_code', 'country', 'country_id', 'country_code',
 				'total_ht', 'total_tva', 'total_ttc', 'total_localtax1', 'total_localtax2',
 				'barcode_type', 'barcode_type_code', 'barcode_type_label', 'barcode_type_coder', 'mode_reglement_id', 'cond_reglement_id', 'mode_reglement', 'cond_reglement', 'shipping_method_id',
-				'fk_incoterms', 'label_incoterms', 'location_incoterms', 'lines'));
+				'extraparams', 'fk_incoterms', 'fk_user_creat', 'fk_user_valid', 'label_incoterms', 'location_incoterms', 'lines', 'nb', 'tms', 'comments', 'array_options', 'warnings',
+				'opening', 'status', 'date_valid'
+				)
+			);
 		}
 
 		// For customer payment and supplier payment, the thirdparty can be added in payment detail
@@ -642,7 +647,7 @@ class BlockedLog
 		}
 
 		// Add my company info
-		if (!empty($mysoc)) {
+		if (!empty($mysoc) && !in_array($object->element, array('cashcontrol'))) {
 			$this->object_data->mycompany = new stdClass();
 
 			foreach ($mysoc as $key => $value) {
@@ -896,10 +901,10 @@ class BlockedLog
 					if (property_exists($tmpobject, 'module_source')) {
 						if (is_null($originofpayment)) {
 							$originofpayment = $tmpobject->module_source;
-						} elseif ($originofpayment != $invoice->module_source) {
+						} elseif ($originofpayment != $tmpobject->module_source) {
 							$originofpayment = 'mix';	// the payment is on several invoices with different origins
 						} else {
-							$originofpayment = (string) $invoice->module_source;
+							$originofpayment = (string) $tmpobject->module_source;
 						}
 					}
 

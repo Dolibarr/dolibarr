@@ -391,7 +391,7 @@ span.massactionselect, input.inputsearch_dropdownselectedfields {
 }
 
 .divadvancedsearchfieldcompinput,
-div.tabBar input, div.tabBar input.flat, div.tabBar textarea, div.tabBar textarea.flat, div.tabBar form.flat select, div.tabBar select, div.tabBar select.flat, div.tabBar .dataTables_length label select
+div.tabBar input:not(.pageplusone), div.tabBar input.flat:not(.pageplusone), div.tabBar textarea, div.tabBar textarea.flat, div.tabBar form.flat select, div.tabBar select, div.tabBar select.flat, div.tabBar .dataTables_length label select
 {
 	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>: solid 1px var(--inputbordercolor);
 	<?php if (getDolGlobalString('THEME_ADD_BACKGROUND_ON_INPUT')) { ?>
@@ -448,14 +448,15 @@ input {
 .liste_titre input {
 	line-height: 1.3em;
 	padding: 3px;
-	padding-left: 3px;
+	padding-left: 4px;
 }
 .tableforfield input {
-	padding-left: 2px;
+	padding-left: 4px;
 }
 .refidno input {
 	margin-top: 0 !important;
 	padding: 0;
+	padding-left: 6px;
 }
 .refidno .button.smallpaddingimp {
 	padding: 3px !important;
@@ -806,8 +807,9 @@ select:invalid, select.--error {
 }
 input:disabled, textarea:disabled, select[disabled='disabled']
 {
-	background: var(--inputbackgroundcolordisabled);
-	color: var(--inputcolordisabled);
+	/* background: var(--inputbackgroundcolordisabled); */
+	/* color: var(--inputcolordisabled); */
+	opacity: 0.5;
 }
 
 input.liste_titre {
@@ -3511,9 +3513,10 @@ if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
 	border-radius: 5px;
 }
 .login_table input#username, .login_table input#password, .login_table input#securitycode {
-	border: none;
+	/* border: none; */
 	border-bottom: solid 1px rgba(180,180,180,.4);
-	padding: 5px;
+	padding: 8px;
+	padding-left: 12px;
 	margin-left: 5px;
 	margin-top: 5px;
 	margin-bottom: 5px;
@@ -3545,14 +3548,14 @@ if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
 }
 .login_table #tdpasswordlogin #togglepassword {
 	position: absolute;
-	top: 0.7em;
+	top: 0.8em;
 	right: 11px;
 	background: none;
 	border: none;
 	opacity: 0.3;
 }
 .login_table #tdpasswordlogin #togglepassword .fa {
-	padding: 0 3px;
+	padding: 0 7px;
 	width: auto;
 }
 #togglepassword .fa::before {
@@ -3889,7 +3892,7 @@ a.vsmenu:link, a.vsmenu:visited {
 	white-space: nowrap;
 }
 span.vsmenudisabledmargin, font.vsmenudisabledmargin { margin: 1px 1px 1px 6px; }
-li a.vsmenudisabled, li.vsmenudisabled { color: #aaa !important; }
+li a.vsmenudisabled, li.vsmenudisabled { color: #aaa !important; cursor: default !important; }
 
 a.help:link, a.help:visited, a.help:hover, a.help:active, span.help {
 	text-align: <?php print $left; ?>; color: #aaa; text-decoration: none;
@@ -7504,6 +7507,12 @@ input.select2-input {
 
 	box-shadow: none !important;
 }
+.liste_titre .select2-container--default .select2-selection--single:not(.selectwidget),
+.liste_titre .select2-container--default .select2-selection--multiple {
+	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>: solid 1px var(--colorbacktitle1);
+}
+
+
 .select2-container--default .select2-selection--single.selectwidget,
 .select2-container--default .select2-selection--single.selectwidget:hover,
 .select2-container--default .select2-selection--single.selectwidget:focus {

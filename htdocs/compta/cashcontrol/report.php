@@ -38,17 +38,8 @@ if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1'); // Disable browser notification
 }
 
-$optioncss = "print";
-
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/cashcontrol/class/cashcontrol.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/cashcontrol/class/cashcontrol.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -57,8 +48,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/compta/cashcontrol/class/cashcontrol.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/cashcontrol/class/cashcontrol.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 
-$langs->loadLangs(array("bills", "banks", "cashdesk"));
+$langs->loadLangs(array("bills", "banks", "cashdesk", "blockedlog"));
 
 $id = GETPOSTINT('id');
 $summaryonly = GETPOSTINT('summaryonly');		// May be used for ticket Z
@@ -111,64 +108,52 @@ llxHeader('', $title, '', '', 0, 0, array(), array(), $param);
 
 print '<!-- Begin div id-container --><div id="id-container" class="id-container center">';
 
-/*$sql = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro as conciliated, b.num_releve, b.num_chq,";
-$sql.= " b.fk_account, b.fk_type,";
-$sql.= " ba.rowid as bankid, ba.ref as bankref,";
-$sql.= " bu.url_id,";
-$sql.= " f.module_source, f.ref as ref";
-$sql.= " FROM ";
-//if ($bid) $sql.= MAIN_DB_PREFIX."category_bankline as l,";
-$sql.= " ".MAIN_DB_PREFIX."bank_account as ba,";
-$sql.= " ".MAIN_DB_PREFIX."bank as b";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu ON bu.fk_bank = b.rowid AND type = 'payment'";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON bu.url_id = f.rowid";
-$sql.= " WHERE b.fk_account = ba.rowid";
-// Define filter on invoice
-$sql.= " AND f.module_source = '".$db->escape($object->posmodule)."'";
-$sql.= " AND f.pos_source = '".$db->escape($object->posnumber)."'";
-$sql.= " AND f.entity IN (".getEntity('facture').")";
-// Define filter on data
-if ($syear && ! $smonth)              $sql.= " AND dateo BETWEEN '".$db->idate(dol_get_first_day($syear, 1))."' AND '".$db->idate(dol_get_last_day($syear, 12))."'";
-elseif ($syear && $smonth && ! $sday) $sql.= " AND dateo BETWEEN '".$db->idate(dol_get_first_day($syear, $smonth))."' AND '".$db->idate(dol_get_last_day($syear, $smonth))."'";
-elseif ($syear && $smonth && $sday)   $sql.= " AND dateo BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $smonth, $sday, $syear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $smonth, $sday, $syear))."'";
-else dol_print_error(null, 'Year not defined');
-// Define filter on bank account
-$sql.=" AND (b.fk_account = ".((int) $conf->global->CASHDESK_ID_BANKACCOUNT_CASH);
-$sql.=" OR b.fk_account = ".((int) $conf->global->CASHDESK_ID_BANKACCOUNT_CB);
-$sql.=" OR b.fk_account = ".((int) $conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE);
-$sql.=")";
-*/
-$sql = "SELECT f.rowid as facid, f.ref, f.datef as datef, p.datep as datep, pf.amount as amount, b.fk_account as bankid, cp.code";
-$sql .= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."c_paiement as cp, ".MAIN_DB_PREFIX."bank as b";
-$sql .= " WHERE pf.fk_facture = f.rowid AND p.rowid = pf.fk_paiement AND cp.id = p.fk_paiement AND p.fk_bank = b.rowid";
-$sql .= " AND f.module_source = '".$db->escape($posmodule)."'";
-$sql .= " AND f.pos_source = '".$db->escape($terminalid)."'";
-//$sql .= " AND f.paye = 1";
-$sql .= " AND p.entity = ".$conf->entity; // Never share entities for features related to accountancy
-/*if ($key == 'cash')       $sql.=" AND cp.code = 'LIQ'";
-elseif ($key == 'cheque') $sql.=" AND cp.code = 'CHQ'";
-elseif ($key == 'card')   $sql.=" AND cp.code = 'CB'";
-else
-{
-	dol_print_error(null, 'Value for key = '.$key.' not supported');
-	exit;
-}*/
 if ($syear && !$smonth) {
-	$sql .= " AND datep BETWEEN '".$db->idate(dol_get_first_day($syear, 1))."' AND '".$db->idate(dol_get_last_day($syear, 12))."'";
+	$dates = dol_get_first_day($syear, 1); $datee = dol_get_last_day($syear, 12);
 } elseif ($syear && $smonth && !$sday) {
-	$sql .= " AND datep BETWEEN '".$db->idate(dol_get_first_day($syear, $smonth))."' AND '".$db->idate(dol_get_last_day($syear, $smonth))."'";
+	$dates = dol_get_first_day($syear, $smonth); $datee = dol_get_last_day($syear, $smonth);
 } elseif ($syear && $smonth && $sday) {
-	$sql .= " AND datep BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $smonth, $sday, $syear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $smonth, $sday, $syear))."'";
+	$dates = dol_mktime(0, 0, 0, $smonth, $sday, $syear); $datee = dol_mktime(23, 59, 59, $smonth, $sday, $syear);
 } else {
 	dol_print_error(null, 'Year not defined');
 }
+$datefilter = 'p.datep';
+$modulesourcefilter = 'f.module_source';
+$amountfield = 'pf.amount';
+$joinleft = 'LEFT ';
+if (isALNERunningVersion() && $mysoc->country_code == 'FR') {
+	$datefilter = 'bl.date_creation';	// By using this as a filter, it is like the LEFT JOIN is an INNER JOIN
+	$modulesourcefilter = 'bl.module_source';
+	$amountfield = 'bl.amounts';
+	$joinleft = '';
+}
+
+// NOTE: This request must use similar fields and filters to the one into cashcontrol_card to count and sum amount
+$sql = "SELECT p.rowid, p.datep as datep, cp.code,";
+$sql .= " f.rowid as facid, f.ref, f.datef as datef, ".$db->sanitize($amountfield)." as amount,";
+$sql .= " b.fk_account as bankid,";
+$sql .= " bl.signature";
+$sql .= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."facture as f,";
+$sql .= " ".MAIN_DB_PREFIX."paiement as p";
+//$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."blockedlog as bl ON bl.ref_object = p.ref AND bl.entity = ".((int) $conf->entity).",";
+$sql .= " ".$db->sanitize($joinleft)." JOIN ".MAIN_DB_PREFIX."blockedlog as bl ON bl.action = 'PAYMENT_CUSTOMER_CREATE'";
+$sql .= " AND bl.element = 'payment' AND bl.fk_object = p.rowid AND bl.entity = ".((int) $conf->entity);
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON p.fk_bank = b.rowid,";
+$sql .= " ".MAIN_DB_PREFIX."c_paiement as cp";
+$sql .= " WHERE pf.fk_facture = f.rowid AND p.rowid = pf.fk_paiement AND cp.id = p.fk_paiement";
+$sql .= " AND ".$db->sanitize($modulesourcefilter)." = '".$db->escape($posmodule)."'";
+$sql .= " AND f.pos_source = '".$db->escape($terminalid)."'";
+$sql .= " AND p.entity = ".((int) $conf->entity); // Never share entities for features related to accountancy
+$sql .= " AND ".$db->sanitize($datefilter)." BETWEEN '".$db->idate($dates)."' AND '".$db->idate($datee)."'";
+$sql .= " ORDER BY ".$db->sanitize($datefilter)." ASC, rowid ASC"; // Required so later we can use the parameter $previoushash of checkSignature()
 
 $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	print "<!-- title of cash fence -->\n";
+	print "<!-- title of cash control -->\n";
+	print '<!-- We will use this request to find payments: '.dolPrintHTML($sql).' -->';
 	print '<center>';
 	print '<h2>';
 
@@ -190,7 +175,7 @@ if ($resql) {
 		$uservalid->fetch($userauthor);
 		print '<br>'.$langs->trans("Author").': '.$uservalid->getFullName($langs);
 	}
-	print '<br>'.$langs->trans("Period").': '.$object->year_close.($object->month_close ? '-'.$object->month_close : '').($object->day_close ? '-'.$object->day_close : '');
+	print '<br>'.$langs->trans("Period").': '.$object->year_close.($object->month_close ? '-'.sprintf("%02d", $object->month_close) : '').($object->day_close ? '-'.sprintf("%02d", $object->day_close) : '');
 	print '</center>';
 
 	$invoicetmp = new Facture($db);
@@ -213,7 +198,7 @@ if ($resql) {
 		print '<tr class="liste_titre">';
 		print_liste_field_titre($arrayfields['b.rowid']['label'], $_SERVER['PHP_SELF'], 'b.rowid', '', $param, '', $sortfield, $sortorder);
 		print_liste_field_titre($arrayfields['b.dateo']['label'], $_SERVER['PHP_SELF'], 'b.dateo', '', $param, '"', $sortfield, $sortorder, 'center ');
-		print_liste_field_titre($arrayfields['ba.ref']['label'], $_SERVER['PHP_SELF'], 'ba.ref', '', $param, '', $sortfield, $sortorder, 'right ');
+		print_liste_field_titre($arrayfields['ba.ref']['label'], $_SERVER['PHP_SELF'], 'ba.ref', '', $param, '', $sortfield, $sortorder, '');
 		print_liste_field_titre($arrayfields['cp.code']['label'], $_SERVER['PHP_SELF'], 'cp.code', '', $param, '', $sortfield, $sortorder, 'right ');
 		print_liste_field_titre($arrayfields['b.debit']['label'], $_SERVER['PHP_SELF'], 'b.amount', '', $param, '', $sortfield, $sortorder, 'right ');
 		print_liste_field_titre($arrayfields['b.credit']['label'], $_SERVER['PHP_SELF'], 'b.amount', '', $param, '', $sortfield, $sortorder, 'right ');
@@ -319,15 +304,16 @@ if ($resql) {
 			print '<tr class="oddeven">';
 
 			// Ref
-			print '<td class="nowrap left">';
+			print '<td class="nowrap left smallheight">';
 			print $invoicetmp->getNomUrl(1);
+			print '<br><span class="small opacitymedium" title="'.$langs->trans("FingerprintInBlockedLog").': '.$objp->signature.'">'.dol_trunc($objp->signature, 16).'</span>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 
 			// Date ope
-			print '<td class="nowrap left">';
+			print '<td class="nowrap center">';
 			print '<span id="dateoperation_'.$objp->facid.'">'.dol_print_date($db->jdate($objp->datep), "day")."</span>";
 			print "</td>\n";
 			if (!$i) {
@@ -335,7 +321,7 @@ if ($resql) {
 			}
 
 			// Bank account
-			print '<td class="nowrap right">';
+			print '<td class="nowrap left">';
 			print $bankaccount->getNomUrl(1);
 			print "</td>\n";
 			if (!$i) {
@@ -406,8 +392,8 @@ if ($resql) {
 		print '<div class="inline-block amount width100"></div>';
 		print '<div class="inline-block amount width100">'.price($cash).'</div>';
 	}
-	if (!$summaryonly && $object->status == $object::STATUS_VALIDATED && price2num($newcash) != price2num($object->cash)) {
-		print ' <div class="inline-block amountremaintopay fontsizeunset small"><> '.$langs->trans("Declared").': '.price($object->cash).'</div>';
+	if (!$summaryonly && $object->status == $object::STATUS_CLOSED && price2num($newcash) != price2num((float) $object->cash_declared)) {
+		print ' <div class="inline-block amountremaintopay fontsizeunset small"><> '.$langs->trans("Declared").': '.price($object->cash_declared).'</div>';
 	}
 	print "<br>";
 
@@ -415,8 +401,8 @@ if ($resql) {
 	print $langs->trans("PaymentTypeCHQ").(!empty($transactionspertype['CHQ']) ? ' ('.$transactionspertype['CHQ'].' '.$langs->trans("Articles").')' : '').' : ';
 	print '<div class="inline-block amount width100"></div>';
 	print '<div class="inline-block amount width100">'.price($cheque).'</div>';
-	if (!$summaryonly && $object->status == $object::STATUS_VALIDATED && price2num($cheque) != price2num($object->cheque)) {
-		print ' <div class="inline-block amountremaintopay fontsizeunset small"><> '.$langs->trans("Declared").' : '.price($object->cheque).'</div>';
+	if (!$summaryonly && $object->status == $object::STATUS_CLOSED && price2num($cheque) != price2num((float) $object->cheque_declared)) {
+		print ' <div class="inline-block amountremaintopay fontsizeunset small"><> '.$langs->trans("Declared").' : '.price($object->cheque_declared).'</div>';
 	}
 	print "<br>";
 
@@ -424,8 +410,8 @@ if ($resql) {
 	print $langs->trans("PaymentTypeCB").(!empty($transactionspertype['CB']) ? ' ('.$transactionspertype['CB'].' '.$langs->trans("Articles").')' : '').' : ';
 	print '<div class="inline-block amount width100"></div>';
 	print '<div class="inline-block amount width100">'.price($bank).'</div>';
-	if (!$summaryonly && $object->status == $object::STATUS_VALIDATED && price2num($bank) != price2num($object->card)) {
-		print ' <div class="inline-block amountremaintopay fontsizeunset small"><> '.$langs->trans("Declared").': '.price($object->card).'</div>';
+	if (!$summaryonly && $object->status == $object::STATUS_CLOSED && price2num($bank) != price2num((float) $object->card_declared)) {
+		print ' <div class="inline-block amountremaintopay fontsizeunset small"><> '.$langs->trans("Declared").': '.price($object->card_declared).'</div>';
 	}
 	print "<br>";
 
