@@ -253,7 +253,6 @@ Unlettering=no reconciliar
 UnletteringAuto=Auto no reconciliado
 UnletteringManual=manual no reconciliado
 ConfirmMassUnletteringQuestion=¿Está seguro de que desea anular la conciliación de los registros seleccionados %s?
-ConfirmMassDeleteBookkeepingWriting=Confirmación de eliminación masiva
 SomeMandatoryStepsOfSetupWereNotDone=No se realizaron algunos pasos obligatorios de configuración, complételos
 ErrorInvoiceContainsLinesNotYetBounded=Intenta registrar algunas líneas de la factura <strong> %s </strong> , pero algunas otras líneas aún no están vinculadas a la cuenta contable. Se rechaza la contabilización de todas las líneas de factura para esta factura.
 ErrorInvoiceContainsLinesNotYetBoundedShort=Algunas líneas de la factura no están vinculadas a la cuenta contable.

@@ -133,6 +133,7 @@ function formatObject($objtoshow, $prefix)
 		'email_sent_counter' => "NumberOfEmailsSent",
 		'managers' => 'Managers',
 		'type_code' => 'PaymentMode',
+		'date_creation' => 'DateCreation',
 		'datec' => 'DateCreation',
 		'dateh' => 'DateSubscription',
 		'datef' => 'DateEndSubscription',
@@ -161,9 +162,14 @@ function formatObject($objtoshow, $prefix)
 		'nom' => 'Name',
 		'name' => 'Name',
 		'email' => 'Email',
+		'address' => 'Address',
+		'town' => 'Town',
 		'state_code' => 'State',
+		'fk_pays' => 'Country',
+		'fk_typent' => 'CompanyType',
 		'revenuestamp' => 'RevenueStamp',
 		'code_client' => 'CustomerCode',
+		'code_fournisseur' => 'SupplierCode',
 		'capital' => 'Capital',
 		'localtax1_assuj' => 'UseLocalTax1',
 		'localtax2_assuj' => 'UseLocalTax2',
@@ -175,6 +181,14 @@ function formatObject($objtoshow, $prefix)
 		'type' => 'InvoiceType',
 		'info_bits' => 'TVA NPR or NOT',
 		'special_code' => 'Special line (WEEE line, option, id of module...)',
+		'status' => 'Status',
+		'cash' => 'PaymentTypeLIQ',
+		'cash_lifetime' => $langs->transnoentities('LifetimeAmount', $langs->transnoentities('PaymentTypeLIQ')),
+		'card' => 'PaymentTypeCB',
+		'card_lifetime' => $langs->transnoentities('LifetimeAmount', $langs->transnoentities('PaymentTypeCB')),
+		'cheque' => 'PaymentTypeCHQ',
+		'cheque_lifetime' => $langs->transnoentities('LifetimeAmount', $langs->transnoentities('PaymentTypeCHQ')),
+		'lifetime_start' => 'LifetimeStartDate'
 	);
 
 	if (is_object($newobjtoshow) || is_array($newobjtoshow)) {
