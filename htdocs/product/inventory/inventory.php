@@ -89,9 +89,9 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 
-// Sort by warehouse/product or product/warehouse
-$sortfield .= ',' . ($sortfield == 'e.ref' ? 'p.ref' : 'e.ref');
-$sortorder .= ',' . $sortorder;
+// Sort by warehouse/product or product/warehouse, then by batch.
+$sortfield .= ',' . ($sortfield == 'e.ref' ? 'p.ref' : 'e.ref') . ',id.batch,id.rowid';
+$sortorder .= ',' . $sortorder.",ASC,ASC";
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
