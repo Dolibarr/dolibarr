@@ -1390,18 +1390,21 @@ if (getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
 if (! getDolGlobalString('TAKEPOS_HIDE_HISTORY')) {
 	$menus[$r++] = array('title' => '<span class="fa fa-history paddingrightonly"></span><div class="trunc">'.$langs->trans("History").'</div>', 'action' => 'History();');
 }
+// Add a non predefined product
 $menus[$r++] = array('title' => '<span class="fa fa-cube paddingrightonly"></span><div class="trunc">'.$langs->trans("FreeZone").'</div>', 'action' => 'FreeZone();');
+
+// BAR RESTAURANT specific menu "Print on kitchen/order printer"
+if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
+	if (getDolGlobalString('TAKEPOS_ORDER_PRINTERS')) {
+		$menus[$r++] = array('title' => '<span class="fa fa-blender-phone paddingrightonly"></span><div class="trunc">'.$langs->trans("SentOrderToKitchen").'</span>', 'action' => 'TakeposPrintingOrder();');
+	}
+}
+
+// Add a discount
 $menus[$r++] = array('title' => '<span class="fa fa-percent paddingrightonly"></span><div class="trunc">'.$langs->trans("InvoiceDiscountShort").'</div>', 'action' => 'Reduction();');
 
 if (!getDolGlobalString('TAKEPOS_NO_SPLIT_SALE')) {
 	$menus[$r++] = array('title' => '<span class="fas fa-cut paddingrightonly"></span><div class="trunc">'.$langs->trans("SplitSale").'</div>', 'action' => 'Split();');
-}
-
-// BAR RESTAURANT specific menu "Print on Order printer"
-if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
-	if (getDolGlobalString('TAKEPOS_ORDER_PRINTERS')) {
-		$menus[$r++] = array('title' => '<span class="fa fa-blender-phone paddingrightonly"></span><div class="trunc">'.$langs->trans("Order").'</span>', 'action' => 'TakeposPrintingOrder();');
-	}
 }
 
 // Last action that close the sell (payments)

@@ -281,12 +281,6 @@ class MenuManager
 							$showmenu = false;
 						}
 
-						$newlinelevel = ($val2['level'] + 1);
-						if ($newlinelevel > $lastlinelevel) {
-							print str_repeat(' ', $newlinelevel).'<ul class="ullevel'.$newlinelevel.'" xx>'."\n";
-						}
-						$lastlinelevel = ($val2['level'] + 1);
-
 						// If at least one parent is not enabled, we do not show any menu of all children
 						if ($val2['level'] > 0) {
 							$levelcursor = $val2['level'] - 1;
@@ -299,6 +293,12 @@ class MenuManager
 						}
 
 						if ($showmenu) {		// Visible (option to hide when not allowed is off or allowed)
+							$newlinelevel = ($val2['level'] + 1);
+							if ($newlinelevel > $lastlinelevel) {
+								print str_repeat(' ', $newlinelevel).'<ul class="ullevel'.$newlinelevel.'" xx>'."\n";
+							}
+							$lastlinelevel = ($val2['level'] + 1);
+
 							$substitarray = array('__LOGIN__' => $user->login, '__USER_ID__' => $user->id, '__USER_SUPERVISOR_ID__' => $user->fk_user);
 							$substitarray['__USERID__'] = $user->id; // For backward compatibility
 							$val2['url'] = make_substitutions($val2['url'], $substitarray); // Make also substitution of __(XXX)__ and __[XXX]__
