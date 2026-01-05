@@ -174,8 +174,8 @@ class BlockedLog
 	public $trackedevents = array();
 
 	/**
-	 * Array of tracked modules
-	 * @var array<string,string|mixed>
+	 * Array of tracked modules (key => label)
+	 * @var array<string,string>
 	 */
 	public $trackedmodules = array();
 
@@ -682,7 +682,7 @@ class BlockedLog
 		// Field specific to object
 		if ($this->element == 'facture') {
 			'@phan-var-force Facture $object';
-			$this->module_source = $object->module_source;
+			$this->module_source = (string) $object->module_source;
 
 			foreach ($object as $key => $value) {
 				if (in_array($key, $arrayoffieldstoexclude)) {
@@ -762,6 +762,13 @@ class BlockedLog
 			if (!empty($object->newref)) {
 				$this->object_data->ref = $object->newref;
 			}
+
+			// Information on email
+			$this->object_data->action_email_sent = array(
+				"email_from" => $object->context['email_from'],
+				"email_to" => $object->context['email_to'],
+				"email_msgid" => $object->context['email_msgid']
+			);
 		} elseif ($this->element == 'invoice_supplier') {
 			'@phan-var-force FactureFournisseur $object';
 			foreach ($object as $key => $value) {

@@ -129,14 +129,14 @@ $ssec = 0;
 if ($object->id > 0) {
 	// When object is know, we must define first the end date (stored in database with different components) and deduct the start date
 	if (empty($object->day_close) && !empty($object->month_close)) {
-		$dateend = dol_mktime($object->hour_close, $object->min_close, $object->sec_close, $object->month_close, $object->day_close, $object->year_close, 'gmt');
+		$dateend = dol_mktime((int) $object->hour_close, (int) $object->min_close, (int) $object->sec_close, $object->month_close, $object->day_close, $object->year_close, 'gmt');
 		$datestart = dol_time_plus_duree($dateend, -1, 'y', 0);
 	} elseif (empty($object->day_close) && empty($object->month_close)) {
-		$dateend = dol_mktime($object->hour_close, $object->min_close, $object->sec_close, 12, 31, $object->year_close, 'gmt');
-		$datestart = dol_mktime($object->hour_close, $object->min_close, $object->sec_close, 12, 1, $object->year_close, 'gmt');
+		$dateend = dol_mktime((int) $object->hour_close, (int) $object->min_close, (int) $object->sec_close, 12, 31, $object->year_close, 'gmt');
+		$datestart = dol_mktime((int) $object->hour_close, (int) $object->min_close, (int) $object->sec_close, 12, 1, $object->year_close, 'gmt');
 		$datestart = dol_time_plus_duree($datestart, -1, 'm', 0);
 	} else {
-		$dateend = dol_mktime($object->hour_close, $object->min_close, $object->sec_close, $object->month_close, $object->day_close, $object->year_close, 'gmt');
+		$dateend = dol_mktime((int) $object->hour_close, (int) $object->min_close, (int) $object->sec_close, $object->month_close, $object->day_close, $object->year_close, 'gmt');
 		$datestart = dol_time_plus_duree($dateend, -1, 'd', 0);
 	}
 	$datestart += 1;	// Add 1 second
