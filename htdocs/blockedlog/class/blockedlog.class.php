@@ -206,7 +206,7 @@ class BlockedLog
 
 		$sep = 0;
 
-		$this->trackedmodules = array('0' => 'None');
+		$this->trackedmodules['0'] = 'None';
 		if (isModEnabled('takepos')) {
 			$this->trackedmodules['takepos'] = 'TakePOS';
 		}

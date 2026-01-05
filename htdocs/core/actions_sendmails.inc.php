@@ -472,7 +472,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 
 								$db->query($sql);
 
-								$object->email_sent_counter = $object->email_sent_counter + 1;
+								$object->email_sent_counter += 1;
 							}
 
 							$result = $object->call_trigger($triggersendname, $user);  // @phan-suppress-current-line PhanPossiblyUndeclaredGlobalVariable

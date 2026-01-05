@@ -344,7 +344,7 @@ if ($action == "valid" && $permissiontoadd) {	// validate = close
 		$sql .= " AND ".$db->sanitize($modulesourcefilter)." = '".$db->escape($posmodule)."'";
 		$sql .= " AND f.pos_source = '".$db->escape($terminalid)."'";
 		$sql .= " AND p.entity = ".((int) $conf->entity); // Never share entities for features related to accountancy
-		$sql .= " AND ".$db->sanitize($datefilter)." <= '".$db->idate($datee)."'";
+		$sql .= " AND ".$db->sanitize($datefilter)." <= '".$db->idate((int) $datee)."'";
 		if ($key == 'cash') {
 			$sql .= " AND cp.code = 'LIQ'";
 		} elseif ($key == 'cheque') {
@@ -563,7 +563,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 			$sql .= " AND ".$db->sanitize($modulesourcefilter)." = '".$db->escape($posmodule)."'";
 			$sql .= " AND f.pos_source = '".$db->escape($terminalid)."'";
 			$sql .= " AND p.entity = ".((int) $conf->entity); // Never share entities for features related to accountancy
-			$sql .= " AND ".$db->sanitize($datefilter)." BETWEEN '".$db->idate($dates)."' AND '".$db->idate($datee)."'";
+			$sql .= " AND ".$db->sanitize($datefilter)." BETWEEN '".$db->idate((int) $dates)."' AND '".$db->idate((int) $datee)."'";
 			if ($key == 'cash') {
 				$sql .= " AND cp.code = 'LIQ'";
 			} elseif ($key == 'cheque') {
