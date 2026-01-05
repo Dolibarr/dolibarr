@@ -51,6 +51,8 @@ $langs->load("orders");
 $total = 0;
 $ilink = 0;
 foreach ($linkedObjectBlock as $key => $objectlink) {
+	/** @var CommandeFournisseur $objectlink */
+	'@phan-var-force CommandeFournisseur $objectlink';
 	$ilink++;
 
 	$trclass = 'oddeven';
@@ -60,7 +62,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	<tr class="<?php echo $trclass; ?>">
 		<td class="tdoverflowmax125" title="<?php echo dolPrintHTMLForAttribute($langs->trans("SupplierOrder")); ?>"><?php echo dolPrintHTML($langs->trans("SupplierOrder")); ?></td>
 		<td><?php print $objectlink->getNomUrl(1); ?></td>
-		<td class="left linkedcol-ref tdoverflowmax125"><?php echo $objectlink->ref_supplier; ?></td>
+		<td class="left linkedcol-ref tdoverflowmax125" title="<?php echo dolPrintHTMLForAttributeUrl($objectlink->ref_supplier); ?>"><?php echo dolPrintHTML($objectlink->ref_supplier); ?></td>
 		<td class="center"><?php echo dol_print_date($objectlink->date, 'day'); ?></td>
 		<td class="right"><?php
 		if ($user->hasRight("fournisseur", "commande", "lire")) {
