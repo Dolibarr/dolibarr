@@ -176,6 +176,7 @@ if (GETPOSTISSET('template')) {
 
 	if (!empty($selectedIds) && !empty($template) && is_array($selectedIds) ) {
 		$newsList = '';
+		$productList = '';
 		foreach ($selectedIds as $Id) {
 			if ($template == "news") {
 				$post = getNewsDetailsById($Id);
