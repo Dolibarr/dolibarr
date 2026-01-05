@@ -33,7 +33,7 @@
  */
 
 
-define('DOL_MINOR_VERSION', '0.0-beta');
+define('DOL_MINOR_VERSION', '0.0');
 
 if (!defined('DOL_APPLICATION_TITLE')) {
 	define('DOL_APPLICATION_TITLE', 'Dolibarr');

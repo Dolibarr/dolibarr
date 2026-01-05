@@ -82,6 +82,13 @@ class CashControl extends CommonObject
 	'cash' => array('type' => 'price', 'label' => 'Cash', 'enabled' => 1, 'visible' => 1, 'position' => 30, 'csslist' => 'amount'),
 	'cheque' => array('type' => 'price', 'label' => 'Cheque', 'enabled' => 1, 'visible' => 1, 'position' => 33, 'csslist' => 'amount'),
 	'card' => array('type' => 'price', 'label' => 'CreditCard', 'enabled' => 1, 'visible' => 1, 'position' => 36, 'csslist' => 'amount'),
+	'cash_declared' => array('type' => 'price', 'label' => 'CashDeclared', 'enabled' => 1, 'visible' => 1, 'position' => 40, 'csslist' => 'amount'),
+	'cheque_declared' => array('type' => 'price', 'label' => 'ChequeDeclared', 'enabled' => 1, 'visible' => 1, 'position' => 41, 'csslist' => 'amount'),
+	'card_declared' => array('type' => 'price', 'label' => 'CreditCardDeclared', 'enabled' => 1, 'visible' => 1, 'position' => 42, 'csslist' => 'amount'),
+	'cash_lifetime' => array('type' => 'price', 'label' => 'CashLifetime', 'enabled' => 1, 'visible' => 0, 'position' => 45, 'csslist' => 'amount'),
+	'cheque_lifetime' => array('type' => 'price', 'label' => 'ChequeLifetime', 'enabled' => 1, 'visible' => 0, 'position' => 46, 'csslist' => 'amount'),
+	'card_lifetime' => array('type' => 'price', 'label' => 'CreditCardLifetime', 'enabled' => 1, 'visible' => 0, 'position' => 47, 'csslist' => 'amount'),
+	'lifetime_start' => array('type' => 'datetime', 'label' => 'LifetimeStartDate', 'enabled' => 1, 'visible' => 0, 'position' => 48, 'csslist' => 'center'),
 	'year_close' => array('type' => 'integer', 'label' => 'Year', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 50, 'css' => 'center'),
 	'month_close' => array('type' => 'integer', 'label' => 'Month', 'enabled' => 1, 'visible' => 1, 'position' => 55, 'css' => 'center'),
 	'day_close' => array('type' => 'integer', 'label' => 'Day', 'enabled' => 1, 'visible' => 1, 'position' => 60, 'css' => 'center'),
@@ -158,19 +165,54 @@ class CashControl extends CommonObject
 	public $posnumber;
 
 	/**
-	 * @var float Cash amount
+	 * @var float 	Cash amount earned during period (calculated)
 	 */
 	public $cash;
 
 	/**
-	 * @var float cheque amount
+	 * @var float 	Cheque amount earned during period (calculated)
 	 */
 	public $cheque;
 
 	/**
-	 * @var float Card amountS
+	 * @var float 	Card amount earned during period (calculated)
 	 */
 	public $card;
+
+	/**
+	 * @var ?float 	Cash found/declared in account (is the
+	 */
+	public $cash_declared;
+
+	/**
+	 * @var ?float 	Cheque found/declared in account
+	 */
+	public $cheque_declared;
+
+	/**
+	 * @var ?float 	Card found/declared in account
+	 */
+	public $card_declared;
+
+	/**
+	 * @var ?float 	Lifetime cash earned
+	 */
+	public $cash_lifetime;
+
+	/**
+	 * @var ?float 	Lifetime cheque amount
+	 */
+	public $cheque_lifetime;
+
+	/**
+	 * @var ?float 	Lifetime card amountS
+	 */
+	public $card_lifetime;
+
+	/**
+	 * @var ?int 	Date when lifetime value start
+	 */
+	public $lifetime_start;
 
 	/**
 	 * @var int User ID create
@@ -190,7 +232,7 @@ class CashControl extends CommonObject
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
-	const STATUS_CLOSED = 1; // For the moment CLOSED = VALIDATED
+	const STATUS_CLOSED = 1; 		// For the moment CLOSED = VALIDATED
 
 
 	/**
@@ -301,7 +343,7 @@ class CashControl extends CommonObject
 	}
 
 	/**
-	 * Validate cash fence
+	 * Validate a cash register control
 	 *
 	 * @param 	User 		$user		User
 	 * @param 	int 		$notrigger	No trigger
@@ -309,7 +351,6 @@ class CashControl extends CommonObject
 	 */
 	public function valid(User $user, $notrigger = 0)
 	{
-		global $conf, $langs;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$error = 0;
@@ -324,7 +365,7 @@ class CashControl extends CommonObject
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."pos_cash_fence";
-		$sql .= " SET status = ".self::STATUS_VALIDATED.",";
+		$sql .= " SET status = ".((int) self::STATUS_VALIDATED).",";
 		$sql .= " date_valid='".$this->db->idate($now)."',";
 		$sql .= " fk_user_valid = ".((int) $user->id);
 		$sql .= " WHERE rowid=".((int) $this->id);
@@ -367,6 +408,73 @@ class CashControl extends CommonObject
 		}
 	}
 
+
+	/**
+	 * Close a cash register control
+	 *
+	 * @param 	User 		$user		User
+	 * @param 	int 		$notrigger	No trigger
+	 * @return 	int						Return integer <0 if KO, >0 if OK
+	 */
+	public function close(User $user, $notrigger = 0)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+		$error = 0;
+
+		// Protection
+		if ($this->status == self::STATUS_CLOSED) {
+			$this->error = get_class($this)."::valid action abandoned: already validated";
+			dol_syslog($this->error, LOG_WARNING);
+			return 0;
+		}
+
+		$now = dol_now();
+
+		// Update request
+		$sql = "UPDATE ".MAIN_DB_PREFIX."pos_cash_fence";
+		$sql .= " SET status = ".((int) self::STATUS_CLOSED).",";
+		$sql .= " date_valid = '".$this->db->idate($now)."',";
+		$sql .= " fk_user_valid = ".((int) $user->id);
+		$sql .= " WHERE rowid=".((int) $this->id);
+
+		$this->db->begin();
+
+		dol_syslog(get_class($this)."::close", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
+		}
+
+		if (!$error) {
+			$this->status = self::STATUS_CLOSED;
+			$this->date_valid = $now;
+			$this->fk_user_valid = $user->id;
+		}
+
+		if (!$error && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('CASHCONTROL_CLOSE', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
+		}
+
+		// Commit or rollback
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
+				dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+			}
+			$this->db->rollback();
+			return -1 * $error;
+		} else {
+			$this->db->commit();
+			return $this->id;
+		}
+	}
 
 	/**
 	 * Load object in memory from the database
