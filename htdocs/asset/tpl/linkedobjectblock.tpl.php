@@ -20,10 +20,20 @@
  */
 
 /**
- * @var ?Conf $conf
+ *  \file		htdocs/asset/tpl/linkedobjectblock.tpl.php
+ *  \ingroup	asset
+ *  \brief		Template to show objects linked to assets
+ */
+
+/**
+ * @var Translate $langs
+ * @var Conf $conf
  * @var User $user
  *
- * @var	int	$showImportButton
+ * @var CommonObject $object
+ * @var int $noMoreLinkedObjectBlockAfter
+ * @var int $showImportButton
+ * @var Propal[] $linkedObjectBlock
  */
 
 // Protection to avoid direct call of template
@@ -32,20 +42,8 @@ if (empty($conf) || !is_object($conf)) {
 	exit(1);
 }
 
+
 print "<!-- BEGIN PHP TEMPLATE commande/tpl/linkedobjectblock.tpl.php -->\n";
-
-global $user;
-global $noMoreLinkedObjectBlockAfter;
-
-$langs = $GLOBALS['langs'];
-$linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
-'@phan-var-force Translate $langs';
-'@phan-var-force Asset[] $linkedObjectBlock';
-/**
- * @var CommonObject $object
- * @var Asset[] $linkedObjectBlock
- * @var Translate $langs
- */
 
 // Load translation files required by the page
 $langs->load("assets");
@@ -70,7 +68,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	}
 	echo '</td>';
 	echo '<td class="linkedcol-name tdoverflowmax150" >'.$objectlink->getNomUrl(1).'</td>';
-	echo '<td class="linkedcol-ref center">'.$objectlink->label.'</td>';
+	echo '<td class="linkedcol-ref tdoverflowmax150" title="'.dolPrintHTMLForAttribute($objectlink->label).'">'.dolPrintHTML($objectlink->label).'</td>';
 	echo '<td class="linkedcol-date center">'.dol_print_date($objectlink->date_start, 'day').'</td>';
 	echo '<td class="linkedcol-amount right">';
 	if ($user->hasRight('asset', 'read')) {

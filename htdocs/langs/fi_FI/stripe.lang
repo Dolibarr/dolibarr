@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Stripe-moduulin asennus
-StripeDesc=Tarjoa asiakkaat online-sivulle maksu luotto- tai pankkikorttimaksuja varten <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external"> span>Raita</a>. Tätä voidaan käyttää sallimaan asiakkaat suorittaa tapausmaksuja tai tiettyyn Dolibarr-objektiin liittyviä maksuja (lasku, tilaus jne.)
+StripeDesc=Verkkomaksut <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external">Stripellä</a>. Anna asiakkaillesi mahdollisuus maksaa verkossa luotto- tai pankkikortilla. Maksuja voidaan tehdä kertamaksuna tai tiettyyn Dolibarr-kohteeseen liittyen (esim. lasku tai tilaus).
 StripeOrCBDoPayment=Maksa luottokortilla tai Stripellä
 FollowingUrlAreAvailableToMakePayments=Seuraavat URL-osoitteet ovat käytettävissä tarjota sivu asiakas tehdä maksua Dolibarr esineitä
 PaymentForm=Maksulomake
@@ -12,7 +12,8 @@ YourEMail=Sähköposti maksupyyntö vahvistus
 STRIPE_PAYONLINE_SENDEMAIL=Sähköposti-ilmoitus maksu yrityksen jälkeen (onnistui tai epäonnistui)
 Creditor=Velkoja
 PaymentCode=Maksu-koodi
-StripeAutoRecordPayout=Ota käyttöön pankkisiirron automaattinen tallennus (kun Stripe suorittaa maksua ja kutsuu webhook IPN -maksua.luo/payout.paid)
+StripeAutoRecordPayout=Enable the auto recording of Stripe payouts
+StripeAutoRecordPayout2=When Stripe is doing a payout to transfer your earnings to your bank, and is calling the webhook IPN %s
 StripeDoPayment=Maksa Stripellä
 YouWillBeRedirectedOnStripe=Sinut ohjataan suojatulle Stripe-sivulle syöttämään luottokorttitietosi
 Continue=Seuraava

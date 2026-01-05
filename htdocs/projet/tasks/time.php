@@ -442,7 +442,9 @@ if ($action == 'confirm_generateinvoice' && $user->hasRight('facture', 'creer'))
 		$fuser = new User($db);
 		$remiseproject = price2num(GETPOST('remiseprojet', 'alphanohtml'));
 		$condidproject = GETPOSTINT('condidproject');
+
 		$db->begin();
+
 		$idprod = GETPOSTINT('productid');
 		$generateinvoicemode = GETPOST('generateinvoicemode', 'alphanohtml');
 		$invoiceToUse = GETPOSTINT('invoiceid');
@@ -573,7 +575,7 @@ if ($action == 'confirm_generateinvoice' && $user->hasRight('facture', 'creer'))
 						}
 
 						// Add lines
-						$lineid = $tmpinvoice->addline($langs->trans("TimeSpentForInvoice", $username) . ' : ' . $qtyhourtext, $pu_htline, round($qtyhour / $prodDurationHours, 2), $txtvaline, $localtax1line, $localtax2line, ($idprodline > 0 ? $idprodline : 0), (float) $remiseproject);
+						$lineid = $tmpinvoice->addline($langs->trans("TimeSpentForInvoice").' - '.$username . ' : ' . $qtyhourtext, $pu_htline, round($qtyhour / $prodDurationHours, 2), $txtvaline, $localtax1line, $localtax2line, ($idprodline > 0 ? $idprodline : 0), (float) $remiseproject);
 						if ($lineid < 0) {
 							$error++;
 							setEventMessages(null, $tmpinvoice->errors, 'errors');
@@ -1497,7 +1499,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print $langs->trans('InvoiceToUse');
 				print '</td>';
 				print '<td>';
-				print $form->selectInvoice($projectstatic->thirdparty->id, '', 'invoiceid', 24, 0, $langs->trans('NewInvoice'), 1, 0, 0, 'maxwidth500', '', 'all');
+				print $form->selectInvoiceForTimeProject($projectstatic->thirdparty->id, '', 'invoiceid', 24, 0, $langs->trans('NewInvoice'), 1, 0, 0, 'maxwidth500', '', 'all');
 				print '</td>';
 				print '</tr>';
 				print '<tr>';
@@ -1591,6 +1593,11 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 		$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 		$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
+
+		// If project has usage "Bill time", we force visibility of field "billed"
+		if ($projectstatic->usage_bill_time) {
+			$arrayfields['valuebilled']['checked'] = 1;
+		}
 
 		$sql = "SELECT t.rowid, t.fk_element, t.element_date, t.element_datehour, t.element_date_withhour, t.element_duration, t.fk_user, t.note, t.thm,";
 		$sql .= " t.fk_product,";
@@ -1925,6 +1932,11 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 		$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
 		$selectedfields .= (is_array($arrayofmassactions) && count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
+
+		// If project has usage "Bill time", we force visibility of field "billed"
+		if ($projectstatic->usage_bill_time) {
+			$arrayfields['valuebilled']['checked'] = 1;
+		}
 
 		print '<!-- Liste of time spent -->'."\n";
 		print '<div class="div-table-responsive">';
@@ -2493,8 +2505,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 										$invoiceLine = new FactureLigne($db);
 										$invoiceLine->fetch($task_time->invoice_line_id);
 										if (!empty($invoiceLine->id)) {
-											print '<br>'.$langs->trans('Qty').':'.$invoiceLine->qty;
+											print '<br><span class="small opacitymedium">'.$langs->trans('Qty').':'.$invoiceLine->qty;
 											print ' '.$langs->trans('TotalHT').':'.price($invoiceLine->total_ht);
+											print '</span>';
 										}
 									}
 								}
@@ -2887,9 +2900,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				// Value billed
 				if (!empty($arrayfields['valuebilled']['checked'])) {
 					print '<td class="right">';
-					$valuebilled = price2num($task_time->total_ht, '', 1);
 					if (isset($task_time->total_ht)) {
-						print '<span class="amount nowraponall">';
+						$valuebilled = price2num($task_time->total_ht, '', 1);
+						print '<span class="amount nowraponall small">';
 						print price($valuebilled, 1, $langs, 1, -1, -1, $conf->currency);
 						print '</span>';
 					}

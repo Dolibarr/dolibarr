@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - admin
 Publisher=Herausgeber
-VersionLastInstall=Erste installierte Version
 VersionLastUpgrade=Version der letzten Aktualisierung
 FileCheck=Datensatz - Intergritätsprüfung
 FileCheckDesc=Hier kannst du die Systemintegrität von Dolibarr prüfen. Dateien und Einstellungen werden mit den offiziellen Daten verglichen, plus einige Systemkonstanten. So siehst du, ob Dateien irgendwie verändert worden sind.
@@ -8,14 +7,12 @@ FileIntegrityIsStrictlyConformedWithReference=Datei-Integrität entspricht genau
 FileIntegrityIsOkButFilesWereAdded=Die Dateiüberprüfung ist abgschlossen. Dabei hab ich ein paar neue Dateien hizugefügt.
 FileIntegritySomeFilesWereRemovedOrModified=Datei-Integrität konnte NICHT bestätigt werden. Dateien wurden modifiziert, entfernt oder zugefügt.
 MakeIntegrityAnalysisFrom=Mache Integrität Analyse von Anwendungsdateien aus
-FilesMissing=Fehlende Dateien
 FilesUpdated=Dateien ersetzt
 FilesModified=Geänderte Dateien
 FilesAdded=Angehängte Dateien
 FileCheckDolibarr=Überprüfen Sie die Integrität der Anwendungsdateien
 XmlNotFound=Xml Integritätsdatei der Anwendung ​​nicht gefunden
 SessionId=ID Session
-SessionSaveHandler=Handler für Sitzungsspeicherung
 ConfirmPurgeSessions=Wollen Sie wirklich alle Sessions beenden ? Dadurch werden alle Benutzer getrennt (ausser Ihnen)
 NoSessionListWithThisHandler=Wegen der aktuellen PHP-Konfiguration kann ich die aktuellen Sitzungen nicht anzeigen.
 ConfirmLockNewSessions=Bist du sicher, dass du jede neue Dolibarr - Verbindung auf dich selbst einschränken willst? Danach kann nur noch der Benutzer <b>%s</b> zugreifen.

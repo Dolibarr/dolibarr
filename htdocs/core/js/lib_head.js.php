@@ -248,15 +248,17 @@ function getObjectFromID(id){
 // Called after the selection or typing of a date to save details into detailed fields
 function dpChangeDay(dateFieldID, format)
 {
-	console.log("Call dpChangeDay, we save date into detailed fields from format = "+format);
+	console.log("Call dpChangeDay, we save date from field "+dateFieldID+" into detailed fields from format = "+format);
 
 	var thefield = getObjectFromID(dateFieldID);
 	var thefieldday = getObjectFromID(dateFieldID+"day");
 	var thefieldmonth = getObjectFromID(dateFieldID+"month");
 	var thefieldyear = getObjectFromID(dateFieldID+"year");
 
+	console.log("string date value is " + thefield.value);
+
 	var date = getDateFromFormat(thefield.value, format);
-	//console.log(date);
+
 	if (date)
 	{
 		thefieldday.value = date.getDate();
@@ -570,14 +572,14 @@ function cleanSerialize(expr) {
  * Input:   msg
  * Input:   id
  * Input:   popupWidth
+ * Input:   popupHeight
  * Input:   disableCancelButton
  * Licence: GPL
  * See also document_preview() that also maje a dialogforpopup.dialog().
  * See also newpopup that use window.open.
  */
-function confirmDolibarr(msg, id, popupWidth = 400, disableCancelButton = 0) {
+function confirmDolibarr(msg, id, popupWidth = 400, popupHeight = 300, disableCancelButton = 0) {
 	let alink = document.getElementById(id);
-	let popupHeight = 200;
 	let title = '<?php echo dol_escape_js($langs->trans("Note")); ?>';
 
 	if (alink.getAttribute("data-alreadyclicked") === "1") {

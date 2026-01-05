@@ -1,14 +1,14 @@
 # Dolibarr language file - Source file is en_US - receiptprinter
-ReceiptPrinterSetup=Setup of module RAW/Text Printers
+ReceiptPrinterSetup=Oppsett av RAW/Tekst-skrivere for modulen
 PrinterAdded=Skriver %s lagt til
 PrinterUpdated=Skriver %s oppdater
 PrinterDeleted=Skriver %s slettet
 TestSentToPrinter=Test sendt til skriver %s
 ReceiptPrinter=Printere
-ReceiptPrinterDesc=Setup of RAW/Text printers
+ReceiptPrinterDesc=Oppsett av RAW/tekst-skrivere
 ReceiptPrinterTemplateDesc=Oppsett av maler
 ReceiptPrinterTypeDesc=Eksempel på mulige verdier for feltet "Parametere" i henhold til drivertype
-ReceiptPrinterProfileDesc=Description of RAW/Text Printer's Profile
+ReceiptPrinterProfileDesc=Beskrivelse av RAW/Text-skriverens profil
 ListPrinters=Liste over skrivere
 FromServerPointOfView=Fra webserverens synspunkt. Denne skriveren må være tilgjengelig fra webserverens vert.
 SetupReceiptTemplate=Maloppsett
@@ -19,7 +19,7 @@ CONNECTOR_NETWORK_PRINT=Nettverksskriver
 CONNECTOR_FILE_PRINT=Lokal skriver
 CONNECTOR_WINDOWS_PRINT=Lokal Windowsskriver
 CONNECTOR_CUPS_PRINT=Cups Skriver
-CONNECTOR_DUMMY_HELP=Dummyskriver for test. Gjør ingenting
+CONNECTOR_DUMMY_HELP=Falsk skriver for test, gjør ingenting (bortsett fra å skrive strøm til filen dolibarr_printer.txt)
 CONNECTOR_NETWORK_PRINT_HELP=10.x.x.x:9100
 CONNECTOR_FILE_PRINT_HELP=/dev/usb/lp0, /dev/usb/lp1
 CONNECTOR_WINDOWS_PRINT_HELP=LPT1, COM1, smb://FooUser:secret@computername/workgroup/RAW/Text Printer
