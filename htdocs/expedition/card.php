@@ -3689,9 +3689,7 @@ if ($action == 'create' && $usercancreate) {
 
 		print '</tbody>';
 		print "</table>\n";
-
-		print dol_get_fiche_end();
-
+		print '</div>';
 
 		$object->fetchObjectLinked($object->id, $object->element);
 	}
