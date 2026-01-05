@@ -6444,6 +6444,7 @@ class Facture extends CommonInvoice
 							$actioncomm->userownerid = $user->id; // Owner of action
 							// Fields when action is an email (content should be added into note)
 							$actioncomm->email_msgid = $cMailFile->msgid;
+							$actioncomm->email_subject = $sendTopic;
 							$actioncomm->email_from = $from;
 							$actioncomm->email_sender = '';
 							$actioncomm->email_to = $to;

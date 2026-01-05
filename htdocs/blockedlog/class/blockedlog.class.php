@@ -174,8 +174,8 @@ class BlockedLog
 	public $trackedevents = array();
 
 	/**
-	 * Array of tracked modules
-	 * @var array<string,string|mixed>
+	 * Array of tracked modules (key => label)
+	 * @var array<int|string,string>
 	 */
 	public $trackedmodules = array();
 
@@ -206,7 +206,7 @@ class BlockedLog
 
 		$sep = 0;
 
-		$this->trackedmodules = array('0' => 'None');
+		$this->trackedmodules[0] = 'None';
 		if (isModEnabled('takepos')) {
 			$this->trackedmodules['takepos'] = 'TakePOS';
 		}
@@ -538,7 +538,7 @@ class BlockedLog
 					$this->linktype = 'credit_note_of';
 					$this->linktoref = $invoice->ref;
 				}
-				//$this->module_source = $invoice->module_source;
+				//$this->module_source = (string) $invoice->module_source;
 			}
 		}
 		if ($object->element == 'facture') {
@@ -550,7 +550,7 @@ class BlockedLog
 					$this->linktype = 'credit_note_of';
 					$this->linktoref = $invoice->ref;
 				}
-				$this->module_source = $invoice->module_source;
+				$this->module_source = (string) $invoice->module_source;
 			}
 		}
 
@@ -691,7 +691,7 @@ class BlockedLog
 		// Field specific to object
 		if ($this->element == 'facture') {
 			'@phan-var-force Facture $object';
-			$this->module_source = $object->module_source;
+			$this->module_source = (string) $object->module_source;
 
 			foreach ($object as $key => $value) {
 				if (in_array($key, $arrayoffieldstoexclude)) {
@@ -774,29 +774,11 @@ class BlockedLog
 
 			// Add data for action emails
 			if ($action == 'BILL_SENTBYMAIL') {
-				$emailobj = new stdClass();
-				$emailobj->email_from = $object->email_from;
-				//$emailobj->email_to = $object->email_to;
-				$emailobj->email_msgid = $object->email_msgid;
-				$emailobj->email_subject = $object->email_subject;
-
-				$this->object_data->action_email_sent = $emailobj;
-			}
-
-			// Add data for action doc_preview
-			if ($action == 'DOC_PREVIEW') {
-				$docpreviewobj = new stdClass();
-				$docpreviewobj->pos_print_counter = $object->pos_print_counter;
-
-				//$this->object_data->action_doc_preview = $docpreviewobj;
-			}
-
-			// Add data for action doc_download
-			if ($action == 'DOC_DOWNLOAD') {
-				$docdownloadobj = new stdClass();
-				$docdownloadobj->pos_print_counter = $object->pos_print_counter;
-
-				//$this->object_data->action_doc_download = $docdownloadobj;
+				$this->object_data->action_email_sent = array(
+					"email_from" => $object->context['email_from'],
+					"email_to" => $object->context['email_to'],
+					"email_msgid" => $object->context['email_msgid']
+				);
 			}
 		} elseif ($this->element == 'invoice_supplier') {
 			'@phan-var-force FactureFournisseur $object';
@@ -1043,6 +1025,11 @@ class BlockedLog
 				}
 			}
 		} else {
+			if ($object->element == 'cashcontrol') {
+				$this->module_source = (string) $object->posmodule;		// Module
+				//$this->pos_source = (string) $object->posnumber;		// Terminal
+			}
+
 			// Generic case
 			foreach ($object as $key => $value) {
 				if (in_array($key, $arrayoffieldstoexclude)) {
@@ -1100,7 +1087,7 @@ class BlockedLog
 				$this->action 			= $obj->action;
 				$this->module_source	= $obj->module_source;
 
-				$this->amounts_taxecl	= (is_null($obj->amounts_taxexcl) ? null : (float) $obj->amounts);
+				$this->amounts_taxexcl	= (is_null($obj->amounts_taxexcl) ? null : (float) $obj->amounts);
 				$this->amounts			= (float) $obj->amounts;
 
 				$this->fk_object = $obj->fk_object;

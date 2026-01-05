@@ -113,6 +113,7 @@ if (!$user->hasRight("cashdesk", "run") && !$user->hasRight("takepos", "run")) {
 $permissiontoadd = ($user->hasRight("cashdesk", "run") || $user->hasRight("takepos", "run"));
 $permissiontodelete = ($user->hasRight("cashdesk", "run") || $user->hasRight("takepos", "run")) || ($permissiontoadd && $object->status == 0);
 
+$sqlfilteronopdate = '';
 
 // Must be after the fetch
 $datestart = null;
@@ -128,14 +129,14 @@ $ssec = 0;
 if ($object->id > 0) {
 	// When object is know, we must define first the end date (stored in database with different components) and deduct the start date
 	if (empty($object->day_close) && !empty($object->month_close)) {
-		$dateend = dol_mktime($object->hour_close, $object->min_close, $object->sec_close, $object->month_close, $object->day_close, $object->year_close, 'gmt');
+		$dateend = dol_mktime((int) $object->hour_close, (int) $object->min_close, (int) $object->sec_close, $object->month_close, $object->day_close, $object->year_close, 'gmt');
 		$datestart = dol_time_plus_duree($dateend, -1, 'y', 0);
 	} elseif (empty($object->day_close) && empty($object->month_close)) {
-		$dateend = dol_mktime($object->hour_close, $object->min_close, $object->sec_close, 12, 31, $object->year_close, 'gmt');
-		$datestart = dol_mktime($object->hour_close, $object->min_close, $object->sec_close, 12, 1, $object->year_close, 'gmt');
+		$dateend = dol_mktime((int) $object->hour_close, (int) $object->min_close, (int) $object->sec_close, 12, 31, $object->year_close, 'gmt');
+		$datestart = dol_mktime((int) $object->hour_close, (int) $object->min_close, (int) $object->sec_close, 12, 1, $object->year_close, 'gmt');
 		$datestart = dol_time_plus_duree($datestart, -1, 'm', 0);
 	} else {
-		$dateend = dol_mktime($object->hour_close, $object->min_close, $object->sec_close, $object->month_close, $object->day_close, $object->year_close, 'gmt');
+		$dateend = dol_mktime((int) $object->hour_close, (int) $object->min_close, (int) $object->sec_close, $object->month_close, $object->day_close, $object->year_close, 'gmt');
 		$datestart = dol_time_plus_duree($dateend, -1, 'd', 0);
 	}
 	$datestart += 1;	// Add 1 second
@@ -143,23 +144,22 @@ if ($object->id > 0) {
 	if ($syear && !$smonth) {
 		$datestart = dol_get_first_day($syear, 1, 'tzuserrel');
 		$dateend = dol_get_last_day($syear, 12, 'tzuserrel');
-		$sql .= " AND dateo < '".$db->idate($datestart)."'";
 	} elseif ($syear && $smonth && !$sday) {
 		$datestart = dol_get_first_day($syear, $smonth, 'tzuserrel');
 		$dateend = dol_get_last_day($syear, $smonth, 'tzuserrel');
-		$sql .= " AND dateo < '".$db->idate($datestart)."'";
 	} elseif ($syear && $smonth && $sday) {
 		$datestart = dol_mktime($shour, $smin, $ssec, $smonth, $sday, $syear, 'tzuserrel');
 		$dateend = dol_mktime(23, 59, 59, $smonth, $sday, $syear, 'tzuserrel');
-		$sql .= " AND dateo < '".$db->idate($datestart)."'";
 	} else {
 		setEventMessages($langs->trans('YearNotDefined'), null, 'errors');
 	}
 }
+$sqlfilteronopdate .= " AND dateo < '".$db->idate((int) $datestart)."'";
 //var_dump(dol_print_date($datestart, 'dayhour', 'gmt'), dol_print_date($dateend, 'dayhour', 'gmt'));
 
 
 // Define dates and terminal
+$posmodule = '';
 $terminalid = '';
 $terminaltouse = '';
 if ($action == "create" || $action == "start" || $action == 'valid' || $action == 'close') {
@@ -176,7 +176,7 @@ if ($action == "create" || $action == "start" || $action == 'valid' || $action =
 		$terminalid = GETPOST('posnumber', 'alpha');
 		$terminaltouse = $terminalid;
 
-		if ($terminaltouse == '1' && $posmodule == 'cashdesk') {
+		if ($terminaltouse == '1' && $posmodule == 'cashdesk') {	// for compatibility with an old module
 			$terminaltouse = '';
 		}
 	}
@@ -344,7 +344,7 @@ if ($action == "valid" && $permissiontoadd) {	// validate = close
 		$sql .= " AND ".$db->sanitize($modulesourcefilter)." = '".$db->escape($posmodule)."'";
 		$sql .= " AND f.pos_source = '".$db->escape($terminalid)."'";
 		$sql .= " AND p.entity = ".((int) $conf->entity); // Never share entities for features related to accountancy
-		$sql .= " AND ".$db->sanitize($datefilter)." <= '".$db->idate($datee)."'";
+		$sql .= " AND ".$db->sanitize($datefilter)." <= '".$db->idate((int) $datee)."'";
 		if ($key == 'cash') {
 			$sql .= " AND cp.code = 'LIQ'";
 		} elseif ($key == 'cheque') {
@@ -507,11 +507,12 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 			$vartouse = 'CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse;
 			$bankid = getDolGlobalInt($vartouse);
 
-			// Get the amount in bank before the period date to pre-fill the "initial amount".
-			// The user is still free to prefill with the correct value
+			// Get the amount in bank before the period date to pre-fill the suggested "initial amount".
+			// The user is still free to prefill with the correct value. This is just to save time to user.
 			if ($bankid > 0) {
 				$sql = "SELECT SUM(amount) as total FROM ".MAIN_DB_PREFIX."bank";
 				$sql .= " WHERE fk_account = ".((int) $bankid);
+				$sql .= $sqlfilteronopdate;
 
 				$resql = $db->query($sql);
 				if ($resql) {
@@ -562,7 +563,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 			$sql .= " AND ".$db->sanitize($modulesourcefilter)." = '".$db->escape($posmodule)."'";
 			$sql .= " AND f.pos_source = '".$db->escape($terminalid)."'";
 			$sql .= " AND p.entity = ".((int) $conf->entity); // Never share entities for features related to accountancy
-			$sql .= " AND ".$db->sanitize($datefilter)." BETWEEN '".$db->idate($dates)."' AND '".$db->idate($datee)."'";
+			$sql .= " AND ".$db->sanitize($datefilter)." BETWEEN '".$db->idate((int) $dates)."' AND '".$db->idate((int) $datee)."'";
 			if ($key == 'cash') {
 				$sql .= " AND cp.code = 'LIQ'";
 			} elseif ($key == 'cheque') {

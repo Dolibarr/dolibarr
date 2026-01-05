@@ -47,6 +47,7 @@ require '../main.inc.php'; // Load $user and permissions
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ * @var Societe $mysoc
  */
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
