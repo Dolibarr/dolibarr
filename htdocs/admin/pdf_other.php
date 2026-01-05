@@ -429,7 +429,7 @@ if (isModEnabled('order')) {
 	print '<br>';
 }
 
-if (isModEnabled('contrat')) {
+if (isModEnabled('contract')) {
 	print '<div id="contrat" class="undertopmenu"></div>';
 
 	print load_fiche_titre($langs->trans("Contract"), '', 'contract');
