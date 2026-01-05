@@ -404,8 +404,14 @@ ALTER TABLE llx_pos_cash_fence ADD COLUMN hour_close INTEGER DEFAULT null after 
 ALTER TABLE llx_pos_cash_fence ADD COLUMN min_close INTEGER DEFAULT null after hour_close;
 ALTER TABLE llx_pos_cash_fence ADD COLUMN sec_close INTEGER DEFAULT null after min_close;
 
+ALTER TABLE llx_pos_cash_fence ADD COLUMN cash_declared double(24,8) DEFAULT null;
+ALTER TABLE llx_pos_cash_fence ADD COLUMN card_declared double(24,8) DEFAULT null;
+ALTER TABLE llx_pos_cash_fence ADD COLUMN cheque_declared double(24,8) DEFAULT null;
+
 ALTER TABLE llx_pos_cash_fence ADD COLUMN cash_lifetime double(24,8) DEFAULT null;
 ALTER TABLE llx_pos_cash_fence ADD COLUMN card_lifetime double(24,8) DEFAULT null;
 ALTER TABLE llx_pos_cash_fence ADD COLUMN cheque_lifetime double(24,8) DEFAULT null;
+
+ALTER TABLE llx_pos_cash_fence ADD COLUMN lifetime_start datetime DEFAULT NULL;
 
 -- end of migration

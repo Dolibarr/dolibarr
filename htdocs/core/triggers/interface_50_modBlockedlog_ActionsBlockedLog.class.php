@@ -107,7 +107,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			|| $action === 'BILL_SUPPLIER_VALIDATE' || (($action === 'BILL_SUPPLIER_DELETE' || $action === 'BILL_SUPPLIER_SENTBYMAIL') && ($object->statut != 0 || $object->status != 0))
 			|| $action === 'MEMBER_SUBSCRIPTION_CREATE' || $action === 'MEMBER_SUBSCRIPTION_MODIFY' || $action === 'MEMBER_SUBSCRIPTION_DELETE'
 			|| $action === 'DON_VALIDATE' || (($action === 'DON_MODIFY' || $action === 'DON_DELETE') && ($object->statut != 0 || $object->status != 0))
-			|| $action === 'CASHCONTROL_VALIDATE'
+			|| $action === 'CASHCONTROL_CLOSE'
 			|| (in_array($object->element, array('facture', 'supplier_invoice')) && $action === 'DOC_DOWNLOAD' && ($object->statut != 0 || $object->status != 0))
 			|| (in_array($object->element, array('facture', 'supplier_invoice')) && $action === 'DOC_PREVIEW' && ($object->statut != 0 || $object->status != 0))
 			|| (getDolGlobalString('BLOCKEDLOG_ADD_ACTIONS_SUPPORTED') && in_array($action, explode(',', getDolGlobalString('BLOCKEDLOG_ADD_ACTIONS_SUPPORTED'))))
@@ -119,7 +119,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 				'DON_VALIDATE', 'DON_MODIFY', 'DON_DELETE'))) {
 				/** @var Don|Subscription $object */
 				$amounts = (float) $object->amount;
-			} elseif ($action == 'CASHCONTROL_VALIDATE') {
+			} elseif ($action == 'CASHCONTROL_CLOSE') {
 				/** @var CashControl $object */
 				$amounts = (float) $object->cash + (float) $object->cheque + (float) $object->card;
 			} else {
