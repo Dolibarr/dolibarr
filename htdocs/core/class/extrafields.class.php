@@ -1146,6 +1146,10 @@ class ExtraFields
 			$form = new Form($this->db);
 		}
 
+		if ($mode == 1) {	// When field is used for search input into a list, we limit its size.
+			$morecss = 'maxwidth125';
+		}
+
 		$parameters = array(
 			'key'                  => $key,
 			'value'                => &$value,

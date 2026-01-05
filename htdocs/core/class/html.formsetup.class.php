@@ -167,6 +167,7 @@ class FormSetup
 
 			if ($editMode) {
 				$out .= '<form ' . self::generateAttributesStringFromArray($this->formAttributes) . ' >';
+				$out .= '<input type="hidden" name="page_y" value="">';
 
 				// generate hidden values from $this->formHiddenInputs
 				if (!empty($this->formHiddenInputs) && is_array($this->formHiddenInputs)) {
