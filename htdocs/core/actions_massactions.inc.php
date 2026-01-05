@@ -1150,7 +1150,7 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 		$result = $objecttmp->fetch($toselectid);
 		if ($result > 0) {
 			// Refuse deletion for some objects/status
-			if ($objectclass == 'Facture' && !getDolGlobalString('INVOICE_CAN_ALWAYS_BE_REMOVED') && $objecttmp->status != Facture::STATUS_DRAFT) {
+			if ($objectclass == 'Facture' && $objecttmp->status != Facture::STATUS_DRAFT) {
 				$langs->load("errors");
 				$nbignored++;
 				$TMsg[] = '<div class="error">'.$langs->trans('ErrorOnlyDraftStatusCanBeDeletedInMassAction', $objecttmp->ref).'</div><br>';

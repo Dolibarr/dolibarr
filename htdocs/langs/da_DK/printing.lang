@@ -53,4 +53,4 @@ PrintingDriverDescprintgcp=Konfigurationsvariabler for udskrivning af driver Goo
 PrintingDriverDescprintipp=Konfigurationsvariabler for printerdrivere.
 PrintTestDescprintgcp=Liste over printere til Google Cloud Print.
 PrintTestDescprintipp=Liste over printere til kopper.
-Testbbbb
+PrinterLocation=Printerplacering
