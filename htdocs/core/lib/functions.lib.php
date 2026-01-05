@@ -172,10 +172,10 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 			$module = 'fournisseur';
 			$subdirectory = '/commande';
 			break;
-		case 'expedition'
+		case 'expedition':
 			$subdirectory = '/sending';
 			break;
-		case 'company'
+		case 'company':
 			$module = 'societe';
 			break;
 		case 'service':
