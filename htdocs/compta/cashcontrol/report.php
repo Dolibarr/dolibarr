@@ -108,6 +108,8 @@ llxHeader('', $title, '', '', 0, 0, array(), array(), $param);
 
 print '<!-- Begin div id-container --><div id="id-container" class="id-container center">';
 
+$dates = $datee = 0;
+
 if ($syear && !$smonth) {
 	$dates = dol_get_first_day($syear, 1); $datee = dol_get_last_day($syear, 12);
 } elseif ($syear && $smonth && !$sday) {
