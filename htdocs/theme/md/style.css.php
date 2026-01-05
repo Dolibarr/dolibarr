@@ -2815,8 +2815,8 @@ div.fiche {
 <?php } ?>
 
 div.fiche {
-	margin-<?php print $left; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '35' : '6')); ?>px;
-	margin-<?php print $right; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '33' : '6')); ?>px;
+	margin-<?php print $left; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '38' : '6')); ?>px;
+	margin-<?php print $right; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '36' : '6')); ?>px;
 	<?php if (!empty($dol_hide_topmenu) || GETPOST('dol_openinpopup', 'aZ09')) {
 		print 'margin-top: 12px;';
 	} ?>
@@ -3586,9 +3586,10 @@ form#login {
 	border-top:solid 1px #f8f8f8;
 }
 .login_table input#username, .login_table input#password, .login_table input#securitycode{
-	border: none;
+	/* border: none; */
 	/* border-bottom: solid 1px rgba(180,180,180,.4); */
 	padding: 5px;
+	padding-left: 10px;
 	margin-left: 5px;
 	margin-top: 5px;
 	margin-bottom: 5px;
@@ -3604,9 +3605,11 @@ form#login {
 	min-width: 220px;
 	border-radius: 2px;
 }
+/*
 .login_table .tdinputlogin {
 	border-bottom: 1px solid #ccc;
 }
+*/
 .login_table .tdinputlogin .fa {
 	padding-left: 10px;
 	width: 14px;
@@ -3617,7 +3620,7 @@ form#login {
 }
 .login_table #tdpasswordlogin #togglepassword {
 	position: absolute;
-	top: 0.7em;
+	top: 0.6em;
 	right: 8px;
 	background: none;
 	border: none;
@@ -3951,6 +3954,7 @@ a.vsmenu:link, a.vsmenu:visited {
 	white-space: nowrap;
 }
 span.vsmenudisabledmargin, font.vsmenudisabledmargin { margin: 1px 1px 1px 8px; }
+li a.vsmenudisabled, li.vsmenudisabled { color: #aaa !important; cursor: default !important; }
 
 a.help:link, a.help:visited, a.help:hover, a.help:active, span.help {
 	text-align: <?php print $left; ?>; font-weight: normal; color: #999; text-decoration: none;

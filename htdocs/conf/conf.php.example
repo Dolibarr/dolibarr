@@ -316,11 +316,11 @@ $dolibarr_main_restrict_os_commands='mariadb-dump, mariadb, mysqldump, mysql, pg
 // ==================================
 // A whitelist of functions and methods to restrict the commands you can execute in a custom calculated fields, like "computed fields" of
 // extrafields or string conditions of extrafields.
-// Default value: 'getDolGlobalString, getDolGlobalInt, getDolCurrency, fetchNoCompute, hasRight, isAdmin, isModEnabled, isStringVarMatching, abs, round, dol_now, preg_match'
+// Default value: 'getDolGlobalString, getDolGlobalInt, getDolCurrency, getDolEntity, getDolDBType, fetchNoCompute, hasRight, isAdmin, isModEnabled, isStringVarMatching, abs, round, dol_now, preg_match'
 // Examples:
-// $dolibarr_main_restrict_eval_methods='getDolGlobalString, getDolGlobalInt, getDolCurrency, fetchNoCompute, hasRight, isAdmin, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, dol_concat, preg_match';
+// $dolibarr_main_restrict_eval_methods='getDolGlobalString, getDolGlobalInt, getDolCurrency, getDolEntity, getDolDBType, fetchNoCompute, hasRight, isAdmin, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, dol_concat, preg_match';
 //
-$dolibarr_main_restrict_eval_methods='getDolGlobalString, getDolGlobalInt, getDolCurrency, fetchNoCompute, hasRight, isAdmin, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, preg_match';
+$dolibarr_main_restrict_eval_methods='getDolGlobalString, getDolGlobalInt, getDolCurrency, getDolEntity, getDolDBType, fetchNoCompute, hasRight, isAdmin, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, preg_match';
 
 // dolibarr_main_disabled_modules
 // ==================================
