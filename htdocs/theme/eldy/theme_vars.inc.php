@@ -64,7 +64,7 @@ $colorbacklinepair2 = '252,252,252'; // line pair
 $colorbacklinepairhover = '240,242,249'; // line hover
 $colorbacklinepairchecked = '240,242,249'; // line checked
 $colorbacklinebreak = '248,247,244'; // line break
-$colortexttitlenotab = '35,135,140'; // 150,90,121 140,80,10 or 10,140,80  #875a7b  green=0,123,140, violet: 0,50,120
+$colortexttitlenotab = '128,128,128'; // 150,90,121 140,80,10 or 10,140,80  #875a7b  green=0,123,140, violet: 0,50,120
 $colortexttitlenotab2 = '100,0,100'; // 150,90,121 140,80,10 or 10,140,80  #875a7b  green=0,123,140, violet: 0,50,120
 $colortexttitle = '40, 40, 60';
 $colortexttitlelink = '10, 20, 100';
@@ -75,7 +75,7 @@ $fontsizesmaller = '0.75em';
 $topMenuFontSize = '1.1em';
 $toolTipBgColor = 'rgba(255, 255, 255, 0.96)';
 $toolTipFontColor = '#333';
-$butactionbg = '150, 110, 162, 0.95';
+$butactionbg = '136, 96, 170';
 $textbutaction = '255, 255, 255';
 
 // text color
