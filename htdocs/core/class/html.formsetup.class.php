@@ -921,7 +921,17 @@ class FormSetupItem
 				$input = $this->fieldParams['input'] ?? array();
 				$revertonoff = empty($this->fieldParams['revertonoff']) ? 0 : 1;
 				$forcereload = empty($this->fieldParams['forcereload']) ? 0 : 1;
-				$suffixarray = array('ifoff' => empty($this->fieldParams['alertifoff']) ? '' : '_red', 'ifon' => empty($this->fieldParams['alertifon']) ? '' : '_red');
+				$suffixarray = array();
+				if ($this->fieldParams['alertifoff']) {
+					$suffixarray['ifoff'] = '_red';
+				} elseif ($this->fieldParams['warningifoff']) {
+					$suffixarray['ifon'] = '_warning';
+				}
+				if ($this->fieldParams['alertifon']) {
+					$suffixarray['ifon'] = '_red';
+				} elseif ($this->fieldParams['warningifon']) {
+					$suffixarray['ifon'] = '_warning';
+				}
 
 				$out .= ajax_constantonoff($this->confKey, $input, $this->entity, $revertonoff, 0, $forcereload, 2, 0, 0, $suffixarray, '', $this->cssClass);
 			} else {
