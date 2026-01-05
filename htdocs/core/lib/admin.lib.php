@@ -489,7 +489,6 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 					$listofinsertedrowid[$cursorinsert] = $insertedrowid;
 					dol_syslog('Admin.lib::run_sql Insert nb '.$cursorinsert.', done in table '.$table.', rowid is '.$listofinsertedrowid[$cursorinsert], LOG_DEBUG);
 				}
-				// 	          print '<td class="right">OK</td>';
 			} else {
 				$errno = $db->errno();
 				if (!$silent) {
@@ -534,7 +533,7 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 		print '<tr><td>'.$langs->trans("ProcessMigrateScript").'</td>';
 		print '<td class="right">';
 		if ($error == 0) {
-			print '<span class="ok">'.$langs->trans("OK").'</span>';
+			print '<span class="ok">'.$langs->trans("Success").'</span>';
 		} else {
 			print '<span class="error">'.$langs->trans("Error").'</span>';
 		}

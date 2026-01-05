@@ -104,6 +104,11 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	font-size: 2.8em;
 	background: var(--colorbacktitle1) !important;
 }
+<?php if (!colorIsLight(getDolGlobalString('THEME_ELDY_BACKTITLE1'))) { ?>
+.info-box-icon i.fa, .info-box-icon i.fa:before {
+	color: #fff !important;
+}
+<?php } ?>
 
 .info-box-module .info-box-icon {
 	padding-top: 5px;

@@ -50,7 +50,7 @@ $langs->loadLangs(array('admin', 'banks', 'bills', 'blockedlog', 'other'));
 
 // Get Parameters
 $action      = GETPOST('action', 'aZ09');
-$confirm     = GETPOST('confirm', 'aZ09');
+//$confirm     = GETPOST('confirm', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : getDolDefaultContextPage(__FILE__); // To manage different context of search
 $backtopage  = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss   = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
@@ -132,7 +132,6 @@ if ($max_time && $max_time < $max_execution_time_for_importexport) {
 }
 
 $MAXLINES = getDolGlobalInt('BLOCKEDLOG_MAX_LINES', 10000);
-$MAXFORSHOWNLINKS = getDolGlobalInt('BLOCKEDLOG_MAX_FOR_SHOWN_LINKS', 100);
 
 $permission = $user->hasRight('blockedlog', 'read');
 $permissiontoadd = $user->hasRight('blockedlog', 'read');	// Permission is to upload new files to scan them
@@ -141,6 +140,8 @@ $permtoedit = $permissiontoadd;
 $upload_dir = getMultidirOutput($block_static, 'blockedlog').'/archives';
 
 dol_mkdir($upload_dir);
+
+$fh = null;
 
 
 /*
@@ -242,13 +243,14 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 
 
 	// Init var for totals
+	/*
 	$totalhtamountalllines = array('BILL_VALIDATE' => 0, 'PAYMENT_CUSTOMER_CREATE' => 0);
 	$totalvatamountalllines = array('BILL_VALIDATE' => 0, 'PAYMENT_CUSTOMER_CREATE' => 0);
 	$totalamountalllines = array('BILL_VALIDATE' => 0, 'PAYMENT_CUSTOMER_CREATE' => 0);
 	$totalhtamountlifetime = array('BILL_VALIDATE' => array(), 'PAYMENT_CUSTOMER_CREATE' => array());
 	$totalvatamountlifetime = array('BILL_VALIDATE' => array(), 'PAYMENT_CUSTOMER_CREATE' => array());
 	$totalamountlifetime = array('BILL_VALIDATE' => array(), 'PAYMENT_CUSTOMER_CREATE' => array());
-
+	*/
 
 	if (!$error) {
 		$fh = fopen($tmpfile, 'w');
@@ -261,7 +263,7 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 		$sql .= " FROM ".MAIN_DB_PREFIX."blockedlog";
 		$sql .= " WHERE entity = ".((int) $conf->entity);
 		// For unalterable log, we are using the date of creation of the log. Note that a bookkeeper may decide to dispatch an invoice
-		// on different periods for example to manage depreciation.
+		// or payment on different periods for example to manage depreciation, but we want here is not accountancy but payment data.
 		$sql .= " AND date_creation BETWEEN '".$db->idate($dates)."' AND '".$db->idate($datee)."'";
 		$sql .= " ORDER BY date_creation ASC, rowid ASC"; // Required so later we can use the parameter $previoushash of checkSignature()
 
@@ -306,7 +308,7 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 
 				$block_static->module_source = $obj->module_source;
 
-				$block_static->amounts_excl = (float) $obj->amounts_excl;			// Database store value with 8 digits, we cut ending 0 them with (flow)
+				$block_static->amounts_taxexcl = (float) $obj->amounts_taxexcl;		// Database store value with 8 digits, we cut ending 0 them with (flow)
 				$block_static->amounts = (float) $obj->amounts;						// Database store value with 8 digits, we cut ending 0 them with (flow)
 
 				$block_static->action = $obj->action;
@@ -398,30 +400,30 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 		}
 
 		// Now calculate cumulative total of all invoices validated
+		/*
 		if (array_key_exists('BILL_VALIDATE', $totalhtamount)) {
-			foreach ($totalhtamount['BILL_VALIDATE'] as $key => $val) {	// Loop on each module
+			foreach ($totalhtamount['BILL_VALIDATE'] as $val) {	// Loop on each module
 				$totalhtamountalllines['BILL_VALIDATE'] += $val;
 			}
-			foreach ($totalvatamount['BILL_VALIDATE'] as $key => $val) {
+			foreach ($totalvatamount['BILL_VALIDATE'] as $val) {
 				$totalvatamountalllines['BILL_VALIDATE'] += $val;
 			}
-			foreach ($totalamount['BILL_VALIDATE'] as $key => $val) {
+			foreach ($totalamount['BILL_VALIDATE'] as $val) {
 				$totalamountalllines['BILL_VALIDATE'] += $val;
 			}
 		}
 		if (array_key_exists('PAYMENT_CUSTOMER_CREATE', $totalhtamount)) {
-			foreach ($totalhtamount['PAYMENT_CUSTOMER_CREATE'] as $key => $val) {
+			foreach ($totalhtamount['PAYMENT_CUSTOMER_CREATE'] as $val) {
 				$totalhtamountalllines['PAYMENT_CUSTOMER_CREATE'] += $val;
 			}
-			foreach ($totalvatamount['PAYMENT_CUSTOMER_CREATE'] as $key => $val) {
+			foreach ($totalvatamount['PAYMENT_CUSTOMER_CREATE'] as $val) {
 				$totalvatamountalllines['PAYMENT_CUSTOMER_CREATE'] += $val;
 			}
-			foreach ($totalamount['PAYMENT_CUSTOMER_CREATE'] as $key => $val) {
+			foreach ($totalamount['PAYMENT_CUSTOMER_CREATE'] as $val) {
 				$totalamountalllines['PAYMENT_CUSTOMER_CREATE'] += $val;
 			}
 		}
 
-		/*
 
 		// Add a final line with cumulative total of invoices validated (BILL_VALIDATE)
 		$block_static->id = '';
@@ -505,8 +507,7 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 		$sql = "SELECT action, module_source, object_format, MIN(date_creation) as datemin, SUM(amounts_taxexcl) as sumamounts_taxexcl, SUM(amounts) as sumamounts";
 		$sql .= " FROM ".MAIN_DB_PREFIX."blockedlog";
 		$sql .= " WHERE entity = ".((int) $conf->entity);
-		$sql .= " AND action IN ('BILL_VALIDATE', 'PAYMENT_CUSTOMER_CREATE')";
-		//$sql .= " AND action IN ('BILL_VALIDATE', 'BILL_SENTBYMAIL', 'PAYMENT_CUSTOMER_CREATE', 'CASHCONTROL_VALIDATE', 'PAYMENT_CUSTOMER_DELETE', 'DOC_DOWNLOAD', 'DOC_PREVIEW')";
+		//$sql .= " AND action IN ('BILL_VALIDATE', 'BILL_SENTBYMAIL', 'PAYMENT_CUSTOMER_CREATE', 'CASHCONTROL_CLOSE', 'PAYMENT_CUSTOMER_DELETE', 'DOC_DOWNLOAD', 'DOC_PREVIEW')";
 		$sql .= " AND action IN ('BILL_VALIDATE', 'PAYMENT_CUSTOMER_CREATE', 'PAYMENT_CUSTOMER_DELETE')";	// Only event into lifetime total
 		//$sql .= " AND action IN ('PAYMENT_CUSTOMER_CREATE')";
 		$sql .= " GROUP BY action, module_source, object_format";

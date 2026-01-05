@@ -5,7 +5,7 @@
  * Copyright (C) 2023		Nick Fragoulis
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2407,5 +2407,5 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	/**
 	 * @var int
 	 */
-	public $fk_accounting_account;
+	public $fk_code_ventilation;
 }
