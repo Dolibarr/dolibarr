@@ -181,14 +181,19 @@ if ($action == 'update') {
 				$langs->load("errors");
 				setEventMessages($langs->trans("ErrorBadFormat"), null, 'errors');
 			} else {
-				if ($varname == 'MAIN_INFO_PROPAL_TERMSOFSALE') {
-					$diroffile = $conf->propal->dir_output;
-				} elseif ($varname == 'MAIN_INFO_ORDER_TERMSOFSALE') {
-					$diroffile = $conf->order->dir_output;
-				} elseif ($varname == 'MAIN_INFO_CONTRACT_TERMSOFSALE') {
-					$diroffile = $conf->contract->dir_output;
-				} elseif ($varname == 'MAIN_INFO_INVOICE_TERMSOFSALE') {
-					$diroffile = $conf->invoice->dir_output;
+				switch ($varname) {
+					case 'MAIN_INFO_PROPAL_TERMSOFSALE':
+						$diroffile = $conf->propal->dir_output;
+						break;
+					case 'MAIN_INFO_ORDER_TERMSOFSALE':
+						$diroffile = $conf->order->dir_output;
+						break;
+					case 'MAIN_INFO_CONTRACT_TERMSOFSALE':
+						$diroffile = $conf->contract->dir_output;
+						break;
+					case 'MAIN_INFO_INVOICE_TERMSOFSALE':
+						$diroffile = $conf->invoice->dir_output;
+						break;
 				}
 				if ($diroffile) {
 					$dirforterms = $diroffile.'/';
