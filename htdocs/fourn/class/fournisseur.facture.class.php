@@ -10,7 +10,7 @@
  * Copyright (C) 2014-2016	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2015		Bahfir Abbes			<bafbes@gmail.com>
  * Copyright (C) 2015-2022	Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2016-2023	Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2016-2026	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022      	Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
@@ -1123,7 +1123,7 @@ class FactureFournisseur extends CommonInvoice
 					$line->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 
 					// Accountancy
-					$line->fk_accounting_account = $obj->fk_code_ventilation;
+					$line->fk_code_ventilation = $obj->fk_code_ventilation;
 
 					// Multicurrency
 					$line->fk_multicurrency = $obj->fk_multicurrency;

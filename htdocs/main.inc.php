@@ -2418,7 +2418,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 
 	// login infos
 	if (!empty($user->admin)) {
-		$dropdownBody .= '<br><b>'.$langs->trans("Administrator").'</b>: '.yn($user->admin).($user->admin ? ' '.img_picto('', 'admin') : '');
+		$dropdownBody .= '<br><b>'.$langs->trans("Administrator").'</b>: '.yn($user->admin).' '.img_picto('', 'admin');
 	}
 	$company = '';
 	if (!empty($user->socid)) {	// Add third party for external users
