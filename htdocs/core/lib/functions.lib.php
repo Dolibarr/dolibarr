@@ -337,6 +337,17 @@ function getDolEntity()
 }
 
 /**
+ * Return the current entity
+ *
+ * @return 	string						Value returned
+ */
+function getDolDBType()
+{
+	global $conf;
+	return $conf->db->type;
+}
+
+/**
  * Return the default context page string
  *
  * @param	string		$s					Page path
@@ -12021,7 +12032,7 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 
 		// Set $dolibarr_main_restrict_eval_methods_array
 		if (!isset($dolibarr_main_restrict_eval_methods)) {
-			$dolibarr_main_restrict_eval_methods = 'getDolGlobalString, getDolGlobalInt, getDolCurrency, fetchNoCompute, hasRight, isAdmin, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, preg_match';
+			$dolibarr_main_restrict_eval_methods = 'getDolGlobalString, getDolGlobalInt, getDolCurrency, getDolEntity, getDolDBType, fetchNoCompute, hasRight, isAdmin, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, preg_match';
 		}
 		//print '$dolibarr_main_restrict_eval_methods = '.$dolibarr_main_restrict_eval_methods."\n";
 		$dolibarr_main_restrict_eval_methods_array = explode(',', str_replace(" ", "", $dolibarr_main_restrict_eval_methods));
@@ -13214,7 +13225,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0, $sqltoadd =
 					$listofcodes = '';
 					foreach ($tmparray as $val) {
 						$val = trim($val);
-						if ($val) {
+						if ($val) {	// TODO Test with if ($val !== '') {
 							$listofcodes .= ($listofcodes ? ',' : '');
 							$listofcodes .= "'" . $db->escape($val) . "'";
 						}
@@ -13906,7 +13917,7 @@ function getDictionaryValue($tablename, $field, $id, $checkentity = false, $rowi
  *	Return true if the color is light
  *
  *  @param	string	$stringcolor		String with hex (FFFFFF) or comma RGB ('255,255,255')
- *  @return	int<-1,1>					-1 : Error with argument passed |0 : color is dark | 1 : color is light
+ *  @return	int<-1,1>					-1 : Error with argument passed | 0 : color is dark | 1 : color is light
  */
 function colorIsLight($stringcolor)
 {
@@ -13945,8 +13956,6 @@ function colorIsLight($stringcolor)
  */
 function isVisibleToUserType($type_user, &$menuentry, &$listofmodulesforexternal)
 {
-	global $conf;
-
 	//print 'type_user='.$type_user.' module='.$menuentry['module'].' enabled='.$menuentry['enabled'].' perms='.$menuentry['perms'];
 	//print 'ok='.in_array($menuentry['module'], $listofmodulesforexternal);
 	if (empty($menuentry['enabled'])) {

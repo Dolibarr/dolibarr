@@ -253,7 +253,7 @@ div#topmenu-login-dropdown {
 	<?php if ($disableimages) { ?>
 		line-height: 35px;
 	<?php } else { ?>
-		line-height: 50px;
+		line-height: 49px;
 	<?php } ?>
 }
 a.top-menu-dropdown-link {

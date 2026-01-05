@@ -2191,7 +2191,7 @@ class Reception extends CommonObject
 	 */
 	public function reOpen()
 	{
-		global $conf, $langs, $user;
+		global $langs, $user;
 
 		$error = 0;
 
@@ -2201,6 +2201,8 @@ class Reception extends CommonObject
 		$sql .= " WHERE rowid = ".((int) $this->id).' AND fk_statut > 0';
 
 		$resql = $this->db->query($sql);
+		$rollbackStatus = $this->status;
+		$rollbackBilled = $this->billed;
 		if ($resql) {
 			$this->statut = self::STATUS_VALIDATED;
 			$this->status = self::STATUS_VALIDATED;
@@ -2304,6 +2306,8 @@ class Reception extends CommonObject
 			$this->db->commit();
 			return 1;
 		} else {
+			$this->statut = $this->status = $rollbackStatus;
+			$this->billed = $rollbackBilled;
 			$this->db->rollback();
 			return -1;
 		}

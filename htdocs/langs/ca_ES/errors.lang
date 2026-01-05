@@ -49,7 +49,7 @@ ErrorBadParameters=Paràmetres incorrectes
 ErrorWrongParameters=Falten paràmetres o són incorrectes
 ErrorBadValueForParameter=Valor incorrecte '%s' del paràmetre '%s'
 ErrorBadImageFormat=El fitxer d'imatge no té un format compatible (el vostre PHP no admet funcions per convertir imatges d'aquest format)
-ErrorPHPDoesNotSupport=La vostra instal·lació PHP no cobrarà les funcions %s.
+ErrorPHPDoesNotSupport=Your PHP installation does not support functions %s.
 ErrorSupportedFormatAre=Els formats compatibles són: %s
 ErrorBadDateFormat=El valor '%s' té un format de data no reconegut
 ErrorWrongDate=La data no és correcta.
@@ -166,7 +166,7 @@ ErrorDateMustBeInFuture=La data ha de ser major que avui
 ErrorStartDateGreaterEnd=La data d'inici és superior a la data de finalització
 ErrorPaymentModeDefinedToWithoutSetup=S'ha definit una forma de pagament al tipus %s, però la configuració del mòdul de factures no s'ha completat per a definir la informació que es mostrarà per a aquesta forma de pagament.
 ErrorPHPNeedModule=Error, el vostre PHP ha de tenir instal·lat el mòdul <b>%s</b> per a utilitzar aquesta funció.
-ErrorOpenIDSetupConfNotComplete=Per motius de seguretat, també heu de configurar el fitxer de configuració de Dolibarr conf.php per permetre l'autenticació OpenID.
+ErrorOpenIDSetupConfNotComplete=For security purposes, you must also setup the Dolibarr config file conf.php to allow OpenID authentication
 ErrorOpenIDSetupNotComplete=Heu configurat el fitxer de configuració Dolibarr per a permetre l'autenticació OpenID, però l'URL del servei OpenID no es defineix en constant %s
 ErrorWarehouseMustDiffers=El magatzem d'origen i destí han de ser diferents
 ErrorBadFormat=El format és incorrecte!
@@ -373,6 +373,7 @@ ErrorBlockLogNeedAmountsValue=L'objecte de registre inalterable necessita que es
 ErrorBlockLogNeedElement=L'objecte de registre inalterable necessita que es defineixi el tipus d'element.
 ErrorBlockLogNeedObject=L'objecte de registre inalterable necessita que l'objecte estigui definit.
 ErrorBadParameterWhenCallingCreateOfBlockedLog=Paràmetre incorrecte en cridar la creació del registre bloquejat
+ErrorMaxDecimalsShownTooLowComparedToUnitOrTotal=Value for 'Max. decimals for prices shown on screen' (%s) must be equal to or greater than both 'Max. decimals for unit prices' (%s) and 'Max. decimals for total prices' (%s). This is required to prevent rounding inconsistencies on documents.
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=El paràmetre PHP upload_max_filesize (%s) és superior al paràmetre PHP post_max_size (%s). No es tracta d’una configuració consistent.
