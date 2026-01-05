@@ -183,6 +183,7 @@ NEW: API User - Remove user from group (#35453)
 NEW: Implement listTimespent method in api_projects.class.php (#36093)
 NEW: qual fixes on api contract (#36066)
 NEW: stock API GET movement (#36193)
+NEW: action to clone ticket
 
 
 WARNING:

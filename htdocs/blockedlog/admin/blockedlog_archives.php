@@ -50,7 +50,7 @@ $langs->loadLangs(array('admin', 'banks', 'bills', 'blockedlog', 'other'));
 
 // Get Parameters
 $action      = GETPOST('action', 'aZ09');
-$confirm     = GETPOST('confirm', 'aZ09');
+//$confirm     = GETPOST('confirm', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : getDolDefaultContextPage(__FILE__); // To manage different context of search
 $backtopage  = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss   = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
@@ -132,7 +132,6 @@ if ($max_time && $max_time < $max_execution_time_for_importexport) {
 }
 
 $MAXLINES = getDolGlobalInt('BLOCKEDLOG_MAX_LINES', 10000);
-$MAXFORSHOWNLINKS = getDolGlobalInt('BLOCKEDLOG_MAX_FOR_SHOWN_LINKS', 100);
 
 $permission = $user->hasRight('blockedlog', 'read');
 $permissiontoadd = $user->hasRight('blockedlog', 'read');	// Permission is to upload new files to scan them
@@ -141,6 +140,8 @@ $permtoedit = $permissiontoadd;
 $upload_dir = getMultidirOutput($block_static, 'blockedlog').'/archives';
 
 dol_mkdir($upload_dir);
+
+$fh = null;
 
 
 /*
@@ -175,6 +176,7 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 
 	$previoushash = '';
 	$firstid = '';
+	$periodnotcomplete = 0;
 
 	if (! (GETPOSTINT('yeartoexport') > 0)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Year")), null, "errors");
@@ -191,9 +193,10 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 	$datee = dol_get_last_day(GETPOSTINT('yeartoexport'), GETPOSTINT('monthtoexport') > 0 ? GETPOSTINT('monthtoexport') : 12);
 
 	if ($datee >= dol_now()) {
-		setEventMessages($langs->trans("ErrorPeriodMustBePastToAllowExport"), null, "errors");
-		$error++;
+		$periodnotcomplete = 1;
 	}
+
+	$suffixperiod = ($periodnotcomplete ? 'INCOMPLETE' : 'DONOTMODIFY');
 
 	if (!$error) {
 		// Get the ID of the first line qualified
@@ -231,7 +234,7 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 	$yearmonthdateofexport = dol_print_date(dol_now(), 'dayhourrfc', 'gmt');
 	$yearmonthdateofexportstandard = dol_print_date(dol_now(), 'dayhourlog', 'gmt');
 
-	$nameofdownoadedfile = "unalterable-log-archive-".$dolibarr_main_db_name."-".str_replace('-', '', $yearmonthtoexport).'-'.$yearmonthdateofexportstandard.'UTC-DONOTMODIFY.csv';
+	$nameofdownoadedfile = "unalterable-log-archive-".$dolibarr_main_db_name."-".str_replace('-', '', $yearmonthtoexport).'-'.$yearmonthdateofexportstandard.'UTC-'.$suffixperiod.'.csv';
 
 	//$tmpfile = $conf->admin->dir_temp.'/unalterable-log-archive-tmp-'.$user->id.'.csv';
 	$tmpfile = getMultidirOutput($block_static, 'blockedlog').'/archives/'.$nameofdownoadedfile;
@@ -240,13 +243,14 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 
 
 	// Init var for totals
+	/*
 	$totalhtamountalllines = array('BILL_VALIDATE' => 0, 'PAYMENT_CUSTOMER_CREATE' => 0);
 	$totalvatamountalllines = array('BILL_VALIDATE' => 0, 'PAYMENT_CUSTOMER_CREATE' => 0);
 	$totalamountalllines = array('BILL_VALIDATE' => 0, 'PAYMENT_CUSTOMER_CREATE' => 0);
-	$totalhtamountlifetime = array('BILL_VALIDATE' => 0, 'PAYMENT_CUSTOMER_CREATE' => 0);
-	$totalvatamountlifetime = array('BILL_VALIDATE' => 0, 'PAYMENT_CUSTOMER_CREATE' => 0);
-	$totalamountlifetime = array('BILL_VALIDATE' => 0, 'PAYMENT_CUSTOMER_CREATE' => 0);
-
+	$totalhtamountlifetime = array('BILL_VALIDATE' => array(), 'PAYMENT_CUSTOMER_CREATE' => array());
+	$totalvatamountlifetime = array('BILL_VALIDATE' => array(), 'PAYMENT_CUSTOMER_CREATE' => array());
+	$totalamountlifetime = array('BILL_VALIDATE' => array(), 'PAYMENT_CUSTOMER_CREATE' => array());
+	*/
 
 	if (!$error) {
 		$fh = fopen($tmpfile, 'w');
@@ -259,14 +263,14 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 		$sql .= " FROM ".MAIN_DB_PREFIX."blockedlog";
 		$sql .= " WHERE entity = ".((int) $conf->entity);
 		// For unalterable log, we are using the date of creation of the log. Note that a bookkeeper may decide to dispatch an invoice
-		// on different periods for example to manage depreciation.
+		// or payment on different periods for example to manage depreciation, but we want here is not accountancy but payment data.
 		$sql .= " AND date_creation BETWEEN '".$db->idate($dates)."' AND '".$db->idate($datee)."'";
 		$sql .= " ORDER BY date_creation ASC, rowid ASC"; // Required so later we can use the parameter $previoushash of checkSignature()
 
 		$resql = $db->query($sql);
 		if ($resql) {
 			// Print line with title
-			fwrite($fh, "BEGIN - date=".$yearmonthdateofexport." - period=".$yearmonthtoexport." - formatexport=".$formatexport." - user=".$user->getFullName($langs)
+			fwrite($fh, "BEGIN - date=".$yearmonthdateofexport." - period=".$yearmonthtoexport.($periodnotcomplete ? '-'.$suffixperiod : '')." - formatexport=".$formatexport." - user=".$user->getFullName($langs)
 				.';'.$langs->transnoentities('Id')
 				.';'.$langs->transnoentities('DateCreation')
 				.';'.$langs->transnoentities('Action')
@@ -304,7 +308,7 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 
 				$block_static->module_source = $obj->module_source;
 
-				$block_static->amounts_excl = (float) $obj->amounts_excl;			// Database store value with 8 digits, we cut ending 0 them with (flow)
+				$block_static->amounts_taxexcl = (float) $obj->amounts_taxexcl;		// Database store value with 8 digits, we cut ending 0 them with (flow)
 				$block_static->amounts = (float) $obj->amounts;						// Database store value with 8 digits, we cut ending 0 them with (flow)
 
 				$block_static->action = $obj->action;
@@ -396,25 +400,26 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 		}
 
 		// Now calculate cumulative total of all invoices validated
+		/*
 		if (array_key_exists('BILL_VALIDATE', $totalhtamount)) {
-			foreach ($totalhtamount['BILL_VALIDATE'] as $key => $val) {	// Loop on each module
+			foreach ($totalhtamount['BILL_VALIDATE'] as $val) {	// Loop on each module
 				$totalhtamountalllines['BILL_VALIDATE'] += $val;
 			}
-			foreach ($totalvatamount['BILL_VALIDATE'] as $key => $val) {
+			foreach ($totalvatamount['BILL_VALIDATE'] as $val) {
 				$totalvatamountalllines['BILL_VALIDATE'] += $val;
 			}
-			foreach ($totalamount['BILL_VALIDATE'] as $key => $val) {
+			foreach ($totalamount['BILL_VALIDATE'] as $val) {
 				$totalamountalllines['BILL_VALIDATE'] += $val;
 			}
 		}
 		if (array_key_exists('PAYMENT_CUSTOMER_CREATE', $totalhtamount)) {
-			foreach ($totalhtamount['PAYMENT_CUSTOMER_CREATE'] as $key => $val) {
+			foreach ($totalhtamount['PAYMENT_CUSTOMER_CREATE'] as $val) {
 				$totalhtamountalllines['PAYMENT_CUSTOMER_CREATE'] += $val;
 			}
-			foreach ($totalvatamount['PAYMENT_CUSTOMER_CREATE'] as $key => $val) {
+			foreach ($totalvatamount['PAYMENT_CUSTOMER_CREATE'] as $val) {
 				$totalvatamountalllines['PAYMENT_CUSTOMER_CREATE'] += $val;
 			}
-			foreach ($totalamount['PAYMENT_CUSTOMER_CREATE'] as $key => $val) {
+			foreach ($totalamount['PAYMENT_CUSTOMER_CREATE'] as $val) {
 				$totalamountalllines['PAYMENT_CUSTOMER_CREATE'] += $val;
 			}
 		}
@@ -502,7 +507,9 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 		$sql = "SELECT action, module_source, object_format, MIN(date_creation) as datemin, SUM(amounts_taxexcl) as sumamounts_taxexcl, SUM(amounts) as sumamounts";
 		$sql .= " FROM ".MAIN_DB_PREFIX."blockedlog";
 		$sql .= " WHERE entity = ".((int) $conf->entity);
-		$sql .= " AND action IN ('BILL_VALIDATE', 'PAYMENT_CUSTOMER_CREATE')";
+		//$sql .= " AND action IN ('BILL_VALIDATE', 'BILL_SENTBYMAIL', 'PAYMENT_CUSTOMER_CREATE', 'CASHCONTROL_CLOSE', 'PAYMENT_CUSTOMER_DELETE', 'DOC_DOWNLOAD', 'DOC_PREVIEW')";
+		$sql .= " AND action IN ('BILL_VALIDATE', 'PAYMENT_CUSTOMER_CREATE', 'PAYMENT_CUSTOMER_DELETE')";	// Only event into lifetime total
+		//$sql .= " AND action IN ('PAYMENT_CUSTOMER_CREATE')";
 		$sql .= " GROUP BY action, module_source, object_format";
 
 		$foundoldformat = 0;
@@ -524,20 +531,27 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 				} else {
 					$firstrecorddate = $obj->datemin;
 				}
+
+				if (!isset($totalamountlifetime[$obj->action][$obj->module_source])) {
+					$totalamountlifetime[$obj->action][$obj->module_source] = 0;
+				}
+
+				//var_dump($obj->action, $obj->module_source, $obj->sumamounts);
+
 				// Total per action code and module
 				$totalamountlifetime[$obj->action][$obj->module_source] += $obj->sumamounts;
+
 				// If format of line is old, the sumamounts_taxexcl was not recorded. So we flag this case.
 				if (empty($obj->object_format) || $obj->object_format == 'V1') {
 					$foundoldformat = 1;
 				} else {
-					$totalhtamountlifetime[$obj->action] += $obj->sumamounts_taxexcl;
+					$totalhtamountlifetime[$obj->action][$obj->module_source] += $obj->sumamounts_taxexcl;
 				}
 			}
 		} else {
 			$error++;
 			setEventMessages($db->lasterror, null, 'errors');
 		}
-
 
 		// Add a final line with perpetual total for invoice validations
 		$block_static->id = '';
@@ -546,10 +560,15 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 		$block_static->module_source = '*';
 		// if an old format was found, we do not have reliable amount excluding tax for lifetime value, we do not show it
 
+		<<<<<<< HEAD
 		$block_static->amounts_taxexcl = ($foundoldformat ? '' : $totalhtamountlifetime['BILL_VALIDATE']);
 		$block_static->amounts = $totalamountlifetime['BILL_VALIDATE'];
+		=======
+		$block_static->amounts_taxexcl = ($foundoldformat ? '' : array_sum($totalhtamountlifetime['BILL_VALIDATE']));
+		$block_static->amounts = array_sum($totalamountlifetime['BILL_VALIDATE']);
+		>>>>>>> branch '23.0' of git@github.com:Dolibarr/dolibarr.git
 		// if an old format was found, we do not have reliable VAT amount for lifetime value, we do not show it
-		$block_static->ref_object = ($foundoldformat ? '' : $langs->transnoentitiesnoconv("VAT").': '.($block_static->amounts - $totalhtamountlifetime['BILL_VALIDATE']));
+		$block_static->ref_object = ($foundoldformat ? '' : $langs->transnoentitiesnoconv("VAT").': '.($block_static->amounts - $block_static->amounts_taxexcl));
 		$block_static->date_object = '';
 		$block_static->user_fullname = '';
 		$block_static->linktoref = '';
@@ -587,7 +606,7 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 		$block_static->action = 'PAYMENT_CUSTOMER_CREATE';
 		$block_static->module_source = '*';
 		$block_static->amounts_taxtecl = '';
-		$block_static->amounts = $totalamountlifetime['PAYMENT_CUSTOMER_CREATE'];
+		$block_static->amounts = array_sum($totalamountlifetime['PAYMENT_CUSTOMER_CREATE']);
 		$block_static->ref_object = '';
 		$block_static->date_object = '';
 		$block_static->user_fullname = '';
@@ -618,6 +637,7 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 			.csvClean($block_static->signature).';'
 			.csvClean($statusofrecord).';'
 			.csvClean($signatureexport).';'."\n");
+		*/
 
 		fclose($fh);
 
@@ -636,33 +656,39 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 	}
 
 	if (!$error) {
-		// We record the export as a new line into the unalterable logs
-		require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
-		$b = new BlockedLog($db);
+		if ($periodnotcomplete) {
+			setEventMessages($langs->trans("ErrorPeriodMustBePastToAllowExport"), null, "warnings");
+		} else {
+			// We record the export as a new line into the unalterable logs
+			require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
+			$b = new BlockedLog($db);
 
-		$object = new stdClass();
-		$object->id = 0;
-		$object->element = 'module';
-		$object->ref = 'systemevent';
-		$object->entity = $conf->entity;
-		$object->date = dol_now();
+			$object = new stdClass();
+			$object->id = 0;
+			$object->element = 'module';
+			$object->ref = 'systemevent';
+			$object->entity = $conf->entity;
+			$object->date = dol_now();
+			$object->fullname = $user->getFullName($langs);
 
-		$object->label = 'Export unalterable logs - Period: year='.GETPOSTINT('yeartoexport').(GETPOSTINT('monthtoexport') ? ' month='.GETPOSTINT('monthtoexport') : '');
+			$object->label = 'Export unalterable logs';
+			$object->period = 'year='.GETPOSTINT('yeartoexport').(GETPOSTINT('monthtoexport') ? ' month='.GETPOSTINT('monthtoexport') : '');
 
-		$action = 'BLOCKEDLOG_EXPORT';
-		$result = $b->setObjectData($object, $action, 0, $user, null);
-		//var_dump($b); exit;
+			$action = 'BLOCKEDLOG_EXPORT';
+			$result = $b->setObjectData($object, $action, 0, $user, null);
+			//var_dump($b); exit;
 
-		if ($result < 0) {
-			setEventMessages('Failed to insert the export int the unalterable log', null, 'errors');
-			$error++;
-		}
+			if ($result < 0) {
+				setEventMessages('Failed to insert the export int the unalterable log', null, 'errors');
+				$error++;
+			}
 
-		$res = $b->create($user);
+			$res = $b->create($user);
 
-		if ($res < 0) {
-			setEventMessages('Failed to insert the export int the unalterable log', null, 'errors');
-			$error++;
+			if ($res < 0) {
+				setEventMessages('Failed to insert the export int the unalterable log', null, 'errors');
+				$error++;
+			}
 		}
 	}
 }

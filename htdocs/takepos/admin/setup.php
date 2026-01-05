@@ -390,13 +390,6 @@ print '<td>';
 print ajax_constantonoff("TAKEPOS_CONTROL_CASH_OPENING", array(), $conf->entity, 0, 0, 1, 0);
 print "</td></tr>\n";
 
-// Gift receipt
-print '<tr class="oddeven"><td>';
-print $langs->trans('GiftReceiptButton');
-print '<td>';
-print ajax_constantonoff("TAKEPOS_GIFT_RECEIPT", array(), $conf->entity, 0, 0, 1, 0);
-print "</td></tr>\n";
-
 // Delayed Pay Button
 print '<tr class="oddeven"><td>';
 print $langs->trans('AllowDelayedPayment');

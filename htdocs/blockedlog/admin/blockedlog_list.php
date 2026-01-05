@@ -75,6 +75,7 @@ if (GETPOST('search_endyear') != '') {
 	$search_end = dol_mktime(23, 59, 59, $search_endmonth, $search_endday, $search_endyear);
 }
 $search_code = GETPOST('search_code', 'array:alpha');
+$search_module_source = GETPOST('search_module_source', 'array:alpha');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
 $search_signature = GETPOST('search_signature', 'alpha');
@@ -139,6 +140,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_start = -1;
 	$search_end = -1;
 	$search_code = array();
+	$search_module_source = '';
 	$search_ref = '';
 	$search_amount = '';
 	$search_signature = '';
@@ -151,232 +153,6 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_endday = '';
 	$toselect = array();
 	$search_array_options = array();
-}
-
-if (GETPOST('downloadcsv', 'alpha')) {
-	$error = 0;
-
-	$previoushash = '';
-	$firstid = '';
-
-	if (! (GETPOSTINT('yeartoexport') > 0)) {
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Year")), null, "errors");
-		$error++;
-	} else {
-		$dates = dol_get_first_day(GETPOSTINT('yeartoexport'), GETPOSTINT('monthtoexport') > 0 ? GETPOSTINT('monthtoexport') : 1);
-		$datee = dol_get_last_day(GETPOSTINT('yeartoexport'), GETPOSTINT('monthtoexport') > 0 ? GETPOSTINT('monthtoexport') : 12);
-
-		if ($datee >= dol_now()) {
-			setEventMessages($langs->trans("ErrorPeriodMustBePastToAllowExport"), null, "errors");
-			$error++;
-		}
-
-		// Get the ID of the first line qualified
-		$sql = "SELECT rowid, date_creation, tms, user_fullname, action, amounts, amounts_taxexcl, element, fk_object, date_object, ref_object, signature, fk_user, object_data";
-		$sql .= " FROM ".MAIN_DB_PREFIX."blockedlog";
-		$sql .= " WHERE entity = ".((int) $conf->entity);
-		// For unalterable log, we are using the date of creation of the log. Note that a bookkeeper may decide to dispatch an invoice
-		// on different periods for example to manage depreciation.
-		if (GETPOSTINT('monthtoexport') > 0 || GETPOSTINT('yeartoexport') > 0) {
-			$dates = dol_get_first_day(GETPOSTINT('yeartoexport'), GETPOSTINT('monthtoexport') ? GETPOSTINT('monthtoexport') : 1);
-			$datee = dol_get_last_day(GETPOSTINT('yeartoexport'), GETPOSTINT('monthtoexport') ? GETPOSTINT('monthtoexport') : 12);
-			$sql .= " AND date_creation BETWEEN '".$db->idate($dates)."' AND '".$db->idate($datee)."'";
-		}
-		$sql .= " ORDER BY rowid ASC"; // Required so we get the first one
-		$sql .= $db->plimit(1);
-
-		$res = $db->query($sql);
-		if ($res) {
-			// Make the first fetch to get first line
-			$obj = $db->fetch_object($res);
-			if ($obj) {
-				$firstid = $obj->rowid;
-				$previoushash = $block_static->getPreviousHash(0, $firstid);
-			} else {	// If not data found for filter, we do not need previoushash neither firstid
-				$firstid = '';
-				$previoushash = 'nodata';
-			}
-		} else {
-			$error++;
-			setEventMessages($db->lasterror, null, 'errors');
-		}
-	}
-
-	if (! $error) {
-		// We record the export as a new line into the unalterable logs
-		require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
-		$b = new BlockedLog($db);
-
-		$object = new stdClass();
-		$object->id = 0;
-		$object->element = 'module';
-		$object->ref = 'systemevent';
-		$object->entity = $conf->entity;
-		$object->date = dol_now();
-
-		$object->label = 'Export unalterable logs - Period: year='.GETPOSTINT('yeartoexport').(GETPOSTINT('monthtoexport') ? ' month='.GETPOSTINT('monthtoexport') : '');
-
-		$action = 'BLOCKEDLOG_EXPORT';
-		$result = $b->setObjectData($object, $action, 0, $user, null);
-		//var_dump($b); exit;
-
-		if ($result < 0) {
-			setEventMessages('Failed to insert the export int the unalterable log', null, 'errors');
-			$error++;
-		}
-
-		$res = $b->create($user);
-
-		if ($res < 0) {
-			setEventMessages('Failed to insert the export int the unalterable log', null, 'errors');
-			$error++;
-		}
-	}
-
-	if (!$error) {
-		// Now restart request with all data, si without the limit(1) in sql request
-		$sql = "SELECT rowid, date_creation, tms, user_fullname, action, amounts, amounts_taxexcl, element, fk_object, date_object, ref_object,";
-		$sql .= " signature, fk_user, object_data, object_version, object_format, debuginfo";
-		$sql .= " FROM ".MAIN_DB_PREFIX."blockedlog";
-		$sql .= " WHERE entity = ".((int) $conf->entity);
-		if (GETPOSTINT('monthtoexport') > 0 || GETPOSTINT('yeartoexport') > 0) {
-			$dates = dol_get_first_day(GETPOSTINT('yeartoexport'), GETPOSTINT('monthtoexport') ? GETPOSTINT('monthtoexport') : 1);
-			$datee = dol_get_last_day(GETPOSTINT('yeartoexport'), GETPOSTINT('monthtoexport') ? GETPOSTINT('monthtoexport') : 12);
-			$sql .= " AND date_creation BETWEEN '".$db->idate($dates)."' AND '".$db->idate($datee)."'";
-		}
-		$sql .= " ORDER BY rowid ASC"; // Required so later we can use the parameter $previoushash of checkSignature()
-
-		$resql = $db->query($sql);
-		if ($resql) {
-			$nameofdownoadedfile = "unalterable-log-archive-".$dolibarr_main_db_name."-".(GETPOSTINT('yeartoexport') > 0 ? GETPOSTINT('yeartoexport').(GETPOSTINT('monthtoexport') > 0 ? sprintf("%02d", GETPOSTINT('monthtoexport')) : '').'-' : '').dol_print_date(dol_now(), 'dayhourlog', 'gmt').'UTC-DONOTMODIFY';
-
-			$tmpfile = $conf->admin->dir_temp.'/unalterable-log-archive-tmp-'.$user->id.'.csv';
-
-			$fh = fopen($tmpfile, 'w');
-
-			// Print line with title
-			fwrite($fh, $langs->transnoentities('Id')
-				.';'.$langs->transnoentities('Date')
-				.';'.$langs->transnoentities('User')
-				.';'.$langs->transnoentities('Action')
-				.';'.$langs->transnoentities('Element')
-				.';'.$langs->transnoentities('Amounts')
-				.';'.$langs->transnoentities('ObjectId')
-				.';'.$langs->transnoentities('Date')
-				.';'.$langs->transnoentities('Ref')
-				.';'.$langs->transnoentities('Fingerprint')
-				.';'.$langs->transnoentities('Status')
-				.';'.$langs->transnoentities('Note')
-				.';'.$langs->transnoentities('Version')
-				.';'.$langs->transnoentities('FullData')
-				.';'.$langs->transnoentities('DebugInfo')
-				."\n");
-
-			$loweridinerror = 0;
-			$i = 0;
-
-			while ($obj = $db->fetch_object($resql)) {
-				// We set here all data used into signature calculation (see checkSignature method) and more
-				// IMPORTANT: We must have here, the same rule for transformation of data than into the fetch method (db->jdate for date, ...)
-				$block_static->id = $obj->rowid;
-				$block_static->entity = $obj->entity;
-
-
-				$block_static->date_creation = $db->jdate($obj->date_creation);		// TODO Use gmt
-
-				$block_static->amounts_taxexcl = (float) $obj->amounts_taxexcl;		// Database store value with 8 digits, we cut ending 0 them with (float)
-				$block_static->amounts = (float) $obj->amounts;						// Database store value with 8 digits, we cut ending 0 them with (float)
-
-				$block_static->action = $obj->action;
-				$block_static->date_object = $db->jdate($obj->date_object);			// TODO Use gmt ?
-				$block_static->ref_object = $obj->ref_object;
-
-				$block_static->user_fullname = $obj->user_fullname;
-
-				$block_static->object_data = $block_static->dolDecodeBlockedData($obj->object_data);
-
-				// Old hash + Previous fields concatenated = signature
-				$block_static->signature = $obj->signature;
-
-				$block_static->element = $obj->element;								// Not in signature
-				$block_static->fk_object = $obj->fk_object;							// Not in signature
-
-				$block_static->fk_user = $obj->fk_user;								// Not in signature
-
-				$block_static->date_modification = $db->jdate($obj->tms);			// Not in signature
-				$block_static->object_version = $obj->object_version;				// Not in signature
-				$block_static->object_format = $obj->object_format;					// Not in signature
-
-				$block_static->certified = ($obj->certified == 1);
-
-				$block_static->linktoref = $obj->linktoref;
-				$block_static->linktype = $obj->linktype;
-
-				$block_static->debuginfo = $obj->debuginfo;
-
-				//var_dump($block->id.' '.$block->signature, $block->object_data);
-				$checksignature = $block_static->checkSignature($previoushash); // If $previoushash is not defined, checkSignature will search it
-
-				if ($checksignature) {
-					$statusofrecord = 'Valid';
-					if ($loweridinerror > 0) {
-						$statusofrecordnote = 'ValidButFoundAPreviousKO';
-					} else {
-						$statusofrecordnote = '';
-					}
-				} else {
-					$statusofrecord = 'KO';
-					$statusofrecordnote = 'LineCorruptedOrNotMatchingPreviousOne';
-					$loweridinerror = $obj->rowid;
-				}
-
-				if ($i == 0) {
-					$statusofrecordnote = $langs->trans("PreviousFingerprint").': '.$previoushash.($statusofrecordnote ? ' - '.$statusofrecordnote : '');
-				}
-
-				fwrite($fh, $block_static->id
-					.';'.$block_static->date_creation
-					.';"'.str_replace('"', '""', $block_static->user_fullname).'";'
-					.$block_static->action
-					.';'.$block_static->element
-					.';'.$block_static->amounts			// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
-					.';'.$block_static->fk_object
-					.';'.$block_static->date_object
-					.';"'.str_replace('"', '""', $block_static->ref_object).'";"'
-					.$block_static->signature.'";'
-					.$statusofrecord
-					.';'.$statusofrecordnote
-					.';'.$block_static->object_version
-					.';"'.str_replace('"', '""', $obj->object_data).'"'				// We must the string to decode into object with dolDecodeBlockedData
-					.';"'.str_replace('"', '""', $block_static->debuginfo).'"'
-					."\n");
-
-				// Set new previous hash for next fetch
-				$previoushash = $obj->signature;
-
-				$i++;
-			}
-
-			fclose($fh);
-
-			// Calculate the md5 of the file (the last line has a return line)
-			$md5value = md5_file($tmpfile);
-
-			// Now add a signature to check integrity at end of file
-			file_put_contents($tmpfile, 'END - md5='.$md5value, FILE_APPEND);
-			dolChmod($tmpfile);
-
-			header('Content-Type: application/octet-stream');
-			header("Content-Transfer-Encoding: Binary");
-			header("Content-disposition: attachment; filename=\"".$nameofdownoadedfile.".csv\"");
-
-			readfile($tmpfile);
-
-			exit;
-		} else {
-			setEventMessages($db->lasterror, null, 'errors');
-		}
-	}
 }
 
 
@@ -395,7 +171,7 @@ $help_url = "EN:Module_Unalterable_Archives_-_Logs|FR:Module_Archives_-_Logs_Ina
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-blockedlog page-admin_blockedlog_list');
 
-$blocks = $block_static->getLog('all', (string) $search_id, $MAXLINES, $sortfield, $sortorder, (int) $search_fk_user, $search_start, $search_end, $search_ref, $search_amount, $search_code, $search_signature);
+$blocks = $block_static->getLog('all', (string) $search_id, $MAXLINES, $sortfield, $sortorder, (int) $search_fk_user, $search_start, $search_end, $search_ref, $search_amount, $search_code, $search_signature, $search_module_source);
 if (!is_array($blocks)) {
 	if ($blocks == -2) {
 		setEventMessages($langs->trans("TooManyRecordToScanRestrictFilters", $MAXLINES), null, 'errors');
@@ -532,7 +308,12 @@ print '</td>';
 
 // User
 print '<td class="liste_titre">';
-print $form->select_dolusers($search_fk_user, 'search_fk_user', 1, null, 0, '', '', '0', 0, 0, '', 0, '', 'maxwidth150');
+print $form->select_dolusers($search_fk_user, 'search_fk_user', 1, null, 0, '', '', '0', 0, 0, '', 0, '', 'maxwidth100');
+print '</td>';
+
+// Module source
+print '<td class="liste_titre">';
+print $form->multiselectarray('search_module_source', $block_static->trackedmodules, $search_module_source, 0, 0, 'maxwidth150', 1);
 print '</td>';
 
 // Actions code
@@ -559,7 +340,7 @@ print $form->selectarray('search_showonlyerrors', $array, $search_showonlyerrors
 print '</td>';
 
 // Link to debug information object
-if (getDolGlobalString('MAIN_FEATURES_LEVEL') > 0) {	// If in experimental or develop mode, we add some debug information. It may help developers to find origin of bugs.
+if (getDolGlobalString("BLOCKEDLOG_DEBUG")) {	// If in experimental or develop mode, we add some debug information. It may help developers to find origin of bugs.
 	print '<td class="liste_titre"></td>';
 }
 
@@ -582,13 +363,14 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 print getTitleFieldOfList($langs->trans('#'), 0, $_SERVER["PHP_SELF"], 'rowid', '', $param, '', $sortfield, $sortorder, 'minwidth50 ')."\n";
 print getTitleFieldOfList($langs->trans('Date'), 0, $_SERVER["PHP_SELF"], 'date_creation', '', $param, '', $sortfield, $sortorder, '')."\n";
 print getTitleFieldOfList($langs->trans('Author'), 0, $_SERVER["PHP_SELF"], 'user_fullname', '', $param, '', $sortfield, $sortorder, '')."\n";
+print getTitleFieldOfList($langs->trans('POS'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '')."\n";
 print getTitleFieldOfList($langs->trans('Action'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '')."\n";
 print getTitleFieldOfList($langs->trans('Ref'), 0, $_SERVER["PHP_SELF"], 'ref_object', '', $param, '', $sortfield, $sortorder, '')."\n";
 print getTitleFieldOfList($langs->trans('Amount'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ', 0, $langs->trans("TotalTTCIfInvoiceSeeCompleteDataForDetail").'<br>'.$langs->trans("AmountInCurrency", getDolCurrency()))."\n";
 print getTitleFieldOfList($langs->trans('DataOfArchivedEvent'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ', 0, $langs->trans('DataOfArchivedEventHelp'), 1)."\n";
 print getTitleFieldOfList($langs->trans('Fingerprint'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '')."\n";
 print getTitleFieldOfList($form->textwithpicto($langs->trans('Status'), $langs->trans('DataOfArchivedEventHelp2')), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ')."\n";
-if (getDolGlobalString('MAIN_FEATURES_LEVEL') > 0) {	// If in experimental or develop mode, we add some debug information. It may help developers to find origin of bugs.
+if (getDolGlobalString("BLOCKEDLOG_DEBUG")) {	// If in experimental or develop mode, we add some debug information. It may help developers to find origin of bugs.
 	print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '')."\n";
 }
 // Action column
@@ -607,7 +389,7 @@ if (getDolGlobalString('BLOCKEDLOG_SCAN_ALL_FOR_LOWERIDINERROR')) {
 	// TODO Make a full scan of table in reverse order of id of $block, so we can use the parameter $previoushash into checkSignature to save requests
 	// to find the $loweridinerror.
 } else {
-	// This is version that optimize the memory (note: it will not report errors that are outside the filter range)
+	// This is version that optimize the memory (note: it will not report errors that are outside the filter range, but we don't need them)
 	if (is_array($blocks)) {
 		foreach ($blocks as &$block) {
 			//var_dump($block->id.' '.$block->signature, $block->object_data);
@@ -663,27 +445,31 @@ if (is_array($blocks)) {
 			}
 
 			// ID
-			print '<td>'.dol_escape_htmltag((string) $block->id).'</td>';
+			print '<td>'.dolPrintHTML((string) $block->id).'</td>';
 
 			// Date
 			print '<td class="nowraponall">'.dol_print_date($block->date_creation, 'dayhour').'</td>';
 
 			// User
-			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($block->user_fullname).'">';
+			print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($block->user_fullname).'">';
 			//print $block->getUser()
-			print dol_escape_htmltag($block->user_fullname);
+			print dolPrintHTML($block->user_fullname);
 			print '</td>';
+
+			// ModulePOS
+			$labelofmodulesource = $block->module_source;
+			print '<td class="tdoverflowmax250" title="'.dolPrintHTMLForAttribute($labelofmodulesource).'">'.dolPrintHTML($labelofmodulesource).'</td>';
 
 			// Action
 			$labelofaction = $langs->transnoentitiesnoconv('log'.$block->action);
-			print '<td class="tdoverflowmax250" title="'.dol_escape_htmltag($labelofaction).'">'.dolPrintHTML($labelofaction).'</td>';
+			print '<td class="tdoverflowmax250" title="'.dolPrintHTMLForAttribute($labelofaction).'">'.dolPrintHTML($labelofaction).'</td>';
 
 			// Ref
-			print '<td class="nowraponall">';
+			print '<td class="nowraponall"><div class="smallheight">';
 			if (!empty($block->ref_object)) {
 				print dol_escape_htmltag($block->ref_object);
 				if ($block->linktype && $block->linktoref) {
-					if ($block->linktype == 'paymentof') {
+					if ($block->linktype == 'payment') {
 						print '<br><span class="opacitymedium small">'.$langs->trans("PaymentOf").' '.$block->linktoref.'</span>';
 					}
 					if ($block->linktype == 'replacedby') {
@@ -693,7 +479,7 @@ if (is_array($blocks)) {
 			} else {
 				// Ref not stored
 			}
-			print '</td>';
+			print '</div></td>';
 
 			//$tmpobj = json_decode($block->object_data);
 
@@ -803,6 +589,9 @@ if (is_array($blocks)) {
 				print '<td class="tdoverflowmax200">';
 				print '</td>';
 
+				// Module source
+				print '<td></td>';
+
 				// Action
 				print '<td></td>';
 
@@ -850,7 +639,7 @@ if (is_array($blocks)) {
 				print '</td>';
 
 				// Link to debug information object
-				if (getDolGlobalString('MAIN_FEATURES_LEVEL') > 0) {	// If in experimental or develop mode, we add some debug information. It may help developers to find origin of bugs.
+				if (getDolGlobalString("BLOCKEDLOG_DEBUG")) {	// If in experimental or develop mode, we add some debug information. It may help developers to find origin of bugs.
 					print '<td class="tdoverflowmax150"'.(preg_match('/<a/', $object_link) ? '' : 'title="'.dol_escape_htmltag(dol_string_nohtmltag($object_link.($object_link_title ? ' - '.$object_link_title : ''))).'"').'>';
 					print '</td>';
 				}

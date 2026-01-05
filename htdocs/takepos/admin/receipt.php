@@ -34,6 +34,7 @@ require '../../main.inc.php'; // Load $user and permissions
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ * @var Societe $mysoc
  */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
@@ -122,7 +123,7 @@ if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "browser" || getDolGlobalStrin
 	$substitutionarray = pdf_getSubstitutionArray($langs, array('ticket', 'member', 'candidate'), null, 2, array('company', 'user', 'object', 'system'));
 	$substitutionarray['__(AnyTranslationKey)__'] = $langs->trans("Translation");
 
-	$htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
+	$htmltext = '<i class="small">'.$langs->trans("AvailableVariables").':<br>';
 	foreach ($substitutionarray as $key => $val) {
 		$htmltext .= $key.'<br>';
 	}
@@ -174,6 +175,7 @@ if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "browser" || getDolGlobalStrin
 	if (isALNERunningVersion()) {
 		$conf->global->TAKEPOS_PRINT_PAYMENT_METHOD = 1;
 		print ajax_constantonoff("TAKEPOS_PRINT_PAYMENT_METHOD", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', '', 'inline-block', 0, '', 1);
+		print '<span class="opacitymedium">'.$langs->trans("Always").'</span>';
 	} else {
 		print ajax_constantonoff("TAKEPOS_PRINT_PAYMENT_METHOD", array(), $conf->entity, 0, 0, 1, 0);
 	}
@@ -184,7 +186,13 @@ if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "browser" || getDolGlobalStrin
 print '<tr class="oddeven"><td>';
 print $langs->trans('ShowPriceHTOnReceipt');
 print '<td colspan="2">';
-print ajax_constantonoff("TAKEPOS_SHOW_HT_RECEIPT", array(), $conf->entity, 0, 0, 1, 0);
+if (isALNERunningVersion()) {
+	$conf->global->TAKEPOS_PRINT_PAYMENT_METHOD = 1;
+	print ajax_constantonoff("TAKEPOS_SHOW_HT_RECEIPT", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', '', 'inline-block', 0, '', 1);
+	print '<span class="opacitymedium">'.$langs->trans("Always").'</span>';
+} else {
+	print ajax_constantonoff("TAKEPOS_SHOW_HT_RECEIPT", array(), $conf->entity, 0, 0, 1, 0);
+}
 print "</td></tr>\n";
 
 if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector" && filter_var(getDolGlobalString('TAKEPOS_PRINT_SERVER'), FILTER_VALIDATE_URL) == true) {
@@ -216,6 +224,18 @@ if (getDolGlobalString('TAKEPOS_PRINT_WITHOUT_DETAILS')) {
 	print '<input type="text" name="TAKEPOS_PRINT_WITHOUT_DETAILS_LABEL_DEFAULT" value="' . getDolGlobalString('TAKEPOS_PRINT_WITHOUT_DETAILS_LABEL_DEFAULT') . '" />';
 	print "</td></tr>\n";
 }
+
+// Gift receipt
+print '<tr class="oddeven"><td>';
+print $langs->trans('GiftReceiptButton');
+print '<td>';
+if (isALNERunningVersion()) {
+	print ajax_constantonoff("TAKEPOS_GIFT_RECEIPT", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', '', 'inline-block', 0, '', 1);
+	print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NotAvailable"), $langs->trans("NotAvailableForCountryWhenModuleIsOn", $mysoc->country_code, $langs->transnoentitiesnoconv('Module3200Name'))).'</span>';
+} else {
+	print ajax_constantonoff("TAKEPOS_GIFT_RECEIPT", array(), $conf->entity, 0, 0, 1, 0);
+}
+print "</td></tr>\n";
 
 // Auto print tickets
 print '<tr class="oddeven"><td>';
