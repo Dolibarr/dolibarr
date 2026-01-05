@@ -84,7 +84,7 @@ if ($action == 'builddoc' && $permissiontoread) {
 	// We save charset_output to restore it because write_file can change it if needed for
 	// output format that does not support UTF8.
 	$sav_charset_output = $outputlangs->charset_output;
-	if ($rap->write_file($dir, GETPOSTINT("remonth"), GETPOSTINT("reyear"), $outputlangs) > 0) {
+	if ($rap->write_file($dir, GETPOSTINT("remonth"), GETPOSTINT("reyear"), $outputlangs, GETPOSTINT("cday")) > 0) {
 		$outputlangs->charset_output = $sav_charset_output;
 	} else {
 		$outputlangs->charset_output = $sav_charset_output;
@@ -126,8 +126,11 @@ print load_fiche_titre($titre, '', 'bill');
 print '<form method="post" action="rapport.php?year='.$year.'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="builddoc">';
+$cday = GETPOST("cday") ? GETPOST("cday") : date("d", time());
 $cmonth = GETPOST("remonth") ? GETPOST("remonth") : date("n", time());
 $syear = GETPOST("reyear") ? GETPOST("reyear") : date("Y", time());
+
+print $formother->selectDay($cday, 'cday', 1);
 
 print $formother->select_month($cmonth, 'remonth');
 
@@ -159,7 +162,7 @@ if ($year) {
 		print '<td class="right"></td>';
 		print '</tr>';
 
-		$files = (dol_dir_list($dir.'/'.$year, 'files', 0, '^payments-[0-9]{4}-[0-9]{2}\.pdf$', '', 'name', SORT_DESC, 1));
+		$files = (dol_dir_list($dir.'/'.$year, 'files', 0, '^payments-[0-9]{4}-[0-9]{2}(-[0-9]{2})?\.pdf$', '', 'name', SORT_DESC, 1));
 		foreach ($files as $f) {
 			$relativepath = $f['level1name'].'/'.$f['name'];
 			print '<tr class="oddeven">';
