@@ -690,7 +690,6 @@ if ($mode == 'login') {
 	print '<tr class="liste_titre"><td class="titlefieldmax45">';
 	print $langs->trans("Parameter");
 	print '</td><td>';
-	print $langs->trans("Value");
 	print '</td></tr>';
 
 	// Hide helpcenter link on login page

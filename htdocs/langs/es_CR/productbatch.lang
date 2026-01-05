@@ -13,7 +13,6 @@ printEatby=Consumido-por: %s
 printSellby=Vendido-por: %s
 printQty=Cantidad: %d
 AddDispatchBatchLine=Agregar una linea de Vida Útil para despacho
-WhenProductBatchModuleOnOptionAreForced=Cuando el módulo Lote/serie este activado la disminución automática de las existencias se ve obligada a %sy el modo de aumento automático se ve obligado a %salgunas opciones pueden no estar disponibles. otras opciones se pueden definir como desee.
 ProductDoesNotUseBatchSerial=Este producto no utiliza el número de lote/serie
 ProductLotSetup=Configuración del módulo lote/serie
 ShowCurrentStockOfLot=Mostrar las existencias actuales para la relación producto/lote

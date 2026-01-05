@@ -1994,6 +1994,7 @@ if ($action == 'create') {
 				$nbcols++;
 			}
 
+			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder paymenttable centpercent">';
 
 			print '<tr class="liste_titre">';
@@ -2003,8 +2004,8 @@ if ($action == 'create') {
 			if ($canSeeBankAccount) {
 				print '<td class="liste_titre right">'.$langs->trans('BankAccount').'</td>';
 			}
-			print '<td class="liste_titre right">'.$langs->trans('Amount').'</td>';
 			print '<td class="liste_titre" width="18">&nbsp;</td>';
+			print '<td class="liste_titre right">'.$langs->trans('Amount').'</td>';
 			print '</tr>';
 
 			// Payments already done (from payment on this expensereport)
@@ -2063,8 +2064,8 @@ if ($action == 'create') {
 						}
 						print '</td>';
 					}
-					print '<td class="right">'.price($objp->amount)."</td>";
 					print '<td></td>';
+					print '<td class="right">'.price($objp->amount)."</td>";
 					print "</tr>";
 					$totalpaid += $objp->amount;
 					$i++;
@@ -2085,17 +2086,24 @@ if ($action == 'create') {
 				} elseif ($object->paid == 1 && $remaintopay > 0) {
 					$cssforamountpaymentcomplete = 'amountpaymentneutral strikefordisabled';
 				}
-				print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AlreadyPaid").':</td><td class="right">'.price($totalpaid).'</td><td></td></tr>';
-				print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AmountExpected").':</td><td class="right">'.price($object->total_ttc).'</td><td></td></tr>';
+				print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AlreadyPaid").':</td>';
+				print '<td></td>';
+				print '<td class="right">'.price($totalpaid).'</td></tr>';
+
+				print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AmountExpected").':</td>';
+				print '<td></td>';
+				print '<td class="right">'.price($object->total_ttc).'</td></tr>';
 
 				print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("RemainderToPay").':</td>';
-				print '<td class="right'.($resteapayeraffiche ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'">'.price($resteapayeraffiche).'</td><td></td></tr>';
+				print '<td></td>';
+				print '<td class="right'.($resteapayeraffiche ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'">'.price($resteapayeraffiche).'</td></tr>';
 
 				$db->free($resql);
 			} else {
 				dol_print_error($db);
 			}
 			print "</table>";
+			print '</div>';
 
 			print '</div>';
 			print '</div>';
@@ -2214,7 +2222,7 @@ if ($action == 'create') {
 						}
 
 						// Comment
-						print '<td class="left linecolcomment">'.dol_nl2br($line->comments).'</td>';
+						print '<td class="left linecolcomment minwidth100">'.dol_nl2br($line->comments).'</td>';
 
 						// VAT rate
 						$senderissupplier = 0;
@@ -2347,7 +2355,7 @@ if ($action == 'create') {
 						print '</td>';
 
 						print '<td class="nowrap right linecolwarning">';
-						print !empty($line->rule_warning_message) ? img_warning(html_entity_decode($line->rule_warning_message)) : '&nbsp;';
+						print !empty($line->rule_warning_message) ? img_warning(html_entity_decode($line->rule_warning_message)) : '';
 						print '</td>';
 
 						// Ajout des boutons de modification/suppression

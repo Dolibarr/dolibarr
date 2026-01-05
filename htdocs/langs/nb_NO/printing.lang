@@ -53,4 +53,4 @@ PrintingDriverDescprintgcp=Konfigurasjonsvariabler for drivere til Google Cloud 
 PrintingDriverDescprintipp=Konfigurasjonsvariabler for skriverdrivere til Cups.
 PrintTestDescprintgcp=Liste over skrivere for Google Cloud Print.
 PrintTestDescprintipp=Liste over skrivere for Cups.
-Testbbbb
+PrinterLocation=Skriverplassering
