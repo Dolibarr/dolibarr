@@ -1062,7 +1062,7 @@ class BlockedLog
 				$this->action 			= $obj->action;
 				$this->module_source	= $obj->module_source;
 
-				$this->amounts_taxecl	= (is_null($obj->amounts_taxexcl) ? null : (float) $obj->amounts);
+				$this->amounts_taxexcl	= (is_null($obj->amounts_taxexcl) ? null : (float) $obj->amounts);
 				$this->amounts			= (float) $obj->amounts;
 
 				$this->fk_object = $obj->fk_object;
