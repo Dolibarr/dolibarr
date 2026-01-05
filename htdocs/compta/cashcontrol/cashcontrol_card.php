@@ -113,6 +113,7 @@ if (!$user->hasRight("cashdesk", "run") && !$user->hasRight("takepos", "run")) {
 $permissiontoadd = ($user->hasRight("cashdesk", "run") || $user->hasRight("takepos", "run"));
 $permissiontodelete = ($user->hasRight("cashdesk", "run") || $user->hasRight("takepos", "run")) || ($permissiontoadd && $object->status == 0);
 
+$sqlfilteronopdate = '';
 
 // Must be after the fetch
 $datestart = null;
@@ -143,19 +144,17 @@ if ($object->id > 0) {
 	if ($syear && !$smonth) {
 		$datestart = dol_get_first_day($syear, 1, 'tzuserrel');
 		$dateend = dol_get_last_day($syear, 12, 'tzuserrel');
-		$sql .= " AND dateo < '".$db->idate($datestart)."'";
 	} elseif ($syear && $smonth && !$sday) {
 		$datestart = dol_get_first_day($syear, $smonth, 'tzuserrel');
 		$dateend = dol_get_last_day($syear, $smonth, 'tzuserrel');
-		$sql .= " AND dateo < '".$db->idate($datestart)."'";
 	} elseif ($syear && $smonth && $sday) {
 		$datestart = dol_mktime($shour, $smin, $ssec, $smonth, $sday, $syear, 'tzuserrel');
 		$dateend = dol_mktime(23, 59, 59, $smonth, $sday, $syear, 'tzuserrel');
-		$sql .= " AND dateo < '".$db->idate($datestart)."'";
 	} else {
 		setEventMessages($langs->trans('YearNotDefined'), null, 'errors');
 	}
 }
+$sqlfilteronopdate .= " AND dateo < '".$db->idate((int) $datestart)."'";
 //var_dump(dol_print_date($datestart, 'dayhour', 'gmt'), dol_print_date($dateend, 'dayhour', 'gmt'));
 
 
@@ -507,11 +506,12 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 			$vartouse = 'CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse;
 			$bankid = getDolGlobalInt($vartouse);
 
-			// Get the amount in bank before the period date to pre-fill the "initial amount".
-			// The user is still free to prefill with the correct value
+			// Get the amount in bank before the period date to pre-fill the suggested "initial amount".
+			// The user is still free to prefill with the correct value. This is just to save time to user.
 			if ($bankid > 0) {
 				$sql = "SELECT SUM(amount) as total FROM ".MAIN_DB_PREFIX."bank";
 				$sql .= " WHERE fk_account = ".((int) $bankid);
+				$sql .= $sqlfilteronopdate;
 
 				$resql = $db->query($sql);
 				if ($resql) {
