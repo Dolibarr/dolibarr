@@ -30,7 +30,7 @@
  * @var Translate $langs
  * @var Conf $conf
  * @var DoliDB $db
- * @var Hookmanager $hookmanager
+ * @var HookManager $hookmanager
  * @var User $user
  *
  * @var CommonObject $object

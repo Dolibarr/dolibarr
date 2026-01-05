@@ -175,7 +175,7 @@ class BlockedLog
 
 	/**
 	 * Array of tracked modules (key => label)
-	 * @var array<string,string>
+	 * @var array<int|string,string>
 	 */
 	public $trackedmodules = array();
 
@@ -206,7 +206,7 @@ class BlockedLog
 
 		$sep = 0;
 
-		$this->trackedmodules['0'] = 'None';	// @phan-suppress-current-line PhanTypeMismatchProperty Phan don't want you assign a key '0'.
+		$this->trackedmodules[0] = 'None';
 		if (isModEnabled('takepos')) {
 			$this->trackedmodules['takepos'] = 'TakePOS';
 		}
@@ -538,7 +538,7 @@ class BlockedLog
 					$this->linktype = 'credit_note_of';
 					$this->linktoref = $invoice->ref;
 				}
-				//$this->module_source = $invoice->module_source;
+				//$this->module_source = (string) $invoice->module_source;
 			}
 		}
 		if ($object->element == 'facture') {
@@ -550,7 +550,7 @@ class BlockedLog
 					$this->linktype = 'credit_note_of';
 					$this->linktoref = $invoice->ref;
 				}
-				$this->module_source = $invoice->module_source;
+				$this->module_source = (string) $invoice->module_source;
 			}
 		}
 
@@ -1027,7 +1027,7 @@ class BlockedLog
 		} else {
 			if ($object->element == 'cashcontrol') {
 				$this->module_source = (string) $object->posmodule;		// Module
-				$this->pos_source = (string) $object->posnumber;		// Terminal
+				//$this->pos_source = (string) $object->posnumber;		// Terminal
 			}
 
 			// Generic case
