@@ -235,6 +235,8 @@ div#topmenu-global-search-dropdown a::after, div#topmenu-quickadd-dropdown a::af
 div#topmenu-global-search-dropdown, div#topmenu-bookmark-dropdown, div#topmenu-quickadd-dropdown {
 	<?php if (!$disableimages) { ?>
 		line-height: 46px;
+	<?php } else { ?>
+		margin-top: -2px;
 	<?php } ?>
 }
 a.top-menu-dropdown-link {

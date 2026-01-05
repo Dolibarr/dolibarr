@@ -73,11 +73,7 @@ MigrationUserGroupRightsEntity=Mettre à jour la valeur du champ d'entité de ll
 MigrationUserPhotoPath=Migration des chemins photos pour les utilisateurs
 MigrationFieldsSocialNetworks=Migration des champs utilisateurs réseaux sociaux (%s)
 MigrationReloadModule=Recharger module %s
-ShowNotAvailableOptions=Afficher les options indisponibles
-HideNotAvailableOptions=Masquer les options non disponibles
 ErrorFoundDuringMigration=Des erreurs ont été signalées pendant le processus de migration. L'étape suivante n'est donc pas disponible. Pour ignorer les erreurs, vous pouvez <a href="%s">cliquer ici</a>, mais l'application ou certaines fonctionnalités risquent de ne pas fonctionner correctement tant que les erreurs ne sont pas résolues.
-YouTryInstallDisabledByDirLock=L'application a essayé de se mettre à niveau automatiquement, mais les pages d'installation/mise à niveau ont été désactivées pour des raisons de sécurité (répertoire renommé avec le suffixe .lock).<br>
-YouTryInstallDisabledByFileLock=L'application a essayé de se mettre à jour automatiquement, mais les pages d'installation/mise à jour ont été désactivées pour des raisons de sécurité (par l'existence d'un fichier de verrouillage <strong>install.lock</strong> dans le répertoire des documents dolibarr).<br>
 YouTryUpgradeDisabledByMissingFileUnLock=L'application a essayé de se mettre à niveau automatiquement, mais le processus de mise à niveau n'est actuellement pas autorisé.<br>
 ClickHereToGoToApp=Cliquez ici pour accéder à votre candidature
 ClickOnLinkOrRemoveManualy=Si une mise à jour est en cours, veuillez patienter. Sinon, cliquez sur le lien suivant. Si vous voyez toujours cette même page, vous devez supprimer/renommer le fichier install.lock dans le répertoire documents.
@@ -88,3 +84,4 @@ NodoUpgradeAfterFiles=Aucune action demandée par les modules externes après la
 MigrationContractLineRank=Migrer la ligne de contrat pour utiliser le rang (et activer la réorganisation)
 MigrationProductLotPath=Chemin d'accès aux fichiers de lots de produits migrés
 InvoiceExportModelsMigration=Migrer les modèles d'exportation de factures
+MigrationApiRestTokens=Migrer les clés API de l'utilisateur vers llx_oauth_token
