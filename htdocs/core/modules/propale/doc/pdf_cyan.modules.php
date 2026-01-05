@@ -1982,7 +1982,7 @@ class pdf_cyan extends ModelePDFPropales
 					$posy += $hautcadre;
 
 					$hautcadre -= 5; // Height for the shipping address does not need to be as high as main box
-					
+
 					// Show shipping frame
 					$pdf->SetXY($posx + 2, $posy - 5);
 					$pdf->SetFont('', '', $default_font_size - 2);
