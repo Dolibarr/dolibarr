@@ -792,9 +792,9 @@ class Documents extends DolibarrApi
 								$filearray[$i] = array_merge($filearray[$i], (array) $line);
 							}
 						}
-						if (isset($line->filename)) $filearray[$i]['content-type'] = dol_mimetype($line->filename);
+						if (isset($filearray[$i]['relativename'])) $filearray[$i]['content-type'] = dol_mimetype($filearray[$i]['relativename']);
 						$arraycontenttype = explode(",", $content_type);
-						if (!empty($content_type) && isset($line->filename) && !in_array(dol_mimetype($line->filename), $arraycontenttype)) {
+						if (!empty($content_type) && isset($filearray[$i]['relativename']) && !in_array(dol_mimetype($filearray[$i]['relativename']), $arraycontenttype)) {
 							unset($filearray[$i]);
 							$countarray -= 1;
 						}

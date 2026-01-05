@@ -179,3 +179,7 @@ KitchenPrinter=Kitchen printer
 CashControlEndDateMustBeBeforeNow=It is not possible to make a monthly or yearly cash control when the period is not yet complete. Select a past period or add a day in the selection.
 CashControlEndDayMustNotBeInPast=It is not possible to make a daily cash control on a day in the future.
 TheoricalView=Theorical view
+SentOrderToKitchen=Send order to kitchen
+LifetimeAmount=Lifetime amount
+LifetimeStatDate=Lifetime amount start date
+AllTerminals=All terminals
