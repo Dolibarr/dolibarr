@@ -133,6 +133,7 @@ function formatObject($objtoshow, $prefix)
 		'email_sent_counter' => "NumberOfEmailsSent",
 		'managers' => 'Managers',
 		'type_code' => 'PaymentMode',
+		'date_creation' => 'DateCreation',
 		'datec' => 'DateCreation',
 		'dateh' => 'DateSubscription',
 		'datef' => 'DateEndSubscription',
@@ -180,6 +181,14 @@ function formatObject($objtoshow, $prefix)
 		'type' => 'InvoiceType',
 		'info_bits' => 'TVA NPR or NOT',
 		'special_code' => 'Special line (WEEE line, option, id of module...)',
+		'status' => 'Status',
+		'cash' => 'PaymentTypeLIQ',
+		'cash_lifetime' => $langs->transnoentities('LifetimeAmount', $langs->transnoentities('PaymentTypeLIQ')),
+		'card' => 'PaymentTypeCB',
+		'card_lifetime' => $langs->transnoentities('LifetimeAmount', $langs->transnoentities('PaymentTypeCB')),
+		'cheque' => 'PaymentTypeCHQ',
+		'cheque_lifetime' => $langs->transnoentities('LifetimeAmount', $langs->transnoentities('PaymentTypeCHQ')),
+		'lifetime_start' => 'LifetimeStartDate'
 	);
 
 	if (is_object($newobjtoshow) || is_array($newobjtoshow)) {
