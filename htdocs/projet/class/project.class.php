@@ -1704,8 +1704,6 @@ class Project extends CommonObject
 			$sql .= $filter;
 		}
 
-		print $sql;
-
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);

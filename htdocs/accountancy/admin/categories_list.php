@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2023	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2011-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -465,9 +465,7 @@ $paramwithsearch = $param;
 if ($sortorder) {
 	$paramwithsearch .= '&sortorder='.urlencode($sortorder);
 }
-if ($sortfield) {
-	$paramwithsearch .= '&sortfield='.urlencode($sortfield);
-}
+$paramwithsearch .= '&sortfield='.urlencode($sortfield);
 if (GETPOST('from', 'alpha')) {
 	$paramwithsearch .= '&from='.urlencode(GETPOST('from', 'alpha'));
 }
@@ -825,9 +823,7 @@ if ($resql) {
 					}
 				}
 				$url = $_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(!empty($obj->rowid) ? $obj->rowid : (!empty($obj->code) ? $obj->code : '')).'&code='.(!empty($obj->code) ? urlencode($obj->code) : '');
-				if ($param) {
-					$url .= '&'.$param;
-				}
+				$url .= '&'.$param;
 				$url .= '&';
 
 				$canbemodified = $iserasable;

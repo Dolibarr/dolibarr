@@ -23,17 +23,19 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
  * @var User $user
  *
  * @var string $butactionbg
+ * @var string $colorbackhmenu1
  * @var string $colortextlink
  * @var int $dol_optimize_smallscreen
  * @var string $fontlist
- * @var string $textbutaction
+ * @var string $left
  * @var int<0,max> $nbtopmenuentries
  * @var string $right
- * @var string $left
+ * @var string $textbutaction
  */
 
 '
 @phan-var-force string $butactionbg
+@phan-var-force string $colorbackhmenu1
 @phan-var-force string $colortextlink
 @phan-var-force int<0,1> $dol_optimize_smallscreen
 @phan-var-force string $fontlist
@@ -256,6 +258,11 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 .butActionTransparent {
 	color: #222 ! important;
 	background-color: transparent ! important;
+}
+
+.butActionLogin, .butActionLogin:link, .butActionLogin:visited, .butActionLogin:hover, .butActionLogin:active {
+	background-color: rgb(<?php echo $colorbackhmenu1; ?>);
+	padding: 1em 1em;
 }
 
 

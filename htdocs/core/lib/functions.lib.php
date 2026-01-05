@@ -146,21 +146,39 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 	}
 
 	// Special case for backward compatibility
-	if ($module == 'fichinter') {
-		$module = 'ficheinter';
-	} elseif ($module == 'invoice_supplier') {
-		$module = 'supplier_invoice';
-	} elseif ($module == 'order_supplier') {
-		$module = 'supplier_order';
-	} elseif ($module == 'recruitmentjobposition') {
-		$module = 'recruitment';
-		$subdirectory = '/recruitmentjobposition';
-	} elseif ($module == 'recruitmentcandidature') {
-		$module = 'recruitment';
-		$subdirectory = '/recruitmentcandidature';
-	} elseif ($module == 'knowledgerecord') {
-		$module = 'knowledgemanagement';
-		$subdirectory = '/knowledgerecord';
+	switch ($module) {
+		case 'fichinter':
+			$module = 'ficheinter';
+			break;
+		case 'invoice_supplier':
+			$module = 'supplier_invoice';
+			break;
+		case 'order_supplier':
+			$module = 'supplier_order';
+			break;
+		case 'recruitmentjobposition':
+			$module = 'recruitment';
+			$subdirectory = '/recruitmentjobposition';
+			break;
+		case 'recruitmentcandidature':
+			$module = 'recruitment';
+			$subdirectory = '/recruitmentcandidature';
+			break;
+		case 'knowledgerecord':
+			$module = 'knowledgemanagement';
+			$subdirectory = '/knowledgerecord';
+			break;
+		case 'service':
+		case 'produit':
+			$module = 'product';
+			break;
+		case 'action':
+		case 'actioncomm':
+		case 'event':
+			$module = 'agenda';
+			break;
+		default:
+			break;
 	}
 
 	// Get the relative path of directory
@@ -5077,7 +5095,12 @@ function dolGetCountryCodeFromIp($ip)
 	$countrycode = '';
 
 	if (isModEnabled('geoipmaxmind')) {
-		$datafile = getDolGlobalString('GEOIPMAXMIND_COUNTRY_DATAFILE');
+		if (getDolGlobalString('GEOIP_VERSION') == 'php') {
+			$datafile = getDolGlobalString('GEOIPMAXMIND_COUNTRY_DATAFILE');
+		} else {
+			$diroffile = getMultidirOutput(null, 'geoipmaxmind');
+			$datafile = $diroffile . '/' . getDolGlobalString('GEOIPMAXMIND_COUNTRY_DATAFILE_EMBEDDED');
+		}
 		//$ip='24.24.24.24';
 		//$datafile='/usr/share/GeoIP/GeoIP.dat';    Note that this must be downloaded datafile (not same than datafile provided with ubuntu packages)
 		if ($datafile) {
@@ -10001,6 +10024,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			'__MYCOMPANY_CAPITAL__' => $mysoc->capital,
 			'__MYCOMPANY_FULLADDRESS__' => (method_exists($mysoc, 'getFullAddress') ? $mysoc->getFullAddress(1, ', ') : ''),	// $mysoc may be stdClass
 			'__MYCOMPANY_ADDRESS__' => $mysoc->address,
+			'__MYCOMPANY_VATNUMBER__' => $mysoc->tva_intra,
 			'__MYCOMPANY_ZIP__'     => $mysoc->zip,
 			'__MYCOMPANY_TOWN__'    => $mysoc->town,
 			'__MYCOMPANY_STATE__'    => $mysoc->state,
@@ -10638,6 +10662,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		}
 
 		$substitutionarray['__AMOUNT_MULTICURRENCY__']          = (is_object($object) && isset($object->multicurrency_total_ttc)) ? $object->multicurrency_total_ttc : '';
+		$substitutionarray['__AMOUNT_MULTICURRENCY_FORMATED__']	= (is_object($object) && isset($object->multicurrency_total_ttc)) ? price($object->multicurrency_total_ttc, 0, $outputlangs, 0, -1, -1, $object->multicurrency_code) : '';
 		$substitutionarray['__AMOUNT_MULTICURRENCY_TEXT__']     = (is_object($object) && isset($object->multicurrency_total_ttc)) ? dol_convertToWord($object->multicurrency_total_ttc, $outputlangs, '', true) : '';
 		$substitutionarray['__AMOUNT_MULTICURRENCY_TEXTCURRENCY__'] = (is_object($object) && isset($object->multicurrency_total_ttc)) ? dol_convertToWord($object->multicurrency_total_ttc, $outputlangs, $object->multicurrency_code, true) : '';
 		$substitutionarray['__MULTICURRENCY_CODE__']          = (is_object($object) && isset($object->multicurrency_code)) ? $object->multicurrency_code : '';
@@ -11289,10 +11314,10 @@ function dol_htmloutput_mesg($mesgstring = '', $mesgarray = array(), $style = 'o
 	} elseif ($mesgstring && preg_match('/class="warning"/i', $mesgstring)) {
 		$iswarning++;
 	}
-	if ($style == 'error') {
+	if ($style == 'error' || $style == 'errors') {
 		$iserror++;
 	}
-	if ($style == 'warning') {
+	if ($style == 'warning' || $style == 'warnings') {
 		$iswarning++;
 	}
 
@@ -13179,7 +13204,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0, $sqltoadd =
 					$listofcodes = '';
 					foreach ($tmparray as $val) {
 						$val = trim($val);
-						if ($val) {
+						if ($val) {	// TODO Test with if ($val !== '') {
 							$listofcodes .= ($listofcodes ? ',' : '');
 							$listofcodes .= "'" . $db->escape($val) . "'";
 						}
@@ -14128,8 +14153,8 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
 /**
  * Function dolGetButtonAction
  *
- * @param string    	$label      	Label or tooltip of button if $text is provided. Also used as tooltip in title attribute. Can be escaped HTML content or full simple text.
- * @param string    	$text       	Optional : short label on button. Can be escaped HTML content or full simple text.
+ * @param string    	$label      	Label or tooltip of button if $text is provided. Also used as tooltip in title attribute. Can be escaped HTML content or full simple text. Used only if $url not defined.
+ * @param string    	$text       	Optional : short label on button. Can be escaped HTML content or full simple text. Used only if $url not defined.
  * @param string 		$actionType 	'default', 'edit', 'danger', 'email', 'clone', 'cancel', 'delete', ...
  * @param string|array<int,array{lang:string,enabled:bool,perm:bool|int,label:string,url:string,urlroot?:string,isDropDown?:int<0,1>}> 	$url        	Url for link or array of subbutton description
  *                                                                                                                                                      Example when an array is used:
@@ -14232,7 +14257,14 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 					$tmpurl = dolCompletUrlForDropdownButton($tmpurl, $params, empty($subbutton['urlroot']));
 				}
 
-				$out .= dolGetButtonAction('', $langs->trans($subbutton['label']), 'default', $tmpurl, '', $subbutton['perm'], $params);
+				$label = $langs->trans($subbutton['label']);
+				$text = $subbutton['text'] ?? '';
+				if (empty($text)) {
+					$text = $label;
+					$label = '';
+				}
+
+				$out .= dolGetButtonAction($label, $text, 'default', $tmpurl, '', $subbutton['perm'], $params);
 			}
 		}
 
@@ -16939,4 +16971,22 @@ function array_merge_recursive_distinct(array $array1, array $array2): array
 	}
 
 	return $merged;
+}
+
+/**
+ * Get the socid of an object, supporting legacy attribute names.
+ *
+ * @param object $obj The Dolibarr object
+ * @return int|null Returns the socid if found, null otherwise
+ */
+function getObjectSocId($obj)
+{
+	if (!empty($obj->socid)) {
+		return (int) $obj->socid;
+	} elseif (!empty($obj->soc_id)) {
+		return (int) $obj->soc_id;
+	} elseif (!empty($obj->societe_id)) {
+		return (int) $obj->societe_id;
+	}
+	return null;
 }

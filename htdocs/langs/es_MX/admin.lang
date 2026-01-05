@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - admin
-VersionProgram=Versión del programa
 VersionLastInstall=Versión inicial instalada
 VersionLastUpgrade=Actualizar a la versión más reciente
 FileCheck=Comprobación de integridad del conjunto de archivos
@@ -8,7 +7,6 @@ FileIntegrityIsStrictlyConformedWithReference=La integridad de los archivos est�
 FileIntegrityIsOkButFilesWereAdded=La comprobación de la integridad de archivos ha terminado, sin embargo algunos archivos nuevos han sido agregados.
 FileIntegritySomeFilesWereRemovedOrModified=La verificación de integridad de los archivos ha fallado. Algunos archivos fueron modificados, eliminados o agregados.
 MakeIntegrityAnalysisFrom=Hacer análisis de integridad de los archivos de la aplicación de
-FilesMissing=Archivos faltantes
 FileCheckDolibarr=Comprobar integridad de los archivos de la aplicación 
 XmlNotFound=No se encontró el archivo Xml de integidad de la aplicación
 SessionId=ID de sesión

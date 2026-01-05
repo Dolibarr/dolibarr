@@ -2,6 +2,7 @@
 BillsCustomersUnpaid=Facturas a clientes pendientes de cobro
 CreateCreditNote=Crear factura de abono
 BillShortStatusConverted=Pagada
+ErrorInvoiceIsNotLastOfSameType=Error: The date of invoice %s  is %s. It must be posterior or equal to last date for same type invoices (%s). Please change the invoice date.
 ConfirmClassifyPaidPartiallyReasonProductReturned=Productos parcialmente devueltos
 CustomerBillsUnpaid=Facturas a clientes pendientes de cobro
 Statut=Estatuto

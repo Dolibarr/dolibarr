@@ -320,7 +320,8 @@ ALTER TABLE llx_oauth_token ADD COLUMN expire_at datetime NULL AFTER lastaccess;
 
 ALTER TABLE llx_blockedlog ADD COLUMN linktoref varchar(255);
 ALTER TABLE llx_blockedlog ADD COLUMN linktype varchar(16);
-ALTER TABLE llx_blockedlog ADD COLUMN vat double(24,8) DEFAULT NULL;
+ALTER TABLE llx_blockedlog ADD COLUMN module_source varchar(32) DEFAULT '' AFTER action;
+ALTER TABLE llx_blockedlog ADD COLUMN amounts_taxexcl double(24,8) DEFAULT NULL AFTER amounts;
 
 
 -- Incoterms 2025 and specific terms
@@ -396,5 +397,13 @@ ALTER TABLE llx_blockedlog ADD CONSTRAINT fk_linktoref FOREIGN KEY (linktoref) R
 
 ALTER TABLE llx_fichinterdet ADD COLUMN special_code integer DEFAULT 0 AFTER fk_parent_line;
 ALTER TABLE llx_fichinterdet ADD COLUMN product_type integer DEFAULT 0 AFTER special_code;
+
+ALTER TABLE llx_pos_cash_fence ADD COLUMN hour_close INTEGER DEFAULT null after year_close;
+ALTER TABLE llx_pos_cash_fence ADD COLUMN min_close INTEGER DEFAULT null after hour_close;
+ALTER TABLE llx_pos_cash_fence ADD COLUMN sec_close INTEGER DEFAULT null after min_close;
+
+ALTER TABLE llx_pos_cash_fence ADD COLUMN cash_lifetime double(24,8) DEFAULT null;
+ALTER TABLE llx_pos_cash_fence ADD COLUMN card_lifetime double(24,8) DEFAULT null;
+ALTER TABLE llx_pos_cash_fence ADD COLUMN cheque_lifetime double(24,8) DEFAULT null;
 
 -- end of migration
