@@ -98,9 +98,7 @@ if (is_array($fiscal_periods)) {
 			if (!empty($fiscal_period_id) && $fiscal_period_id == $fiscal_period['id']) {
 				$current_fiscal_period = $fiscal_period;
 			} else {
-				if (empty($current_fiscal_period)) {
-					$last_fiscal_period = $fiscal_period;  // $last_fiscal_period is in fact $previous_fiscal_period
-				}
+				$last_fiscal_period = $fiscal_period;	// $last_fiscal_period is in fact $previous_fiscal_period
 			}
 		}
 	}
