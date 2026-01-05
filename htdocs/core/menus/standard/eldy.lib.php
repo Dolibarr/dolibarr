@@ -2518,7 +2518,9 @@ function get_left_menu_hrm($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 
 				$newmenu->add(dolBuildUrl('/expensereport/list.php', ['search_status' => 4, 'leftmenu' => 'expensereport', 'mainmenu' => 'hrm']), $langs->trans("Canceled"), 2, $user->hasRight('expensereport', 'lire'));
 				$newmenu->add(dolBuildUrl('/expensereport/list.php', ['search_status' => 99, 'leftmenu' => 'expensereport', 'mainmenu' => 'hrm']), $langs->trans("Refused"), 2, $user->hasRight('expensereport', 'lire'));
 			}
-			$newmenu->add(dolBuildUrl('/expensereport/payment/list.php', ['leftmenu' => 'expensereport_payments', 'mainmenu' => 'hrm']), $langs->trans("Payments"), 1, (int) (int) ($user->hasRight('expensereport', 'lire') && isModEnabled('bank')));
+			if (isModEnabled('bank')) {
+				$newmenu->add(dolBuildUrl('/expensereport/payment/list.php', ['leftmenu' => 'expensereport_payments', 'mainmenu' => 'hrm']), $langs->trans("Payments"), 1, (int) ($user->hasRight('expensereport', 'read')));
+			}
 			$newmenu->add(dolBuildUrl('/expensereport/stats/index.php', ['leftmenu' => 'expensereport', 'mainmenu' => 'hrm']), $langs->trans("Statistics"), 1, $user->hasRight('expensereport', 'lire'));
 		}
 

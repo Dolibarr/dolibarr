@@ -118,7 +118,7 @@ if ($withtab) {
 
 print '<span class="opacitymedium">'.$langs->trans("BlockedLogDesc")."</span><br>\n";
 
-if ($mysoc->country_code == 'FR') {
+if (in_array($mysoc->country_code, array('FR'))) {
 	$htmltext = $langs->trans("UnalterableLogTool1FR").'<br>';
 	print info_admin($htmltext, 0, 0, 'warning');
 }

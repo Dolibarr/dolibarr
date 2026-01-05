@@ -938,10 +938,10 @@ class FormOther
 					);
 				 });
 	             </script>';
-				$out .= '<input id="colorpicker'.$prefix.'" name="'.$prefix.'" size="6" maxlength="7" class="flat valignmiddle'.($morecss ? ' '.$morecss : '').'" type="text" value="'.dol_escape_htmltag($set_color).'" />';
+				$out .= '<input id="colorpicker'.$prefix.'" name="'.$prefix.'" size="6" maxlength="7" class="colorpicker flat valignmiddle'.($morecss ? ' '.$morecss : '').'" type="text" value="'.dol_escape_htmltag($set_color).'" />';
 			} else {
 				$color = ($set_color !== '' ? $set_color : ($default !== '' ? $default : 'FFFFFF'));
-				$out .= '<input id="colorpicker'.$prefix.'" name="'.$prefix.'" size="6" maxlength="7" class="flat input-nobottom colorselector valignmiddle '.($morecss ? ' '.$morecss : '').'" type="color" data-default="'.$default.'" value="'.dol_escape_htmltag(preg_match('/^#/', $color) ? $color : '#'.$color).'" />';
+				$out .= '<input id="colorpicker'.$prefix.'" name="'.$prefix.'" size="6" maxlength="7" class="colorpicker flat input-nobottom colorselector valignmiddle '.($morecss ? ' '.$morecss : '').'" type="color" data-default="'.$default.'" value="'.dol_escape_htmltag(preg_match('/^#/', $color) ? $color : '#'.$color).'" />';
 				$out .= '<script nonce="'.getNonce().'" type="text/javascript">
 	             jQuery(document).ready(function(){
 					var originalhex = null;
@@ -977,7 +977,7 @@ class FormOther
 	             });
 	             </script>';
 			}
-			$out .= '<select id="colorpicker'.$prefix.'" class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$prefix.'">';
+			$out .= '<select id="colorpicker'.$prefix.'" class="colorpicker flat'.($morecss ? ' '.$morecss : '').'" name="'.$prefix.'">';
 			//print '<option value="-1">&nbsp;</option>';
 			foreach ($arrayofcolors as $val) {
 				$out .= '<option value="'.$val.'"';

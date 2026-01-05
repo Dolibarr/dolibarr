@@ -17,6 +17,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
+
+/**
+ *  \file		htdocs/ticket/tpl/linkedobjectblock.tpl.php
+ *  \ingroup	ticket
+ *  \brief		Template to show objects linked to tickets
+ */
+
+/**
+ * @var Translate $langs
+ * @var Conf $conf
+ * @var User $user
+ *
+ * @var CommonObject $object
+ * @var int $noMoreLinkedObjectBlockAfter
+ * @var int $showImportButton
+ * @var Ticket[] $linkedObjectBlock
+ */
+
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
@@ -24,20 +42,6 @@ if (empty($conf) || !is_object($conf)) {
 }
 
 print "<!-- BEGIN PHP TEMPLATE ticket/tpl/linkedobjectblock.tpl.php -->\n";
-
-
-global $user;
-global $noMoreLinkedObjectBlockAfter;
-
-$langs = $GLOBALS['langs'];
-'@phan-var-force Translate $langs';
-/**
- * @var Translate $langs
- * @var CommonObject $object
- */
-$linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
-'@phan-var-force Ticket[] $linkedObjectBlock';
-/** @var Ticket[] $linkedObjectBlock */
 
 // Load translation files required by the page
 $langs->load('ticket');
@@ -56,10 +60,10 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		$trclass .= ' liste_sub_total';
 	} ?>
 	<tr class="<?php echo $trclass; ?>" >
-		<td class="linkedcol-element tdoverflowmax100"><?php echo $langs->trans("Ticket"); ?>
+		<td class="linkedcol-element tdoverflowmax125"><?php echo $langs->trans("Ticket"); ?>
 		</td>
 		<td class="linkedcol-name tdoverflowmax150"><?php echo $objectlink->getNomUrl(1); ?></td>
-		<td class="linkedcol-ref center"><?php echo $objectlink->track_id; ?></td>
+		<td class="linkedcol-ref tdoverflowmax125 center" title="<?php echo dolPrintHTMLForAttribute($objectlink->ref_client); ?>"><?php echo dolPrintHTML($objectlink->ref_client); ?></td>
 		<td class="linkedcol-date center"><?php echo dol_print_date($objectlink->datec, 'day'); ?></td>
 		<?php
 		//$objectlink->socid = $objectlink->fk_soc;

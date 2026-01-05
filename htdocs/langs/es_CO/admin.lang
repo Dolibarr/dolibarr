@@ -1,7 +1,5 @@
 # Dolibarr language file - Source file is en_US - admin
-VersionProgram=Versión del programa
 VersionLastInstall=Versión instalación inicial
-VersionLastUpgrade=Última versión de actualización
 VersionUnknown=Desconocido
 VersionRecommanded=Recomendado
 FileCheck=Comprobaciones de integridad del conjunto de archivos
