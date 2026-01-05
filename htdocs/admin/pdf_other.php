@@ -174,8 +174,9 @@ if ($action == 'update') {
 	if (GETPOSTISSET('BARCODE_ON_STOCKTRANSFER_PDF')) {
 		dolibarr_set_const($db, "BARCODE_ON_STOCKTRANSFER_PDF", GETPOSTINT("BARCODE_ON_STOCKTRANSFER_PDF"), 'chaine', 0, '', $conf->entity);
 	}
-	// add file to concat
-	foreach (array('MAIN_INFO_PROPAL_TERMSOFSALE', 'MAIN_INFO_ORDER_TERMSOFSALE', 'MAIN_INFO_CONTRACT_TERMSOFSALE', 'MAIN_INFO_INVOICE_TERMSOFSALE') as $varname) {
+	// add a file to concat
+	$concat_options = array('MAIN_INFO_PROPAL_TERMSOFSALE', 'MAIN_INFO_ORDER_TERMSOFSALE', 'MAIN_INFO_CONTRACT_TERMSOFSALE', 'MAIN_INFO_INVOICE_TERMSOFSALE');
+	foreach ($concat_options as $varname) {
 		if (isset($_FILES[$varname]) && $_FILES[$varname]["name"]) {
 			if (!preg_match('/(\.pdf)$/i', $_FILES[$varname]["name"])) {	// Document can be used on a lot of different places. Only pdf can be supported.
 				$langs->load("errors");
