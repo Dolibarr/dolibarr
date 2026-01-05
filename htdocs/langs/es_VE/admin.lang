@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - admin
-VersionLastInstall=Versión de instalación inicial
 VersionLastUpgrade=Última actualización de la versión
 ConfirmPurgeSessions=¿De verdad quieres purgar todas las sesiones? Esto desconectará a todos los usuarios (excepto a usted).
 SetupArea=Parametrizaje

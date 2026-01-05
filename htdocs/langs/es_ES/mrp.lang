@@ -169,3 +169,5 @@ ErrorModifyMoDateStart = Debes elegir una fecha de inicio anterior a la fecha de
 ErrorModifyMoDateEnd = Debes elegir una fecha de finalización posterior a la fecha de inicio. %s
 ErrorCancelMo=Error al actualizar la cancelación
 ErrorModifyMoDate=Error al actualizar la modificación de la fecha
+BOM_SUB_BOM=Utilizar sub-boms
+UseSearchToSelectBom=Espere hasta que se presione una tecla antes de cargar el contenido de la lista combinada de Boms.<br>Esto puede mejorar el rendimiento si tiene una gran cantidad de proyectos, pero es menos conveniente.

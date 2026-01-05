@@ -169,3 +169,5 @@ ErrorModifyMoDateStart = Trebuie să alegi o dată de începere anterioară date
 ErrorModifyMoDateEnd = Trebuie să alegi o dată de încheiere ulterioară datei de începere. %s
 ErrorCancelMo=Eroare la actualizarea anulării
 ErrorModifyMoDate=Eroare la actualizarea modificării datei
+BOM_SUB_BOM=Utilizare sub-liste de materiale
+UseSearchToSelectBom=Așteaptă până când este apăsată o tastă înainte de a încărca conținutul listei combinate Bonuri/Devize.<br> Acest lucru poate îmbunătăți performanța dacă ai un număr mare de proiecte, dar este mai puțin convenabil.

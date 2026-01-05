@@ -1188,7 +1188,7 @@ function purgeSessions($mysessionid)
 /**
  *  Enable a module
  *
- *  @param      string		$value      			Name of module to activate
+ *  @param      string		$value      			Name of module to activate (modModuleName)
  *  @param      int			$withdeps  				Activate/Disable also all dependencies
  * 	@param		int			$noconfverification		Remove verification of $conf variable for module
  *  @return     array{nbmodules?:int,errors:string[],nbperms?:int}	array('nbmodules'=>nb modules activated with success, 'errors=>array of error messages, 'nbperms'=>Nb permission added);
@@ -1249,7 +1249,6 @@ function activateModule($value, $withdeps = 1, $noconfverification = 0)
 		$ret['errors'][] = $langs->trans("ErrorModuleRequireJavascript");
 		return $ret;
 	}
-
 	$const_name = $objMod->const_name;
 	if ($noconfverification == 0) {
 		if (getDolGlobalString($const_name)) {
