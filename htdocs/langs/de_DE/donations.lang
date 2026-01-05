@@ -57,3 +57,7 @@ donAnonymous=Anonyme Spende
 AnonymousDonationTooltip=Aktivieren Sie dieses Kontrollkästchen, wenn Ihre Spende anonym bleiben soll. Ihre persönlichen Daten werden nicht abgefragt.
 publicDonationFieldHelp=%s kann meine Spende im öffentlichen Register veröffentlichen
 listOfPublicDonations=Liste von öffentlichen Spenden
+donationErrorMessageContactEmail=Es ist ein Fehler aufgetreten. Um Ihre Spende abzuschließen, kontaktieren Sie uns bitte unter %s
+descDonationLineInInvoice=Spende und Mitgliedsbeitrag
+companyBusinessNumber=Registrierungsnummer des Unternehmens
+companyTIN=Steuernummer

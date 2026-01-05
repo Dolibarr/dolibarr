@@ -10,7 +10,6 @@ BillsLate=Pagos atrasados
 BillsStatistics=Estadísticas de facturas de clientes
 DisabledBecauseDispatchedInBookkeeping=Deshabilitado porque la factura se envió a la contabilidad
 DisabledBecauseNotLastInvoice=Deshabilitado porque la factura no se puede borrar. Algunas facturas se registraron después de esta y crearán agujeros en el contador.
-DisabledBecauseNotErasable=Deshabilitado porque no se puede borrar
 InvoiceStandardDesc=Este tipo de factura es la factura común.
 InvoiceDepositDesc=Este tipo de factura se realiza cuando se ha recibido un pago inicial.
 InvoiceProForma=Factura de proforma

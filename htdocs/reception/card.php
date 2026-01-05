@@ -235,6 +235,9 @@ if (empty($reshook)) {
 	// Reopen
 	if ($action == 'reopen' && $permissiontoadd) {	// Test on permissions not required here
 		$result = $object->reOpen();
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 	// Confirm back to draft status

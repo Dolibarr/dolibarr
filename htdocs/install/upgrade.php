@@ -168,8 +168,8 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 
 	if ($db->connected) {
 		print '<tr><td class="nowrap">';
-		print $langs->trans("ServerConnection")." : ".$dolibarr_main_db_host.'</td><td class="right"><span class="neutral">'.$langs->trans("OK").'</span></td></tr>'."\n";
-		dolibarr_install_syslog("upgrade: ".$langs->transnoentities("ServerConnection").": $dolibarr_main_db_host ".$langs->transnoentities("OK"));
+		print $langs->trans("ServerConnection")." : ".$dolibarr_main_db_host.'</td><td class="right"><span class="neutral">'.$langs->trans("Success").'</span></td></tr>'."\n";
+		dolibarr_install_syslog("upgrade: ".$langs->transnoentities("ServerConnection").": $dolibarr_main_db_host ".$langs->transnoentities("Success"));
 		$ok = 1;
 	} else {
 		print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name).'</td><td class="right"><span class="error">'.$langs->transnoentities("Error")."</span></td></tr>\n";
@@ -180,11 +180,11 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 	if ($ok) {
 		if ($db->database_selected) {
 			print '<tr><td class="nowrap">';
-			print $langs->trans("DatabaseConnection")." : ".$dolibarr_main_db_name.'</td><td class="right"><span class="neutral">'.$langs->trans("OK")."</span></td></tr>\n";
+			print $langs->trans("DatabaseConnection")." : ".$dolibarr_main_db_name.'</td><td class="right"><span class="neutral">'.$langs->trans("Success")."</span></td></tr>\n";
 			dolibarr_install_syslog("upgrade: Database connection successful: ".$dolibarr_main_db_name);
 			$ok = 1;
 		} else {
-			print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name).'</td><td class="right"><span class="ok">'.$langs->trans("Error")."</span></td></tr>\n";
+			print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name).'</td><td class="right"><span class="neutral">'.$langs->trans("Error")."</span></td></tr>\n";
 			dolibarr_install_syslog("upgrade: ".$langs->transnoentities("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name));
 			$ok = 0;
 		}
