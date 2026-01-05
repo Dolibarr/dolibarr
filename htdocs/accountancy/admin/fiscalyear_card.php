@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2014-2024  Alexandre Spangaro  <aspangaro@easya.solutions>
- * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2014-2026	Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2018-2024	Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -211,7 +211,9 @@ if ($action == 'create') {
 	print '<table class="border centpercent tableforfieldcreate">'."\n";
 
 	// Label
-	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" size="32" value="'.GETPOST('label', 'alpha').'"></td></tr>';
+	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td>';
+	print '<input name="label" size="32" value="'.GETPOST('label', 'alpha').'">';
+	print '</td></tr>';
 
 	// Date start
 	print '<tr><td class="fieldrequired">'.$langs->trans("DateStart").'</td><td>';
@@ -257,6 +259,7 @@ if (($id || $ref) && $action == 'edit') {
 	print '<form method="POST" name="update" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
+	print '<input type="hidden" name="status" value="' . $object->status . '">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
 	if ($backtopage) {
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
