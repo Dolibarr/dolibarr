@@ -846,12 +846,14 @@ function deletePropsAndPermsFromDoc($file, $objectname)
 		$search = '/' . preg_quote($start, '/') . '(.*?)' . preg_quote($end, '/') . '/s';
 		$new_contents = preg_replace($search, '', $str);
 		file_put_contents($file, $new_contents);
+		dolChmod($file);
 
 		//perms If Exist
 		$perms = "|*".strtolower($objectname)."*|";
 		$search_pattern_perms = '/' . preg_quote($perms, '/') . '.*?\n/';
 		$new_contents = preg_replace($search_pattern_perms, '', $new_contents);
 		file_put_contents($file, $new_contents);
+		dolChmod($file);
 	}
 }
 
@@ -1038,6 +1040,7 @@ function addObjectsToApiFile($srcfile, $file, $objects, $modulename)
 
 	$allContent = implode("", $content);
 	file_put_contents($file, $allContent);
+	dolChmod($file);
 
 	// Add methods for each object
 	$allContent = getFromFile($srcfile, '/* BEGIN MODULEBUILDER API MYOBJECT */', '/* END MODULEBUILDER API MYOBJECT */');
@@ -1107,6 +1110,7 @@ function removeObjectFromApiFile($file, $objects, $objectname)
 
 	$allContent = implode("", $content);
 	file_put_contents($file, $allContent);
+	dolChmod($file);
 
 	// for delete methods of object
 	$begin = '/* BEGIN MODULEBUILDER API '.strtoupper($objectname).' */';

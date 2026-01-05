@@ -208,7 +208,7 @@ class FichinterLigne extends CommonObjectLine
 		$sql .= " '".$this->db->idate($this->date)."',";
 		$sql .= " ".((int) $this->duration).",";
 		$sql .= ' '.((int) $rangToUse).",";
-		$sql .= " ".((int) $this->product_type);
+		$sql .= " ".((int) $this->product_type).",";
 		$sql .= " ".((int) $this->special_code);
 		$sql .= ')';
 

@@ -5981,7 +5981,8 @@ if ((empty($action) || $action == 'preview' || $action == 'createfromclone' || $
 
 		print $out;
 
-		/*file_put_contents($filetpl, $out);
+		/*
+		file_put_contents($filetpl, $out);
 		dolChmod($filetpl);
 
 		// Output file on browser

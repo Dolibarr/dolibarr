@@ -118,7 +118,7 @@ function getServerTimeZoneInt($refgmtdate = 'now')
  *  @param      int			$time               Date timestamp (Must be a UTC timestamp)
  *  @param      float		$duration_value     Value of delay to add
  *  @param      string		$duration_unit      Unit of added delay (d, m, y, w, h, i)
- *  @param      int<0,1>    $ruleforendofmonth  Change the behavior of PHP over data-interval, 0 or 1
+ *  @param      int<0,1>    $ruleforendofmonth  Change the behavior when $duration_unit = 'm' and new date reaches a non existing date. Use 0 (PHP behaviour) or 1
  *  @return     int      			        	New timestamp
  *  @see convertSecondToTime(), convertTimeToSeconds()
  */
@@ -191,15 +191,15 @@ function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforend
 		$newtimemonth = (int) dol_print_date($newtime, '%m');
 		$newtimetotalmonths = (($newtimeyear * 12) +  $newtimemonth);
 
-		if ($monthsexpected < $newtimetotalmonths) {
+		if ($monthsexpected < $newtimetotalmonths || $monthsexpected > $newtimetotalmonths) {	// If months differs
 			$newtimehours = (int) dol_print_date($newtime, '%H');
 			$newtimemins = (int) dol_print_date($newtime, '%M');
 			$newtimesecs = (int) dol_print_date($newtime, '%S');
 
-			$datelim = dol_mktime($newtimehours, $newtimemins, $newtimesecs, $newtimemonth, 1, $newtimeyear);
-			$datelim -= (3600 * 24);
+			$datelim = dol_mktime($newtimehours, $newtimemins, $newtimesecs, $newtimemonth, 1, $newtimeyear);	// Take first day
+			$datelim -= (3600 * 24);		// Remove 1 day to get the last day of month
 
-			$date->setTimestamp($datelim);
+			$date->setTimestamp($datelim);	// Set new date
 		}
 	}
 	return $date->getTimestamp();

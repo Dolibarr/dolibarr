@@ -72,12 +72,11 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
  * View
  */
 
-$textobject = $langs->transnoentitiesnoconv("Calendar");
-
 $help_url = '';
 $page_name = "BookCalSetup";
+$title = $langs->trans($page_name);
 
-llxHeader('', $langs->trans("BookCalSetup"), $help_url, '', 0, 0, '', '', '', 'mod-bookcal page-admin_calender_extrafields');
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-bookcal page-admin_calender_extrafields');
 
 
 $linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
@@ -91,16 +90,6 @@ print dol_get_fiche_head($head, 'calendar_extrafields', $langs->trans($page_name
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
 print dol_get_fiche_end();
-
-
-// Buttons
-if ((float) DOL_VERSION < 17) {	// On v17+, the "New Attribute" button is included into tpl.  @phpstan-ignore-line
-	if ($action != 'create' && $action != 'edit') {
-		print '<div class="tabsAction">';
-		print '<a class="butAction reposition" href="'.$_SERVER["PHP_SELF"].'?action=create">'.$langs->trans("NewAttribute").'</a>';
-		print "</div>";
-	}
-}
 
 
 /*

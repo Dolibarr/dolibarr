@@ -126,6 +126,11 @@ class Context
 	public $rootUrl;
 
 	/**
+	 * @var string cdn url for public/includes
+	 */
+	public $cdnUrl;
+
+	/**
 	 * @var string[]
 	 */
 	public $menu_active = array();
@@ -207,6 +212,10 @@ class Context
 		// Init of base URL. Must be the public URL.
 		$this->rootUrl = self::getRootConfigUrl();
 
+		// Init of CDN URL. Must be the public URL.
+		// BECAUSE IN SOME CASES IT COULD BE IMPORTANT TO HIDE PUBLIC URL BUT YOU CAN SET A CDN URL IN HIDDEN CONF
+		$this->cdnUrl = getDolGlobalString('WEBPORTAL_CDN_URL', dol_buildpath('/public/includes/', 3));
+		$this->cdnUrl = rtrim(trim($this->cdnUrl), '/');
 
 		$this->theme = new WebPortalTheme(false);
 	}

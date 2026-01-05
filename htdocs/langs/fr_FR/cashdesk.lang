@@ -171,3 +171,5 @@ Printers=Imprimantes
 PrintOn=Imprimer sur l'imprimante %s
 SentToPrinter=Envoyé à l'imprimante
 FailedToSendToPrinter=Échec de l'envoi à l'imprimante
+TemporaryReceipt=Temporaire
+SignatureID=Identifiant de signature

@@ -293,6 +293,7 @@ class Odf
 			// Check if the current item is a tag or just plain text
 			if (isset($tag['text'])) {
 				$text = $this->encode_chars($tag['text'], $encode, $charset);
+				$text = preg_replace('/(\r\n|\r|\n)/i', "<text:line-break/>", $text);
 				$odtResult .= $text;
 			} elseif (isset($tag['name'])) {
 				switch ($tag['name']) {

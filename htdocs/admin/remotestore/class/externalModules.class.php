@@ -926,6 +926,8 @@ class ExternalModules
 				$result = file_put_contents($cache_file, $yaml);
 				if ($result === false) {
 					$this->error = 'Failed to create cache file: ' . $cache_file;
+				} else {
+					dolChmod($cache_file);
 				}
 			}
 		} else {

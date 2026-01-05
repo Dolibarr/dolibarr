@@ -199,6 +199,10 @@ if (GETPOSTISSET('template')) {
 		$content = str_replace('__PRODUCT_SELECTED__', $langs->trans("SelectOneArticleOrEnterYourOwnContent"), $content);
 	}
 
+	foreach ($specificSubstitutionArray as $key => $val) {
+		$content = str_replace($key, $val, $content);
+	}
+
 	print $content;
 } else {
 	print 'No template ID provided or expired token';

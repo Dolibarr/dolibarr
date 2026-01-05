@@ -47,7 +47,7 @@ jobs:
       # Restore old cache
       - name: Restore phpstan cache
         id: cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           path: ./.github/tmp
           key: phpstan-cache-${{ env.PHP_VERSION }}-${{ env.CACHE_KEY_PART }}-${{
