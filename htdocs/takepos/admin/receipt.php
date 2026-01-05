@@ -123,7 +123,7 @@ if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "browser" || getDolGlobalStrin
 	$substitutionarray = pdf_getSubstitutionArray($langs, array('ticket', 'member', 'candidate'), null, 2, array('company', 'user', 'object', 'system'));
 	$substitutionarray['__(AnyTranslationKey)__'] = $langs->trans("Translation");
 
-	$htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
+	$htmltext = '<i class="small">'.$langs->trans("AvailableVariables").':<br>';
 	foreach ($substitutionarray as $key => $val) {
 		$htmltext .= $key.'<br>';
 	}
@@ -231,7 +231,7 @@ print $langs->trans('GiftReceiptButton');
 print '<td>';
 if (isALNERunningVersion()) {
 	print ajax_constantonoff("TAKEPOS_GIFT_RECEIPT", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', '', 'inline-block', 0, '', 1);
-	print '<span class="opacitymedium">'.$langs->trans("NotAvailableForCountryWhenModuleIsOn", $mysoc->country_code).'</span>';
+	print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NotAvailable"), $langs->trans("NotAvailableForCountryWhenModuleIsOn", $mysoc->country_code, $langs->transnoentitiesnoconv('Module3200Name'))).'</span>';
 } else {
 	print ajax_constantonoff("TAKEPOS_GIFT_RECEIPT", array(), $conf->entity, 0, 0, 1, 0);
 }

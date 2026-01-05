@@ -174,8 +174,8 @@ class BlockedLog
 	public $trackedevents = array();
 
 	/**
-	 * Array of tracked modules
-	 * @var array<string,string|mixed>
+	 * Array of tracked modules (key => label)
+	 * @var array<int|string,string>
 	 */
 	public $trackedmodules = array();
 
@@ -206,7 +206,7 @@ class BlockedLog
 
 		$sep = 0;
 
-		$this->trackedmodules = array('0' => 'None');
+		$this->trackedmodules[0] = 'None';
 		if (isModEnabled('takepos')) {
 			$this->trackedmodules['takepos'] = 'TakePOS';
 		}
@@ -295,8 +295,10 @@ class BlockedLog
 				$sep++;
 				$this->trackedevents['separator_'.$sep] = array('id' => 'separator_'.$sep, 'label' => '----------', 'labelhtml' => '<span class="opacitymedium">-----   '.$langs->trans("CashControl").'</span>', 'disabled' => 1);
 			}
-
-			$this->trackedevents['CASHCONTROL_VALIDATE'] = array('id' => 'CASHCONTROL_VALIDATE', 'label' => 'logCASHCONTROL_VALIDATE', 'labelhtml' => img_picto('', 'pos', 'class="pictofixedwidth").').$langs->trans('logCASHCONTROL_VALIDATE'));
+			if (getDolGlobalString('BLOCKEDLOG_ADD_OLD_CASHCONTROL_VALIDATE')) {
+				$this->trackedevents['CASHCONTROL_VALIDATE'] = array('id' => 'CASHCONTROL_VALIDATE', 'label' => 'logCASHCONTROL_VALIDATE', 'labelhtml' => img_picto('', 'pos', 'class="pictofixedwidth").').$langs->trans('logCASHCONTROL_VALIDATE'));
+			}
+			$this->trackedevents['CASHCONTROL_CLOSE'] = array('id' => 'CASHCONTROL_CLOSE', 'label' => 'logCASHCONTROL_CLOSE', 'labelhtml' => img_picto('', 'pos', 'class="pictofixedwidth").').$langs->trans('logCASHCONTROL_CLOSE'));
 		}
 
 		// Add more action to track from a conf variable. For the case we want to track other actions into the unalterable log.
@@ -536,7 +538,7 @@ class BlockedLog
 					$this->linktype = 'credit_note_of';
 					$this->linktoref = $invoice->ref;
 				}
-				//$this->module_source = $invoice->module_source;
+				//$this->module_source = (string) $invoice->module_source;
 			}
 		}
 		if ($object->element == 'facture') {
@@ -548,7 +550,7 @@ class BlockedLog
 					$this->linktype = 'credit_note_of';
 					$this->linktoref = $invoice->ref;
 				}
-				$this->module_source = $invoice->module_source;
+				$this->module_source = (string) $invoice->module_source;
 			}
 		}
 
@@ -597,7 +599,10 @@ class BlockedLog
 				'name', 'lastname', 'firstname', 'region', 'region_id', 'region_code', 'state', 'state_id', 'state_code', 'country', 'country_id', 'country_code',
 				'total_ht', 'total_tva', 'total_ttc', 'total_localtax1', 'total_localtax2',
 				'barcode_type', 'barcode_type_code', 'barcode_type_label', 'barcode_type_coder', 'mode_reglement_id', 'cond_reglement_id', 'mode_reglement', 'cond_reglement', 'shipping_method_id',
-				'fk_incoterms', 'label_incoterms', 'location_incoterms', 'lines'));
+				'extraparams', 'fk_incoterms', 'fk_user_creat', 'fk_user_valid', 'label_incoterms', 'location_incoterms', 'lines', 'nb', 'tms', 'comments', 'array_options', 'warnings',
+				'opening', 'status', 'date_valid'
+				)
+			);
 		}
 
 		// For customer payment and supplier payment, the thirdparty can be added in payment detail
@@ -642,7 +647,7 @@ class BlockedLog
 		}
 
 		// Add my company info
-		if (!empty($mysoc)) {
+		if (!empty($mysoc) && !in_array($object->element, array('cashcontrol'))) {
 			$this->object_data->mycompany = new stdClass();
 
 			foreach ($mysoc as $key => $value) {
@@ -686,7 +691,7 @@ class BlockedLog
 		// Field specific to object
 		if ($this->element == 'facture') {
 			'@phan-var-force Facture $object';
-			$this->module_source = $object->module_source;
+			$this->module_source = (string) $object->module_source;
 
 			foreach ($object as $key => $value) {
 				if (in_array($key, $arrayoffieldstoexclude)) {
@@ -769,29 +774,11 @@ class BlockedLog
 
 			// Add data for action emails
 			if ($action == 'BILL_SENTBYMAIL') {
-				$emailobj = new stdClass();
-				$emailobj->email_from = $object->email_from;
-				//$emailobj->email_to = $object->email_to;
-				$emailobj->email_msgid = $object->email_msgid;
-				$emailobj->email_subject = $object->email_subject;
-
-				$this->object_data->action_email_sent = $emailobj;
-			}
-
-			// Add data for action doc_preview
-			if ($action == 'DOC_PREVIEW') {
-				$docpreviewobj = new stdClass();
-				$docpreviewobj->pos_print_counter = $object->pos_print_counter;
-
-				//$this->object_data->action_doc_preview = $docpreviewobj;
-			}
-
-			// Add data for action doc_download
-			if ($action == 'DOC_DOWNLOAD') {
-				$docdownloadobj = new stdClass();
-				$docdownloadobj->pos_print_counter = $object->pos_print_counter;
-
-				//$this->object_data->action_doc_download = $docdownloadobj;
+				$this->object_data->action_email_sent = array(
+					"email_from" => $object->context['email_from'],
+					"email_to" => $object->context['email_to'],
+					"email_msgid" => $object->context['email_msgid']
+				);
 			}
 		} elseif ($this->element == 'invoice_supplier') {
 			'@phan-var-force FactureFournisseur $object';
@@ -896,10 +883,10 @@ class BlockedLog
 					if (property_exists($tmpobject, 'module_source')) {
 						if (is_null($originofpayment)) {
 							$originofpayment = $tmpobject->module_source;
-						} elseif ($originofpayment != $invoice->module_source) {
+						} elseif ($originofpayment != $tmpobject->module_source) {
 							$originofpayment = 'mix';	// the payment is on several invoices with different origins
 						} else {
-							$originofpayment = (string) $invoice->module_source;
+							$originofpayment = (string) $tmpobject->module_source;
 						}
 					}
 
@@ -1038,6 +1025,11 @@ class BlockedLog
 				}
 			}
 		} else {
+			if ($object->element == 'cashcontrol') {
+				$this->module_source = (string) $object->posmodule;		// Module
+				//$this->pos_source = (string) $object->posnumber;		// Terminal
+			}
+
 			// Generic case
 			foreach ($object as $key => $value) {
 				if (in_array($key, $arrayoffieldstoexclude)) {
@@ -1095,7 +1087,7 @@ class BlockedLog
 				$this->action 			= $obj->action;
 				$this->module_source	= $obj->module_source;
 
-				$this->amounts_taxecl	= (is_null($obj->amounts_taxexcl) ? null : (float) $obj->amounts);
+				$this->amounts_taxexcl	= (is_null($obj->amounts_taxexcl) ? null : (float) $obj->amounts);
 				$this->amounts			= (float) $obj->amounts;
 
 				$this->fk_object = $obj->fk_object;

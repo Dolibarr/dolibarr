@@ -197,7 +197,6 @@ print '
         padding-bottom: 5px;
     }
 	li.lilevel1 > a, li.lilevel1 > i {
-        /* background-image: url(\''.DOL_URL_ROOT.'/theme/'.urlencode($conf->theme).'/img/puce.png\') !important; */
         background-repeat: no-repeat !important;';
 if ($langs->trans("DIRECTION") == 'rtl') {
 	print 'background-position: right;';
