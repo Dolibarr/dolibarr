@@ -329,7 +329,7 @@ function getDolEntity()
 /**
  * Return the current entity
  *
- * @return 	int							Value returned
+ * @return 	string						Value returned
  */
 function getDolDBType()
 {

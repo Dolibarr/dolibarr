@@ -174,8 +174,8 @@ class BlockedLog
 	public $trackedevents = array();
 
 	/**
-	 * Array of tracked modules
-	 * @var array<string,string|mixed>
+	 * Array of tracked modules (key => label)
+	 * @var array<int|string,string>
 	 */
 	public $trackedmodules = array();
 
@@ -206,7 +206,7 @@ class BlockedLog
 
 		$sep = 0;
 
-		$this->trackedmodules = array('0' => 'None');
+		$this->trackedmodules[0] = 'None';
 		if (isModEnabled('takepos')) {
 			$this->trackedmodules['takepos'] = 'TakePOS';
 		}
@@ -537,6 +537,7 @@ class BlockedLog
 					$this->linktype = 'credit_note_of';
 					$this->linktoref = $invoice->ref;
 				}
+				//$this->module_source = (string) $invoice->module_source;
 			}
 		}
 		if ($object->element == 'facture') {
@@ -548,10 +549,11 @@ class BlockedLog
 					$this->linktype = 'credit_note_of';
 					$this->linktoref = $invoice->ref;
 				}
+				$this->module_source = (string) $invoice->module_source;
 			}
 		}
 
-		// ref
+		// ref object
 		$this->ref_object = ((!empty($object->newref)) ? $object->newref : $object->ref); // newref is set when validating a draft, ref is set in other cases
 		// type of object
 		$this->element = $object->element;
@@ -602,7 +604,13 @@ class BlockedLog
 			);
 		}
 
-		if (!empty($object->thirdparty)) {
+		// For customer payment and supplier payment, the thirdparty can be added in payment detail
+		$addthirdpartyatpaymentlevel = 0;
+		if (!empty($object->thirdparty) && !in_array($this->element, array('payment', 'payment_supplier'))) {
+			$addthirdpartyatpaymentlevel = 1;
+		}
+
+		if (!empty($object->thirdparty) && !$addthirdpartyatpaymentlevel) {
 			$this->object_data->thirdparty = new stdClass();
 
 			foreach ($object->thirdparty as $key => $value) {
@@ -659,7 +667,7 @@ class BlockedLog
 						$valuequalifiedforstorage = true; // We accept '' value for some fields
 						$value = (string) $value;
 					}
-					if (!is_null($value) && empty($value) && in_array($key, array('tva_assuj'))) {
+					if (!is_null($value) && empty($value) && in_array($key, array('tva_assuj', 'localtax1_assuj', 'localtax2_assuj'))) {
 						$valuequalifiedforstorage = true; // We accept zero value for amounts
 					}
 					if (!is_null($value) && (string) $value !== '') {
@@ -682,7 +690,7 @@ class BlockedLog
 		// Field specific to object
 		if ($this->element == 'facture') {
 			'@phan-var-force Facture $object';
-			$this->module_source = $object->module_source;
+			$this->module_source = (string) $object->module_source;
 
 			foreach ($object as $key => $value) {
 				if (in_array($key, $arrayoffieldstoexclude)) {
@@ -761,6 +769,15 @@ class BlockedLog
 
 			if (!empty($object->newref)) {
 				$this->object_data->ref = $object->newref;
+			}
+
+			// Add data for action emails
+			if ($action == 'BILL_SENTBYMAIL') {
+				$this->object_data->action_email_sent = array(
+					"email_from" => $object->context['email_from'],
+					"email_to" => $object->context['email_to'],
+					"email_msgid" => $object->context['email_msgid']
+				);
 			}
 		} elseif ($this->element == 'invoice_supplier') {
 			'@phan-var-force FactureFournisseur $object';
@@ -875,7 +892,9 @@ class BlockedLog
 					$paymentpart = new stdClass();
 					$paymentpart->amount = $amount;
 
-					if (!in_array($this->element, array('payment_donation', 'payment_various'))) {
+					// If we want to add thirdparty on each payment level
+					// (seems not necessary as we have one thirdparty per payment on invoice level)
+					if ($addthirdpartyatpaymentlevel) {
 						$result = $tmpobject->fetch_thirdparty();
 						if ($result == 0) {
 							$this->error = 'Failed to fetch thirdparty for object with id '.$tmpobject->id;
@@ -896,7 +915,7 @@ class BlockedLog
 							// List of thirdparty fields qualified
 							if (!in_array($key, array(
 							'name', 'name_alias', 'ref_ext', 'address', 'zip', 'town', 'state_code', 'country_code', 'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6', 'phone', 'fax', 'email', 'barcode',
-							'tva_intra', 'localtax1_assuj', 'localtax1_value', 'localtax2_assuj', 'localtax2_value', 'managers', 'capital', 'typent_code', 'forme_juridique_code', 'code_client', 'code_fournisseur'
+							'tva_intra', 'tva_assuj', 'localtax1_assuj', 'localtax1_value', 'localtax2_assuj', 'localtax2_value', 'managers', 'capital', 'typent_code', 'forme_juridique_code', 'code_client', 'code_fournisseur'
 							))) {
 								continue; // Discard if not into a dedicated list
 							}
@@ -1005,6 +1024,11 @@ class BlockedLog
 				}
 			}
 		} else {
+			if ($object->element == 'cashcontrol') {
+				$this->module_source = (string) $object->posmodule;		// Module
+				//$this->pos_source = (string) $object->posnumber;		// Terminal
+			}
+
 			// Generic case
 			foreach ($object as $key => $value) {
 				if (in_array($key, $arrayoffieldstoexclude)) {
@@ -1062,7 +1086,7 @@ class BlockedLog
 				$this->action 			= $obj->action;
 				$this->module_source	= $obj->module_source;
 
-				$this->amounts_taxecl	= (is_null($obj->amounts_taxexcl) ? null : (float) $obj->amounts);
+				$this->amounts_taxexcl	= (is_null($obj->amounts_taxexcl) ? null : (float) $obj->amounts);
 				$this->amounts			= (float) $obj->amounts;
 
 				$this->fk_object = $obj->fk_object;
