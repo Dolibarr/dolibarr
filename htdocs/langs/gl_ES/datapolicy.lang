@@ -56,4 +56,4 @@ MailSent = Enviouse o correo electrónico
 NUMBER_MONTH_BEFORE_DELETION = Número de meses antes da eliminación
 TheFollowingFieldsAreReplaceWith=Algúns campos serán substituídos por un valor único:
 OtherFieldsAreReplaceWithStaticValues=Algúns outros campos son substituídos por un valor estático:
-QualifiedNumber=Número cualificado
+QualifiedNumber=Conteo de rexistros cualificados

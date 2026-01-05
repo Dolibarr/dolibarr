@@ -54,7 +54,6 @@ parameters:
 	# checkAlwaysTrueStrictComparison: false
 	polluteScopeWithLoopInitialAssignments: false
 	polluteScopeWithAlwaysIterableForeach: false
-	polluteScopeWithBlock: false
 	checkClassCaseSensitivity: true
 	checkFunctionArgumentTypes: true
 	checkFunctionNameCase: true

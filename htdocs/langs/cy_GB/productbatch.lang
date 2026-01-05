@@ -22,7 +22,7 @@ printSellby=Gwerthu gan: %s
 printQty=Qty: %d
 printPlannedWarehouse=Warws: %s
 AddDispatchBatchLine=Ychwanegu llinell ar gyfer anfon Oes Silff
-WhenProductBatchModuleOnOptionAreForced=Pan fydd modiwl Lot/Serial ymlaen, mae gostyngiad stoc awtomatig yn cael ei orfodi i '%s' a gorfodir modd cynyddu awtomatig i '%s '. Efallai na fydd rhai dewisiadau ar gael. Gellir diffinio opsiynau eraill fel y dymunwch.
+WhenProductBatchModuleOnOptionAreForced=When module Lot/Serial is on, some modes for automatic stock decrease or increase may be not available. The other options have no restriction.
 ProductDoesNotUseBatchSerial=Nid yw'r cynnyrch hwn yn defnyddio lot/rhif cyfresol
 ProductLotSetup=Gosod lot modiwl/cyfres
 ShowCurrentStockOfLot=Dangoswch y stoc gyfredol ar gyfer cynnyrch/lot cwpl
@@ -50,3 +50,6 @@ ToReplace=Amnewid
 CantMoveNonExistantSerial=Gwall. Rydych chi'n gofyn am symud ar gofnod ar gyfer cyfres nad yw'n bodoli mwyach. Efallai eich bod yn cymryd yr un cyfresol ar yr un warws sawl gwaith yn yr un llwyth neu iddo gael ei ddefnyddio gan lwyth arall. Tynnwch y llwyth hwn a pharatowch un arall.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Tabl lot yn anghyflawn atgyweiriad rhediad gyda pharamedr '...repair.php?standard=confirmed'
 IlligalQtyForSerialNumbers= Angen cywiro stoc oherwydd rhif cyfresol unigryw.
+ErrorBatchesNeedStockManagement=Error. A product with batch/lot management must also be managed in stock.
+ForceBatchesNeedStockManagement=A product with batch/lot management must be managed in stock (stock management force to yes)
+BatchInformationNotfound=Batch information not found
