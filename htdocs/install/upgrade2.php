@@ -4244,6 +4244,9 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/core/modules/mailings/peche.modules.php',
 		'/core/modules/mailings/poire.modules.php',
 		'/core/modules/mailings/kiwi.modules.php',
+		'/core/modules/syslog/mod_syslog_chromephp.php',
+		'/core/modules/syslog/mod_syslog_firephp.php',
+		'/core/modules/syslog/logHandlerInterface.php',
 		'/core/boxes/box_members.php',
 
 		'/includes/restler/framework/Luracast/Restler/Data/Object.php',
