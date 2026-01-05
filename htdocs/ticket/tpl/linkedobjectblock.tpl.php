@@ -63,7 +63,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		<td class="linkedcol-element tdoverflowmax125"><?php echo $langs->trans("Ticket"); ?>
 		</td>
 		<td class="linkedcol-name tdoverflowmax150"><?php echo $objectlink->getNomUrl(1); ?></td>
-		<td class="linkedcol-ref tdoverflowmax125 center" title="<?php echo dolPrintHTMLForAttribute($objectlink->ref_client); ?>"><?php echo dolPrintHTML($objectlink->ref_client); ?></td>
+		<td class="linkedcol-ref tdoverflowmax125 center" title="<?php echo dolPrintHTMLForAttribute($objectlink->track_id); ?>"><?php echo dolPrintHTML($objectlink->track_id); ?></td>
 		<td class="linkedcol-date center"><?php echo dol_print_date($objectlink->datec, 'day'); ?></td>
 		<?php
 		//$objectlink->socid = $objectlink->fk_soc;

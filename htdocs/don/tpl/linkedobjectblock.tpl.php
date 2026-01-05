@@ -36,6 +36,7 @@
  * @var int $showImportButton
  * @var Don[] $linkedObjectBlock
  */
+'@phan-var-force Don[] $linkedObjectBlock';
 
 print "<!-- BEGIN PHP TEMPLATE don/tpl/linkedobjectblock.tpl.php -->\n";
 
@@ -55,7 +56,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	print '<tr class="'.$trclass.'">';
 	print '<td>'.$langs->trans("Donation").'</td>';
 	print '<td>'.$objectlink->getNomUrl(1).'</td>';
-	print '<td class="center linkedcol-ref tdoverflowmax150"title="'.dolPrintHTMLForAttribute($objectlink->ref_client).'">'.dolPrintHTML($objectlink->ref_client).'</td>';
+	print '<td class="center linkedcol-ref"></td>';
 	print '<td class="center">'.dol_print_date($objectlink->date, 'day').'</td>';
 	print '<td class="right">';
 	$total += $objectlink->total_ht;

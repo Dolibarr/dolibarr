@@ -30,12 +30,14 @@
  * @var Translate $langs
  * @var Conf $conf
  * @var DoliDB $db
+ * @var Hookmanager $hookmanager
  * @var User $user
  *
  * @var CommonObject $object
  * @var int $noMoreLinkedObjectBlockAfter
  * @var int $showImportButton
  * @var CommonObject[] $linkedObjectBlock
+ * @var string $action
  */
 
 // Protection to avoid direct call of template
