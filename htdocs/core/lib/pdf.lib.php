@@ -242,7 +242,7 @@ function pdf_getEncryption($pathoffile)
 
 	//ob_start();
 	@($parser = new TCPDF_PARSER(ltrim($content)));
-	list($xref, $data) = $parser->getParsedData();
+	[$xref, $data] = $parser->getParsedData();
 	unset($parser);
 	//ob_end_clean();
 
@@ -1253,7 +1253,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 	$pdf->SetDrawColor(224, 224, 224);
 	// Option for footer text color
 	if (getDolGlobalString('PDF_FOOTER_TEXT_COLOR')) {
-		list($r, $g, $b) = sscanf(getDolGlobalString('PDF_FOOTER_TEXT_COLOR'), '%d, %d, %d');
+		[$r, $g, $b] = sscanf(getDolGlobalString('PDF_FOOTER_TEXT_COLOR'), '%d, %d, %d');
 		$pdf->SetTextColor($r, $g, $b);
 	}
 
@@ -1291,7 +1291,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 
 			// Option for footer background color (without freetext zone)
 			if (getDolGlobalString('PDF_FOOTER_BACKGROUND_COLOR')) {
-				list($r, $g, $b) = sscanf($conf->global->PDF_FOOTER_BACKGROUND_COLOR, '%d, %d, %d');
+				[$r, $g, $b] = sscanf($conf->global->PDF_FOOTER_BACKGROUND_COLOR, '%d, %d, %d');
 				$pdf->setAutoPageBreak(false, 0); // Disable auto pagebreak
 				$pdf->Rect(0, $dims['hk'] - $posy + $freetextheight, $dims['wk'] + 1, $marginwithfooter + 1, 'F', array(), $fill_color = array($r, $g, $b));
 				$pdf->setAutoPageBreak(true, 0); // Restore pagebreak
@@ -1343,7 +1343,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 
 			// Option for footer background color (without freetext zone)
 			if (getDolGlobalString('PDF_FOOTER_BACKGROUND_COLOR')) {
-				list($r, $g, $b) = sscanf($conf->global->PDF_FOOTER_BACKGROUND_COLOR, '%d, %d, %d');
+				[$r, $g, $b] = sscanf($conf->global->PDF_FOOTER_BACKGROUND_COLOR, '%d, %d, %d');
 				$pdf->setAutoPageBreak(false, 0); // Disable auto pagebreak
 				$pdf->Rect(0, $dims['hk'] - $posy + $freetextheight, $dims['wk'] + 1, $marginwithfooter + 1, 'F', array(), $fill_color = array($r, $g, $b));
 				$pdf->setAutoPageBreak(true, 0); // Restore pagebreak
@@ -2583,6 +2583,32 @@ function pdf_getlinetotalwithtax($object, $i, $outputlangs, $hidedetails = 0)
 }
 
 /**
+ * Check if a linked object can be displayed based on third-party privacy rules.
+ *
+ * This function prevents displaying customer data to suppliers or supplier data to customers
+ * according to the configuration and the socid of the main object and the linked object.
+ *
+ * @param object $object The main Dolibarr object (e.g., invoice, order, proposal)
+ * @param object $elementobject The linked object to check (e.g., linked order, linked invoice)
+ * @return bool Returns true if the linked object can be displayed, false otherwise.
+ */
+function canDisplayLinkedObjectInPDF($object, $elementobject)
+{
+	$objectSocId = getObjectSocId($object);
+	$elementSocId = getObjectSocId($elementobject);
+
+	if (getDolGlobalBool("PDF_ALLOW_DISPLAY_LINKED_OBJECT_FOR_OTHER_SOC")) {
+		return true;
+	}
+
+	if (!empty($objectSocId) && !empty($elementSocId) && $objectSocId != $elementSocId) {
+		return false;
+	}
+
+	return true;
+}
+
+/**
  * 	Return linked objects to use for document generation.
  *  Warning: To save space, this function returns only one link per link type (all links are concated on same record string). This function is used by pdf_writeLinkedObjects
  *
@@ -2613,41 +2639,58 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 				$linkedobjects[$objecttype]['date_value'] = dol_print_date($elementobject->date, 'day', '', $outputlangs);
 			}
 		} elseif ($objecttype == 'commande' || $objecttype == 'supplier_order' || $objecttype == 'order_supplier') {
+			$optiontohidelinkedorders = "PDF_HIDE_LINKED_ORDERS_ON_SAME_THIRDPARTY";
+			if ($objecttype == 'supplier_order' || $objecttype == 'order_supplier') {
+				$optiontohidelinkedorders = "PDF_HIDE_LINKED_PURCHASE_ORDERS_ON_SAME_THIRDPARTY";
+			}
 			'@phan-var-force array<Commande|CommandeFournisseur> $objects';
 			$outputlangs->load('orders');
 
-			if (count($objects) > 1 && count($objects) <= getDolGlobalInt("MAXREFONDOC", 10) && !getDolGlobalString("PDF_HIDE_LINKED_OBJECT_IN_PUBLIC_NOTE")) {
+			if (count($objects) > 1 && count($objects) <= getDolGlobalInt("MAXREFONDOC", 10) && !getDolGlobalString($optiontohidelinkedorders)) {
 				if (empty($object->context['DolPublicNoteAppendedGetLinkedObjects'])) { // Check if already appended before add to avoid repeat data
-					$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities("RefOrder").' :');
+					$outputList = '';
 					foreach ($objects as $elementobject) {
-						$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities($elementobject->ref).(empty($elementobject->ref_client) ? '' : ' ('.$elementobject->ref_client.')').(empty($elementobject->ref_supplier) ? '' : ' ('.$elementobject->ref_supplier.')').' ');
-						$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities("OrderDate").' : '.dol_print_date($elementobject->date, 'day', '', $outputlangs));
+						if (canDisplayLinkedObjectInPDF($object, $elementobject)) {
+							$outputList = dol_concatdesc($outputList, $outputlangs->transnoentities($elementobject->ref) . (empty($elementobject->ref_client) ? '' : ' (' . $elementobject->ref_client . ')') . (empty($elementobject->ref_supplier) ? '' : ' (' . $elementobject->ref_supplier . ')') . ' ');
+							$outputList = dol_concatdesc($outputList, $outputlangs->transnoentities("OrderDate") . ' : ' . dol_print_date($elementobject->date, 'day', '', $outputlangs));
+						}
+					}
+
+					if (!empty($outputList)) {
+						$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities("RefOrder").' :');
+						$object->note_public = dol_concatdesc($object->note_public, $outputList);
 					}
 				}
-			} elseif (count($objects) == 1) {
+			} elseif (count($objects) == 1 && !getDolGlobalString($optiontohidelinkedorders)) {
 				$elementobject = array_shift($objects);
-				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefOrder");
-				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($elementobject->ref).(!empty($elementobject->ref_client) ? ' ('.$elementobject->ref_client.')' : '').(!empty($elementobject->ref_supplier) ? ' ('.$elementobject->ref_supplier.')' : '');
-				$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("OrderDate");
-				$linkedobjects[$objecttype]['date_value'] = dol_print_date($elementobject->date, 'day', '', $outputlangs);
+				if (canDisplayLinkedObjectInPDF($object, $elementobject)) {
+					$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefOrder");
+					$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($elementobject->ref).(!empty($elementobject->ref_client) ? ' ('.$elementobject->ref_client.')' : '').(!empty($elementobject->ref_supplier) ? ' ('.$elementobject->ref_supplier.')' : '');
+					$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("OrderDate");
+					$linkedobjects[$objecttype]['date_value'] = dol_print_date($elementobject->date, 'day', '', $outputlangs);
+				}
 			}
 		} elseif ($objecttype == 'contrat') {
 			'@phan-var-force Contrat[] $objects';
 			$outputlangs->load('contracts');
 			foreach ($objects as $elementobject) {
-				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefContract");
-				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($elementobject->ref);
-				$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("DateContract");
-				$linkedobjects[$objecttype]['date_value'] = dol_print_date($elementobject->date_contrat, 'day', '', $outputlangs);
+				if (canDisplayLinkedObjectInPDF($object, $elementobject)) {
+					$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefContract");
+					$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($elementobject->ref);
+					$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("DateContract");
+					$linkedobjects[$objecttype]['date_value'] = dol_print_date($elementobject->date_contrat, 'day', '', $outputlangs);
+				}
 			}
 		} elseif ($objecttype == 'fichinter') {
 			'@phan-var-force Fichinter[] $objects';
 			$outputlangs->load('interventions');
 			foreach ($objects as $elementobject) {
-				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("InterRef");
-				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($elementobject->ref);
-				$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("InterDate");
-				$linkedobjects[$objecttype]['date_value'] = dol_print_date($elementobject->datec, 'day', '', $outputlangs);
+				if (canDisplayLinkedObjectInPDF($object, $elementobject)) {
+					$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("InterRef");
+					$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($elementobject->ref);
+					$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("InterDate");
+					$linkedobjects[$objecttype]['date_value'] = dol_print_date($elementobject->datec, 'day', '', $outputlangs);
+				}
 			}
 		} elseif ($objecttype == 'shipping') {
 			'@phan-var-force Expedition[] $objects';

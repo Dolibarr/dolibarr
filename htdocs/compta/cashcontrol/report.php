@@ -58,7 +58,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  * @var User $user
  */
 
-$langs->loadLangs(array("bills", "banks"));
+$langs->loadLangs(array("bills", "banks", "cashdesk"));
 
 $id = GETPOSTINT('id');
 $summaryonly = GETPOSTINT('summaryonly');		// May be used for ticket Z
@@ -175,7 +175,7 @@ if ($resql) {
 	$nameterminal = getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$object->posnumber);
 	print $langs->trans("CashControl")." #".$object->id.(($nameterminal != "TAKEPOS_TERMINAL_NAME_".$object->posnumber) ? '<br>'.$nameterminal : '');
 	if ($object->status == $object::STATUS_DRAFT) {
-		print '<br><span class="opacitymedium small">('.$langs->trans("Draft").")</span>";
+		print '<br><span class="opacitymedium small">('.$langs->trans("Draft")." - ".$langs->trans("TheoricalView").")</span>";
 	}
 	print "</h2>";
 	print $mysoc->name;

@@ -169,3 +169,5 @@ ErrorModifyMoDateStart = Heu de triar una data d'inici anterior a la data d'inic
 ErrorModifyMoDateEnd = Heu de triar una data de finalització posterior a la data d'inici. %s
 ErrorCancelMo=S'ha produït un error en actualitzar la cancel·lació
 ErrorModifyMoDate=S'ha produït un error en actualitzar la modificació de la data
+BOM_SUB_BOM=Utilitza subboms
+UseSearchToSelectBom=Espereu fins que es premi una tecla abans de carregar el contingut de la llista combinada de Boms.<br>Això pot millorar el rendiment si teniu un gran nombre de projectes, però és menys convenient.

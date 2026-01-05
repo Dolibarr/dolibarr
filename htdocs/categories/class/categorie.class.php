@@ -85,6 +85,7 @@ class Categorie extends CommonObject
 	 */
 	public $MAP_ID = array(
 		'product'				=> 0,
+		'service'				=> 0,
 		'supplier'				=> 1,
 		'customer'				=> 2,
 		'member'				=> 3,
@@ -164,6 +165,7 @@ class Categorie extends CommonObject
 	 */
 	public $MAP_OBJ_CLASS = array(
 		'product'				=> 'Product',
+		'service'				=> 'Product',
 		'customer'				=> 'Societe',
 		'supplier'				=> 'Fournisseur',
 		'member'				=> 'Adherent',
@@ -192,6 +194,7 @@ class Categorie extends CommonObject
 	 */
 	public static $MAP_TYPE_TITLE_AREA = array(
 		'product'				=> 'Products',
+		'service'				=> 'Services',
 		'customer'				=> 'ProspectsOrCustomers',
 		'supplier'				=> 'Suppliers',
 		'member'				=> 'Members',

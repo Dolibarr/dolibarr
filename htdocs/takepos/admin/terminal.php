@@ -180,7 +180,8 @@ $formproduct = new FormProduct($db);
 
 llxHeader('', $langs->trans("CashDeskSetup"), '', '', 0, 0, '', '', '', 'mod-takepos page-admin_terminal');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/system/database.php?restore_lastsearch_values=1">'.img_picto($langs->trans("GoBack"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("GoBack").'</span></a>';
+
 print load_fiche_titre($langs->trans("CashDeskSetup").' (TakePOS)', $linkback, 'title_setup');
 $head = takepos_admin_prepare_head();
 print dol_get_fiche_head($head, 'terminal'.$terminal, 'TakePOS', -1, 'cash-register');
@@ -464,15 +465,15 @@ if (isModEnabled('receiptprinter')) {
 	print '</td></tr>';
 
 	if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT') && getDolGlobalInt('TAKEPOS_ORDER_PRINTERS') && $orderprinterallowed) {
-		print '<tr class="oddeven"><td>'.$langs->trans("OrderPrinterToUse").' - '.$langs->trans("Printer").' 1</td>';
+		print '<tr class="oddeven"><td>'.$langs->trans("OrderPrinterToUse").' - '.$langs->trans("KitchenPrinter").' 1</td>';
 		print '<td>';
 		print $form->selectarray('TAKEPOS_ORDER_PRINTER1_TO_USE'.$terminal, $printers, getDolGlobalInt('TAKEPOS_ORDER_PRINTER1_TO_USE'.$terminal), 1);
 		print '</td></tr>';
-		print '<tr class="oddeven"><td>'.$langs->trans("OrderPrinterToUse").' - '.$langs->trans("Printer").' 2</td>';
+		print '<tr class="oddeven"><td>'.$langs->trans("OrderPrinterToUse").' - '.$langs->trans("KitchenPrinter").' 2</td>';
 		print '<td>';
 		print $form->selectarray('TAKEPOS_ORDER_PRINTER2_TO_USE'.$terminal, $printers, getDolGlobalInt('TAKEPOS_ORDER_PRINTER2_TO_USE'.$terminal), 1);
 		print '</td></tr>';
-		print '<tr class="oddeven"><td>'.$langs->trans("OrderPrinterToUse").' - '.$langs->trans("Printer").' 3</td>';
+		print '<tr class="oddeven"><td>'.$langs->trans("OrderPrinterToUse").' - '.$langs->trans("KitchenPrinter").' 3</td>';
 		print '<td>';
 		print $form->selectarray('TAKEPOS_ORDER_PRINTER3_TO_USE'.$terminal, $printers, getDolGlobalInt('TAKEPOS_ORDER_PRINTER3_TO_USE'.$terminal), 1);
 		print '</td></tr>';

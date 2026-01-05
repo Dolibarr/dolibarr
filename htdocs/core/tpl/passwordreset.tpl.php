@@ -308,7 +308,7 @@ if (!empty($morelogincontent)) {
 <div id="login_line2" style="clear: both">
 
 <!-- Button "Regenerate and Send password" -->
-<br><input type="submit" <?php echo $disabled; ?> class="button small" name="button_password" value="<?php echo $langs->trans('Save'); ?>" tabindex="4" />
+<br><input type="submit" <?php echo $disabled; ?> class="butAction butActionLogin noborderfocus small" name="button_password" value="<?php echo $langs->trans('Save'); ?>" tabindex="4" />
 
 <br>
 <div class="center" style="margin-top: 15px;">
