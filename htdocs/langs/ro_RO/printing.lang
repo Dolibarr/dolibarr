@@ -53,4 +53,4 @@ PrintingDriverDescprintgcp=Configurare variabile pentru driverul imprimanta Goog
 PrintingDriverDescprintipp=Variabilele de configurare pentru driverele de imprimare Cups
 PrintTestDescprintgcp=Lista imprimantelor pentru Google Cloud Print
 PrintTestDescprintipp=Lista imprimantelor pentru Cups.
-Testbbbb
+PrinterLocation=Locație imprimantă

@@ -270,6 +270,8 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 	 *
 	 ***************************************************************************************/
 
+	dol_syslog("Process upgrade2 (step common to all entities)");
+
 	// Force to execute this at begin to avoid the new core code into Dolibarr to be broken.
 	$sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'user ADD COLUMN birth date';
 	$db->query($sql, 1);
@@ -298,7 +300,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 	$db->begin();
 
 	foreach ($listofentities as $entity) {
-		dol_syslog("Process upgrade2 for entity ".$entity);
+		dol_syslog("Process upgrade2 (step a) for entity ".$entity);
 
 		// Set $conf context for entity
 		$conf->setEntityValues($db, $entity);
@@ -313,7 +315,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 		$versiontoarray = array();
 		$versionranarray = array();
 
-		dol_syslog("Process upgrade2 d for entity ".$entity);
+		dol_syslog("Process upgrade2 (step b) for entity ".$entity);
 
 		if (!$error) {
 			if (count($listofentities) > 1) {
@@ -3862,7 +3864,7 @@ function migrate_reset_blocked_log($db, $langs, $conf)
 							$object->date = dol_now();
 
 							$b = new BlockedLog($db);
-							$b->setObjectData($object, 'MODULE_SET', 0);
+							$b->setObjectData($object, 'MODULE_SET', 0, $user, null);
 
 							$res = $b->create($user);
 							if ($res <= 0) {
@@ -4256,6 +4258,9 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/core/modules/mailings/peche.modules.php',
 		'/core/modules/mailings/poire.modules.php',
 		'/core/modules/mailings/kiwi.modules.php',
+		'/core/modules/syslog/mod_syslog_chromephp.php',
+		'/core/modules/syslog/mod_syslog_firephp.php',
+		'/core/modules/syslog/logHandlerInterface.php',
 		'/core/boxes/box_members.php',
 
 		'/includes/restler/framework/Luracast/Restler/Data/Object.php',
@@ -4410,7 +4415,7 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 	);
 
 	foreach ($listofmodule as $moduletoreload => $reloadmode) {	// reloadmodule can be 'noboxes', 'newboxdefonly', 'forceactivate'
-		if (empty($moduletoreload) || (empty($conf->global->$moduletoreload) && !$force)) {
+		if (empty($moduletoreload) || (!isModEnabled($moduletoreload) && !$force)) {
 			continue; // Discard reload if module not enabled
 		}
 

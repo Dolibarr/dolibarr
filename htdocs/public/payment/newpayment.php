@@ -1086,7 +1086,7 @@ if (getDolGlobalString('PAYMENT_NEWFORM_TEXT')) {
 	} else {
 		$text .= getDolGlobalString('PAYMENT_NEWFORM_TEXT') . "<br>\n";
 	}
-	$text = '<tr><td align="center"><br>'.$text.'<br></td></tr>'."\n";
+	$text = '<tr><td class="center"><br>'.$text.'<br></td></tr>'."\n";
 }
 if (empty($text)) {
 	$text .= '<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("WelcomeOnPaymentPage").'</strong></td></tr>'."\n";
@@ -1097,7 +1097,7 @@ print $text;
 // Output payment summary form
 print '<tr><td align="center">';	// class=center does not have the payment button centered so we keep align here.
 print '<table class="centpercent left" id="tablepublicpayment">';
-print '<tr class="hideonsmartphone"><td colspan="2" align="left" class="opacitymedium">'.$langs->trans("ThisIsInformationOnPayment").' :</td></tr>'."\n";
+print '<tr class="hideonsmartphone"><td colspan="2" class="opacitymedium">'.$langs->trans("ThisIsInformationOnPayment").'...<br><br></td></tr>'."\n";
 
 $found = false;
 $error = 0;
@@ -2298,7 +2298,9 @@ if ($action != 'dopayment') {
 					// If STRIPE_USE_IDEMPOTENCY_BY_DEFAULT is set or param noidempotency=0 is added, then with add an idempotent key, so we must use a different tag/ref for each payment (if not we will get an error).
 					$noidempotency_key = (GETPOSTISSET('noidempotency') ? GETPOSTINT('noidempotency') : (getDolGlobalInt('STRIPE_USE_IDEMPOTENCY_BY_DEFAULT') ? 0 : 1));
 
-					print '<div class="button buttonpayment" id="div_dopayment_stripe"><span class="fa fa-credit-card"></span> <input class="" type="submit" id="dopayment_stripe" name="dopayment_stripe" value="'.$langs->trans("StripeDoPayment").'">';
+					print '<div class="button buttonpayment" id="div_dopayment_stripe">';
+					print '<span class="fa fa-credit-card"></span> ';
+					print '<input class="" type="submit" id="dopayment_stripe" name="dopayment_stripe" value="'.$langs->trans("StripeDoPayment").'">';
 					print '<input type="hidden" name="noidempotency" value="'.$noidempotency_key.'">';
 					print '<br>';
 					print '<span class="buttonpaymentsmall">'.$langs->trans("CreditOrDebitCard").'</span>';

@@ -1637,7 +1637,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 
 	print '<div class="div-table-responsive-no-min sectioncalendarbymonth maxscreenheightless300">';
 	print '<table class="centpercent noborder nocellnopadd cal_pannel cal_month listwithfilterbefore">';
-	print ' <tr class="liste_titre">';
+	print ' <tr class="liste_titre sticky">';
 	// Column title of weeks numbers
 	echo '  <td class="center">#</td>';
 	$i = 0;

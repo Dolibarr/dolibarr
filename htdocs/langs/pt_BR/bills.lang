@@ -7,7 +7,6 @@ BillsLate=Pagamentos atrasados
 BillsStatistics=Estatísticas de faturas de clientes
 DisabledBecauseDispatchedInBookkeeping=Desativado porque a nota fiscal foi despachada na contabilidade
 DisabledBecauseNotLastInvoice=Desativado porque a fatura não é apagável. Algumas faturas foram gravadas após esta e ele criará buracos no balcão.
-DisabledBecauseNotErasable=Desativada já que não pode ser apagada
 InvoiceStandard=Fatura padrão
 InvoiceStandardAsk=Fatura padrão
 InvoiceStandardDesc=Esse tipo de fatura é a fatura comum.

@@ -22,7 +22,7 @@ printSellby=Límite venta: %s
 printQty=Cant.: %d
 printPlannedWarehouse=Almacén: %s
 AddDispatchBatchLine=Añada una línea para despacho por caducidad
-WhenProductBatchModuleOnOptionAreForced=Cuando el módulo Lote/Serie está activado, la disminución automática de existencias se fuerza a '%s' y el modo de aumento automático se fuerza a '%s'. Algunas opciones pueden no estar disponibles. Otras opciones se pueden definir como quieras.
+WhenProductBatchModuleOnOptionAreForced=Cuando el módulo Lote/Serie está activado, es posible que algunos modos de aumento o disminución automática del stock no estén disponibles. Las demás opciones no tienen restricciones.
 ProductDoesNotUseBatchSerial=Este producto no usa lotes/series
 ProductLotSetup=Configuración del módulo lotes/series
 ShowCurrentStockOfLot=Mostrar el stock actual de este producto/lote
@@ -50,5 +50,6 @@ ToReplace=Reemplazar
 CantMoveNonExistantSerial=Error. Pides un movimiento en un registro de una serie que ya no existe. Puede ser que tome la misma serie en el mismo almacén varias veces en el mismo envío o que haya sido utilizada por otro envío. Retire este envío y prepare otro.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Reparación de ejecución incompleta de tabla de lotes con parámetro '...repair.php?standard=confirmed'
 IlligalQtyForSerialNumbers= Se requiere corrección de existencias debido al número de serie único.
-ErrorBatchesNeedStockManagement=Error. A product with batch/lot management must also be managed in stock.
+ErrorBatchesNeedStockManagement=Error. Un producto con gestión de lotes también debe gestionarse en stock.
 ForceBatchesNeedStockManagement=Un producto con gestión de lotes/lotes debe gestionarse en stock (gestión de stock forzada a sí)
+BatchInformationNotfound=No se encontró información del lote

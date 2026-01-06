@@ -75,7 +75,7 @@ jobs:
       - run: python -m pip install pre-commit
 
       # Restore previous cache of precommit
-      - uses: actions/cache/restore@v4
+      - uses: actions/cache/restore@v5
         with:
           path: ~/.cache/pre-commit/
           key: pre-commit-4|${{ env.pythonLocation }}|${{ hashFiles('.pre-commit-config.yaml') }}
@@ -163,14 +163,14 @@ jobs:
           in: ${{ env.RAW_LOG }}
 
       # Save the precommit cache
-      - uses: actions/cache/save@v4
+      - uses: actions/cache/save@v5
         if: ${{ ! cancelled() }}
         with:
           path: ~/.cache/pre-commit/
           key: pre-commit-4|${{ env.pythonLocation }}|${{ hashFiles('.pre-commit-config.yaml') }}
       # Upload result log files of precommit into the Artifact shared store
       - name: Provide log as artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         if: ${{ ! cancelled() }}
         with:
           name: precommit-logs

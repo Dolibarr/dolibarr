@@ -1695,6 +1695,7 @@ if ($action == 'create' && $usercancreate) {
 			// Thirdparty
 			print '<tr><td class="titlefieldcreate fieldrequired">' . $langs->trans('Company') . '</td>';
 			print '<td colspan="3">' . $soc->getNomUrl(1) . '</td>';
+			print '<input type="hidden" name="socid" value="' . $soc->id . '">';
 			print '</tr>';
 
 			// Project
@@ -2051,7 +2052,7 @@ if ($action == 'create' && $usercancreate) {
 						print '<!-- Case warehouse already known or product not a predefined product -->';
 						//ship from preselected location
 						$stock = + (isset($product->stock_warehouse[$warehouse_id]->real) ? $product->stock_warehouse[$warehouse_id]->real : 0); // Convert to number
-						if ($line->product_type == Product::TYPE_SERVICE && getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
+						if (($line->product_type == Product::TYPE_SERVICE && getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) || $product->stockable_product == Product::DISABLED_STOCK) {
 							$deliverableQty = $quantityToBeDelivered;
 						} else {
 							$deliverableQty = min($quantityToBeDelivered, $stock);
@@ -3686,13 +3687,9 @@ if ($action == 'create' && $usercancreate) {
 			print '<tr><td colspan="8"><span class="opacitymedium">' . $langs->trans("NoLineGoOnTabToAddSome", $langs->transnoentitiesnoconv("ShipmentDistribution")) . '</span></td></tr>';
 		}
 
-		print "</table>\n";
 		print '</tbody>';
+		print "</table>\n";
 		print '</div>';
-
-
-		print dol_get_fiche_end();
-
 
 		$object->fetchObjectLinked($object->id, $object->element);
 	}

@@ -459,3 +459,5 @@ PriceByCustomeAndMultiPricesAbility=Des prix différents pour chaque client + Pl
 WhenProductVirtualOnOptionAreForced=Lorsque l'option « Activer les kits » (module produit) est activée, certains modes de stock automatique ou d'augmentation peuvent être indisponibles. Les autres options restent pleinement fonctionnelles.
 UpdatedRecently=Mis à jour récemment
 ProductType=Type de produit
+UseBarCodeForProducts=Utilisez code-barre pour produits
+UseBarCodeForThirdParties=Utilisez code-barre pour les tiers

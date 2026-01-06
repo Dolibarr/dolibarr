@@ -313,7 +313,7 @@ if ($action == 'addtime' && $user->hasRight('projet', 'lire') && GETPOST('formfi
 				}
 			}
 
-			if (!$updateoftaskdone && GETPOSTISSET($taskid.'progress')) {  // Check to update progress if no update were done on task.
+			if (!$updateoftaskdone && GETPOSTISSET($tmptaskid.'progress')) {  // Check to update progress if no update were done on task.
 				$object->fetch($tmptaskid);
 				//var_dump($object->progress);
 				//var_dump(GETPOST($tmptaskid . 'progress', 'int')); exit;
@@ -418,6 +418,7 @@ $extrafieldsobjectkey = 'projet_task';
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 
 $tasksarray = $taskstatic->getTasksArray(null, null, ($project->id ? $project->id : 0), $socid, 0, $search_project_ref, (string) $onlyopenedproject, $morewherefilter, ($search_usertoprocessid ? $search_usertoprocessid : 0), 0, $extrafields, 0, $search_array_options_task, 1);// We want to see all tasks of open project i am allowed to see and that match filter, not only my tasks. Later only mine will be editable later.
+
 $tasksarraywithoutfilter = array();
 if ($morewherefilter) {	// Get all task without any filter, so we can show total of time spent for not visible tasks
 	$tasksarraywithoutfilter = $taskstatic->getTasksArray(null, null, ($project->id ? $project->id : 0), $socid, 0, '', (string) $onlyopenedproject, '', ($search_usertoprocessid ? $search_usertoprocessid : 0)); // We want to see all tasks of open project i am allowed to see and that match filter, not only my tasks. Later only mine will be editable later.
@@ -431,7 +432,6 @@ $tasksrole = $taskstatic->getUserRolesForProjectsOrTasks(null, $usertoprocess, (
 
 llxHeader("", $title, "", '', 0, 0, array('/core/js/timesheet.js'), '', '', 'mod-project project-activity page-activity_perweek');
 
-//print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num, '', 'project');
 
 $param = '';
 $param .= ($mode ? '&mode='.urlencode($mode) : '');
@@ -489,7 +489,7 @@ if ($mine || ($usertoprocess->id == $user->id)) {
 } else {
 	$s .= $langs->trans("AllTaskVisibleButEditIfYouAreAssigned").'<br>';
 }
-print info_admin($s, 0, 0, 'info', 'nomargintop');
+print info_admin($s, 0, 0, 'info', 'nomargintop hideonsmartphone');
 
 print dol_get_fiche_end();
 

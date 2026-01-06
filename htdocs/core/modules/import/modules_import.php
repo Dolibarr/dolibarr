@@ -48,12 +48,12 @@ class ModeleImports
 	public $error = '';
 
 	/**
-	 * @var string[] Error codes (or messages)
+	 * @var string[]|array<int,array<string,string>> Error codes (or messages)
 	 */
 	public $errors = array();
 
 	/**
-	 * @var string[] warnings codes (or messages)
+	 * @var string[]|array<int,array<string,string>> warnings codes (or messages)
 	 */
 	public $warnings = array();
 

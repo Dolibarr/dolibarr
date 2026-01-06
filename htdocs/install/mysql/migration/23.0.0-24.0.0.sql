@@ -1,0 +1,75 @@
+--
+-- This file is executed by calling /install/index.php page
+-- when current version is higher than the name of this file.
+-- Be carefull in the position of each SQL request.
+--
+-- To restrict request to Mysql version x.y minimum use -- VMYSQLx.y
+-- To restrict request to Pgsql version x.y minimum use -- VPGSQLx.y
+-- To rename a table:       ALTER TABLE llx_table RENAME TO llx_table_new;
+--                          Note that "RENAME TO" is both compatible with mysql/postgesql, not the "RENAME" alone.
+--                          Also you must complete with renaming the sequence for PGSQL with -- VPGSQL8.2 ALTER SEQUENCE llx_table_rowid_seq RENAME TO llx_table_new_rowid_seq;
+-- To add a column:         ALTER TABLE llx_table ADD COLUMN newcol varchar(60) NOT NULL DEFAULT '0' AFTER existingcol;
+-- To rename a column:      ALTER TABLE llx_table CHANGE COLUMN oldname newname varchar(60);
+-- To drop a column:        ALTER TABLE llx_table DROP COLUMN oldname;
+-- To change type of field: ALTER TABLE llx_table MODIFY COLUMN name varchar(60);
+-- To drop a foreign key or constraint:   ALTER TABLE llx_table DROP FOREIGN KEY fk_name;
+-- To create a unique index:              ALTER TABLE llx_table ADD UNIQUE INDEX uk_table_field (field);
+-- To drop an index:        -- VMYSQL4.1 DROP INDEX nomindex ON llx_table;
+-- To drop an index:        -- VPGSQL8.2 DROP INDEX nomindex;
+-- To make pk to be auto increment (mysql):
+-- -- VMYSQL4.3 ALTER TABLE llx_table ADD PRIMARY KEY(rowid);
+-- -- VMYSQL4.3 ALTER TABLE llx_table CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
+-- To make pk to be auto increment (postgres):
+-- -- VPGSQL8.2 CREATE SEQUENCE llx_table_rowid_seq OWNED BY llx_table.rowid;
+-- -- VPGSQL8.2 ALTER TABLE llx_table ADD PRIMARY KEY (rowid);
+-- -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN rowid SET DEFAULT nextval('llx_table_rowid_seq');
+-- -- VPGSQL8.2 SELECT setval('llx_table_rowid_seq', MAX(rowid)) FROM llx_table;
+-- To set a field as NULL:                     -- VMYSQL4.3 ALTER TABLE llx_table MODIFY COLUMN name varchar(60) NULL;
+-- To set a field as NULL:                     -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name DROP NOT NULL;
+-- To set a field as NOT NULL:                 -- VMYSQL4.3 ALTER TABLE llx_table MODIFY COLUMN name varchar(60) NOT NULL;
+-- To set a field as NOT NULL:                 -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name SET NOT NULL;
+-- To set a field as default NULL:             -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name SET DEFAULT NULL;
+-- Note: fields with type BLOB/TEXT can't have default value.
+-- To rebuild sequence for postgresql after insert, by forcing id autoincrement fields:
+-- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
+
+
+-- V23 forgotten
+
+
+
+
+-- V24 migration
+CREATE TABLE llx_accounting_transaction_template (
+	rowid			integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	entity          integer DEFAULT 1 NOT NULL,
+	code			varchar(128) NOT NULL,
+	label			varchar(255),
+	date_creation	datetime NOT NULL,
+	tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	fk_user_creat	integer NOT NULL,
+	fk_user_modif	integer,
+	import_key		varchar(14)
+) ENGINE=innodb;
+
+ALTER TABLE llx_accounting_transaction_template ADD INDEX idx_accounting_transaction_template_rowid (rowid);
+ALTER TABLE llx_accounting_transaction_template ADD INDEX idx_accounting_transaction_template_code (code);
+
+ALTER TABLE llx_accounting_transaction_template ADD UNIQUE INDEX uk_accounting_transaction_template_code (code, entity);
+
+CREATE TABLE llx_accounting_transaction_template_det (
+	rowid					integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	fk_transaction_template	integer NOT NULL,
+	general_account			varchar(32) NOT NULL,
+	general_label			varchar(255) NOT NULL,
+	subledger_account		varchar(32),
+	subledger_label			varchar(255),
+	operation_label			varchar(255),
+	debit					double(24,8),
+	credit					double(24,8)
+) ENGINE=innodb;
+
+ALTER TABLE llx_accounting_transaction_template_det ADD INDEX idx_accounting_transaction_template_det_rowid (rowid);
+ALTER TABLE llx_accounting_transaction_template_det ADD CONSTRAINT llx_accounting_transaction_template_det_fk_transaction_template FOREIGN KEY (fk_transaction_template) REFERENCES llx_accounting_transaction_template(rowid);
+
+-- end of migration

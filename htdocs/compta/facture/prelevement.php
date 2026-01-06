@@ -930,6 +930,7 @@ if ($object->id > 0) {
 	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print '<td>&nbsp;</td>';
 	}
+	print '<td class="left">'.$langs->trans("ID").'</td>';
 	print '<td class="left">'.$langs->trans("DateRequest").'</td>';
 	print '<td>'.$langs->trans("User").'</td>';
 	print '<td class="center">'.$langs->trans("Amount").'</td>';
@@ -996,6 +997,9 @@ if ($object->id > 0) {
 				print '</a>';
 				print '</td>';
 			}
+
+			// ID
+			print '<td class="nowraponall">'.$obj->rowid."</td>\n";
 
 			// Date
 			print '<td class="nowraponall">'.dol_print_date($db->jdate($obj->date_demande), 'dayhour')."</td>\n";
@@ -1127,6 +1131,9 @@ if ($object->id > 0) {
 				print '<td>&nbsp;</td>';
 			}
 
+			// ID
+			print '<td class="nowraponall">'.$obj->rowid."</td>\n";
+
 			// Date
 			print '<td class="nowraponall">'.dol_print_date($db->jdate($obj->date_demande), 'day', 'tzuserrel')."</td>\n";
 
@@ -1203,7 +1210,7 @@ if ($object->id > 0) {
 		}
 
 		if (!$numopen && !$numclosed) {
-			print '<tr class="oddeven"><td colspan="8"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+			print '<tr class="oddeven"><td colspan="9"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 		}
 
 		$db->free($resql);
