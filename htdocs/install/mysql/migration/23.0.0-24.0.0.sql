@@ -33,6 +33,9 @@
 -- To rebuild sequence for postgresql after insert, by forcing id autoincrement fields:
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
+-- V23 forgotten
+
+
 -- V24 migration
 
 ALTER TABLE llx_actioncomm_reminder MODIFY COLUMN fk_user integer DEFAULT NULL;
@@ -42,5 +45,37 @@ ALTER TABLE llx_actioncomm_reminder ADD INDEX idx_actioncomm_reminder_fk_soc (fk
 ALTER TABLE llx_actioncomm_reminder ADD INDEX idx_actioncomm_reminder_fk_contact (fk_contact);
 ALTER TABLE llx_actioncomm_reminder DROP INDEX uk_actioncomm_reminder_unique;
 ALTER TABLE llx_actioncomm_reminder ADD UNIQUE INDEX uk_actioncomm_reminder_unique(fk_actioncomm, fk_user, fk_soc, fk_contact, typeremind, offsetvalue, offsetunit);
+
+CREATE TABLE llx_accounting_transaction_template (
+	rowid			integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	entity          integer DEFAULT 1 NOT NULL,
+	code			varchar(128) NOT NULL,
+	label			varchar(255),
+	date_creation	datetime NOT NULL,
+	tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	fk_user_creat	integer NOT NULL,
+	fk_user_modif	integer,
+	import_key		varchar(14)
+) ENGINE=innodb;
+
+ALTER TABLE llx_accounting_transaction_template ADD INDEX idx_accounting_transaction_template_rowid (rowid);
+ALTER TABLE llx_accounting_transaction_template ADD INDEX idx_accounting_transaction_template_code (code);
+
+ALTER TABLE llx_accounting_transaction_template ADD UNIQUE INDEX uk_accounting_transaction_template_code (code, entity);
+
+CREATE TABLE llx_accounting_transaction_template_det (
+	rowid					integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	fk_transaction_template	integer NOT NULL,
+	general_account			varchar(32) NOT NULL,
+	general_label			varchar(255) NOT NULL,
+	subledger_account		varchar(32),
+	subledger_label			varchar(255),
+	operation_label			varchar(255),
+	debit					double(24,8),
+	credit					double(24,8)
+) ENGINE=innodb;
+
+ALTER TABLE llx_accounting_transaction_template_det ADD INDEX idx_accounting_transaction_template_det_rowid (rowid);
+ALTER TABLE llx_accounting_transaction_template_det ADD CONSTRAINT llx_accounting_transaction_template_det_fk_transaction_template FOREIGN KEY (fk_transaction_template) REFERENCES llx_accounting_transaction_template(rowid);
 
 -- end of migration
