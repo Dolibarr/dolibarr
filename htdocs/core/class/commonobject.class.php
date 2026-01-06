@@ -92,6 +92,11 @@ abstract class CommonObject
 	public $errors = array();
 
 	/**
+	 * @var string[]	Array of warning strings
+	 */
+	public $warnings = array();
+
+	/**
 	 * @var array<string,string>	To store error results of ->validateField()
 	 */
 	private $validateFieldsErrors = array();
@@ -230,7 +235,7 @@ abstract class CommonObject
 	private $linkedObjectsFullLoaded = array();
 
 	/**
-	 * @var ?static		To store a cloned copy of the object before editing it (to keep track of its former properties)
+	 * @var ?static		To store a cloned copy of the object before editing it (to keep track of its former properties) by doing $object->oldcopy = dol_clone($object, 2);
 	 */
 	public $oldcopy;
 
@@ -2724,8 +2729,8 @@ abstract class CommonObject
 			}
 
 			$sql = "UPDATE ".$this->db->prefix().$this->table_element;
-			$sql .= " SET ".$fieldname." = ".(($id > 0 || $id == '0') ? ((int) $id) : 'NULL');
-			$sql .= ' WHERE rowid='.((int) $this->id);
+			$sql .= " SET ".$this->db->sanitize($fieldname)." = ".(($id > 0 || $id == '0') ? ((int) $id) : 'NULL');
+			$sql .= ' WHERE rowid = '.((int) $this->id);
 
 			if ($this->db->query($sql)) {
 				$this->mode_reglement_id = $id;
@@ -6106,6 +6111,7 @@ abstract class CommonObject
 		}
 		// After call of write_file $obj->result['fullpath'] is set with generated file. It will be used to update the ECM database index.
 
+
 		if ($resultwritefile > 0) {
 			$outputlangs->charset_output = $sav_charset_output;
 
@@ -6135,11 +6141,14 @@ abstract class CommonObject
 			// Success in building document. We build meta file.
 			dol_meta_create($this);
 
+			$this->warnings = $obj->warnings;
+
 			return 1;
 		} else {
 			$outputlangs->charset_output = $sav_charset_output;
 			$this->error = $obj->error;
 			$this->errors = $obj->errors;
+			$this->warnings = $obj->warnings;
 			dol_syslog("Error generating document for ".__CLASS__.". Error: ".$obj->error, LOG_ERR);
 			return -1;
 		}
@@ -6173,6 +6182,13 @@ abstract class CommonObject
 
 			// Set the public "share" key
 			$setsharekey = false;
+			if (
+				!empty($this->TRIGGER_PREFIX)
+				&& (getDolGlobalInt($this->TRIGGER_PREFIX . "_ALLOW_EXTERNAL_DOWNLOAD") || getDolGlobalInt($this->TRIGGER_PREFIX . "_ALLOW_ONLINESIGN"))
+			) {
+				$setsharekey = true;
+			}
+			// TODO Remove case covered by trigger prefix
 			if ($this->element == 'propal' || $this->element == 'proposal') {
 				if (getDolGlobalInt("PROPOSAL_ALLOW_ONLINESIGN")) {
 					$setsharekey = true;	// feature to make online signature is not set or set to on (default)
@@ -6181,22 +6197,13 @@ abstract class CommonObject
 					$setsharekey = true;
 				}
 			}
-			if ($this->element == 'commande' && getDolGlobalInt("ORDER_ALLOW_EXTERNAL_DOWNLOAD")) {
-				$setsharekey = true;
-			}
 			if ($this->element == 'facture' && getDolGlobalInt("INVOICE_ALLOW_EXTERNAL_DOWNLOAD")) {
 				$setsharekey = true;
 			}
 			if ($this->element == 'bank_account' && getDolGlobalInt("BANK_ACCOUNT_ALLOW_EXTERNAL_DOWNLOAD")) {
 				$setsharekey = true;
 			}
-			if ($this->element == 'product' && getDolGlobalInt("PRODUCT_ALLOW_EXTERNAL_DOWNLOAD")) {
-				$setsharekey = true;
-			}
 			if ($this->element == 'contrat' && getDolGlobalInt("CONTRACT_ALLOW_EXTERNAL_DOWNLOAD")) {
-				$setsharekey = true;
-			}
-			if ($this->element == 'fichinter' && getDolGlobalInt("FICHINTER_ALLOW_EXTERNAL_DOWNLOAD")) {
 				$setsharekey = true;
 			}
 			if ($this->element == 'supplier_proposal' && getDolGlobalInt("SUPPLIER_PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD")) {

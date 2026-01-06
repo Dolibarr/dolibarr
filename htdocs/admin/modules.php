@@ -1170,11 +1170,12 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 				}
 
 				$urltogo = $_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&token='.newToken().'&module_position='.$module_position.'&action=set&token='.newToken().'&value='.$modName.'&mode='.$mode.$param;
-				$popupwidth = 500;
+				$popupWidth = 500;
+				$popupHeight = 300;
 				$codeenabledisable .= '<!-- Message to show: '.$warningmessage.' -->'."\n";
 				$codeenabledisable .= '<a class="reposition" id="idqualified'.$objMod->numero.'" data-alreadyclicked="0" href="'.$urltogo.'"';
 				if ($warningmessage) {
-					$codeenabledisable .= ' onclick="return confirmDolibarr(\''.dol_escape_js($warningmessage).'\', \'idqualified'.$objMod->numero.'\', '.$popupwidth.', '.$disableCancel.');"';
+					$codeenabledisable .= ' onclick="return confirmDolibarr(\''.dol_escape_js($warningmessage).'\', \'idqualified'.$objMod->numero.'\', '.$popupWidth.', '.$popupHeight.','.$disableCancel.');"';
 				}
 				$codeenabledisable .= '>';
 				$codeenabledisable .= img_picto($langs->trans("Disabled"), 'switch_off');

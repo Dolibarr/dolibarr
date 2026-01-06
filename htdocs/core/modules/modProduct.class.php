@@ -553,6 +553,7 @@ class modProduct extends DolibarrModules
 			'p.price_min_ttc' => "SellingMinPriceTTC",
 			'p.price_base_type' => "PriceBaseType", //price base: with-tax (TTC) or without (HT) tax. Displays accordingly in Product card
 			'p.tva_tx' => 'VATRate',
+			'p.default_vat_code' => 'VATCode',		// to use the correct vat line when there is several lines with the same vat rate for your country
 			'p.datec' => 'DateCreation',
 			'p.cost_price' => "CostPrice"
 		);
@@ -717,7 +718,8 @@ class modProduct extends DolibarrModules
 			'p.price_ttc' => "110",
 			'p.price_min_ttc' => "110",
 			'p.price_base_type' => "HT (show/use price excl. tax) / TTC (show/use price incl. tax)",
-			'p.tva_tx' => '10', // tax rate eg: 10. Must match numerically one of the tax rates defined for your country'
+			'p.tva_tx' => '10', 			// tax rate eg: 10. Must match numerically one of the tax rates defined for your country
+			'p.default_vat_code' => '',		// to use the correct vat line when there is several lines with the same vat rate for your country
 			'p.tosell' => "0 (not for sale to customer, eg. raw material) / 1 (for sale)",
 			'p.tobuy' => "0 (not for purchase from supplier, eg. virtual product) / 1 (for purchase)",
 			'p.fk_product_type' => "0 (product) / 1 (service)",
@@ -913,10 +915,10 @@ class modProduct extends DolibarrModules
 				'sp.ref_fourn' => "XYZ-F123456",
 				'sp.quantity' => "5",
 				'sp.tva_tx' => '10',
+				'sp.default_vat_code' => '',
 				'sp.price' => "50",
 				'sp.unitprice' => '50',
 				'sp.remise_percent' => '0',
-				'sp.default_vat_code' => '',
 				'sp.delivery_time_days' => '5',
 				'sp.supplier_reputation' => 'FAVORITE / NOTTHGOOD / DONOTORDER',
 				'sp.status' => '1',
@@ -1021,7 +1023,7 @@ class modProduct extends DolibarrModules
 				'sp.date_begin' => "AppliedPricesFrom*",
 				'sp.date_end' => "AppliedPricesTo",
 				'sp.tva_tx' => "VATRate*",
-				'sp.default_vat_code' => 'PriceVATCode',
+				'sp.default_vat_code' => 'VATCode',
 				'sp.discount_percent' => 'Discount',
 				'sp.price_base_type' => "PriceBase*",
 				'sp.price' => "SellingUnitPriceHT*",

@@ -33,7 +33,7 @@
  */
 
 '
-@phan-var-force CommonObject $this
+@phan-var-force Propal|Commande|Facture|FactureRec|Expedition|SupplierProposal|CommandeFournisseur|FactureFournisseur $this
 ';
 
 $depth_array = $depth_array ?? array();

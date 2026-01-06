@@ -34,7 +34,7 @@ class box_activity extends ModeleBoxes
 	public $boxcode = "activity";
 	public $boximg = "object_bill";
 	public $boxlabel = 'BoxGlobalActivity';
-	public $depends = array("facture");
+	public $depends = array("invoice|propal|order");
 
 	public $enabled = 1;
 

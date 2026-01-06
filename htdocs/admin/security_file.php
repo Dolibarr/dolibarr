@@ -27,10 +27,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -38,6 +34,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('users', 'admin', 'other'));
@@ -225,8 +224,8 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("UseAntivirusOnUploadedFile").'</td>';
 print '<td class="">';
-if (defined('MAIN_ANTIVIRUS_UPLOAD_ON')) {
-	print img_picto($langs->trans("Enabled")." - Can't be disabled", 'switch_on', '', 0, 0, 0, '', 'opacitymedium');
+if (defined('MAIN_ANTIVIRUS_UPLOAD_ON') && constant('MAIN_ANTIVIRUS_UPLOAD_ON')) {
+	print img_picto($langs->trans("Enabled")." - Can't be disabled (MAIN_ANTIVIRUS_UPLOAD_ON is set)", 'switch_on', '', 0, 0, 0, '', 'opacitymedium');
 } else {
 	if (!empty($conf->use_javascript_ajax)) {
 		print ajax_constantonoff('MAIN_ANTIVIRUS_UPLOAD_ON', array(), null, 0, 0, 1);

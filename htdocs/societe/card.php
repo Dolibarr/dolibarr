@@ -2943,8 +2943,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 		if (!empty($object->id)) {
 			$res = $object->fetch_optionals();
 		}
-		//if ($res < 0) { dol_print_error($db); exit; }
-
 
 		$head = societe_prepare_head($object);
 

@@ -136,9 +136,9 @@ If your PR is a change on interface, you must also paste a screenshot showing th
 
 #### Examples
 <pre>
-FIX|Fix #456 Short description (where #456 is number of bug fix, if it exists. In upper case to appear into ChangeLog)
+FIX|Fix #456 Short description (where #456 is number of bug fix, if an issue ID exists, or #xxx456 with xxx as the name of the VDP platform in lower case for security issues. The "Fix" must be in upper case to appear into ChangeLog)
 or
-CLOSE|Close #456 Short description (where #456 is number of feature request, if it exists. In upper case to appear into ChangeLog)
+CLOSE|Close #456 Short description (where #456 is number of feature request, if it exists. The "Close" must be in upper case to appear into ChangeLog)
 or
 NEW|New|QUAL|Qual|PERF|Perf Short description (In upper case to appear into ChangeLog, use this if you add a feature not tracked, otherwise use CLOSE #xxx)
 or

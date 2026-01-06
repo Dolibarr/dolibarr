@@ -128,5 +128,4 @@ FileWasUpload=Se cargó el archivo <b>%s</b>
 FTPFailedToUploadFile=No se pudo cargar el archivo <b>%s</b> .
 FileWasCreateFolder=Se ha creado la carpeta <b>%s</b>
 FTPFailedToCreateFolder=No se pudo crear la carpeta <b>%s</b>.
-AddThisPageToBookmarks =Agregar página actual a favoritos
 SubscribeToFoundation=Contribuye al proyecto Dolibarr, suscríbete a la fundación

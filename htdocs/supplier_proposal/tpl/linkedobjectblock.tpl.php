@@ -19,6 +19,25 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+
+/**
+ *  \file		htdocs/reception/tpl/linkedobjectblock.tpl.php
+ *  \ingroup	reception
+ *  \brief		Template to show objects linked to reception
+ */
+
+/**
+ * @var Translate $langs
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var User $user
+ *
+ * @var CommonObject $object
+ * @var int $noMoreLinkedObjectBlockAfter
+ * @var int $showImportButton
+ * @var SupplierProposal[] $linkedObjectBlock
+ */
+
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
@@ -27,19 +46,6 @@ if (empty($conf) || !is_object($conf)) {
 
 
 print "<!-- BEGIN PHP TEMPLATE LINKEDOBJECTBOCK-->\n";
-
-
-global $user;
-/** @var User $user */
-$langs = $GLOBALS['langs'];
-'@phan-var-force Translate $langs';
-/**
- * @var CommonObject $object
- * @var Translate $langs
- */
-$linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
-'@phan-var-force SupplierProposal[] $linkedObjectBlock';
-/** @var SupplierProposal[] $linkedObjectBlock */
 
 $total = 0;
 $ilink = 0;
@@ -51,7 +57,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		$trclass .= ' liste_sub_total';
 	} ?>
 	<tr class="<?php echo $trclass; ?>">
-		<td><?php echo $langs->trans("SupplierProposal"); ?></td>
+		<td class="tdoverflowmax125" title="<?php echo dolPrintHTMLForAttribute($langs->trans("SupplierProposal")); ?>"><?php echo dolPrintHTML($langs->trans("SupplierProposal")); ?></td>
 		<td><a href="<?php echo DOL_URL_ROOT.'/supplier_proposal/card.php?id='.$objectlink->id ?>"><?php echo img_object($langs->trans("ShowSupplierProposal"), "supplier_proposal").' '.$objectlink->ref; ?></a></td>
 		<td></td>
 		<td class="center"><?php echo dol_print_date($objectlink->date_creation, 'day'); ?></td>

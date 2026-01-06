@@ -212,5 +212,4 @@ SelectANewDate=Seleccione una nueva fecha
 Post-Prompt=Post-indicación
 AIProcessingPleaseWait=AI (%s) está procesando su solicitud, por favor espere...
 PayOfBankTransferInvoice=Va a realizar un pago en línea de esta factura. Sin embargo, esta factura se ha configurado para pagarse en modo "Transferencia de crédito", por lo que para evitar pagar dos veces, verifique que no se haya iniciado ninguna transferencia bancaria antes de continuar.
-BehaviourOnClick =Comportamiento cuando se selecciona la URL de un marcador
 UseAnExternalHttpLinkOrRelativeDolibarrLink =Use un link externo/absoluto (https://ejemplo.com) o un link interno/relativo (/mypage.php). También puede usar un teléfono como tel: 0123456.
