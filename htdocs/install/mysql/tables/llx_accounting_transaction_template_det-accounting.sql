@@ -28,5 +28,5 @@ CREATE TABLE llx_accounting_transaction_template_det (
 	subledger_label			varchar(255),
 	operation_label			varchar(255),
 	debit					double(24,8),
-	credit					double(24,8),
+	credit					double(24,8)
 ) ENGINE=innodb;
