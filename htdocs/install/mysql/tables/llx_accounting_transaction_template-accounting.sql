@@ -22,7 +22,7 @@ CREATE TABLE llx_accounting_transaction_template (
 	rowid			integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	entity          integer DEFAULT 1 NOT NULL,
 	code			varchar(128) NOT NULL,
-	description		varchar(300),
+	label			varchar(255),
 	date_creation	datetime NOT NULL,
 	tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	fk_user_creat	integer NOT NULL,
