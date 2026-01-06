@@ -911,7 +911,7 @@ class User extends CommonObject
 			'fichinter' => 'ficheinter',
 			'inventory' => 'stock',
 			'invoice' => 'facture',
-			'invoice_supplier' => 'fournisseur',
+			'invoice_supplier' => 'facture@fournisseur',
 			'order_supplier' => 'fournisseur',
 			'knowledgerecord' => 'knowledgerecord@knowledgemanagement',
 			'skill@hrm' => 'all@hrm', // skill / job / position objects rights are for the moment grouped into right level "all"
