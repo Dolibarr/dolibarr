@@ -283,17 +283,11 @@ class MenuManager
 					$lastlinelevel = $level;
 
 					'@phan-var-force array<string> $lastlevel2';
-					foreach ($submenu->liste as $key2 => $val2) {		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
+					foreach ($submenu->liste as $key2 => $val2) {		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu','prefix']
 						$showmenu = true;
 						if (getDolGlobalString('MAIN_MENU_HIDE_UNAUTHORIZED') && empty($val2['enabled'])) {
 							$showmenu = false;
 						}
-
-						$newlinelevel = ($val2['level'] + 1);
-						if ($newlinelevel > $lastlinelevel) {
-							print str_repeat(' ', $newlinelevel).'<ul class="ullevel'.$newlinelevel.'" xx>'."\n";
-						}
-						$lastlinelevel = ($val2['level'] + 1);
 
 						// If at least one parent is not enabled, we do not show any menu of all children
 						if ($val2['level'] > 0) {
@@ -308,6 +302,12 @@ class MenuManager
 						}
 
 						if ($showmenu) {		// Visible (option to hide when not allowed is off or allowed)
+							$newlinelevel = ($val2['level'] + 1);
+							if ($newlinelevel > $lastlinelevel) {
+								print str_repeat(' ', $newlinelevel).'<ul class="ullevel'.$newlinelevel.'" xx>'."\n";
+							}
+							$lastlinelevel = ($val2['level'] + 1);
+
 							$substitarray = array('__LOGIN__' => $user->login, '__USER_ID__' => $user->id, '__USER_SUPERVISOR_ID__' => $user->fk_user);
 							$substitarray['__USERID__'] = $user->id; // For backward compatibility
 							$val2['url'] = make_substitutions($val2['url'], $substitarray); // Make also substitution of __(XXX)__ and __[XXX]__
@@ -387,6 +387,7 @@ class MenuManager
 								print '</li>'."\n";	// end level $val2['level']+1
 							}
 						}
+						//var_dump($submenu);
 					}
 
 					print str_repeat(' ', $level).'</ul>'."\n";			// end ul level 1

@@ -254,15 +254,15 @@ function pdfCertifMentionblockedLog(&$pdf, $outputlangs, $seller, $default_font_
 /**
  *      sumAmountsForUnalterableEvent
  *
- *      @param	BlockedLog			$block				Object BlockedLog
- *      @param	array<string,int>	$refinvoicefound	Array of ref of invoice already found (to avoid duplicates. Should be useless but just in case of)
- *      @param  array<string,float>	$totalhtamount		Array of total per code event and module
- *      @param  array<string,float>	$totalvatamount		Array of total per code event and module
- *      @param  array<string,float>	$totalamount		Array of total per code event and module
- *      @param  float				$total_ht			Total HT
- *      @param  float				$total_vat			Total VAT
- *      @param  float				$total_ttc			Total TTC
- *      @return	int                                 	Return > 0
+ *      @param	BlockedLog			$block								Object BlockedLog
+ *      @param	array<string,int>	$refinvoicefound					Array of ref of invoice already found (to avoid duplicates. Should be useless but just in case of)
+ *      @param  array<string,array<string,float>>	$totalhtamount		Array of total per code event and module
+ *      @param  array<string,array<string,float>>	$totalvatamount		Array of total per code event and module
+ *      @param  array<string,array<string,float>>	$totalamount		Array of total per code event and module
+ *      @param  float				$total_ht							Total HT
+ *      @param  float				$total_vat							Total VAT
+ *      @param  float				$total_ttc							Total TTC
+ *      @return	int                                 					Return > 0
  */
 function sumAmountsForUnalterableEvent($block, &$refinvoicefound, &$totalhtamount, &$totalvatamount, &$totalamount, &$total_ht, &$total_vat, &$total_ttc)
 {

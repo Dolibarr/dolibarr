@@ -375,6 +375,7 @@ INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'CDF'
 ALTER TABLE llx_societe MODIFY COLUMN mode_reglement integer;
 
 ALTER TABLE llx_blockedlog DROP COLUMN signature_line;
+ALTER TABLE llx_blockedlog ADD COLUMN actionrefisunique varchar(16) DEFAULT NULL;
 
 
 ALTER TABLE llx_ecm_files ADD COLUMN geolat double(24,8) DEFAULT NULL;
@@ -393,7 +394,8 @@ CREATE TABLE llx_expensereport_det_extrafields
 
 
 ALTER TABLE llx_blockedlog ADD INDEX idx_ref_object (ref_object);
-ALTER TABLE llx_blockedlog ADD CONSTRAINT fk_linktoref FOREIGN KEY (linktoref) REFERENCES llx_blockedlog(ref_object);
+--ALTER TABLE llx_blockedlog ADD CONSTRAINT fk_linktoref FOREIGN KEY (linktoref) REFERENCES llx_blockedlog(ref_object);
+ALTER TABLE llx_blockedlog DROP FOREIGN KEY fk_linktoref;
 
 ALTER TABLE llx_fichinterdet ADD COLUMN special_code integer DEFAULT 0 AFTER fk_parent_line;
 ALTER TABLE llx_fichinterdet ADD COLUMN product_type integer DEFAULT 0 AFTER special_code;
@@ -402,8 +404,19 @@ ALTER TABLE llx_pos_cash_fence ADD COLUMN hour_close INTEGER DEFAULT null after 
 ALTER TABLE llx_pos_cash_fence ADD COLUMN min_close INTEGER DEFAULT null after hour_close;
 ALTER TABLE llx_pos_cash_fence ADD COLUMN sec_close INTEGER DEFAULT null after min_close;
 
+ALTER TABLE llx_pos_cash_fence ADD COLUMN cash_declared double(24,8) DEFAULT null;
+ALTER TABLE llx_pos_cash_fence ADD COLUMN card_declared double(24,8) DEFAULT null;
+ALTER TABLE llx_pos_cash_fence ADD COLUMN cheque_declared double(24,8) DEFAULT null;
+
 ALTER TABLE llx_pos_cash_fence ADD COLUMN cash_lifetime double(24,8) DEFAULT null;
 ALTER TABLE llx_pos_cash_fence ADD COLUMN card_lifetime double(24,8) DEFAULT null;
 ALTER TABLE llx_pos_cash_fence ADD COLUMN cheque_lifetime double(24,8) DEFAULT null;
+
+ALTER TABLE llx_pos_cash_fence ADD COLUMN lifetime_start datetime DEFAULT NULL;
+
+UPDATE llx_cronjob set test = 'getDolDBType() == \'mysqli\'' WHERE label = 'MakeLocalDatabaseDumpShort';
+UPDATE llx_cronjob set test = 'getDolGlobalString(\'MAIN_ALLOW_BACKUP_BY_EMAIL\') && getDolDBType() == \'mysqli\'' WHERE label = 'MakeSendLocalDatabaseDumpShort';
+
+
 
 -- end of migration
