@@ -40,7 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("accountancy", "agenda", "banks", "bills", "categories", "contracts", "interventions"));
+$langs->loadLangs(array("accountancy", "agenda", "banks", "bills", "categories", "contracts", "interventions", "mrp"));
 $langs->loadLangs(array("knowledgemanagement", "members", "orders", "products", "stocks", "suppliers", "tickets"));
 
 // Get parameters

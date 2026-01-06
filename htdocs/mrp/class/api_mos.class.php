@@ -21,6 +21,7 @@
 use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 
 /**
@@ -79,6 +80,40 @@ class Mos extends DolibarrApi
 		}
 
 		return $this->_cleanObjectDatas($this->mo);
+	}
+
+	/**
+	 * Get categories for a MO
+	 *
+	 * @since	24.0.0	Initial implementation
+	 *
+	 * @param int    $id        ID of MO
+	 * @param string $sortfield Sort field
+	 * @param string $sortorder Sort order
+	 * @param int    $limit     Limit for list
+	 * @param int    $page      Page number
+	 *
+	 * @return mixed
+	 *
+	 * @url GET {id}/categories
+	 *
+	 * @throws RestException
+	 */
+	public function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('categorie', 'lire')) {
+			throw new RestException(403);
+		}
+
+		$categories = new Categorie($this->db);
+
+		$result = $categories->getListForItem($id, Categorie::TYPE_MO, $sortfield, $sortorder, $limit, $page);
+
+		if ($result < 0) {
+			throw new RestException(503, 'Error when retrieve category list : ' . implode(',', array_merge(array($categories->error), $categories->errors)));
+		}
+
+		return $result;
 	}
 
 
