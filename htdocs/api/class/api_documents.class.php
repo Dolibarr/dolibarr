@@ -587,8 +587,8 @@ class Documents extends DolibarrApi
 				throw new RestException(500, 'Error while fetching object: '.$object->error);
 			}
 
-			$upload_dir = $conf->product->multidir_output[$object->entity ?? $conf->entity].'/'.get_exdir(0, 0, 0, 1, $object, 'product');
-		} elseif ($modulepart == 'agenda' || $modulepart == 'action' || $modulepart == 'event') {
+			$upload_dir = getMultidirOutput($object) . '/'.dol_sanitizeFileName($object->ref);
+		} elseif ($modulepart == 'agenda' || $modulepart == 'action' || $modulepart == 'event' || $modulepart == 'actioncomm') {
 			require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
 			if (!DolibarrApiAccess::$user->hasRight('agenda', 'myactions', 'read') && !DolibarrApiAccess::$user->hasRight('agenda', 'allactions', 'read')) {
@@ -792,9 +792,9 @@ class Documents extends DolibarrApi
 								$filearray[$i] = array_merge($filearray[$i], (array) $line);
 							}
 						}
-						if (isset($line->filename)) $filearray[$i]['content-type'] = dol_mimetype($line->filename);
+						if (isset($filearray[$i]['relativename'])) $filearray[$i]['content-type'] = dol_mimetype($filearray[$i]['relativename']);
 						$arraycontenttype = explode(",", $content_type);
-						if (!empty($content_type) && isset($line->filename) && !in_array(dol_mimetype($line->filename), $arraycontenttype)) {
+						if (!empty($content_type) && isset($filearray[$i]['relativename']) && !in_array(dol_mimetype($filearray[$i]['relativename']), $arraycontenttype)) {
 							unset($filearray[$i]);
 							$countarray -= 1;
 						}

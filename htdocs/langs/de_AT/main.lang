@@ -46,6 +46,7 @@ TotalTTCShort=Summe (inkl. MwSt.)
 TotalTTC=Summe (inkl. MwSt.)
 TotalTTCToYourCredit=Gesamtbetrag (inkl. MwSt.) zu Ihren Gunsten
 TotalVAT=Steuer gesamt
+TotalVATShort=Steuer gesamt
 VAT=MwSt.
 Statistics=Statistiken
 RefPayment=Zahlungs Nr.

@@ -59,6 +59,8 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
+		global $mysoc;
+
 		if (!isModEnabled('blockedlog')) {
 			return 0; // Module not active, we do nothing
 		}
@@ -88,16 +90,26 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			return 0;
 		}
 
+		if ($action === 'PAYMENT_CUSTOMER_CREATE' && $object->element == 'payment') {
+			if (isALNERunningVersion() && $mysoc->country_code == 'FR') {
+				if (!in_array($object->paiementcode, array('LIQ', 'CB', 'CHQ'))) {
+					$this->errors[] = 'The payment mode '.$object->paiementcode.' is not available in this version.';
+					return -1;
+				}
+			}
+		}
+
 		// Event/record is qualified
 		$qualified = 0;
+		$amounts_taxexcl = null;
 		$amounts = 0;
 		if ($action === 'BILL_VALIDATE' || (($action === 'BILL_DELETE' || $action === 'BILL_SENTBYMAIL') && ($object->statut != 0 || $object->status != 0))
 			|| $action === 'BILL_SUPPLIER_VALIDATE' || (($action === 'BILL_SUPPLIER_DELETE' || $action === 'BILL_SUPPLIER_SENTBYMAIL') && ($object->statut != 0 || $object->status != 0))
 			|| $action === 'MEMBER_SUBSCRIPTION_CREATE' || $action === 'MEMBER_SUBSCRIPTION_MODIFY' || $action === 'MEMBER_SUBSCRIPTION_DELETE'
 			|| $action === 'DON_VALIDATE' || (($action === 'DON_MODIFY' || $action === 'DON_DELETE') && ($object->statut != 0 || $object->status != 0))
-			|| $action === 'CASHCONTROL_VALIDATE'
-			|| (in_array($object->element, array('facture', 'supplier_invoice')) && $action === 'DOC_DOWNLOAD' && ($object->statut != 0 || $object->status != 0))
-			|| (in_array($object->element, array('facture', 'supplier_invoice')) && $action === 'DOC_PREVIEW' && ($object->statut != 0 || $object->status != 0))
+			|| $action === 'CASHCONTROL_CLOSE'
+			|| (in_array($object->element, array('facture', 'supplier_invoice')) && $action === 'DOC_PREVIEW' && ($object->statut != 0 || $object->status != 0 || $object->module_source != ''))
+			|| (in_array($object->element, array('facture', 'supplier_invoice')) && $action === 'DOC_DOWNLOAD' && ($object->statut != 0 || $object->status != 0 || $object->module_source != ''))
 			|| (getDolGlobalString('BLOCKEDLOG_ADD_ACTIONS_SUPPORTED') && in_array($action, explode(',', getDolGlobalString('BLOCKEDLOG_ADD_ACTIONS_SUPPORTED'))))
 		) {
 			$qualified++;
@@ -105,13 +117,18 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			if (in_array($action, array(
 				'MEMBER_SUBSCRIPTION_CREATE', 'MEMBER_SUBSCRIPTION_MODIFY', 'MEMBER_SUBSCRIPTION_DELETE',
 				'DON_VALIDATE', 'DON_MODIFY', 'DON_DELETE'))) {
-					/** @var Don|Subscription $object */
+				/** @var Don|Subscription $object */
 				$amounts = (float) $object->amount;
-			} elseif ($action == 'CASHCONTROL_VALIDATE') {
+			} elseif ($action == 'CASHCONTROL_CLOSE') {
 				/** @var CashControl $object */
 				$amounts = (float) $object->cash + (float) $object->cheque + (float) $object->card;
-			} elseif (property_exists($object, 'total_ttc')) {
-				$amounts = (float) $object->total_ttc;
+			} else {
+				if (property_exists($object, 'total_ht')) {
+					$amounts_taxexcl = (float) $object->total_ht;
+				}
+				if (property_exists($object, 'total_ttc')) {
+					$amounts = (float) $object->total_ttc;
+				}
 			}
 		}
 		/*if ($action === 'BILL_PAYED' || $action==='BILL_UNPAYED'
@@ -123,7 +140,6 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 		if ($action === 'PAYMENT_CUSTOMER_CREATE' || $action === 'PAYMENT_SUPPLIER_CREATE' || $action === 'DONATION_PAYMENT_CREATE'
 			|| $action === 'PAYMENT_CUSTOMER_DELETE' || $action === 'PAYMENT_SUPPLIER_DELETE' || $action === 'DONATION_PAYMENT_DELETE') {
 			$qualified++;
-			$amounts = 0;
 			if (!empty($object->amounts)) {
 				foreach ($object->amounts as $amount) {
 					$amounts += (float) $amount;
@@ -143,7 +159,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 		}
 
 		// Set field date_object, ref_object, fk_object, element, object_data
-		$result = $b->setObjectData($object, $action, $amounts, $user);
+		$result = $b->setObjectData($object, $action, $amounts, $user, $amounts_taxexcl);
 
 		if ($result < 0) {
 			$this->setErrorsFromObject($b);

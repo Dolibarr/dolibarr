@@ -213,7 +213,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 		$tplcontent .= '<title>'.dol_string_nohtmltag($objectpage->title, 1, 'UTF-8').'</title>'."\n";
 		$tplcontent .= '<meta charset="utf-8">'."\n";
 		$tplcontent .= '<meta http-equiv="content-type" content="text/html; charset=utf-8" />'."\n";
-		$tplcontent .= '<meta name="robots" content="index, follow" />'."\n";
+		$tplcontent .= '<meta name="robots" content="'.($objectpage->index ? 'index' : 'noindex').', '.($objectpage->follow ? 'follow' : 'nofollow').'" />'."\n";
 		$tplcontent .= '<meta name="viewport" content="width=device-width, initial-scale=1.0">'."\n";
 		$tplcontent .= '<meta name="keywords" content="'.dol_string_nohtmltag($objectpage->keywords, 1, 'UTF-8').'" />'."\n";
 		$tplcontent .= '<meta name="title" content="'.dol_string_nohtmltag($objectpage->title, 1, 'UTF-8').'" />'."\n";

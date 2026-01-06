@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -680,9 +680,7 @@ if ($resql) {
 					}
 				}
 				$url = $_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(!empty($obj->rowid) ? $obj->rowid : (!empty($obj->code) ? $obj->code : '')).'&code='.(!empty($obj->code) ? urlencode($obj->code) : '');
-				if ($param) {
-					$url .= '&'.$param;
-				}
+				$url .= '&'.$param;
 				$url .= '&';
 
 				$canbemodified = $iserasable;

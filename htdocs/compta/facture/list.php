@@ -199,6 +199,11 @@ if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('b
 	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
 }
+
+if ($contextpage == 'poslist' && !GETPOSTISSET('limit')) {
+	$limit = 5;
+}
+
 $offset = $limit * $page;
 if (!$sortorder && getDolGlobalString('INVOICE_DEFAULT_UNPAYED_SORT_ORDER') && $search_status == '1') {
 	$sortorder = getDolGlobalString('INVOICE_DEFAULT_UNPAYED_SORT_ORDER');
@@ -1035,7 +1040,7 @@ if ($search_fk_fac_rec_source) {
 	$sql .= ' AND f.fk_fac_rec_source = ' . (int) $search_fk_fac_rec_source;
 }
 if ($search_import_key) {
-	$sql .= natural_search("s.import_key", $search_import_key);
+	$sql .= natural_search("f.import_key", $search_import_key);
 }
 // Search on user
 if ($search_user > 0) {
@@ -1472,10 +1477,8 @@ if (isModEnabled('prelevement') && $user->hasRight('prelevement', 'bons', 'creer
 	$arrayofmassactions['withdrawrequest'] = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("MakeWithdrawRequest");
 }
 if ($user->hasRight('facture', 'supprimer')) {
-	if (getDolGlobalString('INVOICE_CAN_REMOVE_DRAFT_ONLY')) {
+	if (!getDolGlobalString('INVOICE_DIABLE_MASS_DELETION_ON_DRAFT_INVOICES')) {
 		$arrayofmassactions['predeletedraft'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Deletedraft");
-	} elseif (getDolGlobalString('INVOICE_CAN_ALWAYS_BE_REMOVED')) {	// mass deletion never possible on invoices on such situation
-		$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 	}
 }
 if (in_array($massaction, array('presend', 'predelete', 'makepayment'))) {
@@ -2801,7 +2804,7 @@ if ($num > 0) {
 
 			// Author
 			if (!empty($arrayfields['u.login']['checked'])) {
-				print '<td class="tdoverflowmax125">';
+				print '<td class="tdoverflowmax100">';
 				if ($userstatic->id) {
 					print $userstatic->getNomUrl(-1);
 				} else {

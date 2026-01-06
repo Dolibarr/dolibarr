@@ -33,12 +33,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -46,6 +40,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("members", "companies", "categories"));
@@ -1039,7 +1037,7 @@ print $hookmanager->resPrint;
 
 // Date creation
 if (!empty($arrayfields['d.datec']['checked'])) {
-	print '<td class="liste_titre">';
+	print '<td class="liste_titre center">';
 	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_datec_start ? $search_datec_start : -1, 'search_datec_start_', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
