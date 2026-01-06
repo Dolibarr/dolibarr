@@ -687,13 +687,13 @@ if (empty($reshook)) {
 
 			if (!$error) {
 				$db->commit();
-
-				header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
-				exit;
 			} else {
 				$db->rollback();
 				$action = '';
 			}
+
+			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+			exit;
 		}
 	}
 
