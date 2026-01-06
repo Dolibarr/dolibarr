@@ -3059,10 +3059,10 @@ function removeEmoji($text, $allowedemoji = 1)
 /**
  * Clean a cell to respect rules of CSV file cells
  *
- * @param 	string	$newvalue	String to clean (must be UTF-8 encoded)
- * @param	string	$charset	Expected output character set ('UTF-8', 'ISO-8859-1', ...). Default '' will use the value into EXPORT_CSV_FORCE_CHARSET.
- * @param	string	$separator	CSV char separator (often ',' or ';'). Default '' will use the value into EXPORT_CSV_SEPARATOR_TO_USE.
- * @return 	string				Value cleaned
+ * @param 	string|int|float	$newvalue	String to clean (must be UTF-8 encoded)
+ * @param	string				$charset	Expected output character set ('UTF-8', 'ISO-8859-1', ...). Default '' will use the value into EXPORT_CSV_FORCE_CHARSET.
+ * @param	string				$separator	CSV char separator (often ',' or ';'). Default '' will use the value into EXPORT_CSV_SEPARATOR_TO_USE.
+ * @return 	string							Value cleaned
  */
 function csvClean($newvalue, $charset = '', $separator = '')
 {
@@ -3078,7 +3078,7 @@ function csvClean($newvalue, $charset = '', $separator = '')
 	}
 
 
-	$newvalue = $langs->convToOutputCharset($newvalue, 'UTF-8', $charset); // newvalue is now encoded into $charset
+	$newvalue = $langs->convToOutputCharset((string) $newvalue, 'UTF-8', $charset); // newvalue is now encoded into $charset
 
 
 	// Rule Dolibarr: No HTML
