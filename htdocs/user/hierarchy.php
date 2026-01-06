@@ -4,7 +4,7 @@
  * Copyright (C) 2006-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2007       Patrick Raguin          <patrick.raguin@gmail.com>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -165,7 +165,7 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 		$entitystring = '';
 
 		// TODO Set of entitystring should be done with a hook
-		if (isModEnabled('multicompany') && is_object($mc)) {
+		if (isModEnabled('multicompany') && isset($mc) && is_object($mc)) {
 			if (empty($entity)) {
 				$entitystring = $langs->trans("AllEntities");
 			} else {
@@ -221,7 +221,7 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 					$entitystring = '';
 
 					// TODO Set of entitystring should be done with a hook
-					if (isModEnabled('multicompany') && is_object($mc)) {
+					if (isModEnabled('multicompany') && isset($mc) && is_object($mc)) {
 						if (empty($entity)) {
 							$entitystring = $langs->trans("AllEntities");
 						} else {
