@@ -521,8 +521,6 @@ if ($step == 2 && $datatoimport) {
 
 	$filetoimport = '';
 
-
-			
 	print '<table class="noborder centpercent" cellpadding="4">';
 
 	$filetoimport = '';
