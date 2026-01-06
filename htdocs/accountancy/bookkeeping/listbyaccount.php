@@ -2,7 +2,7 @@
 /* Copyright (C) 2016		Neil Orley				<neil.orley@oeris.fr>
  * Copyright (C) 2013-2016	Olivier Geffroy			<jeff@jeffinfo.com>
  * Copyright (C) 2013-2020	Florian Henry			<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2013-2026	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2018-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Nicolas Barrouillet		<nicolas@pragma-tech.fr>
@@ -49,7 +49,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("accountancy", "categories", "compta"));
+$langs->loadLangs(array("accountancy", "categories", "compta", "other"));
 
 $journal_code = GETPOST('code_journal', 'alpha');
 $account = GETPOST("account", 'int');
