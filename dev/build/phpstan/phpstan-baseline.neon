@@ -2643,7 +2643,7 @@ parameters:
 		-
 			message: '#^Loose comparison using \=\= between ''create''\|''start'' and ''close'' will always evaluate to false\.$#'
 			identifier: equal.alwaysFalse
-			count: 2
+			count: 1
 			path: ../../../htdocs/compta/cashcontrol/cashcontrol_card.php
 
 		-
@@ -6849,7 +6849,7 @@ parameters:
 		-
 			message: '#^Left side of \|\| is always true\.$#'
 			identifier: booleanOr.leftAlwaysTrue
-			count: 4
+			count: 3
 			path: ../../../htdocs/core/menus/standard/eldy.lib.php
 
 		-
@@ -9020,18 +9020,6 @@ parameters:
 
 		-
 			message: '#^Call to function property_exists\(\) with \$this\(CommandeFournisseur\) and ''billed'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.commande.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(CommandeFournisseur\) and ''socid'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.commande.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(CommandeFournisseur\) and ''total_tva'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
 			path: ../../../htdocs/fourn/class/fournisseur.commande.class.php
@@ -14743,12 +14731,6 @@ parameters:
 			path: ../../../htdocs/societe/paymentmodes.php
 
 		-
-			message: '#^Left side of && is always true\.$#'
-			identifier: booleanAnd.leftAlwaysTrue
-			count: 1
-			path: ../../../htdocs/societe/paymentmodes.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
@@ -15591,12 +15573,6 @@ parameters:
 		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
-			count: 1
-			path: ../../../htdocs/user/group/list.php
-
-		-
-			message: '#^Variable \$mc might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/user/group/list.php
 
