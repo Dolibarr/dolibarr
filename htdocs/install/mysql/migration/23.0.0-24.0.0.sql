@@ -5,7 +5,9 @@
 --
 -- To restrict request to Mysql version x.y minimum use -- VMYSQLx.y
 -- To restrict request to Pgsql version x.y minimum use -- VPGSQLx.y
--- To rename a table:       ALTER TABLE llx_table RENAME TO llx_table_new; -- Note that "RENAME TO" is both compatible mysql/postgesql, not "RENAME" alone.
+-- To rename a table:       ALTER TABLE llx_table RENAME TO llx_table_new;
+--                          Note that "RENAME TO" is both compatible with mysql/postgesql, not the "RENAME" alone.
+--                          Also you must complete with renaming the sequence for PGSQL with -- VPGSQL8.2 ALTER SEQUENCE llx_table_rowid_seq RENAME TO llx_table_new_rowid_seq;
 -- To add a column:         ALTER TABLE llx_table ADD COLUMN newcol varchar(60) NOT NULL DEFAULT '0' AFTER existingcol;
 -- To rename a column:      ALTER TABLE llx_table CHANGE COLUMN oldname newname varchar(60);
 -- To drop a column:        ALTER TABLE llx_table DROP COLUMN oldname;
@@ -32,6 +34,44 @@
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
 
+-- V23 forgotten
+
+
+
+
+-- V24 migration
+CREATE TABLE llx_accounting_transaction_template (
+	rowid			integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	entity          integer DEFAULT 1 NOT NULL,
+	code			varchar(128) NOT NULL,
+	label			varchar(255),
+	date_creation	datetime NOT NULL,
+	tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	fk_user_creat	integer NOT NULL,
+	fk_user_modif	integer,
+	import_key		varchar(14)
+) ENGINE=innodb;
+
+ALTER TABLE llx_accounting_transaction_template ADD INDEX idx_accounting_transaction_template_rowid (rowid);
+ALTER TABLE llx_accounting_transaction_template ADD INDEX idx_accounting_transaction_template_code (code);
+
+ALTER TABLE llx_accounting_transaction_template ADD UNIQUE INDEX uk_accounting_transaction_template_code (code, entity);
+
+CREATE TABLE llx_accounting_transaction_template_det (
+	rowid					integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	fk_transaction_template	integer NOT NULL,
+	general_account			varchar(32) NOT NULL,
+	general_label			varchar(255) NOT NULL,
+	subledger_account		varchar(32),
+	subledger_label			varchar(255),
+	operation_label			varchar(255),
+	debit					double(24,8),
+	credit					double(24,8)
+) ENGINE=innodb;
+
+ALTER TABLE llx_accounting_transaction_template_det ADD INDEX idx_accounting_transaction_template_det_rowid (rowid);
+ALTER TABLE llx_accounting_transaction_template_det ADD CONSTRAINT llx_accounting_transaction_template_det_fk_transaction_template FOREIGN KEY (fk_transaction_template) REFERENCES llx_accounting_transaction_template(rowid);
+
 create table llx_categorie_mo
 (
   fk_categorie integer NOT NULL,
@@ -47,3 +87,4 @@ ALTER TABLE llx_categorie_mo ADD INDEX idx_categorie_mo_fk_mo (fk_mo);
 
 ALTER TABLE llx_categorie_mo ADD CONSTRAINT fk_categorie_mo_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
 ALTER TABLE llx_categorie_mo ADD CONSTRAINT fk_categorie_mo_fk_mo_rowid FOREIGN KEY (fk_mo) REFERENCES llx_mrp_mo (rowid);
+-- end of migration
