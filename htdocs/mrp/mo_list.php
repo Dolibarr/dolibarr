@@ -260,14 +260,14 @@ if (empty($reshook)) {
 							setEventMessages($langs->trans($errorKey, $objMo->ref), null, 'errors');
 							continue;
 						}
-							if (!empty($changeDate)) {
-								if ($action == 'changedatestart_confirm') {			// Test on permission not required
-									if (empty($objMo->date_end_planned) || $newDate < $objMo->date_end_planned) {
-										$objMo->date_start_planned = $newDate;
-									} else {
-										setEventMessages($langs->trans('ErrorModifyMoDateStart', $objMo->ref), null, 'errors');
-										break;
-									}
+						if (!empty($changeDate)) {
+							if ($action == 'changedatestart_confirm') {			// Test on permission not required
+								if (empty($objMo->date_end_planned) || $newDate < $objMo->date_end_planned) {
+									$objMo->date_start_planned = $newDate;
+								} else {
+									setEventMessages($langs->trans('ErrorModifyMoDateStart', $objMo->ref), null, 'errors');
+									break;
+								}
 							} elseif ($action == 'changedateend_confirm') {		// Test on permission not required
 								if ($newDate > $objMo->date_start_planned) {
 									$objMo->date_end_planned = $newDate;
