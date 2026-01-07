@@ -271,7 +271,7 @@ $arrayfields = array(
 	'typent.code' => array('label' => "ThirdPartyType", 'checked' => $checkedtypetiers, 'position' => 75),
 	'f.fk_mode_reglement' => array('label' => "PaymentMode", 'checked' => '1', 'position' => 80),
 	'f.fk_cond_reglement' => array('label' => "PaymentConditionsShort", 'checked' => '1', 'position' => 85),
-	'ba.label' => array('label' => "BankAccount", 'langfile' => 'banks', 'checked' => '0', 'enabled' => (string) (int) (isModEnabled('bank')), 'position' => 192),
+	'ba.label' => array('label' => "DefaultBankAccount", 'langfile' => 'banks', 'checked' => '0', 'enabled' => (isModEnabled('bank')?'1':'0'), 'position' => 192),
 	'f.fk_input_reason' => array('label' => "Source", 'checked' => 0, 'enabled' => 1, 'position' => 88),
 	'f.module_source' => array('label' => "POSModule", 'langfile' => 'cashdesk', 'checked' => ($contextpage == 'poslist' ? '1' : '0'), 'enabled' => "(isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('INVOICE_SHOW_POS'))", 'position' => 90),
 	'f.pos_source' => array('label' => "POSTerminal", 'langfile' => 'cashdesk', 'checked' => ($contextpage == 'poslist' ? '1' : '0'), 'enabled' => "(isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('INVOICE_SHOW_POS'))", 'position' => 91),
