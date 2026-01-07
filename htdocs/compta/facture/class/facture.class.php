@@ -4138,7 +4138,7 @@ class Facture extends CommonInvoice
 	 *  @param 	int				$fk_code_ventilation   		Code of dispatching into accountancy
 	 *  @param 	int				$info_bits					Bits of type of lines
 	 *  @param 	int				$fk_remise_except			Id discount used
-	 *  @param	string			$price_base_type			'HT' or 'TTC'
+	 *  @param	'HT'|'TTC'|''	$price_base_type			HT or TTC or '' for subtotals
 	 *  @param	float			$pu_ttc             		Unit price with tax (> 0 even for credit note)
 	 *  @param	int				$type						Type of line (0=product, 1=service). Not used if fk_product is defined, the type of product is used.
 	 *  @param 	int				$rang               		Position of line (-1 means last value + 1)
