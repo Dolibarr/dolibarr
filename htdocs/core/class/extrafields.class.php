@@ -9,7 +9,7 @@
  * Copyright (C) 2015-2025  Charlene BENKE          <charlene@patas-monkey.com>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022 		Antonin MARCHAL         <antonin@letempledujeu.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benoît PASCAL			<contact@p-ben.com>
@@ -1586,16 +1586,24 @@ class ExtraFields
 								$InfoFieldList[4] = str_replace('$ID$', '0', $InfoFieldList[4]);
 							}
 
-							// can use filter on any field of object
+							// can use filter on any field of object or in array_options
 							if (is_object($object)) {
 								$tags = [];
 								preg_match_all('/\$(.*?)\$/', $InfoFieldList[4], $tags);	// Example: $InfoFieldList[4] is ($dateadh$:<=:CURRENT_DATE)
 								foreach ($tags[0] as $keytag => $valuetag) {
 									$property = preg_replace('/[^a-z0-9_]/', '', strtolower($tags[1][$keytag]));
-									if (strpos($InfoFieldList[4], $valuetag) !== false && property_exists($object, $property) && !empty($object->$property)) {
-										$InfoFieldList[4] = str_replace($valuetag, (string) $object->$property, $InfoFieldList[4]);
+									if (strpos($property, 'options_') === 0) { // Example: $InfoFieldList[4] is ($options_dateadh$:<=:CURRENT_DATE) if options_datadh is an extrafield
+										if (strpos($InfoFieldList[4], $valuetag) !== false && isset($object->array_options[$property]) && !empty($object->array_options[$property])) {
+											$InfoFieldList[4] = str_replace($valuetag, (string) $object->array_options[$property], $InfoFieldList[4]);
+										} else {
+											$InfoFieldList[4] = str_replace($valuetag, '0', $InfoFieldList[4]);
+										}
 									} else {
-										$InfoFieldList[4] = str_replace($valuetag, '0', $InfoFieldList[4]);
+										if (strpos($InfoFieldList[4], $valuetag) !== false && property_exists($object, $property) && !empty($object->$property)) {
+											$InfoFieldList[4] = str_replace($valuetag, (string) $object->$property, $InfoFieldList[4]);
+										} else {
+											$InfoFieldList[4] = str_replace($valuetag, '0', $InfoFieldList[4]);
+										}
 									}
 								}
 							}
