@@ -34,6 +34,10 @@ require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 // load mrp libraries
 require_once __DIR__.'/class/mo.class.php';
+if (isModEnabled('category')) {
+	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
+}
 
 /**
  * @var Conf $conf
@@ -109,6 +113,13 @@ if (!$sortorder) {
 
 // Initialize array of search criteria
 $search_all = trim(GETPOST('search_all', 'alphanohtml'));
+$searchCategoryMoOperator = 0;
+if (GETPOSTISSET('formfilteraction')) {
+	$searchCategoryMoOperator = GETPOSTINT('search_category_mo_operator');
+} elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
+	$searchCategoryMoOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
+}
+$searchCategoryMoList = GETPOST('search_category_mo_list', 'array:int');
 $search = array();
 foreach ($object->fields as $key => $val) {
 	if (GETPOST('search_'.$key, 'alpha') !== '') {
@@ -206,6 +217,8 @@ if (empty($reshook)) {
 			}
 		}
 		$search_all = '';
+		$searchCategoryMoOperator = 0;
+		$searchCategoryMoList = array();
 		$toselect = array();
 		$search_array_options = array();
 	}
@@ -391,6 +404,35 @@ if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
 
+// Search for tag/category ($searchCategoryMoList is an array of ID)
+if (!empty($searchCategoryMoList)) {
+	$searchCategoryMoSqlList = array();
+	$listofcategoryid = '';
+	foreach ($searchCategoryMoList as $searchCategoryMo) {
+		if (intval($searchCategoryMo) == -2) {
+			$searchCategoryMoSqlList[] = "NOT EXISTS (SELECT ck.fk_mo FROM ".MAIN_DB_PREFIX."categorie_mo as ck WHERE t.rowid = ck.fk_mo)";
+		} elseif (intval($searchCategoryMo) > 0) {
+			if ($searchCategoryMoOperator == 0) {
+				$searchCategoryMoSqlList[] = " EXISTS (SELECT ck.fk_mo FROM ".MAIN_DB_PREFIX."categorie_mo as ck WHERE t.rowid = ck.fk_mo AND ck.fk_categorie = ".((int) $searchCategoryMo).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '') . ((int) $searchCategoryMo);
+			}
+		}
+	}
+	if ($listofcategoryid) {
+		$searchCategoryMoSqlList[] = " EXISTS (SELECT ck.fk_mo FROM ".MAIN_DB_PREFIX."categorie_mo as ck WHERE t.rowid = ck.fk_mo AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+	}
+	if ($searchCategoryMoOperator == 1) {
+		if (!empty($searchCategoryMoSqlList)) {
+			$sql .= " AND (".implode(' OR ', $searchCategoryMoSqlList).")";
+		}
+	} else {
+		if (!empty($searchCategoryMoSqlList)) {
+			$sql .= " AND (".implode(' AND ', $searchCategoryMoSqlList).")";
+		}
+	}
+}
+
 
 
 //$sql.= dolSqlDateFilter("t.field", $search_xxxday, $search_xxxmonth, $search_xxxyear);
@@ -500,6 +542,12 @@ foreach ($search as $key => $val) {
 		$param .= '&search_'.$key.'='.urlencode($search[$key]);
 	}
 }
+if ($searchCategoryMoOperator == 1) {
+	$param .= '&search_category_mo_operator='.urlencode((string) ($searchCategoryMoOperator));
+}
+foreach ($searchCategoryMoList as $searchCategoryMo) {
+	$param .= '&search_category_mo_list[]='.urlencode($searchCategoryMo);
+}
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
@@ -517,10 +565,13 @@ $arrayofmassactions = array(
 	'predateend'=>img_picto('', 'object_calendar', 'class="pictofixedwidth"').$langs->trans("MoChangeDateEnd"),
 	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
+if (isModEnabled('category') && $permissiontoadd) {
+	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
+}
 if (!empty($permissiontodelete)) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete'))) {
+if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete', 'preaffecttag'))) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
@@ -614,6 +665,10 @@ $moreforfilter = '';
 /*$moreforfilter.='<div class="divsearchfield">';
 $moreforfilter.= $langs->trans('MyFilter') . ': <input type="text" name="search_myfield" value="'.dol_escape_htmltag($search_myfield).'">';
 $moreforfilter.= '</div>';*/
+if (isModEnabled('category') && $user->hasRight('categorie', 'read')) {
+	$formcategory = new FormCategory($db);
+	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_MO, $searchCategoryMoList, 'minwidth300', $searchCategoryMoOperator ? $searchCategoryMoOperator : 0);
+}
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook

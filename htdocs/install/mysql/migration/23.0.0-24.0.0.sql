@@ -72,4 +72,19 @@ CREATE TABLE llx_accounting_transaction_template_det (
 ALTER TABLE llx_accounting_transaction_template_det ADD INDEX idx_accounting_transaction_template_det_rowid (rowid);
 ALTER TABLE llx_accounting_transaction_template_det ADD CONSTRAINT llx_accounting_transaction_template_det_fk_transaction_template FOREIGN KEY (fk_transaction_template) REFERENCES llx_accounting_transaction_template(rowid);
 
+create table llx_categorie_mo
+(
+  fk_categorie integer NOT NULL,
+  fk_mo        integer NOT NULL,
+  import_key   varchar(14)
+)ENGINE=innodb;
+
+--noqa:disable=PRS
+ALTER TABLE llx_categorie_mo ADD PRIMARY KEY pk_categorie_mo (fk_categorie, fk_mo);
+--noqa:enable=PRS
+ALTER TABLE llx_categorie_mo ADD INDEX idx_categorie_mo_fk_categorie (fk_categorie);
+ALTER TABLE llx_categorie_mo ADD INDEX idx_categorie_mo_fk_mo (fk_mo);
+
+ALTER TABLE llx_categorie_mo ADD CONSTRAINT fk_categorie_mo_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_mo ADD CONSTRAINT fk_categorie_mo_fk_mo_rowid FOREIGN KEY (fk_mo) REFERENCES llx_mrp_mo (rowid);
 -- end of migration
