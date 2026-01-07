@@ -1,4 +1,5 @@
 parameters:
+	phpVersion: 80200 # PHP 8.2
 	tmpDir: ./.github/tmp
 	parallel:
 		# Commented some of the settings, reminding the defaults:
@@ -46,12 +47,15 @@ parameters:
 		- htdocs/includes/tecnickcom/*
 		- htdocs/includes/webklex/*
 		- htdocs/core/class/lessc.class.php
-	checkAlwaysTrueCheckTypeFunctionCall: false
-	checkAlwaysTrueInstanceof: false
-	checkAlwaysTrueStrictComparison: false
+	# checkAlwaysTrueCheckTypeFunctionCall: false
+	# checkAlwaysTrueInstanceof: false
+	# checkAlwaysTrueStrictComparison: false
+	polluteScopeWithLoopInitialAssignments: false
+	polluteScopeWithAlwaysIterableForeach: false
 	checkClassCaseSensitivity: true
 	checkFunctionArgumentTypes: true
 	checkFunctionNameCase: true
+	checkInternalClassCaseSensitivity: true
 	checkArgumentsPassedByReference: true
 	checkMaybeUndefinedVariables: true
 	checkNullables: false
@@ -61,13 +65,17 @@ parameters:
 	reportMaybes: false
 	reportMaybesInMethodSignatures: false
 	reportStaticMethodSignatures: false
-	polluteScopeWithLoopInitialAssignments: true
-	polluteScopeWithAlwaysIterableForeach: true
 	reportMagicMethods: false
 	reportMagicProperties: false
 	treatPhpDocTypesAsCertain: false
+	# if you want to exclude something, generate the baseline to do that, add here give only pattern that does not give the opportunity to introduce new errors
+	# or pattern to avoid false positive of some bugged or allowed phpstan checks
 	ignoreErrors:
 		- '#.*phan-var#'
+		- '#^Expression "''…" on a separate line does not do anything#'
+		- '#Empty array passed to foreach#'
+		- '#Unable to resolve the template type T#'
+		- '#in empty\(\) always exists and is always falsy#'
 		- '#is always#'
 	internalErrorsCountLimit: 50
 	cache:

@@ -3,10 +3,10 @@ MenuFinancial=Fakturazioa | Ordainketa
 TaxModuleSetupToModifyRules=Joan <a href="%s">Zerga moduluaren konfigurazioa</a> helbidera kalkulurako arauak aldatzeko.
 TaxModuleSetupToModifyRulesLT=Joan <a href="%s">Enpresaren konfigurazioa</a> helbidera kalkulurako arauak aldatzeko.
 OptionMode=Kontabilitaterako aukera.
-OptionModeTrue=Metatze-kontabilitatea
-OptionModeVirtual=Eskudiru-kontabilitatea
-OptionModeTrueDesc=Testuinguru honetan, fakturazioa ordainketen (ordainketa-dataren) gainean kalkulatzen da. Zifren baliozkotasuna bermatzen da kontabilitatea ordainketen sarrera/irteeren bidez aztertzen bada soilik.
+OptionModeVirtual=Accrual accounting
+OptionModeTrue=Cash accounting
 OptionModeVirtualDesc=Testuinguru honetan, fakturazioa fakturetan oinarrituta kalkulatzen da (balioztatze data). Faktura horiek ordaindu behar direnean, ordaindu diren ala ez, fakturazioaren irteeran zerrendatzen dira.
+OptionModeTrueDesc=Testuinguru honetan, fakturazioa ordainketen (ordainketa-dataren) gainean kalkulatzen da. Zifren baliozkotasuna bermatzen da kontabilitatea ordainketen sarrera/irteeren bidez aztertzen bada soilik.
 FeatureIsSupportedInInOutModeOnly=Ezaugarria KREDITUAK-ZORRAK kontabilitate moduan bakarrik eskuragarri (ikusi Kontabilitate moduluaren konfigurazioa)
 VATReportBuildWithOptionDefinedInModule=Hemen erakusten diren zenbatekoak Zerga moduluaren konfigurazioak definitutako arauak erabiliz kalkulatzen dira.
 LTReportBuildWithOptionDefinedInModule=Hemen erakusten diren zenbatekoak Enpresaren konfigurazioak definitutako arauak erabiliz kalkulatzen dira.
@@ -302,7 +302,6 @@ ByVatRate=Salmenta-zerga tasaren arabera
 TurnoverbyVatrate=Salmenta-zergaren tasaren arabera fakturatutako fakturazioa
 TurnoverCollectedbyVatrate=Salmenta-zergaren tasaren arabera bildutako fakturazioa
 PurchasebyVatrate=Erosketa bidezko salmenta zerga tasa
-LabelToShow=Etiketa laburra
 PurchaseTurnover=Erosketa-fakturazioa
 PurchaseTurnoverCollected=Bildutako erosketa-fakturazioa
 RulesPurchaseTurnoverDue=- Hornitzailearen ordaindu gabeko fakturak barne hartzen ditu, ordainduta dauden ala ez. <br>- Faktura horien faktura-datan oinarritzen da.<br>
@@ -329,3 +328,4 @@ RuleForLinesDates=Lerro-daten araua
 Prepaid=Aurrez ordaindutakoa
 Postpaid=Ordaindu ondoren
 SetRuleForLinesDates=Ezarri araua lerro-datenentzat
+SomeNotConvertedCreditNoteExists=There is <b>%s</b> credit notes not yet converted for consumption

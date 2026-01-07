@@ -3,10 +3,10 @@ MenuFinancial=Norēķini | Maksājums
 TaxModuleSetupToModifyRules=Iet uz <a href="%s">Nodokļi moduļa uzstādīšanas</a> mainīt aprēķināšanas noteikumus
 TaxModuleSetupToModifyRulesLT=Iet uz <a href="%s">Kompānijas iestatījumiem</a> lai labotu aprēķina noteikumus
 OptionMode=Variants grāmatvedības
-OptionModeTrue=Accrual accounting
-OptionModeVirtual=Cash accounting
-OptionModeTrueDesc=In this context, the turnover is calculated over payments (date of payments). The validity of the figures is assured only if the book-keeping is scrutinized through the input/output on payments.
+OptionModeVirtual=Accrual accounting
+OptionModeTrue=Cash accounting
 OptionModeVirtualDesc=Šajā kontekstā, apgrozījumu aprēķina rēķinu (datums validāciju). Kad šie rēķini ir jāmaksā, vai tie ir vai nav maksāts, tās ir uzskaitītas apgrozījuma produkciju.
+OptionModeTrueDesc=In this context, the turnover is calculated over payments (date of payments). The validity of the figures is assured only if the book-keeping is scrutinized through the input/output on payments.
 FeatureIsSupportedInInOutModeOnly=Funkcija pieejama tikai kredītpunktu-parādi grāmatvedības režīmā (skatīt grāmatvedības uzskaites moduļa konfigurācija)
 VATReportBuildWithOptionDefinedInModule=Summas, kas norādītas šeit tiek aprēķinātas, izmantojot noteikumus, kas paredzēti ar nodokli moduļa uzstādīšanas.
 LTReportBuildWithOptionDefinedInModule=Amounts shown here are calculated using rules defined by Company setup.
@@ -302,7 +302,6 @@ ByVatRate=Ar pārdošanas nodokļa likmi
 TurnoverbyVatrate=Apgrozījums, par kuru tiek aprēķināta pārdošanas nodokļa likme
 TurnoverCollectedbyVatrate=Apgrozījums, kas iegūts, pārdodot nodokli
 PurchasebyVatrate=Iegāde pēc pārdošanas nodokļa likmes
-LabelToShow=Īsais nosaukums
 PurchaseTurnover=Pirkumu apgrozījums
 PurchaseTurnoverCollected=Apkopots pirkumu apgrozījums
 RulesPurchaseTurnoverDue=- Tajā ir iekļauti piegādātāja rēķini par samaksu neatkarīgi no tā, vai tie ir samaksāti. <br> - tas ir balstīts uz šo rēķinu izrakstīšanas datumu. <br>
@@ -329,3 +328,4 @@ RuleForLinesDates=Rule for lines dates
 Prepaid=Prepaid
 Postpaid=Postpaid
 SetRuleForLinesDates=Set rule for lines dates
+SomeNotConvertedCreditNoteExists=There is <b>%s</b> credit notes not yet converted for consumption

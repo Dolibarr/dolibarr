@@ -5,7 +5,7 @@
  * Copyright (C) 2014-2025  Charlene BENKE           <charlene@patas-monkey.com>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2019       Pierre Ardoin           <mapiolca@me.com>
- * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -321,8 +321,9 @@ $lastmodified = "";
 if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("produit", "lire") || $user->hasRight("service", "lire"))) {
 	$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type, p.tosell, p.tobuy, p.tobatch, p.fk_price_expression,";
 	$sql .= " p.entity,";
-	$sql .= " p.tms as datem";
+	$sql .= " GREATEST(p.tms, pef.tms) as datem";
 	$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_extrafields as pef ON pef.fk_object=p.rowid";
 	$sql .= " WHERE p.entity IN (".getEntity($product_static->element, 1).")";
 	/*if ($type != '') {
 		$sql .= " AND p.fk_product_type = ".((int) $type);
@@ -338,7 +339,7 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $product_static); // Note that $action and $object may have been modified by hook
 	$sql .= $hookmanager->resPrint;
-	$sql .= $db->order("p.tms", "DESC");
+	$sql .= $db->order("datem", "DESC");
 	$sql .= $db->plimit($max, 0);
 
 	//print $sql;

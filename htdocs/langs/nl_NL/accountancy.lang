@@ -1,6 +1,8 @@
 # Dolibarr language file - en_US - Accountancy (Double entries)
 Accountancy=Boekhouding
 Accounting=Boekhouding
+AccountingAccount=Grootboekrekening
+AccountingCode=Accounting code
 ACCOUNTING_EXPORT_SEPARATORCSV=Kolom separator voor export bestand
 ACCOUNTING_EXPORT_DATE=Datumnotatie voor exportbestand
 ACCOUNTING_EXPORT_PIECE=Exporteer het aantal stuks
@@ -193,7 +195,7 @@ DONATION_ACCOUNTINGACCOUNT=Rekening (uit het Rekeningschema) voor het registrere
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Rekening (uit het Rekeningschema) te gebruiken om abonnementen op lidmaatschappen te registreren (Lidmaatschapsmodule - indien lidmaatschap geregistreerd zonder factuur)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Rekening (uit het Rekeningschema) die moet worden gebruikt als de standaardrekening om deposito's van klanten te registreren
 UseAuxiliaryAccountOnCustomerDeposit=Klantrekening opslaan als individuele rekening in subgrootboek voor vooruitbetalingsregels (indien uitgeschakeld, blijft individuele rekening voor vooruitbetalingsregels leeg)
-ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Rekening (uit het Rekeningschema) als standaard te gebruiken
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=Leveranciersrekening opslaan als individuele rekening in subgrootboek voor vooruitbetalingsregels (indien uitgeschakeld, blijft individuele rekening voor vooruitbetalingsregels leeg)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Boekhoudingsaccount standaard om de door de klant behouden garantie te registreren
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Rekening (uit het rekeningschema) te gebruiken als de standaardrekening voor de producten die in hetzelfde land zijn gekocht (gebruikt indien niet gedefinieerd in het productblad)
@@ -278,6 +280,7 @@ PcgtypeDesc=Cluster grootboekrekeningen welke gebruikt worden als vooraf gedefin
 AccountingCategoriesDesc=U kunt een aangepaste groep rekeningen gebruiken om boekhoudrekeningen onder één naam te groeperen. Zo kunt u eenvoudiger filters gebruiken of aangepaste rapporten maken.
 Reconcilable=Samentrekken
 Centralized=Gecentraliseerde rekening
+CentralizedAccountHelp=When a accounting transaction is recording on a centralized account, you are also allowed to record a more accurate subsidiary account on this transaction.
 TotalVente=Total turnover before tax
 TotalMarge=Total sales margin
 DescVentilCustomer=Raadpleeg hier de lijst met klantfactuurregels die al dan niet gebonden zijn aan een productrekening uit het rekeningschema
@@ -357,6 +360,7 @@ ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Activeer het beheer van btw-verleggin
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Wanneer deze optie is ingeschakeld, kunt u definiëren dat een Leverancier of een bepaalde leverancier Factuur op een andere manier naar de boekhouding moet worden overgezet: Een extra er wordt een debet- en een kredietlimiet gegenereerd in de boekhouding op 2 bepaalde rekeningen uit het rekeningschema dat is gedefinieerd op de instellingenpagina "%s".
 ACCOUNTING_ENABLE_TABONTHIRDPARTY=Activeer een tabblad op kaarten van derden om het grootboek van de dochteronderneming te bekijken
 ACCOUNTING_ENABLE_TABONTHIRDPARTY_DESC=Wanneer deze optie is ingeschakeld, wordt er een nieuw tabblad weergegeven in kaarten van derden om de boekhouding voor de derde partij te bekijken en te beheren, zoals afstemmen, afdrukken en meer.
+
 ## Export
 NotExportLettering=Exporteer het afletteren niet bij het genereren van het bestand
 NotifiedExportDate=Markeer nog niet geëxporteerde regels als geëxporteerd <span class="warning"> (om een regel te wijzigen die is gemarkeerd als geëxporteerd, moet u de hele transactie verwijderen en opnieuw overboeken naar de boekhouding) </span>
@@ -389,9 +393,9 @@ Modelcsv_Gestinumv5=Exporteren voor Gestinum (v5)
 Modelcsv_charlemagne=Exporteren voor Aplim Charlemagne
 ChartofaccountsId=Rekeningschema Id
 ExportToPdf = Exporteren naar PDF
-ExportToCsv = Export to CSV
-PdfLedgerTitle = Grootboekrekeningen
-PdfBalanceTitle = Grootboeksaldo
+ExportToCsv = Exporteren naar CSV
+PdfLedgerTitle = Grootboek rekeningen
+PdfBalanceTitle = Balans Resultaat
 PdfBookkeepingTitle = Dagboeken
 AccountancyBalance = Boekhoudkundig saldo
 AccountancyLedger = Boekhoudkundig grootboek
@@ -401,8 +405,8 @@ PDFAccountancyBookkeepingDescription = Een PDF-model voor boekhouding
 PDFAccountancyLedgerDescription = Een PDF-model voor een boekhoudkundig grootboek
 PrintDate = Afdrukdatum
 PdfTitleAccountNb = Account
-DebitMovement = Debetbeweging
-CreditMovement = Kredietbeweging
+DebitMovement = Debet
+CreditMovement = Credit
 BalanceAt = Saldo bij %s
 AccountancyGroupTHIRDPARTY = Derde partijen
 AccountancyGroupFINAN = Financieel
@@ -441,7 +445,7 @@ AccountRemovedFromGroup=Rekening uit groep verwijderd.
 SaleLocal=Lokale verkoop
 SaleExport=Verkoop buitenland
 SaleEEC=Verkoop binnen de EU
-SaleEECWithVAT=Sale is in EEC with a VAT not null, so we suppose this is NOT an intra-community sale and the suggested account is the standard product account.
+SaleEECWithVAT=De verkoop vindt plaats binnen de EEG, met een BTW-tarief dat niet nul is. We gaan er dan ook vanuit dat dit GEEN intracommunautaire verkoop is en de voorgestelde rekening is de standaardproductrekening.
 SaleEECWithoutVATNumber=De verkoop vindt plaats in de EEG zonder btw, maar het btw-nummer van de derde partij is niet gedefinieerd. We vallen terug op het account voor standaardverkopen. U kunt het btw-nummer van de derde partij aanpassen of het voorgestelde productaccount voor binding wijzigen indien nodig.
 AnySale=Elke verkoop
 ForbiddenTransactionAlreadyExported=Niet toegestaan: De transactie is gevalideerd en/of geëxporteerd.
@@ -486,7 +490,7 @@ AccountancyClosureConfirmClose=Weet u zeker dat u de huidige fiscale periode wil
 AccountancyClosureConfirmAccountingReversal=Weet u zeker dat u boekingen voor de "Ingehouden winsten" wilt vastleggen?
 
 ## Warning
-WarningBookkeepingRecordAlreadyExists=Transaction for (doc_type=%s, doc_id=%s, doc_det=%s) has already been recorded
+WarningBookkeepingRecordAlreadyExists=Transactie voor (doc_type=%s, doc_id=%s, doc_det=%s) is al uitgevoerd opgenomen
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Sommige verplichte stappen zijn nog niet volledig uitgevoerd. Maak deze alsnog.
@@ -509,7 +513,7 @@ ErrorNoFiscalPeriodActiveFound=Er is geen actieve fiscale periode (met een gedef
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=De datum van het boekhouddocument valt niet binnen de actieve fiscale periode
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=De datum van het boekhouddocument valt binnen een gesloten fiscale periode
 Error_BOOKKEEPING_ADDON_NotDefined=Fout, de regel voor boekhoudkundige nummering is niet gedefinieerd in de algemene instellingen van de boekhoudmodule
-ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=You tried to insert a non balanced transaction in the book for %s (Payment ID: %s). Action is canceled
+ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=U hebt geprobeerd een niet-gebalanceerde transactie in het boek in te voegen voor %s (Betalings-ID: %s). Actie is geannuleerd.
 ProductUsage=Product- of servicegebruik
 ## Import
 ImportAccountingEntries=Boekingen
@@ -538,15 +542,15 @@ ExpenseReportJournal=Kostenoverzicht
 DocsAlreadyExportedAreIncluded=Reeds geëxporteerde documenten zijn inbegrepen
 ClickToShowAlreadyExportedLines=Klik om reeds geëxporteerde regels weer te geven
 NAccounts=%s accounts
-ACCOUNTING_USE_NON_TREASURY_Desc=This is the method for accrual accounting (known as "real" or "complete"). We use all the information (sales and purchase invoices, expense reports, bank, etc.) to generate the accounting.
-ACCOUNTING_USE_TREASURY_Desc=This is the cash accounting method. We only use payments and their dates to generate the accounting. Check with your accounting firm to see if you are eligible for this accounting method.
+ACCOUNTING_USE_NON_TREASURY_Desc=Dit is de methode voor de Periodetoerekening boekhouding (ook wel "echte" of "volledige" boekhouding genoemd). We gebruiken alle informatie (verkoop- en inkoopgegevens Facturen, onkostennota's, bankgegevens, enz.) om de boekhouding te genereren.
+ACCOUNTING_USE_TREASURY_Desc=Dit is de contante boekhoudmethode. We gebruiken alleen betalingen en hun datums om de boekhouding te genereren. Neem contact op met uw accountantskantoor om te zien of u in aanmerking komt voor deze boekhoudmethode.
 PieceDesc=De referentie van het brondocument dat deze banktransactie genereert (Factuur Ref, Onkostennota ref, ...)
 BankTransactionRef=Een referentie voor de banktransactie (optioneel, er wordt al automatisch een ID gegenereerd)
 ## Mass Actions
 ConfirmMassCloneBookkeepingWritingQuestion=Hiermee wordt de boekhoudkundige post gekloond (alle regels die aan deze boekhoudkundige post zijn gekoppeld, worden gekloond). Weet u zeker dat u de geselecteerde %s-records wilt klonen?
 ConfirmMassCloneBookkeepingWriting=Massa klonen bevestigen
-ConfirmMassReturnAccountBookkeepingWriting=Confirm mass reversal
-ConfirmMassReturnAccountBookkeepingWritingQuestion=This will create reversal entries for the selected bookkeeping records (all lines linked to these records will be reversed: debit and credit will be swapped, and a reversal operation will be recorded). Are you sure you want to perform this reversal for the %s selected records?
+ConfirmMassReturnAccountBookkeepingWriting=Bevestig massa-omkering
+ConfirmMassReturnAccountBookkeepingWritingQuestion=Hiermee worden terugboekingen aangemaakt voor de geselecteerde boekhoudrecords (alle regels die aan deze records zijn gekoppeld, worden teruggedraaid: debet en credit worden omgewisseld en er wordt een terugboeking geregistreerd). Weet u zeker dat u deze terugboeking wilt uitvoeren voor de geselecteerde %s records?
 ConfirmMassAssignAccountBookkeepingWritingQuestion=Hiermee wijzigt u de rekening van alle geselecteerde lijnen.
 confirmMassAssignAccountBookkeepingWritingConfirm=Massale accountwijziging bevestigen
 CloningSuccess=Succesvol klonen van transacties: %s

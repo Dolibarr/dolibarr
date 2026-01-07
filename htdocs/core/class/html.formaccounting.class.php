@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
- * Copyright (C) 2015       Ari Elbaz (elarifr)     <github@accedinfo.com>
- * Copyright (C) 2016       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2016-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
+/* Copyright (C) 2013-2016	Florian Henry			<florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2014	Olivier Geffroy			<jeff@jeffinfo.com>
+ * Copyright (C) 2015		Ari Elbaz (elarifr)		<github@accedinfo.com>
+ * Copyright (C) 2016		Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2016-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 class FormAccounting extends Form
 {
 	/**
-	 * @var array<string,array<string,string>>
+	 * @var array<string, array<string, string>|array<string, array<string, mixed>>>
 	 */
 	private $options_cache = array();
 
@@ -457,7 +457,10 @@ class FormAccounting extends Form
 						$selected = $select_value_out;
 					}
 
-					$options[$select_value_out] = $label;
+					$options[$select_value_out] = array(
+						'label' => $label,
+						'data-centralized' => $obj->centralized ? 1 : 0
+					);
 				}
 			}
 

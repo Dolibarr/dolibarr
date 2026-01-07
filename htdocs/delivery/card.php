@@ -60,7 +60,7 @@ if (isModEnabled('project')) {
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('bills', 'deliveries', 'orders', 'sendings'));
+$langs->loadLangs(array('bills', 'orders', 'sendings'));
 
 if (isModEnabled('incoterm')) {
 	$langs->load('incoterm');
@@ -128,20 +128,17 @@ if ($action == 'add' && $permissiontoadd) {
 	$db->begin();
 
 	$object->date_delivery = dol_now();
-	$object->note          = GETPOST("note", 'restricthtml');
 	$object->note_private  = GETPOST("note", 'restricthtml');
+	$object->note          = $object->note_private;	// deprecated
 	$object->commande_id   = GETPOSTINT("commande_id");
 	$object->fk_incoterms  = GETPOSTINT('incoterm_id');
-
-	/* ->entrepot_id seems to not exists
-	if (!getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION') && isModEnabled('stock')) {
-		$object->entrepot_id = GETPOST('entrepot_id', 'int');
-	}*/
+	// $object->entrepot_id = GETPOST('entrepot_id', 'int');	entrepot_id does not exists on delivery note, only on shipment document
 
 	// We loop on each line of order to complete object delivery with qty to delivery
 	$commande = new Commande($db);
 	$commande->fetch($object->commande_id);
 	$commande->fetch_lines();
+
 	$num = count($commande->lines);
 	for ($i = 0; $i < $num; $i++) {
 		$qty = "qtyl".$i;
@@ -282,6 +279,15 @@ include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
+// Actions to send emails
+
+$triggersendname = 'DELIVERY_SENTBYMAIL';
+$paramname = 'id';
+$autocopy = 'MAIN_MAIL_AUTOCOPY_DELIVERY_TO';
+$mode = 'emailfromdelivery';
+$trackid = 'del' . $object->id;
+include DOL_DOCUMENT_ROOT . '/core/actions_sendmails.inc.php';
+
 
 /*
  *	View
@@ -368,10 +374,10 @@ if ($action == 'create') {
 			if (isModEnabled('project')) {
 				$langs->load("projects");
 				$morehtmlref .= '<br>';
-				if (0) {	// Do not change on shipment
+				if (0) {	// @phpstan-ignore-line  Do not change on shipment
 					$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 					if ($action != 'classify') {
-						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+						$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 					}
 					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $objectsrc->socid, (string) $objectsrc->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 				} else {
@@ -679,15 +685,17 @@ if ($action == 'create') {
 				if ($object->statut == 0 && $num_prod > 0) {
 					if ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'delivery', 'creer'))
 						|| (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'delivery_advance', 'validate'))) {
-						print dolGetButtonAction('', $langs->trans('Validate'), 'default', $_SERVER["PHP_SELF"].'?action=valid&amp;token='.newToken().'&amp;id='.$object->id, '');
+						print dolGetButtonAction('', $langs->trans('Validate'), 'default', $_SERVER["PHP_SELF"].'?action=valid&token='.newToken().'&id='.$object->id, '');
 					}
 				}
-
-				if ($user->hasRight('expedition', 'delivery', 'supprimer')) {
+				if ($user->hasRight('expedition', 'delivery', 'supprimer') && $action != 'presend') {
+					if ($object->status == Delivery::STATUS_VALIDATED && $action != 'presend' && $expedition->status == Expedition::STATUS_VALIDATED) {
+						print dolGetButtonAction('', $langs->trans('SendMail'), 'email', $_SERVER["PHP_SELF"].'?action=presend&token='.newToken().'&id='.$object->id.'&mode=init#formmailbeforetitle', '');
+					}
 					if (getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION')) {
-						print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;expid='.$object->origin_id.'&amp;action=delete&amp;token='.newToken().'&amp;backtopage='.urlencode(DOL_URL_ROOT.'/expedition/card.php?id='.$object->origin_id), '');
+						print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&expid='.$object->origin_id.'&action=delete&token='.newToken().'&backtopage='.urlencode(DOL_URL_ROOT.'/expedition/card.php?id='.$object->origin_id), '');
 					} else {
-						print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?action=delete&amp;token='.newToken().'&amp;id='.$object->id, '');
+						print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id, '');
 					}
 				}
 
@@ -700,26 +708,28 @@ if ($action == 'create') {
 			/*
 			  * Documents generated
 			 */
+			if ($action != 'presend') {
+				$objectref = dol_sanitizeFileName($object->ref);
+				$filedir = $conf->expedition->dir_output."/receipt/".$objectref;
+				$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 
-			$objectref = dol_sanitizeFileName($object->ref);
-			$filedir = $conf->expedition->dir_output."/receipt/".$objectref;
-			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
+				$genallowed = $user->hasRight('expedition', 'delivery', 'lire');
+				$delallowed = $user->hasRight('expedition', 'delivery', 'creer');
 
-			$genallowed = $user->hasRight('expedition', 'delivery', 'lire');
-			$delallowed = $user->hasRight('expedition', 'delivery', 'creer');
+				print $formfile->showdocuments('delivery', $objectref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 
-			print $formfile->showdocuments('delivery', $objectref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
+				/*
+				  * Linked object block (of linked shipment)
+				  */
 
-			/*
-			  * Linked object block (of linked shipment)
-			  */
-			if ($object->origin == 'expedition') {
-				$shipment = new Expedition($db);
-				$shipment->fetch($object->origin_id);
+					// Show links to link elements
+					print '</div><div class="fichehalfright">';
 
-				// Show links to link elements
-				//$tmparray = $form->showLinkToObjectBlock($object, null, array('order'), 1);
-				$somethingshown = $form->showLinkedObjectBlock($object, '');
+					// List of actions on element
+					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+
+					//$tmparray = $form->showLinkToObjectBlock($object, null, array('order'), 1);
+					$somethingshown = $form->showLinkedObjectBlock($object, '');
 			}
 
 
@@ -736,6 +746,22 @@ if ($action == 'create') {
 		/* Expedition non trouvee */
 		print "Expedition inexistante ou access refuse";
 	}
+
+	/*
+	* Action presend
+	*/
+	//Select mail models is same action as presend
+	if (GETPOST('modelselected')) {
+		$action = 'presend';
+	}
+
+	// Presend form
+	$modelmail = 'delivery_send';
+	$defaulttopic = 'SendDeliveryRef';
+	$diroutput = $conf->expedition->dir_output . '/receipt';
+	$trackid = 'del' . $object->id;
+
+	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 }
 
 // End of page

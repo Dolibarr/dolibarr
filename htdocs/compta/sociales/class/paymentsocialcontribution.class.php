@@ -2,7 +2,7 @@
 /* Copyright (C) 2002       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -215,6 +215,7 @@ class PaymentSocialContribution extends CommonObject
 
 		// Check parameters
 		if ($totalamount == 0) {
+			$this->error = 'ErrorPaymentAmountMustNotBeNull';
 			return -1; // On accepte les montants negatifs pour les rejets de prelevement mais pas null
 		}
 
@@ -503,6 +504,7 @@ class PaymentSocialContribution extends CommonObject
 		$object->fetch($fromid);
 		$object->id = 0;
 		$object->statut = 0;
+		$object->status = 0;
 
 		// Clear fields
 		// ...
@@ -513,7 +515,7 @@ class PaymentSocialContribution extends CommonObject
 
 		// Other options
 		if ($result < 0) {
-			$this->error = $object->error;
+			$this->setErrorsFromObject($object);
 			$error++;
 		}
 

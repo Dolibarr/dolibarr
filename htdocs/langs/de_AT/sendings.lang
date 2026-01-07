@@ -3,4 +3,6 @@ Sendings=Sendungen
 Shipments=Sendungen
 StatusSendingValidatedShort=Bestätigt
 DateReceived=Datum des Warenerhalts
+DeliveryDate=Lieferdatum
+GoodStatusDeclaration=Haben die oben genannten Waren in einwandfreiem Zustand erhalten,
 TypeContact_shipping_external_BILLING=Debitorenrechnung Kontakt

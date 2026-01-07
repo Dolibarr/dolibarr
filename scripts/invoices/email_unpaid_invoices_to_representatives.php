@@ -157,7 +157,7 @@ if ($resql) {
 			$outputlangs->loadLangs(array("main", "bills"));
 
 			if (dol_strlen($obj->email)) {
-				$message .= $outputlangs->trans("Invoice")." ".$obj->ref." : ".price($obj->total_ttc, 0, $outputlangs, 0, 0, -1, $conf->currency)." : ".$obj->name."\n";
+				$message .= $outputlangs->trans("Invoice")." ".$obj->ref." : ".price($obj->total_ttc, 0, $outputlangs, 0, 0, -1, getDolCurrency())." : ".$obj->name."\n";
 				dol_syslog("email_unpaid_invoices_to_representatives.php: ".$obj->email);
 				$foundtoprocess++;
 			}
@@ -246,7 +246,7 @@ function sendMailRepresentativeUnpaid($mode, $oldemail, $message, $total, $userl
 		$allmessage .= $newlangs->transnoentities("NoteListOfYourUnpaidInvoices").($usehtml ? "<br>\n" : "\n");
 	}
 	$allmessage .= $message.($usehtml ? "<br>\n" : "\n");
-	$allmessage .= $langs->trans("Total")." = ".price($total, 0, $newlangs, 0, 0, -1, $conf->currency).($usehtml ? "<br>\n" : "\n");
+	$allmessage .= $langs->trans("Total")." = ".price($total, 0, $newlangs, 0, 0, -1, getDolCurrency()).($usehtml ? "<br>\n" : "\n");
 	if (getDolGlobalString('SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_FOOTER')) {
 		$allmessage .= getDolGlobalString('SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_FOOTER');
 		if (dol_textishtml(getDolGlobalString('SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_FOOTER'))) {

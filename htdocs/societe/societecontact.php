@@ -185,10 +185,6 @@ if ($id > 0 || !empty($ref)) {
 		print yn($object->fournisseur);
 		print '</td></tr>';*/
 
-		if (getDolGlobalString('SOCIETE_USEPREFIX')) {  // Old not used prefix field
-			print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
-		}
-
 		if ($object->client) {
 			print '<tr><td class="titlefield">';
 			print $langs->trans('CustomerCode').'</td><td colspan="3">';

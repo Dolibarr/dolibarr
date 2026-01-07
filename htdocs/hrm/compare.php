@@ -63,7 +63,7 @@ $job = new Job($db);
 $permissiontoread = $user->hasRight('hrm', 'evaluation', 'read') || $user->hasRight('hrm', 'compare_advance', 'read');
 $permissiontoadd = 0;
 
-if (empty($conf->hrm->enabled)) {
+if (!isModEnabled('hrm')) {
 	accessforbidden();
 }
 if (!$permissiontoread || ($action === 'create' && !$permissiontoadd)) {
@@ -151,7 +151,7 @@ $fk_usergroup1 = GETPOSTINT('fk_usergroup1');
 							print $form->select_dolgroups($fk_usergroup1, 'fk_usergroup1', 1);
 							?></td>
 						</tr>
-						<tr><td>&nbsp;</td></tr>
+						<tr><td></td><td></td></tr>
 						<tr>
 							<td><?php
 							print $langs->trans('group2ToCompare').'</td><td>';
@@ -160,7 +160,7 @@ $fk_usergroup1 = GETPOSTINT('fk_usergroup1');
 							?></td>
 						</tr>
 						<tr>
-							<td><STRONG><?php print $langs->trans('or'); ?></STRONG></td>
+							<td><b><?php print $langs->trans('or'); ?></b></td><td></td>
 						</tr>
 						<tr>
 							<td><?php

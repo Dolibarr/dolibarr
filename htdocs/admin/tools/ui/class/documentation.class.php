@@ -87,7 +87,7 @@ class Documentation
 
 		// Go back to Dolibarr
 		$this->menu['BackToDolibarr'] = array(
-			'url' => DOL_URL_ROOT,
+			'url' => dol_buildpath('modulebuilder/index.php', 1),
 			'icon' => 'fas fa-arrow-left',
 			'submenu' => array(),
 		);
@@ -174,6 +174,15 @@ class Documentation
 			'url' => dol_buildpath($this->baseUrl.'/content/index.php', 1),
 			'icon' => 'far fa-file-alt',
 			'submenu' => array(
+				'Titles' => array(
+					'url' => dol_buildpath('admin/tools/ui/content/titles.php', 1),
+					'icon' => 'fas fa-heading',
+					'submenu' => array(),
+					'summary' => array(
+						'DocBasicUsage' => '#titlesection-basicusage',
+						'DocTitleWithFilters' => '#titlesection-withfilters',
+					),
+				),
 				'Tables' => array(
 					'url' => dol_buildpath('admin/tools/ui/content/tables.php', 1),
 					'icon' => 'fas fa-table',
@@ -184,6 +193,20 @@ class Documentation
 						'DocTableBeforeFilters' => '#tablesection-beforefilters',
 						'DocTableCSSClass' => '#tablesection-cssclasses',
 					),
+				),
+
+				'TableRowIntuitiveSelect' => array(
+					'url' => dol_buildpath($this->baseUrl.'/content/intuitive-table-row-select.php', 1),
+					'icon' => 'far fa-check-square',
+					'submenu' => array(),
+					'summary' => array(),
+				),
+
+				'FreezeTooltip' => array(
+					'url' => dol_buildpath($this->baseUrl.'/content/freeze-tooltip.php', 1),
+					'icon' => 'far fa-comment',
+					'submenu' => array(),
+					'summary' => array(),
 				),
 			)
 		);
@@ -223,25 +246,38 @@ class Documentation
 						'ExperimentalUxContributionTitle' => '#experimental-ux-contribution',
 					),
 				),
-
-				'ExperimentalUxFreezeTooltip' => array(
-					'url' => dol_buildpath($this->baseUrl.'/experimental/experiments/freeze-tooltip/index.php', 1),
-					'icon' => 'fas fa-flask',
-					'submenu' => array(),
-					'summary' => array(),
-				),
-
 				'ExperimentalUxInputAjaxFeedback' => array(
 					'url' => dol_buildpath($this->baseUrl.'/experimental/experiments/input-feedback/index.php', 1),
 					'icon' => 'fas fa-flask',
 					'submenu' => array(),
 					'summary' => array(),
 				),
-
-				'ExperimentalUxIntuitiveSelect' => array(
-					'url' => dol_buildpath($this->baseUrl.'/experimental/experiments/intuitive-select/index.php', 1),
+				'UxDolibarrContext' => array(
+					'url' => dol_buildpath($this->baseUrl.'/experimental/experiments/dolibarr-context/index.php', 1),
 					'icon' => 'fas fa-flask',
-					'submenu' => array(),
+					'submenu' => array(
+						'UxDolibarrContextHowItWork' => array(
+							'url' => dol_buildpath($this->baseUrl.'/experimental/experiments/dolibarr-context/index.php', 1),
+							'icon' => 'fas fa-flask',
+							'submenu' => array(),
+							'summary' => array(
+								'Introduction' => '#titlesection-basicusage',
+								'ConsoleHelp' => '#titlesection-console-help',
+								'JSDolibarrhooks' => '#titlesection-hooks',
+								'JSDolibarrhooksReadyVsInit' => '#titlesection-event-init-vs-ready',
+								'JSDolibarrAwaitHooks' => '#titlesection-await-hooks',
+								'ExampleOfCreatingNewContextTool' => '#titlesection-create-tool-example',
+								'SetEventMessageTool' => '#titlesection-tool-seteventmessage',
+								'SetAndUseContextVars' => '#titlesection-contextvars',
+							),
+						),
+						'UxDolibarrContextLangsTool' => array(
+							'url' => dol_buildpath($this->baseUrl.'/experimental/experiments/dolibarr-context/langs-tool.php', 1),
+							'icon' => 'fas fa-flask',
+							'submenu' => array(),
+							'summary' => array(),
+						),
+					),
 					'summary' => array(),
 				),
 			)
@@ -462,7 +498,13 @@ class Documentation
 		if ($showsubmenu && !empty($menu['submenu'])) {
 			foreach ($menu['submenu'] as $key => $item) {
 				print '<li class="summary-title ">';
+
+				if (!empty($item['url'])) {
+					print '<h3 class="level-'.$level.'"><a href="'.dolBuildUrl($item['url']).'" >'.$langs->trans($key).'</a></h3>';
+				} else {
 					print '<h3 class="level-'.$level.'">'.$langs->trans($key).'</h3>';
+				}
+
 				if ($showsubmenu_summary) {
 					$this->displaySummary($item, $level);
 				}

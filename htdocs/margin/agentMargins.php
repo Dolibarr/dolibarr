@@ -3,7 +3,7 @@
  * Copyright (C) 2014		Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -134,17 +134,17 @@ print '<table class="border centpercent">';
 
 print '<tr><td class="titlefield">'.$langs->trans('ContactOfInvoice').'</td>';
 print '<td class="maxwidthonsmartphone" colspan="4">';
-print img_picto('', 'user').$form->select_dolusers($agentid, 'agentid', 1, null, $user->hasRight('margins', 'read', 'all') ? 0 : 1, '', '', '0', 0, 0, '', 0, '', 'maxwidth300');
+print img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers($agentid, 'agentid', 1, null, $user->hasRight('margins', 'read', 'all') ? 0 : 1, '', '', '0', 0, 0, '', 0, '', 'maxwidth300');
 print '</td></tr>';
 
 // Start date
 print '<td>'.$langs->trans('DateStart').' ('.$langs->trans("DateValidation").')</td>';
 print '<td>';
-print $form->selectDate($startdate, 'startdate', 0, 0, 1, "sel", 1, 1);
+print img_picto('', 'agenda', 'class="pictofixedwidth"').$form->selectDate($startdate, 'startdate', 0, 0, 1, "sel", 1, 1);
 print '</td>';
 print '<td>'.$langs->trans('DateEnd').' ('.$langs->trans("DateValidation").')</td>';
 print '<td>';
-print $form->selectDate($enddate, 'enddate', 0, 0, 1, "sel", 1, 1);
+print img_picto('', 'agenda', 'class="pictofixedwidth"').$form->selectDate($enddate, 'enddate', 0, 0, 1, "sel", 1, 1);
 print '</td>';
 print '<td style="text-align: center;">';
 print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Refresh')).'" />';
@@ -280,23 +280,24 @@ if ($result) {
 	print "</tr>\n";
 
 	if ($num > 0) {
+		/** @var array<int,array{name:string,htmlname:string,selling_price:float,buying_price:float,marge:float}> $group_list */
 		$group_list = array();
 		while ($objp = $db->fetch_object($result)) {
 			if ($agentid > 0) {
-				$group_id = $objp->socid;
+				$group_id = (int) $objp->socid;
 			} else {
-				$group_id = $objp->agent;
+				$group_id = (int) $objp->agent;
 			}
 
 			if (!isset($group_list[$group_id])) {
 				if ($agentid > 0) {
-					$group_name = $objp->name;
+					$group_name = (string) $objp->name;
 					$companystatic->id = $objp->socid;
 					$companystatic->name = $objp->name;
 					$companystatic->client = $objp->client;
 					$group_htmlname = $companystatic->getNomUrl(1, 'customer');
 				} else {
-					$group_name = $objp->lastname;
+					$group_name = (string) $objp->lastname;
 					$userstatic->fetch($objp->agent);
 					$group_htmlname = $userstatic->getFullName($langs, 0, 0, 0);
 				}
@@ -317,15 +318,15 @@ if ($result) {
 				} else {
 					if ($obj_seller = $db->fetch_object($resql_seller)) {
 						if ($obj_seller->nb > 0) {
-							$seller_nb = $obj_seller->nb;
+							$seller_nb = (int) $obj_seller->nb;
 						}
 					}
 				}
 			}
 
-			$group_list[$group_id]['selling_price'] += $objp->selling_price / $seller_nb;
-			$group_list[$group_id]['buying_price'] += $objp->buying_price / $seller_nb;
-			$group_list[$group_id]['marge'] += $objp->marge / $seller_nb;
+			$group_list[$group_id]['selling_price'] += (float) $objp->selling_price / $seller_nb;
+			$group_list[$group_id]['buying_price'] += (float) $objp->buying_price / $seller_nb;
+			$group_list[$group_id]['marge'] += (float) $objp->marge / $seller_nb;
 		}
 
 		// sort group array by sortfield

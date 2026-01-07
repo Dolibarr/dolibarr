@@ -125,7 +125,7 @@ if ($user->hasRight('projet', 'all', 'lire') && !$socid) {
 	$titleall = $langs->trans("AllAllowedProjects").'<br><br>';
 }
 
-$morehtml = '<form name="projectform" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+$morehtml = '<form name="projectform" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 $morehtml .= '<input type="hidden" name="token" value="'.newToken().'">';
 $morehtml .= '<input type="hidden" name="action" value="refresh_search_project_user">';
 

@@ -1,7 +1,5 @@
 # Dolibarr language file - Source file is en_US - blockedlog
-BlockedLogDesc=Este módulo rastrea algunos eventos en un registro inalterable (que no puedes modificar una vez registrado) en una cadena de bloques, en tiempo real. Este módulo proporciona compatibilidad con los requisitos de las leyes de algunos países (como Francia con la ley Finanzas 2016 - Norma NF525).
 Fingerprints=Eventos archivados y huellas digitales
-FingerprintsDesc=Esta es la herramienta para examinar o extraer los registros inalterables. Éstos se generan y archivan localmente en una tabla dedicada, en tiempo real cuando registras un evento de negocios. Puede usar esta herramienta para exportar este archivo y guardarlo en un soporte externo (algunos países, como Francia, solicitan que lo hagas todos los años). Debes tener en cuenta que no hay ninguna función para purgar estos registros y cada cambio que se intente realizar directamente (por ejemplo, por un hacker) se informará con una huella digital inválida. Si realmente necesitas purgar esta tabla porque usaste la aplicación para hacer una demostración/prueba y deseas limpiar sus datos para comenzar su producción, puedes pedirle al administrador que restablezca la base de datos (se eliminará toda la información).
 CompanyInitialKey=Clave inicial de la empresa (hash del bloque génesis)
 DownloadBlockChain=Descargar huellas digitales
 OkCheckFingerprintValidity=El registro archivado es válido. Los datos de esta línea no se modificaron y la entrada es correlativa a la anterior.

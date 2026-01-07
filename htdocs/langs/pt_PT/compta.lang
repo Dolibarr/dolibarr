@@ -3,10 +3,10 @@ MenuFinancial=Faturação | Pagamento
 TaxModuleSetupToModifyRules=Ir para <a href="%s">configurar módulo de impostos</a> para modificar as regras de cálculo
 TaxModuleSetupToModifyRulesLT=Ir para <a href="%s">configurar Empresa</a> para modificar as regras de cálculo
 OptionMode=Opção de Gestão Contabilidade
-OptionModeTrue=acumulação;  acrescento Contabilista
-OptionModeVirtual=Dinheiro Contabilista
-OptionModeTrueDesc=Neste contexto, o faturamento é calculado sobre os pagamentos (data de pagamentos). A validade dos números só é garantida se a contabilidade for examinada por meio da entrada/saída de pagamentos.
+OptionModeVirtual=Accrual accounting
+OptionModeTrue=Cash accounting
 OptionModeVirtualDesc=Neste contexto, o balanço é calculado sobre as faturas (data de validação). Quando essas faturas são devidas, tenham sido pagas ou não, elas serão listadas no resultado do balanço.
+OptionModeTrueDesc=Neste contexto, o faturamento é calculado sobre os pagamentos (data de pagamentos). A validade dos números só é garantida se a contabilidade for examinada por meio da entrada/saída de pagamentos.
 FeatureIsSupportedInInOutModeOnly=Função disponível somente ao modo contas CREDITOS-dividas (Ver a configuração do módulo contas)
 VATReportBuildWithOptionDefinedInModule=Montantes apresentados aqui são calculadas usando as regras definidas pelo Imposto de configuração do módulo.
 LTReportBuildWithOptionDefinedInModule=Os valores mostrados aqui são calculados usando regras definidas pela configuração da empresa.
@@ -302,7 +302,6 @@ ByVatRate=Por taxa de imposto de venda
 TurnoverbyVatrate=Volume de negócios faturado por taxa de imposto sobre vendas
 TurnoverCollectedbyVatrate=Volume de negócios cobrado pela taxa de imposto sobre vendas
 PurchasebyVatrate=Compra por taxa de imposto sobre vendas
-LabelToShow=Rótulo curto
 PurchaseTurnover=Rotatividade de compras
 PurchaseTurnoverCollected=Rotatividade de compras coletada
 RulesPurchaseTurnoverDue=- Inclui as faturas vencidas do fornecedor, pagas ou não. <br>- É baseado no fatura data dessas faturas.<br>
@@ -329,3 +328,4 @@ RuleForLinesDates=Regra para linhas datas
 Prepaid=Pré-pago
 Postpaid=Pós-pago
 SetRuleForLinesDates=Definir regra para linhas datas
+SomeNotConvertedCreditNoteExists=There is <b>%s</b> credit notes not yet converted for consumption

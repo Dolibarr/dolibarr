@@ -200,3 +200,5 @@ InSepa=SEPA
 CountryIsInSepa=Țări în spațiul SEPA
 Bank_line=Linie tranzacție bancară
 BankId=ID linie bancară
+BankAccountForcedOnRequest=Acest cont bancar a fost definit la pregătirea cererii de transfer bancar. Șterge-l și repetă pregătirea din obiectul sursă dacă este nevoie să îl modifici.
+BankAccountUsedByDefault=Acesta este contul bancar implicit al terțului.

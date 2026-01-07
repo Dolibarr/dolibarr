@@ -151,14 +151,14 @@ if ($id > 0 || !empty($ref)) {
 			$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_fournisseur, r.ref, r.ref_supplier";
 			$sql .= ", r.date_creation, r.date_delivery, r.fk_statut as statut, r.rowid as receptionid, cfd.rowid";
 			$sql .= ", cfd.qty, cfdet.subprice * (100 - cfdet.remise_percent) / 100 * cfd.qty AS total_ht";
-			if (empty($user->rights->societe->client->voir) && !$socid) {
+			if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 				$sql .= ", sc.fk_soc, sc.fk_user ";
 			}
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."reception as r ON r.fk_soc = s.rowid";
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."receptiondet_batch as cfd ON cfd.fk_reception = r.rowid AND element_type = 'supplier_order'";
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."commande_fournisseurdet as cfdet ON cfdet.rowid = cfd.fk_elementdet";
-			if (empty($user->rights->societe->client->voir) && !$socid) {
+			if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			$sql .= " WHERE r.entity IN (".getEntity('reception').")";

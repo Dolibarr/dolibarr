@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		William Mead				<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -121,7 +121,7 @@ if ($action == "importSignature") {
 			$object = new Propal($db);
 			$object->fetch(0, $ref);
 
-			$upload_dir = !empty($conf->propal->multidir_output[$object->entity]) ? $conf->propal->multidir_output[$object->entity] : $conf->propal->dir_output;
+			$upload_dir = !empty($conf->propal->multidir_output[$object->entity ?? $conf->entity]) ? $conf->propal->multidir_output[$object->entity ?? $conf->entity] : $conf->propal->dir_output;
 			$upload_dir .= '/' . dol_sanitizeFileName($object->ref) . '/';
 
 			$default_font_size = pdf_getPDFFontSize($langs);    // Must be after pdf_getInstance
@@ -138,10 +138,12 @@ if ($action == "importSignature") {
 			}
 
 			if (!$error) {
-				$return = file_put_contents($upload_dir . $filename, $data);
-				if ($return == false) {
+				$return = file_put_contents($upload_dir.$filename, $data);
+				if ($return === false) {
 					$error++;
 					$response = 'Error file_put_content: failed to create signature file.';
+				} else {
+					dolChmod($upload_dir.$filename);
 				}
 			}
 
@@ -339,7 +341,7 @@ if ($action == "importSignature") {
 			$object = new Contrat($db);
 			$object->fetch(0, $ref);
 
-			$upload_dir = !empty($conf->contrat->multidir_output[$object->entity]) ? $conf->contrat->multidir_output[$object->entity] : $conf->contrat->dir_output;
+			$upload_dir = !empty($conf->contrat->multidir_output[$object->entity ?? $conf->entity]) ? $conf->contrat->multidir_output[$object->entity ?? $conf->entity] : $conf->contrat->dir_output;
 			$upload_dir .= '/' . dol_sanitizeFileName($object->ref) . '/';
 
 			$date = dol_print_date(dol_now(), "%Y%m%d%H%M%S");
@@ -353,9 +355,11 @@ if ($action == "importSignature") {
 
 			if (!$error) {
 				$return = file_put_contents($upload_dir . $filename, $data);
-				if ($return == false) {
+				if ($return === false) {
 					$error++;
 					$response = 'Error file_put_content: failed to create signature file.';
+				} else {
+					dolChmod($upload_dir.$filename);
 				}
 			}
 
@@ -471,7 +475,7 @@ if ($action == "importSignature") {
 			$object = new Fichinter($db);
 			$object->fetch(0, $ref);
 
-			$upload_dir = !empty($conf->ficheinter->multidir_output[$object->entity]) ? $conf->ficheinter->multidir_output[$object->entity] : $conf->ficheinter->dir_output;
+			$upload_dir = !empty($conf->ficheinter->multidir_output[$object->entity ?? $conf->entity]) ? $conf->ficheinter->multidir_output[$object->entity ?? $conf->entity] : $conf->ficheinter->dir_output;
 			$upload_dir .= '/'.dol_sanitizeFileName($object->ref).'/';
 
 			$langs->loadLangs(array("main", "companies"));
@@ -490,9 +494,11 @@ if ($action == "importSignature") {
 
 			if (!$error) {
 				$return = file_put_contents($upload_dir . $filename, $data);
-				if ($return == false) {
+				if ($return === false) {
 					$error++;
 					$response = 'Error file_put_content: failed to create signature file.';
+				} else {
+					dolChmod($upload_dir.$filename);
 				}
 			}
 
@@ -637,9 +643,11 @@ if ($action == "importSignature") {
 
 				if (!$error) {
 					$return = file_put_contents($upload_dir . $filename, $data);
-					if ($return == false) {
+					if ($return === false) {
 						$error++;
 						$response = 'Error file_put_content: failed to create signature file.';
+					} else {
+						dolChmod($upload_dir.$filename);
 					}
 				}
 
@@ -834,9 +842,11 @@ if ($action == "importSignature") {
 
 			if (!$error) {
 				$return = file_put_contents($upload_dir . $filename, $data);
-				if ($return == false) {
+				if ($return === false) {
 					$error++;
 					$response = 'Error file_put_content: failed to create signature file.';
+				} else {
+					dolChmod($upload_dir.$filename);
 				}
 			}
 

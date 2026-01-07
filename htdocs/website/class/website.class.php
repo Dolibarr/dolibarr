@@ -3,7 +3,7 @@
  * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -56,11 +56,6 @@ class Website extends CommonObject
 	 * @var string String with name of icon for website. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'globe';
-
-	/**
-	 * @var int Entity
-	 */
-	public $entity;
 
 	/**
 	 * @var string Ref
@@ -284,6 +279,7 @@ class Website extends CommonObject
 			$stringtodolibarrfile .= "param=value\n";
 			//print $conf->website->dir_output.'/'.$this->ref.'/.dolibarr';exit;
 			file_put_contents($pathofwebsite.'/.dolibarr', $stringtodolibarrfile);
+			dolChmod($pathofwebsite.'/.dolibarr');
 
 			$filelicense = $pathofwebsite.'/LICENSE';
 			if (!dol_is_file($filelicense)) {
@@ -791,8 +787,7 @@ class Website extends CommonObject
 		$result = $object->create($user);
 		if ($result < 0) {
 			$error++;
-			$this->error = $object->error;
-			$this->errors = $object->errors;
+			$this->setErrorsFromObject($object);
 			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 		}
 
@@ -1067,6 +1062,9 @@ class Website extends CommonObject
 
 		dol_syslog("Copy pages from ".$srcdir." into ".$destdir);
 		dolCopyDir($srcdir, $destdir, '0', 1, $arrayreplacementinfilename, 2, array('old', 'back'), 1);
+
+		// Remove non required files (will be re-generated during the import)
+		dol_delete_file($conf->website->dir_temp.'/'.$website->ref.'/containers/master.inc.php');
 
 		// Copy file README.md and LICENSE from directory containers into directory root
 		if (dol_is_file($conf->website->dir_temp.'/'.$website->ref.'/containers/README.md')) {
@@ -1902,34 +1900,6 @@ class Website extends CommonObject
 	}
 
 	/**
-	 * check previous state for file
-	 * @param  string   $pathname  path of file
-	 * @return  array|mixed
-	 */
-	public function checkPreviousState($pathname)
-	{
-		if (!file_exists($pathname)) {
-			if (touch($pathname)) {
-				dolChmod($pathname, '0664');
-			}
-			return [];
-		}
-		return unserialize(file_get_contents($pathname));
-	}
-
-
-	/**
-	 * Save state for File
-	 * @param mixed $etat   state
-	 * @param string $pathname  path of file
-	 * @return int|false
-	 */
-	public function saveState($etat, $pathname)
-	{
-		return file_put_contents($pathname, serialize($etat));
-	}
-
-	/**
 	 * Compare two files has not same name but same content
 	 * @param  string   $dossierSource        filepath of folder source
 	 * @param  string   $dossierDestination   filepath of folder dest
@@ -2159,7 +2129,10 @@ class Website extends CommonObject
 		// Reindex the table keys
 		$contentDest = array_values($contentDest);
 		$stringreplacement = implode("\n", $contentDest);
+
 		file_put_contents($inplaceFile, $stringreplacement);
+		dolChmod($inplaceFile);
+
 		foreach ($differences['lignes_dont_change'] as $linechanged => $line) {
 			if (in_array($linechanged, $contentDest)) {
 				dolReplaceInFile($inplaceFile, array($linechanged => $line));

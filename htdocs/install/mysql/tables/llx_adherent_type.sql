@@ -36,6 +36,6 @@ create table llx_adherent_type
   amount           double(24,8) DEFAULT NULL,              -- membership fee
   caneditamount    integer DEFAULT 0,                      -- can member edit the amount of subscription
   vote             varchar(3) NOT NULL DEFAULT '1',        -- entitled to vote
-  note             text,                                   -- description / comment 
+  note             text,                                   -- description / comment
   mail_valid       text                                    -- text for welcome email
 )ENGINE=innodb;

@@ -3,6 +3,7 @@
  * Copyright (C) 2013		Juanjo Menent <jmenent@2byte.es>
  * Copyright (C) 2014       Marcos García <marcosgdf@gmail.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,8 +34,13 @@ global $noMoreLinkedObjectBlockAfter;
 
 $langs = $GLOBALS['langs'];
 '@phan-var-force Translate $langs';
+/**
+ * @var CommonObject $object
+ * @var Translate $langs
+ */
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
-'@phan-var-force CommonObject[] $linkedObjectBlock';
+'@phan-var-force FactureRec[] $linkedObjectBlock';
+/** @var FactureRec[] $linkedObjectBlock */
 
 $langs->load("bills");
 
