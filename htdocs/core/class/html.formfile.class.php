@@ -2261,6 +2261,7 @@ class FormFile
 
 		print '<form action="'.$_SERVER['PHP_SELF'].($param ? '?'.$param : '').'" id="'.$htmlname.'" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<div class="div-table-responsive-no-min">';
 
 		print '<table class="liste noborder nobottom centpercent">';
 		print '<tr class="liste_titre">';
@@ -2376,7 +2377,7 @@ class FormFile
 		print "</table>";
 
 		print '</form>';
-
+		print '</div>';
 		return $nboflinks;
 	}
 
