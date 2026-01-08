@@ -15,7 +15,7 @@
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- This table is a list of all available possible automatic actions
--- It is read only by admin page to select action code and save them 
+-- It is read only by admin page to select action code and save them
 -- into llx_const with name MAIN_AGENDA_ACTIONAUTO_XXX_YYY.
 -- ===================================================================
 

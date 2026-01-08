@@ -215,7 +215,8 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 			$obj = $db->fetch_object($res);
 			if ($obj) {
 				$firstid = $obj->rowid;
-				$previoushash = $block_static->getPreviousHash(0, $firstid);
+				$tmparray = $block_static->getPreviousHash(0, $firstid);
+				$previoushash = $tmparray['previoushash'];
 			} else {	// If not data found for filter, we do not need previoushash neither firstid
 				$firstid = '';
 				$previoushash = 'nodata';

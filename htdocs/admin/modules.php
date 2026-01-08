@@ -62,6 +62,7 @@ require_once DOL_DOCUMENT_ROOT.'/admin/remotestore/class/externalModules.class.p
 $langs->loadLangs(array("errors", "admin", "modulebuilder"));
 
 $action = GETPOST('action', 'aZ09');
+$page = GETPOSTINT('page');
 $page_y = GETPOSTINT('page_y');
 $optioncss = GETPOST('optioncss', 'aZ09');
 $sortfield = GETPOST('sortfield', 'aZ09');
@@ -520,7 +521,7 @@ $i = 0; // is a sequencer of modules found
 $j = 0; // j is module number. Automatically affected if module number not defined.
 $modNameLoaded = array();
 
-//if ($mode == 'common' || $mode == 'commonkanban') {
+
 // Load $modules (required for the badge count)
 foreach ($modulesdir as $dir) {
 	// Load modules attributes in arrays (name, numero, orders) from dir directory
@@ -1213,7 +1214,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			print "</td>\n";
 
 			// Desc
-			print '<td class="valignmiddle tdoverflowmax300 minwidth200imp">';
+			print '<td class="valignmiddle tdoverflowmax300 minwidth200imp opacitylow">';
 			print nl2br($objMod->getDesc());
 			print "</td>\n";
 

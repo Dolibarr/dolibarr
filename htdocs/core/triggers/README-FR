@@ -12,7 +12,6 @@ où:
 			module particulier.
 > Mytrigger est le nom du trigger. La classe PHP dans le fichier trigger
             aura pour nom InterfaceMytrigger.
-> -NORUN est optionnel et désactive le fichier trigger si défini. Pour 
-            utiliser un tel fichier trigger, renommer le fichier afin 
+> -NORUN est optionnel et désactive le fichier trigger si défini. Pour
+            utiliser un tel fichier trigger, renommer le fichier afin
 			d'enlever la partie -NORUN.
-

@@ -303,7 +303,7 @@ stream resource {@{$ref}
       %sTwig.php:2: {
         : foo bar
         :   twig source
-        : 
+        :
       }
       %sTemplate.php:%d: {
         : try {

@@ -821,6 +821,11 @@ class ActionComm extends CommonObject
 		$result = $this->create($fuser);
 		if ($result < 0) {
 			$error++;
+		} else {
+			$resultcat = $this->cloneCategories($objFrom->id, $this->id);
+			if ($resultcat < 0) {
+				$error++;
+			}
 		}
 
 		if (!$error) {

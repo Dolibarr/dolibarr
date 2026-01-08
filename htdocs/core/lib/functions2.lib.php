@@ -3118,10 +3118,10 @@ function csvClean($newvalue, $charset = '', $separator = '')
 /**
  * Function to output HTML to make an ajax call to make registration
  *
- * @param	string	$constanttosavelastko		Name of constant to save the last call that failed
- * @param	string	$constanttosavefirstok		Name of cosntant to save the first try that succeed
+ * @param	string					$constanttosavelastko		Name of constant to save the last call that failed
+ * @param	string					$constanttosavefirstok		Name of cosntant to save the first try that succeed
  * @param	array<string,string>	$arrayofdata				Array of key-value to add as parameter in the ajax call
- * @param	int		$forceping					Value 1 to force the ping, even if it was already done
+ * @param	int						$forceping					Value 1 to force the ping, even if it was already done
  * @return 	void
  */
 function printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayofdata = array(), $forceping = 0)
