@@ -5664,6 +5664,16 @@ if ($action == 'create') {
 			}
 			print '</span></td><td class="right'.(($totalpaid > 0) ? ' amountalreadypaid' : '').'">'.price($totalpaid).'</td><td>&nbsp;</td></tr>';
 
+			// Billed
+			print '<tr><td colspan="'.$nbcols.'" class="right">';
+			print '<span class="opacitymedium">';
+			print $langs->trans("Billed");
+			if (getDolGlobalString('INVOICE_USE_SITUATION')) {
+				print '</td><td class="right">'.price(round($object->total_ttc - $object->prorata_discount * (1 + $avg_vat_rate), 2)).'</td><td>&nbsp;</td></tr>';
+			} else {
+				print '</td><td class="right">'.price($object->total_ttc).'</td><td>&nbsp;</td></tr>';
+			}
+
 			$resteapayeraffiche = $resteapayer;
 			$cssforamountpaymentcomplete = 'amountpaymentcomplete';
 
@@ -5698,6 +5708,9 @@ if ($action == 'create') {
 					if ($invoice->type == Facture::TYPE_DEPOSIT) {
 						print $langs->trans("Deposit").' ';
 					}
+					if ($invoice->type == FactureFournisseur::TYPE_STANDARD) {
+						print $langs->trans("CompensatedDebt").' ';
+					}
 					print $invoice->getNomUrl(0);
 					print '</span>';
 					print '</td>';
@@ -5717,7 +5730,6 @@ if ($action == 'create') {
 					if ($invoice->type == FactureFournisseur::TYPE_STANDARD) {
 						$compensated_amount += $obj->amount_ttc;
 					}
-					$resteapayeraffiche -= $obj->amount_ttc;
 				}
 			} else {
 				dol_print_error($db);
@@ -5766,16 +5778,6 @@ if ($action == 'create') {
 				print '</td><td class="right"><span class="amount">'.price(price2num($object->total_ttc - $creditnoteamount - $depositamount - $compensated_amount - $totalpaid, 'MT')).'</span></td><td>&nbsp;</td></tr>';
 				$resteapayeraffiche = 0;
 				$cssforamountpaymentcomplete = 'amountpaymentneutral';
-			}
-
-			// Billed
-			print '<tr><td colspan="'.$nbcols.'" class="right">';
-			print '<span class="opacitymedium">';
-			print $langs->trans("Billed");
-			if (getDolGlobalString('INVOICE_USE_SITUATION')) {
-				print '</td><td class="right">'.price(round($object->total_ttc - $object->prorata_discount * (1 + $avg_vat_rate), 2)).'</td><td>&nbsp;</td></tr>';
-			} else {
-				print '</td><td class="right">'.price($object->total_ttc).'</td><td>&nbsp;</td></tr>';
 			}
 
 			// Remaining to pay

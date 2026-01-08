@@ -316,3 +316,4 @@ AmountPaidMustMatchAmountOfDownPayment=Le montant payé doit correspondre au mon
 ProrataRate=Taux prorata
 SetProrataRate=Changer le taux de prorata
 ProrataRetain=Retenue prorata
+CompensatedDebt=Compensation de créance
