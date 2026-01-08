@@ -261,7 +261,7 @@ function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $
 		print '</div>';
 	}
 
-	if (getDolGlobalInt('TICKET_IMAGE_PUBLIC_INTERFACE')) {
+	if (getDolGlobalString('TICKET_IMAGE_PUBLIC_INTERFACE')) {
 		print '<div class="backimagepublicticket">';
 		print '<img id="idTICKET_IMAGE_PUBLIC_INTERFACE" src="'.getDolGlobalString('TICKET_IMAGE_PUBLIC_INTERFACE').'">';
 		print '</div>';
