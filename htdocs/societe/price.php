@@ -556,7 +556,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 
 		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder centpercent">';
+		print '<table class="noborder centpercent liste">';
 
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Ref").'</td>';

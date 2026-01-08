@@ -308,7 +308,7 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('formfilterac
 				}
 			}
 
-			if (!$updateoftaskdone) {  // Check to update progress if no update were done on task.
+			if (!$updateoftaskdone && GETPOSTISSET($tmptaskid.'progress')) {  // Check to update progress if no update were done on task.
 				$object->fetch($tmptaskid);
 				//var_dump($object->progress);
 				//var_dump(GETPOST($tmptaskid . 'progress', 'int')); exit;

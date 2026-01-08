@@ -60,8 +60,15 @@ $module = $object->module;
 $element = $object->element;
 
 $usesublevelpermission = ($module != $element ? $element : '');
-if ($usesublevelpermission && !isset($user->rights->$module->$element)) {	// There is no permission on object defined, we will check permission on module directly
-	$usesublevelpermission = '';
+$exclude = array('projet_task', 'project_task'); // for user rights compatibility
+if ($usesublevelpermission) {
+	if (!in_array($usesublevelpermission, $exclude)) {
+		if (!isset($user->rights->$module->$element)) {	// There is no permission on object defined, we will check permission on module directly
+			$usesublevelpermission = '';
+		}
+	} elseif (!isset($user->rights->$module)) {
+		$usesublevelpermission = '';
+	}
 }
 
 //print $object->id.' - '.$object->module.' - '.$object->element.' - '.$object->table_element.' - '.$usesublevelpermission."\n";

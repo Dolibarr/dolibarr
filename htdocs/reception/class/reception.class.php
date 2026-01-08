@@ -12,6 +12,7 @@
  * Copyright (C) 2016-2022	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018		Quentin Vial-Gouteyron  <quentin.vial-gouteyron@atm-consulting.fr>
  * Copyright (C) 2022-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2026		Mathieu Moulin			<mathieu@iprospective.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1033,7 +1034,10 @@ class Reception extends CommonObject
 		$this->db->begin();
 
 		// Stock control
-		if (isModEnabled('stock') && $conf->global->STOCK_CALCULATE_ON_RECEPTION && $this->statut > 0) {
+		if (isModEnabled('stock') &&
+			((getDolGlobalInt('STOCK_CALCULATE_ON_RECEPTION') && $this->statut > self::STATUS_DRAFT) ||
+			 (getDolGlobalInt('STOCK_CALCULATE_ON_RECEPTION_CLOSE') && $this->statut == self::STATUS_CLOSED))
+			) {
 			require_once DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php";
 
 			$langs->load("agenda");

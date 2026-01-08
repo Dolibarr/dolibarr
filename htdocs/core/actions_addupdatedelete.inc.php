@@ -351,9 +351,11 @@ if (preg_match('/^set(\w+)$/', $action, $reg) && GETPOST('id', 'int') > 0 && !em
 if ($action == "update_extras" && GETPOST('id', 'int') > 0 && !empty($permissiontoadd)) {
 	$object->fetch(GETPOST('id', 'int'));
 
+	$attribute = GETPOST('attribute', 'aZ09');
+
 	$error = 0;
 
-	$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
+	$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute);
 	if ($ret < 0) {
 		$error++;
 		setEventMessages($extrafields->error, $object->errors, 'errors');
