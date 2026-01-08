@@ -4931,9 +4931,8 @@ function dol_print_phone($phone, $countrycode = '', $contactid = 0, $socid = 0, 
 			$useridwarehouse = $user->fk_warehouse;
 			$warehousestatic = new entrepot($db);
 			$warehousestatic->fetch($useridwarehouse);
-		
 
-      $substitutionarray['__USER_WAREHOUSE_ID__'] = isset($warehousestatic->rowid) ? $warehousestatic->rowid : '';
+			$substitutionarray['__USER_WAREHOUSE_ID__'] = isset($warehousestatic->rowid) ? $warehousestatic->rowid : '';
 			$substitutionarray['__USER_WAREHOUSE_REF__'] = isset($warehousestatic->ref) ? $warehousestatic->ref : '';
 			$substitutionarray['__USER_WAREHOUSE_DESCRIPTION__'] = isset($warehousestatic->description) ? $warehousestatic->description : '';
 			$substitutionarray['__USER_WAREHOUSE_ADDRESS__'] = isset($warehousestatic->address) ? $warehousestatic->address : '';
