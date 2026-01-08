@@ -160,16 +160,17 @@ function isALNEQualifiedVersion($ignoredev = 0, $ignoremodule = 0)
  * Return if the application is executed with the LNE requirements on.
  * This function can be used to disable some features like custom receipts, or to enable others like showing the information "Certified LNE".
  *
- * @return 	boolean		True or false
+ * @param	int		$blockedlogtestalreadydone	Test on blockedlog used already done
+ * @return 	boolean								True or false
  */
-function isALNERunningVersion()
+function isALNERunningVersion($blockedlogtestalreadydone = 0)
 {
 	// For Debug help: Constant set by developer to force all LNE restrictions even if country is not France so we can test them on any dev instance.
 	// Note that you can force, with this option, the enabling of the LNE restrictions, but there is no way to force the disabling of the LNE restriction.
 	if (defined('CERTIF_LNE') && (int) constant('CERTIF_LNE') === 2) {
 		return true;
 	}
-	if (isModEnabled('blockedlog') && isBlockedLogUsed()) {
+	if (isModEnabled('blockedlog') && ($blockedlogtestalreadydone || isBlockedLogUsed())) {
 		return true;
 	}
 

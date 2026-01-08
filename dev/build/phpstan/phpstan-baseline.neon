@@ -2275,12 +2275,6 @@ parameters:
 			path: ../../../htdocs/compta/accounting-files.php
 
 		-
-			message: '#^Variable \$mc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 5
-			path: ../../../htdocs/compta/accounting-files.php
-
-		-
 			message: '#^Variable \$modulepart might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -2557,12 +2551,6 @@ parameters:
 			path: ../../../htdocs/compta/bank/treso.php
 
 		-
-			message: '#^Variable \$mc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/compta/bank/treso.php
-
-		-
 			message: '#^Call to function is_array\(\) with array will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -2643,7 +2631,7 @@ parameters:
 		-
 			message: '#^Loose comparison using \=\= between ''create''\|''start'' and ''close'' will always evaluate to false\.$#'
 			identifier: equal.alwaysFalse
-			count: 2
+			count: 1
 			path: ../../../htdocs/compta/cashcontrol/cashcontrol_card.php
 
 		-
@@ -3250,12 +3238,6 @@ parameters:
 			message: '#^Variable \$marginInfo might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
-			path: ../../../htdocs/compta/paiement/card.php
-
-		-
-			message: '#^Variable \$mc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
 			path: ../../../htdocs/compta/paiement/card.php
 
 		-
@@ -6849,7 +6831,7 @@ parameters:
 		-
 			message: '#^Left side of \|\| is always true\.$#'
 			identifier: booleanOr.leftAlwaysTrue
-			count: 4
+			count: 3
 			path: ../../../htdocs/core/menus/standard/eldy.lib.php
 
 		-
@@ -8077,12 +8059,6 @@ parameters:
 			path: ../../../htdocs/core/multicompany_page.php
 
 		-
-			message: '#^Variable \$mc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/core/multicompany_page.php
-
-		-
 			message: '#^Negated boolean expression is always false\.$#'
 			identifier: booleanNot.alwaysFalse
 			count: 1
@@ -8333,12 +8309,6 @@ parameters:
 			identifier: function.alreadyNarrowedType
 			count: 1
 			path: ../../../htdocs/core/website.inc.php
-
-		-
-			message: '#^Variable \$mc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/cron/card.php
 
 		-
 			message: '#^Call to function is_array\(\) with array will always evaluate to true\.$#'
@@ -9020,18 +8990,6 @@ parameters:
 
 		-
 			message: '#^Call to function property_exists\(\) with \$this\(CommandeFournisseur\) and ''billed'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.commande.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(CommandeFournisseur\) and ''socid'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.commande.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(CommandeFournisseur\) and ''total_tva'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
 			path: ../../../htdocs/fourn/class/fournisseur.commande.class.php
@@ -13657,12 +13615,6 @@ parameters:
 			path: ../../../htdocs/public/stripe/ipn.php
 
 		-
-			message: '#^Variable \$mc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/public/stripe/ipn.php
-
-		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
 			count: 1
@@ -14497,12 +14449,6 @@ parameters:
 			path: ../../../htdocs/salaries/virement_request.php
 
 		-
-			message: '#^Variable \$mc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/societe/admin/societe.php
-
-		-
 			message: '#^Call to function is_object\(\) with Societe will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -14739,12 +14685,6 @@ parameters:
 		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/societe/paymentmodes.php
-
-		-
-			message: '#^Left side of && is always true\.$#'
-			identifier: booleanAnd.leftAlwaysTrue
 			count: 1
 			path: ../../../htdocs/societe/paymentmodes.php
 
@@ -15415,12 +15355,6 @@ parameters:
 			path: ../../../htdocs/user/card.php
 
 		-
-			message: '#^Variable \$mc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/user/card.php
-
-		-
 			message: '#^Call to function method_exists\(\) with \$this\(User\) and ''getLibStatut'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -15571,12 +15505,6 @@ parameters:
 			path: ../../../htdocs/user/document.php
 
 		-
-			message: '#^Variable \$mc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/user/group/card.php
-
-		-
 			message: '#^Loose comparison using \!\= between '''' and '''' will always evaluate to false\.$#'
 			identifier: notEqual.alwaysFalse
 			count: 1
@@ -15595,34 +15523,10 @@ parameters:
 			path: ../../../htdocs/user/group/list.php
 
 		-
-			message: '#^Variable \$mc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/user/group/list.php
-
-		-
-			message: '#^Variable \$mc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/user/group/perms.php
-
-		-
-			message: '#^Variable \$mc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/user/hierarchy.php
-
-		-
 			message: '#^Variable \$mode in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
 			path: ../../../htdocs/user/hierarchy.php
-
-		-
-			message: '#^Variable \$mc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/user/home.php
 
 		-
 			message: '#^Offset ''u\.salary'' on array\{u\.salary\: \(float\|int\)\} in isset\(\) always exists and is not nullable\.$#'
@@ -15633,12 +15537,6 @@ parameters:
 		-
 			message: '#^Offset ''val'' on array\{val\: array\{u\.salary\: \(float\|int\)\}, nbfield\: int\<0, max\>, pos\?\: non\-empty\-array\<int, ''u\.salary''\>\} in isset\(\) always exists and is not nullable\.$#'
 			identifier: isset.offset
-			count: 1
-			path: ../../../htdocs/user/list.php
-
-		-
-			message: '#^Variable \$mc might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/user/list.php
 

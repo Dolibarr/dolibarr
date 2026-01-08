@@ -42,6 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonorder.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.orderline.class.php';
 require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
+require_once DOL_DOCUMENT_ROOT.'/subtotals/class/commonsubtotal.class.php';
 if (isModEnabled('productbatch')) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 }
@@ -52,6 +53,8 @@ if (isModEnabled('productbatch')) {
  */
 class CommandeFournisseur extends CommonOrder
 {
+	use CommonSubtotal;
+
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -2005,7 +2008,7 @@ class CommandeFournisseur extends CommonOrder
 	 *	@param      int				$fk_prod_fourn_price	Id supplier price
 	 *	@param      string			$ref_supplier			Supplier reference price
 	 *	@param      float			$remise_percent  		Remise
-	 *	@param      'HT'|'TTC'		$price_base_type		HT or TTC
+	 *	@param      'HT'|'TTC'|''	$price_base_type		HT or TTC or '' for subtotals
 	 *	@param		float			$pu_ttc					Unit price TTC (used if $price_base_type is 'TTC')
 	 *	@param		int<0,1>		$type					Type of line (0=product, 1=service)
 	 *	@param		int				$info_bits				More information
@@ -2277,6 +2280,13 @@ class CommandeFournisseur extends CommonOrder
 						}
 
 						$this->lines[] = $this->line;
+					} else {
+						foreach ($this->lines as $line) {
+							if ($line->id == $origin_id) {
+								$this->line->extraparams = $line->extraparams;
+								$this->line->setExtraParameters();
+							}
+						}
 					}
 
 					$this->db->commit();

@@ -1185,7 +1185,7 @@ class BlockedLog
 	 */
 	public function create($user, $forcesignature = '')
 	{
-		global $conf, $langs;
+		global $conf, $langs, $mysoc;
 
 		$langs->load('blockedlog');
 
@@ -1237,7 +1237,8 @@ class BlockedLog
 		$this->object_format = 'V1';	// TODO Switch to V2 when v2 support is complete
 
 		try {
-			$previoushash = $this->getPreviousHash(1, 0); // This get last record and lock database until insert is done and transaction closed
+			$tmparray = $this->getPreviousHash(1, 0); // This get last record and lock database until insert is done and transaction closed
+			$previoushash = $tmparray['previoushash'];
 
 			$concatenateddata = $this->buildKeyForSignature();	// All the information for the hash (meta data + data saved)
 
@@ -1322,6 +1323,33 @@ class BlockedLog
 
 				$this->db->commit();
 
+				include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+				if (isALNERunningVersion(1) && $mysoc->country_code == 'FR') {
+					// TODO Push last rowid + signature to remote dolibarr server
+					// TODO Do it only selected events: BILL_VALIDATE
+
+					// Code here is similar to the one into printCodeForPing()
+					$url_for_ping = getDolGlobalString('MAIN_URL_FOR_PING', "https://ping.dolibarr.org/");
+
+					include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+					$hash_unique_id = dol_hash('dolibarr'.$conf->file->instance_unique_id, 'sha256');	// Note: if the global salt changes, this hash changes too so ping may be counted twice. We don't mind. It is for statistics and inventory purpose only.
+
+					$data = 'action=dolibarrtrack';
+					$data .= '&hash_algo=dol_hash-sha256';
+					$data .= '&hash_unique_id='.urlencode($hash_unique_id);
+					$data .= '&version='.(float) DOL_VERSION;
+					$data .= '&version_full='.urlencode(DOL_VERSION);
+					$data .= '&entity='.(int) $conf->entity;
+
+					$addheaders = array();
+					$timeoutconnect = 1;
+					$timeoutresponse = 1;
+
+					// $result = getURLContent($url_for_ping, 'POST', $data, 1, $addheaders, 'https', 0, -1, $timeoutconnect, $timeoutresponse);
+					// Add a warning in log in case of error
+					//
+				}
+
 				return $this->id;
 			} else {
 				$this->db->rollback();
@@ -1333,7 +1361,7 @@ class BlockedLog
 			return -1;
 		}
 
-		// The commit will release the lock so we can insert nex record
+		// The commit or rollback will release the lock so app can insert other record now
 	}
 
 	/**
@@ -1346,7 +1374,8 @@ class BlockedLog
 	public function checkSignature($previoushash = '', $returnarray = 0)
 	{
 		if (empty($previoushash)) {
-			$previoushash = $this->getPreviousHash(0, $this->id);
+			$tmparray = $this->getPreviousHash(0, $this->id);
+			$previoushash = $tmparray['previoushash'];
 		}
 
 		$concatenateddata = '';
@@ -1464,16 +1493,17 @@ class BlockedLog
 	}
 
 	/**
-	 *	Get previous signature/hash in chain
+	 *	Get previous signature/hash in chain. If there is no previous line, return the init hash.
 	 *
-	 *	@param int<0,1>	$withlock		1=With a lock
-	 *	@param int		$beforeid		ID of a record
-	 *  @return	string					Hash of previous record (if beforeid is defined) or hash of last record (if beforeid is 0)
+	 *	@param int<0,1>	$withlock			1=With a lock
+	 *	@param int		$beforeid			ID of a record
+	 *  @return	array<string, int|string>	Hash of previous record (if beforeid is defined) or hash of last record (if beforeid is 0)
 	 */
 	public function getPreviousHash($withlock = 0, $beforeid = 0)
 	{
 		global $conf;
 
+		$previousid = 0;
 		$previoussignature = '';
 
 		// Fast search of previous record by searching with beforeid - 1. This is very fast and will work 99% of time.
@@ -1487,6 +1517,7 @@ class BlockedLog
 			if ($resql) {
 				$obj = $this->db->fetch_object($resql);
 				if ($obj) {
+					$previousid = $obj->rowid;
 					$previoussignature = $obj->signature;
 				}
 			} else {
@@ -1496,6 +1527,7 @@ class BlockedLog
 		}
 
 		if (empty($previoussignature)) {
+			// Note: a select max rowid and then a select to get signature seems not faster due to filter on entity
 			$sql = "SELECT rowid, signature FROM ".MAIN_DB_PREFIX."blockedlog";
 			if ($beforeid) {
 				$sql .= $this->db->hintindex('entity_rowid', 1);
@@ -1511,6 +1543,7 @@ class BlockedLog
 			if ($resql) {
 				$obj = $this->db->fetch_object($resql);
 				if ($obj) {
+					$previousid = $obj->rowid;
 					$previoussignature = $obj->signature;
 				}
 			} else {
@@ -1521,10 +1554,11 @@ class BlockedLog
 
 		if (empty($previoussignature)) {
 			// First signature line (line 0)
+			$previousid = 0;
 			$previoussignature = $this->getOrInitFirstSignature();
 		}
 
-		return $previoussignature;
+		return array('previousid' => $previousid, 'previoussignature' => $previoussignature);
 	}
 
 	/**

@@ -1,5 +1,5 @@
 ---
-exclude: (?x)^( htdocs/includes/ckeditor/.*|(\.(?!github/workflows)[^/]*/.*))$
+exclude: (?x)^( htdocs/includes/ckeditor/.*|htdocs/public/includes/ckeditor/.*|(\.(?!github/workflows)[^/]*/.*))$
 repos:
   # Several miscellaneous checks and fix (on yaml files, end of files fix)
   - repo: https://github.com/pre-commit/pre-commit-hooks

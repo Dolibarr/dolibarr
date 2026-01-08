@@ -4231,6 +4231,7 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/core/modules/modCommercial.class.php',
 		'/core/modules/modProduit.class.php',
 		'/core/modules/modSkype.class.php',
+		'/core/modules/modactivite.class.php',		// A file from external module that should not be here
 		'/core/triggers/interface_modWebcalendar_Webcalsynchro.class.php',
 		'/core/triggers/interface_modCommande_Ecotax.class.php',
 		'/core/triggers/interface_modCommande_fraisport.class.php',

@@ -1350,6 +1350,11 @@ class Conf extends stdClass
 				$this->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
 			}
 
+			if (!isset($this->global->MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER)) {
+				// Note value is always forced to 1 in API context to avoid bind SQL injection into API filters.
+				$this->global->MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER = 0;		// TODO Move this into 1 by default
+			}
+
 			// For backward compatibility
 			if (!empty($this->global->LDAP_SYNCHRO_ACTIVE)) {
 				if ($this->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap') {

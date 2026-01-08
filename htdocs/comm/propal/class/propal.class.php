@@ -615,7 +615,7 @@ class Propal extends CommonObject
 	 *  	@param		float			$txlocaltax2		Local tax 2 rate (deprecated, use instead txtva with code inside)
 	 *		@param    	int				$fk_product      	Product/Service ID predefined
 	 * 		@param    	float			$remise_percent  	Pourcentage de remise de la ligne
-	 * 		@param    	string			$price_base_type	HT or TTC
+	 * 		@param    	'HT'|'TTC'|''	$price_base_type	HT or TTC or '' for subtotals
 	 * 		@param    	float			$pu_ttc             Prix unitaire TTC
 	 * 		@param    	int				$info_bits			Bits for type of lines
 	 *      @param      int				$type               Type of line (0=product, 1=service). Not used if fk_product is defined, the type of product is used.

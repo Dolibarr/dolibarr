@@ -4507,10 +4507,9 @@ if ($action == 'create') {
 
 		// Bank Account
 		if (isModEnabled("bank")) {
-			print '<tr><td>'.$langs->trans('BankAccount').'</td><td colspan="2">';
+			print '<tr><td>'.$langs->trans('DefaultBankAccount').'</td><td colspan="2">';
 			print img_picto('', 'bank_account', 'class="pictofixedwidth"');
 			print $form->select_comptes((int) $fk_account, 'fk_account', 0, '', 1, '', 0, 'maxwidth250 widthcentpercentminusx', 1);
-			//print ' <a href="'.DOL_URL_ROOT.'/compta/bank/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id.($fac_rec ? '&fac_rec='.$fac_rec : '')).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("NewBankAccount").'"></span></a>';
 			print '</td></tr>';
 		}
 
@@ -5544,7 +5543,7 @@ if ($action == 'create') {
 		if (isModEnabled("bank")) {
 			print '<tr><td class="nowrap">';
 			print '<table class="nobordernopadding centpercent"><tr><td class="nowrap">';
-			print $langs->trans('BankAccount');
+			print $langs->trans('DefaultBankAccount');
 			print '<td>';
 			if (($action != 'editbankaccount') && $usercancreate) {
 				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
