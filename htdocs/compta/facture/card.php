@@ -1710,25 +1710,25 @@ if (empty($reshook)) {
 
 										// Date start
 										$date_start = false;
-										if ($lines[$i]->date_debut_prevue) {
+										if (isset($lines[$i]->date_debut_prevue)) {
 											$date_start = $lines[$i]->date_debut_prevue;
 										}
-										if ($lines[$i]->date_debut_reel) {
+										if (isset($lines[$i]->date_debut_reel)) {
 											$date_start = $lines[$i]->date_debut_reel;
 										}
-										if ($lines[$i]->date_start) {
+										if (isset($lines[$i]->date_start)) {
 											$date_start = $lines[$i]->date_start;
 										}
 
 										// Date end
 										$date_end = false;
-										if ($lines[$i]->date_fin_prevue) {
+										if (isset($lines[$i]->date_fin_prevue)) {
 											$date_end = $lines[$i]->date_fin_prevue;
 										}
-										if ($lines[$i]->date_fin_reel) {
+										if (isset($lines[$i]->date_fin_reel)) {
 											$date_end = $lines[$i]->date_fin_reel;
 										}
-										if ($lines[$i]->date_end) {
+										if (isset($lines[$i]->date_end)) {
 											$date_end = $lines[$i]->date_end;
 										}
 
@@ -1779,8 +1779,8 @@ if (empty($reshook)) {
 											$lines[$i]->pa_ht,
 											$label,
 											$array_options,
-											$lines[$i]->situation_percent,
-											$lines[$i]->fk_prev_id,
+											$lines[$i]->situation_percent ?? 100,
+											$lines[$i]->fk_prev_id ?? 0,
 											$lines[$i]->fk_unit,
 											0,
 											'',
@@ -5128,9 +5128,9 @@ if ($action == 'create') {
 			$total_next_ht = $total_next_ttc = 0;
 
 			foreach ($object->tab_next_situation_invoice as $next_invoice) {
-				$totalpaid = $next_invoice->getSommePaiement(0);
-				$totalcreditnotes = $next_invoice->getSumCreditNotesUsed(0);
-				$totaldeposits = $next_invoice->getSumDepositsUsed(0);
+				$next_invoice_total_paid = $next_invoice->getSommePaiement(0);
+				$next_invoice_totalcreditnotes = $next_invoice->getSumCreditNotesUsed(0);
+				$next_invoice_totaldeposits = $next_invoice->getSumDepositsUsed(0);
 				$total_next_ht += $next_invoice->total_ht;
 				$total_next_ttc += $next_invoice->total_ttc;
 
@@ -5143,7 +5143,7 @@ if ($action == 'create') {
 				}
 				print '<td class="right"><span class="amount">'.price($next_invoice->total_ht).'</span></td>';
 				print '<td class="right"><span class="amount">'.price($next_invoice->total_ttc).'</span></td>';
-				print '<td class="right">'.$next_invoice->getLibStatut(3, $totalpaid + $totalcreditnotes + $totaldeposits).'</td>';
+				print '<td class="right">'.$next_invoice->getLibStatut(3, $next_invoice_total_paid + $next_invoice_totalcreditnotes + $next_invoice_totaldeposits).'</td>';
 				print '</tr>';
 			}
 
@@ -5796,10 +5796,9 @@ if ($action == 'create') {
 				}
 			}
 
-			// For situation invoice with excess received
+			// For situation invoice
 			if ($object->statut > Facture::STATUS_DRAFT
 				&& $object->type == Facture::TYPE_SITUATION
-				&& ($object->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits) > 0
 				&& $usercancreate
 				&& !$objectidnext
 				&& $object->is_last_in_cycle()

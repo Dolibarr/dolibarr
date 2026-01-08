@@ -128,7 +128,7 @@ tools:
                 enabled:              true
             # Disabled unused code. In most cases, we want to keep it.
             unused_code:
-                enabled:              false		
+                enabled:              false
             deprecation_checks:
                 enabled:              true
             useless_function_calls:

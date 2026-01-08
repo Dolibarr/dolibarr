@@ -608,6 +608,11 @@ while ($i < min($num, $limit)) {
 		$totalarray['val']['amount'] += $objp->amount;
 	}
 
+	// Fields from hook
+	$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$objp, 'i'=>$i, 'totalarray'=>&$totalarray);
+	$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+
 	// Buttons
 	print '<td></td>';
 	if (!$i) {

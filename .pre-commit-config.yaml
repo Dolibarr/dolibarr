@@ -82,7 +82,7 @@ repos:
         pass_filenames: false # Run on all files
       - id: php-lint
         exclude:
-          (?x)^(htdocs/includes/symfony/var-dumper/Tests/.*)$	  
+          (?x)^(htdocs/includes/symfony/var-dumper/Tests/.*)$
       - id: php-stan
         stages: [manual]
         files: \.(php)$

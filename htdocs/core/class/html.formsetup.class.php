@@ -80,6 +80,10 @@ class FormSetup
 	 */
 	public $formHiddenInputs = array();
 
+	/**
+	 * @var string[] $errors
+	 */
+	public $errors = array();
 
 	/**
 	 * Constructor
@@ -253,10 +257,9 @@ class FormSetup
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('formSetupBeforeSaveConfFromPost', $parameters, $this); // Note that $action and $object may have been modified by some hooks
 		if ($reshook < 0) {
-			$this->setErrors($hookmanager->errors);
+			$this->errors = $hookmanager->errors;
 			return -1;
 		}
-
 		if ($reshook > 0) {
 			return $reshook;
 		}
