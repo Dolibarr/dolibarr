@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Antoine Iauch           <aiauch@gpcsolutions.fr>
- * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -252,7 +252,7 @@ if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {
 $name = array();
 
 // Show array
-print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 // Extra parameters management
 foreach ($headerparams as $key => $value) {

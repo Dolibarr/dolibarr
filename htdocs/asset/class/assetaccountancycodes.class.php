@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2021  Open-Dsi  <support@open-dsi.fr>
- * Copyright (C) 2024		MDW			<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2021		Open-Dsi					<support@open-dsi.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,8 +69,8 @@ class AssetAccountancyCodes extends CommonObject
 		'economic' => array(
 			'label' => 'AssetAccountancyCodeDepreciationEconomic',
 			'table'	=> 'asset_accountancy_codes_economic',
-			'depreciation_debit' => 'depreciation_asset',
-			'depreciation_credit' => 'depreciation_expense',
+			'depreciation_debit' => 'depreciation_expense',
+			'depreciation_credit' => 'depreciation_asset',
 			'fields' => array(
 				'asset' => array('label' => 'AssetAccountancyCodeAsset'),
 				'depreciation_asset' => array('label' => 'AssetAccountancyCodeDepreciationAsset'),
@@ -84,8 +85,8 @@ class AssetAccountancyCodes extends CommonObject
 		'accelerated_depreciation' => array(
 			'label' => 'AssetAccountancyCodeDepreciationAcceleratedDepreciation',
 			'table'	=> 'asset_accountancy_codes_fiscal',
-			'depreciation_debit' => 'accelerated_depreciation',
-			'depreciation_credit' => 'endowment_accelerated_depreciation',
+			'depreciation_debit' => 'endowment_accelerated_depreciation',
+			'depreciation_credit' => 'accelerated_depreciation',
 			'fields' => array(
 				'accelerated_depreciation' => array('label' => 'AssetAccountancyCodeAcceleratedDepreciation'),
 				'endowment_accelerated_depreciation' => array('label' => 'AssetAccountancyCodeEndowmentAcceleratedDepreciation'),

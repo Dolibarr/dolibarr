@@ -20,4 +20,3 @@ CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_recruitment_recruitm
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_recruitment_recruitmentjobposition_extrafields FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_recruitment_recruitmentcandidature FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_recruitment_recruitmentcandidature_extrafields FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
-

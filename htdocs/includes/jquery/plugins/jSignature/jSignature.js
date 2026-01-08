@@ -1,8 +1,8 @@
-/** @preserve 
+/** @preserve
 jSignature v2 "${buildDate}" "${commitID}"
 Copyright (c) 2012 Willow Systems Corp http://willow-systems.com
 Copyright (c) 2010 Brinley Ang http://www.unbolt.net
-MIT License <http://www.opensource.org/licenses/mit-license.php> 
+MIT License <http://www.opensource.org/licenses/mit-license.php>
 
 */
 ;(function() {
@@ -25,7 +25,7 @@ var KickTimerClass = function(time, callback) {
 		timer = setTimeout(
 			callback
 			, time
-		)		
+		)
 	}
 	this.clear = function() {
 		clearTimeout(timer)
@@ -35,7 +35,7 @@ var KickTimerClass = function(time, callback) {
 
 var PubSubClass = function(context){
 	'use strict'
-	/*  @preserve 
+	/*  @preserve
 	-----------------------------------------------------------------------------------------------
 	JavaScript PubSub library
 	2012 (c) Willow Systems Corp (www.willow-systems.com)
@@ -68,7 +68,7 @@ var PubSubClass = function(context){
 
 			for (i = 0, l = currentTopic.length; i < l; i++) {
 				pair = currentTopic[i] // this is a [function, once_flag] array
-				fn = pair[0] 
+				fn = pair[0]
 				if (pair[1] /* 'run once' flag set */){
 				  pair[0] = function(){}
 				  toremove.push(i)
@@ -81,13 +81,13 @@ var PubSubClass = function(context){
 		}
 	}
 	/**
-	 * Allows listener code to subscribe to channel and be called when data is available 
+	 * Allows listener code to subscribe to channel and be called when data is available
 	 * @public
 	 * @function
 	 * @param topic {String} Name of the channel on which to voice this event
 	 * @param callback {Function} Executable (function pointer) that will be ran when event is voiced on this channel.
 	 * @param once {Boolean} (optional. False by default) Flag indicating if the function is to be triggered only once.
-	 * @returns {Object} A token object that cen be used for unsubscribing.  
+	 * @returns {Object} A token object that cen be used for unsubscribing.
 	 */
 	this.subscribe = function(topic, callback, once) {
 		'use strict'
@@ -102,15 +102,15 @@ var PubSubClass = function(context){
 		};
 	};
 	/**
-	 * Allows listener code to unsubscribe from a channel 
+	 * Allows listener code to unsubscribe from a channel
 	 * @public
 	 * @function
-	 * @param token {Object} A token object that was returned by `subscribe` method 
+	 * @param token {Object} A token object that was returned by `subscribe` method
 	 */
 	this.unsubscribe = function(token) {
 		if (this.topics[token.topic]) {
 			var currentTopic = this.topics[token.topic]
-			
+
 			for (var i = 0, l = currentTopic.length; i < l; i++) {
 				if (currentTopic[i][0] === token.callback) {
 					currentTopic.splice(i, 1)
@@ -127,7 +127,7 @@ function getColors($e){
 	, frontcolor = $e.css('color')
 	, backcolor
 	, e = $e[0]
-	
+
 	var toOfDOM = false
 	while(e && !backcolor && !toOfDOM){
 		try{
@@ -192,18 +192,18 @@ function getColors($e){
 //				backcolorcomponents = {'r':0,'g':0,'b':0}
 //			}
 	}
-	
+
 	// Deriving Decor color
-	// THis is LAZY!!!! Better way would be to use HSL and adjust luminocity. However, that could be an overkill. 
-	
-	var toRGBfn = function(o){return 'rgb(' + [o.r, o.g, o.b].join(', ') + ')'} 
+	// THis is LAZY!!!! Better way would be to use HSL and adjust luminocity. However, that could be an overkill.
+
+	var toRGBfn = function(o){return 'rgb(' + [o.r, o.g, o.b].join(', ') + ')'}
 	, decorcolorcomponents
 	, frontcolorbrightness
 	, adjusted
-	
+
 	if (frontcolorcomponents && backcolorcomponents){
 		var backcolorbrightness = Math.max.apply(null, [frontcolorcomponents.r, frontcolorcomponents.g, frontcolorcomponents.b])
-		
+
 		frontcolorbrightness = Math.max.apply(null, [backcolorcomponents.r, backcolorcomponents.g, backcolorcomponents.b])
 		adjusted = Math.round(frontcolorbrightness + (-1 * (frontcolorbrightness - backcolorbrightness) * 0.75)) // "dimming" the difference between pen and back.
 		decorcolorcomponents = {'r':adjusted,'g':adjusted,'b':adjusted} // always shade of gray
@@ -231,7 +231,7 @@ function Vector(x,y){
 	this.x = x
 	this.y = y
 	this.reverse = function(){
-		return new this.constructor( 
+		return new this.constructor(
 			this.x * -1
 			, this.y * -1
 		)
@@ -243,7 +243,7 @@ function Vector(x,y){
 		}
 		return this._length
 	}
-	
+
 	var polarity = function (e){
 		return Math.round(e / Math.abs(e))
 	}
@@ -267,12 +267,12 @@ function Vector(x,y){
 		}
 		return this
 	}
-	
+
 	/**
 	 * Calculates the angle between 'this' vector and another.
 	 * @public
 	 * @function
-	 * @returns {Number} The angle between the two vectors as measured in PI. 
+	 * @returns {Number} The angle between the two vectors as measured in PI.
 	 */
 	this.angleTo = function(vectorB) {
 		var divisor = this.getLength() * vectorB.getLength()
@@ -283,8 +283,8 @@ function Vector(x,y){
 			// because of it, the core of the formula can, on occasion, have values
 			// over 1.0 and below -1.0.
 			return Math.acos(
-				Math.min( 
-					Math.max( 
+				Math.min(
+					Math.max(
 						( this.x * vectorB.x + this.y * vectorB.y ) / divisor
 						, -1.0
 					)
@@ -298,7 +298,7 @@ function Vector(x,y){
 function Point(x,y){
 	this.x = x
 	this.y = y
-	
+
 	this.getVectorToCoordinates = function (x, y) {
 		return new Vector(x - this.x, y - this.y)
 	}
@@ -316,17 +316,17 @@ function Point(x,y){
 /*
  * About data structure:
  * We don't store / deal with "pictures" this signature capture code captures "vectors"
- * 
+ *
  * We don't store bitmaps. We store "strokes" as arrays of arrays. (Actually, arrays of objects containing arrays of coordinates.
- * 
+ *
  * Stroke = mousedown + mousemoved * n (+ mouseup but we don't record that as that was the "end / lack of movement" indicator)
- * 
+ *
  * Vectors = not classical vectors where numbers indicated shift relative last position. Our vectors are actually coordinates against top left of canvas.
- * 			we could calc the classical vectors, but keeping the the actual coordinates allows us (through Math.max / min) 
+ * 			we could calc the classical vectors, but keeping the the actual coordinates allows us (through Math.max / min)
  * 			to calc the size of resulting drawing very quickly. If we want classical vectors later, we can always get them in backend code.
- * 
+ *
  * So, the data structure:
- * 
+ *
  * var data = [
  * 	{ // stroke starts
  * 		x : [101, 98, 57, 43] // x points
@@ -341,9 +341,9 @@ function Point(x,y){
  * 		, y : [151] // y points
  * 	} // stroke ends
  * ]
- * 
+ *
  * we don't care or store stroke width (it's canvas-size-relative), color, shadow values. These can be added / changed on whim post-capture.
- * 
+ *
  */
 function DataEngine(storageObject, context, startStrokeFn, addToStrokeFn, endStrokeFn){
 	this.data = storageObject // we expect this to be an instance of Array
@@ -354,7 +354,7 @@ function DataEngine(storageObject, context, startStrokeFn, addToStrokeFn, endStr
 		var numofstrokes = storageObject.length
 		, stroke
 		, numofpoints
-		
+
 		for (var i = 0; i < numofstrokes; i++){
 			stroke = storageObject[i]
 			numofpoints = stroke.x.length
@@ -367,13 +367,13 @@ function DataEngine(storageObject, context, startStrokeFn, addToStrokeFn, endStr
 	}
 
 	this.changed = function(){}
-	
+
 	this.startStrokeFn = startStrokeFn
 	this.addToStrokeFn = addToStrokeFn
 	this.endStrokeFn = endStrokeFn
 
 	this.inStroke = false
-	
+
 	this._lastPoint = null
 	this._stroke = null
 	this.startStroke = function(point){
@@ -383,7 +383,7 @@ function DataEngine(storageObject, context, startStrokeFn, addToStrokeFn, endStr
 			this._lastPoint = point
 			this.inStroke = true
 			// 'this' does not work same inside setTimeout(
-			var stroke = this._stroke 
+			var stroke = this._stroke
 			, fn = this.startStrokeFn
 			, context = this.context
 			setTimeout(
@@ -402,8 +402,8 @@ function DataEngine(storageObject, context, startStrokeFn, addToStrokeFn, endStr
 	// when clustering of these is too tight, it produces noise on the line, which, because of smoothing, makes lines too curvy.
 	// maybe, later, we can expose this as a configurable setting of some sort.
 	this.addToStroke = function(point){
-		if (this.inStroke && 
-			typeof(point.x) === "number" && 
+		if (this.inStroke &&
+			typeof(point.x) === "number" &&
 			typeof(point.y) === "number" &&
 			// calculates absolute shift in diagonal pixels away from original point
 			(Math.abs(point.x - this._lastPoint.x) + Math.abs(point.y - this._lastPoint.y)) > 4
@@ -412,7 +412,7 @@ function DataEngine(storageObject, context, startStrokeFn, addToStrokeFn, endStr
 			this._stroke.x.push(point.x)
 			this._stroke.y.push(point.y)
 			this._lastPoint = point
-			
+
 			var stroke = this._stroke
 			, fn = this.addToStrokeFn
 			, context = this.context
@@ -478,7 +478,7 @@ var basicDot = function(ctx, x, y, size){
 	// Because we are funky this way, here we draw TWO curves.
 	// 1. POSSIBLY "this line" - spanning from point right before us, to this latest point.
 	// 2. POSSIBLY "prior curve" - spanning from "latest point" to the one before it.
-	
+
 	// Why you ask?
 	// long lines (ones with many pixels between them) do not look good when they are part of a large curvy stroke.
 	// You know, the jaggedy crocodile spine instead of a pretty, smooth curve. Yuck!
@@ -486,23 +486,23 @@ var basicDot = function(ctx, x, y, size){
 	// To approximate a very nice curve we need to know the direction of line before and after.
 	// Hence, on long lines we actually wait for another point beyond it to come back from
 	// mousemoved before we draw this curve.
-	
-	// So for "prior curve" to be calc'ed we need 4 points 
+
+	// So for "prior curve" to be calc'ed we need 4 points
 	// 	A, B, C, D (we are on D now, A is 3 points in the past.)
 	// and 3 lines:
-	//  pre-line (from points A to B), 
-	//  this line (from points B to C), (we call it "this" because if it was not yet, it's the only one we can draw for sure.) 
+	//  pre-line (from points A to B),
+	//  this line (from points B to C), (we call it "this" because if it was not yet, it's the only one we can draw for sure.)
 	//  post-line (from points C to D) (even through D point is 'current' we don't know how we can draw it yet)
 	//
 	// Well, actually, we don't need to *know* the point A, just the vector A->B
 	var Cpoint = new Point(stroke.x[positionInStroke-1], stroke.y[positionInStroke-1])
 		, Dpoint = new Point(stroke.x[positionInStroke], stroke.y[positionInStroke])
 		, CDvector = Cpoint.getVectorToPoint(Dpoint)
-		
+
 	// Again, we have a chance here to draw TWO things:
-	//  BC Curve (only if it's long, because if it was short, it was drawn by previous callback) and 
+	//  BC Curve (only if it's long, because if it was short, it was drawn by previous callback) and
 	//  CD Line (only if it's short)
-	
+
 	// So, let's start with BC curve.
 	// if there is only 2 points in stroke array, we don't have "history" long enough to have point B, let alone point A.
 	// Falling through to drawing line CD is proper, as that's the only line we have points for.
@@ -530,7 +530,7 @@ var basicDot = function(ctx, x, y, size){
 			, CCP2vector = (new Vector(BCvector.x + CDvector.x, BCvector.y + CDvector.y)).reverse().resizeTo(
 				Math.max(minlenfraction, BCDangle) * maxlen
 			)
-			
+
 			basicCurve(
 				this.canvasContext
 				, Bpoint.x
@@ -558,23 +558,23 @@ var basicDot = function(ctx, x, y, size){
 	// this = jSignatureClass instance
 
 	// Here we tidy up things left unfinished in last strokeAddCallback run.
-	
+
 	// What's POTENTIALLY left unfinished there is the curve between the last points
 	// in the stroke, if the len of that line is more than lineCurveThreshold
 	// If the last line was shorter than lineCurveThreshold, it was drawn there, and there
 	// is nothing for us here to do.
-	// We can also be called when there is only one point in the stroke (meaning, the 
+	// We can also be called when there is only one point in the stroke (meaning, the
 	// stroke was just a dot), in which case, again, there is nothing for us to do.
-				
-	// So for "this curve" to be calc'ed we need 3 points 
+
+	// So for "this curve" to be calc'ed we need 3 points
 	// 	A, B, C
 	// and 2 lines:
-	//  pre-line (from points A to B), 
-	//  this line (from points B to C) 
+	//  pre-line (from points A to B),
+	//  this line (from points B to C)
 	// Well, actually, we don't need to *know* the point A, just the vector A->B
 	// so, we really need points B, C and AB vector.
 	var positionInStroke = stroke.x.length - 1
-	
+
 	if (positionInStroke > 0){
 		// there are at least 2 points in the stroke.we are in business.
 		var Cpoint = new Point(stroke.x[positionInStroke], stroke.y[positionInStroke])
@@ -649,7 +649,7 @@ var getDataStats = function(){
 function conditionallyLinkCanvasResizeToWindowResize(jSignatureInstance, settingsWidth, apinamespace, globalEvents){
 	'use strict'
 	if ( settingsWidth === 'ratio' || settingsWidth.split('')[settingsWidth.length - 1] === '%' ) {
-		
+
 		this.eventTokens[apinamespace + '.parentresized'] = globalEvents.subscribe(
 			apinamespace + '.parentresized'
 			, (function(eventTokens, $parent, originalParentWidth, sizeRatio){
@@ -660,9 +660,9 @@ function conditionallyLinkCanvasResizeToWindowResize(jSignatureInstance, setting
 
 					var w = $parent.width()
 					if (w !== originalParentWidth) {
-					
+
 						// UNsubscribing this particular instance of signature pad only.
-						// there is a separate `eventTokens` per each instance of signature pad 
+						// there is a separate `eventTokens` per each instance of signature pad
 						for (var key in eventTokens){
 							if (eventTokens.hasOwnProperty(key)) {
 								globalEvents.unsubscribe(eventTokens[key])
@@ -677,21 +677,21 @@ function conditionallyLinkCanvasResizeToWindowResize(jSignatureInstance, setting
 								delete jSignatureInstance[key]
 							}
 						}
-						
+
 						// scale data to new signature pad size
 						settings.data = (function(data, scale){
 							var newData = []
 							var o, i, l, j, m, stroke
 							for ( i = 0, l = data.length; i < l; i++) {
                             	stroke = data[i]
-                            	
+
                             	o = {'x':[],'y':[]}
-                            	
+
                             	for ( j = 0, m = stroke.x.length; j < m; j++) {
                                 	o.x.push(stroke.x[j] * scale)
                                 	o.y.push(stroke.y[j] * scale)
                                 }
-                            
+
                             	newData.push(o)
                             }
 							return newData
@@ -699,7 +699,7 @@ function conditionallyLinkCanvasResizeToWindowResize(jSignatureInstance, setting
 							settings.data
 							, w * 1.0 / originalParentWidth
 						)
-						
+
 						$parent[apinamespace](settings)
 			        }
 				}
@@ -732,7 +732,7 @@ function jSignatureClass(parent, options, instanceExtensions) {
 		,'showUndoButton': false
 		,'data': []
 	}
-	
+
 	$.extend(settings, getColors($parent))
 	if (options) {
 		$.extend(settings, options)
@@ -776,7 +776,7 @@ function jSignatureClass(parent, options, instanceExtensions) {
 			return Math.max(
 				Math.round(canvasWidth / 400) /*+1 pixel for every extra 300px of width.*/
 				, 2 /* minimum line width */
-			) 
+			)
 		} else {
 			return defaultLineWidth
 		}
@@ -830,7 +830,7 @@ function jSignatureClass(parent, options, instanceExtensions) {
 		this.drawStartHandler = function(e) {
 			e.preventDefault()
 			// for performance we cache the offsets
-			// we recalc these only at the beginning the stroke			
+			// we recalc these only at the beginning the stroke
 			setStartValues()
 			jSignatureInstance.dataEngine.startStroke( getPointFromEvent(e) )
 			timer.kick()
@@ -839,7 +839,7 @@ function jSignatureClass(parent, options, instanceExtensions) {
 			e.preventDefault()
 			if (!jSignatureInstance.dataEngine.inStroke){
 				return
-			} 
+			}
 			jSignatureInstance.dataEngine.addToStroke( getPointFromEvent(e) )
 			timer.kick()
 		}
@@ -866,7 +866,7 @@ function jSignatureClass(parent, options, instanceExtensions) {
 				canvas.onmousemove = undef
 
 				this.fatFingerCompensation = (
-					settings.minFatFingerCompensation && 
+					settings.minFatFingerCompensation &&
 					settings.lineWidth * -3 > settings.minFatFingerCompensation
 				) ? settings.lineWidth * -3 : settings.minFatFingerCompensation
 
@@ -888,7 +888,7 @@ function jSignatureClass(parent, options, instanceExtensions) {
 				canvas.onmousemove = drawMoveHandler
 			}
 		}
-	}).call( 
+	}).call(
 		this
 		, movementHandlers.drawEndHandler
 		, movementHandlers.drawStartHandler
@@ -918,7 +918,7 @@ function jSignatureClass(parent, options, instanceExtensions) {
 		, settings.width.toString(10)
 		, apinamespace, globalEvents
 	)
-	
+
 	// end of event handlers.
 	// ===============================
 
@@ -944,7 +944,7 @@ jSignatureClass.prototype.resetCanvas = function(data){
 
 	, cw = canvas.width
 	, ch = canvas.height
-	
+
 	// preparing colors, drawing area
 
 	ctx.clearRect(0, 0, cw + 30, ch + 30)
@@ -952,13 +952,13 @@ jSignatureClass.prototype.resetCanvas = function(data){
 	ctx.shadowColor = ctx.fillStyle = settings['background-color']
 	if (isCanvasEmulator){
 		// FLashCanvas fills with Black by default, covering up the parent div's background
-		// hence we refill 
+		// hence we refill
 		ctx.fillRect(0,0,cw + 30, ch + 30)
 	}
 
 	ctx.lineWidth = Math.ceil(parseInt(settings.lineWidth, 10))
 	ctx.lineCap = ctx.lineJoin = "round"
-	
+
 	// signature line
 	ctx.strokeStyle = settings['decor-color']
 	ctx.shadowOffsetX = 0
@@ -971,13 +971,13 @@ jSignatureClass.prototype.resetCanvas = function(data){
 		ctx.shadowColor = ctx.strokeStyle
 		ctx.shadowOffsetX = ctx.lineWidth * 0.5
 		ctx.shadowOffsetY = ctx.lineWidth * -0.6
-		ctx.shadowBlur = 0					
+		ctx.shadowBlur = 0
 	}
-	
+
 	// setting up new dataEngine
 
 	if (!data) { data = [] }
-	
+
 	var dataEngine = this.dataEngine = new DataEngine(
 		data
 		, this
@@ -996,7 +996,7 @@ jSignatureClass.prototype.resetCanvas = function(data){
 		'use strict'
 		return function() {
 			events.publish(apinamespace+'.change')
-			target.trigger('change') 
+			target.trigger('change')
 		}
 	})(this.$parent, this.events, apinamespace)
 	// let's trigger change on all data reloads
@@ -1026,9 +1026,9 @@ function initializeCanvasEmulator(canvas){
 
 		if (FC) {
 			canvas = FC.initElement(canvas)
-			
+
 			var zoom = 1
-			// FlashCanvas uses flash which has this annoying habit of NOT scaling with page zoom. 
+			// FlashCanvas uses flash which has this annoying habit of NOT scaling with page zoom.
 			// It matches pixel-to-pixel to screen instead.
 			// Since we are targeting ONLY IE 7, 8 with FlashCanvas, we will test the zoom only the IE8, IE7 way
 			if (window && window.screen && window.screen.deviceXDPI && window.screen.logicalXDPI){
@@ -1105,7 +1105,7 @@ jSignatureClass.prototype.initializeCanvas = function(settings) {
 
 	canvas.width = $canvas.width()
 	canvas.height = $canvas.height()
-	
+
 	// Special case Sizing code
 
 	this.isCanvasEmulator = initializeCanvasEmulator(canvas)
@@ -1124,7 +1124,7 @@ jSignatureClass.prototype.initializeCanvas = function(settings) {
 var GlobalJSignatureObjectInitializer = function(window){
 
 	var globalEvents = new PubSubClass()
-	
+
 	// common "window resized" event listener.
 	// jSignature instances will subscribe to this chanel.
 	// to resize themselves when needed.
@@ -1144,7 +1144,7 @@ var GlobalJSignatureObjectInitializer = function(window){
 			if (resizetimer) {
                 clearTimeout(resizetimer)
 			}
-			resizetimer = setTimeout( 
+			resizetimer = setTimeout(
 				runner
 				, 500
 			)
@@ -1163,10 +1163,10 @@ var GlobalJSignatureObjectInitializer = function(window){
 		/*
 		'exampleExtension':function(extensionName){
 			// we are called very early in instance's life.
-			// right after the settings are resolved and 
-			// jSignatureInstance.events is created 
+			// right after the settings are resolved and
+			// jSignatureInstance.events is created
 			// and right before first ("jSignature.initializing") event is called.
-			// You don't really need to manupilate 
+			// You don't really need to manupilate
 			// jSignatureInstance directly, just attach
 			// a bunch of events to jSignatureInstance.events
 			// (look at the source of jSignatureClass to see when these fire)
@@ -1210,12 +1210,12 @@ var GlobalJSignatureObjectInitializer = function(window){
 		, 'image':function(data){
 			/*this = canvas elem */
 			var imagestring = this.toDataURL()
-			
-			if (typeof imagestring === 'string' && 
-				imagestring.length > 4 && 
+
+			if (typeof imagestring === 'string' &&
+				imagestring.length > 4 &&
 				imagestring.slice(0,5) === 'data:' &&
 				imagestring.indexOf(',') !== -1){
-				
+
 				var splitterpos = imagestring.indexOf(',')
 
 				return [
@@ -1230,9 +1230,9 @@ var GlobalJSignatureObjectInitializer = function(window){
 	// will be part of "importplugins"
 	function _renderImageOnCanvas( data, formattype, rerendercallable ) {
 		'use strict'
-		// #1. Do NOT rely on this. No worky on IE 
+		// #1. Do NOT rely on this. No worky on IE
 		//   (url max len + lack of base64 decoder + possibly other issues)
-		// #2. This does NOT affect what is captured as "signature" as far as vector data is 
+		// #2. This does NOT affect what is captured as "signature" as far as vector data is
 		// concerned. This is treated same as "signature line" - i.e. completely ignored
 		// the only time you see imported image data exported is if you export as image.
 
@@ -1240,13 +1240,13 @@ var GlobalJSignatureObjectInitializer = function(window){
 		// because importing image does absolutely nothing to the underlying vector data storage
 		// This could be a way to "import" old signatures stored as images
 		// This could also be a way to import extra decor into signature area.
-		
+
 		var img = new Image()
 		// this = Canvas DOM elem. Not jQuery object. Not Canvas's parent div.
 		, c = this
 
 		img.onload = function() {
-			var ctx = c.getContext("2d").drawImage( 
+			var ctx = c.getContext("2d").drawImage(
 				img, 0, 0
 				, ( img.width < c.width) ? img.width : c.width
 				, ( img.height < c.height) ? img.height : c.height
@@ -1281,7 +1281,7 @@ var GlobalJSignatureObjectInitializer = function(window){
 		if (formattype === undef && typeof data === 'string' && data.substr(0,5) === 'data:') {
 			formattype = data.slice(5).split(',')[0]
 			// 5 chars of "data:" + mimetype len + 1 "," char = all skipped.
-			data = data.slice(6 + formattype.length) 
+			data = data.slice(6 + formattype.length)
 			if (formattype === data) return
 		}
 
@@ -1294,7 +1294,7 @@ var GlobalJSignatureObjectInitializer = function(window){
 				$canvas[0]
 				, data
 				, formattype
-				, (function(jSignatureInstance){ 
+				, (function(jSignatureInstance){
 					return function(){ return jSignatureInstance.resetCanvas.apply(jSignatureInstance, arguments) }
 				})($canvas.data(apinamespace+'.this'))
 			)
@@ -1319,7 +1319,7 @@ var GlobalJSignatureObjectInitializer = function(window){
 		'init' : function( options ) {
 			return this.each( function() {
 				if (!elementIsOrphan(this)) {
-					new jSignatureClass(this, options, jSignatureInstanceExtensions)					
+					new jSignatureClass(this, options, jSignatureInstanceExtensions)
 				}
 			})
 		}
@@ -1353,7 +1353,7 @@ var GlobalJSignatureObjectInitializer = function(window){
 		, 'getData' : function( formattype ) {
 			var undef, $canvas=this.find('canvas.'+apinamespace).add(this.filter('canvas.'+apinamespace))
 			if (formattype === undef) formattype = 'default'
-			if ($canvas.length !== 0 && exportplugins.hasOwnProperty(formattype)){				
+			if ($canvas.length !== 0 && exportplugins.hasOwnProperty(formattype)){
 				return exportplugins[formattype].call(
 					$canvas.get(0) // canvas dom elem
 					, $canvas.data(apinamespace+'.data') // raw signature data as array of objects of arrays
@@ -1373,7 +1373,7 @@ var GlobalJSignatureObjectInitializer = function(window){
 					.data(apinamespace+'.this').events
 		}
 	} // end of methods declaration.
-	
+
 	$.fn[apinamespace] = function(method) {
 		'use strict'
 		if ( !method || typeof method === 'object' ) {

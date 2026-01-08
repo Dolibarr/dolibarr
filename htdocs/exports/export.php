@@ -144,10 +144,12 @@ $entitytolang = array(
 	'bomline'      => 'BOMLine',
 	'mrp'          => 'ManufacturingOrder',
 	'mrp_line'     => 'ManufacturingOrderLine',
+	'conferenceorbooth' => 'ConferenceOrBooth',
 	'conferenceorboothattendee' => 'Attendee',
 	'inventory'   => 'Inventory',
 	'inventory_line' => 'InventoryLine'
 );
+
 
 $array_selected = isset($_SESSION["export_selected_fields"]) ? $_SESSION["export_selected_fields"] : array();
 $array_filtervalue = isset($_SESSION["export_filtered_fields"]) ? $_SESSION["export_filtered_fields"] : array();
@@ -158,10 +160,11 @@ $step = GETPOSTINT("step") ? GETPOSTINT("step") : 1;
 $export_name = GETPOST("export_name", "alphanohtml");
 $hexa = GETPOST("hexa", "alpha");
 $exportmodelid = GETPOSTINT("exportmodelid");
-$field = GETPOST("field", "alpha");
+$field = (string) GETPOST("field", "alpha");
 
 $objexport = new Export($db);
 $objexport->load_arrays($user, $datatoexport);
+
 
 $objmodelexport = new ModeleExports($db);
 $form = new Form($db);
@@ -470,9 +473,25 @@ if ($step == 1 || !$datatoexport) {
 
 	print dol_get_fiche_head($head, $hselected, 'Export', -1, 'download');
 
-	print '<div class="opacitymedium">'.$langs->trans("SelectExportDataSet").'</div><br>';
+	print '<div class="opacitymedium">'.$langs->trans("SelectExportDataSet").'</div>';
 
-	// Affiche les modules d'exports
+
+	// Define $nbmodulesnotautoenabled - TODO This code is at different places
+	$nbmodulesnotautoenabled = count($conf->modules);
+	$listofmodulesautoenabled = array('user', 'agenda', 'fckeditor', 'export', 'import');
+	foreach ($listofmodulesautoenabled as $moduleautoenable) {
+		if (in_array($moduleautoenable, $conf->modules)) {
+			$nbmodulesnotautoenabled--;
+		}
+	}
+
+	if ($user->admin && $nbmodulesnotautoenabled < getDolGlobalInt('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only minimal initial modules enabled
+		print info_admin($langs->trans("WarningOnlyProfilesOfActivatedModules").' '.$langs->trans("YouCanEnableModulesFrom"));
+	}
+
+	print '<br>';
+
+	// Show profiles for export
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent nomarginbottom">';
 	print '<tr class="liste_titre">';
@@ -623,7 +642,7 @@ if ($step == 2 && $datatoexport) {
 		$entityicon = strtolower(!empty($entitytoicon[$entity]) ? $entitytoicon[$entity] : $entity);
 		$entitylang = (!empty($entitytolang[$entity]) ? $entitytolang[$entity] : $entity);
 
-		print '<td class="nowrap">';
+		print '<td class="nowraponall">';
 		// If value of entityicon=entitylang='icon:Label'
 		//print $code.'-'.$label.'-'.$entity;
 
@@ -1005,6 +1024,7 @@ if ($step == 4 && $datatoexport) {
 	// Select request if all fields are selected
 	$sqlmaxforexport = $objexport->build_sql(0, array(), array());
 
+	print '<br>';
 	print '<div class="marginbottomonly"><span class="opacitymedium">'.$langs->trans("ChooseFieldsOrdersAndTitle").'</span></div>';
 
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
@@ -1335,15 +1355,16 @@ if ($step == 5 && $datatoexport) {
 	}
 	$htmltabloflibs .= '</table><br>';
 
+	print '<br>';
 	print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NowClickToGenerateToBuildExportFile"), $htmltabloflibs, 1, 'help', '', 0, 2, 'helphonformat').'</span>';
 	//print $htmltabloflibs;
-	print '<br>';
 
 	print '</div>';
 
 
 	if ($sqlusedforexport && $user->admin) {
-		print info_admin($langs->trans("SQLUsedForExport").':<br> '.$sqlusedforexport, 0, 0, '1', '', 'TechnicalInformation');
+		print info_admin($langs->trans("SQLUsedForExport").':<br> '.$sqlusedforexport, 0, 0, '1', '', 'TechnicalInformation').'<br>';
+		print '<br>';
 	}
 
 

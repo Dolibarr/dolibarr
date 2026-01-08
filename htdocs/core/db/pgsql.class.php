@@ -325,13 +325,13 @@ class DoliDBPgsql extends DoliDB
 
 			// To have PostgreSQL case sensitive
 			$count_like = 0;
-			$line = str_replace(' LIKE \'', ' ILIKE \'', $line, $count_like);
+			$line = str_replace(" LIKE '", " ILIKE '", $line, $count_like);
 			if (getDolGlobalString('PSQL_USE_UNACCENT') && $count_like > 0) {
 				// @see https://docs.PostgreSQL.fr/11/unaccent.html : 'unaccent()' function must be installed before
 				$line = preg_replace('/\s+(\(+\s*)([a-zA-Z0-9\-\_\.]+) ILIKE /', ' \1unaccent(\2) ILIKE ', $line);
 			}
 
-			$line = str_replace(' LIKE BINARY \'', ' LIKE \'', $line);
+			$line = str_replace(" LIKE BINARY '", " LIKE '", $line);
 
 			// Replace INSERT IGNORE into INSERT
 			$line = preg_replace('/^INSERT IGNORE/', 'INSERT', $line);
@@ -855,18 +855,20 @@ class DoliDBPgsql extends DoliDB
 	/**
 	 * Get last ID after an insert INSERT
 	 *
-	 * @param   string	$tab    	Table name concerned by insert. Ne sert pas sous MySql mais requis pour compatibilite avec PostgreSQL
+	 * @param   string	$table    	Table name concerned by insert.
 	 * @param	string	$fieldid	Field name
-	 * @return  int     			Id of row
+	 * @return  int     			Id of row or -1 if error
 	 */
-	public function last_insert_id($tab, $fieldid = 'rowid')
+	public function last_insert_id($table, $fieldid = 'rowid')
 	{
 		// phpcs:enable
-		//$result = pg_query($this->db,"SELECT MAX(".$fieldid.") FROM ".$tab);
-		$result = pg_query($this->db, "SELECT currval('".$tab."_".$fieldid."_seq')");
+		$sequencename = $table."_".$fieldid."_seq";
+
+		//$result = pg_query($this->db,"SELECT MAX(".$fieldid.") FROM ".$table);
+		$result = pg_query($this->db, "SELECT currval('".$sequencename."')");
 		if (!$result) {
 			print pg_last_error($this->db);
-			exit;
+			return -1;
 		}
 		//$nbre = pg_num_rows($result);
 		$row = pg_fetch_result($result, 0, 0);
@@ -1511,5 +1513,36 @@ class DoliDBPgsql extends DoliDB
 		*/
 
 		return array();
+	}
+
+	/**
+	 * Get the last ID of an auto-increment field of a table
+	 *
+	 * @param 	string 		$table 	Name of table
+	 * @return 	int		 			Next ID or < 0 if error
+	 */
+	public function getNextAutoIncrementId($table)
+	{
+		return $this->last_insert_id($table, 'rowid') + 1;
+	}
+
+
+	/**
+	 * Prepare a SQL statement for execution (PostgreSQL prepared statement)
+	 *
+	 * @param string $sql The SQL query to prepare
+	 * @return string|false The name of the prepared statement on success, or false on failure
+	 */
+	public function prepare($sql)
+	{
+		$stmtname = uniqid('dolipgstmt_'); // Generate a unique identifier for the statement
+
+		$result = pg_prepare($this->db, $stmtname, $sql);
+		if (!$result) {
+			$this->lasterror = pg_last_error($this->db);
+			return false;
+		}
+
+		return $stmtname; // We just return the name of the prepared statement
 	}
 }

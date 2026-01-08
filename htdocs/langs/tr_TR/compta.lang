@@ -3,10 +3,10 @@ MenuFinancial=Faturalama | Ödeme
 TaxModuleSetupToModifyRules=Hesaplama kurallarını değiştirmek için <a href="%s">Vergi modülü ayarları</a> na git
 TaxModuleSetupToModifyRulesLT=Hesaplama kurallarını değiştirmek için <a href="%s">Firma ayarları</a>na git
 OptionMode=Muhasebe seçeneği
-OptionModeTrue=Tahakkuk muhasebesi
-OptionModeVirtual=Nakit usulü muhasebe
-OptionModeTrueDesc=Bu bağlamda ciro, ödemeler üzerinden (ödeme tarihi) hesaplanır. Rakamların geçerliliği, ancak muhasebenin ödemelerdeki girdi/çıktı üzerinden incelenmesiyle sağlanır.
+OptionModeVirtual=Tahakkuk muhasebesi
+OptionModeTrue=Nakit usulü muhasebe
 OptionModeVirtualDesc=Bu bağlamda, ciro faturalar üzerinden (doğrulama tarihi) hesaplanır.  Bu faturalar işlendiğinde, ödenmiş ya da ödenmemiş olmasına bakılmadan, ciro listesinde görüntülenir.
+OptionModeTrueDesc=Bu bağlamda ciro, ödemeler üzerinden (ödeme tarihi) hesaplanır. Rakamların geçerliliği, ancak muhasebenin ödemelerdeki girdi/çıktı üzerinden incelenmesiyle sağlanır.
 FeatureIsSupportedInInOutModeOnly=Özellik yalnızca ALACAKLAR-BORÇLAR muhasebe modunda geçerlidir (Muhasebe modülü yapılandırmasına bak)
 VATReportBuildWithOptionDefinedInModule=Burada gösterilen tutarlar vergi modülü kurulumu tarafından tanımlanan kurallar kullanılarak hesaplanır.
 LTReportBuildWithOptionDefinedInModule=Burada gösterilen tutarlar Firma ayarları tarafından tanımlanan kurallar kullanılarak hesaplanır.
@@ -302,7 +302,6 @@ ByVatRate=Satış vergisi oranına göre
 TurnoverbyVatrate=Satış vergisi oranına göre faturalandırılan ciro
 TurnoverCollectedbyVatrate=Satış vergisi oranına göre toplanan ciro
 PurchasebyVatrate=Satış vergisi oranına göre satın alma
-LabelToShow=Kısa etiket
 PurchaseTurnover=Satın alma cirosu
 PurchaseTurnoverCollected=Toplanan satın alma cirosu
 RulesPurchaseTurnoverDue=- Tedarikçinin ödenmiş olsun ya da olmasın vadesi gelen faturalarını içerir. <br>- Bu faturaların fatura tarihi temel alınır.<br>
@@ -329,3 +328,4 @@ RuleForLinesDates=Satır tarihleri için kural
 Prepaid=Ön ödemeli
 Postpaid=Faturalı
 SetRuleForLinesDates=Satır tarihleri için kural belirleyin
+SomeNotConvertedCreditNoteExists=There is <b>%s</b> credit notes not yet converted for consumption

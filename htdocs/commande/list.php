@@ -17,6 +17,7 @@
  * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2024		William Mead			    <william.mead@manchenumerique.fr>
+ * Copyright (C) 2025		Lenin Rivas			    	<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,14 +70,14 @@ if (isModEnabled('category')) {
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('orders', 'sendings', 'deliveries', 'companies', 'compta', 'bills', 'stocks', 'products'));
+$langs->loadLangs(array('orders', 'sendings', 'companies', 'compta', 'bills', 'stocks', 'products'));
 
 // Get Parameters
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:int');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'orderlist';
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode        = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
@@ -204,7 +205,7 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 $fieldstosearchall = array(
 	'c.ref' => 'Ref',
 	'c.ref_client' => 'RefCustomerOrder',
-	'pd.description' => 'Description',
+	'pd.description' => 'ProductDescription',
 	's.nom' => "ThirdParty",
 	's.name_alias' => "AliasNameShort",
 	's.zip' => "Zip",
@@ -406,7 +407,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	if ($massaction == 'confirm_createbills') {   // Create bills from orders.
-		$orders = GETPOST('toselect', 'array');
+		$orders = GETPOST('toselect', 'array:int');
 		$createbills_onebythird = GETPOSTINT('createbills_onebythird');
 		$validate_invoices = GETPOSTINT('validate_invoices');
 
@@ -453,7 +454,7 @@ if (empty($reshook)) {
 					$objecttmp->ref_client = $cmd->ref_client;
 				}
 
-				if (empty($objecttmp->note_public)) {
+				if (empty($objecttmp->note_public) && getDolGlobalInt("MAXREFONDOC", 10)>0) {
 					$objecttmp->note_public =  $langs->transnoentities("Orders");
 				}
 
@@ -464,7 +465,7 @@ if (empty($reshook)) {
 
 				$objecttmp->date = $datefacture;
 				$objecttmp->origin    = 'commande';
-				$objecttmp->origin_id = $id_order;
+				$objecttmp->origin_id = (int) $id_order;
 
 				$objecttmp->array_options = $cmd->array_options; // Copy extrafields
 
@@ -490,6 +491,36 @@ if (empty($reshook)) {
 				if ($res == 0) {
 					$errors[] = $cmd->ref.' : '.$langs->trans($objecttmp->errors[0]);
 					$error++;
+				}
+
+				// Linked Expeditions
+				if (getDolGlobalString('ORDER_MASS_ACTION_BILLED_LINK_EXPEDITIONS')) {
+					$cmd->fetchObjectLinked();
+					// Add object linked
+					if (!$error && $cmd->id && !empty($cmd->linkedObjectsIds['shipping']) && is_array($cmd->linkedObjectsIds['shipping'])) {
+						$cmd->linked_objects = $cmd->linkedObjectsIds;
+						foreach ($cmd->linked_objects as $origin_type => $tmp_origin_id) {
+							// IF more of same type
+							if ($origin_type == 'shipping') {
+								if (is_array($tmp_origin_id)) {       // New behaviour, if linked_object can have several links per type, so is something like array('contract'=>array(id1, id2, ...))
+									foreach ($tmp_origin_id as $origin_id) {
+										$res = $objecttmp->add_object_linked($origin_type, $origin_id);
+										if (!$res) {
+											$errors[] = $cmd->ref.' : '.$langs->trans($objecttmp->errors[0]);
+											$error++;
+										}
+									}
+								} else { // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
+									$origin_id = $tmp_origin_id;
+									$res = $objecttmp->add_object_linked($origin_type, $origin_id);
+									if (!$res) {
+										$errors[] = $cmd->ref.' : '.$langs->trans($objecttmp->errors[0]);
+										$error++;
+									}
+								}
+							}
+						}
+					}
 				}
 
 				if (!$error) {
@@ -606,6 +637,13 @@ if (empty($reshook)) {
 								$lines[$i]->fk_unit
 							);
 							if ($result > 0) {
+								if (!empty($lines[$i]->extraparams)) {
+									$factureLine = new FactureLigne($db);
+									$factureLine->id = $result;
+									$factureLine->extraparams = $lines[$i]->extraparams;
+									$factureLine->setExtraParameters();
+								}
+
 								$lineid = $result;
 							} else {
 								$lineid = 0;
@@ -808,7 +846,7 @@ if ($action == 'validate' && $permissiontoadd && $objectclass !== null) {
 					} else {
 						$idwarehouse = 0;
 					}
-					if ($objecttmp->valid($user, $idwarehouse)) {
+					if ($objecttmp->valid($user, $idwarehouse) > 0) {
 						setEventMessages($langs->trans('hasBeenValidated', $objecttmp->ref), null, 'mesgs');
 					} else {
 						setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
@@ -925,9 +963,6 @@ $help_url = "EN:Module_Customers_Orders|FR:Module_Commandes_Clients|ES:Módulo_P
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = 'SELECT';
-if ($search_all) {
-	$sql = 'SELECT DISTINCT';
-}
 $sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client,';
 $sql .= " s.parent as fk_parent,";
 $sql .= " s2.nom as name2,";
@@ -967,9 +1002,6 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = 
 $sql .= ', '.MAIN_DB_PREFIX.'commande as c';
 if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande_extrafields as ef on (c.rowid = ef.fk_object)";
-}
-if ($search_all) {
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'commandedet as pd ON c.rowid = pd.fk_commande';
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = c.fk_projet";
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON c.fk_user_author = u.rowid';
@@ -1026,7 +1058,12 @@ if ($search_status != '') {
 	}
 }
 if ($search_option == 'late') {
-	$sql .= " AND c.date_commande < '".$db->idate(dol_now() - $conf->order->client->warning_delay)."'";
+	// Use delivery date if set and not disabled, otherwise use order date.
+	if (!getDolGlobalString('ORDER_DISABLE_DELIVERY_DATE')) {
+		$sql .= " AND ((c.date_livraison IS NOT NULL AND c.date_livraison < '".$db->idate(dol_now() - $conf->order->client->warning_delay)."') OR (c.date_livraison IS NULL AND c.date_commande < '".$db->idate(dol_now() - $conf->order->client->warning_delay)."'))";
+	} else {
+		$sql .= " AND c.date_commande < '".$db->idate(dol_now() - $conf->order->client->warning_delay)."'";
+	}
 }
 if ($search_datecloture_start) {
 	$sql .= " AND c.date_cloture >= '".$db->idate($search_datecloture_start)."'";
@@ -1135,7 +1172,7 @@ if ($search_pos_source) {
 	$sql .= natural_search("c.pos_source", $search_pos_source);
 }
 if ($search_import_key) {
-	$sql .= natural_search("s.import_key", $search_import_key);
+	$sql .= natural_search("c.import_key", $search_import_key);
 }
 // Search on user
 if ($search_user > 0) {
@@ -1252,13 +1289,35 @@ $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $objec
 $sql .= $hookmanager->resPrint;
 
 if ($search_all) {
-	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
+	// Prepare the $sqltoadd for fields pd.* that need a test by doing a "or exits"
+	$sqltoadd = '';
+	$fieldstosearchallwithoutpd = array();
+	$fieldstosearchallwithpd = array();
+	foreach ($fieldstosearchall as $key => $val) {
+		if (!preg_match('/^pd\./', $key)) {
+			$fieldstosearchallwithoutpd[$key] = $val;
+		} else {
+			$fieldstosearchallwithpd[$key] = $val;
+		}
+	}
+
+	if (count($fieldstosearchallwithpd) > 0) {
+		$sqltoadd .= " OR EXISTS (SELECT pd.rowid FROM ".MAIN_DB_PREFIX."commandedet as pd WHERE pd.fk_commande = c.rowid";
+		$sqltoadd .= natural_search(array_keys($fieldstosearchallwithpd), '__KEYTOSEARCH__');
+		$sqltoadd .= ')';
+	}
+
+	$sql .= natural_search(array_keys($fieldstosearchallwithoutpd), $search_all, 0, 0, $sqltoadd);
 }
 
 // Add HAVING from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
+if (empty($reshook)) {
+	$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
+} else {
+	$sql = $hookmanager->resPrint;
+}
 //print $sql;
 
 // Count total nb of records
@@ -1275,7 +1334,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -1522,6 +1581,9 @@ $arrayofmassactions = array(
 	'generate_doc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
 	'builddoc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 );
+if (isModEnabled('category') && $user->hasRight("commande", "lire")) {
+	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
+}
 if ($permissiontovalidate) {
 	$arrayofmassactions['prevalidate'] = img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate");
 }
@@ -1814,7 +1876,7 @@ if (!empty($arrayfields['country.code_iso']['checked'])) {
 }
 // Company type
 if (!empty($arrayfields['typent.code']['checked'])) {
-	print '<td class="liste_titre maxwidthonsmartphone" align="center">';
+	print '<td class="liste_titre maxwidthonsmartphone center">';
 	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (!getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), '', 1);
 	print '</td>';
 }
@@ -2376,7 +2438,7 @@ while ($i < $imaxinloop) {
 	} else {
 		// Show line of result
 		$j = 0;
-		print '<tr data-rowid="'.$object->id.'" class="oddeven status'.$generic_commande->status.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->status > 1) ? ' opacitymedium' : '').'">';
+		print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select status'.$generic_commande->status.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->status > 1) ? ' opacitymedium' : '').'">';
 
 		// Action column
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -2555,7 +2617,7 @@ while ($i < $imaxinloop) {
 
 		// Country
 		if (!empty($arrayfields['country.code_iso']['checked'])) {
-			print '<td class="center">';
+			print '<td class="center tdoverflowmax100">';
 			$tmparray = getCountry($obj->fk_pays, 'all');
 			print $tmparray['label'];
 			print '</td>';
@@ -2569,9 +2631,12 @@ while ($i < $imaxinloop) {
 			if (!is_array($typenArray) || count($typenArray) == 0) {
 				$typenArray = $formcompany->typent_array(1);
 			}
-			print '<td class="center tdoverflowmax100" title="'.dolPrintHTMLForAttribute($typenArray[$obj->typent_code]).'">';
 			if (!empty($obj->typent_code)) {
+				print '<td class="center tdoverflowmax100" title="'.dolPrintHTMLForAttribute($typenArray[$obj->typent_code]).'">';
 				print $typenArray[$obj->typent_code];
+			} else {
+				print '<td class="center tdoverflowmax100">';
+				print '';
 			}
 			print '</td>';
 			if (!$i) {
@@ -2908,8 +2973,8 @@ while ($i < $imaxinloop) {
 
 		// Note public
 		if (!empty($arrayfields['c.note_public']['checked'])) {
-			print '<td class="flat maxwidth250imp">';
-			print '<div class="small lineheightsmall">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_public), 5).'</div>';
+			print '<td class="sensiblehtmlcontent maxwidth250imp classfortooltip" title="'.dolPrintHTMLForAttribute(dolGetFirstLineOfText($obj->note_public, 20)).'">';
+			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_public, 5)).'</div>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2918,8 +2983,8 @@ while ($i < $imaxinloop) {
 
 		// Note private
 		if (!empty($arrayfields['c.note_private']['checked'])) {
-			print '<td class="flat maxwidth250imp">';
-			print '<div class="small lineheightsmall">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_private), 5).'</div>';
+			print '<td class="sensiblehtmlcontent maxwidth250imp classfortooltip" title="'.dolPrintHTMLForAttribute(dolGetFirstLineOfText($obj->note_private, 20)).'">';
+			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_private, 5)).'</div>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2017-2022  OpenDSI     <support@open-dsi.fr>
+/* Copyright (C) 2017-2022	OpenDSI						<support@open-dsi.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024       Alexandre Janniaux <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024-2025	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024		Alexandre Janniaux			<alexandre.janniaux@gmail.com>
+ * Copyright (C) 2025		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -217,7 +218,7 @@ class AccountingJournal extends CommonObject
 
 		$result = '';
 
-		$url = DOL_URL_ROOT.'/accountancy/admin/journals_list.php?id=35';
+		$url = dolBuildUrl(DOL_URL_ROOT.'/accountancy/admin/journals_list.php', ['id' => 35]);
 
 		$label = '<u>'.$langs->trans("ShowAccountingJournal").'</u>';
 		if (!empty($this->code)) {
@@ -375,7 +376,24 @@ class AccountingJournal extends CommonObject
 		} elseif (empty($reshook)) {
 			switch ($this->nature) {
 				case 1: // Various Journal
-					$data = $this->getAssetData($user, $type, $date_start, $date_end, $in_bookkeeping);
+					if (isModEnabled('asset') && !getDolGlobalInt('ACCOUNTING_DISABLE_TRANSFER_ON_ASSETS')) {
+						$tmp = $this->getAssetData($user, $type, $date_start, $date_end, $in_bookkeeping);
+						if (is_array($tmp)) {
+							$data = array_merge($data, $tmp);
+						}
+					}
+					if (isModEnabled('invoice') && !getDolGlobalInt('ACCOUNTING_DISABLE_TRANSFER_ON_DISCOUNTS')) {
+						$tmp = $this->getDiscountCustomer($user, $type, $date_start, $date_end, $in_bookkeeping);
+						if (is_array($tmp)) {
+							$data = array_merge($data, $tmp);
+						}
+					}
+					if (isModEnabled('supplier_invoice') && !getDolGlobalInt('ACCOUNTING_DISABLE_TRANSFER_ON_DISCOUNTS')) {
+						$tmp = $this->getDiscountSupplier($user, $type, $date_start, $date_end, $in_bookkeeping);
+						if (is_array($tmp)) {
+							$data = array_merge($data, $tmp);
+						}
+					}
 					break;
 					//              case 2: // Sells Journal
 					//              case 3: // Purchases Journal
@@ -429,6 +447,7 @@ class AccountingJournal extends CommonObject
 		$sql .= " FROM " . MAIN_DB_PREFIX . "asset_depreciation as ad";
 		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "asset as a ON a.rowid = ad.fk_asset";
 		$sql .= " WHERE a.entity IN (" . getEntity('asset', 0) . ')'; // We don't share object for accountancy, we use source object sharing
+		$sql .= " AND a.status > 0";
 		if ($in_bookkeeping == 'already') {
 			$sql .= " AND EXISTS (SELECT iab.fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS iab WHERE iab.fk_docdet = ad.rowid AND doc_type = 'asset')";
 		} elseif ($in_bookkeeping == 'notyet') {
@@ -507,7 +526,7 @@ class AccountingJournal extends CommonObject
 
 			$element = array(
 				'ref' => dol_trunc($element_static->ref, 16, 'right', 'UTF-8', 1),
-				'error' => array_key_exists('error', $pre_data_info) ? $pre_data_info['error'] : '',
+				'error' => array_key_exists('error', $pre_data_info) ? $pre_data_info['error'] : '',  // @phpstan-ignore-line
 				'blocks' => array(),
 			);
 
@@ -524,7 +543,7 @@ class AccountingJournal extends CommonObject
 					$account_infos = $this->getAccountingAccountInfos($account);
 
 					if ($type == 'view') {
-						$account_to_show = length_accounta($account);
+						$account_to_show = length_accountg($account);
 						if (($account_to_show == "") || $account_to_show == 'NotDefined') {
 							$account_to_show = '<span class="error">' . $langs->trans("AssetInAccountNotDefined") . '</span>';
 						}
@@ -644,7 +663,7 @@ class AccountingJournal extends CommonObject
 									$account_infos = $this->getAccountingAccountInfos($account);
 
 									if ($type == 'view') {
-										$account_to_show = length_accounta($account);
+										$account_to_show = length_accountg($account);
 										if (($account_to_show == "") || $account_to_show == 'NotDefined') {
 											$account_to_show = '<span class="error">' . $langs->trans("AssetInAccountNotDefined") . '</span>';
 										}
@@ -707,6 +726,624 @@ class AccountingJournal extends CommonObject
 			$journal_data[(int) $pre_data_id] = $element;
 		}
 		unset($pre_data);
+
+		return $journal_data;
+	}
+
+	/**
+	 *  Get customer discount (escompte) data for various journal
+	 *
+	 * @param	User						$user				User who get infos
+	 * @param	'view'|'bookkeeping'|'csv'	$type				Type data returned ('view', 'bookkeeping', 'csv')
+	 * @param	?int						$date_start			Filter 'start date'
+	 * @param	?int						$date_end			Filter 'end date'
+	 * @param	'already'|'notyet'			$in_bookkeeping		Filter 'in bookkeeping' ('already', 'notyet')
+	 * @return	int<-1,-1>|array<int,array{ref:string,error:?string,blocks:array<array<array{date:string,piece:string,account_accounting:string,subledger_account:string,label_operation:string,debit:string,credit:string}|array{doc_date:''|int,date_lim_reglement:string,doc_ref:string,date_creation:int,doc_type:string,fk_doc:int|string,fk_docdet:int|string,thirdparty_code:string,subledger_account:string,subledger_label:string,numero_compte:string,label_compte:string,label_operation:string,montant:string,sens:string,debit:int|float|string,credit:int|float|string,code_journal:string,journal_label:string,piece_num:string,import_key:string,fk_user_author:string,entity:string}>>}>    Return integer <0 if KO, array
+	 */
+	public function getDiscountCustomer(User $user, $type = 'view', $date_start = null, $date_end = null, $in_bookkeeping = 'notyet')
+	{
+		global $conf, $langs;
+
+		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+
+		$langs->loadLangs(array('bills'));
+
+		// Clean parameters
+		if (empty($type)) {
+			$type = 'view';
+		}
+		if (empty($in_bookkeeping)) {
+			$in_bookkeeping = 'notyet';
+		}
+
+		// Build SQL - Customer invoices closed by discount
+		$sql = "SELECT f.rowid, f.ref, f.datef, f.date_closing, f.fk_soc, f.total_ttc";
+		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
+		$sql .= " WHERE f.entity IN (".getEntity('invoice', 0).')'; // We don't share object for accountancy, we use source object sharing
+		$sql .= " AND f.fk_statut > 0";
+		if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {	// Non common setup
+			$sql .= " AND f.type IN (".Facture::TYPE_STANDARD.",".Facture::TYPE_REPLACEMENT.",".Facture::TYPE_CREDIT_NOTE.",".Facture::TYPE_SITUATION.")";
+		} else {
+			$sql .= " AND f.type IN (".Facture::TYPE_STANDARD.",".Facture::TYPE_REPLACEMENT.",".Facture::TYPE_CREDIT_NOTE.",".Facture::TYPE_DEPOSIT.",".Facture::TYPE_SITUATION.")";
+		}
+		$sql .= " AND f.close_code = 'discount_vat'";
+		if ($date_start && $date_end) {
+			$sql .= " AND f.date_closing >= '".$this->db->idate($date_start)."' AND f.date_closing <= '".$this->db->idate($date_end)."'";
+		}
+		if (getDolGlobalString('ACCOUNTING_DATE_START_BINDING')) {
+			$sql .= " AND f.date_closing >= '".$this->db->idate(getDolGlobalInt('ACCOUNTING_DATE_START_BINDING'))."'";
+		}
+		if ($in_bookkeeping == 'already') {
+			$sql .= " AND EXISTS (SELECT 1 FROM ".MAIN_DB_PREFIX."accounting_bookkeeping ab";
+			$sql .= "              WHERE ab.doc_type = 'customer_invoice' AND ab.fk_doc = f.rowid";
+			$sql .= "                AND ab.code_journal = '".$this->db->escape($this->code)."')";
+		} elseif ($in_bookkeeping == 'notyet') {
+			$sql .= " AND NOT EXISTS (SELECT 1 FROM ".MAIN_DB_PREFIX."accounting_bookkeeping ab";
+			$sql .= "              WHERE ab.doc_type = 'customer_invoice' AND ab.fk_doc = f.rowid";
+			$sql .= "                AND ab.code_journal = '".$this->db->escape($this->code)."')";
+		}
+		$sql .= " ORDER BY f.date_closing";
+
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->errors[] = $this->db->lasterror();
+			return -1;
+		}
+
+		$journal = $this->code;
+		$journal_label_formatted = $langs->transnoentities($this->label);
+		$now = dol_now();
+
+		$journal_data = array();
+		$invoice_static = new Facture($this->db);
+		$customer_static = new Societe($this->db);
+
+		// Accounting accounts
+		$acc_disc_granted = getDolGlobalString('ACCOUNTING_ACCOUNT_DISCOUNT_GRANTED');
+		$acc_vat_coll_def = getDolGlobalString('ACCOUNTING_VAT_BUY_ACCOUNT');			// Normal to apply vat default account for buy with customer's discount
+
+		while ($obj = $this->db->fetch_object($resql)) {
+			if ($invoice_static->fetch((int) $obj->rowid) <= 0) {
+				continue;
+			}
+
+			$customer_static->fetch($invoice_static->socid);
+			$account_customer_general = !empty($customer_static->accountancy_code_customer_general) ? $customer_static->accountancy_code_customer_general : getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER');
+			$account_customer_subsidiary = !empty($customer_static->code_compta_client) ? $customer_static->code_compta_client : '';
+
+			$piece_link = $invoice_static->getNomUrl(1, 'withlabel');
+
+			// Discounted amount including tax
+			$paid    = (float) price2num($invoice_static->getSommePaiement(), 'MT');
+			$usedcn  = (float) price2num($invoice_static->getSumCreditNotesUsed(), 'MT');
+			$useddep = (float) price2num($invoice_static->getSumDepositsUsed(), 'MT');
+			$ttc_inv = (float) price2num($invoice_static->total_ttc, 'MT');
+			$escompte_ttc = (float) price2num(max(0, $ttc_inv - $paid - $usedcn - $useddep), 'MT');
+			if ($escompte_ttc <= 0) {
+				continue;
+			}
+
+			$bookkeeping_static = new BookKeeping($this->db);
+			$thirdpartyname = (string) $customer_static->name;
+			$label_discount = $bookkeeping_static->accountingLabelForOperation($thirdpartyname, $invoice_static->ref, $langs->trans('DiscountGranted'));
+
+			// Distribution including VAT by rate
+			$ttcByRate = array();
+			$totalTTC = 0.0;
+			foreach ((array) $invoice_static->lines as $li) {
+				$ttc = (float) $li->total_ttc;
+				if (!$ttc) {
+					continue;
+				}
+				$key = number_format((float) $li->tva_tx, 3, '.', '');
+				if (!isset($ttcByRate[$key])) {
+					$ttcByRate[$key] = 0.0;
+				}
+				$ttcByRate[$key] += $ttc;
+				$totalTTC += $ttc;
+			}
+			if ($totalTTC <= 0) {
+				$ttcByRate = array("0.000" => $escompte_ttc);
+				$totalTTC = $escompte_ttc;
+			}
+
+			$element = array(
+				'ref'   => dol_trunc($invoice_static->ref, 16, 'right', 'UTF-8', 1),
+				'error' => '',
+				'blocks' => array(),
+			);
+
+			$closingdate = !empty($obj->date_closing) ? $obj->date_closing : $obj->datef;
+
+			$docdate = $this->db->jdate($closingdate);
+			$docdate_fmt = dol_print_date($docdate, 'day');
+
+			$sumTTC = 0.0;
+			$i = 0;
+			$n = count($ttcByRate);
+			foreach ($ttcByRate as $rateStr => $ttcRateOnInvoice) {
+				$i++;
+				$rate = (float) $rateStr;
+
+				$ttc_part = (float) $escompte_ttc * ($ttcRateOnInvoice / $totalTTC);
+				if ($i == $n) {
+					$ttc_part = (float) price2num($escompte_ttc - $sumTTC, 'MT');
+				} else {
+					$ttc_part = (float) price2num($ttc_part, 'MT');
+					$sumTTC = (float) price2num($sumTTC + $ttc_part, 'MT');
+				}
+
+				if ($rate > 0) {
+					$ht_part  = (float) price2num($ttc_part / (1 + $rate / 100), 'MT');
+					$tva_part = (float) price2num($ttc_part - $ht_part, 'MT');
+				} else {
+					$ht_part = $ttc_part;
+					$tva_part = 0.0;
+				}
+
+				// VAT deductible account (by rate if available)
+				// TODO write function to search the same vat code like the invoice
+				$acc_vat_coll = $acc_vat_coll_def;
+
+				$lines_view = array();
+				$lines_book = array();
+
+				// Discount granted
+				$acc_info_discountgranted = $this->getAccountingAccountInfos($acc_disc_granted);
+				if ($type == 'view') {
+					$lines_view[] = array(
+						'date' => $docdate_fmt,
+						'piece' => $piece_link,
+						'account_accounting' => length_accountg($acc_disc_granted),
+						'subledger_account' => '',
+						'label_operation' => $label_discount." - " .$langs->transnoentitiesnoconv('HT') . " (".$rateStr."%)",
+						'debit' => price($ht_part),
+						'credit' => '',
+					);
+				} elseif ($type == 'bookkeeping' && $acc_info_discountgranted['found']) {
+					$lines_book[] = array(
+						'doc_date' => $docdate,
+						'date_lim_reglement' => '',
+						'doc_ref' => $invoice_static->ref,
+						'date_creation' => $now,
+						'doc_type' => 'customer_invoice',
+						'fk_doc' => $invoice_static->id,
+						'fk_docdet' => 0,
+						'thirdparty_code' => $customer_static->code_client,
+						'subledger_account' => '',
+						'subledger_label' => '',
+						'numero_compte' => $acc_disc_granted,
+						'label_compte' => $acc_info_discountgranted['label'],
+						'label_operation' => $label_discount." - " .$langs->transnoentitiesnoconv('HT') . " (".$rateStr."%)",
+						'montant' => $ht_part,
+						'sens' => 'D',
+						'debit' => $ht_part,
+						'credit' => 0,
+						'code_journal' => $journal,
+						'journal_label' => $journal_label_formatted,
+						'piece_num' => 'OD-ESC-'.$invoice_static->ref,
+						'import_key' => '',
+						'fk_user_author' => $user->id,
+						'entity' => $conf->entity,
+					);
+				}
+
+				// VAT
+				if ($tva_part > 0) {
+					$acc_info_vatbuy = $this->getAccountingAccountInfos($acc_vat_coll);
+					if ($type == 'view') {
+						$lines_view[] = array(
+							'date' => $docdate_fmt,
+							'piece' => $piece_link,
+							'account_accounting' => length_accountg($acc_vat_coll),
+							'subledger_account' => '',
+							'label_operation' => $label_discount." - " .$langs->transnoentitiesnoconv('VAT') . " (".$rateStr."%)",
+							'debit' => price($tva_part),
+							'credit' => '',
+						);
+					} elseif ($type == 'bookkeeping' && $acc_info_vatbuy['found']) {
+						$lines_book[] = array(
+							'doc_date' => $docdate,
+							'date_lim_reglement' => '',
+							'doc_ref' => $invoice_static->ref,
+							'date_creation' => $now,
+							'doc_type' => 'customer_invoice',
+							'fk_doc' => $invoice_static->id,
+							'fk_docdet' => 0,
+							'thirdparty_code' => $customer_static->code_client,
+							'subledger_account' => '',
+							'subledger_label' => '',
+							'numero_compte' => $acc_vat_coll,
+							'label_compte' => $acc_info_vatbuy['label'],
+							'label_operation' => $label_discount." - " .$langs->transnoentitiesnoconv('VAT') . " (".$rateStr."%)",
+							'montant' => $tva_part,
+							'sens' => 'D',
+							'debit' => $tva_part,
+							'credit' => 0,
+							'code_journal' => $journal,
+							'journal_label' => $journal_label_formatted,
+							'piece_num' => 'OD-ESC-'.$invoice_static->ref,
+							'import_key' => '',
+							'fk_user_author' => $user->id,
+							'entity' => $conf->entity,
+						);
+					}
+				}
+
+				// Thirdparty
+				$acc_info_customeraccount = $this->getAccountingAccountInfos($account_customer_general);
+				if ($type == 'view') {
+					$lines_view[] = array(
+						'date' => $docdate_fmt,
+						'piece' => $piece_link,
+						'account_accounting' => length_accountg($account_customer_general),
+						'subledger_account' => length_accounta($account_customer_subsidiary),
+						'label_operation' => $label_discount.' - '.$langs->transnoentitiesnoconv('Customer'),
+						'debit' => '',
+						'credit' => price($ttc_part),
+					);
+					$element['blocks'][] = $lines_view;
+				} elseif ($type == 'bookkeeping' && $acc_info_customeraccount['found']) {
+					$lines_book[] = array(
+						'doc_date' => $docdate,
+						'date_lim_reglement' => '',
+						'doc_ref' => $invoice_static->ref,
+						'date_creation' => $now,
+						'doc_type' => 'customer_invoice',
+						'fk_doc' => $invoice_static->id,
+						'fk_docdet' => 0,
+						'thirdparty_code' => $customer_static->code_client,
+						'subledger_account' => $account_customer_subsidiary,
+						'subledger_label' => $customer_static->name,
+						'numero_compte' => $account_customer_general,
+						'label_compte' => $acc_info_customeraccount['label'],
+						'label_operation' => $label_discount.' - '.$langs->transnoentitiesnoconv('Customer'),
+						'montant' => $ttc_part,
+						'sens' => 'C',
+						'debit' => 0,
+						'credit' => $ttc_part,
+						'code_journal' => $journal,
+						'journal_label' => $journal_label_formatted,
+						'piece_num' => 'OD-ESC-'.$invoice_static->ref,
+						'import_key' => '',
+						'fk_user_author' => $user->id,
+						'entity' => $conf->entity,
+					);
+					$element['blocks'][] = $lines_book;
+				} else { // CSV
+					$element['blocks'][] = array(
+						$docdate,                         // Date
+						$invoice_static->ref,             // Piece
+						length_accountg($acc_disc_granted), // Account
+						$label_discount." (".$rateStr."%)",   // Label
+						price($ht_part),                  // Debit
+						'',                               // Credit
+					);
+					if ($tva_part > 0) {
+						$element['blocks'][] = array(
+							$docdate, $invoice_static->ref, length_accountg($acc_vat_coll), $label_discount." ". $langs->transnoentitiesnoconv('VAT') . " (".$rateStr."%)", price($tva_part), ''
+						);
+					}
+					$element['blocks'][] = array(
+						$docdate, $invoice_static->ref, length_accountg($account_customer_general), $label_discount.' - '.$langs->transnoentitiesnoconv('Customer'), '', price($ttc_part)
+					);
+				}
+			}
+
+			$journal_data[(int) $invoice_static->id] = $element;
+		}
+
+		return $journal_data;
+	}
+
+	/**
+	 *  Get supplier discount (escompte) data for various journal
+	 *
+	 * @param	User						$user				User who get infos
+	 * @param	'view'|'bookkeeping'|'csv'	$type				Type data returned ('view', 'bookkeeping', 'csv')
+	 * @param	?int						$date_start			Filter 'start date'
+	 * @param	?int						$date_end			Filter 'end date'
+	 * @param	'already'|'notyet'			$in_bookkeeping		Filter 'in bookkeeping' ('already', 'notyet')
+	 * @return	int<-1,-1>|array<int,array{ref:string,error:?string,blocks:array<array<array{date:string,piece:string,account_accounting:string,subledger_account:string,label_operation:string,debit:string,credit:string}|array{doc_date:''|int,date_lim_reglement:string,doc_ref:string,date_creation:int,doc_type:string,fk_doc:int|string,fk_docdet:int|string,thirdparty_code:string,subledger_account:string,subledger_label:string,numero_compte:string,label_compte:string,label_operation:string,montant:string,sens:string,debit:int|float|string,credit:int|float|string,code_journal:string,journal_label:string,piece_num:string,import_key:string,fk_user_author:string,entity:string}>>}>    Return integer <0 if KO, array
+	 */
+	public function getDiscountSupplier(User $user, $type = 'view', $date_start = null, $date_end = null, $in_bookkeeping = 'notyet')
+	{
+		global $conf, $langs;
+
+		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+
+		$langs->loadLangs(array('suppliers'));
+
+		// Clean parameters
+		if (empty($type)) {
+			$type = 'view';
+		}
+		if (empty($in_bookkeeping)) {
+			$in_bookkeeping = 'notyet';
+		}
+
+		// SQL - Supplier invoices closed by discount
+		$sql = "SELECT ff.rowid, ff.ref, ff.datef, ff.date_closing, ff.fk_soc, ff.total_ttc";
+		$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as ff";
+		$sql .= " WHERE ff.entity IN (".getEntity('facture_fourn', 0).")"; // We don't share object for accountancy
+		$sql .= " AND ff.fk_statut > 0";
+		if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
+			$sql .= " AND ff.type IN (".FactureFournisseur::TYPE_STANDARD.",".FactureFournisseur::TYPE_REPLACEMENT.",".FactureFournisseur::TYPE_CREDIT_NOTE.",".FactureFournisseur::TYPE_SITUATION.")";
+		} else {
+			$sql .= " AND ff.type IN (".FactureFournisseur::TYPE_STANDARD.",".FactureFournisseur::TYPE_REPLACEMENT.",".FactureFournisseur::TYPE_CREDIT_NOTE.",".FactureFournisseur::TYPE_DEPOSIT.",".FactureFournisseur::TYPE_SITUATION.")";
+		}
+		$sql .= " AND ff.close_code = 'discount_vat'";
+		if ($date_start && $date_end) {
+			$sql .= " AND ff.date_closing >= '".$this->db->idate($date_start)."' AND ff.date_closing <= '".$this->db->idate($date_end)."'";
+		}
+		if (getDolGlobalString('ACCOUNTING_DATE_START_BINDING')) {
+			$sql .= " AND ff.date_closing >= '".$this->db->idate(getDolGlobalInt('ACCOUNTING_DATE_START_BINDING'))."'";
+		}
+		if ($in_bookkeeping == 'already') {
+			$sql .= " AND EXISTS (SELECT 1 FROM ".MAIN_DB_PREFIX."accounting_bookkeeping ab";
+			$sql .= "              WHERE ab.doc_type = 'supplier_invoice' AND ab.fk_doc = ff.rowid";
+			$sql .= "                AND ab.code_journal = '".$this->db->escape($this->code)."')";
+		} elseif ($in_bookkeeping == 'notyet') {
+			$sql .= " AND NOT EXISTS (SELECT 1 FROM ".MAIN_DB_PREFIX."accounting_bookkeeping ab";
+			$sql .= "              WHERE ab.doc_type = 'supplier_invoice' AND ab.fk_doc = ff.rowid";
+			$sql .= "                AND ab.code_journal = '".$this->db->escape($this->code)."')";
+		}
+		$sql .= " ORDER BY ff.date_closing";
+
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->errors[] = $this->db->lasterror();
+			return -1;
+		}
+
+		$journal = $this->code;
+		$journal_label_formatted = $langs->transnoentities($this->label);
+		$now = dol_now();
+
+		$journal_data = array();
+		$invoicesupplier_static = new FactureFournisseur($this->db);
+		$supplier_static = new Societe($this->db);
+
+		// Accounting accounts
+		$acc_disc_recv    = getDolGlobalString('ACCOUNTING_ACCOUNT_DISCOUNT_RECEIVED');
+		$acc_vat_ded_def  = getDolGlobalString('ACCOUNTING_VAT_SOLD_ACCOUNT');			// Normal to apply vat default account for sold with supplier's discount
+
+		while ($obj = $this->db->fetch_object($resql)) {
+			if ($invoicesupplier_static->fetch((int) $obj->rowid) <= 0) {
+				continue;
+			}
+
+			$supplier_static->fetch($invoicesupplier_static->socid);
+			$account_supplier_general = !empty($supplier_static->accountancy_code_supplier_general) ? $supplier_static->accountancy_code_supplier_general : getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER');
+			$account_supplier_subsidiary = !empty($supplier_static->code_compta_fournisseur) ? $supplier_static->code_compta_fournisseur : '';
+
+			$piece_link = $invoicesupplier_static->getNomUrl(1, 'withlabel');
+
+			// Discounted amount including tax
+			$paid    = (float) price2num($invoicesupplier_static->getSommePaiement(), 'MT');
+			$usedcn  = (float) price2num($invoicesupplier_static->getSumCreditNotesUsed(), 'MT');
+			$useddep = (float) price2num($invoicesupplier_static->getSumDepositsUsed(), 'MT');
+			$ttc_inv = (float) price2num($invoicesupplier_static->total_ttc, 'MT');
+			$escompte_ttc = (float) price2num(max(0, $ttc_inv - $paid - $usedcn - $useddep), 'MT');
+			if ($escompte_ttc <= 0) {
+				continue;
+			}
+
+			$bookkeeping_static = new BookKeeping($this->db);
+			$thirdpartyname = (string) $supplier_static->name;
+			$label_discount = $bookkeeping_static->accountingLabelForOperation($thirdpartyname, $invoicesupplier_static->ref, $langs->trans('DiscountReceived'));
+
+			// Distribution including VAT by rate
+			$ttcByRate = array();
+			$totalTTC = 0.0;
+			foreach ((array) $invoicesupplier_static->lines as $li) {
+				$ttc = (float) $li->total_ttc;
+				if (!$ttc) {
+					continue;
+				}
+				$key = number_format((float) $li->tva_tx, 3, '.', '');
+				if (!isset($ttcByRate[$key])) {
+					$ttcByRate[$key] = 0.0;
+				}
+				$ttcByRate[$key] += $ttc;
+				$totalTTC += $ttc;
+			}
+			if ($totalTTC <= 0) {
+				$ttcByRate = array("0.000" => $escompte_ttc);
+				$totalTTC = $escompte_ttc;
+			}
+
+			$element = array(
+				'ref'   => dol_trunc($invoicesupplier_static->ref, 16, 'right', 'UTF-8', 1),
+				'error' => '',
+				'blocks' => array(),
+			);
+
+			$closingdate = !empty($obj->date_closing) ? $obj->date_closing : $obj->datef;
+
+			$docdate = $this->db->jdate($closingdate);
+			$docdate_fmt = dol_print_date($docdate, 'day');
+
+			$sumTTC = 0.0;
+			$i = 0;
+			$n = count($ttcByRate);
+			foreach ($ttcByRate as $rateStr => $ttcRateOnInvoice) {
+				$i++;
+				$rate = (float) $rateStr;
+
+				$ttc_part = $escompte_ttc * ($ttcRateOnInvoice / $totalTTC);
+				if ($i == $n) {
+					$ttc_part = (float) price2num($escompte_ttc - $sumTTC, 'MT');
+				} else {
+					$ttc_part = (float) price2num($ttc_part, 'MT');
+					$sumTTC = (float) price2num($sumTTC + $ttc_part, 'MT');
+				}
+
+				if ($rate > 0) {
+					$ht_part  = (float) price2num($ttc_part / (1 + $rate / 100), 'MT');
+					$tva_part = (float) price2num($ttc_part - $ht_part, 'MT');
+				} else {
+					$ht_part = $ttc_part;
+					$tva_part = 0.0;
+				}
+
+				// VAT collected account (by rate if available)
+				// TODO write function to search the same vat code like the supplier invoice
+				$acc_vat_ded = $acc_vat_ded_def;
+
+				$lines_view = array();
+				$lines_book = array();
+
+				// Thirdparty
+				$acc_info_supplieraccount = $this->getAccountingAccountInfos($account_supplier_general);
+				if ($type == 'view') {
+					$lines_view[] = array(
+						'date' => $docdate_fmt,
+						'piece' => $piece_link,
+						'account_accounting' => length_accountg($account_supplier_general),
+						'subledger_account' => length_accounta($account_supplier_subsidiary),
+						'label_operation' => $label_discount.' - '.$langs->transnoentitiesnoconv('Supplier'),
+						'debit' => price($ttc_part),
+						'credit' => '',
+					);
+				} elseif ($type == 'bookkeeping' && $acc_info_supplieraccount['found']) {
+					$lines_book[] = array(
+						'doc_date' => $docdate,
+						'date_lim_reglement' => '',
+						'doc_ref' => $invoicesupplier_static->ref,
+						'date_creation' => $now,
+						'doc_type' => 'supplier_invoice',
+						'fk_doc' => $invoicesupplier_static->id,
+						'fk_docdet' => 0,
+						'thirdparty_code' => $supplier_static->code_fournisseur,
+						'subledger_account' => $account_supplier_subsidiary,
+						'subledger_label' => $supplier_static->name,
+						'numero_compte' => $account_supplier_general,
+						'label_compte' => $acc_info_supplieraccount['label'],
+						'label_operation' => $label_discount.' - '.$langs->transnoentitiesnoconv('Supplier'),
+						'montant' => $ttc_part,
+						'sens' => 'D',
+						'debit' => $ttc_part,
+						'credit' => 0,
+						'code_journal' => $journal,
+						'journal_label' => $journal_label_formatted,
+						'piece_num' => 'OD-ESC-FRS-'.$invoicesupplier_static->ref,
+						'import_key' => '',
+						'fk_user_author' => $user->id,
+						'entity' => $conf->entity,
+					);
+				}
+
+				// Discount received
+				$acc_info_discountreceived = $this->getAccountingAccountInfos($acc_disc_recv);
+				if ($type == 'view') {
+					$lines_view[] = array(
+						'date' => $docdate_fmt,
+						'piece' => $piece_link,
+						'account_accounting' => length_accountg($acc_disc_recv),
+						'subledger_account' => '',
+						'label_operation' => $label_discount." - " .$langs->transnoentitiesnoconv('HT') . " (".$rateStr."%)",
+						'debit' => '',
+						'credit' => price($ht_part),
+					);
+				} elseif ($type == 'bookkeeping' && $acc_info_discountreceived['found']) {
+					$lines_book[] = array(
+						'doc_date' => $docdate,
+						'date_lim_reglement' => '',
+						'doc_ref' => $invoicesupplier_static->ref,
+						'date_creation' => $now,
+						'doc_type' => 'supplier_invoice',
+						'fk_doc' => $invoicesupplier_static->id,
+						'fk_docdet' => 0,
+						'thirdparty_code' => $supplier_static->code_fournisseur,
+						'subledger_account' => '',
+						'subledger_label' => '',
+						'numero_compte' => $acc_disc_recv,
+						'label_compte' => $acc_info_discountreceived['label'],
+						'label_operation' => $label_discount." - " .$langs->transnoentitiesnoconv('HT') . " (".$rateStr."%)",
+						'montant' => $ht_part,
+						'sens' => 'C',
+						'debit' => 0,
+						'credit' => $ht_part,
+						'code_journal' => $journal,
+						'journal_label' => $journal_label_formatted,
+						'piece_num' => 'OD-ESC-FRS-'.$invoicesupplier_static->ref,
+						'import_key' => '',
+						'fk_user_author' => $user->id,
+						'entity' => $conf->entity,
+					);
+				}
+
+				// VAT
+				if ($tva_part > 0) {
+					$acc_info_vatbuy = $this->getAccountingAccountInfos($acc_vat_ded);
+					if ($type == 'view') {
+						$lines_view[] = array(
+							'date' => $docdate_fmt,
+							'piece' => $piece_link,
+							'account_accounting' => length_accountg($acc_vat_ded),
+							'subledger_account' => '',
+							'label_operation' => $label_discount." - " .$langs->transnoentitiesnoconv('VAT') . " (".$rateStr."%)",
+							'debit' => '',
+							'credit' => price($tva_part),
+						);
+						$element['blocks'][] = $lines_view;
+					} elseif ($type == 'bookkeeping' && $acc_info_vatbuy['found']) {
+						$lines_book[] = array(
+							'doc_date' => $docdate,
+							'date_lim_reglement' => '',
+							'doc_ref' => $invoicesupplier_static->ref,
+							'date_creation' => $now,
+							'doc_type' => 'supplier_invoice',
+							'fk_doc' => $invoicesupplier_static->id,
+							'fk_docdet' => 0,
+							'thirdparty_code' => $supplier_static->code_fournisseur,
+							'subledger_account' => '',
+							'subledger_label' => '',
+							'numero_compte' => $acc_vat_ded,
+							'label_compte' => $acc_info_vatbuy['label'],
+							'label_operation' => $label_discount." - " .$langs->transnoentitiesnoconv('VAT') . " (".$rateStr."%)",
+							'montant' => $tva_part,
+							'sens' => 'C',
+							'debit' => 0,
+							'credit' => $tva_part,
+							'code_journal' => $journal,
+							'journal_label' => $journal_label_formatted,
+							'piece_num' => 'OD-ESC-FRS-'.$invoicesupplier_static->ref,
+							'import_key' => '',
+							'fk_user_author' => $user->id,
+							'entity' => $conf->entity,
+						);
+						$element['blocks'][] = $lines_book;
+					}
+				} else {
+					// si TVA = 0, pousser les 2 lignes view/bookkeeping déjà constituées
+					if ($type == 'view') {
+						$element['blocks'][] = $lines_view;
+					} elseif ($type == 'bookkeeping') {
+						$element['blocks'][] = $lines_book;
+					} else { // csv
+						$element['blocks'][] = array($docdate, $invoicesupplier_static->ref, length_accountg($account_supplier_general), $label_discount.' - '.$langs->transnoentitiesnoconv('Supplier'), price($ttc_part), '');
+						$element['blocks'][] = array($docdate, $invoicesupplier_static->ref, length_accountg($acc_disc_recv), $label_discount.' ('.$rateStr.'%)', '', price($ht_part));
+					}
+				}
+
+				// CSV
+				if ($type == 'csv') {
+					$element['blocks'][] = array(
+						$docdate, $invoicesupplier_static->ref, length_accountg($acc_vat_ded), $label_discount." ". $langs->transnoentitiesnoconv('VAT') . " (".$rateStr."%)", '', $tva_part > 0 ? price($tva_part) : ''
+					);
+				}
+			}
+
+			$journal_data[(int) $invoicesupplier_static->id] = $element;
+		}
 
 		return $journal_data;
 	}
@@ -986,7 +1623,7 @@ class AccountingJournal extends CommonObject
 				self::$accounting_account_cached[$account] = array(
 					'found' => true,
 					'label' => $accountingaccount->label,
-					'code_formatted_1' => length_accounta(html_entity_decode($account)),
+					'code_formatted_1' => length_accountg(html_entity_decode($account)),
 					'label_formatted_1' => mb_convert_encoding(dol_trunc($accountingaccount->label, 32), 'ISO-8859-1'),
 					'label_formatted_2' => dol_trunc($accountingaccount->label, 32),
 				);
@@ -994,7 +1631,7 @@ class AccountingJournal extends CommonObject
 				self::$accounting_account_cached[$account] = array(
 					'found' => false,
 					'label' => '',
-					'code_formatted_1' => length_accounta(html_entity_decode($account)),
+					'code_formatted_1' => length_accountg(html_entity_decode($account)),
 					'label_formatted_1' => '',
 					'label_formatted_2' => '',
 				);

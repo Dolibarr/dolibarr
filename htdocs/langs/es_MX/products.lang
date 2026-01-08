@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - products
 ProductId=ID de producto / servicio
-ContractStatusClosed=Cerrada
 ErrorProductBadRefOrLabel=Valor incorrecto para referencia o etiqueta.
 ProductsAndServicesArea=Área de productos y servicios
 ProductsArea=Área de producto

@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2003		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
- * Copyright (C) 2003		Jean-Louis Bergamo			<jlb@j1b.org>
- * Copyright (C) 2006-2013	Laurent Destailleur			<eldy@users.sourceforge.net>
- * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
+ * Copyright (C) 2006-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,21 +26,21 @@
  *	\brief      Page to output members business cards
  */
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/modules/member/modules_cards.php';
-require_once DOL_DOCUMENT_ROOT.'/core/modules/printsheet/modules_labels.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
- *
- * @var array<string,array{name:string,paper-size:string|array{0:float,1:float},orientation:string,metric:string,marginLeft:float,marginTop:float,NX:int,NY:int,SpaceX:float,SpaceY:float,width:float,height:float,font-size:int,custom_x:float,custom_y:float}> $_Avery_Labels
  */
+
+require_once DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php';
+/** @var array<string,array{name:string,paper-size:string|array{0:float,1:float},orientation:string,metric:string,marginLeft:float,marginTop:float,NX:int,NY:int,SpaceX:float,SpaceY:float,width:float,height:float,font-size:int,custom_x:float,custom_y:float}> $_Avery_Labels */
+
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/member/modules_cards.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/printsheet/modules_labels.php';
 
 $langs->loadLangs(array("members", "errors"));
 
@@ -136,6 +136,12 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 				}
 			}
 
+
+			$now = dol_now();
+			$year = dol_print_date($now, '%Y');
+			$month = dol_print_date($now, '%m');
+			$day = dol_print_date($now, '%d');
+
 			// List of values to scan for a replacement
 			$substitutionarray = array(
 				'__MEMBER_ID__' => $objp->rowid,
@@ -163,6 +169,28 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 			foreach ($adherentstatic->array_options as $key => $val) {
 				$substitutionarray['__'.strtoupper($key).'__'] = $val;
 			}
+
+			// Add old values for backward compatibility (need upgrade of member setup to be removed)
+			$substitutionarrayold = array(
+				'__ID__' => $objp->rowid,
+				'__REF__' => $objp->ref,
+				'__LOGIN__' => empty($objp->login) ? '' : $objp->login,
+				'__TITLE__' => empty($objp->civility) ? '' : $langs->trans("Civility".$objp->civility),
+				'__FIRSTNAME__' => empty($objp->firstname) ? '' : $objp->firstname,
+				'__LASTNAME__' => empty($objp->lastname) ? '' : $objp->lastname,
+				'__FULLNAME__' => $adherentstatic->getFullName($langs),
+				'__COMPANY__' => empty($objp->company) ? '' : $objp->company,
+				'__ADDRESS__' => empty($objp->address) ? '' : $objp->address,
+				'__ZIP__' => empty($objp->zip) ? '' : $objp->zip,
+				'__TOWN__' => empty($objp->town) ? '' : $objp->town,
+				'__COUNTRY__' => empty($objp->country) ? '' : $objp->country,
+				'__COUNTRY_CODE__' => empty($objp->country_code) ? '' : $objp->country_code,
+				'__EMAIL__' => empty($objp->email) ? '' : $objp->email,
+				'__BIRTH__' => dol_print_date($objp->birth, 'day'),
+				'__TYPE__' => empty($objp->type) ? '' : $objp->type,
+			);
+			$substitutionarray = array_merge($substitutionarray, $substitutionarrayold);
+
 			complete_substitutions_array($substitutionarray, $langs, $adherentstatic);
 
 			// For business cards
@@ -237,7 +265,7 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 				$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DescADHERENT_CARD_TYPE"));
 			}
 			if (!$mesg) {
-				$result = members_card_pdf_create($db, $arrayofmembers, $modelcard, $outputlangs, '', 'standard', 'tmp_cards');
+				$result = members_card_pdf_create($db, $arrayofmembers, $modelcard, $outputlangs, '', 'standard_member', 'tmp_cards');
 			}
 		} elseif ($mode == 'cardlogin') {
 			if (!count($arrayofmembers)) {
@@ -247,7 +275,7 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 				$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DescADHERENT_CARD_TYPE"));
 			}
 			if (!$mesg) {
-				$result = members_card_pdf_create($db, $arrayofmembers, $model, $outputlangs, '', 'standard', 'tmp_cards_login');
+				$result = members_card_pdf_create($db, $arrayofmembers, $model, $outputlangs, '', 'standard_member', 'tmp_cards_login');
 			}
 		} elseif ($mode == 'label') {
 			if (!count($arrayofmembers)) {

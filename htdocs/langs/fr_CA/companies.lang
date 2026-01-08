@@ -101,6 +101,7 @@ VATIntraCheckableOnEUSite=Vérifiez le numéro de TVA intracommunautaire sur le 
 VATIntraManualCheck=Vous pouvez également vérifier manuellement sur le site Web de la Commission européenne <a href="%s" target="_blank" rel="noopener noreferrer">%s</a>
 NorProspectNorCustomer=Ni prospect, ni client
 JuridicalStatus=Type d'entité commerciale
+CompnanyBirthDate=Date de création de l'entreprise
 Staff=Employés
 StatusProspect1=Pour être contacté
 ChangeToContact=Changer l'état sur 'À contacter'

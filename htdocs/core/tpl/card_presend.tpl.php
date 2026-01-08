@@ -52,6 +52,7 @@ if (empty($conf) || !is_object($conf)) {
 }
 
 $fileparams = array();
+$file = null;
 
 if ($action == 'presend') {
 	$langs->load("mails");
@@ -332,6 +333,13 @@ if ($action == 'presend') {
 
 		if (!empty($origin) && !empty($origin_id)) {
 			$element = $subelement = $origin;
+
+			if ($element == 'order_supplier') {
+				$element = 'fourn';
+				$subelement = 'fournisseur.commande';
+				$origin = 'CommandeFournisseur';
+			}
+
 			$regs = array();
 			if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs)) {
 				$element = $regs[1];
@@ -353,10 +361,6 @@ if ($action == 'presend') {
 			}
 			if ($element == 'shipping') {
 				$element = $subelement = 'expedition';
-			}
-			if ($element == 'order_supplier') {
-				$element = 'fourn';
-				$subelement = 'fournisseur.commande';
 			}
 			if ($element == 'project') {
 				$element = 'projet';

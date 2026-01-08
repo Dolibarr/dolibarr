@@ -7,7 +7,7 @@
  * Copyright (C) 2015-2017 Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -457,13 +457,13 @@ if ($result) {
 					print '</a>';
 				} elseif ($links[$key]['type'] == 'payment_salary') {
 					print '<a href="'.DOL_URL_ROOT.'/salaries/payment_salary/card.php?id='.$links[$key]['url_id'].'">';
-					print img_object($langs->trans('PaymentSalary'), 'payment').' ';
+					print img_object($langs->trans('SalaryPayment'), 'payment').' ';
 					print $langs->trans("SalaryPayment");
 					print '</a>';
 				} elseif ($links[$key]['type'] == 'payment_loan') {
 					print '<a href="'.DOL_URL_ROOT.'/loan/payment/card.php?id='.$links[$key]['url_id'].'">';
 					print img_object($langs->trans('LoanPayment'), 'payment').' ';
-					print $langs->trans("PaymentLoan");
+					print $langs->trans("LoanPayment");
 					print '</a>';
 				} elseif ($links[$key]['type'] == 'loan') {
 					print '<a href="'.DOL_URL_ROOT.'/loan/card.php?id='.$links[$key]['url_id'].'">';

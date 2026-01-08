@@ -7,6 +7,7 @@
  * Copyright (C) 2013       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2024-2025	MDW                     <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025      Joachim Kueter       <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -250,7 +251,11 @@ if ($type == 'directory') {
 	$parameters = array('modulepart' => $module);
 	$reshook = $hookmanager->executeHooks('addSectionECMAuto', $parameters);
 	if ($reshook > 0 && is_array($hookmanager->resArray) && count($hookmanager->resArray) > 0) {
-		$automodules[] = $hookmanager->resArray['module'];
+		if (is_array($hookmanager->resArray['module'])) {
+			$automodules = array_merge($automodules, $hookmanager->resArray['module']);
+		} else {
+			$automodules[] = $hookmanager->resArray['module'];
+		}
 	}
 
 	// TODO change for multicompany sharing
@@ -496,15 +501,20 @@ if ($useajax) {
 	print '<script nonce="'.getNonce().'" type="text/javascript">';
 
 	// Enable jquery handlers on new generated HTML objects (same code than into lib_footer.js.php)
-	// Because the content is reloaded by ajax call, we must also reenable some jquery hooks
-	// Wrapper to manage document_preview
+	// Because the content is reloaded by ajax call, we must also redefine/reenable some jquery hooks.
+
+	// Handler to manage document_preview on click on a .documentpreview css class.
 	if ($conf->browser->layout != 'phone') {
 		print "\n/* JS CODE TO ENABLE document_preview */\n";
 		print '
                 jQuery(document).ready(function () {
 			        jQuery(".documentpreview").click(function () {
             		    console.log("We click on preview for element with href="+$(this).attr(\'href\')+" mime="+$(this).attr(\'mime\'));
-            		    document_preview($(this).attr(\'href\'), $(this).attr(\'mime\'), \''.dol_escape_js($langs->transnoentities("Preview")).'\');
+						var titledocpreview = $(this).attr(\'data-title\');
+						if (titledocpreview == undefined || titledocpreview == "") {
+							titledocpreview = \''.dol_escape_js($langs->transnoentities("Preview")).'\'
+						}
+            		    document_preview($(this).attr(\'href\'), $(this).attr(\'mime\'), titledocpreview);
                 		return false;
         			});
         		});

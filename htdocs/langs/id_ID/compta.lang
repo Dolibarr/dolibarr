@@ -3,10 +3,10 @@ MenuFinancial=Tagihan | Pembayaran
 TaxModuleSetupToModifyRules=Pergi ke <a href="%s">Pengaturan modul Pajak</a> untuk memodifikasi aturan perhitungan
 TaxModuleSetupToModifyRulesLT=Pergi ke <a href="%s">Pengaturan perusahaan</a> untuk mengubah aturan perhitungan
 OptionMode=Pilihan untuk akuntansi
-OptionModeTrue=Akuntansi Akrual
-OptionModeVirtual=Akuntansi kas
-OptionModeTrueDesc=Dalam konteks ini, omzet dihitung berdasarkan pembayaran (tanggal pembayaran). Keabsahan angka-angka tersebut hanya dapat dipastikan jika pembukuan diperiksa melalui input/output pembayaran.
+OptionModeVirtual=Accrual accounting
+OptionModeTrue=Cash accounting
 OptionModeVirtualDesc=Dalam konteks ini, omset dihitung berdasarkan faktur (tanggal validasi). Ketika faktur ini jatuh tempo, apakah mereka telah dibayar atau belum, mereka dicantumkan pada output omset.
+OptionModeTrueDesc=Dalam konteks ini, omzet dihitung berdasarkan pembayaran (tanggal pembayaran). Keabsahan angka-angka tersebut hanya dapat dipastikan jika pembukuan diperiksa melalui input/output pembayaran.
 FeatureIsSupportedInInOutModeOnly=Fitur hanya tersedia dalam mode akuntansi CREDITS-DEBTS (Lihat konfigurasi modul Akuntansi)
 VATReportBuildWithOptionDefinedInModule=Jumlah yang ditampilkan di sini dihitung menggunakan aturan yang ditentukan oleh pengaturan modul Pajak.
 LTReportBuildWithOptionDefinedInModule=Jumlah yang ditampilkan di sini dihitung menggunakan aturan yang ditentukan oleh pengaturan Perusahaan.
@@ -302,7 +302,6 @@ ByVatRate=Dengan tarif pajak penjualan
 TurnoverbyVatrate=Omzet ditagih oleh tarif pajak penjualan
 TurnoverCollectedbyVatrate=Omset dikumpulkan oleh tarif pajak penjualan
 PurchasebyVatrate=Beli dengan tarif pajak penjualan
-LabelToShow=Label pendek
 PurchaseTurnover=Beli pergantian
 PurchaseTurnoverCollected=Turnover pembelian dikumpulkan
 RulesPurchaseTurnoverDue=- Ini termasuk faktur jatuh tempo pemasok apakah mereka dibayar atau tidak. <br> - Ini didasarkan pada tanggal faktur faktur ini. <br>
@@ -329,3 +328,4 @@ RuleForLinesDates=Aturan untuk tanggal baris
 Prepaid=Prabayar
 Postpaid=Pascabayar
 SetRuleForLinesDates=Tetapkan aturan untuk tanggal baris
+SomeNotConvertedCreditNoteExists=There is <b>%s</b> credit notes not yet converted for consumption

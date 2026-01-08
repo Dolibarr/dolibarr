@@ -159,3 +159,4 @@ TF_TRAIN=Trein
 TF_TRIP=Vervoer
 FailedToSetPaid=Het is niet gelukt om het als betaald in te stellen
 FailedToSetToCancel=Annuleren mislukt
+NobodyHasPermissionToValidateExpenseReport=Niemand heeft toestemming om de onkostennota te valideren

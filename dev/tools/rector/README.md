@@ -16,15 +16,15 @@ composer install
 
 #### Usage
 
-##### To make changes (Add --dry-run for test mode only)
+##### To make changes (remove --dry-run for real run)
 ```shell
 cd dev/tools/rector
-./vendor/bin/rector process --dry-run
+./vendor/bin/rector process --debug --dry-run
 ```
 
 ##### To make changes on a given directory
 
 ```shell
 cd dev/tools/rector
-./vendor/bin/rector process [--dry-run] [--clear-cache] ../../../htdocs/core/
+./vendor/bin/rector process --debug [--dry-run] [--clear-cache] ../../../htdocs/core/
 ```

@@ -130,11 +130,11 @@ class Validate
 	 */
 	public function isTimestamp($stamp)
 	{
-		if (!is_numeric($stamp) && (int) $stamp == $stamp) {
-			$this->error = $this->outputLang->trans('RequireValidDate');
-			return false;
+		if (preg_match('/^\d{9,}$/', (string) $stamp)) {
+			return true;
 		}
-		return true;
+		$this->error = $this->outputLang->trans('RequireValidDate');
+		return false;
 	}
 
 	/**

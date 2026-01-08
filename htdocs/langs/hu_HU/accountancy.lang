@@ -1,6 +1,8 @@
 # Dolibarr language file - en_US - Accountancy (Double entries)
 Accountancy=Könyvelés
 Accounting=Számvitel
+AccountingAccount=Számviteli számla
+AccountingCode=Accounting code
 ACCOUNTING_EXPORT_SEPARATORCSV=Oszlop határoló az export fájlhoz
 ACCOUNTING_EXPORT_DATE=Az exportfájl dátumformátuma
 ACCOUNTING_EXPORT_PIECE=Darabszám exportálása
@@ -72,7 +74,7 @@ AccountancyAreaDescActionOnce=A következő műveletek általában csak egyszer,
 AccountancyAreaDescActionOnceBis=A következő lépéseket meg kell tennie, hogy a jövőben időt takarítson meg azáltal, hogy automatikusan a megfelelő alapértelmezett könyvelési fiókot javasolja a számviteli adatátvitel során
 AccountancyAreaDescActionFreq=A következő műveleteket általában havonta, hetente vagy naponta hajtják végre nagyon nagy cégeknél...
 AccountancyAreaDescJournalSetup=LÉPÉS %s: Ellenőrizze a naplólista tartalmát az %s menüből
-AccountancyAreaDescChartModel=LÉPÉS %s: Ellenőrizze, hogy létezik-e számlatükör-modell, vagy hozzon létre egyet az %s menüből
+AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists for your country or create one from menu %s
 AccountancyAreaDescChart=LÉPÉS %s: Válassza ki és|vagy töltse ki a számlatervét az %s menüből
 AccountancyAreaDescFiscalPeriod=LÉPÉS %s: Adja meg a pénzügyi időszakot, amely meghatározza a könyvelési tételek létrehozásához elfogadott dátumtartományt. Ehhez használja a %s menüpontot.
 AccountancyAreaDescVat=LÉPÉS %s: Határozza meg a számviteli számlákat az egyes áfakulcsokhoz. Ehhez használja az %s menüpontot.
@@ -134,7 +136,7 @@ BookkeepingSubAccount=Alkönyv
 AccountBalance=Számlaegyenleg
 AccountBalanceSubAccount=Az alszámlák egyenlege
 ObjectsRef=Forrásobjektum ref
-CAHTF=Teljes beszerzési eladó adózás előtt
+CAHTF=Teljes beszerzési szállító adózás előtt
 TotalExpenseReport=Összköltségjelentés
 InvoiceLines=A kötendő számlák sorai
 InvoiceLinesDone=Számla kötött sorai
@@ -193,7 +195,7 @@ DONATION_ACCOUNTINGACCOUNT=Az adományok regisztrálására szolgáló számla (
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Számla (a számlatáblázatból), amelyet a tagsági előfizetések regisztrálásához használnak (Tagsági modul – ha a tagságot számla nélkül rögzítették)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Számla (a számlatervből), amelyet alapértelmezett számlaként kell használni a vevő befizetés regisztrálásához
 UseAuxiliaryAccountOnCustomerDeposit=Tárolja az ügyfél számát egyéni számlaként a alkönyvben az előlegsorokhoz (ha le van tiltva, az előlegsorokhoz tartozó egyéni számla üres marad)
-ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Számla (a Számlatükörből) alapértelmezettként használandó
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=Tárolja a szállítói számlát egyéni számlaként a alkönyvben az előlegsorokhoz (letiltás esetén az előlegsorok egyéni számla üresen marad)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Alapértelmezés szerint könyvelési fiók a regisztrációhoz vevő megtartott garancia
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Számla (a Számlatervből) alapértelmezett számlaként használandó az ugyanazon országban vásárolt termékeknél (használjuk, ha a terméklapon nincs megadva)
@@ -275,9 +277,10 @@ HideOpeningBalance=Nyitó egyenleg elrejtése
 ShowSubtotalByGroup=Részösszeg megjelenítése szint szerint
 Pcgtype=Számla csoport
 PcgtypeDesc=A számlacsoport előre meghatározott "szűrő" és "csoportosítás" kritériumként használatos egyes számviteli jelentések esetében. Például a „BEVÉTEL” vagy „KIADÁS” csoportként használatos a termékek számviteli számláihoz a kiadás/bevétel jelentés összeállításához.
-AccountingCategoriesDesc=Egyéni fiókcsoportok használhatók a számviteli fiókok egy névbe történő csoportosítására, hogy megkönnyítsék a szűrőhasználatot vagy az egyéni jelentések készítését.
+AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease the use of filters or building of custom reports.
 Reconcilable=Kibékíthető
 Centralized=Központi számla
+CentralizedAccountHelp=When a accounting transaction is recording on a centralized account, you are also allowed to record a more accurate subsidiary account on this transaction.
 TotalVente=Teljes forgalom adózás előtt
 TotalMarge=Teljes értékesítési árrés
 DescVentilCustomer=Tekintse meg itt a vevő számla sorok listáját, amelyek a számlatervből termékszámlához vannak kötve (vagy nem)
@@ -319,7 +322,7 @@ NotReconciled=Nincs egyeztetve
 WarningRecordWithoutSubledgerAreExcluded=Figyelmeztetés, minden alkönyvi számla definiálása nélküli művelet kiszűrésre kerül, és ki van zárva ebből a nézetből
 AccountRemovedFromCurrentChartOfAccount=Számviteli számla, amely nem létezik az aktuális számlatükörben
 WarningThisPageContainsOnlyEntriesTransferredInAccounting=Figyelem, ez az oldal csak a számviteli rendszerbe átvitt tételeket tartalmazza.
-BookkeepingNumRefModelDesc = Visszaadja a hivatkozási számot yyyyjjnnnn formátumban, ahol yyyy az év, jj a naplókód, az nnnn pedig egy szekvenciális, automatikusan növekvő szám az évtől és a naplókódtól függően.
+BookkeepingNumRefModelDesc = Returns the reference number in the format yymmjjnnnnn where yy is the year, mm is the month and jj the journal code, nnnnn is a sequential auto-incrementing number depending on the year, the month and the journal code.
 BookkeepingNumberingModules = Könyvelési számozási modellek
 ## Admin
 BindingOptions=Az átutalás lehetőségei a könyvelésben
@@ -357,6 +360,7 @@ ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Aktiválja az áfa fordított adózta
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Ha ez a lehetőség be van kapcsolva, megadhatja, hogy egy szállító vagy egy adott szállító számla másként kerüljön át a könyvelésbe: Egy további terhelés és hitelkeret generálódik a könyvelésbe 2 adott számlán a „%s” beállítási oldalon meghatározott számlatükörből.
 ACCOUNTING_ENABLE_TABONTHIRDPARTY=Aktiváljon egy fület harmadik féltől származó kártyákon a kiegészítő főkönyv megtekintéséhez
 ACCOUNTING_ENABLE_TABONTHIRDPARTY_DESC=Ha ez a beállítás engedélyezve van, egy új lap jelenik meg a harmadik féltől származó kártyákon, ahol megtekintheti és kezelheti a harmadik fél könyvelését, például egyeztetést, nyomtatást és egyebeket.
+
 ## Export
 NotExportLettering=Ne exportálja a betűket a fájl létrehozásakor
 NotifiedExportDate=A még nem exportált sorok megjelölése exportáltként <span class="warning"> (egy exportáltként megjelölt sor módosításához törölnie kell a teljes tranzakciót, és újra át kell vinnie a könyvelésbe)</span>
@@ -389,6 +393,7 @@ Modelcsv_Gestinumv5=Exportálás a Gestinumhoz (v5)
 Modelcsv_charlemagne=Exportálás az Aplim Charlemagne-hoz
 ChartofaccountsId=Számladiagram azonosítója
 ExportToPdf = Exportálás PDF-be
+ExportToCsv = Export to CSV
 PdfLedgerTitle = Főkönyvi számlák
 PdfBalanceTitle = Főkönyvi egyenleg
 PdfBookkeepingTitle = Folyóiratok
@@ -439,9 +444,9 @@ ValueNotIntoChartOfAccount=A számviteli számla értéke nem szerepel a számla
 AccountRemovedFromGroup=A számla eltávolítva a csoportból
 SaleLocal=Helyi értékesítés
 SaleExport=Export értékesítés
-SaleEEC=Eladó az EGK-ban
-SaleEECWithVAT=Az értékesítés az EGK-ban történik, az ÁFA nem nulla, tehát feltételezzük, hogy ez NEM közösségen belüli értékesítés, és a javasolt számla a standard termékszámla.
-SaleEECWithoutVATNumber=Az értékesítés az EGK-ban történik, ÁFA nélkül, de a partner adóazonosítója nincs meghatározva. A standard értékesítésekhez a fiókot használjuk. Javíthatja a partner adóazonosítóját, vagy szükség esetén módosíthatja a kötéshez javasolt termékfiókot.
+SaleEEC=Eladás az EGK-ban
+SaleEECWithVAT=Sale is in EEC with a VAT not null, so we suppose this is NOT an intra-community sale and the suggested account is the standard product account.
+SaleEECWithoutVATNumber=Az értékesítés az EGK-ban történik, ÁFA nélkül, de a partner adószáma nincs meghatározva. A standard értékesítésekhez a fiókot használjuk. Javíthatja a partner adóazonosítóját, vagy szükség esetén módosíthatja a kötéshez javasolt termékfiókot.
 AnySale=Bármely eladás
 ForbiddenTransactionAlreadyExported=Tiltott: A tranzakciót ellenőrizték és/vagy exportálták.
 ForbiddenTransactionAlreadyValidated=Tiltott: A tranzakció érvényesítése megtörtént.
@@ -485,7 +490,7 @@ AccountancyClosureConfirmClose=Biztosan le szeretné zárni a jelenlegi pénzüg
 AccountancyClosureConfirmAccountingReversal=Biztos benne, hogy bejegyzéseket szeretne rögzíteni a "Feltartott bevétel"-hez?
 
 ## Warning
-WarningBookkeepingRecordAlreadyExists=Tranzakció a következőhöz: (doc_type=%s, doc_id=%s, doc_det=
+WarningBookkeepingRecordAlreadyExists=Transaction for (doc_type=%s, doc_id=%s, doc_det=%s) has already been recorded
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=A beállítás néhány kötelező lépése nem történt meg, kérjük, végezze el őket
@@ -508,7 +513,7 @@ ErrorNoFiscalPeriodActiveFound=Nem található aktív pénzügyi időszak (kezd�
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=A könyvelési dokumentum dátuma nem az aktív pénzügyi időszakon belül van
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=A könyvelési dokumentum dátuma egy lezárt pénzügyi időszakon belül van
 Error_BOOKKEEPING_ADDON_NotDefined=Hiba, a könyvelési számozási hivatkozás szabálya nincs definiálva a Könyvelés modul általános beállításaiban.
-ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=Próbálj meg egy nem kiegyensúlyozott tranzakciót beszúrni a könyvelésbe a következőhöz: %s (fizetési azonosító: %s). Megszakítva. Biztosan hiba.
+ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=You tried to insert a non balanced transaction in the book for %s (Payment ID: %s). Action is canceled
 ProductUsage=Termék vagy szolgáltatás használata
 ## Import
 ImportAccountingEntries=Számviteli bejegyzések
@@ -537,15 +542,15 @@ ExpenseReportJournal=Költségjelentési napló
 DocsAlreadyExportedAreIncluded=A már exportált dokumentumokat tartalmazza
 ClickToShowAlreadyExportedLines=Kattintson a már exportált sorok megjelenítéséhez
 NAccounts=%s számlák
-ACCOUNTING_USE_TREASURY_Desc=Ez a kincstári könyvelés módja. Kizárólag a kifizetéseket és azok dátumát használjuk a könyvelés során.
-ACCOUNTING_USE_NON_TREASURY_Desc=Ez a valódi könyvelés módja. Számlákat és fizetéseket is használunk a könyvelés elvégzéséhez.
+ACCOUNTING_USE_NON_TREASURY_Desc=This is the method for accrual accounting (known as "real" or "complete"). We use all the information (sales and purchase invoices, expense reports, bank, etc.) to generate the accounting.
+ACCOUNTING_USE_TREASURY_Desc=This is the cash accounting method. We only use payments and their dates to generate the accounting. Check with your accounting firm to see if you are eligible for this accounting method.
 PieceDesc=A banki tranzakciót generáló forrásbizonylat hivatkozása (számla Ref, Költségjelentés hivatkozása, ...)
 BankTransactionRef=Banki tranzakció hivatkozási száma (opcionális, az automatikus azonosító már generálva van)
 ## Mass Actions
 ConfirmMassCloneBookkeepingWritingQuestion=Ez klónozza a könyvelési bejegyzést (az ehhez a könyvelési bejegyzéshez kapcsolódó összes sor klónozásra kerül). Biztosan klónozni szeretné a kiválasztott %s rekordokat?
 ConfirmMassCloneBookkeepingWriting=Tömeges klónozás megerősítése
-ConfirmMassReturnAccountBookkeepingWriting=Tömeges kihalás megerősítése
-ConfirmMassReturnAccountBookkeepingWritingQuestion=Ez törli a könyvelési bejegyzést (az ehhez a könyvelési bejegyzéshez kapcsolódó összes sor törlésre kerül). Biztosan megkerüli a %s kiválasztott rekordokat?
+ConfirmMassReturnAccountBookkeepingWriting=Confirm mass reversal
+ConfirmMassReturnAccountBookkeepingWritingQuestion=This will create reversal entries for the selected bookkeeping records (all lines linked to these records will be reversed: debit and credit will be swapped, and a reversal operation will be recorded). Are you sure you want to perform this reversal for the %s selected records?
 ConfirmMassAssignAccountBookkeepingWritingQuestion=Ez az összes kiválasztott sor számláját módosítja.
 confirmMassAssignAccountBookkeepingWritingConfirm=Tömeges fiókmódosítás megerősítése
 CloningSuccess=Sikeres tranzakcióklónozás: %s
@@ -560,6 +565,6 @@ NoAccountsChangedWithAccountNumber=A tranzakciók nincsenek frissítve a számla
 HasAlreadyBeenReversed=már visszafordították
 ErrorWhileCreating=Hiba a létrehozás során %s
 ReturnAccount=Megtérülés
-Clone=Klónozó
+Clone=Klónozás
 AlreadyReturnedAccount=A(z) %s számú bejegyzést már visszavonták.
 SuccessReturnedAccount=A(z) %s számú bejegyzés visszavonásra került.

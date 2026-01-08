@@ -32,6 +32,9 @@
 
 include_once 'inc.php';
 /**
+ * @var string $conffile
+ * @var string $conffiletoshow
+ *
  * @var Translate $langs
  *
  * @var string $dolibarr_main_db_host
@@ -40,8 +43,6 @@ include_once 'inc.php';
  * @var string $dolibarr_main_db_user
  * @var string $dolibarr_main_db_pass
  * @var string $dolibarr_main_db_encrypted_pass
- * @var string $conffile
- * @var string $conffiletoshow
  */
 '
 @phan-var-force string $dolibarr_main_db_host
@@ -80,7 +81,7 @@ $err = 0;
 $setuplang = GETPOST("selectlang", 'alpha', 3) ? GETPOST("selectlang", 'alpha', 3) : (GETPOST('lang', 'alpha', 1) ? GETPOST('lang', 'alpha', 1) : 'auto');
 $langs->setDefaultLang($setuplang);
 
-$langs->loadLangs(array("install", "errors"));
+$langs->loadLangs(array("install", "errors", "admin"));
 
 dolibarr_install_syslog("- fileconf: entering fileconf.php page");
 
@@ -178,7 +179,7 @@ if (!empty($force_install_message)) {
 
 	<tr>
 		<td colspan="3" class="label">
-		<h3><img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/globe.svg" width="20" alt="webserver"> <?php echo $langs->trans("WebServer"); ?></h3>
+		<h3><img class="valignmiddle inline-block paddingright" src="../public/theme/common/globe.svg" width="20" alt="webserver"> <?php echo $langs->trans("WebServer"); ?></h3>
 		</td>
 	</tr>
 
@@ -250,6 +251,7 @@ if (!empty($force_install_noedit)) {
 	<?php
 	if (empty($dolibarr_main_url_root)) {
 		$dolibarr_main_url_root = GETPOSTISSET('main_url') ? GETPOST('main_url') : detect_dolibarr_main_url_root();
+		$dolibarr_main_url_root = trim($dolibarr_main_url_root);
 	}
 	?>
 	<tr>
@@ -260,7 +262,7 @@ if (!empty($force_install_noedit)) {
 				   class="minwidth300"
 				   id="main_url"
 				   name="main_url"
-				   value="<?php print $dolibarr_main_url_root; ?> "
+				   value="<?php print $dolibarr_main_url_root; ?>"
 <?php if (!empty($force_install_noedit) && $force_install_noedit != 3) {
 	print ' disabled';
 }
@@ -305,7 +307,7 @@ if (!empty($force_install_noedit)) {
 
 	<tr>
 		<td colspan="3" class="label"><br>
-		<h3><img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/database.svg" width="20" alt="webserver"> <?php echo $langs->trans("DolibarrDatabase"); ?></h3>
+		<h3><img class="valignmiddle inline-block paddingright" src="../public/theme/common/database.svg" width="20" alt="webserver"> <?php echo $langs->trans("DolibarrDatabase"); ?></h3>
 		</td>
 	</tr>
 
@@ -590,7 +592,7 @@ if (!empty($force_install_noedit)) {
 	?>
 	<tr class="hidesqlite hideroot">
 		<td colspan="3" class="label"><br>
-		<h3><img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/shield.svg" width="20" alt="webserver"> <?php echo $langs->trans("DatabaseSuperUserAccess"); ?></h3>
+		<h3><img class="valignmiddle inline-block paddingright" src="../public/theme/common/shield.svg" width="20" alt="webserver"> <?php echo $langs->trans("DatabaseSuperUserAccess"); ?></h3>
 		</td>
 	</tr>
 

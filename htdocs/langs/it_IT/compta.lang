@@ -3,10 +3,10 @@ MenuFinancial=Contabilità
 TaxModuleSetupToModifyRules=Per modificare le regole di calcolo, vai ad <a href="%s">impostazioni Modulo Imposte</a>
 TaxModuleSetupToModifyRulesLT=Per modificare le regole di calcolo, vai ad <a href="%s">impostazioni Azienda</a>\n
 OptionMode=Opzione per la gestione contabile
-OptionModeTrue=rateo Contabilità
-OptionModeVirtual=Denaro contante Contabilità
-OptionModeTrueDesc=In questo contesto, il fatturato viene calcolato sui pagamenti (data dei pagamenti). La validità dei dati è garantita solo se la contabilità viene verificata attraverso l'inserimento/l'uscita dei pagamenti.
+OptionModeVirtual=rateo Contabilità
+OptionModeTrue=Denaro contante Contabilità
 OptionModeVirtualDesc=In modalità il fatturato è calcolato sulle fatture (data di convalida).<br/>Alla data di scadenza le fatture verranno calcolate automaticamente in attivo o passivo, che siano state pagate o meno.
+OptionModeTrueDesc=In questo contesto, il fatturato viene calcolato sui pagamenti (data dei pagamenti). La validità dei dati è garantita solo se la contabilità viene verificata attraverso l'inserimento/l'uscita dei pagamenti.
 FeatureIsSupportedInInOutModeOnly=Caratteristica disponibile solo in modalità contabile CREDITI-DEBITI (vedi <b>Impostazioni modulo contabilità</b>)
 VATReportBuildWithOptionDefinedInModule=Gli importi mostrati sono calcolati secondo le regole stabilite nelle impostazioni del modulo tasse e contributi.
 LTReportBuildWithOptionDefinedInModule=I totali qui mostrati sono calcolati usando le regole definite per le impostazioni dell'azienda
@@ -302,7 +302,6 @@ ByVatRate=Per aliquota iva di vendita
 TurnoverbyVatrate=Fatturato per aliquota iva di vendita
 TurnoverCollectedbyVatrate=Fatturato per aliquota iva di vendita
 PurchasebyVatrate=Acquisti per aliquota iva
-LabelToShow=Etichetta breve
 PurchaseTurnover=Fatturato d'acquisto
 PurchaseTurnoverCollected=Fatturato di acquisto raccolto
 RulesPurchaseTurnoverDue=- Include le fatture scadute del fornitore, che siano pagate o meno. <br> - Si basa sulla data di fatturazione di queste fatture. <br>
@@ -329,3 +328,4 @@ RuleForLinesDates=Regola per le date linee
 Prepaid=Prepagato
 Postpaid=Postpagato
 SetRuleForLinesDates=Imposta regola per le date linee
+SomeNotConvertedCreditNoteExists=There is <b>%s</b> credit notes not yet converted for consumption

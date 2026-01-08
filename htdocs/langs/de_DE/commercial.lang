@@ -102,3 +102,4 @@ SignedReceiverOnline=Online signiert vom Geschäftspartner
 SignedAll=Von allen Parteien signiert
 SignStatus=Unterschriftenstatus
 DocumentSigned=Dokument unterzeichnet
+DocumentUnsigned=Dokument nicht unterzeichnet
