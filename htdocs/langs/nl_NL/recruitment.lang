@@ -64,3 +64,7 @@ NoPositionOpen=Op dit moment geen vacatures
 ConfirmClose=Bevestig de annulering
 ConfirmCloseAsk=Weet u zeker dat u deze sollicitatiekandidatuur wilt annuleren?
 Recruitment=Werving
+ApplyJobCandidature=Solliciteer op deze baan
+ErrorRecruitmmentCandidatureAlreadyExists= Kandidaat voor werving bestaat al met e-mailadres %s
+RecruitmentCandidatureSaved=Kandidaat voor werving succesvol opgeslagen
+NoOpenJobOffer=Momenteel geen openstaande vacatures

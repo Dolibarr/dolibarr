@@ -32,6 +32,18 @@
  * $text, $description, $line
  */
 
+/**
+ * @var CommonObject $this
+ * @var CommonObject $object
+ * @var CommonObjectLine $line
+ * @var Conf $conf
+ * @var User $user
+ *
+ * @var string $action
+ * @var int $i
+ * @var int $num
+ */
+
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";

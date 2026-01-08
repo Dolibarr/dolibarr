@@ -64,3 +64,7 @@ NoPositionOpen=На данный момент открытых позиций н
 ConfirmClose=Подтвердить отмену
 ConfirmCloseAsk=Вы действительно хотите — отменить этой кандидатуре найма
 Recruitment=Рекрутинг
+ApplyJobCandidature=Подать заявку на эту работу
+ErrorRecruitmmentCandidatureAlreadyExists= Кандидатура для набора уже существует с адресом электронной почты %s
+RecruitmentCandidatureSaved=Кандидатура для набора успешно сохранена
+NoOpenJobOffer=На данный момент нет предложений работы открыть

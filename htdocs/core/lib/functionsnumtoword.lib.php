@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Víctor Ortiz Pérez      <victor@accett.com.mx>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -47,12 +47,12 @@ function dol_convertToWord($num, $langs, $currency = '', $centimes = false)
 	}
 
 	if (isModEnabled('numberwords')) {
-		$concatWords = $langs->getLabelFromNumber($num, $currency);
+		$concatWords = $langs->getLabelFromNumber((string) $num, $currency);
 		return $concatWords;
 	} else {
 		$TNum = explode('.', (string) $num);
 
-		$num = (int) $TNum[0];
+		$num = abs((int) $TNum[0]);
 		$words = array();
 		$list1 = array(
 			'',
@@ -153,11 +153,12 @@ function dol_convertToWord($num, $langs, $currency = '', $centimes = false)
 /**
  * Function to return number or amount in text.
  *
- * @deprecated
  * @param	float 	    $numero			Number to convert
  * @param	Translate	$langs			Language
  * @param	string	    $numorcurrency	'number' or 'amount'
  * @return 	string|int  	       			Text of the number or -1 in case TOO LONG (more than 1000000000000.99)
+ *
+ * @deprecated Use dol_convertToWord instead
  */
 function dolNumberToWord($numero, $langs, $numorcurrency = 'number')
 {

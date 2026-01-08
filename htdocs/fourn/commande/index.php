@@ -22,7 +22,7 @@
 
 /**
  *    \file	      htdocs/fourn/commande/index.php
- *    \ingroup    order fournisseur
+ *    \ingroup    supplier order
  *    \brief      Home page of supplier's orders area
  */
 
@@ -34,10 +34,16 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("suppliers", "orders"));
-
-$hookmanager = new HookManager($db);
 
 // Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('orderssuppliersindex'));
@@ -46,6 +52,7 @@ $max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 
 // Security check
 $orderid = GETPOST('orderid');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -110,7 +117,13 @@ if ($resql) {
 	$db->free($resql);
 
 	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
-
+	/**
+	 * @var string $badgeStatus0
+	 * @var string $badgeStatus1
+	 * @var string $badgeStatus4
+	 * @var string $badgeStatus6
+	 * @var string $badgeStatus9
+	 */
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder nohover centpercent">';
 	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("SuppliersOrders").'</th></tr>';
@@ -222,14 +235,14 @@ if (isModEnabled("supplier_order")) {
 
 
 /*
- * List of users allowed
+ * List of users allowed to approve
  */
 
 $sql = "SELECT";
 if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 	$sql .= " DISTINCT";
 }
-$sql .= " u.rowid, u.lastname, u.firstname, u.email, u.statut";
+$sql .= " u.rowid, u.login, u.lastname, u.firstname, u.email, u.photo, u.statut";
 $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 	$sql .= ",".MAIN_DB_PREFIX."usergroup_user as ug";
@@ -239,7 +252,7 @@ if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_
 } else {
 	$sql .= " WHERE (u.entity IN (".getEntity('user')."))";
 }
-$sql .= " AND u.fk_soc IS NULL"; // An external user can not approved
+$sql .= " AND u.fk_soc IS NULL"; // An external user can not approve
 
 $resql = $db->query($sql);
 if ($resql) {
@@ -251,6 +264,9 @@ if ($resql) {
 	print '<tr class="liste_titre"><th>'.$langs->trans("UserWithApproveOrderGrant").'</th>';
 	print "</tr>\n";
 
+	print '<tr class="oddeven">';
+	print '<td>';
+
 	while ($i < $num) {
 		$obj = $db->fetch_object($resql);
 
@@ -259,19 +275,29 @@ if ($resql) {
 		$userstatic->loadRights('fournisseur');
 
 		if ($userstatic->hasRight('fournisseur', 'commande', 'approuver')) {
-			print '<tr class="oddeven">';
-			print '<td>';
+			if ($i > 0) {
+				print ', ';
+			}
+
 			$userstatic->lastname = $obj->lastname;
 			$userstatic->firstname = $obj->firstname;
 			$userstatic->email = $obj->email;
+			$userstatic->login = $obj->login;
+			$userstatic->photo = $obj->photo;
 			$userstatic->status = $obj->statut;
-			print $userstatic->getNomUrl(1);
-			print '</td>';
-			print "</tr>\n";
+
+			print $userstatic->getNomUrl(-1);
 		}
 
 		$i++;
 	}
+	if ($i == 0) {
+		print '<span class="opacitymedium">'.$langs->trans("Nobody").'</span>';
+	}
+
+	print '</td>';
+	print "</tr>\n";
+
 	print "</table></div><br>";
 	$db->free($resql);
 } else {

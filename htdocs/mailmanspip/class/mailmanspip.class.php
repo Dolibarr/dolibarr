@@ -56,22 +56,22 @@ class MailmanSpip
 	public $errors = array();
 
 	/**
-	 * @var array
+	 * @var array<string,string>
 	 */
 	public $mladded_ok;
 
 	/**
-	 * @var array
+	 * @var array<string,string>
 	 */
 	public $mladded_ko;
 
 	/**
-	 * @var array
+	 * @var array<string,string>
 	 */
 	public $mlremoved_ok;
 
 	/**
-	 * @var array
+	 * @var array<string,string>
 	 */
 	public $mlremoved_ko;
 

@@ -25,7 +25,7 @@
 /**
  * Prepare array with list of tabs
  *
- * @param   Object	$object		Object related to tabs
+ * @param   Entrepot	$object		Object related to tabs
  * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function stock_prepare_head($object)
@@ -55,8 +55,7 @@ function stock_prepare_head($object)
 	*/
 
 	/* Disabled because will never be implemented. Table always empty.
-	if (!empty($conf->global->STOCK_USE_WAREHOUSE_BY_USER))
-	{
+	if (getDolGlobalString('STOCK_USE_WAREHOUSE_BY_USER')) {
 		// Should not be enabled by default because does not work yet correctly because
 		// personal stocks are not tagged into table llx_entrepot
 		$head[$h][0] = DOL_URL_ROOT.'/product/stock/user.php?id='.$object->id;

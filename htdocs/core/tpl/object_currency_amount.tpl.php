@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2024  Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2024       Laurent Destailleur	    <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +23,15 @@
  * $conf
  * $langs
  */
-
+/**
+ * @var CommonObject $object
+ * @var Conf $conf
+ * @var Form $form
+ * @var Translate $langs
+ *
+ * @var string $action
+ * @var int $usercancreate
+ */
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
@@ -44,12 +53,15 @@ print '<!-- BEGIN object_currency_amount.tpl.php -->'."\n";
 // Multicurrency
 if (isModEnabled('multicurrency')) {
 	$colspan = 1;
-	if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+	if ($object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
 		$colspan = 2;
 	}
+
 	if ($object instanceof FactureFournisseurRec || $object instanceof FactureRec) {
 		$currencyIsEditable = ($object->suspended == $object::STATUS_SUSPENDED);
-		$colspan = 1;
+		if ($object instanceof FactureFournisseurRec) {	// Not yet supported for this case
+			$colspan = 1;
+		}
 	} else {
 		// @phan-suppress-next-line PhanUndeclaredConstantOfClass
 		$currencyIsEditable = ($object->status == $object::STATUS_DRAFT);

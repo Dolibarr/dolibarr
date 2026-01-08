@@ -31,6 +31,14 @@ if (isModEnabled("bank")) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("bills", "banks", "companies", "loan"));
 
@@ -42,7 +50,7 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 // TODO ajouter regle pour restreindre access paiement
-//$result = restrictedArea($user, 'facture', $id,'');
+//restrictedArea($user, 'facture', $id,'');
 
 $payment = new PaymentLoan($db);
 if ($id > 0) {

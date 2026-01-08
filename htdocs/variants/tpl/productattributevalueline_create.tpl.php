@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2022   Open-Dsi		<support@open-dsi.fr>
+/* Copyright (C) 2022       Open-Dsi				<support@open-dsi.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,13 +25,22 @@
  * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
  */
 
+/**
+ * @var CommonObject $this
+ * @var CommonObject $object
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ *
+ * @var string $action
+ */
+
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error: this template page cannot be called directly as an URL";
 	exit;
 }
 
-'@phan-var-force CommonObject $this
+'@phan-var-force CommonObject $object
  @phan-var-force CommonObject $this';
 
 global $forcetoshowtitlelines;

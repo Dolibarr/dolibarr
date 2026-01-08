@@ -5,7 +5,8 @@
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2014-2020  Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015  		Benoit Bruchard			<benoitb21@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,10 +70,10 @@ class html_cerfafr extends ModeleDon
 	/**
 	 *  Write the object to document file to disk
 	 *
-	 *	@param	Don			$don	        Donation object
-	 *  @param  Translate	$outputlangs    Lang object for output language
+	 *	@param	Don			$don			Donation object
+	 *  @param  Translate	$outputlangs	Lang object for output language
 	 *  @param	string		$currency		Currency code
-	 *	@return	int             			>0 if OK, <0 if KO
+	 *	@return	int<-1,1>					>0 if OK, <0 if KO
 	 */
 	public function write_file($don, $outputlangs, $currency = '')
 	{
@@ -171,7 +172,7 @@ class html_cerfafr extends ModeleDon
 				$form = str_replace('__DONATOR_ADDRESS__', $don->address, $form);
 				$form = str_replace('__DONATOR_ZIP__', $don->zip, $form);
 				$form = str_replace('__DONATOR_TOWN__', $don->town, $form);
-				$form = str_replace('__PAYMENTMODE_LIB__ ', $paymentmode, $form);
+				$form = str_replace('__PAYMENTMODE_LIB__ ', (string) $paymentmode, $form);
 				$form = str_replace('__NOW__', dol_print_date($now, 'day', false, $outputlangs), $form);
 				$form = str_replace('__DonationRef__', $outputlangs->trans("DonationRef"), $form);
 				$form = str_replace('__DonationTitle__', $outputlangs->trans("DonationTitle"), $form);
@@ -260,8 +261,8 @@ class html_cerfafr extends ModeleDon
 	 * numbers to letters
 	 *
 	 * @param   mixed   $montant    amount
-	 * @param   mixed   $devise1    devise 1 ex: euro
-	 * @param   mixed   $devise2    devise 2 ex: centimes
+	 * @param   string  $devise1    devise 1 ex: euro
+	 * @param   string  $devise2    devise 2 ex: centimes
 	 * @return string               amount in letters
 	 */
 	private function amountToLetters($montant, $devise1 = '', $devise2 = '')

@@ -23,7 +23,10 @@ AllPropals=Visi priekšlikumi
 SearchAProposal=Meklēt priekšlikumu
 NoProposal=Nav priekšlikumu
 ProposalsStatistics=Komerciālo priekšlikuma'u statistika
+NumberOfProposals=Priekšlikumu skaits
 NumberOfProposalsByMonth=Numurs pēc mēneša
+AmountOfProposals=Amount of proposals
+AmountOfProposalsHT=Amount of proposals (excl. tax)
 AmountOfProposalsByMonthHT=Summa pa mēnešiem (bez nodokļiem)
 NbOfProposals=Skaits tirdzniecības priekšlikumiem
 ShowPropal=Rādīt priekšlikumu
@@ -77,7 +80,7 @@ AvailabilityTypeAV_1W=1 nedēļa
 AvailabilityTypeAV_2W=2 nedēļas
 AvailabilityTypeAV_3W=3 nedēļas
 AvailabilityTypeAV_1M=1 mēnesis
-##### Types ofe contacts #####
+##### Types of contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Pārstāvis turpinot darboties priekšlikums
 TypeContact_propal_external_BILLING=Klientu rēķinu kontakts
 TypeContact_propal_external_CUSTOMER=Klientu kontaktu turpinot darboties priekšlikums

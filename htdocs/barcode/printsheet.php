@@ -2,7 +2,8 @@
 /* Copyright (C) 2003	   Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003	   Jean-Louis Bergamo	<jlb@j1b.org>
  * Copyright (C) 2006-2017 Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +38,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/printsheet/modules_labels.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var array<string,array{name:string,paper-size:string|array{0:float,1:float},orientation:string,metric:string,marginLeft:float,marginTop:float,NX:int,NY:int,SpaceX:float,SpaceY:float,width:float,height:float,font-size:int,custom_x:float,custom_y:float}> $_Avery_Labels
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'members', 'errors'));
@@ -73,20 +85,22 @@ $hookmanager->initHooks(array('printsheettools'));
 
 restrictedArea($user, 'barcode');
 
-$parameters = array();
+$object = new stdClass();
 
-// Note that $action and $object may have been modified by some
-$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
-if ($reshook < 0) {
-	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-}
 
 /*
  * Actions
  */
 
+// Note that $action and $object may have been modified by some
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+
 if (empty($reshook)) {
-	if (GETPOST('submitproduct') && GETPOST('submitproduct')) {
+	if (GETPOST('submitproduct')) {
 		$action = ''; // We reset because we don't want to build doc
 		if (GETPOSTINT('productid') > 0) {
 			$result = $producttmp->fetch(GETPOSTINT('productid'));
@@ -105,7 +119,7 @@ if (empty($reshook)) {
 			}
 		}
 	}
-	if (GETPOST('submitthirdparty') && GETPOST('submitthirdparty')) {
+	if (GETPOST('submitthirdparty')) {
 		$action = ''; // We reset because we don't want to build doc
 		if (GETPOSTINT('socid') > 0) {
 			$thirdpartytmp->fetch(GETPOSTINT('socid'));
@@ -145,7 +159,7 @@ if (empty($reshook)) {
 			// Get encoder (barcode_type_coder) from barcode type id (barcode_type)
 			$stdobject = new GenericObject($db);
 			$stdobject->barcode_type = $fk_barcode_type;
-			$result = $stdobject->fetch_barcode();
+			$result = $stdobject->fetchBarCode();
 			if ($result <= 0) {
 				$error++;
 				setEventMessages('Failed to get bar code type information '.$stdobject->error, $stdobject->errors, 'errors');
@@ -159,8 +173,8 @@ if (empty($reshook)) {
 
 		if (!$error && $stdobject !== null) {
 			$code = $forbarcode;
-			$generator = $stdobject->barcode_type_coder; // coder (loaded by fetch_barcode). Engine.
-			$encoding = strtoupper($stdobject->barcode_type_code); // code (loaded by fetch_barcode). Example 'ean', 'isbn', ...
+			$generator = $stdobject->barcode_type_coder; // coder (loaded by fetchBarCode). Engine.
+			$encoding = strtoupper($stdobject->barcode_type_code); // code (loaded by fetchBarCode). Example 'ean', 'isbn', ...
 
 			$diroutput = $conf->barcode->dir_temp;
 			dol_mkdir($diroutput);
@@ -284,7 +298,7 @@ if (empty($reshook)) {
 					// This generates and send PDF to output
 					// TODO Move
 					try {
-						$result = doc_label_pdf_create($db, $arrayofrecords, $modellabel, $outputlangs, $diroutput, $template, dol_sanitizeFileName($outfile));
+						$result = doc_label_pdf_create($db, $arrayofrecords, $modellabel, $outputlangs, (string) $diroutput, (string) $template, dol_sanitizeFileName($outfile));
 					} catch (Exception $e) {
 						$mesg = $langs->trans('ErrorGeneratingBarcode');
 					}
@@ -429,7 +443,7 @@ if ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire')) {
 	print '<input id="fillfromproduct" type="radio" '.((GETPOST("selectorforbarcode") == 'fillfromproduct') ? 'checked ' : '').'name="selectorforbarcode" value="fillfromproduct" class="radiobarcodeselect"><label for="fillfromproduct"> '.$langs->trans("FillBarCodeTypeAndValueFromProduct").'</label>';
 	print '<br>';
 	print '<div class="showforproductselector">';
-	$form->select_produits(GETPOSTINT('productid'), 'productid', '', '', 0, -1, 2, '', 0, array(), 0, '1', 0, 'minwidth400imp', 1);
+	$form->select_produits(GETPOSTINT('productid'), 'productid', '', 0, 0, -1, 2, '', 0, array(), 0, '1', 0, 'minwidth400imp', 1);
 	print ' &nbsp; <input type="submit" class="button small" id="submitproduct" name="submitproduct" value="'.(dol_escape_htmltag($langs->trans("GetBarCode"))).'">';
 	print '</div>';
 }
@@ -443,7 +457,7 @@ if ($user->hasRight('societe', 'lire')) {
 	print '</div>';
 }
 
-print '<br>';
+print '<br><br>';
 
 if ($producttmp->id > 0) {
 	print $langs->trans("BarCodeDataForProduct", '').' '.$producttmp->getNomUrl(1).'<br>';
@@ -481,7 +495,7 @@ print '<br>';
 
 print '</div>';
 
-print '<br><input type="submit" class="button" id="submitformbarcodegen" '.((GETPOST("selectorforbarcode") && GETPOST("selectorforbarcode")) ? '' : 'disabled ').'value="'.$langs->trans("BuildPageToPrint").'">';
+print '<br><input type="submit" class="button" id="submitformbarcodegen" '.(GETPOST("selectorforbarcode") ? '' : 'disabled ').'value="'.$langs->trans("BuildPageToPrint").'">';
 
 print '</form>';
 print '<br>';

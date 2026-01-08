@@ -1,9 +1,9 @@
 <?php
 /* Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
- * Copyright (C) 2013-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2025  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2014       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2019       Eric Seigne             <eric.seigne@cap-rel.fr>
- * Copyright (C) 2021-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2021-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -57,7 +57,7 @@ function accounting_prepare_head(AccountingAccount $object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/accountancy/admin/card.php?id='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/accountancy/admin/card.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans("AccountAccounting");
 	$head[$h][2] = 'card';
 	$h++;
@@ -69,6 +69,38 @@ function accounting_prepare_head(AccountingAccount $object)
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'accounting_account');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'accounting_account', 'remove');
+
+	return $head;
+}
+
+/**
+ *	Prepare array with list of tabs for accounting transaction
+ *
+ *	@param	BookKeeping	$object		Bookkeeping
+ *	@param	string		$mode		Mode _tmp if operation are drafted
+ *	@param	string		$type		Type of list "sub" (for subsidiary list) or not
+ *	@param	string		$backtopage Back to page (return on ledger by default)
+ *	@return	array<array{0:string,1:string,2:string}>	Array of tabs to show
+ */
+function accounting_transaction_prepare_head(BookKeeping $object, $mode = '', $type = '', $backtopage = '/accountancy/bookkeeping/listbyaccount.php')
+{
+	global $langs, $conf;
+
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/accountancy/bookkeeping/card.php', ['piece_num' => $object->piece_num, 'mode' => $mode, 'type' => $type, 'backtopage' => $backtopage]);
+	$head[$h][1] = $langs->trans("Transaction");
+	$head[$h][2] = 'transaction';
+	$h++;
+
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__'); to add new tab
+	// $this->tabs = array('entity:-tabname); to remove a tab
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'accounting_transaction');
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'accounting_transaction', 'remove');
 
 	return $head;
 }
@@ -94,8 +126,6 @@ function clean_account($account)
  */
 function length_accountg($account)
 {
-	global $conf;
-
 	if ($account < 0 || is_empty($account)) {
 		return '';
 	}
@@ -112,7 +142,6 @@ function length_accountg($account)
 		if ($i >= 1) {
 			while ($i < $g) {
 				$account .= '0';
-
 				$i++;
 			}
 
@@ -151,7 +180,6 @@ function length_accounta($accounta)
 		if ($i >= 1) {
 			while ($i < $a) {
 				$accounta .= '0';
-
 				$i++;
 			}
 
@@ -164,7 +192,44 @@ function length_accounta($accounta)
 	}
 }
 
+/**
+ * Check if a general accounting account allows the use of an auxiliary account.
+ *
+ * @param DoliDB	$db					Database handler
+ * @param string	$general_account	The general account number (optional if $general_account_id is used)
+ * @param string	$auxiliary_account	The auxiliary account number
+ * @param int		$general_account_id	Optional rowid of the general accounting account
+ * @return bool True if the auxiliary account is allowed, false otherwise
+ */
+function checkGeneralAccountAllowsAuxiliary($db, $general_account, $auxiliary_account, $general_account_id = 0)
+{
+	global $conf;
 
+	if (empty($auxiliary_account)) return true; // No check needed if no auxiliary account used
+
+	// Build SQL to get general account info based on rowid or account number
+	$sql = "SELECT rowid, account_number, centralized";
+	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_account";
+	$sql .= " WHERE";
+	if ($general_account_id > 0) {
+		$sql .= " rowid = ".((int) $general_account_id);
+	} else {
+		$sql .= " account_number = '".$db->escape($general_account)."'";
+	}
+	$sql .= " AND entity = ". ((int) $conf->entity);
+	$sql .= " AND fk_pcg_version IN (SELECT pcg_version FROM ".MAIN_DB_PREFIX."accounting_system WHERE rowid = ".((int) getDolGlobalInt('CHARTOFACCOUNTS')).")";
+
+	$resql = $db->query($sql);
+	if ($resql) {
+		$obj = $db->fetch_object($resql);
+		if ($obj && empty($obj->centralized)) {
+			// Not a centralized account -> not allowed to use auxiliary
+			return false;
+		}
+	}
+
+	return true;
+}
 
 /**
  *	Show header of a page used to transfer/dispatch data in accounting
@@ -283,7 +348,7 @@ function journalHead($nom, $variant, $period, $periodlink, $description, $buildd
  */
 function getDefaultDatesForTransfer()
 {
-	global $db, $conf;
+	global $db;
 
 	$date_start = '';
 	$date_end = '';
@@ -297,11 +362,11 @@ function getDefaultDatesForTransfer()
 		$sql .= " WHERE date_start < '".$db->idate(dol_now())."' AND date_end > '".$db->idate(dol_now())."'";
 		$sql .= $db->plimit(1);
 		$res = $db->query($sql);
-		if ($res->num_rows > 0) {
+		if ($db->num_rows($res) > 0) {
 			$obj = $db->fetch_object($res);
 
 			$date_start = $db->jdate($obj->date_start);
-			$date_end = $db->jdate($obj->date_end);
+			$date_end = dol_get_last_hour($db->jdate($obj->date_end));
 		} else {
 			$month_start = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
 			$year_start = (int) dol_print_date(dol_now(), '%Y');
@@ -315,7 +380,8 @@ function getDefaultDatesForTransfer()
 				$year_end--;
 			}
 			$date_start = dol_mktime(0, 0, 0, $month_start, 1, $year_start);
-			$date_end = dol_get_last_day($year_end, $month_end);
+			$lastday = dol_get_last_day($year_end, $month_end);
+			$date_end = dol_mktime(23, 59, 59, $month_end, (int) dol_print_date($lastday, '%d'), $year_end);
 		}
 	} elseif ($periodbydefaultontransfer == 1) {	// current month
 		$year_current = (int) dol_print_date(dol_now('gmt'), "%Y", 'gmt');
@@ -349,7 +415,7 @@ function getDefaultDatesForTransfer()
  * 	@param 	Conf		$conf				Config
  * 	@param 	?int 		$from_time			[=null] Get current time or set time to find fiscal period
  *	@param	'tzserver'|'gmt'	$gm			'gmt' => we return GMT timestamp (recommended), 'tzserver' => we return in the PHP server timezone
- * 	@param	int			$withenddateonly	Do not return period if and date is not defined
+ * 	@param	int			$withenddateonly	Do not return period if end date is not defined
  * 	@return array{date_start:int,date_end:int}	Period of fiscal year : [date_start, date_end]
  */
 function getCurrentPeriodOfFiscalYear($db, $conf, $from_time = null, $gm = 'tzserver', $withenddateonly = 1)
@@ -358,6 +424,8 @@ function getCurrentPeriodOfFiscalYear($db, $conf, $from_time = null, $gm = 'tzse
 	$now_arr = dol_getdate($now);
 	if ($from_time === null) {
 		$from_time = $now;
+	} else {
+		$now_arr = dol_getdate($from_time);
 	}
 
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -408,4 +476,38 @@ function getCurrentPeriodOfFiscalYear($db, $conf, $from_time = null, $gm = 'tzse
 		'date_start' => $date_start,
 		'date_end' => $date_end,
 	);
+}
+
+/**
+ * Get next fiscal year period after a given date
+ *
+ * @param  DoliDB   $db             Database handler
+ * @param  int      $after_date     Get fiscal period that starts after this date
+ * @param  'tzserver'|'gmt' $gm     'gmt' => we return GMT timestamp, 'tzserver' => PHP server timezone
+ * @return array{date_start:int,date_end:int}|null Period of next fiscal year or null if not found
+ */
+function getNextFiscalYear($db, $after_date, $gm = 'tzserver')
+{
+	// Find the fiscal year that starts strictly after the given date
+	$sql = "SELECT date_start, date_end FROM ".$db->prefix()."accounting_fiscalyear";
+	$sql .= " WHERE date_start > '".$db->idate($after_date, $gm)."'";
+	$sql .= " AND entity IN (".getEntity('accounting_fiscalyear').")";
+	$sql .= $db->order('date_start', 'ASC');  // Get the first one (earliest)
+	$sql .= $db->plimit(1);
+
+	$res = $db->query($sql);
+
+	if ($res && $db->num_rows($res) > 0) {
+		$obj = $db->fetch_object($res);
+
+		$date_start = $db->jdate($obj->date_start, $gm);
+		$date_end = $db->jdate($obj->date_end, $gm);  // Without dol_get_last_hour to avoid the bug
+
+		return array(
+			'date_start' => $date_start,
+			'date_end' => $date_end,
+		);
+	}
+
+	return null;  // No next fiscal year found
 }

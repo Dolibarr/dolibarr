@@ -5,8 +5,8 @@
  * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Ari Elbaz (elarifr) <github@accedinfo.com>
  * Copyright (C) 2021       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,14 @@
  * \brief		To define accounting account on product / service
  */
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -190,20 +198,18 @@ if ($action == 'update' && $permissiontobind) {
 	}
 
 	if (!empty($toselect) && $massaction === 'changeaccount') {
-		//$msg = '<div><span class="accountingprocessing">' . $langs->trans("Processing") . '...</span></div>';
 		$ok = 0;
 		$ko = 0;
 		$msg = '';
 		$sql = '';
-		if (!empty($toselect) && in_array($accounting_product_mode, $accounting_product_modes)) {
+		if (in_array($accounting_product_mode, $accounting_product_modes)) {
 			$accounting = new AccountingAccount($db);
 
-			//$msg .= '<div><span class="accountingprocessing">' . count($toselect) . ' ' . $langs->trans("SelectedLines") . '</span></div>';
 			$arrayofdifferentselectedvalues = array();
 
 			$cpt = 0;
 			foreach ($toselect as $productid) {
-				$accounting_account_id = GETPOST('codeventil_'.$productid);
+				$accounting_account_id = GETPOSTINT('codeventil_'.$productid);
 
 				$result = 0;
 				if ($accounting_account_id > 0) {
@@ -415,7 +421,7 @@ $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -460,9 +466,9 @@ if ($resql) {
 	if ($search_current_account_valid && $search_current_account_valid != '-1') {
 		$param .= "&search_current_account_valid=".urlencode($search_current_account_valid);
 	}
-	if ($accounting_product_mode) {
-		$param .= '&accounting_product_mode='.urlencode($accounting_product_mode);
-	}
+	// if ($accounting_product_mode) { // can't be empty see line 91-93
+	$param .= '&accounting_product_mode='.urlencode($accounting_product_mode);
+	// }
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	if ($optioncss != '') {
@@ -476,15 +482,14 @@ if ($resql) {
 	print '<input type="hidden" name="page_y" value="">';
 
 	print load_fiche_titre($langs->trans("ProductsBinding"), '', 'title_accountancy');
-	print '<br>';
 
 	print '<span class="opacitymedium">'.$langs->trans("InitAccountancyDesc").'</span><br>';
 	print '<br>';
 
-	// Select mode
+	// Select usage
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans('Options').'</td><td>'.$langs->trans('Description').'</td>';
+	print '<td>'.$langs->trans('ProductUsage').'</td><td></td>';
 	print "</tr>\n";
 	print '<tr class="oddeven"><td><input type="radio" id="accounting_product_mode1" name="accounting_product_mode" value="ACCOUNTANCY_SELL"'.($accounting_product_mode == 'ACCOUNTANCY_SELL' ? ' checked' : '').'> <label for="accounting_product_mode1">'.$langs->trans('OptionModeProductSell').'</label></td>';
 	print '<td>'.$langs->trans('OptionModeProductSellDesc');
@@ -509,8 +514,10 @@ if ($resql) {
 
 	print '<div class="center"><input type="submit" class="button" value="'.$langs->trans('Refresh').'" name="changetype"></div>';
 
-	print "<br>\n";
+	print "<br><br>\n";
 
+
+	$object = new Product($db);
 
 	// Filter on categories
 	$moreforfilter = '';
@@ -541,7 +548,7 @@ if ($resql) {
 	//print '<br><div class="center">'.$buttonsave.'</div>';
 
 	$texte = $langs->trans("ListOfProductsServices");
-	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, '', 0, '', '', $limit, 0, 0, 1);
+	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, (string) $massactionbutton, $num, $nbtotalofrecords, '', 0, '', '', $limit, 0, 0, 1);
 
 	if ($massaction == 'set_default_account') {
 		$formquestion = array();

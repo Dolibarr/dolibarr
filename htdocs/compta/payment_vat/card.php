@@ -38,6 +38,14 @@ if (isModEnabled("bank")) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'banks', 'companies'));
 
@@ -49,7 +57,7 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 // TODO ajouter regle pour restreindre access paiement
-//$result = restrictedArea($user, 'facture', $id,'');
+//restrictedArea($user, 'facture', $id,'');
 
 $object = new PaymentVAT($db);
 if ($id > 0) {
@@ -79,16 +87,16 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('tax', '
 	}
 }
 
+$outputlangs = $langs;
+
 // Validate social contribution
 /*
-if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->tax->charges->creer)
-{
+if ($action == 'confirm_valide' && $confirm == 'yes' && $user->hasRight('tax', 'charges', '>creer') {
 	$db->begin();
 
 	$result=$object->valide();
 
-	if ($result > 0)
-	{
+	if ($result > 0) {
 		$db->commit();
 
 		$factures=array();	// TODO Get all id of invoices linked to this payment
@@ -110,9 +118,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->tax->char
 
 		header('Location: card.php?id='.$object->id);
 		exit;
-	}
-	else
-	{
+	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 		$db->rollback();
 	}

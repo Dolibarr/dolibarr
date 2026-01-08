@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014-2024	Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2014-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2016       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -27,6 +27,14 @@
 require '../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/core/modules/printing/modules_printing.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->load("printing");
 
@@ -48,7 +56,7 @@ if (!$user->admin) {
 
 llxHeader("", $langs->trans("Printing"));
 
-print_barre_liste($langs->trans("Printing"), 0, $_SERVER["PHP_SELF"], '', '', '', '<a class="button" href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("Refresh").'</a>', 0, 0, 'title_setup.png');
+print_barre_liste($langs->trans("Printing"), 0, $_SERVER["PHP_SELF"], '', '', '', '<a class="button" href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("Refresh").'</a>', 0, 0, 'title_setup');
 
 print $langs->trans("DirectPrintingJobsDesc").'<br><br>';
 

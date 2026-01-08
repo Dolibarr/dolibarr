@@ -74,3 +74,5 @@ NewPartnershipRequest=新しいパートナーシップリクエスト
 NewPartnershipRequestDesc=このフォームでは、パートナーシッププログラムへの参加をリクエストできる。このフォームへの記入についてサポートが必要な場合は、メール<b>%s</b>までご連絡ください。
 ThisUrlMustContainsAtLeastOneLinkToWebsite=このページには、次のドメインのいずれかへのリンクが少なくとも 1 つ含まれている必要がある: %s
 IPOfApplicant=申請者のIPアドレス
+PartnershipToReopen=再開するには
+PartnershipConfirmReOpenAsk=このパートナーシップ <b> %s</b> を再開してもよいか?

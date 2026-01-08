@@ -2,6 +2,7 @@
 /* Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +29,14 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 require_once DOL_DOCUMENT_ROOT."/opensurvey/lib/opensurvey.lib.php";
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Security check
 if (!$user->hasRight('opensurvey', 'write')) {
@@ -58,21 +67,24 @@ if (isset($_SESSION["nbrecases"])) {
 }
 
 if (GETPOST("ajoutcases") || GETPOST("ajoutcases_x")) {
-	$_SESSION["nbrecases"] += 5;
+	if ($_SESSION["nbrecases"] < 100) {
+		$_SESSION["nbrecases"] += 5;
+	}
 }
 
 // Create survey into database
 if (GETPOSTISSET("confirmecreation")) {
-	//recuperation des données de champs textes
 	$toutchoix = '';
 	for ($i = 0; $i < $_SESSION["nbrecases"] + 1; $i++) {
-		if (!empty($arrayofchoices[$i])) {
+		$tmpchoice = $arrayofchoices[$i];
+		$tmptypecolumn = GETPOST('typecolonne'.$i, 'alphanohtml');
+		if (!empty($tmpchoice)) {
 			$toutchoix .= ',';
-			$toutchoix .= str_replace(array(",", "@"), " ", $arrayofchoices[$i]).(empty($arrayoftypecolumn[$i]) ? '' : '@'.$arrayoftypecolumn[$i]);
+			$toutchoix .= str_replace(array(",", "@"), " ", $tmpchoice).(empty($tmptypecolumn) ? '' : '@'.$tmptypecolumn);
 		}
 	}
 
-	$toutchoix = substr("$toutchoix", 1);
+	$toutchoix = substr($toutchoix, 1);
 	$_SESSION["toutchoix"] = $toutchoix;
 
 	//test de remplissage des cases
@@ -83,11 +95,11 @@ if (GETPOSTISSET("confirmecreation")) {
 		}
 	}
 
-	//message d'erreur si aucun champ renseigné
+	// Error if no field defined
 	if ($testremplissage != "ok" || (!$toutchoix)) {
 		setEventMessages($langs->trans("ErrorOpenSurveyOneChoice"), null, 'errors');
 	} else {
-		//format du sondage AUTRE
+		// format of survey AUTRE
 		$_SESSION["formatsondage"] = "A";
 
 		// Add into database
@@ -115,7 +127,7 @@ if (empty($_SESSION['title'])) {
 //partie creation du sondage dans la base SQL
 //On prépare les données pour les inserer dans la base
 
-print '<form name="formulaire" action="#bas" method="POST">'."\n";
+print '<form name="formulaire" id="surveyform" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print load_fiche_titre($langs->trans("CreatePoll").' (2 / 2)');
@@ -123,7 +135,8 @@ print load_fiche_titre($langs->trans("CreatePoll").' (2 / 2)');
 
 print '<br>'.$langs->trans("PollOnChoice").'<br><br>'."\n";
 
-print '<div class=corps>'."\n";
+print '<div>'."\n";
+
 print '<table>'."\n";
 
 //affichage des cases texte de formulaire
@@ -134,7 +147,8 @@ for ($i = 0; $i < $_SESSION["nbrecases"]; $i++) {
 	}
 	print '<tr><td>'.$langs->trans("TitleChoice").' '.$j.': </td><td><input type="text" name="choix[]" size="40" maxlength="40" value="'.dol_escape_htmltag($_SESSION["choix$i"]).'" id="choix'.$i.'">';
 	$tmparray = array('checkbox' => $langs->trans("CheckBox"), 'yesno' => $langs->trans("YesNoList"), 'foragainst' => $langs->trans("PourContreList"));
-	print ' &nbsp; '.$langs->trans("Type").' '.$form->selectarray("typecolonne[]", $tmparray, $_SESSION["typecolonne$i"]);
+
+	print ' &nbsp; '.$langs->trans("Type").' '.$form->selectarray("typecolonne".$i, $tmparray, $_SESSION["typecolonne".$i]);
 	print '</td></tr>'."\n";
 }
 
@@ -142,20 +156,39 @@ print '</table>'."\n";
 
 //ajout de cases supplementaires
 print '<table><tr>'."\n";
-print '<td>'.$langs->trans("5MoreChoices").'</td><td><input type="image" name="ajoutcases" src="../img/add-16.png"></td>'."\n";
+print '<td class="center">'.$langs->trans("5MoreChoices").'... ';
+if ($conf->use_javascript_ajax) {
+	print '<div id="addchoice" class="inline-block">';
+	print img_picto('', 'add', '', 0, 0, 0, '', 'valignmiddle btnTitle-icon cursorpointer');
+	print '</div>';
+
+	print '<input type="hidden" name="ajoutcases" id="ajoutcases" value="">';
+	print '<script>
+	// jQuery code to handle the div click event
+	$(document).ready(function() {
+		$("#addchoice").on("click", function() {
+			console.log("Click on adchoice");
+			$("#ajoutcases").val("ajoutcases");
+			$("#surveyform").submit();
+		});
+	});
+	</script>';
+} else {
+	print '<input type="image" name="ajoutcases" src="../img/add-16.png">';
+}
+print '</td><td>';
+print '</td>'."\n";
 print '</tr></table>'."\n";
 print'<br>'."\n";
 
-print '<table><tr>'."\n";
-print '<td></td><td><input type="submit" class="button" name="confirmecreation" value="'.dol_escape_htmltag($langs->trans("CreatePoll")).'"></td>'."\n";
-print '</tr></table>'."\n";
+print '<input type="submit" class="button" name="confirmecreation" value="'.dol_escape_htmltag($langs->trans("CreatePoll")).'">'."\n";
 
-//fin du formulaire et bandeau de pied
 print '</form>'."\n";
 
 
 print '<a name="bas"></a>'."\n";
 print '<br><br><br>'."\n";
+
 print '</div>'."\n";
 
 // End of page

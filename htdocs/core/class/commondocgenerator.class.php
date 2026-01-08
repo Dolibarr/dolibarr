@@ -4,10 +4,10 @@
  * Copyright (C) 2004		Eric Seigne             <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012	Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2016-2023  Charlene Benke          <charlene@patas-monkey.com>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2016-2025  Charlene Benke          <charlene@patas-monkey.com>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Josep Lluís Amador      <joseplluis@lliuretic.cat>
- * Copyright (C) 2024		MDW	                    <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW	                    <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Mélina Joum			    <melina.joum@altairis.fr>
  * Copyright (C) 2024	    Nick Fragoulis
  *
@@ -59,12 +59,17 @@ abstract class CommonDocGenerator
 	public $errors = array();
 
 	/**
+	 * @var string[]    Array of warnings strings
+	 */
+	public $warnings = array();
+
+	/**
 	 * @var DoliDB Database handler.
 	 */
 	protected $db;
 
 	/**
-	 * @var ?Extrafields object
+	 * @var ?ExtraFields object
 	 */
 	public $extrafieldsCache;
 
@@ -219,9 +224,14 @@ abstract class CommonDocGenerator
 	public $phpmin = array(7, 1);
 
 	/**
-	 * @var array<string,array{rank:int,width:float|int,status:bool,title:array{textkey:string,label:string,align:string,padding:array{0:float,1:float,2:float,3:float}},content:array{align:string,padding:array{0:float,1:float,2:float,3:float}}}>	Array of columns
+	 * @var array<string,array{rank:int,width:float|false,status:bool|int<0,1>,border-left?:bool,title:array{textkey:string,label?:string,align?:string,padding?:array{0:float,1:float,2:float,3:float}},content?:array{align?:string,padding?:array{0:float,1:float,2:float,3:float}}}>	Array of document table columns
 	 */
 	public $cols;
+
+	/**
+	 * @var array<string,array{page:int,y:float|int}>	Array of position data
+	 */
+	public $afterColsLinePositions;
 
 	/**
 	 * @var array{fullpath:string}	Array with result of doc generation. content is array('fullpath'=>$file)
@@ -318,7 +328,7 @@ abstract class CommonDocGenerator
 	 *
 	 * @param   User		$user           User
 	 * @param   Translate	$outputlangs    Language object for output
-	 * @return	array<string,mixed>			Array of substitution key->code
+	 * @return	array<string,float|string>			Array of substitution key->code
 	 */
 	public function get_substitutionarray_user($user, $outputlangs)
 	{
@@ -367,7 +377,7 @@ abstract class CommonDocGenerator
 	 *
 	 * @param   Adherent	$member         Member
 	 * @param   Translate	$outputlangs    Language object for output
-	 * @return	array<string,mixed>			Array of substitution key->code
+	 * @return	array<string,float|string>			Array of substitution key->code
 	 */
 	public function getSubstitutionarrayMember($member, $outputlangs)
 	{
@@ -471,7 +481,7 @@ abstract class CommonDocGenerator
 	 * Define array with couple substitution key => substitution value
 	 * For example {company_name}, {company_name_alias}
 	 *
-	 * @param	Societe		$object			Object
+	 * @param	?Societe	$object			Object
 	 * @param   Translate	$outputlangs    Language object for output
 	 * @param   string		$array_key	    Name of the key for return array
 	 * @return	array<string,mixed>			Array of substitution key->code
@@ -654,7 +664,7 @@ abstract class CommonDocGenerator
 		// phpcs:enable
 		global $extrafields;
 
-		$sumpayed = $sumdeposit = $sumcreditnote = '';
+		$totalpaid = $totaldeposits = $totalcreditnotes = '';
 		$already_payed_all = 0;
 
 		if ($object->element == 'facture') {
@@ -664,10 +674,10 @@ abstract class CommonDocGenerator
 			if ($object->fk_facture_source > 0) {
 				$invoice_source->fetch($object->fk_facture_source);
 			}
-			$sumpayed = $object->getSommePaiement();
-			$sumdeposit = $object->getSumDepositsUsed();
-			$sumcreditnote = $object->getSumCreditNotesUsed();
-			$already_payed_all = $sumpayed + $sumdeposit + $sumcreditnote;
+			$totalpaid = $object->getSommePaiement();
+			$totaldeposits = $object->getSumDepositsUsed();
+			$totalcreditnotes = $object->getSumCreditNotesUsed();
+			$already_payed_all = $totalpaid + $totaldeposits + $totalcreditnotes;
 		}
 
 		// Ignore notice for deprecated date - @phan-suppress-next-line PhanUndeclaredProperty
@@ -702,7 +712,7 @@ abstract class CommonDocGenerator
 			$array_key.'_payment_mode_code' => $object->mode_reglement_code,
 			$array_key.'_payment_mode' => ($outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code) != 'PaymentType'.$object->mode_reglement_code ? $outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code) : $object->mode_reglement),
 			$array_key.'_payment_term_code' => $object->cond_reglement_code,
-			$array_key.'_payment_term' => ($outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code) != 'PaymentCondition'.$object->cond_reglement_code ? $outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code) : ($object->cond_reglement_doc ? $object->cond_reglement_doc : $object->cond_reglement)),
+			$array_key.'_payment_term' => ($outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code) != 'PaymentCondition'.$object->cond_reglement_code ? $outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code) : $object->cond_reglement_doc),
 
 			$array_key.'_incoterms' => (method_exists($object, 'display_incoterms') ? $object->display_incoterms() : ''),
 
@@ -732,12 +742,12 @@ abstract class CommonDocGenerator
 			$array_key.'_note' => $object->note_public, // For backward compatibility
 
 			// Payments
-			$array_key.'_already_payed_locale' => price($sumpayed, 0, $outputlangs),
-			$array_key.'_already_payed' => price2num($sumpayed),
-			$array_key.'_already_deposit_locale' => price($sumdeposit, 0, $outputlangs),
-			$array_key.'_already_deposit' => price2num($sumdeposit),
-			$array_key.'_already_creditnote_locale' => price($sumcreditnote, 0, $outputlangs),
-			$array_key.'_already_creditnote' => price2num($sumcreditnote),
+			$array_key.'_already_payed_locale' => price($totalpaid, 0, $outputlangs),
+			$array_key.'_already_payed' => price2num($totalpaid),
+			$array_key.'_already_deposit_locale' => price($totaldeposits, 0, $outputlangs),
+			$array_key.'_already_deposit' => price2num($totaldeposits),
+			$array_key.'_already_creditnote_locale' => price($totalcreditnotes, 0, $outputlangs),
+			$array_key.'_already_creditnote' => price2num($totalcreditnotes),
 
 			$array_key.'_already_payed_all_locale' => price(price2num($already_payed_all, 'MT'), 0, $outputlangs),
 			$array_key.'_already_payed_all' => price2num($already_payed_all, 'MT'),
@@ -753,7 +763,7 @@ abstract class CommonDocGenerator
 			if (property_exists($object, 'fk_account') && $object->fk_account > 0) {
 				require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 				$bank_account = new Account($this->db);
-				$bank_account->fetch($object->fk_account);
+				$bank_account->fetch((int) $object->fk_account);
 			}
 
 			$resarray[$array_key.'_bank_iban'] = (empty($bank_account) ? '' : $bank_account->iban);
@@ -772,6 +782,14 @@ abstract class CommonDocGenerator
 		} else {
 			$resarray[$array_key.'_total_discount_ht_locale'] = '';
 			$resarray[$array_key.'_total_discount_ht'] = '';
+		}
+
+		if ($object->element == 'facture' || $object->element == 'invoice_supplier') {
+			if ($object->type == 0) {
+				$resarray[$array_key.'_type_label'] = $outputlangs->transnoentities("PdfInvoiceTitle");
+			} else {
+				$resarray[$array_key.'_type_label'] = (empty($object)) ? '' : $object->getLibType(0);
+			}
 		}
 
 		// Fetch project information if there is a project assigned to this object
@@ -867,12 +885,13 @@ abstract class CommonDocGenerator
 			'line_product_desc' => (empty($line->product_desc) ? '' : $line->product_desc),
 
 			'line_desc' => $line->desc,
-			'line_vatrate' => vatrate($line->tva_tx, true, $line->info_bits),
+			'line_vatrate' => vatrate($line->tva_tx, true, (int) $line->info_bits),
 			'line_up' => price2num($line->subprice),
 			'line_up_locale' => price($line->subprice, 0, $outputlangs),
 			'line_total_up' => price2num($line->subprice * (float) $line->qty),
 			'line_total_up_locale' => price($line->subprice * (float) $line->qty, 0, $outputlangs),
 			'line_qty' => $line->qty,
+			'line_qty_locale' => price($line->qty),
 			'line_discount_percent' => ($line->remise_percent ? $line->remise_percent.'%' : ''),
 			'line_price_ht' => price2num($line->total_ht),
 			'line_price_ttc' => price2num($line->total_ttc),
@@ -901,9 +920,10 @@ abstract class CommonDocGenerator
 			'line_localtax1_rate' => 'localtax1_tx',
 			'line_localtax2_rate' => 'localtax2_tx',
 		);
-		foreach ($vat_specs as $vat_spec) {
-			if (property_exists($line, $vat_spec[1])) {
-				$resarray[$vat_spec[0]] = vatrate($line->${$vat_spec[1]});
+		foreach ($vat_specs as $vat_key => $vat_spec) {
+			if (property_exists($line, $vat_spec)) {
+				// @phan-suppress-next-line PhanUndeclaredProperty
+				$resarray[$vat_key] = vatrate($line->$vat_spec);
 			}
 		}
 
@@ -912,20 +932,26 @@ abstract class CommonDocGenerator
 			array('line_date_start', 'date_start', 'day', 'auto', null),
 			array('line_date_start_locale', 'date_start', 'day', 'tzserver', $outputlangs),
 			array('line_date_start_rfc', 'date_start', 'dayrfc', 'auto', null),
+			array('line_date_start_real', 'date_start_real', 'day', 'auto', null),
+			array('line_date_start_real_locale', 'date_start_real', 'day', 'tzserver', $outputlangs),
+			array('line_date_start_real_rfc', 'date_start_real', 'dayrfc', 'auto', null),
 			array('line_date_end', 'date_end', 'day', 'auto', null),
 			array('line_date_end_locale', 'date_end', 'day', 'tzserver', $outputlangs),
 			array('line_date_end_rfc', 'date_end', 'dayrfc', 'auto', null)
 		);
 		foreach ($date_specs as $date_spec) {
-			if (property_exists($line, $date_spec[1])) {
-				$resarray[$date_spec[0]] = dol_print_date($line->${$date_spec[1]}, $date_spec[2], $date_spec[3], $date_spec[4]);
+			$propertyname = $date_spec[1];
+			if (property_exists($line, $propertyname)) {
+				// @phan-suppress-next-line PhanUndeclaredProperty
+				$resarray[$date_spec[0]] = dol_print_date($line->$propertyname, $date_spec[2], $date_spec[3], $date_spec[4]);
 			}
 		}
 
 		// Units
 		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
-			$resarray['line_unit'] = $outputlangs->trans($line->getLabelOfUnit('long'));
-			$resarray['line_unit_short'] = $outputlangs->trans($line->getLabelOfUnit('short'));
+			$resarray['line_unit'] = $line->getLabelOfUnit('long', $outputlangs);
+			$resarray['line_unit_short'] = $line->getLabelOfUnit('short', $outputlangs);
+			//$resarray['line_unit_code'] = $line->getLabelOfUnit('code', $outputlangs);
 		}
 
 		// Retrieve extrafields
@@ -964,6 +990,16 @@ abstract class CommonDocGenerator
 					}
 				}
 			}
+		}
+
+		// Check if the current line belongs to a shipment
+		if (get_class($line) == 'ExpeditionLigne') {
+			$resarray['line_qty_shipped'] = $line->qty_shipped;
+			$resarray['line_qty_asked'] = $line->qty_asked;
+			$resarray['line_weight'] = empty($line->weight) ? '' : $line->weight * $line->qty_shipped.' '.measuringUnitString(0, 'weight', $line->weight_units);
+			$resarray['line_length'] = empty($line->length) ? '' : $line->length * $line->qty_shipped.' '.measuringUnitString(0, 'size', $line->length_units);
+			$resarray['line_surface'] = empty($line->surface) ? '' : $line->surface * $line->qty_shipped.' '.measuringUnitString(0, 'surface', $line->surface_units);
+			$resarray['line_volume'] = empty($line->volume) ? '' : $line->volume * $line->qty_shipped.' '.measuringUnitString(0, 'volume', $line->volume_units);
 		}
 
 		// Load product data optional fields to the line -> enables to use "line_options_{extrafield}"
@@ -1015,7 +1051,7 @@ abstract class CommonDocGenerator
 			$array_key.'_ref' => $object->ref,
 			$array_key.'_ref_ext' => $object->ref_ext,
 			$array_key.'_ref_customer' => $object->ref_customer,
-			$array_key.'_date_delivery' => dol_print_date($object->date_delivery, 'day'),
+			$array_key.'_date_delivery' => dol_print_date($object->date_delivery, 'day'),	// note: for shipment, delivery and reception: date_delivery, for orders: delivery_date
 			$array_key.'_hour_delivery' => dol_print_date($object->date_delivery, 'hour'),
 			$array_key.'_date_creation' => dol_print_date($object->date_creation, 'day'),
 			$array_key.'_total_ht' => price($object->total_ht),
@@ -1027,7 +1063,7 @@ abstract class CommonDocGenerator
 			$array_key.'_tracking_number' => $object->tracking_number,
 			$array_key.'_tracking_url' => $object->tracking_url,
 			$array_key.'_shipping_method' => $object->listmeths[0]['libelle'],
-			$array_key.'_weight' => $object->trueWeight.' '.measuringUnitString(0, 'weight', (string) $object->weight_units),
+			$array_key.'_weight' => $object->trueWeight.' '.measuringUnitString(0, 'weight', $object->weight_units),
 			$array_key.'_width' => $object->trueWidth.' '.measuringUnitString(0, 'size', $object->width_units),
 			$array_key.'_height' => $object->trueHeight.' '.measuringUnitString(0, 'size', $object->height_units),
 			$array_key.'_depth' => $object->trueDepth.' '.measuringUnitString(0, 'size', $object->depth_units),
@@ -1049,10 +1085,48 @@ abstract class CommonDocGenerator
 			$array_shipment = $this->fill_substitutionarray_with_extrafields($object, $array_shipment, $extrafields, $array_key, $outputlangs);
 		}
 
-		// Add info from $object->xxx where xxx has been loaded by fetch_origin() of shipment
-		if (is_object($object->commande) && !empty($object->commande->ref)) {
-			$array_shipment['order_ref'] = $object->commande->ref;
-			$array_shipment['order_ref_customer'] = $object->commande->ref_customer;
+		// Add info from $object->origin_object which has been loaded by fetch() of shipment
+		if ($object->origin_type == 'commande' && is_object($object->origin_object) && !empty($object->origin_object->ref)) {
+			$originOrder = $object->origin_object;
+			'@phan-var-force Commande $originOrder';
+			$array_shipment['order_ref'] = $originOrder->ref;
+			$array_shipment['order_ref_customer'] = $originOrder->ref_customer;
+		}
+
+		// Load dim data
+		$tmparray = $object->getTotalWeightVolume();
+		$totalWeight = $tmparray['weight'];
+		$totalVolume = $tmparray['volume'];
+		$totalOrdered = $tmparray['ordered'];
+		$totalToShip = $tmparray['toship'];
+
+		// Set trueVolume and volume_units not currently stored into database
+		if ($object->trueWidth && $object->trueHeight && $object->trueDepth) {
+			$object->trueVolume = $object->trueWidth * $object->trueHeight * $object->trueDepth;
+			$object->volume_units = $object->size_units * 3;
+		}
+
+		$array_shipment[$array_key.'_total_ordered'] = (string) $totalOrdered;
+		$array_shipment[$array_key.'_total_toship'] = (string) $totalToShip;
+
+		if ($object->trueWeight) {
+			$array_shipment[$array_key.'_total_weight'] = (empty($totalWeight)) ? '' : showDimensionInBestUnit($object->trueWeight, $object->weight_units, "weight", $outputlangs);
+		} elseif (!empty($totalWeight)) {
+			$array_shipment[$array_key.'_total_weight'] = showDimensionInBestUnit($totalWeight, 0, "weight", $outputlangs, -1, 'no', 1);
+		} else {
+			$array_shipment[$array_key.'_total_weight'] = "";
+		}
+
+		if (!empty($object->trueVolume)) {
+			if ($object->volume_units < 50) {
+				$array_shipment[$array_key.'_total_volume'] = (empty($totalVolume)) ? '' : showDimensionInBestUnit($object->trueVolume, $object->volume_units, "volume", $outputlangs);
+			} else {
+				$array_shipment[$array_key.'_total_volume'] = (empty($totalVolume)) ? '' : price($object->trueVolume, 0, $outputlangs, 0, 0).' '.measuringUnitString(0, "volume", $object->volume_units);
+			}
+		} elseif (!empty($totalVolume)) {
+			$array_shipment[$array_key.'_total_volume'] = showDimensionInBestUnit($totalVolume, 0, "volume", $outputlangs, -1, 'no', 1);
+		} else {
+			$array_shipment[$array_key.'_total_volume'] = "";
 		}
 
 		return $array_shipment;
@@ -1062,17 +1136,21 @@ abstract class CommonDocGenerator
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Define array with couple substitution key => substitution value
+	 * @phpstan-template T
 	 *
-	 * @param   array<string,CommonObject|float|int|string>	$object	Dolibarr Object
-	 * @param   Translate	$outputlangs	Language object for output
-	 * @param   boolean|int	$recursive		Want to fetch child array or child object.
-	 * @return	array<string,mixed>			Array of substitution key->code
+	 * @phpstan-param T $object
+	 * @param   array<string,CommonObject|float|int|string>|CommonObject	$object		Dolibarr Object
+	 * @param   Translate			$outputlangs	Language object for output
+	 * @param   boolean|int			$recursive		Want to fetch child array or child object.
+	 * @return	array<string,mixed>					Array of substitution key->code
 	 */
 	public function get_substitutionarray_each_var_object(&$object, $outputlangs, $recursive = 1)
 	{
 		// phpcs:enable
 		$array_other = array();
-		if (is_array($object) && count($object)) {
+
+		if ((is_array($object) && count($object)) || is_object($object)) {
+			// Loop on each entry of array or on each property of object
 			foreach ($object as $key => $value) {
 				if (in_array($key, array('db', 'fields', 'lines', 'modelpdf', 'model_pdf'))) {		// discard some properties
 					continue;
@@ -1109,11 +1187,11 @@ abstract class CommonDocGenerator
 	 *  Note that vars into substitutions array are formatted.
 	 *
 	 *	@param  CommonObject	$object				Object with extrafields (must have $object->array_options filled)
-	 *	@param  array<string,string>	$array_to_fill      Substitution array
-	 *  @param  Extrafields		$extrafields        Extrafields object
+	 *	@param  array<string,float|string>	$array_to_fill      Substitution array
+	 *  @param  ExtraFields		$extrafields        ExtraFields object
 	 *  @param  string			$array_key	        Prefix for name of the keys into returned array
 	 *  @param  Translate		$outputlangs        Lang object to use for output
-	 *	@return	array<string,string>				Substitution array
+	 *	@return	array<string,float|string>				Substitution array
 	 */
 	public function fill_substitutionarray_with_extrafields($object, $array_to_fill, $extrafields, $array_key, $outputlangs)
 	{
@@ -1231,7 +1309,7 @@ abstract class CommonDocGenerator
 	 * @param float       $w            Width of the rectangle
 	 * @param float       $h            Height of the rectangle
 	 * @param float       $r            Corner radius (can be an array for different radii per corner)
-	 * @param int         $hidetop      1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
+	 * @param int<-1,1>   $hidetop      1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
 	 * @param int         $hidebottom   Hide bottom
 	 * @param string      $style        Draw style (e.g. 'D' for draw, 'F' for fill, 'DF' for both)
 	 * @return void
@@ -1249,6 +1327,64 @@ abstract class CommonDocGenerator
 			$pdf->RoundedRect($x, $y, $w, $h, $r, '1101', $style);
 		}
 	}
+
+	/**
+	 * Get position in PDF after col display
+	 * @return false|array{page:int,y:float|int,col:string}
+	 */
+	public function getMaxAfterColsLinePositionsData()
+	{
+		if (empty($this->afterColsLinePositions) || !is_array($this->afterColsLinePositions)) {
+			return false;
+		}
+
+		$colId = '';
+		$maxPage = $maxY = 0;
+		foreach ($this->afterColsLinePositions as $colKey => $value) {
+			if ($value['page'] > $maxPage) {
+				$colId = $colKey;
+				$maxPage = $value['page'];
+				$maxY = $value['y']; // if page is higher we need to reset y to new max page y
+			} elseif ($value['page'] == $maxPage) {
+				$maxY = max($value['y'], $maxY);
+				$colId = $colKey;
+			}
+		}
+
+		return [
+			'col' => $colId,
+			'y' => $maxY,
+			'page' => $maxPage
+		];
+	}
+
+	/**
+	 * Used for reset afterColsLinePositions var in start of a new pdf draw line loop
+	 * @param float $y the new $y position usually get by TCPDF::GetY()
+	 * @param int $pageNumb the page number to reset at
+	 * @return void
+	 */
+	public function resetAfterColsLinePositionsData(float $y, int $pageNumb)
+	{
+		$this->afterColsLinePositions = [];
+		$this->setAfterColsLinePositionsData('startLine', $y, $pageNumb);
+	}
+
+	/**
+	 * Used for to set afterColsLinePositions var in a pdf draw line loop
+	 * @param string $colId the column id used as key in $this->cols or an unique id code like startLine or separateLine ....
+	 * @param float $y the $y position usually get by TCPDF::GetY() where print data ended
+	 * @param int $pageNumb the page number where print data ended
+	 * @return void
+	 */
+	public function setAfterColsLinePositionsData(string $colId, float $y, int $pageNumb)
+	{
+		$this->afterColsLinePositions[$colId] = [
+			'page' 	=> $pageNumb,
+			'y' 	=> $y
+		];
+	}
+
 
 	/**
 	 *  uasort callback function to Sort columns fields
@@ -1462,7 +1598,8 @@ abstract class CommonDocGenerator
 			$curentCellPaddinds = $pdf->getCellPaddings();
 			// set cell padding with column content definition
 			$pdf->setCellPaddings(isset($colDef['content']['padding'][3]) ? $colDef['content']['padding'][3] : 0, isset($colDef['content']['padding'][0]) ? $colDef['content']['padding'][0] : 0, isset($colDef['content']['padding'][1]) ? $colDef['content']['padding'][1] : 0, isset($colDef['content']['padding'][2]) ? $colDef['content']['padding'][2] : 0);
-			$pdf->writeHTMLCell($colDef['width'], 2, isset($colDef['xStartPos']) ? $colDef['xStartPos'] : 0, $curY, $columnText, 0, 1, 0, true, $colDef['content']['align']);
+			$pdf->writeHTMLCell($colDef['width'], 2, isset($colDef['xStartPos']) ? $colDef['xStartPos'] : 0, $curY, $columnText, 0, 1, false, true, $colDef['content']['align']);
+			$this->setAfterColsLinePositionsData($colKey, $pdf->GetY(), $pdf->getPage());
 
 			// restore cell padding
 			$pdf->setCellPaddings($curentCellPaddinds['L'], $curentCellPaddinds['T'], $curentCellPaddinds['R'], $curentCellPaddinds['B']);
@@ -1488,6 +1625,8 @@ abstract class CommonDocGenerator
 	 */
 	public function printColDescContent($pdf, &$curY, $colKey, $object, $i, $outputlangs, $hideref = 0, $hidedesc = 0, $issupplierline = 0)
 	{
+		global $hookmanager;
+
 		// load desc col params
 		$colDef = $this->cols[$colKey];
 		// save current cell padding
@@ -1511,6 +1650,19 @@ abstract class CommonDocGenerator
 		$extrafieldDesc = $this->getExtrafieldsInHtml($object->lines[$i], $outputlangs, $params);
 		if (!empty($extrafieldDesc)) {
 			$this->printStdColumnContent($pdf, $posYAfterDescription, $colKey, $extrafieldDesc);
+		}
+
+		$parameters = array(
+			'curY' => &$curY,
+			'colKey' => $colKey,
+			'object' => $object,
+			'i' => $i,
+			'outputlangs' => $outputlangs,
+			'pdf' => &$pdf,
+		);
+		$reshook = $hookmanager->executeHooks('printColDescContent', $parameters, $this); // Note that $action and $object may have been modified by hook
+		if ($reshook < 0) {
+			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 		}
 	}
 
@@ -1562,6 +1714,14 @@ abstract class CommonDocGenerator
 			$extrafieldOutputContent = dol_string_nohtmltag($extrafieldOutputContent);
 		}
 
+		// Display stars extrafield as simple string
+		if ($extrafields->attributes[$object->table_element]['type'][$extrafieldKey] == 'stars') {
+			$extrafieldOutputContent = '';
+			for ($i = 0; $i < $object->array_options[$extrafieldOptionsKey]; $i++) {
+				$extrafieldOutputContent .= ' *';
+			}
+		}
+
 		$parameters = array(
 			'object' => $object,
 			'extrafields' => $extrafields,
@@ -1583,10 +1743,10 @@ abstract class CommonDocGenerator
 	/**
 	 *  display extrafields columns content
 	 *
-	 *  @param	CommonObjectLine	$object    		line of common object
-	 *  @param 	Translate 			$outputlangs    Output language
-	 *  @param 	array<string,mixed> $params    		array of additional parameters
-	 *  @return	string  							Html string
+	 *  @param	CommonObject|CommonObjectLine	$object    		line of common object
+	 *  @param 	Translate 						$outputlangs    Output language
+	 *  @param 	array<string,mixed> 			$params    		array of additional parameters
+	 *  @return	string  										Html string
 	 */
 	public function getExtrafieldsInHtml($object, $outputlangs, $params = array())
 	{
@@ -1875,9 +2035,9 @@ abstract class CommonDocGenerator
 	/**
 	 *  Define Array Column Field for extrafields
 	 *
-	 *  @param	object			$object    		common object det
+	 *  @param	CommonObject	$object    		common object det
 	 *  @param	Translate		$outputlangs    langs
-	 *  @param	int			   $hidedetails		Do not show line details
+	 *  @param	int<0,1>		$hidedetails	Do not show line details
 	 *  @return	int								Return integer <0 if KO, >=0 if OK
 	 */
 	public function defineColumnExtrafield($object, $outputlangs, $hidedetails = 0)
@@ -1965,11 +2125,11 @@ abstract class CommonDocGenerator
 	 *   Define Array Column Field into $this->cols
 	 *   This method must be implemented by the module that generate the document with its own columns.
 	 *
-	 *   @param		Object			$object    		Common object
+	 *   @param		CommonObject	$object    		Common object
 	 *   @param		Translate		$outputlangs    Langs
-	 *   @param		int			   	$hidedetails	Do not show line details
-	 *   @param		int			   	$hidedesc		Do not show desc
-	 *   @param		int			   	$hideref		Do not show ref
+	 *   @param		int<0,1>		$hidedetails	Do not show line details
+	 *   @param		int<0,1>		$hidedesc		Do not show desc
+	 *   @param		int<0,1>		$hideref		Do not show ref
 	 *   @return	void
 	 */
 	public function defineColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
@@ -1994,7 +2154,7 @@ abstract class CommonDocGenerator
 			'width' => false, // only for desc
 			'status' => true,
 			'title' => array(
-				'textkey' => 'Designation', // use lang key is useful in somme case with module
+				'textkey' => 'Designation', // use lang key is useful in some case with module
 				'align' => 'L',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label

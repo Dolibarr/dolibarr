@@ -8,13 +8,12 @@ Shipments=ஏற்றுமதி
 ShowSending=ஏற்றுமதிகளைக் காட்டு
 Receivings=டெலிவரி ரசீதுகள்
 SendingsArea=ஏற்றுமதி பகுதி
-ListOfSendings=ஏற்றுமதி பட்டியல்
 SendingMethod=கப்பல் முறை
 LastSendings=சமீபத்திய %s ஏற்றுமதிகள்
 StatisticsOfSendings=ஏற்றுமதிக்கான புள்ளிவிவரங்கள்
 NbOfSendings=ஏற்றுமதிகளின் எண்ணிக்கை
 NumberOfShipmentsByMonth=மாதத்தின் மூலம் ஏற்றுமதிகளின் எண்ணிக்கை
-SendingCard=ஏற்றுமதி அட்டை
+SendingCard=Shipment
 NewSending=புதிய ஏற்றுமதி
 CreateShipment=ஏற்றுமதியை உருவாக்கவும்
 QtyShipped=Qty அனுப்பப்பட்டது
@@ -44,6 +43,7 @@ ConfirmCancelSending=இந்த ஏற்றுமதியை நிச்ச
 DocumentModelMerou=Merou A5 மாடல்
 WarningNoQtyLeftToSend=எச்சரிக்கை, எந்த தயாரிப்புகளும் அனுப்பப்படுவதற்கு காத்திருக்கவில்லை.
 StatsOnShipmentsOnlyValidated=புள்ளிவிவரங்கள் சரிபார்க்கப்பட்ட ஏற்றுமதிகளுக்கு மட்டுமே. பயன்படுத்தப்படும் தேதி கப்பலின் சரிபார்ப்பு தேதி (திட்டமிடப்பட்ட விநியோக தேதி எப்போதும் அறியப்படவில்லை)
+DateShipping=Sending date
 DateDeliveryPlanned=திட்டமிடப்பட்ட விநியோக தேதி
 RefDeliveryReceipt=ரெஃப் டெலிவரி ரசீது
 StatusReceipt=நிலை விநியோக ரசீது
@@ -63,6 +63,12 @@ NoProductToShipFoundIntoStock=<b> %s </b> கிடங்கில் அனு�
 WeightVolShort=எடை/தொகுதி.
 ValidateOrderFirstBeforeShipment=ஷிப்மென்ட் செய்வதற்கு முன் நீங்கள் முதலில் ஆர்டரைச் சரிபார்க்க வேண்டும்.
 NoLineGoOnTabToAddSome=No line, go on tab "%s" to add
+CreateInvoiceForThisCustomerFromSendings=Create Bills
+IfValidateInvoiceIsNoSendingStayUnbilled=If invoice validation is 'No', the sending will remain to status 'Unbilled' until the invoice is validated.
+OptionToSetSendingBilledNotEnabled=Option from module Workflow, to set sending to 'Billed' automatically when invoice is validated, is not enabled, so you will have to set the status of sendings to 'Billed' manually after the invoice has been generated.
+NoWarehouseInBase=No warehouse in base
+ShipmentUpdated=Shipment successfully updated
+ShipmentIncrementStockOnDelete = Increase stock on deletion
 
 # Sending methods
 # ModelDocument
@@ -71,16 +77,22 @@ DocumentModelStorm=டெலிவரி ரசீதுகள் மற்ற�
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=நிலையான EXPEDITION_ADDON_NUMBER வரையறுக்கப்படவில்லை
 SumOfProductVolumes=தயாரிப்பு தொகுதிகளின் கூட்டுத்தொகை
 SumOfProductWeights=தயாரிப்பு எடைகளின் கூட்டுத்தொகை
-
 # warehouse details
 DetailWarehouseNumber= கிடங்கு விவரங்கள்
 DetailWarehouseFormat= W:%s (Qty: %d)
+DetailChildrenFormat=%s : %s (Qty: %s)
 SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Display last date of entry in stock during shipment creation for serial number or batch
 CreationOptions=Available options during shipment creation
-
 ShipmentDistribution=Shipment distribution
-
 ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combinations of warehouse, product, batch code was found (%s).
 ErrorNoCombinationBatchcode=Could not save the line %s as the combination of warehouse-product-lot/serial (%s, %s, %s) was not found in stock.
-
 ErrorTooMuchShipped=Quantity shipped should not be greater than quantity ordered for line %s
+##### Types of contacts #####
+TypeContact_shipping_internal_SALESREPFOLL=Representative following-up shipping
+TypeContact_shipping_external_BILLING=Customer invoice contact
+TypeContact_shipping_external_CUSTOMER=Customer contact following-up shipping
+TypeContact_shipping_external_SHIPPING=Customer contact for shipping
+TypeContact_shipping_external_DELIVERY=Customer contact for delivery
+CloseShipment=Close shipment
+ConfirmCloseShipment=Confirm close shipment
+SHIPPING_SELL_EAT_BY_DATE_PRE_SELECT_EARLIEST=Pre-select the batch/serial number with the earliest sell-by/eat-by date when creating a shipment

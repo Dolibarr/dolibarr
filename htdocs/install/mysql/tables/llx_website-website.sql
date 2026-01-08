@@ -31,17 +31,18 @@ CREATE TABLE llx_website
 	status		  integer DEFAULT 1,
 	fk_default_home integer,
 	use_manifest integer,
-	virtualhost   varchar(255), 
+	virtualhost   varchar(255),
     fk_user_creat integer,
     fk_user_modif integer,
     date_creation datetime,
     position      integer DEFAULT 0,
+    paymentframemode integer DEFAULT 0,					-- set to 0 to have payment pages managed as full pages. 1 to ask to have payment pages inside a frame bot not the paymentok of website. 2 to have payment pages inside a frame including the paymentok.php
     lastaccess    datetime NULL,						-- updated at each page access
     lastpageid    integer DEFAULT 0,
-    pageviews_previous_month BIGINT UNSIGNED DEFAULT 0,		
-    pageviews_month BIGINT UNSIGNED DEFAULT 0,			-- increased by 1 at each page access, saved into pageviews_previous_month when on different month than lastaccess 
+    pageviews_previous_month BIGINT UNSIGNED DEFAULT 0,
+    pageviews_month BIGINT UNSIGNED DEFAULT 0,			-- increased by 1 at each page access, saved into pageviews_previous_month when on different month than lastaccess
     pageviews_total BIGINT UNSIGNED DEFAULT 0,			-- increased by 1 at each page access, no reset
 	tms           timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    import_key    varchar(14),      -- import key	
+    import_key    varchar(14),      -- import key
 	name_template varchar(255) NULL   --name of template imported
 ) ENGINE=innodb;

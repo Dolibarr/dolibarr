@@ -6,6 +6,7 @@
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,13 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 // Load translation files required by the page
@@ -106,12 +114,12 @@ if ($mode != '') {
 $h = 0;
 $head = array();
 
-$head[$h][0] = DOL_URL_ROOT.'/product/stats/card.php?id=all';
+$head[$h][0] = DOL_URL_ROOT.'/product/stats/card.php'.($type != '' ? '?type='.((int) $type) : '');
 $head[$h][1] = $langs->trans("Chart");
 $head[$h][2] = 'chart';
 $h++;
 
-$head[$h][0] = DOL_URL_ROOT.'/product/popuprop.php';
+$head[$h][0] = DOL_URL_ROOT.'/product/popuprop.php'.($type != '' ? '?type='.((int) $type) : '');
 $head[$h][1] = $langs->trans("ProductsServicesPerPopularity");
 if ((string) $type == '0') {
 	$head[$h][1] = $langs->trans("ProductsPerPopularity");
@@ -189,10 +197,10 @@ $arrayofmode = array(
 	'facture' => 'Facture'
 	);
 $title .= ' '.$form->selectarray('mode', $arrayofmode, $mode, 1, 0, 0, '', 1);
-$title .= ' <input type="submit" class="button small" name="refresh" value="'.$langs->trans("Refresh").'">';
+$title .= ' <input type="submit" class="button smallpaddingimp" name="refresh" value="'.$langs->trans("Refresh").'">';
 
 
-print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 print '<input type="hidden" name="type" value="'.$type.'">';

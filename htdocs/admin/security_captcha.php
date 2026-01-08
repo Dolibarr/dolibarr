@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2013      Juanjo Menent 		<jmenent@2byte.es>
+/* Copyright (C) 2004-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2013       Juanjo Menent 		    <jmenent@2byte.es>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +26,14 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -37,7 +46,7 @@ if (!$user->admin) {
 }
 
 $action = GETPOST('action', 'aZ09');
-
+$handler = GETPOST('handler', 'aZ09');
 
 
 /*
@@ -61,32 +70,11 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 	} else {
 		dol_print_error($db);
 	}
-} elseif ($action == 'updateform') {
-	$res1 = 1;
-	$res2 = 1;
-	$res3 = 1;
-	$res4 = 1;
-	$res5 = 1;
-	if (GETPOSTISSET('MAIN_APPLICATION_TITLE')) {
-		$res1 = dolibarr_set_const($db, "MAIN_APPLICATION_TITLE", GETPOST("MAIN_APPLICATION_TITLE", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
-	}
-	if (GETPOSTISSET('MAIN_SESSION_TIMEOUT')) {
-		$res2 = dolibarr_set_const($db, "MAIN_SESSION_TIMEOUT", GETPOST("MAIN_SESSION_TIMEOUT", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
-	}
-	if (GETPOSTISSET('MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT')) {
-		$res3 = dolibarr_set_const($db, "MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT", GETPOST("MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT", 'alphanohtml'), 'int', 0, '', $conf->entity);
-	}
-	if (GETPOSTISSET('MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS')) {
-		$res4 = dolibarr_set_const($db, "MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", GETPOST("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 'alphanohtml'), 'int', 0, '', $conf->entity);
-	}
-	if (GETPOSTISSET('MAIN_SECURITY_MAX_ATTACHMENT_ON_FORMS')) {
-		$res5 = dolibarr_set_const($db, "MAIN_SECURITY_MAX_ATTACHMENT_ON_FORMS", GETPOST("MAIN_SECURITY_MAX_ATTACHMENT_ON_FORMS", 'alphanohtml'), 'int', 0, '', $conf->entity);
-	}
-	if ($res1 && $res2 && $res3 && $res4 && $res5) {
-		setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
+} elseif ($action == 'setcaptchahandler') {
+	if (!dolibarr_set_const($db, 'MAIN_SECURITY_ENABLECAPTCHA_HANDLER', GETPOST("value", "aZ09"), 'chaine', 0, '', $conf->entity)) {
+		dol_print_error($db);
 	}
 }
-
 
 
 /*
@@ -103,31 +91,36 @@ print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 print '<span class="opacitymedium">'.$langs->trans("CaptchaDesc")."</span><br>\n";
 print "<br>\n";
 
+$dirModCaptcha = array_merge(array('/core/modules/security/captcha/'), (isset($conf->modules_parts['captcha']) && is_array($conf->modules_parts['captcha'])) ? $conf->modules_parts['captcha'] : array());
 
 // Load array with all captcha generation modules
-$dir = DOL_DOCUMENT_ROOT."/core/modules/security/captcha";
-clearstatcache();
-$handle = opendir($dir);
-$i = 1;
 $arrayhandler = array();
-if (is_resource($handle)) {
-	while (($file = readdir($handle)) !== false) {
-		$reg = array();
-		if (preg_match('/(modCaptcha[a-z]+)\.class\.php$/i', $file, $reg)) {
-			// Charging the numbering class
-			$classname = $reg[1];
-			require_once $dir.'/'.$file;
 
-			$obj = new $classname($db, $conf, $langs, $user);
-			'@phan-var-force ModeleCaptcha $obj';
-			$arrayhandler[$obj->id] = $obj;
-			$i++;
+foreach ($dirModCaptcha as $dirroot) {
+	$dir = dol_buildpath($dirroot, 0);
+
+	$handle = @opendir($dir);
+
+	$i = 1;
+	if (is_resource($handle)) {
+		while (($file = readdir($handle)) !== false) {
+			$reg = array();
+			if (preg_match('/(modCaptcha[a-z]+)\.class\.php$/i', $file, $reg)) {
+				// Charging the numbering class
+				$classname = $reg[1];
+				require_once $dir.'/'.$file;
+
+				$obj = new $classname($db, $conf, $langs, $user);
+				'@phan-var-force ModeleCaptcha $obj';
+				/** @var ModeleCaptcha $obj */
+				$arrayhandler[$obj->id] = $obj;
+				$i++;
+			}
 		}
+		closedir($handle);
 	}
-	closedir($handle);
 }
-asort($arrayhandler);
-
+$arrayhandler = dol_sort_array($arrayhandler, 'position');
 
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -140,8 +133,14 @@ print dol_get_fiche_head($head, 'captcha', '', -1);
 
 print '<br>';
 
+print '<div class="div-table-responsive">';
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Captcha").'</td>';
+print '<td class="right" width="100">'.$langs->trans("Status").'</td>';
+print '</tr>';
 
-print $langs->trans("UseCaptchaCode");
+print '<tr class="oddeven"><td>' . $langs->trans("UseCaptchaCode").' - Login</td><td class="right" width="100">';
 if (!empty($conf->use_javascript_ajax)) {
 	print ajax_constantonoff('MAIN_SECURITY_ENABLECAPTCHA', array(), null, 0, 0, 1);
 } else {
@@ -151,10 +150,24 @@ if (!empty($conf->use_javascript_ajax)) {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MAIN_SECURITY_ENABLECAPTCHA&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	}
 }
+print '</td></tr>';
+
+if (isModEnabled('societe')) {
+	print '<tr class="oddeven"><td>' . $langs->trans("UseCaptchaCode").' - Thirdparty public contact form</td><td class="right" width="100">';
+	if (!empty($conf->use_javascript_ajax)) {
+		print ajax_constantonoff('MAIN_SECURITY_ENABLECAPTCHA_THIRDPARTY', array(), null, 0, 0, 1);
+	} else {
+		if (!getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_THIRDPARTY')) {
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_MAIN_SECURITY_ENABLECAPTCHA_THIRDPARTY&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+		} else {
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MAIN_SECURITY_ENABLECAPTCHA_THIRDPARTY&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+		}
+	}
+}
+print '</td></tr>';
 
 if (isModEnabled('ticket')) {
-	print '<br>';
-	print $langs->trans("TicketUseCaptchaCodeHelp");
+	print '<tr class="oddeven"><td>' . $langs->trans("UseCaptchaCode").' - Public ticket creation</td><td class="right" width="100">';
 	if (!empty($conf->use_javascript_ajax)) {
 		print ajax_constantonoff('MAIN_SECURITY_ENABLECAPTCHA_TICKET', array(), null, 0, 0, 1);
 	} else {
@@ -165,12 +178,68 @@ if (isModEnabled('ticket')) {
 		}
 	}
 }
+print '</td></tr>';
 
+if (isModEnabled('member')) {
+	print '<tr class="oddeven"><td>' . $langs->trans("UseCaptchaCode").' - Membership public subscription</td><td class="right" width="100">';
+	if (!empty($conf->use_javascript_ajax)) {
+		print ajax_constantonoff('MAIN_SECURITY_ENABLECAPTCHA_MEMBER', array(), null, 0, 0, 1);
+	} else {
+		if (!getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_MEMBER')) {
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_MAIN_SECURITY_ENABLECAPTCHA_MEMBER&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+		} else {
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MAIN_SECURITY_ENABLECAPTCHA_MEMBER&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+		}
+	}
+}
+print '</td></tr>';
+
+if (isModEnabled('don')) {
+	print '<tr class="oddeven"><td>' . $langs->trans("UseCaptchaCode").' - Donation public form</td><td class="right" width="100">';
+	if (!empty($conf->use_javascript_ajax)) {
+		print ajax_constantonoff('MAIN_SECURITY_ENABLECAPTCHA_DONATION', array(), null, 0, 0, 1);
+	} else {
+		if (!getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_DONATION')) {
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_MAIN_SECURITY_ENABLECAPTCHA_DONATION&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+		} else {
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MAIN_SECURITY_ENABLECAPTCHA_DONATION&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+		}
+	}
+}
+print '</td></tr>';
+
+if (isModEnabled('recruitment')) {
+	print '<tr class="oddeven"><td>' . $langs->trans("UseCaptchaCode").' - Recruitment public form</td><td class="right" width="100">';
+	if (!empty($conf->use_javascript_ajax)) {
+		print ajax_constantonoff('MAIN_SECURITY_ENABLECAPTCHA_RECRUITMENT', array(), null, 0, 0, 1);
+	} else {
+		if (!getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_RECRUITMENT')) {
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_MAIN_SECURITY_ENABLECAPTCHA_RECRUITMENT&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+		} else {
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MAIN_SECURITY_ENABLECAPTCHA_RECRUITMENT&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+		}
+	}
+}
+print '</td></tr>';
+
+print '</table>';
+print '</div>';
+
+// Set if a captcha is used on at least one place
 $showavailablecaptcha = 0;
 if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA')) {
 	$showavailablecaptcha = 1;
 }
+if (isModEnabled('societe') && getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_THIRDPARTY')) {
+	$showavailablecaptcha = 1;
+}
 if (isModEnabled('ticket') && getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_TICKET')) {
+	$showavailablecaptcha = 1;
+}
+if (isModEnabled('member') && getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_MEMBER')) {
+	$showavailablecaptcha = 1;
+}
+if (isModEnabled('don') && getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_DONATION')) {
 	$showavailablecaptcha = 1;
 }
 
@@ -182,9 +251,10 @@ if ($showavailablecaptcha) {
 	print '<br>';
 
 	// List of all available captcha
+	print '<div class="div-table-responsive">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td colspan="2">'.$langs->trans("Captcha").'</td>';
+	print '<td colspan="3">'.$langs->trans("Captcha").'</td>';
 	print '<td>'.$langs->trans("Example").'</td>';
 	print '<td class="right" width="100">'.$langs->trans("Status").'</td>';
 	print '</tr>';
@@ -192,8 +262,10 @@ if ($showavailablecaptcha) {
 	// Loop on each available captcha
 	foreach ($arrayhandler as $key => $module) {
 		print '<tr class="oddeven">';
+		print '<td style="width: 26px" class="center">';
+		print img_picto('', $module->picto, 'class="width25 size15x"');
+		print '</td>';
 		print '<td>';
-		print img_picto('', $module->picto, 'class="width25 size15x marginrightonly"').' ';
 		print ucfirst($key);
 		print '</td>';
 		print '<td>';
@@ -206,13 +278,11 @@ if ($showavailablecaptcha) {
 
 		if (function_exists("imagecreatefrompng")) {
 			if ($key != $selectedcaptcha) {
-				print '<a href="'.$_SERVER['PHP_SELF'].'?action=enabledcaptchahandler&token='.newToken().'&handler=standard"><input type="checkbox"></a>';
+				print '<a href="'.$_SERVER['PHP_SELF'].'?action=setcaptchahandler&token='.newToken().'&value='.$key.'">';
+				print img_picto($langs->trans("Disabled"), 'switch_off');
+				print '</a>';
 			} else {
-				print '<a href="'.$_SERVER['PHP_SELF'].'?action=disablecaptchahandler&token='.newToken().'&handler=standard"><input type="checkbox" checked="checked"';
-				if (count($arrayhandler) <= 1) {
-					print 'disabled="disabled"';
-				}
-				print '></a>';
+				print img_picto($langs->trans("Enabled"), 'switch_on');
 			}
 		} else {
 			$desc = $form->textwithpicto('', $langs->transnoentities("EnableGDLibraryDesc"), 1, 'warning');
@@ -224,7 +294,7 @@ if ($showavailablecaptcha) {
 	}
 
 	print '</table>';
-
+	print '</div>';
 	//print $form->buttonsSaveCancel("Modify", '');
 }
 

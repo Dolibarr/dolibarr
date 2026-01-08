@@ -1,6 +1,8 @@
 <?php
-/* Copyright (C) 2019-2023  Open-DSI    	    <support@open-dsi.fr>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+/* Copyright (C) 2019-2023  Open-DSI    	    		<support@open-dsi.fr>
+ * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2025-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +32,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/fiscalyear.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
-$langs->loadLangs(array("compta", "bills", "other", "accountancy"));
+$langs->loadLangs(array("accountancy", "bills", "compta", "exports", "other"));
 
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'aZ09');
@@ -83,8 +93,9 @@ if (is_array($fiscal_periods)) {
 			if (!isset($next_active_fiscal_period) && empty($fiscal_period['status'])) {
 				$next_active_fiscal_period = $fiscal_period;
 			}
-		} else {								// If we did not found the current fiscal period
-			if ($fiscal_period_id == $fiscal_period['id'] || (empty($fiscal_period_id) && $fiscal_period['date_start'] <= $now && $now <= $fiscal_period['date_end'])) {
+		} else {                        // If we did not found the current fiscal period
+			// Only select by ID, not by date range for closure page
+			if (!empty($fiscal_period_id) && $fiscal_period_id == $fiscal_period['id']) {
 				$current_fiscal_period = $fiscal_period;
 			} else {
 				$last_fiscal_period = $fiscal_period;	// $last_fiscal_period is in fact $previous_fiscal_period
@@ -136,7 +147,7 @@ if (empty($reshook)) {
 			if ($result > 0) {
 				setEventMessages($langs->trans("AllMovementsWereRecordedAsValidated"), null, 'mesgs');
 
-				header("Location: " . $_SERVER['PHP_SELF'] . (isset($current_fiscal_period) ? '?fiscal_period_id=' . $current_fiscal_period['id'] : ''));
+				header("Location: " . $_SERVER['PHP_SELF'] . '?fiscal_period_id=' . $current_fiscal_period['id']);
 				exit;
 			} else {
 				setEventMessages($langs->trans("NotAllMovementsCouldBeRecordedAsValidated"), null, 'errors');
@@ -145,8 +156,8 @@ if (empty($reshook)) {
 			}
 		} elseif ($action == 'confirm_step_2' && $confirm == "yes" && $user->hasRight('accounting', 'fiscalyear', 'write')) {
 			$new_fiscal_period_id = GETPOSTINT('new_fiscal_period_id');
-			$separate_auxiliary_account = GETPOST('separate_auxiliary_account', 'aZ09');
-			$generate_bookkeeping_records = GETPOST('generate_bookkeeping_records', 'aZ09');
+			$separate_auxiliary_account = GETPOSTINT('separate_auxiliary_account');
+			$generate_bookkeeping_records = GETPOSTINT('generate_bookkeeping_records');
 
 			$error = 0;
 			if ($generate_bookkeeping_records) {
@@ -160,13 +171,13 @@ if (empty($reshook)) {
 			}
 
 			if (!$error) {
-				$result = $object->closeFiscalPeriod($current_fiscal_period['id'], $new_fiscal_period_id, $separate_auxiliary_account, $generate_bookkeeping_records);
+				$result = $object->closeFiscalPeriod($current_fiscal_period['id'], $new_fiscal_period_id, (bool) $separate_auxiliary_account, (bool) $generate_bookkeeping_records);
 				if ($result < 0) {
 					setEventMessages($object->error, $object->errors, 'errors');
 				} else {
 					setEventMessages($langs->trans("AccountancyClosureCloseSuccessfully"), null, 'mesgs');
 
-					header("Location: " . $_SERVER['PHP_SELF'] . (isset($current_fiscal_period) ? '?fiscal_period_id=' . $current_fiscal_period['id'] : ''));
+					header("Location: " . $_SERVER['PHP_SELF'] . '?fiscal_period_id=' . $current_fiscal_period['id']);
 					exit;
 				}
 			}
@@ -182,7 +193,7 @@ if (empty($reshook)) {
 			} else {
 				setEventMessages($langs->trans("AccountancyClosureInsertAccountingReversalSuccessfully"), null, 'mesgs');
 
-				header("Location: " . $_SERVER['PHP_SELF'] . (isset($current_fiscal_period) ? '?fiscal_period_id=' . $current_fiscal_period['id'] : ''));
+				header("Location: " . $_SERVER['PHP_SELF'] . '?fiscal_period_id=' . $current_fiscal_period['id']);
 				exit;
 			}
 		}
@@ -278,7 +289,7 @@ if (isset($current_fiscal_period)) {
 			'name' => 'inventory_journal_id',
 			'type' => 'other',
 			'label' => $langs->trans('InventoryJournal'),
-			'value' => $formaccounting->select_journal(0, "inventory_journal_id", 8, 1, 0, 0)
+			'value' => $formaccounting->select_journal('0', "inventory_journal_id", 8, 1, 0, 0)
 		);
 		$fiscal_period_arr = array();
 		foreach ($active_fiscal_periods as $info) {
@@ -335,7 +346,7 @@ $fiscal_period_nav_text = $langs->trans("FiscalPeriod");
 $fiscal_period_nav_text .= '&nbsp;<a href="' . (isset($last_fiscal_period) ? $_SERVER["PHP_SELF"] . '?fiscal_period_id=' . $last_fiscal_period['id'] : '#" class="disabled') . '">' . img_previous() . '</a>';
 $fiscal_period_nav_text .= '&nbsp;<a href="' . (isset($next_fiscal_period) ? $_SERVER["PHP_SELF"] . '?fiscal_period_id=' . $next_fiscal_period['id'] : '#" class="disabled') . '">' . img_next() . '</a>';
 if (!empty($current_fiscal_period)) {
-	$fiscal_period_nav_text .= $current_fiscal_period['label'].' &nbsp;(' . (isset($current_fiscal_period) ? dol_print_date($current_fiscal_period['date_start'], 'day') . '&nbsp;-&nbsp;' . dol_print_date($current_fiscal_period['date_end'], 'day') . ')' : '');
+	$fiscal_period_nav_text .= $current_fiscal_period['label'].' &nbsp;(' . dol_print_date($current_fiscal_period['date_start'], 'day') . '&nbsp;-&nbsp;' . dol_print_date($current_fiscal_period['date_end'], 'day') . ')';
 }
 
 print load_fiche_titre($langs->trans("Closure") . " - " . $fiscal_period_nav_text, '', 'title_accountancy');
@@ -353,7 +364,7 @@ if (empty($current_fiscal_period)) {
 
 		print '<span class="opacitymedium">' . $langs->trans("AccountancyClosureStep1Desc") . '</span><br>';
 
-		$count_by_month = $object->getCountByMonthForFiscalPeriod($current_fiscal_period['date_start'], $current_fiscal_period['date_end']);
+		$count_by_month = $object->getCountByMonthForFiscalPeriod((int) $current_fiscal_period['date_start'], (int) $current_fiscal_period['date_end']);
 
 		if (!is_array($count_by_month)) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -364,7 +375,7 @@ if (empty($current_fiscal_period)) {
 		} else {
 			$buttonvalidate = '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=step_1&token='.newToken().'&fiscal_period_id=' . $current_fiscal_period['id'] . '">' . $langs->trans("ValidateMovements") . '</a>';
 		}
-		print_barre_liste($langs->trans("OverviewOfMovementsNotValidated"), '', '', '', '', '', '', -1, '', '', 0, $buttonvalidate, '', 0, 1, 0);
+		print_barre_liste($langs->trans("OverviewOfMovementsNotValidated"), 0, '', '', '', '', '', -1, '', '', 0, $buttonvalidate, '', 0, 1, 0);
 
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
@@ -402,7 +413,7 @@ if (empty($current_fiscal_period)) {
 	// Step 2
 	$head = array();
 	$head[0][0] = DOL_URL_ROOT . '/accountancy/closure/index.php?fiscal_period_id=' . $current_fiscal_period['id'];
-	$head[0][1] = $langs->trans("Step").(getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE") ? '1' : '2').' - '.$langs->trans("AccountancyClosureStep2");
+	$head[0][1] = $langs->trans("Step"). ' ' . (getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE") ? '1' : '2').' - '.$langs->trans("AccountancyClosureStep2");
 	$head[0][2] = 'step2';
 	print dol_get_fiche_head($head, 'step2', '', -1, '');
 
@@ -418,14 +429,14 @@ if (empty($current_fiscal_period)) {
 			$button = '<a class="butActionRefused classfortooltip" href="#" title="There is some lines not yet locked. Feature disabled.">' . $langs->trans("AccountancyClosureClose") . '</a>';
 		}
 	}
-	print_barre_liste('', '', '', '', '', '', '', -1, '', '', 0, $button, '', 0, 1, 0);
+	print_barre_liste('', 0, '', '', '', '', '', -1, '', '', 0, $button, '', 0, 1, 0);
 
 	print '<br>';
 
 	// Step 3
 	$head = array();
 	$head[0][0] = DOL_URL_ROOT . '/accountancy/closure/index.php?fiscal_period_id=' . $current_fiscal_period['id'];
-	$head[0][1] = $langs->trans("Step").(getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE") ? '2' : '3').' - '.$langs->trans("AccountancyClosureStep3");
+	$head[0][1] = $langs->trans("Step"). ' ' . (getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE") ? '2' : '3').' - '.$langs->trans("AccountancyClosureStep3");
 	$head[0][2] = 'step3';
 	print dol_get_fiche_head($head, 'step3', '', -1, '');
 
@@ -436,7 +447,7 @@ if (empty($current_fiscal_period)) {
 	} else {
 		$button = '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=step_3&token='.newToken().'&fiscal_period_id=' . $current_fiscal_period['id'] . '">' . $langs->trans("AccountancyClosureAccountingReversal") . '</a>';
 	}
-	print_barre_liste('', '', '', '', '', '', '', -1, '', '', 0, $button, '', 0, 1, 0);
+	print_barre_liste('', 0, '', '', '', '', '', -1, '', '', 0, $button, '', 0, 1, 0);
 }
 
 // End of page

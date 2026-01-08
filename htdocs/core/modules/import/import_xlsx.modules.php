@@ -149,6 +149,13 @@ class ImportXlsx extends ModeleImports
 		$this->label_lib = 'PhpSpreadSheet';
 		$this->version_lib = '1.8.0';
 
+		$arrayofstreams = stream_get_wrappers();
+		if (!in_array('zip', $arrayofstreams)) {
+			$langs->load("errors");
+			$this->error = $langs->trans('ErrorStreamMustBeEnabled', 'zip');
+			return;
+		}
+
 		$this->datatoimport = $datatoimport;
 		if (preg_match('/^societe_/', $datatoimport)) {
 			$this->thirdpartyobject = new Societe($this->db);
@@ -261,7 +268,6 @@ class ImportXlsx extends ModeleImports
 	public function import_open_file($file)
 	{
 		// phpcs:enable
-		global $langs;
 		$ret = 1;
 
 		dol_syslog(get_class($this) . "::open_file file=" . $file);
@@ -776,6 +782,7 @@ class ImportXlsx extends ModeleImports
 											$sql .= ' WHERE ' . $filter;
 										}
 
+
 										$resql = $this->db->query($sql);
 										if ($resql) {
 											$num = $this->db->num_rows($resql);
@@ -875,22 +882,22 @@ class ImportXlsx extends ModeleImports
 						if (!preg_match('/^' . preg_quote($alias, '/') . '\./', $key)) {
 							continue; // Not a field of current table
 						}
-						$keyfield = preg_replace('/^' . preg_quote($alias, '/') . '\./', '', $key);
-
-						if (in_array($keyfield, $listfields)) {	// avoid duplicates in insert
+						$keyfieldcache = preg_replace('/^' . preg_quote($alias, '/') . '\./', '', $key);
+						if (in_array($keyfieldcache, $listfields)) {	// avoid duplicates in insert
 							continue;
 						} elseif ($val == 'user->id') {
-							$listfields[] = $keyfield;
+							$listfields[] = $keyfieldcache;
 							$listvalues[] = ((int) $user->id);
 						} elseif (preg_match('/^lastrowid-/', $val)) {
 							$tmp = explode('-', $val);
 							$lastinsertid = (isset($last_insert_id_array[$tmp[1]])) ? $last_insert_id_array[$tmp[1]] : 0;
-							$listfields[] = $keyfield;
+							$listfields[] = $keyfieldcache;
+							$keyfield = $keyfieldcache;
 							$listvalues[] = (int) $lastinsertid;
 							//print $key."-".$val."-".$listfields."-".$listvalues."<br>";exit;
 						} elseif (preg_match('/^const-/', $val)) {
 							$tmp = explode('-', $val, 2);
-							$listfields[] = $keyfield;
+							$listfields[] = $keyfieldcache;
 							$listvalues[] = "'".$this->db->escape($tmp[1])."'";
 						} elseif (preg_match('/^rule-/', $val)) {
 							$fieldname = $key;
@@ -1006,6 +1013,7 @@ class ImportXlsx extends ModeleImports
 									if ($num_rows == 1) {
 										$res = $this->db->fetch_object($resql);
 										$lastinsertid = $res->rowid;
+										$keyfield = 'rowid';
 										if ($is_table_category_link) {
 											$lastinsertid = 'linktable';
 										} // used to apply update on tables like llx_categorie_product and avoid being blocked for all file content if at least one entry already exists
@@ -1030,11 +1038,10 @@ class ImportXlsx extends ModeleImports
 								// may already exists. So we rescan the extrafield table to know if record exists or not for the rowid.
 								// Note: For extrafield tablename, we have in importfieldshidden_array an entry 'extra.fk_object'=>'lastrowid-tableparent' so $keyfield is 'fk_object'
 								$sqlSelect = "SELECT rowid FROM " . $tablename;
-
-
 								if (empty($keyfield)) {
 									$keyfield = 'rowid';
 								}
+
 								$sqlSelect .= " WHERE ".$keyfield." = ".((int) $lastinsertid);
 
 								if (!empty($tablewithentity_cache[$tablename])) {
@@ -1076,10 +1083,10 @@ class ImportXlsx extends ModeleImports
 									$set[] = $key." = ".$val;	// $val was escaped/sanitized previously
 								}
 								$sqlstart .= " SET " . implode(', ', $set) . ", import_key = '" . $this->db->escape($importid) . "'";
-
 								if (empty($keyfield)) {
 									$keyfield = 'rowid';
 								}
+
 								$sqlend = " WHERE " . $keyfield . " = ".((int) $lastinsertid);
 
 								if ($is_table_category_link) {

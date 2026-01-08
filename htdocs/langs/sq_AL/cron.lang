@@ -29,8 +29,8 @@ CronExecute=Niseni tani
 CronConfirmExecute=Je i sigurt që dëshiron t'i ekzekutosh këto punë të planifikuara tani?
 CronInfo=Moduli i punës së planifikuar ju lejon të planifikoni punë për t'i ekzekutuar ato automatikisht. Punët mund të fillojnë edhe me dorë.
 CronTask=Punë
-CronNone=Next run of scheduled task
-CronNotYetRan=Never executed
+CronNone=Ekzekutimi tjetër i detyrës së planifikuar
+CronNotYetRan=Nuk u ekzekutua kurrë
 CronDtStart=Jo më parë
 CronDtEnd=Jo pas
 CronDtNextLaunch=Ekzekutimi i radhës
@@ -50,7 +50,7 @@ JobFinished=Puna filloi dhe mbaroi
 Scheduled=I planifikuar
 #Page card
 CronAdd=Shto vende pune
-CronEvery=Run job every
+CronEvery=Ekzekuto punën çdo
 CronObject=Shembull/Objekt për të krijuar
 CronArgs=Parametrat
 CronSaveSucess=Ruaje me sukses
@@ -77,6 +77,7 @@ CronType=Lloji i punës
 CronType_method=Metoda e thirrjes së një klase PHP
 CronType_command=Komanda e guaskës
 CronCannotLoadClass=Nuk mund të ngarkohet skedari i klasës %s (për të përdorur klasën %s)
+CronModuleNotEnabledInThisEntity=Moduli Cron nuk është aktivizuar në këtë entitet (për të përdorur metodën %s të objektit %s)
 CronCannotLoadObject=Skedari i klasës %s u ngarkua, por objekti %s nuk u gjet në të
 UseMenuModuleToolsToAddCronJobs=Shkoni te menyja "<a href="%s">Faqja kryesore - Veglat e administratorit - Punët e planifikuara</a>" për të parë dhe modifikuar punët e planifikuara.
 JobDisabled=Punë me aftësi të kufizuara

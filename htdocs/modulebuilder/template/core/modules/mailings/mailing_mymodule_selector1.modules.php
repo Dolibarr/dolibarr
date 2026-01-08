@@ -111,7 +111,7 @@ class mailing_mailing_mymodule_selector1 extends MailingTargets
 		$j = 0;
 
 		$sql = "SELECT rowid as id, firstname, lastname, email";
-		$sql .= " FROM ".MAIN_DB_PREFIX."myobject";
+		$sql .= " FROM ".$this->db->prefix()."myobject";
 		$sql .= " WHERE email IS NOT NULL AND email <> ''";
 		if (GETPOSTISSET('filter') && GETPOST('filter', 'alphanohtml') != 'none') {
 			$sql .= " AND status = '".$this->db->escape(GETPOST('filter', 'alphanohtml'))."'";
@@ -131,13 +131,13 @@ class mailing_mailing_mymodule_selector1 extends MailingTargets
 				$obj = $this->db->fetch_object($result);
 				if ($old != $obj->email) {
 					$target[$j] = array(
-						'email' => $obj->email,
-						'id' => $obj->id,
-						'firstname' => $obj->firstname,
-						'lastname' => $obj->lastname,
-						//'other' => $obj->label,
+						'email' => (string) $obj->email,
+						'id' => (int) $obj->id,
+						'firstname' => (string) $obj->firstname,
+						'lastname' => (string) $obj->lastname,
+						'other' => '', // (string) $obj->label,
 						'source_url' => $this->url($obj->id),
-						'source_id' => $obj->id,
+						'source_id' => (int) $obj->id,
 						'source_type' => 'myobject@mymodule'
 					);
 					$old = $obj->email;
@@ -195,7 +195,7 @@ class mailing_mailing_mymodule_selector1 extends MailingTargets
 	public function getNbOfRecipients($sql = '')
 	{
 		$sql = "SELECT COUNT(DISTINCT(email)) as nb";
-		$sql .= " FROM ".MAIN_DB_PREFIX."myobject as p";
+		$sql .= " FROM ".$this->db->prefix()."myobject as p";
 		$sql .= " WHERE email IS NOT NULL AND email <> ''";
 
 		$a = parent::getNbOfRecipients($sql);

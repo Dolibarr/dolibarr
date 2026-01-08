@@ -237,13 +237,14 @@ class Canvas
 	 *
 	 * 	@param		string		$action	Action string
 	 * 	@param		int			$id			Object id
-	 * 	@return		mixed					Return return code of doActions of canvas
+	 * 	@return		?mixed					Return return code of doActions of canvas
 	 * 	@see		https://wiki.dolibarr.org/index.php/Canvas_development
 	 */
 	public function doActions(&$action = 'view', $id = 0)
 	{
-		if (method_exists($this->control, 'doActions')) {
-			$ret = $this->control->doActions($action, $id);
+		$control = $this->control;
+		if (method_exists($control, 'doActions')) {
+			$ret = $control->doActions($action, $id);
 			return $ret;
 		}
 		return null;

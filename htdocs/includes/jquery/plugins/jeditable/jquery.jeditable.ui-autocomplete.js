@@ -1,5 +1,5 @@
 /* Create an inline datepicker which leverages the
-   jQuery UI autocomplete 
+   jQuery UI autocomplete
 */
 $.editable.addInputType('autocomplete', {
 	element	: $.editable.types.text.element,

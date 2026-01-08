@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2014-2015  Florian HENRY               <florian.henry@open-concept.pro>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,9 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  */
 class TaskStats extends Stats
 {
+	/**
+	 * @var Project
+	 */
 	private $project; // @phpstan-ignore-line
 
 	/**
@@ -58,7 +61,7 @@ class TaskStats extends Stats
 	 * Return all tasks grouped by status.
 	 *
 	 * @param  int             $limit Limit results
-	 * @return array|int       Array with value or -1 if error
+	 * @return array<int,array{0:int|string,1:int}>|int<-1,-1>	Array with value or -1 if error
 	 * @throws Exception
 	 */
 	public function getAllTaskByStatus($limit = 5)
@@ -159,7 +162,7 @@ class TaskStats extends Stats
 			$sqlwhere[] = " t.datec BETWEEN '".$this->db->idate(dol_get_first_day($this->year, $this->month))."' AND '".$this->db->idate(dol_get_last_day($this->year, $this->month))."'";
 		}
 		if (!empty($this->priority)) {
-			$sqlwhere[] = " t.priority IN (".$this->db->sanitize($this->priority, 1).")";
+			$sqlwhere[] = " t.priority = ".((int) $this->priority);
 		}
 
 		if (count($sqlwhere) > 0) {
@@ -213,7 +216,7 @@ class TaskStats extends Stats
 	/**
 	 * Return average of entity by month
 	 * @param	int     $year           year number
-	 * @return 	array					array of values
+	 * @return	array<int<0,11>,array{0:int<1,12>,1:int|float}> Array of average each month
 	 */
 	protected function getAverageByMonth($year)
 	{

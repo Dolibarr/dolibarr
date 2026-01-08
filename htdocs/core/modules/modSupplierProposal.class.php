@@ -93,7 +93,7 @@ class modSupplierProposal extends DolibarrModules
 
 		$this->const[$r][0] = "SUPPLIER_PROPOSAL_ADDON_PDF_ODT_PATH";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/supplier_proposals";
+		$this->const[$r][2] = "DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/supplier_proposals";
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
 
@@ -125,7 +125,7 @@ class modSupplierProposal extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r; // id de la permission
-		$this->rights[$r][1] = 'Envoyer les demandes fournisseurs'; // libelle de la permission
+		$this->rights[$r][1] = 'Send supplier proposals'; // libelle de la permission
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'send_advance';
 
@@ -164,7 +164,7 @@ class modSupplierProposal extends DolibarrModules
 
 		//ODT template
 		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/supplier_proposals/template_supplier_proposal.odt';
-		$dirodt = DOL_DATA_ROOT.'/doctemplates/supplier_proposals';
+		$dirodt = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/supplier_proposals';
 		$dest = $dirodt.'/template_supplier_proposal.odt';
 
 		if (file_exists($src) && !file_exists($dest)) {

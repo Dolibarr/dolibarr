@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +36,7 @@ require_once dirname(__FILE__).'/CommonClassTest.class.php';
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
-	$user->getrights();
+	$user->loadRights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
@@ -93,7 +94,8 @@ class CommandeFournisseurTest extends CommonClassTest
 		$conf->global->SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY = 1;
 
 		$localobject = new CommandeFournisseur($db);
-		$localobject->initAsSpecimen();
+		$param = array('tobuy' => 1);
+		$localobject->initAsSpecimen($param);
 		$localobject->lines = array();    // Overwrite lines of order
 		$line = new CommandeFournisseurLigne($db);
 		$line->desc = $langs->trans("Description")." specimen line with qty too low";
@@ -101,6 +103,7 @@ class CommandeFournisseurTest extends CommonClassTest
 		$line->subprice = 100;
 		$line->fk_product = $product->id;
 		$line->ref_fourn = $ref_fourn;
+		$line->ref_supplier = $ref_fourn;
 		$localobject->lines[] = $line;
 
 		$result = $localobject->create($user);
@@ -112,14 +115,15 @@ class CommandeFournisseurTest extends CommonClassTest
 
 		// Create purchase order
 		$localobject2 = new CommandeFournisseur($db);
-		$localobject2->initAsSpecimen();    // This create 5 lines of first product found for socid 1
+		$param = array('tobuy' => 1);
+		$localobject2->initAsSpecimen($param);    // This create 5 lines of first product found for socid 1
 		$localobject2->lines = array();       // Overwrite lines of order
 		$line = new CommandeFournisseurLigne($db);
 		$line->desc = $langs->trans("Description")." specimen line ok";
 		$line->qty = 10;                      // So enough quantity
 		$line->subprice = 100;
 		$line->fk_product = $product->id;
-		$line->ref_fourn = $ref_fourn;
+		$line->ref_supplier = $ref_fourn;
 		$localobject2->lines[] = $line;
 
 		$result = $localobject2->create($user);
@@ -131,14 +135,15 @@ class CommandeFournisseurTest extends CommonClassTest
 		$conf->global->SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY = 0;
 
 		$localobject3 = new CommandeFournisseur($db);
-		$localobject3->initAsSpecimen();
+		$param = array('tobuy' => 1);
+		$localobject3->initAsSpecimen($param);
 		$localobject3->lines = array();    // Overwrite lines of order
 		$line = new CommandeFournisseurLigne($db);
 		$line->desc = $langs->trans("Description")." specimen line with qty too low";
 		$line->qty = 1;                   // So lower than $quantity
 		$line->subprice = 100;
 		$line->fk_product = $product->id;
-		$line->ref_fourn = $ref_fourn;
+		$line->ref_supplier = $ref_fourn;
 		$localobject3->lines[] = $line;
 
 		$result = $localobject3->create($user);
@@ -157,7 +162,6 @@ class CommandeFournisseurTest extends CommonClassTest
 		$line->qty = 10;                      // So enough quantity
 		$line->subprice = 100;
 		$line->fk_product = $product->id;
-		$line->ref_fourn = $ref_fourn;
 		$localobject4->lines[] = $line;
 
 		$result = $localobject4->create($user);

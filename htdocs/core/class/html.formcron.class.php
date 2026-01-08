@@ -1,6 +1,7 @@
 <?php
 /*
  * Copyright (C) 2013   Florian Henry      <florian.henry@open-concept.pro>
+ * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,12 +54,12 @@ class FormCron extends Form
 	/**
 	 *  Display On Off selector
 	 *
-	 *  @param  string      $htmlname       Html control name
-	 *  @param  integer     $selected       selected value
-	 *  @param  integer     $readonly       Select is read only or not
-	 *  @return string                      HTML select field
+	 *  @param  string		$htmlname	Html control name
+	 *  @param  string		$selected	Selected value
+	 *  @param  int<0,1>	$readonly	Select is read only or not
+	 *  @return string					HTML select field
 	 */
-	public function select_typejob($htmlname, $selected = 0, $readonly = 0)
+	public function select_typejob($htmlname, $selected = '', $readonly = 0)
 	{
 		// phpcs:enable
 		global $langs;

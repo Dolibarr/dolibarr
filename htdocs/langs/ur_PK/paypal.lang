@@ -34,3 +34,4 @@ ARollbackWasPerformedOnPostActions=تمام پوسٹ ایکشنز پر ایک ر
 ValidationOfPaymentFailed=ادائیگی کی توثیق ناکام ہوگئی ہے۔
 CardOwner=کارڈ ہولڈر
 PayPalBalance=پے پال کریڈٹ
+OnlineSubscriptionPaymentLine=آن لائن سبسکرپشن کو ریکارڈ کیا گیا %s<br>بذریعہ ادائیگی %s<br>ابتدائی آئی پی ایڈریس: %s<br>ٹرانزیکشن ID: <span class='noeclatecfda19bz0</span> </span>

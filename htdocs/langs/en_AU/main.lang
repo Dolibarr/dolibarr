@@ -31,6 +31,7 @@ TotalTTCShort=Total (incl GST)
 TotalTTC=Total (incl GST)
 TotalTTCToYourCredit=Total (incl GST) to your credit
 TotalVAT=Total GST
+TotalVATShort=Total GST
 TTC=Incl GST
 VAT=GST
 VATRate=GST Rate
