@@ -5681,13 +5681,13 @@ if ($action == 'create') {
 				$i = 0;
 				while ($i < $num) {
 					$obj = $db->fetch_object($resql);
-					if (!empty($obj->fk_facture_source)) {
-						$invoice = new Facture($db);
-						$id = $obj->fk_facture_source;
-					} elseif (!empty($obj->fk_invoice_supplier_source)) {
+					if (!empty($obj->fk_invoice_supplier_source)) {
 						require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 						$invoice = new FactureFournisseur($db);
 						$id = $obj->fk_invoice_supplier_source;
+					} elseif (!empty($obj->fk_facture_source)) {
+						$invoice = new Facture($db);
+						$id = $obj->fk_facture_source;
 					}
 					$invoice->fetch($id);
 					print '<tr><td colspan="'.$nbcols.'" class="right">';
@@ -5777,7 +5777,8 @@ if ($action == 'create') {
 			} else {
 				print '</td><td class="right">'.price($object->total_ttc).'</td><td>&nbsp;</td></tr>';
 			}
-			// Remainder to pay
+
+			// Remaining to pay
 			print '<tr><td colspan="'.$nbcols.'" class="right">';
 			print '<span class="opacitymedium">';
 			print $langs->trans('RemainderToPay');
