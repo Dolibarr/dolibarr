@@ -85,8 +85,7 @@ if (!$sortorder) {
 $hookmanager->initHooks(array('warehousecard', 'stocklist', 'globalcard'));
 
 // Security check
-//$result=restrictedArea($user,'stock', $id, 'entrepot&stock');
-$result = restrictedArea($user, 'stock');
+$result=restrictedArea($user, 'stock', $id, 'entrepot&stock');
 
 $object = new Entrepot($db);
 $extrafields = new ExtraFields($db);
@@ -109,7 +108,7 @@ $usercandelete = $user->hasRight('stock', 'supprimer');
 $permissiontoeditextra = $usercancreate;
 if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
 	// For action 'update_extras', is there a specific permission set for the attribute to update
-	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+	$permissiontoeditextra = dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
 }
 
 

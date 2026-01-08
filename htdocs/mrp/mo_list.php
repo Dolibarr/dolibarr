@@ -148,7 +148,7 @@ foreach ($object->fields as $key => $val) {
 		$arrayfields[$tableprefix.'.'.$key] = array(
 			'label' => $val['label'],
 			'checked' => (($visible <= 0) ? 0 : 1),
-			'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
+			'enabled' => (abs($visible) != 3 && (bool) dol_eval((string) $val['enabled'], 1)),
 			'position' => $val['position'],
 			'help' => isset($val['help']) ? $val['help'] : ''
 		);
@@ -253,6 +253,13 @@ if (empty($reshook)) {
 			if (!empty($toselect)) {
 				foreach ($toselect as $key => $idMo) {
 					if ($objMo->fetch($idMo)) {
+						if (in_array($action, array('changedatestart_confirm', 'changedateend_confirm'), true) && $objMo->status == Mo::STATUS_PRODUCED) {
+							$errorKey = $action == 'changedatestart_confirm'
+								? 'ErrorObjectMustNotBeFinishedToModifyDateStart'
+								: 'ErrorObjectMustNotBeFinishedToModifyDateEnd';
+							setEventMessages($langs->trans($errorKey, $objMo->ref), null, 'errors');
+							continue;
+						}
 						if (!empty($changeDate)) {
 							if ($action == 'changedatestart_confirm') { 		// Test on permission not required
 								// The start date can be set IF (the end date is empty OR the new date is BEFORE the existing end date).

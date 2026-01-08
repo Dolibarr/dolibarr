@@ -120,7 +120,7 @@ $permissiontoeditextra = $permissiontoadd;
 
 if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
 	// For action 'update_extras', is there a specific permission set for the attribute to update
-	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+	$permissiontoeditextra = dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
 }
 
 
@@ -371,8 +371,10 @@ if (empty($reshook)) {
 					$idoppstatuswon = (int) dol_getIdFromCode($db, 'WON', 'c_lead_status', 'code', 'rowid');
 
 					if ($object->opp_status == $idoppstatuswon) {
-						// Switch the thirdparty into a customer
-						$object->thirdparty->setAsCustomer();
+						// Switch the thirdparty into a customer (only if thirdparty exists)
+						if (!empty($object->thirdparty) && !empty($object->thirdparty->id)) {
+							$object->thirdparty->setAsCustomer();
+						}
 					}
 				}
 			}
@@ -468,8 +470,10 @@ if (empty($reshook)) {
 					$idoppstatuswon = (int) dol_getIdFromCode($db, 'WON', 'c_lead_status', 'code', 'rowid');
 
 					if (!$error && $object->opp_status == $idoppstatuswon) {
-						// Switch the thirdparty into a customer
-						$object->thirdparty->setAsCustomer();
+						// Switch the thirdparty into a customer (only if thirdparty exists)
+						if (!empty($object->thirdparty) && !empty($object->thirdparty->id)) {
+							$object->thirdparty->setAsCustomer();
+						}
 					}
 				}
 			}

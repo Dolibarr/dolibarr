@@ -316,8 +316,8 @@ class AssetDepreciationOptions extends CommonObject
 		foreach ($this->deprecation_options_fields as $mode_key => $mode_info) {
 			if (!empty($mode_info['enabled_field'])) {
 				$info = explode(':', $mode_info['enabled_field']);
-				if (!empty($this->deprecation_options[$info[0]][$info[1]]) && $deprecation_options[$info[0]][$info[1]] != $info[2]) {
-					unset($deprecation_options[$info[0]][$info[1]]);
+				if (isset($deprecation_options[$info[0]][$info[1]]) && $deprecation_options[$info[0]][$info[1]] != $info[2]) {
+					unset($deprecation_options[$mode_key]);
 				}
 			}
 		}
@@ -389,8 +389,8 @@ class AssetDepreciationOptions extends CommonObject
 		foreach ($this->deprecation_options_fields as $mode_key => $mode_info) {
 			if (!empty($mode_info['enabled_field'])) {
 				$info = explode(':', $mode_info['enabled_field']);
-				if (isset($deprecation_options[$info[0]][$info[1]]) && $deprecation_options[$info[0]][$info[1]] != $info[2]) {
-					unset($deprecation_options[$info[0]][$info[1]]);
+				if (!empty($deprecation_options[$info[0]][$info[1]]) && $deprecation_options[$info[0]][$info[1]] != $info[2]) {
+					unset($deprecation_options[$mode_key]);
 				}
 			}
 		}
@@ -431,10 +431,14 @@ class AssetDepreciationOptions extends CommonObject
 
 		$duration_type_list = $this->deprecation_options_fields[$mode]['fields']['duration_type']['arrayofkeyval'];
 
+		$mode_opts = $this->deprecation_options[$mode] ?? array();
+		$duration_type_idx = $mode_opts['duration_type'] ?? null;
+		$duration_type_label = $duration_type_list[$duration_type_idx] ?? '';
+
 		return array(
-			'base_depreciation_ht' => $this->deprecation_options[$mode]['amount_base_depreciation_ht'],
-			'duration' => $this->deprecation_options[$mode]['duration'],
-			'duration_type' => $duration_type_list[$this->deprecation_options[$mode]['duration_type']],
+			'base_depreciation_ht' => $mode_opts['amount_base_depreciation_ht'] ?? 0,
+			'duration' => $mode_opts['duration'] ?? 0,
+			'duration_type' => $duration_type_label,
 			'rate' => $this->getRate($mode),
 		);
 	}
@@ -501,8 +505,9 @@ class AssetDepreciationOptions extends CommonObject
 
 			if (!$error && !empty($this->deprecation_options[$mode_key])) {
 				if (!empty($mode_info['enabled_field'])) {
-					$info = explode(':', $mode_info['enabled_field']);
-					if (!empty($this->deprecation_options[$info[0]][$info[1]]) && $this->deprecation_options[$info[0]][$info[1]] != $info[2]) {
+					list($ref_mode, $ref_field, $required) = explode(':', $mode_info['enabled_field']);
+					$flag = $this->deprecation_options[$ref_mode][$ref_field] ?? null;
+					if ((string) $flag !== (string) $required) {
 						continue;
 					}
 				}

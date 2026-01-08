@@ -243,15 +243,17 @@ function getObjectFromID(id){
 // Called after the selection or typing of a date to save details into detailed fields
 function dpChangeDay(dateFieldID, format)
 {
-	console.log("Call dpChangeDay, we save date into detailed fields from format = "+format);
+	console.log("Call dpChangeDay, we save date from field "+dateFieldID+" into detailed fields from format = "+format);
 
 	var thefield = getObjectFromID(dateFieldID);
 	var thefieldday = getObjectFromID(dateFieldID+"day");
 	var thefieldmonth = getObjectFromID(dateFieldID+"month");
 	var thefieldyear = getObjectFromID(dateFieldID+"year");
 
+	console.log("string date value is " + thefield.value);
+
 	var date = getDateFromFormat(thefield.value, format);
-	//console.log(date);
+
 	if (date)
 	{
 		thefieldday.value = date.getDate();
@@ -1578,14 +1580,20 @@ jQuery(document).ready(function() {
 
 // Code to manage the js for combo list with dependencies (called by extrafields_view.tpl.php)
 function showOptions(child_list, parent_list) {
-		   var val = $("select[name="+parent_list+"]").val();
-		   var parentVal = parent_list + ":" + val;
-		if(val > 0) {
-			$("select[name=\""+child_list+"\"] option[parent]").hide();
-			$("select[name=\""+child_list+"\"] option[parent=\""+parentVal+"\"]").show();
+	var parentInput = $("select[name="+parent_list+"]");
+	if (parentInput.length === 0) { // when parent extra-field is in view mode and the child is edited directly on card (on line edit)
+		parentInput = $("input[name="+parent_list+"]");
+	}
+	if (parentInput.length > 0) {
+		var val = parentInput.val();
+		var parentVal = parent_list + ":" + val;
+		if (val > 0) {
+			$("select[name=\""+child_list+"\"] option[parent]").prop("disabled", true).hide(); // hide not work with select2 element so disabled it
+			$("select[name=\""+child_list+"\"] option[parent=\""+parentVal+"\"]").prop('disabled', false).show(); // show not work with select2 element so enabled it
 		} else {
-			$("select[name=\""+child_list+"\"] option").show();
+			$("select[name=\""+child_list+"\"] option").prop("disabled", false).show(); // show not work with select2 element so enabled it
 		}
+	}
 }
 function setListDependencies() {
 		console.log("setListDependencies");

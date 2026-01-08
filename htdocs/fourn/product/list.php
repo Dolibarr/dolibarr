@@ -378,13 +378,13 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
-print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.ref", $param, "", "", $sortfield, $sortorder);
-print_liste_field_titre("RefSupplierShort", $_SERVER["PHP_SELF"], "ppf.ref_fourn", $param, "", "", $sortfield, $sortorder);
-print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "p.label", $param, "", "", $sortfield, $sortorder);
-print_liste_field_titre("Supplier", $_SERVER["PHP_SELF"], "ppf.fk_soc", $param, "", "", $sortfield, $sortorder);
-print_liste_field_titre("BuyingPrice", $_SERVER["PHP_SELF"], "ppf.price", $param, "", '', $sortfield, $sortorder, 'right ');
-print_liste_field_titre("QtyMin", $_SERVER["PHP_SELF"], "ppf.quantity", $param, "", '', $sortfield, $sortorder, 'right ');
-print_liste_field_titre("UnitPrice", $_SERVER["PHP_SELF"], "ppf.unitprice", $param, "", '', $sortfield, $sortorder, 'right ');
+print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.ref", "", $param, "", $sortfield, $sortorder);
+print_liste_field_titre("RefSupplierShort", $_SERVER["PHP_SELF"], "ppf.ref_fourn", "", $param, "", $sortfield, $sortorder);
+print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "p.label", "", $param, "", $sortfield, $sortorder);
+print_liste_field_titre("Supplier", $_SERVER["PHP_SELF"], "ppf.fk_soc", "", $param, "", $sortfield, $sortorder);
+print_liste_field_titre("BuyingPrice", $_SERVER["PHP_SELF"], "ppf.price", "", $param, "", $sortfield, $sortorder, 'right ');
+print_liste_field_titre("QtyMin", $_SERVER["PHP_SELF"], "ppf.quantity", "", $param, "", $sortfield, $sortorder, 'right ');
+print_liste_field_titre("UnitPrice", $_SERVER["PHP_SELF"], "ppf.unitprice", "", $param, "", $sortfield, $sortorder, 'right ');
 // add header cells from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $productstatic, $action);

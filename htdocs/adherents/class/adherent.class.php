@@ -2027,6 +2027,7 @@ class Adherent extends CommonObject
 				// Generate PDF (whatever is option MAIN_DISABLE_PDF_AUTOUPDATE) so we can include it into email
 				//if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE'))
 
+				$invoice->fetch($invoice->id); // Reload invoice object data
 				$invoice->generateDocument($invoice->model_pdf, $outputlangs);
 			}
 		}

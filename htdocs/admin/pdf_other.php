@@ -163,7 +163,7 @@ if ($action == 'update') {
 
 	// add file to concat
 	foreach (array('MAIN_INFO_PROPAL_TERMSOFSALE', 'MAIN_INFO_ORDER_TERMSOFSALE', 'MAIN_INFO_INVOICE_TERMSOFSALE') as $varname) {
-		if ($_FILES[$varname]["name"]) {
+		if (isset($_FILES[$varname]) && $_FILES[$varname]["name"]) {
 			if (!preg_match('/(\.pdf)$/i', $_FILES[$varname]["name"])) {	// Document can be used on a lot of different places. Only pdf can be supported.
 				$langs->load("errors");
 				setEventMessages($langs->trans("ErrorBadFormat"), null, 'errors');

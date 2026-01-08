@@ -988,152 +988,146 @@ class FactureFournisseurRec extends CommonInvoice
 			return -1;
 		}
 
-		if ($this->suspended == self::STATUS_NOTSUSPENDED) {
-			$localtaxes_type = getLocalTaxesFromRate($txtva, 0, $this->thirdparty, $mysoc);
+		$localtaxes_type = getLocalTaxesFromRate($txtva, 0, $this->thirdparty, $mysoc);
 
-			// Clean vat code
-			$reg = array();
-			$vat_src_code = '';
-			if (preg_match('/\((.*)\)/', (string) $txtva, $reg)) {
-				$vat_src_code = $reg[1];
-				$txtva = preg_replace('/\s*\(.*\)/', '', (string) $txtva); // Remove code into vatrate.
-			}
+		// Clean vat code
+		$reg = array();
+		$vat_src_code = '';
+		if (preg_match('/\((.*)\)/', (string) $txtva, $reg)) {
+			$vat_src_code = $reg[1];
+			$txtva = preg_replace('/\s*\(.*\)/', '', (string) $txtva); // Remove code into vatrate.
+		}
 
-			// Clean parameters
-			$fk_product = empty($fk_product) ? 0 : $fk_product;
-			$label = empty($label) ? '' : $label;
-			$remise_percent = empty($remise_percent) ? 0 : price2num($remise_percent);
-			$qty = price2num($qty);
-			$pu_ht = price2num($pu_ht);
-			$pu_ttc = price2num($pu_ttc);
-			if (!preg_match('/\((.*)\)/', $txtva)) {
-				$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
-			}
-			$txlocaltax1 = price2num($txlocaltax1);
-			$txlocaltax2 = price2num($txlocaltax2);
-			$txtva = !empty($txtva) ? $txtva : 0;
-			$txlocaltax1 = !empty($txlocaltax1) ? $txlocaltax1 : 0;
-			$txlocaltax2 = !empty($txlocaltax2) ? $txlocaltax2 : 0;
-			$info_bits = !empty($info_bits) ? $info_bits : 0;
-			$info_bits = !empty($info_bits) ? $info_bits : 0;
-			$pu = $price_base_type == 'HT' ? $pu_ht : $pu_ttc;
+		// Clean parameters
+		$fk_product = empty($fk_product) ? 0 : $fk_product;
+		$label = empty($label) ? '' : $label;
+		$remise_percent = empty($remise_percent) ? 0 : price2num($remise_percent);
+		$qty = price2num($qty);
+		$pu_ht = price2num($pu_ht);
+		$pu_ttc = price2num($pu_ttc);
+		if (!preg_match('/\((.*)\)/', $txtva)) {
+			$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
+		}
+		$txlocaltax1 = price2num($txlocaltax1);
+		$txlocaltax2 = price2num($txlocaltax2);
+		$txtva = !empty($txtva) ? $txtva : 0;
+		$txlocaltax1 = !empty($txlocaltax1) ? $txlocaltax1 : 0;
+		$txlocaltax2 = !empty($txlocaltax2) ? $txlocaltax2 : 0;
+		$info_bits = !empty($info_bits) ? $info_bits : 0;
+		$info_bits = !empty($info_bits) ? $info_bits : 0;
+		$pu = $price_base_type == 'HT' ? $pu_ht : $pu_ttc;
 
-			// Calcul du total TTC et de la TVA pour la ligne a partir de qty, pu, remise_percent et txtva
-			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
-			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
+		// Calcul du total TTC et de la TVA pour la ligne a partir de qty, pu, remise_percent et txtva
+		// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
+		// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 
-			$tabprice = calcul_price_total((float) $qty, (float) $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
-			$total_ht  = $tabprice[0];
-			$total_tva = $tabprice[1];
-			$total_ttc = $tabprice[2];
-			$total_localtax1 = $tabprice[9];
-			$total_localtax2 = $tabprice[10];
-			$pu_ht = $tabprice[3];
+		$tabprice = calcul_price_total((float) $qty, (float) $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
+		$total_ht  = $tabprice[0];
+		$total_tva = $tabprice[1];
+		$total_ttc = $tabprice[2];
+		$total_localtax1 = $tabprice[9];
+		$total_localtax2 = $tabprice[10];
+		$pu_ht = $tabprice[3];
 
-			// MultiCurrency
-			$multicurrency_total_ht  = $tabprice[16];
-			$multicurrency_total_tva = $tabprice[17];
-			$multicurrency_total_ttc = $tabprice[18];
-			$pu_ht_devise = $tabprice[19];
+		// MultiCurrency
+		$multicurrency_total_ht  = $tabprice[16];
+		$multicurrency_total_tva = $tabprice[17];
+		$multicurrency_total_ttc = $tabprice[18];
+		$pu_ht_devise = $tabprice[19];
 
-			$this->db->begin();
-			$product_type = $type;
-			if ($fk_product) {
-				$product = new Product($this->db);
-				$result = $product->fetch($fk_product);
-				if ($result < 0) {
-					return -1;
-				}
-				$product_type = $product->type;
-				if (empty($label)) {
-					$label = $product->label;
-				}
-			}
-
-			$sql = 'INSERT INTO ' . MAIN_DB_PREFIX . 'facture_fourn_det_rec (';
-			$sql .= 'fk_facture_fourn';
-			$sql .= ', fk_product';
-			$sql .= ', ref';
-			$sql .= ', label';
-			$sql .= ', description';
-			$sql .= ', pu_ht';
-			$sql .= ', pu_ttc';
-			$sql .= ', qty';
-			$sql .= ', remise_percent';
-			$sql .= ', fk_remise_except';
-			$sql .= ', vat_src_code';
-			$sql .= ', tva_tx';
-			$sql .= ', localtax1_tx';
-			$sql .= ', localtax1_type';
-			$sql .= ', localtax2_tx';
-			$sql .= ', localtax2_type';
-			$sql .= ', total_ht';
-			$sql .= ', total_tva';
-			$sql .= ', total_localtax1';
-			$sql .= ', total_localtax2';
-			$sql .= ', total_ttc';
-			$sql .= ', product_type';
-			$sql .= ', date_start';
-			$sql .= ', date_end';
-			$sql .= ', info_bits';
-			$sql .= ', special_code';
-			$sql .= ', rang';
-			$sql .= ', fk_unit';
-			$sql .= ', fk_user_author';
-			$sql .= ', fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc';
-			$sql .= ') VALUES (';
-			$sql .= ' ' . (int) $facid;   // source supplier invoice id
-			$sql .= ', ' . (!empty($fk_product) ? "'" . $this->db->escape((string) $fk_product) . "'" : 'null');
-			$sql .= ', ' . (!empty($ref) ? "'" . $this->db->escape($ref) . "'" : 'null');
-			$sql .= ', ' . (!empty($label) ? "'" . $this->db->escape($label) . "'" : 'null');
-			$sql .= ", '" . $this->db->escape($desc) . "'";
-			$sql .= ', ' . price2num($pu_ht);
-			$sql .= ', ' . price2num($pu_ttc);
-			$sql .= ', ' . price2num($qty);
-			$sql .= ', ' . price2num($remise_percent);
-			$sql .= ', null';
-			$sql .= ", '" . $this->db->escape($vat_src_code) . "'";
-			$sql .= ', ' . price2num($txtva);
-			$sql .= ', ' . price2num($txlocaltax1);
-			$sql .= ", '" . $this->db->escape(isset($localtaxes_type[0]) ? $localtaxes_type[0] : '') . "'";
-			$sql .= ', ' . price2num($txlocaltax2);
-			$sql .= ", '" . $this->db->escape(isset($localtaxes_type[2]) ? $localtaxes_type[2] : '') . "'";
-			$sql .= ', ' . price2num($total_ht);
-			$sql .= ', ' . price2num($total_tva);
-			$sql .= ', ' . price2num($total_localtax1);
-			$sql .= ', ' . price2num($total_localtax2);
-			$sql .= ', ' . price2num($total_ttc);
-			$sql .= ', ' . (int) $product_type;
-			$sql .= ', ' . ($date_start > 0 ? (int) $date_start : 'NULL');
-			$sql .= ', ' . ($date_end > 0 ? (int) $date_end : 'NULL');
-			$sql .= ', ' . (int) $info_bits;
-			$sql .= ', ' . (int) $special_code;
-			$sql .= ', ' . (int) $rang;
-			$sql .= ', ' . ($fk_unit ? (int) $fk_unit : 'NULL');
-			$sql .= ', ' . (int) $user->id;
-			$sql .= ', ' . (int) $this->fk_multicurrency;
-			$sql .= ", '" . $this->db->escape($this->multicurrency_code) . "'";
-			$sql .= ', ' . price2num($pu_ht_devise, 'CU');
-			$sql .= ', ' . price2num($multicurrency_total_ht, 'CT');
-			$sql .= ', ' . price2num($multicurrency_total_tva, 'CT');
-			$sql .= ', ' . price2num($multicurrency_total_ttc, 'CT');
-			$sql .= ')';
-
-			dol_syslog(get_class($this). '::addline', LOG_DEBUG);
-			if ($this->db->query($sql)) {
-				$lineId = $this->db->last_insert_id(MAIN_DB_PREFIX. 'facture_fourn_det_rec');
-				$this->update_price();
-				$this->id = $facid;
-				$this->db->commit();
-				return $lineId;
-			} else {
-				$this->db->rollback();
-				$this->error = $this->db->lasterror();
-
+		$this->db->begin();
+		$product_type = $type;
+		if ($fk_product) {
+			$product = new Product($this->db);
+			$result = $product->fetch($fk_product);
+			if ($result < 0) {
 				return -1;
 			}
+			$product_type = $product->type;
+			if (empty($label)) {
+				$label = $product->label;
+			}
+		}
+
+		$sql = 'INSERT INTO ' . MAIN_DB_PREFIX . 'facture_fourn_det_rec (';
+		$sql .= 'fk_facture_fourn';
+		$sql .= ', fk_product';
+		$sql .= ', ref';
+		$sql .= ', label';
+		$sql .= ', description';
+		$sql .= ', pu_ht';
+		$sql .= ', pu_ttc';
+		$sql .= ', qty';
+		$sql .= ', remise_percent';
+		$sql .= ', fk_remise_except';
+		$sql .= ', vat_src_code';
+		$sql .= ', tva_tx';
+		$sql .= ', localtax1_tx';
+		$sql .= ', localtax1_type';
+		$sql .= ', localtax2_tx';
+		$sql .= ', localtax2_type';
+		$sql .= ', total_ht';
+		$sql .= ', total_tva';
+		$sql .= ', total_localtax1';
+		$sql .= ', total_localtax2';
+		$sql .= ', total_ttc';
+		$sql .= ', product_type';
+		$sql .= ', date_start';
+		$sql .= ', date_end';
+		$sql .= ', info_bits';
+		$sql .= ', special_code';
+		$sql .= ', rang';
+		$sql .= ', fk_unit';
+		$sql .= ', fk_user_author';
+		$sql .= ', fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc';
+		$sql .= ') VALUES (';
+		$sql .= ' ' . (int) $facid;   // source supplier invoice id
+		$sql .= ', ' . (!empty($fk_product) ? ((int) $fk_product) : 'null');
+		$sql .= ', ' . (!empty($ref) ? "'" . $this->db->escape($ref) . "'" : 'null');
+		$sql .= ', ' . (!empty($label) ? "'" . $this->db->escape($label) . "'" : 'null');
+		$sql .= ", '" . $this->db->escape($desc) . "'";
+		$sql .= ', ' . price2num($pu_ht);
+		$sql .= ', ' . price2num($pu_ttc);
+		$sql .= ', ' . price2num($qty);
+		$sql .= ', ' . price2num($remise_percent);
+		$sql .= ', null';
+		$sql .= ", '" . $this->db->escape($vat_src_code) . "'";
+		$sql .= ', ' . price2num($txtva);
+		$sql .= ', ' . price2num($txlocaltax1);
+		$sql .= ", '" . $this->db->escape(isset($localtaxes_type[0]) ? $localtaxes_type[0] : '') . "'";
+		$sql .= ', ' . price2num($txlocaltax2);
+		$sql .= ", '" . $this->db->escape(isset($localtaxes_type[2]) ? $localtaxes_type[2] : '') . "'";
+		$sql .= ', ' . price2num($total_ht);
+		$sql .= ', ' . price2num($total_tva);
+		$sql .= ', ' . price2num($total_localtax1);
+		$sql .= ', ' . price2num($total_localtax2);
+		$sql .= ', ' . price2num($total_ttc);
+		$sql .= ', ' . (int) $product_type;
+		$sql .= ', ' . ($date_start > 0 ? (int) $date_start : 'NULL');
+		$sql .= ', ' . ($date_end > 0 ? (int) $date_end : 'NULL');
+		$sql .= ', ' . (int) $info_bits;
+		$sql .= ', ' . (int) $special_code;
+		$sql .= ', ' . (int) $rang;
+		$sql .= ', ' . ($fk_unit ? (int) $fk_unit : 'NULL');
+		$sql .= ', ' . (int) $user->id;
+		$sql .= ', ' . (int) $this->fk_multicurrency;
+		$sql .= ", '" . $this->db->escape($this->multicurrency_code) . "'";
+		$sql .= ', ' . price2num($pu_ht_devise, 'CU');
+		$sql .= ', ' . price2num($multicurrency_total_ht, 'CT');
+		$sql .= ', ' . price2num($multicurrency_total_tva, 'CT');
+		$sql .= ', ' . price2num($multicurrency_total_ttc, 'CT');
+		$sql .= ')';
+
+		dol_syslog(get_class($this). '::addline', LOG_DEBUG);
+		if ($this->db->query($sql)) {
+			$lineId = $this->db->last_insert_id(MAIN_DB_PREFIX. 'facture_fourn_det_rec');
+			$this->update_price();
+			$this->id = $facid;
+			$this->db->commit();
+			return $lineId;
 		} else {
-			$this->error = 'Recurring Invoice is suspended. adding lines not allowed.';
+			$this->db->rollback();
+			$this->error = $this->db->lasterror();
 
 			return -1;
 		}
@@ -1180,113 +1174,110 @@ class FactureFournisseurRec extends CommonInvoice
 			return -1;
 		}
 
-		if ($this->status == self::STATUS_SUSPENDED) {
-			// Clean parameters
-			$fk_product = empty($fk_product) ? 0 : $fk_product;
-			$label = empty($label) ? '' : $label;
-			$remise_percent = empty($remise_percent) ? 0 : price2num($remise_percent);
-			$qty = price2num($qty);
-			$info_bits = empty($info_bits) ? 0 : $info_bits;
-			$pu_ht          = price2num($pu_ht);
-			$pu_ttc         = price2num($pu_ttc);
-			$pu_ht_devise = price2num($pu_ht_devise);
+		// Clean parameters
+		$fk_product = empty($fk_product) ? 0 : $fk_product;
+		$label = empty($label) ? '' : $label;
+		$remise_percent = empty($remise_percent) ? 0 : price2num($remise_percent);
+		$qty = price2num($qty);
+		$info_bits = empty($info_bits) ? 0 : $info_bits;
+		$pu_ht          = price2num($pu_ht);
+		$pu_ttc         = price2num($pu_ttc);
+		$pu_ht_devise = price2num($pu_ht_devise);
 
-			if (!preg_match('/\((.*)\)/', (string) $txtva)) {
-				$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
-			}
-
-			$txlocaltax1 = empty($txlocaltax1) ? 0 : price2num($txlocaltax1);
-			$txlocaltax2 = empty($txlocaltax2) ? 0 : price2num($txlocaltax2);
-			$this->multicurrency_total_ht = empty($this->multicurrency_total_ht) ? 0 : $this->multicurrency_total_ht;
-			$this->multicurrency_total_tva = empty($this->multicurrency_total_tva) ? 0 : $this->multicurrency_total_tva;
-			$this->multicurrency_total_ttc = empty($this->multicurrency_total_ttc) ? 0 : $this->multicurrency_total_ttc;
-
-			$pu = $price_base_type == 'HT' ? $pu_ht : $pu_ttc;
-
-
-			// Calculate total with, without tax and tax from qty, pu, remise_percent and txtva
-			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
-			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-
-			$localtaxes_type = getLocalTaxesFromRate($txtva, 0, $this->thirdparty, $mysoc);
-
-			// Clean vat code
-			$vat_src_code = '';
-			$reg = array();
-			if (preg_match('/\((.*)\)/', $txtva, $reg)) {
-				$vat_src_code = $reg[1];
-				$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
-			}
-
-			$tabprice = calcul_price_total((float) $qty, (float) $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, (float) $pu_ht_devise);
-
-			$total_ht  = $tabprice[0];
-			$total_tva = $tabprice[1];
-			$total_ttc = $tabprice[2];
-			$total_localtax1 = $tabprice[9];
-			$total_localtax2 = $tabprice[10];
-			$pu_ht  = $tabprice[3];
-			$pu_tva = $tabprice[4];
-			$pu_ttc = $tabprice[5];
-
-			// MultiCurrency
-			$multicurrency_total_ht  = $tabprice[16];
-			$multicurrency_total_tva = $tabprice[17];
-			$multicurrency_total_ttc = $tabprice[18];
-			$pu_ht_devise = $tabprice[19];
-
-			$product_type = $type;
-			if ($fk_product) {
-				$product = new Product($this->db);
-				$result = $product->fetch($fk_product);
-				$product_type = $product->type;
-			}
-
-			$sql = 'UPDATE ' . MAIN_DB_PREFIX . 'facture_fourn_det_rec SET';
-			$sql .= ' fk_facture_fourn = ' . ((int) $facid);
-			$sql .= ', fk_product = ' . ($fk_product > 0 ? ((int) $fk_product) : 'null');
-			$sql .= ", ref = '" . $this->db->escape($ref) . "'";
-			$sql .= ", label = '" . $this->db->escape($label) . "'";
-			$sql .= ", description = '" . $this->db->escape($desc) . "'";
-			$sql .= ', pu_ht = ' . price2num($pu_ht);
-			$sql .= ', qty = ' . price2num($qty);
-			$sql .= ", remise_percent = '" . price2num($remise_percent) . "'";
-			$sql .= ", vat_src_code = '" . $this->db->escape($vat_src_code) . "'";
-			$sql .= ', tva_tx = ' . price2num($txtva);
-			$sql .= ', localtax1_tx = ' . (float) $txlocaltax1;
-			$sql .= ", localtax1_type = '" . $this->db->escape($localtaxes_type[0]) . "'";
-			$sql .= ', localtax2_tx = ' . (float) $txlocaltax2;
-			$sql .= ", localtax2_type = '" . $this->db->escape($localtaxes_type[2]) . "'";
-			$sql .= ", total_ht = '" . price2num($total_ht) . "'";
-			$sql .= ", total_tva = '" . price2num($total_tva) . "'";
-			$sql .= ", total_localtax1 = '" . price2num($total_localtax1) . "'";
-			$sql .= ", total_localtax2 = '" . price2num($total_localtax2) . "'";
-			$sql .= ", total_ttc = '" . price2num($total_ttc) . "'";
-			$sql .= ', product_type = ' . (int) $product_type;
-			$sql .= ', date_start = ' . (empty($date_start) ? 'NULL' : (int) $date_start);
-			$sql .= ', date_end = ' . (empty($date_end) ? 'NULL' : (int) $date_end);
-			$sql .= ', info_bits = ' . (int) $info_bits;
-			$sql .= ', special_code = ' . (int) $special_code;
-			$sql .= ', rang = ' . (int) $rang;
-			$sql .= ', fk_unit = ' . ($fk_unit ? "'" . $this->db->escape($fk_unit) . "'" : 'null');
-			$sql .= ', fk_user_modif = ' . (int) $user;
-			$sql .= ', multicurrency_subprice = '.price2num($pu_ht_devise);
-			$sql .= ', multicurrency_total_ht = '.price2num($multicurrency_total_ht);
-			$sql .= ', multicurrency_total_tva = '.price2num($multicurrency_total_tva);
-			$sql .= ', multicurrency_total_ttc = '.price2num($multicurrency_total_ttc);
-			$sql .= ' WHERE rowid = ' . (int) $rowid;
-
-			dol_syslog(get_class($this). '::updateline', LOG_DEBUG);
-			if ($this->db->query($sql)) {
-				$this->id = $facid;
-				$this->update_price();
-				return 1;
-			} else {
-				$this->error = $this->db->lasterror();
-				return -1;
-			}
+		if (!preg_match('/\((.*)\)/', (string) $txtva)) {
+			$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
 		}
-		return 0;
+
+		$txlocaltax1 = empty($txlocaltax1) ? 0 : price2num($txlocaltax1);
+		$txlocaltax2 = empty($txlocaltax2) ? 0 : price2num($txlocaltax2);
+		$this->multicurrency_total_ht = empty($this->multicurrency_total_ht) ? 0 : $this->multicurrency_total_ht;
+		$this->multicurrency_total_tva = empty($this->multicurrency_total_tva) ? 0 : $this->multicurrency_total_tva;
+		$this->multicurrency_total_ttc = empty($this->multicurrency_total_ttc) ? 0 : $this->multicurrency_total_ttc;
+
+		$pu = $price_base_type == 'HT' ? $pu_ht : $pu_ttc;
+
+
+		// Calculate total with, without tax and tax from qty, pu, remise_percent and txtva
+		// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
+		// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
+
+		$localtaxes_type = getLocalTaxesFromRate($txtva, 0, $this->thirdparty, $mysoc);
+
+		// Clean vat code
+		$vat_src_code = '';
+		$reg = array();
+		if (preg_match('/\((.*)\)/', $txtva, $reg)) {
+			$vat_src_code = $reg[1];
+			$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
+		}
+
+		$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
+
+		$total_ht  = $tabprice[0];
+		$total_tva = $tabprice[1];
+		$total_ttc = $tabprice[2];
+		$total_localtax1 = $tabprice[9];
+		$total_localtax2 = $tabprice[10];
+		$pu_ht  = $tabprice[3];
+		$pu_tva = $tabprice[4];
+		$pu_ttc = $tabprice[5];
+
+		// MultiCurrency
+		$multicurrency_total_ht  = $tabprice[16];
+		$multicurrency_total_tva = $tabprice[17];
+		$multicurrency_total_ttc = $tabprice[18];
+		$pu_ht_devise = $tabprice[19];
+
+		$product_type = $type;
+		if ($fk_product) {
+			$product = new Product($this->db);
+			$result = $product->fetch($fk_product);
+			$product_type = $product->type;
+		}
+
+		$sql = 'UPDATE ' . MAIN_DB_PREFIX . 'facture_fourn_det_rec SET';
+		$sql .= ' fk_facture_fourn = ' . ((int) $facid);
+		$sql .= ', fk_product = ' . ($fk_product > 0 ? ((int) $fk_product) : 'null');
+		$sql .= ", ref = '" . $this->db->escape($ref) . "'";
+		$sql .= ", label = '" . $this->db->escape($label) . "'";
+		$sql .= ", description = '" . $this->db->escape($desc) . "'";
+		$sql .= ', pu_ht = ' . price2num($pu_ht);
+		$sql .= ', qty = ' . price2num($qty);
+		$sql .= ", remise_percent = '" . price2num($remise_percent) . "'";
+		$sql .= ", vat_src_code = '" . $this->db->escape($vat_src_code) . "'";
+		$sql .= ', tva_tx = ' . price2num($txtva);
+		$sql .= ', localtax1_tx = ' . (float) $txlocaltax1;
+		$sql .= ", localtax1_type = '" . $this->db->escape($localtaxes_type[0]) . "'";
+		$sql .= ', localtax2_tx = ' . (float) $txlocaltax2;
+		$sql .= ", localtax2_type = '" . $this->db->escape($localtaxes_type[2]) . "'";
+		$sql .= ", total_ht = '" . price2num($total_ht) . "'";
+		$sql .= ", total_tva = '" . price2num($total_tva) . "'";
+		$sql .= ", total_localtax1 = '" . price2num($total_localtax1) . "'";
+		$sql .= ", total_localtax2 = '" . price2num($total_localtax2) . "'";
+		$sql .= ", total_ttc = '" . price2num($total_ttc) . "'";
+		$sql .= ', product_type = ' . (int) $product_type;
+		$sql .= ', date_start = ' . (empty($date_start) ? 'NULL' : (int) $date_start);
+		$sql .= ', date_end = ' . (empty($date_end) ? 'NULL' : (int) $date_end);
+		$sql .= ', info_bits = ' . (int) $info_bits;
+		$sql .= ', special_code = ' . (int) $special_code;
+		$sql .= ', rang = ' . (int) $rang;
+		$sql .= ', fk_unit = ' . ($fk_unit ? "'" . $this->db->escape($fk_unit) . "'" : 'null');
+		$sql .= ', fk_user_modif = ' . (int) $user;
+		$sql .= ', multicurrency_subprice = '.price2num($pu_ht_devise);
+		$sql .= ', multicurrency_total_ht = '.price2num($multicurrency_total_ht);
+		$sql .= ', multicurrency_total_tva = '.price2num($multicurrency_total_tva);
+		$sql .= ', multicurrency_total_ttc = '.price2num($multicurrency_total_ttc);
+		$sql .= ' WHERE rowid = ' . (int) $rowid;
+
+		dol_syslog(get_class($this). '::updateline', LOG_DEBUG);
+		if ($this->db->query($sql)) {
+			$this->id = $facid;
+			$this->update_price();
+			return 1;
+		} else {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
 	}
 
 

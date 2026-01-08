@@ -429,6 +429,7 @@ class AccountingJournal extends CommonObject
 		$sql .= " FROM " . MAIN_DB_PREFIX . "asset_depreciation as ad";
 		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "asset as a ON a.rowid = ad.fk_asset";
 		$sql .= " WHERE a.entity IN (" . getEntity('asset', 0) . ')'; // We don't share object for accountancy, we use source object sharing
+		$sql .= " AND a.status > 0";
 		if ($in_bookkeeping == 'already') {
 			$sql .= " AND EXISTS (SELECT iab.fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS iab WHERE iab.fk_docdet = ad.rowid AND doc_type = 'asset')";
 		} elseif ($in_bookkeeping == 'notyet') {

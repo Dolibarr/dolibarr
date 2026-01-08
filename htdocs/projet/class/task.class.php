@@ -1753,6 +1753,7 @@ class Task extends CommonObjectLine
 		$sql .= " ptt.element_date_withhour as task_date_withhour,";
 		$sql .= " ptt.element_duration as task_duration,";
 		$sql .= " ptt.fk_user,";
+		$sql .= " ptt.fk_product,";
 		$sql .= " ptt.note,";
 		$sql .= " ptt.thm,";
 		$sql .= " pt.rowid as task_id,";
@@ -1803,6 +1804,7 @@ class Task extends CommonObjectLine
 				$newobj->timespent_line_withhour = $obj->task_date_withhour;
 				$newobj->timespent_line_duration = $obj->task_duration;
 				$newobj->timespent_line_fk_user = $obj->fk_user;
+				$newobj->timespent_line_fk_product = $obj->fk_product;
 				$newobj->timespent_line_thm = $obj->thm;	// hourly rate
 				$newobj->timespent_line_note = $obj->note;
 

@@ -289,10 +289,11 @@ if ($socid > 0) {
 		$sql .= " GROUP BY rc.fk_user";
 		$resql = $db->query($sql);
 		if ($resql) {
-			$obj = $db->fetch_object($resql);
-			$remise_all += (!empty($obj->amount) ? $obj->amount : 0);
-			if (!empty($obj->fk_user) && $obj->fk_user == $user->id) {
-				$remise_user += (!empty($obj->amount) ? $obj->amount : 0);
+			while ($obj = $db->fetch_object($resql)) {
+				$remise_all += (!empty($obj->amount) ? $obj->amount : 0);
+				if (!empty($obj->fk_user) && $obj->fk_user == $user->id) {
+					$remise_user += (!empty($obj->amount) ? $obj->amount : 0);
+				}
 			}
 		} else {
 			dol_print_error($db);
@@ -318,10 +319,11 @@ if ($socid > 0) {
 		$sql .= " GROUP BY rc.fk_user";
 		$resql = $db->query($sql);
 		if ($resql) {
-			$obj = $db->fetch_object($resql);
-			$remise_all += (!empty($obj->amount) ? $obj->amount : 0);
-			if (!empty($obj->fk_user) && $obj->fk_user == $user->id) {
-				$remise_user += (!empty($obj->amount) ? $obj->amount : 0);
+			while ($obj = $db->fetch_object($resql)) {
+				$remise_all += (!empty($obj->amount) ? $obj->amount : 0);
+				if (!empty($obj->fk_user) && $obj->fk_user == $user->id) {
+					$remise_user += (!empty($obj->amount) ? $obj->amount : 0);
+				}
 			}
 		} else {
 			dol_print_error($db);

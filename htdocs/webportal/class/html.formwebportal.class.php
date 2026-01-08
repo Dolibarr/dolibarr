@@ -413,7 +413,6 @@ class FormWebPortal extends Form
 		$classpath = $InfoFieldList[1];
 		$filter = empty($InfoFieldList[3]) ? '' : $InfoFieldList[3];
 		$sortfield = empty($InfoFieldList[4]) ? '' : $InfoFieldList[4];
-
 		if (!empty($classpath)) {
 			dol_include_once($classpath);
 
@@ -478,7 +477,7 @@ class FormWebPortal extends Form
 		if (!empty($objecttmp->fields)) {    // For object that declare it, it is better to use declared fields (like societe, contact, ...)
 			$tmpfieldstoshow = '';
 			foreach ($objecttmp->fields as $key => $val) {
-				if (! (int) dol_eval($val['enabled'], 1, 1, '1')) {
+				if (! (int) dol_eval((string) $val['enabled'], 1, 1, '1')) {
 					continue;
 				}
 				if (!empty($val['showoncombobox'])) {
@@ -518,6 +517,10 @@ class FormWebPortal extends Form
 			}
 		}
 
+		if (!empty($objecttmp->isextrafieldmanaged)) {
+			$sql .= " LEFT JOIN " . $this->db->prefix() . $this->db->sanitize($objecttmp->table_element) . "_extrafields as e ON t.rowid = e.fk_object";
+		}
+
 		// Add where from hooks
 		$parameters = array(
 			'object' => $objecttmp,
@@ -533,7 +536,7 @@ class FormWebPortal extends Form
 			$sql .= " WHERE 1=1";
 			if (isset($objecttmp->ismultientitymanaged)) {
 				if ($objecttmp->ismultientitymanaged == 1) {
-					$sql .= " AND t.entity IN (" . getEntity($objecttmp->table_element) . ")";
+					$sql .= " AND t.entity IN (" . getEntity($objecttmp->element) . ")";
 				}
 				if (!is_numeric($objecttmp->ismultientitymanaged)) {
 					$sql .= " AND parenttable.entity = t." . $tmparray[0];
@@ -1065,7 +1068,7 @@ class FormWebPortal extends Form
 		if ($computed) {
 			// Make the eval of compute string
 			//var_dump($computed);
-			$value = (string) dol_eval($computed, 1, 0, '2');
+			$value = (string) dol_eval((string) $computed, 1, 0, '2');
 		}
 
 		// Format output value differently according to properties of field

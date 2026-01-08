@@ -543,6 +543,7 @@ class modProduct extends DolibarrModules
 			'p.price_min_ttc' => "SellingMinPriceTTC",
 			'p.price_base_type' => "PriceBaseType", //price base: with-tax (TTC) or without (HT) tax. Displays accordingly in Product card
 			'p.tva_tx' => 'VATRate',
+			'p.default_vat_code' => 'VATCode',		// to use the correct vat line when there is several lines with the same vat rate for your country
 			'p.datec' => 'DateCreation',
 			'p.cost_price' => "CostPrice"
 		);
@@ -707,7 +708,8 @@ class modProduct extends DolibarrModules
 			'p.price_ttc' => "110",
 			'p.price_min_ttc' => "110",
 			'p.price_base_type' => "HT (show/use price excl. tax) / TTC (show/use price incl. tax)",
-			'p.tva_tx' => '10', // tax rate eg: 10. Must match numerically one of the tax rates defined for your country'
+			'p.tva_tx' => '10', 			// tax rate eg: 10. Must match numerically one of the tax rates defined for your country
+			'p.default_vat_code' => '',		// to use the correct vat line when there is several lines with the same vat rate for your country
 			'p.tosell' => "0 (not for sale to customer, eg. raw material) / 1 (for sale)",
 			'p.tobuy' => "0 (not for purchase from supplier, eg. virtual product) / 1 (for purchase)",
 			'p.fk_product_type' => "0 (product) / 1 (service)",
@@ -833,7 +835,8 @@ class modProduct extends DolibarrModules
 				'sp.default_vat_code' => 'VATCode',
 				'sp.delivery_time_days' => 'NbDaysToDelivery',
 				'sp.supplier_reputation' => 'SupplierReputation',
-				'sp.status' => 'Status'
+				'sp.status' => 'Status',
+				'sp.datec' => 'DateCreation'
 			);
 			if (is_object($mysoc) && $usenpr) {
 				$this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array('sp.recuperableonly' => 'VATNPR'));
@@ -877,11 +880,20 @@ class modProduct extends DolibarrModules
 				}
 			}
 			// End add extra fields
-			$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'product_fournisseur_price'); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
+
+			// Add some field automatically (if they are not yet provided explicitly)
+			$this->import_fieldshidden_array[$r] = array(
+				'sp.datec' => 'const-'.dol_print_date(dol_now(), 'standard'),
+				'extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'product_fournisseur_price'
+			); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent or 'const-xxxx')
 
 			$this->import_convertvalue_array[$r] = array(
 					'sp.fk_soc' => array('rule' => 'fetchidfromref', 'classfile' => '/societe/class/societe.class.php', 'class' => 'Societe', 'method' => 'fetch', 'element' => 'ThirdParty'),
 					'sp.fk_product' => array('rule' => 'fetchidfromref', 'classfile' => '/product/class/product.class.php', 'class' => 'Product', 'method' => 'fetch', 'element' => 'Product')
+			);
+
+			$this->import_regex_array[$r] = array(
+				'sp.datec' => '^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]$'
 			);
 
 			$this->import_examplevalues_array[$r] = array(
@@ -890,13 +902,14 @@ class modProduct extends DolibarrModules
 				'sp.ref_fourn' => "XYZ-F123456",
 				'sp.quantity' => "5",
 				'sp.tva_tx' => '10',
+				'sp.default_vat_code' => '',
 				'sp.price' => "50",
 				'sp.unitprice' => '50',
 				'sp.remise_percent' => '0',
-				'sp.default_vat_code' => '',
 				'sp.delivery_time_days' => '5',
 				'sp.supplier_reputation' => 'FAVORITE / NOTTHGOOD / DONOTORDER',
-				'sp.status' => '1'
+				'sp.status' => '1',
+				'sp.datec' => dol_print_date(dol_now(), '%Y-%m-%d %H:%M:%S'),
 			);
 			if (is_object($mysoc) && $usenpr) {
 				$this->import_examplevalues_array[$r] = array_merge($this->import_examplevalues_array[$r], array('sp.recuperableonly' => ''));
@@ -915,7 +928,7 @@ class modProduct extends DolibarrModules
 			));
 			if (isModEnabled("multicurrency")) {
 				$this->import_examplevalues_array[$r] = array_merge($this->import_examplevalues_array[$r], array(
-					'sp.fk_multicurrency' => 'eg: 2, rowid for code of multicurrency currency',
+					'sp.fk_multicurrency' => 'eg: 2 = the rowid for code of multicurrency currency',
 					'sp.multicurrency_code' => 'GBP',
 					'sp.multicurrency_tx' => '1.12345',
 					'sp.multicurrency_unitprice' => '',

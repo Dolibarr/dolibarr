@@ -323,7 +323,7 @@ foreach ($object->fields as $key => $val) {
 			$arrayfields[$newkey] = array(
 				'label' => $val['label'],
 				'checked' => (($visible < 0) ? '0' : '1'),
-				'enabled' => (string) (int) (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
+				'enabled' => (string) (int) (abs($visible) != 3 && (bool) dol_eval((string) $val['enabled'], 1)),
 				'position' => $val['position'],
 				'help' => empty($val['help']) ? '' : $val['help'],
 			);
@@ -992,7 +992,7 @@ if ($search_fk_fac_rec_source) {
 	$sql .= ' AND f.fk_fac_rec_source = ' . (int) $search_fk_fac_rec_source;
 }
 if ($search_import_key) {
-	$sql .= natural_search("s.import_key", $search_import_key);
+	$sql .= natural_search("f.import_key", $search_import_key);
 }
 // Search on user
 if ($search_user > 0) {

@@ -258,7 +258,7 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 						$context->setEventMessage($error_msg, 'errors');
 					}
 
-					if (!$error && $logged_member->id > 0) {
+					if (isModEnabled('partnership') && !$error && $logged_member->id > 0) {
 						// get partnership
 						$logged_partnership = new WebPortalPartnership($db);
 						// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
