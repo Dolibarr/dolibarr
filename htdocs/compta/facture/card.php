@@ -5727,7 +5727,7 @@ if ($action == 'create') {
 					if ($invoice->type == Facture::TYPE_DEPOSIT) {
 						$depositamount += $obj->amount_ttc;
 					}
-					if ($invoice->type == FactureFournisseur::TYPE_STANDARD) {
+					if (class_exists('FactureFournisseur') && $invoice->type == FactureFournisseur::TYPE_STANDARD) {
 						$compensated_amount += $obj->amount_ttc;
 					}
 				}
