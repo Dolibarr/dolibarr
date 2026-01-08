@@ -768,7 +768,7 @@ class pdf_couffignal_situation extends ModelePDFFactures
 		}
 
 		// Loop on each payment
-		// TODO Call getListOfPaymentsgetListOfPayments instead of hard coded sql
+		// TODO Call getListOfPayments instead of hard coded sql
 		$sql = "SELECT p.datep as date, p.fk_paiement, p.num_paiement as num, pf.amount as amount, ";
 		$sql.= " cp.code";
 		$sql.= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."paiement as p";
@@ -1132,9 +1132,10 @@ class pdf_couffignal_situation extends ModelePDFFactures
 		$pdf->SetFont('', '', $default_font_size - 1);
 
 		// Tableau total
-		$col1x = 130; $col2x = 190;
+		$largcol2 = $this->margin_right * 3;
+		$col1x = 130; 
+		$col2x = ($this->page_width - $this->margin_right - $largcol2);
 		if ($this->page_width < 210) {$col2x-=20;}// To work with US executive format
-		$largcol2 = ($this->page_width - $this->margin_right - $col2x);
 
 		$useborder = 0;
 
@@ -1182,8 +1183,10 @@ class pdf_couffignal_situation extends ModelePDFFactures
 			} else {
 				$pdf->SetFillColor(255, 255, 255);
 			}
+			// Need to clean name coming from HTML
+			$name = preg_replace('/\r\n|\r|\n/', ' - ', mb_convert_encoding(strip_tags(html_entity_decode($line['name'], ENT_QUOTES | ENT_HTML5, 'UTF-8')), 'UTF-8', 'UTF-8'));
 			$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $line['name'], 0, 'L', 1);
+			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $name, 0, 'L', 1);
 			$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($largcol2, $tab2_hl, $line['values']['Situation'], 0, 'R', 1);
 		}
