@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2022-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2022-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -49,20 +49,20 @@ function ecm_prepare_dasboard_head()
 		$helptext .= '<br>'.$langs->trans("ECMAreaDesc3");
 	}
 
-	$head[$h][0] = DOL_URL_ROOT.'/ecm/index.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/ecm/index.php');
 	$head[$h][1] = $langs->trans("ECMSectionsManual").$form->textwithpicto('', $helptext, 1, 'info', '', 0, 3);
 	$head[$h][2] = 'index';
 	$h++;
 
 	if (!getDolGlobalString('ECM_AUTO_TREE_HIDEN')) {
-		$head[$h][0] = DOL_URL_ROOT.'/ecm/index_auto.php';
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/ecm/index_auto.php');
 		$head[$h][1] = $langs->trans("ECMSectionsAuto").$form->textwithpicto('', $helptext, 1, 'info', '', 0, 3);
 		$head[$h][2] = 'index_auto';
 		$h++;
 	}
 
 	if ($showmediasection) {
-		$head[$h][0] = DOL_URL_ROOT.'/ecm/index_medias.php?file_manager=1';
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/ecm/index_medias.php', ['file_manager' => 1]);
 		$head[$h][1] = $langs->trans("ECMSectionsMedias").$form->textwithpicto('', $helptext, 1, 'info', '', 0, 3);
 		$head[$h][2] = 'index_medias';
 		$h++;
@@ -95,12 +95,12 @@ function ecm_prepare_head($object, $module = 'ecm', $section = '')
 	$head = array();
 
 	if ($module == 'ecm') {
-		$head[$h][0] = DOL_URL_ROOT.'/ecm/dir_card.php?section='.$object->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/ecm/dir_card.php', ['section' => $object->id]);
 		$head[$h][1] = $langs->trans("Directory");
 		$head[$h][2] = 'card';
 		$h++;
 	} else {
-		$head[$h][0] = DOL_URL_ROOT.'/ecm/dir_card.php?section='.$section.'&module='.$module;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/ecm/dir_card.php', ['section' => $section, 'module' => $module]);
 		$head[$h][1] = $langs->trans("Directory");
 		$head[$h][2] = 'card';
 		$h++;
@@ -121,13 +121,13 @@ function ecm_file_prepare_head($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/ecm/file_card.php?section='.$object->section_id.'&urlfile='.urlencode($object->label);
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/ecm/file_card.php', ['section' => $object->section_id, 'urlfile' => $object->label]);
 	$head[$h][1] = $langs->trans("File");
 	$head[$h][2] = 'card';
 	$h++;
 
 	// Notes
-	$head[$h][0] = DOL_URL_ROOT.'/ecm/file_note.php?section='.$object->section_id.'&urlfile='.urlencode($object->label);
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/ecm/file_note.php', ['section' => $object->section_id, 'urlfile' => $object->label]);
 	$head[$h][1] = $langs->trans("Notes");
 	$nbNote = 0;
 	if (!empty($object->note_private)) {
@@ -157,12 +157,12 @@ function ecm_prepare_head_fm($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/ecm/index.php?action=file_manager';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/ecm/index.php?action=file_manager');
 	$head[$h][1] = $langs->trans('ECMFileManager');
 	$head[$h][2] = 'file_manager';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/ecm/search.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/ecm/search.php');
 	$head[$h][1] = $langs->trans('Search');
 	$head[$h][2] = 'search_form';
 	$h++;
@@ -188,12 +188,12 @@ function ecm_admin_prepare_head()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/ecm.php";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/admin/ecm.php");
 	$head[$h][1] = $langs->trans("Setup");
 	$head[$h][2] = 'ecm';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/admin/ecm_files_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/ecm_files_extrafields.php');
 	$head[$h][1] = $langs->trans("ExtraFieldsEcmFiles");
 	$nbExtrafields = $extrafields->attributes['ecm_files']['count'];
 	if ($nbExtrafields > 0) {
@@ -202,7 +202,7 @@ function ecm_admin_prepare_head()
 	$head[$h][2] = 'attributes_ecm_files';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/admin/ecm_directories_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/ecm_directories_extrafields.php');
 	$head[$h][1] = $langs->trans("ExtraFieldsEcmDirectories");
 	$nbExtrafields = $extrafields->attributes['ecm_directories']['count'];
 	if ($nbExtrafields > 0) {

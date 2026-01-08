@@ -125,3 +125,5 @@ Signed=allekirjoitettu
 SignedOnly=Vain allekirjoitettu
 ExpeditionSigned=Lähetys allekirjoitettu
 SignExpedition=Allekirjoita lähetys
+PROPOSAL_SHOW_SHIPPING_ADDRESS=Näytä toimitusosoite
+PROPOSAL_SHOW_SHIPPING_ADDRESSMore=Compulsory indication in some countries (France, ...)

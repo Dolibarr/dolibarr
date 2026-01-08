@@ -27,11 +27,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -41,6 +36,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
  *
  * @var string	$dolibarr_main_restrict_os_commands
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 $langs->load("admin");
 
@@ -121,7 +120,7 @@ $outputdir  = $conf->admin->dir_output.'/backup';
 $result = dol_mkdir($outputdir);
 
 
-$lowmemorydump = GETPOSTISSET("lowmemorydump") ? GETPOST("lowmemorydump") : getDolGlobalString('MAIN_LOW_MEMORY_DUMP');
+$lowmemorydump = (int) (GETPOSTISSET("lowmemorydump") ? GETPOSTINT("lowmemorydump") : getDolGlobalInt('MAIN_LOW_MEMORY_DUMP'));
 
 
 // MYSQL
@@ -156,7 +155,7 @@ if ($what == 'mysql') {
 	}
 
 	if (!$errormsg) {
-		$result = $utils->dumpDatabase(GETPOST('compression', 'alpha'), $what, 0, $file, 0, 0, (int) $lowmemorydump);
+		$result = $utils->dumpDatabase(GETPOST('compression', 'alpha'), $what, 0, $file, 0, 0, $lowmemorydump);
 
 		$errormsg = $utils->error;
 		$_SESSION["commandbackuplastdone"] = $utils->result['commandbackuplastdone'];
@@ -166,7 +165,7 @@ if ($what == 'mysql') {
 
 // MYSQL NO BIN
 if ($what == 'mysqlnobin') {
-	$utils->dumpDatabase(GETPOST('compression', 'alpha'), $what, 0, $file, 0, 0, (int) $lowmemorydump);
+	$utils->dumpDatabase(GETPOST('compression', 'alpha'), $what, 0, $file, 0, 0, $lowmemorydump);
 
 	$errormsg = $utils->error;
 	$_SESSION["commandbackuplastdone"] = $utils->result['commandbackuplastdone'];
@@ -196,7 +195,7 @@ if ($what == 'postgresql') {
 	}
 
 	if (!$errormsg) {
-		$utils->dumpDatabase(GETPOST('compression', 'alpha'), $what, 0, $file, 0, 0, (int) $lowmemorydump);
+		$utils->dumpDatabase(GETPOST('compression', 'alpha'), $what, 0, $file, 0, 0, $lowmemorydump);
 		$errormsg = $utils->error;
 		$_SESSION["commandbackuplastdone"] = $utils->result['commandbackuplastdone'];
 		$_SESSION["commandbackuptorun"] = $utils->result['commandbackuptorun'];

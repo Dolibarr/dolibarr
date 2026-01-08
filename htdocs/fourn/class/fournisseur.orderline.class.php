@@ -100,6 +100,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 	/**
 	 * Unit price without taxes
 	 * @var float
+	 * @deprecated Use $subprice
 	 */
 	public $pu_ht;
 
@@ -222,7 +223,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 
 					// Take better packaging for $objp->qty (first supplier ref quantity <= $objp->qty)
 					$sqlsearchpackage = 'SELECT rowid, packaging FROM '.$this->db->prefix()."product_fournisseur_price";
-					$sqlsearchpackage .= ' WHERE entity IN ('.getEntity('product_fournisseur_price').")";
+					$sqlsearchpackage .= ' WHERE entity IN ('.getEntity('productsupplierprice').")";
 					$sqlsearchpackage .= " AND fk_product = ".((int) $objp->fk_product);
 					$sqlsearchpackage .= " AND ref_fourn = '".$this->db->escape($objp->ref_supplier)."'";
 					$sqlsearchpackage .= " AND quantity <= ".((float) $objp->qty);	// required to be qualified
@@ -358,8 +359,8 @@ class CommandeFournisseurLigne extends CommonOrderLine
 		} else {
 			$sql .= "null,";
 		}
-		$sql .= "'".$this->db->escape((string) $this->product_type)."',";
-		$sql .= ((int) $this->special_code) . ",";
+		$sql .= ((int) $this->product_type).",";
+		$sql .= ((int) $this->special_code).",";
 		$sql .= "'".$this->db->escape((string) $this->rang)."',";
 		$sql .= "'".$this->db->escape((string) $this->qty)."', ";
 		$sql .= " ".(empty($this->vat_src_code) ? "''" : "'".$this->db->escape((string) $this->vat_src_code)."'").",";
@@ -466,7 +467,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 		}
 		// Multicurrency
 		$sql .= ", multicurrency_subprice = ".((float) price2num($this->multicurrency_subprice));
-		$sql .= ", multicurrency_subprice = ".((float) price2num($this->multicurrency_subprice_ttc));
+		$sql .= ", multicurrency_subprice_ttc = ".((float) price2num($this->multicurrency_subprice_ttc));
 		$sql .= ", multicurrency_total_ht = ".((float) price2num($this->multicurrency_total_ht));
 		$sql .= ", multicurrency_total_tva = ".((float) price2num($this->multicurrency_total_tva));
 		$sql .= ", multicurrency_total_ttc = ".((float) price2num($this->multicurrency_total_ttc));

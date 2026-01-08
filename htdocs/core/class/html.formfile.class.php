@@ -8,7 +8,7 @@
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2015		Bahfir Abbes		<bafbes@gmail.com>
  * Copyright (C) 2016-2017	Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2019-2024	Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2019-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -160,7 +160,7 @@ class FormFile
 	 *	@param	int			$sectionid		If upload must be done inside a particular ECM section (is sectionid defined, sectiondir must not be)
 	 * 	@param	int			$perm			Value of permission to allow upload
 	 *  @param  int			$size          	Length of input file area. Deprecated.
-	 *  @param	?CommonObject	$object		Object to use (when attachment is done on an element)
+	 *  @param	CommonObject|BlockedLog|null	$object		Object to use (when attachment is done on an element)
 	 *  @param	string		$options		Add an option column
 	 *  @param  int<0,1>    $useajax        Use fileupload ajax (0=never, 1=if enabled, 2=always whatever is option).
 	 *                                      Deprecated 2 should never be used and if 1 is used, option should not be enabled.
@@ -256,7 +256,7 @@ class FormFile
 			$out .= '<label for="overwritefile" class="opacitylow paddingleft paddingright">'.$langs->trans("OverwriteIfExists").'</label>';
 			$out .= '</span>';
 		}
-		$out .= '<input type="submit" class="button small reposition" name="sendit" value="'.$langs->trans("Upload").'"';
+		$out .= '<input type="submit" class="button smallpaddingimp reposition" name="sendit" value="'.$langs->trans("Upload").'"';
 		$out .= (!getDolGlobalString('MAIN_UPLOAD_DOC') || empty($perm) ? ' disabled' : '');
 		$out .= '>';
 
@@ -357,7 +357,7 @@ class FormFile
 			$out2 .= '<input type="hidden" name="objectid" value="'.$object->id.'">';
 			$out2 .= '</div>';
 			$out2 .= '<div class="inline-block" style="padding-right: 10px;">';
-			$out2 .= '<input type="submit" class="button small reposition" name="linkit" value="'.$langs->trans("ToLink").'"';
+			$out2 .= '<input type="submit" class="button smallpaddingimp reposition" name="linkit" value="'.$langs->trans("ToLink").'"';
 			$out2 .= (!getDolGlobalString('MAIN_UPLOAD_DOC') || empty($perm) ? ' disabled' : '');
 			$out2 .= '>';
 			$out2 .= '</div>';
@@ -507,8 +507,32 @@ class FormFile
 		}
 
 		$printer = 0;
+		$supportedmoduleparts = [
+			'company',
+			'member',
+			'product',
+			'stock',
+			'ficheinter',
+			'user',
+			'project',
+			'contract',
+			'facture',
+			'supplier_proposal',
+			'propal',
+			'proposal',
+			'order',
+			'commande',
+			'expedition',
+			'commande_fournisseur',
+			'facture_fournisseur',
+			'expensereport',
+			'delivery',
+			'ticket',
+			'bom',
+			'mrp:mo',
+		];
 		// The direct print feature is implemented only for such elements
-		if (in_array($modulepart, array('contract', 'facture', 'supplier_proposal', 'propal', 'proposal', 'order', 'commande', 'expedition', 'commande_fournisseur', 'expensereport', 'delivery', 'ticket'))) {
+		if (in_array($modulepart, $supportedmoduleparts)) {
 			$printer = ($user->hasRight('printing', 'read') && isModEnabled('printing'));
 		}
 
@@ -530,7 +554,6 @@ class FormFile
 		$i = 0;
 
 		$out .= "\n".'<!-- Start show_document -->'."\n";
-		//print 'filedir='.$filedir;
 
 		if (preg_match('/massfilesarea_/', $modulepart)) {
 			$out .= '<div id="show_files"><br></div>'."\n";
@@ -783,6 +806,7 @@ class FormFile
 			} else {
 				// For normalized standard modules
 				$file = dol_buildpath('/core/modules/'.$modulepart.'/modules_'.strtolower($submodulepart).'.php', 0);
+
 				if (file_exists($file)) {
 					$res = include_once $file;
 				} else {
@@ -818,7 +842,9 @@ class FormFile
 			$out .= '<input type="hidden" name="page_y" value="">';
 			$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 
-			$out .= load_fiche_titre($titletoshow, '', '');
+			if ($titletoshow) {
+				$out .= load_fiche_titre($titletoshow, '', '');
+			}
 			$out .= '<div class="div-table-responsive-no-min">';
 			$out .= '<table class="liste formdoc noborder centpercent">';
 
@@ -921,7 +947,7 @@ class FormFile
 			if ((!empty($file_list) || !empty($link_list) || preg_match('/^massfilesarea/', $modulepart))
 				&& !$headershown) {
 				$headershown = 1;
-				$out .= '<div class="titre">'.$titletoshow.'</div>'."\n";
+				$out .= '<div class="titre paddingbottom">'.$titletoshow.'</div>'."\n";
 				$out .= '<div class="div-table-responsive-no-min">';
 				$out .= '<table class="noborder centpercent" id="'.$modulepart.'_table">'."\n";
 			}
@@ -1029,10 +1055,10 @@ class FormFile
 						//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 						//print '<span class="opacitymedium">'.$langs->trans("Hash").' : '.$file['share'].'</span>';
-						$forcedownload = 0;
+						$forcedownload = getDolGlobalInt('MAIN_FORCE_DOWNLOAD_IN_HTML_FORMFILE');
 						$paramlink = '';
 						if (!empty($file['share'])) {
-							$paramlink .= ($paramlink ? '&' : '').'hashp='.$file['share']; // Hash for public share
+							$paramlink .= /* ($paramlink ? '&' : ''). */'hashp='.$file['share']; // Hash for public share
 						}
 						if ($forcedownload) {
 							$paramlink .= ($paramlink ? '&' : '').'attachment=1';
@@ -1041,7 +1067,7 @@ class FormFile
 						$fulllink = $urlwithroot.'/document.php'.($paramlink ? '?'.$paramlink : '');
 
 						$out .= '<a href="'.$fulllink.'" target="_blank" rel="noopener">'.img_picto($langs->trans("FileSharedViaALink"), 'globe').'</a> ';
-						$out .= '<input type="text" class="quatrevingtpercentminusx width75 nopadding small" id="downloadlink'.$file['rowid'].'" name="downloadexternallink" title="'.dol_escape_htmltag($langs->trans("FileSharedViaALink")).'" value="'.dol_escape_htmltag($fulllink).'">';
+						$out .= '<input type="text" class="quatrevingtpercentminusx width75 nopadding small" id="downloadlink'.$file['rowid'].'" name="downloadexternallink" title="'.dol_escape_htmltag($langs->trans("FileSharedViaALink")).'" value="'.dol_escape_htmltag($fulllink).'" spellcheck="false">';
 						$out .= ajax_autoselect('downloadlink'.$file['rowid']);
 					} else {
 						//print '<span class="opacitymedium">'.$langs->trans("FileNotShared").'</span>';
@@ -1062,7 +1088,7 @@ class FormFile
 						if ($printer) {
 							$out .= '<a class="marginleftonly reposition" href="'.$urlsource.(strpos($urlsource, '?') ? '&' : '?').'action=print_file&token='.newToken().'&printer='.urlencode($modulepart).'&file='.urlencode($relativepath);
 							$out .= ($param ? '&'.$param : '');
-							$out .= '">'.img_picto($langs->trans("PrintFile", $relativepath), 'printer.png').'</a>';
+							$out .= '">'.img_picto($langs->trans("PrintFile", $relativepath), 'printer').'</a>';
 						}
 						if ($morepicto) {
 							$morepicto = preg_replace('/__FILENAMEURLENCODED__/', urlencode($relativepath), $morepicto);
@@ -1318,10 +1344,11 @@ class FormFile
 		// Define relative path used to store the file
 		if (empty($relativepath)) {
 			$relativepath = (!empty($object->ref) ? dol_sanitizeFileName($object->ref) : '').'/';
-			if (!empty($object->element) && $object->element == 'invoice_supplier') {
+			if (!empty($object->element) && $object->element == "societe" && !empty($object->id)) {
+				$relativepath = ($object->id).'/';
+			} elseif (!empty($object->element) && $object->element == 'invoice_supplier') {
 				$relativepath = get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').$relativepath; // TODO Call using a defined value for $relativepath
-			}
-			if (!empty($object->element) && $object->element == 'project_task') {
+			} elseif (!empty($object->element) && $object->element == 'project_task') {
 				$relativepath = 'Call_not_supported_._Call_function_using_a_defined_relative_path_.';
 			}
 		}
@@ -1399,7 +1426,7 @@ class FormFile
 			// Show title of list of existing files
 			$morehtmlright = '';
 			if (!empty($moreoptions['showhideaddbutton']) && $conf->use_javascript_ajax) {
-				$tmpurlforbutton = 'javascript:console.log("open add file form");jQuery(".divattachnewfile").toggle(); if (!jQuery(".divattachnewfile").is(":hidden")) { jQuery("input[type=\'file\']").click();}void(0);';
+				$tmpurlforbutton = 'javascript:console.log("open add file form");jQuery(".divattachnewfile").toggle(); if (!jQuery(".divattachnewfile").is(":hidden")) { jQuery("input[type=\'file\']").click(); } void(0);';
 				$morehtmlright .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $tmpurlforbutton, '', $permtoeditline);
 			}
 
@@ -1407,6 +1434,7 @@ class FormFile
 				print load_fiche_titre($title ? $title : $langs->trans("AttachedFiles"), $morehtmlright, 'file-upload', 0, '', 'table-list-of-attached-files');
 			}
 			if (!empty($moreoptions) && $moreoptions['afteruploadtitle']) {
+				print '<!-- Add form from $moreoptions[\'afteruploadtitle\'] -->';
 				print '<div class="divattachnewfile'.((!empty($moreoptions['showhideaddbutton']) && $conf->use_javascript_ajax) ? ' hidden' : '').'">'.$moreoptions['afteruploadtitle'].'</div>';
 			}
 
@@ -1558,7 +1586,7 @@ class FormFile
 						$editline = 1;
 					} else {
 						$filenametoshow = preg_replace('/\.noexe$/', '', $file['name']);
-						print dol_escape_htmltag(dol_trunc($filenametoshow, 200));
+						print dolPrintHTML(dol_trunc($filenametoshow, 200));
 						print '</a>';
 					}
 					// Preview link
@@ -1583,8 +1611,8 @@ class FormFile
 					print '<td class="center nowraponall">'.dol_print_date($file['date'], "dayhour", "tzuser").'</td>';
 
 					// Preview
+					$fileinfo = pathinfo($file['name']);
 					if (empty($useinecm) || $useinecm == 4 || $useinecm == 5 || $useinecm == 6) {
-						$fileinfo = pathinfo($file['name']);
 						print '<td class="center">';
 						if (image_format_supported($file['name']) >= 0) {
 							if ($useinecm == 5 || $useinecm == 6) {
@@ -1599,7 +1627,6 @@ class FormFile
 								$smallfile = getImageFileNameForSize($file['name'], ''); // This is in case no _small image exist
 							}
 							//print $file['path'].'/'.$smallfile.'<br>';
-
 
 							$urlforhref = getAdvancedPreviewUrl($modulepart, $relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']), 1, '&entity='.(empty($object->entity) ? $conf->entity : $object->entity));
 							if (empty($urlforhref)) {
@@ -1639,10 +1666,10 @@ class FormFile
 								//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 								//print '<span class="opacitymedium">'.$langs->trans("Hash").' : '.$file['share'].'</span>';
-								$forcedownload = 0;
+								$forcedownload = getDolGlobalInt('MAIN_FORCE_DOWNLOAD_IN_HTML_FORMFILE');
 								$paramlink = '';
 								if (!empty($file['share'])) {
-									$paramlink .= ($paramlink ? '&' : '').'hashp='.$file['share']; // Hash for public share
+									$paramlink .= /* ($paramlink ? '&' : ''). */'hashp='.$file['share']; // Hash for public share
 								}
 								if ($forcedownload) {
 									$paramlink .= ($paramlink ? '&' : '').'attachment=1';
@@ -1652,7 +1679,7 @@ class FormFile
 
 								print '<!-- shared link -->';
 								print '<a href="'.$fulllink.'" target="_blank" rel="noopener">'.img_picto($langs->trans("FileSharedViaALink"), 'globe').'</a> ';
-								print '<input type="text" class="centpercentminusx minwidth50imp nopadding small" id="downloadlink'.$filearray[$key]['rowid'].'" name="downloadexternallink" title="'.dol_escape_htmltag($langs->trans("FileSharedViaALink")).'" value="'.dol_escape_htmltag($fulllink).'">';
+								print '<input type="text" class="centpercentminusx minwidth50imp nopadding small" id="downloadlink'.$filearray[$key]['rowid'].'" name="downloadexternallink" title="'.dol_escape_htmltag($langs->trans("FileSharedViaALink")).'" value="'.dol_escape_htmltag($fulllink).'" spellcheck="false">';
 							} else {
 								//print '<span class="opacitymedium">'.$langs->trans("FileNotShared").'</span>';
 							}
@@ -1757,8 +1784,8 @@ class FormFile
 					} else {
 						print '<td class="right">';
 						print '<input type="hidden" name="ecmfileid" value="'.(empty($filearray[$key]['rowid']) ? '' : $filearray[$key]['rowid']).'">';
-						print '<input type="submit" class="button button-save smallpaddingimp" name="renamefilesave" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
-						print '<input type="submit" class="button button-cancel smallpaddingimp" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
+						print '<input type="submit" class="button button-save smallpaddingimp" name="renamefilesave" value="'.dolPrintHTMLForAttribute($langs->transnoentitiesnoconv("Save")).'">';
+						print '<input type="submit" class="button button-cancel smallpaddingimp" name="cancel" value="'.dolPrintHTMLForAttribute($langs->transnoentitiesnoconv("Cancel")).'">';
 						print '</td>';
 						if (empty($disablemove) && count($filearray) > 1) {
 							print '<td class="right"></td>';
@@ -1778,7 +1805,7 @@ class FormFile
 				if (empty($textifempty)) {
 					print '<span class="opacitymedium">'.$langs->trans("NoFileFound").'</span>';
 				} else {
-					print '<span class="opacitymedium">'.$textifempty.'</span>';
+					print '<span class="opacitymedium">'.dolPrintHTML($textifempty).'</span>';
 				}
 				print '</td></tr>';
 			}
@@ -2067,7 +2094,10 @@ class FormFile
 						if ($id) {
 							$result = $object_instance->fetch($id);
 						} else {
-							if (!($result = $object_instance->fetch(0, $ref))) {
+							$result = $object_instance->fetch(0, $ref);
+							if ($result < 0) {
+								print $object_instance->error;
+							} elseif ($result == 0) {
 								// fetchOneLike looks for objects with wildcards in its reference.
 								// It is useful for those masks who get underscores instead of their actual symbols (because the _ had replaced all forbidden chars into filename)
 								// TODO Example when this is needed ?
@@ -2163,10 +2193,10 @@ class FormFile
 					//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 					//print '<span class="opacitymedium">'.$langs->trans("Hash").' : '.$file['share'].'</span>';
-					$forcedownload = 0;
+					$forcedownload = getDolGlobalInt('MAIN_FORCE_DOWNLOAD_IN_HTML_FORMFILE');
 					$paramlink = '';
 					if (!empty($file['share'])) {
-						$paramlink .= ($paramlink ? '&' : '').'hashp='.$file['share']; // Hash for public share
+						$paramlink .= /* ($paramlink ? '&' : ''). */'hashp='.$file['share']; // Hash for public share
 					}
 					if ($forcedownload) {
 						$paramlink .= ($paramlink ? '&' : '').'attachment=1';
@@ -2176,7 +2206,7 @@ class FormFile
 
 					print '<!-- shared link -->';
 					print img_picto($langs->trans("FileSharedViaALink"), 'globe').' ';
-					print '<input type="text" class="quatrevingtpercent width100 nopadding nopadding small" id="downloadlink" name="downloadexternallink" value="'.dol_escape_htmltag($fulllink).'">';
+					print '<input type="text" class="quatrevingtpercent width100 nopadding nopadding small" id="downloadlink" name="downloadexternallink" value="'.dol_escape_htmltag($fulllink).'" spellcheck="false">';
 				}
 				//if (!empty($useinecm) && $useinecm != 6)  print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
 				//if ($forcedownload) print '&attachment=1';
@@ -2259,6 +2289,7 @@ class FormFile
 
 		print '<form action="'.$_SERVER['PHP_SELF'].($param ? '?'.$param : '').'" id="'.$htmlname.'" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<div class="div-table-responsive-no-min">';
 
 		print '<table class="liste noborder nobottom centpercent">';
 		print '<tr class="liste_titre">';
@@ -2352,7 +2383,7 @@ class FormFile
 					$fulllink = $urlwithroot.'/document.php?type=link&hashp=' . $link->share;
 
 					print '<a href="'.$fulllink.'" target="_blank" rel="noopener">'.img_picto($langs->trans("FileSharedViaALink"), 'globe').'</a> ';
-					print '<input type="text" class="centpercentminusx minwidth200imp nopadding small" id="downloadlink'.$link->id.'" name="downloadexternallink" title="'.dol_escape_htmltag($langs->trans("LinkSharedViaALink")).'" value="'.dol_escape_htmltag($fulllink).'">';
+					print '<input type="text" class="centpercentminusx minwidth200imp nopadding small" id="downloadlink'.$link->id.'" name="downloadexternallink" title="'.dol_escape_htmltag($langs->trans("LinkSharedViaALink")).'" value="'.dol_escape_htmltag($fulllink).'" spellcheck="false">';
 				}
 				print '</td>';
 				print '<td class="right">';
@@ -2374,7 +2405,7 @@ class FormFile
 		print "</table>";
 
 		print '</form>';
-
+		print '</div>';
 		return $nboflinks;
 	}
 
@@ -2394,7 +2425,7 @@ class FormFile
 		global $langs, $conf;
 
 		$out = '';
-		if ($conf->browser->layout != 'phone' && !empty($conf->use_javascript_ajax)) {
+		if (($conf->browser->layout != 'phone' || getDolGlobalString('MAIN_SHOW_PREVIEW_PICTO_EVEN_ON_PHONE')) && !empty($conf->use_javascript_ajax)) {
 			$urladvancedpreview = getAdvancedPreviewUrl($modulepart, $relativepath, 1, $param); // Return if a file is qualified for preview.
 			if (count($urladvancedpreview)) {
 				$out .= '<a class="pictopreview '.$urladvancedpreview['css'].'" href="'.$urladvancedpreview['url'].'"'.(empty($urladvancedpreview['mime']) ? '' : ' mime="'.$urladvancedpreview['mime'].'"').' '.(empty($urladvancedpreview['target']) ? '' : ' target="'.$urladvancedpreview['target'].'"').'>';

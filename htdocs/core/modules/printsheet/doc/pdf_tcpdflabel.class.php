@@ -86,7 +86,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 	 * @param TCPDF	  $pdf		   PDF reference
 	 * @param string  $code		   code to print
 	 * @param string  $encoding	   type of barcode
-	 * @param boolean $is2d		   true if 2d barcode
+	 * @param bool	  $is2d		   true if 2d barcode
 	 * @param float	  $x		   x position in user units
 	 * @param float	  $y		   y position in user units
 	 * @param float	  $w		   width in user units

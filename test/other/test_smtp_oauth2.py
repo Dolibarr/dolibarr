@@ -23,14 +23,14 @@ server.ehlo()
 
 try:
 	print (auth_string)
-    response = server.docmd("AUTH", "XOAUTH2 " + auth_string)
+	response = server.docmd("AUTH", "XOAUTH2 " + auth_string)
 
-    # Check authentication
-    if response[0] != 235:
-        raise Exception(f"Authentication fails : {response[1].decode()}")
+	# Check authentication
+	if response[0] != 235:
+		raise Exception(f"Authentication fails : {response[1].decode()}")
 
 except Exception as e:
-    print (f"Error : {e}")
+	print (f"Error : {e}")
 
 finally:
-    server.quit()
+	server.quit()

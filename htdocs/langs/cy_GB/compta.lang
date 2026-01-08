@@ -3,10 +3,10 @@ MenuFinancial=Bilio | Taliad
 TaxModuleSetupToModifyRules=Ewch i <a href="%s"> Gosodiad modiwl Trethi </a> i addasu rheolau ar gyfer cyfrifo
 TaxModuleSetupToModifyRulesLT=Ewch i <a href="%s"> Sefydlu cwmni </a> i addasu rheolau ar gyfer cyfrifo
 OptionMode=Opsiwn ar gyfer cyfrifyddiaeth
-OptionModeTrue=Accrual accounting
-OptionModeVirtual=Cash accounting
-OptionModeTrueDesc=In this context, the turnover is calculated over payments (date of payments). The validity of the figures is assured only if the book-keeping is scrutinized through the input/output on payments.
+OptionModeVirtual=Accrual accounting
+OptionModeTrue=Cash accounting
 OptionModeVirtualDesc=Yn y cyd-destun hwn, cyfrifir y trosiant dros anfonebau (dyddiad dilysu). Pan fydd yr anfonebau hyn yn ddyledus, p'un a ydynt wedi'u talu ai peidio, cânt eu rhestru yn yr allbwn trosiant.
+OptionModeTrueDesc=In this context, the turnover is calculated over payments (date of payments). The validity of the figures is assured only if the book-keeping is scrutinized through the input/output on payments.
 FeatureIsSupportedInInOutModeOnly=Nodwedd yn unig ar gael yn y modd cyfrifeg CREDITS-DEBTS (Gweler ffurfweddiad modiwl Cyfrifeg)
 VATReportBuildWithOptionDefinedInModule=Cyfrifir y symiau a ddangosir yma gan ddefnyddio rheolau a ddiffinnir gan osod modiwlau Treth.
 LTReportBuildWithOptionDefinedInModule=Cyfrifir y symiau a ddangosir yma gan ddefnyddio rheolau a ddiffinnir gan drefniant y Cwmni.
@@ -302,7 +302,6 @@ ByVatRate=Trwy gyfradd treth gwerthu
 TurnoverbyVatrate=Trosiant wedi'i anfonebu yn ôl cyfradd treth gwerthu
 TurnoverCollectedbyVatrate=Trosiant a gasglwyd yn ôl cyfradd treth gwerthu
 PurchasebyVatrate=Prynu trwy gyfradd treth gwerthu
-LabelToShow=Label byr
 PurchaseTurnover=Trosiant prynu
 PurchaseTurnoverCollected=Trosiant pryniant wedi'i gasglu
 RulesPurchaseTurnoverDue=- Mae'n cynnwys anfonebau dyledus y cyflenwr p'un a ydynt yn cael eu talu ai peidio. <br> - Mae'n seiliedig ar ddyddiad anfonebu'r anfonebau hyn. <br>
@@ -329,3 +328,4 @@ RuleForLinesDates=Rule for lines dates
 Prepaid=Prepaid
 Postpaid=Postpaid
 SetRuleForLinesDates=Set rule for lines dates
+SomeNotConvertedCreditNoteExists=There is <b>%s</b> credit notes not yet converted for consumption

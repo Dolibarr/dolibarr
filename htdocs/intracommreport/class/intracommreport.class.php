@@ -81,7 +81,7 @@ class IntracommReport extends CommonObject
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
 	 *  'alwayseditable' says if field can be modified also when status is not draft ('1' or '0')
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -101,7 +101,7 @@ class IntracommReport extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>	Array of properties of field to show
+	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>,searchmulti?:int<0,1>}>	Array of properties of field to show
 	 */
 	public $fields = array(
 		"rowid" => array("type" => "integer", "label" => "TechnicalID", "enabled" => 1, 'position' => 10, 'notnull' => 1, "visible" => "0",),
@@ -260,7 +260,7 @@ class IntracommReport extends CommonObject
 	 * @param 	int 	$id 			object ID
 	 * @param 	string 	$ref  			Ref
 	 * @param	int		$noextrafields	0=Default to load extrafields, 1=No extrafields
-	 * @param	int		$nolines		0=Default to load extrafields, 1=No extrafields
+	 * @param	int		$nolines		0=Default to load lines, 1=No lines
 	 * @return 	int     				Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null, $noextrafields = 0, $nolines = 0)
@@ -307,7 +307,7 @@ class IntracommReport extends CommonObject
 		$e = new SimpleXMLElement('<?xml version="1.0" encoding="utf-8" standalone="yes"?><INSTAT></INSTAT>');
 
 		$envelope = $e->addChild('Envelope');
-		$envelope->addChild('envelopeId', $conf->global->INTRACOMMREPORT_NUM_AGREMENT);
+		$envelope->addChild('envelopeId', getDolGlobalString('INTRACOMMREPORT_NUM_AGREMENT'));
 		$date_time = $envelope->addChild('DateTime');
 		$date_time->addChild('date', date('Y-m-d'));
 		$date_time->addChild('time', date('H:i:s'));

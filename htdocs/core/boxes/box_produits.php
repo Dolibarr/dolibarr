@@ -37,7 +37,7 @@ class box_produits extends ModeleBoxes
 	public $boxcode = "lastproducts";
 	public $boximg = "object_product";
 	public $boxlabel = "BoxLastProducts";
-	public $depends = array("produit");
+	public $depends = array("product");
 
 	/**
 	 *  Constructor
@@ -101,7 +101,7 @@ class box_produits extends ModeleBoxes
 				$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $productstatic); // Note that $action and $object may have been modified by hook
 				$sql .= $hookmanager->resPrint;
 			}
-			$sql .= $this->db->order('p.datec', 'DESC');
+			$sql .= $this->db->order('p.tms', 'DESC');
 			$sql .= $this->db->plimit($max, 0);
 
 			$result = $this->db->query($sql);

@@ -57,7 +57,7 @@ $massaction  = GETPOST('massaction', 'alpha');
 $show_files  = GETPOSTINT('show_files');
 $confirm     = GETPOST('confirm', 'alpha');
 $cancel      = GETPOST('cancel', 'alpha'); // We click on a Cancel button
-$toselect    = GETPOST('toselect', 'array');
+$toselect    = GETPOST('toselect', 'array:int');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'expensereportlist';
 $mode        = GETPOST('mode', 'alpha');
 
@@ -375,7 +375,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -526,7 +526,7 @@ if ($id > 0) {		// For user tab
 		$childids = $user->getAllChildIds(1);
 
 		$canedit = ((in_array($user_id, $childids) && $user->hasRight('expensereport', 'creer'))
-			|| ($conf->global->MAIN_USE_ADVANCED_PERMS && $user->hasRight('expensereport', 'writeall_advance')));
+			|| (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expensereport', 'writeall_advance')));
 
 		// Buttons for actions
 		if ($canedit) {
@@ -607,8 +607,8 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print '</td>';
 }
 if (!empty($arrayfields['d.ref']['checked'])) {
-	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" size="15" type="text" name="search_ref" value="'.$search_ref.'">';
+	print '<td class="liste_titre">';
+	print '<input class="flat width100" type="text" name="search_ref" value="'.dolPrintHTMLForAttribute($search_ref).'">';
 	print '</td>';
 }
 // User
@@ -843,7 +843,7 @@ if ($num > 0) {
 		} else {
 			// Show line of result
 			$j = 0;
-			print '<tr data-rowid="'.$object->id.'" class="oddeven">';
+			print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select">';
 
 			// Action column
 			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -862,14 +862,10 @@ if ($num > 0) {
 			}
 			// Ref
 			if (!empty($arrayfields['d.ref']['checked'])) {
-				print '<td>';
-				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-				print '<td class="nobordernopadding nowrap">';
+				print '<td class="tdoverflowmax150">';
 				print $expensereportstatic->getNomUrl(1);
-				print '</td>';
 				// Warning late icon and note
-				print '<td class="nobordernopadding nowrap">';
-				if ($expensereportstatic->status == 2 && $expensereportstatic->hasDelay('toappove')) {
+				if ($expensereportstatic->status == 2 && $expensereportstatic->hasDelay('toapprove')) {
 					print img_warning($langs->trans("Late"));
 				}
 				if ($expensereportstatic->status == 5 && $expensereportstatic->hasDelay('topay')) {
@@ -880,14 +876,10 @@ if ($num > 0) {
 					print '<a href="'.DOL_URL_ROOT.'/expensereport/note.php?id='.$obj->rowid.'">'.img_picto($langs->trans("ViewPrivateNote"), 'object_generic').'</a>';
 					print '</span>';
 				}
-				print '</td>';
-				print '<td width="16" class="nobordernopadding hideonsmartphone right">';
 				$filename = dol_sanitizeFileName($obj->ref);
 				$filedir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($obj->ref);
 				$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->rowid;
 				print $formfile->getDocumentsLink($expensereportstatic->element, $filename, $filedir);
-				print '</td>';
-				print '</tr></table>';
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;

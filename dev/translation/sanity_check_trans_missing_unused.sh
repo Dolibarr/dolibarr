@@ -1,6 +1,7 @@
 #!/bin/bash
 #
 # Find unused translations pretty fast...
+# Go into the root of the git directory, then launch the shell.
 #
 # Principle:
 #
@@ -35,7 +36,7 @@ DYNAMIC_KEYS_FILE=${TMP}/dynamic_keys
 MISSING_AND_UNUSED_FILE=${TMP}/missing_and_unused
 MISSING_FILE=${TMP}/missing
 UNUSED_FILE=${TMP}/unused
-EXPECTED_REGEX='(Country..|ExportDataset_.*|Language_.._..|MonthVeryShort\d\d|PaperFormat.*||Permission.*|ProfId\d(..)?|unit.*)'
+EXPECTED_REGEX='(Country..|ExportDataset_.*|Language_.._..|MonthVeryShort\d\d|PaperFormat.*||Permission.*|ProfId\d(..)?|TypeContact_shipping_external_.*|unit.*)'
 DYNAMIC_KEYS_SRC_FILE=${MYDIR}/dynamic_translation_keys.lst
 EXCLUDE_KEYS_SRC_FILE=${MYDIR}/ignore_translation_keys.lst
 DUPLICATE_KEYS_SRC_FILE=${MYDIR}/duplicate_translation_keys.lst

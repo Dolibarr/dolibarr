@@ -53,7 +53,7 @@ TCPDI                  1.1.0         LGPL-3+ / Apache 2.0        Yes            
 bacon, dasprid, swiss-qr-bill, kmukku, symfony/validator
 
 JS libraries:
-Ace                    1.4.14        BSD                         Yes             JS library to get code syntaxique coloration in a textarea.
+Ace                    1.43.12       BSD                         Yes             JS library to get code syntaxique coloration in a textarea (Must take src dir into https://github.com/ajaxorg/ace-builds/).
 ChartJS                3.7.1         MIT License                 Yes             JS library for graph
 CKEditor               4.22.1        LGPL-2.1+                   Yes             Editor WYSIWYG
 jQuery                 3.6.4         MIT License                 Yes             JS library

@@ -30,12 +30,6 @@
 
 // Load Dolibarr environment
 require '../../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -43,6 +37,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'products', 'supplier_proposal', 'productbatch'));
@@ -83,8 +82,8 @@ if (empty($sortfield)) {
 	$sortfield = "exp.date_creation";
 }
 
-$search_month = GETPOSTINT('search_month');
-$search_year = GETPOSTINT('search_year');
+$search_month = GETPOST('search_month');	// Can be ''
+$search_year = GETPOST('search_year');	// Can be '''
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	$search_month = '';
@@ -153,7 +152,7 @@ if ($id > 0 || !empty($ref)) {
 		print '<div class="fichecenter">';
 
 		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border centpercent tableforfield" width="100%">';
+		print '<table class="border centpercent tableforfield">';
 
 
 		// Product
@@ -211,13 +210,18 @@ if ($id > 0 || !empty($ref)) {
 		//      // Other attributes
 		//      include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
-		print '<table class="border centpercent tableforfield" width="100%">';
+		print '<br>';
+
+		print '<table class="noborder centpercent tableforfield">';
 
 		$nboflines = show_stats_for_batch($object, $socid);
 
 		print "</table>";
 
 		print '</div>';
+
+
+
 		print '<div class="clearboth"></div>';
 
 		print dol_get_fiche_end();
@@ -360,6 +364,7 @@ if ($id > 0 || !empty($ref)) {
 				print '<td></td>';
 				print "</table>";
 				print '</div>';
+
 				print '</form>';
 			} else {
 				dol_print_error($db);

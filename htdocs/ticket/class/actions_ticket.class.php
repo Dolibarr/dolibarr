@@ -169,10 +169,11 @@ class ActionsTicket extends CommonHookActions
 	/**
 	 * Get action title
 	 *
-	 * @param string 	$action    	Type of action
-	 * @return string			Title of action
+	 * @param 	string 			$action    	Type of action
+	 * @param	Ticket|null		$object		Object ticket
+	 * @return 	string						Title of action
 	 */
-	public function getTitle($action = '')
+	public function getTitle($action = '', $object = null)
 	{
 		global $langs;
 
@@ -181,11 +182,11 @@ class ActionsTicket extends CommonHookActions
 		} elseif ($action == 'edit') {
 			return $langs->trans("EditTicket");
 		} elseif ($action == 'view') {
-			return $langs->trans("TicketCard");
+			return $langs->trans("Ticket").(is_null($object) ? '' : ' '.$object->ref);
 		} elseif ($action == 'add_message') {
 			return $langs->trans("TicketAddMessage");
 		} else {
-			return $langs->trans("TicketsManagement");
+			return $langs->trans("Ticket");
 		}
 	}
 
@@ -343,7 +344,7 @@ class ActionsTicket extends CommonHookActions
 
 					$documents = array();
 
-					$sql = 'SELECT ecm.rowid as id, ecm.src_object_type, ecm.src_object_id';
+					$sql = 'SELECT ecm.rowid as id, ecm.src_object_type, ecm.src_object_id, ecm.agenda_id';
 					$sql .= ', ecm.filepath, ecm.filename, ecm.share';
 					$sql .= ' FROM '.MAIN_DB_PREFIX.'ecm_files ecm';
 					$sql .= " WHERE ecm.filepath = 'agenda/".(int) $arraymsgs['id']."'";
@@ -362,7 +363,7 @@ class ActionsTicket extends CommonHookActions
 						$isshared = 0;
 						$footer = '<div class="timeline-documents-container">';
 						foreach ($documents as $doc) {
-							if (!empty($doc->share)) {
+							if (!empty($doc->share) || ($doc->src_object_type == 'ticket')) {
 								$isshared = 1;
 								$footer .= '<span id="document_'.$doc->id.'" class="timeline-documents" ';
 								$footer .= ' data-id="'.$doc->id.'" ';
@@ -370,10 +371,23 @@ class ActionsTicket extends CommonHookActions
 								$footer .= ' data-filename="'.dol_escape_htmltag($doc->filename).'" ';
 								$footer .= '>';
 
+								if (empty($doc->agenda_id)) {
+									$dir_ref = $arraymsgs['id'];
+									$modulepart = 'actions';
+								} else {
+									$split_dir = explode('/', $doc->filepath);
+									$modulepart = array_shift($split_dir);
+									$dir_ref = implode('/', $split_dir);
+								}
 								$filePath = DOL_DATA_ROOT.'/'.$doc->filepath.'/'.$doc->filename;
+								$file_relative_path = $dir_ref.'/'.$doc->filename;
 								$mime = dol_mimetype($filePath);
-								$thumb = $arraymsgs['id'].'/thumbs/'.substr($doc->filename, 0, strrpos($doc->filename, '.')).'_mini'.substr($doc->filename, strrpos($doc->filename, '.'));
-								$doclink = DOL_URL_ROOT.'/document.php?hashp='.urlencode($doc->share);
+								$doclink = '';
+								if (!empty($doc->share)) {
+									$doclink = DOL_URL_ROOT.'/document.php?hashp='.urlencode($doc->share);
+								} elseif ($doc->src_object_type == 'ticket') {
+									$doclink = dol_buildpath('document.php', 1).'?modulepart='.$modulepart.'&attachment=0&file='.urlencode($file_relative_path).'&entity='.getEntity('ticket', 0);
+								}
 
 								$mimeAttr = ' mime="'.$mime.'" ';
 								$class = '';

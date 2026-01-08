@@ -195,6 +195,11 @@ class Import
 
 			// Search module files
 			while (($file = readdir($handle)) !== false) {
+				// Ignore Module Builder backup files (*.php.back)
+				if (preg_match('/\.back$/i', $file)) {
+					continue;
+				}
+
 				if (!preg_match("/^(mod.*)\.class\.php/i", $file, $reg)) {
 					continue;
 				}
@@ -352,8 +357,6 @@ class Import
 	 */
 	public function create($user)
 	{
-		global $conf;
-
 		dol_syslog("Import.class.php::create");
 
 		// Check parameters

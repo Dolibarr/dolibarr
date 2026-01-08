@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2001-2004  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2015       Jean-François Ferry	    <jfefe@aternatik.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -52,8 +51,6 @@ $hookmanager->initHooks(array('homesetup'));
  * View
  */
 
-$form = new Form($db);
-
 $wikihelp = 'EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
 llxHeader('', $langs->trans("Setup"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-index');
 
@@ -71,7 +68,7 @@ if (getDolGlobalString('MAIN_MOTD_SETUPPAGE')) {
 			if (!empty($tmp[1])) {
 				$langs->load($tmp[1]);
 			}
-			$conf->global->MAIN_MOTD_SETUPPAGE = preg_replace('/__\('.preg_quote($reg[1]).'\)__/i', $langs->trans($tmp[0]), getDolGlobalString('MAIN_MOTD_SETUPPAGE'));
+			$conf->global->MAIN_MOTD_SETUPPAGE = preg_replace('/__\('.preg_quote($reg[1], '/').'\)__/i', $langs->trans($tmp[0]), getDolGlobalString('MAIN_MOTD_SETUPPAGE'));
 			$i++;
 		}
 
@@ -84,11 +81,21 @@ if (getDolGlobalString('MAIN_MOTD_SETUPPAGE')) {
 }
 
 print '<span class="opacitymedium hideonsmartphone">';
-print $langs->trans("SetupDescription1").' ';
-print $langs->trans("AreaForAdminOnly").' ';
-print $langs->trans("SetupDescription2", $langs->transnoentities("MenuCompanySetup"), $langs->transnoentities("Modules"));
+print $langs->trans("SetupDescription1").'<br>';
+
+if (!getDolGlobalString('MAIN_INFO_SOCIETE_NOM') || !getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY') || getDolGlobalString('MAIN_INFO_SOCIETE_SETUP_TODO_WARNING')) {
+	$setupcompanynotcomplete = 1;
+} else {
+	$setupcompanynotcomplete = 0;
+}
+
+if ($setupcompanynotcomplete) {
+	print $langs->trans("SetupDescription2", $langs->transnoentities("MenuCompanySetup"), $langs->transnoentities("Modules"));
+}
+
 print "<br><br>";
 print '</span>';
+
 
 
 // Show info depending on country if defined
@@ -106,21 +113,17 @@ print '<br>';
 
 // Show info setup company
 
-if (!getDolGlobalString('MAIN_INFO_SOCIETE_NOM') || !getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY') || getDolGlobalString('MAIN_INFO_SOCIETE_SETUP_TODO_WARNING')) {
-	$setupcompanynotcomplete = 1;
-}
-
 print '<section class="setupsection setupcompany cursorpointer">';
 
 print img_picto('', 'company', 'class="paddingright valignmiddle double"');
 print ' ';
-print '<a class="nounderlineimp" href="'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete) ? '' : '&action=edit&token='.newToken()).'">'.$langs->transnoentities("Setup").' - '.$langs->transnoentities("MenuCompanySetup").'</a>';
+print '<a class="nounderlineimp fontsize-1-1" href="'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete) ? '' : '&action=edit&token='.newToken()).'">'.$langs->transnoentities("Setup").' - '.$langs->transnoentities("MenuCompanySetup").'</a>';
 print '<br><br>';
 print $langs->trans("SetupDescription3b");
 if (!empty($setupcompanynotcomplete)) {
 	$langs->load("errors");
 	$warnpicto = img_warning($langs->trans("WarningMandatorySetupNotComplete"), 'style="padding-right: 6px;"');
-	print '<br><div class="warning"><a href="'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete) ? '' : '&action=edit').'">'.$warnpicto.$langs->trans("WarningMandatorySetupNotComplete").'</a></div>';
+	print '<br><div class="warning"><a href="'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home&action=edit&token='.newToken().'">'.$warnpicto.' '.$langs->trans("WarningMandatorySetupNotComplete").'</a></div>';
 }
 
 print '</a>';
@@ -136,7 +139,7 @@ print '<section class="setupsection setupmodules cursorpointer">';
 
 // Define $nbmodulesnotautoenabled - TODO This code is at different places
 $nbmodulesnotautoenabled = count($conf->modules);
-$listofmodulesautoenabled = array('agenda', 'fckeditor', 'export', 'import');
+$listofmodulesautoenabled = array('user', 'agenda', 'fckeditor', 'export', 'import');	// All modules with ->enabled_bydefault to true (so enabled during install)
 foreach ($listofmodulesautoenabled as $moduleautoenable) {
 	if (in_array($moduleautoenable, $conf->modules)) {
 		$nbmodulesnotautoenabled--;
@@ -146,9 +149,9 @@ foreach ($listofmodulesautoenabled as $moduleautoenable) {
 // Show info setup module
 print img_picto('', 'cog', 'class="paddingright valignmiddle double"');
 print ' ';
-print '<a class="nounderlineimp" href="'.DOL_URL_ROOT.'/admin/modules.php?mainmenu=home">'.$langs->transnoentities("Setup").' - '.$langs->transnoentities("Modules").'</a>';
+print '<a class="nounderlineimp fontsize-1-1" href="'.DOL_URL_ROOT.'/admin/modules.php?mainmenu=home">'.$langs->transnoentities("Setup").' - '.$langs->transnoentities("Modules").'</a>';
 print '<br><br>'.$langs->trans("SetupDescription4b");
-if ($nbmodulesnotautoenabled <= getDolGlobalInt('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only minimal initial modules enabled
+if ($nbmodulesnotautoenabled < getDolGlobalInt('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only minimal initial modules enabled
 	$langs->load("errors");
 	$warnpicto = img_warning($langs->trans("WarningEnableYourModulesApplications"), 'style="padding-right: 6px;"');
 	print '<br><div class="warning"><a href="'.DOL_URL_ROOT.'/admin/modules.php?mainmenu=home">'.$warnpicto.$langs->trans("WarningEnableYourModulesApplications").'</a></div>';
