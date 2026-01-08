@@ -1331,7 +1331,6 @@ class BlockedLog
 					// Code here is similar to the one into printCodeForPing()
 					$url_for_ping = getDolGlobalString('MAIN_URL_FOR_PING', "https://ping.dolibarr.org/");
 
-					include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 					$hash_unique_id = dol_hash('dolibarr'.$conf->file->instance_unique_id, 'sha256');	// Note: if the global salt changes, this hash changes too so ping may be counted twice. We don't mind. It is for statistics and inventory purpose only.
 
 					$data = 'action=dolibarrtrack';
@@ -1558,7 +1557,7 @@ class BlockedLog
 			$previoussignature = $this->getOrInitFirstSignature();
 		}
 
-		return array('previousid' => $previousid, 'previoussignature' => $previoussignature);
+		return array('previousid' => $previousid, 'previoushash' => $previoussignature);
 	}
 
 	/**
