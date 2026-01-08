@@ -138,6 +138,20 @@ class ExtraFields
 	}
 
 	/**
+	 * Extract SQL aliases
+	 * 
+	 * @param string 	string from which we want to extract the alias. ex. "CONCAT(name, '-', age) as newlabel"
+	 * @return	string	only the SQL alias. ex. "newlabel"
+	 */
+	private static function extractSQLAlias($val)
+	{
+		$new_val = preg_replace('/[a-z_]+\([^\)]*\) as ([\w]+)/i', '\1', $val);
+		// Sanitize field names to avoid error when doing $obj->field
+		$new_val = preg_replace('/[^0-9a-z_\.\|]/i', '', $new_val);
+		return $new_val;
+	}
+
+	/**
 	 *  Add a new extra field parameter
 	 *
 	 *  @param	string			$attrname           Code of attribute
@@ -1610,11 +1624,8 @@ class ExtraFields
 								$labeltoshow = '';
 								$obj = $this->db->fetch_object($resql);
 
-								$nameFields = $InfoFieldList[1];
 								// If text is "field1|f(a,b,c) as xxx|field2", we must convert string into 'field1|xxx|field2'
-								$nameFields = preg_replace('/[a-z_]+\([^\)]*\) as ([\w]+)/i', '\1', $nameFields);
-								// Sanitize field names to avoid error when doing $obj->field
-								$nameFields = preg_replace('/[^0-9a-z_\.\|]/i', '', $nameFields);
+								$nameFields = self::extractSQLAlias($InfoFieldList[1]);
 
 								// Several fields into label (eq table:code|label:rowid)
 								$notrans = false;
@@ -2212,9 +2223,10 @@ class ExtraFields
 
 					// Several field into label (eq table:code|label:rowid)
 					$fields_label = explode('|', $InfoFieldList[1]);
+					$fields_label_names = array_map([$this, 'extractSQLAlias'], $fields_label);	
 
-					if (is_array($fields_label) && count($fields_label) > 1) {
-						foreach ($fields_label as $field_toshow) {
+					if (is_array($fields_label_names) && count($fields_label_names) > 1) {
+						foreach ($fields_label_names as $field_toshow) {
 							$translabel = '';
 							if (!empty($obj->$field_toshow)) {
 								$translabel = $outputlangs->trans($obj->$field_toshow);
@@ -2228,7 +2240,7 @@ class ExtraFields
 						}
 					} else {
 						$translabel = '';
-						$tmppropname = $InfoFieldList[1];
+						$tmppropname = reset($fields_label_names);
 						//$obj->$tmppropname = '';
 						if (!empty(isset($obj->$tmppropname) ? $obj->$tmppropname : '')) {
 							$translabel = $outputlangs->trans($obj->$tmppropname);
