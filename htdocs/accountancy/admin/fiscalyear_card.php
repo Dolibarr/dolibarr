@@ -128,16 +128,19 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $permissiontoadd) {
 			$db->begin();
 
 			$id = $object->create($user);
-
 			if ($id > 0) {
 				$db->commit();
-
-				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
-				exit();
+				header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
+				exit;
 			} else {
 				$db->rollback();
 
-				setEventMessages($object->error, $object->errors, 'errors');
+				// Handle overlap error
+				if ($id == -5 && !empty($object->errors[0])) {
+					setEventMessages($langs->trans($object->error, $object->errors[0]), null, 'errors');
+				} else {
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
 				$action = 'create';
 			}
 		} else {
@@ -145,7 +148,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $permissiontoadd) {
 		}
 	} else {
 		header("Location: ./fiscalyear.php");
-		exit();
+		exit;
 	}
 } elseif ($action == 'update' && $permissiontoadd) {
 	// Update record
@@ -158,16 +161,20 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $permissiontoadd) {
 		$object->status = GETPOSTINT('status');
 
 		$result = $object->update($user);
-
 		if ($result > 0) {
-			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
-			exit();
+			header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
+			exit;
 		} else {
-			setEventMessages($object->error, $object->errors, 'errors');
+			// Handle overlap error
+			if ($result == -5 && !empty($object->errors[0])) {
+				setEventMessages($langs->trans($object->error, $object->errors[0]), null, 'errors');
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
 		}
 	} else {
-		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
-		exit();
+		header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
+		exit;
 	}
 } elseif ($action == 'reopen' && $permissiontoadd && getDolGlobalString('ACCOUNTING_CAN_REOPEN_CLOSED_PERIOD')) {
 	$result = $object->fetch($id);
