@@ -378,7 +378,6 @@ class Documents extends DolibarrApi
 			if ($result <= 0) {
 				throw new RestException(500, 'Error generating document');
 			}
-		
 		} else {
 			throw new RestException(403, 'Generation not available for this modulepart');
 		}
