@@ -87,19 +87,12 @@ class InterfaceCouffignalFactureSituation extends DolibarrTriggers
 
 		if (($object instanceof Facture) && ((int) $object->type === Facture::TYPE_SITUATION)) {
 			if ($action === 'BILL_VALIDATE') {
-				$difference = abs(round(FactureTools::calculateDifference($this->db, $object), 2));
+				$difference = round(FactureTools::calculateDifference($this->db, $object), 2);
 
-				if ($difference <= 0.01) {
-					return 1;
-				}
-
-				if ($difference < 5) {
+				if (abs($difference) >= 0.01) {
 					setEventMessage($langs->trans('InvoiceSituationMustHaveOrdersImportedForBeingValidated', number_format($difference, 2)), 'warnings');
-					return 1;
-				}
-
-				setEventMessage($langs->trans('InvoiceSituationMustHaveOrdersImportedForBeingValidated', number_format($difference, 2)), 'errors');
-				return -1;
+				} 
+				return 1;
 			}
 		}
 
