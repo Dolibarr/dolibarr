@@ -11,21 +11,30 @@ require_once DOL_DOCUMENT_ROOT.'/couffignal/CommandeTools.php';
 class FactureTools
 {
 	/**
-	 * Get total HT of validated orders linked to the project of the invoice.
+	 * Get total HT of validated orders linked to the invoice.
 	 *
 	 * @param DoliDB $db Database handler
 	 * @param Facture $facture Invoice object
 	 * @return array List of orders with their client reference and total HT
 	 */
-	public static function getTotalHtOrdersLinkedToProjectOfInvoice(DoliDB $db, Facture $facture): array
+	public static function getTotalHtOrdersLinkedToInvoice(DoliDB $db, Facture $invoice): array
 	{
-		if ($facture->project === null) {
-			$facture->fetch_project();
+
+		$invoice->fetchObjectLinked(null, '', null, 'commande');
+
+		$orders = [];
+		foreach ($invoice->linkedObjects as $order) {
+			if (in_array($order->statut, [
+				Commande::STATUS_VALIDATED,
+				Commande::STATUS_SHIPMENTONPROCESS,
+				Commande::STATUS_ACCEPTED
+			])) {
+				$orders[] = $order;
+			}
 		}
+		$orders = CommandeTools::sortOrdersByDateAndRef($orders);
 
-		$orders = CommandeTools::getOrdersValidatedFromProject($db, $facture->project, (int) $facture->socid);
-
-		return array_map(static fn ($order) => ['ref_client' => $order->ref_client, 'total_ht' => $order->total_ht], $orders);
+		return array_map(static fn ($orders) => ['ref_client' => $order->ref_client, 'total_ht' => $order->total_ht], $orders);
 	}
 
 	/**
@@ -38,7 +47,7 @@ class FactureTools
 	public static function calculateDifference(DoliDB $db, Facture $facture): float
 	{
 		$lastSituationCompletePrice = $facture->getLastSituationCompletePrice(false);
-		$totalHtOrders = self::getTotalHtOrdersLinkedToProjectOfInvoice($db, $facture);
+		$totalHtOrders = self::getTotalHtOrdersLinkedToInvoice($db, $facture);
 		$sumTotalHtOrders = array_sum(array_column($totalHtOrders, 'total_ht'));
 
 		return $lastSituationCompletePrice - $sumTotalHtOrders;

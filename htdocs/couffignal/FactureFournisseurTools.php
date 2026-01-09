@@ -1,25 +1,37 @@
 <?php
 
+if (isModEnabled('clientpayfourn')) dol_include_once('/clientpayfourn/class/linkclientpayfourn.class.php');
+
 /**
  * Classe utilitaire pour les factures fournisseurs.
  */
 class FactureFournisseurTools
 {
 	/**
-	 * Get list of supplier invoices linked to the project of the invoice
+	 * Get array of supplier invoices linked to the invoice through direct paiment module
+	 * Based on external module ClientPayFourn
 	 *
-	 * @param Project $project Invoice object
-	 * @param DoliDB $db Database handler
-	 * @return FactureFournisseur[] Array of supplier invoice objects
+	 * @param Facture $invoice Invoice object
+	 * @param DoliDB $db Gestionnaire de base de données.
+	 * 
+	 * @return FactureFournisseur[] Array of supplier invoice objects 
 	 */
-	public static function getFacturesFournValidatedFromProject(Project $project, DoliDB $db): array
+	public static function getFacturesFournValidatedFromDebtCompensationLinks(FactureFournisseur|Facture $invoice, DoliDB $db): array
 	{
-		/** @var string[] $factureFournRowIdList */
-		$factureFournRowIdList = $project->get_element_list('invoice_supplier', 'facture_fourn');
+		// Check compliance to module requirements
+		if (!isModEnabled('clientpayfourn')) {
+			dol_syslog("Module clientpayfourn must be enabled for Co-Sous-traitant table to work", LOG_WARN);
+			setEventMessages("", "Module clientpayfourn must be enabled for Co-Sous-traitant table to work", 'mesgs');
+		}
+
+		// Load linked object
+		$obj = new LinkClientPayFourn($db);
+		$factureFournLinked = $obj->getLinkedObjects($invoice, $db);
+		var_dump($factureFournLinked);
+
+		// Safety filter on Validated and Closef supplier invoices only
 		$facturesFourn = [];
-		foreach ($factureFournRowIdList as $facutreFournRowId) {
-			$factureFourn = new FactureFournisseur($db);
-			$factureFourn->fetch($facutreFournRowId);
+		foreach ($factureFournLinked as $factureFourn) {
 			$statusValid = [FactureFournisseur::STATUS_VALIDATED, FactureFournisseur::STATUS_CLOSED];
 			if (in_array($factureFourn->status, $statusValid)) {
 				$facturesFourn[] = $factureFourn;

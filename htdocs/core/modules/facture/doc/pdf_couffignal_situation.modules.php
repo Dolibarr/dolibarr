@@ -1381,7 +1381,7 @@ class pdf_couffignal_situation extends ModelePDFFactures
 		}
 
 		/** Orders of projects */
-		$ordersTotalHt = FactureTools::getTotalHtOrdersLinkedToProjectOfInvoice($this->db, $object);
+		$ordersTotalHt = FactureTools::getTotalHtOrdersLinkedToInvoice($this->db, $object);
 		$linesOrders = [];
 		if (count($ordersTotalHt) > 0) {
 			$linesOrders = array_map(static function($v) {
@@ -2349,22 +2349,22 @@ class pdf_couffignal_situation extends ModelePDFFactures
 		$available_width = $page_width - $this->margin_left - $this->margin_right;
 
 		// Définition des proportions relatives des colonnes
-		$column_ratios = array(
+		$table_columns = array(
 			'Désignation' => 40,
 			'Marché HT' => 20,
 			'Facturé HT' => 20,
-			'Pourcentage' => 20
+			'A payer TTC' => 20
 		);
 
 		// Calcul des largeurs réelles des colonnes
 		$headers = array();
-		foreach ($column_ratios as $title => $ratio) {
+		foreach ($table_columns as $title => $ratio) {
 			$headers[$title] = ($ratio * $available_width) / 100;
 		}
 
 		$totalWidth = $available_width;
 			
-			// Style des bordures
+		// Style des bordures
 		$border = 'LRTB';
 
 		// Titre principal du tableau
@@ -2415,12 +2415,63 @@ class pdf_couffignal_situation extends ModelePDFFactures
 			$currentX += $headers['Facturé HT'];
 
 			// Pourcentage
-			$pdf->SetXY($currentX, $posy);
+			/*$pdf->SetXY($currentX, $posy);
 			$pourcentage = ($company['market']['sum_total_ht'] > 0) ?
 				($company['factured']['sum_total_ht'] / $company['market']['sum_total_ht'] * 100) : 0;
-			$pdf->Cell($headers['Pourcentage'], $line_height, sprintf('%.2f%%', $pourcentage), $border, 0, 'R');
+			$pdf->Cell($headers['Pourcentage'], $line_height, sprintf('%.2f%%', $pourcentage), $border, 0, 'R');*/
+
+			// Paiement TTC
+			$pdf->SetXY($currentX, $posy);
+			$pdf->Cell($headers['Facturé HT'], $line_height, price($company['factured']['sum_total_ht']), $border, 0, 'R');
+			$currentX += $headers['Facturé HT'];
 
 			$posy += $line_height;
+		}
+
+		// Section Sous-traitants
+		// Ligne de séparation si nécessaire
+		if (!empty($sousTraitantsCoTraitants['sous_trait'])) {
+			// Titre de section Sous-traitants
+			$pdf->SetXY($this->margin_left, $posy);
+			$pdf->SetFont('', 'B', $default_font_size);
+			$pdf->SetFillColor(230, 230, 230);
+			$pdf->Cell($totalWidth, $title_height, $outputlangs->trans("Sous-traitants"), $border, 1, 'L', 1);
+			$posy = $pdf->GetY();
+			$pdf->SetFont('', '', $default_font_size);
+
+			foreach ($sousTraitantsCoTraitants['sous_trait'] as $sousTrait) {
+				$currentX = $this->margin_left;
+
+				// Nom
+				$pdf->SetXY($currentX, $posy);
+				$pdf->Cell($headers['Désignation'], $line_height, $sousTrait['name'], $border, 0, 'L');
+				$currentX += $headers['Désignation'];
+
+				// Marché HT
+				$pdf->SetXY($currentX, $posy);
+				$pdf->SetFillColor(240, 240, 240);
+				$pdf->Cell($headers['Marché HT'], $line_height, ' - ', $border, 1, 'R', 1);
+				$currentX += $headers['Marché HT'];
+
+				// Facturé HT
+				$pdf->SetXY($currentX, $posy);
+				$pdf->SetFillColor(240, 240, 240);
+				$pdf->Cell($headers['Facturé HT'], $line_height, ' - ', $border, 1, 'R', 1);
+				$currentX += $headers['Facturé HT'];
+
+				// Pourcentage
+				/*$pdf->SetXY($currentX, $posy);
+				$pourcentage = ($sousTrait['market']['sum_total_ht'] > 0) ? 
+					($sousTrait['factured']['sum_total_ht'] / $sousTrait['market']['sum_total_ht'] * 100) : 0;
+				$pdf->Cell($headers['Pourcentage'], $line_height, sprintf('%.2f%%', $pourcentage), $border, 0, 'R');*/
+
+				// Paiement TTC
+				$pdf->SetXY($currentX, $posy);
+				$pdf->Cell($headers['Facturé HT'], $line_height, price($sousTrait['factured']['sum_total_ht']), $border, 0, 'R');
+				$currentX += $headers['Facturé HT'];
+
+				$posy += $line_height;
+			}
 		}
 
 		// Section Co-traitants
@@ -2452,49 +2503,15 @@ class pdf_couffignal_situation extends ModelePDFFactures
 				$currentX += $headers['Facturé HT'];
 
 				// Pourcentage
-				$pdf->SetXY($currentX, $posy);
+				/*$pdf->SetXY($currentX, $posy);
 				$pourcentage = ($coTrait['market']['sum_total_ht'] > 0) ? 
 					($coTrait['factured']['sum_total_ht'] / $coTrait['market']['sum_total_ht'] * 100) : 0;
-				$pdf->Cell($headers['Pourcentage'], $line_height, sprintf('%.2f%%', $pourcentage), $border, 0, 'R');
+				$pdf->Cell($headers['Pourcentage'], $line_height, sprintf('%.2f%%', $pourcentage), $border, 0, 'R');*/
 
-				$posy += $line_height;
-			}
-		}
-	
-		// Section Sous-traitants
-		// Ligne de séparation si nécessaire
-		if (!empty($sousTraitantsCoTraitants['sous_trait'])) {
-			// Titre de section Sous-traitants
-			$pdf->SetXY($this->margin_left, $posy);
-			$pdf->SetFont('', 'B', $default_font_size);
-			$pdf->SetFillColor(230, 230, 230);
-			$pdf->Cell($totalWidth, $title_height, $outputlangs->trans("Sous-traitants"), $border, 1, 'L', 1);
-			$posy = $pdf->GetY();
-			$pdf->SetFont('', '', $default_font_size);
-
-			foreach ($sousTraitantsCoTraitants['sous_trait'] as $sousTrait) {
-				$currentX = $this->margin_left;
-
-				// Nom
+				// Paiement TTC
 				$pdf->SetXY($currentX, $posy);
-				$pdf->Cell($headers['Désignation'], $line_height, $sousTrait['name'], $border, 0, 'L');
-				$currentX += $headers['Désignation'];
-
-				// Marché HT
-				$pdf->SetXY($currentX, $posy);
-				$pdf->Cell($headers['Marché HT'], $line_height, price($sousTrait['market']['sum_total_ht']), $border, 0, 'R');
-				$currentX += $headers['Marché HT'];
-
-				// Facturé HT
-				$pdf->SetXY($currentX, $posy);
-				$pdf->Cell($headers['Facturé HT'], $line_height, price($sousTrait['factured']['sum_total_ht']), $border, 0, 'R');
+				$pdf->Cell($headers['Facturé HT'], $line_height, price($coTrait['factured']['sum_total_ht']), $border, 0, 'R');
 				$currentX += $headers['Facturé HT'];
-
-				// Pourcentage
-				$pdf->SetXY($currentX, $posy);
-				$pourcentage = ($sousTrait['market']['sum_total_ht'] > 0) ? 
-					($sousTrait['factured']['sum_total_ht'] / $sousTrait['market']['sum_total_ht'] * 100) : 0;
-				$pdf->Cell($headers['Pourcentage'], $line_height, sprintf('%.2f%%', $pourcentage), $border, 0, 'R');
 
 				$posy += $line_height;
 			}

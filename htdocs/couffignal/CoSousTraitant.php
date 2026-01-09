@@ -19,6 +19,7 @@ class CoSousTraitant
 	 */
 	public static function getSousTraitantsCoTraitants(DoliDB $db, Facture $facture): array
 	{
+
 		if (!$facture->project) {
 			$facture->fetch_project();
 			if (!$facture->project) return [];
@@ -28,10 +29,11 @@ class CoSousTraitant
 		if (!$payDirId) return [];
 
 		$commandesFourn = CommandFournisseurTools::getOrdersValidatedFromProject($facture->project, $db);
-		$facturesFourn = FactureFournisseurTools::getFacturesFournValidatedFromProject($facture->project, $db);
+		$facturesFourn = FactureFournisseurTools::getFacturesFournValidatedFromDebtCompensationLinks($facture, $db);
+		var_dump($facturesFourn);
 		if (!$commandesFourn && !$facturesFourn) return [];
 
-		// N'apparaisent dans le tableau 'CoSousTraitant'qui ceux qui ont le mode de règlement 'PAYDIR'
+		// N'apparaisent dans le tableau 'CoSousTraitant' qui ceux qui ont le mode de règlement 'PAYDIR'
 		$filterUsePayDir = fn($arr) => array_filter($arr, fn($el) => $el->mode_reglement_id == $payDirId);
 		$commandesFourn = $filterUsePayDir($commandesFourn);
 		$facturesFourn = $filterUsePayDir($facturesFourn);
