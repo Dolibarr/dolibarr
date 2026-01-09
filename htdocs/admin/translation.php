@@ -226,7 +226,8 @@ $form = new Form($db);
 $formadmin = new FormAdmin($db);
 
 $wikihelp = 'EN:Setup_Translation|FR:Paramétrage_Traduction|ES:Configuración_Traducción';
-llxHeader('', $langs->trans("Setup"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-translation');
+$title = $langs->trans("Translation");
+llxHeader('', $title, $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-translation');
 
 $param = '&mode='.urlencode($mode);
 
@@ -251,7 +252,7 @@ if (!empty($conf->dol_optimize_smallscreen)) {
 	$infoOnCurrentLang = 1;
 }
 
-print load_fiche_titre($langs->trans("Translation"), $enabledisablehtml, 'language', 0, '', '', $infoOnCurrentLang);
+print load_fiche_titre($title, $enabledisablehtml, 'language', 0, '', '', $infoOnCurrentLang);
 
 
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
@@ -567,7 +568,7 @@ if ($mode == 'searchkey') {
 	//print 'param='.$param.' $_SERVER["PHP_SELF"]='.$_SERVER["PHP_SELF"].' num='.$num.' page='.$page.' nbtotalofrecords='.$nbtotalofrecords." sortfield=".$sortfield." sortorder=".$sortorder;
 	$title = $langs->trans("Translation");
 	if ($nbtotalofrecords > 0) {
-		$title .= ' <span class="opacitymedium colorblack paddingleft">('.$nbtotalofrecords.' / '.$nbtotalofrecordswithoutfilters.' - <span title="'.dol_escape_htmltag(($nbtotaloffiles - $nbtotaloffilesexternal).' core - '.($nbtotaloffilesexternal).' external').'">'.$nbtotaloffiles.' '.$langs->trans("Files").'</span>)</span>';
+		$title .= ' <span class="opacitymedium colorblack paddingleft small">('.$nbtotalofrecords.' / '.$nbtotalofrecordswithoutfilters.' - <span title="'.dol_escape_htmltag(($nbtotaloffiles - $nbtotaloffilesexternal).' core - '.($nbtotaloffilesexternal).' external').'">'.$nbtotaloffiles.' '.$langs->trans("Files").'</span>)</span>';
 	}
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, -1 * $nbtotalofrecords, '', 0, '', '', $limit, 0, 0, 1);
 

@@ -279,7 +279,8 @@ if (empty($reshook)) {
 		$paiement->multicurrency_amounts = $multicurrency_amounts; // Array with all payments dispatching
 		$paiement->multicurrency_code = $multicurrency_code; // Array with all currency of payments dispatching
 		$paiement->multicurrency_tx = $multicurrency_tx; // Array with all currency tx of payments dispatching
-		$paiement->paiementid   = dol_getIdFromCode($db, GETPOST('paiementcode'), 'c_paiement', 'code', 'id', 1);
+		$paiement->paiementcode = GETPOST('paiementcode', 'alpha');
+		$paiement->paiementid   = dol_getIdFromCode($db, $paiement->paiementcode, 'c_paiement', 'code', 'id', 1);
 		$paiement->num_payment  = GETPOST('num_paiement', 'alpha');
 		$paiement->note_private = GETPOST('comment', 'alpha');
 		$paiement->fk_account   = GETPOSTINT('accountid');
@@ -830,7 +831,7 @@ if ($result >= 0) {
 								print img_picto("Auto fill", 'rightarrow.png');
 								print '</button>';
 							}
-							print '<input '.$min.' '.$max.' type="text" class="multicurrency_amount" name="'.$namef.'" value="'.GETPOST($namef).'">';
+							print '<input '.$min.' '.$max.' type="text" class="multicurrency_amount maxwidth100" name="'.$namef.'" value="'.GETPOST($namef).'">';
 							print '<input type="hidden" class="multicurrency_remain" name="'.$nameRemain.'" value="'.$multicurrency_remaintopay.'">';
 						} else {
 							print '<input type="text" class="maxwidth75" name="'.$namef.'_disabled" value="'.(GETPOST($namef) != '0' ? GETPOST($namef) : '').'" disabled>';
@@ -903,7 +904,7 @@ if ($result >= 0) {
 						print img_picto("Auto fill", 'rightarrow.png');
 						print '</button>';
 					}
-					print '<input '.$max.' '.$min.' type="text" size="8" class="amount" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">'; // class is required to be used by javascript callForResult();
+					print '<input '.$max.' '.$min.' type="text" class="amount maxwidth100" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">'; // class is required to be used by javascript callForResult();
 					print '<input type="hidden" class="remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
 				} else {
 					print '<input type="text" class="maxwidth75" name="'.$namef.'_disabled" value="'.dol_escape_htmltag(GETPOST($namef)).'" disabled>';

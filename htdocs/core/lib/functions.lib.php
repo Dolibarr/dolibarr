@@ -126,11 +126,11 @@ if (!function_exists('str_contains')) {
  * Return the full path of the directory where a module (or an object of a module) stores its files.
  * Path may depends on the entity if a multicompany module is enabled.
  *
- * @param 	CommonObject|BlockedLog	$object 	Dolibarr common object.
- * @param 	string 					$module 	Override object element, for example to use 'mycompany' instead of 'societe'
- * @param	int						$forobject	Return the more complete path for the given object instead of for the module only.
- * @param	string					$mode		'output' (full main dir) or 'outputrel' (relative dir) or 'temp' (full dir for temporary files) or 'version' (full dir for archived files)
- * @return 	string|null							The path of the relative directory of the module, ending with /
+ * @param 	CommonObject|BlockedLog|null	$object 	Dolibarr common object.
+ * @param 	string 							$module 	Override object element, for example to use 'mycompany' instead of 'societe'
+ * @param	int								$forobject	Return the more complete path for the given object instead of for the module only.
+ * @param	string							$mode		'output' (full main dir) or 'outputrel' (relative dir) or 'temp' (full dir for temporary files) or 'version' (full dir for archived files)
+ * @return 	string|null									The path of the relative directory of the module, ending with /
  * @since Dolibarr V18
  */
 function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'output')
@@ -324,6 +324,17 @@ function getDolEntity()
 {
 	global $conf;
 	return (int) $conf->entity;
+}
+
+/**
+ * Return the current entity
+ *
+ * @return 	string						Value returned
+ */
+function getDolDBType()
+{
+	global $conf;
+	return $conf->db->type;
 }
 
 /**
@@ -1914,16 +1925,21 @@ function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1, $includequotes
  *
  *	@param	string	$str            String to clean
  * 	@param	string	$newstr			String to replace bad chars with
- *  @param	int	    $unaccent		1=Remove also accent (default), 0 do not remove them
+ *  @param	int	    $unaccent		1=Remove also accent, 0 do not remove them
+ *  @param	int	    $allowdash		1=Allow dash char after a space and before a string, 0 do not allow
  *	@return string          		String cleaned
  *
  * 	@see        	dol_string_nospecial(), dol_string_unaccent(), dol_sanitizeFileName()
  */
-function dol_sanitizePathName($str, $newstr = '_', $unaccent = 1)
+function dol_sanitizePathName($str, $newstr = '_', $unaccent = 0, $allowdash = 0)
 {
 	// List of special chars for filenames in windows are defined on page https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file
-	// Char '>' '<' '|' '$' and ';' are special chars for shells.
-	// Chars '--' can be used into filename to inject special parameters like --use-compress-program to make command with file as parameter making remote execution of command
+	// Char '>' '<' '|' '$' ';' and '`' are special chars for shells.
+	// Char '?' and '*' are for wild card chars.
+	// Char '"' is dangerous.
+	// Char '°' is just not expected.
+	// Chars '-' and '--' can be used into filename to inject special parameters like --use-compress-program to make command with file as parameter making remote execution of command
+	// Chars '--' and '~' can be used for path transversal
 	$filesystem_forbidden_chars = array('<', '>', '?', '*', '|', '"', '°', '$', ';', '`');
 
 	$tmp = $str;
@@ -1931,10 +1947,13 @@ function dol_sanitizePathName($str, $newstr = '_', $unaccent = 1)
 		$tmp = dol_string_unaccent($tmp);
 	}
 	$tmp = dol_string_nospecial($tmp, $newstr, $filesystem_forbidden_chars);
-	$tmp = preg_replace('/\-\-+/', '_', $tmp);
-	$tmp = preg_replace('/\s+\-([^\s])/', ' _$1', $tmp);
-	$tmp = preg_replace('/\s+\-$/', '', $tmp);
-	$tmp = str_replace('..', '', $tmp);
+	$tmp = preg_replace('/\-\-+/', $newstr, $tmp);
+	if (empty($allowdash)) {
+		$tmp = preg_replace('/\s+\-([^\s])/', ' '.$newstr.'$1', $tmp);
+		$tmp = preg_replace('/\s+\-$/', '', $tmp);
+	}
+	$tmp = str_replace('..', $newstr, $tmp);
+	$tmp = str_replace('~', $newstr, $tmp);
 	return $tmp;
 }
 
@@ -12011,7 +12030,7 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 
 		// Set $dolibarr_main_restrict_eval_methods_array
 		if (!isset($dolibarr_main_restrict_eval_methods)) {
-			$dolibarr_main_restrict_eval_methods = 'getDolGlobalString, getDolGlobalInt, getDolCurrency, fetchNoCompute, hasRight, isAdmin, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, preg_match';
+			$dolibarr_main_restrict_eval_methods = 'getDolGlobalString, getDolGlobalInt, getDolCurrency, getDolEntity, getDolDBType, fetchNoCompute, hasRight, isAdmin, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, preg_match';
 		}
 		//print '$dolibarr_main_restrict_eval_methods = '.$dolibarr_main_restrict_eval_methods."\n";
 		$dolibarr_main_restrict_eval_methods_array = explode(',', str_replace(" ", "", $dolibarr_main_restrict_eval_methods));
@@ -13204,7 +13223,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0, $sqltoadd =
 					$listofcodes = '';
 					foreach ($tmparray as $val) {
 						$val = trim($val);
-						if ($val) {
+						if ($val) {	// TODO Test with if ($val !== '') {
 							$listofcodes .= ($listofcodes ? ',' : '');
 							$listofcodes .= "'" . $db->escape($val) . "'";
 						}
@@ -13896,7 +13915,7 @@ function getDictionaryValue($tablename, $field, $id, $checkentity = false, $rowi
  *	Return true if the color is light
  *
  *  @param	string	$stringcolor		String with hex (FFFFFF) or comma RGB ('255,255,255')
- *  @return	int<-1,1>					-1 : Error with argument passed |0 : color is dark | 1 : color is light
+ *  @return	int<-1,1>					-1 : Error with argument passed | 0 : color is dark | 1 : color is light
  */
 function colorIsLight($stringcolor)
 {
@@ -13935,8 +13954,6 @@ function colorIsLight($stringcolor)
  */
 function isVisibleToUserType($type_user, &$menuentry, &$listofmodulesforexternal)
 {
-	global $conf;
-
 	//print 'type_user='.$type_user.' module='.$menuentry['module'].' enabled='.$menuentry['enabled'].' perms='.$menuentry['perms'];
 	//print 'ok='.in_array($menuentry['module'], $listofmodulesforexternal);
 	if (empty($menuentry['enabled'])) {
@@ -14811,6 +14828,12 @@ function getElementProperties($elementType)
 		$module = 'projet';
 		$subelement = 'task';
 		$table_element = 'projet_task';
+	} elseif ($elementType == 'mo') {
+		$classpath = 'mrp/class';
+		$module = 'mrp';
+		$classfile = 'mo';
+		$classname = 'Mo';
+		$table_element = 'mrp_mo';
 	} elseif ($elementType == 'facture' || $elementType == 'invoice') {
 		$classpath = 'compta/facture/class';
 		$module = 'facture';
@@ -15864,7 +15887,7 @@ function dolForgeSQLCriteriaCallback($matches)
 			} elseif (is_numeric((string) $tmpelem)) {	// it can be a float with a .
 				$tmpelemarray[$tmpkey] = (float) $tmpelem;
 			} elseif (!getDolGlobalString("MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER")) {
-				$tmpelemarray[$tmpkey] = preg_replace('/[^a-z0-9_<>=!\s]/i', '', $tmpelem);	// it can be a full subrequest
+				$tmpelemarray[$tmpkey] = preg_replace('/[^a-z0-9_<>=!\s]/i', '', $tmpelem);	// it can be a full subrequest (should be removed in a future as it allows blind SQL injection)
 			} else {
 				$tmpelemarray[$tmpkey] = preg_replace('/[^a-z0-9_]/i', '', $tmpelem);	// it can be a name of field or a substitution variable like '__NOW__'
 			}

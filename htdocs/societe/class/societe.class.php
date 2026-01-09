@@ -4435,11 +4435,9 @@ class Societe extends CommonObject
 	 */
 	public function isACompany()
 	{
-		//global $mysoc;
-
 		// Define if third party is treated as company (or not) when nature is unknown
 		//$defaultvalue = in_array($mysoc->country_code, array('FR')) ? 0 : 1;	// TODO On old version, default was 1 for everybody, move this to defaultvalue = 0 for everybody
-		$defaultvalue = 1;
+		$defaultvalue = 0;
 		$isACompany = getDolGlobalInt('MAIN_UNKNOWN_CUSTOMERS_ARE_COMPANIES', $defaultvalue);
 
 		// Now try to guess using different tips

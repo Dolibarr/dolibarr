@@ -8,7 +8,7 @@
  * Copyright (C) 2017		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2022		OpenDSI				<support@open-dsi.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Alexandre Spangaro  <alexandre@inovea-conseil.com>
+ * Copyright (C) 2024-2026  Alexandre Spangaro  <alexandre@inovea-conseil.com>
  * Copyright (C) 2024-2025  Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2025       Lenin Rivas			<lenin.rivas777@gmail.com>
  *
@@ -39,17 +39,17 @@
  * $text, $description, $line
  */
 /**
- * @var CommonObject $object
- * @var CommonObject $this
- * @var CommonObjectLine $line
  * @var Conf $conf
  * @var Form $form
  * @var HookManager $hookmanager
- * @var ?Product $product_static
  * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
  *
+ * @var CommonObject $object
+ * @var CommonObject $this
+ * @var CommonObjectLine $line
+ * @var ?Product $product_static
  * @var string $action
  * @var int $i
  * @var int $forceall
@@ -57,6 +57,7 @@
  * @var int $senderissupplier
  * @var string $text
  * @var string $description
+ * @var int	$dateSelector
  */
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
@@ -309,9 +310,9 @@ if (empty($reshook)) {
 	}
 }
 
-if (isModEnabled('accounting') && !empty($line->fk_accounting_account) && $line->fk_accounting_account > 0) {
+if (isModEnabled('accounting') && !empty($line->fk_code_ventilation) && $line->fk_code_ventilation > 0) {
 	$accountingaccount = new AccountingAccount($this->db);
-	$accountingaccount->fetch($line->fk_accounting_account);
+	$accountingaccount->fetch($line->fk_code_ventilation);
 	print '<div class="clearboth"></div><br><span class="opacitymedium">'.$langs->trans('AccountingAffectation').' : </span>'.$accountingaccount->getNomUrl(0, 1, 1);
 }
 

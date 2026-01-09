@@ -1563,7 +1563,7 @@ class Commande extends CommonOrder
 	 *	@param      float			$remise_percent  	Percentage discount of the line
 	 *	@param      int				$info_bits			Bits of type of lines
 	 *	@param      int				$fk_remise_except	Id remise
-	 *	@param      string			$price_base_type	HT or TTC
+	 *	@param      'HT'|'TTC'|''	$price_base_type	HT or TTC or '' for subtotals
 	 *	@param      float			$pu_ttc    		    Prix unitaire TTC
 	 *	@param      int|''			$date_start       	Start date of the line
 	 *	@param      int|''			$date_end         	End date of the line

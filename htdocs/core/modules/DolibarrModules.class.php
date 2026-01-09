@@ -2683,7 +2683,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 		$return .=  '</div>
 	    <div class="info-box-content info-box-text-module'.(!getDolGlobalString($const_name) ? '' : ' info-box-module-enabled'.($versiontrans ? ' info-box-content-warning' : '')).'">
-	    <span class="info-box-title">'.$this->getName().'</span>
+	    <span class="info-box-title noopacity">'.$this->getName().'</span>
 	    <span class="info-box-desc twolinesmax opacitymedium" title="'.dol_escape_htmltag($this->getDesc()).'">'.nl2br($this->getDesc()).'</span>';
 
 		$return .=  '<div class="valignmiddle inline-block info-box-more">';

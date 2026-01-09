@@ -18,20 +18,28 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
- *
  */
+
+/**
+ *  \file		htdocs/don/tpl/linkedobjectblock.tpl.php
+ *  \ingroup	don
+ *  \brief		Template to show objects linked to donations
+ */
+
+/**
+ * @var Translate $langs
+ * @var Conf $conf
+ * @var User $user
+ *
+ * @var CommonObject $object
+ * @var int $noMoreLinkedObjectBlockAfter
+ * @var int $showImportButton
+ * @var Don[] $linkedObjectBlock
+ */
+'@phan-var-force Don[] $linkedObjectBlock';
 
 print "<!-- BEGIN PHP TEMPLATE don/tpl/linkedobjectblock.tpl.php -->\n";
 
-global $user;
-global $noMoreLinkedObjectBlockAfter;
-
-$langs = $GLOBALS['langs'];
-'@phan-var-force Translate $langs';
-/** @var Translate $langs */
-$linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
-'@phan-var-force Don[] $linkedObjectBlock';
-/** @var Don[] $linkedObjectBlock */
 $langs->load("donations");
 
 $total = 0;
@@ -48,8 +56,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	print '<tr class="'.$trclass.'">';
 	print '<td>'.$langs->trans("Donation").'</td>';
 	print '<td>'.$objectlink->getNomUrl(1).'</td>';
-	// print '<td class="center">'.$objectlink->ref_client.'</td>'; // ref_client doesn't exists
-	print '<td class="center"></td>';
+	print '<td class="center linkedcol-ref"></td>';
 	print '<td class="center">'.dol_print_date($objectlink->date, 'day').'</td>';
 	print '<td class="right">';
 	$total += $objectlink->total_ht;

@@ -69,7 +69,9 @@ $error = 0;
 /*
  * View
  */
-$form = new Form($db);
+
+$now = dol_now();
+$nowlasthourmidday = dol_get_last_hour($now) + 1 + (12 * 3600);	// +1 to get next day at 00:00:00. We add 12 hours to be at midday.
 
 $datetime = dol_now();
 $year = dol_print_date($datetime, "%Y");
@@ -123,8 +125,8 @@ if ($result < 0) {
 	if ($resql) {
 		$num = $db->num_rows($resql);
 		$obj = $db->fetch_object($resql);
-		$min = $db->jdate($obj->min);
-		$max = $db->jdate($obj->max);
+		$min = dol_get_first_hour($db->jdate($obj->min));
+		$max = dol_get_last_hour($db->jdate($obj->max));
 	} else {
 		dol_print_error($db);
 	}
@@ -217,7 +219,7 @@ if ($result < 0) {
 		$dataall = array();
 		while ($xmonth == $month) {
 			$subtotal += (isset($amounts[$textdate]) ? $amounts[$textdate] : 0);
-			if ($day > time()) {
+			if ($day > $nowlasthourmidday) {
 				$datas[$i] = ''; // Valeur speciale permettant de ne pas tracer le graph
 			} else {
 				$datas[$i] = $solde + $subtotal;
@@ -228,6 +230,7 @@ if ($result < 0) {
 			$labels[$i] = $xday;
 
 			$day += 86400;
+
 			//$textdate = strftime("%Y%m%d", $day);
 			$textdate = dol_print_date($day, "%Y%m%d");
 			$xyear = substr($textdate, 0, 4);
@@ -355,7 +358,7 @@ if ($result < 0) {
 		$dataall = array();
 
 		$subtotal = 0;
-		$now = time();
+
 		$day = dol_mktime(12, 0, 0, 1, 1, (int) $year);
 		//$textdate = strftime("%Y%m%d", $day);
 		$textdate = dol_print_date($day, "%Y%m%d");
@@ -363,25 +366,22 @@ if ($result < 0) {
 		$xday = substr($textdate, 6, 2);
 
 		$i = 0;
-		while ($xyear == $year && $day <= $datetime) {
+		while ($xyear == $year && $day <= $nowlasthourmidday) {
 			$subtotal += (isset($amounts[$textdate]) ? $amounts[$textdate] : 0);
-			if ($day > $now) {
-				$datas[$i] = ''; // Valeur speciale permettant de ne pas tracer le graph
-			} else {
-				$datas[$i] = $solde + $subtotal;
-			}
+
+			$datas[$i] = $solde + $subtotal;
+
 			$datamin[$i] = $object->min_desired;
 			$dataall[$i] = $object->min_allowed;
-			/*if ($xday == '15')	// Set only some label for jflot
-			{
-				$labels[$i] = dol_print_date($day, "%b");
-			}*/
+
 			$labels[$i] = dol_print_date($day, "%Y%m");
+
 			$day += 86400;
-			//$textdate = strftime("%Y%m%d", $day);
+
 			$textdate = dol_print_date($day, "%Y%m%d");
 			$xyear = substr($textdate, 0, 4);
 			$xday = substr($textdate, 6, 2);
+
 			$i++;
 		}
 

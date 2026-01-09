@@ -15,7 +15,7 @@
  * Copyright (C) 2013       Cedric Gross            <c.gross@kreiz-it.fr>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2016-2025  Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2018-2025  Alexandre Spangaro      <alexandre@inovea-conseil.com>
+ * Copyright (C) 2018-2026  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2022       Sylvain Legrand         <contact@infras.fr>
  * Copyright (C) 2022-2023	Solution Libre SAS		<contact@solution-libre.fr>
@@ -2586,7 +2586,7 @@ class Facture extends CommonInvoice
 				$line->fk_warehouse = $objp->fk_warehouse;
 
 				// Accountancy
-				$line->fk_accounting_account = $objp->fk_code_ventilation;
+				$line->fk_code_ventilation = $objp->fk_code_ventilation;
 
 				// Multicurrency
 				$line->fk_multicurrency = $objp->fk_multicurrency;
@@ -4138,7 +4138,7 @@ class Facture extends CommonInvoice
 	 *  @param 	int				$fk_code_ventilation   		Code of dispatching into accountancy
 	 *  @param 	int				$info_bits					Bits of type of lines
 	 *  @param 	int				$fk_remise_except			Id discount used
-	 *  @param	string			$price_base_type			'HT' or 'TTC'
+	 *  @param	'HT'|'TTC'|''	$price_base_type			HT or TTC or '' for subtotals
 	 *  @param	float			$pu_ttc             		Unit price with tax (> 0 even for credit note)
 	 *  @param	int				$type						Type of line (0=product, 1=service). Not used if fk_product is defined, the type of product is used.
 	 *  @param 	int				$rang               		Position of line (-1 means last value + 1)
@@ -6444,6 +6444,7 @@ class Facture extends CommonInvoice
 							$actioncomm->userownerid = $user->id; // Owner of action
 							// Fields when action is an email (content should be added into note)
 							$actioncomm->email_msgid = $cMailFile->msgid;
+							$actioncomm->email_subject = $sendTopic;
 							$actioncomm->email_from = $from;
 							$actioncomm->email_sender = '';
 							$actioncomm->email_to = $to;
