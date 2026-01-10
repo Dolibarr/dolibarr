@@ -48,7 +48,7 @@ $.Jcrop = function(obj,opt)
 
 	if (!('keySupport' in opt))
 			opt.keySupport = true;
-		
+
 	// }}}
 	// Extend the default options {{{
 	var defaults = {
@@ -122,7 +122,7 @@ $.Jcrop = function(obj,opt)
 				backgroundColor: options.bgColor
 			}).insertAfter($origimg).append($img);
 	;
-	
+
 	if (options.addClass) $div.addClass(options.addClass);
 	//$img.wrap($div);
 
@@ -156,8 +156,8 @@ $.Jcrop = function(obj,opt)
 	var bound = options.boundary;
 	var $trk = newTracker().width(boundx+(bound*2)).height(boundy+(bound*2))
 		.css({ position: 'absolute', top: px(-bound), left: px(-bound), zIndex: 290 })
-		.mousedown(newSelection);	
-	
+		.mousedown(newSelection);
+
 	/* }}} */
 	// Set more variables {{{
 
@@ -169,7 +169,7 @@ $.Jcrop = function(obj,opt)
 		shift_down;
 
 	// }}}
-		
+
 
 		// }}}
 	// Internal Modules {{{
@@ -232,9 +232,9 @@ $.Jcrop = function(obj,opt)
 			if (!options.aspectRatio) return getRect();
 			// This function could use some optimization I think...
 			var aspect = options.aspectRatio,
-				min_x = options.minSize[0]/xscale, 
+				min_x = options.minSize[0]/xscale,
 				min_y = options.minSize[1]/yscale,
-				max_x = options.maxSize[0]/xscale, 
+				max_x = options.maxSize[0]/xscale,
 				max_y = options.maxSize[1]/yscale,
 				rw = x2 - x1,
 				rh = y2 - y1,
@@ -455,7 +455,7 @@ $.Jcrop = function(obj,opt)
 				.css({
 					cursor: ord+'-resize',
 					position: 'absolute',
-					zIndex: zi 
+					zIndex: zi
 				})
 			;
 			$hdl_holder.append(jq);
@@ -584,7 +584,7 @@ $.Jcrop = function(obj,opt)
 		};
 		//}}}
 		function enableHandles()/*{{{*/
-		{ 
+		{
 			seehandles = true;
 			if (options.allowResize)
 			{
@@ -775,7 +775,7 @@ $.Jcrop = function(obj,opt)
 			return nothing(e);
 		};
 		/*}}}*/
-		
+
 		if (options.keySupport) $keywrap.insertBefore($img);
 		return {
 			watchKeys: watchKeys
@@ -860,7 +860,7 @@ $.Jcrop = function(obj,opt)
 		{
 			Coords.moveOffset([pos[0] - lloc[0], pos[1] - lloc[1]]);
 			lloc = pos;
-			
+
 			Selection.update();
 		};
 	};
@@ -914,8 +914,8 @@ $.Jcrop = function(obj,opt)
 	function unscale(c)/*{{{*/
 	{
 		return {
-			x: parseInt(c.x * xscale), y: parseInt(c.y * yscale), 
-			x2: parseInt(c.x2 * xscale), y2: parseInt(c.y2 * yscale), 
+			x: parseInt(c.x * xscale), y: parseInt(c.y * yscale),
+			x2: parseInt(c.x2 * xscale), y2: parseInt(c.y2 * yscale),
 			w: parseInt(c.w * xscale), h: parseInt(c.h * yscale)
 		};
 	};
@@ -968,7 +968,7 @@ $.Jcrop = function(obj,opt)
 
 	// }}}
 	// API methods {{{
-		
+
 	function animateTo(a)/*{{{*/
 	{
 		var x1 = a[0] / xscale,
@@ -1133,7 +1133,7 @@ $.Jcrop = function(obj,opt)
 
 	$hdl_holder.hide();
 	interfaceUpdate(true);
-	
+
 	var api = {
 		animateTo: animateTo,
 		setSelect: setSelect,

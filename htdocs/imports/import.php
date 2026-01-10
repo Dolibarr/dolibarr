@@ -234,7 +234,7 @@ if ($action == 'add_import_model' && $user->hasRight('import', 'run')) {
 	}
 }
 
-if ($step == 3 && $datatoimport) {
+if ($step == 2 && $datatoimport) {
 	if (GETPOST('sendit') && getDolGlobalString('MAIN_UPLOAD_DOC')) {
 		dol_mkdir($conf->import->dir_temp);
 		$nowyearmonth = dol_print_date(dol_now(), '%Y%m%d%H%M%S');
@@ -412,7 +412,7 @@ if ($step == 1 || !$datatoimport) {
 }
 
 
-// STEP 2: Page to select input format file
+// STEP 2: Page to select file
 if ($step == 2 && $datatoimport) {
 	$param = '&datatoimport='.urlencode($datatoimport);
 	if ($excludefirstline) {
@@ -428,127 +428,19 @@ if ($step == 2 && $datatoimport) {
 		$param .= '&enclosure='.urlencode($enclosure);
 	}
 
+	$list = $objmodelimport->listOfAvailableImportFormat($db);
+
 	llxHeader('', $langs->trans("NewImport"), $help_url);
 
 	$head = import_prepare_head($param, 2);
 
 	print dol_get_fiche_head($head, 'step2', 'Import', -2, 'upload');
 
-	print '<div class="underbanner clearboth"></div>';
-	print '<div class="fichecenter">';
-
-	print '<table class="border tableforfield centpercent">';
-
-	// Module
-	print '<tr><td class="titlefieldcreate">'.$langs->trans("Module").'</td>';
-	print '<td>';
-	$titleofmodule = $objimport->array_import_module[0]['module']->getName();
-	// Special case for import common to module/services
-	if (in_array($objimport->array_import_code[0], array('produit_supplierprices', 'produit_multiprice', 'produit_languages'))) {
-		$titleofmodule = $langs->trans("ProductOrService");
-	}
-	print $titleofmodule;
-	print '</td></tr>';
-
-	// Dataset to import
-	print '<tr><td>'.$langs->trans("DatasetToImport").'</td>';
-	print '<td>';
-	$entity = preg_replace('/:.*$/', '', $objimport->array_import_icon[0]);
-	$entityicon = strtolower(!empty($entitytoicon[$entity]) ? $entitytoicon[$entity] : $entity);
-	print img_object($objimport->array_import_module[0]['module']->getName(), $entityicon).' ';
-	print $objimport->array_import_label[0];
-	print '</td></tr>';
-
-	print '</table>';
-	print '</div>';
-
-	print dol_get_fiche_end();
-
-	print '<form name="userfile" action="'.$_SERVER["PHP_SELF"].'" enctype="multipart/form-data" METHOD="POST">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
-
-	print '<br>';
-
-	print '<span class="opacitymedium">';
-	$s = $langs->trans("ChooseFormatOfFileToImport", '{s1}');
-	$s = str_replace('{s1}', img_picto('', 'next'), $s);
-	print $s;
-	print '</span><br><br>';
-
-	print '<br>';
-
-	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-	print '<table class="noborder centpercent" cellpadding="4">';
-
-	$filetoimport = '';
-
-	// Add format information and link to download example
-	print '<tr class="liste_titre"><td colspan="5">';
-	print $langs->trans("FileMustHaveOneOfFollowingFormat");
-	print '</td></tr>';
-	$list = $objmodelimport->listOfAvailableImportFormat($db);
-	foreach ($list as $key) {
-		print '<tr class="oddeven">';
-		print '<td width="16">'.img_picto_common($key, $objmodelimport->getPictoForKey($key)).'</td>';
-		$htmltext = $objmodelimport->getDriverDescForKey($key);
-		print '<td>'.$form->textwithpicto($objmodelimport->getDriverLabelForKey($key), $htmltext).'</td>';
-		print '<td style="text-align:center">';
-		if (empty($objmodelimport->drivererror[$key])) {
-			$filename = $langs->transnoentitiesnoconv("ExampleOfImportFile").'_'.$datatoimport.'.'.$key;
-			print '<a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$key.$param.'&output=file&file='.urlencode($filename).'" target="_blank" rel="noopener noreferrer">';
-			print img_picto('', 'download', 'class="paddingright opacitymedium"');
-			print $langs->trans("DownloadEmptyExampleShort");
-			print '</a>';
-			print $form->textwithpicto('', $langs->trans("DownloadEmptyExample").'.<br>'.$langs->trans("StarAreMandatory"));
-		} else {
-			print dolPrintHTML($objmodelimport->drivererror[$key]);
-		}
-		print '</td>';
-		// Action button
-		print '<td style="text-align:right">';
-		if (empty($objmodelimport->drivererror[$key])) {
-			print '<a href="'.DOL_URL_ROOT.'/imports/import.php?step=3&format='.$key.$param.'">'.img_picto($langs->trans("SelectFormat"), 'next', 'class="fa-15"').'</a>';
-		}
-		print '</td>';
-		print '</tr>';
-	}
-
-	print '</table>';
-	print '</div>';
-
-	print '</form>';
-}
-
-
-// STEP 3: Page to select file
-if ($step == 3 && $datatoimport) {
-	$param = '&datatoimport='.urlencode($datatoimport).'&format='.urlencode($format);
-	if ($excludefirstline) {
-		$param .= '&excludefirstline='.urlencode($excludefirstline);
-	}
-	if ($endatlinenb) {
-		$param .= '&endatlinenb='.urlencode($endatlinenb);
-	}
-	if ($separator) {
-		$param .= '&separator='.urlencode($separator);
-	}
-	if ($enclosure) {
-		$param .= '&enclosure='.urlencode($enclosure);
-	}
-
-	$list = $objmodelimport->listOfAvailableImportFormat($db);
-
-	llxHeader('', $langs->trans("NewImport"), $help_url);
-
-	$head = import_prepare_head($param, 3);
-
-	print dol_get_fiche_head($head, 'step3', 'Import', -2, 'upload');
-
 	/*
 	 * Confirm delete file
 	 */
 	if ($action == 'delete') {
-		print $form->formconfirm($_SERVER["PHP_SELF"].'?urlfile='.urlencode(GETPOST('urlfile')).'&step=3'.$param, $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?urlfile='.urlencode(GETPOST('urlfile')).'&step=2'.$param, $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
 	}
 
 	print '<div class="underbanner clearboth"></div>';
@@ -579,7 +471,7 @@ if ($step == 3 && $datatoimport) {
 	print '</table>';
 	print '</div>';
 
-	print '<br>';
+	/*print '<br>';
 
 	print load_fiche_titre($langs->trans("InformationOnSourceFile"), '', 'file-export');
 
@@ -594,16 +486,11 @@ if ($step == 3 && $datatoimport) {
 	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 	print $form->textwithpicto($objmodelimport->getDriverLabelForKey($format), $text);
 	print '</td><td style="text-align:right" class="nowrap">';
-	$filename = $langs->transnoentitiesnoconv("ExampleOfImportFile").'_'.$datatoimport.'.'.$format;
-	print '<a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$format.$param.'&output=file&file='.urlencode($filename).'" target="_blank" rel="noopener noreferrer">';
-	print img_picto('', 'download', 'class="paddingright opacitymedium"');
-	print $langs->trans("DownloadEmptyExampleShort");
-	print '</a>';
 	print $form->textwithpicto('', $langs->trans("DownloadEmptyExample").'.<br>'.$langs->trans("StarAreMandatory"));
 	print '</td></tr>';
 
 	print '</table>';
-	print '</div>';
+	print '</div>';*/
 
 	print dol_get_fiche_end();
 
@@ -634,6 +521,36 @@ if ($step == 3 && $datatoimport) {
 
 	$filetoimport = '';
 
+	print '<table class="noborder centpercent" cellpadding="4">';
+
+	$filetoimport = '';
+
+	// Add format information and link to download example
+	print '<tr class="liste_titre"><td colspan="4">';
+	print $langs->trans("FileMustHaveOneOfFollowingFormat");
+	print '</td></tr>';
+	$list = $objmodelimport->listOfAvailableImportFormat($db);
+	foreach ($list as $key) {
+		print '<tr class="oddeven">';
+		print '<td width="16">'.img_picto_common($key, $objmodelimport->getPictoForKey($key)).'</td>';
+		$htmltext = $objmodelimport->getDriverDescForKey($key);
+		print '<td>'.$form->textwithpicto($objmodelimport->getDriverLabelForKey($key), $htmltext).'</td>';
+		print '<td style="text-align:center">';
+		if (empty($objmodelimport->drivererror[$key])) {
+			$filename = $langs->transnoentitiesnoconv("ExampleOfImportFile").'_'.$datatoimport.'.'.$key;
+			print '<a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$key.$param.'&output=file&file='.urlencode($filename).'" target="_blank" rel="noopener noreferrer">';
+			print img_picto('', 'download', 'class="paddingright opacitymedium"');
+			print $langs->trans("DownloadEmptyExampleShort");
+			print '</a>';
+			print $form->textwithpicto('', $langs->trans("DownloadEmptyExample").'.<br>'.$langs->trans("StarAreMandatory"));
+		} else {
+			print dolPrintHTML($objmodelimport->drivererror[$key]);
+		}
+		print '</td>';
+		print '</tr>';
+	}
+
+	print '</table>';
 	// Input file name box
 	print '<div class="marginbottomonly">';
 	$maxfilesizearray = getMaxFileSizeArray();
@@ -696,7 +613,6 @@ if ($step == 3 && $datatoimport) {
 		$out .= ' ('.$langs->trans("UploadDisabled").')';
 	}
 	print $out;
-	print '</div>';
 
 	// Search available imports
 	$filearray = dol_dir_list($conf->import->dir_temp, 'files', 0, '', '', 'name', SORT_DESC);
@@ -727,7 +643,7 @@ if ($step == 3 && $datatoimport) {
 			print '<tr class="oddeven">';
 			print '<td>';
 			print img_mime($file, '', 'pictofixedwidth');
-			print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'&step=3'.$param.'" target="_blank" rel="noopener noreferrer">';
+			print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'&step=2'.$param.'" target="_blank" rel="noopener noreferrer">';
 			print $file;
 			print '</a>';
 			print '</td>';
@@ -736,11 +652,11 @@ if ($step == 3 && $datatoimport) {
 			// Affiche date fichier
 			print '<td style="text-align:right">'.dol_print_date(dol_filemtime($dir.'/'.$file), 'dayhour').'</td>';
 			// Del button
-			print '<td style="text-align:right"><a href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&step=3'.$param.'&urlfile='.urlencode($relativepath);
+			print '<td style="text-align:right"><a href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&step=2'.$param.'&urlfile='.urlencode($relativepath);
 			print '">'.img_delete().'</a></td>';
 			// Action button
 			print '<td style="text-align:right">';
-			print '<a href="'.$_SERVER['PHP_SELF'].'?step=4'.$param.'&filetoimport='.urlencode($relativepath).'">'.img_picto($langs->trans("NewImport"), 'next', 'class="fa-15"').'</a>';
+			print '<a href="'.$_SERVER['PHP_SELF'].'?step=3'.$param.'&filetoimport='.urlencode($relativepath).'">'.img_picto($langs->trans("NewImport"), 'next', 'class="fa-15"').'</a>';
 			print '</td>';
 			print '</tr>';
 		}
@@ -753,8 +669,8 @@ if ($step == 3 && $datatoimport) {
 }
 
 
-// STEP 4: Page to make matching between source file and database fields
-if ($step == 4 && $datatoimport) {
+// STEP 3: Page to make matching between source file and database fields
+if ($step == 3 && $datatoimport) {
 	//var_dump($_SESSION["dol_array_match_file_to_database_select"]);
 	$serialized_array_match_file_to_database = isset($_SESSION["dol_array_match_file_to_database_select"]) ? $_SESSION["dol_array_match_file_to_database_select"] : '';
 	$fieldsarray = explode(',', $serialized_array_match_file_to_database);
@@ -771,6 +687,9 @@ if ($step == 4 && $datatoimport) {
 	//var_dump($serialized_array_match_file_to_database);
 	//var_dump($fieldsarray);
 	//var_dump($array_match_file_to_database);
+	if (empty($format) && !empty($filetoimport)) {
+		$format  = pathinfo($filetoimport, PATHINFO_EXTENSION);
+	}
 
 	$model = $format;
 	$list = $objmodelimport->listOfAvailableImportFormat($db);
@@ -816,7 +735,7 @@ if ($step == 4 && $datatoimport) {
 		$langs->load("errors");
 		$param = '&datatoimport='.$datatoimport.'&format='.$format;
 		setEventMessages($obj->error, null, 'errors');
-		header("Location: ".$_SERVER["PHP_SELF"].'?step=3'.$param.'&filetoimport='.urlencode($relativepath));
+		header("Location: ".$_SERVER["PHP_SELF"].'?step=2'.$param.'&filetoimport='.urlencode($relativepath));
 		exit;
 	}
 
@@ -832,7 +751,7 @@ if ($step == 4 && $datatoimport) {
 			$langs->load("errors");
 			$param = '&datatoimport='.$datatoimport.'&format='.$format;
 			setEventMessages($langs->trans("ErrorFileMustHaveFormat", $model), null, 'errors');
-			header("Location: ".$_SERVER["PHP_SELF"].'?step=3'.$param.'&filetoimport='.urlencode($relativepath));
+			header("Location: ".$_SERVER["PHP_SELF"].'?step=2'.$param.'&filetoimport='.urlencode($relativepath));
 			exit;
 		}
 	}
@@ -962,9 +881,9 @@ if ($step == 4 && $datatoimport) {
 
 	llxHeader('', $langs->trans("NewImport"), $help_url);
 
-	$head = import_prepare_head($param, 4);
+	$head = import_prepare_head($param, 3);
 
-	print dol_get_fiche_head($head, 'step4', 'Import', -2, 'upload');
+	print dol_get_fiche_head($head, 'step3', 'Import', -2, 'upload');
 
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
@@ -1037,7 +956,7 @@ if ($step == 4 && $datatoimport) {
 	print '<td>';
 	$modulepart = 'import';
 	$relativepath = GETPOST('filetoimport');
-	print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'&step=4'.$param.'" target="_blank" rel="noopener noreferrer">';
+	print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'&step=3'.$param.'" target="_blank" rel="noopener noreferrer">';
 	print img_mime($file, '', 'pictofixedwidth');
 	print $filetoimport;
 	print img_picto($langs->trans("Download"), 'download', 'class="paddingleft opacitymedium"');
@@ -1057,7 +976,7 @@ if ($step == 4 && $datatoimport) {
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="select_model">';
-	print '<input type="hidden" name="step" value="4">';
+	print '<input type="hidden" name="step" value="3">';
 	print '<input type="hidden" name="format" value="'.$format.'">';
 	print '<input type="hidden" name="datatoimport" value="'.$datatoimport.'">';
 	print '<input type="hidden" name="filetoimport" value="'.$filetoimport.'">';
@@ -1467,7 +1386,7 @@ if ($step == 4 && $datatoimport) {
 
 	if (count($array_match_file_to_database)) {
 		if ($mandatoryfieldshavesource) {
-			print '<a class="butAction saveorderselect" href="import.php?step=5'.$param.'&filetoimport='.urlencode($filetoimport).'">'.$langs->trans("NextStep").'</a>';
+			print '<a class="butAction saveorderselect" href="import.php?step=4'.$param.'&filetoimport='.urlencode($filetoimport).'">'.$langs->trans("NextStep").'</a>';
 		} else {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("SomeMandatoryFieldHaveNoSource")).'">'.$langs->trans("NextStep").'</a>';
 		}
@@ -1567,8 +1486,8 @@ if ($step == 4 && $datatoimport) {
 	}
 }
 
-// STEP 5: Summary of choices and launch simulation
-if ($step == 5 && $datatoimport) {
+// STEP 4: Summary of choices and launch simulation
+if ($step == 4 && $datatoimport) {
 	$max_execution_time_for_importexport = getDolGlobalInt('IMPORT_MAX_EXECUTION_TIME', 300); // 5mn if not defined
 	$max_time = @ini_get("max_execution_time");
 	if ($max_time && $max_time < $max_execution_time_for_importexport) {
@@ -1624,15 +1543,15 @@ if ($step == 5 && $datatoimport) {
 
 	llxHeader('', $langs->trans("NewImport"), $help_url);
 
-	$head = import_prepare_head($param, 5);
+	$head = import_prepare_head($param, 4);
 
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'?'.$param2.'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="step" value="5">'; // step 5
-	print '<input type="hidden" name="action" value="launchsimu">'; // step 5
+	print '<input type="hidden" name="step" value="4">'; // step 4
+	print '<input type="hidden" name="action" value="launchsimu">'; // step 4
 
-	print dol_get_fiche_head($head, 'step5', 'Import', -2, 'upload');
+	print dol_get_fiche_head($head, 'step4', 'Import', -2, 'upload');
 
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
@@ -1727,7 +1646,7 @@ if ($step == 5 && $datatoimport) {
 		print $form->textwithpicto("", $langs->trans("KeepEmptyToGoToEndOfFile"));
 	}
 	if ($action == 'launchsimu') {
-		print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'?step=5'.$param.'">'.$langs->trans("Modify").'</a>';
+		print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'?step=4'.$param.'">'.$langs->trans("Modify").'</a>';
 	}
 	if ($excludefirstline == 2) {
 		print $form->textwithpicto("", $langs->trans("WarningFirstImportedLine", $excludefirstline), 1, 'warning', "warningexcludefirstline");
@@ -1758,7 +1677,7 @@ if ($step == 5 && $datatoimport) {
 		foreach ($updatekeys as $val) {
 			print '<input type="hidden" name="updatekeys[]" value="'.$val.'">';
 		}
-		print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'?step=5'.$param.'">'.$langs->trans("Modify").'</a>';
+		print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'?step=4'.$param.'">'.$langs->trans("Modify").'</a>';
 	} else {
 		if (is_array($objimport->array_import_updatekeys[0]) && count($objimport->array_import_updatekeys[0])) {   //TODO dropdown UL is created inside nested SPANS
 			print $form->multiselectarray('updatekeys', $objimport->array_import_updatekeys[0], $updatekeys, 0, 0, '', 1, '80%');
@@ -2051,7 +1970,7 @@ if ($step == 5 && $datatoimport) {
 		print '<div class="center">';
 		if ($user->hasRight('import', 'run')) {
 			if (empty($nboferrors)) {
-				print '<a class="butAction" href="'.DOL_URL_ROOT.'/imports/import.php?leftmenu=import&step=6&importid='.$importid.$param.'">'.$langs->trans("RunImportFile").'</a>';
+				print '<a class="butAction" href="'.DOL_URL_ROOT.'/imports/import.php?leftmenu=import&step=5&importid='.$importid.$param.'">'.$langs->trans("RunImportFile").'</a>';
 			} else {
 				//print '<input type="submit" class="butAction" value="'.dol_escape_htmltag($langs->trans("RunSimulateImportFile")).'">';
 
@@ -2070,7 +1989,7 @@ if ($step == 5 && $datatoimport) {
 
 
 // STEP 6: Real import
-if ($step == 6 && $datatoimport) {
+if ($step == 5 && $datatoimport) {
 	$max_execution_time_for_importexport = getDolGlobalInt('IMPORT_MAX_EXECUTION_TIME', 300); // 5mn if not defined
 	$max_time = @ini_get("max_execution_time");
 	if ($max_time && $max_time < $max_execution_time_for_importexport) {
@@ -2129,9 +2048,9 @@ if ($step == 6 && $datatoimport) {
 
 	llxHeader('', $langs->trans("NewImport"), $help_url);
 
-	$head = import_prepare_head($param, 6);
+	$head = import_prepare_head($param, 5);
 
-	print dol_get_fiche_head($head, 'step6', 'Import', -1, 'upload');
+	print dol_get_fiche_head($head, 'step5', 'Import', -1, 'upload');
 
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';

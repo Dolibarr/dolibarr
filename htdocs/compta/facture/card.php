@@ -4507,10 +4507,9 @@ if ($action == 'create') {
 
 		// Bank Account
 		if (isModEnabled("bank")) {
-			print '<tr><td>'.$langs->trans('BankAccount').'</td><td colspan="2">';
+			print '<tr><td>'.$langs->trans('DefaultBankAccount').'</td><td colspan="2">';
 			print img_picto('', 'bank_account', 'class="pictofixedwidth"');
 			print $form->select_comptes((int) $fk_account, 'fk_account', 0, '', 1, '', 0, 'maxwidth250 widthcentpercentminusx', 1);
-			//print ' <a href="'.DOL_URL_ROOT.'/compta/bank/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id.($fac_rec ? '&fac_rec='.$fac_rec : '')).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("NewBankAccount").'"></span></a>';
 			print '</td></tr>';
 		}
 
@@ -4992,44 +4991,88 @@ if ($action == 'create') {
 		}
 	}
 
-	// Confirm back to draft status
+	// Confirm back to draft status (action = 'modif')
 	if ($action == 'modif') {
-		$text = $langs->trans('ConfirmUnvalidateBill', $object->ref);
-		$formquestion = array();
+		$oktomodif = 1;		// Assume we can modify by default
 
-		if ($object->type != Facture::TYPE_DEPOSIT && getDolGlobalString('STOCK_CALCULATE_ON_BILL')) {
-			$qualified_for_stock_change = 0;
-			if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
-				$qualified_for_stock_change = $object->hasProductsOrServices(2);
-			} else {
-				$qualified_for_stock_change = $object->hasProductsOrServices(1);
+		$testvalue = $object->isEditable();
+		if ($testvalue < 0) {
+			switch ($testvalue) {
+				case -1:
+					// Dispatched in bookkeeping
+					setEventMessages($langs->trans("DisabledBecauseDispatchedInBookkeeping"), null, 'errors');
+					break;
+				case -2:
+					// Not last invoice
+					setEventMessages($langs->trans("DisabledBecauseNotLastInvoice"), null, 'errors');
+					break;
+				case -3:
+					// Not last situation invoice
+					setEventMessages($langs->trans("DisabledBecauseNotLastSituationInvoice"), null, 'errors');
+					break;
+				case -4:
+					// At least one payment made
+					setEventMessages($langs->trans("DisabledBecauseThereIsAPayment"), null, 'errors');
+					break;
+				case -5:
+					// Already sent by email
+					setEventMessages($langs->trans("DisabledBecauseAlreadySentByEmail"), null, 'errors');
+					break;
+				case -6:
+					// Already printed once
+					setEventMessages($langs->trans("DisabledBecauseAlreadyPrintedOnce"), null, 'errors');
+					break;
+				case -7:
+					// Already validated
+					setEventMessages($langs->trans("DisabledBecauseVersionProtected"), null, 'errors');
+					break;
+				default:
+					// Other error
+					setEventMessages($langs->trans("DisabledBecauseNotErasable"), null, 'errors');
+					break;
 			}
-
-			if ($qualified_for_stock_change) {
-				$langs->load("stocks");
-				require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
-				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
-				$formproduct = new FormProduct($db);
-				$warehouse = new Entrepot($db);
-				$warehouse_array = $warehouse->list_array();
-				if (count($warehouse_array) == 1) {
-					$label = $object->type == Facture::TYPE_CREDIT_NOTE ? $langs->trans("WarehouseForStockDecrease", current($warehouse_array)) : $langs->trans("WarehouseForStockIncrease", current($warehouse_array));
-					$value = '<input type="hidden" id="idwarehouse" name="idwarehouse" value="'.key($warehouse_array).'">';
-				} else {
-					$label = $object->type == Facture::TYPE_CREDIT_NOTE ? $langs->trans("SelectWarehouseForStockDecrease") : $langs->trans("SelectWarehouseForStockIncrease");
-					$value = $formproduct->selectWarehouses(GETPOST('idwarehouse') ? GETPOST('idwarehouse') : 'ifone', 'idwarehouse', '', 1);
-				}
-				$formquestion = array(
-									// 'text' => $langs->trans("ConfirmClone"),
-									// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' =>
-									// 1),
-									// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value'
-									// => 1),
-									array('type' => 'other', 'name' => 'idwarehouse', 'label' => $label, 'value' => $value));
-			}
+			$oktomodif = 0;
+			$action = '';
 		}
 
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id, $langs->trans('UnvalidateBill'), $text, 'confirm_modif', $formquestion, "yes", 1);
+		if ($oktomodif) {
+			$text = $langs->trans('ConfirmUnvalidateBill', $object->ref);
+			$formquestion = array();
+
+			if ($object->type != Facture::TYPE_DEPOSIT && getDolGlobalString('STOCK_CALCULATE_ON_BILL')) {
+				$qualified_for_stock_change = 0;
+				if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
+					$qualified_for_stock_change = $object->hasProductsOrServices(2);
+				} else {
+					$qualified_for_stock_change = $object->hasProductsOrServices(1);
+				}
+
+				if ($qualified_for_stock_change) {
+					$langs->load("stocks");
+					require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+					require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+					$formproduct = new FormProduct($db);
+					$warehouse = new Entrepot($db);
+					$warehouse_array = $warehouse->list_array();
+					if (count($warehouse_array) == 1) {
+						$label = $object->type == Facture::TYPE_CREDIT_NOTE ? $langs->trans("WarehouseForStockDecrease", current($warehouse_array)) : $langs->trans("WarehouseForStockIncrease", current($warehouse_array));
+						$value = '<input type="hidden" id="idwarehouse" name="idwarehouse" value="'.key($warehouse_array).'">';
+					} else {
+						$label = $object->type == Facture::TYPE_CREDIT_NOTE ? $langs->trans("SelectWarehouseForStockDecrease") : $langs->trans("SelectWarehouseForStockIncrease");
+						$value = $formproduct->selectWarehouses(GETPOST('idwarehouse') ? GETPOST('idwarehouse') : 'ifone', 'idwarehouse', '', 1);
+					}
+					$formquestion = array(
+										// 'text' => $langs->trans("ConfirmClone"),
+										// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' =>
+										// 1),
+										// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value'
+										// => 1),
+										array('type' => 'other', 'name' => 'idwarehouse', 'label' => $label, 'value' => $value));
+				}
+			}
+
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id, $langs->trans('UnvalidateBill'), $text, 'confirm_modif', $formquestion, "yes", 1);
+		}
 	}
 
 	// Confirmation of payment classification
@@ -5500,7 +5543,7 @@ if ($action == 'create') {
 		if (isModEnabled("bank")) {
 			print '<tr><td class="nowrap">';
 			print '<table class="nobordernopadding centpercent"><tr><td class="nowrap">';
-			print $langs->trans('BankAccount');
+			print $langs->trans('DefaultBankAccount');
 			print '<td>';
 			if (($action != 'editbankaccount') && $usercancreate) {
 				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';

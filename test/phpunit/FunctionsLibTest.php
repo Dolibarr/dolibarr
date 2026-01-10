@@ -2046,4 +2046,44 @@ class FunctionsLibTest extends CommonClassTest
 		$this->assertEquals("1", $result[0]);
 		$this->assertEquals("0", $result[1]);
 	}
+
+
+
+	/**
+	 * testDolSanitizePathName
+	 *
+	 * @return void
+	 */
+	public function testDolSanitizePathName()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$s = '../aéa/bbb ccc/ddd';
+		$result = dol_sanitizePathName($s);
+		$this->assertEquals('_/aéa/bbb ccc/ddd', $result);
+
+		$s = '../aéa/bbb ccc/ddd';
+		$result = dol_sanitizePathName($s, '_', 1);
+		$this->assertEquals('_/aea/bbb ccc/ddd', $result);
+
+		$s = 'C:\ccc/d\'d"d$';
+		$result = dol_sanitizePathName($s);
+		$this->assertEquals('C:\ccc/d\'d_d_', $result);
+
+		$s = 'C:\ccc/d\'d"d$';
+		$result = dol_sanitizePathName($s);
+		$this->assertEquals('C:\ccc/d\'d_d_', $result);
+
+		$s = '/aaa/bbb -a -b';
+		$result = dol_sanitizePathName($s);
+		$this->assertEquals('/aaa/bbb _a _b', $result);
+
+		$s = '/aaa/bbb -a -b';
+		$result = dol_sanitizePathName($s, '_', 0, 1);
+		$this->assertEquals('/aaa/bbb -a -b', $result);
+	}
 }
