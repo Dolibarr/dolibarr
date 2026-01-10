@@ -2223,7 +2223,7 @@ class ExtraFields
 
 					// Several field into label (eq table:code|label:rowid)
 					$fields_label = explode('|', $InfoFieldList[1]);
-					$fields_label_names = array_map([$this, 'extractSQLAlias'], $fields_label);	
+					$fields_label_names = array_map([$this, 'extractSQLAlias'], $fields_label);
 
 					if (is_array($fields_label_names) && count($fields_label_names) > 1) {
 						foreach ($fields_label_names as $field_toshow) {
