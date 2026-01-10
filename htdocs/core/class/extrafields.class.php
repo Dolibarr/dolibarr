@@ -139,13 +139,13 @@ class ExtraFields
 
 	/**
 	 * Extract SQL aliases
-	 * 
-	 * @param string 	string from which we want to extract the alias. ex. "CONCAT(name, '-', age) as newlabel"
-	 * @return	string	only the SQL alias. ex. "newlabel"
+	 *
+	 * @param	string	$val 	String from which we want to extract the alias. ex. "CONCAT(name, '-', age) as newlabel"
+	 * @return	string			Only the SQL alias. ex. "newlabel"
 	 */
 	private static function extractSQLAlias($val)
 	{
-		$new_val = preg_replace('/[a-z_]+\([^\)]*\) as ([\w]+)/i', '\1', $val);
+		$new_val = preg_replace('/^[a-z_]+\([^\)]*\) as ([\w]+)/i', '\1', $val);
 		// Sanitize field names to avoid error when doing $obj->field
 		$new_val = preg_replace('/[^0-9a-z_\.\|]/i', '', $new_val);
 		return $new_val;
