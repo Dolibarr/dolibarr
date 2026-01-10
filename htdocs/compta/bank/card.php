@@ -703,7 +703,7 @@ if ($action == 'create') {
 		print '<table class="border centpercent tableforfield">';
 
 		// Type
-		print '<tr><td class="titlefield">'.$langs->trans("AccountType").'</td>';
+		print '<tr><td class="titlefieldmiddle">'.$langs->trans("AccountType").'</td>';
 		print '<td>'.$object->type_lib[$object->type].'</td></tr>';
 
 		// Currency
@@ -739,10 +739,13 @@ if ($action == 'create') {
 		print '<tr class="liste_titre_add"><td class="titlefield">'.$langs->trans("AccountancyCode").'</td>';
 		print '<td>';
 		if (isModEnabled('accounting')) {
-			$accountingaccount = new AccountingAccount($db);
-			$accountingaccount->fetch(0, $object->account_number, 1);
-
-			print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
+			if (empty($object->account_number)) {
+				print img_warning($langs->trans("Mandatory"));
+			} else {
+				$accountingaccount = new AccountingAccount($db);
+				$accountingaccount->fetch(0, $object->account_number, 1);
+				print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
+			}
 		} else {
 			print $object->account_number;
 		}
@@ -752,11 +755,11 @@ if ($action == 'create') {
 		if (isModEnabled('accounting')) {
 			print '<tr><td>'.$langs->trans("AccountancyJournal").'</td>';
 			print '<td>';
-
-			if ($object->fk_accountancy_journal > 0) {
+			if (empty($object->fk_accountancy_journal)) {
+				print img_warning($langs->trans("Mandatory"));
+			} elseif ($object->fk_accountancy_journal > 0) {
 				$accountingjournal = new AccountingJournal($db);
 				$accountingjournal->fetch($object->fk_accountancy_journal);
-
 				print $accountingjournal->getNomUrl(0, 1, 1, '', 1);
 			}
 			print '</td></tr>';
@@ -869,15 +872,15 @@ if ($action == 'create') {
 			print nl2br($object->owner_address);
 			print "</td></tr>\n";
 
-			print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerZip").'</td>';
+			print '<tr><td>'.$langs->trans("BankAccountOwnerZip").'</td>';
 			print '<td>'.dol_escape_htmltag($object->owner_zip);
 			print '</td></tr>';
 
-			print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerTown").'</td>';
+			print '<tr><td>'.$langs->trans("BankAccountOwnerTown").'</td>';
 			print '<td>'.dol_escape_htmltag($object->owner_town);
 			print '</td></tr>';
 
-			print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerCountry").'</td>';
+			print '<tr><td>'.$langs->trans("BankAccountOwnerCountry").'</td>';
 			print '<td>';
 			$object->owner_country_code = dol_getIdFromCode($db, $object->owner_country_id, 'c_country', 'rowid', 'code');
 			$langs->load("dict");

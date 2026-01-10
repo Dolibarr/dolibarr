@@ -52,6 +52,7 @@ require_once '../lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 
 $langs->load("mails");
 
@@ -156,10 +157,11 @@ if (GETPOSTISSET('template')) {
 		$content);
 
 
+	$template = GETPOST('template', 'alpha');
 	// Get list of selected news or products
-	$selectedPostsStr = GETPOST('selectedPosts', 'alpha');
+	$selectedIdsStr = GETPOST('selectedPosts', 'alpha');
 	//$selectedPosts = array();
-	$selectedPosts = json_decode($selectedPostsStr);
+	$selectedIds = json_decode($selectedIdsStr);
 	/*if (is_array($selectedPostsStr)) {
 		$selectedPosts = explode(',', $selectedPostsStr);
 	}*/
@@ -172,28 +174,43 @@ if (GETPOSTISSET('template')) {
 		}
 	} */
 
-	if (is_array($selectedPosts) && !empty($selectedPosts)) {
+	if (!empty($selectedIds) && !empty($template) && is_array($selectedIds) ) {
 		$newsList = '';
+		$productList = '';
+		foreach ($selectedIds as $Id) {
+			if ($template == "news") {
+				$post = getNewsDetailsById($Id);
 
-		foreach ($selectedPosts as $postId) {
-			$post = getNewsDetailsById($postId);
+				$newsList .= '<div style="display: flex; align-items: flex-start; justify-content: flex-start; width: 100%; max-width: 800px; margin-top: 20px;margin-bottom: 50px; padding: 20px;">
+								<div style="flex-grow: 1; margin-right: 30px; max-width: 600px; margin-left: 100px;">
+									<h2 style="margin: 0; font-size: 1.5em;">' . (empty($post['title']) ? '' : dol_htmlentitiesbr($post['title'])) . '</h2>
+									<p style="margin: 10px 0; color: #555;">' . (empty($post['description']) ? '' : dol_htmlentitiesbr($post['description'])) . '</p>
+									<span style="display: block; margin-bottom: 5px; color: #888;">Created By: <strong>' . dol_htmlentitiesbr(empty($post['user_fullname']) ? '' : $post['user_fullname']) . '</strong></span>
+									<br>
+									<span style="display: block; color: #888;">' . dol_print_date((empty($post['date_creation']) ? dol_now() : $post['date_creation']), 'daytext', 'tzserver', $langs) . '</span>
+								</div>
+								<div style="flex-shrink: 0; margin-left: 100px; float: right;">
+									' . (!empty($post['image']) ? '<img alt="Image" width="130px" height="130px" style="border-radius: 10px;" src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=medias&file=' . dol_htmlentitiesbr($post['image']) . '">' : '<img alt="Gray rectangle" width="130px" height="130px" style="border-radius: 10px;" src="__GRAY_RECTANGLE__">') . '
+								</div>
+							</div>';
+			} elseif ($template == "product") {
+				$product = getProductForEmailTemplate($Id);
 
-			$newsList .= '<div style="display: flex; align-items: flex-start; justify-content: flex-start; width: 100%; max-width: 800px; margin-top: 20px;margin-bottom: 50px; padding: 20px;">
-                            <div style="flex-grow: 1; margin-right: 30px; max-width: 600px; margin-left: 100px;">
-                                <h2 style="margin: 0; font-size: 1.5em;">' . htmlentities(empty($post['title']) ? '' : $post['title']) . '</h2>
-                                <p style="margin: 10px 0; color: #555;">' . htmlentities(empty($post['description']) ? '' : $post['description']) . '</p>
-                                <span style="display: block; margin-bottom: 5px; color: #888;">Created By: <strong>' . htmlentities(empty($post['user_fullname']) ? '' : $post['user_fullname']) . '</strong></span>
-                                <br>
-                                <span style="display: block; color: #888;">' . dol_print_date((empty($post['date_creation']) ? dol_now() : $post['date_creation']), 'daytext', 'tzserver', $langs) . '</span>
-                            </div>
-                            <div style="flex-shrink: 0; margin-left: 100px; float: right;">
-                                ' . (!empty($post['image']) ? '<img alt="Image" width="130px" height="130px" style="border-radius: 10px;" src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=medias&file=' . htmlentities($post['image']) . '">' : '<img alt="Gray rectangle" width="130px" height="130px" style="border-radius: 10px;" src="__GRAY_RECTANGLE__">') . '
-                            </div>
-                        </div>';
+				$productList .= '<div style="width:100%; padding: 20px;">
+									<div>
+									' . (!empty($product['image']) ? dol_htmlentitiesbr($product['image']) : '<img alt="Gray rectangle" width="130px" height="130px" style="border-radius: 10px;" src="__GRAY_RECTANGLE__">') . '
+									</div>
+									<div>
+										<h2>'.(dol_htmlentitiesbr($product["ref"])).(empty($product["label"]) ? '' : ' - '.dol_htmlentitiesbr($product["label"])).'</h2>
+										<p style="margin: 10px 0; color: #555;">'. (empty($product['description']) ? '' : dol_htmlentitiesbr($product['description'])) .'</p>
+									</div>
+								</div>
+				';
+			}
 		}
 
 		$content = str_replace('__NEWS_LIST__', $newsList, $content);
-		$content = str_replace('__PRODUCT_SELECTED__', $newsList, $content);
+		$content = str_replace('__PRODUCT_SELECTED__', $productList, $content);
 	} else {
 		$content = str_replace('__NEWS_LIST__', $langs->trans("SelectSomeArticlesOrEnterYourOwnContent"), $content);
 		$content = str_replace('__PRODUCT_SELECTED__', $langs->trans("SelectOneArticleOrEnterYourOwnContent"), $content);

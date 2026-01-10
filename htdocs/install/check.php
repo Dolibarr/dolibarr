@@ -448,8 +448,8 @@ if (!file_exists($conffile)) {
 
 		// Show title
 		if (getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') || getDolGlobalString('MAIN_VERSION_LAST_INSTALL')) {
-			print $langs->trans("VersionLastUpgrade").' <b><span class="badge-text badge-secondary okinversed">'.getDolGlobalString('MAIN_VERSION_LAST_UPGRADE', getDolGlobalString('MAIN_VERSION_LAST_INSTALL')).'</span></b> &nbsp; - &nbsp; ';
-			print $langs->trans("VersionProgram").' <b><span class="badge-text badge-secondary okinversed">'.DOL_VERSION.'</span></b>';
+			print $langs->trans("VersionLastUpgrade").' <b><span class="badge-text okinversed">'.getDolGlobalString('MAIN_VERSION_LAST_UPGRADE', getDolGlobalString('MAIN_VERSION_LAST_INSTALL')).'</span></b> &nbsp; - &nbsp; ';
+			print $langs->trans("VersionProgram").' <b><span class="badge-text okinversed">'.DOL_VERSION.'</span></b>';
 			//print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired"));
 			print '<br>';
 			print '<br>';
