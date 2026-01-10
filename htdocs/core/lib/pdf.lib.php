@@ -774,8 +774,8 @@ function pdf_pagehead(&$pdf, $outputlangs, $page_height)
  * 		@param	float		$page_height	Height of page
  * 		@param	Facture		$object			Object invoice
  * 		@param	int			$w				Width for text
- * 		@param	int			$posx			Pos x
- * 		@param	int			$posy			Pos y
+ * 		@param	float		$posx			Pos x
+ * 		@param	float		$posy			Pos y
  *      @return	void
  */
 function pdfWriteBlockedLogSignature(&$pdf, $outputlangs, $page_height, $object, &$w, &$posx, &$posy)
