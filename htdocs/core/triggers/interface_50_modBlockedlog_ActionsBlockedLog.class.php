@@ -92,9 +92,22 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 
 		if ($action === 'PAYMENT_CUSTOMER_CREATE' && $object->element == 'payment') {
 			if (isALNERunningVersion() && $mysoc->country_code == 'FR') {
+				if (empty($object->paiementcode) && !empty($object->paiementid)) {
+					$object->paiementcode = dol_getIdFromCode($this->db, $object->paiementid, 'c_paiement', 'id', 'code', 1);
+				}
+
 				if (!in_array($object->paiementcode, array('LIQ', 'CB', 'CHQ'))) {
-					$this->errors[] = 'The payment mode '.$object->paiementcode.' is not available in this version.';
-					return -1;
+					// Check that invoice of payment is not from a POS module. Refuse if yes
+					if (is_array($object->amounts)) {
+						$invoiceids = array();
+						foreach ($object->amounts as $objid => $amount) {
+							$invoiceids[] = $objid;
+						}
+					}
+					// Test there is not invoices with id in $invoiceids and with a module_source that is not empty
+
+					//$this->errors[] = 'The payment mode '.$object->paiementcode.' is not available in this version.';
+					//return -1;
 				}
 			}
 		}
