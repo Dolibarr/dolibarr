@@ -4358,7 +4358,7 @@ function dol_print_url($url, $target = '_blank', $max = 32, $withpicto = 0, $mor
 /**
  * Show EMail link formatted for HTML output.
  *
- * @param	string		$email			EMail to show (only email, without 'Name of recipient' before)
+ * @param	string		$email			EMail to show (can be 'email' or 'Name of recipient <email>')
  * @param 	int			$contactid 		Id of contact if known
  * @param 	int			$socid 			Id of third party if known
  * @param 	int|string	$addlink		0=no link, 1=email has a html email link (+ link to create action if constant AGENDA_ADDACTIONFOREMAIL is on), 'thirdparty'=link to the thirdparty presend email
@@ -4401,9 +4401,15 @@ function dol_print_email($email, $contactid = 0, $socid = 0, $addlink = 0, $max 
 			$newemail .= $email;
 		}
 		$newemail .= '</a>';
-		if ($showinvalid && !isValidEmail($email)) {
+
+		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+		$emailonly = CMailFile::getValidAddress($email, 2);
+		if ($showinvalid && !isValidEmail($emailonly)) {
 			$langs->load("errors");
-			$newemail .= img_warning($langs->trans("ErrorBadEMail", $email), '', 'paddingrightonly');
+			$newemail .= img_warning($langs->transnoentitiesnoconv("ErrorBadEMail", $emailonly), '', 'paddingrightonly');
+		} elseif ($showinvalid && !isValidMailDomain($emailonly)) {
+			$langs->load("errors");
+			$newemail .= img_warning($langs->transnoentitiesnoconv("ErrorBadMXDomain", $emailonly), '', 'paddingrightonly');
 		}
 
 		if (($contactid || $socid) && isModEnabled('agenda') && $user->hasRight("agenda", "myactions", "create")) {
@@ -4428,9 +4434,14 @@ function dol_print_email($email, $contactid = 0, $socid = 0, $addlink = 0, $max 
 	} else {
 		$newemail = ($withpicto ? img_picto($langs->trans("EMail") . ' : ' . $email, (is_numeric($withpicto) ? 'email' : $withpicto), 'class="paddingrightonly"') : '') . $newemail;
 
-		if ($showinvalid && !isValidEmail($email)) {
+		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+		$emailonly = CMailFile::getValidAddress($email, 2);
+		if ($showinvalid && !isValidEmail($emailonly)) {
 			$langs->load("errors");
-			$newemail .= img_warning($langs->trans("ErrorBadEMail", $email));
+			$newemail .= img_warning($langs->transnoentitiesnoconv("ErrorBadEMail", $email));
+		} elseif ($showinvalid && !isValidMailDomain($emailonly)) {
+			$langs->load("errors");
+			$newemail .= img_warning($langs->transnoentitiesnoconv("ErrorBadMXDomain", $emailonly));
 		}
 	}
 

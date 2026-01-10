@@ -1372,12 +1372,16 @@ class BlockedLog
 					if ($random == 1) {	// 1 chance on BLOCKEDLOG_RANDOMRANGE_FOR_TRACKING
 						dol_syslog(get_class($this)."::create Record is selected to be remotely pushed for tracking", LOG_DEBUG);
 
-						$tmpresult = getURLContent($url_for_ping, 'POST', $data, 1, $addheaders, array('https'), 0, -1, $timeoutconnect, $timeoutresponse, array(), '_dolibarrtrack');
+						try {
+							$tmpresult = getURLContent($url_for_ping, 'POST', $data, 1, $addheaders, array('https'), 0, -1, $timeoutconnect, $timeoutresponse, array(), '_dolibarrtrack');
 
-						// Add a warning in log in case of error
-						if ($tmpresult['http_code'] != 200) {
-							$logerrormessage = 'Error: '.$tmpresult['http_code'].' '.$tmpresult['content'];
-							dol_syslog(get_class($this)."::create Error when pushing track info: ".$logerrormessage, LOG_WARNING);
+							// Add a warning in log in case of error
+							if ($tmpresult['http_code'] != 200) {
+								$logerrormessage = 'Error: '.$tmpresult['http_code'].' '.$tmpresult['content'];
+								dol_syslog(get_class($this)."::create Error when pushing track info: ".$logerrormessage, LOG_WARNING);
+							}
+						} catch (Exception $e) {
+							dol_syslog(get_class($this)."::create Error ".$e->getMessage(), LOG_ERR);
 						}
 					} else {
 						dol_syslog(get_class($this)."::create Record is NOT selected to be remotely pushed for tracking", LOG_DEBUG);

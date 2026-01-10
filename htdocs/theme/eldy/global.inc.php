@@ -661,6 +661,9 @@ div.userimg.notfirst {
 .smallheight {
 	line-height: 1em;
 }
+tr.tdsmallheight, tr.tdsmallheight td {
+	height: 1.5em !important;
+}
 
 
 /* Used by timesheets */
