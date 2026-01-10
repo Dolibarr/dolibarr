@@ -374,7 +374,7 @@ if ($action == 'dispatch' && $permissiontoreceive) {
 
 					if (!$error && getDolGlobalString('SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT')) {
 						if (!isModEnabled("multicurrency") && empty($conf->dynamicprices->enabled)) {
-							$dto = GETPOST("dto_".$reg[1].'_'.$reg[2]);
+							$dto = GETPOSTFLOAT("dto_".$reg[1].'_'.$reg[2]);
 							//update supplier price
 							if (GETPOSTISSET($saveprice)) {
 								// TODO Use class
