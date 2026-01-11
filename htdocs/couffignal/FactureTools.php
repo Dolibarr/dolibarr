@@ -23,7 +23,8 @@ class FactureTools
 		$invoice->fetchObjectLinked(null, '', null, 'commande');
 
 		$orders = [];
-		foreach ($invoice->linkedObjects as $order) {
+		if (empty($invoice->linkedObjects['commande'])) { return []; }
+		foreach ($invoice->linkedObjects['commande'] as $id => $order) {
 			if (in_array($order->statut, [
 				Commande::STATUS_VALIDATED,
 				Commande::STATUS_SHIPMENTONPROCESS,
