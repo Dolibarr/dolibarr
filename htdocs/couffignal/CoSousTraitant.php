@@ -1,7 +1,6 @@
 <?php
 
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
-require_once DOL_DOCUMENT_ROOT.'/couffignal/CommandFournisseurTools.php';
 require_once DOL_DOCUMENT_ROOT.'/couffignal/FactureFournisseurTools.php';
 require_once DOL_DOCUMENT_ROOT.'/couffignal/PaiementTools.php';
 
@@ -28,16 +27,16 @@ class CoSousTraitant
 		$payDirId = PaiementTools::getPaimentPaiementDirectMoId($db);
 		if (!$payDirId) return [];
 
-		$commandesFourn = CommandFournisseurTools::getOrdersValidatedFromProject($facture->project, $db);
+		// Fetch related Orders and Invoices
 		$facturesFourn = FactureFournisseurTools::getFacturesFournValidatedFromDebtCompensationLinks($facture, $db);
-		var_dump($facturesFourn);
+		$commandesFourn = FactureFournisseurTools::getOrdersValidatedFromFacturesFourn($facturesFourn);
 		if (!$commandesFourn && !$facturesFourn) return [];
 
 		// N'apparaisent dans le tableau 'CoSousTraitant' qui ceux qui ont le mode de règlement 'PAYDIR'
-		$filterUsePayDir = fn($arr) => array_filter($arr, fn($el) => $el->mode_reglement_id == $payDirId);
+		/*$filterUsePayDir = fn($arr) => array_filter($arr, fn($el) => $el->mode_reglement_id == $payDirId);
 		$commandesFourn = $filterUsePayDir($commandesFourn);
 		$facturesFourn = $filterUsePayDir($facturesFourn);
-		if (!$commandesFourn && !$facturesFourn) return [];
+		if (!$commandesFourn && !$facturesFourn) return [];*/
 
 		// CommandeFournisseur via extrafields: options_typefournisseur, 1 pour co-traitant, 2 pour sous-traitant
 		$filterCommandesFourn = fn($arr, $type) => array_filter($arr, fn(CommandeFournisseur $el) =>
@@ -54,6 +53,7 @@ class CoSousTraitant
 			return [];
 		}
 
+		// Todo => implement change over commande fournisseur
 		$sumCommandesFournCotraitants = array_sum(array_column($commandesFournCotraitants, 'total_ht'));
 		$sumFacturedFourn = array_sum(array_column($facturesFourn, 'total_ht'));
 		$facturedMainCompanyDiff = $facture->getLastSituationCompletePrice(false) - $sumFacturedFourn;
