@@ -285,51 +285,32 @@ class Fiscalyear extends CommonObject
 		// Get entity value
 		$entity = (!empty($this->entity) ? $this->entity : $conf->entity);
 
-		// Query to get all fiscal years for the current entity
-		$sql = "SELECT rowid, label, date_start, date_end";
-		$sql .= " FROM ".$this->db->prefix()."accounting_fiscalyear";
-		$sql .= " WHERE entity = ".((int) $entity);
+		// Query to checks if any existing fiscal year overlaps with the current date range
+		$sql = "SELECT label";
+		$sql .= " FROM " . $this->db->prefix() . "accounting_fiscalyear";
+		$sql .= " WHERE entity = " . ((int)$entity);
+		$sql .= " AND date_start <= '" . $this->db->idate($this->date_end) . "'";
+		$sql .= " AND date_end >= '" . $this->db->idate($this->date_start) . "'";
 
 		// Exclude current fiscal year when updating
 		if (!empty($this->id)) {
-			$sql .= " AND rowid != ".((int) $this->id);
+			$sql .= " AND rowid != " . ((int)$this->id);
 		}
 
-		dol_syslog(get_class($this)."::checkOverlap", LOG_DEBUG);
+		dol_syslog(get_class($this) . "::checkOverlap", LOG_DEBUG);
 
 		$result = $this->db->query($sql);
 		if ($result) {
-			// Loop through all existing fiscal years
-			while ($obj = $this->db->fetch_object($result)) {
-				$existing_start = $this->db->jdate($obj->date_start);
-				$existing_end = $this->db->jdate($obj->date_end);
-
-				// Check for overlapping dates
-				// Case 1: New fiscal year start date falls within an existing fiscal year
-				if ($this->date_start >= $existing_start && $this->date_start <= $existing_end) {
-					$this->error = 'ErrorFiscalYearOverlapWithFiscalYear';
-					$this->errors[] = $obj->label;
-					return -1;
-				}
-
-				// Case 2: New fiscal year end date falls within an existing fiscal year
-				if ($this->date_end >= $existing_start && $this->date_end <= $existing_end) {
-					$this->error = 'ErrorFiscalYearOverlapWithFiscalYear';
-					$this->errors[] = $obj->label;
-					return -2;
-				}
-
-				// Case 3: New fiscal year completely encompasses an existing fiscal year
-				if ($this->date_start <= $existing_start && $this->date_end >= $existing_end) {
-					$this->error = 'ErrorFiscalYearOverlapWithFiscalYear';
-					$this->errors[] = $obj->label;
-					return -3;
-				}
+			if ($this->db->num_rows($result) > 0) {
+				$obj = $this->db->fetch_object($result);
+				$this->error = 'ErrorFiscalYearOverlapWithFiscalYear';
+				$this->errors[] = $obj->label;
+				return -1;
 			}
 			return 1; // No overlap found
 		} else {
 			$this->error = $this->db->lasterror();
-			return -4;
+			return -2;
 		}
 	}
 
