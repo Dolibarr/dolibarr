@@ -1194,7 +1194,7 @@ class FactureFournisseurRec extends CommonInvoice
 		$this->multicurrency_total_tva = empty($this->multicurrency_total_tva) ? 0 : $this->multicurrency_total_tva;
 		$this->multicurrency_total_ttc = empty($this->multicurrency_total_ttc) ? 0 : $this->multicurrency_total_ttc;
 
-		$pu = $price_base_type == 'HT' ? $pu_ht : $pu_ttc;
+		$pu = ($price_base_type == 'HT' ? $pu_ht : $pu_ttc);
 
 
 		// Calculate total with, without tax and tax from qty, pu, remise_percent and txtva
@@ -1211,7 +1211,7 @@ class FactureFournisseurRec extends CommonInvoice
 			$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
 		}
 
-		$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
+		$tabprice = calcul_price_total((float) $qty, (float) $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, (float) $pu_ht_devise);
 
 		$total_ht  = $tabprice[0];
 		$total_tva = $tabprice[1];
