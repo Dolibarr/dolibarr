@@ -4926,21 +4926,6 @@ function dol_print_phone($phone, $countrycode = '', $contactid = 0, $socid = 0, 
 				$newphoneaend .= '</a>';
 			}
 		}
-		if (isModEnabled('stock') && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER') && is_object($user) && !empty($user->fk_warehouse)) {
-			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
-			$useridwarehouse = $user->fk_warehouse;
-			$warehousestatic = new entrepot($db);
-			$warehousestatic->fetch($useridwarehouse);
-
-			$substitutionarray['__USER_WAREHOUSE_ID__'] = isset($warehousestatic->rowid) ? $warehousestatic->rowid : '';
-			$substitutionarray['__USER_WAREHOUSE_REF__'] = isset($warehousestatic->ref) ? $warehousestatic->ref : '';
-			$substitutionarray['__USER_WAREHOUSE_DESCRIPTION__'] = isset($warehousestatic->description) ? $warehousestatic->description : '';
-			$substitutionarray['__USER_WAREHOUSE_ADDRESS__'] = isset($warehousestatic->address) ? $warehousestatic->address : '';
-			$substitutionarray['__USER_WAREHOUSE_ZIP__'] = isset($warehousestatic->zip) ? $warehousestatic->zip : '';
-			$substitutionarray['__USER_WAREHOUSE_TOWN__'] = isset($warehousestatic->town) ? $warehousestatic->town : '';
-			$substitutionarray['__USER_WAREHOUSE_PHONE__'] = isset($warehousestatic->phone) ? (string) dol_print_phone($warehousestatic->phone, '', 0, 0, '', " ", '', '', -1) : '';
-			$substitutionarray['__USER_WAREHOUSE_FAX__'] = isset($warehousestatic->fax) ? (string) dol_print_phone($warehousestatic->fax, '', 0, 0, '', " ", '', '', -1) : '';
-		}
 		//if (($contactid || $socid) && isModEnabled('agenda') && $user->hasRight('agenda', 'myactions', 'create'))
 		if (isModEnabled('agenda') && $user->hasRight("agenda", "myactions", "create")) {
 			$type = 'AC_TEL';
@@ -10709,6 +10694,21 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		}
 	}
 
+	if (isModEnabled('stock') && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER') && is_object($user) && !empty($user->fk_warehouse)) {
+		require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+		$useridwarehouse = $user->fk_warehouse;
+		$warehousestatic = new entrepot($db);
+		$warehousestatic->fetch($useridwarehouse);
+
+		$substitutionarray['__USER_WAREHOUSE_ID__'] = isset($warehousestatic->rowid) ? $warehousestatic->rowid : '';
+		$substitutionarray['__USER_WAREHOUSE_REF__'] = isset($warehousestatic->ref) ? $warehousestatic->ref : '';
+		$substitutionarray['__USER_WAREHOUSE_DESCRIPTION__'] = isset($warehousestatic->description) ? $warehousestatic->description : '';
+		$substitutionarray['__USER_WAREHOUSE_ADDRESS__'] = isset($warehousestatic->address) ? $warehousestatic->address : '';
+		$substitutionarray['__USER_WAREHOUSE_ZIP__'] = isset($warehousestatic->zip) ? $warehousestatic->zip : '';
+		$substitutionarray['__USER_WAREHOUSE_TOWN__'] = isset($warehousestatic->town) ? $warehousestatic->town : '';
+		$substitutionarray['__USER_WAREHOUSE_PHONE__'] = isset($warehousestatic->phone) ? (string) dol_print_phone($warehousestatic->phone, '', 0, 0, '', " ", '', '', -1) : '';
+		$substitutionarray['__USER_WAREHOUSE_FAX__'] = isset($warehousestatic->fax) ? (string) dol_print_phone($warehousestatic->fax, '', 0, 0, '', " ", '', '', -1) : '';
+	}
 
 	if ((empty($exclude) || !in_array('date', $exclude)) && (empty($include) || in_array('date', $include))) {
 		include_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
