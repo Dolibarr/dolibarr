@@ -1234,12 +1234,14 @@ class EmailCollector extends CommonObject
 				try {
 					$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
 
-					$expire = true;
-					// TODO
 					// Is token expired or will token expire in the next 30 seconds
-					// if (is_object($tokenobj)) {
-					// 	$expire = ($tokenobj->getEndOfLife() !== -9002 && $tokenobj->getEndOfLife() !== -9001 && time() > ($tokenobj->getEndOfLife() - 30));
-					// }
+					$expire = false;
+					if (is_object($tokenobj) && method_exists($tokenobj, 'getEndOfLife')) {
+						$endOfLife = $tokenobj->getEndOfLife();
+						if ($endOfLife !== -9002 && $endOfLife !== -9001 && time() > ($endOfLife - 30)) {
+							$expire = true;
+						}
+					}
 					// Token expired so we refresh it
 					if (is_object($tokenobj) && $expire) {
 						$this->debuginfo .= 'Refresh token '.$OAUTH_SERVICENAME.'<br>';
@@ -1856,8 +1858,9 @@ class EmailCollector extends CommonObject
 
 				//If there is an emailcollector filter on trackid
 				if ($searchfilterdoltrackid > 0) {
+					$referencesForFilter = ($headers['References'] ?? '').' '.($headers['In-Reply-To'] ?? '');
 					if (empty($trackidfoundintorecipienttype) && empty($trackidfoundintomsgidtype)) {
-						if (empty($headers['References']) || !preg_match('/@'.preg_quote($host, '/').'/', $headers['References'])) {
+						if (empty($referencesForFilter) || !preg_match('/@'.preg_quote($host, '/').'/', $referencesForFilter)) {
 							$nbemailprocessed++;
 							dol_syslog(" Discarded - No suffix in email recipient and no Header References found matching the signature of the application, so with a trackid coming from the application");
 							continue; // Exclude email
@@ -1865,7 +1868,8 @@ class EmailCollector extends CommonObject
 					}
 				}
 				if ($searchfilternodoltrackid > 0) {
-					if (!empty($trackidfoundintorecipienttype) || !empty($trackidfoundintomsgidtype) || (!empty($headers['References']) && preg_match('/@'.preg_quote($host, '/').'/', $headers['References']))) {
+					$referencesForFilter = ($headers['References'] ?? '').' '.($headers['In-Reply-To'] ?? '');
+					if (!empty($trackidfoundintorecipienttype) || !empty($trackidfoundintomsgidtype) || (!empty($referencesForFilter) && preg_match('/@'.preg_quote($host, '/').'/', $referencesForFilter))) {
 						$nbemailprocessed++;
 						dol_syslog(" Discarded - Suffix found into email or Header References found and matching signature of application so with a trackid");
 						continue; // Exclude email
@@ -2075,13 +2079,13 @@ class EmailCollector extends CommonObject
 				$replytostring = '';
 
 				if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
-					$fromstring = $overview['from'];
-					$replytostring = empty($overview['in_reply-to']) ? $headers['Reply-To'] : $overview['in_reply-to'];
+					$fromstring = $this->decodeSMTPSubject((string) ($overview['from'] ?? ''));
+					$replytostring = !empty($headers['Reply-To']) ? $this->decodeSMTPSubject($headers['Reply-To']) : '';
 
-					$sender = $overview['sender'];
-					$to = $overview['to'];
-					$sendtocc = empty($overview['cc']) ? '' : $overview['cc'];
-					$sendtobcc = empty($overview['bcc']) ? '' : $overview['bcc'];
+					$sender = $this->decodeSMTPSubject((string) ($overview['sender'] ?? ''));
+					$to = $this->decodeSMTPSubject((string) ($overview['to'] ?? ''));
+					$sendtocc = $this->decodeSMTPSubject((string) ($overview['cc'] ?? ''));
+					$sendtobcc = $this->decodeSMTPSubject((string) ($overview['bcc'] ?? ''));
 
 					$tmpdate = $overview['date']->toDate();  // @phan-suppress-current-line PhanPluginUnknownObjectMethodCall
 					$tmptimezone = $tmpdate->getTimezone()->getName();  // @phan-suppress-current-line PhanPluginUnknownObjectMethodCall
@@ -2097,7 +2101,7 @@ class EmailCollector extends CommonObject
 							$dateemail += (60 * (int) $reg[3]);
 						}
 					}
-					$subject = $overview['subject'];
+					$subject = $this->decodeSMTPSubject((string) ($overview['subject'] ?? ''));
 				} else {
 					$fromstring = $overview[0]->from;
 					$replytostring = (!empty($overview['in_reply-to']) ? $overview['in_reply-to'] : (!empty($headers['Reply-To']) ? $headers['Reply-To'] : "")) ;
@@ -2162,6 +2166,10 @@ class EmailCollector extends CommonObject
 				if (!empty($headers['References'])) {
 					$arrayofreferences = preg_split('/(,|\s+)/', $headers['References']);
 				}
+				if (!empty($headers['In-Reply-To'])) {
+					$arrayofreferences = array_merge($arrayofreferences, preg_split('/(,|\s+)/', $headers['In-Reply-To']));
+				}
+				$arrayofreferences = array_values(array_filter(array_map('trim', $arrayofreferences)));
 				if (!in_array('<'.$msgid.'>', $arrayofreferences)) {
 					$arrayofreferences = array_merge($arrayofreferences, array('<'.$msgid.'>'));
 				}
@@ -2490,8 +2498,11 @@ class EmailCollector extends CommonObject
 							$actioncode = 'EMAIL';
 						}
 						// If sender is in the list MAIL_FROM_EMAILS_TO_CONSIDER_SENDING
-						$arrayofemailtoconsideresender = explode(',', getDolGlobalString('MAIL_FROM_EMAILS_TO_CONSIDER_SENDING'));
+						$arrayofemailtoconsideresender = array_filter(array_map('trim', explode(',', getDolGlobalString('MAIL_FROM_EMAILS_TO_CONSIDER_SENDING'))));
 						foreach ($arrayofemailtoconsideresender as $emailtoconsidersender) {
+							if ($emailtoconsidersender === '') {
+								continue;
+							}
 							if (preg_match('/'.preg_quote($emailtoconsidersender, '/').'/', $fromstring)) {
 								$actioncode = 'EMAIL';
 							}
