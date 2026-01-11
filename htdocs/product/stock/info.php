@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -85,7 +85,7 @@ if (isModEnabled('project')) {
 	$morehtmlref .= '<br>'.img_picto('', 'project').' '.$langs->trans('Project').' ';
 	if ($usercancreate) {
 		if ($action != 'classify') {
-			$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+			$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 		}
 		if ($action == 'classify') {
 			$formproject = new FormProjets($db);

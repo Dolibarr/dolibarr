@@ -11,6 +11,7 @@
  * Copyright (C) 2024	    Nick Fragoulis
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2024		Éric Seigne             	<eric.seigne@cap-rel.fr>
+ * Copyright (C) 2025		William Mead				<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -238,8 +239,8 @@ class pdf_strato extends ModelePDFContract
 				// Set path to the background PDF File
 				if (getDolGlobalString('MAIN_ADD_PDF_BACKGROUND')) {
 					$logodir = $conf->mycompany->dir_output;
-					if (!empty($conf->mycompany->multidir_output[$object->entity])) {
-						$logodir = $conf->mycompany->multidir_output[$object->entity];
+					if (!empty($conf->mycompany->multidir_output[$object->entity ?? $conf->entity])) {
+						$logodir = $conf->mycompany->multidir_output[$object->entity ?? $conf->entity];
 					}
 					$pagecount = $pdf->setSourceFile($logodir.'/' . getDolGlobalString('MAIN_ADD_PDF_BACKGROUND'));
 					$tplidx = $pdf->importPage(1);
@@ -490,6 +491,28 @@ class pdf_strato extends ModelePDFContract
 					$pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
 				}
 
+				// Add terms of sale
+				if (getDolGlobalString('MAIN_INFO_CONTRACT_TERMSOFSALE') && getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_CONTRACT')) {
+					$termsofsalefilename = getDolGlobalString('MAIN_INFO_CONTRACT_TERMSOFSALE');
+					$termsofsale = $conf->contract->dir_output.'/'.$termsofsalefilename;
+					if (!empty($conf->contract->multidir_output[$object->entity ?? $conf->entity])) {
+						$termsofsale = $conf->contract->multidir_output[$object->entity ?? $conf->entity].'/'.$termsofsalefilename;
+					}
+					if (file_exists($termsofsale) && is_readable($termsofsale)) {
+						$pagecount = $pdf->setSourceFile($termsofsale);
+						for ($i = 1; $i <= $pagecount; $i++) {
+							$tplIdx = $pdf->importPage($i);
+							if ($tplIdx !== false) {
+								$s = $pdf->getTemplatesize($tplIdx);
+								$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
+								$pdf->useTemplate($tplIdx);
+							} else {
+								setEventMessages(null, array($termsofsale.' cannot be added, probably protected PDF'), 'warnings');
+							}
+						}
+					}
+				}
+
 				$pdf->Close();
 
 				$pdf->Output($file, 'F');
@@ -499,9 +522,12 @@ class pdf_strato extends ModelePDFContract
 				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+				$this->warnings = $hookmanager->warnings;
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
+					dolChmod($file);
+					return -1;
 				}
 
 				dolChmod($file);

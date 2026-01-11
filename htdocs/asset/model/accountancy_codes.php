@@ -44,7 +44,7 @@ $langs->loadLangs(array("assets", "companies"));
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
-$cancel = GETPOST('cancel');
+$cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 // Initialize a technical objects

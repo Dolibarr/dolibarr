@@ -3,10 +3,10 @@ MenuFinancial=Arveldamine | Makse
 TaxModuleSetupToModifyRules=Mine <a href="%s">Maksude mooduli seadistusse</a> arvutusreeglite muutmiseks
 TaxModuleSetupToModifyRulesLT=Arvutusreeglite muutmiseks minge ettevõtte seadistusse <a href="%s">.
 OptionMode=Raamatupidamise võimalused
-OptionModeTrue=Tekkepõhine arvestus
-OptionModeVirtual=Kassapõhine arvestus
-OptionModeTrueDesc=Selles kontekstis arvutatakse käive maksete (maksete kuupäeva) põhjal. Arvude kehtivus on tagatud ainult siis, kui raamatupidamist kontrollitakse maksete sisendi/väljundi kaudu.
+OptionModeVirtual=Accrual accounting
+OptionModeTrue=Cash accounting
 OptionModeVirtualDesc=Selles kontekstis arvutatakse käive arvete põhjal (kinnitamise kuupäev). Kui arvete maksetähtaeg on käes, siis lisatakse arvete summad käibe arvutamisse hoolimata sellest, kas nad on makstud või mitte.
+OptionModeTrueDesc=Selles kontekstis arvutatakse käive maksete (maksete kuupäeva) põhjal. Arvude kehtivus on tagatud ainult siis, kui raamatupidamist kontrollitakse maksete sisendi/väljundi kaudu.
 FeatureIsSupportedInInOutModeOnly=See funktsioon saadaval vaid KREDIIT-DEEBET raamatupidamise režiimis (vt mooduli Raamatupidamine seadistust)
 VATReportBuildWithOptionDefinedInModule=Siin näidatud summade arvutamiseks kasutatakse Maksude mooduli seadistuses kasutatavaid reegleid.
 LTReportBuildWithOptionDefinedInModule=Siin näidatud summad on arvutatud ettevõtte seadistustega määratud reeglite alusel.
@@ -302,7 +302,6 @@ ByVatRate=Müügimaksu määra järgi
 TurnoverbyVatrate=Käive arveldatud maksumäära järgi
 TurnoverCollectedbyVatrate=Müügimaksu määra järgi kogutud käive
 PurchasebyVatrate=Ost müügimaksu määra järgi
-LabelToShow=Lühike silt
 PurchaseTurnover=Ostukäive
 PurchaseTurnoverCollected=Kogutud ostukäive
 RulesPurchaseTurnoverDue=- See hõlmab tarnija tasumisele kuuluvaid arveid olenemata sellest, kas need on tasutud või mitte. <br>- See põhineb nende arvete kuupäeval.<br>
@@ -329,3 +328,4 @@ RuleForLinesDates=Ridade kuupäevade reegel
 Prepaid=Ettemakstud
 Postpaid=Järelmaks
 SetRuleForLinesDates=Ridade kuupäevade reegli määramine
+SomeNotConvertedCreditNoteExists=There is <b>%s</b> credit notes not yet converted for consumption

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2018       Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -309,7 +309,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	print '<td class="left">'.$langs->trans("Country").'</td>';
 	$i = 0;
 	while ($i < 12) {
-		$j = $i + (!getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START);
+		$j = $i + getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
 		if ($j > 12) {
 			$j -= 12;
 		}

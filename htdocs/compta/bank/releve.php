@@ -6,7 +6,7 @@
  * Copyright (C) 2017       Patrick Delcroix        <pmpdelcroix@gmail.com>
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -464,7 +464,7 @@ if (empty($numref)) {
 	$title = $langs->trans("AccountStatement").' '.$numref.' - '.$langs->trans("BankAccount").' '.$object->getNomUrl(1, 'receipts');
 	print load_fiche_titre($title, $morehtmlright, '');
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 

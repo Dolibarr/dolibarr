@@ -42,7 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 $langs->loadLangs(array('companies', 'products', 'admin', 'mails', 'other', 'errors'));
 
 $action = GETPOST('action', 'aZ09');
-$cancel = GETPOST('cancel');
+$cancel = GETPOST('cancel', 'alpha');
 
 $usersignature = $user->signature;
 // For action = test or send, we ensure that content is not html, even for signature, because this we want a test with NO html.
@@ -343,7 +343,7 @@ if ($action == 'edit') {
 		print '</script>'."\n";
 	}
 
-	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 

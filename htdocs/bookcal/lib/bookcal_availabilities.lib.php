@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2022 Alice Adminson <aadminson@example.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2022       Alice Adminson              <aadminson@example.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -35,11 +35,6 @@ function availabilitiesPrepareHead($object)
 
 	$langs->load("agenda");
 
-	$showtabofpagecontact = 0;
-	$showtabofpagenote = 1;
-	$showtabofpagedocument = 0;
-	$showtabofpageagenda = 0;
-
 	$h = 0;
 	$head = array();
 
@@ -48,53 +43,45 @@ function availabilitiesPrepareHead($object)
 	$head[$h][2] = 'card';
 	$h++;
 
-	if ($showtabofpagecontact) {
-		$head[$h][0] = DOL_URL_ROOT . '/bookcal/availabilities_contact.php?id=' . $object->id;
-		$head[$h][1] = $langs->trans("Contacts");
-		$head[$h][2] = 'contact';
-		$h++;
-	}
+	// $head[$h][0] = DOL_URL_ROOT . '/bookcal/availabilities_contact.php?id=' . $object->id;
+	// $head[$h][1] = $langs->trans("Contacts");
+	// $head[$h][2] = 'contact';
+	// $h++;
 
-	if ($showtabofpagenote) {
-		if (isset($object->fields['note_public']) || isset($object->fields['note_private'])) {
-			$nbNote = 0;
-			if (!empty($object->note_private)) {
-				$nbNote++;
-			}
-			if (!empty($object->note_public)) {
-				$nbNote++;
-			}
-			$head[$h][0] = DOL_URL_ROOT . '/bookcal/availabilities_note.php?id=' . $object->id;
-			$head[$h][1] = $langs->trans('Notes');
-			if ($nbNote > 0) {
-				$head[$h][1] .= (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">' . $nbNote . '</span>' : '');
-			}
-			$head[$h][2] = 'note';
-			$h++;
+	if (isset($object->fields['note_public']) || isset($object->fields['note_private'])) {
+		$nbNote = 0;
+		if (!empty($object->note_private)) {
+			$nbNote++;
 		}
-	}
-
-	if ($showtabofpagedocument) {
-		require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-		require_once DOL_DOCUMENT_ROOT . '/core/class/link.class.php';
-		$upload_dir = $conf->bookcal->dir_output . "/availabilities/" . dol_sanitizeFileName($object->ref);
-		$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
-		$nbLinks = Link::count($db, $object->element, $object->id);
-		$head[$h][0] = DOL_URL_ROOT . '/bookcal/availabilities_document.php?id=' . $object->id;
-		$head[$h][1] = $langs->trans('Documents');
-		if (($nbFiles + $nbLinks) > 0) {
-			$head[$h][1] .= '<span class="badge marginleftonlyshort">' . ($nbFiles + $nbLinks) . '</span>';
+		if (!empty($object->note_public)) {
+			$nbNote++;
 		}
-		$head[$h][2] = 'document';
+		$head[$h][0] = DOL_URL_ROOT . '/bookcal/availabilities_note.php?id=' . $object->id;
+		$head[$h][1] = $langs->trans('Notes');
+		if ($nbNote > 0) {
+			$head[$h][1] .= (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">' . $nbNote . '</span>' : '');
+		}
+		$head[$h][2] = 'note';
 		$h++;
 	}
 
-	if ($showtabofpageagenda) {
-		$head[$h][0] = DOL_URL_ROOT . '/bookcal/availabilities_agenda.php?id=' . $object->id;
-		$head[$h][1] = $langs->trans("Events");
-		$head[$h][2] = 'agenda';
-		$h++;
-	}
+	// require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+	// require_once DOL_DOCUMENT_ROOT . '/core/class/link.class.php';
+	// $upload_dir = $conf->bookcal->dir_output . "/availabilities/" . dol_sanitizeFileName($object->ref);
+	// $nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
+	// $nbLinks = Link::count($db, $object->element, $object->id);
+	// $head[$h][0] = DOL_URL_ROOT . '/bookcal/availabilities_document.php?id=' . $object->id;
+	// $head[$h][1] = $langs->trans('Documents');
+	// if (($nbFiles + $nbLinks) > 0) {
+	// 	$head[$h][1] .= '<span class="badge marginleftonlyshort">' . ($nbFiles + $nbLinks) . '</span>';
+	// }
+	// $head[$h][2] = 'document';
+	// $h++;
+
+	// $head[$h][0] = DOL_URL_ROOT . '/bookcal/availabilities_agenda.php?id=' . $object->id;
+	// $head[$h][1] = $langs->trans("Events");
+	// $head[$h][2] = 'agenda';
+	// $h++;
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line

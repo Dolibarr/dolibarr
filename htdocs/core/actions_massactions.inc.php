@@ -248,7 +248,7 @@ if (!$error && $massaction == 'confirm_presend') {
 	}
 	if (!trim(GETPOST('sendto', 'alphawithlgt')) && count($receiver) == 0 && count($listofobjectthirdparties) == 1) {	// if only one recipient, receiver is mandatory
 		$error++;
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Recipient")), null, 'warnings');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("MailRecipient")), null, 'warnings');
 		$massaction = 'presend';
 	}
 
@@ -429,6 +429,14 @@ if (!$error && $massaction == 'confirm_presend') {
 						$filepath = $fileparams['fullname'];
 					}
 
+					if (getDolGlobalInt('MAIL_MASS_ACTION_SEARCH_MOST_RECENT_FILE_IF_NOT_FOUND') && isset($filepath) && !dol_is_file($filepath)) {
+						$fileparams = dol_most_recent_file($filedir, preg_quote($objectobj->ref, '/') . '([^\-])+' . (getDolGlobalInt('MAIN_ODT_AS_PDF') ? '\.pdf$' : ''));
+						if (isset($fileparams)) {
+							$filepath = $fileparams['fullname'];
+							$filename = $fileparams['name'];
+						}
+					}
+
 					// try to find other files generated for this object (last_main_doc)
 					$filename_found = '';
 					$filepath_found = '';
@@ -480,6 +488,7 @@ if (!$error && $massaction == 'confirm_presend') {
 			// Send email if there is at least one qualified object for current thirdparty
 			if (count($listofqualifiedobj) > 0) {
 				$langs->load("commercial");
+				$from = '';
 
 				$reg = array();
 				$fromtype = GETPOST('fromtype');
@@ -685,11 +694,11 @@ if (!$error && $massaction == 'confirm_presend') {
 								// Initialisation donnees
 								$objectobj2->sendtoid = (empty($contactidtosend) ? 0 : $contactidtosend);
 								$objectobj2->actionmsg = $actionmsg; // Long text
-								$objectobj2->actionmsg2		= $actionmsg2; // Short text
-								$objectobj2->fk_element		= $objid2;
-								$objectobj2->elementtype	= $objectobj2->element;
+								$objectobj2->actionmsg2 = $actionmsg2; // Short text
+								$objectobj2->fk_element = $objid2;
+								$objectobj2->elementtype = $objectobj2->element;
 								if (getDolGlobalString('MAIN_MAIL_REPLACE_EVENT_TITLE_BY_EMAIL_SUBJECT')) {
-									$objectobj2->actionmsg2		= $subjectreplaced; // Short text
+									$objectobj2->actionmsg2 = $subjectreplaced; // Short text
 								}
 
 								$triggername = strtoupper(get_class($objectobj2)).'_SENTBYMAIL';
@@ -780,7 +789,7 @@ if (!$error && $massaction == 'cancelorders') {
 
 	$nbok = 0;
 
-	$orders = GETPOST('toselect', 'array');
+	$orders = GETPOST('toselect', 'array:int');
 	foreach ($orders as $id_order) {
 		$cmd = new Commande($db);
 		if ($cmd->fetch($id_order) <= 0) {
@@ -794,7 +803,7 @@ if (!$error && $massaction == 'cancelorders') {
 			break;
 		} else {
 			// TODO We do not provide warehouse so no stock change here for the moment.
-			$result = $cmd->cancel();
+			$result = $cmd->cancel($user);
 		}
 
 		if ($result < 0) {
@@ -840,11 +849,19 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 	}
 
 	$arrayofinclusion = array();
-	foreach ($listofobjectref as $tmppdf) {
-		$arrayofinclusion[] = '^'.preg_quote(dol_sanitizeFileName($tmppdf), '/').'\.pdf$';
-	}
-	foreach ($listofobjectref as $tmppdf) {
-		$arrayofinclusion[] = '^'.preg_quote(dol_sanitizeFileName($tmppdf), '/').'_[a-zA-Z0-9\-\_\'\&\.]+\.pdf$'; // To include PDF generated from ODX files
+	$parameters = array(
+		'listofobjectref' => $listofobjectref,
+		'arrayofinclusion' => &$arrayofinclusion,
+	);
+	$reshook = $hookmanager->executeHooks('updateSearchRegexToMergeDoc', $parameters, $object, $action);
+
+	if (empty($reshook)) {
+		foreach ($listofobjectref as $tmppdf) {
+			$arrayofinclusion[] = '^'.preg_quote(dol_sanitizeFileName($tmppdf), '/').'\.pdf$';
+		}
+		foreach ($listofobjectref as $tmppdf) {
+			$arrayofinclusion[] = '^'.preg_quote(dol_sanitizeFileName($tmppdf), '/').'_[\w\-\'\&\.]+\.pdf$'; // To include PDF generated from ODX files
+		}
 	}
 
 	$listoffiles = dol_dir_list($uploaddir, 'all', 1, $arrayofinclusion, '\.meta$|\.png$', 'date', SORT_DESC, 0, 1);
@@ -1141,7 +1158,7 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 		$result = $objecttmp->fetch($toselectid);
 		if ($result > 0) {
 			// Refuse deletion for some objects/status
-			if ($objectclass == 'Facture' && !getDolGlobalString('INVOICE_CAN_ALWAYS_BE_REMOVED') && $objecttmp->status != Facture::STATUS_DRAFT) {
+			if ($objectclass == 'Facture' && $objecttmp->status != Facture::STATUS_DRAFT) {
 				$langs->load("errors");
 				$nbignored++;
 				$TMsg[] = '<div class="error">'.$langs->trans('ErrorOnlyDraftStatusCanBeDeletedInMassAction', $objecttmp->ref).'</div><br>';
@@ -1733,8 +1750,11 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 
 				// If no SQL error, we redirect to the request form
 				if (!$error) {
+					$tmpUser = new User($db);
+					$result = $tmpUser->fetch($objecttmp->fk_user);
+
 					// Calculate number of days consumed
-					$nbopenedday = num_open_day($objecttmp->date_debut_gmt, $objecttmp->date_fin_gmt, 0, 1, $objecttmp->halfday);
+					$nbopenedday = num_open_day($objecttmp->date_debut_gmt, $objecttmp->date_fin_gmt, 0, 1, $objecttmp->halfday, $tmpUser->country_id);
 					$soldeActuel = $objecttmp->getCpforUser($objecttmp->fk_user, $objecttmp->fk_type);
 					$newSolde = ($soldeActuel - $nbopenedday);
 
@@ -1826,6 +1846,7 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 
 if (!$error && ($massaction == 'increaseholiday' || ($action == 'increaseholiday' && $confirm == 'yes')) && $permissiontoapprove && is_array($toselect)) {
 	'@phan-var-force Holiday $holiday';  // Supposing that $holiday is set, it is needed.
+	/** @var Holiday $holiday */
 	$db->begin();
 	$objecttmp = new $objectclass($db);
 	$nbok = 0;
@@ -1913,6 +1934,7 @@ if (!$error && ($massaction == 'clonetasks' || ($action == 'clonetasks' && $conf
 				require_once DOL_DOCUMENT_ROOT . "/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON') . '.php';
 				$modTask = new $classnamemodtask();
 				'@phan-var-force ModeleNumRefTask $modTask';
+				/** @var ModeleNumRefTask $modTask */
 				$defaultref = $modTask->getNextValue(null, $clone_task);
 			}
 

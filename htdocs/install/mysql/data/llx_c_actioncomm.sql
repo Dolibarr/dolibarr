@@ -36,7 +36,7 @@
 
 delete from llx_c_actioncomm where id in (1,2,3,4,5,6,8,9,10,11,30,31,40,50);
 
--- Code kept for backward compatibility < 3.3 
+-- Code kept for backward compatibility < 3.3
 --insert into llx_c_actioncomm (id, code, libelle, type, module, active, position) values (  3, 'AC_PROP',    'Send commercial proposal by email', 'systemauto', 'propal', 0, 10);
 --insert into llx_c_actioncomm (id, code, libelle, type, module, active, position) values (  8, 'AC_COM',     'Send customer order by email',      'systemauto', 'order', 0, 8);
 --insert into llx_c_actioncomm (id, code, libelle, type, module, active, position) values (  9, 'AC_FAC',     'Send customer invoice by email',    'systemauto', 'invoice', 0, 6);

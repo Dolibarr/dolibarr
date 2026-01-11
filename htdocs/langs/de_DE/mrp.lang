@@ -16,7 +16,7 @@ BOMsSetup=Stücklisten Modul einrichten
 ListOfBOMs=Stücklisten - BOM
 ListOfManufacturingOrders=Fertigungsaufträge
 NewBOM=Neue Stückliste
-ProductBOMHelp=Mit dieser Stückliste zu erstellendes (oder zu zerlegendes) Produkt. <br> Hinweis: Produkte mit der Eigenschaft 'Art des Produkts' = 'Ausgangsmaterial' sind in dieser Liste nicht sichtbar.
+ProductBOMHelp=Mit dieser Stückliste zu erstellendes (oder zu zerlegendes) Produkt. <br> Hinweis: Produkte mit der Eigenschaft 'Art des Produkts' = 'Rohstoff / -material' sind in dieser Liste nicht sichtbar.
 CloneDefBomProduct=Klonen Sie den Standard Stückliste, um den Produkt herzustellen.
 CloneOtherBomsProduct=Klonen Sie alle Stücklisten, die zur Herstellung von Produkt verwendet werden können.
 BOMofRef=Stückliste von %s
@@ -169,3 +169,5 @@ ErrorModifyMoDateStart = Sie müssen einen Start-Datum wählen, der vor dem aktu
 ErrorModifyMoDateEnd = Sie müssen ein End-Datum wählen, das nach dem Start-Datum liegt. %s
 ErrorCancelMo=Fehler beim Aktualisieren der Stornierung
 ErrorModifyMoDate=Fehler beim Aktualisieren der Datums-Änderung
+BOM_SUB_BOM=Unterstücklisten (Sub-BOMs) verwenden
+UseSearchToSelectBom=Warten, bis eine Taste gedrückt wird, bevor der Inhalt der Stücklisten/BOM-Kombolisten geladen wird.<br>Dies kann die Leistung verbessern, wenn Sie eine große Zahl an Listen haben, ist aber weniger komfortabel.

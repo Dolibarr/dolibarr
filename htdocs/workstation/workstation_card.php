@@ -1,7 +1,7 @@
 <?php
 
-/* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2017       Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -37,6 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/workstation/lib/workstation_workstation.lib.php
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -91,7 +92,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'inclu
 // Permissions
 $permissiontoread = $user->hasRight('workstation', 'workstation', 'read');
 $permissiontoadd = $user->hasRight('workstation', 'workstation', 'write');      // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->hasRight('workstation', 'workstation', 'delete') || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DISABLED);
+$permissiontodelete = $user->hasRight('workstation', 'workstation', 'delete') || ($permissiontoadd && isset($object->status) && $object->status == Workstation::STATUS_DISABLED);
 $permissionnote = $user->hasRight('workstation', 'workstation', 'write');      // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->hasRight('workstation', 'workstation', 'write');      // Used by the include of actions_dellink.inc.php
 
@@ -211,7 +212,7 @@ if ($action == 'create') {
 
 	print load_fiche_titre($title, '', 'object_'.$object->picto);
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	if ($backtopage) {
@@ -233,7 +234,7 @@ if ($action == 'create') {
 	print $langs->trans('UserGroups');
 	print '</td>';
 	print '<td>';
-	print img_picto('', 'group');
+	print img_picto('', 'group', 'class="pictofixedwidth"');
 	print $form->select_dolgroups($groups, 'groups', 1, '', 0, '', array(), (string) $object->entity, true, 'quatrevingtpercent widthcentpercentminusx');
 	print '</td></tr>';
 
@@ -241,7 +242,7 @@ if ($action == 'create') {
 	print $langs->trans('Machines');
 	print '</td>';
 	print '<td>';
-	print img_picto('', 'resource');
+	print img_picto('', 'resource', 'class="pictofixedwidth"');
 	print $formresource->select_resource_list($resources, 'resources', '', 0, 0, 0, array(), (string) $object->entity, 0, 0, 'quatrevingtpercent widthcentpercentminusx', true);
 	print '</td></tr>';
 
@@ -263,7 +264,7 @@ if ($action == 'create') {
 if (($id || $ref) && $action == 'edit') {
 	print load_fiche_titre($langs->trans("Workstation"), '', 'object_'.$object->picto);
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
@@ -286,7 +287,7 @@ if (($id || $ref) && $action == 'edit') {
 	print $langs->trans('UserGroups');
 	print '</td>';
 	print '<td>';
-	print img_picto('', 'group');
+	print img_picto('', 'group', 'class="pictofixedwidth"');
 	print $form->select_dolgroups(empty($groups) ? $object->usergroups : $groups, 'groups', 1, '', 0, '', array(), (string) $object->entity, true, 'quatrevingtpercent widthcentpercentminusx');
 	print '</td></tr>';
 
@@ -294,7 +295,7 @@ if (($id || $ref) && $action == 'edit') {
 	print $langs->trans('Machines');
 	print '</td>';
 	print '<td>';
-	print img_picto('', 'resource');
+	print img_picto('', 'resource', 'class="pictofixedwidth"');
 	print $formresource->select_resource_list(empty($resources) ? $object->resources : $resources, 'resources', '', 0, 0, 0, array(), (string) $object->entity, 1, 0, 'quatrevingtpercent widthcentpercentminusx', true);
 	print '</td></tr>';
 
@@ -370,7 +371,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			if ($permissiontoadd) {
 				$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 				if ($action != 'classify') {
-					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+					$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 				}
 				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			} else {
@@ -472,7 +473,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Disable / Enable
 			if ($permissiontoadd) {
-				if ($object->status == $object::STATUS_ENABLED) {
+				if ($object->status == Workstation::STATUS_ENABLED) {
 					print dolGetButtonAction('', $langs->trans('Disable'), 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=disable&token='.newToken(), '', $permissiontoadd);
 				} else {
 					print dolGetButtonAction('', $langs->trans('Enable'), 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=enable&token='.newToken(), '', $permissiontoadd);

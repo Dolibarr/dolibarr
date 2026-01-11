@@ -193,7 +193,7 @@ DONATION_ACCOUNTINGACCOUNT=दान दर्ज करने के लिए 
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=खाता (खाते के चार्ट से) सदस्यता पंजीकरण के लिए उपयोग किया जाएगा (सदस्यता मॉड्यूल - यदि सदस्यता चालान के बिना दर्ज की गई है)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=खाता (खाता चार्ट से) ग्राहक जमा को पंजीकृत करने के लिए डिफ़ॉल्ट खाते के रूप में उपयोग किया जाना चाहिए
 UseAuxiliaryAccountOnCustomerDeposit=ग्राहक खाते को डाउन पेमेंट की पंक्तियों के लिए सहायक खाता बही में व्यक्तिगत खाते के रूप में संग्रहीत करें (यदि अक्षम किया गया है, तो डाउन पेमेंट पंक्तियों के लिए व्यक्तिगत खाता खाली रहेगा)
-ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=खाता (खाता चार्ट से) डिफ़ॉल्ट के रूप में उपयोग किया जाना है
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=अग्रिम भुगतान की पंक्तियों के लिए सहायक खाता बही में आपूर्तिकर्ता खाते को व्यक्तिगत खाते के रूप में संग्रहीत करें (यदि अक्षम किया गया है, तो अग्रिम भुगतान पंक्तियों के लिए व्यक्तिगत खाता रिक्त रहेगा)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=ग्राहक द्वारा रखी गई वारंटी को पंजीकृत करने के लिए डिफ़ॉल्ट रूप से लेखांकन खाता
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=खाता (खाता चार्ट से) उसी देश में खरीदे गए उत्पादों के लिए डिफ़ॉल्ट खाते के रूप में उपयोग किया जाएगा (उत्पाद पत्रक में परिभाषित न होने पर उपयोग किया जाएगा)
@@ -278,6 +278,7 @@ PcgtypeDesc=खातों के समूह का उपयोग कुछ
 AccountingCategoriesDesc=खातों के कस्टम समूह का उपयोग लेखांकन खातों को एक नाम में समूहित करने के लिए किया जा सकता है, जिससे फ़िल्टर का उपयोग या कस्टम रिपोर्ट का निर्माण आसान हो जाता है।
 Reconcilable=अविस्र्द्ध
 Centralized=केंद्रीकृत खाता
+CentralizedAccountHelp=When a accounting transaction is recording on a centralized account, you are also allowed to record a more accurate subsidiary account on this transaction.
 TotalVente=कर से पहले कुल कारोबार
 TotalMarge=कुल बिक्री मार्जिन
 DescVentilCustomer=यहां खाते के चार्ट से उत्पाद खाते से जुड़ी (या नहीं) ग्राहक चालान पंक्तियों की सूची देखें
@@ -357,6 +358,7 @@ ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=आपूर्तिकर्ता 
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=जब यह विकल्प सक्षम होता है, तो आप यह निर्धारित कर सकते हैं कि आपूर्तिकर्ता या किसी विक्रेता के चालान को अलग तरीके से लेखांकन में स्थानांतरित किया जाना चाहिए: "%s" सेटअप पृष्ठ में निर्धारित खाता चार्ट से 2 दिए गए खातों पर लेखांकन में एक अतिरिक्त डेबिट और एक क्रेडिट लाइन उत्पन्न की जाएगी।
 ACCOUNTING_ENABLE_TABONTHIRDPARTY=सहायक खाता बही देखने के लिए तृतीय-पक्ष कार्ड पर टैब सक्रिय करें
 ACCOUNTING_ENABLE_TABONTHIRDPARTY_DESC=जब यह विकल्प सक्षम होता है, तो तृतीय-पक्ष कार्ड में एक नया टैब दिखाई देता है, जिससे तृतीय-पक्ष के लिए लेखांकन को देखा और प्रबंधित किया जा सकता है, जैसे मिलान, मुद्रण और बहुत कुछ
+
 ## Export
 NotExportLettering=फ़ाइल बनाते समय अक्षरों को निर्यात न करें
 NotifiedExportDate=अभी तक निर्यात न की गई पंक्तियों को निर्यातित के रूप में चिह्नित करें <span class="warning">(निर्यातित के रूप में चिह्नित पंक्ति को संशोधित करने के लिए, आपको संपूर्ण लेनदेन को हटाना होगा और उसे लेखांकन में पुनः स्थानांतरित करना होगा)</span>

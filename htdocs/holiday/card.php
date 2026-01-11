@@ -5,11 +5,12 @@
  * Copyright (C) 2013		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2017-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2014-2017  Ferran Marcet				<fmarcet@2byte.es>
- * Copyright (C) 2018-2024  Frédéric France 		    <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France 		    <frederic.france@free.fr>
  * Copyright (C) 2020-2021	Udo Tamm					<dev@dolibit.de>
  * Copyright (C) 2022		Anthony Berton				<anthony.berton@bb2a.fr>
  * Copyright (C) 2024		Charlene Benke				<charlene@patas-monkey.com>
  * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Julien Marchand				<julien.marchand@iouston.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +34,13 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -43,14 +51,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/holiday.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Get parameters
 $action = GETPOST('action', 'aZ09');
@@ -189,7 +189,7 @@ if (empty($reshook)) {
 		$date_fin_gmt = GETPOSTDATE('date_fin_', '00:00:00', 1);
 		$starthalfday = GETPOST('starthalfday');
 		$endhalfday = GETPOST('endhalfday');
-		$type = GETPOST('type');
+		$type = GETPOSTINT('type');
 		$halfday = 0;
 		if ($starthalfday == 'afternoon' && $endhalfday == 'morning') {
 			$halfday = 2;
@@ -259,8 +259,11 @@ if (empty($reshook)) {
 			$action = 'create';
 		}
 
+		$tmpUser = new User($db);
+		$tmpUser->fetch($fuserid);
+
 		// If there is no Business Days within request
-		$nbopenedday = num_open_day($date_debut_gmt, $date_fin_gmt, 0, 1, $halfday);
+		$nbopenedday = num_open_day($date_debut_gmt, $date_fin_gmt, 0, 1, $halfday, $tmpUser->country_id);
 		if ($nbopenedday < 0.5) {
 			setEventMessages($langs->trans("ErrorDureeCP"), null, 'errors'); // No working day
 			$error++;
@@ -401,8 +404,11 @@ if (empty($reshook)) {
 					$action = 'edit';
 				}
 
+				$tmpUser = new User($db);
+				$tmpUser->fetch($fuserid);
+
 				// If there is no Business Days within request
-				$nbopenedday = num_open_day($date_debut_gmt, $date_fin_gmt, 0, 1, $halfday);
+				$nbopenedday = num_open_day($date_debut_gmt, $date_fin_gmt, 0, 1, $halfday, $tmpUser->country_id);
 				if ($nbopenedday < 0.5) {
 					setEventMessages($langs->trans('ErrorDureeCP'), null, 'warnings');
 					$error++;
@@ -501,7 +507,9 @@ if (empty($reshook)) {
 				$expediteur = new User($db);
 				$expediteur->fetch($object->fk_user);
 				//$emailFrom = $expediteur->email;		Email of user can be an email into another company. Sending will fails, we must use the generic email.
-				$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
+
+				// You can specify a special address from for holiday
+				$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_HOLIDAY_FROM', getDolGlobalString('MAIN_MAIL_EMAIL_FROM'));
 
 				// Subject
 				$societeName = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
@@ -519,19 +527,22 @@ if (empty($reshook)) {
 
 				// option to warn the validator in case of too short delay
 				if (!getDolGlobalString('HOLIDAY_HIDE_APPROVER_ABOUT_TOO_LOW_DELAY')) {
-					$delayForRequest = 0;		// TODO Set delay depending of holiday leave type
+					$delayForRequest = getDolGlobalFloat('HOLIDAY_DELAY_TO_APPROVE_FOR_TYPE_'.$object->fk_type);	// Set delay depending of holiday leave type
 					if ($delayForRequest) {
 						$nowplusdelay = dol_time_plus_duree($now, $delayForRequest, 'd');
 
 						if ($object->date_debut < $nowplusdelay) {
-							$message = "<p>".$langs->transnoentities("HolidaysToValidateDelay", $delayForRequest)."</p>\n";
+							$message = "<p>".$langs->transnoentities("HolidaysToValidateDelay", (string) $delayForRequest)."</p>\n";
 						}
 					}
 				}
 
 				// option to notify the validator if the balance is less than the request
 				if (!getDolGlobalString('HOLIDAY_HIDE_APPROVER_ABOUT_NEGATIVE_BALANCE')) {
-					$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
+					$tmpUser = new User($db);
+					$tmpUser->fetch($object->fk_user);
+
+					$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday, $tmpUser->country_id);
 
 					if ($nbopenedday > $object->getCPforUser($object->fk_user, $object->fk_type)) {
 						$message .= "<p>".$langs->transnoentities("HolidaysToValidateAlertSolde")."</p>\n";
@@ -618,7 +629,7 @@ if (empty($reshook)) {
 	}
 
 	// Approve leave request
-	if ($action == 'confirm_valid' && $permissiontoapprove) {	// Test on permission done later
+	if ($action == 'confirm_valid' && $permissiontoapprove) {
 		$object->fetch($id);
 
 		// If status is waiting approval and approver is also user
@@ -642,8 +653,11 @@ if (empty($reshook)) {
 
 			// If no SQL error, we redirect to the request form
 			if (!$error && empty($decrease)) {
+				$tmpUser = new User($db);
+				$tmpUser->fetch($object->fk_user);
+
 				// Calculate number of days consumed
-				$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
+				$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday, $tmpUser->country_id);
 				$soldeActuel = $object->getCpforUser($object->fk_user, $object->fk_type);
 				$newSolde = ($soldeActuel - $nbopenedday);
 				$label = $object->ref.' - '.$langs->transnoentitiesnoconv("HolidayConsumption");
@@ -817,9 +831,8 @@ if (empty($reshook)) {
 		}
 	}
 
-
 	// If the request is validated
-	if ($action == 'confirm_draft' && GETPOST('confirm') == 'yes' && $permissiontoadd) {	// Test on permission done later
+	if ($action == 'confirm_draft' && GETPOST('confirm') == 'yes' && $permissiontoadd) {
 		$error = 0;
 
 		$object->fetch($id);
@@ -886,8 +899,11 @@ if (empty($reshook)) {
 					}
 				}
 
+				$tmpUser = new User($db);
+				$tmpUser->fetch($object->fk_user);
+
 				// Calculate number of days consumed
-				$nbopenedday = num_open_day($startDate, $endDate, 0, 1, $object->halfday);
+				$nbopenedday = num_open_day($startDate, $endDate, 0, 1, $object->halfday, $tmpUser->country_id);
 
 				$soldeActuel = $object->getCpforUser($object->fk_user, $object->fk_type);
 				$newSolde = ($soldeActuel + $nbopenedday);
@@ -1422,7 +1438,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 				print $form->textwithpicto($langs->trans('NbUseDaysCP'), $htmlhelp);
 				print '</td>';
 				print '<td>';
-				print num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
+				print num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, (int) $object->halfday, $userRequest->country_id);
 				print '</td>';
 				print '</tr>';
 
