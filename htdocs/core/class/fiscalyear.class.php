@@ -288,13 +288,13 @@ class Fiscalyear extends CommonObject
 		// Query to checks if any existing fiscal year overlaps with the current date range
 		$sql = "SELECT label";
 		$sql .= " FROM " . $this->db->prefix() . "accounting_fiscalyear";
-		$sql .= " WHERE entity = " . ((int)$entity);
+		$sql .= " WHERE entity = " . ((int) $entity);
 		$sql .= " AND date_start <= '" . $this->db->idate($this->date_end) . "'";
 		$sql .= " AND date_end >= '" . $this->db->idate($this->date_start) . "'";
 
 		// Exclude current fiscal year when updating
 		if (!empty($this->id)) {
-			$sql .= " AND rowid != " . ((int)$this->id);
+			$sql .= " AND rowid != " . ((int) $this->id);
 		}
 
 		dol_syslog(get_class($this) . "::checkOverlap", LOG_DEBUG);
