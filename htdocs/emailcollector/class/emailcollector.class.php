@@ -2458,8 +2458,8 @@ class EmailCollector extends CommonObject
 							$actioncode = 'EMAIL';
 						}
 						// If sender is in the list MAIL_FROM_EMAILS_TO_CONSIDER_SENDING
-						$arrayofemailtoconsideresender = array_filter(array_map('trim', explode(',', getDolGlobalString('MAIL_FROM_EMAILS_TO_CONSIDER_SENDING'))));
-						foreach ($arrayofemailtoconsideresender as $emailtoconsidersender) {
+						$arrayofemailtoconsidersender = array_filter(array_map('trim', explode(',', getDolGlobalString('MAIL_FROM_EMAILS_TO_CONSIDER_SENDING'))));
+						foreach ($arrayofemailtoconsidersender as $emailtoconsidersender) {
 							if ($emailtoconsidersender === '') {
 								continue;
 							}
