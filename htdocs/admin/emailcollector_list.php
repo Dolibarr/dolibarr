@@ -258,6 +258,7 @@ foreach ($search as $key => $val) {
 			continue;
 		}
 		$field_spec = $object->fields[$key];
+		// @phpstan-ignore-next-line PHPStan thinks that $field_spec is never null
 		if ($field_spec === null) {
 			continue;
 		}
