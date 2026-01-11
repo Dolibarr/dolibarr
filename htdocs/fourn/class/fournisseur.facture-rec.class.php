@@ -1201,7 +1201,7 @@ class FactureFournisseurRec extends CommonInvoice
 		$this->multicurrency_total_tva = empty($this->multicurrency_total_tva) ? 0 : $this->multicurrency_total_tva;
 		$this->multicurrency_total_ttc = empty($this->multicurrency_total_ttc) ? 0 : $this->multicurrency_total_ttc;
 
-		$pu = $price_base_type == 'HT' ? $pu_ht : $pu_ttc;
+		$pu = ($price_base_type == 'HT' ? $pu_ht : $pu_ttc);
 
 
 		// Calculate total with, without tax and tax from qty, pu, remise_percent and txtva
