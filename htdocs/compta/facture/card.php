@@ -4991,7 +4991,7 @@ if ($action == 'create') {
 		}
 	}
 
-	// Confirm back to draft status
+	// Confirm back to draft status (action = 'modif')
 	if ($action == 'modif') {
 		$oktomodif = 1;		// Assume we can modify by default
 

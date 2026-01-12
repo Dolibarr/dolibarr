@@ -3129,7 +3129,8 @@ function printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayo
 	global $dolibarr_distrib;
 	global $db, $conf;
 
-	$hash_unique_id = dol_hash('dolibarr'.$conf->file->instance_unique_id, 'sha256');	// Note: if the global salt changes, this hash changes too so ping may be counted twice. We don't mind. It is for statistics and inventory purpose only.
+	$algo = 'sha256';
+	$hash_unique_id = dol_hash('dolibarr'.$conf->file->instance_unique_id, $algo);	// Note: if the global salt changes, this hash changes too so ping may be counted twice. We don't mind. It is for statistics and inventory purpose only.
 
 	// Disable ping if $constanttosavelastpingko is set and is recent (this month)
 	if (getDolGlobalString($constanttosavelastko) && substr(getDolGlobalString($constanttosavelastko), 0, 6) == dol_print_date(dol_now(), '%Y%m') && !$forceping) {
@@ -3161,7 +3162,7 @@ function printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayo
 							print $datakey.": '".dol_escape_js($dataval)."',\n";
 						}
 						?>
-						hash_algo: 'dol_hash-sha256',
+						hash_algo: 'dol_hash-<?php echo $algo; ?>',
 						hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>',
 						version: '<?php echo (float) DOL_VERSION; ?>',
 						version_full: '<?php echo DOL_VERSION; ?>',

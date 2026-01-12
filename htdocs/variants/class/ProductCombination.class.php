@@ -718,8 +718,12 @@ class ProductCombination
 			$attrval = new ProductAttributeValue($this->db);
 			// fetch only the used values of this attribute
 			foreach ($attrval->fetchAllByProductAttribute($attr->id, true) as $val) {
-				'@phan-var-force ProductAttributeValue $val';
-				$tmp->values[] = $val;
+				$tmpValue = new stdClass();
+				$tmpValue->id = $val->id;
+				$tmpValue->fk_product_attribute = $val->fk_product_attribute;
+				$tmpValue->ref = $val->ref;
+				$tmpValue->value = $val->value;
+				$tmp->values[] = $tmpValue;
 			}
 
 			$variants[] = $tmp;

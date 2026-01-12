@@ -33,6 +33,7 @@
  * @var	string			$htmlname
  * @var ?string			$out
  * @var	?string			$aiprompt
+ * @var ?string			$morecss
  */
 
 //Protection to avoid direct call of template

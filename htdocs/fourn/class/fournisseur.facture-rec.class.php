@@ -1022,7 +1022,8 @@ class FactureFournisseurRec extends CommonInvoice
 		$txlocaltax2 = !empty($txlocaltax2) ? $txlocaltax2 : 0;
 		$info_bits = !empty($info_bits) ? $info_bits : 0;
 		$info_bits = !empty($info_bits) ? $info_bits : 0;
-		$pu = $price_base_type == 'HT' ? $pu_ht : $pu_ttc;
+
+		$pu = ($price_base_type == 'HT' ? $pu_ht : $pu_ttc);
 
 		// Calcul du total TTC et de la TVA pour la ligne a partir de qty, pu, remise_percent et txtva
 		// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
@@ -1201,7 +1202,7 @@ class FactureFournisseurRec extends CommonInvoice
 		$this->multicurrency_total_tva = empty($this->multicurrency_total_tva) ? 0 : $this->multicurrency_total_tva;
 		$this->multicurrency_total_ttc = empty($this->multicurrency_total_ttc) ? 0 : $this->multicurrency_total_ttc;
 
-		$pu = $price_base_type == 'HT' ? $pu_ht : $pu_ttc;
+		$pu = ($price_base_type == 'HT' ? $pu_ht : $pu_ttc);
 
 
 		// Calculate total with, without tax and tax from qty, pu, remise_percent and txtva
