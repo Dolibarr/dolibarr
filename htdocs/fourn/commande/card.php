@@ -15,6 +15,7 @@
  * Copyright (C) 2024-2025 MDW						      <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024      Nick Fragoulis
  * Copyright (C) 2025		   Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2026		William Mead		<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1590,8 +1591,6 @@ if (empty($reshook)) {
 						dol_syslog("Try to find source object origin=".$object->origin_type." originid=".$object->origin_id." to add lines");
 						$result = $srcobject->fetch($object->origin_id);
 						if ($result > 0) {
-							$tmpdate = $srcobject->delivery_date;
-							$object->setDeliveryDate($user, $tmpdate);
 							$object->set_id_projet($user, $srcobject->fk_project);
 
 							$lines = $srcobject->lines;
@@ -1877,7 +1876,7 @@ if ($action == 'create') {
 			$cond_reglement_id = 0;
 			$deposit_percent = 0;
 			$mode_reglement_id = 0;
-			$datelivraison = '';
+			$datelivraison = (!empty($objectsrc->delivery_date) ? $objectsrc->delivery_date : '');
 			$objectsrc->note_private = '';
 			$objectsrc->note_public = '';
 			if ($societe = $object->thirdparty) {
