@@ -18,6 +18,7 @@
  * Copyright (C) 2023       Joachim Küter      		<git-jk@bloxera.com>
  * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -269,7 +270,12 @@ if (!defined('NOLOGIN') && !defined('NOIPCHECK') && !empty($dolibarr_main_restri
 	$found = false;
 	foreach ($listofip as $ip) {
 		$ip = trim($ip);
-		if ($ip == $_SERVER['REMOTE_ADDR']) {
+		if (strpos($ip, '/')) { // Check if IP with CIDR notation
+			if (check_ip_in_cidr($_SERVER['REMOTE_ADDR'], $ip) > 0) {
+				$found = true;
+				break;
+			}
+		} else if ($ip == $_SERVER['REMOTE_ADDR']) {
 			$found = true;
 			break;
 		}
