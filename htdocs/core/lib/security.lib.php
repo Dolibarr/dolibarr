@@ -1491,7 +1491,7 @@ function check_ip_in_cidr($ip, $cidr)
 
 	// Comparison boundaries
 	$total_bits = strlen($ip_bin) * 8;
-	$prefix = max(0, min((int)$prefix, $total_bits));
+	$prefix = max(0, min((int) $prefix, $total_bits));
 	$full_bytes = intdiv($prefix, 8);
 	$rem_bits = $prefix % 8;
 

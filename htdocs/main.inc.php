@@ -275,7 +275,7 @@ if (!defined('NOLOGIN') && !defined('NOIPCHECK') && !empty($dolibarr_main_restri
 				$found = true;
 				break;
 			}
-		} else if ($ip == $_SERVER['REMOTE_ADDR']) {
+		} elseif ($ip == $_SERVER['REMOTE_ADDR']) {
 			$found = true;
 			break;
 		}
