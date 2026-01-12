@@ -961,7 +961,7 @@ if ($search_dispute_status != '-1' && $search_dispute_status != '') {
 		$sql .= " AND f.dispute_status IN (".$db->sanitize($search_dispute_status).")";
 	}
 }
-if ((is_array($search_status) && count($search_status) > 0) || (!is_array($search_status) && $search_status != '' && $search_status != '-1')) {
+if ((is_array($search_status) && count($search_status) > 0) || (!is_array($search_status) && $search_status !== '' && $search_status !== '-1')) {
 	$search_statusArray = is_array($search_status) ? $search_status : array($search_status);
 	$sql .= " AND f.fk_statut IN (" . $db->sanitize(implode(',', $search_statusArray)) . ")";
 }
