@@ -4402,14 +4402,17 @@ function dol_print_email($email, $contactid = 0, $socid = 0, $addlink = 0, $max 
 		}
 		$newemail .= '</a>';
 
-		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-		$emailonly = CMailFile::getValidAddress($email, 2);
-		if ($showinvalid && !isValidEmail($emailonly)) {
-			$langs->load("errors");
-			$newemail .= img_warning($langs->transnoentitiesnoconv("ErrorBadEMail", $emailonly), '', 'paddingrightonly');
-		} elseif ($showinvalid && !isValidMailDomain($emailonly)) {
-			$langs->load("errors");
-			$newemail .= img_warning($langs->transnoentitiesnoconv("ErrorBadMXDomain", $emailonly), '', 'paddingrightonly');
+		if ($showinvalid) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+			$emailonly = CMailFile::getValidAddress($email, 2);
+			if (!isValidEmail($emailonly)) {
+				$langs->load("errors");
+				$newemail .= img_warning($langs->transnoentitiesnoconv("ErrorBadEMail", $emailonly), '', 'paddingrightonly');
+			} elseif (!isValidMailDomain($emailonly)) {
+				$langs->load("errors");
+				$newemail .= img_warning($langs->transnoentitiesnoconv("ErrorBadMXDomain", $emailonly), '', 'paddingrightonly');
+			}
 		}
 
 		if (($contactid || $socid) && isModEnabled('agenda') && $user->hasRight("agenda", "myactions", "create")) {
@@ -4434,14 +4437,17 @@ function dol_print_email($email, $contactid = 0, $socid = 0, $addlink = 0, $max 
 	} else {
 		$newemail = ($withpicto ? img_picto($langs->trans("EMail") . ' : ' . $email, (is_numeric($withpicto) ? 'email' : $withpicto), 'class="paddingrightonly"') : '') . $newemail;
 
-		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-		$emailonly = CMailFile::getValidAddress($email, 2);
-		if ($showinvalid && !isValidEmail($emailonly)) {
-			$langs->load("errors");
-			$newemail .= img_warning($langs->transnoentitiesnoconv("ErrorBadEMail", $email));
-		} elseif ($showinvalid && !isValidMailDomain($emailonly)) {
-			$langs->load("errors");
-			$newemail .= img_warning($langs->transnoentitiesnoconv("ErrorBadMXDomain", $emailonly));
+		if ($showinvalid) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+			$emailonly = CMailFile::getValidAddress($email, 2);
+			if (!isValidEmail($emailonly)) {
+				$langs->load("errors");
+				$newemail .= img_warning($langs->transnoentitiesnoconv("ErrorBadEMail", $email));
+			} elseif (!isValidMailDomain($emailonly)) {
+				$langs->load("errors");
+				$newemail .= img_warning($langs->transnoentitiesnoconv("ErrorBadMXDomain", $emailonly));
+			}
 		}
 	}
 
