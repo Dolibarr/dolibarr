@@ -174,6 +174,12 @@ class BlockedLog
 	public $trackedevents = array();
 
 	/**
+	 * Array of controlled event codes
+	 * @var array<string,string|mixed>
+	 */
+	public $controlledevents = array();
+
+	/**
 	 * Array of tracked modules (key => label)
 	 * @var array<int|string,string>
 	 */
@@ -193,7 +199,7 @@ class BlockedLog
 
 
 	/**
-	 * Load list of tracked events into $this->trackedevents.
+	 * Load list of tracked and controlled events into $this->controlled, $this->trackedevents and $this->trackedmodules
 	 *
 	 * @return int<1,1>		Always 1
 	 */
@@ -201,10 +207,13 @@ class BlockedLog
 	{
 		global $langs;
 
+		$this->controlledevents = array();
 		$this->trackedevents = array();
 		$this->trackedmodules = array();
 
 		$sep = 0;
+
+		$this->controlledevents = array('BILL_MODIFY');
 
 		$this->trackedmodules[0] = 'None';
 		if (isModEnabled('takepos')) {
