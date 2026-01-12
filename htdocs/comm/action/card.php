@@ -1287,9 +1287,9 @@ if ($action == 'create') {
 		//checkbox create reminder
 		print '<hr>';
 		print '<br>';
-		print '<label for="addreminder">'.$langs->trans("AddReminder").'</label> <input type="checkbox" id="addreminder" name="addreminder"><br><br>';
+		print '<label for="addreminder">'.$langs->trans("AddReminder").'</label> <input type="checkbox" id="addreminder" name="addreminder"'.(empty(GETPOST('addreminder')) ? '' : 'checked').'><br><br>';
 
-		print '<div class="reminderparameters" style="display: none;">';
+		print '<div class="reminderparameters" '.(empty(GETPOST('addreminder')) ? 'style="display: none;' : '').' ">';
 
 		//print '<hr>';
 		//print load_fiche_titre($langs->trans("AddReminder"), '', '');
@@ -1299,17 +1299,17 @@ if ($action == 'create') {
 		//Reminder
 		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderTime").'</td><td colspan="3">';
 		print '<input class="width50" type="number" name="offsetvalue" value="'.(GETPOSTISSET('offsetvalue') ? GETPOST('offsetvalue', 'int') : '15').'"> ';
-		print $form->selectTypeDuration('offsetunit', 'i', array('y', 'm'));
+		print $form->selectTypeDuration('offsetunit', (empty($offsetunit) ? 'i' : $offsetunit), array('y', 'm'));
 		print '</td></tr>';
 
 		//Reminder Type
 		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderType").'</td><td colspan="3">';
-		print $form->selectarray('selectremindertype', $TRemindTypes, '', 0, 0, 0, '', 0, 0, 0, '', 'mimnwidth200', 1);
+		print $form->selectarray('selectremindertype', $TRemindTypes, $remindertype, 0, 0, 0, '', 0, 0, 0, '', 'mimnwidth200', 1);
 		print '</td></tr>';
 
 		//Mail Model
 		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("EMailTemplates").'</td><td colspan="3">';
-		print $form->selectModelMail('actioncommsend', 'actioncomm_send', 1, 1);
+		print $form->selectModelMail('actioncommsend', 'actioncomm_send', 1, 1, (empty($modelmail) ? 0 : $modelmail));
 		print '</td></tr>';
 
 
@@ -1318,13 +1318,16 @@ if ($action == 'create') {
 
 		print "\n".'<script type="text/javascript">';
 		print '$(document).ready(function () {
-	            		$("#addreminder").click(function(){
-	            		    if (this.checked) {
-	            		      $(".reminderparameters").show();
-                            } else {
-                            $(".reminderparameters").hide();
-                            }
-	            		 });
+						function toggle_reminder_part(evt) {
+							if ($("#addreminder").is(":checked")) {
+								$(".reminderparameters").show();
+							} else {
+								$(".reminderparameters").hide();
+							}
+						}
+
+						toggle_reminder_part();
+						$("#addreminder").click(toggle_reminder_part);
 
 	            		$("#selectremindertype").change(function(){
 	            	        var selected_option = $("#selectremindertype option:selected").val();
