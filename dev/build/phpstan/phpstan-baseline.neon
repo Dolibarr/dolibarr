@@ -10071,7 +10071,7 @@ parameters:
 		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
-			count: 12
+			count: 10
 			path: ../../../htdocs/imports/import.php
 
 		-
