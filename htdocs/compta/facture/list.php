@@ -121,11 +121,13 @@ $search_multicurrency_montant_vat = GETPOST('search_multicurrency_montant_vat', 
 $search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 'alpha');
 $search_dispute_status = GETPOST('search_dispute_status', 'intcomma');
 $search_status = GETPOST('search_status', 'array:intcomma');
-$search_status = GETPOST('search_status', 'array:intcomma');
-if (empty($search_status) && GETPOST('ISSET_search_status')) {
+if (empty($search_status) && GETPOSTISSET('search_status')) {
+	// The parameter exists in the URL but was not recognized as an array.
 	$search_status = GETPOST('search_status', 'intcomma');
 	if ($search_status !== '' && $search_status !== '-1') {
 		$search_status = array($search_status);
+	} else {
+		$search_status = '';
 	}
 } elseif (is_array($search_status) && count($search_status) == 0) {
 	$search_status = '';
