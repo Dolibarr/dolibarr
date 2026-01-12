@@ -268,20 +268,21 @@ if (!empty($conf->file->main_force_https) && !isHTTPS() && !defined('NOHTTPSREDI
 if (!defined('NOLOGIN') && !defined('NOIPCHECK') && !empty($dolibarr_main_restrict_ip)) {
 	$listofip = explode(',', $dolibarr_main_restrict_ip);
 	$found = false;
+	$user_ip = $_SERVER['REMOTE_ADDR'];
 	foreach ($listofip as $ip) {
-		$ip = trim($ip);
-		if (strpos($ip, '/')) { // Check if IP with CIDR notation
-			if (check_ip_in_cidr($_SERVER['REMOTE_ADDR'], $ip) > 0) {
+		$authorized_ip = trim($ip);
+		if (strpos($authorized_ip, '/')) { // Check if IP with CIDR notation
+			if (check_ip_in_cidr($_SERVER['REMOTE_ADDR'], $authorized_ip) > 0) {
 				$found = true;
 				break;
 			}
-		} elseif ($ip == $_SERVER['REMOTE_ADDR']) {
+		} elseif ($user_ip == $authorized_ip) {
 			$found = true;
 			break;
 		}
 	}
 	if (!$found) {
-		print 'Access refused by IP protection. Your detected IP is '.$_SERVER['REMOTE_ADDR'];
+		print 'Access refused by IP protection. Your detected IP is: '.$user_ip;
 		exit;
 	}
 }
