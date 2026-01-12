@@ -409,12 +409,14 @@ if ($usersection) {
 	// Output payment summary form
 	print '<tr><td class="left">';
 
-	print '<div class="nowidthimp nopaddingtoponsmartphone" id="tablepublicpayment">';
+	if ($usersection) {
+		print '<div class="nowidthimp nopaddingtoponsmartphone" id="tablepublicpayment">';
 
-	print $usersection;
+		print $usersection;
 
-	print '</div>'."\n";
-	print "\n";
+		print '</div>'."\n";
+		print "\n";
+	}
 
 	print '</td></tr>'."\n";
 
@@ -506,20 +508,22 @@ if (!getDolUserInt('USER_PUBLIC_HIDE_COMPANY', 0, $object)) {
 	// Output payment summary form
 	print '<tr><td class="left">';
 
-	print '<div class="nowidthimp nopaddingtoponsmartphone" id="tablepublicpayment">';
+	if ($companysection || $mysoc->name) {
+		print '<div class="nowidthimp nopaddingtoponsmartphone" id="tablepublicpayment">';
 
-	// Add company info
-	if ($mysoc->name) {
-		print '<div class="center bold">';
-		print dol_escape_htmltag($mysoc->name);
-		print '</div>';
-		print '<br>';
+		// Add company info
+		if ($mysoc->name) {
+			print '<div class="center bold">';
+			print dol_escape_htmltag($mysoc->name);
+			print '</div>';
+			print '<br>';
+		}
+
+		print $companysection;
+
+		print '</div>'."\n";
+		print "\n";
 	}
-
-	print $companysection;
-
-	print '</div>'."\n";
-	print "\n";
 
 	print '</td></tr>'."\n";
 
