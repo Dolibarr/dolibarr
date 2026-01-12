@@ -1547,6 +1547,7 @@ InvoiceOptionCategoryOfOperationsHelp=Depending on the situation, the mention wi
 InvoiceOptionCategoryOfOperationsYes1=Yes, below the address block
 InvoiceOptionCategoryOfOperationsYes2=Yes, in the lower left-hand corner
 InvoiceClassifyBilledSupplierOrderWithoutInvoice=Disallow the classification of an order as billed without invoice.
+DisableShippableIconOnCard=Disable shippable icon on order card
 InvoiceClassifyBilledSupplierOrderWithoutInvoiceHelp=An order can be classified as billed by default. If this conf is set to true, it will be not.
 ##### Supplier Orders #####
 SupplierOrderClassifyBilledWithoutInvoice=Disallow the classification of a purchase order as billed without invoice.
