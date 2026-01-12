@@ -961,7 +961,7 @@ if ($search_dispute_status != '-1' && $search_dispute_status != '') {
 		$sql .= " AND f.dispute_status IN (".$db->sanitize($search_dispute_status).")";
 	}
 }
-if ((is_array($search_status) && count($search_status) > 0) || (!is_array($search_status) && $search_status !== '' && $search_status !== '-1')) {
+if ((is_array($search_status) && count($search_status) > 0) || (!is_array($search_status) && $search_status !== '')) {
 	$search_statusArray = is_array($search_status) ? $search_status : array($search_status);
 	$sql .= " AND f.fk_statut IN (" . $db->sanitize(implode(',', $search_statusArray)) . ")";
 }
@@ -1971,7 +1971,7 @@ if (!empty($arrayfields['f.fk_statut']['checked'])) {
 		'2' => $langs->trans("BillShortStatusPaid"),
 		'3' => $langs->trans("BillShortStatusCanceled"));
 	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-	$search_status = is_array($search_status) ? $search_status : (($search_status != '' && $search_status != '-1') ? array($search_status) : array());
+	$search_status = is_array($search_status) ? $search_status : (($search_status !== '') ? array($search_status) : array());
 	print $form->multiselectarray('search_status', $liststatus, $search_status, 0, 0, 'minwidth125', 1, 0);
 	print '</td>';
 }
