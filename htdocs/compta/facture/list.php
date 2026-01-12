@@ -121,12 +121,14 @@ $search_multicurrency_montant_vat = GETPOST('search_multicurrency_montant_vat', 
 $search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 'alpha');
 $search_dispute_status = GETPOST('search_dispute_status', 'intcomma');
 $search_status = GETPOST('search_status', 'array:intcomma');
-if (empty($search_status) && GETPOSTISSET('search_status')) {
-	// Handling the case where the parameter is passed without being an array
+$search_status = GETPOST('search_status', 'array:intcomma');
+if (empty($search_status) && GETPOST('ISSET_search_status')) {
 	$search_status = GETPOST('search_status', 'intcomma');
-	if (!empty($search_status)) {
-		$search_status = is_array($search_status) ? $search_status : array($search_status);
+	if ($search_status !== '' && $search_status !== '-1') {
+		$search_status = array($search_status);
 	}
+} elseif (is_array($search_status) && count($search_status) == 0) {
+	$search_status = '';
 }
 $search_paymentmode = GETPOST('search_paymentmode', 'intcomma');
 $search_paymentterms = GETPOST('search_paymentterms', 'intcomma');
@@ -963,7 +965,7 @@ if ($search_dispute_status != '-1' && $search_dispute_status != '') {
 }
 if ((is_array($search_status) && count($search_status) > 0) || (!is_array($search_status) && $search_status !== '')) {
 	$search_statusArray = is_array($search_status) ? $search_status : array($search_status);
-	$sql .= " AND f.fk_statut IN (" . $db->sanitize(implode(',', $search_statusArray)) . ")";
+	$sql .= " AND f.fk_statut IN (" . $db->sanitize(implode(',', array_map('intval', $search_statusArray))) . ")";
 }
 
 if ($search_paymentmode > 0) {
@@ -1971,8 +1973,7 @@ if (!empty($arrayfields['f.fk_statut']['checked'])) {
 		'2' => $langs->trans("BillShortStatusPaid"),
 		'3' => $langs->trans("BillShortStatusCanceled"));
 	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-	$search_status = is_array($search_status) ? $search_status : (($search_status !== '') ? array($search_status) : array());
-	print $form->multiselectarray('search_status', $liststatus, $search_status, 0, 0, 'minwidth125', 1, 0);
+	print $form->multiselectarray('search_status', $liststatus, (is_array($search_status) ? $search_status : array()), 0, 0, 'minwidth125', 1, 0);
 	print '</td>';
 }
 // Action column
