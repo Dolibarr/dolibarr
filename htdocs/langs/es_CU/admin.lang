@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
 Foundation=Base
 VersionProgram=Programa de versión
-VersionLastInstall=Versión de instalación inicial
 VersionLastUpgrade=Actualización de la última versión
 VersionUnknown=Desconocido
 VersionRecommanded=Recomendado
@@ -28,7 +27,6 @@ PermissionsOnFilesInWebRoot=Permisos en archivos en el directorio raíz web
 PermissionsOnFile=Permisos en el archivo %s
 NoSessionFound=Su configuración de PHP parece no permitir la lista de sesiones activas. El directorio utilizado para guardar sesiones ( <b> %s </b> ) puede estar protegido (por ejemplo, mediante permisos del sistema operativo o mediante la directiva PHP open_basedir).
 DBStoringCharset=Juego de caracteres de la base de datos para almacenar datos
-DBSortingCharset=Juego de caracteres de base de datos para ordenar datos
 HostCharset=Juego de caracteres de host
 ClientCharset=juego de caracteres del cliente
 ClientSortingCharset=intercalación de clientes
@@ -818,7 +816,6 @@ ListOfSecurityEvents=Lista de eventos de seguridad de Dolibarr
 LogEventDesc=Habilite el registro para eventos de seguridad específicos. Los administradores inician sesión a través del menú <b> %s - %s </b> . Advertencia, esta función puede generar una gran cantidad de datos en la base de datos.
 AreaForAdminOnly=Los parámetros de configuración pueden ser configurados por los usuarios administradores de <b> </b> únicamente.
 SystemInfoDesc=La información del sistema es información técnica diversa que obtiene en modo de solo lectura y es visible solo para los administradores.
-AccountantDesc=Si tiene un contador/tenedor de libros externo, puede editar aquí su información.
 AccountantFileNumber=código contable
 DisplayDesc=Los parámetros que afectan el aspecto y la presentación de la aplicación se pueden modificar aquí.
 AvailableModules=Aplicación/módulos disponibles

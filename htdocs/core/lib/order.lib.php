@@ -229,7 +229,7 @@ function order_admin_prepare_head()
  */
 function getCustomerOrderPieChart($socid = 0)
 {
-	global $conf, $db, $langs, $user;
+	global $conf, $db, $langs, $user, $hookmanager;
 
 	$result = '';
 
@@ -257,6 +257,10 @@ function getCustomerOrderPieChart($socid = 0)
 	if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
+	// Add where from hooks
+	$parameters = array('socid' => $user->socid);
+	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $commandestatic); // Note that $action and $object may have been modified by hook
+	$sql .= $hookmanager->resPrint;
 	$sql .= " GROUP BY c.fk_statut";
 
 	$resql = $db->query($sql);

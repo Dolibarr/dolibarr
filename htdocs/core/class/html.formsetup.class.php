@@ -139,11 +139,13 @@ class FormSetup
 	/**
 	 * Generate the form (in read or edit mode depending on $editMode)
 	 *
-	 * @param 	bool 	$editMode 	true will display output on edit mod
-	 * @param	bool	$hideTitle	True to hide the first title line
-	 * @return 	string				Html output
+	 * @param 	bool 	$editMode 		True will display output on edit mod
+	 * @param	bool	$hideTitle		True to hide the first title line
+	 * @param	string	$title			Title of first line
+	 * @param	string	$cssfirstcolumn	CSS first column
+	 * @return 	string					Html output
 	 */
-	public function generateOutput($editMode = false, $hideTitle = false)
+	public function generateOutput($editMode = false, $hideTitle = false, $title = '', $cssfirstcolumn = '')
 	{
 		global $hookmanager, $action;
 
@@ -165,6 +167,7 @@ class FormSetup
 
 			if ($editMode) {
 				$out .= '<form ' . self::generateAttributesStringFromArray($this->formAttributes) . ' >';
+				$out .= '<input type="hidden" name="page_y" value="">';
 
 				// generate hidden values from $this->formHiddenInputs
 				if (!empty($this->formHiddenInputs) && is_array($this->formHiddenInputs)) {
@@ -175,7 +178,7 @@ class FormSetup
 			}
 
 			// generate output table
-			$out .= $this->generateTableOutput($editMode, $hideTitle);
+			$out .= $this->generateTableOutput($editMode, $hideTitle, $title, $cssfirstcolumn);
 
 
 			$reshook = $hookmanager->executeHooks('formSetupBeforeGenerateOutputButton', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
@@ -208,11 +211,13 @@ class FormSetup
 	/**
 	 * generateTableOutput
 	 *
-	 * @param 	bool 	$editMode 	True will display output on edit modECM
-	 * @param	bool	$hideTitle	True to hide the first title line
-	 * @return 	string				Html output
+	 * @param 	bool 	$editMode 		True will display output on edit modECM
+	 * @param	bool	$hideTitle		True to hide the first title line
+	 * @param	string	$title			Title of first line
+	 * @param	string	$cssfirstcolumn	CSS first column
+	 * @return 	string					Html output
 	 */
-	public function generateTableOutput($editMode = false, $hideTitle = false)
+	public function generateTableOutput($editMode = false, $hideTitle = false, $title = '', $cssfirstcolumn = '')
 	{
 		global $hookmanager, $action;
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
@@ -230,9 +235,12 @@ class FormSetup
 		} else {
 			$out = '<table class="noborder centpercent">';
 			if (empty($hideTitle)) {
+				if (empty($title)) {
+					$title = $this->langs->transnoentitiesnoconv("Parameter");
+				}
 				$out .= '<thead>';
 				$out .= '<tr class="liste_titre">';
-				$out .= '	<td>' . $this->langs->trans("Parameter") . '</td>';
+				$out .= '	<td'.($cssfirstcolumn ? ' class="'.$cssfirstcolumn.'"' : '').'>' . dolPrintHTML($title) . '</td>';
 				$out .= '	<td></td>';
 				$out .= '</tr>';
 				$out .= '</thead>';
@@ -268,7 +276,6 @@ class FormSetup
 			$this->errors = $hookmanager->errors;
 			return -1;
 		}
-
 		if ($reshook > 0) {
 			return $reshook;
 		}
@@ -900,6 +907,8 @@ class FormSetupItem
 			$out .= $this->generateInputFieldMultiSelect();
 		} elseif ($this->type == 'select') {
 			$out .= $this->generateInputFieldSelect();
+		} elseif ($this->type == 'radio') {
+			$out .= $this->generateInputFieldRadio();
 		} elseif ($this->type == 'selectUser') {
 			$out .= $this->generateInputFieldSelectUser();
 		} elseif ($this->type == 'textarea') {
@@ -911,12 +920,23 @@ class FormSetupItem
 		} elseif ($this->type == 'yesno') {
 			if (!empty($conf->use_javascript_ajax)) {
 				$input = $this->fieldParams['input'] ?? array();
-				$revertonoff = !empty($this->fieldParams['revertonoff']) ? 1 : 0;
-				$forcereload = !empty($this->fieldParams['forcereload']) ? 1 : 0;
+				$revertonoff = empty($this->fieldParams['revertonoff']) ? 0 : 1;
+				$forcereload = empty($this->fieldParams['forcereload']) ? 0 : 1;
+				$suffixarray = array();
+				if ($this->fieldParams['alertifoff']) {
+					$suffixarray['ifoff'] = '_red';
+				} elseif ($this->fieldParams['warningifoff']) {
+					$suffixarray['ifon'] = '_warning';
+				}
+				if ($this->fieldParams['alertifon']) {
+					$suffixarray['ifon'] = '_red';
+				} elseif ($this->fieldParams['warningifon']) {
+					$suffixarray['ifon'] = '_warning';
+				}
 
-				$out .= ajax_constantonoff($this->confKey, $input, $this->entity, $revertonoff, 0, $forcereload);
+				$out .= ajax_constantonoff($this->confKey, $input, $this->entity, $revertonoff, 0, $forcereload, 2, 0, 0, $suffixarray, '', $this->cssClass);
 			} else {
-				$out .= $this->form->selectyesno($this->confKey, $this->fieldValue, 1);
+				$out .= $this->form->selectyesno($this->confKey, $this->fieldValue, 1, false, 0, 0, $this->cssClass);
 			}
 		} elseif (preg_match('/emailtemplate:/', $this->type)) {
 			$out .= $this->generateInputFieldEmailTemplate();
@@ -1147,6 +1167,9 @@ class FormSetupItem
 			$out .= ' maxlength="' . $max . '"';
 		}
 		$out .= '>';
+
+		$out .= '<span class="fa fa-eye paddingleft paddingright" onclick="javascript: console.log(\'click on show-hide pass\'); newtype = (jQuery(\'#'.trim($this->confKey).'\').attr(\'type\') == \'text\' ? \'password\' : \'text\'); jQuery(\'#'.trim($this->confKey).'\').attr(\'type\', newtype);"></span>';
+
 		return $out;
 	}
 
@@ -1167,7 +1190,6 @@ class FormSetupItem
 		return $this->form->multiselectarray($this->confKey, $this->fieldOptions, $TSelected, 0, 0, '', 0, 0, 'style="min-width:100px"');
 	}
 
-
 	/**
 	 * generateInputFieldSelect
 	 *
@@ -1181,6 +1203,23 @@ class FormSetupItem
 		}
 
 		$s .= $this->form->selectarray($this->confKey, $this->fieldOptions, $this->fieldValue, 0, 0, 0, '', 0, 0, 0, '', $this->cssClass);
+
+		return $s;
+	}
+
+	/**
+	 * generateInputFieldSelect
+	 *
+	 * @return string
+	 */
+	public function generateInputFieldRadio()
+	{
+		$s = '';
+		if ($this->picto) {
+			$s .= img_picto('', $this->picto, 'class="pictofixedwidth"');
+		}
+
+		$s .= $this->form->radio($this->confKey, $this->fieldOptions, $this->fieldValue, ['attrLabel' => ['class' => $this->cssClass]]);
 
 		return $s;
 	}
@@ -1279,7 +1318,7 @@ class FormSetupItem
 				$revertonoff = empty($this->fieldParams['revertonoff']) ? 0 : 1;
 				$forcereload = empty($this->fieldParams['forcereload']) ? 0 : 1;
 
-				$out .= ajax_constantonoff($this->confKey, array(), $this->entity, $revertonoff, 0, $forcereload);
+				$out .= ajax_constantonoff($this->confKey, array(), $this->entity, $revertonoff, 0, $forcereload, 2, 0, 0, '', '', $this->cssClass); // TODO possibility to add $input parameter
 			} else {
 				if ($this->fieldValue == 1) {
 					$out .= $langs->trans('yes');
@@ -1307,7 +1346,7 @@ class FormSetupItem
 			if ($result < 0) {
 				$this->setErrors($c->errors);
 			}
-			$ways = $c->print_all_ways(' &gt;&gt; ', 'none', 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formatted text
+			$ways = $c->print_all_ways('auto', 'none', 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formatted text
 			$toprint = array();
 			foreach ($ways as $way) {
 				$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"' . ($c->color ? ' style="background: #' . $c->color . ';"' : ' style="background: #bbb"') . '>' . $way . '</li>';
@@ -1663,6 +1702,23 @@ class FormSetupItem
 		}
 
 		$this->type = 'select';
+		return $this;
+	}
+
+
+	/**
+	 * Set type of input as a simple title. No data to store
+	 *
+	 * @param  ?array<string,string|array{id:string,label:string,picto?:string,labelIsHtml?:bool}> $fieldOptions  A table of field options
+	 * @return self
+	 */
+	public function setAsRadio($fieldOptions)
+	{
+		if (is_array($fieldOptions)) {
+			$this->fieldOptions = $fieldOptions;
+		}
+
+		$this->type = 'radio';
 		return $this;
 	}
 

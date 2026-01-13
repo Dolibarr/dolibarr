@@ -295,7 +295,7 @@ if (empty($reshook)) {
 
 				$objecttmp->date = $datefacture;
 				$objecttmp->origin_type    = 'shipping';
-				$objecttmp->origin_id = $id_sending;
+				$objecttmp->origin_id = (int) $id_sending;
 
 				$objecttmp->array_options = $expd->array_options; // Copy extrafields
 
@@ -446,7 +446,7 @@ if (empty($reshook)) {
 								$product_type,
 								$rang,
 								$lines[$i]->special_code,
-								$objecttmp->origin,
+								$objecttmp->origin_type,
 								$lines[$i]->rowid,
 								$fk_parent_line,
 								$lines[$i]->fk_fournprice,
@@ -1622,7 +1622,7 @@ while ($i < $imaxinloop) {
 			print '<td class="center">';
 			if (empty($object->trueWeight)) {
 				$tmparray = $object->getTotalWeightVolume();
-				print showDimensionInBestUnit($tmparray['weight'], 0, "weight", $langs, getDolGlobalInt('MAIN_WEIGHT_DEFAULT_ROUND', -1), isset($conf->global->MAIN_WEIGHT_DEFAULT_UNIT) ? $conf->global->MAIN_WEIGHT_DEFAULT_UNIT : 'no');
+				print showDimensionInBestUnit($tmparray['weight'], 0, "weight", $langs, getDolGlobalInt('MAIN_WEIGHT_DEFAULT_ROUND', -1), getDolGlobalString('MAIN_WEIGHT_DEFAULT_UNIT', 'no'));
 				print $form->textwithpicto('', $langs->trans('EstimatedWeight'), 1);
 			} else {
 				print $object->trueWeight;

@@ -55,6 +55,11 @@ class ExpenseReport extends CommonObject
 	public $table_element_line = 'expensereport_det';
 
 	/**
+	 * @var string    Name of subtable class that manage subtable lines
+	 */
+	public $class_element_line = 'ExpenseReportLine';
+
+	/**
 	 * @var string Fieldname with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_expensereport';
@@ -2224,19 +2229,19 @@ class ExpenseReport extends CommonObject
 	/**
 	 * Update an expense report line.
 	 *
-	 * @param   int         $rowid                  Line to edit
-	 * @param   int         $type_fees_id           Type payment
-	 * @param   int         $projet_id              Project id
-	 * @param   double      $vatrate                Vat rate. Can be '8.5' or '8.5* (8.5NPROM...)'
-	 * @param   string      $comments               Description
-	 * @param   float       $qty                    Qty
-	 * @param   double      $value_unit             Unit price (with taxes)
-	 * @param   int         $date                   Date
-	 * @param   int         $expensereport_id       Expense report id
-	 * @param   int         $fk_c_exp_tax_cat       Id of category of car
-	 * @param   int         $fk_ecm_files           Id of ECM file to link to this expensereport line
-	 * @param   int     	$notrigger      		1=No trigger
-	 * @return  int                                 Return integer <0 if KO, >0 if OK
+	 * @param   int         	$rowid                  Line to edit
+	 * @param   int         	$type_fees_id           Type payment
+	 * @param   int         	$projet_id              Project id
+	 * @param   float|string	$vatrate                Vat rate. Can be '8.5' or '8.5* (8.5NPROM...)'
+	 * @param   string      	$comments               Description
+	 * @param   float      		$qty                    Qty
+	 * @param   float      		$value_unit             Unit price (with taxes)
+	 * @param   int         	$date                   Date
+	 * @param   int         	$expensereport_id       Expense report id
+	 * @param   int         	$fk_c_exp_tax_cat       Id of category of car
+	 * @param   int         	$fk_ecm_files           Id of ECM file to link to this expensereport line
+	 * @param   int     		$notrigger      		1=No trigger
+	 * @return  int             	                    Return integer <0 if KO, >0 if OK
 	 */
 	public function updateline($rowid, $type_fees_id, $projet_id, $vatrate, $comments, $qty, $value_unit, $date, $expensereport_id, $fk_c_exp_tax_cat = 0, $fk_ecm_files = 0, $notrigger = 0)
 	{
@@ -2351,11 +2356,11 @@ class ExpenseReport extends CommonObject
 	 * deleteline
 	 *
 	 * @param   int			$rowid      	Row id
-	 * @param   User|string	$fuser      	User
+	 * @param   ?User		$fuser      	User
 	 * @param   int<0,1>	$notrigger      1=No trigger
 	 * @return  int<-1,1>                 	Return integer <0 if KO, >0 if OK
 	 */
-	public function deleteLine($rowid, $fuser = '', $notrigger = 0)
+	public function deleteLine($rowid, $fuser = null, $notrigger = 0)
 	{
 		$error = 0;
 
@@ -2394,11 +2399,11 @@ class ExpenseReport extends CommonObject
 	 * periodExists
 	 *
 	 * @param   User       $fuser          User
-	 * @param   integer    $date_debut     Start date
-	 * @param   integer    $date_fin       End date
+	 * @param   integer    $startDate     Start date timestamp
+	 * @param   integer    $endDate       End date timestamp
 	 * @return  int                        Return integer <0 if KO, >0 if OK
 	 */
-	public function periodExists($fuser, $date_debut, $date_fin)
+	public function periodExists(User $fuser, $startDate, $endDate)
 	{
 		global $conf;
 
@@ -2406,39 +2411,17 @@ class ExpenseReport extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " WHERE entity = ".((int) $conf->entity); // not shared, only for the current entity
 		$sql .= " AND fk_user_author = ".((int) $fuser->id);
+		$sql .= " AND (date_fin >= '".$this->db->idate($startDate)."' AND date_debut <= '".$this->db->idate($endDate)."')";
 
-		dol_syslog(get_class($this)."::periodExists sql=".$sql);
-		$result = $this->db->query($sql);
-		if ($result) {
-			$num_rows = $this->db->num_rows($result);
-			$i = 0;
+		$row = $this->db->getRow($sql);
 
-			if ($num_rows > 0) {
-				$date_d_form = $date_debut;
-				$date_f_form = $date_fin;
-
-				while ($i < $num_rows) {
-					$objp = $this->db->fetch_object($result);
-
-					$date_d_req = $this->db->jdate($objp->date_debut); // 3
-					$date_f_req = $this->db->jdate($objp->date_fin); // 4
-
-					if (!($date_f_form < $date_d_req || $date_d_form > $date_f_req)) {
-						return $objp->rowid;
-					}
-
-					$i++;
-				}
-
-				return 0;
-			} else {
-				return 0;
-			}
-		} else {
+		if ($row === false) {
 			$this->error = $this->db->lasterror();
-			dol_syslog(get_class($this)."::periodExists  Error ".$this->error, LOG_ERR);
+			dol_syslog(__CLASS__."::". __METHOD__."  Error ".$this->error, LOG_ERR);
 			return -1;
 		}
+
+		return $row->rowid ?? 0;
 	}
 
 

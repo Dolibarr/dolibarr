@@ -3,7 +3,7 @@
  * Copyright (C) 2008-2009  Laurent Destailleur (Eldy)  <eldy@users.sourceforge.net>
  * Copyright (C) 2008       Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2015       Marcos García               <marcosgdf@gmail.com
- * Copyright (C) 2016-2024  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2016-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2022       Alexandre Spangaro          <aspangaro@open-dsi.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -350,7 +350,7 @@ if (GETPOST("account") || GETPOST("ref")) {
 				}
 				print "</td>";
 				print "<td>".$ref."</td>";
-				if (getDolGlobalString("MULTICOMPANY_INVOICE_SHARING_ENABLED")) {
+				if (isModEnabled('multicompany') && isset($mc) && getDolGlobalString("MULTICOMPANY_INVOICE_SHARING_ENABLED")) {
 					if ($tmpobj->family == 'invoice') {
 						$mc->getInfo($tmpobj->entity);
 						print "<td>".$mc->label."</td>";

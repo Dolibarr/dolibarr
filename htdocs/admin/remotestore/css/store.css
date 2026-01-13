@@ -195,16 +195,47 @@ textarea.row4{
 h2.appTitle small{
     font-weight: normal;
 }
+/*
 tr.NotCompatible{
-    opacity: 0.5;
+    opacity: 1;
 }
 tr.NotCompatible:hover{
-    opacity: 0.7;
+    opacity: 0.9;
 }
+*/
 span.details{
     font-size: 1em;
     margin-left: 10px;
     vertical-align: super;
+}
+.storedesc {
+	opacity: 0.5;
+}
+
+.shop-container {
+    border-top: none;
+    overflow: hidden;
+    text-align: center;
+    background-color: #fff;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, .1);
+    transition: transform .3s;
+    transform: scale(1);
+}
+.shop-button {
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    text-transform: uppercase;
+    font-size: 16px;
+    color: #fff;
+    background-color: #ff5f57;
+    box-shadow: 0 5px 15px rgba(255, 95, 87, .3);
+    transition: background-color .3s, transform .3s;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
 }
 
 

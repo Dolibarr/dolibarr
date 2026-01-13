@@ -71,6 +71,8 @@ class Categorie extends CommonObject
 	const TYPE_SUPPLIER_INVOICE		= 'supplier_invoice';
 	const TYPE_SUPPLIER_PROPOSAL	= 'supplier_proposal';
 	const TYPE_PROPOSAL	            = 'propal';
+	const TYPE_PROJECT_TASK			= 'project_task';
+	const TYPE_MO					= 'mo';
 
 
 	/**
@@ -84,6 +86,7 @@ class Categorie extends CommonObject
 	 */
 	public $MAP_ID = array(
 		'product'				=> 0,
+		'service'				=> 0,
 		'supplier'				=> 1,
 		'customer'				=> 2,
 		'member'				=> 3,
@@ -103,7 +106,9 @@ class Categorie extends CommonObject
 		'supplier_order'		=> 20,
 		'supplier_invoice'		=> 21,
 		'supplier_proposal'		=> 22,
-		'propal'				=> 23
+		'propal'				=> 23,
+		'project_task'			=> 24,
+		'mo'					=> 25,
 	);
 
 	/**
@@ -131,7 +136,10 @@ class Categorie extends CommonObject
 		16 => 'order',
 		17 => 'invoice',
 		20 => 'supplier_order',
-		21 => 'supplier_invoice'
+		21 => 'supplier_invoice',
+		22 => 'supplier_proposal',
+		23 => 'propal',
+		24 => 'project_task'
 	);
 	*/
 
@@ -159,6 +167,7 @@ class Categorie extends CommonObject
 	 */
 	public $MAP_OBJ_CLASS = array(
 		'product'				=> 'Product',
+		'service'				=> 'Product',
 		'customer'				=> 'Societe',
 		'supplier'				=> 'Fournisseur',
 		'member'				=> 'Adherent',
@@ -177,8 +186,10 @@ class Categorie extends CommonObject
 		'invoice'				=> 'Facture',
 		'supplier_order'		=> 'CommandeFournisseur',
 		'supplier_invoice'		=> 'FactureFournisseur',
-		'supplier_proposal' => 'SupplierProposal',
-		'propal' => 'Propal',
+		'supplier_proposal' 	=> 'SupplierProposal',
+		'propal' 				=> 'Propal',
+		'project_task'			=> 'Task',
+		'mo'					=> 'Mo',
 	);
 
 	/**
@@ -186,6 +197,7 @@ class Categorie extends CommonObject
 	 */
 	public $MAP_TYPE_TITLE_AREA = array(
 		'product'				=> 'Products',
+		'service'				=> 'Services',
 		'customer'				=> 'ProspectsOrCustomers',
 		'supplier'				=> 'Suppliers',
 		'member'				=> 'Members',
@@ -205,8 +217,10 @@ class Categorie extends CommonObject
 		'invoice'				=> 'Invoices',
 		'supplier_order'		=> 'SuppliersOrders',
 		'supplier_invoice'		=> 'SuppliersInvoices',
-		'propal' => 'Proposals',
-		'supplier_proposal' => 'SupplierProposals',
+		'propal' 				=> 'Proposals',
+		'supplier_proposal' 	=> 'SupplierProposals',
+		'project_task'			=> 'Tasks',
+		'mo'					=> 'MOs'
 	);
 
 	/**
@@ -226,7 +240,9 @@ class Categorie extends CommonObject
 		'order'					=> 'commande',
 		'invoice'				=> 'facture',
 		'supplier_order'		=> 'commande_fournisseur',
-		'supplier_invoice'		=> 'facture_fourn'
+		'supplier_invoice'		=> 'facture_fourn',
+		'project_task'			=> 'projet_task',
+		'mo'					=> 'mrp_mo'
 	);
 
 	/**
@@ -295,6 +311,7 @@ class Categorie extends CommonObject
 	 * @see Categorie::TYPE_INVOICE
 	 * @see Categorie::TYPE_SUPPLIER_ORDER
 	 * @see Categorie::TYPE_SUPPLIER_INVOICE
+	 * @see Categorie::TYPE_PROJECT_TASK
 	 */
 	public $type;
 
@@ -382,6 +399,9 @@ class Categorie extends CommonObject
 
 		$this->db = $db;
 
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 1;
+
 		if (is_object($hookmanager)) {
 			$hookmanager->initHooks(array('category'));
 			$parameters = array();
@@ -419,7 +439,7 @@ class Categorie extends CommonObject
 				'cat_fk'    => (empty($this->MAP_CAT_FK[$mapCode]) ? $mapCode : $this->MAP_CAT_FK[$mapCode]),
 				'cat_table' => (empty($this->MAP_CAT_TABLE[$mapCode]) ? $mapCode : $this->MAP_CAT_TABLE[$mapCode]),
 				'obj_class' => (empty($this->MAP_OBJ_CLASS[$mapCode]) ? $mapCode : $this->MAP_OBJ_CLASS[$mapCode]),
-				'obj_table' => (empty($this->MAP_OBJ_TABLE[$mapCode]) ? $mapCode : $this->MAP_OBJ_TABLE[$mapCode])
+				'obj_table' => (empty($this->MAP_OBJ_TABLE[$mapCode]) ? $mapCode : $this->MAP_OBJ_TABLE[$mapCode]),
 			);
 		}
 
@@ -457,7 +477,7 @@ class Categorie extends CommonObject
 		}
 
 		$sql = "SELECT rowid, fk_parent, entity, label, description, color, position, fk_soc, visible, type, ref_ext";
-		$sql .= ", date_creation, tms, fk_user_creat, fk_user_modif";
+		$sql .= ", date_creation, tms, fk_user_creat, fk_user_modif, import_key";
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie";
 		if ($id) {
 			$sql .= " WHERE rowid = ".((int) $id);
@@ -490,8 +510,9 @@ class Categorie extends CommonObject
 				$this->date_modification = $this->db->jdate($res['tms']);
 				$this->user_creation_id = (int) $res['fk_user_creat'];
 				$this->user_modification_id = (int) $res['fk_user_modif'];
+				$this->import_key = $res['import_key'];
 
-				// Retrieve all extrafield
+				// Retrieve all extrafields
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 
@@ -766,6 +787,7 @@ class Categorie extends CommonObject
 			'categorie_user' => 'fk_categorie',
 			'categorie_product' => 'fk_categorie',
 			'categorie_project' => 'fk_categorie',
+			'categorie_project_task' => 'fk_categorie',
 			'categorie_societe' => 'fk_categorie',
 			'categorie_ticket' => array('field' => 'fk_categorie', 'enabled' => isModEnabled('ticket')),
 			'categorie_warehouse' => 'fk_categorie',
@@ -985,66 +1007,69 @@ class Categorie extends CommonObject
 		$objs = array();
 
 		$classnameforobj = $this->MAP_OBJ_CLASS[$type];
-		$obj = new $classnameforobj($this->db);
+		if (!empty($classnameforobj) && class_exists($classnameforobj)) {
+			$tmpobj = new $classnameforobj($this->db);
+			/** @var CommonObject $tmpobj */
 
-		$sql = "SELECT c.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." as fk_object";
-		$sql .= " FROM ".MAIN_DB_PREFIX."categorie_".(empty($this->MAP_CAT_TABLE[$type]) ? $type : $this->MAP_CAT_TABLE[$type])." as c";
-		$sql .= ", ".MAIN_DB_PREFIX.(empty($this->MAP_OBJ_TABLE[$type]) ? $type : $this->MAP_OBJ_TABLE[$type])." as o";
-		if (!empty($filterlang)) {
-			$sql .= ", ".MAIN_DB_PREFIX.(empty($this->MAP_OBJ_TABLE[$type]) ? $type : $this->MAP_OBJ_TABLE[$type])."_lang as ol";
-		}
-		$sql .= " WHERE o.entity IN (".getEntity($obj->element).")";
-		$sql .= " AND c.fk_categorie = ".((int) $this->id);
-		// Compatibility with actioncomm table which has id instead of rowid
-		if ((array_key_exists($type, $this->MAP_OBJ_TABLE) && $this->MAP_OBJ_TABLE[$type] == "actioncomm") || $type == "actioncomm") {
-			$sql .= " AND c.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = o.id";
-		} else {
-			$sql .= " AND c.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = o.rowid";
-		}
-		if (!empty($filterlang)) {
-			$sql .= " AND ol.fk_".(empty($this->MAP_OBJ_TABLE[$type]) ? $type : $this->MAP_OBJ_TABLE[$type])." = o.rowid";
-			$sql .= " AND ol.lang = '".$this->db->escape($filterlang)."'";
-		}
-		// Protection for external users
-		if (($type == 'customer' || $type == 'supplier') && $user->socid > 0) {
-			$sql .= " AND o.rowid = ".((int) $user->socid);
-		}
+			$sql = "SELECT c.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." as fk_object";
+			$sql .= " FROM ".MAIN_DB_PREFIX."categorie_".(empty($this->MAP_CAT_TABLE[$type]) ? $type : $this->MAP_CAT_TABLE[$type])." as c";
+			$sql .= ", ".MAIN_DB_PREFIX.(empty($this->MAP_OBJ_TABLE[$type]) ? $type : $this->MAP_OBJ_TABLE[$type])." as o";
+			if (!empty($filterlang)) {
+				$sql .= ", ".MAIN_DB_PREFIX.(empty($this->MAP_OBJ_TABLE[$type]) ? $type : $this->MAP_OBJ_TABLE[$type])."_lang as ol";
+			}
+			$sql .= " WHERE o.entity IN (".getEntity($tmpobj->element).")";
+			$sql .= " AND c.fk_categorie = ".((int) $this->id);
+			// Compatibility with actioncomm table which has id instead of rowid
+			if ((array_key_exists($type, $this->MAP_OBJ_TABLE) && $this->MAP_OBJ_TABLE[$type] == "actioncomm") || $type == "actioncomm") {
+				$sql .= " AND c.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = o.id";
+			} else {
+				$sql .= " AND c.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = o.rowid";
+			}
+			if (!empty($filterlang)) {
+				$sql .= " AND ol.fk_".(empty($this->MAP_OBJ_TABLE[$type]) ? $type : $this->MAP_OBJ_TABLE[$type])." = o.rowid";
+				$sql .= " AND ol.lang = '".$this->db->escape($filterlang)."'";
+			}
+			// Protection for external users
+			if (($type == 'customer' || $type == 'supplier') && $user->socid > 0) {
+				$sql .= " AND o.rowid = ".((int) $user->socid);
+			}
 
-		$errormessage = '';
-		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
-		if ($errormessage) {
-			$this->errors[] = $errormessage;
-			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
-			return -1;
-		}
+			$errormessage = '';
+			$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+			if ($errormessage) {
+				$this->errors[] = $errormessage;
+				dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+				return -1;
+			}
 
-		$sql .= $this->db->order($sortfield, $sortorder);
-		if ($limit > 0 || $offset > 0) {
-			$sql .= $this->db->plimit($limit + 1, $offset);
-		}
+			$sql .= $this->db->order($sortfield, $sortorder);
+			if ($limit > 0 || $offset > 0) {
+				$sql .= $this->db->plimit($limit + 1, $offset);
+			}
 
-		dol_syslog(get_class($this)."::getObjectsInCateg", LOG_DEBUG);
+			dol_syslog(get_class($this)."::getObjectsInCateg", LOG_DEBUG);
 
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			while ($rec = $this->db->fetch_array($resql)) {
-				if ($onlyids) {
-					$objs[] = $rec['fk_object'];
-				} else {
-					$classnameforobj = $this->MAP_OBJ_CLASS[$type];
-
-					$obj = new $classnameforobj($this->db);
-					$obj->fetch($rec['fk_object']);
-					if ($obj->id > 0) {		// Failing fetch may happen for example when a category supplier was set and third party was moved as customer only. The object supplier can't be loaded.
-						$objs[] = $obj;
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				while ($rec = $this->db->fetch_array($resql)) {
+					if ($onlyids) {
+						$objs[] = $rec['fk_object'];
+					} else {
+						$tmpobj->id = 0;
+						$tmpobj->fetch($rec['fk_object']);	// The fetch will erase $tmpobj->id only if it succeed.
+						// @phpstan-ignore-next-line
+						if ($tmpobj->id > 0) {		// Failing fetch may happen for example when a category supplier was set and third party was moved as customer only. The object supplier can't be loaded.
+							$objs[] = clone $tmpobj;
+						}
 					}
 				}
+			} else {
+				$this->error = $this->db->error().' sql='.$sql;
+				return -1;
 			}
-			return $objs;
-		} else {
-			$this->error = $this->db->error().' sql='.$sql;
-			return -1;
 		}
+
+		return $objs;
 	}
 
 	/**
@@ -1326,19 +1351,23 @@ class Categorie extends CommonObject
 			$nbcateg = $this->db->num_rows($resql);
 
 			while ($obj = $this->db->fetch_object($resql)) {
-				$this->cats[$obj->rowid]['rowid'] = $obj->rowid;
-				$this->cats[$obj->rowid]['id'] = $obj->rowid;
-				$this->cats[$obj->rowid]['fk_parent'] = $obj->fk_parent;
-				$this->cats[$obj->rowid]['label'] = !empty($obj->label_trans) ? $obj->label_trans : $obj->label;
-				$this->cats[$obj->rowid]['description'] = !empty($obj->description_trans) ? $obj->description_trans : $obj->description;
-				$this->cats[$obj->rowid]['color'] = $obj->color;
-				$this->cats[$obj->rowid]['position'] = $obj->position;
-				$this->cats[$obj->rowid]['visible'] = $obj->visible;
-				$this->cats[$obj->rowid]['ref_ext'] = $obj->ref_ext;
-				$this->cats[$obj->rowid]['picto'] = 'category';
-				// fields are filled with buildPathFromId later
-				$this->cats[$obj->rowid]['fullpath'] = '';
-				$this->cats[$obj->rowid]['fulllabel'] = '';
+				$this->cats[(int) $obj->rowid]
+					= array(
+						'rowid' => (int) $obj->rowid,
+						'id' => (int) $obj->rowid,
+						'fk_parent' => (int) $obj->fk_parent,
+						'label' => !empty($obj->label_trans) ? (string) $obj->label_trans : (string) $obj->label,
+						'description' => !empty($obj->description_trans) ? (string) $obj->description_trans : (string) $obj->description,
+						'color' => (string) $obj->color,
+						'position' => (string) $obj->position,
+						'visible' => (int) $obj->visible,
+						'ref_ext' => (string) $obj->ref_ext,
+						'picto' => 'category',
+						// fields are filled with buildPathFromId later
+						'fullpath' => '',
+						'fulllabel' => '',
+						'level' => null,
+					);
 				$i++;
 			}
 		} else {
@@ -1412,7 +1441,7 @@ class Categorie extends CommonObject
 		while ((empty($protection) || $i < $protection) && !empty($this->motherof[$cursor_categ])) {
 			//print '&nbsp; cursor_categ='.$cursor_categ.' i='.$i.' '.$this->motherof[$cursor_categ].'<br>'."\n";
 			$this->cats[$id_categ]['fullpath'] = '_'.$this->motherof[$cursor_categ].$this->cats[$id_categ]['fullpath'];
-			$this->cats[$id_categ]['fulllabel'] = (empty($this->cats[$this->motherof[$cursor_categ]]) ? 'NotFound' : $this->cats[$this->motherof[$cursor_categ]]['label']).' >> '.$this->cats[$id_categ]['fulllabel'];
+			$this->cats[$id_categ]['fulllabel'] = (empty($this->cats[$this->motherof[$cursor_categ]]) ? 'NotFound' : $this->cats[$this->motherof[$cursor_categ]]['label']).' > '.$this->cats[$id_categ]['fulllabel'];
 			//print '&nbsp; Result for id_categ='.$id_categ.' : '.$this->cats[$id_categ]['fullpath'].' '.$this->cats[$id_categ]['fulllabel'].'<br>'."\n";
 			$i++;
 			$cursor_categ = $this->motherof[$cursor_categ];
@@ -1533,16 +1562,21 @@ class Categorie extends CommonObject
 	 * Returns the path of the category, with the names of the categories
 	 * separated by $sep (" >> " by default)
 	 *
-	 * @param	string	$sep	     Separator
-	 * @param	string	$url	     Url ('', 'none' or 'urltouse')
-	 * @param   int     $nocolor     0
-	 * @param	int		$addpicto	 Add picto into link
+	 * @param	string		$sep	     Separator
+	 * @param	string		$url	     Url ('', 'none' or 'urltouse')
+	 * @param   int     	$nocolor     0
+	 * @param	int			$addpicto	 Add picto into link
+	 * @param	int			$notrunc	 Do not truncate names of parent categories
 	 * @return	string[]
 	 */
-	public function print_all_ways($sep = '&gt;&gt;', $url = '', $nocolor = 0, $addpicto = 0)
+	public function print_all_ways($sep = 'auto', $url = '', $nocolor = 0, $addpicto = 0, $notrunc = 0)
 	{
 		// phpcs:enable
 		$ways = array();
+
+		if ($sep == 'auto') {
+			$sep = '&gt;';
+		}
 
 		$all_ways = $this->get_all_ways(); // Load array of categories to reach this->id
 
@@ -1567,18 +1601,34 @@ class Categorie extends CommonObject
 				}
 
 				if ($url == '') {
-					$link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.((int) $cat->id).'&type='.urlencode($cat->type).'" class="'.($i < count($way) ? 'small ' : '').$forced_color.'">';
-					$linkend = '</a>';
-					$w[] = $link.(($addpicto && $i == 1) ? img_object('', 'category', 'class="paddingright"') : '').$cat->label.$linkend;
+					if (($i < count($way) && empty($notrunc)) && $i > 1) {
+						$link = '';
+						$linkend = '';
+					} else {
+						$link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.((int) $cat->id).'&type='.urlencode($cat->type).'" class="'.(($i < count($way) && empty($notrunc)) ? 'small ' : '').$forced_color.'">';
+						$linkend = '</a>';
+					}
+					$s = $link.(($addpicto && $i == 1) ? img_object('', 'category', 'class="paddingright"') : '');
+					$s .= (($i < count($way) && empty($notrunc)) ? ($i == 1 ? dol_trunc($cat->label, 3) : '') : $cat->label);
+					$s .= $linkend;
+					$w[] = $s;
 				} elseif ($url == 'none') {
-					$link = '<span class="valignmiddle '.($i < count($way) ? 'small ' : '').$forced_color.'">';
-					$linkend = '</span>';
-					$w[] = $link.(($addpicto && $i == 1) ? img_object('', 'category', 'class="paddingright"') : '').$cat->label.$linkend;
+					if (($i < count($way) && empty($notrunc)) && $i > 1) {
+						$link = '';
+						$linkend = '';
+					} else {
+						$link = '<span class="valignmiddle '.($i < count($way) ? 'small ' : '').$forced_color.'">';
+						$linkend = '</span>';
+					}
+					$s = $link.(($addpicto && $i == 1) ? img_object('', 'category', 'class="paddingright"') : '');
+					$s .= (($i < count($way) && empty($notrunc)) ? ($i == 1 ? dol_trunc($cat->label, 3) : '') : $cat->label);
+					$s .= $linkend;
+					$w[] = $s;
 				} else {
 					$w[] = '<a class="valignmiddle '.($i < count($way) ? 'small ' : '').$forced_color.'" href="'.DOL_URL_ROOT.'/'.$url.'?catid='.((int) $cat->id).'">'.($addpicto ? img_object('', 'category') : '').$cat->label.'</a>';
 				}
 			}
-			$newcategwithpath = preg_replace('/colortoreplace/', $forced_color, implode('<span class="inline-block valignmiddle paddingleft paddingright '.$forced_color.'">'.$sep.'</span>', $w));
+			$newcategwithpath = preg_replace('/colortoreplace/', $forced_color, implode('<span class="inline-block valignmiddle paddingleft paddingright small '.$forced_color.'">'.$sep.'</span>', $w));
 
 			$ways[] = $newcategwithpath;
 		}

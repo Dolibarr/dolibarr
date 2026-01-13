@@ -4,6 +4,7 @@
  * Copyright (C) 2010-2014 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,6 +46,11 @@ class HookManager
 	 * @var string[] Error codes (or messages)
 	 */
 	public $errors = array();
+
+	/**
+	 * @var string[] Warning codes (or messages)
+	 */
+	public $warnings = array();
 
 	/**
 	 * @var string[] Context hookmanager was created for ('thirdpartycard', 'thirdpartydao', ...)
@@ -189,14 +195,18 @@ class HookManager
 	/**
 	 *  Execute hooks (if they were initialized) for the given method
 	 *
+	 *  @phpstan-template T
+	 *
 	 *  @param		string				$method			Name of method hooked ('doActions', 'printSearchForm', 'showInputField', ...)
 	 *  @param		array<string,mixed>	$parameters		Array of parameters
+	 *  @phpstan-param T $object
 	 *  @param		null|Object|array<string,mixed>|string	$object			Object to use hooks on  @phan-ignore-reference
 	 *  @param		string				$action			Action code on calling page ('create', 'edit', 'view', 'add', 'update', 'delete'...)
 	 *  @return		int<-1,1>							For 'addreplace' hooks (doActions, formConfirm, formObjectOptions, pdf_xxx,...): 	Return 0 if we want to keep standard actions, >0 if we want to stop/replace standard actions, <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
 	 *                                  			    For 'output' hooks (printLeftBlock, formAddObjectLine, formBuilddocOptions, ...):	Return 0 if we want to keep standard actions, >0 uf we want to stop/replace standard actions (at least one > 0 and replacement will be done), <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
 	 *                                  			    All types can also return some values into an array ->results that will be merged into this->resArray for caller.
 	 * 													$this->error or this->errors are also defined by class called by this function if error.
+	 * 													$this->warnings is also defined by class called by this function if warning.
 	 */
 	public function executeHooks($method, $parameters = array(), &$object = null, &$action = '')
 	{
@@ -307,6 +317,7 @@ class HookManager
 					// Clean class (an error may have been set from a previous call of another method for same module/hook)
 					$actionclassinstance->error = '';
 					$actionclassinstance->errors = array();
+					$actionclassinstance->warnings = array();
 
 					if (getDolGlobalInt('MAIN_HOOK_DEBUG')) {
 						// This is too verbose, enabled if const enabled only // False positive about id & element: @phan-suppress-next-line PhanUndeclaredProperty
@@ -327,6 +338,11 @@ class HookManager
 							$this->error = $actionclassinstance->error;
 							$this->errors = array_merge($this->errors, (array) $actionclassinstance->errors);
 							dol_syslog("Error on hook module=".$module.", method ".$method.", class ".get_class($actionclassinstance).", hooktype=".$hooktype.(empty($this->error) ? '' : " ".$this->error).(empty($this->errors) ? '' : " ".implode(",", $this->errors)), LOG_ERR);
+						}
+
+						if (!empty($actionclassinstance->warnings) && count($actionclassinstance->warnings) > 0) {
+							$this->warnings = array_merge($this->warnings, (array) $actionclassinstance->warnings);
+							dol_syslog("Warning on hook module=".$module.", method ".$method.", class ".get_class($actionclassinstance).", hooktype=".$hooktype.(empty($this->warnings) ? '' : " ".implode(",", $this->warnings)), LOG_DEBUG);
 						}
 
 						if (isset($actionclassinstance->results) && is_array($actionclassinstance->results)) {

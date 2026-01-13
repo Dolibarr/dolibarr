@@ -279,6 +279,7 @@ class Website extends CommonObject
 			$stringtodolibarrfile .= "param=value\n";
 			//print $conf->website->dir_output.'/'.$this->ref.'/.dolibarr';exit;
 			file_put_contents($pathofwebsite.'/.dolibarr', $stringtodolibarrfile);
+			dolChmod($pathofwebsite.'/.dolibarr');
 
 			$filelicense = $pathofwebsite.'/LICENSE';
 			if (!dol_is_file($filelicense)) {
@@ -1279,6 +1280,11 @@ class Website extends CommonObject
 		$error = 0;
 
 		$pathtofile = dol_sanitizePathName($pathtofile);
+		if (!file_exists($pathtofile)) {
+			$this->error = 'The zip file "'.$pathtofile.'" is not found';
+			return -9;
+		}
+
 		$object = $this;
 		if (empty($object->ref)) {
 			$this->error = 'Function importWebSite called on object not loaded (object->ref is empty)';
@@ -1894,34 +1900,6 @@ class Website extends CommonObject
 	}
 
 	/**
-	 * check previous state for file
-	 * @param  string   $pathname  path of file
-	 * @return  array|mixed
-	 */
-	public function checkPreviousState($pathname)
-	{
-		if (!file_exists($pathname)) {
-			if (touch($pathname)) {
-				dolChmod($pathname, '0664');
-			}
-			return [];
-		}
-		return unserialize(file_get_contents($pathname));
-	}
-
-
-	/**
-	 * Save state for File
-	 * @param mixed $etat   state
-	 * @param string $pathname  path of file
-	 * @return int|false
-	 */
-	public function saveState($etat, $pathname)
-	{
-		return file_put_contents($pathname, serialize($etat));
-	}
-
-	/**
 	 * Compare two files has not same name but same content
 	 * @param  string   $dossierSource        filepath of folder source
 	 * @param  string   $dossierDestination   filepath of folder dest
@@ -2151,7 +2129,10 @@ class Website extends CommonObject
 		// Reindex the table keys
 		$contentDest = array_values($contentDest);
 		$stringreplacement = implode("\n", $contentDest);
+
 		file_put_contents($inplaceFile, $stringreplacement);
+		dolChmod($inplaceFile);
+
 		foreach ($differences['lignes_dont_change'] as $linechanged => $line) {
 			if (in_array($linechanged, $contentDest)) {
 				dolReplaceInFile($inplaceFile, array($linechanged => $line));

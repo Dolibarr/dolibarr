@@ -3,7 +3,7 @@
  * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2021	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -65,9 +65,11 @@ if (preg_match('/del(.*)/', $action, $reg)) {
 	}
 }
 
+
 // List of workflow we can enable
 clearstatcache();
 
+/** @var array<string,array{family:string,position:int,enabled:bool,picto?:string,warning?:string,deprecated?:int<0,1>,reloadpage?:int<0,1>}> $workflowcodes */
 $workflowcodes = array(
 	// Automatic creation
 	'WORKFLOW_PROPAL_AUTOCREATE_ORDER' => array(
@@ -227,6 +229,7 @@ $workflowcodes = array(
 
 if (!empty($conf->modules_parts['workflow']) && is_array($conf->modules_parts['workflow'])) {
 	foreach ($conf->modules_parts['workflow'] as $workflow) {
+		/** @var array<string,array{family:string,position:int,enabled:bool,picto?:string,warning?:string,deprecated?:int<0,1>,reloadpage?:int<0,1>}> $workflow */
 		$workflowcodes = array_merge($workflowcodes, $workflow);
 	}
 }

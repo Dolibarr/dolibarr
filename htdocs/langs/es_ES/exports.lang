@@ -152,3 +152,4 @@ MandatoryTargetFieldsNotMapped=Algunos campos de destino obligatorios no están 
 AllTargetMandatoryFieldsAreMapped=Todos los campos de destino que necesitan un valor obligatorio se asignan
 ResultOfSimulationNoError=Resultado de la simulación: Sin error
 NumberOfLinesLimited=Número de líneas limitado
+ErrorFileLinesReachEOF=El archivo tiene %s líneas. Sin embargo, llegamos al final del archivo o a una línea vacía en el registro %s. Esto puede ocurrir cuando algunos registros están divididos en varias líneas y no están correctamente delimitados por el "delimitador de caracteres", o si hay una línea sin datos en todos los campos.

@@ -70,6 +70,7 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 if (!is_array($search_array_options)) {
 	$search_array_options = array();
 }
+$search_all          = trim(GETPOST('search_all', 'alphanohtml'));
 $search_ref			= GETPOST("search_ref", 'alpha');
 $search_type		= GETPOST("search_type", 'alpha');
 $search_address		= GETPOST("search_address", 'alpha');
@@ -93,6 +94,8 @@ if (empty($sortfield)) {
 	$sortfield = "t.ref";
 }
 
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
+
 // Load variable for pagination
 $limit	= GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 
@@ -103,6 +106,12 @@ if (empty($page) || $page == -1) {
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
+
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+	't.ref' => 'Ref',
+	't.description' => 'Description',
+);
 
 $arrayfields = array(
 	't.ref' => array(
@@ -279,6 +288,10 @@ $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object
 $sql .= $hookmanager->resPrint;
 
 $sql .= " WHERE t.entity IN (".getEntity('resource').")";
+// Search all
+if (!empty($search_all)) {
+	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
+}
 if ($search_ref) {
 	$sql .= natural_search('t.ref', $search_ref);
 }
@@ -356,7 +369,7 @@ if (!$resql) {
 $num = $db->num_rows($resql);
 
 // Direct jump if only one record found
-if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && !$page) {
+if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
 	header("Location: ".dol_buildpath('/resource/card.php', 1).'?id='.$id);
@@ -449,6 +462,16 @@ $objecttmp = new Dolresource($db);
 $trackid = 'int'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
+if ($search_all) {
+	$setupstring = '';
+	foreach ($fieldstosearchall as $key => $val) {
+		$fieldstosearchall[$key] = $langs->trans($val);
+		$setupstring .= $key."=".$val.";";
+	}
+	print '<!-- Search done like if RESOURCE_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>';
+}
+
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = ($form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'))); // This also change content of $arrayfields
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
@@ -459,9 +482,10 @@ print '<table class="tagtable liste">'."\n";
 // Fields title search
 
 print '<tr class="liste_titre_filter">';
+// Action column
 if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-	print '<td class="liste_titre center maxwidthsearch">';
-	$searchpicto = $form->showFilterButtons();
+	print '<td class="liste_titre maxwidthsearch center">';
+	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
 	print '</td>';
 }
@@ -538,6 +562,7 @@ $totalarray['nbfield'] = 0;
 // Fields title label
 
 print '<tr class="liste_titre">';
+// Action column
 if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 }
@@ -605,7 +630,7 @@ while ($i < $imaxinloop) {
 	$objectstatic->max_users = $obj->max_users;
 	$objectstatic->url = $obj->url;
 
-	print '<tr class="oddeven row-with-select">';
+	print '<tr data-rowid="'.$obj->rowid.'"  class="oddeven row-with-select">';
 
 	// Action column
 	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -624,14 +649,14 @@ while ($i < $imaxinloop) {
 	}
 
 	if (!empty($arrayfields['t.ref']['checked'])) {
-		print '<td>'.$objectstatic->getNomUrl(5).'</td>';
+		print '<td class="tdoverflowmax150">'.$objectstatic->getNomUrl(5).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 
 	if (!empty($arrayfields['ty.label']['checked'])) {
-		print '<td>'.$objectstatic->type_label.'</td>';
+		print '<td class="tdoverflowmax200">'.$objectstatic->type_label.'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

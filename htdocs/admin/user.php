@@ -31,10 +31,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -42,11 +38,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'members', 'users'));
 
-$extrafields = new ExtraFields($db);
+$extrafields = new ExtraFields($db);			// may be used by some inc.php files
 
 $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
@@ -199,7 +199,9 @@ print '</td></tr>';
 print '</table>';
 print '</div>';
 
+
 print '<br>';
+
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 

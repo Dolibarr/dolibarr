@@ -104,6 +104,11 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	font-size: 2.8em;
 	background: var(--colorbacktitle1) !important;
 }
+<?php if (!colorIsLight(getDolGlobalString('THEME_ELDY_BACKTITLE1'))) { ?>
+.info-box-icon i.fa, .info-box-icon i.fa:before {
+	color: #fff !important;
+}
+<?php } ?>
 
 .info-box-module .info-box-icon {
 	padding-top: 5px;
@@ -256,8 +261,8 @@ a.info-box-text-a i.fa.fa-exclamation-triangle, span.badge i.fa.fa-exclamation-t
 .info-box-content {
 	padding-top: 5px;
 	padding-bottom: 5px;
-	padding-left: 10px;
-	padding-right: 5px;
+	padding-<?php echo $left; ?>: 14px;
+	padding-<?php echo $right; ?>: 5px;
 	margin-left: 84px;
 }
 .info-box-sm .info-box-content {
@@ -279,21 +284,21 @@ a.info-box-text-a i.fa.fa-exclamation-triangle, span.badge i.fa.fa-exclamation-t
 }
 .progress-description,
 .info-box-text,
-.info-box-title{
+.info-box-title {
 	display: block;
 	font-size: 12px;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
-.info-box-title{
+.info-box-title {
 	text-transform: uppercase;
-	font-weight: bold;
+	/* font-weight: bold; */
 	margin-bottom: 3px;	/* not too much space so we can add another lines */
-	opacity: 0.6;
+	opacity: 0.5;
 	/* color: var(--colortexttitlenotab); */
 }
-.info-box-text{
+.info-box-text {
 	font-size: 0.92em;
 }
 /* Force values for small screen 480 */
@@ -375,61 +380,47 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 }
 
 .spannature {
-	padding-top: 5px !important;
+	padding-top: 6px !important;
 	padding-bottom: 6px !important;
+	vertical-align: middle;
+	white-space: nowrap;
+	display: inline-block;
 }
 
 .nonature-back {
 	background-color: #EEE;
-	padding: 2px;
-	margin: 2px;
-	border-radius: 3px;
 }
 .prospect-back {
 	background-color: #a7c5b0 !important;
 	color: #FFF !important;
-	padding: 2px;
-	margin: 2px;
-	border-radius: 3px;
 }
 .customer-back {
 	background-color: #55955d !important;
 	color: #FFF !important;
-	padding: 2px;
-	margin: 2px;
-	border-radius: 3px;
 }
 .vendor-back {
 	background-color: #599caf !important;
 	color: #FFF !important;
-	padding: 2px;
-	margin: 2px;
-	border-radius: 3px;
 }
 .user-back {
 	background-color: #79633f !important;
 	color: #FFF !important;
-	padding: 2px;
-	margin: 2px;
-	border-radius: 3px;
 }
 .member-company-back {
-	padding: 2px;
-	margin: 2px;
 	background-color: #e4e4e4;
 	color: #666;
-	border-radius: 3px;
 	white-space: nowrap;
 }
 .member-individual-back {
-	padding: 2px;
-	margin: 2px;
 	background-color: #e4e4e4;
 	color: #666;
-	border-radius: 3px;
 	white-space: nowrap;
 }
-
+.nonature-back, .prospect-back, .customer-back, .vendor-back, .user-back, .member-company-back, .member-individual-back {
+	padding: 2px;
+	margin: 2px;
+	border-radius: 5px;
+}
 
 .bg-infobox-project{
 	<?php echo $prefix; ?>color: #6c6aa8 !important;
@@ -468,7 +459,7 @@ a.vmenu span, span.vmenu, span.vmenu span {
 	/* color: var(--colortextbackvmenu) !important; */
 }
 
-.infobox-adherent, .infobox-member {
+.infobox-adherent, .infobox-member, .infobox-expensereport {
 	color: #79633f;
 }
 .infobox-project{
@@ -495,14 +486,11 @@ a.vmenu span, span.vmenu, span.vmenu span {
 .infobox-bank_account{
 	color: #b0bb39;
 }
-.infobox-adherent, .infobox-member {
-	color: #79633f;
-}
-.infobox-expensereport{
-	color: #79633f;
-}
 .infobox-holiday{
 	color: #755114;
+}
+.infobox-portal {
+	color: #304;
 }
 
 

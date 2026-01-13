@@ -20,8 +20,8 @@
 
 /**
  * @var CommonObject $this
- * @var CommonObject $object
- * @var CommonObjectLine $line
+ * @var Propal|Contrat|Commande|Facture|Expedition|Delivery|CommandeFournisseur|FactureFournisseur|SupplierProposal|Fichinter $object
+ * @var PropaleLigne|ContratLigne|OrderLine|FactureLigne|ExpeditionLigne|DeliveryLine|CommandeFournisseurLigne|SupplierInvoiceLine|SupplierProposalLine|FichinterLigne $line
  * @var Form $form
  * @var Translate $langs
  * @var User $user
@@ -30,8 +30,8 @@
  */
 
 '
-@phan-var-force Propal|Contrat|Commande|Facture|Expedition|Delivery|CommandeFournisseur|FactureFournisseur|SupplierProposal $object
-@phan-var-force CommonObjectLine|CommonInvoiceLine|CommonOrderLine|ExpeditionLigne|PropaleLigne $line
+@phan-var-force Propal|Contrat|Commande|Facture|Expedition|Delivery|CommandeFournisseur|FactureFournisseur|SupplierProposal|Fichinter $object
+@phan-var-force CommonObjectLine|CommonInvoiceLine|CommonOrderLine|ExpeditionLigne|PropaleLigne|FichinterLigne $line
 ';
 
 // Options for subtotal
@@ -141,7 +141,7 @@ if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 		foreach ($line_options as $key => $value) {
 			if (in_array($line_type, $value['type'])) {
 				print '<li><label for="' . $key . '">' . $langs->trans($value['trans_key']) . '</label>';
-				print '<input style="float: left;" id="' . $key . '" type="checkbox" name="' . $key . '" value="' . $value['value'] . '" ';
+				print '<input style="float: left;margin-top: 9px;" id="' . $key . '" type="checkbox" name="' . $key . '" value="' . $value['value'] . '" ';
 				print $value['checked'] ? 'checked' : '';
 				print '></li>';
 			}

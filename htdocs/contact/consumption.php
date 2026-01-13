@@ -365,6 +365,9 @@ if (!empty($sql_select)) {
 		}
 		$sql .= ")";
 	}
+	$parameters = array('type_element' => $type_element);
+	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	$sql .= $hookmanager->resPrint;
 	$sql .= $db->order($sortfield, $sortorder);
 	$resql = $db->query($sql);
 	$totalnboflines = $db->num_rows($resql);

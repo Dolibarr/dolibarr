@@ -69,7 +69,7 @@ $canbemodified = ((empty($object->date_fin) || dol_get_last_hour($object->date_f
 
 // Security check
 if (!isModEnabled('opensurvey')) {
-	httponly_accessforbidden('Module Survey not enabled');
+	httponly_accessforbidden('Module Opensurvey not enabled');
 }
 
 

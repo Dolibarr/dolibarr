@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014-2024  Alexandre Spangaro  <aspangaro@easya.solutions>
+/* Copyright (C) 2014-2026	Alexandre Spangaro	<alexandre@inovea-conseil.com>
  * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
@@ -46,7 +46,7 @@ $ref = GETPOST('ref', 'alpha');
 
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');					// if not set, a default page will be used
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');	// if not set, $backtopage will be used
@@ -211,7 +211,9 @@ if ($action == 'create') {
 	print '<table class="border centpercent tableforfieldcreate">'."\n";
 
 	// Label
-	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" size="32" value="'.GETPOST('label', 'alpha').'"></td></tr>';
+	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td>';
+	print '<input name="label" size="32" value="'.GETPOST('label', 'alpha').'">';
+	print '</td></tr>';
 
 	// Date start
 	print '<tr><td class="fieldrequired">'.$langs->trans("DateStart").'</td><td>';
@@ -257,6 +259,7 @@ if (($id || $ref) && $action == 'edit') {
 	print '<form method="POST" name="update" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
+	print '<input type="hidden" name="status" value="' . $object->status . '">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
 	if ($backtopage) {
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
@@ -334,13 +337,19 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// ------------------------------------------------------------
 	$linkback = '<a href="'.DOL_URL_ROOT.'/accountancy/admin/fiscalyear.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+	dol_banner_tab($object, 'label', $linkback, 1, 'label', 'label', $morehtmlref);
 
 
 	print '<div class="fichecenter">';
 	print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">'."\n";
+
+	// Id
+	print "<tr>";
+	print '<td class="titlefield">'.$langs->trans("Id").'</td><td>';
+	print $object->id;
+	print '</td></tr>';
 
 	// Label
 	print '<tr><td class="tdtop">';

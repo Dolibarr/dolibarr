@@ -44,13 +44,13 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
-
+require_once DOL_DOCUMENT_ROOT.'/subtotals/class/commonsubtotal.class.php';
 /**
  *	Class to manage price ask supplier
  */
 class SupplierProposal extends CommonObject
 {
-	use CommonIncoterm;
+	use CommonIncoterm, CommonSubtotal;
 
 	/**
 	 * @var string ID to identify managed object
@@ -250,6 +250,11 @@ class SupplierProposal extends CommonObject
 	 */
 	public $multicurrency_total_ttc;
 
+	public $fields = array(
+		'ref' => array('type' => 'varchar(255)', 'label' => 'Ref', 'enabled' => 1, 'visible' => 1, 'showoncombobox' => 1, 'position' => 25, 'searchall' => 1),
+		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 750, 'searchall' => 1),
+	);
+
 	/**
 	 * Draft status
 	 */
@@ -405,7 +410,7 @@ class SupplierProposal extends CommonObject
 					return -1;
 				}
 			} else {
-				$this->error = $supplier_proposalligne->error;
+				$this->setErrorsFromObject($supplier_proposalligne);
 				$this->db->rollback();
 				return -2;
 			}
@@ -422,33 +427,33 @@ class SupplierProposal extends CommonObject
 	 *		par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,'',produit)
 	 *		et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
 	 *
-	 * 		@param    	string		$desc				Description de la ligne
-	 * 		@param    	float		$pu_ht				Prix unitaire
-	 * 		@param    	float		$qty             	Quantite
-	 * 		@param    	float		$txtva           	Taux de tva
-	 * 		@param		float		$txlocaltax1		Local tax 1 rate
-	 *  	@param		float		$txlocaltax2		Local tax 2 rate
-	 *		@param    	int			$fk_product      	Product/Service ID predefined
-	 * 		@param    	float		$remise_percent  	Percentage discount of the line
-	 * 		@param    	string		$price_base_type	HT or TTC
-	 * 		@param    	float		$pu_ttc             Prix unitaire TTC
-	 * 		@param    	int			$info_bits			Bits of type of lines
-	 *      @param      int			$type               Type of line (product, service)
-	 *      @param      int			$rang               Position of line
-	 *      @param		int			$special_code		Special code (also used by externals modules!)
-	 *      @param		int			$fk_parent_line		Id of parent line
+	 * 		@param    	string			$desc				Description of line
+	 * 		@param    	float			$pu_ht				Unit price
+	 * 		@param    	float			$qty             	Quantite
+	 * 		@param    	float|string	$txtva           	VAT rate. Can be '19.6' or '19.6 (CODE)'
+	 * 		@param		float			$txlocaltax1		Local tax 1 rate
+	 *  	@param		float			$txlocaltax2		Local tax 2 rate
+	 *		@param    	int				$fk_product      	Product/Service ID predefined
+	 * 		@param    	float			$remise_percent  	Percentage discount of the line
+	 * 		@param    	string			$price_base_type	HT or TTC
+	 * 		@param    	float			$pu_ttc             Prix unitaire TTC
+	 * 		@param    	int				$info_bits			Bits of type of lines
+	 *      @param      int				$type               Type of line (product, service)
+	 *      @param      int				$rang               Position of line
+	 *      @param		int				$special_code		Special code (also used by externals modules!)
+	 *      @param		int				$fk_parent_line		Id of parent line
 	 *      @param		int|string		$fk_fournprice		Id supplier price or string. If 0, we will take best price. If -1 we keep it empty.
 	 *      @param		float|string	$pa_ht				Buying price without tax (Can be '' to keep AWP unchanged or a float value)
-	 *      @param		string		$label				???
+	 *      @param		string			$label				???
 	 *      @param		array<string,mixed>		$array_options		extrafields array
-	 * 		@param		string		$ref_supplier		Supplier price reference
-	 * 		@param		int			$fk_unit			Id of the unit to use.
-	 * 		@param		string		$origin				'order', 'supplier_proposal', ...
-	 * 		@param		int			$origin_id			Id of origin line
-	 * 		@param		float		$pu_ht_devise		Amount in currency
-	 * 		@param		int			$date_start			Date start
-	 * 		@param		int			$date_end			Date end
-	 *    	@return    	int         	    			>0 if OK, <0 if KO
+	 * 		@param		string			$ref_supplier		Supplier price reference
+	 * 		@param		int				$fk_unit			Id of the unit to use.
+	 * 		@param		string			$origin				'order', 'supplier_proposal', ...
+	 * 		@param		int				$origin_id			Id of origin line
+	 * 		@param		float			$pu_ht_devise		Amount in currency
+	 * 		@param		int				$date_start			Date start
+	 * 		@param		int				$date_end			Date end
+	 *    	@return    	int         		    			Return >0 if OK, <0 if KO
 	 *
 	 *    	@see       	add_product()
 	 */
@@ -700,8 +705,7 @@ class SupplierProposal extends CommonObject
 					return -1;
 				}
 			} else {
-				$this->error = $this->line->error;
-				$this->errors = $this->line->errors;
+				$this->setErrorsFromObject($this->line);
 				$this->db->rollback();
 				return -2;
 			}
@@ -715,28 +719,28 @@ class SupplierProposal extends CommonObject
 	/**
 	 *  Update a proposal line
 	 *
-	 *  @param      int			$rowid           	Id de la ligne
-	 *  @param      float		$pu		     	  	Unit price (HT or TTC depending on price_base_type)
-	 *  @param      float		$qty            	Quantity
-	 *  @param      float		$remise_percent  	Discount on line
-	 *  @param      float		$txtva	          	VAT rate
-	 * 	@param	  	float		$txlocaltax1		Local tax 1 rate
-	 *  @param	  	float		$txlocaltax2		Local tax 2 rate
-	 *  @param      string		$desc            	Description
-	 *	@param	  	string		$price_base_type	HT or TTC
-	 *	@param      int			$info_bits        	Miscellaneous information
-	 *	@param		int			$special_code		Special code (also used by externals modules!)
-	 * 	@param		int			$fk_parent_line		Id of parent line (0 in most cases, used by modules adding sublevels into lines).
-	 * 	@param		int			$skip_update_total	Keep fields total_xxx to 0 (used for special lines by some modules)
-	 *  @param		int			$fk_fournprice		Id of origin supplier price
-	 *  @param		float|string	$pa_ht			Price (without tax) of product when it was bought (Can be '' to keep AWP unchanged or a float value)
-	 *  @param		string		$label				???
-	 *  @param		int<0,1>	$type				0/1=Product/service
-	 *  @param		array<string,mixed>	$array_options		extrafields array
-	 * 	@param		string		$ref_supplier		Supplier price reference
-	 *	@param		int			$fk_unit			Id of the unit to use.
-	 * 	@param		float		$pu_ht_devise		Unit price in currency
-	 *  @return     int     		        		0 if OK, <0 if KO
+	 *  @param      int				$rowid           	Id de la ligne
+	 *  @param      float			$pu		     	  	Unit price (HT or TTC depending on price_base_type)
+	 *  @param      float			$qty            	Quantity
+	 *  @param      float			$remise_percent  	Discount on line
+	 *  @param      float|string	$txtva	          	VAT rate. Can be '19.6' or '19.6 (CODE)'
+	 * 	@param	  	float			$txlocaltax1		Local tax 1 rate
+	 *  @param	  	float			$txlocaltax2		Local tax 2 rate
+	 *  @param      string			$desc            	Description
+	 *	@param	  	string			$price_base_type	HT or TTC
+	 *	@param      int				$info_bits        	Miscellaneous information
+	 *	@param		int				$special_code		Special code (also used by externals modules!)
+	 * 	@param		int				$fk_parent_line		Id of parent line (0 in most cases, used by modules adding sublevels into lines).
+	 * 	@param		int				$skip_update_total	Keep fields total_xxx to 0 (used for special lines by some modules)
+	 *  @param		int				$fk_fournprice		Id of origin supplier price
+	 *  @param		float|string	$pa_ht				Price (without tax) of product when it was bought (Can be '' to keep AWP unchanged or a float value)
+	 *  @param		string			$label				???
+	 *  @param		int<0,1>		$type				0/1=Product/service
+	 *  @param		array<string,mixed>	$array_options	Extrafields array
+	 * 	@param		string			$ref_supplier		Supplier price reference
+	 *	@param		int				$fk_unit			Id of the unit to use.
+	 * 	@param		float			$pu_ht_devise		Unit price in currency
+	 *  @return     int     			        		Return 0 if OK, <0 if KO
 	 */
 	public function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $desc = '', $price_base_type = 'HT', $info_bits = 0, $special_code = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $type = 0, $array_options = [], $ref_supplier = '', $fk_unit = 0, $pu_ht_devise = 0)
 	{
@@ -986,7 +990,7 @@ class SupplierProposal extends CommonObject
 			list($this->fk_multicurrency, $this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $now);
 		}
 		if (empty($this->fk_multicurrency)) {
-			$this->multicurrency_code = $conf->currency;
+			$this->multicurrency_code = getDolCurrency();
 			$this->fk_multicurrency = 0;
 			$this->multicurrency_tx = 1;
 		}
@@ -2440,7 +2444,7 @@ class SupplierProposal extends CommonObject
 		$this->note_private = 'This is a comment (private)';
 
 		$this->multicurrency_tx = 1;
-		$this->multicurrency_code = $conf->currency;
+		$this->multicurrency_code = getDolCurrency();
 
 		// Lines
 		$nbp = min(1000, GETPOSTINT('nblines') ? GETPOSTINT('nblines') : 5);	// We can force the nb of lines to test from command line (but not more than 1000)
@@ -2554,6 +2558,7 @@ class SupplierProposal extends CommonObject
 
 			$obj = new $classname();
 			'@phan-var-force ModeleNumRefSupplierProposal $obj';
+			/** @var ModeleNumRefSupplierProposal $obj */
 			$numref = "";
 			$numref = $obj->getNextValue($soc, $this);
 
@@ -2600,13 +2605,13 @@ class SupplierProposal extends CommonObject
 			$datas['ref_supplier'] = '<br><b>'.$langs->trans('RefSupplier').':</b> '.$this->ref_fourn;
 		}
 		if (!empty($this->total_ht)) {
-			$datas['amount_ht'] = '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
+			$datas['amount_ht'] = '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, getDolCurrency());
 		}
 		if (!empty($this->total_tva)) {
-			$datas['amount_vat'] = '<br><b>'.$langs->trans('VAT').':</b> '.price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
+			$datas['amount_vat'] = '<br><b>'.$langs->trans('VAT').':</b> '.price($this->total_tva, 0, $langs, 0, -1, -1, getDolCurrency());
 		}
 		if (!empty($this->total_ttc)) {
-			$datas['amount_ttc'] = '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
+			$datas['amount_ttc'] = '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, getDolCurrency());
 		}
 
 		return $datas;
@@ -2762,10 +2767,10 @@ class SupplierProposal extends CommonObject
 				$this->lines[$i]->remise_percent = $obj->remise_percent;
 				$this->lines[$i]->tva_tx = $obj->tva_tx;
 				$this->lines[$i]->vat_src_code = $obj->vat_src_code;
-				$this->lines[$i]->info_bits			= $obj->info_bits;
+				$this->lines[$i]->info_bits = $obj->info_bits;
 				$this->lines[$i]->total_ht = $obj->total_ht;
-				$this->lines[$i]->total_tva			= $obj->total_tva;
-				$this->lines[$i]->total_ttc			= $obj->total_ttc;
+				$this->lines[$i]->total_tva = $obj->total_tva;
+				$this->lines[$i]->total_ttc = $obj->total_ttc;
 				$this->lines[$i]->fk_fournprice = $obj->fk_fournprice;
 				$marginInfos = getMarginInfos($obj->subprice, $obj->remise_percent, $obj->tva_tx, $obj->localtax1_tx, $obj->localtax2_tx, $this->lines[$i]->fk_fournprice, $obj->pa_ht);
 				$this->lines[$i]->pa_ht = $marginInfos[0];
@@ -2778,8 +2783,6 @@ class SupplierProposal extends CommonObject
 				$this->lines[$i]->ref_fourn = $obj->ref_supplier; // deprecated
 				$this->lines[$i]->ref_supplier = $obj->ref_supplier;
 
-				$this->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
-
 				// Multicurrency
 				$this->lines[$i]->fk_multicurrency = $obj->fk_multicurrency;
 				$this->lines[$i]->multicurrency_code = $obj->multicurrency_code;
@@ -2788,6 +2791,7 @@ class SupplierProposal extends CommonObject
 				$this->lines[$i]->multicurrency_total_tva 	= $obj->multicurrency_total_tva;
 				$this->lines[$i]->multicurrency_total_ttc 	= $obj->multicurrency_total_ttc;
 				$this->lines[$i]->fk_unit = $obj->fk_unit;
+				$this->lines[$i]->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 
 				$i++;
 			}

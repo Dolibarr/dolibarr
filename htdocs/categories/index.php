@@ -44,7 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("accountancy", "agenda", "banks", "bills", "categories", "contracts", "interventions", "propal", "supplier_proposal"));
+$langs->loadLangs(array("accountancy", "agenda", "banks", "bills", "categories", "contracts", "interventions", "mrp", "propal", "supplier_proposal"));
 $langs->loadLangs(array("knowledgemanagement", "members", "orders", "products", "stocks", "suppliers", "tickets", "website"));
 
 $mode = GETPOST('mode', 'aZ09');
@@ -89,15 +89,30 @@ foreach ($categstatic->MAP_ID as $key => $idtype) {
 $arrayofcateg = dol_sort_array($arrayofcateg, 'labelwithoutaccent', 'asc', 1, 0, 1);
 
 // Get number of tags per category type
-$sql = "SELECT type as idtype, COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."categorie GROUP BY type";
+$countobjects = [];
+$sql = "SELECT type as idtype, COUNT(rowid) as nb";
+$sql .= " FROM ".MAIN_DB_PREFIX."categorie";
+$sql .= " WHERE entity IN (".getEntity('category').")";
+$sql .= " GROUP BY type";
 $resql = $db->query($sql);
 if ($resql) {
 	while ($obj = $db->fetch_object($resql)) {
-		$arrayofcateg[$obj->idtype]['nb'] = $obj->nb;
+		$countobjects[$obj->idtype] = $obj->nb;
 	}
 } else {
 	dol_print_error($db);
 }
+
+// Get list of category type
+$arrayofcateg = array();
+foreach ($categstatic->MAP_ID as $key => $idtype) {
+	$arrayofcateg[$key] = array();
+	$arrayofcateg[$key]['key'] = $key;
+	$arrayofcateg[$key]['nb'] = $countobjects[$idtype] ?? 0;
+	$arrayofcateg[$key]['label'] = $langs->transnoentitiesnoconv($categstatic::$MAP_TYPE_TITLE_AREA[$key]);
+	$arrayofcateg[$key]['labelwithoutaccent'] = dol_string_unaccent($langs->transnoentitiesnoconv($categstatic::$MAP_TYPE_TITLE_AREA[$key]));
+}
+$arrayofcateg = dol_sort_array($arrayofcateg, 'labelwithoutaccent', 'asc', 1, 0, 1);
 
 print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', '', '', '', -1, 0, $categstatic->picto, 0, '', '', -1, 0, 1, 1);
 
@@ -163,7 +178,11 @@ foreach ($arrayofcateg as $idtype => $val) {
 	print dolPrintHTML($arrayofcateg[$idtype]['label']);
 	print '</td>';
 	print '<td class="center">';
-	print $arrayofcateg[$idtype]['nb'];
+	if (empty($arrayofcateg[$idtype]['nb'])) {
+		print '<span class="opacitymedium">'.$arrayofcateg[$idtype]['nb'].'</span>';
+	} else {
+		print $arrayofcateg[$idtype]['nb'];
+	}
 	print '</td>';
 	print '<td class="center"><a class="editfielda" href="'.dolBuildUrl(DOL_URL_ROOT.'/categories/categorie_list.php', ['mode' => 'hierarchy', 'type' => $key]).'">'.img_picto('', 'edit').'</a></td>';
 	print '</tr>';

@@ -163,7 +163,21 @@ function product_prepare_head($object)
 			$h++;
 		}
 	}
-
+	if (!getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB')) {
+		$objectsrc = $object;
+		if ($object->origin == 'product' && $object->origin_id > 0) {
+			$objectsrc = new Product($db);
+			$objectsrc->fetch($object->origin_id);
+		}
+		$nbContact = count($objectsrc->liste_contact(-1, 'internal')) + count($objectsrc->liste_contact(-1, 'external'));
+		$head[$h][0] = DOL_URL_ROOT."/product/contact.php?id=".$object->id;
+		$head[$h][1] = $langs->trans("ContactsAddresses");
+		if ($nbContact > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
+		}
+		$head[$h][2] = 'contact';
+		$h++;
+	}
 	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/stats/facture.php', ['showmessage' => 1, 'id' => $object->id]);
 	$head[$h][1] = $langs->trans('Referers');
 	$head[$h][2] = 'referers';
@@ -957,9 +971,9 @@ function measuringUnitString($unitid, $measuring_style = '', $unitscale = null, 
 				if ($use_short_label == 1) {
 					$labeltoreturn = $measuringUnits->records[key($measuringUnits->records)]->short_label;
 				} elseif ($use_short_label == 2) {
-					$labeltoreturn = $outputlangs->transnoentitiesnoconv(ucfirst($measuringUnits->records[key($measuringUnits->records)]->label).'Short');
+					$labeltoreturn = $outputlangs->transnoentitiesnoconv(ucfirst((string) $measuringUnits->records[key($measuringUnits->records)]->label).'Short');
 				} else {
-					$labeltoreturn = $outputlangs->transnoentitiesnoconv($measuringUnits->records[key($measuringUnits->records)]->label);
+					$labeltoreturn = $outputlangs->transnoentitiesnoconv((string) $measuringUnits->records[key($measuringUnits->records)]->label);
 				}
 			} else {
 				$labeltoreturn = '';
@@ -1009,4 +1023,43 @@ function measuring_units_cubed($unit)
 	$measuring_units[98] = 88; // foot -> foot3
 	$measuring_units[99] = 89; // inch -> inch3
 	return $measuring_units[$unit];
+}
+
+/**
+ * Retrieve and return product for mail template.
+ *
+ * @param int $id The ID of the product to retrieve.
+ * @return array<string,mixed>|int<-1,-1>   Return array if OK, -1 if KO
+ */
+function getProductForEmailTemplate($id)
+{
+	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+	global $db, $conf;
+
+	$productarray = array();
+	$sql = "SELECT p.rowid as id, p.ref, p.label, p.description, p.entity";
+	$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
+	$sql .= " WHERE p.entity IN (".getEntity('product').")";
+	$sql .= " AND p.rowid = ".((int) $id);
+
+	$resql = $db->query($sql);
+
+	if ($resql) {
+		$productarray = $db->fetch_array($resql);
+	} else {
+		dol_print_error($db);
+		return -1;
+	}
+
+	$object = new Product($db);
+	$result = $object->fetch($id);
+	if ($result < 0) {
+		dol_print_error($db, $object->error, $object->errors);
+	}
+	$entity = (empty($object->entity) ? $conf->entity : $object->entity);
+	$productarray["image"] = $object->show_photos('product', $conf->product->multidir_output[$entity], 1, 1, 0, 0, 0, 120, 160, 1, '');
+	if ($object->nbphoto <= 0) {
+		$productarray["image"] = "";
+	}
+	return $productarray;
 }

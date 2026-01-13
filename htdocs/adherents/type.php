@@ -33,12 +33,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -47,14 +41,20 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
  * @var User $user
  */
 
+require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+
 // Load translation files required by the page
 $langs->load("members");
 
-$rowid  = GETPOSTINT('rowid');
+$rowid = GETPOSTINT('rowid');
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
-$toselect 	= GETPOST('toselect', 'array:int');
+$toselect = GETPOST('toselect', 'array:int');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $mode = GETPOST('mode', 'alpha');
@@ -485,7 +485,13 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 					print '<td class="center">'.yn($objp->subscription).'</td>';
 				}
 				if (!empty($arrayfields['t.amount']['checked'])) {
-					print '<td class="center"><span class="amount">'.(is_null($objp->amount) || $objp->amount === '' ? '' : price($objp->amount)).'</span></td>';
+					print '<td class="center">';
+					$amount = (is_null($objp->amount) || $objp->amount === '' ? '' : price($objp->amount));
+					print '<span class="amount">'.$amount.'</span>';
+					if ($amount && $amount < (float) getDolGlobalInt("MEMBER_MIN_AMOUNT")) {
+						print img_warning('Amount lower than minimum of '.price(getDolGlobalInt("MEMBER_MIN_AMOUNT")).' defined in setup');
+					}
+					print '</td>';
 				}
 				if (!empty($arrayfields['t.caneditamount']['checked'])) {
 					print '<td class="center">'.yn($objp->caneditamount).'</td>';
@@ -645,7 +651,11 @@ if ($rowid > 0) {
 
 		// Amount
 		print '<tr><td class="titlefield">'.$langs->trans("Amount").'</td><td>';
-		print((is_null($object->amount) || $object->amount === '') ? '' : '<span class="amount">'.price($object->amount).'</span>');
+		$amount = ((is_null($object->amount) || $object->amount === '') ? '' : price($object->amount));
+		print '<span class="amount">'.$amount.'</span>';
+		if ($amount && $amount < (float) getDolGlobalInt("MEMBER_MIN_AMOUNT")) {
+			print ' '.img_warning('Amount lower than minimum of '.price(getDolGlobalInt("MEMBER_MIN_AMOUNT")).' defined in setup');
+		}
 		print '</tr>';
 
 		print '<tr><td>'.$form->textwithpicto($langs->trans("CanEditAmountShort"), $langs->transnoentities("CanEditAmount")).'</td><td>';
@@ -915,17 +925,17 @@ if ($rowid > 0) {
 
 			print '<tr class="liste_titre">';
 			if ($conf->main_checkbox_left_column) {
-				print_liste_field_titre("Action", $_SERVER["PHP_SELF"], "", $param, "", 'width="60" align="center"', $sortfield, $sortorder);
+				print_liste_field_titre("Action", $_SERVER["PHP_SELF"], "", "", $param, 'width="60" align="center"', $sortfield, $sortorder);
 			}
-			print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "d.ref", $param, "", "", $sortfield, $sortorder);
-			print_liste_field_titre("NameSlashCompany", $_SERVER["PHP_SELF"], "d.lastname", $param, "", "", $sortfield, $sortorder);
-			print_liste_field_titre("Login", $_SERVER["PHP_SELF"], "d.login", $param, "", "", $sortfield, $sortorder);
-			print_liste_field_titre("MemberNature", $_SERVER["PHP_SELF"], "d.morphy", $param, "", "", $sortfield, $sortorder);
-			print_liste_field_titre("EMail", $_SERVER["PHP_SELF"], "d.email", $param, "", "", $sortfield, $sortorder);
-			print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "d.statut,d.datefin", $param, "", "", $sortfield, $sortorder);
-			print_liste_field_titre("EndSubscription", $_SERVER["PHP_SELF"], "d.datefin", $param, "", 'align="center"', $sortfield, $sortorder);
+			print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "d.ref", "", $param, "", $sortfield, $sortorder);
+			print_liste_field_titre("NameSlashCompany", $_SERVER["PHP_SELF"], "d.lastname", "", $param, "", $sortfield, $sortorder);
+			print_liste_field_titre("Login", $_SERVER["PHP_SELF"], "d.login", "", $param, "", $sortfield, $sortorder);
+			print_liste_field_titre("MemberNature", $_SERVER["PHP_SELF"], "d.morphy", "", $param, "", $sortfield, $sortorder);
+			print_liste_field_titre("EMail", $_SERVER["PHP_SELF"], "d.email", "", $param, "", $sortfield, $sortorder);
+			print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "d.statut,d.datefin", "", $param, "", $sortfield, $sortorder);
+			print_liste_field_titre("EndSubscription", $_SERVER["PHP_SELF"], "d.datefin", "", $param, 'align="center"', $sortfield, $sortorder);
 			if (!$conf->main_checkbox_left_column) {
-				print_liste_field_titre("Action", $_SERVER["PHP_SELF"], "", $param, "", 'width="60" align="center"', $sortfield, $sortorder);
+				print_liste_field_titre("Action", $_SERVER["PHP_SELF"], "", "", $param, 'width="60" align="center"', $sortfield, $sortorder);
 			}
 			print "</tr>\n";
 
@@ -944,7 +954,6 @@ if ($rowid > 0) {
 				$adh->firstname = $objp->firstname;
 				$adh->datefin = $datefin;
 				$adh->need_subscription = $objp->subscription;
-				$adh->statut = $objp->status;
 				$adh->status = $objp->status;
 				$adh->email = $objp->email;
 				$adh->photo = $objp->photo;
@@ -1089,8 +1098,9 @@ if ($rowid > 0) {
 		print '</td></tr>';
 
 		print '<tr><td>'.$langs->trans("Amount").'</td><td>';
+		$amount = ((is_null($object->amount) || $object->amount === '') ? '' : price($object->amount));
 		print '<input name="amount" size="5" value="';
-		print((is_null($object->amount) || $object->amount === '') ? '' : price($object->amount));
+		print $amount;
 		print '">';
 		print '</td></tr>';
 

@@ -4,7 +4,7 @@
  * Copyright (C) 2006-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
  * Copyright (C) 2022       Udo Tamm                <dev@dolibit.de>
@@ -265,6 +265,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 	$ok = (array_key_exists($sessionkey, $_SESSION) && (strtolower($_SESSION[$sessionkey]) == strtolower(GETPOST('code'))));
 	if (!$ok) {
 		$error++;
+		$langs->load("errors");
 		$errmsg .= $langs->trans("ErrorBadValueForCode")."<br>\n";
 		$action = '';
 	}
@@ -550,7 +551,7 @@ if (!$action || $action == 'create') {
 	print '</td><td class="nowrap">';
 
 	print '<input type="text" name="amount" id="amount" class="flat amount width50" value="'.$showedamount.'">';
-	print ' '.$langs->trans("Currency".$conf->currency).'<span class="opacitymedium hideifautoturnover"> - ';
+	print ' '.$langs->trans("Currency".getDolCurrency()).'<span class="opacitymedium hideifautoturnover"> - ';
 	print $langs->trans("AnyAmountForDonation");
 	print '</span>';
 

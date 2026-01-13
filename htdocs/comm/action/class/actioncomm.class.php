@@ -821,6 +821,11 @@ class ActionComm extends CommonObject
 		$result = $this->create($fuser);
 		if ($result < 0) {
 			$error++;
+		} else {
+			$resultcat = $this->cloneCategories($objFrom->id, $this->id);
+			if ($resultcat < 0) {
+				$error++;
+			}
 		}
 
 		if (!$error) {
@@ -2695,7 +2700,7 @@ class ActionComm extends CommonObject
 				$tmpactioncommreminder = new ActionCommReminder($this->db);
 				$tmpactioncommreminder->id = $obj->id;
 				$tmpactioncommreminder->typeremind = $obj->typeremind;
-				$tmpactioncommreminder->dateremind = $obj->dateremind;
+				$tmpactioncommreminder->dateremind = $this->db->jdate($obj->dateremind);
 				$tmpactioncommreminder->offsetvalue = $obj->offsetvalue;
 				$tmpactioncommreminder->offsetunit = $obj->offsetunit;
 				$tmpactioncommreminder->status = $obj->status;

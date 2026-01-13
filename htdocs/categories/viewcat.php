@@ -34,11 +34,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -46,9 +41,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("categories", "compta"));
+$langs->loadLangs(array("categories", "compta", "mrp"));
 
 $action     = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
@@ -90,15 +89,15 @@ if ($id == "" && $label == "") {
 // Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('categorycard', 'globalcard'));
 
-// Security check
-$result = restrictedArea($user, 'categorie', $id, '&category');
-
 $object = new Categorie($db);
 $result = $object->fetch($id, $label);
 if ($result <= 0) {
 	dol_print_error($db, $object->error);
 	exit;
 }
+
+// Security check
+$result = restrictedArea($user, 'categorie', $object->id, '&category');
 
 $type = $object->type;
 if (is_numeric($type)) {
@@ -177,6 +176,11 @@ if ($id > 0 && $removeelem > 0 && $action == 'unlink') {	// Test on permission n
 		$tmpobject = new Commande($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'order';
+	} elseif ($type == Categorie::TYPE_MO && $user->hasRight('mrp', 'write')) {
+		require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
+		$tmpobject = new Mo($db);
+		$result = $tmpobject->fetch($removeelem);
+		$elementtype = 'mo';
 	} elseif ($type == Categorie::TYPE_INVOICE && $user->hasRight('facture', 'creer')) {
 		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$tmpobject = new Facture($db);
@@ -262,6 +266,10 @@ if ($elemid && $action == 'addintocategory') {	// Test on permission not require
 		require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 		$newobject = new Commande($db);
 		$elementtype = 'order';
+	} elseif ($type == Categorie::TYPE_MO && $user->hasRight('mrp', 'write')) {
+		require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
+		$newobject = new Mo($db);
+		$elementtype = 'mo';
 	} elseif ($type == Categorie::TYPE_INVOICE && $user->hasRight('facture', 'creer')) {
 		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$newobject = new Facture($db);
@@ -324,8 +332,9 @@ $backtolist = (GETPOST('backtolist') ? GETPOST('backtolist') : DOL_URL_ROOT.'/ca
 $linkback = '<a href="'.dol_sanitizeUrl($backtolist).'">'.$langs->trans("BackToList").'</a>';
 $object->next_prev_filter = 'type:=:'.((int) $object->type);
 $object->ref = $object->label;
-$morehtmlref = '<br><div class="refidno"><a href="'.DOL_URL_ROOT.'/categories/categorie_list.php?leftmenu=cat&type='.urlencode($type).'">'.$langs->trans("Root").'</a> >> ';
-$ways = $object->print_all_ways(" &gt;&gt; ", '', 1);
+$morehtmlref = '<br><div class="refidno"><a href="'.DOL_URL_ROOT.'/categories/categorie_list.php?leftmenu=cat&type='.urlencode($type).'">'.$langs->trans("Root").'</a>';
+$morehtmlref .= ' > ';
+$ways = $object->print_all_ways("auto", '', 1, 0, 1);
 foreach ($ways as $way) {
 	$morehtmlref .= $way."<br>\n";
 }
@@ -628,7 +637,7 @@ if ($type == Categorie::TYPE_PRODUCT) {
 			}
 			print "</table>\n";
 
-			print '</form>'."\n";
+			print "</form>\n";
 		}
 	} else {
 		print_barre_liste($langs->trans("ProductsAndServices"), null, $_SERVER["PHP_SELF"], '', '', '', '', 0, '', 'products');
@@ -708,7 +717,7 @@ if ($type == Categorie::TYPE_CUSTOMER) {
 			}
 			print "</table>\n";
 
-			print '</form>'."\n";
+			print "</form>\n";
 		}
 	} else {
 		print_barre_liste($langs->trans("Customers"), null, $_SERVER["PHP_SELF"], '', '', '', '', 0, '', 'companies');
@@ -790,7 +799,7 @@ if ($type == Categorie::TYPE_SUPPLIER) {
 			}
 			print "</table>\n";
 
-			print '</form>'."\n";
+			print "</form>\n";
 		}
 	} else {
 		print_barre_liste($langs->trans("Suppliers"), null, $_SERVER["PHP_SELF"], '', '', '', '', 0, '', 'companies');
@@ -874,7 +883,7 @@ if ($type == Categorie::TYPE_MEMBER) {
 			}
 			print "</table>\n";
 
-			print '</form>'."\n";
+			print "</form>\n";
 		}
 	} else {
 		print_barre_liste($langs->trans("Member"), null, $_SERVER["PHP_SELF"], '', '', '', '', 0, '', 'members');
@@ -960,7 +969,7 @@ if ($type == Categorie::TYPE_CONTACT) {
 			}
 			print "</table>\n";
 
-			print '</form>'."\n";
+			print "</form>\n";
 		}
 	} else {
 		print_barre_liste($langs->trans("Contact"), null, $_SERVER["PHP_SELF"], '', '', '', '', 0, '', 'contact');
@@ -1043,7 +1052,7 @@ if ($type == Categorie::TYPE_ACCOUNT) {
 			}
 			print "</table>\n";
 
-			print '</form>'."\n";
+			print "</form>\n";
 		}
 	} else {
 		print_barre_liste($langs->trans("Banque"), null, $_SERVER["PHP_SELF"], '', '', '', '', 0, '', 'bank');
@@ -1063,8 +1072,8 @@ if ($type == Categorie::TYPE_PROJECT) {
 		if ($objects < 0) {
 			dol_print_error($db, $object->error, $object->errors);
 		} else {
-			/** @var Project $object */
-			'@phan-var-force Project $object';
+			/** @var Project[] $objects */
+			'@phan-var-force Project[] $objects';
 			// Form to add record into a category
 			print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -1125,7 +1134,7 @@ if ($type == Categorie::TYPE_PROJECT) {
 			}
 			print "</table>\n";
 
-			print '</form>'."\n";
+			print "</form>\n";
 		}
 	} else {
 		print_barre_liste($langs->trans("Project"), null, $_SERVER["PHP_SELF"], '', '', '', '', 0, '', 'project');
@@ -1145,6 +1154,7 @@ if ($type == Categorie::TYPE_USER) {
 		} else {
 			/** @var User[] $users */
 			'@phan-var-force User[] $users';
+
 			// Form to add record into a category
 			print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -1203,7 +1213,7 @@ if ($type == Categorie::TYPE_USER) {
 			}
 			print "</table>\n";
 
-			print '</form>'."\n";
+			print "</form>\n";
 		}
 	} else {
 		print_barre_liste($langs->trans("Users"), null, $_SERVER["PHP_SELF"], '', '', '', '', 0, '', 'user');
@@ -1215,6 +1225,7 @@ if ($type == Categorie::TYPE_USER) {
 if ($type == Categorie::TYPE_WAREHOUSE) {
 	if ($user->hasRight("stock", "read")) {
 		$permission = $user->hasRight('stock', 'creer');
+		$showclassifyform = $user->hasRight('stock', 'creer');
 
 		require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 
@@ -1240,6 +1251,16 @@ if ($type == Categorie::TYPE_WAREHOUSE) {
 
 			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			print_barre_liste($langs->trans("Warehouses"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'stock', 0, $newcardbutton, '', $limit);
+
+			if ($showclassifyform) {
+				print '<table class="noborder centpercent">';
+				print '<tr class="liste_titre"><td>';
+				print $langs->trans("AddTicketIntoCategory").' &nbsp;';
+				print $form->selectForForms('Entrepot:product/stock/class/entrepot.class.php', 'elemid', 0, 1, '', '', 'maxwidth500');
+				print '<input type="submit" class="button buttongen" name="addintocategory" value="'.$langs->trans("ClassifyInCategory").'"></td>';
+				print '</tr>';
+				print '</table>';
+			}
 
 			print '<table class="noborder centpercent">'."\n";
 			print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Ref").'</td></tr>'."\n";
@@ -1274,7 +1295,7 @@ if ($type == Categorie::TYPE_WAREHOUSE) {
 			}
 			print "</table>\n";
 
-			print '</form>'."\n";
+			print "</form>\n";
 		}
 	} else {
 		print_barre_liste($langs->trans("Warehouse"), null, $_SERVER["PHP_SELF"], '', '', '', '', 0, '', 'stock');
@@ -1354,7 +1375,7 @@ if ($type == Categorie::TYPE_TICKET) {
 			}
 			print "</table>\n";
 
-			print '</form>'."\n";
+			print "</form>\n";
 		}
 	} else {
 		print_barre_liste($langs->trans("Ticket"), null, $_SERVER["PHP_SELF"], '', '', '', '', 0, '', 'ticket');
@@ -1372,11 +1393,11 @@ if ($type == Categorie::TYPE_FICHINTER) {
 		if ($fichinters < 0) {
 			dol_print_error($db, $object->error, $object->errors);
 		} else {
+			/** @var Fichinter[] $fichinters */
+			'@phan-var-force Fichinter[] $fichinters';
+
 			// Form to add record into a category
 			if ($showclassifyform) {
-				require_once DOL_DOCUMENT_ROOT.'/core/class/html.formintervention.class.php';
-				$formfichinter = new FormIntervention($db);
-
 				print '<br>';
 				print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -1387,7 +1408,7 @@ if ($type == Categorie::TYPE_FICHINTER) {
 				print '<table class="noborder centpercent">';
 				print '<tr class="liste_titre"><td>';
 				print $langs->trans("AddFichinterIntoCategory").' &nbsp;';
-				print $formfichinter->select_interventions(-1, 0, 'elemid');
+				print $form->selectForForms('Fichinter:fichinter/class/fichinter.class.php', 'elemid', 0, 1, '', '', 'maxwidth500');
 				print '<input type="submit" class="button buttongen" value="'.$langs->trans("ClassifyInCategory").'"></td>';
 				print '</tr>';
 				print '</table>';
@@ -1441,7 +1462,7 @@ if ($type == Categorie::TYPE_FICHINTER) {
 				print '<tr class="oddeven"><td colspan="2"><span class="opacitymedium">'.$langs->trans("ThisCategoryHasNoItems").'</span></td></tr>';
 			}
 			print "</table>\n";
-			print '</form>'."\n";
+			print "</form>\n";
 		}
 	} else {
 		print_barre_liste($langs->trans("Intervention"), null, $_SERVER["PHP_SELF"], '', '', '', '', 0, '', 'fichinter');
@@ -1459,6 +1480,8 @@ if ($type == Categorie::TYPE_ORDER) {
 	if ($objects < 0) {
 		dol_print_error($db, $object->error, $object->errors);
 	} else {
+		/** @var Commande[] $objects */
+		'@phan-var-force Commande[] $objects';
 		// Form to add record into a category
 		$showclassifyform = $user->hasRight('order', 'write');
 		if ($showclassifyform) {
@@ -1472,7 +1495,7 @@ if ($type == Categorie::TYPE_ORDER) {
 			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre"><td>';
 			print $langs->trans("AddOrderIntoCategory").' &nbsp;';
-			$form->selectOrder('', 'elemid');
+			print $form->selectForForms('Commande:commande/class/commande.class.php', 'elemid', 0, 1, '', '', 'maxwidth500');
 			print '<input type="submit" class="button buttongen" value="'.$langs->trans("ClassifyInCategory").'"></td>';
 			print '</tr>';
 			print '</table>';
@@ -1514,8 +1537,7 @@ if ($type == Categorie::TYPE_ORDER) {
 				// Link to delete from category
 				print '<td class="right">';
 				if ($permission) {
-					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$order->id."'>";
-					print $langs->trans("DeleteFromCat");
+					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$typeid."&action=unlink&token=".newToken()."&removeelem=".$order->id."'>";
 					print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', 0, 0, 0, '', 'paddingleft');
 					print "</a>";
 				}
@@ -1526,7 +1548,89 @@ if ($type == Categorie::TYPE_ORDER) {
 		}
 		print "</table>\n";
 
-		print '</form>'."\n";
+		print "</form>\n";
+	}
+}
+
+// List of Manufacturing Orders
+if ($type == Categorie::TYPE_MO) {
+	require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
+
+	$permission = $user->hasRight('mrp', 'write');
+
+	$objects = $object->getObjectsInCateg($type, 0, $limit, $offset);
+	if ($objects < 0) {
+		dol_print_error($db, $object->error, $object->errors);
+	} else {
+		/** @var Mo[] $objects */
+		'@phan-var-force Mo[] $objects';
+		// Form to add record into a category
+		$showclassifyform = $user->hasRight('mrp', 'write');
+		if ($showclassifyform) {
+			print '<br>';
+			print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
+			print '<input type="hidden" name="typeid" value="'.$typeid.'">';
+			print '<input type="hidden" name="type" value="'.$typeid.'">';
+			print '<input type="hidden" name="id" value="'.$object->id.'">';
+			print '<input type="hidden" name="action" value="addintocategory">';
+			print '<table class="noborder centpercent">';
+			print '<tr class="liste_titre"><td>';
+			print $langs->trans("AddMoIntoCategory").' &nbsp;';
+			print $form->selectForForms('Mo:mrp/class/mo.class.php', 'elemid', 0, 1, '', '', 'maxwidth500');
+			print '<input type="submit" class="button buttongen" value="'.$langs->trans("ClassifyInCategory").'"></td>';
+			print '</tr>';
+			print '</table>';
+			print '</form>';
+		}
+
+		print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input type="hidden" name="typeid" value="'.$typeid.'">';
+		print '<input type="hidden" name="type" value="'.$typeid.'">';
+		print '<input type="hidden" name="id" value="'.$object->id.'">';
+		print '<input type="hidden" name="action" value="list">';
+
+		print '<br>';
+		$param = '&limit='.$limit.'&id='.$id.'&type='.$type;
+		$num = count($objects);
+		$nbtotalofrecords = '';
+		$newcardbutton = '';
+
+		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
+		print_barre_liste($langs->trans("MOs"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'mrp', 0, $newcardbutton, '', $limit);
+
+		print "<table class='noborder centpercent'>\n";
+		print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Ref").'</td></tr>'."\n";
+
+		if (count($objects) > 0) {
+			$i = 0;
+			foreach ($objects as $key => $mo) {
+				$i++;
+				if ($i > $limit) {
+					break;
+				}
+
+				print "\t".'<tr class="oddeven">'."\n";
+				print '<td class="nowrap tdtop">';
+				print $mo->getNomUrl(1);
+				print "</td>\n";
+				print '<td class="tdtop">'.$mo->ref."</td>\n";
+				// Link to delete from category
+				print '<td class="right">';
+				if ($permission) {
+					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$typeid."&action=unlink&token=".newToken()."&removeelem=".$mo->id."'>";
+					print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', 0, 0, 0, '', 'paddingleft');
+					print "</a>";
+				}
+				print "</tr>\n";
+			}
+		} else {
+			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("ThisCategoryHasNoItems").'</td></tr>';
+		}
+		print "</table>\n";
+
+		print "</form>\n";
 	}
 }
 
@@ -1553,7 +1657,7 @@ if ($type == Categorie::TYPE_INVOICE) {
 			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre"><td>';
 			print $langs->trans("AddInvoiceIntoCategory").' &nbsp;';
-			$form->selectInvoice(-1, '', 'elemid', 24, 0, '1', 0, 0, 0, 'maxwidth500', '', '');
+			print $form->selectForForms('Facture:compta/facture/class/facture.class.php', 'elemid', 0, 1, '', '', 'maxwidth500');
 			print '<input type="submit" class="button buttongen" value="'.$langs->trans("ClassifyInCategory").'"></td>';
 			print '</tr>';
 			print '</table>';
@@ -1595,7 +1699,7 @@ if ($type == Categorie::TYPE_INVOICE) {
 				// Link to delete from category
 				print '<td class="right">';
 				if ($permission) {
-					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$invoice->id."'>";
+					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$typeid."&action=unlink&token=".newToken()."&removeelem=".$invoice->id."'>";
 					print $langs->trans("DeleteFromCat");
 					print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', 0, 0, 0, '', 'paddingleft');
 					print "</a>";
@@ -1607,7 +1711,7 @@ if ($type == Categorie::TYPE_INVOICE) {
 		}
 		print "</table>\n";
 
-		print '</form>'."\n";
+		print "</form>\n";
 	}
 }
 
@@ -1635,7 +1739,7 @@ if ($type == Categorie::TYPE_SUPPLIER_ORDER) {
 			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre"><td>';
 			print $langs->trans("AddSupplierOrderIntoCategory").' &nbsp;';
-			$form->selectSupplierOrder('', 'elemid');
+			print $form->selectForForms('CommandeFournisseur:fourn/class/fournisseur.commande.class.php', 'elemid', 0, 1, '', '', 'maxwidth500');
 			print '<input type="submit" class="button buttongen" value="'.$langs->trans("ClassifyInCategory").'"></td>';
 			print '</tr>';
 			print '</table>';
@@ -1677,7 +1781,7 @@ if ($type == Categorie::TYPE_SUPPLIER_ORDER) {
 				// Link to delete from category
 				print '<td class="right">';
 				if ($permission) {
-					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$supplier_order->id."'>";
+					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$typeid."&action=unlink&token=".newToken()."&removeelem=".$supplier_order->id."'>";
 					print $langs->trans("DeleteFromCat");
 					print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', 0, 0, 0, '', 'paddingleft');
 					print "</a>";
@@ -1689,7 +1793,7 @@ if ($type == Categorie::TYPE_SUPPLIER_ORDER) {
 		}
 		print "</table>\n";
 
-		print '</form>'."\n";
+		print "</form>\n";
 	}
 }
 
@@ -1716,7 +1820,7 @@ if ($type == Categorie::TYPE_SUPPLIER_INVOICE) {
 			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre"><td>';
 			print $langs->trans("AddSupplierInvoiceIntoCategory").' &nbsp;';
-			$form->selectSupplierInvoice('', 'elemid');
+			print $form->selectForForms('FactureFournisseur:fourn/class/fournisseur.facture.class.php', 'elemid', 0, 1, '', '', 'maxwidth500');
 			print '<input type="submit" class="button buttongen" value="'.$langs->trans("ClassifyInCategory").'"></td>';
 			print '</tr>';
 			print '</table>';
@@ -1755,7 +1859,7 @@ if ($type == Categorie::TYPE_SUPPLIER_INVOICE) {
 				// Link to delete from category
 				print '<td class="right">';
 				if ($permission) {
-					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$supplier_invoice->id."'>";
+					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$typeid."&action=unlink&token=".newToken()."&removeelem=".$supplier_invoice->id."'>";
 					print $langs->trans("DeleteFromCat");
 					print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', 0, 0, 0, '', 'paddingleft');
 					print "</a>";
@@ -1767,7 +1871,7 @@ if ($type == Categorie::TYPE_SUPPLIER_INVOICE) {
 		}
 		print "</table>\n";
 
-		print '</form>'."\n";
+		print "</form>\n";
 	}
 }
 

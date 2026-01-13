@@ -110,7 +110,7 @@ class EmailCollector extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>,searchmulti?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid'         => array('type' => 'integer', 'label' => 'TechnicalID', 'visible' => -2, 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'index' => 1),
@@ -890,10 +890,9 @@ class EmailCollector extends CommonObject
 	{
 		global $user;
 
-		$nberror = 0;
+		$nbErrors = 0;
 
 		$arrayofcollectors = $this->fetchAll($user, 1);
-
 		// Loop on each collector
 		foreach ($arrayofcollectors as $emailcollector) {
 			$result = $emailcollector->doCollectOneCollector(0);
@@ -903,15 +902,16 @@ class EmailCollector extends CommonObject
 			$this->error .= 'EmailCollector ID '.$emailcollector->id.':'.$emailcollector->error.'<br>';
 			if (!empty($emailcollector->errors)) {
 				$this->error .= implode('<br>', $emailcollector->errors);
+				$nbErrors++;
 			}
 			$this->output .= 'EmailCollector ID '.$emailcollector->id.': '.$emailcollector->lastresult.'<br>';
 
 			if ($result < 0) {
-				$nberror++;
+				$nbErrors++;
 			}
 		}
 
-		return $nberror;
+		return $nbErrors;
 	}
 
 	/**
@@ -1395,17 +1395,17 @@ class EmailCollector extends CommonObject
 					array_push($criteria, array($not."CC" => $rule['rulevalue']));
 				}
 				if ($rule['type'] == 'subject') {
-					if (strpos($rule['rulevalue'], '!') === 0) {
+					if ($not) {
 						//array_push($criteria, array("NOT SUBJECT" => $rule['rulevalue']));
-						$searchfilterexcludesubjectarray[] = preg_replace('/^!/', '', $rule['rulevalue']);
+						$searchfilterexcludesubjectarray[] = $rule['rulevalue'];
 					} else {
 						array_push($criteria, array("SUBJECT" => $rule['rulevalue']));
 					}
 				}
 				if ($rule['type'] == 'body') {
-					if (strpos($rule['rulevalue'], '!') === 0) {
+					if ($not) {
 						//array_push($criteria, array("NOT BODY" => $rule['rulevalue']));
-						$searchfilterexcludebodyarray[] = preg_replace('/^!/', '', $rule['rulevalue']);
+						$searchfilterexcludebodyarray[] = $rule['rulevalue'];
 					} else {
 						array_push($criteria, array("BODY" => $rule['rulevalue']));
 					}
@@ -1967,7 +1967,11 @@ class EmailCollector extends CommonObject
 						$attachments = [];
 					}
 				} else {
-					$this->getmsg($connection, $imapemail);	// This set global var $charset, $htmlmsg, $plainmsg, $attachments
+					$getMsg = $this->getmsg($connection, $imapemail); // This set global var $charset, $htmlmsg, $plainmsg, $attachments
+					if ($getMsg < 0) {
+						$this->errors = array_merge($this->errors, [$this->error]);
+						return $getMsg;
+					}
 				}
 				'@phan-var-force Webklex\PHPIMAP\Attachment[] $attachments';
 				/** @var Webklex\PHPIMAP\Attachment[] $attachments */
@@ -2034,13 +2038,13 @@ class EmailCollector extends CommonObject
 				$replytostring = '';
 
 				if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
-					$fromstring = $overview['from'];
-					$replytostring = empty($overview['in_reply-to']) ? $headers['Reply-To'] : $overview['in_reply-to'];
+					$fromstring = $this->decodeSMTPSubject((string) ($overview['from'] ?? ''));
+					$replytostring = !empty($headers['Reply-To']) ? $this->decodeSMTPSubject($headers['Reply-To']) : '';
 
-					$sender = $overview['sender'];
-					$to = $overview['to'];
-					$sendtocc = empty($overview['cc']) ? '' : $overview['cc'];
-					$sendtobcc = empty($overview['bcc']) ? '' : $overview['bcc'];
+					$sender = $this->decodeSMTPSubject((string) ($overview['sender'] ?? ''));
+					$to = $this->decodeSMTPSubject((string) ($overview['to'] ?? ''));
+					$sendtocc = $this->decodeSMTPSubject((string) ($overview['cc'] ?? ''));
+					$sendtobcc = $this->decodeSMTPSubject((string) ($overview['bcc'] ?? ''));
 
 					$tmpdate = $overview['date']->toDate();  // @phan-suppress-current-line PhanPluginUnknownObjectMethodCall
 					$tmptimezone = $tmpdate->getTimezone()->getName();  // @phan-suppress-current-line PhanPluginUnknownObjectMethodCall
@@ -2056,9 +2060,9 @@ class EmailCollector extends CommonObject
 							$dateemail += (60 * (int) $reg[3]);
 						}
 					}
-					$subject = $overview['subject'];
+					$subject = $this->decodeSMTPSubject((string) ($overview['subject'] ?? ''));
 				} else {
-					$fromstring = $overview[0]->from;
+					$fromstring = (string) $overview[0]->from;
 					$replytostring = (!empty($overview['in_reply-to']) ? $overview['in_reply-to'] : (!empty($headers['Reply-To']) ? $headers['Reply-To'] : "")) ;
 
 					$sender = !empty($overview[0]->sender) ? $overview[0]->sender : '';
@@ -2066,7 +2070,7 @@ class EmailCollector extends CommonObject
 					$sendtocc = !empty($overview[0]->cc) ? $overview[0]->cc : '';
 					$sendtobcc = !empty($overview[0]->bcc) ? $overview[0]->bcc : '';
 					$dateemail = dol_stringtotime((string) $overview[0]->udate, 'gmt');
-					$subject = $overview[0]->subject;
+					$subject = (string) $overview[0]->subject;
 				}
 
 				if (!empty($searchfilterexcludesubjectarray)) {
@@ -2446,8 +2450,11 @@ class EmailCollector extends CommonObject
 							$actioncode = 'EMAIL';
 						}
 						// If sender is in the list MAIL_FROM_EMAILS_TO_CONSIDER_SENDING
-						$arrayofemailtoconsideresender = explode(',', getDolGlobalString('MAIL_FROM_EMAILS_TO_CONSIDER_SENDING'));
-						foreach ($arrayofemailtoconsideresender as $emailtoconsidersender) {
+						$arrayofemailtoconsidersender = array_filter(array_map('trim', explode(',', getDolGlobalString('MAIL_FROM_EMAILS_TO_CONSIDER_SENDING'))));
+						foreach ($arrayofemailtoconsidersender as $emailtoconsidersender) {
+							if ($emailtoconsidersender === '') {
+								continue;
+							}
 							if (preg_match('/'.preg_quote($emailtoconsidersender, '/').'/', $fromstring)) {
 								$actioncode = 'EMAIL';
 							}
@@ -2731,6 +2738,7 @@ class EmailCollector extends CommonObject
 								if ($errorforthisaction) {
 									$errorforactions++;
 								} else {
+									$from = (string) $from;
 									if (!empty($contact_static->email) && $contact_static->email != $from) {
 										$from = $contact_static->email;
 									}
@@ -3264,7 +3272,11 @@ class EmailCollector extends CommonObject
 														$this->saveAttachment($destdir, $filename, $content);
 													}
 												} else {
-													$this->getmsg($connection, $imapemail, $destdir);
+													$getMsg = $this->getmsg($connection, $imapemail, $destdir);
+													if ($getMsg < 0) {
+														$this->errors = array_merge($this->errors, [$this->error]);
+														return $getMsg;
+													}
 												}
 
 												$operationslog .= '<br>Project created with attachments -> id='.dol_escape_htmltag((string) $projecttocreate->id);
@@ -3421,7 +3433,11 @@ class EmailCollector extends CommonObject
 														$this->saveAttachment($destdir, $filename, $content);
 													}
 												} else {
-													$this->getmsg($connection, $imapemail, $destdir);
+													$getMsg = $this->getmsg($connection, $imapemail, $destdir);
+													if ($getMsg < 0) {
+														$this->errors = array_merge($this->errors, [$this->error]);
+														return $getMsg;
+													}
 												}
 
 												$operationslog .= '<br>Ticket created with attachments -> id='.dol_escape_htmltag((string) $tickettocreate->id);
@@ -3756,9 +3772,9 @@ class EmailCollector extends CommonObject
 	 * @param 	IMAP\Connection|resource $mbox   	Structure
 	 * @param 	int				$mid		Message Id / Message Number  Email
 	 * @param 	string			$destdir    Target dir for attachments. Leave blank to parse without writing to disk.
-	 * @return 	void
+	 * @return 	-1|1						Return -1 if error, 1 if OK
 	 */
-	private function getmsg($mbox, $mid, $destdir = '')
+	private function getmsg($mbox, $mid, $destdir = ''): int
 	{
 		// input $mbox = IMAP stream, $mid = message id
 		// output all the following:
@@ -3772,9 +3788,12 @@ class EmailCollector extends CommonObject
 
 		// BODY
 		$s = imap_fetchstructure($mbox, $mid, FT_UID);
+		if ($s === false) {
+			$this->errors = array_merge($this->errors, [imap_last_error()]);
+			return -1;
+		}
 
-
-		if (!$s->parts) {
+		if (empty($s->parts)) {
 			// simple
 			$this->getpart($mbox, $mid, $s, '0'); // pass '0' as part-number
 		} else {
@@ -3783,6 +3802,8 @@ class EmailCollector extends CommonObject
 				$this->getpart($mbox, $mid, $p, (string) ($partno0 + 1), $destdir);
 			}
 		}
+
+		return 1;
 	}
 
 	/* partno string
@@ -3886,6 +3907,7 @@ class EmailCollector extends CommonObject
 				$destination = dol_sanitizePathName($destination);
 
 				file_put_contents($destination, $data);
+				dolChmod($destination);
 			}
 		}
 
@@ -3979,7 +4001,7 @@ class EmailCollector extends CommonObject
 			$subject = iconv_mime_decode($subject, ICONV_MIME_DECODE_CONTINUE_ON_ERROR, 'UTF-8');
 		}
 
-		return $subject;
+		return (string) $subject;
 	}
 
 	/**
@@ -4002,12 +4024,15 @@ class EmailCollector extends CommonObject
 		$quality = $tmparraysize['quality'];
 
 		file_put_contents($destdir.'/'.$filename, $content);
+		dolChmod($destdir.'/'.$filename);
+
 		if (image_format_supported($filename) == 1) {
 			// Create thumbs
 			vignette($destdir.'/'.$filename, $maxwidthsmall, $maxheightsmall, '_small', $quality, "thumbs");
 			// Create mini thumbs for image (Ratio is near 16/9)
 			vignette($destdir.'/'.$filename, $maxwidthmini, $maxheightmini, '_mini', $quality, "thumbs");
 		}
+
 		addFileIntoDatabaseIndex($destdir, $filename);
 	}
 

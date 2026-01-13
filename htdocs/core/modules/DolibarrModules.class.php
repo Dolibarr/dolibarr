@@ -401,6 +401,11 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $disabled;
 
 	/**
+	 * @var array<string,string>  Array ['<country_code>'=>'<translation_key_activation_reason>']
+	 */
+	public $automatic_activation = array();
+
+	/**
 	 * @var int Module is enabled globally (Multicompany support)
 	 */
 	public $core_enabled;
@@ -408,7 +413,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	/**
 	 * @var string Name of image file used for this module
 	 *
-	 * If file is in theme/yourtheme/img directory under name object_pictoname.png use 'pictoname'
+	 * If file is in theme/yourtheme/img directory under name object_pictoname.png use 'pictoname.png'
 	 * If file is in module/img directory under name object_pictoname.png use 'pictoname@module'
 	 */
 	public $picto;
@@ -536,8 +541,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 *
 	 * @param array<array{sql:string,ignoreerror:int<0,1>}>|string[]	$array_sql 	SQL requests to be executed when enabling module
 	 * @param string	$options   	String with options when disabling module:
-	 *                          	- 'noboxes' = Do all actions but do not insert boxes
-	 *                          	- 'newboxdefonly' = Do all actions but for boxes, insert def of boxes only and not boxes activation
+	 *                          	- 'noboxes' = Do all actions except for actions related to widgets/boxes
+	 *                          	- 'newboxdefonly' = Do all actions but for widgets/boxes we only insert their declaration and we do not change widgets activation or position
 	 * @return int                  1 if OK, 0 if KO
 	 */
 	protected function _init($array_sql, $options = '')
@@ -563,7 +568,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			$err += $this->insert_module_parts();
 		}
 
-		// Insert constant defined by modules (into llx_const)
+		// Insert constant defined by modules (into llx_const) if no existing yet
 		if (!$err && !preg_match('/newboxdefonly/', $options)) {
 			$err += $this->insert_const(); // Test on newboxdefonly to avoid to erase value during upgrade
 		}
@@ -777,9 +782,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	/**
 	 * Gives the translated module description if translation exists in admin.lang or the default module description
 	 *
-	 * @return string  Translated module description
+	 * @param 	int<0,1>	$foruseinpopupdesc  	If 1, we return a short description for use into popup window
+	 * @return 	string  							Translated module description
 	 */
-	public function getDesc()
+	public function getDesc($foruseinpopupdesc = 0)
 	{
 		global $langs;
 		$langs->load("admin");
@@ -1867,12 +1873,15 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		foreach ($this->const as $key => $value) {
+			// Property to search if entry exists
 			$name      = $this->const[$key][0];
+			$entity    = (!empty($this->const[$key][5]) && $this->const[$key][5] != 'current') ? 0 : $conf->entity;
+
+			// Property to update if it does not exists
 			$type      = $this->const[$key][1];
 			$val       = $this->const[$key][2];
 			$note      = isset($this->const[$key][3]) ? $this->const[$key][3] : '';
 			$visible   = isset($this->const[$key][4]) ? $this->const[$key][4] : 0;
-			$entity    = (!empty($this->const[$key][5]) && $this->const[$key][5] != 'current') ? 0 : $conf->entity;
 
 			// Clean
 			if (empty($visible)) {
@@ -1990,17 +1999,6 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			if ($obj !== null && !empty($obj->value) && !empty($this->rights)) {
 				include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
-				// TODO rights parameters with integer indexes are deprecated
-				// $this->rights[$key][0] = $this->rights[$key][self::KEY_ID]
-				// $this->rights[$key][1] = $this->rights[$key][self::KEY_LABEL]
-				// $this->rights[$key][3] = $this->rights[$key][self::KEY_DEFAULT]
-				// $this->rights[$key][4] = $this->rights[$key][self::KEY_FIRST_LEVEL]
-				// $this->rights[$key][5] = $this->rights[$key][self::KEY_SECOND_LEVEL]
-
-				// new parameters
-				// $this->rights[$key][self::KEY_MODULE]	// possibility to define user right for an another module (default: current module name)
-				// $this->rights[$key][self::KEY_ENABLED]	// condition to show or hide a user right (default: 1) (eg isModEnabled('anothermodule'))
-
 				// If the module is active
 				foreach ($this->rights as $key => $value) {
 					$r_id = $this->rights[$key][self::KEY_ID];	// permission id in llx_rights_def (not unique because primary key is couple id-entity)
@@ -2009,6 +2007,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					$r_default = $this->rights[$key][self::KEY_DEFAULT] ?? 0;
 					$r_perms = $this->rights[$key][self::KEY_FIRST_LEVEL] ?? '';
 					$r_subperms = $this->rights[$key][self::KEY_SECOND_LEVEL] ?? '';
+
+					$r_module_position = $this->getModulePosition();
+					$r_family = $this->family;
+					$r_family_position = 0;
 
 					// KEY_FIRST_LEVEL (perms) must not be empty
 					if (empty($r_perms)) {
@@ -2046,7 +2048,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 							$sql .= ", libelle";
 							$sql .= ", module";
 							$sql .= ", module_origin";
-							$sql .= ", type";	// TODO deprecated
+							$sql .= ", module_position";		// Not that module_position can be fixed eynamically when accessing page user/perms.php
+							$sql .= ", family";
+							$sql .= ", family_position";
+							$sql .= ", type";	// Not used yet
 							$sql .= ", bydefault";
 							$sql .= ", perms";
 							$sql .= ", subperms";
@@ -2057,7 +2062,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 							$sql .= ", '".$this->db->escape($r_label)."'";
 							$sql .= ", '".$this->db->escape($r_module)."'";
 							$sql .= ", '".$this->db->escape($r_module_origin)."'";
-							$sql .= ", '".$this->db->escape($r_type)."'";	// TODO deprecated
+							$sql .= ", '".$this->db->escape((string) $r_module_position)."'";
+							$sql .= ", '".$this->db->escape($r_family)."'";
+							$sql .= ", '".$this->db->escape((string) $r_family_position)."'";
+							$sql .= ", '".$this->db->escape($r_type)."'";	// Not used yet
 							$sql .= ", ".((int) $r_default);
 							$sql .= ", '".$this->db->escape($r_perms)."'";
 							$sql .= ", '".$this->db->escape($r_subperms)."'";
@@ -2597,10 +2605,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 	/**
 	 * Function called when module is disabled.
-	 * The remove function removes tabs, constants, boxes, permissions and menus from Dolibarr database.
+	 * The remove() function removes tabs, constants, boxes, permissions and menus from Dolibarr database.
 	 * Data directories are not deleted
 	 *
-	 * @param  string $options Options when enabling module ('', 'noboxes')
+	 * @param  string $options Options when enabling module ('', 'noboxes', 'newboxdefonly')
 	 * @return int                     1 if OK, 0 if KO
 	 */
 	public function remove($options = '')
@@ -2675,7 +2683,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 		$return .=  '</div>
 	    <div class="info-box-content info-box-text-module'.(!getDolGlobalString($const_name) ? '' : ' info-box-module-enabled'.($versiontrans ? ' info-box-content-warning' : '')).'">
-	    <span class="info-box-title">'.$this->getName().'</span>
+	    <span class="info-box-title noopacity">'.$this->getName().'</span>
 	    <span class="info-box-desc twolinesmax opacitymedium" title="'.dol_escape_htmltag($this->getDesc()).'">'.nl2br($this->getDesc()).'</span>';
 
 		$return .=  '<div class="valignmiddle inline-block info-box-more">';

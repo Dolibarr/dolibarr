@@ -221,7 +221,7 @@ class LoanSchedule extends CommonObject
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {
-				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_loan");
+				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."loan_schedule");
 			} else {
 				$this->error = $this->db->lasterror();
 				$error++;

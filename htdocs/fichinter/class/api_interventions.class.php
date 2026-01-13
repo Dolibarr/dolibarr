@@ -475,43 +475,6 @@ class Interventions extends DolibarrApi
 	}
 
 	/**
-	 * Reopen an intervention
-	 *
-	 * @since	22.0.0	Initial implementation
-	 *
-	 * @param	int		$id		Intervention ID
-	 *
-	 * @url		POST	{id}/reopen
-	 *
-	 * @return	Object
-	 *
-	 * @throws	RestException
-	 */
-	public function reopen($id)
-	{
-		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'creer')) {
-			throw new RestException(403, "Insufficiant rights");
-		}
-		$result = $this->fichinter->fetch($id);
-		if (!$result) {
-			throw new RestException(404, 'Intervention not found');
-		}
-
-		if (!DolibarrApi::_checkAccessToResource('fichinter', $this->fichinter->id)) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
-		$result = $this->fichinter->setDraft(DolibarrApiAccess::$user);
-		if ($result == 0) {
-			throw new RestException(304, 'Error nothing done. May be object is already set as draft');
-		}
-		if ($result < 0) {
-			throw new RestException(500, 'Error when closing Intervention: '.$this->fichinter->error);
-		}
-		$this->fichinter->fetchObjectLinked();
-		return $this->_cleanObjectDatas($this->fichinter);
-	}
-
-	/**
 	 * Validate an intervention
 	 *
 	 * If you get a bad value for param notrigger check, provide this in body
@@ -560,17 +523,25 @@ class Interventions extends DolibarrApi
 	/**
 	 * Close an intervention
 	 *
-	 * @since	7.0.0	Initial implementation
+	 * If you get a bad value for param notrigger check, provide this in body
+	 *  {
+	 *    "notrigger": 0
+	 *  }
 	 *
-	 * @param	int		$id		Intervention ID
+	 * @since	7.0.0	Initial implementation
+	 * @since	23.0.0	Added notrigger parameter
+	 *
+	 * @param	int		$id				Intervention ID
+	 * @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers {@required true}
 	 *
 	 * @url		POST	{id}/close
 	 *
 	 * @return	Object
 	 *
 	 * @throws RestException
+	 *
 	 */
-	public function closeFichinter($id)
+	public function close($id, $notrigger = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'creer')) {
 			throw new RestException(403, "Insufficiant rights");
@@ -584,8 +555,7 @@ class Interventions extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$result = $this->fichinter->setStatut(3);
-
+		$result = $this->fichinter->setClose(DolibarrApiAccess::$user, $notrigger);
 		if ($result == 0) {
 			throw new RestException(304, 'Error nothing done. May be object is already closed');
 		}
@@ -644,27 +614,29 @@ class Interventions extends DolibarrApi
 	}
 
 	/**
-	 * Sets an interventional as draft
+	 * Sets an intervention as draft
 	 *
-	 * @param   int $id             interventional ID
+	 * @since	23.0.0	Initial implementation
+	 *
+	 * @param	int		$id			ID of intervention
 	 *
 	 * @return	Object				Object with cleaned properties
 	 *
-	 * @url POST    {id}/settodraft
+	 * @url		POST	{id}/settodraft
 	 *
 	 * @throws RestException 304
-	 * @throws RestException 401
+	 * @throws RestException 403
 	 * @throws RestException 404
 	 * @throws RestException 500 System error
 	 */
 	public function settodraft($id)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'creer')) {
-			throw new RestException(403);
+			throw new RestException(403, "Insufficiant rights");
 		}
 		$result = $this->fichinter->fetch($id);
 		if (!$result) {
-			throw new RestException(404, 'Interventional not found');
+			throw new RestException(404, 'Intervention not found');
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('ficheinter', $this->fichinter->id)) {
@@ -673,17 +645,13 @@ class Interventions extends DolibarrApi
 
 		$result = $this->fichinter->setDraft(DolibarrApiAccess::$user);
 		if ($result == 0) {
-			throw new RestException(304, 'Nothing done.');
+			throw new RestException(304, 'Nothing done. . May be object is already set as draft.');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error : '.$this->fichinter->error);
+			throw new RestException(500, 'Error when closing intervention: '.$this->fichinter->error);
 		}
 
-		$result = $this->fichinter->fetch($id);
-		if (!$result) {
-			throw new RestException(404, 'Interventional not found');
-		}
-
+		$this->fichinter->fetchObjectLinked();
 		return $this->_cleanObjectDatas($this->fichinter);
 	}
 
@@ -886,9 +854,12 @@ class Interventions extends DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object data
+	 * @phpstan-template T
 	 *
 	 * @param	Object	$object		Object to clean
 	 * @return	Object				Object with cleaned properties
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	protected function _cleanObjectDatas($object)
 	{

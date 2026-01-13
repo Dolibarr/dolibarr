@@ -225,7 +225,7 @@ class modHoliday extends DolibarrModules
 			'd.rowid' => "LeaveId", 'd.fk_type' => 'TypeOfLeaveId', 't.code' => 'TypeOfLeaveCode', 't.label' => 'TypeOfLeaveLabel', 'd.fk_user' => 'UserID',
 			'd.date_debut' => 'DateStart', 'd.date_fin' => 'DateEnd', 'd.halfday' => 'HalfDay', 'none.num_open_days' => 'NbUseDaysCP',
 			'd.date_valid' => 'DateApprove', 'd.fk_validator' => "UserForApprovalID",
-			'u.lastname' => 'Lastname', 'u.firstname' => 'Firstname', 'u.login' => "Login",
+			'u.lastname' => 'Lastname', 'u.firstname' => 'Firstname', 'u.login' => "Login", 'u.fk_country' => "CountyID",
 			'ua.lastname' => "UserForApprovalLastname", 'ua.firstname' => "UserForApprovalFirstname",
 			'ua.login' => "UserForApprovalLogin", 'd.description' => 'Description', 'd.statut' => 'Status'
 		);
@@ -233,7 +233,7 @@ class modHoliday extends DolibarrModules
 			'd.rowid' => "Numeric", 't.code' => 'Text', 't.label' => 'Text', 'd.fk_user' => 'Numeric',
 			'd.date_debut' => 'Date', 'd.date_fin' => 'Date', 'none.num_open_days' => 'NumericCompute',
 			'd.date_valid' => 'Date', 'd.fk_validator' => "Numeric",
-			'u.lastname' => 'Text', 'u.firstname' => 'Text', 'u.login' => "Text",
+			'u.lastname' => 'Text', 'u.firstname' => 'Text', 'u.login' => "Text", 'u.fk_country' => 'Numeric',
 			'ua.lastname' => "Text", 'ua.firstname' => "Text",
 			'ua.login' => "Text", 'd.description' => 'Text', 'd.statut' => 'Numeric'
 		);
@@ -242,7 +242,8 @@ class modHoliday extends DolibarrModules
 		);
 		//$this->export_alias_array[$r] = array('d.rowid'=>"idholiday");
 		$this->export_special_array[$r] = array('none.num_open_days' => 'getNumOpenDays');
-		$this->export_dependencies_array[$r] = array(); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
+		$this->export_dependencies_array[$r] = array('none.num_open_days' => 'u.fk_country'); // To force addition in GUI of u.fk_country when none.num_open_days is included in exported fields
+		//$this->export_dependencies_array[$r] = array();
 
 		$keyforselect = 'holiday';
 		$keyforelement = 'holiday';
@@ -256,7 +257,7 @@ class modHoliday extends DolibarrModules
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'holiday as d';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'holiday_extrafields as extra on d.rowid = extra.fk_object';
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_holiday_types as t ON t.rowid = d.fk_type AND t.entity IN ('.getEntity('c_holiday_types').')';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_holiday_types as t ON t.rowid = d.fk_type AND t.entity IN (0, '.getEntity('c_holiday_types').')';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as ua ON ua.rowid = d.fk_validator,';
 		$this->export_sql_end[$r] .= ' '.MAIN_DB_PREFIX.'user as u';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user_extrafields as extrau ON u.rowid = extrau.fk_object';
@@ -289,6 +290,28 @@ class modHoliday extends DolibarrModules
 		// $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (fd.fk_product = p.rowid)';
 		// $this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_facture';
 		// $r++;
+
+		// Imports
+		//--------
+		$r = 0;
+
+		// Import list of leave request
+
+		$r++;
+		$this->import_code[$r] = $this->rights_class.'_'.$r;
+		$this->import_label[$r] = "ListeCP"; // Translation key
+		$this->import_icon[$r] = 'holiday';
+		$this->import_tables_array[$r] = array('d' => MAIN_DB_PREFIX.'holiday');
+		$this->import_fields_array[$r] = array(
+			'd.ref' => 'Ref*', 'd.fk_user' => 'UserID*', 'd.fk_type' => 'TypeOfLeaveId*','d.fk_validator' => 'ApprovedBy*',
+			'd.date_debut' => 'DateStart*', 'd.date_fin' => 'DateEnd*', 'd.halfday' => 'HalfDay', 'd.description' => 'Description*',
+			'd.date_create' => 'DateCreation*'
+		);
+
+		$keyforselect = 'holiday';
+		$keyforelement = 'holiday';
+		$keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
 	}
 
 	/**

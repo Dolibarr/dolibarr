@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("install", "other", "admin", "products"));
+$langs->loadLangs(array("install", "other", "admin", "products", "mrp"));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -610,6 +610,27 @@ if ($resql) {
 		}
 	} else {
 		print img_picto('', 'tick', 'class="pictofixedwidth"').' '.$langs->trans("NbOfObjectIsLowerThanNoPb", $nb, $langs->transnoentitiesnoconv("Projects"));
+	}
+	print '<br>';
+	$db->free($resql);
+}
+// Bom combo list
+$sql = "SELECT COUNT(*) as nb";
+$sql .= " FROM ".$db->prefix()."bom_bom as s";
+$resql = $db->query($sql);
+if ($resql) {
+	$limitforoptim = 5000;
+	$num = $db->num_rows($resql);
+	$obj = $db->fetch_object($resql);
+	$nb = $obj->nb;
+	if ($nb > $limitforoptim) {
+		if (!getDolGlobalString('BOM_USE_SEARCH_TO_SELECT')) {
+			print img_picto('', 'warning.png', 'class="pictofixedwidth"').' '.$langs->trans("YouHaveXObjectUseComboOptim", $nb, $langs->transnoentitiesnoconv("Bom"), 'BOM_USE_SEARCH_TO_SELECT');
+		} else {
+			print img_picto('', 'tick.png', 'class="pictofixedwidth"').' '.$langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("Bom"), 'BOM_USE_SEARCH_TO_SELECT', getDolGlobalString('BOM_USE_SEARCH_TO_SELECT'));
+		}
+	} else {
+		print img_picto('', 'tick.png', 'class="pictofixedwidth"').' '.$langs->trans("NbOfObjectIsLowerThanNoPb", $nb, $langs->transnoentitiesnoconv("Bom"));
 	}
 	print '<br>';
 	$db->free($resql);

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2021  Open-Dsi       	<support@open-dsi.fr>
- * Copyright (C) 2024  MDW				<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW				<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024  Jose   			<jose.martinez@pichinov.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
@@ -67,7 +67,7 @@ class AssetDepreciationOptions extends CommonObject
 	 */
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>,searchmulti?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array();
 
@@ -315,8 +315,8 @@ class AssetDepreciationOptions extends CommonObject
 		foreach ($this->deprecation_options_fields as $mode_key => $mode_info) {
 			if (!empty($mode_info['enabled_field'])) {
 				$info = explode(':', $mode_info['enabled_field']);
-				if (!empty($this->deprecation_options[$info[0]][$info[1]]) && $deprecation_options[$info[0]][$info[1]] != $info[2]) {
-					unset($deprecation_options[$info[0]][$info[1]]);
+				if (isset($deprecation_options[$info[0]][$info[1]]) && $deprecation_options[$info[0]][$info[1]] != $info[2]) {
+					unset($deprecation_options[$mode_key]);
 				}
 			}
 		}
@@ -388,8 +388,8 @@ class AssetDepreciationOptions extends CommonObject
 		foreach ($this->deprecation_options_fields as $mode_key => $mode_info) {
 			if (!empty($mode_info['enabled_field'])) {
 				$info = explode(':', $mode_info['enabled_field']);
-				if (isset($deprecation_options[$info[0]][$info[1]]) && $deprecation_options[$info[0]][$info[1]] != $info[2]) {
-					unset($deprecation_options[$info[0]][$info[1]]);
+				if (!empty($deprecation_options[$info[0]][$info[1]]) && $deprecation_options[$info[0]][$info[1]] != $info[2]) {
+					unset($deprecation_options[$mode_key]);
 				}
 			}
 		}
@@ -430,10 +430,14 @@ class AssetDepreciationOptions extends CommonObject
 
 		$duration_type_list = $this->deprecation_options_fields[$mode]['fields']['duration_type']['arrayofkeyval'];
 
+		$mode_opts = $this->deprecation_options[$mode] ?? array();
+		$duration_type_idx = $mode_opts['duration_type'] ?? null;
+		$duration_type_label = $duration_type_list[$duration_type_idx] ?? '';
+
 		return array(
-			'base_depreciation_ht' => $this->deprecation_options[$mode]['amount_base_depreciation_ht'],
-			'duration' => $this->deprecation_options[$mode]['duration'],
-			'duration_type' => $duration_type_list[$this->deprecation_options[$mode]['duration_type']],
+			'base_depreciation_ht' => $mode_opts['amount_base_depreciation_ht'] ?? 0,
+			'duration' => $mode_opts['duration'] ?? 0,
+			'duration_type' => $duration_type_label,
 			'rate' => $this->getRate($mode),
 		);
 	}
@@ -500,8 +504,9 @@ class AssetDepreciationOptions extends CommonObject
 
 			if (!$error && !empty($this->deprecation_options[$mode_key])) {
 				if (!empty($mode_info['enabled_field'])) {
-					$info = explode(':', $mode_info['enabled_field']);
-					if (!empty($this->deprecation_options[$info[0]][$info[1]]) && $this->deprecation_options[$info[0]][$info[1]] != $info[2]) {
+					list($ref_mode, $ref_field, $required) = explode(':', $mode_info['enabled_field']);
+					$flag = $this->deprecation_options[$ref_mode][$ref_field] ?? null;
+					if ((string) $flag !== (string) $required) {
 						continue;
 					}
 				}

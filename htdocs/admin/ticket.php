@@ -322,6 +322,7 @@ foreach ($dirmodels as $reldir) {
 
 					$module = new $file();
 					'@phan-var-force ModeleNumRefTicket $module';
+					/** @var ModeleNumRefTicket $module */
 
 					// Show modules according to features level
 					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {

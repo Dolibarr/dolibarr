@@ -209,7 +209,7 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 
 				// restrict on database type
 				if (!empty($reg[1])) {
-					if (!preg_match('/'.preg_quote($reg[1]).'/i', $db->type)) {
+					if (!preg_match('/'.preg_quote($reg[1], '/').'/i', $db->type)) {
 						$qualified = 0;
 					}
 				}
@@ -489,7 +489,6 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 					$listofinsertedrowid[$cursorinsert] = $insertedrowid;
 					dol_syslog('Admin.lib::run_sql Insert nb '.$cursorinsert.', done in table '.$table.', rowid is '.$listofinsertedrowid[$cursorinsert], LOG_DEBUG);
 				}
-				// 	          print '<td class="right">OK</td>';
 			} else {
 				$errno = $db->errno();
 				if (!$silent) {
@@ -534,7 +533,7 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 		print '<tr><td>'.$langs->trans("ProcessMigrateScript").'</td>';
 		print '<td class="right">';
 		if ($error == 0) {
-			print '<span class="ok">'.$langs->trans("OK").'</span>';
+			print '<span class="ok">'.$langs->trans("Success").'</span>';
 		} else {
 			print '<span class="error">'.$langs->trans("Error").'</span>';
 		}
@@ -842,10 +841,12 @@ function ihm_prepare_head()
 	$head[$h][2] = 'css';
 	$h++;
 
+	/* Not a user setup of a feature. Useless for an end users, so has been moved into the Modulebuilder main page (for dev).
 	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/tools/ui/index.php');
 	$head[$h][1] = $langs->trans("UxComponentsDoc").' '.img_picto('', 'external-link-square-alt');
 	$head[$h][2] = 'ux';
 	$h++;
+	*/
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'ihm_admin');
 
@@ -1186,7 +1187,7 @@ function purgeSessions($mysessionid)
 /**
  *  Enable a module
  *
- *  @param      string		$value      			Name of module to activate
+ *  @param      string		$value      			Name of module to activate (modModuleName)
  *  @param      int			$withdeps  				Activate/Disable also all dependencies
  * 	@param		int			$noconfverification		Remove verification of $conf variable for module
  *  @return     array{nbmodules?:int,errors:string[],nbperms?:int}	array('nbmodules'=>nb modules activated with success, 'errors=>array of error messages, 'nbperms'=>Nb permission added);
@@ -1247,7 +1248,6 @@ function activateModule($value, $withdeps = 1, $noconfverification = 0)
 		$ret['errors'][] = $langs->trans("ErrorModuleRequireJavascript");
 		return $ret;
 	}
-
 	$const_name = $objMod->const_name;
 	if ($noconfverification == 0) {
 		if (getDolGlobalString($const_name)) {
@@ -1332,11 +1332,12 @@ function activateModule($value, $withdeps = 1, $noconfverification = 0)
 /**
  *  Disable a module
  *
- *  @param      string		$value               Nom du module a desactiver
- *  @param      int			$requiredby          1=Desactive aussi modules dependants
- *  @return     string     				         Error message or '';
+ *  @param      string		$value              Name of module to disable
+ *  @param      int			$requiredby         1=Disable also the dependency modules
+ *  @param  	string 		$options 			Options when enabling module ('', 'noboxes', 'newboxdefonly')
+ *  @return     string     				        Error message or '';
  */
-function unActivateModule($value, $requiredby = 1)
+function unActivateModule($value, $requiredby = 1, $options = '')
 {
 	global $db;
 
@@ -1367,13 +1368,13 @@ function unActivateModule($value, $requiredby = 1)
 		$objMod = new $modName($db);
 		'@phan-var-force DolibarrModules $objMod';
 		/** @var DolibarrModules $objMod */
-		$result = $objMod->remove();
+		$result = $objMod->remove($options);
 		if ($result <= 0) {
 			$ret = $objMod->error;
 		}
 	} else { // We come here when we try to unactivate a module when module does not exists anymore in sources
 		//print $dir.$modFile;exit;
-		// TODO Replace this after DolibarrModules is moved as abstract class with a try catch to show module we try to disable has not been found or could not be loaded
+		// TODO Replace this after DolibarrModules is moved as abstract class with a try catch, to show if the module we try to disable has not been found or could not be loaded
 		include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 		$genericMod = new DolibarrModules($db);
 		$genericMod->name = preg_replace('/^mod/i', '', $modName);
@@ -1388,7 +1389,7 @@ function unActivateModule($value, $requiredby = 1)
 		$countrb = count($objMod->requiredby);
 		for ($i = 0; $i < $countrb; $i++) {
 			//var_dump($objMod->requiredby[$i]);
-			unActivateModule($objMod->requiredby[$i]);
+			unActivateModule($objMod->requiredby[$i], $requiredby, $options);
 		}
 	}
 
@@ -1627,7 +1628,7 @@ function activateModulesRequiredByCountry($country_code)
 
 						if ($modulequalified) {
 							// Load languages files of module
-							if (property_exists($objMod, 'automatic_activation') && isset($objMod->automatic_activation) && is_array($objMod->automatic_activation) && isset($objMod->automatic_activation[$country_code])) {
+							if (isset($objMod->automatic_activation[$country_code])) {
 								activateModule($modName);
 
 								setEventMessages($objMod->automatic_activation[$country_code], null, 'warnings');
@@ -2083,7 +2084,7 @@ function company_admin_prepare_head()
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT."/admin/company.php";
-	$head[$h][1] = $langs->trans("Company");
+	$head[$h][1] = $langs->trans("MyOrganization");
 	$head[$h][2] = 'company';
 	$h++;
 
@@ -2097,9 +2098,9 @@ function company_admin_prepare_head()
 	$head[$h][2] = 'openinghours';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/accountant.php";
-	$head[$h][1] = $langs->trans("Accountant");
-	$head[$h][2] = 'accountant';
+	$head[$h][0] = DOL_URL_ROOT."/admin/subcontractors.php";
+	$head[$h][1] = $langs->trans("Subcontractors");
+	$head[$h][2] = 'subcontractors';
 	$h++;
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'mycompany_admin', 'add');

@@ -44,7 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
  */
 
 // Load translation files required by the page
-$langs->loadlangs(array('categories', 'bills'));
+$langs->loadlangs(array('categories', 'bills', 'mrp'));
 
 
 $id      = GETPOSTINT('id');
@@ -140,7 +140,7 @@ if ($object->id) {
 	$object->next_prev_filter = 'type:=:'.((int) $object->type);
 	$object->ref = $object->label;
 	$morehtmlref = '<br><div class="refidno"><a href="'.DOL_URL_ROOT.'/categories/categorie_list.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
-	$ways = $object->print_all_ways(" &gt;&gt; ", '', 1);
+	$ways = $object->print_all_ways("auto", '', 1);
 	foreach ($ways as $way) {
 		$morehtmlref .= $way."<br>\n";
 	}

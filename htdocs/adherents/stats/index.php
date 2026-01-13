@@ -2,7 +2,7 @@
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -77,14 +77,14 @@ $langs->loadLangs(array("companies", "members"));
 $memberstatic = new Adherent($db);
 $form = new Form($db);
 
-$title = $langs->trans("SubscriptionsStatistics");
+$title = $langs->trans("MembershipStatistics");
 $help_url = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios|DE:Modul_Mitglieder';
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-member page-stats');
 
 print load_fiche_titre($title, '', $memberstatic->picto);
 
-$dir = $conf->adherent->dir_temp;
+$dir = $conf->member->dir_temp;
 
 dol_mkdir($dir);
 

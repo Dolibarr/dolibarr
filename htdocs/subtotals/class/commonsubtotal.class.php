@@ -2,6 +2,8 @@
 /* Copyright (C) 2014-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
+
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +51,21 @@ trait CommonSubtotal
 	public static $SUBTOTAL_OPTIONS = ['subtotalshowtotalexludingvatonpdf'];
 
 	/**
+	 * @var string[] element of allowed module class
+	 */
+	public static $ALLOWED_TYPES = [
+		'propal',
+		'commande',
+		'facture',
+		'facturerec',
+		'shipping',
+		'supplier_proposal',
+		'order_supplier',
+		'invoice_supplier',
+	];
+
+
+	/**
 	 * Adds a subtotals line to a document.
 	 * This function inserts a subtotal line based on the given parameters.
 	 *
@@ -65,24 +82,13 @@ trait CommonSubtotal
 	public function addSubtotalLine($langs, $desc, $depth, $options = array(), $parent_line = 0)
 	{
 		if (empty($desc)) {
-			if (isset($this->errors)) {
-				$this->errors[] = $langs->trans("TitleNeedDesc");
-			}
+			$this->errors[] = $langs->trans("TitleNeedDesc");
 			return -1;
 		}
 		$current_module = $this->element;
 		// Ensure the object is one of the supported types
-		$allowed_types = [
-			'propal',
-			'commande',
-			'facture',
-			'facturerec',
-			'shipping',
-		];
-		if (!in_array($current_module, $allowed_types)) {
-			if (isset($this->errors)) {
-				$this->errors[] = $langs->trans("UnsupportedModuleError");
-			}
+		if (!in_array($current_module, self::$ALLOWED_TYPES)) {
+			$this->errors[] = $langs->trans("UnsupportedModuleError");
 			return -1; // Unsupported type
 		}
 		$error = 0;
@@ -119,9 +125,7 @@ trait CommonSubtotal
 
 			if ($max_existing_level+1 < $depth) {
 				$depth = $max_existing_level+1;
-				if (isset($this->errors)) {
-					$this->errors[] = $langs->trans("TitleAddedLevelTooHigh", $depth);
-				}
+				$this->errors[] = $langs->trans("TitleAddedLevelTooHigh", $depth);
 
 				$error ++;
 			}
@@ -212,7 +216,93 @@ trait CommonSubtotal
 				SUBTOTALS_SPECIAL_CODE	// Special code
 			);
 			$this->fetch_lines();
+		} elseif ($current_module == 'supplier_proposal' && $this instanceof SupplierProposal) {
+			$rang = $rang == -1 ? $rang : $rang-1;
+			$result = $this->addline(
+				$desc,					// Description
+				0,						// Unit price
+				$depth,					// Quantity
+				0,						// VAT rate
+				0,						// Local tax 1
+				0,						// Local tax 2
+				0,						// FK product
+				0,						// Discount percentage
+				'',						// Price base type
+				0,						// PU ttc
+				0,						// Info bits
+				self::$PRODUCT_TYPE,	// Type
+				$rang,					// Rang
+				SUBTOTALS_SPECIAL_CODE	// Special code
+			);
+		} elseif ($current_module == 'order_supplier' && $this instanceof CommandeFournisseur) {
+			$rang = $rang == -1 ? $rang : $rang-1;
+			$result = $this->addline(
+				$desc,					// Description
+				0,						// Unit price
+				$depth,					// Quantity
+				0,						// VAT rate
+				0,						// Local tax 1
+				0,						// Local tax 2
+				0,						// FK product
+				0,						// fk fourn price
+				'',						// ref supplier
+				0,						// Remise percent
+				'',						// Price base type
+				0,						// PU ttc
+				self::$PRODUCT_TYPE,	// Type
+				0,						// info bits
+				0,						// no trigger
+				null,					// Date start
+				null,					// Date end
+				[],						// array_options
+				null,					// fk_unit
+				0,						// pu ht devise
+				'',						// origin type
+				0,						// origin id
+				$rang,					// Rang
+				SUBTOTALS_SPECIAL_CODE	// Special code
+			);
+		} elseif ($current_module == 'invoice_supplier' && $this instanceof FactureFournisseur) {
+			$rang = $rang == -1 ? $rang : $rang-1;
+			$result = $this->addline(
+				$desc,					// Description
+				0,						// Unit price
+				0,						// VAT rate
+				0,						// Local tax 1
+				0,						// Local tax 2
+				$depth,					// Quantity
+				0,						// FK product
+				0,						// Remise percent
+				'',						// Date start
+				'',						// Date end
+				0,						// Code ventilation
+				0,						// info bits
+				'',						// Price base type
+				self::$PRODUCT_TYPE,	// Type
+				$rang,					// Rang
+				0,						// no trigger
+				[],						// array_options
+				null,					// fk_unit
+				0,						// origin id
+				0,						// pu ht devise
+				'',						// ref supplier
+				SUBTOTALS_SPECIAL_CODE	// Special code
+			);
+		} elseif ($current_module == 'fichinter' && $this instanceof Fichinter) {
+			global $user;
+			$result = $this->addline(
+				$user,					// user
+				$this->id,				// fk_fichinter
+				$desc,					// Description
+				0,						// dateintervention
+				$depth,					// duration
+				[],						// arrayoption
+				self::$PRODUCT_TYPE,	// Type
+				$rang,					// Rang
+				SUBTOTALS_SPECIAL_CODE	// Special code
+			);
 		}
+
 
 		if ($current_module != 'shipping') {
 			foreach ($this->lines as $line) {
@@ -249,17 +339,8 @@ trait CommonSubtotal
 	{
 		$current_module = $this->element;
 		// Ensure the object is one of the supported types
-		$allowed_types = [
-			'propal',
-			'commande',
-			'facture',
-			'facturerec',
-			'shipping',
-		];
-		if (!in_array($current_module, $allowed_types)) {
-			if (isset($this->errors)) {
-				$this->errors[] = $langs->trans("UnsupportedModuleError");
-			}
+		if (!in_array($current_module, self::$ALLOWED_TYPES)) {
+			$this->errors[] = $langs->trans("UnsupportedModuleError");
 			return -1; // Unsupported type
 		}
 
@@ -298,6 +379,18 @@ trait CommonSubtotal
 			$line = new ExpeditionLigne($this->db);
 			$line->id = $id;
 			$result = $line->delete($user);
+		} elseif ($current_module == 'supplier_proposal') {
+			$line = new SupplierProposalLine($this->db);
+			$line->id = $id;
+			$result = $line->delete($user);
+		} elseif ($current_module == 'order_supplier') {
+			$line = new CommandeFournisseurLigne($this->db);
+			$line->id = $id;
+			$result = $line->delete($user);
+		} elseif ($current_module == 'invoice_supplier') {
+			$line = new SupplierInvoiceLine($this->db);
+			$line->id = $id;
+			$result = $line->delete();
 		}
 
 		return $result >= 0 ? $result : -1; // Return line ID or false
@@ -322,17 +415,8 @@ trait CommonSubtotal
 	{
 		$current_module = $this->element;
 		// Ensure the object is one of the supported types
-		$allowed_types = [
-			'propal',
-			'commande',
-			'facture',
-			'facturerec',
-			'shipping',
-		];
-		if (!in_array($current_module, $allowed_types)) {
-			if (isset($this->errors)) {
-				$this->errors[] = $langs->trans("UnsupportedModuleError");
-			}
+		if (!in_array($current_module, self::$ALLOWED_TYPES)) {
+			$this->errors[] = $langs->trans("UnsupportedModuleError");
 			return -1; // Unsupported type
 		}
 
@@ -351,9 +435,7 @@ trait CommonSubtotal
 
 		if ($max_existing_level+1 < $depth) {
 			$depth = $max_existing_level+1;
-			if (isset($this->errors)) {
-				$this->errors[] = $langs->trans("TitleEditedLevelTooHigh");
-			}
+			$this->errors[] = $langs->trans("TitleEditedLevelTooHigh");
 			$error ++;
 		}
 
@@ -459,6 +541,70 @@ trait CommonSubtotal
 				$line_rang,				// Rang
 				SUBTOTALS_SPECIAL_CODE	// Special code
 			);
+		} elseif ($current_module == 'supplier_proposal' && $this instanceof SupplierProposal) {
+			$objectline = new SupplierProposalLine($this->db);
+			$objectline->fetch($lineid);
+			$line_rang = $objectline->rang;
+			$result = $this->updateline(
+				$lineid,				// ID of line to change
+				0,						// Unit price
+				$depth,					// Quantity
+				0,						// Discount percentage
+				0,						// VAT rate
+				0,						// Local tax 1
+				0,						// Local tax 2
+				$desc,					// Description
+				'',						// Price base type
+				0,						// Info bits
+				SUBTOTALS_SPECIAL_CODE,	// Special code
+				0,						// FK parent line
+				0,						//
+				0,						//
+				0,						//
+				'',						//
+				self::$PRODUCT_TYPE		// Type
+			);
+		} elseif ($current_module == 'order_supplier' && $this instanceof CommandeFournisseur) {
+			$objectline = new CommandeFournisseurLigne($this->db);
+			$objectline->fetch($lineid);
+			$line_rang = $objectline->rang;
+			// special code comes from old line
+			$result = $this->updateline(
+				$lineid,				// ID of line to change
+				$desc,					// Description
+				0,						// Unit price
+				$depth,					// Quantity
+				0,						// Discount percentage
+				0,						// VAT rate
+				0,						// Local tax 1
+				0,						// Local tax 2
+				'',						// Price base type
+				0,						// Info bits
+				self::$PRODUCT_TYPE,	// Type
+				0,						// no trigger
+				0,						//
+				0,						//
+				[],						//
+				null					//
+			);
+		} elseif ($current_module == 'invoice_supplier' && $this instanceof FactureFournisseur) {
+			$objectline = new SupplierInvoiceLine($this->db);
+			$objectline->fetch($lineid);
+			$line_rang = $objectline->rang;
+			$result = $this->updateline(
+				$lineid,				// ID of line to change
+				$desc,					// Description
+				0,						// Unit price
+				0,						// VAT rate
+				0,						// Local tax 1
+				0,						// Local tax 2
+				$depth,					// Quantity
+				0,						// product id
+				'',						// Price base type
+				0,						// Info bits
+				self::$PRODUCT_TYPE,	// Type
+				0						// Discount percentage
+			);
 		}
 
 		foreach ($this->lines as $line) {
@@ -493,17 +639,8 @@ trait CommonSubtotal
 	{
 		$current_module = $this->element;
 		// Ensure the object is one of the supported types
-		$allowed_types = [
-			'propal',
-			'commande',
-			'facture',
-			'facturerec',
-			'shipping',
-		];
-		if (!in_array($current_module, $allowed_types)) {
-			if (isset($this->errors)) {
-				$this->errors[] = $langs->trans("UnsupportedModuleError");
-			}
+		if (!in_array($current_module, self::$ALLOWED_TYPES)) {
+			$this->errors[] = $langs->trans("UnsupportedModuleError");
 			return -1; // Unsupported type
 		}
 
@@ -533,7 +670,8 @@ trait CommonSubtotal
 						'HT',
 						$this->lines[$i]->info_bits,
 						$this->lines[$i]->product_type,
-						$this->lines[$i]->fk_parent_line, 0,
+						$this->lines[$i]->fk_parent_line,
+						0,
 						$this->lines[$i]->fk_fournprice,
 						$this->lines[$i]->pa_ht,
 						$this->lines[$i]->label,
@@ -558,7 +696,8 @@ trait CommonSubtotal
 						$this->lines[$i]->date_start,
 						$this->lines[$i]->date_end,
 						$this->lines[$i]->product_type,
-						$this->lines[$i]->fk_parent_line, 0,
+						$this->lines[$i]->fk_parent_line,
+						0,
 						$this->lines[$i]->fk_fournprice,
 						$this->lines[$i]->pa_ht,
 						$this->lines[$i]->label,
@@ -580,7 +719,8 @@ trait CommonSubtotal
 						'HT',
 						$this->lines[$i]->info_bits,
 						$this->lines[$i]->special_code,
-						$this->lines[$i]->fk_parent_line, 0,
+						$this->lines[$i]->fk_parent_line,
+						0,
 						$this->lines[$i]->fk_fournprice,
 						$this->lines[$i]->pa_ht,
 						$this->lines[$i]->label,

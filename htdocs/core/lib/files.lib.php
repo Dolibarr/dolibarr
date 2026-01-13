@@ -7,6 +7,7 @@
  * Copyright (C) 2019-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2023       Lenin Rivas         <lenin.rivas777@gmail.com>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		William Mead		<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,9 +48,9 @@ function dol_basename($pathfile)
  * @param	string			$utf8_path     	Starting path from which to search. This is a full path.
  * @param	string			$types        	Can be "directories", "files", or "all"
  * @param	int				$recursive		Determines whether subdirectories are searched
- * @param	string|string[]	$filter        	Regex or Array of Regex filter to restrict list. The regex value must be escaped for '/' by doing preg_quote($var,'/'), since this char is used for preg_match function,
- *                  	                    but must NOT contains the start and end '/'. Filter is checked into basename only.
- * @param	string|string[]	$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview.*\.png)$','^\.')). Exclude is checked both into fullpath and into basename (So '^xxx' may exclude 'xxx/dirscanned/...' and dirscanned/xxx').
+ * @param	string|string[]|null	$filter        	Regex or Array of Regex filter to restrict list. The regex value must be escaped for '/' by doing preg_quote($var,'/'), since this char is used for preg_match function,
+ *                  	                    		but must NOT contains the start and end '/'. Filter is checked into basename only.
+ * @param	string|string[]|null	$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview.*\.png)$','^\.')). Exclude is checked both into fullpath and into basename (So '^xxx' may exclude 'xxx/dirscanned/...' and dirscanned/xxx').
  * @param	string			$sortcriteria	Sort criteria ('','fullname','relativename','name','date','size')
  * @param	int 			$sortorder		Sort order (SORT_ASC, SORT_DESC)
  * @param	int				$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower), 2=Force load of date only, 3=Force load of size only, 4=Force load of perm
@@ -70,7 +71,7 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
 
 		// Verify filters (only on the first call of the function)
 		$filter_ok = true;
-		if (!is_array($filter)) {
+		if (!empty($filter) && !is_array($filter)) {
 			if (strlen($filter) > 25000) {	// Note that limit depends on syntax of filter
 				dol_syslog("Value for filter is too large", LOG_ERR);
 				$filter_ok = false;
@@ -762,13 +763,13 @@ function dol_fileperm($pathoffile)
 /**
  * Make replacement of strings into a file.
  *
- * @param	string					$srcfile			       Source file (can't be a directory)
- * @param	array<string,string|int> $arrayreplacement	       Array with strings to replace. Example: array('valuebefore'=>'valueafter', ...)
- * @param	string					$destfile			       Destination file (can't be a directory). If empty, will be same than source file.
- * @param	string					$newmask			       Mask for new file. '0' by default means getDolGlobalString('MAIN_UMASK'). Example: '0666'.
- * @param	int						$indexdatabase		       1=index new file into database.
- * @param   int     				$arrayreplacementisregex   1=Array of replacement is already an array with key that is a regex. Warning: the key must be escaped with preg_quote for '/'
- * @return	int											       Return integer <0 if error, 0 if nothing done (dest file already exists), >0 if OK
+ * @param	string						$srcfile			       Source file (can't be a directory)
+ * @param	array<string,string|int> 	$arrayreplacement	       Array with strings to replace. Example: array('valuebefore'=>'valueafter', ...)
+ * @param	string						$destfile			       Destination file (can't be a directory). If empty, will be same than source file.
+ * @param	string						$newmask			       Mask for new file. '0' by default means getDolGlobalString('MAIN_UMASK'). Example: '0666'.
+ * @param	int							$indexdatabase		       1=index new file into database.
+ * @param   int     					$arrayreplacementisregex   1=Array of replacement is already an array with key that is a regex. Warning: the key must be escaped with preg_quote for '/' and include the starting/ending '/' in string.
+ * @return	int												       Return integer <0 if error, 0 if nothing done (dest file already exists), >0 if OK
  * @see		dol_copy(), dolCopyDir()
  */
 function dolReplaceInFile($srcfile, $arrayreplacement, $destfile = '', $newmask = '0', $indexdatabase = 0, $arrayreplacementisregex = 0)
@@ -1097,18 +1098,18 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
  *  - Database indexes for files are updated.
  *  - Test on virus is done only if param testvirus is provided and an antivirus was set.
  *
- * @param	string  	$srcfile            Source file (can't be a directory. use native php @rename() to move a directory)
- * @param   string		$destfile           Destination file (can't be a directory. use native php @rename() to move a directory)
- * @param   string		$newmask            Mask in octal string for new file ('0' by default means $conf->global->MAIN_UMASK)
- * @param   int<0,1>	$overwriteifexists  Overwrite file if exists (1 by default)
- * @param   int<0,1>	$testvirus          Do an antivirus test. Move is canceled if a virus is found.
- * @param	int<0,1>	$indexdatabase		Index new file into database.
- * @param	array<string,mixed>	$moreinfo   Array with more information to set in index table
- * @param	int			$entity				Entity
- * @return  boolean 		            True if OK, false if KO
+ * @param	string				$srcfile			Source file (can't be a directory. use native php @rename() to move a directory)
+ * @param   string				$destfile			Destination file (can't be a directory. use native php @rename() to move a directory)
+ * @param   string				$newmask			Mask in octal string for new file ('0' by default means $conf->global->MAIN_UMASK)
+ * @param   int<0,1>			$overwriteifexists	Overwrite file if exists (1 by default)
+ * @param   int<0,1>			$testvirus			Do an antivirus test. Move is canceled if a virus is found.
+ * @param	int<0,1>			$indexdatabase		Index new file into database.
+ * @param	array<string,mixed>	$moreinfo			Array with more information to set in index table
+ * @param	int|null			$entity				Entity (it's null by default to avoid problem with entity = 0)
+ * @return  boolean									True if OK, false if KO
  * @see dol_move_uploaded_file()
  */
-function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $testvirus = 0, $indexdatabase = 1, $moreinfo = array(), $entity = 0)
+function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $testvirus = 0, $indexdatabase = 1, $moreinfo = array(), $entity = null)
 {
 	global $user, $db;
 	$result = false;
@@ -1473,7 +1474,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 			switch ($uploaderrorcode) {
 				case UPLOAD_ERR_INI_SIZE:	// 1
 					return 'ErrorFileSizeTooLarge';
-				case UPLOAD_ERR_FORM_SIZE:	// 2
+				case UPLOAD_ERR_FORM_SIZE:	// 2 - Exceed the MAX_FILE_SIZE specified into a field in form
 					return 'ErrorFileSizeTooLarge';
 				case UPLOAD_ERR_PARTIAL:	// 3
 					return 'ErrorPartialFile';
@@ -1671,7 +1672,8 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 								dol_syslog("Try to remove also entries in database for full relative path = ".$rel_filetodelete, LOG_DEBUG);
 								include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 								$ecmfile = new EcmFiles($db);
-								$result = $ecmfile->fetch(0, '', $rel_filetodelete, '', '', '', 0, $object->entity ?? 0);
+								$entity = (isset($object->entity) ? $object->entity : null);
+								$result = $ecmfile->fetch(0, '', $rel_filetodelete, '', '', '', 0, $entity);
 								if ($result >= 0 && $ecmfile->id > 0) {
 									$result = $ecmfile->delete($user);
 								}
@@ -3252,7 +3254,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$modulepartsuffix = str_replace('tax-', '', $modulepart);
 		$original_file = $conf->tax->dir_output.'/'.($modulepartsuffix != 'tax' ? $modulepartsuffix.'/' : '').$original_file;
-	} elseif ($modulepart == 'actions' && !empty($conf->agenda->dir_output)) {
+	} elseif (($modulepart == 'actions' || $modulepart == 'actioncomm') && !empty($conf->agenda->dir_output)) {
 		// Wrapping for events
 		if ($fuser->hasRight('agenda', 'myactions', $read)) {
 			$accessallowed = 1;
@@ -3333,7 +3335,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->societe->multidir_output[$entity].'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT rowid as fk_soc FROM ".MAIN_DB_PREFIX."societe WHERE rowid='".$db->escape($refname)."' AND entity IN (".getEntity('societe').")";
-	} elseif ($modulepart == 'contact' && !empty($conf->societe->multidir_output[$entity])) {
+	} elseif (($modulepart == 'contact' || $modulepart == 'socpeople') && !empty($conf->societe->multidir_output[$entity])) {
 		// Wrapping for contact
 		if (empty($entity) || empty($conf->societe->multidir_output[$entity])) {
 			return array('accessallowed' => 0, 'error' => 'Value entity must be provided');
@@ -3405,6 +3407,11 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->contract->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
+	} elseif ($modulepart == 'massfilesarea_stock' && !empty($conf->stock->dir_output)) {
+		if ($fuser->hasRight('stock', $lire) || preg_match('/^specimen/i', $original_file)) {
+			$accessallowed = 1;
+		}
+		$original_file = $conf->stock->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
 	} elseif (($modulepart == 'fichinter' || $modulepart == 'ficheinter') && !empty($conf->ficheinter->dir_output)) {
 		// Wrapping for interventions
 		if ($fuser->hasRight('ficheinter', $lire) || preg_match('/^specimen/i', $original_file)) {
@@ -3479,6 +3486,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		if ($fuser->hasRight('fournisseur', 'facture', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
+		$original_file = preg_replace("/payment\//", "", $original_file);	// Because the $conf->fournisseur->payment->dir_output already contains the "payment/"
 		$original_file = $conf->fournisseur->payment->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."paiementfournisseur WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
 	} elseif ($modulepart == 'payment') {
@@ -3556,6 +3564,17 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		if (isModEnabled('stock')) {
 			$original_file = $conf->stock->multidir_output[$entity].'/movement/'.$original_file;
+		}
+	} elseif ($modulepart == 'entrepot') {
+		// Wrapping for stock warehouse
+		if (empty($entity) || empty($conf->stock->multidir_output[$entity])) {
+			return array('accessallowed' => 0, 'error' => 'Value entity must be provided');
+		}
+		if (($fuser->hasRight('stock', $lire) || $fuser->hasRight('stock', 'movement', $lire) || $fuser->hasRight('stock', 'mouvement', $lire)) || preg_match('/^specimen/i', $original_file)) {
+			$accessallowed = 1;
+		}
+		if (isModEnabled('stock')) {
+			$original_file = $conf->stock->multidir_output[$entity].'/'.$original_file;
 		}
 	} elseif ($modulepart == 'contract' && !empty($conf->contract->multidir_output[$entity])) {
 		// Wrapping pour les contrats
@@ -3635,6 +3654,30 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->member->dir_output.'/'.$original_file;
+	} elseif ($modulepart == 'ticket' && !empty($conf->ticket->multidir_output[$entity])) {
+		// Wrapping for events
+		if ($fuser->hasRight('ticket', $read)) {
+			$accessallowed = 1;
+		}
+		if (!isset($_SESSION['email_customer'])) {
+			$sqlprotectagainstexternals = '';
+		} else {
+			$email_split = explode('@', $_SESSION['email_customer']);
+
+			$sqlprotectagainstexternals = 'SELECT t.rowid, t.fk_soc FROM '.MAIN_DB_PREFIX.'ticket t';
+			$sqlprotectagainstexternals.= ' LEFT JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id = t.rowid';
+			$sqlprotectagainstexternals.= ' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople c ON c.rowid = ec.fk_socpeople';
+			$sqlprotectagainstexternals.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact tc ON tc.element = "ticket" AND tc.rowid = ec.fk_c_type_contact';
+			$sqlprotectagainstexternals.= ' WHERE t.ref LIKE "'.$db->sanitize($refname).'"';
+			$sqlprotectagainstexternals.= ' AND (';
+			$sqlprotectagainstexternals.= '   (';
+			$sqlprotectagainstexternals.= '     tc.rowid IS NOT NULL';
+			$sqlprotectagainstexternals.= '     AND c.email = "'.$db->sanitize($email_split[0]).'@'.$db->sanitize($email_split[1]).'"';
+			$sqlprotectagainstexternals.= '   )';
+			$sqlprotectagainstexternals.= '   OR t.origin_email = "'.$db->sanitize($email_split[0]).'@'.$db->sanitize($email_split[1]).'"';
+			$sqlprotectagainstexternals.= ' )';
+		}
+		$original_file = $conf->ticket->multidir_output[$entity].'/'.$original_file;
 		// If modulepart=module_user_temp	Allows any module to open a file if file is in directory called DOL_DATA_ROOT/modulepart/temp/iduser
 		// If modulepart=module_temp		Allows any module to open a file if file is in directory called DOL_DATA_ROOT/modulepart/temp
 		// If modulepart=module_user		Allows any module to open a file if file is in directory called DOL_DATA_ROOT/modulepart/iduser
@@ -3783,8 +3826,7 @@ function dol_filecache($directory, $filename, $object)
 	$cachefile = $directory.$filename;
 
 	file_put_contents($cachefile, serialize($object), LOCK_EX);
-
-	dolChmod($cachefile, '0644');
+	dolChmod($cachefile);
 }
 
 /**
@@ -3833,12 +3875,12 @@ function dirbasename($pathfile)
  * Function to get list of updated or modified files.
  * $file_list is used as global variable
  *
- * @param array{}|array{insignature:string[],missing?:array<array{filename:string,expectedmd5:string,expectedsize:string}>,updated:array<array{filename:string,expectedmd5:string,expectedsize:string,md5:string}>}	$file_list	Array for response
+ * @param array{}|array{insignature:string[],missing?:array<array{filename:string,expectedhash:string,expectedsize:string,algo:string}>,updated:array<array{filename:string,expectedhash:string,expectedsize:string,hash:string,algo:string}>}	$file_list	Array for response
  * @param   SimpleXMLElement	$dir    	        SimpleXMLElement of files to test
  * @param   string				$path   	        Path of files relative to $pathref. We start with ''. Used by recursive calls.
  * @param   string				$pathref            Path ref (DOL_DOCUMENT_ROOT)
  * @param   string[]			$checksumconcat     Array of checksum
- * @return	array{insignature:string[],missing?:array<array{filename:string,expectedmd5:string,expectedsize:string}>,updated:array<array{filename:string,expectedmd5:string,expectedsize:string,md5:string}>}	$file_list	Array of filenames
+ * @return	array{insignature:string[],missing?:array<array{filename:string,expectedhash:string,expectedsize:string,algo:string}>,updated:array<array{filename:string,expectedhash:string,expectedsize:string,hash:string,algo:string}>}	$file_list	Array of filenames
  */
 function getFilesUpdated(&$file_list, SimpleXMLElement $dir, $path = '', $pathref = '', &$checksumconcat = array())
 {
@@ -3846,24 +3888,34 @@ function getFilesUpdated(&$file_list, SimpleXMLElement $dir, $path = '', $pathre
 
 	//$exclude = 'install';
 
-	foreach ($dir->md5file as $file) {    // $file is a simpleXMLElement
+	$entry = array();
+	$algo = '';
+	if (!empty($dir->md5file)) {
+		$entry = $dir->md5file;
+		$algo = 'md5';
+	} elseif (!empty($dir->sha256file)) {
+		$entry = $dir->sha256file;
+		$algo = 'sha256';
+	}
+
+	foreach ($entry as $file) {    // $file is a simpleXMLElement
 		$filename = $path.$file['name'];
 		$file_list['insignature'][] = $filename;
 		$expectedsize = (empty($file['size']) ? '' : $file['size']);
-		$expectedmd5 = (string) $file;
+		$expectedhash = (string) $file;
 
 		if (!file_exists($pathref.'/'.$filename)) {
-			$file_list['missing'][] = array('filename' => $filename, 'expectedmd5' => $expectedmd5, 'expectedsize' => $expectedsize);
+			$file_list['missing'][] = array('filename' => $filename, 'expectedhash' => $expectedhash, 'expectedsize' => $expectedsize, 'algo' => (string) $algo);
 		} else {
-			$md5_local = md5_file($pathref.'/'.$filename);
+			$hash_local = hash_file($algo, $pathref.'/'.$filename);
 
 			if ($conffile == '/etc/dolibarr/conf.php' && $filename == '/filefunc.inc.php') {	// For install with deb or rpm, we ignore test on filefunc.inc.php that was modified by package
-				$checksumconcat[] = $expectedmd5;
+				$checksumconcat[] = $expectedhash;
 			} else {
-				if ($md5_local != $expectedmd5) {
-					$file_list['updated'][] = array('filename' => $filename, 'expectedmd5' => $expectedmd5, 'expectedsize' => $expectedsize, 'md5' => (string) $md5_local);
+				if ($hash_local != $expectedhash) {
+					$file_list['updated'][] = array('filename' => $filename, 'expectedhash' => $expectedhash, 'expectedsize' => $expectedsize, 'hash' => (string) $hash_local, 'algo' => (string) $algo);
 				}
-				$checksumconcat[] = $md5_local;
+				$checksumconcat[] = $hash_local;
 			}
 		}
 	}

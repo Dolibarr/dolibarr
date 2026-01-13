@@ -305,14 +305,16 @@ if ($object instanceof CommonObject) {
 							$labeltoshow = '(not defined)';
 						}
 
+						/*
 						if (!empty($InfoFieldList[3]) && $parentField) {
 							$parent = $parentName . ':' . $obj->{$parentField};
 						}
 
-						// $out .= '<option value="'.$obj->rowid.'"';
-						// $out .= ($value == $obj->rowid ? ' selected' : '');
-						// $out .= (!empty($parent) ? ' parent="'.$parent.'"' : '');
-						// $out .= '>'.$labeltoshow.'</option>';
+						$out .= '<option value="'.$obj->rowid.'"';
+						$out .= ($value == $obj->rowid ? ' selected' : '');
+						$out .= (!empty($parent) ? ' data-parent="'.$parent.'"' : '');
+						$out .= '>'.$labeltoshow.'</option>';
+						*/
 						$data['results'][] = [
 							'id' => $obj->rowid,
 							'text' => $labeltoshow,

@@ -289,7 +289,7 @@ print '<table class="noborder centpercent nomarginbottom">';
 
 print '<tr class="liste_titre">';
 print '<td>'.$form->textwithpicto($langs->trans("CurrenciesUsed"), $langs->transnoentitiesnoconv("CurrenciesUsed_help_to_add")).'</td>'."\n";
-print '<td class="right">'.$langs->trans("Rate").' / '.$langs->getCurrencySymbol($conf->currency).'</td>'."\n";
+print '<td class="right">'.$langs->trans("Rate").' / '.$langs->getCurrencySymbol(getDolCurrency()).'</td>'."\n";
 print '</tr>';
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
@@ -308,10 +308,10 @@ print '</form>';
 
 // Main currency
 print '<tr class="oddeven">';
-print '<td>'.$conf->currency;
-print ' ('.$langs->getCurrencySymbol($conf->currency).')';
+print '<td>'.getDolCurrency();
+print ' ('.$langs->getCurrencySymbol(getDolCurrency()).')';
 print $form->textwithpicto(' ', $langs->trans("BaseCurrency"));
-if (!empty($TAvailableCurrency[$conf->currency]) && empty($TAvailableCurrency[$conf->currency]['active'])) {
+if (!empty($TAvailableCurrency[getDolCurrency()]) && empty($TAvailableCurrency[getDolCurrency()]['active'])) {
 	print img_warning('Warning: This code has been disabled into Home - Setup - Dictionaries - Currencies');
 }
 print '</td>';
@@ -319,7 +319,7 @@ print '<td class="right">1</td>';
 print '</tr>';
 
 foreach ($TCurrency as &$currency) {
-	if ($currency->code == $conf->currency) {
+	if ($currency->code == getDolCurrency()) {
 		continue;
 	}
 
@@ -334,7 +334,7 @@ foreach ($TCurrency as &$currency) {
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update_currency">';
 	print '<input type="hidden" name="fk_multicurrency" value="'.$currency->id.'">';
-	print '1 '.$conf->currency.' = ';
+	print '1 '.getDolCurrency().' = ';
 	print '<input type="text" name="rate" class="width125 right" value="'.($currency->rate->rate ? $currency->rate->rate : '').'">&nbsp;'.$currency->code.'&nbsp;';
 	print '<input type="submit" name="updatecurrency" class="button button-edit smallpaddingimp" value="'.$langs->trans("Modify").'">&nbsp;';
 	print '<input type="submit" name="deletecurrency" class="button smallpaddingimp" value="'.$langs->trans("Delete").'">';

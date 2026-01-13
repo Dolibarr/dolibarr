@@ -298,12 +298,12 @@ class PropaleLigne extends CommonObjectLine
 	public $total_localtax2;
 
 	/**
-	 * @var int|''
+	 * @var int|''|null
 	 */
 	public $date_start;
 
 	/**
-	 * @var int|''
+	 * @var int|''|null
 	 */
 	public $date_end;
 

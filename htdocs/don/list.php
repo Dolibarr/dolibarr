@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2019       Thibault FOUCART        <support@ptibogxiv.net>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -29,11 +29,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
-if (isModEnabled('project')) {
-	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-}
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -41,6 +36,10 @@ if (isModEnabled('project')) {
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
+if (isModEnabled('project')) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'donations'));
@@ -134,6 +133,7 @@ $fieldstosearchall = array(
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
+$arrayfields = array();
 //$arrayfields['anotherfield'] = array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>1, 'enabled'=>1, 'position'=>90, 'csslist'=>'right');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
@@ -236,9 +236,9 @@ $morecss = array();
 
 // Build and execute select
 // --------------------------------------------------------------------
-$sql = "SELECT d.rowid, d.datedon, d.fk_soc as socid, d.firstname, d.lastname, d.societe,";
+$sql = "SELECT d.rowid, d.ref, d.datedon, d.fk_soc as socid, d.firstname, d.lastname, d.societe,";
 $sql .= " d.amount, d.fk_statut as status,";
-$sql .= " p.rowid as pid, p.ref, p.title, p.public";
+$sql .= " p.rowid as pid, p.ref as pref, p.title, p.public";
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -603,7 +603,7 @@ while ($i < $imaxinloop) {
 	$donationstatic->setVarsFromFetchObj($obj);
 
 	$donationstatic->id = $obj->rowid;
-	$donationstatic->ref = $obj->rowid;
+	$donationstatic->ref = ($obj->ref ? $obj->ref : $obj->rowid);
 	$donationstatic->date = $db->jdate($obj->datedon);
 	$donationstatic->status = $obj->status;
 	$donationstatic->lastname = $obj->lastname;
@@ -625,7 +625,7 @@ while ($i < $imaxinloop) {
 		if (!empty($obj->socid) && $company->id > 0) {
 			$donationstatic->societe = $company->getNomUrl(1);
 		} else {
-			$donationstatic->societe = $obj->societe;
+			$donationstatic->societe = (string) $obj->societe;  // Value from sql query
 		}
 
 		$object = $donationstatic;
@@ -687,8 +687,7 @@ while ($i < $imaxinloop) {
 			print "<td>";
 			if ($obj->pid) {
 				$projectstatic->id = $obj->pid;
-				$projectstatic->ref = $obj->ref;
-				$projectstatic->id = $obj->pid;
+				$projectstatic->ref = $obj->pref;
 				$projectstatic->public = $obj->public;
 				$projectstatic->title = $obj->title;
 				print $projectstatic->getNomUrl(1);

@@ -60,7 +60,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('products', 'bills', 'companies', 'projects'));
+$langs->loadLangs(array('products', 'bills', 'companies', 'projects', 'banks'));
 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
@@ -96,10 +96,13 @@ $search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 
 $search_status = GETPOST('search_status', 'intcomma');	// Can be '' or a numeric
 $search_paymentmode = GETPOST('search_paymentmode', 'intcomma');
 $search_paymentcond = GETPOST('search_paymentcond') ? GETPOSTINT('search_paymentcond') : '';
+$search_bankaccount = GETPOST('search_bankaccount', 'intcomma');
 $search_vat_reverse_charge = GETPOST('search_vat_reverse_charge', 'alpha');
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
 $search_state = GETPOST("search_state");
+$search_note_private = GETPOST('search_note_private', 'alpha');
+$search_note_public = GETPOST('search_note_public', 'alpha');
 $search_country = GETPOST("search_country", 'aZ09');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'intcomma');
 $search_user = GETPOST('search_user', 'intcomma');
@@ -205,6 +208,7 @@ $arrayfields = array(
 	'f.vat_reverse_charge' => array('label' => "VATReverseCharge", 'checked' => '0', 'position' => 49, 'enabled' => (getDolGlobalString('ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE') ? '1' : '0')),
 	'f.fk_mode_reglement' => array('label' => "PaymentMode", 'checked' => '1', 'position' => 52),
 	'f.fk_cond_reglement' => array('label' => "PaymentConditionsShort", 'checked' => '1', 'position' => 50),
+	'ba.label' => array('label' => "BankAccount", 'langfile' => 'banks', 'checked' => '0', 'enabled' => (string) (int) (isModEnabled('bank')), 'position' => 192),
 	'f.total_ht' => array('label' => "AmountHT", 'checked' => '1', 'position' => 105),
 	'f.total_vat' => array('label' => "AmountVAT", 'checked' => '0', 'position' => 110),
 	'f.total_localtax1' => array('label' => $langs->transcountry("AmountLT1", $mysoc->country_code), 'checked' => '0', 'enabled' => (string) (int) ($mysoc->localtax1_assuj == "1"), 'position' => 95),
@@ -223,6 +227,8 @@ $arrayfields = array(
 	'f.datec' => array('label' => "DateCreation", 'checked' => '0', 'position' => 501),
 	'f.tms' => array('label' => "DateModificationShort", 'checked' => '0', 'position' => 502),
 	'f.nb_docs' => array('label' => "Documents", 'checked' => '-1', 'position' => 510),
+	'f.note_public' => array('label' => 'NotePublic', 'checked' => '0', 'position' => 520, 'enabled' => (getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES') ? '0' : '1')),
+	'f.note_private' => array('label' => 'NotePrivate', 'checked' => '0', 'position' => 521, 'enabled' => (getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES') ? '0' : '1')),
 	'f.fk_statut' => array('label' => "Status", 'checked' => '1', 'position' => 1000),
 );
 // Extra fields
@@ -307,6 +313,7 @@ if (empty($reshook)) {
 		$search_status = '';
 		$search_paymentmode = '';
 		$search_paymentcond = '';
+		$search_bankaccount = '';
 		$search_vat_reverse_charge = '';
 		$search_town = '';
 		$search_zip = "";
@@ -323,6 +330,8 @@ if (empty($reshook)) {
 		$search_datelimit_endyear = '';
 		$search_datelimit_start = '';
 		$search_datelimit_end = '';
+		$search_note_private = '';
+		$search_note_public = '';
 		$toselect = array();
 		$search_array_options = array();
 		$search_categ_sup = 0;
@@ -493,6 +502,7 @@ $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
 $facturestatic = new FactureFournisseur($db);
+$accountstatic = new Account($db);
 $formcompany = new FormCompany($db);
 $thirdparty = new Societe($db);
 $subtypearray = $object->getArrayOfInvoiceSubtypes(0);
@@ -513,7 +523,7 @@ $help_url = 'EN:Suppliers_Invoices|FR:FactureFournisseur|ES:Facturas_de_proveedo
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = "SELECT";
-$sql .= " f.rowid as facid, f.ref, f.ref_supplier, f.type, f.subtype, f.datef, f.date_lim_reglement as datelimite, f.fk_mode_reglement, f.fk_cond_reglement, f.vat_reverse_charge,";
+$sql .= " f.rowid as facid, f.ref, f.ref_supplier, f.type, f.subtype, f.datef, f.date_lim_reglement as datelimite, f.fk_mode_reglement, f.fk_cond_reglement, ba.rowid as bid, ba.ref as bref, ba.label as blabel, ba.number as bnumber, ba.account_number as baccount_number, ba.fk_accountancy_journal as baccountancy_journal, f.vat_reverse_charge,";
 $sql .= " f.total_ht, f.total_ttc, f.total_tva as total_vat, f.paye as paye, f.close_code, f.fk_statut as fk_statut, f.libelle as label, f.datec as date_creation, f.tms as date_modification,";
 $sql .= " f.localtax1 as total_localtax1, f.localtax2 as total_localtax2,";
 $sql .= ' f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva as multicurrency_total_vat, f.multicurrency_total_ttc,';
@@ -549,6 +559,7 @@ if (isset($extrafields->attributes[$object->table_element]['label']) && is_array
 }
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user AS u ON f.fk_user_author = u.rowid';
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = f.fk_projet";
+$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON ba.rowid = f.fk_account';
 if ($search_user > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."element_contact as ec";
 	$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as tc";
@@ -682,6 +693,9 @@ if ($search_paymentmode > 0) {
 if ($search_paymentcond > 0) {
 	$sql .= " AND f.fk_cond_reglement = ".((int) $search_paymentcond);
 }
+if ($search_bankaccount > 0) {
+	$sql .= " AND ba.rowid = ".((int) $search_bankaccount);
+}
 if ($search_vat_reverse_charge != '') {
 	$sql .= " AND f.vat_reverse_charge = ".((int) $search_vat_reverse_charge);
 }
@@ -690,6 +704,12 @@ if ($search_date_start) {
 }
 if ($search_date_end) {
 	$sql .= " AND f.datef <= '" . $db->idate($search_date_end) . "'";
+}
+if ($search_note_public) {
+	$sql .= " AND f.note_public LIKE '%".$db->escape($db->escapeforlike($search_note_public))."%'";
+}
+if ($search_note_private) {
+	$sql .= " AND f.note_private LIKE '%".$db->escape($db->escapeforlike($search_note_private))."%'";
 }
 if ($search_datelimit_start) {
 	$sql .= " AND f.date_lim_reglement >= '" . $db->idate($search_datelimit_start) . "'";
@@ -1027,6 +1047,9 @@ if ($search_paymentmode) {
 if ($search_paymentcond) {
 	$param .= '&search_paymentcond='.urlencode((string) ($search_paymentcond));
 }
+if ($search_bankaccount > 0) {
+	$param .= '&search_bankaccount='.urlencode((string) ($search_bankaccount));
+}
 if ($search_vat_reverse_charge != '') {
 	$param .= '&search_vat_reverse_charge='.urlencode((string) ($search_vat_reverse_charge));
 }
@@ -1306,6 +1329,12 @@ if (!empty($arrayfields['f.fk_cond_reglement']['checked'])) {
 	print $form->getSelectConditionsPaiements($search_paymentcond, 'search_paymentcond', -1, 1, 1, 'maxwidth100');
 	print '</td>';
 }
+// Bank account
+if (!empty($arrayfields['ba.label']['checked'])) {
+	print '<td class="liste_titre">';
+	$form->select_comptes($search_bankaccount, 'search_bankaccount', 0, '', 1, '', 0, 'maxwidth125');
+	print '</td>';
+}
 // Payment mode
 if (!empty($arrayfields['f.fk_mode_reglement']['checked'])) {
 	print '<td class="liste_titre">';
@@ -1416,6 +1445,18 @@ if (!empty($arrayfields['f.tms']['checked'])) {
 	print '<td class="liste_titre">';
 	print '</td>';
 }
+if (!empty($arrayfields['f.note_public']['checked'])) {
+	// Note public
+	print '<td class="liste_titre">';
+	print '<input class="flat maxwidth75" type="text" name="search_note_public" value="'.dol_escape_htmltag($search_note_public).'">';
+	print '</td>';
+}
+if (!empty($arrayfields['f.note_private']['checked'])) {
+	// Note private
+	print '<td class="liste_titre">';
+	print '<input class="flat maxwidth75" type="text" name="search_note_private" value="'.dol_escape_htmltag($search_note_private).'">';
+	print '</td>';
+}
 // Status
 if (!empty($arrayfields['f.fk_statut']['checked'])) {
 	print '<td class="liste_titre center parentonrightofpage">';
@@ -1517,6 +1558,10 @@ if (!empty($arrayfields['f.fk_cond_reglement']['checked'])) {
 	print_liste_field_titre($arrayfields['f.fk_cond_reglement']['label'], $_SERVER["PHP_SELF"], "f.fk_cond_reglement", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['ba.label']['checked'])) {
+	print_liste_field_titre($arrayfields['ba.label']['label'], $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
 if (!empty($arrayfields['f.fk_mode_reglement']['checked'])) {
 	print_liste_field_titre($arrayfields['f.fk_mode_reglement']['label'], $_SERVER["PHP_SELF"], "f.fk_mode_reglement", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
@@ -1597,6 +1642,14 @@ if (!empty($arrayfields['f.datec']['checked'])) {
 }
 if (!empty($arrayfields['f.tms']['checked'])) {
 	print_liste_field_titre($arrayfields['f.tms']['label'], $_SERVER["PHP_SELF"], "f.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['f.note_public']['checked'])) {
+	print_liste_field_titre($arrayfields['f.note_public']['label'], $_SERVER["PHP_SELF"], "f.note_public", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['f.note_private']['checked'])) {
+	print_liste_field_titre($arrayfields['f.note_private']['label'], $_SERVER["PHP_SELF"], "f.note_private", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['f.fk_statut']['checked'])) {
@@ -1957,6 +2010,23 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Bank account
+		if (!empty($arrayfields['ba.label']['checked'])) {
+			print '<td>';
+			if (!empty($obj->bid)) {
+				$accountstatic->id = $obj->bid;
+				$accountstatic->ref = $obj->bref;
+				$accountstatic->label = $obj->blabel;
+				$accountstatic->number = $obj->bnumber;
+				$accountstatic->account_number = $obj->baccount_number;
+				$accountstatic->accountancy_journal = $obj->baccountancy_journal;
+				print $accountstatic->getNomUrl(1);
+			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
 		// Payment mode
 		if (!empty($arrayfields['f.fk_mode_reglement']['checked'])) {
 			$s = $form->form_modes_reglement($_SERVER['PHP_SELF'], $obj->fk_mode_reglement, 'none', '', -1, 0, '', 1);
@@ -2139,6 +2209,24 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['f.tms']['checked'])) {
 			print '<td class="center nowraponall">';
 			print dol_print_date($db->jdate($obj->date_modification), 'dayhour', 'tzuser');
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Note public
+		if (!empty($arrayfields['f.note_public']['checked'])) {
+			print '<td class="sensiblehtmlcontent center">';
+			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_public, 5)).'</div>';
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Note private
+		if (!empty($arrayfields['f.note_private']['checked'])) {
+			print '<td class="sensiblehtmlcontent center">';
+			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_private, 5)).'</div>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
