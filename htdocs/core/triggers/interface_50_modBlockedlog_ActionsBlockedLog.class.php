@@ -109,7 +109,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 					foreach ($invoiceids as $invoiceid) {
 						$tmpinvoice->id = 0;
 						$tmpinvoice->fetch($invoiceid);
-						if ($tmpinvoice->id > 0 && $tmpinvoice->module_source == 'takepos') {
+						if ($tmpinvoice->id > 0 && $tmpinvoice->module_source == 'takepos') {		// @phpstan-ignore-line PHP think tmpinvoice->id is always 0
 							$this->errors[] = 'The payment mode '.$object->paiementcode.' is not available in this version for payment of invoices generated from '.$tmpinvoice->module_source;
 							return -1;
 						}
