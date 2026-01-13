@@ -266,7 +266,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
 				$stringtoshow .= ' &nbsp; ';
 				$stringtoshow .= '<input type="checkbox" id="'.$param_showtot.'" name="'.$param_showtot.'"'.($showtot ? ' checked' : '').'><label for="'.$param_showtot.'"> '.$langs->trans("AmountOfBillsByMonthHT").'</label>';
 				$stringtoshow .= '<br>';
-				$stringtoshow .= '<input type="checkbox" name="'.$param_cumuled.'"'.($showcum ? ' checked' : '').'> '.$langs->trans("Cumuled");
+				$stringtoshow .= '<input type="checkbox" name="'.$param_cumuled.'"'.($showcum ? ' checked' : '').'> '.$langs->trans("Cumulated");
 				$stringtoshow .= '<br>';
 				$stringtoshow .= $langs->trans("Year").' <input class="flat" size="4" type="text" name="'.$param_year.'" value="'.$endyear.'">';
 				$stringtoshow .= '<input type="image" class="reposition inline-block valigntextbottom" alt="'.$langs->trans("Refresh").'" src="'.img_picto($langs->trans("Refresh"), 'refresh.png', '', 0, 1).'">';
