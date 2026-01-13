@@ -4351,6 +4351,7 @@ class Commande extends CommonOrder
 		$genericCommande->loadExpeditions();   // Load array ->expeditions
 
 		$notshippable = 0;
+		$has_reliquat = 0;
 		$warning = 0;
 		$textinfo = '';
 		$textwarning = '';
@@ -4383,6 +4384,7 @@ class Commande extends CommonOrder
 				$genericProduct->stock_theorique = $productstatcachevirtual[$orderLine->fk_product]['stockreel'];
 
 				if ($reliquat > 0) {
+					$has_reliquat = 1;
 					if (!getDolGlobalString('SHIPPABLE_ORDER_ICON_IN_LIST')) {
 						$textinfo .= $reliquat . ' x ' . $orderLine->product_ref . '&nbsp;' . dol_trunc($orderLine->product_label, 20);
 						$textinfo .= ' - ' . $langs->trans("Stock") . ': <span class="' . ($genericProduct->stock_reel >= $reliquat ? 'ok' : 'error') . '">' . $genericProduct->stock_reel . '</span>';
@@ -4440,7 +4442,7 @@ class Commande extends CommonOrder
 						$textinfo .= '<br>';
 					}
 
-					if ($reliquat > $genericProduct->stock_theorique) {
+					if ($reliquat > $genericProduct->stock_reel) {
 						$notshippable++;
 					}
 				}
@@ -4448,7 +4450,13 @@ class Commande extends CommonOrder
 		}
 
 		if ($nbprod) {
-			if ($notshippable) {
+			if (!$has_reliquat) {
+
+				$texticon = img_picto('', 'statut5', '', 0, 0, 0, '', 'paddingleft');
+				$textinfo = $texticon . ' ' . $langs->trans("Shipped");
+				$result['shippable'] = true;
+
+			} elseif ($notshippable) {
 				$texticon = img_picto('', 'dolly', '', 0, 0, 0, '', 'error paddingleft');
 				$textinfo = $texticon . ' ' . $langs->trans("NonShippable") . '<br>' . $textinfo;
 				$result['shippable'] = false;
