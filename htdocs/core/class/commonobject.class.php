@@ -10598,7 +10598,7 @@ abstract class CommonObject
 			}
 
 			// If value is null and there is a default value for field @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
-			if (isset($key_fields['notnull']) && $key_fields['notnull'] == 1 && (!isset($values[$key]) || $values[$key] === 'NULL') && !is_null($key_fields['default'])) {
+			if (isset($key_fields['notnull']) && $key_fields['notnull'] == 1 && (!isset($values[$key]) || $values[$key] === 'NULL') && (isset($key_fields['default']) && !is_null($key_fields['default']))) {
 				$values[$key] = $this->quote($key_fields['default'], $key_fields);
 			}
 
