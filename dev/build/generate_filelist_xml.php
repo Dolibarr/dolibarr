@@ -40,6 +40,8 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 
 define('DOL_DOCUMENT_ROOT', dirname(dirname($path)).'/htdocs');
 
+$algo = 'sha256';
+
 require_once $path."../../htdocs/master.inc.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 
@@ -231,7 +233,7 @@ if ($release) {
 	$gitcommit = trim($fileforgitcontent);
 
 	fputs($fp, '<?xml version="1.0" encoding="UTF-8" ?>'."\n");
-	fputs($fp, '<checksum_list version="'.$release.'" date="'.dol_print_date(dol_now(), 'dayhourrfc').'" generator="'.$script_file.'" gitcommit="'.$gitcommit.'">'."\n");
+	fputs($fp, '<checksum_list version="'.$release.'" date="'.dol_print_date(dol_now(), 'dayhourrfc').'" generator="'.$script_file.'" algo="'.$algo.'" gitcommit="'.$gitcommit.'">'."\n");
 
 	foreach ($includeconstants as $countrycode => $tmp) {
 		fputs($fp, '<dolibarr_constants country="'.$countrycode.'">'."\n");
@@ -265,9 +267,9 @@ if ($release) {
 			$needtoclose = 1;
 		}
 		if (filetype($file) == "file") {
-			$md5 = md5_file($file);
-			$checksumconcat[] = $md5;
-			fputs($fp, '    <md5file name="'.basename($file).'" size="'.filesize($file).'">'.$md5.'</md5file>'."\n");
+			$hashoffile = hash_file($algo, $file);
+			$checksumconcat[] = $hashoffile;
+			fputs($fp, '    <'.$algo.'file name="'.basename($file).'" size="'.filesize($file).'">'.$hashoffile.'</'.$algo.'file>'."\n");
 		}
 	}
 	if ($needtoclose) {
@@ -277,10 +279,10 @@ if ($release) {
 	fputs($fp, '</dolibarr_htdocs_dir>'."\n");
 
 	asort($checksumconcat); // Sort list of checksum
-	$md5htdocsdir = md5(join(',', $checksumconcat));
+	$hashhtdocsdir = hash($algo, join(',', $checksumconcat));
 
 	fputs($fp, '<dolibarr_htdocs_dir_checksum>'."\n");
-	fputs($fp, $md5htdocsdir."\n");
+	fputs($fp, $hashhtdocsdir."\n");
 	fputs($fp, '</dolibarr_htdocs_dir_checksum>'."\n\n");
 
 
@@ -308,9 +310,9 @@ if ($release) {
 			$needtoclose = 1;
 		}
 		if (filetype($file) == "file") {
-			$md5 = md5_file($file);
-			$checksumconcat[] = $md5;
-			fputs($fp, '    <md5file name="'.basename($file).'" size="'.filesize($file).'">'.$md5.'</md5file>'."\n");
+			$hashoffile = hash_file($algo, $file);
+			$checksumconcat[] = $hashoffile;
+			fputs($fp, '    <'.$algo.'file name="'.basename($file).'" size="'.filesize($file).'">'.$hashoffile.'</'.$algo.'file>'."\n");
 		}
 	}
 	if ($needtoclose) {
@@ -320,10 +322,10 @@ if ($release) {
 	fputs($fp, '</dolibarr_scripts_dir>'."\n");
 
 	asort($checksumconcat); // Sort list of checksum
-	$md5scriptsdir = md5(join(',', $checksumconcat));
+	$hashscriptsdir = hash($algo, join(',', $checksumconcat));
 
 	fputs($fp, '<dolibarr_scripts_dir_checksum>'."\n");
-	fputs($fp, $md5scriptsdir."\n");
+	fputs($fp, $hashscriptsdir."\n");
 	fputs($fp, '</dolibarr_scripts_dir_checksum>'."\n\n");
 }
 
@@ -371,10 +373,10 @@ foreach ($arrayofunalterablefiles as $entry) {
 				$needtoclose = 1;
 			}
 			if (filetype($file) == "file") {
-				$md5 = md5_file($file);
-				$checksumconcat[] = $md5;
+				$hashoffile = hash_file($algo, $file);
+				$checksumconcat[] = $hashoffile;
 				if ($release) {
-					fputs($fp, '    <md5file name="'.basename($file).'" size="'.filesize($file).'">'.$md5.'</md5file>'."\n");
+					fputs($fp, '    <'.$algo.'file name="'.basename($file).'" size="'.filesize($file).'">'.$hashoffile.'</'.$algo.'file>'."\n");
 				}
 			}
 		}
@@ -407,10 +409,10 @@ foreach ($arrayofunalterablefiles as $entry) {
 			$needtoclose = 1;
 		}
 		if (filetype($file) == "file") {
-			$md5 = md5_file($file);
-			$checksumconcat[] = $md5;
+			$hashoffile = hash_file($algo, $file);
+			$checksumconcat[] = $hashoffile;
 			if ($release) {
-				fputs($fp, '    <md5file name="'.basename($file).'" size="'.filesize($file).'">'.$md5.'</md5file>'."\n");
+				fputs($fp, '    <'.$algo.'file name="'.basename($file).'" size="'.filesize($file).'">'.$hashoffile.'</'.$algo.'file>'."\n");
 			}
 		}
 		if ($needtoclose) {
@@ -423,13 +425,13 @@ foreach ($arrayofunalterablefiles as $entry) {
 }
 
 asort($checksumconcat); // Sort list of checksum
-$md5unalterable_files = md5(join(',', $checksumconcat));
+$hashunalterable_files = hash($algo, join(',', $checksumconcat));
 
 if ($release) {
 	fputs($fp, '</dolibarr_unalterable_files>'."\n");
 
 	fputs($fp, '<dolibarr_unalterable_files_checksum>'."\n");
-	fputs($fp, $md5unalterable_files."\n");
+	fputs($fp, $hashunalterable_files."\n");
 	fputs($fp, '</dolibarr_unalterable_files_checksum>'."\n\n");
 
 	// End of file
@@ -443,9 +445,9 @@ print "\n";
 if ($release) {
 	if (empty($buildzip)) {
 		print "File ".$outputfile." generated.\n";
-		print "Signature for htdocs files: ".$md5htdocsdir."\n";
-		print "Signature for scripts files: ".$md5scriptsdir."\n";
-		print "Signature for the ".count($checksumconcat)." unalterable files: ".$md5unalterable_files."\n";
+		print "Signature for htdocs files: ".$hashhtdocsdir."\n";
+		print "Signature for scripts files: ".$hashscriptsdir."\n";
+		print "Signature for the ".count($checksumconcat)." unalterable files: ".$hashunalterable_files."\n";
 	} else {
 		if ($buildzip == '1' || $buildzip == 'zip') {
 			$result = dol_compress_file($outputfile, $outputfile.'.zip', 'zip');
@@ -464,7 +466,7 @@ if ($release) {
 }
 
 if ($checklock) {
-	print "Signature for unalterable files: ".$md5unalterable_files."\n";
+	print "Signature for unalterable files: ".$algo." ".$hashunalterable_files."\n";
 
 	$lockedfile = DOL_DOCUMENT_ROOT.'/../dev/lockedfiles.txt';
 	$checksuminlockedfile = '';
@@ -475,15 +477,15 @@ if ($checklock) {
 		// Now we check the content of lockedfiles.txt
 		$arraylocked = file($lockedfile);
 		foreach ($arraylocked as $line) {
-			$tmparray = preg_split("/\s+/", $line, 3);
-			if ($tmparray[0] == $checklockmajorversion) {
-				$checksuminlockedfile = $tmparray[2];
+			$tmparray = preg_split("/\s+/", $line, 4);
+			if ($tmparray[0] == $checklockmajorversion && $tmparray[2] == $algo) {
+				$checksuminlockedfile = $tmparray[3];
 			}
 		}
 		if (empty($checksuminlockedfile)) {
-			print "The major version ".$checklockmajorversion." is not locked on the scope ".$checksource." (file found but no matching entry found into dev/lockedfiles.txt).\n";
-		} elseif ($checksuminlockedfile != $md5unalterable_files) {
-			print "The major version ".$checklockmajorversion." is locked on scope '".$checksource."' to checksum ".$checksuminlockedfile."\n";
+			print "The major version ".$checklockmajorversion." is not locked on the scope '".$checksource."' (file found but no matching entry found into dev/lockedfiles.txt).\n";
+		} elseif ($checksuminlockedfile != $hashunalterable_files) {
+			print "The major version ".$checklockmajorversion." is locked on scope '".$checksource."' to checksum ".$algo." ".$checksuminlockedfile."\n";
 			if ($checklockmajorversion != $checksource) {
 				print "The checksum now differs from the locked one, so we return an error.\n";
 				print "\n";

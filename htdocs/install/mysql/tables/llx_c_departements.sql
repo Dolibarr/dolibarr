@@ -28,6 +28,3 @@ create table llx_c_departements
   nom              varchar(50),
   active           tinyint DEFAULT 1  NOT NULL
 )ENGINE=innodb;
-
-
-

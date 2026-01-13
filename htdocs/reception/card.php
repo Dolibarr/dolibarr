@@ -235,6 +235,9 @@ if (empty($reshook)) {
 	// Reopen
 	if ($action == 'reopen' && $permissiontoadd) {	// Test on permissions not required here
 		$result = $object->reOpen();
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 	// Confirm back to draft status
@@ -2319,8 +2322,6 @@ if ($action == 'create' && $permissiontoadd) {
 	print '</div>';
 
 	print '<div class="clearboth"></div>';
-
-	print dol_get_fiche_end();
 
 	/*
 	* Lines of simple reception

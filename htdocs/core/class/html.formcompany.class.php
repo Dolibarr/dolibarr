@@ -582,6 +582,7 @@ class FormCompany extends Form
 			if ($num) {
 				$i = 0;
 				$country = '';
+				/** @var array<int,array{code:int,label:string,label_sort:string,country_code:string,country:string}> $arraydata */
 				$arraydata = array();
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($resql);
@@ -589,7 +590,7 @@ class FormCompany extends Form
 					if ($obj->code) {		// We exclude empty line, we will add it later
 						$labelcountry = (($langs->trans("Country" . $obj->country_code) != "Country" . $obj->country_code) ? $langs->trans("Country" . $obj->country_code) : $obj->country);
 						$labeljs = (($langs->trans("JuridicalStatus" . $obj->code) != "JuridicalStatus" . $obj->code) ? $langs->trans("JuridicalStatus" . $obj->code) : ($obj->label != '-' ? $obj->label : '')); // $obj->label is already in output charset (converted by database driver)
-						$arraydata[$obj->code] = array('code' => $obj->code, 'label' => $labeljs, 'label_sort' => $labelcountry . '_' . $labeljs, 'country_code' => $obj->country_code, 'country' => $labelcountry);
+						$arraydata[(int) $obj->code] = array('code' => (int) $obj->code, 'label' => $labeljs, 'label_sort' => $labelcountry . '_' . $labeljs, 'country_code' => (string) $obj->country_code, 'country' => $labelcountry);
 					}
 					$i++;
 				}
@@ -746,7 +747,8 @@ class FormCompany extends Form
 			if (getDolGlobalString('COMPANY_SHOW_ADDRESS_SELECTLIST')) {
 				$sql .= " LEFT JOIN " . $this->db->prefix() . "c_country as dictp ON dictp.rowid = s.fk_pays";
 			}
-			$sql .= " WHERE s.entity IN (" . getEntity('societe') . ")";
+			// Filter on active third parties only (status = 1) Closed third parties must not be selectable
+			$sql .= " WHERE s.entity IN (" . getEntity('societe') . ")  AND s.status = 1";
 			// For ajax search we limit here. For combo list, we limit later
 			if (is_array($limitto) && count($limitto)) {
 				$sql .= " AND s.rowid IN (" . $this->db->sanitize(implode(',', $limitto)) . ")";

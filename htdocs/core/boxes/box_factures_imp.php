@@ -38,7 +38,7 @@ class box_factures_imp extends ModeleBoxes
 	public $boxcode = "oldestunpaidcustomerbills";
 	public $boximg = "object_bill";
 	public $boxlabel = "BoxOldestUnpaidCustomerBills";
-	public $depends = array("facture");
+	public $depends = array("invoice");
 
 	/**
 	 *  Constructor

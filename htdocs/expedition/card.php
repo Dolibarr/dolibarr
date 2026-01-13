@@ -294,7 +294,16 @@ if (empty($reshook)) {
 	if ($action == 'add' && $permissiontoadd) {
 		$db->begin();
 
-		if (GETPOSTINT('socid') < 1) {
+		if ($origin && $origin_id > 0) {
+			// We will loop on each line of the original document to complete the shipping object with various info and quantity to deliver
+			$classname = ucfirst($origin);
+			$objectsrc = new $classname($db);
+			'@phan-var-force Facture|Commande $objectsrc';
+			$objectsrc->fetch($origin_id);
+			$object->socid = $objectsrc->socid;
+		}
+
+		if (GETPOSTINT('socid') < 1 && $object->socid < 1) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdParty")), null, 'errors');
 			$action = 'create';
@@ -320,15 +329,13 @@ if (empty($reshook)) {
 			$object->date_shipping = $date_shipping; // Sending date
 			$object->shipping_method_id = GETPOSTINT('shipping_method_id');
 			$object->tracking_number = GETPOST('tracking_number', 'alpha');
-			$object->note = GETPOST('note', 'restricthtml'); // deprecated
+			$object->note = GETPOST('note_private', 'restricthtml'); // deprecated
 			$object->note_private = GETPOST('note_private', 'restricthtml');
 			$object->note_public = GETPOST('note_public', 'restricthtml');
 			$object->fk_incoterms = GETPOSTINT('incoterm_id');
 			$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 
 			$product = new Product($db);
-
-
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -362,7 +369,7 @@ if (empty($reshook)) {
 			$object->date_shipping = $date_shipping; // Sending date
 			$object->shipping_method_id = GETPOSTINT('shipping_method_id');
 			$object->tracking_number = GETPOST('tracking_number', 'alpha');
-			$object->note = GETPOST('note', 'restricthtml'); // deprecated
+			$object->note = GETPOST('note_private', 'restricthtml'); // deprecated
 			$object->note_private = GETPOST('note_private', 'restricthtml');
 			$object->note_public = GETPOST('note_public', 'restricthtml');
 			$object->fk_incoterms = GETPOSTINT('incoterm_id');
@@ -1418,7 +1425,7 @@ $product_static = new Product($db);
 $shipment_static = new Expedition($db);
 $warehousestatic = new Entrepot($db);
 
-if ($action == 'create' && !getDolGlobalString('SHIPMENT_STANDALONE')) {
+if (!$origin && $action == 'create' && !getDolGlobalString('SHIPMENT_STANDALONE')) {
 	print load_fiche_titre($langs->trans("CreateShipment"), '', 'dolly');
 
 	print '<br>'  .$langs->trans("ShipmentCreationIsDoneFromOrder");
@@ -1688,6 +1695,7 @@ if ($action == 'create' && $usercancreate) {
 			// Thirdparty
 			print '<tr><td class="titlefieldcreate fieldrequired">' . $langs->trans('Company') . '</td>';
 			print '<td colspan="3">' . $soc->getNomUrl(1) . '</td>';
+			print '<input type="hidden" name="socid" value="' . $soc->id . '">';
 			print '</tr>';
 
 			// Project
@@ -2044,7 +2052,7 @@ if ($action == 'create' && $usercancreate) {
 						print '<!-- Case warehouse already known or product not a predefined product -->';
 						//ship from preselected location
 						$stock = + (isset($product->stock_warehouse[$warehouse_id]->real) ? $product->stock_warehouse[$warehouse_id]->real : 0); // Convert to number
-						if ($line->product_type == Product::TYPE_SERVICE && getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
+						if (($line->product_type == Product::TYPE_SERVICE && getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) || $product->stockable_product == Product::DISABLED_STOCK) {
 							$deliverableQty = $quantityToBeDelivered;
 						} else {
 							$deliverableQty = min($quantityToBeDelivered, $stock);
@@ -2257,7 +2265,7 @@ if ($action == 'create' && $usercancreate) {
 						}
 					} else {
 						// ship from multiple locations
-						if (isModEnabled('productbatch') || !$product->hasbatch()) {
+						if (!isModEnabled('productbatch') || !$product->hasbatch()) {
 							print '<!-- Case warehouse not already known and product does not need lot -->';
 							print '<td></td><td></td>';
 							if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
@@ -2464,6 +2472,7 @@ if ($action == 'create' && $usercancreate) {
 
 										print '<!-- Show details of lot -->';
 										print '<input name="batchl' . $indiceAsked . '_' . $subj . '" type="hidden" value="' . $dbatch->id . '">';
+										print '<input name="entl' . $indiceAsked . '_'.$subj.'" type="hidden" value="' . $tmpwarehouseObject->id . '">';
 
 										//print '|'.$line->fk_product.'|'.$dbatch->batch.'|<br>';
 										print $langs->trans("Batch") . ': ';
@@ -3678,13 +3687,9 @@ if ($action == 'create' && $usercancreate) {
 			print '<tr><td colspan="8"><span class="opacitymedium">' . $langs->trans("NoLineGoOnTabToAddSome", $langs->transnoentitiesnoconv("ShipmentDistribution")) . '</span></td></tr>';
 		}
 
-		print "</table>\n";
 		print '</tbody>';
+		print "</table>\n";
 		print '</div>';
-
-
-		print dol_get_fiche_end();
-
 
 		$object->fetchObjectLinked($object->id, $object->element);
 	}

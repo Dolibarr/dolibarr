@@ -535,9 +535,9 @@ script:
     echo
 
   - |
-    echo Show some debug info like table content or log
-    #echo '\d llx_adherent' | psql 'postgresql://postgres:postgres@127.0.0.1:5432/travis'
-    cat $TRAVIS_BUILD_DIR/upgrade18001900.log
+    echo Show some debug info, like table content, or migration log from some versions
+    echo '\d llx_blockedlog' | psql 'postgresql://postgres:postgres@127.0.0.1:5432/travis'
+    cat $TRAVIS_BUILD_DIR/upgrade500600.log
     cat $TRAVIS_BUILD_DIR/upgrade19002000.log
     echo
 
@@ -557,6 +557,7 @@ script:
     php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_RECEPTION,MAIN_MODULE_RECRUITMENT >> $TRAVIS_BUILD_DIR/enablemodule.log
     php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_KnowledgeManagement,MAIN_MODULE_EventOrganization,MAIN_MODULE_PARTNERSHIP >> $TRAVIS_BUILD_DIR/enablemodule.log
     php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_EmailCollector >> $TRAVIS_BUILD_DIR/enablemodule.log
+    php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_BlockedLog >> $TRAVIS_BUILD_DIR/enablemodule.log
     echo $?
     cd -
     set +e

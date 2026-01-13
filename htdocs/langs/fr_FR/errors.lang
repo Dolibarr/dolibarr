@@ -166,7 +166,7 @@ ErrorDateMustBeInFuture=La date doit être postérieure à la date courante
 ErrorStartDateGreaterEnd=La date de début est supérieure à la date de fin
 ErrorPaymentModeDefinedToWithoutSetup=Un mode de paiement a été défini de type %s mais la configuration du module Facture n'a pas été complétée pour définir les informations affichées pour ce mode de paiement.
 ErrorPHPNeedModule=Erreur, votre PHP doit avoir le module <b>%s</b> installé pour utiliser cette fonctionnalité.
-ErrorOpenIDSetupConfNotComplete=Pour des raisons de sécurité, vous devez également configurer le fichier conf.php de Dolibarr pour autoriser OpenID.
+ErrorOpenIDSetupConfNotComplete=Pour des raisons de sécurité, vous devez également configurer le fichier conf.php de Dolibarr pour autoriser l'authentification par OpenID.
 ErrorOpenIDSetupNotComplete=Vous avez configuré Dolibarr pour accepter l'authentication OpenID, mais l'URL du service OpenID n'est pas défini dans la constante %s
 ErrorWarehouseMustDiffers=Les entrepôts source et destination doivent être différents
 ErrorBadFormat=Mauvais format
@@ -367,8 +367,13 @@ ErrorFilenameExtensionNotAllowed=Le fichier %s a une extension interdite
 ErrorNoValueForSelectListType=Erreur, une valeur pour ce type de champ est obligatoire
 ErrorPaymentAmountMustNotBeNull=Erreur : le montant du paiement doit être défini (et) et non égal à zéro.
 ErrorOneLineContainsADisactivatedProduct=Erreur : au moins un produit n'est plus disponible à la vente.
-ErrorFieldClassNotFoundForClassName=La classe "%s" gérant le type de champ "%s" n'a pas été trouvée.
 ErrorCalendarIsNotYetOpenOrHasBeenClosed=Ce calendrier n'est pas encore ouvert ou a été fermé.
+ErrorFieldClassNotFoundForClassName=La classe « %s » gérant le type de champ « %s » est introuvable.
+ErrorBlockLogNeedAmountsValue=L'objet journal inaltérable nécessite que des valeurs de quantités soient définies.
+ErrorBlockLogNeedElement=L'objet journal inaltérable nécessite que son type d'élément soit défini.
+ErrorBlockLogNeedObject=L'objet journal inaltérable nécessite que l'objet soit défini.
+ErrorBadParameterWhenCallingCreateOfBlockedLog=Paramètre incorrect lors de l'appel à la création du journal bloqué
+ErrorMaxDecimalsShownTooLowComparedToUnitOrTotal=La valeur de « Nombre maximal de décimales pour les prix affichés à l'écran » (%s) doit être supérieure ou égale à la fois à « Nombre maximal de décimales pour les prix unitaires » (%s) et à « Nombre maximal de décimales pour les prix totaux » (%s). Ceci est nécessaire pour éviter les incohérences d'arrondi dans les documents.
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Votre paramètre PHP upload_max_filesize (%s) est supérieur au paramètre PHP post_max_size (%s). Ceci n'est pas une configuration cohérente.

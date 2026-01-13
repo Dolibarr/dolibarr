@@ -72,6 +72,7 @@ class Categorie extends CommonObject
 	const TYPE_SUPPLIER_PROPOSAL	= 'supplier_proposal';
 	const TYPE_PROPOSAL	            = 'propal';
 	const TYPE_PROJECT_TASK			= 'project_task';
+	const TYPE_MO					= 'mo';
 
 
 	/**
@@ -85,6 +86,7 @@ class Categorie extends CommonObject
 	 */
 	public $MAP_ID = array(
 		'product'				=> 0,
+		'service'				=> 0,
 		'supplier'				=> 1,
 		'customer'				=> 2,
 		'member'				=> 3,
@@ -106,6 +108,7 @@ class Categorie extends CommonObject
 		'supplier_proposal'		=> 22,
 		'propal'				=> 23,
 		'project_task'			=> 24,
+		'mo'					=> 25,
 	);
 
 	/**
@@ -164,6 +167,7 @@ class Categorie extends CommonObject
 	 */
 	public $MAP_OBJ_CLASS = array(
 		'product'				=> 'Product',
+		'service'				=> 'Product',
 		'customer'				=> 'Societe',
 		'supplier'				=> 'Fournisseur',
 		'member'				=> 'Adherent',
@@ -185,6 +189,7 @@ class Categorie extends CommonObject
 		'supplier_proposal' 	=> 'SupplierProposal',
 		'propal' 				=> 'Propal',
 		'project_task'			=> 'Task',
+		'mo'					=> 'Mo',
 	);
 
 	/**
@@ -192,6 +197,7 @@ class Categorie extends CommonObject
 	 */
 	public static $MAP_TYPE_TITLE_AREA = array(
 		'product'				=> 'Products',
+		'service'				=> 'Services',
 		'customer'				=> 'ProspectsOrCustomers',
 		'supplier'				=> 'Suppliers',
 		'member'				=> 'Members',
@@ -213,7 +219,8 @@ class Categorie extends CommonObject
 		'supplier_invoice'		=> 'SuppliersInvoices',
 		'propal' 				=> 'Proposals',
 		'supplier_proposal' 	=> 'SupplierProposals',
-		'project_task'			=> 'Tasks'
+		'project_task'			=> 'Tasks',
+		'mo'					=> 'MOs'
 	);
 
 	/**
@@ -234,7 +241,8 @@ class Categorie extends CommonObject
 		'invoice'				=> 'facture',
 		'supplier_order'		=> 'commande_fournisseur',
 		'supplier_invoice'		=> 'facture_fourn',
-		'project_task'			=> 'projet_task'
+		'project_task'			=> 'projet_task',
+		'mo'					=> 'mrp_mo'
 	);
 
 	/**
@@ -431,7 +439,7 @@ class Categorie extends CommonObject
 				'cat_fk'    => (empty($this->MAP_CAT_FK[$mapCode]) ? $mapCode : $this->MAP_CAT_FK[$mapCode]),
 				'cat_table' => (empty($this->MAP_CAT_TABLE[$mapCode]) ? $mapCode : $this->MAP_CAT_TABLE[$mapCode]),
 				'obj_class' => (empty($this->MAP_OBJ_CLASS[$mapCode]) ? $mapCode : $this->MAP_OBJ_CLASS[$mapCode]),
-				'obj_table' => (empty($this->MAP_OBJ_TABLE[$mapCode]) ? $mapCode : $this->MAP_OBJ_TABLE[$mapCode])
+				'obj_table' => (empty($this->MAP_OBJ_TABLE[$mapCode]) ? $mapCode : $this->MAP_OBJ_TABLE[$mapCode]),
 			);
 		}
 
@@ -469,7 +477,7 @@ class Categorie extends CommonObject
 		}
 
 		$sql = "SELECT rowid, fk_parent, entity, label, description, color, position, fk_soc, visible, type, ref_ext";
-		$sql .= ", date_creation, tms, fk_user_creat, fk_user_modif";
+		$sql .= ", date_creation, tms, fk_user_creat, fk_user_modif, import_key";
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie";
 		if ($id) {
 			$sql .= " WHERE rowid = ".((int) $id);
@@ -502,8 +510,9 @@ class Categorie extends CommonObject
 				$this->date_modification = $this->db->jdate($res['tms']);
 				$this->user_creation_id = (int) $res['fk_user_creat'];
 				$this->user_modification_id = (int) $res['fk_user_modif'];
+				$this->import_key = $res['import_key'];
 
-				// Retrieve all extrafield
+				// Retrieve all extrafields
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 
@@ -1342,19 +1351,23 @@ class Categorie extends CommonObject
 			$nbcateg = $this->db->num_rows($resql);
 
 			while ($obj = $this->db->fetch_object($resql)) {
-				$this->cats[$obj->rowid]['rowid'] = $obj->rowid;
-				$this->cats[$obj->rowid]['id'] = $obj->rowid;
-				$this->cats[$obj->rowid]['fk_parent'] = $obj->fk_parent;
-				$this->cats[$obj->rowid]['label'] = !empty($obj->label_trans) ? $obj->label_trans : $obj->label;
-				$this->cats[$obj->rowid]['description'] = !empty($obj->description_trans) ? $obj->description_trans : $obj->description;
-				$this->cats[$obj->rowid]['color'] = $obj->color;
-				$this->cats[$obj->rowid]['position'] = $obj->position;
-				$this->cats[$obj->rowid]['visible'] = $obj->visible;
-				$this->cats[$obj->rowid]['ref_ext'] = $obj->ref_ext;
-				$this->cats[$obj->rowid]['picto'] = 'category';
-				// fields are filled with buildPathFromId later
-				$this->cats[$obj->rowid]['fullpath'] = '';
-				$this->cats[$obj->rowid]['fulllabel'] = '';
+				$this->cats[(int) $obj->rowid]
+					= array(
+						'rowid' => (int) $obj->rowid,
+						'id' => (int) $obj->rowid,
+						'fk_parent' => (int) $obj->fk_parent,
+						'label' => !empty($obj->label_trans) ? (string) $obj->label_trans : (string) $obj->label,
+						'description' => !empty($obj->description_trans) ? (string) $obj->description_trans : (string) $obj->description,
+						'color' => (string) $obj->color,
+						'position' => (string) $obj->position,
+						'visible' => (int) $obj->visible,
+						'ref_ext' => (string) $obj->ref_ext,
+						'picto' => 'category',
+						// fields are filled with buildPathFromId later
+						'fullpath' => '',
+						'fulllabel' => '',
+						'level' => null,
+					);
 				$i++;
 			}
 		} else {
@@ -1428,7 +1441,7 @@ class Categorie extends CommonObject
 		while ((empty($protection) || $i < $protection) && !empty($this->motherof[$cursor_categ])) {
 			//print '&nbsp; cursor_categ='.$cursor_categ.' i='.$i.' '.$this->motherof[$cursor_categ].'<br>'."\n";
 			$this->cats[$id_categ]['fullpath'] = '_'.$this->motherof[$cursor_categ].$this->cats[$id_categ]['fullpath'];
-			$this->cats[$id_categ]['fulllabel'] = (empty($this->cats[$this->motherof[$cursor_categ]]) ? 'NotFound' : $this->cats[$this->motherof[$cursor_categ]]['label']).' >> '.$this->cats[$id_categ]['fulllabel'];
+			$this->cats[$id_categ]['fulllabel'] = (empty($this->cats[$this->motherof[$cursor_categ]]) ? 'NotFound' : $this->cats[$this->motherof[$cursor_categ]]['label']).' > '.$this->cats[$id_categ]['fulllabel'];
 			//print '&nbsp; Result for id_categ='.$id_categ.' : '.$this->cats[$id_categ]['fullpath'].' '.$this->cats[$id_categ]['fulllabel'].'<br>'."\n";
 			$i++;
 			$cursor_categ = $this->motherof[$cursor_categ];
@@ -1615,7 +1628,7 @@ class Categorie extends CommonObject
 					$w[] = '<a class="valignmiddle '.($i < count($way) ? 'small ' : '').$forced_color.'" href="'.DOL_URL_ROOT.'/'.$url.'?catid='.((int) $cat->id).'">'.($addpicto ? img_object('', 'category') : '').$cat->label.'</a>';
 				}
 			}
-			$newcategwithpath = preg_replace('/colortoreplace/', $forced_color, implode('<span class="inline-block valignmiddle paddingleft paddingright '.$forced_color.'">'.$sep.'</span>', $w));
+			$newcategwithpath = preg_replace('/colortoreplace/', $forced_color, implode('<span class="inline-block valignmiddle paddingleft paddingright small '.$forced_color.'">'.$sep.'</span>', $w));
 
 			$ways[] = $newcategwithpath;
 		}

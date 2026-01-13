@@ -390,6 +390,7 @@ class pdf_crabe extends ModelePDFFactures
 
 					// Do not take into account lines of the type “deposit.”
 					$is_deposit = false;
+					$reg = array();
 					if (preg_match('/^\((.*)\)$/', $object->lines[$i]->desc, $reg)) {
 						if ($reg[1] == 'DEPOSIT') {
 							$is_deposit = true;
@@ -400,6 +401,19 @@ class pdf_crabe extends ModelePDFFactures
 					if ($is_deposit) {
 						continue;
 					}
+
+					// determine category of operation
+					$is_deposit = false;
+					if (preg_match('/^\((.*)\)$/', $object->lines[$i]->desc, $reg)) {
+						if ($reg[1] == 'DEPOSIT') {
+							$is_deposit = true;
+						}
+					}
+					// If DEPOSIT, this line is completely ignored for calculations.
+					if ($is_deposit) {
+						continue;
+					}
+
 
 					// determine category of operation
 					if ($categoryOfOperation < 2) {
@@ -932,6 +946,7 @@ class pdf_crabe extends ModelePDFFactures
 				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+				$this->warnings = $hookmanager->warnings;
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
@@ -2175,11 +2190,14 @@ class pdf_crabe extends ModelePDFFactures
 
 		$pdf->MultiCell($w, 3, $title, '', 'R');
 
-		$pdf->SetFont('', 'B', $default_font_size);
+		$pdf->SetFont('', '', $default_font_size - 2);
+
+		pdfWriteBlockedLogSignature($pdf, $outputlangs, $this->page_hauteur, $object, $w, $posx, $posy);
 
 		/*
 		$posy += 5;
 		$pdf->SetXY($posx, $posy);
+		$pdf->SetFont('', 'B', $default_font_size);
 		$pdf->SetTextColor(0, 0, 60);
 		$textref = $outputlangs->transnoentities("Ref")." : ".$outputlangs->convToOutputCharset($object->ref);
 		if ($object->status == $object::STATUS_DRAFT) {

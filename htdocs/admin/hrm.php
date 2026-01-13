@@ -651,7 +651,7 @@ if ($action != 'editxxx') {
 					if ($resprod > 0) {
 						print $product->ref;
 					} elseif ($resprod < 0) {
-						setEventMessages(null, $object->errors, "errors");
+						setEventMessages($product->error, $product->errors, "errors");
 					}
 				} else {
 					print getDolGlobalString($constname);
