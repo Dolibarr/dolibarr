@@ -409,14 +409,12 @@ if ($usersection) {
 	// Output payment summary form
 	print '<tr><td class="left">';
 
-	if ($usersection) {
-		print '<div class="nowidthimp nopaddingtoponsmartphone" id="tablepublicpayment">';
+	print '<div class="nowidthimp nopaddingtoponsmartphone" id="tablepublicpayment">';
 
-		print $usersection;
+	print $usersection;
 
-		print '</div>'."\n";
-		print "\n";
-	}
+	print '</div>'."\n";
+	print "\n";
 
 	print '</td></tr>'."\n";
 
