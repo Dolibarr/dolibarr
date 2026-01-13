@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2012	Christophe Battarel	<christophe.battarel@altairis.fr>
- * Copyright (C) 2015   Marcos García       <marcosgdf@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2012	    Christophe Battarel	    <christophe.battarel@altairis.fr>
+ * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,8 +87,8 @@ class modMargin extends DolibarrModules
 
 		// New pages on tabs
 		$this->tabs = array(
-				'product:+margin:Margins:margins:$user->rights->margins->liretous:/margin/tabs/productMargins.php?id=__ID__',
-				'thirdparty:+margin:Margins:margins:empty($user->socid) && $user->rights->margins->liretous && ($object->client > 0):/margin/tabs/thirdpartyMargins.php?socid=__ID__'
+				'product:+margin:Margins:margins:$user->hasRight("margins","liretous"):/margin/tabs/productMargins.php?id=__ID__',
+				'thirdparty:+margin:Margins:margins:empty($user->socid) && $user->hasRight("margins","liretous") && ($object->client > 0):/margin/tabs/thirdpartyMargins.php?socid=__ID__'
 		);
 
 
@@ -97,11 +98,11 @@ class modMargin extends DolibarrModules
 
 		// Permissions
 		$this->rights = array(); // Permission array used by this module
-		$r = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$r = 0;
 
 		// Main menu entries
 		$this->menu = array(); // List of menus to add
-		$r = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$r = 0;
 
 		// left menu entry
 		$this->menu[$r] = array(
@@ -115,7 +116,7 @@ class modMargin extends DolibarrModules
 			'langs' => 'margins', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 100,
 			'enabled' => 'isModEnabled("margin")', // Define condition to show or hide menu entry. Use '$conf->monmodule->enabled' if entry must be visible if module is enabled.
-			'perms' => '$user->rights->margins->liretous', // Use 'perms'=>'$user->rights->monmodule->level1->level2' if you want your menu with a permission rules
+			'perms' => '$user->hasRight("margins", "liretous")',
 			'target' => '',
 			'user' => 2, // 0=Menu for internal users, 1=external users, 2=both
 		);

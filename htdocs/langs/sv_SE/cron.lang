@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
-# About page
-# Right
+# Permissions
 Permission23101 = Läs Planerad jobb
 Permission23102 = Skapa / uppdatera Schemalagt jobb
 Permission23103 = Radera schemalagt jobb
@@ -13,8 +12,8 @@ KeyForCronAccess=Säkerhetsnyckel för URL för att lansera cron-jobb
 FileToLaunchCronJobs=Kommandorad för att kontrollera och starta kvalificerade cron-jobb
 CronExplainHowToRunUnix=I en Unix-miljö bör följande rad läggas i crontab så kommandot exekveras var 5:e minut.
 CronExplainHowToRunWin=I Microsoft (tm) Windows-miljö kan du använda Schemalagda uppgiftsverktyg för att köra kommandoraden var 5: e minut
-CronMethodDoesNotExists=Class %s does not contain any method %s
-CronMethodNotAllowed=Metod %s av klass %s finns i svartlistan över förbjudna metoder
+CronMethodDoesNotExists=Klass %s innehåller ingen metod %s
+CronMethodNotAllowed=Metoden %s av klassen %s finns i blocklistan över förbjudna metoder
 CronJobDefDesc=Cron-jobbprofiler definieras i modulbeskrivningsfilen. När modulen är aktiverad laddas de och är tillgängliga så att du kan administrera jobben från adminverktygsmenyn %s.
 CronJobProfiles=Förteckning över fördefinierade cron jobbprofiler
 # Menu
@@ -30,7 +29,8 @@ CronExecute=Kör nu
 CronConfirmExecute=Är du säker på att du vill utföra dessa schemalagda jobb nu?
 CronInfo=Schemalagd arbetsmodul gör det möjligt att schemalägga jobb för att utföra dem automatiskt. Jobb kan också startas manuellt.
 CronTask=Jobb
-CronNone=Ingen
+CronNone=Nästa körning av schemalagd uppgift
+CronNotYetRan=Aldrig avrättad
 CronDtStart=Inte före
 CronDtEnd=Inte efter
 CronDtNextLaunch=Nästa exekvering
@@ -49,8 +49,8 @@ CronEach=Varje
 JobFinished=Job lanserad och klar
 Scheduled=Schemalagd
 #Page card
-CronAdd= Lägg till jobb
-CronEvery=Utför jobbet vardera
+CronAdd=Lägg till jobb
+CronEvery=Kör jobbet varje
 CronObject=Instans / Object för att skapa
 CronArgs=Parametrar
 CronSaveSucess=Spara framgångsrikt
@@ -67,7 +67,7 @@ CronModuleHelp=Namn på Dolibarr-modulkatalogen (fungerar även med extern Dolib
 CronClassFileHelp=Den relativa sökvägen och filnamnet som ska laddas (sökvägen är i förhållande till webbserverns rotkatalog). <BR> Till exempel för att hämta hämtningsmetoden för Dolibarr Produktobjekt htdocs / product / class / <u> product.class.php </u>, värdet för klassfilnamnet är <br> <i> produkt / class / product.class.php </i>
 CronObjectHelp=Objektnamnet att ladda. <BR> Till exempel för att hämta hämtningsmetoden för Dolibarr Product-objektet /htdocs/product/class/product.class.php, är värdet för klassfilnamnet <br> <i> Produkt </i>
 CronMethodHelp=Objektmetoden att starta. <BR> Till exempel för att hämta hämtningsmetoden för Dolibarr Product-objektet /htdocs/product/class/product.class.php, är värdet för metoden <br> <i> hämta </i>
-CronArgsHelp=Metod argumenten. <BR> Till exempel för att ringa hämtningsmetoden för Dolibarr Product-objektet /htdocs/product/class/product.class.php, kan parameterns värde vara <br> <i> 0, ProductRef </i>
+CronArgsHelp=Metodens argument. <BR> Till exempel för att anropa hämtningsmetoden för Dolibarr Product object /htdocs/product/class/product.class.php, kan värdet för parametrar vara<br><i>0, ProductRef</i>
 CronCommandHelp=Systemet kommandoraden som ska köras.
 CronCreateJob=Skapa nytt schemalagt jobb
 CronFrom=Från
@@ -77,6 +77,7 @@ CronType=Jobbtyp
 CronType_method=Samtalsmetod för en PHP-klass
 CronType_command=Skalkommando
 CronCannotLoadClass=Kan inte ladda klassfilen %s (för att använda klass %s)
+CronModuleNotEnabledInThisEntity=Cron-modulen är inte aktiverad i denna entitet (för att använda %s-metoden för %s-objektet)
 CronCannotLoadObject=Klassfilen %s laddades, men objektet %s kunde inte hittas i det
 UseMenuModuleToolsToAddCronJobs=Gå till menyn "<a href="%s">Hem - Adminverktyg - Schemalagda jobb</a>" för att se och redigera schemalagda jobb.
 JobDisabled=Jobb inaktiverat
@@ -91,6 +92,7 @@ WarningCronDelayed=Uppmärksamhet, för prestationsändamål, vad som än är n�
 DATAPOLICYJob=Resning och anonymisering av data
 JobXMustBeEnabled=Jobb %s måste vara aktiverat
 EmailIfError=E-post för varning vid fel
+JobNotFound=Jobbet %s hittades inte i listan över jobb (försök att inaktivera/aktivera modulen)
 ErrorInBatch=Fel vid körning av jobbet %s
 
 # Cron Boxes

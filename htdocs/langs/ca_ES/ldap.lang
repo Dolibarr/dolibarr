@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - ldap
 YouMustChangePassNextLogon=La contrasenya de <b>%s </b> en el domini <b>%s </b> ha de ser modificada.
-UserMustChangePassNextLogon=L'usuari ha de canviar de contrasenya en la propera connexió
+UserMustChangePassNextLogon=L'usuari ha de canviar la contrasenya al domini %s
 LDAPInformationsForThisContact=Informació de la base de dades LDAP d'aquest contacte
 LDAPInformationsForThisUser=Informació de la base de dades LDAP d'aquest usuari
 LDAPInformationsForThisGroup=Informació de la base de dades LDAP d'aquest grup

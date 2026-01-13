@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2019  Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2019-2022  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
  * 	\defgroup   bookcal     Module BookCal
  *  \brief      BookCal module descriptor.
  *
- *  \file       htdocs/bookcal/core/modules/modBookCal.class.php
+ *  \file       htdocs/core/modules/modBookCal.class.php
  *  \ingroup    bookcal
  *  \brief      Description and activation file for module BookCal
  */
@@ -40,7 +40,7 @@ class modBookCal extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $langs, $conf;
+		global $conf;
 
 		$this->db = $db;
 
@@ -53,7 +53,7 @@ class modBookCal extends DolibarrModules
 
 		// Family can be 'base' (core modules),'crm','financial','hr','projects','products','ecm','technic' (transverse modules),'interface' (link with external tools),'other','...'
 		// It is used to group modules by family in module setup page
-		$this->family = "projects";
+		$this->family = "portal";
 
 		// Module position in the family on 2 digits ('01', '10', '20', ...)
 		$this->module_position = '50';
@@ -138,14 +138,10 @@ class modBookCal extends DolibarrModules
 		// The language file dedicated to your module
 		$this->langfiles = array("agenda");
 
-		// Prerequisites
-		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
-
 		// Messages at activation
-		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','MX'='textmx'...)
-		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','MX'='textmx'...)
+		$this->warnings_activation = array();
+		$this->warnings_activation_ext = array();
 		//$this->automatic_activation = array('FR'=>'BookCalWasAutomaticallyActivatedBecauseOfYourCountryChoice');
-		//$this->always_enabled = true;								// If true, can't be disabled
 
 		// Constants
 		// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
@@ -198,7 +194,7 @@ class modBookCal extends DolibarrModules
 		/* Example:
 		$this->dictionaries=array(
 			'langs'=>'bookcal@bookcal',
-			// List of tables we want to see into dictonnary editor
+			// List of tables we want to see into dictionary editor
 			'tabname'=>array("table1", "table2", "table3"),
 			// Label of tables
 			'tablib'=>array("Table1", "Table2", "Table3"),
@@ -327,7 +323,7 @@ class modBookCal extends DolibarrModules
 			'langs' => 'bookcal',
 			'position' => 1100 + $r,
 			'enabled' => '1',
-			'perms' => '$user->rights->bookcal->calendar->read',
+			'perms' => '$user->hasRight("bookcal", "calendar", "read")',
 			'user' => 0
 		);
 
@@ -344,9 +340,9 @@ class modBookCal extends DolibarrModules
 			'langs' => 'bookcal',
 			'position' => 1100 + $r,
 			// Define condition to show or hide menu entry. Use '$conf->bookcal->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'enabled' => '$conf->bookcal->enabled',
+			'enabled' => 'isModEnabled("bookcal")',
 			// Use 'perms'=>'$user->rights->bookcal->level1->level2' if you want your menu with a permission rules
-			'perms' => '$user->rights->bookcal->calendar->read',
+			'perms' => '$user->hasRight("bookcal", "calendar", "read")',
 			'target' => '',
 			// 0=Menu for internal users, 1=external users, 2=both
 			'user' => 2,
@@ -364,60 +360,16 @@ class modBookCal extends DolibarrModules
 			'langs' => 'bookcal',
 			'position' => 1100 + $r,
 			// Define condition to show or hide menu entry. Use '$conf->bookcal->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'enabled' => '$conf->bookcal->enabled',
+			'enabled' => 'isModEnabled("bookcal")',
 			// Use 'perms'=>'$user->rights->bookcal->level1->level2' if you want your menu with a permission rules
-			'perms' => '$user->rights->bookcal->calendar->read',
+			'perms' => '$user->hasRight("bookcal", "calendar", "read")',
 			'target' => '',
 			// 0=Menu for internal users, 1=external users, 2=both
 			'user' => 2
 		);
 		/* END MODULEBUILDER LEFTMENU CALENDAR */
 
-		/* BEGIN MODULEBUILDER LEFTMENU AVAILABILITIES
-		$this->menu[$r++]=array(
-			'fk_menu'=>'fk_mainmenu=bookcal',      // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'type'=>'left',                          // This is a Left menu entry
-			'titre'=>'Availabilities',
-			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth valignmiddle"'),
-			'mainmenu'=>'bookcal',
-			'leftmenu'=>'availabilities',
-			'url'=>'/bookcal/bookcalindex.php',
-			'langs'=>'bookcal@bookcal',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'position'=>1000+$r,
-			'enabled'=>'$conf->bookcal->enabled',  // Define condition to show or hide menu entry. Use '$conf->bookcal->enabled' if entry must be visible if module is enabled.
-			'perms'=>'$user->rights->bookcal->availabilities->read',			                // Use 'perms'=>'$user->rights->bookcal->level1->level2' if you want your menu with a permission rules
-			'target'=>'',
-			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
-		);
-		$this->menu[$r++]=array(
-			'fk_menu'=>'fk_mainmenu=bookcal,fk_leftmenu=availabilities',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'type'=>'left',			                // This is a Left menu entry
-			'titre'=>'List_Availabilities',
-			'mainmenu'=>'bookcal',
-			'leftmenu'=>'bookcal_availabilities_list',
-			'url'=>'/bookcal/availabilities_list.php',
-			'langs'=>'bookcal@bookcal',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'position'=>1000+$r,
-			'enabled'=>'$conf->bookcal->enabled',  // Define condition to show or hide menu entry. Use '$conf->bookcal->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'$user->rights->bookcal->availabilities->read',			                // Use 'perms'=>'$user->rights->bookcal->level1->level2' if you want your menu with a permission rules
-			'target'=>'',
-			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
-		);
-		$this->menu[$r++]=array(
-			'fk_menu'=>'fk_mainmenu=bookcal,fk_leftmenu=availabilities',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'type'=>'left',			                // This is a Left menu entry
-			'titre'=>'New_Availabilities',
-			'mainmenu'=>'bookcal',
-			'leftmenu'=>'bookcal_availabilities_new',
-			'url'=>'/bookcal/availabilities_card.php?action=create',
-			'langs'=>'bookcal@bookcal',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'position'=>1000+$r,
-			'enabled'=>'$conf->bookcal->enabled',  // Define condition to show or hide menu entry. Use '$conf->bookcal->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'$user->rights->bookcal->availabilities->write',			                // Use 'perms'=>'$user->rights->bookcal->level1->level2' if you want your menu with a permission rules
-			'target'=>'',
-			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
-		);
-		*/
+		/* BEGIN MODULEBUILDER LEFTMENU AVAILABILITIES */
 
 		$this->menu[$r++] = array(
 			// '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
@@ -432,9 +384,9 @@ class modBookCal extends DolibarrModules
 			'langs' => 'bookcal',
 			'position' => 1200 + $r,
 			// Define condition to show or hide menu entry. Use '$conf->bookcal->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'enabled' => '$conf->bookcal->enabled',
+			'enabled' => 'isModEnabled("bookcal")',
 			// Use 'perms'=>'$user->rights->bookcal->level1->level2' if you want your menu with a permission rules
-			'perms' => '$user->rights->bookcal->availabilities->read',
+			'perms' => '$user->hasRight("bookcal", "availabilities", "read")',
 			'target' => '',
 			// 0=Menu for internal users, 1=external users, 2=both
 			'user' => 2,
@@ -452,15 +404,16 @@ class modBookCal extends DolibarrModules
 			'langs' => 'bookcal',
 			'position' => 1200 + $r,
 			// Define condition to show or hide menu entry. Use '$conf->bookcal->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'enabled' => '$conf->bookcal->enabled',
+			'enabled' => 'isModEnabled("bookcal")',
 			// Use 'perms'=>'$user->rights->bookcal->level1->level2' if you want your menu with a permission rules
-			'perms' => '$user->rights->bookcal->availabilities->read',
+			'perms' => '$user->hasRight("bookcal", "availabilities", "read")',
 			'target' => '',
 			// 0=Menu for internal users, 1=external users, 2=both
 			'user' => 2
 		);
 
 		/* END MODULEBUILDER LEFTMENU AVAILABILITIES */
+
 		// Exports profiles provided by this module
 		$r = 1;
 		/* BEGIN MODULEBUILDER EXPORT AVAILABILITIES */
@@ -491,42 +444,6 @@ class modBookCal extends DolibarrModules
 		$this->export_sql_end[$r] .=' AND t.entity IN ('.getEntity('availabilities').')';
 		$r++; */
 		/* END MODULEBUILDER EXPORT AVAILABILITIES */
-
-		// Imports profiles provided by this module
-
-		$r = 1;  // @phan-suppress-current-line PhanPluginRedundantAssignment
-		/* BEGIN MODULEBUILDER IMPORT AVAILABILITIES */
-		/*
-		$langs->load("agenda");
-		$this->import_code[$r]=$this->rights_class.'_'.$r;
-		$this->import_label[$r]='AvailabilitiesLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
-		$this->import_icon[$r]='availabilities@bookcal';
-		$this->import_tables_array[$r] = array('t' => MAIN_DB_PREFIX.'bookcal_availabilities', 'extra' => MAIN_DB_PREFIX.'bookcal_availabilities_extrafields');
-		$this->import_tables_creator_array[$r] = array('t' => 'fk_user_author'); // Fields to store import user id
-		$import_sample = array();
-		$keyforclass = 'Availabilities'; $keyforclassfile='/bookcal/class/availabilities.class.php'; $keyforelement='availabilities@bookcal';
-		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinimport.inc.php';
-		$import_extrafield_sample = array();
-		$keyforselect='availabilities'; $keyforaliasextra='extra'; $keyforelement='availabilities@bookcal';
-		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
-		$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'bookcal_availabilities');
-		$this->import_regex_array[$r] = array();
-		$this->import_examplevalues_array[$r] = array_merge($import_sample, $import_extrafield_sample);
-		$this->import_updatekeys_array[$r] = array('t.ref' => 'Ref');
-		$this->import_convertvalue_array[$r] = array(
-			't.ref' => array(
-				'rule'=>'getrefifauto',
-				'class'=>(empty($conf->global->BOOKCAL_AVAILABILITIES_ADDON) ? 'mod_availabilities_standard' : $conf->global->BOOKCAL_AVAILABILITIES_ADDON),
-				'path'=>"/core/modules/commande/".(empty($conf->global->BOOKCAL_AVAILABILITIES_ADDON) ? 'mod_availabilities_standard' : $conf->global->BOOKCAL_AVAILABILITIES_ADDON).'.php'
-				'classobject'=>'Availabilities',
-				'pathobject'=>'/bookcal/class/availabilities.class.php',
-			),
-			't.fk_soc' => array('rule' => 'fetchidfromref', 'file' => '/societe/class/societe.class.php', 'class' => 'Societe', 'method' => 'fetch', 'element' => 'ThirdParty'),
-			't.fk_user_valid' => array('rule' => 'fetchidfromref', 'file' => '/user/class/user.class.php', 'class' => 'User', 'method' => 'fetch', 'element' => 'user'),
-			't.fk_mode_reglement' => array('rule' => 'fetchidfromcodeorlabel', 'file' => '/compta/paiement/class/cpaiement.class.php', 'class' => 'Cpaiement', 'method' => 'fetch', 'element' => 'cpayment'),
-		);
-		$r++; */
-		/* END MODULEBUILDER IMPORT AVAILABILITIES */
 	}
 
 	/**
@@ -539,60 +456,15 @@ class modBookCal extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
-		global $conf, $langs;
-
 		$result = $this->_load_tables('/install/mysql/', 'bookcal');
 		if ($result < 0) {
 			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
 		}
 
-		// Create extrafields during init
-		//include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-		//$extrafields = new ExtraFields($this->db);
-		//$result1=$extrafields->addExtraField('bookcal_myattr1', "New Attr 1 label", 'boolean', 1,  3, 'thirdparty',   0, 0, '', '', 1, '', 0, 0, '', '', 'bookcal@bookcal', '$conf->bookcal->enabled');
-		//$result2=$extrafields->addExtraField('bookcal_myattr2', "New Attr 2 label", 'varchar', 1, 10, 'project',      0, 0, '', '', 1, '', 0, 0, '', '', 'bookcal@bookcal', '$conf->bookcal->enabled');
-		//$result3=$extrafields->addExtraField('bookcal_myattr3', "New Attr 3 label", 'varchar', 1, 10, 'bank_account', 0, 0, '', '', 1, '', 0, 0, '', '', 'bookcal@bookcal', '$conf->bookcal->enabled');
-		//$result4=$extrafields->addExtraField('bookcal_myattr4', "New Attr 4 label", 'select',  1,  3, 'thirdparty',   0, 1, '', array('options'=>array('code1'=>'Val1','code2'=>'Val2','code3'=>'Val3')), 1,'', 0, 0, '', '', 'bookcal@bookcal', '$conf->bookcal->enabled');
-		//$result5=$extrafields->addExtraField('bookcal_myattr5', "New Attr 5 label", 'text',    1, 10, 'user',         0, 0, '', '', 1, '', 0, 0, '', '', 'bookcal@bookcal', '$conf->bookcal->enabled');
-
 		// Permissions
 		$this->remove($options);
 
 		$sql = array();
-
-		// Document templates
-		$moduledir = dol_sanitizeFileName('bookcal');
-		$myTmpObjects = array();
-		$myTmpObjects['Availabilities'] = array('includerefgeneration' => 0, 'includedocgeneration' => 0);
-
-		foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
-			if ($myTmpObjectKey == 'Availabilities') {
-				continue;
-			}
-			if ($myTmpObjectArray['includerefgeneration']) {
-				$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/'.$moduledir.'/template_availabilitiess.odt';
-				$dirodt = DOL_DATA_ROOT.'/doctemplates/'.$moduledir;
-				$dest = $dirodt.'/template_availabilitiess.odt';
-
-				if (file_exists($src) && !file_exists($dest)) {
-					require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-					dol_mkdir($dirodt);
-					$result = dol_copy($src, $dest, 0, 0);
-					if ($result < 0) {
-						$langs->load("errors");
-						$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
-						return 0;
-					}
-				}
-
-				$sql = array_merge($sql, array(
-					"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'standard_".$this->db->escape(strtolower($myTmpObjectKey))."' AND type = '".$this->db->escape(strtolower($myTmpObjectKey))."' AND entity = ".((int) $conf->entity),
-					"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('standard_".$this->db->escape(strtolower($myTmpObjectKey))."', '".$this->db->escape(strtolower($myTmpObjectKey))."', ".((int) $conf->entity).")",
-					"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'generic_".$this->db->escape(strtolower($myTmpObjectKey))."_odt' AND type = '".$this->db->escape(strtolower($myTmpObjectKey))."' AND entity = ".((int) $conf->entity),
-					"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('generic_".$this->db->escape(strtolower($myTmpObjectKey))."_odt', '".$this->db->escape(strtolower($myTmpObjectKey))."', ".((int) $conf->entity).")"
-				));
-			}
-		}
 
 		return $this->_init($sql, $options);
 	}

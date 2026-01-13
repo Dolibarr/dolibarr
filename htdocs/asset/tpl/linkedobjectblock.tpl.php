@@ -2,6 +2,8 @@
 /* Copyright (C) 2010-2011	Regis Houssin <regis.houssin@inodbox.com>
  * Copyright (C) 2013		Juanjo Menent <jmenent@2byte.es>
  * Copyright (C) 2014       Marcos García <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,24 +19,38 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ *  \file		htdocs/asset/tpl/linkedobjectblock.tpl.php
+ *  \ingroup	asset
+ *  \brief		Template to show objects linked to assets
+ */
+
+/**
+ * @var Translate $langs
+ * @var Conf $conf
+ * @var User $user
+ *
+ * @var CommonObject $object
+ * @var int $noMoreLinkedObjectBlockAfter
+ * @var int $showImportButton
+ * @var Propal[] $linkedObjectBlock
+ */
+
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
 
+
 print "<!-- BEGIN PHP TEMPLATE commande/tpl/linkedobjectblock.tpl.php -->\n";
-
-global $user;
-global $noMoreLinkedObjectBlockAfter;
-
-$langs = $GLOBALS['langs'];
-$linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
 // Load translation files required by the page
 $langs->load("assets");
 
-$linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date', 'desc', 0, 0, 1);
+$linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date,ref', 'desc', 0, 0, 1);
+'@phan-var-force Asset[] $linkedObjectBlock';  // Repeat because type lost after dol_sort_array)
+/** @var Asset[] $linkedObjectBlock */
 
 $total = 0;
 $ilink = 0;
@@ -48,15 +64,15 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	echo '<tr class="'.$trclass.'" >';
 	echo '<td class="linkedcol-element tdoverflowmax100">'.$langs->trans("Asset");
 	if (!empty($showImportButton) && getDolGlobalString('MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES')) {
-		print '<a class="objectlinked_importbtn" href="'.$objectlink->getNomUrl(0, '', 0, 1).'&amp;action=selectlines" data-element="'.$objectlink->element.'" data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a';
+		print '<a class="objectlinked_importbtn" href="'.$objectlink->getNomUrl(0, '', 0, 1).'&action=selectlines&token='.newToken().'" data-element="'.$objectlink->element.'" data-id="'.$objectlink->id.'"> <i class="fa fa-indent"></i> </a>';
 	}
 	echo '</td>';
 	echo '<td class="linkedcol-name tdoverflowmax150" >'.$objectlink->getNomUrl(1).'</td>';
-	echo '<td class="linkedcol-ref" align="center">'.$objectlink->label.'</td>';
-	echo '<td class="linkedcol-date" align="center">'.dol_print_date($objectlink->date_start, 'day').'</td>';
+	echo '<td class="linkedcol-ref tdoverflowmax150" title="'.dolPrintHTMLForAttribute($objectlink->label).'">'.dolPrintHTML($objectlink->label).'</td>';
+	echo '<td class="linkedcol-date center">'.dol_print_date($objectlink->date_start, 'day').'</td>';
 	echo '<td class="linkedcol-amount right">';
 	if ($user->hasRight('asset', 'read')) {
-		$total = $total + $objectlink->acquisition_value_ht;
+		$total += $objectlink->acquisition_value_ht;
 		echo price($objectlink->acquisition_value_ht);
 	}
 	echo '</td>';

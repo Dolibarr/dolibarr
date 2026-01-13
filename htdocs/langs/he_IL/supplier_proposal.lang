@@ -35,7 +35,6 @@ SupplierProposalStatusSignedShort=מְקוּבָּל
 SupplierProposalStatusNotSignedShort=סירב
 CopyAskFrom=צור בקשת מחיר על ידי העתקת בקשה קיימת
 CreateEmptyAsk=צור בקשה ריקה
-ConfirmCloneAsk=האם אתה בטוח שברצונך לשכפל את בקשת המחיר <b>%s</b>?
 ConfirmReOpenAsk=האם אתה בטוח שברצונך לפתוח בחזרה את בקשת המחיר <b>%s</b> ?
 SendAskByMail=שלח בקשה למחיר בדואר
 SendAskRef=שליחת בקשת המחיר %s

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2018	   Quentin Vial-Gouteyron    <quentin.vial-gouteyron@atm-consulting.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,7 +92,7 @@ class modReception extends DolibarrModules
 
 		$this->const[$r][0] = "RECEPTION_ADDON_PDF_ODT_PATH";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/receptions";
+		$this->const[$r][2] = "DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/receptions";
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
 		$r++;
@@ -113,21 +114,21 @@ class modReception extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = $this->numero.$r;
-		$this->rights[$r][1] = 'Lire les receptions';
+		$this->rights[$r][1] = 'Read receptions';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'lire';
 
 		$r++;
 		$this->rights[$r][0] = $this->numero.$r;
-		$this->rights[$r][1] = 'Creer modifier les receptions';
+		$this->rights[$r][1] = 'Create receptions';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'creer';
 
 		$r++;
 		$this->rights[$r][0] = $this->numero.$r;
-		$this->rights[$r][1] = 'Valider les receptions';
+		$this->rights[$r][1] = 'Validate receptions';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'reception_advance';
@@ -135,7 +136,7 @@ class modReception extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = $this->numero.$r; // id de la permission
-		$this->rights[$r][1] = 'Envoyer les receptions aux clients'; // libelle de la permission
+		$this->rights[$r][1] = 'Send receptions to customers'; // libelle de la permission
 		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'reception_advance';
@@ -143,7 +144,7 @@ class modReception extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = $this->numero.$r;
-		$this->rights[$r][1] = 'Exporter les receptions';
+		$this->rights[$r][1] = 'Export receptions';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'reception';
@@ -151,7 +152,7 @@ class modReception extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = $this->numero.$r;
-		$this->rights[$r][1] = 'Supprimer les receptions';
+		$this->rights[$r][1] = 'Delete receptions';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'supprimer';
@@ -266,13 +267,13 @@ class modReception extends DolibarrModules
 
 		//ODT template
 		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/reception/template_reception.odt';
-		$dirodt = DOL_DATA_ROOT.'/doctemplates/reception';
+		$dirodt = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/reception';
 		$dest = $dirodt.'/template_reception.odt';
 
 		if (file_exists($src) && !file_exists($dest)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
-			$result = dol_copy($src, $dest, 0, 0);
+			$result = dol_copy($src, $dest, '0', 0);
 			if ($result < 0) {
 				$langs->load("errors");
 				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);

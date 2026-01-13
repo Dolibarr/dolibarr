@@ -34,10 +34,13 @@ class mod_recruitmentjobposition_standard extends ModeleNumRefRecruitmentJobPosi
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
+	/**
+	 * @var string
+	 */
 	public $prefix = 'JOB';
 
 	/**
@@ -94,7 +97,7 @@ class mod_recruitmentjobposition_standard extends ModeleNumRefRecruitmentJobPosi
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
 		if ($object->ismultientitymanaged == 1) {
 			$sql .= " AND entity = ".$conf->entity;
-		} elseif ($object->ismultientitymanaged == 2) {
+		} elseif (!is_numeric($object->ismultientitymanaged)) {
 			// TODO
 		}
 
@@ -118,8 +121,8 @@ class mod_recruitmentjobposition_standard extends ModeleNumRefRecruitmentJobPosi
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param  RecruitmentJobPosition	$object		Object we need next value for
-	 *  @return string|-1      			Next value if OK, -1 if KO
+	 *  @param	RecruitmentJobPosition	$object		Object we need next value for
+	 *  @return string|int<-1,0>					Next value if OK, 0 if KO
 	 */
 	public function getNextValue($object)
 	{
@@ -132,7 +135,7 @@ class mod_recruitmentjobposition_standard extends ModeleNumRefRecruitmentJobPosi
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
 		if ($object->ismultientitymanaged == 1) {
 			$sql .= " AND entity = ".$conf->entity;
-		} elseif ($object->ismultientitymanaged == 2) {
+		} elseif (!is_numeric($object->ismultientitymanaged)) {
 			// TODO
 		}
 

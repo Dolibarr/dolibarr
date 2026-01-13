@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2014-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2015-2025  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -103,7 +103,7 @@ class modOauth extends DolibarrModules
 
 		// Main menu entries
 		$this->menu = array(); // List of menus to add
-		$r = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$r = 0;
 
 		// This is to declare the Top Menu entry:
 		//$this->menu[$r]=array(  'fk_menu'=>'fk_mainmenu=home,fk_leftmenu=admintools',               // Put 0 if this is a top menu
@@ -114,7 +114,7 @@ class modOauth extends DolibarrModules
 		//                        'langs'=>'oauth',            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 		//                        'position'=>300,
 		//                        'enabled'=>'$conf->oauth->enabled && preg_match(\'/^(admintools|all)/\',$leftmenu)',
-		//                        'perms'=>'$user->rights->oauth->read',    // Use 'perms'=>'1' if you want your menu with no permission rules
+		//                        'perms'=>'$user->hasRight("oauth", "read")',    // Use 'perms'=>'1' if you want your menu with no permission rules
 		//                        'target'=>'',
 		//                        'user'=>0);                     // 0=Menu for internal users, 1=external users, 2=both
 
@@ -132,8 +132,6 @@ class modOauth extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
-		global $conf;
-
 		// Clean before activation
 		$this->remove($options);
 

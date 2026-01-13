@@ -24,6 +24,10 @@ DATAPOLICY_TIERS_NIPROSPECT_NICLIENT
 DATAPOLICY_TIERS_PROSPECT
 DATAPOLICY_TIERS_PROSPECT_CLIENT
 
+#
+TOKEN_EXPIRE_AT
+TOKEN_EXPIRED
+
 # fournisseur
 CodePaymentTerm
 IdPaymentTerm
@@ -35,6 +39,15 @@ Map
 Reservation
 CompletePage
 PortionOfPage
+
+#
+AccountancyGroupCAPIT
+AccountancyGroupEXPENSE
+AccountancyGroupFINAN
+AccountancyGroupIMMO
+AccountancyGroupINCOME
+AccountancyGroupSTOCK
+AccountancyGroupTHIRDPARTY
 
 # Others
 ACCOUNTING_ACCOUNT_CUSTOMER
@@ -95,6 +108,24 @@ ACCOUNTING_VAT_BUY_REVERSE_CHARGES_DEBIT
 ACCOUNTING_VAT_PAY_ACCOUNT
 ACCOUNTING_VAT_SOLD_ACCOUNT
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT
+ACCOUNTING_LT1_BUY_ACCOUNT
+ACCOUNTING_LT2_BUY_ACCOUNT
+ACCOUNTING_LT1_BUY_REVERSE_CHARGES_CREDIT
+ACCOUNTING_LT2_BUY_REVERSE_CHARGES_CREDIT
+ACCOUNTING_LT1_PAY_ACCOUNT
+ACCOUNTING_LT2_PAY_ACCOUNT
+ACCOUNTING_LT1_PAY_REVERSE_CHARGES_CREDIT
+ACCOUNTING_LT2_PAY_REVERSE_CHARGES_CREDIT
+ACCOUNTING_LT1_SOLD_ACCOUNT
+ACCOUNTING_LT2_SOLD_ACCOUNT
+
+AI_API_MODEL_AUDIO
+AI_API_MODEL_IMAGE
+AI_API_MODEL_TEXT
+AI_API_MODEL_TRANSCRIPT
+AI_API_MODEL_TRANSLATE
+AI_API_MODEL_VIDEO
+
 AGENDA_EVENT_CURRENT_COLOR
 AGENDA_EVENT_FUTURE_COLOR
 AGENDA_EVENT_PAST_COLOR
@@ -668,7 +699,6 @@ DATAPOLICY_CONTACT_FOURNISSEUR
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT
 DATAPOLICY_CONTACT_PROSPECT
 DATAPOLICY_CONTACT_PROSPECT_CLIENT
-DATAPOLICY_PORTABILITE
 DATAPOLICY_TIERS_CLIENT
 DATAPOLICY_TIERS_FOURNISSEUR
 DATAPOLICY_TIERS_NIPROSPECT_NICLIENT
@@ -888,6 +918,8 @@ DirectPrint
 Disassemble
 Dispatch
 DispatchVerb
+DocumentSigned
+DocumentUnsigned
 DoCreditTransferBeforePayments3
 DoNotAutofillButAutoConcat
 DoNotRemovePreviousCombinations
@@ -1030,7 +1062,6 @@ ErrorLanguageOfTranslatedPageIsSameThanThisPage
 ErrorLoginDisabled
 ErrorLoginDoesNotExists
 ErrorLoginHasNoEmail
-ErrorMandatoryParametersNotProvided
 ErrorMaxNumberReachForThisMask
 ErrorNewRefIsAlreadyUsed
 ErrorNoImagickReadimage
@@ -1205,6 +1236,7 @@ Feature
 FeatureIsSupportedInInOutModeOnly
 Features
 FichinterNoContractLinked
+FichintersCategoriesArea
 FieldNeedSource
 FieldTarget
 FieldTitle
@@ -2993,9 +3025,9 @@ UserHideExternal
 UserHideNonEmployee
 UserID
 UserLogged
-UserLoginFailed
 UserLogoff
 UserMargins
+UserModif
 UserModification
 UserModificationShort
 UserNeedPermissionToEditStockToUsePos
@@ -3307,11 +3339,7 @@ WEBPORTAL_USER_LOGGED
 # The following exceptions are added to have Continuous Integrations pass.
 # They may not be valid exceptions - this list needs to be cleaned
 #
-ANONYMISER_AT
 AiCustomPrompt
-DATAPOLICYSUBSITUTION
-DATAPOLICY_PORTABILITE_CONFIRMATION
-DATAPOLICY_PORTABILITE_TITLE
 DisplayGrandTotalInList
 EditWithEditor
 ElementId
@@ -3326,6 +3354,7 @@ ModelTemplate
 ModuleWebPortalDesc
 ModuleWebPortalName
 Reports
+SecurityEvent
 SendEmailsRemindersOnSupplierInvoiceDueDate
 TXTLINKDATAPOLICYACCEPT
 TXTLINKDATAPOLICYREFUSE
@@ -3338,6 +3367,7 @@ WebPortalOrderListNothing
 WebPortalPropalListNothing
 WebPortalSetup
 WebPortalSetupPage
+WebsiteTemplateWasCopied
 XSubsriptionErrors
 YouCanChooseAModelForYouMailContent
 YouCanMakeSomeInstructionForEmail

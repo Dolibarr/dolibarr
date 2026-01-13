@@ -1,26 +1,12 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=إعداد وحدة PayBox
 PayBoxDesc=تقدم هذه الوحدة صفحات للسماح بالدفع على <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external"> Paybox </a> من قبل العملاء. يمكن استخدام هذا للدفع المجاني أو للدفع على شيء Dolibarr معين (فاتورة ، أمر ، ...)
-FollowingUrlAreAvailableToMakePayments=تتوفر عناوين URL التالية لتقديم صفحة إلى عميل لإجراء دفعة على عناصر دوليبار
-PaymentForm=نموذج الدفع
-WelcomeOnPaymentPage=مرحبًا بك في خدمة الدفع عبر الإنترنت
-ThisScreenAllowsYouToPay=هذه الشاشة تسمح لك بإجراء الدفع عبر الإنترنت إلى %s.
-ThisIsInformationOnPayment=هذه هي معلومات عن الدفع للقيام به
-ToComplete=لإكمال
-YourEMail=البريد الإلكتروني لتلقي تأكيد الدفع
-Creditor=دائن
-PaymentCode=رمز الدفع
 PayBoxDoPayment=ادفع باستخدام Paybox
 YouWillBeRedirectedOnPayBox=سيتم إعادة توجيهك على صفحة Paybox الأمنة لإدخال معلومات بطاقة الائتمان الخاصة بك
-Continue=التالي
 SetupPayBoxToHavePaymentCreatedAutomatically=قم بإعداد Paybox الخاص بك بعنوان url <b> %s </b> حتى يتم إنشاء الدفع تلقائيًا عند التحقق من صحته بواسطة Paybox.
 YourPaymentHasBeenRecorded=تؤكد هذه الصفحة أنه قد تم تسجيل دفعتك. شكرا لكم.
 YourPaymentHasNotBeenRecorded=لم يتم تسجيل دفعتك وتم إلغاء المعاملة. شكرًا لك.
-AccountParameter=معلمات الحساب
-UsageParameter=معلمات الاستخدام
-InformationToFindParameters=مساعدة للعثور على معلومات الحساب الخاص بك %s
 PAYBOX_CGI_URL_V2=Url من Paybox CGI وحدة للدفع
-CSSUrlForPaymentForm=CSS style sheet url  لنموذج الدفع
 NewPayboxPaymentReceived=تلقى الدفع Paybox الجديد
 NewPayboxPaymentFailed=دفع Paybox جديد حاول ولكنه فشل
 PAYBOX_PAYONLINE_SENDEMAIL=إشعار بالبريد الإلكتروني بعد محاولة الدفع (نجاح أو فشل)

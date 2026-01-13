@@ -6,6 +6,7 @@ ErrorDeleteCurrencyFail=Fejl sletning mislykkes
 multicurrency_syncronize_error=Synkroniseringsfejl: %s
 MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE=Brug datoen for dokumentet til at finde valutakursen i stedet for at bruge den senest kendte sats
 multicurrency_useOriginTx=Når et objekt er oprettet fra et andet, skal du holde den oprindelige sats fra kildeobjektet (ellers bruge den senest kendte sats)
+multicurrency_useOriginTxHelp=Denne mulighed gælder ikke for oprettelse af en faktura fra en tilbagevendende faktura.
 CurrencyLayerAccount=CurrencyLayer API
 CurrencyLayerAccount_help_to_synchronize=Du skal oprette en konto på webstedet %s for at bruge denne funktionalitet.<br> Få din <b>API-nøgle</b>. <br>Hvis du bruger en gratis konto, kan du ikke ændre <b>kildevalutaen</b> (USD som standard). <br>Hvis din hovedvaluta ikke er USD, vil applikationen automatisk genberegn det.<br><br> Du er begrænset til 1000 synkroniseringer om måneden.
 multicurrency_appId=API-nøgle

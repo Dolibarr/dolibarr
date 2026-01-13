@@ -39,7 +39,6 @@ WithdrawalsSetup=Tiešā debeta maksājuma iestatīšana
 CreditTransferSetup=Kredīta pārveduma iestatīšana
 WithdrawStatistics=Tiešā debeta maksājumu statistika
 CreditTransferStatistics=Kredīta pārvedumu statistika
-Rejects=Atteikumi
 LastWithdrawalReceipt=Jaunākie %s tiešā debeta ieņēmumi
 MakeWithdrawRequest=Izveidojiet tiešā debeta maksājumu pieprasījumu
 MakeWithdrawRequestStripe=Veiciet tiešā debeta maksājuma pieprasījumu, izmantojot Stripe

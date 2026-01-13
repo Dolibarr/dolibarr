@@ -1,0 +1,104 @@
+#Template: dolibarr/configuration/note
+#Type: note
+#Description: Package configuration note
+# Dolibarr can be and should be configured entirely via web, so, in the
+# following configuration steps, I'm going to prompt you for the passwords that
+# Dolibarr uses for web configuration and some default values for the
+# application startup. Then you should point your browser to the Dolibarr
+# setup, for example:
+# .
+# http://localhost/dolibarr/install.php
+# .
+# continue the configuration, fill the database and let Dolibarr be aware of
+# the installed modules.
+
+#Template: dolibarr/webserver
+#Type: select
+#Choices: Apache, Apache-ssl, Both, None
+#Description: Which Web Server are you running ?
+# Dolibarr supports any web server with PHP capabilities, but this
+# configuration process only supports Apache and Apache-SSL.
+
+#Template: dolibarr/db
+#Type: text
+#Description: Dolibarr DB setup note
+# Now you should specify the DBMS settings. You must provide the host name on
+# which the DBMS server is installed, the type (i.e.  MySql), the DB name, the DBMS administrator user-name, etc.
+
+#Template: dolibarr/db/host
+#Type: string
+#Default: localhost
+#Description: Please, insert your database host name:
+# This should be the host-name or IP address that dolibarr will use to access
+# the DB.
+
+#Template: dolibarr/db/port
+#Type: string
+#Default: 3306
+#Description: Please, insert your database port:
+# This should be the port value that Dolibarr will use to access
+# the DB.
+
+#Template: dolibarr/db/name
+#Type: string
+#Default: dolibarr
+#Description: Please, insert Dolibarr database name:
+# This is the name of the database that Dolibarr will use.
+
+#Template: dolibarr/db/user/name
+#Type: string
+#Default: dolibarr
+#Description: Please, insert the DBMS user-name to access the DB:
+# This is the user-name that Dolibarr will use to access the DB.
+
+#Template: dolibarr/db/user/password
+#Type: password
+#Description: Please, insert the password to access the DB:
+# This is the password that Dolibarr will use, along with user-name you
+# provided, to access the DB.
+
+#Template: dolibarr/db/user/password/confirm
+#Type: password
+#Description: Please, retype the password to access the DB:
+# Please insert the DB access password again. If the password you are going to
+# retype mismatch the previous inserted one, I'll ask you to insert them again.
+
+#Template: dolibarr/db/user/password/mismatch
+#Type: text
+#Description: Passwords mismatch
+# The DB access passwords you inserted mismatch. Please, try again.
+
+#Template: dolibarr/db/admin/name
+#Type: string
+#Default: root
+#Description: Please, insert the DBMS administrator user-name:
+# This user-name will be used to access the DBMS to create (if needed):
+# .
+#  (1) The new Dolibarr database
+#  (2) The new database account that Dolibarr will use to access the DB
+# .
+# It should be 'root' for MySql.
+
+#Template: dolibarr/db/admin/password
+#Type: password
+#Description: Please, insert the DBMS administrator password (if any):
+# This is the password that will be used along with the DBMS administrator
+# user-name.
+# .
+# NOTE: This password will not be asked twice, since it's not a new password.
+
+Template: dolibarr/postrm
+Type: boolean
+Default: true
+Description: Delete database ?
+ Delete the Dolibarr MySQL database and all its datas (datas related
+ to this quetion are the Dolibarr DBMS account and all
+ Dolibarr tables) ?
+
+#Template: dolibarr/postrmfile
+#Type: boolean
+#Default: true
+#Description: Delete attached files ?
+# Delete also all uploaded and generated files (datas related
+# to this quetion are all files found into /usr/share/dolibarr/documents,
+# uploaded or generated when using Dolibarr) ?

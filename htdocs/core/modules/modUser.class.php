@@ -71,6 +71,7 @@ class modUser extends DolibarrModules
 		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->langfiles = array("main", "users", "companies", "members", "salaries", "hrm");
 		$this->always_enabled = true; // Can't be disabled
+		//$this->auto_enabled = true;	// always_enabled already set
 
 		// Constants
 		$this->const = array();
@@ -203,7 +204,7 @@ class modUser extends DolibarrModules
 
 		$r++;
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
-		$this->export_label[$r] = 'List of users and attributes';
+		$this->export_label[$r] = 'List of users and attributes'; // Translation key (used only if key ExportDataset_user_1 not found)
 		$this->export_permission[$r] = array(array("user", "user", "export"));
 		$this->export_fields_array[$r] = array(
 			'u.rowid'=>"Id", 'u.login'=>"Login", 'u.lastname'=>"Lastname", 'u.firstname'=>"Firstname", 'u.employee'=>"Employee", 'u.job'=>"PostOrFunction", 'u.gender'=>"Gender",
@@ -275,7 +276,7 @@ class modUser extends DolibarrModules
 
 		$r++;
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
-		$this->export_label[$r] = 'List of security events';
+		$this->export_label[$r] = 'List of security events'; // Translation key (used only if key ExportDataset_user_2 not found)
 		$this->export_permission[$r] = array(array("user"));	// Only admin
 		$this->export_fields_array[$r] = array(
 			'e.rowid'=>"Id", 'e.type'=>"Type",
@@ -376,8 +377,6 @@ class modUser extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
-		global $conf;
-
 		// Permissions
 		$this->remove($options);
 

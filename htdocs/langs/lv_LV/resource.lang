@@ -9,28 +9,30 @@ ActionsOnResource=Notikumi šim resursam
 ResourcePageIndex=Resursu saraksts
 ResourceSingular=Resursi
 ResourceCard=Resursu karte
+NewResource=Jauni resursi
 AddResource=Izveidot resursu
 ResourceFormLabel_ref=Resursu nosaukums
-ResourceType=Resursa veids
 ResourceFormLabel_description=Resursa apraksts
-
+ResourceType=Resursa veids
+ResourceTypeID=Resursa tipa ID
+ResourceTypeLabel=Resursa veida etiķete
 ResourcesLinkedToElement=Resurss saistīts ar elementu
 
 ShowResource=Rārīt resursus
-
 ResourceElementPage=Elementa resursi
 ResourceCreatedWithSuccess=Resurss veiksmīgi izveidots
 RessourceLineSuccessfullyDeleted=Resursu līnija veiksmīgi dzēsta
 RessourceLineSuccessfullyUpdated=Resursa līnija veiksmīgi atjaunota
 ResourceLinkedWithSuccess=Resurs sasaistīts veiksmīgi
-
 ConfirmDeleteResource=Apstiprināt šī resursa dzēšanu
 RessourceSuccessfullyDeleted=Resurss veiksmīgi dzēsts
 DictionaryResourceType=Resursa veids
-
 SelectResource=Izvēlēties resursu
-
 IdResource=Id resurss
 AssetNumber=Sērijas numurs
 ResourceTypeCode=Resursa veida kods
 ImportDataset_resource_1=Resursi
+ErrorResourcesAlreadyInUse=Daži resursi tiek izmantoti
+ErrorResourceUseInEvent=%s izmantots %s notikumā
+MaxUsers=Maksimālais lietotāju skaits (vietas, sēdvietas utt.)
+MaxUsersLabel=Maksimālais lietotāju skaits

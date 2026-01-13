@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - trips
+# Dolibarr language file - Source file is en_US - trips.lang
 AUTHOR=Ghi nhận bởi
 AUTHORPAIEMENT=Được trả tiền bởi
 AddTrip=Tạo báo cáo chi phí
@@ -13,6 +13,8 @@ byEX_EXP=theo dòng (giới hạn đến %s)
 byEX_MON=theo tháng (giới hạn đến %s)
 byEX_YEA=theo năm (giới hạn đến %s)
 CANCEL_USER=Đã bị xóa bởi
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Tài khoản (từ Biểu đồ tài khoản) được sử dụng theo mặc định cho "người dùng" trên báo cáo chi phí
+ACCOUNTING_ACCOUNT_EXPENSEREPORT_Desc=Tài khoản chuyên dụng được xác định trên thẻ người dùng sẽ chỉ được sử dụng cho kế toán Subledger. Tài khoản này sẽ được sử dụng cho Sổ cái chung và cũng là giá trị mặc định của kế toán Subledger nếu không có tài khoản kế toán chuyên dụng nào được xác định trên người dùng.
 CarCategory=Loại xe
 ClassifyRefunded=Phân loại 'hoàn trả'
 CompanyVisited=Công ty / tổ chức đã đến thăm
@@ -70,14 +72,15 @@ ExpenseReportRulesDesc=Bạn có thể xác định quy tắc số tiền tối 
 ExpenseReportWaitingForApproval=Một báo cáo chi phí mới đã được đệ trình để phê duyệt
 ExpenseReportWaitingForApprovalMessage=Một báo cáo chi phí mới đã được đệ trình và đang chờ phê duyệt. <br> - Người dùng: %s <br> - Thời gian: %s <br> Nhấn vào đây để xác nhận: %s
 ExpenseReportWaitingForReApproval=Một báo cáo chi phí đã được đệ trình để phê duyệt lại
-ExpenseReportWaitingForReApprovalMessage=Một báo cáo chi phí đã được đệ trình và đang chờ phê duyệt lại. <br> %s, bạn đã từ chối phê duyệt báo cáo chi phí vì lý do này: %s. <br> Một phiên bản mới đã được đề xuất và chờ phê duyệt của bạn. <br> - Người dùng: %s <br> - Thời gian: %s <br> Nhấn vào đây để xác nhận: %s
+ExpenseReportWaitingForReApprovalMessage=Một báo cáo chi phí đã được gửi và đang chờ phê duyệt lại. <br> %s, bạn đã từ chối phê duyệt báo cáo chi phí vì lý do sau: %s. <br> Một phiên bản mới đã được đề xuất và đang chờ bạn phê duyệt. <br> - Người dùng: %s<br> - Giai đoạn: %s<br>
+ExpenseReportWaitingForReApprovalMessage2=Nhấp vào đây để xác thực: %s
 ExpenseReportsIk=Cấu hình tính phí số dặm
 ExpenseReportsRules=Quy tắc báo cáo chi phí
 ExpenseReportsToApprove=Báo cáo chi phí để phê duyệt
 ExpenseReportsToPay=Báo cáo chi phí phải trả
 ExpensesArea=Khu vực báo cáo chi phí
 FeesKilometersOrAmout=Số tiền hoặc số km
-LastExpenseReports=Báo cáo chi phí mới nhất %s 
+LastExpenseReports=Báo cáo chi phí mới nhất %s
 ListOfFees=Danh sách phí
 ListOfTrips=Danh sách báo cáo chi phí
 ListToApprove=Chờ phê duyệt
@@ -115,6 +118,10 @@ VALIDOR=Được phê duyệt bởi
 ValidateAndSubmit=Xác nhận và trình phê duyệt
 ValidatedWaitingApproval=Xác nhận (chờ phê duyệt)
 ValideTrip=Phê duyệt báo cáo chi phí
+ExpenseReportPayments=Thanh toán báo cáo chi phí
+TaxUndefinedForThisCategory = Thuế không được xác định cho danh mục này
+errorComputeTtcOnMileageExpense=Lỗi khi tính toán chi phí đi lại
+ErrorOnlyDraftStatusCanBeDeletedInMassAction=Chỉ những thành phần trong trạng thái bản nháp mới có thể bị xóa trong hành động hàng loạt
 
 ## Dictionary
 EX_BRE=Bữa ăn sáng
@@ -150,3 +157,5 @@ TF_PEAGE=Phí cầu đường
 TF_TAXI=Tắc xi
 TF_TRAIN=Xe lửa
 TF_TRIP=Vận chuyển
+FailedToSetPaid=Không thể thiết lập là đã thanh toán
+FailedToSetToCancel=Không thể hủy

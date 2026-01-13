@@ -4,8 +4,9 @@
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2021		Frédéric France			<frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2021-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,16 @@
 define('CSRFCHECK_WITH_TOKEN', 1); // We force need to use a token to login when making a POST
 
 require 'main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Form $form
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $conffile	defined into filefunc.inc.php
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // If not defined, we select menu "home"
@@ -38,31 +49,13 @@ $action = GETPOST('action', 'aZ09');
 
 $hookmanager->initHooks(array('index'));
 
+require_once DOL_DOCUMENT_ROOT.'/core/redirect_if_setup_not_complete.inc.php';
+
 
 /*
  * Actions
  */
 
-$nbmodulesnotautoenabled = count($conf->modules);
-if (in_array('fckeditor', $conf->modules)) {
-	$nbmodulesnotautoenabled--;
-}
-if (in_array('export', $conf->modules)) {
-	$nbmodulesnotautoenabled--;
-}
-if (in_array('import', $conf->modules)) {
-	$nbmodulesnotautoenabled--;
-}
-
-// Check if company name is defined (first install)
-if (!getDolGlobalString('MAIN_INFO_SOCIETE_NOM') || !getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY')) {
-	header("Location: ".DOL_URL_ROOT."/admin/index.php?mainmenu=home&leftmenu=setup&mesg=setupnotcomplete");
-	exit;
-}
-if ($nbmodulesnotautoenabled <= getDolGlobalString('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only user module enabled
-	header("Location: ".DOL_URL_ROOT."/admin/index.php?mainmenu=home&leftmenu=setup&mesg=setupnotcomplete");
-	exit;
-}
 if (GETPOST('addbox')) {	// Add box (when submit is done from a form when ajax disabled)
 	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
 	$zone = GETPOSTINT('areacode');
@@ -85,11 +78,16 @@ if (!isset($form) || !is_object($form)) {
 	$form = new Form($db);
 }
 
-// Title
-$title = $langs->trans("HomeArea").' - Dolibarr '.DOL_VERSION;
-if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-	$title = $langs->trans("HomeArea").' - ' . getDolGlobalString('MAIN_APPLICATION_TITLE');
+$appli = constant('DOL_APPLICATION_TITLE');
+$applicustom = getDolGlobalString('MAIN_APPLICATION_TITLE');
+if ($applicustom) {
+	$appli = (preg_match('/^\+/', $applicustom) ? $appli : '').$applicustom;
+} else {
+	$appli .= " ".DOL_VERSION;
 }
+
+// Title
+$title = $langs->trans("HomeArea").' - '.$appli;
 
 llxHeader('', $title);
 
@@ -97,21 +95,29 @@ llxHeader('', $title);
 $resultboxes = FormOther::getBoxesArea($user, "0"); // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
 
 
-print load_fiche_titre('&nbsp;', $resultboxes['selectboxlist'], '', 0, '', 'titleforhome');
-
 if (getDolGlobalString('MAIN_MOTD')) {
 	$conf->global->MAIN_MOTD = preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i', '<br>', getDolGlobalString('MAIN_MOTD'));
-	if (getDolGlobalString('MAIN_MOTD')) {
-		$substitutionarray = getCommonSubstitutionArray($langs);
-		complete_substitutions_array($substitutionarray, $langs);
-		$texttoshow = make_substitutions(getDolGlobalString('MAIN_MOTD'), $substitutionarray, $langs);
 
-		print "\n<!-- Start of welcome text -->\n";
-		print '<table class="centpercent notopnoleftnoright"><tr><td>';
-		print dol_htmlentitiesbr($texttoshow);
-		print '</td></tr></table><br>';
-		print "\n<!-- End of welcome text -->\n";
-	}
+	$substitutionarray = getCommonSubstitutionArray($langs);
+	complete_substitutions_array($substitutionarray, $langs);
+	$texttoshow = make_substitutions(getDolGlobalString('MAIN_MOTD'), $substitutionarray, $langs);
+
+	print "\n<!-- Start of welcome text -->\n";
+	print '<table class="centpercent notopnoleftnoright"><tr><td>';
+	print dol_htmlentitiesbr($texttoshow);
+	print '</td></tr></table><br>';
+	print "\n<!-- End of welcome text -->\n";
+}
+
+/*
+ * Show specific warnings
+ */
+
+// Specific warning to propose to upgrade invoice situation to progressive mode
+if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) { // Note that we must also be in v22 or +, but this is the case now in this branch
+	$langs->loadLangs(array("admin"));
+	print info_admin($langs->trans("WarningExperimentalFeatureInvoiceSituationNeedToUpgradeToProgressiveMode", 'https://partners.dolibarr.org'));
+	//print "<br>";
 }
 
 /*
@@ -131,11 +137,18 @@ if (!getDolGlobalString('MAIN_REMOVE_INSTALL_WARNING')) {
 	}
 
 	// Conf files must be in read only mode
-	if (is_writable($conffile)) {	// $conffile is defined into filefunc.inc.php
-		$langs->load("errors");
-		//$langs->load("other");
-		//if (!empty($message)) $message.='<br>';
-		$message .= info_admin($langs->transnoentities("WarningConfFileMustBeReadOnly").' '.$langs->transnoentities("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
+	if (is_writable($conffile)) {
+		// Try to remove automatically write permission
+		$currentPerm = fileperms($conffile);
+		$newPerm = $currentPerm & ~0222;
+		//print $conffile.' '.decoct($currentPerm).' '.(string) decoct($newPerm).' '.substr(decoct($newPerm), -4);
+		dolChmod($conffile, decoct($newPerm));
+
+		//  @phpstan-ignore-next-line
+		if (is_writable($conffile)) {
+			$langs->load("errors");
+			$message .= info_admin($langs->transnoentities("WarningConfFileMustBeReadOnly").' '.$langs->transnoentities("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
+		}
 	}
 
 	$object = new stdClass();
@@ -145,8 +158,9 @@ if (!getDolGlobalString('MAIN_REMOVE_INSTALL_WARNING')) {
 		$message .= $hookmanager->resPrint;
 	}
 	if ($message) {	// $message is an HTML string.
+		print '<!-- show security warning -->';
 		print dol_string_onlythesehtmltags($message, 1, 0, 0, 0, array('div', 'span', 'b'));
-		print '<br>';
+		//print '<br>';
 		//print info_admin($langs->trans("WarningUntilDirRemoved",DOL_DOCUMENT_ROOT."/install"));
 	}
 }
@@ -156,8 +170,7 @@ if (!getDolGlobalString('MAIN_REMOVE_INSTALL_WARNING')) {
  * Hidden for external users
  */
 
-$boxstatItems = array();
-$boxstatFromHook = '';
+print load_fiche_titre('&nbsp;', $resultboxes['selectboxlist'], '', 0, '', 'titleforhome');
 
 // Load translation files required by page
 $langs->loadLangs(array('commercial', 'bills', 'orders', 'contracts'));
@@ -166,7 +179,7 @@ $langs->loadLangs(array('commercial', 'bills', 'orders', 'contracts'));
 if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2) {
 	$showweather = (!getDolGlobalString('MAIN_DISABLE_METEO') || getDolGlobalInt('MAIN_DISABLE_METEO') == 2) ? 1 : 0;
 
-	//Array that contains all WorkboardResponse classes to process them
+	// Array that contains all WorkboardResponse classes to process them
 	$dashboardlines = array();
 
 	// Do not include sections without management permission
@@ -325,6 +338,12 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 		$dashboardlines[$board->element] = $board->load_board($user);
 	}
 
+	if (isModEnabled('mrp')  && !getDolGlobalString('MAIN_DISABLE_BLOCK_MRP')) {
+		include_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
+		$board = new Mo($db);
+		$dashboardlines[$board->element] = $board->load_board($user);
+	}
+
 	$object = new stdClass();
 	$parameters = array();
 	$action = '';
@@ -337,7 +356,6 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 	if ($reshook == 0) {
 		$dashboardlines = array_merge($dashboardlines, $hookmanager->resArray);
 	}
-
 	/* Open object dashboard */
 	$dashboardgroup = array(
 		'action' =>
@@ -435,8 +453,14 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 				'stats' =>
 					array('holiday'),
 			),
+		'cubes' =>
+			array(
+				'groupName' => 'Mo',
+				'globalStatsKey' => 'mrp',
+				'stats' =>
+					array('mo'),
+			),
 	);
-
 	$object = new stdClass();
 	$parameters = array(
 		'dashboardgroup' => $dashboardgroup
@@ -459,7 +483,6 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 			$valid_dashboardlines[$workboardid] = $tmp;
 		}
 	}
-
 	// We calculate $totallate. Must be defined before start of next loop because it is show in first fetch on next loop
 	foreach ($valid_dashboardlines as $board) {
 		if (is_numeric($board->nbtodo) && is_numeric($board->nbtodolate) && $board->nbtodolate > 0) {
@@ -482,6 +505,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 		$totallate = $totallatePercentage;
 	}
 
+	// Fill the content to show the tasks to do as a widget box (old version). Now this is no more used. Tasks to do ar in dedicated thumbs.
 	$boxwork = '';
 	$boxwork .= '<div class="box">';
 	$boxwork .= '<table summary="'.dol_escape_htmltag($langs->trans("WorkingBoard")).'" class="noborder boxtable boxtablenobottom boxworkingboard centpercent">'."\n";
@@ -506,12 +530,10 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 
 	// Show dashboard
 	$nbworkboardempty = 0;
-	$isIntopOpenedDashBoard = $globalStatInTopOpenedDashBoard = array();
+	$isIntopOpenedDashBoard = array();
+	$openedDashBoard = '';
 	if (!empty($valid_dashboardlines)) {
-		$openedDashBoard = '';
-
 		$boxwork .= '<tr class="nobottom nohover"><td class="tdboxstats nohover flexcontainer centpercent"><div style="display: flex: flex-wrap: wrap">';
-
 		foreach ($dashboardgroup as $groupKey => $groupElement) {
 			$boards = array();
 
@@ -524,6 +546,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 					}
 				}
 			}
+
 
 			if (!empty($boards)) {
 				if (!empty($groupElement['lang'])) {
@@ -540,21 +563,48 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 					$groupElement['globalStats'] = array();
 				}
 
+				// Links
+				$arrayLinks = array(
+					'action' => dol_buildpath('/comm/action/card.php?action=create', 1),
+					'project' => dol_buildpath('/projet/card.php?action=create', 1),
+					'propal' => dol_buildpath('/comm/propal/card.php?action=create', 1),
+					'commande' => dol_buildpath('/commande/card.php?action=create', 1),
+					'facture' => dol_buildpath('/compta/facture/card.php?action=create', 1),
+					'supplier_proposal' => dol_buildpath('/supplier_proposal/card.php?action=create', 1),
+					'order_supplier' => dol_buildpath('/fourn/commande/card.php?action=create', 1),
+					'invoice_supplier' => dol_buildpath('/fourn/facture/card.php?action=create', 1),
+					'contrat' => dol_buildpath('/contrat/card.php?action=create', 1),
+					'ticket' => dol_buildpath('/ticket/card.php?action=create', 1),
+					'bank_account' => dol_buildpath('/compta/bank/card.php?action=create', 1),
+					'member' => dol_buildpath('/adherents/card.php?action=create', 1),
+					'expensereport' => dol_buildpath('/expensereport/card.php?action=create', 1),
+					'holiday' => dol_buildpath('/holiday/card.php?action=create', 1),
+					'cubes' => dol_buildpath('/mrp/mo_card.php?action=create', 1),
+
+				);
+				$infoboxMoreCss = '';
+				if (array_key_exists($groupKey, $arrayLinks)) {
+					$infoboxMoreCss = 'infobox-haslink';
+				}
+
 				$openedDashBoard .= '<div class="box-flex-item"><div class="box-flex-item-with-margin">'."\n";
-				$openedDashBoard .= '	<div class="info-box '.$openedDashBoardSize.'">'."\n";
+				$openedDashBoard .= '	<div class="info-box '.$openedDashBoardSize.' '.$infoboxMoreCss.'">'."\n";
 				$openedDashBoard .= '		<span class="info-box-icon bg-infobox-'.$groupKeyLowerCase.'">'."\n";
 				$openedDashBoard .= '		<i class="fa fa-dol-'.$groupKeyLowerCase.'"></i>'."\n";
 
 				// Show the span for the total of record. TODO This seems not used.
 				if (!empty($groupElement['globalStats'])) {
-					$globalStatInTopOpenedDashBoard[] = $globalStatsKey;
 					$openedDashBoard .= '<span class="info-box-icon-text" title="'.$groupElement['globalStats']['text'].'">'.$groupElement['globalStats']['nbTotal'].'</span>';
+				}
+
+				if (array_key_exists($groupKey, $arrayLinks)) {
+					$openedDashBoard .= '		<a href="'.$arrayLinks[$groupKey].'" class="info-box-createlink"><span class="fas fa-plus-circle"></span></a>'."\n";
 				}
 
 				$openedDashBoard .= '</span>'."\n";
 				$openedDashBoard .= '<div class="info-box-content">'."\n";
 
-				$openedDashBoard .= '<div class="info-box-title" title="'.strip_tags($groupName).'">'.$groupName.'</div>'."\n";
+				$openedDashBoard .= '<div class="info-box-title" title="'.dolPrintHTMLForAttribute($groupName).'">'.$groupName.'</div>'."\n";
 				$openedDashBoard .= '<div class="info-box-lines">'."\n";
 
 				foreach ($boards as $board) {
@@ -567,7 +617,20 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 					}
 
 					$textLateTitle = $langs->trans("NActionsLate", $board->nbtodolate);
-					$textLateTitle .= ' ('.$langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil(empty($board->warning_delay) ? 0 : $board->warning_delay) >= 0 ? '+' : '').ceil(empty($board->warning_delay) ? 0 : $board->warning_delay).' '.$langs->trans("days").')';
+
+					$dateOrder = '';
+					if ($board->id == 'mo') {
+						$dateOrder = $langs->trans("DateToday") . " > " . $langs->trans("DateReference");
+					} else {
+						$dateOrder = $langs->trans("DateReference") . " > " . $langs->trans("DateToday");
+					}
+					$warningDelay = ceil(empty($board->warning_delay) ? 0 : $board->warning_delay);
+					$sign = '';
+					if ($warningDelay >= 0) {
+						$sign = '+';
+					}
+
+					$textLateTitle .= " (" . $langs->trans("Late") . " = $dateOrder $sign$warningDelay " . $langs->trans("days") . ")";
 
 					if ($board->id == 'bank_account') {
 						$textLateTitle .= '<br><span class="opacitymedium">'.$langs->trans("IfYouDontReconcileDisableProperty", $langs->transnoentitiesnoconv("Conciliable")).'</span>';
@@ -576,7 +639,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 					$textLate = '';
 					if ($board->nbtodolate > 0) {
 						$textLate .= '<span title="'.dol_escape_htmltag($textLateTitle).'" class="classfortooltip badge badge-warning">';
-						$textLate .= '<i class="fa fa-exclamation-triangle"></i> '.$board->nbtodolate;
+						$textLate .= '<i class="fa fa-exclamation-triangle hideonsmartphone"></i> '.$board->nbtodolate;
 						$textLate .= '</span>';
 					}
 
@@ -590,30 +653,38 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 					// Forge the line to show into the open object box
 					$labeltoshow = $board->label.' ('.$board->nbtodo.')';
 					if ($board->total > 0) {
-						$labeltoshow .= ' - '.price($board->total, 0, $langs, 1, -1, -1, $conf->currency);
+						$labeltoshow .= ' - '.price($board->total, 0, $langs, 1, -1, -1, getDolCurrency());
 					}
 					$openedDashBoard .= '<a href="'.$board->url.'" class="info-box-text info-box-text-a">';
 					$openedDashBoard .= $infoName;
+					$openedDashBoard .= '</a>';
 					$openedDashBoard .= '<div class="inline-block nowraponall">';
+					$openedDashBoard .= '<a href="'.$board->url.'" class="info-box-text info-box-text-a">';
 					$openedDashBoard .= '<span class="classfortooltip'.($nbtodClass ? ' '.$nbtodClass : '').'" title="'.$labeltoshow.'">';
 					$openedDashBoard .= $board->nbtodo;
 					if ($board->total > 0 && getDolGlobalString('MAIN_WORKBOARD_SHOW_TOTAL_WO_TAX')) {
-						$openedDashBoard .= ' : '.price($board->total, 0, $langs, 1, -1, -1, $conf->currency);
+						$openedDashBoard .= ' : '.price($board->total, 0, $langs, 1, -1, -1, getDolCurrency());
 					}
 					$openedDashBoard .= '</span>';
+					$openedDashBoard .= '</a>';
 
 					if ($textLate) {
 						if ($board->url_late) {
-							$openedDashBoard .= '</div></a>';
+							$openedDashBoard .= '</div>';
 							$openedDashBoard .= ' <div class="inline-block"><a href="'.$board->url_late.'" class="info-box-text info-box-text-a paddingleft">';
 						} else {
-							$openedDashBoard .= ' ';
+							$openedDashBoard .= ' <span class="info-box-text info-box-text-a displaycontents">';
 						}
 						$openedDashBoard .= $textLate;
+						if ($board->url_late) {
+							$openedDashBoard .= '</a>';
+						} else {
+							$openedDashBoard .= '</span>';
+						}
 					}
-					$openedDashBoard .= '</a>'."\n";
-					$openedDashBoard .= '</div>';
 					$openedDashBoard .= '</div>'."\n";
+					//$openedDashBoard .= '</div>';
+					$openedDashBoard .= '</div>'."\n"; // info-box-line
 				}
 
 				// TODO Add hook here to add more "info-box-line"
@@ -661,7 +732,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 			} else {
 				$weatherDashBoard .= '			<span class="info-box-number">'.$langs->transnoentitiesnoconv(
 					"NActionsLate",
-					$totalLateNumber
+					(string) $totalLateNumber
 				).'</span>'."\n";
 				if ($totallatePercentage > 0) {
 					$weatherDashBoard .= '			<span class="progress-description">'.$langs->trans(

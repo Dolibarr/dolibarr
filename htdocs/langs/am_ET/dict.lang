@@ -295,8 +295,8 @@ CurrencyXPF=ሲኤፍፒ ፍራንክ
 CurrencySingXPF=ሲኤፍፒ ፍራንክ
 CurrencyCentEUR=ሳንቲም
 CurrencyCentSingEUR=መቶ
-CurrencyCentINR=paisa
-CurrencyCentSingINR=paise
+CurrencyCentINR=paise
+CurrencyCentSingINR=paisa
 CurrencyThousandthSingTND=ሺህ
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=ኢንተርኔት

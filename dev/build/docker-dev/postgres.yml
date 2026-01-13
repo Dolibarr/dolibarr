@@ -1,0 +1,18 @@
+---
+networks:
+    internal-pod:
+        internal: true
+    external-pod:
+        internal: false
+
+services:
+    postgres:
+        image: postgres:latest
+        environment:
+            POSTGRES_PASSWORD: rootpassfordev
+        networks:
+            - internal-pod
+            - external-pod
+    web:
+        depends_on:
+            - postgres

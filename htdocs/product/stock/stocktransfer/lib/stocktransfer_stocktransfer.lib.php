@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) ---Put here your own copyright and developer email---
  * Copyright (C) 2021  Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW				<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +27,7 @@
  * Prepare array of tabs for StockTransfer
  *
  * @param	StockTransfer	$object		StockTransfer
- * @return 	array					Array of tabs
+ * @return 	array<array{0:string,1:string,2:string}>	Array of tabs
  */
 function stocktransferPrepareHead($object)
 {
@@ -38,7 +39,7 @@ function stocktransferPrepareHead($object)
 	$head = array();
 
 	$head[$h][0] = dol_buildpath("/product/stock/stocktransfer/stocktransfer_card.php", 1).'?id='.$object->id;
-	$head[$h][1] = $langs->trans("Card");
+	$head[$h][1] = $langs->trans("StockTransfer");
 	$head[$h][2] = 'card';
 	$h++;
 

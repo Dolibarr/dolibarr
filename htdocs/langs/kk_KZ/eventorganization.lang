@@ -5,32 +5,22 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModuleEventOrganizationName = Іс -шараны ұйымдастыру
 EventOrganizationDescription = Модульдік жоба арқылы оқиғаны ұйымдастыру
 EventOrganizationDescriptionLong= Іс-шараны ұйымдастыруды басқару (шоу, конференциялар, қатысушылар немесе спикерлер, ұсыныс, дауыс беру немесе тіркеу үшін ашық беттері бар)
-#
-# Menu
-#
 EventOrganizationMenuLeft = Ұйымдастырылған шаралар
 EventOrganizationConferenceOrBoothMenuLeft = Конференция немесе стенд
-
 PaymentEvent=Оқиғаның төлемі
-
-#
+EventFee=Іс-шараның ақысы
 # Admin page
-#
 NewRegistration=Тіркеу
 EventOrganizationSetup=Іс -шараны ұйымдастыру
 EventOrganization=Іс-шараны ұйымдастыру
@@ -48,10 +38,7 @@ EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Динамиктерге «Эл�
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Қатысушылар тізіміндегі «Электрондық хаттарды жіберу» массасынан электрондық хаттарды жіберу кезінде пайдаланылатын электрондық пошта үлгісі
 EVENTORGANIZATION_FILTERATTENDEES_CAT = Қатысушыны жасау/қосу пішімінде санаттағы үшінші тұлғаларға үшінші тұлғалар тізімін шектейді
 EVENTORGANIZATION_FILTERATTENDEES_TYPE = Қатысушыны құру/қосу пішімінде үшінші тұлғалардың тізімін үшінші тұлғаларға сипатымен шектейді
-
-#
 # Object
-#
 OrganizedEvent=Ұйымдастырылған шара
 EventOrganizationConfOrBooth= Конференция немесе стенд
 EventOrganizationConfOrBoothes=Конференциялар немесе стендтер
@@ -63,10 +50,7 @@ DateOfRegistration = Тіркеу күні
 ConferenceOrBoothAttendee = Конференцияға немесе стендке қатысушы
 ApplicantOrVisitor=Өтініш беруші немесе келуші
 Speaker=Спикер
-
-#
 # Template Mail
-#
 YourOrganizationEventConfRequestWasReceived = Сіздің конференцияға сұранысыңыз қабылданды
 YourOrganizationEventBoothRequestWasReceived = Стендке сұранысыңыз қабылданды
 EventOrganizationEmailAskConf = Конференцияға сұраныс
@@ -76,10 +60,7 @@ EventOrganizationEmailRegistrationPayment = Іс-шараға тіркелу
 EventOrganizationMassEmailAttendees = Қатысушыларға хабарлау
 EventOrganizationMassEmailSpeakers = Баяндамашылармен байланыс
 ToSpeakers=Спикерлерге
-
-#
 # Event
-#
 AllowUnknownPeopleSuggestConf=Адамдарға конференциялар ұсынуға мүмкіндік беріңіз
 AllowUnknownPeopleSuggestConfHelp=Белгісіз адамдарға өздері қалаған конференцияны ұсынуға рұқсат беріңіз
 AllowUnknownPeopleSuggestBooth=Адамдарға стендке өтініш беруге рұқсат етіңіз
@@ -88,30 +69,29 @@ PriceOfRegistration=Тіркеу бағасы
 PriceOfRegistrationHelp=Тіркелу немесе шараға қатысу үшін төлейтін баға
 PriceOfBooth=Кабинаға жазылу бағасы
 PriceOfBoothHelp=Кабинаға жазылу бағасы
-EventOrganizationICSLinkProject=Link ICS for the event
+EventOrganizationICSLinkProject=Оқиға үшін ICS сілтемесін жасаңыз
 EventOrganizationICSLink=Конференциялар үшін ICS сілтемесі
 ConferenceOrBoothInformation=Конференция немесе стенд туралы ақпарат
+ConferenceOrBoothFormat=Конференция немесе стенд режимі
+ConferenceOrBoothFormatID=Конференция немесе стенд режимінің идентификаторы
+ConferenceOrBoothFormatCode=Конференция немесе стенд режимінің коды
+ConferenceOrBoothFormatLabel=Конференция немесе стенд режимінің белгісі
 Attendees=Қатысушылар
-ListOfAttendeesOfEvent=Іс-шара жобасына қатысушылардың тізімі
-DownloadICSLink = ICS сілтемесін жүктеңіз
-EVENTORGANIZATION_SECUREKEY = Конференцияны ұсыну үшін жалпыға ортақ тіркеу бетінің кілтін қорғау үшін Seed
-SERVICE_BOOTH_LOCATION = Кабинаның орналасқан жері туралы шот -фактура жолы үшін қолданылатын қызмет
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Қатысушының оқиғаға жазылуы туралы шот-фактура жолында қолданылатын қызмет
+ListOfAttendeesOfEvent=Іс-шара жобаларына қатысушылардың тізімі
+ListOfConfOrBoothOfEvent=Конференциялар тізімі немесе оқиға жобаларының стендтері
+DownloadICSLink=Download ICS file
+EVENTORGANIZATION_SECUREKEY=Конференцияны ұсыну үшін жалпыға ортақ тіркеу бетінің кілтін қорғау үшін Seed
+SERVICE_BOOTH_LOCATION=Кабинаның орналасқан жері туралы шот -фактура жолы үшін қолданылатын қызмет
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Қатысушының оқиғаға жазылуы туралы шот-фактура жолында қолданылатын қызмет
 NbVotes=Дауыстар саны
-
-#
 # Status
-#
 EvntOrgDraft = Жоба
 EvntOrgSuggested = Ұсынылды
 EvntOrgConfirmed = Расталды
 EvntOrgNotQualified = Біліктілігі жоқ
 EvntOrgDone = Орындалды
 EvntOrgCancelled = Бас тартылды
-
-#
 # Other
-#
 SuggestForm = Ұсыныс беті
 SuggestOrVoteForConfOrBooth = Ұсыныс немесе дауыс беру үшін бет
 EvntOrgRegistrationHelpMessage = Мұнда сіз конференцияға дауыс бере аласыз немесе оқиғаға жаңасын ұсына аласыз. Сондай-ақ іс-шара кезінде стенд алу үшін өтініш бере аласыз.
@@ -134,6 +114,7 @@ EventType = Оқиға түрі
 LabelOfBooth=Стенд белгісі
 LabelOfconference=Конференция белгісі
 ConferenceIsNotConfirmed=Тіркеу мүмкін емес, конференция әлі расталмаған
+EventRegistrationAreClosed=Оқиғаларды тіркеу жабық
 DateMustBeBeforeThan=%s %s алдында болуы керек
 DateMustBeAfterThan=%s %s кейін болуы керек
 MaxNbOfAttendeesReached=Қатысушылардың максималды санына жетті
@@ -175,6 +156,11 @@ DateEndEvent=Оқиғаның аяқталу күні
 ModifyStatus=Күйді өзгерту
 ConfirmModifyStatus=Күйді өзгертуді растаңыз
 ConfirmModifyStatusQuestion=Таңдалған жазбаларды %s өзгерткіңіз келетініне сенімдісіз бе?
-RecordsUpdated = %s Жазбалар жаңартылды
-RecordUpdated = Жазба жаңартылды
-NoRecordUpdated = Жаңартылған жазба жоқ
+RecordsUpdated=%s Жазбалар жаңартылды
+RecordUpdated=Жазба жаңартылды
+NoRecordUpdated=Жаңартылған жазба жоқ
+ProfitPerValidatedAttendee=Бір қатысушыға шаққандағы пайда
+Confirmed=Confirmed
+NotSelected=Not selected
+TheLinkIsAvailableOnTheProjectEventCard=The links to suggest or vote for a conference or apply for a booth is provided into the page of the project/event
+ShowedUp=Showed up

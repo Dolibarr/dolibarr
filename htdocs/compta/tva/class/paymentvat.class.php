@@ -2,7 +2,7 @@
 /* Copyright (C) 2002      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -54,8 +54,14 @@ class PaymentVAT extends CommonObject
 	 */
 	public $fk_tva;
 
+	/**
+	 * @var int|''
+	 */
 	public $datec = '';
 
+	/**
+	 * @var int|''
+	 */
 	public $datep = '';
 
 	/**
@@ -121,7 +127,7 @@ class PaymentVAT extends CommonObject
 	public $lib;
 
 	/**
-	 * @var integer|string datepaye
+	 * @var int|string datepaye
 	 */
 	public $datepaye;
 
@@ -146,7 +152,7 @@ class PaymentVAT extends CommonObject
 	public $bank_line;
 
 	/**
-	 * @var integer|string paiementtype
+	 * @var int|string paiementtype
 	 */
 	public $paiementtype;
 
@@ -400,7 +406,7 @@ class PaymentVAT extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_vat SET";
 		$sql .= " fk_tva=".(isset($this->fk_tva) ? ((int) $this->fk_tva) : "null").",";
 		$sql .= " datec=".(dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
-		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
+		$sql .= " tms=".(dol_strlen((string) $this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
 		$sql .= " datep=".(dol_strlen($this->datep) != 0 ? "'".$this->db->idate($this->datep)."'" : 'null').",";
 		$sql .= " amount=".(isset($this->amount) ? (float) price2num($this->amount) : "null").",";
 		$sql .= " fk_typepaiement=".(isset($this->fk_typepaiement) ? ((int) $this->fk_typepaiement) : "null").",";
@@ -506,6 +512,7 @@ class PaymentVAT extends CommonObject
 		// Load source object
 		$object->fetch($fromid);
 		$object->id = 0;
+		$object->status = 0;
 		$object->statut = 0;
 
 		// Clear fields
@@ -597,7 +604,7 @@ class PaymentVAT extends CommonObject
 				$label,
 				$total,
 				$this->num_payment,
-				'',
+				0,
 				$user,
 				$emetteur_nom,
 				$emetteur_banque

@@ -5,6 +5,7 @@
  * Copyright (C) 2012		Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +35,14 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->load("trips");
 
@@ -43,15 +52,16 @@ $id = GETPOSTINT('id');
 if ($user->socid) {
 	$socid = $user->socid;
 }
+
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('tripsandexpensescard', 'globalcard'));
+
 $result = restrictedArea($user, 'deplacement', $id, '');
 
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
 $object = new Deplacement($db);
-
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('tripsandexpensescard', 'globalcard'));
 
 $permissionnote = $user->hasRight('deplacement', 'creer'); // Used by the include of actions_setnotes.inc.php
 
@@ -171,7 +181,7 @@ if ($action == 'validate' && $user->hasRight('deplacement', 'creer')) {
 	// Set fields
 	$dated = dol_mktime(GETPOSTINT('datedhour'), GETPOSTINT('datedmin'), GETPOSTINT('datedsec'), GETPOSTINT('datedmonth'), GETPOSTINT('datedday'), GETPOSTINT('datedyear'));
 	$object->fetch($id);
-	$result = $object->setValueFrom('dated', $dated, '', '', 'date', '', $user, 'DEPLACEMENT_MODIFY');
+	$result = $object->setValueFrom('dated', $dated, '', null, 'date', '', $user, 'DEPLACEMENT_MODIFY');
 	if ($result < 0) {
 		dol_print_error($db, $object->error);
 	}
@@ -211,12 +221,12 @@ if ($action == 'create') {
 
 	print "<tr>";
 	print '<td class="fieldrequired">'.$langs->trans("Type").'</td><td>';
-	$form->select_type_fees(GETPOSTINT('type'), 'type', 1);
+	$form->select_type_fees((string) GETPOSTINT('type'), 'type', 1);
 	print '</td></tr>';
 
 	print "<tr>";
 	print '<td class="fieldrequired">'.$langs->trans("Person").'</td><td>';
-	print $form->select_dolusers(GETPOSTINT('fk_user'), 'fk_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+	print $form->select_dolusers(GETPOSTINT('fk_user'), 'fk_user', 1, null, 0, '', '', '0', 0, 0, '', 0, '', 'maxwidth300');
 	print '</td></tr>';
 
 	print "<tr>";
@@ -307,7 +317,7 @@ if ($action == 'create') {
 			// Who
 			print "<tr>";
 			print '<td class="fieldrequired">'.$langs->trans("Person").'</td><td>';
-			print $form->select_dolusers(GETPOSTINT('fk_user') ? GETPOSTINT('fk_user') : $object->fk_user, 'fk_user', 0, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+			print $form->select_dolusers(GETPOSTINT('fk_user') ? GETPOSTINT('fk_user') : $object->fk_user, 'fk_user', 0, null, 0, '', '', '0', 0, 0, '', 0, '', 'maxwidth300');
 			print '</td></tr>';
 
 			// Date
@@ -409,7 +419,7 @@ if ($action == 'create') {
 
 			// Km/Price
 			print '<tr><td class="tdtop">';
-			print $form->editfieldkey("FeesKilometersOrAmout", 'km', $object->km, $object, $user->hasRight('deplacement', 'creer'), 'numeric:6');
+			print $form->editfieldkey("FeesKilometersOrAmout", 'km', (string) $object->km, $object, $user->hasRight('deplacement', 'creer'), 'numeric:6');
 			print '</td><td>';
 			print $form->editfieldval("FeesKilometersOrAmout", 'km', $object->km, $object, $user->hasRight('deplacement', 'creer'), 'numeric:6');
 			print "</td></tr>";
@@ -439,9 +449,9 @@ if ($action == 'create') {
 				print '</tr></table>';
 				print '</td><td colspan="3">';
 				if ($action == 'classify') {
-					$form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1);
+					$form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, 'projectid', 0, 0, 1);
 				} else {
-					$form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0);
+					$form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, 'none', 0, 0);
 				}
 				print '</td>';
 				print '</tr>';

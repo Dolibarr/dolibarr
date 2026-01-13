@@ -4,37 +4,24 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see .
 
-#
 # Generic
-#
-
 # Module label 'ModuleKnowledgeManagementName'
 ModuleKnowledgeManagementName = 知识管理系统
 # Module description 'ModuleKnowledgeManagementDesc'
 ModuleKnowledgeManagementDesc=管理一个知识管理（KM）或服务台基础
-
-#
 # Admin page
-#
 KnowledgeManagementSetup = 知识管理系统设置
 KnowledgeManagementSetupPage = 知识管理系统设置页面
-
-
-#
 # About page
-#
 KnowledgeManagementAbout = 关于知识管理
 KnowledgeManagementAboutPage = 知识管理简介页面
-
 KnowledgeManagementArea = 知识管理
 MenuKnowledgeRecord = 知识库
 MenuKnowledgeRecordShort = 知识库
@@ -46,8 +33,7 @@ KnowledgeRecord = 文章
 KnowledgeRecordExtraFields = 文章的自定义属性
 GroupOfTicket=服务工单分组
 YouCanLinkArticleToATicketCategory=您可以将文章链接到服务工单组（该文章将在该组的任何服务工单上突出显示）
-SuggestedForTicketsInGroup=关于服务工单创建的建议
-
+SuggestedForTicketsInGroup=Suggested on tickets creation
 SetObsolete=设置为过时的
 ConfirmCloseKM=你是否确认要将这篇文章关闭并设定为已经过时吗？
 ConfirmReopenKM=您想将这篇文章恢复到 "已验证 "状态吗？

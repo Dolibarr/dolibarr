@@ -1,27 +1,12 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=PayBox mát skipulag
-PayBoxDesc=Þessi eining síður bjóða upp á til að heimila greiðslu á <a href="http://www.paybox.com" target="_blank">Paybox</a> við viðskiptavini. Þetta má nota til a frjáls greiðslu eða til greiðslu á tilteknum Dolibarr mótmæla (Reikningar, röð, ...)
-FollowingUrlAreAvailableToMakePayments=Eftirfarandi vefslóðir eru að bjóða upp síðu til viðskiptavina til að framkvæma greiðslu á Dolibarr mótmæla
-PaymentForm=Greiðsla mynd
-WelcomeOnPaymentPage=Welcome to our online payment service
-ThisScreenAllowsYouToPay=Þessi skjár leyfa þér að gera á netinu greiðslu til %s.
-ThisIsInformationOnPayment=Þetta eru upplýsingar um greiðslu að gera
-ToComplete=Til að ljúka
-YourEMail=Netfang til staðfestingar greiðslu
-Creditor=Lánveitandi
-PaymentCode=Greiðsla kóða
+PayBoxDesc=This module offer pages to allow payment on <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Paybox</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
 PayBoxDoPayment=Pay with Paybox
 YouWillBeRedirectedOnPayBox=Þú verður vísað á að tryggja Paybox síðu til inntak þú upplýsingar um greiðslukort
-Continue=Næsti
 SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
 YourPaymentHasBeenRecorded=Þessi síða staðfestir að greiðsla hefur verið skráð. Þakka þér.
 YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.
-AccountParameter=Skráningin breytur
-UsageParameter=Notkun breytur
-InformationToFindParameters=Hjálp til að finna %s upplýsingar reiknings þíns
 PAYBOX_CGI_URL_V2=Slóð Paybox CGI mát fyrir greiðslu
-VendorName=Nafn seljanda
-CSSUrlForPaymentForm=CSS stíll lak url fyrir formi greiðslu
 NewPayboxPaymentReceived=New Paybox payment received
 NewPayboxPaymentFailed=New Paybox payment tried but failed
 PAYBOX_PAYONLINE_SENDEMAIL=Email notification after payment attempt (success or fail)

@@ -9,31 +9,30 @@ ActionsOnResource=Бұл ресурс туралы оқиғалар
 ResourcePageIndex=Ресурстар тізімі
 ResourceSingular=Ресурс
 ResourceCard=Ресурстық карта
+NewResource=Жаңа ресурс
 AddResource=Ресурс құру
 ResourceFormLabel_ref=Ресурстың атауы
-ResourceType=Ресурстың түрі
 ResourceFormLabel_description=Ресурстар сипаттамасы
-
+ResourceType=Ресурстың түрі
+ResourceTypeID=Ресурс түрінің идентификаторы
+ResourceTypeLabel=Ресурс түрінің белгісі
 ResourcesLinkedToElement=Элементпен байланысқан ресурстар
 
 ShowResource=Ресурсты көрсету
-
 ResourceElementPage=Элемент ресурстары
 ResourceCreatedWithSuccess=Ресурс сәтті құрылды
 RessourceLineSuccessfullyDeleted=Ресурстық желі сәтті жойылды
 RessourceLineSuccessfullyUpdated=Ресурстық желі сәтті жаңартылды
 ResourceLinkedWithSuccess=Табыспен байланысты ресурс
-
 ConfirmDeleteResource=Бұл ресурсты жоюды растаңыз
 RessourceSuccessfullyDeleted=Ресурс жойылды
 DictionaryResourceType=Ресурстар түрі
-
 SelectResource=Ресурсты таңдаңыз
-
 IdResource=Id ресурсы
 AssetNumber=Сериялық нөмір
 ResourceTypeCode=Ресурс түрінің коды
 ImportDataset_resource_1=Ресурстар
-
 ErrorResourcesAlreadyInUse=Кейбір ресурстар пайдаланылады
 ErrorResourceUseInEvent=%s %s оқиғасында қолданылады
+MaxUsers=Ең көп пайдаланушылар (орындар, орындар, т.б.)
+MaxUsersLabel=Ең көп пайдаланушылар

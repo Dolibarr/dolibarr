@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2024 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,14 +51,16 @@ class DolGeoPHP
 	 * Return data from a value
 	 *
 	 * @param	string	$value		Value
-	 * @return	array				Centroid
+	 * @return	array{}|array{geojson:string,centroid:Geometry,centroidjson:string}	Centroid
 	 */
 	public function parseGeoString($value)
 	{
 		$geom = geoPHP::load($value, 'wkt');
 		if ($geom) {
+			'@phan-var-force Geometry $geom';
 			$geojson = $geom->out('json');
 			$centroid = $geom->getCentroid();
+			'@phan-var-force Geometry $centroid';
 			$centroidjson = $centroid->out('json');
 
 			return array('geojson' => $geojson, 'centroid' => $centroid, 'centroidjson' => $centroidjson);
@@ -78,6 +81,7 @@ class DolGeoPHP
 
 		$geom = geoPHP::load($value, 'wkt');
 		if ($geom) {
+			'@phan-var-force Geometry $geom';
 			$value = $geom->x().' '.$geom->y();
 		}
 		return $value;
@@ -95,6 +99,7 @@ class DolGeoPHP
 
 		$geom = geoPHP::load($value, 'wkt');
 		if ($geom) {
+			'@phan-var-force Geometry $geom';
 			$value = get_class($geom) . ' : '. $geom->numPoints() . ' Points';
 		}
 		return $value;
@@ -110,9 +115,15 @@ class DolGeoPHP
 	{
 		$value_key = '';
 
-		$geom = geoPHP::load($geojson, 'json');
-		if ($geom) {
-			$value_key = $geom->out('wkt');
+		try {
+			$geom = geoPHP::load($geojson, 'json');
+			if ($geom) {
+				'@phan-var-force Geometry $geom';
+				$value_key = $geom->out('wkt');
+			}
+		} catch (Exception $e) {
+			// Do nothing
+			$value_key = 'Error: Bad value for property';
 		}
 		return $value_key;
 	}

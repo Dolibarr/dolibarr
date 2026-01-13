@@ -102,12 +102,12 @@ class modPaypal extends DolibarrModules
 
 		// Permissions
 		$this->rights = array(); // Permission array used by this module
-		$r = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$r = 0;
 
 
 		// Main menu entries
 		$this->menu = array(); // List of menus to add
-		$r = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$r = 0;
 		/*$this->menu[$r]=array(
 			'fk_menu'=>'fk_mainmenu=billing,fk_leftmenu=customers_bills_payment',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'mainmenu'=>'billing',
@@ -117,7 +117,7 @@ class modPaypal extends DolibarrModules
 			'url'=>'/paypal/importpayments.php',
 			'langs'=>'paypal',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>501,
-			'enabled'=>'$conf->paypal->enabled && isModEnabled("banque") && $conf->global->MAIN_FEATURES_LEVEL >= 2',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+			'enabled'=>'isModEnabled("paypal")  && isModEnabled("banque") && $conf->global->MAIN_FEATURES_LEVEL >= 2',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 			'perms'=>'$user->rights->banque->consolidate',	// Use 'perms'=>'$user->hasRight("mymodule","level1","level2")' if you want your menu with a permission rules
 			'target'=>'',
 			'user'=>2

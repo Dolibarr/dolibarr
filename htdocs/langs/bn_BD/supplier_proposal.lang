@@ -35,7 +35,6 @@ SupplierProposalStatusSignedShort=গৃহীত
 SupplierProposalStatusNotSignedShort=প্রত্যাখ্যান করেছে
 CopyAskFrom=একটি বিদ্যমান অনুরোধ অনুলিপি করে একটি মূল্য অনুরোধ তৈরি করুন
 CreateEmptyAsk=ফাঁকা অনুরোধ তৈরি করুন
-ConfirmCloneAsk=আপনি কি নিশ্চিত <b>%s</b> মূল্য অনুরোধ ক্লোন করতে চান?
 ConfirmReOpenAsk=আপনি কি নিশ্চিত যে আপনি মূল্যের অনুরোধ <b>%s</b> খুলতে চান ?
 SendAskByMail=মেল দ্বারা মূল্য অনুরোধ পাঠান
 SendAskRef=মূল্যের অনুরোধ পাঠানো হচ্ছে %s

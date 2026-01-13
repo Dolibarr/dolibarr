@@ -1,6 +1,8 @@
 <?php
-/* Copyright (C) 2010-2011 Regis Houssin <regis.houssin@inodbox.com>
- * Copyright (C) 2014      Marcos García <marcosgdf@gmail.com>
+/* Copyright (C) 2010-2011  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,6 +18,25 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ *  \file		htdocs/fourn/commande/linkedobjectblock.tpl.php
+ *  \ingroup	fourn
+ *  \brief		Template to show objects linked to purchase orders
+ */
+
+/**
+ * @var Translate $langs
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var User $user
+ *
+ * @var CommonObject $object
+ * @var int $noMoreLinkedObjectBlockAfter
+ * @var int $showImportButton
+ * @var CommandeFournisseur[] $linkedObjectBlock
+ */
+'@phan-var-force CommandeFournisseur[] $linkedObjectBlock';
+
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
@@ -25,18 +46,13 @@ if (empty($conf) || !is_object($conf)) {
 
 print "<!-- BEGIN PHP TEMPLATE fourn/commande/tpl/linkedobjectblock.tpl.php -->\n";
 
-
-global $user;
-global $noMoreLinkedObjectBlockAfter;
-
-$langs = $GLOBALS['langs'];
-$linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
-
 $langs->load("orders");
 
 $total = 0;
 $ilink = 0;
 foreach ($linkedObjectBlock as $key => $objectlink) {
+	/** @var CommandeFournisseur $objectlink */
+	'@phan-var-force CommandeFournisseur $objectlink';
 	$ilink++;
 
 	$trclass = 'oddeven';
@@ -44,13 +60,13 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		$trclass .= ' liste_sub_total';
 	} ?>
 	<tr class="<?php echo $trclass; ?>">
-		<td><?php echo $langs->trans("SupplierOrder"); ?></td>
+		<td class="tdoverflowmax125" title="<?php echo dolPrintHTMLForAttribute($langs->trans("SupplierOrder")); ?>"><?php echo dolPrintHTML($langs->trans("SupplierOrder")); ?></td>
 		<td><?php print $objectlink->getNomUrl(1); ?></td>
-		<td class="left"><?php echo $objectlink->ref_supplier; ?></td>
+		<td class="left linkedcol-ref tdoverflowmax125" title="<?php echo dolPrintHTMLForAttributeUrl($objectlink->ref_supplier); ?>"><?php echo dolPrintHTML($objectlink->ref_supplier); ?></td>
 		<td class="center"><?php echo dol_print_date($objectlink->date, 'day'); ?></td>
 		<td class="right"><?php
 		if ($user->hasRight("fournisseur", "commande", "lire")) {
-			$total = $total + $objectlink->total_ht;
+			$total += $objectlink->total_ht;
 			echo price($objectlink->total_ht);
 		} ?></td>
 		<td class="right"><?php echo $objectlink->getLibStatut(3); ?></td>

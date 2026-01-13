@@ -1,8 +1,10 @@
 #!/bin/bash
+# Copyright (C) 2025		MDW	<mdeweerd@users.noreply.github.com>
+
 # Borrowed from https://gist.github.com/lgiraudel/6065155
 # Inplace mode added by Raphaël Doursenaud <rdoursenaud@gpcsolutions.fr>
 
-# shellcheck disable=2003,2006,2034,2046,2086,2166,2268
+# shellcheck disable=2003,2006,2034,2046,2086,2166,2268,2327,2328
 
 PROGNAME=${0##*/}
 INPUT=''
@@ -28,8 +30,8 @@ EO
 	-q, --quiet 	   & disables output
 	-i, --input [dir]  & specify input directory (current directory by default)
 	-o, --output [dir] & specify output directory ("output" by default)
-	-ns, --no-stats	& no stats at the end
 	-p, --inplace	  & optimizes files inplace
+	-ns, --no-stats	& no stats at the end
 EO
 }
 
@@ -236,4 +238,3 @@ then
 fi
 
 main
-

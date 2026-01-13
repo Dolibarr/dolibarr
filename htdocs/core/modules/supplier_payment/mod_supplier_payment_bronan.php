@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2015      Juanjo Menent	    <jmenent@2byte.es>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,10 +33,13 @@ class mod_supplier_payment_bronan extends ModeleNumRefSupplierPayments
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
+	/**
+	 * @var string prefix
+	 */
 	public $prefix = 'SPAY';
 
 	/**
@@ -121,9 +124,9 @@ class mod_supplier_payment_bronan extends ModeleNumRefSupplierPayments
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param	Societe			$objsoc     Object thirdparty
-	 *  @param  PaiementFourn	$object		Object we need next value for
-	 *  @return string|-1      				Value if OK, -1 if KO
+	 *  @param	Societe			$objsoc		Object thirdparty
+	 *  @param  ?PaiementFourn	$object		Object we need next value for
+	 *  @return string|int<-1,0>			Next value if OK, <=0 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{

@@ -37,7 +37,7 @@ PropalStatusNotSigned=Қол қойылмаған (жабық)
 PropalStatusBilled=Есепшот
 PropalStatusCanceledShort=Бас тартылды
 PropalStatusDraftShort=Жоба
-PropalStatusValidatedShort=Open
+PropalStatusValidatedShort=Ашық
 PropalStatusClosedShort=Жабық
 PropalStatusSignedShort=Қол қойылған
 PropalStatusNotSignedShort=Қол қойылған жоқ
@@ -77,13 +77,11 @@ AvailabilityTypeAV_1W=1 апта
 AvailabilityTypeAV_2W=2 апта
 AvailabilityTypeAV_3W=3 апта
 AvailabilityTypeAV_1M=1 ай
-
 ##### Types ofe contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Кейінгі ұсыныс
 TypeContact_propal_external_BILLING=Клиенттердің шот -фактурасымен байланыс
 TypeContact_propal_external_CUSTOMER=Клиенттермен байланыс бойынша келесі ұсыныс
 TypeContact_propal_external_SHIPPING=Жеткізу үшін тұтынушылармен байланыс
-
 # Document models
 CantBeNoSign=орнату мүмкін емес
 CaseFollowedBy=Іс соңынан
@@ -122,3 +120,5 @@ SignSociete_rib=Мандатқа қол қою
 SignPropal=Ұсынысты қабылдаңыз
 Signed=қол қойды
 SignedOnly=Тек қол қойылған
+ExpeditionSigned=Жөнелтуге қол қойылды
+SignExpedition=Жеткізуге қол қою

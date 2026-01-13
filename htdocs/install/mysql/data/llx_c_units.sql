@@ -51,11 +51,11 @@ INSERT INTO llx_c_units (code, sortorder, scale, label, short_label, unit_type, 
 INSERT INTO llx_c_units (code, sortorder, scale, label, short_label, unit_type, active) VALUES ('L',  '470','98','VolumeUnitlitre','L', 'volume', 1);
 INSERT INTO llx_c_units (code, sortorder, scale, label, short_label, unit_type, active) VALUES ('GAL','480','99','VolumeUnitgallon','gal', 'volume', 1);
 
-INSERT INTO llx_c_units (code, sortorder, scale, label, short_label, unit_type, active) VALUES ('P',  '500', '0','Piece','p', 'qty', 1);
+INSERT INTO llx_c_units (code, sortorder, scale, label, short_label, unit_type, active) VALUES ('P',  '500', '0','unitP','p', 'qty', 1);
 INSERT INTO llx_c_units (code, sortorder, scale, label, short_label, unit_type, active) VALUES ('SET','510', '0','Set','set', 'qty', 1);
 
 INSERT INTO llx_c_units (code, sortorder, scale, label, short_label, unit_type, active) VALUES ('S', '600',       '1','second','s', 'time', 1);
-INSERT INTO llx_c_units (code, sortorder, scale, label, short_label, unit_type, active) VALUES ('MI','610',      '60','minute','i', 'time', 1);
+INSERT INTO llx_c_units (code, sortorder, scale, label, short_label, unit_type, active) VALUES ('MI','610',      '60','minute','mn', 'time', 1);
 INSERT INTO llx_c_units (code, sortorder, scale, label, short_label, unit_type, active) VALUES ('H', '620',    '3600','hour','h', 'time', 1);
 INSERT INTO llx_c_units (code, sortorder, scale, label, short_label, unit_type, active) VALUES ('D', '630',   '86400','day','d', 'time', 1);
 INSERT INTO llx_c_units (code, sortorder, scale, label, short_label, unit_type, active) VALUES ('W', '640',  '604800','week','w', 'time', 1);

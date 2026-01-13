@@ -65,7 +65,7 @@ $colortexttitle = '20,20,20';
 $colortexttitlelink = '0,0,120';
 $colortext = '0,0,0';
 $colortextlink = '0,0,120';
-$fontsize = '0.94em';
+$fontsize = '0.96em';
 $fontsizesmaller = '0.75em';
 $topMenuFontSize = '1.1em';
 $toolTipBgColor = 'rgba(255, 255, 255, 0.96)';
@@ -86,7 +86,7 @@ $badgeSecondary = '#999999';
 $badgeInfo      = '#17a2b8';
 $badgeSuccess   = '#28a745';
 $badgeWarning   = '#a37c0d'; // See $textWarning
-$badgeDanger    = '#8c4446'; // See $textDanger
+$badgeDanger    = '#993013'; // See $textDanger
 $badgeDark      = '#343a40';
 $badgeLight     = '#f8f9fa';
 

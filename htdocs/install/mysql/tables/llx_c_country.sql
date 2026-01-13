@@ -27,8 +27,7 @@ create table llx_c_country
   numeric_code 	varchar(3),						-- the iso numeric number
   label    		varchar(128)       NOT NULL,
   eec      		tinyint DEFAULT 0  NOT NULL,
+  sepa     		tinyint DEFAULT 0  NOT NULL,
   active   		tinyint DEFAULT 1  NOT NULL,
   favorite 		tinyint DEFAULT 0  NOT NULL
 )ENGINE=innodb;
-
-

@@ -23,14 +23,13 @@
  *		\mainpage	Dolibarr documentation of source code
  *
  *	    This is source documentation for Dolibarr ERP/CRM.<br>
- *      This documentation can be built or updated running the script <b>build/doxygen/dolibarr-doxygen-build.pl</b> or from Eclipse with Doxygen plugin.<br>
+ *      This documentation can be built or updated running the script <b>dev/build/doxygen/dolibarr-doxygen-build.pl</b> or from Eclipse with Doxygen plugin.<br>
  *      <br>
  *      Dolibarr official web site: <a href="https://www.dolibarr.org">www.dolibarr.org</a><br>
  *      <br>
  *      Dolibarr french portal: <a href="https://www.dolibarr.fr">www.dolibarr.fr</a><br>
  *      Dolibarr spanish portal: <a href="https://www.dolibarr.es">www.dolibarr.es</a><br>
  *      Dolibarr italian portal: <a href="https://www.dolibarr.it">www.dolibarr.it</a><br>
- *      Dolibarr greek portal: <a href="https://www.dolibarr.gr">www.dolibarr.gr</a><br>
  *      Dolibarr german portal: <a href="https://www.dolibarr.de">www.dolibarr.de</a><br>
  *      <br>
  */

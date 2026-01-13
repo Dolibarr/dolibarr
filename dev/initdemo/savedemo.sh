@@ -35,6 +35,13 @@ admin=$4;
 passwd=$5;
 
 
+# ----------------------------- check if dialog available
+command -v dialog >/dev/null 2>&1 || {
+	echo "Error: command dialog not found. On Linux, you can install it with: apt install dialog"
+	exit
+}
+
+
 # ----------------------------- if no params on command line
 if [ "x$passwd" = "x" ]
 then
@@ -218,6 +225,8 @@ export list="
 --ignore-table=$base.llx_agefodd_stagiaire_extrafields
 --ignore-table=$base.llx_agefodd_stagiaire_type
 --ignore-table=$base.llx_agefodd_training_admlevel
+--ignore-table=$base.llx_alumni_survey
+--ignore-table=$base.llx_alumni_survey_extrafields
 --ignore-table=$base.llx_askpricesupplier
 --ignore-table=$base.llx_askpricesupplier_extrafields
 --ignore-table=$base.llx_askpricesupplierdet
@@ -247,6 +256,7 @@ export list="
 --ignore-table=$base.llx_c_ticketsup_type
 --ignore-table=$base.llx_cabinetmed_c_banques
 --ignore-table=$base.llx_cabinetmed_c_examconclusion
+--ignore-table=$base.llx_cabinetmed_cons
 --ignore-table=$base.llx_cabinetmed_cons_extrafields
 --ignore-table=$base.llx_cabinetmed_diaglec
 --ignore-table=$base.llx_cabinetmed_examaut
@@ -260,6 +270,7 @@ export list="
 --ignore-table=$base.llx_congespayes_events
 --ignore-table=$base.llx_congespayes_logs
 --ignore-table=$base.llx_congespayes_users
+--ignore-table=$base.llx_deplacement
 --ignore-table=$base.llx_dolicloud_customers
 --ignore-table=$base.llx_dolicloud_stats
 --ignore-table=$base.llx_dolicloud_emailstemplates
@@ -326,6 +337,7 @@ export list="
 --ignore-table=$base.llx_sellyoursaas_blacklistip
 --ignore-table=$base.llx_sellyoursaas_blacklistmail
 --ignore-table=$base.llx_sellyoursaas_blacklistto
+--ignore-table=$base.llx_sellyoursaas_clean_dbnotinlist
 --ignore-table=$base.llx_sellyoursaas_deploymentserver
 --ignore-table=$base.llx_sellyoursaas_stats
 --ignore-table=$base.llx_sellyoursaas_whitelistip

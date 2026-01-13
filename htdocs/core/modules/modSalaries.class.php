@@ -44,8 +44,6 @@ class modSalaries extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $conf;
-
 		$this->db = $db;
 		$this->numero = 510; // Perms from 501..519
 
@@ -61,7 +59,7 @@ class modSalaries extends DolibarrModules
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->picto = 'payment';
+		$this->picto = 'salary';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array("/salaries/temp");
@@ -100,7 +98,7 @@ class modSalaries extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 511;
-		$this->rights[$r][1] = 'Read employee salaries and payments (yours and your subordinates)';
+		$this->rights[$r][1] = 'Read employee salaries and payments (yours only)';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'read';
@@ -108,6 +106,14 @@ class modSalaries extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 512;
+		$this->rights[$r][1] = 'Read employee salaries and payments (yours and of your subordinates)';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'readchild';
+		$this->rights[$r][5] = '';
+
+		$r++;
+		$this->rights[$r][0] = 513;
 		$this->rights[$r][1] = 'Create/modify payments of empoyee salaries';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
@@ -124,7 +130,7 @@ class modSalaries extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 517;
-		$this->rights[$r][1] = 'Read salaries and payments of all employees';
+		$this->rights[$r][1] = 'Read salaries and payments (of all employees)';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'readall';
@@ -151,16 +157,18 @@ class modSalaries extends DolibarrModules
 		$r++;
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
 		$this->export_label[$r] = 'SalariesAndPayments';
+		$this->export_icon[$r] = 'salary';
 		$this->export_permission[$r] = array(array("salaries", "export"));
-		$this->export_fields_array[$r] = array('u.firstname'=>"Firstname", 'u.lastname'=>"Lastname", 'u.login'=>"Login", 'u.salary'=>'CurrentSalary', 'p.datep'=>'DatePayment', 'p.datesp'=>'DateStartPeriod', 'p.dateep'=>'DateEndPeriod', 'p.amount'=>'AmountPayment', 'p.num_payment'=>'Numero', 'p.label'=>'Label', 'p.note'=>'Note');
-		$this->export_TypeFields_array[$r] = array('u.firstname'=>"Text", 'u.lastname'=>"Text", 'u.login'=>'Text', 'u.salary'=>"Numeric", 'p.datep'=>'Date', 'p.datesp'=>'Date', 'p.dateep'=>'Date', 'p.amount'=>'Numeric', 'p.num_payment'=>'Numeric', 'p.label'=>'Text');
+		$this->export_fields_array[$r] = array('s.rowid' => 'SalaryID', 's.label'=>'Label', 's.datesp'=>'DateStartPeriod', 's.dateep'=>'DateEndPeriod', 's.amount' => 'SalaryAmount', 's.paye' => 'Status', 'u.firstname'=>"Firstname", 'u.lastname'=>"Lastname", 'u.login'=>"Login", 'u.salary'=>'CurrentSalary', 'p.datep'=>'DatePayment', 'p.amount'=>'AmountPayment', 'p.num_payment'=>'Numero', 'p.note'=>'Note');
+		$this->export_TypeFields_array[$r] = array('s.rowid' => 'Numeric', 's.label'=>'Text', 's.amount' => 'Numeric', 's.paye' => 'Numeric', 'u.firstname'=>"Text", 'u.lastname'=>"Text", 'u.login'=>'Text', 'u.salary'=>"Numeric", 'p.datep'=>'Date', 's.datesp'=>'Date', 's.dateep'=>'Date', 'p.amount'=>'Numeric', 'p.num_payment'=>'Numeric');
 		$this->export_entities_array[$r] = array('u.firstname'=>'user', 'u.lastname'=>'user', 'u.login'=>'user', 'u.salary'=>'user', 'p.datep'=>'payment', 'p.datesp'=>'payment', 'p.dateep'=>'payment', 'p.amount'=>'payment', 'p.label'=>'payment', 'p.note'=>'payment', 'p.num_payment'=>'payment');
 
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
-		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'user as u';
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'payment_salary as p ON p.fk_user = u.rowid';
+		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'salary as s';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON s.fk_user = u.rowid';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'payment_salary as p ON p.fk_salary = s.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_typepayment = cp.id';
-		$this->export_sql_end[$r] .= ' AND u.entity IN ('.getEntity('user').')';
+		$this->export_sql_end[$r] .= ' AND s.entity IN ('.getEntity('salary').')';
 	}
 
 

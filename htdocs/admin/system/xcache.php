@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2009-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +24,14 @@
 // Load Dolibarr environment
 require '../../main.inc.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $langs->load("admin");
 
 if (!$user->admin) {
@@ -36,7 +45,7 @@ $action = GETPOST('action', 'aZ09');
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_xcache');
 
 print load_fiche_titre("XCache", '', 'title_setup');
 

@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2006-2016  Laurent Destailleur  		<eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,6 +52,10 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
+/**
+ * @var DoliDB $db
+ * @var Translate $langs
+ */
 
 dol_syslog("Call User webservices interfaces");
 
@@ -72,6 +76,7 @@ $server->soap_defencoding = 'UTF-8';
 $server->decode_utf8 = false;
 $ns = 'http://www.dolibarr.org/ns/';
 $server->configureWSDL('WebServicesDolibarrUser', $ns);
+// @phan-suppress-next-line PhanUndeclaredProperty
 $server->wsdl->schemaTargetNamespace = $ns;
 
 
@@ -324,7 +329,7 @@ $server->register(
 /**
  * Get produt or service
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}	$authentication		Array of authentication information
  * @param	int			$id					Id of object
  * @param	string		$ref				Ref of object
  * @param	string		$ref_ext			Ref external of object
@@ -354,7 +359,7 @@ function getUser($authentication, $id, $ref = '', $ref_ext = '')
 	}
 
 	if (!$error) {
-		$fuser->getrights();
+		$fuser->loadRights();
 
 		if ($fuser->hasRight('user', 'user', 'lire')
 			|| ($fuser->hasRight('user', 'self', 'creer') && $id && $id == $fuser->id)
@@ -417,8 +422,8 @@ function getUser($authentication, $id, $ref = '', $ref_ext = '')
 /**
  * getListOfGroups
  *
- * @param	array		$authentication		Array of authentication information
- * @return	array							Array result
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}	$authentication		Array of authentication information
+ * @return array{result:array{result_code:string,result_label:string}} Array result
  */
 function getListOfGroups($authentication)
 {
@@ -485,9 +490,9 @@ function getListOfGroups($authentication)
 /**
  * Create an external user with thirdparty and contact
  *
- * @param	array		$authentication		Array of authentication information
- * @param	array		$thirdpartywithuser Datas
- * @return	mixed
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}	$authentication		Array of authentication information
+ * @param array{name:string,firstname:string,name_thirdparty:string,ref_ext:string,client:string,fournisseur:string,address:string,zip:string,town:string,country_id:string,country_code:string,phone:string,phone_mobile:string,fax:string,email:string,url:string,profid1:string,profid2:string,profid3:string,profid4:string,profid5:string,profid6:string,capital:string,tva_assuj:string,tva_intra:string,login:string,password:string,group_id:string}		$thirdpartywithuser Datas
+ * @return array{id?:int,result:array{result_code:string,result_label:string}} Array result
  */
 function createUserFromThirdparty($authentication, $thirdpartywithuser)
 {
@@ -517,7 +522,7 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 	}
 
 	if (!$error) {
-		$fuser->getrights();
+		$fuser->loadRights();
 
 		if ($fuser->hasRight('societe', 'creer')) {
 			$thirdparty = new Societe($db);
@@ -548,7 +553,7 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 					$thirdparty->address = $thirdpartywithuser['address'];
 					$thirdparty->zip = $thirdpartywithuser['zip'];
 					$thirdparty->town = $thirdpartywithuser['town'];
-					$thirdparty->country_id = $thirdpartywithuser['country_id'];
+					$thirdparty->country_id = (int) $thirdpartywithuser['country_id'];
 					$thirdparty->country_code = $thirdpartywithuser['country_code'];
 
 					// find the country id by code
@@ -557,7 +562,7 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 					$sql = "SELECT rowid";
 					$sql .= " FROM ".MAIN_DB_PREFIX."c_country";
 					$sql .= " WHERE active = 1";
-					$sql .= " AND code='".$db->escape($thirdparty->country_code)."'";
+					$sql .= " AND code = '".$db->escape($thirdparty->country_code)."'";
 
 					$resql = $db->query($sql);
 					if ($resql) {
@@ -571,16 +576,15 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 					$thirdparty->fax = $thirdpartywithuser['fax'];
 					$thirdparty->email = $thirdpartywithuser['email'];
 					$thirdparty->url = $thirdpartywithuser['url'];
-					$thirdparty->ape = $thirdpartywithuser['ape'];
-					$thirdparty->idprof1 = $thirdpartywithuser['prof1'];
-					$thirdparty->idprof2 = $thirdpartywithuser['prof2'];
-					$thirdparty->idprof3 = $thirdpartywithuser['prof3'];
-					$thirdparty->idprof4 = $thirdpartywithuser['prof4'];
-					$thirdparty->idprof5 = $thirdpartywithuser['prof5'];
-					$thirdparty->idprof6 = $thirdpartywithuser['prof6'];
+					$thirdparty->idprof1 = $thirdpartywithuser['profid1'];
+					$thirdparty->idprof2 = $thirdpartywithuser['profid2'];
+					$thirdparty->idprof3 = $thirdpartywithuser['profid3'];
+					$thirdparty->idprof4 = $thirdpartywithuser['profid4'];
+					$thirdparty->idprof5 = $thirdpartywithuser['profid5'];
+					$thirdparty->idprof6 = $thirdpartywithuser['profid6'];
 
-					$thirdparty->client = $thirdpartywithuser['client'];
-					$thirdparty->fournisseur = $thirdpartywithuser['fournisseur'];
+					$thirdparty->client = (int) $thirdpartywithuser['client'];
+					$thirdparty->fournisseur = (int) $thirdpartywithuser['fournisseur'];
 
 					$socid_return = $thirdparty->create($fuser);
 
@@ -603,6 +607,7 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 						$contact->phone_pro = $thirdparty->phone;
 						$contact->phone_mobile = $thirdpartywithuser['phone_mobile'];
 						$contact->fax = $thirdparty->fax;
+						$contact->status = 1;
 						$contact->statut = 1;
 						$contact->country_id = $thirdparty->country_id;
 						$contact->country_code = $thirdparty->country_code;
@@ -635,7 +640,7 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 								$edituser->setPassword($fuser, trim($thirdpartywithuser['password']));
 
 								if ($thirdpartywithuser['group_id'] > 0) {
-									$edituser->SetInGroup($thirdpartywithuser['group_id'], $conf->entity);
+									$edituser->SetInGroup((int) $thirdpartywithuser['group_id'], $conf->entity);
 								}
 							} else {
 								$error++;
@@ -684,8 +689,8 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 /**
  * Set password of an user
  *
- * @param	array		$authentication		Array of authentication information
- * @param	array		$shortuser			Array of login/password info
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}	$authentication		Array of authentication information
+ * @param	array{login:string,password:string}		$shortuser			Array of login/password info
  * @return	mixed
  */
 function setUserPassword($authentication, $shortuser)
@@ -716,11 +721,11 @@ function setUserPassword($authentication, $shortuser)
 	}
 
 	if (!$error) {
-		$fuser->getrights();
+		$fuser->loadRights();
 
 		if ($fuser->hasRight('user', 'user', 'password') || $fuser->hasRight('user', 'self', 'password')) {
 			$userstat = new User($db);
-			$res = $userstat->fetch('', $shortuser['login']);
+			$res = $userstat->fetch(0, $shortuser['login']);
 			if ($res) {
 				$res = $userstat->setPassword($userstat, $shortuser['password']);
 				if (is_int($res) && $res < 0) {
