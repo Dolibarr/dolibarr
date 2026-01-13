@@ -126,11 +126,11 @@ if (!function_exists('str_contains')) {
  * Return the full path of the directory where a module (or an object of a module) stores its files.
  * Path may depends on the entity if a multicompany module is enabled.
  *
- * @param 	CommonObject|BlockedLog	$object 	Dolibarr common object.
- * @param 	string 					$module 	Override object element, for example to use 'mycompany' instead of 'societe'
- * @param	int						$forobject	Return the more complete path for the given object instead of for the module only.
- * @param	string					$mode		'output' (full main dir) or 'outputrel' (relative dir) or 'temp' (full dir for temporary files) or 'version' (full dir for archived files)
- * @return 	string|null							The path of the relative directory of the module, ending with /
+ * @param 	CommonObject|BlockedLog|null	$object 	Dolibarr common object.
+ * @param 	string 							$module 	Override object element, for example to use 'mycompany' instead of 'societe'
+ * @param	int								$forobject	Return the more complete path for the given object instead of for the module only.
+ * @param	string							$mode		'output' (full main dir) or 'outputrel' (relative dir) or 'temp' (full dir for temporary files) or 'version' (full dir for archived files)
+ * @return 	string|null									The path of the relative directory of the module, ending with /
  * @since Dolibarr V18
  */
 function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'output')
@@ -324,6 +324,17 @@ function getDolEntity()
 {
 	global $conf;
 	return (int) $conf->entity;
+}
+
+/**
+ * Return the current entity
+ *
+ * @return 	string						Value returned
+ */
+function getDolDBType()
+{
+	global $conf;
+	return $conf->db->type;
 }
 
 /**
@@ -1776,7 +1787,9 @@ function dol_get_object_properties($obj, $properties = [])
  *  Create a clone of instance of object (new instance with same value for each properties)
  *  With native = 0: Deprecated. Property that are references are different memory area in the new object (full isolation clone). This means $this->objectproperty of the new object may not be valid (except this->db that is voluntarly kept).
  *  With native = 1: Use PHP clone. Property that are reference are same pointer. This means $this->db of new object is still valid but point to same this->db than original object.
- *  With native = 2: Property that are reference are different memory area in the new object (full isolation clone). Only scalar and array values are cloned. This means method are not availables and $this->db of new object is not valid.
+ *  With native = 2: Property that are reference are different memory area in the new object (full isolation clone). Only scalar and array values are cloned. This means that the methods are not available and $this->db of new object is not valid.
+ *  You can use it with: $object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
+ *
  *
  *  @template T
  *
@@ -1914,16 +1927,21 @@ function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1, $includequotes
  *
  *	@param	string	$str            String to clean
  * 	@param	string	$newstr			String to replace bad chars with
- *  @param	int	    $unaccent		1=Remove also accent (default), 0 do not remove them
+ *  @param	int	    $unaccent		1=Remove also accent, 0 do not remove them
+ *  @param	int	    $allowdash		1=Allow dash char after a space and before a string, 0 do not allow
  *	@return string          		String cleaned
  *
  * 	@see        	dol_string_nospecial(), dol_string_unaccent(), dol_sanitizeFileName()
  */
-function dol_sanitizePathName($str, $newstr = '_', $unaccent = 1)
+function dol_sanitizePathName($str, $newstr = '_', $unaccent = 0, $allowdash = 0)
 {
 	// List of special chars for filenames in windows are defined on page https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file
-	// Char '>' '<' '|' '$' and ';' are special chars for shells.
-	// Chars '--' can be used into filename to inject special parameters like --use-compress-program to make command with file as parameter making remote execution of command
+	// Char '>' '<' '|' '$' ';' and '`' are special chars for shells.
+	// Char '?' and '*' are for wild card chars.
+	// Char '"' is dangerous.
+	// Char '°' is just not expected.
+	// Chars '-' and '--' can be used into filename to inject special parameters like --use-compress-program to make command with file as parameter making remote execution of command
+	// Chars '--' and '~' can be used for path transversal
 	$filesystem_forbidden_chars = array('<', '>', '?', '*', '|', '"', '°', '$', ';', '`');
 
 	$tmp = $str;
@@ -1931,10 +1949,13 @@ function dol_sanitizePathName($str, $newstr = '_', $unaccent = 1)
 		$tmp = dol_string_unaccent($tmp);
 	}
 	$tmp = dol_string_nospecial($tmp, $newstr, $filesystem_forbidden_chars);
-	$tmp = preg_replace('/\-\-+/', '_', $tmp);
-	$tmp = preg_replace('/\s+\-([^\s])/', ' _$1', $tmp);
-	$tmp = preg_replace('/\s+\-$/', '', $tmp);
-	$tmp = str_replace('..', '', $tmp);
+	$tmp = preg_replace('/\-\-+/', $newstr, $tmp);
+	if (empty($allowdash)) {
+		$tmp = preg_replace('/\s+\-([^\s])/', ' '.$newstr.'$1', $tmp);
+		$tmp = preg_replace('/\s+\-$/', '', $tmp);
+	}
+	$tmp = str_replace('..', $newstr, $tmp);
+	$tmp = str_replace('~', $newstr, $tmp);
 	return $tmp;
 }
 
@@ -4339,7 +4360,7 @@ function dol_print_url($url, $target = '_blank', $max = 32, $withpicto = 0, $mor
 /**
  * Show EMail link formatted for HTML output.
  *
- * @param	string		$email			EMail to show (only email, without 'Name of recipient' before)
+ * @param	string		$email			EMail to show (can be 'email' or 'Name of recipient <email>')
  * @param 	int			$contactid 		Id of contact if known
  * @param 	int			$socid 			Id of third party if known
  * @param 	int|string	$addlink		0=no link, 1=email has a html email link (+ link to create action if constant AGENDA_ADDACTIONFOREMAIL is on), 'thirdparty'=link to the thirdparty presend email
@@ -4382,9 +4403,18 @@ function dol_print_email($email, $contactid = 0, $socid = 0, $addlink = 0, $max 
 			$newemail .= $email;
 		}
 		$newemail .= '</a>';
-		if ($showinvalid && !isValidEmail($email)) {
-			$langs->load("errors");
-			$newemail .= img_warning($langs->trans("ErrorBadEMail", $email), '', 'paddingrightonly');
+
+		if ($showinvalid) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+			$emailonly = CMailFile::getValidAddress($email, 2);
+			if (!isValidEmail($emailonly)) {
+				$langs->load("errors");
+				$newemail .= img_warning($langs->transnoentitiesnoconv("ErrorBadEMail", $emailonly), '', 'paddingrightonly');
+			} elseif (!isValidMailDomain($emailonly)) {
+				$langs->load("errors");
+				$newemail .= img_warning($langs->transnoentitiesnoconv("ErrorBadMXDomain", $emailonly), '', 'paddingrightonly');
+			}
 		}
 
 		if (($contactid || $socid) && isModEnabled('agenda') && $user->hasRight("agenda", "myactions", "create")) {
@@ -4409,9 +4439,17 @@ function dol_print_email($email, $contactid = 0, $socid = 0, $addlink = 0, $max 
 	} else {
 		$newemail = ($withpicto ? img_picto($langs->trans("EMail") . ' : ' . $email, (is_numeric($withpicto) ? 'email' : $withpicto), 'class="paddingrightonly"') : '') . $newemail;
 
-		if ($showinvalid && !isValidEmail($email)) {
-			$langs->load("errors");
-			$newemail .= img_warning($langs->trans("ErrorBadEMail", $email));
+		if ($showinvalid) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+			$emailonly = CMailFile::getValidAddress($email, 2);
+			if (!isValidEmail($emailonly)) {
+				$langs->load("errors");
+				$newemail .= img_warning($langs->transnoentitiesnoconv("ErrorBadEMail", $email));
+			} elseif (!isValidMailDomain($emailonly)) {
+				$langs->load("errors");
+				$newemail .= img_warning($langs->transnoentitiesnoconv("ErrorBadMXDomain", $emailonly));
+			}
 		}
 	}
 
@@ -12011,7 +12049,7 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 
 		// Set $dolibarr_main_restrict_eval_methods_array
 		if (!isset($dolibarr_main_restrict_eval_methods)) {
-			$dolibarr_main_restrict_eval_methods = 'getDolGlobalString, getDolGlobalInt, getDolCurrency, fetchNoCompute, hasRight, isAdmin, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, preg_match';
+			$dolibarr_main_restrict_eval_methods = 'getDolGlobalString, getDolGlobalInt, getDolCurrency, getDolEntity, getDolDBType, fetchNoCompute, hasRight, isAdmin, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, preg_match';
 		}
 		//print '$dolibarr_main_restrict_eval_methods = '.$dolibarr_main_restrict_eval_methods."\n";
 		$dolibarr_main_restrict_eval_methods_array = explode(',', str_replace(" ", "", $dolibarr_main_restrict_eval_methods));
@@ -13896,7 +13934,7 @@ function getDictionaryValue($tablename, $field, $id, $checkentity = false, $rowi
  *	Return true if the color is light
  *
  *  @param	string	$stringcolor		String with hex (FFFFFF) or comma RGB ('255,255,255')
- *  @return	int<-1,1>					-1 : Error with argument passed |0 : color is dark | 1 : color is light
+ *  @return	int<-1,1>					-1 : Error with argument passed | 0 : color is dark | 1 : color is light
  */
 function colorIsLight($stringcolor)
 {
@@ -13935,8 +13973,6 @@ function colorIsLight($stringcolor)
  */
 function isVisibleToUserType($type_user, &$menuentry, &$listofmodulesforexternal)
 {
-	global $conf;
-
 	//print 'type_user='.$type_user.' module='.$menuentry['module'].' enabled='.$menuentry['enabled'].' perms='.$menuentry['perms'];
 	//print 'ok='.in_array($menuentry['module'], $listofmodulesforexternal);
 	if (empty($menuentry['enabled'])) {
@@ -14811,6 +14847,12 @@ function getElementProperties($elementType)
 		$module = 'projet';
 		$subelement = 'task';
 		$table_element = 'projet_task';
+	} elseif ($elementType == 'mo') {
+		$classpath = 'mrp/class';
+		$module = 'mrp';
+		$classfile = 'mo';
+		$classname = 'Mo';
+		$table_element = 'mrp_mo';
 	} elseif ($elementType == 'facture' || $elementType == 'invoice') {
 		$classpath = 'compta/facture/class';
 		$module = 'facture';
@@ -15864,7 +15906,7 @@ function dolForgeSQLCriteriaCallback($matches)
 			} elseif (is_numeric((string) $tmpelem)) {	// it can be a float with a .
 				$tmpelemarray[$tmpkey] = (float) $tmpelem;
 			} elseif (!getDolGlobalString("MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER")) {
-				$tmpelemarray[$tmpkey] = preg_replace('/[^a-z0-9_<>=!\s]/i', '', $tmpelem);	// it can be a full subrequest
+				$tmpelemarray[$tmpkey] = preg_replace('/[^a-z0-9_<>=!\s]/i', '', $tmpelem);	// it can be a full subrequest (should be removed in a future as it allows blind SQL injection)
 			} else {
 				$tmpelemarray[$tmpkey] = preg_replace('/[^a-z0-9_]/i', '', $tmpelem);	// it can be a name of field or a substitution variable like '__NOW__'
 			}

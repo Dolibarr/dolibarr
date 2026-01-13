@@ -2779,7 +2779,7 @@ class Form
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
-	 *  Return list of products for customer.
+	 *  Return list of products.
 	 *  Use Ajax if Ajax activated or go to select_produits_list
 	 *
 	 *  @param		int			$selected				Preselected products
@@ -4950,7 +4950,7 @@ class Form
 		$this->load_cache_conditions_paiements();
 
 		// Set default value if not already set by caller
-		if (empty($selected) && getDolGlobalString('MAIN_DEFAULT_PAYMENT_TERM_ID')) {
+		if (empty($selected) && strpos($htmlname, 'search_') !== 0 && getDolGlobalString('MAIN_DEFAULT_PAYMENT_TERM_ID')) {
 			dol_syslog(__METHOD__ . "Using deprecated option MAIN_DEFAULT_PAYMENT_TERM_ID", LOG_NOTICE);
 			$selected = getDolGlobalString('MAIN_DEFAULT_PAYMENT_TERM_ID');
 		}
@@ -5095,7 +5095,7 @@ class Form
 		$this->load_cache_types_paiements();
 
 		// Set default value if not already set by caller
-		if (empty($selected) && getDolGlobalString('MAIN_DEFAULT_PAYMENT_TYPE_ID')) {
+		if (empty($selected) && strpos($htmlname, 'search_') !== 0 && getDolGlobalString('MAIN_DEFAULT_PAYMENT_TYPE_ID')) {
 			dol_syslog(__METHOD__ . "Using deprecated option MAIN_DEFAULT_PAYMENT_TYPE_ID", LOG_NOTICE);
 			$selected = getDolGlobalString('MAIN_DEFAULT_PAYMENT_TYPE_ID');
 		}
@@ -7972,7 +7972,8 @@ class Form
 			}
 
 			// Show hour
-			$retstring .= '<select' . ($disabled ? ' disabled' : '') . ' class="flat valignmiddle maxwidth50 ' . ($fullday ? $fullday . 'hour' : '') . '" id="' . $prefix . 'hour" name="' . $prefix . 'hour">';
+			$retstring .= '<select' . ($disabled ? ' disabled' : '') . ' class="flat valignmiddle maxwidth75 ';	// Note maxwidth50 generates truncated number on some desktops even with same version of chrome that works on others
+			$retstring .= ($fullday ? $fullday . 'hour' : '') . '" id="' . $prefix . 'hour" name="' . $prefix . 'hour">';
 			if ($emptyhours) {
 				$retstring .= '<option value="-1">&nbsp;</option>';
 			}
@@ -7995,7 +7996,8 @@ class Form
 
 		if ($m) {
 			// Show minutes
-			$retstring .= '<select ' . ($disabled ? ' disabled' : '') . ' class="flat valignmiddle maxwidth50 ' . ($fullday ? $fullday . 'min' : '') . '" id="' . $prefix . 'min" name="' . $prefix . 'min">';
+			$retstring .= '<select ' . ($disabled ? ' disabled' : '') . ' class="flat valignmiddle maxwidth75 ';	// Note maxwidth50 generates truncated number on some desktops even with same version of chrome that works on others
+			$retstring .= ($fullday ? $fullday . 'min' : '') . '" id="' . $prefix . 'min" name="' . $prefix . 'min">';
 			if ($emptyhours) {
 				$retstring .= '<option value="-1">&nbsp;</option>';
 			}
@@ -10242,6 +10244,7 @@ class Form
 	{
 		global $conf, $langs, $hookmanager;
 		global $action;
+		global $db, $user;	// Will be used into tpl
 
 		$object->fetchObjectLinked();
 
@@ -10279,6 +10282,7 @@ class Form
 				$tplpath = $element = $subelement = $objecttype;
 
 				// to display import button on tpl
+				global $showImportButton;		// Will be used into tpl
 				$showImportButton = false;
 				if (!empty($compatibleImportElementsList) && in_array($element, $compatibleImportElementsList)) {
 					$showImportButton = true;
@@ -10363,7 +10367,7 @@ class Form
 					$tplpath = 'projet/tasks';
 				}
 
-				global $linkedObjectBlock;
+				global $linkedObjectBlock;		// Will be used into tpl
 				$linkedObjectBlock = $objects;
 
 				// Output template part (modules that overwrite templates must declare this into descriptor)
@@ -10372,7 +10376,7 @@ class Form
 				foreach ($dirtpls as $reldir) {
 					$reldir = rtrim($reldir, '/');
 					if ($nboftypesoutput == ($nbofdifferenttypes - 1)) {    // No more type to show after
-						global $noMoreLinkedObjectBlockAfter;
+						global $noMoreLinkedObjectBlockAfter;		// Will be used into tpl
 						$noMoreLinkedObjectBlockAfter = 1;
 					}
 					$file = dol_buildpath($reldir . '/' . $tplname . '.tpl.php');

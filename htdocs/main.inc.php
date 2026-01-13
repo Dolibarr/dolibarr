@@ -75,6 +75,8 @@ require_once 'filefunc.inc.php';
 /**
  * @var ?string $php_session_save_handler
  * @var ?string $dolibarr_main_force_https
+ * @var ?string $dolibarr_main_restrict_ip
+ * @var ?string $dolibarr_nocsrfcheck
  */
 
 // If there is a POST parameter to tell to save automatically some POST parameters into cookies, we do it.
@@ -2418,7 +2420,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 
 	// login infos
 	if (!empty($user->admin)) {
-		$dropdownBody .= '<br><b>'.$langs->trans("Administrator").'</b>: '.yn($user->admin).($user->admin ? ' '.img_picto('', 'admin') : '');
+		$dropdownBody .= '<br><b>'.$langs->trans("Administrator").'</b>: '.yn($user->admin).' '.img_picto('', 'admin');
 	}
 	$company = '';
 	if (!empty($user->socid)) {	// Add third party for external users
@@ -3748,8 +3750,11 @@ if (!function_exists("llxFooter")) {
 					// Output code for ping
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-					$arrayofdata = array('action' => 'dolibarrping', 'country_code' => ($mysoc->country_code ? $mysoc->country_code : 'unknown'));
-					printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayofdata, $forceping);
+					$arrayofmoredata = array(
+						'action' => 'dolibarrping',
+						'country_code' => ($mysoc->country_code ? $mysoc->country_code : 'unknown')
+					);
+					printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayofmoredata, $forceping);
 				} else {
 					$now = dol_now();
 					print "\n<!-- NO JS CODE TO ENABLE the anonymous Ping. It was disabled -->\n";

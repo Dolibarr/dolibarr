@@ -72,6 +72,7 @@ class Categorie extends CommonObject
 	const TYPE_SUPPLIER_PROPOSAL	= 'supplier_proposal';
 	const TYPE_PROPOSAL	            = 'propal';
 	const TYPE_PROJECT_TASK			= 'project_task';
+	const TYPE_MO					= 'mo';
 
 
 	/**
@@ -107,6 +108,7 @@ class Categorie extends CommonObject
 		'supplier_proposal'		=> 22,
 		'propal'				=> 23,
 		'project_task'			=> 24,
+		'mo'					=> 25,
 	);
 
 	/**
@@ -187,6 +189,7 @@ class Categorie extends CommonObject
 		'supplier_proposal' 	=> 'SupplierProposal',
 		'propal' 				=> 'Propal',
 		'project_task'			=> 'Task',
+		'mo'					=> 'Mo',
 	);
 
 	/**
@@ -216,7 +219,8 @@ class Categorie extends CommonObject
 		'supplier_invoice'		=> 'SuppliersInvoices',
 		'propal' 				=> 'Proposals',
 		'supplier_proposal' 	=> 'SupplierProposals',
-		'project_task'			=> 'Tasks'
+		'project_task'			=> 'Tasks',
+		'mo'					=> 'MOs'
 	);
 
 	/**
@@ -237,7 +241,8 @@ class Categorie extends CommonObject
 		'invoice'				=> 'facture',
 		'supplier_order'		=> 'commande_fournisseur',
 		'supplier_invoice'		=> 'facture_fourn',
-		'project_task'			=> 'projet_task'
+		'project_task'			=> 'projet_task',
+		'mo'					=> 'mrp_mo'
 	);
 
 	/**
@@ -1436,7 +1441,7 @@ class Categorie extends CommonObject
 		while ((empty($protection) || $i < $protection) && !empty($this->motherof[$cursor_categ])) {
 			//print '&nbsp; cursor_categ='.$cursor_categ.' i='.$i.' '.$this->motherof[$cursor_categ].'<br>'."\n";
 			$this->cats[$id_categ]['fullpath'] = '_'.$this->motherof[$cursor_categ].$this->cats[$id_categ]['fullpath'];
-			$this->cats[$id_categ]['fulllabel'] = (empty($this->cats[$this->motherof[$cursor_categ]]) ? 'NotFound' : $this->cats[$this->motherof[$cursor_categ]]['label']).' >> '.$this->cats[$id_categ]['fulllabel'];
+			$this->cats[$id_categ]['fulllabel'] = (empty($this->cats[$this->motherof[$cursor_categ]]) ? 'NotFound' : $this->cats[$this->motherof[$cursor_categ]]['label']).' > '.$this->cats[$id_categ]['fulllabel'];
 			//print '&nbsp; Result for id_categ='.$id_categ.' : '.$this->cats[$id_categ]['fullpath'].' '.$this->cats[$id_categ]['fulllabel'].'<br>'."\n";
 			$i++;
 			$cursor_categ = $this->motherof[$cursor_categ];
@@ -1623,7 +1628,7 @@ class Categorie extends CommonObject
 					$w[] = '<a class="valignmiddle '.($i < count($way) ? 'small ' : '').$forced_color.'" href="'.DOL_URL_ROOT.'/'.$url.'?catid='.((int) $cat->id).'">'.($addpicto ? img_object('', 'category') : '').$cat->label.'</a>';
 				}
 			}
-			$newcategwithpath = preg_replace('/colortoreplace/', $forced_color, implode('<span class="inline-block valignmiddle paddingleft paddingright '.$forced_color.'">'.$sep.'</span>', $w));
+			$newcategwithpath = preg_replace('/colortoreplace/', $forced_color, implode('<span class="inline-block valignmiddle paddingleft paddingright small '.$forced_color.'">'.$sep.'</span>', $w));
 
 			$ways[] = $newcategwithpath;
 		}

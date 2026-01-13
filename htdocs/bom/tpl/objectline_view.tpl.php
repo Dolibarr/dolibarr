@@ -290,6 +290,7 @@ $sql .= ' WHERE fk_bom ='. (int) $tmpbom->id;
 $resql = $object->db->query($sql);
 
 if ($resql) {
+	$j = 0; // sub bom line number
 	// Loop on all the sub-BOM lines if they exist
 	while ($obj = $object->db->fetch_object($resql)) {
 		$sub_bom_product = new Product($object->db);
@@ -308,6 +309,12 @@ if ($resql) {
 			print '<tr style="display:none" class="sub_bom_lines" parentid="'.$line->id.'">';
 		} else {
 			print '<tr class="sub_bom_lines" parentid="'.$line->id.'">';
+		}
+
+		// Line nb
+		if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
+			print '<td class="linecolnum center">'.($i + 1).'.'.($j + 1).'</td>';
+			$coldisplay++;
 		}
 
 		// Product OR BOM
@@ -392,6 +399,8 @@ if ($resql) {
 		print '<td></td>';
 		print '<td></td>';
 		print '<td></td>';
+		print '</tr>';
+		$j++;
 	}
 }
 

@@ -174,8 +174,14 @@ class BlockedLog
 	public $trackedevents = array();
 
 	/**
-	 * Array of tracked modules
+	 * Array of controlled event codes
 	 * @var array<string,string|mixed>
+	 */
+	public $controlledevents = array();
+
+	/**
+	 * Array of tracked modules (key => label)
+	 * @var array<int|string,string>
 	 */
 	public $trackedmodules = array();
 
@@ -193,7 +199,7 @@ class BlockedLog
 
 
 	/**
-	 * Load list of tracked events into $this->trackedevents.
+	 * Load list of tracked and controlled events into $this->controlled, $this->trackedevents and $this->trackedmodules
 	 *
 	 * @return int<1,1>		Always 1
 	 */
@@ -201,12 +207,15 @@ class BlockedLog
 	{
 		global $langs;
 
+		$this->controlledevents = array();
 		$this->trackedevents = array();
 		$this->trackedmodules = array();
 
 		$sep = 0;
 
-		$this->trackedmodules = array('0' => 'None');
+		$this->controlledevents['BILL_MODIFY'] = array('id' => 'BILL_MODIFY', 'label' => 'logBILL_MODIFY');
+
+		$this->trackedmodules[0] = 'None';
 		if (isModEnabled('takepos')) {
 			$this->trackedmodules['takepos'] = 'TakePOS';
 		}
@@ -295,8 +304,10 @@ class BlockedLog
 				$sep++;
 				$this->trackedevents['separator_'.$sep] = array('id' => 'separator_'.$sep, 'label' => '----------', 'labelhtml' => '<span class="opacitymedium">-----   '.$langs->trans("CashControl").'</span>', 'disabled' => 1);
 			}
-
-			$this->trackedevents['CASHCONTROL_VALIDATE'] = array('id' => 'CASHCONTROL_VALIDATE', 'label' => 'logCASHCONTROL_VALIDATE', 'labelhtml' => img_picto('', 'pos', 'class="pictofixedwidth").').$langs->trans('logCASHCONTROL_VALIDATE'));
+			if (getDolGlobalString('BLOCKEDLOG_ADD_OLD_CASHCONTROL_VALIDATE')) {
+				$this->trackedevents['CASHCONTROL_VALIDATE'] = array('id' => 'CASHCONTROL_VALIDATE', 'label' => 'logCASHCONTROL_VALIDATE', 'labelhtml' => img_picto('', 'pos', 'class="pictofixedwidth").').$langs->trans('logCASHCONTROL_VALIDATE'));
+			}
+			$this->trackedevents['CASHCONTROL_CLOSE'] = array('id' => 'CASHCONTROL_CLOSE', 'label' => 'logCASHCONTROL_CLOSE', 'labelhtml' => img_picto('', 'pos', 'class="pictofixedwidth").').$langs->trans('logCASHCONTROL_CLOSE'));
 		}
 
 		// Add more action to track from a conf variable. For the case we want to track other actions into the unalterable log.
@@ -536,7 +547,7 @@ class BlockedLog
 					$this->linktype = 'credit_note_of';
 					$this->linktoref = $invoice->ref;
 				}
-				//$this->module_source = $invoice->module_source;
+				//$this->module_source = (string) $invoice->module_source;
 			}
 		}
 		if ($object->element == 'facture') {
@@ -548,7 +559,7 @@ class BlockedLog
 					$this->linktype = 'credit_note_of';
 					$this->linktoref = $invoice->ref;
 				}
-				$this->module_source = $invoice->module_source;
+				$this->module_source = (string) $invoice->module_source;
 			}
 		}
 
@@ -597,7 +608,10 @@ class BlockedLog
 				'name', 'lastname', 'firstname', 'region', 'region_id', 'region_code', 'state', 'state_id', 'state_code', 'country', 'country_id', 'country_code',
 				'total_ht', 'total_tva', 'total_ttc', 'total_localtax1', 'total_localtax2',
 				'barcode_type', 'barcode_type_code', 'barcode_type_label', 'barcode_type_coder', 'mode_reglement_id', 'cond_reglement_id', 'mode_reglement', 'cond_reglement', 'shipping_method_id',
-				'fk_incoterms', 'label_incoterms', 'location_incoterms', 'lines'));
+				'extraparams', 'fk_incoterms', 'fk_user_creat', 'fk_user_valid', 'label_incoterms', 'location_incoterms', 'lines', 'nb', 'tms', 'comments', 'array_options', 'warnings',
+				'opening', 'status', 'date_valid'
+				)
+			);
 		}
 
 		// For customer payment and supplier payment, the thirdparty can be added in payment detail
@@ -642,7 +656,7 @@ class BlockedLog
 		}
 
 		// Add my company info
-		if (!empty($mysoc)) {
+		if (!empty($mysoc) && !in_array($object->element, array('cashcontrol'))) {
 			$this->object_data->mycompany = new stdClass();
 
 			foreach ($mysoc as $key => $value) {
@@ -686,7 +700,7 @@ class BlockedLog
 		// Field specific to object
 		if ($this->element == 'facture') {
 			'@phan-var-force Facture $object';
-			$this->module_source = $object->module_source;
+			$this->module_source = (string) $object->module_source;
 
 			foreach ($object as $key => $value) {
 				if (in_array($key, $arrayoffieldstoexclude)) {
@@ -769,29 +783,11 @@ class BlockedLog
 
 			// Add data for action emails
 			if ($action == 'BILL_SENTBYMAIL') {
-				$emailobj = new stdClass();
-				$emailobj->email_from = $object->email_from;
-				//$emailobj->email_to = $object->email_to;
-				$emailobj->email_msgid = $object->email_msgid;
-				$emailobj->email_subject = $object->email_subject;
-
-				$this->object_data->action_email_sent = $emailobj;
-			}
-
-			// Add data for action doc_preview
-			if ($action == 'DOC_PREVIEW') {
-				$docpreviewobj = new stdClass();
-				$docpreviewobj->pos_print_counter = $object->pos_print_counter;
-
-				//$this->object_data->action_doc_preview = $docpreviewobj;
-			}
-
-			// Add data for action doc_download
-			if ($action == 'DOC_DOWNLOAD') {
-				$docdownloadobj = new stdClass();
-				$docdownloadobj->pos_print_counter = $object->pos_print_counter;
-
-				//$this->object_data->action_doc_download = $docdownloadobj;
+				$this->object_data->action_email_sent = array(
+					"email_from" => $object->context['email_from'],
+					"email_to" => $object->context['email_to'],
+					"email_msgid" => $object->context['email_msgid']
+				);
 			}
 		} elseif ($this->element == 'invoice_supplier') {
 			'@phan-var-force FactureFournisseur $object';
@@ -896,10 +892,10 @@ class BlockedLog
 					if (property_exists($tmpobject, 'module_source')) {
 						if (is_null($originofpayment)) {
 							$originofpayment = $tmpobject->module_source;
-						} elseif ($originofpayment != $invoice->module_source) {
+						} elseif ($originofpayment != $tmpobject->module_source) {
 							$originofpayment = 'mix';	// the payment is on several invoices with different origins
 						} else {
-							$originofpayment = (string) $invoice->module_source;
+							$originofpayment = (string) $tmpobject->module_source;
 						}
 					}
 
@@ -1038,6 +1034,11 @@ class BlockedLog
 				}
 			}
 		} else {
+			if ($object->element == 'cashcontrol') {
+				$this->module_source = (string) $object->posmodule;		// Module
+				//$this->pos_source = (string) $object->posnumber;		// Terminal
+			}
+
 			// Generic case
 			foreach ($object as $key => $value) {
 				if (in_array($key, $arrayoffieldstoexclude)) {
@@ -1095,7 +1096,7 @@ class BlockedLog
 				$this->action 			= $obj->action;
 				$this->module_source	= $obj->module_source;
 
-				$this->amounts_taxecl	= (is_null($obj->amounts_taxexcl) ? null : (float) $obj->amounts);
+				$this->amounts_taxexcl	= (is_null($obj->amounts_taxexcl) ? null : (float) $obj->amounts);
 				$this->amounts			= (float) $obj->amounts;
 
 				$this->fk_object = $obj->fk_object;
@@ -1193,7 +1194,7 @@ class BlockedLog
 	 */
 	public function create($user, $forcesignature = '')
 	{
-		global $conf, $langs;
+		global $conf, $langs, $mysoc;
 
 		$langs->load('blockedlog');
 
@@ -1245,7 +1246,8 @@ class BlockedLog
 		$this->object_format = 'V1';	// TODO Switch to V2 when v2 support is complete
 
 		try {
-			$previoushash = $this->getPreviousHash(1, 0); // This get last record and lock database until insert is done and transaction closed
+			$tmparray = $this->getPreviousHash(1, 0); // This get last record and lock database until insert is done and transaction closed
+			$previoushash = $tmparray['previoushash'];
 
 			$concatenateddata = $this->buildKeyForSignature();	// All the information for the hash (meta data + data saved)
 
@@ -1330,6 +1332,71 @@ class BlockedLog
 
 				$this->db->commit();
 
+				include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+				if (isALNERunningVersion(1) && $mysoc->country_code == 'FR') {
+					// TODO Push last rowid + signature to remote dolibarr server
+					// TODO Do it only selected events: BILL_VALIDATE
+
+					// Code here is similar to the one into printCodeForPing()
+					$url_for_ping = getDolGlobalString('MAIN_URL_FOR_PING', "https://ping.dolibarr.org/");
+
+					$algo = 'sha256';
+					$hash_unique_id = dol_hash('dolibarr'.$conf->file->instance_unique_id, $algo);	// Note: if the global salt changes, this hash changes too so ping may be counted twice. We don't mind. It is for statistics and inventory purpose only.
+
+					$data = 'hash_algo=dol_hash-'.urlencode($algo);
+					$data .= '&hash_unique_id='.urlencode($hash_unique_id);
+					$data .= '&action=dolibarrtrack';
+					$data .= '&version='.(float) DOL_VERSION;
+					$data .= '&version_full='.urlencode(DOL_VERSION);
+					$data .= '&entity='.(int) $conf->entity;
+
+					$data .= '&lastrowid='.(int) $this->id;
+					$data .= '&lastsignature='.urlencode($this->signature);
+
+					/*
+					$data = array(
+						'action' => 'dolibarrtrack',
+						'hash_algo' => 'dol_hash-'.$algo,
+						'hash_unique_id' => $hash_unique_id,
+						'version' => (float) DOL_VERSION,
+						'version_full' => urlencode(DOL_VERSION),
+						'entity=' => (int) $conf->entity
+					);
+					$data['lastrowid'] = (int) $this->id;
+					$data['lastsignature'] = urlencode($this->signature);
+					*/
+
+					$addheaders = array();
+					$timeoutconnect = 1;
+					$timeoutresponse = 1;
+
+					// Probability will be between 1/10 by default and 1/1 if const BLOCKEDLOG_RANDOMRANGE_FOR_TRACKING is set to 1. Can't be lower than 1/10.
+					$BLOCKEDLOG_RANDOMRANGE_FOR_TRACKING = min(10, getDolGlobalInt('BLOCKEDLOG_RANDOMRANGE_FOR_TRACKING', 10));
+					$random = 1;
+					//$BLOCKEDLOG_RANDOMRANGE_FOR_TRACKING = 1;	// To force track at every call
+					if ($BLOCKEDLOG_RANDOMRANGE_FOR_TRACKING > 1) {
+						$random = random_int(1, (int) $BLOCKEDLOG_RANDOMRANGE_FOR_TRACKING);
+					}
+
+					if ($random == 1) {	// 1 chance on BLOCKEDLOG_RANDOMRANGE_FOR_TRACKING
+						dol_syslog(get_class($this)."::create Record is selected to be remotely pushed for tracking", LOG_DEBUG);
+
+						try {
+							$tmpresult = getURLContent($url_for_ping, 'POST', $data, 1, $addheaders, array('https'), 0, -1, $timeoutconnect, $timeoutresponse, array(), '_dolibarrtrack');
+
+							// Add a warning in log in case of error
+							if ($tmpresult['http_code'] != 200) {
+								$logerrormessage = 'Error: '.$tmpresult['http_code'].' '.$tmpresult['content'];
+								dol_syslog(get_class($this)."::create Error when pushing track info: ".$logerrormessage, LOG_WARNING);
+							}
+						} catch (Exception $e) {
+							dol_syslog(get_class($this)."::create Error ".$e->getMessage(), LOG_ERR);
+						}
+					} else {
+						dol_syslog(get_class($this)."::create Record is NOT selected to be remotely pushed for tracking", LOG_DEBUG);
+					}
+				}
+
 				return $this->id;
 			} else {
 				$this->db->rollback();
@@ -1341,7 +1408,7 @@ class BlockedLog
 			return -1;
 		}
 
-		// The commit will release the lock so we can insert nex record
+		// The commit or rollback will release the lock so app can insert other record now
 	}
 
 	/**
@@ -1354,7 +1421,8 @@ class BlockedLog
 	public function checkSignature($previoushash = '', $returnarray = 0)
 	{
 		if (empty($previoushash)) {
-			$previoushash = $this->getPreviousHash(0, $this->id);
+			$tmparray = $this->getPreviousHash(0, $this->id);
+			$previoushash = $tmparray['previoushash'];
 		}
 
 		$concatenateddata = '';
@@ -1472,16 +1540,17 @@ class BlockedLog
 	}
 
 	/**
-	 *	Get previous signature/hash in chain
+	 *	Get previous signature/hash in chain. If there is no previous line, return the init hash.
 	 *
-	 *	@param int<0,1>	$withlock		1=With a lock
-	 *	@param int		$beforeid		ID of a record
-	 *  @return	string					Hash of previous record (if beforeid is defined) or hash of last record (if beforeid is 0)
+	 *	@param int<0,1>	$withlock			1=With a lock
+	 *	@param int		$beforeid			ID of a record
+	 *  @return	array<string, int|string>	Hash of previous record (if beforeid is defined) or hash of last record (if beforeid is 0)
 	 */
 	public function getPreviousHash($withlock = 0, $beforeid = 0)
 	{
 		global $conf;
 
+		$previousid = 0;
 		$previoussignature = '';
 
 		// Fast search of previous record by searching with beforeid - 1. This is very fast and will work 99% of time.
@@ -1495,6 +1564,7 @@ class BlockedLog
 			if ($resql) {
 				$obj = $this->db->fetch_object($resql);
 				if ($obj) {
+					$previousid = $obj->rowid;
 					$previoussignature = $obj->signature;
 				}
 			} else {
@@ -1504,6 +1574,7 @@ class BlockedLog
 		}
 
 		if (empty($previoussignature)) {
+			// Note: a select max rowid and then a select to get signature seems not faster due to filter on entity
 			$sql = "SELECT rowid, signature FROM ".MAIN_DB_PREFIX."blockedlog";
 			if ($beforeid) {
 				$sql .= $this->db->hintindex('entity_rowid', 1);
@@ -1519,6 +1590,7 @@ class BlockedLog
 			if ($resql) {
 				$obj = $this->db->fetch_object($resql);
 				if ($obj) {
+					$previousid = $obj->rowid;
 					$previoussignature = $obj->signature;
 				}
 			} else {
@@ -1529,10 +1601,11 @@ class BlockedLog
 
 		if (empty($previoussignature)) {
 			// First signature line (line 0)
+			$previousid = 0;
 			$previoussignature = $this->getOrInitFirstSignature();
 		}
 
-		return $previoussignature;
+		return array('previousid' => $previousid, 'previoushash' => $previoussignature);
 	}
 
 	/**
@@ -1701,5 +1774,44 @@ class BlockedLog
 	{
 		include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 		return isBlockedLogUsed($ignoresystem);
+	}
+
+
+	/**
+	 * Check if module can be enabled.
+	 *
+	 * @return  string			'' if ok, error message if not possible
+	 */
+	public function canBeEnabled()
+	{
+		global $dolibarr_main_force_https;
+
+		include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+
+		if (isALNEQualifiedVersion(0, 1) && empty($dolibarr_main_force_https)) {
+			return 'Error: The HTTPS must be forced by setting the $dolibarr_main_force_https into Dolibarr conf/conf.php file to allow the use of this module in France.';
+		}
+
+		return '';
+	}
+
+
+	/**
+	 * Check if module can be disabled.
+	 *
+	 * @return  int<0,1>		0=Can't be disabled, 1=Can be disabled
+	 */
+	public function canBeDisabled()
+	{
+		global $mysoc;
+
+		include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+
+		$canbedisabled = 1;
+		if (isALNEQualifiedVersion() && $mysoc->country_code == 'FR') {
+			$canbedisabled = 0;
+		}
+
+		return $canbedisabled;
 	}
 }

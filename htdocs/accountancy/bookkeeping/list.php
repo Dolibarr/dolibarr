@@ -51,7 +51,7 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/lettering.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("accountancy", "categories", "compta"));
+$langs->loadLangs(array("accountancy", "categories", "compta", "other"));
 
 // Get Parameters
 $socid = GETPOSTINT('socid');

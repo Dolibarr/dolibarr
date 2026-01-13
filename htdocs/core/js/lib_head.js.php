@@ -1725,9 +1725,12 @@ function onKanbanColumnChange(item, newColumn) {
 	item.data('original-column', newColumn);
 }
 
+
+if (typeof jQuery.fn.on === 'function') {
+
 /*
-* Intuitive table selection
-*/
+ * Intuitive table selection (with keyboard selection)
+ */
 $(function() {
 
 	/**
@@ -1817,5 +1820,7 @@ $(function() {
 		}
 	});
 });
+
+}
 
 // End of lib_head.js.php

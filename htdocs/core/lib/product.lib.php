@@ -1024,3 +1024,42 @@ function measuring_units_cubed($unit)
 	$measuring_units[99] = 89; // inch -> inch3
 	return $measuring_units[$unit];
 }
+
+/**
+ * Retrieve and return product for mail template.
+ *
+ * @param int $id The ID of the product to retrieve.
+ * @return array<string,mixed>|int<-1,-1>   Return array if OK, -1 if KO
+ */
+function getProductForEmailTemplate($id)
+{
+	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+	global $db, $conf;
+
+	$productarray = array();
+	$sql = "SELECT p.rowid as id, p.ref, p.label, p.description, p.entity";
+	$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
+	$sql .= " WHERE p.entity IN (".getEntity('product').")";
+	$sql .= " AND p.rowid = ".((int) $id);
+
+	$resql = $db->query($sql);
+
+	if ($resql) {
+		$productarray = $db->fetch_array($resql);
+	} else {
+		dol_print_error($db);
+		return -1;
+	}
+
+	$object = new Product($db);
+	$result = $object->fetch($id);
+	if ($result < 0) {
+		dol_print_error($db, $object->error, $object->errors);
+	}
+	$entity = (empty($object->entity) ? $conf->entity : $object->entity);
+	$productarray["image"] = $object->show_photos('product', $conf->product->multidir_output[$entity], 1, 1, 0, 0, 0, 120, 160, 1, '');
+	if ($object->nbphoto <= 0) {
+		$productarray["image"] = "";
+	}
+	return $productarray;
+}

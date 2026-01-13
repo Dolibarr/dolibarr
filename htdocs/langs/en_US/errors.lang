@@ -464,3 +464,5 @@ OperNotDefined=Payment method not defined
 EmptyMessageNotAllowedError=Empty message is not allowed
 SomeShipmentExists=Error, there is some shipment linked to the order. Deletion refused.
 WarningEvaluationEmptyValidate=Can't validate evaluation, levels on skills not defined
+ErrorBadParametersForDirectDebitFileCreate=Can't create bank transfer file: expected format parameter is not provided.
+ErrorBadParametersForDirectDebitFileCreateDids=Can't create bank transfer file: IDs of existing payment requests are not provided.

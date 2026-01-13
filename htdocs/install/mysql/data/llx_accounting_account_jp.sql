@@ -29,7 +29,7 @@
 -- Note: To replace a string thas is '__, 0' into an increasing number, you can use vi with comment
 -- :let @a=1 | %s/__, 0/\='__, '.(@a+setreg('a',@a+1))/g
 
--- Descriptif des plans comptables Japan JPN-BASE                                            
+-- Descriptif des plans comptables Japan JPN-BASE
 -- ID 10000 - 99999
 -- ADD 12300000 to rowid # Do no remove this comment --
 
