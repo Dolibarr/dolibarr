@@ -2995,11 +2995,10 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['shippable']['checked'])) {
 			print '<td class="center">';
 			if (!empty($show_shippable_command) && isModEnabled('stock')) {
-
 				$commande = new Commande($db);
 				$commande->id     = (int) $obj->rowid;
-				$commande->status = (int) $obj->fk_statut; // Nouveau champ status
-				$commande->statut = (int) $obj->fk_statut; // Compat ancien code
+				$commande->status = (int) $obj->fk_statut;
+				$commande->statut = (int) $obj->fk_statut;
 
 				$shippableInfos = $commande->getShippableInfos();
 
