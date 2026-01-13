@@ -393,6 +393,7 @@ PriceUHTCurrency=U.P (net) (currency)
 PriceUTTC=U.P. (inc. tax)
 PriceUTTCCurrency=U.P (inc. tax) (currency)
 ShippableStatus=Shippable
+Shipped=Shipped
 Amount=Amount
 Amounts=Amounts
 AmountInvoice=Invoice amount
