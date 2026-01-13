@@ -213,7 +213,7 @@ class BlockedLog
 
 		$sep = 0;
 
-		$this->controlledevents = array('BILL_MODIFY');
+		$this->controlledevents['BILL_MODIFY'] = array('id' => 'BILL_MODIFY', 'label' => 'logBILL_MODIFY');
 
 		$this->trackedmodules[0] = 'None';
 		if (isModEnabled('takepos')) {

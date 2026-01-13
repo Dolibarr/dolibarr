@@ -98,8 +98,8 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 
 				if (!in_array($object->paiementcode, array('LIQ', 'CB', 'CHQ'))) {
 					// Check that invoice of payment is not from a POS module. Refuse if yes
+					$invoiceids = array();
 					if (is_array($object->amounts)) {
-						$invoiceids = array();
 						foreach ($object->amounts as $objid => $amount) {
 							$invoiceids[] = $objid;
 						}
@@ -107,8 +107,9 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 					// Test there is not invoices with id in $invoiceids and with a module_source that is not empty
 					$tmpinvoice = new Facture($this->db);
 					foreach ($invoiceids as $invoiceid) {
+						$tmpinvoice->id = 0;
 						$tmpinvoice->fetch($invoiceid);
-						if ($tmpinvoice->module_source == 'takepos') {
+						if ($tmpinvoice->id > 0 && $tmpinvoice->module_source == 'takepos') {
 							$this->errors[] = 'The payment mode '.$object->paiementcode.' is not available in this version for payment of invoices generated from '.$tmpinvoice->module_source;
 							return -1;
 						}
