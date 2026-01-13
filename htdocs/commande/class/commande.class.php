@@ -4315,16 +4315,9 @@ class Commande extends CommonOrder
 	/**
 	 * Compute shippable status and tooltip/icon for the order.
 	 *
-	 * Reuses logic previously embedded in commande/list.php
-	 * ("Show shippable Icon this creates subloops, so may be slow").
-	 *
-	 * @param   array   $options    Extra options (reserved for future use)
-	 * @return  array              Array with:
-	 *                             - has_product (bool)
-	 *                             - shippable   (bool)
-	 *                             - texticon    (string)
-	 *                             - textinfo    (string)
-	 *                             - warning     (bool)
+	 * @param array<mixed> $options Extra options (reserved for future use)
+	 * @return  array<string,mixed>        Array with keys: has_product, shippable, texticon, textinfo, warning
+	 * /
 	 */
 	public function getShippableInfos(array $options = array()) : array
 	{
@@ -4380,7 +4373,7 @@ class Commande extends CommonOrder
 
 				if (empty($productstatcache[$orderLine->fk_product])) {
 					$genericProduct->fetch($orderLine->fk_product);
-					$genericProduct->load_stock('nobatch', 'warehouseopen'); // loadvirtualstock included
+					$genericProduct->load_stock('nobatch,warehouseopen'); // loadvirtualstock included
 
 					$productstatcache[$orderLine->fk_product]['stockreel'] = $genericProduct->stock_reel;
 					$productstatcachevirtual[$orderLine->fk_product]['stockreel'] = $genericProduct->stock_theorique;
@@ -4415,7 +4408,7 @@ class Commande extends CommonOrder
 
 								if (isModEnabled('supplier_order')) {
 									if (empty($productstatcache[$orderLine->fk_product]['statsordersupplier'])) {
-										$genericProduct->load_stats_commande_fournisseur(0, 3);
+										$genericProduct->load_stats_commande_fournisseur(0, '3');
 										$productstatcache[$orderLine->fk_product]['statsordersupplier'] = $genericProduct->stats_commande_fournisseur['qty'];
 									}
 									$genericProduct->stats_commande_fournisseur['qty'] = $productstatcache[$orderLine->fk_product]['statsordersupplier'];
