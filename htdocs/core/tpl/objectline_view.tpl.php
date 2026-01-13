@@ -466,8 +466,6 @@ if ($object->element == 'commande' && isModEnabled('stock') && isModEnabled('exp
 		}
 
 		$stock = $productstatcache[$line->fk_product]['stockreel'];
-
-		// Calcul du reste à expédier
 		$reliquat = $line->qty;
 		if (!empty($object->expeditions[$line->id])) {
 			$reliquat -= $object->expeditions[$line->id];
