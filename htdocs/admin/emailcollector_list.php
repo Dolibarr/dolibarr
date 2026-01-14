@@ -788,7 +788,7 @@ if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('MAIN_IMAP_USE_PHPIMAP');
 } else {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("MAIN_IMAP_USE_PHPIMAP", $arrval, $conf->global->MAIN_IMAP_USE_PHPIMAP);
+	print $form->selectarray("MAIN_IMAP_USE_PHPIMAP", $arrval, getDolGlobalString("MAIN_IMAP_USE_PHPIMAP"));
 }
 print '</td>';
 print '</tr>';
