@@ -1512,9 +1512,7 @@ function get_left_menu_commercial($mainmenu, &$newmenu, $usemenuhider = 1, $left
 			$newmenu->add("/fichinter/index.php?leftmenu=ficheinter", $langs->trans("Interventions"), 0, $user->hasRight('ficheinter', 'lire'), '', $mainmenu, 'ficheinter', 2200, '', '', '', img_picto('', 'intervention', 'class="paddingright pictofixedwidth"'));
 			$newmenu->add("/fichinter/card.php?action=create&amp;leftmenu=ficheinter", $langs->trans("NewIntervention"), 1, $user->hasRight('ficheinter', 'creer'), '', '', '', 201);
 			$newmenu->add("/fichinter/list.php?leftmenu=ficheinter", $langs->trans("List"), 1, $user->hasRight('ficheinter', 'lire'), '', '', '', 202);
-			if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
-				$newmenu->add("/fichinter/card-rec.php?leftmenu=ficheinter", $langs->trans("ListOfTemplates"), 1, $user->hasRight('ficheinter', 'lire'), '', '', '', 203);
-			}
+			$newmenu->add("/fichinter/card-rec.php?leftmenu=ficheinter", $langs->trans("ListOfTemplates"), 1, $user->hasRight('ficheinter', 'lire'), '', '', '', 203);
 			$newmenu->add("/fichinter/stats/index.php?leftmenu=ficheinter", $langs->trans("Statistics"), 1, $user->hasRight('ficheinter', 'lire'), '', '', '', 204);
 		}
 	}
