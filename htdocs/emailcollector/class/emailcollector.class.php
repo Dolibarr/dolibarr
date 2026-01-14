@@ -2486,6 +2486,35 @@ class EmailCollector extends CommonObject
 				 }
 				 */
 
+				// Persist attachments for some linked objects (so hooks can rely on files on disk).
+				$savedattachments = array();
+				$savedattachmentsdir = '';
+				$savedattachmentsnote = '';
+				if (empty($mode) && !empty($attachments) && $fk_element_id > 0 && $fk_element_type === 'order_supplier' && is_object($objectemail) && get_class($objectemail) === 'CommandeFournisseur') {
+					$orderref = isset($objectemail->ref) ? (string) $objectemail->ref : '';
+					if ($orderref !== '' && !empty($conf->fournisseur->commande)) {
+						$entityforobject = isset($objectemail->entity) ? (int) $objectemail->entity : (int) $conf->entity;
+						$basedir = (!empty($conf->fournisseur->commande->multidir_output[$entityforobject]) ? $conf->fournisseur->commande->multidir_output[$entityforobject] : $conf->fournisseur->commande->dir_output);
+						$savedattachmentsdir = rtrim($basedir, '/').'/'.dol_sanitizeFileName($orderref);
+						$savedattachments = $this->saveEmailCollectorAttachmentsToDir($savedattachmentsdir, $attachments);
+						if (!empty($savedattachments)) {
+							$operationslog .= '<br>Saved '.count($savedattachments).' attachment(s) into '.dol_escape_htmltag($savedattachmentsdir);
+						}
+					}
+				}
+				if (!empty($savedattachments)) {
+					$names = array();
+					foreach ($savedattachments as $attmeta) {
+						if (!is_array($attmeta) || empty($attmeta['name'])) {
+							continue;
+						}
+						$names[] = (string) $attmeta['name'];
+					}
+					if (!empty($names)) {
+						$savedattachmentsnote = $langs->trans("AttachedFiles").' : '.count($names);
+						$savedattachmentsnote .= ' ('.implode(', ', array_slice($names, 0, 10)).(count($names) > 10 ? '...' : '').')';
+					}
+				}
 
 				// Now do all operations for the email (extract variables and creating data)
 				if ($mode < 2) {	// 0=Mode production, 1=Mode test (read IMAP and try SQL update then rollback), 2=Mode test with no SQL updates
@@ -2537,6 +2566,9 @@ class EmailCollector extends CommonObject
 						}
 						if ($sendtocc) {
 							$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailCC").($langs->trans("MailCC") != 'CC' ? ' (CC)' : '').' : '.dol_escape_htmltag($sendtocc));
+						}
+						if ($savedattachmentsnote) {
+							$descriptionmeta = dol_concatdesc($descriptionmeta, $savedattachmentsnote);
 						}
 
 						if ($operation['type'] == 'ticket') {
@@ -3634,6 +3666,8 @@ class EmailCollector extends CommonObject
 								'subject' => $subject,
 								'header' => $header,
 								'attachments' => $attachments,
+								'savedattachments' => $savedattachments,
+								'savedattachmentsdir' => $savedattachmentsdir,
 							);
 							$reshook = $hookmanager->executeHooks('doCollectImapOneCollector', $parameters, $this, $operation['type']);
 
@@ -4062,6 +4096,145 @@ class EmailCollector extends CommonObject
 		}
 
 		return $subject;
+	}
+
+	/**
+	 * Save IMAP attachments into a target directory and return metadata (relative to DOL_DATA_ROOT).
+	 *
+	 * @param 	string	$destdir	Absolute target dir
+	 * @param 	array	$attachments	Array of Webklex\PHPIMAP\Attachment OR array(filename => raw_data)
+	 * @return	array<int,array<string,mixed>>
+	 */
+	private function saveEmailCollectorAttachmentsToDir($destdir, $attachments)
+	{
+		$destdir = rtrim((string) $destdir, '/');
+		if ($destdir === '' || empty($attachments) || !is_array($attachments)) {
+			return array();
+		}
+
+		if (!dol_is_dir($destdir)) {
+			if (dol_mkdir($destdir) < 0) {
+				return array();
+			}
+		}
+
+		// Compute path relative to DOL_DATA_ROOT.
+		$relativeDir = '';
+		if (defined('DOL_DATA_ROOT')) {
+			$root = rtrim((string) DOL_DATA_ROOT, '/').'/';
+			$destdirwithslash = $destdir.'/';
+			if (strpos($destdirwithslash, $root) === 0) {
+				$relativeDir = rtrim(substr($destdirwithslash, strlen($root)), '/');
+			}
+		}
+
+		$stored = array();
+
+		// PHP-IMAP (Webklex): array of Attachment objects.
+		if (!empty($attachments) && is_object(reset($attachments))) {
+			foreach ($attachments as $idx => $attachment) {
+				if (!is_object($attachment) || !method_exists($attachment, 'getName') || !method_exists($attachment, 'getContent')) {
+					continue;
+				}
+
+				$origName = (string) $attachment->getName();
+				if ($origName === '' || $origName === 'undefined') {
+					$origName = 'attachment-'.((int) $idx);
+				}
+				$safeName = dol_sanitizeFileName($origName, '_', 1, 0);
+				if ($safeName === '') {
+					$safeName = 'attachment-'.((int) $idx);
+				}
+
+				$finalName = $safeName;
+				$n = 1;
+				while (file_exists($destdir.'/'.$finalName)) {
+					$finalName = preg_replace('/(\\.[A-Za-z0-9]{1,10})$/', '', $safeName).'-'.$n;
+					if (preg_match('/\\.[A-Za-z0-9]{1,10}$/', $safeName, $m)) {
+						$finalName .= $m[0];
+					}
+					$n++;
+				}
+
+				$content = '';
+				try {
+					$content = (string) $attachment->getContent();
+				} catch (Throwable $e) {
+					$content = '';
+				}
+				if ($content === '') {
+					continue;
+				}
+
+				$this->saveAttachment($destdir, $finalName, $content);
+
+				$fullPath = $destdir.'/'.$finalName;
+				$mime = '';
+				if (method_exists($attachment, 'getContentType')) {
+					$mime = (string) $attachment->getContentType();
+				}
+				$size = (file_exists($fullPath) ? filesize($fullPath) : null);
+				$sha256 = (file_exists($fullPath) ? hash_file('sha256', $fullPath) : null);
+
+				$stored[] = array(
+					'name' => $finalName,
+					'original_name' => $origName,
+					'relative_path' => ($relativeDir !== '' ? $relativeDir.'/'.$finalName : ''),
+					'content_type' => ($mime !== '' ? $mime : null),
+					'size' => ($size !== false && $size !== null ? (int) $size : null),
+					'sha256' => ($sha256 !== false && $sha256 !== null ? (string) $sha256 : null),
+				);
+			}
+
+			return $stored;
+		}
+
+		// Native IMAP: array(filename => raw_data).
+		$i = 0;
+		foreach ($attachments as $origName => $data) {
+			$i++;
+			$origName = (string) $origName;
+			if ($origName === '' || $origName === 'undefined') {
+				$origName = 'attachment-'.$i;
+			}
+
+			$safeName = dol_sanitizeFileName($origName, '_', 1, 0);
+			if ($safeName === '') {
+				$safeName = 'attachment-'.$i;
+			}
+
+			$finalName = $safeName;
+			$n = 1;
+			while (file_exists($destdir.'/'.$finalName)) {
+				$finalName = preg_replace('/(\\.[A-Za-z0-9]{1,10})$/', '', $safeName).'-'.$n;
+				if (preg_match('/\\.[A-Za-z0-9]{1,10}$/', $safeName, $m)) {
+					$finalName .= $m[0];
+				}
+				$n++;
+			}
+
+			$content = (string) $data;
+			if ($content === '') {
+				continue;
+			}
+
+			$this->saveAttachment($destdir, $finalName, $content);
+
+			$fullPath = $destdir.'/'.$finalName;
+			$size = (file_exists($fullPath) ? filesize($fullPath) : null);
+			$sha256 = (file_exists($fullPath) ? hash_file('sha256', $fullPath) : null);
+
+			$stored[] = array(
+				'name' => $finalName,
+				'original_name' => $origName,
+				'relative_path' => ($relativeDir !== '' ? $relativeDir.'/'.$finalName : ''),
+				'content_type' => null,
+				'size' => ($size !== false && $size !== null ? (int) $size : null),
+				'sha256' => ($sha256 !== false && $sha256 !== null ? (string) $sha256 : null),
+			);
+		}
+
+		return $stored;
 	}
 
 	/**
