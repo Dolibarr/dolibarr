@@ -450,7 +450,7 @@ if ((($line->info_bits & 2) != 2) && $line->special_code != 3) {
 }
 print '</td>';
 //Shippable Status
-if ($object->element == 'commande' && isModEnabled('stock') && isModEnabled('shipping') && getDolGlobalString('ORDER_ENABLE_SHIPPABLE_ICON_ON_CARD')) {
+if ($object->element == 'commande' && isModEnabled('stock') && isModEnabled('shipping') && getDolGlobalString('ORDER_ENABLE_SHIPPABLE_ICON_ON_CARD') && ($object->status > 0 && $object->status < 3)) {
 	$coldisplay++;
 	print '<td class="linecolstock center">';
 
