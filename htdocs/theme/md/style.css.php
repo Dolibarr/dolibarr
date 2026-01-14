@@ -770,7 +770,7 @@ input.buttonpayment, button.buttonpayment, div.buttonpayment {
 
 div.buttonpayment input {
 	background-color: unset;
-	border-bottom: unset;
+	border: unset;
 	font-weight: bold;
 	text-transform: uppercase;
 	color: #333;
@@ -7407,7 +7407,7 @@ li.select2-selection__choice {
 	margin-top: 4px !important;
 }
 .select2-selection--multiple input.select2-search__field {
-	border-bottom: none !important;
+	border: none !important;
 }
 .select2-search__field
 {
@@ -7615,6 +7615,7 @@ select.multiselectononeline {
 	height: 28px !important;
 	opacity: 0;
 	/* width: 1px !important; */
+	min-width: 50px;
 }
 
 @media only screen and (min-width: 767px)
