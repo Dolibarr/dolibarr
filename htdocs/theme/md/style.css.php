@@ -1461,11 +1461,13 @@ td.wordbreak img, td.wordbreakimp img {
 	max-height: <?php print getDolGlobalInt('MAIN_CSS_SHORTMESSSAGECUT', 125); ?>px;
 	max-width: 100%;
 	overflow-y: auto;
+	word-break: break-word;
 }
 .longmessagecut {
 	max-height: <?php print getDolGlobalInt('MAIN_CSS_LONGMESSSAGECUT', 250); ?>px;
 	max-width: 100%;
 	overflow-y: auto;
+	word-break: break-word;
 }
 div.urllink {
 	padding: 5px;
@@ -7283,6 +7285,10 @@ input.select2-input {
 	border: none;
 	border-bottom: 1px solid #ccc !important;
 }
+li.select2-selection__choice {
+	white-space: break-spaces;
+}
+
 .select2-results .select2-highlighted.optionblue {
 	color: #FFF !important;
 }

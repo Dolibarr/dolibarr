@@ -2707,6 +2707,8 @@ class Facture extends CommonInvoice
 	{
 		$error = 0;
 
+		$this->oldcopy = dol_clone($this, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
+
 		// Clean parameters
 		if (empty($this->type)) {
 			$this->type = self::TYPE_STANDARD;

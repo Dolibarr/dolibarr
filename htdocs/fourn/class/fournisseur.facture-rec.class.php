@@ -1022,7 +1022,8 @@ class FactureFournisseurRec extends CommonInvoice
 		$txlocaltax2 = !empty($txlocaltax2) ? $txlocaltax2 : 0;
 		$info_bits = !empty($info_bits) ? $info_bits : 0;
 		$info_bits = !empty($info_bits) ? $info_bits : 0;
-		$pu = $price_base_type == 'HT' ? $pu_ht : $pu_ttc;
+
+		$pu = ($price_base_type == 'HT' ? $pu_ht : $pu_ttc);
 
 		// Calculation of the gross total (TTC) and VAT for the line from qty, pu, remise_percent and txtva
 		// VERY IMPORTANT: It's at the time of line insertion that we must store the net, VAT, and gross amounts,
@@ -1201,7 +1202,7 @@ class FactureFournisseurRec extends CommonInvoice
 		$this->multicurrency_total_tva = empty($this->multicurrency_total_tva) ? 0 : $this->multicurrency_total_tva;
 		$this->multicurrency_total_ttc = empty($this->multicurrency_total_ttc) ? 0 : $this->multicurrency_total_ttc;
 
-		$pu = $price_base_type == 'HT' ? $pu_ht : $pu_ttc;
+		$pu = ($price_base_type == 'HT' ? $pu_ht : $pu_ttc);
 
 
 		// Calculation of the gross total (TTC) and VAT for the line from qty, pu, remise_percent and txtva
