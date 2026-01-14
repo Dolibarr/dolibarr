@@ -307,7 +307,7 @@ $coldisplay++;
 	// Shippable Status (Empty cell for edit mode to keep column alignment)
 	if ($object->element == 'commande' && isModEnabled('stock') && isModEnabled('shipping') && getDolGlobalString('ORDER_ENABLE_SHIPPABLE_ICON_ON_CARD')) {
 	print '<td class="linecolstock center">';
-		print '&nbsp;'; // Cellule vide car on n'édite pas le statut shippable, c'est calculé
+		print '&nbsp;';
 		print '</td>';
 	}
 	?>
