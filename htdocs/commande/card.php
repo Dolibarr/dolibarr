@@ -3082,7 +3082,7 @@ if ($action == 'create' && $usercancreate) {
 				}
 			}
 			// --- SHIPPABLE icon ---
-			if (isModEnabled('stock') && isModEnabled('shipping') && !getDolGlobalString('ORDER_DISABLE_SHIPPABLE_ICON_ON_CARD') && !empty($object->delivery_date)) {
+			if (isModEnabled('stock') && isModEnabled('shipping') && getDolGlobalString('ORDER_ENABLE_SHIPPABLE_ICON_ON_CARD') && !empty($object->delivery_date)) {
 				$shippableInfos = $object->getShippableInfos();
 
 				if (!empty($shippableInfos['has_product'])) {
