@@ -1194,6 +1194,10 @@ function showOptions(child_list, parent_list) {
 function setListDependencies() {
 	console.log("setListDependencies");
 	jQuery("select option[parent]").parent().each(function() {
+		// Skip selects inside line item extrafield areas (handled by setListDependencies_extra)
+		if ($(this).closest('[id^="extrafield_lines_area"]').length > 0) {
+			return;
+		}
 		var child_list = $(this).attr("name");
 		var parent = $(this).find("option[parent]:first").attr("parent");
 		var infos = parent.split(":");
