@@ -99,7 +99,7 @@ if (is_object($hookmanager)) {
 		'code'              => $code ?? '',
 		'prefix'            => $prefix ?? '',
 		'filename'          => $filename ?? '',
-		'period_start'      => $startaccountingperiod ?? '',
+		'period_start'      => $startaccountingperiod,
 		'period_end'        => $endaccountingperiod ?? '',
 		'siren'             => $siren ?? '',
 		'ndate_in_filename' => $nodateexport ?? 0,
