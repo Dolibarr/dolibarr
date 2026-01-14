@@ -202,6 +202,7 @@ if ($reshook < 0) {
 $result = restrictedArea($user, 'agenda', $object, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id');
 
 $usercancreate = $user->hasRight('agenda', 'allactions', 'create') || ((empty($object->id) || $object->authorid == $user->id || $object->userownerid == $user->id) && $user->hasRight('agenda', 'myactions', 'create'));
+$usercandelete = $user->hasRight('agenda', 'allactions', 'delete') || (($object->authorid === $user->id || $object->userownerid === $user->id) && $user->hasRight('agenda', 'myactions', 'delete'));
 
 
 /*
@@ -1206,22 +1207,19 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 }
 
 // Delete event
-if (empty($reshook) && $action == 'confirm_delete' && GETPOST("confirm") == 'yes' && $usercancreate) {
+if (empty($reshook) && $action == 'confirm_delete' && GETPOST("confirm") == 'yes' && $usercandelete) {
 	$object->fetch($id);
 	$object->fetch_optionals();
 	$object->fetch_userassigned();
 	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
-	if ($user->hasRight('agenda', 'myactions', 'delete')
-		|| $user->hasRight('agenda', 'allactions', 'delete')) {
-		$result = $object->delete($user);
+	$result = $object->delete($user);
 
-		if ($result >= 0) {
-			header("Location: index.php");
-			exit;
-		} else {
-			setEventMessages($object->error, $object->errors, 'errors');
-		}
+	if ($result >= 0) {
+		header("Location: index.php");
+		exit;
+	} else {
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 
@@ -2977,8 +2975,7 @@ if ($id > 0 && $action != 'create') {
 				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("ToClone").'</a></div>';
 			}
 
-			if ($user->hasRight('agenda', 'allactions', 'delete') ||
-			   (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->hasRight('agenda', 'myactions', 'delete'))) {
+			if ($usercandelete) {
 				print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Delete").'</a></div>';
 			} else {
 				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Delete").'</a></div>';

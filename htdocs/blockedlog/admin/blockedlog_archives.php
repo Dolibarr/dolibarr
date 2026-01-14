@@ -215,7 +215,8 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 			$obj = $db->fetch_object($res);
 			if ($obj) {
 				$firstid = $obj->rowid;
-				$previoushash = $block_static->getPreviousHash(0, $firstid);
+				$tmparray = $block_static->getPreviousHash(0, $firstid);
+				$previoushash = $tmparray['previoushash'];
 			} else {	// If not data found for filter, we do not need previoushash neither firstid
 				$firstid = '';
 				$previoushash = 'nodata';
@@ -270,7 +271,7 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 		$resql = $db->query($sql);
 		if ($resql) {
 			// Print line with title
-			fwrite($fh, "BEGIN - date=".$yearmonthdateofexport." - period=".$yearmonthtoexport.($periodnotcomplete ? '-'.$suffixperiod : '')." - formatexport=".$formatexport." - user=".$user->getFullName($langs)
+			fwrite($fh, "BEGIN - regnumber=".dol_trunc($registrationnumber, 10)." - date=".$yearmonthdateofexport." - period=".$yearmonthtoexport.($periodnotcomplete ? '-'.$suffixperiod : '')." - formatexport=".$formatexport." - user=".$user->getFullName($langs)
 				.';'.$langs->transnoentities('Id')
 				.';'.$langs->transnoentities('DateCreation')
 				.';'.$langs->transnoentities('Action')

@@ -28,7 +28,7 @@
 -- Ne pas placer de commentaire en fin de ligne, ce fichier est parsé lors
 -- de l''install et tous les sigles '--' sont supprimés.
 
--- Descriptif des plans comptables Canada CA-ENG-BASE                                            
+-- Descriptif des plans comptables Canada CA-ENG-BASE
 -- ID 1000 - 9999
 -- ADD 1400000 to rowid # Do no remove this comment --
 

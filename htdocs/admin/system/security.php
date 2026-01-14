@@ -989,7 +989,11 @@ print '<strong>MAIN_ALLOW_SVG_FILES_AS_EXTERNAL_LINKS</strong> = '.getDolGlobalS
 print '<br>';
 
 print '<strong>MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL</strong> = '.getDolGlobalString('MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
-print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").": 0 - The value 1 allows the use of concatenation functions like . or dol_concat into extra fields conditions or formula but is not secured)</span><br>";
+print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").": ".$langs->trans("Undefined").' '.$langs->trans("or")." 0 - The value 1 allows the use of concatenation functions like . or dol_concat into extra fields conditions or formula but is not secured)</span><br>";
+print '<br>';
+
+print '<strong>MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER</strong> = '.getDolGlobalString('MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
+print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").": 1 - The value 0 allows the use of subrequests into extrafields conditions. It remains not possible in API filters to avoid bind SQL injections whatever is this value)</span><br>";
 print '<br>';
 
 

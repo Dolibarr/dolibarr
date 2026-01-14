@@ -770,7 +770,7 @@ input.buttonpayment, button.buttonpayment, div.buttonpayment {
 
 div.buttonpayment input {
 	background-color: unset;
-	border-bottom: unset;
+	border: unset;
 	font-weight: bold;
 	text-transform: uppercase;
 	color: #333;
@@ -943,6 +943,9 @@ input.pageplusone {
 }
 .opacitytransp {
 	opacity: 0;
+}
+.noopacity {
+	opacity: unset !important;
 }
 .colorwhite {
 	color: var(--colorwhite);
@@ -1458,11 +1461,13 @@ td.wordbreak img, td.wordbreakimp img {
 	max-height: <?php print getDolGlobalInt('MAIN_CSS_SHORTMESSSAGECUT', 125); ?>px;
 	max-width: 100%;
 	overflow-y: auto;
+	word-break: break-word;
 }
 .longmessagecut {
 	max-height: <?php print getDolGlobalInt('MAIN_CSS_LONGMESSSAGECUT', 250); ?>px;
 	max-width: 100%;
 	overflow-y: auto;
+	word-break: break-word;
 }
 div.urllink {
 	padding: 5px;
@@ -1979,6 +1984,14 @@ select.flat.selectlimit {
 	display: -webkit-box;
 	-webkit-box-orient: vertical;
 	-webkit-line-clamp: 2;
+	overflow: hidden;
+	height: auto !important;
+	word-break: break-word;
+}
+.threelinesmax, .threelinesmax-normallineheight {				/* To be used into a <div class="twolinesmax-normallineheight minwidth200onall"> into a td for example */
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 3;
 	overflow: hidden;
 	height: auto !important;
 	word-break: break-word;
@@ -7280,6 +7293,10 @@ input.select2-input {
 	border: none;
 	border-bottom: 1px solid #ccc !important;
 }
+li.select2-selection__choice {
+	white-space: break-spaces;
+}
+
 .select2-results .select2-highlighted.optionblue {
 	color: #FFF !important;
 }
@@ -7398,7 +7415,7 @@ input.select2-input {
 	margin-top: 4px !important;
 }
 .select2-selection--multiple input.select2-search__field {
-	border-bottom: none !important;
+	border: none !important;
 }
 .select2-search__field
 {
@@ -7606,6 +7623,7 @@ select.multiselectononeline {
 	height: 28px !important;
 	opacity: 0;
 	/* width: 1px !important; */
+	min-width: 50px;
 }
 
 @media only screen and (min-width: 767px)

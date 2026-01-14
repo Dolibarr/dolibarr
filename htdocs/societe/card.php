@@ -1608,7 +1608,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '</td></tr>';
 			}
 
-			print '<tr><td colspan="4">&nbsp;</td></tr>';
+			print '<tr class="tdsmallheight"><td colspan="4"></td></tr>';
 
 			// Address
 			print '<tr><td class="tdtop">';
@@ -1661,7 +1661,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 			// Phone / Fax
 			print '<tr><td>'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td>';
-			print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>'.img_picto('', 'object_phoning', 'class="pictofixedwidth"').' <input type="text" name="phone" id="phone" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('phone') ? GETPOST('phone', 'alpha') : $object->phone).'" spellcheck="false"></td>';
+			print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>'.img_picto('', 'object_phoning', 'class="pictofixedwidth"').'<input type="text" name="phone" id="phone" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('phone') ? GETPOST('phone', 'alpha') : $object->phone).'" spellcheck="false"></td>';
 
 			if ($conf->browser->layout == 'phone') {
 				print '</tr><tr>';
@@ -1669,20 +1669,20 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 			// Phone mobile
 			print '<td>'.$form->editfieldkey('PhoneMobile', 'phone_mobile', '', $object, 0).'</td>';
-			print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>'.img_picto('', 'object_phoning_mobile', 'class="pictofixedwidth"').' <input type="text" name="phone_mobile" id="phone_mobile" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('phone_mobile') ? GETPOST('phone_mobile', 'alpha') : $object->phone_mobile).'" spellcheck="false"></td></tr>';
+			print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>'.img_picto('', 'object_phoning_mobile', 'class="pictofixedwidth"').'<input type="text" name="phone_mobile" id="phone_mobile" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('phone_mobile') ? GETPOST('phone_mobile', 'alpha') : $object->phone_mobile).'" spellcheck="false"></td></tr>';
 
 			// Fax
 			print '<tr>';
 			print '<td>'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td>';
-			print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>'.img_picto('', 'object_phoning_fax', 'class="pictofixedwidth"').' <input type="text" name="fax" id="fax" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('fax') ? GETPOST('fax', 'alpha') : $object->fax).'" spellcheck="false"></td></tr>';
+			print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>'.img_picto('', 'object_phoning_fax', 'class="pictofixedwidth"').'<input type="text" name="fax" id="fax" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('fax') ? GETPOST('fax', 'alpha') : $object->fax).'" spellcheck="false"></td></tr>';
 
 			// URL
 			print '<tr><td>'.$form->editfieldkey('Web', 'url', '', $object, 0).'</td>';
-			print '<td colspan="3">'.img_picto('', 'globe', 'class="pictofixedwidth"').' <input type="text" class="maxwidth500 widthcentpercentminusx" name="url" id="url" value="'.$object->url.'" spellcheck="false"></td></tr>';
+			print '<td colspan="3">'.img_picto('', 'globe', 'class="pictofixedwidth"').'<input type="text" class="maxwidth500 widthcentpercentminusx" name="url" id="url" value="'.$object->url.'" spellcheck="false"></td></tr>';
 
 			// Email
 			print '<tr><td>'.$form->editfieldkey('EMail', 'email', '', $object, 0, 'string', '', getDolGlobalInt('SOCIETE_EMAIL_MANDATORY')).'</td>';
-			print '<td'.(($conf->browser->layout == 'phone') || !isModEnabled('mailing') ? ' colspan="3"' : '').'>'.img_picto('', 'object_email', 'class="pictofixedwidth"').' <input type="text" class="maxwidth200 widthcentpercentminusx" name="email" id="email" value="'.$object->email.'" spellcheck="false"></td>';
+			print '<td'.(($conf->browser->layout == 'phone') || !isModEnabled('mailing') ? ' colspan="3"' : '').'>'.img_picto('', 'object_email', 'class="pictofixedwidth"').'<input type="text" class="maxwidth200 widthcentpercentminusx" name="email" id="email" value="'.$object->email.'" spellcheck="false"></td>';
 
 			// Unsubscribe
 			if (isModEnabled('mailing')) {
@@ -1881,7 +1881,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			if (!getDolGlobalString('SOCIETE_DISABLE_WORKFORCE')) {
 				print '</td>';
 				if ($conf->browser->layout == 'phone') {
-					print '</tr><tr>';
+					print '</tr><tr class="morefields">';
 				}
 				print '<td>'.$form->editfieldkey('Workforce', 'effectif_id', '', $object, 0).'</td><td class="maxwidthonsmartphone"'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>';
 				print $form->selectarray("effectif_id", $formcompany->effectif_array(0), $object->effectif_id, 0, 0, 0, '', 0, 0, 0, '', '', 1);
@@ -2002,14 +2002,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					$("document").ready(function() { toogleMoreFields(false); });
 
 					jQuery(".morefieldslnk").click(function() {
-						console.log("Click on link");
+						console.log("Click on link .morefieldslnk (create)");
 						toogleMoreFields(true);
 						return false;
 					});
 
 					function toogleMoreFields(chgCookieState) {
 						const lnk = $("#morefieldslnk");
-						const items = $(".morefields, .trextrafields");
+						const items = $(".morefields, .trextrafields:not(.trextrafieldsgroup)");
 						var cookieState = document.cookie.split(";").some((item) => item.trim().startsWith("DOLUSER_MOREFIELDS_SHOW=true")) == true;
 
 						if (!chgCookieState) cookieState = !cookieState ;
@@ -2483,7 +2483,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				//$colspan = ($conf->browser->layout == 'phone' ? 2 : 4);
 				$colspan = 4;
-				print '<tr><td colspan="'.$colspan.'">&nbsp;</td></tr>';
+				print '<tr class="tdsmallheight"><td colspan="'.$colspan.'"></td></tr>';
 
 				// Address
 				print '<tr><td class="tdtop">'.$form->editfieldkey('Address', 'address', '', $object, 0).'</td>';
@@ -2529,20 +2529,20 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				// Phone / Fax
 				print '<tr><td>'.$form->editfieldkey('Phone', 'phone', GETPOST('phone', 'alpha'), $object, 0).'</td>';
-				print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>'.img_picto('', 'object_phoning', 'class="pictofixedwidth"').' <input type="text" name="phone" id="phone" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('phone') ? GETPOST('phone', 'alpha') : $object->phone).'" spellcheck="false"></td>';
+				print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>'.img_picto('', 'object_phoning', 'class="pictofixedwidth"').'<input type="text" name="phone" id="phone" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('phone') ? GETPOST('phone', 'alpha') : $object->phone).'" spellcheck="false"></td>';
 				if ($conf->browser->layout == 'phone') {
 					print '</tr><tr>';
 				}
 				print '<td>'.$form->editfieldkey('PhoneMobile', 'phone_mobile', GETPOST('phone_mobile', 'alpha'), $object, 0).'</td>';
-				print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>'.img_picto('', 'object_phoning_mobile', 'class="pictofixedwidth"').' <input type="text" name="phone_mobile" id="phone_mobile" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('phone_mobile') ? GETPOST('phone_mobile', 'alpha') : $object->phone_mobile).'" spellcheck="false"></td></tr>';
+				print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>'.img_picto('', 'object_phoning_mobile', 'class="pictofixedwidth"').'<input type="text" name="phone_mobile" id="phone_mobile" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('phone_mobile') ? GETPOST('phone_mobile', 'alpha') : $object->phone_mobile).'" spellcheck="false"></td></tr>';
 
 				print '<td>'.$form->editfieldkey('Fax', 'fax', GETPOST('fax', 'alpha'), $object, 0).'</td>';
-				print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>'.img_picto('', 'object_phoning_fax', 'class="pictofixedwidth"').' <input type="text" name="fax" id="fax" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('fax') ? GETPOST('fax', 'alpha') : $object->fax).'" spellcheck="false"></td>';
+				print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>'.img_picto('', 'object_phoning_fax', 'class="pictofixedwidth"').'<input type="text" name="fax" id="fax" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('fax') ? GETPOST('fax', 'alpha') : $object->fax).'" spellcheck="false"></td>';
 				print '</tr>';
 
 				// Web
 				print '<tr><td>'.$form->editfieldkey('Web', 'url', GETPOST('url', 'alpha'), $object, 0).'</td>';
-				print '<td colspan="3">'.img_picto('', 'globe', 'class="pictofixedwidth"').' <input type="text" name="url" id="url" class="maxwidth200onsmartphone maxwidth300 widthcentpercentminusx " value="'.(GETPOSTISSET('url') ? GETPOST('url', 'alpha') : $object->url).'" spellcheck="false"></td></tr>';
+				print '<td colspan="3">'.img_picto('', 'globe', 'class="pictofixedwidth"').'<input type="text" name="url" id="url" class="maxwidth200onsmartphone maxwidth300 widthcentpercentminusx " value="'.(GETPOSTISSET('url') ? GETPOST('url', 'alpha') : $object->url).'" spellcheck="false"></td></tr>';
 
 				// EMail
 				print '<tr><td>'.$form->editfieldkey('EMail', 'email', GETPOST('email', 'alpha'), $object, 0, 'string', '', (getDolGlobalInt('SOCIETE_EMAIL_MANDATORY'))).'</td>';
@@ -2752,7 +2752,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				if (!getDolGlobalString('SOCIETE_DISABLE_WORKFORCE')) {
 					print '</td>';
 					if ($conf->browser->layout == 'phone') {
-						print '</tr><tr>';
+						print '</tr><tr class="morefields">';
 					}
 					print '<td>'.$form->editfieldkey('Workforce', 'effectif_id', '', $object, 0).'</td><td class="maxwidthonsmartphone">';
 					print $form->selectarray("effectif_id", $formcompany->effectif_array(0), $object->effectif_id, 0, 0, 0, '', 0, 0, 0, '', '', 1);
@@ -2817,9 +2817,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				$parameters = array('socid' => $socid, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
 				include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
 
+				print '<tr class="morefieldsbis tdsmallheight"><td colspan="4"></td></tr>';
+
 				// Parent company
 				if (!getDolGlobalString('SOCIETE_DISABLE_PARENTCOMPANY')) {
-					print '<tr class="morefields">';
+					print '<tr class="morefieldsbis">';
 					print '<td>'.$langs->trans('ParentCompany').'</td>';
 					print '<td colspan="3" class="maxwidthonsmartphone">';
 					print img_picto('', 'company', 'class="pictofixedwidth"');
@@ -2827,8 +2829,20 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '</td></tr>';
 				}
 
+				// Assign sale representative
+				print '<tr class="morefieldsbis">';
+				print '<td>'.$form->editfieldkey('AllocateCommercial', 'commercial_id', '', $object, 0).'</td>';
+				print '<td colspan="3" class="maxwidthonsmartphone">';
+				$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', '0', 0, 0, 'u.statut:=:1', 0, '', '', 0, 1);
+				$arrayselected = GETPOST('commercial', 'array');
+				if (empty($arrayselected)) {
+					$arrayselected = $object->getSalesRepresentatives($user, 1);
+				}
+				print img_picto('', 'user', 'class="pictofixedwidth"').$form->multiselectarray('commercial', $userlist, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0, '', '', '', 1);
+				print '</td></tr>';
+
 				// Logo
-				print '<tr class="hideonsmartphone morefields">';
+				print '<tr class="hideonsmartphone morefieldsbis">';
 				print '<td>'.$form->editfieldkey('Logo', 'photoinput', '', $object, 0).'</td>';
 				print '<td colspan="3">';
 				if ($object->logo) {
@@ -2857,32 +2871,20 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '</td>';
 				print '</tr>';
 
-				// Assign sale representative
-				print '<tr class="morefields">';
-				print '<td>'.$form->editfieldkey('AllocateCommercial', 'commercial_id', '', $object, 0).'</td>';
-				print '<td colspan="3" class="maxwidthonsmartphone">';
-				$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', '0', 0, 0, 'u.statut:=:1', 0, '', '', 0, 1);
-				$arrayselected = GETPOST('commercial', 'array');
-				if (empty($arrayselected)) {
-					$arrayselected = $object->getSalesRepresentatives($user, 1);
-				}
-				print img_picto('', 'user', 'class="pictofixedwidth"').$form->multiselectarray('commercial', $userlist, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0, '', '', '', 1);
-				print '</td></tr>';
-
-				print '</table>';
+				print '</table>'."\n";
 
 				print '<script nonce="'.getNonce().'" type="text/javascript">
 					$("document").ready(function() { toogleMoreFields(false); });
 
 					jQuery(".morefieldslnk").click(function() {
-						console.log("Click on link");
+						console.log("Click on link .morefieldslnk (edit)");
 						toogleMoreFields(true);
 						return false;
 					});
 
 					function toogleMoreFields(chgCookieState) {
 						const lnk = $("#morefieldslnk");
-						const items = $(".morefields, .trextrafields");
+						const items = $(".morefields, .trextrafields:not(.trextrafieldsgroup)");
 						var cookieState = document.cookie.split(";").some((item) => item.trim().startsWith("DOLUSER_MOREFIELDS_SHOW=true")) == true;
 
 						if (!chgCookieState) cookieState = !cookieState ;

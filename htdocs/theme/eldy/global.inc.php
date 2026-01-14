@@ -387,7 +387,7 @@ span.massactionselect, input.inputsearch_dropdownselectedfields {
 
 .liste_titre input, .liste_titre select {
 	border: none;
-	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>: solid 1px var(<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '--colorbacktitle1' : '--inputbordercolor'; ?>);
+	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>: solid 1px var(<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '--colorbacktitle1' : '--inputbordercolor'; ?>) !important;
 }
 
 .divadvancedsearchfieldcompinput,
@@ -601,7 +601,7 @@ div.buttonpayment input:focus {
 div.buttonpayment input {
 	background-color: unset;
 	color: #fff;
-	border-bottom: unset;
+	border: unset;
 	font-weight: bold;
 	text-transform: uppercase;
 	cursor: pointer;
@@ -660,6 +660,9 @@ div.userimg.notfirst {
 }
 .smallheight {
 	line-height: 1em;
+}
+tr.tdsmallheight, tr.tdsmallheight td {
+	height: 1.5em !important;
 }
 
 
@@ -772,6 +775,9 @@ input.pageplusone {
 }
 .opacitytransp {
 	opacity: 0;
+}
+.noopacity {
+	opacity: unset !important;
 }
 .colorwhite {
 	color: var(--colorwhite);
@@ -1309,11 +1315,13 @@ td.wordbreak img, td.wordbreakimp img {
 	max-height: <?php print getDolGlobalInt('MAIN_CSS_SHORTMESSSAGECUT', 125); ?>px;
 	max-width: 100%;
 	overflow-y: auto;
+	word-break: break-word;
 }
 .longmessagecut {
 	max-height: <?php print getDolGlobalInt('MAIN_CSS_LONGMESSSAGECUT', 250); ?>px;
 	max-width: 100%;
 	overflow-y: auto;
+	word-break: break-word;
 }
 div.urllink {
 	padding: 5px;
@@ -1847,6 +1855,14 @@ select.flat.selectlimit {
 	display: -webkit-box;
 	-webkit-box-orient: vertical;
 	-webkit-line-clamp: 2;
+	overflow: hidden;
+	height: auto !important;
+	word-break: break-word;
+}
+.threelinesmax, .threelinesmax-normallineheight {				/* To be used into a <div class="twolinesmax-normallineheight minwidth200onall"> into a td for example */
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 3;
 	overflow: hidden;
 	height: auto !important;
 	word-break: break-word;
@@ -5384,9 +5400,9 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 .boxstats:hover {
 	box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.20);
 }
-span.boxstatstext span:not(.fas) {
+/*span.boxstatstext span:not(.fas) {
 	opacity: 0.5;
-}
+}*/
 span.boxstatstext {
 	opacity: 0.5;		/* a bug if browser make z-index was discovered when opacity is set, if still present, we must disable it */
 	line-height: 18px;
@@ -7409,6 +7425,9 @@ input.select2-input {
 	border: none;
 	border-bottom: solid 1px var(--inputbordercolor) !important;	/* required to avoid to lose bottom line when focus is lost on select2. */
 }
+li.select2-selection__choice {
+	white-space: break-spaces;
+}
 .select2-results .select2-highlighted.optionblue {
 	color: #FFF !important;
 }
@@ -7558,7 +7577,7 @@ input.select2-input {
 	margin-top: 0.25em !important;
 }
 .select2-selection--multiple input.select2-search__field {
-	border-bottom: none !important;
+	border: none !important;
 }
 
 .select2-search__field
@@ -7773,6 +7792,7 @@ select.multiselectononeline {
 	min-height: unset;
 	height: 2.2em !important;
 	opacity: 0;
+	min-width: 50px;
 	/* width: 1px !important; */
 }
 

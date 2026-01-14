@@ -83,7 +83,7 @@ class modAccounting extends DolibarrModules
 			[
 				"MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED",
 				"chaine",
-				"1",
+				"0",
 				"With this constants on, bank account number is always required", 0, 'current', 1
 			],
 			[

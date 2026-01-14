@@ -2590,6 +2590,9 @@ if ($action == 'create') {
 		}
 
 		// Other attributes
+		if (getDolGlobalInt('THIRDPARTY_PROPAGATE_EXTRAFIELDS_TO_PROPAL') && $socid > 0) {
+			$thirdpartytopropagateextrafieldsfrom = $soc;
+		}
 		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_add.tpl.php';
 
 		// Lines from source
