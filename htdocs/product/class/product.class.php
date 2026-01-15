@@ -14,7 +14,7 @@
  * Copyright (C) 2014		Ion agorria			    <ion@agorria.com>
  * Copyright (C) 2016-2024	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2017		Gustavo Novaro
- * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023		Benjamin Falière		<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Lenin Rivas				<lenin.rivas777@gmail.com>
@@ -978,7 +978,7 @@ class Product extends CommonObject
 		if (empty($this->tva_npr)) {
 			$this->tva_npr = 0;
 		}
-		//Local taxes
+		// Local taxes
 		if (empty($this->localtax1_tx)) {
 			$this->localtax1_tx = 0;
 		}
@@ -1353,6 +1353,7 @@ class Product extends CommonObject
 
 			$mod = new $module();
 			'@phan-var-force ModeleNumRefBarCode $mod';
+			/** @var ModeleNumRefBarCode $mod */
 
 			dol_syslog(get_class($this)."::check_barcode value=".$valuetotest." type=".$typefortest." module=".$module);
 			$result = $mod->verif($this->db, $valuetotest, $this, 0, $typefortest);
@@ -1872,7 +1873,7 @@ class Product extends CommonObject
 				include_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 				include_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination2ValuePair.class.php';
 
-				//If it is a parent product, then we remove the association with child products
+				// If it is a parent product, then we remove the association with child products
 				$prodcomb = new ProductCombination($this->db);
 
 				if ($prodcomb->deleteByFkProductParent($user, $this->id) < 0) {
@@ -1880,7 +1881,7 @@ class Product extends CommonObject
 					$this->errors[] = 'Error deleting combinations';
 				}
 
-				//We also check if it is a child product
+				// We also check if it is a child product
 				if (!$error && ($prodcomb->fetchByFkProductChild($this->id) > 0) && ($prodcomb->delete($user) < 0)) {
 					$error++;
 					$this->errors[] = 'Error deleting child combination';
@@ -2820,8 +2821,8 @@ class Product extends CommonObject
 
 			$this->db->begin();
 
-			// Ne pas mettre de quote sur les numeriques decimaux.
-			// Ceci provoque des stockages avec arrondis en base au lieu des valeurs exactes.
+			// Don't put quotes here on decimal numbers.
+			// This causes storage with base rounding instead of exact values.
 			$sql = "UPDATE ".$this->db->prefix()."product SET";
 			$sql .= " price_base_type = '".$this->db->escape($newpricebase)."',";
 			$sql .= " price = ".(float) $price.",";
