@@ -5,8 +5,8 @@
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (c) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2016-2020 	Ferran Marcet       	<fmarcet@2byte.es>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -90,11 +90,6 @@ class ExpenseReportLine extends CommonObjectLine
 	 * @var int ID
 	 */
 	public $fk_c_exp_tax_cat;
-
-	/**
-	 * @var int ID
-	 */
-	public $fk_projet;
 
 	/**
 	 * @var int ID
@@ -203,7 +198,7 @@ class ExpenseReportLine extends CommonObjectLine
 	public $multicurrency_code;
 
 	/**
-	 * @var float
+	 * @var ?float
 	 */
 	public $multicurrency_tx;
 
@@ -373,7 +368,7 @@ class ExpenseReportLine extends CommonObjectLine
 		if ($resql) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'expensereport_det');
 
-			if (!$error && !$notrigger) {
+			if (!$notrigger) {
 				// Call triggers
 				$result = $this->call_trigger('EXPENSE_REPORT_DET_CREATE', $user);
 				if ($result < 0) {

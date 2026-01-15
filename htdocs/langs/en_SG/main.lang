@@ -23,6 +23,7 @@ AmountVAT=Amount GST
 MulticurrencyAmountVAT=Amount GST, original currency
 TotalTTC=Total (incl GST)
 TotalVAT=Total GST
+TotalVATShort=Total GST
 HT=Excl GST
 TTC=Incl GST
 INCVATONLY=Inc. GST

@@ -66,10 +66,10 @@ function print_paybox_redirect($PRICE, $CURRENCY, $EMAIL, $urlok, $urlko, $TAG)
 	}
 
 	$URLPAYBOX = "";
-	if ($conf->global->PAYBOX_CGI_URL_V1) {
+	if (getDolGlobalString('PAYBOX_CGI_URL_V1')) {
 		$URLPAYBOX = getDolGlobalString('PAYBOX_CGI_URL_V1');
 	}
-	if ($conf->global->PAYBOX_CGI_URL_V2) {
+	if (getDolGlobalString('PAYBOX_CGI_URL_V2')) {
 		$URLPAYBOX = getDolGlobalString('PAYBOX_CGI_URL_V2');
 	}
 

@@ -2,7 +2,7 @@
 /* Copyright (C) 2011-2019      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2011-2018      Philippe Grand	    <philippe.grand@atoo-net.com>
  * Copyright (C) 2018		    Charlene Benke		<charlie@patas-monkey.com>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -126,7 +126,7 @@ if ($action == 'updateMask') {
 } elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		if ($conf->global->HOLIDAY_ADDON_PDF == "$value") {
+		if (getDolGlobalString('HOLIDAY_ADDON_PDF') == "$value") {
 			dolibarr_del_const($db, 'HOLIDAY_ADDON_PDF', $conf->entity);
 		}
 	}
@@ -177,7 +177,8 @@ llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-holiday');
 
 $form = new Form($db);
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans("HolidaySetup"), $linkback, 'title_setup');
 
 $head = holiday_admin_prepare_head();
@@ -245,7 +246,7 @@ foreach ($dirmodels as $reldir) {
 						print '</td>'."\n";
 
 						print '<td class="center">';
-						if ($conf->global->HOLIDAY_ADDON == "$file") {
+						if (getDolGlobalString('HOLIDAY_ADDON') == "$file") {
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						} else {
 							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.urlencode($file).'">';
@@ -304,7 +305,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 	$sql = "SELECT nom";
 	$sql .= " FROM ".MAIN_DB_PREFIX."document_model";
 	$sql .= " WHERE type = '".$db->escape($type)."'";
-	$sql .= " AND entity = ".$conf->entity;
+	$sql .= " AND entity = ".((int) $conf->entity);
 	$resql = $db->query($sql);
 	if ($resql) {
 		$i = 0;
@@ -395,7 +396,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 
 									// Default
 									print '<td class="center">';
-									if ($conf->global->HOLIDAY_ADDON_PDF == $name) {
+									if (getDolGlobalString('HOLIDAY_ADDON_PDF') == $name) {
 										print img_picto($langs->trans("Default"), 'on');
 									} else {
 										print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
@@ -530,7 +531,7 @@ print "</tr>";
 
 // Set holiday decrease at the end of month
 print '<tr class="oddeven">';
-print "<td>".$langs->trans("ConsumeHolidaysAtTheEndOfTheMonthTheyAreTakenAt")."</td>";
+print "<td>".$langs->trans("ConsumeHolidaysAtTheEndOfTheMonthTheyAreTakenAt").' <span class="opacitymedium">('.$langs->trans("ConsumeHolidaysAtTheEndOfTheMonthTheyAreTakenAtBis").')</span></td>';
 print '<td class="center">';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('HOLIDAY_DECREASE_AT_END_OF_MONTH', array(), null, 0, 0, 0, 2, 0, 1);

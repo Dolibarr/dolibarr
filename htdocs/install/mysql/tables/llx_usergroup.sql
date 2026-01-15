@@ -25,11 +25,12 @@ create table llx_usergroup
   entity        integer DEFAULT 1 NOT NULL,	-- multi company id
   datec         datetime,
   tms           timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  color         varchar(6),
   note          text,
   model_pdf     varchar(255) DEFAULT NULL
 )ENGINE=innodb;
 
--- 
+--
 -- List of codes for the field entity
 --
 -- 0 : global group

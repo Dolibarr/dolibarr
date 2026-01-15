@@ -51,7 +51,7 @@ create table llx_user
   town                varchar(50),				              -- town
   fk_state            integer        DEFAULT 0,
   fk_country          integer        DEFAULT 0,
-  birth               date,                                   -- birthday
+  birth               date,                                   -- birth date
   birth_place         varchar(64),                            -- birth place (town)
   job                 varchar(128),
   office_phone        varchar(30),
@@ -109,6 +109,7 @@ create table llx_user
   nb_holiday              integer       DEFAULT 0,
   thm                     double(24,8),
   tjm                     double(24,8),
+  access_hours			  varchar(128) DEFAULT NULL,
 
   salary                  double(24,8),                       -- DENORMALIZED FIELD. Value coming from llx_user_employment
   salaryextra             double(24,8),                       -- DENORMALIZED FIELD. Value coming from llx_user_employment

@@ -26,13 +26,23 @@
  */
 
 include 'inc.php';
+
+/**
+ * @var string	$conffile
+ * @var string	$conffiletoshow
+ *
+ * @var Conf $conf
+ * @var Translate $langs
+ *
+ * @var string	$dolibarr_main_document_root
+ */
+
 require_once $dolibarr_main_document_root.'/core/class/conf.class.php';
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 require_once $dolibarr_main_document_root.'/core/lib/security.lib.php';
 
 global $langs;
 
-$step = 2;
 $ok = 0;
 
 
@@ -115,7 +125,7 @@ if (!is_writable($conffile)) {
 }
 
 if ($action == "set") {		// Test on permission not required. Already managed by test in inc.php
-	print '<h3><img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/database.svg" width="20" alt="Database"> '.$langs->trans("Database").'</h3>';
+	print '<h3><img class="valignmiddle inline-block paddingright" src="../public/theme/common/database.svg" width="20" alt="Database"> '.$langs->trans("Database").'</h3>';
 
 	print '<table cellspacing="0" style="padding: 4px 4px 4px 0" border="0" width="100%">';
 	$error = 0;
@@ -124,10 +134,10 @@ if ($action == "set") {		// Test on permission not required. Already managed by 
 
 	if ($db->connected) {
 		print "<tr><td>";
-		print $langs->trans("ServerConnection")." : ".$conf->db->host.'</td><td><img src="../theme/eldy/img/tick.png" alt="Ok"></td></tr>';
+		print $langs->trans("ServerConnection")." : ".$conf->db->host.'</td><td>'.img_picto('OK', 'tick').'</td></tr>';
 		$ok = 1;
 	} else {
-		print "<tr><td>Failed to connect to server : ".$conf->db->host.'</td><td><img src="../theme/eldy/img/error.png" alt="Error"></td></tr>';
+		print "<tr><td>Failed to connect to server : ".$conf->db->host.'</td><td>'.img_picto('Error', 'warning', 'class="error"').'</td></tr>';
 	}
 
 	if ($ok) {
@@ -135,7 +145,7 @@ if ($action == "set") {		// Test on permission not required. Already managed by 
 			dolibarr_install_syslog("step2: successful connection to database: ".$conf->db->name);
 		} else {
 			dolibarr_install_syslog("step2: failed connection to database :".$conf->db->name, LOG_ERR);
-			print "<tr><td>Failed to select database ".$conf->db->name.'</td><td><img src="../theme/eldy/img/error.png" alt="Error"></td></tr>';
+			print "<tr><td>Failed to select database ".$conf->db->name.'</td><td>'.img_picto('Error', 'warning', 'class="error"').'</td></tr>';
 			$ok = 0;
 		}
 	}
@@ -258,11 +268,11 @@ if ($action == "set") {		// Test on permission not required. Already managed by 
 		if ($tablefound) {
 			if ($error == 0) {
 				print '<tr><td>';
-				print $langs->trans("TablesAndPrimaryKeysCreation").'</td><td><img src="../theme/eldy/img/tick.png" alt="Ok"></td></tr>';
+				print $langs->trans("TablesAndPrimaryKeysCreation").'</td><td>'.img_picto('OK', 'tick').'</td></tr>';
 				$ok = 1;
 			}
 		} else {
-			print '<tr><td>'.$langs->trans("ErrorFailedToFindSomeFiles", $dir).'</td><td><img src="../theme/eldy/img/error.png" alt="Error"></td></tr>';
+			print '<tr><td>'.$langs->trans("ErrorFailedToFindSomeFiles", $dir).'</td><td>'.img_picto('Error', 'warning', 'class="error"').'</td></tr>';
 			dolibarr_install_syslog("step2: failed to find files to create database in directory ".$dir, LOG_ERR);
 		}
 	}
@@ -384,7 +394,7 @@ if ($action == "set") {		// Test on permission not required. Already managed by 
 
 		if ($tablefound && $error == 0) {
 			print '<tr><td>';
-			print $langs->trans("OtherKeysCreation").'</td><td><img src="../theme/eldy/img/tick.png" alt="Ok"></td></tr>';
+			print $langs->trans("OtherKeysCreation").'</td><td>'.img_picto('OK', 'tick').'</td></tr>';
 			$okkeys = 1;
 		}
 	}
@@ -459,9 +469,9 @@ if ($action == "set") {		// Test on permission not required. Already managed by 
 
 			print "<tr><td>".$langs->trans("FunctionsCreation")."</td>";
 			if ($ok) {
-				print '<td><img src="../theme/eldy/img/tick.png" alt="Ok"></td></tr>';
+				print '<td>'.img_picto('OK', 'tick').'</td></tr>';
 			} else {
-				print '<td><img src="../theme/eldy/img/error.png" alt="Error"></td></tr>';
+				print '<td>'.img_picto('Error', 'warning', 'class="error"').'</td></tr>';
 				$ok = 1;
 			}
 		}
@@ -574,9 +584,9 @@ if ($action == "set") {		// Test on permission not required. Already managed by 
 
 		print "<tr><td>".$langs->trans("ReferenceDataLoading")."</td>";
 		if ($ok) {
-			print '<td><img src="../theme/eldy/img/tick.png" alt="Ok"></td></tr>';
+			print '<td>'.img_picto('OK', 'tick').'</td></tr>';
 		} else {
-			print '<td><img src="../theme/eldy/img/error.png" alt="Error"></td></tr>';
+			print '<td>'.img_picto('Error', 'warning', 'class="error"').'</td></tr>';
 			$ok = 1; // Data loading are not blocking errors
 		}
 	}

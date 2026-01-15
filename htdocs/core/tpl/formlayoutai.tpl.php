@@ -33,6 +33,7 @@
  * @var	string			$htmlname
  * @var ?string			$out
  * @var	?string			$aiprompt
+ * @var ?string			$morecss
  */
 
 //Protection to avoid direct call of template
@@ -51,7 +52,7 @@ if (empty($htmlname)) {
 }
 
 ?>
-<!-- BEGIN PHP TEMPLATE formlayoutai.tpl.php -->
+<!-- BEGIN PHP TEMPLATE htdocs/core/tpl/formlayoutai.tpl.php -->
 <?php
 
 '
@@ -170,4 +171,4 @@ if ($showlinktoai) {
 }
 
 ?>
-<!-- END PHP TEMPLATE commonfields_edit.tpl.php -->
+<!-- END PHP TEMPLATE htdocs/core/tpl/formlayoutai.tpl.php -->

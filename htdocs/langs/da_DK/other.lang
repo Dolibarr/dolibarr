@@ -1,8 +1,7 @@
 # Dolibarr language file - Source file is en_US - other
+# THIS FILE MUST CONTAINS ENTRIES THAT ARE RARELY USED
 SecurityCode=Sikkerhedskode
 NumberingShort=N °
-Tools=Værktøj
-TMenuTools=Værktøjer
 ToolsDesc=Alle værktøjer, der ikke er inkluderet i andre menupunkter, er grupperet her. <br> Alle værktøjerne er tilgængelige via menuen til venstre.
 Birthday=Fødselsdag
 BirthdayAlert=Fødselsdagsalarm
@@ -384,3 +383,25 @@ FillExtrafieldWithAi=Udfyld ekstrafeltet med AI-indhold
 ExtrafieldFiller=Ekstrafeltfyldstof
 OurProductSelection=Vores udvalg af nye produkter
 NoSupportedModulesHaveBeenActivated=The reporting tool can generate dynamic reports for some modules only. There is no supported module enabled yet.
+# Bookmarks
+AddThisPageToBookmarks = Tilføj denne side til bogmærker
+BehaviourOnClick = Adfærd, når en bogmærke-URL er valgt
+BookmarkTargetNewWindowShort = Ny fane
+BookmarkTargetReplaceWindowShort = Nuværende fane
+BookmarkTitle = Bogmærke navn
+BookmarksManagement = Bogmærke styring
+BookmarksMenuShortCut = Ctrl + shift + m
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark = Vælg om bogmærket skal åbne i denne fane eller en ny fane
+CreateBookmark = Opret bogmærke
+EditBookmarks = Vis/rediger bogmærker
+ListOfBookmarks = Liste over bogmærker
+NewBookmark = Nyt bogmærke
+NoBookmarkFound = Intet bogmærke fundet
+NoBookmarks = Ingen bogmærker defineret
+OpenANewWindow = Åbn i en ny fane
+ReplaceWindow = Åben i nuværende fane
+SetHereATitleForLink = Tildel et navn til bogmærket
+ShowBookmark = Vis bogmærke
+UrlOrLink = URL
+UseAnExternalHttpLinkOrRelativeDolibarrLink = Brug et eksternt/absolut link (https://externalurl.com) eller et internt/relativt link (/mypage.php). Du kan også bruge telefon som tel:0123456.
+SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation

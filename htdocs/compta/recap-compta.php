@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2017      Pierre-Henry Favre   <support@atm-consulting.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2001-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2017       Pierre-Henry Favre      <support@atm-consulting.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -148,6 +148,9 @@ if ($id > 0) {
 		print '<td class="right">'.$langs->trans("Author").'</td>';
 		print '</tr>';
 
+		/**
+		 * @var array<int,array<string,mixed>>	$TData
+		 */
 		$TData = array();
 
 		$sql = "SELECT s.nom, s.rowid as socid, f.ref, f.total_ttc, f.datef as df,";
@@ -225,7 +228,7 @@ if ($id > 0) {
 						$userstatic->login = $objp->login;
 
 						$values = array(
-						'fk_paiement' => $objp->rowid,
+							'fk_paiement' => $objp->rowid,
 							'date' => $db->jdate($objp->dp),
 							'datefieldforsort' => $db->jdate($objp->dp).'-'.$fac->ref,
 							'link' => $langs->trans("Payment").' '.$paymentstatic->getNomUrl(1),

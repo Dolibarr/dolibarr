@@ -137,6 +137,7 @@ class box_contacts extends ModeleBoxes
 					$contactstatic->lastname = $objp->lastname;
 					$contactstatic->firstname = $objp->firstname;
 					$contactstatic->civility_id = $objp->civility_id;
+					$contactstatic->status = $objp->status;
 					$contactstatic->statut = $objp->status;
 					$contactstatic->phone_pro = $objp->phone;
 					$contactstatic->phone_perso = $objp->phone_perso;

@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) - 2020	Andreu Bisquerra Gaya <jove@bisquerra.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2020       Andreu Bisquerra Gaya   <jove@bisquerra.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -99,6 +99,7 @@ foreach ($maincategories as $cat) {
 	$result = $object->fetch($cat['id']);
 	$prods = $object->getObjectsInCateg("product", 0, 0, 0, $conf->global->TAKEPOS_SORTPRODUCTFIELD, 'ASC');
 	/** @var Product[] $prods */
+	'@phan-var-force Product[] $prods';
 	foreach ($prods as $pro) {
 		print '
 		<div class="cell small-6 medium-4">

@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2014 	   Charles-Fr BENKE        <charles.fr@benke.fr>
- * Copyright (C) 2015-2024  Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2003-2007  Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2011  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2011  Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2014 	    Charles-Fr BENKE        <charles.fr@benke.fr>
+ * Copyright (C) 2015-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -136,7 +136,7 @@ class box_actions_future extends ModeleBoxes
 					$societestatic->name = $objp->name;
 					//$societestatic->name_alias = $objp->name_alias;
 					$societestatic->code_client = $objp->code_client;
-					$societestatic->code_compta = $objp->code_compta;
+					$societestatic->code_compta = $objp->code_compta_client;
 					$societestatic->code_compta_client = $objp->code_compta_client;
 					$societestatic->client = $objp->client;
 					$societestatic->logo = $objp->logo;

@@ -306,18 +306,19 @@ if (!getDolGlobalString('PRODUCT_STOCK_LIST_SHOW_WITH_PRECALCULATED_DENORMALIZED
 // Add HAVING from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object); // Note that $action and $object may have been modified by hook
-if (!empty($hookmanager->resPrint)) {
-	if (!empty($sql_having)) {
-		$sql_having .= " AND";
-	} else {
-		$sql_having .= " HAVING";
+if (empty($reshook)) {
+	if (empty($sql_having)) {
+		$sql_having .= " HAVING 1=1";
 	}
 	$sql_having .= $hookmanager->resPrint;
+} else {
+	$sql_having = $hookmanager->resPrint;
 }
 
 if (!empty($sql_having)) {
 	$sql .= $sql_having;
 }
+
 $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
@@ -325,7 +326,7 @@ $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -412,7 +413,7 @@ if ($resql) {
 		print "<div id='ways'>";
 		$c = new Categorie($db);
 		$c->fetch($search_categ);
-		$ways = $c->print_all_ways(' &gt; ', 'product/reassort.php');
+		$ways = $c->print_all_ways('auto', 'product/reassort.php');
 		print " &gt; ".$ways[0]."<br>\n";
 		print "</div><br>";
 	}
@@ -489,6 +490,10 @@ if ($resql) {
 		print '<td class="liste_titre">&nbsp;</td>';
 		$colspan++;
 	}
+	if (getDolGlobalString('PRODUCT_USE_UNITS')) {
+		print '<td class="liste_titre"></td>';
+		$colspan++;
+	}
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
@@ -503,10 +508,6 @@ if ($resql) {
 		$searchpicto = $form->showFilterAndCheckAddButtons(0);
 		print $searchpicto;
 		print '</td>';
-		$colspan++;
-	}
-	if (getDolGlobalString('PRODUCT_USE_UNITS')) {
-		print '<td class="liste_titre"></td>';
 		$colspan++;
 	}
 	print '</tr>';

@@ -1,11 +1,11 @@
 <?php
-/* Copyright (C) 2013-2014  Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2024  Alexandre Spangaro   <aspangaro@easya.solutions>
- * Copyright (C) 2013-2021  Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2014       Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2015       Ari Elbaz (elarifr)  <github@accedinfo.com>
- * Copyright (C) 2018-2024  Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
+ * Copyright (C) 2013-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
+ * Copyright (C) 2013-2021  Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2015       Ari Elbaz (elarifr)     <github@accedinfo.com>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,17 +80,17 @@ class AccountingAccount extends CommonObject
 	public $datec;
 
 	/**
-	 * @var string pcg version
+	 * @var ?string pcg version
 	 */
 	public $fk_pcg_version;
 
 	/**
-	 * @var string pcg type
+	 * @var ?string pcg type
 	 */
 	public $pcg_type;
 
 	/**
-	 * @var string account number
+	 * @var ?string account number
 	 */
 	public $account_number;
 
@@ -115,12 +115,12 @@ class AccountingAccount extends CommonObject
 	public $status;
 
 	/**
-	 * @var string Label of account
+	 * @var ?string Label of account
 	 */
 	public $label;
 
 	/**
-	 * @var string Label short of account
+	 * @var ?string Label short of account
 	 */
 	public $labelshort;
 
@@ -358,7 +358,7 @@ class AccountingAccount extends CommonObject
 
 		$sql = "UPDATE " . $this->db->prefix() . $this->table_element;
 		$sql .= " SET fk_pcg_version = " . ($this->fk_pcg_version ? "'" . $this->db->escape($this->fk_pcg_version) . "'" : "null");
-		$sql .= " , pcg_type = " . ($this->pcg_type ? "'" . $this->db->escape($this->pcg_type) . "'" : "null");
+		$sql .= " , pcg_type = '" . $this->db->escape($this->pcg_type) . "'";
 		$sql .= " , account_number = '" . $this->db->escape($this->account_number) . "'";
 		$sql .= " , account_parent = " . (int) $this->account_parent;
 		$sql .= " , label = " . ($this->label ? "'" . $this->db->escape($this->label) . "'" : "''");
@@ -436,16 +436,14 @@ class AccountingAccount extends CommonObject
 		if ($result > 0) {
 			$this->db->begin();
 
-			if (!$error) {
-				$sql = "DELETE FROM " . $this->db->prefix() . $this->table_element;
-				$sql .= " WHERE rowid=" . ((int) $this->id);
+			$sql = "DELETE FROM " . $this->db->prefix() . $this->table_element;
+			$sql .= " WHERE rowid=" . ((int) $this->id);
 
-				dol_syslog(get_class($this) . "::delete sql=" . $sql);
-				$resql = $this->db->query($sql);
-				if (!$resql) {
-					$error++;
-					$this->errors[] = "Error " . $this->db->lasterror();
-				}
+			dol_syslog(get_class($this) . "::delete sql=" . $sql);
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$error++;
+				$this->errors[] = "Error " . $this->db->lasterror();
 			}
 
 			// Commit or rollback
@@ -737,7 +735,7 @@ class AccountingAccount extends CommonObject
 	 * @param 	FactureLigne|SupplierInvoiceLine	$factureDet 		Facture Det
 	 * @param 	array<string,int>					$accountingAccount 	Array of Accounting account
 	 * @param 	string 								$type 				Customer / Supplier
-	 * @return	array{suggestedaccountingaccountbydefaultfor:string,suggestedaccountingaccountfor:string,suggestedid:?int,code_l:string,code_p:string,code_t:string}|int<-1,-1>	Array of accounting accounts suggested or < 0 if technical error.
+	 * @return	array{suggestedaccountingaccountbydefaultfor:''|'eec'|'eecwithoutvatnumber'|'eecwithvat'|'export',suggestedaccountingaccountfor:'deposit'|'eec'|'eecwithoutvatnumber'|'eecwithvat'|'export'|'prodserv'|'thirdparty',suggestedid:?int,code_l:string,code_p:?string,code_t:string}|int<-1,-1>	Array of accounting accounts suggested or < 0 if technical error.
 	 * 																	'suggestedaccountingaccountbydefaultfor'=>Will be used for the label to show on tooltip for account by default on any product
 	 * 																	'suggestedaccountingaccountfor'=>Is the account suggested for this product
 	 */
@@ -889,10 +887,10 @@ class AccountingAccount extends CommonObject
 						return -1;
 					}
 
-					$code_l = $accountdeposittoventilated->ref;
+					$code_l = (string) $accountdeposittoventilated->ref;
 					$code_p = '';
 					$code_t = '';
-					$suggestedid = $accountdeposittoventilated->rowid;
+					$suggestedid = (int) $accountdeposittoventilated->rowid;
 					$suggestedaccountingaccountfor = 'deposit';
 				}
 
@@ -908,10 +906,10 @@ class AccountingAccount extends CommonObject
 						} elseif ($type == 'supplier') {
 							$accountdeposittoventilated->fetch(0, getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT'), 1);
 						}
-						$code_l = $accountdeposittoventilated->ref;
+						$code_l = (string) $accountdeposittoventilated->ref;
 						$code_p = '';
 						$code_t = '';
-						$suggestedid = $accountdeposittoventilated->rowid;
+						$suggestedid = (int) $accountdeposittoventilated->rowid;
 						$suggestedaccountingaccountfor = 'deposit';
 					}
 				}

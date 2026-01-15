@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - compta
-OptionModeVirtual=Comptabilité de caisse
-OptionModeTrue=Comptabilité d'exercice
+OptionModeVirtual=Comptabilité d'exercice
+OptionModeTrue=Comptabilité de caisse
 RemainingAmountPayment=Montant restant à payer :
 Accountparent=Compte Parent
 Accountsparent=Comptes parents
@@ -186,7 +186,6 @@ ByVatRate=Par taux de taxe de vente
 TurnoverbyVatrate=Chiffre d'affaires facturé par taux de taxe de vente
 TurnoverCollectedbyVatrate=Chiffre d'affaires collecté par taux de taxe de vente
 PurchasebyVatrate=Taux de taxe sur les achats par vente
-LabelToShow=Étiquette courte
 PurchaseTurnover=Chiffre d'affaires des achats
 PurchaseTurnoverCollected=Chiffre d'affaires achats encaissé
 RulesPurchaseTurnoverDue=- Il comprend les factures dues au fournisseur, qu'elles soient payées ou non. <br>- Il est basé sur la date de facturation de ces factures.<br>

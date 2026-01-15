@@ -35,7 +35,7 @@ class box_ficheinter extends ModeleBoxes
 	public $boxcode = "ficheinter";
 	public $boximg = "object_intervention";
 	public $boxlabel = "BoxFicheInter";
-	public $depends = array("ficheinter"); // conf->contrat->enabled
+	public $depends = array("intervention");
 
 	/**
 	 *  Constructor

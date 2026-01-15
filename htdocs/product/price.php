@@ -397,6 +397,7 @@ if (empty($reshook)) {
 				}
 
 				$pricestoupdate[$i] = array(
+					'price_label' => '', // no change so empty value
 					'price' => price2num($newprice[$i], '', 2),
 					'price_min' => price2num($newprice_min[$i], '', 2),
 					'price_base_type' => $newpricebase[$i],
@@ -808,6 +809,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
+			// Insert price
 			$result = $prodcustprice->create($user, 0, $update_child_soc);
 			if ($result > 0) {
 				if (!empty($extrafield_values) && is_array($extrafield_values)) {
@@ -1098,7 +1100,7 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 				$positiverates = '0';
 			}
 			echo vatrate($positiverates.($object->default_vat_code ? ' ('.$object->default_vat_code.')' : ''), true, $object->tva_npr);
-			//print vatrate($object->multiprices_tva_tx[$soc->price_level], true);
+
 			print '</td></tr>';
 		} else {
 			// TVA
@@ -1118,12 +1120,7 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 				$positiverates = '0';
 			}
 			echo vatrate($positiverates.($object->default_vat_code ? ' ('.$object->default_vat_code.')' : ''), true, $object->tva_npr);
-			/*
-			if ($object->default_vat_code)
-			{
-				print vatrate($object->tva_tx, true) . ' ('.$object->default_vat_code.')';
-			}
-			else print vatrate($object->tva_tx . ($object->tva_npr ? '*' : ''), true);*/
+
 			print '</td></tr>';
 		}
 	} else {
@@ -2301,7 +2298,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 		$title = $langs->trans('PriceByCustomerLog');
 		$title .= ' - '.$staticsoc->getNomUrl(1);
 
-		$backbutton = '<a class="justalink" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">'.$langs->trans("Back").'</a>';
+		$backbutton = '<a class="justalink" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">'.$langs->trans("GoBack").'</a>';
 
 		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 		print_barre_liste($title, $page, $_SERVER['PHP_SELF'], $option, $sortfield, $sortorder, $backbutton, count($prodcustprice->lines), $nbtotalofrecords, 'title_accountancy.png');
@@ -2366,7 +2363,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 				print "<td>".dol_print_date($line->date_begin, "day", 'tzuserrel')."</td>";
 				print "<td>".dol_print_date($line->date_end, "day", 'tzuserrel')."</td>";
 				print '<td class="center">'.$langs->trans($line->price_base_type)."</td>";
-				print '<td class="right">';
+				print '<td class="right nowraponall">';
 
 				$positiverates = '';
 				if (price2num($line->tva_tx)) {
@@ -2395,16 +2392,19 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 
 				print '<td class="right">'.price($line->price_min).'</td>';
 				print '<td class="right">'.price($line->price_min_ttc).'</td>';
-				print '<td class="right">'.$line->price_label.'</td>';
+				print '<td class="right">'.dolPrintHTML($line->price_label).'</td>';
 				print '<td class="right">'.price($line->discount_percent).'</td>';
 
 				// User
-				$userstatic = new User($db);
-				$userstatic->fetch($line->fk_user);
-				print '<td class="right">';
-				print $userstatic->getNomUrl(1, '', 0, 0, 24, 0, 'login');
-				//print $userstatic->getLoginUrl(1);
+				print '<td class="tdoverflowmax125">';
+				// @TODO Add a cache on $userstatic
+				if ($line->fk_user > 0) {
+					$userstatic = new User($db);
+					$userstatic->fetch($line->fk_user);
+					print $userstatic->getNomUrl(1, '', 0, 0, 24, 0, 'login');
+				}
 				print '</td>';
+
 				print "<td>".dol_print_date($line->datec, "dayhour", 'tzuserrel')."</td>";
 				print '</tr>';
 			}
@@ -2534,7 +2534,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 			print '<td class="center">'.$langs->trans($object->price_base_type)."</td>";
 
 			// VAT Rate
-			print '<td class="right">';
+			print '<td class="right nowraponall">';
 
 			$positiverates = '';
 			if (price2num($object->tva_tx)) {
@@ -2551,8 +2551,6 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 			}
 			echo vatrate($positiverates.($object->default_vat_code ? ' ('.$object->default_vat_code.')' : ''), true, $object->tva_npr);
 
-			//print vatrate($object->tva_tx, true, $object->tva_npr);
-			//print $object->default_vat_code?' ('.$object->default_vat_code.')':'';
 			print "</td>";
 
 			print '<td class="right"><span class="amount">'.price($object->price)."</span></td>";
@@ -2565,7 +2563,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 
 			print '<td class="right">'.price($object->price_min).'</td>';
 			print '<td class="right">'.price($object->price_min_ttc).'</td>';
-			print '<td class="right">'.$object->price_label.'</td>';
+			print '<td class="right">'.dolPrintHTML($object->price_label).'</td>';
 			print '<td class="right"></td>';
 			print '<td class="right"></td>';
 			if (!empty($extralabels)) {
@@ -2619,12 +2617,12 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 				print '<tr class="oddeven">';
 
 				print '<td class="tdoverflowmax125">'.$staticsoc->getNomUrl(1)."</td>";
-				print '<td>'.dol_escape_htmltag($line->ref_customer).'</td>';
+				print '<td>'.dolPrintHTML($line->ref_customer).'</td>';
 				print "<td>".dol_print_date($line->date_begin, "day", 'tzuserrel')."</td>";
 				print "<td>".dol_print_date($line->date_end, "day", 'tzuserrel')."</td>";
 				print '<td class="center">'.$langs->trans($line->price_base_type)."</td>";
 				// VAT Rate
-				print '<td class="right">';
+				print '<td class="right nowraponall">';
 
 				$positiverates = '';
 				if (price2num($line->tva_tx)) {
@@ -2654,7 +2652,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 
 				print '<td class="right">'.price($line->price_min).'</td>';
 				print '<td class="right">'.price($line->price_min_ttc).'</td>';
-				print '<td class="right">'.$line->price_label.'</td>';
+				print '<td class="right">'.dolPrintHTMLForAttribute($line->price_label).'</td>';
 				print '<td class="right">'.price($line->discount_percent).'</td>';
 
 				// Extrafields
@@ -2689,17 +2687,19 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 				}
 
 				// User
-				$userstatic = new User($db);
-				$userstatic->fetch($line->fk_user);
-				// @TODO Add a cache on $users object
-				print '<td>';
-				print $userstatic->getNomUrl(-1, '', 0, 0, 24, 0, 'login');
+				print '<td class="tdoverflowmax125">';
+				if ($line->fk_user > 0) {
+					$userstatic = new User($db);
+					$userstatic->fetch($line->fk_user);
+					// @TODO Add a cache on $userstatic object
+					print $userstatic->getNomUrl(-1, '', 0, 0, 24, 0, 'login');
+				}
 				print '</td>';
 
 				// Todo Edit or delete button
 				// Action
-				if ($user->hasRight('produit', 'supprimer') || $user->hasRight('service', 'supprimer')) {
-					print '<td class="right nowraponall">';
+				print '<td class="right nowraponall">';
+				if ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer')) {
 					print '<a href="'.$_SERVER["PHP_SELF"].'?action=showlog_customer_price&token='.newToken().'&id='.$object->id.'&socid='.$line->fk_soc.'">';
 					print img_info($langs->trans('PriceByCustomerLog'));
 					print '</a>';
@@ -2708,11 +2708,13 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 					print img_edit('default', 0, 'style="vertical-align: middle;"');
 					print '</a>';
 					print ' ';
+				}
+				if ($user->hasRight('produit', 'supprimer') || $user->hasRight('service', 'supprimer')) {
 					print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?action=delete_customer_price&token='.newToken().'&id='.$object->id.'&lineid='.$line->id.'">';
 					print img_delete('default', 'style="vertical-align: middle;"');
 					print '</a>';
-					print '</td>';
 				}
+				print '</td>';
 
 				print "</tr>\n";
 			}
@@ -2773,7 +2775,7 @@ if ((!getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || $action == 'showlog_defau
 		if ($num > 0) {
 			// Default prices or
 			// Log of previous customer prices
-			$backbutton = '<a class="justalink" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">'.$langs->trans("Back").'</a>';
+			$backbutton = '<a class="justalink" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">'.$langs->trans("GoBack").'</a>';
 
 			if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition, PhanPluginSuspiciousParamOrder
@@ -2942,19 +2944,19 @@ if ((!getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || $action == 'showlog_defau
 				print '</td>';
 
 				// Price Label
-				print '<td class="right">';
-				print $objp->price_label;
+				print '<td>';
+				print dolPrintHTML($objp->price_label);
 				print '</td>';
 
 				// User
-				print '<td>';
+				print '<td class="tdoverflowmax125">';
 				if ($objp->user_id > 0) {
+					// @TODO Add a cache on $userstatic
 					$userstatic = new User($db);
 					$userstatic->fetch($objp->user_id);
 					print $userstatic->getNomUrl(-1, '', 0, 0, 24, 0, 'login');
 				}
 				print '</td>';
-
 
 				// Action
 				if ($user->hasRight('produit', 'supprimer')) {

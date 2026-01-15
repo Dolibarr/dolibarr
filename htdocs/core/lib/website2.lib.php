@@ -213,7 +213,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 		$tplcontent .= '<title>'.dol_string_nohtmltag($objectpage->title, 1, 'UTF-8').'</title>'."\n";
 		$tplcontent .= '<meta charset="utf-8">'."\n";
 		$tplcontent .= '<meta http-equiv="content-type" content="text/html; charset=utf-8" />'."\n";
-		$tplcontent .= '<meta name="robots" content="index, follow" />'."\n";
+		$tplcontent .= '<meta name="robots" content="'.($objectpage->index ? 'index' : 'noindex').', '.($objectpage->follow ? 'follow' : 'nofollow').'" />'."\n";
 		$tplcontent .= '<meta name="viewport" content="width=device-width, initial-scale=1.0">'."\n";
 		$tplcontent .= '<meta name="keywords" content="'.dol_string_nohtmltag($objectpage->keywords, 1, 'UTF-8').'" />'."\n";
 		$tplcontent .= '<meta name="title" content="'.dol_string_nohtmltag($objectpage->title, 1, 'UTF-8').'" />'."\n";
@@ -332,6 +332,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 		$tplcontent .= '<!-- Include link to common JS file -->'."\n";
 		$tplcontent .= '<script nonce="'.getNonce().'" async src="/javascript.js.php?website=<?php echo $websitekey; ?>"></script>'."\n";
 		$tplcontent .= '</head>'."\n";
+		$tplcontent .= "\n";
 
 		// Page content
 		$tplcontent .= '<!-- File content defined in Dolibarr website module editor -->'."\n";
@@ -988,9 +989,14 @@ function checkPHPCode(&$phpfullcodestringold, &$phpfullcodestring)
 			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("eval", "create_function", "assert", "mb_ereg_replace")); // function with eval capabilities
 		}
 		if (!getDolGlobalString('WEBSITE_PHP_ALLOW_WRITE')) {    // If option is not on, we disallow functions to write files
-			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_compress_dir", "dol_decode", "dol_delete_file", "dol_delete_dir", "dol_delete_dir_recursive", "dol_copy", "archiveOrBackupFile")); // more dolibarr functions
-			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("fopen", "file_put_contents", "fputs", "fputscsv", "fwrite", "fpassthru", "mkdir", "rmdir", "symlink", "touch", "unlink", "umask"));
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_compress_dir", "dol_delete_file", "dol_delete_dir", "dol_delete_dir_recursive", "dol_copy", "archiveOrBackupFile")); // more dolibarr functions
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("fopen", "file_put_contents", "flock", "fputs", "fputscsv", "fwrite", "fpassthru", "mkdir", "rmdir", "symlink", "touch", "unlink", "umask"));
 		}
+		if (getDolGlobalString('WEBSITE_PHP_DISALLOW_READ')) {    // If option is not on, we disallow functions to read files
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_decode")); // more dolibarr functions
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("file", "fopen", "file_get_contents", "fgets", "fgetscsv", "fgetss", "fread"));
+		}
+
 		//$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("require", "include"));
 
 		$forbiddenphpmethods = array('invoke', 'invokeArgs');	// Method of ReflectionFunction to execute a function
