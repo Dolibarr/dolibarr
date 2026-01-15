@@ -2061,6 +2061,37 @@ function dolPrintHTML($s, $allowiframe = 0)
 }
 
 /**
+ * Return a string ready to be output on an HTML content, with extra allowed tags.
+ *
+ * @param	string		$s				String to print
+ * @param	string[]	$allowedtags	Array of extra allowed tags (in addition to 'common' list)
+ * @param	int			$allowiframe	Allow iframe tag
+ * @return	string						String ready for HTML output
+ */
+function dolPrintHTMLWithAllowedTags($s, $allowedtags = array(), $allowiframe = 0)
+{
+	$allowedtags = array_map('trim', $allowedtags);
+	$allowedtags = array_filter($allowedtags, 'strlen');
+	$baseallowedtags = array(
+		"a", "abbr", "article", "b", "blockquote", "br", "cite", "code", "dd", "del", "dfn", "div", "dl", "dt",
+		"em", "font", "h1", "h2", "h3", "h4", "h5", "h6", "h7", "h8", "h9", "hr", "i", "img", "ins",
+		"li", "ol", "p", "pre", "q", "s", "span", "strike", "strong", "sub", "sup", "table", "tbody",
+		"td", "th", "tr", "u", "ul", "header", "footer", "nav", "section", "menu", "menuitem"
+	);
+	$allowedtags = array_values(array_unique(array_merge($baseallowedtags, $allowedtags)));
+	$noescapetags = implode(',', $allowedtags);
+
+	return dol_escape_htmltag(
+		dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr((string) $s), 1, 1, 1, $allowiframe, $allowedtags)),
+		1,
+		1,
+		$noescapetags,
+		0,
+		1
+	);
+}
+
+/**
  * Return a string ready to be output into an HTML attribute (alt, title, data-html, ...)
  * With dolPrintHTMLForAttribute(), the content is HTML encode, even if it is already HTML content.
  *
@@ -15057,16 +15088,16 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 				if ($truncateLines > 0 && strlen($histo[$key]['message']) > strlen($truncatedText)) {
 					$out .= '<div class="readmore-block --closed" >';
 					$out .= '	<div class="readmore-block__excerpt">';
-					$out .= 	dolPrintHTML($truncatedText);
+					$out .= 	dolPrintHTMLWithAllowedTags($truncatedText, array('pre', 'code'));
 					$out .= ' 	<br><a class="read-more-link" data-read-more-action="open" href="'.DOL_MAIN_URL_ROOT.'/comm/action/card.php?id='.$actionstatic->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$param).'" >'.$langs->trans("ReadMore").' <span class="fa fa-chevron-right" aria-hidden="true"></span></a>';
 					$out .= '	</div>';
 					$out .= '	<div class="readmore-block__full-text" >';
-					$out .=  dolPrintHTML($histo[$key]['message']);
+					$out .=  dolPrintHTMLWithAllowedTags($histo[$key]['message'], array('pre', 'code'));
 					$out .= ' 	<a class="read-less-link" data-read-more-action="close" href="#" ><span class="fa fa-chevron-up" aria-hidden="true"></span> '.$langs->trans("ReadLess").'</a>';
 					$out .= '	</div>';
 					$out .= '</div>';
 				} else {
-					$out .= dolPrintHTML($histo[$key]['message']);
+					$out .= dolPrintHTMLWithAllowedTags($histo[$key]['message'], array('pre', 'code'));
 				}
 
 				$out .= '</div>';
