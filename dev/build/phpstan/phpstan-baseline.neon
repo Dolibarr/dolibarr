@@ -433,12 +433,6 @@ parameters:
 			path: ../../../htdocs/admin/emailcollector_card.php
 
 		-
-			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/admin/emailcollector_list.php
-
-		-
 			message: '#^Left side of && is always true\.$#'
 			identifier: booleanAnd.leftAlwaysTrue
 			count: 1
@@ -7819,12 +7813,6 @@ parameters:
 			path: ../../../htdocs/core/modules/oauth/generic_oauthcallback.php
 
 		-
-			message: '#^Variable \$state might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/modules/oauth/github_oauthcallback.php
-
-		-
 			message: '#^Strict comparison using \=\=\= between null and null will always evaluate to true\.$#'
 			identifier: identical.alwaysTrue
 			count: 2
@@ -14476,12 +14464,6 @@ parameters:
 			message: '#^Variable \$objcanvas might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
-			path: ../../../htdocs/societe/canvas/company/tpl/card_view.tpl.php
-
-		-
-			message: '#^Variable \$socid might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
 			path: ../../../htdocs/societe/canvas/company/tpl/card_view.tpl.php
 
 		-

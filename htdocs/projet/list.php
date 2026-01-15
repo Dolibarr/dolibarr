@@ -1346,7 +1346,7 @@ $moreforfilter .= '</div>';
 if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 	$langs->load("categories");
 	$formcategory = new FormCategory($db);
-	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_USER, $search_category_user_array, 'minwidth200imp minwidth200 widthcentpercentminusx', -1, 1, 1, $langs->trans("UsersCategoryShort"));
+	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_USER, $search_category_user_array, 'minwidth200imp minwidth200 widthcentpercentminusx', -1, 1, 1, $langs->transnoentitiesnoconv("UsersCategoryShort"));
 }
 
 
@@ -1368,7 +1368,7 @@ if ($user->hasRight('user', 'user', 'lire')) {
 // Filter on project categories
 if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 	$formcategory = new FormCategory($db);
-	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PROJECT, $search_category_array, 'minwidth200imp minwidth200 widthcentpercentminusx', -1, 1, 1, $langs->trans("ProjectsCategoryShort"));
+	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PROJECT, $search_category_array, 'minwidth200imp minwidth200 widthcentpercentminusx', -1, 1, 1, $langs->transnoentitiesnoconv("ProjectsCategoryShort"));
 }
 
 // Filter on customer categories
