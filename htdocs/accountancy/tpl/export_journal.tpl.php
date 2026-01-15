@@ -20,9 +20,6 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-// $formatexportset must be defined
-// $downloadMode 	=0 for direct download or =1 to download after writing files or =-1 not to download files
-
 '
 @phan-var-force int $formatexportset
 @phan-var-force string $type_export
@@ -34,10 +31,13 @@
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
+ *
+ * @var string $action
  * @var int $formatexportset
  * @var string $type_export
  * @var string $filename
- * @var int<-1,1> $downloadMode
+ * @var string $search_date_end
+ * @var int<-1,1> $downloadMode		Value =0 for direct download or =1 to download after writing files or =-1 not to download files
  */
 
 // Protection to avoid direct call of template
@@ -53,12 +53,9 @@ $nodateexport = getDolGlobalInt('ACCOUNTING_EXPORT_NO_DATE_IN_FILENAME');
 $siren = getDolGlobalString('MAIN_INFO_SIREN');
 
 $date_export = "_".dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+$startaccountingperiod = '';
 $endaccountingperiod = dol_print_date(dol_now(), '%Y%m%d');
 
-
-if (empty($downloadMode)) {
-	header('Content-Type: text/csv');
-}
 
 include_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancyexport.class.php';
 $accountancyexport = new AccountancyExport($db);
@@ -102,7 +99,7 @@ if (is_object($hookmanager)) {
 		'code'              => $code ?? '',
 		'prefix'            => $prefix ?? '',
 		'filename'          => $filename ?? '',
-		'period_start'      => $startaccountingperiod ?? '',
+		'period_start'      => $startaccountingperiod,
 		'period_end'        => $endaccountingperiod ?? '',
 		'siren'             => $siren ?? '',
 		'ndate_in_filename' => $nodateexport ?? 0,
@@ -123,5 +120,6 @@ if (is_object($hookmanager)) {
 }
 
 if (empty($downloadMode)) {
+	header('Content-Type: text/csv');
 	header('Content-Disposition: attachment;filename=' . $completefilename);
 }
