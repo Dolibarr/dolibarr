@@ -2749,6 +2749,7 @@ class EmailCollector extends CommonObject
 									if (!empty($contact_static->email) && $contact_static->email != $from) {
 										$from = $contact_static->email;
 									}
+									$from = (string) $from;
 
 									$result = $contactstatic->fetch(0, null, '', $from);
 									if ($result < 0) {
