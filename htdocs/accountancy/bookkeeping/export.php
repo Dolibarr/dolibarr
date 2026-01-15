@@ -864,7 +864,7 @@ if ($action == 'export_file') {
 		$form_question['notifiedexportfull'] = array(
 			'name' => 'notifiedexportfull',
 			'type' => 'checkbox',
-			'label' => $langs->trans('NotifiedExportFull').(empty($except) ? '' : ' <spanc class="opacitymedium">(Except '.join(', ', $except).')</span>'),
+			'label' => $langs->trans('NotifiedExportFull').(empty($except) ? '' : ' <spanc class="opacitymedium">('.$langs->trans("except").' '.implode(', ', $except).')</span>'),
 			'value' => 'false',
 		);
 	}
