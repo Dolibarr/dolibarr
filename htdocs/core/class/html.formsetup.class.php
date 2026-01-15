@@ -962,7 +962,7 @@ class FormSetupItem
 		} elseif ($this->type == 'password') {
 			$out .= $this->generateInputFieldPassword('dolibarr');
 		} elseif ($this->type == 'genericpassword') {
-			$out .= $this->generateInputFieldPassword('generic');
+			$out .= $this->generateInputFieldPassword('generic', 0, 0);
 		} elseif ($this->type == 'price') {
 			$out .= $this->generateInputFieldPrice();
 		} elseif ($this->type == 'email') {
@@ -1137,16 +1137,17 @@ class FormSetupItem
 	/**
 	 * generate input field for a password
 	 *
-	 * @param   string  $type  'dolibarr' (dolibarr password rules apply) or 'generic'
-	 *
+	 * @param   string  $type  			'dolibarr' (dolibarr password rules apply) or 'generic'
+	 * @param	int		$defaultmin		Min nb of chars
+	 * @param	int		$defaultmax		Max nb of chars
 	 * @return  string
 	 */
-	public function generateInputFieldPassword($type = 'generic')
+	public function generateInputFieldPassword($type = 'generic', $defaultmin = 6, $defaultmax = 50)
 	{
 		global $conf, $langs, $user;
 
-		$min = 6;
-		$max = 50;
+		$min = $defaultmin;
+		$max = $defaultmax;
 		if ($type == 'dolibarr') {
 			$gen = getDolGlobalString('USER_PASSWORD_GENERATED', 'standard');
 			if ($gen == 'none') {
@@ -1749,6 +1750,7 @@ class FormSetupItem
 	 * Hide entry on display.
 	 *
 	 * @return self
+	 * @see setAsGenericPassword()
 	 */
 	public function setAsPassword()
 	{
@@ -1761,6 +1763,7 @@ class FormSetupItem
 	 * Hide entry on display.
 	 *
 	 * @return self
+	 * @see setAsPassword()
 	 */
 	public function setAsGenericPassword()
 	{
