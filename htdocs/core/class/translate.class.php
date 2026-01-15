@@ -733,11 +733,11 @@ class Translate
 	 *               Parameters of this method must not contain any HTML tags.
 	 *
 	 *  @param	string	$key        Key to translate
-	 *  @param  string	$param1     chaine de param1
-	 *  @param  string	$param2     chaine de param2
-	 *  @param  string	$param3     chaine de param3
-	 *  @param  string	$param4     chaine de param4
-	 *  @param  string	$param5     chaine de param5
+	 *  @param  string	$param1     param1 string
+	 *  @param  string	$param2     param2 string
+	 *  @param  string	$param3     param3 string
+	 *  @param  string	$param4     param4 string
+	 *  @param  string	$param5     param5 string
 	 *  @return string      		Translated string (encoded into UTF8)
 	 */
 	public function transnoentities($key, $param1 = '', $param2 = '', $param3 = '', $param4 = '', $param5 = '')
