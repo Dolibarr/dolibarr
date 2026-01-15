@@ -86,7 +86,7 @@ if ($action == 'update') {
 			$constvalue = str_replace('_ID', '', $key);
 			$newconstvalue = $constvalue;
 			if (GETPOSTISSET($constvalue.'_NAME')) {
-				$newconstvalue = preg_replace('/-.*$/', '', $constvalue).'-'.GETPOST($constvalue.'_NAME');
+				$newconstvalue = preg_replace('/-.*$/', '', $constvalue).'-'.preg_replace('/[^a-z]/', '', GETPOST($constvalue.'_NAME'));
 			}
 
 			if (GETPOSTISSET($constvalue.'_ID')) {
