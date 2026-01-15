@@ -2071,7 +2071,7 @@ function dolPrintHTML($s, $allowiframe = 0)
 function dolPrintHTMLWithAllowedTags($s, $allowedtags = array(), $allowiframe = 0)
 {
 	$allowedtags = array_map('trim', $allowedtags);
-	$allowedtags = array_filter($allowedtags, static function ($value) {
+	$allowedtags = array_filter($allowedtags, static function (string $value): bool {
 		return $value !== '';
 	});
 	$baseallowedtags = array(
