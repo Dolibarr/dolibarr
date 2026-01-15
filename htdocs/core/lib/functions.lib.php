@@ -2071,7 +2071,9 @@ function dolPrintHTML($s, $allowiframe = 0)
 function dolPrintHTMLWithAllowedTags($s, $allowedtags = array(), $allowiframe = 0)
 {
 	$allowedtags = array_map('trim', $allowedtags);
-	$allowedtags = array_filter($allowedtags, 'strlen');
+	$allowedtags = array_filter($allowedtags, static function ($value) {
+		return $value !== '';
+	});
 	$baseallowedtags = array(
 		"a", "abbr", "article", "b", "blockquote", "br", "cite", "code", "dd", "del", "dfn", "div", "dl", "dt",
 		"em", "font", "h1", "h2", "h3", "h4", "h5", "h6", "h7", "h8", "h9", "hr", "i", "img", "ins",
