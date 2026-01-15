@@ -3323,6 +3323,7 @@ class Form
 			$sql .= $this->db->order("p.ref");
 		}
 
+		$limit = getDolGlobalInt('SEARCH_LIMIT_AJAX') ?: $limit;
 		$sql .= $this->db->plimit($limit, 0);
 
 		// Build output string
