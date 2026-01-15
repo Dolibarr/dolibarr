@@ -312,11 +312,13 @@ if ($action == "valid" && $permissiontoadd) {	// validate = close
 	$datefilter = 'p.datep';
 	$modulesourcefilter = 'f.module_source';
 	$amountfield = 'pf.amount';
+	$fieldentity = 'p.entity';
 	$joinleft = 'LEFT ';
 	if (isALNERunningVersion() && $mysoc->country_code == 'FR') {
 		$datefilter = 'bl.date_creation';	// By using this as a filter, it is like the LEFT JOIN is an INNER JOIN
 		$modulesourcefilter = 'bl.module_source';
 		$amountfield = 'bl.amounts';
+		$fieldentity = 'bl.entity';
 		$joinleft = '';
 	}
 
@@ -343,7 +345,7 @@ if ($action == "valid" && $permissiontoadd) {	// validate = close
 		$sql .= " WHERE pf.fk_facture = f.rowid AND p.rowid = pf.fk_paiement AND cp.id = p.fk_paiement";
 		$sql .= " AND ".$db->sanitize($modulesourcefilter)." = '".$db->escape($posmodule)."'";
 		$sql .= " AND f.pos_source = '".$db->escape($terminalid)."'";
-		$sql .= " AND p.entity = ".((int) $conf->entity); // Never share entities for features related to accountancy
+		$sql .= " AND ".$db->sanitize($fieldentity)." = ".((int) $conf->entity); // Never share entities for features related to accountancy
 		$sql .= " AND ".$db->sanitize($datefilter)." <= '".$db->idate((int) $datee)."'";
 		if ($key == 'cash') {
 			$sql .= " AND cp.code = 'LIQ'";
