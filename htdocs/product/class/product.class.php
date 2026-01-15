@@ -2678,7 +2678,7 @@ class Product extends CommonObject
 						$result = $obj->fk_product;
 						return $result;
 					} else {
-						return -1; // Ce produit n'existe pas avec cet id tarif fournisseur ou existe mais qte insuffisante, ni pour le couple produit/ref fournisseur dans la quantité.
+						return -1; // This product does not exist with this supplier price ID, or it exists but with insufficient quantity; nor does it exist for the product/supplier ref pair in the required quantity.
 					}
 				} else {
 					$this->error = $this->db->lasterror();
@@ -5385,10 +5385,10 @@ class Product extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Recopie les fournisseurs et prix fournisseurs d'un produit/service sur un autre
+	 *  Copies the suppliers and supplier pricing of a product/service onto another one.
 	 *
-	 * @param  int $fromId Id produit source
-	 * @param  int $toId   Id produit cible
+	 * @param  int $fromId Id source product
+	 * @param  int $toId   Id target product
 	 * @return int                 Return integer < 0 si erreur, > 0 si ok
 	 */
 	public function clone_fournisseurs($fromId, $toId)
