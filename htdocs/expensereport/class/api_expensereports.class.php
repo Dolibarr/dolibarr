@@ -5,6 +5,7 @@
  * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025	William Mead			<william@m34d.com>
  * Copyright (C) 2025	Kowal Jessica			<jessicakowal69@gmail.com>
+ * Copyright (C) 2026	Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,7 +62,7 @@ class ExpenseReports extends DolibarrApi
 	 */
 	public static $FIELDSPAYMENT = array(
 		"fk_typepayment",
-		'datepaid',
+		'datep',
 		'amounts',
 	);
 
