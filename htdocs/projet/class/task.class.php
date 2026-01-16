@@ -467,7 +467,7 @@ class Task extends CommonObjectLine
 		$sql .= ", ".(isDolTms($this->date_start) ? "'".$this->db->idate($this->date_start)."'" : 'null');
 		$sql .= ", ".(isDolTms($this->date_end) ? "'".$this->db->idate($this->date_end)."'" : 'null');
 		$sql .= ", ".(($this->planned_workload != '' && $this->planned_workload >= 0) ? ((int) $this->planned_workload) : 'null');
-		$sql .= ", ".(($this->progress != '' && $this->progress >= 0) ? ((int) $this->progress) : 'null');
+		$sql .= ", ".(($this->progress != '' && $this->progress >= 0) ? ((int) $this->progress) : '0');
 		$sql .= ", ".(($this->budget_amount != '' && $this->budget_amount >= 0) ? ((int) $this->budget_amount) : 'null');
 		$sql .= ", ".(($this->priority != '' && $this->priority >= 0) ? (int) $this->priority : 'null');
 		$sql .= ", ".((int) $this->billable);
