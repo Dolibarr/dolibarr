@@ -13,7 +13,7 @@
  * Copyright (C) 2014		Cédric GROSS				<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015	Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
- * Copyright (C) 2018-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2019-2023  Thibault Foucart            <support@ptibogxiv.net>
  * Copyright (C) 2020       Open-Dsi         			<support@open-dsi.fr>
  * Copyright (C) 2021       Gauthier VERDOL         	<gauthier.verdol@atm-consulting.fr>
@@ -4741,13 +4741,13 @@ function dol_print_phone($phone, $countrycode = '', $contactid = 0, $socid = 0, 
 		} elseif (dol_strlen($phone) == 11) { //ex: +597_ABC_DEFG
 			$newphone = substr($newphone, 0, 4) . $separ . substr($newphone, 4, 3) . $separ . substr($newphone, 7, 4);
 		}
-	} elseif (strtoupper($countrycode) == "DE") { //Allemagne
+	} elseif (strtoupper($countrycode) == "DE") { //Deutschland
 		if (dol_strlen($phone) == 14) { //ex:  +49_ABCD_EFGH_IJK
 			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 4) . $separ . substr($newphone, 7, 4) . $separ . substr($newphone, 11, 3);
 		} elseif (dol_strlen($phone) == 13) { //ex: +49_ABC_DEFG_HIJ
 			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 3) . $separ . substr($newphone, 6, 4) . $separ . substr($newphone, 10, 3);
 		}
-	} elseif (strtoupper($countrycode) == "ES") { //Espagne
+	} elseif (strtoupper($countrycode) == "ES") { //Spain
 		if (dol_strlen($phone) == 12) { //ex:  +34_ABC_DEF_GHI
 			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 3) . $separ . substr($newphone, 6, 3) . $separ . substr($newphone, 9, 3);
 		}
@@ -4891,12 +4891,12 @@ function dol_print_phone($phone, $countrycode = '', $contactid = 0, $socid = 0, 
 		}
 	} elseif (strtoupper($countrycode) == "PE") {
 		// Peru
-		if (dol_strlen($phone) == 7) { // fix 7 chiffres without code AAA_BBBB
+		if (dol_strlen($phone) == 7) { // fix 7 digits without code AAA_BBBB
 			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 4);
-		} elseif (dol_strlen($phone) == 9) { // mobile add code and fix 9 chiffres +51_AAA_BBB_CCC
+		} elseif (dol_strlen($phone) == 9) { // mobile add code and fix 9 digits +51_AAA_BBB_CCC
 			$newphonewa = '+51' . $newphone;
 			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 3) . $separ . substr($newphone, 6, 3) . $separ . substr($newphone, 10, 3);
-		} elseif (dol_strlen($phone) == 11) { // fix 11 chiffres +511_AAA_BBBB
+		} elseif (dol_strlen($phone) == 11) { // fix 11 digits +511_AAA_BBBB
 			$newphone = substr($newphone, 0, 4) . $separ . substr($newphone, 4, 3) . $separ . substr($newphone, 8, 4);
 		} elseif (dol_strlen($phone) == 12) { // mobile +51_AAA_BBB_CCC
 			$newphonewa = $newphone;
@@ -8913,7 +8913,7 @@ function dolChmod($filepath, $newmask = '')
 /**
  *	Return picto saying a field is required
  *
- *	@return  string		Chaine avec picto obligatoire
+ *	@return  string		String with mandatory picto
  */
 function picto_required()
 {
