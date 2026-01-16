@@ -7149,7 +7149,7 @@ class Form
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
-	 *    Retourne la liste des devises, dans la langue de l'utilisateur
+	 *  Returns the list of currencies in the user's language
 	 *
 	 * @param string $selected preselected currency code
 	 * @param string $htmlname name of HTML select list
@@ -7163,7 +7163,7 @@ class Form
 	}
 
 	/**
-	 *  Retourne la liste des devises, dans la langue de l'utilisateur
+	 *  Returns the list of currencies in the user's language
 	 *
 	 * @param 	string 	$selected 		Preselected currency code
 	 * @param 	string 	$htmlname 		Name of HTML select list
