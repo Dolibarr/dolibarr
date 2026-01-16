@@ -183,7 +183,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		}
 	}
 
-	// If check is ik and action is add, we add the line
+	// If check is ok and action is add, we add the line
 	if ($ok && GETPOST('actionadd', 'alpha')) {
 		$newid = 0;
 

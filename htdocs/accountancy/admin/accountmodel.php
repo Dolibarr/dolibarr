@@ -196,7 +196,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities("Country")), null, 'errors');
 	}
 
-	// If check is ik and action is add, we add the line
+	// If check is ok and action is add, we add the line
 	if ($ok && GETPOST('actionadd', 'alpha')) {
 		$newid = 0;
 
@@ -241,7 +241,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		}
 	}
 
-	// Si verif ok et action modify, on modifie la ligne
+	// If check is ok and action is modify, we update the line
 	if ($ok && GETPOST('actionmodify', 'alpha')) {
 		// Modify entry
 		$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET ";

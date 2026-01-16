@@ -209,7 +209,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		setEventMessages($langs->transnoentities('ErrorFieldMustBeANumeric', $langs->transnoentities("Position")), null, 'errors');
 	}
 
-	// If check is ik and action is add, we add the line
+	// If check is ok and action is add, we add the line
 	if ($ok && GETPOST('actionadd', 'alpha')) {
 		$newid = 0;
 

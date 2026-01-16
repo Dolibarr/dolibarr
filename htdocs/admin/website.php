@@ -171,7 +171,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 
 	$newid = 0;
 
-	// If check is ik and action is add, we add the line
+	// If check is ok and action is add, we add the line
 	if ($ok && GETPOST('actionadd', 'alpha')) {
 		if ($tabrowid[$id]) {
 			// Get free id for insert
@@ -239,7 +239,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		}
 	}
 
-	// Si verif ok et action modify, on modifie la ligne
+	// If check is ok and action is modify, we update the line
 	if ($ok && GETPOST('actionmodify', 'alpha')) {
 		if ($tabrowid[$id]) {
 			$rowidcol = $tabrowid[$id];
