@@ -6,7 +6,7 @@
  * Copyright (C) 2019	    Nicolas ZABOURI     	<info@inovea-conseil.com>
  * Copyright (C) 2021		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -440,11 +440,11 @@ function checkBanForAccount($account)
 		$coef = array(62, 34, 3);
 		// Concatenate the code parts
 		$rib = strtolower(trim($account->code_banque).trim($account->code_guichet).trim($account->number).trim($account->cle));
-		// On replace les eventuelles lettres par des chiffres.
-		//$rib = strtr($rib, "abcdefghijklmnopqrstuvwxyz","12345678912345678912345678");	//Ne marche pas
+		// Replace any letters with numbers.
+		//$rib = strtr($rib, "abcdefghijklmnopqrstuvwxyz","12345678912345678912345678");	// don't work
 		$rib = strtr($rib, "abcdefghijklmnopqrstuvwxyz", "12345678912345678923456789");
 		// Separation du rib en 3 groups de 7 + 1 group de 2.
-		// Multiplication de chaque group par les coef du tableau
+		// Multiplication of each group by the coefficients in the array.
 
 		for ($i = 0, $s = 0; $i < 3; $i++) {
 			$code = substr($rib, 7 * $i, 7);
