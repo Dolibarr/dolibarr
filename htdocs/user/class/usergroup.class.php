@@ -507,7 +507,7 @@ class UserGroup extends CommonObject
 				$wherefordel .= " OR (module='".$this->db->escape($module)."')";
 			}
 
-			// Pour compatibility, if lowid = 0, we are in renovall all mode
+			// Pour compatibility, if lowid = 0, we are in removal all mode
 			// TODO To remove when this will be implemented by the caller
 			//if (substr($rid,-1,1) == 0) $wherefordel="module='$module'";
 		} else {
