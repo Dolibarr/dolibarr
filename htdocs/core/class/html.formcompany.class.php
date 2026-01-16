@@ -4,7 +4,7 @@
  * Copyright (C) 2014		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2017		Rui Strecht				<rui.strecht@aliartalentos.com>
  * Copyright (C) 2020       Open-Dsi         		<support@open-dsi.fr>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -192,11 +192,11 @@ class FormCompany extends Form
 	}
 
 	/**
-	 *  Affiche formulaire de selection des niveau de prospection pour les contacts
+	 *  Display the prospecting level selection form for contacts
 	 *
 	 *  @param	string	$page        	Page
 	 *  @param  int		$selected    	Id or code preselected
-	 *  @param  string	$htmlname   	Nom du formulaire select
+	 *  @param  string	$htmlname   	Name of the select form
 	 *	@param	int		$empty			Add empty value in list
 	 *	@return	void
 	 */
@@ -330,7 +330,7 @@ class FormCompany extends Form
 							$out .= '<option value="' . $obj->rowid . '">';
 						}
 
-						// Si traduction existe, on l'utilise, sinon on prend le libelle par default
+						// Use the translation if available; otherwise, fall back to the default label.
 						if (
 							getDolGlobalString('MAIN_SHOW_STATE_CODE') &&
 							(getDolGlobalInt('MAIN_SHOW_STATE_CODE') == 1 || getDolGlobalInt('MAIN_SHOW_STATE_CODE') == 2 || getDolGlobalString('MAIN_SHOW_STATE_CODE') === 'all')
@@ -967,7 +967,7 @@ class FormCompany extends Form
 					} elseif ($idprof == 2) {
 						$formlength = 14;
 					} elseif ($idprof == 3) {
-						$formlength = 5; // 4 chiffres et 1 lettre depuis janvier
+						$formlength = 5; // 4 numbers et 1 letter since january
 					} elseif ($idprof == 4) {
 						$formlength = 32; // No maximum as we need to include a town name in this id
 					}

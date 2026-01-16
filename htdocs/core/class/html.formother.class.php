@@ -10,7 +10,7 @@
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerker@telenet.be>
  * Copyright (C) 2007      Patrick Raguin 		<patrick.raguin@gmail.com>
  * Copyright (C) 2019       Thibault FOUCART        <support@ptibogxiv.net>
- * Copyright (C) 2024-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -205,7 +205,7 @@ class FormOther
 	 *    @param    string	$selected          Id modele pre-selectionne
 	 *    @param    string	$htmlname          Nom de la zone select
 	 *    @param    string	$type              Type des modeles recherches
-	 *    @param    int		$useempty          Affiche valeur vide dans liste
+	 *    @param    int		$useempty          Display empty value in list
 	 *    @param    int		$fk_user           User that has created the template
 	 *    @return	void
 	 */
@@ -364,8 +364,8 @@ class FormOther
 	/**
 	 *    Return a HTML select list to select a percent
 	 *
-	 *    @param	integer	$selected      	pourcentage pre-selectionne
-	 *    @param    string	$htmlname      	nom de la liste deroulante
+	 *    @param	integer	$selected      	Pre-selected percentage
+	 *    @param    string	$htmlname      	name of the select form
 	 *    @param	int		$disabled		Disabled or not
 	 *    @param    int		$increment     	increment value
 	 *    @param    int		$start         	start value
@@ -1038,7 +1038,7 @@ class FormOther
 	 *
 	 *    	@param	string		$selected          Preselected value
 	 *    	@param  string		$htmlname          Nom de la zone select
-	 *    	@param  int			$useempty          Affiche valeur vide dans liste
+	 *    	@param  int			$useempty          Display empty value in list
 	 *    	@return	string
 	 */
 	public function select_dayofweek($selected = '', $htmlname = 'weekid', $useempty = 0)
@@ -1173,7 +1173,7 @@ class FormOther
 	 *
 	 *  @param  string		$selected       Preselected value (''=current year, -1=none, year otherwise)
 	 *  @param  string		$htmlname       Name of HTML select object
-	 *  @param  int			$useempty       Affiche valeur vide dans liste
+	 *  @param  int			$useempty       Display empty value in list
 	 *  @param  int			$min_year       Offset of minimum year into list (by default current year -10)
 	 *  @param  int		    $max_year		Offset of maximum year into list (by default current year + 5)
 	 *  @param	int			$offset			Offset
@@ -1195,7 +1195,7 @@ class FormOther
 	 *
 	 *  @param  int|string	$selected       Preselected value (''=current year, -1=none, year otherwise)
 	 *  @param  string		$htmlname       Name of HTML select object
-	 *  @param  int	    	$useempty       Affiche valeur vide dans liste
+	 *  @param  int	    	$useempty       Display empty value in list
 	 *  @param  int	    	$min_year		Offset of minimum year into list (by default current year -10)
 	 *  @param  int	    	$max_year       Offset of maximum year into list (by default current year + 5)
 	 *  @param	int			$offset			Offset

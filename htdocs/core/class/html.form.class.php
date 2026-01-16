@@ -17,7 +17,7 @@
  * Copyright (C) 2012-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014-2023  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2022  Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018       Nicolas ZABOURI	        <info@inovea-conseil.com>
  * Copyright (C) 2018       Christophe Battarel     <christophe@altairis.fr>
  * Copyright (C) 2018       Josep Lluis Amador      <joseplluis@lliuretic.cat>
@@ -1312,7 +1312,7 @@ class Form
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 
-				// Si traduction existe, on l'utilise, sinon on prend le libelle par default
+				// Use the translation if available; otherwise, fall back to the default label.
 				$label = ($obj->code != $langs->trans($obj->code) ? $langs->trans($obj->code) : $langs->trans($obj->label));
 				$this->cache_types_fees[$obj->code] = $label;
 				$i++;
@@ -2175,7 +2175,7 @@ class Form
 	 *
 	 * @param 	string 			$selected 		Id user preselected
 	 * @param 	string 			$htmlname 		Field name in form
-	 * @param 	int<0,1> 		$show_empty 	0=liste sans valeur nulle, 1=ajoute valeur inconnue
+	 * @param 	int<0,1> 		$show_empty 	0=list without null value, 1=add unknown value
 	 * @param 	int[] 			$exclude 		Array list of users id to exclude
 	 * @param 	int<0,1> 		$disabled 		If select list must be disabled
 	 * @param 	int[]|''|'hierarchy'|'hierarchyme' 	$include 		Array list of users id to include. User '' for all users or 'hierarchy' to have only supervised users or 'hierarchyme' to have supervised + me
@@ -4593,7 +4593,7 @@ class Form
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 
-				// Si traduction existe, on l'utilise, sinon on prend le libelle par default
+				// Use the translation if available; otherwise, fall back to the default label.
 				$label = ($langs->trans("PaymentConditionShort" . $obj->code) != "PaymentConditionShort" . $obj->code ? $langs->trans("PaymentConditionShort" . $obj->code) : ($obj->label != '-' ? $obj->label : ''));
 				$this->cache_conditions_paiements[$obj->rowid]['code'] = (string) $obj->code;
 				$this->cache_conditions_paiements[$obj->rowid]['label'] = (string) $label;
@@ -4676,7 +4676,7 @@ class Form
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 
-				// Si traduction existe, on l'utilise, sinon on prend le libelle par default
+				// Use the translation if available; otherwise, fall back to the default label.
 				$label = ($langs->trans("AvailabilityType" . $obj->code) != "AvailabilityType" . $obj->code ? $langs->trans("AvailabilityType" . $obj->code) : ($obj->label != '-' ? $obj->label : ''));
 				$this->cache_availability[$obj->rowid]['code'] = (string) $obj->code;
 				$this->cache_availability[$obj->rowid]['label'] = (string) $label;
@@ -4758,7 +4758,7 @@ class Form
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 
-				// Si traduction existe, on l'utilise, sinon on prend le libelle par default
+				// Use the translation if available; otherwise, fall back to the default label.
 				$label = ($obj->label != '-' ? (string) $obj->label : '');
 				if ($langs->trans("DemandReasonType" . $obj->code) != "DemandReasonType" . $obj->code) {
 					$label = $langs->trans("DemandReasonType" . $obj->code); // So translation key DemandReasonTypeSRC_XXX will work
@@ -4861,7 +4861,7 @@ class Form
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 
-				// Si traduction existe, on l'utilise, sinon on prend le libelle par default
+				// Use the translation if available; otherwise, fall back to the default label.
 				$label = ($langs->transnoentitiesnoconv("PaymentTypeShort" . $obj->code) != "PaymentTypeShort" . $obj->code ? $langs->transnoentitiesnoconv("PaymentTypeShort" . $obj->code) : ($obj->label != '-' ? $obj->label : ''));
 				$this->cache_types_paiements[$obj->id]['id'] = (int) $obj->id;
 				$this->cache_types_paiements[$obj->id]['code'] = (string) $obj->code;
@@ -10782,7 +10782,7 @@ class Form
 	 * @param string $selected Id modele pre-selectionne
 	 * @param string $htmlname Name of HTML select
 	 * @param string $type Type of searched templates
-	 * @param int $useempty Affiche valeur vide dans liste
+	 * @param int $useempty Display empty value in list
 	 * @return    void
 	 */
 	public function select_export_model($selected = '', $htmlname = 'exportmodelid', $type = '', $useempty = 0)
@@ -11291,7 +11291,7 @@ class Form
 	 *
 	 * @param int|object|array<int|object> 	$selected	Id group or group(s) preselected
 	 * @param string 				$htmlname 		Field name in form
-	 * @param int<0,1> 				$show_empty 	0=liste sans valeur nulle, 1=ajoute valeur inconnue
+	 * @param int<0,1> 				$show_empty 	0=list without null value, 1=add unknown value
 	 * @param string|int[] 			$exclude 		Array list of groups id to exclude
 	 * @param int<0,1> 				$disabled 		If select list must be disabled
 	 * @param string|int[] 			$include 		Array list of groups id to include
