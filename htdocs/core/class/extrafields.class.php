@@ -1026,7 +1026,7 @@ class ExtraFields
 	public function fetch_name_optionals_label($elementtype, $forceload = false, $attrname = '')
 	{
 		// phpcs:enable
-		global $conf;
+		global $conf,$hookmanager;
 
 		if (empty($elementtype)) {
 			return array();
@@ -1116,6 +1116,22 @@ class ExtraFields
 		} else {
 			$this->error = $this->db->lasterror();
 			dol_syslog(get_class($this)."::fetch_name_optionals_label ".$this->error, LOG_ERR);
+		}
+
+		// Hook to complete/modify extrafields loaded from database
+		if (is_object($hookmanager)) {
+			$parameters = array(
+				'elementtype' => $elementtype,
+				'attrname' => $attrname,
+				'forceload' => $forceload,
+			);
+			$reshook = $hookmanager->executeHooks('completeFetchNameOptionalsLabel', $parameters, $this);
+			if ($reshook > 0 && is_array($hookmanager->resArray)) {
+				// Allow hook to inject additional extrafields definitions
+				foreach ($hookmanager->resArray as $key => $val) {
+					$array_name_label[$key] = $val;
+				}
+			}
 		}
 
 		return $array_name_label;
@@ -2749,7 +2765,7 @@ class ExtraFields
 	 */
 	public function setOptionalsFromPost($extralabels, $object, $onlykey = '', $todefaultifmissing = 0)
 	{
-		global $langs;
+		global $langs, $hookmanager;
 
 		$nofillrequired = 0; // For error when required field left blank
 		$error_field_required = array();
@@ -2888,6 +2904,16 @@ class ExtraFields
 						unset($error_field_required[$key]);
 						$nofillrequired--;
 					}
+				}
+
+				// Hook to process custom extrafields from POST
+				if (is_object($hookmanager)) {
+					$parameters = array(
+						'key' => $key,
+						'key_type' => $key_type,
+						'value_key' => &$value_key,
+					);
+					$reshook = $hookmanager->executeHooks('setOptionalsFromPostExtra', $parameters, $object);
 				}
 
 				$object->array_options["options_".$key] = $value_key;

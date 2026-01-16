@@ -272,8 +272,8 @@ class SupplierInvoiceLine extends CommonObjectLine
 
 	/**
 	 * List of cumulative options:
-	 * Bit 0:	0 si TVA normal - 1 si TVA NPR
-	 * Bit 1:	0 si ligne normal - 1 si bit discount (link to line into llx_remise_except)
+	 * Bit 0:	0 if TVA normal - 1 if TVA NPR
+	 * Bit 1:	0 if normal line - 1 if bit discount (link to line into llx_remise_except)
 	 * @var int
 	 */
 	public $info_bits;
@@ -691,7 +691,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 
 		$this->db->begin();
 
-		// Insertion dans base de la ligne
+		// Insert line into database
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.$this->table_element;
 		$sql .= ' (fk_facture_fourn, fk_parent_line, label, description, ref, qty,';
 		$sql .= ' vat_src_code, tva_tx, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type,';
@@ -825,7 +825,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Mise a jour de l'objet ligne de commande en base
+	 *  Update invoice supplier line into database
 	 *
 	 *  @return		int		Return integer <0 si ko, >0 si ok
 	 */
@@ -834,7 +834,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 		// phpcs:enable
 		$this->db->begin();
 
-		// Mise a jour ligne en base
+		// Update line in database
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_det SET";
 		$sql .= "  total_ht = ".price2num($this->total_ht);
 		$sql .= ", tva= ".price2num($this->total_tva);

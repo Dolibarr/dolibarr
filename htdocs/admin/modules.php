@@ -515,6 +515,7 @@ $filename = array();
 $modules = array();
 $orders = array();
 $categ = array();
+$timestoinit = [];
 //$publisherlogoarray = array();
 
 $i = 0; // is a sequencer of modules found
@@ -528,6 +529,7 @@ foreach ($modulesdir as $dir) {
 	//print $dir."\n<br>";
 	dol_syslog("Scan directory ".$dir." for module descriptor files (modXXX.class.php)");
 	$handle = @opendir($dir);
+	$timestart = microtime(true);
 	if (is_resource($handle)) {
 		while (($file = readdir($handle)) !== false) {
 			//print "$i ".$file."\n<br>";
@@ -595,6 +597,7 @@ foreach ($modulesdir as $dir) {
 								// Define an array $categ with categ with at least one qualified module
 								$filename[$i] = $modName;
 								$modules[$modName] = $objMod;
+								$timestoinit[$modName] = round((microtime(true) - $timestart) * 1000, 3);
 
 								// Gives the possibility to the module, to provide his own family info and position of this family
 								if (is_array($objMod->familyinfo) && !empty($objMod->familyinfo)) {
@@ -1223,6 +1226,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			print '<a href="javascript:document_preview(\''.DOL_URL_ROOT.'/admin/modulehelp.php?id='.((int) $objMod->numero).'\',\'text/html\',\''.dol_escape_js($langs->trans("Module")).'\')">';
 			print img_picto(($objMod->isCoreOrExternalModule() == 'external' ? $langs->trans("ExternalModule").' - ' : '').$langs->trans("ClickToShowDescription"), $imginfo, '', 0, 0, 0, '', 'purple');
 			print '</a>';
+			print ($timestoinit[$modName] > 500 ? img_picto($langs->trans('InitModuleIsSlow'), 'fa-exclamation-circle') : '');
 			print '</td>';
 
 			// Version

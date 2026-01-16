@@ -5,6 +5,7 @@
  * Copyright (C) 2020	    Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1462,4 +1463,50 @@ function getMaxFileSizeArray()
 	//var_dump($maxmin);
 
 	return array('max' => $max, 'maxmin' => $maxmin, 'maxphptoshow' => $maxphptoshow, 'maxphptoshowparam' => $maxphptoshowparam);
+}
+
+/**
+ * Check if IP address is in CIDR range
+ *
+ * @param	string		$ip			IP address to check (ex: 192.168.0.50, 2001:db8:3333:4444::5555:6666)
+ * @param	string		$cidr		Network IP CIDR notation (ex: 192.168.0.0/24, 2001:db8:3333:4444::/64)
+ * @return	int						1 if IP is in CIDR range, 0 if IP out of CIDR range, -1 if check error
+ */
+function checkIPInCidr($ip, $cidr)
+{
+	list($network, $prefix) = explode('/', $cidr, 2);
+
+	// Convert IPs to binary format
+	$ip_bin = @inet_pton($ip);
+	$net_bin = @inet_pton($network);
+	if ($ip_bin === false || $net_bin === false) {
+		return -1;
+	}
+
+	// Require same address IPvX family
+	if (strlen($ip_bin) !== strlen($net_bin)) {
+		return -1;
+	}
+
+	// Comparison boundaries
+	$total_bits = strlen($ip_bin) * 8;
+	$prefix = max(0, min((int) $prefix, $total_bits));
+	$full_bytes = intdiv($prefix, 8);
+	$rem_bits = $prefix % 8;
+
+	// Compare full bytes and partial bytes
+	if ($full_bytes > 0) {
+		if (substr($ip_bin, 0, $full_bytes) !== substr($net_bin, 0, $full_bytes)) {
+			return 0;
+		}
+	}
+	if ($rem_bits > 0) {
+		$mask = (0xFF << (8 - $rem_bits)) & 0xFF;
+		$ip_byte = ord($ip_bin[$full_bytes]);
+		$net_byte = ord($net_bin[$full_bytes]);
+		if (($ip_byte & $mask) !== ($net_byte & $mask)) {
+			return 0;
+		}
+	}
+	return 1;
 }

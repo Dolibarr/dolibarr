@@ -1693,11 +1693,12 @@ if (empty($reshook)) {
 									$array_option,
 									$lines[$i]->fk_unit,
 									0,
-									$element,
-									!empty($lines[$i]->id) ? $lines[$i]->id : $lines[$i]->rowid,
-									-1,
-									$lines[$i]->special_code
-								);
+										$element,
+										!empty($lines[$i]->id) ? $lines[$i]->id : $lines[$i]->rowid,
+										-1,
+										$lines[$i]->special_code,
+										$label
+									);
 
 								if ($result < 0) {
 									setEventMessages($object->error, $object->errors, 'errors');
