@@ -194,7 +194,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		$ok = 0;
 	}
 
-	// Si verif ok et action add, on ajoute la ligne
+	// If check is ik and action is add, we add the line
 	if ($ok && GETPOST('actionadd', 'alpha')) {
 		$newid = 0;  // Initialise before if for static analysis
 		if ($tabrowid[$id]) {

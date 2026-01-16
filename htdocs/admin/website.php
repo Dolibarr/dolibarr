@@ -171,7 +171,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 
 	$newid = 0;
 
-	// Si verif ok et action add, on ajoute la ligne
+	// If check is ik and action is add, we add the line
 	if ($ok && GETPOST('actionadd', 'alpha')) {
 		if ($tabrowid[$id]) {
 			// Get free id for insert
