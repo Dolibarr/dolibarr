@@ -5,6 +5,7 @@
  * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025	William Mead			<william@m34d.com>
  * Copyright (C) 2025	Kowal Jessica			<jessicakowal69@gmail.com>
+ * Copyright (C) 2026	Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -753,6 +754,50 @@ class ExpenseReports extends DolibarrApi
 		}
 
 
+
+		return $this->_cleanObjectDatas($this->expensereport);
+	}
+
+	/**
+	 * Set to paid an expense report
+	 *
+	 * If you get a bad value for param notrigger check, provide this in body
+	 * {
+	 *   "notrigger": 0
+	 * }
+	 *
+	 * @since	22.0.0	Initial implementation
+	 *
+	 * @param	int		$id				Expense report ID
+	 * @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
+	 *
+	 * @url		POST	{id}/setpaid
+	 *
+	 * @return	Object
+	 *
+	 * @throws RestException
+	 */
+	public function setPaid($id, $notrigger = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'to_paid')) {
+			throw new RestException(403, "Insufficiant rights");
+		}
+		$result = $this->expensereport->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Expense report not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$result = $this->expensereport->setPaid($id, DolibarrApiAccess::$user, $notrigger);
+		if ($result == 0) {
+			throw new RestException(304, 'Error nothing done. May be object is already approved');
+		}
+		if ($result < 0) {
+			throw new RestException(500, 'Error when approving expense report: '.$this->expensereport->error);
+		}
 
 		return $this->_cleanObjectDatas($this->expensereport);
 	}
