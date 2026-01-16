@@ -386,7 +386,6 @@ ExtrafieldFiller=Relleno de campo extra
 OurProductSelection=El producto por descubrir
 NoSupportedModulesHaveBeenActivated=La herramienta de informes solo puede generar informes dinámicos para algunos módulos. Aún no hay ningún módulo compatible habilitado.
 # Bookmarks
-AddThisPageToBookmarks = Añadir esta página a los marcadores
 BehaviourOnClick = Comportamiento cuando se selecciona la URL de un marcador
 BookmarkTargetNewWindowShort = Nueva pestaña
 BookmarkTargetReplaceWindowShort = Pestaña actual
@@ -395,7 +394,6 @@ BookmarksManagement = Gestión de marcadores
 BookmarksMenuShortCut = Ctrl + shift + m
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark = Elija si la página enlazada debería abrirse en la pestaña actual o en una nueva pestaña
 CreateBookmark = Crear marcador
-EditBookmarks = Listar/editar marcadores
 ListOfBookmarks = Listado de marcadores
 NewBookmark = Nuevo marcador
 NoBookmarkFound = No se encontró ningún marcador

@@ -245,7 +245,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 	if ($ok && GETPOST('actionmodify', 'alpha')) {
 		// Modify entry
 		$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET ";
-		// Modifie valeur des champs
+		// Change field's value
 
 		$i = 0;
 		foreach ($listfieldmodify as $field) {
@@ -268,7 +268,6 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		$sql .= " WHERE rowid = ".((int) $rowid);
 
 		dol_syslog("actionmodify", LOG_DEBUG);
-		//print $sql;
 		$resql = $db->query($sql);
 		if (!$resql) {
 			setEventMessages($db->error(), null, 'errors');
@@ -327,13 +326,13 @@ $linkback = '';
 print load_fiche_titre($titre, $linkback, 'title_accountancy');
 
 
-// Confirmation de la suppression de la ligne
+// Confirmation of line deletion
 if ($action == 'delete') {
 	print $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['page'=> $page, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'rowid' => $rowid, 'code' => $code, 'id' => $id]), $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete', '', 0, 1);
 }
 
 
-// Complete requete recherche valeurs avec critere de tri
+// Complete the values search query with the sort order
 $sql = $tabsql[$id];
 
 if ($search_country_id > 0) {
@@ -351,7 +350,6 @@ if ($sortfield == 'country') {
 }
 $sql .= $db->order($sortfield, $sortorder);
 $sql .= $db->plimit($listlimit + 1, $offset);
-//print $sql;
 
 $fieldlist = explode(',', $tabfield[$id]);
 
@@ -368,8 +366,8 @@ $fieldlist = explode(',', $tabfield[$id]);
 // Line for title
 print '<tr class="liste_titre">';
 foreach ($fieldlist as $field => $value) {
-	// Determine le nom du champ par rapport aux noms possibles
-	// dans les dictionnaires de donnees
+	// Determine the field name based on the possible names
+	// in the data dictionaries
 	$valuetoshow = ucfirst($fieldlist[$field]); // By default
 	$valuetoshow = $langs->trans($valuetoshow); // try to translate
 	$class = "left";
@@ -393,7 +391,6 @@ foreach ($fieldlist as $field => $value) {
 	if ($fieldlist[$field] == 'pcg_version' || $fieldlist[$field] == 'fk_pcg_version') {
 		$valuetoshow = $langs->trans("Pcg_version");
 	}
-	//var_dump($value);
 
 	if ($valuetoshow != '') {
 		print '<td class="'.$class.'">';

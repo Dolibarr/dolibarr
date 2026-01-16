@@ -249,6 +249,7 @@ if (!GETPOST('code')) {
 
 			$db->begin();
 
+			$token = null;
 			try {
 				// This requests the token from the received OAuth code (call of the https://oauth2.googleapis.com/token endpoint)
 				// Result is stored into object managed by class DoliStorage into includes/OAuth/Common/Storage/DoliStorage.php and into database table llx_oauth_token

@@ -67,7 +67,7 @@ if (isModEnabled('blockedlog')) {
 	$s = str_replace('{s}', DOL_URL_ROOT.'/blockedlog/admin/blockedlog_list.php', $s);
 	print '<br>'.$s;
 }
-print'</div><br><br>';
+print'</div><br>';
 
 // Version
 print '<div class="div-table-responsive-no-min">';
@@ -95,7 +95,7 @@ print ' '.$form->textwithpicto('', $htmltooltip);
 print '</td></tr>'."\n";
 print '</table>';
 print '</div>';
-print '<br>';
+print '<br><br>';
 
 
 // Modified or missing files
@@ -233,8 +233,11 @@ if (empty($error) && !empty($xml)) {
 	$file_list = array();
 	$out = '';
 
-	//$algo = 'md5';		// For v22-
-	$algo = 'sha256';		// For v23+
+	$algo = (string) $xml['algo'];		// When file is <checksum_list attrib="val" algo="xxx">...</checksum_list>, the first tag is root of the $xml
+	if (empty($algo)) {
+		//$algo = 'md5';		// For v22-
+		$algo = 'sha256';		// For v23+
+	}
 
 	// Forced constants
 	if (is_object($xml->dolibarr_constants[0]) || $mode == 'unalterable') {
@@ -618,8 +621,8 @@ if (empty($error) && !empty($xml)) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("ExpectedChecksum").'</td>';
-	print '<td>'.$langs->trans("CurrentChecksum").'</td>';
+	print '<td>'.$langs->trans("ExpectedChecksum").' <span class="opacitymedium">('.$algo.')</span></td>';
+	print '<td>'.$langs->trans("CurrentChecksum").' <span class="opacitymedium">('.$algo.')</span></td>';
 	print '</tr>'."\n";
 
 	print '<tr><td>';

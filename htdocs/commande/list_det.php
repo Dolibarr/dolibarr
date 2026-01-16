@@ -1653,9 +1653,9 @@ if ($resql) {
 		// Product Description
 		if (!empty($arrayfields['pr.desc']['checked'])) {
 			// print '<td class="nowrap tdoverflowmax200">'.$obj->description.'</td>';
-			!empty($obj->product_label) ? $labelproduct = $obj->product_label : $labelproduct = $obj->description;
+			$descline = empty($obj->description) ? $obj->product_label : $obj->description;
 			print '<td class="nowrap tdoverflowmax200">';
-			print dolGetFirstLineOfText(dolPrintHTML($labelproduct), 5);
+			print dolGetFirstLineOfText(dolPrintHTML($descline), 5);
 			print '</td>';
 
 			if (!$i) {

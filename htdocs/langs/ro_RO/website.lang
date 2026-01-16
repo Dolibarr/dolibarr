@@ -477,3 +477,4 @@ WebPortalSharedDocsDir=Numele directorului de documente partajate
 WebPortalSharedDocsDirHelp=Introdu numele directorului, situat în folderul ECM/GED, care conține documentele care vor fi partajate cu toți utilizatorii portalului.
 DateM=Dată modificare
 ThisDirectoryIsEmpty=Acest director este gol
+WrittenBy=Scris de %s

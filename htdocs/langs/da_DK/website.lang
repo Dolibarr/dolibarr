@@ -477,3 +477,4 @@ WebPortalSharedDocsDir=Navn på mappen med delte dokumenter
 WebPortalSharedDocsDirHelp=Indtast navnet på den mappe, der findes i ECM/GED-mappen, og som indeholder de dokumenter, der skal deles med alle portalbrugere.
 DateM=Ændringsdato
 ThisDirectoryIsEmpty=Denne mappe er tom
+WrittenBy=Skrevet af %s

@@ -207,7 +207,7 @@ class Facture extends CommonInvoice
 	public $extraparams = array();
 
 	/**
-	 * @var int ID facture rec
+	 * @var int ID invoice model
 	 */
 	public $fac_rec;
 
@@ -2882,7 +2882,7 @@ class Facture extends CommonInvoice
 			$facligne->vat_src_code = $remise->vat_src_code;
 			$facligne->tva_tx = $remise->tva_tx;
 			$facligne->subprice = -(float) $remise->amount_ht;
-			$facligne->fk_product = 0; // Id produit predefini
+			$facligne->fk_product = 0; // Predefined Product ID
 			$facligne->qty = 1;
 			$facligne->remise_percent = 0;
 			$facligne->rang = -1;
@@ -4122,10 +4122,9 @@ class Facture extends CommonInvoice
 	/**
 	 *  Add an invoice line into database (linked to product/service or not).
 	 *  Note: ->thirdparty must be defined.
-	 *  Les parameters sont deja cense etre juste et avec valeurs finales a l'appel
-	 *  de cette method. Aussi, pour le taux tva, il doit deja avoir ete defini
-	 *  par l'appelant par la method get_default_tva(societe_vendeuse,societe_acheteuse,produit)
-	 *  et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
+	 *  The parameters are already supposed to be correct and with final values upon calling this method.
+	 *  Also, for the VAT rate, it must have already been defined by the caller using the method get_default_tva(societe_vendeuse, societe_acheteuse, produit)
+	 *  and the description (desc) must already have the correct value (it's up to the caller to manage multilanguage)
 	 *
 	 *  @param	string			$desc            			Description of line
 	 *  @param	float			$pu_ht              		Unit price without tax (> 0 even for credit note)
@@ -4348,10 +4347,9 @@ class Facture extends CommonInvoice
 				$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
 			}
 
-			// Calcul du total TTC et de la TVA pour la ligne a partir de
-			// qty, pu, remise_percent et txtva
-			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
-			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
+			// Calculation of the gross total (TTC) and VAT for the line from qty, pu, remise_percent and txtva
+			// VERY IMPORTANT: It's at the time of line insertion that we must store the net, VAT, and gross amounts,
+			// and this is done at the line level, which has its own VAT rate
 
 			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $mysoc, $localtaxes_type, $situation_percent, $this->multicurrency_tx, $pu_ht_devise);
 
@@ -4590,9 +4588,9 @@ class Facture extends CommonInvoice
 				return -1;
 			}
 
-			// Calculate total with, without tax and tax from qty, pu, remise_percent and txtva
-			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
-			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
+			// Calculation of the gross total (TTC) and VAT for the line from qty, pu, remise_percent and txtva
+			// VERY IMPORTANT: It's at the time of line insertion that we must store the net, VAT, and gross amounts,
+			// and this is done at the line level, which has its own VAT rate
 
 			$localtaxes_type = getLocalTaxesFromRate($txtva, 0, $this->thirdparty, $mysoc);
 
@@ -4760,7 +4758,7 @@ class Facture extends CommonInvoice
 					$this->line_order(true, 'DESC');
 				}
 
-				// Mise a jour info denormalisees au niveau facture
+				// Update denormalized information at the invoice level
 				$this->update_price(1, 'auto');
 				$this->db->commit();
 				return $result;
@@ -5383,7 +5381,7 @@ class Facture extends CommonInvoice
 		//  $sql.= " WHERE f.fk_statut >= 1";
 		//	$sql.= " AND (f.paye = 1";				// Classee payee completement
 		//	$sql.= " OR f.close_code IS NOT NULL)";	// Classee payee partiellement
-		$sql .= " AND ff.type IS NULL"; // Renvoi vrai si pas facture de replacement
+		$sql .= " AND ff.type IS NULL"; // Return true if there isn't any replacement invoice
 		$sql .= " AND f.type <> ".self::TYPE_CREDIT_NOTE; // Exclude credit note invoices from selection
 
 		if (getDolGlobalString('INVOICE_USE_SITUATION_CREDIT_NOTE')) {
@@ -5506,10 +5504,10 @@ class Facture extends CommonInvoice
 	}
 
 
-	/* gestion des contacts d'une facture */
+	/* Management of a bill's contacts */
 
 	/**
-	 *	Retourne id des contacts clients de facturation
+	 *	Returns the IDs of the customer billing contacts.
 	 *
 	 *	@return     int[]       Liste des id contacts facturation
 	 */
@@ -5519,7 +5517,7 @@ class Facture extends CommonInvoice
 	}
 
 	/**
-	 *	Retourne id des contacts clients de livraison
+	 *	Returns the IDs of the customer shipping contacts.
 	 *
 	 *	@return     int[]       Liste des id contacts livraison
 	 */
@@ -5829,7 +5827,7 @@ class Facture extends CommonInvoice
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Returns an array containing the previous situations as Facture objects
+	 * Returns an array containing the previous situations as Invoice objects
 	 *
 	 * @return Facture[]|int<-1,-1>	-1 if error, array of previous situations
 	 */
