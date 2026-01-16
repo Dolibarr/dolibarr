@@ -3350,7 +3350,7 @@ class pdf_octopus extends ModelePDFFactures
 						$TDataSituation['cumul_anterieur'][$ltvatx]['HT'] = $calc_ht;
 						$TDataSituation['cumul_anterieur'][$ltvatx]['TVA'] = $amounttva;
 					} else {
-						//lignes suivantes
+						// next lines
 						$TDataSituation['cumul_anterieur'][$ltvatx]['HT'] += ($calc_ht);
 						$TDataSituation['cumul_anterieur'][$ltvatx]['TVA'] += $amounttva;
 					}
