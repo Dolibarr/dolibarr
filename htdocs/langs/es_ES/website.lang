@@ -477,3 +477,4 @@ WebPortalSharedDocsDir=Nombre del directorio de documentos compartidos
 WebPortalSharedDocsDirHelp=Ingrese el nombre del directorio, ubicado en la carpeta ECM/GED, que contiene los documentos que se compartirán con todos los usuarios del portal.
 DateM=Fecha de modificación
 ThisDirectoryIsEmpty=Este directorio está vacío
+WrittenBy=Escrito por %s

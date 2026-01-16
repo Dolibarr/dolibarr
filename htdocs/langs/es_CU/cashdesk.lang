@@ -46,7 +46,6 @@ POSTerminal=TPV
 POSModule=Módulo TPV
 DirectPaymentButton=Agregar un botón de "Pago directo en efectivo"
 NoLinesToBill=Sin filas para facturar
-ProductSupplements=Gestionar complementos de productos
 Colorful=Vistoso
 HeadBar=Barra de cabeza
 SortProductField=Campo para clasificar productos

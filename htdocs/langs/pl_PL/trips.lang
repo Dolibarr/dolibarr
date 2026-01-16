@@ -121,7 +121,6 @@ ValideTrip=Zatwierdzić raport wydatków
 ExpenseReportPayments=Raport wydatków płatności
 TaxUndefinedForThisCategory = Podatek nie jest zdefiniowany dla tej kategorii
 errorComputeTtcOnMileageExpense=Błąd podczas obliczania kosztu przebiegu
-ErrorOnlyDraftStatusCanBeDeletedInMassAction=Zbiorczo można usuwać tylko elementy w wersji roboczej
 
 ## Dictionary
 EX_BRE=Śniadanie
@@ -159,3 +158,4 @@ TF_TRAIN=Pociąg
 TF_TRIP=Transport
 FailedToSetPaid=Nie udało się ustawić jako opłacone
 FailedToSetToCancel=Nie udało się anulować
+NobodyHasPermissionToValidateExpenseReport=Nobody has permission to validate expensereport

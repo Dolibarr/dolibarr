@@ -4416,7 +4416,9 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 	);
 
 	foreach ($listofmodule as $moduletoreload => $reloadmode) {	// reloadmodule can be 'noboxes', 'newboxdefonly', 'forceactivate'
-		if (empty($moduletoreload) || (!isModEnabled($moduletoreload) && !$force)) {
+		$modulekey = preg_replace('/^MAIN_MODULE_/', '', $moduletoreload);
+
+		if (empty($moduletoreload) || (!isModEnabled(strtolower($modulekey)) && !$force)) {
 			continue; // Discard reload if module not enabled
 		}
 
@@ -4443,9 +4445,9 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 			}
 		} else {	// Other generic cases/modules
 			$reg = array();
-			$tmp = preg_match('/MAIN_MODULE_([a-zA-Z0-9]+)/', $moduletoreload, $reg);
+			preg_match('/([a-zA-Z0-9]+)/', $modulekey, $reg);
 			if (!empty($reg[1])) {
-				if (strtoupper($moduletoreload) == $moduletoreload) {	// If key is un uppercase
+				if (strtoupper($moduletoreload) == $moduletoreload) {	// If key has at least one uppercase
 					$moduletoreloadshort = ucfirst(strtolower($reg[1]));
 				} else { // If key is a mix of up and low case
 					$moduletoreloadshort = $reg[1];

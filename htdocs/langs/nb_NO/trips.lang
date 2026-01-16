@@ -72,7 +72,8 @@ ExpenseReportRulesDesc=Du kan definere maksbeløpsregler for utgiftsrapporter. D
 ExpenseReportWaitingForApproval=En ny reiseregning er sendt inn for godkjenning
 ExpenseReportWaitingForApprovalMessage=En ny kostnadsrapport er sendt og venter på godkjenning. <br> - Bruker: %s <br> - Periode: %s <br> Klikk her for å validere: %s
 ExpenseReportWaitingForReApproval=En utgiftsrapport er blitt sendt inn for ny godkjenning
-ExpenseReportWaitingForReApprovalMessage=En kostnadsrapport er sendt og venter på re-godkjenning. <br> %s, du nektet å godkjenne kostnadsrapporten av denne årsak: %s.<br> En ny versjon har blitt foreslått og venter på godkjenning.<br> - Bruker: %s <br> - Periode: %s<br> Klikk her for å validere: %s
+ExpenseReportWaitingForReApprovalMessage=En utgiftsrapport er sendt inn og venter på ny godkjenning.<br>%s, nektet du å godkjenne utgiftsrapporten av denne grunn: %s.<br>En ny versjon har blitt foreslått og venter på din godkjenning.<br> - Bruker: %s<br> - Periode: %s<br>
+ExpenseReportWaitingForReApprovalMessage2=Klikk her for å validere: %s
 ExpenseReportsIk=Konfigurasjon av kjøregodtgjørelser
 ExpenseReportsRules=Utgifts-rapportregler
 ExpenseReportsToApprove=Utgiftsrapporter for godkjenning
@@ -120,7 +121,6 @@ ValideTrip=Godkjenn reiseregning
 ExpenseReportPayments=Utgiftsrapportbetalinger
 TaxUndefinedForThisCategory = Mva er udefinert for denne kategorien
 errorComputeTtcOnMileageExpense=Feil ved beregning av kjøreutgifter
-ErrorOnlyDraftStatusCanBeDeletedInMassAction=Bare elementer med utkaststatus kan slettes i masseaksjon
 
 ## Dictionary
 EX_BRE=Frokost
@@ -156,3 +156,6 @@ TF_PEAGE=Toll
 TF_TAXI=Taxi
 TF_TRAIN=Tog
 TF_TRIP=Transport
+FailedToSetPaid=Kunne ikke angi som betalt
+FailedToSetToCancel=Kunne ikke kansellere
+NobodyHasPermissionToValidateExpenseReport=Ingen har tillatelse til å validere utgiftsrapporten
