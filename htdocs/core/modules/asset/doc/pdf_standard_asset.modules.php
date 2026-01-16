@@ -8,7 +8,7 @@
  * Copyright (C) 2012-2014  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	    Nick Fragoulis
  *
@@ -542,7 +542,7 @@ class pdf_standard_asset extends ModelePDFAsset
 
 
 					$sign = 1;
-					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
+					// Collection of totals by VAT value in $this->tva["taux"]=total_tva
 					$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
 					if ($prev_progress > 0 && !empty($object->lines[$i]->situation_percent)) { // Compute progress from previous situation
 						if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {

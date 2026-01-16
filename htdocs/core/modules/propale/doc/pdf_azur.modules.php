@@ -7,7 +7,7 @@
  * Copyright (C) 2012       Cedric Salvador				<csalvador@gpcsolutions.fr>
  * Copyright (C) 2015       Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2017-2018  Ferran Marcet				<fmarcet@2byte.es>
- * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2019       Pierre Ardoin				<mapiolca@me.com>
  * Copyright (C) 2021-2024	Anthony Berton				<anthony.berton@bb2a.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
@@ -613,7 +613,7 @@ class pdf_azur extends ModelePDFPropales
 					$pdf->SetXY($this->postotalht, $curY);
 					$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->postotalht, 3, $total_excl_tax, 0, 'R', false);
 
-					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
+					// Collection of totals by VAT value in $this->tva["taux"]=total_tva
 					if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {
 						$tvaligne = $object->lines[$i]->multicurrency_total_tva;
 					} else {

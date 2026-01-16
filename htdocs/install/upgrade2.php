@@ -4858,7 +4858,6 @@ function migrate_holiday_path()
 									//print $origin.'/'.$file.' -> '.$destin.'/'.$file.'<br>'."\n";
 									print '.';
 									dol_copy($origin.'/'.$file, $destin.'/'.$file, '0', 0);
-									//var_dump('eee');exit;
 								}
 							}
 						}
@@ -4907,7 +4906,7 @@ function migrate_users_socialnetworks()
 	$sql .= " OR googleplus IS NOT NULL OR googleplus <> ''";
 	$sql .= " OR youtube IS NOT NULL OR youtube <> ''";
 	$sql .= " OR whatsapp IS NOT NULL OR whatsapp <> ''";
-	//print $sql;
+
 	$resql = $db->query($sql);
 	if ($resql) {
 		while ($obj = $db->fetch_object($resql)) {
@@ -4954,7 +4953,7 @@ function migrate_users_socialnetworks()
 			$sqlupd .= ', youtube=null';
 			$sqlupd .= ', whatsapp=null';
 			$sqlupd .= ' WHERE rowid = '.((int) $obj->rowid);
-			//print $sqlupd."<br>";
+
 			$resqlupd = $db->query($sqlupd);
 			if (!$resqlupd) {
 				dol_print_error($db);
@@ -5186,7 +5185,7 @@ function migrate_thirdparties_socialnetworks()
 	$sql .= " OR googleplus IS NOT NULL OR googleplus <> ''";
 	$sql .= " OR youtube IS NOT NULL OR youtube <> ''";
 	$sql .= " OR whatsapp IS NOT NULL OR whatsapp <> ''";
-	//print $sql;
+
 	$resql = $db->query($sql);
 	if ($resql) {
 		while ($obj = $db->fetch_object($resql)) {
