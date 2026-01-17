@@ -3,6 +3,7 @@
  * Copyright (C) 2023-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023       Gauthier VERDOL       	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Charlene Benke       	<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -114,6 +115,7 @@ class TimeSpent extends CommonObject
 		'element_duration' => array('type' => 'double', 'label' => 'element_duration', 'enabled' => 1, 'position' => 7, 'notnull' => 0, 'visible' => -1,),
 		'fk_product' => array('type' => 'integer', 'label' => 'fk_product', 'enabled' => 1, 'position' => 8, 'notnull' => 0, 'visible' => -1,),
 		'fk_user' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'fk_user', 'enabled' => 1, 'position' => 9, 'notnull' => 0, 'visible' => -1,),
+		'fk_socpeople' => array('type' => 'integer:Contact:contact/class/contact.class.php', 'label' => 'fk_socpeople', 'enabled' => 1, 'position' => 9, 'notnull' => 0, 'visible' => -1,),
 		'thm' => array('type' => 'double(24,8)', 'label' => 'thm', 'enabled' => 1, 'position' => 10, 'notnull' => 0, 'visible' => -1,),
 		'invoice_id' => array('type' => 'integer', 'label' => 'invoice_id', 'enabled' => 1, 'position' => 11, 'notnull' => 0, 'visible' => -1, 'default' => 'NULL',),
 		'invoice_line_id' => array('type' => 'integer', 'label' => 'invoice_line_id', 'enabled' => 1, 'position' => 12, 'notnull' => 0, 'visible' => -1, 'default' => 'NULL',),
@@ -172,6 +174,11 @@ class TimeSpent extends CommonObject
 	 * @var int
 	 */
 	public $fk_user;
+
+	/**
+	 * @var int
+	 */
+	public $fk_socpeople;
 
 	/**
 	 * @var float
