@@ -6,6 +6,7 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -133,13 +134,12 @@ if ($sqlfilter) {
 	$user_arbo = $user_arbo_all;
 }
 
-// Count total nb of records
-$nbtotalofrecords = count($user_arbo);
-
-
 if (!is_array($user_arbo) && $user_arbo < 0) {
 	setEventMessages($userstatic->error, $userstatic->errors, 'warnings');
 } else {
+	// Count total nb of records
+	$nbtotalofrecords = count($user_arbo);
+
 	// Define fulltree array
 	$fulltree = $user_arbo;
 	//var_dump($fulltree);
