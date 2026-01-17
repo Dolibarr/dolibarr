@@ -38,6 +38,8 @@
 
 -- V24 migration
 
+ALTER TABLE llx_element_time ADD COLUMN fk_socpeople integer DEFAULT NULL AFTER fk_user;
+
 ALTER TABLE llx_actioncomm_reminder MODIFY COLUMN fk_user integer DEFAULT NULL;
 ALTER TABLE llx_actioncomm_reminder ADD COLUMN fk_soc integer DEFAULT NULL AFTER fk_user;
 ALTER TABLE llx_actioncomm_reminder ADD COLUMN fk_contact integer DEFAULT NULL AFTER fk_soc;
