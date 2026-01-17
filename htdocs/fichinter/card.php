@@ -1850,7 +1850,7 @@ if ($action == 'create') {
 					$url_button[] = array(
 						'lang' => 'subtotals',
 						'enabled' => (isModEnabled('intervention') && $object->status == Fichinter::STATUS_DRAFT),
-						'perm' => (bool) $user->hasRight('intervention', 'creer'),
+						'perm' => (bool) $permissiontoadd,
 						'label' => $langs->trans('AddTitleLine'),
 						'url' => '/fichinter/card.php?id='.$object->id.'&action=add_title_line&token='.newToken()
 					);
@@ -1858,7 +1858,7 @@ if ($action == 'create') {
 					$url_button[] = array(
 						'lang' => 'subtotals',
 						'enabled' => (isModEnabled('intervention') && $object->status == Fichinter::STATUS_DRAFT),
-						'perm' => (bool) $user->hasRight('intervention', 'creer'),
+						'perm' => (bool) $permissiontoadd,
 						'label' => $langs->trans('AddSubtotalLine'),
 						'url' => '/fichinter/card.php?id='.$object->id.'&action=add_subtotal_line&token='.newToken()
 					);
@@ -1867,7 +1867,7 @@ if ($action == 'create') {
 
 				// Validate
 				if ($object->status == Fichinter::STATUS_DRAFT && (count($object->lines) > 0 || getDolGlobalString('FICHINTER_DISABLE_DETAILS') == '1')) {
-					if ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ficheinter', 'creer')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ficheinter', 'ficheinter_advance', 'validate'))) {
+					if ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $permissiontoadd || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ficheinter', 'ficheinter_advance', 'validate'))) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&action=validate&token='.newToken().'">'.$langs->trans("Validate").'</a></div>';
 					} else {
 						print '<div class="inline-block divButActionRefused"><span class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Validate").'</span></div>';
@@ -1875,7 +1875,7 @@ if ($action == 'create') {
 				}
 
 				// Modify
-				if ($object->status == Fichinter::STATUS_VALIDATED && ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ficheinter', 'creer')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ficheinter', 'ficheinter_advance', 'unvalidate')))) {
+				if ($object->status == Fichinter::STATUS_VALIDATED && ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $permissiontoadd || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ficheinter', 'ficheinter_advance', 'unvalidate')))) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&action=modify&token='.newToken().'">';
 					if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS') || getDolGlobalString('FICHINTER_DISABLE_DETAILS') == '2') {
 						print $langs->trans("Modify");
@@ -1887,7 +1887,7 @@ if ($action == 'create') {
 
 				// Reopen
 				if ($object->status >= Fichinter::STATUS_CLOSED) {
-					if ($user->hasRight('ficheinter', 'creer')) {
+					if ($permissiontoadd) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken().'">'.$langs->trans('ReOpen').'</a></div>';
 					} else {
 						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans('ReOpen').'</a></div>';
@@ -1906,7 +1906,7 @@ if ($action == 'create') {
 				}
 
 				// Create intervention model
-				if ($object->status == Fichinter::STATUS_DRAFT && $user->hasRight('ficheinter', 'creer') && (count($object->lines) > 0)) {
+				if ($object->status == Fichinter::STATUS_DRAFT && $permissiontoadd && (count($object->lines) > 0)) {
 					print '<div class="inline-block divButAction">';
 					print '<a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card-rec.php?id='.$object->id.'&action=create&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id).'">'.$langs->trans("ChangeIntoRepeatableIntervention").'</a>';
 					print '</div>';
@@ -1968,7 +1968,7 @@ if ($action == 'create') {
 				}
 
 				// Clone
-				if ($user->hasRight('ficheinter', 'creer')) {
+				if ($permissiontoadd) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&token='.newToken().'&object=ficheinter">'.$langs->trans("ToClone").'</a></div>';
 				}
 
