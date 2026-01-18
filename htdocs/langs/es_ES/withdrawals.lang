@@ -172,3 +172,4 @@ SalaryWaitingWithdraw=Salarios pendientes de pago mediante transferencia bancari
 RefSalary=Salario
 NoSalaryInvoiceToWithdraw=Sin salario esperando un '%s'. Vaya a la pestaña '%s' en la tarjeta de salario para realizar una solicitud.
 SalaryInvoiceWaitingWithdraw=Salarios pendientes de pago mediante transferencia bancaria
+ErrorBankTransferNoPaymentRequestSelected=No se ha seleccionado ninguna solicitud de pago.

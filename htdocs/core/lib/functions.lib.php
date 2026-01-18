@@ -168,6 +168,16 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 			$module = 'knowledgemanagement';
 			$subdirectory = '/knowledgerecord';
 			break;
+		case 'commande_fournisseur':
+			$module = 'fournisseur';
+			$subdirectory = '/commande';
+			break;
+		case 'expedition':
+			$subdirectory = '/sending';
+			break;
+		case 'company':
+			$module = 'societe';
+			break;
 		case 'service':
 		case 'produit':
 			$module = 'product';

@@ -349,7 +349,7 @@ foreach ($oauthservices as $key => $value) {
 
 /** @phan-var-force array<string, array{label:string, data-html:string, disable?:int, css?:string}> $oauthservices */
 if (!isModEnabled('multicompany') || ($user->admin && !$user->entity)) {
-	print $form->selectarray('OAUTH_SERVICE_SOCIAL_NETWORK', $oauthservicesStringKeys, (string) $conf->global->OAUTH_SERVICE_SOCIAL_NETWORK);
+	print $form->selectarray('OAUTH_SERVICE_SOCIAL_NETWORK', $oauthservicesStringKeys, (string) getDolGlobalString("OAUTH_SERVICE_SOCIAL_NETWORK"));
 } else {
 	$selectedKey = (string) getDolGlobalString('OAUTH_SERVICE_SOCIAL_NETWORK');
 	$text = isset($oauthservicesStringKeys[$selectedKey]) ? $oauthservicesStringKeys[$selectedKey]['label'] : '';

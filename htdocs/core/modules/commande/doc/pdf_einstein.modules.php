@@ -641,8 +641,8 @@ class pdf_einstein extends ModelePDFCommandes
 				}
 
 				// Add terms to sale
-				if (getDolGlobalString("MAIN_INFO_ORDER_TERMSOFSALE") && getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_ORDER')) {
-					$termsofsalefilename = getDolGlobalString('MAIN_INFO_ORDER_TERMSOFSALE');
+				$termsofsalefilename = getDolGlobalString('MAIN_INFO_ORDER_TERMSOFSALE');
+				if (getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_ORDER') && $termsofsalefilename) {
 					$termsofsale = $conf->order->dir_output.'/'.$termsofsalefilename;
 					if (!empty($conf->order->multidir_output[$conf->entity])) {
 						$termsofsale = $conf->order->multidir_output[$conf->entity].'/'.$termsofsalefilename;

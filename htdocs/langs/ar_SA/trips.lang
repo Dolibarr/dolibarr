@@ -121,7 +121,6 @@ ValideTrip=الموافقة على تقرير النفقات
 ExpenseReportPayments=مدفوعات تقرير المصروفات
 TaxUndefinedForThisCategory = الضريبة غير محددة لهذه الفئة
 errorComputeTtcOnMileageExpense=خطأ في حساب تكلفة المسافة المقطوعة
-ErrorOnlyDraftStatusCanBeDeletedInMassAction=لا يمكن حذف سوى العناصر الموجودة في حالة المسودة في العمل الجماعي
 
 ## Dictionary
 EX_BRE=إفطار
@@ -159,3 +158,4 @@ TF_TRAIN=قطار
 TF_TRIP=وسائل النقل
 FailedToSetPaid=فشل في التعيين كمدفوع
 FailedToSetToCancel=فشل في الإلغاء
+NobodyHasPermissionToValidateExpenseReport=Nobody has permission to validate expensereport

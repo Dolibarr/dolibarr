@@ -33,13 +33,19 @@
 -- To rebuild sequence for postgresql after insert, by forcing id autoincrement fields:
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
-
 -- V23 forgotten
 
 
-
-
 -- V24 migration
+
+ALTER TABLE llx_actioncomm_reminder MODIFY COLUMN fk_user integer DEFAULT NULL;
+ALTER TABLE llx_actioncomm_reminder ADD COLUMN fk_soc integer DEFAULT NULL AFTER fk_user;
+ALTER TABLE llx_actioncomm_reminder ADD COLUMN fk_contact integer DEFAULT NULL AFTER fk_soc;
+ALTER TABLE llx_actioncomm_reminder ADD INDEX idx_actioncomm_reminder_fk_soc (fk_soc);
+ALTER TABLE llx_actioncomm_reminder ADD INDEX idx_actioncomm_reminder_fk_contact (fk_contact);
+ALTER TABLE llx_actioncomm_reminder DROP INDEX uk_actioncomm_reminder_unique;
+ALTER TABLE llx_actioncomm_reminder ADD UNIQUE INDEX uk_actioncomm_reminder_unique(fk_actioncomm, fk_user, fk_soc, fk_contact, typeremind, offsetvalue, offsetunit);
+
 CREATE TABLE llx_accounting_transaction_template (
 	rowid			integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	entity          integer DEFAULT 1 NOT NULL,

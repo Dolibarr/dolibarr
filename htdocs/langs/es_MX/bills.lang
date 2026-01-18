@@ -100,7 +100,6 @@ BillShortStatusClosedPaidPartially=Pagada (parcialmente)
 ErrorNoPaiementModeConfigured=No se ha establecido un tipo de pago predefinido. Corríjalo en el módulo de facturación.
 ErrorCreateBankAccount=Cree una cuenta bancaria, luego vaya al módulo de facturación para definir los tipos de pago.
 ErrorBillNotFound=No  existe la factura %s
-ErrorInvoiceIsNotLastOfSameType=Error: The date of invoice %s  is %s. It must be posterior or equal to last date for same type invoices (%s). Please change the invoice date.
 BillFrom=De
 BillTo=Hacia
 NewBill=Factura nueva

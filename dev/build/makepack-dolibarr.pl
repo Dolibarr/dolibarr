@@ -20,27 +20,28 @@ use Cwd;
 use Term::ANSIColor;
 
 # Change this to defined target for option 98 and 99
-$PROJECT = "dolibarr";
+my $PROJECT = "dolibarr";
 
-$PUBLISHBETARC =
+my $PUBLISHBETARC =
 "$ENV{'DESTIASSOLOGIN'}\@vmprod1.dolibarr.org:/home/dolibarr/asso.dolibarr.org/dolibarr_documents/website/www.dolibarr.org/files";
-$PUBLISHSTABLE =
+my $PUBLISHSTABLE =
   "$ENV{'DESTISFLOGIN'}\@frs.sourceforge.net:/home/frs/project/dolibarr";
 
 # due to implicit origin on git commands, example: implicit origin, lionel upstream, eric dolibarr
-$GITREMOTENAME = "$ENV{'GITREMOTENAME'}";
+my $GITREMOTENAME = "$ENV{'GITREMOTENAME'}";
 
 #@LISTETARGET=("TGZ","ZIP","RPM_GENERIC","RPM_FEDORA","RPM_MANDRIVA","RPM_OPENSUSE","DEB","EXEDOLIWAMP","SNAPSHOT");   # Possible packages
-@LISTETARGET = (
+my @LISTETARGET = (
 	"TGZ",          "ZIP",          "RPM_GENERIC", "RPM_FEDORA",
 	"RPM_MANDRIVA", "RPM_OPENSUSE", "DEB",         "EXEDOLIWAMP",
 	"SNAPSHOT"
 );    # Possible packages
-%REQUIREMENTPUBLISH = (
+my %REQUIREMENTPUBLISH = (
 	"SF"   => "git ssh rsync",
 	"ASSO" => "git ssh rsync"
 );
-%REQUIREMENTTARGET = (    # Tool requirement for each package
+my %REQUIREMENTTARGET = (    # Tool requirement for each package
+	"-CHKSUM"      => "",
 	"TGZ"          => "tar",
 	"ZIP"          => "7z",
 	"XZ"           => "xz",
@@ -53,18 +54,18 @@ $GITREMOTENAME = "$ENV{'GITREMOTENAME'}";
 	"EXEDOLIWAMP"  => "ISCC.exe",
 	"SNAPSHOT"     => "tar"
 );
-%ALTERNATEPATH = (
+my %ALTERNATEPATH = (
 	"7z"           => "7-ZIP",
 	"makensis.exe" => "NSIS"
 );
 
-$RPMSUBVERSION = "auto";    # auto use value found into BUILD
+my $RPMSUBVERSION = "auto";    # auto use value found into BUILD
 if ( -d "/usr/src/redhat" )   { $RPMDIR = "/usr/src/redhat"; }      # redhat
 if ( -d "/usr/src/packages" ) { $RPMDIR = "/usr/src/packages"; }    # opensuse
 if ( -d "/usr/src/RPM" )      { $RPMDIR = "/usr/src/RPM"; }         # mandrake
 
 use vars qw/ $REVISION $VERSION /;
-$VERSION = "4.0";
+my $VERSION = "4.0";
 
 #------------------------------------------------------------------------------
 # MAIN
@@ -198,7 +199,7 @@ open( my $IN, "<", $SOURCE . "/htdocs/version.inc.php" )
 while (<$IN>) {
 	if ( $_ =~ /define\('DOL_MAJOR_VERSION',\s*'([\d\.a-z\-]+)'\)/ ) {
 		$MAJORVERSION = $1;
-		break;
+		last;
 	}
 }
 close $IN;
@@ -209,7 +210,7 @@ open( my $IN2, "<", $SOURCE . "/htdocs/filefunc.inc.php" )
 while (<$IN2>) {
 	if ( $_ =~ /define\('DOL_MINOR_VERSION',\s*'([\d\.a-z\-]+)'\)/ ) {
 		$MINORVERSION = $1;
-		break;
+		last;
 	}
 }
 close $IN2;
@@ -395,6 +396,7 @@ foreach my $target ( sort keys %CHOOSEDTARGET ) {
 		}
 		$atleastonerpm = 1;
 	}
+
 	foreach my $req ( split( /[,\s]/, $REQUIREMENTTARGET{$target} ) ) {
 
 		# Test

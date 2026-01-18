@@ -385,7 +385,7 @@ span.massactionselect, input.inputsearch_dropdownselectedfields {
 	background-color: unset;
 }
 
-.liste_titre input, .liste_titre select {
+.liste_titre input:not(#search_component_params_input):not(.select2-search__field), .liste_titre select {
 	border: none;
 	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>: solid 1px var(<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '--colorbacktitle1' : '--inputbordercolor'; ?>) !important;
 }
@@ -601,7 +601,7 @@ div.buttonpayment input:focus {
 div.buttonpayment input {
 	background-color: unset;
 	color: #fff;
-	border-bottom: unset;
+	border: unset;
 	font-weight: bold;
 	text-transform: uppercase;
 	cursor: pointer;
@@ -656,7 +656,7 @@ div.userimg.notfirst {
 	display: block-inline;
 }
 .center.inline-block.dateheight {
-	line-height: 1.2em;
+	line-height: 1.15em;
 }
 .smallheight {
 	line-height: 1em;
@@ -872,8 +872,11 @@ input#onlinepaymenturl, input#directdownloadlink {
 
 
 .formconsumeproduce {
-	background: #f3f3f3;
-	padding: 20px 0px 0px 0px;
+	border-left: solid 5px #87cfd2;		/* like for div.info */
+	background: #eff8fc;				/* like for div.info */
+	/* background: #f3f3f3; */
+
+	padding: 20px 0px 20px 0px;
 	border-radius: 8px;
 }
 
@@ -1855,6 +1858,14 @@ select.flat.selectlimit {
 	display: -webkit-box;
 	-webkit-box-orient: vertical;
 	-webkit-line-clamp: 2;
+	overflow: hidden;
+	height: auto !important;
+	word-break: break-word;
+}
+.threelinesmax, .threelinesmax-normallineheight {				/* To be used into a <div class="twolinesmax-normallineheight minwidth200onall"> into a td for example */
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 3;
 	overflow: hidden;
 	height: auto !important;
 	word-break: break-word;
@@ -4142,6 +4153,12 @@ div.tabBar tr.titre td {
 div.fiche table:not(.table-fiche-title) tr.titre td {
 	padding-top: 10px;
 }
+div.fiche >.table-fiche-title tr.toptitle td.col-picto,
+div.fiche >.table-fiche-title tr.toptitle td.col-title,
+div.fiche >form >.table-fiche-title tr.toptitle td.col-picto,
+div.fiche >form >.table-fiche-title tr.toptitle td.col-title {
+	filter: grayscale(90%);
+}
 
 div.tabBar.tabBarNoTop {
 	padding-top: 0;
@@ -5656,7 +5673,7 @@ div.info, div.warning, div.error, div.green, div.neutral {
 }
 
 div.fiche div.info, div.fiche div.warning, div.fiche div.neutral {
-	box-shadow: 1px 1px 6px #e4e4e4;
+	box-shadow: 1px 1px 6px #d4d4d4;
 	margin: 1em 0em 1.2em 0em;
 }
 
@@ -7569,7 +7586,7 @@ li.select2-selection__choice {
 	margin-top: 0.25em !important;
 }
 .select2-selection--multiple input.select2-search__field {
-	border-bottom: none !important;
+	border: none !important;
 }
 
 .select2-search__field
@@ -7784,6 +7801,7 @@ select.multiselectononeline {
 	min-height: unset;
 	height: 2.2em !important;
 	opacity: 0;
+	min-width: 50px;
 	/* width: 1px !important; */
 }
 

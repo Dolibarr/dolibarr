@@ -12,7 +12,7 @@
  * Copyright (C) 2017		Josep Lluís Amador			<joseplluis@lliuretic.cat>
  * Copyright (C) 2018-2022	Charlene Benke				<charlene@patas-monkey.com>
  * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2019-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2019-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2023		Nick Fragoulis
  * Copyright (C) 2023		Joachim Kueter				<git-jk@bloxera.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
@@ -93,7 +93,18 @@ $search_multicurrency_tx = GETPOST('search_multicurrency_tx', 'alpha');
 $search_multicurrency_montant_ht = GETPOST('search_multicurrency_montant_ht', 'alpha');
 $search_multicurrency_montant_vat = GETPOST('search_multicurrency_montant_vat', 'alpha');
 $search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 'alpha');
-$search_status = GETPOST('search_status', 'intcomma');	// Can be '' or a numeric
+$search_status = GETPOST('search_status', 'array:intcomma');
+if (empty($search_status) && GETPOSTISSET('search_status')) {
+	// The parameter exists in the URL but was not recognized as an array.
+	$search_status = GETPOST('search_status', 'intcomma');
+	if ($search_status !== '' && $search_status !== '-1') {
+		$search_status = array($search_status);
+	} else {
+		$search_status = '';
+	}
+} elseif (is_array($search_status) && count($search_status) == 0) {
+	$search_status = '';
+}
 $search_paymentmode = GETPOST('search_paymentmode', 'intcomma');
 $search_paymentcond = GETPOST('search_paymentcond') ? GETPOSTINT('search_paymentcond') : '';
 $search_bankaccount = GETPOST('search_bankaccount', 'intcomma');
@@ -684,8 +695,9 @@ if ($search_multicurrency_montant_ttc != '') {
 if ($search_login) {
 	$sql .= natural_search(array('u.login', 'u.lastname', 'u.firstname'), $search_login);
 }
-if ($search_status != '' && $search_status >= 0) {
-	$sql .= " AND f.fk_statut = ".((int) $search_status);
+if (is_array($search_status) && count($search_status) > 0) {
+	$search_statusArray = $search_status;
+	$sql .= " AND f.fk_statut IN (" . $db->sanitize(implode(',', array_map('intval', $search_statusArray))) . ")";
 }
 if ($search_paymentmode > 0) {
 	$sql .= " AND f.fk_mode_reglement = ".((int) $search_paymentmode);
@@ -696,7 +708,7 @@ if ($search_paymentcond > 0) {
 if ($search_bankaccount > 0) {
 	$sql .= " AND ba.rowid = ".((int) $search_bankaccount);
 }
-if ($search_vat_reverse_charge != '') {
+if ($search_vat_reverse_charge !== '' && $search_vat_reverse_charge !== '-1') {
 	$sql .= " AND f.vat_reverse_charge = ".((int) $search_vat_reverse_charge);
 }
 if ($search_date_start) {
@@ -1038,8 +1050,14 @@ if ($search_amount_no_tax) {
 if ($search_amount_all_tax) {
 	$param .= '&search_amount_all_tax='.urlencode($search_amount_all_tax);
 }
-if ($search_status >= 0) {
-	$param .= "&search_status=".urlencode($search_status);
+if ($search_status != '') {
+	if (is_array($search_status)) {
+		foreach ($search_status as $key => $val) {
+			$param .= '&search_status[]='.urlencode($val);
+		}
+	} else {
+		$param .= '&search_status='.urlencode($search_status);
+	}
 }
 if ($search_paymentmode) {
 	$param .= '&search_paymentmode='.urlencode((string) ($search_paymentmode));
@@ -1050,8 +1068,8 @@ if ($search_paymentcond) {
 if ($search_bankaccount > 0) {
 	$param .= '&search_bankaccount='.urlencode((string) ($search_bankaccount));
 }
-if ($search_vat_reverse_charge != '') {
-	$param .= '&search_vat_reverse_charge='.urlencode((string) ($search_vat_reverse_charge));
+if ($search_vat_reverse_charge !== '' && $search_vat_reverse_charge !== '-1') {
+	$param .= '&search_vat_reverse_charge='.urlencode($search_vat_reverse_charge);
 }
 if ($show_files) {
 	$param .= '&show_files='.urlencode((string) ($show_files));
@@ -1462,7 +1480,7 @@ if (!empty($arrayfields['f.fk_statut']['checked'])) {
 	print '<td class="liste_titre center parentonrightofpage">';
 	$liststatus = array('0' => $langs->trans("Draft"), '1' => $langs->trans("Unpaid"), '2' => $langs->trans("Paid"));
 	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-	print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'center search_status width100 onrightofpage', 1);
+	print $form->multiselectarray('search_status', $liststatus, (is_array($search_status) ? $search_status : array()), 0, 0, 'center search_status width125 onrightofpage', 1, 0);
 	print '</td>';
 }
 // Action column

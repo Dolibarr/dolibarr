@@ -40,6 +40,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 
 define('DOL_DOCUMENT_ROOT', dirname(dirname($path)).'/htdocs');
 
+//$algo = 'md5';		// Old algorithm
 $algo = 'sha256';
 
 require_once $path."../../htdocs/master.inc.php";
@@ -182,6 +183,7 @@ if ($checklock && empty($checksource)) {
 if ($release) {
 	print "Working on files into           : ".DOL_DOCUMENT_ROOT."\n";
 	print "Version of target release       : ".$release."\n";
+	print "Algo                            : ".$algo."\n";
 	print "Include custom dir in signature : ".(empty($includecustom) ? 'no' : 'yes')."\n";
 	print "Include constants in signature  : ".(empty($includeconstants) ? 'none' : '');
 	foreach ($includeconstants as $countrycode => $tmp) {
@@ -189,6 +191,7 @@ if ($release) {
 			print $constname.'='.$constvalue." ";
 		}
 	}
+	print "\n";
 	print "\n";
 }
 if ($checklock) {

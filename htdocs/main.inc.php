@@ -18,6 +18,7 @@
  * Copyright (C) 2023       Joachim Küter      		<git-jk@bloxera.com>
  * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -267,15 +268,21 @@ if (!empty($conf->file->main_force_https) && !isHTTPS() && !defined('NOHTTPSREDI
 if (!defined('NOLOGIN') && !defined('NOIPCHECK') && !empty($dolibarr_main_restrict_ip)) {
 	$listofip = explode(',', $dolibarr_main_restrict_ip);
 	$found = false;
+	$user_ip = $_SERVER['REMOTE_ADDR'];
 	foreach ($listofip as $ip) {
-		$ip = trim($ip);
-		if ($ip == $_SERVER['REMOTE_ADDR']) {
+		$authorized_ip = trim($ip);
+		if (strpos($authorized_ip, '/')) { // Check if IP with CIDR notation
+			if (checkIPInCidr($user_ip, $authorized_ip) > 0) {
+				$found = true;
+				break;
+			}
+		} elseif ($user_ip == $authorized_ip) {
 			$found = true;
 			break;
 		}
 	}
 	if (!$found) {
-		print 'Access refused by IP protection. Your detected IP is '.$_SERVER['REMOTE_ADDR'];
+		print 'Access refused by IP protection. Your detected IP is: '.dol_escape_htmltag($user_ip);
 		exit;
 	}
 }

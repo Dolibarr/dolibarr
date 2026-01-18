@@ -103,7 +103,6 @@ ErrorInvoiceAvoirMustBeNegative=Error, la factura correcta debe tener un importe
 ErrorInvoiceOfThisTypeMustBePositive=Error, este tipo de factura debe tener una base imponible positiva (o nula)
 ErrorCantCancelIfReplacementInvoiceNotValidated=Error, no se puede cancelar una factura que ha sido sustituida por otra factura que todavía está en estado de borrador
 ErrorThisPartOrAnotherIsAlreadyUsedSoDiscountSerieCantBeRemoved=Esta parte u otra ya está en uso, por lo que no se pueden eliminar las series de descuento.
-ErrorInvoiceIsNotLastOfSameType=Error: La fecha de la factura %ses%s. Debe ser posterior o igual a la última fecha para el mismo tipo de factura (%s). Por favor cambiar la fecha de la factura.
 BillFrom=De
 BillTo=A
 NoQualifiedRecurringInvoiceTemplateFound=Ninguna factura de plantilla recurrente calificada para la generación.

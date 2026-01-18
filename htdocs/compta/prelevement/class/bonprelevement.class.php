@@ -2921,7 +2921,7 @@ class BonPrelevement extends CommonObject
 	{
 		// phpcs:enable
 		if ($user->socid) {
-			return -1; // protection pour eviter appel par utilisateur externe
+			return -1; // Protection to prevent calls by external users
 		}
 
 		/*

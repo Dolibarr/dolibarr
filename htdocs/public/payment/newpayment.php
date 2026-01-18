@@ -902,9 +902,13 @@ if ($action == 'charge' && isModEnabled('stripe')) {	// Test on permission not r
 	$_SESSION["currencyCodeType"] = $currency;		// currency really used for payment (coming from Stripe). Will be used for check in paymentok.php.
 	$_SESSION["paymentType"] = '';
 	$_SESSION['ipaddress'] = ($remoteip ? $remoteip : 'unknown'); // Payer ip
-	$_SESSION['payerID'] = is_object($customer) ? $customer->id : '';
 	$_SESSION['TRANSACTIONID'] = (is_object($charge) ? $charge->id : (is_object($paymentintent) ? $paymentintent->id : ''));
 	$_SESSION['errormessage'] = $errormessage;
+	if (!getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION')) {
+		$_SESSION['payerID'] = is_object($customer) ? $customer->id : '';
+	} else {
+		$_SESSION['payerID'] = '';
+	}
 
 	dol_syslog("Action charge stripe STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION=".getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION')." ip=".$remoteip, LOG_DEBUG, 0, '_payment');
 	dol_syslog("_SERVER[HTTP_X_FORWARDED_HOST] = ".(empty($_SERVER["HTTP_X_FORWARDED_HOST"]) ? '' : dol_escape_htmltag($_SERVER["HTTP_X_FORWARDED_HOST"])), LOG_DEBUG, 0, '_payment');

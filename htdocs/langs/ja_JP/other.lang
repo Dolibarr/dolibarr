@@ -386,7 +386,6 @@ ExtrafieldFiller=外野フィラー
 OurProductSelection=製品 を発見する
 NoSupportedModulesHaveBeenActivated=レポートツールは一部のモジュールに対してのみ動的レポートを生成できる。サポートされているモジュールはまだ有効化されていません。
 # Bookmarks
-AddThisPageToBookmarks = 現在のページをブックマークに追加
 BehaviourOnClick = ブックマークURLを選択した場合の動作
 BookmarkTargetNewWindowShort = 新規タブ
 BookmarkTargetReplaceWindowShort = 現在のタブ
@@ -395,7 +394,6 @@ BookmarksManagement = ブックマークの管理
 BookmarksMenuShortCut = Ctrl + Shift + m
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark = リンクされたページを現在のタブで開くか、新規タブで開くかを選択
 CreateBookmark = ブックマークを作成。
-EditBookmarks = ブックマークの一覧表示/編集
 ListOfBookmarks = ブックマークのリスト
 NewBookmark = 新規ブックマーク
 NoBookmarkFound = ブックマークが見つからない

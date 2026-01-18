@@ -1107,13 +1107,15 @@ class pdf_sponge extends ModelePDFFactures
 				if (method_exists($pdf, 'AliasNbPages')) {
 					$pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
 				}
+
 				// Add terms to sale
-				if (getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_INVOICE')) {
-					$termsofsalefilename = getDolGlobalString('MAIN_INFO_INVOICE_TERMSOFSALE');
+				$termsofsalefilename = getDolGlobalString('MAIN_INFO_INVOICE_TERMSOFSALE');
+				if (getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_INVOICE') && $termsofsalefilename) {
 					$termsofsale = $conf->invoice->dir_output.'/'.$termsofsalefilename;
 					if (!empty($conf->invoice->multidir_output[$object->entity ?? $conf->entity])) {
 						$termsofsale = $conf->invoice->multidir_output[$object->entity ?? $conf->entity].'/'.$termsofsalefilename;
 					}
+
 					if (file_exists($termsofsale) && is_readable($termsofsale)) {
 						$pagecount = $pdf->setSourceFile($termsofsale);
 						for ($i = 1; $i <= $pagecount; $i++) {
@@ -1498,7 +1500,7 @@ class pdf_sponge extends ModelePDFFactures
 		}
 
 		// Show payments conditions
-		if ($object->type != 2 && ($object->cond_reglement_code || $object->cond_reglement)) {
+		if ($object->type != 2 && $object->cond_reglement_code) {
 			$pdf->SetFont('', '', $default_font_size - 2);
 			$pdf->SetXY($this->marge_gauche, $posy);
 			$titre = $outputlangs->transnoentities("PaymentConditions").':';

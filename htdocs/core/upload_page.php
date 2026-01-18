@@ -46,7 +46,9 @@ $langs->loadLangs(array("main", "other"));
 $action = GETPOST('action', 'aZ09');
 $modulepart = GETPOST('modulepart', 'aZ09');
 
-$upload_dir = $conf->admin->dir_temp.'/import';
+// users/temp/import
+$upload_dir = $conf->user->dir_temp.'/import';
+dol_mkdir($upload_dir);
 
 // Delete the temporary files that are used when uploading files
 dol_delete_file($upload_dir.'/upload_page-by'.$user->id.'-*');
@@ -71,6 +73,7 @@ if ($action == 'uploadfile') {	// Test on permission not required here. Done lat
 		exit(1);
 	}
 
+	// $modulepart can be 'invoice_supplier', ...
 	$arrayobject = getElementProperties($modulepart);
 
 	$module = $arrayobject['module'];
@@ -84,11 +87,11 @@ if ($action == 'uploadfile') {	// Test on permission not required here. Done lat
 	if (in_array($modulepart, array('fournisseur', 'invoice_supplier'))) {
 		$permlevel1 = 'facture';
 		$permlevel2 = 'read';
-		$fileprefix = 'upload_page-by'.$user->id.'-'.$modulepart.'-'.(GETPOSTINT('socid') > 0 ? GETPOSTINT('socid') : 0).'-'.(GETPOSTINT('search_prodid') > 0 ? GETPOSTINT('search_prodid') : 0);
+		$fileprefix = 'upload_page-'.$modulepart.'-uid'.$user->id.'-thiid'.(GETPOSTINT('socid') > 0 ? GETPOSTINT('socid') : 0).'-pid'.(GETPOSTINT('search_prodid') > 0 ? GETPOSTINT('search_prodid') : 0);
 	} elseif ($modulepart == 'expensereport') {
-		$fileprefix = 'upload_page-by'.$user->id.'-'.$modulepart.'-'.(GETPOSTINT('userexpensereportid') > 0 ? GETPOSTINT('userexpensereportid') : 0).'-'.(GETPOSTINT('search_prodid') > 0 ? GETPOSTINT('search_prodid') : 0);
+		$fileprefix = 'upload_page-'.$modulepart.'-uid'.$user->id.'-erid'.(GETPOSTINT('userexpensereportid') > 0 ? GETPOSTINT('userexpensereportid') : 0).'-pid'.(GETPOSTINT('search_prodid') > 0 ? GETPOSTINT('search_prodid') : 0);
 	} elseif ($modulepart == 'salaries') {
-		$fileprefix = 'upload_page-by'.$user->id.'-'.$modulepart.'-'.(GETPOSTINT('usersalaryid') > 0 ? GETPOSTINT('usersalaryid') : 0);
+		$fileprefix = 'upload_page-'.$modulepart.'-uid'.$user->id.'-salid'.(GETPOSTINT('usersalaryid') > 0 ? GETPOSTINT('usersalaryid') : 0);
 	}
 
 	if ($permlevel2) {
@@ -100,13 +103,18 @@ if ($action == 'uploadfile') {	// Test on permission not required here. Done lat
 
 
 	if (!empty($_FILES['userfile']['name'])) {
-		$_FILES['userfile']['name'] = $fileprefix.'-'.$_FILES['userfile']['name'];
+		$fullnewname = $fileprefix.'-'.$_FILES['userfile']['name'];
+		$_FILES['userfile']['name'] = $fullnewname;
 
+		// $dir_output = output dir of object
+		// $dir_temp = temp dir of object
+		// $upload_dir is "users/temp/import"
 		include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
+		// TODO Add a js call of ajax service and show instead a message
 		// @phpstan-ignore-next-line $error may have been modified by actions_linkedfiles.inc.php
 		if (!$error) {
-			header("Location: ".DOL_URL_ROOT.'/core/upload_page2.php?file='.urlencode($fileprefix));
+			header("Location: ".DOL_URL_ROOT.'/core/ajax/ajax_upload_page.php?file='.urlencode($fullnewname));
 			exit;
 		}
 	}
