@@ -309,8 +309,8 @@ function analyseVarsForSqlAndScriptsInjection(&$var, $type, $stopcode = 1)
 	}
 }
 
-// Prevent the use of method TRACE
-if ($_SERVER["REQUEST_METHOD"] == "TRACE") {
+// Prevent the use of method TRACE in case of the web server authorizes it (some do it by default). TRACE method can be used by attacker to steal cookies or other sensitive information.
+if (!empty($_SERVER["REQUEST_METHOD"]) && $_SERVER["REQUEST_METHOD"] == "TRACE") {
 	print 'Access refused with request method TRACE';
 	http_response_code(405);
 	exit();

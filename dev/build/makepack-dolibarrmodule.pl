@@ -7,24 +7,24 @@
 #----------------------------------------------------------------------------
 ## no critic (InputOutput::ProhibitExplicitStdin,InputOutput::RequireBriefOpen)
 
-use strict;
+#use strict;
 use warnings;
 use Cwd;
 use Term::ANSIColor;
 
-$OWNER = "ldestailleur";
-$GROUP = "ldestailleur";
+my $OWNER = "ldestailleur";
+my $GROUP = "ldestailleur";
 
-@LISTETARGET       = ("ZIP");    # Possible packages
-%REQUIREMENTTARGET = (           # Tool requirement for each package
+my @LISTETARGET       = ("ZIP");    # Possible packages
+my %REQUIREMENTTARGET = (           # Tool requirement for each package
 	"TGZ" => "tar",
 	"ZIP" => "7z"
 );
-%ALTERNATEPATH = ();
+my %ALTERNATEPATH = ();
 
 use vars qw/ $REVISION $VERSION /;
-$REVISION = '1.0';
-$VERSION  = "3.5 (build $REVISION)";
+my $REVISION = '1.0';
+my $VERSION  = "3.5 (build $REVISION)";
 
 #------------------------------------------------------------------------------
 # MAIN
@@ -184,7 +184,7 @@ foreach my $PROJECT (@PROJECTLIST) {
 	while (<$IN>) {
 		if ( $_ =~ /this->version\s*=\s*'([\d\.]+)'/ ) {
 			$PROJVERSION = $1;
-			break;
+			last;
 		}
 	}
 	close $IN;

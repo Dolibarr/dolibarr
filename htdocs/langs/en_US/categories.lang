@@ -92,6 +92,7 @@ AddCustomerIntoCategory=Assign the category to the customer
 AddSupplierIntoCategory=Assign the category to the supplier
 AddFichinterIntoCategory=Assign the category to the intervention
 AddOrderIntoCategory=Assign the category to the order
+AddMoIntoCategory=Assign the category to the manufacturing order
 AddInvoiceIntoCategory=Assign the category to the invoice
 AddSupplierOrderIntoCategory=Assign the category to the supplier order
 AddSupplierInvoiceIntoCategory=Assign the category to the supplier invoice

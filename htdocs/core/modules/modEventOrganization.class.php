@@ -340,18 +340,18 @@ class modEventOrganization extends DolibarrModules
 		$this->export_TypeFields_array[$r]['t.fk_soc'] = 'Numeric';
 		//$this->export_fields_array[$r]['t.fieldtoadd']='FieldToAdd'; $this->export_TypeFields_array[$r]['t.fieldtoadd']='Text';
 		//unset($this->export_fields_array[$r]['t.fieldtoremove']);
-		$keyforselect = 'conferenceorboothattendee';
+		$keyforselect = 'eventorganization_conferenceorboothattendee';		// The value in column elementtype of llx_extrafields table
 		$keyforaliasextra = 'extra';
-		$keyforelement = 'conferenceorboothattendee';
+		$keyforelement = 'conferenceorboothattendee';						// The value of key for icon and class
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		//$this->export_dependencies_array[$r] = array('aaaline'=>array('tl.rowid','tl.ref')); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
 		//$this->export_special_array[$r] = array('t.field'=>'...');
 		//$this->export_examplevalues_array[$r] = array('t.field'=>'Example');
 		//$this->export_help_array[$r] = array('t.field'=>'FieldDescHelp');
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
-		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'eventorganization_conferenceorboothattendee as t, '.MAIN_DB_PREFIX.'projet as p';
-		$this->export_sql_end[$r] .= ' WHERE t.fk_project = p.rowid';
-		$this->export_sql_end[$r] .= ' AND p.entity IN ('.getEntity('conferenceorboothattendee').')';
+		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'eventorganization_conferenceorboothattendee as t';
+		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'projet as p ON t.fk_project = p.rowid AND p.entity IN ('.getEntity('conferenceorboothattendee').')';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'eventorganization_conferenceorboothattendee_extrafields as extra on t.rowid = extra.fk_object';
 		$r++;
 		/* END MODULEBUILDER EXPORT CONFERENCEORBOOTHATTENDEES */
 
@@ -389,7 +389,7 @@ class modEventOrganization extends DolibarrModules
 		$this->export_TypeFields_array[$r]['s.nom'] = 'Text';
 		//$this->export_fields_array[$r]['t.fieldtoadd']='FieldToAdd'; $this->export_TypeFields_array[$r]['t.fieldtoadd']='Text';
 		//unset($this->export_fields_array[$r]['t.fieldtoremove']);
-		$keyforselect = 'conferenceorbooth';
+		$keyforselect = 'actioncomm';		// The value in column elementtype of llx_extrafields table
 		$keyforaliasextra = 'extra';
 		$keyforelement = 'conferenceorbooth';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
@@ -397,16 +397,13 @@ class modEventOrganization extends DolibarrModules
 		//$this->export_special_array[$r] = array('t.field'=>'...');
 		//$this->export_examplevalues_array[$r] = array('t.field'=>'Example');
 		//$this->export_help_array[$r] = array('t.field'=>'FieldDescHelp');
-		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
+		$this->export_sql_start[$r] = "SELECT DISTINCT ";
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'actioncomm as t';
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON t.fk_soc = s.rowid,';
-		$this->export_sql_end[$r] .= ' '.MAIN_DB_PREFIX.'projet as p,';
-		$this->export_sql_end[$r] .= ' '.MAIN_DB_PREFIX.'c_actioncomm as ca';
-		$this->export_sql_end[$r] .= ' WHERE t.fk_project = p.rowid';
-		$this->export_sql_end[$r] .= ' AND ca.id = t.fk_action';
-		$this->export_sql_end[$r] .= " AND t.code LIKE 'AC_EO_%'";
-		$this->export_sql_end[$r] .= ' AND p.usage_organize_event = 1';
-		$this->export_sql_end[$r] .= ' AND p.entity IN ('.getEntity('conferenceorboothattendee').')';
+		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'projet as p ON t.fk_project = p.rowid AND p.usage_organize_event = 1 AND p.entity IN ('.getEntity('conferenceorboothattendee').')';
+		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'c_actioncomm as ca ON ca.id = t.fk_action';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON t.fk_soc = s.rowid';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'actioncomm_extrafields as extra on t.id = extra.fk_object';
+		$this->export_sql_end[$r] .= " WHERE t.code LIKE 'AC_EO_%'";
 		$r++;
 		/* END MODULEBUILDER EXPORT CONFERENCEORBOOTH */
 

@@ -34,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/lettering.class.php';
@@ -738,7 +739,38 @@ if ($action == 'create') {
 			print '<input type="submit" class="button button-edit smallpaddingimp" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {
-			print $object->doc_ref;
+			// Get information of an element
+			if ($object->doc_type === 'customer_invoice' && !empty($object->fk_doc)) {
+				$invoicestatic = new Facture($db);
+				$result = $invoicestatic->fetch($object->fk_doc);
+
+				if ($result > 0) {
+					$label_element = $invoicestatic->getNomUrl(1);
+				} else {
+					$label_element = $object->doc_ref;
+				}
+			} elseif ($object->doc_type === 'supplier_invoice' && !empty($object->fk_doc)) {
+				$supplierinvoicestatic = new FactureFournisseur($db);
+				$result = $supplierinvoicestatic->fetch($object->fk_doc);
+
+				if ($result > 0) {
+					$label_element = $supplierinvoicestatic->getNomUrl(1);
+				} else {
+					$label_element = $object->doc_ref;
+				}
+			} elseif ($object->doc_type === 'expense_report' && !empty($object->fk_doc)) {
+				$expensereportstatic = new ExpenseReport($db);
+				$result = $expensereportstatic->fetch($object->fk_doc);
+
+				if ($result > 0) {
+					$label_element = $expensereportstatic->getNomUrl(1);
+				} else {
+					$label_element = $object->doc_ref;
+				}
+			} else {
+				$label_element = $object->doc_ref;
+			}
+			print $label_element;
 		}
 		print '</td>';
 		print '</tr>';
@@ -804,7 +836,13 @@ if ($action == 'create') {
 			print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {
-			print $object->code_journal;
+			// Get information of a journal
+			$accountingjournalstatic = new AccountingJournal($db);
+			$accountingjournalstatic->fetch(0, $object->code_journal);
+			$journal = $accountingjournalstatic->code;
+			$journal_label = $accountingjournalstatic->label;
+
+			print $accountingjournalstatic->getNomUrl(1, 1, 1);
 		}
 		print '</td>';
 		print '</tr>';

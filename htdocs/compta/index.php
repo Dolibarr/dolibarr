@@ -801,7 +801,8 @@ if ($sql) {
 print '</div></div></div>';
 
 $parameters = array('user' => $user);
-$reshook = $hookmanager->executeHooks('dashboardAccountancy', $parameters, $object); // Note that $action and $object may have been modified by hook
+$object = null;
+$reshook = $hookmanager->executeHooks('dashboardAccountancy', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 // End of page
 llxFooter();

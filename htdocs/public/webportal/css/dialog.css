@@ -1,0 +1,109 @@
+/* Dialog container */
+:is(.dialog-full-screen,.dialog-popup) article {
+	width: 80vw;
+	max-width: 95vw;
+	height: 90vh;
+	max-height: 95vh;
+
+	position: fixed;
+	margin: 0 auto;
+
+	display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	justify-content: normal;
+	align-items: normal;
+	align-content: normal;
+}
+
+
+:is(.dialog-full-screen,.dialog-popup)  article:has(.dialog-header) {
+	padding: 0;
+}
+
+
+:is(.dialog-full-screen,.dialog-popup) article .dialog-body {
+	display: block;
+	flex-grow: 2;
+	flex-shrink: 1;
+	flex-basis: auto;
+	align-self: auto;
+	order: 0;
+	max-width: 100%;
+	overflow: auto;
+}
+
+
+object.object-preview {
+	width: 100%;
+	height: calc(100% - 8px);
+	object-fit:scale-down;
+}
+
+object.object-preview.--show-original-size {
+	max-width: none;
+	max-height: none;
+	width: auto;
+	height: auto;
+	object-fit: unset;
+}
+
+@media (min-width: 576px) {
+	dialog.dialog-full-screen article {
+		max-width: 95%;
+	}
+}
+@media (min-width: 768px) {
+	dialog.dialog-full-screen article {
+		 max-width: 95%;
+	}
+}
+
+/* Iframe */
+.dialog-iframe {
+	border: none;
+	width: 100%;
+	height: 100%;
+}
+
+
+
+/*!* Header *!*/
+.dialog-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0.5em 1em;
+	border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.dialog-header-title-container {
+	flex: 1;
+	overflow: hidden;
+}
+
+.dialog-header-title {
+	margin: 0;
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+
+.dialog-header-action-container {
+	flex: 0 0 auto;
+	white-space: nowrap;
+	display: flex;
+	flex-direction: row-reverse;
+	gap: 0.5em;
+}
+
+/* Header title */
+.dialog-header h2 {
+	margin: 0;
+	font-size: 1.2em;
+}
+
+/* Close button */
+dialog article .dialog-header-btn.close {
+	margin-top: 0;
+	margin-bottom: 0;
+}

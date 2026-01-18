@@ -153,15 +153,15 @@ if (getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID') > 0) {
 	}
 }
 
-$levelofmaincategories = $levelofrootcategory + 1;
+$levelofmaincategories = $levelofrootcategory + 1;		// Main categories are categories just under the root categorie of POS products.
 
 $maincategories = array();
 $subcategories = array();
 foreach ($categories as $key => $categorycursor) {
 	if ($categorycursor['level'] == $levelofmaincategories) {
 		$maincategories[$key] = $categorycursor;
-	} else {
-		$subcategories[$key] = $categorycursor;
+	} elseif ($categorycursor['level'] > $levelofmaincategories) {
+		$subcategories[$key] = $categorycursor;			// If category level 2 or 3 or ...
 	}
 }
 
@@ -307,16 +307,20 @@ function LoadProducts(position, issubcat) {
 	console.log("LoadProducts position="+position+" issubcat="+issubcat);
 	var maxproduct = <?php echo (int) ($MAXPRODUCT - 2); ?>;
 
-	if (position=="supplements") {
-		currentcat="supplements";
+	if (position == "supplements") {
+		currentcat = "supplements";
+
+		if (subcategories.count == 0) {
+			alert("No product found into categories level 2 or more");
+		}
 	} else {
 		$('#catimg'+position).animate({opacity: '0.5'}, 1);
 		$('#catimg'+position).animate({opacity: '1'}, 100);
 		if (issubcat == true) {
-			currentcat=$('#prodiv'+position).data('rowid');
+			currentcat = $('#prodiv'+position).data('rowid');
 		} else {
 			console.log('#catdiv'+position);
-			currentcat=$('#catdiv'+position).data('rowid');
+			currentcat = $('#catdiv'+position).data('rowid');
 			console.log("currentcat="+currentcat);
 		}
 	}
@@ -326,29 +330,32 @@ function LoadProducts(position, issubcat) {
 	pageproducts=0;
 	ishow=0; //product to show counter
 
-	jQuery.each(subcategories, function(i, val) {
-		if (currentcat==val.fk_parent) {
-			$("#prodivdesc"+ishow).show();
-			<?php if (getDolGlobalString('TAKEPOS_SHOW_CATEGORY_DESCRIPTION') == 1) { ?>
-				$("#prodesc"+ishow).html(val.label.bold() + ' - ' + val.description);
-			   $("#probutton"+ishow).html(val.label);
-			<?php } else { ?>
-				$("#prodesc"+ishow).text(val.label);
-			  $("#probutton"+ishow).text(val.label);
-			<?php } ?>
-			$("#probutton"+ishow).show();
-			$("#proprice"+ishow).attr("class", "hidden");
-			$("#proprice"+ishow).html("");
-			$("#proimg"+ishow).attr("src","genimg/index.php?query=cat&id="+val.rowid);
-			$("#prodiv"+ishow).data("rowid",val.rowid);
-			$("#prodiv"+ishow).attr("data-rowid",val.rowid);
-			$("#prodiv"+ishow).data("iscat", 1);
-			$("#prodiv"+ishow).attr("data-iscat", 1);
-			$("#prodiv"+ishow).removeClass("divempty");
-			$("#prowatermark"+ishow).show();
-			ishow++;
-		}
-	});
+	if (currentcat != "supplements") {
+		console.log("Loop on each category level 2 or more");
+		jQuery.each(subcategories, function(i, val) {
+			if (currentcat == val.fk_parent) {
+				$("#prodivdesc"+ishow).show();
+				<?php if (getDolGlobalString('TAKEPOS_SHOW_CATEGORY_DESCRIPTION') == 1) { ?>
+					$("#prodesc"+ishow).html(val.label.bold() + ' - ' + val.description);
+				   $("#probutton"+ishow).html(val.label);
+				<?php } else { ?>
+					$("#prodesc"+ishow).text(val.label);
+				  $("#probutton"+ishow).text(val.label);
+				<?php } ?>
+				$("#probutton"+ishow).show();
+				$("#proprice"+ishow).attr("class", "hidden");
+				$("#proprice"+ishow).html("");
+				$("#proimg"+ishow).attr("src","genimg/index.php?query=cat&id="+val.rowid);
+				$("#prodiv"+ishow).data("rowid",val.rowid);
+				$("#prodiv"+ishow).attr("data-rowid",val.rowid);
+				$("#prodiv"+ishow).data("iscat", 1);
+				$("#prodiv"+ishow).attr("data-iscat", 1);
+				$("#prodiv"+ishow).removeClass("divempty");
+				$("#prowatermark"+ishow).show();
+				ishow++;
+			}
+		});
+	}
 
 	idata=0; //product data counter
 	var limit = 0;
@@ -357,8 +364,13 @@ function LoadProducts(position, issubcat) {
 	}
 	// Only show products for sale (tosell=1)
 	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&token=<?php echo newToken();?>&thirdpartyid=' + jQuery('#thirdpartyid').val() + '&category='+currentcat+'&tosell=1&limit='+limit+'&offset=0', function(data) {
+		/* Fill thumbs from ishow to end max of products with products loaded into data array */
 		console.log("Call ajax.php (in LoadProducts) to get Products of category "+currentcat+" then loop on result to fill image thumbs");
-		//console.log(data);
+		console.log("Found "+data.length+" record");
+
+		if (data.length == 0 && currentcat == "supplements") {
+			alert("No supplements found into the supplement category. Check the module setup and your product categories.");
+		}
 
 		while (ishow < maxproduct) {
 			console.log("ishow"+ishow+" idata="+idata);
@@ -998,23 +1010,12 @@ function DolibarrOpenDrawer() {
 	});
 }
 
-function MoreActions(totalactions){
-	if (pageactions==0){
-		pageactions=1;
-		for (i = 0; i <= totalactions; i++){
-			if (i<12) $("#action"+i).hide();
-			else $("#action"+i).show();
-		}
+function MoreActions(totalactions) {
+	for (i = 0; i <= totalactions; i++) {
+		$("#action" + i).toggle();
 	}
-	else if (pageactions==1){
-		pageactions=0;
-		for (i = 0; i <= totalactions; i++){
-			if (i<12) $("#action"+i).show();
-			else $("#action"+i).hide();
-		}
-	}
-
-	return true;
+	$("#actionnext").toggle();
+	$("#actionprevious").toggle();
 }
 
 function ControlCashOpening()
@@ -1384,11 +1385,8 @@ if (count($maincategories) == 0) {
 $menus = array();
 $r = 0;
 
-if (!getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
-	$menus[$r++] = array('title' => '<span class="fa fa-layer-group paddingrightonly"></span><div class="trunc">'.$langs->trans("New").'</div>', 'action' => 'New();');
-} else {
-	// BAR RESTAURANT specific menu
-	$menus[$r++] = array('title' => '<span class="fa fa-layer-group paddingrightonly"></span><div class="trunc">'.$langs->trans("Place").'</div>', 'action' => 'Floors();');
+if (! getDolGlobalString('TAKEPOS_HIDE_HISTORY')) {
+	$menus[$r++] = array('title' => '<span class="fa fa-history paddingrightonly"></span><div class="trunc">'.$langs->trans("History").'</div>', 'action' => 'History();');
 }
 
 if (getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
@@ -1398,21 +1396,33 @@ if (getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
 		$menus[$r++] = array('title' => '<span class="far fa-building paddingrightonly"></span><div class="trunc">'.$langs->trans("Customer").'</div>', 'action' => 'Customer();');
 	}
 }
-if (! getDolGlobalString('TAKEPOS_HIDE_HISTORY')) {
-	$menus[$r++] = array('title' => '<span class="fa fa-history paddingrightonly"></span><div class="trunc">'.$langs->trans("History").'</div>', 'action' => 'History();');
+
+if (!getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
+	$menus[$r++] = array('title' => '<span class="fa fa-layer-group paddingrightonly"></span><div class="trunc">'.$langs->trans("New").'</div>', 'action' => 'New();');
+} else {
+	// BAR RESTAURANT specific menu
+	$menus[$r++] = array('title' => '<span class="fa fa-layer-group paddingrightonly"></span><div class="trunc">'.$langs->trans("Place").'</div>', 'action' => 'Floors();');
 }
+
+// Add a non predefined product
 $menus[$r++] = array('title' => '<span class="fa fa-cube paddingrightonly"></span><div class="trunc">'.$langs->trans("FreeZone").'</div>', 'action' => 'FreeZone();');
+
+// BAR RESTAURANT specific menu "Print on kitchen/order printer"
+if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
+	if (getDolGlobalString('TAKEPOS_SUPPLEMENTS')) {
+		$menus[$r++] = array('title' => '<span class="fa fa-cube  paddingrightonly"></span><div class="trunc">'.$langs->trans("ProductSupplements").'</div>', 'action' => 'LoadProducts(\'supplements\');');
+	}
+
+	if (getDolGlobalString('TAKEPOS_ORDER_PRINTERS')) {
+		$menus[$r++] = array('title' => '<span class="fa fa-blender-phone paddingrightonly"></span><div class="trunc">'.$langs->trans("SentOrderToKitchen").'</span>', 'action' => 'TakeposPrintingOrder();');
+	}
+}
+
+// Add a discount
 $menus[$r++] = array('title' => '<span class="fa fa-percent paddingrightonly"></span><div class="trunc">'.$langs->trans("InvoiceDiscountShort").'</div>', 'action' => 'Reduction();');
 
 if (!getDolGlobalString('TAKEPOS_NO_SPLIT_SALE')) {
 	$menus[$r++] = array('title' => '<span class="fas fa-cut paddingrightonly"></span><div class="trunc">'.$langs->trans("SplitSale").'</div>', 'action' => 'Split();');
-}
-
-// BAR RESTAURANT specific menu "Print on Order printer"
-if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
-	if (getDolGlobalString('TAKEPOS_ORDER_PRINTERS')) {
-		$menus[$r++] = array('title' => '<span class="fa fa-blender-phone paddingrightonly"></span><div class="trunc">'.$langs->trans("Order").'</span>', 'action' => 'TakeposPrintingOrder();');
-	}
 }
 
 // Last action that close the sell (payments)
@@ -1450,9 +1460,6 @@ if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
 	if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector" && getDolGlobalString('TAKEPOS_ORDER_NOTES') == 1) {
 		$menus[$r++] = array('title' => '<span class="fa fa-sticky-note paddingrightonly"></span><div class="trunc">'.$langs->trans("OrderNotes").'</div>', 'action' => 'TakeposOrderNotes();');
 	}
-	if (getDolGlobalString('TAKEPOS_SUPPLEMENTS')) {
-		$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("ProductSupplements").'</div>', 'action' => 'LoadProducts(\'supplements\');');
-	}
 }
 
 if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
@@ -1483,6 +1490,14 @@ if ($resql) {
 	}
 }
 
+if (getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
+	$menus[$r++] = array('title' => '<span class="fa fa-sign-out-alt pictofixedwidth"></span><div class="trunc">'.$langs->trans("Logout").'</div>', 'action' => 'window.location.href=\''.DOL_URL_ROOT.'/user/logout.php?token='.newToken().'\';');
+}
+
+if (getDolGlobalString('TAKEPOS_WEIGHING_SCALE')) {
+	$menus[$r++] = array('title' => '<span class="fa fa-balance-scale pictofixedwidth"></span><div class="trunc">'.$langs->trans("WeighingScale").'</div>', 'action' => 'WeighingScale();');
+}
+
 $parameters = array('menus' => $menus);
 $reshook = $hookmanager->executeHooks('ActionButtons', $parameters);
 if ($reshook == 0) {  //add buttons
@@ -1502,18 +1517,6 @@ if ($reshook == 0) {  //add buttons
 			}
 		}
 	}
-}
-
-if ($r % 3 == 2) {
-	$menus[$r++] = array('title' => '', 'style' => 'visibility: hidden;');
-}
-
-if (getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
-	$menus[$r++] = array('title' => '<span class="fa fa-sign-out-alt pictofixedwidth"></span><div class="trunc">'.$langs->trans("Logout").'</div>', 'action' => 'window.location.href=\''.DOL_URL_ROOT.'/user/logout.php?token='.newToken().'\';');
-}
-
-if (getDolGlobalString('TAKEPOS_WEIGHING_SCALE')) {
-	$menus[$r++] = array('title' => '<span class="fa fa-balance-scale pictofixedwidth"></span><div class="trunc">'.$langs->trans("WeighingScale").'</div>', 'action' => 'WeighingScale();');
 }
 
 ?>
@@ -1543,9 +1546,11 @@ if (getDolGlobalString('TAKEPOS_WEIGHING_SCALE')) {
 			$i++;
 			if (count($menus) > 12 and $i == 12) {
 				echo '<button style="'.(empty($menu['style']) ? '' : $menu['style']).'" type="button" id="actionnext" class="actionbutton" onclick="MoreActions('.count($menus).')">'.$langs->trans("Next").'</button>';
+				echo '<button style="display: none;" type="button" id="actionprevious" class="actionbutton" onclick="MoreActions('.count($menus).')">'.$langs->trans("Previous").'</button>';
 				echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton" onclick="'.(empty($menu['action']) ? '' : $menu['action']).'">'.$menu['title'].'</button>';
 			} elseif ($i > 12) {
 				echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton" onclick="'.(empty($menu['action']) ? '' : $menu['action']).'">'.$menu['title'].'</button>';
+				// TODO keep style but hide button
 			} else {
 				echo '<button style="'.(empty($menu['style']) ? '' : $menu['style']).'" type="button" id="action'.$i.'" class="actionbutton" onclick="'.(empty($menu['action']) ? '' : $menu['action']).'">'.$menu['title'].'</button>';
 			}

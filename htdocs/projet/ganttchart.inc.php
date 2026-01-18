@@ -141,7 +141,7 @@ if (g.getDivId() != null)
 			'task_name' => $projecttmp->ref.' '.$projecttmp->title,
 			'task_resources' => '',
 			'task_start_date' => $projecttmp->date_start,
-			'task_end_date' => $projecttmp->date_end,
+			'task_end_date' => (!empty($projecttmp->date_end) ? $projecttmp->date_end : 0),
 			'task_is_group' => 1, 'task_position' => 0, 'task_css' => 'ggroupblack', 'task_milestone' => 0, 'task_parent' => 0, 'task_parent_alternate_id' => 0,
 			'note' => '',
 			'task_planned_workload' => 0

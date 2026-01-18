@@ -145,8 +145,6 @@ Barcode
 BarcodeDesc
 BarcodeStickersMask
 BillOfMaterialsLine
-BlockLogNeedAmountsValue
-BlockLogNeedElement
 BlockedLogAuthorityNeededToStoreYouFingerprintsInNonAlterableRemote
 BlockedLogAuthorityUrl
 BlockedLogSetup

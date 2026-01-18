@@ -145,7 +145,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="page_y" value="">';
 
-print load_fiche_titre($langs->trans("AccountantingProvider"), '', 'accounting', 0, '', '', '', '');
+print load_fiche_titre($langs->trans("AccountingProvider"), '', 'accounting', 0, '', '', '', '');
 
 print '<table class="noborder centpercent editmode">';
 print '<tr class="liste_titre"><th class="titlefieldcreate wordbreak">'.$langs->trans("CompanyInfo").'</th><th></th></tr>'."\n";

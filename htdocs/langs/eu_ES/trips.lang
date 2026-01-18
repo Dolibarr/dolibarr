@@ -121,7 +121,6 @@ ValideTrip=Gastuen txostena onartu
 ExpenseReportPayments=Gastuen txostenaren ordainketak
 TaxUndefinedForThisCategory = Zerga zehaztu gabe dago kategoria honetarako
 errorComputeTtcOnMileageExpense=Errorea kilometro-gastua kalkulatzean
-ErrorOnlyDraftStatusCanBeDeletedInMassAction=Ekintza masiboan zirriborro egoeran dauden elementuak bakarrik ezaba daitezke
 
 ## Dictionary
 EX_BRE=Gosaria
@@ -159,3 +158,4 @@ TF_TRAIN=Trena
 TF_TRIP=Garraioa
 FailedToSetPaid=Ezin izan da ordaindutako gisa ezarri
 FailedToSetToCancel=Ezeztatu ezin izan da
+NobodyHasPermissionToValidateExpenseReport=Nobody has permission to validate expensereport

@@ -2,7 +2,7 @@
 /* Copyright (C) 2008-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2014       Marcos García       <marcosgdf@gmail.com>
- * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2020       Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2022-2025  Charlene Benke		<charlene@patas-monkey.com>
  * Copyright (C) 2023      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
@@ -1015,7 +1015,7 @@ class Task extends CommonObjectLine
 	 *  @param	string	$sep			Separator between ref and label if option addlabel is set
 	 *  @param	int   	$notooltip		1=Disable tooltip
 	 *  @param  int     $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *	@return	string					Chaine avec URL
+	 *	@return	string					String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $mode = 'task', $addlabel = 0, $sep = ' - ', $notooltip = 0, $save_lastsearch_value = -1)
 	{
@@ -1754,6 +1754,7 @@ class Task extends CommonObjectLine
 		$sql .= " ptt.element_date_withhour as task_date_withhour,";
 		$sql .= " ptt.element_duration as task_duration,";
 		$sql .= " ptt.fk_user,";
+		$sql .= " ptt.fk_product,";
 		$sql .= " ptt.note,";
 		$sql .= " ptt.thm,";
 		$sql .= " pt.rowid as task_id,";
@@ -1805,6 +1806,7 @@ class Task extends CommonObjectLine
 				$newobj->timespent_line_withhour = $obj->task_date_withhour;
 				$newobj->timespent_line_duration = $obj->task_duration;
 				$newobj->timespent_line_fk_user = $obj->fk_user;
+				$newobj->timespent_line_fk_product = $obj->fk_product;
 				$newobj->timespent_line_thm = $obj->thm;	// hourly rate
 				$newobj->timespent_line_note = $obj->note;
 
