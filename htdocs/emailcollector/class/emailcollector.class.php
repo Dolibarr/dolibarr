@@ -1359,11 +1359,10 @@ class EmailCollector extends CommonObject
 				if (empty($rule['status'])) {
 					continue;
 				}
-
-				$not = '';
+				$not = false;
 				if (strpos($rule['rulevalue'], '!') === 0) {
 					// The value start with !, so we exclude the criteria
-					$not = 'NOT ';
+					$not = true;
 					// Then remove the ! from the string for next filters
 					$rule['rulevalue'] = substr($rule['rulevalue'], 1);
 				}
@@ -1372,27 +1371,45 @@ class EmailCollector extends CommonObject
 					$tmprulevaluearray = explode('*', $rule['rulevalue']);
 					if (count($tmprulevaluearray) >= 2) {
 						foreach ($tmprulevaluearray as $tmprulevalue) {
-							array_push($criteria, array($not."FROM" => $tmprulevalue));
+							if ($not) {
+								array_push($criteria, array('NOT'));
+							}
+							array_push($criteria, array("FROM" => $tmprulevalue));
 						}
 					} else {
-						array_push($criteria, array($not."FROM" => $rule['rulevalue']));
+						if ($not) {
+							array_push($criteria, array('NOT'));
+						}
+						array_push($criteria, array("FROM" => $rule['rulevalue']));
 					}
 				}
 				if ($rule['type'] == 'to') {
 					$tmprulevaluearray = explode('*', $rule['rulevalue']);
 					if (count($tmprulevaluearray) >= 2) {
 						foreach ($tmprulevaluearray as $tmprulevalue) {
-							array_push($criteria, array($not."TO" => $tmprulevalue));
+							if ($not) {
+								array_push($criteria, array('NOT'));
+							}
+							array_push($criteria, array("TO" => $tmprulevalue));
 						}
 					} else {
-						array_push($criteria, array($not."TO" => $rule['rulevalue']));
+						if ($not) {
+							array_push($criteria, array('NOT'));
+						}
+						array_push($criteria, array("TO" => $rule['rulevalue']));
 					}
 				}
 				if ($rule['type'] == 'bcc') {
-					array_push($criteria, array($not."BCC" => $rule['rulevalue']));
+					if ($not) {
+						array_push($criteria, array('NOT'));
+					}
+					array_push($criteria, array("BCC" => $rule['rulevalue']));
 				}
 				if ($rule['type'] == 'cc') {
-					array_push($criteria, array($not."CC" => $rule['rulevalue']));
+					if ($not) {
+						array_push($criteria, array('NOT'));
+					}
+					array_push($criteria, array("CC" => $rule['rulevalue']));
 				}
 				if ($rule['type'] == 'subject') {
 					if ($not) {
@@ -1411,7 +1428,10 @@ class EmailCollector extends CommonObject
 					}
 				}
 				if ($rule['type'] == 'header') {
-					array_push($criteria, array($not."HEADER" => $rule['rulevalue']));
+					if ($not) {
+						array_push($criteria, array('NOT'));
+					}
+					array_push($criteria, array("CUSTOM HEADER ".$rule['rulevalue']));
 				}
 
 				/* seems not used */
@@ -1424,22 +1444,40 @@ class EmailCollector extends CommonObject
 				 }*/
 
 				if ($rule['type'] == 'seen') {
-					array_push($criteria, array($not."SEEN"));
+					if ($not) {
+						array_push($criteria, array('NOT'));
+					}
+					array_push($criteria, array("SEEN"));
 				}
 				if ($rule['type'] == 'unseen') {
-					array_push($criteria, array($not."UNSEEN"));
+					if ($not) {
+						array_push($criteria, array('NOT'));
+					}
+					array_push($criteria, array("UNSEEN"));
 				}
 				if ($rule['type'] == 'unanswered') {
-					array_push($criteria, array($not."UNANSWERED"));
+					if ($not) {
+						array_push($criteria, array('NOT'));
+					}
+					array_push($criteria, array("UNANSWERED"));
 				}
 				if ($rule['type'] == 'answered') {
-					array_push($criteria, array($not."ANSWERED"));
+					if ($not) {
+						array_push($criteria, array('NOT'));
+					}
+					array_push($criteria, array("ANSWERED"));
 				}
 				if ($rule['type'] == 'smaller') {
-					array_push($criteria, array($not."SMALLER"));
+					if ($not) {
+						array_push($criteria, array('NOT'));
+					}
+					array_push($criteria, array("CUSTOM SMALLER ".$rule['rulevalue']));
 				}
 				if ($rule['type'] == 'larger') {
-					array_push($criteria, array($not."LARGER"));
+					if ($not) {
+						array_push($criteria, array('NOT'));
+					}
+					array_push($criteria, array("CUSTOM LARGER ".$rule['rulevalue']));
 				}
 
 				// Rules to filter after the search imap
