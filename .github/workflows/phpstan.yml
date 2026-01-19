@@ -82,7 +82,7 @@ jobs:
         id: phpstan
         if: steps.files.outputs.files != ''
         run: |
-          phpstan -vvv analyse --error-format=checkstyle --memory-limit 7G -a dev/build/phpstan/bootstrap_action.php ${{ steps.files.outputs.files }} | tee _stan.xml | cs2pr --graceful-warnings
+          phpstan -vvv analyse --error-format=checkstyle --memory-limit 7G -a dev/build/phpstan/bootstrap_action.php "${{ steps.files.outputs.files }}" | tee _stan.xml | cs2pr --graceful-warnings
         # continue-on-error: true
 
       # Save cache
