@@ -137,10 +137,7 @@ class Ai
 			} elseif ($function == 'thread') {
 				$this->apiEndpoint = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_URL', $arrayofai[$this->apiService]['url']);
 				$this->apiEndpoint .= (preg_match('/\/$/', $this->apiEndpoint) ? '' : '/').'threads';
-			} elseif ($function == 'docparsing') {
-				$this->apiEndpoint = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_URL', $arrayofai[$this->apiService]['url']);
-				$this->apiEndpoint .= (preg_match('/\/$/', $this->apiEndpoint) ? '' : '/').'chat/completions';
-			} else {
+			} else {	// if $function == 'docparsing', ...
 				$this->apiEndpoint = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_URL', $arrayofai[$this->apiService]['url']);
 				$this->apiEndpoint .= (preg_match('/\/$/', $this->apiEndpoint) ? '' : '/').'chat/completions';
 			}
@@ -221,6 +218,7 @@ class Ai
 
 			if (is_array($instructions)) {
 				$arrayforpayload = $instructions;
+				$fullInstructions = '';
 			} else {
 				$fullInstructions = $instructions.($postPrompt ? (preg_match('/[\.\!\?]$/', $instructions) ? '' : '.').' '.$postPrompt : '');
 
