@@ -1580,7 +1580,7 @@ if ($action == 'create') {
 			while ($i < $num) {
 				$objp = $db->fetch_object($resql);
 
-				// Ligne en mode visu
+				// Show line in view mode
 				if ($action != 'editline' || GETPOSTINT('line_id') != $objp->rowid) {
 					print '<tr class="oddeven">';
 
