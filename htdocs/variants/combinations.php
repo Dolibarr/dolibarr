@@ -950,8 +950,11 @@ if (!empty($id) || !empty($ref)) {
 
 				print '<td>'.$prodstatic->getNomUrl(1).'</td>';
 				print '<td>';
-				foreach ($comb2val->fetchByFkCombination($currcomb->id) as $pc2v) {
-					print dol_htmlentities($pc2v).'<br>';
+				$arraycomb = $comb2val->fetchByFkCombination($currcomb->id);
+				if (is_array($arraycomb)) {
+					foreach ($arraycomb as $pc2v) {
+						print dolPrintHTML((string) $pc2v).'<br>';		// $pc2v is object ProductCombination2ValuePair, the (string) use the __toString to output it.
+					}
 				}
 				print '</td>';
 				print '<td class="right">'.($currcomb->variation_price >= 0 ? '+' : '').price($currcomb->variation_price).($currcomb->variation_price_percentage ? ' %' : '').'</td>';
