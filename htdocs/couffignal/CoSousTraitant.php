@@ -91,7 +91,6 @@ class CoSousTraitant
 		// Fetch related Orders and Invoices
 		$facturesFourn = FactureFournisseurTools::getFacturesFournValidatedFromDebtCompensationLinks($facture, $db, $mode);
 		$commandesFourn = FactureFournisseurTools::getOrdersValidatedFromFacturesFourn($facturesFourn);
-		if (!$commandesFourn && !$facturesFourn) return [];
 
 		// CommandeFournisseur via extrafields: options_typefournisseur, 1 pour co-traitant, 2 pour sous-traitant
 		$filterCommandesFourn = fn($arr, $type) => array_filter($arr, fn(CommandeFournisseur $el) =>
