@@ -69,6 +69,7 @@ jobs:
       - name: Get changed PHP files
         id: files
         run: |
+          # shellcheck disable=SC2016
           git fetch origin ${{ github.base_ref }}
           FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep '\.php$' || true)
           {
