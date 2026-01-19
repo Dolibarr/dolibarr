@@ -1,0 +1,61 @@
+Received: from webmail.my-office.cz (localhost [127.0.0.1])
+	by keira.cofis.cz
+	; Fri, 29 Jan 2016 14:25:40 +0100
+From: demo@cerstor.cz
+To: demo@cerstor.cz
+Date: Fri, 5 Apr 2019 12:10:49 +0200
+Subject: embedded_message_subject
+Message-ID: <AC39946EBF5C034B87BABD5343E96979012671D40E38@VM002.cerk.cc>
+Accept-Language: pl-PL, nl-NL
+Content-Language: pl-PL
+Content-Type: multipart/mixed;
+	boundary="_005_AC39946EBF5C034B87BABD5343E96979012671D40E38VM002emonsn_"
+MIME-Version: 1.0
+
+--_005_AC39946EBF5C034B87BABD5343E96979012671D40E38VM002emonsn_
+Content-Type: multipart/alternative;
+	boundary="_000_AC39946EBF5C034B87BABD5343E96979012671D40E38VM002emonsn_"
+
+--_000_AC39946EBF5C034B87BABD5343E96979012671D40E38VM002emonsn_
+Content-Type: text/plain; charset="iso-8859-2"
+Content-Transfer-Encoding: quoted-printable
+
+some txt
+
+
+
+
+
+--_000_AC39946EBF5C034B87BABD5343E96979012671D40E38VM002emonsn_
+Content-Type: text/html; charset="iso-8859-2"
+Content-Transfer-Encoding: quoted-printable
+
+<html>
+ <p>some txt</p>
+</html>
+
+--_000_AC39946EBF5C034B87BABD5343E96979012671D40E38VM002emonsn_--
+
+--_005_AC39946EBF5C034B87BABD5343E96979012671D40E38VM002emonsn_
+Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;
+	name="file1.xlsx"
+Content-Description: file1.xlsx
+Content-Disposition: attachment; filename="file1.xlsx"; size=29;
+	creation-date="Fri, 05 Apr 2019 10:06:01 GMT";
+	modification-date="Fri, 05 Apr 2019 10:10:49 GMT"
+Content-Transfer-Encoding: base64
+
+IHRoaXMgaXMgY29udGVudCBvZiB0ZXN0IGZpbGU=
+
+--_005_AC39946EBF5C034B87BABD5343E96979012671D40E38VM002emonsn_
+Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;
+	name="file2.xlsx"
+Content-Description: file2
+Content-Disposition: attachment; filename="file2.xlsx"; size=29;
+	creation-date="Fri, 05 Apr 2019 10:10:19 GMT";
+	modification-date="Wed, 03 Apr 2019 11:04:32 GMT"
+Content-Transfer-Encoding: base64
+
+IHRoaXMgaXMgY29udGVudCBvZiB0ZXN0IGZpbGU=
+
+--_005_AC39946EBF5C034B87BABD5343E96979012671D40E38VM002emonsn_--

@@ -1,0 +1,31 @@
+From: from@there.com
+To: to@here.com
+Subject: Nuu
+Date: Wed, 13 Sep 2017 13:05:45 +0200
+Content-Type: multipart/mixed; boundary="=-vyqYb0SSRwuGFKv/Trdf"
+
+--=-vyqYb0SSRwuGFKv/Trdf
+Content-Type: multipart/alternative; boundary="=-ewUvwipK68Y6itClYNpy"
+
+--=-ewUvwipK68Y6itClYNpy
+Content-Type: text/plain; charset="us-ascii"
+
+Here is the problem mail
+ 
+Body text
+--=-ewUvwipK68Y6itClYNpy
+Content-Type: text/html; charset="us-ascii"
+
+Here is the problem mail
+ 
+Body text
+--=-ewUvwipK68Y6itClYNpy--
+
+--=-vyqYb0SSRwuGFKv/Trdf
+Content-Type: application/pdf; name="Example Domain.pdf"
+Content-Disposition: attachment; filename="Example Domain.pdf"
+Content-Transfer-Encoding: base64
+
+nnDusSNdG92w6Fuw61fMjAxOF8wMy0xMzMyNTMzMTkzLnBkZg==?=
+
+--=-vyqYb0SSRwuGFKv/Trdf--

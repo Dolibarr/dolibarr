@@ -1,0 +1,56 @@
+Return-Path: <someone@domain.tld>
+Delivered-To: <someone@domain.tld>
+Received: from mx.domain.tld
+	by localhost (Dovecot) with LMTP id T7mwLn3ddlvKWwAA0J78UA
+	for <someone@domain.tld>; Fri, 17 Aug 2018 16:36:45 +0200
+Received: from localhost (localhost [127.0.0.1])
+	by mx.domain.tld (Postfix) with ESMTP id B642913BA0BE2
+	for <someone@domain.tld>; Fri, 17 Aug 2018 16:36:45 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at mx.domain.tld
+X-Spam-Flag: NO
+X-Spam-Score: 1.103
+X-Spam-Level: *
+X-Spam-Status: No, score=1.103 required=6.31 tests=[ALL_TRUSTED=-1,
+	OBFU_TEXT_ATTACH=1, TRACKER_ID=1.102, TVD_SPACE_RATIO=0.001]
+	autolearn=no autolearn_force=no
+Received: from mx.domain.tld ([127.0.0.1])
+	by localhost (mx.domain.tld [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id L8E9vyX80d44 for <someone@domain.tld>;
+	Fri, 17 Aug 2018 16:36:39 +0200 (CEST)
+Received: from [127.0.0.1] (ip.dynamic.domain.tld [192.168.0.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by mx.domain.tld (Postfix) with ESMTPSA id EF01E13BA0BD7
+	for <someone@domain.tld>; Fri, 17 Aug 2018 16:36:38 +0200 (CEST)
+Sender: testsender <someone@domain.tld>
+Message-ID: <d3a5e91963cb805cee975687d5acb1c6@swift.generated>
+Date: Fri, 17 Aug 2018 14:36:24 +0000
+Subject: ogqMVHhz7swLaq2PfSWsZj0k99w8wtMbrb4RuHdNg53i76B7icIIM0zIWpwGFtnk
+From: testfrom <someone@domain.tld>
+Reply-To: testreply_to <someone@domain.tld>
+To: testnameto <someone@domain.tld>
+Cc: testnamecc <someone@domain.tld>
+MIME-Version: 1.0
+Content-Type: multipart/mixed;
+ boundary="_=_swift_v4_1534516584_32c032a3715d2dfd5cd84c26f84dba8d_=_"
+X-Priority: 1 (Highest)
+
+
+
+
+--_=_swift_v4_1534516584_32c032a3715d2dfd5cd84c26f84dba8d_=_
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+n1IaXFkbeqKyg4lYToaJ3u1Ond2EDrN3UWuiLFNjOLJEAabSYagYQaOHtV5QDlZE
+
+--_=_swift_v4_1534516584_32c032a3715d2dfd5cd84c26f84dba8d_=_
+Content-Type: application/octet-stream; name=6mfFxiU5Yhv9WYJx.txt
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename=6mfFxiU5Yhv9WYJx.txt
+
+em5rNTUxTVAzVFAzV1BwOUtsMWduTEVycldFZ2tKRkF0dmFLcWtUZ3JrM2RLSThkWDM4WVQ4QmFW
+eFJjT0VSTg==
+
+--_=_swift_v4_1534516584_32c032a3715d2dfd5cd84c26f84dba8d_=_--
+

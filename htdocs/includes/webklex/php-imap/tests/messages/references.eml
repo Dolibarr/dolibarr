@@ -1,0 +1,11 @@
+Message-ID: <123@example.com>
+From: no_host
+Cc: "This one: is \"right\"" <ding@dong.com>, No-address
+In-Reply-To: <b9e87bd5e661a645ed6e3b832828fcc5@example.com>
+References: <231d9ac57aec7d8c1a0eacfeab8af6f3@example.com> <08F04024-A5B3-4FDE-BF2C-6710DE97D8D9@example.com>
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+
+Hi
+How are you?

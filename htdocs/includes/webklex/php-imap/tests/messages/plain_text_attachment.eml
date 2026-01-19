@@ -1,0 +1,21 @@
+To: to@here.com
+From: from@there.com
+Subject: Plain text attachment
+Date: Tue, 21 Aug 2018 09:05:14 +0200
+MIME-Version: 1.0
+Content-Type: multipart/mixed;
+ boundary="------------B832AF745285AEEC6D5AEE42"
+
+This is a multi-part message in MIME format.
+--------------B832AF745285AEEC6D5AEE42
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
+Content-Transfer-Encoding: 7bit
+
+Test
+--------------B832AF745285AEEC6D5AEE42
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment;
+ filename="a.txt"
+
+SGkh
+--------------B832AF745285AEEC6D5AEE42--

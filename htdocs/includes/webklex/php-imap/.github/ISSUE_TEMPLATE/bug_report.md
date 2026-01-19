@@ -26,6 +26,7 @@ If applicable, add screenshots to help explain your problem.
 - OS: [e.g. Debian 10]
 - PHP: [e.g. 5.5.9]
 - Version [e.g. v2.3.1]
+- Provider [e.g. Gmail, Outlook, Dovecot]
 
 **Additional context**
 Add any other context about the problem here.

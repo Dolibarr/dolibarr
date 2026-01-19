@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="vendor/autoload.php" backupGlobals="false" backupStaticAttributes="false" colors="true" verbose="true" convertErrorsToExceptions="true" convertNoticesToExceptions="true" convertWarningsToExceptions="true" processIsolation="false" stopOnFailure="false" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
+  <coverage>
+    <include>
+      <directory suffix=".php">src/</directory>
+    </include>
+    <report>
+      <clover outputFile="build/logs/clover.xml"/>
+      <html outputDirectory="build/coverage"/>
+      <text outputFile="build/coverage.txt"/>
+    </report>
+  </coverage>
+  <testsuites>
+    <testsuite name="PHP-IMAP Test Suite">
+      <directory>tests</directory>
+      <directory>tests/fixtures</directory>
+      <directory>tests/issues</directory>
+      <directory>tests/live</directory>
+    </testsuite>
+  </testsuites>
+  <logging>
+    <junit outputFile="build/report.junit.xml"/>
+  </logging>
+  <php>
+    <env name="LIVE_MAILBOX" value="false"/>
+    <env name="LIVE_MAILBOX_DEBUG" value="false"/>
+    <env name="LIVE_MAILBOX_HOST" value="mail.example.local"/>
+    <env name="LIVE_MAILBOX_PORT" value="993"/>
+    <env name="LIVE_MAILBOX_VALIDATE_CERT" value="false"/>
+    <env name="LIVE_MAILBOX_QUOTA_SUPPORT" value="false"/>
+    <env name="LIVE_MAILBOX_ENCRYPTION" value=""/>
+    <env name="LIVE_MAILBOX_USERNAME" value="root@example.local"/>
+    <env name="LIVE_MAILBOX_PASSWORD" value="foobar"/>
+  </php>
+</phpunit>

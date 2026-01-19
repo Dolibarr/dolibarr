@@ -1,0 +1,63 @@
+Return-Path: demo@cerstor.cz
+Received: from webmail.my-office.cz (localhost [127.0.0.1])
+	by keira.cofis.cz
+	; Fri, 29 Jan 2016 14:25:40 +0100
+MIME-Version: 1.0
+Content-Type: multipart/mixed;
+ boundary="=_5d4b2de51e6aad0435b4bfbd7a23594a"
+Date: Fri, 29 Jan 2016 14:25:40 +0100
+From: demo@cerstor.cz
+To: demo@cerstor.cz
+Subject: embedded message
+Message-ID: <7e5798da5747415e5b82fdce042ab2a6@cerstor.cz>
+X-Sender: demo@cerstor.cz
+User-Agent: Roundcube Webmail/1.0.0
+
+--=_5d4b2de51e6aad0435b4bfbd7a23594a
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+
+email that contains embedded message
+--=_5d4b2de51e6aad0435b4bfbd7a23594a
+Content-Transfer-Encoding: 8bit
+Content-Type: message/rfc822;
+ name=demo.eml
+Content-Disposition: attachment;
+ filename=demo.eml;
+ size=889
+
+Return-Path: demo@cerstor.cz
+Received: from webmail.my-office.cz (localhost [127.0.0.1])
+	by keira.cofis.cz
+	; Fri, 29 Jan 2016 14:22:13 +0100
+MIME-Version: 1.0
+Content-Type: multipart/mixed;
+ boundary="=_995890bdbf8bd158f2cbae0e8d966000"
+Date: Fri, 29 Jan 2016 14:22:13 +0100
+From: demo-from@cerstor.cz
+To: demo-to@cerstor.cz
+Subject: demo
+Message-ID: <4cbaf57cb00891c53b32e1d63367740c@cerstor.cz>
+X-Sender: demo@cerstor.cz
+User-Agent: Roundcube Webmail/1.0.0
+
+--=_995890bdbf8bd158f2cbae0e8d966000
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+
+demo text
+--=_995890bdbf8bd158f2cbae0e8d966000
+Content-Transfer-Encoding: base64
+Content-Type: text/plain;
+ name=testfile.txt
+Content-Disposition: attachment;
+ filename=testfile.txt;
+ size=29
+
+IHRoaXMgaXMgY29udGVudCBvZiB0ZXN0IGZpbGU=
+--=_995890bdbf8bd158f2cbae0e8d966000--
+
+
+--=_5d4b2de51e6aad0435b4bfbd7a23594a--

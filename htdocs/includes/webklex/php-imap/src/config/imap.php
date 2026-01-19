@@ -37,6 +37,32 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Security options
+    |--------------------------------------------------------------------------
+    |
+    | You can enable or disable certain security features here by setting them to true or false to enable or disable
+    | them.
+    | -detect_spoofing:
+    |       Detect spoofing attempts by checking the message sender against the message headers.
+    |       Default TRUE
+    | -detect_spoofing_exception:
+    |       Throw an exception if a spoofing attempt is detected.
+    |       Default FALSE
+    | -sanitize_filenames:
+    |       Sanitize attachment filenames by removing any unwanted and potentially dangerous characters. This is not a
+    |       100% secure solution, but it should help to prevent some common attacks. Please sanitize the filenames
+    |       again if you need a more secure solution.
+    |       Default TRUE
+    |
+    */
+    'security' => [
+        "detect_spoofing" => true,
+        "detect_spoofing_exception" => false,
+        "sanitize_filenames" => true,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Available accounts
     |--------------------------------------------------------------------------
     |
@@ -55,13 +81,15 @@ return [
             'username' => 'root@example.com',
             'password' => '',
             'authentication' => null,
+            'rfc' => 'RFC822', // If you are using iCloud, you might want to set this to 'BODY'
             'proxy' => [
                 'socket' => null,
                 'request_fulluri' => false,
                 'username' => null,
                 'password' => null,
             ],
-            "timeout" => 30
+            "timeout" => 30,
+            "extensions" => []
         ],
 
         /*
@@ -111,6 +139,11 @@ return [
     |   -RFC822
     |       Default TRUE - Set to FALSE to prevent the usage of \imap_rfc822_parse_headers().
     |                      See https://github.com/Webklex/php-imap/issues/115 for more information.
+    |   -Debug enable to trace communication traffic
+    |   -UID cache enable the UID cache
+    |   -Fallback date is used if the given message date could not be parsed
+    |   -Boundary regex used to detect message boundaries. If you are having problems with empty messages, missing
+    |       attachments or anything like this. Be advised that it likes to break which causes new problems..
     |   -Message key identifier option
     |       You can choose between the following:
     |       'id'     - Use the MessageID as array key (default, might cause hickups with yahoo mail)
@@ -130,19 +163,21 @@ return [
     |                               error: "Kerberos error: No credentials cache
     |                               file found (try running kinit) (...)"
     |                               or ['GSSAPI','PLAIN'] if you are using outlook mail
-    |   -Decoder options (currently only the message subject and attachment name decoder can be set)
-    |       'utf-8' - Uses imap_utf8($string) to decode a string
-    |       'mimeheader' - Uses mb_decode_mimeheader($string) to decode a string
     |
     */
     'options' => [
         'delimiter' => '/',
         'fetch' => \Webklex\PHPIMAP\IMAP::FT_PEEK,
-        'sequence' => \Webklex\PHPIMAP\IMAP::ST_MSGN,
+        'sequence' => \Webklex\PHPIMAP\IMAP::ST_UID,
         'fetch_body' => true,
         'fetch_flags' => true,
         'soft_fail' => false,
         'rfc822' => true,
+        'debug' => false,
+        'unescaped_search_dates' => false,
+        'uid_cache' => true,
+        // 'fallback_date' => "01.01.1970 00:00:00",
+        'boundary' => '/boundary=(.*?(?=;)|(.*))/i',
         'message_key' => 'list',
         'fetch_order' => 'asc',
         'dispositions' => ['attachment', 'inline'],
@@ -153,12 +188,35 @@ return [
             "sent" => "INBOX/Sent",
             "trash" => "INBOX/Trash",
         ],
-        'decoder' => [
+        'open' => [
+            // 'DISABLE_AUTHENTICATOR' => 'GSSAPI'
+        ]
+    ],
+
+    /**
+     * |--------------------------------------------------------------------------
+     * | Available decoding options
+     * |--------------------------------------------------------------------------
+     * |
+     * | Available php imap config parameters are listed below
+     * |   -options: Decoder options (currently only the message subject and attachment name decoder can be set)
+     * |       'utf-8' - Uses imap_utf8($string) to decode a string
+     * |       'mimeheader' - Uses mb_decode_mimeheader($string) to decode a string
+     * |   -decoder: Decoder to be used. Can be replaced by custom decoders if needed.
+     * |       'header' - HeaderDecoder
+     * |       'message' - MessageDecoder
+     * |       'attachment' - AttachmentDecoder
+     */
+    'decoding' => [
+        'options' => [
+            'header' => 'utf-8', // mimeheader
             'message' => 'utf-8', // mimeheader
             'attachment' => 'utf-8' // mimeheader
         ],
-        'open' => [
-            // 'DISABLE_AUTHENTICATOR' => 'GSSAPI'
+        'decoder' => [
+            'header' => \Webklex\PHPIMAP\Decoder\HeaderDecoder::class,
+            'message' => \Webklex\PHPIMAP\Decoder\MessageDecoder::class,
+            'attachment' => \Webklex\PHPIMAP\Decoder\AttachmentDecoder::class
         ]
     ],
 

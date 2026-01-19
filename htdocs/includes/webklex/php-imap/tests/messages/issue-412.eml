@@ -1,0 +1,216 @@
+Return-Path: <tonymarston@hotmail.com>
+Delivered-To: gmx@tonymarston.co.uk
+Received: from ion.dnsprotect.com
+	by ion.dnsprotect.com with LMTP
+	id YFDRGeZ6d2SlCRUAzEkvSQ
+	(envelope-from <tonymarston@hotmail.com>)
+	for <gmx@tonymarston.co.uk>; Wed, 31 May 2023 12:50:46 -0400
+Return-path: <tonymarston@hotmail.com>
+Envelope-to: gmx@tonymarston.co.uk
+Delivery-date: Wed, 31 May 2023 12:50:46 -0400
+Received: from mail-vi1eur04olkn2050.outbound.protection.outlook.com ([40.92.75.50]:23637 helo=EUR04-VI1-obe.outbound.protection.outlook.com)
+	by ion.dnsprotect.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <tonymarston@hotmail.com>)
+	id 1q4P28-005pTm-0E
+	for gmx@tonymarston.co.uk;
+	Wed, 31 May 2023 12:50:46 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=SYBG6BEOiWsmVfcgXUQJ0moS1SuG/IdTK6DIT4H3g7CQ+hbWIbItTxOhFzJiHP+q0uz+XzR1FzX2Daso+4iKotX7x2ViHIA0Hs65xUZVFtvflMsUrB+5RLlf3Pr7DiNKguQQtC+R2IBLvedc+IqElnMrTHcxLVS2gWl89MZx5Q0bXGWW/9wBVq6yvc6C69ynppcEdD0QZsoUQlp2DgzDpg8iG3y6dYGxFiTvLzw08nTQiCuqi8qQ+nmHyeeItIiAmyKynvyiL+kh4frcSDS67r6PU/CBxvto/nP3RCAxHuzJEGOpS7LJPqoJAlRSrUp2zpeEMpmDFJUE/Jo0K+EgcQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ISg5C/1AgVASEPkGp/cgowfc/y9qywGvXMTv5yjJffs=;
+ b=eVYGErUWMxOeFGLg2nPuB0E/ngKet0hEVcN8Ay4ujGFY4k7i+1hrmnOMD6XiaIk3gVrqPalsmDjmEHpS0zV3+fPPTSktlSvkLrUr5ViVI1kMVBbBQsowLD5x3FpX7fnP2q17WPQ2P6R8Ibudkdnei8uq7gZhc3CSDLv4PfNma45H0FmdaB40mF2dCYzj5hEzr6jmMliANHJjznuDEFEUH3CfS1/iIA9rzhBKPKtahipTNeYiLqvZpKo1fO/XkZ57T44fqHkocfCyEK3Y1rehWudmkU8a9eEZlU5nBC6xoGO3P5Q1XIUNEHFmx2HH7eO8IgGzq/vbLMhcvbc3Ysdb2A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hotmail.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ISg5C/1AgVASEPkGp/cgowfc/y9qywGvXMTv5yjJffs=;
+ b=Qv71Bx+LsM9Lo0uen0vxQzWI3ju4Q095ZMkKPXDaKsd5Y8dA3QteMpAPhy3/mAdP1+EV8NviDBhamtTG4qMO+zEqu/pyRpBGZOtjyiJGKh7aFh2bbodOkJkiGqH3jPwYBnE7T1XAqDVFmvRpuqIkqBe9FXeCZKRrF/Na5Y+zuklH7ebuGQVzIK+xol6q7BDgb/oLul7Wa3r3Lw40cPW5leUgwxngRFMucUVVO5aJ4MWlk76CmcN8XqgwVcFaACY80HLWRqRZfM8n24/KzV9nKSZIQFCgJi2CiqnEWVRSZZtZ9SudJJv4S3C/gU4OYoiFKr7GkEQibyqE2QkGHCBA1g==
+Received: from PAXP193MB2364.EURP193.PROD.OUTLOOK.COM (2603:10a6:102:22b::9)
+ by DB8P193MB0773.EURP193.PROD.OUTLOOK.COM (2603:10a6:10:15a::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6455.22; Wed, 31 May
+ 2023 16:50:03 +0000
+Received: from PAXP193MB2364.EURP193.PROD.OUTLOOK.COM
+ ([fe80::b962:59b:2d33:85c2]) by PAXP193MB2364.EURP193.PROD.OUTLOOK.COM
+ ([fe80::b962:59b:2d33:85c2%5]) with mapi id 15.20.6455.020; Wed, 31 May 2023
+ 16:50:03 +0000
+From: Tony Marston <tonymarston@hotmail.com>
+To: "gmx@tonymarston.co.uk" <gmx@tonymarston.co.uk>
+Subject: RE: TEST MESSAGE
+Thread-Topic: TEST MESSAGE
+Thread-Index: AQHZjysmbQn8p2cYOEawNV6ywnFmN690oIyAgAAA5rw=
+Date: Wed, 31 May 2023 16:50:03 +0000
+Message-ID:
+ <PAXP193MB2364F1160B9E7C559D7D897ABB489@PAXP193MB2364.EURP193.PROD.OUTLOOK.COM>
+References:
+ <PAXP193MB236463D7319FE32F29EB5FF1BB469@PAXP193MB2364.EURP193.PROD.OUTLOOK.COM>
+ <944a7d16fcb607628f358cdd0f5ba8c0@tonymarston.co.uk>
+In-Reply-To: <944a7d16fcb607628f358cdd0f5ba8c0@tonymarston.co.uk>
+Accept-Language: en-GB, en-US
+Content-Language: en-GB
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn: [ABOzTq1ytyWYuvBD5A4I78Eqna1hBLeM]
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXP193MB2364:EE_|DB8P193MB0773:EE_
+x-ms-office365-filtering-correlation-id: 7fbd6771-9a0d-495d-c4d3-08db61f714a6
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info:
+ fwWKs8Qs/JyQ+pSnCNC804PQ86JYn/R63U7P6WCeXLC/fVSGqcAnslOc2vbxC2cUeTPPfow1WAz3f73/7Uk+byKxiE6L48WkgL6BFKVkYCwPKcQ3ps6KyEdGL6uUvPqYKwf5gFgUiTt+fKDiR/GJljj6qmN51jd5lUBvLf1g59q3LryUC+lEy6iLQ8cjCivzmBcR+0C2+uaa/xsjJxokbIEQoMicjjUiVWFkxRFBDr6FO8kEQyzzs70pNivK6mcXpVeJSOiLQfYa/2Q5QDYhE8kznG1EYUzHBQD/sLp/maUgmpKj1b8ObeI13QXed1qih+CtdLYAmPs5GPaoz8aY7pmaxroKLjBAqfOAC2IeQ3grxdQ8eRXlrnZ29cQnvD9tDryUvE9nyQLinaM2Dft4MueHvBTL5+WOTNnVQB98zVjnop8iVkwNrBKzPYiox9ufs9XFXNl0+2fFn66647ET7y/DkBKcszTKYF5RRp5o59QAh8rUTsaKeGJkPkyowZd+i6R12NIavL+eOOgnKvziTTbNl1lGgP+3zTKbgbb6K+DxfbKNl1zaTNvonOHwzI3jfdkDRtg5BvZVKstyl9AfZqo6OZ7ii3JKgVquRVWAtEQ6J6tx1Va/nTVrn1478+Dj
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?EMaSeqWhMBslXR7KptI34/opub+lBzTReVt3ACHDu/w7NvVUPpdp4YhwogpL?=
+ =?us-ascii?Q?8V9o/Zj+8vv6zZ7YL0n2NpODi8fzrPScgRiZGtJmfS58OqfgW2yygp1BmawZ?=
+ =?us-ascii?Q?y99Omv39THENDmCAba4d8zYLikOc+HJUfhpWeb/L9yqut7T2QkPFJYoeN5vU?=
+ =?us-ascii?Q?LeJ1hoPlguhNnDwMtE3HTgAl0Hbesms0Rb7wGaTDsgAc7XOO+8XpqLamnU0m?=
+ =?us-ascii?Q?zPpkQXV8+V5dFU2HxgIcYPYSaTX1CLPCdNcCAr1uHPnN81Ntm9Jb7fpYs1oA?=
+ =?us-ascii?Q?tgzPMwt37Ks9eQucJWZ5LQnNmZl/kYtVnvkylqYYMWiAg3y2XtjVkW/Ut/V2?=
+ =?us-ascii?Q?6vMfyCB5fEGJrn/uCp+KwL1s7s/4B332Bn4zvwpYd5TioMSGf9Rdp157eAfg?=
+ =?us-ascii?Q?LiNlLjDFdRc5SSEkUEl1TeX0FOQLsaCsQQqC/hzb10boa49GuxpoKwRmwhAO?=
+ =?us-ascii?Q?LZ2+veS5Jr1qWngBGo4MTkEq7nD6vBRIXQmKiLMpJc+Gk3/PCADL+H0IRH0+?=
+ =?us-ascii?Q?4uHnvcVr6CrDDZ2BEwcaWOa/ct8yUI5G9SC5gFP53TaS2llCnYwHAX1PkMAo?=
+ =?us-ascii?Q?w2LHFHE5I5dtQQJHaWNGMJGYdPmb9dDrksggLWXN+IxsxvFcFNSK2GPaqOMJ?=
+ =?us-ascii?Q?H4ht1rpqHTlU0uzgjb19gKCCcBdZfIzv118RTjFYG+EX/rsHlNRei/OWdTBF?=
+ =?us-ascii?Q?xf5cdnap836rQmre5ZoubNsSw2qKSRJhmZH1pCHoCFLtreM1fk7kkVJfkUz5?=
+ =?us-ascii?Q?ApMa03dEfFvzVv5wvPdWBLiCqzI6z6z8fUmwg2XfvK9Nyxb1AOZoT7JUXnp2?=
+ =?us-ascii?Q?Me6dTKqGKsBx87Dtny+fANHqgOm+Eo/pBZqyXwN93udbltxPmtNJ84MJJjyx?=
+ =?us-ascii?Q?vbEiDnMVb4knBO+sBqlKAVUv1F9ZJA2oUTrOD7t1xx6nBmQTgoYN6zsi+dgw?=
+ =?us-ascii?Q?nPebsl1/6fUy73FWLUKkeA64PeSa00Zi/q53ylXmUZV4Pc+11blKdL8o+p32?=
+ =?us-ascii?Q?dTD0ndul0WvvpQf8RdYNtGJ/BMurqNfvHq9wJo7Iu4fgTElR50ngwEsr28Bc?=
+ =?us-ascii?Q?G81pAb2fNhID6ewyOGfj87kqybxUhv1E+4pquh770UagjD1J3rKAUiw1sxWp?=
+ =?us-ascii?Q?u+FSmd7HKgd2cKJsmMErnQelF3DNozw5d0qdNELXZNO03xlMiADVvhqEJuqc?=
+ =?us-ascii?Q?uArdsSo2hyApUaiB+dM4Fp+oeiGienEQl64NJ7QFxRb/h96J0iTL3Vp8+8Y?=
+ =?us-ascii?Q?=3D?=
+Content-Type: multipart/alternative;
+	boundary="_000_PAXP193MB2364F1160B9E7C559D7D897ABB489PAXP193MB2364EURP_"
+MIME-Version: 1.0
+X-OriginatorOrg: sct-15-20-4755-11-msonline-outlook-80ceb.templateTenant
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXP193MB2364.EURP193.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7fbd6771-9a0d-495d-c4d3-08db61f714a6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 31 May 2023 16:50:03.3982
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8P193MB0773
+X-Spam-Status: No, score=-1.6
+X-Spam-Score: -15
+X-Spam-Bar: -
+X-Ham-Report: Spam detection software, running on the system "ion.dnsprotect.com",
+ has NOT identified this incoming email as spam.  The original
+ message has been attached to this so you can view it or label
+ similar future email.  If you have any questions, see
+ root\@localhost for details.
+ Content preview:  Here is my reply to your reply. Tony Marston From: gmx@tonymarston.co.uk<mailto:gmx@tonymarston.co.uk>
+    Sent: 31 May 2023 17:46 To: Tony Marston<mailto:tonymarston@hotmail.com>
+   Subject: Re: TEST MESSAGE
+ Content analysis details:   (-1.6 points, 8.0 required)
+  pts rule name              description
+ ---- ---------------------- --------------------------------------------------
+ -1.9 BAYES_00               BODY: Bayes spam probability is 0 to 1%
+                             [score: 0.0005]
+  0.0 FREEMAIL_FROM          Sender email is commonly abused enduser mail
+                             provider
+                             [tonymarston[at]hotmail.com]
+ -0.0 SPF_PASS               SPF: sender matches SPF record
+  0.5 SUBJ_ALL_CAPS          Subject is all capitals
+ -0.0 SPF_HELO_PASS          SPF: HELO matches SPF record
+  0.0 HTML_MESSAGE           BODY: HTML included in message
+ -0.1 DKIM_VALID_AU          Message has a valid DKIM or DK signature from
+                             author's domain
+  0.1 DKIM_SIGNED            Message has a DKIM or DK signature, not necessarily
+                             valid
+ -0.1 DKIM_VALID_EF          Message has a valid DKIM or DK signature from
+                             envelope-from domain
+ -0.1 DKIM_VALID             Message has at least one valid DKIM or DK signature
+ -0.0 T_SCC_BODY_TEXT_LINE   No description available.
+X-Spam-Flag: NO
+X-From-Rewrite: unmodified, no actual sender determined from check mail permissions
+
+--_000_PAXP193MB2364F1160B9E7C559D7D897ABB489PAXP193MB2364EURP_
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+
+Here is my reply to your reply.
+
+Tony Marston
+
+From: gmx@tonymarston.co.uk<mailto:gmx@tonymarston.co.uk>
+Sent: 31 May 2023 17:46
+To: Tony Marston<mailto:tonymarston@hotmail.com>
+Subject: Re: TEST MESSAGE
+
+On 2023-05-25 13:06, Tony Marston wrote:
+Here is my reply to your message
+> Tony Marston
+
+
+--_000_PAXP193MB2364F1160B9E7C559D7D897ABB489PAXP193MB2364EURP_
+Content-Type: text/html; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+
+<html xmlns:o=3D"urn:schemas-microsoft-com:office:office" xmlns:w=3D"urn:sc=
+hemas-microsoft-com:office:word" xmlns:m=3D"http://schemas.microsoft.com/of=
+fice/2004/12/omml" xmlns=3D"http://www.w3.org/TR/REC-html40">
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dus-ascii"=
+>
+<meta name=3D"Generator" content=3D"Microsoft Word 15 (filtered medium)">
+<style><!--
+/* Font Definitions */
+@font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+	{font-family:Calibri;
+	panose-1:2 15 5 2 2 2 4 3 2 4;}
+/* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin:0cm;
+	font-size:11.0pt;
+	font-family:"Calibri",sans-serif;}
+a:link, span.MsoHyperlink
+	{mso-style-priority:99;
+	color:blue;
+	text-decoration:underline;}
+.MsoChpDefault
+	{mso-style-type:export-only;}
+@page WordSection1
+	{size:612.0pt 792.0pt;
+	margin:72.0pt 72.0pt 72.0pt 72.0pt;}
+div.WordSection1
+	{page:WordSection1;}
+--></style>
+</head>
+<body lang=3D"EN-GB" link=3D"blue" vlink=3D"#954F72" style=3D"word-wrap:bre=
+ak-word">
+<div class=3D"WordSection1">
+<p class=3D"MsoNormal">Here is my reply to your reply.</p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Tony Marston<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<div style=3D"mso-element:para-border-div;border:none;border-top:solid #E1E=
+1E1 1.0pt;padding:3.0pt 0cm 0cm 0cm">
+<p class=3D"MsoNormal" style=3D"border:none;padding:0cm"><b>From: </b><a hr=
+ef=3D"mailto:gmx@tonymarston.co.uk">gmx@tonymarston.co.uk</a><br>
+<b>Sent: </b>31 May 2023 17:46<br>
+<b>To: </b><a href=3D"mailto:tonymarston@hotmail.com">Tony Marston</a><br>
+<b>Subject: </b>Re: TEST MESSAGE</p>
+</div>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">On 2023-05-25 13:06, Tony Marston wrote:<br>
+Here is my reply to your message<br>
+&gt; Tony Marston<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+</div>
+</body>
+</html>
+
+--_000_PAXP193MB2364F1160B9E7C559D7D897ABB489PAXP193MB2364EURP_--

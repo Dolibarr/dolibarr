@@ -27,14 +27,14 @@ class Mask {
      *
      * @var array $attributes
      */
-    protected $attributes = [];
+    protected array $attributes = [];
 
     /**
      * Parent instance
      *
-     * @var object $parent
+     * @var mixed $parent
      */
-    protected $parent;
+    protected mixed $parent;
 
     /**
      * Mask constructor.
@@ -53,7 +53,7 @@ class Mask {
     /**
      * Boot method made to be used by any custom mask
      */
-    protected function boot(){}
+    protected function boot(): void {}
 
     /**
      * Call dynamic attribute setter and getter methods and inherit the parent calls
@@ -63,7 +63,7 @@ class Mask {
      * @return mixed
      * @throws MethodNotFoundException
      */
-    public function __call($method, $arguments) {
+    public function __call(string $method, array $arguments) {
         if(strtolower(substr($method, 0, 3)) === 'get') {
             $name = Str::snake(substr($method, 3));
 
@@ -121,7 +121,7 @@ class Mask {
      *
      * @return mixed
      */
-    public function getParent(){
+    public function getParent(): mixed {
         return $this->parent;
     }
 
@@ -130,7 +130,7 @@ class Mask {
      *
      * @return array
      */
-    public function getAttributes(){
+    public function getAttributes(): array {
         return $this->attributes;
     }
 

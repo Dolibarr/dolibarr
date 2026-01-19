@@ -1,0 +1,108 @@
+Return-Path: <noreply@github.com>
+Delivered-To: someone@domain.tld
+Received: from mx.domain.tld
+	by localhost with LMTP
+	id SABVMNfGqWP+PAAA0J78UA
+	(envelope-from <noreply@github.com>)
+	for <someone@domain.tld>; Mon, 26 Dec 2022 17:07:51 +0100
+Received: from localhost (localhost [127.0.0.1])
+	by mx.domain.tld (Postfix) with ESMTP id C3828140227
+	for <someone@domain.tld>; Mon, 26 Dec 2022 17:07:51 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at mx.domain.tld
+X-Spam-Flag: NO
+X-Spam-Score: -4.299
+X-Spam-Level:
+X-Spam-Status: No, score=-4.299 required=6.31 tests=[BAYES_00=-1.9,
+	DKIMWL_WL_HIGH=-0.001, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
+	DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, HTML_IMAGE_ONLY_16=1.092,
+	HTML_MESSAGE=0.001, MAILING_LIST_MULTI=-1, RCVD_IN_DNSWL_MED=-2.3,
+	RCVD_IN_MSPIKE_H2=-0.001, T_KAM_HTML_FONT_INVALID=0.01]
+	autolearn=ham autolearn_force=no
+Received: from mx.domain.tld ([127.0.0.1])
+	by localhost (mx.domain.tld [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id JcIS9RuNBTNx for <someone@domain.tld>;
+	Mon, 26 Dec 2022 17:07:21 +0100 (CET)
+Received: from smtp.github.com (out-26.smtp.github.com [192.30.252.209])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx.domain.tld (Postfix) with ESMTPS id 6410B13FEB2
+	for <someone@domain.tld>; Mon, 26 Dec 2022 17:07:21 +0100 (CET)
+Received: from github-lowworker-891b8d2.va3-iad.github.net (github-lowworker-891b8d2.va3-iad.github.net [10.48.109.104])
+	by smtp.github.com (Postfix) with ESMTP id 176985E0200
+	for <someone@domain.tld>; Mon, 26 Dec 2022 08:07:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=github.com;
+	s=pf2014; t=1672070834;
+	bh=v91TPiLpM/cpUb4lgt2NMIUfM4HOIxCEWMR1+JTco+Q=;
+	h=Date:From:Reply-To:To:Cc:In-Reply-To:References:Subject:List-ID:
+	 List-Archive:List-Post:List-Unsubscribe:From;
+	b=jW4Tac9IjWAPbEImyiYf1bzGLzY3ceohVbBg1V8BlpMTQ+o+yY3YB0eOe20hAsqZR
+	 jrDjArx7rKQcslqBFL/b2B1C51rHuCBrz2cccLEERu9l/u0mTGCxTNtCRXHbCKbnR1
+	 VLWBeFLjATHth83kK6Kt7lkVuty+G3V1B6ZKPhCI=
+Date: Mon, 26 Dec 2022 08:07:14 -0800
+From: Username <notifications@github.com>
+Reply-To: Webklex/php-imap <reply+aibuo5jooM2quaizuoyae0jeuk9queth@reply.github.com>
+To: Webklex/php-imap <php-imap@noreply.github.com>
+Cc: Subscribed <subscribed@noreply.github.com>
+Message-ID: <Webklex/php-imap/issues/349/1365266070@github.com>
+In-Reply-To: <Webklex/php-imap/issues/349@github.com>
+References: <Webklex/php-imap/issues/349@github.com>
+Subject: Re: [Webklex/php-imap] Read all folders? (Issue #349)
+Mime-Version: 1.0
+Content-Type: multipart/alternative;
+ boundary="--==_mimepart_63a9c6b293fe_65b5c71014155a";
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Precedence: list
+X-GitHub-Sender: consigliere23
+X-GitHub-Recipient: Webklex
+X-GitHub-Reason: subscribed
+List-ID: Webklex/php-imap <php-imap.Webklex.github.com>
+List-Archive: https://github.com/Webklex/php-imap
+List-Post: <mailto:reply+aibuo5jooM2quaizuoyae0jeuk9queth@reply.github.com>
+List-Unsubscribe: <mailto:unsub+aibuo5jooM2quaizuoyae0jeuk9queth@reply.github.com>,
+ <https://github.com/notifications/unsubscribe/ooxee3quaequoob4eux3uSe5seehee9o>
+X-Auto-Response-Suppress: All
+X-GitHub-Recipient-Address: someone@domain.tld
+
+
+----==_mimepart_63a9c6b293fe_65b5c71014155a
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+Any updates? 
+
+-- 
+Reply to this email directly or view it on GitHub:
+https://github.com/Webklex/php-imap/issues/349#issuecomment-1365266070
+You are receiving this because you are subscribed to this thread.
+
+Message ID: <Webklex/php-imap/issues/349/1365266070@github.com>
+----==_mimepart_63a9c6b293fe_65b5c71014155a
+Content-Type: text/html;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+<p></p>
+<p dir="auto">Any updates?</p>
+
+<p style="font-size:small;-webkit-text-size-adjust:none;color:#666;">&mdash;<br />Reply to this email directly, <a href="https://github.com/Webklex/php-imap/issues/349#issuecomment-1365266070">view it on GitHub</a>, or <a href="https://github.com/notifications/unsubscribe-auth/AAWAEMH2ZLKHMNNNIBWTUT3WPG7DFANCNFSM6AAAAAATBM42CI">unsubscribe</a>.<br />You are receiving this because you are subscribed to this thread.<img src="https://github.com/notifications/beacon/AAWAEMHVWSHRQDWETTTRYPTWPG7DFA5CNFSM6AAAAAATBM42CKWGG33NNVSW45C7OR4XAZNMJFZXG5LFINXW23LFNZ2KUY3PNVWWK3TUL5UWJTSRMBHJM.gif" height="1" width="1" alt="" /><span style="color: transparent; font-size: 0; display: none; visibility: hidden; overflow: hidden; opacity: 0; width: 0; height: 0; max-width: 0; max-height: 0; mso-hide: all">Message ID: <span>&lt;Webklex/php-imap/issues/349/1365266070</span><span>@</span><span>github</span><span>.</span><span>com&gt;</span></span></p>
+<script type="application/ld+json">[
+{
+"@context": "http://schema.org",
+"@type": "EmailMessage",
+"potentialAction": {
+"@type": "ViewAction",
+"target": "https://github.com/Webklex/php-imap/issues/349#issuecomment-1365266070",
+"url": "https://github.com/Webklex/php-imap/issues/349#issuecomment-1365266070",
+"name": "View Issue"
+},
+"description": "View this Issue on GitHub",
+"publisher": {
+"@type": "Organization",
+"name": "GitHub",
+"url": "https://github.com"
+}
+}
+]</script>
+----==_mimepart_63a9c6b293fe_65b5c71014155a--

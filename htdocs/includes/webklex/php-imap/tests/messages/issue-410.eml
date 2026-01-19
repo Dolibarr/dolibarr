@@ -1,0 +1,16 @@
+From: from@there.com
+To: to@here.com
+Subject: =?ISO-2022-JP?B?GyRCIXlCaBsoQjEzMhskQjlmISEhViUsITwlRyVzGyhCJhskQiUoJS8lOSVGJWolIiFXQGxMZ0U5JE4kPyRhJE4jURsoQiYbJEIjQSU1JW0lcyEhIVo3bjQpJSglLyU5JUYlaiUiISYlbyE8JS8hWxsoQg==?=
+Date: Wed, 13 Sep 2017 13:05:45 +0200
+MIME-Version: 1.0
+Content-Type: multipart/mixed;
+ boundary="------------B832AF745285AEEC6D5AEE42"
+
+Hi
+--------------B832AF745285AEEC6D5AEE42
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment;
+ filename="=?ISO-2022-JP?B?GyRCIXlCaBsoQjEzMhskQjlmISEhViUsITwlRyVzGyhCJhskQiUoJS8lOSVGJWolIiFXQGxMZ0U5JE4kPyRhJE4jURsoQiYbJEIjQSU1JW0lcyEhIVo3bjQpJSglLyU5JUYlaiUiISYlbyE8JS8hWxsoQg==?="
+
+SGkh
+--------------B832AF745285AEEC6D5AEE42--

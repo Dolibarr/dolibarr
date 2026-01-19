@@ -22,14 +22,15 @@ use Webklex\PHPIMAP\Message;
 class MessageNewEvent extends Event {
 
     /** @var Message $message */
-    public $message;
+    public Message $message;
 
     /**
      * Create a new event instance.
      * @var Message[] $messages
+     *
      * @return void
      */
-    public function __construct($messages) {
+    public function __construct(array $messages) {
         $this->message = $messages[0];
     }
 }

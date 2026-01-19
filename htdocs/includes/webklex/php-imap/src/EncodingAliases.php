@@ -19,13 +19,13 @@ namespace Webklex\PHPIMAP;
  * @package Webklex\PHPIMAP
  */
 class EncodingAliases {
-
+   
     /**
      * Contains email encoding mappings
      *
      * @var array
      */
-    private static $aliases = [
+    private static array $aliases = [
         /*
         |--------------------------------------------------------------------------
         | Email encoding aliases
@@ -107,6 +107,8 @@ class EncodingAliases {
         "ibm864"                   => "IBM864",
         "utf-8"                    => "UTF-8",
         "utf-7"                    => "UTF-7",
+        "utf-7-imap"               => "UTF7-IMAP",
+        "utf7-imap"                => "UTF7-IMAP",
         "shift_jis"                => "Shift_JIS",
         "big5"                     => "Big5",
         "euc-jp"                   => "EUC-JP",
@@ -463,20 +465,127 @@ class EncodingAliases {
         "x-gbk"                    => "gbk",
         "windows-936"              => "gbk",
         "ansi-1251"                => "windows-1251",
-    ];
-
+    ];        
+    
     /**
-     * Returns proper encoding mapping, if exsists. If it doesn't, return unchanged $encoding
-     * @param string $encoding
+     * Returns proper encoding mapping, if exists. If it doesn't, return unchanged $encoding
+     * @param string|null $encoding
      * @param string|null $fallback
      *
      * @return string
      */
-    public static function get($encoding, $fallback = null) {
-        if (isset(self::$aliases[strtolower($encoding)])) {
-            return self::$aliases[strtolower($encoding)];
+    public static function get(?string $encoding, ?string $fallback = null): string {
+        if (isset(self::$aliases[strtolower($encoding ?? '')])) {
+            return self::$aliases[strtolower($encoding ?? '')];
         }
-        return $fallback !== null ? $fallback : $encoding;
+        return $fallback ?: $encoding;
     }
 
+
+    /**
+     * Convert the encoding of a string
+     * @param $str
+     * @param string $from
+     * @param string $to
+     *
+     * @return mixed
+     */
+    public static function convert($str, string $from = "ISO-8859-2", string $to = "UTF-8"): mixed {
+        $from = self::get($from, self::detectEncoding($str));
+        $to = self::get($to, self::detectEncoding($str));
+
+        if ($from === $to) {
+            return $str;
+        }
+
+        // We don't need to do convertEncoding() if charset is ASCII (us-ascii):
+        //     ASCII is a subset of UTF-8, so all ASCII files are already UTF-8 encoded
+        //     https://stackoverflow.com/a/11303410
+        //
+        // us-ascii is the same as ASCII:
+        //     ASCII is the traditional name for the encoding system; the Internet Assigned Numbers Authority (IANA)
+        //     prefers the updated name US-ASCII, which clarifies that this system was developed in the US and
+        //     based on the typographical symbols predominantly in use there.
+        //     https://en.wikipedia.org/wiki/ASCII
+        //
+        // convertEncoding() function basically means convertToUtf8(), so when we convert ASCII string into UTF-8 it gets broken.
+        if (strtolower($from) == 'us-ascii' && $to == 'UTF-8') {
+            return $str;
+        }
+
+        try {
+            if (function_exists('iconv') && !self::isUtf7($from) && !self::isUtf7($to)) {
+                return iconv($from, $to, $str);
+            }
+            if (!$from) {
+                return mb_convert_encoding($str, $to);
+            }
+            return mb_convert_encoding($str, $to, $from);
+        } catch (\Exception $e) {
+            if (str_contains($from, '-')) {
+                $from = str_replace('-', '', $from);
+                return self::convert($str, $from, $to);
+            }
+            return $str;
+        }
+    }
+
+    /**
+     * Attempts to detect the encoding of a string
+     * @param string $string
+     *
+     * @return string
+     */
+    public static function detectEncoding(string $string): string {
+        $encoding = mb_detect_encoding($string, array_filter(self::getEncodings(), function($value){
+            return !in_array($value, [
+                'ISO-8859-6-I', 'ISO-8859-6-E', 'ISO-8859-8-I', 'ISO-8859-8-E',
+                'ISO-8859-11', 'ISO-8859-13', 'ISO-8859-14', 'ISO-8859-15', 'ISO-8859-16', 'ISO-IR-111',"ISO-2022-CN",
+                "windows-1250", "windows-1253", "windows-1255", "windows-1256", "windows-1257", "windows-1258",
+                "IBM852", "IBM855", "IBM857", "IBM866", "IBM864", "IBM862", "KOI8-R", "KOI8-U",
+                "TIS-620", "ISO-8859-1", "ISO-8859-2", "ISO-8859-3", "ISO-8859-4",
+                "VISCII", "T.61-8bit", "Big5-HKSCS", "windows-874", "macintosh", "ISO-8859-12", "ISO-8859-7",
+                "IMAP-UTF-7"
+            ]);
+        }), true);
+        if ($encoding === false) {
+            $encoding = 'UTF-8';
+        }
+        return $encoding;
+    }
+
+    /**
+     * Returns all available encodings
+     *
+     * @return array
+     */
+    public static function getEncodings(): array {
+        $encodings = [];
+        foreach (self::$aliases as $encoding) {
+            if (!in_array($encoding, $encodings)) {
+                $encodings[] = $encoding;
+            }
+        }
+        return $encodings;
+    }
+
+    /**
+     * Returns true if the encoding is UTF-7 like
+     * @param string $encoding
+     *
+     * @return bool
+     */
+    public static function isUtf7(string $encoding): bool {
+        return str_contains(str_replace("-", "", strtolower($encoding)), "utf7");
+    }
+
+    /**
+     * Check if an encoding is supported
+     * @param string $encoding
+     *
+     * @return bool
+     */
+    public static function has(string $encoding): bool {
+        return isset(self::$aliases[strtolower($encoding)]);
+    }
 }

@@ -1,0 +1,27 @@
+From: from@there.com
+To: to@here.com
+Subject: Test
+Date: Fri, 29 Sep 2017 10:55:23 +0200
+MIME-Version: 1.0
+Content-Type: multipart/mixed;
+ boundary="------------5B1F217006A67C28E756A62E"
+
+This is a multi-part message in MIME format.
+
+--------------5B1F217006A67C28E756A62E
+Content-Type: text/plain; charset=UTF-8;
+ name="../../example/MyFile.txt"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment;
+ filename="../../example/MyFile.txt"
+
+TXlGaWxlQ29udGVudA==
+--------------5B1F217006A67C28E756A62E
+Content-Type: text/plain; charset=UTF-8;
+ name="php://foo"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment;
+ filename="php://foo"
+
+TXlGaWxlQ29udGVudA==
+--------------5B1F217006A67C28E756A62E--
