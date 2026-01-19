@@ -20,7 +20,7 @@ class FactureTools
 	public static function getTotalHtOrdersLinkedToInvoice(DoliDB $db, Facture $invoice): array
 	{
 
-		$invoice->fetchObjectLinked(null, '', null, 'commande');
+		$invoice->fetchObjectLinked();
 
 		$orders = [];
 		if (empty($invoice->linkedObjects['commande'])) { return []; }
@@ -34,8 +34,7 @@ class FactureTools
 			}
 		}
 		$orders = CommandeTools::sortOrdersByDateAndRef($orders);
-
-		return array_map(static fn ($orders) => ['ref_client' => $order->ref_client, 'total_ht' => $order->total_ht], $orders);
+		return array_map(static fn ($o) => ['ref_client' => $o->ref_ext . '(' .$o->ref.')', 'total_ht' => $o->total_ht], $orders);
 	}
 
 	/**

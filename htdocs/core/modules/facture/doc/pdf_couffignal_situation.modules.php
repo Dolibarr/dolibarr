@@ -1381,7 +1381,9 @@ class pdf_couffignal_situation extends ModelePDFFactures
 		}
 
 		/** Orders of projects */
-		$ordersTotalHt = FactureTools::getTotalHtOrdersLinkedToInvoice($this->db, $object);
+		$object->fetchPreviousNextSituationInvoice();
+		$last_invoice = $object->is_last_in_cycle() ? $object : end($object->tab_next_situation_invoice);
+		$ordersTotalHt = FactureTools::getTotalHtOrdersLinkedToInvoice($this->db, $last_invoice);
 		$linesOrders = [];
 		if (count($ordersTotalHt) > 0) {
 			$linesOrders = array_map(static function($v) {
@@ -2414,16 +2416,10 @@ class pdf_couffignal_situation extends ModelePDFFactures
 			$pdf->Cell($headers['Facturé HT'], $line_height, price($company['factured']['sum_total_ht']), $border, 0, 'R');
 			$currentX += $headers['Facturé HT'];
 
-			// Pourcentage
-			/*$pdf->SetXY($currentX, $posy);
-			$pourcentage = ($company['market']['sum_total_ht'] > 0) ?
-				($company['factured']['sum_total_ht'] / $company['market']['sum_total_ht'] * 100) : 0;
-			$pdf->Cell($headers['Pourcentage'], $line_height, sprintf('%.2f%%', $pourcentage), $border, 0, 'R');*/
-
 			// Paiement TTC
 			$pdf->SetXY($currentX, $posy);
-			$pdf->Cell($headers['Facturé HT'], $line_height, price($company['factured']['sum_total_ht']), $border, 0, 'R');
-			$currentX += $headers['Facturé HT'];
+			$pdf->Cell($headers['A payer TTC'], $line_height, price($company['to_pay']['sum_total_ttc']), $border, 0, 'R');
+			$currentX += $headers['A payer TTC'];
 
 			$posy += $line_height;
 		}
@@ -2459,16 +2455,10 @@ class pdf_couffignal_situation extends ModelePDFFactures
 				$pdf->Cell($headers['Facturé HT'], $line_height, ' - ', $border, 1, 'R', 1);
 				$currentX += $headers['Facturé HT'];
 
-				// Pourcentage
-				/*$pdf->SetXY($currentX, $posy);
-				$pourcentage = ($sousTrait['market']['sum_total_ht'] > 0) ? 
-					($sousTrait['factured']['sum_total_ht'] / $sousTrait['market']['sum_total_ht'] * 100) : 0;
-				$pdf->Cell($headers['Pourcentage'], $line_height, sprintf('%.2f%%', $pourcentage), $border, 0, 'R');*/
-
 				// Paiement TTC
 				$pdf->SetXY($currentX, $posy);
-				$pdf->Cell($headers['Facturé HT'], $line_height, price($sousTrait['factured']['sum_total_ht']), $border, 0, 'R');
-				$currentX += $headers['Facturé HT'];
+				$pdf->Cell($headers['A payer TTC'], $line_height, price($sousTrait['to_pay']['sum_total_ht']), $border, 0, 'R');
+				$currentX += $headers['A payer TTC'];
 
 				$posy += $line_height;
 			}
@@ -2502,16 +2492,10 @@ class pdf_couffignal_situation extends ModelePDFFactures
 				$pdf->Cell($headers['Facturé HT'], $line_height, price($coTrait['factured']['sum_total_ht']), $border, 0, 'R');
 				$currentX += $headers['Facturé HT'];
 
-				// Pourcentage
-				/*$pdf->SetXY($currentX, $posy);
-				$pourcentage = ($coTrait['market']['sum_total_ht'] > 0) ? 
-					($coTrait['factured']['sum_total_ht'] / $coTrait['market']['sum_total_ht'] * 100) : 0;
-				$pdf->Cell($headers['Pourcentage'], $line_height, sprintf('%.2f%%', $pourcentage), $border, 0, 'R');*/
-
 				// Paiement TTC
 				$pdf->SetXY($currentX, $posy);
-				$pdf->Cell($headers['Facturé HT'], $line_height, price($coTrait['factured']['sum_total_ht']), $border, 0, 'R');
-				$currentX += $headers['Facturé HT'];
+				$pdf->Cell($headers['A payer TTC'], $line_height, price($coTrait['to_pay']['sum_total_ttc']), $border, 0, 'R');
+				$currentX += $headers['A payer TTC'];
 
 				$posy += $line_height;
 			}

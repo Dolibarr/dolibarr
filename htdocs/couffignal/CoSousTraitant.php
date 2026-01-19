@@ -2,7 +2,6 @@
 
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/couffignal/FactureFournisseurTools.php';
-require_once DOL_DOCUMENT_ROOT.'/couffignal/PaiementTools.php';
 
 /**
  * Classe utilitaire pour la gestion des co-traitants et sous-traitants.
@@ -10,7 +9,7 @@ require_once DOL_DOCUMENT_ROOT.'/couffignal/PaiementTools.php';
 class CoSousTraitant
 {
 	/**
-	 * Récupère les informations des sous-traitants et co-traitants à partir d'une facture.
+	 * Prépare les informations des sous-traitants et co-traitants à partir d'une facture.
 	 *
 	 * @param DoliDB $db Gestionnaire de base de données.
 	 * @param Facture $facture Facture à traiter.
@@ -19,107 +18,147 @@ class CoSousTraitant
 	public static function getSousTraitantsCoTraitants(DoliDB $db, Facture $facture): array
 	{
 
-		if (!$facture->project) {
-			$facture->fetch_project();
-			if (!$facture->project) return [];
+		$facture->fetchPreviousNextSituationInvoice();
+		$cumulated_invoices_of_cycle = array_merge([$facture], $facture->tab_previous_situation_invoice);
+		$all_invoices_of_cycle = array_merge($cumulated_invoices_of_cycle, $facture->tab_next_situation_invoice);
+
+		// -- Part 1 - Fetch related Orders to and Invoices from suppliers
+		$supplier_docs = array(
+			'direct' => self::fetchSousTraitantsCoTraitantsData($db, $facture, 'unique'),
+			'cumulated' => self::fetchSousTraitantsCoTraitantsData($db, $facture, 'cumulated'),
+			'all' => self::fetchSousTraitantsCoTraitantsData($db, $facture, 'full_cycle'),
+		);
+
+		// Manage case where all docs are empty, not to show the table
+		$zero_docs = True; 
+		foreach ($supplier_docs['all'] as $key => $doc_array) {
+			if (!empty($doc_array)) {
+				$zero_docs = False;
+				break;
+			}
 		}
+		if ($zero_docs) {
+			return [];
+		}
+		
+		// -- Part 2 - Fetch related Customer Orders 
+		$orders_related_to_cycle = [];
+		foreach ($all_invoices_of_cycle as $inv_in_cycle) {
+			$orders_related = FactureTools::getTotalHtOrdersLinkedToInvoice($db, $inv_in_cycle);
+			$orders_related_to_cycle = array_merge($orders_related_to_cycle, $orders_related);
+		}
+		$orders_related_to_cycle = array_map("unserialize", array_unique(array_map("serialize", $orders_related_to_cycle)));
 
-		$payDirId = PaiementTools::getPaimentPaiementDirectMoId($db);
-		if (!$payDirId) return [];
+		// -- Part 3 - Calculate values and results 
+		$sum_tot_ht_of = fn($arr) => array_sum(array_column($arr, 'total_ht'));
+		$sum_tot_ttc_of = fn($arr) => array_sum(array_column($arr, 'total_ttc'));
+		$sum_prorata_ht_of = fn($arr) => array_sum(array_column($arr, 'prorata_discount'));
 
+		// Total facturé Couffignal : Factures Clients cumulées - factures Co-trait cumulée
+		$sumCumFacturedCoTrait = $sum_tot_ht_of($supplier_docs['cumulated']['invoices_co_trait']);
+		$cumulatedTotalHTMainCompany = $sum_tot_ht_of($cumulated_invoices_of_cycle) - $sum_prorata_ht_of($cumulated_invoices_of_cycle);
+		$facturedMainCompany = $cumulatedTotalHTMainCompany - $sumCumFacturedCoTrait;
+		
+		// Total à payer Couffignal
+		$sumDirFacturedCoTrait = $sum_tot_ttc_of($supplier_docs['direct']['invoices_co_trait']);
+		$sumDirFactureSsTrait = $sum_tot_ht_of($supplier_docs['direct']['invoices_ss_trait']);
+		$ToPayMainCompany = $facture->ttc_BTP() - $sumDirFacturedCoTrait - $sumDirFactureSsTrait;
+		// Note: Supplier invoices related data are cumulated up to now (column invoiced), while orders related data are for all the serie (column Marché)
+
+		return [
+			'company' => [
+				'name' => 'Couffignal',
+				'market' => ['sum_total_ht' => $sum_tot_ht_of($orders_related_to_cycle)],
+				'factured' => ['sum_total_ht' => round($facturedMainCompany, 2)],
+				'to_pay' => ['sum_total_ttc' => round($ToPayMainCompany, 2)]
+			],
+			'co_trait' => self::structureFacturesBySocid($db, $supplier_docs['all']['orders_co_trait'], $supplier_docs['cumulated']['invoices_co_trait'], $supplier_docs['direct']['invoices_co_trait']),
+			'sous_trait' => self::structureFacturesBySocid($db, $supplier_docs['all']['orders_ss_trait'], $supplier_docs['cumulated']['invoices_ss_trait'], $supplier_docs['direct']['invoices_ss_trait']),
+		];
+	}
+
+
+	/**
+	 * Charge les factures fournisseurs et commandes des sous-traitants et co-traitants à partir d'une facture.
+	 *
+	 * @param DoliDB $db Gestionnaire de base de données.
+	 * @param Facture $facture Facture à traiter.
+	 * @param string $mode Mode:'unique', cumulated', 'full_cycle' for all documents attached to resp. this invoice, invoices in cycle up to the given one, all invoices in cycle. 
+	 * @return array of array
+	 */
+	public static function fetchSousTraitantsCoTraitantsData(DoliDB $db, Facture $facture, string $mode): array
+	{
 		// Fetch related Orders and Invoices
-		$facturesFourn = FactureFournisseurTools::getFacturesFournValidatedFromDebtCompensationLinks($facture, $db);
+		$facturesFourn = FactureFournisseurTools::getFacturesFournValidatedFromDebtCompensationLinks($facture, $db, $mode);
 		$commandesFourn = FactureFournisseurTools::getOrdersValidatedFromFacturesFourn($facturesFourn);
 		if (!$commandesFourn && !$facturesFourn) return [];
-
-		// N'apparaisent dans le tableau 'CoSousTraitant' qui ceux qui ont le mode de règlement 'PAYDIR'
-		/*$filterUsePayDir = fn($arr) => array_filter($arr, fn($el) => $el->mode_reglement_id == $payDirId);
-		$commandesFourn = $filterUsePayDir($commandesFourn);
-		$facturesFourn = $filterUsePayDir($facturesFourn);
-		if (!$commandesFourn && !$facturesFourn) return [];*/
 
 		// CommandeFournisseur via extrafields: options_typefournisseur, 1 pour co-traitant, 2 pour sous-traitant
 		$filterCommandesFourn = fn($arr, $type) => array_filter($arr, fn(CommandeFournisseur $el) =>
 			array_key_exists('options_typefournisseur', $el->array_options) && $el->array_options['options_typefournisseur'] == $type
 		);
-		$commandesFournCotraitants = $filterCommandesFourn($commandesFourn, '1');
-		$commandesFournSousTraitants = $filterCommandesFourn($commandesFourn, '2');
 
-		// Autoliquidation de TVA = sous traitant, pas d'autoliquidation de TVA = co-traitant
-		$facturesFournCoTraitants = array_filter($facturesFourn, fn($el) => !$el->vat_reverse_charge);
-		$facturesFournSousTraitant = array_filter($facturesFourn, fn($el) => $el->vat_reverse_charge);
-
-		if (!$commandesFournCotraitants && !$commandesFournSousTraitants && !$facturesFournCoTraitants && !$facturesFournSousTraitant) {
-			return [];
-		}
-
-		// Todo => implement change over commande fournisseur
-		$sumCommandesFournCotraitants = array_sum(array_column($commandesFournCotraitants, 'total_ht'));
-		$sumFacturedFourn = array_sum(array_column($facturesFourn, 'total_ht'));
-		$facturedMainCompanyDiff = $facture->getLastSituationCompletePrice(false) - $sumFacturedFourn;
-		$totalHt = $facture->totalExeptSpecialLines();
-
-		return [
-			'company' => [
-				'name' => 'Couffignal',
-				'market' => ['sum_total_ht' => $totalHt - $sumCommandesFournCotraitants],
-				'factured' => ['sum_total_ht' => round($facturedMainCompanyDiff, 2)],
-			],
-			'co_trait' => self::structureFacturesBySocid($db, $commandesFournCotraitants, $facturesFournCoTraitants),
-			'sous_trait' => self::structureFacturesBySocid($db, $commandesFournSousTraitants, $facturesFournSousTraitant),
-		];
+		return array(
+			'orders_co_trait' => $filterCommandesFourn($commandesFourn, '1'),
+			'orders_ss_trait' => $filterCommandesFourn($commandesFourn, '2'),
+			// Autoliquidation de TVA = sous traitant, pas d'autoliquidation de TVA = co-traitant
+			'invoices_co_trait' => array_filter($facturesFourn, fn($el) => !$el->vat_reverse_charge),
+			'invoices_ss_trait' => array_filter($facturesFourn, fn($el) => $el->vat_reverse_charge),
+		);
 	}
+
 
 	/**
 	 * Structure les commandes et factures fournisseurs par société.
 	 *
 	 * @param DoliDB $db Gestionnaire de base de données.
-	 * @param array $commandesFourn Liste des commandes fournisseurs.
-	 * @param array $facturesFourn Liste des factures fournisseurs.
+	 * @param array $allCommandesFourn Liste des commandes fournisseurs sur toute la série de factures client.
+	 * @param array $CumulatedFacturesFourn Liste des factures fournisseurs cumulées sur la série de factures client jusqu'à la facture actuelle.
+	 * @param array $DirectFacturesFourn Liste des factures fournisseurs directement liées à la facture actuelle.
 	 * @return array
 	 */
-	private static function structureFacturesBySocid(DoliDB $db, array $commandesFourn, array $facturesFourn): array
+	private static function structureFacturesBySocid(DoliDB $db, array $allCommandesFourn, array $CumulatedFacturesFourn, array $DirectFacturesFourn): array
 	{
 		$result = [];
 
 		// Initialisation des données par société
-		foreach (array_merge($commandesFourn, $facturesFourn) as $el) {
+		foreach (array_merge($allCommandesFourn, $CumulatedFacturesFourn) as $el) {
 			if (!isset($result[$el->socid])) {
 				$fournisseur = new Fournisseur($db);
 				$fournisseur->fetch($el->socid);
 				$result[$el->socid] = [
 					'soc_id' => $el->socid,
 					'name' => $fournisseur->name,
-					'market' => ['sum_total_ht' => 0, 'orders_fourn_resume' => []],
-					'factured' => ['sum_total_ht' => 0, 'factures_fourn_resume' => []],
+					'market' => ['sum_total_ht' => 0, 'sum_total_ttc' => 0, 'summary' => []],
+					'factured' => ['sum_total_ht' => 0, 'sum_total_ttc' => 0, 'summary' => []],
+					'to_pay' => ['sum_total_ht' => 0, 'sum_total_ttc' => 0, 'summary' => []],
 				];
 			}
 		}
 
-		// Ajout des commandes fournisseurs
-		foreach ($commandesFourn as $c) {
-			$result[$c->socid]['market']['sum_total_ht'] += $c->total_ht;
-			$result[$c->socid]['market']['orders_fourn_resume'][$c->id] = [
-				'order_fourn_id' => $c->id,
-				'ref' => $c->ref,
-				'total_ht' => $c->total_ht,
-			];
-		}
+		$params = array(
+			'market' => $allCommandesFourn,
+			'factured' => $CumulatedFacturesFourn,
+			'to_pay' => $DirectFacturesFourn,
+		);
 
-		// Ajout des factures fournisseurs
-		foreach ($facturesFourn as $f) {
-			$result[$f->socid]['factured']['sum_total_ht'] += $f->total_ht;
-			$result[$f->socid]['factured']['factures_fourn_resume'][$f->id] = [
-				'facture_fourn_id' => $f->id,
-				'ref' => $f->ref,
-				'total_ht' => $f->total_ht,
-			];
+		foreach ($params as $key => $docs) {
+			foreach ($docs as $d) {
+				$result[$d->socid][$key]['sum_total_ht'] += $d->total_ht;
+				$result[$d->socid][$key]['sum_total_ttc'] += $d->total_ttc;
+				$result[$d->socid][$key]['summary'][$d->id] = [
+					'id' => $d->id,
+					'ref' => $d->ref,
+					'total_ht' => $d->total_ht,
+				];
+			}
 		}
 
 		// Tri des commandes et factures par référence
 		foreach ($result as &$soc) {
-			usort($soc['market']['orders_fourn_resume'], fn($a, $b) => strcmp($a['ref'], $b['ref']));
-			usort($soc['factured']['factures_fourn_resume'], fn($a, $b) => strcmp($a['ref'], $b['ref']));
+			foreach ($params as $key => $docs) {
+				usort($soc[$key]['summary'], fn($a, $b) => strcmp($a['ref'], $b['ref']));
+			}
 		}
 
 		return $result;
