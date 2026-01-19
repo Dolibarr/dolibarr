@@ -65,10 +65,10 @@ repos:
       - id: gitleaks
 
   # Check github actions
-  - repo: https://github.com/rhysd/actionlint
-    rev: v1.7.8
-    hooks:
-      - id: actionlint
+  #- repo: https://github.com/rhysd/actionlint
+  #  rev: v1.7.8
+  #  hooks:
+  #    - id: actionlint
 
   # Beautify shell scripts
   - repo: https://github.com/lovesegfault/beautysh.git

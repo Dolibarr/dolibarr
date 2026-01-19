@@ -55,8 +55,8 @@ jobs:
         if: "! cancelled() && steps.changed-php.outputs.any_changed == 'true'"
         env:
           ALL_CHANGED_FILES: ${{ steps.changed-php.outputs.all_changed_files }}
-        # shellcheck disable=SC2086
+        # shellcheck disable=2086
         run: |
           # shellcheck disable=2086
           echo "$ALL_CHANGED_FILES" > /tmp/phan-files.txt
-          phan --file-list /tmp/phan-files.txt $PHAN_QUICK -k "$PHAN_CONFIG" -B "$PHAN_BASELINE" --analyze-twice --minimum-target-php-version "$PHAN_MIN_PHP" --output-mode=github
+          phan --file-list /tmp/phan-files.txt "$PHAN_QUICK"" -k "$PHAN_CONFIG" -B "$PHAN_BASELINE" --analyze-twice --minimum-target-php-version "$PHAN_MIN_PHP" --output-mode=github
