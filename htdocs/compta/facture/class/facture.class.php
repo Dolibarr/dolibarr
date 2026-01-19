@@ -2568,6 +2568,37 @@ class Facture extends CommonInvoice
 	}
 
 	/**
+	 * Compute the VAT on the prorata, if any.
+	 * Return the 2 digit rounded price.
+	 *
+	 * @return	float
+	 */
+	public function tvaOnProrata()
+	{
+		global $conf;
+
+		if ($this->total_ht != 0) {
+			$avg_vat_rate = $this->total_tva / $this->total_ht;
+		} else {
+			$avg_vat_rate = 0;
+		}
+
+		return round($this->prorata_discount * $avg_vat_rate, 2);
+	}
+
+	/**
+	 * Provide the "BTP" TTC: TTC - prorata - VAT on prorata - retained warranty
+	 * Return the 2 digit rounded price.
+	 *
+	 * @return	float
+	 */
+	public function ttc_BTP()
+	{
+		global $conf;
+		return round($this->total_ttc - $this->prorata_discount - $this->tvaOnProrata() - $this->retained_warranty, 2);
+	}
+
+	/**
 	 * Return the special-code lines
 	 *
 	 * @return	array of FactureLines
