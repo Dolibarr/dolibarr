@@ -207,78 +207,51 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT . '/core/actions_dellink.inc.php'; // Must be 'include', not 'include_once'
 
 	include DOL_DOCUMENT_ROOT . '/core/actions_lineupdown.inc.php'; // Must be 'include', not 'include_once'
-	// Action clone object
-	if ($action == 'confirm_clone' && $confirm == 'yes' && $usercancreate) {
-		if (!($socid > 0)) {
-			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('IdThirdParty')), null, 'errors');
-		} else {
-			if ($object->id > 0) {
-				if (getDolGlobalString('PROPAL_CLONE_DATE_DELIVERY')) {
-					//Get difference between old and new delivery date and change lines according to difference
-					$date_delivery = dol_mktime(
-						12,
-						0,
-						0,
-						GETPOSTINT('date_deliverymonth'),
-						GETPOSTINT('date_deliveryday'),
-						GETPOSTINT('date_deliveryyear')
-					);
-					$date_delivery_old = $object->delivery_date;
-					if (!empty($date_delivery_old) && !empty($date_delivery)) {
-						//Attempt to get the date without possible hour rounding errors
-						$old_date_delivery = dol_mktime(
-							12,
-							0,
-							0,
-							(int) dol_print_date($date_delivery_old, '%m'),
-							(int) dol_print_date($date_delivery_old, '%d'),
-							(int) dol_print_date($date_delivery_old, '%Y')
-						);
-						//Calculate the difference and apply if necessary
-						$difference = $date_delivery - $old_date_delivery;
-						if ($difference != 0) {
-							$object->delivery_date = $date_delivery;
-							foreach ($object->lines as $line) {
-								if (isset($line->date_start)) {
-									$line->date_start +=  $difference;
-								}
-								if (isset($line->date_end)) {
-									$line->date_end += $difference;
+
+		// Action clone object
+		if ($action == 'confirm_clone' && $confirm == 'yes' && $usercancreate) {
+			if (!($socid > 0)) {
+				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('IdThirdParty')), null, 'errors');
+			} else {
+				if ($object->id > 0) {
+					// If a new delivery date is provided when cloning, shift line start/end dates accordingly.
+					// The effective update is done inside createFromClone() (source object is re-fetched there).
+					$datedeliveryyear = GETPOSTINT('date_deliveryyear');
+					$datedeliverymonth = GETPOSTINT('date_deliverymonth');
+					$datedeliveryday = GETPOSTINT('date_deliveryday');
+					if ($datedeliveryyear > 0 && $datedeliverymonth > 0 && $datedeliveryday > 0) {
+						$object->context['clone_delivery_date'] = dol_mktime(12, 0, 0, $datedeliverymonth, $datedeliveryday, $datedeliveryyear);
+					}
+
+					$result = $object->createFromClone($user, $socid, (GETPOSTISSET('entity') ? GETPOSTINT('entity') : null), (GETPOST('update_prices') == 'on'), (GETPOST('update_desc') == 'on'));
+					if ($result > 0) {
+						$warningMsgLineList = array();
+						// check all product lines are to sell otherwise add a warning message for each product line is not to sell
+						foreach ($object->lines as $line) {
+							if (!is_object($line->product)) {
+								$line->fetch_product();
+							}
+							if (is_object($line->product) && $line->product->id > 0) {
+								if (empty($line->product->status)) {
+									$warningMsgLineList[$line->id] = $langs->trans('WarningLineProductNotToSell', $line->product->ref);
 								}
 							}
 						}
-					}
-				}
-
-				$result = $object->createFromClone($user, $socid, (GETPOSTISSET('entity') ? GETPOSTINT('entity') : null), (GETPOST('update_prices') == 'on'), (GETPOST('update_desc') == 'on'));
-				if ($result > 0) {
-					$warningMsgLineList = array();
-					// check all product lines are to sell otherwise add a warning message for each product line is not to sell
-					foreach ($object->lines as $line) {
-						if (!is_object($line->product)) {
-							$line->fetch_product();
+						if (!empty($warningMsgLineList)) {
+							setEventMessages('', $warningMsgLineList, 'warnings');
 						}
-						if (is_object($line->product) && $line->product->id > 0) {
-							if (empty($line->product->status)) {
-								$warningMsgLineList[$line->id] = $langs->trans('WarningLineProductNotToSell', $line->product->ref);
-							}
-						}
-					}
-					if (!empty($warningMsgLineList)) {
-						setEventMessages('', $warningMsgLineList, 'warnings');
-					}
 
-					header("Location: " . $_SERVER['PHP_SELF'] . '?id=' . $result);
-					exit();
-				} else {
-					if (count($object->errors) > 0) {
-						setEventMessages($object->error, $object->errors, 'errors');
+						header("Location: " . $_SERVER['PHP_SELF'] . '?id=' . $result);
+						exit();
+					} else {
+						if (count($object->errors) > 0) {
+							setEventMessages($object->error, $object->errors, 'errors');
+						}
+						$action = '';
 					}
-					$action = '';
 				}
 			}
-		}
-	} elseif ($action == 'confirm_cancel' && $confirm == 'yes' && $usercanclose) {
+		} elseif ($action == 'confirm_cancel' && $confirm == 'yes' && $usercanclose) {
 		// Cancel proposal
 		$result = $object->setCancel($user);
 		if ($result > 0) {
@@ -2746,9 +2719,9 @@ if ($action == 'create') {
 			array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans('PuttingPricesUpToDate'), 'value' => 0),
 			array('type' => 'checkbox', 'name' => 'update_desc', 'label' => $langs->trans('PuttingDescUpToDate'), 'value' => 0),
 		);
-		if (getDolGlobalString('PROPAL_CLONE_DATE_DELIVERY') && !empty($object->delivery_date)) {
-			$formquestion[] = array('type' => 'date', 'name' => 'date_delivery', 'label' => $langs->trans("DeliveryDate"), 'value' => $object->delivery_date);
-		}
+			if (!empty($object->delivery_date)) {
+				$formquestion[] = array('type' => 'date', 'name' => 'date_delivery', 'label' => $langs->trans("DeliveryDate"), 'value' => $object->delivery_date);
+			}
 		// Incomplete payment. We ask if reason = discount or other
 		$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('ToClone'), $langs->trans('ConfirmClonePropal', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 250, 600);
 	}

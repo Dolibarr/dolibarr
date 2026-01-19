@@ -1475,6 +1475,48 @@ class Propal extends CommonObject
 		// Load source object
 		$object->fetch($this->id);
 
+		// If option enabled, shift line dates when cloning with a different delivery date.
+		// We read the new date from $this->context (set by the UI before calling createFromClone()).
+		if (!empty($this->context['clone_delivery_date'])) {
+			$newdeliverydate = (int) $this->context['clone_delivery_date'];
+			$olddeliverydate = $object->delivery_date;
+
+			if (!empty($olddeliverydate) && !empty($newdeliverydate)) {
+				// Attempt to get the dates without possible hour rounding errors
+				$old_date_delivery = dol_mktime(
+					12,
+					0,
+					0,
+					(int) dol_print_date($olddeliverydate, '%m'),
+					(int) dol_print_date($olddeliverydate, '%d'),
+					(int) dol_print_date($olddeliverydate, '%Y')
+				);
+				$new_date_delivery = dol_mktime(
+					12,
+					0,
+					0,
+					(int) dol_print_date($newdeliverydate, '%m'),
+					(int) dol_print_date($newdeliverydate, '%d'),
+					(int) dol_print_date($newdeliverydate, '%Y')
+				);
+
+				$difference = $new_date_delivery - $old_date_delivery;
+				if ($difference != 0) {
+					$object->delivery_date = $newdeliverydate;
+					if (!empty($object->lines)) {
+						foreach ($object->lines as $line) {
+							if (isDolTms($line->date_start)) {
+								$line->date_start += $difference;
+							}
+							if (isDolTms($line->date_end)) {
+								$line->date_end += $difference;
+							}
+						}
+					}
+				}
+			}
+		}
+
 		$objsoc = new Societe($this->db);
 
 		// Change socid if needed
