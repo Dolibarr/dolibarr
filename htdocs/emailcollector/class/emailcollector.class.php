@@ -858,10 +858,9 @@ class EmailCollector extends CommonObject
 	{
 		global $user;
 
-		$nberror = 0;
+		$nbErrors = 0;
 
 		$arrayofcollectors = $this->fetchAll($user, 1);
-
 		// Loop on each collector
 		foreach ($arrayofcollectors as $emailcollector) {
 			$result = $emailcollector->doCollectOneCollector(0);
@@ -870,11 +869,12 @@ class EmailCollector extends CommonObject
 			$this->error .= 'EmailCollector ID '.$emailcollector->id.':'.$emailcollector->error.'<br>';
 			if (!empty($emailcollector->errors)) {
 				$this->error .= join('<br>', $emailcollector->errors);
+				$nbErrors++;
 			}
 			$this->output .= 'EmailCollector ID '.$emailcollector->id.': '.$emailcollector->lastresult.'<br>';
 		}
 
-		return $nberror;
+		return $nbErrors;
 	}
 
 	/**
@@ -1809,7 +1809,11 @@ class EmailCollector extends CommonObject
 						$attachments = [];
 					}
 				} else {
-					$this->getmsg($connection, $imapemail);	// This set global var $charset, $htmlmsg, $plainmsg, $attachments
+					$getMsg = $this->getmsg($connection, $imapemail); // This set global var $charset, $htmlmsg, $plainmsg, $attachments
+					if ($getMsg < 0) {
+						$this->errors = array_merge($this->errors, [$this->error]);
+						return $getMsg;
+					}
 				}
 				//print $plainmsg;
 				//var_dump($plainmsg); exit;
@@ -2983,7 +2987,11 @@ class EmailCollector extends CommonObject
 														$this->saveAttachment($destdir, $filename, $content);
 													}
 												} else {
-													$this->getmsg($connection, $imapemail, $destdir);
+													$getMsg = $this->getmsg($connection, $imapemail, $destdir);
+													if ($getMsg < 0) {
+														$this->errors = array_merge($this->errors, [$this->error]);
+														return $getMsg;
+													}
 												}
 
 												$operationslog .= '<br>Project created with attachments -> id='.dol_escape_htmltag($projecttocreate->id);
@@ -3120,7 +3128,11 @@ class EmailCollector extends CommonObject
 														$this->saveAttachment($destdir, $filename, $content);
 													}
 												} else {
-													$this->getmsg($connection, $imapemail, $destdir);
+													$getMsg = $this->getmsg($connection, $imapemail, $destdir);
+													if ($getMsg < 0) {
+														$this->errors = array_merge($this->errors, [$this->error]);
+														return $getMsg;
+													}
 												}
 
 												$operationslog .= '<br>Ticket created with attachments -> id='.dol_escape_htmltag($tickettocreate->id);
@@ -3407,9 +3419,9 @@ class EmailCollector extends CommonObject
 	 * @param 	Object $mbox     	Structure
 	 * @param 	string $mid		    UID email
 	 * @param 	string $destdir	    Target dir for attachments. Leave blank to parse without writing to disk.
-	 * @return 	void
+	 * @return 	int
 	 */
-	private function getmsg($mbox, $mid, $destdir = '')
+	private function getmsg($mbox, $mid, $destdir = ''): int
 	{
 		// input $mbox = IMAP stream, $mid = message id
 		// output all the following:
@@ -3423,9 +3435,12 @@ class EmailCollector extends CommonObject
 
 		// BODY
 		$s = imap_fetchstructure($mbox, $mid, FT_UID);
+		if ($s === false) {
+			$this->errors = array_merge($this->errors, [imap_last_error()]);
+			return -1;
+		}
 
-
-		if (!$s->parts) {
+		if (empty($s->parts)) {
 			// simple
 			$this->getpart($mbox, $mid, $s, 0); // pass 0 as part-number
 		} else {
@@ -3434,6 +3449,8 @@ class EmailCollector extends CommonObject
 				$this->getpart($mbox, $mid, $p, $partno0 + 1, $destdir);
 			}
 		}
+
+		return 1;
 	}
 
 	/* partno string

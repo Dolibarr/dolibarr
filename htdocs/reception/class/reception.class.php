@@ -1603,6 +1603,8 @@ class Reception extends CommonObject
 		if ($resql) {
 			// Set order billed if 100% of order is received (qty in reception lines match qty in order lines)
 			if ($this->origin == 'order_supplier' && $this->origin_id > 0) {
+				require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+
 				$order = new CommandeFournisseur($this->db);
 				$order->fetch($this->origin_id);
 
@@ -1863,6 +1865,8 @@ class Reception extends CommonObject
 			}
 
 			if (!$error && $this->origin == 'order_supplier') {
+				require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+
 				$commande = new CommandeFournisseur($this->db);
 				$commande->fetch($this->origin_id);
 				$result = $commande->setStatus($user, 4);

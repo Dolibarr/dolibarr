@@ -371,7 +371,14 @@ class Products extends DolibarrApi
 				continue;
 			}
 
-			$this->product->$field = $value;
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->product->array_options[$index] = $this->_checkValForAPI($field, $val, $this->product);
+				}
+				continue;
+			}
+
+			$this->product->$field = $this->_checkValForAPI($field, $value, $this->product);
 		}
 
 		$updatetype = false;

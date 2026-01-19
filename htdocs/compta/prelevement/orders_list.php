@@ -152,7 +152,11 @@ if (($massaction == "delete" || ($action == 'delete' && $confirm == 'yes')) && $
 }
 $objectclass = 'BonPrelevement';
 $objectlabel = 'BonPrelevement';
-$uploaddir = $conf->prelevement->dir_output;
+if ($type == 'bank-transfer') {
+	$uploaddir = $conf->paymentbybanktransfer->dir_output;
+} else {
+	$uploaddir = $conf->prelevement->dir_output;
+}
 include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 /*

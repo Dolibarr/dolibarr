@@ -2114,6 +2114,11 @@ if ($id > 0) {
 					$canbemodified = 1;
 				}
 
+				if ($tabname[$id] == "c_product_nature" && in_array($obj->code, array(0, 1))) {
+					$canbedisabled = 0;
+					$canbemodified = 0;
+					$iserasable = 0;
+				}
 				// Build Url. The table is id=, the id of line is rowid=
 				$rowidcol = empty($tabrowid[$id]) ? 'rowid' : $tabrowid[$id];
 				// If rowidcol not defined
