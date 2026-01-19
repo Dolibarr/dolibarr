@@ -233,7 +233,7 @@ if ($METHOD == 'converttotext') {
 		$result = $ai->generateContent($prompt, 'auto', 'docparsing', '');
 		// $result is an array of error messages or a string with answer
 
-		if (!empty($result['error']) || !empty($result['curl_error_no']) || (!empty($result['http_code']) && (int) $result['http_code'] !=200)) {
+		if (is_array($result)) {	// If array, there is an error
 			if ($result['error']) {
 				$error++;
 				$errors[] = $result['error'];
@@ -268,7 +268,7 @@ if ($METHOD == 'thread') {
 
 	$result = $ai->generateContent($payload, 'auto', 'file', '');
 
-	if (!empty($result['error']) || !empty($result['curl_error_no']) || (!empty($result['http_code']) && (int) $result['http_code'] !=200)) {
+	if (is_array($result)) {	// If array, there is an error
 		if ($result['error']) {
 			$error++;
 			$errors[] = $result['error'];
@@ -294,7 +294,7 @@ if ($METHOD == 'thread') {
 
 		$result = $ai->generateContent($payload, 'auto', 'assistant', '', array('OpenAI-Beta', 'assistants=v2'));
 
-		if (!empty($result['error']) || !empty($result['curl_error_no']) || (!empty($result['http_code']) && (int) $result['http_code'] !=200)) {
+		if (is_array($result)) {	// If array, there is an error
 			if ($result['error']) {
 				$error++;
 				$errors[] = $result['error'];
@@ -315,7 +315,7 @@ if ($METHOD == 'thread') {
 
 		$result = $ai->generateContent($payload, 'auto', 'thread', '', array('OpenAI-Beta', 'assistants=v2'));
 
-		if (!empty($result['error']) || !empty($result['curl_error_no']) || (!empty($result['http_code']) && (int) $result['http_code'] !=200)) {
+		if (is_array($result)) {	// If array, there is an error
 			if ($result['error']) {
 				$error++;
 				$errors[] = $result['error'];
@@ -351,7 +351,7 @@ if ($METHOD == 'thread') {
 
 		$result = $ai->generateContent($payload, 'auto', 'thread', '', array('OpenAI-Beta', 'assistants=v2'), $moreendpoint);
 
-		if (!empty($result['error']) || !empty($result['curl_error_no']) || (!empty($result['http_code']) && (int) $result['http_code'] !=200)) {
+		if (is_array($result)) {	// If array, there is an error
 			if ($result['error']) {
 				$error++;
 				$errors[] = $result['error'];
@@ -373,7 +373,7 @@ if ($METHOD == 'thread') {
 
 		$result = $ai->generateContent($payload, 'auto', 'thread', '', array('OpenAI-Beta', 'assistants=v2'), $moreendpoint);
 
-		if (!empty($result['error']) || !empty($result['curl_error_no']) || (!empty($result['http_code']) && (int) $result['http_code'] !=200)) {
+		if (is_array($result)) {	// If array, there is an error
 			if ($result['error']) {
 				$error++;
 				$errors[] = $result['error'];
@@ -398,8 +398,7 @@ if ($METHOD == 'thread') {
 
 			$result = $ai->generateContent($payload, 'auto', 'thread', '', array('OpenAI-Beta', 'assistants=v2'), $moreendpoint);
 
-			$threadId = 0;
-			if (!empty($result['error']) || !empty($result['curl_error_no']) || (!empty($result['http_code']) && (int) $result['http_code'] !=200)) {
+			if (is_array($result)) {	// If array, there is an error
 				if ($result['error']) {
 					$error++;
 					$errors[] = $result['error'];
@@ -424,7 +423,7 @@ if ($METHOD == 'thread') {
 
 		$result = $ai->generateContent($prompt, 'auto', 'thread', '', array('OpenAI-Beta', 'assistants=v2'));
 
-		if (!empty($result['error']) || !empty($result['curl_error_no']) || (!empty($result['http_code']) && (int) $result['http_code'] !=200)) {
+		if (is_array($result)) {	// If array, there is an error
 			if ($result['error']) {
 				$error++;
 				$errors[] = $result['error'];
