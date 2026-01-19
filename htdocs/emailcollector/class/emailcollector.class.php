@@ -2752,6 +2752,8 @@ class EmailCollector extends CommonObject
 										$from = $contact_static->email;
 									}
 
+									$from = (string) $from;
+
 									$result = $contactstatic->fetch(0, null, '', $from);
 									if ($result < 0) {
 										$errorforactions++;

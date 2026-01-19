@@ -686,6 +686,7 @@ function getBrowserInfo($user_agent)
 
 	$user_agent = substr($user_agent, 0, 512);	// Avoid to process too large user agent
 
+	// @phan-suppress-next-line PhanTypeMismatchArgumentProbablyReal Bad definition of Mobile_Detect function
 	$detectmobile = new Mobile_Detect(null, $user_agent);
 	$tablet = $detectmobile->isTablet();
 
