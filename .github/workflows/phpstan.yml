@@ -70,13 +70,14 @@ jobs:
         id: files
         # shellcheck disable=SC2086
         run: |
+          # shellcheck disable=SC2086
           git fetch origin ${{ github.base_ref }}
-          FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep '\.php$' || true)
+          FILES=$(git diff --name-only "origin/${{ github.base_ref }}...HEAD" | grep '\.php$' || true)
           {
             echo "files<<EOF"
             echo "$FILES"
             echo "EOF"
-          } >> $GITHUB_OUTPUT
+          } > "$GITHUB_OUTPUT"
 
       # Run PHPStan
       - name: Run PHPStan
