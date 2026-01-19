@@ -3165,8 +3165,8 @@ class BookKeeping extends CommonObject
 						$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
 						$bookkeeping->thirdparty_code = '';
 
+						/* $obj->subledger_account is not defined, so all code into if do the same then in else
 						if ($separate_auxiliary_account) {
-							/* $obj->subledger_account is not defined here, so all this code do nothing
 							$bookkeeping->subledger_account = $obj->subledger_account;
 							$sql = 'SELECT';
 							$sql .= " subledger_label";
@@ -3182,13 +3182,14 @@ class BookKeeping extends CommonObject
 							}
 							$objtmp = $this->db->fetch_object($result);
 							$bookkeeping->subledger_label = $objtmp->subledger_label ?? null; // latest subledger label used
-							*/
+
 							$bookkeeping->subledger_account = null;
 							$bookkeeping->subledger_label = null;
 						} else {
+						*/
 							$bookkeeping->subledger_account = null;
 							$bookkeeping->subledger_label = null;
-						}
+						//}
 
 						$bookkeeping->numero_compte = $accountingaccount->account_number;
 						$bookkeeping->label_compte = $accountingaccount->label;
