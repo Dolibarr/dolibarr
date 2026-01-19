@@ -43,7 +43,7 @@ if (empty($object) || !is_object($object)) {
 print "<!-- BEGIN PHP TEMPLATE objectline_title.tpl.php -->\n";
 
 // Title line
-print "<thead>\n";
+print '<thead ' . (getDolGlobalString('MAIN_TABLELINETITLE_STICKY') ? 'style="position: sticky ;top: 50px; z-index:100;" ' : '') . '>';
 
 print '<tr class="liste_titre nodrag nodrop">';
 
@@ -92,7 +92,7 @@ if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currenc
 	print '<th class="linecoluht_currency right" style="width: 80px">'.$langs->trans('PriceUHTCurrency', $this->multicurrency_code).'</th>';
 }
 
-if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
+if (!empty($inputalsopricewithtax) && showInputTtc($object, $inputalsopricewithtax)) {
 	print '<th class="right nowraponall">'.$langs->trans('PriceUTTC').'</th>';
 }
 

@@ -88,6 +88,7 @@ $lineid    = GETPOST('lineid', 'int');
 $origin    = GETPOST('origin', 'alpha');
 $originid  = (GETPOST('originid', 'int') ? GETPOST('originid', 'int') : GETPOST('origin_id', 'int')); // For backward compatibility
 $rank      = (GETPOST('rank', 'int') > 0) ? GETPOST('rank', 'int') : -1;
+$same_project_filter = GETPOST('sameproject', 'string') == "on";
 
 // PDF
 $hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0));
@@ -156,7 +157,6 @@ if (!isModEnabled('reception')) {
 }
 
 // Permissions for includes
-$permissionnote		= $usercancreate; // Used by the include of actions_setnotes.inc.php
 $permissiondellink	= $usercancreate; // Used by the include of actions_dellink.inc.php
 $permissiontoedit	= $usercancreate; // Used by the include of actions_lineupdown.inc.php
 $permissiontoadd	= $usercancreate; // Used by the include of actions_addupdatedelete.inc.php
@@ -602,7 +602,7 @@ if (empty($reshook)) {
 				if (empty($pu)) {
 					$pu = 0; // If pu is '' or null, we force to have a numeric value
 				}
-
+				
 				$result = $object->addline(
 					$desc,
 					($price_base_type == 'HT' ? $pu : 0),
@@ -622,7 +622,7 @@ if (empty($reshook)) {
 					$date_start,
 					$date_end,
 					$array_options,
-					$productsupplier->fk_unit,
+					(getDolGlobalInt('MAIN_EDIT_LINE_SET_UNIT_ON_EXISTING_PRODUCT') ?  GETPOST('units', 'alpha') : $productsupplier->fk_unit),
 					$pu_devise,
 					'',
 					0,
@@ -1926,7 +1926,7 @@ if ($action == 'create') {
 		$title = $langs->trans('ProductsAndServices');
 		print load_fiche_titre($title);
 
-		print '<div class="div-table-responsive-no-min">';
+		print '<div class="div-table-responsive-no-min" style="overflow: initial !important;" >';
 		print '<table class="noborder centpercent">';
 
 		$selectedLines = array();
@@ -2482,7 +2482,7 @@ if ($action == 'create') {
 			include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 		}
 
-		print '<div class="div-table-responsive-no-min">';
+		print '<div class="div-table-responsive-no-min" style="overflow: initial !important;" >';
 		print '<table id="tablelines" class="noborder noshadow centpercent">';
 
 		// Add free products/services form
@@ -2783,7 +2783,7 @@ if ($action == 'create') {
 			$somethingshown = $formfile->numoffiles;
 
 			// Show links to link elements
-			$linktoelem = $form->showLinkToObjectBlock($object, null, array('supplier_order', 'order_supplier'));
+			$linktoelem = $form->showLinkToObjectBlock($object, null, array('supplier_order', 'order_supplier'), $same_project_filter);
 			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 			print '</div><div class="fichehalfright">';

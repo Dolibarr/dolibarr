@@ -98,6 +98,9 @@ if (isModEnabled('banque')) {
 if (getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')) {
 	$list_account[] = 'ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY';
 }
+if (getDolGlobalString('INVOICE_USE_PRORATA_DISCOUNT')) {
+	$list_account[] = 'ACCOUNTING_ACCOUNT_CUSTOMER_PRORATA_DISCOUNT';
+}
 if (isModEnabled('don')) {
 	$list_account[] = 'DONATION_ACCOUNTINGACCOUNT';
 }

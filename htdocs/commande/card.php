@@ -92,6 +92,7 @@ $projectid =  GETPOST('projectid', 'int');
 $origin    =  GETPOST('origin', 'alpha');
 $originid  = (GETPOST('originid', 'int') ? GETPOST('originid', 'int') : GETPOST('origin_id', 'int'));    // For backward compatibility
 $rank      = (GETPOST('rank', 'int') > 0) ? GETPOST('rank', 'int') : -1;
+$same_project_filter = GETPOST('sameproject', 'string') == "on";
 
 // PDF
 $hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0));
@@ -970,7 +971,7 @@ if (empty($reshook)) {
 				}
 
 				$type = $prod->type;
-				$fk_unit = $prod->fk_unit;
+                $fk_unit = (getDolGlobalInt('MAIN_EDIT_LINE_SET_UNIT_ON_EXISTING_PRODUCT') ?  GETPOST('units', 'alpha') :  $prod->fk_unit) ;
 			} else {
 				$pu_ht = price2num($price_ht, 'MU');
 				$pu_ttc = price2num($price_ttc, 'MU');
@@ -2122,7 +2123,7 @@ if ($action == 'create' && $usercancreate) {
 		$title = $langs->trans('ProductsAndServices');
 		print load_fiche_titre($title);
 
-		print '<div class="div-table-responsive-no-min">';
+		print '<div class="div-table-responsive-no-min" style="overflow: initial !important;" >';
 		print '<table class="noborder centpercent">';
 
 		$objectsrc->printOriginLinesList('', $selectedLines);
@@ -2870,7 +2871,7 @@ if ($action == 'create' && $usercancreate) {
 				include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 			}
 
-			print '<div class="div-table-responsive-no-min">';
+			print '<div class="div-table-responsive-no-min" style="overflow: initial !important;" >';
 			print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
 			// Show object lines
@@ -3084,7 +3085,7 @@ if ($action == 'create' && $usercancreate) {
 
 
 			// Show links to link elements
-			$linktoelem = $form->showLinkToObjectBlock($object, null, array('order'));
+			$linktoelem = $form->showLinkToObjectBlock($object, null, array('order'), $same_project_filter);
 
 			$compatibleImportElementsList = false;
 			if ($usercancreate

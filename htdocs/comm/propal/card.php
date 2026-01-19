@@ -84,6 +84,7 @@ $lineid = GETPOST('lineid', 'int');
 $contactid = GETPOST('contactid', 'int');
 $projectid = GETPOST('projectid', 'int');
 $rank = (GETPOST('rank', 'int') > 0) ? GETPOST('rank', 'int') : -1;
+$same_project_filter = GETPOST('sameproject', 'string') == "on";
 
 // PDF
 $hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0));
@@ -1270,7 +1271,7 @@ if (empty($reshook)) {
 				}
 
 				$type = $prod->type;
-				$fk_unit = $prod->fk_unit;
+                $fk_unit = (getDolGlobalInt('MAIN_EDIT_LINE_SET_UNIT_ON_EXISTING_PRODUCT') ?  GETPOST('units', 'alpha') :  $prod->fk_unit) ;
 			} else {
 				$pu_ht = price2num($price_ht, 'MU');
 				$pu_ttc = price2num($price_ttc, 'MU');
@@ -2224,7 +2225,7 @@ if ($action == 'create') {
 		$title = $langs->trans('ProductsAndServices');
 		print load_fiche_titre($title);
 
-		print '<div class="div-table-responsive-no-min">';
+		print '<div class="div-table-responsive-no-min" style="overflow: initial !important;" >';
 		print '<table class="noborder centpercent">';
 
 		$objectsrc->printOriginLinesList();
@@ -2973,7 +2974,7 @@ if ($action == 'create') {
 			include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 		}
 
-		print '<div class="div-table-responsive-no-min">';
+		print '<div class="div-table-responsive-no-min" style="overflow: initial !important;" >';
 		if (!empty($object->lines) || ($object->statut == Propal::STATUS_DRAFT && $usercancreate && $action != 'selectlines' && $action != 'editline')) {
 			print '<table id="tablelines" class="noborder noshadow centpercent">';
 		}
@@ -3155,7 +3156,7 @@ if ($action == 'create') {
 		print $formfile->showdocuments('propal', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang, '', $object);
 
 		// Show links to link elements
-		$linktoelem = $form->showLinkToObjectBlock($object, null, array('propal'));
+		$linktoelem = $form->showLinkToObjectBlock($object, null, array('propal'), $same_project_filter);
 
 		$compatibleImportElementsList = false;
 		if ($user->hasRight('propal', 'creer') && $object->statut == Propal::STATUS_DRAFT) {

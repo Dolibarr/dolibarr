@@ -84,6 +84,7 @@ $origin		= GETPOST('origin', 'alpha');
 $originid = GETPOST('originid', 'int');
 $fac_recid = GETPOST('fac_rec', 'int');
 $rank = (GETPOST('rank', 'int') > 0) ? GETPOST('rank', 'int') : -1;
+$same_project_filter = GETPOST('sameproject', 'string') == "on";
 
 // PDF
 $hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0));
@@ -131,7 +132,6 @@ $usercanvalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($u
 $usercansend = (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || $user->hasRight("fournisseur", "supplier_invoice_advance", "send"));
 
 // Permissions for includes
-$permissionnote = $usercancreate; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $usercancreate; // Used by the include of actions_dellink.inc.php
 $permissiontoedit = $usercancreate; // Used by the include of actions_lineupdown.inc.php
 $permissiontoadd = $usercancreate; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
@@ -1743,7 +1743,7 @@ if (empty($reshook)) {
 					min($rank, count($object->lines) + 1),
 					0,
 					$array_options,
-					$productsupplier->fk_unit,
+					(getDolGlobalInt('MAIN_EDIT_LINE_SET_UNIT_ON_EXISTING_PRODUCT') ?  GETPOST('units', 'alpha') : $productsupplier->fk_unit),
 					0,
 					$pu_devise,
 					GETPOST('fourn_ref', 'alpha'),
@@ -2851,7 +2851,7 @@ if ($action == 'create') {
 		$title = $langs->trans('ProductsAndServices');
 		print load_fiche_titre($title);
 
-		print '<div class="div-table-responsive-no-min">';
+		print '<div class="div-table-responsive-no-min" style="overflow: initial !important;" >';
 		print '<table class="noborder centpercent">';
 
 		$objectsrc->printOriginLinesList('', $selectedLines);
@@ -3645,7 +3645,7 @@ if ($action == 'create') {
 				$num = $db->num_rows($result);
 				$i = 0;
 
-				print '<div class="div-table-responsive-no-min">';
+				print '<div class="div-table-responsive-no-min" style="overflow: initial !important;" >';
 				print '<table class="noborder paymenttable centpercent">';
 				print '<tr class="liste_titre">';
 				print '<td class="liste_titre">'.($object->type == FactureFournisseur::TYPE_CREDIT_NOTE ? $langs->trans("PaymentsBack") : $langs->trans('Payments')).'</td>';
@@ -3948,7 +3948,7 @@ if ($action == 'create') {
 				include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 			}
 
-			print '<div class="div-table-responsive-no-min">';
+			print '<div class="div-table-responsive-no-min" style="overflow: initial !important;" >';
 			print '<table id="tablelines" class="noborder noshadow centpercent">';
 
 			global $forceall, $senderissupplier, $dateSelector, $inputalsopricewithtax;
@@ -4180,7 +4180,7 @@ if ($action == 'create') {
 					$somethingshown = $formfile->numoffiles;
 
 					// Show links to link elements
-					$linktoelem = $form->showLinkToObjectBlock($object, null, array('invoice_supplier'));
+					$linktoelem = $form->showLinkToObjectBlock($object, null, array('invoice_supplier'), $same_project_filter);
 					$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 					print '</div><div class="fichehalfright">';

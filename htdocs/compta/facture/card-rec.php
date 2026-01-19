@@ -1184,7 +1184,7 @@ if ($action == 'create') {
 		/*
 		 * Invoice lines
 		 */
-		print '<div class="div-table-responsive-no-min">';
+		print '<div class="div-table-responsive-no-min" style="overflow: initial !important;" >';
 		print '<table id="tablelines" class="noborder noshadow centpercent">';
 
 		// Show object lines
@@ -1683,7 +1683,7 @@ if ($action == 'create') {
 			include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 		}
 
-		print '<div class="div-table-responsive-no-min">';
+		print '<div class="div-table-responsive-no-min" style="overflow: initial !important;" >';
 		print '<table id="tablelines" class="noborder noshadow centpercent">';
 		// Show object lines
 		if (!empty($object->lines)) {
