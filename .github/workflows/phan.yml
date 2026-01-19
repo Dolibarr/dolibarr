@@ -49,7 +49,7 @@ jobs:
         with:
           php-version: 8.2
           coverage: none # disable xdebug, pcov
-          tools: phan
+          tools: phan:5.5.2
 
       - name: Run Phan analysis
         if: "! cancelled() && steps.changed-php.outputs.any_changed == 'true'"
