@@ -566,6 +566,7 @@ class FormMail extends Form
 				$out .= '<a id="formmail" name="formmail"></a>';
 				$out .= '<input style="display:none" type="submit" id="sendmailhidden" name="sendmail">';
 				$out .= '<input type="hidden" name="token" value="'.newToken().'" />';
+				$out .= '<input type="hidden" name="page_y" value="" />';
 				$out .= '<input type="hidden" name="trackid" value="'.$this->trackid.'" />';
 				$out .= '<input type="hidden" name="inreplyto" value="'.$this->inreplyto.'" />';
 			}
@@ -1483,7 +1484,7 @@ class FormMail extends Form
 
 		$out = '<tr>';
 		$out .= '<td class="fieldrequired">';
-		$out .= $form->textwithpicto($langs->trans('MailTopic'), $helpforsubstitution, 1, 'help', '', 0, 2, 'substittooltipfromtopic');
+		$out .= $form->textwithpicto($langs->trans('MailTopicShort'), $helpforsubstitution, 1, 'help', '', 0, 2, 'substittooltipfromtopic');
 		$out .= '</td>';
 		$out .= '<td>';
 		if ($this->withtopicreadonly) {
@@ -1535,7 +1536,6 @@ class FormMail extends Form
 		}
 		//}
 		// TODO Add a hook to allow to complete the list
-
 		foreach ($layouts as $layout => $templateFunction) {
 			$contentHtml = getHtmlOfLayout($layout);
 
@@ -1579,38 +1579,46 @@ class FormMail extends Form
 		}
 
 		// Fetch Product / Services
-		$productArray = array();
-		if (isModEnabled('product') || isModEnabled('service')) {
-			include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
-			$form = new Form($this->db);
-			$arrayofproduct = $form->select_produits_list(0, 'product-select', '', 0, 0, '', 1, 2, 1);
-			if (!empty($arrayofproduct)) {
-				foreach ($arrayofproduct as $product) {
-					$productArray[$product["key"]] = array(
-						'id' => $product["key"],
-						'label' => $product["value"].' - '.dol_trunc($product["label2"], 40),
-						'labelhtml' => $product["value"].' - '.dol_trunc($product["label2"], 40),
-					);
+		/* to use with multiselectarray but consume too much memory so replaced
+		if (in_array('product', array_keys($layouts))) {
+			$productArray = array();
+			if (isModEnabled('product') || isModEnabled('service')) {
+				include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+				$form = new Form($this->db);
+				$arrayofproduct = $form->select_produits_list(0, 'product-select', '', 0, 0, '', 1, 2, 1);
+				if (!empty($arrayofproduct)) {
+					foreach ($arrayofproduct as $product) {
+						$productArray[$product["key"]] = array(
+							'id' => $product["key"],
+							'label' => $product["value"].' - '.dol_trunc($product["label2"], 40),
+							'labelhtml' => $product["value"].' - '.dol_trunc($product["label2"], 40),
+						);
+					}
 				}
 			}
 		}
+		*/
 
 		// Use the multiselect array function to create the dropdown
-		$out .= '<div id="post-dropdown-container" class="email-layout-container hidden" style="height: 32px; display:none;">';
-		$out .= '<label for="blogpost-select">Select Posts: </label>';
-		$out .= '<!-- select component for selection of blog posts -->'."\n";
-		$out .= self::multiselectarray('blogpost-select', $blogArray, array(), 0, 0, 'minwidth200 select-template');
-		$out .= ' <input type="submit" class="smallpaddingimp button" name="submit" id="post-submit" value="'.dolPrintHTMLForAttribute($langs->trans("Select")).'">';
-		$out .= '</div>';
-
-		if (isModEnabled('product') || isModEnabled('service')) {
+		if (in_array('news', array_keys($layouts)) && (isModEnabled('product') || isModEnabled('service'))) {
+			$out .= '<div id="post-dropdown-container" class="email-layout-container hidden" style="height: 32px; display:none;">';
+			$out .= '<label for="blogpost-select">Select Posts: </label>';
+			$out .= '<!-- select component for selection of blog posts -->'."\n";
+			// TODO WARNING: multiselectarray is ok only for very small list
+			$out .= self::multiselectarray('blogpost-select', $blogArray, array(), 0, 0, 'minwidth200 select-template');
+			$out .= ' <input type="submit" class="smallpaddingimp button reposition" name="submit" id="post-submit" value="'.dolPrintHTMLForAttribute($langs->trans("Select")).'">';
+			$out .= '</div>';
+		}
+		if (in_array('product', array_keys($layouts)) && (isModEnabled('product') || isModEnabled('service'))) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 			$form = new Form($this->db);
 			$out .= '<div id="product-dropdown-container" class="email-layout-container hidden" style="height: 32px; display:none;">';
 			$out .= '<label for="product-select">'.img_picto('', 'product', 'class="pictofixedwidth"').$langs->trans("Product").' : </label>';
 			$out .= '<!-- select component for selection of product -->'."\n";
-			$out .= self::multiselectarray('product-select', $productArray, array(), 0, 0, 'minwidth200 select-template');
-			$out .= ' <input type="submit" class="smallpaddingimp button" name="submit" id="product-submit" value="'.dolPrintHTMLForAttribute($langs->trans("Select")).'">';
+			$out .= $form->select_produits(0, 'product-select', '', 0, 0, -1, 2, '', 0, array(), 0, '1', 0, 'inline-block valignmiddle', 0, '', null, 1);
+			// TODO multiselectarray is ok only for very small list but is ok for multiselect. We need a multiselect ok with ajax for long list
+			//$out .= self::multiselectarray('product-select', $productArray, array(), 0, 0, 'minwidth200 select-template');
+			$out .= ' <input type="submit" class="smallpaddingimp button reposition" name="submit" id="product-submit" value="'.dolPrintHTMLForAttribute($langs->trans("Select")).'">';
 			$out .= '</div>';
 		}
 

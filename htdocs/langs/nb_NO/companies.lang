@@ -475,5 +475,5 @@ ConfirmCloneThirdparties=Er du sikker på at du vil klone <b>%s</b> selskap?
 SocialNetworksBusiness=Sosiale nettverk for bedrift
 ErrorCommercialNotAllowedForThirdparty=Brukeren %s har ikke tillatelse til å se alle tredjeparter og er ikke en autorisert salgsrepresentant for selskapet.
 EnablePublicCompanyPages=Aktiver den offentlige kontaktsiden
-PublicInterfaceCompanyDesc=Dette alternativet tilbyr en offentlig side med et online kontaktskjema som lar anonyme besøkende sende deg en melding (og oppretter også automatisk en tredjeparts og/kontakt).
+PublicInterfaceCompanyDesc=Dette alternativet tilbyr en offentlig side med et online kontaktskjema som lar anonyme besøkende sende deg en melding (oppretter også automatisk en tredjepart og/eller kontakt).
 ImpossibleToCreateUserFromContact=Umulig å opprette bruker fra denne kontakten

@@ -475,5 +475,5 @@ ConfirmCloneThirdparties=Esteu segur que voleu clonar l'empresa <b>%s</b>?
 SocialNetworksBusiness=Xarxes socials per a l'empresa
 ErrorCommercialNotAllowedForThirdparty=L'usuari %s no té permís per veure tots els tercers i no és un representant de vendes autoritzat de l'empresa.
 EnablePublicCompanyPages=Activa la pàgina de contacte pública
-PublicInterfaceCompanyDesc=This option offer a public page with an online contact form to allow any anonymous visitor to send you a message (creating also a thirdparty and/or contact, automatically).
+PublicInterfaceCompanyDesc=Aquesta opció ofereix una pàgina pública amb un formulari de contacte en línia per permetre que qualsevol visitant anònim us enviï un missatge (creant també un tercer i/o contacte, automàticament).
 ImpossibleToCreateUserFromContact=Impossible crear un usuari a partir d'aquest contacte

@@ -39,7 +39,6 @@ ExampleOfTestBankAcountForSEPA=Exemplo de IBAN de conta bancária para teste de 
 StripeGateways=Gateways do Stripe
 BankAccountForBankTransfer=Conta bancária para transferência de fundos
 StripeAccount=Conta Stripe
-StripeTransactionList=Lista de transações Stripe
 StripeCustomerId=ID do cliente Stripe
 StripePaymentId=ID de pagamento Stripe
 StripePaymentModes=Modos de pagamento Stripe
@@ -52,7 +51,6 @@ CreateCustomerOnStripe=Crie um cliente no Stripe
 CreateCardOnStripe=Criar cartão no Stripe
 ShowInStripe=Mostrar no Stripe
 StripeUserAccountForActions=Conta de usuário a ser usada para notificação por e-mail de alguns eventos do Stripe (pagamentos Stripe)
-StripePayoutList=Lista de pagamentos do Stripe
 ToOfferALinkForTestWebhook=Link para configurar o Stripe WebHook para chamar o IPN (modo de teste)
 ToOfferALinkForLiveWebhook=Link para configurar Stripe WebHook para chamar o IPN (modo ao vivo)
 ClickHereToTryAgain=<a href="%s"> Clique aqui para tentar novamente... </a>

@@ -390,6 +390,7 @@ class pdf_crabe extends ModelePDFFactures
 
 					// Do not take into account lines of the type “deposit.”
 					$is_deposit = false;
+					$reg = array();
 					if (preg_match('/^\((.*)\)$/', $object->lines[$i]->desc, $reg)) {
 						if ($reg[1] == 'DEPOSIT') {
 							$is_deposit = true;
@@ -915,8 +916,8 @@ class pdf_crabe extends ModelePDFFactures
 				}
 
 				// Add terms to sale
-				if (getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_INVOICE')) {
-					$termsofsalefilename = getDolGlobalString('MAIN_INFO_INVOICE_TERMSOFSALE');
+				$termsofsalefilename = getDolGlobalString('MAIN_INFO_INVOICE_TERMSOFSALE');
+				if (getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_INVOICE') && $termsofsalefilename) {
 					$termsofsale = $conf->invoice->dir_output.'/'.$termsofsalefilename;
 					if (!empty($conf->invoice->multidir_output[$object->entity ?? $conf->entity])) {
 						$termsofsale = $conf->invoice->multidir_output[$object->entity ?? $conf->entity].'/'.$termsofsalefilename;
@@ -2189,11 +2190,14 @@ class pdf_crabe extends ModelePDFFactures
 
 		$pdf->MultiCell($w, 3, $title, '', 'R');
 
-		$pdf->SetFont('', 'B', $default_font_size);
+		$pdf->SetFont('', '', $default_font_size - 2);
+
+		pdfWriteBlockedLogSignature($pdf, $outputlangs, $this->page_hauteur, $object, $w, $posx, $posy);
 
 		/*
 		$posy += 5;
 		$pdf->SetXY($posx, $posy);
+		$pdf->SetFont('', 'B', $default_font_size);
 		$pdf->SetTextColor(0, 0, 60);
 		$textref = $outputlangs->transnoentities("Ref")." : ".$outputlangs->convToOutputCharset($object->ref);
 		if ($object->status == $object::STATUS_DRAFT) {

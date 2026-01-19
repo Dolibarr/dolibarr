@@ -373,6 +373,8 @@ ErrorBlockLogNeedAmountsValue=Det uforaderlige loggobjektet trenger at mengdever
 ErrorBlockLogNeedElement=Elementtypen må angis for objektet «Uforanderlig logg».
 ErrorBlockLogNeedObject=Objektet «uforanderlig logg» må settes
 ErrorBadParameterWhenCallingCreateOfBlockedLog=Ugyldig parameter ved kalling av oppretting av blokkert logg
+ErrorMaxDecimalsShownTooLowComparedToUnitOrTotal=Verdien for «Maks. desimaler for priser vist på skjermen» (%s) må være lik eller større enn begge «Maks. desimaler for enhetspriser» (%s) og «Maks. desimaler for totalpriser» (%s). Dette er nødvendig for å forhindre avrundingsinkonsekvenser på dokumenter.
+ErrorOnlyDraftStatusCanBeDeletedInMassAction=Bare elementer med utkaststatus kan slettes i masseaksjon
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=PHP-parameteren upload_max_filesize (%s) er høyere enn PHP-parameteren post_max_size (%s). Dette er ikke et konsistent oppsett.
@@ -462,3 +464,5 @@ OperNotDefined=Betalingsmåte er ikke definert
 EmptyMessageNotAllowedError=Tom melding er ikke tillatt
 SomeShipmentExists=Feil, det er en forsendelse knyttet til ordre. Sletting avvist.
 WarningEvaluationEmptyValidate=Kan ikke validere evalueringen, ferdighetsnivåer er ikke definert
+ErrorBadParametersForDirectDebitFileCreate=Kan ikke opprette bankoverføringsfil: forventet formatparameter er ikke oppgitt.
+ErrorBadParametersForDirectDebitFileCreateDids=Kan ikke opprette bankoverføringsfil: ID-er for eksisterende betalingsforespørsler er ikke oppgitt.

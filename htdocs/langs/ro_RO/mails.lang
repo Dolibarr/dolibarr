@@ -19,6 +19,7 @@ MailCC=Copie la
 MailToCCUsers=CC la utilizator(i)
 MailCCC=Copie în cache a
 MailTopic=Subiect email
+MailTopicShort=Subiect
 MailDate=Dată email
 MailReferences=ID-uri mesaj în Referințe
 MailText=Mesaj

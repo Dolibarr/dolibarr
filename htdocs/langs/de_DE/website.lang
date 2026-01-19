@@ -477,3 +477,4 @@ WebPortalSharedDocsDir=Name des Verzeichnisses für geteilte Dokumente
 WebPortalSharedDocsDirHelp=Namen der Verzeichnisses eingeben, das sich im Ordner ECM/Dokumentenmanagement befindet und die Dokumente enthält, die mit allen Portalbenutzern geteilt werden sollen.
 DateM=Änderungsdatum
 ThisDirectoryIsEmpty=Dieses Verzeichnis ist leer
+WrittenBy=Geschrieben von %s

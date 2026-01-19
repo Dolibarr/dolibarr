@@ -168,6 +168,16 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 			$module = 'knowledgemanagement';
 			$subdirectory = '/knowledgerecord';
 			break;
+		case 'commande_fournisseur':
+			$module = 'fournisseur';
+			$subdirectory = '/commande';
+			break;
+		case 'expedition':
+			$subdirectory = '/sending';
+			break;
+		case 'company':
+			$module = 'societe';
+			break;
 		case 'service':
 		case 'produit':
 			$module = 'product';
@@ -1787,7 +1797,9 @@ function dol_get_object_properties($obj, $properties = [])
  *  Create a clone of instance of object (new instance with same value for each properties)
  *  With native = 0: Deprecated. Property that are references are different memory area in the new object (full isolation clone). This means $this->objectproperty of the new object may not be valid (except this->db that is voluntarly kept).
  *  With native = 1: Use PHP clone. Property that are reference are same pointer. This means $this->db of new object is still valid but point to same this->db than original object.
- *  With native = 2: Property that are reference are different memory area in the new object (full isolation clone). Only scalar and array values are cloned. This means method are not availables and $this->db of new object is not valid.
+ *  With native = 2: Property that are reference are different memory area in the new object (full isolation clone). Only scalar and array values are cloned. This means that the methods are not available and $this->db of new object is not valid.
+ *  You can use it with: $object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
+ *
  *
  *  @template T
  *
@@ -4358,7 +4370,7 @@ function dol_print_url($url, $target = '_blank', $max = 32, $withpicto = 0, $mor
 /**
  * Show EMail link formatted for HTML output.
  *
- * @param	string		$email			EMail to show (only email, without 'Name of recipient' before)
+ * @param	string		$email			EMail to show (can be 'email' or 'Name of recipient <email>')
  * @param 	int			$contactid 		Id of contact if known
  * @param 	int			$socid 			Id of third party if known
  * @param 	int|string	$addlink		0=no link, 1=email has a html email link (+ link to create action if constant AGENDA_ADDACTIONFOREMAIL is on), 'thirdparty'=link to the thirdparty presend email
@@ -4401,9 +4413,18 @@ function dol_print_email($email, $contactid = 0, $socid = 0, $addlink = 0, $max 
 			$newemail .= $email;
 		}
 		$newemail .= '</a>';
-		if ($showinvalid && !isValidEmail($email)) {
-			$langs->load("errors");
-			$newemail .= img_warning($langs->trans("ErrorBadEMail", $email), '', 'paddingrightonly');
+
+		if ($showinvalid) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+			$emailonly = CMailFile::getValidAddress($email, 2);
+			if (!isValidEmail($emailonly)) {
+				$langs->load("errors");
+				$newemail .= img_warning($langs->transnoentitiesnoconv("ErrorBadEMail", $emailonly), '', 'paddingrightonly');
+			} elseif (!isValidMailDomain($emailonly)) {
+				$langs->load("errors");
+				$newemail .= img_warning($langs->transnoentitiesnoconv("ErrorBadMXDomain", $emailonly), '', 'paddingrightonly');
+			}
 		}
 
 		if (($contactid || $socid) && isModEnabled('agenda') && $user->hasRight("agenda", "myactions", "create")) {
@@ -4428,9 +4449,17 @@ function dol_print_email($email, $contactid = 0, $socid = 0, $addlink = 0, $max 
 	} else {
 		$newemail = ($withpicto ? img_picto($langs->trans("EMail") . ' : ' . $email, (is_numeric($withpicto) ? 'email' : $withpicto), 'class="paddingrightonly"') : '') . $newemail;
 
-		if ($showinvalid && !isValidEmail($email)) {
-			$langs->load("errors");
-			$newemail .= img_warning($langs->trans("ErrorBadEMail", $email));
+		if ($showinvalid) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+			$emailonly = CMailFile::getValidAddress($email, 2);
+			if (!isValidEmail($emailonly)) {
+				$langs->load("errors");
+				$newemail .= img_warning($langs->transnoentitiesnoconv("ErrorBadEMail", $email));
+			} elseif (!isValidMailDomain($emailonly)) {
+				$langs->load("errors");
+				$newemail .= img_warning($langs->transnoentitiesnoconv("ErrorBadMXDomain", $emailonly));
+			}
 		}
 	}
 
