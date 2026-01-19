@@ -50,9 +50,9 @@ class CoSousTraitant
 		$orders_related_to_cycle = array_map("unserialize", array_unique(array_map("serialize", $orders_related_to_cycle)));
 
 		// -- Part 3 - Calculate values and results 
-		$sum_tot_ht_of = fn($arr) => array_sum(array_column($arr, 'total_ht'));
-		$sum_tot_ttc_of = fn($arr) => array_sum(array_column($arr, 'total_ttc'));
-		$sum_prorata_ht_of = fn($arr) => array_sum(array_column($arr, 'prorata_discount'));
+		$sum_tot_ht_of = fn($arr) => empty($arr) ? 0 : array_sum(array_column($arr, 'total_ht'));
+		$sum_tot_ttc_of = fn($arr) => empty($arr) ? 0 : array_sum(array_column($arr, 'total_ttc'));
+		$sum_prorata_ht_of = fn($arr) => empty($arr) ? 0 : array_sum(array_column($arr, 'prorata_discount'));
 
 		// Total facturé Couffignal : Factures Clients cumulées - factures Co-trait cumulée
 		$sumCumFacturedCoTrait = $sum_tot_ht_of($supplier_docs['cumulated']['invoices_co_trait']);

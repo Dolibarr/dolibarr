@@ -5684,10 +5684,10 @@ if ($action == 'create') {
 			if ($resql) {
 				$num = $db->num_rows($resql);
 				$i = 0;
+				require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 				while ($i < $num) {
 					$obj = $db->fetch_object($resql);
 					if (!empty($obj->fk_invoice_supplier_source)) {
-						require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 						$invoice = new FactureFournisseur($db);
 						$id = $obj->fk_invoice_supplier_source;
 					} elseif (!empty($obj->fk_facture_source)) {
