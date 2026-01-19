@@ -13,7 +13,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: phan-${{ github.workflow }}-${{ github.ref }}
+  group: phan-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 env:
@@ -40,7 +40,15 @@ jobs:
           php-version: 8.2
           coverage: none # disable xdebug, pcov
           tools: phan
+      - name: Get changed PHP files
+        id: files
+        run: |
+          git fetch origin ${{ github.base_ref }}
+          FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep '\.php$' || true)
+          PHP_FILES=$(echo "$FILES" | grep '\.php$' || true)
+          echo "$PHP_FILES" > /tmp/phan-files.txt
       - name: Run Phan analysis
+        if: steps.files.outputs.files != ''
         run: |
           # shellcheck disable=2086
-          phan $PHAN_QUICK -k "$PHAN_CONFIG" -B "$PHAN_BASELINE" --analyze-twice --minimum-target-php-version "$PHAN_MIN_PHP" --output-mode=github
+          phan --file-list /tmp/phan-files.txt $PHAN_QUICK -k "$PHAN_CONFIG" -B "$PHAN_BASELINE" --analyze-twice --minimum-target-php-version "$PHAN_MIN_PHP" --output-mode=github

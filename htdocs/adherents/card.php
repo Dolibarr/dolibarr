@@ -336,7 +336,7 @@ if (empty($reshook)) {
 			$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 			// Change values
-			$object->civility_id = trim(GETPOST("civility_id", 'alphanohtml'));
+			$object->civility_code = trim(GETPOST("civility_code", 'alphanohtml'));
 			$object->firstname   = trim(GETPOST("firstname", 'alphanohtml'));
 			$object->lastname    = trim(GETPOST("lastname", 'alphanohtml'));
 			$object->gender      = trim(GETPOST("gender", 'alphanohtml'));
@@ -513,7 +513,7 @@ if (empty($reshook)) {
 		}
 
 		$typeid = GETPOSTINT("typeid");
-		$civility_id = GETPOST("civility_id", 'alphanohtml');
+		$civility_code = GETPOST("civility_code", 'alphanohtml');
 		$lastname = GETPOST("lastname", 'alphanohtml');
 		$firstname = GETPOST("firstname", 'alphanohtml');
 		$gender = GETPOST("gender", 'alphanohtml');
@@ -539,7 +539,7 @@ if (empty($reshook)) {
 		$socid = GETPOSTINT("socid");
 		$default_lang = GETPOST('default_lang', 'alpha');
 
-		$object->civility_id = $civility_id;
+		$object->civility_code = $civility_code;
 		$object->firstname   = $firstname;
 		$object->lastname    = $lastname;
 		$object->gender      = $gender;
@@ -1190,7 +1190,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Civility
 		print '<tr><td>'.$langs->trans("UserTitle").'</td><td>';
-		print $formcompany->select_civility(GETPOSTINT('civility_id') ? GETPOSTINT('civility_id') : $object->civility_id, 'civility_id', 'maxwidth150', 1).'</td>';
+		print $formcompany->select_civility(GETPOSTISSET('civility_code') ? GETPOST('civility_code') : $object->civility_code, 'civility_code', 'maxwidth150', 1).'</td>';
 		print '</tr>';
 
 		// Lastname
@@ -1424,7 +1424,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Civility
 		print '<tr><td>'.$langs->trans("UserTitle").'</td><td>';
-		print $formcompany->select_civility(GETPOSTISSET("civility_id") ? GETPOST("civility_id", 'alpha') : $object->civility_id, 'civility_id', 'maxwidth150', 1);
+		print $formcompany->select_civility(GETPOSTISSET("civility_code") ? GETPOST("civility_code", 'alpha') : $object->civility_code, 'civility_code', 'maxwidth150', 1);
 		print '</td>';
 		print '</tr>';
 
