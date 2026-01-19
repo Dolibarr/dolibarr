@@ -3147,7 +3147,7 @@ class BookKeeping extends CommonObject
 						}
 					}
 
-					// Insert bookkeeping record for income statement
+					// Insert bookkeeping record for income statement (loss or profit when closing)
 					if (!$error && $income_statement_amount != 0) {
 						$mt = $income_statement_amount;
 						$accountingaccount = new AccountingAccount($this->db);
@@ -3166,6 +3166,7 @@ class BookKeeping extends CommonObject
 						$bookkeeping->thirdparty_code = '';
 
 						if ($separate_auxiliary_account) {
+							/* $obj->subledger_account is not defined here, so all this code do nothing
 							$bookkeeping->subledger_account = $obj->subledger_account;
 							$sql = 'SELECT';
 							$sql .= " subledger_label";
@@ -3181,6 +3182,9 @@ class BookKeeping extends CommonObject
 							}
 							$objtmp = $this->db->fetch_object($result);
 							$bookkeeping->subledger_label = $objtmp->subledger_label ?? null; // latest subledger label used
+							*/
+							$bookkeeping->subledger_account = null;
+							$bookkeeping->subledger_label = null;
 						} else {
 							$bookkeeping->subledger_account = null;
 							$bookkeeping->subledger_label = null;
