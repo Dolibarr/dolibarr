@@ -133,7 +133,7 @@
 
 	<rule ref="Generic.Formatting.SpaceAfterCast" />
 
-	<rule ref="Generic.Functions.CallTimePassByReference" />
+	<!-- <rule ref="Generic.Functions.CallTimePassByReference" /> -->
 
 	<rule ref="Generic.Functions.FunctionCallArgumentSpacing" />
 
