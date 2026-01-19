@@ -50,8 +50,29 @@ $modulepart = GETPOST('modulepart', 'aZ09');
 $upload_dir = $conf->user->dir_temp.'/import';
 dol_mkdir($upload_dir);
 
-// Delete the temporary files that are used when uploading files
-dol_delete_file($upload_dir.'/upload_page-by'.$user->id.'-*');
+$originalfilename = $file;
+$uid = $thiid = $pid = $erid = $salid = 0;
+if (preg_match('/-uid([\d+])/', $file, $reg)) {
+	$uid = $reg[1];
+	$originalfilename = preg_replace('/-uid\d+/', '', $originalfilename);
+}
+if (preg_match('/-thiid([\d+])/', $file, $reg)) {
+	$thiid = $reg[1];
+	$originalfilename = preg_replace('/-thiid\d+/', '', $originalfilename);
+}
+if (preg_match('/-pid([\d+])/', $file, $reg)) {
+	$pid = $reg[1];
+	$originalfilename = preg_replace('/-pid\d+/', '', $originalfilename);
+}
+if (preg_match('/-erid([\d+])/', $file, $reg)) {
+	$erid = $reg[1];
+	$originalfilename = preg_replace('/-erid\d+/', '', $originalfilename);
+}
+if (preg_match('/-salid([\d+])/', $file, $reg)) {
+	$salid = $reg[1];
+	$originalfilename = preg_replace('/-salid\d+/', '', $originalfilename);
+}
+$originalfilename = preg_replace('/^upload_page-[a-z_]+-/', '', $originalfilename);
 
 $error = 0;
 
@@ -114,10 +135,13 @@ if ($action == 'uploadfile') {	// Test on permission not required here. Done lat
 		// TODO Add a js call of ajax service and show instead a message
 		// @phpstan-ignore-next-line $error may have been modified by actions_linkedfiles.inc.php
 		if (!$error) {
-			header("Location: ".DOL_URL_ROOT.'/core/ajax/ajax_upload_page.php?file='.urlencode($fullnewname));
+			header("Location: ".DOL_URL_ROOT.'/core/ajax/ajaxuploadpage.php?file='.urlencode($fullnewname));
 			exit;
 		}
 	}
+} else {
+	// Delete the temporary files that are used when uploading files
+	dol_delete_file($upload_dir.'/upload_page-by'.$user->id.'-*');
 }
 
 
@@ -247,94 +271,109 @@ if (empty($reshook)) {
 $uploadform .= '<br>';
 
 
-// Show all forms
-print "\n";
-print "<!-- Begin UploadForm -->\n";
-print '<form id="uploadform" enctype="multipart/form-data" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="uploadfile">';
-print '<input type="hidden" name="sendit" value="1">';
-print '<input type="hidden" name="modulepart" id="modulepart" value="">';
-print '<input type="hidden" name="overwritefile" value="1">';
+if ($action == 'uploadfile') {
+	print $langs->trans("ImportInProcess", $originalfilename).'<br>';
+	print '<br>';
 
-print '<div class="center"><div class="center" style="padding: 10px;">';
-print '<style>.menu_titre { padding-top: 7px; }</style>';
-print '<div id="blockupload" class="center">'."\n";
-//print '<input name="filenamePDF" id="filenamePDF" type="hideobject">';
-print $uploadform;
+	print $langs->trans("AIProcessingPleaseWait", $ai->getApiService()).'...';
+	print '<br>';
+
+	print '<div class="progress" title="80%">
+	    <div class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+	</div>';
 
 
-$accept = '.pdf,image/*';
-$disablemulti = 1;
-$perm = 1;
-$capture = 1;
+	print '</form>';
+	print "\n<!-- End Form -->\n";
+} else {
+	// Show all forms
+	print "\n";
+	print "<!-- Begin UploadForm -->\n";
+	print '<form id="uploadform" enctype="multipart/form-data" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="uploadfile">';
+	print '<input type="hidden" name="sendit" value="1">';
+	print '<input type="hidden" name="modulepart" id="modulepart" value="">';
+	print '<input type="hidden" name="overwritefile" value="1">';
 
-$maxfilesizearray = getMaxFileSizeArray();
-$max = $maxfilesizearray['max'];
-$maxmin = $maxfilesizearray['maxmin'];
-$maxphptoshow = $maxfilesizearray['maxphptoshow'];
-$maxphptoshowparam = $maxfilesizearray['maxphptoshowparam'];
-$out = '';
-if ($maxmin > 0) {
-	$out .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+	print '<div class="center"><div class="center" style="padding: 10px;">';
+	print '<style>.menu_titre { padding-top: 7px; }</style>';
+	print '<div id="blockupload" class="center">'."\n";
+	//print '<input name="filenamePDF" id="filenamePDF" type="hideobject">';
+	print $uploadform;
+
+
+	$accept = '.pdf,image/*';
+	$disablemulti = 1;
+	$perm = 1;
+	$capture = 1;
+
+	$maxfilesizearray = getMaxFileSizeArray();
+	$max = $maxfilesizearray['max'];
+	$maxmin = $maxfilesizearray['maxmin'];
+	$maxphptoshow = $maxfilesizearray['maxphptoshow'];
+	$maxphptoshowparam = $maxfilesizearray['maxphptoshowparam'];
+	$out = '';
+	if ($maxmin > 0) {
+		$out .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+	}
+	$out .= '<input class="hideobject" type="file" id="fileInput" value=""';
+	// @phpstan-ignore-next-line
+	$out .= ((getDolGlobalString('MAIN_DISABLE_MULTIPLE_FILEUPLOAD') || $disablemulti) ? ' name="userfile"' : ' name="userfile[]" multiple');
+	// @phpstan-ignore-next-line
+	$out .= (!getDolGlobalString('MAIN_UPLOAD_DOC') || empty($perm) ? ' disabled' : '');
+	// @phpstan-ignore-next-line
+	$out .= (!empty($accept) ? ' accept="'.$accept.'"' : ' accept=""');
+	// @phpstan-ignore-next-line
+	$out .= (!empty($capture) ? ' capture="capture"' : '');
+	$out .= '>';
+
+	print $out;
+
+
+	print "<script>
+	$(document).ready(function() {
+		jQuery('#supplierinvoice:not(.disableautoopen)').on('click', function(event) {
+			console.log('Click on link supplierinvoice to open input file');
+			console.log(event);
+			if (!event.target.closest('.disableautoopen')) {
+				$('#modulepart').val('invoice_supplier');
+				$('#fileInput').click();
+			}
+		});
+
+		jQuery('#userexpensereport:not(.disableautoopen)').on('click', function(event) {
+			console.log('Click on link userexpensereport to open input file');
+			console.log(event);
+			if (!event.target.closest('.disableautoopen')) {
+				$('#modulepart').val('expensereport');
+				$('#fileInput').click();
+			}
+		});
+
+		jQuery('#userpayroll:not(.disableautoopen)').on('click', function(event) {
+			console.log('Click on link userpayroll to open input file');
+			console.log(event);
+			if (!event.target.closest('.disableautoopen')) {
+				$('#modulepart').val('salaries');
+				$('#fileInput').click();
+			}
+		});
+
+		jQuery('#fileInput').on('change', function(event) {
+			console.log(event);
+			console.log('A file was selected, we submit the form');
+			$('#uploadform').submit();
+		});
+	});
+	</script>";
+
+	print '</div>'."\n";
+	print '</div></div>';
+
+	print '</form>';
+	print "\n<!-- End UploadForm -->\n";
 }
-$out .= '<input class="hideobject" type="file" id="fileInput" value=""';
-// @phpstan-ignore-next-line
-$out .= ((getDolGlobalString('MAIN_DISABLE_MULTIPLE_FILEUPLOAD') || $disablemulti) ? ' name="userfile"' : ' name="userfile[]" multiple');
-// @phpstan-ignore-next-line
-$out .= (!getDolGlobalString('MAIN_UPLOAD_DOC') || empty($perm) ? ' disabled' : '');
-// @phpstan-ignore-next-line
-$out .= (!empty($accept) ? ' accept="'.$accept.'"' : ' accept=""');
-// @phpstan-ignore-next-line
-$out .= (!empty($capture) ? ' capture="capture"' : '');
-$out .= '>';
-
-print $out;
-
-
-print "<script>
-$(document).ready(function() {
-	jQuery('#supplierinvoice:not(.disableautoopen)').on('click', function(event) {
-		console.log('Click on link supplierinvoice to open input file');
-		console.log(event);
-		if (!event.target.closest('.disableautoopen')) {
-			$('#modulepart').val('invoice_supplier');
-			$('#fileInput').click();
-		}
-	});
-
-	jQuery('#userexpensereport:not(.disableautoopen)').on('click', function(event) {
-		console.log('Click on link userexpensereport to open input file');
-		console.log(event);
-		if (!event.target.closest('.disableautoopen')) {
-			$('#modulepart').val('expensereport');
-			$('#fileInput').click();
-		}
-	});
-
-	jQuery('#userpayroll:not(.disableautoopen)').on('click', function(event) {
-		console.log('Click on link userpayroll to open input file');
-		console.log(event);
-		if (!event.target.closest('.disableautoopen')) {
-			$('#modulepart').val('salaries');
-			$('#fileInput').click();
-		}
-	});
-
-	jQuery('#fileInput').on('change', function(event) {
-		console.log(event);
-		console.log('A file was selected, we submit the form');
-		$('#uploadform').submit();
-	});
-});
-</script>";
-
-print '</div>'."\n";
-print '</div></div>';
-
-print '</form>';
-print "\n<!-- End UploadForm -->\n";
-
 
 
 // End of page

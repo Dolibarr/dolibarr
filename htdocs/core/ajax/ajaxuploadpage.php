@@ -25,7 +25,23 @@
  *       \brief      Page to show a generic upload file feature
  */
 
-require_once '../main.inc.php';
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', 1); // Disables token renewal
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1');
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1');
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');
+}
+if (!defined('NOHEADERNOFOOTER')) {
+	define('NOHEADERNOFOOTER', '1');
+}
+
+require_once '../../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -47,7 +63,7 @@ $langs->loadLangs(array("main", "other", "exports"));
 $action = GETPOST('action', 'aZ09');
 $modulepart = GETPOST('modulepart', 'aZ09');
 
-$upload_dir = $conf->users->dir_temp.'/import';
+$upload_dir = $conf->user->dir_temp.'/import';
 
 // Delete the temporary files that are used when uploading files
 //dol_delete_file($upload_dir.'/upload_page-by'.$user->id.'-*');
@@ -68,6 +84,8 @@ if (preg_match('/^upload_page-([a-z_]+)-uid(\d+)-/', $file, $reg)) {
 $error = 0;
 $errors = array();
 
+$ai = new Ai($db);
+
 
 /*
  * Actions
@@ -84,7 +102,6 @@ $errors = array();
 top_httphead('application/json');
 
 $originalfilename = $file;
-
 $uid = $thiid = $pid = $erid = $salid = 0;
 if (preg_match('/-uid([\d+])/', $file, $reg)) {
 	$uid = $reg[1];
@@ -106,26 +123,7 @@ if (preg_match('/-salid([\d+])/', $file, $reg)) {
 	$salid = $reg[1];
 	$originalfilename = preg_replace('/-salid\d+/', '', $originalfilename);
 }
-
 $originalfilename = preg_replace('/^upload_page-[a-z_]+-/', '', $originalfilename);
-
-
-$ai = new Ai($db);
-
-
-print $langs->trans("ImportInProcess", $originalfilename).'<br>';
-print '<br>';
-
-print $langs->trans("AIProcessingPleaseWait", $ai->getApiService()).'...';
-print '<br>';
-
-print '<div class="progress" title="80%">
-    <div class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-</div>';
-
-
-print '</form>';
-print "\n<!-- End Form -->\n";
 
 
 
@@ -137,6 +135,7 @@ $METHOD = 'converttotext';		// For Mistral and most others
 $docformat = $doctypelabel = $prompt = '';
 $fullpathoffile = $upload_dir.'/'.$file;
 $answer = null;
+$fileContent = '';
 
 // Set the prompting
 if (!$error && $modulepart == 'invoice_supplier') {
@@ -162,7 +161,6 @@ if (!$error && $modulepart == 'invoice_supplier') {
 
 	**Example JSON Structure:**
 
-	```json
 	{
 	 "document_info": {
 	  "document_ref": "<document ref or number>",
@@ -173,17 +171,17 @@ if (!$error && $modulepart == 'invoice_supplier') {
 	  "name": "<name>",
 	  "address": "<address>",
 	  "phone": "<phone number>",
-	  "email": "<email>"
+	  "email": "<email>",
 	  "vatnumber": "<vat number>",
-	  "prodif": "<professional id>",
+	  "profid": "<professional id>"
 	 },
 	 "recipient": {
 	  "name": "<name>",
 	  "address": "<address>",
 	  "phone": "<phone number>",
-	  "email": "<email>"
+	  "email": "<email>",
 	  "vatnumber": "<vat number>",
-	  "prodif": "<professional id>",
+	  "profid": "<professional id>"
 	 },
 	 "items": [
 	  {
@@ -212,7 +210,7 @@ if (!$error && $modulepart == 'invoice_supplier') {
 	  {
        "method": "<check or cash or card or direct_debit or credit_transferor other>",
        "amount": "<detail of the payment>",
-	   "note":"<other information on payment done>
+	   "note":"<other information on payment done>"
       }
 	 ],
 	 "notes": "<optional text>"
@@ -224,25 +222,31 @@ if (!$error && $modulepart == 'invoice_supplier') {
 // TODO Move this into an AJAX service and just output the JS code to call the aajax to start
 
 if ($METHOD == 'converttotext') {
-	$fileContent = 'eee';
+	$result = dolDocToText($fullpathoffile, '', 'fulltext');
+	if (empty($result['error'])) {
+		$fileContent = $result['content'];
+	}
 
-	$prompt = 'This is the content of the document:'."\n\n";
+	if ($fileContent) {
+		$prompt = 'This is the content of the document:'."\n\n".substr($fileContent, 0, 12000)."\n\nQuestion: ".$prompt;
 
-	$prompt .= $fileContent;
+		$result = $ai->generateContent($prompt, 'auto', 'docparsing', '');
+		// $result is an array of error messages or a string with answer
 
-	$result = $ai->generateContent($prompt, 'auto', 'docparsing', '');
-
-	if (!empty($result['error']) || !empty($result['curl_error_no']) || (!empty($result['http_code']) && (int) $result['http_code'] !=200)) {
-		if ($result['error']) {
-			$error++;
-			$errors[] = $result['error'];
-		}
-		if ($result['curl_error_no']) {
-			$error++;
-			$errors[] = $result['curl_error_no'];
+		if (!empty($result['error']) || !empty($result['curl_error_no']) || (!empty($result['http_code']) && (int) $result['http_code'] !=200)) {
+			if ($result['error']) {
+				$error++;
+				$errors[] = $result['error'];
+			}
+			if ($result['curl_error_no']) {
+				$error++;
+				$errors[] = $result['curl_error_no'];
+			}
+		} else {
+			$answer = $result;
 		}
 	} else {
-		$answer = $result;
+		$errors[] = 'Failed to convert document into TXT';
 	}
 }
 
@@ -280,7 +284,13 @@ if ($METHOD == 'thread') {
 
 	// Create assistant
 	if (!$error) {
-		$payload = 'Analyze PDF and answer precisely';
+		$payload = [
+			"name" => "PDF Analyzer",
+			"instructions" => "Analyze PDF and answer precisely",
+			"tools" => [
+				["type" => "file_search"]
+			]
+		];
 
 		$result = $ai->generateContent($payload, 'auto', 'assistant', '', array('OpenAI-Beta', 'assistants=v2'));
 
@@ -430,15 +440,23 @@ if ($METHOD == 'thread') {
 }
 
 
-if (!empty($errors)) {
-	dol_htmloutput_errors('', $errors);
-} else {
-	// Add JS code to scan regularly the status of work and show output and redirect
-
-	var_dump($answer);
-}
-
-
 // End of page
-llxFooter();
+
 $db->close();
+
+
+if (!empty($errors)) {
+	http_response_code(500);
+
+	print json_encode(array('errors' => $errors));
+} else {
+	$data = json_decode($answer, true);
+
+	if ($data == null) {
+		$error++;
+		$errors[] = 'Failed to decode answer';
+		print 'Failed to decode answer';
+	} else {
+		print $answer;
+	}
+}

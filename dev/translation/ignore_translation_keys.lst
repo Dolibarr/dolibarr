@@ -939,7 +939,6 @@ Don
 ECM
 EmptyMessageNotAllowedError
 ErrorInputRequired
-ErrorLDAPFunctionsAreDisabledOnThisPHP
 ErrorUpdating
 Extra
 FailedToConnectToSFTPAfterSSHAuthentication
@@ -1014,7 +1013,6 @@ TicketMessageMailSignatureText
 TicketSetupPage
 Timeline
 Transfer
-TryAnotherConnectionMode
 UndefinedKey
 UnknownType
 UpdateMember
