@@ -27,11 +27,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -39,6 +34,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('accountancy', 'admin', 'bills', 'compta', 'salaries'));
@@ -467,7 +466,7 @@ if ($resql) {
 			$obj = $db->fetch_object($resqlchart);
 			if ($obj) {
 				$labeltoshow = $obj->country_code.' - '.$obj->pcg_version.' - '.$obj->label;
-				$htmltoshow = picto_from_langcode($obj->country_code).' '.$obj->country_code.' - '.$obj->pcg_version.' - '.$obj->label;
+				$htmltoshow = picto_from_langcode($obj->country_code).' '.$obj->country_code.' - '.$obj->pcg_version.' <span class="opacitymedium">- '.$obj->label.'</span>';
 				print '<option value="'.$obj->rowid.'" data-html="'.dolPrintHTMLForAttribute($htmltoshow).'"';
 				print ($pcgver == $obj->rowid) ? ' selected' : '';
 				print '>'.$labeltoshow.'</option>';
