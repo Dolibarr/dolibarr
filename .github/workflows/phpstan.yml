@@ -92,8 +92,10 @@ jobs:
         if: "! cancelled() && steps.changed-php.outputs.any_changed == 'true'"
         env:
           ALL_CHANGED_FILES: ${{ steps.changed-php.outputs.all_changed_files }}
+        # shellcheck disable=2086
         run: |
-          phpstan -vvv analyse --error-format=checkstyle --memory-limit 7G -a dev/build/phpstan/bootstrap_action.php ${ALL_CHANGED_FILES} | tee _stan.xml | cs2pr --graceful-warnings
+          # shellcheck disable=2086
+          phpstan -vvv analyse --error-format=checkstyle --memory-limit 7G -a dev/build/phpstan/bootstrap_action.php "${ALL_CHANGED_FILES}" | tee _stan.xml | cs2pr --graceful-warnings
         # continue-on-error: true
 
       # Save cache

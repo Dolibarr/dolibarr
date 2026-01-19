@@ -55,6 +55,7 @@ jobs:
         if: "! cancelled() && steps.changed-php.outputs.any_changed == 'true'"
         env:
           ALL_CHANGED_FILES: ${{ steps.changed-php.outputs.all_changed_files }}
+        # shellcheck disable=SC2086
         run: |
           # shellcheck disable=2086
           echo "$ALL_CHANGED_FILES" > /tmp/phan-files.txt
