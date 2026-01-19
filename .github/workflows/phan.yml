@@ -61,5 +61,5 @@ jobs:
           > /tmp/phpstan-files.txt
           echo "$ALL_CHANGED_FILES" >> /tmp/phan-files.txt
           cat /tmp/phan-files.txt
-          echo phan --file-list /tmp/phan-files.txt "$PHAN_QUICK" -k "$PHAN_CONFIG" -B "$PHAN_BASELINE" --analyze-twice --minimum-target-php-version "$PHAN_MIN_PHP" --output-mode=github
-          phan --file-list /tmp/phan-files.txt "$PHAN_QUICK" -k "$PHAN_CONFIG" -B "$PHAN_BASELINE" --analyze-twice --minimum-target-php-version "$PHAN_MIN_PHP" --output-mode=github
+          echo phan --file-list /tmp/phan-files.txt $PHAN_QUICK -k "$PHAN_CONFIG" -B "$PHAN_BASELINE" --analyze-twice --minimum-target-php-version "$PHAN_MIN_PHP" --output-mode=github
+          phan --file-list /tmp/phan-files.txt $PHAN_QUICK -k "$PHAN_CONFIG" -B "$PHAN_BASELINE" --analyze-twice --minimum-target-php-version "$PHAN_MIN_PHP" --output-mode=github
