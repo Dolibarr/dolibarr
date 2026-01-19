@@ -2457,7 +2457,7 @@ class pdf_couffignal_situation extends ModelePDFFactures
 
 				// Paiement TTC
 				$pdf->SetXY($currentX, $posy);
-				$pdf->Cell($headers['A payer TTC'], $line_height, price($sousTrait['to_pay']['sum_total_ht']), $border, 0, 'R');
+				$pdf->Cell($headers['A payer TTC'], $line_height, $object->status == Facture::STATUS_DRAFT ? $outputlangs->trans("ADéfinir") : price($sousTrait['to_pay']['sum_total_ht']), $border, 0, 'R');
 				$currentX += $headers['A payer TTC'];
 
 				$posy += $line_height;
@@ -2489,12 +2489,12 @@ class pdf_couffignal_situation extends ModelePDFFactures
 
 				// Facturé HT
 				$pdf->SetXY($currentX, $posy);
-				$pdf->Cell($headers['Facturé HT'], $line_height, price($coTrait['factured']['sum_total_ht']), $border, 0, 'R');
+				$pdf->Cell($headers['Facturé HT'], $line_height, $object->status == Facture::STATUS_DRAFT ? $outputlangs->trans("ADéfinir") : price($coTrait['factured']['sum_total_ht']), $border, 0, 'R');
 				$currentX += $headers['Facturé HT'];
 
 				// Paiement TTC
 				$pdf->SetXY($currentX, $posy);
-				$pdf->Cell($headers['A payer TTC'], $line_height, price($coTrait['to_pay']['sum_total_ttc']), $border, 0, 'R');
+				$pdf->Cell($headers['A payer TTC'], $line_height, $object->status == Facture::STATUS_DRAFT ? $outputlangs->trans("ADéfinir") : price($coTrait['to_pay']['sum_total_ttc']), $border, 0, 'R');
 				$currentX += $headers['A payer TTC'];
 
 				$posy += $line_height;
