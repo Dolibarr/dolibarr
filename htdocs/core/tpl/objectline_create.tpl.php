@@ -1293,19 +1293,28 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 				$('#tva_tx option[value="'+stringforvatrateselection+'"]').prop('selected', true);
 				<?php
 				if (getDolGlobalInt('PRODUIT_AUTOFILL_DESC') == 1) {
+					//#36881 START **************
+					?>
+				var description = $('option:selected', this).attr('data-description');
+				if (typeof description == 'undefined') { description = jQuery('#idprodfournprice').attr('data-description');	}
+				console.log("Load description into text area : "+description);
+					<?php
+					//#36881 END *************
 					if (getDolGlobalString('FCKEDITOR_ENABLE_DETAILS')) {
 						?>
 				if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
 				{
 					var editor = CKEDITOR.instances['dp_desc'];
 					if (editor) {
-						editor.setData('');
+						//#36881 DELETE *************  editor.setData('');
+						editor.setData(description); //#36881 NEW *******************
 					}
 				}
 						<?php
 					} else {
 						?>
-				jQuery('#dp_desc').text('');
+				//#36881 DELETE ************ jQuery('#dp_desc').text('');
+				jQuery('#dp_desc').text(description); //#36881 NEW **************
 						<?php
 					}
 				}
