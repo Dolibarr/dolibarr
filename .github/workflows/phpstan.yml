@@ -71,15 +71,18 @@ jobs:
         run: |
           git fetch origin ${{ github.base_ref }}
           FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep '\.php$' || true)
-          echo "files<<EOF" >> $GITHUB_OUTPUT
-          echo "$FILES" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          {
+            echo "files<<EOF"
+            echo "$FILES"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
 
       # Run PHPStan
       - name: Run PHPStan
         id: phpstan
+        if: steps.files.outputs.files != ''
         run: |
-          phpstan -vvv analyse --error-format=checkstyle --memory-limit 7G -a dev/build/phpstan/bootstrap_action.php | tee _stan.xml | cs2pr --graceful-warnings
+          phpstan -vvv analyse --error-format=checkstyle --memory-limit 7G -a dev/build/phpstan/bootstrap_action.php ${{ steps.files.outputs.files }} | tee _stan.xml | cs2pr --graceful-warnings
         # continue-on-error: true
 
       # Save cache
