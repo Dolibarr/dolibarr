@@ -51,17 +51,11 @@ jobs:
           coverage: none # disable xdebug, pcov
           tools: phan
 
-      - name: Get changed PHP files
-        id: files
-        # shellcheck disable=2086
-        run: |
-          git fetch origin ${{ github.base_ref }}
-          FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep '\.php$' || true)
-          PHP_FILES=$(echo "$FILES" | grep '\.php$' || true)
-          echo "$PHP_FILES" > /tmp/phan-files.txt
-
       - name: Run Phan analysis
-        if: steps.files.outputs.files != ''
+        if: "! cancelled() && steps.changed-php.outputs.any_changed == 'true'"
+        env:
+          ALL_CHANGED_FILES: ${{ steps.changed-php.outputs.all_changed_files }}
         run: |
           # shellcheck disable=2086
+          echo "$ALL_CHANGED_FILES" > /tmp/phan-files.txt
           phan --file-list /tmp/phan-files.txt $PHAN_QUICK -k "$PHAN_CONFIG" -B "$PHAN_BASELINE" --analyze-twice --minimum-target-php-version "$PHAN_MIN_PHP" --output-mode=github

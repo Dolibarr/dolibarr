@@ -66,25 +66,34 @@ jobs:
       - name: Show debug into
         run: cd ./.github/tmp && ls -al
 
-      - name: Get changed PHP files
-        id: files
-        # shellcheck disable=SC2086
-        run: |
-          # shellcheck disable=SC2086
-          git fetch origin ${{ github.base_ref }}
-          FILES=$(git diff --name-only "origin/${{ github.base_ref }}...HEAD" | grep '\.php$' || true)
-          {
-            echo "files<<EOF"
-            echo "$FILES"
-            echo "EOF"
-          } > "$GITHUB_OUTPUT"
+      # Another method to get the list of changed files
+      # It sets the variable steps.changed-php.outputs.all_changed_files for other steps
+      - name: Get all changed php files (if PR)
+        id: changed-php
+        if: env.gh_event == 'pull_request'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ./.github/scripts/get_changed_php.sh
+
+      #- name: Get changed PHP files
+      #  id: files
+      #  run: |
+      #    git fetch origin ${{ github.base_ref }}
+      #    FILES=$(git diff --name-only "origin/${{ github.base_ref }}...HEAD" | grep '\.php$' || true)
+      #    {
+      #      echo "files<<EOF"
+      #      echo "$FILES"
+      #      echo "EOF"
+      #    } > "$GITHUB_OUTPUT"
 
       # Run PHPStan
       - name: Run PHPStan
         id: phpstan
-        if: steps.files.outputs.files != ''
+        if: "! cancelled() && steps.changed-php.outputs.any_changed == 'true'"
+        env:
+          ALL_CHANGED_FILES: ${{ steps.changed-php.outputs.all_changed_files }}
         run: |
-          phpstan -vvv analyse --error-format=checkstyle --memory-limit 7G -a dev/build/phpstan/bootstrap_action.php "${{ steps.files.outputs.files }}" | tee _stan.xml | cs2pr --graceful-warnings
+          phpstan -vvv analyse --error-format=checkstyle --memory-limit 7G -a dev/build/phpstan/bootstrap_action.php ${ALL_CHANGED_FILES} | tee _stan.xml | cs2pr --graceful-warnings
         # continue-on-error: true
 
       # Save cache
