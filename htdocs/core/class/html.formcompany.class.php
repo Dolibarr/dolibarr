@@ -463,16 +463,16 @@ class FormCompany extends Form
 	/**
 	 *  Return combo list with people title
 	 *
-	 *  @param  string	$selected   	Civility/Title code preselected
-	 * 	@param	string	$htmlname		Name of HTML select combo field
-	 *  @param  string  $morecss        Add more css on SELECT element
-	 *  @param	int		$addjscombo		Add js combo
-	 *  @return	string					String with HTML select
+	 *  @param  string		$selected   	Civility/Title code preselected
+	 * 	@param	string		$htmlname		Name of HTML select combo field
+	 *  @param  string 	 	$morecss        Add more css on SELECT element
+	 *  @param	int			$addjscombo		Add js combo
+	 *  @return	string						String with HTML select
 	 */
 	public function select_civility($selected = '', $htmlname = 'civility_id', $morecss = 'maxwidth150', $addjscombo = 1)
 	{
 		// phpcs:enable
-		global $conf, $langs, $user;
+		global $langs, $user;
 		$langs->load("dict");
 
 		$out = '';
