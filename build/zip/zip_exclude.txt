@@ -22,3 +22,9 @@ dolibarr*.deb
 dolibarr*.zip
 cvschangelogbuilder_dolibarr*
 dolibarr_install.log
+.travis.yml
+.vscode
+.idea
+.editorconfig
+.codeclimate.yml
+.pre-commit-config.yaml

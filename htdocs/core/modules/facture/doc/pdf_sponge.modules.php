@@ -404,6 +404,19 @@ class pdf_sponge extends ModelePDFFactures
 						$this->atleastonediscount++;
 					}
 
+					// Do not take into account lines of the type “deposit.”
+					$is_deposit = false;
+					if (preg_match('/^\((.*)\)$/', $object->lines[$i]->desc, $reg)) {
+						if ($reg[1] == 'DEPOSIT') {
+							$is_deposit = true;
+						}
+					}
+					// If DEPOSIT, this line is completely ignored for calculations.
+					if ($is_deposit) {
+						continue;
+					}
+
+
 					// determine category of operation
 					if ($categoryOfOperation < 2) {
 						$lineProductType = $object->lines[$i]->product_type;
@@ -2113,7 +2126,7 @@ class pdf_sponge extends ModelePDFFactures
 			$title = $outputlangs->transnoentities("InvoiceProForma");
 		}
 		if ($this->situationinvoice) {
-			$langs->loadLangs(array("other"));
+			$outputlangs->loadLangs(array("other"));
 			$title = $outputlangs->transnoentities("PDFInvoiceSituation") . " " . $outputlangs->transnoentities("NumberingShort") . $object->situation_counter . " -";
 		}
 		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && is_object($outputlangsbis)) {

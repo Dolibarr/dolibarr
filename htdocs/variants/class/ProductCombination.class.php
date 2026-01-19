@@ -526,7 +526,8 @@ class ProductCombination
 
 			// MultiPrix
 			if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
-				for ($i = 1; $i <= getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT'); $i++) {
+				$produit_multiprices_limit = getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT');
+				for ($i = 1; $i <= $produit_multiprices_limit; $i++) {
 					if ($parent->multiprices[$i] != '' || isset($this->combination_price_levels[$i]->variation_price)) {
 						$new_type = empty($parent->multiprices_base_type[$i]) ? 'HT' : $parent->multiprices_base_type[$i];
 						$new_min_price = $parent->multiprices_min[$i];
@@ -702,16 +703,16 @@ class ProductCombination
 	 * [...]
 	 * )
 	 *
-	 * @param User 			$user 				Object user
-	 * @param Product 		$product 			Parent product
-	 * @param array 		$combinations 		Attribute and value combinations.
-	 * @param array 		$variations 		Price and weight variations
-	 * @param bool|array 	$price_var_percent 	Is the price variation a relative variation?
-	 * @param bool|float 	$forced_pricevar 	If the price variation is forced
-	 * @param bool|float 	$forced_weightvar 	If the weight variation is forced
-	 * @param bool|string 	$forced_refvar 		If the reference is forced
-	 * @param string 	    $ref_ext            External reference
-	 * @return int 								Return integer <0 KO, >0 OK
+	 * @param User 				$user 				Object user
+	 * @param Product 			$product 			Parent product
+	 * @param array 			$combinations 		Attribute and value combinations.
+	 * @param array 			$variations 		Price and weight variations
+	 * @param bool|array		$price_var_percent 	Is the price variation a relative variation?
+	 * @param bool|float|array	$forced_pricevar 	If the price variation is forced
+	 * @param bool|float 		$forced_weightvar 	If the weight variation is forced
+	 * @param bool|string 		$forced_refvar 		If the reference is forced
+	 * @param string 	    	$ref_ext            External reference
+	 * @return int 									Return integer <0 KO, >0 OK
 	 */
 	public function createProductCombination(User $user, Product $product, array $combinations, array $variations, $price_var_percent = false, $forced_pricevar = false, $forced_weightvar = false, $forced_refvar = false, $ref_ext = '')
 	{
@@ -752,8 +753,8 @@ class ProductCombination
 			$price_impact = $forced_pricevar;
 		}
 
-		if (!array($price_var_percent)) {
-			$price_var_percent[1] = (float) $price_var_percent;
+		if (!is_array($price_var_percent)) {
+			$price_var_percent = array(1 => (bool) $price_var_percent);
 		}
 
 		$newcomb = new ProductCombination($this->db);
@@ -835,7 +836,8 @@ class ProductCombination
 
 		// Init price level
 		if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
-			for ($i = 1; $i <= getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT'); $i++) {
+			$produit_multiprices_limit = getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT');
+			for ($i = 1; $i <= $produit_multiprices_limit; $i++) {
 				$productCombinationLevel = new ProductCombinationLevel($this->db);
 				$productCombinationLevel->fk_product_attribute_combination = $newcomb->id;
 				$productCombinationLevel->fk_price_level = $i;
@@ -955,13 +957,26 @@ class ProductCombination
 				$variations[$tmp_pc2v->fk_prod_attr] = $tmp_pc2v->fk_prod_attr_val;
 			}
 
+			$variation_price_percentage = $combination->variation_price_percentage;
+			$variation_price = $combination->variation_price;
+
+			if (getDolGlobalInt('PRODUIT_MULTIPRICES') && getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT') > 1) {
+				$variation_price_percentage = [ ];
+				$variation_price = [ ];
+
+				foreach ($combination->combination_price_levels as $productCombinationLevel) {
+					$variation_price_percentage[$productCombinationLevel->fk_price_level] = $productCombinationLevel->variation_price_percentage;
+					$variation_price[$productCombinationLevel->fk_price_level] = $productCombinationLevel->variation_price;
+				}
+			}
+
 			if ($this->createProductCombination(
 				$user,
 				$destProduct,
 				$variations,
 				array(),
-				$combination->variation_price_percentage,
-				$combination->variation_price,
+				$variation_price_percentage,
+				$variation_price,
 				$combination->variation_weight
 			) < 0) {
 				return -1;

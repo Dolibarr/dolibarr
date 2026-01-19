@@ -44,6 +44,12 @@ $action 	= GETPOST('action', 'aZ09');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
+// Protection
+$socid = 0;
+if ($user->socid > 0) {
+	$socid = $user->socid;
+}
+
 if (GETPOST('actioncode', 'array')) {
 	$actioncode = GETPOST('actioncode', 'array', 3);
 	if (!count($actioncode)) {
@@ -84,7 +90,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
 if ($id > 0 || !empty($ref)) {
-	$upload_dir = $conf->mrp->multidir_output[$object->entity]."/".$object->id;
+	$upload_dir = (empty($conf->mrp->multidir_output[$object->entity]) ? $conf->mrp->dir_output : $conf->mrp->multidir_output[$object->entity])."/".$object->id;
 }
 
 // Security check - Protection if external user
@@ -229,7 +235,10 @@ if ($object->id > 0) {
 	print '</div>';
 
 	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
-		$param = '&id='.$object->id.'&socid='.$socid;
+		$param = '&id='.$object->id;
+		if (!empty($socid)) {
+			$param .= '&socid='.$socid;
+		}
 		if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 			$param .= '&contextpage='.urlencode($contextpage);
 		}

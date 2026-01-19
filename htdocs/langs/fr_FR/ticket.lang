@@ -287,7 +287,7 @@ NoLogForThisTicket=Pas encore de log pour ce ticket
 TicketLogAssignedTo=Ticket %s assigné à %s
 TicketLogPropertyChanged=Ticket %s modifié: classification de %s à %s
 TicketLogClosedBy=Ticket %s clôt par %s
-TicketLogReopen=Ticket %s ré-ouvert 
+TicketLogReopen=Ticket %s ré-ouvert
 
 #
 # Public pages
@@ -309,6 +309,7 @@ TicketNewEmailBodyInfosTrackUrl=Vous pouvez voir la progression du ticket en cli
 TicketNewEmailBodyInfosTrackUrlCustomer=Vous pouvez voir la progression du ticket en cliquant sur le lien ci-dessus.
 TicketCloseEmailBodyInfosTrackUrlCustomer=Vous pouvez consulter l'historique de ce ticket en cliquant sur le lien suivant
 TicketEmailPleaseDoNotReplyToThisEmail=Merci de ne pas répondre directement à ce courriel ! Utilisez le lien pour répondre via l'interface.
+TicketEmailPleaseDoNotReplyToThisEmailNoInterface=Merci de ne pas répondre directement à ce courriel !
 TicketPublicInfoCreateTicket=Ce formulaire vous permet d'enregistrer un ticket dans notre système de gestion.
 TicketPublicPleaseBeAccuratelyDescribe=Veuillez décrire précisément votre question. Fournissez le plus d'informations possible pour nous permettre d'identifier correctement votre demande.
 TicketPublicMsgViewLogIn=Merci d'entrer le code de suivi du ticket

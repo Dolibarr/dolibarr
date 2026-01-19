@@ -5391,16 +5391,12 @@ abstract class CommonObject
 			}
 			$this->tpl['label'] .= $discount->getNomUrl(0, 'discount');
 		} elseif (!empty($line->fk_product)) {
-			$productstatic = new Product($this->db);
-			$productstatic->id = $line->fk_product;
-			$productstatic->ref = $line->ref;
-			$productstatic->type = $line->fk_product_type;
-			if (empty($productstatic->ref)) {
+			if (empty($line->product)) {
 				$line->fetch_product();
-				$productstatic = $line->product;
 			}
+			$productstatic = $line->product;
 
-			$this->tpl['label'] .= $productstatic->getNomUrl(1);
+			$this->tpl['label'] .= (is_object($productstatic) ? $productstatic->getNomUrl(1) : $line->ref);
 			$this->tpl['label'] .= ' - '.(!empty($line->label) ? $line->label : $line->product_label);
 			// Dates
 			if ($line->product_type == 1 && ($date_start || $date_end)) {
@@ -7354,7 +7350,7 @@ abstract class CommonObject
 			}
 
 			$out .= '<select class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '').'>';
-			if ((!isset($this->fields[$key]['default'])) || ($this->fields[$key]['notnull'] != 1)) {
+			if ((!isset($this->fields[$key]['default'])) || empty($this->fields[$key]['notnull']) || ($this->fields[$key]['notnull'] != 1)) {
 				$out .= '<option value="0">&nbsp;</option>';
 			}
 			foreach ($param['options'] as $keyb => $valb) {
