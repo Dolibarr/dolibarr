@@ -1895,8 +1895,17 @@ class EmailCollector extends CommonObject
 					}
 
 					$isanswer = 0;
-					// Subject prefix is not always reliable; use common reply prefixes (multilingual).
-					if (preg_match('/^(回复|回覆|SV|Antw|VS|RE|Re|AW|Aw|ΑΠ|השב| תשובה | הועבר|Vá|R|RIF|BLS|Atb|RES|Odp|பதில்|YNT|ATB)\s*:\s+/i', $headers['Subject'])) {
+					// Some servers strip "In-Reply-To". Keep the early discard, but consider other reply signals too
+					// (References header, Dolibarr reference in thread headers, or common reply prefixes in subject).
+					$subjectIsReply = (preg_match('/^(回复|回覆|SV|Antw|VS|RE|Re|AW|Aw|ΑΠ|השב| תשובה | הועבר|Vá|R|RIF|BLS|Atb|RES|Odp|பதில்|YNT|ATB)\s*:\s+/i', $headers['Subject']));
+					if (empty($headers['In-Reply-To']) && empty($hasdolibarrreference)) {
+						if (empty($headers['References']) && !$subjectIsReply) {
+							$nbemailprocessed++;
+							dol_syslog(" Discarded - Email is not an answer (no In-Reply-To/References headers and no reply prefix in subject)");
+							continue; // Exclude email
+						}
+					}
+					if ($subjectIsReply) {
 						$isanswer = 1;
 					}
 					if (getDolGlobalString('EMAILCOLLECTOR_USE_IN_REPLY_TO_TO_DETECT_ANSWERS')) {
