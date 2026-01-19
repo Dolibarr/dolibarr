@@ -724,7 +724,7 @@ if (empty($reshook)) {
 			$mesg = $object->error;
 		}
 	} elseif ($action == 'updateline' && $permissiontoadd && GETPOST('save', 'alpha')) {
-		// Mise a jour d'une ligne d'intervention
+		// Update intervention line
 		$objectline = new FichinterLigne($db);
 		if ($objectline->fetch($lineid) <= 0) {
 			dol_print_error($db);
@@ -778,7 +778,7 @@ if (empty($reshook)) {
 		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 		exit;
 	} elseif ($action == 'confirm_deleteline' && $confirm == 'yes' && $permissiontoadd) {
-		// Supprime une ligne d'intervention AVEC confirmation
+		// Delete an intervention line with confirmation
 		$objectline = new FichinterLigne($db);
 		if ($objectline->fetch($lineid) <= 0) {
 			dol_print_error($db);
