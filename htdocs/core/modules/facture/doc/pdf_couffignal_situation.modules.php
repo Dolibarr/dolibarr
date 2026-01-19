@@ -1574,8 +1574,8 @@ class pdf_couffignal_situation extends ModelePDFFactures
 
 		$recap_lines['TotalHT'] = array(
 				'name' => $outputlangs->transnoentities("TotalHT"), 
-				'spaceBefore' => 0, 
-				'spaceAfter' => 4, 
+				'spaceBefore' => 4, 
+				'spaceAfter' => 0, 
 				'Hline' => false, 
 				'align' => 'R', 
 				'fontWeight' => 'B', 
