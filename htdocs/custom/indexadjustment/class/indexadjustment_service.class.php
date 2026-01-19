@@ -1,0 +1,539 @@
+<?php
+/* Copyright (C) 2025 Florian Hödl <florian@hoedl.co>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/**
+ * \file       class/indexadjustment_service.class.php
+ * \ingroup    indexadjustment
+ * \brief      Service class for IndexAdjustment business logic
+ */
+
+require_once __DIR__ . '/indexadjustment.class.php';
+require_once __DIR__ . '/indexadjustmentline.class.php';
+require_once __DIR__ . '/indexadjustment_calculator.class.php';
+require_once DOL_DOCUMENT_ROOT . '/contrat/class/contrat.class.php';
+require_once DOL_DOCUMENT_ROOT . '/comm/action/class/actioncomm.class.php';
+
+/**
+ * Class IndexAdjustmentService
+ *
+ * Handles business logic for index adjustments:
+ * - Fetching eligible contracts
+ * - Preview calculations
+ * - Executing adjustments
+ * - Rollback operations
+ * - Event documentation
+ */
+class IndexAdjustmentService
+{
+	/**
+	 * @var DoliDB Database handler
+	 */
+	public $db;
+
+	/**
+	 * @var IndexAdjustmentCalculator Calculator instance
+	 */
+	public $calculator;
+
+	/**
+	 * @var string Error message
+	 */
+	public $error;
+
+	/**
+	 * @var array Error messages
+	 */
+	public $errors = array();
+
+	/**
+	 * Constructor
+	 *
+	 * @param DoliDB $db Database handler
+	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
+		$this->calculator = new IndexAdjustmentCalculator();
+	}
+
+	/**
+	 * Fetch active contracts eligible for adjustment
+	 *
+	 * @param int|null $customerId Optional customer ID filter
+	 * @return array               Array of contracts indexed by ID
+	 */
+	public function fetchActiveContracts($customerId = null)
+	{
+		$contracts = array();
+
+		$sql = "SELECT DISTINCT c.rowid, c.ref, c.ref_customer, c.ref_supplier,";
+		$sql .= " s.rowid as socid, s.nom as socname";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "contrat as c";
+		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe as s ON c.fk_soc = s.rowid";
+		$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "contratdet as cd ON cd.fk_contrat = c.rowid";
+		$sql .= " WHERE c.statut = 1"; // Contract validated
+		$sql .= " AND cd.statut = 4"; // Service line active
+		$sql .= " AND c.entity IN (" . getEntity('contrat') . ")";
+
+		if ($customerId) {
+			$sql .= " AND c.fk_soc = " . (int)$customerId;
+		}
+
+		$sql .= " ORDER BY s.nom ASC, c.ref ASC";
+
+		$result = $this->db->query($sql);
+		if ($result) {
+			while ($obj = $this->db->fetch_object($result)) {
+				$contracts[$obj->rowid] = array(
+					'id' => $obj->rowid,
+					'ref' => $obj->ref,
+					'ref_customer' => $obj->ref_customer,
+					'ref_supplier' => $obj->ref_supplier,
+					'socid' => $obj->socid,
+					'socname' => $obj->socname,
+				);
+			}
+		}
+
+		return $contracts;
+	}
+
+	/**
+	 * Fetch active service lines for a contract
+	 *
+	 * Only returns lines with statut=4 (active running service)
+	 *
+	 * @param int $contractId Contract ID
+	 * @return array          Array of active service lines
+	 */
+	public function fetchActiveServiceLines($contractId)
+	{
+		$lines = array();
+
+		$sql = "SELECT cd.rowid, cd.fk_contrat, cd.fk_product,";
+		$sql .= " cd.description, cd.subprice, cd.qty, cd.tva_tx,";
+		$sql .= " cd.total_ht, cd.total_tva, cd.total_ttc,";
+		$sql .= " cd.statut, cd.date_ouverture, cd.date_fin_validite,";
+		$sql .= " p.ref as product_ref, p.label as product_label";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "contratdet as cd";
+		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON cd.fk_product = p.rowid";
+		$sql .= " WHERE cd.fk_contrat = " . (int)$contractId;
+		$sql .= " AND cd.statut = 4"; // Active running service
+
+		$result = $this->db->query($sql);
+		if ($result) {
+			while ($obj = $this->db->fetch_object($result)) {
+				$lines[$obj->rowid] = array(
+					'id' => $obj->rowid,
+					'fk_contrat' => $obj->fk_contrat,
+					'fk_product' => $obj->fk_product,
+					'description' => $obj->description,
+					'subprice' => (float)$obj->subprice,
+					'qty' => (float)$obj->qty,
+					'tva_tx' => (float)$obj->tva_tx,
+					'total_ht' => (float)$obj->total_ht,
+					'total_tva' => (float)$obj->total_tva,
+					'total_ttc' => (float)$obj->total_ttc,
+					'statut' => $obj->statut,
+					'date_ouverture' => $obj->date_ouverture,
+					'date_fin_validite' => $obj->date_fin_validite,
+					'product_ref' => $obj->product_ref,
+					'product_label' => $obj->product_label ?: $obj->description,
+				);
+			}
+		}
+
+		return $lines;
+	}
+
+	/**
+	 * Preview adjustments for selected contracts
+	 *
+	 * @param array $contractIds Array of contract IDs
+	 * @param float $percent     Adjustment percentage
+	 * @param float $threshold   Minimum threshold (default 0)
+	 * @return array             Preview data with contracts and totals
+	 */
+	public function previewAdjustments($contractIds, $percent, $threshold = 0)
+	{
+		$preview = array(
+			'contracts' => array(),
+			'totals' => array(
+				'total_contracts' => 0,
+				'total_lines' => 0,
+				'total_ht_before' => 0,
+				'total_ht_after' => 0,
+				'total_diff' => 0,
+			),
+		);
+
+		// Check threshold
+		if ($threshold > 0 && !$this->calculator->meetsThreshold($percent, $threshold)) {
+			return $preview;
+		}
+
+		foreach ($contractIds as $contractId) {
+			$lines = $this->fetchActiveServiceLines($contractId);
+
+			if (empty($lines)) {
+				continue;
+			}
+
+			$contractData = array(
+				'id' => $contractId,
+				'lines' => array(),
+				'totals' => array(
+					'total_ht_before' => 0,
+					'total_ht_after' => 0,
+					'total_diff' => 0,
+				),
+			);
+
+			foreach ($lines as $lineId => $line) {
+				$subpriceAfter = $this->calculator->calculateAdjustedPrice($line['subprice'], $percent);
+				$totalHtAfter = $this->calculator->calculateTotalHT($subpriceAfter, $line['qty']);
+				$priceDiff = $this->calculator->calculatePriceDifference($line['subprice'], $subpriceAfter);
+
+				$lineData = array(
+					'id' => $lineId,
+					'fk_contrat' => $contractId,
+					'product_ref' => $line['product_ref'],
+					'product_label' => $line['product_label'],
+					'qty' => $line['qty'],
+					'tva_tx' => $line['tva_tx'],
+					'statut' => $line['statut'],
+					'subprice_before' => $line['subprice'],
+					'subprice_after' => $subpriceAfter,
+					'total_ht_before' => $line['total_ht'],
+					'total_ht_after' => $totalHtAfter,
+					'price_diff' => $priceDiff,
+					'total_diff' => $totalHtAfter - $line['total_ht'],
+				);
+
+				$contractData['lines'][$lineId] = $lineData;
+				$contractData['totals']['total_ht_before'] += $line['total_ht'];
+				$contractData['totals']['total_ht_after'] += $totalHtAfter;
+				$contractData['totals']['total_diff'] += ($totalHtAfter - $line['total_ht']);
+			}
+
+			if (!empty($contractData['lines'])) {
+				$preview['contracts'][$contractId] = $contractData;
+				$preview['totals']['total_contracts']++;
+				$preview['totals']['total_lines'] += count($contractData['lines']);
+				$preview['totals']['total_ht_before'] += $contractData['totals']['total_ht_before'];
+				$preview['totals']['total_ht_after'] += $contractData['totals']['total_ht_after'];
+				$preview['totals']['total_diff'] += $contractData['totals']['total_diff'];
+			}
+		}
+
+		return $preview;
+	}
+
+	/**
+	 * Execute index adjustment
+	 *
+	 * @param IndexAdjustment $adjustment Adjustment object (must be validated)
+	 * @param User            $user       User executing
+	 * @param array           $contractIds Contract IDs to adjust
+	 * @return int                        <0 if KO, >0 if OK
+	 * @throws Exception                  If validation fails
+	 */
+	public function execute($adjustment, $user, $contractIds = array())
+	{
+		global $langs;
+
+		// Validate adjustment status
+		if ($adjustment->status != IndexAdjustment::STATUS_VALIDATED) {
+			throw new Exception($langs->trans('AdjustmentMustBeValidatedBeforeExecution') ?: 'Adjustment must be validated before execution');
+		}
+
+		// Validate required fields
+		if (empty($adjustment->label) || $adjustment->adjustment_percent === null) {
+			throw new Exception($langs->trans('RequiredFieldsMissing') ?: 'Required fields missing');
+		}
+
+		$this->db->begin();
+
+		try {
+			$percent = $adjustment->adjustment_percent;
+			$preview = $this->previewAdjustments($contractIds, $percent);
+
+			if ($preview['totals']['total_lines'] == 0) {
+				throw new Exception($langs->trans('NoActiveServicesFound') ?: 'No active services found');
+			}
+
+			$contract = new Contrat($this->db);
+
+			// Process each contract
+			foreach ($preview['contracts'] as $contractId => $contractData) {
+				$contract->fetch($contractId);
+
+				// Process each line
+				foreach ($contractData['lines'] as $lineId => $lineData) {
+					// Create audit record
+					$line = new IndexAdjustmentLine($this->db);
+					$line->fk_indexadjustment = $adjustment->id;
+					$line->fk_contrat = $contractId;
+					$line->fk_contratdet = $lineId;
+					$line->product_ref = $lineData['product_ref'];
+					$line->product_label = $lineData['product_label'];
+					$line->subprice_before = $lineData['subprice_before'];
+					$line->qty = $lineData['qty'];
+					$line->total_ht_before = $lineData['total_ht_before'];
+					$line->subprice_after = $lineData['subprice_after'];
+					$line->total_ht_after = $lineData['total_ht_after'];
+					$line->price_diff_ht = $lineData['price_diff'];
+
+					$resultLine = $line->create($user);
+					if ($resultLine < 0) {
+						throw new Exception('Failed to create adjustment line: ' . $line->error);
+					}
+
+					// Update contract line price using Dolibarr API
+					$resultUpdate = $contract->updateline(
+						$lineId,                        // Line ID
+						$lineData['product_label'],     // Description
+						$lineData['subprice_after'],    // New subprice
+						$lineData['qty'],               // Qty
+						0,                              // Remise percent
+						0,                              // Date start
+						0,                              // Date end
+						$lineData['tva_tx'],            // VAT rate
+						0,                              // Date planned start
+						0,                              // Date planned end
+						'HT',                           // Price base type
+						0,                              // Info bits
+						0,                              // fk_fournis_price
+						0,                              // Pa HT
+						0,                              // Multicurrency subprice
+						'',                             // Label
+						0,                              // fk_unit
+						0,                              // Product type
+						0,                              // Date ouverture
+						0,                              // Date ouverture fin
+						0,                              // fk_user
+						0,                              // Date cloture
+						''                              // Array options
+					);
+
+					if ($resultUpdate < 0) {
+						throw new Exception('Failed to update contract line: ' . $contract->error);
+					}
+				}
+
+				// Create ActionComm event for this contract
+				$this->createContractEvent($adjustment, $contract, $contractData, $user);
+			}
+
+			// Update adjustment statistics
+			$adjustment->total_contracts = $preview['totals']['total_contracts'];
+			$adjustment->total_lines = $preview['totals']['total_lines'];
+			$adjustment->total_ht_before = $preview['totals']['total_ht_before'];
+			$adjustment->total_ht_after = $preview['totals']['total_ht_after'];
+			$adjustment->setExecuted($user);
+
+			$this->db->commit();
+			return 1;
+
+		} catch (Exception $e) {
+			$this->db->rollback();
+			$this->error = $e->getMessage();
+			$this->errors[] = $e->getMessage();
+			return -1;
+		}
+	}
+
+	/**
+	 * Create ActionComm event for a contract adjustment
+	 *
+	 * @param IndexAdjustment $adjustment Adjustment object
+	 * @param Contrat         $contract   Contract object
+	 * @param array           $data       Contract adjustment data
+	 * @param User            $user       User
+	 * @return int                        <0 if KO, >0 if OK
+	 */
+	protected function createContractEvent($adjustment, $contract, $data, $user)
+	{
+		global $langs, $conf;
+
+		$langs->load("indexadjustment@indexadjustment");
+
+		$actioncomm = new ActionComm($this->db);
+
+		$actioncomm->type_code = 'AC_OTH_AUTO';
+		$actioncomm->code = 'AC_INDEXADJUST';
+		$actioncomm->label = sprintf($langs->trans('IndexAdjustmentExecuted'), $adjustment->ref);
+
+		// Build note with line details
+		$linesText = '';
+		foreach ($data['lines'] as $lineData) {
+			$linesText .= sprintf(
+				"- %s: €%.2f → €%.2f (%+.2f€)\n",
+				$lineData['product_label'],
+				$lineData['subprice_before'],
+				$lineData['subprice_after'],
+				$lineData['price_diff']
+			);
+		}
+
+		$actioncomm->note_private = sprintf(
+			$langs->trans('IndexAdjustmentNote'),
+			$adjustment->ref,
+			dol_print_date($adjustment->adjustment_date, 'day'),
+			$adjustment->adjustment_percent,
+			$linesText,
+			price($data['totals']['total_ht_before'], 0, $langs, 0, -1, 2),
+			price($data['totals']['total_ht_after'], 0, $langs, 0, -1, 2),
+			$data['totals']['total_diff'],
+			$user->getFullName($langs)
+		);
+
+		$actioncomm->datep = dol_now();
+		$actioncomm->datef = dol_now();
+		$actioncomm->durationp = 0;
+		$actioncomm->punctual = 1;
+		$actioncomm->percentage = -1; // Not applicable
+		$actioncomm->socid = $contract->fk_soc;
+		$actioncomm->fk_element = $contract->id;
+		$actioncomm->elementtype = 'contrat';
+		$actioncomm->userownerid = $user->id;
+		$actioncomm->userassigned = array($user->id => array('id' => $user->id));
+
+		return $actioncomm->create($user);
+	}
+
+	/**
+	 * Check if rollback is allowed for adjustment
+	 *
+	 * @param IndexAdjustment $adjustment Adjustment object
+	 * @return bool                       True if rollback is allowed
+	 */
+	public function canRollback($adjustment)
+	{
+		global $conf;
+
+		// Must be executed
+		if ($adjustment->status != IndexAdjustment::STATUS_EXECUTED) {
+			return false;
+		}
+
+		// Check time window
+		$rollbackDays = !empty($conf->global->INDEXADJUSTMENT_ROLLBACK_DAYS) ? $conf->global->INDEXADJUSTMENT_ROLLBACK_DAYS : 30;
+		$maxDate = strtotime("+{$rollbackDays} days", $adjustment->date_executed);
+
+		return dol_now() <= $maxDate;
+	}
+
+	/**
+	 * Rollback index adjustment
+	 *
+	 * @param IndexAdjustment $adjustment Adjustment object
+	 * @param User            $user       User performing rollback
+	 * @return int                        <0 if KO, >0 if OK
+	 */
+	public function rollback($adjustment, $user)
+	{
+		global $langs;
+
+		if (!$this->canRollback($adjustment)) {
+			$this->error = $langs->trans('RollbackNotAllowed');
+			return -1;
+		}
+
+		$this->db->begin();
+
+		try {
+			$contract = new Contrat($this->db);
+
+			// Process each line
+			foreach ($adjustment->lines as $line) {
+				// Skip if already rolled back
+				if ($line->rollback_executed) {
+					continue;
+				}
+
+				// Load contract
+				$contract->fetch($line->fk_contrat);
+
+				// Restore original price
+				$resultUpdate = $contract->updateline(
+					$line->fk_contratdet,
+					$line->product_label,
+					$line->subprice_before,  // Restore original price
+					$line->qty,
+					0, 0, 0, 0, 0, 0, 'HT'
+				);
+
+				if ($resultUpdate < 0) {
+					throw new Exception('Failed to restore contract line: ' . $contract->error);
+				}
+
+				// Mark line as rolled back
+				$line->setRolledBack($user);
+			}
+
+			// Cancel adjustment
+			$adjustment->cancel($user);
+
+			$this->db->commit();
+			return 1;
+
+		} catch (Exception $e) {
+			$this->db->rollback();
+			$this->error = $e->getMessage();
+			return -1;
+		}
+	}
+
+	/**
+	 * Generate event note content
+	 *
+	 * @param IndexAdjustment $adjustment Adjustment object
+	 * @param array           $lines      Lines data
+	 * @param User            $user       User
+	 * @return string                     Note content
+	 */
+	public function generateEventNote($adjustment, $lines, $user)
+	{
+		global $langs;
+
+		$langs->load("indexadjustment@indexadjustment");
+
+		$linesText = '';
+		foreach ($lines as $line) {
+			$linesText .= sprintf(
+				"- %s: €%.2f → €%.2f (%+.2f€)\n",
+				$line['product_label'],
+				$line['subprice_before'],
+				$line['subprice_after'],
+				$line['price_diff']
+			);
+		}
+
+		return sprintf(
+			$langs->trans('IndexAdjustmentNote'),
+			$adjustment->ref,
+			dol_print_date($adjustment->adjustment_date, 'day'),
+			$adjustment->adjustment_percent,
+			$linesText,
+			price($adjustment->total_ht_before, 0, $langs, 0, -1, 2),
+			price($adjustment->total_ht_after, 0, $langs, 0, -1, 2),
+			$adjustment->total_ht_after - $adjustment->total_ht_before,
+			$user->getFullName($langs)
+		);
+	}
+}

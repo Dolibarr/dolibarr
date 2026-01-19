@@ -1,0 +1,91 @@
+# Dolibarr language file - en_US - indexadjustment
+#
+# Copyright (C) 2025 Florian Hödl <florian@hoedl.co>
+
+# Module
+ModuleIndexAdjustmentName = Index Adjustment
+ModuleIndexAdjustmentDesc = Transparent contract index adjustments based on Austrian VPI (Verbraucherpreisindex)
+
+# Menu
+IndexAdjustments = Index Adjustments
+IndexAdjustmentHistory = Price History
+NewIndexAdjustment = New Index Adjustment
+IndexAdjustmentList = Index Adjustments List
+
+# Fields
+IndexAdjustmentRef = Reference
+AdjustmentDate = Adjustment Date
+AdjustmentPercent = Adjustment Percent
+AdjustmentLabel = Label
+AdjustmentDescription = Description
+VPIBaseYear = VPI Base Year
+VPIBaseValue = VPI Base Value
+VPICurrentYear = VPI Current Year
+VPICurrentValue = VPI Current Value
+TotalContracts = Total Contracts
+TotalLines = Total Lines
+TotalHTBefore = Total HT Before
+TotalHTAfter = Total HT After
+SubpriceBefore = Unit Price Before
+SubpriceAfter = Unit Price After
+PriceDiff = Price Difference
+ExecutedBy = Executed By
+ExecutedOn = Executed On
+
+# Status
+StatusDraft = Draft
+StatusValidated = Validated
+StatusExecuted = Executed
+StatusCancelled = Cancelled
+
+# Actions
+CreateIndexAdjustment = Create Index Adjustment
+ValidateIndexAdjustment = Validate Index Adjustment
+ExecuteIndexAdjustment = Execute Index Adjustment
+RollbackIndexAdjustment = Rollback Index Adjustment
+CancelIndexAdjustment = Cancel Index Adjustment
+PreviewAdjustment = Preview Adjustment
+SelectCustomer = Select Customer
+SelectContracts = Select Contracts
+ConfirmExecution = Confirm Execution
+
+# Wizard
+WizardStep1 = Step 1: Settings
+WizardStep2 = Step 2: Select Contracts
+WizardStep3 = Step 3: Preview
+WizardStep4 = Step 4: Execute
+EnterAdjustmentPercent = Enter adjustment percentage
+SelectCustomerOrAll = Select customer or leave empty for all
+FilterActiveContractsOnly = Only active contracts
+FilterActiveServicesOnly = Only active service lines (statut=4)
+
+# Messages
+ConfirmExecuteIndexAdjustment = Are you sure you want to execute this index adjustment? This will update all selected contract line prices.
+ConfirmRollbackIndexAdjustment = Are you sure you want to rollback this index adjustment? This will restore original prices.
+AdjustmentExecutedSuccessfully = Index adjustment executed successfully
+AdjustmentRolledBackSuccessfully = Index adjustment rolled back successfully
+NoContractsFound = No contracts found matching criteria
+NoActiveServicesFound = No active service lines found
+RollbackNotAllowed = Rollback is only allowed within %s days
+RollbackAlreadyExecuted = This adjustment has already been rolled back
+ThresholdNotMet = Adjustment does not meet minimum threshold of %s%%
+
+# ActionComm Event
+IndexAdjustmentExecuted = Index Adjustment: %s
+IndexAdjustmentNote = Index adjustment performed\nReference: %s\nDate: %s\nAdjustment: %+.2f%%\n\nAdjusted Lines:\n%s\nTotal HT: %s EUR -> %s EUR (%+.2f EUR)\nExecuted by: %s
+
+# Admin
+IndexAdjustmentSetup = Index Adjustment Setup
+DefaultThreshold = Default Threshold (%)
+RoundingMode = Rounding Mode
+RollbackDays = Rollback Days
+VPIBaseYearDefault = Default VPI Base Year
+RoundingStandard = Standard (half-up)
+RoundingUp = Round Up
+RoundingDown = Round Down
+
+# Help
+HelpDefaultThreshold = Minimum percentage required for adjustment to be applied. Set to 0 to disable.
+HelpRoundingMode = How to round calculated prices. Standard uses banker's rounding.
+HelpRollbackDays = Number of days after execution during which rollback is allowed.
+HelpVPIBaseYear = Default base year for VPI calculations (e.g., 2020).

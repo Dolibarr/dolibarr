@@ -1,0 +1,91 @@
+# Dolibarr language file - de_DE - indexadjustment
+#
+# Copyright (C) 2025 Florian Hödl <florian@hoedl.co>
+
+# Module
+ModuleIndexAdjustmentName = Indexanpassung
+ModuleIndexAdjustmentDesc = Transparente Vertrags-Indexanpassungen basierend auf dem österreichischen VPI (Verbraucherpreisindex)
+
+# Menu
+IndexAdjustments = Indexanpassungen
+IndexAdjustmentHistory = Preishistorie
+NewIndexAdjustment = Neue Indexanpassung
+IndexAdjustmentList = Indexanpassungen Liste
+
+# Fields
+IndexAdjustmentRef = Referenz
+AdjustmentDate = Anpassungsdatum
+AdjustmentPercent = Anpassung in Prozent
+AdjustmentLabel = Bezeichnung
+AdjustmentDescription = Beschreibung
+VPIBaseYear = VPI Basisjahr
+VPIBaseValue = VPI Basiswert
+VPICurrentYear = VPI aktuelles Jahr
+VPICurrentValue = VPI aktueller Wert
+TotalContracts = Verträge gesamt
+TotalLines = Positionen gesamt
+TotalHTBefore = Summe netto vorher
+TotalHTAfter = Summe netto nachher
+SubpriceBefore = Stückpreis vorher
+SubpriceAfter = Stückpreis nachher
+PriceDiff = Preisdifferenz
+ExecutedBy = Ausgeführt von
+ExecutedOn = Ausgeführt am
+
+# Status
+StatusDraft = Entwurf
+StatusValidated = Validiert
+StatusExecuted = Ausgeführt
+StatusCancelled = Storniert
+
+# Actions
+CreateIndexAdjustment = Indexanpassung erstellen
+ValidateIndexAdjustment = Indexanpassung validieren
+ExecuteIndexAdjustment = Indexanpassung ausführen
+RollbackIndexAdjustment = Indexanpassung rückgängig machen
+CancelIndexAdjustment = Indexanpassung stornieren
+PreviewAdjustment = Vorschau
+SelectCustomer = Kunde auswählen
+SelectContracts = Verträge auswählen
+ConfirmExecution = Ausführung bestätigen
+
+# Wizard
+WizardStep1 = Schritt 1: Einstellungen
+WizardStep2 = Schritt 2: Verträge auswählen
+WizardStep3 = Schritt 3: Vorschau
+WizardStep4 = Schritt 4: Ausführen
+EnterAdjustmentPercent = Anpassungsprozentsatz eingeben
+SelectCustomerOrAll = Kunde auswählen oder leer für alle
+FilterActiveContractsOnly = Nur aktive Verträge
+FilterActiveServicesOnly = Nur aktive Dienstleistungen (statut=4)
+
+# Messages
+ConfirmExecuteIndexAdjustment = Sind Sie sicher, dass Sie diese Indexanpassung ausführen möchten? Dies wird alle ausgewählten Vertragspositions-Preise aktualisieren.
+ConfirmRollbackIndexAdjustment = Sind Sie sicher, dass Sie diese Indexanpassung rückgängig machen möchten? Dies wird die ursprünglichen Preise wiederherstellen.
+AdjustmentExecutedSuccessfully = Indexanpassung erfolgreich ausgeführt
+AdjustmentRolledBackSuccessfully = Indexanpassung erfolgreich rückgängig gemacht
+NoContractsFound = Keine Verträge gefunden, die den Kriterien entsprechen
+NoActiveServicesFound = Keine aktiven Dienstleistungen gefunden
+RollbackNotAllowed = Rückgängigmachen ist nur innerhalb von %s Tagen erlaubt
+RollbackAlreadyExecuted = Diese Anpassung wurde bereits rückgängig gemacht
+ThresholdNotMet = Anpassung erreicht nicht den Mindestschwellenwert von %s%%
+
+# ActionComm Event
+IndexAdjustmentExecuted = Indexanpassung: %s
+IndexAdjustmentNote = Indexanpassung durchgeführt\nReferenz: %s\nDatum: %s\nAnpassung: %+.2f%%\n\nAngepasste Positionen:\n%s\nSumme netto: %s EUR -> %s EUR (%+.2f EUR)\nAusgeführt von: %s
+
+# Admin
+IndexAdjustmentSetup = Indexanpassung Einstellungen
+DefaultThreshold = Standard-Schwellenwert (%)
+RoundingMode = Rundungsmodus
+RollbackDays = Tage für Rückgängigmachen
+VPIBaseYearDefault = Standard VPI Basisjahr
+RoundingStandard = Standard (kaufmännisch)
+RoundingUp = Aufrunden
+RoundingDown = Abrunden
+
+# Help
+HelpDefaultThreshold = Mindestprozentsatz für die Anwendung der Anpassung. Auf 0 setzen um zu deaktivieren.
+HelpRoundingMode = Rundung der berechneten Preise. Standard verwendet kaufmännische Rundung.
+HelpRollbackDays = Anzahl der Tage nach der Ausführung, in denen ein Rückgängigmachen erlaubt ist.
+HelpVPIBaseYear = Standard-Basisjahr für VPI-Berechnungen (z.B. 2020).
