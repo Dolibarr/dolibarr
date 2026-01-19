@@ -111,7 +111,7 @@ if ($object->element == 'mo') {
 		print '</td>';
 
 		print '<td class="linkedcol-name tdoverflowmax150">'.$objectlink->getNomUrl(1).'</td>';
-		print '<td class="linkedcol-ref" >'.$objectlink->ref_client.'</td>';
+		print '<td class="linkedcol-ref tdoverflowmax150" >'.$objectlink->ref_client.'</td>';
 		print '<td class="linkedcol-date center">'.dol_print_date($objectlink->date_start_planned, 'day').'</td>';
 		print '<td class="linkedcol-amount right">-</td>';
 		print '<td class="linkedcol-statut right">'.$objectlink->getLibStatut(3).'</td>';

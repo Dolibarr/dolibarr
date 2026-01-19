@@ -103,8 +103,8 @@ if (! $ENV{"DESTIBETARC"} || ! $ENV{"DESTISTABLE"})
 	print "On Linux:\n";
 	print "export DESTIBETARC='/tmp'; export DESTISTABLE='/tmp';\n";
 	print "On Windows:\n";
-	print "set DESTIBETARC=c:/tmp\n";
-	print "set DESTISTABLE=c:/tmp\n";
+	print "set DESTIBETARC=c:/temp\n";
+	print "set DESTISTABLE=c:/temp\n";
 	print "\n";
 	print "Example in .bashrc:\n";
 	print "export DESTIBETARC='/mnt/HDDATA1_LD/Mes Archives/Doli/dolibarr/lastbuild'\n";

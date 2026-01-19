@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2014-2024  Alexandre Spangaro  <aspangaro@easya.solutions>
- * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2014-2026	Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2018-2024	Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -128,16 +128,19 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $permissiontoadd) {
 			$db->begin();
 
 			$id = $object->create($user);
-
 			if ($id > 0) {
 				$db->commit();
-
-				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
-				exit();
+				header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
+				exit;
 			} else {
 				$db->rollback();
 
-				setEventMessages($object->error, $object->errors, 'errors');
+				// Handle overlap error
+				if ($id == -5 && !empty($object->errors[0])) {
+					setEventMessages($langs->trans($object->error, $object->errors[0]), null, 'errors');
+				} else {
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
 				$action = 'create';
 			}
 		} else {
@@ -145,7 +148,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $permissiontoadd) {
 		}
 	} else {
 		header("Location: ./fiscalyear.php");
-		exit();
+		exit;
 	}
 } elseif ($action == 'update' && $permissiontoadd) {
 	// Update record
@@ -158,16 +161,20 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $permissiontoadd) {
 		$object->status = GETPOSTINT('status');
 
 		$result = $object->update($user);
-
 		if ($result > 0) {
-			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
-			exit();
+			header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
+			exit;
 		} else {
-			setEventMessages($object->error, $object->errors, 'errors');
+			// Handle overlap error
+			if ($result == -5 && !empty($object->errors[0])) {
+				setEventMessages($langs->trans($object->error, $object->errors[0]), null, 'errors');
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
 		}
 	} else {
-		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
-		exit();
+		header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
+		exit;
 	}
 } elseif ($action == 'reopen' && $permissiontoadd && getDolGlobalString('ACCOUNTING_CAN_REOPEN_CLOSED_PERIOD')) {
 	$result = $object->fetch($id);
@@ -211,7 +218,9 @@ if ($action == 'create') {
 	print '<table class="border centpercent tableforfieldcreate">'."\n";
 
 	// Label
-	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" size="32" value="'.GETPOST('label', 'alpha').'"></td></tr>';
+	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td>';
+	print '<input name="label" size="32" value="'.GETPOST('label', 'alpha').'">';
+	print '</td></tr>';
 
 	// Date start
 	print '<tr><td class="fieldrequired">'.$langs->trans("DateStart").'</td><td>';
@@ -257,6 +266,7 @@ if (($id || $ref) && $action == 'edit') {
 	print '<form method="POST" name="update" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
+	print '<input type="hidden" name="status" value="' . $object->status . '">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
 	if ($backtopage) {
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';

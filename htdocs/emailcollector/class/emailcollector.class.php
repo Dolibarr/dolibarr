@@ -1873,9 +1873,28 @@ class EmailCollector extends CommonObject
 				}
 
 				if ($searchfilterisanswer > 0) {
-					if (empty($headers['In-Reply-To'])) {
+					$referencesforanswer = '';
+					if (!empty($headers['References'])) {
+						$referencesforanswer .= $headers['References'].' ';
+					}
+					if (!empty($headers['In-Reply-To'])) {
+						$referencesforanswer .= $headers['In-Reply-To'];
+					}
+
+					$hasdolibarrreference = 0;
+					if (!empty($referencesforanswer)) {
+						if (preg_match('/dolibarr-([a-z]+)([0-9]+)@'.preg_quote($host, '/').'/', $referencesforanswer)) {
+							$hasdolibarrreference = 1;
+						} elseif (getDolGlobalString('EMAIL_ALTERNATIVE_HOST_SIGNATURE')) {
+							if (preg_match('/dolibarr-([a-z]+)([0-9]+)@'.preg_quote(getDolGlobalString('EMAIL_ALTERNATIVE_HOST_SIGNATURE'), '/').'/', $referencesforanswer)) {
+								$hasdolibarrreference = 1;
+							}
+						}
+					}
+
+					if (empty($headers['In-Reply-To']) && empty($hasdolibarrreference)) {
 						$nbemailprocessed++;
-						dol_syslog(" Discarded - Email is not an answer (no In-Reply-To header)");
+						dol_syslog(" Discarded - Email is not an answer (no In-Reply-To header and no Dolibarr reference)");
 						continue; // Exclude email
 					}
 					$isanswer = 0;
@@ -1888,6 +1907,9 @@ class EmailCollector extends CommonObject
 						if (!empty($headers['In-Reply-To'])) {
 							$isanswer = 1;
 						}
+					}
+					if ($hasdolibarrreference) {
+						$isanswer = 1;
 					}
 					//if ($headers['In-Reply-To'] != $headers['Message-ID'] && empty($headers['References'])) $isanswer = 1;	// If in-reply-to differs of message-id, this is a reply
 					//if ($headers['In-Reply-To'] != $headers['Message-ID'] && !empty($headers['References']) && strpos($headers['References'], $headers['Message-ID']) !== false) $isanswer = 1;

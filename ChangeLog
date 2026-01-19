@@ -3,6 +3,84 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
+***** ChangeLog for 22.0.4 compared to 22.0.3 *****
+FIX: $param is the 5th parameter of print_liste_field_titre ($moreparam) (#36250)
+FIX: 17.0: perweek.php resets task progress to 0% when: (#36401)
+FIX: 18.0: GETPOSTDATE and buildParamDate assumed HTTP param names 'minute' and 'second' instead of 'min' and 'sec'
+FIX: 18.0: `GETPOSTDATE()` and `buildParamDate()` assumed wrong HTTP param names
+FIX: 19.0 - attachments upload dir for invoices not always determined correctly (doesn't always take multi-entity into account) (#36302)
+FIX: #33148 - partial payments are taken into account in EPC QR codes (#36338)
+FIX: #33899 API Timespent Service Field
+FIX: #35061
+FIX: #35096 #36393 Add minimal fields required asthe class is used by
+FIX: #35141 (#36390)
+FIX: #35375 Accountancy - SQL error on empty filter account category
+FIX: #35655 API Contract Creation Fails for Non-Admin Users in Version 22.0.2
+FIX: #36090 Accountancy - Inconsistent date on various journal
+FIX: #36149 (#36150)
+FIX: #36310 Accountancy - Data - Wrong account labels (cache) on write bookkeeping action (#36410)
+FIX: #36334 - reload invoice data before pdf-creation in process of generating a new member contribution (#36335)
+FIX: #36347 (#36358)
+FIX: #36368 - avoid overlaying of EPC-QR Code and payment information (#36369)
+FIX: #36576 - date creation is empty on import
+FIX: Accountancy - #36090 Inconsistent date on various journal
+FIX: Accountancy - No limit on chart of account to define category on account
+FIX: Accountancy - Not propose to write operation on draft asset
+FIX: Accountancy - Problem calculating exercises with different tax periods on fixed assets
+FIX: Accountancy - Problem calculating fiscal year with different periods on fixed assets
+FIX: Accountancy - Reverse accounting account in depreciation expense entries for fixed assets
+FIX: Accountancy - Verify fiscal year on last hour to enable the integration of asset entries
+FIX: allow a situation with credit to be removed from cycle
+FIX: API task getTimeSpent to actually return data
+FIX: avoid php warning error (#36330), avoid php warnings (#36301), (#36411)
+FIX: Can Validated Holidays When Negative Balance
+FIX: Concat of PDF to invoices (#36329)
+FIX: create API temp directory in Dolibarr API constructor
+FIX: DA027383: permissions not checked on HRM evaluation card (#36328) (#36399)
+FIX: do not force rowid to int (#36412)
+FIX: Email Collector Module: manage error when imap_fetchstructure return false. Previously it generated warning and fatal error because the returned value was not of type class
+FIX: empty origin type passed to addline when creating invoices from expeditions using massaction (confirm_createbills) (#36413)
+FIX: expense report card: do not show bank account if user cannot see them
+FIX: expense report card: use correct bank module designator for detection
+FIX: Export of extrafield in organized events
+FIX: fix #36401 (for v17.0) doesn't work in v18.0+ because of variable renaming
+FIX: | Fixing addPayment /invoices/id/payments
+FIX: getEntity use element instead table_element (#36405)
+FIX: Implementation of multi-company compatibility with inventory/warehouse management
+FIX: info on supplier payment card on v22 and payment link
+FIX: keep user who validate proposal on update (#36257)
+FIX: List is filtered on task status when it should not
+FIX: Missing AND on fields filter on evaluation class
+FIX: missing p.default_vat_code in product import profile.
+FIX: Missing Product ref in Bom stats
+FIX: Mo::deleteLine() - stock movement correction (#34733)
+FIX: Multicompany compatibility with "project_task"
+FIX: not remove value of others extra-fields on update extras action
+FIX: Object should be cloned here (#36289)
+FIX: PR#36401 fixed a missing GETPOSTISSET() but the check involves a variable ($taskid) that was renamed ($tmptaskid) in 18.0
+FIX: (propal): Incorrect HT/TTC recalculation when editing proposal lines #36514
+FIX: (propal): values lost when editing HT price
+FIX: propal shipping and availability update (v18+)
+FIX: re-create API temp dir after purging temp files
+FIX: remove situation invoice from cycle
+FIX: remove useless condition to create credit on situation invoice (#35786)
+FIX: Search all for supplier proposals via object reference
+FIX: Selection of email when prefilled from a template
+FIX: SQL error for LIST_OF_QUALIFIED_INVOICES_LIMIT_DEFINED
+FIX: subtotal feature button availability according setup
+FIX: TakePOS Missing Thirdparty Id when getting more products (#36341)
+FIX: (tasks): dates in gantt view
+FIX: undefined variables on create invoice card from order (backport from v19) or shipment card (backport from v20)
+FIX: use array_intersect instead in_array
+FIX: warning on select
+FIX: wrong $param parameter position (#36265)
+SEC: 7ed0af2a138a34e7c7005b95c85ffc791976a6cf
+SEC: empty commit for CI automata
+SEC: FIX: #36430 permissions not checked on other tabs of HRM evaluation card
+SEC: fix IDOR attack on employee evaluation. Missing permission test https://github.com/atm-florianm/dolibarr/commit/7ed0af2a138a34e7c7005b95c85ffc791976a6cf
+SEC: permissions not checked on other tabs of HRM evaluation card
+
+
 ***** ChangeLog for 22.0.3 compared to 22.0.2 *****
 FIX: 16.0: extrafield of type link to category causes SQL error in selectForFormsList() (#36074)
 FIX: 20.0 ajax_constantonoff + FormSetup were ignoring custom css class (cssClass / $morecss) (#36039)

@@ -8,6 +8,7 @@
  * Copyright (C) 2021		Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2021		Antonin MARCHAL		<antonin@letempledujeu.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Josep Lluís Amador	<joseplluis@lliuretic.cat>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,7 +67,7 @@ $search_ref = GETPOST('search_ref', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
 $sall = trim(GETPOST('search_all', 'alphanohtml'));
 $type = GETPOSTINT('type');
-$tobuy = GETPOSTINT('tobuy');
+$tobuy = GETPOSTFLOAT('tobuy');
 $salert = GETPOST('salert', 'alpha');
 $includeproductswithoutdesiredqty = GETPOST('includeproductswithoutdesiredqty', 'alpha');
 $mode = GETPOST('mode', 'alpha');
@@ -184,7 +185,7 @@ if ($action == 'order' && GETPOST('valid') && $user->hasRight('fournisseur', 'co
 				$box = $i;
 				$supplierpriceid = GETPOSTINT('fourn'.$i);
 				//get all the parameters needed to create a line
-				$qty = GETPOSTINT('tobuy'.$i);
+				$qty = GETPOSTFLOAT('tobuy'.$i);
 				$idprod = $productsupplier->get_buyprice($supplierpriceid, $qty);
 				$res = $productsupplier->fetch($idprod);
 				if ($res && $idprod > 0) {
