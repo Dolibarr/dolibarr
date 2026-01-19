@@ -95,7 +95,9 @@ jobs:
         # shellcheck disable=2086
         run: |
           # shellcheck disable=2086
-          phpstan -vvv analyse --error-format=checkstyle --memory-limit 7G -a dev/build/phpstan/bootstrap_action.php "${ALL_CHANGED_FILES}" | tee _stan.xml | cs2pr --graceful-warnings
+          echo "$ALL_CHANGED_FILES" > /tmp/phan-files.txt
+          cat /tmp/phan-files.txt
+          phpstan -vvv analyse --error-format=checkstyle --memory-limit 7G -a dev/build/phpstan/bootstrap_action.php ${ALL_CHANGED_FILES} | tee _stan.xml | cs2pr --graceful-warnings
         # continue-on-error: true
 
       # Save cache
@@ -113,6 +115,7 @@ jobs:
           name: phpstan-srcrt
           path: ${{ github.workspace }}/_stan.xml
           retention-days: 2
+
       # Run PHPStan generate baseline
       # - name: Run PHPStan generate baseline
       #   id: phpstan-baseline
