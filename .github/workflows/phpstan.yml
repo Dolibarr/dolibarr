@@ -62,8 +62,18 @@ jobs:
             phpstan-cache-${{ matrix.php-version }}-${{ github.head_ref }}-
             phpstan-cache-${{ matrix.php-version }}-${{ github.base_ref }}-
             phpstan-cache-${{ matrix.php-version }}-
+
       - name: Show debug into
         run: cd ./.github/tmp && ls -al
+
+      - name: Get changed PHP files
+        id: files
+        run: |
+          git fetch origin ${{ github.base_ref }}
+          FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep '\.php$' || true)
+          echo "files<<EOF" >> $GITHUB_OUTPUT
+          echo "$FILES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
       # Run PHPStan
       - name: Run PHPStan
