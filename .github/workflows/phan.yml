@@ -59,5 +59,6 @@ jobs:
         run: |
           # shellcheck disable=2086
           #echo "$ALL_CHANGED_FILES" > /tmp/phan-files.txt
-          for f in "$ALL_CHANGED_FILES"; do echo $f > /tmp/phan-files.txt; done
+          for f in $ALL_CHANGED_FILES; do echo "$f" > /tmp/phan-files.txt; done
+          cat /tmp/phan-files.txt
           phan --file-list /tmp/phan-files.txt "$PHAN_QUICK" -k "$PHAN_CONFIG" -B "$PHAN_BASELINE" --analyze-twice --minimum-target-php-version "$PHAN_MIN_PHP" --output-mode=github
