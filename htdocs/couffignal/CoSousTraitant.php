@@ -98,13 +98,19 @@ class CoSousTraitant
 			array_key_exists('options_typefournisseur', $el->array_options) && $el->array_options['options_typefournisseur'] == $type
 		);
 
-		return array(
+		$result = array(
 			'orders_co_trait' => $filterCommandesFourn($commandesFourn, '1'),
 			'orders_ss_trait' => $filterCommandesFourn($commandesFourn, '2'),
 			// Autoliquidation de TVA = sous traitant, pas d'autoliquidation de TVA = co-traitant
 			'invoices_co_trait' => array_filter($facturesFourn, fn($el) => !$el->vat_reverse_charge),
 			'invoices_ss_trait' => array_filter($facturesFourn, fn($el) => $el->vat_reverse_charge),
 		);
+
+		foreach ($result as $i => $docs) {
+			if (empty($docs)) {$result[$i] = [];}
+		}
+
+		return $result;
 	}
 
 
