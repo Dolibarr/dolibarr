@@ -1381,7 +1381,9 @@ class pdf_couffignal_situation extends ModelePDFFactures
 		}
 
 		/** Orders of projects */
-		$ordersTotalHt = FactureTools::getTotalHtOrdersLinkedToInvoice($this->db, $object);
+		$object->fetchPreviousNextSituationInvoice();
+		$last_invoice = $object->is_last_in_cycle() ? $object : end($object->tab_next_situation_invoice);
+		$ordersTotalHt = FactureTools::getTotalHtOrdersLinkedToInvoice($this->db, $last_invoice);
 		$linesOrders = [];
 		if (count($ordersTotalHt) > 0) {
 			$linesOrders = array_map(static function($v) {
