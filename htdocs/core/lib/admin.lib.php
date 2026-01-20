@@ -5,7 +5,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,10 +30,10 @@
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 /**
- *  Renvoi une version en chaine depuis une version en tableau
+ *  Returns a string version from an array version.
  *
- *  @param		array<int<0,2>,int|string>		$versionarray		Tableau de version (vermajeur,vermineur,autre)
- *  @return     string        			      	Chaine version
+ *  @param		array<int<0,2>,int|string>		$versionarray		Array of version (major,minor,other)
+ *  @return     string        			      	Version in string
  *  @see versioncompare()
  */
 function versiontostring($versionarray)
@@ -2284,7 +2284,7 @@ function GetContentPolicyToArray($forceCSP)
 	foreach ($sourceCSPArr as $key => $arr) {
 		$sourceCSPArrflatten = array_merge($sourceCSPArrflatten, array_keys($arr));
 	}
-	// Gerer le problème avec data:text/plain;base64,SGVsbG8sIFdvcmxkIQ%3D%3D qui est split + problème avec button ajouter
+	// Manage the issue where the data:text/plain;base64,SGVsbG8sIFdvcmxkIQ%3D%3D string is getting split, as well as the issue with the "add" button.
 	$forceCSP = preg_replace('/;base64,/', "__semicolumnbase64__", $forceCSP);
 	$securitypolicies = explode(";", $forceCSP);
 
