@@ -9016,7 +9016,7 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
  *  @param	int				$removeclassattribute	1=Remove the class attribute from tags
  *  @param	int				$cleanalsojavascript	Remove also occurrence of 'javascript:'.
  *  @param	int				$allowiframe			Allow iframe tags.
- *  @param	string,string[]	$allowed_tags			Array of allowed tags to replace the default list or '' or 'common' or 'common,a,b,c'
+ *  @param	string|string[]	$allowed_tags			Array of allowed tags to replace the default list or '' or 'common' or 'common,a,b,c'
  *  @param	int				$allowlink				Allow "link" and "meta" tags (for head html section when using GETPOST with mode 'restricthtmlallowlinkscript')
  *  @param	int				$allowscript			Allow "script" tags (for head html section when using GETPOST with mode 'restricthtmlallowlinkscript')
  *  @param	int				$allowstyle				Allow "style" tags (for head html section when using GETPOST with mode 'restricthtmlallowlinkscript')
