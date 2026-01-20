@@ -101,6 +101,6 @@ ALTER TABLE llx_facture_fourn ADD COLUMN fk_thirdparty_rib_id integer NULL;
 ALTER TABLE llx_facture_fourn ADD COLUMN payment_reference varchar(25);
 ALTER TABLE llx_facture_fourn ADD COLUMN dispute_status	integer DEFAULT 0;
 
-
+ALTER TABLE llx_facture_rec ADD COLUMN fk_email_template integer DEFAULT NULL;
 
 -- end of migration

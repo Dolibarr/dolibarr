@@ -1235,6 +1235,7 @@ class Form
 			if (empty($hidetext)) {
 				print $langs->trans("Type").'...';
 			}
+
 			print '<select class="flat'.($morecss ? ' '.$morecss : '').'" id="select_' . $htmlname . '" name="' . $htmlname . '">';
 			if ($showempty) {
 				print '<option value="-1" class="opacitymedium"'.($useajaxcombo ? '' : ' disabled="disabled"');
@@ -1255,12 +1256,14 @@ class Form
 				print ' selected';
 			}
 			print '>' . $langs->trans("Product");
+			print '</option>';
 
 			print '<option value="1"';
 			if (1 == $selected || ($selected == -1 && getDolGlobalString('MAIN_FREE_PRODUCT_CHECKED_BY_DEFAULT') == 'service')) {
 				print ' selected';
 			}
 			print '>' . $langs->trans("Service");
+			print '</option>';
 
 			print '</select>';
 

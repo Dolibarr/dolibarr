@@ -932,6 +932,26 @@ class SecurityTest extends CommonClassTest
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($stringfixed, $result, 'Error in dolPrintHTML test 1');    // Expected '' because should failed because login 'auto' does not exists
 
+		$stringtotest = "<b>bold</b> <code>aaa</code>";
+		$stringfixed = "<b>bold</b> aaa";
+		//$result = dol_htmlentitiesbr($stringtotest);
+		//$result = dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0);
+		//$result = dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0));
+		//$result = dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0, array())), 1, 1, 'common', 0, 1);
+		$result = dolPrintHTML($stringtotest);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($stringfixed, $result, 'Error in dolPrintHTML test 1');    // Expected '' because should failed because login 'auto' does not exists
+
+		$stringtotest = "<b>bold</b> <code>aaa</code>";
+		$stringfixed = "<b>bold</b> aaa";
+		//$result = dol_htmlentitiesbr($stringtotest);
+		//$result = dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0);
+		//$result = dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0));
+		//$result = dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0, array())), 1, 1, 'common', 0, 1);
+		$result = dolPrintHTML($stringtotest, 0, array('code'));
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($stringfixed, $result, 'Error in dolPrintHTML test 1');    // Expected '' because should failed because login 'auto' does not exists
+
 		// For a string that is already HTML (contains HTML tags) with special tags but badly formatted
 		$stringtotest = "&quot; &gt; &lt; <b>bold</b>";
 		$stringfixed = "&quot; &gt; &lt; <b>bold</b>";
