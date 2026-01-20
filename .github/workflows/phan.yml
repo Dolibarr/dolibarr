@@ -13,7 +13,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: phan-${{ github.workflow }}-${{ github.ref }}
+  group: phan-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 env:
@@ -34,13 +34,32 @@ jobs:
       || github.event.schedule == false
     steps:
       - uses: actions/checkout@v6
+
+      # Another method to get the list of changed files
+      # It sets the variable steps.changed-php.outputs.all_changed_files for other steps
+      - name: Get all changed php files (if PR)
+        id: changed-php
+        if: env.gh_event == 'pull_request'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ./.github/scripts/get_changed_php.sh
+
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: 8.2
           coverage: none # disable xdebug, pcov
-          tools: phan
+          tools: phan:5.5.2
+
       - name: Run Phan analysis
+        if: "! cancelled() && steps.changed-php.outputs.any_changed == 'true'"
+        env:
+          ALL_CHANGED_FILES: ${{ steps.changed-php.outputs.all_changed_files }}
+        # shellcheck disable=2086
         run: |
           # shellcheck disable=2086
-          phan $PHAN_QUICK -k "$PHAN_CONFIG" -B "$PHAN_BASELINE" --analyze-twice --minimum-target-php-version "$PHAN_MIN_PHP" --output-mode=github
+          > /tmp/phpstan-files.txt
+          for f in $ALL_CHANGED_FILES; do echo "$f" >> /tmp/phan-files.txt; done
+          cat /tmp/phan-files.txt
+          echo phan --file-list /tmp/phan-files.txt $PHAN_QUICK -k "$PHAN_CONFIG" -B "$PHAN_BASELINE" --analyze-twice --minimum-target-php-version "$PHAN_MIN_PHP" --output-mode=github
+          phan --file-list /tmp/phan-files.txt $PHAN_QUICK -k "$PHAN_CONFIG" -B "$PHAN_BASELINE" --analyze-twice --minimum-target-php-version "$PHAN_MIN_PHP" --output-mode=github

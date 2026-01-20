@@ -19,6 +19,24 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ *  \file		htdocs/reception/tpl/linkedobjectblock.tpl.php
+ *  \ingroup	reception
+ *  \brief		Template to show objects linked to reception
+ */
+
+/**
+ * @var Translate $langs
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var User $user
+ *
+ * @var CommonObject $object
+ * @var int $noMoreLinkedObjectBlockAfter
+ * @var int $showImportButton
+ * @var Reception[] $linkedObjectBlock
+ */
+
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
@@ -30,19 +48,6 @@ if (empty($conf) || !is_object($conf)) {
 <!-- BEGIN PHP TEMPLATE reception/tpl/linkedobjectblock.tpl.php  -->
 
 <?php
-
-global $user;
-global $noMoreLinkedObjectBlockAfter;
-
-$langs = $GLOBALS['langs'];
-'@phan-var-force Translate $langs';
-/**
- * @var Translate $langs
- * @var CommonObject $object
- */
-$linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
-'@phan-var-force Reception[] $linkedObjectBlock';
-/** @var Reception[] $linkedObjectBlock */
 
 // Load translation files required by the page
 $langs->load("receptions");
@@ -61,13 +66,13 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		$trclass .= ' liste_sub_total';
 	} ?>
 	<tr class="<?php echo $trclass; ?>">
-		<td class="linkedcol-element tdoverflowmax100"><?php echo $langs->trans("Reception"); ?>
+		<td class="linkedcol-element tdoverflowmax125"><?php echo $langs->trans("Reception"); ?>
 		<?php if (!empty($showImportButton) && getDolGlobalInt('MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES')) {
 			print '<a class="objectlinked_importbtn" href="'.$objectlink->getNomUrl(0, '', 0, 1).'&amp;action=selectlines&amp;token='.newToken().'"  data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a';
 		} ?>
 		</td>
 		<td class="linkedcol-name tdoverflowmax150"><?php echo $objectlink->getNomUrl(1); ?></td>
-		<td class="linkedcol-ref tdoverflowmax100" title="<?php echo dol_escape_htmltag($objectlink->ref_supplier); ?>"><?php echo dol_escape_htmltag($objectlink->ref_supplier); ?></td>
+		<td class="linkedcol-ref tdoverflowmax150" title="<?php echo dol_escape_htmltag($objectlink->ref_supplier); ?>"><?php echo dol_escape_htmltag($objectlink->ref_supplier); ?></td>
 		<td class="linkedcol-date"><?php echo dol_print_date($objectlink->date_delivery, 'day'); ?></td>
 		<td class="linkedcol-amount right"><?php
 		if ($user->hasRight('reception', 'lire')) {

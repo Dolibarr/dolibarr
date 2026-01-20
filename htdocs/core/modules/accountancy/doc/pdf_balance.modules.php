@@ -347,9 +347,9 @@ class pdf_balance extends ModelePdfAccountancy
 			$pdf->startTransaction();
 
 			if ($this->balanceType == "sub") {
-				$this->printStdColumnContent($pdf, $curY, 'account_label', $object->lines[$i]->subledger_label);
+				$this->printStdColumnContent($pdf, $curY, 'account_label', (string) $object->lines[$i]->subledger_label);
 			} else {
-				$this->printStdColumnContent($pdf, $curY, 'account_label', $accountingAccount->label);
+				$this->printStdColumnContent($pdf, $curY, 'account_label', (string) $accountingAccount->label);
 			}
 
 			$pageposafter = $pdf->getPage();
@@ -360,9 +360,9 @@ class pdf_balance extends ModelePdfAccountancy
 				$pdf->setPage($pageposafter);
 				$curY = $tab_top_newpage + $this->tabTitleHeight;
 				if ($this->balanceType == "sub") {
-					$this->printStdColumnContent($pdf, $curY, 'account_label',  $object->lines[$i]->subledger_label);
+					$this->printStdColumnContent($pdf, $curY, 'account_label', (string) $object->lines[$i]->subledger_label);
 				} else {
-					$this->printStdColumnContent($pdf, $curY, 'account_label', $accountingAccount->label);
+					$this->printStdColumnContent($pdf, $curY, 'account_label', (string) $accountingAccount->label);
 				}
 
 				$pageposafter = $pdf->getPage();
@@ -559,6 +559,7 @@ class pdf_balance extends ModelePdfAccountancy
 		$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 		global $action;
 		$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		$this->warnings = $hookmanager->warnings;
 		if ($reshook < 0) {
 			$this->error = $hookmanager->error;
 			$this->errors = $hookmanager->errors;

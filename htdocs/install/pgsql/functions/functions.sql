@@ -74,7 +74,6 @@ CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_bank FOR EACH ROW EX
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_bank_account FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_bank_account_extrafields FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_blockedlog FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
-CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_blockedlog_authority FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_bordereau_cheque FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_boxes_def FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_c_email_templates FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();

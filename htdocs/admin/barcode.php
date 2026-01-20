@@ -518,7 +518,7 @@ if (getDolGlobalString('BARCODE_USE_ON_PRODUCT') || getDolGlobalString('BARCODE_
 		print '<td>'.$langs->trans("GenbarcodeLocation").'</td>';
 		print '<td width="60" class="center">';
 		print '<input type="text" size="40" name="GENBARCODE_LOCATION" value="'.getDolGlobalString('GENBARCODE_LOCATION').'">';
-		if (getDolGlobalString('GENBARCODE_LOCATION') && !@file_exists($conf->global->GENBARCODE_LOCATION)) {
+		if (getDolGlobalString('GENBARCODE_LOCATION') && !@file_exists(getDolGlobalString('GENBARCODE_LOCATION'))) {
 			$langs->load("errors");
 			print '<br><span class="error">'.$langs->trans("ErrorFileNotFound", getDolGlobalString('GENBARCODE_LOCATION')).'</span>';
 		}

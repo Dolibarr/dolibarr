@@ -902,9 +902,13 @@ if ($action == 'charge' && isModEnabled('stripe')) {	// Test on permission not r
 	$_SESSION["currencyCodeType"] = $currency;		// currency really used for payment (coming from Stripe). Will be used for check in paymentok.php.
 	$_SESSION["paymentType"] = '';
 	$_SESSION['ipaddress'] = ($remoteip ? $remoteip : 'unknown'); // Payer ip
-	$_SESSION['payerID'] = is_object($customer) ? $customer->id : '';
 	$_SESSION['TRANSACTIONID'] = (is_object($charge) ? $charge->id : (is_object($paymentintent) ? $paymentintent->id : ''));
 	$_SESSION['errormessage'] = $errormessage;
+	if (!getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION')) {
+		$_SESSION['payerID'] = is_object($customer) ? $customer->id : '';
+	} else {
+		$_SESSION['payerID'] = '';
+	}
 
 	dol_syslog("Action charge stripe STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION=".getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION')." ip=".$remoteip, LOG_DEBUG, 0, '_payment');
 	dol_syslog("_SERVER[HTTP_X_FORWARDED_HOST] = ".(empty($_SERVER["HTTP_X_FORWARDED_HOST"]) ? '' : dol_escape_htmltag($_SERVER["HTTP_X_FORWARDED_HOST"])), LOG_DEBUG, 0, '_payment');
@@ -1086,7 +1090,7 @@ if (getDolGlobalString('PAYMENT_NEWFORM_TEXT')) {
 	} else {
 		$text .= getDolGlobalString('PAYMENT_NEWFORM_TEXT') . "<br>\n";
 	}
-	$text = '<tr><td align="center"><br>'.$text.'<br></td></tr>'."\n";
+	$text = '<tr><td class="center"><br>'.$text.'<br></td></tr>'."\n";
 }
 if (empty($text)) {
 	$text .= '<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("WelcomeOnPaymentPage").'</strong></td></tr>'."\n";
@@ -1097,7 +1101,7 @@ print $text;
 // Output payment summary form
 print '<tr><td align="center">';	// class=center does not have the payment button centered so we keep align here.
 print '<table class="centpercent left" id="tablepublicpayment">';
-print '<tr class="hideonsmartphone"><td colspan="2" align="left" class="opacitymedium">'.$langs->trans("ThisIsInformationOnPayment").' :</td></tr>'."\n";
+print '<tr class="hideonsmartphone"><td colspan="2" class="opacitymedium">'.$langs->trans("ThisIsInformationOnPayment").'...<br><br></td></tr>'."\n";
 
 $found = false;
 $error = 0;
@@ -2298,7 +2302,9 @@ if ($action != 'dopayment') {
 					// If STRIPE_USE_IDEMPOTENCY_BY_DEFAULT is set or param noidempotency=0 is added, then with add an idempotent key, so we must use a different tag/ref for each payment (if not we will get an error).
 					$noidempotency_key = (GETPOSTISSET('noidempotency') ? GETPOSTINT('noidempotency') : (getDolGlobalInt('STRIPE_USE_IDEMPOTENCY_BY_DEFAULT') ? 0 : 1));
 
-					print '<div class="button buttonpayment" id="div_dopayment_stripe"><span class="fa fa-credit-card"></span> <input class="" type="submit" id="dopayment_stripe" name="dopayment_stripe" value="'.$langs->trans("StripeDoPayment").'">';
+					print '<div class="button buttonpayment" id="div_dopayment_stripe">';
+					print '<span class="fa fa-credit-card"></span> ';
+					print '<input class="" type="submit" id="dopayment_stripe" name="dopayment_stripe" value="'.$langs->trans("StripeDoPayment").'">';
 					print '<input type="hidden" name="noidempotency" value="'.$noidempotency_key.'">';
 					print '<br>';
 					print '<span class="buttonpaymentsmall">'.$langs->trans("CreditOrDebitCard").'</span>';
@@ -2509,7 +2515,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we chose/clicked on the payme
 		print '<div class="form-row '.(getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION') == 2 ? 'center' : 'left').'">';
 		if (getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION') == 1) {
 			print '<label for="card-element">'.$langs->trans("CreditOrDebitCard").'</label>';
-			print '<br><input id="cardholder-name" class="marginbottomonly" name="cardholder-name" value="" type="text" placeholder="'.$langs->trans("CardOwner").'" autocomplete="off" autofocus required>';
+			print '<br><input id="cardholder-name" class="marginbottomonly" name="cardholder-name" value="" type="text" placeholder="'.$langs->trans("CardOwner").'" autocomplete="off" spellcheck="false" autofocus required>';
 		}
 
 		if (getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION') == 1) {

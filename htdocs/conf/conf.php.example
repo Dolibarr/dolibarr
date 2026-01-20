@@ -316,11 +316,11 @@ $dolibarr_main_restrict_os_commands='mariadb-dump, mariadb, mysqldump, mysql, pg
 // ==================================
 // A whitelist of functions and methods to restrict the commands you can execute in a custom calculated fields, like "computed fields" of
 // extrafields or string conditions of extrafields.
-// Default value: 'getDolGlobalString, getDolGlobalInt, getDolCurrency, fetchNoCompute, hasRight, isAdmin, isModEnabled, isStringVarMatching, abs, round, dol_now, preg_match'
+// Default value: 'getDolGlobalString, getDolGlobalInt, getDolCurrency, getDolEntity, getDolDBType, fetchNoCompute, hasRight, isAdmin, isModEnabled, isStringVarMatching, abs, round, dol_now, preg_match'
 // Examples:
-// $dolibarr_main_restrict_eval_methods='getDolGlobalString, getDolGlobalInt, getDolCurrency, fetchNoCompute, hasRight, isAdmin, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, dol_concat, preg_match';
+// $dolibarr_main_restrict_eval_methods='getDolGlobalString, getDolGlobalInt, getDolCurrency, getDolEntity, getDolDBType, fetchNoCompute, hasRight, isAdmin, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, dol_concat, preg_match';
 //
-$dolibarr_main_restrict_eval_methods='getDolGlobalString, getDolGlobalInt, getDolCurrency, fetchNoCompute, hasRight, isAdmin, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, preg_match';
+$dolibarr_main_restrict_eval_methods='getDolGlobalString, getDolGlobalInt, getDolCurrency, getDolEntity, getDolDBType, fetchNoCompute, hasRight, isAdmin, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, preg_match';
 
 // dolibarr_main_disabled_modules
 // ==================================
@@ -333,11 +333,12 @@ $dolibarr_main_restrict_eval_methods='getDolGlobalString, getDolGlobalInt, getDo
 
 // dolibarr_main_restrict_ip
 // =========================
-// To restrict access to backoffice to some ip addresses only. Use a comma to separate values.
+// To restrict access to backoffice to some ip addresses only. Use a comma to separate values. Possible to use IPv4 and IPv6 addresses.
+// Networks can be covered with CIDR notation.
 // Note: Pages that does not need login (like public pages, web site) are not protected with this.
 // Default value: ''
 // Examples:
-// $dolibarr_main_restrict_ip='127.0.0.1, ::1, 192.168.0.1';
+// $dolibarr_main_restrict_ip='127.0.0.1, ::1, 192.168.0.1, 192.168.0.0/24, 2a01:e0a:123:456::/64';
 //
 $dolibarr_main_restrict_ip='';
 

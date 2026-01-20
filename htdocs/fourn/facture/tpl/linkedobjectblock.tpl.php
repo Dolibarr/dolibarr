@@ -20,6 +20,23 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ *  \file		htdocs/fourn/facture/tpl/linkedobjectblock.tpl.php
+ *  \ingroup	fourn
+ *  \brief		Template to show objects linked to purchase invoices
+ */
+
+/**
+ * @var Translate $langs
+ * @var Conf $conf
+ * @var User $user
+ *
+ * @var CommonObject $object
+ * @var int $noMoreLinkedObjectBlockAfter
+ * @var int $showImportButton
+ * @var FactureFournisseur[] $linkedObjectBlock
+ */
+
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
@@ -28,21 +45,6 @@ if (empty($conf) || !is_object($conf)) {
 
 
 print "<!-- BEGIN PHP TEMPLATE fourn/facture/tpl/linkedobjectblock.tpl.php -->\n";
-
-
-global $user;
-global $noMoreLinkedObjectBlockAfter;
-
-$langs = $GLOBALS['langs'];
-'@phan-var-force Translate $langs';
-/**
- * @var CommonObject $object
- * @var Translate $langs
- */
-$linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
-'@phan-var-force FactureFournisseur[] $linkedObjectBlock';
-/** @var FactureFournisseur[] $linkedObjectBlock */
-
 
 $langs->load("bills");
 
@@ -56,9 +58,10 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		$trclass .= ' liste_sub_total';
 	} ?>
 	<tr class="<?php echo $trclass; ?>">
-		<td><?php echo $langs->trans("SupplierInvoice"); ?></td>
+		<td class="tdoverflowmax125"><?php echo $langs->trans("SupplierInvoice"); ?></td>
+
 		<td><?php echo $objectlink->getNomUrl(1) ?></td>
-		<td class="left"><?php echo $objectlink->ref_supplier; ?></td>
+		<td class="left linkedcol-ref tdoverflowmax125" title="<?php echo dolPrintHTMLForAttribute($objectlink->ref_supplier); ?>"><?php echo dolPrintHTML($objectlink->ref_supplier); ?></td>
 		<td class="center"><?php echo dol_print_date($objectlink->date, 'day'); ?></td>
 		<td class="right"><?php
 		if ($user->hasRight('fournisseur', 'facture', 'lire')) {

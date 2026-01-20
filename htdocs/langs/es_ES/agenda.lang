@@ -2,6 +2,7 @@
 IdAgenda=ID de evento
 Actions=Eventos
 Agenda=Agenda
+AgendaEvents=Eventos de la agenda
 TMenuAgenda=Agenda
 Agendas=Agendas
 LocalAgenda=Calendario predeterminado
@@ -33,6 +34,7 @@ AgendaSetupOtherDesc= Esta página le permite configurar algunas opciones que pe
 AgendaExtSitesDesc=Esta página le permite configurar calendarios externos para su visualización en la agenda de Dolibarr.
 ActionsEvents=Eventos para que Dolibarr cree un evento en la agenda de forma automática
 EventRemindersByEmailNotEnabled=Los recordatorios de eventos por e-mail no se activaron en la configuración del módulo %s.
+EventRemindersBySmsNotEnabled=Los recordatorios de eventos por SMS no estaban habilitados en la configuración del módulo %s.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Tercero %s creado
 COMPANY_MODIFYInDolibarr=Tercero %s modificado
@@ -44,6 +46,7 @@ PropalClosedRefusedInDolibarr=Presupuesto %s rechazado
 PropalValidatedInDolibarr=Presupuesto %s validado
 PropalBackToDraftInDolibarr=Propuesta %s volver al estado de borrador
 PropalClassifiedBilledInDolibarr=Presupuesto %s clasificado facturado
+InvoiceCreatedInDolibarr=Factura %s creada
 InvoiceValidatedInDolibarr=Factura %s validada
 InvoiceValidatedInDolibarrFromPos=Factura %s validada desde TPV
 InvoiceBackToDraftInDolibarr=Factura %s devuelta a borrador
@@ -134,14 +137,14 @@ AgendaModelModule=Plantillas de documentos para eventos
 DateActionStart=Fecha de inicio
 DateActionEnd=Fecha finalización
 AgendaUrlOptions1=Puede también añadir estos parámetros al filtro de salida:
-AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
+AgendaUrlOptions3=<b>logina=%s</b> para restringir la salida a acciones propiedad de un usuario <b>%s</b> (use <b>logina=!%s</b> para eventos que no son propiedad del usuario).
 AgendaUrlOptions4=<b>logint=%s</b>para restringir notificaciones en acciones asignadas al usuario <b>%s</b>(propietario y otros).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> para restringir exportación de acciones asociadas al proyecto <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
-AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
+AgendaUrlOptionsType=<b>actiontype=%s</b> para obtener eventos automáticos o manuales
+AgendaUrlOptionsCode=<b>actioncode=%s</b> para obtener solo eventos con un código determinado
 AgendaUrlOptionsIncludeHolidays= <b> includeholidays = 1 </b> para incluir eventos de días libres.
-AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
-AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> para limitar a eventos de los últimos %s días (el valor predeterminado es %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> para limitar a los últimos 50 eventos (el valor predeterminado y el máximo es %s).
 AgendaShowBirthdayEvents=Cumpleaños de contactos
 AgendaHideBirthdayEvents=Ocultar cumpleaños de los contactos
 Busy=Ocupado
@@ -168,8 +171,10 @@ OnceOnly=Una sola vez
 EveryDay=Todos los días
 EveryWeek=Cada semana
 EveryMonth=Cada mes
+EveryYear=Cada año
 DayOfMonth=Día del mes
 DayOfWeek=Día de la semana
+DayOfYear=Día del año
 DateStartPlusOne=Fecha inicio +1 hora
 SetAllEventsToTodo=Establecer todos los eventos para hacer
 SetAllEventsToInProgress=Establecer todos los eventos en progreso
@@ -203,5 +208,10 @@ BookingSuccessfullyBooked=Tu reserva ha sido guardada
 BookingReservationHourAfter=Confirmamos la reserva de nuestra reunión en la fecha %s
 BookcalBookingTitle=cita en línea
 Transparency = Transparencia
-ReadMore = Read more
-ReadLess = Read less
+ReadMore = Leer más
+ReadLess = Leer menos
+RecurringEvent=Evento recurrente
+EventPartOfARecurringSerie=El evento es parte de una serie recurrente con ID %s
+BookCalSystem=Reserva online
+BookCalInitHelp=Para comenzar, vaya al menú para crear un nuevo Calendario con disponibilidades...
+PublicLinkForBooking=Enlace público para reservas

@@ -846,4 +846,3 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 7840,'PCG','RESU','85',7831,'Résultat non courant','1');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 7841,'PCG','RESU','86',7831,'Résultat avant impôt','1');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 7842,'PCG','RESU','88',7831,'Résultat après impôt','1');
-

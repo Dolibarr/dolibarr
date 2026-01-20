@@ -246,7 +246,10 @@ if ($nolinesbefore) {
 			if ($forceall >= 0 && (isModEnabled("product") || isModEnabled("service"))) {
 				print '<label for="prod_entry_mode_free">';
 			}
+
+			// Select type of line
 			$form->select_type_of_lines(GETPOSTISSET("type") ? GETPOST("type", 'alpha', 2) : -1, 'type', $labelforempty, 1, $forceall, 'minwidth200', 0);
+
 			if ($forceall >= 0 && (isModEnabled("product") || isModEnabled("service"))) {
 				print '</label>';
 			}

@@ -942,8 +942,8 @@ class pdf_cyan extends ModelePDFPropales
 				}
 
 				// Add terms to sale
-				if (getDolGlobalString('MAIN_INFO_PROPAL_TERMSOFSALE') && getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_PROPAL')) {
-					$termsofsalefilename = getDolGlobalString('MAIN_INFO_PROPAL_TERMSOFSALE');
+				$termsofsalefilename = getDolGlobalString('MAIN_INFO_PROPAL_TERMSOFSALE');
+				if (getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_PROPAL') && $termsofsalefilename) {
 					$termsofsale = $conf->propal->dir_output.'/'.$termsofsalefilename;
 					if (!empty($conf->propal->multidir_output[$object->entity ?? $conf->entity])) {
 						$termsofsale = $conf->propal->multidir_output[$object->entity ?? $conf->entity].'/'.$termsofsalefilename;
@@ -1045,6 +1045,7 @@ class pdf_cyan extends ModelePDFPropales
 				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+				$this->warnings = $hookmanager->warnings;
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
@@ -1980,7 +1981,7 @@ class pdf_cyan extends ModelePDFPropales
 				if (!empty($carac_client_shipping)) {
 					$posy += $hautcadre;
 
-					$hautcadre -= 10;	// Height for the shipping address does not need to be as high as main box
+					$hautcadre -= 5; // Height for the shipping address does not need to be as high as main box
 
 					// Show shipping frame
 					$pdf->SetXY($posx + 2, $posy - 5);

@@ -463,16 +463,16 @@ class FormCompany extends Form
 	/**
 	 *  Return combo list with people title
 	 *
-	 *  @param  string	$selected   	Civility/Title code preselected
-	 * 	@param	string	$htmlname		Name of HTML select combo field
-	 *  @param  string  $morecss        Add more css on SELECT element
-	 *  @param	int		$addjscombo		Add js combo
-	 *  @return	string					String with HTML select
+	 *  @param  string		$selected   	Civility/Title code preselected
+	 * 	@param	string		$htmlname		Name of HTML select combo field
+	 *  @param  string 	 	$morecss        Add more css on SELECT element
+	 *  @param	int			$addjscombo		Add js combo
+	 *  @return	string						String with HTML select
 	 */
 	public function select_civility($selected = '', $htmlname = 'civility_id', $morecss = 'maxwidth150', $addjscombo = 1)
 	{
 		// phpcs:enable
-		global $conf, $langs, $user;
+		global $langs, $user;
 		$langs->load("dict");
 
 		$out = '';
@@ -747,7 +747,8 @@ class FormCompany extends Form
 			if (getDolGlobalString('COMPANY_SHOW_ADDRESS_SELECTLIST')) {
 				$sql .= " LEFT JOIN " . $this->db->prefix() . "c_country as dictp ON dictp.rowid = s.fk_pays";
 			}
-			$sql .= " WHERE s.entity IN (" . getEntity('societe') . ")";
+			// Filter on active third parties only (status = 1) Closed third parties must not be selectable
+			$sql .= " WHERE s.entity IN (" . getEntity('societe') . ")  AND s.status = 1";
 			// For ajax search we limit here. For combo list, we limit later
 			if (is_array($limitto) && count($limitto)) {
 				$sql .= " AND s.rowid IN (" . $this->db->sanitize(implode(',', $limitto)) . ")";

@@ -49,7 +49,7 @@ class mod_ticket_simple extends ModeleNumRefTicket
 	public $error = '';
 
 	/**
-	 * @var string Nom du modele
+	 * @var string Name of model
 	 * @deprecated
 	 * @see $name
 	 */

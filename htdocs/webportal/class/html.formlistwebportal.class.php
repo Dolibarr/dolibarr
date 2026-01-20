@@ -366,11 +366,14 @@ class FormListWebPortal
 	}
 
 	/**
-	 * set SQL request
+	 * Set SQL request
 	 *
+	 * @param	string	$sqlSelect		[=''] Add more fields in SQL select
+	 * @param	string	$sqlBody		[=''] Add more fields in SQL where
+	 * @param 	string	$sqlOrder		[=''] Add more fields in SQL order by
 	 * @return	void
 	 */
-	public function setSqlRequest()
+	public function setSqlRequest($sqlSelect = '', $sqlBody = '', $sqlOrder = '')
 	{
 		global $hookmanager;
 
@@ -384,8 +387,11 @@ class FormListWebPortal
 			if ($this->object->ismultientitymanaged == 1) {
 				$this->sql_select .= ", t.entity as element_entity, t.entity";
 			}
+			$this->sql_select .= $sqlSelect;
 			// Add fields from hooks
-			$parameters = array();
+			$parameters = array(
+				'sql_select' => &$this->sql_select,
+			);
 			$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $context);
 			$this->sql_select .= $hookmanager->resPrint;
 			$this->sql_select = preg_replace('/,\s*$/', '', $this->sql_select);
@@ -455,8 +461,11 @@ class FormListWebPortal
 			if (!empty($this->search_all) && !empty($this->fields_to_search_all)) {
 				$this->sql_body .= natural_search(array_keys($this->fields_to_search_all), $this->search_all);
 			}
+			$this->sql_body .= $sqlBody;
 			// Add where from hooks
-			$parameters = array();
+			$parameters = array(
+				'sql_body' => &$this->sql_body,
+			);
 			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $context);
 			$this->sql_body .= $hookmanager->resPrint;
 
@@ -466,6 +475,13 @@ class FormListWebPortal
 			$this->offset = $this->limit * ($this->page - 1);
 
 			$this->sql_order = $this->db->order($this->sortfield, $this->sortorder);
+			$this->sql_order .= $sqlOrder;
+			// Add order by from hooks
+			$parameters = array(
+				'sql_order' => &$this->sql_order,
+			);
+			$reshook = $hookmanager->executeHooks('printFieldListOrderBy', $parameters, $context);
+
 			if ($this->limit) {
 				$this->sql_order .= $this->db->plimit($this->limit, $this->offset);
 			}

@@ -474,6 +474,19 @@ abstract class DoliDB implements Database
 	}
 
 	/**
+	 * Get the last ID of an auto-increment field of a table
+	 *
+	 * @param 	string 		$table 	Name of table
+	 * @return 	int		 			Next ID or -1 if error
+	 */
+	public function getNextAutoIncrementId($table)
+	{
+		$this->lasterror = 'getNextAutoIncrementId() not implemented for this driver. Failed to get next ID for table '.$table;
+
+		return -1;
+	}
+
+	/**
 	 * Prepare a SQL statement for execution
 	 *
 	 * This method must be implemented by subclasses.
