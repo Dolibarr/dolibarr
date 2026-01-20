@@ -707,3 +707,4 @@ SplitDiscountTitle=İndirimi birkaç parçaya bölün
 DisputeStatus=Anlaşmazlık durumu
 DisputeOpen=Anlaşmazlık açıldı
 Sales=Satışlar
+EmailTemplateForAutoSend=Otomatik gönderim için e-posta şablonu

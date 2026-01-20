@@ -36,3 +36,4 @@ PaymentTypeShortLIQ=En espèces
 PaymentTypeCB=Carte de crédit
 PaymentTypeShortCB=Carte de crédit
 Cash=En espèces
+EmailTemplateForAutoSend=Modèle d'e-mail pour l'envoi automatique

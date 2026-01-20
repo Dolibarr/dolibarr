@@ -669,3 +669,4 @@ SearchValidatedSupplierInvoicesWithDate=Search unpaid supplier invoices with a v
 SendEmailsRemindersOnSupplierInvoiceDueDate=Send reminder by email for validated and unpaid supplier invoices
 PaymentMadeForSeveralInvoices=Payment made for several invoices
 SituationInvoiceProgressCurrent=Invoice progress
+EmailTemplateForAutoSend=ಸ್ವಯಂ-ಕಳುಹಿಸುವಿಕೆಗಾಗಿ ಇಮೇಲ್ ಟೆಂಪ್ಲೇಟ್

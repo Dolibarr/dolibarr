@@ -707,3 +707,4 @@ SplitDiscountTitle=Opdel rabatten i flere dele
 DisputeStatus=Tviststatus
 DisputeOpen=Tvist åben
 Sales=Salg
+EmailTemplateForAutoSend=E-mail-skabelon til automatisk afsendelse

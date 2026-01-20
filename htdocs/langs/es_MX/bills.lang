@@ -152,3 +152,4 @@ ClosePaidCreditNotesAutomatically=Clasifica automáticamente todas las notas de 
 NoteListOfYourUnpaidInvoices=Nota: Esta lista contiene solo facturas de terceros con los que está vinculado como representante de ventas.
 ErrorOutingSituationInvoiceCreditNote=No se pudo sacar la nota de crédito vinculada.
 situationInvoiceShortcode_S=D
+EmailTemplateForAutoSend=Plantilla de correo electrónico para envío automático

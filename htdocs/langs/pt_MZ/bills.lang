@@ -378,3 +378,4 @@ UnitPriceXQtyLessDiscount=Preço unitário x Qtd. - Desconto
 CustomersInvoicesArea=Área de cobrança do cliente
 SupplierInvoicesArea=Área de cobrança do cliente
 Sales=De vendas
+EmailTemplateForAutoSend=Modelo de email para envio automático

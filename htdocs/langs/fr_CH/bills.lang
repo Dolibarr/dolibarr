@@ -1,3 +1,4 @@
 # Dolibarr language file - Source file is en_US - bills
 BillShortStatusValidated=Validé
 PaymentTypeShortTRA=Brouillon
+EmailTemplateForAutoSend=Modèle d'e-mail pour l'envoi automatique

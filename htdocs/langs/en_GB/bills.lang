@@ -21,3 +21,4 @@ PaymentByChequeOrderedToShort=Cheque payments (incl. tax) are payable to
 MenuCheques=Cheques
 Cheques=Cheques
 NbCheque=Number of cheques
+EmailTemplateForAutoSend=Email template for auto-send

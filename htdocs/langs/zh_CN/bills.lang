@@ -707,3 +707,4 @@ SplitDiscountTitle=Split discount into several parts
 DisputeStatus=Dispute status
 DisputeOpen=Dispute open
 Sales=销售
+EmailTemplateForAutoSend=自动发送的电子邮件模板

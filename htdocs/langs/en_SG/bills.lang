@@ -5,3 +5,4 @@ ConfirmClassifyPaidPartiallyReasonDiscountVat=Remaining unpaid <b>(%s %s)</b> is
 PaymentConditionShortPT_ORDER=Sales Order
 CantRemovePaymentVATPaid=Can't remove payment since GST declaration is classified paid
 ClosePaidVATAutomatically=Classify automatically GST declaration as "Paid" when payment is done entirely.
+EmailTemplateForAutoSend=Email template for auto-send

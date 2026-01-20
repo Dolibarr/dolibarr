@@ -711,3 +711,4 @@ DisputeWon=Dispute won
 DisputeClosed=Dispute closed
 Dispute=Dispute
 Sales=Sales
+EmailTemplateForAutoSend=Email template for auto-send

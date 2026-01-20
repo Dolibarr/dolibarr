@@ -707,3 +707,4 @@ SplitDiscountTitle=Split discount into several parts
 DisputeStatus=Dispute status
 DisputeOpen=Dispute open
 Sales=Müügid
+EmailTemplateForAutoSend=E-posti mall automaatseks saatmiseks

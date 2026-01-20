@@ -221,3 +221,4 @@ ToCreateARecurringInvoiceGene=Um zukünftige wiederkehrende Rechnungen manuell z
 Salaries=Löhne
 SalaryInvoice=Lohn
 Sales=Verkauf
+EmailTemplateForAutoSend=E-Mail-Vorlage für automatischen Versand

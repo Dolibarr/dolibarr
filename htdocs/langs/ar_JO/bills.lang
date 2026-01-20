@@ -692,3 +692,4 @@ LimitDepositInvoicePossibilityForConsistency=Limit deposit invoice type to keep 
 ExtPaymentID=External payment ID
 ExtPaymentSite=External payment Site
 CantConvertToReducAnInvoiceOfThisType=Cant convert to discount an invoice of this type
+EmailTemplateForAutoSend=قالب البريد الإلكتروني للإرسال التلقائي

@@ -707,3 +707,4 @@ SplitDiscountTitle=Split discount into several parts
 DisputeStatus=Dispute status
 DisputeOpen=Dispute open
 Sales=Odbyt
+EmailTemplateForAutoSend=Šablona e-mailu pro automatické odesílání

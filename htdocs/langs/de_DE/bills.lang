@@ -707,3 +707,4 @@ SplitDiscountTitle=Guthaben in mehrere Teile aufteilen
 DisputeStatus=Status Streitfall
 DisputeOpen=Streitfall offen
 Sales=Verkäufe
+EmailTemplateForAutoSend=E-Mail-Vorlage für automatischen Versand

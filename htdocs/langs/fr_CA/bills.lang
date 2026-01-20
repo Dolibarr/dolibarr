@@ -330,3 +330,4 @@ LimitDepositInvoicePossibilityForConsistency=Limiter le type de facture d'acompt
 CantConvertToReducAnInvoiceOfThisType=Impossible de convertir en remise une facture de ce type
 WithholdingTax=Retenue à la source
 DisputeStatus=Statut du litige
+EmailTemplateForAutoSend=Modèle d'e-mail pour l'envoi automatique

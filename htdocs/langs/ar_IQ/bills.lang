@@ -1,2 +1,3 @@
 # Dolibarr language file - Source file is en_US - bills
 CantConvertToReducAnInvoiceOfThisType=Cant convert to discount an invoice of this type
+EmailTemplateForAutoSend=قالب البريد الإلكتروني للإرسال التلقائي

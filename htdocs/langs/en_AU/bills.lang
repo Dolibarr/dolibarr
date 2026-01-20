@@ -9,3 +9,4 @@ CheckBank=Cheque
 MenuCheques=Cheques
 Cheques=Cheques
 NbCheque=Number of cheques
+EmailTemplateForAutoSend=Email template for auto-send

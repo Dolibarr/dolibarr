@@ -707,3 +707,4 @@ SplitDiscountTitle=Split discount into several parts
 DisputeStatus=Dispute status
 DisputeOpen=Dispute open
 Sales=Sales
+EmailTemplateForAutoSend=স্বয়ংক্রিয় প্রেরণের জন্য ইমেল টেমপ্লেট

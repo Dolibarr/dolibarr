@@ -411,3 +411,4 @@ MaxNumberOfGenerationReached=Número máximo de generación alcanzado
 BILL_DELETEInDolibarr=Se eliminó la factura
 Salaries=Sueldos
 SalaryInvoice=Sueldo
+EmailTemplateForAutoSend=Plantilla de correo electrónico para envío automático

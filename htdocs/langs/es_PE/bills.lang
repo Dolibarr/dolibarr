@@ -20,3 +20,4 @@ VATIsNotUsedForInvoice=* IGV no aplicable  art-293B del CGI
 CantRemovePaymentVATPaid=No se puede eliminar el pago porque la declaración de IGV esta clasificada como pagada
 ClosePaidVATAutomatically=Clasificar automáticamente la declaración de IGV como "Pagada" cuando el pago se realiza en su totalidad.
 TotalSituationInvoiceWithRetainedWarranty=Total (IGV incl.) con garantía retenida
+EmailTemplateForAutoSend=Plantilla de correo electrónico para envío automático
