@@ -8,7 +8,7 @@
  * Copyright (C) 2012-2016 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2014      Ion Agorria          <ion@agorria.com>
- * Copyright (C) 2018-2025	Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2022      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2022-2024 Charlene Benke       <charlene@patas-monkey.com>
  * Copyright (C) 2023 	   Joachim Kueter       <git-jk@bloxera.com>
@@ -2209,7 +2209,7 @@ if ($action == 'create') {
 
 	$formconfirm = '';
 
-	// Confirmation de la suppression de la commande
+	// Confirm deletion of order
 	if ($action == 'delete') {
 		$arrayAjouts = array();
 		$heightModal = 0;
@@ -2252,11 +2252,11 @@ if ($action == 'create') {
 		$formquestion = array(
 			array('type' => 'other', 'name' => 'socid', 'label' => $langs->trans("SelectThirdParty"), 'value' => $form->select_company(GETPOSTINT('socid'), 'socid', $filter))
 		);
-		// Paiement incomplet. On demande si motif = escompte ou autre
+		// Payment incomplete. Requesting reason: discount or other?
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneOrder', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
 
-	// Confirmation de la validation
+	// Confirm validation
 	if ($action == 'valid') {
 		$object->date_commande = dol_now();
 
