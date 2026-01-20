@@ -527,7 +527,7 @@ class Documents extends DolibarrApi
 				throw new RestException(404, 'Purchase order not found');
 			}
 
-			$upload_dir = getMultidirOutput($object) . "/commande/".dol_sanitizeFileName($object->ref);
+			$upload_dir = getMultidirOutput($object) . "/commande/".dol_sanitizeFileName((string) $object->ref);
 		} elseif ($modulepart == 'shipment' || $modulepart == 'expedition') {
 			require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 
@@ -587,7 +587,7 @@ class Documents extends DolibarrApi
 				throw new RestException(500, 'Error while fetching object: '.$object->error);
 			}
 
-			$upload_dir = getMultidirOutput($object) . '/'.dol_sanitizeFileName($object->ref);
+			$upload_dir = getMultidirOutput($object) . '/'.dol_sanitizeFileName((string) $object->ref);
 		} elseif ($modulepart == 'agenda' || $modulepart == 'action' || $modulepart == 'event' || $modulepart == 'actioncomm') {
 			require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
@@ -601,7 +601,7 @@ class Documents extends DolibarrApi
 				throw new RestException(404, 'Event not found');
 			}
 
-			$upload_dir = getMultidirOutput($object) . '/'.dol_sanitizeFileName($object->ref);
+			$upload_dir = getMultidirOutput($object) . '/'.dol_sanitizeFileName((string) $object->ref);
 		} elseif ($modulepart == 'expensereport') {
 			require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 
@@ -615,7 +615,7 @@ class Documents extends DolibarrApi
 				throw new RestException(404, 'Expense report not found');
 			}
 
-			$upload_dir = getMultidirOutput($object) . '/'.dol_sanitizeFileName($object->ref);
+			$upload_dir = getMultidirOutput($object) . '/'.dol_sanitizeFileName((string) $object->ref);
 		} elseif ($modulepart == 'ticket') {
 			require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 
@@ -629,7 +629,7 @@ class Documents extends DolibarrApi
 				throw new RestException(404, 'Ticket not found');
 			}
 
-			$upload_dir = $conf->ticket->dir_output.'/'.dol_sanitizeFileName($object->ref);
+			$upload_dir = $conf->ticket->dir_output.'/'.dol_sanitizeFileName((string) $object->ref);
 		} elseif ($modulepart == 'knowledgemanagement') {
 			require_once DOL_DOCUMENT_ROOT.'/knowledgemanagement/class/knowledgerecord.class.php';
 
@@ -643,7 +643,7 @@ class Documents extends DolibarrApi
 				throw new RestException(404, 'KM article not found');
 			}
 
-			$upload_dir = getMultidirOutput($object) . '/knowledgerecord/'.dol_sanitizeFileName($object->ref);
+			$upload_dir = getMultidirOutput($object) . '/knowledgerecord/'.dol_sanitizeFileName((string) $object->ref);
 		} elseif ($modulepart == 'categorie' || $modulepart == 'category') {
 			require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
@@ -726,7 +726,7 @@ class Documents extends DolibarrApi
 				throw new RestException(500, 'Error while fetching project for task');
 			}
 
-			$upload_dir = $conf->project->dir_output . "/" . dol_sanitizeFileName($object->project->ref) . "/" . dol_sanitizeFileName($object->ref);
+			$upload_dir = $conf->project->dir_output . "/" . dol_sanitizeFileName($object->project->ref) . "/" . dol_sanitizeFileName((string) $object->ref);
 		} elseif ($modulepart == 'mrp') {
 			$modulepart = 'mrp';
 			require_once DOL_DOCUMENT_ROOT . '/mrp/class/mo.class.php';
@@ -1034,7 +1034,7 @@ class Documents extends DolibarrApi
 			if ($modulepart == 'societe') {
 				$relativefile = $tmpreldir.dol_sanitizeFileName((string) $object->id);
 			} else {
-				$relativefile = $tmpreldir.dol_sanitizeFileName($object->ref);
+				$relativefile = $tmpreldir.dol_sanitizeFileName((string) $object->ref);
 			}
 			$tmp = dol_check_secure_access_document($modulepart, $relativefile, $entity, DolibarrApiAccess::$user, $ref, 'write');
 			$upload_dir = $tmp['original_file']; // No dirname here, tmp['original_file'] is already the dir because dol_check_secure_access_document was called with param original_file that is only the dir
