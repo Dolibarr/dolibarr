@@ -922,15 +922,18 @@ class FormSetupItem
 				$input = $this->fieldParams['input'] ?? array();
 				$revertonoff = empty($this->fieldParams['revertonoff']) ? 0 : 1;
 				$forcereload = empty($this->fieldParams['forcereload']) ? 0 : 1;
-				$suffixarray = array();
-				if ($this->fieldParams['alertifoff']) {
+				$suffixarray = array(
+					'ifoff' => '',
+					'ifon' => '',
+				);
+				if (!empty($this->fieldParams['alertifoff'])) {
 					$suffixarray['ifoff'] = '_red';
-				} elseif ($this->fieldParams['warningifoff']) {
-					$suffixarray['ifon'] = '_warning';
+				} elseif (!empty($this->fieldParams['warningifoff'])) {
+					$suffixarray['ifoff'] = '_warning';
 				}
-				if ($this->fieldParams['alertifon']) {
+				if (!empty($this->fieldParams['alertifon'])) {
 					$suffixarray['ifon'] = '_red';
-				} elseif ($this->fieldParams['warningifon']) {
+				} elseif (!empty($this->fieldParams['warningifon'])) {
 					$suffixarray['ifon'] = '_warning';
 				}
 

@@ -449,7 +449,7 @@ if (!empty($errors)) {
 
 	print json_encode(array('errors' => $errors));
 } else {
-	$data = json_decode($answer, true);
+	$data = json_decode((string) $answer, true);
 
 	if ($data == null) {
 		$error++;
