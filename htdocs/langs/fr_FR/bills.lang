@@ -707,3 +707,4 @@ SplitDiscountTitle=Diviser la remise en plusieurs parties
 DisputeStatus=État litige
 DisputeOpen=Litige ouvert
 Sales=Ventes
+EmailTemplateForAutoSend=Modèle d'e-mail pour l'envoi automatique

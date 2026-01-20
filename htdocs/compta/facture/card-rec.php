@@ -1417,8 +1417,7 @@ if ($action == 'create') {
 		print "</td></tr>";
 
 		// Email template for auto sending invoices
-		// TODO -> Trad
-		print "<tr id='col_auto_send_model_mail' class='".(GETPOSTINT('auto_validate') != 1 ? 'hidden' : '')."'><td>" . $langs->trans("Modèle d'e-mail pour l'envoi automatique") . "</td><td>";
+		print "<tr id='col_auto_send_model_mail' class='".(GETPOSTINT('auto_validate') != 1 ? 'hidden' : '')."'><td>" . $langs->trans("EmailTemplateForAutoSend") . "</td><td>";
 		print $form->selectModelMail("auto_send_", "facture_send", 1);
 		print "</td></tr>";
 		print "	<script>
@@ -1976,9 +1975,7 @@ if ($action == 'create') {
 			if ($object->frequency > 0 && $object->auto_validate == 1) {
 				print '<tr><td style="width: 50%">';
 				print '<table class="nobordernopadding" width="100%"><tr><td>';
-	//			print $langs->trans('Frequency');
-				// TODO -> Trad
-				print "Modèle d'e-mail pour l'envoi automatique";
+				print $langs->trans("EmailTemplateForAutoSend");
 				print '</td>';
 				if ($action != 'editEmailTemplate' && $user->hasRight('facture', 'creer')) {
 					print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editEmailTemplate&token=' . newToken() . '&facid=' . $object->id . '">' . img_edit($langs->trans('Edit'), 1) . '</a></td>';
