@@ -35,6 +35,7 @@ require_once '../main.inc.php';
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/ai/class/ai.class.php';
 
 
 if (GETPOST('lang', 'aZ09')) {
@@ -50,8 +51,11 @@ $modulepart = GETPOST('modulepart', 'aZ09');
 $upload_dir = $conf->user->dir_temp.'/import';
 dol_mkdir($upload_dir);
 
+$file = GETPOST('file');
+
 $originalfilename = $file;
 $uid = $thiid = $pid = $erid = $salid = 0;
+$reg = array();
 if (preg_match('/-uid([\d+])/', $file, $reg)) {
 	$uid = $reg[1];
 	$originalfilename = preg_replace('/-uid\d+/', '', $originalfilename);
@@ -75,6 +79,8 @@ if (preg_match('/-salid([\d+])/', $file, $reg)) {
 $originalfilename = preg_replace('/^upload_page-[a-z_]+-/', '', $originalfilename);
 
 $error = 0;
+
+$ai = new Ai($db);
 
 
 /*
