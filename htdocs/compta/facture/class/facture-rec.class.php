@@ -208,6 +208,11 @@ class FactureRec extends CommonInvoice
 	public $auto_validate; // 0 to create in draft, 1 to create and validate the new invoice
 
 	/**
+	 * @var int
+	 */
+	public $fk_email_template; // Email template for auto sending invoices
+
+	/**
 	 * @var int<0,1>
 	 */
 	public $generate_pdf; // 1 to generate PDF on invoice generation (default)
@@ -280,6 +285,7 @@ class FactureRec extends CommonInvoice
 		'usenewprice' => array('type' => 'integer', 'label' => 'UseNewPrice', 'enabled' => 1, 'visible' => 0, 'position' => 155),
 		'revenuestamp' => array('type' => 'double(24,8)', 'label' => 'RevenueStamp', 'enabled' => 1, 'visible' => -1, 'position' => 160, 'isameasure' => 1),
 		'auto_validate' => array('type' => 'integer', 'label' => 'Auto validate', 'enabled' => 1, 'visible' => -1, 'position' => 165),
+		'fk_email_template' => array('type' => 'integer:CEmailTemplate:core/class/cemailtemplate.class.php', 'label' => "Modèle d'e-mail pour l'envoi automatique", 'enabled' => 1, 'visible' => -1, 'position' => 162),
 		'generate_pdf' => array('type' => 'integer', 'label' => 'Generate pdf', 'enabled' => 1, 'visible' => -1, 'position' => 170),
 		'fk_account' => array('type' => 'integer', 'label' => 'Fk account', 'enabled' => 'isModEnabled("bank")', 'visible' => -1, 'position' => 175),
 		'fk_multicurrency' => array('type' => 'integer', 'label' => 'Fk multicurrency', 'enabled' => 1, 'visible' => -1, 'position' => 180),
@@ -381,6 +387,7 @@ class FactureRec extends CommonInvoice
 			$sql .= ", nb_gen_done";
 			$sql .= ", nb_gen_max";
 			$sql .= ", auto_validate";
+			$sql .= ", fk_email_template";
 			$sql .= ", generate_pdf";
 			$sql .= ", fk_multicurrency";
 			$sql .= ", multicurrency_code";
@@ -412,6 +419,7 @@ class FactureRec extends CommonInvoice
 			$sql .= ", ".((int) $this->nb_gen_done);
 			$sql .= ", ".((int) $this->nb_gen_max);
 			$sql .= ", ".((int) $this->auto_validate);
+			$sql .= ", ".(!empty($this->fk_email_template) ? (int) $this->fk_email_template : 'NULL');
 			$sql .= ", ".((int) $this->generate_pdf);
 			$sql .= ", ".((int) $facsrc->fk_multicurrency);
 			$sql .= ", '".$this->db->escape($facsrc->multicurrency_code)."'";
@@ -421,6 +429,7 @@ class FactureRec extends CommonInvoice
 			$sql .= ", '".$this->db->escape($this->rule_for_lines_dates)."'";
 			$sql .= ")";
 
+			print $sql;
 			if ($this->db->query($sql)) {
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."facture_rec");
 
@@ -587,7 +596,7 @@ class FactureRec extends CommonInvoice
 	{
 		$error = 0;
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_rec SET";
+		$sql = "UPDATE ".$this->db->prefix()."facture_rec SET";
 		$sql .= " entity = ".((int) $this->entity).",";
 		$sql .= " titre = '".$this->db->escape($this->title)."',";
 		$sql .= " suspended = ".((int) $this->suspended).",";
@@ -597,7 +606,9 @@ class FactureRec extends CommonInvoice
 		$sql .= " localtax2 = ".((float) $this->total_localtax2).",";
 		$sql .= " total_ht = ".((float) $this->total_ht).",";
 		$sql .= " total_ttc = ".((float) $this->total_ttc).",";
-		$sql .= " fk_societe_rib = ".(!empty($this->fk_societe_rib) ? ((int) $this->fk_societe_rib) : 'NULL');
+		$sql .= " fk_societe_rib = ".(!empty($this->fk_societe_rib) ? ((int) $this->fk_societe_rib) : 'NULL').",";
+		$sql .= " auto_validate = ".((int) $this->auto_validate).",";
+		$sql .= " fk_email_template = ".(!empty($this->fk_email_template) ? ((int) $this->fk_email_template) : 'NULL');
 
 		// TODO Add missing fields
 		$sql .= " WHERE rowid = ".((int) $this->id);
@@ -654,6 +665,7 @@ class FactureRec extends CommonInvoice
 		$sql .= ', f.fk_mode_reglement, f.fk_cond_reglement, f.fk_projet as fk_project';
 		$sql .= ', f.fk_account, f.fk_societe_rib';
 		$sql .= ', f.frequency, f.unit_frequency, f.rule_for_lines_dates, f.date_when, f.date_last_gen, f.nb_gen_done, f.nb_gen_max, f.usenewprice, f.auto_validate';
+		$sql .= ', f.fk_email_template';
 		$sql .= ', f.generate_pdf';
 		$sql .= ", f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc";
 		$sql .= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
@@ -718,6 +730,7 @@ class FactureRec extends CommonInvoice
 				$this->nb_gen_max = $obj->nb_gen_max;
 				$this->usenewprice			  = $obj->usenewprice;
 				$this->auto_validate = $obj->auto_validate;
+				$this->fk_email_template = $obj->fk_email_template;
 				$this->generate_pdf = $obj->generate_pdf;
 
 				// Multicurrency
@@ -2141,14 +2154,15 @@ class FactureRec extends CommonInvoice
 			return -1;
 		}
 
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-		$sql .= ' SET auto_validate = '.((int) $validate);
-		$sql .= " WHERE rowid = ".((int) $this->id);
+		$this->auto_validate = $validate;
+		if ($validate == 0) {
+			$this->fk_email_template = null;
+		}
+
+		$result = $this->update($user);
 
 		dol_syslog(get_class($this)."::setAutoValidate", LOG_DEBUG);
-		if ($this->db->query($sql)) {
-			$this->auto_validate = $validate;
-
+		if ($result > 0) {
 			if (!$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('BILLREC_MODIFY', $user);
@@ -2228,6 +2242,41 @@ class FactureRec extends CommonInvoice
 		if ($this->db->query($sql)) {
 			$this->model_pdf = $model;
 
+			if (!$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger('BILLREC_MODIFY', $user);
+				if ($result < 0) {
+					return $result;
+				}
+				// End call triggers
+			}
+
+			return 1;
+		} else {
+			dol_print_error($this->db);
+			return -1;
+		}
+	}
+
+	/**
+	 *  Update the email template
+	 *
+	 *  @param     	int			$idEmailTemplate	Email template
+	 *	@param     	int<0,1> 	$notrigger 			Disable the trigger
+	 *  @return		int								Return integer <0 if KO, >0 if OK
+	 */
+	public function setMailTemplate($idEmailTemplate, $notrigger = 0): int {
+		global $user;
+		if (!$this->table_element) {
+			dol_syslog(get_class($this)."::setMailTemplate was called on object with property table_element not defined", LOG_ERR);
+			return -1;
+		}
+
+		$this->fk_email_template = $idEmailTemplate;
+		$result = $this->update($user);
+
+		dol_syslog(get_class($this)."::setMailTemplate", LOG_DEBUG);
+		if ($result > 0) {
 			if (!$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('BILLREC_MODIFY', $user);
