@@ -10798,6 +10798,120 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		$substitutionarray['__[AnyConstantKey]__'] = $outputlangs->trans('ValueOfConstantKey');
 	}
 
+	// Supplier payment specific substitutions (PaiementFourn, element = 'payment_supplier')
+	// - Added to help/tooltip list when $onlykey == 2
+	// - Filled with values when $object is a supplier payment
+	if ($onlykey == 2 || (is_object($object) && (property_exists($object, 'element') && $object->element === 'payment_supplier'))) {
+		$substitutionarray['__PAYMENT_AMOUNT__'] = ($onlykey == 2 ? 'Payment amount' : '');
+		$substitutionarray['__PAYMENT_AMOUNT_FORMATTED__'] = ($onlykey == 2 ? 'Payment amount formatted' : '');
+		$substitutionarray['__PAYMENT_DATE__'] = ($onlykey == 2 ? 'Payment date' : '');
+		$substitutionarray['__PAYMENT_NUM__'] = ($onlykey == 2 ? 'Payment number' : '');
+		$substitutionarray['__PAYMENT_TYPE__'] = ($onlykey == 2 ? 'Payment type' : '');
+		$substitutionarray['__PAYMENT_BANK_ACCOUNT__'] = ($onlykey == 2 ? 'Origin bank account label' : '');
+		$substitutionarray['__PAYMENT_BANK_ACCOUNT_IBAN__'] = ($onlykey == 2 ? 'Origin bank account IBAN' : '');
+		$substitutionarray['__PAYMENT_SUPPLIER_IBAN__'] = ($onlykey == 2 ? 'Supplier default IBAN' : '');
+		$substitutionarray['__PAYMENT_INVOICE_REFS__'] = ($onlykey == 2 ? 'Refs of paid invoices' : '');
+		$substitutionarray['__PAYMENT_INVOICE_SUPPLIER_REFS__'] = ($onlykey == 2 ? 'Supplier refs of paid invoices' : '');
+	}
+
+	if (is_object($object) && (property_exists($object, 'element') && $object->element === 'payment_supplier') && $onlykey != 2) {
+		// Ensure thirdparty is loaded when possible (needed for supplier IBAN)
+		if ((!property_exists($object, 'thirdparty') || !is_object($object->thirdparty)) && method_exists($object, 'fetch_thirdparty')) {
+			$object->fetch_thirdparty();
+		}
+
+		$paymentAmount = null;
+		if (isset($object->amount)) {
+			$paymentAmount = $object->amount;
+		} elseif (isset($object->total)) {
+			$paymentAmount = $object->total;
+		}
+
+		if ($paymentAmount !== null) {
+			$substitutionarray['__PAYMENT_AMOUNT__'] = (string) price2num($paymentAmount, 'MT');
+			$substitutionarray['__PAYMENT_AMOUNT_FORMATTED__'] = (string) price($paymentAmount, 0, $outputlangs, 0, -1, -1, $conf->currency);
+		}
+
+		$paymentDate = null;
+		if (isset($object->date)) {
+			$paymentDate = $object->date;
+		} elseif (isset($object->datepaye)) {
+			$paymentDate = $object->datepaye;
+		}
+		if (!empty($paymentDate)) {
+			$substitutionarray['__PAYMENT_DATE__'] = (string) dol_print_date($paymentDate, 'day', false, $outputlangs);
+		}
+
+		if (isset($object->num_payment)) {
+			$substitutionarray['__PAYMENT_NUM__'] = (string) $object->num_payment;
+		}
+
+		if (isset($object->type_label) && $object->type_label !== '') {
+			$substitutionarray['__PAYMENT_TYPE__'] = (string) $object->type_label;
+		} elseif (isset($object->type_code) && $object->type_code !== '') {
+			$substitutionarray['__PAYMENT_TYPE__'] = (string) $object->type_code;
+		}
+
+		// Origin bank account used for the payment
+		if (!empty($object->fk_account) && (int) $object->fk_account > 0) {
+			require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
+			$bankaccount = new Account($db);
+			if ($bankaccount->fetch((int) $object->fk_account) > 0) {
+				$substitutionarray['__PAYMENT_BANK_ACCOUNT__'] = (string) $bankaccount->label;
+				$ibanOrigin = dolDecrypt((string) $bankaccount->iban);
+				if ($ibanOrigin === '' && !empty($bankaccount->iban)) {
+					$ibanOrigin = (string) $bankaccount->iban;
+				}
+				$substitutionarray['__PAYMENT_BANK_ACCOUNT_IBAN__'] = (string) $ibanOrigin;
+			}
+		}
+
+		// Supplier default IBAN (destination account)
+		if (property_exists($object, 'thirdparty') && is_object($object->thirdparty) && !empty($object->thirdparty->id)) {
+			$ibanDest = '';
+			$sql = "SELECT iban_prefix as iban";
+			$sql .= " FROM " . MAIN_DB_PREFIX . "societe_rib as rib";
+			$sql .= " WHERE fk_soc = " . ((int) $object->thirdparty->id);
+			$sql .= " AND rib.default_rib = 1";
+			$sql .= " AND rib.type = 'ban'";
+			$sql .= " LIMIT 1";
+			$resql = $db->query($sql);
+			if ($resql) {
+				$obj = $db->fetch_object($resql);
+				if ($obj) {
+					$ibanDest = dolDecrypt($obj->iban);
+				}
+			}
+			$substitutionarray['__PAYMENT_SUPPLIER_IBAN__'] = (string) $ibanDest;
+		}
+
+		// Paid invoices refs / supplier refs
+		if (!empty($object->id) && is_object($db)) {
+			$invoiceRefs = array();
+			$invoiceSupplierRefs = array();
+
+			$sql = "SELECT DISTINCT f.ref, f.ref_supplier";
+			$sql .= " FROM " . MAIN_DB_PREFIX . "paiementfourn_facturefourn as pf";
+			$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "facture_fourn as f ON f.rowid = pf.fk_facturefourn";
+			$sql .= " WHERE pf.fk_paiementfourn = " . ((int) $object->id);
+			$sql .= " AND f.entity IN (" . getEntity('facture_fourn') . ")";
+			$resql = $db->query($sql);
+			if ($resql) {
+				while ($obj = $db->fetch_object($resql)) {
+					if (!empty($obj->ref)) {
+						$invoiceRefs[(string) $obj->ref] = true;
+					}
+					if (!empty($obj->ref_supplier)) {
+						$invoiceSupplierRefs[(string) $obj->ref_supplier] = true;
+					}
+				}
+			}
+
+			$substitutionarray['__PAYMENT_INVOICE_REFS__'] = implode(', ', array_keys($invoiceRefs));
+			$substitutionarray['__PAYMENT_INVOICE_SUPPLIER_REFS__'] = implode(', ', array_keys($invoiceSupplierRefs));
+		}
+	}
+
 	// Note: The lazyload variables are replaced only during the call by make_substitutions, and only if necessary
 
 	return $substitutionarray;
