@@ -67,6 +67,8 @@ $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 /**
  * Class for PHPUnit tests
  *
+ * #LNE1-QU2507-0005
+ *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
@@ -337,10 +339,10 @@ class SecurityGETPOSTTest extends CommonClassTest
 		//$this->assertEquals('InvalidHTMLStringCantBeCleaned', $result, 'Test 15b');   // With some PHP and libxml version, we got this result when parsing invalid HTML, but ...
 		//$this->assertEquals('"c:\this is a path~1\aaan 110;" abcdef', $result);		// ... on other PHP and libxml versions, we got a HTML that has been cleaned
 
-		$_POST["pagecontentwithaconstantvarinurl"] = '<a href="https://[__aaa__]/aaa.html">https://[__aaa__]/aaa.html</a>';
+		$_POST["pagecontentwithaconstantvarinurl"] = '<a href="https://__[aaa]__/aaa.html">https://__[aaa]__/aaa.html</a>';
 		$result = GETPOST("pagecontentwithaconstantvarinurl", 'restricthtml');
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('<a href="https://[__aaa__]/aaa.html">https://[__aaa__]/aaa.html</a>', $result, 'Test on HTML content with url with constant');
+		$this->assertEquals('<a href="https://__[aaa]__/aaa.html">https://__[aaa]__/aaa.html</a>', $result, 'Test on HTML content with url with constant');
 
 
 		// Test with restricthtml + MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY only to test disabling of bad attributes

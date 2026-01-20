@@ -34,7 +34,7 @@ class box_factures extends ModeleBoxes
 	public $boxcode = "lastcustomerbills";
 	public $boximg = "object_bill";
 	public $boxlabel = "BoxLastCustomerBills";
-	public $depends = array("facture");
+	public $depends = array("invoice");
 
 	/**
 	 *  Constructor

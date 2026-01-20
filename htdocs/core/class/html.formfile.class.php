@@ -506,35 +506,7 @@ class FormFile
 			$param .= ($param ? '&' : '').'entity='.(empty($object->entity) ? $conf->entity : $object->entity);
 		}
 
-		$printer = 0;
-		$supportedmoduleparts = [
-			'company',
-			'member',
-			'product',
-			'stock',
-			'ficheinter',
-			'user',
-			'project',
-			'contract',
-			'facture',
-			'supplier_proposal',
-			'propal',
-			'proposal',
-			'order',
-			'commande',
-			'expedition',
-			'commande_fournisseur',
-			'facture_fournisseur',
-			'expensereport',
-			'delivery',
-			'ticket',
-			'bom',
-			'mrp:mo',
-		];
-		// The direct print feature is implemented only for such elements
-		if (in_array($modulepart, $supportedmoduleparts)) {
-			$printer = ($user->hasRight('printing', 'read') && isModEnabled('printing'));
-		}
+		$printer = ($user->hasRight('printing', 'read') && isModEnabled('printing'));
 
 		$hookmanager->initHooks(array('formfile'));
 
@@ -2289,6 +2261,7 @@ class FormFile
 
 		print '<form action="'.$_SERVER['PHP_SELF'].($param ? '?'.$param : '').'" id="'.$htmlname.'" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<div class="div-table-responsive-no-min">';
 
 		print '<table class="liste noborder nobottom centpercent">';
 		print '<tr class="liste_titre">';
@@ -2404,7 +2377,7 @@ class FormFile
 		print "</table>";
 
 		print '</form>';
-
+		print '</div>';
 		return $nboflinks;
 	}
 

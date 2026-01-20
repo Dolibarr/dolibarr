@@ -36,7 +36,7 @@ class box_services_contracts extends ModeleBoxes
 	public $boxcode = "lastproductsincontract";
 	public $boximg = "object_product";
 	public $boxlabel = "BoxLastProductsInContract";
-	public $depends = array("service", "contrat");
+	public $depends = array("service", "contract");
 
 	/**
 	 *  Constructor

@@ -1190,8 +1190,8 @@ class pdf_octopus extends ModelePDFFactures
 					$pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
 				}
 				// Add terms to sale
-				if (getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_INVOICE')) {
-					$termsofsalefilename = getDolGlobalString('MAIN_INFO_INVOICE_TERMSOFSALE');
+				$termsofsalefilename = getDolGlobalString('MAIN_INFO_INVOICE_TERMSOFSALE');
+				if (getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_INVOICE') && $termsofsalefilename) {
 					$termsofsale = $conf->invoice->dir_output.'/'.$termsofsalefilename;
 					if (!empty($conf->invoice->multidir_output[$object->entity ?? $conf->entity])) {
 						$termsofsale = $conf->invoice->multidir_output[$object->entity ?? $conf->entity].'/'.$termsofsalefilename;
@@ -1220,8 +1220,8 @@ class pdf_octopus extends ModelePDFFactures
 				}
 
 				// Add terms to sale
-				if (getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_INVOICE')) {
-					$termsofsalefilename = getDolGlobalString('MAIN_INFO_INVOICE_TERMSOFSALE');
+				$termsofsalefilename = getDolGlobalString('MAIN_INFO_INVOICE_TERMSOFSALE');
+				if (getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_INVOICE') && $termsofsalefilename) {
 					$termsofsale = $conf->invoice->dir_output.'/'.$termsofsalefilename;
 					if (!empty($conf->invoice->multidir_output[$object->entity ?? $conf->entity])) {
 						$termsofsale = $conf->invoice->multidir_output[$object->entity ?? $conf->entity].'/'.$termsofsalefilename;
@@ -1250,6 +1250,7 @@ class pdf_octopus extends ModelePDFFactures
 				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+				$this->warnings = $hookmanager->warnings;
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
@@ -2401,7 +2402,6 @@ class pdf_octopus extends ModelePDFFactures
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
-		$subtitle = "";
 		$title = $outputlangs->transnoentities("PdfInvoiceTitle");
 		if ($object->type == 1) {
 			$title = $outputlangs->transnoentities("InvoiceReplacement");
@@ -2417,8 +2417,7 @@ class pdf_octopus extends ModelePDFFactures
 		}
 		if ($this->situationinvoice) {
 			$outputlangs->loadLangs(array("other"));
-			$title = $outputlangs->transnoentities("PDFInvoiceSituation");
-			$subtitle = $outputlangs->transnoentities("PDFSituationTitle", (string) $object->situation_counter);
+			$title = $outputlangs->transnoentities("PDFInvoiceSituation") . " (#".((int) $object->situation_counter).")";
 		}
 		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && is_object($outputlangsbis)) {
 			$title .= ' - ';
@@ -2444,25 +2443,22 @@ class pdf_octopus extends ModelePDFFactures
 		}
 
 		$pdf->MultiCell($w, 3, $title, '', 'R');
-		if (!empty($subtitle)) {
-			$pdf->SetFont('', 'B', $default_font_size);
-			$pdf->SetXY($posx, $posy + 5);
-			$pdf->MultiCell($w, 6, $subtitle, '', 'R');
-			$posy += 2;
-		}
 
-		$pdf->SetFont('', 'B', $default_font_size);
+		$pdf->SetFont('', '', $default_font_size - 2);
+
+		pdfWriteBlockedLogSignature($pdf, $outputlangs, $this->page_hauteur, $object, $w, $posx, $posy);
 
 		/*
-		 $posy += 5;
-		 $pdf->SetXY($posx, $posy);
-		 $pdf->SetTextColor(0, 0, 60);
-		 $textref = $outputlangs->transnoentities("Ref")." : ".$outputlangs->convToOutputCharset($object->ref);
-		 if ($object->status == $object::STATUS_DRAFT) {
-		 $pdf->SetTextColor(128, 0, 0);
-		 $textref .= ' - '.$outputlangs->transnoentities("NotValidated");
-		 }
-		 $pdf->MultiCell($w, 4, $textref, '', 'R');*/
+		$posy += 5;
+		$pdf->SetXY($posx, $posy);
+		$pdf->SetTextColor(0, 0, 60);
+		$pdf->SetFont('', 'B', $default_font_size);
+		$textref = $outputlangs->transnoentities("Ref")." : ".$outputlangs->convToOutputCharset($object->ref);
+		if ($object->status == $object::STATUS_DRAFT) {
+		$pdf->SetTextColor(128, 0, 0);
+		$textref .= ' - '.$outputlangs->transnoentities("NotValidated");
+		}
+		$pdf->MultiCell($w, 4, $textref, '', 'R');*/
 
 		$posy += 3;
 		$pdf->SetFont('', '', $default_font_size - 2);

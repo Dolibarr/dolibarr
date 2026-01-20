@@ -119,7 +119,7 @@ button.calcbutton {
 	border-width: 0;
 	margin: 1px;
 	font-size: 14pt;
-	border-radius: 3px;
+	border-radius: 4px;
 }
 
 div.wrapper, div.wrapper2 {
@@ -143,7 +143,7 @@ button.calcbutton2 {
 	font-weight: bold;
 	font-size: 10pt;
 	margin: 1px;
-	border-radius: 3px;
+	border-radius: 4px;
 }
 button.calcbutton2.clicked {
 	background-color: #8855AA;
@@ -165,7 +165,7 @@ button.calcbutton3 {
 	height: calc(25% - 2px);
 	font-size: 14pt;
 	margin: 1px;
-	border-radius: 3px;
+	border-radius: 4px;
 }
 
 button.productbutton {
@@ -186,21 +186,18 @@ button.productbutton {
 	border-width: 0;
 	margin: 1px;
 	font-size: 14pt;
-	border-radius: 3px;
+	border-radius: 4px;
 }
 
 button.actionbutton {
-	background: #EABCA6;
+	background: #EACCC6;
 	color: #222;
-	border: 2px solid #EEE;
+	/* border: 2px solid #EEE; */
 	min-height: 40px;
-	border-radius: 3px;
-}
-
-button.actionbutton {
+	border-radius: 4px;
+	padding: 12px;
 	display: inline-block;
 	position: relative;
-	padding: 0;
 	line-height: normal;
 	cursor: pointer;
 	vertical-align: middle;
@@ -209,7 +206,7 @@ button.actionbutton {
 	width: calc(33.33% - 2px);
 	height: calc(25% - 2px);
 	margin: 1px;
-	   border-width: 0;
+	border-width: 0;
 }
 
 button.item_value {
@@ -237,6 +234,7 @@ div[aria-describedby="dialog-info"].ui-dialog .ui-dialog-buttonpane {
 
 .takepospay {
 	font-size: 1.5em;
+	height: 40px !important;
 }
 
 .fa.fa-trash:before {
@@ -580,7 +578,7 @@ div.description_content {
 	margin: 8px;
 	margin-left: 5px;
 	margin-right: 5px;
-	border-radius: 3px;
+	border-radius: 4px;
 }
 .topnav-left a:hover:not(.nohover), .topnav .login_block_other a:hover:not(.nohover) {
 	background-color: #ddd;

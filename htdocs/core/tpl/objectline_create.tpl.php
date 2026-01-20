@@ -246,7 +246,10 @@ if ($nolinesbefore) {
 			if ($forceall >= 0 && (isModEnabled("product") || isModEnabled("service"))) {
 				print '<label for="prod_entry_mode_free">';
 			}
+
+			// Select type of line
 			$form->select_type_of_lines(GETPOSTISSET("type") ? GETPOST("type", 'alpha', 2) : -1, 'type', $labelforempty, 1, $forceall, 'minwidth200', 0);
+
 			if ($forceall >= 0 && (isModEnabled("product") || isModEnabled("service"))) {
 				print '</label>';
 			}
@@ -674,14 +677,14 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 	<?php
 	if (getDolGlobalString('DISPLAY_MARGIN_RATES')) { ?>
 		$("input[name='np_marginRate']:first").blur(function(e) {
-			console.log("np_marginRate blur");
+			console.log("np_marginRate blur, call checkFreeLine");
 			return checkFreeLine(e, "np_marginRate");
 		});
 		<?php
 	}
 	if (getDolGlobalString('DISPLAY_MARK_RATES')) { ?>
 		$("input[name='np_markRate']:first").blur(function(e) {
-			console.log("np_markRate blur");
+			console.log("np_markRate blur, call checkFreeLine");
 			return checkFreeLine(e, "np_markRate");
 		});
 		<?php
@@ -698,15 +701,13 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 		if (rate.val() == '')
 			return true;
 
-		if (! $.isNumeric(rate.val().replace(',','.')))
-		{
+		if (! $.isNumeric(rate.val().replace(',','.')))	{		// TODO Use price2numjs ?
 			alert('<?php echo dol_escape_js($langs->trans("rateMustBeNumeric")); ?>');
 			e.stopPropagation();
 			setTimeout(function () { rate.focus() }, 50);
 			return false;
 		}
-		if (npRate == "np_markRate" && rate.val() >= 100)
-		{
+		if (npRate == "np_markRate" && rate.val() >= 100) {		// TODO Use price2numjs ?
 			alert('<?php echo dol_escape_js($langs->trans("markRateShouldBeLesserThan100")); ?>');
 			e.stopPropagation();
 			setTimeout(function () { rate.focus() }, 50);
@@ -714,14 +715,15 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 		}
 
 		var price = 0;
-		remisejs=price2numjs(remise.val());
+		remisejs = price2numjs(remise.val());
 
-		if (remisejs != 100)	// If a discount not 100 or no discount
-		{
-			if (remisejs == '') remisejs=0;
+		if (remisejs != 100) {	// If there is a discount that is not 100 or if no discount at all (most common case)
+			if (remisejs == '') {
+				remisejs=0;
+			}
 
-			bpjs=price2numjs(buying_price.val());
-			ratejs=price2numjs(rate.val());
+			bpjs = price2numjs(buying_price.val());
+			ratejs = price2numjs(rate.val());
 
 			if (npRate == "np_marginRate")
 				price = ((bpjs * (1 + ratejs / 100)) / (1 - remisejs / 100));
@@ -729,7 +731,8 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 				price = ((bpjs / (1 - ratejs / 100)) / (1 - remisejs / 100));
 		}
 
-		$("input[name='price_ht']:first").val(price);	// TODO Must use a function like php price to have here a formatted value
+		// $("input[name='price_ht']:first").val(price);	// TODO Must use a function like php price to have here a formatted value
+		$("input[name='price_ht']:first").val(pricejs(price));
 
 		return true;
 	}
@@ -804,11 +807,11 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 			}
 
 			if (jQuery("#select_type").val() != '-1') {
-				console.log("we remove class");
+				console.log("we remove class placeholder");
 				jQuery("#select_type").removeClass("placeholder");
 				setFocusOnDescription();
 			} else {
-				console.log("we add class");
+				console.log("we add class placeholder");
 				jQuery("#select_type").addClass("placeholder");
 			}
 		});
@@ -826,9 +829,12 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 
 		<?php
 		if (!$freelines) { ?>
+			console.log("emulate click on prod_entry_mode_predef");
 			jQuery("#prod_entry_mode_predef").click();
 			<?php
-		} else { ?>
+		} elseif (!GETPOSTISSET("type")) { // If not a type selected from previous page
+			?>
+			console.log("add class placeholder");
 			jQuery("#select_type").addClass("placeholder");
 			<?php
 		}
@@ -846,7 +852,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 				}
 			}
 		});
-															<?php
+			<?php
 		} ?>
 
 		/* When changing predefined product, we reload list of supplier prices required for margin combo */

@@ -772,7 +772,9 @@ class Holiday extends CommonObject
 
 		if ($checkBalance > 0) {
 			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
-			if ($balance < 0) {
+			$daysAsked = num_open_day($this->date_debut, $this->date_fin, 0, 1);
+
+			if (($balance - $daysAsked) < 0 && getDolGlobalString('HOLIDAY_DISALLOW_NEGATIVE_BALANCE')) {
 				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
 				return -1;
 			}
@@ -894,9 +896,9 @@ class Holiday extends CommonObject
 
 		if ($checkBalance > 0) {
 			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
+			$daysAsked = num_open_day($this->date_debut, $this->date_fin, 0, 1);
 
-			$days = num_between_day($this->date_debut, $this->date_fin);
-			if ($balance - $days < 0 && getDolGlobalString('HOLIDAY_DISALLOW_NEGATIVE_BALANCE')) {
+			if (($balance - $daysAsked) < 0 && getDolGlobalString('HOLIDAY_DISALLOW_NEGATIVE_BALANCE')) {
 				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
 				return -1;
 			}
@@ -1023,8 +1025,9 @@ class Holiday extends CommonObject
 
 		if ($checkBalance > 0 && $this->status != self::STATUS_DRAFT) {
 			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
+			$daysAsked = num_open_day($this->date_debut, $this->date_fin, 0, 1);
 
-			if ($balance < 0) {
+			if (($balance - $daysAsked) < 0 && getDolGlobalString('HOLIDAY_DISALLOW_NEGATIVE_BALANCE')) {
 				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
 				return -1;
 			}
@@ -1590,8 +1593,8 @@ class Holiday extends CommonObject
 	/**
 	 *  Met à jour une option du module Holiday Payés
 	 *
-	 *  @param	string	$name       name du paramètre de configuration
-	 *  @param	string	$value      vrai si mise à jour OK sinon faux
+	 *  @param	string	$name       name settings parameter
+	 *  @param	string	$value      true if update OK else false
 	 *  @return boolean				ok or ko
 	 */
 	public function updateConfCP($name, $value)
@@ -2160,9 +2163,9 @@ class Holiday extends CommonObject
 
 
 	/**
-	 *	Compte le nombre d'utilisateur actifs dans Dolibarr
+	 *	Count number of active users in Dolibarr
 	 *
-	 *  @return     int      retourne le nombre d'utilisateur
+	 *  @return     int      Return numbers of users
 	 */
 	public function countActiveUsers()
 	{
@@ -2176,9 +2179,9 @@ class Holiday extends CommonObject
 		return $object->compteur;
 	}
 	/**
-	 *	Compte le nombre d'utilisateur actifs dans Dolibarr sans CP
+	 *	Count number of active users in Dolibarr without Paid leave
 	 *
-	 *  @return     int      retourne le nombre d'utilisateur
+	 *  @return     int      Return numbers of users
 	 */
 	public function countActiveUsersWithoutCP()
 	{
@@ -2193,7 +2196,7 @@ class Holiday extends CommonObject
 	}
 
 	/**
-	 *  Compare le nombre d'utilisateur actif de Dolibarr à celui des utilisateurs des congés payés
+	 *  Compare the number of active Dolibarr users to the number of paid leave users
 	 *
 	 *  @param    int	$userDolibarrWithoutCP	Number of active users in Dolibarr without holidays
 	 *  @param    int	$userCP    				Number of active users into table of holidays
@@ -2522,7 +2525,7 @@ class Holiday extends CommonObject
 		global $conf, $langs;
 
 		if ($user->socid) {
-			return -1; // protection pour eviter appel par utilisateur externe
+			return -1; // Protection to prevent calls by external users
 		}
 
 		$now = dol_now();

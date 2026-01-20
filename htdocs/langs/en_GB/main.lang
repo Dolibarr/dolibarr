@@ -30,6 +30,7 @@ Disapprove=Reject
 b=b
 AmountVAT=Amount VAT
 TotalVAT=Total VAT
+TotalVATShort=Total VAT
 TTC=Inc. VAT
 VAT=VAT
 VATRate=VAT Rate

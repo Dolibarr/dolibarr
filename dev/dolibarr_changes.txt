@@ -267,6 +267,18 @@ PHP JQUERYFILETREE:
 
 
 
+PHP Mobile_DETECT:
+------------------
+Remplacer:
+
+array $headers = null,
+
+par
+
+$headers = null,
+
+
+
 PHP RESTLER:
 ------------
 

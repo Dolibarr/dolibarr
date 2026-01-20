@@ -303,7 +303,8 @@ a.info-box-text-a i.fa.fa-exclamation-triangle, span.badge i.fa.fa-exclamation-t
 }
 .info-box-line-text {
 	overflow: hidden;
-	width: calc(100% - 76px);
+	width: calc(100% - 92px);
+	max-width: calc(100% - 82px);
 	text-overflow: ellipsis;
 }
 

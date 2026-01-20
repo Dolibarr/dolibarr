@@ -18,6 +18,7 @@
  * Copyright (C) 2023       Joachim Küter      		<git-jk@bloxera.com>
  * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,6 +76,8 @@ require_once 'filefunc.inc.php';
 /**
  * @var ?string $php_session_save_handler
  * @var ?string $dolibarr_main_force_https
+ * @var ?string $dolibarr_main_restrict_ip
+ * @var ?string $dolibarr_nocsrfcheck
  */
 
 // If there is a POST parameter to tell to save automatically some POST parameters into cookies, we do it.
@@ -265,15 +268,21 @@ if (!empty($conf->file->main_force_https) && !isHTTPS() && !defined('NOHTTPSREDI
 if (!defined('NOLOGIN') && !defined('NOIPCHECK') && !empty($dolibarr_main_restrict_ip)) {
 	$listofip = explode(',', $dolibarr_main_restrict_ip);
 	$found = false;
+	$user_ip = $_SERVER['REMOTE_ADDR'];
 	foreach ($listofip as $ip) {
-		$ip = trim($ip);
-		if ($ip == $_SERVER['REMOTE_ADDR']) {
+		$authorized_ip = trim($ip);
+		if (strpos($authorized_ip, '/')) { // Check if IP with CIDR notation
+			if (checkIPInCidr($user_ip, $authorized_ip) > 0) {
+				$found = true;
+				break;
+			}
+		} elseif ($user_ip == $authorized_ip) {
 			$found = true;
 			break;
 		}
 	}
 	if (!$found) {
-		print 'Access refused by IP protection. Your detected IP is '.$_SERVER['REMOTE_ADDR'];
+		print 'Access refused by IP protection. Your detected IP is: '.dol_escape_htmltag($user_ip);
 		exit;
 	}
 }
@@ -2370,8 +2379,9 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 			$nophoto = '/public/theme/common/user_woman.png';
 		}
 
-		$userImage = '<img class="photo photouserphoto userphoto" alt="" src="'.DOL_URL_ROOT.$nophoto.'" aria-hidden="true">';
-		$userDropDownImage = '<img class="photo dropdown-user-image" alt="" src="'.DOL_URL_ROOT.$nophoto.'">';
+		$userImage = img_picto('', 'user', 'class="photo photouserphoto userphoto"');
+		//$userImage = '<img class="photo photouserphoto userphoto" alt="" src="'.DOL_URL_ROOT.$nophoto.'" aria-hidden="true">';
+		$userDropDownImage = '<img class="photo dropdown-user-image" alt="" src="'.DOL_URL_ROOT.$nophoto.'" aria-hidden="true">';
 	}
 
 	$dropdownBody = '';
@@ -2404,7 +2414,8 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 		}
 	}
 	$dropdownBody .= '<br><b>'.$langs->trans("VATIntraShort").'</b>: <span>'.dol_print_profids(getDolGlobalString("MAIN_INFO_TVAINTRA"), 'VAT').'</span>';
-	$dropdownBody .= '<br><b>'.$langs->trans("Country").'</b>: <span>'.($mysoc->country_code ? $langs->trans("Country".$mysoc->country_code) : '').'</span>';
+	$langFlag = picto_from_langcode($langs->getDefaultLang(), 'class="none"');
+	$dropdownBody .= '<br><b>'.$langs->trans("Country").'</b>: <span>'.($mysoc->country_code ? $langs->trans("Country".$mysoc->country_code).' '.$langFlag : '').'</span>';
 	if (isModEnabled('multicurrency')) {
 		$dropdownBody .= '<br><b>'.$langs->trans("Currency").'</b>: <span>'.getDolCurrency().'</span>';
 	}
@@ -2416,7 +2427,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 
 	// login infos
 	if (!empty($user->admin)) {
-		$dropdownBody .= '<br><b>'.$langs->trans("Administrator").'</b>: '.yn($user->admin);
+		$dropdownBody .= '<br><b>'.$langs->trans("Administrator").'</b>: '.yn($user->admin).' '.img_picto('', 'admin');
 	}
 	$company = '';
 	if (!empty($user->socid)) {	// Add third party for external users
@@ -2441,8 +2452,8 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	$dropdownBody .= '<br><b>'.$langs->trans("CurrentTheme").':</b> '.$conf->theme;
 	// @phan-suppress-next-line PhanRedefinedClassReference
 	$dropdownBody .= '<br><b>'.$langs->trans("CurrentMenuManager").':</b> '.(isset($menumanager) ? $menumanager->name : 'unknown');
-	$langFlag = picto_from_langcode($langs->getDefaultLang());
-	$dropdownBody .= '<br><b>'.$langs->trans("CurrentUserLanguage").':</b> '.($langFlag ? $langFlag.' ' : '').$langs->getDefaultLang();
+	$langFlag = picto_from_langcode($langs->getDefaultLang(), 'class="none"');
+	$dropdownBody .= '<br><b>'.$langs->trans("CurrentUserLanguage").':</b> '.$langs->getDefaultLang().($langFlag ? ' '.$langFlag : '');;
 
 	$tz = (int) $_SESSION['dol_tz'] + (int) $_SESSION['dol_dst'];
 	$dropdownBody .= '<br><b>'.$langs->trans("ClientTZ").':</b> '.($tz ? ($tz >= 0 ? '+' : '').$tz : '');
@@ -2487,7 +2498,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 
 	$profilName = $user->getFullName($langs).' ('.$user->login.')';
 	if (!empty($user->admin)) {
-		$profilName = '<i class="far fa-star classfortooltip" title="'.$langs->trans("Administrator").'" ></i> '.$profilName;
+		$profilName = img_picto($langs->trans("Administrator"), 'admin').' '.$profilName;
 	}
 
 	// Define version to show
@@ -3536,7 +3547,7 @@ function printSearchForm($urlaction, $urlobject, $title, $htmlmorecss, $htmlinpu
 	$ret .= ' placeholder="'.strip_tags($title).'"';
 	$ret .= ($autofocus ? ' autofocus' : '');
 	$ret .= ' name="'.$htmlinputname.'" id="'.$prefhtmlinputname.$htmlinputname.'" />';
-	$ret .= '<button type="submit" class="button bordertransp" style="padding-top: 4px; padding-bottom: 4px; padding-left: 6px; padding-right: 6px">';
+	$ret .= '<button type="submit" class="button bordertransp nohover" style="padding-top: 4px; padding-bottom: 4px; padding-left: 6px; padding-right: 6px">';
 	$ret .= '<span class="fa fa-search"></span>';
 	$ret .= '</button>';
 	$ret .= '</div>';
@@ -3746,8 +3757,11 @@ if (!function_exists("llxFooter")) {
 					// Output code for ping
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-					$arrayofdata = array('action' => 'dolibarrping', 'country_code' => ($mysoc->country_code ? $mysoc->country_code : 'unknown'));
-					printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayofdata, $forceping);
+					$arrayofmoredata = array(
+						'action' => 'dolibarrping',
+						'country_code' => ($mysoc->country_code ? $mysoc->country_code : 'unknown')
+					);
+					printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayofmoredata, $forceping);
 				} else {
 					$now = dol_now();
 					print "\n<!-- NO JS CODE TO ENABLE the anonymous Ping. It was disabled -->\n";
