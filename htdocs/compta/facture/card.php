@@ -4550,9 +4550,9 @@ if ($action == 'create') {
 			print '</td></tr>';
 		}
 
-		// Dispute open
+		// Dispute
 		/* Not necessary on creation
-		print '<tr><td class="nowrap fieldrequired">'.$langs->trans('DisputeOpen').'</td><td colspan="2">';
+		print '<tr><td class="nowrap fieldrequired">'.$langs->trans('Dispute').'</td><td colspan="2">';
 		//print yn($object->dispute_status);
 		print '</td></tr>';
 		*/
@@ -5582,22 +5582,25 @@ if ($action == 'create') {
 		// Dispute open
 		print '<tr><td>';
 		print '<table class="nobordernopadding centpercent"><tr><td>';
-		print $langs->trans('DisputeOpen');
+		print $langs->trans('Dispute');
 		print '<td><td class="right">';
 		if ($usercancreate) {
 			print '<a class="editfielda" href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$object->id.'&action=editdispute_status&token='.newToken().'">'.img_edit().'</a>';
 		}
 		print '</td></tr></table>';
 		print '</td><td>';
+		$liststatus = array('0' => "None", '1' => "DisputeOpen", '8' => "DisputeLost", '9' => "DisputeWon");
 		if ($action != 'editdispute_status') {
-			print '<input type="checkbox" value="1" disabled="disabled"'.($object->dispute_status ? ' checked="checked"' : '').'>';
+			if ($object->dispute_status) {
+				print $langs->trans($liststatus[$object->dispute_status]);
+			}
 		} else {
 			print '<form enctype="multipart/form-data" action="'.DOL_URL_ROOT.'/compta/facture/card.php" method="POST">';
 			print '<input type="hidden" name="action" value="set_dispute_status">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
 			print '<input type="hidden" name="page_y" value="">';
-			print '<input type="checkbox" name="dispute_status" value="1" class="valignmiddle"'.($object->dispute_status ? ' checked="checked"' : '').'>';
+			print $form->selectarray('dispute_status', $liststatus, $object->dispute_status);
 			print '<input type="submit" class="button smallpaddingimp valignmiddle" value="'.$langs->trans("Save").'">';
 			print '</form>';
 		}

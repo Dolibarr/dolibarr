@@ -1381,6 +1381,7 @@ class BlockedLog
 					if ($random == 1) {	// 1 chance on BLOCKEDLOG_RANDOMRANGE_FOR_TRACKING
 						dol_syslog(get_class($this)."::create Record is selected to be remotely pushed for tracking", LOG_DEBUG);
 
+						include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 						try {
 							$tmpresult = getURLContent($url_for_ping, 'POST', $data, 1, $addheaders, array('https'), 0, -1, $timeoutconnect, $timeoutresponse, array(), '_dolibarrtrack');
 

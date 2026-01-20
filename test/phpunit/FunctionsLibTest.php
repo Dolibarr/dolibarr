@@ -1130,12 +1130,15 @@ class FunctionsLibTest extends CommonClassTest
 	{
 		$input = "x&<b>#</b>,\"'";    // " will be converted into '
 		$result = dol_escape_js($input);
+		print __METHOD__." result=".$result."\n";
 		$this->assertEquals("x&<b>#</b>,\'\'", $result, "Test mode=0");
 
 		$result = dol_escape_js($input, 1);
+		print __METHOD__." result=".$result."\n";
 		$this->assertEquals("x&<b>#</b>,\"\'", $result, "Test mode=1");
 
 		$result = dol_escape_js($input, 2);
+		print __METHOD__." result=".$result."\n";
 		$this->assertEquals("x&<b>#</b>,\\\"'", $result, "Test mode=2");
 	}
 
@@ -1147,6 +1150,8 @@ class FunctionsLibTest extends CommonClassTest
 	 */
 	public function testDolEscapeHtmlTag()
 	{
+		print __METHOD__."\n";
+
 		$input = 'x&<b>#</b>,"';    // & and " are converted into html entities, <b> are removed
 		$result = dol_escape_htmltag($input);
 		$this->assertEquals('x&amp;#,&quot;', $result);
@@ -1179,8 +1184,19 @@ class FunctionsLibTest extends CommonClassTest
 		<a href="mailto:abc+def@domain.com" id="sigEmail" style="color:#428BCA;">abc+def@domain.com</a><br>
 		<a href="https://www.another-domain.com" id="sigWebsite" style="color:#428BCA;">https://www.another-domain.com</a><br>
 		</div>';
-
 		$result = dol_escape_htmltag($input, 1, 1, 'common');
+		$this->assertEquals($input, $result);
+
+		// The same plus the tag 'code'
+		$input = '<div style="float:left; margin-left:0px; margin-right:5px">
+		<img id="sigPhoto" src="https://www.domain.com/aaa.png" style="height:65px; width:65px" />
+		</div>
+		<div style="margin-left:74px"><strong>A text here</strong> and more<br>
+		<a href="mailto:abc+def@domain.com" id="sigEmail" style="color:#428BCA;">abc+def@domain.com</a><br>
+		<a href="https://www.another-domain.com" id="sigWebsite" style="color:#428BCA;">https://www.another-domain.com</a><br>
+		<code>abc</code>
+		</div>';
+		$result = dol_escape_htmltag($input, 1, 1, 'common,code');
 		$this->assertEquals($input, $result);
 	}
 
@@ -1193,10 +1209,13 @@ class FunctionsLibTest extends CommonClassTest
 	public function testDolFormatAddress()
 	{
 		global $conf,$user,$langs,$db;
+
 		$conf = $this->savconf;
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+
+		print __METHOD__."\n";
 
 		$object = new Societe($db);
 		$object->initAsSpecimen();
@@ -1235,6 +1254,8 @@ class FunctionsLibTest extends CommonClassTest
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+
+		print __METHOD__."\n";
 
 		$object = new Societe($db);
 		$object->initAsSpecimen();

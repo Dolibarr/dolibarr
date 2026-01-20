@@ -833,7 +833,7 @@ div.userimg.notfirst {
 	display: block-inline;
 }
 .center.inline-block.dateheight {
-	line-height: 1.2em;
+	line-height: 1.15em;
 }
 
 /* Used by timesheets */
@@ -1040,8 +1040,9 @@ input#onlinepaymenturl, input#directdownloadlink {
 }
 
 .formconsumeproduce {
-	background: #f3f3f3;
-	padding: 20px 0px 0px 0px;
+	background: #f0f0f0;
+
+	padding: 20px 0px 20px 0px;
 	border-radius: 8px;
 }
 
@@ -2541,7 +2542,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 
 	/* input, input[type=text], */
 	select {
-		width: 98%;
+		/* width: 98%; */
 		min-width: 40px;
 	}
 
@@ -3882,7 +3883,7 @@ img.userphotopublicvcard {
 	top: 25px;
 	left: -110px;
 }
-form[name="addtime"] img.userphoto {
+form[name="addtime"] img.userphoto, form[name="addtime"] img.userphotosmall {
 	border: 1px solid #444;
 }
 .span-icon-user {
@@ -8967,8 +8968,8 @@ table.jPicker {
 		width: <?php print dol_size(300, 'width'); ?>px;
 	}
 	select {
-		width: 98%;
-		min-width: 0 !important;
+		/* width: 98%; */
+		min-width: 40px;
 	}
 	div.divphotoref {
 		padding-<?php echo $right; ?>: 5px;

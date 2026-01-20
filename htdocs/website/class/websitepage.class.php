@@ -285,15 +285,15 @@ class WebsitePage extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param 	int       	$id             		Id object.
-	 *                                  			- If this is 0, the value into $page will be used. If not found or $page not defined, the default page of website_id will be used or the first page found if not set.
-	 *                                  			- If value is < 0, we must exclude this ID.
-	 * @param 	?string    	$website_id     		Web site id (page name must also be filled if this parameter is used)
-	 * @param 	?string    	$page           		Page name (website id must also be filled if this parameter is used). Example 'myaliaspage' or 'fr/myaliaspage'
-	 * @param 	?string    	$aliasalt       		Alternative alias to search page (slow)
-	 * @param	int			$translationparentid	Translation parent ID (a main language page ID to get the translated page). Parameter $translationparentlang must also be set.
-	 * @param	string		$translationparentlang	Translation parent Lang (a language lang to search the translation of the main page ID). Parameter $translationparentid must also be set.
-	 * @return 	int<-1,1>							Return integer <0 if KO, 0 if not found, >0 if OK
+	 * @param 	int       		$id             		Id object.
+	 *                          	        			- If this is 0, the value into $page will be used. If not found or $page not defined, the default page of website_id will be used or the first page found if not set.
+	 *                              	    			- If value is < 0, we must exclude this ID.
+	 * @param 	int|string|null $website_id     		Web site id (page name must also be filled if this parameter is used)
+	 * @param 	?string    		$page           		Page name (website id must also be filled if this parameter is used). Example 'myaliaspage' or 'fr/myaliaspage'
+	 * @param 	?string    		$aliasalt       		Alternative alias to search page (slow)
+	 * @param	int				$translationparentid	Translation parent ID (a main language page ID to get the translated page). Parameter $translationparentlang must also be set.
+	 * @param	string			$translationparentlang	Translation parent Lang (a language lang to search the translation of the main page ID). Parameter $translationparentid must also be set.
+	 * @return 	int<-1,1>								Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $website_id = null, $page = null, $aliasalt = null, $translationparentid = 0, $translationparentlang = '')
 	{
@@ -334,7 +334,7 @@ class WebsitePage extends CommonObject
 				$sql .= ' AND t.rowid <> '.((int) abs($id));
 			}
 			if (null !== $website_id) {
-				$sql .= " AND t.fk_website = '".$this->db->escape($website_id)."'";
+				$sql .= " AND t.fk_website = ".((int) $website_id);
 				if ($page) {
 					$pagetouse = $page;
 					$langtouse = '';

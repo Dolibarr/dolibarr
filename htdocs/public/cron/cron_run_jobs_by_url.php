@@ -81,7 +81,7 @@ global $langs, $conf, $db;
 $langs->loadLangs(array("admin", "cron", "dict"));
 
 // Security check
-if (empty($conf->cron->enabled)) {
+if (!isModEnabled('cron')) {
 	httponly_accessforbidden('Module Cron not enabled');
 }
 

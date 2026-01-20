@@ -197,18 +197,23 @@ foreach ($arrayofparameters as $title => $tab) {
 		if (!empty($val['config_keys']['anonymize'])) {
 			$selectedvalue = getDolGlobalString($val['config_keys']['anonymize']);
 
-			print Form::selectarray($val['config_keys']['anonymize'], $valTab, $selectedvalue);
+			print Form::selectarray($val['config_keys']['anonymize'], $valTab, $selectedvalue, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100');
 
 			//var_dump($val);
 			$listoffieldsid = '';
 			foreach ($arrayofelem[$logicalKey]['anonymize_fields'] as $tmpkey => $tmpval) {
+				if (is_array($tmpval)) {
+					continue;
+				}
 				if ($tmpval === 'MAKEANONYMOUS') {
-					$listoffieldsid .= ($listoffieldsid ? ', ' : '').$tmpkey.' -> field-anon-ID';
+					$listoffieldsid .= ($listoffieldsid ? ', ' : '').$tmpkey.' -> '.$tmpkey.'-anon-ID';
+				} elseif (strpos($tmpval, '__ID__') !== false) {
+					$listoffieldsid .= ($listoffieldsid ? ', ' : '').$tmpkey.' -> '.$tmpval;
 				}
 			}
 			$otherfields = '';
 			foreach ($arrayofelem[$logicalKey]['anonymize_fields'] as $tmpkey => $tmpval) {
-				if ($tmpval !== 'MAKEANONYMOUS') {
+				if ($tmpval !== 'MAKEANONYMOUS' && strpos((string) $tmpval, '__ID__') === false) {
 					$otherfields .= ($otherfields ? ', ' : '').$tmpkey.' -> '.json_encode($tmpval);
 				}
 			}
@@ -220,12 +225,12 @@ foreach ($arrayofparameters as $title => $tab) {
 			$sql = preg_replace('/^SELECT [\w+\s+\._]+ FROM/', 'SELECT COUNT(*) as nb FROM', $sql);
 
 			$htmltooltip = $langs->transnoentitiesnoconv("TheFollowingFieldsAreReplaceWith");
-			$htmltooltip .= '<br><small>'.$listoffieldsid.'</small>';
+			$htmltooltip .= '<br><small class="opacitymedium">'.$listoffieldsid.'</small>';
 			$htmltooltip .= '<br><br>'.$langs->transnoentitiesnoconv("OtherFieldsAreReplaceWithStaticValues");
-			$htmltooltip .= '<br><small>'.$otherfields.'</small>';
-			$htmltooltip .= '<br><br>'.$langs->transnoentitiesnoconv("TechnicalInformation").' - SQL:';
-			$htmltooltip .= '<br><small>'.$sql.'</small>';
-			print $form->textwithpicto('', $htmltooltip);
+			$htmltooltip .= '<br><small class="opacitymedium">'.$otherfields.'</small>';
+			$htmltooltip .= '<br><br>'.$langs->transnoentitiesnoconv("TechnicalInformation").' - SQL to select record:';
+			$htmltooltip .= '<br><small class="opacitymedium">'.$sql.'</small>';
+			print $form->textwithpicto('', $htmltooltip, 1, 'help', 'valignmidde', 1, 3, $val['config_keys']['anonymize']);
 
 			print ' &nbsp; ';
 			if ($action == 'count' && GETPOST('group') == $logicalKey) {
@@ -263,7 +268,7 @@ foreach ($arrayofparameters as $title => $tab) {
 			$selectedvalue = getDolGlobalString($val['config_keys']['delete']);
 
 			// Display the dropdown only if a constant key is defined for the 'delete' action.
-			print Form::selectarray($val['config_keys']['delete'], $valTab, $selectedvalue);
+			print Form::selectarray($val['config_keys']['delete'], $valTab, $selectedvalue, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100');
 
 			$sql = $arrayofelem[$logicalKey]['sql_template_delete'];
 			$sql = preg_replace('/__ENTITY__/', (string) (int) $conf->entity, $sql);
@@ -271,9 +276,9 @@ foreach ($arrayofparameters as $title => $tab) {
 			$sql = preg_replace('/__NOW__/', "'".dol_print_date(dol_now(), 'standard')."'", $sql);
 			$sql = preg_replace('/^SELECT [\w+\s+\._]+ FROM/', 'SELECT COUNT(*) as nb FROM', $sql);
 
-			$htmltooltip = $langs->transnoentitiesnoconv("TechnicalInformation").' - SQL:';
-			$htmltooltip .= '<br><small>'.$sql.'</small>';
-			print $form->textwithpicto('', $htmltooltip);
+			$htmltooltip = $langs->transnoentitiesnoconv("TechnicalInformation").' - SQL to select record:';
+			$htmltooltip .= '<br><small class="opacitymedium">'.$sql.'</small>';
+			print $form->textwithpicto('', $htmltooltip, 1, 'help', 'valignmidde', 1, 3, $val['config_keys']['delete']);
 
 			print ' &nbsp; ';
 			if ($action == 'countdelete' && GETPOST('group') == $logicalKey) {
