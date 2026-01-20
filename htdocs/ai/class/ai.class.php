@@ -91,7 +91,7 @@ class Ai
 	/**
 	 * Generate response of instructions
 	 *
-	 * @param   string|array<string,mixed>	$instructions   String instruction to generate content (or file path) or array of payload or ID of file with function threads
+	 * @param   string|array<mixed,mixed>	$instructions   String instruction to generate content (or file path) or array of payload or ID of file with function threads
 	 * @param   string  					$model          Model name ('gpt-4.1-turbo', 'gpt-4.1', 'dall-e-3', ...)
 	 * @param   string  					$function     	Code of the feature we want to use ('textgeneration', 'transcription', 'audiogeneration', 'imagegeneration', 'translation', 'docparsing')
 	 * @param	string						$format			Format for output ('', 'html', ...)

@@ -2536,7 +2536,7 @@ class BookKeeping extends CommonObject
 					$sql_list[$i] .= "'".$this->db->idate($fiscal_period['date_start']) . "' <= ".$this->db->sanitize($alias)."doc_date";
 					if (!empty($fiscal_period['date_end'])) {
 						$sql_list[$i] .= " AND ";
-						$sql_list[$i] .= $this->db->sanitize($alias)."doc_date <= '" . $this->db->idate($fiscal_period['date_end'])."'";
+						$sql_list[$i] .= $this->db->sanitize($alias)."doc_date <= '" . $this->db->idate((int) $fiscal_period['date_end'])."'";
 					}
 					$sql_list[$i] .= ")";
 					$i++;
