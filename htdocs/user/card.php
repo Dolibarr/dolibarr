@@ -11,7 +11,7 @@
  * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2015-2017	Jean-François Ferry			<jfefe@aternatik.fr>
  * Copyright (C) 2015		Ari Elbaz (elarifr)			<github@accedinfo.com>
- * Copyright (C) 2015-2018	Charlene Benke				<charlie@patas-monkey.com>
+ * Copyright (C) 2015-2026	Charlene Benke				<charlene@patas-monkey.com>
  * Copyright (C) 2016		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2018		David Beniamine				<David.Beniamine@Tetras-Libre.fr>
@@ -1739,6 +1739,28 @@ if ($action == 'create' || $action == 'adduserldap') {
 				}
 				print '</td>';
 				print "</tr>\n";
+
+				// Subordinates
+				$sql = "SELECT u.rowid FROM ".MAIN_DB_PREFIX."user as u";
+				$sql .= " WHERE u.fk_user = ".$object->id;
+				$sql .= " ORDER BY u.lastname, u.firstname";
+				$resql = $db->query($sql);
+				if ($resql) {
+					$num = $db->num_rows($resql);
+					if ($num > 0) {
+						$i=0;
+						print '<tr><td>'.$langs->trans("SubordinatesList").'</td>';
+						print '<td>';
+						$huser = new User($db);
+						while ($i < $num) {
+							$obj = $db->fetch_object($resql);
+							$huser->fetch($obj->rowid);
+							print $huser->getNomUrl(-1) . '&nbsp;';
+							$i++;
+						}
+						print "</td></tr>\n";
+					}
+				}
 
 				// Expense report validator
 				if (isModEnabled('expensereport')) {
