@@ -1478,29 +1478,6 @@ class SupplierProposal extends CommonObject
 	}
 
 	/**
-	 * Alias support for ref_supplier updates.
-	 *
-	 * @param string $field
-	 * @param mixed $value
-	 * @param string $table
-	 * @param int|null $id
-	 * @param string $format
-	 * @param string $id_field
-	 * @param User|null $fuser
-	 * @param string $trigkey
-	 * @param string $fk_user_field
-	 * @return int
-	 */
-	public function setValueFrom($field, $value, $table = '', $id = null, $format = '', $id_field = '', $fuser = null, $trigkey = '', $fk_user_field = 'fk_user_modif')
-	{
-		if ($field === 'ref_supplier') {
-			$field = 'ref_fourn';
-		}
-
-		return parent::setValueFrom($field, $value, $table, $id, $format, $id_field, $fuser, $trigkey, $fk_user_field);
-	}
-
-	/**
 	 *  Set status to validated
 	 *
 	 *  @param	User	$user       Object user that validate
