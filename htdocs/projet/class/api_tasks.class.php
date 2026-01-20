@@ -612,7 +612,7 @@ class Tasks extends DolibarrApi
 	 * @param   int         	$id                 Task ID
 	 * @param   datetime|string	$date               Date (YYYY-MM-DD HH:MI:SS in GMT)
 	 * @param   int         	$duration           Duration in seconds (3600 = 1h)
-	 * @param   int|null      	$product_id         The product id that is used, default is null
+	 * @param   int		      	$product_id         The product id that is used, default is null
 	 * @param   int         	$user_id            User (Use 0 for connected user)
 	 * @param   string      	$note               Note
 	 * @param   int|null    	$progress           Progress percentage (0-100). If null, progress is not updated
@@ -624,7 +624,7 @@ class Tasks extends DolibarrApi
 	 * @phan-return array{success:array{code:int,message:string}}
 	 * @phpstan-return array{success:array{code:int,message:string}}
 	 */
-	public function addTimeSpent($id, $date, $duration, $product_id = null, $user_id = 0, $note = '', $progress = -1)
+	public function addTimeSpent($id, $date, $duration, $product_id = 0, $user_id = 0, $note = '', $progress = -1)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('projet', 'creer')) {
 			throw new RestException(403);
@@ -682,10 +682,10 @@ class Tasks extends DolibarrApi
 	 * @param   datetime    $date               Date (YYYY-MM-DD HH:MI:SS in GMT)
 	 * @phan-param string $date
 	 * @param   int         $duration           Duration in seconds (3600 = 1h)
-	 * @param   int|null    $product_id         The product id that is used, default is null
+	 * @param   int		    $product_id         The product id that is used, default is null
 	 * @param   int         $user_id            User (Use 0 for connected user)
 	 * @param   string      $note               Note
-	 * @param   int|null    $progress           Progress percentage (0-100). If null, progress is not updated
+	 * @param   int			$progress           Progress percentage (0-100). If null, progress is not updated
 	 *
 	 * @url PUT    {id}/timespent/{timespent_id}
 	 *
@@ -693,7 +693,7 @@ class Tasks extends DolibarrApi
 	 * @phan-return array{success:array{code:int,message:string}}
 	 * @phpstan-return array{success:array{code:int,message:string}}
 	 */
-	public function putTimeSpent($id, $timespent_id, $date, $duration, $product_id = null, $user_id = 0, $note = '', $progress = -1)
+	public function putTimeSpent($id, $timespent_id, $date, $duration, $product_id = 0, $user_id = 0, $note = '', $progress = -1)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('projet', 'creer')) {
 			throw new RestException(403);
