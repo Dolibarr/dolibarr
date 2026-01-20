@@ -615,7 +615,7 @@ class Tasks extends DolibarrApi
 	 * @param   int		      	$product_id         The product id that is used, default is null
 	 * @param   int         	$user_id            User (Use 0 for connected user)
 	 * @param   string      	$note               Note
-	 * @param   int|null    	$progress           Progress percentage (0-100). If null, progress is not updated
+	 * @param   int		    	$progress           Progress percentage (0-100). If null, progress is not updated
 	 *
 	 * @url POST    {id}/addtimespent
 	 *      NOTE: Should be "POST {id}/timespent", since POST already implies "add"
