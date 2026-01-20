@@ -2384,12 +2384,13 @@ function dolPrintText($s)
  * To output a text inside an attribute, you can use dolPrintHTMLForAttribute() or dolPrintHTMLForTextArea() inside a textarea
  * With dolPrintHTML(), only content not already in HTML is encoded with HTML.
  *
- * @param	int|float|string	$s				String to print
- * @param	int					$allowiframe	Allow iframe tags
- * @return	string								String ready for HTML output (sanitized and escape)
+ * @param	int|float|string	$s					String to print
+ * @param	int					$allowiframe		Allow iframe tags
+ * @param 	string[] 			$moreallowedtags 	Array of extra allowed tags (in addition to 'common' list)
+ * @return	string									String ready for HTML output (sanitized and escape)
  * @see dolPrintHTMLForAttribute(), dolPrintHTMLFortextArea(), dolPrintText()
  */
-function dolPrintHTML($s, $allowiframe = 0)
+function dolPrintHTML($s, $allowiframe = 0, $moreallowedtags = array())
 {
 	// If text is already HTML, we want to escape only dangerous chars else we want to escape all content.
 	//$isAlreadyHTML = dol_textishtml($s);
@@ -2398,7 +2399,11 @@ function dolPrintHTML($s, $allowiframe = 0)
 	// encode only special char like é but not &, <, >, ", ' if already HTML.
 	$stringWithEntitesForSpecialChar = dol_htmlentitiesbr((string) $s);
 
-	return dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags($stringWithEntitesForSpecialChar, 1, 1, 1, $allowiframe)), 1, 1, 'common', 0, 1);
+	$allowedtags = 'common';
+	if (!empty($moreallowedtags)) {
+		$allowedtags .= ','.implode(',', $moreallowedtags);
+	}
+	return dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags($stringWithEntitesForSpecialChar, 1, 1, 1, $allowiframe, $allowedtags)), 1, 1, $allowedtags, 0, 1);
 }
 
 /**
@@ -2478,7 +2483,7 @@ function dolPrintPassword($s)
  *  @param      string		$stringtoescape			String to escape
  *  @param		int			$keepb					1=Replace b tags with escaped value (except if in $noescapetags), 0=Remove them completely
  *  @param      int         $keepn              	1=Preserve \r\n strings, 0=Replace them with escaped value, -1=Remove them. Set to 1 when escaping for a <textarea>.
- *  @param		string		$noescapetags			'' (escape all html tags) or 'common' (do not escape some common tags) or list of tags to not escape.
+ *  @param		string		$noescapetags			'' (escape all html tags) or 'common' (do not escape some common tags) or 'common,a,b,c' or list of tags to not escape.
  *  @param		int			$escapeonlyhtmltags		1=Escape only html tags and double quotes, not the special chars like accents.
  *  @param		int			$cleanalsojavascript	Clean also javascript. @TODO switch this option to 1 by default.
  *  @return     string     				 			Escaped string
@@ -2486,10 +2491,14 @@ function dolPrintPassword($s)
  */
 function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapetags = '', $escapeonlyhtmltags = 0, $cleanalsojavascript = 0)
 {
-	if ($noescapetags == 'common') {
+	$reg = array();
+	if (preg_match('/^common([a-z,]*)/', $noescapetags, $reg)) {
 		$noescapetags = 'html,body,a,b,em,hr,i,u,ul,ol,li,br,div,img,font,p,span,strong,table,tr,td,th,tbody,h1,h2,h3,h4,h5,h6,h7,h8,h9';
 		// Add also html5 tags
 		$noescapetags .= ',header,footer,nav,section,menu,menuitem';
+		if (!empty($reg[1])) {
+			$noescapetags .= $reg[1];
+		}
 	}
 	if ($cleanalsojavascript) {
 		$stringtoescape = dol_string_onlythesehtmltags($stringtoescape, 0, 0, $cleanalsojavascript, 0, array(), 0);
@@ -9002,23 +9011,25 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
  *  Complementary of dol_string_onlythesehtmlattributes().
  *  WARNING: This also clean HTML comments (because they can be used to obfuscate tag names).
  *
- *	@param	string		$stringtoclean			String to clean
- *  @param	int			$cleanalsosomestyles	Remove absolute/fixed positioning from inline styles
- *  @param	int			$removeclassattribute	1=Remove the class attribute from tags
- *  @param	int			$cleanalsojavascript	Remove also occurrence of 'javascript:'.
- *  @param	int			$allowiframe			Allow iframe tags.
- *  @param	string[]	$allowed_tags			List of allowed tags to replace the default list
- *  @param	int			$allowlink				Allow "link" and "meta" tags (for head html section when using GETPOST with mode 'restricthtmlallowlinkscript')
- *  @param	int			$allowscript			Allow "script" tags (for head html section when using GETPOST with mode 'restricthtmlallowlinkscript')
- *  @param	int			$allowstyle				Allow "style" tags (for head html section when using GETPOST with mode 'restricthtmlallowlinkscript')
- *  @param	int			$allowphp				Allow "php" tags (Deprecated. Should never be used. If you can add php, you can also print in the php the code to output the other non allowed tags)
- *	@return string	    						String cleaned
+ *	@param	string			$stringtoclean			String to clean
+ *  @param	int				$cleanalsosomestyles	Remove absolute/fixed positioning from inline styles
+ *  @param	int				$removeclassattribute	1=Remove the class attribute from tags
+ *  @param	int				$cleanalsojavascript	Remove also occurrence of 'javascript:'.
+ *  @param	int				$allowiframe			Allow iframe tags.
+ *  @param	string,string[]	$allowed_tags			Array of allowed tags to replace the default list or '' or 'common' or 'common,a,b,c'
+ *  @param	int				$allowlink				Allow "link" and "meta" tags (for head html section when using GETPOST with mode 'restricthtmlallowlinkscript')
+ *  @param	int				$allowscript			Allow "script" tags (for head html section when using GETPOST with mode 'restricthtmlallowlinkscript')
+ *  @param	int				$allowstyle				Allow "style" tags (for head html section when using GETPOST with mode 'restricthtmlallowlinkscript')
+ *  @param	int				$allowphp				Allow "php" tags (Deprecated. Should never be used. If you can add php, you can also print in the php the code to output the other non allowed tags)
+ *	@return string	    							String cleaned
  *
  * 	@see	dol_htmlwithnojs() dol_escape_htmltag() strip_tags() dol_string_nohtmltag() dol_string_neverthesehtmltags()
  */
 function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, $removeclassattribute = 1, $cleanalsojavascript = 0, $allowiframe = 0, $allowed_tags = array(), $allowlink = 0, $allowscript = 0, $allowstyle = 0, $allowphp = 0)
 {
-	if (empty($allowed_tags)) {
+	$sav_allowed_tags = $allowed_tags;
+
+	if (empty($allowed_tags) || (is_string($allowed_tags) && preg_match('/^common/', $allowed_tags))) {
 		$allowed_tags = array(
 			// HTML 4
 			"html",
@@ -9100,6 +9111,15 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 			$allowed_tags[] = "style";
 		}
 	}
+	if (is_string($sav_allowed_tags)) {
+		$tmptags = explode(',', $sav_allowed_tags);
+		foreach ($tmptags as $tag) {
+			if ($tag != 'common') {
+				$allowed_tags[] = $tag;
+			}
+		}
+	}
+
 
 	$allowed_tags_string = implode("><", $allowed_tags);
 	$allowed_tags_string = '<' . $allowed_tags_string . '>';
