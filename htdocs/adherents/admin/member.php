@@ -35,10 +35,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -48,6 +44,9 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
  *
  * @var array<string,array{name:string,paper-size:string|array{0:float,1:float},orientation:string,metric:string,marginLeft:float,marginTop:float,NX:int,NY:int,SpaceX:float,SpaceY:float,width:float,height:float,font-size:int,custom_x:float,custom_y:float}> $_Avery_Labels
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "members"));
@@ -302,7 +301,7 @@ $head = member_admin_prepare_head();
 
 print dol_get_fiche_head($head, 'general', $langs->trans("Members"), -1, 'user');
 
-$dirModMember = array_merge(array('/core/modules/member/'), $conf->modules_parts['member']);
+$dirModMember = array_merge(array('/core/modules/member/'), (array) $conf->modules_parts['member']);
 foreach ($conf->modules_parts['models'] as $mo) {
 	//Add more models
 	$dirModMember[] = $mo.'core/modules/member/';

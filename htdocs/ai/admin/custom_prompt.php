@@ -26,10 +26,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
-require_once DOL_DOCUMENT_ROOT."/ai/lib/ai.lib.php";
-require_once DOL_DOCUMENT_ROOT."/core/class/html.formai.class.php";
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -37,6 +33,9 @@ require_once DOL_DOCUMENT_ROOT."/core/class/html.formai.class.php";
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
+require_once DOL_DOCUMENT_ROOT."/ai/lib/ai.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/class/html.formai.class.php";
 
 $langs->loadLangs(array("admin", "website", "other"));
 
@@ -432,9 +431,10 @@ if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 	print '<br>';
 }
 
-
+// Custom models
 if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 	print load_fiche_titre($langs->trans("AIModelForFeature", $arrayofai[$aiservice]['label']), '', '');
+
 	print $formSetup->generateOutput(true);
 }
 

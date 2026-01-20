@@ -246,7 +246,10 @@ if ($nolinesbefore) {
 			if ($forceall >= 0 && (isModEnabled("product") || isModEnabled("service"))) {
 				print '<label for="prod_entry_mode_free">';
 			}
+
+			// Select type of line
 			$form->select_type_of_lines(GETPOSTISSET("type") ? GETPOST("type", 'alpha', 2) : -1, 'type', $labelforempty, 1, $forceall, 'minwidth200', 0);
+
 			if ($forceall >= 0 && (isModEnabled("product") || isModEnabled("service"))) {
 				print '</label>';
 			}
@@ -804,11 +807,11 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 			}
 
 			if (jQuery("#select_type").val() != '-1') {
-				console.log("we remove class");
+				console.log("we remove class placeholder");
 				jQuery("#select_type").removeClass("placeholder");
 				setFocusOnDescription();
 			} else {
-				console.log("we add class");
+				console.log("we add class placeholder");
 				jQuery("#select_type").addClass("placeholder");
 			}
 		});
@@ -826,9 +829,12 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 
 		<?php
 		if (!$freelines) { ?>
+			console.log("emulate click on prod_entry_mode_predef");
 			jQuery("#prod_entry_mode_predef").click();
 			<?php
-		} else { ?>
+		} elseif (!GETPOSTISSET("type")) { // If not a type selected from previous page
+			?>
+			console.log("add class placeholder");
 			jQuery("#select_type").addClass("placeholder");
 			<?php
 		}
@@ -846,7 +852,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 				}
 			}
 		});
-															<?php
+			<?php
 		} ?>
 
 		/* When changing predefined product, we reload list of supplier prices required for margin combo */
