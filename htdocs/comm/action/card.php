@@ -1836,16 +1836,16 @@ if ($action == 'create') {
 		//checkbox create reminder
 		print '<hr>';
 		print '<br>';
-		print '<label for="addreminder">'.img_picto('', 'bell', 'class="pictofixedwidth"').$langs->trans("AddReminder").'</label> <input type="checkbox" id="addreminder" name="addreminder"><br><br>';
+		print '<label for="addreminder">'.img_picto('', 'bell', 'class="pictofixedwidth"').$langs->trans("AddReminder").'</label> <input type="checkbox" id="addreminder" name="addreminder"'.(empty(GETPOST('addreminder')) ? '' : 'checked').'><br><br>';
 
-		print '<div class="reminderparameters" style="display: none;">';
+		print '<div class="reminderparameters" '.(empty(GETPOST('addreminder')) ? 'style="display: none;' : '').' ">';
 
 		print '<table class="border centpercent">';
 
 		//Reminder
 		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderTime").'</td><td colspan="3">';
 		print '<input class="width50" type="number" name="offsetvalue" value="'.(GETPOSTISSET('offsetvalue') ? GETPOSTINT('offsetvalue') : getDolGlobalInt('AGENDA_REMINDER_DEFAULT_OFFSET', 30)).'"> ';
-		print $form->selectTypeDuration('offsetunit', 'i', array('y', 'm'));
+		print $form->selectTypeDuration('offsetunit', (empty($offsetunit) ? 'i' : $offsetunit), array('y', 'm'));
 		print '</td></tr>';
 
 		//Reminder Type
@@ -1856,7 +1856,7 @@ if ($action == 'create') {
 		//Mail Model
 		if (getDolGlobalString('AGENDA_REMINDER_EMAIL')) {
 			print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("EMailTemplates").'</td><td colspan="3">';
-			print $form->selectModelMail('actioncommsend', 'actioncomm_send', 1, 1);
+			print $form->selectModelMail('actioncommsend', 'actioncomm_send', 1, 1, (empty($modelmail) ? 0 : $modelmail));
 			print '</td></tr>';
 		}
 
@@ -1900,9 +1900,9 @@ if ($action == 'create') {
 
 		print "\n".'<script type="text/javascript">';
 		print '$(document).ready(function () {
-	            		$("#addreminder").click(function(){
-							console.log("Click on addreminder");
-	            		    if (this.checked) {
+	            		function toggle_reminder_part(evt) {
+							console.log("Toggle reminder part");
+	            		    if ($("#addreminder").is(":checked")) {
 	            		    	$(".reminderparameters").show();
                             } else {
                             	$(".reminderparameters").hide();
@@ -1913,6 +1913,9 @@ if ($action == 'create') {
 							$("#select_offsetunittype_duration").select2();
 							selectremindertype();
 	            		 });
+
+						toggle_reminder_part();
+						$("#addreminder").click(toggle_reminder_part);
 
 	            		$("#selectremindertype").change(function(){
 							selectremindertype();
