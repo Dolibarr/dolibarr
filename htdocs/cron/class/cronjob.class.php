@@ -1512,12 +1512,9 @@ class Cronjob extends CommonObject
 				if (empty($outputdir)) {
 					$outputdir = $conf->cronjob->dir_temp;
 				}
-				if (empty($outputdir) && function_exists('sys_get_temp_dir')) {
-					$outputdir = sys_get_temp_dir();
-				}
+				dol_mkdir($outputdir);
 
 				if (!empty($outputdir)) {
-					dol_mkdir($outputdir);
 					$outputfile = $outputdir.'/cronjob.'.$userlogin.'.out'; // File used with popen method
 
 					// Execute a CLI
@@ -1530,7 +1527,7 @@ class Cronjob extends CommonObject
 					$this->lastresult = (string) $arrayresult['result'];
 				} else {
 					$langs->load("errors");
-					$this->error = $langs->trans("ErrorNoTmpDir", $outputdir);
+					$this->error = $langs->trans("ErrorNoTmpDir", (string) $outputdir);
 					$this->lastoutput = '';
 					$this->lastresult = '-1';
 					$error++;
