@@ -47,6 +47,11 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 	public $error = '';
 
 	/**
+	 * @var int		Position
+	 */
+	public $position = 40;
+
+	/**
 	 * @var string name
 	 */
 	public $name = 'Saphir';
@@ -89,7 +94,7 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskorder" value="'.getDolGlobalString("COMMANDE_SAPHIR_MASK").'">', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button" value="'.$langs->trans("Save").'"></td>';
+		$texte .= '<td class="left"><input type="submit" class="button button-edit reposition smallpaddingimp" name="Button" value="'.$langs->trans("Save").'"></td>';
 
 		$texte .= '</tr>';
 
