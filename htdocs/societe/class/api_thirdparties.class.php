@@ -1855,7 +1855,7 @@ class Thirdparties extends DolibarrApi
 		if (empty($account->rum)) {
 			require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 			$prelevement = new BonPrelevement($this->db);
-			$account->rum = $prelevement->buildRumNumber($this->company->code_client, $account->datec, (string) $account->id);
+			$account->rum = $prelevement->buildRumNumber((string) $this->company->code_client, $account->datec, (string) $account->id);
 			$account->date_rum = dol_now();
 		}
 
@@ -1914,7 +1914,7 @@ class Thirdparties extends DolibarrApi
 		if (empty($account->rum)) {
 			require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 			$prelevement = new BonPrelevement($this->db);
-			$account->rum = $prelevement->buildRumNumber($this->company->code_client, $account->datec, (string) $account->id);
+			$account->rum = $prelevement->buildRumNumber((string) $this->company->code_client, $account->datec, (string) $account->id);
 			$account->date_rum = dol_now();
 		}
 
