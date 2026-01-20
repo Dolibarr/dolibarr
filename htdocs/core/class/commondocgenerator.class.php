@@ -338,28 +338,28 @@ abstract class CommonDocGenerator
 		$logotouse = $conf->user->dir_output . '/' . get_exdir(0, 0, 0, 0, $user, 'user') . 'photos/' . getImageFileNameForSize($user->photo, '_small');
 
 		$array_user = array(
-			'myuser_lastname' => $user->lastname,
-			'myuser_firstname' => $user->firstname,
+			'myuser_lastname' => (string) $user->lastname,
+			'myuser_firstname' => (string) $user->firstname,
 			'myuser_fullname' => $user->getFullName($outputlangs, 1),
-			'myuser_login' => $user->login,
-			'myuser_phone' => $user->office_phone,
-			'myuser_address' => $user->address,
-			'myuser_zip' => $user->zip,
-			'myuser_town' => $user->town,
-			'myuser_country' => $user->country,
-			'myuser_country_code' => $user->country_code,
-			'myuser_state' => $user->state,
-			'myuser_state_code' => $user->state_code,
-			'myuser_fax' => $user->office_fax,
-			'myuser_mobile' => $user->user_mobile,
-			'myuser_email' => $user->email,
-			'myuser_logo' => $logotouse,
-			'myuser_job' => $user->job,
+			'myuser_login' => (string) $user->login,
+			'myuser_phone' => (string) $user->office_phone,
+			'myuser_address' => (string) $user->address,
+			'myuser_zip' => (string) $user->zip,
+			'myuser_town' => (string) $user->town,
+			'myuser_country' => (string) $user->country,
+			'myuser_country_code' => (string) $user->country_code,
+			'myuser_state' => (string) $user->state,
+			'myuser_state_code' => (string) $user->state_code,
+			'myuser_fax' => (string) $user->office_fax,
+			'myuser_mobile' => (string) $user->user_mobile,
+			'myuser_email' => (string) $user->email,
+			'myuser_logo' => (string) $logotouse,
+			'myuser_job' => (string) $user->job,
 			'myuser_web' => '',	// url not exist in $user object
 			'myuser_birth' => dol_print_date($user->birth, 'day', 'gmt'),
 			'myuser_dateemployment' => dol_print_date($user->dateemployment, 'day', 'tzuser'),
 			'myuser_dateemploymentend' => dol_print_date($user->dateemploymentend, 'day', 'tzuser'),
-			'myuser_gender' => $user->gender,
+			'myuser_gender' => (string) $user->gender,
 		);
 		// Retrieve extrafields
 		if (is_array($user->array_options) && count($user->array_options)) {
@@ -1043,7 +1043,8 @@ abstract class CommonDocGenerator
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 
-		$object->list_delivery_methods($object->shipping_method_id);
+		$object->list_delivery_methods((int) $object->shipping_method_id);
+
 		$calculatedVolume = ((float) $object->trueWidth * (float) $object->trueHeight * (float) $object->trueDepth);
 
 		$array_shipment = array(
@@ -1110,7 +1111,7 @@ abstract class CommonDocGenerator
 		$array_shipment[$array_key.'_total_toship'] = (string) $totalToShip;
 
 		if ($object->trueWeight) {
-			$array_shipment[$array_key.'_total_weight'] = (empty($totalWeight)) ? '' : showDimensionInBestUnit($object->trueWeight, $object->weight_units, "weight", $outputlangs);
+			$array_shipment[$array_key.'_total_weight'] = (empty($totalWeight)) ? '' : showDimensionInBestUnit($object->trueWeight, (int) $object->weight_units, "weight", $outputlangs);
 		} elseif (!empty($totalWeight)) {
 			$array_shipment[$array_key.'_total_weight'] = showDimensionInBestUnit($totalWeight, 0, "weight", $outputlangs, -1, 'no', 1);
 		} else {
@@ -1186,12 +1187,12 @@ abstract class CommonDocGenerator
 	 *	Fill array with couple extrafield key => extrafield value
 	 *  Note that vars into substitutions array are formatted.
 	 *
-	 *	@param  CommonObject	$object				Object with extrafields (must have $object->array_options filled)
+	 *	@param  CommonObject				$object				Object with extrafields (must have $object->array_options filled)
 	 *	@param  array<string,float|string>	$array_to_fill      Substitution array
-	 *  @param  ExtraFields		$extrafields        ExtraFields object
-	 *  @param  string			$array_key	        Prefix for name of the keys into returned array
-	 *  @param  Translate		$outputlangs        Lang object to use for output
-	 *	@return	array<string,float|string>				Substitution array
+	 *  @param  ExtraFields					$extrafields        ExtraFields object
+	 *  @param  string						$array_key	        Prefix for name of the keys into returned array
+	 *  @param  Translate					$outputlangs        Lang object to use for output
+	 *	@return	array<string,float|string>						Substitution array
 	 */
 	public function fill_substitutionarray_with_extrafields($object, $array_to_fill, $extrafields, $array_key, $outputlangs)
 	{

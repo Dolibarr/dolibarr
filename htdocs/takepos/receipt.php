@@ -119,8 +119,8 @@ print '<body>';
 
 print "
 <script>
-jQuery(document).ready(function () {
-	console.log('Call /blockedlog/ajax/block-add on output of receipt.php');
+
+	console.log('Call /blockedlog/ajax/block-add on output of receipt.php.');
 	$.post('".DOL_URL_ROOT."/blockedlog/ajax/block-add.php'
 			, {
 				id: ".((int) $object->id)."
@@ -129,8 +129,12 @@ jQuery(document).ready(function () {
 									, token: '".currentToken()."'
 			   }
 	);
-});
 </script>";
+
+/*
+ * jQuery(document).ready(function () {
+});
+ */
 
 // Call to external receipt modules factory if it exists and if we can (not allowed in some cases)
 if (isALNERunningVersion()) {
@@ -257,7 +261,7 @@ if (isALNERunningVersion() || !getDolGlobalString('TAKEPOS_HIDE_DATE_OF_PRINTING
 }
 // Transaction ID
 if (isALNERunningVersion() && isModEnabled('blockedlog')) {
-	if ($object->status == $object::STATUS_CLOSED) {
+	if ($object->status > $object::STATUS_DRAFT) {
 		$unalterablelogid = 'UNDEFINED';
 		$sql = "SELECT signature FROM ".MAIN_DB_PREFIX."blockedlog";
 		$sql .= " WHERE action = 'BILL_VALIDATE' AND element = 'facture' AND ref_object = '".$db->escape($object->ref)."'";
@@ -276,14 +280,20 @@ if (isALNERunningVersion() && isModEnabled('blockedlog')) {
 	}
 }
 
-// TODO Show if it is a duplicata
-$isADuplicata = $object->pos_print_counter;
+// $object->pos_print_counter is current value. It is increased by a parallel process when calling ajax block-add.php that
+// may have finished before or after this page start, so $object->pos_print_counter may be already up to date, but we use the value at begin
+// of this page start and we increase 1 to have correct value we want to show.
+$object->pos_print_counter += 1;
+
+// Show if it is a duplicata
+$isADuplicata = ($object->pos_print_counter >= 2);
 
 if ($object->status == $object::STATUS_CLOSED) {
 	if ($isADuplicata) {
-		print '<br><b>*** DUPLICATA***</b>';	// Hard coded string
+		print '<br><b>*** DUPLICATA (no '.($object->pos_print_counter - 1).') ***</b>';	// Hard coded string
 	}
 } else {
+	// Not yet paid completely
 	print '<br><b>*** '.strtoupper($langs->trans("TemporaryReceipt")).' ***</b>';	// Hard coded string
 }
 ?>
@@ -367,7 +377,7 @@ if ($object->status == $object::STATUS_CLOSED) {
 if (getDolGlobalString('TAKEPOS_TICKET_VAT_GROUPPED')) {
 	$vat_groups = array();
 	foreach ($object->lines as $line) {
-		if (!array_key_exists($line->tva_tx, $vat_groups)) {
+		if (!array_key_exists((string) $line->tva_tx, $vat_groups)) {
 			$vat_groups[(string) $line->tva_tx] = 0;
 		}
 		$vat_groups[(string) $line->tva_tx] += $line->total_tva;

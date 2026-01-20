@@ -421,6 +421,8 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 				if ($result) {
 					// Initialisation of datas of object to call trigger
 					if (is_object($object)) {
+						$db->begin();	// Transaction for post action must start after sending email to avoid lock when sending email that may be long
+
 						if (empty($actiontypecode)) {
 							$actiontypecode = 'AC_OTH_AUTO'; // Event inserted into agenda automatically
 						}
@@ -444,6 +446,14 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 							$object->sendtouserid = $sendtouserid;
 						}
 
+						// TODO Fix this: Such properties does not exists on all objects
+						$object->context['email_msgid'] = $mailfile->msgid;
+						$object->context['email_from'] = $from;
+						$object->context['email_subject'] = $subject;
+						$object->context['email_to'] = $sendto;
+						$object->context['email_tocc'] = $sendtocc;
+						$object->context['email_tobcc'] = $sendtobcc;
+
 						$object->email_msgid = $mailfile->msgid; // @todo Set msgid into $mailfile after sending
 						$object->email_from = $from;
 						$object->email_subject = $subject;
@@ -454,6 +464,8 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 						// Call of triggers (you should have set $triggersendname to execute trigger.
 						if (!empty($triggersendname)) {
 							if ($triggersendname == 'BILL_SENTBYMAIL' && $object instanceof Facture) {
+								/* @var Facture $object */
+
 								// If sending email for invoice, we increase the counter of invoices sent by email
 								$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET email_sent_counter = email_sent_counter + 1";
 								$sql .= " WHERE rowid = ".((int) $object->id);
@@ -473,6 +485,12 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 							}
 						}
 						// End call of triggers
+
+						if (!$error) {
+							$db->commit();
+						} else {
+							$db->rollback();
+						}
 					}
 
 					// Redirect here

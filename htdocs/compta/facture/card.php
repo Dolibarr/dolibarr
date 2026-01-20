@@ -4507,10 +4507,9 @@ if ($action == 'create') {
 
 		// Bank Account
 		if (isModEnabled("bank")) {
-			print '<tr><td>'.$langs->trans('BankAccount').'</td><td colspan="2">';
+			print '<tr><td>'.$langs->trans('DefaultBankAccount').'</td><td colspan="2">';
 			print img_picto('', 'bank_account', 'class="pictofixedwidth"');
 			print $form->select_comptes((int) $fk_account, 'fk_account', 0, '', 1, '', 0, 'maxwidth250 widthcentpercentminusx', 1);
-			//print ' <a href="'.DOL_URL_ROOT.'/compta/bank/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id.($fac_rec ? '&fac_rec='.$fac_rec : '')).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("NewBankAccount").'"></span></a>';
 			print '</td></tr>';
 		}
 
@@ -4551,9 +4550,9 @@ if ($action == 'create') {
 			print '</td></tr>';
 		}
 
-		// Dispute open
+		// Dispute
 		/* Not necessary on creation
-		print '<tr><td class="nowrap fieldrequired">'.$langs->trans('DisputeOpen').'</td><td colspan="2">';
+		print '<tr><td class="nowrap fieldrequired">'.$langs->trans('Dispute').'</td><td colspan="2">';
 		//print yn($object->dispute_status);
 		print '</td></tr>';
 		*/
@@ -4992,7 +4991,7 @@ if ($action == 'create') {
 		}
 	}
 
-	// Confirm back to draft status
+	// Confirm back to draft status (action = 'modif')
 	if ($action == 'modif') {
 		$oktomodif = 1;		// Assume we can modify by default
 
@@ -5544,7 +5543,7 @@ if ($action == 'create') {
 		if (isModEnabled("bank")) {
 			print '<tr><td class="nowrap">';
 			print '<table class="nobordernopadding centpercent"><tr><td class="nowrap">';
-			print $langs->trans('BankAccount');
+			print $langs->trans('DefaultBankAccount');
 			print '<td>';
 			if (($action != 'editbankaccount') && $usercancreate) {
 				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
@@ -5583,22 +5582,25 @@ if ($action == 'create') {
 		// Dispute open
 		print '<tr><td>';
 		print '<table class="nobordernopadding centpercent"><tr><td>';
-		print $langs->trans('DisputeOpen');
+		print $langs->trans('Dispute');
 		print '<td><td class="right">';
 		if ($usercancreate) {
 			print '<a class="editfielda" href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$object->id.'&action=editdispute_status&token='.newToken().'">'.img_edit().'</a>';
 		}
 		print '</td></tr></table>';
 		print '</td><td>';
+		$liststatus = array('0' => "None", '1' => "DisputeOpen", '8' => "DisputeLost", '9' => "DisputeWon");
 		if ($action != 'editdispute_status') {
-			print '<input type="checkbox" value="1" disabled="disabled"'.($object->dispute_status ? ' checked="checked"' : '').'>';
+			if ($object->dispute_status) {
+				print $langs->trans($liststatus[$object->dispute_status]);
+			}
 		} else {
 			print '<form enctype="multipart/form-data" action="'.DOL_URL_ROOT.'/compta/facture/card.php" method="POST">';
 			print '<input type="hidden" name="action" value="set_dispute_status">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
 			print '<input type="hidden" name="page_y" value="">';
-			print '<input type="checkbox" name="dispute_status" value="1" class="valignmiddle"'.($object->dispute_status ? ' checked="checked"' : '').'>';
+			print $form->selectarray('dispute_status', $liststatus, $object->dispute_status);
 			print '<input type="submit" class="button smallpaddingimp valignmiddle" value="'.$langs->trans("Save").'">';
 			print '</form>';
 		}

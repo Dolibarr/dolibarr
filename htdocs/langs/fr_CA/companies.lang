@@ -150,3 +150,5 @@ NewSocNameForClone=Nouveau nom de l'entreprise
 ConfirmCloneThirdparties=Êtes-vous sûr de vouloir cloner la société <b>%s</b> ?
 SocialNetworksBusiness=Réseaux sociaux pour entreprise
 ErrorCommercialNotAllowedForThirdparty=L'utilisateur %s n'a pas l'autorisation de voir tous les tiers et n'est pas un représentant commercial autorisé de l'entreprise.
+PublicInterfaceCompanyDesc=Cette option propose une page publique avec un formulaire de contact en ligne permettant à tout visiteur anonyme de vous envoyer un message (créant ainsi automatiquement un contact tiers).
+ImpossibleToCreateUserFromContact=Impossible de créer un utilisateur à partir de ce contact

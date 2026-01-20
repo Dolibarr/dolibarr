@@ -110,7 +110,6 @@ ErrorInvoiceAvoirMustBeNegative=Error, la factura correcta debe tener una cantid
 ErrorInvoiceOfThisTypeMustBePositive=Error, este tipo de factura debe tener una cantidad que excluya impuestos positivos (o nulos)
 ErrorCantCancelIfReplacementInvoiceNotValidated=Error, no puede cancelar una factura que ha sido reemplazada por otra factura que todavía está en estado de borrador
 ErrorThisPartOrAnotherIsAlreadyUsedSoDiscountSerieCantBeRemoved=Esta parte u otra ya está en uso, por lo que no se pueden eliminar las series de descuento
-ErrorInvoiceIsNotLastOfSameType=Error: The date of invoice %s  is %s. It must be posterior or equal to last date for same type invoices (%s). Please change the invoice date.
 BillFrom=De
 BillTo=A
 ActionsOnBill=Acciones en la factura

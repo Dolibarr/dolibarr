@@ -4231,6 +4231,7 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/core/modules/modCommercial.class.php',
 		'/core/modules/modProduit.class.php',
 		'/core/modules/modSkype.class.php',
+		'/core/modules/modactivite.class.php',		// A file from external module that should not be here
 		'/core/triggers/interface_modWebcalendar_Webcalsynchro.class.php',
 		'/core/triggers/interface_modCommande_Ecotax.class.php',
 		'/core/triggers/interface_modCommande_fraisport.class.php',
@@ -4258,6 +4259,9 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/core/modules/mailings/peche.modules.php',
 		'/core/modules/mailings/poire.modules.php',
 		'/core/modules/mailings/kiwi.modules.php',
+		'/core/modules/syslog/mod_syslog_chromephp.php',
+		'/core/modules/syslog/mod_syslog_firephp.php',
+		'/core/modules/syslog/logHandlerInterface.php',
 		'/core/boxes/box_members.php',
 
 		'/includes/restler/framework/Luracast/Restler/Data/Object.php',
@@ -4412,7 +4416,9 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 	);
 
 	foreach ($listofmodule as $moduletoreload => $reloadmode) {	// reloadmodule can be 'noboxes', 'newboxdefonly', 'forceactivate'
-		if (empty($moduletoreload) || (!isModEnabled($moduletoreload) && !$force)) {
+		$modulekey = preg_replace('/^MAIN_MODULE_/', '', $moduletoreload);
+
+		if (empty($moduletoreload) || (!isModEnabled(strtolower($modulekey)) && !$force)) {
 			continue; // Discard reload if module not enabled
 		}
 
@@ -4439,9 +4445,9 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 			}
 		} else {	// Other generic cases/modules
 			$reg = array();
-			$tmp = preg_match('/MAIN_MODULE_([a-zA-Z0-9]+)/', $moduletoreload, $reg);
+			preg_match('/([a-zA-Z0-9]+)/', $modulekey, $reg);
 			if (!empty($reg[1])) {
-				if (strtoupper($moduletoreload) == $moduletoreload) {	// If key is un uppercase
+				if (strtoupper($moduletoreload) == $moduletoreload) {	// If key has at least one uppercase
 					$moduletoreloadshort = ucfirst(strtolower($reg[1]));
 				} else { // If key is a mix of up and low case
 					$moduletoreloadshort = $reg[1];

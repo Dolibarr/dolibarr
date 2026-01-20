@@ -160,7 +160,9 @@ if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY')) {
 
 // Show the input of countries not allowed for disabling
 print '<tr class="oddeven">';
-print '<td>'.$langs->trans("BlockedLogDisableNotAllowedForCountry").'</td>';
+print '<td>';
+print $form->textwithpicto($langs->transnoentitiesnoconv("BlockedLogDisableNotAllowedForCountry"), $langs->transnoentitiesnoconv("BlockedLogDisableNotAllowedForCountry2"));
+print '</td>';
 print '<td>';
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
@@ -182,8 +184,11 @@ if ($resql) {
 
 $selected = !getDolGlobalString('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY') ? array() : explode(',', getDolGlobalString('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY'));
 
-print $form->multiselectarray('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY', $countryArray, $selected);
-print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
+// Can module be disabled
+$canbedisabled = $block_static->canBeDisabled();
+
+print $form->multiselectarray('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY', $countryArray, $selected, 0, 0, '', 0, 0, $canbedisabled ? '' : 'disabled');
+print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"'.($canbedisabled ? '' : ' disabled').'>';
 print '</form>';
 
 print '</td>';
