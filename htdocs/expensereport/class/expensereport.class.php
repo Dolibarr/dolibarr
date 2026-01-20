@@ -631,6 +631,7 @@ class ExpenseReport extends CommonObject
 		$sql .= " total_ht = ".((float) $this->total_ht);
 		$sql .= " , total_ttc = ".((float) $this->total_ttc);
 		$sql .= " , total_tva = ".((float) $this->total_tva);
+		$sql .= " , date_create = '".$this->db->idate($this->date_create)."'";
 		$sql .= " , date_debut = '".$this->db->idate($this->date_debut)."'";
 		$sql .= " , date_fin = '".$this->db->idate($this->date_fin)."'";
 		if ($userofexpensereport && is_object($userofexpensereport)) {
