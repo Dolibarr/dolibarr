@@ -64,7 +64,7 @@ $resources	= GETPOST('resources', 'array:int');
 // Initialize a technical objects
 $object = new Workstation($db);
 
-//$extrafields = new ExtraFields($db);
+$extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->workstation->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array($object->element.'card', 'globalcard')); // Note that conf->hooks_modules contains array
 
