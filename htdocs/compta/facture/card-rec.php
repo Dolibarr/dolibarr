@@ -961,12 +961,11 @@ if (empty($reshook)) {
 		$line->fetch(GETPOST('lineid', 'int'));
 		$percent = $line->get_prev_progress($object->id);
 
-		if (GETPOST('progress') < $percent)
-		{
-				$mesg = '<div class="warning">' . $langs->trans("CantBeLessThanMinPercent") . '</div>';
-				setEventMessages($mesg, null, 'warnings');
-				$error++;
-				$result = -1;
+		if (GETPOST('progress') < $percent) {
+			$mesg = '<div class="warning">' . $langs->trans("CantBeLessThanMinPercent") . '</div>';
+			setEventMessages($mesg, null, 'warnings');
+			$error++;
+			$result = -1;
 		}*/
 
 		$remise_percent = price2num(GETPOST('remise_percent'), '', 2);
@@ -1051,17 +1050,18 @@ if (empty($reshook)) {
 					// Define output language
 					$outputlangs = $langs;
 					$newlang = '';
-					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id','aZ09'))
+					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id','aZ09')) {
 						$newlang = GETPOST('lang_id','aZ09');
-						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang))
-							$newlang = $object->thirdparty->default_lang;
-							if (!empty($newlang)) {
-								$outputlangs = new Translate("", $conf);
-								$outputlangs->setDefaultLang($newlang);
-							}
-
-							$ret = $object->fetch($id); // Reload to get new records
-							$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+					}
+					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+						$newlang = $object->thirdparty->default_lang;
+					}
+					if (!empty($newlang)) {
+						$outputlangs = new Translate("", $conf);
+						$outputlangs->setDefaultLang($newlang);
+					}
+					$ret = $object->fetch($id); // Reload to get new records
+					$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				}*/
 
 				$object->fetch($object->id); // Reload lines
