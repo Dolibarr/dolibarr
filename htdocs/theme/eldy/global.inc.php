@@ -387,7 +387,9 @@ span.massactionselect, input.inputsearch_dropdownselectedfields {
 
 .liste_titre input:not(#search_component_params_input):not(.select2-search__field), .liste_titre select {
 	border: none;
-	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>: solid 1px var(<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '--colorbacktitle1' : '--inputbordercolor'; ?>) !important;
+	border-style: solid;
+	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>-width: 1px !important;
+	border-color: var(<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '--colorbacktitle1' : '--inputbordercolor'; ?>) !important;
 }
 
 .divadvancedsearchfieldcompinput,
@@ -2434,7 +2436,7 @@ datalist {
 
 	/* input, input[type=text], */
 	select {
-		width: 98%;
+		/* width: 98%; */
 		min-width: 40px;
 	}
 
@@ -3818,7 +3820,7 @@ img.userphotopublicvcard {
 img.userphoto[alt="Gravatar avatar"], img.photouserphoto.dropdown-user-image[alt="Gravatar avatar"] {
 	background: #fff;
 }
-form[name="addtime"] img.userphoto {
+form[name="addtime"] img.userphoto, form[name="addtime"] img.userphotosmall {
 	border: 1px solid #444;
 }
 .span-icon-user {

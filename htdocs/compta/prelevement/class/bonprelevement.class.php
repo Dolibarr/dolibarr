@@ -2251,7 +2251,7 @@ class BonPrelevement extends CommonObject
 	 *
 	 * @param	string		$row_code_client	Customer code (soc.code_client)
 	 * @param	int			$row_datec			Creation date of bank account (rib.datec)
-	 * @param	string		$row_drum			Id of customer bank account (rib.rowid)
+	 * @param	int|string	$row_drum			Id of customer bank account (rib.rowid)
 	 * @return 	string		RUM number
 	 */
 	public static function buildRumNumber($row_code_client, $row_datec, $row_drum)
@@ -2261,7 +2261,7 @@ class BonPrelevement extends CommonObject
 		$pre = substr(dol_string_nospecial(dol_string_unaccent($langs->transnoentitiesnoconv('RUM'))), 0, 3); // Must always be on 3 char ('RUM' or 'UMR'. This is a protection against bad translation)
 
 		// 3 char + '-' + 12 + '-' + id + '-' + code 		Must be lower than 32.
-		return $pre . '-' . dol_print_date($row_datec, 'dayhourlogsmall') . '-' . dol_trunc($row_drum . ($row_code_client ? '-' . $row_code_client : ''), 13, 'right', 'UTF-8', 1);
+		return $pre . '-' . dol_print_date($row_datec, 'dayhourlogsmall') . '-' . dol_trunc((string) $row_drum . ($row_code_client ? '-' . $row_code_client : ''), 13, 'right', 'UTF-8', 1);
 	}
 
 
