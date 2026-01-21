@@ -15,9 +15,10 @@ class FactureTools
 	 *
 	 * @param DoliDB $db Database handler
 	 * @param Facture $facture Invoice object
+	 * @param bool $load_obj Load and return object in response if True
 	 * @return array List of orders with their client reference and total HT
 	 */
-	public static function getTotalHtOrdersLinkedToInvoice(DoliDB $db, Facture $invoice): array
+	public static function getTotalHtOrdersLinkedToInvoice(DoliDB $db, Facture $invoice, bool $load_obj = False): array
 	{
 
 		$invoice->fetchObjectLinked();
@@ -34,6 +35,9 @@ class FactureTools
 			}
 		}
 		$orders = CommandeTools::sortOrdersByDateAndRef($orders);
+		if ($load_obj) {
+			return array_map(static fn ($o) => ['ref_client' => $o->ref_ext . '(' .$o->ref.')', 'total_ht' => $o->total_ht, 'obj' => $o], $orders);
+		}
 		return array_map(static fn ($o) => ['ref_client' => $o->ref_ext . '(' .$o->ref.')', 'total_ht' => $o->total_ht], $orders);
 	}
 
