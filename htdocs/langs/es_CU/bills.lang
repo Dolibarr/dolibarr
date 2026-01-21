@@ -442,4 +442,3 @@ CustomersInvoicesArea=área de facturación del cliente
 PDFSituationTitle=Situación n° %d
 SearchUnpaidInvoicesWithDueDate=Buscar facturas sin pagar con fecha de vencimiento = %s
 PaymentRegisteredAndInvoiceSetToPaid=Pago registrado y factura %s configurada como pagada
-EmailTemplateForAutoSend=Plantilla de correo electrónico para envío automático

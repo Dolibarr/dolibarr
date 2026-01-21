@@ -5,4 +5,3 @@ AmountOfBillsByMonthHT=Importe de las facturas por mes (Sin IVU)
 IntracommunityVATNumber=Número de IVU intracomunitario
 VATIsNotUsedForInvoice=* IVU no aplicable  art-293B del CGI
 PDFCrabeDescription=Modelo de factura completo (IVU,  método de pago a mostrar, logotipo...)
-EmailTemplateForAutoSend=Plantilla de correo electrónico para envío automático

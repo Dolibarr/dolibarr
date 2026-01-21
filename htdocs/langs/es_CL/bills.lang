@@ -395,4 +395,3 @@ AutoFillDateFrom=Establecer fecha de inicio para la línea de servicio con fecha
 AutoFillDateFromShort=Establecer fecha de inicio
 AutoFillDateToShort=Establecer fecha de finalización
 MaxNumberOfGenerationReached=Número máximo de gen. alcanzado
-EmailTemplateForAutoSend=Plantilla de correo electrónico para envío automático

@@ -386,4 +386,3 @@ ConfirmDeleteRepeatableInvoice=¿Está seguro de que desea eliminar la factura d
 BillCreated=%s factura(s) generada
 SearchValidatedInvoicesWithDate=Buscar facturas pendientes de pago con una fecha de validación =%s
 SalaryInvoice=Sueldo
-EmailTemplateForAutoSend=Plantilla de correo electrónico para envío automático

@@ -28,4 +28,3 @@ PayedByThisPayment=Bezahlt durch diese Zahlung
 TypeContact_facture_internal_SALESREPFOLL=Repräsentative Follow-up Debitorenrechnung
 TypeContact_facture_external_BILLING=Debitorenrechnung Kontakt
 TypeContact_facture_external_SHIPPING=Customer Versand Kontakt
-EmailTemplateForAutoSend=E-Mail-Vorlage für automatischen Versand

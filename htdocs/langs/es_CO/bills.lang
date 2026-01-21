@@ -491,4 +491,3 @@ CreateCreditNoteWhenClientInvoiceExists=Esta opción está habilitada solo cuand
 SearchValidatedSupplierInvoicesWithDate=Buscar facturas de proveedores impagadas con fecha de validación = %s
 SendEmailsRemindersOnSupplierInvoiceDueDate=Enviar recordatorio por correo electrónico para facturas de proveedores validadas y no pagadas
 CumulativeProgression=Progreso acumulado
-EmailTemplateForAutoSend=Plantilla de correo electrónico para envío automático

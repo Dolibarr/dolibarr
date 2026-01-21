@@ -370,4 +370,3 @@ BILL_SUPPLIER_DELETEInDolibarr=Fatura de fornecedor excluída
 UnitPriceXQtyLessDiscount=Preço unitário x Qtd. - Desconto
 CustomersInvoicesArea=Área de cobrança do cliente
 SupplierInvoicesArea=Área de cobrança do cliente
-EmailTemplateForAutoSend=Modelo de email para envio automático
