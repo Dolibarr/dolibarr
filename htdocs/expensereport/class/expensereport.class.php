@@ -631,17 +631,20 @@ class ExpenseReport extends CommonObject
 		$sql .= " total_ht = ".((float) $this->total_ht);
 		$sql .= " , total_ttc = ".((float) $this->total_ttc);
 		$sql .= " , total_tva = ".((float) $this->total_tva);
+		if (!empty($this->date_create)) {
+			$sql .= " , date_create = '".$this->db->idate($this->date_create)."'";
+		}
 		$sql .= " , date_debut = '".$this->db->idate($this->date_debut)."'";
 		$sql .= " , date_fin = '".$this->db->idate($this->date_fin)."'";
 		if ($userofexpensereport && is_object($userofexpensereport)) {
-			$sql .= " , fk_user_author = ".($userofexpensereport->id > 0 ? $userofexpensereport->id : "null"); // Note fk_user_author is not the 'author' but the guy the expense report is for.
+			$sql .= " , fk_user_author = ".($userofexpensereport->id > 0 ? (int) $userofexpensereport->id : "null"); // Note fk_user_author is not the 'author' but the guy the expense report is for.
 		}
-		$sql .= " , fk_user_validator = ".($this->fk_user_validator > 0 ? $this->fk_user_validator : "null");
-		$sql .= " , fk_user_valid = ".($this->fk_user_valid > 0 ? $this->fk_user_valid : "null");
-		$sql .= " , fk_user_approve = ".($this->fk_user_approve > 0 ? $this->fk_user_approve : "null");
+		$sql .= " , fk_user_validator = ".($this->fk_user_validator > 0 ? (int) $this->fk_user_validator : "null");
+		$sql .= " , fk_user_valid = ".($this->fk_user_valid > 0 ? (int) $this->fk_user_valid : "null");
+		$sql .= " , fk_user_approve = ".($this->fk_user_approve > 0 ? (int) $this->fk_user_approve : "null");
 		$sql .= " , fk_user_modif = ".((int) $user->id);
-		$sql .= " , fk_statut = ".($this->fk_statut >= 0 ? $this->fk_statut : '0');
-		$sql .= " , fk_c_paiement = ".($this->fk_c_paiement > 0 ? $this->fk_c_paiement : "null");
+		$sql .= " , fk_statut = ".($this->fk_statut >= 0 ? (int) $this->fk_statut : 0);
+		$sql .= " , fk_c_paiement = ".($this->fk_c_paiement > 0 ? (int) $this->fk_c_paiement : "null");
 		$sql .= " , note_public = ".(!empty($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "''");
 		$sql .= " , note_private = ".(!empty($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "''");
 		$sql .= " , detail_refuse = ".(!empty($this->detail_refuse) ? "'".$this->db->escape($this->detail_refuse)."'" : "''");

@@ -193,7 +193,8 @@ if ($action == 'updatesocialnetwork') {
 	$paramsKey = GETPOST('paramsKey', 'array');
 	$paramsVal = GETPOST('paramsVal', 'array');
 
-	$result = dolibarr_get_const($db, "SOCIAL_NETWORKS_DATA_".$name, $conf->entity);
+	$result = getDolGlobalString("SOCIAL_NETWORKS_DATA_".$name);
+
 	$socialNetworkData = json_decode($result, true);
 
 	foreach ($paramsKey as $index => $key) {
@@ -244,7 +245,9 @@ if ($action == 'editsocialnetwork' && GETPOST('confirm') == 'yes') {
 	$paramKey = GETPOST('paramkey', 'alpha');
 	$key = GETPOST('key', 'alpha');
 	$name = GETPOST('name');
-	$result = dolibarr_get_const($db, "SOCIAL_NETWORKS_DATA_".$name, $conf->entity);
+
+	$result = getDolGlobalString("SOCIAL_NETWORKS_DATA_".$name);
+
 	$socialNetworkData = json_decode($result, true);
 
 	unset($socialNetworkData[$paramKey]);

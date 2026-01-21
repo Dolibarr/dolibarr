@@ -2081,11 +2081,7 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 			$newmenu->add("/asset/list.php?leftmenu=asset&mainmenu=accountancy", $langs->trans("MenuAssets"), 0, $user->hasRight('asset', 'read'), '', $mainmenu, 'asset', 100, '', '', '', img_picto('', 'payment', 'class="paddingright pictofixedwidth"'));
 			$newmenu->add("/asset/card.php?leftmenu=asset&action=create", $langs->trans("MenuNewAsset"), 1, $user->hasRight('asset', 'write'));
 			$newmenu->add("/asset/list.php?leftmenu=asset&mainmenu=accountancy", $langs->trans("MenuListAssets"), 1, $user->hasRight('asset', 'read'));
-			$newmenu->add("/asset/model/list.php?leftmenu=asset_model", $langs->trans("MenuAssetModels"), 1, (int) ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'read')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'model_advance', 'read'))), '', $mainmenu, 'asset_model');
-			if ($usemenuhider || empty($leftmenu) || preg_match('/asset_model/', $leftmenu)) {
-				$newmenu->add("/asset/model/card.php?leftmenu=asset_model&action=create", $langs->trans("MenuNewAssetModel"), 2, (int) ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'write')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'model_advance', 'write'))));
-				$newmenu->add("/asset/model/list.php?leftmenu=asset_model", $langs->trans("MenuListAssetModels"), 2, (int) ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'read')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'model_advance', 'read'))));
-			}
+			$newmenu->add("/asset/model/list.php?leftmenu=asset_model", $langs->trans("ListOfTemplates"), 1, (int) ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'read')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'model_advance', 'read'))), '', $mainmenu, 'asset_model');
 		}
 	}
 }
