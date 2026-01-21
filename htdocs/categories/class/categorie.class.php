@@ -1055,7 +1055,9 @@ class Categorie extends CommonObject
 					if ($onlyids) {
 						$objs[] = $rec['fk_object'];
 					} else {
-						$tmpobj->id = 0;
+						// $tmpobj->id = 0; // don't do that, the object will be the same in all the array and keep only the last one
+						/** @var CommonObject $tmpobj */
+						$tmpobj = new $classnameforobj($this->db);
 						$tmpobj->fetch($rec['fk_object']);	// The fetch will erase $tmpobj->id only if it succeed.
 						// @phpstan-ignore-next-line
 						if ($tmpobj->id > 0) {		// Failing fetch may happen for example when a category supplier was set and third party was moved as customer only. The object supplier can't be loaded.
