@@ -431,11 +431,12 @@ if ($action == 'new') {
 	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_start, 'search_date_start_', 0, 0, 1, '', 1, 1, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
-	print '<div class="nowrapfordate">';
+	print '<div class="nowrapfordate marginleftonly">';
 	print $form->selectDate($search_date_end, 'search_date_end_', 0, 0, 1, '', 1, 1, 0, '', '', '', '', 1, '', $langs->trans('to'));
 	print '</div>';
 	print '</td></tr>';
 	print '<tr><td>'.$langs->trans("BankAccount").'</td><td>';
+	print img_picto('', 'account', 'class="pictofixedwidth"');
 	$form->select_comptes($filteraccountid, 'accountid', 0, 'courant <> 2', 1);
 	print '</td></tr>';
 	print '</table>';
@@ -450,7 +451,7 @@ if ($action == 'new') {
 	}
 	print '</div>';
 	print '</form>';
-	print '<br>';
+	print '<br><br>';
 	print '<br>';
 
 	$sql = "SELECT ba.rowid as bid, ba.label,";
@@ -528,11 +529,20 @@ if ($action == 'new') {
 		print '<input type="hidden" name="type" value="'.$type.'">';
 		print '<input type="hidden" name="accountid" value="'.$bid.'">';
 
+		print_fiche_titre($account_label, '', '');
+
 		$moreforfilter = '';
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 		print '<tr class="liste_titre">';
+		if ($conf->main_checkbox_left_column) {
+			print '<td class="center">'.$langs->trans("Select")."<br>";
+			if ($conf->use_javascript_ajax) {
+				print '<a href="#" id="checkall_'.$bid.'">'.$langs->trans("All").'</a> / <a href="#" id="checknone_'.$bid.'">'.$langs->trans("None").'</a>';
+			}
+			print '</td>';
+		}
 		print '<td>';
 		if ($type == 'CHQ') {
 			print $langs->trans("DateChequeReceived");
@@ -546,47 +556,51 @@ if ($action == 'new') {
 		print '<td class="right">'.$langs->trans("Amount")."</td>\n";
 		print '<td class="center">'.$langs->trans("Payment")."</td>\n";
 		print '<td class="center">'.$langs->trans("LineRecord")."</td>\n";
-		print '<td class="center">'.$langs->trans("Select")."<br>";
-		if ($conf->use_javascript_ajax) {
-			print '<a href="#" id="checkall_'.$bid.'">'.$langs->trans("All").'</a> / <a href="#" id="checknone_'.$bid.'">'.$langs->trans("None").'</a>';
+		if (empty($conf->main_checkbox_left_column)) {
+			print '<td class="center">'.$langs->trans("Select")."<br>";
+			if ($conf->use_javascript_ajax) {
+				print '<a href="#" id="checkall_'.$bid.'">'.$langs->trans("All").'</a> / <a href="#" id="checknone_'.$bid.'">'.$langs->trans("None").'</a>';
+			}
+			print '</td>';
 		}
-		print '</td>';
 		print "</tr>\n";
 
 		if (count($lines[$bid])) {
 			foreach ($lines[$bid] as $lid => $value) {
 				print '<tr class="oddeven">';
+				if ($conf->main_checkbox_left_column) {
+					print '<td class="center">';
+					print '<input id="'.$value["id"].'" class="flat checkforremise_'.$bid.'" checked type="checkbox" name="toRemise[]" value="'.$value["id"].'">';
+					print '</td>';
+				}
 				print '<td>'.dol_print_date($value["paymentdate"], 'day').'</td>';
-				print '<td>'.$value["numero"]."</td>\n";
-				print '<td>'.$value["emetteur"]."</td>\n";
-				print '<td>'.$value["banque"]."</td>\n";
-				print '<td class="right"><span class="amount">'.price($value["amount"], 0, $langs, 1, -1, -1, $conf->currency).'</span></td>';
+				print '<td>'.dolPrintHTML($value["numero"])."</td>\n";
+				print '<td class="tdoverflowmax125" title="'.dolPrintHTML($value["emetteur"]).'">'.dolPrintHTML($value["emetteur"])."</td>\n";
+				print '<td>'.dolPrintHTML($value["banque"])."</td>\n";
+				print '<td class="right nowraponall"><span class="amount">'.price($value["amount"], 0, $langs, 1, -1, -1, $conf->currency).'</span></td>';
 
 				// Link to payment
-				print '<td class="center">';
+				print '<td class="center nowraponall">';
 				$paymentstatic->id = $value["paymentid"];
 				$paymentstatic->ref = $value["paymentref"];
 				$paymentstatic->date = $value["paymentdate"];
 				if ($paymentstatic->id) {
 					print $paymentstatic->getNomUrl(1);
-				} else {
-					print '&nbsp;';
 				}
 				print '</td>';
 				// Link to bank transaction
-				print '<td class="center">';
+				print '<td class="center nowraponall">';
 				$accountlinestatic->id = $value["id"];
 				$accountlinestatic->ref = $value["ref"];
 				if ($accountlinestatic->id > 0) {
 					print $accountlinestatic->getNomUrl(1);
-				} else {
-					print '&nbsp;';
 				}
 				print '</td>';
-
-				print '<td class="center">';
-				print '<input id="'.$value["id"].'" class="flat checkforremise_'.$bid.'" checked type="checkbox" name="toRemise[]" value="'.$value["id"].'">';
-				print '</td>';
+				if (empty($conf->main_checkbox_left_column)) {
+					print '<td class="center">';
+					print '<input id="'.$value["id"].'" class="flat checkforremise_'.$bid.'" checked type="checkbox" name="toRemise[]" value="'.$value["id"].'">';
+					print '</td>';
+				}
 				print '</tr>';
 			}
 		}
@@ -595,9 +609,9 @@ if ($action == 'new') {
 
 		print '<div class="tabsAction">';
 		if ($user->hasRight('banque', 'cheque')) {
-			print '<input type="submit" class="button" value="'.$langs->trans('NewCheckDepositOn', $account_label).'">';
+			print '<input type="submit" class="button" value="'.$langs->trans('NewCheckDepositOn').'">';
 		} else {
-			print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('NewCheckDepositOn', $account_label).'</a>';
+			print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('NewCheckDepositOn').'</a>';
 		}
 		print '</div><br>';
 		print '</form>';
