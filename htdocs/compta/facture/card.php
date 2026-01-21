@@ -5175,12 +5175,12 @@ if ($action == 'create') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&paiement_id='.$payment_id, $langs->trans('DeletePayment'), $langs->trans('ConfirmDeletePayment'), 'confirm_delete_paiement', '', 'no', 1);
 	}
 
-	// Confirmation de la suppression d'une ligne produit
+	// Confirm deletion of product line
 	if ($action == 'ask_deleteline') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 'no', 1);
 	}
 
-	// Confirmation de la suppression d'une ligne subtotal
+	// Confirm deletion of subtotal line
 	if ($action == 'ask_subtotal_deleteline') {
 		$langs->load("subtotals");
 		$title = "DeleteSubtotalLine";
@@ -6162,12 +6162,12 @@ if ($action == 'create') {
 			// Loop on each credit note or deposit amount applied
 			$creditnoteamount = 0;
 			$depositamount = 0;
+			$num = 0;
 			$sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
 			$sql .= " re.description, re.fk_facture_source";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as re";
 			$sql .= " WHERE fk_facture = ".((int) $object->id);
 			$resql = $db->query($sql);
-			$num = 0;
 			if ($resql) {
 				$num = $db->num_rows($resql);
 				$i = 0;
