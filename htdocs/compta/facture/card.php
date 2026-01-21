@@ -2797,6 +2797,7 @@ if (empty($reshook)) {
 			}
 
 			if (!$error) {
+				/* Disable strange code that use $lines[$i] that is not defined
 				'@phan-var-force CommonObjectLine[] $lines';
 				// Add batchinfo if the detail_batch array is defined
 				if (isModEnabled('productbatch') && !empty($lines[$i]->detail_batch) && is_array($lines[$i]->detail_batch) && getDolGlobalString('INVOICE_INCUDE_DETAILS_OF_LOTS_SERIALS')) {
@@ -2805,6 +2806,7 @@ if (empty($reshook)) {
 						$desc .= ' '.$langs->trans('Batch').' '.$batchline->batch.' '.$langs->trans('printQty', $batchline->qty).' ';
 					}
 				}
+				*/
 
 				// Insert line
 				$situation_percent = (GETPOSTISSET('progress') ? GETPOSTINT('progress') : 100);
@@ -6596,7 +6598,7 @@ if ($action == 'create') {
 					$langs->load("contracts");
 
 					if ($usercancreatecontract) {
-						print '<a class="butAction" href="' . DOL_URL_ROOT . '/contrat/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans('AddContract') . '</a>';
+						print '<a class="butAction" href="' . DOL_URL_ROOT . '/contrat/card.php?action=create&origin=' . $object->element . '&originid=' . $object->id . '&socid=' . $object->socid . '">' . $langs->trans('AddContract') . '</a>';
 					}
 				}
 			}
@@ -6655,7 +6657,7 @@ if ($action == 'create') {
 			}
 
 			// Request a direct debit order
-			if ($object->status > Facture::STATUS_DRAFT && $object->paye == 0 && $num == 0) {
+			if ($object->status > Facture::STATUS_DRAFT && $object->paye == 0) {
 				if ($resteapayer > 0) {
 					if ($usercancreatewithdrarequest) {
 						if (!$objectidnext && $object->close_code != 'replaced') { 				// Not replaced by another invoice
