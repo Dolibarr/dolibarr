@@ -97,7 +97,7 @@ if (empty($reshook)) {
 		} else {
 			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 				$langs->load("errors");
-				$msg = $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
+				$mesg = $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
 			} else {
 				$mesg = $object->error;
 			}

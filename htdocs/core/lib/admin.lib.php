@@ -30,10 +30,10 @@
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 /**
- *  Returns a string version from an array version.
+ *  Return a version in a string from a version into an array
  *
- *  @param		array<int<0,2>,int|string>		$versionarray		Array of version (major,minor,other)
- *  @return     string        			      	Version in string
+ *  @param		array<int<0,2>,int|string>		$versionarray		Array of version (vermajeur,vermineur,autre)
+ *  @return     string        			      						String version
  *  @see versioncompare()
  */
 function versiontostring($versionarray)
@@ -580,7 +580,7 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
  *	@param	    int			$entity		Multi company id, -1 for all entities
  *	@return     int         			Return integer <0 if KO, >0 if OK
  *
- *	@see		dolibarr_get_const(), dolibarr_set_const(), dol_set_user_param()
+ *	@see		getDolGlobalString(), dolibarr_get_const(), dolibarr_set_const(), dol_set_user_param()
  */
 function dolibarr_del_const($db, $name, $entity = 1)
 {
@@ -627,25 +627,26 @@ function dolibarr_del_const($db, $name, $entity = 1)
 }
 
 /**
- *	Get the value of a setup constant from database
+ *	Get the value of a setup constant from database.
+ *  This method is used only when you need toget a constant and can't use getDolGlobalXXX method because you need a constant that is saved
+ *  into another entity.
  *
  *	@param	    DoliDB		$db         Database handler
  *	@param	    string		$name		Name of constant
  *	@param	    int			$entity		Multi company id
  *	@return     string      			Value of constant
  *
- *	@see		dolibarr_del_const(), dolibarr_set_const(), dol_set_user_param()
+ *	@see		getDolGlobalString(), dolibarr_del_const(), dolibarr_set_const(), dol_set_user_param()
  */
 function dolibarr_get_const($db, $name, $entity = 1)
 {
 	$value = '';
 
-	$sql = "SELECT ".$db->decrypt('value')." as value";
+	$sql = "SELECT ".$db->sanitize($db->decrypt('value'))." as value";
 	$sql .= " FROM ".MAIN_DB_PREFIX."const";
-	$sql .= " WHERE name = ".$db->encrypt($name);
+	$sql .= " WHERE name = '".$db->escape($db->encrypt($name, 0))."'";
 	$sql .= " AND entity = ".((int) $entity);
 
-	dol_syslog("admin.lib::dolibarr_get_const", LOG_DEBUG);
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
@@ -670,7 +671,7 @@ function dolibarr_get_const($db, $name, $entity = 1)
  *	@param	    int			$entity		Multi company id (0 means all entities)
  *	@return     int         			-1 if KO, 1 if OK
  *
- *	@see		dolibarr_del_const(), dolibarr_get_const(), dol_set_user_param()
+ *	@see		getDolGlobalString(), dolibarr_del_const(), dolibarr_get_const(), dol_set_user_param()
  */
 function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, $note = '', $entity = 1)
 {
