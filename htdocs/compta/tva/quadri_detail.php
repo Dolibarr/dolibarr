@@ -233,17 +233,28 @@ $vatcust = $langs->trans("VATReceived");
 $vatsup = $langs->trans("VATPaid");
 $vatexpensereport = $langs->trans("VATPaid");
 
-print '<div class="tabsAction hideonprint">';
-if (GETPOST('showall', 'int') == 1) {
-	// Button to collapse everything
-	$url_params = $_SERVER['QUERY_STRING'];
-	$url_params = preg_replace('/&?showall=1/', '', $url_params);
-	print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?'.$url_params.'">'.$langs->trans("UndoExpandAll").'</a>';
-} else {
-	// Button to expand everything
-	print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?'.$_SERVER['QUERY_STRING'].'&showall=1">'.$langs->trans("ExpandAll").'</a>';
-}
-print '</div>';
+print '<div class="right nowrap">';
+
+// built URLs
+$url_params = preg_replace('/&?showall=1/', '', $_SERVER['QUERY_STRING']);
+$url_collapse = $_SERVER['PHP_SELF'].'?'.$url_params;
+$url_expand = $_SERVER['PHP_SELF'].'?'.$_SERVER['QUERY_STRING'].'&showall=1';
+
+// Link expand all
+print '<a class="showallperms" title="'.dol_escape_htmltag($langs->trans("ShowAllPerms")).'" href="'.$url_expand.'">';
+print img_picto($langs->trans("ExpandAll"), 'folder-open', 'class="paddingright"');
+print '<span class="hideonsmartphone">'.$langs->trans("ExpandAll").'</span>';
+print '</a>';
+
+print ' | ';
+
+// Link undo expand all
+print '<a class="hideallperms" title="'.dol_escape_htmltag($langs->trans("HideAllPerms")).'" href="'.$url_collapse.'">';
+print img_picto($langs->trans("UndoExpandAll"), 'folder', 'class="paddingright"');
+print '<span class="hideonsmartphone">'.$langs->trans("UndoExpandAll").'</span>';
+print '</a>';
+
+print '</div><br>';
 print '<div class="clearboth"></div>';
 
 // VAT Received and paid
