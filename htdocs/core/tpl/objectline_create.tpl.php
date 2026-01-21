@@ -692,7 +692,8 @@ $jsConf = [
 		'newtoken' => newToken(),
 		'token' => currentToken(),
 		'currency' => $conf->currency,
-		'prod_entry_mode_is_predef' => GETPOST('prod_entry_mode') == 'predef'
+		'prod_entry_mode_is_predef' => GETPOST('prod_entry_mode') == 'predef',
+		'noGetPostType' => !GETPOSTISSET("type")
 	],
 	'modules' => [
 		'multicurrency' => isModEnabled('multicurrency')
@@ -956,8 +957,10 @@ if ( !empty($object->thirdparty) ) {
 		});
 
 		if (jsConf.conf.freelines) {
+			console.log("emulate click on prod_entry_mode_predef");
 			jQuery("#prod_entry_mode_predef").click();
-		} else {
+		} else if (jsConf.conf.noGetPostType){
+			console.log("add class placeholder");
 			jQuery("#select_type").addClass("placeholder");
 		}
 
