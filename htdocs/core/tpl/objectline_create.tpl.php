@@ -672,79 +672,208 @@ if ((isModEnabled("service") || ($object->element == 'contrat')) && $dateSelecto
 	print '</tr>'."\n";
 }
 
+$langs->load('stocks');
 
-print "<script>\n";
+$jsConf = [
+	'conf' => [
+		'freelines' => (bool) $freelines,
+		'usemargins' => (bool) $usemargins,
+		'DISPLAY_MARGIN_RATES' => (bool) getDolGlobalInt('DISPLAY_MARGIN_RATES'),
+		'MARGIN_TYPE' => getDolGlobalString('MARGIN_TYPE'),
+		'DISPLAY_MARK_RATES' => (bool) getDolGlobalInt('DISPLAY_MARK_RATES'),
+		'PRODUCT_USE_UNITS' => (bool) getDolGlobalInt('PRODUCT_USE_UNITS'),
+		'inputalsopricewithtax' => (int) $inputalsopricewithtax,
+		'MAIN_NO_INPUT_PRICE_WITH_TAX' => (bool) getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX'),
+		'MAIN_SALETAX_AUTOSWITCH_I_CS_FOR_INDIA' => (bool) getDolGlobalInt('MAIN_SALETAX_AUTOSWITCH_I_CS_FOR_INDIA'),
+		'PRODUIT_CUSTOMER_PRICES_BY_QTY' => (bool) getDolGlobalInt('PRODUIT_CUSTOMER_PRICES_BY_QTY'),
+		'PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES' => (bool) getDolGlobalInt('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES'),
+		'MAIN_DISABLE_EDIT_PREDEF_PRICEHT' => (bool) getDolGlobalInt('MAIN_DISABLE_EDIT_PREDEF_PRICEHT'),
+		'MAIN_DISABLE_EDIT_PREDEF_PRICETTC' => (bool) getDolGlobalInt('MAIN_DISABLE_EDIT_PREDEF_PRICETTC'),
+		'FCKEDITOR_ENABLE_DETAILS' => (bool) getDolGlobalInt('FCKEDITOR_ENABLE_DETAILS'),
+		'PRODUCT_LOAD_EXTRAFIELD_INTO_OBJECTLINES' => (bool) getDolGlobalInt('PRODUCT_LOAD_EXTRAFIELD_INTO_OBJECTLINES'),
+		'PRODUIT_AUTOFILL_DESC' => getDolGlobalInt('PRODUIT_AUTOFILL_DESC'),
+		'MAIN_MULTILANGS' => getDolGlobalInt('MAIN_MULTILANGS'),
+		'PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE' => (bool) getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE'), // todo check if getDolGlobalString is really needed
+		'newtoken' => newToken(),
+		'token' => currentToken(),
+		'currency' => $conf->currency,
+		'prod_entry_mode_is_predef' => GETPOST('prod_entry_mode') == 'predef',
+		'noGetPostType' => !GETPOSTISSET("type")
+	],
+	'modules' => [
+		'multicurrency' => isModEnabled('multicurrency')
+	],
+	'url' => [
+		'fetchProductUrl' => DOL_URL_ROOT . '/product/ajax/products.php?action=fetch',
+		'getSupplierPrices' => DOL_URL_ROOT . '/fourn/ajax/getSupplierPrices.php?bestpricefirst=1'
+	],
+	'mySoc' => [
+		'country_code' =>$mysoc->country_code,
+		'state_code' =>$mysoc->state_code,
+	],
+	'docObject' => [
+		'table_element_line' => $this->table_element_line,
+		'element' => $object->element,
+		'thirdparty' => false,
+		'socid' => (property_exists($object, 'socid') ? (int) $object->socid : 0),	// @phan-suppress-current-line PhanUndeclaredProperty
+		'senderissupplier' => (bool) $senderissupplier,
+		'seller_tva_assuj' => (bool) $seller->tva_assuj,
+		'multicurrency_code' => $object->multicurrency_code,
+	],
+	'userRight' => [
+		'margins' => [
+			'creer' => (bool) $user->hasRight('margins', 'creer')
+		]
+	],
+	// TODO move to Dolibarr context lang tool when it will be included
+	'langs' => [
+		'rateMustBeNumeric' => dol_escape_js($langs->trans("rateMustBeNumeric")),
+		'markRateShouldBeLesserThan100' => dol_escape_js($langs->trans("markRateShouldBeLesserThan100"))
+	]
+];
 
-if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
-	?>
-	/* Some js test when we click on button "Add" */
-	jQuery(document).ready(function() {
-	<?php
-	if (getDolGlobalString('DISPLAY_MARGIN_RATES')) { ?>
-		$("input[name='np_marginRate']:first").blur(function(e) {
-			console.log("np_marginRate blur, call checkFreeLine");
-			return checkFreeLine(e, "np_marginRate");
-		});
-		<?php
-	}
-	if (getDolGlobalString('DISPLAY_MARK_RATES')) { ?>
-		$("input[name='np_markRate']:first").blur(function(e) {
-			console.log("np_markRate blur, call checkFreeLine");
-			return checkFreeLine(e, "np_markRate");
-		});
-		<?php
-	} ?>
-	});
+if ( !empty($object->thirdparty) ) {
+	$jsConf['docObject']['thirdparty'] = [
+		'state_code' => $object->thirdparty->state_code,
+		'country_code' => $object->thirdparty->country_code,
+	];
+}
 
-	/* TODO This does not work for number with thousand separator that is , */
-	function checkFreeLine(e, npRate)
-	{
-		var buying_price = $("input[name='buying_price']:first");
-		var remise = $("input[name='remise_percent']:first");
 
-		var rate = $("input[name='"+npRate+"']:first");
-		if (rate.val() == '')
-			return true;
+?>
+<script nonce="<?php print getNonce(); ?>">
+	/**
+	 * First Step of factoring js part in goal of remove printed js to migrate to js files this class with hooks
+	 * STOP USING PHP in js use a const container with php data passed as JSON
+	 * The goal is to extract JS to migrate it in a js file and one day create init tests on js too
+	 *
+	 * @typedef {Object} JsConf
+	 * @property {Object} conf
+	 * @property {boolean} conf.freelines
+	 * @property {string} conf.MARGIN_TYPE
+	 * @property {string} conf.currency
+	 * @property {boolean} conf.usemargins
+	 * @property {boolean} conf.prod_entry_mode_is_predef
+	 * @property {boolean} conf.DISPLAY_MARGIN_RATES
+	 * @property {boolean} conf.DISPLAY_MARK_RATES
+	 * @property {boolean} conf.PRODUCT_USE_UNITS
+	 * @property {number} conf.inputalsopricewithtax
+	 * @property {boolean} conf.MAIN_NO_INPUT_PRICE_WITH_TAX
+	 * @property {boolean} conf.FCKEDITOR_ENABLE_DETAILS
+	 * @property {boolean} conf.MAIN_SALETAX_AUTOSWITCH_I_CS_FOR_INDIA
+	 * @property {boolean} conf.PRODUIT_CUSTOMER_PRICES_BY_QTY
+	 * @property {boolean} conf.PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES
+	 * @property {boolean} conf.PRODUCT_LOAD_EXTRAFIELD_INTO_OBJECTLINES
+	 * @property {boolean} conf.MAIN_DISABLE_EDIT_PREDEF_PRICEHT
+	 * @property {boolean} conf.MAIN_MULTILANGS
+	 * @property {boolean} conf.PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE
+	 * @property {int} conf.PRODUIT_AUTOFILL_DESC
+	 * @property {string} conf.token
+	 * @property {string} conf.newtoken
+	 *
+	 * @property {Object} url
+	 * @property {string} url.fetchProductUrl
+	 * @property {string} url.getSupplierPrices
+	 *
+	 * @property {Object} modules
+	 * @property {boolean} modules.multicurrency
+	 *
+	 * @property {Object} mySoc
+	 * @property {string|null} mySoc.country_code
+	 * @property {string|null} mySoc.state_code
+	 *
+	 * @property {Object} docObject
+	 * @property {string} docObject.table_element_line
+	 * @property {string} docObject.element
+	 * @property {string} docObject.multicurrency_code
+	 * @property {Object|false} docObject.thirdparty
+	 * @property {string} docObject.thirdparty.country_code
+	 * @property {string} docObject.thirdparty.state_code
+	 * @property {number} docObject.socid
+	 * @property {boolean} docObject.senderissupplier
+	 *
+	 * @property {Object} userRight
+	 * @property {Object} userRight.margins
+	 * @property {boolean} userRight.margins.creer
+	 *
+	 * @property {Object} langs
+	 * @property {string} langs.rateMustBeNumeric
+	 * @property {string} langs.markRateShouldBeLesserThan100
+	 */
 
-		if (! $.isNumeric(rate.val().replace(',','.')))	{		// TODO Use price2numjs ?
-			alert('<?php echo dol_escape_js($langs->trans("rateMustBeNumeric")); ?>');
-			e.stopPropagation();
-			setTimeout(function () { rate.focus() }, 50);
-			return false;
-		}
-		if (npRate == "np_markRate" && rate.val() >= 100) {		// TODO Use price2numjs ?
-			alert('<?php echo dol_escape_js($langs->trans("markRateShouldBeLesserThan100")); ?>');
-			e.stopPropagation();
-			setTimeout(function () { rate.focus() }, 50);
-			return false;
-		}
+	/** @type {JsConf} */
+	const jsConf = <?php print json_encode($jsConf); ?>;
+	if(jsConf.conf.usemargins && jsConf.userRight.margins.creer){
 
-		var price = 0;
-		remisejs = price2numjs(remise.val());
-
-		if (remisejs != 100) {	// If there is a discount that is not 100 or if no discount at all (most common case)
-			if (remisejs == '') {
-				remisejs=0;
+		/* Some js test when we click on button "Add" */
+		$(function() {
+			if (jsConf.conf.DISPLAY_MARGIN_RATES) {
+				$("input[name='np_marginRate']:first").on('blur', function(e) {
+					console.log("np_marginRate blur");
+					return checkFreeLine(e, "np_marginRate");
+				});
 			}
 
-			bpjs = price2numjs(buying_price.val());
-			ratejs = price2numjs(rate.val());
+			if (jsConf.conf.DISPLAY_MARK_RATES) {
+				$("input[name='np_markRate']:first").on('blur', function(e) {
+					console.log("np_markRate blur");
+					return checkFreeLine(e, "np_markRate");
+				});
+			}
+		});
 
-			if (npRate == "np_marginRate")
-				price = ((bpjs * (1 + ratejs / 100)) / (1 - remisejs / 100));
-			else if (npRate == "np_markRate")
-				price = ((bpjs / (1 - ratejs / 100)) / (1 - remisejs / 100));
+		/* TODO This does not work for number with thousand separator that is , */
+		function checkFreeLine(e, npRate)
+		{
+			var buying_price = $("input[name='buying_price']:first");
+			var remise = $("input[name='remise_percent']:first");
+
+			var rate = $("input[name='"+npRate+"']:first");
+			if (rate.val() == '') {
+				return true;
+			}
+
+			const rateValue = rate.val().replace(',', '.').trim();
+			if (rateValue === '' || isNaN(Number(rateValue)))
+			{
+				alert(jsConf.langs.rateMustBeNumeric); // TODO move to Dolibarr context tool setEventMessage when it will be included
+				e.stopPropagation();
+				setTimeout(function () { rate.focus() }, 50);
+				return false;
+			}
+
+			if (npRate == "np_markRate" && rate.val() >= 100)
+			{
+				alert(jsConf.langs.markRateShouldBeLesserThan100);
+				e.stopPropagation();
+				setTimeout(function () { rate.focus() }, 50);
+				return false;
+			}
+
+			var price = 0;
+			remisejs=price2numjs(remise.val());
+
+			if (remisejs != 100)	// If a discount not 100 or no discount
+			{
+				if (remisejs == '') remisejs=0;
+
+				bpjs=price2numjs(buying_price.val());
+				ratejs=price2numjs(rate.val());
+
+				if (npRate == "np_marginRate") {
+					price = ((bpjs * (1 + ratejs / 100)) / (1 - remisejs / 100));
+				}
+				else if (npRate == "np_markRate") {
+					price = ((bpjs / (1 - ratejs / 100)) / (1 - remisejs / 100));
+				}
+			}
+
+			$("input[name='price_ht']:first").val(price);	// TODO Must use a function like php price to have here a formatted value
+
+			return true;
 		}
-
-		// $("input[name='price_ht']:first").val(price);	// TODO Must use a function like php price to have here a formatted value
-		$("input[name='price_ht']:first").val(pricejs(price));
-
-		return true;
 	}
 
-	<?php
-}
-?>
 
 	/* Function to set focus on description */
 	function setFocusOnDescription() {
@@ -812,11 +941,11 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 			}
 
 			if (jQuery("#select_type").val() != '-1') {
-				console.log("we remove class placeholder");
+				console.log("we remove class");
 				jQuery("#select_type").removeClass("placeholder");
 				setFocusOnDescription();
 			} else {
-				console.log("we add class placeholder");
+				console.log("we add class");
 				jQuery("#select_type").addClass("placeholder");
 			}
 		});
@@ -832,60 +961,55 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 			jQuery('#trlinefordates').show();
 		});
 
-		<?php
-		if (!$freelines) { ?>
+		if (jsConf.conf.freelines) {
 			console.log("emulate click on prod_entry_mode_predef");
 			jQuery("#prod_entry_mode_predef").click();
-			<?php
-		} elseif (!GETPOSTISSET("type")) { // If not a type selected from previous page
-			?>
+		} else if (jsConf.conf.noGetPostType){
 			console.log("add class placeholder");
 			jQuery("#select_type").addClass("placeholder");
-			<?php
 		}
 
-		if (in_array($this->table_element_line, array('propaldet', 'commandedet', 'facturedet'))) { ?>
-		$("#date_start, #date_end").focusout(function() {
-			console.log("focusout of date");
-			let type = $(this).attr('type');
-			let mandatoryP = $(this).attr('mandatoryperiod');
-			if (type == 1 && mandatoryP == 1) {
-				if ($(this).val() == ''  && !$(this).hasClass('inputmandatory')) {
-					$(this).addClass('inputmandatory');
-				}else{
-					$(this).removeClass('inputmandatory');
+		if (['propaldet', 'commandedet', 'facturedet'].includes(jsConf.docObject.table_element_line)) {
+			$("#date_start, #date_end").focusout(function() {
+				console.log("focusout of date");
+				let type = $(this).attr('type');
+				let mandatoryP = $(this).attr('mandatoryperiod');
+				if (type == 1 && mandatoryP == 1) {
+					if ($(this).val() == ''  && !$(this).hasClass('inputmandatory')) {
+						$(this).addClass('inputmandatory');
+					}else{
+						$(this).removeClass('inputmandatory');
+					}
 				}
-			}
-		});
-			<?php
-		} ?>
+			});
+		}
 
 		/* When changing predefined product, we reload list of supplier prices required for margin combo */
 		$("#idprod, #idprodfournprice").change(function()
 		{
-			console.log("objectline_create.tpl Call method change() after change on #idprod or #idprodfournprice (senderissupplier=<?php echo $senderissupplier; ?>). this.val = "+$(this).val());
+			console.log("objectline_create.tpl Call method change() after change on #idprod or #idprodfournprice (senderissupplier=" + jsConf.docObject.senderissupplier + "). this.val = "+$(this).val());
 
 			setforpredef();		// TODO Keep vat combo visible and set it to first entry into list that match result of get_default_tva(product)
 
 			jQuery('#trlinefordates').show();
 
-			<?php
-			if (!getDolGlobalString('MAIN_DISABLE_EDIT_PREDEF_PRICEHT') && empty($senderissupplier)) {
-				?>
+			if(!jsConf.conf.MAIN_DISABLE_EDIT_PREDEF_PRICEHT && !jsConf.docObject.senderissupplier) {
+
 				var pbq = parseInt($('option:selected', this).attr('data-pbq'));	/* If product was selected with a HTML select */
 				if (isNaN(pbq)) { pbq = jQuery('#idprod').attr('data-pbq'); } 		/* If product was selected with a HTML input with autocomplete */
 
-				if ((jQuery('#idprod').val() > 0 || jQuery('#idprodfournprice').val()) && ! isNaN(pbq) && pbq > 0)
-				{
+				if ((jQuery('#idprod').val() > 0 || jQuery('#idprodfournprice').val()) && ! isNaN(pbq) && pbq > 0) {
 					console.log("objectline_create.tpl We are in a price per qty context, we do not call ajax/product, init of fields is done few lines later");
 				} else {
-					<?php if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) { ?>
+
+					if (jsConf.conf.PRODUIT_CUSTOMER_PRICES_BY_QTY || jsConf.conf.PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES) {
 						if (isNaN(pbq)) { console.log("We use experimental option PRODUIT_CUSTOMER_PRICES_BY_QTY or PRODUIT_CUSTOMER_PRICES_BY_QTY but we could not get the id of pbq from product combo list, so load of price may be 0 if product has different prices"); }
-					<?php } ?>
+					}
+
 					// Get the price for the product and display it
-					console.log("Load unit price and set it into #price_ht or #price_ttc for product id="+$(this).val()+" socid=<?php print $object->socid; ?>");
-					$.post('<?php echo DOL_URL_ROOT; ?>/product/ajax/products.php?action=fetch',
-						{ 'id': $(this).val(), 'socid': <?php print $object->socid; ?>, 'token': '<?php print currentToken(); ?>', 'addalsovatforthirdpartyid': 1 },
+					console.log("Load unit price and set it into #price_ht or #price_ttc for product id="+$(this).val()+" socid=" + jsConf.docObject.socid);
+					$.post(jsConf.url.fetchProductUrl,
+						{ 'id': $(this).val(), 'socid': jsConf.docObject.socid, 'token': jsConf.conf.newtoken, 'addalsovatforthirdpartyid': 1 },
 						function(data) {
 							console.log("objectline_create.tpl Load unit price ends, we got value ht="+data.price_ht+" ttc="+data.price_ttc+" pricebasetype="+data.pricebasetype);
 
@@ -894,7 +1018,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 							$('#date_start').attr('type', data.type);
 							$('#date_end').attr('type', data.type);
 
-							if(<?php echo getDolGlobalInt('PRODUCT_USE_UNITS'); ?>) {
+							if(jsConf.conf.PRODUCT_USE_UNITS) {
 								console.log("objectline_create.tpl set content of units");
 								jQuery("#units").val(data.default_unit).change();
 							}
@@ -913,7 +1037,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 								jQuery('#date_end').removeClass('inputmandatory');
 							}
 
-							if (<?php echo (int) $inputalsopricewithtax; ?> == 1 && data.pricebasetype == 'TTC' && <?php print getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX') ? 'false' : 'true'; ?>) {
+							if (jsConf.conf.inputalsopricewithtax == 1 && data.pricebasetype == 'TTC' && jsConf.conf.MAIN_NO_INPUT_PRICE_WITH_TAX) {
 								console.log("objectline_create.tpl set content of price_ttc");
 								jQuery("#price_ttc").val(data.price_ttc);
 							} else {
@@ -939,33 +1063,31 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 							var stringforvatrateselection = tva_tx;
 							if (typeof default_vat_code != 'undefined' && default_vat_code != null && default_vat_code != '') {
 								stringforvatrateselection = stringforvatrateselection+' ('+default_vat_code+')';
-								<?php
-								// Special case for India
-								if (getDolGlobalString('MAIN_SALETAX_AUTOSWITCH_I_CS_FOR_INDIA')) {
-									?>
+
+								if (jsConf.conf.MAIN_SALETAX_AUTOSWITCH_I_CS_FOR_INDIA) {
 									console.log("MAIN_SALETAX_AUTOSWITCH_I_CS_FOR_INDIA is on so we check if we need to autoswith the vat code");
-									console.log("mysoc->country_code=<?php echo $mysoc->country_code; ?> thirdparty->country_code=<?php echo $object->thirdparty->country_code; ?>");
+									console.log("mysoc->country_code=" + jsConf.mySoc.country_code + " thirdparty->country_code=" + jsConf.docObject.thirdparty.country_code);
 									new_default_vat_code = default_vat_code;
-									<?php
-									if ($mysoc->country_code == 'IN' && !empty($object->thirdparty) && $object->thirdparty->country_code == 'IN' && $mysoc->state_code == $object->thirdparty->state_code) {
-										// We are in India and states are same, we revert the vat code "I-x" into "CS-x"
-										?>
-										console.log("Countries are both IN and states are same, so we revert I into CS in default_vat_code="+default_vat_code);
-										new_default_vat_code = default_vat_code.replace(/^I\-/, 'C+S-');
-										<?php
-									} elseif ($mysoc->country_code == 'IN' && !empty($object->thirdparty) && $object->thirdparty->country_code == 'IN' && $mysoc->state_code != $object->thirdparty->state_code) {
-										// We are in India and states differs, we revert the vat code "CS-x" into "I-x"
-										?>
-										console.log("Countries are both IN and states differs, so we revert CS into I in default_vat_code="+default_vat_code);
-										new_default_vat_code = default_vat_code.replace(/^C\+S\-/, 'I-');
-										<?php
-									} ?>
+
+									if (jsConf.mySoc.country_code === 'IN'
+										&& jsConf.docObject.thirdparty
+										&& jsConf.docObject.thirdparty.country_code === 'IN'
+									) {
+										if (jsConf.mySoc.state_code === jsConf.docObject.thirdparty.state_code) {
+											console.log("Countries are both IN and states are same, so we revert I into CS in default_vat_code="+default_vat_code);
+											new_default_vat_code = default_vat_code.replace(/^I\-/, 'C+S-');
+										}
+										else {
+											console.log("Countries are both IN and states differs, so we revert CS into I in default_vat_code="+default_vat_code);
+											new_default_vat_code = default_vat_code.replace(/^C\+S\-/, 'I-');
+										}
+									}
+
 									if (new_default_vat_code != default_vat_code && jQuery('#tva_tx option:contains("'+new_default_vat_code+'")').val()) {
 										console.log("We found en entry into VAT with new default_vat_code, we will use it");
 										stringforvatrateselection = jQuery('#tva_tx option:contains("'+new_default_vat_code+'")').val();
 									}
-									<?php
-								} ?>
+								}
 							}
 							// Set vat rate if field is an input box
 							$('#tva_tx').val(tva_tx);
@@ -975,48 +1097,41 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 							console.log("stringforvatrateselection="+stringforvatrateselection+" -> value of option label for this key="+$('#tva_tx option[value="'+stringforvatrateselection+'"]').val());
 							$('#tva_tx option[value="'+stringforvatrateselection+'"]').prop('selected', true);
 
-								<?php
-								if (getDolGlobalInt('PRODUIT_AUTOFILL_DESC') == 1) {
-									if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) { ?>
-							var proddesc = data.desc_trans;
-																						<?php
-									} else { ?>
-							var proddesc = data.desc;
-										<?php
-									} ?>
-							console.log("objectline_create.tpl Load description into text area : "+proddesc);
-									<?php
-									if (getDolGlobalString('FCKEDITOR_ENABLE_DETAILS')) { ?>
-							if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
-							{
-								var editor = CKEDITOR.instances['dp_desc'];
-								if (editor) {
-									editor.setData(proddesc);
+							if(jsConf.conf.PRODUIT_AUTOFILL_DESC == 1) {
+								if(jsConf.conf.MAIN_MULTILANGS && jsConf.conf.PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE) {
+									var proddesc = data.desc_trans;
+								}
+								else {
+									var proddesc = data.desc;
+								}
+
+								console.log("objectline_create.tpl Load description into text area : "+proddesc);
+
+								if(jsConf.conf.FCKEDITOR_ENABLE_DETAILS) {
+									if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
+									{
+										var editor = CKEDITOR.instances['dp_desc'];
+										if (editor) {
+											editor.setData(proddesc);
+										}
+									}
+								} else {
+									jQuery('#dp_desc').text(proddesc);
 								}
 							}
-																						<?php
-									} else { ?>
-							jQuery('#dp_desc').text(proddesc);
-										<?php
-									} ?>
-									<?php
-								} ?>
-								<?php
-								if (getDolGlobalString('PRODUCT_LOAD_EXTRAFIELD_INTO_OBJECTLINES')) { ?>
+
+							if (jsConf.conf.PRODUCT_LOAD_EXTRAFIELD_INTO_OBJECTLINES) {
 								jQuery.each(data.array_options, function( key, value ) {
 									jQuery('div[class*="det'+key.replace('options_','_extras_')+'"] > #'+key).val(value);
 								});
-																									<?php
-								} ?>
+							}
 						},
 						'json'
 					);
 				}
-							<?php
 			}
 
-			if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
-				$langs->load('stocks'); ?>
+			if(jsConf.conf.usemargins && jsConf.userRight.margins.creer){
 
 				/* Code for margin */
 				$("#fournprice_predef").find("option").remove();
@@ -1024,8 +1139,8 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 				$("#buying_price").val("").show();
 
 				/* Call post to load content of combo list fournprice_predef */
-				var token = '<?php echo currentToken(); ?>';		// For AJAX Call we use old 'token' and not 'newtoken'
-				$.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php?bestpricefirst=1', { 'idprod': $(this).val(), 'token': token }, function(data) {
+				var token = jsConf.conf.token;		// For AJAX Call we use old 'token' and not 'newtoken'
+				$.post(jsConf.url.getSupplierPrices, { 'idprod': $(this).val(), 'token': token }, function(data) {
 					if (data && data.length > 0)
 					{
 						var options = ''; var defaultkey = ''; var defaultprice = ''; var bestpricefound = 0;
@@ -1035,18 +1150,14 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 						var costpriceid = 0; var costpricevalue = 0;
 
 						/* setup of margin calculation */
-						var defaultbuyprice = '<?php
-						if (isset($conf->global->MARGIN_TYPE)) {
-							if (getDolGlobalString('MARGIN_TYPE') == '1') {
-								print 'bestsupplierprice';
-							}
-							if (getDolGlobalString('MARGIN_TYPE') == 'pmp') {
-								print 'pmp';
-							}
-							if (getDolGlobalString('MARGIN_TYPE') == 'costprice') {
-								print 'costprice';
-							}
-						} ?>';
+						const defaultbuypriceMap = {
+							"1": "bestsupplierprice",
+							"pmp": "pmp",
+							"costprice": "costprice"
+						};
+
+						let defaultbuyprice = defaultbuypriceMap[jsConf.conf.MARGIN_TYPE] || "";
+
 						console.log("objectline_create.tpl we will set the field for margin. defaultbuyprice="+defaultbuyprice);
 
 						var i = 0;
@@ -1120,14 +1231,10 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 					}
 				},
 				'json');
-
-						<?php
 			}
-			?>
 
-			<?php
-			if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
-				?>
+
+			if (jsConf.conf.PRODUIT_CUSTOMER_PRICES_BY_QTY || jsConf.conf.PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES) {
 				/* To process customer price per quantity (PRODUIT_CUSTOMER_PRICES_BY_QTY works only if combo product is not an ajax after x key pressed) */
 				var pbq = parseInt($('option:selected', this).attr('data-pbq'));				// When select is done from HTML select
 				if (isNaN(pbq)) { pbq = jQuery('#idprod').attr('data-pbq');	}					// When select is done from HTML input with autocomplete
@@ -1156,10 +1263,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 						jQuery("#remise_percent").val(pbqpercent);
 					}
 				} else { jQuery("#pbq").val(''); }
-				<?php
 			}
-			?>
-
 
 			// Deal with supplier ref price (idprodfournprice = int)
 			if (jQuery('#idprodfournprice').val() > 0)
@@ -1187,12 +1291,21 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 				var supplier_ref = $('option:selected', this).attr('data-supplier-ref');											// When select is done from HTML select
 				if (typeof supplier_ref === 'undefined') { supplier_ref = jQuery('#idprodfournprice').attr('data-supplier-ref'); }	// When select is done from HTML input with ajax autocomplete
 
-				<?php if (($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier' || $object->element == 'invoice_supplier_rec') && !$seller->tva_assuj) { ?>
-					if (tva_tx != .0) {
-						tva_tx = .0;
+
+				const supplierElements = [
+					"supplier_proposal",
+					"order_supplier",
+					"invoice_supplier",
+					"invoice_supplier_rec"
+				];
+
+				// seller.tva_assuj -> à injecter dans jsConf ou ailleurs
+				if (supplierElements.includes(jsConf.docObject.element) && !jsConf.docObject.seller_tva_assuj) {
+					if (tva_tx !== 0) {
+						tva_tx = 0;
 						default_vat_code = null;
 					}
-				<?php } ?>
+				}
 
 				var stringforvatrateselection = tva_tx;
 				if (typeof default_vat_code != 'undefined' && default_vat_code != null && default_vat_code != '') {
@@ -1200,10 +1313,9 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 				}
 
 				var has_multicurrency_up = false;
-				<?php
-				if (isModEnabled('multicurrency') && $object->multicurrency_code != $conf->currency) {
-					?>
-					var object_multicurrency_code = '<?php print dol_escape_js($object->multicurrency_code); ?>';
+
+				if(jsConf.modules.multicurrency && jsConf.docObject.multicurrency_code !== jsConf.conf.currency) {
+					var object_multicurrency_code = jsConf.docObject.multicurrency_code;
 
 					var multicurrency_code = $('option:selected', this).attr('data-multicurrency-code');                                			// When select is done from HTML select
 					if (multicurrency_code == undefined) { multicurrency_code = jQuery('#idprodfournprice').attr('data-multicurrency-code'); }  	// When select is done from HTML input with ajax autocomplete
@@ -1217,9 +1329,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 					}
 
 					console.log("objectline_create.tpl Multicurrency values : object_multicurrency_code = "+object_multicurrency_code+", multicurrency_code = "+multicurrency_code+", multicurrency_up = "+multicurrency_up);
-					<?php
 				}
-				?>
 
 				console.log("objectline_create.tpl We find supplier price : up = "+up+", up_locale = "+up_locale+", has_multicurrency_up = "+has_multicurrency_up+", supplier_ref = "+supplier_ref+" qty = "+qty+", tva_tx = "+tva_tx+", default_vat_code = "+default_vat_code+", stringforvatrateselection="+stringforvatrateselection+", discount = "+discount+" for product supplier ref id = "+jQuery('#idprodfournprice').val());
 
@@ -1248,31 +1358,26 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 					jQuery("#remise_percent").val(discount);
 				}
 
-				<?php
-				if (getDolGlobalInt('PRODUIT_AUTOFILL_DESC') == 1) {
-					?>
-				var description = $('option:selected', this).attr('data-description');
-				if (typeof description == 'undefined') { description = jQuery('#idprodfournprice').attr('data-description');	}
+				if (jsConf.conf.PRODUIT_AUTOFILL_DESC === 1) {
+					var description = $('option:selected', this).attr('data-description');
 
-				console.log("Load description into text area : "+description);
-					<?php
-					if (getDolGlobalString('FCKEDITOR_ENABLE_DETAILS')) {
-						?>
-				if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
-				{
-					var editor = CKEDITOR.instances['dp_desc'];
-					if (editor) {
-						editor.setData(description);
-					}
-				}
-						<?php
+					if (typeof description == 'undefined') { description = jQuery('#idprodfournprice').attr('data-description');	}
+
+					console.log("Load description into text area : "+description);
+
+					if (jsConf.conf.FCKEDITOR_ENABLE_DETAILS) {
+						if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
+						{
+							var editor = CKEDITOR.instances['dp_desc'];
+							if (editor) {
+								editor.setData(description);
+							}
+						}
 					} else {
-						?>
-				jQuery('#dp_desc').text(description);
-						<?php
+						jQuery('#dp_desc').text(description);
 					}
 				}
-				?>
+
 			} else if (jQuery('#idprodfournprice').length > 0) {
 				console.log("objectline_create.tpl #idprodfournprice is not an int but is a string so we set only few properties into page");
 
@@ -1302,25 +1407,20 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 				$('#tva_tx option').removeAttr('selected');
 				console.log("stringforvatrateselection="+stringforvatrateselection+" -> value of option label for this key="+$('#tva_tx option[value="'+stringforvatrateselection+'"]').val());
 				$('#tva_tx option[value="'+stringforvatrateselection+'"]').prop('selected', true);
-				<?php
-				if (getDolGlobalInt('PRODUIT_AUTOFILL_DESC') == 1) {
-					if (getDolGlobalString('FCKEDITOR_ENABLE_DETAILS')) {
-						?>
-				if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
-				{
-					var editor = CKEDITOR.instances['dp_desc'];
-					if (editor) {
-						editor.setData('');
-					}
-				}
-						<?php
+
+				if (jsConf.conf.PRODUIT_AUTOFILL_DESC === 1) {
+					if (jsConf.conf.FCKEDITOR_ENABLE_DETAILS) {
+						if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
+						{
+							var editor = CKEDITOR.instances['dp_desc'];
+							if (editor) {
+								editor.setData('');
+							}
+						}
 					} else {
-						?>
-				jQuery('#dp_desc').text('');
-						<?php
+						jQuery('#dp_desc').text('');
 					}
 				}
-				?>
 			}
 
 
@@ -1341,9 +1441,9 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 			}
 		});
 
-		<?php if (GETPOST('prod_entry_mode') == 'predef') { // When we submit with a predef product and it fails we must start with predef?>
-		setforpredef();
-		<?php } ?>
+		if (jsConf.conf.prod_entry_mode_is_predef) { // When we submit with a predef product and it fails we must start with predef?>
+			setforpredef();
+		}
 
 	});
 
@@ -1368,40 +1468,43 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 
 		jQuery("#prod_entry_mode_free").prop('checked',false).change();
 		jQuery("#prod_entry_mode_predef").prop('checked',true).change();
-		<?php if (!getDolGlobalString('MAIN_DISABLE_EDIT_PREDEF_PRICEHT')) { ?>
+		if (!jsConf.conf.MAIN_DISABLE_EDIT_PREDEF_PRICEHT) {
 			jQuery("#price_ht").val('').show();
 			jQuery("#multicurrency_price_ht").val('').show();
 			jQuery("#title_up_ht, #title_up_ht_currency").show();
-		<?php } else { ?>
+		 } else {
 			//jQuery("#price_ht").val('').hide();
 			jQuery("#multicurrency_price_ht").val('').hide();
 			jQuery("#title_up_ht, #title_up_ht_currency").hide();
-		<?php } ?>
-		<?php if (!getDolGlobalString('MAIN_DISABLE_EDIT_PREDEF_PRICETTC')) { ?>
+		}
+
+		if (!jsConf.conf.MAIN_DISABLE_EDIT_PREDEF_PRICETTC) {
 			jQuery("#price_ttc").val('').show();
 			jQuery("#multicurrency_price_ttc").val('').show();
 			jQuery("#title_up_ttc, #title_up_ttc_currency").show();
-		<?php } else { ?>
+		} else {
 			jQuery("#price_ttc").val('').hide();
 			jQuery("#multicurrency_price_ttc").val('').hide();
 			jQuery("#title_up_ttc, #title_up_ttc_currency").hide();
-		<?php } ?>
+		}
+
 		/* jQuery("#tva_tx, #title_vat").hide(); */
 		/* jQuery("#title_fourn_ref").hide(); */
-		<?php if (!getDolGlobalString('DISPLAY_MARGIN_RATES')) { ?>
+		if (!jsConf.conf.DISPLAY_MARGIN_RATES) {
 			jQuery("#np_marginRate, .np_marginRate").hide();
-		<?php } ?>
-		<?php if (!getDolGlobalString('DISPLAY_MARK_RATES')) { ?>
+		}
+
+		if (!jsConf.conf.DISPLAY_MARK_RATES) {
 			jQuery("#np_markRate, .np_markRate").hide();
-		<?php } ?>
+		}
+
 		jQuery("#units, #title_units").hide();
 		jQuery("#buying_price").show();
 		jQuery('#trlinefordates, .divlinefordates').show();
 	}
-
+</script>
 <?php
 
-print '</script>';
 
 //print '<span onclick="setFocusOnDescription();">Click</span>';
 
