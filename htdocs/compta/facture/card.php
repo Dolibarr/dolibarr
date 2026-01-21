@@ -6167,6 +6167,7 @@ if ($action == 'create') {
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as re";
 			$sql .= " WHERE fk_facture = ".((int) $object->id);
 			$resql = $db->query($sql);
+			$num = 0;
 			if ($resql) {
 				$num = $db->num_rows($resql);
 				$i = 0;
