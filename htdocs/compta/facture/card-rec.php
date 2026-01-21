@@ -270,6 +270,7 @@ if (empty($reshook)) {
 			$object->unit_frequency        = GETPOST('unit_frequency', 'alpha');
 			$object->nb_gen_max            = $nb_gen_max;
 			$object->auto_validate         = GETPOSTINT('auto_validate');
+			$object->auto_send         	   = GETPOSTINT('auto_send');
 			$object->fk_email_template     = GETPOSTINT('auto_send_model_mail');
 			$object->generate_pdf          = GETPOSTINT('generate_pdf');
 			$object->fk_project            = $projectid;
@@ -409,6 +410,9 @@ if (empty($reshook)) {
 	} elseif ($action == 'setauto_validate' && $usercancreate) {
 		// Set auto validate
 		$object->setAutoValidate(GETPOSTINT('auto_validate'));
+	} elseif ($action == 'setauto_send' && $usercancreate) {
+		// Set auto send
+		$object->setAutoSend(GETPOSTINT('auto_send'));
 	} elseif ($action == 'setEmailTemplate' && $usercancreate) {
 		// Set Email Template
 		$object->setMailTemplate(GETPOSTINT('auto_send_model_mail'));
@@ -1416,13 +1420,31 @@ if ($action == 'create') {
 		print $form->selectarray('auto_validate', $select, GETPOSTINT('auto_validate'));
 		print "</td></tr>";
 
-		// Email template for auto sending invoices
-		print "<tr id='col_auto_send_model_mail' class='".(GETPOSTINT('auto_validate') != 1 ? 'hidden' : '')."'><td>" . $langs->trans("EmailTemplateForAutoSend") . "</td><td>";
-		print $form->selectModelMail("auto_send_", "facture_send", 1);
+		// Automatic sending of the invoice
+		print "<tr id='col_auto_send' class='".(GETPOSTINT('auto_validate') != 1 ? 'hidden' : '')."'><td>".$langs->trans("AutoSendEmail")."</td><td>";
+		$select = array('0' => $langs->trans('AutoSendDisabled'), '1' => $langs->trans('AutoSendEnabled'));
+		print $form->selectarray('auto_send', $select, GETPOSTINT('auto_send'));
 		print "</td></tr>";
 		print "	<script>
 					$(document).ready(function() {
 						$('#auto_validate').on('change', function () {
+							if(+$(this).val() === 1) {
+								$('#col_auto_send').show();
+							} else {
+								$('#col_auto_send').hide();
+								$('#auto_send').val(0);
+							}
+						});
+					});
+				</script>";
+
+		// Email template for auto sending invoices
+		print "<tr id='col_auto_send_model_mail' class='".(GETPOSTINT('auto_send') != 1 ? 'hidden' : '')."'><td>" . $langs->trans("EmailTemplateForAutoSend") . "</td><td>";
+		print $form->selectModelMail("auto_send_", "facture_send", 1);
+		print "</td></tr>";
+		print "	<script>
+					$(document).ready(function() {
+						$('#auto_send').on('change', function () {
 							if(+$(this).val() === 1) {
 								$('#col_auto_send_model_mail').show();
 							} else {
@@ -1971,6 +1993,26 @@ if ($action == 'create') {
 			}
 			print '</tr>';
 
+			// Auto sending invoices
+			if ($object->frequency > 0 && $object->auto_validate == 1) {
+				print '<tr><td>';
+				if ($action == 'auto_send' || $object->frequency > 0) {
+					print $form->editfieldkey($langs->trans("AutoSendEmail"), 'auto_send', (string)$object->auto_send, $object, $user->hasRight('facture', 'creer'));
+				} else {
+					print $langs->trans("AutoSendEmail");
+				}
+				print '</td><td>';
+				$select = 'select;0:' . $langs->trans('AutoSendDisabled') . ',1:' . $langs->trans('AutoSendEnabled');
+				if ($action == 'auto_send' || $object->frequency > 0) {
+					print $form->editfieldval($langs->trans("AutoSendEmail"), 'auto_send', $object->auto_send, $object, $user->hasRight('facture', 'creer'), $select);
+				}
+				print '</td>';
+				if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+					print '<td></td>';
+				}
+				print '</tr>';
+			}
+
 			// Email template for auto sending invoices
 			if ($object->frequency > 0 && $object->auto_validate == 1) {
 				print '<tr><td style="width: 50%">';
@@ -1983,8 +2025,8 @@ if ($action == 'create') {
 				print '</tr></table>';
 				print '</td><td>';
 
+				// Edit
 				if ($action == 'editEmailTemplate') {
-					// Mode édition - afficher le select directement
 					print '<form method="POST" action="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '">';
 					print '<input type="hidden" name="token" value="' . newToken() . '">';
 					print '<input type="hidden" name="action" value="setEmailTemplate">';
@@ -1992,8 +2034,9 @@ if ($action == 'create') {
 					print '<input type="submit" class="button valignmiddle smallpaddingimp" name="modify" value="' . $langs->trans("Modify") . '">';
 					print '<input type="submit" class="button button-cancel valignmiddle smallpaddingimp" name="cancel" value="' . $langs->trans("Cancel") . '">';
 					print '</form>';
-				} else {
-					// Mode affichage avec lien d'édition
+				}
+				// Show
+				else {
 					if (!empty($object->fk_email_template)) {
 						$sql = "SELECT label
 							FROM ".$db->prefix()."c_email_templates
@@ -2006,8 +2049,8 @@ if ($action == 'create') {
 						}
 					}
 				}
-				print '</td>';
 
+				print '</td>';
 				print '</tr>';
 			}
 
