@@ -54,6 +54,8 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	/** @var CommandeFournisseur $objectlink */
 	'@phan-var-force CommandeFournisseur $objectlink';
 	$ilink++;
+	$objectlink->fetch_thirdparty();
+	$refSupplierWithThirdparty = $objectlink->ref_supplier ? dolPrintHTML($objectlink->ref_supplier) . '<br>' . $objectlink->thirdparty->getNomUrl(1) : $objectlink->thirdparty->getNomUrl(1);
 
 	$trclass = 'oddeven';
 	if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) {
@@ -62,7 +64,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	<tr class="<?php echo $trclass; ?>">
 		<td class="tdoverflowmax125" title="<?php echo dolPrintHTMLForAttribute($langs->trans("SupplierOrder")); ?>"><?php echo dolPrintHTML($langs->trans("SupplierOrder")); ?></td>
 		<td><?php print $objectlink->getNomUrl(1); ?></td>
-		<td class="left linkedcol-ref tdoverflowmax125" title="<?php echo dolPrintHTMLForAttributeUrl($objectlink->ref_supplier); ?>"><?php echo dolPrintHTML($objectlink->ref_supplier); ?></td>
+		<td class="left linkedcol-ref tdoverflowmax125" title="<?php echo dolPrintHTMLForAttributeUrl($objectlink->ref_supplier); ?>"><?php echo $refSupplierWithThirdparty ?></td>
 		<td class="center"><?php echo dol_print_date($objectlink->date, 'day'); ?></td>
 		<td class="right"><?php
 		if ($user->hasRight("fournisseur", "commande", "lire")) {
