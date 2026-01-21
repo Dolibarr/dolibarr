@@ -336,6 +336,7 @@ if ($nolinesbefore) {
 
 				$socid = 0;
 				if (property_exists($object, 'socid')) {
+					// @phan-suppress-next-line PhanUndeclaredProperty
 					$socid = $object->socid;
 				}
 				$form->select_produits_fournisseurs($socid, GETPOST('idprodfournprice'), 'idprodfournprice', '', '', $ajaxoptions, 1, $alsoproductwithnosupplierprice, 'minwidth100 maxwidth500 widthcentpercentminusx', $labelforradio);
