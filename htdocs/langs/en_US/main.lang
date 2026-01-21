@@ -1413,3 +1413,5 @@ Why=Why
 since=since
 SignatureID=Signature
 except=except
+CollapseAll=Collapse all
+ExpandAll=Expand all
