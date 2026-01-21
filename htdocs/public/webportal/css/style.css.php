@@ -108,6 +108,11 @@ This file can overwrite default pico css
  */
 
 
+.maxwidthdate {
+	max-width: 110px;
+}
+
+
 /**
  * Navs
  */
@@ -162,8 +167,6 @@ ul.menu-entries-alt {
 		display: block;
 	}
 }
-
-
 
 
 /**

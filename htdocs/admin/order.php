@@ -34,11 +34,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -47,6 +42,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'errors', 'orders', 'other'));
@@ -312,7 +311,7 @@ foreach ($dirmodels as $reldir) {
 						require_once $dir.$file.'.php';
 
 						$module = new $file($db);
-						/** @var ModeleNumRefCommande $module */
+						/** @var ModeleNumRefCommandes $module */
 						'@phan-var-force ModeleNumRefCommandes $module';
 
 						$arrayofmodules[] = $module;
@@ -325,8 +324,8 @@ foreach ($dirmodels as $reldir) {
 }
 
 $arrayofmodules = dol_sort_array($arrayofmodules, 'position');
-/** @var ModeleNumRefCommande[] $arrayofmodules */
-'@phan-var-force ModeleNumRefCommande[] $arrayofmodules';
+/** @var ModeleNumRefCommandes[] $arrayofmodules */
+'@phan-var-force ModeleNumRefCommandes[] $arrayofmodules';
 
 foreach ($arrayofmodules as $module) {
 	$file = strtolower($module->getName($langs));

@@ -326,6 +326,17 @@ function getDolCurrency()
 }
 
 /**
+ * Return if render must be optimized for small screen
+ *
+ * @return 	string							Value returned
+ */
+function getDolOptimizeSmallScreen()
+{
+	global $conf;
+	return (string) $conf->dol_optimize_smallscreen;
+}
+
+/**
  * Return the current entity
  *
  * @return 	int							Value returned
@@ -7592,7 +7603,6 @@ function vatrate($rate, $addpercent = false, $info_bits = 0, $usestarfornpr = 0,
  *		@param	''|'MU'|'MT'|'MS'|'CU'|'CT'|int<-2,max>	$forcerounding	MAXIMUM number of decimal to forcerounding decimal: -1=no change, -2=keep non zero part, 'MU' or 'MT' or a numeric to round to MU or MT or to a given number of decimal
  *		@param	string					$currency_code	To add currency symbol (''=add nothing, 'auto'=Use default currency, 'XXX'=add currency symbols for XXX currency)
  *		@return	string									String with formatted amount
- *
  *		@see	price2num()								Revert function of price
  */
 function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $forcerounding = -1, $currency_code = '')
