@@ -283,14 +283,13 @@ abstract class CommonInvoice extends CommonObject
 	const STATUS_ABANDONED = 3;
 
 
-	const CLOSECODE_DISCOUNTVAT = 'discount_vat'; // Abandoned remain - escompte
-	const CLOSECODE_BADDEBT = 'badcustomer'; // Abandoned remain - bad customer
-	const CLOSECODE_BANKCHARGE = 'bankcharge'; // Abandoned remain - bank charge
-	const CLOSECODE_WITHHOLDINGTAX = 'withholdingtax';	// Abandoned remain - source tax
-	const CLOSECODE_OTHER = 'other'; // Abandoned remain - other
-
-	const CLOSECODE_ABANDONED = 'abandon'; // Abandoned - other
-	const CLOSECODE_REPLACED = 'replaced'; // Closed after doing a replacement invoice
+	const CLOSECODE_DISCOUNTVAT = 'discount_vat'; // Abandoned (the remain to pay) - escompte
+	const CLOSECODE_BADDEBT = 'badcustomer'; // Abandoned (the remain to pay) - bad customer
+	const CLOSECODE_BANKCHARGE = 'bankcharge'; // Abandoned (the remain to pay) - bank charge
+	const CLOSECODE_WITHHOLDINGTAX = 'withholdingtax';	// Abandoned (the remain to pay) - source tax
+	const CLOSECODE_OTHER = 'other'; // Abandoned (the remain to pay) - other
+	const CLOSECODE_ABANDONED = 'abandon'; // Abandoned (no payment at all) - other
+	const CLOSECODE_REPLACED = 'replaced'; // Abandoned (no payment at all) - replacedby another invoice (feature disabled by default)
 
 
 	/**
@@ -2384,7 +2383,7 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	/**
 	 * List of cumulative options:
 	 * Bit 0:	0 for common VAT - 1 if VAT french NPR
-	 * Bit 1:	0 si ligne normal - 1 si bit discount (link to line into llx_remise_except)
+	 * Bit 1:	0 if standard line - 1 if bit discount (link to line into llx_remise_except)
 	 * @var int
 	 */
 	public $info_bits = 0;
