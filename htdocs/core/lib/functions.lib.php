@@ -326,6 +326,17 @@ function getDolCurrency()
 }
 
 /**
+ * Return if render must be optimized for small screen
+ *
+ * @return 	string							Value returned
+ */
+function getDolOptimizeSmallScreen()
+{
+	global $conf;
+	return (string) $conf->dol_optimize_smallscreen;
+}
+
+/**
  * Return the current entity
  *
  * @return 	int							Value returned
