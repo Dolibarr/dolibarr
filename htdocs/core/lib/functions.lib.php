@@ -15204,7 +15204,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 				} elseif ($actioncode == 'AC_ALL_AUTO') {
 					$sql .= " AND c.type = 'systemauto'";
 				} else {
-					$sql .= " AND c.code = '".$db->escape($actioncode[0])."'";
+					$sql .= " AND c.code = '".$db->escape($actioncode)."'";
 				}
 			}
 		}
