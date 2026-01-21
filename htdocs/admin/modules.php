@@ -1296,8 +1296,8 @@ if ($mode == 'marketplace') {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table summary="list_of_modules" class="noborder centpercent">'."\n";
 	print '<tr class="liste_titre">'."\n";
-	print '<td colspan="2" class="hideonsmartphone">'.$form->textwithpicto($langs->trans("ModuleProviderSites"), $langs->trans("WebSiteDesc")).'</td>';
-	print '<td>';
+	print '<td colspan="2">'.$form->textwithpicto($langs->trans("ModuleProviderSites"), $langs->trans("WebSiteDesc")).'</td>';
+	print '<td class="hideonsmartphone">';
 	print '</td>';
 	print '<td></td>';
 	print '</tr>';
@@ -1412,8 +1412,9 @@ if ($mode == 'marketplace') {
 			print $remotestore->getPagination();
 		print '</form>';
 
-		print '</div></div>';
+		print '</div>';
 		print '<div class="clearboth"></div>';
+		print '</div>';
 		?>
 			<?php if (!empty($categories_tree)) { ?>
 				<div id="category-tree-left" class="paddingtop">
