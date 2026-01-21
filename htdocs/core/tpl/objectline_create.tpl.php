@@ -334,7 +334,11 @@ if ($nolinesbefore) {
 					$alsoproductwithnosupplierprice = 1;
 				}
 
-				$form->select_produits_fournisseurs($object->socid, GETPOST('idprodfournprice'), 'idprodfournprice', '', '', $ajaxoptions, 1, $alsoproductwithnosupplierprice, 'minwidth100 maxwidth500 widthcentpercentminusx', $labelforradio);
+				$socid = 0;
+				if (property_exists($object, 'socid')) {
+					$socid = $object->socid;
+				}
+				$form->select_produits_fournisseurs($socid, GETPOST('idprodfournprice'), 'idprodfournprice', '', '', $ajaxoptions, 1, $alsoproductwithnosupplierprice, 'minwidth100 maxwidth500 widthcentpercentminusx', $labelforradio);
 
 				if (getDolGlobalString('MAIN_AUTO_OPEN_SELECT2_ON_FOCUS_FOR_SUPPLIER_PRODUCTS')) {
 					?>
