@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       htdocs/variants/admin/product_attribute_extrafields.php
+ *      \file       htdocs/variants/admin/product_attribute_value_extrafields.php
  *		\ingroup    variants
  *		\brief      Page to setup extra fields of product_attribute_value
  */
@@ -28,11 +28,11 @@ require_once DOL_DOCUMENT_ROOT.'/variants/lib/variants.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 /**
- * @var Conf $conf
- * @var DoliDB $db
+ * @var Conf       $conf
+ * @var DoliDB     $db
  * @var HookManager $hookmanager
  * @var Translate $langs
- * @var User $user
+ * @var User      $user
  */
 
 if (!$user->admin) {
@@ -54,25 +54,23 @@ foreach ($tmptype2label as $key => $val) {
 
 $action = GETPOST('action', 'aZ09');
 $attrname = GETPOST('attrname', 'alpha');
-$elementtype = 'product_attribute_value'; //Must be the $table_element of the class that manage extrafield
-
+$elementtype = 'product_attribute_value'; // Must be the $table_element of the extrafield owner
 
 /*
  * Actions
  */
-
 require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
-
-
 
 /*
  * View
  */
-
 $title = $langs->trans("ProductAttributeValueExtrafieldsSetup");
 llxHeader('', $title);
 
-$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+$linkback = '<a href="' . dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]) . '">' .
+	img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"') .
+	'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($title, $linkback, 'title_setup');
 
 $head = adminProductAttributePrepareHead();
@@ -83,13 +81,21 @@ require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
 print dol_get_fiche_end();
 
-
 // Creation of an optional field
 if ($action == 'create') {
 	print '<br><div id="newattrib"></div>';
 	print load_fiche_titre($langs->trans('NewAttribute'));
 
+	// Temporary override for template
+	$textobject = $elementtype;
+
+	if (!empty($extrafields->attributes[$textobject])) {
+		$extrafields->attributes['product'] = $extrafields->attributes[$textobject];
+	}
+
+	$elementtype = 'product';
 	require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_add.tpl.php';
+	$elementtype = $textobject;
 }
 
 // Edition of an optional field
@@ -97,7 +103,16 @@ if ($action == 'edit' && !empty($attrname)) {
 	print "<br>";
 	print load_fiche_titre($langs->trans("FieldEdition", $attrname));
 
+	// Temporary override for template
+	$textobject = $elementtype;
+
+	if (!empty($extrafields->attributes[$textobject])) {
+		$extrafields->attributes['product'] = $extrafields->attributes[$textobject];
+	}
+
+	$elementtype = 'product';
 	require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_edit.tpl.php';
+	$elementtype = $textobject;
 }
 
 // End of page
