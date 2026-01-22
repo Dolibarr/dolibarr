@@ -238,20 +238,20 @@ class Holidays extends DolibarrApi
 
 
 	/**
-	 * Update expense report general fields
+	 * Update holiday general fields
 	 *
-	 * Does not touch lines of the expense report
+	 * Does not touch lines of the holiday
 	 *
 	 * @since	23.0.0	Initial implementation
 	 *
 	 * @param	int		$id					Leave ID to update
-	 * @param	array	$request_data		Expense report data
+	 * @param	array	$request_data		holiday report data
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
 	 * @return	Object						Updated object
 	 *
 	 * @throws	RestException	401		Not allowed
-	 * @throws  RestException	404		Expense report not found
+	 * @throws  RestException	404		Holiday not found
 	 * @throws	RestException	500		System error
 	 */
 	public function put($id, $request_data = null)
@@ -419,7 +419,7 @@ class Holidays extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already approved');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when approving expense report: '.$this->holiday->error);
+			throw new RestException(500, 'Error when approving holiday: '.$this->holiday->error);
 		}
 
 		return $this->_cleanObjectDatas($this->holiday);
@@ -642,13 +642,13 @@ class Holidays extends DolibarrApi
 		if ($data === null) {
 			$data = array();
 		}
-		$expensereport = array();
+		$holiday = array();
 		foreach (self::$FIELDS as $field) {
 			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
 			}
-			$expensereport[$field] = $data[$field];
+			$holiday[$field] = $data[$field];
 		}
-		return $expensereport;
+		return $holiday;
 	}
 }
