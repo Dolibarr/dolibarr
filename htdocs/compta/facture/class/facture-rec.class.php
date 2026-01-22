@@ -1447,6 +1447,8 @@ class FactureRec extends CommonInvoice
 				$errorforinvoice = 0;
 				$invoiceidgenerated = 0;
 				$mailHasSent = false;
+				// Create a loopError that is reset at each loop, this counter is added to the global counter at the end of loop
+				$loopError = 0;
 
 				$facture = null;
 				$facturerec = new FactureRec($this->db);
@@ -1518,9 +1520,6 @@ class FactureRec extends CommonInvoice
 							require_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
 							require_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
 							$formmail = new FormMail($this->db);
-
-							// Create a loopError that is reset at each loop, this counter is added to the global counter at the end of loop
-							$loopError = 0;
 
 							$outputlangs = new Translate('', $conf);
 							if ($facture->thirdparty->default_lang) {
