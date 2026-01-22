@@ -270,7 +270,6 @@ if (empty($reshook)) {
 			$object->unit_frequency        = GETPOST('unit_frequency', 'alpha');
 			$object->nb_gen_max            = $nb_gen_max;
 			$object->auto_validate         = GETPOSTINT('auto_validate');
-			$object->auto_send         	   = GETPOSTINT('auto_send');
 			$object->fk_email_template     = GETPOSTINT('auto_send_model_mail');
 			$object->generate_pdf          = GETPOSTINT('generate_pdf');
 			$object->fk_project            = $projectid;
@@ -410,9 +409,6 @@ if (empty($reshook)) {
 	} elseif ($action == 'setauto_validate' && $usercancreate) {
 		// Set auto validate
 		$object->setAutoValidate(GETPOSTINT('auto_validate'));
-	} elseif ($action == 'setauto_send' && $usercancreate) {
-		// Set auto send
-		$object->setAutoSend(GETPOSTINT('auto_send'));
 	} elseif ($action == 'setEmailTemplate' && $usercancreate) {
 		// Set Email Template
 		$object->setMailTemplate(GETPOSTINT('auto_send_model_mail'));

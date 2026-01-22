@@ -210,11 +210,6 @@ class FactureRec extends CommonInvoice
 	/**
 	 * @var int
 	 */
-	public $auto_send; // 0 disable auto send, 1 enable auto send
-
-	/**
-	 * @var int
-	 */
 	public $fk_email_template; // Email template for auto sending invoices
 
 	/**
@@ -290,8 +285,7 @@ class FactureRec extends CommonInvoice
 		'usenewprice' => array('type' => 'integer', 'label' => 'UseNewPrice', 'enabled' => 1, 'visible' => 0, 'position' => 155),
 		'revenuestamp' => array('type' => 'double(24,8)', 'label' => 'RevenueStamp', 'enabled' => 1, 'visible' => -1, 'position' => 160, 'isameasure' => 1),
 		'auto_validate' => array('type' => 'integer', 'label' => 'Auto validate', 'enabled' => 1, 'visible' => -1, 'position' => 165),
-		'auto_send' => array('type' => 'integer', 'label' => 'AutoSendEmail', 'enabled' => 1, 'visible' => -1, 'position' => 167),
-		'fk_email_template' => array('type' => 'integer:CEmailTemplate:core/class/cemailtemplate.class.php', 'label' => "Modèle d'e-mail pour l'envoi automatique", 'enabled' => 1, 'visible' => -1, 'position' => 168),
+		'fk_email_template' => array('type' => 'integer:CEmailTemplate:core/class/cemailtemplate.class.php', 'label' => "Modèle d'e-mail pour l'envoi automatique", 'enabled' => 1, 'visible' => -1, 'position' => 167),
 		'generate_pdf' => array('type' => 'integer', 'label' => 'Generate pdf', 'enabled' => 1, 'visible' => -1, 'position' => 170),
 		'fk_account' => array('type' => 'integer', 'label' => 'Fk account', 'enabled' => 'isModEnabled("bank")', 'visible' => -1, 'position' => 175),
 		'fk_multicurrency' => array('type' => 'integer', 'label' => 'Fk multicurrency', 'enabled' => 1, 'visible' => -1, 'position' => 180),
@@ -393,7 +387,6 @@ class FactureRec extends CommonInvoice
 			$sql .= ", nb_gen_done";
 			$sql .= ", nb_gen_max";
 			$sql .= ", auto_validate";
-			$sql .= ", auto_send";
 			$sql .= ", fk_email_template";
 			$sql .= ", generate_pdf";
 			$sql .= ", fk_multicurrency";
@@ -426,7 +419,6 @@ class FactureRec extends CommonInvoice
 			$sql .= ", ".((int) $this->nb_gen_done);
 			$sql .= ", ".((int) $this->nb_gen_max);
 			$sql .= ", ".((int) $this->auto_validate);
-			$sql .= ", ".((int) $this->auto_send);
 			$sql .= ", ".((int) $this->fk_email_template);
 			$sql .= ", ".((int) $this->generate_pdf);
 			$sql .= ", ".((int) $facsrc->fk_multicurrency);
@@ -616,7 +608,6 @@ class FactureRec extends CommonInvoice
 		$sql .= " total_ttc = ".((float) $this->total_ttc).",";
 		$sql .= " fk_societe_rib = ".(!empty($this->fk_societe_rib) ? ((int) $this->fk_societe_rib) : 'NULL').",";
 		$sql .= " auto_validate = ".((int) $this->auto_validate).",";
-		$sql .= " auto_send = ".((int) $this->auto_send).",";
 		$sql .= " fk_email_template = ".((int) $this->fk_email_template);
 
 		// TODO Add missing fields
@@ -674,7 +665,6 @@ class FactureRec extends CommonInvoice
 		$sql .= ', f.fk_mode_reglement, f.fk_cond_reglement, f.fk_projet as fk_project';
 		$sql .= ', f.fk_account, f.fk_societe_rib';
 		$sql .= ', f.frequency, f.unit_frequency, f.rule_for_lines_dates, f.date_when, f.date_last_gen, f.nb_gen_done, f.nb_gen_max, f.usenewprice, f.auto_validate';
-		$sql .= ', f.auto_send';
 		$sql .= ', f.fk_email_template';
 		$sql .= ', f.generate_pdf';
 		$sql .= ", f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc";
@@ -740,7 +730,6 @@ class FactureRec extends CommonInvoice
 				$this->nb_gen_max = $obj->nb_gen_max;
 				$this->usenewprice			  = $obj->usenewprice;
 				$this->auto_validate = $obj->auto_validate;
-				$this->auto_send = $obj->auto_send;
 				$this->fk_email_template = $obj->fk_email_template;
 				$this->generate_pdf = $obj->generate_pdf;
 
@@ -1525,7 +1514,7 @@ class FactureRec extends CommonInvoice
 						}
 
 						// Auto sending of the invoice
-						if ($result > 0 && $facture->status == Facture::STATUS_VALIDATED && $facturerec->auto_send == 1) {
+						if ($result > 0 && $facture->status == Facture::STATUS_VALIDATED && $facturerec->auto_validate == 2) {
 							require_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
 							require_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
 							$formmail = new FormMail($this->db);
@@ -1636,9 +1625,6 @@ class FactureRec extends CommonInvoice
 								}
 
 								// Mail Creation
-								// TODO -> A suppr
-								$to = 'vincent.penel@atm-consulting.fr';
-
 								$cMailFile = new CMailFile($sendTopic, $to, $from, $sendContent, $joinFile, $joinFileMime, $joinFileName, $email_tocc, $email_tobcc, 0, 1, $errors_to, '', $trackid, '', $sendcontext, '');
 
 								$resultsendmail = $cMailFile->sendfile();
@@ -2384,10 +2370,6 @@ class FactureRec extends CommonInvoice
 		}
 
 		$this->auto_validate = $validate;
-		if ($validate == 0) {
-			// Disable auto send
-			$this->auto_send = 0;
-		}
 
 		$result = $this->update($user);
 
@@ -2472,44 +2454,6 @@ class FactureRec extends CommonInvoice
 		if ($this->db->query($sql)) {
 			$this->model_pdf = $model;
 
-			if (!$notrigger) {
-				// Call trigger
-				$result = $this->call_trigger('BILLREC_MODIFY', $user);
-				if ($result < 0) {
-					return $result;
-				}
-				// End call triggers
-			}
-
-			return 1;
-		} else {
-			dol_print_error($this->db);
-			return -1;
-		}
-	}
-
-	/**
-	 *	Update the auto send flag of invoice
-	 *
-	 *	@param     	int<0,1>	$autoSend		0 disable auto send, 1 enable auto send
-	 *	@param     	int<0,1> 	$notrigger 		Disable the trigger
-	 *	@return		int							Return integer <0 if KO, >0 if OK
-	 */
-	public function setAutoSend($autoSend, $notrigger = 0): int
-	{
-		global $user;
-
-		if (!$this->table_element) {
-			dol_syslog(get_class($this)."::setAutoSend was called on object with property table_element not defined", LOG_ERR);
-			return -1;
-		}
-
-		$this->auto_send = $autoSend;
-
-		$result = $this->update($user);
-
-		dol_syslog(get_class($this)."::setAutoSend", LOG_DEBUG);
-		if ($result > 0) {
 			if (!$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('BILLREC_MODIFY', $user);
