@@ -15,6 +15,7 @@
  * Copyright (C) 2024-2025 MDW						      <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024      Nick Fragoulis
  * Copyright (C) 2025		   Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2026		William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -634,7 +635,7 @@ if (empty($reshook)) {
 
 				if ($res = $prodcomb->fetchByProductCombination2ValuePairs($idprod, $combinations)) {
 					$idprod = $res->fk_product_child;
-				} else {
+				} elseif (!getDolGlobalBool('PRODUCT_ALLOW_VARIANT_PARENT_LINE')) {
 					setEventMessages($langs->trans('ErrorProductCombinationNotFound'), null, 'errors');
 					$error++;
 				}
