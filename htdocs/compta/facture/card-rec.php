@@ -1418,7 +1418,7 @@ if ($action == 'create') {
 
 		// Email template for auto sending invoices
 		print "<tr id='col_auto_send_model_mail' class='".(GETPOSTINT('auto_validate') != 2 ? 'hidden' : '')."'><td>" . $langs->trans("EmailTemplateForAutoSend") . "</td><td>";
-		print $form->selectModelMail("auto_send_", "facture_send", 1);
+		print $form->selectModelMail("auto_send_", "facture_send", 1, 0, GETPOSTINT('auto_send_model_mail'));
 		print "</td></tr>";
 		print "	<script>
 					$(document).ready(function() {
