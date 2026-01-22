@@ -2210,7 +2210,7 @@ if ($action == 'create') {
 
 	$formconfirm = '';
 
-	// Order deletion confirmation
+	// Confirmation to delete
 	if ($action == 'delete') {
 		$arrayAjouts = array();
 		$heightModal = 0;
