@@ -2499,9 +2499,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 											}
 										}
 									}
-								} else {                                                                                                                                                   
-						              print $langs->trans("Yes");                                                                                                                            
-								}  
+								} else {
+									print $langs->trans("Yes");
+								}
 							}
 							$invoiced = true;
 						} else {
