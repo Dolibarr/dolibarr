@@ -235,7 +235,7 @@ if ($object->id) {
 
 				print '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=category&entity='.$object->entity.'&file='.urlencode($pdir.$obj['photo']).'" alt="Original size" target="_blank" rel="noopener noreferrer">';
 
-				// Si fichier vignette disponible, on l'utilise, sinon on utilise photo origine
+				// If a thumbnail file is available, it is used; otherwise, the original photo is used.
 				if ($obj['photo_vignette']) {
 					$filename = $obj['photo_vignette'];
 				} else {

@@ -91,7 +91,7 @@ $hidedetails = (GETPOSTINT('hidedetails') ? GETPOSTINT('hidedetails') : (getDolG
 $hidedesc = (GETPOSTINT('hidedesc') ? GETPOSTINT('hidedesc') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0));
 $hideref = (GETPOSTINT('hideref') ? GETPOSTINT('hideref') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0));
 
-// Nombre de ligne pour choix de produit/service predefinis
+// Number of lines for predefined product/service selection
 $NBLINES = 4;
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
@@ -1858,7 +1858,7 @@ if ($action == 'create') {
 		// Confirmation delete product/service line
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
 	} elseif ($action == 'ask_subtotal_deleteline') {
-		// Confirmation de la suppression d'une ligne subtotal
+		// Confirmation of subtotal row deletion
 		$langs->load("subtotals");
 		$title = "DeleteSubtotalLine";
 		$question = "ConfirmDeleteSubtotalLine";

@@ -503,7 +503,7 @@ if ($search_filter == 'outofdate') {
 	$sql .= " AND (datefin < '".$db->idate($now)."')";
 }
 if ($search_status != '') {
-	// Peut valoir un nombre ou liste de nombre separates par virgules
+	// Can be a number or a list of numbers separated by commas.
 	$sql .= " AND d.statut in (".$db->sanitize($db->escape($search_status)).")";
 }
 if ($search_morphy != '' && $search_morphy != '-1') {

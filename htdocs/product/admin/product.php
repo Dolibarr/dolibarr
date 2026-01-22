@@ -624,7 +624,7 @@ print '</td>';
 print '</tr>';
 
 
-// multiprix nombre de prix a proposer
+// multiprice number of prizes to be offered
 if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("MultiPricesNumPrices").'</td>';
@@ -742,7 +742,7 @@ print $form->selectarray(
 print '</td>';
 print '</tr>';
 
-// Visualiser description produit dans les formulaires activation/deactivation
+// View product description in activation/deactivation forms
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ViewProductDescInFormAbility").'</td>';
 print '<td class="right">';

@@ -3251,7 +3251,7 @@ if ($action == 'create') {
 			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('CancelBill'), $langs->trans('ConfirmCancelBill', $object->ref), 'confirm_canceled', $formquestion, "yes", 1, 280);
 		}
 
-		// Confirmation de la suppression de la facture fournisseur
+		// Confirmation of supplier invoice deletion
 		if ($action == 'delete') {
 			$formquestion = array();
 

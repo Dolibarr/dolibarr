@@ -144,7 +144,7 @@ if ($object_statut != '') {
 	$search_status = $object_statut;
 }
 
-// Nombre de ligne pour choix de produit/service predefinis
+// Number of lines for predefined product/service selection
 $NBLINES = 4;
 
 // Security check

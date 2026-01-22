@@ -1053,7 +1053,7 @@ if (empty($reshook)) {
 
 			// Modify entry
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET ";
-			// Modifie valeur des champs
+			// Modify field values
 			if ($tabrowid[$id] && !in_array($tabrowid[$id], $listfieldmodify)) {
 				$sql .= $tabrowid[$id]."=";
 				$sql .= "'".$db->escape($rowid)."', ";

@@ -325,10 +325,10 @@ print '</td></tr>'."\n";
 print '</td></tr>'."\n";
 print '<tr class="oddeven"><td>&nbsp; => '.$langs->trans("ClientHour").'</td><td>'.dol_print_date(dol_now('gmt'), 'dayhour', 'tzuser').'</td></tr>'."\n";
 
-$filesystemencoding = ini_get("unicode.filesystem_encoding"); // Disponible avec PHP 6.0
+$filesystemencoding = ini_get("unicode.filesystem_encoding"); // Available with PHP 6.0
 print '<tr class="oddeven"><td>'.$langs->trans("File encoding").' (php.ini unicode.filesystem_encoding)</td><td>'.$filesystemencoding.'</td></tr>'."\n";
 
-$tmp = ini_get("unicode.filesystem_encoding"); // Disponible avec PHP 6.0
+$tmp = ini_get("unicode.filesystem_encoding"); // Available with PHP 6.0
 if (empty($tmp) && !empty($_SERVER["WINDIR"])) {
 	$tmp = 'iso-8859-1'; // By default for windows
 }

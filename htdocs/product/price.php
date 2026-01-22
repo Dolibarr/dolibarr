@@ -2755,8 +2755,8 @@ if ((!getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || $action == 'showlog_defau
 		if (!$num) {
 			$db->free($result);
 
-			// Il doit au moins y avoir la ligne de prix initial.
-			// On l'ajoute donc pour remettre a niveau (pb vieilles versions)
+			// There must at least be the initial price line.
+			// We are therefore adding it to bring it up to date (old version issue).
 			// We emulate the change of the price from interface with the same value than the one into table llx_product
 			if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 				$ret = $object->updatePrice(($object->multiprices_base_type[1] == 'TTC' ? $object->multiprices_ttc[1] : $object->multiprices[1]), $object->multiprices_base_type[1], $user, (empty($object->multiprices_tva_tx[1]) ? 0 : $object->multiprices_tva_tx[1]), ($object->multiprices_base_type[1] == 'TTC' ? $object->multiprices_min_ttc[1] : $object->multiprices_min[1]), 1);

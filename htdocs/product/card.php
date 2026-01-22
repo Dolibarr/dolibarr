@@ -1197,8 +1197,8 @@ if (empty($reshook)) {
 			$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $tva_tx));
 			$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', $object->tva_tx));
 
-			// On reevalue prix selon taux tva car taux tva transaction peut etre different
-			// de ceux du produit par default (par example si pays different entre vendeur et acheteur).
+			// We reevaluate prices according to VAT rates because transaction VAT rates may vary.
+			// from those of the default product (for example, if the seller and buyer are in different countries).
 			if ($tmpvat != $tmpprodvat) {
 				if ($price_base_type != 'HT') {
 					$pu_ht = price2num($pu_ttc / (1 + ((float) $tmpvat / 100)), 'MU');

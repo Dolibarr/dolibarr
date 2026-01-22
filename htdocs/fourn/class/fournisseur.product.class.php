@@ -57,7 +57,7 @@ class ProductFournisseur extends Product
 	public $error = '';
 
 	/**
-	 * @var int			ID of ligne product-supplier
+	 * @var int			ID of line product-supplier
 	 */
 	public $product_fourn_price_id;
 

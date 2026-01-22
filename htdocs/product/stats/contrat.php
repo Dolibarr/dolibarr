@@ -22,7 +22,7 @@
 /**
  *       \file       htdocs/product/stats/contrat.php
  *       \ingroup    product service contrat
- *       \brief      Page des stats des contrats pour un produit
+ *       \brief      Contract statistics page for a product
  */
 
 // Load Dolibarr environment

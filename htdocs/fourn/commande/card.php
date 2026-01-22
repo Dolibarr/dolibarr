@@ -2209,7 +2209,7 @@ if ($action == 'create') {
 
 	$formconfirm = '';
 
-	// Confirmation de la suppression de la commande
+	// Confirmation of order cancellation
 	if ($action == 'delete') {
 		$arrayAjouts = array();
 		$heightModal = 0;

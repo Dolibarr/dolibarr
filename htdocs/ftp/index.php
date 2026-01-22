@@ -390,7 +390,7 @@ if (!function_exists('ftp_connect')) {
 			print $form->formconfirm($_SERVER["PHP_SELF"].'?numero_ftp='.$numero_ftp.'&section='.urlencode(GETPOST('section')).'&file='.urlencode(GETPOST('file')), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile', GETPOST('file')), 'confirm_deletefile', '', '', 1);
 		}
 
-		// Confirmation de la suppression d'une ligne categorie
+		// Confirmation of deletion of a category line
 		if ($action == 'delete_section') {
 			print $form->formconfirm($_SERVER["PHP_SELF"].'?numero_ftp='.$numero_ftp.'&section='.urlencode(GETPOST('section')).'&file='.urlencode(GETPOST('file')), $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection', GETPOST('file')), 'confirm_deletesection', '', '', 1);
 		}

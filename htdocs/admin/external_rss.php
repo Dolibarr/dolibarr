@@ -61,7 +61,7 @@ if (!$user->admin) {
  */
 $error = 0;
 
-// positionne la variable pour le nombre de rss externes
+// Sets the variable for the number of external RSS feeds
 $sql = "SELECT ".$db->decrypt('name')." as name FROM ".MAIN_DB_PREFIX."const";
 $sql .= " WHERE ".$db->decrypt('name')." LIKE 'EXTERNAL_RSS_URLRSS_%'";
 //print $sql;
