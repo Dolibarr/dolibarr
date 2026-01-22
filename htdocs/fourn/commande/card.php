@@ -635,7 +635,7 @@ if (empty($reshook)) {
 
 				if ($res = $prodcomb->fetchByProductCombination2ValuePairs($idprod, $combinations)) {
 					$idprod = $res->fk_product_child;
-				} elseif (!getDolGlobalBool('PRODUCT_ALLOW_VARIANT_PARENT_LINE')) {
+				} elseif (!getDolGlobalInt('PRODUCT_ALLOW_VARIANT_PARENT_LINE')) {
 					setEventMessages($langs->trans('ErrorProductCombinationNotFound'), null, 'errors');
 					$error++;
 				}
