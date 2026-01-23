@@ -113,6 +113,13 @@ class Product extends CommonObject
 	public $regeximgext = '\.gif|\.jpg|\.jpeg|\.png|\.bmp|\.webp|\.xpm|\.xbm';
 
 	/**
+	 * Product ref
+	 *
+	 * @var string
+	 */
+	public $ref;
+
+	/**
 	 * @var string
 	 * @deprecated  Use $label instead
 	 * @see $label

@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2014-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2020       OScss-Shop          <support@oscss-shop.fr>
- * Copyright (C) 2023-2024  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2014-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2020		OScss-Shop					<support@oscss-shop.fr>
+ * Copyright (C) 2023-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -135,6 +135,12 @@ class Fiscalyear extends CommonObject
 
 		$now = dol_now();
 
+		// Check for date overlaps with existing fiscal years
+		$checkresult = $this->checkOverlap();
+		if ($checkresult < 0) {
+			return -5; // Overlap error detected
+		}
+
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".$this->db->prefix()."accounting_fiscalyear (";
@@ -159,16 +165,8 @@ class Fiscalyear extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result) {
 			$this->id = $this->db->last_insert_id($this->db->prefix()."accounting_fiscalyear");
-
-			$result = $this->update($user);
-			if ($result > 0) {
-				$this->db->commit();
-				return $this->id;
-			} else {
-				$this->error = $this->db->lasterror();
-				$this->db->rollback();
-				return $result;
-			}
+			$this->db->commit();
+			return $this->id;
 		} else {
 			$this->error = $this->db->lasterror()." sql=".$sql;
 			$this->db->rollback();
@@ -188,6 +186,12 @@ class Fiscalyear extends CommonObject
 		if (empty($this->date_start) && empty($this->date_end)) {
 			$this->error = 'ErrorBadParameter';
 			return -1;
+		}
+
+		// Check for date overlaps with existing fiscal years
+		$checkresult = $this->checkOverlap();
+		if ($checkresult < 0) {
+			return -5; // Overlap error detected
 		}
 
 		$this->db->begin();
@@ -266,6 +270,47 @@ class Fiscalyear extends CommonObject
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;
+		}
+	}
+
+	/**
+	 * Check if fiscal year dates overlap with existing fiscal years
+	 *
+	 * @return int Return integer <0 if overlap detected, >0 if OK
+	 */
+	public function checkOverlap()
+	{
+		global $conf;
+
+		// Get entity value
+		$entity = (!empty($this->entity) ? $this->entity : $conf->entity);
+
+		// Query to checks if any existing fiscal year overlaps with the current date range
+		$sql = "SELECT label";
+		$sql .= " FROM " . $this->db->prefix() . "accounting_fiscalyear";
+		$sql .= " WHERE entity = " . ((int) $entity);
+		$sql .= " AND date_start <= '" . $this->db->idate($this->date_end) . "'";
+		$sql .= " AND date_end >= '" . $this->db->idate($this->date_start) . "'";
+
+		// Exclude current fiscal year when updating
+		if (!empty($this->id)) {
+			$sql .= " AND rowid != " . ((int) $this->id);
+		}
+
+		dol_syslog(get_class($this) . "::checkOverlap", LOG_DEBUG);
+
+		$result = $this->db->query($sql);
+		if ($result) {
+			if ($this->db->num_rows($result) > 0) {
+				$obj = $this->db->fetch_object($result);
+				$this->error = 'ErrorFiscalYearOverlapWithFiscalYear';
+				$this->errors[] = $obj->label;
+				return -1;
+			}
+			return 1; // No overlap found
+		} else {
+			$this->error = $this->db->lasterror();
+			return -2;
 		}
 	}
 

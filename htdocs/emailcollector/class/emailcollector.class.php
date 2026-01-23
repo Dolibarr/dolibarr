@@ -1873,8 +1873,27 @@ class EmailCollector extends CommonObject
 				}
 
 				if ($searchfilterisanswer > 0) {
+					$referencesforanswer = '';
+					if (!empty($headers['References'])) {
+						$referencesforanswer .= $headers['References'].' ';
+					}
+					if (!empty($headers['In-Reply-To'])) {
+						$referencesforanswer .= $headers['In-Reply-To'];
+					}
+
+					$hasdolibarrreference = 0;
+					if (!empty($referencesforanswer)) {
+						if (preg_match('/dolibarr-([a-z]+)([0-9]+)@'.preg_quote($host, '/').'/', $referencesforanswer)) {
+							$hasdolibarrreference = 1;
+						} elseif (getDolGlobalString('EMAIL_ALTERNATIVE_HOST_SIGNATURE')) {
+							if (preg_match('/dolibarr-([a-z]+)([0-9]+)@'.preg_quote(getDolGlobalString('EMAIL_ALTERNATIVE_HOST_SIGNATURE'), '/').'/', $referencesforanswer)) {
+								$hasdolibarrreference = 1;
+							}
+						}
+					}
+
 					$isanswer = 0;
-					if (preg_match('/^(Re|AW)\s*:\s+/i', $headers['Subject'])) {
+					if (preg_match('/^(回复|回覆|SV|Antw|VS|RE|Re|AW|Aw|ΑΠ|השב| תשובה | הועבר|Vá|R|RIF|BLS|Atb|RES|Odp|பதில்|YNT|ATB)\s*:\s+/i', $headers['Subject'])) {
 						$isanswer = 1;
 					}
 					if (getDolGlobalString('EMAILCOLLECTOR_USE_IN_REPLY_TO_TO_DETECT_ANSWERS')) {
@@ -1884,12 +1903,15 @@ class EmailCollector extends CommonObject
 							$isanswer = 1;
 						}
 					}
+					if ($hasdolibarrreference) {
+						$isanswer = 1;
+					}
 					//if ($headers['In-Reply-To'] != $headers['Message-ID'] && empty($headers['References'])) $isanswer = 1;	// If in-reply-to differs of message-id, this is a reply
 					//if ($headers['In-Reply-To'] != $headers['Message-ID'] && !empty($headers['References']) && strpos($headers['References'], $headers['Message-ID']) !== false) $isanswer = 1;
 
 					if (!$isanswer) {
 						$nbemailprocessed++;
-						dol_syslog(" Discarded - Email is not an answer (no reply marker detected, and test on In-Reply-To not requested because nor reliable, or test on In-Reply-To requested but not found)");
+						dol_syslog(" Discarded - Email is not an answer (no reply marker detected, and test on In-Reply-To not requested because not reliable, or test on In-Reply-To requested but not found)");
 						continue; // Exclude email
 					}
 				}
