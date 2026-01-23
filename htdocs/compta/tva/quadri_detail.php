@@ -236,9 +236,9 @@ $vatexpensereport = $langs->trans("VATPaid");
 print '<div class="right nowrap">';
 
 // built URLs
-$url_params = preg_replace('/&?showall=1/', '', $_SERVER['QUERY_STRING']);
+$url_params = preg_replace('/&?showall=1/', '', dol_escape_htmltag($_SERVER['QUERY_STRING']));
 $url_collapse = $_SERVER['PHP_SELF'].'?'.$url_params;
-$url_expand = $_SERVER['PHP_SELF'].'?'.$_SERVER['QUERY_STRING'].'&showall=1';
+$url_expand = $_SERVER['PHP_SELF'].'?'.$url_params.'&showall=1';
 
 // Link expand all
 print '<a class="showallperms" title="'.dol_escape_htmltag($langs->trans("ShowAllPerms")).'" href="'.$url_expand.'">';
