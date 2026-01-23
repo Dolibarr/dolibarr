@@ -155,6 +155,9 @@ class Tickets extends DolibarrApi
 		$messages = array();
 
 		$this->ticket->loadCacheMsgsTicket();
+		/**
+		 * @var array<int,array<string,mixed>> 	$this->ticket->cache_msgs_ticket
+		 */
 
 		if (is_array($this->ticket->cache_msgs_ticket) && count($this->ticket->cache_msgs_ticket) > 0) {
 			$num = count($this->ticket->cache_msgs_ticket);
