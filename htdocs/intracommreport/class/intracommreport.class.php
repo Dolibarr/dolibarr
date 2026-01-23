@@ -331,11 +331,9 @@ class IntracommReport extends CommonObject
 		$declaration->addChild('declarationTypeCode', getDolGlobalString('INTRACOMMREPORT_NIV_OBLIGATION_'.strtoupper($type)));
 		$declaration->addChild('flowCode', ($type == 'introduction' ? 'A' : 'D'));
 		$declaration->addChild('currencyCode', $conf->global->MAIN_MONNAIE);
-		/********************************************************************/
 
-		/**************Ajout des lignes de factures**************************/
+		// Add lines of invoices
 		$res = $this->addItemsFact($declaration, $type, $period_reference);
-		/********************************************************************/
 
 		$this->errors = array_unique($this->errors);
 
@@ -509,12 +507,12 @@ class IntracommReport extends CommonObject
 			$code_douane = $code_douane_spe;
 		}
 		$cn8->addChild('CN8Code', $code_douane);
-		$item->addChild('MSConsDestCode', $res->code); // code iso pays client
-		$item->addChild('countryOfOriginCode', substr($res->zip, 0, 2)); // code iso pays d'origine
-		$item->addChild('netMass', (string) round($res->weight * $res->qty)); // Poids du produit
-		$item->addChild('quantityInSU', (string) $res->qty); // Quantité de produit dans la ligne
-		$item->addChild('invoicedAmount', (string) round($res->total_ht)); // Montant total ht de la facture (entier attendu)
-		// $item->addChild('invoicedNumber', $res->refinvoice); // Numéro facture
+		$item->addChild('MSConsDestCode', $res->code); // code iso country customer
+		$item->addChild('countryOfOriginCode', substr($res->zip, 0, 2)); // code iso original country
+		$item->addChild('netMass', (string) round($res->weight * $res->qty)); // Weight of product
+		$item->addChild('quantityInSU', (string) $res->qty); // Quantity of product in line
+		$item->addChild('invoicedAmount', (string) round($res->total_ht)); // amount of invoice (integer expected)
+		// $item->addChild('invoicedNumber', $res->refinvoice); // Number of invoice
 		if (!empty($res->tva_intra)) {
 			$item->addChild('partnerId', $res->tva_intra);
 		}
@@ -638,10 +636,12 @@ class IntracommReport extends CommonObject
 	 */
 	public function generateXMLFile($content_xml)
 	{
-		$name = $this->period.'.xml';
+		global $conf;
 
-		// TODO Must be stored into a dolibarr temp directory
-		$fname = sys_get_temp_dir().'/'.$name;
+		dol_mkdir($conf->intracommreport->dir_temp);
+
+		$name = $this->period.'.xml';
+		$fname = $conf->intracommreport->dir_temp.'/'.$name;
 
 		$f = fopen($fname, 'w+');
 		fwrite($f, $content_xml);

@@ -352,6 +352,7 @@ class Cronjob extends CommonObject
 		}
 		if (isset($this->lastoutput)) {
 			$this->lastoutput = trim($this->lastoutput);
+			$this->lastoutput = dol_substr($this->lastoutput, 0, self::MAXIMUM_LENGTH_FOR_LASTOUTPUT_FIELD, 'UTF-8', 1);
 		}
 		if (isset($this->lastresult)) {
 			$this->lastresult = trim($this->lastresult);
@@ -817,6 +818,7 @@ class Cronjob extends CommonObject
 		}
 		if (isset($this->lastoutput)) {
 			$this->lastoutput = trim($this->lastoutput);
+			$this->lastoutput = dol_substr($this->lastoutput, 0, self::MAXIMUM_LENGTH_FOR_LASTOUTPUT_FIELD, 'UTF-8', 1);
 		}
 		if (isset($this->lastresult)) {
 			$this->lastresult = trim($this->lastresult);
@@ -1453,37 +1455,45 @@ class Cronjob extends CommonObject
 			if ($ret === false) {
 				$this->error = $langs->trans('CronCannotLoadLib').': '.$libpath;
 				dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
-				$conf->setEntityValues($this->db, $savcurrententity);
-				return -1;
+				$this->lastoutput = $this->error;
+				$this->lastresult = '-1';
+				$error++;
 			}
 
 			// Load langs
-			$result = $langs->load($this->module_name);
-			$result = $langs->load($this->module_name.'@'.$this->module_name); // If this->module_name was an existing language file, this will make nothing
-			if ($result < 0) {	// If technical error
-				dol_syslog(get_class($this)."::run_jobs Cannot load module langs".$langs->error, LOG_ERR);
-				$conf->setEntityValues($this->db, $savcurrententity);
-				return -1;
+			if (!$error) {
+				$result = $langs->load($this->module_name);
+				$result = $langs->load($this->module_name.'@'.$this->module_name); // If this->module_name was an existing language file, this will make nothing
+				if ($result < 0) {	// If technical error
+					dol_syslog(get_class($this)."::run_jobs Cannot load module langs".$langs->error, LOG_ERR);
+					$this->error = $langs->error;
+					$this->lastoutput = $this->error;
+					$this->lastresult = '-1';
+					$error++;
+				}
 			}
 
-			dol_syslog(get_class($this)."::run_jobs ".$this->libname."::".$this->methodename."(".$this->params.");", LOG_DEBUG);
-			$params_arr = explode(", ", $this->params);
-			if (!is_array($params_arr)) {
-				$result = call_user_func($this->methodename, $this->params);
-			} else {
+			if (!$error) {
+				dol_syslog(get_class($this)."::run_jobs ".$this->libname."::".$this->methodename."(".$this->params.");", LOG_DEBUG);
+
+				$params_arr = array();
+				if (!empty($this->params) || $this->params === '0') {
+					$params_arr = array_map('trim', explode(",", $this->params));
+				}
+
 				$result = call_user_func_array($this->methodename, $params_arr);
-			}
 
-			if ($result === false || (!is_bool($result) && $result != 0)) {
-				$langs->load("errors");
-				dol_syslog(get_class($this)."::run_jobs result=".$result, LOG_ERR);
-				$this->error = $langs->trans('ErrorUnknown');
-				$this->lastoutput = $this->error;
-				$this->lastresult = is_numeric($result) ? var_export($result, true) : '-1';
-				$error++;
-			} else {
-				$this->lastoutput = var_export($result, true);
-				$this->lastresult = var_export($result, true); // Return code
+				if ($result === false || (!is_bool($result) && $result != 0)) {
+					$langs->load("errors");
+					dol_syslog(get_class($this)."::run_jobs result=".$result, LOG_ERR);
+					$this->error = $langs->trans('ErrorUnknown');
+					$this->lastoutput = $this->error;
+					$this->lastresult = is_numeric($result) ? var_export($result, true) : '-1';
+					$error++;
+				} else {
+					$this->lastoutput = var_export($result, true);
+					$this->lastresult = var_export($result, true); // Return code
+				}
 			}
 		}
 
@@ -1496,14 +1506,15 @@ class Cronjob extends CommonObject
 				$this->error      = $langs->trans("FailedToExecutCommandJob");
 				$this->lastoutput = '';
 				$this->lastresult = $langs->trans("ErrorParameterMustBeEnabledToAllwoThisFeature", 'dolibarr_cron_allow_cli');
+				$error++;
 			} else {
 				$outputdir = $conf->cron->dir_temp;
 				if (empty($outputdir)) {
 					$outputdir = $conf->cronjob->dir_temp;
 				}
+				dol_mkdir($outputdir);
 
 				if (!empty($outputdir)) {
-					dol_mkdir($outputdir);
 					$outputfile = $outputdir.'/cronjob.'.$userlogin.'.out'; // File used with popen method
 
 					// Execute a CLI
@@ -1514,6 +1525,12 @@ class Cronjob extends CommonObject
 					$this->error      = $arrayresult['error'];
 					$this->lastoutput = $arrayresult['output'];
 					$this->lastresult = (string) $arrayresult['result'];
+				} else {
+					$langs->load("errors");
+					$this->error = $langs->trans("ErrorNoTmpDir", (string) $outputdir);
+					$this->lastoutput = '';
+					$this->lastresult = '-1';
+					$error++;
 				}
 			}
 		}

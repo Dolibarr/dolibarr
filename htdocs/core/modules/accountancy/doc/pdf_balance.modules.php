@@ -668,7 +668,7 @@ class pdf_balance extends ModelePdfAccountancy
 
 		// Name of soc
 		$pdf->SetXY($this->marge_gauche + 2, $posy + 2);
-		$text = $this->emetteur->name;
+		$text = (string) $this->emetteur->name;
 		$pdf->MultiCell($w / 3, 4, $outputlangs->convToOutputCharset($text), 0, $ltrdirection);
 		$nexY = max($pdf->GetY(), $nexY);
 
