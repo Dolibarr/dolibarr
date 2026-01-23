@@ -4672,7 +4672,7 @@ class Societe extends CommonObject
 			}
 		}
 
-		$name = $socname;
+		$name = (string) $socname;
 		$alias = $socalias ? $socalias : '';
 
 		// Positionne parameters
