@@ -776,7 +776,8 @@ trait CommonSubtotal
 	 *
 	 * @phan-suppress PhanUndeclaredProperty
 	 */
-	public function getSubtotalLineAmountVAT($line) {
+	public function getSubtotalLineAmountVAT($line)
+	{
 		$final_amount = 0;
 		for ($i = $line->rang - 1; $i > 0; $i--) {
 			if (is_null($this->lines[$i - 1]) || $this->lines[$i - 1]->rang >= $line->rang) {
@@ -829,7 +830,7 @@ trait CommonSubtotal
 	 *
 	 * @phan-suppress PhanUndeclaredProperty
 	 */
-	public function getSubtotalLineMulticurrencyAmountVAT($line) 
+	public function getSubtotalLineMulticurrencyAmountVAT($line)
 	{
 		$final_amount = 0;
 		for ($i = $line->rang - 1; $i > 0; $i--) {
