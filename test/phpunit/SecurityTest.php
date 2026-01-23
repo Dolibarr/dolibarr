@@ -469,15 +469,19 @@ class SecurityTest extends CommonClassTest
 		$tmpvar = preg_match('/not supported/', $tmp['curl_error_msg']);
 		$this->assertEquals(1, $tmpvar, "Did not find the /not supported/ in getURLContent error message. We should.");
 
-		$url = 'https://www.dolibarr.fr';	// This is a redirect 301 page
-		$tmp = getURLContent($url, 'GET', '', 0);	// We do NOT follow
-		print __METHOD__." url=".$url."\n";
-		$this->assertEquals(301, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url 301 response');
+		$DISABLEREMOTEACCESSTODOLIBARRFR = 1;
 
-		$url = 'https://www.dolibarr.fr';	// This is a redirect 301 page
-		$tmp = getURLContent($url);		// We DO follow a page with return 300 so result should be 200
-		print __METHOD__." url=".$url."\n";
-		$this->assertEquals(200, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url 301 with a follow -> 200 but we get '.(empty($tmp['http_code']) ? 0 : $tmp['http_code']));
+		if (empty($DISABLEREMOTEACCESSTODOLIBARRFR)) {
+			$url = 'https://www.dolibarr.fr';	// This is a redirect 301 page
+			$tmp = getURLContent($url, 'GET', '', 0);	// We do NOT follow
+			print __METHOD__." url=".$url."\n";
+			$this->assertEquals(301, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Test getURLContent '.$url.' - Should GET url 301 response');
+
+			$url = 'https://www.dolibarr.fr';	// This is a redirect 301 page
+			$tmp = getURLContent($url);		// We DO follow a page with return 300 so result should be 200
+			print __METHOD__." url=".$url."\n";
+			$this->assertEquals(200, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url 301 with a follow -> 200 but we get '.(empty($tmp['http_code']) ? 0 : $tmp['http_code']));
+		}
 
 		$url = 'http://localhost';
 		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
@@ -925,6 +929,26 @@ class SecurityTest extends CommonClassTest
 		//$result = dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0));
 		//$result = dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0, array())), 1, 1, 'common', 0, 1);
 		$result = dolPrintHTML($stringtotest);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($stringfixed, $result, 'Error in dolPrintHTML test 1');    // Expected '' because should failed because login 'auto' does not exists
+
+		$stringtotest = "<b>bold</b> <code>aaa</code>";
+		$stringfixed = "<b>bold</b> aaa";
+		//$result = dol_htmlentitiesbr($stringtotest);
+		//$result = dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0);
+		//$result = dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0));
+		//$result = dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0, array())), 1, 1, 'common', 0, 1);
+		$result = dolPrintHTML($stringtotest);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($stringfixed, $result, 'Error in dolPrintHTML test 1');    // Expected '' because should failed because login 'auto' does not exists
+
+		$stringtotest = "<b>bold</b> <code>aaa</code>";
+		$stringfixed = "<b>bold</b> aaa";
+		//$result = dol_htmlentitiesbr($stringtotest);
+		//$result = dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0);
+		//$result = dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0));
+		//$result = dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0, array())), 1, 1, 'common', 0, 1);
+		$result = dolPrintHTML($stringtotest, 0, array('code'));
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($stringfixed, $result, 'Error in dolPrintHTML test 1');    // Expected '' because should failed because login 'auto' does not exists
 

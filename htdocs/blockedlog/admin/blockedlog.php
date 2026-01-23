@@ -106,19 +106,19 @@ $morehtmlcenter = '';
 $registrationnumber = getHashUniqueIdOfRegistration();
 $texttop = '<small class="opacitymedium">'.$langs->trans("RegistrationNumber").':</small> <small>'.dol_trunc($registrationnumber, 10).'</small>';
 
-print load_fiche_titre($title, $linkback, 'blockedlog', 0, '', '', $morehtmlcenter);
+print load_fiche_titre($title.'<br>'.$texttop, $linkback, 'blockedlog', 0, '', '', $morehtmlcenter);
 
 if ($withtab) {
 	$head = blockedlogadmin_prepare_head(GETPOST('withtab', 'alpha'));
 	print dol_get_fiche_head($head, 'blockedlog', '', -1);
 }
 
-print $texttop;
-print '<br><br>';
+//print $texttop;
+//print '<br><br>';
 
 print '<span class="opacitymedium">'.$langs->trans("BlockedLogDesc")."</span><br>\n";
 
-if ($mysoc->country_code == 'FR') {
+if (in_array($mysoc->country_code, array('FR'))) {
 	$htmltext = $langs->trans("UnalterableLogTool1FR").'<br>';
 	print info_admin($htmltext, 0, 0, 'warning');
 }
@@ -160,7 +160,9 @@ if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY')) {
 
 // Show the input of countries not allowed for disabling
 print '<tr class="oddeven">';
-print '<td>'.$langs->trans("BlockedLogDisableNotAllowedForCountry").'</td>';
+print '<td>';
+print $form->textwithpicto($langs->transnoentitiesnoconv("BlockedLogDisableNotAllowedForCountry"), $langs->transnoentitiesnoconv("BlockedLogDisableNotAllowedForCountry2"));
+print '</td>';
 print '<td>';
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
@@ -182,8 +184,11 @@ if ($resql) {
 
 $selected = !getDolGlobalString('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY') ? array() : explode(',', getDolGlobalString('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY'));
 
-print $form->multiselectarray('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY', $countryArray, $selected);
-print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
+// Can module be disabled
+$canbedisabled = $block_static->canBeDisabled();
+
+print $form->multiselectarray('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY', $countryArray, $selected, 0, 0, '', 0, 0, $canbedisabled ? '' : 'disabled');
+print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"'.($canbedisabled ? '' : ' disabled').'>';
 print '</form>';
 
 print '</td>';

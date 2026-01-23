@@ -1963,7 +1963,7 @@ class BookKeeping extends CommonObject
 	{
 		global $conf;
 
-		$sql = "SELECT piece_num, ref, doc_date, code_journal, journal_label, doc_ref, doc_type,";
+		$sql = "SELECT piece_num, ref, doc_date, code_journal, journal_label, doc_ref, doc_type, fk_doc,";
 		$sql .= " date_creation, tms as date_modification, date_validated as date_validation, date_lim_reglement, import_key";
 		// In llx_accounting_bookkeeping_tmp, field date_export doesn't exist
 		if ($mode != "_tmp") {
@@ -1985,6 +1985,7 @@ class BookKeeping extends CommonObject
 			$this->doc_date = $this->db->jdate($obj->doc_date);
 			$this->doc_ref = $obj->doc_ref;
 			$this->doc_type = $obj->doc_type;
+			$this->fk_doc = $obj->fk_doc;
 			$this->date_creation = $this->db->jdate($obj->date_creation);
 			$this->date_modification = $this->db->jdate($obj->date_modification);
 			if ($mode != "_tmp") {
@@ -2522,7 +2523,7 @@ class BookKeeping extends CommonObject
 		$alias = !empty($alias) && strpos($alias, '.') === false ? $alias . "." : $alias;
 
 		if (!isset(self::$can_modify_bookkeeping_sql_cached[$alias]) || $force) {
-			$result = $this->loadFiscalPeriods($force, 'active');
+			$result = $this->loadFiscalPeriods($force, 'active');	// This set $conf->cache['active_fiscal_period_cached']
 			if ($result < 0) {
 				return null;
 			}
@@ -2533,9 +2534,10 @@ class BookKeeping extends CommonObject
 				foreach ($conf->cache['active_fiscal_period_cached'] as $fiscal_period) {
 					$sql_list[$i] = "(";
 					$sql_list[$i] .= "'".$this->db->idate($fiscal_period['date_start']) . "' <= ".$this->db->sanitize($alias)."doc_date";
+					// @phan-suppress-next-line PhanTypeMismatchDimAssignment
 					if (!empty($fiscal_period['date_end'])) {
 						$sql_list[$i] .= " AND ";
-						$sql_list[$i] .= $this->db->sanitize($alias)."doc_date <= '" . $this->db->idate($fiscal_period['date_end'])."'";
+						$sql_list[$i] .= $this->db->sanitize($alias)."doc_date <= '" . $this->db->idate((int) $fiscal_period['date_end'])."'";
 					}
 					$sql_list[$i] .= ")";
 					$i++;
@@ -2595,6 +2597,7 @@ class BookKeeping extends CommonObject
 			}
 			if (!empty($conf->cache['active_fiscal_period_cached']) && is_array($conf->cache['active_fiscal_period_cached'])) {
 				foreach ($conf->cache['active_fiscal_period_cached'] as $fiscal_period) {
+					// @phan-suppress-next-line PhanTypeMismatchDimAssignment
 					if (!empty($fiscal_period['date_start']) && $fiscal_period['date_start'] <= $bookkeeping->doc_date && (empty($fiscal_period['date_end']) || $bookkeeping->doc_date <= $fiscal_period['date_end'])) {
 						return 1;
 					}
@@ -2693,6 +2696,7 @@ class BookKeeping extends CommonObject
 
 			if (!empty($conf->cache['active_fiscal_period_cached']) && is_array($conf->cache['active_fiscal_period_cached'])) {
 				foreach ($conf->cache['active_fiscal_period_cached'] as $fiscal_period) {
+					// @phan-suppress-next-line PhanTypeMismatchDimAssignment
 					if (!empty($fiscal_period['date_start']) && $fiscal_period['date_start'] <= $date && (empty($fiscal_period['date_end']) || $date <= $fiscal_period['date_end'])) {
 						return 1;
 					}
@@ -2729,9 +2733,12 @@ class BookKeeping extends CommonObject
 
 				$list = array();
 				while ($obj = $this->db->fetch_object($resql)) {
+					$date_start = $this->db->jdate($obj->date_start);
+					$date_end_base = $this->db->jdate($obj->date_end);
+					$date_end = dol_get_last_hour($date_end_base);
 					$list[] = array(
-						'date_start' => $this->db->jdate($obj->date_start),
-						'date_end' => $this->db->jdate($obj->date_end),
+						'date_start' => $date_start,
+						'date_end' => $date_end,
 					);
 				}
 				$conf->cache['active_fiscal_period_cached'] = $list;
@@ -2752,9 +2759,13 @@ class BookKeeping extends CommonObject
 
 				$list = array();
 				while ($obj = $this->db->fetch_object($resql)) {
+					$date_start = $this->db->jdate($obj->date_start);
+					$date_end_base = $this->db->jdate($obj->date_end);
+					$date_end = dol_get_last_hour($date_end_base);
+
 					$list[] = array(
-						'date_start' => $this->db->jdate($obj->date_start),
-						'date_end' => $this->db->jdate($obj->date_end),
+						'date_start' => $date_start,
+						'date_end' => $date_end,
 					);
 				}
 				$conf->cache['closed_fiscal_period_cached'] = $list;
@@ -3139,7 +3150,7 @@ class BookKeeping extends CommonObject
 						}
 					}
 
-					// Insert bookkeeping record for income statement
+					// Insert bookkeeping record for income statement (loss or profit when closing)
 					if (!$error && $income_statement_amount != 0) {
 						$mt = $income_statement_amount;
 						$accountingaccount = new AccountingAccount($this->db);
@@ -3157,6 +3168,7 @@ class BookKeeping extends CommonObject
 						$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
 						$bookkeeping->thirdparty_code = '';
 
+						/* $obj->subledger_account is not defined, so all code into if do the same then in else
 						if ($separate_auxiliary_account) {
 							$bookkeeping->subledger_account = $obj->subledger_account;
 							$sql = 'SELECT';
@@ -3173,10 +3185,14 @@ class BookKeeping extends CommonObject
 							}
 							$objtmp = $this->db->fetch_object($result);
 							$bookkeeping->subledger_label = $objtmp->subledger_label ?? null; // latest subledger label used
-						} else {
+
 							$bookkeeping->subledger_account = null;
 							$bookkeeping->subledger_label = null;
-						}
+						} else {
+						*/
+							$bookkeeping->subledger_account = null;
+							$bookkeeping->subledger_label = null;
+						//}
 
 						$bookkeeping->numero_compte = $accountingaccount->account_number;
 						$bookkeeping->label_compte = $accountingaccount->label;

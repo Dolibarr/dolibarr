@@ -226,7 +226,7 @@ print dol_get_fiche_head($head, (string) $tab, '', -1, '');
 
 // Print title
 if ($mode && !count($data)) {
-	print $langs->trans("NoValidatedMemberYet").'<br>';
+	print '<span class="opacitymedium">'.$langs->trans("NoValidatedMemberYet").'</span><br>';
 	print '<br>';
 } else {
 	if (empty($mode) || $mode == 'memberbycountry') {

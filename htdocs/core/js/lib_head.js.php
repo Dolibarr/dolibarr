@@ -248,15 +248,17 @@ function getObjectFromID(id){
 // Called after the selection or typing of a date to save details into detailed fields
 function dpChangeDay(dateFieldID, format)
 {
-	console.log("Call dpChangeDay, we save date into detailed fields from format = "+format);
+	console.log("Call dpChangeDay, we save date from field "+dateFieldID+" into detailed fields from format = "+format);
 
 	var thefield = getObjectFromID(dateFieldID);
 	var thefieldday = getObjectFromID(dateFieldID+"day");
 	var thefieldmonth = getObjectFromID(dateFieldID+"month");
 	var thefieldyear = getObjectFromID(dateFieldID+"year");
 
+	console.log("string date value is " + thefield.value);
+
 	var date = getDateFromFormat(thefield.value, format);
-	//console.log(date);
+
 	if (date)
 	{
 		thefieldday.value = date.getDate();
@@ -578,7 +580,7 @@ function cleanSerialize(expr) {
  */
 function confirmDolibarr(msg, id, popupWidth = 400, popupHeight = 300, disableCancelButton = 0) {
 	let alink = document.getElementById(id);
-	let title = '<?php echo dol_escape_js($langs->trans("Note")); ?>';
+	let title = '<?php echo dol_escape_js($langs->transnoentitiesnoconv("Note")); ?>';
 
 	if (alink.getAttribute("data-alreadyclicked") === "1") {
 		return true;
@@ -588,11 +590,11 @@ function confirmDolibarr(msg, id, popupWidth = 400, popupHeight = 300, disableCa
 
 	let buttons = {};
 	if (disableCancelButton === 0) {
-		buttons['<?php echo dol_escape_js($langs->trans("Cancel")); ?>'] = function () {
+		buttons['<?php echo dol_escape_js($langs->transnoentitiesnoconv("Cancel")); ?>'] = function () {
 		   $(this).dialog("close");
 		};
 	}
-	buttons['<?php echo dol_escape_js($langs->trans("OK")); ?>'] = function () {
+	buttons['<?php echo dol_escape_js($langs->transnoentitiesnoconv("Confirm")); ?>'] = function () {
 		console.log("We click OK"); $(this).dialog("close"); alink.setAttribute("data-alreadyclicked", "1"); alink.click(); return false;
 	};
 
@@ -1723,9 +1725,12 @@ function onKanbanColumnChange(item, newColumn) {
 	item.data('original-column', newColumn);
 }
 
+
+if (typeof jQuery.fn.on === 'function') {
+
 /*
-* Intuitive table selection
-*/
+ * Intuitive table selection (with keyboard selection)
+ */
 $(function() {
 
 	/**
@@ -1815,5 +1820,7 @@ $(function() {
 		}
 	});
 });
+
+}
 
 // End of lib_head.js.php

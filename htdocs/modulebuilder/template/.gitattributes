@@ -2,7 +2,7 @@
 * text=auto
 
 
-# Explicitly declare text files we want to always be normalized and converted 
+# Explicitly declare text files we want to always be normalized and converted
 # to native line endings on checkout.
 *.php text eol=lf
 *.sql text eol=lf

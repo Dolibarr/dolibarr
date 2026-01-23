@@ -26,15 +26,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
-'
-@phan-var-force string $dolibarr_main_document_root_alt
-';
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -45,6 +36,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
  * @var string $dolibarr_main_document_root_alt
  * @var string $conffile
  */
+'
+@phan-var-force string $dolibarr_main_document_root_alt
+';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("install", "other", "admin"));
@@ -169,9 +168,15 @@ if (preg_match('/[a-z]+/i', $version)) {
 
 print '</td></tr>'."\n";
 print '<tr class="oddeven"><td>'.$langs->trans("VersionLastUpgrade").'<br><span class="opacitymedium">('.$langs->trans("Database").')</span></td><td>';
-print '<span class="badge-text badge-secondary">'.getDolGlobalString('MAIN_VERSION_LAST_UPGRADE').'</span></td></tr>'."\n";
+if (getDolGlobalString('MAIN_VERSION_LAST_UPGRADE')) {
+	print '<span class="badge-text badge-secondary">'.getDolGlobalString('MAIN_VERSION_LAST_UPGRADE').'</span>';
+}
+print '</td></tr>'."\n";
 print '<tr class="oddeven"><td>'.$langs->trans("VersionLastInstall").'<br><span class="opacitymedium">('.$langs->trans("Database").')</span></td><td>';
-print '<span class="badge-text badge-secondary">'.getDolGlobalString('MAIN_VERSION_LAST_INSTALL').'</span></td></tr>'."\n";
+if (getDolGlobalString('MAIN_VERSION_LAST_INSTALL')) {
+	print '<span class="badge-text badge-secondary">'.getDolGlobalString('MAIN_VERSION_LAST_INSTALL').'</span>';
+}
+print '</td></tr>'."\n";
 print '</table>';
 print '</div>';
 print '<br>';

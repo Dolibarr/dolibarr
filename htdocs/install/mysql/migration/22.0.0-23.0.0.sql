@@ -320,7 +320,8 @@ ALTER TABLE llx_oauth_token ADD COLUMN expire_at datetime NULL AFTER lastaccess;
 
 ALTER TABLE llx_blockedlog ADD COLUMN linktoref varchar(255);
 ALTER TABLE llx_blockedlog ADD COLUMN linktype varchar(16);
-ALTER TABLE llx_blockedlog ADD COLUMN vat double(24,8) DEFAULT NULL;
+ALTER TABLE llx_blockedlog ADD COLUMN module_source varchar(32) DEFAULT '' AFTER action;
+ALTER TABLE llx_blockedlog ADD COLUMN amounts_taxexcl double(24,8) DEFAULT NULL AFTER amounts;
 
 
 -- Incoterms 2025 and specific terms
@@ -374,6 +375,7 @@ INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'CDF'
 ALTER TABLE llx_societe MODIFY COLUMN mode_reglement integer;
 
 ALTER TABLE llx_blockedlog DROP COLUMN signature_line;
+ALTER TABLE llx_blockedlog ADD COLUMN actionrefisunique varchar(16) DEFAULT NULL;
 
 
 ALTER TABLE llx_ecm_files ADD COLUMN geolat double(24,8) DEFAULT NULL;
@@ -392,10 +394,36 @@ CREATE TABLE llx_expensereport_det_extrafields
 
 
 ALTER TABLE llx_blockedlog ADD INDEX idx_ref_object (ref_object);
-ALTER TABLE llx_blockedlog ADD CONSTRAINT fk_linktoref FOREIGN KEY (linktoref) REFERENCES llx_blockedlog(ref_object);
+--ALTER TABLE llx_blockedlog ADD CONSTRAINT fk_linktoref FOREIGN KEY (linktoref) REFERENCES llx_blockedlog(ref_object);
+ALTER TABLE llx_blockedlog DROP FOREIGN KEY fk_linktoref;
 
 ALTER TABLE llx_fichinterdet ADD COLUMN special_code integer DEFAULT 0 AFTER fk_parent_line;
 ALTER TABLE llx_fichinterdet ADD COLUMN product_type integer DEFAULT 0 AFTER special_code;
+
+ALTER TABLE llx_pos_cash_fence ADD COLUMN hour_close INTEGER DEFAULT null after year_close;
+ALTER TABLE llx_pos_cash_fence ADD COLUMN min_close INTEGER DEFAULT null after hour_close;
+ALTER TABLE llx_pos_cash_fence ADD COLUMN sec_close INTEGER DEFAULT null after min_close;
+
+ALTER TABLE llx_pos_cash_fence ADD COLUMN cash_declared double(24,8) DEFAULT null;
+ALTER TABLE llx_pos_cash_fence ADD COLUMN card_declared double(24,8) DEFAULT null;
+ALTER TABLE llx_pos_cash_fence ADD COLUMN cheque_declared double(24,8) DEFAULT null;
+
+ALTER TABLE llx_pos_cash_fence ADD COLUMN cash_lifetime double(24,8) DEFAULT null;
+ALTER TABLE llx_pos_cash_fence ADD COLUMN card_lifetime double(24,8) DEFAULT null;
+ALTER TABLE llx_pos_cash_fence ADD COLUMN cheque_lifetime double(24,8) DEFAULT null;
+
+ALTER TABLE llx_pos_cash_fence ADD COLUMN lifetime_start datetime DEFAULT NULL;
+
+UPDATE llx_cronjob set test = 'getDolDBType() == \'mysqli\'' WHERE label = 'MakeLocalDatabaseDumpShort';
+UPDATE llx_cronjob set test = 'getDolGlobalString(\'MAIN_ALLOW_BACKUP_BY_EMAIL\') && getDolDBType() == \'mysqli\'' WHERE label = 'MakeSendLocalDatabaseDumpShort';
+
+UPDATE llx_c_socialnetworks SET icon = 'fa-mastodon' WHERE icon = '' AND code = 'mastodon';
+
+INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'PGK', '[75]', 1,			'Papua New Guinea Kina');
+
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  1, 'PCG25-DEV', 'The developed accountancy french plan 2025', 1);
+
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  4, 'PCG08-PYME-CAT', 'The PYME accountancy spanish plan in catalan language', 1);
 
 
 INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, enabled, active, topic, joinfiles, content) VALUES (0, 'ticket', 'ticket_send', '', 0, null, '2025-12-19 10:40:07', 'Creation ticket', 100, 1,1, '[__MYCOMPANY_NAME__] __(TicketNewEmailSubjectAdmin|ticket)__ __TICKET_TRACKID__', 0, '__(TicketNewEmailBodyAdmin|ticket)__ :__TICKET_TRACKID__<br><br> __(Title|ticket)__ : __TICKET_SUBJECT__<br> <br> __(Type|ticket) : __(__TICKET_TYPE__)__<br>__(Category|ticket)__ : __(__TICKET_CATEGORY__)__<br>__(Severity|ticket)__ : __(__TICKET_SEVERITY__)__<br><br>__(Message|ticket)__ : __TICKET_MESSAGE__');

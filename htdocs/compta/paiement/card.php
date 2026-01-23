@@ -6,7 +6,7 @@
  * Copyright (C) 2013	   Marcos García		 <marcosgdf@gmail.com>
  * Copyright (C) 2015	   Juanjo Menent		 <jmenent@2byte.es>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -570,7 +570,7 @@ if ($resql) {
 			print '</td>';
 
 			// Expected to pay
-			if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_INVOICE_SHARING_ENABLED')) {
+			if (isModEnabled('multicompany') && isset($mc) && getDolGlobalString('MULTICOMPANY_INVOICE_SHARING_ENABLED')) {
 				print '<td>';
 				$mc->getInfo($objp->entity);
 				print $mc->label;

@@ -5,7 +5,7 @@
  * Copyright (C) 2023		Nick Fragoulis
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -283,14 +283,13 @@ abstract class CommonInvoice extends CommonObject
 	const STATUS_ABANDONED = 3;
 
 
-	const CLOSECODE_DISCOUNTVAT = 'discount_vat'; // Abandoned remain - escompte
-	const CLOSECODE_BADDEBT = 'badcustomer'; // Abandoned remain - bad customer
-	const CLOSECODE_BANKCHARGE = 'bankcharge'; // Abandoned remain - bank charge
-	const CLOSECODE_WITHHOLDINGTAX = 'withholdingtax';	// Abandoned remain - source tax
-	const CLOSECODE_OTHER = 'other'; // Abandoned remain - other
-
-	const CLOSECODE_ABANDONED = 'abandon'; // Abandoned - other
-	const CLOSECODE_REPLACED = 'replaced'; // Closed after doing a replacement invoice
+	const CLOSECODE_DISCOUNTVAT = 'discount_vat'; // Abandoned (the remain to pay) - escompte
+	const CLOSECODE_BADDEBT = 'badcustomer'; // Abandoned (the remain to pay) - bad customer
+	const CLOSECODE_BANKCHARGE = 'bankcharge'; // Abandoned (the remain to pay) - bank charge
+	const CLOSECODE_WITHHOLDINGTAX = 'withholdingtax';	// Abandoned (the remain to pay) - source tax
+	const CLOSECODE_OTHER = 'other'; // Abandoned (the remain to pay) - other
+	const CLOSECODE_ABANDONED = 'abandon'; // Abandoned (no payment at all) - other
+	const CLOSECODE_REPLACED = 'replaced'; // Abandoned (no payment at all) - replacedby another invoice (feature disabled by default)
 
 
 	/**
@@ -689,6 +688,29 @@ abstract class CommonInvoice extends CommonObject
 		return $retarray;
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Return if an invoice can be set back to draft.
+	 *	Rule is:
+	 *  If invoice is draft and has a temporary ref -> yes (1)
+	 *  If hidden option INVOICE_CAN_NEVER_BE_REMOVED is 1 -> no (0)
+	 *  If invoice is transferred in bookkeeping -> no (-1)
+	 *  If invoice has a definitive ref, is not last in ref -> no (-2)
+	 *  If invoice has a definitive ref, is not last in a situation cycle -> no (-3)
+	 *  If there is one payment -> no (-4)
+	 *  If already sent by email -> no (-5)
+	 *  If already printed -> no (-6)
+	 *  If running a LNE version and customer invoice was validated -> no (-7)
+	 *  Otherwise -> yes (2)
+	 *
+	 *  @return    int         Return integer <=0 if no, >0 if yes
+	 */
+	public function isEditable()
+	{
+		$test = $this->is_erasable();
+
+		return $test;
+	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -702,6 +724,7 @@ abstract class CommonInvoice extends CommonObject
 	 *  If there is one payment -> no (-4)
 	 *  If already sent by email -> no (-5)
 	 *  If already printed -> no (-6)
+	 *  If running a LNE version and customer invoice was validated -> no (-7)
 	 *  Otherwise -> yes (2)
 	 *
 	 *  @return    int         Return integer <=0 if no, >0 if yes
@@ -734,6 +757,11 @@ abstract class CommonInvoice extends CommonObject
 				if ((int) $this->pos_print_counter > 0) {
 					return -6;
 				}
+
+				include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+				if (isALNERunningVersion()) {
+					return -7;
+				}
 			}
 
 			// If in accountancy, we refuse
@@ -748,6 +776,7 @@ abstract class CommonInvoice extends CommonObject
 					$this->fetch_thirdparty(); // We need to have this->thirdparty defined, in case of the numbering rule uses tags that depend on thirdparty (like {t} tag).
 				}
 				$maxref = $this->getNextNumRef($this->thirdparty, 'last');
+				// $maxref can be '' (means not found) if there is no invoice yet, but also if there is no invoice for the new period when there is a reset at each period
 
 				// If invoice to delete is not the last one, we refuse
 				if ($maxref != '' && $maxref != $this->ref) {
@@ -1084,8 +1113,15 @@ abstract class CommonInvoice extends CommonObject
 		}
 		*/
 		if (isset($moreparams['dispute_status']) && $moreparams['dispute_status']) {
-			$labelStatus .= ' - '.$langs->trans("DisputeOpen");
-			$statusType = 'status8';
+			$labelStatus .= ' - ';
+			if ($moreparams['dispute_status'] == 8) {
+				$labelStatus .= $langs->trans("DisputeLost");
+			} elseif ($moreparams['dispute_status'] == 9) {
+				$labelStatus .= $langs->trans("DisputeWon");
+			} else {
+				$labelStatus .= $langs->trans("DisputeOpen");
+				$statusType = 'status8';
+			}
 		}
 
 		$statusbadge = dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode, '', $paramsBadge);
@@ -1177,7 +1213,7 @@ abstract class CommonInvoice extends CommonObject
 
 			$diff = $date_piece - $date_lim_current;
 
-			if ($diff < 0) {
+			if ($diff <= 0) {
 				$datelim = $date_lim_current;
 			} else {
 				$datelim = $date_lim_next;
@@ -2347,7 +2383,7 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	/**
 	 * List of cumulative options:
 	 * Bit 0:	0 for common VAT - 1 if VAT french NPR
-	 * Bit 1:	0 si ligne normal - 1 si bit discount (link to line into llx_remise_except)
+	 * Bit 1:	0 if standard line - 1 if bit discount (link to line into llx_remise_except)
 	 * @var int
 	 */
 	public $info_bits = 0;
@@ -2377,5 +2413,5 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	/**
 	 * @var int
 	 */
-	public $fk_accounting_account;
+	public $fk_code_ventilation;
 }

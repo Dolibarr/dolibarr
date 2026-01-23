@@ -126,11 +126,11 @@ if (!function_exists('str_contains')) {
  * Return the full path of the directory where a module (or an object of a module) stores its files.
  * Path may depends on the entity if a multicompany module is enabled.
  *
- * @param 	CommonObject|BlockedLog	$object 	Dolibarr common object.
- * @param 	string 					$module 	Override object element, for example to use 'mycompany' instead of 'societe'
- * @param	int						$forobject	Return the more complete path for the given object instead of for the module only.
- * @param	string					$mode		'output' (full main dir) or 'outputrel' (relative dir) or 'temp' (full dir for temporary files) or 'version' (full dir for archived files)
- * @return 	string|null							The path of the relative directory of the module, ending with /
+ * @param 	CommonObject|BlockedLog|null	$object 	Dolibarr common object.
+ * @param 	string 							$module 	Override object element, for example to use 'mycompany' instead of 'societe'
+ * @param	int								$forobject	Return the more complete path for the given object instead of for the module only.
+ * @param	string							$mode		'output' (full main dir) or 'outputrel' (relative dir) or 'temp' (full dir for temporary files) or 'version' (full dir for archived files)
+ * @return 	string|null									The path of the relative directory of the module, ending with /
  * @since Dolibarr V18
  */
 function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'output')
@@ -146,21 +146,49 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 	}
 
 	// Special case for backward compatibility
-	if ($module == 'fichinter') {
-		$module = 'ficheinter';
-	} elseif ($module == 'invoice_supplier') {
-		$module = 'supplier_invoice';
-	} elseif ($module == 'order_supplier') {
-		$module = 'supplier_order';
-	} elseif ($module == 'recruitmentjobposition') {
-		$module = 'recruitment';
-		$subdirectory = '/recruitmentjobposition';
-	} elseif ($module == 'recruitmentcandidature') {
-		$module = 'recruitment';
-		$subdirectory = '/recruitmentcandidature';
-	} elseif ($module == 'knowledgerecord') {
-		$module = 'knowledgemanagement';
-		$subdirectory = '/knowledgerecord';
+	switch ($module) {
+		case 'fichinter':
+			$module = 'ficheinter';
+			break;
+		case 'invoice_supplier':
+			$module = 'supplier_invoice';
+			break;
+		case 'order_supplier':
+			$module = 'supplier_order';
+			break;
+		case 'recruitmentjobposition':
+			$module = 'recruitment';
+			$subdirectory = '/recruitmentjobposition';
+			break;
+		case 'recruitmentcandidature':
+			$module = 'recruitment';
+			$subdirectory = '/recruitmentcandidature';
+			break;
+		case 'knowledgerecord':
+			$module = 'knowledgemanagement';
+			$subdirectory = '/knowledgerecord';
+			break;
+		case 'commande_fournisseur':
+			$module = 'fournisseur';
+			$subdirectory = '/commande';
+			break;
+		case 'expedition':
+			$subdirectory = '/sending';
+			break;
+		case 'company':
+			$module = 'societe';
+			break;
+		case 'service':
+		case 'produit':
+			$module = 'product';
+			break;
+		case 'action':
+		case 'actioncomm':
+		case 'event':
+			$module = 'agenda';
+			break;
+		default:
+			break;
 	}
 
 	// Get the relative path of directory
@@ -298,6 +326,17 @@ function getDolCurrency()
 }
 
 /**
+ * Return if render must be optimized for small screen
+ *
+ * @return 	string							Value returned
+ */
+function getDolOptimizeSmallScreen()
+{
+	global $conf;
+	return (string) $conf->dol_optimize_smallscreen;
+}
+
+/**
  * Return the current entity
  *
  * @return 	int							Value returned
@@ -306,6 +345,17 @@ function getDolEntity()
 {
 	global $conf;
 	return (int) $conf->entity;
+}
+
+/**
+ * Return the current entity
+ *
+ * @return 	string						Value returned
+ */
+function getDolDBType()
+{
+	global $conf;
+	return $conf->db->type;
 }
 
 /**
@@ -657,6 +707,7 @@ function getBrowserInfo($user_agent)
 
 	$user_agent = substr($user_agent, 0, 512);	// Avoid to process too large user agent
 
+	// @phan-suppress-next-line PhanTypeMismatchArgumentProbablyReal Bad definition of Mobile_Detect function
 	$detectmobile = new Mobile_Detect(null, $user_agent);
 	$tablet = $detectmobile->isTablet();
 
@@ -1758,7 +1809,9 @@ function dol_get_object_properties($obj, $properties = [])
  *  Create a clone of instance of object (new instance with same value for each properties)
  *  With native = 0: Deprecated. Property that are references are different memory area in the new object (full isolation clone). This means $this->objectproperty of the new object may not be valid (except this->db that is voluntarly kept).
  *  With native = 1: Use PHP clone. Property that are reference are same pointer. This means $this->db of new object is still valid but point to same this->db than original object.
- *  With native = 2: Property that are reference are different memory area in the new object (full isolation clone). Only scalar and array values are cloned. This means method are not availables and $this->db of new object is not valid.
+ *  With native = 2: Property that are reference are different memory area in the new object (full isolation clone). Only scalar and array values are cloned. This means that the methods are not available and $this->db of new object is not valid.
+ *  You can use it with: $object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
+ *
  *
  *  @template T
  *
@@ -1896,16 +1949,21 @@ function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1, $includequotes
  *
  *	@param	string	$str            String to clean
  * 	@param	string	$newstr			String to replace bad chars with
- *  @param	int	    $unaccent		1=Remove also accent (default), 0 do not remove them
+ *  @param	int	    $unaccent		1=Remove also accent, 0 do not remove them
+ *  @param	int	    $allowdash		1=Allow dash char after a space and before a string, 0 do not allow
  *	@return string          		String cleaned
  *
  * 	@see        	dol_string_nospecial(), dol_string_unaccent(), dol_sanitizeFileName()
  */
-function dol_sanitizePathName($str, $newstr = '_', $unaccent = 1)
+function dol_sanitizePathName($str, $newstr = '_', $unaccent = 0, $allowdash = 0)
 {
 	// List of special chars for filenames in windows are defined on page https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file
-	// Char '>' '<' '|' '$' and ';' are special chars for shells.
-	// Chars '--' can be used into filename to inject special parameters like --use-compress-program to make command with file as parameter making remote execution of command
+	// Char '>' '<' '|' '$' ';' and '`' are special chars for shells.
+	// Char '?' and '*' are for wild card chars.
+	// Char '"' is dangerous.
+	// Char '°' is just not expected.
+	// Chars '-' and '--' can be used into filename to inject special parameters like --use-compress-program to make command with file as parameter making remote execution of command
+	// Chars '--' and '~' can be used for path transversal
 	$filesystem_forbidden_chars = array('<', '>', '?', '*', '|', '"', '°', '$', ';', '`');
 
 	$tmp = $str;
@@ -1913,10 +1971,13 @@ function dol_sanitizePathName($str, $newstr = '_', $unaccent = 1)
 		$tmp = dol_string_unaccent($tmp);
 	}
 	$tmp = dol_string_nospecial($tmp, $newstr, $filesystem_forbidden_chars);
-	$tmp = preg_replace('/\-\-+/', '_', $tmp);
-	$tmp = preg_replace('/\s+\-([^\s])/', ' _$1', $tmp);
-	$tmp = preg_replace('/\s+\-$/', '', $tmp);
-	$tmp = str_replace('..', '', $tmp);
+	$tmp = preg_replace('/\-\-+/', $newstr, $tmp);
+	if (empty($allowdash)) {
+		$tmp = preg_replace('/\s+\-([^\s])/', ' '.$newstr.'$1', $tmp);
+		$tmp = preg_replace('/\s+\-$/', '', $tmp);
+	}
+	$tmp = str_replace('..', $newstr, $tmp);
+	$tmp = str_replace('~', $newstr, $tmp);
 	return $tmp;
 }
 
@@ -2334,12 +2395,13 @@ function dolPrintText($s)
  * To output a text inside an attribute, you can use dolPrintHTMLForAttribute() or dolPrintHTMLForTextArea() inside a textarea
  * With dolPrintHTML(), only content not already in HTML is encoded with HTML.
  *
- * @param	int|float|string	$s				String to print
- * @param	int					$allowiframe	Allow iframe tags
- * @return	string								String ready for HTML output (sanitized and escape)
+ * @param	int|float|string	$s					String to print
+ * @param	int					$allowiframe		Allow iframe tags
+ * @param 	string[] 			$moreallowedtags 	Array of extra allowed tags (in addition to 'common' list)
+ * @return	string									String ready for HTML output (sanitized and escape)
  * @see dolPrintHTMLForAttribute(), dolPrintHTMLFortextArea(), dolPrintText()
  */
-function dolPrintHTML($s, $allowiframe = 0)
+function dolPrintHTML($s, $allowiframe = 0, $moreallowedtags = array())
 {
 	// If text is already HTML, we want to escape only dangerous chars else we want to escape all content.
 	//$isAlreadyHTML = dol_textishtml($s);
@@ -2348,7 +2410,11 @@ function dolPrintHTML($s, $allowiframe = 0)
 	// encode only special char like é but not &, <, >, ", ' if already HTML.
 	$stringWithEntitesForSpecialChar = dol_htmlentitiesbr((string) $s);
 
-	return dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags($stringWithEntitesForSpecialChar, 1, 1, 1, $allowiframe)), 1, 1, 'common', 0, 1);
+	$allowedtags = 'common';
+	if (!empty($moreallowedtags)) {
+		$allowedtags .= ','.implode(',', $moreallowedtags);
+	}
+	return dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags($stringWithEntitesForSpecialChar, 1, 1, 1, $allowiframe, $allowedtags)), 1, 1, $allowedtags, 0, 1);
 }
 
 /**
@@ -2428,7 +2494,7 @@ function dolPrintPassword($s)
  *  @param      string		$stringtoescape			String to escape
  *  @param		int			$keepb					1=Replace b tags with escaped value (except if in $noescapetags), 0=Remove them completely
  *  @param      int         $keepn              	1=Preserve \r\n strings, 0=Replace them with escaped value, -1=Remove them. Set to 1 when escaping for a <textarea>.
- *  @param		string		$noescapetags			'' (escape all html tags) or 'common' (do not escape some common tags) or list of tags to not escape.
+ *  @param		string		$noescapetags			'' (escape all html tags) or 'common' (do not escape some common tags) or 'common,a,b,c' or list of tags to not escape.
  *  @param		int			$escapeonlyhtmltags		1=Escape only html tags and double quotes, not the special chars like accents.
  *  @param		int			$cleanalsojavascript	Clean also javascript. @TODO switch this option to 1 by default.
  *  @return     string     				 			Escaped string
@@ -2436,10 +2502,14 @@ function dolPrintPassword($s)
  */
 function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapetags = '', $escapeonlyhtmltags = 0, $cleanalsojavascript = 0)
 {
-	if ($noescapetags == 'common') {
+	$reg = array();
+	if (preg_match('/^common([a-z,]*)/', $noescapetags, $reg)) {
 		$noescapetags = 'html,body,a,b,em,hr,i,u,ul,ol,li,br,div,img,font,p,span,strong,table,tr,td,th,tbody,h1,h2,h3,h4,h5,h6,h7,h8,h9';
 		// Add also html5 tags
 		$noescapetags .= ',header,footer,nav,section,menu,menuitem';
+		if (!empty($reg[1])) {
+			$noescapetags .= $reg[1];
+		}
 	}
 	if ($cleanalsojavascript) {
 		$stringtoescape = dol_string_onlythesehtmltags($stringtoescape, 0, 0, $cleanalsojavascript, 0, array(), 0);
@@ -4321,7 +4391,7 @@ function dol_print_url($url, $target = '_blank', $max = 32, $withpicto = 0, $mor
 /**
  * Show EMail link formatted for HTML output.
  *
- * @param	string		$email			EMail to show (only email, without 'Name of recipient' before)
+ * @param	string		$email			EMail to show (can be 'email' or 'Name of recipient <email>')
  * @param 	int			$contactid 		Id of contact if known
  * @param 	int			$socid 			Id of third party if known
  * @param 	int|string	$addlink		0=no link, 1=email has a html email link (+ link to create action if constant AGENDA_ADDACTIONFOREMAIL is on), 'thirdparty'=link to the thirdparty presend email
@@ -4364,9 +4434,18 @@ function dol_print_email($email, $contactid = 0, $socid = 0, $addlink = 0, $max 
 			$newemail .= $email;
 		}
 		$newemail .= '</a>';
-		if ($showinvalid && !isValidEmail($email)) {
-			$langs->load("errors");
-			$newemail .= img_warning($langs->trans("ErrorBadEMail", $email), '', 'paddingrightonly');
+
+		if ($showinvalid) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+			$emailonly = CMailFile::getValidAddress($email, 2);
+			if (!isValidEmail($emailonly)) {
+				$langs->load("errors");
+				$newemail .= img_warning($langs->transnoentitiesnoconv("ErrorBadEMail", $emailonly), '', 'paddingrightonly');
+			} elseif (!isValidMailDomain($emailonly)) {
+				$langs->load("errors");
+				$newemail .= img_warning($langs->transnoentitiesnoconv("ErrorBadMXDomain", $emailonly), '', 'paddingrightonly');
+			}
 		}
 
 		if (($contactid || $socid) && isModEnabled('agenda') && $user->hasRight("agenda", "myactions", "create")) {
@@ -4391,9 +4470,17 @@ function dol_print_email($email, $contactid = 0, $socid = 0, $addlink = 0, $max 
 	} else {
 		$newemail = ($withpicto ? img_picto($langs->trans("EMail") . ' : ' . $email, (is_numeric($withpicto) ? 'email' : $withpicto), 'class="paddingrightonly"') : '') . $newemail;
 
-		if ($showinvalid && !isValidEmail($email)) {
-			$langs->load("errors");
-			$newemail .= img_warning($langs->trans("ErrorBadEMail", $email));
+		if ($showinvalid) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+			$emailonly = CMailFile::getValidAddress($email, 2);
+			if (!isValidEmail($emailonly)) {
+				$langs->load("errors");
+				$newemail .= img_warning($langs->transnoentitiesnoconv("ErrorBadEMail", $email));
+			} elseif (!isValidMailDomain($emailonly)) {
+				$langs->load("errors");
+				$newemail .= img_warning($langs->transnoentitiesnoconv("ErrorBadMXDomain", $emailonly));
+			}
 		}
 	}
 
@@ -4825,12 +4912,12 @@ function dol_print_phone($phone, $countrycode = '', $contactid = 0, $socid = 0, 
 		}
 	} elseif (strtoupper($countrycode) == "PE") {
 		// Peru
-		if (dol_strlen($phone) == 7) { // fix 7 chiffres without code AAA_BBBB
+		if (dol_strlen($phone) == 7) { // fix 7 numbers without code AAA_BBBB
 			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 4);
-		} elseif (dol_strlen($phone) == 9) { // mobile add code and fix 9 chiffres +51_AAA_BBB_CCC
+		} elseif (dol_strlen($phone) == 9) { // mobile add code and fix 9 numbers +51_AAA_BBB_CCC
 			$newphonewa = '+51' . $newphone;
 			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 3) . $separ . substr($newphone, 6, 3) . $separ . substr($newphone, 10, 3);
-		} elseif (dol_strlen($phone) == 11) { // fix 11 chiffres +511_AAA_BBBB
+		} elseif (dol_strlen($phone) == 11) { // fix 11 numbers +511_AAA_BBBB
 			$newphone = substr($newphone, 0, 4) . $separ . substr($newphone, 4, 3) . $separ . substr($newphone, 8, 4);
 		} elseif (dol_strlen($phone) == 12) { // mobile +51_AAA_BBB_CCC
 			$newphonewa = $newphone;
@@ -5077,7 +5164,12 @@ function dolGetCountryCodeFromIp($ip)
 	$countrycode = '';
 
 	if (isModEnabled('geoipmaxmind')) {
-		$datafile = getDolGlobalString('GEOIPMAXMIND_COUNTRY_DATAFILE');
+		if (getDolGlobalString('GEOIP_VERSION') == 'php') {
+			$datafile = getDolGlobalString('GEOIPMAXMIND_COUNTRY_DATAFILE');
+		} else {
+			$diroffile = getMultidirOutput(null, 'geoipmaxmind');
+			$datafile = $diroffile . '/' . getDolGlobalString('GEOIPMAXMIND_COUNTRY_DATAFILE_EMBEDDED');
+		}
 		//$ip='24.24.24.24';
 		//$datafile='/usr/share/GeoIP/GeoIP.dat';    Note that this must be downloaded datafile (not same than datafile provided with ubuntu packages)
 		if ($datafile) {
@@ -7511,7 +7603,6 @@ function vatrate($rate, $addpercent = false, $info_bits = 0, $usestarfornpr = 0,
  *		@param	''|'MU'|'MT'|'MS'|'CU'|'CT'|int<-2,max>	$forcerounding	MAXIMUM number of decimal to forcerounding decimal: -1=no change, -2=keep non zero part, 'MU' or 'MT' or a numeric to round to MU or MT or to a given number of decimal
  *		@param	string					$currency_code	To add currency symbol (''=add nothing, 'auto'=Use default currency, 'XXX'=add currency symbols for XXX currency)
  *		@return	string									String with formatted amount
- *
  *		@see	price2num()								Revert function of price
  */
 function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $forcerounding = -1, $currency_code = '')
@@ -8842,7 +8933,7 @@ function dolChmod($filepath, $newmask = '')
 /**
  *	Return picto saying a field is required
  *
- *	@return  string		Chaine avec picto obligatoire
+ *	@return  string		String with the picto mandatory
  */
 function picto_required()
 {
@@ -8930,23 +9021,25 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
  *  Complementary of dol_string_onlythesehtmlattributes().
  *  WARNING: This also clean HTML comments (because they can be used to obfuscate tag names).
  *
- *	@param	string		$stringtoclean			String to clean
- *  @param	int			$cleanalsosomestyles	Remove absolute/fixed positioning from inline styles
- *  @param	int			$removeclassattribute	1=Remove the class attribute from tags
- *  @param	int			$cleanalsojavascript	Remove also occurrence of 'javascript:'.
- *  @param	int			$allowiframe			Allow iframe tags.
- *  @param	string[]	$allowed_tags			List of allowed tags to replace the default list
- *  @param	int			$allowlink				Allow "link" and "meta" tags (for head html section when using GETPOST with mode 'restricthtmlallowlinkscript')
- *  @param	int			$allowscript			Allow "script" tags (for head html section when using GETPOST with mode 'restricthtmlallowlinkscript')
- *  @param	int			$allowstyle				Allow "style" tags (for head html section when using GETPOST with mode 'restricthtmlallowlinkscript')
- *  @param	int			$allowphp				Allow "php" tags (Deprecated. Should never be used. If you can add php, you can also print in the php the code to output the other non allowed tags)
- *	@return string	    						String cleaned
+ *	@param	string			$stringtoclean			String to clean
+ *  @param	int				$cleanalsosomestyles	Remove absolute/fixed positioning from inline styles
+ *  @param	int				$removeclassattribute	1=Remove the class attribute from tags
+ *  @param	int				$cleanalsojavascript	Remove also occurrence of 'javascript:'.
+ *  @param	int				$allowiframe			Allow iframe tags.
+ *  @param	string|string[]	$allowed_tags			Array of allowed tags to replace the default list or '' or 'common' or 'common,a,b,c'
+ *  @param	int				$allowlink				Allow "link" and "meta" tags (for head html section when using GETPOST with mode 'restricthtmlallowlinkscript')
+ *  @param	int				$allowscript			Allow "script" tags (for head html section when using GETPOST with mode 'restricthtmlallowlinkscript')
+ *  @param	int				$allowstyle				Allow "style" tags (for head html section when using GETPOST with mode 'restricthtmlallowlinkscript')
+ *  @param	int				$allowphp				Allow "php" tags (Deprecated. Should never be used. If you can add php, you can also print in the php the code to output the other non allowed tags)
+ *	@return string	    							String cleaned
  *
  * 	@see	dol_htmlwithnojs() dol_escape_htmltag() strip_tags() dol_string_nohtmltag() dol_string_neverthesehtmltags()
  */
 function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, $removeclassattribute = 1, $cleanalsojavascript = 0, $allowiframe = 0, $allowed_tags = array(), $allowlink = 0, $allowscript = 0, $allowstyle = 0, $allowphp = 0)
 {
-	if (empty($allowed_tags)) {
+	$sav_allowed_tags = $allowed_tags;
+
+	if (empty($allowed_tags) || (is_string($allowed_tags) && preg_match('/^common/', $allowed_tags))) {
 		$allowed_tags = array(
 			// HTML 4
 			"html",
@@ -9028,6 +9121,15 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 			$allowed_tags[] = "style";
 		}
 	}
+	if (is_string($sav_allowed_tags)) {
+		$tmptags = explode(',', $sav_allowed_tags);
+		foreach ($tmptags as $tag) {
+			if ($tag != 'common') {
+				$allowed_tags[] = $tag;
+			}
+		}
+	}
+
 
 	$allowed_tags_string = implode("><", $allowed_tags);
 	$allowed_tags_string = '<' . $allowed_tags_string . '>';
@@ -10001,6 +10103,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			'__MYCOMPANY_CAPITAL__' => $mysoc->capital,
 			'__MYCOMPANY_FULLADDRESS__' => (method_exists($mysoc, 'getFullAddress') ? $mysoc->getFullAddress(1, ', ') : ''),	// $mysoc may be stdClass
 			'__MYCOMPANY_ADDRESS__' => $mysoc->address,
+			'__MYCOMPANY_VATNUMBER__' => $mysoc->tva_intra,
 			'__MYCOMPANY_ZIP__'     => $mysoc->zip,
 			'__MYCOMPANY_TOWN__'    => $mysoc->town,
 			'__MYCOMPANY_STATE__'    => $mysoc->state,
@@ -10638,6 +10741,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		}
 
 		$substitutionarray['__AMOUNT_MULTICURRENCY__']          = (is_object($object) && isset($object->multicurrency_total_ttc)) ? $object->multicurrency_total_ttc : '';
+		$substitutionarray['__AMOUNT_MULTICURRENCY_FORMATED__']	= (is_object($object) && isset($object->multicurrency_total_ttc)) ? price($object->multicurrency_total_ttc, 0, $outputlangs, 0, -1, -1, $object->multicurrency_code) : '';
 		$substitutionarray['__AMOUNT_MULTICURRENCY_TEXT__']     = (is_object($object) && isset($object->multicurrency_total_ttc)) ? dol_convertToWord($object->multicurrency_total_ttc, $outputlangs, '', true) : '';
 		$substitutionarray['__AMOUNT_MULTICURRENCY_TEXTCURRENCY__'] = (is_object($object) && isset($object->multicurrency_total_ttc)) ? dol_convertToWord($object->multicurrency_total_ttc, $outputlangs, $object->multicurrency_code, true) : '';
 		$substitutionarray['__MULTICURRENCY_CODE__']          = (is_object($object) && isset($object->multicurrency_code)) ? $object->multicurrency_code : '';
@@ -11289,10 +11393,10 @@ function dol_htmloutput_mesg($mesgstring = '', $mesgarray = array(), $style = 'o
 	} elseif ($mesgstring && preg_match('/class="warning"/i', $mesgstring)) {
 		$iswarning++;
 	}
-	if ($style == 'error') {
+	if ($style == 'error' || $style == 'errors') {
 		$iserror++;
 	}
-	if ($style == 'warning') {
+	if ($style == 'warning' || $style == 'warnings') {
 		$iswarning++;
 	}
 
@@ -11986,7 +12090,7 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 
 		// Set $dolibarr_main_restrict_eval_methods_array
 		if (!isset($dolibarr_main_restrict_eval_methods)) {
-			$dolibarr_main_restrict_eval_methods = 'getDolGlobalString, getDolGlobalInt, getDolCurrency, fetchNoCompute, hasRight, isAdmin, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, preg_match';
+			$dolibarr_main_restrict_eval_methods = 'getDolGlobalString, getDolGlobalInt, getDolCurrency, getDolEntity, getDolDBType, fetchNoCompute, hasRight, isAdmin, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, preg_match';
 		}
 		//print '$dolibarr_main_restrict_eval_methods = '.$dolibarr_main_restrict_eval_methods."\n";
 		$dolibarr_main_restrict_eval_methods_array = explode(',', str_replace(" ", "", $dolibarr_main_restrict_eval_methods));
@@ -13179,7 +13283,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0, $sqltoadd =
 					$listofcodes = '';
 					foreach ($tmparray as $val) {
 						$val = trim($val);
-						if ($val) {
+						if ($val) {	// TODO Test with if ($val !== '') {
 							$listofcodes .= ($listofcodes ? ',' : '');
 							$listofcodes .= "'" . $db->escape($val) . "'";
 						}
@@ -13871,7 +13975,7 @@ function getDictionaryValue($tablename, $field, $id, $checkentity = false, $rowi
  *	Return true if the color is light
  *
  *  @param	string	$stringcolor		String with hex (FFFFFF) or comma RGB ('255,255,255')
- *  @return	int<-1,1>					-1 : Error with argument passed |0 : color is dark | 1 : color is light
+ *  @return	int<-1,1>					-1 : Error with argument passed | 0 : color is dark | 1 : color is light
  */
 function colorIsLight($stringcolor)
 {
@@ -13910,8 +14014,6 @@ function colorIsLight($stringcolor)
  */
 function isVisibleToUserType($type_user, &$menuentry, &$listofmodulesforexternal)
 {
-	global $conf;
-
 	//print 'type_user='.$type_user.' module='.$menuentry['module'].' enabled='.$menuentry['enabled'].' perms='.$menuentry['perms'];
 	//print 'ok='.in_array($menuentry['module'], $listofmodulesforexternal);
 	if (empty($menuentry['enabled'])) {
@@ -14128,8 +14230,8 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
 /**
  * Function dolGetButtonAction
  *
- * @param string    	$label      	Label or tooltip of button if $text is provided. Also used as tooltip in title attribute. Can be escaped HTML content or full simple text.
- * @param string    	$text       	Optional : short label on button. Can be escaped HTML content or full simple text.
+ * @param string    	$label      	Label or tooltip of button if $text is provided. Also used as tooltip in title attribute. Can be escaped HTML content or full simple text. Used only if $url not defined.
+ * @param string    	$text       	Optional : short label on button. Can be escaped HTML content or full simple text. Used only if $url not defined.
  * @param string 		$actionType 	'default', 'edit', 'danger', 'email', 'clone', 'cancel', 'delete', ...
  * @param string|array<int,array{lang:string,enabled:bool,perm:bool|int,label:string,url:string,urlroot?:string,isDropDown?:int<0,1>}> 	$url        	Url for link or array of subbutton description
  *                                                                                                                                                      Example when an array is used:
@@ -14232,7 +14334,14 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 					$tmpurl = dolCompletUrlForDropdownButton($tmpurl, $params, empty($subbutton['urlroot']));
 				}
 
-				$out .= dolGetButtonAction('', $langs->trans($subbutton['label']), 'default', $tmpurl, '', $subbutton['perm'], $params);
+				$label = $langs->trans($subbutton['label']);
+				$text = $subbutton['text'] ?? '';
+				if (empty($text)) {
+					$text = $label;
+					$label = '';
+				}
+
+				$out .= dolGetButtonAction($label, $text, 'default', $tmpurl, '', $subbutton['perm'], $params);
 			}
 		}
 
@@ -14779,6 +14888,12 @@ function getElementProperties($elementType)
 		$module = 'projet';
 		$subelement = 'task';
 		$table_element = 'projet_task';
+	} elseif ($elementType == 'mo') {
+		$classpath = 'mrp/class';
+		$module = 'mrp';
+		$classfile = 'mo';
+		$classname = 'Mo';
+		$table_element = 'mrp_mo';
 	} elseif ($elementType == 'facture' || $elementType == 'invoice') {
 		$classpath = 'compta/facture/class';
 		$module = 'facture';
@@ -15832,7 +15947,7 @@ function dolForgeSQLCriteriaCallback($matches)
 			} elseif (is_numeric((string) $tmpelem)) {	// it can be a float with a .
 				$tmpelemarray[$tmpkey] = (float) $tmpelem;
 			} elseif (!getDolGlobalString("MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER")) {
-				$tmpelemarray[$tmpkey] = preg_replace('/[^a-z0-9_<>=!\s]/i', '', $tmpelem);	// it can be a full subrequest
+				$tmpelemarray[$tmpkey] = preg_replace('/[^a-z0-9_<>=!\s]/i', '', $tmpelem);	// it can be a full subrequest (should be removed in a future as it allows blind SQL injection)
 			} else {
 				$tmpelemarray[$tmpkey] = preg_replace('/[^a-z0-9_]/i', '', $tmpelem);	// it can be a name of field or a substitution variable like '__NOW__'
 			}
@@ -16939,4 +17054,22 @@ function array_merge_recursive_distinct(array $array1, array $array2): array
 	}
 
 	return $merged;
+}
+
+/**
+ * Get the socid of an object, supporting legacy attribute names.
+ *
+ * @param object $obj The Dolibarr object
+ * @return int|null Returns the socid if found, null otherwise
+ */
+function getObjectSocId($obj)
+{
+	if (!empty($obj->socid)) {
+		return (int) $obj->socid;
+	} elseif (!empty($obj->soc_id)) {
+		return (int) $obj->soc_id;
+	} elseif (!empty($obj->societe_id)) {
+		return (int) $obj->societe_id;
+	}
+	return null;
 }

@@ -1051,7 +1051,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 							print $menu_array[$i]['prefix'];
 						}
 					}
-					print $menu_array[$i]['titre'];
+					print ucfirst($menu_array[$i]['titre']);
 					if ($shorturlwithoutparam) {
 						print '</a>';
 					} else {
@@ -1065,7 +1065,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 					if (!empty($menu_array[$i]['prefix'])) {
 						print $menu_array[$i]['prefix'];
 					}
-					print $menu_array[$i]['titre'];
+					print ucfirst($menu_array[$i]['titre']);
 					print '</span>';
 					print '</div>'."\n";
 					$lastlevel0 = 'greyed';
@@ -1093,7 +1093,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 					} else {
 						print '<span class="vsmenu" title="'.dolPrintHTMLForAttribute($menu_array[$i]['titre']).'">';
 					}
-					print $menu_array[$i]['titre'];
+					print ucfirst($menu_array[$i]['titre']);
 					if ($shorturlwithoutparam) {
 						print '</a>';
 					} else {
@@ -1263,7 +1263,7 @@ function get_left_menu_home($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 				$newmenu->add("", $langs->trans("Users"), 1, (int) ($user->hasRight('user', 'user', 'read') || $user->admin));
 				$newmenu->add(dolBuildUrl('/user/card.php', ['leftmenu' => 'users', 'action' => 'create']), $langs->trans("NewUser"), 2, (int) (($user->hasRight("user", "user", "write") || $user->admin) && !(isModEnabled('multicompany') && !empty($user->entity) && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE'))), '', 'home');
 				$newmenu->add(dolBuildUrl('/user/list.php', ['leftmenu' => 'users']), $langs->trans("ListOfUsers"), 2, (int) ($user->hasRight('user', 'user', 'read') || $user->admin));
-				$newmenu->add(dolBuildUrl('/user/hierarchy.php', ['leftmenu' => 'users']), $langs->trans("HierarchicView"), 2, (int) ($user->hasRight('user', 'user', 'read') || $user->admin));
+				//$newmenu->add(dolBuildUrl('/user/hierarchy.php', ['leftmenu' => 'users']), $langs->trans("HierarchicView"), 2, (int) ($user->hasRight('user', 'user', 'read') || $user->admin));
 				if (isModEnabled('category') && getDolGlobalString('CATEGORY_EDIT_IN_MENU_NOT_IN_POPUP')) {
 					$langs->load("categories");
 					$newmenu->add(dolBuildUrl('/categories/categorie_list.php', ['leftmenu' => 'users', 'type' => 7]), $langs->trans("UsersCategoriesShort"), 2, $user->hasRight('categorie', 'read'), '', $mainmenu, 'cat');
@@ -1512,9 +1512,7 @@ function get_left_menu_commercial($mainmenu, &$newmenu, $usemenuhider = 1, $left
 			$newmenu->add("/fichinter/index.php?leftmenu=ficheinter", $langs->trans("Interventions"), 0, $user->hasRight('ficheinter', 'lire'), '', $mainmenu, 'ficheinter', 2200, '', '', '', img_picto('', 'intervention', 'class="paddingright pictofixedwidth"'));
 			$newmenu->add("/fichinter/card.php?action=create&amp;leftmenu=ficheinter", $langs->trans("NewIntervention"), 1, $user->hasRight('ficheinter', 'creer'), '', '', '', 201);
 			$newmenu->add("/fichinter/list.php?leftmenu=ficheinter", $langs->trans("List"), 1, $user->hasRight('ficheinter', 'lire'), '', '', '', 202);
-			if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
-				$newmenu->add("/fichinter/card-rec.php?leftmenu=ficheinter", $langs->trans("ListOfTemplates"), 1, $user->hasRight('ficheinter', 'lire'), '', '', '', 203);
-			}
+			$newmenu->add("/fichinter/card-rec.php?leftmenu=ficheinter", $langs->trans("ListOfTemplates"), 1, $user->hasRight('ficheinter', 'lire'), '', '', '', 203);
 			$newmenu->add("/fichinter/stats/index.php?leftmenu=ficheinter", $langs->trans("Statistics"), 1, $user->hasRight('ficheinter', 'lire'), '', '', '', 204);
 		}
 	}
@@ -2023,7 +2021,7 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 				$newmenu->add("/compta/resultat/index.php?leftmenu=report", $langs->trans("MenuReportInOut"), 1, $user->hasRight('compta', 'resultat', 'lire'));
 				$newmenu->add("/compta/resultat/clientfourn.php?leftmenu=report", $langs->trans("ByPredefinedAccountGroups"), 2, $user->hasRight('compta', 'resultat', 'lire'));
 				$newmenu->add("/compta/resultat/projects.php?leftmenu=accountancy_report", $langs->trans("ByProject"), 2, $user->hasRight('compta', 'resultat', 'lire'));
-				/* On verra ca avec module compabilite expert
+				/* We will see with double party module
 				 $newmenu->add("/compta/resultat/compteres.php?leftmenu=report","Compte de resultat",2,$user->hasRight('compta',  'resultat', 'lire'));
 				 $newmenu->add("/compta/resultat/bilan.php?leftmenu=report","Bilan",2,$user->hasRight('compta',  'resultat', 'lire'));
 				 */
@@ -2083,11 +2081,7 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 			$newmenu->add("/asset/list.php?leftmenu=asset&mainmenu=accountancy", $langs->trans("MenuAssets"), 0, $user->hasRight('asset', 'read'), '', $mainmenu, 'asset', 100, '', '', '', img_picto('', 'payment', 'class="paddingright pictofixedwidth"'));
 			$newmenu->add("/asset/card.php?leftmenu=asset&action=create", $langs->trans("MenuNewAsset"), 1, $user->hasRight('asset', 'write'));
 			$newmenu->add("/asset/list.php?leftmenu=asset&mainmenu=accountancy", $langs->trans("MenuListAssets"), 1, $user->hasRight('asset', 'read'));
-			$newmenu->add("/asset/model/list.php?leftmenu=asset_model", $langs->trans("MenuAssetModels"), 1, (int) ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'read')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'model_advance', 'read'))), '', $mainmenu, 'asset_model');
-			if ($usemenuhider || empty($leftmenu) || preg_match('/asset_model/', $leftmenu)) {
-				$newmenu->add("/asset/model/card.php?leftmenu=asset_model&action=create", $langs->trans("MenuNewAssetModel"), 2, (int) ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'write')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'model_advance', 'write'))));
-				$newmenu->add("/asset/model/list.php?leftmenu=asset_model", $langs->trans("MenuListAssetModels"), 2, (int) ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'read')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'model_advance', 'read'))));
-			}
+			$newmenu->add("/asset/model/list.php?leftmenu=asset_model", $langs->trans("ListOfTemplates"), 1, (int) ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'read')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'model_advance', 'read'))), '', $mainmenu, 'asset_model');
 		}
 	}
 }
@@ -2213,7 +2207,7 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 			// Categories
 			if (isModEnabled('category') && getDolGlobalString('CATEGORY_EDIT_IN_MENU_NOT_IN_POPUP')) {
 				$langs->load("categories");
-				$newmenu->add("/categories/categorie_list.php?leftmenu=cat&type=0", $langs->trans("Categories"), 1, $user->hasRight('categorie', 'lire'), '', $mainmenu, 'cat');
+				$newmenu->add("/categories/categorie_list.php?leftmenu=cat&type=product", $langs->trans("Categories"), 1, $user->hasRight('categorie', 'lire'), '', $mainmenu, 'cat');
 			}
 		}
 
@@ -2235,7 +2229,7 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 			// Categories
 			if (isModEnabled('category') && getDolGlobalString('CATEGORY_EDIT_IN_MENU_NOT_IN_POPUP')) {
 				$langs->load("categories");
-				$newmenu->add("/categories/categorie_list.php?leftmenu=cat&type=0", $langs->trans("Categories"), 1, $user->hasRight('categorie', 'lire'), '', $mainmenu, 'cat');
+				$newmenu->add("/categories/categorie_list.php?leftmenu=cat&type=service", $langs->trans("Categories"), 1, $user->hasRight('categorie', 'lire'), '', $mainmenu, 'cat');
 			}
 		}
 
@@ -2518,7 +2512,9 @@ function get_left_menu_hrm($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 
 				$newmenu->add(dolBuildUrl('/expensereport/list.php', ['search_status' => 4, 'leftmenu' => 'expensereport', 'mainmenu' => 'hrm']), $langs->trans("Canceled"), 2, $user->hasRight('expensereport', 'lire'));
 				$newmenu->add(dolBuildUrl('/expensereport/list.php', ['search_status' => 99, 'leftmenu' => 'expensereport', 'mainmenu' => 'hrm']), $langs->trans("Refused"), 2, $user->hasRight('expensereport', 'lire'));
 			}
-			$newmenu->add(dolBuildUrl('/expensereport/payment/list.php', ['leftmenu' => 'expensereport_payments', 'mainmenu' => 'hrm']), $langs->trans("Payments"), 1, (int) (int) ($user->hasRight('expensereport', 'lire') && isModEnabled('bank')));
+			if (isModEnabled('bank')) {
+				$newmenu->add(dolBuildUrl('/expensereport/payment/list.php', ['leftmenu' => 'expensereport_payments', 'mainmenu' => 'hrm']), $langs->trans("Payments"), 1, (int) ($user->hasRight('expensereport', 'read')));
+			}
 			$newmenu->add(dolBuildUrl('/expensereport/stats/index.php', ['leftmenu' => 'expensereport', 'mainmenu' => 'hrm']), $langs->trans("Statistics"), 1, $user->hasRight('expensereport', 'lire'));
 		}
 
