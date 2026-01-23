@@ -1358,7 +1358,7 @@ if ($type == Categorie::TYPE_TICKET) {
 					print '<td class="nowrap tdtop">';
 					print $ticket->getNomUrl(1);
 					print "</td>\n";
-					print '<td class="tdtop">'.$ticket->label."</td>\n";
+					print '<td class="tdtop">'.$ticket->track_id."</td>\n";
 					// Link to delete from category
 					print '<td class="right">';
 					if ($permission) {
