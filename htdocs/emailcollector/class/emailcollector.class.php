@@ -2498,6 +2498,9 @@ class EmailCollector extends CommonObject
 							if ($ticketid > 0) {
 								$alreadycreated = $tickettocreate->fetch($ticketid);
 							}
+							if ($alreadycreated == 0 && !empty($objectid)) {
+								$alreadycreated = $tickettocreate->fetch((int) $objectid);
+							}
 							if ($alreadycreated == 0 && !empty($trackid)) {
 								$alreadycreated = $tickettocreate->fetch(0, '', $trackid);
 							}
