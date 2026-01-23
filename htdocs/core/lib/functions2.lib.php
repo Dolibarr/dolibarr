@@ -2694,6 +2694,8 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'mrp';
 	} elseif ($moduleobject == 'workstations') {
 		$moduledirforclass = 'workstation';
+	} elseif ($moduleobject == 'dolresources') {
+		$moduledirforclass = 'resource';
 	} elseif ($moduleobject == 'accounting') {
 		$moduledirforclass = 'accountancy';
 	} elseif ($moduleobject == 'paiements') {
