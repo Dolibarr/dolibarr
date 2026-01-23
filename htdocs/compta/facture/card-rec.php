@@ -1983,8 +1983,8 @@ if ($action == 'create') {
 				print '</tr></table>';
 				print '</td><td>';
 
-				// Edit
 				if ($action == 'editEmailTemplate') {
+					// Edit
 					print '<form method="POST" action="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '">';
 					print '<input type="hidden" name="token" value="' . newToken() . '">';
 					print '<input type="hidden" name="action" value="setEmailTemplate">';
@@ -1992,9 +1992,8 @@ if ($action == 'create') {
 					print '<input type="submit" class="button valignmiddle smallpaddingimp" name="modify" value="' . $langs->trans("Modify") . '">';
 					print '<input type="submit" class="button button-cancel valignmiddle smallpaddingimp" name="cancel" value="' . $langs->trans("Cancel") . '">';
 					print '</form>';
-				}
-				// Show
-				else {
+				} else {
+					// Show
 					if (!empty($object->fk_email_template)) {
 						$sql = "SELECT label
 							FROM ".$db->prefix()."c_email_templates
