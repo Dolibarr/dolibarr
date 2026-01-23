@@ -1706,7 +1706,7 @@ abstract class CommonObject
 			$obj = $this->db->fetch_object($resql);
 
 			$transkey = "TypeContact_".$this->element."_".$source."_".$obj->code;
-			$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->type_label);
+			$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $langs->trans($obj->type_label));
 			if (empty($option)) {
 				$tab[$obj->rowid] = $libelle_type;
 			} elseif ($option == 1) {
@@ -5741,6 +5741,8 @@ abstract class CommonObject
 		// Is the line strike or not
 		$this->tpl['strike'] = 0;
 		if ($restrictlist == 'services' && $line->product_type != Product::TYPE_SERVICE) {
+			$this->tpl['strike'] = 1;
+		} elseif ($line->special_code == SUBTOTALS_SPECIAL_CODE) {
 			$this->tpl['strike'] = 1;
 		}
 
