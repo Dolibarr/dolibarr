@@ -169,7 +169,7 @@ $arrayfields = array(
 	'd.lastname' => array('label' => "Lastname", 'checked' => 1),
 	'd.firstname' => array('label' => "Firstname", 'checked' => 1),
 	'd.gender' => array('label' => "Gender", 'checked' => 0),
-	'd.company' => array('label' => "Company", 'checked' => 1, 'position' => 70),
+	'd.societe' => array('label' => "Company", 'checked' => 1, 'position' => 70),
 	'd.login' => array('label' => "Login", 'checked' => 1),
 	'd.morphy' => array('label' => "MemberNature", 'checked' => 1),
 	't.libelle' => array('label' => "MemberType", 'checked' => 1, 'position' => 55),
@@ -931,7 +931,7 @@ if (!empty($arrayfields['d.gender']['checked'])) {
 }
 
 // Company
-if (!empty($arrayfields['d.company']['checked'])) {
+if (!empty($arrayfields['d.societe']['checked'])) {
 	print '<td class="liste_titre left">';
 	print '<input class="flat maxwidth75imp" type="text" name="search_company" value="'.dol_escape_htmltag($search_company).'"></td>';
 }
@@ -1131,8 +1131,8 @@ if (!empty($arrayfields['d.gender']['checked'])) {
 	print_liste_field_titre($arrayfields['d.gender']['label'], $_SERVER['PHP_SELF'], 'd.gender', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
-if (!empty($arrayfields['d.company']['checked'])) {
-	print_liste_field_titre($arrayfields['d.company']['label'], $_SERVER["PHP_SELF"], 'companyname', '', $param, '', $sortfield, $sortorder);
+if (!empty($arrayfields['d.societe']['checked'])) {
+	print_liste_field_titre($arrayfields['d.societe']['label'], $_SERVER["PHP_SELF"], 'companyname', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['d.login']['checked'])) {
@@ -1364,7 +1364,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 		// Company
-		if (!empty($arrayfields['d.company']['checked'])) {
+		if (!empty($arrayfields['d.societe']['checked'])) {
 			print '<td class="tdoverflowmax125" title="'.dolPrintHTMLForAttribute((string) $companyname).'">';
 			print $companynametoshow;
 			print "</td>\n";

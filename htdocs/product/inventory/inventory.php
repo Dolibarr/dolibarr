@@ -90,6 +90,10 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 
+// Sort by warehouse/product or product/warehouse, then by batch.
+$sortfield .= ',' . ($sortfield == 'e.ref' ? 'p.ref' : 'e.ref') . ',id.batch,id.rowid';
+$sortorder .= ',' . $sortorder.",ASC,ASC";
+
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
@@ -293,8 +297,10 @@ if (empty($reshook)) {
 		$sql = 'SELECT id.rowid, id.datec as date_creation, id.tms as date_modification, id.fk_inventory, id.fk_warehouse,';
 		$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'inventorydet as id';
+		$sql .= ' LEFT JOIN ' . $db->prefix() . 'product as p ON id.fk_product = p.rowid';
+		$sql .= ' LEFT JOIN ' . $db->prefix() . 'entrepot as e ON id.fk_warehouse = e.rowid';
 		$sql .= ' WHERE id.fk_inventory = '.((int) $object->id);
-		$sql .= $db->order('id.rowid', 'ASC');
+		$sql .= $db->order($sortfield, $sortorder);
 		$sql .= $db->plimit($limit, $offset);
 
 		$db->begin();
@@ -1038,10 +1044,6 @@ if ($object->status == $object::STATUS_DRAFT || $object->status == $object::STAT
 	print '</td>';
 	print '</tr>';
 }
-
-// Sort by warehouse/product or product/warehouse
-$sortfield .= ',' . ($sortfield == 'e.ref' ? 'p.ref' : 'e.ref');
-$sortorder .= ',' . $sortorder;
 
 // Request to show lines of inventory (prefilled after start/validate step)
 $sql = 'SELECT id.rowid, id.datec as date_creation, id.tms as date_modification, id.fk_inventory, id.fk_warehouse,';

@@ -30,7 +30,7 @@ create table llx_usergroup
   model_pdf     varchar(255) DEFAULT NULL
 )ENGINE=innodb;
 
--- 
+--
 -- List of codes for the field entity
 --
 -- 0 : global group

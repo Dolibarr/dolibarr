@@ -1,5 +1,5 @@
 -- ============================================================================
--- Copyright (C) 2007 Patrick Raguin <patrick.raguin@gmail.com>	
+-- Copyright (C) 2007 Patrick Raguin <patrick.raguin@gmail.com>
 -- Copyright (C) 2012 Juanjo Menent  <jmenent@2byte.es>
 -- Copyright (C) 2025 Charlene Benke  <charlene@patas-monkey.com>
 --

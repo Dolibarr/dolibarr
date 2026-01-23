@@ -19,6 +19,7 @@ MailCC=にコピー
 MailToCCUsers=ユーザs(s)にコピーする
 MailCCC=にキャッシュされたコピー
 MailTopic=メールの件名
+MailTopicShort=科目
 MailDate=メール日付
 MailReferences=参照内のメッセージ ID
 MailText=メッセージ

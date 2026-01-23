@@ -490,6 +490,10 @@ if ($resql) {
 		print '<td class="liste_titre">&nbsp;</td>';
 		$colspan++;
 	}
+	if (getDolGlobalString('PRODUCT_USE_UNITS')) {
+		print '<td class="liste_titre"></td>';
+		$colspan++;
+	}
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
@@ -504,10 +508,6 @@ if ($resql) {
 		$searchpicto = $form->showFilterAndCheckAddButtons(0);
 		print $searchpicto;
 		print '</td>';
-		$colspan++;
-	}
-	if (getDolGlobalString('PRODUCT_USE_UNITS')) {
-		print '<td class="liste_titre"></td>';
 		$colspan++;
 	}
 	print '</tr>';

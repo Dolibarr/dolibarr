@@ -19,6 +19,7 @@ MailCC=Κοινοποίηση σε
 MailToCCUsers=Κοινοποίηση σε χρήστη(ες)
 MailCCC=Αποθηκευμένο αντίγραφο σε
 MailTopic=Θέμα Email
+MailTopicShort=Θέμα
 MailDate=Ημερομηνία email
 MailReferences=Αναγνωριστικά μηνυμάτων στις αναφορές
 MailText=Μήνυμα

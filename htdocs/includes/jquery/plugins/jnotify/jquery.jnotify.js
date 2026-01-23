@@ -1,14 +1,14 @@
 /*!
  * jNotify jQuery Plug-in
  *
- * Copyright 2010 Giva, Inc. (http://www.givainc.com/labs/) 
- * 
+ * Copyright 2010 Giva, Inc. (http://www.givainc.com/labs/)
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * 	http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,8 +25,8 @@
 
 	// set the version of the plug-in
 	$.jnotify.version = "1.1.00";
-	
-	var $jnotify, queue = [], count = 0, playing = false, paused = false, queuedId, queuedNote, 
+
+	var $jnotify, queue = [], count = 0, playing = false, paused = false, queuedId, queuedNote,
 		// define default settings
 		defaults = {
 			// define core settings
@@ -37,14 +37,14 @@
 			, showClose: true                           // determines if the "Close" link should be shown if notification is also sticky
 			, fadeSpeed: 1000                           // the speed to fade messages out (in milliseconds)
 			, slideSpeed: 250                           // the speed used to slide messages out (in milliseconds)
-			
+
 			// define the class statements
 			, classContainer: "jnotify-container"       // className to use for the outer most container--this is where all the notifications appear
 			, classNotification: "jnotify-notification" // className of the individual notification containers
 			, classBackground: "jnotify-background"     // className of the background layer for each notification container
 			, classClose: "jnotify-close"               // className to use for the "Close" link
 			, classMessage: "jnotify-message"           // className to use for the actual notification text container--this is where the message is actually written
-	
+
 			// event handlers
 			, init: null                                // callback that occurs when the main jnotify container is created
 			, create: null                              // callback that occurs when when the note is created (occurs just before appearing in DOM)
@@ -67,14 +67,14 @@
 	$.jnotify.play = function (f, d){
 		if( playing && (f !== true ) || (queue.length == 0) ) return;
 		playing = true;
-		
+
 		// get first note
 		var note = queue.shift();
 		queuedNote = note;
 
 		// determine delay to use
 		var delay = (arguments.length >= 2) ? parseInt(d, 10) : note.options.delay;
-		
+
 		// run delay before removing message
 		queuedId = setTimeout(function(){
 			// clear timeout id
@@ -104,7 +104,7 @@
 		$.jnotify.play(true, 0);
   }
 
-	
+
 	function jNotify(message, options){
 		// a reference to the jNotify object
 		var self = this, TO = typeof options;
@@ -118,17 +118,17 @@
 		} else {
 			options = $.extend({}, defaults, options);
 		}
-		
+
 		// store the options
 		this.options = options;
-		
+
 		// if the container doesn't exist, create it
 		if( !$jnotify ){
 			// we want to use one single container, so always use the default container class
 			$jnotify = $('<div class="' + defaults.classContainer + '" />').appendTo("body");
 			if( $.isFunction(options.init) ) options.init.apply(self, [$jnotify]);
-		} 
-		
+		}
+
 		// create the notification
 		function create(message){
 			var html = '<div class="' + options.classNotification + (options.type.length ? (" " + options.classNotification + "-" + options.type) : "") + '">'
@@ -140,10 +140,10 @@
 
 			// increase the counter tracking the notification instances
 			count++;
-			
+
 			// create the note
 			var $note = $(html);
-			
+
 			if( options.sticky ){
 				// add click handler to remove the sticky notification
 				$note.find("a." + options.classClose).bind("click.jnotify", function (){
@@ -154,11 +154,11 @@
 			// run callback
 			if( $.isFunction(options.create) ) options.create.apply(self, [$note]);
 
-			// return the new note			
+			// return the new note
 			return $note.appendTo($jnotify);
 		}
 
-		// remove the notification		
+		// remove the notification
 		this.remove = function (callback){
 			var $msg = $note.find("." + options.classMessage), $parent = $msg.parent();
 			// remove message from counter
@@ -166,12 +166,12 @@
 
 			// run callback
 			if( $.isFunction(options.beforeRemove) ) options.beforeRemove.apply(self, [$msg]);
-			
+
 			// cleans up notification
 			function finished(){
 				// remove the parent container
 				$parent.remove();
-				
+
 				// if there's a callback, run it
 				if( $.isFunction(callback) ) callback.apply(self, [$msg]);
 				if( $.isFunction(options.remove) ) options.remove.apply(self, [$msg]);
@@ -186,15 +186,15 @@
 					// slide the parent closed
 					else $parent.slideUp(options.slideSpeed, finished);
 				});
-				
+
 				// if the last notification, fade out the container
 				if( count <= 0 ) $parent.fadeOut(options.fadeSpeed);
 			}
 		}
-		
+
 		// create the note
 		var $note = create(message);
-		
+
 		// if not a sticky, add to show queue
 		if( !options.sticky ){
 			// add the message to the queue

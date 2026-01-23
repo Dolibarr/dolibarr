@@ -83,7 +83,7 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x")) {		// bo
 				$nouveauchoix .= "1";
 			} elseif (GETPOSTISSET("choix$i") && GETPOST("choix$i") == '2') {
 				$nouveauchoix .= "2";
-			} else { // sinon c'est 0
+			} else { // else it's zéro
 				$nouveauchoix .= "0";
 			}
 		}
@@ -122,7 +122,7 @@ for ($i = 0; $i < $nblines; $i++) {
 		$testligneamodifier = true;
 	}
 
-	//test pour voir si une ligne est a modifier
+	// test to check if a line needs to be updated
 	if (GETPOSTISSET('validermodifier'.$i)) {
 		$modifier = $i;
 		$testmodifier = true;
@@ -140,7 +140,7 @@ if ($testmodifier) {
 			$nouveauchoix .= "1";
 		} elseif (GETPOSTISSET("choix$i") && GETPOST("choix$i") == '2') {
 			$nouveauchoix .= "2";
-		} else { // sinon c'est 0
+		} else { // else it's zero
 			$nouveauchoix .= "0";
 		}
 	}
@@ -165,11 +165,11 @@ if (GETPOST("ajoutercolonne") && GETPOST('nouvellecolonne') && $object->format =
 
 	$nouveauxsujets = $object->sujet;
 
-	//on rajoute la valeur a la fin de tous les sujets deja entrés
+	// We add the value to the end of all subjects already entered
 	$nouveauxsujets .= ',';
 	$nouveauxsujets .= str_replace(array(",", "@"), " ", GETPOST("nouvellecolonne")).(!GETPOST("typecolonne") ? '' : '@'.GETPOST("typecolonne"));
 
-	//mise a jour avec les nouveaux sujets dans la base
+	// update with new subjects in database
 	$sql = 'UPDATE '.MAIN_DB_PREFIX."opensurvey_sondage";
 	$sql .= " SET sujet = '".$db->escape($nouveauxsujets)."'";
 	$sql .= " WHERE id_sondage = '".$db->escape($numsondage)."'";
@@ -224,12 +224,12 @@ if (GETPOSTISSET("ajoutercolonne") && $object->format == "D") {
 			$erreur_ajout_date = "yes";
 		}
 
-		//on rajoute la valeur dans les valeurs
+		// we add the value to the values
 		$datesbase = explode(",", $object->sujet);
 		$taillebase = count($datesbase);
 		$cleinsertion = -1;
 
-		//recherche de l'endroit de l'insertion de la nouvelle date dans les dates deja entrées dans le tableau
+		// Searching for the insertion point of the new date within the dates already entered in the table
 		if ($nouvelledate < $datesbase[0]) {
 			$cleinsertion = 0;
 		} elseif ($nouvelledate > $datesbase[$taillebase - 1]) {
@@ -356,7 +356,7 @@ for ($i = 0; $i < $nbcolonnes; $i++) {
 		$j = 0;
 		$nouveauxsujets = '';
 
-		//parcours de tous les sujets actuels
+		// review of all current subjects
 		while (isset($toutsujet[$j])) {
 			// If the subject is not the deleted subject, then concatenate the current subject
 			if ($i != $j) {
@@ -369,7 +369,7 @@ for ($i = 0; $i < $nbcolonnes; $i++) {
 			$j++;
 		}
 
-		// Mise a jour des sujets dans la base
+		// Update subjects in database
 		$sql = 'UPDATE '.MAIN_DB_PREFIX."opensurvey_sondage";
 		$sql .= " SET sujet = '".$db->escape($nouveauxsujets)."' WHERE id_sondage = '".$db->escape($numsondage)."'";
 		$resql = $db->query($sql);
@@ -395,20 +395,19 @@ for ($i = 0; $i < $nbcolonnes; $i++) {
 			$newcar = '';
 			$ensemblereponses = $obj->reponses;
 
-			// parcours de toutes les réponses actuelles
+			// Review of all current answers
 			for ($j = 0; $j < $nbcolonnes; $j++) {
 				$car = substr($ensemblereponses, $j, 1);
-				//si les reponses ne concerne pas la colonne effacée, on concatenate
+				// If the answers do not concern the erased column, we concatenate
 				if ($i != $j) {
 					$newcar .= $car;
 				}
 			}
 
-			// mise a jour des reponses utilisateurs dans la base
+			// Update user's answers in database
 			$sql2 = 'UPDATE '.MAIN_DB_PREFIX.'opensurvey_user_studs';
 			$sql2 .= " SET reponses = '".$db->escape($newcar)."'";
 			$sql2 .= " WHERE id_users = '".$db->escape($obj->id_users)."'";
-			//print $sql2;
 			dol_syslog('sql='.$sql2);
 			$resql2 = $db->query($sql2);
 
@@ -616,12 +615,12 @@ if (GETPOST('ajoutsujet')) {
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 		$formother = new FormOther($db);
-		//ajout d'une date avec creneau horaire
+		// Adding a date with a time slot
 		print $langs->trans("AddADate").':<br><br>'."\n";
 		print '<select name="nouveaujour"> '."\n";
-		print '<OPTION VALUE="vide">&nbsp;</OPTION>'."\n";
+		print '<option value="vide">&nbsp;</option>'."\n";
 		for ($i = 1; $i < 32; $i++) {
-			print '<OPTION VALUE="'.$i.'">'.$i.'</OPTION>'."\n";
+			print '<option value="'.$i.'">'.$i.'</option>'."\n";
 		}
 		print '</select>'."\n";
 
@@ -633,31 +632,31 @@ if (GETPOST('ajoutsujet')) {
 
 		print '<br><br>'.$langs->trans("AddStartHour").': <br><br>'."\n";
 		print '<select name="nouvelleheuredebut"> '."\n";
-		print '<OPTION VALUE="vide">&nbsp;</OPTION>'."\n";
+		print '<option value="vide">&nbsp;</option>'."\n";
 		for ($i = 0; $i < 24; $i++) {
-			print '<OPTION VALUE="'.$i.'">'.$i.' H</OPTION>'."\n";
+			print '<option value="'.$i.'">'.$i.' H</option>'."\n";
 		}
 		print '</select>'."\n";
 		print '<select name="nouvelleminutedebut"> '."\n";
-		print '<OPTION VALUE="vide">&nbsp;</OPTION>'."\n";
-		print '<OPTION VALUE="00">00</OPTION>'."\n";
-		print '<OPTION VALUE="15">15</OPTION>'."\n";
-		print '<OPTION VALUE="30">30</OPTION>'."\n";
-		print '<OPTION VALUE="45">45</OPTION>'."\n";
+		print '<option value="vide">&nbsp;</option>'."\n";
+		print '<option value="00">00</option>'."\n";
+		print '<option value="15">15</option>'."\n";
+		print '<option value="30">30</option>'."\n";
+		print '<option value="45">45</option>'."\n";
 		print '</select>'."\n";
 		print '<br><br>'.$langs->trans("AddEndHour").': <br><br>'."\n";
 		print '<select name="nouvelleheurefin"> '."\n";
-		print '<OPTION VALUE="vide">&nbsp;</OPTION>'."\n";
+		print '<option value="vide">&nbsp;</option>'."\n";
 		for ($i = 0; $i < 24; $i++) {
-			print '<OPTION VALUE="'.$i.'">'.$i.' H</OPTION>'."\n";
+			print '<option value="'.$i.'">'.$i.' H</option>'."\n";
 		}
 		print '</SELECT>'."\n";
 		print '<select name="nouvelleminutefin"> '."\n";
-		print '<OPTION VALUE="vide">&nbsp;</OPTION>'."\n";
-		print '<OPTION VALUE="00">00</OPTION>'."\n";
-		print '<OPTION VALUE="15">15</OPTION>'."\n";
-		print '<OPTION VALUE="30">30</OPTION>'."\n";
-		print '<OPTION VALUE="45">45</OPTION>'."\n";
+		print '<option value="vide">&nbsp;</option>'."\n";
+		print '<option value="00">00</option>'."\n";
+		print '<option value="15">15</option>'."\n";
+		print '<option value="30">30</option>'."\n";
+		print '<option value="45">45</option>'."\n";
 		print '</select>'."\n";
 
 		print '<br><br>';
@@ -691,7 +690,7 @@ print '<div class="cadre div-table-responsive-no-min"> '."\n";
 // Start to show survey result
 print '<table class="resultats margintoponly">'."\n";
 
-//reformatage des données des sujets du sondage
+// Reformatting the survey subject data
 $toutsujet = explode(",", $object->sujet);
 $toutsujet = str_replace("°", "'", $toutsujet);
 
@@ -711,12 +710,12 @@ print '</tr>'."\n";
 
 // Show choice titles
 if ($object->format == "D") {
-	//affichage des sujets du sondage
+	// Displaying the survey subjects
 	print '<tr>'."\n";
 	print '<td></td>'."\n";
 	print '<td></td>'."\n";
 
-	//affichage des années
+	// Displaying the years
 	$colspan = 1;
 	$nbofsujet = count($toutsujet);
 	for ($i = 0; $i < $nbofsujet; $i++) {
@@ -738,10 +737,10 @@ if ($object->format == "D") {
 	print '<td></td>'."\n";
 	print '<td></td>'."\n";
 
-	//affichage des mois
+	// Displaying the months
 	$colspan = 1;
 	for ($i = 0; $i < $nbofsujet; $i++) {
-		$cur = intval($toutsujet[$i]); // intval() est utiliser pour supprimer le suffixe @* qui déplaît logiquement à strftime()
+		$cur = intval($toutsujet[$i]); // intval() est utilisé pour supprimer le suffixe @* qui déplaît logiquement à strftime()
 
 		if (!isset($toutsujet[$i + 1])) {
 			$next = false;
@@ -767,7 +766,7 @@ if ($object->format == "D") {
 	print '<td></td>'."\n";
 	print '<td></td>'."\n";
 
-	//affichage des jours
+	// Displaying the days
 	$colspan = 1;
 	for ($i = 0; $i < $nbofsujet; $i++) {
 		$cur = intval($toutsujet[$i]);
@@ -790,7 +789,7 @@ if ($object->format == "D") {
 	}
 	print '</tr>'."\n";
 
-	//affichage des horaires
+	// Displaying time slots
 	if (strpos($object->sujet, '@') !== false) {
 		print '<tr>'."\n";
 		print '<td></td>'."\n";
@@ -858,7 +857,7 @@ while ($compteur < $num) {
 	print dolPrintHTML($obj->name);
 	print '</td>'."\n";
 
-	// si la ligne n'est pas a changer, on affiche les données
+	// If the line is not to be changed, we display the data
 	if (!$testligneamodifier) {
 		for ($i = 0; $i < $nbcolonnes; $i++) {
 			$car = substr($ensemblereponses, $i, 1);
@@ -1060,7 +1059,7 @@ if (empty($testligneamodifier)) {
 		print '</td>'."\n";
 	}
 
-	// Affichage du bouton de formulaire pour inscrire un nouvel utilisateur dans la base
+	// Display of the form button to register a new user in the database
 	print '<td><input type="image" name="boutonp" class="borderimp classfortooltip" title="'.dolPrintHTML($langs->trans("AddTheVote")).'" value="'.$langs->trans("Vote").'" src="'.img_picto('', 'edit_add', '', 0, 1).'"></td>'."\n";
 	print '</tr>'."\n";
 }

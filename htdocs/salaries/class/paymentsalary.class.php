@@ -849,7 +849,7 @@ class PaymentSalary extends CommonObject
 	 *  @param  string  $morecss                    Add more css on link
 	 *  @param  int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *  @param  string  $option         			''=Show ref, 'nolink'=No link
-	 *	@return	string								Chaine avec URL
+	 *	@return	string								String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $maxlen = 0, $notooltip = 0, $morecss = '', $save_lastsearch_value = -1, $option = '')
 	{

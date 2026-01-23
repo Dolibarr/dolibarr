@@ -170,4 +170,3 @@ body contains "Declared real progress"
 body contains "Everybody"
 body contains "Time spent"
 body contains "Week"
-

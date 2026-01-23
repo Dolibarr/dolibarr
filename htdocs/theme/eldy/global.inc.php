@@ -334,6 +334,9 @@ input[type="text"]:not(.input-icon-security, .input-icon-user, .input-icon-passw
 input[type="password"]:not(.input-icon-security, .input-icon-user, .input-icon-password) {
 	height: 28px;
 }
+input.downloadexternallink {
+	padding-left: 3px;
+}
 .input-icon-user, .input-icon-password {
 	padding-right: 28px !important;
 }
@@ -385,13 +388,15 @@ span.massactionselect, input.inputsearch_dropdownselectedfields {
 	background-color: unset;
 }
 
-.liste_titre input, .liste_titre select {
+.liste_titre input:not(#search_component_params_input):not(.select2-search__field), .liste_titre select {
 	border: none;
-	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>: solid 1px var(<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '--colorbacktitle1' : '--inputbordercolor'; ?>);
+	border-style: solid;
+	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>-width: 1px !important;
+	border-color: var(<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '--colorbacktitle1' : '--inputbordercolor'; ?>) !important;
 }
 
 .divadvancedsearchfieldcompinput,
-div.tabBar input, div.tabBar input.flat, div.tabBar textarea, div.tabBar textarea.flat, div.tabBar form.flat select, div.tabBar select, div.tabBar select.flat, div.tabBar .dataTables_length label select
+div.tabBar input:not(.pageplusone), div.tabBar input.flat:not(.pageplusone), div.tabBar textarea, div.tabBar textarea.flat, div.tabBar form.flat select, div.tabBar select, div.tabBar select.flat, div.tabBar .dataTables_length label select
 {
 	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>: solid 1px var(--inputbordercolor);
 	<?php if (getDolGlobalString('THEME_ADD_BACKGROUND_ON_INPUT')) { ?>
@@ -448,14 +453,15 @@ input {
 .liste_titre input {
 	line-height: 1.3em;
 	padding: 3px;
-	padding-left: 3px;
+	padding-left: 4px;
 }
 .tableforfield input {
-	padding-left: 2px;
+	padding-left: 4px;
 }
 .refidno input {
 	margin-top: 0 !important;
 	padding: 0;
+	padding-left: 6px;
 }
 .refidno .button.smallpaddingimp {
 	padding: 3px !important;
@@ -600,7 +606,7 @@ div.buttonpayment input:focus {
 div.buttonpayment input {
 	background-color: unset;
 	color: #fff;
-	border-bottom: unset;
+	border: unset;
 	font-weight: bold;
 	text-transform: uppercase;
 	cursor: pointer;
@@ -655,10 +661,13 @@ div.userimg.notfirst {
 	display: block-inline;
 }
 .center.inline-block.dateheight {
-	line-height: 1.2em;
+	line-height: 1.15em;
 }
 .smallheight {
 	line-height: 1em;
+}
+tr.tdsmallheight, tr.tdsmallheight td {
+	height: 1.5em !important;
 }
 
 
@@ -772,6 +781,9 @@ input.pageplusone {
 .opacitytransp {
 	opacity: 0;
 }
+.noopacity {
+	opacity: unset !important;
+}
 .colorwhite {
 	color: var(--colorwhite);
 }
@@ -806,8 +818,9 @@ select:invalid, select.--error {
 }
 input:disabled, textarea:disabled, select[disabled='disabled']
 {
-	background: var(--inputbackgroundcolordisabled);
-	color: var(--inputcolordisabled);
+	/* background: var(--inputbackgroundcolordisabled); */
+	/* color: var(--inputcolordisabled); */
+	opacity: 0.5;
 }
 
 input.liste_titre {
@@ -864,8 +877,11 @@ input#onlinepaymenturl, input#directdownloadlink {
 
 
 .formconsumeproduce {
-	background: #f3f3f3;
-	padding: 20px 0px 0px 0px;
+	border-left: solid 5px #87cfd2;		/* like for div.info */
+	background: #eff8fc;				/* like for div.info */
+	/* background: #f3f3f3; */
+
+	padding: 20px 0px 20px 0px;
 	border-radius: 8px;
 }
 
@@ -1307,11 +1323,13 @@ td.wordbreak img, td.wordbreakimp img {
 	max-height: <?php print getDolGlobalInt('MAIN_CSS_SHORTMESSSAGECUT', 125); ?>px;
 	max-width: 100%;
 	overflow-y: auto;
+	word-break: break-word;
 }
 .longmessagecut {
 	max-height: <?php print getDolGlobalInt('MAIN_CSS_LONGMESSSAGECUT', 250); ?>px;
 	max-width: 100%;
 	overflow-y: auto;
+	word-break: break-word;
 }
 div.urllink {
 	padding: 5px;
@@ -1845,6 +1863,14 @@ select.flat.selectlimit {
 	display: -webkit-box;
 	-webkit-box-orient: vertical;
 	-webkit-line-clamp: 2;
+	overflow: hidden;
+	height: auto !important;
+	word-break: break-word;
+}
+.threelinesmax, .threelinesmax-normallineheight {				/* To be used into a <div class="twolinesmax-normallineheight minwidth200onall"> into a td for example */
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 3;
 	overflow: hidden;
 	height: auto !important;
 	word-break: break-word;
@@ -2413,7 +2439,7 @@ datalist {
 
 	/* input, input[type=text], */
 	select {
-		width: 98%;
+		/* width: 98%; */
 		min-width: 40px;
 	}
 
@@ -3502,7 +3528,7 @@ form#login {
 	max-width: 560px;
 <?php
 if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
-	print '	background-color: rgba(255, 255, 255, 0.9);';
+	print '	background-color: rgba(255, 255, 255, 0.99);';
 } else {
 	print '	background-color: var(--colorbackbody);';
 }
@@ -3511,9 +3537,10 @@ if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
 	border-radius: 5px;
 }
 .login_table input#username, .login_table input#password, .login_table input#securitycode {
-	border: none;
+	/* border: none; */
 	border-bottom: solid 1px rgba(180,180,180,.4);
-	padding: 5px;
+	padding: 8px;
+	padding-left: 12px;
 	margin-left: 5px;
 	margin-top: 5px;
 	margin-bottom: 5px;
@@ -3545,14 +3572,14 @@ if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
 }
 .login_table #tdpasswordlogin #togglepassword {
 	position: absolute;
-	top: 0.7em;
+	top: 0.8em;
 	right: 11px;
 	background: none;
 	border: none;
 	opacity: 0.3;
 }
 .login_table #tdpasswordlogin #togglepassword .fa {
-	padding: 0 3px;
+	padding: 0 7px;
 	width: auto;
 }
 #togglepassword .fa::before {
@@ -3796,7 +3823,7 @@ img.userphotopublicvcard {
 img.userphoto[alt="Gravatar avatar"], img.photouserphoto.dropdown-user-image[alt="Gravatar avatar"] {
 	background: #fff;
 }
-form[name="addtime"] img.userphoto {
+form[name="addtime"] img.userphoto, form[name="addtime"] img.userphotosmall {
 	border: 1px solid #444;
 }
 .span-icon-user {
@@ -3889,7 +3916,7 @@ a.vsmenu:link, a.vsmenu:visited {
 	white-space: nowrap;
 }
 span.vsmenudisabledmargin, font.vsmenudisabledmargin { margin: 1px 1px 1px 6px; }
-li a.vsmenudisabled, li.vsmenudisabled { color: #aaa !important; }
+li a.vsmenudisabled, li.vsmenudisabled { color: #aaa !important; cursor: default !important; }
 
 a.help:link, a.help:visited, a.help:hover, a.help:active, span.help {
 	text-align: <?php print $left; ?>; color: #aaa; text-decoration: none;
@@ -4130,6 +4157,12 @@ div.tabBar tr.titre td {
 }
 div.fiche table:not(.table-fiche-title) tr.titre td {
 	padding-top: 10px;
+}
+div.fiche >.table-fiche-title tr.toptitle td.col-picto,
+div.fiche >.table-fiche-title tr.toptitle td.col-title,
+div.fiche >form >.table-fiche-title tr.toptitle td.col-picto,
+div.fiche >form >.table-fiche-title tr.toptitle td.col-title {
+	filter: grayscale(90%);
 }
 
 div.tabBar.tabBarNoTop {
@@ -5381,9 +5414,9 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 .boxstats:hover {
 	box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.20);
 }
-span.boxstatstext span:not(.fas) {
+/*span.boxstatstext span:not(.fas) {
 	opacity: 0.5;
-}
+}*/
 span.boxstatstext {
 	opacity: 0.5;		/* a bug if browser make z-index was discovered when opacity is set, if still present, we must disable it */
 	line-height: 18px;
@@ -5645,7 +5678,7 @@ div.info, div.warning, div.error, div.green, div.neutral {
 }
 
 div.fiche div.info, div.fiche div.warning, div.fiche div.neutral {
-	box-shadow: 1px 1px 6px #e4e4e4;
+	box-shadow: 1px 1px 6px #d4d4d4;
 	margin: 1em 0em 1.2em 0em;
 }
 
@@ -7406,6 +7439,9 @@ input.select2-input {
 	border: none;
 	border-bottom: solid 1px var(--inputbordercolor) !important;	/* required to avoid to lose bottom line when focus is lost on select2. */
 }
+li.select2-selection__choice {
+	white-space: break-spaces;
+}
 .select2-results .select2-highlighted.optionblue {
 	color: #FFF !important;
 }
@@ -7504,6 +7540,12 @@ input.select2-input {
 
 	box-shadow: none !important;
 }
+.liste_titre .select2-container--default .select2-selection--single:not(.selectwidget),
+.liste_titre .select2-container--default .select2-selection--multiple {
+	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>: solid 1px var(--colorbacktitle1);
+}
+
+
 .select2-container--default .select2-selection--single.selectwidget,
 .select2-container--default .select2-selection--single.selectwidget:hover,
 .select2-container--default .select2-selection--single.selectwidget:focus {
@@ -7549,7 +7591,7 @@ input.select2-input {
 	margin-top: 0.25em !important;
 }
 .select2-selection--multiple input.select2-search__field {
-	border-bottom: none !important;
+	border: none !important;
 }
 
 .select2-search__field
@@ -7764,6 +7806,7 @@ select.multiselectononeline {
 	min-height: unset;
 	height: 2.2em !important;
 	opacity: 0;
+	min-width: 50px;
 	/* width: 1px !important; */
 }
 

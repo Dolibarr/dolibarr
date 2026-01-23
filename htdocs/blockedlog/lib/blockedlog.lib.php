@@ -160,16 +160,17 @@ function isALNEQualifiedVersion($ignoredev = 0, $ignoremodule = 0)
  * Return if the application is executed with the LNE requirements on.
  * This function can be used to disable some features like custom receipts, or to enable others like showing the information "Certified LNE".
  *
- * @return 	boolean		True or false
+ * @param	int		$blockedlogtestalreadydone	Test on blockedlog used already done
+ * @return 	boolean								True or false
  */
-function isALNERunningVersion()
+function isALNERunningVersion($blockedlogtestalreadydone = 0)
 {
 	// For Debug help: Constant set by developer to force all LNE restrictions even if country is not France so we can test them on any dev instance.
 	// Note that you can force, with this option, the enabling of the LNE restrictions, but there is no way to force the disabling of the LNE restriction.
 	if (defined('CERTIF_LNE') && (int) constant('CERTIF_LNE') === 2) {
 		return true;
 	}
-	if (isModEnabled('blockedlog') && isBlockedLogUsed()) {
+	if (isModEnabled('blockedlog') && ($blockedlogtestalreadydone || isBlockedLogUsed())) {
 		return true;
 	}
 
@@ -238,7 +239,7 @@ function pdfCertifMentionblockedLog(&$pdf, $outputlangs, $seller, $default_font_
 
 	if (in_array($seller->country_code, array('FR')) && isALNEQualifiedVersion()) {	// If necessary, we could replace with "if isALNERunningVersion()"
 		$outputlangs->load("blockedlog");
-		$blockedlog_mention = $outputlangs->trans("InvoiceGeneratedWithLNECertifiedPOSSystem");
+		$blockedlog_mention = $outputlangs->transnoentitiesnoconv("InvoiceGeneratedWithLNECertifiedPOSSystem");
 		if ($blockedlog_mention) {
 			$pdf->SetFont('', '', $default_font_size - 2);
 			$pdf->SetXY($pdftemplate->marge_gauche, $posy);
@@ -254,15 +255,15 @@ function pdfCertifMentionblockedLog(&$pdf, $outputlangs, $seller, $default_font_
 /**
  *      sumAmountsForUnalterableEvent
  *
- *      @param	BlockedLog			$block				Object BlockedLog
- *      @param	array<string,int>	$refinvoicefound	Array of ref of invoice already found (to avoid duplicates. Should be useless but just in case of)
- *      @param  array<string,float>	$totalhtamount		Array of total per code event and module
- *      @param  array<string,float>	$totalvatamount		Array of total per code event and module
- *      @param  array<string,float>	$totalamount		Array of total per code event and module
- *      @param  float				$total_ht			Total HT
- *      @param  float				$total_vat			Total VAT
- *      @param  float				$total_ttc			Total TTC
- *      @return	int                                 	Return > 0
+ *      @param	BlockedLog			$block								Object BlockedLog
+ *      @param	array<string,int>	$refinvoicefound					Array of ref of invoice already found (to avoid duplicates. Should be useless but just in case of)
+ *      @param  array<string,array<string,float>>	$totalhtamount		Array of total per code event and module
+ *      @param  array<string,array<string,float>>	$totalvatamount		Array of total per code event and module
+ *      @param  array<string,array<string,float>>	$totalamount		Array of total per code event and module
+ *      @param  float				$total_ht							Total HT
+ *      @param  float				$total_vat							Total VAT
+ *      @param  float				$total_ttc							Total TTC
+ *      @return	int                                 					Return > 0
  */
 function sumAmountsForUnalterableEvent($block, &$refinvoicefound, &$totalhtamount, &$totalvatamount, &$totalamount, &$total_ht, &$total_vat, &$total_ttc)
 {
