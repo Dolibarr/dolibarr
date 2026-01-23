@@ -766,8 +766,8 @@ trait CommonSubtotal
 		}
 		return price($final_amount);
 	}
-        
-    /**
+
+	/**
 	 * Return the total_ttc of lines that are above the current line (excluded) and that are not a subtotal line
 	 * until a title line of the same level is found
 	 *
@@ -819,8 +819,8 @@ trait CommonSubtotal
 		}
 		return price($final_amount);
 	}
-        
-    /**
+
+	/**
 	 * Return the multicurrency_total_ttc of lines that are above the current line (excluded) and that are not a subtotal line
 	 * until a title line of the same level is found
 	 *
@@ -829,7 +829,8 @@ trait CommonSubtotal
 	 *
 	 * @phan-suppress PhanUndeclaredProperty
 	 */
-	public function getSubtotalLineMulticurrencyAmountVAT($line) {
+	public function getSubtotalLineMulticurrencyAmountVAT($line) 
+	{
 		$final_amount = 0;
 		for ($i = $line->rang - 1; $i > 0; $i--) {
 			if (is_null($this->lines[$i - 1]) || $this->lines[$i - 1]->rang >= $line->rang) {
