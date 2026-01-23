@@ -1736,7 +1736,7 @@ class FactureRec extends CommonInvoice
 					}
 
 					// Mail sent
-					if($mailHasSent) {
+					if ($mailHasSent) {
 						$this->output .= $langs->trans("InvoiceSentFromTemplate", $facture->ref, $facturerec->ref)."\n";
 					}
 				} else {
