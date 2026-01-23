@@ -408,7 +408,7 @@ class modAdherent extends DolibarrModules
 		$this->import_tables_array[$r] = array('c'=>MAIN_DB_PREFIX.'subscription');
 		$this->import_fields_array[$r] = array(
 			'c.fk_adherent' => 'MemberRef*',
-			'c.note'=>'Note', 'c.dateadh'=>'SubscriptionStart', 'c.datef'=>'SubscriptionEnd', 'c.subscription'=>'Amount', 'c.fk_type' => 'MemberType', 'c.fk_bank' => 'Bank'
+			'c.note'=>'Note', 'c.dateadh'=>'DateSubscription', 'c.datef'=>'DateEndSubscription', 'c.subscription'=>'Amount', 'c.fk_type' => 'MemberType', 'c.fk_bank' => 'Bank'
 		);
 		$this->import_convertvalue_array[$r] = array(
 			'c.fk_adherent' => array(
