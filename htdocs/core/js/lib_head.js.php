@@ -580,7 +580,7 @@ function cleanSerialize(expr) {
  */
 function confirmDolibarr(msg, id, popupWidth = 400, popupHeight = 300, disableCancelButton = 0) {
 	let alink = document.getElementById(id);
-	let title = '<?php echo dol_escape_js($langs->trans("Note")); ?>';
+	let title = '<?php echo dol_escape_js($langs->transnoentitiesnoconv("Note")); ?>';
 
 	if (alink.getAttribute("data-alreadyclicked") === "1") {
 		return true;
@@ -590,11 +590,11 @@ function confirmDolibarr(msg, id, popupWidth = 400, popupHeight = 300, disableCa
 
 	let buttons = {};
 	if (disableCancelButton === 0) {
-		buttons['<?php echo dol_escape_js($langs->trans("Cancel")); ?>'] = function () {
+		buttons['<?php echo dol_escape_js($langs->transnoentitiesnoconv("Cancel")); ?>'] = function () {
 		   $(this).dialog("close");
 		};
 	}
-	buttons['<?php echo dol_escape_js($langs->trans("OK")); ?>'] = function () {
+	buttons['<?php echo dol_escape_js($langs->transnoentitiesnoconv("Confirm")); ?>'] = function () {
 		console.log("We click OK"); $(this).dialog("close"); alink.setAttribute("data-alreadyclicked", "1"); alink.click(); return false;
 	};
 

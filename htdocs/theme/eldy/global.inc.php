@@ -334,6 +334,9 @@ input[type="text"]:not(.input-icon-security, .input-icon-user, .input-icon-passw
 input[type="password"]:not(.input-icon-security, .input-icon-user, .input-icon-password) {
 	height: 28px;
 }
+input.downloadexternallink {
+	padding-left: 3px;
+}
 .input-icon-user, .input-icon-password {
 	padding-right: 28px !important;
 }
@@ -3525,7 +3528,7 @@ form#login {
 	max-width: 560px;
 <?php
 if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
-	print '	background-color: rgba(255, 255, 255, 0.9);';
+	print '	background-color: rgba(255, 255, 255, 0.99);';
 } else {
 	print '	background-color: var(--colorbackbody);';
 }
