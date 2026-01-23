@@ -1440,27 +1440,28 @@ if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
 	if (isALNERunningVersion()) {		// No need to show this option because it has no effect when isALNERunningVersion is true.
 		$customprinttemplateallowed = false;	// Custom printer may be allowed if mandatory information in template are guaranteed. For the moment, we prefer not allow this.
 	}
-
-	if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
-		if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {		// deprecated method
-			if (getDolGlobalString('TAKEPOS_PRINT_SERVER') && filter_var(getDolGlobalString('TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL')) == true) {
-				$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("PrintTicket").'</div>', 'action' => 'TakeposConnector(placeid);');
-			} else {
-				$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("PrintTicket").'</div>', 'action' => 'TakeposPrinting(placeid);');
-			}
-		} elseif ($customprinterallowed && (isModEnabled('receiptprinter') && getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0) || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {		// @phpstan-ignore-line
-			// Button Print Receipt on special printer
-			$nameOfPrinter = dol_getIdFromCode($db, getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term), 'printer_receipt', 'rowid', 'name', 1);
-			$menus[$r++] = array('title' => '<div title="'.dolPrintHTMLForAttribute($langs->trans("PrintOn", $nameOfPrinter)).'"><span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("PrintTicket").'</div></div>', 'action' => 'DolibarrTakeposPrinting(placeid);');
-		} else {
-			// Button Print Receipt on browser
-			$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("PrintTicket").'</div>', 'action' => 'Print(placeid);');
-		}
-	}
-	if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector" && getDolGlobalString('TAKEPOS_ORDER_NOTES') == 1) {
-		$menus[$r++] = array('title' => '<span class="fa fa-sticky-note paddingrightonly"></span><div class="trunc">'.$langs->trans("OrderNotes").'</div>', 'action' => 'TakeposOrderNotes();');
-	}
 }
+
+// Button to print receipt
+if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {		// deprecated method
+	if (getDolGlobalString('TAKEPOS_PRINT_SERVER') && filter_var(getDolGlobalString('TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL')) == true) {
+		$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("PrintTicket").'</div>', 'action' => 'TakeposConnector(placeid);');
+	} else {
+		$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("PrintTicket").'</div>', 'action' => 'TakeposPrinting(placeid);');
+	}
+} elseif ($customprinterallowed && (isModEnabled('receiptprinter') && getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0) || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {		// @phpstan-ignore-line
+	// Button Print Receipt on special printer
+	$nameOfPrinter = dol_getIdFromCode($db, getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term), 'printer_receipt', 'rowid', 'name', 1);
+	$menus[$r++] = array('title' => '<div title="'.dolPrintHTMLForAttribute($langs->trans("PrintOn", $nameOfPrinter)).'"><span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("PrintTicket").'</div></div>', 'action' => 'DolibarrTakeposPrinting(placeid);');
+} else {
+	// Button Print Receipt on browser
+	$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("PrintTicket").'</div>', 'action' => 'Print(placeid);');
+}
+
+if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector" && getDolGlobalString('TAKEPOS_ORDER_NOTES') == 1) {
+	$menus[$r++] = array('title' => '<span class="fa fa-sticky-note paddingrightonly"></span><div class="trunc">'.$langs->trans("OrderNotes").'</div>', 'action' => 'TakeposOrderNotes();');
+}
+
 
 if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
 	$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("DOL_OPEN_DRAWER").'</div>', 'action' => 'OpenDrawer();');
