@@ -10697,7 +10697,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 	if (isModEnabled('stock') && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER') && is_object($user) && !empty($user->fk_warehouse)) {
 		require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 		$useridwarehouse = $user->fk_warehouse;
-		$warehousestatic = new entrepot($db);
+		$warehousestatic = new Entrepot($db);
 		$warehousestatic->fetch($useridwarehouse);
 
 		$substitutionarray['__USER_WAREHOUSE_ID__'] = isset($warehousestatic->rowid) ? $warehousestatic->rowid : '';
