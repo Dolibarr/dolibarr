@@ -978,7 +978,7 @@ class Form
 	/**
 	 *  Return combo list of activated countries, into language of user
 	 *
-	 * @param string 		$selected 				Id or Code or Label of preselected country
+	 * @param int|string 	$selected 				Id or Code or Label of preselected country
 	 * @param string 		$htmlname 				Name of html select object
 	 * @param string 		$htmloption 			More html options on select object
 	 * @param integer 		$maxlength 				Max length for labels (0=no limit)
@@ -999,6 +999,8 @@ class Form
 
 		$langs->load("dict");
 
+		$selected = (string) $selected;
+
 		$out = '';
 		/** @var array<int,array{rowid:int,code_iso:string,code_iso3:string,label:string,favorite:string,eec:string}> $countryArray */
 		$countryArray = array();
@@ -1012,6 +1014,7 @@ class Form
 		//$sql.= " ORDER BY code ASC";
 
 		dol_syslog(get_class($this) . "::select_country", LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$out .= '<select id="select' . $htmlname . '" class="flat maxwidth200onsmartphone selectcountry' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '" ' . $htmloption . '>';
@@ -1232,6 +1235,7 @@ class Form
 			if (empty($hidetext)) {
 				print $langs->trans("Type").'...';
 			}
+
 			print '<select class="flat'.($morecss ? ' '.$morecss : '').'" id="select_' . $htmlname . '" name="' . $htmlname . '">';
 			if ($showempty) {
 				print '<option value="-1" class="opacitymedium"'.($useajaxcombo ? '' : ' disabled="disabled"');
@@ -1252,12 +1256,14 @@ class Form
 				print ' selected';
 			}
 			print '>' . $langs->trans("Product");
+			print '</option>';
 
 			print '<option value="1"';
 			if (1 == $selected || ($selected == -1 && getDolGlobalString('MAIN_FREE_PRODUCT_CHECKED_BY_DEFAULT') == 'service')) {
 				print ' selected';
 			}
 			print '>' . $langs->trans("Service");
+			print '</option>';
 
 			print '</select>';
 

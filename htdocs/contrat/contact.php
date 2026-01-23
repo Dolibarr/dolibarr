@@ -97,7 +97,7 @@ if (empty($reshook)) {
 		} else {
 			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 				$langs->load("errors");
-				$msg = $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
+				$mesg = $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
 			} else {
 				$mesg = $object->error;
 			}
@@ -216,7 +216,7 @@ if ($id > 0 || !empty($ref)) {
 		print '<table class="border tableforfield" width="100%">';
 
 
-		// Ligne info remises tiers
+		// Third-party discount info
 		print '<tr><td class="titlefield">'.$langs->trans('Discount').'</td><td colspan="3">';
 		if ($object->thirdparty->remise_percent) {
 			print $langs->trans("CompanyHasRelativeDiscount", $object->thirdparty->remise_percent);

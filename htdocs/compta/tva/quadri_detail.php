@@ -429,6 +429,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 	print '</tr>';
 
 	$action = "tvadetail";
+	$parameters = array();
 	$parameters["mode"] = $modetax;
 	$parameters["start"] = $date_start;
 	$parameters["end"] = $date_end;

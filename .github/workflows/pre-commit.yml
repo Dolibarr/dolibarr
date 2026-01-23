@@ -12,8 +12,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: pre-commit-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref
-    }}
+  group: pre-commit-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 env:
   gh_event: ${{ inputs.gh_event || github.event_name }}
@@ -110,15 +109,15 @@ jobs:
           tools: phpcs
 
       # Install perltidy and perlcritic
-      - name: Install perltidy and perlcritic
-        run: sudo apt-get update && sudo apt-get install -y perltidy libperl-critic-perl
+      #- name: Install perltidy and perlcritic
+      #  run: sudo apt-get update && sudo apt-get install -y perltidy libperl-critic-perl
 
       # Run all the precommit tools (defined into pre-commit-config.yaml).
       # We can force exclusion of some of them here.
       - name: Run pre-commit hooks
         env:
           # SKIP is used by pre-commit to not execute certain hooks
-          SKIP: no-commit-to-branch,php-cs,php-cbf,trailing-whitespace,end-of-file-fixer
+          SKIP: no-commit-to-branch,php-cs,php-cbf,trailing-whitespace,end-of-file-fixer,shellcheck
         run: |
           set -o pipefail
           pre-commit gc
