@@ -1460,7 +1460,7 @@ class CMailFile
 			dol_syslog("CMailFile::sendfile: ".$this->error, LOG_WARNING);
 		}
 
-		error_reporting($errorlevel); // Reactive niveau erreur origine
+		error_reporting($errorlevel); // Reactive original error level
 		return $res;
 	}
 
@@ -1903,7 +1903,7 @@ class CMailFile
 	 * Attach an image to email (mode = 'mail')
 	 *
 	 * @param	array<array{name:string,fullpath:string,content_type:string,cid:string,image_encoded:string}>	$images_list	Array of array image
-	 * @return	string					Chaine images encodees
+	 * @return	string					String with encoded images
 	 */
 	public function write_images($images_list)
 	{

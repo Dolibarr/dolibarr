@@ -1038,6 +1038,11 @@ class Holiday extends CommonObject
 
 		$sql .= " description= '".$this->db->escape($this->description)."',";
 
+		if (!empty($this->date_create)) {
+			$sql .= " date_create = '".$this->db->idate($this->date_create)."',";
+		} else {
+			$error++;
+		}
 		if (!empty($this->date_debut)) {
 			$sql .= " date_debut = '".$this->db->idate($this->date_debut)."',";
 		} else {

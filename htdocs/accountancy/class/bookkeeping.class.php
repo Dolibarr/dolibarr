@@ -2523,7 +2523,7 @@ class BookKeeping extends CommonObject
 		$alias = !empty($alias) && strpos($alias, '.') === false ? $alias . "." : $alias;
 
 		if (!isset(self::$can_modify_bookkeeping_sql_cached[$alias]) || $force) {
-			$result = $this->loadFiscalPeriods($force, 'active');
+			$result = $this->loadFiscalPeriods($force, 'active');	// This set $conf->cache['active_fiscal_period_cached']
 			if ($result < 0) {
 				return null;
 			}
@@ -2534,6 +2534,7 @@ class BookKeeping extends CommonObject
 				foreach ($conf->cache['active_fiscal_period_cached'] as $fiscal_period) {
 					$sql_list[$i] = "(";
 					$sql_list[$i] .= "'".$this->db->idate($fiscal_period['date_start']) . "' <= ".$this->db->sanitize($alias)."doc_date";
+					// @phan-suppress-next-line PhanTypeMismatchDimAssignment
 					if (!empty($fiscal_period['date_end'])) {
 						$sql_list[$i] .= " AND ";
 						$sql_list[$i] .= $this->db->sanitize($alias)."doc_date <= '" . $this->db->idate((int) $fiscal_period['date_end'])."'";
@@ -2596,6 +2597,7 @@ class BookKeeping extends CommonObject
 			}
 			if (!empty($conf->cache['active_fiscal_period_cached']) && is_array($conf->cache['active_fiscal_period_cached'])) {
 				foreach ($conf->cache['active_fiscal_period_cached'] as $fiscal_period) {
+					// @phan-suppress-next-line PhanTypeMismatchDimAssignment
 					if (!empty($fiscal_period['date_start']) && $fiscal_period['date_start'] <= $bookkeeping->doc_date && (empty($fiscal_period['date_end']) || $bookkeeping->doc_date <= $fiscal_period['date_end'])) {
 						return 1;
 					}
@@ -2694,6 +2696,7 @@ class BookKeeping extends CommonObject
 
 			if (!empty($conf->cache['active_fiscal_period_cached']) && is_array($conf->cache['active_fiscal_period_cached'])) {
 				foreach ($conf->cache['active_fiscal_period_cached'] as $fiscal_period) {
+					// @phan-suppress-next-line PhanTypeMismatchDimAssignment
 					if (!empty($fiscal_period['date_start']) && $fiscal_period['date_start'] <= $date && (empty($fiscal_period['date_end']) || $date <= $fiscal_period['date_end'])) {
 						return 1;
 					}

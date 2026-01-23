@@ -833,10 +833,7 @@ if ($action == 'create') {	// aaa
 	}
 	$htmltext .= '</span></i>';
 
-
-	$availablelink = $form->textwithpicto('<span class="opacitymedium hideonsmartphone small">'.$langs->trans("AvailableVariables").'</span>', $htmltext, 1, 'helpclickable', '', 0, 2, 'availvar');
-	//print '<a href="javascript:document_preview(\''.DOL_URL_ROOT.'/admin/modulehelp.php?id='.$objMod->numero.'\',\'text/html\',\''.dol_escape_js($langs->trans("Module")).'\')">'.img_picto($langs->trans("ClickToShowDescription"), $imginfo).'</a>';
-
+	$availablelink = '<span class="opacitymedium hideonsmartphone small">'.$form->textwithpicto($langs->trans("AvailableVariables"), $htmltext, 1, 'helpclickable', '', 0, 2, 'availvar').'</span>';
 
 	// Print mail form
 	print load_fiche_titre($langs->trans("NewMailing"), $availablelink, 'object_email');
@@ -1387,8 +1384,10 @@ if ($action == 'create') {	// aaa
 			}
 			$htmltext .= '</span></i>';
 
+			$availablelink = '<span class="opacitymedium hideonsmartphone">'.$form->textwithpicto($langs->trans("AvailableVariables"), $htmltext, 1, 'helpclickable', '', 0, 3, 'emailsubstitionhelp').'</span>';
+
 			// Print mail content
-			print load_fiche_titre($langs->trans("EMail"), $form->textwithpicto('<span class="opacitymedium hideonsmartphone">'.$langs->trans("AvailableVariables").'</span>', $htmltext, 1, 'helpclickable', '', 0, 3, 'emailsubstitionhelp'), 'generic');
+			print load_fiche_titre($langs->trans("EMail"), $availablelink, 'generic');
 
 			print dol_get_fiche_head([], '', '', -1);
 
@@ -1598,8 +1597,10 @@ if ($action == 'create') {	// aaa
 			}
 			$htmltext .= '</span></i>';
 
+			$availablelink = '<span class="opacitymedium small">'.$form->textwithpicto($langs->trans("AvailableVariables"), $htmltext, 1, 'helpclickable', '', 0, 2, 'emailsubstitionhelp').'</span>';
+
 			// Print mail content
-			print load_fiche_titre($langs->trans("EMail"), '<span class="opacitymedium small">'.$form->textwithpicto($langs->trans("AvailableVariables").'</span>', $htmltext, 1, 'help', '', 0, 2, 'emailsubstitionhelp'), 'generic');
+			print load_fiche_titre($langs->trans("EMail"), $availablelink, 'generic');
 
 			print dol_get_fiche_head([], '', '', -1);
 
