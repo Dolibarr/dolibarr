@@ -363,6 +363,9 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 	if ($moduleobject == 'interventions') {
 		$classfile = 'interventions';
 	}
+	if ($moduleobject == 'resources') {
+		$classfile = 'dolresources';
+	}
 
 	$dir_part_file = dol_buildpath('/'.$moduledirforclass.'/class/api_'.$classfile.'.class.php', 0, 2);
 
