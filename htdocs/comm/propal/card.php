@@ -2410,9 +2410,6 @@ if ($action == 'create') {
 		}
 
 		$newdatepropal = dol_mktime(0, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'), 'tzserver');
-		if (empty($newdatepropal)) {
-			$newdatepropal = dol_now();
-		}
 		// Date
 		print '<tr class="field_addprop"><td class="titlefieldcreate fieldrequired">'.$langs->trans('DatePropal').'</td><td class="valuefieldcreate">';
 		print img_picto('', 'action', 'class="pictofixedwidth"');
