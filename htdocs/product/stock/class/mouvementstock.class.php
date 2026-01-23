@@ -322,7 +322,7 @@ class MouvementStock extends CommonObject
 		// Only record into stock tables will be disabled by this (the rest like writing into lot table or movement of subproucts are done)
 		$movestock = 0;
 		$productChildrenNb = 0;
-		if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
+		if (getDolGlobalInt('PRODUIT_SOUSPRODUITS') && getDolGlobalInt('PRODUIT_SOUSPRODUITS_DISABLE_PARENT_STOCK_CHANGE')) {
 			$productChildrenNb = $product->hasFatherOrChild(1);
 		}
 		if (($product->type != Product::TYPE_SERVICE || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) && $productChildrenNb == 0) {

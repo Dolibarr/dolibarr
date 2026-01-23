@@ -901,6 +901,21 @@ if ($conf->use_javascript_ajax) {
 print "</td>\n";
 print "</tr>\n";
 
+if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
+	// Add option to disable stock movement on virtual product parents.
+	print '<tr class="oddeven">';
+	print '<td>'.$langs->trans("DisableStockChangeOfVirtualProductParent").'</td>';
+	print '<td class="right">';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('PRODUIT_SOUSPRODUITS_DISABLE_PARENT_STOCK_CHANGE');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("PRODUIT_SOUSPRODUITS_DISABLE_PARENT_STOCK_CHANGE", $arrval, getDolGlobalString('PRODUIT_SOUSPRODUITS_DISABLE_PARENT_STOCK_CHANGE'));
+	}
+	print "</td>\n";
+	print "</tr>\n";
+}
+
 print '</table>';
 print '</div>';
 
