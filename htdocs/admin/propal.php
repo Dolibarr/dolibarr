@@ -682,6 +682,12 @@ print '<td>';
 print ajax_constantonoff('PROPOSAL_ALLOW_ONLINESIGN', array(), null, 0, 0, 0, 2, 0, 1, '', '', 'inline-block', 0, $langs->transnoentitiesnoconv("WarningOnlineSignature"));
 print '</td></tr>';
 
+// Allow OnLine Sign
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("AutofillDateProposal").'</td>';
+print '<td>';
+print ajax_constantonoff('MAIN_AUTOFILL_DATE_PROPOSAL', array(), null, 0, 0, 0, 2, 0, 1, '', '', 'inline-block', 0, $langs->transnoentitiesnoconv("WarningOnlineSignature"));
+print '</td></tr>';
 
 // Notifications
 print '<tr class="oddeven">';

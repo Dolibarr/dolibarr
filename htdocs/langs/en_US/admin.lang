@@ -2545,6 +2545,7 @@ OptionXShouldBeEnabledInModuleY=Option "<b>%s</b>" should be enabled into module
 OptionXIsCorrectlyEnabledInModuleY=Option "<b>%s</b>" is enabled into module <b>%s</b>
 AllowOnLineSign=Allow On Line signature
 AllowOnLineSignDesc=A link to allow to sign online a bank document (mandate for direct debit for example) is available in list of payment modes of third parties for bank accounts
+AutofillDateProposal=Automatic filling of the proposal date
 AtBottomOfPage=At bottom of page
 FailedAuth=failed authentications
 MaxNumberOfFailedAuth=Max number of failed authentication in 24h to deny login.
