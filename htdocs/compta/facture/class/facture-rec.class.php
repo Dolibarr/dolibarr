@@ -1531,7 +1531,7 @@ class FactureRec extends CommonInvoice
 
 							// Select email template according to language of recipient
 							$template = $facturerec->fk_email_template;
-							$arraymessage = $formmail->getEMailTemplate($this->db, 'facture_send', $user, $outputlangs, (is_numeric($template) ? $template : 0), 1, (is_numeric($template) ? '' : $template));
+							$arraymessage = $formmail->getEMailTemplate($this->db, 'facture_send', $user, $outputlangs, (is_numeric($template) ? $template : 0), 1, (is_numeric($template) ? '' : $template), (($template != 0) ? -1 : 1));
 							if (is_numeric($arraymessage) && $arraymessage <= 0) {
 								$langs->load("errors");
 								$this->output .= $langs->trans('ErrorFailedToFindEmailTemplate', $template);
