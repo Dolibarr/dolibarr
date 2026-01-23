@@ -746,7 +746,7 @@ class pdf_cyan extends ModelePDFPropales
 							$this->printStdColumnContent($pdf, $curY, 'totalexcltax', $total_excl_tax);
 						}
 					}
-                                        
+
 					// Total with tax line (TTC)
 					if ($this->getColumnStatus('totalincltax')) {
 						if ($object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE && isset($pdf_sub_options['titleshowtotalincludingvatonpdf'])) {
