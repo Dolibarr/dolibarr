@@ -174,6 +174,12 @@ class BlockedLog
 	public $trackedevents = array();
 
 	/**
+	 * Array of controlled event codes
+	 * @var array<string,string|mixed>
+	 */
+	public $controlledevents = array();
+
+	/**
 	 * Array of tracked modules (key => label)
 	 * @var array<int|string,string>
 	 */
@@ -193,7 +199,7 @@ class BlockedLog
 
 
 	/**
-	 * Load list of tracked events into $this->trackedevents.
+	 * Load list of tracked and controlled events into $this->controlled, $this->trackedevents and $this->trackedmodules
 	 *
 	 * @return int<1,1>		Always 1
 	 */
@@ -201,10 +207,13 @@ class BlockedLog
 	{
 		global $langs;
 
+		$this->controlledevents = array();
 		$this->trackedevents = array();
 		$this->trackedmodules = array();
 
 		$sep = 0;
+
+		$this->controlledevents['BILL_MODIFY'] = array('id' => 'BILL_MODIFY', 'label' => 'logBILL_MODIFY');
 
 		$this->trackedmodules[0] = 'None';
 		if (isModEnabled('takepos')) {
@@ -1334,30 +1343,55 @@ class BlockedLog
 					$algo = 'sha256';
 					$hash_unique_id = dol_hash('dolibarr'.$conf->file->instance_unique_id, $algo);	// Note: if the global salt changes, this hash changes too so ping may be counted twice. We don't mind. It is for statistics and inventory purpose only.
 
-					$data = 'action=dolibarrtrack';
-					$data .= '&hash_algo=dol_hash-'.$algo;
+					$data = 'hash_algo=dol_hash-'.urlencode($algo);
 					$data .= '&hash_unique_id='.urlencode($hash_unique_id);
+					$data .= '&action=dolibarrtrack';
 					$data .= '&version='.(float) DOL_VERSION;
 					$data .= '&version_full='.urlencode(DOL_VERSION);
 					$data .= '&entity='.(int) $conf->entity;
+
+					$data .= '&lastrowid='.(int) $this->id;
+					$data .= '&lastsignature='.urlencode($this->signature);
+
+					/*
+					$data = array(
+						'action' => 'dolibarrtrack',
+						'hash_algo' => 'dol_hash-'.$algo,
+						'hash_unique_id' => $hash_unique_id,
+						'version' => (float) DOL_VERSION,
+						'version_full' => urlencode(DOL_VERSION),
+						'entity=' => (int) $conf->entity
+					);
+					$data['lastrowid'] = (int) $this->id;
+					$data['lastsignature'] = urlencode($this->signature);
+					*/
 
 					$addheaders = array();
 					$timeoutconnect = 1;
 					$timeoutresponse = 1;
 
-					$BLOCKEDLOG_RANDOMRANGE_FOR_TRACKING = min(10, getDolGlobalString('BLOCKEDLOG_RANDOMRANGE_FOR_TRACKING'));
-					$BLOCKEDLOG_RANDOMRANGE_FOR_TRACKING = 1;	// To force track at every call
-					$random = random_int(1, $BLOCKEDLOG_RANDOMRANGE_FOR_TRACKING);
+					// Probability will be between 1/10 by default and 1/1 if const BLOCKEDLOG_RANDOMRANGE_FOR_TRACKING is set to 1. Can't be lower than 1/10.
+					$BLOCKEDLOG_RANDOMRANGE_FOR_TRACKING = min(10, getDolGlobalInt('BLOCKEDLOG_RANDOMRANGE_FOR_TRACKING', 10));
+					$random = 1;
+					//$BLOCKEDLOG_RANDOMRANGE_FOR_TRACKING = 1;	// To force track at every call
+					if ($BLOCKEDLOG_RANDOMRANGE_FOR_TRACKING > 1) {
+						$random = random_int(1, (int) $BLOCKEDLOG_RANDOMRANGE_FOR_TRACKING);
+					}
 
 					if ($random == 1) {	// 1 chance on BLOCKEDLOG_RANDOMRANGE_FOR_TRACKING
 						dol_syslog(get_class($this)."::create Record is selected to be remotely pushed for tracking", LOG_DEBUG);
 
-						$tmpresult = getURLContent($url_for_ping, 'POST', $data, 1, $addheaders, 'https', 0, -1, $timeoutconnect, $timeoutresponse, array(), '_dolibarrtrack');
+						include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+						try {
+							$tmpresult = getURLContent($url_for_ping, 'POST', $data, 1, $addheaders, array('https'), 0, -1, $timeoutconnect, $timeoutresponse, array(), '_dolibarrtrack');
 
-						// Add a warning in log in case of error
-						if ($tmpresult['http_code'] != 200) {
-							$logerrormessage = 'Error: '.$tmpresult['http_code'].' '.$tmpresult['content'];
-							dol_syslog(get_class($this)."::create Error when pushing track info: ".$logerrormessage, LOG_WARNING);
+							// Add a warning in log in case of error
+							if ($tmpresult['http_code'] != 200) {
+								$logerrormessage = 'Error: '.$tmpresult['http_code'].' '.$tmpresult['content'];
+								dol_syslog(get_class($this)."::create Error when pushing track info: ".$logerrormessage, LOG_WARNING);
+							}
+						} catch (Exception $e) {
+							dol_syslog(get_class($this)."::create Error ".$e->getMessage(), LOG_ERR);
 						}
 					} else {
 						dol_syslog(get_class($this)."::create Record is NOT selected to be remotely pushed for tracking", LOG_DEBUG);

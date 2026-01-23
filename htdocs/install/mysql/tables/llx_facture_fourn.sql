@@ -75,6 +75,10 @@ create table llx_facture_fourn
   fk_mode_reglement		integer,                	   -- mode de reglement (CHQ, VIR, ...)
   date_lim_reglement 	date,                          -- date limite de reglement
 
+  payment_reference     varchar(25),                    -- SEPA and any other national or custom payment id (use case for this field is not clear)
+  fk_thirdparty_rib_id	integer NULL,					-- ID of thirdparty payment mode in llx_societe_rib
+  dispute_status		integer DEFAULT 0,				-- set to 1 if a dispute on a payment of invoice is open
+
   note_private			text,
   note_public			text,
   fk_incoterms          integer,						-- for incoterms

@@ -2,6 +2,7 @@
 ImportArea=Importer
 NewExport=Nouvelle exportation
 NewImport=Nouvelle importation
+ExportableDatas=Ensemble de données exportables
 ImportableDatas=Ensemble de données Importable
 SelectExportDataSet=Choisissez l'ensemble de données que vous souhaitez exporter ...
 SelectImportDataSet=Choisissez l'ensemble de données que vous souhaitez importer ...
@@ -46,6 +47,7 @@ TypeOfLineServiceOrProduct=Type de ligne (0 = produit, 1 = service)
 FileWithDataToImport=Fichier avec données à importer
 FileMustHaveOneOfFollowingFormat=Le fichier à importer doit avoir l'un des formats suivants
 ChooseFormatOfFileToImport=Choisissez le format de fichier à utiliser comme format de fichier d'importation en cliquant sur l'icône %s pour le sélectionner...
+ChooseFileToImport=Téléchargez le fichier puis cliquez sur l'icône %s pour sélectionner le fichier comme fichier d'importation source...
 SourceFileFormat=Format de fichier source
 NoFields=Pas de champs
 MoveField=Déplacer le numéro de colonne du champ %s
@@ -111,3 +113,4 @@ StocksWithBatch=Stocks et localisation (entrepôt) des produits avec numéro de 
 SelectImportFieldsSource =Choisissez les champs du fichier source que vous souhaitez importer et leur champ cible dans la base de données en choisissant les champs dans chaque case de sélection, ou sélectionnez un profil d'importation prédéfini :
 MandatoryTargetFieldsNotMapped=Certains champs cibles obligatoires ne sont pas mappés
 AllTargetMandatoryFieldsAreMapped=Tous les champs cibles nécessitant une valeur obligatoire sont mappés
+ErrorFileLinesReachEOF=Le fichier contient %s lignes. Cependant, nous atteignons la fin du fichier ou une ligne vide à l'enregistrement %s. Cela peut se produire lorsque certains enregistrements sont répartis sur plusieurs lignes et ne sont pas correctement délimités par le caractère de séparation, ou s'il existe une ligne sans aucune donnée dans tous les champs.

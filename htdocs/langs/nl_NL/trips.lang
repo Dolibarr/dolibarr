@@ -121,7 +121,6 @@ ValideTrip=Keur onkostenrapport goed
 ExpenseReportPayments=Betalingen van onkostendeclaraties
 TaxUndefinedForThisCategory = belasting is niet gedefinieerd voor deze Categorie
 errorComputeTtcOnMileageExpense=Fout bij het berekenen van de kilometerkosten
-ErrorOnlyDraftStatusCanBeDeletedInMassAction=Alleen elementen in de conceptstatus kunnen worden verwijderd tijdens massale actie
 
 ## Dictionary
 EX_BRE=Ontbijt

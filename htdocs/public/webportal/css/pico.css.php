@@ -2105,6 +2105,178 @@ details[open] > summary::after {
 	background-position: left center;
 }
 
+
+
+details.dropdown {
+	position: relative;
+	border-bottom: none
+}
+
+details.dropdown>a:after,details.dropdown>button:after,details.dropdown>summary:after {
+	display: block;
+	width: 1rem;
+	height: calc(1rem * var(--line-height,1.5));
+	margin-inline-start:.25rem;float: right;
+	transform: rotate(0) translate(.2rem);
+	background-image: var(--icon-chevron);
+	background-position: right center;
+	background-size: 1rem auto;
+	background-repeat: no-repeat;
+	content: ""
+}
+
+nav details.dropdown {
+	margin-bottom: 0
+}
+
+details.dropdown>summary:not([role]) {
+	height: calc(1rem * var(--line-height) + var(--form-element-spacing-vertical) * 2 + var(--border-width) * 2);
+	padding: var(--form-element-spacing-vertical) var(--form-element-spacing-horizontal);
+	border: var(--border-width) solid var(--form-element-border-color);
+	border-radius: var(--border-radius);
+	background-color: var(--form-element-background-color);
+	color: var(--form-element-placeholder-color);
+	line-height: inherit;
+	cursor: pointer;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	user-select: none;
+	transition: background-color var(--transition),border-color var(--transition),color var(--transition),box-shadow var(--transition)
+}
+
+details.dropdown>summary:not([role]):active,details.dropdown>summary:not([role]):focus {
+	border-color: var(--form-element-active-border-color);
+	background-color: var(--form-element-active-background-color)
+}
+
+details.dropdown>summary:not([role]):focus {
+	box-shadow: 0 0 0 var(--outline-width) var(--form-element-focus-color)
+}
+
+details.dropdown>summary:not([role]):focus-visible {
+	outline: 0
+}
+
+details.dropdown>summary:not([role])[aria-invalid=false] {
+	--form-element-border-color: var(--form-element-valid-border-color);
+	--form-element-active-border-color: var(--form-element-valid-focus-color);
+	--form-element-focus-color: var(--form-element-valid-focus-color)
+}
+
+details.dropdown>summary:not([role])[aria-invalid=true] {
+	--form-element-border-color: var(--form-element-invalid-border-color);
+	--form-element-active-border-color: var(--form-element-invalid-focus-color);
+	--form-element-focus-color: var(--form-element-invalid-focus-color)
+}
+
+nav details.dropdown {
+	display: inline;
+	margin: calc(var(--nav-element-spacing-vertical) * -1) 0
+}
+
+nav details.dropdown>summary:after {
+	transform: rotate(0) translate(0)
+}
+
+nav details.dropdown>summary:not([role]) {
+	height: calc(1rem * var(--line-height) + var(--nav-link-spacing-vertical) * 2);
+	padding: calc(var(--nav-link-spacing-vertical) - var(--border-width) * 2) var(--nav-link-spacing-horizontal)
+}
+
+nav details.dropdown>summary:not([role]):focus-visible {
+	box-shadow: 0 0 0 var(--outline-width) var(--primary-focus)
+}
+
+details.dropdown>summary+ul {
+	display: flex;
+	z-index: 99;
+	position: absolute;
+	left: 0;
+	flex-direction: column;
+	width: 100%;
+	min-width: -moz-fit-content;
+	min-width: fit-content;
+	margin: 0;
+	margin-top: var(--outline-width);
+	padding: 0;
+	border: var(--border-width) solid var(--dropdown-border-color);
+	border-radius: var(--border-radius);
+	background-color: var(--dropdown-background-color);
+	box-shadow: var(--dropdown-box-shadow);
+	color: var(--dropdown-color);
+	white-space: nowrap;
+	opacity: 0;
+	transition: opacity var(--transition),transform 0s ease-in-out 1s
+}
+
+details.dropdown>summary+ul[dir=rtl] {
+	right: 0;
+	left: auto
+}
+
+:where(details.dropdown>summary+ul li) {
+	width: 100%;
+	margin-bottom: 0;
+	padding: calc(var(--form-element-spacing-vertical) * .5) var(--form-element-spacing-horizontal);
+	list-style: none
+}
+
+details.dropdown>summary+ul li:first-of-type {
+	margin-top: calc(var(--form-element-spacing-vertical) * .5)
+}
+
+details.dropdown>summary+ul li:last-of-type {
+	margin-bottom: calc(var(--form-element-spacing-vertical) * .5)
+}
+
+details.dropdown>summary+ul li a {
+	display: block;
+	margin: calc(var(--form-element-spacing-vertical) * -.5) calc(var(--form-element-spacing-horizontal) * -1);
+	padding: calc(var(--form-element-spacing-vertical) * .5) var(--form-element-spacing-horizontal);
+	overflow: hidden;
+	border-radius: 0;
+	color: var(--dropdown-color);
+	text-decoration: none;
+	text-overflow: ellipsis
+}
+
+details.dropdown>summary+ul li a:active,details.dropdown>summary+ul li a:focus,details.dropdown>summary+ul li a:focus-visible,details.dropdown>summary+ul li a:hover,details.dropdown>summary+ul li a[aria-current]:not([aria-current=false]) {
+	background-color: var(--dropdown-hover-background-color)
+}
+
+details.dropdown>summary+ul li label {
+	width: 100%
+}
+
+details.dropdown>summary+ul li:has(label):hover {
+	background-color: var(--dropdown-hover-background-color)
+}
+
+details.dropdown[open]>summary {
+	margin-bottom: 0
+}
+
+details.dropdown[open]>summary+ul {
+	transform: scaleY(1);
+	opacity: 1;
+	transition: opacity var(--transition),transform 0s ease-in-out 0s
+}
+
+details.dropdown[open]>summary:before {
+	display: block;
+	z-index: 1;
+	position: fixed;
+	width: 100vw;
+	height: 100vh;
+	inset: 0;
+	background: 0 0;
+	content: "";
+	cursor: default
+}
+
+label>details.dropdown {
+	margin-top: calc(var(--spacing) * .25)
+}
 /**
  * Card (<article>)
  */

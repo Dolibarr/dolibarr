@@ -101,7 +101,7 @@ div.tabsAction > div.divButAction > a.butActionRefused,
 div.tabsAction > .dropdown > .dropdown-toggle {
 	margin-bottom: 1.4em !important;
 	margin-right: 0px !important;
-	box-shadow: 1px 1px 5px #d0d0d0;
+	/* box-shadow: 1px 1px 5px #d0d0d0; */
 }
 
 .divButAction {

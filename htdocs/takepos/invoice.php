@@ -1540,7 +1540,10 @@ function PrintBox(id, action) {
 }
 
 /* Open the popup of the receipt to allow printing */
-function Print(id, gift){
+function Print(id, gift) {
+
+
+
 	console.log("Call Print() to generate the receipt.");
 	$.colorbox({href:"receipt.php?facid="+id+"&gift="+gift, width:"40%", height:"90%", transition:"none", iframe:"true", title:'<?php echo dol_escape_js($langs->trans("PrintTicket")); ?>'});
 	return true;

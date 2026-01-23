@@ -187,6 +187,7 @@ abstract class CommonClassTest extends TestCase
 
 
 		if ($nbLinesToShow) {
+			print "\n";
 			print "## We try to output the last ".$nbLinesToShow." lines of the log file ".basename($this->logfile)." (that has ".$totalLines." lines)".PHP_EOL;
 			$newLines = count($last_lines);
 			if ($newLines > 0) {
@@ -201,6 +202,28 @@ abstract class CommonClassTest extends TestCase
 			}
 		}
 		print "##[endgroup]".PHP_EOL;
+
+		// Print last line of file /var/log/apache2/travis_error_log
+		$logFile = '/var/log/apache2/travis_error_log';
+
+		// Check if the file exists and is readable
+		if (file_exists($logFile) && is_readable($logFile)) {
+			// Read the file into an array
+			$lines = file($logFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+
+			// Get the last 5 lines
+			$lastFiveLines = array_slice($lines, -10);
+
+			// Print the last 5 lines
+			print "\n";
+			echo "Last 5 lines of $logFile:\n";
+			foreach ($lastFiveLines as $line) {
+				echo $line . "\n";
+			}
+		} else {
+			echo "Error: File $logFile does not exist or is not readable.\n";
+		}
+
 
 		parent::onNotSuccessfulTest($t);
 	}
