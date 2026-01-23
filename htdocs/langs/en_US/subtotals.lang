@@ -31,6 +31,7 @@ SubtotalLineDesc=Line description
 SubtotalLineLevel=Line level
 ShowUPOnPDF=Show unit price on PDF
 ShowTotalExludingVATOnPDF=Show the total excluding VAT on the PDF
+ShowTotalIncludingVATOnPDF=Show the total including VAT on the PDF
 ForcePageBreak=Force page break before title
 NoTitleError=You have no title line or they already all have a corresponding subtotal line
 CorrespondingTitleLine=Corresponding title line

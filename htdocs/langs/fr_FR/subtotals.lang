@@ -31,6 +31,7 @@ SubtotalLineDesc=Description de la ligne
 SubtotalLineLevel=Niveau de ligne
 ShowUPOnPDF=Afficher le prix unitaire sur le PDF
 ShowTotalExludingVATOnPDF=Afficher le total hors TVA sur le PDF
+ShowTotalIncludingVATOnPDF=Afficher le total avec TVA sur le PDF
 ForcePageBreak=Forcer le saut de page avant le titre
 NoTitleError=Vous n'avez pas de ligne de titre ou ils ont déjà tous une ligne de sous-total correspondante
 CorrespondingTitleLine=Ligne de titre correspondante

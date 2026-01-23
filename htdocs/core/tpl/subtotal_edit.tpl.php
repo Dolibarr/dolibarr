@@ -39,14 +39,18 @@ $sub_options = $line->extraparams["subtotal"] ?? array();
 
 $titleshowuponpdf = !empty($sub_options['titleshowuponpdf']);
 $titleshowtotalexludingvatonpdf = !empty($sub_options['titleshowtotalexludingvatonpdf']);
+$titleshowtotalincludingvatonpdf = !empty($sub_options['titleshowtotalincludingvatonpdf']);
 $titleforcepagebreak = !empty($sub_options['titleforcepagebreak']);
 $subtotalshowtotalexludingvatonpdf = !empty($sub_options['subtotalshowtotalexludingvatonpdf']);
+$subtotalshowtotalincludingvatonpdf = !empty($sub_options['subtotalshowtotalincludingvatonpdf']);
 
 $line_options = array(
 	'titleshowuponpdf' => array('type' => array('title'), 'value' => 'on', 'checked' => $titleshowuponpdf, 'trans_key' => 'ShowUPOnPDF'),
 	'titleshowtotalexludingvatonpdf' => array('type' => array('title'), 'value' => 'on', 'checked' => $titleshowtotalexludingvatonpdf, 'trans_key' => 'ShowTotalExludingVATOnPDF'),
+        'titleshowtotalincludingvatonpdf' => array('type' => array('title'), 'value' => 'on', 'checked' => $titleshowtotalincludingvatonpdf, 'trans_key' => 'ShowTotalIncludingVATOnPDF'),
 	'titleforcepagebreak' => array('type' => array('title'), 'value' => 'on', 'checked' => $titleforcepagebreak, 'trans_key' => 'ForcePageBreak'),
 	'subtotalshowtotalexludingvatonpdf' => array('type' => array('subtotal'), 'value' => 'on', 'checked' => $subtotalshowtotalexludingvatonpdf, 'trans_key' => 'ShowTotalExludingVATOnPDF'),
+        'subtotalshowtotalincludingvatonpdf' => array('type' => array('subtotal'), 'value' => 'on', 'checked' => $subtotalshowtotalincludingvatonpdf, 'trans_key' => 'ShowTotalIncludingVATOnPDF'),
 );
 
 // Line type

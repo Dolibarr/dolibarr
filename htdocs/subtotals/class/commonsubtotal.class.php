@@ -42,13 +42,13 @@ trait CommonSubtotal
 	 * @var array<string>
 	 * Options for subtotals module title lines
 	 */
-	public static $TITLE_OPTIONS = ['titleshowuponpdf', 'titleshowtotalexludingvatonpdf', 'titleforcepagebreak'];
+	public static $TITLE_OPTIONS = ['titleshowuponpdf', 'titleshowtotalexludingvatonpdf', 'titleshowtotalincludingvatonpdf', 'titleforcepagebreak'];
 
 	/**
 	 * @var array<string>
 	 * Options for subtotals module subtotal lines
 	 */
-	public static $SUBTOTAL_OPTIONS = ['subtotalshowtotalexludingvatonpdf'];
+	public static $SUBTOTAL_OPTIONS = ['subtotalshowtotalexludingvatonpdf', 'subtotalshowtotalincludingvatonpdf'];
 
 	/**
 	 * @var string[] element of allowed module class
@@ -766,6 +766,34 @@ trait CommonSubtotal
 		}
 		return price($final_amount);
 	}
+        
+        /**
+	 * Return the total_ttc of lines that are above the current line (excluded) and that are not a subtotal line
+	 * until a title line of the same level is found
+	 *
+	 * @param object	$line	Line that needs the subtotal amount.
+	 * @return string	$total_ttc
+	 *
+	 * @phan-suppress PhanUndeclaredProperty
+	 */
+	public function getSubtotalLineAmountVAT($line)
+	{
+		$final_amount = 0;
+		for ($i = $line->rang-1; $i > 0; $i--) {
+			if (is_null($this->lines[$i-1]) || $this->lines[$i-1]->rang >= $line->rang) {
+				continue;
+			}
+			if ($this->lines[$i-1]->special_code == SUBTOTALS_SPECIAL_CODE && $this->lines[$i-1]->qty > 0) {
+				if ($this->lines[$i-1]->qty <= abs($line->qty)) {
+					return price($final_amount);
+				}
+			} else {
+				$final_amount += $this->lines[$i-1]->total_ttc;
+			}
+		}
+		return price($final_amount);
+	}
+
 
 	/**
 	 * Return the multicurrency_total_ht of lines that are above the current line (excluded) and that are not a subtotal line
@@ -789,6 +817,33 @@ trait CommonSubtotal
 				}
 			} else {
 				$final_amount += $this->lines[$i-1]->multicurrency_total_ht;
+			}
+		}
+		return price($final_amount);
+	}
+        
+        /**
+	 * Return the multicurrency_total_ttc of lines that are above the current line (excluded) and that are not a subtotal line
+	 * until a title line of the same level is found
+	 *
+	 * @param object	$line	Line that needs the subtotal amount with multicurrency mod activated.
+	 * @return string	$multicurrency_total_ttc
+	 *
+	 * @phan-suppress PhanUndeclaredProperty
+	 */
+	public function getSubtotalLineMulticurrencyAmountVAT($line)
+	{
+		$final_amount = 0;
+		for ($i = $line->rang-1; $i > 0; $i--) {
+			if (is_null($this->lines[$i-1]) || $this->lines[$i-1]->rang >= $line->rang) {
+				continue;
+			}
+			if ($this->lines[$i-1]->special_code == SUBTOTALS_SPECIAL_CODE && $this->lines[$i-1]->qty>0) {
+				if ($this->lines[$i-1]->qty <= abs($line->qty)) {
+					return price($final_amount);
+				}
+			} else {
+				$final_amount += $this->lines[$i-1]->multicurrency_total_ttc;
 			}
 		}
 		return price($final_amount);
