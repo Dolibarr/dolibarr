@@ -2264,7 +2264,7 @@ if ($action == 'create') {
 
 			$cond_reglement_id  = (!empty($objectsrc->cond_reglement_id) ? $objectsrc->cond_reglement_id : (!empty($soc->cond_reglement_id) ? $soc->cond_reglement_id : 0));
 			$mode_reglement_id  = (!empty($objectsrc->mode_reglement_id) ? $objectsrc->mode_reglement_id : (!empty($soc->mode_reglement_id) ? $soc->mode_reglement_id : 0));
-			$warehouse_id      = (!empty($objectsrc->warehouse_id) ? $objectsrc->warehouse_id : (!empty($soc->warehouse_id) ? $soc->warehouse_id : 0));
+			$warehouse_id      = (!empty($objectsrc->warehouse_id) ? $objectsrc->warehouse_id : (!empty($soc->warehouse_id) ? $soc->warehouse_id : -1));
 
 			// Replicate extrafields
 			$objectsrc->fetch_optionals();
@@ -2288,7 +2288,7 @@ if ($action == 'create') {
 		$mode_reglement_id  = empty($soc->mode_reglement_id) ? $mode_reglement_id : $soc->mode_reglement_id;
 		$fk_account         = empty($soc->fk_account) ? $fk_account : $soc->fk_account;
 		$shipping_method_id = $soc->shipping_method_id;
-		// $warehouse_id       = $soc->fk_warehouse;
+		$warehouse_id       = !empty($soc->fk_warehouse) ? $soc->fk_warehouse : $warehouse_id;
 		$remise_percent     = $soc->remise_percent;
 
 		if (isModEnabled("multicurrency") && !empty($soc->multicurrency_code)) {
@@ -2316,7 +2316,7 @@ if ($action == 'create') {
 	if ($soc->fk_warehouse > 0) {
 		$warehouse_id = $soc->fk_warehouse;
 	}
-	if (isModEnabled('stock') && empty($warehouse_id) && getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_PROPAL')) {
+	if (isModEnabled('stock') && $warehouse_id < 0 && getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_PROPAL')) {
 		if (empty($object->warehouse_id) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE')) {
 			$warehouse_id = getDolGlobalString('MAIN_DEFAULT_WAREHOUSE');
 		}
