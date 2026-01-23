@@ -4217,6 +4217,7 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/core/modules/modCommercial.class.php',
 		'/core/modules/modProduit.class.php',
 		'/core/modules/modSkype.class.php',
+		'/core/modules/modactivite.class.php',		// A file from external module that should not be here
 		'/core/triggers/interface_modWebcalendar_Webcalsynchro.class.php',
 		'/core/triggers/interface_modCommande_Ecotax.class.php',
 		'/core/triggers/interface_modCommande_fraisport.class.php',
@@ -4244,6 +4245,9 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/core/modules/mailings/peche.modules.php',
 		'/core/modules/mailings/poire.modules.php',
 		'/core/modules/mailings/kiwi.modules.php',
+		'/core/modules/syslog/mod_syslog_chromephp.php',
+		'/core/modules/syslog/mod_syslog_firephp.php',
+		'/core/modules/syslog/logHandlerInterface.php',
 		'/core/boxes/box_members.php',
 
 		'/includes/restler/framework/Luracast/Restler/Data/Object.php',

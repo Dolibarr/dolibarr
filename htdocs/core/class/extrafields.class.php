@@ -1622,6 +1622,7 @@ class ExtraFields
 								if (is_array($fields_label) && count($fields_label) > 1) {
 									$notrans = true;
 									foreach ($fields_label as $field_toshow) {
+										$field_toshow = preg_replace('/^.*\./', '', $field_toshow);
 										$labeltoshow .= $obj->$field_toshow.' ';
 									}
 								} else {
@@ -2216,6 +2217,7 @@ class ExtraFields
 					if (is_array($fields_label) && count($fields_label) > 1) {
 						foreach ($fields_label as $field_toshow) {
 							$translabel = '';
+							$field_toshow = preg_replace('/^.*\./', '', $field_toshow);
 							if (!empty($obj->$field_toshow)) {
 								$translabel = $outputlangs->trans($obj->$field_toshow);
 
