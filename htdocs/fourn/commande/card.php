@@ -1372,111 +1372,114 @@ if (empty($reshook)) {
 							$num = count($lines);
 
 							for ($i = 0; $i < $num; $i++) {
-								if (empty($lines[$i]->subprice) || $lines[$i]->qty < 0 || !in_array($lines[$i]->id, $selectedLines)) {
+								if (
+									empty($lines[$i]->subprice)
+									|| $lines[$i]->qty < 0
+									|| !in_array($lines[$i]->id, $selectedLines)
+									|| $lines[$i]->special_code == SUBTOTALS_SPECIAL_CODE
+								) {
 									continue;
 								}
 
 								$label = (!empty($lines[$i]->label) ? $lines[$i]->label : '');
 								$desc = (!empty($lines[$i]->desc) ? $lines[$i]->desc : '');
 								$product_type = (!empty($lines[$i]->product_type) ? $lines[$i]->product_type : 0);
-								if ($lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE) {	
-									// Reset fk_parent_line for no child products and special product
-									if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9) {
-										$fk_parent_line = 0;
-									}
+								// Reset fk_parent_line for no child products and special product
+								if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9) {
+									$fk_parent_line = 0;
+								}
 
-									// Extrafields
-									if (method_exists($lines[$i], 'fetch_optionals')) { 							// For avoid conflicts if
-										$lines[$i]->fetch_optionals();
-										$array_option = $lines[$i]->array_options;
-									} else {
-										$array_option = array();
-									}
+								// Extrafields
+								if (method_exists($lines[$i], 'fetch_optionals')) { 							// For avoid conflicts if
+									$lines[$i]->fetch_optionals();
+									$array_option = $lines[$i]->array_options;
+								} else {
+									$array_option = array();
+								}
 
-									$ref_supplier = '';
-									$product_fourn_price_id = 0;
-									if ($origin == "commande") {
-										$productsupplier = new ProductFournisseur($db);
-										$result = $productsupplier->find_min_price_product_fournisseur($lines[$i]->fk_product, $lines[$i]->qty, $object->socid);
-										$lines[$i]->subprice = 0;
-										if ($result > 0) {
-											$ref_supplier = $productsupplier->ref_supplier;
-											$product_fourn_price_id = $productsupplier->product_fourn_price_id;
-											// we need supplier subprice
-											foreach ($srcobject->lines as $li) {
-												$sql = 'SELECT price, unitprice, tva_tx, remise_percent, entity, ref_fourn';
-												$sql .= ' FROM '.MAIN_DB_PREFIX.'product_fournisseur_price';
-												$sql .= ' WHERE fk_product = '.((int) $li->fk_product);
-												$sql .= ' AND entity IN ('.getEntity('product_fournisseur_price').')';
-												$sql .= ' AND fk_soc = '.((int) $object->socid);
-												$sql .= ' ORDER BY unitprice ASC';
+								$ref_supplier = '';
+								$product_fourn_price_id = 0;
+								if ($origin == "commande") {
+									$productsupplier = new ProductFournisseur($db);
+									$result = $productsupplier->find_min_price_product_fournisseur($lines[$i]->fk_product, $lines[$i]->qty, $object->socid);
+									$lines[$i]->subprice = 0;
+									if ($result > 0) {
+										$ref_supplier = $productsupplier->ref_supplier;
+										$product_fourn_price_id = $productsupplier->product_fourn_price_id;
+										// we need supplier subprice
+										foreach ($srcobject->lines as $li) {
+											$sql = 'SELECT price, unitprice, tva_tx, remise_percent, entity, ref_fourn';
+											$sql .= ' FROM '.MAIN_DB_PREFIX.'product_fournisseur_price';
+											$sql .= ' WHERE fk_product = '.((int) $li->fk_product);
+											$sql .= ' AND entity IN ('.getEntity('product_fournisseur_price').')';
+											$sql .= ' AND fk_soc = '.((int) $object->socid);
+											$sql .= ' ORDER BY unitprice ASC';
 
-												$resql = $db->query($sql);
-												if ($resql) {
-													$num_row = $db->num_rows($resql);
-													if (empty($num_row)) {
-														$li->remise_percent = 0;
-													} else {
-														$obj = $db->fetch_object($resql);
-														$li->subprice = $obj->unitprice;
-														$li->remise_percent = $obj->remise_percent;
-													}
+											$resql = $db->query($sql);
+											if ($resql) {
+												$num_row = $db->num_rows($resql);
+												if (empty($num_row)) {
+													$li->remise_percent = 0;
 												} else {
-													dol_print_error($db);
+													$obj = $db->fetch_object($resql);
+													$li->subprice = $obj->unitprice;
+													$li->remise_percent = $obj->remise_percent;
 												}
-												$db->free($resql);
+											} else {
+												dol_print_error($db);
 											}
+											$db->free($resql);
 										}
-									} else {
-										$ref_supplier = $lines[$i]->ref_fourn;
-										$product_fourn_price_id = 0;
 									}
+								} else {
+									$ref_supplier = $lines[$i]->ref_fourn;
+									$product_fourn_price_id = 0;
+								}
 
-									$tva_tx = $lines[$i]->tva_tx;
+								$tva_tx = $lines[$i]->tva_tx;
 
-									if ($origin == "commande") {
-										$soc = new Societe($db);
-										$soc->fetch($socid);
-										$tva_tx = get_default_tva($soc, $mysoc, $lines[$i]->fk_product, $product_fourn_price_id);
-									}
+								if ($origin == "commande") {
+									$soc = new Societe($db);
+									$soc->fetch($socid);
+									$tva_tx = get_default_tva($soc, $mysoc, $lines[$i]->fk_product, $product_fourn_price_id);
+								}
 
-									$result = $object->addline(
-										$desc,
-										$lines[$i]->subprice,
-										$lines[$i]->qty,
-										$tva_tx,
-										$lines[$i]->localtax1_tx,
-										$lines[$i]->localtax2_tx,
-										$lines[$i]->fk_product > 0 ? $lines[$i]->fk_product : 0,
-										$product_fourn_price_id,
-										$ref_supplier,
-										$lines[$i]->remise_percent,
-										'HT',
-										0,
-										$lines[$i]->product_type,
-										0,
-										0,
-										null,
-										null,
-										$array_option,
-										$lines[$i]->fk_unit,
-										0,
-										$element,
-										!empty($lines[$i]->id) ? $lines[$i]->id : $lines[$i]->rowid,
-										-1,
-										$lines[$i]->special_code
-									);
+								$result = $object->addline(
+									$desc,
+									$lines[$i]->subprice,
+									$lines[$i]->qty,
+									$tva_tx,
+									$lines[$i]->localtax1_tx,
+									$lines[$i]->localtax2_tx,
+									$lines[$i]->fk_product > 0 ? $lines[$i]->fk_product : 0,
+									$product_fourn_price_id,
+									$ref_supplier,
+									$lines[$i]->remise_percent,
+									'HT',
+									0,
+									$lines[$i]->product_type,
+									0,
+									0,
+									null,
+									null,
+									$array_option,
+									$lines[$i]->fk_unit,
+									0,
+									$element,
+									!empty($lines[$i]->id) ? $lines[$i]->id : $lines[$i]->rowid,
+									-1,
+									$lines[$i]->special_code
+								);
 
-									if ($result < 0) {
-										setEventMessages($object->error, $object->errors, 'errors');
-										$error++;
-										break;
-									}
+								if ($result < 0) {
+									setEventMessages($object->error, $object->errors, 'errors');
+									$error++;
+									break;
+								}
 
-									// Defined the new fk_parent_line
-									if ($result > 0 && $lines[$i]->product_type == 9) {
-										$fk_parent_line = $result;
-									}
+								// Defined the new fk_parent_line
+								if ($result > 0 && $lines[$i]->product_type == 9) {
+									$fk_parent_line = $result;
 								}
 							}
 

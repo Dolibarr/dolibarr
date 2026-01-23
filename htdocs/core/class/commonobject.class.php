@@ -5742,7 +5742,7 @@ abstract class CommonObject
 		$this->tpl['strike'] = 0;
 		if ($restrictlist == 'services' && $line->product_type != Product::TYPE_SERVICE) {
 			$this->tpl['strike'] = 1;
-		}elseif ($line->special_code == SUBTOTALS_SPECIAL_CODE) {
+		} elseif ($line->special_code == SUBTOTALS_SPECIAL_CODE) {
 			$this->tpl['strike'] = 1;
 		}
 
