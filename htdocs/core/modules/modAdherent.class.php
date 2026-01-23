@@ -207,11 +207,11 @@ class modAdherent extends DolibarrModules
 		$r = 0;
 
 		// $this->rights[$r][0]     Id permission (unique tous modules confondus)
-		// $this->rights[$r][1]     Libelle par default si traduction de cle "PermissionXXX" non trouvee (XXX = Id permission)
-		// $this->rights[$r][2]     Non utilise
-		// $this->rights[$r][3]     1=Permis par default, 0=Non permis par default
-		// $this->rights[$r][4]     Niveau 1 pour nommer permission dans code
-		// $this->rights[$r][5]     Niveau 2 pour nommer permission dans code
+		// $this->rights[$r][1]     Default label if translation of key “PermissionXXX” not found (XXX = Permission ID)
+		// $this->rights[$r][2]     Not used
+		// $this->rights[$r][3]     1=Allowed by default, 0=Not allowed by default
+		// $this->rights[$r][4]     Level 1 for naming permission in code
+		// $this->rights[$r][5]     Level 2 to name permission in code
 
 		$r++;
 		$this->rights[$r][0] = 71;
