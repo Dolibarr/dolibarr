@@ -299,7 +299,7 @@ if (empty($reshook)) {
 			}
 
 			if ($objecttmp->id > 0) {
-				$res = $objecttmp->add_object_linked($objecttmp->origin, $id_sending);
+				$res = $objecttmp->add_object_linked($objecttmp->origin_type, $id_sending);
 
 				if ($res == 0) {
 					$errors[] = $expd->ref.' : '.$langs->trans($objecttmp->errors[0]);
