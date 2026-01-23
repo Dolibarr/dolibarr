@@ -586,7 +586,7 @@ class pdf_cyan extends ModelePDFPropales
 							} elseif (isset($pdf_sub_options['titleshowtotalexludingvatonpdf']) && abs($level) <= $pdf_sub_options['titleshowtotalexludingvatonpdf']) {
 								unset($pdf_sub_options['titleshowtotalexludingvatonpdf']);
 							}
-                                                        if (isset($sub_options['titleshowtotalincludingvatonpdf'])) {
+							if (isset($sub_options['titleshowtotalincludingvatonpdf'])) {
 								$pdf_sub_options['titleshowtotalincludingvatonpdf'] = isset($pdf_sub_options['titleshowtotalincludingvatonpdf']) && $pdf_sub_options['titleshowtotalincludingvatonpdf'] < $level ? $pdf_sub_options['titleshowtotalincludingvatonpdf'] : $level;
 							} elseif (isset($pdf_sub_options['titleshowtotalincludingvatonpdf']) && abs($level) <= $pdf_sub_options['titleshowtotalincludingvatonpdf']) {
 								unset($pdf_sub_options['titleshowtotalincludingvatonpdf']);
@@ -598,7 +598,7 @@ class pdf_cyan extends ModelePDFPropales
 							if (isset($pdf_sub_options['titleshowtotalexludingvatonpdf']) && abs($level) <= $pdf_sub_options['titleshowtotalexludingvatonpdf']) {
 								unset($pdf_sub_options['titleshowtotalexludingvatonpdf']);
 							}
-                                                        if (isset($pdf_sub_options['titleshowtotalincludingvatonpdf']) && abs($level) <= $pdf_sub_options['titleshowtotalincludingvatonpdf']) {
+							if (isset($pdf_sub_options['titleshowtotalincludingvatonpdf']) && abs($level) <= $pdf_sub_options['titleshowtotalincludingvatonpdf']) {
 								unset($pdf_sub_options['titleshowtotalincludingvatonpdf']);
 							}
 						}
@@ -749,17 +749,17 @@ class pdf_cyan extends ModelePDFPropales
                                         
 					// Total with tax line (TTC)
 					if ($this->getColumnStatus('totalincltax')) {
-                                                if ($object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE && isset($pdf_sub_options['titleshowtotalincludingvatonpdf'])) {
-                                                        $total_incl_tax = pdf_getlinetotalwithtax($object, $i, $outputlangs, $hidedetails);
-                                                        $this->printStdColumnContent($pdf, $curY, 'totalincltax', $total_incl_tax);
-                                                } elseif ($object->lines[$i]->qty < 0 && isset($sub_options['subtotalshowtotalincludingvatonpdf'])) {
-                                                        if (isModEnabled('multicurrency') && $object->multicurrency_code != $conf->currency) {
+						if ($object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE && isset($pdf_sub_options['titleshowtotalincludingvatonpdf'])) {
+							$total_incl_tax = pdf_getlinetotalwithtax($object, $i, $outputlangs, $hidedetails);
+							$this->printStdColumnContent($pdf, $curY, 'totalincltax', $total_incl_tax);
+						} elseif ($object->lines[$i]->qty < 0 && isset($sub_options['subtotalshowtotalincludingvatonpdf'])) {
+							if (isModEnabled('multicurrency') && $object->multicurrency_code != $conf->currency) {
 								$total_incl_tax = $object->getSubtotalLineMulticurrencyAmountVAT($object->lines[$i]);
 							} else {
 								$total_incl_tax = $object->getSubtotalLineAmountVAT($object->lines[$i]);
 							}
-                                                        $this->printStdColumnContent($pdf, $curY, 'totalincltax', $total_incl_tax);
-                                                }
+							$this->printStdColumnContent($pdf, $curY, 'totalincltax', $total_incl_tax);
+						}
 					}
 
 					// Extrafields
