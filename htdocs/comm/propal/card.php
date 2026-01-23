@@ -161,7 +161,7 @@ if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->tabl
 
 $price_base_type = null;
 $shipping_method_id = null;
-$warehouse_id = null;
+$warehouse_id = -1;
 
 // Security check
 if (!empty($user->socid)) {
