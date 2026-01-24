@@ -529,7 +529,7 @@ if ($action == 'new') {
 		print '<input type="hidden" name="type" value="'.$type.'">';
 		print '<input type="hidden" name="accountid" value="'.$bid.'">';
 
-		print_fiche_titre($account_label, '', '');
+		print load_fiche_titre($account_label, '', '');
 
 		$moreforfilter = '';
 		print '<div class="div-table-responsive-no-min">';

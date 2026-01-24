@@ -2797,6 +2797,7 @@ if (empty($reshook)) {
 			}
 
 			if (!$error) {
+				/* Disable strange code that use $lines[$i] that is not defined
 				'@phan-var-force CommonObjectLine[] $lines';
 				// Add batchinfo if the detail_batch array is defined
 				if (isModEnabled('productbatch') && !empty($lines[$i]->detail_batch) && is_array($lines[$i]->detail_batch) && getDolGlobalString('INVOICE_INCUDE_DETAILS_OF_LOTS_SERIALS')) {
@@ -2805,6 +2806,7 @@ if (empty($reshook)) {
 						$desc .= ' '.$langs->trans('Batch').' '.$batchline->batch.' '.$langs->trans('printQty', $batchline->qty).' ';
 					}
 				}
+				*/
 
 				// Insert line
 				$situation_percent = (GETPOSTISSET('progress') ? GETPOSTINT('progress') : 100);
@@ -5075,7 +5077,44 @@ if ($action == 'create') {
 		}
 	}
 
-	// Confirmation of payment classification
+	// Confirmation of status abandoned (when no payment never done)
+	if ($action == 'canceled') {
+		// If there is a replacement invoice not yet validated (draft state),
+		// it is not allowed to classify the invoice as abandoned.
+
+		$statusreplacement = 0;
+
+		if ($objectidnext) {
+			$facturereplacement = new Facture($db);
+			$facturereplacement->fetch($objectidnext);
+			$statusreplacement = $facturereplacement->status;
+		}
+		if ($objectidnext && $statusreplacement == 0) {
+			print '<div class="error">'.$langs->trans("ErrorCantCancelIfReplacementInvoiceNotValidated").'</div>';
+		} else {
+			$close = array();
+			// Code
+			$close[1]['code'] = 'badcustomer';
+			$close[2]['code'] = 'abandon';
+			// Help
+			$close[1]['label'] = $langs->trans("ConfirmClassifyPaidPartiallyReasonBadCustomerDesc");
+			$close[2]['label'] = $langs->trans("ConfirmClassifyAbandonReasonOtherDesc");
+			// Text
+			$close[1]['reason'] = $form->textwithpicto($langs->transnoentities("ConfirmClassifyPaidPartiallyReasonBadCustomer", $object->ref), $close[1]['label'], 1);
+			$close[2]['reason'] = $form->textwithpicto($langs->transnoentities("ConfirmClassifyAbandonReasonOther"), $close[2]['label'], 1);
+			// arrayreasons
+			$arrayreasons = [];
+			$arrayreasons[$close[1]['code']] = $close[1]['reason'];
+			$arrayreasons[$close[2]['code']] = $close[2]['reason'];
+
+			// Create a form table
+			$formquestion = array('text' => $langs->trans("ConfirmCancelBillQuestion"), 0 => array('type' => 'radio', 'name' => 'close_code', 'label' => $langs->trans("Reason"), 'values' => $arrayreasons), 1 => array('type' => 'text', 'name' => 'close_note', 'label' => $langs->trans("Comment"), 'value' => '', 'morecss' => 'minwidth300'));
+
+			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$object->id, $langs->trans('CancelBill'), $langs->trans('ConfirmCancelBill', $object->ref), 'confirm_canceled', $formquestion, "yes", 1, 300);
+		}
+	}
+
+	// Confirmation of payment classification (when some payment started)
 	if ($action == 'paid' && ($resteapayer <= 0 || (getDolGlobalString('INVOICE_CAN_SET_PAID_EVEN_IF_PARTIALLY_PAID') && $resteapayer == $object->total_ttc))) {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id, $langs->trans('ClassifyPaid'), $langs->trans('ConfirmClassifyPaidBill', $object->ref), 'confirm_paid', '', "yes", 1);
 	}
@@ -5131,43 +5170,7 @@ if ($action == 'create') {
 			2 => array('type' => 'separator')
 		);
 		// Incomplete payment. We ask if reason = discount or other
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id.'&resteapayer='.((float) $resteapayer), $langs->trans('ClassifyPaid'), $langs->trans('ConfirmClassifyPaidPartially', $object->ref), 'confirm_paid_partially', $formquestion, "yes", 1, 400, 600);
-	}
-
-	// Confirmation of status abandoned
-	if ($action == 'canceled') {
-		// If there is a replacement invoice not yet validated (draft state),
-		// it is not allowed to classify the invoice as abandoned.
-
-		$statusreplacement = 0;
-
-		if ($objectidnext) {
-			$facturereplacement = new Facture($db);
-			$facturereplacement->fetch($objectidnext);
-			$statusreplacement = $facturereplacement->status;
-		}
-		if ($objectidnext && $statusreplacement == 0) {
-			print '<div class="error">'.$langs->trans("ErrorCantCancelIfReplacementInvoiceNotValidated").'</div>';
-		} else {
-			// Code
-			$close[1]['code'] = 'badcustomer';
-			$close[2]['code'] = 'abandon';
-			// Help
-			$close[1]['label'] = $langs->trans("ConfirmClassifyPaidPartiallyReasonBadCustomerDesc");
-			$close[2]['label'] = $langs->trans("ConfirmClassifyAbandonReasonOtherDesc");
-			// Text
-			$close[1]['reason'] = $form->textwithpicto($langs->transnoentities("ConfirmClassifyPaidPartiallyReasonBadCustomer", $object->ref), $close[1]['label'], 1);
-			$close[2]['reason'] = $form->textwithpicto($langs->transnoentities("ConfirmClassifyAbandonReasonOther"), $close[2]['label'], 1);
-			// arrayreasons
-			$arrayreasons = [];
-			$arrayreasons[$close[1]['code']] = $close[1]['reason'];
-			$arrayreasons[$close[2]['code']] = $close[2]['reason'];
-
-			// Create a form table
-			$formquestion = array('text' => $langs->trans("ConfirmCancelBillQuestion"), 0 => array('type' => 'radio', 'name' => 'close_code', 'label' => $langs->trans("Reason"), 'values' => $arrayreasons), 1 => array('type' => 'text', 'name' => 'close_note', 'label' => $langs->trans("Comment"), 'value' => '', 'morecss' => 'minwidth300'));
-
-			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$object->id, $langs->trans('CancelBill'), $langs->trans('ConfirmCancelBill', $object->ref), 'confirm_canceled', $formquestion, "yes", 1, 270);
-		}
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id.'&resteapayer='.((float) $resteapayer), $langs->trans('ClassifyPaid'), $langs->trans('ConfirmClassifyPaidPartially', $object->ref), 'confirm_paid_partially', $formquestion, "yes", 1, 420, 600);
 	}
 
 	if ($action == 'deletepayment') {
@@ -5175,12 +5178,12 @@ if ($action == 'create') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&paiement_id='.$payment_id, $langs->trans('DeletePayment'), $langs->trans('ConfirmDeletePayment'), 'confirm_delete_paiement', '', 'no', 1);
 	}
 
-	// Confirmation de la suppression d'une ligne produit
+	// Confirmation of deletion of a product line
 	if ($action == 'ask_deleteline') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 'no', 1);
 	}
 
-	// Confirmation de la suppression d'une ligne subtotal
+	// Confirmation of deletion of a subtotal line
 	if ($action == 'ask_subtotal_deleteline') {
 		$langs->load("subtotals");
 		$title = "DeleteSubtotalLine";
@@ -6596,7 +6599,7 @@ if ($action == 'create') {
 					$langs->load("contracts");
 
 					if ($usercancreatecontract) {
-						print '<a class="butAction" href="' . DOL_URL_ROOT . '/contrat/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans('AddContract') . '</a>';
+						print '<a class="butAction" href="' . DOL_URL_ROOT . '/contrat/card.php?action=create&origin=' . $object->element . '&originid=' . $object->id . '&socid=' . $object->socid . '">' . $langs->trans('AddContract') . '</a>';
 					}
 				}
 			}
@@ -6655,7 +6658,7 @@ if ($action == 'create') {
 			}
 
 			// Request a direct debit order
-			if ($object->status > Facture::STATUS_DRAFT && $object->paye == 0 && $num == 0) {
+			if ($object->status > Facture::STATUS_DRAFT && $object->paye == 0) {
 				if ($resteapayer > 0) {
 					if ($usercancreatewithdrarequest) {
 						if (!$objectidnext && $object->close_code != 'replaced') { 				// Not replaced by another invoice

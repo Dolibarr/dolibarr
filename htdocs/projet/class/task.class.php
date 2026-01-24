@@ -2106,6 +2106,7 @@ class Task extends CommonObjectLine
 
 		$timespent = new TimeSpent($this->db);
 		$timespent->fetch($this->timespent_id);
+		$old_fk_element = $timespent->fk_element; // Store old task ID before potential change
 
 		$timespent->element_date = $this->timespent_date;
 		$timespent->element_datehour = $this->timespent_datehour;
@@ -2116,6 +2117,7 @@ class Task extends CommonObjectLine
 			$timespent->fk_user = $this->timespent_fk_user;
 		}
 		$timespent->fk_product = $this->timespent_fk_product;
+		$timespent->fk_element = $this->id; // Update task assignment (may be changed)
 		$timespent->note = $this->timespent_note;
 		$timespent->invoice_id = $this->timespent_invoiceid;
 		$timespent->invoice_line_id = $this->timespent_invoicelineid;
@@ -2176,6 +2178,32 @@ class Task extends CommonObjectLine
 			if ($res_update <= 0) {
 				$this->error = $this->db->lasterror();
 				$ret = -2;
+			}
+		}
+
+		// If task assignment changed, recalculate duration_effective for both old and new tasks
+		if ($ret == 1 && $old_fk_element != $this->id) {
+			// Recalculate duration_effective for the OLD task
+			$sql = "UPDATE " . MAIN_DB_PREFIX . "projet_task";
+			$sql .= " SET duration_effective = (SELECT COALESCE(SUM(element_duration), 0) FROM " . MAIN_DB_PREFIX . "element_time as ptt where ptt.elementtype = 'task' AND ptt.fk_element = " . ((int) $old_fk_element) . ")";
+			$sql .= " WHERE rowid = " . ((int) $old_fk_element);
+			dol_syslog(get_class($this) . "::updateTimeSpent update old task", LOG_DEBUG);
+			if (!$this->db->query($sql)) {
+				$this->error = $this->db->lasterror();
+				$this->db->rollback();
+				$ret = -2;
+			}
+			// Recalculate duration_effective for the NEW task
+			if ($ret == 1) {
+				$sql = "UPDATE " . MAIN_DB_PREFIX . "projet_task";
+				$sql .= " SET duration_effective = (SELECT COALESCE(SUM(element_duration), 0) FROM " . MAIN_DB_PREFIX . "element_time as ptt where ptt.elementtype = 'task' AND ptt.fk_element = " . ((int) $this->id) . ")";
+				$sql .= " WHERE rowid = " . ((int) $this->id);
+				dol_syslog(get_class($this) . "::updateTimeSpent update new task", LOG_DEBUG);
+				if (!$this->db->query($sql)) {
+					$this->error = $this->db->lasterror();
+					$this->db->rollback();
+					$ret = -2;
+				}
 			}
 		}
 
