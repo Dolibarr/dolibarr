@@ -1676,7 +1676,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefCustomer")." : ".dol_trunc($outputlangs->convToOutputCharset($object->ref_client), 65), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefCustomer")." : ".dol_trunc($outputlangs->convToOutputCharset((string) $object->ref_client), 65), '', 'R');
 		}
 
 		if (getDolGlobalInt('PDF_SHOW_PROJECT_TITLE')) {
@@ -1714,7 +1714,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_client), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities((string) $object->thirdparty->code_client), '', 'R');
 		}
 
 		if (!getDolGlobalString('MAIN_PDF_HIDE_CUSTOMER_ACCOUNTING_CODE') && !empty($object->thirdparty->code_compta_client)) {
@@ -1871,10 +1871,10 @@ class pdf_eratosthene extends ModelePDFCommandes
 					$contactshipping = $object->fetch_contact($idaddressshipping[0]);
 					$companystatic = new Societe($this->db);
 					$companystatic->fetch($object->contact->fk_soc);
-					$carac_client_name_shipping = pdfBuildThirdpartyName($object->contact, $outputlangs);
+					$carac_client_name_shipping = (($object->contact instanceOf Contact) ? pdfBuildThirdpartyName($object->contact, $outputlangs) : '');
 					$carac_client_shipping = pdf_build_address($outputlangs, $this->emetteur, $companystatic, $object->contact, 1, 'target', $object);
 				} else {
-					$carac_client_name_shipping = pdfBuildThirdpartyName($object->thirdparty, $outputlangs);
+					$carac_client_name_shipping = (($object->thirdparty instanceOf Societe) ? pdfBuildThirdpartyName($object->thirdparty, $outputlangs));
 					$carac_client_shipping = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'target', $object);
 				}
 				if (!empty($carac_client_shipping)) {
