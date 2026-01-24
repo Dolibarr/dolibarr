@@ -10831,7 +10831,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
  */
 function make_substitutions($text, $substitutionarray, $outputlangs = null, $converttextinhtmlifnecessary = 0)
 {
-	global $conf, $db, $langs;
+	global $db, $langs;
 
 	if (!is_array($substitutionarray)) {
 		return 'ErrorBadParameterSubstitutionArrayWhenCalling_make_substitutions';
