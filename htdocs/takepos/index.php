@@ -579,19 +579,30 @@ function ClickProduct(position, qty = 1) {
 		LoadProducts(position, true);
 	}
 	else{
-		console.log($('#prodiv4').data('rowid'));
 		invoiceid = $("#invoiceid").val();
 		idproduct=$('#prodiv'+position).data('rowid');
 		console.log("Click on product at position "+position+" for idproduct "+idproduct+", qty="+qty+" invoiceid="+invoiceid);
 		if (idproduct == "") {
 			return;
 		}
-		// Call page invoice.php to generate the section with product lines
-		$("#poslines").load("invoice.php?action=addline&token=<?php echo newToken(); ?>&place="+place+"&idproduct="+idproduct+"&qty="+qty+"&invoiceid="+invoiceid, function() {
-			<?php if (getDolGlobalString('TAKEPOS_CUSTOMER_DISPLAY')) {
-				echo "CustomerDisplay();";
-			}?>
-		});
+		addInvoiceLine = function(qty) {
+			// Call page invoice.php to generate the section with product lines
+			$("#poslines").load("invoice.php?action=addline&token=<?php echo newToken(); ?>&place="+place+"&idproduct="+idproduct+"&qty="+qty+"&invoiceid="+invoiceid, function() {
+				<?php if (getDolGlobalString('TAKEPOS_CUSTOMER_DISPLAY')) {
+					echo "CustomerDisplay();";
+				}?>
+			});
+		};
+		// appeler WeighingScale() si le produit est un produit pesé
+		<?php if (getDolGlobalString('TAKEPOS_WEIGHING_SCALE')) { ?>
+			if ($('#prodiv'+position).data('unit') == 2) {
+				WeighingScale(addInvoiceLine);
+			} else {
+				addInvoiceLine(qty);
+			}
+		<?php } else { ?>
+			addInvoiceLine(qty);
+		<?php } ?>
 	}
 
 	ClearSearch(false);
@@ -1076,18 +1087,51 @@ function FullScreen() {
 	document.documentElement.requestFullscreen();
 }
 
-function WeighingScale(){
-	console.log("Weighing Scale");
+function WeighingScale(callback) {
+	console.log("Weighing Scale: invoiceid = " + placeid + ", lineid = " + selectedline);
+	<?php if (getDolGlobalString('TAKEPOS_CONNECTOR_TO_WHB_SCALE')) {?>
+		<?php if (getDolGlobalString('WEIGHINGSCALE_PROTOCOL') == "diag06") { ?>
+			// Protocole Dialog-06, il a besoin du prix unitaire, le demander s'il manque
+			var urlProduct;
+			if (idproduct == "" && selectedline > 0) {
+				urlProduct = "<?php echo DOL_URL_ROOT; ?>/api/index.php/takeposconnector/invoices/" + placeid + "/lines/" + selectedline + "/product";
+			} else {
+				urlProduct = "<?php echo DOL_URL_ROOT; ?>/api/index.php/products/" + idproduct;
+			}
+			$.ajax({
+				type: "GET",
+				headers: { "DOLAPIKEY": '<?php echo $user->api_key; ?>' },
+				url: urlProduct,
+			})
+			.done(function(product) {
+				if (callback === undefined) {
+					callback = function(qty) {
+						$("#poslines").load("invoice.php?token=<?php echo newToken(); ?>&action=updateqty&place="+place+"&idline="+selectedline+"&number="+qty);
+					};
+				}
+				if (product.fk_unit == "2") {
+					askForWeight(product.multicurrency_total_ttc, callback);
+				}
+			});
+		<?php } else { ?>
+			// Protocole par défaut de takeposconnector: réception continue du poids/stabilité
+			editnumber = globalWeight;
+			$("#poslines").load("invoice.php?token=<?php echo newToken(); ?>&action=updateqty&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
+				editnumber="";
+			});
+		<?php } ?>
+	<?php } else { ?> // utilisation du new TakePOS-Connector PHP: envoie "$" à la balance pour avoir le poids
 	$.ajax({
 		type: "POST",
 		data: { token: 'notrequired' },
 		url: '<?php print getDolGlobalString('TAKEPOS_PRINT_SERVER'); ?>/scale/index.php',
 	})
 	.done(function( editnumber ) {
-		$("#poslines").load("invoice.php?token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
+		$("#poslines").load("invoice.php?token=<?php echo newToken(); ?>&action=updateqty&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
 				editnumber="";
 			});
 	});
+	<?php } ?>
 }
 
 $( document ).ready(function() {
