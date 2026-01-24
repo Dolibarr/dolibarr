@@ -1721,7 +1721,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerAccountancyCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_compta_client), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerAccountancyCode")." : ".$outputlangs->transnoentities((string) $object->thirdparty->code_compta_client), '', 'R');
 		}
 
 		// Get contact
@@ -1874,7 +1874,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 					$carac_client_name_shipping = (($object->contact instanceOf Contact) ? pdfBuildThirdpartyName($object->contact, $outputlangs) : '');
 					$carac_client_shipping = pdf_build_address($outputlangs, $this->emetteur, $companystatic, $object->contact, 1, 'target', $object);
 				} else {
-					$carac_client_name_shipping = (($object->thirdparty instanceOf Societe) ? pdfBuildThirdpartyName($object->thirdparty, $outputlangs));
+					$carac_client_name_shipping = (($object->thirdparty instanceOf Societe) ? pdfBuildThirdpartyName($object->thirdparty, $outputlangs) : '');
 					$carac_client_shipping = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'target', $object);
 				}
 				if (!empty($carac_client_shipping)) {

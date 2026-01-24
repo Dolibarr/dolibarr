@@ -78,9 +78,9 @@ class Form
 	public $num;
 
 	// Cache arrays
-	/** @var array<string,array{id:int,code:string,label:string,type:int,entity:int,active:int}> */
+	/** @var array<int,array{id:int,code:string,label:string,type:int,entity:int,active:int}> */
 	public $cache_types_paiements = array();
-	/** @var array<string,array{code:string,label:string,deposit_percent:string,entity:int}> */
+	/** @var array<int,array{code:string,label:string,deposit_percent:string,entity:int}> */
 	public $cache_conditions_paiements = array();
 	/** @var array<int,array{rowid:int,code:string,label:string,active:int}> */
 	public $cache_transport_mode = array();
@@ -4569,7 +4569,7 @@ class Form
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *      Load into cache list of payment terms
+	 * Load into cache list of payment terms
 	 *
 	 * @return     int             Nb of lines loaded, <0 if KO
 	 */
@@ -4839,7 +4839,7 @@ class Form
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
-	 *      Charge dans cache la liste des types de paiements possibles
+	 * Load into the cacha array all possible payment modes
 	 *
 	 * @return     int                 Nb of lines loaded, <0 if KO
 	 */
@@ -4949,7 +4949,7 @@ class Form
 	 */
 	public function getSelectConditionsPaiements($selected = 0, $htmlname = 'condid', $filtertype = -1, $addempty = 0, $noinfoadmin = 0, $morecss = '', $deposit_percent = -1)
 	{
-		global $langs, $user, $conf;
+		global $langs, $user;
 
 		$out = '';
 		dol_syslog(__METHOD__ . " selected=" . $selected . ", htmlname=" . $htmlname, LOG_DEBUG);
