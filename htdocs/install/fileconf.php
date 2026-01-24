@@ -471,7 +471,7 @@ if (!empty($force_install_noedit)) {
 	<tr class="hidesqlite">
 		<td class="label"><label for="db_port"><?php echo $langs->trans("Port"); ?></label></td>
 		<td class="label">
-			<input type="text"
+			<input type="text" class="width75"
 				   name="db_port"
 				   id="db_port"
 				   value="<?php print (!empty($force_install_port)) ? $force_install_port : $dolibarr_main_db_port; ?>"

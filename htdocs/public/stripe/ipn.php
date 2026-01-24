@@ -250,9 +250,8 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 		$currency_code = getDolCurrency();
 
 		$dateo = dol_now();
-		$label = $event->data->object->description;
+		$label = $event->data->object->description.' - '.getDolGlobalString('STRIPE_AUTO_RECORD_PAYOUT_LABEL', 'autorecord by IPN, see Stripe setup');
 		$amount = $stripe->convertAmount($event->data->object->amount, $currency_code, 1);
-		$amount_to = $stripe->convertAmount($event->data->object->amount, $currency_code, 1);
 
 		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 

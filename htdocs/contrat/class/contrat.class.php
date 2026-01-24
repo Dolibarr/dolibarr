@@ -1452,7 +1452,7 @@ class Contrat extends CommonObject
 
 
 	/**
-	 *  Ajoute une ligne de contrat en base
+	 *  Insert contract line into database
 	 *
 	 *  @param	string			$desc            	Description of line
 	 *  @param  float			$pu_ht              Unit price net
@@ -1552,10 +1552,9 @@ class Contrat extends CommonObject
 
 			$localtaxes_type = getLocalTaxesFromRate($txtva.($vat_src_code ? ' ('.$vat_src_code.')' : ''), 0, $this->societe, $mysoc);
 
-			// Calcul du total TTC et de la TVA pour la ligne a partir de
-			// qty, pu, remise_percent et txtva
-			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
-			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
+			// Calculation of the gross total (TTC) and VAT for the line from qty, pu, remise_percent and txtva
+			// VERY IMPORTANT: It's at the time of line insertion that we must store the net, VAT, and gross amounts,
+			// and this is done at the line level, which has its own VAT rate
 
 			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, 1, $mysoc, $localtaxes_type);
 			$total_ht  = $tabprice[0];
@@ -1733,10 +1732,9 @@ class Contrat extends CommonObject
 
 		$this->db->begin();
 
-		// Calcul du total TTC et de la TVA pour la ligne a partir de
-		// qty, pu, remise_percent et tvatx
-		// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
-		// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
+		// Calculation of the gross total (TTC) and VAT for the line from qty, pu, remise_percent and txtva
+		// VERY IMPORTANT: It's at the time of line insertion that we must store the net, VAT, and gross amounts,
+		// and this is done at the line level, which has its own VAT rate
 
 		$localtaxes_type = getLocalTaxesFromRate($tvatx, 0, $this->societe, $mysoc);
 		$tvatx = preg_replace('/\s*\(.*\)/', '', $tvatx); // Remove code into vatrate.
@@ -2078,7 +2076,7 @@ class Contrat extends CommonObject
 	 *	@param	int		$maxlength					Max length of ref
 	 *  @param	int     $notooltip					1=Disable tooltip
 	 *  @param  int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *	@return	string								Chaine avec URL
+	 *	@return	string								String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $maxlength = 0, $notooltip = 0, $save_lastsearch_value = -1)
 	{
@@ -2635,9 +2633,7 @@ class Contrat extends CommonObject
 			$extrafields->fetch_name_optionals_label($this->table_element);
 			foreach ($clonedObj->array_options as $key => $option) {
 				$shortkey = preg_replace('/options_/', '', $key);
-				//var_dump($shortkey); var_dump($extrafields->attributes[$this->element]['unique'][$shortkey]);
 				if (!empty($extrafields->attributes[$this->element]['unique'][$shortkey])) {
-					//var_dump($key); var_dump($clonedObj->array_options[$key]); exit;
 					unset($clonedObj->array_options[$key]);
 				}
 			}
@@ -2786,7 +2782,6 @@ class Contrat extends CommonObject
 					$expirationdate = $this->db->jdate($obj->date_fin_validite);
 					$duration_value = preg_replace('/[^0-9]/', '', $obj->duration);
 					$duration_unit = preg_replace('/\d/', '', $obj->duration);
-					//var_dump($expirationdate.' '.$enddatetoscan);
 
 					// Load linked ->linkedObjects (objects linked)
 					// @TODO Comment this line and then make the search if there is n open invoice(s) by doing a dedicated SQL COUNT request to fill $contractcanceled.

@@ -807,7 +807,7 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("Parameters")."</td>\n";
-print '<td class="right" width="60">'.$langs->trans("Value").'</td>'."\n";
+print '<td class="right" width="60"></td>'."\n";
 print '<td width="80">&nbsp;</td></tr>'."\n";
 
 // Utilisation formulaire Ajax sur choix societe

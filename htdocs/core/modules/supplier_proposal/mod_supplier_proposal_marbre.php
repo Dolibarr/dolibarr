@@ -50,7 +50,7 @@ class mod_supplier_proposal_marbre extends ModeleNumRefSupplierProposal
 	public $error = '';
 
 	/**
-	 * @var string Nom du modele
+	 * @var string Name of model
 	 * @deprecated
 	 * @see $name
 	 */

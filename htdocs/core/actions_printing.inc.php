@@ -58,27 +58,13 @@ if ($action == 'print_file' && $user->hasRight('printing', 'read')) {
 			'@phan-var-force PrintingDriver $printer';
 			/** @var PrintingDriver $printer */
 			$langs->load('printing');
-			// print '<pre>'.print_r($printer, true).'</pre>';
 
 			if (getDolGlobalString($printer->active)) {
 				$printerfound++;
 
 				$subdir = '';
 				$module = GETPOST('printer', 'alpha');
-				// TODO make conversion in printing module
-				switch ($module) {
-					case 'livraison':
-						$subdir = 'receipt';
-						$module = 'expedition';
-						break;
-					case 'expedition':
-						$subdir = 'sending';
-						break;
-					case 'commande_fournisseur':
-						$module = 'commande_fournisseur';
-						$subdir = 'commande';
-						break;
-				}
+
 				try {
 					// Case of printing an invoice
 					$filetoprint = GETPOST('file', 'alpha');		//Example FAYYMM-123/FAYYMM-123-xxx.pdf

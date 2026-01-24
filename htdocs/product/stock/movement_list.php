@@ -461,22 +461,22 @@ if ($action == "transfert_stock" && $permissiontoadd && !$cancel) {
 	if (!(GETPOSTINT("id_entrepot_destination") > 0)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
 		$error++;
-		$action = 'transfert';
+		$action = 'transfer';
 	}
 	if (empty($product_id)) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Product")), null, 'errors');
-		$action = 'transfert';
+		$action = 'transfer';
 	}
 	if (!GETPOSTFLOAT("nbpiece")) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NumberOfUnit")), null, 'errors');
 		$error++;
-		$action = 'transfert';
+		$action = 'transfer';
 	}
 	if ($id == GETPOSTINT("id_entrepot_destination")) {
 		setEventMessages($langs->trans("ErrorSrcAndTargetWarehouseMustDiffers"), null, 'errors');
 		$error++;
-		$action = 'transfert';
+		$action = 'transfer';
 	}
 
 	if (isModEnabled('productbatch')) {
@@ -486,7 +486,7 @@ if ($action == "transfert_stock" && $permissiontoadd && !$cancel) {
 		if ($product->hasbatch() && !GETPOST("batch_number")) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("batch_number")), null, 'errors');
 			$error++;
-			$action = 'transfert';
+			$action = 'transfer';
 		}
 	}
 
@@ -609,7 +609,7 @@ if ($action == "transfert_stock" && $permissiontoadd && !$cancel) {
 			} else {
 				setEventMessages($product->error, $product->errors, 'errors');
 				$db->rollback();
-				$action = 'transfert';
+				$action = 'transfer';
 			}
 		}
 	}
@@ -998,7 +998,7 @@ if ($action == "correction") {
 }
 
 // Transfer of units
-if ($action == "transfert") {
+if ($action == "transfer") {
 	$d_eatby = GETPOSTDATE('eatby');	// used by the tpl
 	$d_sellby = GETPOSTDATE('sellby');	// used by the tpl
 	include DOL_DOCUMENT_ROOT.'/product/stock/tpl/stocktransfer.tpl.php';
@@ -1015,7 +1015,7 @@ if ((empty($action) || $action == 'list') && $id > 0) {
 	// modified by hook
 	if (empty($reshook)) {
 		if ($user->hasRight('stock', 'mouvement', 'creer')) {
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=transfert&token='.newToken().'">'.$langs->trans("TransferStock").'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=transfer&token='.newToken().'">'.$langs->trans("TransferStock").'</a>';
 		}
 
 		if ($user->hasRight('stock', 'mouvement', 'creer')) {

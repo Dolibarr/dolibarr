@@ -934,7 +934,7 @@ class pdf_sponge extends ModelePDFFactures
 					if (isset($object->type) && $object->type == 2 && getDolGlobalString('INVOICE_POSITIVE_CREDIT_NOTE')) {
 						$sign = -1;
 					}
-					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
+					// // Collect total by value of vat rate into $this->tva["taux"]=total_tva
 					$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
 					if ($prev_progress > 0 && !empty($object->lines[$i]->situation_percent)) { // Compute progress from previous situation
 						if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {
@@ -1107,13 +1107,15 @@ class pdf_sponge extends ModelePDFFactures
 				if (method_exists($pdf, 'AliasNbPages')) {
 					$pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
 				}
+
 				// Add terms to sale
-				if (getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_INVOICE')) {
-					$termsofsalefilename = getDolGlobalString('MAIN_INFO_INVOICE_TERMSOFSALE');
+				$termsofsalefilename = getDolGlobalString('MAIN_INFO_INVOICE_TERMSOFSALE');
+				if (getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_INVOICE') && $termsofsalefilename) {
 					$termsofsale = $conf->invoice->dir_output.'/'.$termsofsalefilename;
 					if (!empty($conf->invoice->multidir_output[$object->entity ?? $conf->entity])) {
 						$termsofsale = $conf->invoice->multidir_output[$object->entity ?? $conf->entity].'/'.$termsofsalefilename;
 					}
+
 					if (file_exists($termsofsale) && is_readable($termsofsale)) {
 						$pagecount = $pdf->setSourceFile($termsofsale);
 						for ($i = 1; $i <= $pagecount; $i++) {
@@ -1498,7 +1500,7 @@ class pdf_sponge extends ModelePDFFactures
 		}
 
 		// Show payments conditions
-		if ($object->type != 2 && ($object->cond_reglement_code || $object->cond_reglement)) {
+		if ($object->type != 2 && $object->cond_reglement_code) {
 			$pdf->SetFont('', '', $default_font_size - 2);
 			$pdf->SetXY($this->marge_gauche, $posy);
 			$titre = $outputlangs->transnoentities("PaymentConditions").':';
@@ -2542,18 +2544,21 @@ class pdf_sponge extends ModelePDFFactures
 			$posy += 2;
 		}
 
-		$pdf->SetFont('', 'B', $default_font_size);
+		$pdf->SetFont('', '', $default_font_size - 2);
+
+		pdfWriteBlockedLogSignature($pdf, $outputlangs, $this->page_hauteur, $object, $w, $posx, $posy);
 
 		/*
-		 $posy += 5;
-		 $pdf->SetXY($posx, $posy);
-		 $pdf->SetTextColor(0, 0, 60);
-		 $textref = $outputlangs->transnoentities("Ref")." : ".$outputlangs->convToOutputCharset($object->ref);
-		 if ($object->status == $object::STATUS_DRAFT) {
-		 $pdf->SetTextColor(128, 0, 0);
-		 $textref .= ' - '.$outputlangs->transnoentities("NotValidated");
-		 }
-		 $pdf->MultiCell($w, 4, $textref, '', 'R');*/
+		$posy += 5;
+		$pdf->SetXY($posx, $posy);
+		$pdf->SetTextColor(0, 0, 60);
+		$pdf->SetFont('', 'B', $default_font_size);
+		$textref = $outputlangs->transnoentities("Ref")." : ".$outputlangs->convToOutputCharset($object->ref);
+		if ($object->status == $object::STATUS_DRAFT) {
+		$pdf->SetTextColor(128, 0, 0);
+		$textref .= ' - '.$outputlangs->transnoentities("NotValidated");
+		}
+		$pdf->MultiCell($w, 4, $textref, '', 'R');*/
 
 		$posy += 3;
 		$pdf->SetFont('', '', $default_font_size - 2);
@@ -2654,7 +2659,7 @@ class pdf_sponge extends ModelePDFFactures
 			$posy += 3;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerAccountancyCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_compta_client), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerAccountancyCode")." : ".$outputlangs->transnoentities((string) $object->thirdparty->code_compta_client), '', 'R');
 		}
 
 		// Get contact

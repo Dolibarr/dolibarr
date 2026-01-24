@@ -152,3 +152,4 @@ MandatoryTargetFieldsNotMapped=Sommige verplichte doelvelden zijn niet toegeweze
 AllTargetMandatoryFieldsAreMapped=Alle doelvelden die een verplichte waarde nodig hebben, zijn toegewezen
 ResultOfSimulationNoError=Resultaat van simulatie: Geen fout
 NumberOfLinesLimited=Aantal lijnen beperkt
+ErrorFileLinesReachEOF=Het bestand bevat %s regels. We bereiken echter het einde van het bestand of een lege regel bij record %s. Dit kan gebeuren wanneer sommige records over meerdere regels zijn verdeeld en niet correct zijn gescheiden door het "tekenscheidingsteken", of als er een regel is met geen gegevens in alle velden.

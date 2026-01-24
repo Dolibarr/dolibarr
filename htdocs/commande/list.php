@@ -2617,9 +2617,9 @@ while ($i < $imaxinloop) {
 
 		// Country
 		if (!empty($arrayfields['country.code_iso']['checked'])) {
-			print '<td class="center tdoverflowmax100">';
 			$tmparray = getCountry($obj->fk_pays, 'all');
-			print $tmparray['label'];
+			print '<td class="center tdoverflowmax100" title="'.dolPrintHTMLForAttribute($tmparray['label']).'">';
+			print dolPrintHTML($tmparray['label']);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

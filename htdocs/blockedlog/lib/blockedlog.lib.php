@@ -239,7 +239,7 @@ function pdfCertifMentionblockedLog(&$pdf, $outputlangs, $seller, $default_font_
 
 	if (in_array($seller->country_code, array('FR')) && isALNEQualifiedVersion()) {	// If necessary, we could replace with "if isALNERunningVersion()"
 		$outputlangs->load("blockedlog");
-		$blockedlog_mention = $outputlangs->trans("InvoiceGeneratedWithLNECertifiedPOSSystem");
+		$blockedlog_mention = $outputlangs->transnoentitiesnoconv("InvoiceGeneratedWithLNECertifiedPOSSystem");
 		if ($blockedlog_mention) {
 			$pdf->SetFont('', '', $default_font_size - 2);
 			$pdf->SetXY($pdftemplate->marge_gauche, $posy);

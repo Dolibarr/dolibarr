@@ -22,6 +22,13 @@
  */
 
 /**
+ * @var CommonObject $object
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ *
+ * @var string $action
  * @var string $trackid
  * @var string $modelmail
  * @var string $defaulttopic
@@ -29,12 +36,7 @@
  * @var int<0,1> $diroutput
  * @var string[] $arrayoffamiliestoexclude	Example: array('system', 'mycompany', 'object', 'objectamount', 'date', 'user', ...);
  * @var string $file
- * @var string $action
- * @var CommonObject $object
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
+ * @var ?string $inreplyto
  */
 '
 @phan-var-force int<0,1> $diroutput
@@ -218,6 +220,7 @@ if ($action == 'presend') {
 	$formmail->withfrom = 1;
 	$formmail->withlayout = 'email';
 	$formmail->withaiprompt = 'html';
+
 
 	// Define $liste, a list of recipients with email inside <>.
 	$liste = array();

@@ -11,6 +11,7 @@
  * Copyright (C) 2024	    Nick Fragoulis
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2024		Éric Seigne             	<eric.seigne@cap-rel.fr>
+ * Copyright (C) 2025		William Mead				<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -490,6 +491,28 @@ class pdf_strato extends ModelePDFContract
 					$pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
 				}
 
+				// Add terms of sale
+				if (getDolGlobalString('MAIN_INFO_CONTRACT_TERMSOFSALE') && getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_CONTRACT')) {
+					$termsofsalefilename = getDolGlobalString('MAIN_INFO_CONTRACT_TERMSOFSALE');
+					$termsofsale = $conf->contract->dir_output.'/'.$termsofsalefilename;
+					if (!empty($conf->contract->multidir_output[$object->entity ?? $conf->entity])) {
+						$termsofsale = $conf->contract->multidir_output[$object->entity ?? $conf->entity].'/'.$termsofsalefilename;
+					}
+					if (file_exists($termsofsale) && is_readable($termsofsale)) {
+						$pagecount = $pdf->setSourceFile($termsofsale);
+						for ($i = 1; $i <= $pagecount; $i++) {
+							$tplIdx = $pdf->importPage($i);
+							if ($tplIdx !== false) {
+								$s = $pdf->getTemplatesize($tplIdx);
+								$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
+								$pdf->useTemplate($tplIdx);
+							} else {
+								setEventMessages(null, array($termsofsale.' cannot be added, probably protected PDF'), 'warnings');
+							}
+						}
+					}
+				}
+
 				$pdf->Close();
 
 				$pdf->Output($file, 'F');
@@ -709,14 +732,14 @@ class pdf_strato extends ModelePDFContract
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_client), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities((string) $object->thirdparty->code_client), '', 'R');
 		}
 
 		if (!getDolGlobalString('MAIN_PDF_HIDE_CUSTOMER_ACCOUNTING_CODE') && $object->thirdparty->code_compta_client) {
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerAccountancyCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_compta_client), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerAccountancyCode")." : ".$outputlangs->transnoentities((string) $object->thirdparty->code_compta_client), '', 'R');
 		}
 
 		if ($showaddress) {
