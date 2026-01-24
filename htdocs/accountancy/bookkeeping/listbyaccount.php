@@ -1420,7 +1420,7 @@ while ($i < min($num, $limit)) {
 	}
 	// Piece number
 	if (!empty($arrayfields['t.piece_num']['checked'])) {
-		print '<td>';
+		print '<td class="nowraponall">';
 		$object->id = $line->id;
 		$object->piece_num = $line->piece_num;
 		$object->ref = $line->ref;
