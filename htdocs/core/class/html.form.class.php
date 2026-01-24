@@ -78,9 +78,9 @@ class Form
 	public $num;
 
 	// Cache arrays
-	/** @var array<string,array{id:int,code:string,label:string,type:int,entity:int,active:int}> */
+	/** @var array<int,array{id:int,code:string,label:string,type:int,entity:int,active:int}> */
 	public $cache_types_paiements = array();
-	/** @var array<string,array{code:string,label:string,deposit_percent:string,entity:int}> */
+	/** @var array<int,array{code:string,label:string,deposit_percent:string,entity:int}> */
 	public $cache_conditions_paiements = array();
 	/** @var array<int,array{rowid:int,code:string,label:string,active:int}> */
 	public $cache_transport_mode = array();
@@ -3406,6 +3406,7 @@ class Form
 			$sql .= $this->db->order("p.ref");
 		}
 
+		$limit = getDolGlobalInt('SEARCH_LIMIT_AJAX') ?: $limit;
 		$sql .= $this->db->plimit($limit, 0);
 
 		/* The fast and low memory method to get and count full list converts the sql into a sql count */
@@ -4568,7 +4569,7 @@ class Form
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *      Load into cache list of payment terms
+	 * Load into cache list of payment terms
 	 *
 	 * @return     int             Nb of lines loaded, <0 if KO
 	 */
@@ -4838,7 +4839,7 @@ class Form
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
-	 *      Charge dans cache la liste des types de paiements possibles
+	 * Load into the cacha array all possible payment modes
 	 *
 	 * @return     int                 Nb of lines loaded, <0 if KO
 	 */
@@ -4948,7 +4949,7 @@ class Form
 	 */
 	public function getSelectConditionsPaiements($selected = 0, $htmlname = 'condid', $filtertype = -1, $addempty = 0, $noinfoadmin = 0, $morecss = '', $deposit_percent = -1)
 	{
-		global $langs, $user, $conf;
+		global $langs, $user;
 
 		$out = '';
 		dol_syslog(__METHOD__ . " selected=" . $selected . ", htmlname=" . $htmlname, LOG_DEBUG);
@@ -6113,7 +6114,7 @@ class Form
 		if (empty($height)) {
 			$height = 250;
 			if (is_array($formquestion) && count($formquestion) > 2) {
-				$height += ((count($formquestion) - 2) * 24);
+				$height += ((count($formquestion) - 2) * 24) + 5;
 			}
 		}
 
@@ -12304,11 +12305,11 @@ class Form
 	 * @param	string		$modelType		Model type
 	 * @param	int<0,1>	$default		1=Show also Default mail template
 	 * @param	int<0,1>	$addjscombo		Add js combobox
-	 * @param   string      $selected       Selected model mail
+	 * @param   int|string  $selected       Selected model mail
 	 * @param   string      $morecss        More css added to the select component
 	 * @return	string						HTML select string
 	 */
-	public function selectModelMail($prefix, $modelType = '', $default = 0, $addjscombo = 0, $selected = '', $morecss = '')
+	public function selectModelMail($prefix, $modelType = '', $default = 0, $addjscombo = 0, $selected = 0, $morecss = '')
 	{
 		global $langs, $user;
 
@@ -12325,7 +12326,7 @@ class Form
 		}
 		if ($result > 0) {
 			foreach ($formmail->lines_model as $model) {
-				$TModels[$model->id] = $model->label;
+				$TModels[(int) $model->id] = $model->label;
 			}
 		}
 
@@ -12333,7 +12334,7 @@ class Form
 
 		foreach ($TModels as $id_model => $label_model) {
 			$retstring .= '<option value="' . $id_model . '"';
-			if (!empty($selected) && $selected == $id_model) {
+			if (!empty($selected) && ((int) $selected) == $id_model) {
 				$retstring .= "selected";
 			}
 			$retstring .= ">" . $label_model . "</option>";

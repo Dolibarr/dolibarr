@@ -430,18 +430,25 @@ class Facture extends CommonInvoice
 	/**
 	 * Classified paid.
 	 * If paid partially, $this->close_code can be:
-	 * - CLOSECODE_DISCOUNTVAT
-	 * - CLOSECODE_BADDEBT
+	 * - CLOSECODE_DISCOUNTVAT = 'discount_vat'
+	 * - CLOSECODE_BADDEBT = 'badcustomer'
+	 * - CLOSECODE_PRODUCTRETURN = 'product_returned'
+	 * - CLOSECODE_BANKCHARGE = 'bankcharge'
+	 * - CLOSECODE_WITHHOLDINGTAX = 'withholdingtax'
+	 * - CLOSECODE_OTHER = 'other'
+	 * - CLOSECODE_ABANDON = 'abandon'
+	 *
+	 * - CLOSECODE_REPLACED = 'replaced'
+	 * - All constant CLOSECODE_XXX are into commoninvoice.class.php
+	 *
 	 * If paid completely, this->close_code will be null
 	 */
 	const STATUS_CLOSED = 2;
 
 	/**
 	 * Classified abandoned and no payment done.
-	 * $this->close_code can be:
-	 * - CLOSECODE_BADDEBT
-	 * - CLOSECODE_ABANDONED
-	 * - CLOSECODE_REPLACED
+	 * $this->close_code can beseveral values.
+	 * - This constant CLOSECODE_XXX into commoninvoice.class.php
 	 */
 	const STATUS_ABANDONED = 3;
 

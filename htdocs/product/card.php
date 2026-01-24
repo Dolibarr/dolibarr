@@ -1197,8 +1197,8 @@ if (empty($reshook)) {
 			$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $tva_tx));
 			$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', $object->tva_tx));
 
-			// On reevalue prix selon taux tva car taux tva transaction peut etre different
-			// de ceux du produit par default (par example si pays different entre vendeur et acheteur).
+			// We reevaluate price according to vat rate because vat rate of transaction can be different
+			// of the one of the product by default (for example when country of seller and buyer differ).
 			if ($tmpvat != $tmpprodvat) {
 				if ($price_base_type != 'HT') {
 					$pu_ht = price2num($pu_ttc / (1 + ((float) $tmpvat / 100)), 'MU');
@@ -3261,7 +3261,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete') {
 	print '<a name="builddoc"></a>'; // ancre
 
 	// Documents
-	$objectref = dol_sanitizeFileName($object->ref);
+	$objectref = dol_sanitizeFileName((string) $object->ref);
 	if (!empty($conf->product->multidir_output[$object->entity ?? $conf->entity])) {
 		$filedir = $conf->product->multidir_output[$object->entity ?? $conf->entity].'/'.$objectref; //Check repertories of current entities
 	} else {

@@ -381,10 +381,10 @@ function pdfGetHeightForHtmlContent(&$pdf, $htmlcontent)
 /**
  * Returns the name of the thirdparty
  *
- * @param   Societe|Contact     $thirdparty     Contact or thirdparty
- * @param   Translate           $outputlangs    Output language
- * @param   int<0,1>            $includealias   1=Include alias name after name
- * @return  string                              String with name of thirdparty (+ alias if requested)
+ * @param   Societe|Contact		    $thirdparty     Contact or thirdparty
+ * @param   Translate           	$outputlangs    Output language
+ * @param   int<0,1>            	$includealias   1=Include alias name after name
+ * @return  string                  	            String with name of thirdparty (+ alias if requested)
  */
 function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs, $includealias = 0)
 {
