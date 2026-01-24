@@ -44,7 +44,7 @@ class html_cerfafr extends ModeleDon
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$this->db = $db;
 		$this->name = "cerfafr";
@@ -105,7 +105,7 @@ class html_cerfafr extends ModeleDon
 				$dir = $conf->don->dir_output;
 				$file = $dir."/SPECIMEN.html";
 			} else {
-				$donref = dol_sanitizeFileName($don->ref);
+				$donref = dol_sanitizeFileName((string) $don->ref);
 				$dir = $conf->don->dir_output."/".$donref;
 				$file = $dir."/".$donref.".html";
 			}
