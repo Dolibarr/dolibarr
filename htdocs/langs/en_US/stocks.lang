@@ -350,4 +350,3 @@ QtyStock=Quantity on stock
 QtyRegulated=Quantity on stock correction
 InventoryEntrepot=Warehouse identity
 SelectedWarehouse=Select a warehouse
-DisableStockChangeOfVirtualProductParent=Disable stock value change of the kit parent. 
