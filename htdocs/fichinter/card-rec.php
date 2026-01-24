@@ -7,7 +7,7 @@
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2016-2025  Charlene Benke          <charlene@patas-monkey.com>
+ * Copyright (C) 2016-2026  Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
@@ -73,7 +73,7 @@ if ($user->socid) {
 }
 $objecttype = 'fichinter_rec';
 if ($action == "create" || $action == "add") {
-	$objecttype = '';
+	$objecttype = 'fichinter';
 }
 
 // Load variable for pagination
@@ -117,7 +117,11 @@ $arrayfields = array(
 	'f.tms' => array('label' => "DateModificationShort", 'checked' => 0, 'position' => 500),
 );
 
-$result = restrictedArea($user, 'ficheinter', $id, $objecttype);
+if ($action == "create" || $action == "add") {
+	$result = restrictedArea($user, 'ficheinter');
+} else{
+	$result = restrictedArea($user, 'ficheinter', $id, $objecttype);
+}
 
 $permissiontoadd = $user->hasRight('ficheinter', 'creer');
 $permissiontodelete = $user->hasRight('ficheinter', 'supprimer');
@@ -232,7 +236,8 @@ if ($action == 'add' && $permissiontoadd) {
 	if ($newfichinterid > 0) {
 		// Now we add line of details
 		foreach ($object->lines as $line) {
-			$newinter->addline($user, $newfichinterid, $line->desc, $line->datei, $line->duree, array());
+			$line->date = dol_now(); // We reset date to avoid problems
+			$newinter->addline($user, $newfichinterid, $line->desc, $line->date, $line->duree, array());
 		}
 
 		// on update le nombre d'inter crée à partir du modèle
@@ -535,7 +540,7 @@ if ($action == 'create') {
 					}
 					if ($action == 'classify') {
 						$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-						$morehtmlref .= '<input type="hidden" name="action" value="classin">';
+						$morehtmlref .= '<input type="hidden" name="action" value="setproject">';
 						$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
 						$morehtmlref .= $formproject->select_projects($object->socid, (string) $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
 						$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
@@ -599,7 +604,6 @@ if ($action == 'create') {
 					$formcontract->formSelectContract($_SERVER["PHP_SELF"].'?id='.$object->id, $object->socid, $object->fk_contrat, 'contratid', 0, 1);
 				} else {
 					if ($object->fk_contrat) {
-						$contratstatic = new Contrat($db);
 						$contratstatic->fetch($object->fk_contrat);
 						print $contratstatic->getNomUrl(0, 0, 1);
 					} else {
@@ -822,15 +826,57 @@ if ($action == 'create') {
 			$sql .= ' AND (f.frequency IS NULL or f.frequency = 0)';
 		}
 
+		// Count total nb of records
+		$nbtotalofrecords = '';
+		if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
+			/* The fast and low memory method to get and count full list converts the sql into a sql count */
+			$sqlforcount =  'SELECT COUNT(*) as nbtotalofrecords';
+			$sqlforcount .= " FROM ".MAIN_DB_PREFIX."fichinter_rec as f";
+			$sqlforcount .= " , ".MAIN_DB_PREFIX."societe as s ";
+			if (!$user->hasRight('societe', 'client', 'voir')) {
+				$sqlforcount .= " , ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			}
+			$sqlforcount .= " WHERE f.fk_soc = s.rowid";
+			$sqlforcount .= " AND f.entity = ".$conf->entity;
+			if (!empty($socid)) {
+				$sqlforcount .= " AND s.rowid = ".((int) $socid);
+			}
+			if (!$user->hasRight('societe', 'client', 'voir')) {
+				$sqlforcount .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+			}
 
-		//$sql .= " ORDER BY $sortfield $sortorder, rowid DESC ";
-		//	$sql .= $db->plimit($limit + 1, $offset);
+			$resql = $db->query($sqlforcount);
+			if ($resql) {
+				$objforcount = $db->fetch_object($resql);
+				$nbtotalofrecords = $objforcount->nbtotalofrecords;
+			} else {
+				dol_print_error($db);
+			}
+
+			if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+				$page = 0;
+				$offset = 0;
+			}
+			$db->free($resql);
+		}
+
+		$sql .= " ORDER BY $sortfield $sortorder, f.rowid DESC ";
+		$sql .= $db->plimit($limit + 1, $offset);
 
 		$resql = $db->query($sql);
 		if ($resql) {
 			$num = $db->num_rows($resql);
-
-			print_barre_liste($langs->trans("RepeatableIntervention"), $page, $_SERVER['PHP_SELF'], "&socid=$socid", $sortfield, $sortorder, '', $num, '', 'intervention');
+			print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+			print '<input type="hidden" name="token" value="'.newToken().'">';
+			print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+			print '<input type="hidden" name="action" value="list">';
+			print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+			print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+			print '<input type="hidden" name="page" value="'.$page.'">';
+			//print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+			print '<input type="hidden" name="page_y" value="">';
+			//print '<input type="hidden" name="mode" value="'.$mode.'">';
+			print_barre_liste($langs->trans("RepeatableIntervention"), $page, $_SERVER['PHP_SELF'], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'intervention',  0, "", '', $limit, 0, 0, 1);
 
 			print '<span class="opacitymedium">'.$langs->trans("ToCreateAPredefinedIntervention").'</span><br><br>';
 
@@ -944,6 +990,7 @@ if ($action == 'create') {
 			}
 
 			print "</table>";
+			print '</form>'."\n";
 			$db->free($resql);
 		} else {
 			dol_print_error($db);
