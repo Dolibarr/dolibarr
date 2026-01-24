@@ -1874,7 +1874,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 					$carac_client_name_shipping = (($object->contact instanceOf Contact) ? pdfBuildThirdpartyName($object->contact, $outputlangs) : '');
 					$carac_client_shipping = pdf_build_address($outputlangs, $this->emetteur, $companystatic, $object->contact, 1, 'target', $object);
 				} else {
-					$carac_client_name_shipping = (($object->thirdparty instanceOf Societe) ? pdfBuildThirdpartyName($object->thirdparty, $outputlangs));
+					$carac_client_name_shipping = (($object->thirdparty instanceOf Societe) ? pdfBuildThirdpartyName($object->thirdparty, $outputlangs) : '');
 					$carac_client_shipping = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'target', $object);
 				}
 				if (!empty($carac_client_shipping)) {
