@@ -234,7 +234,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 			if ($object->specimen) {
 				$file = $dir."/SPECIMEN.pdf";
 			} else {
-				$objectref = dol_sanitizeFileName($object->ref);
+				$objectref = dol_sanitizeFileName((string) $object->ref);
 				$dir .= '/'.$objectref;
 				$file = $dir."/".$objectref.".pdf";
 			}
