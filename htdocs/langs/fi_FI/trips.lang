@@ -79,7 +79,7 @@ ExpenseReportsRules=Kulutositteen säännöt
 ExpenseReportsToApprove=Hyväksyttävät kululaskut
 ExpenseReportsToPay=Maksettavat kululaskut
 ExpensesArea=Kulutosite alue
-FeesKilometersOrAmout=Kilometrit (määrä)
+FeesKilometersOrAmout=Summa tai kilometrit
 LastExpenseReports=Viimeisimmät %s kulutositteet
 ListOfFees=Lista kulutyypeistä
 ListOfTrips=Lista kulutositteista
@@ -121,7 +121,6 @@ ValideTrip=Hyväksy kululasku
 ExpenseReportPayments=Kuluraportin maksut
 TaxUndefinedForThisCategory = vero on määrittelemätön tälle luokalle
 errorComputeTtcOnMileageExpense=Virhe kilometrikulujen laskennassa
-ErrorOnlyDraftStatusCanBeDeletedInMassAction=Joukkopoistossa voidaan poistaa vain Luonnos-tilassa olevia elementtejä.
 
 ## Dictionary
 EX_BRE=Aamupala
@@ -159,3 +158,4 @@ TF_TRAIN=Junamaksut
 TF_TRIP=Matkustusmuoto
 FailedToSetPaid=Maksetuksi asettaminen epäonnistui
 FailedToSetToCancel=Peruutus epäonnistui
+NobodyHasPermissionToValidateExpenseReport=Nobody has permission to validate expensereport

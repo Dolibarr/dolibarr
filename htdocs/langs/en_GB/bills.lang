@@ -3,7 +3,6 @@ InvoiceDeposit=Deposit invoice
 InvoiceDepositAsk=Deposit invoice
 InvoiceDepositDesc=This kind of invoice is raised when a deposit has been received.
 PaymentHigherThanReminderToPay=Payment higher than balance outstanding
-ErrorInvoiceIsNotLastOfSameType=Error: The date of invoice %s  is %s. It must be posterior or equal to last date for same type invoices (%s). Please change the invoice date.
 ConfirmValidatePayment=Are you sure you want to validate this payment? No changes can be made once payment is validated.
 AlreadyPaidNoCreditNotesNoDeposits=Already paid (without credit notes and deposits)
 EscompteOffered=Disc. offered (early pmt)

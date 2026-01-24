@@ -258,8 +258,8 @@ $arrayfields = array(
 	'f.date_valid' => array('label' => "DateValidation", 'checked' => '0', 'position' => 22),
 	'f.date_lim_reglement' => array('label' => "DateDue", 'checked' => '1', 'position' => 25),
 	'f.date_closing' => array('label' => "DateClosing", 'checked' => '0', 'position' => 30),
-	'p.ref' => array('label' => "ProjectRef", 'langfile' => 'projects', 'checked' => '1', 'enabled' => (!isModEnabled('project') ? '0' : '1'), 'position' => 40),
-	'p.title' => array('label' => "ProjectLabel", 'langfile' => 'projects', 'checked' => '0', 'enabled' => (!isModEnabled('project') ? '0' : '1'), 'position' => 41),
+	'p.ref' => array('label' => "ProjectRef", 'langfile' => 'projects', 'checked' => '1', 'enabled' => (isModEnabled('project') ? '1' : '0'), 'position' => 40),
+	'p.title' => array('label' => "ProjectLabel", 'langfile' => 'projects', 'checked' => '0', 'enabled' => (isModEnabled('project') ? '1' : '0'), 'position' => 41),
 	's.nom' => array('label' => "ThirdParty", 'checked' => '1', 'position' => 50),
 	's.name_alias' => array('label' => "AliasNameShort", 'checked' => '-1', 'position' => 51),
 	's.code_client' => array('label' => "CustomerCodeShort", 'checked' => '-1', 'position' => 52),
@@ -270,7 +270,7 @@ $arrayfields = array(
 	'country.code_iso' => array('label' => "Country", 'checked' => '0', 'position' => 70),
 	'typent.code' => array('label' => "ThirdPartyType", 'checked' => $checkedtypetiers, 'position' => 75),
 	'f.fk_mode_reglement' => array('label' => "PaymentMode", 'checked' => '1', 'position' => 80),
-	'f.fk_cond_reglement' => array('label' => "PaymentConditionsShort", 'checked' => '1', 'position' => 85),
+	'f.fk_cond_reglement' => array('label' => "PaymentConditionsShort", 'checked' => '0', 'position' => 85),
 	'ba.label' => array('label' => "DefaultBankAccount", 'langfile' => 'banks', 'checked' => '0', 'enabled' => (isModEnabled('bank')?'1':'0'), 'position' => 192),
 	'f.fk_input_reason' => array('label' => "Source", 'checked' => 0, 'enabled' => 1, 'position' => 88),
 	'f.module_source' => array('label' => "POSModule", 'langfile' => 'cashdesk', 'checked' => ($contextpage == 'poslist' ? '1' : '0'), 'enabled' => "(isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('INVOICE_SHOW_POS'))", 'position' => 90),
@@ -295,7 +295,7 @@ $arrayfields = array(
 	'total_mark_rate' => array('label' => 'MarkRate', 'langfile' => 'margins', 'checked' => '0', 'position' => 303, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') || !getDolGlobalString('DISPLAY_MARK_RATES') ? '0' : '1')),
 	'f.datec' => array('label' => "DateCreation", 'checked' => '0', 'position' => 500),
 	'f.tms' => array('type' => 'timestamp', 'label' => 'DateModificationShort', 'enabled' => '1', 'visible' => -1, 'notnull' => 1, 'position' => 502),
-	'u.login' => array('label' => "UserAuthor", 'checked' => '1', 'visible' => -1, 'position' => 504),
+	'u.login' => array('label' => "UserAuthor", 'checked' => '0', 'visible' => -1, 'position' => 504),
 	'sale_representative' => array('label' => "SaleRepresentativesOfThirdParty", 'checked' => '0', 'position' => 506),
 	//'f.fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-1, 'position'=>506),
 	//'f.fk_user_modif' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-1, 'notnull'=>-1, 'position'=>508),
@@ -1958,9 +1958,9 @@ if (!empty($arrayfields['f.import_key']['checked'])) {
 // Dispute status
 if (!empty($arrayfields['f.dispute_status']['checked'])) {
 	print '<td class="liste_titre center parentonrightofpage">';
-	$liststatus = array('0' => $langs->trans("None"), '1' => $langs->trans("DisputeOpen"));
+	$liststatus = array('0' => "None", '1' => "DisputeOpen", '8' => "DisputeLost", '9' => "DisputeWon");
 	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-	print $form->selectarray('search_dispute_status', $liststatus, $search_dispute_status, 1, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage', 1);
+	print $form->selectarray('search_dispute_status', $liststatus, $search_dispute_status, 1, 0, 0, '', 1, 0, 0, '', 'search_status width100 onrightofpage', 1);
 	print '</td>';
 }
 // Status
@@ -3087,7 +3087,8 @@ if ($num > 0) {
 			if (!empty($arrayfields['f.dispute_status']['checked'])) {
 				print '<td class="nowrap center">';
 				if ($facturestatic->dispute_status) {
-					print yn(1);
+					$liststatus = array('0' => "None", '1' => "DisputeOpen", '8' => "DisputeWon", '9' => "DisputeLost");
+					print $langs->trans($liststatus[$facturestatic->dispute_status]);
 				}
 				print "</td>";
 				if (!$i) {

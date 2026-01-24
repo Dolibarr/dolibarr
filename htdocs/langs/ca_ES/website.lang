@@ -477,3 +477,4 @@ WebPortalSharedDocsDir=Nom del directori de documents compartits
 WebPortalSharedDocsDirHelp=Introduïu el nom del directori, que es troba a la carpeta ECM/GED, que conté els documents que es compartiran amb tots els usuaris del portal.
 DateM=Data de modificació
 ThisDirectoryIsEmpty=Aquest directori està buit
+WrittenBy=Escrit per %s

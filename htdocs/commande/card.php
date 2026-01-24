@@ -1016,7 +1016,10 @@ if (empty($reshook)) {
 			}
 		}
 
-		if ((empty($idprod) || $idprod < 0) && ($price_ht < 0) && ($qty < 0)) {
+		$price_to_test_sign = ($price_ht ? $price_ht : $price_ttc);
+
+		if ((empty($idprod) || $idprod < 0) && ($price_to_test_sign < 0) && ($qty < 0)) {
+			$langs->load("errors");
 			setEventMessages($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPriceHT'), $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 			$error++;
 		}
@@ -1032,10 +1035,12 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 			$error++;
 		}
-		if ($qty < 0) {
+
+		if ($qty < 0 && !getDolGlobalString('ORDER_ENABLE_NEGATIVE_QTY')) {
 			setEventMessages($langs->trans('FieldCannotBeNegative', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 			$error++;
 		}
+
 		if ($prod_entry_mode == 'free' && (empty($idprod) || $idprod < 0) && empty($line_desc)) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Description')), null, 'errors');
 			$error++;
@@ -1055,7 +1060,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		if (!$error && ($qty >= 0) && (!empty($line_desc) || (!empty($idprod) && $idprod > 0))) {
+		if (!$error && (!empty($line_desc) || (!empty($idprod) && $idprod > 0))) {
 			// Clean parameters
 			$date_start = dol_mktime(GETPOSTINT('date_start' . $predef . 'hour'), GETPOSTINT('date_start' . $predef . 'min'), GETPOSTINT('date_start' . $predef . 'sec'), GETPOSTINT('date_start' . $predef . 'month'), GETPOSTINT('date_start' . $predef . 'day'), GETPOSTINT('date_start' . $predef . 'year'));
 			$date_end = dol_mktime(GETPOSTINT('date_end' . $predef . 'hour'), GETPOSTINT('date_end' . $predef . 'min'), GETPOSTINT('date_end' . $predef . 'sec'), GETPOSTINT('date_end' . $predef . 'month'), GETPOSTINT('date_end' . $predef . 'day'), GETPOSTINT('date_end' . $predef . 'year'));
@@ -1673,7 +1678,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		if ($qty < 0) {
+		if ($qty < 0 && !getDolGlobalString('ORDER_ENABLE_NEGATIVE_QTY')) {
 			setEventMessages($langs->trans('FieldCannotBeNegative', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 			$error++;
 			$action = 'editline';

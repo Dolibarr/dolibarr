@@ -19,6 +19,7 @@ MailCC=Copie à
 MailToCCUsers=Copie aux utilisateurs
 MailCCC=Copie cachée à
 MailTopic=Objet du mail
+MailTopicShort=Sujet
 MailDate=Date e-mail
 MailReferences=ID de message dans les références
 MailText=Message

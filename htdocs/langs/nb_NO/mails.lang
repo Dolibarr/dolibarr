@@ -19,6 +19,7 @@ MailCC=Kopi til
 MailToCCUsers=Kopier til brukere(e)
 MailCCC=Cached kopi til
 MailTopic=Epost emne
+MailTopicShort=Subjekt
 MailDate=Epost dato
 MailReferences=Meldings-ID-er i referanser
 MailText=Meldingstekst

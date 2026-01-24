@@ -342,14 +342,14 @@ class Stripe extends CommonObject
 	 * @param 	int|float	$amount				Amount in Stripe format (For example 1234 for 12.34 euros)
 	 * @param	string		$currency_code		Currency code (Example 'EUR')
 	 * @param	int			$direction			0=From standard to Stripe amount, 1=From Stripe to standard amount
-	 * @return	float							Standard float amount (For example 12.34)
+	 * @return	int|float						Standard float amount (For example 12.34)
 	 */
 	public function convertAmount($amount, $currency_code, $direction = 0)
 	{
 		$arrayzerounitcurrency = array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
 		if (!in_array($currency_code, $arrayzerounitcurrency)) {
 			if (empty($direction)) {
-				$newamount = (int) ($amount * 100);
+				$newamount = (int) round($amount * 100);		// If $amount is 79.99, doing 79.99 * 100 returns float 7998.999999999999, and "int" do a truncation into 7998 so we must first use round to get nearest integer value
 			} else {
 				$newamount = (float) ($amount / 100);
 			}

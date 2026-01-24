@@ -386,7 +386,6 @@ ExtrafieldFiller=Ekstrafeltfyll
 OurProductSelection=Vare å oppdage
 NoSupportedModulesHaveBeenActivated=Rapporteringsverktøyet kan bare generere dynamiske rapporter for enkelte moduler. Ingen støttede moduler er aktivert ennå.
 # Bookmarks
-AddThisPageToBookmarks = Legg til nåværende side i bokmerker
 BehaviourOnClick = Atferd når en bokmerke-URL er valgt
 BookmarkTargetNewWindowShort = Ny fane
 BookmarkTargetReplaceWindowShort = Gjeldende fane
@@ -395,7 +394,6 @@ BookmarksManagement = Behandling av bokmerker
 BookmarksMenuShortCut = Ctrl + shift + m
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark = Velg om den koblede siden skal åpnes i den nåværende kategorien eller en ny kategori
 CreateBookmark = Opprett bokmerke
-EditBookmarks = Vis/rediger bokmerker
 ListOfBookmarks = Oversikt over bokmerker
 NewBookmark = Legg til bokmerke
 NoBookmarkFound = Finner ingen bokmerker

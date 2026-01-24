@@ -95,6 +95,7 @@ if ($action == 'set') {
 				if ($diroffile) {
 					$dirforterms = $diroffile.'/';
 					$original_file = $_FILES[$varname]["name"];
+					// @phan-suppress-next-line PhanTypeInvalidDimOffset
 					$result = dol_move_uploaded_file($_FILES[$varname]["tmp_name"], $dirforterms.$original_file, 1, 0, $_FILES[$varname]['error']);
 					if ((int) $result > 0) {
 						dolibarr_set_const($db, $varname, $original_file, 'chaine', 0, '', $conf->entity);

@@ -222,7 +222,7 @@ class MenuManager
 							print str_replace('<span class="', '<span class="paddingright pictofixedwidth ', $val['prefix']);
 						}
 					}
-					print $val['titre'];
+					print ucfirst($val['titre']);
 					print '</a>'."\n";
 
 					// Search submenu for this mainmenu entry
@@ -354,7 +354,7 @@ class MenuManager
 								print '<i class="fa fa-does-not-exists fa-fw paddingright pictofixedwidth level'.($val2['level'] + 1).'"></i>';
 							}
 
-							print $val2['titre'];
+							print ucfirst($val2['titre']);
 							if ($relurl2) {
 								print '</a>';
 							}
@@ -394,7 +394,7 @@ class MenuManager
 						print $val['prefix'];
 					}
 
-					print $val['titre'];
+					print ucfirst($val['titre']);
 					print '</span>';
 
 					print '</li>'."\n";		// close entry level 0

@@ -23,7 +23,6 @@ NewSizeAfterCropping=Neue Grösse nach dem Zuschneiden
 DefineNewAreaToPick=Definieren Sie einen neuen Bereich innerhalb des Bildes (Klicken Sie mit der linken Maustaste auf das Bild und halten Sie bis zur gegenüberligenden Ecke)
 YouReceiveMailBecauseOfNotification=Sie erhalten diese Nachricht, weil Ihre E-Mail-Adresse zur Liste der zu benachrichtigenden Kontakte für %s von %s hinzugefügt wurde.
 YouReceiveMailBecauseOfNotification2=Sie erhalten dieses Mail aufgrund folgender Benachrichtigung:
-UseAdvancedPerms=Verwenden Sie die erweiterten Berechtigungen einiger Module
 FileIsTooBig=Dateien sind zu gross
 NewKeyWillBe=Ihr neuer Anmeldeschlüssel für die Software ist
 ForgetIfNothing=Wenn Sie diese Änderung nicht beantragt haben, löschen Sie einfach dieses Mail. Ihre Anmeldedaten sind sicher bei uns aufbewahrt.
