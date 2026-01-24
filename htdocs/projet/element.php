@@ -206,7 +206,7 @@ $canSeeFinancials = (
 	|| (isModEnabled('expensereport') && $user->hasRight('expensereport', 'lire'))
 	|| (isModEnabled('don') && $user->hasRight('don', 'lire'))
 	|| (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire'))
-	|| (isModEnabled('banque') && $user->hasRight('banque', 'lire'))
+	|| (isModEnabled('bank') && $user->hasRight('banque', 'lire'))
 );
 
 $total_duration = 0;
