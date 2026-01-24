@@ -937,6 +937,10 @@ print '<br>';
 
 print '<strong>MAIN_DISALLOW_STRING_OBFUSCATION_IN_DOL_EVAL</strong> = '.(getDolGlobalString('MAIN_DISALLOW_STRING_OBFUSCATION_IN_DOL_EVAL') ? '1' : '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
 print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").": 1 - may break use of concatenation function like . or dol_concatdesc into extra fields conditions or formula)</span><br>";
+
+print '<strong>MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER</strong> = '.getDolGlobalString('MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
+print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").": 1 - The value 0 allows the use of subrequests into extrafields conditions. It remains not possible in API filters to avoid bind SQL injections whatever is this value)</span><br>";
+
 print '<br>';
 
 

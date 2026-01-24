@@ -43,7 +43,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	print '<tr class="'.$trclass.'">';
 	print '<td>'.$langs->trans("Donation").'</td>';
 	print '<td>'.$objectlink->getNomUrl(1).'</td>';
-	print '<td class="center">'.$objectlink->ref_client.'</td>';
+	print '<td class="center linkedcol-ref tdoverflowmax150">'.$objectlink->ref_client.'</td>';
 	print '<td class="center">'.dol_print_date($objectlink->date, 'day').'</td>';
 	print '<td class="right">';
 	$total += $objectlink->total_ht;
