@@ -370,17 +370,17 @@ if ($action == "transfert_stock" && !$cancel && $usercanupdatestock) {
 	if (!(GETPOSTINT("id_entrepot") > 0) || !(GETPOSTINT("id_entrepot_destination") > 0)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
 		$error++;
-		$action = 'transfert';
+		$action = 'transfer';
 	}
 	if (!GETPOST("nbpiece")) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NumberOfUnit")), null, 'errors');
 		$error++;
-		$action = 'transfert';
+		$action = 'transfer';
 	}
 	if (GETPOSTINT("id_entrepot") == GETPOSTINT("id_entrepot_destination")) {
 		setEventMessages($langs->trans("ErrorSrcAndTargetWarehouseMustDiffers"), null, 'errors');
 		$error++;
-		$action = 'transfert';
+		$action = 'transfer';
 	}
 	if (isModEnabled('productbatch')) {
 		$object = new Product($db);
@@ -389,7 +389,7 @@ if ($action == "transfert_stock" && !$cancel && $usercanupdatestock) {
 		if ($object->hasbatch() && !$batchnumber) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("batch_number")), null, 'errors');
 			$error++;
-			$action = 'transfert';
+			$action = 'transfer';
 		}
 	}
 	$batch = '';
@@ -524,7 +524,7 @@ if ($action == "transfert_stock" && !$cancel && $usercanupdatestock) {
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$db->rollback();
-				$action = 'transfert';
+				$action = 'transfer';
 			}
 		}
 	}
@@ -982,7 +982,7 @@ if ($id > 0 || $ref) {
 	}
 
 	// Transfer of units
-	if ($action == "transfert") {
+	if ($action == "transfer") {
 		include DOL_DOCUMENT_ROOT.'/product/stock/tpl/stocktransfer.tpl.php';
 		print '<br><br>';
 	}
@@ -1013,7 +1013,7 @@ if (empty($reshook)) {
 
 			if ($user->hasRight('stock', 'mouvement', 'creer')) {
 				if (!$variants || getDolGlobalString('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT')) {
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=transfert&token='.newToken().'">'.$langs->trans("TransferStock").'</a>';
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=transfer&token='.newToken().'">'.$langs->trans("TransferStock").'</a>';
 				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("ActionAvailableOnVariantProductOnly").'">'.$langs->trans("TransferStock").'</a>';
 				}
@@ -1264,7 +1264,7 @@ if ($showstockdetails) {
 						print '<td colspan="4"></td>';
 						print '<td class="center tdoverflowmax125" title="'.dol_escape_htmltag($langs->trans("TransferStock")).'">';
 						if ($entrepotstatic->status != $entrepotstatic::STATUS_CLOSED) {
-							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&id_entrepot='.$entrepotstatic->id.'&action=transfert&pdluoid='.$pdluo->id.'&token='.newToken().'">';
+							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&id_entrepot='.$entrepotstatic->id.'&action=transfer&pdluoid='.$pdluo->id.'&token='.newToken().'">';
 							print img_picto($langs->trans("TransferStock"), 'add', 'class="hideonsmartphone paddingright" style="color: #a69944"');
 							print $langs->trans("TransferStock");
 							print '</a>';
