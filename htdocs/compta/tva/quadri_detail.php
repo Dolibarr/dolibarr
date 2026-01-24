@@ -1,13 +1,14 @@
 <?php
-/* Copyright (C) 2001-2003  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004       Eric Seigne             <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2006-2015  Yannick Warnier         <ywarnier@beeznest.org>
- * Copyright (C) 2014       Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2019       Eric Seigne             <eric.seigne@cap-rel.fr>
- * Copyright (C) 2021-2022  Open-Dsi                <support@open-dsi.fr>
+/* Copyright (C) 2001-2003	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
+ * Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2015	Yannick Warnier			<ywarnier@beeznest.org>
+ * Copyright (C) 2014		Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2018-2024	Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2019		Eric Seigne				<eric.seigne@cap-rel.fr>
+ * Copyright (C) 2021-2022	Open-Dsi				<support@open-dsi.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Alexandre Spangaro		<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -232,6 +233,29 @@ $vatcust = $langs->trans("VATReceived");
 $vatsup = $langs->trans("VATPaid");
 $vatexpensereport = $langs->trans("VATPaid");
 
+print '<div class="right nowrap">';
+
+// built URLs
+$url_params = preg_replace('/&?showall=1/', '', dol_escape_htmltag($_SERVER['QUERY_STRING']));
+$url_collapse = $_SERVER['PHP_SELF'].'?'.$url_params;
+$url_expand = $_SERVER['PHP_SELF'].'?'.$url_params.'&showall=1';
+
+// Link expand all
+print '<a class="showallperms" title="'.dol_escape_htmltag($langs->trans("ShowAllPerms")).'" href="'.$url_expand.'">';
+print img_picto($langs->trans("ExpandAll"), 'folder-open', 'class="paddingright"');
+print '<span class="hideonsmartphone">'.$langs->trans("ExpandAll").'</span>';
+print '</a>';
+
+print ' | ';
+
+// Link undo expand all
+print '<a class="hideallperms" title="'.dol_escape_htmltag($langs->trans("HideAllPerms")).'" href="'.$url_collapse.'">';
+print img_picto($langs->trans("UndoExpandAll"), 'folder', 'class="paddingright"');
+print '<span class="hideonsmartphone">'.$langs->trans("UndoExpandAll").'</span>';
+print '</a>';
+
+print '</div><br>';
+print '<div class="clearboth"></div>';
 
 // VAT Received and paid
 print '<div class="div-table-responsive">';
@@ -494,7 +518,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 			}
 		}
 
-		if ($invoice_type == 'customer' && $vat_rate_show == $rate) {
+		if (GETPOST('showall', 'int') == 1 || ($invoice_type == 'customer' && $vat_rate_show == $rate)) {
 			if (is_array($x_both[$rate]['coll']['detail'])) {
 				foreach ($x_both[$rate]['coll']['detail'] as $index => $fields) {
 					/*$company_static->id = $fields['company_id'];
@@ -732,7 +756,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 				$x_paye_sum += $temp_vat;
 			}
 
-			if ($invoice_type == 'supplier' && $vat_rate_show == $rate) {
+			if (GETPOST('showall', 'int') == 1 || ($invoice_type == 'supplier' && $vat_rate_show == $rate)) {
 				foreach ($x_both[$rate]['paye']['detail'] as $index => $fields) {
 					/*$company_static->id = $fields['company_id'];
 					$company_static->name = $fields['company_name'];

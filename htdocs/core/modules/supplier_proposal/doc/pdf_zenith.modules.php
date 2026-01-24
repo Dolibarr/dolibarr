@@ -692,7 +692,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 					$reshook = $hookmanager->executeHooks('printPDFline', $parameters, $this); // Note that $object may have been modified by hook
 
 
-					// Collection of totals by VAT value in $this->tva["taux"]=total_tva
+					// // Collect total by value of vat rate into $this->tva["taux"]=total_tva
 					if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {
 						$tvaligne = $object->lines[$i]->multicurrency_total_tva;
 					} else {

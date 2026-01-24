@@ -934,7 +934,7 @@ class pdf_sponge extends ModelePDFFactures
 					if (isset($object->type) && $object->type == 2 && getDolGlobalString('INVOICE_POSITIVE_CREDIT_NOTE')) {
 						$sign = -1;
 					}
-					// Collection of totals by VAT value in $this->tva["taux"]=total_tva
+					// // Collect total by value of vat rate into $this->tva["taux"]=total_tva
 					$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
 					if ($prev_progress > 0 && !empty($object->lines[$i]->situation_percent)) { // Compute progress from previous situation
 						if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {

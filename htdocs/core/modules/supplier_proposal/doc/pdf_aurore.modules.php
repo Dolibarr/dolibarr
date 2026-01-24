@@ -519,7 +519,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 						$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->postotalht, 3, $total_excl_tax, 0, 'R', 0);
 					*/
 
-					// Collection of totals by VAT value in $this->tva["taux"]=total_tva
+					// // Collect total by value of vat rate into $this->tva["taux"]=total_tva
 					if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {
 						$tvaligne = $object->lines[$i]->multicurrency_total_tva;
 					} else {

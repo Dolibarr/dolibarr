@@ -254,7 +254,7 @@ class pdf_standard_asset extends ModelePDFAsset
 				$pdf->SetSubject($outputlangs->transnoentities("PdfTitle"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
-				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("PdfTitle")." ".$outputlangs->convToOutputCharset($object->thirdparty->name));
+				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("PdfTitle")." ".$outputlangs->convToOutputCharset((string) $object->thirdparty->name));
 				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
 				}
@@ -273,7 +273,7 @@ class pdf_standard_asset extends ModelePDFAsset
 						'Reason' => 'ASSET',
 						'ContactInfo' => $this->emetteur->email
 					);
-					$pdf->setSignature($cert, $cert, $this->emetteur->name, '', 2, $info);
+					$pdf->setSignature($cert, $cert, (string) $this->emetteur->name, '', 2, $info);
 				}
 
 				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
@@ -924,7 +924,7 @@ class pdf_standard_asset extends ModelePDFAsset
 			$posy += 3;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_client), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities((string) $object->thirdparty->code_client), '', 'R');
 		}
 
 		// Get contact
@@ -979,7 +979,7 @@ class pdf_standard_asset extends ModelePDFAsset
 			// Show sender name
 			$pdf->SetXY($posx + 2, $posy + 3);
 			$pdf->SetFont('', 'B', $default_font_size);
-			$pdf->MultiCell($widthrecbox - 2, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
+			$pdf->MultiCell($widthrecbox - 2, 4, $outputlangs->convToOutputCharset((string) $this->emetteur->name), 0, 'L');
 			$posy = $pdf->getY();
 
 			// Show sender information
