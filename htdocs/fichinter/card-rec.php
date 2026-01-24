@@ -119,7 +119,7 @@ $arrayfields = array(
 
 if ($action == "create" || $action == "add") {
 	$result = restrictedArea($user, 'ficheinter');
-} else{
+} else {
 	$result = restrictedArea($user, 'ficheinter', $id, $objecttype);
 }
 
@@ -240,9 +240,8 @@ if ($action == 'add' && $permissiontoadd) {
 			$newinter->addline($user, $newfichinterid, $line->desc, $line->date, $line->duree, array());
 		}
 
-		// on update le nombre d'inter crée à partir du modèle
+		// update number of interventional genererated
 		$object->updateNbGenDone();
-		//on redirige vers la fiche d'intervention nouvellement crée
 		header('Location: '.DOL_URL_ROOT.'/fichinter/card.php?id='.$newfichinterid);
 		exit;
 	} else {
