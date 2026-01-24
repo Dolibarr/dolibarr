@@ -1272,17 +1272,19 @@ while ($i < min($num, $limit)) {
 
 	// Piece number
 	if (!empty($arrayfields['t.piece_num']['checked'])) {
-		print '<td>';
+		print '<td class="nowraponall">';
 		$object->id = $line->id;
 		$object->piece_num = $line->piece_num;
 		$object->ref = $line->ref;
 		print $object->getNomUrl(1, '', 0, '', 1);
+		print '<span class="hideonsmartphone">';
 		if (!empty($line->date_export)) {
 			print img_picto($langs->trans("DateExport").": ".dol_print_date($line->date_export, 'dayhour')." (".$langs->trans("TransactionExportDesc").")", 'fa-file-export', 'class="paddingleft pictofixedwidth opacitymedium"');
 		}
 		if (!empty($line->date_validation)) {
 			print img_picto($langs->trans("DateValidation").": ".dol_print_date($line->date_validation, 'dayhour')." (".$langs->trans("TransactionBlockedLockedDesc").")", 'fa-lock', 'class="paddingleft pictofixedwidth opacitymedium"');
 		}
+		print '</span>';
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
