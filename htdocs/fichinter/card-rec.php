@@ -240,7 +240,7 @@ if ($action == 'add' && $permissiontoadd) {
 			$newinter->addline($user, $newfichinterid, $line->desc, $line->date, $line->duree, array());
 		}
 
-		// update number of interventional genererated
+		// update number of generated intervention
 		$object->updateNbGenDone();
 		header('Location: '.DOL_URL_ROOT.'/fichinter/card.php?id='.$newfichinterid);
 		exit;
