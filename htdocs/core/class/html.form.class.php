@@ -10891,7 +10891,7 @@ class Form
 
 		$previous_ref = $next_ref = '';
 		if ($shownav) {
-			//print "paramid=$paramid,morehtml=$morehtml,shownav=$shownav,$fieldid,$fieldref,$morehtmlref,$moreparam";
+			//print "paramid=$paramid,morehtml=$morehtml,shownav=$shownav,fieldid=$fieldid,filedref=$fieldref,morehtmlref=$morehtmlref,moreparam=$moreparam";
 			$object->load_previous_next_ref((isset($object->next_prev_filter) ? $object->next_prev_filter : ''), $fieldid, $nodbprefix);
 
 			$navurl = $_SERVER["PHP_SELF"];
