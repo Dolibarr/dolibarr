@@ -487,7 +487,7 @@ if ($mode == 'template') {
 				print '<input type="hidden" name="templateid" value="'.($printer->listprinterstemplates[$line]['rowid'] ?? '').'">';
 				print '<td><input type="text" class="minwidth200" name="templatename" value="'.($printer->listprinterstemplates[$line]['name'] ?? '').'"></td>';
 				print '<td class="wordbreak">';
-				print '<textarea name="template" wrap="soft" cols="120" rows="12">'.($printer->listprinterstemplates[$line]['template'] ?? '').'</textarea>';
+				print '<textarea name="template" wrap="soft" cols="90" rows="12">'.($printer->listprinterstemplates[$line]['template'] ?? '').'</textarea>';
 				print '</td>';
 				print '<td>';
 				print $form->buttonsSaveCancel("Save", '');
@@ -516,7 +516,7 @@ if ($mode == 'template') {
 		print '<tr>';
 		print '<td><input type="text" class="minwidth200" name="templatename" value="'.($printer->listprinterstemplates[$line]['name'] ?? '').'"></td>';
 		print '<td class="wordbreak">';
-		print '<textarea name="template" wrap="soft" cols="120" rows="12">';
+		print '<textarea name="template" wrap="soft" cols="90" rows="12">';
 		print '</textarea>';
 		print '</td>';
 		print '<td>';
