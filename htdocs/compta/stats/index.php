@@ -159,6 +159,7 @@ $exportlink = '';
 $namelink = '';
 $builddate = dol_now();
 $periodlink = '';
+$description = '';
 $name = '';
 
 // Affiche en-tete du rapport
