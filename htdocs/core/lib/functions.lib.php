@@ -1915,16 +1915,18 @@ function dol_size($size, $type = '')
  *	Clean a string to use it as a file name.
  *  Replace also '--' and ' -' strings, they are used for parameters separation (Note: ' - ' is allowed).
  *
- *	@param	string	$str            String to clean
- * 	@param	string	$newstr			String to replace bad chars with.
- *  @param	int	    $unaccent		1=Remove also accent (default), 0 do not remove them
- *  @param	int		$includequotes	1=Include simple quotes (double is already included by default)
- *	@return string          		String cleaned
+ *	@param	string|null	$str            String to clean
+ * 	@param	string		$newstr			String to replace bad chars with.
+ *  @param	int	    	$unaccent		1=Remove also accent (default), 0 do not remove them
+ *  @param	int			$includequotes	1=Include simple quotes (double is already included by default)
+ *	@return string      	    		String cleaned
  *
  * 	@see        	dol_string_nospecial(), dol_string_unaccent(), dol_sanitizePathName()
  */
 function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1, $includequotes = 0)
 {
+	$str = (string) $str;
+
 	// List of special chars for filenames in windows are defined on page https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file
 	// Char '>' '<' '|' '$' and ';' are special chars for shells.
 	// Char '/' and '\' are file delimiters.
@@ -10634,6 +10636,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 					$liste_factures = [];
 					$total = 0;
 
+					// @FIXME We must not have any repeated SQL access into this function.
 					$sql = 'SELECT f.ref,f.multicurrency_code as f_mccode, pf.*
 							FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf
 							JOIN '.MAIN_DB_PREFIX.'facture_fourn as f ON pf.fk_facturefourn = f.rowid
@@ -10831,7 +10834,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
  */
 function make_substitutions($text, $substitutionarray, $outputlangs = null, $converttextinhtmlifnecessary = 0)
 {
-	global $conf, $db, $langs;
+	global $db, $langs;
 
 	if (!is_array($substitutionarray)) {
 		return 'ErrorBadParameterSubstitutionArrayWhenCalling_make_substitutions';
@@ -10943,9 +10946,8 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 		}
 	}
 
-	// TODO Implement the lazyload substitution
 	/*
-	add a loop to scan $substitutionarray:
+	Loop to scan $substitutionarray for couples:    key=__XXX__@lazyload  and  value='path:class:method:id'  or 'path:class:method:id:keyinarrayresult' if method return array
 	For each key ending with '@lazyload', we extract the substitution key 'XXX' and we check inside the $text (the 1st parameter of make_substitutions), if the string XXX exists.
 	If no, we don't need to make replacement, so we do nothing.
 	If yes, we can make the substitution:
@@ -10964,11 +10966,12 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 				if (preg_match('/' . preg_quote($key_to_substitute, '/') . '/', $text)) {
 					$param_arr = explode(':', (string) $value);
 					// path:class:method:id
-					if (count($param_arr) == 4) {
+					if (count($param_arr) >= 4) {
 						$path = $param_arr[0];
 						$class = $param_arr[1];
 						$method = $param_arr[2];
 						$id = (int) $param_arr[3];
+						$keyinarrayresult = empty($param_arr[4]) ? '' : $param_arr[4];
 
 						// load class file and init object list in memory
 						if (!isset($memory_object_list[$class])) {
@@ -10988,16 +10991,21 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 								if (!isset($memory_object_list[$class]['list'][$id])) {
 									$tmpobj = new $class($db);
 									// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
-									$valuetouseforsubstitution = $tmpobj->$method($id, $key_to_substitute);
+									$tmpvaluetouseforsubstitution = $tmpobj->$method($id, $key_to_substitute);
 									$memory_object_list[$class]['list'][$id] = $tmpobj;
 								} else {
 									// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
 									$tmpobj = $memory_object_list[$class]['list'][$id];
 									// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
-									$valuetouseforsubstitution = $tmpobj->$method($id, $key_to_substitute, true);
+									$tmpvaluetouseforsubstitution = $tmpobj->$method($id, $key_to_substitute, true);
 								}
 
-								$text = str_replace((string) $key_to_substitute, (string) $valuetouseforsubstitution, $text); // Cast to string in case value is 123.5 for example
+								if ($keyinarrayresult) {
+									$valuetouseforsubstitution = (string) $tmpvaluetouseforsubstitution[$keyinarrayresult];		// Cast to string in case value is 123.5 for example
+								} else {
+									$valuetouseforsubstitution = (string) $tmpvaluetouseforsubstitution;						// Cast to string in case value is 123.5 for example
+								}
+								$text = str_replace((string) $key_to_substitute, $valuetouseforsubstitution, $text);
 							}
 						}
 					}
