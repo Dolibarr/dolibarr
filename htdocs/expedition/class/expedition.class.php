@@ -2891,7 +2891,7 @@ class Expedition extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			// Set order billed if 100% of order is shipped (qty in shipment lines match qty in order lines)
-			if ($this->origin == 'commande' && $this->origin_id > 0) {
+			if ($this->origin_type == 'commande' && $this->origin_id > 0) {
 				$order = new Commande($this->db);
 				$order->fetch($this->origin_id);
 
@@ -2921,6 +2921,7 @@ class Expedition extends CommonObject
 			// If stock increment is done on closing
 			if (isModEnabled('stock') && getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE')) {
 				$result = $this->manageStockMvtOnEvt($user);
+
 				if ($result < 0) {
 					$error++;
 				}

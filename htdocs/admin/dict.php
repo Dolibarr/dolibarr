@@ -1378,6 +1378,7 @@ if (empty($reshook)) {
  */
 
 $form = new Form($db);
+$formother = new FormOther($db);
 
 $title = $langs->trans("DictionarySetup");
 
@@ -2621,6 +2622,8 @@ if ($id > 0) {
 								$valuetoshow = price2num($valuetoshow);
 							} elseif ($value == 'type' && $id == DICT_ACTIONCOMM && !empty($obj->module)) {
 								$titletoshow = $langs->trans("Module").' '.$obj->module;
+							} elseif ($value == 'color') {
+								$valuetoshow = $formother->showColor($obj->{$value}, '');
 							}
 
 
@@ -2825,14 +2828,13 @@ $db->close();
 function dictFieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 {
 	global $langs, $db, $mysoc;
-	global $form;
+	global $form, $formother;
 	global $region_id;
 	global $elementList, $sourceList, $localtax_typeList, $type_vatList;
 
 	$formadmin = new FormAdmin($db);
 	$formcompany = new FormCompany($db);
 	$formaccounting = new FormAccounting($db);
-	$formother = new FormOther($db);
 
 	$withentity = '';
 
