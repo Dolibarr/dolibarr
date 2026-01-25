@@ -1175,16 +1175,30 @@ class CMailFile
 							);
 							$serviceFactory = new \OAuth\ServiceFactory();
 							$oauthname = explode('-', $OAUTH_SERVICENAME);
-							// ex service is Google-Emails we need only the first part Google
-							$apiService = $serviceFactory->createService($oauthname[0], $credentials, $storage, array());
+							// Recreate the service with its configured scopes.
+							// This matters for some providers (Microsoft v2 token endpoint) where scope may be required on refresh.
+							$oauthScopes = array();
+							$oauthScopesStr = getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_SCOPE');
+							if (!empty($oauthScopesStr)) {
+								$oauthScopes = preg_split('/\s*,\s*/', $oauthScopesStr);
+								if (!is_array($oauthScopes)) {
+									$oauthScopes = array();
+								}
+							}
 
-							// We have to save the refresh token because Google give it only once
+							// ex service is Google-Emails we need only the first part Google
+							$apiService = $serviceFactory->createService($oauthname[0], $credentials, $storage, $oauthScopes);
+
+							// Some providers (like Google) return a refresh token only once.
+							// If the refreshed token does not contain one, keep the previous refresh token.
 							$refreshtoken = $tokenobj->getRefreshToken();
 
 							if ($apiService instanceof OAuth\OAuth2\Service\AbstractService || $apiService instanceof OAuth\OAuth1\Service\AbstractService) {
 								// ServiceInterface does not provide refreshAccessToken, AbstractService does
 								$tokenobj = $apiService->refreshAccessToken($tokenobj);
-								$tokenobj->setRefreshToken($refreshtoken);	// Restore the refresh token
+								if (empty($tokenobj->getRefreshToken())) {
+									$tokenobj->setRefreshToken($refreshtoken);
+								}
 								$storage->storeAccessToken($OAUTH_SERVICENAME, $tokenobj);
 							}
 
@@ -1345,15 +1359,27 @@ class CMailFile
 							);
 							$serviceFactory = new \OAuth\ServiceFactory();
 							$oauthname = explode('-', $OAUTH_SERVICENAME);
+							// Recreate the service with its configured scopes.
+							// This matters for some providers (Microsoft v2 token endpoint) where scope may be required on refresh.
+							$oauthScopes = array();
+							$oauthScopesStr = getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_SCOPE');
+							if (!empty($oauthScopesStr)) {
+								$oauthScopes = preg_split('/\s*,\s*/', $oauthScopesStr);
+								if (!is_array($oauthScopes)) {
+									$oauthScopes = array();
+								}
+							}
+
 							// ex service is Google-Emails we need only the first part Google
-							$apiService = $serviceFactory->createService($oauthname[0], $credentials, $storage, array());
+							$apiService = $serviceFactory->createService($oauthname[0], $credentials, $storage, $oauthScopes);
 							$refreshtoken = $tokenobj->getRefreshToken();
 
 							if ($apiService instanceof OAuth\OAuth2\Service\AbstractService || $apiService instanceof OAuth\OAuth1\Service\AbstractService) {
 								// ServiceInterface does not provide refreshAccessToken, AbstractService does
-								// We must save the token because Google provides it only once
 								$tokenobj = $apiService->refreshAccessToken($tokenobj);
-								$tokenobj->setRefreshToken($refreshtoken);
+								if (empty($tokenobj->getRefreshToken())) {
+									$tokenobj->setRefreshToken($refreshtoken);
+								}
 								$storage->storeAccessToken($OAUTH_SERVICENAME, $tokenobj);
 
 								$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
