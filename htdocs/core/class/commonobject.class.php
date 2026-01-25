@@ -2445,7 +2445,9 @@ abstract class CommonObject
 		}
 		if ($fieldid == 'rowid') {
 			$sql .= " WHERE te.".$fieldid." < ".((int) $this->id);
-		} else {
+		} elseif ($fieldid == 'label') {
+			$sql .= " WHERE te.".$fieldid." < '".$this->db->escape((string) $this->label)."'";
+		} else {	// Should be 'ref' or any other string field
 			$sql .= " WHERE te.".$fieldid." < '".$this->db->escape((string) $this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
 		}
 		if ($restrictiononfksoc == 1 && !$user->hasRight('societe', 'client', 'voir') && !$socid) {
@@ -2524,7 +2526,9 @@ abstract class CommonObject
 		}
 		if ($fieldid == 'rowid') {
 			$sql .= " WHERE te.".$fieldid." > ".((int) $this->id);
-		} else {
+		} elseif ($fieldid == 'label') {
+			$sql .= " WHERE te.".$fieldid." > '".$this->db->escape((string) $this->label)."'";
+		} else {	// Should be 'ref' or any other string field
 			$sql .= " WHERE te.".$fieldid." > '".$this->db->escape((string) $this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
 		}
 		if ($restrictiononfksoc == 1 && !$user->hasRight('societe', 'client', 'voir') && !$socid) {

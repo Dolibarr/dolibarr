@@ -2025,6 +2025,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 		 * Product card
 		 */
 
+		$iskit = $object->hasFatherOrChild(1);
+
 		// Card in edit mode
 		if ($action == 'edit' && $usercancreate) {
 			//WYSIWYG Editor
@@ -2284,7 +2286,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				}
 
 				// Stock
-				if (($object->isProduct() || getDolGlobalInt('STOCK_SUPPORTS_SERVICES')) && isModEnabled('stock')) {
+				if (isModEnabled('stock')) {
 					if (isModEnabled('productbatch') && $object->hasbatch()) {
 						print '<tr><td><input type="hidden" id="stockable_product" name="stockable_product" value="on" /></td><td></td></tr>';
 					} else {
@@ -2680,6 +2682,27 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '</td></tr>'."\n";
 				}
 
+				// Stockable product / default warehouse
+				if (($object->isProduct() || getDolGlobalInt('STOCK_SUPPORTS_SERVICES')) && isModEnabled('stock')) {	// Do not use isStockManaged here.We must sow info even if stock not managed
+					print '<tr><td>' . $form->textwithpicto($langs->trans("StockableProduct"), $langs->trans('StockableProductDescription')) . '</td>';
+					print '<td>';
+					if ($iskit) {
+						print '<input type="checkbox" readonly disabled> <span class="opacitymedium">' . $langs->trans("NotSupportedOnKits").'</span>';
+					} else {
+						print '<input type="checkbox" readonly disabled '.($object->stockable_product == 1 ? 'checked' : '').'>';
+					}
+					print '</td></tr>';
+
+					if ($object->isStockManaged() && !$iskit) {
+						$warehouse = new Entrepot($db);
+						$warehouse->fetch($object->fk_default_warehouse);
+
+						print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
+						print(!empty($warehouse->id) ? $warehouse->getNomUrl(1) : '');
+						print '</td>';
+					}
+				}
+
 				// Batch number management (to batch)
 				if (isModEnabled('productbatch')) {
 					if ($object->isProduct() || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
@@ -2810,21 +2833,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '<tr><td>'.$langs->trans("PublicUrl").'</td><td>';
 					print dol_print_url($object->url, '_blank', 128);
 					print '</td></tr>';
-				}
-
-				// Stockable product / default warehouse
-				if (($object->isProduct() || getDolGlobalInt('STOCK_SUPPORTS_SERVICES')) && isModEnabled('stock')) {
-					print '<tr><td>' . $form->textwithpicto($langs->trans("StockableProduct"), $langs->trans('StockableProductDescription')) . '</td>';
-					print '<td><input type="checkbox" readonly disabled '.($object->stockable_product == 1 ? 'checked' : '').'></td></tr>';
-
-					if ($object->isStockManaged()) {
-						$warehouse = new Entrepot($db);
-						$warehouse->fetch($object->fk_default_warehouse);
-
-						print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
-						print(!empty($warehouse->id) ? $warehouse->getNomUrl(1) : '');
-						print '</td>';
-					}
 				}
 
 				if ($object->isService() && isModEnabled('workstation')) {
