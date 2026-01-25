@@ -26,15 +26,15 @@
  */
 
 /**
- * \file       htdocs/core/lib/product.lib.php
- * \brief      Ensemble de functions de base pour le module produit et service
- * \ingroup	product
+ * \file       	htdocs/core/lib/product.lib.php
+ * \brief      	Set of functions for the module product and service
+ * \ingroup		product
  */
 
 /**
  * Prepare array with list of tabs
  *
- * @param   Product	$object		Object related to tabs
+ * @param   Product				$object					Object related to tabs
  * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function product_prepare_head($object)
