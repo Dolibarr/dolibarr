@@ -56,6 +56,13 @@ class Account extends CommonObject
 	public $picto = 'account';
 
 	/**
+	 * Ref
+	 *
+	 * @var string
+	 */
+	public $ref;
+
+	/**
 	 * @var	int
 	 * @deprecated	Use $id instead of $rowid
 	 * @see $id
