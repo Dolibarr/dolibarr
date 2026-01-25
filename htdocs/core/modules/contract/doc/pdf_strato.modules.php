@@ -812,7 +812,7 @@ class pdf_strato extends ModelePDFContract
 				$thirdparty = $object->thirdparty;
 			}
 
-			$this->recipient->name = pdfBuildThirdpartyName($thirdparty, $outputlangs);
+			$this->recipient->name = (!is_null($thirdparty) ? pdfBuildThirdpartyName($thirdparty, $outputlangs) : '');
 
 			$mode = 'target';
 			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, (isset($object->contact) ? $object->contact : ''), ($usecontact ? 1 : 0), $mode, $object);
