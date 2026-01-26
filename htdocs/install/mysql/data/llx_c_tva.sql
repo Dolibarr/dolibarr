@@ -189,7 +189,8 @@ insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (8
 
 -- ITALY (id country=3)
 insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (3,   '0','0','VAT rate 0',1,__ENTITY__);
-insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (3,  '10','0','VAT rate - reduced',1,__ENTITY__);
+insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (3,  '10','0','VAT rate - reduced 1',1,__ENTITY__);
+insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (3,   '5','0','VAT rate - reduced 2',1,__ENTITY__);
 insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (3,   '4','0','VAT rate - super-reduced',1,__ENTITY__);
 insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (3,  '22','0','VAT rate - standard',1,__ENTITY__);
 
