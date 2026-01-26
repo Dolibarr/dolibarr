@@ -1079,8 +1079,8 @@ class pdf_octopus extends ModelePDFFactures
 						$vatrate .= '*';
 					}
 
-//					// Fill $this->tva and $this->tva_array
-//					$this->tva[$vatrate] += $tvaligne;	// ->tva is abandoned, we use now ->tva_array that is more complete
+					// Fill $this->tva and $this->tva_array
+					// $this->tva[$vatrate] += $tvaligne;	// ->tva is abandoned, we use now ->tva_array that is more complete
 					$vatcode = $object->lines[$i]->vat_src_code;
 					if (empty($this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'])) {
 						$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] = 0;
@@ -1433,7 +1433,6 @@ class pdf_octopus extends ModelePDFFactures
 		$pdf->SetFont('', '', $default_font_size - 1);
 
 		krsort($this->tva_array);
-//		print_r($this->tva_array); die();
 
 		// Clean data type
 		$object->total_tva = (float) $object->total_tva;
