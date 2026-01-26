@@ -1893,11 +1893,10 @@ class pdf_octopus extends ModelePDFFactures
 
 		$this->atleastoneratenotnull = 0;
 		if (!getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT')) {
-			//$tvaisnull = (!empty($this->tva) && count($this->tva) == 1 && isset($this->tva['0.000']) && is_float($this->tva['0.000']));
 			$tvaisnull = false;
 			if (!empty($this->tva_array) && count($this->tva_array) == 1 ) {
 				$tva_el = reset($this->tva_array);
-				if ($tva_el['vatrate'] == '0.000' && is_float($tva_el['amount'])) $tvaisnull = false;
+				if ($tva_el['vatrate'] == '0.000' && is_float($tva_el['amount'])) $tvaisnull = true;
 			}
 			if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_IFNULL') && $tvaisnull) {
 				// Nothing to do
