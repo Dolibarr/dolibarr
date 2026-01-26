@@ -608,7 +608,7 @@ class pdf_merou extends ModelePdfExpedition
 			$posy = $Yoff;
 			$pdf->SetXY($Xoff, $posy);
 			$pdf->SetTextColor(0, 0, 0);
-			$pdf->MultiCell($this->page_largeur - $this->marge_droite - $Xoff, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_client), '', 'R');
+			$pdf->MultiCell($this->page_largeur - $this->marge_droite - $Xoff, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities((string) $object->thirdparty->code_client), '', 'R');
 		}
 
 		// Date delivery
