@@ -10,6 +10,7 @@
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Vincent de Grandpré		<vincent@de-grandpre.quebec>
  * Copyright (C) 2024		Solution Libre SAS		<contact@solution-libre.fr>
+ * Copyright (C) 2026		Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1887,7 +1888,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				if (isModEnabled("service") && !empty($projectstatic->thirdparty) && $projectstatic->thirdparty->id > 0 && $projectstatic->usage_bill_time) {
 					print '<td class="nowraponall">';
 					print img_picto('', 'service');
-					print $form->select_produits((GETPOSTISSET('fk_product') ? GETPOSTINT("fk_product") : ''), 'fk_product', 1, 0, $projectstatic->thirdparty->price_level, 1, 2, '', 1, array(), $projectstatic->thirdparty->id, 'None', 0, 'maxwidth150', 0, '', null, 1);
+					print $form->select_produits((GETPOSTISSET('fk_product') ? GETPOSTINT("fk_product") : ''), 'fk_product', 1, 0, $projectstatic->thirdparty->price_level, 1, 2, '', 1, array(), $projectstatic->thirdparty->id, 'None', 0, 'maxwidth150', ($user->hasRight('produit', 'lire') ? 0 : 1), '', null, 1);
 					print '</td>';
 				}
 			}
@@ -2430,7 +2431,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print '<td class="nowraponall">';
 				if ($action == 'editline' && GETPOSTINT('lineid') == $task_time->rowid) {
 					print img_picto('', 'service');
-					print $form->select_produits($task_time->fk_product, 'fk_product', 1, 0, $projectstatic->thirdparty->price_level, 1, 2, '', 1, array(), $projectstatic->thirdparty->id, 'None', 0, 'maxwidth500', 0, '', null, 1);
+					print $form->select_produits($task_time->fk_product, 'fk_product', 1, 0, $projectstatic->thirdparty->price_level, 1, 2, '', 1, array(), $projectstatic->thirdparty->id, 'None', 0, 'maxwidth500',  ($user->hasRight('produit', 'lire') ? 0 : 1), '', null, 1);
 				} elseif (!empty($task_time->fk_product)) {
 					$product = new Product($db);
 					$resultFetch = $product->fetch($task_time->fk_product);
@@ -2485,18 +2486,22 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 						if ($task_time->invoice_id) {
 							$result = $tmpinvoice->fetch($task_time->invoice_id);
 							if ($result > 0) {
-								if ($action == 'editline' && GETPOSTINT('lineid') == $task_time->rowid) {
-									print $formproject->selectInvoiceAndLine($task_time->invoice_id, $task_time->invoice_line_id, 'invoiceid', 'invoicelineid', 'maxwidth500', array('p.rowid' => $projectstatic->id));
-								} else {
-									print $tmpinvoice->getNomUrl(1);
-									if (!empty($task_time->invoice_line_id)) {
-										$invoiceLine = new FactureLigne($db);
-										$invoiceLine->fetch($task_time->invoice_line_id);
-										if (!empty($invoiceLine->id)) {
-											print '<br>'.$langs->trans('Qty').':'.$invoiceLine->qty;
-											print ' '.$langs->trans('TotalHT').':'.price($invoiceLine->total_ht);
+								if ($user->hasRight('facture', 'lire')) {
+									if ($action == 'editline' && GETPOSTINT('lineid') == $task_time->rowid) {
+										print $formproject->selectInvoiceAndLine($task_time->invoice_id, $task_time->invoice_line_id, 'invoiceid', 'invoicelineid', 'maxwidth500', array('p.rowid' => $projectstatic->id));
+									} else {
+										print $tmpinvoice->getNomUrl(1);
+										if (!empty($task_time->invoice_line_id)) {
+											$invoiceLine = new FactureLigne($db);
+											$invoiceLine->fetch($task_time->invoice_line_id);
+											if (!empty($invoiceLine->id)) {
+												print '<br>'.$langs->trans('Qty').':'.$invoiceLine->qty;
+												print ' '.$langs->trans('TotalHT').':'.price($invoiceLine->total_ht);
+											}
 										}
 									}
+								} else {
+									print $langs->trans("Yes");
 								}
 							}
 							$invoiced = true;
