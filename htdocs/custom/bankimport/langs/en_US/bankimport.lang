@@ -1,0 +1,68 @@
+Module104020Name = Bank import
+Module104020Desc = Allow importing bank statement CSV files for automatic reconciliation
+
+ATMAbout = This module has been developed by <a href="http://www.atm-consulting.fr" target="_blank">ATM Consulting</a><br>You can find the documentation on our <a href="http://wiki.atm-consulting.fr/index.php/Accueil" target="_blank">wiki</a><br><br>For any question or feedback, contact us on <a href="mailto:support@atm-consulting.fr">support@atm-consulting.fr</a><br><br>For any commercial question, contact us on <a href="mailto:contact@atm-consulting.fr">contact@atm-consulting.fr</a> or at +33 9 77 19 50 70<br><br>Find our other modules on <a href="http://www.dolistore.com/search.php?orderby=position&orderway=desc&search_query=atm&submit_search=Rechercher" target="_blank">Dolistore</a>
+
+BankImportSetup = Bank import module setup
+BankImportAbout = About bank import module
+
+# ADMIN
+BankImportSeparator = Data separator in CSV file
+BankImportMapping = CSV file mapping
+BankImportDateFormat = CSV file date format
+BankImportSeparatorHelp = Character used to separate your CSV file columns (Usually "," or ";". A single character).
+BankImportMappingHelp = Column correspondence in your CSV file. Codes "date", "label", "debit" and "credit" must be in this data mapping.<br>If your file contains only one column for the amount, use "amount" and possibly "direction=Debit token" (eg. "direction=DEBIT" or "direction=-") instead of "debit" and "credit".<br>If your file contains other columns, name them "null" in the correspondence.
+BankImportDateFormatHelp = Date format used in your CSV file (%%d is the day on two characters, %%m month on two characters and %%Y year on four characters). For example, the date 07/25/2013 matches the date format %%m/%%d/%%Y.
+UseMacCompatibility=
+bankImportUseHistory=Enable the import history with the file content (<b>Carreful: a header line must be exists in you file</b>)
+bankImportAllowInvoiceFromSeveralThird=Allow to pay / reconcile payments from different third parties
+bankImportAllowDraftInvoice=Allow to reconcile draft invoice payments (invoices will be validated and payments created)
+UseMacCompatibility=Enable Mac compatibility
+
+# MENU
+LeftMenuBankImport = Bank import
+
+# PAGE
+TitleBankImport = Bank import
+BankImportFile = File to import
+BankCompareTransactions = Compare transactions
+BankImport = Do automatic reconciliations and transactions creation
+FileTransactions = Bank transactions from CSV file
+DolibarrTransactions = Bank transactions from Dolibarr
+RelatedItem = Related element
+Action = Planned action
+DoAction = Validate
+StatementCreatedAndDataImported = Statement %s created with %s transactions reconciliated, including %s created
+FileHasHeader = File has a header line
+bankImport_selectCompanyPls=Select company
+bankImport_selectPaymentTypePls=select payment
+bankImportNoReccordFound=No reccord found
+
+bankImportFieldBankAccountRequired=Bank account required
+bankImportFieldNumReleveRequired=Account statement required
+bankImportFieldBankImportFileRequired=File required
+bankImportFieldCompanyRequired=Company required
+bankImportFieldPaymentRequired=Payment type required
+
+# DATA
+BankTransactionWillBeCreatedAndReconciled = Transaction will be created and reconciliated
+WillBeReconciledWithStatement = Transaction will be reconciliated with statement %s
+AlreadyReconciledWithStatement = Transaction already reconciliated with statement %s
+LineDoesNotMatchWithMapping = File line doesn't match mapping
+
+BankImport_FatalError_PaymentType_NotPossible=Error : type of payment [%s] is not possible
+
+bankimport_no_customer_selected_click_to_select_one=No thirdparty found, click here to choose one
+bankimport_customer_selected_click_to_select_another_one=%s (click here to choose another thirdparty)BankImportSetupPage = Configuring the bank import module
+BankImportAboutPage = About the bank import module
+bankImportUncheckAllLines = Uncheck all lines when displaying transactions from the
+bankImportAutoCreateDiscount = Automatically convert down payments into future reductions if fully settled
+bankImportMatchBanklinesByAmountAndLabel = Search for bank entry lines by amount AND name
+bankImportUseDateProximity = Use date proximity for matching (best match instead of first)
+bankImportDateToleranceDays = Date tolerance (days)
+bankImportDateToleranceDaysHelp = Maximum deviation in days between CSV date and Dolibarr transaction date. Entries outside this tolerance will be skipped. 0 = no restriction.
+bankImportAllowFreelines = Authorize the creation of free bank entries (not linked to a settlement)
+PlannedAction = Planned action
+bankImportCretaFreeLine = Free banking entry
+SupplierInvoices = Supplier invoices
+ImportBankFile = Bank file import

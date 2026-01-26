@@ -1,0 +1,69 @@
+Module104020Name = Bankimport
+Module104020Desc = Ermöglicht das Importieren von Bankkontoauszugs-CSV-Dateien zum automatischen Abgleich
+
+ATMAbout = Dieses Modul wurde von <a href="http://www.atm-consulting.fr" target="_blank">ATM Consulting</a> entwickelt.<br>Sie finden die Dokumentation in unserem <a href="http://wiki.atm-consulting.fr/index.php/Accueil" target="_blank">Wiki</a>.<br><br>Für Fragen oder Feedback kontaktieren Sie uns unter <a href="mailto:support@atm-consulting.fr">support@atm-consulting.fr</a><br><br>Für kommerzielle Anfragen kontaktieren Sie uns unter <a href="mailto:contact@atm-consulting.fr">contact@atm-consulting.fr</a> oder unter +33 9 77 19 50 70<br><br>Entdecken Sie unsere weiteren Module auf <a href="http://www.dolistore.com/search.php?orderby=position&orderway=desc&search_query=atm&submit_search=Rechercher" target="_blank">Dolistore</a>.
+
+BankImportSetup = Konfiguration des Bankimport-Moduls
+BankImportAbout = Über das Bankimport-Modul
+
+# ADMIN
+BankImportSeparator = Trennzeichen in der CSV-Datei
+BankImportMapping = CSV-Datei Spaltenzuorndung
+BankImportDateFormat = Datumsformat in der CSV-Datei
+BankImportSeparatorHelp = Zeichen, das zur Trennung der Spalten in der CSV-Datei verwendet wird (normalerweise "," oder ";". Nur ein einzelnes Zeichen).
+BankImportMappingHelp = Spaltenzuordnung in Ihrer CSV-Datei. Die Codes "date", "label", "debit" und "credit" müssen in dieser Zuordnung zwingend enthalten sein.<br>Wenn Ihre Datei nur eine Spalte für den Transaktionsbetrag enthält, verwenden Sie "amount" und gegebenenfalls, wenn Sie eine Richtungsspalte haben, "direction=Debit token" (z. B. "direction=DEBIT" oder "direction=-") anstelle von "debit" und "credit".<br>Wenn Ihre Datei weitere Spalten enthält, benennen Sie diese in der Zuordnung als "null".
+BankImportDateFormatHelp = Datumsformat, das in Ihrer CSV-Datei verwendet wird (%%d steht für den Tag mit zwei Zeichen, %%m für den Monat mit zwei Zeichen und %%Y steht für das  Jahr mit vier Zeichen). Beispielsweise entspricht das Datum 07/25/2013 dem Datumsformat %%m/%%d/%%Y.
+bankImportUseHistory = Den Importverlauf mit dem Dateiinhalt aktivieren (<b>Vorsicht: Die Datei muss eine Kopfzeile enthalten</b>)
+bankImportAllowInvoiceFromSeveralThird = Abgleich/Zahlung von Rechnungen verschiedener Geschäftspartner erlauben
+bankImportAllowDraftInvoice = Abgleich mit Rechnungen im Entwurfsstatus erlauben (Rechnung validieren und Zahlung erstellen)
+UseMacCompatibility = Mac-Kompatibilität aktivieren
+
+
+# MENU
+LeftMenuBankImport = Bankimport
+
+# PAGE
+TitleBankImport = Bankimport
+BankImportFile = Datei zum Importieren
+BankCompareTransactions = Buchungen abgleichen
+BankImport = Automatischen Abgleich und Buchungserstellung durchführen
+FileTransactions = Banktransaktionen aus der CSV-Datei
+DolibarrTransactions = Banktransaktionen aus Dolibarr
+RelatedItem = Zugehöriges Element
+Action = Geplante Aktion
+DoAction = Bestätigen
+StatementCreatedAndDataImported = Kontoauszug %s erstellt mit %s abgeglichenen Buchungen, davon %s neu erstellt
+FileHasHeader = Datei enthält eine Kopfzeile
+bankImport_selectCompanyPls = Bitte wählen Sie ein Unternehmen aus
+bankImport_selectPaymentTypePls = Bitte wählen Sie eine Zahlungsmethode aus
+bankImportNoReccordFound = Kein Eintrag gefunden
+
+bankImportFieldBankAccountRequired = Bankkonto erforderlich
+bankImportFieldNumReleveRequired = Kontoauszug erforderlich
+bankImportFieldBankImportFileRequired = Datei erforderlich
+bankImportFieldCompanyRequired = Unternehmen erforderlich
+bankImportFieldPaymentRequired = Zahlungsart erforderlich
+
+# DATA
+BankTransactionWillBeCreatedAndReconciled = Buchung wird erstellt und mit dem Kontoauszug %s abgeglichen
+WillBeReconciledWithStatement = Buchung wird mit Kontoauszug %s abgeglichen
+AlreadyReconciledWithStatement = Buchung ist bereits mit Kontoauszug %s abgeglichen
+LineDoesNotMatchWithMapping = Zeile der Datei stimmt nicht mit der Zuorndung überein
+
+BankImport_FatalError_PaymentType_NotPossible = Fehler: Die Zahlungsart [%s] ist nicht möglich
+
+bankimport_no_customer_selected_click_to_select_one = Kein Geschäftspartner gefunden, klicken Sie hier, um einen auszuwählen
+bankimport_customer_selected_click_to_select_another_one = %s (klicken Sie hier, um einen anderen Geschäftspartner auszuwählen)
+BankImportSetupPage = Konfiguration des Bankimport-Moduls
+BankImportAboutPage = Über das Bankimport-Modul
+bankImportUncheckAllLines = Alle Zeilen deaktivieren, wenn Sie Transaktionen aus der Datei anzeigen
+bankImportAutoCreateDiscount = Anzahlungen automatisch in zukünftige Rabatte umwandeln, wenn vollständig beglichen
+bankImportMatchBanklinesByAmountAndLabel = Bankbuchungen anhand von Betrag UND Bezeichnung suchen
+bankImportUseDateProximity = Datumsnaehe beim Abgleich verwenden (beste Uebereinstimmung statt erste)
+bankImportDateToleranceDays = Datumstoleranz (Tage)
+bankImportDateToleranceDaysHelp = Maximale Abweichung in Tagen zwischen CSV-Datum und Dolibarr-Buchungsdatum. Eintraege ausserhalb dieser Toleranz werden uebersprungen. 0 = keine Einschraenkung.
+bankImportAllowFreelines = Erstellen von freien Bankbuchungen erlauben (nicht mit einer Zahlung verknüpft)
+PlannedAction = Geplante Aktion
+bankImportCretaFreeLine = Freier Banking-Eintrag
+SupplierInvoices = Lieferantenrechnungen
+ImportBankFile = Import von Bankdateien
