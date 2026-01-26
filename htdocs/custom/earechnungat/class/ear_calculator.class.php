@@ -371,7 +371,7 @@ class EARCalculator
 		// Income
 		$lines[] = implode($sep, array($langs->trans('Income'), '', ''));
 		foreach ($report['income']['by_rate'] as $rate => $data) {
-			$label = sprintf($langs->trans('CustomerIncome20'), $rate);
+			$label = $langs->trans('CustomerIncome20', $rate);
 			if ($rate == '20') {
 				$label = $langs->trans('CustomerIncome20');
 			} elseif ($rate == '10') {
@@ -393,7 +393,7 @@ class EARCalculator
 		$lines[] = implode($sep, array('', $langs->trans('Salaries'), number_format($report['salaries']['total'], 2, ',', '')));
 
 		foreach ($report['social_charges']['by_type'] as $code => $data) {
-			$lines[] = implode($sep, array('', sprintf($langs->trans('SocialChargesDetail'), $data['label']), number_format($data['total'], 2, ',', '')));
+			$lines[] = implode($sep, array('', $langs->trans('SocialChargesDetail', $data['label']), number_format($data['total'], 2, ',', '')));
 		}
 
 		if ($report['misc']['expense'] > 0) {

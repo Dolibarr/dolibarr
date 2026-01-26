@@ -157,7 +157,7 @@ print '</tr>';
 $rateLabels = array('20' => 'CustomerIncome20', '10' => 'CustomerIncome10', '13' => 'CustomerIncome13', '0' => 'CustomerIncome0');
 foreach ($report['income']['by_rate'] as $rate => $data) {
 	$rateKey = (string) $rate;
-	$label = isset($rateLabels[$rateKey]) ? $langs->trans($rateLabels[$rateKey]) : sprintf($langs->trans('CustomerIncome20'), $rate);
+	$label = isset($rateLabels[$rateKey]) ? $langs->trans($rateLabels[$rateKey]) : $langs->trans('CustomerIncome20', $rate);
 	// Fallback for unknown rates
 	if (!isset($rateLabels[$rateKey])) {
 		$label = 'Erloese ' . $rate . '% USt';
@@ -211,7 +211,7 @@ if (!empty($report['social_charges']['by_type'])) {
 
 	foreach ($report['social_charges']['by_type'] as $code => $data) {
 		print '<tr class="oddeven">';
-		print '<td>&nbsp;&nbsp;&nbsp;&nbsp;' . sprintf($langs->trans('SocialChargesDetail'), dol_escape_htmltag($data['label'])) . '</td>';
+		print '<td>&nbsp;&nbsp;&nbsp;&nbsp;' . $langs->trans('SocialChargesDetail', dol_escape_htmltag($data['label'])) . '</td>';
 		print '<td class="right nowraponall"><span class="amount">' . price($data['total'], 0, $langs, 1, -1, 2, $conf->currency) . '</span></td>';
 		print '</tr>';
 	}
@@ -253,7 +253,7 @@ print '</tr>';
 foreach ($report['income']['by_rate'] as $rate => $data) {
 	if ($data['vat'] > 0) {
 		print '<tr class="oddeven">';
-		print '<td>&nbsp;&nbsp;' . sprintf($langs->trans('VATCollected'), $rate) . '</td>';
+		print '<td>&nbsp;&nbsp;' . $langs->trans('VATCollected', $rate) . '</td>';
 		print '<td class="right nowraponall"><span class="amount">' . price($data['vat'], 0, $langs, 1, -1, 2, $conf->currency) . '</span></td>';
 		print '</tr>';
 	}
