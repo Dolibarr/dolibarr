@@ -1,0 +1,69 @@
+# EARechnungAT - English
+# Copyright (C) 2025 Florian Hoedl
+
+# Module
+Module510200Name = E/A Report AT
+Module510200Desc = Income/Expense Report for Austrian companies
+
+# Menu
+EARechnungATMenu = E/A Report
+EARechnungATReport = Report
+EARechnungATSetup = Settings
+
+# Report page
+EARechnungATTitle = Income-Expense Report
+EARechnungATDescription = Income-Expense Report according to Austrian tax law (Cash-based / Zufluss-Abfluss-Prinzip)
+SelectYear = Fiscal Year
+SelectPeriod = Period
+FullYear = Full Year
+Quarter = Quarter
+Month = Month
+Q1 = Q1 (Jan-Mar)
+Q2 = Q2 (Apr-Jun)
+Q3 = Q3 (Jul-Sep)
+Q4 = Q4 (Oct-Dec)
+ExportCSV = CSV Export
+
+# Report sections
+Income = INCOME
+Expenses = EXPENSES
+CustomerIncome = Customer Invoice Revenue
+CustomerIncome20 = Revenue 20%% VAT
+CustomerIncome10 = Revenue 10%% VAT
+CustomerIncome13 = Revenue 13%% VAT
+CustomerIncome0 = Revenue tax-exempt
+MiscIncome = Other Income
+TotalIncome = Total Income
+SupplierExpenses = Purchases/External Services
+Salaries = Personnel Costs (Net Salaries)
+SocialCharges = Social Charges
+SocialChargesDetail = - %s
+MiscExpenses = Other Operating Expenses
+TotalExpenses = Total Expenses
+ProfitLoss = PROFIT/LOSS
+
+# VAT section
+VATOverview = VAT OVERVIEW (UVA Data)
+VATCollected = VAT collected (%s%%)
+VATDeducted = Input VAT deducted
+VATPayable = VAT payable
+
+# Tax mode
+TaxModePayment = Cash-based (by payment date)
+TaxModeInvoice = Accrual-based (by invoice date)
+TaxMode = Tax calculation mode
+FiscalYearStart = Fiscal year start
+
+# Info
+ReportNote = Note: Calculation based on payment date (cash-based accounting). Based on recorded payments in Dolibarr.
+NoPeriodData = No data available for the selected period.
+
+# Admin
+SetupSaved = Settings saved
+EARechnungATSetupPage = E/A Report Settings
+EARechnungATAbout = About this module
+AboutDescription = This module generates an income/expense report for Austrian companies under 700,000 EUR annual revenue. Calculation is based on cash-flow principle.
+
+# Permissions
+Permission510201 = View E/A reports
+Permission510202 = Export E/A reports

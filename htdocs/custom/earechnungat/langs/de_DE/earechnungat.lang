@@ -1,0 +1,69 @@
+# EARechnungAT - German (Austria/Germany)
+# Copyright (C) 2025 Florian Hoedl
+
+# Module
+Module510200Name = E/A-Rechnung AT
+Module510200Desc = Einnahmen-Ausgaben-Rechnung fuer oesterreichische Unternehmen
+
+# Menu
+EARechnungATMenu = E/A-Rechnung
+EARechnungATReport = Bericht
+EARechnungATSetup = Einstellungen
+
+# Report page
+EARechnungATTitle = Einnahmen-Ausgaben-Rechnung
+EARechnungATDescription = Einnahmen-Ausgaben-Rechnung nach oesterreichischem Recht (Ist-Besteuerung / Zufluss-Abfluss-Prinzip)
+SelectYear = Geschaeftsjahr
+SelectPeriod = Zeitraum
+FullYear = Ganzes Jahr
+Quarter = Quartal
+Month = Monat
+Q1 = Q1 (Jan-Maerz)
+Q2 = Q2 (Apr-Juni)
+Q3 = Q3 (Jul-Sep)
+Q4 = Q4 (Okt-Dez)
+ExportCSV = CSV Export
+
+# Report sections
+Income = EINNAHMEN
+Expenses = AUSGABEN
+CustomerIncome = Erloese aus Kundenrechnungen
+CustomerIncome20 = Erloese 20%% USt
+CustomerIncome10 = Erloese 10%% USt
+CustomerIncome13 = Erloese 13%% USt
+CustomerIncome0 = Erloese steuerfrei
+MiscIncome = Sonstige Einnahmen
+TotalIncome = Summe Einnahmen
+SupplierExpenses = Wareneinkauf/Fremdleistungen
+Salaries = Personalkosten (Gehaelter netto)
+SocialCharges = Sozialabgaben
+SocialChargesDetail = - %s
+MiscExpenses = Sonstige Betriebsausgaben
+TotalExpenses = Summe Ausgaben
+ProfitLoss = GEWINN/VERLUST
+
+# VAT section
+VATOverview = UST-UEBERSICHT (UVA-Daten)
+VATCollected = USt gesammelt (%s%%)
+VATDeducted = Vorsteuer abgezogen
+VATPayable = USt-Zahllast
+
+# Tax mode
+TaxModePayment = Ist-Besteuerung (nach Zahlungsdatum)
+TaxModeInvoice = Soll-Besteuerung (nach Rechnungsdatum)
+TaxMode = Besteuerungsmodus
+FiscalYearStart = Geschaeftsjahresbeginn
+
+# Info
+ReportNote = Hinweis: Berechnung nach Zahlungsdatum (Zufluss-Abfluss-Prinzip, § 17 UStG). Basiert auf erfassten Zahlungen in Dolibarr.
+NoPeriodData = Keine Daten fuer den gewaehlten Zeitraum vorhanden.
+
+# Admin
+SetupSaved = Einstellungen gespeichert
+EARechnungATSetupPage = E/A-Rechnung Einstellungen
+EARechnungATAbout = Ueber dieses Modul
+AboutDescription = Dieses Modul generiert eine Einnahmen-Ausgaben-Rechnung fuer oesterreichische Unternehmen unter 700.000 EUR Jahresumsatz. Die Berechnung basiert auf dem Zufluss-Abfluss-Prinzip.
+
+# Permissions
+Permission510201 = E/A-Bericht anzeigen
+Permission510202 = E/A-Bericht exportieren
