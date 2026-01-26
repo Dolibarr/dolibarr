@@ -17,7 +17,7 @@
  */
 
 use Luracast\Restler\RestException;
-w
+
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 
 
