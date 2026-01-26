@@ -23,7 +23,7 @@ require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 
 /**
  * API class for Resources
- * 
+ *
  * @access protected
  * @class DolibarrApiAccess {@requires user,external}
  */
