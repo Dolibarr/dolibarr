@@ -32,13 +32,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancyexport.class.php';
-require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -47,6 +40,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancyexport.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "admin", "accountancy", "other"));
@@ -660,7 +659,7 @@ print '</form>';
 print '<br><br>';
 
 // Accountancy Numbering model
-$dirmodels = array_merge(array('/'), $conf->modules_parts['models']);
+$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';

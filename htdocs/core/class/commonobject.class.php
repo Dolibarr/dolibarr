@@ -1732,7 +1732,7 @@ abstract class CommonObject
 			$obj = $this->db->fetch_object($resql);
 
 			$transkey = "TypeContact_".$this->element."_".$source."_".$obj->code;
-			$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->type_label);
+			$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $langs->trans($obj->type_label));
 			if (empty($option)) {
 				$tab[$obj->rowid] = $libelle_type;
 			} elseif ($option == 1) {
@@ -2445,7 +2445,9 @@ abstract class CommonObject
 		}
 		if ($fieldid == 'rowid') {
 			$sql .= " WHERE te.".$fieldid." < ".((int) $this->id);
-		} else {
+		} elseif ($fieldid == 'label') {
+			$sql .= " WHERE te.".$fieldid." < '".$this->db->escape((string) $this->label)."'";
+		} else {	// Should be 'ref' or any other string field
 			$sql .= " WHERE te.".$fieldid." < '".$this->db->escape((string) $this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
 		}
 		if ($restrictiononfksoc == 1 && !$user->hasRight('societe', 'client', 'voir') && !$socid) {
@@ -2524,7 +2526,9 @@ abstract class CommonObject
 		}
 		if ($fieldid == 'rowid') {
 			$sql .= " WHERE te.".$fieldid." > ".((int) $this->id);
-		} else {
+		} elseif ($fieldid == 'label') {
+			$sql .= " WHERE te.".$fieldid." > '".$this->db->escape((string) $this->label)."'";
+		} else {	// Should be 'ref' or any other string field
 			$sql .= " WHERE te.".$fieldid." > '".$this->db->escape((string) $this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
 		}
 		if ($restrictiononfksoc == 1 && !$user->hasRight('societe', 'client', 'voir') && !$socid) {
@@ -5512,7 +5516,7 @@ abstract class CommonObject
 				$product_static = new Product($this->db);
 				$product_static->fetch($line->fk_product);
 
-				$product_static->ref = $line->ref; //can change ref in hook
+				$product_static->ref = (string) $line->ref; //can change ref in hook
 				$product_static->label = !empty($line->label) ? $line->label : ""; //can change label in hook
 
 				$text = $product_static->getNomUrl(1);
@@ -5729,7 +5733,7 @@ abstract class CommonObject
 		} elseif (!empty($line->fk_product)) {
 			$productstatic = new Product($this->db);
 			$productstatic->id = $line->fk_product;
-			$productstatic->ref = $line->ref;
+			$productstatic->ref = (string) $line->ref;
 			$productstatic->type = $line->fk_product_type;
 			if (empty($productstatic->ref)) {
 				$line->fetch_product();

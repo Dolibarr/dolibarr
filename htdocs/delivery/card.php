@@ -599,7 +599,7 @@ if ($action == 'create') {
 
 						print '<td>';
 
-						// Affiche ligne produit
+						// Show product line
 						$text = '<a href="'.DOL_URL_ROOT.'/product/card.php?id='.$object->lines[$i]->fk_product.'">';
 						if ($object->lines[$i]->fk_product_type == 1) {
 							$text .= img_object($langs->trans('ShowService'), 'service');
@@ -709,7 +709,7 @@ if ($action == 'create') {
 			  * Documents generated
 			 */
 			if ($action != 'presend') {
-				$objectref = dol_sanitizeFileName($object->ref);
+				$objectref = dol_sanitizeFileName((string) $object->ref);
 				$filedir = $conf->expedition->dir_output."/receipt/".$objectref;
 				$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 

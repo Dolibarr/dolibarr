@@ -1224,12 +1224,14 @@ class EmailCollector extends CommonObject
 				try {
 					$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
 
-					$expire = true;
-					// TODO
-					// Is token expired or will token expire in the next 30 seconds
-					// if (is_object($tokenobj)) {
-					// 	$expire = ($tokenobj->getEndOfLife() !== -9002 && $tokenobj->getEndOfLife() !== -9001 && time() > ($tokenobj->getEndOfLife() - 30));
-					// }
+					$expire = false;
+					if (is_object($tokenobj) && method_exists($tokenobj, 'getEndOfLife')) {
+						$endOfLife = $tokenobj->getEndOfLife();
+						if ($endOfLife !== -9002 && $endOfLife !== -9001 && time() > ($endOfLife - 30)) {
+							$expire = true;
+						}
+					}
+
 					// Token expired so we refresh it
 					if (is_object($tokenobj) && $expire) {
 						$this->debuginfo .= 'Refresh token '.$OAUTH_SERVICENAME.'<br>';
@@ -1482,8 +1484,8 @@ class EmailCollector extends CommonObject
 					$fromdate = $this->datelastok;
 				}
 				if ($fromdate > 0) {
-					// $search .= ($search ? ' ' : '').'SINCE '.date('j-M-Y', $fromdate - 1); // SENTSINCE not supported. Date must be X-Abc-9999 (X on 1 digit if < 10)
-					array_push($criteria, array("SINCE" => date('j-M-Y', $fromdate - 1)));	// -1 is to add a security to no forgot some email
+					// IMAP SINCE works by day; keep a 1-day overlap so we don't miss emails left unprocessed (e.g. discarded by filters).
+					array_push($criteria, array("SINCE" => date('j-M-Y', $fromdate - 86400)));
 				}
 				//$search.=($search?' ':'').'SINCE 8-Apr-2022';
 			}
@@ -1624,7 +1626,8 @@ class EmailCollector extends CommonObject
 					$fromdate = $this->datelastok;
 				}
 				if ($fromdate > 0) {
-					$search .= ($search ? ' ' : '').'SINCE '.date('j-M-Y', $fromdate - 1); // SENTSINCE not supported. Date must be X-Abc-9999 (X on 1 digit if < 10)
+					// IMAP SINCE works by day; keep a 1-day overlap so we don't miss emails left unprocessed (e.g. discarded by filters).
+					$search .= ($search ? ' ' : '').'SINCE '.date('j-M-Y', $fromdate - 86400); // SENTSINCE not supported. Date must be X-Abc-9999 (X on 1 digit if < 10)
 				}
 				//$search.=($search?' ':'').'SINCE 8-Apr-2018';
 			}
@@ -1839,32 +1842,58 @@ class EmailCollector extends CommonObject
 
 				// Now apply some filters.
 
-				//If there is an emailcollector filter on trackid
+				// If there is an emailcollector filter on trackid
 				if ($searchfilterdoltrackid > 0) {
+					$referencesForFilter = $headers['References'] ?? '';
+					if (!empty($headers['References']) && !empty($headers['In-Reply-To'])) {
+						$referencesForFilter .= ' ';
+					}
+					$referencesForFilter .= ($headers['In-Reply-To'] ?? '');
+
 					if (empty($trackidfoundintorecipienttype) && empty($trackidfoundintomsgidtype)) {
-						if (empty($headers['References']) || !preg_match('/@'.preg_quote($host, '/').'/', $headers['References'])) {
+						if (empty($referencesForFilter) || !preg_match('/@'.preg_quote($host, '/').'/', $referencesForFilter)) {
 							$nbemailprocessed++;
-							dol_syslog(" Discarded - No suffix in email recipient and no Header References found matching the signature of the application, so with a trackid coming from the application");
+							dol_syslog(" Discarded - No suffix in email recipient, and no Header 'References/In-Reply-To' found matching the signature of the application, so with a trackid coming from the application");
 							continue; // Exclude email
 						}
 					}
 				}
 				if ($searchfilternodoltrackid > 0) {
-					if (!empty($trackidfoundintorecipienttype) || !empty($trackidfoundintomsgidtype) || (!empty($headers['References']) && preg_match('/@'.preg_quote($host, '/').'/', $headers['References']))) {
+					$referencesForFilter = $headers['References'] ?? '';
+					if (!empty($headers['References']) && !empty($headers['In-Reply-To'])) {
+						$referencesForFilter .= ' ';
+					}
+					$referencesForFilter .= ($headers['In-Reply-To'] ?? '');
+
+					if (!empty($trackidfoundintorecipienttype) || !empty($trackidfoundintomsgidtype) || (!empty($referencesForFilter) && preg_match('/@'.preg_quote($host, '/').'/', $referencesForFilter))) {
 						$nbemailprocessed++;
-						dol_syslog(" Discarded - Suffix found into email or Header References found and matching signature of application so with a trackid");
+						dol_syslog(" Discarded - Suffix found into email recipient, or Header 'References/In-Reply-To' found and matching signature of application so with a trackid");
 						continue; // Exclude email
 					}
 				}
 
 				if ($searchfilterisanswer > 0) {
-					if (empty($headers['In-Reply-To'])) {
-						$nbemailprocessed++;
-						dol_syslog(" Discarded - Email is not an answer (no In-Reply-To header)");
-						continue; // Exclude email
+					$referencesforanswer = '';
+					if (!empty($headers['References'])) {
+						$referencesforanswer .= $headers['References'].' ';
 					}
+					if (!empty($headers['In-Reply-To'])) {
+						$referencesforanswer .= $headers['In-Reply-To'];
+					}
+
+					$hasdolibarrreference = 0;
+					if (!empty($referencesforanswer)) {
+						if (preg_match('/dolibarr-([a-z]+)([0-9]+)@'.preg_quote($host, '/').'/', $referencesforanswer)) {
+							$hasdolibarrreference = 1;
+						} elseif (getDolGlobalString('EMAIL_ALTERNATIVE_HOST_SIGNATURE')) {
+							if (preg_match('/dolibarr-([a-z]+)([0-9]+)@'.preg_quote(getDolGlobalString('EMAIL_ALTERNATIVE_HOST_SIGNATURE'), '/').'/', $referencesforanswer)) {
+								$hasdolibarrreference = 1;
+							}
+						}
+					}
+
 					$isanswer = 0;
-					if (preg_match('/^(Re|AW)\s*:\s+/i', $headers['Subject'])) {
+					if (preg_match('/^(回复|回覆|SV|Antw|VS|RE|Re|AW|Aw|ΑΠ|השב| תשובה | הועבר|Vá|R|RIF|BLS|Atb|RES|Odp|பதில்|YNT|ATB)\s*:\s+/i', $headers['Subject'])) {
 						$isanswer = 1;
 					}
 					if (getDolGlobalString('EMAILCOLLECTOR_USE_IN_REPLY_TO_TO_DETECT_ANSWERS')) {
@@ -1874,12 +1903,15 @@ class EmailCollector extends CommonObject
 							$isanswer = 1;
 						}
 					}
+					if ($hasdolibarrreference) {
+						$isanswer = 1;
+					}
 					//if ($headers['In-Reply-To'] != $headers['Message-ID'] && empty($headers['References'])) $isanswer = 1;	// If in-reply-to differs of message-id, this is a reply
 					//if ($headers['In-Reply-To'] != $headers['Message-ID'] && !empty($headers['References']) && strpos($headers['References'], $headers['Message-ID']) !== false) $isanswer = 1;
 
 					if (!$isanswer) {
 						$nbemailprocessed++;
-						dol_syslog(" Discarded - Email is not an answer (no RE prefix in subject)");
+						dol_syslog(" Discarded - Email is not an answer (no reply marker detected, and test on In-Reply-To not requested because not reliable, or test on In-Reply-To requested but not found)");
 						continue; // Exclude email
 					}
 				}
@@ -2488,6 +2520,9 @@ class EmailCollector extends CommonObject
 							if ($ticketid > 0) {
 								$alreadycreated = $tickettocreate->fetch($ticketid);
 							}
+							if ($alreadycreated == 0 && !empty($objectid)) {
+								$alreadycreated = $tickettocreate->fetch((int) $objectid);
+							}
 							if ($alreadycreated == 0 && !empty($trackid)) {
 								$alreadycreated = $tickettocreate->fetch(0, '', $trackid);
 							}
@@ -2741,6 +2776,8 @@ class EmailCollector extends CommonObject
 									if (!empty($contact_static->email) && $contact_static->email != $from) {
 										$from = $contact_static->email;
 									}
+									$from = (string) $from;
+
 									$from = (string) $from;
 
 									$result = $contactstatic->fetch(0, null, '', $from);
