@@ -114,7 +114,7 @@ class Dolresources extends DolibarrApi
 		$sql = "SELECT t.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->resource->table_element." as t";
 		$sql .= " WHERE t.entity IN (".getEntity('resource').")";
-		
+
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
@@ -275,7 +275,7 @@ class Dolresources extends DolibarrApi
 	{
 		// phpcs:enable
 		$object = parent::_cleanObjectDatas($object);
-		
+
 		unset($object->statut);
 		unset($object->user);
 		unset($object->thirdparty);
