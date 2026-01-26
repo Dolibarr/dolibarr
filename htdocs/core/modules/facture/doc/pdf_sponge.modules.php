@@ -723,6 +723,7 @@ class pdf_sponge extends ModelePDFFactures
 				$pdf_sub_options = array();
 				$pdf_sub_options['titleshowuponpdf'] = 1;
 				$pdf_sub_options['titleshowtotalexludingvatonpdf'] = 1;
+				$pdf_sub_options['titleshowtotalincludingvatonpdf'] = 1;
 
 				for ($i = 0; $i < $nblines; $i++) {
 					$linePosition = $i + 1;
