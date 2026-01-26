@@ -1,0 +1,109 @@
+version: '3.8'
+
+services:
+  # خادم الويب (Nginx)
+  webserver:
+    image: nginx:latest
+    container_name: sccit_erp_saas_web
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./:/var/www/html
+      - ./dev/build/docker/nginx/conf.d:/etc/nginx/conf.d
+      - ./dev/build/docker/nginx/ssl:/etc/nginx/ssl
+    networks:
+      - sccit-erp-network
+    depends_on:
+      - php
+      - db
+
+  # خادم PHP-FPM
+  php:
+    build:
+      context: .
+      dockerfile: dev/build/docker/php/Dockerfile
+    container_name: sccit_erp_saas_php
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+      - ./dev/build/docker/php/php.ini:/usr/local/etc/php/conf.d/php.ini
+    networks:
+      - sccit-erp-network
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+
+  # قاعدة البيانات (MySQL)
+  db:
+    image: mysql:8.0
+    container_name: sccit_erp_saas_db
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./saas/migrations/001_create_saas_tables.sql:/docker-entrypoint-initdb.d/001_create_saas_tables.sql
+    networks:
+      - sccit-erp-network
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
+  # phpMyAdmin (اختياري)
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: sccit_erp_saas_phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_USER: ${DB_USER}
+      PMA_PASSWORD: ${DB_PASSWORD}
+    networks:
+      - sccit-erp-network
+    depends_on:
+      - db
+
+  # Redis (للتخزين المؤقت)
+  redis:
+    image: redis:7-alpine
+    container_name: sccit_erp_saas_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - sccit-erp-network
+
+  # MailHog (لاختبار البريد)
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: sccit_erp_saas_mailhog
+    restart: unless-stopped
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - sccit-erp-network
+
+volumes:
+  db_data:
+  redis_data:
+
+networks:
+  sccit-erp-network:
+    driver: bridge
