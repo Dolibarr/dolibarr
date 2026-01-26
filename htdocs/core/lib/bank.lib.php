@@ -207,6 +207,7 @@ function bank_admin_prepare_head($object)
 	$extrafields->fetch_name_optionals_label('bank_account');
 	$extrafields->fetch_name_optionals_label('bank');
 	$extrafields->fetch_name_optionals_label('paiement');
+	$extrafields->fetch_name_optionals_label('payment_various');
 
 	$h = 0;
 	$head = array();
@@ -253,6 +254,15 @@ function bank_admin_prepare_head($object)
 		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
 	}
 	$head[$h][2] = 'bank_payments_extrafields';
+	$h++;
+
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/bank/admin/bank_various_payment_extrafields.php');
+	$head[$h][1] = $langs->trans("ExtraFields").' ('.$langs->trans("VariousPayments").')';
+	$nbExtrafields = $extrafields->attributes['payment_various']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
+	$head[$h][2] = 'bank_various_payment_extrafields';
 	$h++;
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'bank_admin', 'remove');

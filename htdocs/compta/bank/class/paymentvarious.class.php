@@ -272,6 +272,14 @@ class PaymentVarious extends CommonObject
 			return -1;
 		}
 
+		if (!$error) {
+			// Update extrafields
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
+			}
+		}
+
 		if (!$notrigger) {
 			// Call trigger
 			$result = $this->call_trigger('PAYMENT_VARIOUS_MODIFY', $user);
@@ -354,6 +362,10 @@ class PaymentVarious extends CommonObject
 				$this->rappro               = $obj->rappro;
 				$this->bank_num_releve      = $obj->bank_num_releve;
 			}
+
+			// Fetch extrafields
+			$this->fetch_optionals();
+
 			$this->db->free($resql);
 
 			return 1;
@@ -533,6 +545,12 @@ class PaymentVarious extends CommonObject
 			$this->ref = (string) $this->id;
 
 			if ($this->id > 0) {
+				// Insert extrafields
+				$result = $this->insertExtraFields();
+				if ($result < 0) {
+					$error++;
+				}
+
 				if (isModEnabled("bank") && !empty($this->amount)) {
 					// Insert into llx_bank
 					require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';

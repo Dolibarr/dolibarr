@@ -903,6 +903,10 @@ while ($i < $imaxinloop) {
 			print '</td>';
 		}
 
+		// Extra fields
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
+
+		// Action column
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td></td>';
 			if (!$i) {

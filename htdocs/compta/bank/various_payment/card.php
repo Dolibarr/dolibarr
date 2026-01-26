@@ -35,6 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
@@ -83,6 +84,9 @@ $hookmanager->initHooks(array('variouscard', 'globalcard'));
 $result = restrictedArea($user, 'banque', '', '', '');
 
 $object = new PaymentVarious($db);
+
+$extrafields = new ExtraFields($db);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 $permissiontoadd = $user->hasRight('banque', 'modifier');
 $permissiontodelete = $user->hasRight('banque', 'modifier');
@@ -147,6 +151,12 @@ if (empty($reshook)) {
 
 		$object->sens = GETPOSTINT('sens');
 		$object->fk_project = GETPOSTINT('fk_project');
+
+		// Fill array 'array_options' with data from add form
+		$ret = $extrafields->setOptionalsFromPost(null, $object);
+		if ($ret < 0) {
+			$error++;
+		}
 
 		if (!checkGeneralAccountAllowsAuxiliary($db, $object->accountancy_code, $object->subledger_account)) {
 			setEventMessages($langs->trans("ErrorAccountNotCentralized"). ". " . $langs->trans("RemoveSubsidiaryAccountOrAdjustTheGeneralAccount"), null, 'errors');
@@ -537,6 +547,8 @@ if ($action == 'create') {
 	}
 
 	// Other attributes
+	print $object->showOptionals($extrafields, 'create');
+
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
