@@ -2873,7 +2873,7 @@ class pdf_octopus extends ModelePDFFactures
 	 */
 	public function tableFirstPage(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
 	{
-		global $conf, $object, $db;
+		global $conf, $object, $db, $user;
 
 		$form = new Form($db);
 
