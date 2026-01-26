@@ -347,9 +347,9 @@ class pdf_balance extends ModelePdfAccountancy
 			$pdf->startTransaction();
 
 			if ($this->balanceType == "sub") {
-				$this->printStdColumnContent($pdf, $curY, 'account_label', $object->lines[$i]->subledger_label);
+				$this->printStdColumnContent($pdf, $curY, 'account_label', (string) $object->lines[$i]->subledger_label);
 			} else {
-				$this->printStdColumnContent($pdf, $curY, 'account_label', $accountingAccount->label);
+				$this->printStdColumnContent($pdf, $curY, 'account_label', (string) $accountingAccount->label);
 			}
 
 			$pageposafter = $pdf->getPage();
@@ -360,9 +360,9 @@ class pdf_balance extends ModelePdfAccountancy
 				$pdf->setPage($pageposafter);
 				$curY = $tab_top_newpage + $this->tabTitleHeight;
 				if ($this->balanceType == "sub") {
-					$this->printStdColumnContent($pdf, $curY, 'account_label',  $object->lines[$i]->subledger_label);
+					$this->printStdColumnContent($pdf, $curY, 'account_label', (string) $object->lines[$i]->subledger_label);
 				} else {
-					$this->printStdColumnContent($pdf, $curY, 'account_label', $accountingAccount->label);
+					$this->printStdColumnContent($pdf, $curY, 'account_label', (string) $accountingAccount->label);
 				}
 
 				$pageposafter = $pdf->getPage();
@@ -668,7 +668,7 @@ class pdf_balance extends ModelePdfAccountancy
 
 		// Name of soc
 		$pdf->SetXY($this->marge_gauche + 2, $posy + 2);
-		$text = $this->emetteur->name;
+		$text = (string) $this->emetteur->name;
 		$pdf->MultiCell($w / 3, 4, $outputlangs->convToOutputCharset($text), 0, $ltrdirection);
 		$nexY = max($pdf->GetY(), $nexY);
 

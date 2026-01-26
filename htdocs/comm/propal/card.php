@@ -207,6 +207,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT . '/core/actions_dellink.inc.php'; // Must be 'include', not 'include_once'
 
 	include DOL_DOCUMENT_ROOT . '/core/actions_lineupdown.inc.php'; // Must be 'include', not 'include_once'
+
 	// Action clone object
 	if ($action == 'confirm_clone' && $confirm == 'yes' && $usercancreate) {
 		if (!($socid > 0)) {
@@ -1278,6 +1279,13 @@ if (empty($reshook)) {
 			}
 		}
 
+		$price_to_test_sign = ($price_ht ? $price_ht : $price_ttc);
+
+		if ((empty($idprod) || $idprod < 0) && ($price_to_test_sign < 0) && ($qty < 0)) {
+			$langs->load("errors");
+			setEventMessages($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPriceHT'), $langs->transnoentitiesnoconv('Qty')), null, 'errors');
+			$error++;
+		}
 		if ($prod_entry_mode == 'free' && (empty($idprod) || $idprod < 0) && GETPOST('type') < 0) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 			$error++;
@@ -1285,6 +1293,10 @@ if (empty($reshook)) {
 
 		if ($prod_entry_mode == 'free' && (empty($idprod) || $idprod < 0) && $price_ht === '' && $price_ht_devise === '' && $price_ttc === '' && $price_ttc_devise === '') { 	// Unit price can be 0 but not ''. Also price can be negative for proposal.
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("UnitPriceHT")), null, 'errors');
+			$error++;
+		}
+		if ($qty < 0 && !getDolGlobalString('PROPAL_ENABLE_NEGATIVE_QTY')) {
+			setEventMessages($langs->trans('FieldCannotBeNegative', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 			$error++;
 		}
 		if ($prod_entry_mode == 'free' && (empty($idprod) || $idprod < 0) && empty($line_desc)) {
@@ -1306,8 +1318,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		$propal_qty_requirement = (getDolGlobalString('PROPAL_ENABLE_NEGATIVE_QTY') ? ($qty >= 0 || $qty <= 0) : $qty >= 0);
-		if (!$error && $propal_qty_requirement && (!empty($line_desc) || (!empty($idprod) && $idprod > 0))) {
+		if (!$error && (!empty($line_desc) || (!empty($idprod) && $idprod > 0))) {
 			$pu_ht = 0;
 			$pu_ttc = 0;
 			$pu_ht_devise = 0;
@@ -2933,7 +2944,7 @@ if ($action == 'create') {
 		// Confirmation delete product/service line
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id . '&lineid=' . $lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
 	} elseif ($action == 'ask_subtotal_deleteline') {
-		// Confirmation de la suppression d'une ligne subtotal
+		// Confirmation of removal of a subtotal line
 		$langs->load("subtotals");
 		$title = "DeleteSubtotalLine";
 		$question = "ConfirmDeleteSubtotalLine";

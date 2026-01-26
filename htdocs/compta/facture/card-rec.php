@@ -656,8 +656,8 @@ if (empty($reshook)) {
 					$pu_ht = price2num($price_ht, 'MU');
 					$pu_ttc = price2num((float) $pu_ht * (1 + ($tmpvat / 100)), 'MU');
 				} elseif ($tmpvat != $tmpprodvat) {
-					// On reevalue prix selon taux tva car taux tva transaction peut etre different
-					// de ceux du produit par default (par example si pays different entre vendeur et acheteur).
+					// We reevaluate the price according to vat rate because vat rate of transactionmay differs from
+					// the one oth the product by default (for example when country of seller and buyer are different).
 					if ($price_base_type != 'HT') {
 						$pu_ht = price2num((float) $pu_ttc / (1 + ($tmpvat / 100)), 'MU');
 					} else {
@@ -1485,7 +1485,7 @@ if ($action == 'create') {
 		if ($action == 'delete') {
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteRepeatableInvoice'), $langs->trans('ConfirmDeleteRepeatableInvoice'), 'confirm_delete', '', 'no', 1);
 		}
-		// Confirmation de la suppression d'une ligne subtotal
+		// Confirmation of deletion of the subtotal line
 		if ($action == 'ask_subtotal_deleteline') {
 			$langs->load("subtotals");
 			$title = "DeleteSubtotalLine";

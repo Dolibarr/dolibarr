@@ -398,6 +398,11 @@ if ($result > 0) {
 	}
 	print '</div>';
 
+	// Select mail models is same action as presend
+	if (GETPOST('modelselected')) {
+		$action = 'presend';
+	}
+
 	if ($action != 'presend') {
 		print '<div class="fichecenter"><div class="fichehalfleft">';
 
@@ -410,7 +415,14 @@ if ($result > 0) {
 			$urlsource = $_SERVER['PHP_SELF'].'?id='.$object->id;
 			$genallowed = ($user->hasRight("fournisseur", "facture", "lire") || $user->hasRight("supplier_invoice", "lire"));
 			$delallowed = ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"));
-			$modelpdf = (!empty($object->model_pdf) ? $object->model_pdf : (!getDolGlobalString('SUPPLIER_PAYMENT_ADDON_PDF') ? '' : $conf->global->SUPPLIER_PAYMENT_ADDON_PDF));
+			$modelpdf = (!empty($object->model_pdf) ? $object->model_pdf : getDolGlobalString('SUPPLIER_PAYMENT_ADDON_PDF'));
+			if (empty($modelpdf) && !empty($modellist)) {
+				$tmpkeys = array_keys($modellist);
+				$modelpdf = (string) $tmpkeys[0];
+			}
+			if (empty($modelpdf)) {
+				$modelpdf = 'standard_supplierpayment';
+			}
 
 			print $formfile->showdocuments('supplier_payment', $ref, $filedir, $urlsource, (int) $genallowed, (int) $delallowed, $modelpdf, 1, 0, 0, 40, 0, '', '', '', $object->thirdparty->default_lang);
 			$somethingshown = $formfile->numoffiles;
@@ -426,6 +438,24 @@ if ($result > 0) {
 		*/
 
 		print '</div></div>';
+	}
+
+	// Ensure we have a PDF model to generate/attach the receipt on presend
+	if ($action == 'presend' && empty($object->model_pdf)) {
+		$defaultpdfmodel = getDolGlobalString('SUPPLIER_PAYMENT_ADDON_PDF');
+		if (!empty($defaultpdfmodel)) {
+			$object->model_pdf = $defaultpdfmodel;
+		} else {
+			include_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_payment/modules_supplier_payment.php';
+			$modellist = ModelePDFSuppliersPayments::liste_modeles($db);
+			if (!empty($modellist)) {
+				$tmpkeys = array_keys($modellist);
+				$object->model_pdf = (string) $tmpkeys[0];
+			}
+		}
+		if (empty($object->model_pdf)) {
+			$object->model_pdf = 'standard_supplierpayment';
+		}
 	}
 
 	// Presend form

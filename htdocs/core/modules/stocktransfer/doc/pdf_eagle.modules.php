@@ -454,7 +454,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 						$result = $module->writeBarCode($object->ref, $encoding);
 
 						// get path of qrcode image
-						$newcode = $object->ref;
+						$newcode = (string) $object->ref;
 						if (!preg_match('/^\w+$/', $newcode) || dol_strlen($newcode) > 32) {
 							$newcode = dol_hash($newcode, 'md5');
 						}
@@ -1110,7 +1110,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_client), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities((string) $object->thirdparty->code_client), '', 'R');
 		}
 
 

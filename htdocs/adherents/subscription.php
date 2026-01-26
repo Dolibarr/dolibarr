@@ -932,7 +932,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 		// If customer code was forced to "required", we ask it at creation to avoid error later
 		if (getDolGlobalString('MAIN_COMPANY_CODE_ALWAYS_REQUIRED')) {
 			$tmpcompany = new Societe($db);
-			$tmpcompany->name = $companyname;
+			$tmpcompany->name = (string) $companyname;
 			$tmpcompany->get_codeclient($tmpcompany, 0);
 			$customercode = $tmpcompany->code_client;
 			$formquestion[] = array(

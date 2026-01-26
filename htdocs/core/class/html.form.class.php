@@ -78,9 +78,9 @@ class Form
 	public $num;
 
 	// Cache arrays
-	/** @var array<string,array{id:int,code:string,label:string,type:int,entity:int,active:int}> */
+	/** @var array<int,array{id:int,code:string,label:string,type:int,entity:int,active:int}> */
 	public $cache_types_paiements = array();
-	/** @var array<string,array{code:string,label:string,deposit_percent:string,entity:int}> */
+	/** @var array<int,array{code:string,label:string,deposit_percent:string,entity:int}> */
 	public $cache_conditions_paiements = array();
 	/** @var array<int,array{rowid:int,code:string,label:string,active:int}> */
 	public $cache_transport_mode = array();
@@ -978,7 +978,7 @@ class Form
 	/**
 	 *  Return combo list of activated countries, into language of user
 	 *
-	 * @param string 		$selected 				Id or Code or Label of preselected country
+	 * @param int|string 	$selected 				Id or Code or Label of preselected country
 	 * @param string 		$htmlname 				Name of html select object
 	 * @param string 		$htmloption 			More html options on select object
 	 * @param integer 		$maxlength 				Max length for labels (0=no limit)
@@ -999,6 +999,8 @@ class Form
 
 		$langs->load("dict");
 
+		$selected = (string) $selected;
+
 		$out = '';
 		/** @var array<int,array{rowid:int,code_iso:string,code_iso3:string,label:string,favorite:string,eec:string}> $countryArray */
 		$countryArray = array();
@@ -1012,6 +1014,7 @@ class Form
 		//$sql.= " ORDER BY code ASC";
 
 		dol_syslog(get_class($this) . "::select_country", LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$out .= '<select id="select' . $htmlname . '" class="flat maxwidth200onsmartphone selectcountry' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '" ' . $htmloption . '>';
@@ -1232,6 +1235,7 @@ class Form
 			if (empty($hidetext)) {
 				print $langs->trans("Type").'...';
 			}
+
 			print '<select class="flat'.($morecss ? ' '.$morecss : '').'" id="select_' . $htmlname . '" name="' . $htmlname . '">';
 			if ($showempty) {
 				print '<option value="-1" class="opacitymedium"'.($useajaxcombo ? '' : ' disabled="disabled"');
@@ -1252,12 +1256,14 @@ class Form
 				print ' selected';
 			}
 			print '>' . $langs->trans("Product");
+			print '</option>';
 
 			print '<option value="1"';
 			if (1 == $selected || ($selected == -1 && getDolGlobalString('MAIN_FREE_PRODUCT_CHECKED_BY_DEFAULT') == 'service')) {
 				print ' selected';
 			}
 			print '>' . $langs->trans("Service");
+			print '</option>';
 
 			print '</select>';
 
@@ -3400,6 +3406,7 @@ class Form
 			$sql .= $this->db->order("p.ref");
 		}
 
+		$limit = getDolGlobalInt('SEARCH_LIMIT_AJAX') ?: $limit;
 		$sql .= $this->db->plimit($limit, 0);
 
 		/* The fast and low memory method to get and count full list converts the sql into a sql count */
@@ -4562,7 +4569,7 @@ class Form
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *      Load into cache list of payment terms
+	 * Load into cache list of payment terms
 	 *
 	 * @return     int             Nb of lines loaded, <0 if KO
 	 */
@@ -4595,10 +4602,12 @@ class Form
 
 				// If a translation exists, we use it, otherwise, we take the label by default
 				$label = ($langs->trans("PaymentConditionShort" . $obj->code) != "PaymentConditionShort" . $obj->code ? $langs->trans("PaymentConditionShort" . $obj->code) : ($obj->label != '-' ? $obj->label : ''));
+
 				$this->cache_conditions_paiements[$obj->rowid]['code'] = (string) $obj->code;
 				$this->cache_conditions_paiements[$obj->rowid]['label'] = (string) $label;
 				$this->cache_conditions_paiements[$obj->rowid]['deposit_percent'] = (string) $obj->deposit_percent;
 				$this->cache_conditions_paiements[$obj->rowid]['entity'] = (int) $obj->entity;
+
 				$i++;
 			}
 
@@ -4832,7 +4841,7 @@ class Form
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
-	 *      Charge dans cache la liste des types de paiements possibles
+	 * Load into the cacha array all possible payment modes
 	 *
 	 * @return     int                 Nb of lines loaded, <0 if KO
 	 */
@@ -4929,20 +4938,20 @@ class Form
 	 *    Constant MAIN_DEFAULT_PAYMENT_TERM_ID can be used to set default value but scope is all application, probably not what you want.
 	 *    See instead to force the default value by the caller.
 	 *
-	 * @param int $selected Id of payment term to preselect by default
-	 * @param string $htmlname Nom de la zone select
-	 * @param int $filtertype If > 0, include payment terms with deposit percentage (for objects other than invoices and invoice templates)
-	 * @param int $addempty Add an empty entry
-	 * @param int $noinfoadmin 0=Add admin info, 1=Disable admin info
-	 * @param string $morecss Add more CSS on select tag
-	 * @param float	 $deposit_percent < 0 : deposit_percent input makes no sense (for example, in list filters)
-	 *                                0 : use default deposit percentage from entry
-	 *                                > 0 : force deposit percentage (for example, from company object)
-	 * @return    string                        String for the HTML select component
+	 * @param int 		$selected 			Id of payment term to preselect by default
+	 * @param string 	$htmlname 			Name of the select zone
+	 * @param int 		$filtertype 		If > 0, include payment terms with deposit percentage (for objects other than invoices and invoice templates)
+	 * @param int 		$addempty 			Add an empty entry
+	 * @param int 		$noinfoadmin 		0=Add admin info, 1=Disable admin info
+	 * @param string 	$morecss 			Add more CSS on select tag
+	 * @param float	 	$deposit_percent 	If < 0 : deposit_percent input makes no sense (for example, in list filters)
+	 *                                		If 0 : use default deposit percentage from entry
+	 *                                		If > 0 : force deposit percentage (for example, from company object)
+	 * @return    string                    String for the HTML select component
 	 */
 	public function getSelectConditionsPaiements($selected = 0, $htmlname = 'condid', $filtertype = -1, $addempty = 0, $noinfoadmin = 0, $morecss = '', $deposit_percent = -1)
 	{
-		global $langs, $user, $conf;
+		global $langs, $user;
 
 		$out = '';
 		dol_syslog(__METHOD__ . " selected=" . $selected . ", htmlname=" . $htmlname, LOG_DEBUG);
@@ -4950,9 +4959,9 @@ class Form
 		$this->load_cache_conditions_paiements();
 
 		// Set default value if not already set by caller
-		if (empty($selected) && strpos($htmlname, 'search_') !== 0 && getDolGlobalString('MAIN_DEFAULT_PAYMENT_TERM_ID')) {
+		if (empty($selected) && strpos($htmlname, 'search_') !== 0 && getDolGlobalInt('MAIN_DEFAULT_PAYMENT_TERM_ID')) {
 			dol_syslog(__METHOD__ . "Using deprecated option MAIN_DEFAULT_PAYMENT_TERM_ID", LOG_NOTICE);
-			$selected = getDolGlobalString('MAIN_DEFAULT_PAYMENT_TERM_ID');
+			$selected = getDolGlobalInt('MAIN_DEFAULT_PAYMENT_TERM_ID');
 		}
 
 		$out .= '<select id="' . $htmlname . '" class="flat selectpaymentterms' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '">';
@@ -6107,7 +6116,7 @@ class Form
 		if (empty($height)) {
 			$height = 250;
 			if (is_array($formquestion) && count($formquestion) > 2) {
-				$height += ((count($formquestion) - 2) * 24);
+				$height += ((count($formquestion) - 2) * 24) + 5;
 			}
 		}
 
@@ -6547,7 +6556,7 @@ class Form
 	 * Show a form to select payment conditions
 	 *
 	 * @param string 	$page 				Page
-	 * @param string 	$selected 			Id condition pre-selectionne
+	 * @param string 	$selected 			Id of preselected payment term
 	 * @param string 	$htmlname 			Name of select html field
 	 * @param int<0,1> 	$addempty 			Add empty entry
 	 * @param ''|'direct-debit'|'bank-transfer'	$type 	Type ('direct-debit' or 'bank-transfer')
@@ -6563,6 +6572,8 @@ class Form
 		// phpcs:enable
 		global $langs;
 
+		$selected = (int) $selected;
+
 		$out = '';
 
 		if ($htmlname != "none") {
@@ -6572,12 +6583,13 @@ class Form
 			if ($type) {
 				$out .= '<input type="hidden" name="type" value="' . dol_escape_htmltag($type) . '">';
 			}
-			$out .= $this->getSelectConditionsPaiements((int) $selected, $htmlname, $filtertype, $addempty, 0, '', $deposit_percent);
+			$out .= $this->getSelectConditionsPaiements($selected, $htmlname, $filtertype, $addempty, 0, '', $deposit_percent);
 			$out .= '<input type="submit" class="button valignmiddle smallpaddingimp" value="' . $langs->trans("Modify") . '">';
 			$out .= '</form>';
 		} else {
 			if ($selected) {
 				$this->load_cache_conditions_paiements();
+
 				if (isset($this->cache_conditions_paiements[$selected])) {
 					$label = $this->cache_conditions_paiements[$selected]['label'];
 
@@ -10444,7 +10456,7 @@ class Form
 			if (($object->fk_project > 0) && getDolGlobalString('THIRDPARTY_INCLUDE_PROJECT_THIRDPARY_IN_LINKTO')) {
 				include_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 				$tmpproject = new Project($this->db);
-				$tmpproject->fetch($object->fk_project);
+				$tmpproject->fetch((int) $object->fk_project);
 				if ($tmpproject->socid > 0 && ($tmpproject->socid != $object->thirdparty->id)) {
 					$listofidcompanytoscan .= ',' . (int) $tmpproject->socid;
 				}
@@ -10882,7 +10894,7 @@ class Form
 
 		$previous_ref = $next_ref = '';
 		if ($shownav) {
-			//print "paramid=$paramid,morehtml=$morehtml,shownav=$shownav,$fieldid,$fieldref,$morehtmlref,$moreparam";
+			//print "paramid=$paramid,morehtml=$morehtml,shownav=$shownav,fieldid=$fieldid,filedref=$fieldref,morehtmlref=$morehtmlref,moreparam=$moreparam";
 			$object->load_previous_next_ref((isset($object->next_prev_filter) ? $object->next_prev_filter : ''), $fieldid, $nodbprefix);
 
 			$navurl = $_SERVER["PHP_SELF"];
@@ -11210,9 +11222,9 @@ class Form
 					}
 				}
 				if (!empty($ecmfiles->share)) {
-					$ret .= '<img alt="" class="photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . ' photologo' . (preg_replace('/[^a-z]/i', '_', $file)) . '" ' . ($width ? ' width="' . $width . '"' : '') . ($height ? ' height="' . $height . '"' : '') . ' src="' . DOL_URL_ROOT . '/viewimage.php?hashp=' . urlencode($ecmfiles->share) . '&cache=' . $cache . '">';
+					$ret .= '<img alt="" class="photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . ' photologo' . (preg_replace('/[^a-z]/i', '_', $file)) . '" ' . ($width ? ' width="' . $width . '"' : '') . ($height ? ' height="' . $height . '"' : '') . ' src="' . DOL_URL_ROOT . '/viewimage.php?hashp=' . urlencode((string) $ecmfiles->share) . '&cache=' . urlencode((string) $cache) . '">';
 				} else {
-					$ret .= '<img alt="" class="photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . ' photologo' . (preg_replace('/[^a-z]/i', '_', $file)) . '" ' . ($width ? ' width="' . $width . '"' : '') . ($height ? ' height="' . $height . '"' : '') . ' src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=' . $modulepart . '&entity=' . $entity . '&file=' . urlencode($file) . '&cache=' . $cache . '">';
+					$ret .= '<img alt="" class="photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . ' photologo' . (preg_replace('/[^a-z]/i', '_', $file)) . '" ' . ($width ? ' width="' . $width . '"' : '') . ($height ? ' height="' . $height . '"' : '') . ' src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=' . urlencode($modulepart) . '&entity=' . ((int) $entity) . '&file=' . urlencode($file) . '&cache=' . urlencode((string) $cache) . '">';
 				}
 				if ($addlinktofullsize) {
 					$ret .= '</a>';
@@ -11226,7 +11238,7 @@ class Form
 						$ret .= '<a href="' . DOL_URL_ROOT . '/viewimage.php?modulepart=' . $modulepart . '&entity=' . $entity . '&file=' . urlencode($originalfile) . '&cache=' . $cache . '">';
 					}
 				}
-				$ret .= '<img class="photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . '" alt="Photo alt" id="photologo' . (preg_replace('/[^a-z]/i', '_', $file)) . '" class="' . $cssclass . '" ' . ($width ? ' width="' . $width . '"' : '') . ($height ? ' height="' . $height . '"' : '') . ' src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=' . $modulepart . '&entity=' . $entity . '&file=' . urlencode($altfile) . '&cache=' . $cache . '">';
+				$ret .= '<img class="photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . '" alt="Photo alt" id="photologo' . (preg_replace('/[^a-z]/i', '_', $file)) . '" class="' . $cssclass . '" ' . ($width ? ' width="' . $width . '"' : '') . ($height ? ' height="' . $height . '"' : '') . ' src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=' . urlencode($modulepart) . '&entity=' . ((int) $entity) . '&file=' . urlencode($altfile) . '&cache=' . urlencode((string) $cache) . '">';
 				if ($addlinktofullsize) {
 					$ret .= '</a>';
 				}
@@ -12298,11 +12310,11 @@ class Form
 	 * @param	string		$modelType		Model type
 	 * @param	int<0,1>	$default		1=Show also Default mail template
 	 * @param	int<0,1>	$addjscombo		Add js combobox
-	 * @param   string      $selected       Selected model mail
+	 * @param   int|string  $selected       Selected model mail
 	 * @param   string      $morecss        More css added to the select component
 	 * @return	string						HTML select string
 	 */
-	public function selectModelMail($prefix, $modelType = '', $default = 0, $addjscombo = 0, $selected = '', $morecss = '')
+	public function selectModelMail($prefix, $modelType = '', $default = 0, $addjscombo = 0, $selected = 0, $morecss = '')
 	{
 		global $langs, $user;
 
@@ -12319,7 +12331,7 @@ class Form
 		}
 		if ($result > 0) {
 			foreach ($formmail->lines_model as $model) {
-				$TModels[$model->id] = $model->label;
+				$TModels[(int) $model->id] = $model->label;
 			}
 		}
 
@@ -12327,7 +12339,7 @@ class Form
 
 		foreach ($TModels as $id_model => $label_model) {
 			$retstring .= '<option value="' . $id_model . '"';
-			if (!empty($selected) && $selected == $id_model) {
+			if (!empty($selected) && ((int) $selected) == $id_model) {
 				$retstring .= "selected";
 			}
 			$retstring .= ">" . $label_model . "</option>";
