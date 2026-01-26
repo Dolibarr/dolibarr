@@ -1902,9 +1902,9 @@ if ($action == 'create') {
 		//checkbox create reminder
 		print '<hr>';
 
-		print '<label for="addreminder">'.img_picto('', 'bell', 'class="pictofixedwidth"').$langs->trans("AddReminder").'</label> <input type="checkbox" id="addreminder" name="addreminder"><br>';
+		print '<label for="addreminder">'.img_picto('', 'bell', 'class="pictofixedwidth"').$langs->trans("AddReminder").'</label> <input type="checkbox" id="addreminder" name="addreminder"'.(empty(GETPOST('addreminder')) ? '' : 'checked').'><br>';
 
-		print '<div class="reminderparameters" style="display: none;">';
+		print '<div class="reminderparameters" '.(empty(GETPOST('addreminder')) ? 'style="display: none;' : '').' ">';
 		print '<br>';
 
 		print '<table class="border centpercent">';
@@ -1912,7 +1912,8 @@ if ($action == 'create') {
 		//Reminder
 		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderTime").'</td><td colspan="3">';
 		print '<input class="width50" type="number" name="offsetvalue" value="'.(GETPOSTISSET('offsetvalue') ? GETPOSTINT('offsetvalue') : getDolGlobalInt('AGENDA_REMINDER_DEFAULT_OFFSET', 30)).'"> ';
-		print $form->selectTypeDuration('offsetunit', 'i', $TDurationTypesExcluded);
+
+		print $form->selectTypeDuration('offsetunit', (empty($offsetunit) ? 'i' : $offsetunit), $TDurationTypesExcluded);
 		print '</td></tr>';
 
 		//Reminder Type
@@ -1923,7 +1924,7 @@ if ($action == 'create') {
 		//Mail Model
 		if (getDolGlobalString('AGENDA_REMINDER_EMAIL')) {
 			print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("EMailTemplates").'</td><td colspan="3">';
-			print $form->selectModelMail('actioncommsend', 'actioncomm_send', 1, 1);
+			print $form->selectModelMail('actioncommsend', 'actioncomm_send', 1, 1, (empty($modelmail) ? 0 : $modelmail));
 			print '</td></tr>';
 		}
 
@@ -1964,37 +1965,42 @@ if ($action == 'create') {
 				});
 		   })';
 		print '</script>'."\n";
-		?>
-		<script type="text/javascript">
-			$(document).ready(function () {
-				$("#addreminder").click(function(){
-					console.log("Click on addreminder");
-					if (this.checked) {
-						$(".reminderparameters").show();
-					} else {
-						$(".reminderparameters").hide();
-					}
-					$("#selectremindertype").select2("destroy");
-					$("#selectremindertype").select2();
-					$("#select_offsetunittype_duration").select2("destroy");
-					$("#select_offsetunittype_duration").select2();
-					selectremindertype();
-				 });
-				$("#selectremindertype").change(function(){
-					selectremindertype();
-				});
-				function selectremindertype() {
-					console.log("Call selectremindertype");
-					var selected_option = $("#selectremindertype option:selected").val();
-					if(selected_option == "email") {
-						$("#select_actioncommsendmodel_mail").closest("tr").show();
-					} else {
-						$("#select_actioncommsendmodel_mail").closest("tr").hide();
-					}
-				}
-			});
-		</script>
-		<?php
+
+		print "\n".'<script type="text/javascript">';
+		print '$(document).ready(function () {
+	            		function toggle_reminder_part(evt) {
+							console.log("Toggle reminder part");
+	            		    if ($("#addreminder").is(":checked")) {
+	            		    	$(".reminderparameters").show();
+                            } else {
+                            	$(".reminderparameters").hide();
+                            }
+							$("#selectremindertype").select2("destroy");
+							$("#selectremindertype").select2();
+							$("#select_offsetunittype_duration").select2("destroy");
+							$("#select_offsetunittype_duration").select2();
+							selectremindertype();
+	            		 });
+
+						toggle_reminder_part();
+						$("#addreminder").click(toggle_reminder_part);
+
+	            		$("#selectremindertype").change(function(){
+							selectremindertype();
+	            		});
+
+						function selectremindertype() {
+							console.log("Call selectremindertype");
+	            	        var selected_option = $("#selectremindertype option:selected").val();
+	            		    if(selected_option == "email") {
+	            		        $("#select_actioncommsendmodel_mail").closest("tr").show();
+	            		    } else {
+	            			    $("#select_actioncommsendmodel_mail").closest("tr").hide();
+	            		    }
+						}
+
+                   })';
+		print '</script>'."\n";
 	}
 
 	print dol_get_fiche_end();

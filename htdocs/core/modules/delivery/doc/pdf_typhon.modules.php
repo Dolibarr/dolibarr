@@ -433,7 +433,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					 $total = price($object->lines[$i]->price * $object->lines[$i]->qty);
 					 $pdf->MultiCell(23, 3, $total, 0, 'R', 0);
 
-					 // Collecte des totaux par valeur de tva
+					 // Collect of total by vat rate
 					 // dans le tableau tva["taux"]=total_tva
 					 $tvaligne=$object->lines[$i]->price * $object->lines[$i]->qty;
 					 if ($object->remise_percent) $tvaligne-=($tvaligne*$object->remise_percent)/100;
@@ -770,7 +770,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			$posy += 5;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_client), '', 'R');
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities((string) $object->thirdparty->code_client), '', 'R');
 		}
 
 		$pdf->SetTextColor(0, 0, 60);

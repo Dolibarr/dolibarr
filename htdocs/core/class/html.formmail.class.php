@@ -34,10 +34,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/cemailtemplate.class.php';	// So the
 
 
 /**
- *      Class permettant la generation du formulaire html d'envoi de mail unitaire
+ *      Class to manage a HTML form to send a unitary email
  *      Usage: $formail = new FormMail($db)
- *             $formmail->proprietes=1 ou chaine ou tableau de valeurs
- *             $formmail->show_form() affiche le formulaire
+ *             $formmail->proprietes=1 or string or array of values
+ *             $formmail->show_form() show the form
  */
 class FormMail extends Form
 {

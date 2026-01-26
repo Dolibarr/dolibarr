@@ -506,10 +506,10 @@ div.description_content {
 	padding-right: 2px;
 }
 
-.header{
+.header {
 	margin: 0 auto;
 	width: 100%;
-	height: 52px;
+	min-height: 52px;
 	background: rgb(60,70,100);
 }
 
