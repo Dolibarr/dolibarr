@@ -2932,7 +2932,7 @@ class pdf_octopus extends ModelePDFFactures
 
 		$pdf->SetDrawColor(128, 128, 128);
 		$pdf->SetFont('', '', $default_font_size - 1);
-		
+
 		$height_incoterms = 0;
 		if (isModEnabled('incoterm')) {
 			$desc_incoterms = $object->getIncotermsForPDF();
@@ -2946,7 +2946,7 @@ class pdf_octopus extends ModelePDFFactures
 				$pdf->SetDrawColor(192, 192, 192);
 				$pdf->RoundedRect($this->marge_gauche, $this->tab_top - 1, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_incoterms + 3, $this->corner_radius, '1234', 'D');
 				$posyafter = $pdf->GetY();
-				$tab_top += $posyafter - $posybefore + 2;			
+				$tab_top += $posyafter - $posybefore + 2;
 			}
 		}
 		// Displays notes. Here we are still on code executed only for the first page.
