@@ -976,7 +976,7 @@ class FactureLigne extends CommonInvoiceLine
 					$sql .= ' JOIN '.MAIN_DB_PREFIX.'facture f ON (f.rowid = fd.fk_facture) ';
 					$sql .= " WHERE fd.fk_prev_id = ".((int) $this->fk_prev_id);
 					$sql .= " AND f.situation_cycle_ref = ".((int) $invoicecache[$invoiceid]->situation_cycle_ref); // Prevent cycle outed
-					$sql .= " AND f.type = ".Facture::TYPE_CREDIT_NOTE;
+					$sql .= " AND f.type = ".((int) Facture::TYPE_CREDIT_NOTE);
 
 					$res = $this->db->query($sql);
 					if ($res) {
@@ -1057,7 +1057,7 @@ class FactureLigne extends CommonInvoiceLine
 					// Si fk_prev_id, on continue
 					if ($obj->fk_prev_id) {
 						$lastprevid = $obj->fk_prev_id;
-					} else { // Sinon on stoppe la boucle
+					} else { // else we stop the loop
 						$all_found = true;
 					}
 				} else {
