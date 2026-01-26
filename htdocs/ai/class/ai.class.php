@@ -362,8 +362,8 @@ class Ai
 			if (is_array($instructions)) {
 				$arrayforpayload = $instructions;
 				$fullInstructions = '';
-				} else {
-					$fullInstructions = $instructions.($postPrompt ? (preg_match('/[\.\!\?]$/', $instructions) ? '' : '.').' '.$postPrompt : '');
+			} else {
+				$fullInstructions = $instructions.($postPrompt ? (preg_match('/[\.\!\?]$/', $instructions) ? '' : '.').' '.$postPrompt : '');
 
 				// Set payload string
 				/*{
@@ -389,37 +389,37 @@ class Ai
 					"top_p": 0.95
 				}*/
 
-					// Add a system message (Chat Completions) / instructions (Responses API)
-					$addDateTimeContext = false;
-					if ($addDateTimeContext) {		// @phpstan-ignore-line
-						$prePrompt = ($prePrompt ? $prePrompt.(preg_match('/[\.\!\?]$/', $prePrompt) ? '' : '.').' ' : '').'Today we are '.dol_print_date(dol_now(), 'dayhourtext');
-					}
+				// Add a system message (Chat Completions) / instructions (Responses API)
+				$addDateTimeContext = false;
+				if ($addDateTimeContext) {		// @phpstan-ignore-line
+					$prePrompt = ($prePrompt ? $prePrompt.(preg_match('/[\.\!\?]$/', $prePrompt) ? '' : '.').' ' : '').'Today we are '.dol_print_date(dol_now(), 'dayhourtext');
+				}
 
-					if ($useResponsesApi) {
-						$arrayforpayload = array(
-							'model' => $model,
-							'input' => array(
-								array(
-									'role' => 'user',
-									'content' => array(
-										array('type' => 'input_text', 'text' => $fullInstructions),
-									),
+				if ($useResponsesApi) {
+					$arrayforpayload = array(
+						'model' => $model,
+						'input' => array(
+							array(
+								'role' => 'user',
+								'content' => array(
+									array('type' => 'input_text', 'text' => $fullInstructions),
 								),
 							),
-						);
-						if ($prePrompt) {
-							$arrayforpayload['instructions'] = $prePrompt;
-						}
-					} else {
-						$arrayforpayload = array(
-							'messages' => array(array('role' => 'user', 'content' => $fullInstructions)),
-							'model' => $model,
-						);
-						if ($prePrompt) {
-							$arrayforpayload['messages'][] = array('role' => 'system', 'content' => $prePrompt);
-						}
+						),
+					);
+					if ($prePrompt) {
+						$arrayforpayload['instructions'] = $prePrompt;
+					}
+				} else {
+					$arrayforpayload = array(
+						'messages' => array(array('role' => 'user', 'content' => $fullInstructions)),
+						'model' => $model,
+					);
+					if ($prePrompt) {
+						$arrayforpayload['messages'][] = array('role' => 'system', 'content' => $prePrompt);
 					}
 				}
+			}
 
 			/*
 			$arrayforpayload['temperature'] = 0.7;
@@ -477,27 +477,27 @@ class Ai
 			if (empty($response['http_code'])) {
 				throw new Exception('API request failed. No http received');
 			}
-				if (!empty($response['http_code']) && $response['http_code'] != 200) {
-					if (in_array($response['http_code'], array(400, 401, 403, 429)) && !empty($response['content'])) {
-						$tmp = json_decode($response['content'], true);
-						$tmpMsg = '';
-						if (!empty($tmp['message'])) {
-							$tmpMsg = (string) $tmp['message'];
-						} elseif (!empty($tmp['error']['message'])) {
-							$tmpMsg = (string) $tmp['error']['message'];
-						}
+			if (!empty($response['http_code']) && $response['http_code'] != 200) {
+				if (in_array($response['http_code'], array(400, 401, 403, 429)) && !empty($response['content'])) {
+					$tmp = json_decode($response['content'], true);
+					$tmpMsg = '';
+					if (!empty($tmp['message'])) {
+						$tmpMsg = (string) $tmp['message'];
+					} elseif (!empty($tmp['error']['message'])) {
+						$tmpMsg = (string) $tmp['error']['message'];
+					}
 
-						if ($tmpMsg !== '') {
-							if ($this->isQuotaExhaustedError((int) $response['http_code'], $tmp, $tmpMsg)) {
-								$this->recordQuotaExhaustedWarning((int) $response['http_code'], (string) $function, $tmpMsg, $tmp);
-							}
-							return array(
-								'error' => true,
-								'message' => $tmpMsg,
-								'code' => (empty($response['http_code']) ? 0 : $response['http_code']),
-								'curl_error_no' => (empty($response['curl_error_no']) ? 0 : $response['curl_error_no']),
-								'format' => $format,
-								'service' => $this->apiService,
+					if ($tmpMsg !== '') {
+						if ($this->isQuotaExhaustedError((int) $response['http_code'], $tmp, $tmpMsg)) {
+							$this->recordQuotaExhaustedWarning((int) $response['http_code'], (string) $function, $tmpMsg, $tmp);
+						}
+						return array(
+							'error' => true,
+							'message' => $tmpMsg,
+							'code' => (empty($response['http_code']) ? 0 : $response['http_code']),
+							'curl_error_no' => (empty($response['curl_error_no']) ? 0 : $response['curl_error_no']),
+							'format' => $format,
+							'service' => $this->apiService,
 							'function' => $function
 						);
 					}
@@ -520,64 +520,63 @@ class Ai
 				}
 			}
 
+			// Decode JSON response
+			$decodedResponse = json_decode($response['content'], true);
 
-				// Decode JSON response
-				$decodedResponse = json_decode($response['content'], true);
-
-				// Clear quota suspension after a successful request.
-				if (!empty($decodedResponse) && is_array($decodedResponse)) {
-					global $conf;
-					if (!empty($conf) && !empty($conf->entity) && is_object($this->db)) {
-						if ((int) getDolGlobalString('AI_QUOTA_SUSPEND_UNTIL', '0') > 0) {
-							dolibarr_del_const($this->db, 'AI_QUOTA_SUSPEND_UNTIL', $conf->entity);
-						}
+			// Clear quota suspension after a successful request.
+			if (!empty($decodedResponse) && is_array($decodedResponse)) {
+				global $conf;
+				if (!empty($conf) && !empty($conf->entity) && is_object($this->db)) {
+					if ((int) getDolGlobalString('AI_QUOTA_SUSPEND_UNTIL', '0') > 0) {
+						dolibarr_del_const($this->db, 'AI_QUOTA_SUSPEND_UNTIL', $conf->entity);
 					}
 				}
+			}
 
-				// Extraction content
-				$generatedContent = '';
-				if ($useResponsesApi) {
-					if (!empty($decodedResponse['output_text']) && is_string($decodedResponse['output_text'])) {
-						$generatedContent = (string) $decodedResponse['output_text'];
-					} elseif (!empty($decodedResponse['output']) && is_array($decodedResponse['output'])) {
-						$texts = array();
-						foreach ($decodedResponse['output'] as $outItem) {
-							if (!is_array($outItem)) continue;
-							if (!empty($outItem['content']) && is_array($outItem['content'])) {
-								foreach ($outItem['content'] as $cont) {
-									if (!is_array($cont)) continue;
-									if (!empty($cont['text']) && is_string($cont['text'])) {
-										$texts[] = $cont['text'];
-									} elseif (!empty($cont['output_text']) && is_string($cont['output_text'])) {
-										$texts[] = $cont['output_text'];
-									}
+			// Extraction content
+			$generatedContent = '';
+			if ($useResponsesApi) {
+				if (!empty($decodedResponse['output_text']) && is_string($decodedResponse['output_text'])) {
+					$generatedContent = (string) $decodedResponse['output_text'];
+				} elseif (!empty($decodedResponse['output']) && is_array($decodedResponse['output'])) {
+					$texts = array();
+					foreach ($decodedResponse['output'] as $outItem) {
+						if (!is_array($outItem)) continue;
+						if (!empty($outItem['content']) && is_array($outItem['content'])) {
+							foreach ($outItem['content'] as $cont) {
+								if (!is_array($cont)) continue;
+								if (!empty($cont['text']) && is_string($cont['text'])) {
+									$texts[] = $cont['text'];
+								} elseif (!empty($cont['output_text']) && is_string($cont['output_text'])) {
+									$texts[] = $cont['output_text'];
 								}
-							} elseif (!empty($outItem['text']) && is_string($outItem['text'])) {
-								$texts[] = $outItem['text'];
 							}
+						} elseif (!empty($outItem['text']) && is_string($outItem['text'])) {
+							$texts[] = $outItem['text'];
 						}
-						$generatedContent = trim(implode("\n", $texts));
 					}
+					$generatedContent = trim(implode("\n", $texts));
+				}
 
-					if ($generatedContent === '' && !empty($decodedResponse['error'])) {
-						if (is_scalar($decodedResponse['error'])) {
-							$generatedContent = (string) $decodedResponse['error'];
-						} else {
-							$generatedContent = var_export($decodedResponse['error'], true);
-						}
+				if ($generatedContent === '' && !empty($decodedResponse['error'])) {
+					if (is_scalar($decodedResponse['error'])) {
+						$generatedContent = (string) $decodedResponse['error'];
+					} else {
+						$generatedContent = var_export($decodedResponse['error'], true);
+					}
+				}
+			} else {
+				if (!empty($decodedResponse['error'])) {
+					if (is_scalar($decodedResponse['error'])) {
+						$generatedContent = $decodedResponse['error'];
+					} else {
+						$generatedContent = var_export($decodedResponse['error'], true);
 					}
 				} else {
-					if (!empty($decodedResponse['error'])) {
-						if (is_scalar($decodedResponse['error'])) {
-							$generatedContent = $decodedResponse['error'];
-						} else {
-							$generatedContent = var_export($decodedResponse['error'], true);
-						}
-					} else {
-						$generatedContent = $decodedResponse['choices'][0]['message']['content'];
-					}
+					$generatedContent = $decodedResponse['choices'][0]['message']['content'];
 				}
-				dol_syslog("ai->generatedContent returned: ".dol_trunc($generatedContent, 50));
+			}
+			dol_syslog("ai->generatedContent returned: ".dol_trunc($generatedContent, 50));
 
 			// If content is not HTML, we convert it into HTML
 			if ($format == 'html') {
@@ -594,30 +593,30 @@ class Ai
 			}
 
 			return $generatedContent;
-			} catch (Exception $e) {
-				$errormessage = $e->getMessage();
-				$errormessagelog = $e->getMessage();
-				$decodedResponse = null;
-				if (!empty($response['content'])) {
-					$decodedResponse = json_decode($response['content'], true);
-					$errormessagelog .= ' - '.$response['content'];
+		} catch (Exception $e) {
+			$errormessage = $e->getMessage();
+			$errormessagelog = $e->getMessage();
+			$decodedResponse = null;
+			if (!empty($response['content'])) {
+				$decodedResponse = json_decode($response['content'], true);
+				$errormessagelog .= ' - '.$response['content'];
 
 				if (!empty($decodedResponse['error']['message'])) {
 					// With OpenAI, error is into an object error into the content
 					$errormessage .= ' - '.$decodedResponse['error']['message'];
 				} else {
 					$errormessage .= ' - '.$response['content'];
-					}
 				}
+			}
 
-				if ($this->isQuotaExhaustedError((empty($response['http_code']) ? 0 : (int) $response['http_code']), $decodedResponse, $errormessage)) {
-					$this->recordQuotaExhaustedWarning((empty($response['http_code']) ? 0 : (int) $response['http_code']), (string) $function, $errormessage, $decodedResponse);
-				}
+			if ($this->isQuotaExhaustedError((empty($response['http_code']) ? 0 : (int) $response['http_code']), $decodedResponse, $errormessage)) {
+				$this->recordQuotaExhaustedWarning((empty($response['http_code']) ? 0 : (int) $response['http_code']), (string) $function, $errormessage, $decodedResponse);
+			}
 
-				if (getDolGlobalString("AI_DEBUG")) {
-					if (@is_writable($dolibarr_main_data_root)) {	// Avoid fatal error on fopen with open_basedir
-						$outputfile = $dolibarr_main_data_root."/dolibarr_ai.log";
-						$fp = fopen($outputfile, "a");
+			if (getDolGlobalString("AI_DEBUG")) {
+				if (@is_writable($dolibarr_main_data_root)) {	// Avoid fatal error on fopen with open_basedir
+					$outputfile = $dolibarr_main_data_root."/dolibarr_ai.log";
+					$fp = fopen($outputfile, "a");
 
 					if ($fp) {
 						fwrite($fp, "Error: ".$errormessagelog."\n");
