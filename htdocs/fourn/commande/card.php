@@ -1603,14 +1603,18 @@ if (empty($reshook)) {
 							$num = count($lines);
 
 							for ($i = 0; $i < $num; $i++) {
-								if ((empty($lines[$i]->subprice) || $lines[$i]->qty <= 0 || !in_array($lines[$i]->id, $selectedLines)) && $lines[$i]->product_type != 9) {
+								if (
+									empty($lines[$i]->subprice)
+									|| $lines[$i]->qty < 0
+									|| !in_array($lines[$i]->id, $selectedLines)
+									|| $lines[$i]->special_code == SUBTOTALS_SPECIAL_CODE
+								) {
 									continue;
 								}
 
 								$label = (!empty($lines[$i]->label) ? $lines[$i]->label : '');
 								$desc = (!empty($lines[$i]->desc) ? $lines[$i]->desc : '');
 								$product_type = (!empty($lines[$i]->product_type) ? $lines[$i]->product_type : 0);
-
 								// Reset fk_parent_line for no child products and special product
 								if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9) {
 									$fk_parent_line = 0;
@@ -1877,7 +1881,7 @@ if ($action == 'create') {
 			$cond_reglement_id = 0;
 			$deposit_percent = 0;
 			$mode_reglement_id = 0;
-			$datelivraison = (!empty($objectsrc->delivery_date) ? $objectsrc->delivery_date : '');
+			$datelivraison = '';
 			$objectsrc->note_private = '';
 			$objectsrc->note_public = '';
 			if ($societe = $object->thirdparty) {
@@ -2208,7 +2212,7 @@ if ($action == 'create') {
 
 	$formconfirm = '';
 
-	// Order deletion confirmation
+	// Confirmation of deletion of order
 	if ($action == 'delete') {
 		$arrayAjouts = array();
 		$heightModal = 0;

@@ -152,17 +152,17 @@ class doc_generic_project_odt extends ModelePDFProjects
 		}
 
 		$resarray = array(
-			$array_key.'_id' => $object->id,
-			$array_key.'_ref' => $object->ref,
-			$array_key.'_title' => $object->title,
-			$array_key.'_description' => $object->description,
+			$array_key.'_id' => (int) $object->id,
+			$array_key.'_ref' => (string) $object->ref,
+			$array_key.'_title' => (string) $object->title,
+			$array_key.'_description' => (string) $object->description,
 			$array_key.'_date_creation' => dol_print_date($object->date_c, 'day'),
 			$array_key.'_date_modification' => dol_print_date($object->date_m, 'day'),
 			$array_key.'_date_start' => dol_print_date($object->date_start, 'day'),
 			$array_key.'_date_end' => dol_print_date($object->date_end, 'day'),
-			$array_key.'_note_private' => $object->note_private,
-			$array_key.'_note_public' => $object->note_public,
-			$array_key.'_public' => $object->public,
+			$array_key.'_note_private' => (string) $object->note_private,
+			$array_key.'_note_public' => (string) $object->note_public,
+			$array_key.'_public' => (string) $object->public,
 			$array_key.'_statut' => $object->getLibStatut()
 		);
 

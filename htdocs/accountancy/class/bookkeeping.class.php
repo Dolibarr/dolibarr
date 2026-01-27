@@ -1,11 +1,11 @@
 <?php
 /* Copyright (C) 2014-2017	Olivier Geffroy			<jeff@jeffinfo.com>
- * Copyright (C) 2015-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2015-2026	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2015-2020	Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2018-2025	Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Jose MARTINEZ	    	<jose.martinez@pichinov.com>
- * Copyright (C) 2025		Nicolas Barrouillet 	<nicolas@pragma-tech.fr>
+ * Copyright (C) 2024		Jose MARTINEZ			<jose.martinez@pichinov.com>
+ * Copyright (C) 2025		Nicolas Barrouillet		<nicolas@pragma-tech.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -3761,7 +3761,7 @@ class BookKeeping extends CommonObject
 									$newBookKeeping->sens = 'D';
 								}
 
-								$newBookKeeping->label_operation = "Extourne " . $bookKeeping->piece_num . " - " . $bookKeeping->numero_compte . " - " . date('d/m/Y', dol_now()) . " - " . $i;
+								$newBookKeeping->label_operation = $langs->trans("ReturnAccount") . " " . $bookKeeping->piece_num . " - " . $bookKeeping->numero_compte . " - " . date('d/m/Y', dol_now()) . " - " . $i;
 
 								$newBookKeeping->numero_compte = $bookKeeping->numero_compte;
 								$newBookKeeping->label_compte = $bookKeeping->label_compte;
@@ -3777,14 +3777,14 @@ class BookKeeping extends CommonObject
 							}
 							$createResult = $newBookKeeping->create($user);
 
-							if ($createResult > 0) {
+							if ($createResult >= 0) {
 								$newBookKeeping->piece_num = $pieceNumNext;
 								$newBookKeeping->fk_doc = $bookKeeping->fk_doc;
 								$newBookKeeping->fk_docdet = $bookKeeping->fk_docdet;
-								$result = $newBookKeeping->update($user);
+								$newBookKeeping->update($user);
 								setEventMessages($langs->trans("SuccessReturnedAccount", $bookKeeping->piece_num), null, 'mesgs');
 							} else {
-								setEventMessages($langs->trans("ErrorWhileCreating", $newBookKeeping->error), null, 'errors');
+								setEventMessages($langs->trans("ErrorWhileCreating", $newBookKeeping->error), $newBookKeeping->errors, 'errors');
 								$error++;
 							}
 						}

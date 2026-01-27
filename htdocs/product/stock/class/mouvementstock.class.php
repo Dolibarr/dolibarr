@@ -333,6 +333,7 @@ class MouvementStock extends CommonObject
 		if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
 			$productChildrenNb = $product->hasFatherOrChild(1);
 		}
+
 		if ($product->isStockManaged() && ($productChildrenNb == 0 || getDolGlobalInt('PRODUIT_SOUSPRODUITS_ALSO_ENABLE_PARENT_STOCK_MOVE'))) { // For kit parent, we disable stock move, except if option PRODUIT_SOUSPRODUITS_ALSO_ENABLE_PARENT_STOCK_MOVE is set. For this option on, code must be completed to finish implementation, for example to have kit supported in shipments.
 			$movestock = 1;
 		}
