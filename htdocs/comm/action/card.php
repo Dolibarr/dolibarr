@@ -410,6 +410,11 @@ if (empty($reshook) && $action == 'add') {
 		if (!empty($_SESSION['assignedtouser'])) {
 			$listofuserid = json_decode($_SESSION['assignedtouser'], true);
 		}
+
+		if (!empty($_SESSION['assignedtoresource'])) {
+			$listofresourceid = json_decode($_SESSION['assignedtoresource'], true);
+		}
+
 		$i = 0;
 		foreach ($listofuserid as $key => $value) {
 			if ($i == 0) {	// First entry
@@ -520,22 +525,95 @@ if (empty($reshook) && $action == 'add') {
 
 		// Creation of action/event
 		$idaction = $object->create($user);
+		$moreparam = '';
 
 		if ($idaction > 0) {
 			if (!$object->error) {
+				if (is_array($listofresourceid) && count($listofresourceid)) {
+					foreach ($listofresourceid as $resource_id => $val) {
+						$resource_type = 'dolresource';
+						$busy = 1;//GETPOSTINT('busy');
+
+						// Resources association
+						if (getDolGlobalString('RESOURCE_USED_IN_EVENT_CHECK')) {
+							$eventDateStart = $object->datep;
+							$eventDateEnd = $object->datef;
+							$isFullDayEvent = $object->fulldayevent;
+							if (empty($eventDateEnd)) {
+								if ($isFullDayEvent) {
+									$eventDateStartArr = dol_getdate($eventDateStart);
+									$eventDateStart = dol_mktime(0, 0, 0, $eventDateStartArr['mon'], $eventDateStartArr['mday'], $eventDateStartArr['year']);
+									$eventDateEnd = dol_mktime(23, 59, 59, $eventDateStartArr['mon'], $eventDateStartArr['mday'], $eventDateStartArr['year']);
+								}
+							}
+
+							$sql = "SELECT er.rowid, r.ref as r_ref, ac.id as ac_id, ac.label as ac_label";
+							$sql .= " FROM " . MAIN_DB_PREFIX . "element_resources as er";
+							$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "resource as r ON r.rowid = er.resource_id AND er.resource_type = '" . $db->escape($resource_type) . "'";
+							$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "actioncomm as ac ON ac.id = er.element_id AND er.element_type = '" . $db->escape($object->element) . "'";
+							$sql .= " WHERE er.resource_id = " . ((int) $resource_id);
+							$sql .= " AND er.busy = 1";
+							$sql .= " AND (";
+
+							// event date start between ac.datep and ac.datep2 (if datep2 is null we consider there is no end)
+							$sql .= " (ac.datep <= '" . $db->idate($eventDateStart) . "' AND (ac.datep2 IS NULL OR ac.datep2 >= '" . $db->idate($eventDateStart) . "'))";
+							// event date end between ac.datep and ac.datep2
+							if (!empty($eventDateEnd)) {
+								$sql .= " OR (ac.datep <= '" . $db->idate($eventDateEnd) . "' AND (ac.datep2 >= '" . $db->idate($eventDateEnd) . "'))";
+							}
+							// event date start before ac.datep and event date end after ac.datep2
+							$sql .= " OR (";
+							$sql .= "ac.datep >= '" . $db->idate($eventDateStart) . "'";
+							if (!empty($eventDateEnd)) {
+								$sql .= " AND (ac.datep2 IS NOT NULL AND ac.datep2 <= '" . $db->idate($eventDateEnd) . "')";
+							}
+							$sql .= ")";
+
+							$sql .= ")";
+							$resql = $db->query($sql);
+							if (!$resql) {
+								$error++;
+								$object->error = $db->lasterror();
+								$object->errors[] = $object->error;
+							} else {
+								if ($db->num_rows($resql) > 0) {
+									// Resource already in use
+									$error++;
+									$object->error = $langs->trans('ErrorResourcesAlreadyInUse') . ' : ';
+									while ($obj = $db->fetch_object($resql)) {
+										$object->error .= '<br> - ' . $langs->trans('ErrorResourceUseInEvent', $obj->r_ref, $obj->ac_label . ' [' . $obj->ac_id . ']');
+									}
+									$object->errors[] = $object->error;
+
+									setEventMessages($object->error, null, 'errors');
+								}
+								$db->free($resql);
+							}
+						}
+
+						if (!$error) {
+							$res = $object->add_element_resource($resource_id, $resource_type, $busy, $val['mandatory']);
+						}
+					}
+				}
+
+				unset($_SESSION['assignedtoresource']);
+
+
 				// Category association
-				$categories = GETPOST('categories', 'array');
-				$object->setCategories($categories);
+				if (!$error) {
+					$categories = GETPOST('categories', 'array');
+					$object->setCategories($categories);
+				}
 
 				unset($_SESSION['assignedtouser']);
 
-				$moreparam = '';
 				if ($user->id != $object->userownerid) {
 					$moreparam = "filtert=-1"; // We force to remove filter so created record is visible when going back to per user view.
 				}
 
 				// Create reminders
-				if ($addreminder == 'on') {
+				if (!$error && $addreminder == 'on') {
 					$actionCommReminder = new ActionCommReminder($db);
 
 					$dateremind = dol_time_plus_duree($datep, -1 * $offsetvalue, $offsetunit);
@@ -606,7 +684,9 @@ if (empty($reshook) && $action == 'add') {
 			$donotclearsession = 1;
 		}
 
-		if ($eventisrecurring) {
+		if (!$error && $eventisrecurring) {
+			$dayoffset = 0;
+			$monthoffset = 0;
 			// We set first date of recurrence and offsets
 			if ($selectedrecurrulefreq == 'WEEKLY' && !empty($selectedrecurrulebyday)) {
 				$firstdatearray = dol_get_first_day_week(GETPOST("apday", 'int'), GETPOST("apmonth", 'int'), GETPOST("apyear", 'int'));
