@@ -949,7 +949,8 @@ class FactureLigne extends CommonInvoiceLine
 				$invoicecache[$invoiceid] = new Facture($this->db);
 				$invoicecache[$invoiceid]->fetch($invoiceid);
 			}
-			if ($invoicecache[$invoiceid]->type != Facture::TYPE_SITUATION) {
+			// if ($invoicecache[$invoiceid]->type != Facture::TYPE_SITUATION) { // We want to also include situation credit notes
+			if (empty($invoicecache[$invoiceid]->situation_cycle_ref)) {
 				return 0;
 			}
 
@@ -972,6 +973,7 @@ class FactureLigne extends CommonInvoiceLine
 					$sql .= " WHERE fd.fk_prev_id = ".((int) $this->fk_prev_id);
 					$sql .= " AND f.situation_cycle_ref = ".((int) $invoicecache[$invoiceid]->situation_cycle_ref); // Prevent cycle outed
 					$sql .= " AND f.type = ".((int) Facture::TYPE_CREDIT_NOTE);
+					$sql .= " AND fd.rowid != ".(int) $this->id; // ignore current credit note if it is
 
 					$res = $this->db->query($sql);
 					if ($res) {
@@ -1016,7 +1018,8 @@ class FactureLigne extends CommonInvoiceLine
 				$invoicecache[$invoiceid] = new Facture($this->db);
 				$invoicecache[$invoiceid]->fetch($invoiceid);
 			}
-			if ($invoicecache[$invoiceid]->type != Facture::TYPE_SITUATION) {
+			// if ($invoicecache[$invoiceid]->type != Facture::TYPE_SITUATION) { // We want to also include situation credit notes
+			if (empty($invoicecache[$invoiceid]->situation_cycle_ref)) {
 				return 0;
 			}
 
@@ -1038,6 +1041,7 @@ class FactureLigne extends CommonInvoiceLine
 						$sql_credit_note .= " WHERE fd.fk_prev_id = ".((int) $lastprevid);
 						$sql_credit_note .= " AND f.situation_cycle_ref = ".((int) $invoicecache[$invoiceid]->situation_cycle_ref); // Prevent cycle outed
 						$sql_credit_note .= " AND f.type = ".Facture::TYPE_CREDIT_NOTE;
+						$sql_credit_note .= " AND fd.rowid != ".(int) $this->id; // ignore current credit note if it is
 
 						$res_credit_note = $this->db->query($sql_credit_note);
 						if ($res_credit_note) {

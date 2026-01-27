@@ -4615,7 +4615,6 @@ class Facture extends CommonInvoice
 			}
 
 			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, $situation_percent, $this->multicurrency_tx, $pu_ht_devise);
-
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
@@ -4818,7 +4817,7 @@ class Facture extends CommonInvoice
 	 * Update invoice line with percentage
 	 *
 	 * @param  FactureLigne $line       	Invoice line
-	 * @param  int          $percent    	Percentage
+	 * @param  int          $percent    	Total Progress Percentage
 	 * @param  boolean      $update_price   Update object price
 	 * @return void
 	 */
@@ -4847,14 +4846,20 @@ class Facture extends CommonInvoice
 			$line->situation_percent = $percent;
 			$tabprice = calcul_price_total($line->qty, $line->subprice, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 0, 'HT', 0, $line->product_type, $mysoc, array(), $percent);
 		}
-		$line->total_ht = (float) $tabprice[0];
-		$line->total_tva = (float) $tabprice[1];
-		$line->total_ttc = (float) $tabprice[2];
+
+		$sign = 1;
+		if ((getDolGlobalInt('INVOICE_USE_SITUATION') == 2 && $this->type == self::TYPE_CREDIT_NOTE)) { // && (!getDolGlobalInt('FACTURE_ENABLE_NEGATIVE_LINES') && !getDolGlobalInt('INVOICE_KEEP_DISCOUNT_LINES_AS_IN_ORIGIN')) || $line->qty < 0
+			$sign = -1;
+		}
+
+		$line->total_ht = $sign * (float) $tabprice[0];
+		$line->total_tva = $sign * (float) $tabprice[1];
+		$line->total_ttc =  $sign * (float) $tabprice[2];
 		$line->total_localtax1 = (float) $tabprice[9];
 		$line->total_localtax2 = (float) $tabprice[10];
-		$line->multicurrency_total_ht  = (float) $tabprice[16];
-		$line->multicurrency_total_tva = (float) $tabprice[17];
-		$line->multicurrency_total_ttc = (float) $tabprice[18];
+		$line->multicurrency_total_ht  =  $sign * (float) $tabprice[16];
+		$line->multicurrency_total_tva =  $sign * (float) $tabprice[17];
+		$line->multicurrency_total_ttc =  $sign * (float) $tabprice[18];
 		$line->update($user);
 
 		// sometimes it is better to not update price for each line, ie when updating situation on all lines
