@@ -767,11 +767,18 @@ print $hookmanager->resPrint;
 print '</table>'."\n";
 print '</div>'."\n";
 
-print load_fiche_titre($langs->trans("Other"), '', '');
+	print load_fiche_titre($langs->trans("Other"), '', '');
+
+	// Default to "on" to keep legacy behavior: after a successful processing, collected emails are marked as read
+	// when they are not moved to another folder (targetdir is empty).
+	if (!isset($conf->global->EMAILCOLLECTOR_MARK_AS_SEEN_ON_SUCCESS)) {
+		dolibarr_set_const($db, 'EMAILCOLLECTOR_MARK_AS_SEEN_ON_SUCCESS', '1', 'yesno', 0, '', $conf->entity);
+		$conf->global->EMAILCOLLECTOR_MARK_AS_SEEN_ON_SUCCESS = '1';
+	}
 
 
-print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-print '<table class="noborder centpercent">';
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
+	print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
@@ -790,13 +797,25 @@ if ($conf->use_javascript_ajax) {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 	print $form->selectarray("MAIN_IMAP_USE_PHPIMAP", $arrval, getDolGlobalString("MAIN_IMAP_USE_PHPIMAP"));
 }
-print '</td>';
-print '</tr>';
+	print '</td>';
+	print '</tr>';
 
-// MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER: Hide e-mail headers from collected messages
-print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans("EmailCollectorHideMailHeaders"), $langs->transnoentitiesnoconv("EmailCollectorHideMailHeadersHelp")).'</td>';
-print '<td class="left">';
-if ($conf->use_javascript_ajax) {
+	// EMAILCOLLECTOR_MARK_AS_SEEN_ON_SUCCESS: Mark emails as read (Seen) when successfully processed without moving.
+	print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans("EmailCollectorMarkAsSeenOnSuccess"), $langs->transnoentitiesnoconv("EmailCollectorMarkAsSeenOnSuccessHelp")).'</td>';
+	print '<td class="left">';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('EMAILCOLLECTOR_MARK_AS_SEEN_ON_SUCCESS');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("EMAILCOLLECTOR_MARK_AS_SEEN_ON_SUCCESS", $arrval, getDolGlobalInt('EMAILCOLLECTOR_MARK_AS_SEEN_ON_SUCCESS', 1));
+	}
+	print '</td>';
+	print '</tr>';
+
+	// MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER: Hide e-mail headers from collected messages
+	print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans("EmailCollectorHideMailHeaders"), $langs->transnoentitiesnoconv("EmailCollectorHideMailHeadersHelp")).'</td>';
+	print '<td class="left">';
+	if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER');
 } else {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));

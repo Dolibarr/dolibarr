@@ -1146,17 +1146,19 @@ class EmailCollector extends CommonObject
 		$searchhead = '';
 		$searchfilterdoltrackid = 0;
 		$searchfilternodoltrackid = 0;
-		$searchfilterisanswer = 0;
-		$searchfilterisnotanswer = 0;
-		$searchfilterreplyto = 0;
-		$searchfilterexcludebodyarray = array();
-		$searchfilterexcludesubjectarray = array();
-		$operationslog = '';
-		$rulesreplyto = array();
-		$connectstringsource = '';
-		$connectstringtarget = '';
-		$connection = false;
-		$arrayofemail = array();
+			$searchfilterisanswer = 0;
+			$searchfilterisnotanswer = 0;
+			$searchfilterreplyto = 0;
+			$searchfilterexcludebodyarray = array();
+			$searchfilterexcludesubjectarray = array();
+			$operationslog = '';
+			$markSeenOnSuccess = (getDolGlobalInt('EMAILCOLLECTOR_MARK_AS_SEEN_ON_SUCCESS', 1) > 0);
+			$markAnsweredOnSuccess = (getDolGlobalInt('EMAILCOLLECTOR_MARK_AS_ANSWERED_ON_SUCCESS', 0) > 0);
+			$rulesreplyto = array();
+			$connectstringsource = '';
+			$connectstringtarget = '';
+			$connection = false;
+			$arrayofemail = array();
 
 		$now = dol_now();
 		$datelastok = $now;
@@ -3665,15 +3667,20 @@ class EmailCollector extends CommonObject
 					}
 				}
 
-				// Decide IMAP flags for this email (Seen/Answered).
-				// Modules can override per email with hook 'emailcollectorDecideImapFlags' (context 'emailcolector').
-				$markSeenForEmail = (empty($mode) && !$errorforactions);
-				$markAnsweredForEmail = false;
+					// Decide IMAP flags for this email (Seen/Answered).
+					// Modules can override per email with hook 'emailcollectorDecideImapFlags' (context 'emailcolector').
+					$markSeenForEmail = false;
+					$markAnsweredForEmail = false;
+					if (empty($mode) && !$errorforactions) {
+						// Legacy behavior: emails are marked as read on success (when not moved).
+						$markSeenForEmail = (empty($targetdir) ? $markSeenOnSuccess : false);
+						$markAnsweredForEmail = (empty($targetdir) ? $markAnsweredOnSuccess : false);
+					}
 
-				if (empty($mode) && !$errorforactions) {
-					if (!is_object($hookmanager)) {
-						include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-						$hookmanager = new HookManager($this->db);
+					if (empty($mode) && !$errorforactions) {
+						if (!is_object($hookmanager)) {
+							include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+							$hookmanager = new HookManager($this->db);
 					}
 					$hookmanager->initHooks(array('emailcolector'));
 
