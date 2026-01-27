@@ -6,7 +6,7 @@
  * Copyright (C) 2018-2019  Thibault Foucart		<support@ptibogxiv.net>
  * Copyright (C) 2021     	Waël Almoman            <info@almoman.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -273,7 +273,7 @@ class AdherentType extends CommonObject
 		if ($result) {
 			while ($obj = $this->db->fetch_object($result)) {
 				//print 'lang='.$obj->lang.' current='.$current_lang.'<br>';
-				if ($obj->lang == $current_lang) {  // si on a les traduct. dans la langue courante on les charge en infos principales.
+				if ($obj->lang == $current_lang) {  // if we have the translations in the current language, we load them as main information.
 					$this->label        = $obj->label;
 					$this->description = $obj->description;
 					$this->email        = $obj->email;

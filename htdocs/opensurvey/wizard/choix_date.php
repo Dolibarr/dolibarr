@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -514,12 +514,12 @@ print '<tr>'."\n";
 for ($i = 0; $i < $nbrejourmois + $premierjourmois; $i++) {
 	$numerojour = $i - $premierjourmois + 1;
 
-	// On saute a la ligne tous les 7 jours
+	// Add new line every 7 days
 	if (($i % 7) == 0 && $i != 0) {
 		print '</tr><tr>'."\n";
 	}
 
-	// On affiche les jours precedants en gris et incliquables
+	// Show previous days in grey and non clickable
 	if ($i < $premierjourmois) {
 		print '<td class="avant"></td>'."\n";
 	} else {

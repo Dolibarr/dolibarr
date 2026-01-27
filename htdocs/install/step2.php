@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Cedric GROSS            <c.gross@kreiz-it.fr>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -565,7 +565,7 @@ if ($action == "set") {		// Test on permission not required. Already managed by 
 						//$db->free($resql);     // Not required as request we launch here does not return memory needs.
 					} else {
 						if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-							//print "<tr><td>Insertion ligne : $buffer</td><td>";
+							//print "<tr><td>Insert line : $buffer</td><td>";
 						} else {
 							$ok = 0;
 							$okallfile = 0;

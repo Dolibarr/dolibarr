@@ -14,7 +14,7 @@
  * Copyright (C) 2020		Guillaume Alexandre			<guillaume@tag-info.fr>
  * Copyright (C) 2022		Joachim Kueter				<jkueter@gmx.de>
  * Copyright (C) 2022		Progiseize					<a.bisotti@progiseize.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1391,7 +1391,7 @@ class AccountancyExport
 		$separator = ';';
 		$end_line = "\n";
 
-		// parcours du tableau pour recuperation des numero de compte des tiers pour pouvoir les fournir dans la bonne ligne pour istea
+		// Extract the Third party account numbers from the table to provide the correct line for ISTEA
 		$tiers = [];
 		foreach ($objectLines as $line) {
 			if ($line->subledger_account && substr($line->subledger_account, 0, 1) == '4') {

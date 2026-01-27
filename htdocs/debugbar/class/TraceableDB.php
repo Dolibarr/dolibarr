@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2023	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -77,8 +77,8 @@ class TraceableDB extends DoliDB
 	 * Format a SQL IF
 	 *
 	 * @param   string $test Test string (example: 'cd.statut=0', 'field IS NULL')
-	 * @param   string $resok resultat si test equal
-	 * @param   string $resko resultat si test non equal
+	 * @param   string $resok result if test equal
+	 * @param   string $resko result if test non equal
 	 * @return	string                SQL string
 	 */
 	public function ifsql($test, $resok, $resko)
@@ -186,7 +186,7 @@ class TraceableDB extends DoliDB
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Return the number o flines into the result of a request INSERT, DELETE or UPDATE
+	 * Return the number of lines into the result of a request INSERT, DELETE or UPDATE
 	 *
 	 * @param   resource $resultset    Curseur de la requete voulue
 	 * @return 	int                    Number of lines
@@ -628,8 +628,8 @@ class TraceableDB extends DoliDB
 	 * Create a user and privileges to connect to database (even if database does not exists yet)
 	 *
 	 * @param    string $dolibarr_main_db_host 	Ip serveur
-	 * @param    string $dolibarr_main_db_user 	Nom user a creer
-	 * @param    string $dolibarr_main_db_pass 	Password user a creer
+	 * @param    string $dolibarr_main_db_user 	Name of user to create
+	 * @param    string $dolibarr_main_db_pass 	Password of user to create
 	 * @param    string $dolibarr_main_db_name 	Database name where user must be granted
 	 * @return   int                            Return integer <0 if KO, >=0 if OK
 	 */

@@ -9,7 +9,7 @@
  * Copyright (C) 2017-2022  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019-2020  Christophe Battarel	    <christophe@altairis.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1089,7 +1089,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 											print $langs->trans("ErrorNoWarehouseDefined");
 										}
 									} else {
-										// on force l'entrepot pour passer le test d'ajout de ligne dans expedition.class.php
+										// Force the warehouse to succeed tha test to add the line in expedition.class.php
 										print '<input id="entrepot'.$suffix.'" name="entrepot'.$suffix.'" type="hidden" value="'.$objd->fk_warehouse.'">';
 										print img_warning().' '.$langs->trans('StockDisabled');
 									}

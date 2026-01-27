@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -171,7 +171,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 
 	$newid = 0;
 
-	// Si verif ok et action add, on ajoute la ligne
+	// In case of 'actionadd' and with valid parameters, add the line
 	if ($ok && GETPOST('actionadd', 'alpha')) {
 		if ($tabrowid[$id]) {
 			// Get free id for insert
@@ -239,7 +239,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		}
 	}
 
-	// Si verif ok et action modify, on modifie la ligne
+	// In case of 'actionmodify' and with valid parameters, modify the line
 	if ($ok && GETPOST('actionmodify', 'alpha')) {
 		if ($tabrowid[$id]) {
 			$rowidcol = $tabrowid[$id];
@@ -440,7 +440,7 @@ print '<span class="opacitymedium">'.$langs->trans("WebsiteSetupDesc").'</span><
 print "<br>\n";
 
 
-// Confirmation de la suppression de la ligne
+// Generate form to confirm line deletion
 if ($action == 'delete') {
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$rowid, $langs->trans('DeleteWebsite'), $langs->trans('ConfirmDeleteWebsite'), 'confirm_delete', '', 0, 1, 220);
 }

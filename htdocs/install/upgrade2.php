@@ -5,7 +5,7 @@
  * Copyright (C) 2010       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2023      	Gauthier VERDOL       	<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -326,9 +326,9 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			// Version to install is DOL_VERSION
 			$dolibarrlastupgradeversionarray = preg_split('/[\.-]/', getDolGlobalString('MAIN_VERSION_LAST_UPGRADE', getDolGlobalString('MAIN_VERSION_LAST_INSTALL')));
 
-			// Chaque action de migration doit renvoyer une ligne sur 4 colonnes avec
-			// dans la 1ere colonne, la description de l'action a faire
-			// dans la 4eme colonne, le texte 'OK' si fait ou 'AlreadyDone' si rien n'est fait ou 'Error'
+			// Every migration action must return a 4 column line with:
+			// - in the 1st column: the description of the action to do,
+			// - in the 4th column: the text 'OK' if done, or 'AlreadyDone' si nothing is done, or 'Error'
 
 			$versiontoarray = explode('.', $versionto);
 			$versionranarray = explode('.', DOL_VERSION);
@@ -1518,7 +1518,7 @@ function migrate_contracts_date3($db, $langs, $conf)
 }
 
 /**
- * Reouverture des contrats qui ont au moins une ligne non fermee
+ * Reopen the contracts that have at least one line that is not closed (/completed).
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
@@ -1613,7 +1613,7 @@ function migrate_paiementfourn_facturefourn($db, $langs, $conf)
 			$select_num = $db->num_rows($select_resql);
 			$i = 0;
 
-			// Pour chaque paiement fournisseur, on insere une ligne dans paiementfourn_facturefourn
+			// For every supplier payment, add a line to paiementfourn_facturefourn
 			while (($i < $select_num) && (!$error)) {
 				$select_obj = $db->fetch_object($select_resql);
 
@@ -1825,7 +1825,7 @@ function migrate_price_propal($db, $langs, $conf)
 				$remise_percent_global = $obj->remise_percent_global;
 				$info_bits = $obj->info_bits;
 
-				// On met a jour les 3 nouveaux champs
+				// Update the 3 new fields
 				$propalligne = new PropaleLigne($db);
 				$propalligne->fetch($rowid);
 

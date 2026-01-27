@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2021	Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2006-2021	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1142,7 +1142,7 @@ class Ldap
 		// We need to search for this user in order to get their entry.
 		$this->result = @ldap_search($this->connection, $this->people, $filterrecord, $attributes);
 
-		// Pourquoi cette ligne ?
+		// What is this line for ?
 		//$info = ldap_get_entries($this->connection, $this->result);
 
 		// Only one entry should ever be returned (no user will have the same uid)
