@@ -1185,6 +1185,20 @@ class EmailCollector extends CommonObject
 		$sourcedir = $this->source_directory;
 		$targetdir = ($this->target_directory ? $this->target_directory : ''); // Can be '[Gmail]/Trash' or 'mytag'
 
+		// Build a list of configured hook operations for this collector (useful for modules deciding flags).
+		$collectorHookActionTypes = array();
+		if (!empty($this->actions) && is_array($this->actions)) {
+			foreach ($this->actions as $op) {
+				if (!is_array($op)) {
+					continue;
+				}
+				$type = (!empty($op['type']) ? (string) $op['type'] : '');
+				if ($type !== '' && substr($type, 0, 4) === 'hook') {
+					$collectorHookActionTypes[] = $type;
+				}
+			}
+		}
+
 		if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 			if ($this->acces_type == 1) {
 				// Mode OAUth2 (access_type == 1) with PHP-IMAP
@@ -1684,9 +1698,7 @@ class EmailCollector extends CommonObject
 
 			'@phan-var-force Webklex\PHPIMAP\Query\Query $Query';
 			try {
-				if ($mode > 0) {
-					$Query->leaveUnread();
-				}
+				$Query->leaveUnread();
 				$arrayofemail = $Query->limit($this->maxemailpercollect)->setFetchOrder("asc")->get();
 				dol_syslog("EmailCollector::doCollectOneCollector nb arrayofemail ".(is_array($arrayofemail) ? count($arrayofemail) : 'Not array'));	// @phpstan-ignore-line
 			} catch (Exception $e) {
@@ -1739,14 +1751,35 @@ class EmailCollector extends CommonObject
 					break; // Do not process more than 1000 email per launch (this is a different protection than maxnbcollectedpercollect)
 				}
 
+				$initialseen = null; // null=unknown, true/false when detectable
+
 				// GET header and overview datas
 				if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 					'@phan-var-force Webklex\PHPIMAP\Message $imapemail';
 					$header = $imapemail->getHeader()->raw;  // @phan-suppress-current-line PhanPluginUnknownObjectMethodCall  // @phan-suppress-current-line PhanPluginUnknownObjectMethodCall
 					$overview = $imapemail->getAttributes();
+					try {
+						if (is_object($imapemail) && method_exists($imapemail, 'getFlags')) {
+							$flags = $imapemail->getFlags();
+							if (is_object($flags)) {
+								if (method_exists($flags, 'has')) {
+									$initialseen = $flags->has('seen');
+								} elseif (method_exists($flags, 'get')) {
+									$initialseen = ($flags->get('seen') !== null);
+								}
+							}
+						}
+					} catch (\Throwable $e) {
+						$initialseen = null;
+					}
 				} else {
-					$header = imap_fetchheader($connection, $imapemail, FT_UID);
+					// Use FT_PEEK to avoid marking the email as \Seen while we are just reading headers for processing/sorting.
+					$fetchHeaderOpts = FT_UID | (defined('FT_PEEK') ? FT_PEEK : 0);
+					$header = imap_fetchheader($connection, $imapemail, $fetchHeaderOpts);
 					$overview = imap_fetch_overview($connection, $imapemail, FT_UID);
+					if (is_array($overview) && !empty($overview[0]) && property_exists($overview[0], 'seen')) {
+						$initialseen = !empty($overview[0]->seen);
+					}
 				}
 
 				$header = preg_replace('/\r\n\s+/m', ' ', $header); // When a header line is on several lines, merge lines
@@ -1756,7 +1789,7 @@ class EmailCollector extends CommonObject
 				$headers = array_combine($matches[1], $matches[2]);
 
 
-				$richarrayofemail[] = array('imapemail' => $imapemail, 'header' => $header, 'headers' => $headers, 'overview' => $overview, 'date' => strtotime($headers['Date']));
+				$richarrayofemail[] = array('imapemail' => $imapemail, 'header' => $header, 'headers' => $headers, 'overview' => $overview, 'initialseen' => $initialseen, 'date' => strtotime($headers['Date']));
 			}
 
 
@@ -1772,6 +1805,7 @@ class EmailCollector extends CommonObject
 				$header = $tmpval['header'];
 				$overview = $tmpval['overview'];
 				$headers = $tmpval['headers'];
+				$initialseen = (array_key_exists('initialseen', $tmpval) ? $tmpval['initialseen'] : null); // null=unknown, true/false when detectable
 
 				if (!empty($headers['in-reply-to']) && empty($headers['In-Reply-To'])) {
 					$headers['In-Reply-To'] = $headers['in-reply-to'];
@@ -3631,6 +3665,137 @@ class EmailCollector extends CommonObject
 					}
 				}
 
+				// Decide IMAP flags for this email (Seen/Answered).
+				// Modules can override per email with hook 'emailcollectorDecideImapFlags' (context 'emailcolector').
+				$markSeenForEmail = (empty($mode) && !$errorforactions);
+				$markAnsweredForEmail = false;
+
+				if (empty($mode) && !$errorforactions) {
+					if (!is_object($hookmanager)) {
+						include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+						$hookmanager = new HookManager($this->db);
+					}
+					$hookmanager->initHooks(array('emailcolector'));
+
+					$hookParamsFlags = array(
+						'connection' => $connection,
+						'imapemail' => $imapemail,
+						'overview' => $overview,
+						'from' => $from,
+						'fromtext' => $fromtext,
+						'thirdpartyid' => $thirdpartyid,
+						'objectid' => $objectid,
+						'objectemail' => $objectemail,
+						'messagetext' => $messagetext,
+						'subject' => $subject,
+						'header' => $header,
+						'headers' => $headers,
+						'msgid' => $msgid,
+						'collector_id' => (int) $this->id,
+						'collector_ref' => (string) $this->ref,
+						'target_directory' => $targetdir,
+						'mode' => (int) $mode,
+						'success' => 1,
+						'initial_seen' => $initialseen,
+						'default_flags' => array(
+							'seen' => $markSeenForEmail,
+							'answered' => $markAnsweredForEmail,
+						),
+						'collector_hook_actions' => $collectorHookActionTypes,
+					);
+
+					$reshookFlags = $hookmanager->executeHooks('emailcollectorDecideImapFlags', $hookParamsFlags, $this, 'collect');
+					if ($reshookFlags >= 0 && !empty($hookmanager->resArray['imap_flags']) && is_array($hookmanager->resArray['imap_flags'])) {
+						$imapFlags = $hookmanager->resArray['imap_flags'];
+
+						if (array_key_exists('seen', $imapFlags)) {
+							$tmp = (is_bool($imapFlags['seen']) ? $imapFlags['seen'] : filter_var($imapFlags['seen'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE));
+							if ($tmp !== null) {
+								$markSeenForEmail = $tmp;
+							}
+						}
+						if (array_key_exists('answered', $imapFlags)) {
+							$tmp = (is_bool($imapFlags['answered']) ? $imapFlags['answered'] : filter_var($imapFlags['answered'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE));
+							if ($tmp !== null) {
+								$markAnsweredForEmail = $tmp;
+							}
+						}
+					} elseif ($reshookFlags < 0 && !empty($hookmanager->error)) {
+						$operationslog .= '<br>Hook emailcollectorDecideImapFlags error: '.dol_escape_htmltag((string) $hookmanager->error);
+					}
+				}
+
+				// Apply IMAP flags after processing.
+				if (empty($mode) && !$errorforactions) {
+					$markSeen = (!empty($markSeenForEmail) ? true : false);
+					$markAnswered = (!empty($markAnsweredForEmail) ? true : false);
+
+					if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
+						if (is_object($imapemail) && method_exists($imapemail, 'setFlag')) {
+							if ($markSeen) {
+								try {
+									$imapemail->setFlag("Seen");
+								} catch (\Throwable $e) {
+									$this->errors[] = $e->getMessage();
+									$operationslog .= '<br>Failed to set Seen flag: '.dol_escape_htmltag($e->getMessage());
+								}
+							}
+							if ($markAnswered) {
+								try {
+									$imapemail->setFlag("Answered");
+								} catch (\Throwable $e) {
+									$this->errors[] = $e->getMessage();
+									$operationslog .= '<br>Failed to set Answered flag: '.dol_escape_htmltag($e->getMessage());
+								}
+							}
+						}
+					} else {
+						if ($connection !== false && function_exists('imap_setflag_full') && defined('ST_UID')) {
+							if ($markSeen) {
+								try {
+									imap_setflag_full($connection, (string) $imapemail, "\\Seen", ST_UID);
+								} catch (\Throwable $e) {
+									$this->errors[] = $e->getMessage();
+									$operationslog .= '<br>Failed to set \\Seen flag: '.dol_escape_htmltag($e->getMessage());
+								}
+							}
+							if ($markAnswered) {
+								try {
+									imap_setflag_full($connection, (string) $imapemail, "\\Answered", ST_UID);
+								} catch (\Throwable $e) {
+									$this->errors[] = $e->getMessage();
+									$operationslog .= '<br>Failed to set \\Answered flag: '.dol_escape_htmltag($e->getMessage());
+								}
+							}
+						}
+					}
+				}
+
+				// Guarantee: an email that was initially unread should stay unread when we are not marking it as Seen.
+				// This is important when using native IMAP (imap_fetchbody/imap_fetchheader without FT_PEEK can set \\Seen).
+				$keepUnread = (!empty($mode) || $errorforactions || !$markSeenForEmail);
+				if ($keepUnread && $initialseen === false) {
+					if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
+						if (is_object($imapemail) && method_exists($imapemail, 'unsetFlag')) {
+							try {
+								$imapemail->unsetFlag("Seen");
+							} catch (\Throwable $e) {
+								$this->errors[] = $e->getMessage();
+								$operationslog .= '<br>Failed to unset Seen flag: '.dol_escape_htmltag($e->getMessage());
+							}
+						}
+					} else {
+						if ($connection !== false && function_exists('imap_clearflag_full') && defined('ST_UID')) {
+							try {
+								imap_clearflag_full($connection, (string) $imapemail, "\\Seen", ST_UID);
+							} catch (\Throwable $e) {
+								$this->errors[] = $e->getMessage();
+								$operationslog .= '<br>Failed to clear \\Seen flag: '.dol_escape_htmltag($e->getMessage());
+							}
+						}
+					}
+				}
+
 				// Error for email or not ?
 				if (!$errorforactions) {
 					if (!empty($targetdir)) {
@@ -3649,10 +3814,11 @@ class EmailCollector extends CommonObject
 							// Note: Real move is done later using $arrayofemailtodelete
 						}
 					} else {
+						$syslogreadaction = ($markSeenForEmail ? 'was set to read' : 'was left unread');
 						if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
-							dol_syslog("EmailCollector::doCollectOneCollector message ".($this->uidAsString($imapemail))." '".($imapemail->getHeader()->get('subject'))."' using this->host=".$this->host.", this->access_type=".$this->acces_type." was set to read", LOG_DEBUG);
+							dol_syslog("EmailCollector::doCollectOneCollector message ".($this->uidAsString($imapemail))." '".($imapemail->getHeader()->get('subject'))."' using this->host=".$this->host.", this->access_type=".$this->acces_type." ".$syslogreadaction, LOG_DEBUG);
 						} else {
-							dol_syslog("EmailCollector::doCollectOneCollector message ".($this->uidAsString($imapemail))." to ".$connectstringtarget." was set to read", LOG_DEBUG);
+							dol_syslog("EmailCollector::doCollectOneCollector message ".($this->uidAsString($imapemail))." to ".$connectstringtarget." ".$syslogreadaction, LOG_DEBUG);
 						}
 					}
 				} else {
@@ -3809,9 +3975,10 @@ class EmailCollector extends CommonObject
 	 * @param 	IMAP\Connection|resource $mbox   	Structure
 	 * @param 	int				$mid		Message Id / Message Number  Email
 	 * @param 	string			$destdir    Target dir for attachments. Leave blank to parse without writing to disk.
+	 * @param 	bool			$peek	True to fetch body with FT_PEEK (do not set \\Seen)
 	 * @return 	-1|1						Return -1 if error, 1 if OK
 	 */
-	private function getmsg($mbox, $mid, $destdir = ''): int
+	private function getmsg($mbox, $mid, $destdir = '', $peek = true): int
 	{
 		// input $mbox = IMAP stream, $mid = message id
 		// output all the following:
@@ -3832,11 +3999,11 @@ class EmailCollector extends CommonObject
 
 		if (empty($s->parts)) {
 			// simple
-			$this->getpart($mbox, $mid, $s, '0'); // pass '0' as part-number
+			$this->getpart($mbox, $mid, $s, '0', $destdir, $peek); // pass '0' as part-number
 		} else {
 			// multipart: cycle through each part
 			foreach ($s->parts as $partno0 => $p) {
-				$this->getpart($mbox, $mid, $p, (string) ($partno0 + 1), $destdir);
+				$this->getpart($mbox, $mid, $p, (string) ($partno0 + 1), $destdir, $peek);
 			}
 		}
 
@@ -3867,17 +4034,20 @@ class EmailCollector extends CommonObject
 	 * @param 	Object			$p              Object p
 	 * @param   string			$partno			Partno / Section
 	 * @param 	string			$destdir	    Target dir for attachments. Leave blank to parse without writing to disk.
+	 * @param 	bool			$peek	True to fetch body with FT_PEEK (do not set \\Seen)
 	 * @return	void
 	 */
-	private function getpart($mbox, $mid, $p, $partno, $destdir = '')
+	private function getpart($mbox, $mid, $p, $partno, $destdir = '', $peek = true)
 	{
 		// $partno = '1', '2', '2.1', '2.1.3', etc for multipart, 0 if simple
 		global $htmlmsg, $plainmsg, $charset, $attachments;
 
+		$imapfetchopts = FT_UID | ($peek && defined('FT_PEEK') ? FT_PEEK : 0);
+
 		// DECODE DATA
 		$data = ($partno) ?
-		imap_fetchbody($mbox, $mid, $partno, FT_UID) : // multipart
-		imap_body($mbox, $mid, FT_UID); // simple
+		imap_fetchbody($mbox, $mid, $partno, $imapfetchopts) : // multipart
+		imap_body($mbox, $mid, $imapfetchopts); // simple
 		// Any part may be encoded, even plain text messages, so check everything.
 		if ($p->encoding == 4) {
 			$data = quoted_printable_decode($data);
@@ -3976,7 +4146,7 @@ class EmailCollector extends CommonObject
 		// SUBPART RECURSION
 		if (!empty($p->parts)) {
 			foreach ($p->parts as $partno0 => $p2) {
-				$this->getpart($mbox, $mid, $p2, $partno.'.'.($partno0 + 1), $destdir); // 1.2, 1.2.1, etc.
+				$this->getpart($mbox, $mid, $p2, $partno.'.'.($partno0 + 1), $destdir, $peek); // 1.2, 1.2.1, etc.
 			}
 		}
 	}
