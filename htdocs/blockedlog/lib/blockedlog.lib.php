@@ -127,7 +127,7 @@ function getHashUniqueIdOfRegistration()
  *
  * @param   int<0,1>	$ignoredev			Set this to 1 to ignore the fact the version is an alpha or beta version
  * @param   int<0,1>	$ignoremodule		Set this to 1 to not take into account if module BlockedLog is on, so function can be used during module activation.
- * @return 	boolean							True or false
+ * @return 	string							'' if false or a string if true
  */
 function isALNEQualifiedVersion($ignoredev = 0, $ignoremodule = 0)
 {
@@ -136,7 +136,7 @@ function isALNEQualifiedVersion($ignoredev = 0, $ignoremodule = 0)
 	// For Debug help: Constant set by developer to force all LNE restrictions even if country is not France so we can test them on any dev instance.
 	// Note that you can force, with this option, the enabling of the LNE restrictions, but there is no way to force the disabling of the LNE restriction.
 	if (defined('CERTIF_LNE') && (int) constant('CERTIF_LNE') === 2) {
-		return true;
+		return 'CERTIF_LNE_IS_2';
 	}
 
 	if (!$ignoredev && preg_match('/\-/', DOL_VERSION)) {	// This is not a stable version
@@ -152,7 +152,7 @@ function isALNEQualifiedVersion($ignoredev = 0, $ignoremodule = 0)
 		return false;
 	}
 
-	return true;	// all conditions are ok to become a LNE certified version
+	return ($ignoredev ? '' : 'NOT_BETA+').'FR+CERTIF_LNE_IS_1'.($ignoremodule ? '' : '+MODENABLED');	// all conditions are ok to become a LNE certified version
 }
 
 

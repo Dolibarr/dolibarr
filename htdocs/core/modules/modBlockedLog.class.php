@@ -171,10 +171,15 @@ class modBlockedLog extends DolibarrModules
 
 		$sql = array();
 
-
 		require_once DOL_DOCUMENT_ROOT . '/blockedlog/class/blockedlog.class.php';
 		$b = new BlockedLog($this->db);
 
+		// forceinit can be set to bypass this redirection
+		if (isALNEQualifiedVersion(1, 1) && $options != 'forceinit') {
+			// We first switch on registration page
+			header("Location: ".DOL_URL_ROOT.'/blockedlog/admin/registration.php');
+			exit;
+		}
 
 		$this->db->begin();
 
