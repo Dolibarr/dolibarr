@@ -2872,7 +2872,7 @@ if ($action == 'create' && $permissiontoadd) {
 	if ($action != 'presend' && $action != 'editline') {
 		print '<div class="fichecenter"><div class="fichehalfleft">';
 
-		$objectref = dol_sanitizeFileName($object->ref);
+		$objectref = dol_sanitizeFileName((string) $object->ref);
 		$filedir = $conf->reception->dir_output."/".$objectref;
 
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;

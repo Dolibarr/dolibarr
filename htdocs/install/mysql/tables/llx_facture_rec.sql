@@ -75,7 +75,7 @@ create table llx_facture_rec
   date_last_gen      datetime DEFAULT NULL,		-- date for last gen (date with last successfull generation of invoice)
   nb_gen_done        integer DEFAULT NULL,		-- nb of generation done (when an invoice is generated, this field must incremented)
   nb_gen_max         integer DEFAULT NULL,		    -- maximum number of generation
-  auto_validate      integer DEFAULT 0,		-- 0 to create in draft, 1 to create and validate the new invoice
+  auto_validate      integer DEFAULT 0,		-- 0 to create in draft, 1 to create and validate the new invoice, 2 to create+validate and send
   fk_email_template  integer DEFAULT NULL,		-- email template for automatic sending
   generate_pdf       integer DEFAULT 1      -- 0 disable pdf, 1 to generate pdf
 )ENGINE=innodb;

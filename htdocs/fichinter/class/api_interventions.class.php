@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2015	Jean-François Ferry		<jfefe@aternatik.fr>
- * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2025	William Mead			<william@m34d.com>
- * Copyright (C) 2025	Charlene Benke			<charlene@patas-monkey.com>
+/* Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
+ * Copyright (C) 2016		Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2025		William Mead			<william@m34d.com>
+ * Copyright (C) 2025-2026	Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -707,13 +707,14 @@ class Interventions extends DolibarrApi
 	 *
 	 * @param	int					$id			ID of interventional
 	 * @param	string				$type		Type of the interventional
+	 * @param	string				$source		Source of the contact (internal, external)
 	 * @return	array<int,mixed>				Object with cleaned properties
 	 *
 	 * @url	GET {id}/contacts
 	 *
 	 * @throws	RestException
 	 */
-	public function getContacts($id, $type = '')
+	public function getContacts($id, $type = '', $source = '')
 	{
 		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'lire')) {
 			throw new RestException(403);
@@ -728,8 +729,16 @@ class Interventions extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$contacts = $this->fichinter->liste_contact(-1, 'external', 0, $type);
-		$socpeoples = $this->fichinter->liste_contact(-1, 'internal', 0, $type);
+		if (empty($source) || $source == 'external') {
+			$contacts = $this->fichinter->liste_contact(-1, 'external', 0, $type);
+		} else {
+			$contacts = array();
+		}
+		if (empty($source) || $source == 'internal') {
+			$socpeoples = $this->fichinter->liste_contact(-1, 'internal', 0, $type);
+		} else {
+			$socpeoples = array();
+		}
 
 		$contacts = array_merge($contacts, $socpeoples);
 
