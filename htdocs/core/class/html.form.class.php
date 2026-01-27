@@ -15,7 +15,7 @@
  * Copyright (C) 2012-2016  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2014-2020  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2014-2026  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2018-2022  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018       Nicolas ZABOURI	        <info@inovea-conseil.com>
@@ -8094,6 +8094,26 @@ class Form
 
 			if ($filter) {     // Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 				$errormessage = '';
+
+				// Fix: Add table alias prefix to common field names to avoid SQL ambiguity
+				$common_fields = array('entity', 'status', 'rowid', 'ref', 'label', 'fk_soc', 'date_creation', 'tms', 'nom', 'name');
+
+				foreach ($common_fields as $field) {
+					// Universal Search syntax: (fieldname:operator:value)
+					$filter = preg_replace(
+						'/\((\s*)(' . preg_quote($field, '/') . ')(\s*:[=!<>]+:)/i',
+						'($1t.$2$3',
+						$filter
+					);
+
+					// Standard SQL syntax: fieldname operator value
+					$filter = preg_replace(
+						'/(?<![a-zA-Z0-9_\.])(' . preg_quote($field, '/') . ')(\s*(?:=|!=|<|>|<=|>=|<>|IN|NOT\s+IN|LIKE|NOT\s+LIKE|IS))/i',
+						't.$1$2',
+						$filter
+					);
+				}
+
 				$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
 				if ($errormessage) {
 					return 'Error forging a SQL request from an universal criteria: ' . $errormessage;
