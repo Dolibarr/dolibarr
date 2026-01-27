@@ -192,7 +192,7 @@ class FormCompany extends Form
 	}
 
 	/**
-	 *  Affiche formulaire de selection des niveau de prospection pour les contacts
+	 *  Show form to select the level of prospection for contacts
 	 *
 	 *  @param	string	$page        	Page
 	 *  @param  int		$selected    	Id or code preselected
@@ -250,7 +250,7 @@ class FormCompany extends Form
 	 *   Thus the links with the departments are done on a department independently of its name.
 	 *
 	 *   @param     string		$selected        	Code state preselected
-	 *   @param     0|string	$country_codeid     Set to 0=list for all countries, otherwise country code or country rowid to show
+	 *   @param     int|string	$country_codeid     Set to 0=list for all countries, otherwise country code or country rowid to show
 	 *   @param     string		$htmlname			Id of department
 	 *   @return	void
 	 */
@@ -330,7 +330,7 @@ class FormCompany extends Form
 							$out .= '<option value="' . $obj->rowid . '">';
 						}
 
-						// Si traduction existe, on l'utilise, sinon on prend le libelle par default
+						// If a translation exists, we use it, else we take the default label
 						if (
 							getDolGlobalString('MAIN_SHOW_STATE_CODE') &&
 							(getDolGlobalInt('MAIN_SHOW_STATE_CODE') == 1 || getDolGlobalInt('MAIN_SHOW_STATE_CODE') == 2 || getDolGlobalString('MAIN_SHOW_STATE_CODE') === 'all')
@@ -524,7 +524,7 @@ class FormCompany extends Form
 	 *    A country separator is included in case the list for all countries is returned.
 	 *
 	 *    @param	int			$selected        	Preselected code for juridical type
-	 *    @param    0|string	$country_codeid		Set to 0=All countries, else the code of the country to display
+	 *    @param    int|string	$country_codeid		Set to 0=All countries, else the code of the country to display
 	 *    @param    string		$filter          	Add a SQL filter on list
 	 *    @return	void
 	 *    @deprecated Use print xxx->select_juridicalstatus instead
@@ -542,7 +542,7 @@ class FormCompany extends Form
 	 *    A country separator is included in case the list for all countries is returned.
 	 *
 	 *    @param	int			$selected        	Preselected code of juridical type
-	 *    @param    0|string	$country_codeid     Set to 0=list for all countries, otherwise list only country requested
+	 *    @param    int|string	$country_codeid     Set to 0=list for all countries, otherwise list only country requested
 	 *    @param    string		$filter          	Add a SQL filter on list. Data must not come from user input.
 	 *    @param	string		$htmlname			HTML name of select
 	 *    @param	string		$morecss			More CSS
@@ -551,7 +551,7 @@ class FormCompany extends Form
 	public function select_juridicalstatus($selected = 0, $country_codeid = 0, $filter = '', $htmlname = 'forme_juridique_code', $morecss = '')
 	{
 		// phpcs:enable
-		global $conf, $langs, $user;
+		global $langs, $user;
 		$langs->load("dict");
 
 		$out = '';
@@ -956,7 +956,7 @@ class FormCompany extends Form
 	public function get_input_id_prof($idprof, $htmlname, $preselected, $country_code, $morecss = 'maxwidth200')
 	{
 		// phpcs:enable
-		global $conf, $langs, $hookmanager;
+		global $hookmanager;
 
 		$formlength = 0;
 		if (!getDolGlobalString('MAIN_DISABLEPROFIDRULES')) {
@@ -967,7 +967,7 @@ class FormCompany extends Form
 					} elseif ($idprof == 2) {
 						$formlength = 14;
 					} elseif ($idprof == 3) {
-						$formlength = 5; // 4 chiffres et 1 lettre depuis janvier
+						$formlength = 5; // 4 digits and 1 letter since january
 					} elseif ($idprof == 4) {
 						$formlength = 32; // No maximum as we need to include a town name in this id
 					}
