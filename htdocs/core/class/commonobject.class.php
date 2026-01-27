@@ -2445,7 +2445,9 @@ abstract class CommonObject
 		}
 		if ($fieldid == 'rowid') {
 			$sql .= " WHERE te.".$fieldid." < ".((int) $this->id);
-		} else {
+		} elseif ($fieldid == 'label') {
+			$sql .= " WHERE te.".$fieldid." < '".$this->db->escape((string) $this->label)."'";
+		} else {	// Should be 'ref' or any other string field
 			$sql .= " WHERE te.".$fieldid." < '".$this->db->escape((string) $this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
 		}
 		if ($restrictiononfksoc == 1 && !$user->hasRight('societe', 'client', 'voir') && !$socid) {
@@ -2524,7 +2526,9 @@ abstract class CommonObject
 		}
 		if ($fieldid == 'rowid') {
 			$sql .= " WHERE te.".$fieldid." > ".((int) $this->id);
-		} else {
+		} elseif ($fieldid == 'label') {
+			$sql .= " WHERE te.".$fieldid." > '".$this->db->escape((string) $this->label)."'";
+		} else {	// Should be 'ref' or any other string field
 			$sql .= " WHERE te.".$fieldid." > '".$this->db->escape((string) $this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
 		}
 		if ($restrictiononfksoc == 1 && !$user->hasRight('societe', 'client', 'voir') && !$socid) {
@@ -5802,6 +5806,8 @@ abstract class CommonObject
 		// Is the line strike or not
 		$this->tpl['strike'] = 0;
 		if ($restrictlist == 'services' && $line->product_type != Product::TYPE_SERVICE) {
+			$this->tpl['strike'] = 1;
+		} elseif ($line->special_code == SUBTOTALS_SPECIAL_CODE) {
 			$this->tpl['strike'] = 1;
 		}
 

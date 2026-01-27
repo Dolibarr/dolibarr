@@ -1532,22 +1532,22 @@ if ($action == 'create' && $usercancreate) {
 		print $langs->trans("Weight");
 		print '</td><td colspan="3">';
 		print img_picto('', 'fa-balance-scale', 'class="pictofixedwidth"');
-		print '<input name="weight" size="4" value="' . GETPOSTINT('weight') . '"> ';
-		$text = $formproduct->selectMeasuringUnits("weight_units", "weight", (string) GETPOSTINT('weight_units'), 0, 2);
+		print '<input name="weight" size="4" value="' . GETPOST('weight') . '"> ';		// Do not use GETPOSTINT here, we must accept '' also.
+		$text = $formproduct->selectMeasuringUnits("weight_units", "weight", GETPOST('weight_units'), 0, 2);
 		$htmltext = $langs->trans("KeepEmptyForAutoCalculation");
 		print $form->textwithpicto($text, $htmltext);
 		print '</td></tr>';
 
-		// Dim
+		// Dim width x height x depth
 		print '<tr><td>';
 		print $langs->trans("Width") . ' x ' . $langs->trans("Height") . ' x ' . $langs->trans("Depth");
 		print ' </td><td colspan="3">';
 		print img_picto('', 'fa-ruler', 'class="pictofixedwidth"');
-		print '<input name="sizeW" size="4" value="' . GETPOSTINT('sizeW') . '">';
-		print ' x <input name="sizeH" size="4" value="' . GETPOSTINT('sizeH') . '">';
-		print ' x <input name="sizeS" size="4" value="' . GETPOSTINT('sizeS') . '">';
+		print '<input name="sizeW" size="4" value="' . GETPOST('sizeW') . '">';
+		print ' x <input name="sizeH" size="4" value="' . GETPOST('sizeH') . '">';
+		print ' x <input name="sizeS" size="4" value="' . GETPOST('sizeS') . '">';
 		print ' ';
-		$text = $formproduct->selectMeasuringUnits("size_units", "size", (string) GETPOSTINT('size_units'), 0, 2);
+		$text = $formproduct->selectMeasuringUnits("size_units", "size", GETPOST('size_units'), 0, 2);
 		$htmltext = $langs->trans("KeepEmptyForAutoCalculation");
 		print $form->textwithpicto($text, $htmltext);
 		print '</td></tr>';
@@ -1756,22 +1756,22 @@ if ($action == 'create' && $usercancreate) {
 			print $langs->trans("Weight");
 			print '</td><td colspan="3">';
 			print img_picto('', 'fa-balance-scale', 'class="pictofixedwidth"');
-			print '<input name="weight" size="4" value="' . GETPOSTINT('weight') . '"> ';
-			$text = $formproduct->selectMeasuringUnits("weight_units", "weight", (string) GETPOSTINT('weight_units'), 0, 2);
+			print '<input name="weight" size="4" value="' . GETPOST('weight') . '"> ';	// Do not use GETPOSTINT here, we must accept '' also.
+			$text = $formproduct->selectMeasuringUnits("weight_units", "weight", GETPOST('weight_units'), 0, 2);
 			$htmltext = $langs->trans("KeepEmptyForAutoCalculation");
 			print $form->textwithpicto($text, $htmltext);
 			print '</td></tr>';
 
-			// Dim
+			// Dim Width x Height x Depth
 			print '<tr><td>';
 			print $langs->trans("Width") . ' x ' . $langs->trans("Height") . ' x ' . $langs->trans("Depth");
 			print ' </td><td colspan="3">';
 			print img_picto('', 'fa-ruler', 'class="pictofixedwidth"');
-			print '<input name="sizeW" size="4" value="' . GETPOSTINT('sizeW') . '">';
-			print ' x <input name="sizeH" size="4" value="' . GETPOSTINT('sizeH') . '">';
-			print ' x <input name="sizeS" size="4" value="' . GETPOSTINT('sizeS') . '">';
+			print '<input name="sizeW" size="4" value="' . GETPOST('sizeW') . '">';
+			print ' x <input name="sizeH" size="4" value="' . GETPOST('sizeH') . '">';
+			print ' x <input name="sizeS" size="4" value="' . GETPOST('sizeS') . '">';
 			print ' ';
-			$text = $formproduct->selectMeasuringUnits("size_units", "size", (string) GETPOSTINT('size_units'), 0, 2);
+			$text = $formproduct->selectMeasuringUnits("size_units", "size", GETPOST('size_units'), 0, 2);
 			$htmltext = $langs->trans("KeepEmptyForAutoCalculation");
 			print $form->textwithpicto($text, $htmltext);
 			print '</td></tr>';
@@ -2026,14 +2026,18 @@ if ($action == 'create' && $usercancreate) {
 					// Qty
 					print '<td class="center">' . $line->qty;
 					print '<input name="qtyasked' . $indiceAsked . '" id="qtyasked' . $indiceAsked . '" type="hidden" value="' . $line->qty . '">';
-					print '' . $unit_order . '</td>';
+					if ($line->qty) {
+						print ' ' . $unit_order . '</td>';
+					}
 
 					// Qty already shipped
 					print '<td class="center">';
 					$quantityDelivered = isset($object->expeditions[$line->id]) ? $object->expeditions[$line->id] : '';
 					print $quantityDelivered;
 					print '<input name="qtydelivered' . $indiceAsked . '" id="qtydelivered' . $indiceAsked . '" type="hidden" value="' . $quantityDelivered . '">';
-					print '' . $unit_order . '</td>';
+					if ($quantityDelivered) {
+						print ' ' . $unit_order . '</td>';
+					}
 
 					// Qty to ship
 					$quantityAsked = $line->qty;
@@ -2512,17 +2516,19 @@ if ($action == 'create' && $usercancreate) {
 
 							if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 								$disabled = '';
+								$alt = '';
 								if (isModEnabled('productbatch') && $product->hasbatch()) {
 									$disabled = 'disabled="disabled"';
+									$alt = 'Product need serial or batch number';
 								}
 								if ($warehouse_selected_id <= 0) {		// We did not force a given warehouse, so we won't have no warehouse to change qty.
 									$disabled = 'disabled="disabled"';
 								}
 								// finally we overwrite the input with the product status stockable_product if it's disabled
-								if ($product->stockable_product == Product::DISABLED_STOCK) {
+								if ($product->stockable_product == Product::ENABLED_STOCK) {
 									$disabled = '';
 								}
-								print '<input class="qtyl right" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="0"'.($disabled ? ' '.$disabled : '').'> ';
+								print '<input class="qtyl right" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="0"'.($disabled ? ' '.$disabled : '').($alt ? ' title="'.dolPrintHTMLForAttribute($alt).'"' : '').'> ';
 								if (empty($disabled) && (!getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER') || $product->stockable_product == Product::DISABLED_STOCK)) {
 									print '<input name="ent1' . $indiceAsked . '_' . $subj . '" type="hidden" value="' . $warehouse_selected_id . '">';
 								}
@@ -2545,16 +2551,17 @@ if ($action == 'create' && $usercancreate) {
 
 							print '<td class="left">';
 							if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
-								if ($warehouse_selected_id > 0 && $product->stockable_product == Product::ENABLED_STOCK) {
+								// product may use stock management
+								if (($warehouse_selected_id > 0 && $product->stockable_product == Product::ENABLED_STOCK)) {
 									$warehouseObject = new Entrepot($db);
 									$warehouseObject->fetch($warehouse_selected_id);
 									print img_warning() . ' ' . $langs->trans("NoProductToShipFoundIntoStock", $warehouseObject->label);
 								} else {
 									if ($line->fk_product) {
-										if ($product->stockable_product == Product::ENABLED_STOCK) {
-											print img_warning() . ' ' . $langs->trans('StockTooLow');
-										} else {
+										if ($product->stockable_product != Product::ENABLED_STOCK) {
 											print img_warning() . ' ' . $langs->trans('StockDisabled');
+										} else {
+											print img_warning() . ' ' . $langs->trans('StockTooLow');
 										}
 									} else {
 										print '';

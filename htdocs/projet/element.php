@@ -11,6 +11,7 @@
  * Copyright (C) 2023-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Günter Lukas			<github@gl.co.at>
+ * Copyright (C) 2026		Joachim Kueter       <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -197,6 +198,17 @@ $hookmanager->initHooks(array('projectOverview'));
 
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
 $result = restrictedArea($user, 'projet', $object->id, 'projet&project');
+
+// Check if user has access to any financial module (not just project time)
+$canSeeFinancials = (
+	(isModEnabled('invoice') && $user->hasRight('facture', 'lire'))
+	|| (isModEnabled('supplier_invoice') && ($user->hasRight('fournisseur', 'facture', 'lire') || $user->hasRight('supplier_invoice', 'lire')))
+	|| (isModEnabled('salaries') && $user->hasRight('salaries', 'read'))
+	|| (isModEnabled('expensereport') && $user->hasRight('expensereport', 'lire'))
+	|| (isModEnabled('don') && $user->hasRight('don', 'lire'))
+	|| (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire'))
+	|| (isModEnabled('bank') && $user->hasRight('banque', 'lire'))
+);
 
 $total_duration = 0;
 $total_ttc_by_line = 0;
@@ -723,7 +735,7 @@ $listofreferent = array(
 		'margin' => 'minus',
 		'table' => 'projet_task',
 		'datefieldname' => 'element_date',
-		'disableamount' => 0,
+		'disableamount' => ($canSeeFinancials ? 0 : 1),
 		'urlnew' => DOL_URL_ROOT.'/projet/tasks/time.php?withproject=1&action=createtime&projectid='.$id.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
 		'buttonnew' => 'AddTimeSpent',
 		'testnew' => $user->hasRight('project', 'creer'),
@@ -935,6 +947,10 @@ foreach ($listofreferent as $key => $value) {
 	$tablename = $value['table'];
 	$datefieldname = $value['datefieldname'];
 	$qualified = $value['test'];
+	// Hide project_task amounts in profit section for users without financial access
+	if ($key === 'project_task' && !$canSeeFinancials) {
+		$qualified = false;
+	}
 	$margin = empty($value['margin']) ? 0 : $value['margin'];
 	$project_field = empty($value['project_field']) ? '' : $value['project_field'];
 	if ($qualified) {		// If this element must be included into profit summary table ($margin is '', 'minus' or 'add')

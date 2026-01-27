@@ -4602,10 +4602,12 @@ class Form
 
 				// If a translation exists, we use it, otherwise, we take the label by default
 				$label = ($langs->trans("PaymentConditionShort" . $obj->code) != "PaymentConditionShort" . $obj->code ? $langs->trans("PaymentConditionShort" . $obj->code) : ($obj->label != '-' ? $obj->label : ''));
+
 				$this->cache_conditions_paiements[$obj->rowid]['code'] = (string) $obj->code;
 				$this->cache_conditions_paiements[$obj->rowid]['label'] = (string) $label;
 				$this->cache_conditions_paiements[$obj->rowid]['deposit_percent'] = (string) $obj->deposit_percent;
 				$this->cache_conditions_paiements[$obj->rowid]['entity'] = (int) $obj->entity;
+
 				$i++;
 			}
 
@@ -6587,6 +6589,7 @@ class Form
 		} else {
 			if ($selected) {
 				$this->load_cache_conditions_paiements();
+
 				if (isset($this->cache_conditions_paiements[$selected])) {
 					$label = $this->cache_conditions_paiements[$selected]['label'];
 
@@ -10453,7 +10456,7 @@ class Form
 			if (($object->fk_project > 0) && getDolGlobalString('THIRDPARTY_INCLUDE_PROJECT_THIRDPARY_IN_LINKTO')) {
 				include_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 				$tmpproject = new Project($this->db);
-				$tmpproject->fetch($object->fk_project);
+				$tmpproject->fetch((int) $object->fk_project);
 				if ($tmpproject->socid > 0 && ($tmpproject->socid != $object->thirdparty->id)) {
 					$listofidcompanytoscan .= ',' . (int) $tmpproject->socid;
 				}
@@ -10891,7 +10894,7 @@ class Form
 
 		$previous_ref = $next_ref = '';
 		if ($shownav) {
-			//print "paramid=$paramid,morehtml=$morehtml,shownav=$shownav,$fieldid,$fieldref,$morehtmlref,$moreparam";
+			//print "paramid=$paramid,morehtml=$morehtml,shownav=$shownav,fieldid=$fieldid,filedref=$fieldref,morehtmlref=$morehtmlref,moreparam=$moreparam";
 			$object->load_previous_next_ref((isset($object->next_prev_filter) ? $object->next_prev_filter : ''), $fieldid, $nodbprefix);
 
 			$navurl = $_SERVER["PHP_SELF"];
@@ -11219,9 +11222,9 @@ class Form
 					}
 				}
 				if (!empty($ecmfiles->share)) {
-					$ret .= '<img alt="" class="photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . ' photologo' . (preg_replace('/[^a-z]/i', '_', $file)) . '" ' . ($width ? ' width="' . $width . '"' : '') . ($height ? ' height="' . $height . '"' : '') . ' src="' . DOL_URL_ROOT . '/viewimage.php?hashp=' . urlencode($ecmfiles->share) . '&cache=' . $cache . '">';
+					$ret .= '<img alt="" class="photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . ' photologo' . (preg_replace('/[^a-z]/i', '_', $file)) . '" ' . ($width ? ' width="' . $width . '"' : '') . ($height ? ' height="' . $height . '"' : '') . ' src="' . DOL_URL_ROOT . '/viewimage.php?hashp=' . urlencode((string) $ecmfiles->share) . '&cache=' . urlencode((string) $cache) . '">';
 				} else {
-					$ret .= '<img alt="" class="photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . ' photologo' . (preg_replace('/[^a-z]/i', '_', $file)) . '" ' . ($width ? ' width="' . $width . '"' : '') . ($height ? ' height="' . $height . '"' : '') . ' src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=' . $modulepart . '&entity=' . $entity . '&file=' . urlencode($file) . '&cache=' . $cache . '">';
+					$ret .= '<img alt="" class="photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . ' photologo' . (preg_replace('/[^a-z]/i', '_', $file)) . '" ' . ($width ? ' width="' . $width . '"' : '') . ($height ? ' height="' . $height . '"' : '') . ' src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=' . urlencode($modulepart) . '&entity=' . ((int) $entity) . '&file=' . urlencode($file) . '&cache=' . urlencode((string) $cache) . '">';
 				}
 				if ($addlinktofullsize) {
 					$ret .= '</a>';
@@ -11235,7 +11238,7 @@ class Form
 						$ret .= '<a href="' . DOL_URL_ROOT . '/viewimage.php?modulepart=' . $modulepart . '&entity=' . $entity . '&file=' . urlencode($originalfile) . '&cache=' . $cache . '">';
 					}
 				}
-				$ret .= '<img class="photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . '" alt="Photo alt" id="photologo' . (preg_replace('/[^a-z]/i', '_', $file)) . '" class="' . $cssclass . '" ' . ($width ? ' width="' . $width . '"' : '') . ($height ? ' height="' . $height . '"' : '') . ' src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=' . $modulepart . '&entity=' . $entity . '&file=' . urlencode($altfile) . '&cache=' . $cache . '">';
+				$ret .= '<img class="photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . '" alt="Photo alt" id="photologo' . (preg_replace('/[^a-z]/i', '_', $file)) . '" class="' . $cssclass . '" ' . ($width ? ' width="' . $width . '"' : '') . ($height ? ' height="' . $height . '"' : '') . ' src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=' . urlencode($modulepart) . '&entity=' . ((int) $entity) . '&file=' . urlencode($altfile) . '&cache=' . urlencode((string) $cache) . '">';
 				if ($addlinktofullsize) {
 					$ret .= '</a>';
 				}

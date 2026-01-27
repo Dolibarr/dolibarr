@@ -871,7 +871,7 @@ if ($warehouse->id > 0) {
 	// Project
 	if (isModEnabled('project') && $formproject !== null) {
 		$langs->load("projects");
-		$morehtmlref .= '<br>'.img_picto('', 'project').' '.$langs->trans('Project').' ';
+		$morehtmlref .= '<br>'.img_picto('', 'project', 'class="pictofixedwidth"').$langs->trans('Project').' ';
 		if ($usercancreate && 1 == 2) {  // @phan-suppress-current-line PhanPluginBothLiteralsBinaryOp
 			if ($action != 'classify') {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$warehouse->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
@@ -1531,9 +1531,7 @@ while ($i < $imaxinloop) {
 		// Id movement
 		if (!empty($arrayfields['m.rowid']['checked'])) {
 			print '<td class="nowraponall">';
-			//print img_picto($langs->trans("StockMovement"), 'movement', 'class="pictofixedwidth"');
 			print $object->getNomUrl(1);
-			;
 			print '</td>'; // This is primary not movement id
 		}
 		// Date
