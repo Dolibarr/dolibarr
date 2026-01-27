@@ -20,6 +20,7 @@
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2025		Benjamin Falière			<benjamin@faliere.com>
+ * Copyright (C) 2025		Anthony Berton				<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -161,6 +162,8 @@ if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->tabl
 }
 
 $price_base_type = null;
+$shipping_method_id = null;
+$warehouse_id = -1;
 
 // Security check
 if (!empty($user->socid)) {
@@ -2295,7 +2298,7 @@ if ($action == 'create') {
 
 			$cond_reglement_id = (!empty($objectsrc->cond_reglement_id) ? $objectsrc->cond_reglement_id : (!empty($soc->cond_reglement_id) ? $soc->cond_reglement_id : 0));
 			$mode_reglement_id = (!empty($objectsrc->mode_reglement_id) ? $objectsrc->mode_reglement_id : (!empty($soc->mode_reglement_id) ? $soc->mode_reglement_id : 0));
-			$warehouse_id      = (!empty($objectsrc->warehouse_id) ? $objectsrc->warehouse_id : (!empty($soc->warehouse_id) ? $soc->warehouse_id : 0));
+			$warehouse_id      = (!empty($objectsrc->warehouse_id) ? $objectsrc->warehouse_id : (!empty($soc->warehouse_id) ? $soc->warehouse_id : -1));
 
 			// Replicate extrafields
 			$objectsrc->fetch_optionals();
@@ -2319,7 +2322,7 @@ if ($action == 'create') {
 		$mode_reglement_id  = empty($soc->mode_reglement_id) ? $mode_reglement_id : $soc->mode_reglement_id;
 		$fk_account         = empty($soc->fk_account) ? $fk_account : $soc->fk_account;
 		$shipping_method_id = $soc->shipping_method_id;
-		$warehouse_id       = $soc->fk_warehouse;
+		$warehouse_id       = !empty($soc->fk_warehouse) ? $soc->fk_warehouse : $warehouse_id;
 		$remise_percent     = $soc->remise_percent;
 
 		if (isModEnabled("multicurrency") && !empty($soc->multicurrency_code)) {
@@ -2347,7 +2350,7 @@ if ($action == 'create') {
 	if ($soc->fk_warehouse > 0) {
 		$warehouse_id = $soc->fk_warehouse;
 	}
-	if (isModEnabled('stock') && empty($warehouse_id) && getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_PROPAL')) {
+	if (isModEnabled('stock') && $warehouse_id < 0 && getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_PROPAL')) {
 		if (empty($object->warehouse_id) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE')) {
 			$warehouse_id = getDolGlobalString('MAIN_DEFAULT_WAREHOUSE');
 		}
@@ -2390,9 +2393,11 @@ if ($action == 'create') {
 
 		// Third party
 		print '<tr class="field_socid">';
+
 		print '<td class="titlefieldcreate fieldrequired">' . $langs->trans('Customer') . '</td>';
 		$shipping_method_id = 0;
 		$warehouse_id = 0;
+
 		if ($socid > 0) {
 			print '<td class="valuefieldcreate">';
 			print $soc->getNomUrl(1, 'customer');
@@ -2401,7 +2406,6 @@ if ($action == 'create') {
 			if (getDolGlobalString('SOCIETE_ASK_FOR_SHIPPING_METHOD') && !empty($soc->shipping_method_id)) {
 				$shipping_method_id = $soc->shipping_method_id;
 			}
-			//$warehouse_id       = $soc->warehouse_id;
 		} else {
 			print '<td class="valuefieldcreate">';
 			$filter = '((s.client:IN:1,2,3) AND (s.status:=:1))';

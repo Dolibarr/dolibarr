@@ -42,7 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 $langs->loadLangs(array('admin', 'blockedlog', 'other'));
 
 // Access Control
-if (!$user->admin || empty($conf->blockedlog->enabled)) {
+if (!$user->admin || !isModEnabled('blockedlog')) {
 	accessforbidden();
 }
 
