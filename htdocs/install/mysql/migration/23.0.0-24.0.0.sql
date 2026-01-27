@@ -103,4 +103,6 @@ ALTER TABLE llx_facture_fourn ADD COLUMN dispute_status	integer DEFAULT 0;
 
 ALTER TABLE llx_facture_rec ADD COLUMN fk_email_template integer DEFAULT NULL;
 
+ALTER TABLE llx_societe ADD COLUMN euid varchar (64);
+
 -- end of migration
