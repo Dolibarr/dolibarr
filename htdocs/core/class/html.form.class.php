@@ -81,7 +81,14 @@ class Form
 	// Cache arrays
 	/** @var array<int,array{id:int,code:string,label:string,type:int,entity:int,active:int}> */
 	public $cache_types_paiements = array();
-	/** @var array<int,array{code:string,label:string,deposit_percent:string,entity:int}> */
+	/**
+	 * @var array<string,array{
+	 *   code:string,
+	 *   label:string,
+	 *   deposit_percent?:string,
+	 *   entity?:int
+	 * }>
+	 */
 	public $cache_conditions_paiements = array();
 	/** @var array<int,array{rowid:int,code:string,label:string,active:int}> */
 	public $cache_transport_mode = array();
