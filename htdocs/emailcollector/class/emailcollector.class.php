@@ -888,13 +888,21 @@ class EmailCollector extends CommonObject
 	 */
 	public function doCollect()
 	{
-		global $user;
+		global $user, $conf, $mc;
 
 		$nbErrors = 0;
 
 		$arrayofcollectors = $this->fetchAll($user, 1);
+		$originEntity = (int) $conf->entity;
 		// Loop on each collector
 		foreach ($arrayofcollectors as $emailcollector) {
+			if (is_object($mc) && method_exists($mc, 'switchEntity')) {
+				$collectorEntity = (!empty($emailcollector->entity) ? (int) $emailcollector->entity : 0);
+				if ($collectorEntity > 0 && $collectorEntity != $conf->entity) {
+					$mc->switchEntity($collectorEntity);
+				}
+			}
+
 			$result = $emailcollector->doCollectOneCollector(0);
 
 			dol_syslog("doCollect result = ".$result." for emailcollector->id = ".$emailcollector->id);
@@ -909,6 +917,10 @@ class EmailCollector extends CommonObject
 			if ($result < 0) {
 				$nbErrors++;
 			}
+		}
+
+		if (is_object($mc) && method_exists($mc, 'switchEntity') && (int) $conf->entity != $originEntity) {
+			$mc->switchEntity($originEntity);
 		}
 
 		return $nbErrors;
@@ -1133,7 +1145,7 @@ class EmailCollector extends CommonObject
 			require_once DOL_DOCUMENT_ROOT.'/includes/webklex/php-imap/vendor/autoload.php';
 		}
 
-		dol_syslog("EmailCollector::doCollectOneCollector start for id=".$this->id." - ".$this->ref, LOG_INFO);
+		dol_syslog("EmailCollector::doCollectOneCollector start for id=".$this->id." - ".$this->ref." (entity=".$conf->entity.")", LOG_INFO);
 
 		$langs->loadLangs(array("project", "companies", "mails", "errors", "ticket", "agenda", "commercial"));
 
@@ -1146,19 +1158,35 @@ class EmailCollector extends CommonObject
 		$searchhead = '';
 		$searchfilterdoltrackid = 0;
 		$searchfilternodoltrackid = 0;
-			$searchfilterisanswer = 0;
-			$searchfilterisnotanswer = 0;
-			$searchfilterreplyto = 0;
-			$searchfilterexcludebodyarray = array();
-			$searchfilterexcludesubjectarray = array();
-			$operationslog = '';
-			$markSeenOnSuccess = (getDolGlobalInt('EMAILCOLLECTOR_MARK_AS_SEEN_ON_SUCCESS', 1) > 0);
-			$markAnsweredOnSuccess = (getDolGlobalInt('EMAILCOLLECTOR_MARK_AS_ANSWERED_ON_SUCCESS', 0) > 0);
-			$rulesreplyto = array();
-			$connectstringsource = '';
-			$connectstringtarget = '';
-			$connection = false;
-			$arrayofemail = array();
+		$searchfilterisanswer = 0;
+		$searchfilterisnotanswer = 0;
+		$searchfilterreplyto = 0;
+		$searchfilterexcludebodyarray = array();
+		$searchfilterexcludesubjectarray = array();
+		$operationslog = '';
+		$entityForCollector = (!empty($this->entity) ? (int) $this->entity : (int) $conf->entity);
+		$markSeenOnSuccess = (getDolGlobalInt('EMAILCOLLECTOR_MARK_AS_SEEN_ON_SUCCESS', 1) > 0);
+		$markAnsweredOnSuccess = (getDolGlobalInt('EMAILCOLLECTOR_MARK_AS_ANSWERED_ON_SUCCESS', 0) > 0);
+		if ($entityForCollector !== (int) $conf->entity) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+
+			$tmp = dolibarr_get_const($db, 'EMAILCOLLECTOR_MARK_AS_SEEN_ON_SUCCESS', $entityForCollector);
+			if ($tmp === '') {
+				$tmp = dolibarr_get_const($db, 'EMAILCOLLECTOR_MARK_AS_SEEN_ON_SUCCESS', 0);
+			}
+			$markSeenOnSuccess = ((int) ($tmp !== '' ? $tmp : 1) > 0);
+
+			$tmp = dolibarr_get_const($db, 'EMAILCOLLECTOR_MARK_AS_ANSWERED_ON_SUCCESS', $entityForCollector);
+			if ($tmp === '') {
+				$tmp = dolibarr_get_const($db, 'EMAILCOLLECTOR_MARK_AS_ANSWERED_ON_SUCCESS', 0);
+			}
+			$markAnsweredOnSuccess = ((int) ($tmp !== '' ? $tmp : 0) > 0);
+		}
+		$rulesreplyto = array();
+		$connectstringsource = '';
+		$connectstringtarget = '';
+		$connection = false;
+		$arrayofemail = array();
 
 		$now = dol_now();
 		$datelastok = $now;
