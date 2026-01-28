@@ -2916,6 +2916,7 @@ class pdf_octopus extends ModelePDFFactures
 			),
 			'border-left' => true, // add left line separator
 			'overtitle' => array(
+				// @phan-suppress-next-line
 				'textkey' => 'S'.(!empty($this->TDataSituation['derniere_situation']) ? $this->TDataSituation['derniere_situation']->situation_counter . ' - ' . dol_print_date($this->TDataSituation['derniere_situation']->date, "%d/%m/%Y") : ''),
 				'align' => 'C',
 				'padding' => array(0.5,0.2,0.5,0.2), // Like css 0 => top, 1 => right, 2 => bottom, 3 => left
