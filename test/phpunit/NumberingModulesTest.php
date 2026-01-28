@@ -73,6 +73,8 @@ class NumberingModulesTest extends CommonClassTest
 		$conf->global->FACTURE_MERCURE_MASK_DEPOSIT = '{yyyy}-{0000}';
 		$conf->global->FACTURE_MERCURE_MASK_REPLACEMENT = '{yyyy}-{0000}';
 		$conf->global->FAC_FORCE_DATE_VALIDATION = 0;		// We disable option "Force date on validation", so we can make test on old dates
+		$conf->global->INVOICE_CHECK_POSTERIOR_DATE = 0;	// We disable option "Check date on validation", so we can make test on old dates
+		$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 		$localobject = new Facture($db);
 		$localobject->initAsSpecimen();
@@ -80,14 +82,14 @@ class NumberingModulesTest extends CommonClassTest
 
 		$localobject->date = dol_mktime(12, 0, 0, 1, 1, 1915);	// we use year 1915 to be sure to not have existing invoice for this year (useful only if numbering is {0000@1}
 		$numbering = new mod_facture_mercure();
-		$result = $numbering->getNextValue($mysoc, $localobject);
-		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('1915-0001', $result, 'Test for {yyyy}-{0000}, 1st invoice');				// counter must start to 1
-		$result2 = $localobject->create($user, 1);
+		$newref = $numbering->getNextValue($mysoc, $localobject);
+		print __METHOD__." newref=".$newref."\n";
+		$this->assertEquals('1915-0001', $newref, 'Test for {yyyy}-{0000}, 1st invoice');				// counter must start to 1
+		$result = $localobject->create($user, 1);
 		print __METHOD__." result2=".$result."\n";
-		$result3 = $localobject->validate($user, $result);		// create invoice by forcing ref
+		$result3 = $localobject->validate($user, $newref);		// create invoice by forcing ref
 		print __METHOD__." result3=".$result."\n";
-		$this->assertEquals(1, $result3, 'Test validation of invoice with forced ref is ok');	// counter must start to 1
+		$this->assertEquals(1, $result3, 'Test that the validation of an invoice with the forced ref '.$newref.' is ok: '.$localobject->error);	// counter must start to 1
 
 		// Force enable of BlockedLog (not possible from application, but required to allow the test with sample data))
 		activateModule('modBlockedLog', 1, 1);
