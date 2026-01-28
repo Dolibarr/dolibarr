@@ -1349,12 +1349,12 @@ if (empty($reshook)) {
 				if (GETPOSTINT('invoiceAvoirWithLines') == 1 && $id > 0) {
 					if (!empty($facture_source->lines)) {
 						$fk_parent_line = 0;
-						
+
 						//if ($facture_source->isSituationInvoice() && getDolGlobalString('INVOICE_USE_SITUATION') != 2) die('Impossible de créer des avoirs de facture de situation en mode INVOICE_USE_SITUATION != 2');
 						/* if ($facture_source->isSituationInvoice()) {
-//							$source_fk_prev_id = $line->fk_prev_id; // temporary storing situation invoice fk_prev_id
-//							$line->fk_prev_id  = $line->id; // The new line of the new credit note we are creating must be linked to the situation invoice line it is created from
-							
+							$source_fk_prev_id = $line->fk_prev_id; // temporary storing situation invoice fk_prev_id
+							$line->fk_prev_id  = $line->id; // The new line of the new credit note we are creating must be linked to the situation invoice line it is created from
+
 							if (!empty($facture_source->tab_previous_situation_invoice)) {
 								// search the last standard invoice in cycle and the possible credit note between this last and facture_source
 								$tab_jumped_credit_notes = array();
@@ -1414,15 +1414,15 @@ if (empty($reshook)) {
 											$line->multicurrency_total_ttc -= $prevLine->multicurrency_total_ttc;
 										}
 									}
-								} 
+								}
 
 								// prorata
 								$line->situation_percent += $maxPrevSituationPercent;
 
 								//print 'New line based on invoice id '.$facture_source->tab_previous_situation_invoice[$lineIndex]->id.' fk_prev_id='.$source_fk_prev_id.' will be fk_prev_id='.$line->fk_prev_id.' '.$line->total_ht.' '.$line->situation_percent.'<br>';
-						
+
 							}  */
-						
+
 						foreach ($facture_source->lines as $line) {
 							// Extrafields
 							if (method_exists($line, 'fetch_optionals')) {
@@ -1470,7 +1470,7 @@ if (empty($reshook)) {
 								$fk_parent_line = $result;
 							}
 						}
-						
+
 						$object->update_price(1);
 					}
 				}
@@ -3108,10 +3108,10 @@ if (empty($reshook)) {
 
 		$line = new FactureLigne($db);
 		$line->fetch(GETPOSTINT('lineid'));
-		$percent = getDolGlobalInt('INVOICE_USE_SITUATION') == 2 ? $line->getAllPrevProgress($object->id) : $line->get_prev_progress($object->id); 
-		
-		$progress = price2num(GETPOST('progress', 'alpha')); // cumulative progress input 
-		
+		$percent = getDolGlobalInt('INVOICE_USE_SITUATION') == 2 ? $line->getAllPrevProgress($object->id) : $line->get_prev_progress($object->id);
+
+		$progress = price2num(GETPOST('progress', 'alpha')); // cumulative progress input
+
 		if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->situation_cycle_ref > 0) {
 			// in case of situation credit note
 			if ($progress - $percent >= 0) {
@@ -3119,7 +3119,7 @@ if (empty($reshook)) {
 				setEventMessages($mesg, null, 'warnings');
 				$error++;
 				$result = -1;
-			} elseif ($progress < 0) { 
+			} elseif ($progress < 0) {
 				$mesg = $langs->trans("CantBeLessThanZero");
 				setEventMessages($mesg, null, 'warnings');
 				$error++;
