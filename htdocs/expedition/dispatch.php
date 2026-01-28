@@ -707,7 +707,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 			while ($i < $num) {
 				$objp = $db->fetch_object($resql);
 
-				// On n'affiche pas les produits libres
+				// Do hot show the free products
 				if (!$objp->fk_product > 0) {
 					$nbfreeproduct++;
 				} else {

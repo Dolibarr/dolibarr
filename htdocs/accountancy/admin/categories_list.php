@@ -280,7 +280,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 
 		// Modify entry
 		$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET ";
-		// Modifie valeur des champs
+		// Modify field values
 		if ($tabrowid[$id] && !in_array($tabrowid[$id], $listfieldmodify)) {
 			$sql .= $db->sanitize($tabrowid[$id])." = ";
 			$sql .= "'".$db->escape($rowid)."', ";
