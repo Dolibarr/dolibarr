@@ -3595,7 +3595,7 @@ class pdf_octopus extends ModelePDFFactures
 			}
 
 			// Modification of VAT format, special case of imports or others which may have 20.0000
-			$ltvatx = (float) sprintf("%01.3f", $l->tva_tx);
+			$ltvatx = price2num($l->tva_tx, '', 1);	   // ltvatx is used as key or array so must be a string or int
 			if (isset($ret[$ltvatx])) {
 				$ret[$ltvatx]['TVA'] += $l->total_tva;
 				$ret[$ltvatx]['HT'] += $l->total_ht;
@@ -3611,7 +3611,7 @@ class pdf_octopus extends ModelePDFFactures
 			$retenue_garantie = 0;
 		}
 
-		//les cumuls
+		// Aggregate
 		$ret['TTC'] = $object->total_ttc;
 		$ret['TVA'] = $object->total_tva;
 		$ret['HT'] = $object->total_ht - $ret['travaux_sup'];
@@ -3619,10 +3619,10 @@ class pdf_octopus extends ModelePDFFactures
 		$ret['retenue_garantie'] = $retenue_garantie;
 
 		//Clean up before keep in "cache"
-		if (array_key_exists('derniere_situation', $ret)) {
-			unset($ret['derniere_situation']->db);
-			unset($ret['derniere_situation']->fields);
-			unset($ret['derniere_situation']->lines);
+		if (array_key_exists('derniere_situation', )) {
+			unset(['derniere_situation']->db);
+			unset(['derniere_situation']->fields);
+			unset(['derniere_situation']->lines);
 		}
 
 		// print "<p>Store to cache $id : " . json_encode($_cache_btpProrataGetInvoiceAmounts[$id]) . "</p>";
