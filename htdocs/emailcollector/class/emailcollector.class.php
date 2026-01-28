@@ -1983,15 +1983,16 @@ class EmailCollector extends CommonObject
 					// Removed emojis
 					$overview[0]->subject = removeEmoji($overview[0]->subject, getDolGlobalInt('MAIN_EMAIL_COLLECTOR_ACCEPT_EMOJIS', 1));
 				}
-					// GET IMAP email structure/content
-					global $htmlmsg, $plainmsg, $charset, $attachments;
-					// Reset globals for each email to avoid leaking content between messages (notably when using PHP-IMAP).
-					$htmlmsg = $plainmsg = '';
-					$attachments = [];
+				
+				// GET IMAP email structure/content
+				global $htmlmsg, $plainmsg, $charset, $attachments;
+				// Reset globals for each email to avoid leaking content between messages (notably when using PHP-IMAP).
+				$htmlmsg = $plainmsg = '';
+				$attachments = [];
 
-					if (getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')) {
-						/** @var Webklex\PHPIMAP\Message $imapemail */
-						'@phan-var-force Webklex\PHPIMAP\Message $imapemail';
+				if (getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')) {
+					/** @var Webklex\PHPIMAP\Message $imapemail */
+					'@phan-var-force Webklex\PHPIMAP\Message $imapemail';
 					if ($imapemail->hasHTMLBody()) {
 						$htmlmsg = $imapemail->getHTMLBody();
 					}
