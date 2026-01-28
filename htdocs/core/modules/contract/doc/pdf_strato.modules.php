@@ -811,7 +811,7 @@ class pdf_strato extends ModelePDFContract
 			}
 
 			$recipientname = '';
-			if ($this->recipient instanceOf Contact || $this->recipiet instanceOf Societe) {
+			if ($this->recipient instanceOf Contact || $this->recipient instanceOf Societe) {
 				$recipientname = pdfBuildThirdpartyName($this->recipient, $outputlangs);
 			}
 
