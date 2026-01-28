@@ -29,6 +29,7 @@ include_once DOL_DOCUMENT_ROOT .'/emailcollector/lib/emailcollector.lib.php';
 require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT .'/core/lib/date.lib.php';
 
 require_once DOL_DOCUMENT_ROOT .'/comm/propal/class/propal.class.php';                   // Customer Proposal
 require_once DOL_DOCUMENT_ROOT .'/commande/class/commande.class.php';                    // Sale Order
@@ -110,13 +111,13 @@ class EmailCollector extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>,searchmulti?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid'         => array('type' => 'integer', 'label' => 'TechnicalID', 'visible' => -2, 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'index' => 1),
 		'entity'        => array('type' => 'integer', 'label' => 'Entity', 'enabled' => 1, 'visible' => 0, 'default' => '1', 'notnull' => 1, 'index' => 1, 'position' => 20),
 		'ref'           => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 10, 'searchall' => 1, 'help' => 'Example: MyCollector1', 'csslist' => 'tdoverflowmax200'),
-		'label'         => array('type' => 'varchar(255)', 'label' => 'Label', 'visible' => 1, 'enabled' => 1, 'position' => 30, 'notnull' => -1, 'searchall' => 1, 'help' => 'Example: My Email collector', 'csslist' => 'tdoverflowmax150 small', 'tdcss' => 'titlefieldmiddle'),
+		'label'         => array('type' => 'varchar(255)', 'label' => 'Label', 'visible' => 1, 'enabled' => 1, 'position' => 30, 'notnull' => -1, 'searchall' => 1, 'help' => 'Example: My Email collector', 'csslist' => 'tdoverflowmax150', 'tdcss' => 'titlefieldmiddle'),
 		'description'   => array('type' => 'text', 'label' => 'Description', 'visible' => -1, 'enabled' => 1, 'position' => 60, 'notnull' => -1, 'cssview' => 'small', 'csslist' => 'small tdoverflowmax200'),
 		'host'          => array('type' => 'varchar(255)', 'label' => 'EMailHost', 'visible' => 1, 'enabled' => 1, 'position' => 90, 'notnull' => 1, 'searchall' => 1, 'comment' => "IMAP server", 'help' => 'Example: imap.gmail.com', 'csslist' => 'tdoverflowmax125'),
 		'port'          => array('type' => 'varchar(10)', 'label' => 'EMailHostPort', 'visible' => 1, 'enabled' => 1, 'position' => 91, 'notnull' => 1, 'searchall' => 0, 'comment' => "IMAP server port", 'help' => 'Example: 993', 'csslist' => 'tdoverflowmax50', 'default' => '993'),
@@ -132,7 +133,7 @@ class EmailCollector extends CommonObject
 		'maxemailpercollect' => array('type' => 'integer', 'label' => 'MaxEmailCollectPerCollect', 'visible' => -1, 'enabled' => 1, 'position' => 111, 'default' => '50'),
 		'datelastresult' => array('type' => 'datetime', 'label' => 'DateLastCollectResult', 'visible' => 1, 'enabled' => '$action != "create" && $action != "edit"', 'position' => 121, 'notnull' => -1, 'csslist' => 'nowraponall'),
 		'codelastresult' => array('type' => 'varchar(16)', 'label' => 'CodeLastResult', 'visible' => 1, 'enabled' => '$action != "create" && $action != "edit"', 'position' => 122, 'notnull' => -1,),
-		'lastresult' => array('type' => 'varchar(255)', 'label' => 'LastResult', 'visible' => 1, 'enabled' => '$action != "create" && $action != "edit"', 'position' => 123, 'notnull' => -1, 'cssview' => 'small', 'csslist' => 'maxwidth250imp'),
+		'lastresult' => array('type' => 'varchar(255)', 'label' => 'LastResult', 'visible' => 1, 'enabled' => '$action != "create" && $action != "edit"', 'position' => 123, 'notnull' => -1, 'cssview' => 'small', 'csslist' => 'small tdoverflowmax200'),
 		'datelastok' => array('type' => 'datetime', 'label' => 'DateLastcollectResultOk', 'visible' => 1, 'enabled' => '$action != "create"', 'position' => 125, 'notnull' => -1, 'csslist' => 'nowraponall'),
 		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'visible' => 0, 'enabled' => 1, 'position' => 61, 'notnull' => -1,),
 		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'visible' => 0, 'enabled' => 1, 'position' => 62, 'notnull' => -1,),
@@ -156,6 +157,11 @@ class EmailCollector extends CommonObject
 	 * @var string Ref
 	 */
 	public $ref;
+
+	/**
+	 * @var int Entity
+	 */
+	public $entity;
 
 	/**
 	 * @var string label
@@ -287,9 +293,9 @@ class EmailCollector extends CommonObject
 		$this->ismultientitymanaged = 1;
 		$this->isextrafieldmanaged = 0;
 
-		/*if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
-		}*/
+		}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
 			$this->fields['entity']['enabled'] = 0;
 		}
@@ -434,6 +440,7 @@ class EmailCollector extends CommonObject
 			foreach ($object->array_options as $key => $option) {
 				$shortkey = preg_replace('/options_/', '', $key);
 				if (!empty($extrafields->attributes[$this->element]['unique'][$shortkey])) {
+					//var_dump($key); var_dump($clonedObj->array_options[$key]); exit;
 					unset($object->array_options[$key]);
 				}
 			}
@@ -444,7 +451,8 @@ class EmailCollector extends CommonObject
 		$result = $object->create($user);
 		if ($result < 0) {
 			$error++;
-			$this->setErrorsFromObject($object);
+			$this->error = $object->error;
+			$this->errors = $object->errors;
 		}
 
 		unset($object->context['createfromclone']);
@@ -1001,6 +1009,7 @@ class EmailCollector extends CommonObject
 							$regexoptions = 'm'; // The m means ^ and $ char is valid at each new line.
 						}
 
+						//var_dump($tmpproperty.' - '.$regexstring.' - '.$regexoptions.' - '.$sourcestring);
 						if (preg_match('/'.$regexstring.'/'.$regexoptions, $sourcestring, $regforval)) {
 							// Overwrite param $tmpproperty
 							$valueextracted = isset($regforval[count($regforval) - 1]) ? trim($regforval[count($regforval) - 1]) : null;
@@ -1025,25 +1034,24 @@ class EmailCollector extends CommonObject
 									}
 								}
 							}
-
 							if (preg_match('/^options_/', $tmpproperty)) {
-								$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> extract '.dol_escape_htmltag(dol_trunc($object->array_options[preg_replace('/^options_/', '', $tmpproperty)], 128)).' so object extrafield '.dol_escape_htmltag($tmpproperty).' is set.';
+								$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> found '.dol_escape_htmltag(dol_trunc($object->array_options[preg_replace('/^options_/', '', $tmpproperty)], 128));
 							} else {
 								if (property_exists($object, $tmpproperty)) {
-									$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> extract '.dol_escape_htmltag(dol_trunc($object->$tmpproperty, 128)).' so object property '.dol_escape_htmltag($tmpproperty).' is set.';
+									$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> found '.dol_escape_htmltag(dol_trunc($object->$tmpproperty, 128));
 								} else {
-									$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> extract '.dol_escape_htmltag(dol_trunc($tmp[$tmpproperty], 128)).' so var '.dol_escape_htmltag($tmpproperty).' is set.';
+									$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> found '.dol_escape_htmltag(dol_trunc($tmp[$tmpproperty], 128));
 								}
 							}
 						} else {
 							// Regex not found
 							if (property_exists($object, $tmpproperty)) {
 								$object->$tmpproperty = null;
-								$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> not found, so object property '.dol_escape_htmltag($tmpproperty).' is set to null.';
 							} else {
 								$tmp[$tmpproperty] = null;
-								$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> not found, so var '.dol_escape_htmltag($tmpproperty).' is set to null.';
 							}
+
+							$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> not found, so property '.dol_escape_htmltag($tmpproperty).' is set to null.';
 						}
 					} else {
 						// Nothing can be done for this param
@@ -1072,7 +1080,8 @@ class EmailCollector extends CommonObject
 						complete_substitutions_array($substitutionarray, $outputlangs, $object);
 						$matcharray = array();
 						preg_match_all('/__([a-z0-9]+(?:_[a-z0-9]+)?)__/i', $valuetouse, $matcharray);
-						if (is_array($matcharray[1])) {    // $matcharray[1] is an array with the list of all substitution keys found with the __X__ syntax into the SET entry.
+						//var_dump($tmpproperty.' - '.$object->$tmpproperty.' - '.$valuetouse); var_dump($matcharray);
+						if (is_array($matcharray[1])) {    // $matcharray[1] is an array with the list of substitution key found without the __X__ syntax into the SET entry
 							foreach ($matcharray[1] as $keytoreplace) {
 								if ($keytoreplace) {
 									if (preg_match('/^options_/', $keytoreplace)) {
@@ -1088,7 +1097,8 @@ class EmailCollector extends CommonObject
 								}
 							}
 						}
-						// dol_syslog('substitutionarray='.var_export($substitutionarray, true));
+						//var_dump($substitutionarray);
+						//dol_syslog('substitutionarray='.var_export($substitutionarray, true));
 
 						$valuetouse = make_substitutions($valuetouse, $substitutionarray);
 						if (preg_match('/^options_/', $tmpproperty)) {
@@ -1794,6 +1804,8 @@ class EmailCollector extends CommonObject
 				} else {
 					$emailto = $this->decodeSMTPSubject($overview[0]->to);
 				}
+				//var_dump($headers);
+				//var_dump($overview);exit;
 
 				$operationslog .= '<br>** Process email #'.dol_escape_htmltag((string) $iforemailloop);
 
@@ -2033,6 +2045,13 @@ class EmailCollector extends CommonObject
 					}
 				}
 
+				//var_dump($plainmsg);
+				//var_dump($htmlmsg);
+				//var_dump($messagetext);
+				//var_dump($charset);
+				//var_dump($attachments);
+				//exit;
+
 				// Parse IMAP email structure
 				/*
 				 $structure = imap_fetchstructure($connection, $imapemail, FT_UID);
@@ -2064,9 +2083,22 @@ class EmailCollector extends CommonObject
 				 }
 				 }
 				 }
+				 //var_dump($result);
+				 //var_dump($partplain);
+				 //var_dump($parthtml);
+
+				 //var_dump($structure);
+				 //var_dump($parthtml);
+				 //var_dump($partplain);
 
 				 $messagetext = imap_fetchbody($connection, $imapemail, ($parthtml != '-1' ? $parthtml : ($partplain != '-1' ? $partplain : 1)), FT_PEEK|FTP_UID);
 				 */
+
+				//var_dump($messagetext);
+				//var_dump($structure->parts[0]->parts);
+				//print $header;
+				//print $messagetext;
+				//exit;
 
 				$fromstring = '';
 				$replytostring = '';
@@ -2428,10 +2460,10 @@ class EmailCollector extends CommonObject
 					}
 				}
 
-				/*
-				 if ($replyto) {
-				 if (empty($contactid)) {		// Try to find contact using email
-				 $result = $contactstatic->fetch(0, null, '', $replyto);
+					/*
+					 if ($replyto) {
+					 if (empty($contactid)) {		// Try to find contact using email
+					 $result = $contactstatic->fetch(0, null, '', $replyto);
 
 				 if ($result > 0) {
 				 dol_syslog("We found a contact with the email ".$replyto);
@@ -2484,8 +2516,8 @@ class EmailCollector extends CommonObject
 							$actioncode = 'EMAIL';
 						}
 						// If sender is in the list MAIL_FROM_EMAILS_TO_CONSIDER_SENDING
-						$arrayofemailtoconsidersender = array_filter(array_map('trim', explode(',', getDolGlobalString('MAIL_FROM_EMAILS_TO_CONSIDER_SENDING'))));
-						foreach ($arrayofemailtoconsidersender as $emailtoconsidersender) {
+						$arrayofemailtoconsideresender = array_filter(array_map('trim', explode(',', getDolGlobalString('MAIL_FROM_EMAILS_TO_CONSIDER_SENDING'))));
+						foreach ($arrayofemailtoconsideresender as $emailtoconsidersender) {
 							if ($emailtoconsidersender === '') {
 								continue;
 							}
@@ -2593,7 +2625,9 @@ class EmailCollector extends CommonObject
 
 										if ($sourcestring) {
 											$regforval = array();
+											//var_dump($regexstring);var_dump($sourcestring);
 											if (preg_match('/'.$regexstring.'/ms', $sourcestring, $regforval)) {
+												//var_dump($regforval[count($regforval)-1]);exit;
 												// Overwrite param $tmpproperty
 												if ($propertytooverwrite == 'id') {
 													$idtouseforthirdparty = isset($regforval[count($regforval) - 1]) ? trim($regforval[count($regforval) - 1]) : null;
@@ -2627,6 +2661,7 @@ class EmailCollector extends CommonObject
 													$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.' Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtoupper($sourcefield).' -> Not found';
 												}
 											}
+											//var_dump($object->$tmpproperty);exit;
 										} else {
 											// Nothing can be done for this param
 											$errorforactions++;
@@ -2689,11 +2724,10 @@ class EmailCollector extends CommonObject
 
 									if ($result < 0) {
 										$errorforactions++;
-										$this->error = 'Error when getting thirdparty with name '.((string) $nametouseforthirdparty).', alternative name '.((string) $namealiastouseforthirdparty).' and email '.$emailtouseforthirdparty.' (may be 2 record exists with same name ?)';
+										$this->error = 'Error when getting thirdparty with name '.$nametouseforthirdparty.' (may be 2 record exists with same name ?)';
 										$this->errors[] = $this->error;
 										break;
-									}
-									if ($result == 0) {	// No thirdparty found
+									} elseif ($result == 0) {	// No thirdparty found
 										if ($operation['type'] == 'loadthirdparty') {
 											dol_syslog("Third party with id=".$idtouseforthirdparty." email=".$emailtouseforthirdparty." name=".$nametouseforthirdparty." name_alias=".$namealiastouseforthirdparty." was not found");
 
@@ -2755,7 +2789,7 @@ class EmailCollector extends CommonObject
 												}
 											}
 										}
-									} else {	// if $result > 0, it is ID of thirdparty
+									} else {	// $result > 0 is ID of thirdparty
 										dol_syslog("One and only one existing third party has been found");
 
 										$thirdpartystatic->fetch($result);
@@ -2779,9 +2813,6 @@ class EmailCollector extends CommonObject
 									if (!empty($contact_static->email) && $contact_static->email != $from) {
 										$from = $contact_static->email;
 									}
-									$from = (string) $from;
-
-									$from = (string) $from;
 
 									$result = $contactstatic->fetch(0, null, '', $from);
 									if ($result < 0) {
@@ -4018,8 +4049,8 @@ class EmailCollector extends CommonObject
 	 * @param 	string	$subject		Subject
 	 * @return 	string					Decoded subject (in UTF-8)
 	 */
-	protected function decodeSMTPSubject($subject)
-	{
+		protected function decodeSMTPSubject($subject)
+		{
 		// Decode $overview[0]->subject according to RFC2047
 		// Can use also imap_mime_header_decode($str)
 		// Can use also mb_decode_mimeheader($str)
