@@ -53,6 +53,7 @@ $rowid = GETPOST('rowid', 'alpha');
 
 $id = 1;
 
+$acts = array();
 $acts[0] = "activate";
 $acts[1] = "disable";
 $actl[0] = img_picto($langs->trans("Disabled"), 'switch_off', 'class="size15x"');

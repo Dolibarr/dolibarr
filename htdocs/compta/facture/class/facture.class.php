@@ -869,6 +869,7 @@ class Facture extends CommonInvoice
 					$newinvoiceline->fk_facture = $this->id;
 
 					$newinvoiceline->origin = $this->lines[$i]->element;
+					$newinvoiceline->origin_type = $this->lines[$i]->element;
 					$newinvoiceline->origin_id = $this->lines[$i]->id;
 
 					// Auto set date of service ?
@@ -4332,24 +4333,24 @@ class Facture extends CommonInvoice
 						return -3;
 					}
 				}
-			}
 
-			$localtaxes_type = getLocalTaxesFromRate($txtva, 0, $this->thirdparty, $mysoc);
-
-			if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
-				$tmpproduct = new Product($this->db);
-				$result = $tmpproduct->fetch($fk_product);
-				if (abs($qty) < $tmpproduct->packaging) {
-					$qty = (float) $tmpproduct->packaging;
-					setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'mesgs');
-				} else {
-					if (!empty($tmpproduct->packaging) && $qty > $tmpproduct->packaging) {
-						$coeff = intval(abs($qty) / $tmpproduct->packaging) + 1;
-						$qty = price2num((float) $tmpproduct->packaging * $coeff, 'MS');
+				if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
+					$tmpproduct = new Product($this->db);
+					$result = $tmpproduct->fetch($fk_product);
+					if (abs($qty) < $tmpproduct->packaging) {
+						$qty = (float) $tmpproduct->packaging;
 						setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'mesgs');
+					} else {
+						if (!empty($tmpproduct->packaging) && $qty > $tmpproduct->packaging) {
+							$coeff = intval(abs($qty) / $tmpproduct->packaging) + 1;
+							$qty = price2num((float) $tmpproduct->packaging * $coeff, 'MS');
+							setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'mesgs');
+						}
 					}
 				}
 			}
+
+			$localtaxes_type = getLocalTaxesFromRate($txtva, 0, $this->thirdparty, $mysoc);
 
 			// Clean vat code
 			$reg = array();
