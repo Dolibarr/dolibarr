@@ -235,9 +235,9 @@ if ($action == 'add' && $permissiontoadd) {
 			$newinter->addline($user, $newfichinterid, $line->desc, $line->datei, $line->duree, array());
 		}
 
-		// on update le nombre d'inter crée à partir du modèle
+		// Update the number of interventions created from the template (model)
 		$object->updateNbGenDone();
-		//on redirige vers la fiche d'intervention nouvellement crée
+		// Redirect to the newly created interventions report
 		header('Location: '.DOL_URL_ROOT.'/fichinter/card.php?id='.$newfichinterid);
 		exit;
 	} else {

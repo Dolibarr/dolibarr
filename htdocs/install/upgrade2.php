@@ -1219,7 +1219,7 @@ function migrate_paiements_orphelins_2($db, $langs, $conf)
 
 
 /**
- * Mise a jour des contrats (gestion du contrat + detail de contrat)
+ * Update the contracts (Contract Management + Contract Detail)
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
@@ -1378,7 +1378,7 @@ function migrate_links_transfert($db, $langs, $conf)
 }
 
 /**
- * Mise a jour des date de contrats non renseignees
+ * Update missing Contract Dates
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
@@ -1617,7 +1617,7 @@ function migrate_paiementfourn_facturefourn($db, $langs, $conf)
 			while (($i < $select_num) && (!$error)) {
 				$select_obj = $db->fetch_object($select_resql);
 
-				// Verifier si la ligne est deja dans la nouvelle table. On ne veut pas inserer de doublons.
+				// Verify if the row is already in the new table - avoid adding duplicates
 				$check_sql = 'SELECT fk_paiementfourn, fk_facturefourn';
 				$check_sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn';
 				$check_sql .= ' WHERE fk_paiementfourn = '.((int) $select_obj->rowid).' AND fk_facturefourn = '.((int) $select_obj->fk_facture_fourn);
@@ -2189,7 +2189,7 @@ function migrate_modeles($db, $langs, $conf)
 
 
 /**
- * Correspondence des expeditions et des commandes clients dans la table llx_co_exp
+ * Relations between the Shipping and Client Order in the table llx_co_exp
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
@@ -2254,7 +2254,7 @@ function migrate_commande_expedition($db, $langs, $conf)
 }
 
 /**
- * Correspondence des livraisons et des commandes clients dans la table llx_co_liv
+ * Correspondance of the deliveries and the Customer Orders in the table llx_co_liv
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
@@ -2334,7 +2334,7 @@ function migrate_commande_livraison($db, $langs, $conf)
 }
 
 /**
- * Migration des details commandes dans les details livraisons
+ * Migrate the Order Details in the Delivery Details
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
@@ -4874,13 +4874,13 @@ function migrate_holiday_path()
 }
 
 
-/* A faire egalement: Modif statut paye et fk_facture des factures payes completement
+/* TODO: Modify the Paid status and `fk_facture` of the invoices paid in full
 
-On recherche facture incorrecte:
+Lookup incorrect invoices:
 select f.rowid, f.total_ttc as t1, sum(pf.amount) as t2 from llx_facture as f, llx_paiement_facture as pf where pf.fk_facture=f.rowid and f.fk_statut in(2,3) and paye=0 and close_code is null group by f.rowid
 having  f.total_ttc = sum(pf.amount)
 
-On les corrige:
+Correct the incorrect invoices:
 update llx_facture set paye=1, fk_statut=2 where close_code is null
 and rowid in (...)
 */

@@ -346,7 +346,7 @@ if (issetAndNoEmpty('anneeapres_x') || issetAndNoEmpty('anneeapres')) {
 	}
 }
 
-// valeurs du nombre de jour dans le mois et du premier jour du mois
+// Values for number of days in the month and first day of the month
 $nbrejourmois = idate("t", dol_get_first_day((int) $_SESSION["annee"], (int) $_SESSION["mois"]));
 $premierjourmois = (int) dol_print_date(dol_get_first_day((int) $_SESSION["annee"], (int) $_SESSION["mois"]), "%w") - 1;
 //var_dump(dol_get_first_day((int) $_SESSION["annee"], (int) $_SESSION["mois"]));
@@ -415,7 +415,7 @@ for ($i = 0; $i < 7; $i++) {
 
 print '</tr>'."\n";
 
-//ajout d'une entrée dans la variable de session qui contient toutes les dates
+// Add a field to the session variables that holds all the dates
 if (issetAndNoEmpty('choixjourajout')) {
 	if (!isset($_SESSION["totalchoixjour"])) {
 		$_SESSION["totalchoixjour"] = array();
@@ -433,7 +433,7 @@ if (issetAndNoEmpty('choixjourajout')) {
 		}
 	}
 
-	// Si le test est passé, alors on insere la valeur dans la variable de session qui contient les dates
+    // If the validation is ok, add a field to the session variables that holds all the dates
 	if ($journeuf && issetAndNoEmpty('choixjourajout') === true) {
 		$choixjourajout = GETPOST("choixjourajout");
 		array_push($_SESSION["totalchoixjour"], dol_mktime(0, 0, 0, $_SESSION["mois"], $choixjourajout[0], $_SESSION["annee"]));
