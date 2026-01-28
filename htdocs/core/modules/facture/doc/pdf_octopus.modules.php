@@ -3597,7 +3597,9 @@ class pdf_octopus extends ModelePDFFactures
 			// Modification of VAT format, special case of imports or others which may have 20.0000
 			$ltvatx = price2num($l->tva_tx, '', 1);	   // ltvatx is used as key or array so must be a string or int
 			if (isset($ret[$ltvatx])) {
+				// @phan-suppress-next-line PhanTypeArraySuspicious
 				$ret[$ltvatx]['TVA'] += $l->total_tva;
+				// @phan-suppress-next-line PhanTypeArraySuspicious
 				$ret[$ltvatx]['HT'] += $l->total_ht;
 			} else {
 				$ret[$ltvatx]['TVA'] = $l->total_tva;
