@@ -128,7 +128,7 @@ if (!$permissiontoadd) {
  * Actions
  */
 
-// Action ajout d'un produit ou service
+// Action - add product or service
 if ($action == 'add' && $permissiontoadd) {
 	if ($cancel) {
 		if (!empty($backtopage)) {

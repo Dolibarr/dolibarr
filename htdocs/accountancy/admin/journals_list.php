@@ -261,7 +261,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 
 		// Modify entry
 		$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET ";
-		// Modifie valeur des champs
+		// Modify the field values
 		if ($tabrowid[$id] && !in_array($tabrowid[$id], $listfieldmodify)) {
 			$sql .= $db->sanitize($tabrowid[$id])." = ";
 			$sql .= "'".$db->escape($rowid)."', ";
@@ -373,7 +373,7 @@ $titlepicto = 'title_accountancy';
 print load_fiche_titre($titre, $linkback, $titlepicto);
 
 
-// Confirmation de la suppression de la ligne
+// Generate a form to confirm the deletion of the row
 if ($action == 'delete') {
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$rowid.'&code='.$code.'&id='.$id, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete', '', 0, 1);
 }
@@ -382,7 +382,7 @@ if ($action == 'delete') {
  * Show a dictionary
  */
 
-// Complete requete recherche valeurs avec critere de tri
+// Complete the search query with sort criteria
 $sql = $tabsql[$id];
 $sql .= " WHERE a.entity = ".((int) $conf->entity);
 
