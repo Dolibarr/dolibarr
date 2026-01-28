@@ -5,7 +5,7 @@
  * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2021-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2023		Gauthier VERDOL			<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Vincent de Grandpré		<vincent@de-grandpre.quebec>
  * Copyright (C) 2025		Alexandre Spangaro		<alexandre@inovea-conseil.com>
  *
@@ -1870,9 +1870,9 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
 			$sql_line .= ' AND   line.fk_product  = '.((int) $obj_dispatch->fk_product);
 			$resql_line = $db->query($sql_line);
 
-			// s’il y a plusieurs lignes avec le même produit sur cette commande fournisseur,
-			// on divise la ligne de dispatch en autant de lignes qu’on en a sur la commande pour le produit
-			// et on met la quantité de la ligne dans la limit du "budget" indiqué par dispatch.qty
+			// In case there are multiple line with the same product for this supplier order,
+			// split the dispatch line in as many lines as there are on the order for the product,
+			// and set the line quantity to a value within the limit the "budget" set in dispatch.qty
 
 			$remaining_qty = $obj_dispatch->qty;
 			$first_iteration = true;
