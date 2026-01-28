@@ -433,7 +433,7 @@ if (issetAndNoEmpty('choixjourajout')) {
 		}
 	}
 
-    // If the validation is ok, add a field to the session variables that holds all the dates
+	// If the validation is ok, add a field to the session variables that holds all the dates
 	if ($journeuf && issetAndNoEmpty('choixjourajout') === true) {
 		$choixjourajout = GETPOST("choixjourajout");
 		array_push($_SESSION["totalchoixjour"], dol_mktime(0, 0, 0, $_SESSION["mois"], $choixjourajout[0], $_SESSION["annee"]));
