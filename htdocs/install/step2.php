@@ -131,7 +131,7 @@ if ($action == "set") {		// Test on permission not required. Already managed by 
 	print '<table cellspacing="0" style="padding: 4px 4px 4px 0" border="0" width="100%">';
 	$error = 0;
 
-	$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, (int) $conf->db->port);
+	$db = getDoliDBInstance($conf->db->type, $conf->db->host, (string) $conf->db->user, (string) $conf->db->pass, (string) $conf->db->name, (int) $conf->db->port);
 
 	if ($db->connected) {
 		print "<tr><td>";
