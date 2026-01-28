@@ -158,8 +158,8 @@ if ($id > 0 || !empty($ref)) {
 
 		$morehtmlref = '<div class="refidno">';
 		// Ref supplier
-		$morehtmlref .= $form->editfieldkey("RefSupplier", 'ref_fourn', $object->ref_fourn, $object, 0, 'string', '', 0, 1);
-		$morehtmlref .= $form->editfieldval("RefSupplier", 'ref_fourn', $object->ref_fourn, $object, 0, 'string'.(isset($conf->global->THIRDPARTY_REF_INPUT_SIZE) ? ':' . getDolGlobalString('THIRDPARTY_REF_INPUT_SIZE') : ''), '', null, null, '', 1);
+		$morehtmlref .= $form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', 0, 1);
+		$morehtmlref .= $form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string'.(isset($conf->global->THIRDPARTY_REF_INPUT_SIZE) ? ':' . getDolGlobalString('THIRDPARTY_REF_INPUT_SIZE') : ''), '', null, null, '', 1);
 		$morehtmlref .= '<br>';
 		// Thirdparty
 		$morehtmlref .= $object->thirdparty->getNomUrl(1);
