@@ -41,17 +41,20 @@ include_once 'inc.php';
  * @var string $dolibarr_main_db_user
  * @var string $dolibarr_main_db_pass
  * @var string $dolibarr_main_db_type
+ * @var string $dolibarr_main_db_encrypted_pass
+ * @var string $dolibarr_main_db_encryption
+ * @var string $dolibarr_main_db_cryptkey
  * @var string $conffile
  */
+'
+@phan-var-force ?string $dolibarr_main_db_encryption
+@phan-var-force ?string $dolibarr_main_db_cryptkey
+@phan-var-force ?string $dolibarr_main_db_type
+';
 
 if (file_exists($conffile)) {
 	include_once $conffile;
 }
-
-'
-@phan-var-force ?string $dolibarr_main_db_encryption
-@phan-var-force ?string $dolibarr_main_db_cryptkey
-';
 
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 include_once $dolibarr_main_document_root.'/core/lib/images.lib.php';
@@ -133,7 +136,7 @@ $conf->db->pass = $dolibarr_main_db_pass;
 $conf->db->dolibarr_main_db_encryption = isset($dolibarr_main_db_encryption) ? $dolibarr_main_db_encryption : 0;
 $conf->db->dolibarr_main_db_cryptkey = isset($dolibarr_main_db_cryptkey) ? $dolibarr_main_db_cryptkey : '';
 
-$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, (int) $conf->db->port);
+$db = getDoliDBInstance($conf->db->type, $conf->db->host, (string) $conf->db->user, (string) $conf->db->pass, (string) $conf->db->name, (int) $conf->db->port);
 
 if ($db->connected) {
 	print '<tr><td class="nowrap">';
