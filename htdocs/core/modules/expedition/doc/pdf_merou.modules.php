@@ -401,6 +401,7 @@ class pdf_merou extends ModelePdfExpedition
 				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+				$this->warnings = $hookmanager->warnings;
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
@@ -607,7 +608,7 @@ class pdf_merou extends ModelePdfExpedition
 			$posy = $Yoff;
 			$pdf->SetXY($Xoff, $posy);
 			$pdf->SetTextColor(0, 0, 0);
-			$pdf->MultiCell($this->page_largeur - $this->marge_droite - $Xoff, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_client), '', 'R');
+			$pdf->MultiCell($this->page_largeur - $this->marge_droite - $Xoff, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities((string) $object->thirdparty->code_client), '', 'R');
 		}
 
 		// Date delivery

@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2021-2024	Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2021-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2023		Gauthier VERDOL			<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Vincent de Grandpré		<vincent@de-grandpre.quebec>
@@ -1104,7 +1104,7 @@ if ($ok && GETPOST('clean_product_stock_batch', 'alpha')) {
 	$sql .= " WHERE p.rowid = ps.fk_product";
 	$sql .= " GROUP BY p.rowid, p.ref, p.tobatch, ps.rowid, ps.fk_entrepot, ps.reel";
 	$sql .= " HAVING (SUM(pb.qty) IS NOT NULL AND reel != SUM(pb.qty)) OR (SUM(pb.qty) IS NULL AND p.tobatch > 0)";
-	print $sql;
+
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);

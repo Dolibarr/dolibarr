@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
+
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -84,7 +85,7 @@ if ($action == 'editsalesrepresentatives') {
 			print ' ';
 		}
 	} else {
-		print '<span class="opacitymedium">'.$langs->trans("NoSalesRepresentativeAffected").'</span>';
+		//print '<span class="opacitymedium">'.$langs->trans("NoSalesRepresentativeAffected").'</span>';
 	}
 	print '</td></tr>';
 }

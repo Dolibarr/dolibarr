@@ -235,8 +235,8 @@ if ($action == 'export' && $user->hasRight('accounting', 'mouvements', 'lire')) 
 
 	if ($exportType === 'csv') {
 		$sep = getDolGlobalString('ACCOUNTING_EXPORT_SEPARATORCSV');
-		$filename = 'balance';
-		$type_export = 'balance';
+		$filename = 'balance';		// Used by the tpl
+		$type_export = 'balance';	// Used by the tpl
 		include DOL_DOCUMENT_ROOT.'/accountancy/tpl/export_journal.tpl.php';
 
 		foreach ($object->lines as $line) {

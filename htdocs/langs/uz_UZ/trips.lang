@@ -121,7 +121,6 @@ ValideTrip=Xarajatlar to'g'risidagi hisobotni tasdiqlash
 ExpenseReportPayments=Xarajatlar to'g'risidagi hisobot
 TaxUndefinedForThisCategory = Ushbu toifa uchun soliq aniqlanmagan
 errorComputeTtcOnMileageExpense=Kilometraj xarajatlarini hisoblashda xato
-ErrorOnlyDraftStatusCanBeDeletedInMassAction=Ommaviy harakatda faqat qoralama holatidagi elementlarni oʻchirib tashlash mumkin
 
 ## Dictionary
 EX_BRE=Nonushta
@@ -159,3 +158,4 @@ TF_TRAIN=Poezd
 TF_TRIP=Transport
 FailedToSetPaid=Toʻlangan qilib belgilab boʻlmadi
 FailedToSetToCancel=Bekor qilish amalga oshmadi
+NobodyHasPermissionToValidateExpenseReport=Nobody has permission to validate expensereport

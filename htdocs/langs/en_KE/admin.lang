@@ -1,0 +1,6 @@
+# Dolibarr language file - Source file is en_US - admin
+FileIntegrityIsKO=File integrity check failed, some files were modified or removed. See the detail lower...
+FileCheckDolibarr=Check application file integrity
+RestoreDescMore=Note: For security reason, it is not possible to make system or data restoration from the application itself. The following steps, described here, are provided for a system administrator that has have full access on the server to remind how to make a complete system restauration.
+SecurityForConnection=Credentials for connexion
+SeeValueIntoConfPhp2=For security purpose, this value can only be read by a system user, that has a file system access to the conf/conf.php file. If you need a non system backup, without encrypted data, you can use the "export" menu to export your data in clear CSV files.

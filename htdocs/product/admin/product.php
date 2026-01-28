@@ -66,18 +66,21 @@ $type = 'product';
 
 // Pricing Rules
 $select_pricing_rules = array(
-	'PRODUCT_PRICE_UNIQ' => $langs->trans('PriceCatalogue'), // Unique price
-	'PRODUIT_MULTIPRICES' => $langs->trans('MultiPricesAbility'), // Several prices according to a customer level
-	'PRODUIT_CUSTOMER_PRICES' => $langs->trans('PriceByCustomer'), // Different price for each customer
-	'PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES' => $langs->trans('PriceByCustomeAndMultiPricesAbility'), // Different price for each customer and several prices according to a customer level
+	'PRODUCT_PRICE_UNIQ' => array('label' => $langs->trans('PriceCatalogue')), // Unique price
+	'PRODUIT_MULTIPRICES' => array('label' => $langs->trans('MultiPricesAbility')), // Several prices according to a customer level
+	'PRODUIT_CUSTOMER_PRICES' => array('label' => $langs->trans('PriceByCustomer')), // Different price for each customer
+	'PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES' => array('label' => $langs->trans('PriceByCustomeAndMultiPricesAbility')), // Different price for each customer and several prices according to a customer level
 );
 $keyforparam = 'PRODUIT_CUSTOMER_PRICES_BY_QTY';
 if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1 || getDolGlobalString($keyforparam)) {
-	$select_pricing_rules['PRODUIT_CUSTOMER_PRICES_BY_QTY'] = $langs->trans('PriceByQuantity').' ('.$langs->trans("VersionExperimental").')'; // TODO If this is enabled, price must be hidden when price by qty is enabled, also price for quantity must be used when adding product into order/propal/invoice
+	$select_pricing_rules['PRODUIT_CUSTOMER_PRICES_BY_QTY'] = array(
+		'label' => $langs->trans('PriceByQuantity').' ('.$langs->trans("VersionExperimental").')',
+		'data-html' => $langs->trans('PriceByQuantity').' <span class="opacitymedium">('.$langs->trans("VersionExperimental").')</span>'
+	); // TODO If this is enabled, price must be hidden when price by qty is enabled, also price for quantity must be used when adding product into order/propal/invoice
 }
 $keyforparam = 'PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES';
 if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2 || getDolGlobalString($keyforparam)) {
-	$select_pricing_rules['PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES'] = $langs->trans('MultiPricesAbility').'+'.$langs->trans('PriceByQuantity').' ('.$langs->trans("VersionExperimental").')';
+	$select_pricing_rules['PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES'] = array('label' => $langs->trans('MultiPricesAbility').'+'.$langs->trans('PriceByQuantity').' ('.$langs->trans("VersionExperimental").')');
 }
 
 // Clean param
@@ -573,7 +576,6 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AssociatedProductsAbility").'</td>';
 print '<td class="right">';
 print ajax_constantonoff("PRODUIT_SOUSPRODUITS", array(), $conf->entity, 0, 0, 1, 0);
-//print $form->selectyesno("PRODUIT_SOUSPRODUITS", $conf->global->PRODUIT_SOUSPRODUITS, 1);
 print '</td>';
 print '</tr>';
 
@@ -583,8 +585,6 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("VariantsAbility").'</td>';
 print '<td class="right">';
-//print ajax_constantonoff("PRODUIT_SOUSPRODUITS", array(), $conf->entity, 0, 0, 1, 0);
-//print $form->selectyesno("PRODUIT_SOUSPRODUITS", $conf->global->PRODUIT_SOUSPRODUITS, 1);
 if (!isModEnabled('variants')) {
 	print '<span class="opacitymedium">'.$langs->trans("ModuleMustBeEnabled", $langs->transnoentitiesnoconv("Module610Name")).'</span>';
 } else {
@@ -624,7 +624,7 @@ print '</td>';
 print '</tr>';
 
 
-// multiprix nombre de prix a proposer
+// For multiprice mode, how many prices to show/manage
 if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("MultiPricesNumPrices").'</td>';
@@ -640,13 +640,22 @@ print $form->selectPriceBaseType($conf->global->PRODUCT_PRICE_BASE_TYPE, "price_
 print '</td>';
 print '</tr>';
 
+// Use packaging during your sales
+if (isModEnabled("order") || isModEnabled("invoice")) {
+	print '<tr class="oddeven">';
+	print '<td>'.$form->textwithpicto($langs->trans("UseProductCustomerPackaging", $langs->transnoentities("PackagingForThisProduct")), $langs->trans("PackagingForThisProductDesc")).'</td>';
+	print '<td align="right">';
+	print ajax_constantonoff("PRODUCT_USE_CUSTOMER_PACKAGING", array(), $conf->entity, 0, 0, 0, 0);
+	print '</td>';
+	print '</tr>';
+}
+
 // Use conditionnement in buying
 if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 	print '<tr class="oddeven">';
-	print '<td>'.$form->textwithpicto($langs->trans("UseProductSupplierPackaging"), $langs->trans("PackagingForThisProductDesc")).'</td>';
+	print '<td>'.$form->textwithpicto($langs->trans("UseProductSupplierPackaging", $langs->transnoentities("PackagingForThisProduct")), $langs->trans("PackagingForThisProductDesc")).'</td>';
 	print '<td align="right">';
 	print ajax_constantonoff("PRODUCT_USE_SUPPLIER_PACKAGING", array(), $conf->entity, 0, 0, 0, 0);
-	//print $form->selectyesno("activate_useProdSupplierPackaging", (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING) ? $conf->global->PRODUCT_USE_SUPPLIER_PACKAGING : 0), 1);
 	print '</td>';
 	print '</tr>';
 
@@ -654,18 +663,6 @@ if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 	print '<td>'.$langs->trans("UseProductFournDesc").'</td>';
 	print '<td class="right">';
 	print ajax_constantonoff("PRODUIT_FOURN_TEXTS", array(), $conf->entity, 0, 0, 0, 0);
-	//print $form->selectyesno("activate_useProdFournDesc", (!empty($conf->global->PRODUIT_FOURN_TEXTS) ? $conf->global->PRODUIT_FOURN_TEXTS : 0), 1);
-	print '</td>';
-	print '</tr>';
-}
-
-// Use packaging during your sales
-if (isModEnabled("order") || isModEnabled("invoice")) {
-	print '<tr class="oddeven">';
-	print '<td>'.$form->textwithpicto($langs->trans("UseProductCustomerPackaging"), $langs->trans("PackagingForThisProductSellDesc")).'</td>';
-	print '<td align="right">';
-	print ajax_constantonoff("PRODUCT_USE_CUSTOMER_PACKAGING", array(), $conf->entity, 0, 0, 0, 0);
-	//print $form->selectyesno("activate_useProdSupplierPackaging", (!empty($conf->global->PRODUCT_USE_CUSTOMER_PACKAGING) ? $conf->global->PRODUCT_USE_CUSTOMER_PACKAGING : 0), 1);
 	print '</td>';
 	print '</tr>';
 }
@@ -727,7 +724,7 @@ print '<!-- PRODUIT_AUTOFILL_DESC -->';
 print $form->selectarray(
 	"activate_FillProductDescAuto",
 	array(0 => 'DoNotAutofillButAutoConcat', 1 => 'AutoFillFormFieldBeforeSubmit', 2 => 'DoNotUseDescriptionOfProdut'),
-	!getDolGlobalString('PRODUIT_AUTOFILL_DESC') ? 0 : $conf->global->PRODUIT_AUTOFILL_DESC,
+	getDolGlobalInt('PRODUIT_AUTOFILL_DESC'),
 	0,
 	0,
 	0,
@@ -742,7 +739,7 @@ print $form->selectarray(
 print '</td>';
 print '</tr>';
 
-// Visualiser description produit dans les formulaires activation/deactivation
+// Show (or not) the description of products into forms
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ViewProductDescInFormAbility").'</td>';
 print '<td class="right">';

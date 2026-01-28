@@ -28,12 +28,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -41,6 +35,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies'));
@@ -281,13 +280,14 @@ if ($resql) {
 			$companystatic->id = $obj->socid;
 			$companystatic->name = $obj->name;
 			$companystatic->name_alias = $obj->name_alias;
+			$companystatic->client = $obj->client;
+			$companystatic->fournisseur = $obj->fournisseur;
+
 			//$companystatic->code_client = $obj->code_client;
 			$companystatic->code_compta = $obj->code_compta;
 			$companystatic->code_compta_client = $obj->code_compta;
-			$companystatic->client = $obj->client;
-			//$companystatic->code_fournisseur = $obj->code_fournisseur;
 			$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
-			$companystatic->fournisseur = $obj->fournisseur;
+
 			$companystatic->logo = $obj->logo;
 			$companystatic->email = $obj->email;
 			$companystatic->entity = $obj->entity;
@@ -313,12 +313,12 @@ if ($resql) {
 			print '</td>';
 
 			// Label
-			print '<td class="tdoverflowmax175" title="'.dol_escape_htmltag($obj->title).'">';
-			print dol_escape_htmltag($projectstatic->title);
+			print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($obj->title).'">';
+			print dolPrintHTML($projectstatic->title);
 			print '</td>';
 
 			// Thirdparty
-			print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($companystatic->name).'">';
+			print '<td class="tdoverflowmax125" title="'.dolPrintHTMLForAttribute($companystatic->name).'">';
 			if ($companystatic->id > 0) {
 				print $companystatic->getNomUrl(1, 'company', 16);
 			}
@@ -326,7 +326,7 @@ if ($resql) {
 
 			// Date
 			$datem = $db->jdate($obj->datem);
-			print '<td class="center" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'">';
+			print '<td class="center" title="'.dolPrintHTMLForAttribute($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'">';
 			print dol_print_date($datem, 'day', 'tzuserrel');
 			print '</td>';
 

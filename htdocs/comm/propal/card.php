@@ -20,6 +20,7 @@
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2025		Benjamin Falière			<benjamin@faliere.com>
+ * Copyright (C) 2025		Anthony Berton				<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -161,6 +162,8 @@ if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->tabl
 }
 
 $price_base_type = null;
+$shipping_method_id = null;
+$warehouse_id = -1;
 
 // Security check
 if (!empty($user->socid)) {
@@ -207,6 +210,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT . '/core/actions_dellink.inc.php'; // Must be 'include', not 'include_once'
 
 	include DOL_DOCUMENT_ROOT . '/core/actions_lineupdown.inc.php'; // Must be 'include', not 'include_once'
+
 	// Action clone object
 	if ($action == 'confirm_clone' && $confirm == 'yes' && $usercancreate) {
 		if (!($socid > 0)) {
@@ -1278,6 +1282,13 @@ if (empty($reshook)) {
 			}
 		}
 
+		$price_to_test_sign = ($price_ht ? $price_ht : $price_ttc);
+
+		if ((empty($idprod) || $idprod < 0) && ($price_to_test_sign < 0) && ($qty < 0)) {
+			$langs->load("errors");
+			setEventMessages($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPriceHT'), $langs->transnoentitiesnoconv('Qty')), null, 'errors');
+			$error++;
+		}
 		if ($prod_entry_mode == 'free' && (empty($idprod) || $idprod < 0) && GETPOST('type') < 0) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 			$error++;
@@ -1285,6 +1296,10 @@ if (empty($reshook)) {
 
 		if ($prod_entry_mode == 'free' && (empty($idprod) || $idprod < 0) && $price_ht === '' && $price_ht_devise === '' && $price_ttc === '' && $price_ttc_devise === '') { 	// Unit price can be 0 but not ''. Also price can be negative for proposal.
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("UnitPriceHT")), null, 'errors');
+			$error++;
+		}
+		if ($qty < 0 && !getDolGlobalString('PROPAL_ENABLE_NEGATIVE_QTY')) {
+			setEventMessages($langs->trans('FieldCannotBeNegative', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 			$error++;
 		}
 		if ($prod_entry_mode == 'free' && (empty($idprod) || $idprod < 0) && empty($line_desc)) {
@@ -1306,8 +1321,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		$propal_qty_requirement = (getDolGlobalString('PROPAL_ENABLE_NEGATIVE_QTY') ? ($qty >= 0 || $qty <= 0) : $qty >= 0);
-		if (!$error && $propal_qty_requirement && (!empty($line_desc) || (!empty($idprod) && $idprod > 0))) {
+		if (!$error && (!empty($line_desc) || (!empty($idprod) && $idprod > 0))) {
 			$pu_ht = 0;
 			$pu_ttc = 0;
 			$pu_ht_devise = 0;
@@ -2284,7 +2298,7 @@ if ($action == 'create') {
 
 			$cond_reglement_id = (!empty($objectsrc->cond_reglement_id) ? $objectsrc->cond_reglement_id : (!empty($soc->cond_reglement_id) ? $soc->cond_reglement_id : 0));
 			$mode_reglement_id = (!empty($objectsrc->mode_reglement_id) ? $objectsrc->mode_reglement_id : (!empty($soc->mode_reglement_id) ? $soc->mode_reglement_id : 0));
-			$warehouse_id      = (!empty($objectsrc->warehouse_id) ? $objectsrc->warehouse_id : (!empty($soc->warehouse_id) ? $soc->warehouse_id : 0));
+			$warehouse_id      = (!empty($objectsrc->warehouse_id) ? $objectsrc->warehouse_id : (!empty($soc->warehouse_id) ? $soc->warehouse_id : -1));
 
 			// Replicate extrafields
 			$objectsrc->fetch_optionals();
@@ -2308,7 +2322,7 @@ if ($action == 'create') {
 		$mode_reglement_id  = empty($soc->mode_reglement_id) ? $mode_reglement_id : $soc->mode_reglement_id;
 		$fk_account         = empty($soc->fk_account) ? $fk_account : $soc->fk_account;
 		$shipping_method_id = $soc->shipping_method_id;
-		$warehouse_id       = $soc->fk_warehouse;
+		$warehouse_id       = !empty($soc->fk_warehouse) ? $soc->fk_warehouse : $warehouse_id;
 		$remise_percent     = $soc->remise_percent;
 
 		if (isModEnabled("multicurrency") && !empty($soc->multicurrency_code)) {
@@ -2336,7 +2350,7 @@ if ($action == 'create') {
 	if ($soc->fk_warehouse > 0) {
 		$warehouse_id = $soc->fk_warehouse;
 	}
-	if (isModEnabled('stock') && empty($warehouse_id) && getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_PROPAL')) {
+	if (isModEnabled('stock') && $warehouse_id < 0 && getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_PROPAL')) {
 		if (empty($object->warehouse_id) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE')) {
 			$warehouse_id = getDolGlobalString('MAIN_DEFAULT_WAREHOUSE');
 		}
@@ -2379,9 +2393,11 @@ if ($action == 'create') {
 
 		// Third party
 		print '<tr class="field_socid">';
+
 		print '<td class="titlefieldcreate fieldrequired">' . $langs->trans('Customer') . '</td>';
 		$shipping_method_id = 0;
 		$warehouse_id = 0;
+
 		if ($socid > 0) {
 			print '<td class="valuefieldcreate">';
 			print $soc->getNomUrl(1, 'customer');
@@ -2390,7 +2406,6 @@ if ($action == 'create') {
 			if (getDolGlobalString('SOCIETE_ASK_FOR_SHIPPING_METHOD') && !empty($soc->shipping_method_id)) {
 				$shipping_method_id = $soc->shipping_method_id;
 			}
-			//$warehouse_id       = $soc->warehouse_id;
 		} else {
 			print '<td class="valuefieldcreate">';
 			$filter = '((s.client:IN:1,2,3) AND (s.status:=:1))';
@@ -2488,7 +2503,7 @@ if ($action == 'create') {
 			require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
 			$formproduct = new FormProduct($db);
 			print '<tr class="field_warehouse_id"><td class="titlefieldcreate">' . $langs->trans('Warehouse') . '</td><td class="valuefieldcreate">';
-			print img_picto('', 'stock', 'class="pictofixedwidth"') . $formproduct->selectWarehouses($warehouse_id, 'warehouse_id', '', 1, 0, 0, '', 0, 0, array(), 'maxwidth500 widthcentpercentminusxx');
+			print img_picto('', 'stock', 'class="pictofixedwidth"') . $formproduct->selectWarehouses((int) $warehouse_id, 'warehouse_id', '', 1, 0, 0, '', 0, 0, array(), 'maxwidth500 widthcentpercentminusxx');
 			print '</td></tr>';
 		}
 
@@ -2590,6 +2605,9 @@ if ($action == 'create') {
 		}
 
 		// Other attributes
+		if (getDolGlobalInt('THIRDPARTY_PROPAGATE_EXTRAFIELDS_TO_PROPAL') && $socid > 0) {
+			$thirdpartytopropagateextrafieldsfrom = $soc;
+		}
 		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_add.tpl.php';
 
 		// Lines from source
@@ -2930,7 +2948,7 @@ if ($action == 'create') {
 		// Confirmation delete product/service line
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id . '&lineid=' . $lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
 	} elseif ($action == 'ask_subtotal_deleteline') {
-		// Confirmation de la suppression d'une ligne subtotal
+		// Confirmation of removal of a subtotal line
 		$langs->load("subtotals");
 		$title = "DeleteSubtotalLine";
 		$question = "ConfirmDeleteSubtotalLine";

@@ -33,7 +33,7 @@ class box_graph_product_distribution extends ModeleBoxes
 	public $boxcode = "productdistribution";
 	public $boximg = "object_product";
 	public $boxlabel = "BoxProductDistribution";
-	public $depends = array("product|service", "facture|propal|commande");
+	public $depends = array("product|service", "invoice|propal|order");
 
 	public $widgettype = 'graph';
 

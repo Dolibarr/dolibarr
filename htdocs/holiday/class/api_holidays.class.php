@@ -4,7 +4,7 @@
  * Copyright (C) 2020-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
- * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
+ * Copyright (C) 2025-2026  Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -126,6 +126,7 @@ class Holidays extends DolibarrApi
 
 		$sql = "SELECT t.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday AS t LEFT JOIN ".MAIN_DB_PREFIX."holiday_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user AS u ON t.fk_user = u.rowid";
 		$sql .= ' WHERE t.entity IN ('.getEntity('holiday').')';
 		if ($user_ids) {
 			$sql .= " AND t.fk_user IN (".$this->db->sanitize($user_ids).")";
@@ -237,20 +238,20 @@ class Holidays extends DolibarrApi
 
 
 	/**
-	 * Update expense report general fields
+	 * Update holiday general fields
 	 *
-	 * Does not touch lines of the expense report
+	 * Does not touch lines of the holiday
 	 *
 	 * @since	23.0.0	Initial implementation
 	 *
 	 * @param	int		$id					Leave ID to update
-	 * @param	array	$request_data		Expense report data
+	 * @param	array	$request_data		holiday report data
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
 	 * @return	Object						Updated object
 	 *
 	 * @throws	RestException	401		Not allowed
-	 * @throws  RestException	404		Expense report not found
+	 * @throws  RestException	404		Holiday not found
 	 * @throws	RestException	500		System error
 	 */
 	public function put($id, $request_data = null)
@@ -418,7 +419,7 @@ class Holidays extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already approved');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when approving expense report: '.$this->holiday->error);
+			throw new RestException(500, 'Error when approving holiday: '.$this->holiday->error);
 		}
 
 		return $this->_cleanObjectDatas($this->holiday);
@@ -641,13 +642,13 @@ class Holidays extends DolibarrApi
 		if ($data === null) {
 			$data = array();
 		}
-		$expensereport = array();
+		$holiday = array();
 		foreach (self::$FIELDS as $field) {
 			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
 			}
-			$expensereport[$field] = $data[$field];
+			$holiday[$field] = $data[$field];
 		}
-		return $expensereport;
+		return $holiday;
 	}
 }

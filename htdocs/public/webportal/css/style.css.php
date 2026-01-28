@@ -102,9 +102,15 @@ if (empty($dolibarr_nocache)) {
 @import "card.css";
 @import "dialog.css";
 @import "btn.css";
+@import "form-input-special.css";
 /**
 This file can overwrite default pico css
  */
+
+
+.maxwidthdate {
+	max-width: 110px;
+}
 
 
 /**
@@ -150,10 +156,6 @@ ul.menu-entries-alt {
 	display: none;
 }
 
-.maxwidthdate {
-	max-width: 110px;
-}
-
 @media (max-width: 576px) {
 	ul.brand li.brand {
 		padding-left: 0px;
@@ -165,8 +167,6 @@ ul.menu-entries-alt {
 		display: block;
 	}
 }
-
-
 
 
 /**

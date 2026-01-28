@@ -32,6 +32,14 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -45,15 +53,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 $action = GETPOST('action', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'admincompany'; // To manage different context of search
 $page_y = GETPOSTINT('page_y');
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Societe $mysoc
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'companies', 'bills'));
@@ -604,15 +603,6 @@ print '<input name="MAIN_INFO_GDPR" id="infodirector" class="minwidth300" value=
 print '<tr class="oddeven"><td><label for="capital">'.$langs->trans("Capital").'</label></td><td>';
 print '<input name="capital" id="capital" class="maxwidth100" value="'.dolPrintHTMLForAttribute((GETPOSTISSET('capital') ? GETPOST('capital', 'alphanohtml') : getDolGlobalString('MAIN_INFO_CAPITAL'))).'"></td></tr>';
 
-// Juridical Status
-print '<tr class="oddeven"><td><label for="forme_juridique_code">'.$langs->trans("JuridicalStatus").'</label></td><td>';
-if ($mysoc->country_code) {
-	print $formcompany->select_juridicalstatus(getDolGlobalInt('MAIN_INFO_SOCIETE_FORME_JURIDIQUE'), $mysoc->country_code, '', 'forme_juridique_code');
-} else {
-	print $countrynotdefined;
-}
-print '</td></tr>';
-
 // Object of the company
 print '<tr class="oddeven"><td><label for="socialobject">'.$langs->trans("CompanyObject").'</label></td><td>';
 print '<textarea class="flat quatrevingtpercent" name="socialobject" id="socialobject" rows="'.ROWS_3.'">'.getDolGlobalString('MAIN_INFO_SOCIETE_OBJECT').'</textarea></td></tr>';
@@ -621,6 +611,15 @@ print '</td></tr>';
 // Tax ID Intra-community VAT number
 print '<tr class="oddeven"><td><label for="intra_vat">'.$langs->trans("VATIntra").'</label></td><td>';
 print '<input name="tva" id="intra_vat" class="minwidth200" value="'.dolPrintHTMLForAttribute(getDolGlobalString('MAIN_INFO_TVAINTRA')).'">';
+print '</td></tr>';
+
+// Juridical Status
+print '<tr class="oddeven"><td><label for="forme_juridique_code">'.$langs->trans("JuridicalStatus").'</label></td><td>';
+if ($mysoc->country_code) {
+	print $formcompany->select_juridicalstatus(getDolGlobalInt('MAIN_INFO_SOCIETE_FORME_JURIDIQUE'), $mysoc->country_code, '', 'forme_juridique_code');
+} else {
+	print $countrynotdefined;
+}
 print '</td></tr>';
 
 // ProfId1

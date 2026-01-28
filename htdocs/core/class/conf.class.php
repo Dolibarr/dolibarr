@@ -1,5 +1,4 @@
 <?php
-
 /* Copyright (C) 2003-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2003       Xavier Dutoit           <doli@sydesy.com>
  * Copyright (C) 2004-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
@@ -706,6 +705,9 @@ class Conf extends stdClass
 			if (!isset($this->global->FACTURE_TVAOPTION)) {
 				$this->global->FACTURE_TVAOPTION = 1;
 			}
+			if (!isset($this->global->FAC_FORCE_DATE_VALIDATION)) {
+				$this->global->FAC_FORCE_DATE_VALIDATION = 1;
+			}
 
 			// Variable globales LDAP
 			if (empty($this->global->LDAP_FIELD_FULLNAME)) {
@@ -986,6 +988,12 @@ class Conf extends stdClass
 
 			if (!isset($this->global->MAIN_ENABLE_AJAX_TOOLTIP)) {
 				$this->global->MAIN_ENABLE_AJAX_TOOLTIP = 1;	// Try to have it enabled by default with v21+
+			}
+			if (!isset($this->global->THEME_SHOW_BORDER_ON_INPUT)) {
+				$this->global->THEME_SHOW_BORDER_ON_INPUT = 1;
+			}
+			if (!isset($this->global->THEME_ELDY_BORDER_RADIUS)) {
+				$this->global->THEME_ELDY_BORDER_RADIUS = 6;
 			}
 
 			// By default, suppliers objects can be linked to all projects
@@ -1342,6 +1350,11 @@ class Conf extends stdClass
 			}
 			if (!isset($this->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY) && extension_loaded('tidy') && class_exists("tidy")) {
 				$this->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
+			}
+
+			if (!isset($this->global->MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER)) {
+				// Note value is always forced to 1 in API context to avoid bind SQL injection into API filters.
+				$this->global->MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER = 0;		// TODO Move this into 1 by default
 			}
 
 			// For backward compatibility

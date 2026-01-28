@@ -34,6 +34,7 @@ require 'main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var Form $form
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -113,11 +114,13 @@ if (getDolGlobalString('MAIN_MOTD')) {
  */
 
 // Specific warning to propose to upgrade invoice situation to progressive mode
-if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) { // Note that we must also be in v22 or +, but this is the case now in this branch
+/*
+if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
 	$langs->loadLangs(array("admin"));
 	print info_admin($langs->trans("WarningExperimentalFeatureInvoiceSituationNeedToUpgradeToProgressiveMode", 'https://partners.dolibarr.org'));
 	//print "<br>";
 }
+*/
 
 /*
  * Show security warnings
@@ -132,7 +135,7 @@ if (!getDolGlobalString('MAIN_REMOVE_INSTALL_WARNING')) {
 	if (!empty($lockfile) && !file_exists($lockfile) && is_dir(DOL_DOCUMENT_ROOT."/install")) {
 		$langs->load("errors");
 		//if (!empty($message)) $message.='<br>';
-		$message .= info_admin($langs->transnoentities("WarningLockFileDoesNotExists", DOL_DATA_ROOT).' '.$langs->transnoentities("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
+		$message .= info_admin($langs->transnoentities("WarningLockFileDoesNotExists", DOL_DATA_ROOT).' '.$langs->transnoentities("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, 'warning', 'clearboth');
 	}
 
 	// Conf files must be in read only mode
@@ -529,7 +532,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 
 	// Show dashboard
 	$nbworkboardempty = 0;
-	$isIntopOpenedDashBoard = $globalStatInTopOpenedDashBoard = array();
+	$isIntopOpenedDashBoard = array();
 	$openedDashBoard = '';
 	if (!empty($valid_dashboardlines)) {
 		$boxwork .= '<tr class="nobottom nohover"><td class="tdboxstats nohover flexcontainer centpercent"><div style="display: flex: flex-wrap: wrap">';
@@ -593,7 +596,6 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 
 				// Show the span for the total of record. TODO This seems not used.
 				if (!empty($groupElement['globalStats'])) {
-					$globalStatInTopOpenedDashBoard[] = $globalStatsKey;
 					$openedDashBoard .= '<span class="info-box-icon-text" title="'.$groupElement['globalStats']['text'].'">'.$groupElement['globalStats']['nbTotal'].'</span>';
 				}
 

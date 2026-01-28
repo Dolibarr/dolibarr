@@ -277,7 +277,7 @@ class Societe extends CommonObject
 	public $nom;
 
 	/**
-	 * @var ?string Thirdparty name
+	 * @var string Thirdparty name
 	 */
 	public $name;
 
@@ -4435,11 +4435,9 @@ class Societe extends CommonObject
 	 */
 	public function isACompany()
 	{
-		//global $mysoc;
-
 		// Define if third party is treated as company (or not) when nature is unknown
 		//$defaultvalue = in_array($mysoc->country_code, array('FR')) ? 0 : 1;	// TODO On old version, default was 1 for everybody, move this to defaultvalue = 0 for everybody
-		$defaultvalue = 1;
+		$defaultvalue = 0;
 		$isACompany = getDolGlobalInt('MAIN_UNKNOWN_CUSTOMERS_ARE_COMPANIES', $defaultvalue);
 
 		// Now try to guess using different tips
@@ -4674,7 +4672,7 @@ class Societe extends CommonObject
 			}
 		}
 
-		$name = $socname;
+		$name = (string) $socname;
 		$alias = $socalias ? $socalias : '';
 
 		// Positionne parameters
@@ -5265,6 +5263,8 @@ class Societe extends CommonObject
 	 */
 	public function getOutstandingBills($mode = 'customer', $late = 0)
 	{
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
 		$table = 'facture';
 		if ($mode == 'supplier') {
 			$table = 'facture_fourn';
@@ -5343,7 +5343,7 @@ class Societe extends CommonObject
 					$arrayofrefopened[$obj->rowid] = $obj->ref;
 				}
 			}
-			return array('opened' => $outstandingOpened, 'total_ht' => $outstandingTotal, 'total_ttc' => $outstandingTotalIncTax, 'refs' => $arrayofref, 'refsopened' => $arrayofrefopened); // 'opened' is 'incl taxes'
+			return array('opened' => $outstandingOpened, 'total_ht' => $outstandingTotal, 'total_ttc' => $outstandingTotalIncTax, 'refs' => $arrayofref, 'refsopened' => $arrayofrefopened); // 'opened' is 'amount incl taxes' > 0
 		} else {
 			dol_syslog("Sql error ".$this->db->lasterror, LOG_ERR);
 			return array();

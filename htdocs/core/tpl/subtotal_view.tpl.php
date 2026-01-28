@@ -69,6 +69,10 @@ if ($line->qty > 0) { ?>
 		if (array_key_exists('titleforcepagebreak', $line_options)) {
 			echo '&nbsp;' . img_picto($langs->trans("ForcePageBreak"), 'file');
 		}
+		// Handling td for ref supplier
+		if (in_array($object->element, ['supplier_proposal'])) {
+			echo '<td></td>';
+		}
 		?>
 	</td>
 	<td class="linecolvat nowrap right">
@@ -200,6 +204,10 @@ if ($line->qty > 0) { ?>
 
 	// Handling colspan if PRODUCT_USE_UNITS conf is enabled
 	if (getDolGlobalString('PRODUCT_USE_UNITS')) {
+		$colspan += 1;
+	}
+	// Handling colspan if supplier object
+	if (in_array($object->element, ['supplier_proposal'])) {
 		$colspan += 1;
 	}
 	?>

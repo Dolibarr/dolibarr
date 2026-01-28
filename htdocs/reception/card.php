@@ -235,6 +235,9 @@ if (empty($reshook)) {
 	// Reopen
 	if ($action == 'reopen' && $permissiontoadd) {	// Test on permissions not required here
 		$result = $object->reOpen();
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 	// Confirm back to draft status
@@ -2320,8 +2323,6 @@ if ($action == 'create' && $permissiontoadd) {
 
 	print '<div class="clearboth"></div>';
 
-	print dol_get_fiche_end();
-
 	/*
 	* Lines of simple reception
 	*/
@@ -2870,7 +2871,7 @@ if ($action == 'create' && $permissiontoadd) {
 	if ($action != 'presend' && $action != 'editline') {
 		print '<div class="fichecenter"><div class="fichehalfleft">';
 
-		$objectref = dol_sanitizeFileName($object->ref);
+		$objectref = dol_sanitizeFileName((string) $object->ref);
 		$filedir = $conf->reception->dir_output."/".$objectref;
 
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;

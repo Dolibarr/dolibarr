@@ -24,4 +24,3 @@ ALTER TABLE llx_hrm_job ADD INDEX idx_hrm_job_label (label);
 --ALTER TABLE llx_hrm_job ADD UNIQUE INDEX uk_hrm_job_fieldxy(fieldx, fieldy);
 
 --ALTER TABLE llx_hrm_job ADD CONSTRAINT llx_hrm_job_fk_field FOREIGN KEY (fk_field) REFERENCES llx_hrm_myotherobject(rowid);
-

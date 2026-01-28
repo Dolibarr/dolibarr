@@ -29,6 +29,7 @@
  * @var User $user
  *
  * @var string $action
+ * @var string $backtopage
  * @var string $upload_dir
  * @var string $upload_dirold
  * @var string $confirm
