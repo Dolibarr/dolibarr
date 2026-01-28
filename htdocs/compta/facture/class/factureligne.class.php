@@ -448,7 +448,7 @@ class FactureLigne extends CommonInvoiceLine
 		if (empty($this->fk_prev_id)) {
 			$this->fk_prev_id = 0;
 		}
-		if (!isset($this->situation_percent) || $this->situation_percent > 100 || (string) $this->situation_percent == '') {
+		if (empty($this->situation_percent) || $this->situation_percent > 100) {
 			$this->situation_percent = 100;
 		}
 
@@ -686,7 +686,7 @@ class FactureLigne extends CommonInvoiceLine
 		if (empty($this->fk_parent_line)) {
 			$this->fk_parent_line = 0;
 		}
-		if (!isset($this->situation_percent) || $this->situation_percent > 100 || (string) $this->situation_percent == '') {
+		if (empty($this->situation_percent) || $this->situation_percent > 100) {
 			$this->situation_percent = 100;
 		}
 		if (empty($this->pa_ht)) {
