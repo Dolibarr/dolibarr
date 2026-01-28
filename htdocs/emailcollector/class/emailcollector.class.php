@@ -4193,6 +4193,7 @@ class EmailCollector extends CommonObject
 		$quality = $tmparraysize['quality'];
 
 		file_put_contents($destdir.'/'.$filename, $content);
+		dolChmod($destdir.'/'.$filename);
 		if (image_format_supported($filename) == 1) {
 			// Create thumbs
 			vignette($destdir.'/'.$filename, $maxwidthsmall, $maxheightsmall, '_small', $quality, "thumbs");
