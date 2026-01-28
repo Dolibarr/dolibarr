@@ -140,16 +140,16 @@ function isALNEQualifiedVersion($ignoredev = 0, $ignoremodule = 0)
 	}
 
 	if (!$ignoredev && preg_match('/\-/', DOL_VERSION)) {	// This is not a stable version
-		return false;
+		return '';
 	}
 	if ($mysoc->country_code != 'FR') {
-		return false;
+		return '';
 	}
 	if (!defined('CERTIF_LNE') || (int) constant('CERTIF_LNE') === 0) {
-		return false;
+		return '';
 	}
 	if (!$ignoremodule && !isModEnabled('blockedlog')) {
-		return false;
+		return '';
 	}
 
 	return ($ignoredev ? '' : 'NOT_BETA+').'FR+CERTIF_LNE_IS_1'.($ignoremodule ? '' : '+MODENABLED');	// all conditions are ok to become a LNE certified version
