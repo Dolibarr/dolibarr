@@ -1002,7 +1002,7 @@ class AdherentType extends CommonObject
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 *	Returns full DN descriptionf rom the LDAP directory for the object
+	 *	Return string DN complete into LDAP annuary for object
 	 *
 	 *	@param	array<string,mixed>	$info	Info array loaded by _load_ldap_info
 	 *	@param	int<0,2>	$mode	0=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)

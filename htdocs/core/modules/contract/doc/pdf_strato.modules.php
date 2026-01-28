@@ -622,7 +622,7 @@ class pdf_strato extends ModelePDFContract
 			$pdf->RoundedRect($this->marge_gauche, $posy + 5, $posmiddle - $this->marge_gauche - 5, 20, $this->corner_radius, '1234', 'D');
 		}
 
-		if (!getDolGlobalString('CONTRACT_HIDE_THIRPARTY_SIGNATURE_SECTION_PDF')) {
+		if (!getDolGlobalString('CONTRACT_HIDE_THIRPARTY_SIGNATURE_SECTION_PDF') && is_object($this->recipient)) {
 			$pdf->SetXY($posmiddle + 5, $posy);
 			$recipientname = pdfBuildThirdpartyName($this->recipient, $outputlangs);
 			$pdf->MultiCell($this->page_largeur - $this->marge_droite - $posmiddle - 5, 5, $outputlangs->transnoentities("ContactNameAndSignature", $recipientname), 0, 'L', false);
@@ -810,7 +810,10 @@ class pdf_strato extends ModelePDFContract
 				$this->recipient = $object->thirdparty;
 			}
 
-			$recipientname = pdfBuildThirdpartyName($this->recipient, $outputlangs);
+			$recipientname = '';
+			if ($this->recipient instanceOf Contact || $this->recipiet instanceOf Societe) {
+				$recipientname = pdfBuildThirdpartyName($this->recipient, $outputlangs);
+			}
 
 			$mode = 'target';
 			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, (isset($object->contact) ? $object->contact : ''), ($usecontact ? 1 : 0), $mode, $object);
