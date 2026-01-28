@@ -179,7 +179,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 
 	if (!$db->connected) {
 		print '<tr><td colspan="4">'.$langs->trans("ErrorFailedToConnectToDatabase", $conf->db->name).'</td><td class="right">'.$langs->trans('Error').'</td></tr>';
-		dolibarr_install_syslog('upgrade2: failed to connect to database :'.$conf->db->name.' on '.$conf->db->host.' for user '.$conf->db->user, LOG_ERR);
+		dolibarr_install_syslog('upgrade2: failed to connect to database :'.(string) $conf->db->name.' on '.(string) $conf->db->host.' for user '.(string) $conf->db->user, LOG_ERR);
 		$error++;
 	}
 
