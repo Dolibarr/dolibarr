@@ -3618,11 +3618,11 @@ class pdf_octopus extends ModelePDFFactures
 		$ret['total_a_payer'] = $ret['TTC'] - $retenue_garantie;
 		$ret['retenue_garantie'] = $retenue_garantie;
 
-		//Clean up before keep in "cache"
-		if (array_key_exists('derniere_situation', )) {
-			unset(['derniere_situation']->db);
-			unset(['derniere_situation']->fields);
-			unset(['derniere_situation']->lines);
+		// Clean up before keep in "cache"
+		if (array_key_exists('derniere_situation', $ret)) {
+			unset($ret['derniere_situation']->db);
+			unset($ret['derniere_situation']->fields);
+			unset($ret['derniere_situation']->lines);
 		}
 
 		// print "<p>Store to cache $id : " . json_encode($_cache_btpProrataGetInvoiceAmounts[$id]) . "</p>";
