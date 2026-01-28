@@ -440,12 +440,12 @@ function conf($dolibarr_main_document_root)
 	}
 
 	$conf = new Conf();
-	$conf->db->type = trim($dolibarr_main_db_type);
-	$conf->db->host = trim($dolibarr_main_db_host);
-	$conf->db->port = trim($dolibarr_main_db_port);
-	$conf->db->name = trim($dolibarr_main_db_name);
-	$conf->db->user = trim($dolibarr_main_db_user);
-	$conf->db->pass = (empty($dolibarr_main_db_pass) ? '' : trim($dolibarr_main_db_pass));
+	$conf->db->type = trim((string) $dolibarr_main_db_type);
+	$conf->db->host = trim((string) $dolibarr_main_db_host);
+	$conf->db->port = trim((string) $dolibarr_main_db_port);
+	$conf->db->name = trim((string) $dolibarr_main_db_name);
+	$conf->db->user = trim((string) $dolibarr_main_db_user);
+	$conf->db->pass = (empty($dolibarr_main_db_pass) ? '' : trim((string) $dolibarr_main_db_pass));
 
 	// Mysql driver support has been removed in favor of mysqli
 	if ($conf->db->type == 'mysql') {
