@@ -190,8 +190,6 @@ function saveAttachment($path, $filename, $data)
 		$i++;
 	}
 	file_put_contents($filepath, $data);
-	dolChmod($filepath);
-
 	return $filepath;
 }
 
