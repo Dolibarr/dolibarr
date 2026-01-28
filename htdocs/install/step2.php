@@ -35,6 +35,7 @@ include 'inc.php';
  * @var Translate $langs
  *
  * @var string	$dolibarr_main_document_root
+ * @var string	$dolibarr_main_db_type
  */
 
 require_once $dolibarr_main_document_root.'/core/class/conf.class.php';
