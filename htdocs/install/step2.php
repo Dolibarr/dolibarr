@@ -314,7 +314,7 @@ if ($action == "set") {		// Test on permission not required. Already managed by 
 				while (!feof($fp)) {
 					$buf = fgets($fp, 4096);
 
-					// Special case of lines allowed for some version only
+					// Special case of lines allowed for some versions only
 					// MySQL
 					if ($choix == 1 && preg_match('/^--\sV([0-9\.]+)/i', $buf, $reg)) {
 						$versioncommande = explode('.', $reg[1]);

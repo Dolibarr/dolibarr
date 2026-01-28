@@ -2752,7 +2752,7 @@ class AccountancyExport
 			$tab[] = substr($date, 3, 2);
 			$tab[] = substr($date, 0, 2);
 			$tab[] = $line->doc_ref;
-			//Conversion de chaine UTF8 en Latin9
+			// Convert the UTF-8 string in latin9
 			$tab[] = mb_convert_encoding(str_replace(' - Compte auxiliaire', '', $line->label_operation), "Windows-1252", 'UTF-8');
 
 			//Calcul de la longueur des numéros de comptes

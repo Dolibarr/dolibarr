@@ -2340,7 +2340,7 @@ if ($action == 'create' && $usercancreate) {
 			print $form->select_contact($soc->id, $contactid, 'contactid', 1, empty($srccontactslist) ? "" : $srccontactslist, '', 1, 'maxwidth300 widthcentpercentminusx', true);
 			print '</td></tr>';
 
-			// Ligne info remises tiers
+			// Line with information on Third Party Discounts
 			print '<tr><td>' . $langs->trans('Discounts') . '</td><td>';
 
 			$absolute_discount = $soc->getAvailableDiscounts();

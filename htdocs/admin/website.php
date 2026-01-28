@@ -255,7 +255,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 
 		// Modify entry
 		$sql = "UPDATE ".$tabname[$id]." SET ";
-		// Modifie valeur des champs
+		// Modify the field values
 		if ($tabrowid[$id] && !in_array($tabrowid[$id], $listfieldmodify)) {
 			$sql .= $tabrowid[$id]."=";
 			$sql .= "'".$db->escape((string) $rowid)."', ";
@@ -450,7 +450,7 @@ if ($action == 'delete') {
  * Show website list
  */
 if ($id) {
-	// Complete requete recherche valeurs avec critere de tri
+	// Complete the request - lookup values with sort condition
 	$sql = $tabsql[$id];
 	$sql .= $db->order($sortfield, $sortorder);
 	$sql .= $db->plimit($limit + 1, $offset);
@@ -473,8 +473,7 @@ if ($id) {
 				continue;
 			}
 
-			// Determine le nom du champ par rapport aux noms possibles
-			// dans les dictionnaires de donnees
+			// Get the field name based on the names available in the data dictionnaries
 			$valuetoshow = ucfirst($fieldlist[$field]); // By default
 			$valuetoshow = $langs->trans($valuetoshow); // try to translate
 			$css = '';

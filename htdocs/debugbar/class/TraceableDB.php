@@ -314,7 +314,7 @@ class TraceableDB extends DoliDB
 	/**
 	 * Get last ID after an insert INSERT
 	 *
-	 * @param	string 	$tab 		Table name concerned by insert. Ne sert pas sous MySql mais requis pour compatibilite avec Postgresql
+	 * @param	string 	$tab 		Table name concerned by insert. Needed for Postgresql compatibility (not useful for MySql)
 	 * @param   string 	$fieldid 	Field name
 	 * @return  int                	Id of row
 	 */

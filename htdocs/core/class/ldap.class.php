@@ -1239,7 +1239,7 @@ class Ldap
 					$keyattributelower = strtolower($attributeArray[$j]);
 					//print " Param ".$attributeArray[$j]."=".$info[$i][$keyattributelower][0]."<br>\n";
 
-					//permet de recuperer le SID avec Active Directory
+					// Enables getting the SID using Active Directory
 					if ($this->serverType == "activedirectory" && $keyattributelower == "objectsid") {
 						$objectsid = $this->getObjectSid($recordid);
 						$fulllist[$recordid][$attributeArray[$j]] = $objectsid;
@@ -1577,15 +1577,15 @@ class Ldap
 	 */
 	public function convertTime($value)
 	{
-		$dateLargeInt = $value; // nano secondes depuis 1601 !!!!
+		$dateLargeInt = $value; // nano secondes since the year 1601 !!!!
 		if (PHP_INT_SIZE < 8) {
 			// 32 bit platform
-			$secsAfterADEpoch = (float) $dateLargeInt / (10000000.); // secondes depuis le 1 jan 1601
+			$secsAfterADEpoch = (float) $dateLargeInt / (10000000.); // seconds since 1 jan 1601
 		} else {
 			// At least 64 bit platform
-			$secsAfterADEpoch = (int) $dateLargeInt / (10000000); // secondes depuis le 1 jan 1601
+			$secsAfterADEpoch = (int) $dateLargeInt / (10000000); // seconds since 1 jan 1601
 		}
-		$ADToUnixConvertor = ((1970 - 1601) * 365.242190) * 86400; // UNIX start date - AD start date * jours * secondes
+		$ADToUnixConvertor = ((1970 - 1601) * 365.242190) * 86400; // UNIX start date - AD start date * days * seconds
 		$unixTimeStamp = intval($secsAfterADEpoch - $ADToUnixConvertor); // Unix time stamp
 		return $unixTimeStamp;
 	}
