@@ -144,7 +144,7 @@ if ($object_statut != '') {
 	$search_status = $object_statut;
 }
 
-// Nomber of line to choose predefined product/service from
+// Number of line to choose predefined product/service from
 $NBLINES = 4;
 
 // Security check

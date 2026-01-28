@@ -2254,7 +2254,7 @@ function migrate_commande_expedition($db, $langs, $conf)
 }
 
 /**
- * Correspondance of the deliveries and the Customer Orders in the table llx_co_liv
+ * Correspondence of the deliveries and the Customer Orders in the table llx_co_liv
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs

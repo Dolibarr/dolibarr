@@ -473,7 +473,7 @@ if ($id) {
 				continue;
 			}
 
-			// Get the field name based on the names available in the data dictionnaries
+			// Get the field name based on the names available in the data dictionaries
 			$valuetoshow = ucfirst($fieldlist[$field]); // By default
 			$valuetoshow = $langs->trans($valuetoshow); // try to translate
 			$css = '';
