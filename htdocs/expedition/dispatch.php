@@ -496,6 +496,8 @@ if ($object->id > 0 || !empty($object->ref)) {
 	print '<table class="border tableforfield centpercent">';
 
 	// Linked documents
+
+	// @phpstan-ignore-next-line
 	if (($objectsrc instanceOf Commande) && $object->origin_object->id && isModEnabled('order')) {
 		print '<tr><td>';
 		print $langs->trans("RefOrder").'</td>';
@@ -504,6 +506,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 		print "</td>\n";
 		print '</tr>';
 	}
+	// @phpstan-ignore-next-line
 	if (($objectsrc instanceOf Propal) && $object->origin_object->id && isModEnabled("propal")) {
 		print '<tr><td>';
 		print $langs->trans("RefProposal").'</td>';
