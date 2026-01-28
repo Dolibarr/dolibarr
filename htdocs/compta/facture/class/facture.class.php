@@ -2728,9 +2728,7 @@ class Facture extends CommonInvoice
 		if (isset($this->subtype)) {
 			$this->subtype = (int) $this->subtype;
 		}
-		if (isset($this->ref)) {
-			$this->ref = trim($this->ref);
-		}
+		$this->ref = trim($this->ref);
 		if (isset($this->ref_ext)) {
 			$this->ref_ext = trim($this->ref_ext);
 		}
@@ -2776,7 +2774,7 @@ class Facture extends CommonInvoice
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET";
-		$sql .= " ref=".(isset($this->ref) ? "'".$this->db->escape($this->ref)."'" : "null").",";
+		$sql .= " ref='".$this->db->escape($this->ref)."',";
 		$sql .= " ref_ext=".(isset($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null").",";
 		$sql .= " type=".(isset($this->type) ? $this->db->escape((string) $this->type) : "null").",";
 		$sql .= " subtype=".(isset($this->subtype) ? (int) $this->subtype : "null").",";
