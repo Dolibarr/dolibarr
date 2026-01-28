@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2016	Olivier Geffroy			<jeff@jeffinfo.com>
- * Copyright (C) 2013-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2013-2026	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2016-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
@@ -439,7 +439,9 @@ if ($resql) {
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+	print '<input type="hidden" name="page_y" value="">';
 
 	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 	print_barre_liste($langs->trans('ListAccounts'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'accounting_account', 0, $newcardbutton, '', $limit, 0, 0, 1);
@@ -841,11 +843,11 @@ if ($resql) {
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td class="center nowraponall">';
 			// if ($permissiontoadd) { // test is always true
-			print '<a class="editfielda" href="./card.php?action=update&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$param).'">';
+			print '<a class="editfielda" href="./card.php?action=update&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$param.'&page='.$page).'">';
 			print img_edit();
 			print '</a>';
 			print '&nbsp;';
-			print '<a class="marginleftonly" href="./card.php?action=delete&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$param).'">';
+			print '<a class="marginleftonly" href="./card.php?action=delete&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$param.'&page='.$page).'">';
 			print img_delete();
 			print '</a>';
 			print '&nbsp;';

@@ -657,7 +657,7 @@ class Documents extends DolibarrApi
 				throw new RestException(404, 'Category not found');
 			}
 
-			$upload_dir = $conf->categorie->multidir_output[$object->entity ?? $conf->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'category').$object->id."/photos/".dol_sanitizeFileName($object->ref);
+			$upload_dir = $conf->categorie->multidir_output[$object->entity ?? $conf->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'category').$object->id."/photos/".dol_sanitizeFileName((string) $object->ref);
 		} elseif ($modulepart == 'ecm') {
 			throw new RestException(500, 'Modulepart Ecm not implemented yet.');
 			// require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
@@ -726,7 +726,7 @@ class Documents extends DolibarrApi
 				throw new RestException(500, 'Error while fetching project for task');
 			}
 
-			$upload_dir = $conf->project->dir_output . "/" . dol_sanitizeFileName($object->project->ref) . "/" . dol_sanitizeFileName((string) $object->ref);
+			$upload_dir = $conf->project->dir_output . "/" . dol_sanitizeFileName((string) $object->project->ref) . "/" . dol_sanitizeFileName((string) $object->ref);
 		} elseif ($modulepart == 'mrp') {
 			$modulepart = 'mrp';
 			require_once DOL_DOCUMENT_ROOT . '/mrp/class/mo.class.php';
@@ -937,7 +937,7 @@ class Documents extends DolibarrApi
 					$project_result = $object->fetchProject();
 
 					if ($project_result >= 0) {
-						$tmpreldir = dol_sanitizeFileName($object->project->ref).'/';
+						$tmpreldir = dol_sanitizeFileName((string) $object->project->ref).'/';
 					}
 				} else {
 					throw new RestException(500, 'Error while fetching Task '.$ref);
