@@ -308,6 +308,16 @@ class modHoliday extends DolibarrModules
 			'd.date_create' => 'DateCreation*'
 		);
 
+		// Import of leave balance
+		$r++;
+		$this->import_code[$r] = $this->rights_class.'_'.$r;
+		$this->import_label[$r] = "ListeLB"; // Translation key
+		$this->import_icon[$r] = 'holiday';
+		$this->import_tables_array[$r] = array('d' => MAIN_DB_PREFIX.'holiday_users');
+		$this->import_fields_array[$r] = array(
+			'd.fk_user' => "Employee*", 'd.nb_holiday' => "LeaveBalance*", 'd.fk_type' => "LeaveType*"
+		);
+
 		$keyforselect = 'holiday';
 		$keyforelement = 'holiday';
 		$keyforaliasextra = 'extra';

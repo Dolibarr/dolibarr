@@ -215,7 +215,8 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 			$obj = $db->fetch_object($res);
 			if ($obj) {
 				$firstid = $obj->rowid;
-				$previoushash = $block_static->getPreviousHash(0, $firstid);
+				$tmparray = $block_static->getPreviousHash(0, $firstid);
+				$previoushash = $tmparray['previoushash'];
 			} else {	// If not data found for filter, we do not need previoushash neither firstid
 				$firstid = '';
 				$previoushash = 'nodata';
@@ -270,7 +271,7 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 		$resql = $db->query($sql);
 		if ($resql) {
 			// Print line with title
-			fwrite($fh, "BEGIN - date=".$yearmonthdateofexport." - period=".$yearmonthtoexport.($periodnotcomplete ? '-'.$suffixperiod : '')." - formatexport=".$formatexport." - user=".$user->getFullName($langs)
+			fwrite($fh, "BEGIN - regnumber=".dol_trunc($registrationnumber, 10)." - date=".$yearmonthdateofexport." - period=".$yearmonthtoexport.($periodnotcomplete ? '-'.$suffixperiod : '')." - formatexport=".$formatexport." - user=".$user->getFullName($langs)
 				.';'.$langs->transnoentities('Id')
 				.';'.$langs->transnoentities('DateCreation')
 				.';'.$langs->transnoentities('Action')
@@ -560,8 +561,13 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 		$block_static->module_source = '*';
 		// if an old format was found, we do not have reliable amount excluding tax for lifetime value, we do not show it
 
+		<<<<<<< HEAD
+		$block_static->amounts_taxexcl = ($foundoldformat ? '' : $totalhtamountlifetime['BILL_VALIDATE']);
+		$block_static->amounts = $totalamountlifetime['BILL_VALIDATE'];
+		=======
 		$block_static->amounts_taxexcl = ($foundoldformat ? '' : array_sum($totalhtamountlifetime['BILL_VALIDATE']));
 		$block_static->amounts = array_sum($totalamountlifetime['BILL_VALIDATE']);
+		>>>>>>> branch '23.0' of git@github.com:Dolibarr/dolibarr.git
 		// if an old format was found, we do not have reliable VAT amount for lifetime value, we do not show it
 		$block_static->ref_object = ($foundoldformat ? '' : $langs->transnoentitiesnoconv("VAT").': '.($block_static->amounts - $block_static->amounts_taxexcl));
 		$block_static->date_object = '';

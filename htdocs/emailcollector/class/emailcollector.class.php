@@ -1025,24 +1025,25 @@ class EmailCollector extends CommonObject
 									}
 								}
 							}
+
 							if (preg_match('/^options_/', $tmpproperty)) {
-								$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> found '.dol_escape_htmltag(dol_trunc($object->array_options[preg_replace('/^options_/', '', $tmpproperty)], 128));
+								$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> extract '.dol_escape_htmltag(dol_trunc($object->array_options[preg_replace('/^options_/', '', $tmpproperty)], 128)).' so object extrafield '.dol_escape_htmltag($tmpproperty).' is set.';
 							} else {
 								if (property_exists($object, $tmpproperty)) {
-									$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> found '.dol_escape_htmltag(dol_trunc($object->$tmpproperty, 128));
+									$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> extract '.dol_escape_htmltag(dol_trunc($object->$tmpproperty, 128)).' so object property '.dol_escape_htmltag($tmpproperty).' is set.';
 								} else {
-									$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> found '.dol_escape_htmltag(dol_trunc($tmp[$tmpproperty], 128));
+									$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> extract '.dol_escape_htmltag(dol_trunc($tmp[$tmpproperty], 128)).' so var '.dol_escape_htmltag($tmpproperty).' is set.';
 								}
 							}
 						} else {
 							// Regex not found
 							if (property_exists($object, $tmpproperty)) {
 								$object->$tmpproperty = null;
+								$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> not found, so object property '.dol_escape_htmltag($tmpproperty).' is set to null.';
 							} else {
 								$tmp[$tmpproperty] = null;
+								$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> not found, so var '.dol_escape_htmltag($tmpproperty).' is set to null.';
 							}
-
-							$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> not found, so property '.dol_escape_htmltag($tmpproperty).' is set to null.';
 						}
 					} else {
 						// Nothing can be done for this param
@@ -1071,7 +1072,7 @@ class EmailCollector extends CommonObject
 						complete_substitutions_array($substitutionarray, $outputlangs, $object);
 						$matcharray = array();
 						preg_match_all('/__([a-z0-9]+(?:_[a-z0-9]+)?)__/i', $valuetouse, $matcharray);
-						if (is_array($matcharray[1])) {    // $matcharray[1] is an array with the list of substitution key found without the __X__ syntax into the SET entry
+						if (is_array($matcharray[1])) {    // $matcharray[1] is an array with the list of all substitution keys found with the __X__ syntax into the SET entry.
 							foreach ($matcharray[1] as $keytoreplace) {
 								if ($keytoreplace) {
 									if (preg_match('/^options_/', $keytoreplace)) {
@@ -1858,6 +1859,7 @@ class EmailCollector extends CommonObject
 						}
 					}
 				}
+				// If we DON'T want email if there is a trackid
 				if ($searchfilternodoltrackid > 0) {
 					$referencesForFilter = $headers['References'] ?? '';
 					if (!empty($headers['References']) && !empty($headers['In-Reply-To'])) {
@@ -2094,7 +2096,7 @@ class EmailCollector extends CommonObject
 					}
 					$subject = $this->decodeSMTPSubject((string) ($overview['subject'] ?? ''));
 				} else {
-					$fromstring = $overview[0]->from;
+					$fromstring = (string) $overview[0]->from;
 					$replytostring = (!empty($overview['in_reply-to']) ? $overview['in_reply-to'] : (!empty($headers['Reply-To']) ? $headers['Reply-To'] : "")) ;
 
 					$sender = !empty($overview[0]->sender) ? $overview[0]->sender : '';
@@ -2102,7 +2104,7 @@ class EmailCollector extends CommonObject
 					$sendtocc = !empty($overview[0]->cc) ? $overview[0]->cc : '';
 					$sendtobcc = !empty($overview[0]->bcc) ? $overview[0]->bcc : '';
 					$dateemail = dol_stringtotime((string) $overview[0]->udate, 'gmt');
-					$subject = $overview[0]->subject;
+					$subject = (string) $overview[0]->subject;
 				}
 
 				if (!empty($searchfilterexcludesubjectarray)) {
@@ -2687,10 +2689,11 @@ class EmailCollector extends CommonObject
 
 									if ($result < 0) {
 										$errorforactions++;
-										$this->error = 'Error when getting thirdparty with name '.$nametouseforthirdparty.' (may be 2 record exists with same name ?)';
+										$this->error = 'Error when getting thirdparty with name '.((string) $nametouseforthirdparty).', alternative name '.((string) $namealiastouseforthirdparty).' and email '.$emailtouseforthirdparty.' (may be 2 record exists with same name ?)';
 										$this->errors[] = $this->error;
 										break;
-									} elseif ($result == 0) {	// No thirdparty found
+									}
+									if ($result == 0) {	// No thirdparty found
 										if ($operation['type'] == 'loadthirdparty') {
 											dol_syslog("Third party with id=".$idtouseforthirdparty." email=".$emailtouseforthirdparty." name=".$nametouseforthirdparty." name_alias=".$namealiastouseforthirdparty." was not found");
 
@@ -2752,7 +2755,7 @@ class EmailCollector extends CommonObject
 												}
 											}
 										}
-									} else {	// $result > 0 is ID of thirdparty
+									} else {	// if $result > 0, it is ID of thirdparty
 										dol_syslog("One and only one existing third party has been found");
 
 										$thirdpartystatic->fetch($result);
@@ -2776,6 +2779,7 @@ class EmailCollector extends CommonObject
 									if (!empty($contact_static->email) && $contact_static->email != $from) {
 										$from = $contact_static->email;
 									}
+									$from = (string) $from;
 
 									$from = (string) $from;
 
@@ -4037,7 +4041,7 @@ class EmailCollector extends CommonObject
 			$subject = iconv_mime_decode($subject, ICONV_MIME_DECODE_CONTINUE_ON_ERROR, 'UTF-8');
 		}
 
-		return $subject;
+		return (string) $subject;
 	}
 
 	/**

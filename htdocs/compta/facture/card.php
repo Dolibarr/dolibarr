@@ -1341,7 +1341,7 @@ if (empty($reshook)) {
 					}
 				}
 
-				// NOTE: Pb with situation invoice
+				// NOTE: Pb with situation invoice when INVOICE_USE_SITUATION=1 (legacy mode)
 				// NOTE: fields total on situation invoice are stored as cumulative values on total of lines (bad) but delta on invoice total
 				// NOTE: fields total on credit note are stored as delta both on total of lines and on invoice total (good)
 				// NOTE: fields situation_percent on situation invoice are stored as cumulative values on lines (bad)
@@ -2797,6 +2797,7 @@ if (empty($reshook)) {
 			}
 
 			if (!$error) {
+				/* Disable strange code that use $lines[$i] that is not defined
 				'@phan-var-force CommonObjectLine[] $lines';
 				// Add batchinfo if the detail_batch array is defined
 				if (isModEnabled('productbatch') && !empty($lines[$i]->detail_batch) && is_array($lines[$i]->detail_batch) && getDolGlobalString('INVOICE_INCUDE_DETAILS_OF_LOTS_SERIALS')) {
@@ -2805,6 +2806,7 @@ if (empty($reshook)) {
 						$desc .= ' '.$langs->trans('Batch').' '.$batchline->batch.' '.$langs->trans('printQty', $batchline->qty).' ';
 					}
 				}
+				*/
 
 				// Insert line
 				$situation_percent = (GETPOSTISSET('progress') ? GETPOSTINT('progress') : 100);
@@ -3315,6 +3317,7 @@ if (empty($reshook)) {
 		}
 		if (GETPOST('all_progress') != "") {
 			$all_progress = GETPOSTINT('all_progress');
+			if ($all_progress > 100) $all_progress = 100;
 			foreach ($object->lines as $line) {
 				if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
 					$percent = $line->getAllPrevProgress($object->id);
@@ -3326,7 +3329,7 @@ if (empty($reshook)) {
 					setEventMessages($mesg, null, 'warnings');
 					$result = -1;
 				} else {
-					$object->update_percent($line, GETPOSTINT('all_progress'), false);
+					$object->update_percent($line, $all_progress, false);
 				}
 			}
 			$object->update_price(1);
@@ -5090,6 +5093,7 @@ if ($action == 'create') {
 		if ($objectidnext && $statusreplacement == 0) {
 			print '<div class="error">'.$langs->trans("ErrorCantCancelIfReplacementInvoiceNotValidated").'</div>';
 		} else {
+			$close = array();
 			// Code
 			$close[1]['code'] = 'badcustomer';
 			$close[2]['code'] = 'abandon';
@@ -5175,12 +5179,12 @@ if ($action == 'create') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&paiement_id='.$payment_id, $langs->trans('DeletePayment'), $langs->trans('ConfirmDeletePayment'), 'confirm_delete_paiement', '', 'no', 1);
 	}
 
-	// Confirmation de la suppression d'une ligne produit
+	// Confirmation of deletion of a product line
 	if ($action == 'ask_deleteline') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 'no', 1);
 	}
 
-	// Confirmation de la suppression d'une ligne subtotal
+	// Confirmation of deletion of a subtotal line
 	if ($action == 'ask_subtotal_deleteline') {
 		$langs->load("subtotals");
 		$title = "DeleteSubtotalLine";
@@ -6596,7 +6600,7 @@ if ($action == 'create') {
 					$langs->load("contracts");
 
 					if ($usercancreatecontract) {
-						print '<a class="butAction" href="' . DOL_URL_ROOT . '/contrat/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans('AddContract') . '</a>';
+						print '<a class="butAction" href="' . DOL_URL_ROOT . '/contrat/card.php?action=create&origin=' . $object->element . '&originid=' . $object->id . '&socid=' . $object->socid . '">' . $langs->trans('AddContract') . '</a>';
 					}
 				}
 			}
@@ -6655,7 +6659,7 @@ if ($action == 'create') {
 			}
 
 			// Request a direct debit order
-			if ($object->status > Facture::STATUS_DRAFT && $object->paye == 0 && $num == 0) {
+			if ($object->status > Facture::STATUS_DRAFT && $object->paye == 0) {
 				if ($resteapayer > 0) {
 					if ($usercancreatewithdrarequest) {
 						if (!$objectidnext && $object->close_code != 'replaced') { 				// Not replaced by another invoice
@@ -6819,7 +6823,7 @@ if ($action == 'create') {
 			}
 
 			// Create next situation invoice
-			if ($usercancreate && ($object->type == 5) && ($object->status == 1 || $object->status == 2)) {
+			if ($usercancreate && ($object->type == Facture::TYPE_SITUATION) && ($object->status == 1 || $object->status == 2)) {
 				if ($object->is_last_in_cycle() && $object->situation_final != 1) {
 					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=create&type=5&origin=facture&originid='.$object->id.'&socid='.$object->socid.'" >'.$langs->trans('CreateNextSituationInvoice').'</a>';
 				} elseif (!$object->is_last_in_cycle()) {

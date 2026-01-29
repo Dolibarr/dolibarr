@@ -14,6 +14,7 @@
  * Copyright (C) 2022-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Nick Fragoulis
+ * Copyright (C) 2026		Mathieu Moulin			<mathieu@iprospective.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1849,7 +1850,7 @@ class Reception extends CommonObject
 	/**
 	 *	Set the planned delivery date
 	 *
-	 *	@param      User			$user        		Object utilisateur qui modifie
+	 *	@param      User			$user        		Object User who makes the update
 	 *	@param      integer 		$delivery_date     Delivery date
 	 *	@return     int         						Return integer <0 if KO, >0 if OK
 	 */
