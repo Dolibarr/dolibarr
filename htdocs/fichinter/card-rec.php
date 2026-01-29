@@ -221,7 +221,7 @@ if ($action == 'add' && $permissiontoadd) {
 	$newinter->note_private = $object->note_private;
 	$newinter->note_public = $object->note_public;
 
-	// on créer un nouvelle intervention
+	// Create a new intervention
 	$extrafields->fetch_name_optionals_label($newinter->table_element);
 
 	$array_options = $extrafields->getOptionalsFromPost($newinter->table_element);
