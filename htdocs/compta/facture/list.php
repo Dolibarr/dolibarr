@@ -3087,7 +3087,7 @@ if ($num > 0) {
 			if (!empty($arrayfields['f.dispute_status']['checked'])) {
 				print '<td class="nowrap center">';
 				if ($facturestatic->dispute_status) {
-					$liststatus = array('0' => "None", '1' => "DisputeOpen", '8' => "DisputeWon", '9' => "DisputeLost");
+					$liststatus = array('0' => "None", '1' => "DisputeOpen", '8' => "DisputeLost", '9' => "DisputeWon");
 					print $langs->trans($liststatus[$facturestatic->dispute_status]);
 				}
 				print "</td>";
