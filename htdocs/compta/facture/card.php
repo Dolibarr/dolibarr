@@ -1365,10 +1365,10 @@ if (empty($reshook)) {
 							}
 
 							if ($facture_source->isSituationInvoice()) {
-								$line->fk_prev_id = $line->id;
 								if (getDolGlobalString('INVOICE_USE_SITUATION') == 2) {
+									$line->fk_prev_id = $line->id;
 									$line->situation_percent = -$line->situation_percent;
-								} else { // old INVOICE_USE_SITUATION=1 legacy which is bugged
+								} else { // old INVOICE_USE_SITUATION=1 legacy wich is bugged
 									$source_fk_prev_id = $line->fk_prev_id; // temporary storing situation invoice fk_prev_id
 									$line->fk_prev_id  = $line->id; // The new line of the new credit note we are creating must be linked to the situation invoice line it is created from
 
