@@ -3108,16 +3108,30 @@ if (empty($reshook)) {
 
 		if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->situation_cycle_ref > 0) {
 			// in case of situation credit note
-			if ($progress - $percent >= 0) {
-				$mesg = $langs->trans("CantBeNullOrPositive");
-				setEventMessages($mesg, null, 'warnings');
-				$error++;
-				$result = -1;
-			} elseif ($progress < 0) {
-				$mesg = $langs->trans("CantBeLessThanZero");
-				setEventMessages($mesg, null, 'warnings');
-				$error++;
-				$result = -1;
+			if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+				if ($progress - $percent >= 0) {
+					$mesg = $langs->trans("CantBeNullOrPositive");
+					setEventMessages($mesg, null, 'warnings');
+					$error++;
+					$result = -1;
+				} elseif ($progress < 0) {
+					$mesg = $langs->trans("CantBeLessThanZero");
+					setEventMessages($mesg, null, 'warnings');
+					$error++;
+					$result = -1;
+				}
+			} else {
+				if ($progress >= 0) {
+					$mesg = $langs->trans("CantBeNullOrPositive");
+					setEventMessages($mesg, null, 'warnings');
+					$error++;
+					$result = -1;
+				} elseif ($progress < $percent) {
+					$mesg = '<div class="warning">'.$langs->trans("CantBeLessThanMinPercent").'</div>';
+					setEventMessages($mesg, null, 'warnings');
+					$error++;
+					$result = -1;
+				}
 			}
 		}
 
