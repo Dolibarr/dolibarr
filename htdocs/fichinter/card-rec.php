@@ -10,7 +10,7 @@
  * Copyright (C) 2016-2026  Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -225,7 +225,7 @@ if ($action == 'add' && $permissiontoadd) {
 	$newinter->note_private = $object->note_private;
 	$newinter->note_public = $object->note_public;
 
-	// on créer un nouvelle intervention
+	// Create a new intervention
 	$extrafields->fetch_name_optionals_label($newinter->table_element);
 
 	$array_options = $extrafields->getOptionalsFromPost($newinter->table_element);
@@ -240,8 +240,9 @@ if ($action == 'add' && $permissiontoadd) {
 			$newinter->addline($user, $newfichinterid, $line->desc, $line->date, $line->duree, array());
 		}
 
-		// update number of generated intervention
+		// Update the number of interventions created from the template (model)
 		$object->updateNbGenDone();
+		// Redirect to the newly created interventions report
 		header('Location: '.DOL_URL_ROOT.'/fichinter/card.php?id='.$newfichinterid);
 		exit;
 	} else {
@@ -457,7 +458,7 @@ if ($action == 'create') {
 				// Show product and description
 
 				print '<td>';
-				print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
+				print '<a name="'.$objp->rowid.'"></a>'; // Anchor to return to the line
 
 				$text = img_object($langs->trans('Service'), 'service');
 

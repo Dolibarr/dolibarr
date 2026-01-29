@@ -221,7 +221,7 @@ abstract class CommonClassTest extends TestCase
 				echo $line . "\n";
 			}
 		} else {
-			echo "Error: File $logFile does not exist or is not readable.\n";
+			echo "File $logFile does not exist or is not readable so we can't show more information.\n";
 		}
 
 
@@ -320,7 +320,9 @@ abstract class CommonClassTest extends TestCase
 		} else {
 			$oVarsA = get_object_vars($oA);
 			$oVarsB = get_object_vars($oB);
+
 			$aKeys = array_keys($oVarsA);
+
 			if (method_exists($oA, 'deprecatedProperties')) {
 				// Update exclusions
 				foreach (self::callMethod($oA, 'deprecatedProperties') as $deprecated => $new) {
@@ -333,6 +335,7 @@ abstract class CommonClassTest extends TestCase
 				if (in_array($sKey, $fieldstoignorearray)) {
 					continue;
 				}
+
 				if (! $ignoretype && ($oVarsA[$sKey] !== $oVarsB[$sKey])) {
 					$retAr[] = get_class($oA).'::'.$sKey.' : '.(is_object($oVarsA[$sKey]) ? get_class($oVarsA[$sKey]) : json_encode($oVarsA[$sKey])).' <> '.(is_object($oVarsB[$sKey]) ? get_class($oVarsB[$sKey]) : json_encode($oVarsB[$sKey]));
 				}
@@ -341,6 +344,7 @@ abstract class CommonClassTest extends TestCase
 				}
 			}
 		}
+
 		return $retAr;
 	}
 

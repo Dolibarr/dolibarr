@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2013	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -428,9 +428,9 @@ if (getDolGlobalString('BARCODE_USE_ON_PRODUCT') || getDolGlobalString('BARCODE_
 			print dol_escape_htmltag($obj->label);
 			print "</td><td>\n";
 			print $langs->trans('BarcodeDesc'.$obj->encoding);
-			//print "L'EAN se compose de 8 characters, 7 chiffres plus une cle de verification.<br>";
-			//print "L'utilisation des symbologies EAN8 impose la souscription et l'abonnement aupres d'organismes comme GENCOD.<br>";
-			//print "Codes numeriques utilises exclusivement a l'identification des produits susceptibles d'etre vendus au grand public.";
+			// print "The EAN consists of 8 characters, 7 digits plus a control digit.";
+			// print "The use of EAN8 symbols requires subscription to organizations such as GENCOD.";
+			// print "Numeric codes are used exclusively for the identification of products that are likely to be sold to the general public.";
 			print '</td>';
 
 			// Show example
