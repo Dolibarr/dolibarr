@@ -4698,7 +4698,7 @@ class Facture extends CommonInvoice
 					if (!empty($this->line->packaging)
 						&& is_numeric($this->line->packaging)
 						&& (float) $this->line->packaging > 0
-						&& (float) price2num(fmod((float) $qty, (float) $$this->line->packaging), 'MS')) {
+						&& (float) price2num(fmod((float) $qty, (float) $this->line->packaging), 'MS')) {
 						$coeff = intval($qty / $this->line->packaging) + 1;
 						$qty = $this->line->packaging * $coeff;
 						setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'warnings');
