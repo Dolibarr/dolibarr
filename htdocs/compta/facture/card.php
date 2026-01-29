@@ -1351,7 +1351,7 @@ if (empty($reshook)) {
 				if (GETPOSTINT('invoiceAvoirWithLines') == 1 && $id > 0) {
 					if (!empty($facture_source->lines)) {
 						$fk_parent_line = 0;
-						
+
 						foreach ($facture_source->lines as $line) {
 							// Extrafields
 							if (method_exists($line, 'fetch_optionals')) {
@@ -1437,7 +1437,7 @@ if (empty($reshook)) {
 										// prorata
 										$line->situation_percent += $maxPrevSituationPercent;
 										//print 'New line based on invoice id '.$facture_source->tab_previous_situation_invoice[$lineIndex]->id.' fk_prev_id='.$source_fk_prev_id.' will be fk_prev_id='.$line->fk_prev_id.' '.$line->total_ht.' '.$line->situation_percent.'<br>';
-									} 
+									}
 								}
 							}
 
