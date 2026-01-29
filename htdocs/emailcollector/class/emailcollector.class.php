@@ -1983,8 +1983,12 @@ class EmailCollector extends CommonObject
 					// Removed emojis
 					$overview[0]->subject = removeEmoji($overview[0]->subject, getDolGlobalInt('MAIN_EMAIL_COLLECTOR_ACCEPT_EMOJIS', 1));
 				}
+
 				// GET IMAP email structure/content
 				global $htmlmsg, $plainmsg, $charset, $attachments;
+				// Reset globals for each email to avoid leaking content between messages (notably when using PHP-IMAP).
+				$htmlmsg = $plainmsg = '';
+				$attachments = [];
 
 				if (getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')) {
 					/** @var Webklex\PHPIMAP\Message $imapemail */
@@ -2454,14 +2458,44 @@ class EmailCollector extends CommonObject
 				 $thirdpartyid = $thirdpartystatic->id;
 				 $thirdpartyfoundby = 'email ('.$replyto.')';
 				 }
-				 }
-				 }
-				 */
+					 }
+					 }
+					 */
+
+					// Persist attachments for some linked objects (so hooks can rely on files on disk).
+					$savedattachments = array();
+					$savedattachmentsdir = '';
+					$savedattachmentsnote = '';
+					if (empty($mode) && !empty($attachments) && $fk_element_id > 0 && $fk_element_type === 'order_supplier' && is_object($objectemail) && get_class($objectemail) === 'CommandeFournisseur') {
+						$orderref = isset($objectemail->ref) ? (string) $objectemail->ref : '';
+						if ($orderref !== '' && !empty($conf->fournisseur->commande)) {
+							$entityforobject = isset($objectemail->entity) ? (int) $objectemail->entity : (int) $conf->entity;
+							$basedir = (!empty($conf->fournisseur->commande->multidir_output[$entityforobject]) ? $conf->fournisseur->commande->multidir_output[$entityforobject] : $conf->fournisseur->commande->dir_output);
+							$savedattachmentsdir = rtrim($basedir, '/').'/'.dol_sanitizeFileName($orderref);
+							$savedattachments = $this->saveEmailCollectorAttachmentsToDir($savedattachmentsdir, $attachments);
+							if (!empty($savedattachments)) {
+								$operationslog .= '<br>Saved '.count($savedattachments).' attachment(s) into '.dol_escape_htmltag($savedattachmentsdir);
+							}
+						}
+					}
+					if (!empty($savedattachments)) {
+						$names = array();
+						foreach ($savedattachments as $attmeta) {
+							if (!is_array($attmeta) || empty($attmeta['name'])) {
+								continue;
+							}
+							$names[] = (string) $attmeta['name'];
+						}
+						if (!empty($names)) {
+							$savedattachmentsnote = $langs->trans("NbOfAttachedFiles").' : '.count($names);
+							$savedattachmentsnote .= ' ('.implode(', ', array_slice($names, 0, 10)).(count($names) > 10 ? '...' : '').')';
+						}
+					}
 
 
-				// Now do all operations for the email (extract variables and creating data)
-				if ($mode < 2) {	// 0=Mode production, 1=Mode test (read IMAP and try SQL update then rollback), 2=Mode test with no SQL updates
-					foreach ($this->actions as $operation) {
+					// Now do all operations for the email (extract variables and creating data)
+					if ($mode < 2) {	// 0=Mode production, 1=Mode test (read IMAP and try SQL update then rollback), 2=Mode test with no SQL updates
+						foreach ($this->actions as $operation) {
 						$errorforthisaction = 0;
 						$ticketalreadyexists = 0;
 						if ($errorforactions) {
@@ -2510,24 +2544,27 @@ class EmailCollector extends CommonObject
 						if ($replyto) {
 							$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailReply").($langs->trans("MailReply") != 'Reply to' ? ' (Reply to)' : '').' : '.dol_escape_htmltag($replyto));
 						}
-						if ($sendtocc) {
-							$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailCC").($langs->trans("MailCC") != 'CC' ? ' (CC)' : '').' : '.dol_escape_htmltag($sendtocc));
-						}
+							if ($sendtocc) {
+								$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailCC").($langs->trans("MailCC") != 'CC' ? ' (CC)' : '').' : '.dol_escape_htmltag($sendtocc));
+							}
+							if ($savedattachmentsnote) {
+								$descriptionmeta = dol_concatdesc($descriptionmeta, $savedattachmentsnote);
+							}
 
-						if ($operation['type'] == 'ticket') {
-							// Verify if ticket already exists to fall back on the right operation
-							$tickettocreate = new Ticket($this->db);
+							if ($operation['type'] == 'ticket') {
+								// Verify if ticket already exists to fall back on the right operation
+								$tickettocreate = new Ticket($this->db);
 							$errorfetchticket = 0;
-							$alreadycreated = 0;
-							if ($ticketid > 0) {
-								$alreadycreated = $tickettocreate->fetch($ticketid);
-							}
-							if ($alreadycreated == 0 && !empty($objectid)) {
-								$alreadycreated = $tickettocreate->fetch((int) $objectid);
-							}
-							if ($alreadycreated == 0 && !empty($trackid)) {
-								$alreadycreated = $tickettocreate->fetch(0, '', $trackid);
-							}
+								$alreadycreated = 0;
+								if ($ticketid > 0) {
+									$alreadycreated = $tickettocreate->fetch($ticketid);
+								}
+								if ($alreadycreated == 0 && !empty($objectid) && $objectemail instanceof Ticket) {
+									$alreadycreated = $tickettocreate->fetch((int) $objectid);
+								}
+								if ($alreadycreated == 0 && !empty($trackid)) {
+									$alreadycreated = $tickettocreate->fetch(0, '', $trackid);
+								}
 							if ($alreadycreated == 0 && !empty($msgid)) {
 								$alreadycreated = $tickettocreate->fetch(0, '', '', $msgid);
 							}
@@ -2984,18 +3021,19 @@ class EmailCollector extends CommonObject
 												$ticket = new Ticket($this->db);
 												$ticket->fetch($fk_element_id);
 												$destdir = $conf->ticket->dir_output.'/'.$ticket->ref;
-												if (!dol_is_dir($destdir)) {
-													dol_mkdir($destdir);
-												}
-												if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
-													foreach ($attachments as $attachment) {
-														$attachment->save($destdir.'/');
+													if (!dol_is_dir($destdir)) {
+														dol_mkdir($destdir);
 													}
-												} else {
-													$this->getmsg($connection, $imapemail, $destdir);
+													if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
+														$savedatt = $this->saveEmailCollectorAttachmentsToDir($destdir, $attachments);
+														if (!empty($savedatt)) {
+															$operationslog .= '<br>Saved '.count($savedatt).' attachment(s) into '.dol_escape_htmltag($destdir);
+														}
+													} else {
+														$this->getmsg($connection, $imapemail, $destdir, $shouldLeaveUnread);
+													}
 												}
 											}
-										}
 
 										$operationslog .= '<br>Event created -> id='.dol_escape_htmltag((string) $actioncomm->id);
 									}
@@ -3003,26 +3041,45 @@ class EmailCollector extends CommonObject
 							} else {
 								$operationslog .= '<br>An event in actioncomm table already exists for the msgid = '.$msgid.' so we bypass this action.';
 							}
-						} elseif ($operation['type'] == 'recordjoinpiece') {
-							$data = [];
-							if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
-								foreach ($attachments as $attachment) {
-									if ($attachment->getName() === 'undefined') {
-										continue;
+							} elseif ($operation['type'] == 'recordjoinpiece') {
+								$data = [];
+								$skipped = 0;
+								if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
+									foreach ($attachments as $attachment) {
+										$attname = '';
+										try {
+											$attname = (string) $attachment->getName();
+										} catch (Throwable $e) {
+											$attname = '';
+										}
+										if ($attname === '' || $attname === 'undefined') {
+											$skipped++;
+											continue;
+										}
+										if (!$this->isAllowedAttachmentFilename($attname)) {
+											$skipped++;
+											continue;
+										}
+										$data[$attname] = $attachment->getContent();
 									}
-									$data[$attachment->getName()] = $attachment->getContent();
+								} else {
+									$pj = getAttachments($imapemail, $connection);
+									foreach ($pj as $key => $val) {
+										if (empty($val['filename']) || !$this->isAllowedAttachmentFilename((string) $val['filename'])) {
+											$skipped++;
+											continue;
+										}
+										$data[$val['filename']] = getFileData($imapemail, (string) $val['pos'], $val['type'], $connection);
+									}
 								}
-							} else {
-								$pj = getAttachments($imapemail, $connection);
-								foreach ($pj as $key => $val) {
-									$data[$val['filename']] = getFileData($imapemail, (string) $val['pos'], $val['type'], $connection);
+								if ($skipped > 0) {
+									$operationslog .= '<br>Skipped '.$skipped.' attachment(s) due to allowed extensions filter';
 								}
-							}
-							if (count($data) > 0) {
-								$sql = "SELECT rowid as id FROM ".MAIN_DB_PREFIX."user WHERE email LIKE '%".$this->db->escape($from)."%'";
-								$resql = $this->db->query($sql);
-								if ($this->db->num_rows($resql) == 0) {
-									$this->errors[] = "User Not allowed to add documents ({$from})";
+								if (count($data) > 0) {
+									$sql = "SELECT rowid as id FROM ".MAIN_DB_PREFIX."user WHERE email LIKE '%".$this->db->escape($from)."%'";
+									$resql = $this->db->query($sql);
+									if ($this->db->num_rows($resql) == 0) {
+										$this->errors[] = "User Not allowed to add documents ({$from})";
 								}
 								$arrayobject = array(
 									'propale' => array('table' => 'propal',
@@ -3300,23 +3357,31 @@ class EmailCollector extends CommonObject
 										} else {
 											if ($attachments) {
 												$destdir = $conf->project->dir_output.'/'.$projecttocreate->ref;
-												if (!dol_is_dir($destdir)) {
-													dol_mkdir($destdir);
-												}
-												if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
-													foreach ($attachments as $attachment) {
-														// $attachment->save($destdir.'/');
-														$typeattachment = (string) $attachment->getDisposition();
-														$filename = $attachment->getFilename();
-														$content = $attachment->getContent();
-														$this->saveAttachment($destdir, $filename, $content);
+													if (!dol_is_dir($destdir)) {
+														dol_mkdir($destdir);
 													}
-												} else {
-													$getMsg = $this->getmsg($connection, $imapemail, $destdir);
-													if ($getMsg < 0) {
-														$this->errors = array_merge($this->errors, [$this->error]);
-														return $getMsg;
-													}
+													if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
+														$skippedatt = 0;
+														foreach ($attachments as $attachment) {
+															// $attachment->save($destdir.'/');
+															$typeattachment = (string) $attachment->getDisposition();
+															$filename = $attachment->getFilename();
+															if (!$this->isAllowedAttachmentFilename($filename)) {
+																$skippedatt++;
+																continue;
+															}
+															$content = $attachment->getContent();
+															$this->saveAttachment($destdir, $filename, $content);
+														}
+														if ($skippedatt > 0) {
+															$operationslog .= '<br>Skipped '.$skippedatt.' attachment(s) due to allowed extensions filter';
+														}
+													} else {
+														$getMsg = $this->getmsg($connection, $imapemail, $destdir, $shouldLeaveUnread);
+														if ($getMsg < 0) {
+															$this->errors = array_merge($this->errors, [$this->error]);
+															return $getMsg;
+														}
 												}
 
 												$operationslog .= '<br>Project created with attachments -> id='.dol_escape_htmltag((string) $projecttocreate->id);
@@ -3461,23 +3526,31 @@ class EmailCollector extends CommonObject
 										} else {
 											if ($attachments) {
 												$destdir = $conf->ticket->dir_output.'/'.$tickettocreate->ref;
-												if (!dol_is_dir($destdir)) {
-													dol_mkdir($destdir);
-												}
-												if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
-													foreach ($attachments as $attachment) {
-														// $attachment->save($destdir.'/');
-														$typeattachment = (string) $attachment->getDisposition();
-														$filename = $attachment->getName();
-														$content = $attachment->getContent();
-														$this->saveAttachment($destdir, $filename, $content);
+													if (!dol_is_dir($destdir)) {
+														dol_mkdir($destdir);
 													}
-												} else {
-													$getMsg = $this->getmsg($connection, $imapemail, $destdir);
-													if ($getMsg < 0) {
-														$this->errors = array_merge($this->errors, [$this->error]);
-														return $getMsg;
-													}
+													if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
+														$skippedatt = 0;
+														foreach ($attachments as $attachment) {
+															// $attachment->save($destdir.'/');
+															$typeattachment = (string) $attachment->getDisposition();
+															$filename = $attachment->getName();
+															if (!$this->isAllowedAttachmentFilename($filename)) {
+																$skippedatt++;
+																continue;
+															}
+															$content = $attachment->getContent();
+															$this->saveAttachment($destdir, $filename, $content);
+														}
+														if ($skippedatt > 0) {
+															$operationslog .= '<br>Skipped '.$skippedatt.' attachment(s) due to allowed extensions filter';
+														}
+													} else {
+														$getMsg = $this->getmsg($connection, $imapemail, $destdir, $shouldLeaveUnread);
+														if ($getMsg < 0) {
+															$this->errors = array_merge($this->errors, [$this->error]);
+															return $getMsg;
+														}
 												}
 
 												$operationslog .= '<br>Ticket created with attachments -> id='.dol_escape_htmltag((string) $tickettocreate->id);
@@ -3595,30 +3668,35 @@ class EmailCollector extends CommonObject
 							}
 							$hookmanager->initHooks(['emailcolector']);
 
-							$parameters = array(
-								'connection' =>  $connection,
-								'imapemail' => $imapemail,
-								'overview' => $overview,
+								$parameters = array(
+									'connection' =>  $connection,
+									'imapemail' => $imapemail,
+									'overview' => $overview,
 
-								'from' => $from,
-								'fromtext' => $fromtext,
+									'from' => $from,
+									'fromtext' => $fromtext,
 
-								'actionparam' =>  $operation['actionparam'],
+									'actionparam' =>  $operation['actionparam'],
 
-								'thirdpartyid' => $thirdpartyid,
-								'objectid' => $objectid,
-								'objectemail' => $objectemail,
+									'thirdpartyid' => $thirdpartyid,
+									'objectid' => $objectid,
+									'objectemail' => $objectemail,
 
-								'messagetext' => $messagetext,
-								'subject' => $subject,
-								'header' => $header,
-								'attachments' => $attachments,
-							);
-							$reshook = $hookmanager->executeHooks('doCollectImapOneCollector', $parameters, $this, $operation['type']);
+									'messagetext' => $messagetext,
+									'subject' => $subject,
+									'header' => $header,
+									'attachments' => $attachments,
+									'savedattachments' => $savedattachments,
+									'savedattachmentsdir' => $savedattachmentsdir,
+								);
+								$reshook = $hookmanager->executeHooks('doCollectImapOneCollector', $parameters, $this, $operation['type']);
 
-							if ($reshook < 0) {
+								if ($reshook < 0) {
 								$errorforthisaction++;
 								$this->error = $hookmanager->resPrint;
+								if (!empty($hookmanager->resPrint)) {
+									$operationslog .= '<br>Hook error: '.dol_escape_htmltag($hookmanager->resPrint);
+								}
 							}
 							if ($errorforthisaction) {
 								$errorforactions++;
@@ -3906,50 +3984,52 @@ class EmailCollector extends CommonObject
 		// ATTACHMENT
 		// Any part with a filename is an attachment,
 		// so an attached text file (type 0) is not mistaken as the message.
-		if (!empty($params['filename']) || !empty($params['name'])) {
-			// filename may be given as 'Filename' or 'Name' or both
-			$filename = $params['filename'] ?? $params['name'];
-			// filename may be encoded, so see imap_mime_header_decode()
-			$attachments[$filename] = $data; // this is a problem if two files have same name
+			if (!empty($params['filename']) || !empty($params['name'])) {
+				// filename may be given as 'Filename' or 'Name' or both
+				$filename = $params['filename'] ?? $params['name'];
+				if ($this->isAllowedAttachmentFilename($filename)) {
+					// filename may be encoded, so see imap_mime_header_decode()
+					$attachments[$filename] = $data; // this is a problem if two files have same name
 
-			if (strlen($destdir)) {
-				if (substr($destdir, -1) != '/') {
-					$destdir .= '/';
+					if (strlen($destdir)) {
+						if (substr($destdir, -1) != '/') {
+							$destdir .= '/';
+						}
+
+						// Get file name (with extension)
+						$file_name_complete = $filename;
+						$destination = $destdir.$file_name_complete;
+
+						// Extract file extension
+						$extension = pathinfo($file_name_complete, PATHINFO_EXTENSION);
+
+						// Extract file name without extension
+						$file_name = pathinfo($file_name_complete, PATHINFO_FILENAME);
+
+						// Save an original file name variable to track while renaming if file already exists
+						$file_name_original = $file_name;
+
+						// Increment file name by 1
+						$num = 1;
+
+						/**
+						 * Check if the same file name already exists in the upload folder,
+						 * append increment number to the original filename
+						 */
+						while (file_exists($destdir.$file_name.".".$extension)) {
+							$file_name = $file_name_original . ' (' . $num . ')';
+							$file_name_complete = $file_name . "." . $extension;
+							$destination = $destdir.$file_name_complete;
+							$num++;
+						}
+
+						$destination = dol_sanitizePathName($destination);
+
+						file_put_contents($destination, $data);
+						dolChmod($destination);
+					}
 				}
-
-				// Get file name (with extension)
-				$file_name_complete = $filename;
-				$destination = $destdir.$file_name_complete;
-
-				// Extract file extension
-				$extension = pathinfo($file_name_complete, PATHINFO_EXTENSION);
-
-				// Extract file name without extension
-				$file_name = pathinfo($file_name_complete, PATHINFO_FILENAME);
-
-				// Save an original file name variable to track while renaming if file already exists
-				$file_name_original = $file_name;
-
-				// Increment file name by 1
-				$num = 1;
-
-				/**
-				 * Check if the same file name already exists in the upload folder,
-				 * append increment number to the original filename
-				 */
-				while (file_exists($destdir.$file_name.".".$extension)) {
-					$file_name = $file_name_original . ' (' . $num . ')';
-					$file_name_complete = $file_name . "." . $extension;
-					$destination = $destdir.$file_name_complete;
-					$num++;
-				}
-
-				$destination = dol_sanitizePathName($destination);
-
-				file_put_contents($destination, $data);
-				dolChmod($destination);
 			}
-		}
 
 		// TEXT
 		if ($p->type == 0 && $data) {
@@ -4041,13 +4121,66 @@ class EmailCollector extends CommonObject
 			$subject = iconv_mime_decode($subject, ICONV_MIME_DECODE_CONTINUE_ON_ERROR, 'UTF-8');
 		}
 
-		return (string) $subject;
-	}
+				return (string) $subject;
+			}
 
-	/**
-	 * saveAttachment
-	 *
-	 * @param  string $destdir	destination
+		/**
+		 * Check if an attachment filename is allowed by configuration.
+		 *
+		 * If EMAILCOLLECTOR_ALLOWED_ATTACHMENT_EXTENSIONS is empty, all attachments are allowed.
+		 * If set, only attachments with an extension in the allowlist are kept (case-insensitive).
+		 *
+		 * @param 	string	$filename	Filename as provided by IMAP
+		 * @return 	bool
+		 */
+		private function isAllowedAttachmentFilename($filename)
+		{
+			static $allowedExtRaw = null;
+			static $allowedExtMap = null;
+
+			$raw = trim(getDolGlobalString('EMAILCOLLECTOR_ALLOWED_ATTACHMENT_EXTENSIONS'));
+			if ($raw === '') {
+				return true;
+			}
+
+			if ($allowedExtRaw !== $raw) {
+				$allowedExtRaw = $raw;
+				$allowedExtMap = array();
+
+				$tokens = preg_split('/[\\s,;]+/', strtolower($raw));
+				if (is_array($tokens)) {
+					foreach ($tokens as $token) {
+						$token = trim($token);
+						if ($token === '') {
+							continue;
+						}
+						$token = ltrim($token, '.');
+						$token = preg_replace('/[^a-z0-9]+/', '', $token);
+						if ($token === '') {
+							continue;
+						}
+						$allowedExtMap[$token] = true;
+					}
+				}
+			}
+
+			// If the allowlist contains no valid extension, consider it as "no restriction".
+			if (empty($allowedExtMap)) {
+				return true;
+			}
+
+			$ext = strtolower(pathinfo((string) $filename, PATHINFO_EXTENSION));
+			if ($ext === '') {
+				return false;
+			}
+
+			return !empty($allowedExtMap[$ext]);
+		}
+
+		/**
+		 * saveAttachment
+		 *
+		 * @param  string $destdir	destination
 	 * @param  string $filename filename
 	 * @param  string $content  content
 	 * @return void
@@ -4065,14 +4198,12 @@ class EmailCollector extends CommonObject
 
 		file_put_contents($destdir.'/'.$filename, $content);
 		dolChmod($destdir.'/'.$filename);
-
 		if (image_format_supported($filename) == 1) {
 			// Create thumbs
 			vignette($destdir.'/'.$filename, $maxwidthsmall, $maxheightsmall, '_small', $quality, "thumbs");
 			// Create mini thumbs for image (Ratio is near 16/9)
 			vignette($destdir.'/'.$filename, $maxwidthmini, $maxheightmini, '_mini', $quality, "thumbs");
 		}
-
 		addFileIntoDatabaseIndex($destdir, $filename);
 	}
 
@@ -4089,5 +4220,198 @@ class EmailCollector extends CommonObject
 		} else {
 			return (string) $imapemail;
 		}
+	}
+
+	/**
+	 * Save IMAP attachments into a target directory and return metadata (relative to DOL_DATA_ROOT).
+	 *
+	 * @param 	string	$destdir	Absolute target dir
+	 * @param 	array	$attachments	Array of Webklex\PHPIMAP\Attachment OR array(filename => raw_data)
+	 * @return	array<int,array<string,mixed>>
+	 */
+	private function saveEmailCollectorAttachmentsToDir($destdir, $attachments)
+	{
+		$destdir = rtrim((string) $destdir, '/');
+		if ($destdir === '' || empty($attachments) || !is_array($attachments)) {
+			return array();
+		}
+
+		if (!dol_is_dir($destdir)) {
+			if (dol_mkdir($destdir) < 0) {
+				return array();
+			}
+		}
+
+		// Compute path relative to DOL_DATA_ROOT (used by ctcorderconfirm to reopen attachments later).
+		$relativeDir = '';
+		if (defined('DOL_DATA_ROOT')) {
+			$root = rtrim((string) DOL_DATA_ROOT, '/').'/';
+			$destdirwithslash = $destdir.'/';
+			if (strpos($destdirwithslash, $root) === 0) {
+				$relativeDir = rtrim(substr($destdirwithslash, strlen($root)), '/');
+			}
+		}
+
+		// Build a hash map of existing files to avoid storing duplicates.
+		$existingByHash = array();
+		$seenHashes = array();
+		$filelist = dol_dir_list($destdir, 'files', 0, '', '(\\.meta|_preview.*.*\\.png)$', 'date', SORT_DESC, 0, 1);
+		foreach ($filelist as $fileinfo) {
+			if (empty($fileinfo['fullname']) || !is_file($fileinfo['fullname']) || !is_readable($fileinfo['fullname'])) {
+				continue;
+			}
+			$hash = hash_file('sha256', $fileinfo['fullname']);
+			if ($hash !== false && $hash !== '' && empty($existingByHash[$hash])) {
+				$existingByHash[$hash] = $fileinfo['name'];
+			}
+		}
+		$seenHashes = $existingByHash;
+
+		$stored = array();
+
+			// PHP-IMAP (Webklex): array of Attachment objects.
+			if (!empty($attachments) && is_object(reset($attachments))) {
+				foreach ($attachments as $idx => $attachment) {
+					if (!is_object($attachment)) {
+						continue;
+					}
+
+					$origName = '';
+					try {
+						$origName = (string) $attachment->getName(); // Webklex Attachment uses magic __call
+					} catch (Throwable $e) {
+						$origName = '';
+					}
+						if ($origName === '' || $origName === 'undefined') {
+							$origName = 'attachment-'.((int) $idx);
+						}
+						if (!$this->isAllowedAttachmentFilename($origName)) {
+							continue;
+						}
+						$safeName = dol_sanitizeFileName($origName, '_', 1, 0);
+						if ($safeName === '') {
+							$safeName = 'attachment-'.((int) $idx);
+						}
+
+					$content = '';
+					try {
+						$content = (string) $attachment->getContent(); // Webklex Attachment uses magic __call
+					} catch (Throwable $e) {
+						$content = '';
+					}
+					if ($content === '') {
+						continue;
+					}
+
+					$contentHash = hash('sha256', $content);
+					$finalName = $safeName;
+					$useExisting = false;
+					if ($contentHash !== '' && !empty($seenHashes[$contentHash])) {
+						$finalName = $seenHashes[$contentHash];
+						if (file_exists($destdir.'/'.$finalName)) {
+							$useExisting = true;
+						}
+					}
+					if (!$useExisting) {
+						$n = 1;
+						while (file_exists($destdir.'/'.$finalName)) {
+							$finalName = preg_replace('/(\\.[A-Za-z0-9]{1,10})$/', '', $safeName).'-'.$n;
+							if (preg_match('/\\.[A-Za-z0-9]{1,10}$/', $safeName, $m)) {
+								$finalName .= $m[0];
+							}
+							$n++;
+						}
+
+						$this->saveAttachment($destdir, $finalName, $content);
+						if ($contentHash !== '') {
+							$seenHashes[$contentHash] = $finalName;
+						}
+					}
+
+					$fullPath = $destdir.'/'.$finalName;
+					$mime = '';
+					try {
+						$mime = (string) $attachment->getContentType(); // Webklex Attachment uses magic __call
+					} catch (Throwable $e) {
+						$mime = '';
+					}
+					$size = (file_exists($fullPath) ? filesize($fullPath) : null);
+					$sha256 = ($contentHash !== '' ? $contentHash : (file_exists($fullPath) ? hash_file('sha256', $fullPath) : null));
+
+					$stored[] = array(
+					'name' => $finalName,
+					'original_name' => $origName,
+					'relative_path' => ($relativeDir !== '' ? $relativeDir.'/'.$finalName : ''),
+					'content_type' => ($mime !== '' ? $mime : null),
+					'size' => ($size !== false && $size !== null ? (int) $size : null),
+					'sha256' => ($sha256 !== false && $sha256 !== null ? (string) $sha256 : null),
+				);
+			}
+
+			return $stored;
+		}
+
+		// Native IMAP: array(filename => raw_data).
+		$i = 0;
+			foreach ($attachments as $origName => $data) {
+				$i++;
+				$origName = (string) $origName;
+				if ($origName === '' || $origName === 'undefined') {
+					$origName = 'attachment-'.$i;
+				}
+				if (!$this->isAllowedAttachmentFilename($origName)) {
+					continue;
+				}
+
+				$safeName = dol_sanitizeFileName($origName, '_', 1, 0);
+				if ($safeName === '') {
+					$safeName = 'attachment-'.$i;
+				}
+
+				$content = (string) $data;
+				if ($content === '') {
+					continue;
+				}
+
+				$contentHash = hash('sha256', $content);
+				$finalName = $safeName;
+				$useExisting = false;
+				if ($contentHash !== '' && !empty($seenHashes[$contentHash])) {
+					$finalName = $seenHashes[$contentHash];
+					if (file_exists($destdir.'/'.$finalName)) {
+						$useExisting = true;
+					}
+				}
+				if (!$useExisting) {
+					$n = 1;
+					while (file_exists($destdir.'/'.$finalName)) {
+						$finalName = preg_replace('/(\\.[A-Za-z0-9]{1,10})$/', '', $safeName).'-'.$n;
+						if (preg_match('/\\.[A-Za-z0-9]{1,10}$/', $safeName, $m)) {
+							$finalName .= $m[0];
+						}
+						$n++;
+					}
+
+					$this->saveAttachment($destdir, $finalName, $content);
+					if ($contentHash !== '') {
+						$seenHashes[$contentHash] = $finalName;
+					}
+				}
+
+				$fullPath = $destdir.'/'.$finalName;
+				$size = (file_exists($fullPath) ? filesize($fullPath) : null);
+				$sha256 = ($contentHash !== '' ? $contentHash : (file_exists($fullPath) ? hash_file('sha256', $fullPath) : null));
+
+			$stored[] = array(
+				'name' => $finalName,
+				'original_name' => $origName,
+				'relative_path' => ($relativeDir !== '' ? $relativeDir.'/'.$finalName : ''),
+				'content_type' => null,
+				'size' => ($size !== false && $size !== null ? (int) $size : null),
+				'sha256' => ($sha256 !== false && $sha256 !== null ? (string) $sha256 : null),
+			);
+		}
+
+		return $stored;
 	}
 }
