@@ -524,7 +524,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		print '<td>'.$langs->trans("DarkThemeMode").'</td>';
 		print '<td colspan="'.($colspan - 1).'">';
 		if ($edit) {
-			print $form->selectarray('THEME_DARKMODEENABLED', $listofdarkmodes, getDolGlobalInt('THEME_DARKMODEENABLED'), 0, 0, 0, '', 0, 0, 0, '', 'minwidth150 maxwidth250');
+			print $form->selectarray('THEME_DARKMODEENABLED', $listofdarkmodes, getDolGlobalInt('THEME_DARKMODEENABLED'), 0, 0, 0, '', 0, 0, 0, '', 'minwidth200 maxwidth250');
 		} else {
 			print $listofdarkmodes[getDolGlobalInt('THEME_DARKMODEENABLED')];
 		}
@@ -624,19 +624,19 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 
 		if (getDolGlobalString('THEME_ELDY_USEBORDERONTABLE')) {
 			$listofborderradius = array(
-				0 => $langs->transnoentitiesnoconv("No"),
-				4 => $langs->transnoentitiesnoconv("Size").' 4',
-				6 => $langs->transnoentitiesnoconv("Size").' 6',
-				8 => $langs->transnoentitiesnoconv("Size").' 8',
-				10 => $langs->transnoentitiesnoconv("Size").' 10',
-				20 => $langs->transnoentitiesnoconv("Size").' 20',
+				0 => array('label' => $langs->transnoentitiesnoconv("NoRoundedCorners")),
+				4 => array('label' => $langs->transnoentitiesnoconv("CornerRadius").' 4'),
+				6 => array('label' => $langs->transnoentitiesnoconv("CornerRadius").' 6'),
+				8 => array('label' => $langs->transnoentitiesnoconv("CornerRadius").' 8'),
+				10 => array('label' => $langs->transnoentitiesnoconv("CornerRadius").' 10'),
+				20 => array('label' => $langs->transnoentitiesnoconv("CornerRadius").' 20'),
 			);
 
 			print ' &nbsp; &nbsp; ';
 			if ($edit) {
-				print $form->selectarray('THEME_ELDY_BORDER_RADIUS', $listofborderradius, getDolGlobalInt('THEME_ELDY_BORDER_RADIUS'), 0, 0, 0, '', 0, 0, 0, '', 'widthcentpercentminusx maxwidth100');
+				print $form->selectarray('THEME_ELDY_BORDER_RADIUS', $listofborderradius, getDolGlobalInt('THEME_ELDY_BORDER_RADIUS'), 0, 0, 0, '', 0, 0, 0, '', 'miwdith150 widthcentpercentminusx maxwidth200');
 			} else {
-				print $listofborderradius[getDolGlobalInt('THEME_ELDY_BORDER_RADIUS')];
+				print $listofborderradius[getDolGlobalInt('THEME_ELDY_BORDER_RADIUS')]['label'];
 			}
 			//print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes"), 1, 'help', 'inline-block');
 		}

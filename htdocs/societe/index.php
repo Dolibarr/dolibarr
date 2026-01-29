@@ -424,8 +424,9 @@ $sql .= ", s.status as status";
 $sql .= ", GREATEST(sp.tms, spef.tms) as date_modification, sp.statut as cstatus";
 $sql .= ", sp.rowid as cid, sp.canvas as ccanvas, sp.email as cemail, sp.firstname, sp.lastname";
 $sql .= ", sp.address as caddress, sp.phone as cphone";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."socpeople as sp";
-$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "socpeople_extrafields as spef ON spef.fk_object=sp.rowid";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+$sql .= " INNER JOIN ".MAIN_DB_PREFIX."socpeople as sp ON sp.fk_soc = s.rowid AND ((sp.fk_user_creat = ".((int) $user->id)." AND sp.priv = 1) OR sp.priv = 0)";
+$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "socpeople_extrafields as spef ON spef.fk_object = sp.rowid";
 if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
 }
@@ -433,8 +434,7 @@ if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
-$sql .= " WHERE s.entity IN (".getEntity('societe').") AND sp.fk_soc = s.rowid";
-$sql .= " AND ((sp.fk_user_creat = ".((int) $user->id)." AND sp.priv = 1) OR sp.priv = 0)"; // check if this is a private contact
+$sql .= " WHERE s.entity IN (".getEntity('societe').") ";
 if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }

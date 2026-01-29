@@ -504,6 +504,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 	if (getDolGlobalString('DISPLAY_MARGIN_RATES')) {
 		?>
 			$("input[name='np_marginRate']:first").blur(function(e) {
+				console.log("np_marginRate blur, call checkFreeLine");
 				return checkFreeLine(e, "np_marginRate");
 			});
 		<?php
@@ -511,6 +512,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 	if (getDolGlobalString('DISPLAY_MARK_RATES')) {
 		?>
 			$("input[name='np_markRate']:first").blur(function(e) {
+				console.log("np_markRate blur, call checkFreeLine");
 				return checkFreeLine(e, "np_markRate");
 			});
 		<?php
@@ -528,15 +530,13 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 			return true;
 
 		var ratejs = price2numjs(rate.val());
-		if (! $.isNumeric(ratejs))
-		{
+		if (! $.isNumeric(rate.val().replace(',','.')))	{		// TODO Use price2numjs ?
 			alert('<?php echo dol_escape_js($langs->transnoentities("rateMustBeNumeric")); ?>');
 			e.stopPropagation();
 			setTimeout(function () { rate.focus() }, 50);
 			return false;
 		}
-		if (npRate == "np_markRate" && rate.val() >= 100)
-		{
+		if (npRate == "np_markRate" && rate.val() >= 100) {		// TODO Use price2numjs ?
 			alert('<?php echo dol_escape_js($langs->transnoentities("markRateShouldBeLesserThan100")); ?>');
 			e.stopPropagation();
 			setTimeout(function () { rate.focus() }, 50);
@@ -546,7 +546,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 		var price = 0;
 		remisejs = price2numjs(remise.val());
 
-		if (remisejs != 100) {	// If a discount not 100 or no discount
+		if (remisejs != 100) {		// If there is a discount that is not 100 or if no discount at all (most common case)
 			if (remisejs == '') {
 				remisejs = 0;
 			}
@@ -559,7 +559,9 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 			else if (npRate == "np_markRate")
 				price = ((bpjs / (1 - ratejs / 100)) / (1 - remisejs / 100));
 		}
-		$("input[name='price_ht']:first").val(price);	// TODO Must use a function like php price to have here a formatted value
+
+		// $("input[name='price_ht']:first").val(price);	// TODO Must use a function like php price to have here a formatted value
+		$("input[name='price_ht']:first").val(pricejs(price));
 
 		return true;
 	}

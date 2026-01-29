@@ -8,7 +8,7 @@
  * Copyright (C) 2013       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2014       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -203,18 +203,28 @@ if ($result) {
 		$line->fetch($obj->id); // id of line
 		$prev_progress = 0;
 		if ($obj->situation_cycle_ref > 0) {	// It is a situation invoice
+			$prev_progress = $line->get_prev_progress($obj->rowid); // id on invoice
+			if (getDolGlobalInt('INVOICE_USE_SITUATION') === 1) {
+				// backward compat: old behavior => line's situation_percent was cumulative
+				// (it reflected the line's progress state, not the line progress delta)
+				$progressDelta = $obj->situation_percent - $prev_progress;
+				$progressState = $obj->situation_percent;
+			} else {
+				$progressDelta = $obj->situation_percent;
+				$progressState = $prev_progress + $progressDelta;
+			}
+
 			// Avoid divide by 0
-			if ($obj->situation_percent == 0) {
+			if ($progressState == 0) {
 				$situation_ratio = 0;
 			} else {
-				$prev_progress = $line->get_prev_progress($obj->rowid); // id on invoice
-				$situation_ratio = ($obj->situation_percent - $prev_progress) / $obj->situation_percent;
+				$situation_ratio = $progressDelta / $progressState;
 			}
 		} else {
 			$situation_ratio = 1;
 		}
 
-		//la ligne facture
+		// Invoice line
 		$tabfac[$obj->rowid]["date"] = $obj->datef;
 		$tabfac[$obj->rowid]["ref"] = $obj->ref;
 		$tabfac[$obj->rowid]["type"] = $obj->type;

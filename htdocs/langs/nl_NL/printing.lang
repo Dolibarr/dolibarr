@@ -53,4 +53,4 @@ PrintingDriverDescprintgcp=Configuratievariabelen voor het afdrukken van stuurpr
 PrintingDriverDescprintipp=Configuratievariabelen voor het afdrukken van Driver Cups.
 PrintTestDescprintgcp=Lijst met printers voor Google Cloudprinter.
 PrintTestDescprintipp=Lijst met printers voor Cups.
-Testbbbb
+PrinterLocation=Printerlocatie

@@ -62,6 +62,7 @@ require_once DOL_DOCUMENT_ROOT.'/admin/remotestore/class/externalModules.class.p
 $langs->loadLangs(array("errors", "admin", "modulebuilder"));
 
 $action = GETPOST('action', 'aZ09');
+$page = GETPOSTINT('page');
 $page_y = GETPOSTINT('page_y');
 $optioncss = GETPOST('optioncss', 'aZ09');
 $sortfield = GETPOST('sortfield', 'aZ09');
@@ -452,7 +453,7 @@ if ($action == 'set' && $user->admin) {
 	header("Location: ".$_SERVER["PHP_SELF"]."?mode=".$mode.$param.($page_y ? '&page_y='.$page_y : ''));
 	exit;
 } elseif (getDolGlobalInt("MAIN_FEATURES_LEVEL") > 1 && $action == 'reload' && $user->admin && GETPOST('confirm') == 'yes') {
-	$result = unActivateModule($value, 0);
+	$result = unActivateModule($value, 0, 'newboxdefonly');		// unactivate all module features but for widget, we reload only definition and we do not change position or setup
 	dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1, 'chaine', 0, '', $conf->entity);
 	if ($result) {
 		setEventMessages($result, null, 'errors');
@@ -514,19 +515,21 @@ $filename = array();
 $modules = array();
 $orders = array();
 $categ = array();
+$timestoinit = [];
 //$publisherlogoarray = array();
 
 $i = 0; // is a sequencer of modules found
 $j = 0; // j is module number. Automatically affected if module number not defined.
 $modNameLoaded = array();
 
-//if ($mode == 'common' || $mode == 'commonkanban') {
+
 // Load $modules (required for the badge count)
 foreach ($modulesdir as $dir) {
 	// Load modules attributes in arrays (name, numero, orders) from dir directory
 	//print $dir."\n<br>";
 	dol_syslog("Scan directory ".$dir." for module descriptor files (modXXX.class.php)");
 	$handle = @opendir($dir);
+	$timestart = microtime(true);
 	if (is_resource($handle)) {
 		while (($file = readdir($handle)) !== false) {
 			//print "$i ".$file."\n<br>";
@@ -594,6 +597,7 @@ foreach ($modulesdir as $dir) {
 								// Define an array $categ with categ with at least one qualified module
 								$filename[$i] = $modName;
 								$modules[$modName] = $objMod;
+								$timestoinit[$modName] = round((microtime(true) - $timestart) * 1000, 3);
 
 								// Gives the possibility to the module, to provide his own family info and position of this family
 								if (is_array($objMod->familyinfo) && !empty($objMod->familyinfo)) {
@@ -1121,6 +1125,8 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			} else {
 				// Module qualified for activation
 				$warningmessage = '';
+				$disableCancel = 0;
+
 				if (!empty($arrayofwarnings[$modName])) {
 					$codeenabledisable .= '<!-- This module is a core module and it may have a warning to show when we activate it (note: your country is '.$mysoc->country_code.') -->'."\n";
 					foreach ($arrayofwarnings[$modName] as $keycountry => $cursorwarningmessage) {
@@ -1129,7 +1135,12 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 								$cursorwarningmessage = array($cursorwarningmessage);
 							}
 							foreach ($cursorwarningmessage as $messagetoshow) {
-								// TODO Use replacement instead of always adding param module name and country code to the string message
+								if (preg_match('/:1$/', $messagetoshow)) {
+									$disableCancel = 1;
+								}
+								$messagetoshow = preg_replace('/:1$/', '', $messagetoshow);
+
+								// TODO Use a replacement instead of always adding the module name and the country code to the string message ?
 								$warningmessage .= ($warningmessage ? "\n" : "").$langs->trans($messagetoshow, $objMod->getName(), $mysoc->country_code);
 							}
 						}
@@ -1163,11 +1174,12 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 				}
 
 				$urltogo = $_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&token='.newToken().'&module_position='.$module_position.'&action=set&token='.newToken().'&value='.$modName.'&mode='.$mode.$param;
-				$popupwidth = 500;
+				$popupWidth = 500;
+				$popupHeight = 300;
 				$codeenabledisable .= '<!-- Message to show: '.$warningmessage.' -->'."\n";
 				$codeenabledisable .= '<a class="reposition" id="idqualified'.$objMod->numero.'" data-alreadyclicked="0" href="'.$urltogo.'"';
 				if ($warningmessage) {
-					$codeenabledisable .= ' onclick="return confirmDolibarr(\''.dol_escape_js($warningmessage).'\', \'idqualified'.$objMod->numero.'\', '.$popupwidth.');"';
+					$codeenabledisable .= ' onclick="return confirmDolibarr(\''.dol_escape_js($warningmessage).'\', \'idqualified'.$objMod->numero.'\', '.$popupWidth.', '.$popupHeight.','.$disableCancel.');"';
 				}
 				$codeenabledisable .= '>';
 				$codeenabledisable .= img_picto($langs->trans("Disabled"), 'switch_off');
@@ -1205,7 +1217,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			print "</td>\n";
 
 			// Desc
-			print '<td class="valignmiddle tdoverflowmax300 minwidth200imp">';
+			print '<td class="valignmiddle tdoverflowmax300 minwidth200imp opacitylow">';
 			print nl2br($objMod->getDesc());
 			print "</td>\n";
 
@@ -1214,6 +1226,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			print '<a href="javascript:document_preview(\''.DOL_URL_ROOT.'/admin/modulehelp.php?id='.((int) $objMod->numero).'\',\'text/html\',\''.dol_escape_js($langs->trans("Module")).'\')">';
 			print img_picto(($objMod->isCoreOrExternalModule() == 'external' ? $langs->trans("ExternalModule").' - ' : '').$langs->trans("ClickToShowDescription"), $imginfo, '', 0, 0, 0, '', 'purple');
 			print '</a>';
+			print ($timestoinit[$modName] > 500 ? img_picto($langs->trans('InitModuleIsSlow'), 'fa-exclamation-circle') : '');
 			print '</td>';
 
 			// Version
@@ -1287,8 +1300,8 @@ if ($mode == 'marketplace') {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table summary="list_of_modules" class="noborder centpercent">'."\n";
 	print '<tr class="liste_titre">'."\n";
-	print '<td colspan="2" class="hideonsmartphone">'.$form->textwithpicto($langs->trans("ModuleProviderSites"), $langs->trans("WebSiteDesc")).'</td>';
-	print '<td>';
+	print '<td colspan="2">'.$form->textwithpicto($langs->trans("ModuleProviderSites"), $langs->trans("WebSiteDesc")).'</td>';
+	print '<td class="hideonsmartphone">';
 	print '</td>';
 	print '<td></td>';
 	print '</tr>';
@@ -1403,8 +1416,9 @@ if ($mode == 'marketplace') {
 			print $remotestore->getPagination();
 		print '</form>';
 
-		print '</div></div>';
+		print '</div>';
 		print '<div class="clearboth"></div>';
+		print '</div>';
 		?>
 			<?php if (!empty($categories_tree)) { ?>
 				<div id="category-tree-left" class="paddingtop">

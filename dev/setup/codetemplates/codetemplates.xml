@@ -7,7 +7,7 @@
  */</template><template autoinsert="true" context="phpcomment" deleted="false" description="Comment for created constructors" enabled="true" id="org.eclipse.php.ui.editor.templates.php.codetemplates.constructorcomment" name="constructorcomment">/**
  * ${tags}
  */</template><template autoinsert="true" context="phpcomment" deleted="false" description="Comment for created PHP files" enabled="true" id="org.eclipse.php.ui.editor.templates.php.codetemplates.filecomment" name="filecomment">/**
- * 
+ *
  */
 </template><template autoinsert="true" context="phpcomment" deleted="false" description="Comment for created types" enabled="true" id="org.eclipse.php.ui.editor.templates.php.codetemplates.typecomment" name="typecomment">/**
  * @author ${user}
@@ -47,7 +47,7 @@ ${cursor}</template><template autoinsert="false" context="php" deleted="false" d
 	case ${value}:
 	${cursor};
 	break;
-	
+
 	default:
 		;
 	break;
@@ -66,21 +66,21 @@ ${cursor}</template><template autoinsert="false" context="php" deleted="false" d
 </template><template autoinsert="false" context="php" deleted="false" description="lambda function statement (closure)" enabled="true" id="org.eclipse.php.ui.editor.templates.php.closure" name="closure">function (${parameters}) use (${lexical_variables}) {
 	${cursor};
 }
-</template><template autoinsert="false" context="php" deleted="false" description="class statement" enabled="true" id="org.eclipse.php.ui.editor.templates.php.cls" name="cls">class ${class_name} 
+</template><template autoinsert="false" context="php" deleted="false" description="class statement" enabled="true" id="org.eclipse.php.ui.editor.templates.php.cls" name="cls">class ${class_name}
 {
-	function ${function_name}() 
+	function ${function_name}()
     {
 		${cursor};
 	}
 }
-</template><template autoinsert="false" context="php" deleted="false" description="class statement" enabled="true" id="org.eclipse.php.ui.editor.templates.php.class" name="class">class ${class_name} 
+</template><template autoinsert="false" context="php" deleted="false" description="class statement" enabled="true" id="org.eclipse.php.ui.editor.templates.php.class" name="class">class ${class_name}
 {
-	function ${function_name}() 
+	function ${function_name}()
     {
 		${cursor};
 	}
 }
-</template><template autoinsert="false" context="php" deleted="false" description="if statement" enabled="true" id="org.eclipse.php.ui.editor.templates.php.if" name="if">if (${condition}) 
+</template><template autoinsert="false" context="php" deleted="false" description="if statement" enabled="true" id="org.eclipse.php.ui.editor.templates.php.if" name="if">if (${condition})
 {
 	${cursor};
 }
@@ -115,7 +115,7 @@ if (${dollar}${dirh}) {
 	${cursor};
 }
 </template><template autoinsert="false" context="php" deleted="false" description="Trap code output" enabled="true" id="org.eclipse.php.ui.editor.templates.php.my_gc" name="my_gc">ob_start();
-	
+
 ${cursor};
 
 ${dollar}${contents} = ob_get_contents();
