@@ -21,7 +21,7 @@
  * Copyright (C) 2022-2023	Solution Libre SAS		<contact@solution-libre.fr>
  * Copyright (C) 2023      	Gauthier VERDOL       	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		Nick Fragoulis
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		Lenin Rivas				<lenin.rivas777@gmail.com>
  *
@@ -107,6 +107,11 @@ class Facture extends CommonInvoice
 	 * {@inheritdoc}
 	 */
 	protected $table_ref_field = 'ref';
+
+	/**
+	 * @var string 		Ref
+	 */
+	public $ref;
 
 	/**
 	 * @var int|null ID
@@ -207,7 +212,7 @@ class Facture extends CommonInvoice
 	public $extraparams = array();
 
 	/**
-	 * @var int ID facture rec
+	 * @var int ID invoice model
 	 */
 	public $fac_rec;
 
@@ -430,18 +435,25 @@ class Facture extends CommonInvoice
 	/**
 	 * Classified paid.
 	 * If paid partially, $this->close_code can be:
-	 * - CLOSECODE_DISCOUNTVAT
-	 * - CLOSECODE_BADDEBT
+	 * - CLOSECODE_DISCOUNTVAT = 'discount_vat'
+	 * - CLOSECODE_BADDEBT = 'badcustomer'
+	 * - CLOSECODE_PRODUCTRETURN = 'product_returned'
+	 * - CLOSECODE_BANKCHARGE = 'bankcharge'
+	 * - CLOSECODE_WITHHOLDINGTAX = 'withholdingtax'
+	 * - CLOSECODE_OTHER = 'other'
+	 * - CLOSECODE_ABANDON = 'abandon'
+	 *
+	 * - CLOSECODE_REPLACED = 'replaced'
+	 * - All constant CLOSECODE_XXX are into commoninvoice.class.php
+	 *
 	 * If paid completely, this->close_code will be null
 	 */
 	const STATUS_CLOSED = 2;
 
 	/**
 	 * Classified abandoned and no payment done.
-	 * $this->close_code can be:
-	 * - CLOSECODE_BADDEBT
-	 * - CLOSECODE_ABANDONED
-	 * - CLOSECODE_REPLACED
+	 * $this->close_code can beseveral values.
+	 * - This constant CLOSECODE_XXX into commoninvoice.class.php
 	 */
 	const STATUS_ABANDONED = 3;
 
@@ -857,6 +869,7 @@ class Facture extends CommonInvoice
 					$newinvoiceline->fk_facture = $this->id;
 
 					$newinvoiceline->origin = $this->lines[$i]->element;
+					$newinvoiceline->origin_type = $this->lines[$i]->element;
 					$newinvoiceline->origin_id = $this->lines[$i]->id;
 
 					// Auto set date of service ?
@@ -2707,6 +2720,8 @@ class Facture extends CommonInvoice
 	{
 		$error = 0;
 
+		$this->oldcopy = dol_clone($this, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
+
 		// Clean parameters
 		if (empty($this->type)) {
 			$this->type = self::TYPE_STANDARD;
@@ -2876,11 +2891,11 @@ class Facture extends CommonInvoice
 			$facligne = new FactureLigne($this->db);
 			$facligne->fk_facture = $this->id;
 			$facligne->fk_remise_except = $remise->id;
-			$facligne->desc = $remise->description; // Description ligne
+			$facligne->desc = $remise->description; // Description of the invoice line
 			$facligne->vat_src_code = $remise->vat_src_code;
 			$facligne->tva_tx = $remise->tva_tx;
 			$facligne->subprice = -(float) $remise->amount_ht;
-			$facligne->fk_product = 0; // Id produit predefini
+			$facligne->fk_product = 0; // Predefined Product ID
 			$facligne->qty = 1;
 			$facligne->remise_percent = 0;
 			$facligne->rang = -1;
@@ -4120,10 +4135,9 @@ class Facture extends CommonInvoice
 	/**
 	 *  Add an invoice line into database (linked to product/service or not).
 	 *  Note: ->thirdparty must be defined.
-	 *  Les parameters sont deja cense etre juste et avec valeurs finales a l'appel
-	 *  de cette method. Aussi, pour le taux tva, il doit deja avoir ete defini
-	 *  par l'appelant par la method get_default_tva(societe_vendeuse,societe_acheteuse,produit)
-	 *  et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
+	 *  The parameters are already supposed to be correct and with final values upon calling this method.
+	 *  Also, for the VAT rate, it must have already been defined by the caller using the method get_default_tva(societe_vendeuse, societe_acheteuse, produit)
+	 *  and the description (desc) must already have the correct value (it's up to the caller to manage multilanguage)
 	 *
 	 *  @param	string			$desc            			Description of line
 	 *  @param	float			$pu_ht              		Unit price without tax (> 0 even for credit note)
@@ -4138,7 +4152,7 @@ class Facture extends CommonInvoice
 	 *  @param 	int				$fk_code_ventilation   		Code of dispatching into accountancy
 	 *  @param 	int				$info_bits					Bits of type of lines
 	 *  @param 	int				$fk_remise_except			Id discount used
-	 *  @param	string			$price_base_type			'HT' or 'TTC'
+	 *  @param	'HT'|'TTC'|''	$price_base_type			HT or TTC or '' for subtotals
 	 *  @param	float			$pu_ttc             		Unit price with tax (> 0 even for credit note)
 	 *  @param	int				$type						Type of line (0=product, 1=service). Not used if fk_product is defined, the type of product is used.
 	 *  @param 	int				$rang               		Position of line (-1 means last value + 1)
@@ -4319,24 +4333,24 @@ class Facture extends CommonInvoice
 						return -3;
 					}
 				}
-			}
 
-			$localtaxes_type = getLocalTaxesFromRate($txtva, 0, $this->thirdparty, $mysoc);
-
-			if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
-				$tmpproduct = new Product($this->db);
-				$result = $tmpproduct->fetch($fk_product);
-				if (abs($qty) < $tmpproduct->packaging) {
-					$qty = (float) $tmpproduct->packaging;
-					setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'mesgs');
-				} else {
-					if (!empty($tmpproduct->packaging) && $qty > $tmpproduct->packaging) {
-						$coeff = intval(abs($qty) / $tmpproduct->packaging) + 1;
-						$qty = price2num((float) $tmpproduct->packaging * $coeff, 'MS');
-						setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'mesgs');
+				if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
+					$tmpproduct = new Product($this->db);
+					$result = $tmpproduct->fetch($fk_product);
+					if (abs($qty) < $tmpproduct->packaging) {
+						$qty = (float) $tmpproduct->packaging;
+						setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'warnings');
+					} else {
+						if (!empty($tmpproduct->packaging) && (float) price2num(fmod((float) $qty, (float) $tmpproduct->packaging), 'MS')) {
+							$coeff = intval(abs($qty) / $tmpproduct->packaging) + 1;
+							$qty = price2num((float) $tmpproduct->packaging * $coeff, 'MS');
+							setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'warnings');
+						}
 					}
 				}
 			}
+
+			$localtaxes_type = getLocalTaxesFromRate($txtva, 0, $this->thirdparty, $mysoc);
 
 			// Clean vat code
 			$reg = array();
@@ -4346,10 +4360,9 @@ class Facture extends CommonInvoice
 				$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
 			}
 
-			// Calcul du total TTC et de la TVA pour la ligne a partir de
-			// qty, pu, remise_percent et txtva
-			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
-			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
+			// Calculation of the gross total (TTC) and VAT for the line from qty, pu, remise_percent and txtva
+			// VERY IMPORTANT: It's at the time of line insertion that we must store the net, VAT, and gross amounts,
+			// and this is done at the line level, which has its own VAT rate
 
 			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $mysoc, $localtaxes_type, $situation_percent, $this->multicurrency_tx, $pu_ht_devise);
 
@@ -4588,9 +4601,9 @@ class Facture extends CommonInvoice
 				return -1;
 			}
 
-			// Calculate total with, without tax and tax from qty, pu, remise_percent and txtva
-			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
-			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
+			// Calculation of the gross total (TTC) and VAT for the line from qty, pu, remise_percent and txtva
+			// VERY IMPORTANT: It's at the time of line insertion that we must store the net, VAT, and gross amounts,
+			// and this is done at the line level, which has its own VAT rate
 
 			$localtaxes_type = getLocalTaxesFromRate($txtva, 0, $this->thirdparty, $mysoc);
 
@@ -4692,14 +4705,15 @@ class Facture extends CommonInvoice
 			if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
 				if ($qty < $this->line->packaging) {
 					$qty = $this->line->packaging;
+					setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'warnings');
 				} else {
 					if (!empty($this->line->packaging)
 						&& is_numeric($this->line->packaging)
 						&& (float) $this->line->packaging > 0
-						&& fmod((float) $qty, (float) $this->line->packaging) > 0) {
+						&& (float) price2num(fmod((float) $qty, (float) $$this->line->packaging), 'MS')) {
 						$coeff = intval($qty / $this->line->packaging) + 1;
 						$qty = $this->line->packaging * $coeff;
-						setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'mesgs');
+						setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'warnings');
 					}
 				}
 			}
@@ -4758,7 +4772,7 @@ class Facture extends CommonInvoice
 					$this->line_order(true, 'DESC');
 				}
 
-				// Mise a jour info denormalisees au niveau facture
+				// Update denormalized information at the invoice level
 				$this->update_price(1, 'auto');
 				$this->db->commit();
 				return $result;
@@ -5381,7 +5395,7 @@ class Facture extends CommonInvoice
 		//  $sql.= " WHERE f.fk_statut >= 1";
 		//	$sql.= " AND (f.paye = 1";				// Classee payee completement
 		//	$sql.= " OR f.close_code IS NOT NULL)";	// Classee payee partiellement
-		$sql .= " AND ff.type IS NULL"; // Renvoi vrai si pas facture de replacement
+		$sql .= " AND ff.type IS NULL"; // Return true if there isn't any replacement invoice
 		$sql .= " AND f.type <> ".self::TYPE_CREDIT_NOTE; // Exclude credit note invoices from selection
 
 		if (getDolGlobalString('INVOICE_USE_SITUATION_CREDIT_NOTE')) {
@@ -5504,10 +5518,10 @@ class Facture extends CommonInvoice
 	}
 
 
-	/* gestion des contacts d'une facture */
+	/* Management of a bill's contacts */
 
 	/**
-	 *	Retourne id des contacts clients de facturation
+	 *	Returns the IDs of the customer billing contacts.
 	 *
 	 *	@return     int[]       Liste des id contacts facturation
 	 */
@@ -5517,7 +5531,7 @@ class Facture extends CommonInvoice
 	}
 
 	/**
-	 *	Retourne id des contacts clients de livraison
+	 *	Returns the IDs of the customer shipping contacts.
 	 *
 	 *	@return     int[]       Liste des id contacts livraison
 	 */
@@ -5827,7 +5841,7 @@ class Facture extends CommonInvoice
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Returns an array containing the previous situations as Facture objects
+	 * Returns an array containing the previous situations as Invoice objects
 	 *
 	 * @return Facture[]|int<-1,-1>	-1 if error, array of previous situations
 	 */
@@ -6444,6 +6458,7 @@ class Facture extends CommonInvoice
 							$actioncomm->userownerid = $user->id; // Owner of action
 							// Fields when action is an email (content should be added into note)
 							$actioncomm->email_msgid = $cMailFile->msgid;
+							$actioncomm->email_subject = $sendTopic;
 							$actioncomm->email_from = $from;
 							$actioncomm->email_sender = '';
 							$actioncomm->email_to = $to;

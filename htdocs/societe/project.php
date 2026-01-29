@@ -31,11 +31,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -43,6 +38,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 $form  = new Form($db);
 
@@ -186,14 +185,16 @@ if ($socid) {
 	if (empty($conf->dol_optimize_smallscreen)) {
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
-		print '<div class="nobordernopadding center valignmiddle col-center">'.$massactionbutton.'</div>';
+		//print '<div class="nobordernopadding center valignmiddle col-center">'.$massactionbutton.'</div>';
 	}
 
 
 	// Projects list
 	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 	$arrayofselected = is_array($toselect) ? $toselect : array();
-	$result = show_projects($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id, 1, $newcardbutton);
+
+
+	$result = show_projects($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id, 1, $newcardbutton, $massactionbutton);
 
 	if (empty($conf->dol_optimize_smallscreen)) {
 		print '</form>';

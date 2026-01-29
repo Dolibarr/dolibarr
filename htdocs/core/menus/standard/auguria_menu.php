@@ -223,7 +223,7 @@ class MenuManager
 						}
 					}
 
-					print $val['titre'];
+					print ucfirst($val['titre']);
 					print '</a>'."\n";
 
 					// Search submenu for this mainmenu entry

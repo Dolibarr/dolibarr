@@ -202,6 +202,7 @@ if ($reshook < 0) {
 $result = restrictedArea($user, 'agenda', $object, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id');
 
 $usercancreate = $user->hasRight('agenda', 'allactions', 'create') || ((empty($object->id) || $object->authorid == $user->id || $object->userownerid == $user->id) && $user->hasRight('agenda', 'myactions', 'create'));
+$usercandelete = $user->hasRight('agenda', 'allactions', 'delete') || (($object->authorid === $user->id || $object->userownerid === $user->id) && $user->hasRight('agenda', 'myactions', 'delete'));
 
 
 /*
@@ -1206,22 +1207,19 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 }
 
 // Delete event
-if (empty($reshook) && $action == 'confirm_delete' && GETPOST("confirm") == 'yes' && $usercancreate) {
+if (empty($reshook) && $action == 'confirm_delete' && GETPOST("confirm") == 'yes' && $usercandelete) {
 	$object->fetch($id);
 	$object->fetch_optionals();
 	$object->fetch_userassigned();
 	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
-	if ($user->hasRight('agenda', 'myactions', 'delete')
-		|| $user->hasRight('agenda', 'allactions', 'delete')) {
-		$result = $object->delete($user);
+	$result = $object->delete($user);
 
-		if ($result >= 0) {
-			header("Location: index.php");
-			exit;
-		} else {
-			setEventMessages($object->error, $object->errors, 'errors');
-		}
+	if ($result >= 0) {
+		header("Location: index.php");
+		exit;
+	} else {
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 
@@ -1904,9 +1902,9 @@ if ($action == 'create') {
 		//checkbox create reminder
 		print '<hr>';
 
-		print '<label for="addreminder">'.img_picto('', 'bell', 'class="pictofixedwidth"').$langs->trans("AddReminder").'</label> <input type="checkbox" id="addreminder" name="addreminder"><br>';
+		print '<label for="addreminder">'.img_picto('', 'bell', 'class="pictofixedwidth"').$langs->trans("AddReminder").'</label> <input type="checkbox" id="addreminder" name="addreminder"'.(empty(GETPOST('addreminder')) ? '' : 'checked').'><br>';
 
-		print '<div class="reminderparameters" style="display: none;">';
+		print '<div class="reminderparameters" '.(empty(GETPOST('addreminder')) ? 'style="display: none;' : '').' ">';
 		print '<br>';
 
 		print '<table class="border centpercent">';
@@ -1914,7 +1912,8 @@ if ($action == 'create') {
 		//Reminder
 		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderTime").'</td><td colspan="3">';
 		print '<input class="width50" type="number" name="offsetvalue" value="'.(GETPOSTISSET('offsetvalue') ? GETPOSTINT('offsetvalue') : getDolGlobalInt('AGENDA_REMINDER_DEFAULT_OFFSET', 30)).'"> ';
-		print $form->selectTypeDuration('offsetunit', 'i', $TDurationTypesExcluded);
+
+		print $form->selectTypeDuration('offsetunit', (empty($offsetunit) ? 'i' : $offsetunit), $TDurationTypesExcluded);
 		print '</td></tr>';
 
 		//Reminder Type
@@ -1925,7 +1924,7 @@ if ($action == 'create') {
 		//Mail Model
 		if (getDolGlobalString('AGENDA_REMINDER_EMAIL')) {
 			print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("EMailTemplates").'</td><td colspan="3">';
-			print $form->selectModelMail('actioncommsend', 'actioncomm_send', 1, 1);
+			print $form->selectModelMail('actioncommsend', 'actioncomm_send', 1, 1, (empty($modelmail) ? 0 : $modelmail));
 			print '</td></tr>';
 		}
 
@@ -1966,37 +1965,42 @@ if ($action == 'create') {
 				});
 		   })';
 		print '</script>'."\n";
-		?>
-		<script type="text/javascript">
-			$(document).ready(function () {
-				$("#addreminder").click(function(){
-					console.log("Click on addreminder");
-					if (this.checked) {
-						$(".reminderparameters").show();
-					} else {
-						$(".reminderparameters").hide();
-					}
-					$("#selectremindertype").select2("destroy");
-					$("#selectremindertype").select2();
-					$("#select_offsetunittype_duration").select2("destroy");
-					$("#select_offsetunittype_duration").select2();
-					selectremindertype();
-				 });
-				$("#selectremindertype").change(function(){
-					selectremindertype();
-				});
-				function selectremindertype() {
-					console.log("Call selectremindertype");
-					var selected_option = $("#selectremindertype option:selected").val();
-					if(selected_option == "email") {
-						$("#select_actioncommsendmodel_mail").closest("tr").show();
-					} else {
-						$("#select_actioncommsendmodel_mail").closest("tr").hide();
-					}
-				}
-			});
-		</script>
-		<?php
+
+		print "\n".'<script type="text/javascript">';
+		print '$(document).ready(function () {
+	            		function toggle_reminder_part(evt) {
+							console.log("Toggle reminder part");
+	            		    if ($("#addreminder").is(":checked")) {
+	            		    	$(".reminderparameters").show();
+                            } else {
+                            	$(".reminderparameters").hide();
+                            }
+							$("#selectremindertype").select2("destroy");
+							$("#selectremindertype").select2();
+							$("#select_offsetunittype_duration").select2("destroy");
+							$("#select_offsetunittype_duration").select2();
+							selectremindertype();
+	            		 });
+
+						toggle_reminder_part();
+						$("#addreminder").click(toggle_reminder_part);
+
+	            		$("#selectremindertype").change(function(){
+							selectremindertype();
+	            		});
+
+						function selectremindertype() {
+							console.log("Call selectremindertype");
+	            	        var selected_option = $("#selectremindertype option:selected").val();
+	            		    if(selected_option == "email") {
+	            		        $("#select_actioncommsendmodel_mail").closest("tr").show();
+	            		    } else {
+	            			    $("#select_actioncommsendmodel_mail").closest("tr").hide();
+	            		    }
+						}
+
+                   })';
+		print '</script>'."\n";
 	}
 
 	print dol_get_fiche_end();
@@ -2977,8 +2981,7 @@ if ($id > 0 && $action != 'create') {
 				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("ToClone").'</a></div>';
 			}
 
-			if ($user->hasRight('agenda', 'allactions', 'delete') ||
-			   (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->hasRight('agenda', 'myactions', 'delete'))) {
+			if ($usercandelete) {
 				print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Delete").'</a></div>';
 			} else {
 				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Delete").'</a></div>';

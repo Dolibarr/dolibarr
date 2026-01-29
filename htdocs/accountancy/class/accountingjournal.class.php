@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017-2022	OpenDSI						<support@open-dsi.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025	Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		Alexandre Janniaux			<alexandre.janniaux@gmail.com>
  * Copyright (C) 2025		Alexandre Spangaro			<alexandre@inovea-conseil.com>
@@ -1323,7 +1323,7 @@ class AccountingJournal extends CommonObject
 						$element['blocks'][] = $lines_book;
 					}
 				} else {
-					// si TVA = 0, pousser les 2 lignes view/bookkeeping déjà constituées
+					// When VAT = 0, push the 2 lines view/bookkeeping already prepared
 					if ($type == 'view') {
 						$element['blocks'][] = $lines_view;
 					} elseif ($type == 'bookkeeping') {

@@ -178,25 +178,25 @@ class PropaleLigne extends CommonObjectLine
 	/**
 	 * Some other info:
 	 * Bit 0: 	0 si TVA normal - 1 if TVA NPR
-	 * Bit 1:	0 ligne normal - 1 if line with fixed discount
+	 * Bit 1:	0 if normal line - 1 if line with fixed discount
 	 * @var ?int
 	 */
 	public $info_bits = 0;
 
 	/**
-	 * Total amount excluding taxes (HT = "Hors Taxe" in French) including discounts
+	 * Total amount excluding taxes HT including discounts
 	 * @var float
 	 */
 	public $total_ht;
 
 	/**
-	 * Total VAT amount (TVA = "Taxe sur la Valeur Ajoutée" in French)
+	 * Total VAT amount
 	 * @var float
 	 */
 	public $total_tva;
 
 	/**
-	 * Total amount including taxes (TTC = "Toutes Taxes Comprises" in French)
+	 * Total amount including taxes
 	 * @var float
 	 */
 	public $total_ttc;
@@ -390,10 +390,10 @@ class PropaleLigne extends CommonObjectLine
 				$this->rowid = $objp->rowid; // deprecated
 				$this->fk_propal = $objp->fk_propal;
 				$this->fk_parent_line = $objp->fk_parent_line;
-				$this->label			= $objp->custom_label;
-				$this->desc				= $objp->description;
+				$this->label = $objp->custom_label;
+				$this->desc = $objp->description;
 				$this->qty = $objp->qty;
-				$this->price			= $objp->price; // deprecated
+				$this->price = $objp->price; // deprecated
 				$this->subprice = $objp->subprice;
 				$this->vat_src_code = $objp->vat_src_code;
 				$this->tva_tx			= $objp->tva_tx;
@@ -762,7 +762,7 @@ class PropaleLigne extends CommonObjectLine
 
 		$this->db->begin();
 
-		// Mise a jour ligne en base
+		// Update line in database
 		$sql = "UPDATE ".MAIN_DB_PREFIX."propaldet SET";
 		$sql .= " description='".$this->db->escape($this->desc)."'";
 		$sql .= ", label=".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null");
@@ -853,7 +853,7 @@ class PropaleLigne extends CommonObjectLine
 		// phpcs:enable
 		$this->db->begin();
 
-		// Mise a jour ligne en base
+		// Update line in database
 		$sql = "UPDATE ".MAIN_DB_PREFIX."propaldet SET";
 		$sql .= " total_ht=".price2num($this->total_ht, 'MT');
 		$sql .= ",total_tva=".price2num($this->total_tva, 'MT');

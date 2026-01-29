@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2024	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Marc de Lima Lucio			<marc-dll@user.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -143,6 +143,8 @@ $leftmenuwidth = 240;
 @phan-var-force int $nbtopmenuentries
 @phan-var-force int $nbtopmenuentriesreal
 @phan-var-force string $path
+@phan-var-force string $theme
+@phan-var-force string $left
 @phan-var-force string $right
 @phan-var-force string $textDanger
 @phan-var-force string $textSuccess
@@ -334,6 +336,9 @@ input[type="text"]:not(.input-icon-security, .input-icon-user, .input-icon-passw
 input[type="password"]:not(.input-icon-security, .input-icon-user, .input-icon-password) {
 	height: 28px;
 }
+input.downloadexternallink {
+	padding-left: 3px;
+}
 .input-icon-user, .input-icon-password {
 	padding-right: 28px !important;
 }
@@ -385,9 +390,11 @@ span.massactionselect, input.inputsearch_dropdownselectedfields {
 	background-color: unset;
 }
 
-.liste_titre input, .liste_titre select {
+.liste_titre input:not(#search_component_params_input):not(.select2-search__field), .liste_titre select {
 	border: none;
-	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>: solid 1px var(<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '--colorbacktitle1' : '--inputbordercolor'; ?>);
+	border-style: solid;
+	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>-width: 1px !important;
+	border-color: var(<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '--colorbacktitle1' : '--inputbordercolor'; ?>) !important;
 }
 
 .divadvancedsearchfieldcompinput,
@@ -601,7 +608,7 @@ div.buttonpayment input:focus {
 div.buttonpayment input {
 	background-color: unset;
 	color: #fff;
-	border-bottom: unset;
+	border: unset;
 	font-weight: bold;
 	text-transform: uppercase;
 	cursor: pointer;
@@ -656,10 +663,13 @@ div.userimg.notfirst {
 	display: block-inline;
 }
 .center.inline-block.dateheight {
-	line-height: 1.2em;
+	line-height: 1.15em;
 }
 .smallheight {
 	line-height: 1em;
+}
+tr.tdsmallheight, tr.tdsmallheight td {
+	height: 1.5em !important;
 }
 
 
@@ -773,6 +783,9 @@ input.pageplusone {
 .opacitytransp {
 	opacity: 0;
 }
+.noopacity {
+	opacity: unset !important;
+}
 .colorwhite {
 	color: var(--colorwhite);
 }
@@ -866,8 +879,11 @@ input#onlinepaymenturl, input#directdownloadlink {
 
 
 .formconsumeproduce {
-	background: #f3f3f3;
-	padding: 20px 0px 0px 0px;
+	border-left: solid 5px #87cfd2;		/* like for div.info */
+	background: #eff8fc;				/* like for div.info */
+	/* background: #f3f3f3; */
+
+	padding: 20px 0px 20px 0px;
 	border-radius: 8px;
 }
 
@@ -1309,11 +1325,13 @@ td.wordbreak img, td.wordbreakimp img {
 	max-height: <?php print getDolGlobalInt('MAIN_CSS_SHORTMESSSAGECUT', 125); ?>px;
 	max-width: 100%;
 	overflow-y: auto;
+	word-break: break-word;
 }
 .longmessagecut {
 	max-height: <?php print getDolGlobalInt('MAIN_CSS_LONGMESSSAGECUT', 250); ?>px;
 	max-width: 100%;
 	overflow-y: auto;
+	word-break: break-word;
 }
 div.urllink {
 	padding: 5px;
@@ -1851,6 +1869,14 @@ select.flat.selectlimit {
 	height: auto !important;
 	word-break: break-word;
 }
+.threelinesmax, .threelinesmax-normallineheight {				/* To be used into a <div class="twolinesmax-normallineheight minwidth200onall"> into a td for example */
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 3;
+	overflow: hidden;
+	height: auto !important;
+	word-break: break-word;
+}
 .twolinesmax-normallineheight {
 	line-height: normal;
 }
@@ -1865,7 +1891,16 @@ select.flat.selectlimit {
 	margin-top: 25px !important;
 }
 .navselectiondate {
-	width: 250px;
+	min-width: 250px;
+}
+
+.showonhover:hover *::before {
+	visibility: visible !important;
+	display: inline-block !important;
+}
+.showonhover:not(:hover) *::before {
+	visibility: hidden;
+	display: inline-block !important;
 }
 
 /* Styles for amount on card */
@@ -2415,7 +2450,7 @@ datalist {
 
 	/* input, input[type=text], */
 	select {
-		width: 98%;
+		/* width: 98%; */
 		min-width: 40px;
 	}
 
@@ -2584,6 +2619,7 @@ td.showDragHandle {
 	display: table-cell;
 <?php } ?>
 	border-<?php echo $right; ?>: 1px solid #ECECEC;
+	border-bottom: 1px solid #ECECEC;
 	box-shadow: 3px 0 6px -2px #eee;
 	background: var(--colorbackvmenu1);
 	transition: left 0.5s ease;
@@ -3088,7 +3124,7 @@ img.photorefnoborder {
 }
 
 /* ============================================================================== */
-/* Menu top et 1ere ligne tableau                                                 */
+/* Top menu and first line of table                                               */
 /* ============================================================================== */
 
 #id-top {
@@ -3504,7 +3540,7 @@ form#login {
 	max-width: 560px;
 <?php
 if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
-	print '	background-color: rgba(255, 255, 255, 0.9);';
+	print '	background-color: rgba(255, 255, 255, 0.99);';
 } else {
 	print '	background-color: var(--colorbackbody);';
 }
@@ -3799,7 +3835,7 @@ img.userphotopublicvcard {
 img.userphoto[alt="Gravatar avatar"], img.photouserphoto.dropdown-user-image[alt="Gravatar avatar"] {
 	background: #fff;
 }
-form[name="addtime"] img.userphoto {
+form[name="addtime"] img.userphoto, form[name="addtime"] img.userphotosmall {
 	border: 1px solid #444;
 }
 .span-icon-user {
@@ -4133,6 +4169,12 @@ div.tabBar tr.titre td {
 }
 div.fiche table:not(.table-fiche-title) tr.titre td {
 	padding-top: 10px;
+}
+div.fiche >.table-fiche-title tr.toptitle td.col-picto,
+div.fiche >.table-fiche-title tr.toptitle td.col-title,
+div.fiche >form >.table-fiche-title tr.toptitle td.col-picto,
+div.fiche >form >.table-fiche-title tr.toptitle td.col-title {
+	filter: grayscale(90%);
 }
 
 div.tabBar.tabBarNoTop {
@@ -4761,6 +4803,7 @@ table.listwithfilterbefore {
 .tagtd, .table-border-col, .table-key-border-col, .table-val-border-col { display: table-cell; }
 .confirmquestions .tagtr .tagtd:not(:first-child)  { padding-left: 10px; }
 .confirmquestions { margin-top: 5px; }
+.confirmquestions .tagtr .tagtd { height: 2em; vertical-align: middle; }
 
 /* Pagination */
 div.refidpadding  {
@@ -5384,9 +5427,9 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 .boxstats:hover {
 	box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.20);
 }
-span.boxstatstext span:not(.fas) {
+/*span.boxstatstext span:not(.fas) {
 	opacity: 0.5;
-}
+}*/
 span.boxstatstext {
 	opacity: 0.5;		/* a bug if browser make z-index was discovered when opacity is set, if still present, we must disable it */
 	line-height: 18px;
@@ -5648,7 +5691,7 @@ div.info, div.warning, div.error, div.green, div.neutral {
 }
 
 div.fiche div.info, div.fiche div.warning, div.fiche div.neutral {
-	box-shadow: 1px 1px 6px #e4e4e4;
+	box-shadow: 1px 1px 6px #d4d4d4;
 	margin: 1em 0em 1.2em 0em;
 }
 
@@ -7409,6 +7452,9 @@ input.select2-input {
 	border: none;
 	border-bottom: solid 1px var(--inputbordercolor) !important;	/* required to avoid to lose bottom line when focus is lost on select2. */
 }
+li.select2-selection__choice {
+	white-space: break-spaces;
+}
 .select2-results .select2-highlighted.optionblue {
 	color: #FFF !important;
 }
@@ -7558,7 +7604,7 @@ input.select2-input {
 	margin-top: 0.25em !important;
 }
 .select2-selection--multiple input.select2-search__field {
-	border-bottom: none !important;
+	border: none !important;
 }
 
 .select2-search__field
@@ -7773,6 +7819,7 @@ select.multiselectononeline {
 	min-height: unset;
 	height: 2.2em !important;
 	opacity: 0;
+	min-width: 50px;
 	/* width: 1px !important; */
 }
 
@@ -7819,6 +7866,8 @@ select.multiselectononeline {
 	box-shadow: none !important;
 	margin-top: 1px !important;
 	margin-bottom: 0 !important;
+	margin-<?php echo $left ?>: 0px !important;
+	margin-<?php echo $right ?>: 3px !important;
 }
 span.noborderoncategories a, li.noborderoncategories a {
 	line-height: normal;

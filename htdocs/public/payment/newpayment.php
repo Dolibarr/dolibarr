@@ -902,9 +902,13 @@ if ($action == 'charge' && isModEnabled('stripe')) {	// Test on permission not r
 	$_SESSION["currencyCodeType"] = $currency;		// currency really used for payment (coming from Stripe). Will be used for check in paymentok.php.
 	$_SESSION["paymentType"] = '';
 	$_SESSION['ipaddress'] = ($remoteip ? $remoteip : 'unknown'); // Payer ip
-	$_SESSION['payerID'] = is_object($customer) ? $customer->id : '';
 	$_SESSION['TRANSACTIONID'] = (is_object($charge) ? $charge->id : (is_object($paymentintent) ? $paymentintent->id : ''));
 	$_SESSION['errormessage'] = $errormessage;
+	if (!getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION')) {
+		$_SESSION['payerID'] = is_object($customer) ? $customer->id : '';
+	} else {
+		$_SESSION['payerID'] = '';
+	}
 
 	dol_syslog("Action charge stripe STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION=".getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION')." ip=".$remoteip, LOG_DEBUG, 0, '_payment');
 	dol_syslog("_SERVER[HTTP_X_FORWARDED_HOST] = ".(empty($_SERVER["HTTP_X_FORWARDED_HOST"]) ? '' : dol_escape_htmltag($_SERVER["HTTP_X_FORWARDED_HOST"])), LOG_DEBUG, 0, '_payment');
@@ -1109,6 +1113,8 @@ $fulltag = null;
 
 // Free payment
 if (!$source) {
+	dol_syslog("newpayment.php no source", LOG_DEBUG);
+
 	$found = true;
 	$tag = GETPOST("tag", 'alpha');
 	if (GETPOST('fulltag', 'alpha')) {
@@ -1158,6 +1164,8 @@ if (!$source) {
 
 // Payment on a Sale Order
 if ($source == 'order') {
+	dol_syslog("newpayment.php source=order", LOG_DEBUG);
+
 	$found = true;
 	$langs->load("orders");
 
@@ -1292,6 +1300,8 @@ if ($source == 'order') {
 
 // Payment on a Customer Invoice
 if ($source == 'invoice') {
+	dol_syslog("newpayment.php source=invoice", LOG_DEBUG);
+
 	$found = true;
 	$langs->load("bills");
 	$form->load_cache_types_paiements();
@@ -1439,6 +1449,8 @@ if ($source == 'invoice') {
 
 // Payment on a Contract line
 if ($source == 'contractline') {
+	dol_syslog("newpayment.php source=contractline", LOG_DEBUG);
+
 	$found = true;
 	$langs->load("contracts");
 
@@ -1636,6 +1648,8 @@ if ($source == 'contractline') {
 
 // Payment on a Member subscription
 if ($source == 'member' || $source == 'membersubscription') {
+	dol_syslog("newpayment.php source=".$source, LOG_DEBUG);
+
 	$newsource = 'member';
 
 	$tag = "";
@@ -1879,6 +1893,8 @@ if ($source == 'member' || $source == 'membersubscription') {
 
 // Payment on donation
 if ($source == 'donation') {
+	dol_syslog("newpayment.php source=donation", LOG_DEBUG);
+
 	$found = true;
 	$langs->load("don");
 
@@ -2036,6 +2052,8 @@ if ($source == 'donation') {
 }
 
 if ($source == 'organizedeventregistration' && is_object($thirdparty)) {
+	dol_syslog("newpayment.php source=organizedeventregistration", LOG_DEBUG);
+
 	$found = true;
 	$langs->loadLangs(array("members", "eventorganization"));
 
@@ -2126,6 +2144,8 @@ if ($source == 'organizedeventregistration' && is_object($thirdparty)) {
 }
 
 if ($source == 'boothlocation') {
+	dol_syslog("newpayment.php source=boothlocation", LOG_DEBUG);
+
 	$found = true;
 	$langs->load("members");
 
@@ -2223,6 +2243,8 @@ print "\n";
 
 // Show all payment mode buttons (Stripe, Paypal, ...)
 if ($action != 'dopayment') {
+	dol_syslog("newpayment.php action is not dopayment so we show all payment modes", LOG_DEBUG);
+
 	if ($found && !$error) {	// We are in a management option and no error
 		// Check status of the object (Invoice) to verify if it is paid by external payment modules (ie Payzen, ...)
 		$parameters = [
@@ -2382,7 +2404,9 @@ print '<br>';
 
 
 // Add more content on page for some services
-if (preg_match('/^dopayment/', $action)) {			// If we chose/clicked on the payment mode
+if (preg_match('/^dopayment/', $action)) {			// If we choose/clicked on the payment mode
+	dol_syslog("newpayment.php action is dopayment... because we clicked on a payment mode - amount = ".$amount);
+
 	// Save some data for the paymentok
 	$remoteip = getUserRemoteIP();
 	$_SESSION["currencyCodeType"] = $currency;
@@ -2483,6 +2507,8 @@ if (preg_match('/^dopayment/', $action)) {			// If we chose/clicked on the payme
 			}
 
 			if (getDolGlobalString('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION')) {
+				dol_syslog("newpayment.php Create a Paymentintent for amount=".$amount, LOG_DEBUG);
+
 				// By default noidempotency is set to 1, to avoid the error "Keys for idempotant requests...". It means we can pay several times the same tag/ref.
 				// If STRIPE_USE_IDEMPOTENCY_BY_DEFAULT is set or param noidempotency=0 is added, then with add an idempotent key, so we must use a different tag/ref for each payment (if not we will get an error).
 				$noidempotency_key = (GETPOSTISSET('noidempotency') ? GETPOSTINT('noidempotency') : (getDolGlobalInt('STRIPE_USE_IDEMPOTENCY_BY_DEFAULT') ? 0 : 1));
@@ -2614,7 +2640,13 @@ if (preg_match('/^dopayment/', $action)) {			// If we chose/clicked on the payme
 					} elseif (GETPOST('email', 'alpha') && isValidEmail(GETPOST('email', 'alpha'))) {
 						$arrayforcheckout['customer_email'] = GETPOST('email', 'alpha');
 					}
+
+					dol_syslog("We create a stripe session with \Stripe\Checkout\Session::create for amountstripe=".$amountstripe);
+
 					$sessionstripe = \Stripe\Checkout\Session::create($arrayforcheckout);
+
+					dol_syslog("sessionstripe=".$sessionstripe->id);
+
 
 					$remoteip = getUserRemoteIP();
 
@@ -2680,7 +2712,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we chose/clicked on the payme
 
 
 				<?php
-			} elseif (getDolGlobalString('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION')) {
+			} elseif (getDolGlobalString('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION')) {	// default value is 1
 				?>
 			// Code for payment with option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION set to 1 or 2
 
@@ -2697,7 +2729,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we chose/clicked on the payme
 				} ?>
 
 				<?php
-				if (getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION') == 2) {
+				if (getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION') == 2) {	// default is 1
 					?>
 			var cardButton = document.getElementById('buttontopay');
 			var clientSecret = cardButton.dataset.secret;
@@ -2733,7 +2765,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we chose/clicked on the payme
 			}
 
 				<?php
-				if (getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION') == 2) {
+				if (getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION') == 2) {	// Default is 1.
 					?>
 			var paymentElement = elements.create("payment");
 

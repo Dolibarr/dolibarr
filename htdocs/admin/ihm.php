@@ -300,7 +300,7 @@ if ($action == 'update') {
 		$dirforimage = $conf->mycompany->dir_output . '/logos/';
 		if ($_FILES[$varforimage]["tmp_name"]) {
 			$reg = array();
-			if (preg_match('/([^\\/:]+)$/i', $_FILES[$varforimage]["name"], $reg)) {
+			if (preg_match('/([^\\/:]+)$/i', (string) $_FILES[$varforimage]["name"], $reg)) {
 				$original_file = $reg[1];
 
 				$isimage = image_format_supported($original_file);

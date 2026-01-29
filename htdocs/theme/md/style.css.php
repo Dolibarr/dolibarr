@@ -7,7 +7,7 @@
  * Copyright (C) 2015		Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2021-2023  Anthony Berton          <anthony.berton@bb2a.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2025		Marc de Lima Lucio			<marc-dll@user.noreply.github.com>
  *
@@ -563,6 +563,10 @@ input {
 .tableforfield input{
 	padding: 2px;
 }
+input.downloadexternallink {
+	padding-left: 3px;
+}
+
 .refidno input {
 	margin-top: 0 !important;
 	padding: 0;
@@ -770,7 +774,7 @@ input.buttonpayment, button.buttonpayment, div.buttonpayment {
 
 div.buttonpayment input {
 	background-color: unset;
-	border-bottom: unset;
+	border: unset;
 	font-weight: bold;
 	text-transform: uppercase;
 	color: #333;
@@ -833,7 +837,7 @@ div.userimg.notfirst {
 	display: block-inline;
 }
 .center.inline-block.dateheight {
-	line-height: 1.2em;
+	line-height: 1.15em;
 }
 
 /* Used by timesheets */
@@ -944,6 +948,9 @@ input.pageplusone {
 .opacitytransp {
 	opacity: 0;
 }
+.noopacity {
+	opacity: unset !important;
+}
 .colorwhite {
 	color: var(--colorwhite);
 }
@@ -1037,8 +1044,9 @@ input#onlinepaymenturl, input#directdownloadlink {
 }
 
 .formconsumeproduce {
-	background: #f3f3f3;
-	padding: 20px 0px 0px 0px;
+	background: #f0f0f0;
+
+	padding: 20px 0px 20px 0px;
 	border-radius: 8px;
 }
 
@@ -1458,11 +1466,13 @@ td.wordbreak img, td.wordbreakimp img {
 	max-height: <?php print getDolGlobalInt('MAIN_CSS_SHORTMESSSAGECUT', 125); ?>px;
 	max-width: 100%;
 	overflow-y: auto;
+	word-break: break-word;
 }
 .longmessagecut {
 	max-height: <?php print getDolGlobalInt('MAIN_CSS_LONGMESSSAGECUT', 250); ?>px;
 	max-width: 100%;
 	overflow-y: auto;
+	word-break: break-word;
 }
 div.urllink {
 	padding: 5px;
@@ -1983,6 +1993,14 @@ select.flat.selectlimit {
 	height: auto !important;
 	word-break: break-word;
 }
+.threelinesmax, .threelinesmax-normallineheight {				/* To be used into a <div class="twolinesmax-normallineheight minwidth200onall"> into a td for example */
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 3;
+	overflow: hidden;
+	height: auto !important;
+	word-break: break-word;
+}
 .twolinesmax-normallineheight {
 	line-height: normal;
 }
@@ -1996,6 +2014,10 @@ select.flat.selectlimit {
 .tablelistofcalendars {
 	margin-top: 25px !important;
 }
+.navselectiondate {
+	min-width: 250px;
+}
+
 .amountalreadypaid {
 	white-space: nowrap;
 }
@@ -2044,6 +2066,16 @@ select.flat.selectlimit {
 	padding: 5px;
 	border-radius: 5px;
 }
+
+.showonhover:hover *::before {
+	visibility: visible !important;
+	display: inline-block !important;
+}
+.showonhover:not(:hover) *::before {
+	visibility: hidden;
+	display: inline-block !important;
+}
+
 
 .savingdocmask {
 	margin-top: 6px;
@@ -2528,7 +2560,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 
 	/* input, input[type=text], */
 	select {
-		width: 98%;
+		/* width: 98%; */
 		min-width: 40px;
 	}
 
@@ -3152,7 +3184,7 @@ img.photorefnoborder {
 
 
 /* ============================================================================== */
-/* Menu top et 1ere ligne tableau                                                 */
+/* Top menu and first line of table                                               */
 /* ============================================================================== */
 
 <?php
@@ -3869,7 +3901,7 @@ img.userphotopublicvcard {
 	top: 25px;
 	left: -110px;
 }
-form[name="addtime"] img.userphoto {
+form[name="addtime"] img.userphoto, form[name="addtime"] img.userphotosmall {
 	border: 1px solid #444;
 }
 .span-icon-user {
@@ -4797,6 +4829,7 @@ table.listwithfilterbefore {
 .tagtd, .table-border-col, .table-key-border-col, .table-val-border-col { display: table-cell; }
 .confirmquestions .tagtr .tagtd:not(:first-child)  { padding-left: 10px; }
 .confirmquestions { margin-top: 5px; }
+.confirmquestions .tagtr .tagtd { height: 2em; vertical-align: middle; }
 
 
 /* Pagination */
@@ -7280,6 +7313,10 @@ input.select2-input {
 	border: none;
 	border-bottom: 1px solid #ccc !important;
 }
+li.select2-selection__choice {
+	white-space: break-spaces;
+}
+
 .select2-results .select2-highlighted.optionblue {
 	color: #FFF !important;
 }
@@ -7398,7 +7435,7 @@ input.select2-input {
 	margin-top: 4px !important;
 }
 .select2-selection--multiple input.select2-search__field {
-	border-bottom: none !important;
+	border: none !important;
 }
 .select2-search__field
 {
@@ -7606,6 +7643,7 @@ select.multiselectononeline {
 	height: 28px !important;
 	opacity: 0;
 	/* width: 1px !important; */
+	min-width: 50px;
 }
 
 @media only screen and (min-width: 767px)
@@ -7655,6 +7693,8 @@ select.multiselectononeline {
 	box-shadow: none !important;
 	margin-top: 1px !important;
 	margin-bottom: 0 !important;
+	margin-<?php echo $left ?>: 0px !important;
+	margin-<?php echo $right ?>: 3px !important;
 }
 span.noborderoncategories a, li.noborderoncategories a {
 	line-height: normal;
@@ -8949,8 +8989,8 @@ table.jPicker {
 		width: <?php print dol_size(300, 'width'); ?>px;
 	}
 	select {
-		width: 98%;
-		min-width: 0 !important;
+		/* width: 98%; */
+		min-width: 40px;
 	}
 	div.divphotoref {
 		padding-<?php echo $right; ?>: 5px;

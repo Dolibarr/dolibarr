@@ -129,14 +129,14 @@ $ssec = 0;
 if ($object->id > 0) {
 	// When object is know, we must define first the end date (stored in database with different components) and deduct the start date
 	if (empty($object->day_close) && !empty($object->month_close)) {
-		$dateend = dol_mktime($object->hour_close, $object->min_close, $object->sec_close, $object->month_close, $object->day_close, $object->year_close, 'gmt');
+		$dateend = dol_mktime((int) $object->hour_close, (int) $object->min_close, (int) $object->sec_close, $object->month_close, $object->day_close, $object->year_close, 'gmt');
 		$datestart = dol_time_plus_duree($dateend, -1, 'y', 0);
 	} elseif (empty($object->day_close) && empty($object->month_close)) {
-		$dateend = dol_mktime($object->hour_close, $object->min_close, $object->sec_close, 12, 31, $object->year_close, 'gmt');
-		$datestart = dol_mktime($object->hour_close, $object->min_close, $object->sec_close, 12, 1, $object->year_close, 'gmt');
+		$dateend = dol_mktime((int) $object->hour_close, (int) $object->min_close, (int) $object->sec_close, 12, 31, $object->year_close, 'gmt');
+		$datestart = dol_mktime((int) $object->hour_close, (int) $object->min_close, (int) $object->sec_close, 12, 1, $object->year_close, 'gmt');
 		$datestart = dol_time_plus_duree($datestart, -1, 'm', 0);
 	} else {
-		$dateend = dol_mktime($object->hour_close, $object->min_close, $object->sec_close, $object->month_close, $object->day_close, $object->year_close, 'gmt');
+		$dateend = dol_mktime((int) $object->hour_close, (int) $object->min_close, (int) $object->sec_close, $object->month_close, $object->day_close, $object->year_close, 'gmt');
 		$datestart = dol_time_plus_duree($dateend, -1, 'd', 0);
 	}
 	$datestart += 1;	// Add 1 second
@@ -159,6 +159,7 @@ $sqlfilteronopdate .= " AND dateo < '".$db->idate((int) $datestart)."'";
 
 
 // Define dates and terminal
+$posmodule = '';
 $terminalid = '';
 $terminaltouse = '';
 if ($action == "create" || $action == "start" || $action == 'valid' || $action == 'close') {
@@ -175,7 +176,7 @@ if ($action == "create" || $action == "start" || $action == 'valid' || $action =
 		$terminalid = GETPOST('posnumber', 'alpha');
 		$terminaltouse = $terminalid;
 
-		if ($terminaltouse == '1' && $posmodule == 'cashdesk') {
+		if ($terminaltouse == '1' && $posmodule == 'cashdesk') {	// for compatibility with an old module
 			$terminaltouse = '';
 		}
 	}
@@ -311,11 +312,13 @@ if ($action == "valid" && $permissiontoadd) {	// validate = close
 	$datefilter = 'p.datep';
 	$modulesourcefilter = 'f.module_source';
 	$amountfield = 'pf.amount';
+	$fieldentity = 'p.entity';
 	$joinleft = 'LEFT ';
 	if (isALNERunningVersion() && $mysoc->country_code == 'FR') {
 		$datefilter = 'bl.date_creation';	// By using this as a filter, it is like the LEFT JOIN is an INNER JOIN
 		$modulesourcefilter = 'bl.module_source';
 		$amountfield = 'bl.amounts';
+		$fieldentity = 'bl.entity';
 		$joinleft = '';
 	}
 
@@ -342,8 +345,8 @@ if ($action == "valid" && $permissiontoadd) {	// validate = close
 		$sql .= " WHERE pf.fk_facture = f.rowid AND p.rowid = pf.fk_paiement AND cp.id = p.fk_paiement";
 		$sql .= " AND ".$db->sanitize($modulesourcefilter)." = '".$db->escape($posmodule)."'";
 		$sql .= " AND f.pos_source = '".$db->escape($terminalid)."'";
-		$sql .= " AND p.entity = ".((int) $conf->entity); // Never share entities for features related to accountancy
-		$sql .= " AND ".$db->sanitize($datefilter)." <= '".$db->idate($datee)."'";
+		$sql .= " AND ".$db->sanitize($fieldentity)." = ".((int) $conf->entity); // Never share entities for features related to accountancy
+		$sql .= " AND ".$db->sanitize($datefilter)." <= '".$db->idate((int) $datee)."'";
 		if ($key == 'cash') {
 			$sql .= " AND cp.code = 'LIQ'";
 		} elseif ($key == 'cheque') {
@@ -562,7 +565,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 			$sql .= " AND ".$db->sanitize($modulesourcefilter)." = '".$db->escape($posmodule)."'";
 			$sql .= " AND f.pos_source = '".$db->escape($terminalid)."'";
 			$sql .= " AND p.entity = ".((int) $conf->entity); // Never share entities for features related to accountancy
-			$sql .= " AND ".$db->sanitize($datefilter)." BETWEEN '".$db->idate($dates)."' AND '".$db->idate($datee)."'";
+			$sql .= " AND ".$db->sanitize($datefilter)." BETWEEN '".$db->idate((int) $dates)."' AND '".$db->idate((int) $datee)."'";
 			if ($key == 'cash') {
 				$sql .= " AND cp.code = 'LIQ'";
 			} elseif ($key == 'cheque') {

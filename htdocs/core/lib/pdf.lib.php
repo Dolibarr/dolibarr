@@ -381,15 +381,13 @@ function pdfGetHeightForHtmlContent(&$pdf, $htmlcontent)
 /**
  * Returns the name of the thirdparty
  *
- * @param   Societe|Contact     $thirdparty     Contact or thirdparty
- * @param   Translate           $outputlangs    Output language
- * @param   int<0,1>            $includealias   1=Include alias name after name
- * @return  string                              String with name of thirdparty (+ alias if requested)
+ * @param   ?Societe|?Contact	    $thirdparty     Contact or thirdparty
+ * @param   Translate           	$outputlangs    Output language
+ * @param   int<0,1>            	$includealias   1=Include alias name after name
+ * @return  string                  	            String with name of thirdparty (+ alias if requested)
  */
 function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs, $includealias = 0)
 {
-	global $conf;
-
 	// Recipient name
 	$socname = '';
 
@@ -420,7 +418,6 @@ function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs, $includeali
 
 	return $outputlangs->convToOutputCharset((string) $socname);
 }
-
 
 /**
  *   	Return a string with full address formatted for output on PDF documents
@@ -765,6 +762,52 @@ function pdf_pagehead(&$pdf, $outputlangs, $page_height)
 	}
 	if (getDolGlobalString('MAIN_ADD_PDF_BACKGROUND') && getDolGlobalString('MAIN_ADD_PDF_BACKGROUND') != '-1') {
 		$pdf->SetPageMark(); // This option avoid to have the images missing on some pages
+	}
+}
+
+
+/**
+ *   	Show header of page for PDF generation
+ *
+ *   	@param	TCPDF		$pdf     		Object PDF
+ *      @param	Translate	$outputlangs	Object lang for output
+ * 		@param	float		$page_height	Height of page
+ * 		@param	Facture		$object			Object invoice
+ * 		@param	int			$w				Width for text
+ * 		@param	float		$posx			Pos x
+ * 		@param	float		$posy			Pos y
+ *      @return	void
+ */
+function pdfWriteBlockedLogSignature(&$pdf, $outputlangs, $page_height, $object, &$w, &$posx, &$posy)
+{
+	global $db;
+
+	// Transaction ID
+	include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+
+	if (isALNERunningVersion() && isModEnabled('blockedlog')) {
+		if ($object->status > $object::STATUS_DRAFT) {
+			$unalterablelogid = 'UNDEFINED';
+			$sql = "SELECT signature FROM ".MAIN_DB_PREFIX."blockedlog";
+			$sql .= " WHERE action = 'BILL_VALIDATE' AND element = 'facture' AND ref_object = '".$db->escape($object->ref)."'";
+			$sql .= $db->order('rowid', 'DESC');
+			$sql .= $db->plimit(1);
+
+			$resql = $db->query($sql);
+			if ($resql) {
+				$obj = $db->fetch_object($resql);
+				if ($obj) {
+					$unalterablelogid = $obj->signature;
+				}
+			}
+
+			if ($unalterablelogid != 'UNDEFINED') {
+				$posy += 5;
+				$pdf->SetXY($posx, $posy);
+				$pdf->SetTextColor(0, 0, 60);
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("SignatureID")." : ".dol_trunc(strtoupper($unalterablelogid), 10), '', 'R');
+			}
+		}
 	}
 }
 

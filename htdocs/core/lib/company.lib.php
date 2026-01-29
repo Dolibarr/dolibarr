@@ -942,18 +942,20 @@ function isInSEPA($object)
 /**
  * 		Show html area for list of projects
  *
- *		@param	Conf		$conf			Object conf
- * 		@param	Translate	$langs			Object langs
- * 		@param	DoliDB		$db				Database handler
- * 		@param	Societe		$object			Third party object
- *      @param  string		$backtopage		Url to go once contact is created
- *      @param  int<0,1>    $nocreatelink   1=Hide create project link
- *      @param	string		$morehtmlright	More html on right of title
+ *		@param	Conf		$conf				Object conf
+ * 		@param	Translate	$langs				Object langs
+ * 		@param	DoliDB		$db					Database handler
+ * 		@param	Societe		$object				Third party object
+ *      @param  string		$backtopage			Url to go once contact is created
+ *      @param  int<0,1>    $nocreatelink   	1=Hide create project link
+ *      @param	string		$morehtmlright		More html on right of title
+ *      @param	string		$massactionbutton	Mass action button
  *      @return	int
  */
-function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatelink = 0, $morehtmlright = '')
+function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatelink = 0, $morehtmlright = '', $massactionbutton = '')
 {
-	global $user, $action, $hookmanager, $form, $massactionbutton, $massaction, $arrayofselected, $arrayofmassactions;
+	global $user, $action, $hookmanager, $form;
+	global $massaction, $arrayofselected, $arrayofmassactions;
 
 	$i = -1;
 
@@ -966,7 +968,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 		}
 
 		print "\n";
-		print load_fiche_titre($langs->trans("ProjectsDedicatedToThisThirdParty"), $newcardbutton . $morehtmlright, '');
+		print load_fiche_titre($langs->trans("ProjectsDedicatedToThisThirdParty"), $newcardbutton . $morehtmlright, '', 0, '', '', $massactionbutton);
 
 		print '<div class="div-table-responsive">' . "\n";
 		print '<table class="noborder centpercent">';

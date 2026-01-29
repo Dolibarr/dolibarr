@@ -400,6 +400,9 @@ ALTER TABLE llx_blockedlog DROP FOREIGN KEY fk_linktoref;
 ALTER TABLE llx_fichinterdet ADD COLUMN special_code integer DEFAULT 0 AFTER fk_parent_line;
 ALTER TABLE llx_fichinterdet ADD COLUMN product_type integer DEFAULT 0 AFTER special_code;
 
+ALTER TABLE llx_adherent_type ADD COLUMN minimumamount double(24,8) DEFAULT NULL AFTER caneditamount;
+ALTER TABLE llx_adherent_type ADD COLUMN amountformuladescription text AFTER minimumamount;
+
 ALTER TABLE llx_pos_cash_fence ADD COLUMN hour_close INTEGER DEFAULT null after year_close;
 ALTER TABLE llx_pos_cash_fence ADD COLUMN min_close INTEGER DEFAULT null after hour_close;
 ALTER TABLE llx_pos_cash_fence ADD COLUMN sec_close INTEGER DEFAULT null after min_close;
@@ -417,6 +420,12 @@ ALTER TABLE llx_pos_cash_fence ADD COLUMN lifetime_start datetime DEFAULT NULL;
 UPDATE llx_cronjob set test = 'getDolDBType() == \'mysqli\'' WHERE label = 'MakeLocalDatabaseDumpShort';
 UPDATE llx_cronjob set test = 'getDolGlobalString(\'MAIN_ALLOW_BACKUP_BY_EMAIL\') && getDolDBType() == \'mysqli\'' WHERE label = 'MakeSendLocalDatabaseDumpShort';
 
+UPDATE llx_c_socialnetworks SET icon = 'fa-mastodon' WHERE icon = '' AND code = 'mastodon';
 
+INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'PGK', '[75]', 1,			'Papua New Guinea Kina');
+
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  1, 'PCG25-DEV', 'The developed accountancy french plan 2025', 1);
+
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  4, 'PCG08-PYME-CAT', 'The PYME accountancy spanish plan in catalan language', 1);
 
 -- end of migration

@@ -66,7 +66,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 		}
 
 		// List of mandatory logged actions
-		$listofqualifiedelement = array('invoice', 'facture', 'don', 'payment', 'payment_donation', 'subscription', 'payment_various', 'cashcontrol');
+		$listofqualifiedelement = array('invoice', 'facture', 'don', 'payment', 'payment_donation', 'subscription', 'cashcontrol');
 
 		// Add custom actions to log
 		if (getDolGlobalString('BLOCKEDLOG_ADD_ACTIONS_SUPPORTED')) {
@@ -86,16 +86,56 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 		$b->loadTrackedEvents();			// Get the list of tracked events into $b->trackedevents
 
 		// Tracked events
-		if (!in_array($action, array_keys($b->trackedevents))) {
+		if (!in_array($action, array_keys($b->trackedevents)) && !in_array($action, array_keys($b->controlledevents))) {
 			return 0;
 		}
 
 		if ($action === 'PAYMENT_CUSTOMER_CREATE' && $object->element == 'payment') {
 			if (isALNERunningVersion() && $mysoc->country_code == 'FR') {
-				if (!in_array($object->paiementcode, array('LIQ', 'CB', 'CHQ'))) {
-					$this->errors[] = 'The payment mode '.$object->paiementcode.' is not available in this version.';
-					return -1;
+				if (empty($object->paiementcode) && !empty($object->paiementid)) {
+					$object->paiementcode = dol_getIdFromCode($this->db, $object->paiementid, 'c_paiement', 'id', 'code', 1);
 				}
+
+				if (!in_array($object->paiementcode, array('LIQ', 'CB', 'CHQ'))) {
+					// Check that invoice of payment is not from a POS module. Refuse if yes
+					$invoiceids = array();
+					if (is_array($object->amounts)) {
+						foreach ($object->amounts as $objid => $amount) {
+							$invoiceids[] = $objid;
+						}
+					}
+					// Test there is not invoices with id in $invoiceids and with a module_source that is not empty
+					$tmpinvoice = new Facture($this->db);
+					foreach ($invoiceids as $invoiceid) {
+						$tmpinvoice->id = 0;
+						$tmpinvoice->fetch($invoiceid);
+						if ($tmpinvoice->id > 0 && $tmpinvoice->module_source == 'takepos') {		// @phpstan-ignore-line PHP think tmpinvoice->id is always 0
+							$this->errors[] = 'The payment mode '.$object->paiementcode.' is not available in this version for payment of invoices generated from '.$tmpinvoice->module_source;
+							return -1;
+						}
+					}
+				}
+			}
+		}
+
+		// Protect against modification of data that should be immutable on a validated invoice
+		if ($action === 'BILL_MODIFY' && !empty($object->oldcopy) && in_array($object->element, array('invoice', 'facture')) && $object->status != 0) {
+			if ($object->oldcopy->ref != $object->ref) {
+				$this->errors[] = 'Modifying the property Ref of a non draft invoice is not allowed';
+				return -2;
+			}
+			if (($object->oldcopy->total_ht != $object->total_ht) || ($object->oldcopy->total_tva != $object->total_tva) || ($object->oldcopy->total_ttc != $object->total_ttc)
+				|| ($object->oldcopy->date != $object->date) || ($object->oldcopy->revenuestamp != $object->revenuestamp)
+				|| ($object->oldcopy->thirdparty->idprof1 != $object->thirdparty->idprof1)	// Siren
+				|| ($object->oldcopy->thirdparty->idprof2 != $object->thirdparty->idprof2)	// Siret
+				|| ($object->oldcopy->thirdparty->tva_intra != $object->thirdparty->tva_intra)
+				) {
+				$this->errors[] = 'You try to modify a property that is locked once the invoice has been validated (total, revenu stamp, professional id).';
+				return -2;
+			}
+			if ($object->oldcopy->lines != $object->lines) {
+				$this->errors[] = 'Modifying the lines of invoice is not allowed';
+				return -2;
 			}
 		}
 

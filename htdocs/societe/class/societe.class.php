@@ -277,7 +277,7 @@ class Societe extends CommonObject
 	public $nom;
 
 	/**
-	 * @var ?string Thirdparty name
+	 * @var string Thirdparty name
 	 */
 	public $name;
 
@@ -1913,7 +1913,7 @@ class Societe extends CommonObject
 	 *    @param    string	$ref_alias 		Name_alias of third party (Warning, this can return several records)
 	 * 	  @param	int		$is_client		Only client third party
 	 *    @param	int		$is_supplier	Only supplier third party
-	 *    @return   int						>0 if OK, <0 if KO or if two records found for same ref or idprof, 0 if not found.
+	 *    @return   int						>0 if OK, <0 if KO (-2 if two records found for same ref or idprof, other negative for error), 0 if not found.
 	 */
 	public function fetch($rowid, $ref = '', $ref_ext = '', $barcode = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '', $is_client = 0, $is_supplier = 0)
 	{
@@ -2042,7 +2042,7 @@ class Societe extends CommonObject
 			$num = $this->db->num_rows($resql);
 			if ($num > 1) {
 				$this->error = 'Fetch found several records. Rename one of thirdparties to avoid duplicate.';
-				dol_syslog($this->error, LOG_ERR);
+				dol_syslog($this->error, LOG_WARNING);
 				$result = -2;
 			} elseif ($num) {   // $num = 1
 				$obj = $this->db->fetch_object($resql);
@@ -2241,7 +2241,7 @@ class Societe extends CommonObject
 	 *    @param    string	$ref_alias 		Name_alias of third party (Warning, this can return several records)
 	 * 	  @param	int		$is_client		Only client third party
 	 *    @param	int		$is_supplier	Only supplier third party
-	 *    @return   int						ID of thirdparty found if OK, <0 if KO or if two records found, 0 if not found.
+	 *    @return   int						ID of thirdparty found if OK, <0 if KO (-2 if two records found or other negative if error), 0 if not found.
 	 */
 	public function findNearest($rowid = 0, $ref = '', $ref_ext = '', $barcode = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '', $is_client = 0, $is_supplier = 0)
 	{
@@ -2321,7 +2321,7 @@ class Societe extends CommonObject
 				$num = $this->db->num_rows($resql);
 				if ($num > 1) {
 					$this->error = 'Fetch found several records. Rename one of thirdparties to avoid duplicate.';
-					dol_syslog($this->error, LOG_ERR);
+					dol_syslog($this->error, LOG_WARNING);
 					$result = -2;
 				} elseif ($num) {
 					$obj = $this->db->fetch_object($resql);
@@ -2374,7 +2374,7 @@ class Societe extends CommonObject
 				$num = $this->db->num_rows($resql);
 				if ($num > 1) {
 					$this->error = 'Fetch found several records. Rename one of thirdparties to avoid duplicate.';
-					dol_syslog($this->error, LOG_ERR);
+					dol_syslog($this->error, LOG_WARNING);
 					$result = -2;
 				} elseif ($num) {
 					$obj = $this->db->fetch_object($resql);
@@ -4435,11 +4435,9 @@ class Societe extends CommonObject
 	 */
 	public function isACompany()
 	{
-		//global $mysoc;
-
 		// Define if third party is treated as company (or not) when nature is unknown
 		//$defaultvalue = in_array($mysoc->country_code, array('FR')) ? 0 : 1;	// TODO On old version, default was 1 for everybody, move this to defaultvalue = 0 for everybody
-		$defaultvalue = 1;
+		$defaultvalue = 0;
 		$isACompany = getDolGlobalInt('MAIN_UNKNOWN_CUSTOMERS_ARE_COMPANIES', $defaultvalue);
 
 		// Now try to guess using different tips
@@ -4674,7 +4672,7 @@ class Societe extends CommonObject
 			}
 		}
 
-		$name = $socname;
+		$name = (string) $socname;
 		$alias = $socalias ? $socalias : '';
 
 		// Positionne parameters

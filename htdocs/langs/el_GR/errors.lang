@@ -373,6 +373,8 @@ ErrorBlockLogNeedAmountsValue=Το αντικείμενο αμετάβλητου
 ErrorBlockLogNeedElement=Το αντικείμενο αμετάβλητου αρχείου καταγραφής χρειάζεται να οριστεί ο τύπος στοιχείου
 ErrorBlockLogNeedObject=Το αντικείμενο αμετάβλητου αρχείου καταγραφής χρειάζεται να οριστεί αντικείμενο
 ErrorBadParameterWhenCallingCreateOfBlockedLog=Λανθασμένη παράμετρος κατά την κλήση δημιουργίας αμετάβλητου αρχείου καταγραφής
+ErrorMaxDecimalsShownTooLowComparedToUnitOrTotal=Value for 'Max. decimals for prices shown on screen' (%s) must be equal to or greater than both 'Max. decimals for unit prices' (%s) and 'Max. decimals for total prices' (%s). This is required to prevent rounding inconsistencies on documents.
+ErrorOnlyDraftStatusCanBeDeletedInMassAction=Μόνο τα στοιχεία σε κατάσταση πρόχειρου μπορούν να διαγραφούν στη μαζική δράση
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Η παράμετρος PHP upload_max_filesize (%s) είναι υψηλότερη από την παράμετρο PHP post_max_size (%s). Αυτή δεν είναι μια συνεπής ρύθμιση.
@@ -462,3 +464,5 @@ OperNotDefined=Η μέθοδος πληρωμής δεν έχει οριστεί
 EmptyMessageNotAllowedError=Δεν επιτρέπεται το κενό μήνυμα
 SomeShipmentExists=Σφάλμα, υπάρχει κάποια αποστολή που συνδέεται με την Παραγγελία. Η διαγραφή απορρίφθηκε.
 WarningEvaluationEmptyValidate=Δεν είναι δυνατή η επικύρωση της αξιολόγησης , τα επίπεδα δεξιοτήτων δεν έχουν καθοριστεί
+ErrorBadParametersForDirectDebitFileCreate=Can't create bank transfer file: expected format parameter is not provided.
+ErrorBadParametersForDirectDebitFileCreateDids=Can't create bank transfer file: IDs of existing payment requests are not provided.

@@ -27,9 +27,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -37,6 +34,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("other", "admin"));
@@ -245,7 +244,7 @@ if ($action == 'delete') {
 	$result = $db->query($sql);
 	$obj = $db->fetch_object($result);
 
-	print $form->formconfirm("index.php?menu_handler=".$menu_handler."&menuId=".GETPOSTINT('menuId'), $langs->trans("DeleteMenu"), $langs->trans("ConfirmDeleteMenu", $obj->title), "confirm_delete");
+	print $form->formconfirm("index.php?menu_handler=".$menu_handler."&menuId=".GETPOSTINT('menuId'), $langs->transnoentitiesnoconv("DeleteMenu"), $langs->transnoentitiesnoconv("ConfirmDeleteMenu", $obj->title), "confirm_delete");
 }
 
 $newcardbutton = '';
