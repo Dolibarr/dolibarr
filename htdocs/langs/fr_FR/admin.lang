@@ -2762,3 +2762,4 @@ SpecificParameters=Paramètres spécifiques
 YouAreUsingTheAdvancedPermissionsMode=Vous utilisez le mode d'autorisation avancé. La granularité des autorisations est plus élevée. Accédez à Accueil - Configuration - Sécurité pour revenir au mode simple.
 YouAreUsingTheSimplePermissionsMode=Vous utilisez le mode d'autorisation simplifié. Accédez à Accueil - Configuration - Sécurité pour passer en mode avancé si vous avez besoin d'une gestion plus fine des autorisations.
 GoodiesButtonTitle=Visitez notre boutique de produits dérivés et de cadeaux
+BANK_DISABLE_DIRECT_INPUT=Désactiver les entrées directes dans le journal de banque
