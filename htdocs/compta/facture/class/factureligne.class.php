@@ -448,7 +448,7 @@ class FactureLigne extends CommonInvoiceLine
 		if (empty($this->fk_prev_id)) {
 			$this->fk_prev_id = 0;
 		}
-		if (empty($this->situation_percent) || $this->situation_percent > 100) {
+		if ($this->situation_percent > 100) { // don't use empty test on situation_percent, it can be equal to zero
 			$this->situation_percent = 100;
 		}
 

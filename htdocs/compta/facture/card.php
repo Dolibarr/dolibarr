@@ -2156,7 +2156,6 @@ if (empty($reshook)) {
 				$result = $object->fetch(GETPOSTINT('situations'));
 				$object->fk_facture_source = GETPOSTINT('situations');
 				$object->type = Facture::TYPE_SITUATION;
-
 				if (!empty($origin) && !empty($originid)) {
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
@@ -2190,7 +2189,7 @@ if (empty($reshook)) {
 						} else {
 							$line->situation_percent = $line->get_prev_progress($object->id); // get good progress including credit note
 						}
-
+						echo $line->id.' : '.$line->situation_percent.' ; ';
 						// The $line->situation_percent has been modified, so we must recalculate all amounts
 						$tabprice = calcul_price_total($line->qty, $line->subprice, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 0, 'HT', 0, $line->product_type, $mysoc, array(), $line->situation_percent);
 						$line->total_ht = (float) $tabprice[0];
@@ -2236,7 +2235,6 @@ if (empty($reshook)) {
 				// Special properties of replacement invoice
 
 				$object->situation_counter += 1;
-
 				$id = $object->createFromCurrent($user);
 				if ($id <= 0) {
 					$mesg = $object->error;
@@ -3110,7 +3108,7 @@ if (empty($reshook)) {
 		$line->fetch(GETPOSTINT('lineid'));
 		$percent = getDolGlobalInt('INVOICE_USE_SITUATION') == 2 ? $line->getAllPrevProgress($object->id) : $line->get_prev_progress($object->id);
 
-		$progress = price2num(GETPOST('progress', 'alpha')); // cumulative progress input
+		$progress = GETPOSTFLOAT('progress'); // cumulative progress input
 
 		if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->situation_cycle_ref > 0) {
 			// in case of situation credit note
@@ -3203,20 +3201,19 @@ if (empty($reshook)) {
 		// Invoice situation
 		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
 			$previousprogress = $line->getAllPrevProgress($line->fk_facture);
-			$fullprogress = (float) price2num(GETPOST('progress', 'alpha'), 2);
 
-			if ($object->type != Facture::TYPE_CREDIT_NOTE && $fullprogress < $previousprogress) {
+			if ($object->type != Facture::TYPE_CREDIT_NOTE && $progress < $previousprogress) {
 				$error++;
 				setEventMessages($langs->trans('CantBeLessThanMinPercent'), null, 'errors');
 			}
 
 			// Max 100%
-			if ($fullprogress > 100) {
-				$fullprogress = 100;
+			if ($progress > 100) {
+				$progress = 100;
 			}
-			$addprogress = $fullprogress - $previousprogress;
+			$addprogress = $progress - $previousprogress;
 		} else {
-			$addprogress = price2num(GETPOST('progress', 'alpha'));
+			$addprogress = $progress;
 		}
 
 		// Update line
