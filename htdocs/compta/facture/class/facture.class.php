@@ -4851,14 +4851,14 @@ class Facture extends CommonInvoice
 			$sign = -1;
 		}
 
-		$line->total_ht = $sign * (float) $tabprice[0];
-		$line->total_tva = $sign * (float) $tabprice[1];
-		$line->total_ttc =  $sign * (float) $tabprice[2];
+		$line->total_ht = price2num($sign * (float) $tabprice[0], 'MT');
+		$line->total_tva = price2num($sign * (float) $tabprice[1], 'MT');
+		$line->total_ttc =  price2num($sign * (float) $tabprice[2], 'MT');
 		$line->total_localtax1 = (float) $tabprice[9];
 		$line->total_localtax2 = (float) $tabprice[10];
-		$line->multicurrency_total_ht  =  $sign * (float) $tabprice[16];
-		$line->multicurrency_total_tva =  $sign * (float) $tabprice[17];
-		$line->multicurrency_total_ttc =  $sign * (float) $tabprice[18];
+		$line->multicurrency_total_ht  =  price2num($sign * (float) $tabprice[16], 'CT');
+		$line->multicurrency_total_tva =  price2num($sign * (float) $tabprice[17], 'CT');
+		$line->multicurrency_total_ttc =  price2num($sign * (float) $tabprice[18], 'CT');
 		$line->update($user);
 
 		// sometimes it is better to not update price for each line, ie when updating situation on all lines
