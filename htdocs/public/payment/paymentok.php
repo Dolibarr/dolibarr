@@ -1012,6 +1012,7 @@ if ($ispaymentok) {
 		// Record payment
 		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$object = new Facture($db);
+		/** @var Facture $object */
 		$result = $object->fetch((int) $tmptag['INV']);
 		if ($result) {
 			$FinalPaymentAmt = $_SESSION["FinalPaymentAmt"];
