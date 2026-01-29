@@ -1430,7 +1430,9 @@ if (!getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
 }
 
 // Add a non predefined product
-$menus[$r++] = array('title' => '<span class="fa fa-cube paddingrightonly"></span><div class="trunc">'.$langs->trans("FreeZone").'</div>', 'action' => 'FreeZone();');
+if (!getDolGlobalString('TAKEPOS_NO_FREE_ZONE_PRODUCT')) {
+	$menus[$r++] = array('title' => '<span class="fa fa-cube paddingrightonly"></span><div class="trunc">'.$langs->trans("FreeZone").'</div>', 'action' => 'FreeZone();');
+}
 
 // BAR RESTAURANT specific menu "Print on kitchen/order printer"
 if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {

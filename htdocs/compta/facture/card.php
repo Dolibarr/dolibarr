@@ -5604,7 +5604,7 @@ if ($action == 'create') {
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
 			print '<input type="hidden" name="page_y" value="">';
-			print $form->selectarray('dispute_status', $liststatus, $object->dispute_status);
+			print $form->selectarray('dispute_status', $liststatus, $object->dispute_status, 0, 0, 0, '', 1);
 			print '<input type="submit" class="button smallpaddingimp valignmiddle" value="'.$langs->trans("Save").'">';
 			print '</form>';
 		}
