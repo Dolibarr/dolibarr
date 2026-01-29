@@ -2555,13 +2555,16 @@ class EmailCollector extends CommonObject
 								// Verify if ticket already exists to fall back on the right operation
 								$tickettocreate = new Ticket($this->db);
 							$errorfetchticket = 0;
-							$alreadycreated = 0;
-							if ($ticketid > 0) {
-								$alreadycreated = $tickettocreate->fetch($ticketid);
-							}
-							if ($alreadycreated == 0 && !empty($trackid)) {
-								$alreadycreated = $tickettocreate->fetch(0, '', $trackid);
-							}
+								$alreadycreated = 0;
+								if ($ticketid > 0) {
+									$alreadycreated = $tickettocreate->fetch($ticketid);
+								}
+								if ($alreadycreated == 0 && !empty($objectid) && $objectemail instanceof Ticket) {
+									$alreadycreated = $tickettocreate->fetch((int) $objectid);
+								}
+								if ($alreadycreated == 0 && !empty($trackid)) {
+									$alreadycreated = $tickettocreate->fetch(0, '', $trackid);
+								}
 							if ($alreadycreated == 0 && !empty($msgid)) {
 								$alreadycreated = $tickettocreate->fetch(0, '', '', $msgid);
 							}
@@ -4023,6 +4026,7 @@ class EmailCollector extends CommonObject
 						$destination = dol_sanitizePathName($destination);
 
 						file_put_contents($destination, $data);
+						dolChmod($destination);
 					}
 				}
 			}
@@ -4117,8 +4121,8 @@ class EmailCollector extends CommonObject
 			$subject = iconv_mime_decode($subject, ICONV_MIME_DECODE_CONTINUE_ON_ERROR, 'UTF-8');
 		}
 
-			return $subject;
-		}
+				return (string) $subject;
+			}
 
 		/**
 		 * Check if an attachment filename is allowed by configuration.
