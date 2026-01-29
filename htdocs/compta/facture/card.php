@@ -1341,16 +1341,22 @@ if (empty($reshook)) {
 					}
 				}
 
-				// NOTE: Pb with situation invoice
+				// NOTE: Pb with situation invoice when INVOICE_USE_SITUATION=1 (legacy mode)
 				// NOTE: fields total on situation invoice are stored as cumulative values on total of lines (bad) but delta on invoice total
 				// NOTE: fields total on credit note are stored as delta both on total of lines and on invoice total (good)
 				// NOTE: fields situation_percent on situation invoice are stored as cumulative values on lines (bad)
 				// NOTE: fields situation_percent on credit note are stored as delta on lines (good)
+				// NOTE: for all this reasons, credit notes on situation invoice when INVOICE_USE_SITUATION=1 are disabled
+				// NOTE: when INVOICE_USE_SITUATION=2 (modern mode) all this problems are supposed to be solved
 				if (GETPOSTINT('invoiceAvoirWithLines') == 1 && $id > 0) {
 					if (!empty($facture_source->lines)) {
 						$fk_parent_line = 0;
 
-						//if ($facture_source->isSituationInvoice() && getDolGlobalString('INVOICE_USE_SITUATION') != 2) die('Impossible de créer des avoirs de facture de situation en mode INVOICE_USE_SITUATION != 2');
+						if ($facture_source->isSituationInvoice() && getDolGlobalString('INVOICE_USE_SITUATION') != 2) {
+							//die('Impossible de créer des avoirs de facture de situation en mode INVOICE_USE_SITUATION != 2');
+							$error++;
+							setEventMessage($langs->trans("ErrorCreditOnSituationMode1"), 'errors');
+						} else {
 						/* if ($facture_source->isSituationInvoice()) {
 							$source_fk_prev_id = $line->fk_prev_id; // temporary storing situation invoice fk_prev_id
 							$line->fk_prev_id  = $line->id; // The new line of the new credit note we are creating must be linked to the situation invoice line it is created from
@@ -1422,56 +1428,57 @@ if (empty($reshook)) {
 								//print 'New line based on invoice id '.$facture_source->tab_previous_situation_invoice[$lineIndex]->id.' fk_prev_id='.$source_fk_prev_id.' will be fk_prev_id='.$line->fk_prev_id.' '.$line->total_ht.' '.$line->situation_percent.'<br>';
 
 							}  */
+						
+							foreach ($facture_source->lines as $line) {
+								// Extrafields
+								if (method_exists($line, 'fetch_optionals')) {
+									// load extrafields
+									$line->fetch_optionals();
+								}
 
-						foreach ($facture_source->lines as $line) {
-							// Extrafields
-							if (method_exists($line, 'fetch_optionals')) {
-								// load extrafields
-								$line->fetch_optionals();
-							}
+								// Reset fk_parent_line for no child products and special product
+								if (($line->product_type != 9 && empty($line->fk_parent_line)) || $line->product_type == 9) {
+									$fk_parent_line = 0;
+								}
 
-							// Reset fk_parent_line for no child products and special product
-							if (($line->product_type != 9 && empty($line->fk_parent_line)) || $line->product_type == 9) {
-								$fk_parent_line = 0;
-							}
+								$line->fk_facture = $object->id;
+								$line->fk_parent_line = $fk_parent_line;
 
-							$line->fk_facture = $object->id;
-							$line->fk_parent_line = $fk_parent_line;
+								$line->subprice = -$line->subprice; // invert price for object
+								// $line->pa_ht = $line->pa_ht; // we chose to have buy/cost price always positive, so no revert of sign here
+								$line->total_ht = -$line->total_ht;
+								$line->total_tva = -$line->total_tva;
+								$line->total_ttc = -$line->total_ttc;
+								$line->total_localtax1 = -$line->total_localtax1;
+								$line->total_localtax2 = -$line->total_localtax2;
 
-							$line->subprice = -$line->subprice; // invert price for object
-							// $line->pa_ht = $line->pa_ht; // we chose to have buy/cost price always positive, so no revert of sign here
-							$line->total_ht = -$line->total_ht;
-							$line->total_tva = -$line->total_tva;
-							$line->total_ttc = -$line->total_ttc;
-							$line->total_localtax1 = -$line->total_localtax1;
-							$line->total_localtax2 = -$line->total_localtax2;
+								$line->multicurrency_subprice = -$line->multicurrency_subprice;
+								$line->multicurrency_total_ht = -$line->multicurrency_total_ht;
+								$line->multicurrency_total_tva = -$line->multicurrency_total_tva;
+								$line->multicurrency_total_ttc = -$line->multicurrency_total_ttc;
 
-							$line->multicurrency_subprice = -$line->multicurrency_subprice;
-							$line->multicurrency_total_ht = -$line->multicurrency_total_ht;
-							$line->multicurrency_total_tva = -$line->multicurrency_total_tva;
-							$line->multicurrency_total_ttc = -$line->multicurrency_total_ttc;
+								$line->context['createcreditnotefrominvoice'] = 1;
+								if ($facture_source->isSituationInvoice()) {
+									$line->fk_prev_id = $line->id;
+									if (getDolGlobalString('INVOICE_USE_SITUATION') == 2) {
+										$line->situation_percent = -$line->situation_percent;
+									} else {
+										$line->situation_percent = $line->get_prev_progress($object->id); // never reached
+									}
+								}
 
-							$line->context['createcreditnotefrominvoice'] = 1;
-							if ($facture_source->isSituationInvoice()) {
-								$line->fk_prev_id = $line->id;
-								if (getDolGlobalString('INVOICE_USE_SITUATION') == 2) {
-									$line->situation_percent = -$line->situation_percent;
-								} else {
-									$line->get_prev_progress($object->id);
+								$result = $line->insert(0, 1); // When creating credit note with same lines than source, we must ignore error if discount already linked
+
+								$object->lines[] = $line; // insert new line in current object
+
+								// Defined the new fk_parent_line
+								if ($result > 0 && $line->product_type == 9) {
+									$fk_parent_line = $result;
 								}
 							}
 
-							$result = $line->insert(0, 1); // When creating credit note with same lines than source, we must ignore error if discount already linked
-
-							$object->lines[] = $line; // insert new line in current object
-
-							// Defined the new fk_parent_line
-							if ($result > 0 && $line->product_type == 9) {
-								$fk_parent_line = $result;
-							}
+							$object->update_price(1);
 						}
-
-						$object->update_price(1);
 					}
 				}
 
