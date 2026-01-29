@@ -1370,7 +1370,7 @@ if (empty($reshook)) {
 									$line->situation_percent = -$line->situation_percent;
 								} else { // old INVOICE_USE_SITUATION=1 legacy wich is bugged
 									$source_fk_prev_id = $line->fk_prev_id; // temporary storing situation invoice fk_prev_id
-									$line->fk_prev_id  = $line->id; // The new line of the new credit note we are creating must be linked to the situation invoice line it is created from
+									$line->fk_prev_id = $line->id; // The new line of the new credit note we are creating must be linked to the situation invoice line it is created from
 
 									if (!empty($facture_source->tab_previous_situation_invoice)) {
 										// search the last standard invoice in cycle and the possible credit note between this last and facture_source
