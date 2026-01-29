@@ -13,7 +13,7 @@
  * Copyright (C) 2014		Cédric GROSS				<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015	Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
- * Copyright (C) 2018-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2019-2023  Thibault Foucart            <support@ptibogxiv.net>
  * Copyright (C) 2020       Open-Dsi         			<support@open-dsi.fr>
  * Copyright (C) 2021       Gauthier VERDOL         	<gauthier.verdol@atm-consulting.fr>
@@ -2258,10 +2258,10 @@ function dolSlugify($stringtoslugify)
 /**
  *  Returns text escaped for inclusion into javascript code
  *
- *  @param	string	$stringtoescape			String to escape
- *  @param	int<0,3>	$mode				0=Escape also ' and " into ', 1=Escape ' but not " for usage into 'string', 2=Escape " but not ' for usage into "string", 3=Escape ' and " with \
- *  @param	int		$noescapebackslashn		0=Escape also \n. 1=Do not escape \n.
- *  @return string							Escaped string. Both ' and " are escaped into ' if they are escaped.
+ *  @param	int|string	$stringtoescape			String to escape
+ *  @param	int<0,3>	$mode					0=Escape also ' and " into ', 1=Escape ' but not " for usage into 'string', 2=Escape " but not ' for usage into "string", 3=Escape ' and " with \
+ *  @param	int			$noescapebackslashn		0=Escape also \n. 1=Do not escape \n.
+ *  @return string								Escaped string. Both ' and " are escaped into ' if they are escaped.
  */
 function dol_escape_js($stringtoescape, $mode = 0, $noescapebackslashn = 0)
 {
@@ -2287,7 +2287,7 @@ function dol_escape_js($stringtoescape, $mode = 0, $noescapebackslashn = 0)
 		$substitjs["'"] = "\\'";
 		$substitjs['"'] = "\\\"";
 	}
-	return strtr($stringtoescape, $substitjs);
+	return strtr((string) $stringtoescape, $substitjs);
 }
 
 /**
@@ -13594,7 +13594,7 @@ function dolIsAllowedForPreview($file)
 	}
 
 	// Check mime types
-	$mime_preview = array('bmp', 'jpeg', 'png', 'gif', 'tiff', 'pdf', 'plain', 'css', 'webp', 'webm', 'mp4');
+	$mime_preview = array('avif', 'bmp', 'jpeg', 'png', 'gif', 'tiff', 'pdf', 'plain', 'css', 'webp', 'webm', 'mp4');
 	if (getDolGlobalString('MAIN_ALLOW_SVG_FILES_AS_IMAGES')) {
 		$mime_preview[] = 'svg+xml';
 	}
@@ -13875,6 +13875,10 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 		$mime = 'video/webm';
 		$imgmime = 'video.png';
 		$famime = 'file-video';
+	} elseif (preg_match('/\.avif$/i', $tmpfile)) {
+		$mime = 'image/avif';
+		$imgmime = 'image.png';
+		$famime = 'file-image';
 	} elseif (preg_match('/\.avi$/i', $tmpfile)) {
 		$mime = 'video/x-msvideo';
 		$imgmime = 'video.png';

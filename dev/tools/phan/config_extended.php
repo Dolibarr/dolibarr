@@ -74,6 +74,7 @@ $config['suppress_issue_types'] = [
 		'PhanTypeObjectUnsetDeclaredProperty',
 		'PhanTypePossiblyInvalidDimOffset',		// a lot of false positive, in most cases, we want to keep the code as it is
 		'PhanPluginUnknownArrayFunctionReturnType',	// a lot of false positive, in most cases, we want to keep the code as it is
+		'PhanTypeMismatchArgumentSuperType', 	// a lot of false positive, in most cases, we want to keep the code as it is
 
 		'PhanPluginWhitespaceTab',		// Dolibarr used tabs
 		'PhanPluginCanUsePHP71Void',	// Dolibarr is maintaining 7.0 compatibility
