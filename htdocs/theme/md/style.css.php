@@ -7,7 +7,7 @@
  * Copyright (C) 2015		Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2021-2023  Anthony Berton          <anthony.berton@bb2a.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2025		Marc de Lima Lucio			<marc-dll@user.noreply.github.com>
  *
@@ -396,7 +396,7 @@ print 'fontsize='.$fontsize."\n";
 print 'nbtopmenuentries='.$nbtopmenuentries."\n";
 print '*/'."\n";
 
-$leftmenuwidth = 242;
+$leftmenuwidth = 254;
 
 ?>
 
@@ -563,6 +563,10 @@ input {
 .tableforfield input{
 	padding: 2px;
 }
+input.downloadexternallink {
+	padding-left: 3px;
+}
+
 .refidno input {
 	margin-top: 0 !important;
 	padding: 0;
@@ -582,7 +586,7 @@ textarea:focus {
 }
 input:focus:not(.input-icon-user, .input-icon-password, .input-icon-security):not(.noborderfocus):not(.inputsearch_dropdownselectedfields):not(.button):not(.buttonwebsite):not(.buttonreset):not(.select2-search__field):not(#top-bookmark-search-input):not(.search_component_input):not(.input-nobottom),
  select:focus, .select2-container--open [aria-expanded="false"].select2-selection--single,
- .select2-container--focus span.selection span.select2-selection:not(.massactionselect) {
+ .select2-container--focus span.selection span.select2-selection:not(.noborderfocus):not(.massactionselect) {
 <?php if (getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT')) { ?>
 	border: 1px solid #666 !important;
 <?php } else { ?>
@@ -674,7 +678,7 @@ input, select {
 	text-shadow: none;
 	text-transform: uppercase;
 	/* font-weight: bold; */
-	margin: 0em 0.8em;
+	margin: 0 2px;
 	padding: 0.6em 0.7em;
 	line-height: 17px;
 }
@@ -770,7 +774,7 @@ input.buttonpayment, button.buttonpayment, div.buttonpayment {
 
 div.buttonpayment input {
 	background-color: unset;
-	border-bottom: unset;
+	border: unset;
 	font-weight: bold;
 	text-transform: uppercase;
 	color: #333;
@@ -831,6 +835,9 @@ span.userimg.notfirst, div.userimg.notfirst {
 }
 div.userimg.notfirst {
 	display: block-inline;
+}
+.center.inline-block.dateheight {
+	line-height: 1.1em;
 }
 
 /* Used by timesheets */
@@ -941,6 +948,9 @@ input.pageplusone {
 .opacitytransp {
 	opacity: 0;
 }
+.noopacity {
+	opacity: unset !important;
+}
 .colorwhite {
 	color: var(--colorwhite);
 }
@@ -1034,8 +1044,9 @@ input#onlinepaymenturl, input#directdownloadlink {
 }
 
 .formconsumeproduce {
-	background: #f3f3f3;
-	padding: 20px 0px 0px 0px;
+	background: #f0f0f0;
+
+	padding: 20px 0px 20px 0px;
 	border-radius: 8px;
 }
 
@@ -1156,6 +1167,8 @@ th .button {
 .maxwidthsearch {		/* Max width of column with the search picto */
 	width: 54px;
 	min-width: 54px;
+	padding-left: 4px !important;
+	padding-right: 4px !important;
 }
 
 .valigntop {
@@ -1205,6 +1218,10 @@ textarea.centpercent {
 }
 .small, small {
 	font-size: 85%;
+}
+.select2-results__option .smallincombo {
+	font-size: 95%;
+	font-weight: bold;
 }
 .lineheightsmall {
 	line-height: 1.2em;
@@ -1444,19 +1461,18 @@ td.wordbreak img, td.wordbreakimp img {
 .borderimp {
 	border: 1px solid #888 !important;
 }
-.text-warning{
-	color : <?php print $textWarning; ?>
-}
 /* CSS used for extrafield text */
 .shortmessagecut {
 	max-height: <?php print getDolGlobalInt('MAIN_CSS_SHORTMESSSAGECUT', 125); ?>px;
 	max-width: 100%;
 	overflow-y: auto;
+	word-break: break-word;
 }
 .longmessagecut {
 	max-height: <?php print getDolGlobalInt('MAIN_CSS_LONGMESSSAGECUT', 250); ?>px;
 	max-width: 100%;
 	overflow-y: auto;
+	word-break: break-word;
 }
 div.urllink {
 	padding: 5px;
@@ -1626,7 +1642,7 @@ div.divsearchfield {
 .divsearchfieldfilter {
 	text-overflow: clip;
 	overflow: auto;
-	white-space: nowrap;
+	/* white-space: nowrap; */
 	padding-bottom: 5px;
 	opacity: 0.6;
 	font-size: small;
@@ -1977,6 +1993,14 @@ select.flat.selectlimit {
 	height: auto !important;
 	word-break: break-word;
 }
+.threelinesmax, .threelinesmax-normallineheight {				/* To be used into a <div class="twolinesmax-normallineheight minwidth200onall"> into a td for example */
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 3;
+	overflow: hidden;
+	height: auto !important;
+	word-break: break-word;
+}
 .twolinesmax-normallineheight {
 	line-height: normal;
 }
@@ -1990,6 +2014,10 @@ select.flat.selectlimit {
 .tablelistofcalendars {
 	margin-top: 25px !important;
 }
+.navselectiondate {
+	min-width: 250px;
+}
+
 .amountalreadypaid {
 	white-space: nowrap;
 }
@@ -2038,6 +2066,16 @@ select.flat.selectlimit {
 	padding: 5px;
 	border-radius: 5px;
 }
+
+.showonhover:hover *::before {
+	visibility: visible !important;
+	display: inline-block !important;
+}
+.showonhover:not(:hover) *::before {
+	visibility: hidden;
+	display: inline-block !important;
+}
+
 
 .savingdocmask {
 	margin-top: 6px;
@@ -2522,7 +2560,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 
 	/* input, input[type=text], */
 	select {
-		width: 98%;
+		/* width: 98%; */
 		min-width: 40px;
 	}
 
@@ -2809,8 +2847,8 @@ div.fiche {
 <?php } ?>
 
 div.fiche {
-	margin-<?php print $left; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '35' : '6')); ?>px;
-	margin-<?php print $right; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '33' : '6')); ?>px;
+	margin-<?php print $left; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '38' : '6')); ?>px;
+	margin-<?php print $right; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '36' : '6')); ?>px;
 	<?php if (!empty($dol_hide_topmenu) || GETPOST('dol_openinpopup', 'aZ09')) {
 		print 'margin-top: 12px;';
 	} ?>
@@ -3023,7 +3061,7 @@ img.hideonsmartphone.pictoactionview {
 
 .pictofixedwidth {
 	text-align: start;
-	width: 20px;	/* do not use em unit here */
+	width: 22px;	/* do not use em unit here */
 	/* padding-right: 0; */
 }
 img.pictofixedwidth {
@@ -3146,13 +3184,12 @@ img.photorefnoborder {
 
 
 /* ============================================================================== */
-/* Menu top et 1ere ligne tableau                                                 */
+/* Top menu and first line of table                                               */
 /* ============================================================================== */
 
 <?php
 $minwidthtmenu = 66; /* minimum width for one top menu entry */
 $heightmenu = 48; /* height of top menu, part with image */
-$heightmenu2 = 48; /* height of top menu, ârt with login  */
 $disableimages = 0;
 $maxwidthloginblock = 110;
 if (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 1 || !empty($user->conf->MAIN_OPTIMIZEFORTEXTBROWSER)) {
@@ -3581,9 +3618,10 @@ form#login {
 	border-top:solid 1px #f8f8f8;
 }
 .login_table input#username, .login_table input#password, .login_table input#securitycode{
-	border: none;
+	/* border: none; */
 	/* border-bottom: solid 1px rgba(180,180,180,.4); */
 	padding: 5px;
+	padding-left: 10px;
 	margin-left: 5px;
 	margin-top: 5px;
 	margin-bottom: 5px;
@@ -3599,9 +3637,11 @@ form#login {
 	min-width: 220px;
 	border-radius: 2px;
 }
+/*
 .login_table .tdinputlogin {
 	border-bottom: 1px solid #ccc;
 }
+*/
 .login_table .tdinputlogin .fa {
 	padding-left: 10px;
 	width: 14px;
@@ -3612,7 +3652,7 @@ form#login {
 }
 .login_table #tdpasswordlogin #togglepassword {
 	position: absolute;
-	top: 0.7em;
+	top: 0.6em;
 	right: 8px;
 	background: none;
 	border: none;
@@ -3674,6 +3714,7 @@ table.login_table_securitycode tr td {
 #img_logo, .img_logo {
 	max-width: 160px;
 	max-height: 90px;
+	border-radius: 4px;
 }
 .loginbuttonexternal {
 	width: 300px;
@@ -3805,7 +3846,8 @@ img.login, img.printer, img.entity {
 	color: white;
 	font-weight: bold;
 }
-.userimg.atoplogin img.userphoto, .userimgatoplogin img.userphoto {		/* size for user photo in login bar */
+.userimg.atoplogin img.userphoto, .userimgatoplogin img.userphoto,
+.userimg.atoplogin span.userphoto, .userimgatoplogin span.userphoto {		/* size for user photo in login bar */
 	/* border-radius: 8px; */
 	width: <?php echo $disableimages ? '26' : '30'; ?>px;
 	height: <?php echo $disableimages ? '26' : '30'; ?>px;
@@ -3820,6 +3862,16 @@ img.userphoto {			/* size for user photo in lists */
 	background-size: contain;
 	vertical-align: middle;
 }
+.userimg.atoplogin span.userphoto, .userimgatoplogin span.userphoto {
+	vertical-align: middle;
+	color: unset;
+}
+.userimg.atoplogin span.userphoto::before, .userimgatoplogin span.userphoto::before {
+	margin-top: 7px;
+	display: inline-block;
+	margin-right: 1px;
+}
+
 span.userimg div.userphoto {
 	background-color: #eee;
 	border-radius: 0.72em;
@@ -3849,7 +3901,7 @@ img.userphotopublicvcard {
 	top: 25px;
 	left: -110px;
 }
-form[name="addtime"] img.userphoto {
+form[name="addtime"] img.userphoto, form[name="addtime"] img.userphotosmall {
 	border: 1px solid #444;
 }
 .span-icon-user {
@@ -3887,6 +3939,11 @@ div.vmenu, td.vmenu {
 
 .vmenusearchselectcombo {
 	width: <?php echo $leftmenuwidth - 20; ?>px;
+	height: 38px !important;
+}
+.vmenusearchselectcombo > .select2-selection__rendered, .vmenusearchselectcombo > .select2-selection__arrow {
+	line-height: 38px !important;
+	height: 38px !important;
 }
 
 .menu_contenu {
@@ -3929,6 +3986,7 @@ a.vsmenu:link, a.vsmenu:visited {
 	white-space: nowrap;
 }
 span.vsmenudisabledmargin, font.vsmenudisabledmargin { margin: 1px 1px 1px 8px; }
+li a.vsmenudisabled, li.vsmenudisabled { color: #aaa !important; cursor: default !important; }
 
 a.help:link, a.help:visited, a.help:hover, a.help:active, span.help {
 	text-align: <?php print $left; ?>; font-weight: normal; color: #999; text-decoration: none;
@@ -4436,8 +4494,8 @@ tr.liste_titre.box_titre td table td, .bordernooddeven tr td {
 	height: 4em !important;
 }
 
-table.border td, table.bordernooddeven td, div.border div div.tagtd {
-	padding: 3px 4px 3px 4px;
+table.border td, table.bordernooddeven td, div.border div div.tagtd, div.table-border div div.tagtd {
+	padding: 3px 8px 3px 8px;
 	/* border: 1px solid #f0f0f0; */
 	border-collapse: collapse;
 }
@@ -4713,8 +4771,8 @@ table.liste th, table.noborder th, table.noborder tr.liste_titre td, table.nobor
 table.liste td, table.noborder > tr > td,
 table.noborder > tbody > tr > td,
 div.noborder form div, table.tableforservicepart1 td, table.tableforservicepart2 td {
-	padding: 4px 8px 4px 10px;			/* t r b l */
-	height: 28px;
+	padding: 8px 12px 8px 12px;			/* t r b l */
+	height: 32px;
 }
 table.liste tr.trkanban td {
 	padding: 12px 15px 12px 15px;			/* t r b l */
@@ -4771,6 +4829,7 @@ table.listwithfilterbefore {
 .tagtd, .table-border-col, .table-key-border-col, .table-val-border-col { display: table-cell; }
 .confirmquestions .tagtr .tagtd:not(:first-child)  { padding-left: 10px; }
 .confirmquestions { margin-top: 5px; }
+.confirmquestions .tagtr .tagtd { height: 2em; vertical-align: middle; }
 
 
 /* Pagination */
@@ -5536,12 +5595,13 @@ img.boxhandle, img.boxclose {
 .warning { color: #887711 !important; }
 .error   { color: #550000 !important; font-weight: bold; }
 .green   { color: #118822 !important; }
+.neutral { color: #444 !important; }
 
 div.ok {
   color: #114466;
 }
 
-div.info, div.warning, div.error {
+div.info, div.warning, div.error, div.green, div.neutral {
 	padding-top: 8px;
 	padding-left: 10px;
 	padding-right: 4px;
@@ -5550,15 +5610,22 @@ div.info, div.warning, div.error {
 	border-radius: 1px;
 }
 
-/* Info admin */
+div.fiche div.info, div.fiche div.warning, div.fiche div.neutral {
+	box-shadow: 1px 1px 6px #e4e4e4;
+	margin: 1em 0em 1.2em 0em;
+}
+
+/* Neutral message */
+div.neutral {
+	border-<?php print $left; ?>: solid 5px #aaa;
+	background: #f8f8f8;
+}
+
+/* Info message */
 div.info {
 	border-<?php print $left; ?>: solid 5px #87cfd2;
 	background: #eff8fc;
 	color: #558;
-}
-div.fiche div.info, div.fiche div.warning {
-	box-shadow: 4px 4px 12px #e4e4e4;
-	margin: 1em 0em 1.2em 0em;
 }
 
 /* Ok message */
@@ -5877,6 +5944,14 @@ div#dialogforpopup {
 .ui-dialog .ui-dialog-buttonpane {
 	padding: .5em 1em .3em .4em;
 }
+.ui-dialog .ui-dialog-content, .ui-dialog .ui-dialog-titlebar.ui-widget-header {
+	padding-left: 1em !important;
+}
+/*
+.ui-dialog .ui-dialog-content {
+	text-align: justify;
+}
+*/
 
 
 /* ============================================================================== */
@@ -6638,6 +6713,10 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 .colorselector {
 	border: solid 1px #ddd !important;
 }
+input.colorpicker {
+	color: unset !important;
+	background-color: unset !important;
+}
 
 
 /* ============================================================================== */
@@ -7234,6 +7313,10 @@ input.select2-input {
 	border: none;
 	border-bottom: 1px solid #ccc !important;
 }
+li.select2-selection__choice {
+	white-space: break-spaces;
+}
+
 .select2-results .select2-highlighted.optionblue {
 	color: #FFF !important;
 }
@@ -7247,7 +7330,10 @@ input.select2-input {
 	border: none;
 }
 
-.blockvmenusearch .select2-container--default .select2-selection--single,
+.blockvmenusearch .select2-container--default .select2-selection--single
+{
+	/* background-color: var(--colorbackvmenu1); */
+}
 .blockvmenubookmarks .select2-container--default .select2-selection--single
 {
 	background-color: var(--colorbackvmenu1);
@@ -7303,7 +7389,7 @@ input.select2-input {
 	border-top: 1px solid #ccc;
 	border-bottom: 1px solid #ccc;
 }
-.select2-container--default .select2-selection--single {
+.select2-container--default .select2-selection--single:not(.selectwidget) {
 	outline: none;
 	<?php if (!getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT')) { ?>
 	border-top: none;
@@ -7316,6 +7402,17 @@ input.select2-input {
 
 	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>: solid 1px var(--inputbordercolor);
 
+	box-shadow: none !important;
+}
+.select2-container--default .select2-selection--single.selectwidget,
+.select2-container--default .select2-selection--single.selectwidget:hover,
+.select2-container--default .select2-selection--single.selectwidget:focus {
+	outline: none;
+	border-top: none;
+	border-left: none;
+	border-right: none;
+	border-bottom: solid 1px var(--inputbordercolor);
+	border-radius: 0;
 	box-shadow: none !important;
 }
 .select2-container--default.select2-container--focus .select2-selection--multiple {
@@ -7338,7 +7435,7 @@ input.select2-input {
 	margin-top: 4px !important;
 }
 .select2-selection--multiple input.select2-search__field {
-	border-bottom: none !important;
+	border: none !important;
 }
 .select2-search__field
 {
@@ -7546,6 +7643,7 @@ select.multiselectononeline {
 	height: 28px !important;
 	opacity: 0;
 	/* width: 1px !important; */
+	min-width: 50px;
 }
 
 @media only screen and (min-width: 767px)
@@ -7595,6 +7693,8 @@ select.multiselectononeline {
 	box-shadow: none !important;
 	margin-top: 1px !important;
 	margin-bottom: 0 !important;
+	margin-<?php echo $left ?>: 0px !important;
+	margin-<?php echo $right ?>: 3px !important;
 }
 span.noborderoncategories a, li.noborderoncategories a {
 	line-height: normal;
@@ -7838,6 +7938,10 @@ div.kanban.column div.ui-sortable-helper {
 }
 .searchpage .searchform input {
 	font-size: 1.15em;
+	height: inherit;
+}
+.searchpage :focus-visible {
+  outline: none;
 }
 
 li.ui-li-divider .ui-link {
@@ -8885,8 +8989,8 @@ table.jPicker {
 		width: <?php print dol_size(300, 'width'); ?>px;
 	}
 	select {
-		width: 98%;
-		min-width: 0 !important;
+		/* width: 98%; */
+		min-width: 40px;
 	}
 	div.divphotoref {
 		padding-<?php echo $right; ?>: 5px;

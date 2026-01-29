@@ -385,6 +385,7 @@ FillExtrafieldWithAi=Fill extrafield with AI content
 ExtrafieldFiller=Extrafield filler
 OurProductSelection=The product to discover
 NoSupportedModulesHaveBeenActivated=The reporting tool can generate dynamic reports for some modules only. There is no supported module enabled yet.
+TryAnotherConnectionMode=Try another connection mode
 # Bookmarks
 BehaviourOnClick = Behavior when a bookmark URL is selected
 BookmarkTargetNewWindowShort = New tab

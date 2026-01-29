@@ -153,7 +153,7 @@ class modBlockedLog extends DolibarrModules
 	{
 		require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 
-		return isBlockedLogused();
+		return isBlockedLogUsed();
 	}
 
 
@@ -171,17 +171,25 @@ class modBlockedLog extends DolibarrModules
 
 		$sql = array();
 
+		require_once DOL_DOCUMENT_ROOT . '/blockedlog/class/blockedlog.class.php';
+		$b = new BlockedLog($this->db);
+
+		// forceinit can be set to bypass this redirection
+		if (isALNEQualifiedVersion(1, 1) && $options != 'forceinit') {
+			// We first switch on registration page
+			header("Location: ".DOL_URL_ROOT.'/blockedlog/admin/registration.php');
+			exit;
+		}
+
 		$this->db->begin();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 
 		// Check that the HTTPS is forced
-		global $dolibarr_main_force_https;
-
-		if (isALNEQualifiedVersion(0, 1) && empty($dolibarr_main_force_https)) {
-			$this->error = 'Error: The HTTPS must be forced by setting the $dolibarr_main_force_https into Dolibarr conf/conf.php file to allow the use of this module in France.';
-
+		$s = $b->canBeEnabled();
+		if ($s) {	// Activation not allowed
+			$this->error = $s;
 			return 0;
 		}
 
@@ -217,7 +225,6 @@ class modBlockedLog extends DolibarrModules
 
 
 		// We add an entry to show we enable module
-		require_once DOL_DOCUMENT_ROOT . '/blockedlog/class/blockedlog.class.php';
 
 		$object = new stdClass();
 		$object->id = 0;
@@ -226,11 +233,9 @@ class modBlockedLog extends DolibarrModules
 		$object->entity = $conf->entity;
 		$object->date = dol_now();
 
-		$b = new BlockedLog($this->db);
-
 		// Add first entry in unalterable Log to track that module was activated
 		$action = 'MODULE_SET';
-		$result = $b->setObjectData($object, $action, 0);
+		$result = $b->setObjectData($object, $action, 0, $user, null);
 
 		if ($result < 0) {
 			$this->error = $b->error;
@@ -274,7 +279,7 @@ class modBlockedLog extends DolibarrModules
 		$object->label = 'Module disabled';
 
 		$b = new BlockedLog($this->db);
-		$result = $b->setObjectData($object, 'MODULE_RESET', 0);
+		$result = $b->setObjectData($object, 'MODULE_RESET', 0, $user, null);
 		if ($result < 0) {
 			$this->error = $b->error;
 			$this->errors = $b->errors;
@@ -283,7 +288,7 @@ class modBlockedLog extends DolibarrModules
 
 		if ($b->alreadyUsed(1)) {
 			// Unalterable log was already used.
-			if (isALNEQualifiedVersion()) {
+			if (!$b->canBeDisabled()) {
 				// Case we refuse to disable it
 				global $langs;
 				$this->error = $langs->trans('DisablingBlockedLogIsNotallowedOnceUsedExceptOnFullreset', $langs->transnoentitiesnoconv('BlockedLog'));

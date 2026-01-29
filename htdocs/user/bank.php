@@ -735,7 +735,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	if (isModEnabled('holiday') && ($user->hasRight('holiday', 'readall') || ($user->hasRight('holiday', 'read') && $object->id == $user->id))) {
 		$holiday = new Holiday($db);
 
-		$sql = "SELECT h.rowid, h.statut as status, h.fk_type, h.date_debut, h.date_fin, h.halfday";
+		$sql = "SELECT h.rowid, h.ref, h.statut as status, h.fk_type, h.date_debut, h.date_fin, h.halfday";
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as h";
 		$sql .= " WHERE h.fk_user = ".((int) $object->id);
 		$sql .= " AND h.entity IN (".getEntity('holiday').")";
@@ -758,7 +758,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 				$objp = $db->fetch_object($resql);
 
 				$holiday->id = $objp->rowid;
-				$holiday->ref = $objp->rowid;
+				$holiday->ref = $objp->ref;
 
 				$holiday->fk_type = $objp->fk_type;
 				$holiday->statut = $objp->status;

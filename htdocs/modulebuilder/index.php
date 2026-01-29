@@ -428,7 +428,8 @@ if ($dirins && $action == 'initmodule' && $modulename /* && $user->hasRight("mod
 		if (getDolGlobalString('MODULEBUILDER_SPECIFIC_README')) {
 			setEventMessages($langs->trans("ContentOfREADMECustomized"), null, 'warnings');
 			dol_delete_file($destdir.'/README.md');
-			file_put_contents($destdir.'/README.md', $conf->global->MODULEBUILDER_SPECIFIC_README);
+			file_put_contents($destdir.'/README.md', getDolGlobalString("MODULEBUILDER_SPECIFIC_README"));
+			dolChmod($destdir.'/README.md');
 		}
 		// for create file to add properties
 		// file_put_contents($destdir.'/'.strtolower($modulename).'propertycard.php','');
@@ -3420,12 +3421,12 @@ if ($module == 'initmodule') {
 	//print '<span class="opacitymedium">'.$langs->trans("ModuleBuilderDesc2", 'conf/conf.php', $newdircustom).'</span><br>';
 	print '<br>';
 
-	print '<div class="tagtable">';
+	print '<div class="tagtable table-border">';
 
 	print '<div class="tagtr"><div class="tagtd paddingright">';
 	print '<span class="opacitymedium">'.$langs->trans("IdModule").'</span>';
 	print '</div><div class="tagtd">';
-	print '<input type="number" min="100000" name="idmodule" class="width75" value="500000">';
+	print '<input type="number" min="100000" name="idmodule" class="width100" value="500000">';
 	print '<span class="opacitymedium small">';
 	print ' &nbsp; &nbsp; ';
 	print dolButtonToOpenUrlInDialogPopup('popup_modules_id', $langs->transnoentitiesnoconv("SeeIDsInUse"), $langs->transnoentitiesnoconv("SeeIDsInUse"), '/admin/system/modules.php?mainmenu=home&leftmenu=admintools_info&hidetitle=1', '', '');

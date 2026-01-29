@@ -456,6 +456,8 @@ class FileUpload
 					// Non-multipart uploads (PUT method support)
 					file_put_contents($file_path, fopen('php://input', 'r'), $append_file ? FILE_APPEND : 0);
 				}
+				dolChmod($file_path);
+
 				$file_size = dol_filesize($file_path);
 				if ($file_size === $file->size) {
 					$file->url = $this->options['upload_url'].urlencode($file->name);

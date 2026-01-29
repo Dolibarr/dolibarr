@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2021	Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2006-2021	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1142,7 +1142,7 @@ class Ldap
 		// We need to search for this user in order to get their entry.
 		$this->result = @ldap_search($this->connection, $this->people, $filterrecord, $attributes);
 
-		// Pourquoi cette ligne ?
+		// What is this line for ?
 		//$info = ldap_get_entries($this->connection, $this->result);
 
 		// Only one entry should ever be returned (no user will have the same uid)
@@ -1239,7 +1239,7 @@ class Ldap
 					$keyattributelower = strtolower($attributeArray[$j]);
 					//print " Param ".$attributeArray[$j]."=".$info[$i][$keyattributelower][0]."<br>\n";
 
-					//permet de recuperer le SID avec Active Directory
+					// Enables getting the SID using Active Directory
 					if ($this->serverType == "activedirectory" && $keyattributelower == "objectsid") {
 						$objectsid = $this->getObjectSid($recordid);
 						$fulllist[$recordid][$attributeArray[$j]] = $objectsid;
@@ -1577,15 +1577,15 @@ class Ldap
 	 */
 	public function convertTime($value)
 	{
-		$dateLargeInt = $value; // nano secondes depuis 1601 !!!!
+		$dateLargeInt = $value; // nano secondes since the year 1601 !!!!
 		if (PHP_INT_SIZE < 8) {
 			// 32 bit platform
-			$secsAfterADEpoch = (float) $dateLargeInt / (10000000.); // secondes depuis le 1 jan 1601
+			$secsAfterADEpoch = (float) $dateLargeInt / (10000000.); // seconds since 1 jan 1601
 		} else {
 			// At least 64 bit platform
-			$secsAfterADEpoch = (int) $dateLargeInt / (10000000); // secondes depuis le 1 jan 1601
+			$secsAfterADEpoch = (int) $dateLargeInt / (10000000); // seconds since 1 jan 1601
 		}
-		$ADToUnixConvertor = ((1970 - 1601) * 365.242190) * 86400; // UNIX start date - AD start date * jours * secondes
+		$ADToUnixConvertor = ((1970 - 1601) * 365.242190) * 86400; // UNIX start date - AD start date * days * seconds
 		$unixTimeStamp = intval($secsAfterADEpoch - $ADToUnixConvertor); // Unix time stamp
 		return $unixTimeStamp;
 	}

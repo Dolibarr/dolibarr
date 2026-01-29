@@ -28,7 +28,7 @@ create table llx_mailing
   body				mediumtext,
   bgcolor			varchar(8),                          -- Backgroud color of mailing
   bgimage			varchar(255),                        -- Backgroud image of mailing
-  evenunsubscribe   smallint       DEFAULT 0, 			 -- If 1, email will be send event if recipient has opt-out to emailings 
+  evenunsubscribe   smallint       DEFAULT 0, 			 -- If 1, email will be send event if recipient has opt-out to emailings
   cible				varchar(60),						 -- ???
   nbemail			integer,
   email_from		varchar(160),                        -- Email address or Phone of sender
@@ -37,10 +37,10 @@ create table llx_mailing
   email_errorsto	varchar(160),                        -- Email addresse for errors
   tag				varchar(128) NULL,
   date_creat		datetime,                            -- creation date
-  date_valid		datetime,                            -- 
-  date_appro		datetime,                            -- 
+  date_valid		datetime,                            --
+  date_appro		datetime,                            --
   date_envoi		datetime,                            -- date d'envoi
-  tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,  
+  tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_user_creat		integer,                             -- user creator
   fk_user_modif		integer,                             -- user of last modification
   fk_user_valid		integer,                             -- user validator

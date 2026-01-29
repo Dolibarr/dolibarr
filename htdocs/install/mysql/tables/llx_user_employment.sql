@@ -36,4 +36,3 @@ create table llx_user_employment
   dateemployment    date,						-- last and current value stored into llx_user
   dateemploymentend date						-- last and current value stored into llx_user
 )ENGINE=innodb;
-

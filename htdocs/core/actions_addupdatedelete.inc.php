@@ -177,7 +177,7 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 		//var_dump($key.' '.$value.' '.$object->fields[$key]['type'].' '.$object->fields[$key]['notnull']);
 
 		$object->$key = $value;
-		if (!empty($val['notnull']) && $val['notnull'] > 0 && $object->$key == '' && isset($val['default']) && $val['default'] == '(PROV)') {
+		if (!empty($val['notnull']) && $val['notnull'] > 0 && $object->$key == '' && isset($val['default']) && $val['default'] === '(PROV)') {
 			$object->$key = '(PROV)';
 		}
 		if ($key == 'pass_crypted') {

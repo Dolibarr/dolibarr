@@ -198,7 +198,7 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 
 		// Get IBAN from account.
 		$account = new Account($this->db);
-		$account->fetch($object->fk_account);
+		$account->fetch((int) $object->fk_account);
 		$creditorInformation = SwissQrBill\DataGroup\Element\CreditorInformation::create($account->iban);
 		if (!$creditorInformation->isValid()) {
 			$langs->load("errors");

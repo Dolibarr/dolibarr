@@ -8,7 +8,7 @@
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2017-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023       Nick Fragoulis
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -949,7 +949,7 @@ class FactureRec extends CommonInvoice
 	/**
 	 * 	Add a line to invoice
 	 *
-	 *	@param    	string			$desc            	Description de la ligne
+	 *	@param    	string			$desc            	Description of the invoice line
 	 *	@param    	float			$pu_ht              Prix unitaire HT (> 0 even for credit note)
 	 *	@param    	float			$qty             	Quantite
 	 *	@param    	float|string	$txtva           	VAT rate, -1 for auto (Can contain the vat_src_code too with syntax '9.9 (CODE)')
@@ -1031,10 +1031,9 @@ class FactureRec extends CommonInvoice
 			$pu = $pu_ttc;
 		}
 
-		// Calcul du total TTC et de la TVA pour la ligne a partir de
-		// qty, pu, remise_percent et txtva
-		// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
-		// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
+		// Calculation of the gross total (TTC) and VAT for the line from qty, pu, remise_percent and txtva
+		// VERY IMPORTANT: It's at the time of line insertion that we must store the net, VAT, and gross amounts,
+		// and this is done at the line level, which has its own VAT rate
 
 		$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
 		$total_ht  = $tabprice[0];
@@ -1155,7 +1154,7 @@ class FactureRec extends CommonInvoice
 	 * 	Update a line to invoice
 	 *
 	 *  @param     	int				$rowid           	Id of line to update
-	 *	@param    	string			$desc            	Description de la ligne
+	 *	@param    	string			$desc            	Description of the invoice line
 	 *	@param    	float			$pu_ht              Prix unitaire HT (> 0 even for credit note)
 	 *	@param    	float			$qty             	Quantite
 	 *	@param    	float|string	$txtva				VAT Rate (Can be '1.23' or '1.23 (ABC)')
@@ -1240,9 +1239,9 @@ class FactureRec extends CommonInvoice
 			$pu = $pu_ttc;
 		}
 
-		// Calculate total with, without tax and tax from qty, pu, remise_percent and txtva
-		// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
-		// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
+		// Calculation of the gross total (TTC) and VAT for the line from qty, pu, remise_percent and txtva
+		// VERY IMPORTANT: It's at the time of line insertion that we must store the net, VAT, and gross amounts,
+		// and this is done at the line level, which has its own VAT rate
 
 		$localtaxes_type = getLocalTaxesFromRate($txtva, 0, $this->thirdparty, $mysoc);
 

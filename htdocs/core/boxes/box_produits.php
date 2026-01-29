@@ -37,7 +37,7 @@ class box_produits extends ModeleBoxes
 	public $boxcode = "lastproducts";
 	public $boximg = "object_product";
 	public $boxlabel = "BoxLastProducts";
-	public $depends = array("produit");
+	public $depends = array("product");
 
 	/**
 	 *  Constructor

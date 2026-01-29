@@ -39,7 +39,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 	public $boxcode = "productsalertstock";
 	public $boximg = "object_product";
 	public $boxlabel = "BoxProductsAlertStock";
-	public $depends = array("produit");
+	public $depends = array("product");
 
 	/**
 	 *  Constructor
@@ -49,7 +49,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 	 */
 	public function __construct($db, $param = '')
 	{
-		global $conf, $user;
+		global $user;
 
 		$this->db = $db;
 
@@ -69,7 +69,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $user, $langs, $conf, $hookmanager;
+		global $user, $langs, $hookmanager;
 
 		$this->max = $max;
 

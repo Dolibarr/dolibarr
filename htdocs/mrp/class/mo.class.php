@@ -1329,6 +1329,23 @@ class Mo extends CommonObject
 	}
 
 	/**
+	 * Sets object to given categories.
+	 *
+	 * Adds it to non existing supplied categories.
+	 * Deletes object from existing categories not supplied.
+	 * Existing categories are left untouch.
+	 *
+	 * @param int[]|int $categories Category ID or array of Categories IDs
+	 *
+	 * @return int Return integer <0 if KO, >0 if OK
+	 */
+	public function setCategories($categories)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+		return parent::setCategoriesCommon($categories, Categorie::TYPE_MO);
+	}
+
+	/**
 	 *	Cancel consumed and produced lines (movement stocks)
 	 *
 	 *	@param	User	$user					Object user that modify

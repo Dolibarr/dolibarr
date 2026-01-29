@@ -32,20 +32,21 @@
  *
  * You can enable constant MAIN_CURL_DEBUG to get detail of output/input into dolibarr_curl.log file.
  *
- * @param	string	  	$url 			    URL to call.
+ * @param	string	  			$url 			    URL to call.
  * @param	'POST'|'GET'|'HEAD'|'PUT'|'PATCH'|'PUTALREADYFORMATED'|'POSTALREADYFORMATED'|'PATCHALREADYFORMATED'|'DELETE'	$postorget		    'POST', 'GET', 'HEAD', 'PUT', 'PATCH', 'PUTALREADYFORMATED', 'POSTALREADYFORMATED', 'PATCHALREADYFORMATED', 'DELETE'
- * @param	string    	$param			    Parameters of URL (x=value1&y=value2) or may be a formatted content with $postorget='PUTALREADYFORMATED'
- * @param	int<0,1>  	$followlocation		0=Do not follow, 1=Follow location.
- * @param	string[]  	$addheaders			Array of string to add into header. Example: ('Accept: application/xrds+xml', ....)
- * @param	string[]  	$allowedschemes		List of schemes that are allowed ('http' + 'https' only by default)
- * @param	int<0,2>  	$localurl			0=Only external URL are possible, 1=Only local URL, 2=Both external and local URL are allowed.
- * @param	int<-1,1>  	$ssl_verifypeer		-1=Auto (no ssl check on dev, check on prod), 0=No ssl check, 1=Always ssl check
- * @param	int			$timeoutconnect		Timeout connect
- * @param	int			$timeoutresponse	Timeout response
- * @param	array<int, mixed>	$otherCurlOptions	Array of other curl options to set. Example: array(CURLOPT_SSL_VERIFYPEER => false)
+ * @param	string    			$param			    Parameters of URL (x=value1&y=value2 urlencoded even with POST) or may be a formatted content with $postorget='POST/PUTALREADYFORMATED'
+ * @param	int<0,1>  			$followlocation		0=Do not follow, 1=Follow location.
+ * @param	string[]  			$addheaders			Array of string to add into header. Example: ('Accept: application/xrds+xml', ....)
+ * @param	string[]  			$allowedschemes		List of schemes that are allowed ('http' + 'https' only by default)
+ * @param	int<0,2>  			$localurl			0=Only external URL are possible, 1=Only local URL, 2=Both external and local URL are allowed.
+ * @param	int<-1,1>  			$ssl_verifypeer		-1=Auto (no ssl check on dev, check on prod), 0=No ssl check, 1=Always ssl check
+ * @param	int					$timeoutconnect		Timeout for connection time
+ * @param	int					$timeoutresponse	Timeout for total time including connection
+ * @param	array<int,mixed>|null	$otherCurlOptions	Array of other curl options to set. Example: array(CURLOPT_SSL_VERIFYPEER => false)
+ * @param	string				$morelogsuffix		If set to a string '_suffix', some logs are also added into the file "dolibarr_suffix.log"
  * @return	array{http_code:int,content:string,curl_error_no:int,curl_error_msg:string}    Returns an associative array containing the response from the server array('http_code'=>http response code, 'content'=>response, 'curl_error_no'=>errno, 'curl_error_msg'=>errmsg...)
  */
-function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 1, $addheaders = array(), $allowedschemes = array('http', 'https'), $localurl = 0, $ssl_verifypeer = -1, $timeoutconnect = 0, $timeoutresponse = 0, $otherCurlOptions = array())
+function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 1, $addheaders = array(), $allowedschemes = array('http', 'https'), $localurl = 0, $ssl_verifypeer = -1, $timeoutconnect = 0, $timeoutresponse = 0, $otherCurlOptions = array(), $morelogsuffix = '')
 {
 	// Get global variables for proxy use
 	$USE_PROXY = getDolGlobalInt('MAIN_PROXY_USE');
@@ -58,11 +59,18 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	if (getDolGlobalInt('MAIN_CURL_DEBUG')) {
 		dol_syslog("getURLContent postorget=".$postorget." URL=".$url." param=".$param, LOG_DEBUG, 0, '_curl');
 	}
+	if ($morelogsuffix) {
+		dol_syslog("getURLContent postorget=".$postorget." URL=".$url." param=".$param, LOG_DEBUG, 0, $morelogsuffix);
+	}
 
 	if (!function_exists('curl_init')) {
 		if (getDolGlobalInt('MAIN_CURL_DEBUG')) {
 			dol_syslog("getURLContent PHP curl library must be installed", LOG_DEBUG, 0, '_curl');
 		}
+		if ($morelogsuffix) {
+			dol_syslog("getURLContent PHP curl library must be installed", LOG_DEBUG, 0, $morelogsuffix);
+		}
+
 		return array('http_code' => 500, 'content' => '', 'curl_error_no' => 1, 'curl_error_msg' => 'PHP curl library must be installed');
 	}
 
@@ -134,6 +142,8 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 				$redir_list["FTPS"] = 1;
 			}
 		}
+	} else {
+		return array('http_code' => 500, 'content' => '', 'curl_error_no' => 1, 'curl_error_msg' => 'Parameter allowedschemes of getURLContent must be an array of protocol schemes');
 	}
 
 	$newtimeoutconnect = ($timeoutconnect ? $timeoutconnect : getDolGlobalInt('MAIN_USE_CONNECT_TIMEOUT', 5));
@@ -142,9 +152,12 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	if (getDolGlobalInt('MAIN_CURL_DEBUG')) {
 		dol_syslog("getURLContent newtimeoutconnect=".$newtimeoutconnect." newtimeoutresponse=".$newtimeoutresponse, LOG_DEBUG, 0, '_curl');
 	}
+	if ($morelogsuffix) {
+		dol_syslog("getURLContent newtimeoutconnect=".$newtimeoutconnect." newtimeoutresponse=".$newtimeoutresponse, LOG_DEBUG, 0, $morelogsuffix);
+	}
 
-	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $newtimeoutconnect);
-	curl_setopt($ch, CURLOPT_TIMEOUT, $newtimeoutresponse);
+	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $newtimeoutconnect);	// Timeout for connection
+	curl_setopt($ch, CURLOPT_TIMEOUT, $newtimeoutresponse);			// Timeout for total time including connection
 
 	// limit size of downloaded files.
 	$maxsize = getDolGlobalInt('MAIN_SECURITY_MAXFILESIZE_DOWNLOADED');
@@ -320,7 +333,13 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		dol_syslog("getURLContent request without body=".$request, LOG_DEBUG, 0, '_curl');
 		dol_syslog("getURLContent response=".$response, LOG_DEBUG, 0, '_curl');
 	}
-	dol_syslog("getURLContent response size=".strlen($response)); // This may contains binary data, so we don't output it
+	if ($morelogsuffix) {
+		// This may contains binary data, so we don't output response by default.
+		dol_syslog("getURLContent request without body=".$request, LOG_DEBUG, 0, $morelogsuffix);
+		dol_syslog("getURLContent response=".$response, LOG_DEBUG, 0, $morelogsuffix);
+	}
+
+	dol_syslog("getURLContent response size=".strlen($response)); // This $response may contains binary data, so we don't output it
 
 	$rep = array();
 	if (curl_errno($ch)) {
@@ -336,8 +355,12 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		$rep['curl_error_msg'] = curl_error($ch);
 
 		dol_syslog("getURLContent response array is ".implode(',', $rep));
+
 		if (getDolGlobalInt('MAIN_CURL_DEBUG')) {
 			dol_syslog("getURLContent curl_error_no=".$rep['curl_error_no']." curl_error_msg=".$rep['curl_error_msg'], LOG_DEBUG, 0, '_curl');
+		}
+		if ($morelogsuffix) {
+			dol_syslog("getURLContent curl_error_no=".$rep['curl_error_no']." curl_error_msg=".$rep['curl_error_msg'], LOG_DEBUG, 0, $morelogsuffix);
 		}
 	} else {
 		//$info = curl_getinfo($ch);

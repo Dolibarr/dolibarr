@@ -386,7 +386,6 @@ ExtrafieldFiller=Remplissage de champ supplémentaire
 OurProductSelection=Le produit pour découvrir
 NoSupportedModulesHaveBeenActivated=L'outil de reporting ne peut générer des rapports dynamiques que pour certains modules. Aucun module pris en charge n'est encore activé.
 # Bookmarks
-AddThisPageToBookmarks = Placer la page courante dans les marques-pages
 BehaviourOnClick = Comportement sur sélection de l'URL
 BookmarkTargetNewWindowShort = Nouvelle fenêtre
 BookmarkTargetReplaceWindowShort = Fenêtre courante
@@ -395,7 +394,6 @@ BookmarksManagement = Gestion des marque-pages
 BookmarksMenuShortCut = Ctrl + Maj + m
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark = Choisir si le raccourci doit ouvrir la page dans une nouvelle fenêtre ou fenêtre courante
 CreateBookmark = Créer marque-page
-EditBookmarks = Lister/modifier marques-pages
 ListOfBookmarks = Liste des marque-pages
 NewBookmark = Nouveau marque-page
 NoBookmarkFound = Pas de marque-page trouvé.
