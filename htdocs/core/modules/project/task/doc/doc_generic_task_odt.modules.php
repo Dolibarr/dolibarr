@@ -268,7 +268,7 @@ class doc_generic_task_odt extends ModelePDFTask
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
-	 *	@param  array{type:string,ref:string,date:int,socname:string,amountht:float|string,amountttc:float|string,status:string}			$refdetail			Reference array
+	 *	@param  array{type:string,ref:string,date:int,socname:string,amountht:float|string,amountttc:float|string,status:int|string}			$refdetail			Reference array
 	 *	@param  Translate		$outputlangs        Lang object to use for output
 	 *  @return	array<string,int|string>			Return a substitution array
 	 */

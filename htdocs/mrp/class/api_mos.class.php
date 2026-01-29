@@ -434,7 +434,7 @@ class Mos extends DolibarrApi
 
 		if (!empty($arraytoconsume) && !empty($arraytoproduce)) {
 			$pos = 0;
-			$arrayofarrayname = array("arraytoconsume","arraytoproduce");
+			$arrayofarrayname = array("arraytoconsume", "arraytoproduce");
 			foreach ($arrayofarrayname as $arrayname) {
 				foreach (${$arrayname} as $value) {
 					$tmpproduct = new Product($this->db);
@@ -806,7 +806,7 @@ class Mos extends DolibarrApi
 		$this->db->begin();
 
 		$pos = 0;
-		$arrayofarrayname = array("arraytoconsume","arraytoproduce");
+		$arrayofarrayname = array("arraytoconsume", "arraytoproduce");
 		foreach ($arrayofarrayname as $arrayname) {
 			foreach (${$arrayname} as $value) {
 				if (empty($value["objectid"])) {
