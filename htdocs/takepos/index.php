@@ -1111,7 +1111,7 @@ function WeighingScale(callback) {
 					};
 				}
 				if (product.fk_unit == "2") {
-					askForWeight(product.multicurrency_total_ttc, callback);
+					askForWeight(product.multiprices_ttc[1], callback);
 				}
 			});
 		<?php } else { ?>
