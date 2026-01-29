@@ -223,7 +223,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 
 		// Add favicon if not already done in htmlheader
 		$htmldeaderindestdir = dol_sanitizePathName($conf->website->dir_temp.'/'.$object->ref.'/containers/htmlheader.html');
-		$htmlheader = fil_get_contents($htmldeaderindestdir);
+		$htmlheader = file_get_contents($htmldeaderindestdir);
 		if (in_array($objectpage->type_container, array('page', 'blogpost')) && !preg_match('/'.preg_quote('rel="icon"', '/').'/', $htmlheader)) {
 			$tplcontent .= '<link rel="icon" type="image/png" href="/favicon.png" />'."\n";
 		}

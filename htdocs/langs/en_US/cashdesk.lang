@@ -182,3 +182,4 @@ SentOrderToKitchen=Send order to kitchen
 LifetimeAmount=Lifetime amount
 LifetimeStatDate=Lifetime amount start date
 AllTerminals=All terminals
+NoFreeZoneProduct=Disable free product
