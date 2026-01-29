@@ -1357,7 +1357,7 @@ if (empty($reshook)) {
 							$error++;
 							setEventMessage($langs->trans("ErrorCreditOnSituationMode1"), 'errors');
 						} else {
-						/* if ($facture_source->isSituationInvoice()) {
+							/* if ($facture_source->isSituationInvoice()) {
 							$source_fk_prev_id = $line->fk_prev_id; // temporary storing situation invoice fk_prev_id
 							$line->fk_prev_id  = $line->id; // The new line of the new credit note we are creating must be linked to the situation invoice line it is created from
 
@@ -1427,7 +1427,7 @@ if (empty($reshook)) {
 
 								//print 'New line based on invoice id '.$facture_source->tab_previous_situation_invoice[$lineIndex]->id.' fk_prev_id='.$source_fk_prev_id.' will be fk_prev_id='.$line->fk_prev_id.' '.$line->total_ht.' '.$line->situation_percent.'<br>';
 
-							}  */
+							} */
 
 							foreach ($facture_source->lines as $line) {
 								// Extrafields
