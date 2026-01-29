@@ -425,4 +425,27 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  4, 'PCG08-PYME-CAT', 'The PYME accountancy spanish plan in catalan language', 1);
 
+CREATE TABLE llx_ai_request_log
+(
+  rowid             	  		integer AUTO_INCREMENT PRIMARY KEY,
+  entity				        integer DEFAULT 1 NOT NULL,
+  date_request			    	datetime,
+  fk_user     			    	integer NOT NULL,
+  query_text        	  		text,
+  tool_name     		    	varchar(255),
+  provider   			      	varchar(50),
+  execution_time    	  		float,
+  confidence        	  		float,
+  status            	  		varchar(50),
+  error_msg         	  		text,
+  raw_request_payload   		MEDIUMTEXT,
+  raw_response_payload			MEDIUMTEXT
+)ENGINE=innodb;
+
+ALTER TABLE llx_ai_request_log ADD INDEX idx_ai_request_log_entity (entity);
+ALTER TABLE llx_ai_request_log ADD INDEX idx_ai_request_log_date (date_request);
+ALTER TABLE llx_ai_request_log ADD INDEX idx_ai_request_log_user (fk_user);
+ALTER TABLE llx_ai_request_log ADD INDEX idx_ai_request_log_status (status);
+ALTER TABLE llx_ai_request_log ADD CONSTRAINT fk_ai_request_log_user FOREIGN KEY (fk_user) REFERENCES llx_user(rowid);
+
 -- end of migration
