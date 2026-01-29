@@ -663,7 +663,7 @@ div.userimg.notfirst {
 	display: block-inline;
 }
 .center.inline-block.dateheight {
-	line-height: 1.15em;
+	line-height: 1.1em;
 }
 .smallheight {
 	line-height: 1em;
