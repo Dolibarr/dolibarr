@@ -628,7 +628,6 @@ CantBeNullOrPositive=Der Fortschritt einer Stornorechnung kann nicht null oder p
 CantBeLessThanMinPercent=Der Fortschritt kann nicht kleiner als in der vorhergehenden Abschlagsrechnung sein.
 CantBeLessThanZero=Der Fortschritt kann nicht negativ sein
 DisabledGoToLastSituation=Um die nächste Situation zu erstellen, gehen Sie zur letzten Stornorechnung (nicht zur Gutschrift).
-ErrorCreditOnSituationMode1=Im Modus INVOICE_USE_SITUATION=1 können keine Gutschriften für Abschlagsrechnungen erstellt werden.<br/> Dazu müssen Sie in den Modus INVOICE_USE_SITUATION=2 wechseln und anschließend <a href="https://github.com/progiseize/facture_situation_migration" target="_blank">das Migrationstool</a> verwenden.
 NoSituations=Keine offenen Positionen
 InvoiceSituationLast=Allgemeine Endrechnung
 SituationInvoiceAmountColTitle=Betrag (netto)
