@@ -949,7 +949,6 @@ class FactureLigne extends CommonInvoiceLine
 				$invoicecache[$invoiceid] = new Facture($this->db);
 				$invoicecache[$invoiceid]->fetch($invoiceid);
 			}
-			// if ($invoicecache[$invoiceid]->type != Facture::TYPE_SITUATION) { // We want to also include situation credit notes
 			if (empty($invoicecache[$invoiceid]->situation_cycle_ref)) {
 				return 0;
 			}

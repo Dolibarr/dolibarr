@@ -144,7 +144,7 @@ function dolSavePageAlias($filealias, $object, $objectpage)
  */
 function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, $backupold = 0)
 {
-	global $db;
+	global $conf, $db;
 
 	// Now create the .tpl file (duplicate code with actions updatesource or updatecontent but we need this to save new header)
 	dol_syslog("dolSavePageContent We regenerate the tpl page filetpl=".$filetpl);
@@ -221,8 +221,10 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 		$tplcontent .= '<meta name="generator" content="'.DOL_APPLICATION_TITLE.' '.DOL_VERSION.' (https://www.dolibarr.org)" />'."\n";
 		$tplcontent .= '<meta name="dolibarr:pageid" content="'.((int) $objectpage->id).'" />'."\n";
 
-		// Add favicon
-		if (in_array($objectpage->type_container, array('page', 'blogpost'))) {
+		// Add favicon if not already done in htmlheader
+		$htmldeaderindestdir = dol_sanitizePathName($conf->website->dir_temp.'/'.$object->ref.'/containers/htmlheader.html');
+		$htmlheader = fil_get_contents($htmldeaderindestdir);
+		if (in_array($objectpage->type_container, array('page', 'blogpost')) && !preg_match('/'.preg_quote('rel="icon"', '/').'/', $htmlheader)) {
 			$tplcontent .= '<link rel="icon" type="image/png" href="/favicon.png" />'."\n";
 		}
 
