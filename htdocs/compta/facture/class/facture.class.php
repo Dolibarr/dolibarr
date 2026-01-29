@@ -21,7 +21,7 @@
  * Copyright (C) 2022-2023	Solution Libre SAS		<contact@solution-libre.fr>
  * Copyright (C) 2023      	Gauthier VERDOL       	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		Nick Fragoulis
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		Lenin Rivas				<lenin.rivas777@gmail.com>
  *
@@ -2891,7 +2891,7 @@ class Facture extends CommonInvoice
 			$facligne = new FactureLigne($this->db);
 			$facligne->fk_facture = $this->id;
 			$facligne->fk_remise_except = $remise->id;
-			$facligne->desc = $remise->description; // Description ligne
+			$facligne->desc = $remise->description; // Description of the invoice line
 			$facligne->vat_src_code = $remise->vat_src_code;
 			$facligne->tva_tx = $remise->tva_tx;
 			$facligne->subprice = -(float) $remise->amount_ht;

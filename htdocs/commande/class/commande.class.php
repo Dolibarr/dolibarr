@@ -13,7 +13,7 @@
  * Copyright (C) 2016-2022 Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2021-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2022       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -2151,7 +2151,7 @@ class Commande extends CommonOrder
 		$result = $remise->fetch($idremise);
 
 		if ($result > 0) {
-			if ($remise->fk_facture) {	// Protection against multiple submission
+			if ($remise->fk_facture) {	// Protection against multiple submissions
 				$this->error = $langs->trans("ErrorDiscountAlreadyUsed");
 				$this->db->rollback();
 				return -5;
@@ -2161,7 +2161,7 @@ class Commande extends CommonOrder
 
 			$line->fk_commande = $this->id;
 			$line->fk_remise_except = $remise->id;
-			$line->desc = $remise->description; // Description ligne
+			$line->desc = $remise->description; // Description for the order line
 			$line->vat_src_code = $remise->vat_src_code;
 			$line->tva_tx = $remise->tva_tx;
 			$line->subprice = -(float) $remise->amount_ht;

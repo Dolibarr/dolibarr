@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García       <marcosgdf@gmail.com>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -500,7 +500,7 @@ while ($compteur < $num) {
 
 	$ensemblereponses = $obj->reponses;
 
-	// ligne d'un usager pré-authentifié
+	// Set if line of pre-authentified user
 	$mod_ok = (in_array($obj->name, $listofvoters));
 
 	if (!$mod_ok && !$object->allow_spy) {
@@ -513,7 +513,7 @@ while ($compteur < $num) {
 	// Name
 	print '<td class="nom">'.img_picto($obj->name, 'user', 'class="pictofixedwidth"').dol_htmlentities($obj->name).'</td>'."\n";
 
-	// si la ligne n'est pas a changer, on affiche les données
+	// If the line does not need modification, show the data
 	if (!$testligneamodifier) {
 		for ($i = 0; $i < $nbcolonnes; $i++) {
 			$car = substr($ensemblereponses, $i, 1);
@@ -672,7 +672,7 @@ while ($compteur < $num) {
 		print '<td class="casevide"><input type="submit" class="button small" name="modifierligne'.$compteur.'" value="'.dol_escape_htmltag($langs->trans("Edit")).'"></td>'."\n";
 	}
 
-	//demande de confirmation pour modification de ligne
+	// Ask for confirmation to modify the line
 	for ($i = 0; $i < $nblines; $i++) {
 		if (GETPOSTISSET("modifierligne".$i)) {
 			if ($compteur == $i) {
@@ -843,7 +843,7 @@ if ($comments) {
 	print '<br>'.img_picto('', 'note', 'class="pictofixedwidth"').'<span class="bold opacitymedium">'.$langs->trans("CommentsOfVoters").':</span><br>'."\n";
 
 	foreach ($comments as $obj) {
-		// ligne d'un usager pré-authentifié
+		// Set if line of pre-authentified user
 		//$mod_ok = (in_array($obj->name, $listofvoters));
 
 		print '<div class="comment"><span class="usercomment">';

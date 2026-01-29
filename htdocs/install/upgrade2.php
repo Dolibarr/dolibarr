@@ -5,7 +5,7 @@
  * Copyright (C) 2010       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2023      	Gauthier VERDOL       	<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -330,9 +330,9 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			// Version to install is DOL_VERSION
 			$dolibarrlastupgradeversionarray = preg_split('/[\.-]/', getDolGlobalString('MAIN_VERSION_LAST_UPGRADE', getDolGlobalString('MAIN_VERSION_LAST_INSTALL')));
 
-			// Chaque action de migration doit renvoyer une ligne sur 4 colonnes avec
-			// dans la 1ere colonne, la description de l'action a faire
-			// dans la 4eme colonne, le texte 'OK' si fait ou 'AlreadyDone' si rien n'est fait ou 'Error'
+			// Every migration action must return a 4 column line with:
+			// - in the 1st column: the description of the action to do,
+			// - in the 4th column: the text 'OK' if done, or 'AlreadyDone' si nothing is done, or 'Error'
 
 			$versiontoarray = explode('.', $versionto);
 			$versionranarray = explode('.', DOL_VERSION);
@@ -1223,7 +1223,7 @@ function migrate_paiements_orphelins_2($db, $langs, $conf)
 
 
 /**
- * Mise a jour des contrats (gestion du contrat + detail de contrat)
+ * Update the contracts (Contract Management + Contract Detail)
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
@@ -1382,7 +1382,7 @@ function migrate_links_transfert($db, $langs, $conf)
 }
 
 /**
- * Mise a jour des date de contrats non renseignees
+ * Update missing Contract Dates
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
@@ -1522,7 +1522,7 @@ function migrate_contracts_date3($db, $langs, $conf)
 }
 
 /**
- * Reouverture des contrats qui ont au moins une ligne non fermee
+ * Reopen the contracts that have at least one line that is not closed (/completed).
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
@@ -1617,11 +1617,11 @@ function migrate_paiementfourn_facturefourn($db, $langs, $conf)
 			$select_num = $db->num_rows($select_resql);
 			$i = 0;
 
-			// Pour chaque paiement fournisseur, on insere une ligne dans paiementfourn_facturefourn
+			// For every supplier payment, add a line to paiementfourn_facturefourn
 			while (($i < $select_num) && (!$error)) {
 				$select_obj = $db->fetch_object($select_resql);
 
-				// Verifier si la ligne est deja dans la nouvelle table. On ne veut pas inserer de doublons.
+				// Verify if the row is already in the new table - avoid adding duplicates
 				$check_sql = 'SELECT fk_paiementfourn, fk_facturefourn';
 				$check_sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn';
 				$check_sql .= ' WHERE fk_paiementfourn = '.((int) $select_obj->rowid).' AND fk_facturefourn = '.((int) $select_obj->fk_facture_fourn);
@@ -1829,7 +1829,7 @@ function migrate_price_propal($db, $langs, $conf)
 				$remise_percent_global = $obj->remise_percent_global;
 				$info_bits = $obj->info_bits;
 
-				// On met a jour les 3 nouveaux champs
+				// Update the 3 new fields
 				$propalligne = new PropaleLigne($db);
 				$propalligne->fetch($rowid);
 
@@ -2193,7 +2193,7 @@ function migrate_modeles($db, $langs, $conf)
 
 
 /**
- * Correspondence des expeditions et des commandes clients dans la table llx_co_exp
+ * Relations between the Shipping and Client Order in the table llx_co_exp
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
@@ -2258,7 +2258,7 @@ function migrate_commande_expedition($db, $langs, $conf)
 }
 
 /**
- * Correspondence des livraisons et des commandes clients dans la table llx_co_liv
+ * Correspondence of the deliveries and the Customer Orders in the table llx_co_liv
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
@@ -2338,7 +2338,7 @@ function migrate_commande_livraison($db, $langs, $conf)
 }
 
 /**
- * Migration des details commandes dans les details livraisons
+ * Migrate the Order Details in the Delivery Details
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
@@ -4878,13 +4878,13 @@ function migrate_holiday_path()
 }
 
 
-/* A faire egalement: Modif statut paye et fk_facture des factures payes completement
+/* TODO: Modify the Paid status and `fk_facture` of the invoices paid in full
 
-On recherche facture incorrecte:
+Lookup incorrect invoices:
 select f.rowid, f.total_ttc as t1, sum(pf.amount) as t2 from llx_facture as f, llx_paiement_facture as pf where pf.fk_facture=f.rowid and f.fk_statut in(2,3) and paye=0 and close_code is null group by f.rowid
 having  f.total_ttc = sum(pf.amount)
 
-On les corrige:
+Correct the incorrect invoices:
 update llx_facture set paye=1, fk_statut=2 where close_code is null
 and rowid in (...)
 */

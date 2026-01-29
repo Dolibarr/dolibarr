@@ -9,7 +9,7 @@
  * Copyright (C) 2017-2022  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019-2020  Christophe Battarel	    <christophe@altairis.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -712,7 +712,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 				while ($i < $num) {
 					$objp = $db->fetch_object($resql);
 
-					// On n'affiche pas les produits libres
+					/// Do hot show the free products
 					if (!$objp->fk_product > 0) {
 						$nbfreeproduct++;
 					} else {

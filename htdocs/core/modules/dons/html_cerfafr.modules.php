@@ -162,11 +162,11 @@ class html_cerfafr extends ModeleDon
 				$form = str_replace('__AMOUNTLETTERS__', $this->amountToLetters($don->amount), $form);
 				$form = str_replace('__CURRENCY__', $outputlangs->transnoentitiesnoconv("Currency".$currency), $form);
 				$form = str_replace('__CURRENCYCODE__', $conf->currency, $form);
-				$form = str_replace('__MAIN_INFO_SOCIETE_NOM__', $mysoc->name, $form);
+				$form = str_replace('__MAIN_INFO_SOCIETE_NOM__', (string) $mysoc->name, $form);
 				$form = str_replace('__MAIN_INFO_SOCIETE_ADDRESS__', (string) $mysoc->address, $form);
 				$form = str_replace('__MAIN_INFO_SOCIETE_ZIP__', (string) $mysoc->zip, $form);
 				$form = str_replace('__MAIN_INFO_SOCIETE_TOWN__', (string) $mysoc->town, $form);
-				$form = str_replace('__MAIN_INFO_SOCIETE_OBJECT__', $mysoc->socialobject, $form);
+				$form = str_replace('__MAIN_INFO_SOCIETE_OBJECT__', (string) $mysoc->socialobject, $form);
 				$form = str_replace('__DONATOR_FIRSTNAME__', (string) $don->firstname, $form);
 				$form = str_replace('__DONATOR_LASTNAME__', (string) $don->lastname, $form);
 				$form = str_replace('__DONATOR_SOCIETE__', (string) $don->societe, $form);
