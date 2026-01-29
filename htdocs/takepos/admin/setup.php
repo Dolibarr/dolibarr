@@ -72,12 +72,12 @@ if ($resql) {
 
 $action = GETPOST('action', 'aZ09');
 
+$error = 0;
+
 
 /*
  * Actions
  */
-
-$error = 0;
 
 if ($action == 'set') {
 	$db->begin();
@@ -99,7 +99,7 @@ if ($action == 'set') {
 
 	dol_syslog("admin/cashdesk: level ".GETPOST('level', 'alpha'));
 
-	if (!($res > 0)) {
+	if ($res <= 0) {
 		$error++;
 	}
 
@@ -111,10 +111,11 @@ if ($action == 'set') {
 } elseif ($action == 'updateMask') {
 	$maskconst = GETPOST('maskconst', 'aZ09');
 	$maskvalue = GETPOST('maskvalue', 'alpha');
+	$res = 1;
 	if ($maskconst && preg_match('/_MASK$/', $maskconst)) {
 		$res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
 	}
-	if (!($res > 0)) {
+	if ($res <= 0) {
 		$error++;
 	}
 } elseif ($action == 'setrefmod') {
