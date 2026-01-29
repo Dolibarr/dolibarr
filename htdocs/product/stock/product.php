@@ -573,7 +573,9 @@ if (isModEnabled('project')) {
 }
 
 
-$variants = false;
+$variants = 0;
+$iskit = 0;
+
 if ($id > 0 || $ref) {
 	$object = new Product($db);
 	$result = $object->fetch($id, $ref);

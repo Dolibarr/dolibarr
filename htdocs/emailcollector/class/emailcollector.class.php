@@ -2096,7 +2096,7 @@ class EmailCollector extends CommonObject
 					}
 					$subject = $this->decodeSMTPSubject((string) ($overview['subject'] ?? ''));
 				} else {
-					$fromstring = $overview[0]->from;
+					$fromstring = (string) $overview[0]->from;
 					$replytostring = (!empty($overview['in_reply-to']) ? $overview['in_reply-to'] : (!empty($headers['Reply-To']) ? $headers['Reply-To'] : "")) ;
 
 					$sender = !empty($overview[0]->sender) ? $overview[0]->sender : '';
@@ -2104,7 +2104,7 @@ class EmailCollector extends CommonObject
 					$sendtocc = !empty($overview[0]->cc) ? $overview[0]->cc : '';
 					$sendtobcc = !empty($overview[0]->bcc) ? $overview[0]->bcc : '';
 					$dateemail = dol_stringtotime((string) $overview[0]->udate, 'gmt');
-					$subject = $overview[0]->subject;
+					$subject = (string) $overview[0]->subject;
 				}
 
 				if (!empty($searchfilterexcludesubjectarray)) {
@@ -2779,6 +2779,7 @@ class EmailCollector extends CommonObject
 									if (!empty($contact_static->email) && $contact_static->email != $from) {
 										$from = $contact_static->email;
 									}
+									$from = (string) $from;
 
 									$from = (string) $from;
 
@@ -4040,7 +4041,7 @@ class EmailCollector extends CommonObject
 			$subject = iconv_mime_decode($subject, ICONV_MIME_DECODE_CONTINUE_ON_ERROR, 'UTF-8');
 		}
 
-		return $subject;
+		return (string) $subject;
 	}
 
 	/**

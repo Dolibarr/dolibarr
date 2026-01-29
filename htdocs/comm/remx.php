@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2019  Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2008       Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2019-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							            <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW				            <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		    Anthony Damhet				      <a.damhet@progiseize.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -826,7 +826,7 @@ if ($socid > 0) {
 		}
 
 		/*
-		 * Liste remises fixes fournisseur restant en cours (= liees a aucune facture ni ligne de facture)
+		 * List of fixed supplier discounts still available (=not linked to any invoice nor invoice line)
 		 */
 		$sql = "SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx, rc.vat_src_code,";
 		$sql .= " rc.multicurrency_amount_ht, rc.multicurrency_amount_tva, rc.multicurrency_amount_ttc,";
@@ -1119,7 +1119,7 @@ if ($socid > 0) {
 	print '<div class="clearboth"></div><br><br>';
 
 	/*
-	 * List discount consumed (=liees a une ligne de facture ou facture)
+	 * List discount consumed (=linked to an invoice line or invoice)
 	 */
 
 	print load_fiche_titre($langs->trans("DiscountAlreadyCounted"));

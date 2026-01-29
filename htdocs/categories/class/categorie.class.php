@@ -72,6 +72,7 @@ class Categorie extends CommonObject
 	const TYPE_SUPPLIER_PROPOSAL	= 'supplier_proposal';
 	const TYPE_PROPOSAL	            = 'propal';
 	const TYPE_PROJECT_TASK			= 'project_task';
+	const TYPE_MO					= 'mo';
 
 
 	/**
@@ -107,6 +108,7 @@ class Categorie extends CommonObject
 		'supplier_proposal'		=> 22,
 		'propal'				=> 23,
 		'project_task'			=> 24,
+		'mo'					=> 25,
 	);
 
 	/**
@@ -187,6 +189,7 @@ class Categorie extends CommonObject
 		'supplier_proposal' 	=> 'SupplierProposal',
 		'propal' 				=> 'Propal',
 		'project_task'			=> 'Task',
+		'mo'					=> 'Mo',
 	);
 
 	/**
@@ -216,7 +219,8 @@ class Categorie extends CommonObject
 		'supplier_invoice'		=> 'SuppliersInvoices',
 		'propal' 				=> 'Proposals',
 		'supplier_proposal' 	=> 'SupplierProposals',
-		'project_task'			=> 'Tasks'
+		'project_task'			=> 'Tasks',
+		'mo'					=> 'MOs'
 	);
 
 	/**
@@ -237,7 +241,8 @@ class Categorie extends CommonObject
 		'invoice'				=> 'facture',
 		'supplier_order'		=> 'commande_fournisseur',
 		'supplier_invoice'		=> 'facture_fourn',
-		'project_task'			=> 'projet_task'
+		'project_task'			=> 'projet_task',
+		'mo'					=> 'mrp_mo'
 	);
 
 	/**

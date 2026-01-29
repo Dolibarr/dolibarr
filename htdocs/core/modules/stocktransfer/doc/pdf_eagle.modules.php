@@ -454,7 +454,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 						$result = $module->writeBarCode($object->ref, $encoding);
 
 						// get path of qrcode image
-						$newcode = $object->ref;
+						$newcode = (string) $object->ref;
 						if (!preg_match('/^\w+$/', $newcode) || dol_strlen($newcode) > 32) {
 							$newcode = dol_hash($newcode, 'md5');
 						}
@@ -534,18 +534,19 @@ class pdf_eagle extends ModelePDFStockTransfer
 					$curX = $this->posxdesc - 1;
 
 					$pdf->startTransaction();
+
 					if (method_exists($object->lines[$i], 'fetch_product')) {
 						$object->lines[$i]->fetch_product();
 						$object->lines[$i]->label = $object->lines[$i]->product->label;
 						$object->lines[$i]->description = $object->lines[$i]->product->description;
 						$object->lines[$i]->weight = $object->lines[$i]->product->weight;
-						$object->lines[$i]->weight_units = $object->lines[$i]->product->weight_units;
+						$object->lines[$i]->weight_units = (int) $object->lines[$i]->product->weight_units;
 						$object->lines[$i]->length = $object->lines[$i]->product->length;
-						$object->lines[$i]->length_units = $object->lines[$i]->product->length_units;
+						$object->lines[$i]->length_units = (int) $object->lines[$i]->product->length_units;
 						$object->lines[$i]->surface = $object->lines[$i]->product->surface;
-						$object->lines[$i]->surface_units = $object->lines[$i]->product->surface_units;
+						$object->lines[$i]->surface_units = (int) $object->lines[$i]->product->surface_units;
 						$object->lines[$i]->volume = $object->lines[$i]->product->volume;
-						$object->lines[$i]->volume_units = $object->lines[$i]->product->volume_units;
+						$object->lines[$i]->volume_units = (int) $object->lines[$i]->product->volume_units;
 						$object->lines[$i]->fk_unit = $object->lines[$i]->product->fk_unit;
 						//var_dump($object->lines[$i]);exit;
 					}
@@ -1110,7 +1111,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_client), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities((string) $object->thirdparty->code_client), '', 'R');
 		}
 
 

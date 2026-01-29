@@ -186,7 +186,7 @@ class FichinterLigne extends CommonObjectLine
 
 		$rangToUse = $this->rang;
 		if ($rangToUse == -1) {
-			// Recupere rang max de la ligne d'intervention dans $rangmax
+			// Retrieve max rank of intervention line into $rangmax
 			$sql = 'SELECT max(rang) as max FROM '.MAIN_DB_PREFIX.'fichinterdet';
 			$sql .= ' WHERE fk_fichinter = '.((int) $this->fk_fichinter);
 			$resql = $this->db->query($sql);
@@ -200,7 +200,7 @@ class FichinterLigne extends CommonObjectLine
 			}
 		}
 
-		// Insertion dans base de la ligne
+		// Insert line into database
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'fichinterdet';
 		$sql .= ' (fk_fichinter, description, date, duree, rang, product_type, special_code)';
 		$sql .= " VALUES (".((int) $this->fk_fichinter).",";
@@ -271,7 +271,7 @@ class FichinterLigne extends CommonObjectLine
 
 		$this->db->begin();
 
-		// Mise a jour ligne en base
+		// Update line in database
 		$sql = "UPDATE ".MAIN_DB_PREFIX."fichinterdet SET";
 		$sql .= " description = '".$this->db->escape($this->desc)."',";
 		$sql .= " date = '".$this->db->idate($this->date)."',";

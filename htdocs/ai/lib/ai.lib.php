@@ -50,7 +50,9 @@ function getListOfAIFeatures()
 		'videogeneration' => array('label' => 'VideoGeneration', 'picto' => '', 'status' => 'notused', 'function' => 'VIDEO'),
 		'audiogeneration' => array('label' => 'AudioGeneration', 'picto' => '', 'status' => 'notused', 'function' => 'AUDIO'),
 		'transcription' => array('label' => 'AudioTranscription', 'picto' => '', 'status' => 'notused', 'function' => 'TRANSCRIPT'),
-		'translation' => array('label' => 'AudioTranslation', 'picto' => '', 'status' => 'notused', 'function' => 'TRANSLATE')
+		'translation' => array('label' => 'AudioTranslation', 'picto' => '', 'status' => 'notused', 'function' => 'TRANSLATE'),
+
+		'docparsing' => array('label' => 'DocumentPArsing', 'picto' => '', 'status' => 'experimental', 'function' => 'DOCPARSING')
 	);
 
 	return $arrayofaifeatures;
@@ -77,6 +79,7 @@ function getListOfAIServices()
 			'videogeneration' => 'na',
 			'transcription' => 'whisper-1',				// audio to text
 			'translation' => 'whisper-1',				// audio to text into another language
+			'docparsing' => 'na',
 		),
 		'groq' => array(
 			'label' => 'Groq',
@@ -88,6 +91,7 @@ function getListOfAIServices()
 			'videogeneration' => 'na',
 			'transcription' => 'na',
 			'translation' => 'na',
+			'docparsing' => 'na',
 		),
 		'mistral' => array(
 			'label' => 'Mistral',
@@ -99,6 +103,7 @@ function getListOfAIServices()
 			'videogeneration' => 'na',
 			'transcription' => 'na',
 			'translation' => 'na',
+			'docparsing' => 'open-mistral-7b',
 		),
 		'custom' => array(
 			'label' => 'Custom',
@@ -110,6 +115,7 @@ function getListOfAIServices()
 			'videogeneration' => 'na',
 			'transcription' => 'mixtral-8x7b-32768',
 			'translation' => 'mixtral-8x7b-32768',
+			'docparsing' => 'na',
 		)
 		//'gemini' => array(
 		//	'label' => 'Gemini',

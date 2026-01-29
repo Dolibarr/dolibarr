@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2018-2020  Thibault FOUCART            <support@ptibogxiv.net>
- * Copyright (C) 2018-2024  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2023       Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -152,7 +152,7 @@ try {
 $langs->load("main");
 
 
-if (isModEnabled('multicompany') && !empty($conf->stripeconnect->enabled) && is_object($mc)) {
+if (isModEnabled('multicompany') && !empty($conf->stripeconnect->enabled) && isset($mc) && is_object($mc)) {
 	$sql = "SELECT entity";
 	$sql .= " FROM ".MAIN_DB_PREFIX."oauth_token";
 	$sql .= " WHERE service = '".$db->escape($service)."' and tokenstring LIKE '%".$db->escape($db->escapeforlike($event->account))."%'";

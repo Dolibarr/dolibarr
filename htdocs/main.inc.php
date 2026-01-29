@@ -18,6 +18,7 @@
  * Copyright (C) 2023       Joachim Küter      		<git-jk@bloxera.com>
  * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -267,15 +268,21 @@ if (!empty($conf->file->main_force_https) && !isHTTPS() && !defined('NOHTTPSREDI
 if (!defined('NOLOGIN') && !defined('NOIPCHECK') && !empty($dolibarr_main_restrict_ip)) {
 	$listofip = explode(',', $dolibarr_main_restrict_ip);
 	$found = false;
+	$user_ip = $_SERVER['REMOTE_ADDR'];
 	foreach ($listofip as $ip) {
-		$ip = trim($ip);
-		if ($ip == $_SERVER['REMOTE_ADDR']) {
+		$authorized_ip = trim($ip);
+		if (strpos($authorized_ip, '/')) { // Check if IP with CIDR notation
+			if (checkIPInCidr($user_ip, $authorized_ip) > 0) {
+				$found = true;
+				break;
+			}
+		} elseif ($user_ip == $authorized_ip) {
 			$found = true;
 			break;
 		}
 	}
 	if (!$found) {
-		print 'Access refused by IP protection. Your detected IP is '.$_SERVER['REMOTE_ADDR'];
+		print 'Access refused by IP protection. Your detected IP is: '.dol_escape_htmltag($user_ip);
 		exit;
 	}
 }
@@ -2457,11 +2464,8 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 
 	$dropdownBody .= '<br><b>'.$langs->trans("Browser").':</b> '.ucfirst($conf->browser->name).($conf->browser->version ? ' '.$conf->browser->version : '');
 	$dropdownBody .= $form->textwithpicto('', dol_escape_htmltag($_SERVER['HTTP_USER_AGENT']), 1, 'help', 'valignmiddle', 0, 3, 'useragent');
-	$dropdownBody .= '<br><b>'.$langs->trans("Layout").':</b> '.$conf->browser->layout;
 	$dropdownBody .= '<br><b>'.$langs->trans("Screen").':</b> '.$_SESSION['dol_screenwidth'].' x '.$_SESSION['dol_screenheight'];
-	if ($conf->browser->layout == 'phone') {
-		$dropdownBody .= '<br><b>'.$langs->trans("Phone").':</b> '.$langs->trans("Yes");
-	}
+	$dropdownBody .= ' <span class="opacitymedium">('.$conf->browser->layout.')</span>';
 	if (!empty($_SESSION["disablemodules"])) {
 		$dropdownBody .= '<br><b>'.$langs->trans("DisabledModules").':</b> <br>'.implode(', ', explode(',', $_SESSION["disablemodules"]));
 	}
@@ -3752,11 +3756,11 @@ if (!function_exists("llxFooter")) {
 					// Output code for ping
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-					$arrayofdata = array(
+					$arrayofmoredata = array(
 						'action' => 'dolibarrping',
 						'country_code' => ($mysoc->country_code ? $mysoc->country_code : 'unknown')
 					);
-					printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayofdata, $forceping);
+					printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayofmoredata, $forceping);
 				} else {
 					$now = dol_now();
 					print "\n<!-- NO JS CODE TO ENABLE the anonymous Ping. It was disabled -->\n";

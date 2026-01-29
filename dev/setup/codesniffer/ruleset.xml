@@ -21,6 +21,11 @@
 	<exclude-pattern>/\.git/</exclude-pattern>
 	<exclude-pattern>/\.cache/</exclude-pattern>
 
+	<!-- Custom rules -->
+	<config name="installed_paths" value="/dev/setup/codesniffer" />
+	<rule ref="codesniffer.Dolibarr.LanguageOfComments"/>
+	<rule ref="codesniffer.Dolibarr.CheckIsModEnabledArgument"/>
+
 	<!-- List of all tests -->
 
 
@@ -31,12 +36,12 @@
 	<!-- Rules from Generic Standard -->
 	<!--
 	<rule ref="PSR12.Files.OpenTag">
-        <properties>
-            <property name="ignoreIndent" value="true"/>
-        </properties>
-    </rule>
+		<properties>
+			<property name="ignoreIndent" value="true"/>
+		</properties>
+	</rule>
 	<exclude name="PSR12.WhiteSpace.ScopeIndent"/>
-    -->
+	-->
 
 	<!-- We want to allow empty statement: It allows to put some code comments into the else for examples -->
 	<rule ref="Generic.CodeAnalysis.EmptyStatement">
@@ -76,16 +81,16 @@
 		<severity>0</severity>
 	</rule>
 
-    <!-- Lower severity on warnings we do not want to show in the pre-commit reports -->
-    <rule ref="Generic.Files.LineLength.TooLong">
+	<!-- Lower severity on warnings we do not want to show in the pre-commit reports -->
+	<rule ref="Generic.Files.LineLength.TooLong">
 		<severity>4</severity>
-    </rule>
-    <rule ref="Generic.Metrics.CyclomaticComplexity.TooHigh">
+	</rule>
+	<rule ref="Generic.Metrics.CyclomaticComplexity.TooHigh">
 		<severity>4</severity>
-    </rule>
-    <rule ref="Generic.Metrics.NestingLevel.TooHigh">
+	</rule>
+	<rule ref="Generic.Metrics.NestingLevel.TooHigh">
 		<severity>4</severity>
-    </rule>
+	</rule>
 
 
 	<!-- Warnings on TODO -->
