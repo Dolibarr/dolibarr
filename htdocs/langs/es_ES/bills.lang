@@ -626,6 +626,9 @@ situationInvoiceShortcode_AS=AS
 situationInvoiceShortcode_S=S
 CantBeNullOrPositive=El avance de una factura de nota de crédito no puede ser nulo ni positivo
 CantBeLessThanMinPercent=El progreso de una línea no puede ser inferior a su valor a la situación anterior.
+CantBeLessThanZero=El progreso acumulado no puede ser negativo
+DisabledGoToLastSituation=Para crear la siguiente situación, vaya a la última factura de situación (no una nota de crédito).
+ErrorCreditOnSituationMode1=No es posible crear notas de crédito para facturas de progreso en el modo INVOICE_USE_SITUATION=1.<br/>Para ello, deberá cambiar al modo INVOICE_USE_SITUATION=2 y luego utilizar la  <a href="https://github.com/progiseize/facture_situation_migration" target="_blank">herramienta de migración</a>. 
 NoSituations=Sin situaciones abiertas
 InvoiceSituationLast=Factura final y general
 SituationInvoiceAmountColTitle=Cantidad (neta)

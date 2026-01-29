@@ -628,6 +628,7 @@ CantBeNullOrPositive=The progress of a credit note invoice can't be null or posi
 CantBeLessThanMinPercent=The progress can't be smaller than its value in the previous situation.
 CantBeLessThanZero=The progress can't be negative
 DisabledGoToLastSituation=To create the next situation, go to the last situation invoice (not a credit note).
+ErrorCreditOnSituationMode1=It is not possible to create credit notes for progress invoices in INVOICE_USE_SITUATION=1 mode.<br/>To do this, you must switch to INVOICE_USE_SITUATION=2 mode and then use  <a href="https://github.com/progiseize/facture_situation_migration" target="_blank">the migration tool</a>. 
 NoSituations=No open situations
 InvoiceSituationLast=Final and general invoice
 SituationInvoiceAmountColTitle=Amount(net)

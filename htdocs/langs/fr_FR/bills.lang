@@ -628,6 +628,7 @@ CantBeNullOrPositive=La progression d'une facture avoir ne peut être ni nul ni 
 CantBeLessThanMinPercent=La progression ne peut être inférieure à la valeur de progression du point de situation précédent
 CantBeLessThanZero=La progression cumulée ne peut pas être négative
 DisabledGoToLastSituation=Pour créer la prochaine situation allez sur la dernière facture de situation (non avoir)
+ErrorCreditOnSituationMode1=Impossible de créer des avoirs de factures de situation en mode INVOICE_USE_SITUATION=1<br/>Pour ce faire, vous devez passer en mode INVOICE_USE_SITUATION=2 puis utiliser <a href="https://github.com/progiseize/facture_situation_migration" target="_blank">l'outil de migration</a>
 NoSituations=Pas de situations ouvertes
 InvoiceSituationLast=Dernière facture
 SituationInvoiceAmountColTitle=Montant (net)
