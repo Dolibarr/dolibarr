@@ -567,7 +567,7 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 
 		// City
 		$pdf->SetXY($this->page_largeur - $this->marge_droite - 30, $posy);
-		$pdf->MultiCell(150, 4, $mysoc->town, 0, 'L', true);
+		$pdf->MultiCell(150, 4, (string) $mysoc->town, 0, 'L', true);
 		$posy += 4;
 
 		// Date
@@ -606,10 +606,6 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 		// Amount in (at tab_top - 1)
 		$pdf->SetTextColor(0, 0, 0);
 		$pdf->SetFont('', '', $default_font_size - 2);
-
-		/*$titre = strtoupper($mysoc->town).' - '.dol_print_date(dol_now(), 'day', 'tzserver', $outputlangs);
-		$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3) - 60, $tab_top - 6);
-		$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);*/
 
 		$titre = $outputlangs->transnoentities("AmountInCurrency", $outputlangs->transnoentitiesnoconv("Currency".$currency));
 		$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3), $tab_top);

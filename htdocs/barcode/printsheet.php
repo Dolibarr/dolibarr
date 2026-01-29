@@ -229,8 +229,10 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
+			global $dolibarr_main_url_root;
 			// List of values to scan for a replacement
 			$substitutionarray = array(
+				// old
 				'%LOGIN%' => $user->login,
 				'%COMPANY%' => $mysoc->name,
 				'%ADDRESS%' => $mysoc->address,
@@ -243,7 +245,21 @@ if (empty($reshook)) {
 				'%MONTH%' => $month,
 				'%DAY%' => $day,
 				'%DOL_MAIN_URL_ROOT%' => DOL_MAIN_URL_ROOT,
-				'%SERVER%' => "http://".$_SERVER["SERVER_NAME"]."/",
+				'%SERVER%' => $dolibarr_main_url_root,
+				// new
+				'__LOGIN__' => $user->login,
+				'__COMPANY__' => $mysoc->name,
+				'__ADDRESS__' => $mysoc->address,
+				'__ZIP__' => $mysoc->zip,
+				'__TOWN__' => $mysoc->town,
+				'__COUNTRY__' => $mysoc->country,
+				'__COUNTRY_CODE__' => $mysoc->country_code,
+				'__EMAIL__' => $mysoc->email,
+				'__YEAR__' => $year,
+				'__MONTH__' => $month,
+				'__DAY__' => $day,
+				'__DOL_MAIN_URL_ROOT__' => DOL_MAIN_URL_ROOT,
+				'__SERVER__' => $dolibarr_main_url_root,
 			);
 			complete_substitutions_array($substitutionarray, $langs);
 

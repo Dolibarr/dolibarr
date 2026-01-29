@@ -5,7 +5,7 @@
  * Copyright (C) 2008      Chiptronik
  * Copyright (C) 2011-2021 Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2015      Marcos García         <marcosgdf@gmail.com>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France       <frederic.france@free.fr>
  * Copyright (C) 2024	   Nick Fragoulis
  *
@@ -421,14 +421,14 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					$qtyRemaining = $object->lines[$i]->qty_asked - $object->commande->expeditions[$object->lines[$i]->fk_origin_line];
 					$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxremainingqty, 3, (string) $qtyRemaining, 0, 'R');
 					/*
-					 // Remise sur ligne
+					 // Discount for line
 					 $pdf->SetXY($this->posxdiscount, $curY);
 					 if ($object->lines[$i]->remise_percent)
 					 {
 					 $pdf->MultiCell(14, 3, $object->lines[$i]->remise_percent."%", 0, 'R');
 					 }
 
-					 // Total HT ligne
+					 // Total Excl. VAT for line
 					 $pdf->SetXY($this->postotalht, $curY);
 					 $total = price($object->lines[$i]->price * $object->lines[$i]->qty);
 					 $pdf->MultiCell(23, 3, $total, 0, 'R', 0);
