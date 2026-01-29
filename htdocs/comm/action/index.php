@@ -61,10 +61,10 @@ if (empty($mode) && preg_match('/show_/', $action)) {
 $disabledefaultvalues = GETPOSTINT('disabledefaultvalues');
 
 $check_holiday = GETPOSTINT('check_holiday');
+$check_birthday = !empty($conf->use_javascript_ajax) ? GETPOSTINT("check_birthday") : 1;
 $filter = GETPOST("search_filter", 'alpha', 3) ? GETPOST("search_filter", 'alpha', 3) : GETPOST("filter", 'alpha', 3);
 $filtert = GETPOST("search_filtert", "intcomma", 3) ? GETPOST("search_filtert", "intcomma", 3) : GETPOST("filtert", "intcomma", 3);
 $usergroup = GETPOST("search_usergroup", "intcomma", 3) ? GETPOST("search_usergroup", "intcomma", 3) : GETPOST("usergroup", "intcomma", 3);
-$showbirthday = empty($conf->use_javascript_ajax) ? GETPOSTINT("showbirthday") : 1;
 $search_categ_cus = GETPOST("search_categ_cus", 'intcomma', 3) ? GETPOST("search_categ_cus", 'intcomma', 3) : 0;
 
 // If no choice done on calendar owner (like on left menu link "Agenda"), we filter on current user by default.
@@ -238,7 +238,7 @@ $parameters = array(
 	'maxprint' => $maxprint,
 	'filter' => $filter,
 	'filtert' => $filtert,
-	'showbirthday' => $showbirthday,
+	'showbirthday' => $check_birthday,
 	'canedit' => $canedit,
 	'optioncss' => $optioncss,
 	'actioncode' => $actioncode,
@@ -441,8 +441,11 @@ if ($usergroup > 0) {
 if ($socid > 0) {
 	$param .= "&search_socid=".urlencode((string) ($socid));
 }
-if ($showbirthday) {
-	$param .= "&search_showbirthday=1";
+if ($check_birthday) {
+	$param .= "&check_birthday=1";
+}
+if ($check_holiday) {
+	$param .= "&check_holiday=1";
 }
 if ($pid) {
 	$param .= "&search_projectid=".urlencode((string) ($pid));
@@ -699,7 +702,7 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 	}
 
 	// Birthdays
-	$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_birthday" name="check_birthday" class="marginleftonly check_birthday"><label for="check_birthday" class="labelcalendar"> <span class="check_birthday_text">'.$langs->trans("AgendaShowBirthdayEvents").'</span></label> &nbsp; </div>';
+	$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_birthday" name="check_birthday" class="marginleftonly check_birthday" value="1" '. (GETPOSTINT('check_birthday') ? ' checked' : '') .'><label for="check_birthday" class="labelcalendar"> <span class="check_birthday_text">'.$langs->trans("AgendaShowBirthdayEvents").'</span></label> &nbsp; </div>';
 
 	// Bookcal Calendar
 	if (isModEnabled("bookcal")) {
@@ -727,13 +730,13 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 	$s .= "\n".'<!-- End div to calendars selectors -->'."\n";
 } else { // If javascript off
 	$newparam = $param; // newparam is for birthday links
-	$newparam = preg_replace('/showbirthday=[0-1]/i', 'showbirthday='.(empty($showbirthday) ? 1 : 0), $newparam);
-	if (!preg_match('/showbirthday=/i', $newparam)) {
-		$newparam .= '&showbirthday=1';
+	$newparam = preg_replace('/check_birthday=[0-1]/i', 'check_birthday='.(empty($check_birthday) ? 1 : 0), $newparam);
+	if (!preg_match('/check_birthday=/i', $newparam)) {
+		$newparam .= '&check_birthday=1';
 	}
 	$s = '<a href="'.$_SERVER['PHP_SELF'].'?'.dol_escape_htmltag($newparam);
 	$s .= '">';
-	if (empty($showbirthday)) {
+	if (empty($check_birthday)) {
 		$s .= $langs->trans("AgendaShowBirthdayEvents");
 	} else {
 		$s .= $langs->trans("AgendaHideBirthdayEvents");
@@ -1076,7 +1079,7 @@ if ($resql) {
 
 // BIRTHDATES CALENDAR
 // Complete $eventarray with birthdates
-if ($showbirthday) {
+if ($check_birthday) {
 	// Add events in array
 	$sql = 'SELECT sp.rowid, sp.lastname, sp.firstname, sp.birthday';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'socpeople as sp';
@@ -1621,18 +1624,18 @@ print $s;
 
 if (empty($mode) || $mode == 'show_month') {      // View by month
 	$newparam = $param; // newparam is for birthday links
-	$newparam = preg_replace('/showbirthday=/i', 'showbirthday_=', $newparam); // To avoid replacement when replace day= is done
+	$newparam = preg_replace('/check_birthday=/i', 'check_birthday_=', $newparam); // To avoid replacement when replace day= is done
 	$newparam = preg_replace('/mode=show_month&?/i', '', $newparam);
 	$newparam = preg_replace('/mode=show_week&?/i', '', $newparam);
 	$newparam = preg_replace('/day=[0-9]+&?/i', '', $newparam);
 	$newparam = preg_replace('/month=[0-9]+&?/i', '', $newparam);
 	$newparam = preg_replace('/year=[0-9]+&?/i', '', $newparam);
 	$newparam = preg_replace('/viewcal=[0-9]+&?/i', '', $newparam);
-	$newparam = preg_replace('/showbirthday_=/i', 'showbirthday=', $newparam); // Restore correct parameter
+	$newparam = preg_replace('/check_birthday_=/i', 'check_birthday=', $newparam); // Restore correct parameter
 	$newparam .= '&viewcal=1';
 
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
-	print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid, $search_categ_cus);
+	print_actions_filter($form, $canedit, $status, $year, $month, $day, $check_birthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid, $search_categ_cus);
 	print '</div>';
 
 	print '<div class="div-table-responsive-no-min sectioncalendarbymonth maxscreenheightless300">';
@@ -1732,18 +1735,18 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 } elseif ($mode == 'show_week') {
 	// View by week
 	$newparam = $param; // newparam is for birthday links
-	$newparam = preg_replace('/showbirthday=/i', 'showbirthday_=', $newparam); // To avoid replacement when replace day= is done
+	$newparam = preg_replace('/check_birthday=/i', 'check_birthday_=', $newparam); // To avoid replacement when replace day= is done
 	$newparam = preg_replace('/mode=show_month&?/i', '', $newparam);
 	$newparam = preg_replace('/mode=show_week&?/i', '', $newparam);
 	$newparam = preg_replace('/day=[0-9]+&?/i', '', $newparam);
 	$newparam = preg_replace('/month=[0-9]+&?/i', '', $newparam);
 	$newparam = preg_replace('/year=[0-9]+&?/i', '', $newparam);
 	$newparam = preg_replace('/viewweek=[0-9]+&?/i', '', $newparam);
-	$newparam = preg_replace('/showbirthday_=/i', 'showbirthday=', $newparam); // Restore correct parameter
+	$newparam = preg_replace('/check_birthday_=/i', 'check_birthday=', $newparam); // Restore correct parameter
 	$newparam .= '&viewweek=1';
 
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
-	print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
+	print_actions_filter($form, $canedit, $status, $year, $month, $day, $check_birthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
 	print '</div>';
 
 	print '<div class="div-table-responsive-no-min sectioncalendarbyweek maxscreenheightless300">';
@@ -1811,7 +1814,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	$arraytimestamp = dol_getdate($timestamp);
 
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
-	print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
+	print_actions_filter($form, $canedit, $status, $year, $month, $day, $check_birthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
 	print '</div>';
 
 	print '<div class="div-table-responsive-no-min sectioncalendarbyday maxscreenheightless300">';

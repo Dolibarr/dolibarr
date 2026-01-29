@@ -9,7 +9,7 @@
  * Copyright (C) 2015-2025  Charlene BENKE          <charlene@patas-monkey.com>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022 		Antonin MARCHAL         <antonin@letempledujeu.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benoît PASCAL			<contact@p-ben.com>
@@ -1026,7 +1026,7 @@ class ExtraFields
 	public function fetch_name_optionals_label($elementtype, $forceload = false, $attrname = '')
 	{
 		// phpcs:enable
-		global $conf;
+		global $conf,$hookmanager;
 
 		if (empty($elementtype)) {
 			return array();
@@ -1118,6 +1118,22 @@ class ExtraFields
 			dol_syslog(get_class($this)."::fetch_name_optionals_label ".$this->error, LOG_ERR);
 		}
 
+		// Hook to complete/modify extrafields loaded from database
+		if (is_object($hookmanager)) {
+			$parameters = array(
+				'elementtype' => $elementtype,
+				'attrname' => $attrname,
+				'forceload' => $forceload,
+			);
+			$reshook = $hookmanager->executeHooks('completeFetchNameOptionalsLabel', $parameters, $this);
+			if ($reshook > 0 && is_array($hookmanager->resArray)) {
+				// Allow hook to inject additional extrafields definitions
+				foreach ($hookmanager->resArray as $key => $val) {
+					$array_name_label[$key] = $val;
+				}
+			}
+		}
+
 		return $array_name_label;
 	}
 
@@ -1144,6 +1160,10 @@ class ExtraFields
 		if (!is_object($form)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 			$form = new Form($this->db);
+		}
+
+		if ($mode == 1) {	// When field is used for search input into a list, we limit its size.
+			$morecss = 'maxwidth125';
 		}
 
 		$parameters = array(
@@ -1586,16 +1606,24 @@ class ExtraFields
 								$InfoFieldList[4] = str_replace('$ID$', '0', $InfoFieldList[4]);
 							}
 
-							// can use filter on any field of object
+							// can use filter on any field of object or in array_options
 							if (is_object($object)) {
 								$tags = [];
 								preg_match_all('/\$(.*?)\$/', $InfoFieldList[4], $tags);	// Example: $InfoFieldList[4] is ($dateadh$:<=:CURRENT_DATE)
 								foreach ($tags[0] as $keytag => $valuetag) {
 									$property = preg_replace('/[^a-z0-9_]/', '', strtolower($tags[1][$keytag]));
-									if (strpos($InfoFieldList[4], $valuetag) !== false && property_exists($object, $property) && !empty($object->$property)) {
-										$InfoFieldList[4] = str_replace($valuetag, (string) $object->$property, $InfoFieldList[4]);
+									if (strpos($property, 'options_') === 0) { // Example: $InfoFieldList[4] is ($options_dateadh$:<=:CURRENT_DATE) if options_datadh is an extrafield
+										if (strpos($InfoFieldList[4], $valuetag) !== false && isset($object->array_options[$property]) && !empty($object->array_options[$property])) {
+											$InfoFieldList[4] = str_replace($valuetag, (string) $object->array_options[$property], $InfoFieldList[4]);
+										} else {
+											$InfoFieldList[4] = str_replace($valuetag, '0', $InfoFieldList[4]);
+										}
 									} else {
-										$InfoFieldList[4] = str_replace($valuetag, '0', $InfoFieldList[4]);
+										if (strpos($InfoFieldList[4], $valuetag) !== false && property_exists($object, $property) && !empty($object->$property)) {
+											$InfoFieldList[4] = str_replace($valuetag, (string) $object->$property, $InfoFieldList[4]);
+										} else {
+											$InfoFieldList[4] = str_replace($valuetag, '0', $InfoFieldList[4]);
+										}
 									}
 								}
 							}
@@ -1658,6 +1686,7 @@ class ExtraFields
 								if (is_array($fields_label) && count($fields_label) > 1) {
 									$notrans = true;
 									foreach ($fields_label as $field_toshow) {
+										$field_toshow = preg_replace('/^.*\./', '', $field_toshow);
 										$labeltoshow .= $obj->$field_toshow.' ';
 									}
 								} else {
@@ -2273,6 +2302,7 @@ class ExtraFields
 					if (is_array($fields_label) && count($fields_label) > 1) {
 						foreach ($fields_label as $field_toshow) {
 							$translabel = '';
+							$field_toshow = preg_replace('/^.*\./', '', $field_toshow);
 							if (!empty($obj->$field_toshow)) {
 								$translabel = $outputlangs->trans($obj->$field_toshow);
 
@@ -2737,7 +2767,7 @@ class ExtraFields
 	 */
 	public function setOptionalsFromPost($extralabels, $object, $onlykey = '', $todefaultifmissing = 0)
 	{
-		global $langs;
+		global $langs, $hookmanager;
 
 		$nofillrequired = 0; // For error when required field left blank
 		$error_field_required = array();
@@ -2876,6 +2906,16 @@ class ExtraFields
 						unset($error_field_required[$key]);
 						$nofillrequired--;
 					}
+				}
+
+				// Hook to process custom extrafields from POST
+				if (is_object($hookmanager)) {
+					$parameters = array(
+						'key' => $key,
+						'key_type' => $key_type,
+						'value_key' => &$value_key,
+					);
+					$reshook = $hookmanager->executeHooks('setOptionalsFromPostExtra', $parameters, $object);
 				}
 
 				$object->array_options["options_".$key] = $value_key;

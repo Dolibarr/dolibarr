@@ -1827,7 +1827,9 @@ if ($resql) {
 		$objectstatic->total_ht = $obj->total_ht;
 		$objectstatic->total_tva = $obj->total_tva;
 		$objectstatic->total_ttc = $obj->total_ttc;
+		$objectstatic->date = $db->jdate($obj->date_commande);
 		$objectstatic->date_commande = $db->jdate($obj->date_commande);
+		$objectstatic->date_creation = $db->jdate($obj->date_creation);
 		$objectstatic->delivery_date = $db->jdate($obj->delivery_date);
 		$objectstatic->note_public = $obj->note_public;
 		$objectstatic->note_private = $obj->note_private;

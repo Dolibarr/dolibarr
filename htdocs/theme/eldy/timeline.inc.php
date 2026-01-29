@@ -217,7 +217,7 @@ a.timeline-btn:hover
 }
 
 .messaging-author {
-	width: 100px;
+	width: 150px;
 }
 
 .readmore-block.--closed .readmore-block__full-text, .readmore-block.--open .readmore-block__excerpt{
@@ -244,6 +244,7 @@ a.timeline-btn:hover
 @media only screen and (max-width: 767px)
 {
 	.messaging-author.inline-block {
+		width: 120px;
 		padding-bottom: 10px;
 	}
 }

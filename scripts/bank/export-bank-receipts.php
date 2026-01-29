@@ -3,7 +3,7 @@
 /*
  * Copyright (C) 2013       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -236,10 +236,10 @@ if ($resql) {
 			return -1;
 		}
 
-		// Genere en-tete
+		// Generate header
 		$objmodel->write_header($outputlangs);
 
-		// Genere ligne de titre
+		// Generate title line
 		$objmodel->write_title($array_fields, $array_selected, $outputlangs, $array_export_TypeFields);
 	}
 
@@ -281,13 +281,13 @@ if ($resql) {
 		// Date operation
 		$dateop = $db->jdate($objp->do);
 
-		// Date de valeur
+		// Value date
 		$datevalue = $db->jdate($objp->dv);
 
 		// Num cheque
 		$numchq = ($objp->num_chq ? $objp->num_chq : '');
 
-		// Libelle
+		// Label
 		$reg = array();
 		preg_match('/\((.+)\)/i', $objp->label, $reg); // Si texte entoure de parentheses on tente recherche de traduction
 		if ($reg[1] && $langs->transnoentitiesnoconv($reg[1]) != $reg[1]) {

@@ -30,6 +30,7 @@ global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/compta/facture/class/facture.class.php';
 require_once dirname(__FILE__).'/../../htdocs/blockedlog/class/blockedlog.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/modules/modBlockedLog.class.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
@@ -52,7 +53,26 @@ $langs->load("main");
 class BlockedLogAndLNETest extends CommonClassTest
 {
 	/**
+	 * setUpBeforeClass
+	 *
+	 * @return void
+	 */
+	public static function setUpBeforeClass(): void
+	{
+		self::assertTrue(isModEnabled('invoice'), " module customer invoice must be enabled");
+		self::assertFalse(isModEnabled('ecotaxdeee'), " module ecotaxdeee must not be enabled");
+		parent::setUpBeforeClass();
+
+		// We disable module blocked log to avoid interference with tests
+		global $db;
+		$blockedlogmodule = new modBlockedLog($db);
+		$blockedlogmodule->init();
+	}
+
+	/**
 	 * testBlockedLogAndLNETest
+	 *
+	 * #LNE8-QU2507-0048
 	 *
 	 * @return int
 	 */
@@ -81,5 +101,27 @@ class BlockedLogAndLNETest extends CommonClassTest
 	}
 
 
+	/**
+	 * testGetNextAutoIncrementId
+	 * This test must be done after a creation of a first record.
+	 *
+	 * @return	int
+	 */
+	public function testGetNextAutoIncrementId()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		print __METHOD__.' db->type = '.$db->type."\n";
+		$result = $db->getNextAutoIncrementId(MAIN_DB_PREFIX.'blockedlog');
+		$this->assertGreaterThan(0, $result);	// Must be strictlyhigher than 0
+		print __METHOD__." result=".$result."\n";
+	}
+
+
 	// TODO Add more tests
+	// #LNExxx
 }

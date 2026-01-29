@@ -152,3 +152,4 @@ MandatoryTargetFieldsNotMapped=Nogle obligatoriske målfelter er ikke forbundet
 AllTargetMandatoryFieldsAreMapped=Alle målfelter, der skal have en obligatorisk værdi, er forbundet
 ResultOfSimulationNoError=Resultat af simulering: Ingen fejl
 NumberOfLinesLimited=Begrænset antal linjer
+ErrorFileLinesReachEOF=Filen har %s linjer. Vi når dog slutningen af filen eller en tom linje ved posten %s. Dette kan forekomme, når nogle poster er opdelt i flere linjer og ikke er korrekt afgrænset af "tegnafgrænseren", eller hvis der er en linje uden data i alle felter.

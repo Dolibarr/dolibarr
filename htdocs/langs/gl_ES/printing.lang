@@ -1,8 +1,8 @@
 # Dolibarr language file - Source file is en_US - printing
-Module64000Name=Impresión cun só clic 
-Module64000Desc=Activar Sistema de Impresión cun só clic 
-PrintingSetup=Configuración do Sistema de Impresión cun só clic 
-PrintingDesc=Este módulo engade un botón Imprimir a varios módulos para permitir a impresión de documentos directamente nunha impresora sen necesidade de abrir o documento noutra aplicación. 
+Module64000Name=Impresión cun só clic
+Module64000Desc=Activar Sistema de Impresión cun só clic
+PrintingSetup=Configuración do Sistema de Impresión cun só clic
+PrintingDesc=Este módulo engade un botón Imprimir a varios módulos para permitir a impresión de documentos directamente nunha impresora sen necesidade de abrir o documento noutra aplicación.
 MenuDirectPrinting=Traballos de impresión cun só clic
 DirectPrint=Imprimir cun só clic
 PrintingDriverDesc=Configuración das variables para o driver de impresión.
@@ -53,4 +53,4 @@ PrintingDriverDescprintgcp=Variables de configuración para o controlador de imp
 PrintingDriverDescprintipp=Variables de configuración  de drivers para impresoras Cups
 PrintTestDescprintgcp=Listaxe de impresoras para Google Cloud Print.
 PrintTestDescprintipp=Listaxe de impresoras para servidor Cups
-Testbbbb
+PrinterLocation=Localización da impresora

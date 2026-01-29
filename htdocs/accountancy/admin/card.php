@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
- * Copyright (C) 2013-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
+ * Copyright (C) 2013-2026  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2014       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
@@ -72,7 +72,7 @@ $object = new AccountingAccount($db);
  */
 
 if (GETPOST('cancel', 'alpha')) {
-	$urltogo = $backtopage ? $backtopage : DOL_URL_ROOT.'/accountancy/admin/account.php';
+	$urltogo = (!empty($backtopage) ? $backtopage : DOL_URL_ROOT.'/accountancy/admin/account.php');
 	header("Location: ".$urltogo);
 	exit;
 }
@@ -126,7 +126,7 @@ if ($action == 'add' /* && $user->hasRight('accounting', 'chartofaccount') // al
 			}
 			if (!$error) {
 				setEventMessages("RecordCreatedSuccessfully", null, 'mesgs');
-				$urltogo = $backtopage ? $backtopage : DOL_URL_ROOT.'/accountancy/admin/account.php';
+				$urltogo = (!empty($backtopage) ? $backtopage : DOL_URL_ROOT.'/accountancy/admin/account.php');
 				header("Location: " . $urltogo);
 				exit;
 			}
@@ -169,7 +169,7 @@ if ($action == 'add' /* && $user->hasRight('accounting', 'chartofaccount') // al
 			$result = $object->update($user);
 
 			if ($result > 0) {
-				$urltogo = $backtopage ? $backtopage : ($_SERVER["PHP_SELF"] . "?id=" . $id);
+				$urltogo = (!empty($backtopage) ? $backtopage : ($_SERVER["PHP_SELF"] . "?id=" . $id));
 				header("Location: " . $urltogo);
 				exit();
 			} elseif ($result == -2) {
@@ -179,7 +179,7 @@ if ($action == 'add' /* && $user->hasRight('accounting', 'chartofaccount') // al
 			}
 		}
 	} else {
-		$urltogo = $backtopage ? $backtopage : ($_SERVER["PHP_SELF"]."?id=".$id);
+		$urltogo = (!empty($backtopage) ? $backtopage : ($_SERVER["PHP_SELF"]."?id=".$id));
 		header("Location: ".$urltogo);
 		exit();
 	}
@@ -190,7 +190,8 @@ if ($action == 'add' /* && $user->hasRight('accounting', 'chartofaccount') // al
 		$result = $object->delete($user);
 
 		if ($result > 0) {
-			header("Location: account.php");
+			$urltogo = (!empty($backtopage) ? $backtopage : DOL_URL_ROOT.'/accountancy/admin/account.php');
+			header("Location: ".$urltogo);
 			exit;
 		}
 	}

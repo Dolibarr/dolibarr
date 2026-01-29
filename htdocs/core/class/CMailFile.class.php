@@ -231,8 +231,8 @@ class CMailFile
 	{
 		global $conf, $dolibarr_main_data_root, $user;
 
-		dol_syslog("CMailFile::CMailfile: charset=".$conf->file->character_set_client." from=$from, to=$to, addr_cc=$addr_cc, addr_bcc=$addr_bcc, errors_to=$errors_to, replyto=$replyto trackid=$trackid sendcontext=$sendcontext");
-		dol_syslog("CMailFile::CMailfile: subject=".$subject.", deliveryreceipt=".$deliveryreceipt.", msgishtml=".$msgishtml, LOG_DEBUG);
+		dol_syslog("CMailFile::CMailFile: charset=".$conf->file->character_set_client." from=$from, to=$to, addr_cc=$addr_cc, addr_bcc=$addr_bcc, errors_to=$errors_to, replyto=$replyto trackid=$trackid sendcontext=$sendcontext");
+		dol_syslog("CMailFile::CMailFile: subject=".$subject.", deliveryreceipt=".$deliveryreceipt.", msgishtml=".$msgishtml, LOG_DEBUG);
 
 
 		// Clean values of $mimefilename_list
@@ -288,12 +288,12 @@ class CMailFile
 		$this->alternative_boundary = 'mul_'.dol_hash(uniqid("dolibarr3"), '3'); // Force md5 hash (does not contain special chars)
 
 		if (empty($subject)) {
-			dol_syslog("CMailFile::CMailfile: Try to send an email with empty subject");
+			dol_syslog("CMailFile::CMailFile: Try to send an email with empty subject");
 			$this->error = 'ErrorSubjectIsRequired';
 			return;
 		}
 		if (empty($msg)) {
-			dol_syslog("CMailFile::CMailfile: Try to send an email with empty body");
+			dol_syslog("CMailFile::CMailFile: Try to send an email with empty body");
 			$msg = '.'; // Avoid empty message (with empty message content, you will see a multipart structure)
 		}
 
@@ -320,7 +320,7 @@ class CMailFile
 		if (getDolGlobalString('MAIN_MAIL_FORCE_CONTENT_TYPE_TO_HTML')) {
 			$this->msgishtml = 1; // To force to send everything with content type html.
 		}
-		dol_syslog("CMailFile::CMailfile: msgishtml=".$this->msgishtml, LOG_DEBUG);
+		dol_syslog("CMailFile::CMailFile: msgishtml=".$this->msgishtml, LOG_DEBUG);
 
 		// Detect images
 		if ($this->msgishtml) {
@@ -338,7 +338,7 @@ class CMailFile
 				}
 				$findimg = $this->findHtmlImages($dolibarr_main_data_root_images.'/medias');
 				if ($findimg < 0) {
-					dol_syslog("CMailFile::CMailfile: Error on findHtmlImages");
+					dol_syslog("CMailFile::CMailFile: Error on findHtmlImages");
 					$this->error = 'ErrorInAddAttachmentsImageBaseOnMedia';
 					return;
 				}
@@ -350,7 +350,7 @@ class CMailFile
 				// It modifies ->html and complete ->html_images
 				$resultImageData = $this->findHtmlImagesIsSrcData($upload_dir_tmp);
 				if ($resultImageData < 0) {
-					dol_syslog("CMailFile::CMailfile: Error on findHtmlImagesInSrcData code=".$resultImageData." upload_dir_tmp=".$upload_dir_tmp);
+					dol_syslog("CMailFile::CMailFile: Error on findHtmlImagesInSrcData code=".$resultImageData." upload_dir_tmp=".$upload_dir_tmp);
 					$this->error = 'ErrorInAddAttachmentsImageBaseIsSrcData';
 					return;
 				}
@@ -375,7 +375,7 @@ class CMailFile
 							// We complete the array of cid_list
 							$cid_list[$posindice] = $this->html_images[$i]['cid'];
 						}
-						dol_syslog("CMailFile::CMailfile: html_images[$i]['name']=".$this->html_images[$i]['name'], LOG_DEBUG);
+						dol_syslog("CMailFile::CMailFile: html_images[$i]['name']=".$this->html_images[$i]['name'], LOG_DEBUG);
 					}
 				}
 			}
@@ -388,7 +388,7 @@ class CMailFile
 			foreach ($filename_list as $i => $val) {
 				if ($filename_list[$i]) {
 					$this->atleastonefile = 1;
-					dol_syslog("CMailFile::CMailfile: filename_list[$i]=".$filename_list[$i].", mimetype_list[$i]=".$mimetype_list[$i]." mimefilename_list[$i]=".$mimefilename_list[$i]." cid_list[$i]=".(empty($cid_list[$i]) ? '' : $cid_list[$i]), LOG_DEBUG);
+					dol_syslog("CMailFile::CMailFile: filename_list[$i]=".$filename_list[$i].", mimetype_list[$i]=".$mimetype_list[$i]." mimefilename_list[$i]=".$mimefilename_list[$i]." cid_list[$i]=".(empty($cid_list[$i]) ? '' : $cid_list[$i]), LOG_DEBUG);
 				}
 			}
 		}
@@ -513,7 +513,7 @@ class CMailFile
 			}
 		}
 
-		dol_syslog("CMailFile::CMailfile: sendmode=".$this->sendmode." addr_bcc=$addr_bcc, replyto=$replyto", LOG_DEBUG);
+		dol_syslog("CMailFile::CMailFile: sendmode=".$this->sendmode." addr_bcc=$addr_bcc, replyto=$replyto", LOG_DEBUG);
 
 		// We set all data according to chose sending method.
 		// We also set a value for ->msgid
@@ -1175,16 +1175,30 @@ class CMailFile
 							);
 							$serviceFactory = new \OAuth\ServiceFactory();
 							$oauthname = explode('-', $OAUTH_SERVICENAME);
-							// ex service is Google-Emails we need only the first part Google
-							$apiService = $serviceFactory->createService($oauthname[0], $credentials, $storage, array());
+							// Recreate the service with its configured scopes.
+							// This matters for some providers (Microsoft v2 token endpoint) where scope may be required on refresh.
+							$oauthScopes = array();
+							$oauthScopesStr = getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_SCOPE');
+							if (!empty($oauthScopesStr)) {
+								$oauthScopes = preg_split('/\s*,\s*/', $oauthScopesStr);
+								if (!is_array($oauthScopes)) {
+									$oauthScopes = array();
+								}
+							}
 
-							// We have to save the refresh token because Google give it only once
+							// ex service is Google-Emails we need only the first part Google
+							$apiService = $serviceFactory->createService($oauthname[0], $credentials, $storage, $oauthScopes);
+
+							// Some providers (like Google) return a refresh token only once.
+							// If the refreshed token does not contain one, keep the previous refresh token.
 							$refreshtoken = $tokenobj->getRefreshToken();
 
 							if ($apiService instanceof OAuth\OAuth2\Service\AbstractService || $apiService instanceof OAuth\OAuth1\Service\AbstractService) {
 								// ServiceInterface does not provide refreshAccessToken, AbstractService does
 								$tokenobj = $apiService->refreshAccessToken($tokenobj);
-								$tokenobj->setRefreshToken($refreshtoken);	// Restore the refresh token
+								if (empty($tokenobj->getRefreshToken())) {
+									$tokenobj->setRefreshToken($refreshtoken);
+								}
 								$storage->storeAccessToken($OAUTH_SERVICENAME, $tokenobj);
 							}
 
@@ -1345,15 +1359,27 @@ class CMailFile
 							);
 							$serviceFactory = new \OAuth\ServiceFactory();
 							$oauthname = explode('-', $OAUTH_SERVICENAME);
+							// Recreate the service with its configured scopes.
+							// This matters for some providers (Microsoft v2 token endpoint) where scope may be required on refresh.
+							$oauthScopes = array();
+							$oauthScopesStr = getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_SCOPE');
+							if (!empty($oauthScopesStr)) {
+								$oauthScopes = preg_split('/\s*,\s*/', $oauthScopesStr);
+								if (!is_array($oauthScopes)) {
+									$oauthScopes = array();
+								}
+							}
+
 							// ex service is Google-Emails we need only the first part Google
-							$apiService = $serviceFactory->createService($oauthname[0], $credentials, $storage, array());
+							$apiService = $serviceFactory->createService($oauthname[0], $credentials, $storage, $oauthScopes);
 							$refreshtoken = $tokenobj->getRefreshToken();
 
 							if ($apiService instanceof OAuth\OAuth2\Service\AbstractService || $apiService instanceof OAuth\OAuth1\Service\AbstractService) {
 								// ServiceInterface does not provide refreshAccessToken, AbstractService does
-								// We must save the token because Google provides it only once
 								$tokenobj = $apiService->refreshAccessToken($tokenobj);
-								$tokenobj->setRefreshToken($refreshtoken);
+								if (empty($tokenobj->getRefreshToken())) {
+									$tokenobj->setRefreshToken($refreshtoken);
+								}
 								$storage->storeAccessToken($OAUTH_SERVICENAME, $tokenobj);
 
 								$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
@@ -1460,7 +1486,7 @@ class CMailFile
 			dol_syslog("CMailFile::sendfile: ".$this->error, LOG_WARNING);
 		}
 
-		error_reporting($errorlevel); // Reactive niveau erreur origine
+		error_reporting($errorlevel); // Reactive original error level
 		return $res;
 	}
 
@@ -1903,7 +1929,7 @@ class CMailFile
 	 * Attach an image to email (mode = 'mail')
 	 *
 	 * @param	array<array{name:string,fullpath:string,content_type:string,cid:string,image_encoded:string}>	$images_list	Array of array image
-	 * @return	string					Chaine images encodees
+	 * @return	string					String with encoded images
 	 */
 	public function write_images($images_list)
 	{
@@ -2043,7 +2069,7 @@ class CMailFile
 
 	/**
 	 * Search images into html message and init array this->images_encoded if found
-	 * This is called in the CMailfile constructor but only if MAIN_MAIL_ADD_INLINE_IMAGES_IF_IN_MEDIAS is set (Off by default)
+	 * This is called in the CMailFile constructor but only if MAIN_MAIL_ADD_INLINE_IMAGES_IF_IN_MEDIAS is set (Off by default)
 	 *
 	 * @param	string	$images_dir		Path to store physical images files. For example $dolibarr_main_data_root.'/medias'
 	 * @return	int 		        	>0 if OK, <0 if KO
@@ -2131,7 +2157,7 @@ class CMailFile
 	/**
 	 * Search images with src="data:image..." format into html message.
 	 * If we find some, we create them on disk.
-	 * This is called in the CMailfile constructor.
+	 * This is called in the CMailFile constructor.
 	 *
 	 * @param	string	$images_dir		Location of where to store physically images files. For example $dolibarr_main_data_root.'/medias'
 	 * @return	int 		        	>0 if OK, <0 if KO

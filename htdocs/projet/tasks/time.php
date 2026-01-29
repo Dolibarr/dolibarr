@@ -10,6 +10,7 @@
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Vincent de Grandpré		<vincent@de-grandpre.quebec>
  * Copyright (C) 2024		Solution Libre SAS		<contact@solution-libre.fr>
+ * Copyright (C) 2026		Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -442,7 +443,9 @@ if ($action == 'confirm_generateinvoice' && $user->hasRight('facture', 'creer'))
 		$fuser = new User($db);
 		$remiseproject = price2num(GETPOST('remiseprojet', 'alphanohtml'));
 		$condidproject = GETPOSTINT('condidproject');
+
 		$db->begin();
+
 		$idprod = GETPOSTINT('productid');
 		$generateinvoicemode = GETPOST('generateinvoicemode', 'alphanohtml');
 		$invoiceToUse = GETPOSTINT('invoiceid');
@@ -573,7 +576,7 @@ if ($action == 'confirm_generateinvoice' && $user->hasRight('facture', 'creer'))
 						}
 
 						// Add lines
-						$lineid = $tmpinvoice->addline($langs->trans("TimeSpentForInvoice", $username) . ' : ' . $qtyhourtext, $pu_htline, round($qtyhour / $prodDurationHours, 2), $txtvaline, $localtax1line, $localtax2line, ($idprodline > 0 ? $idprodline : 0), (float) $remiseproject);
+						$lineid = $tmpinvoice->addline($langs->trans("TimeSpentForInvoice").' - '.$username . ' : ' . $qtyhourtext, $pu_htline, round($qtyhour / $prodDurationHours, 2), $txtvaline, $localtax1line, $localtax2line, ($idprodline > 0 ? $idprodline : 0), (float) $remiseproject);
 						if ($lineid < 0) {
 							$error++;
 							setEventMessages(null, $tmpinvoice->errors, 'errors');
@@ -1307,10 +1310,12 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		}
 		$arrayfields['author'] = array('label' => $langs->trans("By"), 'checked' => '1');
 		$arrayfields['t.note'] = array('label' => $langs->trans("Note"), 'checked' => '1');
+		$arrayfields['t.tms'] = array('label' => $langs->trans("DateModification"), 'checked' => '0');
 		if (isModEnabled('service') && !empty($projectstatic->thirdparty) && $projectstatic->thirdparty->id > 0 && $projectstatic->usage_bill_time) {
 			$arrayfields['t.fk_product'] = array('label' => $langs->trans("Product"), 'checked' => '1');
 		}
 		$arrayfields['t.element_duration'] = array('label' => $langs->trans("Duration"), 'checked' => '1');
+		$arrayfields['t.fk_product'] = array('label' => $langs->trans("Product"), 'checked' => '0', 'enabled' => (string) (int) (((getDolGlobalInt('PROJECT_HIDE_TASKS') || !getDolGlobalInt('PROJECT_BILL_TIME_SPENT')) ? 0 : 1) && $projectstatic->usage_bill_time));
 		$arrayfields['value'] = array('label' => $langs->trans("Value"), 'checked' => '1', 'enabled' => (string) (int) isModEnabled("salaries"));
 		$arrayfields['valuebilled'] = array('label' => $langs->trans("Billed"), 'checked' => '1', 'enabled' => (string) (int) (((getDolGlobalInt('PROJECT_HIDE_TASKS') || !getDolGlobalInt('PROJECT_BILL_TIME_SPENT')) ? 0 : 1) && $projectstatic->usage_bill_time));
 		// Extra fields
@@ -1497,7 +1502,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print $langs->trans('InvoiceToUse');
 				print '</td>';
 				print '<td>';
-				print $form->selectInvoice($projectstatic->thirdparty->id, '', 'invoiceid', 24, 0, $langs->trans('NewInvoice'), 1, 0, 0, 'maxwidth500', '', 'all');
+				print $form->selectInvoiceForTimeProject($projectstatic->thirdparty->id, '', 'invoiceid', 24, 0, $langs->trans('NewInvoice'), 1, 0, 0, 'maxwidth500', '', 'all');
 				print '</td>';
 				print '</tr>';
 				print '<tr>';
@@ -1592,8 +1597,13 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 		$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
 
+		// If project has usage "Bill time", we force visibility of field "billed"
+		if ($projectstatic->usage_bill_time) {
+			$arrayfields['valuebilled']['checked'] = 1;
+		}
+
 		$sql = "SELECT t.rowid, t.fk_element, t.element_date, t.element_datehour, t.element_date_withhour, t.element_duration, t.fk_user, t.note, t.thm,";
-		$sql .= " t.fk_product,";
+		$sql .= " t.fk_product, t.import_key, t.datec, t.tms,";
 		$sql .= " pt.rowid as taskid, pt.ref, pt.label, pt.fk_projet,";
 		$sql .= " u.lastname, u.firstname, u.login, u.photo, u.gender, u.statut as user_status,";
 		$sql .= " il.fk_facture as invoice_id, inv.fk_statut,";
@@ -1764,9 +1774,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 			$i = 0;
 			while ($i < $num) {
-				$row = $db->fetch_object($resql);
+				$obj = $db->fetch_object($resql);
 
-				$tasks[$i] = $row;
+				$tasks[$i] = $obj;
 
 				$i++;
 			}
@@ -1876,7 +1886,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			print $formother->select_percent(GETPOST('progress') ? GETPOST('progress') : $object->progress, 'progress', 0, 5, 0, 100, 1);
 			print '</td>';
 
-			// Invoiced
+			// Billed
 			if (!getDolGlobalString('PROJECT_HIDE_TASKS') && getDolGlobalString('PROJECT_BILL_TIME_SPENT')) {
 				print '<td>';
 				print '</td>';
@@ -1884,7 +1894,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				if (isModEnabled("service") && !empty($projectstatic->thirdparty) && $projectstatic->thirdparty->id > 0 && $projectstatic->usage_bill_time) {
 					print '<td class="nowraponall">';
 					print img_picto('', 'service');
-					print $form->select_produits((GETPOSTISSET('fk_product') ? GETPOSTINT("fk_product") : ''), 'fk_product', 1, 0, $projectstatic->thirdparty->price_level, 1, 2, '', 1, array(), $projectstatic->thirdparty->id, 'None', 0, 'maxwidth150', 0, '', null, 1);
+					print $form->select_produits((GETPOSTISSET('fk_product') ? GETPOSTINT("fk_product") : ''), 'fk_product', 1, 0, $projectstatic->thirdparty->price_level, 1, 2, '', 1, array(), $projectstatic->thirdparty->id, 'None', 0, 'maxwidth150', ($user->hasRight('produit', 'lire') ? 0 : 1), '', null, 1);
 					print '</td>';
 				}
 			}
@@ -1926,6 +1936,11 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
 		$selectedfields .= (is_array($arrayofmassactions) && count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
+		// If project has usage "Bill time", we force visibility of field "billed"
+		if ($projectstatic->usage_bill_time) {
+			$arrayfields['valuebilled']['checked'] = 1;
+		}
+
 		print '<!-- Liste of time spent -->'."\n";
 		print '<div class="div-table-responsive">';
 		print '<table class="tagtable nobottomiftotal liste' . ($moreforfilter ? " listwithfilterbefore" : "") . '">' . "\n";
@@ -1963,19 +1978,19 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 		if (!empty($allprojectforuser)) {
 			if (!empty($arrayfields['p.project_ref']['checked'])) {
-				print '<td class="liste_titre"><input type="text" class="flat maxwidth125" name="$search_project_ref" value="' . dol_escape_htmltag($search_project_ref) . '"></td>';
+				print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="$search_project_ref" value="' . dol_escape_htmltag($search_project_ref) . '"></td>';
 			}
 			if (!empty($arrayfields['p.project_label']['checked'])) {
-				print '<td class="liste_titre"><input type="text" class="flat maxwidth125" name="$search_project_label" value="' . dol_escape_htmltag($search_project_label) . '"></td>';
+				print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="$search_project_label" value="' . dol_escape_htmltag($search_project_label) . '"></td>';
 			}
 		}
 		// Task
 		if ((empty($id) && empty($ref)) || !empty($projectidforalltimes)) {	// Not a dedicated task
 			if (!empty($arrayfields['t.element_ref']['checked'])) {
-				print '<td class="liste_titre"><input type="text" class="flat maxwidth125" name="search_task_ref" value="'.dol_escape_htmltag($search_task_ref).'"></td>';
+				print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_task_ref" value="'.dol_escape_htmltag($search_task_ref).'"></td>';
 			}
 			if (!empty($arrayfields['t.element_label']['checked'])) {
-				print '<td class="liste_titre"><input type="text" class="flat maxwidth125" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'"></td>';
+				print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'"></td>';
 			}
 		}
 		// Author
@@ -1986,6 +2001,10 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		if (!empty($arrayfields['t.note']['checked'])) {
 			print '<td class="liste_titre"><input type="text" class="flat maxwidth75" name="search_note" value="' . dol_escape_htmltag($search_note) . '"></td>';
 		}
+		// Last modification
+		if (!empty($arrayfields['t.tms']['checked'])) {
+			print '<td class="liste_titre"></td>';
+		}
 		// Duration
 		if (!empty($arrayfields['t.element_duration']['checked'])) {
 			// Duration - Time spent
@@ -1995,7 +2014,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			if ($search_timespent_starthour || $search_timespent_startmin) {
 				$durationtouse_start = ($search_timespent_starthour * 3600 + $search_timespent_startmin * 60);
 			}
-			print '<div class="nowraponall">' . $langs->trans('from') . ' ';
+			print '<div class="nowraponall"><span class="opacitymedium">' . $langs->trans('fromhour') . '</span> ';
 			print $form->select_duration('search_timespent_duration_start', $durationtouse_start, 0, 'text', 0, 1);
 			print '</div>';
 
@@ -2003,7 +2022,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			if ($search_timespent_endhour || $search_timespent_endmin) {
 				$durationtouse_end = ($search_timespent_endhour * 3600 + $search_timespent_endmin * 60);
 			}
-			print '<div class="nowraponall">' . $langs->trans('to') . ' ';
+			print '<div class="nowraponall"><span class="opacitymedium">' . $langs->trans('tohour') . '</span> ';
 			print $form->select_duration('search_timespent_duration_end', $durationtouse_end, 0, 'text', 0, 1);
 			print '</div>';
 
@@ -2011,7 +2030,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		}
 		// Product
 		if (!empty($arrayfields['t.fk_product']['checked'])) {
-			print '<td class="liste_titre right"></td>';
+			print '<td class="liste_titre"></td>';
 		}
 		// Value in main currency
 		if (!empty($arrayfields['value']['checked'])) {
@@ -2089,6 +2108,10 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		}
 		if (!empty($arrayfields['t.note']['checked'])) {
 			print_liste_field_titre($arrayfields['t.note']['label'], $_SERVER['PHP_SELF'], 't.note', '', $param, '', $sortfield, $sortorder);
+			$totalarray['nbfield']++;
+		}
+		if (!empty($arrayfields['t.tms']['checked'])) {
+			print_liste_field_titre($arrayfields['t.tms']['label'], $_SERVER['PHP_SELF'], 't.tms', '', $param, '', $sortfield, $sortorder);
 			$totalarray['nbfield']++;
 		}
 		if (!empty($arrayfields['t.element_duration']['checked'])) {
@@ -2394,7 +2417,17 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print '<input type="hidden" name="timespent_note_line" value="' . dol_escape_htmltag($task_time->note, 0, 1) . '">';
 			}
 
-			// Time spent
+			// Last modification
+			if (!empty($arrayfields['t.tms']['checked'])) {
+				print '<td class="nowraponall">';
+				print dol_print_date($task_time->tms, 'dayhour');
+				print '</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
+
+			// Time spent - Duration
 			if (!empty($arrayfields['t.element_duration']['checked'])) {
 				print '<td class="right nowraponall">';
 				if ($action == 'editline' && GETPOSTINT('lineid') == $task_time->rowid) {
@@ -2430,7 +2463,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print '<td class="nowraponall">';
 				if ($action == 'editline' && GETPOSTINT('lineid') == $task_time->rowid) {
 					print img_picto('', 'service');
-					print $form->select_produits($task_time->fk_product, 'fk_product', 1, 0, $projectstatic->thirdparty->price_level, 1, 2, '', 1, array(), $projectstatic->thirdparty->id, 'None', 0, 'maxwidth500', 0, '', null, 1);
+					print $form->select_produits($task_time->fk_product, 'fk_product', 1, 0, $projectstatic->thirdparty->price_level, 1, 2, '', 1, array(), $projectstatic->thirdparty->id, 'None', 0, 'maxwidth500',  ($user->hasRight('produit', 'lire') ? 0 : 1), '', null, 1);
 				} elseif (!empty($task_time->fk_product)) {
 					$product = new Product($db);
 					$resultFetch = $product->fetch($task_time->fk_product);
@@ -2477,7 +2510,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				}
 			}
 
-			// Invoiced
+			// Value billed
 			if (!empty($arrayfields['valuebilled']['checked'])) {
 				print '<td class="center">'; // invoice_id and invoice_line_id
 				if (!getDolGlobalString('PROJECT_HIDE_TASKS') && getDolGlobalString('PROJECT_BILL_TIME_SPENT')) {
@@ -2485,18 +2518,23 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 						if ($task_time->invoice_id) {
 							$result = $tmpinvoice->fetch($task_time->invoice_id);
 							if ($result > 0) {
-								if ($action == 'editline' && GETPOSTINT('lineid') == $task_time->rowid) {
-									print $formproject->selectInvoiceAndLine($task_time->invoice_id, $task_time->invoice_line_id, 'invoiceid', 'invoicelineid', 'maxwidth500', array('p.rowid' => $projectstatic->id));
-								} else {
-									print $tmpinvoice->getNomUrl(1);
-									if (!empty($task_time->invoice_line_id)) {
-										$invoiceLine = new FactureLigne($db);
-										$invoiceLine->fetch($task_time->invoice_line_id);
-										if (!empty($invoiceLine->id)) {
-											print '<br>'.$langs->trans('Qty').':'.$invoiceLine->qty;
-											print ' '.$langs->trans('TotalHT').':'.price($invoiceLine->total_ht);
+								if ($user->hasRight('facture', 'lire')) {
+									if ($action == 'editline' && GETPOSTINT('lineid') == $task_time->rowid) {
+										print $formproject->selectInvoiceAndLine($task_time->invoice_id, $task_time->invoice_line_id, 'invoiceid', 'invoicelineid', 'maxwidth500', array('p.rowid' => $projectstatic->id));
+									} else {
+										print $tmpinvoice->getNomUrl(1);
+										if (!empty($task_time->invoice_line_id)) {
+											$invoiceLine = new FactureLigne($db);
+											$invoiceLine->fetch($task_time->invoice_line_id);
+											if (!empty($invoiceLine->id)) {
+												print '<br><span class="small opacitymedium">'.$langs->trans('Qty').':'.$invoiceLine->qty;
+												print ' '.$langs->trans('TotalHT').':'.price($invoiceLine->total_ht);
+												print '</span>';
+											}
 										}
 									}
+								} else {
+									print $langs->trans("Yes");
 								}
 							}
 							$invoiced = true;
@@ -2690,7 +2728,13 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					print '<input type="hidden" name="timespent_note_line" rows="' . ROWS_2 . '" value="' . dol_escape_htmltag($task_time->note, 0, 1) . '">';
 				}
 
-				// Time spent
+				// Last modification
+				if (!empty($arrayfields['t.tms']['checked'])) {
+					print '<td class="nowraponall">';
+					print '</td>';
+				}
+
+				// Time spent - duration
 				if (!empty($arrayfields['t.element_duration']['checked'])) {
 					print '<td class="right">';
 					if ($action == 'splitline' && GETPOSTINT('lineid') == $task_time->rowid) {
@@ -2855,7 +2899,14 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					print '<input type="hidden" name="timespent_note_line_2" value="' . dol_escape_htmltag($task_time->note, 0, 1) . '">';
 				}
 
-				// Time spent
+				// Last modification
+				if (!empty($arrayfields['t.tms']['checked'])) {
+					print '<td class="nowraponall">';
+					print dol_print_date($task_time->tms, 'dayhour');
+					print '</td>';
+				}
+
+				// Time spent - duration
 				if (!empty($arrayfields['t.element_duration']['checked'])) {
 					print '<td class="right">';
 					if ($action == 'splitline' && GETPOSTINT('lineid') == $task_time->rowid) {
@@ -2873,7 +2924,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					print '</td>';
 				}
 
-				// Value spent
+				// Value spent - duration
 				if (!empty($arrayfields['value']['checked'])) {
 					print '<td class="right">';
 					print '<span class="amount nowraponall">';
@@ -2887,9 +2938,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				// Value billed
 				if (!empty($arrayfields['valuebilled']['checked'])) {
 					print '<td class="right">';
-					$valuebilled = price2num($task_time->total_ht, '', 1);
 					if (isset($task_time->total_ht)) {
-						print '<span class="amount nowraponall">';
+						$valuebilled = price2num($task_time->total_ht, '', 1);
+						print '<span class="amount nowraponall small">';
 						print price($valuebilled, 1, $langs, 1, -1, -1, $conf->currency);
 						print '</span>';
 					}

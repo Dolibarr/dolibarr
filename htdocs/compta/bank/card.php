@@ -32,6 +32,14 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -50,15 +58,6 @@ if (isModEnabled('accounting')) {
 if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Societe $mysoc
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array("banks", "bills", "categories", "companies", "compta", "withdrawals"));
@@ -125,6 +124,24 @@ if (empty($reshook)) {
 			exit;
 		}
 		$action = '';
+	}
+
+	if ($action == 'close' && $user->hasRight('banque', 'configurer')) {
+		$error = 0;
+
+		$object = new Account($db);
+		$object->fetch(GETPOSTINT("id"));
+
+		$result = $object->setStatut($object::STATUS_CLOSED, null, '', 'BANKACCOUNT_MODIFY');
+	}
+
+	if ($action == 'reopen' && $user->hasRight('banque', 'configurer')) {
+		$error = 0;
+
+		$object = new Account($db);
+		$object->fetch(GETPOSTINT("id"));
+
+		$result = $object->setStatut($object::STATUS_OPEN, null, '', 'BANKACCOUNT_MODIFY');
 	}
 
 	if ($action == 'add' && $user->hasRight('banque', 'configurer')) {
@@ -703,7 +720,7 @@ if ($action == 'create') {
 		print '<table class="border centpercent tableforfield">';
 
 		// Type
-		print '<tr><td class="titlefield">'.$langs->trans("AccountType").'</td>';
+		print '<tr><td class="titlefieldmiddle">'.$langs->trans("AccountType").'</td>';
 		print '<td>'.$object->type_lib[$object->type].'</td></tr>';
 
 		// Currency
@@ -739,10 +756,13 @@ if ($action == 'create') {
 		print '<tr class="liste_titre_add"><td class="titlefield">'.$langs->trans("AccountancyCode").'</td>';
 		print '<td>';
 		if (isModEnabled('accounting')) {
-			$accountingaccount = new AccountingAccount($db);
-			$accountingaccount->fetch(0, $object->account_number, 1);
-
-			print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
+			if (empty($object->account_number)) {
+				print img_warning($langs->trans("Mandatory"));
+			} else {
+				$accountingaccount = new AccountingAccount($db);
+				$accountingaccount->fetch(0, $object->account_number, 1);
+				print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
+			}
 		} else {
 			print $object->account_number;
 		}
@@ -752,11 +772,11 @@ if ($action == 'create') {
 		if (isModEnabled('accounting')) {
 			print '<tr><td>'.$langs->trans("AccountancyJournal").'</td>';
 			print '<td>';
-
-			if ($object->fk_accountancy_journal > 0) {
+			if (empty($object->fk_accountancy_journal)) {
+				print img_warning($langs->trans("Mandatory"));
+			} elseif ($object->fk_accountancy_journal > 0) {
 				$accountingjournal = new AccountingJournal($db);
 				$accountingjournal->fetch($object->fk_accountancy_journal);
-
 				print $accountingjournal->getNomUrl(0, 1, 1, '', 1);
 			}
 			print '</td></tr>';
@@ -869,15 +889,15 @@ if ($action == 'create') {
 			print nl2br($object->owner_address);
 			print "</td></tr>\n";
 
-			print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerZip").'</td>';
+			print '<tr><td>'.$langs->trans("BankAccountOwnerZip").'</td>';
 			print '<td>'.dol_escape_htmltag($object->owner_zip);
 			print '</td></tr>';
 
-			print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerTown").'</td>';
+			print '<tr><td>'.$langs->trans("BankAccountOwnerTown").'</td>';
 			print '<td>'.dol_escape_htmltag($object->owner_town);
 			print '</td></tr>';
 
-			print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerCountry").'</td>';
+			print '<tr><td>'.$langs->trans("BankAccountOwnerCountry").'</td>';
 			print '<td>';
 			$object->owner_country_code = dol_getIdFromCode($db, $object->owner_country_id, 'c_country', 'rowid', 'code');
 			$langs->load("dict");
@@ -906,8 +926,16 @@ if ($action == 'create') {
 		}
 
 		if (empty($reshook)) {
-			if ($user->hasRight('banque', 'configurer')) {
+			if ($user->hasRight('banque', 'configurer') && $object->status == $object::STATUS_CLOSED) {
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=reopen&token='.newToken().'&id='.$object->id.'">'.$langs->trans("ReOpen").'</a>';
+			}
+
+			if ($user->hasRight('banque', 'configurer') && $object->status == $object::STATUS_OPEN) {
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Modify").'</a>';
+			}
+
+			if ($user->hasRight('banque', 'configurer') && $object->status == $object::STATUS_OPEN) {
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=close&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Close").'</a>';
 			}
 
 			$canbedeleted = $object->can_be_deleted(); // Return true if account without movements

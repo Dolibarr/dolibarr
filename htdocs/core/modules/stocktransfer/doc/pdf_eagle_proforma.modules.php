@@ -820,6 +820,7 @@ class pdf_eagle_proforma extends ModelePDFStockTransfer
 				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+				$this->warnings = $hookmanager->warnings;
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
@@ -1299,7 +1300,7 @@ class pdf_eagle_proforma extends ModelePDFStockTransfer
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_client), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities((string) $object->thirdparty->code_client), '', 'R');
 		}
 
 		if ($object->ref_client) {
@@ -1333,7 +1334,7 @@ class pdf_eagle_proforma extends ModelePDFStockTransfer
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_client), '', 'R');
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities((string) $object->thirdparty->code_client), '', 'R');
 		}
 
 		// Get contact

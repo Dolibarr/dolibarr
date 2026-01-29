@@ -254,7 +254,7 @@ if (getDolGlobalString("AI_API_SERVICE")) {
 	include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
 	print $out;
 
-	print '<br><textarea id="'.$htmlname.'" placeholder="Lore ipsum..." class="quatrevingtpercent" rows="4"></textarea>';	// The div
+	print '<br><textarea id="'.$htmlname.'" placeholder="Click on picto to enter a prompt or enter a message and click picto to make text transformation..." class="quatrevingtpercent" rows="4"></textarea>';	// The div
 
 	print '<br><br>';
 

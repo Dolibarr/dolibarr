@@ -1175,13 +1175,30 @@ class Asset extends CommonObject
 
 					// Next fiscal period (+1 day/month/year)
 					$fiscal_period_start = dol_time_plus_duree($fiscal_period_end, 1, 'd');
-					$dates_fiscal_period = getCurrentPeriodOfFiscalYear($this->db, $conf, $fiscal_period_start, 'gmt');
-					if ($fields['duration_type'] == 2) { // Daily
-						$fiscal_period_end = $fiscal_period_start;
+
+					if ($fields['duration_type'] == 0) { // Annually - use fiscal year-end
+						// Search for the NEXT fiscal year
+						$next_fy = getNextFiscalYear($this->db, $fiscal_period_end, 'gmt');
+
+						if ($next_fy !== null) {
+							// Exercise found in database
+							$fiscal_period_start = $next_fy['date_start'];
+							$fiscal_period_end = $next_fy['date_end'];
+						} else {
+							// If there is no subsequent fiscal year in the database, a one-year fiscal year is automatically generated.
+							// based on the structure of the current fiscal year
+							$current_fy_start_parts = dol_getdate($fiscal_period_start);
+
+							// Calculate the end: 1 year minus 1 day from the start
+							$fiscal_period_end = dol_time_plus_duree(dol_time_plus_duree($fiscal_period_start, 1, 'y'), -1, 'd');
+
+							// If the amortization end date is exceeded, there is no need to continue after that.
+							// The loop will end naturally with the while condition.
+						}
 					} elseif ($fields['duration_type'] == 1) { // Monthly
 						$fiscal_period_end = dol_time_plus_duree(dol_time_plus_duree($fiscal_period_start, 1, 'm'), -1, 'd');
-					} else { // Annually
-						$fiscal_period_end = $dates_fiscal_period['date_end'];
+					} else { // Daily
+						$fiscal_period_end = $fiscal_period_start;
 					}
 					$last_period_date = $disposal_date !== "" && $disposal_date < $depreciation_date_end ? $disposal_date : $depreciation_date_end;
 				} while ($fiscal_period_start < $last_period_date);
