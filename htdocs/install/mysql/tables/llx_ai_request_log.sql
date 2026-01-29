@@ -20,17 +20,17 @@
 
 create table llx_ai_request_log
 (
-  rowid             	  integer AUTO_INCREMENT PRIMARY KEY,
-  entity				        integer DEFAULT 1 NOT NULL,
-  date_request			    datetime,
-  fk_user     			    integer NOT NULL,  						        -- ID of user
-  query_text        	  text,           						          -- User prompt
-  tool_name     		    varchar(255),           					    -- Tool used
-  provider   			      varchar(50),								          -- LLM provider
-  execution_time    	  float,  								              -- Execution time
-  confidence        	  float,                                -- LLM confidence
-  status            	  varchar(50),								          -- Response status
-  error_msg         	  text,				                    	    -- Error message
-  raw_request_payload   MEDIUMTEXT,           						    -- Request payload
-  raw_response_payload	MEDIUMTEXT									          -- Response payload
+  rowid						integer AUTO_INCREMENT PRIMARY KEY,
+  entity					integer DEFAULT 1 NOT NULL,
+  date_request				datetime,
+  fk_user					integer NOT NULL,						-- ID of user
+  query_text				text,									-- User prompt
+  tool_name					varchar(255),							-- Tool used
+  provider					varchar(50),							-- LLM provider
+  execution_time			float,									-- Execution time
+  confidence				float,									-- LLM confidence
+  status					varchar(50),							-- Response status
+  error_msg					text,									-- Error message
+  raw_request_payload		MEDIUMTEXT,								-- Request payload
+  raw_response_payload		MEDIUMTEXT								-- Response payload
 )ENGINE=innodb;
