@@ -3,8 +3,9 @@
  * Copyright (C) 2011-2017  Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2021       Nicolas ZABOURI     <info@inovea-conseil.com>
  * Copyright (C) 2022       Alexandre Spangaro  <aspangaro@open-dsi.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2026       Charlene Benke      <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,12 +73,12 @@ if ($resql) {
 
 $action = GETPOST('action', 'aZ09');
 
+$error = 0;
+
 
 /*
  * Actions
  */
-
-$error = 0;
 
 if ($action == 'set') {
 	$db->begin();
@@ -99,7 +100,7 @@ if ($action == 'set') {
 
 	dol_syslog("admin/cashdesk: level ".GETPOST('level', 'alpha'));
 
-	if (!($res > 0)) {
+	if ($res <= 0) {
 		$error++;
 	}
 
@@ -111,10 +112,11 @@ if ($action == 'set') {
 } elseif ($action == 'updateMask') {
 	$maskconst = GETPOST('maskconst', 'aZ09');
 	$maskvalue = GETPOST('maskvalue', 'alpha');
+	$res = 1;
 	if ($maskconst && preg_match('/_MASK$/', $maskconst)) {
 		$res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
 	}
-	if (!($res > 0)) {
+	if ($res <= 0) {
 		$error++;
 	}
 } elseif ($action == 'setrefmod') {
@@ -409,6 +411,13 @@ print '<tr class="oddeven"><td>';
 print $langs->trans('UsePriceHT');
 print '</td><td>';
 print ajax_constantonoff("TAKEPOS_CHANGE_PRICE_HT", array(), $conf->entity, 0, 0, 1, 0);
+print "</td></tr>\n";
+
+// disable freezone product
+print '<tr class="oddeven"><td>';
+print $langs->trans('NoFreeZoneProduct');
+print '</td><td>';
+print ajax_constantonoff("TAKEPOS_NO_FREE_ZONE_PRODUCT", array(), $conf->entity, 0, 0, 1, 0);
 print "</td></tr>\n";
 
 // Barcode rule to insert product
