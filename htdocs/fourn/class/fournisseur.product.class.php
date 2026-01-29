@@ -8,7 +8,7 @@
  * Copyright (C) 2016-2023	Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Pierre Ardoin           <mapiolca@me.com>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ class ProductFournisseur extends Product
 	public $error = '';
 
 	/**
-	 * @var int			ID of ligne product-supplier
+	 * @var int			ID of line product-supplier
 	 */
 	public $product_fourn_price_id;
 

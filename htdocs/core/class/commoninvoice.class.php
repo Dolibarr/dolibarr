@@ -2418,5 +2418,5 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	/**
 	 * @var float 		Situation advance percentage (default 100 for standard invoices)
 	 */
-	public $situation_percent;
+	public $situation_percent = 100;
 }
