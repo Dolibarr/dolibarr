@@ -682,7 +682,7 @@ if ($rowid > 0) {
 
 		// Description
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td><div class="longmessagecut">';
-		print dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->note_public));
+		print dol_string_onlythesehtmltags(dol_htmlentitiesbr((string) $object->note_public));
 		print "</div></td></tr>";
 
 		// Welcome email content
