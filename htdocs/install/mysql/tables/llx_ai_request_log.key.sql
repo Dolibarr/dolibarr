@@ -29,6 +29,3 @@ ALTER TABLE llx_ai_request_log ADD INDEX idx_ai_request_log_user (fk_user);
 
 -- Index for filtering by status
 ALTER TABLE llx_ai_request_log ADD INDEX idx_ai_request_log_status (status);
-
--- Foreign Key
-ALTER TABLE llx_ai_request_log ADD CONSTRAINT fk_ai_request_log_user FOREIGN KEY (fk_user) REFERENCES llx_user(rowid);
