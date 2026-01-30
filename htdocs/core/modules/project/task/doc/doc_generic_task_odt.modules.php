@@ -4,7 +4,7 @@
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013		Florian Henry		<florian.henry@ope-concept.pro>
  * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
- * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2023      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
@@ -502,7 +502,7 @@ class doc_generic_task_odt extends ModelePDFTask
 				}
 			}
 			$project = new Project($this->db);
-			$project->fetch($object->fk_project);
+			$project->fetch((int) $object->fk_project);
 			$project->fetch_thirdparty();
 
 			$dir = $conf->project->dir_output."/".$project->ref."/";

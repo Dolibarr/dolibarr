@@ -157,8 +157,8 @@ if (isModEnabled('multicompany') && !empty($conf->stripeconnect->enabled) && iss
 	$sql .= " FROM ".MAIN_DB_PREFIX."oauth_token";
 	$sql .= " WHERE service = '".$db->escape($service)."' and tokenstring LIKE '%".$db->escape($db->escapeforlike($event->account))."%'";
 
-	dol_syslog(get_class($db)."::fetch", LOG_DEBUG);
 	dol_syslog(get_class($db)."::fetch", LOG_DEBUG, 0, '_payment');
+
 	$result = $db->query($sql);
 	if ($result) {
 		if ($db->num_rows($result)) {
@@ -959,6 +959,8 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 			$db->commit();
 		} else {
 			$db->rollback();
+			http_response_code(500);
+			return -1;
 		}
 	}
 } elseif ($event->type == 'payment_method.detached') {
@@ -1127,7 +1129,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 		$actioncomm->create($user);
 		*/
 
-		// Add a flag "dispute_status" in invoice table
+		// Add a flag "dispute_status" in invoice table to Dispute Open
 		$result = $tmpinvoice->setStatut(1, null, '', 'FACTURE_MODIFY', 'dispute_status');
 		if ($result < 0) {
 			$errormsg = $tmpinvoice->error.implode(', ', $tmpinvoice->errors);
@@ -1145,7 +1147,9 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 			return 1;
 		} else {
 			$db->rollback();
-			dol_syslog("Technicalerror ".$db->lasterror());
+
+			dol_syslog("Technicalerror ".$db->lasterror()." - ".$errormsg, LOG_ERR);
+			dol_syslog("Technicalerror ".$db->lasterror()." - ".$errormsg, LOG_ERR, 0, '_payment');
 
 			http_response_code(500);
 			print $db->lasterror();
@@ -1170,54 +1174,113 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 		*/
 		$paiement->paiementid   = dol_getIdFromCode($db, 'PRE', 'c_paiement', 'code', 'id', 1);
 		$paiement->num_payment  = $object->id;	// A string like 'du_...'
-		$paiement->note_public = 'Fund withdrawn by bank. Reason: '.$reason;
-		$paiement->note_private = '';
+		$paiement->note_private = 'Fund withdrawn by bank with id='.$object->id.'. Reason: '.$reason;
 		$paiement->fk_account   = $accountfrom->id;
+
+		$paiement->ext_payment_id   = $object->payment_intent;
+		$paiement->ext_payment_site = $service;
 
 		$db->begin();
 
 		$alreadytransferedinaccounting = $tmpinvoice->getVentilExportCompta();
 
+		dol_syslog("The invoice has alreadytransferedinaccounting=".$alreadytransferedinaccounting);
+		dol_syslog("The invoice has alreadytransferedinaccounting=".$alreadytransferedinaccounting, LOG_DEBUG, 0, '_payment');
+
+		/*
 		if ($alreadytransferedinaccounting) {
 			// TODO Test if invoice already in accountancy.
-			// What to do ?
+			// If yes, what to do ?
 			$errormsg = 'Error: the invoice '.$tmpinvoice->id.' is already transferred into accounting. Don\'t know what to do.';
 			$error++;
 		}
+		*/
 
-		if (! $error && $tmpinvoice->status == Facture::STATUS_CLOSED) {
+		if (!$error && !$alreadytransferedinaccounting && $tmpinvoice->status == Facture::STATUS_CLOSED) {
 			// Switch back the invoice to status validated
 			$result = $tmpinvoice->setStatut(Facture::STATUS_VALIDATED, null, '', 'none');
 			if ($result < 0) {
 				$errormsg = $tmpinvoice->error.implode(', ', $tmpinvoice->errors);
 				$error++;
 			}
+		}
 
-			$result = $tmpinvoice->setStatut(0, null, '', 'FACTURE_MODIFY', 'dispute_status');
+		if (!$error) {
+			// Add status dispute_status to Dispute Open
+			$result = $tmpinvoice->setStatut(1, null, '', 'FACTURE_MODIFY', 'dispute_status');
 			if ($result < 0) {
 				$errormsg = $tmpinvoice->error.implode(', ', $tmpinvoice->errors);
 				$error++;
 			}
+
+			if (!$error) {
+				dol_syslog("The dispute_status of invoice ".$tmpinvoice->ref." has been modified to 1");
+				dol_syslog("The dispute_status of invoice ".$tmpinvoice->ref." has been modified to 1", LOG_DEBUG, 0, '_payment');
+			}
 		}
 
-		if (! $error) {
-			$paiement_id = $paiement->create($user, 0, $tmpinvoice->thirdparty); // This include regenerating documents
-			if ($paiement_id < 0) {
-				$errormsg = $paiement->error.implode(', ', $paiement->errors);
-				$error++;
+		// Check that a withdrawn payment does not already exists for the withdrawn (if IPN is sent twice by Stripe)
+		$withdrawn_payment_already_exists = true;	// By default, we assume that it exists
+		$sql = "SELECT p.rowid, p.ref";
+		$sql .= " FROM ".MAIN_DB_PREFIX."paiement as p";
+		$sql .= " WHERE p.ext_payment_id = '".$db->escape($paiement->ext_payment_id)."'";
+		$sql .= " AND p.ext_payment_site = '".$db->escape($service)."'";
+
+		$tmpresql = $db->query($sql);
+		if ($tmpresql) {
+			$obj = $db->fetch_object($tmpresql);
+			if (empty($obj)) {
+				$withdrawn_payment_already_exists = false;
+				dol_syslog("No withdraw payment already exists", LOG_DEBUG);
+			} else {
+				dol_syslog("A withdraw payment already exists", LOG_DEBUG);
+			}
+		}
+
+		if (!$error && !$alreadytransferedinaccounting && !$withdrawn_payment_already_exists) {
+			if ($paiement->fk_account > 0) {
+				// If not yet in accountnacy, we can record the negative payment, otherwise, only the dispute status will be set and user
+				// will have to make manual correction like a credit note.
+				dol_syslog("We try to record the payment");
+				dol_syslog("We try to record the payment", LOG_DEBUG, 0, '_payment');
+
+				$paiement_id = $paiement->create($user, 0, $tmpinvoice->thirdparty); // This include regenerating documents
+				if ($paiement_id < 0) {
+					$errormsg = $paiement->error.implode(', ', $paiement->errors);
+					$error++;
+				} else {
+					$banklineid = $paiement->addPaymentToBank($user, 'payment', 'IPN Stripe dispute funds withdrawn', $paiement->fk_account, '', '', 1, '', '');
+					if ($banklineid < 0) {
+						$errormsg = $paiement->error.implode(', ', $paiement->errors);
+						$error++;
+					}
+				}
+			} else {
+				dol_syslog("No bank account defined to record payment so no payment recorded");
+				dol_syslog("No bank account defined to record payment so no payment recorded", LOG_DEBUG, 0, '_payment');
 			}
 		}
 
 		if (!$error) {
-			//$db->commit();	// Code not yet enough tested
-			dol_syslog("Code not yet enough tested - Return HTTP 500.", LOG_WARNING, 0, '_payment');
-			$db->rollback();
-			http_response_code(500);
-			return -1;
+			// TODO
+			// Record a payment for Stripe fees ?
+		}
+
+		if (!$error) {
+			$db->commit();
+			//$db->rollback();
+			//http_response_code(500);
+
+			dol_syslog("Invoice status updated and/or Revert payment created", LOG_WARNING);
+			dol_syslog("Invoice status updated and/or Revert payment created", LOG_WARNING, 0, '_payment');
 		} else {
-			dol_syslog("Error - Return HTTP 500.", LOG_WARNING, 0, '_payment');
 			$db->rollback();
+
+			dol_syslog("Error - Return HTTP 500 - ".$errormsg, LOG_ERR);
+			dol_syslog("Error - Return HTTP 500 - ".$errormsg, LOG_ERR, 0, '_payment');
+
 			http_response_code(500);
+
 			print $errormsg;
 			return -1;
 		}

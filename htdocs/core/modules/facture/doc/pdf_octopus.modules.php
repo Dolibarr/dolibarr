@@ -8,7 +8,7 @@
  * Copyright (C) 2012-2014	Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015		Marcos Garcia			<marcosgdf@gmail.com>
  * Copyright (C) 2017		Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2018-2025	Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2022		Anthony Berton			<anthony.berton@bb2a.fr>
  * Copyright (C) 2022-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2022-2024	Eric Seigne				<eric.seigne@cap-rel.fr>
@@ -3310,7 +3310,7 @@ class pdf_octopus extends ModelePDFFactures
 			'retenue_garantie' => 0,
 			'travaux_sup' => 0,
 			'HTnet' => 0, //montant HT
-			'total_a_payer' => 0 //montant "a payer" sur la facture
+			'total_a_payer' => 0 //amount "a payer" on the invoice
 		);
 
 		// If there is previous situation invoices
@@ -3341,7 +3341,7 @@ class pdf_octopus extends ModelePDFFactures
 					}
 
 					$calc_ht = $l->total_ht;
-					//modification du format de TVA, cas particulier des imports ou autres qui peuvent avoir des 20.0000
+					// Modification of the VAT format, special case for imports or others that may have 20.0000
 					$ltvatx = (float) sprintf("%01.3f", $l->tva_tx);
 
 					// 1st line
