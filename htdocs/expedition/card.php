@@ -14,7 +14,7 @@
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Lenin Rivas         	<lenin@leninrivas.com>
  * Copyright (C) 2022       Josep Lluís Amador      <joseplluis@lliuretic.cat>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Nick Fragoulis
  * Copyright (C) 2025       Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2026		William Mead			<william@m34d.com>
@@ -1971,7 +1971,7 @@ if ($action == 'create' && $usercancreate) {
 						//var_dump($product->stock_warehouse[1]);
 
 						print '<td>';
-						print '<a name="' . $line->id . '"></a>'; // ancre pour retourner sur la ligne
+						print '<a name="' . $line->id . '"></a>'; // Anchor to retor to the line
 
 						// Show product and description
 						$product_static->type = $line->fk_product_type;

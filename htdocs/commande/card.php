@@ -2341,7 +2341,7 @@ if ($action == 'create' && $usercancreate) {
 			print $form->select_contact($soc->id, $contactid, 'contactid', 1, empty($srccontactslist) ? "" : $srccontactslist, '', 1, 'maxwidth300 widthcentpercentminusx', true);
 			print '</td></tr>';
 
-			// Third party discount info line
+			// Line with information on Third Party Discounts
 			print '<tr><td>' . $langs->trans('Discounts') . '</td><td>';
 
 			$absolute_discount = $soc->getAvailableDiscounts();
@@ -2880,7 +2880,7 @@ if ($action == 'create' && $usercancreate) {
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id . '&lineid=' . $lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
 		}
 
-		// Confirmation to delete subtotal line
+		// Generate form to delete a subtotal line
 		if ($action == 'ask_subtotal_deleteline') {
 			$langs->load("subtotals");
 			$title = "DeleteSubtotalLine";
