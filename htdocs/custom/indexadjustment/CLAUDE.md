@@ -112,6 +112,7 @@ product_label       VARCHAR(255)
 subprice_before     DOUBLE(24,8) NOT NULL
 qty                 DOUBLE(24,8) DEFAULT 1
 total_ht_before     DOUBLE(24,8) NOT NULL
+tva_tx              DOUBLE(6,3) DEFAULT 0      -- Original VAT rate for rollback
 subprice_after      DOUBLE(24,8) NOT NULL
 total_ht_after      DOUBLE(24,8) NOT NULL
 price_diff_ht       DOUBLE(24,8) NOT NULL

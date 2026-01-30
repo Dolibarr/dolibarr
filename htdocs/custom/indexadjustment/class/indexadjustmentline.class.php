@@ -87,6 +87,11 @@ class IndexAdjustmentLine extends CommonObjectLine
 	public $total_ht_before;
 
 	/**
+	 * @var float VAT rate (for rollback)
+	 */
+	public $tva_tx;
+
+	/**
 	 * @var float Unit price after adjustment
 	 */
 	public $subprice_after;
@@ -144,6 +149,7 @@ class IndexAdjustmentLine extends CommonObjectLine
 		$sql .= "subprice_before,";
 		$sql .= "qty,";
 		$sql .= "total_ht_before,";
+		$sql .= "tva_tx,";
 		$sql .= "subprice_after,";
 		$sql .= "total_ht_after,";
 		$sql .= "price_diff_ht";
@@ -156,6 +162,7 @@ class IndexAdjustmentLine extends CommonObjectLine
 		$sql .= (float)$this->subprice_before . ",";
 		$sql .= (float)$this->qty . ",";
 		$sql .= (float)$this->total_ht_before . ",";
+		$sql .= (float)$this->tva_tx . ",";
 		$sql .= (float)$this->subprice_after . ",";
 		$sql .= (float)$this->total_ht_after . ",";
 		$sql .= (float)$this->price_diff_ht;
@@ -181,7 +188,7 @@ class IndexAdjustmentLine extends CommonObjectLine
 	public function fetch($id)
 	{
 		$sql = "SELECT rowid, fk_indexadjustment, fk_contrat, fk_contratdet,";
-		$sql .= " product_ref, product_label, subprice_before, qty, total_ht_before,";
+		$sql .= " product_ref, product_label, subprice_before, qty, total_ht_before, tva_tx,";
 		$sql .= " subprice_after, total_ht_after, price_diff_ht,";
 		$sql .= " rollback_executed, rollback_date, fk_user_rollback";
 		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
@@ -201,6 +208,7 @@ class IndexAdjustmentLine extends CommonObjectLine
 				$this->subprice_before = $obj->subprice_before;
 				$this->qty = $obj->qty;
 				$this->total_ht_before = $obj->total_ht_before;
+				$this->tva_tx = $obj->tva_tx;
 				$this->subprice_after = $obj->subprice_after;
 				$this->total_ht_after = $obj->total_ht_after;
 				$this->price_diff_ht = $obj->price_diff_ht;

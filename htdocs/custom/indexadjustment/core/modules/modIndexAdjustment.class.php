@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2025 Florian Hödl <florian@hoedl.co>
+/* Copyright (C) 2024 Anexum GmbH
  *
- * This program is free software: you can redistribute it and/or modify
+ * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -12,24 +12,22 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
  * \defgroup   indexadjustment     Module IndexAdjustment
- * \brief      Index Adjustment module descriptor.
+ * \brief      Index Adjustment module for contract price adjustments
  *
- * \file       htdocs/indexadjustment/core/modules/modIndexAdjustment.class.php
+ * \file       htdocs/custom/indexadjustment/core/modules/modIndexAdjustment.class.php
  * \ingroup    indexadjustment
  * \brief      Description and activation file for module IndexAdjustment
  */
+
 include_once DOL_DOCUMENT_ROOT . '/core/modules/DolibarrModules.class.php';
 
 /**
  * Description and activation class for module IndexAdjustment
- *
- * Handles transparent contract index adjustments based on Austrian VPI (Verbraucherpreisindex).
- * Allows batch price adjustments for contract lines with full audit trail.
  */
 class modIndexAdjustment extends DolibarrModules
 {
@@ -44,7 +42,6 @@ class modIndexAdjustment extends DolibarrModules
 		$this->db = $db;
 
 		// Module ID (must be unique)
-		// See https://wiki.dolibarr.org/index.php/List_of_modules_id
 		$this->numero = 510100;
 
 		// Key text used to identify module (for permissions, menus, etc...)
@@ -54,28 +51,27 @@ class modIndexAdjustment extends DolibarrModules
 		$this->family = "financial";
 
 		// Module position in the family
-		$this->module_position = '50';
+		$this->module_position = '90';
 
 		// Module label (no space allowed)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 
 		// Module description
-		$this->description = "Transparent contract index adjustments based on Austrian VPI (Verbraucherpreisindex)";
-		$this->descriptionlong = "Allows batch price adjustments for contract service lines with full audit trail. "
-			. "Supports VPI-based calculations, threshold filtering, rollback capability, and detailed event documentation.";
+		$this->description = "Transparent contract index adjustments based on Austrian VPI";
+		$this->descriptionlong = "Module for managing batch contract price adjustments (Indexanpassungen) with full audit trail, preview mode, and rollback capability.";
 
 		// Author
-		$this->editor_name = 'Anexum GmbH';
-		$this->editor_url = 'https://www.anexum.at';
+		$this->editor_name = 'Florian Hödl';
+		$this->editor_url = '';
 
 		// Version
-		$this->version = '1.0.0';
+		$this->version = '1.0.1';
 
 		// Key used in llx_const table
 		$this->const_name = 'MAIN_MODULE_' . strtoupper($this->name);
 
 		// Module icon
-		$this->picto = 'fa-percent';
+		$this->picto = 'fa-percentage';
 
 		// Module parts
 		$this->module_parts = array(
@@ -91,23 +87,20 @@ class modIndexAdjustment extends DolibarrModules
 			'css' => array(),
 			'js' => array(),
 			'hooks' => array(
-				'data' => array(
-					'contractcard',
-				),
-				'entity' => '0',
+				// 'contractcard', // TODO: Implement hook to show adjustment history on contract card
 			),
 			'moduleforexternal' => 0,
 		);
 
-		// Data directories to create
+		// Data directories
 		$this->dirs = array("/indexadjustment/temp");
 
-		// Config pages
+		// Config page
 		$this->config_page_url = array("setup.php@indexadjustment");
 
 		// Dependencies
 		$this->hidden = false;
-		$this->depends = array('modContrat'); // Requires contract module
+		$this->depends = array('modContrat');
 		$this->requiredby = array();
 		$this->conflictwith = array();
 
@@ -124,10 +117,10 @@ class modIndexAdjustment extends DolibarrModules
 
 		// Constants
 		$this->const = array(
-			1 => array('INDEXADJUSTMENT_DEFAULT_THRESHOLD', 'chaine', '0', 'Minimum % before adjustment', 1, 'current', 0),
-			2 => array('INDEXADJUSTMENT_ROUNDING_MODE', 'chaine', 'standard', 'Rounding mode: standard, up, down', 1, 'current', 0),
-			3 => array('INDEXADJUSTMENT_ROLLBACK_DAYS', 'chaine', '30', 'Days allowed for rollback', 1, 'current', 0),
-			4 => array('INDEXADJUSTMENT_VPI_BASE_YEAR', 'chaine', '2020', 'Default VPI base year', 1, 'current', 0),
+			1 => array('INDEXADJUSTMENT_DEFAULT_THRESHOLD', 'chaine', '0', 'Minimum percentage before adjustment', 1),
+			2 => array('INDEXADJUSTMENT_ROUNDING_MODE', 'chaine', 'standard', 'Rounding mode: standard/up/down', 1),
+			3 => array('INDEXADJUSTMENT_ROLLBACK_DAYS', 'chaine', '30', 'Days allowed for rollback', 1),
+			4 => array('INDEXADJUSTMENT_VPI_BASE_YEAR', 'chaine', '2020', 'Default VPI base year', 1),
 		);
 
 		if (!isset($conf->indexadjustment) || !isset($conf->indexadjustment->enabled)) {
@@ -136,10 +129,7 @@ class modIndexAdjustment extends DolibarrModules
 		}
 
 		// Tabs
-		$this->tabs = array(
-			// Add tab to contract card showing adjustment history
-			'contract:+indexadjustment:IndexAdjustmentHistory:indexadjustment@indexadjustment:$user->hasRight("indexadjustment", "indexadjustment", "read"):/indexadjustment/contract_history.php?id=__ID__',
-		);
+		$this->tabs = array();
 
 		// Dictionaries
 		$this->dictionaries = array();
@@ -154,130 +144,99 @@ class modIndexAdjustment extends DolibarrModules
 		$this->rights = array();
 		$r = 0;
 
-		// Read permission
-		$this->rights[$r][0] = $this->numero . sprintf("%02d", $r + 1);
+		// Read
+		$this->rights[$r][0] = $this->numero . sprintf('%02d', (0 * 10) + 0 + 1);
 		$this->rights[$r][1] = 'Read index adjustments';
 		$this->rights[$r][4] = 'indexadjustment';
 		$this->rights[$r][5] = 'read';
 		$r++;
 
-		// Write permission
-		$this->rights[$r][0] = $this->numero . sprintf("%02d", $r + 1);
+		// Write (Create/Update)
+		$this->rights[$r][0] = $this->numero . sprintf('%02d', (0 * 10) + 1 + 1);
 		$this->rights[$r][1] = 'Create/Update index adjustments';
 		$this->rights[$r][4] = 'indexadjustment';
 		$this->rights[$r][5] = 'write';
 		$r++;
 
-		// Execute permission
-		$this->rights[$r][0] = $this->numero . sprintf("%02d", $r + 1);
+		// Execute
+		$this->rights[$r][0] = $this->numero . sprintf('%02d', (0 * 10) + 2 + 1);
 		$this->rights[$r][1] = 'Execute index adjustments';
 		$this->rights[$r][4] = 'indexadjustment';
 		$this->rights[$r][5] = 'execute';
 		$r++;
 
-		// Rollback permission
-		$this->rights[$r][0] = $this->numero . sprintf("%02d", $r + 1);
+		// Rollback
+		$this->rights[$r][0] = $this->numero . sprintf('%02d', (0 * 10) + 3 + 1);
 		$this->rights[$r][1] = 'Rollback index adjustments';
 		$this->rights[$r][4] = 'indexadjustment';
 		$this->rights[$r][5] = 'rollback';
 		$r++;
 
-		// Delete permission
-		$this->rights[$r][0] = $this->numero . sprintf("%02d", $r + 1);
+		// Delete
+		$this->rights[$r][0] = $this->numero . sprintf('%02d', (0 * 10) + 4 + 1);
 		$this->rights[$r][1] = 'Delete index adjustments';
 		$this->rights[$r][4] = 'indexadjustment';
 		$this->rights[$r][5] = 'delete';
 		$r++;
 
-		// Main menu entries
+		// Menus
 		$this->menu = array();
 		$r = 0;
 
-		// Top menu under Contracts
+		// Left menu under Commercial → Contracts
 		$this->menu[$r++] = array(
 			'fk_menu' => 'fk_mainmenu=commercial,fk_leftmenu=contracts',
 			'type' => 'left',
-			'titre' => 'IndexAdjustments',
-			'prefix' => img_picto('', 'fa-percent', 'class="paddingright pictofixedwidth"'),
+			'titre' => 'IndexAdjustmentMenu',
+			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth valignmiddle"'),
 			'mainmenu' => 'commercial',
 			'leftmenu' => 'indexadjustment',
-			'url' => '/indexadjustment/list.php',
+			'url' => '/indexadjustment/admin/wizard.php',
 			'langs' => 'indexadjustment@indexadjustment',
 			'position' => 1000 + $r,
-			'enabled' => '$conf->indexadjustment->enabled && $conf->contrat->enabled',
+			'enabled' => 'isModEnabled("indexadjustment")',
 			'perms' => '$user->hasRight("indexadjustment", "indexadjustment", "read")',
 			'target' => '',
-			'user' => 0,
-		);
-
-		// Submenu: List
-		$this->menu[$r++] = array(
-			'fk_menu' => 'fk_mainmenu=commercial,fk_leftmenu=indexadjustment',
-			'type' => 'left',
-			'titre' => 'List',
-			'mainmenu' => 'commercial',
-			'leftmenu' => 'indexadjustment_list',
-			'url' => '/indexadjustment/list.php',
-			'langs' => 'indexadjustment@indexadjustment',
-			'position' => 1000 + $r,
-			'enabled' => '$conf->indexadjustment->enabled',
-			'perms' => '$user->hasRight("indexadjustment", "indexadjustment", "read")',
-			'target' => '',
-			'user' => 0,
-		);
-
-		// Submenu: New adjustment (wizard)
-		$this->menu[$r++] = array(
-			'fk_menu' => 'fk_mainmenu=commercial,fk_leftmenu=indexadjustment',
-			'type' => 'left',
-			'titre' => 'NewIndexAdjustment',
-			'mainmenu' => 'commercial',
-			'leftmenu' => 'indexadjustment_new',
-			'url' => '/indexadjustment/wizard.php',
-			'langs' => 'indexadjustment@indexadjustment',
-			'position' => 1000 + $r,
-			'enabled' => '$conf->indexadjustment->enabled',
-			'perms' => '$user->hasRight("indexadjustment", "indexadjustment", "write")',
-			'target' => '',
-			'user' => 0,
+			'user' => 2,
 		);
 	}
 
 	/**
 	 * Function called when module is enabled.
-	 * The init function adds constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-	 * It also creates data directories.
 	 *
 	 * @param string $options Options when enabling module ('', 'noboxes')
-	 * @return int             1 if OK, 0 if KO
+	 * @return int 1 if OK, 0 if KO
 	 */
 	public function init($options = '')
 	{
 		global $conf, $langs;
 
+		// Load tables
 		$result = $this->_load_tables('/indexadjustment/sql/');
 		if ($result < 0) {
 			return -1;
 		}
 
-		// Create extrafields if needed
-		// (Currently no extrafields defined for this module)
+		// Remove old entries then re-add
+		$this->remove($options);
 
-		return $this->_init(array(), $options);
+		$sql = array();
+
+		// Add custom action type for index adjustments
+		$sql[] = "INSERT INTO " . MAIN_DB_PREFIX . "c_actioncomm (id, code, type, libelle, module, active, position, picto) VALUES (100, 'AC_INDEXADJUST', 'systemauto', 'Index Adjustment', 'indexadjustment', 1, 100, 'fa-percent') ON DUPLICATE KEY UPDATE libelle = 'Index Adjustment', module = 'indexadjustment', active = 1, picto = 'fa-percent'";
+
+		return $this->_init($sql, $options);
 	}
 
 	/**
 	 * Function called when module is disabled.
-	 * The remove function removes constants, boxes, permissions and menus from Dolibarr database.
-	 * Data directories are not deleted.
 	 *
-	 * @param string $options Options when disabling module ('', 'noboxes')
-	 * @return int             1 if OK, 0 if KO
+	 * @param string $options Options when enabling module ('', 'noboxes')
+	 * @return int 1 if OK, 0 if KO
 	 */
 	public function remove($options = '')
 	{
 		$sql = array();
-
 		return $this->_remove($sql, $options);
 	}
 }
