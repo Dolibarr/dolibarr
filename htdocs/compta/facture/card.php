@@ -13,7 +13,7 @@
  * Copyright (C) 2013-2014	Florian Henry				<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2024	Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2015-2016	Marcos García				<marcosgdf@gmail.com>
- * Copyright (C) 2018-2025	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2022		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2022-2023	Solution Libre SAS			<contact@solution-libre.fr>
  * Copyright (C) 2023		Nick Fragoulis
@@ -5179,12 +5179,12 @@ if ($action == 'create') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&paiement_id='.$payment_id, $langs->trans('DeletePayment'), $langs->trans('ConfirmDeletePayment'), 'confirm_delete_paiement', '', 'no', 1);
 	}
 
-	// Confirmation of deletion of a product line
+	// Confirm deletion of product line
 	if ($action == 'ask_deleteline') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 'no', 1);
 	}
 
-	// Confirmation of deletion of a subtotal line
+	// Confirm deletion of subtotal line
 	if ($action == 'ask_subtotal_deleteline') {
 		$langs->load("subtotals");
 		$title = "DeleteSubtotalLine";

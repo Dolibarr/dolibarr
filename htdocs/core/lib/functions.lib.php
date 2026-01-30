@@ -4764,13 +4764,13 @@ function dol_print_phone($phone, $countrycode = '', $contactid = 0, $socid = 0, 
 		} elseif (dol_strlen($phone) == 11) { //ex: +597_ABC_DEFG
 			$newphone = substr($newphone, 0, 4) . $separ . substr($newphone, 4, 3) . $separ . substr($newphone, 7, 4);
 		}
-	} elseif (strtoupper($countrycode) == "DE") { //Allemagne
+	} elseif (strtoupper($countrycode) == "DE") { //Deutschland
 		if (dol_strlen($phone) == 14) { //ex:  +49_ABCD_EFGH_IJK
 			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 4) . $separ . substr($newphone, 7, 4) . $separ . substr($newphone, 11, 3);
 		} elseif (dol_strlen($phone) == 13) { //ex: +49_ABC_DEFG_HIJ
 			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 3) . $separ . substr($newphone, 6, 4) . $separ . substr($newphone, 10, 3);
 		}
-	} elseif (strtoupper($countrycode) == "ES") { //Espagne
+	} elseif (strtoupper($countrycode) == "ES") { //Spain
 		if (dol_strlen($phone) == 12) { //ex:  +34_ABC_DEF_GHI
 			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 3) . $separ . substr($newphone, 6, 3) . $separ . substr($newphone, 9, 3);
 		}

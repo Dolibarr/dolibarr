@@ -17,7 +17,7 @@
  * Copyright (C) 2012-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014-2023  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2022  Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018       Nicolas ZABOURI	        <info@inovea-conseil.com>
  * Copyright (C) 2018       Christophe Battarel     <christophe@altairis.fr>
  * Copyright (C) 2018       Josep Lluis Amador      <joseplluis@lliuretic.cat>
@@ -7161,7 +7161,7 @@ class Form
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
-	 *    Retourne la liste des devises, dans la langue de l'utilisateur
+	 *  Returns the list of currencies in the user's language
 	 *
 	 * @param string $selected preselected currency code
 	 * @param string $htmlname name of HTML select list
@@ -7175,7 +7175,7 @@ class Form
 	}
 
 	/**
-	 *  Retourne la liste des devises, dans la langue de l'utilisateur
+	 *  Returns the list of currencies in the user's language
 	 *
 	 * @param 	string 	$selected 		Preselected currency code
 	 * @param 	string 	$htmlname 		Name of HTML select list
