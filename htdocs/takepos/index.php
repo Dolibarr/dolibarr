@@ -1111,7 +1111,9 @@ function WeighingScale(callback) {
 					};
 				}
 				if (product.fk_unit == "2") {
-					askForWeight(product.multiprices_ttc[1], callback);
+					askForWeight(product.multiprices_ttc[1], callback, function (errorMessage) {
+						console.log("Erreur: " + errorMessage);
+					});
 				}
 			});
 		<?php } else { ?>
