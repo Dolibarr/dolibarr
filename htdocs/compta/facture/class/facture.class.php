@@ -2894,7 +2894,8 @@ class Facture extends CommonInvoice
 			$facligne->desc = $remise->description; // Description of the invoice line
 			$facligne->vat_src_code = $remise->vat_src_code;
 			$facligne->tva_tx = $remise->tva_tx;
-			$facligne->subprice = -(float) $remise->amount_ht;
+
+			$facligne->subprice = -(float) $remise->total_ht;
 			$facligne->fk_product = 0; // Predefined Product ID
 			$facligne->qty = 1;
 			$facligne->remise_percent = 0;
@@ -2919,14 +2920,14 @@ class Facture extends CommonInvoice
 				$facligne->pa_ht = $arraytmp['pa_total'];
 			}
 
-			$facligne->total_ht  = -(float) $remise->amount_ht;
-			$facligne->total_tva = -(float) $remise->amount_tva;
-			$facligne->total_ttc = -(float) $remise->amount_ttc;
+			$facligne->total_ht  = -(float) $remise->total_ht;
+			$facligne->total_tva = -(float) $remise->total_tva;
+			$facligne->total_ttc = -(float) $remise->total_ttc;
 
 			$facligne->multicurrency_subprice = -(float) $remise->multicurrency_subprice;
-			$facligne->multicurrency_total_ht = -(float) $remise->multicurrency_amount_ht;
-			$facligne->multicurrency_total_tva = -(float) $remise->multicurrency_amount_tva;
-			$facligne->multicurrency_total_ttc = -(float) $remise->multicurrency_amount_ttc;
+			$facligne->multicurrency_total_ht = -(float) $remise->multicurrency_total_ht;
+			$facligne->multicurrency_total_tva = -(float) $remise->multicurrency_total_tva;
+			$facligne->multicurrency_total_ttc = -(float) $remise->multicurrency_total_ttc;
 
 			$lineid = $facligne->insert();
 			if ($lineid > 0) {
@@ -4710,7 +4711,7 @@ class Facture extends CommonInvoice
 					if (!empty($this->line->packaging)
 						&& is_numeric($this->line->packaging)
 						&& (float) $this->line->packaging > 0
-						&& (float) price2num(fmod((float) $qty, (float) $$this->line->packaging), 'MS')) {
+						&& (float) price2num(fmod((float) $qty, (float) $this->line->packaging), 'MS')) {
 						$coeff = intval($qty / $this->line->packaging) + 1;
 						$qty = $this->line->packaging * $coeff;
 						setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'warnings');
