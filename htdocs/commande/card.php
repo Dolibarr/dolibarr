@@ -12,7 +12,7 @@
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014       Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022	    Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023-2024	Benjamin Falière		<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>

@@ -4,7 +4,7 @@
  * Copyright (C) 2012-2016	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2016       Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1806,7 +1806,7 @@ class Holiday extends CommonObject
 				return 0;
 			}
 		} else {
-			// Mise à jour pour un utilisateur
+			// Update for one user
 			$nbHoliday = price2num($nbHoliday, 5);
 
 			$sql = "SELECT nb_holiday FROM ".MAIN_DB_PREFIX."holiday_users";
