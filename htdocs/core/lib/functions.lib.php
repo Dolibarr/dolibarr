@@ -1942,7 +1942,7 @@ function dol_escape_js($stringtoescape, $mode = 0, $noescapebackslashn = 0)
 		$substitjs["'"] = "\\'";
 		$substitjs['"'] = "\\\"";
 	}
-	return strtr($stringtoescape, $substitjs);
+	return strtr((string) $stringtoescape, $substitjs);
 }
 
 /**
