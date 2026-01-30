@@ -7,7 +7,7 @@
  * Copyright (C) 2018      Nicolas ZABOURI      <info@inovea-conseil.com>
  * Copyright (C) 2019       JC Prieto			<jcprieto@virtual20.com><prietojc@gmail.com>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1404,7 +1404,7 @@ class BonPrelevement extends CommonObject
 				// Get next free number for the ref of bon prelevement
 				$sql = "SELECT SUBSTRING(ref, 6) AS refnumber";		// To suppress "TYYMM" from "TYYMMXXX"
 				$sql .= " FROM " . MAIN_DB_PREFIX . "prelevement_bons";
-				$sql .= " WHERE ref LIKE '" . $prefixt . $this->db->escape($ref) . "%'";
+				$sql .= " WHERE ref LIKE '" . $this->db->escape($prefixt . $ref) . "%'";
 				$sql .= " AND entity = " . ((int) $conf->entity);
 				$sql .= " ORDER BY LENGTH(ref) DESC, ref DESC";
 				$sql .= " LIMIT 1";
