@@ -2361,6 +2361,7 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 				if (empty($result['error'])) {
 					$textforfulltextindex = $result['content'];
 					$filetoprocess = $result['keywords'];
+					$cmd = $result['cmd'];
 				} else {
 					$error++;
 				}
@@ -4069,7 +4070,7 @@ function archiveOrBackupFile($srcfile, $max_versions = 5, $archivedir = '', $suf
  * @param 	string	$filetoprocess				File name to process
  * @param 	string 	$useFullTextIndexation		Method for txt conversion
  * @param	string	$options					Output format ('html', 'fulltext');
- * @return array<string,mixed>					Array of result ('error'=>, 'content'=> , 'keywords'=>)
+ * @return array<string,mixed>					Array of result ('error'=>, 'content'=> , 'keywords'=>, 'cmd'=> )
  */
 function dolDocToText($filetoprocess, $useFullTextIndexation = 'pdftotext', $options = 'html')
 {
@@ -4150,5 +4151,5 @@ function dolDocToText($filetoprocess, $useFullTextIndexation = 'pdftotext', $opt
 		}
 	}
 
-	return array('error' => $error, 'keywords' => $keywords, 'content' => $textforfulltextindex);
+	return array('error' => $error, 'keywords' => $keywords, 'content' => $textforfulltextindex, 'cmd' => $cmd);
 }
