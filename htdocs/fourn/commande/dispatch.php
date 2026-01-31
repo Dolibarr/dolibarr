@@ -7,7 +7,7 @@
  * Copyright (C) 2014       Cedric Gross            <c.gross@kreiz-it.fr>
  * Copyright (C) 2016       Florian Henry           <florian.henry@atm-consulting.fr>
  * Copyright (C) 2017-2022  Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019-2020  Christophe Battarel	    <christophe@altairis.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -76,7 +76,7 @@ if ($user->socid) {
 
 $hookmanager->initHooks(array('ordersupplierdispatch'));
 
-// Recuperation de l'id de projet
+// Get id of project
 $projectid = 0;
 if (GETPOSTISSET("projectid")) {
 	$projectid = GETPOSTINT("projectid");
@@ -816,7 +816,7 @@ if ($id > 0 || !empty($ref)) {
 			while ($i < $num) {
 				$objp = $db->fetch_object($resql);
 
-				// On n'affiche pas les produits libres
+				// We don't display free products
 				if (!$objp->fk_product > 0) {
 					$nbfreeproduct++;
 				} else {
@@ -1145,7 +1145,7 @@ if ($id > 0 || !empty($ref)) {
 
 	print dol_get_fiche_end();
 
-	// traitement entrepot par défaut
+	// default warehouse processing
 	print '<script type="text/javascript">
 			$(document).ready(function () {
 				$("select[name=fk_default_warehouse]").change(function() {
