@@ -66,12 +66,15 @@ class pdf_standard_salary extends ModelePDFSalary
 	/** @var float */
 	public $posxdeduction;
 
+	/** @var Societe */
+	public $emetteur;
+
 	/**
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	public function __construct($db)
+	public function __construct(\DoliDB $db)
 	{
 		global $conf, $langs, $mysoc;
 
@@ -116,7 +119,7 @@ class pdf_standard_salary extends ModelePDFSalary
 	{
 		global $conf, $langs;
 
-		if (!is_object($outputlangs)) $outputlangs = $langs;
+		$outputlangs = is_object($outputlangs) ? $outputlangs : $langs;
 		if (getDolGlobalString('MAIN_USE_FPDF')) $outputlangs->charset_output = 'ISO-8859-1';
 
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "salaries"));

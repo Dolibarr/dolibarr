@@ -130,6 +130,7 @@ if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->tabl
 $upload_dir = $conf->salaries->multidir_output[$conf->entity];
 
 $error = 0;
+$resteapayer = 0;
 
 /*
  * Actions
@@ -1070,6 +1071,7 @@ if ($id > 0) {
 
 		if ($num > 0) {
 			$bankaccountstatic = new Account($db);
+			$objp = $objp ?? null;
 			while ($i < $num) {
 				$objp = $db->fetch_object($resql);
 
