@@ -4099,7 +4099,7 @@ function dolDocToText($filetoprocess, $useFullTextIndexation = 'pdftotext', $opt
 		} else {
 			$params = '-htmlmeta';
 		}
-		$cmd = getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_PDFTOTEXT', 'pdftotext').($params ? " ".$params : "")." '".escapeshellcmd($filetoprocess)."' - ";
+		$cmd = getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_PDFTOTEXT', 'pdftotext') . " " . $params ." '".escapeshellcmd($filetoprocess)."' - ";
 		$resultexec = $utils->executeCLI($cmd, $outputfile, 0, null, 1);
 
 		if (empty($resultexec['error'])) {
