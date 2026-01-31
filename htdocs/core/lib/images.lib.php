@@ -603,6 +603,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 			break;
 		case IMAGETYPE_BMP:	    // 6
 			// Not supported by PHP GD
+			$imgfonction = '';
 			break;
 		case IMAGETYPE_WBMP:	// 15
 			$imgfonction = 'imagecreatefromwbmp';
@@ -610,7 +611,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 		case IMAGETYPE_WEBP:	// 18
 			$imgfonction = 'imagecreatefromwebp';
 			break;
-		case 19:	// 19 TYPEIMAGE_AVIF
+		case 19:	// 19 TYPEIMAGE_AVIF constant don't exists with php < 8.1
 			$imgfonction = 'imagecreatefromavif';
 			break;
 		default:
