@@ -1,0 +1,60 @@
+# Copyright (C) 2023 SuperAdmin
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+
+# Module label 'ModuleAnexumName'
+ModuleAnexumName = Anexum
+# Module description 'ModuleAnexumDesc'
+ModuleAnexumDesc = This module includes features for Anexum
+
+#
+# Admin page
+#
+AnexumSetup = Anexum setup
+Settings = Settings
+AnexumSetupPage = Anexum setup page
+ANEXUM_MYPARAM1 = My param 1
+ANEXUM_MYPARAM1Tooltip = My param 1 tooltip
+ANEXUM_MYPARAM2=My param 2
+ANEXUM_MYPARAM2Tooltip=My param 2 tooltip
+
+
+#
+# About page
+#
+About = About
+AnexumAbout = About Anexum
+AnexumAboutPage = Anexum about page
+
+#
+# Sample page
+#
+AnexumArea = Home Anexum
+MyPageName = My page name
+
+#
+# Sample widget
+#
+MyWidget = My widget
+MyWidgetDescription = My widget description
+
+#
+# Cron jobs
+#
+ResetStuckCronJobs = Reset stuck cron jobs
+ResetStuckCronJobsDescription = Reset cron jobs that have been stuck in processing state for more than 30 minutes
