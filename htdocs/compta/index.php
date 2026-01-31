@@ -53,7 +53,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php'
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 
-// The Accounting/Treasury workspace must remain enabled as it serves as a shared hub 
+// The Accounting/Treasury workspace must remain enabled as it serves as a shared hub
 // for various modules (banking, invoicing, etc.), irrespective of accounting usage.
 // Individual sub-functions are secured by their respective module permissions.
 
@@ -772,7 +772,7 @@ if (isModEnabled('invoice') && isModEnabled('order') && $user->hasRight("command
 }
 
 
-// TODO Mettre ici recup des actions en rapport avec la compta
+// TODO Place accounting-related action retrieval here.
 $sql = '';
 if ($sql) {
 	$langs->load("projects");
