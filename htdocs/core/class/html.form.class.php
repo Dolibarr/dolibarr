@@ -25,6 +25,7 @@
  * Copyright (C) 2023		Nick Fragoulis
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2026		Lenin Rivas				<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -6932,7 +6933,7 @@ class Form
 	 * @param string $currency Currency code to explain the rate
 	 * @return    void
 	 */
-	public function form_multicurrency_rate($page, $rate = 0.0, $htmlname = 'multicurrency_tx', $currency = '')
+	public function form_multicurrency_rate($page, $rate = 0.0, $htmlname = 'multicurrency_tx', $currency = '', $rate_direct = 0.0)
 	{
 		// phpcs:enable
 		global $langs, $conf;
@@ -6953,7 +6954,16 @@ class Form
 			if (!empty($rate)) {
 				print price($rate, 1, $langs, 0, 0);
 				if ($currency && $rate != 1) {
-					print ' &nbsp; <span class="opacitymedium">(' . price($rate, 1, $langs, 0, 0) . ' ' . $currency . ' = 1 ' . $conf->currency . ')</span>';
+					/**
+					 * Direct	: 	1 Divisa Currency = X Currency Main.
+					 * Indirect	: 	1 Currency Main = X Divisa Currency.
+					 * Then for Dolibarr use is Indirect for default
+					 */
+					if (getDolGlobalString('MULTICURRENCY_USE_RATE_DIRECT')) {
+						print ' &nbsp; <span class="opacitymedium">(' . price($rate_direct, 1, $langs, 0, 0) . ' ' . $conf->currency . ' = 1 ' . $currency . ')</span>';
+					} else {
+						print ' &nbsp; <span class="opacitymedium">(' . price($rate, 1, $langs, 0, 0) . ' ' . $currency . ' = 1 ' . $conf->currency . ')</span>';
+					}
 				}
 			} else {
 				print 1;
