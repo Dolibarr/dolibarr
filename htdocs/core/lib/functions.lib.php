@@ -13476,6 +13476,9 @@ function getImageFileNameForSize($file, $extName, $extImgTarget = '')
 	if (empty($extImgTarget)) {
 		$extImgTarget = (preg_match('/\.webp$/i', $file) ? '.webp' : '');
 	}
+	if (empty($extImgTarget)) {
+		$extImgTarget = (preg_match('/\.avif$/i', $file) ? '.avif' : '');
+	}
 
 	if (!$extImgTarget) {
 		return $file;

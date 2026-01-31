@@ -662,6 +662,10 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 			$img = imagecreatefromwebp($filetoread);
 			$extImg = '.webp';
 			break;
+		case 19:	// 19 TYPEIMAGE_AVIF constant don't exists with php < 8.1
+			$img = imagecreatefromavif($filetoread);
+			$extImg = '.avif';
+			break;
 	}
 
 	// Before PHP8, img was a resource, With PHP8, it is a GdImage
@@ -807,7 +811,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 	//imagecopyresized($imgThumb, $img, 0, 0, 0, 0, $thumbWidth, $thumbHeight, $imgWidth, $imgHeight); // Insert resized base image
 	imagecopyresampled($imgThumb, $img, 0, 0, 0, 0, $thumbWidth, $thumbHeight, $imgWidth, $imgHeight); // Insert resized base image
 
-	$fileName = preg_replace('/(\.gif|\.jpeg|\.jpg|\.png|\.bmp)$/i', '', $file); // We remove any extension box
+	$fileName = preg_replace('/(\.gif|\.jpeg|\.jpg|\.png|\.bmp|\.avif)$/i', '', $file); // We remove any extension box
 	$fileName = basename($fileName);
 	//$imgThumbName = $dirthumb.'/'.getImageFileNameForSize(basename($file), $extName, $extImgTarget);   // Full path of thumb file
 	$imgThumbName = getImageFileNameForSize($file, $extName, $extImgTarget); // Full path of thumb file
@@ -836,6 +840,9 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 			break;
 		case IMAGETYPE_WEBP:    // 18
 			imagewebp($imgThumb, $imgThumbName, $newquality); // @phan-suppress-current-line PhanTypeMismatchArgumentNullableInternal,PhanPossiblyUndeclaredVariable
+			break;
+		case 19:    // 19 TYPEIMAGE_AVIF constant don't exists with php < 8.1
+			imageavif($imgThumb, $imgThumbName, $newquality); // @phan-suppress-current-line PhanTypeMismatchArgumentNullableInternal,PhanPossiblyUndeclaredVariable
 			break;
 	}
 
