@@ -613,6 +613,8 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 		case 19:	// 19 TYPEIMAGE_AVIF
 			$imgfonction = 'imagecreatefromavif';
 			break;
+		default:
+			$imgfonction = '';
 	}
 	if ($imgfonction) {
 		if (!function_exists($imgfonction)) {
