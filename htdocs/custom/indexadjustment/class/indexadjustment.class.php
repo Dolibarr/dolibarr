@@ -203,7 +203,6 @@ class IndexAdjustment extends CommonObject
 		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 500),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'position' => 510),
 		'fk_user_creat' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserCreation', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 520),
-		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModification', 'enabled' => 1, 'visible' => -1, 'position' => 530),
 	);
 
 	/**
@@ -290,11 +289,56 @@ class IndexAdjustment extends CommonObject
 	 */
 	public function fetch($id, $ref = null)
 	{
-		$result = $this->fetchCommon($id, $ref);
-		if ($result > 0) {
-			$this->fetchLines();
+		// Direct SQL fetch - only select columns that exist in base schema
+		$sql = "SELECT rowid, ref, entity, datec, tms, fk_user_creat,";
+		$sql .= " label, description, adjustment_date, adjustment_percent,";
+		$sql .= " vpi_base_year, vpi_base_value, vpi_current_year, vpi_current_value,";
+		$sql .= " fk_soc, status, date_executed, fk_user_executed,";
+		$sql .= " total_contracts, total_lines, total_ht_before, total_ht_after";
+		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
+		if ($id > 0) {
+			$sql .= " WHERE rowid = " . (int)$id;
+		} elseif ($ref) {
+			$sql .= " WHERE ref = '" . $this->db->escape($ref) . "'";
+		} else {
+			return 0;
 		}
-		return $result;
+
+		$result = $this->db->query($sql);
+		if ($result) {
+			if ($this->db->num_rows($result)) {
+				$obj = $this->db->fetch_object($result);
+
+				$this->id = $obj->rowid;
+				$this->ref = $obj->ref;
+				$this->entity = $obj->entity;
+				$this->datec = $this->db->jdate($obj->datec);
+				$this->tms = $this->db->jdate($obj->tms);
+				$this->fk_user_creat = $obj->fk_user_creat;
+				$this->label = $obj->label;
+				$this->description = $obj->description;
+				$this->adjustment_date = $this->db->jdate($obj->adjustment_date);
+				$this->adjustment_percent = $obj->adjustment_percent;
+				$this->vpi_base_year = $obj->vpi_base_year;
+				$this->vpi_base_value = $obj->vpi_base_value;
+				$this->vpi_current_year = $obj->vpi_current_year;
+				$this->vpi_current_value = $obj->vpi_current_value;
+				$this->fk_soc = $obj->fk_soc;
+				$this->status = $obj->status;
+				$this->date_executed = $this->db->jdate($obj->date_executed);
+				$this->fk_user_executed = $obj->fk_user_executed;
+				$this->total_contracts = $obj->total_contracts;
+				$this->total_lines = $obj->total_lines;
+				$this->total_ht_before = $obj->total_ht_before;
+				$this->total_ht_after = $obj->total_ht_after;
+
+				$this->fetchLines();
+				return 1;
+			}
+			return 0;
+		}
+		$this->error = $this->db->lasterror();
+		return -1;
 	}
 
 	/**

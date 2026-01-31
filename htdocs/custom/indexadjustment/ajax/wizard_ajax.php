@@ -123,9 +123,10 @@ function actionCreate($db, $user, $langs)
 
 	$result = $object->create($user);
 	if ($result > 0) {
+		dol_syslog("IndexAdjustment::create SUCCESS id=" . $object->id . " ref=" . $object->ref, LOG_DEBUG);
 		return array(
 			'success' => true,
-			'id' => $object->id,
+			'id' => (int)$object->id,
 			'ref' => $object->ref,
 		);
 	}
@@ -396,7 +397,7 @@ function actionExecute($db, $user, $service)
 	$object = new IndexAdjustment($db);
 	$result = $object->fetch($id);
 	if ($result <= 0) {
-		return array('success' => false, 'message' => $langs->trans('ErrorAdjustmentNotFound'));
+		return array('success' => false, 'message' => $langs->trans('ErrorAdjustmentNotFound') . ' (id=' . $id . ', result=' . $result . ', db=' . $db->lasterror() . ')');
 	}
 
 	// Validate before execute
@@ -475,7 +476,7 @@ function actionExecuteLines($db, $user, $service)
 	$object = new IndexAdjustment($db);
 	$result = $object->fetch($id);
 	if ($result <= 0) {
-		return array('success' => false, 'message' => $langs->trans('ErrorAdjustmentNotFound'));
+		return array('success' => false, 'message' => $langs->trans('ErrorAdjustmentNotFound') . ' (id=' . $id . ', result=' . $result . ', db=' . $db->lasterror() . ')');
 	}
 
 	// Validate before execute
