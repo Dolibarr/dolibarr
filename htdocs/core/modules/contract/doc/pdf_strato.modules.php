@@ -6,7 +6,7 @@
  * Copyright (C) 2011		Fabrice CHERRIER
  * Copyright (C) 2013-2024  Philippe Grand	            <philippe.grand@atoo-net.com>
  * Copyright (C) 2015       Marcos García               <marcosgdf@gmail.com>
- * Copyright (C) 2018-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	    Nick Fragoulis
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
@@ -83,8 +83,7 @@ class pdf_strato extends ModelePDFContract
 	public $version = 'dolibarr';
 
 	/**
-	 * Recipient
-	 * @var Societe
+	 * @var Societe|Contact|null 	Recipient company object
 	 */
 	public $recipient;
 
@@ -623,9 +622,10 @@ class pdf_strato extends ModelePDFContract
 			$pdf->RoundedRect($this->marge_gauche, $posy + 5, $posmiddle - $this->marge_gauche - 5, 20, $this->corner_radius, '1234', 'D');
 		}
 
-		if (!getDolGlobalString('CONTRACT_HIDE_THIRPARTY_SIGNATURE_SECTION_PDF')) {
+		if (!getDolGlobalString('CONTRACT_HIDE_THIRPARTY_SIGNATURE_SECTION_PDF') && is_object($this->recipient)) {
 			$pdf->SetXY($posmiddle + 5, $posy);
-			$pdf->MultiCell($this->page_largeur - $this->marge_droite - $posmiddle - 5, 5, $outputlangs->transnoentities("ContactNameAndSignature", $this->recipient->name), 0, 'L', false);
+			$recipientname = pdfBuildThirdpartyName($this->recipient, $outputlangs);
+			$pdf->MultiCell($this->page_largeur - $this->marge_droite - $posmiddle - 5, 5, $outputlangs->transnoentities("ContactNameAndSignature", $recipientname), 0, 'L', false);
 
 			$pdf->SetXY($posmiddle + 5, $posy + 5);
 			$pdf->RoundedRect($posmiddle + 5, $posy + 5, $this->page_largeur - $this->marge_droite - $posmiddle - 5, 20, $this->corner_radius, '1234', 'D');
@@ -732,14 +732,14 @@ class pdf_strato extends ModelePDFContract
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_client), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities((string) $object->thirdparty->code_client), '', 'R');
 		}
 
 		if (!getDolGlobalString('MAIN_PDF_HIDE_CUSTOMER_ACCOUNTING_CODE') && $object->thirdparty->code_compta_client) {
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerAccountancyCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_compta_client), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerAccountancyCode")." : ".$outputlangs->transnoentities((string) $object->thirdparty->code_compta_client), '', 'R');
 		}
 
 		if ($showaddress) {
@@ -803,16 +803,17 @@ class pdf_strato extends ModelePDFContract
 				$result = $object->fetch_contact($arrayidcontact[0]);
 			}
 
-			$this->recipient = $object->thirdparty;
-
 			// Recipient name
 			if ($usecontact && ($object->contact->socid != $object->thirdparty->id) && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT'))) {
-				$thirdparty = $object->contact;
+				$this->recipient = $object->contact;
 			} else {
-				$thirdparty = $object->thirdparty;
+				$this->recipient = $object->thirdparty;
 			}
 
-			$this->recipient->name = pdfBuildThirdpartyName($thirdparty, $outputlangs);
+			$recipientname = '';
+			if ($this->recipient instanceOf Contact || $this->recipient instanceOf Societe) {
+				$recipientname = pdfBuildThirdpartyName($this->recipient, $outputlangs);
+			}
 
 			$mode = 'target';
 			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, (isset($object->contact) ? $object->contact : ''), ($usecontact ? 1 : 0), $mode, $object);
@@ -841,7 +842,7 @@ class pdf_strato extends ModelePDFContract
 			// Show recipient name
 			$pdf->SetXY($posx + 2, $posy + 3);
 			$pdf->SetFont('', 'B', $default_font_size);
-			$pdf->MultiCell($widthrecbox, 4, $this->recipient->name, 0, $ltrdirection);
+			$pdf->MultiCell($widthrecbox, 4, $recipientname, 0, $ltrdirection);
 
 			$posy = $pdf->getY();
 

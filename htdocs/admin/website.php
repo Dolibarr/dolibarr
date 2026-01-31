@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,8 +53,10 @@ $rowid = GETPOST('rowid', 'alpha');
 
 $id = 1;
 
+$acts = array();
 $acts[0] = "activate";
 $acts[1] = "disable";
+$actl = array();
 $actl[0] = img_picto($langs->trans("Disabled"), 'switch_off', 'class="size15x"');
 $actl[1] = img_picto($langs->trans("Activated"), 'switch_on', 'class="size15x"');
 
@@ -171,7 +173,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 
 	$newid = 0;
 
-	// Si verif ok et action add, on ajoute la ligne
+	// In case of 'actionadd' and with valid parameters, add the line
 	if ($ok && GETPOST('actionadd', 'alpha')) {
 		if ($tabrowid[$id]) {
 			// Get free id for insert
@@ -239,7 +241,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		}
 	}
 
-	// Si verif ok et action modify, on modifie la ligne
+	// In case of 'actionmodify' and with valid parameters, modify the line
 	if ($ok && GETPOST('actionmodify', 'alpha')) {
 		if ($tabrowid[$id]) {
 			$rowidcol = $tabrowid[$id];
@@ -255,7 +257,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 
 		// Modify entry
 		$sql = "UPDATE ".$tabname[$id]." SET ";
-		// Modifie valeur des champs
+		// Modify the field values
 		if ($tabrowid[$id] && !in_array($tabrowid[$id], $listfieldmodify)) {
 			$sql .= $tabrowid[$id]."=";
 			$sql .= "'".$db->escape((string) $rowid)."', ";
@@ -440,7 +442,7 @@ print '<span class="opacitymedium">'.$langs->trans("WebsiteSetupDesc").'</span><
 print "<br>\n";
 
 
-// Confirmation de la suppression de la ligne
+// Generate form to confirm line deletion
 if ($action == 'delete') {
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$rowid, $langs->trans('DeleteWebsite'), $langs->trans('ConfirmDeleteWebsite'), 'confirm_delete', '', 0, 1, 220);
 }
@@ -450,7 +452,7 @@ if ($action == 'delete') {
  * Show website list
  */
 if ($id) {
-	// Complete requete recherche valeurs avec critere de tri
+	// Complete the request - lookup values with sort condition
 	$sql = $tabsql[$id];
 	$sql .= $db->order($sortfield, $sortorder);
 	$sql .= $db->plimit($limit + 1, $offset);
@@ -473,8 +475,7 @@ if ($id) {
 				continue;
 			}
 
-			// Determine le nom du champ par rapport aux noms possibles
-			// dans les dictionnaires de donnees
+			// Get the field name based on the names available in the data dictionaries
 			$valuetoshow = ucfirst($fieldlist[$field]); // By default
 			$valuetoshow = $langs->trans($valuetoshow); // try to translate
 			$css = '';

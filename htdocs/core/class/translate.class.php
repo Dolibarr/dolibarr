@@ -862,13 +862,15 @@ class Translate
 	/**
 	 *  Convert a string into output charset (this->charset_output that should be defined to conf->file->character_set_client)
 	 *
-	 *  @param	string	$str            String to convert
-	 *  @param	string	$pagecodefrom	Page code of src string
-	 *  @param	string	$pagecodeto		Expected page code of returned string
-	 *  @return string         			Converted string
+	 *  @param	string|null	$str            String to convert
+	 *  @param	string		$pagecodefrom	Page code of src string
+	 *  @param	string		$pagecodeto		Expected page code of returned string
+	 *  @return string      	   			Converted string
 	 */
 	public function convToOutputCharset($str, $pagecodefrom = 'UTF-8', $pagecodeto = '')
 	{
+		$str = (string) $str;
+
 		if (empty($pagecodeto)) {
 			$pagecodeto = $this->charset_output;
 		}

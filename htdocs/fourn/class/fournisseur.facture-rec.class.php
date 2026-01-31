@@ -7,7 +7,7 @@
  * Copyright (C) 2013       Florian Henry		  	  <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2017-2025  Frédéric France       <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW				      <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW				      <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2023-2024  Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -960,7 +960,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 * @param int 			$fk_product 	Product/Service ID predefined
 	 * @param string 		$ref			Ref
 	 * @param string 		$label			Label
-	 * @param string 		$desc 			Description de la ligne
+	 * @param string 		$desc 			Description of the invoice line
 	 * @param float			$pu_ht			Unit price
 	 * @param float			$pu_ttc			Unit price with tax
 	 * @param float			$qty 			Quantity
@@ -1148,7 +1148,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 * @param int 			$fk_product 		Product/Service ID predefined
 	 * @param string		$ref				Ref
 	 * @param string 		$label 				Label of the line
-	 * @param string 		$desc 				Description de la ligne
+	 * @param string 		$desc 				Description of the invoice line
 	 * @param float			$pu_ht 				Unit price HT (> 0 even for credit note)
 	 * @param float			$qty 				Quantity
 	 * @param int 			$remise_percent 	Percentage discount of the line

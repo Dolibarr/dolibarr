@@ -8,7 +8,7 @@
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2016       Meziane Sof             <virtualsof@yahoo.fr>
- * Copyright (C) 2017-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2017-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023       Nick Fragoulis
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -656,8 +656,8 @@ if (empty($reshook)) {
 					$pu_ht = price2num($price_ht, 'MU');
 					$pu_ttc = price2num((float) $pu_ht * (1 + ($tmpvat / 100)), 'MU');
 				} elseif ($tmpvat != $tmpprodvat) {
-					// On reevalue prix selon taux tva car taux tva transaction peut etre different
-					// de ceux du produit par default (par example si pays different entre vendeur et acheteur).
+					// We reevaluate the price according to vat rate because vat rate of transactionmay differs from
+					// the one oth the product by default (for example when country of seller and buyer are different).
 					if ($price_base_type != 'HT') {
 						$pu_ht = price2num((float) $pu_ttc / (1 + ($tmpvat / 100)), 'MU');
 					} else {
@@ -961,12 +961,11 @@ if (empty($reshook)) {
 		$line->fetch(GETPOST('lineid', 'int'));
 		$percent = $line->get_prev_progress($object->id);
 
-		if (GETPOST('progress') < $percent)
-		{
-				$mesg = '<div class="warning">' . $langs->trans("CantBeLessThanMinPercent") . '</div>';
-				setEventMessages($mesg, null, 'warnings');
-				$error++;
-				$result = -1;
+		if (GETPOST('progress') < $percent) {
+			$mesg = '<div class="warning">' . $langs->trans("CantBeLessThanMinPercent") . '</div>';
+			setEventMessages($mesg, null, 'warnings');
+			$error++;
+			$result = -1;
 		}*/
 
 		$remise_percent = price2num(GETPOST('remise_percent'), '', 2);
@@ -1051,17 +1050,18 @@ if (empty($reshook)) {
 					// Define output language
 					$outputlangs = $langs;
 					$newlang = '';
-					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id','aZ09'))
+					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id','aZ09')) {
 						$newlang = GETPOST('lang_id','aZ09');
-						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang))
-							$newlang = $object->thirdparty->default_lang;
-							if (!empty($newlang)) {
-								$outputlangs = new Translate("", $conf);
-								$outputlangs->setDefaultLang($newlang);
-							}
-
-							$ret = $object->fetch($id); // Reload to get new records
-							$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+					}
+					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+						$newlang = $object->thirdparty->default_lang;
+					}
+					if (!empty($newlang)) {
+						$outputlangs = new Translate("", $conf);
+						$outputlangs->setDefaultLang($newlang);
+					}
+					$ret = $object->fetch($id); // Reload to get new records
+					$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				}*/
 
 				$object->fetch($object->id); // Reload lines
@@ -1485,7 +1485,7 @@ if ($action == 'create') {
 		if ($action == 'delete') {
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteRepeatableInvoice'), $langs->trans('ConfirmDeleteRepeatableInvoice'), 'confirm_delete', '', 'no', 1);
 		}
-		// Confirmation de la suppression d'une ligne subtotal
+		// Confirmation of deletion of the subtotal line
 		if ($action == 'ask_subtotal_deleteline') {
 			$langs->load("subtotals");
 			$title = "DeleteSubtotalLine";

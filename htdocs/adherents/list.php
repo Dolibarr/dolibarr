@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2016	Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2018-2024	Alexandre Spangaro			<aspangaro@open-dsi.fr>
  * Copyright (C) 2021-2025  Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
@@ -503,7 +503,7 @@ if ($search_filter == 'outofdate') {
 	$sql .= " AND (datefin < '".$db->idate($now)."')";
 }
 if ($search_status != '') {
-	// Peut valoir un nombre ou liste de nombre separates par virgules
+	// Can be a number or comma separated list of numbers
 	$sql .= " AND d.statut in (".$db->sanitize($db->escape($search_status)).")";
 }
 if ($search_morphy != '' && $search_morphy != '-1') {

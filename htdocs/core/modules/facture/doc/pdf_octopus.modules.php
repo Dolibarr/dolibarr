@@ -8,7 +8,7 @@
  * Copyright (C) 2012-2014	Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015		Marcos Garcia			<marcosgdf@gmail.com>
  * Copyright (C) 2017		Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2018-2025	Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2022		Anthony Berton			<anthony.berton@bb2a.fr>
  * Copyright (C) 2022-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2022-2024	Eric Seigne				<eric.seigne@cap-rel.fr>
@@ -1025,7 +1025,7 @@ class pdf_octopus extends ModelePDFFactures
 					if (isset($object->type) && $object->type == 2 && getDolGlobalString('INVOICE_POSITIVE_CREDIT_NOTE')) {
 						$sign = -1;
 					}
-					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
+					// Collect total by value of vat rate into $this->tva["taux"]=total_tva
 					$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
 					if ($prev_progress > 0 && !empty($object->lines[$i]->situation_percent)) { // Compute progress from previous situation
 						if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {
@@ -2552,14 +2552,14 @@ class pdf_octopus extends ModelePDFFactures
 			$posy += 3;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_client), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities((string) $object->thirdparty->code_client), '', 'R');
 		}
 
 		if (!getDolGlobalString('MAIN_PDF_HIDE_CUSTOMER_ACCOUNTING_CODE') && $object->thirdparty->code_compta_client) {
 			$posy += 3;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerAccountancyCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_compta_client), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerAccountancyCode")." : ".$outputlangs->transnoentities((string) $object->thirdparty->code_compta_client), '', 'R');
 		}
 
 		// Get contact
@@ -3287,7 +3287,7 @@ class pdf_octopus extends ModelePDFFactures
 		$TPreviousInvoices = $object->tab_previous_situation_invoice;
 		unset($object->tab_previous_situation_invoice);
 
-		// liste de toutes les factures précédentes
+		// list all previous invoice
 		// print json_encode($TPreviousInvoices); exit;
 
 		$TPreviousInvoices = array_reverse($TPreviousInvoices);
@@ -3310,28 +3310,28 @@ class pdf_octopus extends ModelePDFFactures
 			'retenue_garantie' => 0,
 			'travaux_sup' => 0,
 			'HTnet' => 0, //montant HT
-			'total_a_payer' => 0 //montant "a payer" sur la facture
+			'total_a_payer' => 0 //amount "a payer" on the invoice
 		);
 
-		//S'il y a des factures de situations précédentes
+		// If there is previous situation invoices
 		if (!empty($TPreviousInvoices)) {
-			//calcul des cumuls -- plus necessaire ?
+			// Cumulate -- not necessary ?
 			foreach ($TPreviousInvoices as $i => $previousInvoice) {
 				$TDataSituation['cumul_anterieur']['HT'] += $previousInvoice->total_ht;
 				// $TDataSituation['cumul_anterieur']['TTC'] += $previousInvoice->total_ttc;
 				$TDataSituation['cumul_anterieur']['TVA'] += $previousInvoice->total_tva;
 
-				//lecture de chaque ligne pour
+				// Read each line to
 				// 1. recalculer le total_ht pour chaque taux de TVA
 				// 2. recalculer la TVA associée à ce montant HT
-				// 3. le cas échéant stocker cette information comme travaux_sup si cette ligne n'est pas liée à une ligne de la situation précédente
+				// 3. If applicable, store this information as "travaux_sup" (additional work) if this line is not linked to a line from the previous situation.
 				foreach ($previousInvoice->lines as $k => $l) {
 					$total_ht = (float) $l->total_ht;
 					if (empty($total_ht)) {
 						continue;
 					}
 
-					// Si $prevSituationPercent vaut 0 c'est que la ligne $l est un travail supplémentaire
+					// If $prevSituationPercent is 0, it means that line $l is an additional work
 					$prevSituationPercent = 0;
 					$isFirstSituation = false;
 					if (!empty($l->fk_prev_id)) {
@@ -3341,25 +3341,25 @@ class pdf_octopus extends ModelePDFFactures
 					}
 
 					$calc_ht = $l->total_ht;
-					//modification du format de TVA, cas particulier des imports ou autres qui peuvent avoir des 20.0000
+					// Modification of the VAT format, special case for imports or others that may have 20.0000
 					$ltvatx = (float) sprintf("%01.3f", $l->tva_tx);
 
-					//1ere ligne
+					// 1st line
 					$amounttva = $calc_ht * ($ltvatx / 100);
 					if (! isset($TDataSituation['cumul_anterieur'][$ltvatx])) {
 						$TDataSituation['cumul_anterieur'][$ltvatx]['HT'] = $calc_ht;
 						$TDataSituation['cumul_anterieur'][$ltvatx]['TVA'] = $amounttva;
 					} else {
-						//lignes suivantes
+						// next lines
 						$TDataSituation['cumul_anterieur'][$ltvatx]['HT'] += ($calc_ht);
 						$TDataSituation['cumul_anterieur'][$ltvatx]['TVA'] += $amounttva;
 					}
 
-					//le grand total de TVA
+					// the grand total of VAT
 					// $TDataSituation['cumul_anterieur']['TVA'] += $amounttva;
 
 					if (empty($l->fk_prev_id) && ! $isFirstSituation) {
-						// TODO: à clarifier, mais pour moi, un facture de situation précédente qui a des progressions à 0% c'est pas logique
+						// TODO: to clarify, an situation invoice previous to another one with a progress at 0 is not normal
 						$TDataSituation['cumul_anterieur']['travaux_sup'] += $calc_ht;
 					}
 				}
@@ -3369,7 +3369,7 @@ class pdf_octopus extends ModelePDFFactures
 				$retenue_garantie_anterieure += $previousInvoice->getRetainedWarrantyAmount();
 			}
 
-			//les cumuls
+			// grand total
 			$TDataSituation['cumul_anterieur']['HT'] -= $TDataSituation['cumul_anterieur']['travaux_sup'];
 			$TDataSituation['cumul_anterieur']['retenue_garantie'] = $retenue_garantie_anterieure;
 			$TDataSituation['cumul_anterieur']['TTC'] = $TDataSituation['cumul_anterieur']['HT'] + $TDataSituation['cumul_anterieur']['TVA'];

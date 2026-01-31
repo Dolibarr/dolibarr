@@ -1025,24 +1025,25 @@ class EmailCollector extends CommonObject
 									}
 								}
 							}
+
 							if (preg_match('/^options_/', $tmpproperty)) {
-								$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> found '.dol_escape_htmltag(dol_trunc($object->array_options[preg_replace('/^options_/', '', $tmpproperty)], 128));
+								$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> extract '.dol_escape_htmltag(dol_trunc($object->array_options[preg_replace('/^options_/', '', $tmpproperty)], 128)).' so object extrafield '.dol_escape_htmltag($tmpproperty).' is set.';
 							} else {
 								if (property_exists($object, $tmpproperty)) {
-									$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> found '.dol_escape_htmltag(dol_trunc($object->$tmpproperty, 128));
+									$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> extract '.dol_escape_htmltag(dol_trunc($object->$tmpproperty, 128)).' so object property '.dol_escape_htmltag($tmpproperty).' is set.';
 								} else {
-									$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> found '.dol_escape_htmltag(dol_trunc($tmp[$tmpproperty], 128));
+									$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> extract '.dol_escape_htmltag(dol_trunc($tmp[$tmpproperty], 128)).' so var '.dol_escape_htmltag($tmpproperty).' is set.';
 								}
 							}
 						} else {
 							// Regex not found
 							if (property_exists($object, $tmpproperty)) {
 								$object->$tmpproperty = null;
+								$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> not found, so object property '.dol_escape_htmltag($tmpproperty).' is set to null.';
 							} else {
 								$tmp[$tmpproperty] = null;
+								$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> not found, so var '.dol_escape_htmltag($tmpproperty).' is set to null.';
 							}
-
-							$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> not found, so property '.dol_escape_htmltag($tmpproperty).' is set to null.';
 						}
 					} else {
 						// Nothing can be done for this param
@@ -1071,7 +1072,7 @@ class EmailCollector extends CommonObject
 						complete_substitutions_array($substitutionarray, $outputlangs, $object);
 						$matcharray = array();
 						preg_match_all('/__([a-z0-9]+(?:_[a-z0-9]+)?)__/i', $valuetouse, $matcharray);
-						if (is_array($matcharray[1])) {    // $matcharray[1] is an array with the list of substitution key found without the __X__ syntax into the SET entry
+						if (is_array($matcharray[1])) {    // $matcharray[1] is an array with the list of all substitution keys found with the __X__ syntax into the SET entry.
 							foreach ($matcharray[1] as $keytoreplace) {
 								if ($keytoreplace) {
 									if (preg_match('/^options_/', $keytoreplace)) {
@@ -1858,6 +1859,7 @@ class EmailCollector extends CommonObject
 						}
 					}
 				}
+				// If we DON'T want email if there is a trackid
 				if ($searchfilternodoltrackid > 0) {
 					$referencesForFilter = $headers['References'] ?? '';
 					if (!empty($headers['References']) && !empty($headers['In-Reply-To'])) {
@@ -1873,8 +1875,27 @@ class EmailCollector extends CommonObject
 				}
 
 				if ($searchfilterisanswer > 0) {
+					$referencesforanswer = '';
+					if (!empty($headers['References'])) {
+						$referencesforanswer .= $headers['References'].' ';
+					}
+					if (!empty($headers['In-Reply-To'])) {
+						$referencesforanswer .= $headers['In-Reply-To'];
+					}
+
+					$hasdolibarrreference = 0;
+					if (!empty($referencesforanswer)) {
+						if (preg_match('/dolibarr-([a-z]+)([0-9]+)@'.preg_quote($host, '/').'/', $referencesforanswer)) {
+							$hasdolibarrreference = 1;
+						} elseif (getDolGlobalString('EMAIL_ALTERNATIVE_HOST_SIGNATURE')) {
+							if (preg_match('/dolibarr-([a-z]+)([0-9]+)@'.preg_quote(getDolGlobalString('EMAIL_ALTERNATIVE_HOST_SIGNATURE'), '/').'/', $referencesforanswer)) {
+								$hasdolibarrreference = 1;
+							}
+						}
+					}
+
 					$isanswer = 0;
-					if (preg_match('/^(Re|AW)\s*:\s+/i', $headers['Subject'])) {
+					if (preg_match('/^(回复|回覆|SV|Antw|VS|RE|Re|AW|Aw|ΑΠ|השב| תשובה | הועבר|Vá|R|RIF|BLS|Atb|RES|Odp|பதில்|YNT|ATB)\s*:\s+/i', $headers['Subject'])) {
 						$isanswer = 1;
 					}
 					if (getDolGlobalString('EMAILCOLLECTOR_USE_IN_REPLY_TO_TO_DETECT_ANSWERS')) {
@@ -1884,12 +1905,15 @@ class EmailCollector extends CommonObject
 							$isanswer = 1;
 						}
 					}
+					if ($hasdolibarrreference) {
+						$isanswer = 1;
+					}
 					//if ($headers['In-Reply-To'] != $headers['Message-ID'] && empty($headers['References'])) $isanswer = 1;	// If in-reply-to differs of message-id, this is a reply
 					//if ($headers['In-Reply-To'] != $headers['Message-ID'] && !empty($headers['References']) && strpos($headers['References'], $headers['Message-ID']) !== false) $isanswer = 1;
 
 					if (!$isanswer) {
 						$nbemailprocessed++;
-						dol_syslog(" Discarded - Email is not an answer (no reply marker detected, and test on In-Reply-To not requested because nor reliable, or test on In-Reply-To requested but not found)");
+						dol_syslog(" Discarded - Email is not an answer (no reply marker detected, and test on In-Reply-To not requested because not reliable, or test on In-Reply-To requested but not found)");
 						continue; // Exclude email
 					}
 				}
@@ -2495,13 +2519,16 @@ class EmailCollector extends CommonObject
 							$tickettocreate = new Ticket($this->db);
 							$errorfetchticket = 0;
 							$alreadycreated = 0;
-							if ($ticketid > 0) {
+							if (!empty($objectid) && $objectemail instanceof Ticket) {
+								$alreadycreated = $tickettocreate->fetch((int) $objectid);
+							}
+							if ($alreadycreated == 0 && $ticketid > 0) {	// objectemail was on a ticket it ticketid set
 								$alreadycreated = $tickettocreate->fetch($ticketid);
 							}
-							if ($alreadycreated == 0 && !empty($trackid)) {
+							if ($alreadycreated == 0 && !empty($trackid)) {	// objectemail was on a ticket if trackid is set
 								$alreadycreated = $tickettocreate->fetch(0, '', $trackid);
 							}
-							if ($alreadycreated == 0 && !empty($msgid)) {
+							if ($alreadycreated == 0 && !empty($msgid)) {	// objectemail was on a ticket if msgid is set
 								$alreadycreated = $tickettocreate->fetch(0, '', '', $msgid);
 							}
 							if ($alreadycreated < 0) {
@@ -2662,10 +2689,11 @@ class EmailCollector extends CommonObject
 
 									if ($result < 0) {
 										$errorforactions++;
-										$this->error = 'Error when getting thirdparty with name '.$nametouseforthirdparty.' (may be 2 record exists with same name ?)';
+										$this->error = 'Error when getting thirdparty with name '.((string) $nametouseforthirdparty).', alternative name '.((string) $namealiastouseforthirdparty).' and email '.$emailtouseforthirdparty.' (may be 2 record exists with same name ?)';
 										$this->errors[] = $this->error;
 										break;
-									} elseif ($result == 0) {	// No thirdparty found
+									}
+									if ($result == 0) {	// No thirdparty found
 										if ($operation['type'] == 'loadthirdparty') {
 											dol_syslog("Third party with id=".$idtouseforthirdparty." email=".$emailtouseforthirdparty." name=".$nametouseforthirdparty." name_alias=".$namealiastouseforthirdparty." was not found");
 
@@ -2727,7 +2755,7 @@ class EmailCollector extends CommonObject
 												}
 											}
 										}
-									} else {	// $result > 0 is ID of thirdparty
+									} else {	// if $result > 0, it is ID of thirdparty
 										dol_syslog("One and only one existing third party has been found");
 
 										$thirdpartystatic->fetch($result);
