@@ -255,6 +255,9 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 		case 18: // IMG_WEBP
 			$imgfonction = 'imagecreatefromwebp';
 			break;
+		case 19: // IMG_AVIF
+			$imgfonction = 'imagecreatefromavif';
+			break;
 	}
 	if ($imgfonction) {
 		if (!function_exists($imgfonction)) {
@@ -282,6 +285,9 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 				break;
 			case 'webp': 	// IMG_WEBP
 				$imgfonction = 'imagecreatefromwebp';
+				break;
+			case 'avif': 	// IMG_AVIF
+				$imgfonction = 'imagecreatefromavif';
 				break;
 		}
 		if ($imgfonction) {
