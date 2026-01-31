@@ -36,7 +36,10 @@ if ($object->element == 'propal') {
 
 <!-- START TEMPLATE IMPORT OBJECT LINKED LINES -->
 <script>
-
+	
+const importTargetUrl = <?php echo json_encode($_SERVER['REQUEST_URI']); ?>;
+const csrfToken = <?php echo json_encode(currentToken()); ?>;
+	
 $(function() {
 	$(document).on('click', '.objectlinked_importbtn', function(e) {
 		e.preventDefault();
@@ -56,21 +59,20 @@ $(function() {
 			});
 
 
-			var $dialog = $('<form id="' + formId + '" action="<?php print $objectUrl; ?>"  method="post" ></form>')
-			.load( page + " #tablelines", function() {
-
-				$("#" + formId + " #tablelines").prop("id", "ajaxloaded_tablelines"); // change id attribute
-
+			var $dialog = $('<form>', { id: formId, method: 'post' })
+			.attr('action', importTargetUrl)
+			.load(page + " #tablelines", function() {
+			  	$("#" + formId + " #tablelines").prop("id", "ajaxloaded_tablelines"); // change id attribute
+				
 				$("#" + formId + "  .linecheckbox,#" + formId + " .linecheckboxtoggle").prop("checked", true); // checked by default
-
+				
 				// reload checkbox toggle function
 				$("#" + formId + " .linecheckboxtoggle").click(function(){
 					var checkBoxes = $("#" + formId + " .linecheckbox");
 					checkBoxes.prop("checked", this.checked);
 				});
-
-
 			})
+				
 			.html(htmlLines)
 			.dialog({
 				autoOpen: false,
@@ -83,7 +85,7 @@ $(function() {
 							  $( this ).dialog( "close" );
 							  $("#" + formId).append('<input type="hidden" name="action" value="import_lines_from_object" />');
 							  $("#" + formId).append('<input type="hidden" name="fromelement" value="' + fromelement + '" />');
-							  $("#" + formId).append('<input type="hidden" name="token" value="<?php print dol_escape_htmltag(newToken()); ?>" />');
+							  $("#" + formId).append('<input type="hidden" name="token" value="' + csrfToken + '" />');
 							  $("#" + formId).append('<input type="hidden" name="fromelementid" value="' + fromelementid + '" />');
 							  $("#" + formId).trigger('submit');
 						},
