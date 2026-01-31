@@ -56,6 +56,9 @@ htdocs/custom/anexum/
 ├── test/                                # PHPUnit tests
 ├── bin/
 │   └── reset_stuck_cron.php             # CLI script to reset stuck cron jobs
+├── class/
+│   ├── actions_anexum.class.php         # Hook implementations
+│   └── cronjob_anexum.class.php         # Cron job methods for scheduled tasks
 ├── README.md                            # Module documentation
 ├── ChangeLog.md                         # Version history
 └── anexumindex.php                      # Module home page
@@ -254,7 +257,19 @@ php htdocs/custom/anexum/bin/reset_stuck_cron.php --threshold=60
 3. Resets stuck jobs by setting `processing=0` and `pid=NULL`
 4. Logs all resets to Dolibarr syslog
 
-**Scheduled Job**: Registered as a Dolibarr scheduled job running every 5 minutes.
+**Scheduled Job**: Also available as CLI script for manual execution or external cron.
+
+#### `CronjobAnexum::resetStuckCronJobs()` (class method)
+
+**Location**: `htdocs/custom/anexum/class/cronjob_anexum.class.php`
+
+**Purpose**: Same functionality as the CLI script, but callable by Dolibarr's internal cron scheduler (no `$dolibarr_cron_allow_cli` required).
+
+**Scheduled Job Configuration**:
+- **Frequency**: Every 5 minutes
+- **Class**: `/anexum/class/cronjob_anexum.class.php`
+- **Method**: `resetStuckCronJobs`
+- **Parameters**: `30` (threshold in minutes)
 
 ### 4. Helper Library (`lib/anexum.lib.php`)
 

@@ -2,6 +2,7 @@
 
 ## 1.4.0
 ADD CLI script to reset stuck cron jobs (bin/reset_stuck_cron.php)
+ADD CronjobAnexum class for internal Dolibarr cron scheduler (class/cronjob_anexum.class.php)
 ADD Scheduled job to automatically reset stuck cron jobs every 5 minutes
 
 ## 1.3.0

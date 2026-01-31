@@ -252,9 +252,11 @@ class modAnexum extends DolibarrModules
 		$this->cronjobs = array(
 			0 => array(
 				'label' => 'ResetStuckCronJobs',
-				'jobtype' => 'command',
-				'command' => 'php __DOL_DATA_ROOT__/../htdocs/custom/anexum/bin/reset_stuck_cron.php',
-				'parameters' => '',
+				'jobtype' => 'method',
+				'class' => '/anexum/class/cronjob_anexum.class.php',
+				'objectname' => 'CronjobAnexum',
+				'method' => 'resetStuckCronJobs',
+				'parameters' => '30', // threshold in minutes
 				'comment' => 'Reset cron jobs stuck in processing state for more than 30 minutes',
 				'frequency' => 5,
 				'unitfrequency' => 60, // Every 5 minutes
