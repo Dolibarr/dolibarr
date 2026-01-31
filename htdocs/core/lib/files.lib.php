@@ -4079,6 +4079,7 @@ function dolDocToText($filetoprocess, $useFullTextIndexation = 'pdftotext', $opt
 	$error = 0;
 	$keywords = array();
 	$textforfulltextindex = '';
+	$cmd = '';
 
 	if (empty($useFullTextIndexation)) {
 		$useFullTextIndexation = 'pdftotext';
