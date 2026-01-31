@@ -10,308 +10,159 @@
 /**
  * \file       wizard.php
  * \ingroup    indexadjustment
- * \brief      Wizard for creating and executing index adjustments
+ * \brief      AJAX Wizard for creating and executing index adjustments (contract mode)
  */
 
 require_once '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT . '/custom/indexadjustment/class/indexadjustment.class.php';
-require_once DOL_DOCUMENT_ROOT . '/custom/indexadjustment/class/indexadjustment_service.class.php';
 require_once DOL_DOCUMENT_ROOT . '/custom/indexadjustment/lib/indexadjustment.lib.php';
 
 // Load translations
 $langs->loadLangs(array("indexadjustment@indexadjustment", "contracts", "other"));
 
 // Security check
-if (!$user->hasRight('indexadjustment', 'indexadjustment', 'write')) {
+if (!$user->admin && !$user->hasRight('indexadjustment', 'indexadjustment', 'write')) {
 	accessforbidden();
 }
 
-// Get parameters
-$id = GETPOST('id', 'int');
-$action = GETPOST('action', 'aZ09');
-$step = GETPOST('step', 'int') ?: 1;
-$confirm = GETPOST('confirm', 'alpha');
-
-// Form data
-$label = GETPOST('label', 'alphanohtml');
-$adjustment_percent = GETPOST('adjustment_percent', 'alpha');
-$adjustment_date = dol_mktime(0, 0, 0, GETPOST('adjustment_datemonth', 'int'), GETPOST('adjustment_dateday', 'int'), GETPOST('adjustment_dateyear', 'int'));
-$fk_soc = GETPOST('fk_soc', 'int');
-$selected_contracts = GETPOST('contracts', 'array');
-
-// Initialize objects
-$object = new IndexAdjustment($db);
-$service = new IndexAdjustmentService($db);
-
-if ($id > 0) {
-	$object->fetch($id);
-}
-
-/*
- * Actions
- */
-
-// Step 1: Create adjustment object
-if ($action == 'create' && $step == 1) {
-	if (empty($label)) {
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesaliases("Label")), null, 'errors');
-		$action = '';
-	} elseif ($adjustment_percent === '' || $adjustment_percent === null) {
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesaliases("AdjustmentPercent")), null, 'errors');
-		$action = '';
-	} else {
-		$object->label = $label;
-		$object->adjustment_percent = (float)str_replace(',', '.', $adjustment_percent);
-		$object->adjustment_date = $adjustment_date ?: dol_now();
-		$object->fk_soc = $fk_soc > 0 ? $fk_soc : null;
-
-		$result = $object->create($user);
-		if ($result > 0) {
-			header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $object->id . "&step=2");
-			exit;
-		} else {
-			setEventMessages($object->error, $object->errors, 'errors');
-		}
-	}
-}
-
-// Step 2: Validate and go to preview
-if ($action == 'preview' && $step == 2 && $id > 0) {
-	if (empty($selected_contracts)) {
-		setEventMessages($langs->trans("SelectAtLeastOneContract"), null, 'errors');
-	} else {
-		// Store selected contracts in session
-		$_SESSION['indexadjustment_contracts_' . $id] = $selected_contracts;
-		header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $id . "&step=3");
-		exit;
-	}
-}
-
-// Step 3: Execute adjustment
-if ($action == 'confirm_execute' && $confirm == 'yes' && $step == 3 && $id > 0) {
-	if (!$user->hasRight('indexadjustment', 'indexadjustment', 'execute')) {
-		accessforbidden();
-	}
-
-	$contractIds = isset($_SESSION['indexadjustment_contracts_' . $id]) ? $_SESSION['indexadjustment_contracts_' . $id] : array();
-
-	if (empty($contractIds)) {
-		setEventMessages($langs->trans("NoContractsSelected"), null, 'errors');
-	} else {
-		// Validate first
-		$object->validate($user);
-
-		// Execute
-		$result = $service->execute($object, $user, $contractIds);
-		if ($result > 0) {
-			unset($_SESSION['indexadjustment_contracts_' . $id]);
-			setEventMessages($langs->trans("AdjustmentExecutedSuccessfully"), null, 'mesgs');
-			header("Location: " . dol_buildpath('/indexadjustment/card.php', 1) . "?id=" . $id);
-			exit;
-		} else {
-			setEventMessages($service->error, $service->errors, 'errors');
-		}
-	}
-}
+$canExecute = $user->admin || $user->hasRight('indexadjustment', 'indexadjustment', 'execute');
 
 /*
  * View
  */
 
 $form = new Form($db);
-$formcompany = new FormCompany($db);
 
 $title = $langs->trans("NewIndexAdjustment");
-llxHeader('', $title);
+llxHeader('', $title, '', '', 0, 0, array('/custom/indexadjustment/js/indexadjustment_wizard.js'));
 
 print load_fiche_titre($title, '', 'fa-percent');
 
-// Progress steps
-print '<div class="opacitymedium marginbottomonly">';
-print '<span class="' . ($step >= 1 ? 'badge badge-primary' : 'badge') . '">1. ' . $langs->trans("WizardStep1") . '</span> ';
-print '<span class="' . ($step >= 2 ? 'badge badge-primary' : 'badge') . '">2. ' . $langs->trans("WizardStep2") . '</span> ';
-print '<span class="' . ($step >= 3 ? 'badge badge-primary' : 'badge') . '">3. ' . $langs->trans("WizardStep3") . '</span> ';
-print '<span class="' . ($step >= 4 ? 'badge badge-primary' : 'badge') . '">4. ' . $langs->trans("WizardStep4") . '</span>';
+// Step indicator
+print '<div class="wizard-steps marginbottomonly">';
+print '<span class="badge wizard-step-badge badge-primary" data-step="1"><span class="step-icon"></span>1. ' . $langs->trans("WizardStep1") . '</span> ';
+print '<span class="badge wizard-step-badge badge-secondary" data-step="2"><span class="step-icon"></span>2. ' . $langs->trans("WizardStep2") . '</span> ';
+print '<span class="badge wizard-step-badge badge-secondary" data-step="3"><span class="step-icon"></span>3. ' . $langs->trans("WizardStep3") . '</span>';
 print '</div>';
 
-// Step 1: Settings
-if ($step == 1) {
-	print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
-	print '<input type="hidden" name="token" value="' . newToken() . '">';
-	print '<input type="hidden" name="action" value="create">';
-	print '<input type="hidden" name="step" value="1">';
+// Error container
+print '<div id="wizard-error" style="display:none;"></div>';
 
-	print '<table class="border centpercent">';
+// ----- Step 1: Settings -----
+print '<div id="wizard-step-1" class="wizard-step-content">';
 
-	// Label
-	print '<tr><td class="titlefieldcreate fieldrequired">' . $langs->trans("Label") . '</td>';
-	print '<td><input type="text" class="flat minwidth300" name="label" value="' . dol_escape_htmltag($label ?: $langs->trans("IndexAdjustment") . ' ' . date('Y')) . '"></td></tr>';
+print '<table class="border centpercent">';
 
-	// Adjustment Percent
-	print '<tr><td class="fieldrequired">' . $langs->trans("AdjustmentPercent") . '</td>';
-	print '<td><input type="text" class="flat width100" name="adjustment_percent" value="' . dol_escape_htmltag($adjustment_percent ?: '4.5') . '"> %';
-	print ' <span class="opacitymedium">(' . $langs->trans("EnterAdjustmentPercent") . ')</span></td></tr>';
+// Label
+print '<tr><td class="titlefieldcreate fieldrequired">' . $langs->trans("Label") . '</td>';
+print '<td><input type="text" class="flat minwidth300" id="wizard-label" value="' . dol_escape_htmltag($langs->trans("IndexAdjustment") . ' ' . date('Y')) . '"></td></tr>';
 
-	// Adjustment Date
-	print '<tr><td>' . $langs->trans("AdjustmentDate") . '</td>';
-	print '<td>' . $form->selectDate($adjustment_date ?: dol_now(), 'adjustment_date', 0, 0, 0, '', 1, 1) . '</td></tr>';
+// Adjustment Percent
+print '<tr><td class="fieldrequired">' . $langs->trans("AdjustmentPercent") . '</td>';
+print '<td><input type="text" class="flat width100" id="wizard-percent" value="4.5"> %';
+print ' <span class="opacitymedium">(' . $langs->trans("EnterAdjustmentPercent") . ')</span></td></tr>';
 
-	// Customer
-	print '<tr><td>' . $langs->trans("ThirdParty") . '</td>';
-	print '<td>' . $form->select_company($fk_soc, 'fk_soc', 'client > 0', 1, 0, 0, array(), 0, 'minwidth300');
-	print ' <span class="opacitymedium">(' . $langs->trans("SelectCustomerOrAll") . ')</span></td></tr>';
+// Adjustment Date
+print '<tr><td>' . $langs->trans("AdjustmentDate") . '</td>';
+print '<td>';
+// Use Dolibarr selectDate with specific IDs we can reference
+print $form->selectDate(dol_now(), 'adjustment_date', 0, 0, 0, '', 1, 1);
+print '</td></tr>';
 
-	print '</table>';
+// Customer
+print '<tr><td>' . $langs->trans("ThirdParty") . '</td>';
+print '<td>' . $form->select_company('', 'fk_soc', 'client > 0', 1, 0, 0, array(), 0, 'minwidth300');
+print ' <span class="opacitymedium">(' . $langs->trans("SelectCustomerOrAll") . ')</span></td></tr>';
 
-	print '<br>';
-	print '<div class="center">';
-	print '<input type="submit" class="button button-save" value="' . $langs->trans("Next") . ' &raquo;">';
-	print '</div>';
+print '</table>';
 
-	print '</form>';
-}
+print '<br>';
+print '<div class="center">';
+print '<a class="butAction" id="btn-next-step1"><span class="fas fa-arrow-right"></span> ' . $langs->trans("Next") . '</a>';
+print '</div>';
 
-// Step 2: Select Contracts
-if ($step == 2 && $id > 0) {
-	print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
-	print '<input type="hidden" name="token" value="' . newToken() . '">';
-	print '<input type="hidden" name="action" value="preview">';
-	print '<input type="hidden" name="id" value="' . $id . '">';
-	print '<input type="hidden" name="step" value="2">';
+print '</div>'; // End Step 1
 
-	// Show adjustment info
-	print '<div class="info">';
-	print '<strong>' . $langs->trans("Label") . ':</strong> ' . dol_escape_htmltag($object->label) . '<br>';
-	print '<strong>' . $langs->trans("AdjustmentPercent") . ':</strong> ' . ($object->adjustment_percent >= 0 ? '+' : '') . number_format($object->adjustment_percent, 2) . '%<br>';
-	print '</div>';
+// ----- Step 2: Select Contracts -----
+print '<div id="wizard-step-2" class="wizard-step-content" style="display:none;">';
 
-	// Get available contracts
-	$contracts = $service->fetchActiveContracts($object->fk_soc);
+print '<div class="marginbottomonly">';
+print '<span class="opacitymedium" id="wizard-selection-count"></span>';
+print '</div>';
 
-	if (empty($contracts)) {
-		print '<div class="warning">' . $langs->trans("NoContractsFound") . '</div>';
-	} else {
-		print '<p>' . $langs->trans("FilterActiveServicesOnly") . '</p>';
+print '<div id="wizard-contracts-container"></div>';
 
-		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre">';
-		print '<th class="center" width="30"><input type="checkbox" id="checkall" onclick="$(\'input[name=contracts\\[\\]]\').prop(\'checked\', this.checked);"></th>';
-		print '<th>' . $langs->trans("Contract") . '</th>';
-		print '<th>' . $langs->trans("ThirdParty") . '</th>';
-		print '<th>' . $langs->trans("RefCustomer") . '</th>';
-		print '</tr>';
+print '<br>';
+print '<div class="center">';
+print '<a class="button" id="btn-back-step2"><span class="fas fa-arrow-left"></span> ' . $langs->trans("Back") . '</a> ';
+print '<a class="butAction" id="btn-preview"><span class="fas fa-search"></span> ' . $langs->trans("PreviewAdjustment") . '</a>';
+print '</div>';
 
-		$previousContracts = isset($_SESSION['indexadjustment_contracts_' . $id]) ? $_SESSION['indexadjustment_contracts_' . $id] : array();
+print '</div>'; // End Step 2
 
-		foreach ($contracts as $contractId => $contractData) {
-			$checked = in_array($contractId, $previousContracts) ? 'checked' : '';
+// ----- Step 3: Preview & Execute -----
+print '<div id="wizard-step-3" class="wizard-step-content" style="display:none;">';
 
-			print '<tr class="oddeven">';
-			print '<td class="center"><input type="checkbox" name="contracts[]" value="' . $contractId . '" ' . $checked . '></td>';
-			print '<td><a href="' . DOL_URL_ROOT . '/contrat/card.php?id=' . $contractId . '">' . dol_escape_htmltag($contractData['ref']) . '</a></td>';
-			print '<td>' . dol_escape_htmltag($contractData['socname']) . '</td>';
-			print '<td>' . dol_escape_htmltag($contractData['ref_customer']) . '</td>';
-			print '</tr>';
-		}
+print '<div id="wizard-preview-container"></div>';
 
-		print '</table>';
-	}
+print '<br>';
+print '<div class="center">';
+print '<a class="button" id="btn-back-step3"><span class="fas fa-arrow-left"></span> ' . $langs->trans("Back") . '</a> ';
+print '<a class="butAction" id="btn-execute"><span class="fas fa-check"></span> ' . $langs->trans("ExecuteIndexAdjustment") . '</a>';
+print '</div>';
 
-	print '<br>';
-	print '<div class="center">';
-	print '<a class="button" href="' . $_SERVER['PHP_SELF'] . '?step=1">&laquo; ' . $langs->trans("Back") . '</a> ';
-	if (!empty($contracts)) {
-		print '<input type="submit" class="button button-save" value="' . $langs->trans("PreviewAdjustment") . ' &raquo;">';
-	}
-	print '</div>';
+print '</div>'; // End Step 3
 
-	print '</form>';
-}
-
-// Step 3: Preview and Execute
-if ($step == 3 && $id > 0) {
-	$contractIds = isset($_SESSION['indexadjustment_contracts_' . $id]) ? $_SESSION['indexadjustment_contracts_' . $id] : array();
-
-	if (empty($contractIds)) {
-		print '<div class="error">' . $langs->trans("NoContractsSelected") . '</div>';
-		print '<a class="button" href="' . $_SERVER['PHP_SELF'] . '?id=' . $id . '&step=2">&laquo; ' . $langs->trans("Back") . '</a>';
-	} else {
-		// Calculate preview
-		$preview = $service->previewAdjustments($contractIds, $object->adjustment_percent);
-
-		// Confirmation dialog
-		if ($action == 'execute') {
-			print $form->formconfirm(
-				$_SERVER["PHP_SELF"] . '?id=' . $id . '&step=3',
-				$langs->trans('ExecuteIndexAdjustment'),
-				$langs->trans('ConfirmExecuteIndexAdjustment'),
-				'confirm_execute',
-				'',
-				0,
-				1
-			);
-		}
-
-		// Summary
-		print '<div class="info">';
-		print '<strong>' . $langs->trans("Label") . ':</strong> ' . dol_escape_htmltag($object->label) . '<br>';
-		print '<strong>' . $langs->trans("AdjustmentPercent") . ':</strong> ' . ($object->adjustment_percent >= 0 ? '+' : '') . number_format($object->adjustment_percent, 2) . '%<br>';
-		print '<strong>' . $langs->trans("TotalContracts") . ':</strong> ' . $preview['totals']['total_contracts'] . '<br>';
-		print '<strong>' . $langs->trans("TotalLines") . ':</strong> ' . $preview['totals']['total_lines'] . '<br>';
-		print '</div>';
-
-		// Totals summary
-		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre">';
-		print '<th colspan="2">' . $langs->trans("Summary") . '</th>';
-		print '</tr>';
-		print '<tr class="oddeven"><td>' . $langs->trans("TotalHTBefore") . '</td><td class="right">' . price($preview['totals']['total_ht_before']) . ' ' . $langs->getCurrencySymbol($conf->currency) . '</td></tr>';
-		print '<tr class="oddeven"><td>' . $langs->trans("TotalHTAfter") . '</td><td class="right">' . price($preview['totals']['total_ht_after']) . ' ' . $langs->getCurrencySymbol($conf->currency) . '</td></tr>';
-
-		$diffClass = $preview['totals']['total_diff'] >= 0 ? 'amountremaintopay' : 'amountpaymentcomplete';
-		print '<tr class="oddeven"><td><strong>' . $langs->trans("PriceDiff") . '</strong></td><td class="right"><strong><span class="' . $diffClass . '">' . ($preview['totals']['total_diff'] >= 0 ? '+' : '') . price($preview['totals']['total_diff']) . ' ' . $langs->getCurrencySymbol($conf->currency) . '</span></strong></td></tr>';
-		print '</table>';
-
-		// Detail per contract
-		print '<br>';
-		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre">';
-		print '<th>' . $langs->trans("Contract") . '</th>';
-		print '<th>' . $langs->trans("Product") . '</th>';
-		print '<th class="right">' . $langs->trans("SubpriceBefore") . '</th>';
-		print '<th class="right">' . $langs->trans("SubpriceAfter") . '</th>';
-		print '<th class="right">' . $langs->trans("PriceDiff") . '</th>';
-		print '</tr>';
-
-		foreach ($preview['contracts'] as $contractId => $contractData) {
-			$contract = new Contrat($db);
-			$contract->fetch($contractId);
-
-			foreach ($contractData['lines'] as $lineData) {
-				print '<tr class="oddeven">';
-				print '<td>' . $contract->getNomUrl(1) . '</td>';
-				print '<td>' . dol_escape_htmltag($lineData['product_label']) . '</td>';
-				print '<td class="right">' . price($lineData['subprice_before']) . '</td>';
-				print '<td class="right">' . price($lineData['subprice_after']) . '</td>';
-
-				$diffClass = $lineData['price_diff'] >= 0 ? 'amountremaintopay' : 'amountpaymentcomplete';
-				print '<td class="right"><span class="' . $diffClass . '">' . ($lineData['price_diff'] >= 0 ? '+' : '') . price($lineData['price_diff']) . '</span></td>';
-				print '</tr>';
-			}
-		}
-
-		print '</table>';
-
-		print '<br>';
-		print '<div class="center">';
-		print '<a class="button" href="' . $_SERVER['PHP_SELF'] . '?id=' . $id . '&step=2">&laquo; ' . $langs->trans("Back") . '</a> ';
-		if ($user->hasRight('indexadjustment', 'indexadjustment', 'execute')) {
-			print '<a class="button button-save" href="' . $_SERVER['PHP_SELF'] . '?id=' . $id . '&step=3&action=execute&token=' . newToken() . '">' . $langs->trans("ExecuteIndexAdjustment") . '</a>';
-		}
-		print '</div>';
-	}
-}
+// JavaScript initialization
+print '<script type="text/javascript">';
+print 'jQuery(document).ready(function() {';
+print '  new IndexAdjustmentWizard({';
+print '    ajaxUrl: "' . dol_buildpath('/indexadjustment/ajax/wizard_ajax.php', 1) . '",';
+print '    token: "' . newToken() . '",';
+print '    mode: "contract",';
+print '    cardUrl: "' . dol_buildpath('/indexadjustment/card.php', 1) . '",';
+print '    listUrl: "' . dol_buildpath('/indexadjustment/list.php', 1) . '",';
+print '    canExecute: ' . ($canExecute ? 'true' : 'false') . ',';
+print '    currencySymbol: "' . dol_escape_js($langs->getCurrencySymbol($conf->currency)) . '",';
+print '    langs: {';
+print '      Next: "' . dol_escape_js($langs->trans("Next")) . '",';
+print '      Back: "' . dol_escape_js($langs->trans("Back")) . '",';
+print '      Contract: "' . dol_escape_js($langs->trans("Contract")) . '",';
+print '      ThirdParty: "' . dol_escape_js($langs->trans("ThirdParty")) . '",';
+print '      RefCustomer: "' . dol_escape_js($langs->trans("RefCustomer")) . '",';
+print '      ActiveLines: "' . dol_escape_js($langs->trans("ActiveLines")) . '",';
+print '      Product: "' . dol_escape_js($langs->trans("Product")) . '",';
+print '      Lines: "' . dol_escape_js($langs->trans("Lines")) . '",';
+print '      UnitPrice: "' . dol_escape_js($langs->trans("UnitPrice")) . '",';
+print '      Qty: "' . dol_escape_js($langs->trans("Qty")) . '",';
+print '      Summary: "' . dol_escape_js($langs->trans("Summary")) . '",';
+print '      TotalContracts: "' . dol_escape_js($langs->trans("TotalContracts")) . '",';
+print '      TotalLines: "' . dol_escape_js($langs->trans("TotalLines")) . '",';
+print '      TotalHTBefore: "' . dol_escape_js($langs->trans("TotalHTBefore")) . '",';
+print '      TotalHTAfter: "' . dol_escape_js($langs->trans("TotalHTAfter")) . '",';
+print '      SubpriceBefore: "' . dol_escape_js($langs->trans("SubpriceBefore")) . '",';
+print '      SubpriceAfter: "' . dol_escape_js($langs->trans("SubpriceAfter")) . '",';
+print '      PriceDiff: "' . dol_escape_js($langs->trans("PriceDiff")) . '",';
+print '      SelectAll: "' . dol_escape_js($langs->trans("SelectAll")) . '",';
+print '      DeselectAll: "' . dol_escape_js($langs->trans("DeselectAll")) . '",';
+print '      NoContractsFound: "' . dol_escape_js($langs->trans("NoContractsFound")) . '",';
+print '      LoadingContracts: "' . dol_escape_js($langs->trans("LoadingContracts")) . '",';
+print '      LoadingPreview: "' . dol_escape_js($langs->trans("LoadingPreview")) . '",';
+print '      ExecutingAdjustment: "' . dol_escape_js($langs->trans("ExecutingAdjustment")) . '",';
+print '      CreatingAdjustment: "' . dol_escape_js($langs->trans("CreatingAdjustment")) . '",';
+print '      AjaxError: "' . dol_escape_js($langs->trans("AjaxError")) . '",';
+print '      ValidationErrorLabel: "' . dol_escape_js($langs->trans("ValidationErrorLabel")) . '",';
+print '      ValidationErrorPercent: "' . dol_escape_js($langs->trans("ValidationErrorPercent")) . '",';
+print '      ValidationErrorNoSelection: "' . dol_escape_js($langs->trans("ValidationErrorNoSelection")) . '",';
+print '      ExecuteSuccess: "' . dol_escape_js($langs->trans("ExecuteSuccess")) . '",';
+print '      SelectedCount: "' . dol_escape_js($langs->trans("SelectedCount")) . '",';
+print '      ConfirmExecuteIndexAdjustment: "' . dol_escape_js($langs->trans("ConfirmExecuteIndexAdjustment")) . '",';
+print '      NotAllowed: "' . dol_escape_js($langs->trans("NotAllowed")) . '"';
+print '    }';
+print '  });';
+print '});';
+print '</script>';
 
 llxFooter();
 $db->close();

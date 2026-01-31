@@ -65,7 +65,7 @@ class modIndexAdjustment extends DolibarrModules
 		$this->editor_url = '';
 
 		// Version
-		$this->version = '1.0.1';
+		$this->version = '1.0.2';
 
 		// Key used in llx_const table
 		$this->const_name = 'MAIN_MODULE_' . strtoupper($this->name);

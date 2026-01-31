@@ -246,7 +246,39 @@ class IndexAdjustment extends CommonObject
 			$this->ref = $this->getNextNumRef();
 		}
 
-		return $this->createCommon($user, $notrigger);
+		// Direct SQL insert (createCommon has issues with fk_user_modif)
+		$sql = "INSERT INTO " . MAIN_DB_PREFIX . $this->table_element . " (";
+		$sql .= "ref, entity, datec, fk_user_creat, label, description,";
+		$sql .= "adjustment_date, adjustment_percent, vpi_base_year, vpi_base_value,";
+		$sql .= "vpi_current_year, vpi_current_value, fk_soc, status";
+		$sql .= ") VALUES (";
+		$sql .= "'" . $this->db->escape($this->ref) . "',";
+		$sql .= (int)$this->entity . ",";
+		$sql .= "'" . $this->db->idate($this->datec) . "',";
+		$sql .= (int)$this->fk_user_creat . ",";
+		$sql .= "'" . $this->db->escape($this->label) . "',";
+		$sql .= ($this->description ? "'" . $this->db->escape($this->description) . "'" : "NULL") . ",";
+		$sql .= "'" . $this->db->idate($this->adjustment_date) . "',";
+		$sql .= (float)$this->adjustment_percent . ",";
+		$sql .= ($this->vpi_base_year ? (int)$this->vpi_base_year : "NULL") . ",";
+		$sql .= ($this->vpi_base_value ? (float)$this->vpi_base_value : "NULL") . ",";
+		$sql .= ($this->vpi_current_year ? (int)$this->vpi_current_year : "NULL") . ",";
+		$sql .= ($this->vpi_current_value ? (float)$this->vpi_current_value : "NULL") . ",";
+		$sql .= ($this->fk_soc > 0 ? (int)$this->fk_soc : "NULL") . ",";
+		$sql .= (int)$this->status;
+		$sql .= ")";
+
+		dol_syslog(get_class($this) . "::create", LOG_DEBUG);
+		$result = $this->db->query($sql);
+
+		if ($result) {
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . $this->table_element);
+			return $this->id;
+		} else {
+			$this->error = $this->db->lasterror();
+			$this->errors[] = $this->error;
+			return -1;
+		}
 	}
 
 	/**
