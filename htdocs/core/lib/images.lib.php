@@ -67,7 +67,7 @@ function getDefaultImageSizes()
  */
 function getListOfPossibleImageExt($acceptsvg = 0)
 {
-	$regeximgext = '\.gif|\.jpg|\.jpeg|\.png|\.bmp|\.webp|\.xpm|\.xbm'; // See also into product.class.php
+	$regeximgext = '\.gif|\.jpg|\.jpeg|\.png|\.bmp|\.webp|\.xpm|\.xbm|\.avif'; // See also into product.class.php
 	if ($acceptsvg || getDolGlobalString('MAIN_ALLOW_SVG_FILES_AS_IMAGES')) {
 		$regeximgext .= '|\.svg'; // Not allowed by default. SVG can contains javascript
 	}
@@ -240,13 +240,13 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 	// Test function to read source image exists
 	$imgfonction = '';
 	switch ($infoImg[2]) {
-		case 1:	// IMG_GIF
+		case IMAGETYPE_GIF:	// IMG_GIF
 			$imgfonction = 'imagecreatefromgif';
 			break;
-		case 2:	// IMG_JPG
+		case IMAGETYPE_JPEG:	// IMG_JPG
 			$imgfonction = 'imagecreatefromjpeg';
 			break;
-		case 3:	// IMG_PNG
+		case IMAGETYPE_PNG:	// IMG_PNG
 			$imgfonction = 'imagecreatefrompng';
 			break;
 		case 4:	// IMG_WBMP
@@ -296,23 +296,23 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 	$img = null;
 	$extImg = null;
 	switch ($infoImg[2]) {
-		case 1:	// Gif
+		case IMAGETYPE_GIF:	// Gif
 			$img = imagecreatefromgif($filetoread);
 			$extImg = '.gif'; // File name extension of image
 			break;
-		case 2:	// Jpg
+		case IMAGETYPE_JPEG:	// Jpg
 			$img = imagecreatefromjpeg($filetoread);
 			$extImg = '.jpg';
 			break;
-		case 3:	// Png
+		case IMAGETYPE_PNG:	// Png
 			$img = imagecreatefrompng($filetoread);
 			$extImg = '.png';
 			break;
-		case 4:	// Bmp
+		case IMAGETYPE_WBMP:	// Bmp
 			$img = imagecreatefromwbmp($filetoread);
 			$extImg = '.bmp';
 			break;
-		case 18: // Webp
+		case IMAGETYPE_WEBP: // Webp
 			$img = imagecreatefromwebp($filetoread);
 			$extImg = '.webp';
 			break;
@@ -609,6 +609,9 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 			break;
 		case IMAGETYPE_WEBP:	// 18
 			$imgfonction = 'imagecreatefromwebp';
+			break;
+		case 19:	// 19 TYPEIMAGE_AVIF
+			$imgfonction = 'imagecreatefromavif';
 			break;
 	}
 	if ($imgfonction) {
