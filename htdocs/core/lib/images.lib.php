@@ -591,9 +591,9 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 
 	// If the image is smaller than the maximum width and height, no thumbnail is created.
 	if ($infoImg[0] < $maxWidth && $infoImg[1] < $maxHeight) {
-		// On cree toujours les vignettes
+		// we always create thumbnails
 		dol_syslog("File size is smaller than thumb size", LOG_DEBUG);
-		//return 'Le fichier '.$file.' ne necessite pas de creation de vignette';
+		// return 'Le fichier '.$file.' ne necessite pas de creation de vignette';
 	}
 
 	$imgfonction = '';
