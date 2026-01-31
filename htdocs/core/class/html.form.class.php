@@ -6931,6 +6931,7 @@ class Form
 	 * @param double $rate Current rate
 	 * @param string $htmlname Name of select html field
 	 * @param string $currency Currency code to explain the rate
+	 * @param double $rate_direct Current rate_direct
 	 * @return    void
 	 */
 	public function form_multicurrency_rate($page, $rate = 0.0, $htmlname = 'multicurrency_tx', $currency = '', $rate_direct = 0.0)
