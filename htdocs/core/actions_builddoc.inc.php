@@ -135,7 +135,7 @@ if ($action == 'remove_file' && $permissiontoadd) {
 		$langs->load("other");
 		$filetodelete = GETPOST('file', 'alpha');
 		$file = $upload_dir.'/'.$filetodelete;
-		$dirthumb = dirname($file).'/thumbs/'; // Chemin du dossier contenant la vignette (if file is an image)
+		$dirthumb = dirname($file).'/thumbs/'; // Path to the folder containing the thumbnail (if file is an image)
 		$ret = dol_delete_file($file, 0, 0, 0, $object);
 		if ($ret) {
 			// If it exists, remove thumb.

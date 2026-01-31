@@ -160,8 +160,8 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 	$linkid = GETPOSTINT('linkid');
 	if ($urlfile) {
 		// delete of a file
-		$dir = dirname($file).'/'; // Chemin du dossier contenant l'image d'origine
-		$dirthumb = $dir.'/thumbs/'; // Chemin du dossier contenant la vignette (if file is an image)
+		$dir = dirname($file).'/'; // Path to the folder containing the original image
+		$dirthumb = $dir.'/thumbs/'; // Path to the folder containing the thumbnail (if file is an image)
 
 		$ret = dol_delete_file($file, 0, 0, 0, (is_object($object) ? $object : null));
 		if (!empty($fileold)) {
