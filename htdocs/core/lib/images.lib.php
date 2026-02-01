@@ -67,7 +67,7 @@ function getDefaultImageSizes()
  */
 function getListOfPossibleImageExt($acceptsvg = 0)
 {
-	$regeximgext = '\.gif|\.jpg|\.jpeg|\.png|\.bmp|\.webp|\.xpm|\.xbm'; // See also into product.class.php
+	$regeximgext = '\.gif|\.jpg|\.jpeg|\.png|\.bmp|\.webp|\.xpm|\.xbm|\.avif'; // See also into product.class.php
 	if ($acceptsvg || getDolGlobalString('MAIN_ALLOW_SVG_FILES_AS_IMAGES')) {
 		$regeximgext .= '|\.svg'; // Not allowed by default. SVG can contains javascript
 	}
@@ -216,9 +216,13 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 
 	$filetoread = realpath(dol_osencode($file)); // Chemin canonique absolu de l'image
 
-	$infoImg = getimagesize($filetoread); 			// Get data about src image
-	$imgWidth = $infoImg[0]; // Largeur de l'image
-	$imgHeight = $infoImg[1]; // Hauteur de l'image
+	// Get data about src image
+	// Index 0 and 1 contains respectively the width and the height of the image.
+	// Index 2 is one of the IMAGETYPE_* constants indicating the type of the image.
+	// Index 3 is a text string with the correct height="yyy" width="xxx" string that can be used directly in an IMG tag.
+	$infoImg = getimagesize($filetoread);
+	$imgWidth = $infoImg[0]; // Width of picture
+	$imgHeight = $infoImg[1]; // Height of picture
 
 	$imgTargetName = ($filetowrite ? $filetowrite : $file);
 	$newExt = strtolower(pathinfo($imgTargetName, PATHINFO_EXTENSION));
@@ -238,27 +242,34 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 	}
 
 	// Test function to read source image exists
+	// The constants below are defined by this extension, and will only be available when the extension has either been compiled into PHP or dynamically loaded at runtime.
+	// They may not exists if gd extension isn't installed
+	// IMG_* and IMAGETYPE_* are different
+	// example IMG_WEBP = 32, IMAGETYPE_WEBP = 18
 	$imgfonction = '';
 	switch ($infoImg[2]) {
-		case 1:	// IMG_GIF
+		case 1:  // IMAGETYPE_GIF
 			$imgfonction = 'imagecreatefromgif';
 			break;
-		case 2:	// IMG_JPG
+		case 2:  // IMAGETYPE_JPG
 			$imgfonction = 'imagecreatefromjpeg';
 			break;
-		case 3:	// IMG_PNG
+		case 3:  // IMAGETYPE_PNG
 			$imgfonction = 'imagecreatefrompng';
 			break;
-		case 4:	// IMG_WBMP
+		case 15: // IMAGETYPE_WBMP
 			$imgfonction = 'imagecreatefromwbmp';
 			break;
-		case 18: // IMG_WEBP
+		case 18: // IMAGETYPE_WEBP
 			$imgfonction = 'imagecreatefromwebp';
+			break;
+		case 19: // IMAGETYPE_AVIF
+			$imgfonction = 'imagecreatefromavif';
 			break;
 	}
 	if ($imgfonction) {
 		if (!function_exists($imgfonction)) {
-			// Functions de conversion non presente dans ce PHP
+			// Conversion functions not present in this PHP
 			return 'Read of image not possible. This PHP does not support GD functions '.$imgfonction;
 		}
 	}
@@ -283,10 +294,13 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 			case 'webp': 	// IMG_WEBP
 				$imgfonction = 'imagecreatefromwebp';
 				break;
+			case 'avif': 	// IMG_AVIF
+				$imgfonction = 'imagecreatefromavif';
+				break;
 		}
 		if ($imgfonction) {
 			if (!function_exists($imgfonction)) {
-				// Functions de conversion non presente dans ce PHP
+				// Conversion functions not present in this PHP
 				return 'Write of image not possible. This PHP does not support GD functions '.$imgfonction;
 			}
 		}
@@ -308,7 +322,7 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 			$img = imagecreatefrompng($filetoread);
 			$extImg = '.png';
 			break;
-		case 4:	// Bmp
+		case 15:	// Bmp
 			$img = imagecreatefromwbmp($filetoread);
 			$extImg = '.bmp';
 			break;
@@ -585,9 +599,9 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 
 	// If the image is smaller than the maximum width and height, no thumbnail is created.
 	if ($infoImg[0] < $maxWidth && $infoImg[1] < $maxHeight) {
-		// On cree toujours les vignettes
+		// we always create thumbnails
 		dol_syslog("File size is smaller than thumb size", LOG_DEBUG);
-		//return 'Le fichier '.$file.' ne necessite pas de creation de vignette';
+		// return 'Le fichier '.$file.' ne necessite pas de creation de vignette';
 	}
 
 	$imgfonction = '';
@@ -603,6 +617,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 			break;
 		case IMAGETYPE_BMP:	    // 6
 			// Not supported by PHP GD
+			$imgfonction = '';
 			break;
 		case IMAGETYPE_WBMP:	// 15
 			$imgfonction = 'imagecreatefromwbmp';
@@ -610,6 +625,11 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 		case IMAGETYPE_WEBP:	// 18
 			$imgfonction = 'imagecreatefromwebp';
 			break;
+		case 19:	// 19 TYPEIMAGE_AVIF constant don't exists with php < 8.1
+			$imgfonction = 'imagecreatefromavif';
+			break;
+		default:
+			$imgfonction = '';
 	}
 	if ($imgfonction) {
 		if (!function_exists($imgfonction)) {
@@ -649,6 +669,10 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 		case IMAGETYPE_WEBP:	// 18
 			$img = imagecreatefromwebp($filetoread);
 			$extImg = '.webp';
+			break;
+		case 19:	// 19 TYPEIMAGE_AVIF constant don't exists with php < 8.1
+			$img = imagecreatefromavif($filetoread);
+			$extImg = '.avif';
 			break;
 	}
 
@@ -795,7 +819,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 	//imagecopyresized($imgThumb, $img, 0, 0, 0, 0, $thumbWidth, $thumbHeight, $imgWidth, $imgHeight); // Insert resized base image
 	imagecopyresampled($imgThumb, $img, 0, 0, 0, 0, $thumbWidth, $thumbHeight, $imgWidth, $imgHeight); // Insert resized base image
 
-	$fileName = preg_replace('/(\.gif|\.jpeg|\.jpg|\.png|\.bmp)$/i', '', $file); // We remove any extension box
+	$fileName = preg_replace('/(\.gif|\.jpeg|\.jpg|\.png|\.bmp|\.avif)$/i', '', $file); // We remove any extension box
 	$fileName = basename($fileName);
 	//$imgThumbName = $dirthumb.'/'.getImageFileNameForSize(basename($file), $extName, $extImgTarget);   // Full path of thumb file
 	$imgThumbName = getImageFileNameForSize($file, $extName, $extImgTarget); // Full path of thumb file
@@ -824,6 +848,9 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 			break;
 		case IMAGETYPE_WEBP:    // 18
 			imagewebp($imgThumb, $imgThumbName, $newquality); // @phan-suppress-current-line PhanTypeMismatchArgumentNullableInternal,PhanPossiblyUndeclaredVariable
+			break;
+		case 19:    // 19 TYPEIMAGE_AVIF constant don't exists with php < 8.1
+			imageavif($imgThumb, $imgThumbName, $newquality); // @phan-suppress-current-line PhanTypeMismatchArgumentNullableInternal,PhanPossiblyUndeclaredVariable
 			break;
 	}
 
