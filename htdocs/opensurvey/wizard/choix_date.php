@@ -109,7 +109,7 @@ if (GETPOST('confirmation')) {
 							$erreur = true;
 						}
 					} elseif (preg_match(";^(\d{1,2}):(\d{2})$;", $tmphorairesi[$j], $heures)) { //si c'est une heure simple type 8:00
-						//si valeures correctes, on entre les données dans la variables de session
+						// If the values are ok, add the data in the session variables
 						if ($heures[1] < 24 && $heures[2] < 60) {
 							$_SESSION["horaires$i"][$j] = $heures[0];
 						} else { //sinon message d'erreur et nettoyage de la case
@@ -117,7 +117,7 @@ if (GETPOST('confirmation')) {
 							$erreur = true;
 						}
 					} elseif (preg_match(";^(\d{1,2})h(\d{0,2})$;i", $tmphorairesi[$j], $heures)) { //si c'est une heure encore plus simple type 8h
-						//si valeures correctes, on entre les données dans la variables de session
+						// If the values are ok, add the data in the session variables
 						if ($heures[1] < 24 && $heures[2] < 60) {
 							$_SESSION["horaires$i"][$j] = $heures[0];
 						} else { //sinon message d'erreur et nettoyage de la case
@@ -125,7 +125,7 @@ if (GETPOST('confirmation')) {
 							$erreur = true;
 						}
 					} elseif (preg_match(";^(\d{1,2})-(\d{1,2})$;", $tmphorairesi[$j], $heures)) { //si c'est un creneau simple type 8-11
-						//si valeures correctes, on entre les données dans la variables de session
+						// If the values are ok, add the data in the session variables
 						if ($heures[1] < $heures[2] && $heures[1] < 24 && $heures[2] < 24) {
 							$_SESSION["horaires$i"][$j] = $heures[0];
 						} else { //sinon message d'erreur et nettoyage de la case
@@ -133,16 +133,16 @@ if (GETPOST('confirmation')) {
 							$erreur = true;
 						}
 					} elseif (preg_match(";^(\d{1,2})h-(\d{1,2})h$;", $tmphorairesi[$j], $heures)) { //si c'est un creneau H type 8h-11h
-						//si valeures correctes, on entre les données dans la variables de session
+						// If the values are ok, add the data in the session variables
 						if ($heures[1] < $heures[2] && $heures[1] < 24 && $heures[2] < 24) {
 							$_SESSION["horaires$i"][$j] = $heures[0];
 						} else { //sinon message d'erreur et nettoyage de la case
 							$errheure[$i][$j] = true;
 							$erreur = true;
 						}
-					} elseif ($tmphorairesi[$j] == "") { //Si la case est vide
+					} elseif ($tmphorairesi[$j] == "") { // If the field is empty
 						unset($_SESSION["horaires$i"][$j]);
-					} else { //pour tout autre format, message d'erreur
+					} else { // Display an error for any other format
 						$errheure[$i][$j] = true;
 						$erreur = true;
 					}
@@ -245,12 +245,12 @@ if (!isset($_SESSION["nbrecaseshoraires"])) {
 }
 
 
-//valeurs de la date du jour actuel
+// Values representing today's date
 $jourAJ = date("j");
 $moisAJ = date("n");
 $anneeAJ = date("Y");
 
-// Initialisation des jour, mois et année
+// Initialise day, month and year values
 if (!isset($_SESSION['jour'])) {
 	$_SESSION['jour'] = date('j');
 }

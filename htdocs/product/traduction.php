@@ -5,6 +5,7 @@
  * Copyright (C) 2014 	    Henry Florian 			<florian.henry@open-concept.pro>
  * Copyright (C) 2023 	    Benjamin Falière		<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -140,7 +141,7 @@ if (empty($reshook)) {
 	if ($action == 'vedit' && $cancel != $langs->trans("Cancel") && $usercancreate) {
 		$current_lang = $langs->getDefaultLang();
 
-		foreach ($object->multilangs as $key => $value) { // enregistrement des nouvelles valeurs dans l'objet
+		foreach ($object->multilangs as $key => $value) { // Record the new values in the object
 			if ($key == $current_lang) {
 				$object->label = GETPOST("libelle-" . $key);
 				$object->description = dol_htmlcleanlastbr(GETPOST("desc-" . $key, 'restricthtml'));
