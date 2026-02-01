@@ -588,7 +588,7 @@ if ($resql) {
 					'page' => $page,
 					'sortfield' => $sortfield,
 					'sortorder' => $sortorder,
-					'rowid' => (!empty($obj->rowid) ? $obj->rowid : (!empty($obj->code) ? $obj->code : '')),
+					'rowid' => (!empty($obj->rowid) ? $obj->rowid : '')
 				]);
 
 				// Active
