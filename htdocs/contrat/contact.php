@@ -25,7 +25,7 @@
 /**
  *      \file       htdocs/contrat/contact.php
  *      \ingroup    contrat
- *      \brief      Onglet de gestion des contacts des contrats
+ *      \brief      Tab for management of contracts
  */
 
 // Load Dolibarr environment
