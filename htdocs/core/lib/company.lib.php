@@ -86,7 +86,7 @@ function societe_prepare_head(Societe $object)
 			dol_setcache($cachekey, $nbContact, 120);	// If setting cache fails, this is not a problem, so we do not test result.
 		}
 
-		$head[$h][0] = dolBuildurl(DOL_URL_ROOT . '/societe/contact.php', ['socid' => $object->id]);
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/societe/contact.php', ['socid' => $object->id]);
 		$head[$h][1] = $langs->trans('ContactsAddresses');
 		if ($nbContact > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbContact . '</span>';
@@ -96,7 +96,7 @@ function societe_prepare_head(Societe $object)
 	}
 	if (getDolGlobalString('MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES')) {
 		// Some features may be unstable with this option, like permissions rules, import contact, ...
-		$head[$h][0] = dolBuildurl(DOL_URL_ROOT . '/societe/societecontact.php', ['socid' => $object->id]);
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/societe/societecontact.php', ['socid' => $object->id]);
 		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
 		$head[$h][1] = $langs->trans("ContactsAddressesExt");
 		if ($nbContact > 0) {
@@ -154,7 +154,7 @@ function societe_prepare_head(Societe $object)
 			$mode = 'customer';
 		}
 
-		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/accountancy/bookkeeping/listbyaccount.php', ['socid' > $object->id, 'mode' => $mode, 'type' => 'sub', 'search_accountancy_code_start' => $subledger_start_account, 'search_accountancy_code_end' => $subledger_end_account]);
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/accountancy/bookkeeping/listbyaccount.php', ['socid' => $object->id, 'mode' => $mode, 'type' => 'sub', 'search_accountancy_code_start' => $subledger_start_account, 'search_accountancy_code_end' => $subledger_end_account]);
 		$head[$h][1] = $langs->trans("Accounting");
 		$head[$h][2] = 'accounting';
 		$h++;
@@ -194,7 +194,7 @@ function societe_prepare_head(Societe $object)
 
 	// Tab to link resources
 	if (isModEnabled('resource') && getDolGlobalString('RESOURCE_ON_THIRDPARTIES')) {
-		$head[$h][0] = dolBuildurl(DOL_URL_ROOT . '/resource/element_resource.php', ['element' => 'societe', 'element_id' => $object->id]);
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/resource/element_resource.php', ['element' => 'societe', 'element_id' => $object->id]);
 		$head[$h][1] = $langs->trans("Resources");
 		$head[$h][2] = 'resources';
 		$h++;
