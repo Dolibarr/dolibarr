@@ -43,7 +43,7 @@ class modPaymentEdit extends DolibarrModules
         $this->db = $db;
 
         // Module ID (must be unique)
-        $this->numero = 510200;
+        $this->numero = 510201;
 
         // Key text used to identify module (for permissions, menus, etc...)
         $this->rights_class = 'paymentedit';
