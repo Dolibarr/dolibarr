@@ -3,9 +3,10 @@
  * Copyright (C) 2012-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2016	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
- * Copyright (C) 2016       Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2016		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2018-2026	Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Alexandre Spangaro		<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1662,7 +1663,7 @@ class Holiday extends CommonObject
 	}
 
 	/**
-	 *	Met à jour le timestamp de la dernière mise à jour du solde des CP
+	 *	Updates the timestamp of the last CP balance update.
 	 *
 	 *	@param		int		$userID		Id of user
 	 *	@param		float	$nbHoliday	Nb of days
@@ -1680,7 +1681,7 @@ class Holiday extends CommonObject
 
 			$decrease = getDolGlobalInt('HOLIDAY_DECREASE_AT_END_OF_MONTH');
 
-			// Si mise à jour pour tout le monde en début de mois
+			// If updated for everyone at the beginning of the month
 			$now = dol_now();
 
 			// Get month of last update
@@ -1781,7 +1782,7 @@ class Holiday extends CommonObject
 					}
 				}
 
-				//updating the date of the last monthly balance update
+				// Updating the date of the last monthly balance update
 				$newMonth = dol_get_next_month((int) dol_print_date($lastUpdate, '%m'), (int) dol_print_date($lastUpdate, '%Y'));
 				$lastUpdate = dol_mktime(0, 0, 0, (int) $newMonth['month'], 1, (int) $newMonth['year']);
 
@@ -1954,13 +1955,13 @@ class Holiday extends CommonObject
 
 				$resql = $this->db->query($sql);
 
-				// Si pas d'erreur SQL
+				// If no SQL error
 				if ($resql) {
 					$i = 0;
 					$num = $this->db->num_rows($resql);
 					$stringlist = '';
 
-					// Boucles du listage des utilisateurs
+					// User listing loops
 					while ($i < $num) {
 						$obj = $this->db->fetch_object($resql);
 
@@ -1972,10 +1973,10 @@ class Holiday extends CommonObject
 
 						$i++;
 					}
-					// Retoune le tableau des utilisateurs
+					// Returns the user table
 					return $stringlist;
 				} else {
-					// Erreur SQL
+					// SQL error
 					$this->error = "Error ".$this->db->lasterror();
 					return -1;
 				}
@@ -1990,13 +1991,13 @@ class Holiday extends CommonObject
 
 				$resql = $this->db->query($sql);
 
-				// Si pas d'erreur SQL
+				// If no SQL error
 				if ($resql) {
 					$i = 0;
 					$num = $this->db->num_rows($resql);
 					$stringlist = '';
 
-					// Boucles du listage des utilisateurs
+					// User listing loops
 					while ($i < $num) {
 						$obj = $this->db->fetch_object($resql);
 
@@ -2008,16 +2009,16 @@ class Holiday extends CommonObject
 
 						$i++;
 					}
-					// Retoune le tableau des utilisateurs
+					// Returns the user table
 					return $stringlist;
 				} else {
-					// Erreur SQL
+					// SQL error
 					$this->error = "Error ".$this->db->lasterror();
 					return -1;
 				}
 			}
 		} else {
-			// Si faux donc return array
+			// If false, return array
 			// List for Dolibarr users
 			if ($type) {
 				// If we need users of Dolibarr
@@ -2045,13 +2046,13 @@ class Holiday extends CommonObject
 
 				$resql = $this->db->query($sql);
 
-				// Si pas d'erreur SQL
+				// If no SQL error
 				if ($resql) {
 					$i = 0;
 					$tab_result = $this->holiday;
 					$num = $this->db->num_rows($resql);
 
-					// Boucles du listage des utilisateurs
+					// User listing loops
 					while ($i < $num) {
 						$obj = $this->db->fetch_object($resql);
 
@@ -2071,10 +2072,10 @@ class Holiday extends CommonObject
 
 						$i++;
 					}
-					// Retoune le tableau des utilisateurs
+					// Returns the user table
 					return $tab_result;
 				} else {
-					// Erreur SQL
+					// SQL error
 					$this->errors[] = "Error ".$this->db->lasterror();
 					return -1;
 				}
@@ -2089,13 +2090,13 @@ class Holiday extends CommonObject
 
 				$resql = $this->db->query($sql);
 
-				// Si pas d'erreur SQL
+				// If no SQL error
 				if ($resql) {
 					$i = 0;
 					$tab_result = $this->holiday;
 					$num = $this->db->num_rows($resql);
 
-					// Boucles du listage des utilisateurs
+					// User listing loops
 					while ($i < $num) {
 						$obj = $this->db->fetch_object($resql);
 
@@ -2115,10 +2116,10 @@ class Holiday extends CommonObject
 
 						$i++;
 					}
-					// Retoune le tableau des utilisateurs
+					// Returns the user table
 					return $tab_result;
 				} else {
-					// Erreur SQL
+					// SQL error
 					$this->error = "Error ".$this->db->lasterror();
 					return -1;
 				}
@@ -2346,11 +2347,11 @@ class Holiday extends CommonObject
 
 				$i++;
 			}
-			// Retourne 1 et ajoute le tableau à la variable
+			// Returns 1 and adds the array to the variable
 			$this->logs = $tab_result;
 			return 1;
 		} else {
-			// Erreur SQL
+			// SQL error
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
