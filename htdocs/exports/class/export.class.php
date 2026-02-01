@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2012  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2012       Charles-Fr BENKE    <charles.fr@benke.fr>
  * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -69,15 +69,15 @@ class Export
 	/**
 	 * @var array<int,string>
 	 */
-	public $array_export_code = array(); // Tableau de "idmodule_numexportprofile"
+	public $array_export_code = array(); // Array of "idmodule_numexportprofile"
 	/**
 	 * @var string[]
 	 */
-	public $array_export_code_for_sort = array(); // Tableau de "idmodule_numexportprofile"
+	public $array_export_code_for_sort = array(); // Array of "idmodule_numexportprofile"
 	/**
 	 * @var DolibarrModules[]
 	 */
-	public $array_export_module = array(); // Tableau de "nom de modules"
+	public $array_export_module = array(); // Array of Module Names
 	/**
 	 * @var string[]
 	 */
@@ -85,32 +85,32 @@ class Export
 	/**
 	 * @var string[]
 	 */
-	public $array_export_sql_start = array(); // Tableau des "requetes sql"
+	public $array_export_sql_start = array(); // Array of SQL queries ("start")
 	/**
 	 * @var string[]
 	 */
-	public $array_export_sql_end = array(); // Tableau des "requetes sql"
+	public $array_export_sql_end = array(); // Array of SQL queries ("end")
 	/**
 	 * @var string[]
 	 */
-	public $array_export_sql_order = array(); // Tableau des "requetes sql"
+	public $array_export_sql_order = array(); // Array of SQL queries ("order")
 
 	/**
 	 * @var array<int,array<string,string>>
 	 */
-	public $array_export_fields = array(); // Tableau des listes de champ+libelle a exporter
+	public $array_export_fields = array(); // Array of lists of fields and labels to export
 	/**
 	 * @var array<int,array<string,string>>
 	 */
-	public $array_export_TypeFields = array(); // Tableau des listes de champ+Type de filtre
+	public $array_export_TypeFields = array(); // Array of lists of fields & filter types
 	/**
 	 * @var array<int,array<string,string>>
 	 */
-	public $array_export_FilterValue = array(); // Tableau des listes de champ+Valeur a filtrer
+	public $array_export_FilterValue = array(); // Array of lists of fields & values to filter
 	/**
 	 * @var array<int,array<string,string>>
 	 */
-	public $array_export_entities = array(); // Tableau des listes de champ+alias a exporter
+	public $array_export_entities = array(); // Array of lists of fields & aliases to export
 	/**
 	 * @var array<int,array<string,string>>
 	 */
@@ -287,7 +287,7 @@ class Export
 									$this->array_export_TypeFields[$i] = (isset($module->export_TypeFields_array[$r]) ? $module->export_TypeFields_array[$r] : '');
 									// Table of entities to export (key=field, value=entity)
 									$this->array_export_entities[$i] = $module->export_entities_array[$r];
-									// Table of entities requiring to abandon DISTINCT (key=entity, valeur=field id child records)
+									// Table of entities requiring to abandon DISTINCT (key=entity, value=field id child records)
 									$this->array_export_dependencies[$i] = (!empty($module->export_dependencies_array[$r]) ? $module->export_dependencies_array[$r] : '');
 									// Table of special field operations
 									$this->array_export_special[$i] = (!empty($module->export_special_array[$r]) ? $module->export_special_array[$r] : '');
@@ -1037,7 +1037,7 @@ class Export
 				print '<td>';
 				print img_object($this->array_export_module[$keyModel]->getName(), $this->array_export_icon[$keyModel]).' ';
 				print $this->array_export_module[$keyModel]->getName().' - ';
-				// recover export name / recuperation du nom de l'export
+				// Recover export name
 
 				$string = $langs->trans($this->array_export_label[$keyModel]);
 				print($string != $this->array_export_label[$keyModel] ? $string : $this->array_export_label[$keyModel]);
@@ -1049,7 +1049,7 @@ class Export
 					print '<td>'.str_replace(',', ' , ', $filter['field']).'</td>';
 					print '<td>'.str_replace(',', ' , ', $filter['value']).'</td>';
 				}
-				// remove export / suppression de l'export
+				// Remove export
 				print '<td class="right">';
 				print '<a href="'.$_SERVER["PHP_SELF"].'?action=deleteprof&token='.newToken().'&id='.$obj->rowid.'">';
 				print img_delete();

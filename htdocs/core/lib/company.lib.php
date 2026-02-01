@@ -11,7 +11,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Rui Strecht             <rui.strecht@aliartalentos.com>
  * Copyright (C) 2018-2024  Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1982,7 +1982,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat') {
 			$sql .= ", " . MAIN_DB_PREFIX . "contrat as o";
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Expedition') {
-			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "expedition as s ON a.fk_element = s.rowid AND a.elementtype = 'shipping'"; // Jointure sur la table des expéditions avec condition ON
+			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "expedition as s ON a.fk_element = s.rowid AND a.elementtype = 'shipping'"; // JOIN on the shipping tame using the 'ON' constraint
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Propal') {
 			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "propal as o ON a.fk_element = o.rowid AND a.elementtype = 'propal'";
 		} elseif (

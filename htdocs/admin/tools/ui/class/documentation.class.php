@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2024        Anthony Damhet        <a.damhet@progiseize.fr>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -441,7 +442,7 @@ class Documentation
 		$i = 0;
 		$menu_entry = [];
 		if (!empty($this->view)) {
-			// On se place au bon niveau
+			// Set the correct menu depth (level)
 			foreach ($this->view as $view) {
 				$i++;
 				if ($i == 1) {
