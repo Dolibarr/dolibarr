@@ -1,0 +1,30 @@
+# Dolibarr language file - de_DE - PaymentEdit Module
+# Copyright (C) 2024-2025 Florian Hödl
+
+#
+# Module
+#
+ModulePaymentEditName = Zahlung bearbeiten
+ModulePaymentEditDesc = Ermöglicht die Bearbeitung von sonstigen Zahlungen
+PaymentEditDescription = Ermöglicht die Bearbeitung von sonstigen Zahlungen
+PaymentEditDescriptionLong = Dieses Modul fügt einen "Bearbeiten"-Button zur Seite der sonstigen Zahlungen hinzu, mit dem Zahlungsdetails nach der Erstellung bearbeitet werden können.
+
+#
+# Admin
+#
+PaymentEditSetup = PaymentEdit Einstellungen
+PaymentEditAbout = Über PaymentEdit
+PaymentEditSetupPage = Konfigurationsseite für das PaymentEdit-Modul
+
+#
+# Card
+#
+PaymentEditTitle = Sonstige Zahlung bearbeiten
+PaymentEditSensReadonly = Buchungsrichtung kann nach Erstellung nicht geändert werden
+PaymentEditAccountingLocked = Kann nicht geändert werden - bereits verbucht
+
+#
+# Messages
+#
+PaymentEditModifyButton = Bearbeiten
+

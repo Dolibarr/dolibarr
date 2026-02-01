@@ -1,0 +1,30 @@
+# Dolibarr language file - en_US - PaymentEdit Module
+# Copyright (C) 2024-2025 Florian Hödl
+
+#
+# Module
+#
+ModulePaymentEditName = Payment Edit
+ModulePaymentEditDesc = Enables editing of various payments (Payment Various)
+PaymentEditDescription = Enables editing of various payments
+PaymentEditDescriptionLong = This module adds a "Modify" button to the various payment card page, allowing users to edit payment details after creation.
+
+#
+# Admin
+#
+PaymentEditSetup = PaymentEdit Setup
+PaymentEditAbout = About PaymentEdit
+PaymentEditSetupPage = Configuration page for PaymentEdit module
+
+#
+# Card
+#
+PaymentEditTitle = Edit Various Payment
+PaymentEditSensReadonly = Direction cannot be changed after creation
+PaymentEditAccountingLocked = Cannot be changed - already accounted
+
+#
+# Messages
+#
+PaymentEditModifyButton = Modify
+
