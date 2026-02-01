@@ -320,7 +320,7 @@ if ($action == 'create') {
 		$title = $langs->trans("Group");
 
 		/*
-		 * Confirmation suppression
+		 * Deletion confirmation
 		 */
 		if ($action == 'delete') {
 			print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id, $langs->trans("DeleteAGroup"), $langs->trans("ConfirmDeleteGroup", $object->name), "confirm_delete", '', 0, 1);
