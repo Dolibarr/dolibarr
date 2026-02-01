@@ -216,9 +216,13 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 
 	$filetoread = realpath(dol_osencode($file)); // Chemin canonique absolu de l'image
 
-	$infoImg = getimagesize($filetoread); 			// Get data about src image
-	$imgWidth = $infoImg[0]; // Largeur de l'image
-	$imgHeight = $infoImg[1]; // Hauteur de l'image
+	// Get data about src image
+	// Index 0 and 1 contains respectively the width and the height of the image.
+	// Index 2 is one of the IMAGETYPE_* constants indicating the type of the image.
+	// Index 3 is a text string with the correct height="yyy" width="xxx" string that can be used directly in an IMG tag.
+	$infoImg = getimagesize($filetoread);
+	$imgWidth = $infoImg[0]; // Width of picture
+	$imgHeight = $infoImg[1]; // Height of picture
 
 	$imgTargetName = ($filetowrite ? $filetowrite : $file);
 	$newExt = strtolower(pathinfo($imgTargetName, PATHINFO_EXTENSION));
@@ -238,24 +242,25 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 	}
 
 	// Test function to read source image exists
+	// The constants below are defined by this extension, and will only be available when the extension has either been compiled into PHP or dynamically loaded at runtime.
 	$imgfonction = '';
 	switch ($infoImg[2]) {
-		case IMAGETYPE_GIF:	// IMG_GIF
+		case 1:	// IMAGETYPE_GIF
 			$imgfonction = 'imagecreatefromgif';
 			break;
-		case IMAGETYPE_JPEG:	// IMG_JPG
+		case 2:	// IMAGETYPE_JPG
 			$imgfonction = 'imagecreatefromjpeg';
 			break;
-		case IMAGETYPE_PNG:	// IMG_PNG
+		case 3:	// IMAGETYPE_PNG
 			$imgfonction = 'imagecreatefrompng';
 			break;
-		case 4:	// IMG_WBMP
+		case 4:	// IMAGETYPE_WBMP
 			$imgfonction = 'imagecreatefromwbmp';
 			break;
-		case 18: // IMG_WEBP
+		case 18: // IMAGETYPE_WEBP
 			$imgfonction = 'imagecreatefromwebp';
 			break;
-		case 19: // IMG_AVIF
+		case 19: // IMAGETYPE_AVIF
 			$imgfonction = 'imagecreatefromavif';
 			break;
 	}
