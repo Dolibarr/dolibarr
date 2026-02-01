@@ -310,23 +310,23 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 	$img = null;
 	$extImg = null;
 	switch ($infoImg[2]) {
-		case IMAGETYPE_GIF:	// Gif
+		case 1:	// Gif
 			$img = imagecreatefromgif($filetoread);
 			$extImg = '.gif'; // File name extension of image
 			break;
-		case IMAGETYPE_JPEG:	// Jpg
+		case 2:	// Jpg
 			$img = imagecreatefromjpeg($filetoread);
 			$extImg = '.jpg';
 			break;
-		case IMAGETYPE_PNG:	// Png
+		case 3:	// Png
 			$img = imagecreatefrompng($filetoread);
 			$extImg = '.png';
 			break;
-		case IMAGETYPE_WBMP:	// Bmp
+		case 15:	// Bmp
 			$img = imagecreatefromwbmp($filetoread);
 			$extImg = '.bmp';
 			break;
-		case IMAGETYPE_WEBP: // Webp
+		case 18: // Webp
 			$img = imagecreatefromwebp($filetoread);
 			$extImg = '.webp';
 			break;
