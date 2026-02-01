@@ -269,7 +269,7 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 	}
 	if ($imgfonction) {
 		if (!function_exists($imgfonction)) {
-			// Functions de conversion non presente dans ce PHP
+			// Conversion functions not present in this PHP
 			return 'Read of image not possible. This PHP does not support GD functions '.$imgfonction;
 		}
 	}
@@ -300,7 +300,7 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 		}
 		if ($imgfonction) {
 			if (!function_exists($imgfonction)) {
-				// Functions de conversion non presente dans ce PHP
+				// Conversion functions not present in this PHP
 				return 'Write of image not possible. This PHP does not support GD functions '.$imgfonction;
 			}
 		}
