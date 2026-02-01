@@ -8,7 +8,7 @@
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2017-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023       Nick Fragoulis
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -949,7 +949,7 @@ class FactureRec extends CommonInvoice
 	/**
 	 * 	Add a line to invoice
 	 *
-	 *	@param    	string			$desc            	Description de la ligne
+	 *	@param    	string			$desc            	Description of the invoice line
 	 *	@param    	float			$pu_ht              Prix unitaire HT (> 0 even for credit note)
 	 *	@param    	float			$qty             	Quantite
 	 *	@param    	float|string	$txtva           	VAT rate, -1 for auto (Can contain the vat_src_code too with syntax '9.9 (CODE)')
@@ -1154,7 +1154,7 @@ class FactureRec extends CommonInvoice
 	 * 	Update a line to invoice
 	 *
 	 *  @param     	int				$rowid           	Id of line to update
-	 *	@param    	string			$desc            	Description de la ligne
+	 *	@param    	string			$desc            	Description of the invoice line
 	 *	@param    	float			$pu_ht              Prix unitaire HT (> 0 even for credit note)
 	 *	@param    	float			$qty             	Quantite
 	 *	@param    	float|string	$txtva				VAT Rate (Can be '1.23' or '1.23 (ABC)')

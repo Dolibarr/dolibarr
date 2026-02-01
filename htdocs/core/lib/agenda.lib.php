@@ -2,7 +2,7 @@
 /* Copyright (C) 2008-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2022-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2022-2026  Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -379,8 +379,8 @@ function show_array_last_actions_done($max = 5)
 			print "</tr>\n";
 			$i++;
 		}
-		// TODO Ajouter rappel pour "il y a des contrats a mettre en service"
-		// TODO Ajouter rappel pour "il y a des contrats qui arrivent a expiration"
+		// TODO Add a reminder for "contracts need to be put in service."
+		// TODO Add reminder for "contracts expiring soon."
 		print "</table></div><br>";
 
 		$db->free($resql);
