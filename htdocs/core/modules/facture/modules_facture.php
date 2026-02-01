@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024       Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -198,7 +198,7 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 
 		// Get IBAN from account.
 		$account = new Account($this->db);
-		$account->fetch($object->fk_account);
+		$account->fetch((int) $object->fk_account);
 		$creditorInformation = SwissQrBill\DataGroup\Element\CreditorInformation::create($account->iban);
 		if (!$creditorInformation->isValid()) {
 			$langs->load("errors");

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2008-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -115,7 +115,7 @@ class FormBarCode
 	 *
 	 *  @param  int     $selected          Id code pre-selected
 	 *  @param  string  $htmlname          Name of HTML select field
-	 *  @param  int     $useempty          Affiche valeur vide dans liste
+	 *  @param  int     $useempty          Display empty value in list
 	 *  @return void
 	 *  @deprecated
 	 */

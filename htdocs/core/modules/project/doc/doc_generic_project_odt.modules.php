@@ -286,9 +286,9 @@ class doc_generic_project_odt extends ModelePDFProjects
 	{
 		// phpcs:enable
 		return array(
-			'projfile_name' => $file['name'],
+			'projfile_name' => (string) $file['name'],
 			'projfile_date' => dol_print_date($file['date'], 'day'),
-			'projfile_size' => $file['size']
+			'projfile_size' => (int) $file['size']
 		);
 	}
 
@@ -298,21 +298,19 @@ class doc_generic_project_odt extends ModelePDFProjects
 	 *
 	 *	@param  array{type:string,ref:string,date:string,socname:string,amountht:float|'',amountttc:float|'',status:string}		$refdetail			Reference array
 	 *	@param  Translate		$outputlangs        Lang object to use for output
-	 *  @return	array{projref_type:string,projref_ref:string,projref_date:string,projref_socname:string,projref_amountht:string,projref_amountttc:string,projref_status:string}								Return a substitution array
+	 *  @return	array{projref_type:string,projref_ref:string,projref_date:string,projref_socname:string,projref_amountht:string,projref_amountttc:string,projref_status:int}		Return a substitution array
 	 */
 	public function get_substitutionarray_project_reference($refdetail, $outputlangs)
 	{
 		// phpcs:enable
-		global $conf;
-
 		return array(
-			'projref_type' => $refdetail['type'],
-			'projref_ref' => $refdetail['ref'],
+			'projref_type' => (string) $refdetail['type'],
+			'projref_ref' => (string) $refdetail['ref'],
 			'projref_date' => dol_print_date($refdetail['date'], 'day'),
-			'projref_socname' => $refdetail['socname'],
+			'projref_socname' => (string) $refdetail['socname'],
 			'projref_amountht' => price($refdetail['amountht'], 0, $outputlangs),
 			'projref_amountttc' => price($refdetail['amountttc'], 0, $outputlangs),
-			'projref_status' => $refdetail['status']
+			'projref_status' => (int) $refdetail['status']
 		);
 	}
 
@@ -330,13 +328,13 @@ class doc_generic_project_odt extends ModelePDFProjects
 
 		//dol_syslog(get_class($this).'::get_substitutionarray_tasksressource taskressource='.var_export($taskressource,true),LOG_DEBUG);
 		return array(
-			'taskressource_rowid' => $taskresource['rowid'],
-			'taskressource_role' => $taskresource['libelle'],
-			'taskressource_lastname' => $taskresource['lastname'],
-			'taskressource_firstname' => $taskresource['firstname'],
-			'taskressource_fullcivname' => $taskresource['fullname'],
-			'taskressource_socname' => $taskresource['socname'],
-			'taskressource_email' => $taskresource['email']
+			'taskressource_rowid' => (int) $taskresource['rowid'],
+			'taskressource_role' => (string) $taskresource['libelle'],
+			'taskressource_lastname' => (string) $taskresource['lastname'],
+			'taskressource_firstname' => (string) $taskresource['firstname'],
+			'taskressource_fullcivname' => (string) $taskresource['fullname'],
+			'taskressource_socname' => (string) $taskresource['socname'],
+			'taskressource_email' => (string) $taskresource['email']
 		);
 	}
 
@@ -346,24 +344,24 @@ class doc_generic_project_odt extends ModelePDFProjects
 	 *
 	 *	@param	array{rowid:int,task_date:int,task_duration:int,note:string,fk_user:int,name:string,firstname:string,fullcivname:string,amountht:float,amountttc:float,thm:int} 	$tasktime			Array of times object
 	 *	@param  Translate		$outputlangs        Lang object to use for output
-	 *	@return	array{tasktime_rowid:int,tasktime_task_date:string,tasktime_task_duration_sec:int,tasktime_task_duration:string,tasktime_note:string,tasktime_fk_user:int,tasktime_user_name:string,tasktime_user_first:string,tasktime_fullcivname:string,tasktime_amountht:float,tasktime_amountttc:float,tasktime_thm:int}		Return a substitution array
+	 *	@return	array{tasktime_rowid:int,tasktime_task_date:string,tasktime_task_duration_sec:int,tasktime_task_duration:string,tasktime_note:string,tasktime_fk_user:int,tasktime_user_name:string,tasktime_user_first:string,tasktime_fullcivname:string,tasktime_amountht:float,tasktime_amountttc:float,tasktime_thm:float|int}		Return a substitution array
 	 */
 	public function get_substitutionarray_taskstime($tasktime, $outputlangs)
 	{
 		// phpcs:enable
 		return array(
-			'tasktime_rowid' => $tasktime['rowid'],
+			'tasktime_rowid' => (int) $tasktime['rowid'],
 			'tasktime_task_date' => dol_print_date($tasktime['task_date'], 'day'),
-			'tasktime_task_duration_sec' => $tasktime['task_duration'],
+			'tasktime_task_duration_sec' => (int) $tasktime['task_duration'],
 			'tasktime_task_duration' => convertSecondToTime($tasktime['task_duration'], 'all'),
-			'tasktime_note' => $tasktime['note'],
-			'tasktime_fk_user' => $tasktime['fk_user'],
-			'tasktime_user_name' => $tasktime['name'],
-			'tasktime_user_first' => $tasktime['firstname'],
-			'tasktime_fullcivname' => $tasktime['fullcivname'],
-			'tasktime_amountht' => $tasktime['amountht'],
-			'tasktime_amountttc' => $tasktime['amountttc'],
-			'tasktime_thm' => $tasktime['thm'],
+			'tasktime_note' => (string) $tasktime['note'],
+			'tasktime_fk_user' => (int) $tasktime['fk_user'],
+			'tasktime_user_name' => (string) $tasktime['name'],
+			'tasktime_user_first' => (string) $tasktime['firstname'],
+			'tasktime_fullcivname' => (string) $tasktime['fullcivname'],
+			'tasktime_amountht' => (float) $tasktime['amountht'],
+			'tasktime_amountttc' => (float) $tasktime['amountttc'],
+			'tasktime_thm' => (float) $tasktime['thm']
 		);
 	}
 
@@ -379,9 +377,9 @@ class doc_generic_project_odt extends ModelePDFProjects
 	{
 		// phpcs:enable
 		return array(
-			'tasksfile_name' => $file['name'],
+			'tasksfile_name' => (string) $file['name'],
 			'tasksfile_date' => dol_print_date($file['date'], 'day'),
-			'tasksfile_size' => $file['size']
+			'tasksfile_size' => (int) $file['size']
 		);
 	}
 

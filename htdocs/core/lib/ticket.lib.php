@@ -3,6 +3,7 @@
  * Copyright (C) 2016		Christophe Battarel	<christophe@altairis.fr>
  * Copyright (C) 2019-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Benjamin Falière	<benjamin@faliere.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -284,6 +285,7 @@ function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $
 
 	print '<body id="mainbody" class="publicnewticketform">';
 	print '<div class="publicnewticketform2 centpercent" style="min-height: 100%;">';
+
 
 	htmlPrintOnlineHeader($mysoc, $langs, (getDolGlobalInt('TICKET_SHOW_COMPANY_LOGO') ? getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', dol_buildpath('/public/ticket/index.php?entity='.$conf->entity, 1)) : '0'), getDolGlobalString('TICKET_PUBLIC_INTERFACE_TOPIC', $langs->trans("TicketSystem")), 'TICKET_IMAGE_PUBLIC_INTERFACE');
 }

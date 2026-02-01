@@ -24,10 +24,10 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/openid_connect.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/openid_connect.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/openid_connect.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/openid_connect.lib.php';
 
 /**
  * @var Conf $conf
@@ -133,14 +133,14 @@ llxHeader('', $langs->trans("Miscellaneous"), $wikihelp, '', 0, 0, '', '', '', '
 
 print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 
-print '<span class="opacitymedium">'.$langs->trans("OpenIDDesc")."</span><br>\n";
+print '<span class="opacitymedium">' . $langs->trans("OpenIDDesc") . "</span><br>\n";
 print "<br>\n";
 
 $head = security_prepare_head();
 
 print dol_get_fiche_head($head, 'openid', '', -1);
 
-$urlforwikidoc = img_picto('', 'url', 'class="pictofixedwidth"').'<a target="_blank" href="https://wiki.dolibarr.org/index.php?title=Authentication,_SSO_and_SSL#Mode_openid_connect">';
+$urlforwikidoc = img_picto('', 'url', 'class="pictofixedwidth"') . '<a target="_blank" href="https://wiki.dolibarr.org/index.php?title=Authentication,_SSO_and_SSL#Mode_openid_connect">';
 $urlforwikidoc .= $langs->trans("SeeHere");
 $urlforwikidoc .= '</a>';
 /*
@@ -156,9 +156,9 @@ if (!empty($conf->use_javascript_ajax)) {
 	print ajax_constantonoff('MAIN_AUTHENTICATION_OIDC_ON', array(), null, 0, 0, 1);
 } else {
 	if (!getDolGlobalString('MAIN_AUTHENTICATION_OIDC_ON')) {
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_MAIN_AUTHENTICATION_OIDC_ON&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+		print '<a href="' . $_SERVER['PHP_SELF'] . '?action=set_MAIN_AUTHENTICATION_OIDC_ON&token=' . newToken() . '">' . img_picto($langs->trans("Disabled"), 'off') . '</a>';
 	} else {
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MAIN_AUTHENTICATION_OIDC_ON&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+		print '<a href="' . $_SERVER['PHP_SELF'] . '?action=del_MAIN_AUTHENTICATION_OIDC_ON&token=' . newToken() . '">' . img_picto($langs->trans("Enabled"), 'on') . '</a>';
 	}
 }
 
@@ -168,111 +168,129 @@ print '<br><br>';
 if (getDolGlobalString('MAIN_AUTHENTICATION_OIDC_ON')) {
 	if (!preg_match('/openid_connect/', $dolibarr_main_authentication)) {
 		$langs->load("errors");
-		print info_admin($langs->trans("ErrorOpenIDSetupConfNotComplete").':  '.$urlforwikidoc, 0, 0, 1, 'warning');
+		print info_admin($langs->trans("ErrorOpenIDSetupConfNotComplete") . ':  ' . $urlforwikidoc, 0, 0, 1, 'warning');
 	} else {
-		print info_admin('In conf.php file: dolibarr_main_authentication is '.$dolibarr_main_authentication);
+		print info_admin('In conf.php file: dolibarr_main_authentication is ' . $dolibarr_main_authentication);
 	}
 
 	print '<br>';
 
-	print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="tagtable noborder liste nobottomiftotal">';
+	print '<tr class="liste_titre">';
+	print '<th class="liste_titre" colspan="3">' . $langs->trans("Parameters") . '</th>' . "\n";
+	print "</tr>\n";
+
+	print '<tr class="oddeven">' . "\n";
+	print '<td>' . $langs->trans("MainAuthenticationOidcAutofillWithWellknowUrl") . '</td>' . "\n";
+	print '<td align="right">' . "\n";
+	print '<input name="oidc_wellknow_url" id="oidc_wellknow_url" class="minwidth400 centpercent" value="">';
+	print '</td><td>' . "\n";
+	print '<input type="button" class="button smallpaddingimp reposition" id="oidc_wellknow_populate" value="'.$langs->trans("MainAuthenticationOidcAutofillButton").'"';
+	print '</td></tr>' . "\n";
+	print '</table>' . "\n";
+	print '</div>';
+
+	print '<br>';
+
+	print '<form method="post" action="' . dolBuildUrl($_SERVER["PHP_SELF"]) . '">';
+	print '<input type="hidden" name="token" value="' . newToken() . '">';
 	print '<input type="hidden" name="action" value="set">';
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="tagtable noborder liste nobottomiftotal">';
 	print '<tr class="liste_titre">';
-	print '<th class="liste_titre">'.$langs->trans("Parameters").'</th>'."\n";
-	print '<th class="liste_titre"></th>'."\n";
-	print '<th class="liste_titre"></th>'."\n";
+	print '<th class="liste_titre">' . $langs->trans("Parameters") . '</th>' . "\n";
+	print '<th class="liste_titre"></th>' . "\n";
+	print '<th class="liste_titre"></th>' . "\n";
 	print "</tr>\n";
 
 	// MAIN_AUTHENTICATION_OIDC_LOGIN_CLAIM
 	print '<tr class="oddeven">' . "\n";
-	print '<td>'.$langs->trans("MainAuthenticationOidcLoginClaimName").'</td>'."\n";
-	print '<td>'.$langs->trans("MainAuthenticationOidcLoginClaimDesc").'</td>'."\n";
+	print '<td>' . $langs->trans("MainAuthenticationOidcLoginClaimName") . '</td>' . "\n";
+	print '<td>' . $langs->trans("MainAuthenticationOidcLoginClaimDesc") . '</td>' . "\n";
 	print '<td align="right">' . "\n";
-	print '<input name="MAIN_AUTHENTICATION_OIDC_LOGIN_CLAIM" id="MAIN_AUTHENTICATION_OIDC_LOGIN_CLAIM" class="minwidth400" value="'.dol_escape_htmltag((GETPOSTISSET('MAIN_AUTHENTICATION_OIDC_LOGIN_CLAIM') ? GETPOST('MAIN_AUTHENTICATION_OIDC_LOGIN_CLAIM', 'nohtml') : (getDolGlobalString('MAIN_AUTHENTICATION_OIDC_LOGIN_CLAIM') ? getDolGlobalString("MAIN_AUTHENTICATION_OIDC_LOGIN_CLAIM") : ''))).'"></td></tr>';
+	print '<input name="MAIN_AUTHENTICATION_OIDC_LOGIN_CLAIM" id="MAIN_AUTHENTICATION_OIDC_LOGIN_CLAIM" class="minwidth400 centpercent" value="' . dol_escape_htmltag((GETPOSTISSET('MAIN_AUTHENTICATION_OIDC_LOGIN_CLAIM') ? GETPOST('MAIN_AUTHENTICATION_OIDC_LOGIN_CLAIM', 'nohtml') : (getDolGlobalString('MAIN_AUTHENTICATION_OIDC_LOGIN_CLAIM') ? getDolGlobalString("MAIN_AUTHENTICATION_OIDC_LOGIN_CLAIM") : ''))) . '">';
 	print '</td></tr>' . "\n";
 
 	// MAIN_AUTHENTICATION_OIDC_CLIENT_ID
 	print '<tr class="oddeven">' . "\n";
-	print '<td>'.$langs->trans("MainAuthenticationOidcClientIdName").'</td>'."\n";
-	print '<td>'.$langs->trans("MainAuthenticationOidcClientIdDesc").'</td>'."\n";
+	print '<td>' . $langs->trans("MainAuthenticationOidcClientIdName") . '</td>' . "\n";
+	print '<td>' . $langs->trans("MainAuthenticationOidcClientIdDesc") . '</td>' . "\n";
 	print '<td align="right">' . "\n";
-	print '<input name="MAIN_AUTHENTICATION_OIDC_CLIENT_ID" id="MAIN_AUTHENTICATION_OIDC_CLIENT_ID" class="minwidth400" value="'.dol_escape_htmltag((GETPOSTISSET('MAIN_AUTHENTICATION_OIDC_CLIENT_ID') ? GETPOST('MAIN_AUTHENTICATION_OIDC_CLIENT_ID', 'nohtml') : (getDolGlobalString('MAIN_AUTHENTICATION_OIDC_CLIENT_ID') ? getDolGlobalString("MAIN_AUTHENTICATION_OIDC_CLIENT_ID") : ''))).'"></td></tr>';
+	print '<input name="MAIN_AUTHENTICATION_OIDC_CLIENT_ID" id="MAIN_AUTHENTICATION_OIDC_CLIENT_ID" class="minwidth400 centpercent" value="' . dol_escape_htmltag((GETPOSTISSET('MAIN_AUTHENTICATION_OIDC_CLIENT_ID') ? GETPOST('MAIN_AUTHENTICATION_OIDC_CLIENT_ID', 'nohtml') : (getDolGlobalString('MAIN_AUTHENTICATION_OIDC_CLIENT_ID') ? getDolGlobalString("MAIN_AUTHENTICATION_OIDC_CLIENT_ID") : ''))) . '">';
 	print '</td></tr>' . "\n";
 
 	// MAIN_AUTHENTICATION_OIDC_CLIENT_SECRET
 	print '<tr class="oddeven">' . "\n";
-	print '<td>'.$langs->trans("MainAuthenticationOidcClientSecretName").'</td>'."\n";
-	print '<td>'.$langs->trans("MainAuthenticationOidcClientSecretDesc").'</td>'."\n";
+	print '<td>' . $langs->trans("MainAuthenticationOidcClientSecretName") . '</td>' . "\n";
+	print '<td>' . $langs->trans("MainAuthenticationOidcClientSecretDesc") . '</td>' . "\n";
 	print '<td align="right">' . "\n";
-	print '<input type="password" name="MAIN_AUTHENTICATION_OIDC_CLIENT_SECRET" id="MAIN_AUTHENTICATION_OIDC_CLIENT_SECRET" class="minwidth400" value="'.dol_escape_htmltag((GETPOSTISSET('MAIN_AUTHENTICATION_OIDC_CLIENT_SECRET') ? GETPOST('MAIN_AUTHENTICATION_OIDC_CLIENT_SECRET', 'nohtml') : (getDolGlobalString('MAIN_AUTHENTICATION_OIDC_CLIENT_SECRET') ? getDolGlobalString("MAIN_AUTHENTICATION_OIDC_CLIENT_SECRET") : ''))).'"></td></tr>';
+	print '<input type="password" name="MAIN_AUTHENTICATION_OIDC_CLIENT_SECRET" id="MAIN_AUTHENTICATION_OIDC_CLIENT_SECRET" class="minwidth400 centpercent" value="' . dol_escape_htmltag((GETPOSTISSET('MAIN_AUTHENTICATION_OIDC_CLIENT_SECRET') ? GETPOST('MAIN_AUTHENTICATION_OIDC_CLIENT_SECRET', 'nohtml') : (getDolGlobalString('MAIN_AUTHENTICATION_OIDC_CLIENT_SECRET') ? getDolGlobalString("MAIN_AUTHENTICATION_OIDC_CLIENT_SECRET") : ''))) . '">';
 	print '</td></tr>' . "\n";
 
 	// MAIN_AUTHENTICATION_OIDC_SCOPES
 	print '<tr class="oddeven">' . "\n";
-	print '<td>'.$langs->trans("MainAuthenticationOidcScopesName").'</td>'."\n";
-	print '<td>'.$langs->trans("MainAuthenticationOidcScopesDesc").'</td>'."\n";
+	print '<td>' . $langs->trans("MainAuthenticationOidcScopesName") . '</td>' . "\n";
+	print '<td>' . $langs->trans("MainAuthenticationOidcScopesDesc") . '</td>' . "\n";
 	print '<td align="right">' . "\n";
-	print '<input name="MAIN_AUTHENTICATION_OIDC_SCOPES" id="MAIN_AUTHENTICATION_OIDC_SCOPES" class="minwidth400" value="'.dol_escape_htmltag((GETPOSTISSET('MAIN_AUTHENTICATION_OIDC_SCOPES') ? GETPOST('MAIN_AUTHENTICATION_OIDC_SCOPES', 'nohtml') : (getDolGlobalString('MAIN_AUTHENTICATION_OIDC_SCOPES') ? getDolGlobalString("MAIN_AUTHENTICATION_OIDC_SCOPES") : ''))).'"></td></tr>';
+	print '<input name="MAIN_AUTHENTICATION_OIDC_SCOPES" id="MAIN_AUTHENTICATION_OIDC_SCOPES" class="minwidth400 centpercent" value="' . dol_escape_htmltag((GETPOSTISSET('MAIN_AUTHENTICATION_OIDC_SCOPES') ? GETPOST('MAIN_AUTHENTICATION_OIDC_SCOPES', 'nohtml') : (getDolGlobalString('MAIN_AUTHENTICATION_OIDC_SCOPES') ? getDolGlobalString("MAIN_AUTHENTICATION_OIDC_SCOPES") : ''))) . '">';
 	print '</td></tr>' . "\n";
 
 	// MAIN_AUTHENTICATION_OIDC_AUTHORIZE_URL
 	print '<tr class="oddeven">' . "\n";
-	print '<td>'.$langs->trans("MainAuthenticationOidcAuthorizeUrlName").'</td>'."\n";
-	print '<td>'.$langs->trans("MainAuthenticationOidcAuthorizeUrlDesc").'</td>'."\n";
+	print '<td>' . $langs->trans("MainAuthenticationOidcAuthorizeUrlName") . '</td>' . "\n";
+	print '<td>' . $langs->trans("MainAuthenticationOidcAuthorizeUrlDesc") . '</td>' . "\n";
 	print '<td align="right">' . "\n";
-	print '<input name="MAIN_AUTHENTICATION_OIDC_AUTHORIZE_URL" id="MAIN_AUTHENTICATION_OIDC_AUTHORIZE_URL" class="minwidth400" value="'.dol_escape_htmltag((GETPOSTISSET('MAIN_AUTHENTICATION_OIDC_AUTHORIZE_URL') ? GETPOST('MAIN_AUTHENTICATION_OIDC_AUTHORIZE_URL', 'nohtml') : (getDolGlobalString('MAIN_AUTHENTICATION_OIDC_AUTHORIZE_URL') ? getDolGlobalString("MAIN_AUTHENTICATION_OIDC_AUTHORIZE_URL") : ''))).'"></td></tr>';
+	print '<input name="MAIN_AUTHENTICATION_OIDC_AUTHORIZE_URL" id="MAIN_AUTHENTICATION_OIDC_AUTHORIZE_URL" class="minwidth400 centpercent" value="' . dol_escape_htmltag((GETPOSTISSET('MAIN_AUTHENTICATION_OIDC_AUTHORIZE_URL') ? GETPOST('MAIN_AUTHENTICATION_OIDC_AUTHORIZE_URL', 'nohtml') : (getDolGlobalString('MAIN_AUTHENTICATION_OIDC_AUTHORIZE_URL') ? getDolGlobalString("MAIN_AUTHENTICATION_OIDC_AUTHORIZE_URL") : ''))) . '">';
 	print '</td></tr>' . "\n";
 
 	// MAIN_AUTHENTICATION_OIDC_TOKEN_URL
 	print '<tr class="oddeven">' . "\n";
-	print '<td>'.$langs->trans("MainAuthenticationOidcTokenUrlName").'</td>'."\n";
-	print '<td>'.$langs->trans("MainAuthenticationOidcTokenUrlDesc").'</td>'."\n";
+	print '<td>' . $langs->trans("MainAuthenticationOidcTokenUrlName") . '</td>' . "\n";
+	print '<td>' . $langs->trans("MainAuthenticationOidcTokenUrlDesc") . '</td>' . "\n";
 	print '<td align="right">' . "\n";
-	print '<input name="MAIN_AUTHENTICATION_OIDC_TOKEN_URL" id="MAIN_AUTHENTICATION_OIDC_TOKEN_URL" class="minwidth400" value="'.dol_escape_htmltag((GETPOSTISSET('MAIN_AUTHENTICATION_OIDC_TOKEN_URL') ? GETPOST('MAIN_AUTHENTICATION_OIDC_TOKEN_URL', 'nohtml') : (getDolGlobalString('MAIN_AUTHENTICATION_OIDC_TOKEN_URL') ? getDolGlobalString("MAIN_AUTHENTICATION_OIDC_TOKEN_URL") : ''))).'"></td></tr>';
+	print '<input name="MAIN_AUTHENTICATION_OIDC_TOKEN_URL" id="MAIN_AUTHENTICATION_OIDC_TOKEN_URL" class="minwidth400 centpercent" value="' . dol_escape_htmltag((GETPOSTISSET('MAIN_AUTHENTICATION_OIDC_TOKEN_URL') ? GETPOST('MAIN_AUTHENTICATION_OIDC_TOKEN_URL', 'nohtml') : (getDolGlobalString('MAIN_AUTHENTICATION_OIDC_TOKEN_URL') ? getDolGlobalString("MAIN_AUTHENTICATION_OIDC_TOKEN_URL") : ''))) . '">';
 	print '</td></tr>' . "\n";
 
 	// MAIN_AUTHENTICATION_OIDC_USERINFO_URL
 	print '<tr class="oddeven">' . "\n";
-	print '<td>'.$langs->trans("MainAuthenticationOidcUserinfoUrlName").'</td>'."\n";
-	print '<td>'.$langs->trans("MainAuthenticationOidcUserinfoUrlDesc").'</td>'."\n";
+	print '<td>' . $langs->trans("MainAuthenticationOidcUserinfoUrlName") . '</td>' . "\n";
+	print '<td>' . $langs->trans("MainAuthenticationOidcUserinfoUrlDesc") . '</td>' . "\n";
 	print '<td align="right">' . "\n";
-	print '<input name="MAIN_AUTHENTICATION_OIDC_USERINFO_URL" id="MAIN_AUTHENTICATION_OIDC_USERINFO_URL" class="minwidth400" value="'.dol_escape_htmltag((GETPOSTISSET('MAIN_AUTHENTICATION_OIDC_USERINFO_URL') ? GETPOST('MAIN_AUTHENTICATION_OIDC_USERINFO_URL', 'nohtml') : (getDolGlobalString('MAIN_AUTHENTICATION_OIDC_USERINFO_URL') ? getDolGlobalString("MAIN_AUTHENTICATION_OIDC_USERINFO_URL") : ''))).'"></td></tr>';
+	print '<input name="MAIN_AUTHENTICATION_OIDC_USERINFO_URL" id="MAIN_AUTHENTICATION_OIDC_USERINFO_URL" class="minwidth400 centpercent" value="' . dol_escape_htmltag((GETPOSTISSET('MAIN_AUTHENTICATION_OIDC_USERINFO_URL') ? GETPOST('MAIN_AUTHENTICATION_OIDC_USERINFO_URL', 'nohtml') : (getDolGlobalString('MAIN_AUTHENTICATION_OIDC_USERINFO_URL') ? getDolGlobalString("MAIN_AUTHENTICATION_OIDC_USERINFO_URL") : ''))) . '">';
 	print '</td></tr>' . "\n";
 
 	// MAIN_AUTHENTICATION_OIDC_LOGOUT_URL
 	print '<tr class="oddeven">' . "\n";
-	print '<td>'.$langs->trans("MainAuthenticationOidcLogoutUrlName").'</td>'."\n";
-	print '<td>'.$langs->trans("MainAuthenticationOidcLogoutUrlDesc").'</td>'."\n";
+	print '<td>' . $langs->trans("MainAuthenticationOidcLogoutUrlName") . '</td>' . "\n";
+	print '<td>' . $langs->trans("MainAuthenticationOidcLogoutUrlDesc") . '</td>' . "\n";
 	print '<td align="right">' . "\n";
-	print '<input name="MAIN_AUTHENTICATION_OIDC_LOGOUT_URL" id="MAIN_AUTHENTICATION_OIDC_LOGOUT_URL" class="minwidth400" value="'.dol_escape_htmltag((GETPOSTISSET('MAIN_AUTHENTICATION_OIDC_LOGOUT_URL') ? GETPOST('MAIN_AUTHENTICATION_OIDC_LOGOUT_URL', 'nohtml') : (getDolGlobalString('MAIN_AUTHENTICATION_OIDC_LOGOUT_URL') ? getDolGlobalString("MAIN_AUTHENTICATION_OIDC_LOGOUT_URL") : ''))).'"></td></tr>';
+	print '<input name="MAIN_AUTHENTICATION_OIDC_LOGOUT_URL" id="MAIN_AUTHENTICATION_OIDC_LOGOUT_URL" class="minwidth400 centpercent" value="' . dol_escape_htmltag((GETPOSTISSET('MAIN_AUTHENTICATION_OIDC_LOGOUT_URL') ? GETPOST('MAIN_AUTHENTICATION_OIDC_LOGOUT_URL', 'nohtml') : (getDolGlobalString('MAIN_AUTHENTICATION_OIDC_LOGOUT_URL') ? getDolGlobalString("MAIN_AUTHENTICATION_OIDC_LOGOUT_URL") : ''))) . '">';
 	print '</td></tr>' . "\n";
 
 	// REDIRECT_URL
 	print '<tr class="oddeven">' . "\n";
-	print '<td>'.$langs->trans("MainAuthenticationOidcRedirectUrlName").'</td>'."\n";
-	print '<td>'.$langs->trans("MainAuthenticationOidcRedirectUrlDesc").'</td>'."\n";
+	print '<td>' . $langs->trans("MainAuthenticationOidcRedirectUrlName") . '</td>' . "\n";
+	print '<td>' . $langs->trans("MainAuthenticationOidcRedirectUrlDesc") . '</td>' . "\n";
 	print '<td align="right">' . "\n";
-	print '<input class="minwidth400" value="'.dol_escape_htmltag(openid_connect_get_redirect_url()).'" disabled></td></tr>';
+	print '<input class="minwidth400 centpercent" value="' . dol_escape_htmltag(openid_connect_get_redirect_url()) . '" disabled>';
 	print '</td></tr>' . "\n";
 
 	// LOGOUT_URL
 	print '<tr class="oddeven">' . "\n";
-	print '<td>'.$langs->trans("MainAuthenticationOidcLogoutRedirectUrlName").'</td>'."\n";
-	print '<td>'.$langs->trans("MainAuthenticationOidcLogoutRedirectUrlDesc").'</td>'."\n";
+	print '<td>' . $langs->trans("MainAuthenticationOidcLogoutRedirectUrlName") . '</td>' . "\n";
+	print '<td>' . $langs->trans("MainAuthenticationOidcLogoutRedirectUrlDesc") . '</td>' . "\n";
 	print '<td align="right">' . "\n";
-	print '<input class="minwidth400" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_LOGOUT_GOTO_URL', DOL_MAIN_URL_ROOT . "/index.php")).'" disabled></td></tr>';
+	print '<input class="minwidth400 centpercent" value="' . dol_escape_htmltag(getDolGlobalString('MAIN_LOGOUT_GOTO_URL', DOL_MAIN_URL_ROOT . "/index.php")) . '" disabled>';
 	print '</td></tr>' . "\n";
 
-	print '</table>'."\n";
+	print '</table>' . "\n";
 	print '</div>';
 
 	print '<br>';
 	print '<div align="center">';
-	print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+	print '<input type="submit" class="button" value="' . $langs->trans("Save") . '">';
 	print '</div>';
 
 	print '</form>';
@@ -282,3 +300,41 @@ print '<br>';
 
 llxFooter();
 $db->close();
+?>
+<script type="text/javascript">
+	$(document).ready(function() {
+		$('#oidc_wellknow_populate').on('click', function() {
+			const url = $('#oidc_wellknow_url').val().trim();
+			if (!url) return;
+
+			// Ensure URL ends with /.well-known/openid-configuration
+			let wellKnownUrl = url;
+			if (!wellKnownUrl.endsWith('/.well-known/openid-configuration')) {
+				if (!wellKnownUrl.endsWith('/')) wellKnownUrl += '/';
+				wellKnownUrl += '.well-known/openid-configuration';
+			}
+
+			$.getJSON(wellKnownUrl)
+				.done(function(data) {
+					if (data.authorization_endpoint) {
+						$('#MAIN_AUTHENTICATION_OIDC_AUTHORIZE_URL').val(data.authorization_endpoint);
+					}
+					if (data.token_endpoint) {
+						$('#MAIN_AUTHENTICATION_OIDC_TOKEN_URL').val(data.token_endpoint);
+					}
+					if (data.userinfo_endpoint) {
+						$('#MAIN_AUTHENTICATION_OIDC_USERINFO_URL').val(data.userinfo_endpoint);
+					}
+					if (data.end_session_endpoint) {
+						$('#MAIN_AUTHENTICATION_OIDC_LOGOUT_URL').val(data.end_session_endpoint);
+					}
+					if (data.scopes_supported) {
+						$('#MAIN_AUTHENTICATION_OIDC_SCOPES').val(data.scopes_supported.join(' '));
+					}
+				})
+				.fail(function() {
+					alert('Failed to fetch OIDC well-known configuration from: ' + wellKnownUrl);
+				});
+		});
+	});
+</script>

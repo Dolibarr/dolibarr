@@ -6,7 +6,7 @@
  * Copyright (C) 2010-2014 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2017      Ferran Marcet         <fmarcet@2byte.es>
- * Copyright (C) 2018-2025  Frédéric France       <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France       <frederic.france@free.fr>
  * Copyright (C) 2023	   William Mead		     <william.mead@manchenumerique.fr>
  * Copyright (C) 2024-2025	MDW					 <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	   Nick Fragoulis

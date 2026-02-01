@@ -8,13 +8,13 @@
  * Copyright (C) 2012-2016 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2014      Ion Agorria          <ion@agorria.com>
- * Copyright (C) 2018-2025	Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2022      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2022-2024 Charlene Benke       <charlene@patas-monkey.com>
+ * Copyright (C) 2022-2026 Charlene Benke       <charlene@patas-monkey.com>
  * Copyright (C) 2023 	   Joachim Kueter       <git-jk@bloxera.com>
- * Copyright (C) 2024-2025 MDW						      <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025 MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024      Nick Fragoulis
- * Copyright (C) 2025		   Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2025	   Alexandre Spangaro	<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1604,14 +1604,18 @@ if (empty($reshook)) {
 							$num = count($lines);
 
 							for ($i = 0; $i < $num; $i++) {
-								if ((empty($lines[$i]->subprice) || $lines[$i]->qty <= 0 || !in_array($lines[$i]->id, $selectedLines)) && $lines[$i]->product_type != 9) {
+								if (
+									empty($lines[$i]->subprice)
+									|| $lines[$i]->qty < 0
+									|| !in_array($lines[$i]->id, $selectedLines)
+									|| $lines[$i]->special_code == SUBTOTALS_SPECIAL_CODE
+								) {
 									continue;
 								}
 
 								$label = (!empty($lines[$i]->label) ? $lines[$i]->label : '');
 								$desc = (!empty($lines[$i]->desc) ? $lines[$i]->desc : '');
 								$product_type = (!empty($lines[$i]->product_type) ? $lines[$i]->product_type : 0);
-
 								// Reset fk_parent_line for no child products and special product
 								if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9) {
 									$fk_parent_line = 0;
@@ -2063,9 +2067,10 @@ if ($action == 'create') {
 
 			$langs->load('projects');
 			print '<tr><td>'.$langs->trans('Project').'</td><td>';
+
 			if ($socid > 0) { // external user
 				$projSocFilter = $socid;
-			} elseif ((int) $societe->id == 0 || getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS')) {
+			} elseif ((int) $socid == 0 || getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS')) {
 				$projSocFilter = -1;
 			} else {
 				$projSocFilter = $societe->id;
@@ -2209,7 +2214,7 @@ if ($action == 'create') {
 
 	$formconfirm = '';
 
-	// Confirmation de la suppression de la commande
+	// Confirmation of deletion of order
 	if ($action == 'delete') {
 		$arrayAjouts = array();
 		$heightModal = 0;
@@ -2252,11 +2257,11 @@ if ($action == 'create') {
 		$formquestion = array(
 			array('type' => 'other', 'name' => 'socid', 'label' => $langs->trans("SelectThirdParty"), 'value' => $form->select_company(GETPOSTINT('socid'), 'socid', $filter))
 		);
-		// Paiement incomplet. On demande si motif = escompte ou autre
+		// Payment incomplete. Requesting reason: discount or other?
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneOrder', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
 
-	// Confirmation de la validation
+	// Confirm validation
 	if ($action == 'valid') {
 		$object->date_commande = dol_now();
 
@@ -3008,8 +3013,7 @@ if ($action == 'create') {
 				}
 
 				// Create bill
-				//if (isModEnabled('facture'))
-				//{
+				//if (isModEnabled('facture')) {
 				if (isModEnabled("supplier_invoice") && ($object->status >= 2 && $object->status != 7 && $object->billed != 1)) {  // statut 2 means approved, 7 means canceled
 					if ($user->hasRight('fournisseur', 'facture', 'creer') || $user->hasRight("supplier_invoice", "creer")) {
 						print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("SupplierOrderCreateBill").'</a>';
@@ -3241,18 +3245,18 @@ if ($action == 'create') {
 				$ws_thirdparty = '';
 				$error_occurred = false;
 
-				//Create SOAP client and connect it to user
+				// Create SOAP client and connect it to user
 				$soapclient_user = new nusoap_client($ws_url."/webservices/server_user.php");
 				$soapclient_user->soap_defencoding = 'UTF-8';
 				$soapclient_user->decodeUTF8(false);
 
-				//Get the thirdparty associated to user
+				// Get the thirdparty associated to user
 				$ws_parameters = array('authentication' => $ws_authentication, 'id' => '', 'ref' => $ws_user);
 				$result_user = $soapclient_user->call("getUser", $ws_parameters, $ws_ns, '');
 				$user_status_code = $result_user["result"]["result_code"];
 
 				if ($user_status_code == "OK") {
-					//Fill the variables
+					// Fill the variables
 					$ws_entity = $result_user["user"]["entity"];
 					$ws_authentication['entity'] = $ws_entity;
 					$ws_thirdparty = $result_user["user"]["fk_thirdparty"];
@@ -3305,7 +3309,7 @@ if ($action == 'create') {
 							$product_fourn_list = $product_fourn->list_product_fournisseur_price($line->fk_product);
 							if (count($product_fourn_list) > 0) {
 								foreach ($product_fourn_list as $product_fourn_line) {
-									//Only accept the line where the supplier is the same at this order and has the same ref
+									// Only accept the line where the supplier is the same at this order and has the same ref
 									if ($product_fourn_line->fourn_id == $object->socid && $product_fourn_line->fourn_ref == $ref_supplier) {
 										$local_price = price($product_fourn_line->fourn_price);
 									}
@@ -3333,7 +3337,7 @@ if ($action == 'create') {
 					$error_occurred = true;
 				}
 
-				//Form
+				// Form
 				print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="webservice">';
