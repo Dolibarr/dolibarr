@@ -299,7 +299,7 @@ function societe_prepare_head(Societe $object)
 		if ($user->hasRight('partnership', 'read')) {
 			$langs->load("partnership");
 			$nbPartnership = is_array($object->partnerships) ? count($object->partnerships) : 0;
-			$head[$h][0] = dolBuildurl(DOL_URL_ROOT . '/partnership/partnership_list.php', ['socid' => $object->id]);
+			$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/partnership/partnership_list.php', ['socid' => $object->id]);
 			$head[$h][1] = $langs->trans("Partnerships");
 			$nbNote = 0;
 			$sql = "SELECT COUNT(n.rowid) as nb";
@@ -349,7 +349,7 @@ function societe_prepare_head(Societe $object)
 			dol_setcache($cachekey, $nbTicket, 120);		// If setting cache fails, this is not a problem, so we do not test result.
 		}
 
-		$head[$h][0] = dolBuildurl(DOL_URL_ROOT . '/ticket/list.php', ['socid' => $object->id]);
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/ticket/list.php', ['socid' => $object->id]);
 		$head[$h][1] = $langs->trans("Tickets");
 		if ($nbTicket > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbTicket . '</span>';
@@ -395,7 +395,7 @@ function societe_prepare_head(Societe $object)
 				dol_setcache($cachekey, $nbNotif, 120);		// If setting cache fails, this is not a problem, so we do not test result.
 			}
 
-			$head[$h][0] = dolBuildurl(DOL_URL_ROOT . '/societe/notify/card.php', ['socid' => $object->id]);
+			$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/societe/notify/card.php', ['socid' => $object->id]);
 			$head[$h][1] = $langs->trans("Notifications");
 			if ($nbNotif > 0) {
 				$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbNotif . '</span>';
@@ -556,7 +556,7 @@ function societe_admin_prepare_head()
 	$head[$h][2] = 'attributes';
 	$h++;
 
-	$head[$h][0] = dolBuildurl(DOL_URL_ROOT . '/societe/admin/contact_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/societe/admin/contact_extrafields.php');
 	$head[$h][1] = $langs->trans("ExtraFieldsContacts");
 	$nbExtrafields = $extrafields->attributes['socpeople']['count'];
 	if ($nbExtrafields > 0) {
