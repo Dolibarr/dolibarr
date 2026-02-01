@@ -633,169 +633,7 @@ class pdf_octopus extends ModelePDFFactures
 				$this->_pagehead($pdf, $object, 0, $outputlangs, $outputlangsbis);
 				$pdf->setTopMargin($this->tab_top_newpage);
 
-				// Incoterm
-				$height_incoterms = 0;
-				if (isModEnabled('incoterm')) {
-					$desc_incoterms = $object->getIncotermsForPDF();
-					if ($desc_incoterms) {
-						$this->tab_top -= 2;
-
-						$pdf->SetFont('', '', $default_font_size - 1);
-						$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $this->tab_top - 1, dol_htmlentitiesbr($desc_incoterms), 0, 1);
-						$nexY = max($pdf->GetY(), $nexY);
-						$height_incoterms = $nexY - $this->tab_top;
-
-						// Rect takes a length in 3rd parameter
-						$pdf->SetDrawColor(192, 192, 192);
-						$pdf->RoundedRect($this->marge_gauche, $this->tab_top - 1, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_incoterms + 3, $this->corner_radius, '1234', 'D');
-
-						$this->tab_top = $nexY + 6;
-						$height_incoterms += 4;
-					}
-				}
-
-				// Displays notes. Here we are still on code executed only for the first page.
-				$notetoshow = empty($object->note_public) ? '' : $object->note_public;
-				if (getDolGlobalString('MAIN_ADD_SALE_REP_SIGNATURE_IN_NOTE')) {
-					// Get first sale rep
-					if (is_object($object->thirdparty)) {
-						$salereparray = $object->thirdparty->getSalesRepresentatives($user);
-						$salerepobj = new User($this->db);
-						$salerepobj->fetch($salereparray[0]['id']);
-						if (!empty($salerepobj->signature)) {
-							$notetoshow = dol_concatdesc($notetoshow, $salerepobj->signature);
-						}
-					}
-				}
-
-				// Extrafields in note
-				$extranote = $this->getExtrafieldsInHtml($object, $outputlangs);
-				if (!empty($extranote)) {
-					$notetoshow = dol_concatdesc((string) $notetoshow, $extranote);
-				}
-
-				$pagenb = $pdf->getPage();
-				if ($notetoshow) {
-					$this->tab_top -= 2;
-
-					$tab_width = $this->page_largeur - $this->marge_gauche - $this->marge_droite;
-					$pageposbeforenote = $pagenb;
-
-					$substitutionarray = pdf_getSubstitutionArray($outputlangs, null, $object);
-					complete_substitutions_array($substitutionarray, $outputlangs, $object);
-					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
-					$notetoshow = convertBackOfficeMediasLinksToPublicLinks($notetoshow);
-
-					$pdf->startTransaction();
-
-					$pdf->SetFont('', '', $default_font_size - 1);
-					$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $this->tab_top, dol_htmlentitiesbr($notetoshow), 0, 1);
-					// Description
-					$pageposafternote = $pdf->getPage();
-					$posyafter = $pdf->GetY();
-
-					if ($pageposafternote > $pageposbeforenote) {
-						$pdf->rollbackTransaction(true);
-
-						// prepare pages to receive notes
-						while ($pagenb < $pageposafternote) {
-							$pdf->AddPage();
-							$pagenb++;
-							if (!empty($this->tplidx)) {
-								$pdf->useTemplate($this->tplidx);
-							}
-							if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
-								$this->_pagehead($pdf, $object, 0, $outputlangs, $outputlangsbis);
-							}
-							$pdf->setTopMargin($this->tab_top_newpage);
-							// The only function to edit the bottom margin of current page to set it.
-							$pdf->setPageOrientation('', true, $this->heightforfooter + $this->heightforfreetext);
-						}
-
-						// back to start
-						$pdf->setPage($pageposbeforenote);
-						$pdf->setPageOrientation('', true, $this->heightforfooter + $this->heightforfreetext);
-						$pdf->SetFont('', '', $default_font_size - 1);
-						$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $this->tab_top, dol_htmlentitiesbr($notetoshow), 0, 1);
-						$pageposafternote = $pdf->getPage();
-
-						$posyafter = $pdf->GetY();
-
-						if ($posyafter > ($this->page_hauteur - ($this->heightforfooter + $this->heightforfreetext + 20))) {	// There is no space left for total+free text
-							$pdf->AddPage('', '', true);
-							$pagenb++;
-							$pageposafternote++;
-							$pdf->setPage($pageposafternote);
-							$pdf->setTopMargin($this->tab_top_newpage);
-							// The only function to edit the bottom margin of current page to set it.
-							$pdf->setPageOrientation('', true, $this->heightforfooter + $this->heightforfreetext);
-							//$posyafter = $this->tab_top_newpage;
-						}
-
-
-						// apply note frame to previous pages
-						$i = $pageposbeforenote;
-						while ($i < $pageposafternote) {
-							$pdf->setPage($i);
-
-
-							$pdf->SetDrawColor(128, 128, 128);
-							// Draw note frame
-							if ($i > $pageposbeforenote) {
-								$height_note = $this->page_hauteur - ($this->tab_top_newpage + $this->heightforfooter);
-								$pdf->RoundedRect($this->marge_gauche, $this->tab_top_newpage - 1, $tab_width, $height_note + 1, $this->corner_radius, '1234', 'D');
-							} else {
-								$height_note = $this->page_hauteur - ($this->tab_top + $this->heightforfooter);
-								$pdf->RoundedRect($this->marge_gauche, $this->tab_top - 1, $tab_width, $height_note + 1, $this->corner_radius, '1234', 'D');
-							}
-
-							// Add footer
-							$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
-							$this->_pagefoot($pdf, $object, $outputlangs, 1, $this->getHeightForQRInvoice($i, $object, $outputlangs));
-
-							$i++;
-						}
-
-						// apply note frame to last page
-						$pdf->setPage($pageposafternote);
-						if (!empty($this->tplidx)) {
-							$pdf->useTemplate($this->tplidx);
-						}
-						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
-							$this->_pagehead($pdf, $object, 0, $outputlangs, $outputlangsbis);
-						}
-						$height_note = $posyafter - $this->tab_top_newpage;
-						$pdf->RoundedRect($this->marge_gauche, $this->tab_top_newpage - 1, $tab_width, $height_note + 1, $this->corner_radius, '1234', 'D');
-					} else {
-						// No pagebreak
-						$pdf->commitTransaction();
-						$posyafter = $pdf->GetY();
-						$height_note = $posyafter - $this->tab_top;
-						$pdf->RoundedRect($this->marge_gauche, $this->tab_top - 1, $tab_width, $height_note + 1, $this->corner_radius, '1234', 'D');
-
-
-						if ($posyafter > ($this->page_hauteur - ($this->heightforfooter + $this->heightforfreetext + 20))) {
-							// not enough space, need to add page
-							$pdf->AddPage('', '', true);
-							$pagenb++;
-							$pageposafternote++;
-							$pdf->setPage($pageposafternote);
-							if (!empty($this->tplidx)) {
-								$pdf->useTemplate($this->tplidx);
-							}
-							if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
-								$this->_pagehead($pdf, $object, 0, $outputlangs, $outputlangsbis);
-							}
-
-							$posyafter = $this->tab_top_newpage;
-						}
-					}
-
-					$tab_height -= $height_note;
-					$this->tab_top = $posyafter + 6;
-				} else {
-					$height_note = 0;
-				}
+				// Incoterms, sale rep signature, extrafields, and public note are now processed in tableFirstPage method
 
 				// Use new auto column system
 				$this->prepareArrayColumnField($object, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -3053,7 +2891,7 @@ class pdf_octopus extends ModelePDFFactures
 	 */
 	public function tableFirstPage(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
 	{
-		global $conf, $object, $db;
+		global $user, $conf, $object, $db;
 
 		$form = new Form($db);
 
@@ -3094,6 +2932,53 @@ class pdf_octopus extends ModelePDFFactures
 
 		$pdf->SetDrawColor(128, 128, 128);
 		$pdf->SetFont('', '', $default_font_size - 1);
+
+		$height_incoterms = 0;
+		if (isModEnabled('incoterm')) {
+			$desc_incoterms = $object->getIncotermsForPDF();
+			if ($desc_incoterms) {
+				$this->tab_top -= 2;
+				$posybefore = $pdf->GetY();
+				$pdf->SetFont('', '', $default_font_size - 1);
+				$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $this->tab_top - 1, dol_htmlentitiesbr($desc_incoterms), 0, 1);
+
+				// Rect takes a length in 3rd parameter
+				$pdf->SetDrawColor(192, 192, 192);
+				$pdf->RoundedRect($this->marge_gauche, $this->tab_top - 1, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_incoterms + 3, $this->corner_radius, '1234', 'D');
+				$posyafter = $pdf->GetY();
+				$tab_top += $posyafter - $posybefore + 2;
+			}
+		}
+		// Displays notes. Here we are still on code executed only for the first page.
+		$notetoshow = empty($object->note_public) ? '' : $object->note_public;
+		if (getDolGlobalString('MAIN_ADD_SALE_REP_SIGNATURE_IN_NOTE')) {
+			// Get first sale rep
+			if (is_object($object->thirdparty)) {
+				$salereparray = $object->thirdparty->getSalesRepresentatives($user);
+				$salerepobj = new User($this->db);
+				$salerepobj->fetch($salereparray[0]['id']);
+				if (!empty($salerepobj->signature)) $notetoshow = dol_concatdesc($notetoshow, $salerepobj->signature);
+			}
+		}
+
+		// Extrafields in note
+		$extranote = $this->getExtrafieldsInHtml($object, $outputlangs);
+		if (!empty($extranote)) $notetoshow = dol_concatdesc((string) $notetoshow, $extranote);
+
+		if ($notetoshow) {
+			$tab_top -= 2;
+			$posybefore = $pdf->GetY();
+			$substitutionarray = pdf_getSubstitutionArray($outputlangs, null, $object);
+			complete_substitutions_array($substitutionarray, $outputlangs, $object);
+			$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
+			$notetoshow = convertBackOfficeMediasLinksToPublicLinks($notetoshow);
+
+			$pdf->SetFont('', '', $default_font_size - 1);
+			$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top, dol_htmlentitiesbr($notetoshow), 0, 1);
+			// Description
+			$posyafter = $pdf->GetY();
+			$tab_top += $posyafter - $posybefore + 2;
+		}
 
 		// Output Rect
 		// KEEPTHIS => Affiche les bords extérieurs
