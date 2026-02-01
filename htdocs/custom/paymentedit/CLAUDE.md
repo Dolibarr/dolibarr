@@ -5,7 +5,7 @@
 The **PaymentEdit** module enables editing of "Various Payments" (Payment Various) in Dolibarr. The core Dolibarr code has an `update()` method in the `PaymentVarious` class, but no UI to use it (there's a TODO comment on line 765-766 of the core card.php).
 
 **Version**: 1.0.0
-**Module ID**: 510201
+**Module ID**: 510201 (WICHTIG: Bei neuen Modulen immer auf Konflikte prüfen mit `grep -r "numero.*=.*510" htdocs/custom/*/core/modules/*.php`)
 **Author**: Florian Hödl <florian@hoedl.co>
 **Publisher**: Anexum GmbH
 **License**: GPL-3.0+
