@@ -245,7 +245,7 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 	// The constants below are defined by this extension, and will only be available when the extension has either been compiled into PHP or dynamically loaded at runtime.
 	// They may not exists if gd extension isn't installed
 	// IMG_* and IMAGETYPE_* are different
-	// example IMG_WEBP = 32, IMAGETYEPE_WEBP = 18
+	// example IMG_WEBP = 32, IMAGETYPE_WEBP = 18
 	$imgfonction = '';
 	switch ($infoImg[2]) {
 		case 1:  // IMAGETYPE_GIF
