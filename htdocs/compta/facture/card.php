@@ -5090,6 +5090,7 @@ if ($action == 'create') {
 		if ($objectidnext && $statusreplacement == 0) {
 			print '<div class="error">'.$langs->trans("ErrorCantCancelIfReplacementInvoiceNotValidated").'</div>';
 		} else {
+			$close = array();
 			// Code
 			$close[1]['code'] = 'badcustomer';
 			$close[2]['code'] = 'abandon';
