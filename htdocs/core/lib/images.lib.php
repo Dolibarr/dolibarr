@@ -243,18 +243,21 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 
 	// Test function to read source image exists
 	// The constants below are defined by this extension, and will only be available when the extension has either been compiled into PHP or dynamically loaded at runtime.
+	// They may not exists if gd extension isn't installed
+	// IMG_* and IMAGETYPE_* are different
+	// example IMG_WEBP = 32, IMAGETYEPE_WEBP = 18
 	$imgfonction = '';
 	switch ($infoImg[2]) {
-		case 1:	// IMAGETYPE_GIF
+		case 1:  // IMAGETYPE_GIF
 			$imgfonction = 'imagecreatefromgif';
 			break;
-		case 2:	// IMAGETYPE_JPG
+		case 2:  // IMAGETYPE_JPG
 			$imgfonction = 'imagecreatefromjpeg';
 			break;
-		case 3:	// IMAGETYPE_PNG
+		case 3:  // IMAGETYPE_PNG
 			$imgfonction = 'imagecreatefrompng';
 			break;
-		case 4:	// IMAGETYPE_WBMP
+		case 15: // IMAGETYPE_WBMP
 			$imgfonction = 'imagecreatefromwbmp';
 			break;
 		case 18: // IMAGETYPE_WEBP
