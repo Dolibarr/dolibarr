@@ -2526,19 +2526,19 @@ td.showDragHandle {
 
 
 /* ============================================================================== */
-/* Styles de positionnement des zones                                             */
+/* Zone positioning styles                                                        */
 /* ============================================================================== */
 
 #id-container {
 	width: 100%;
 	<?php if (getDolGlobalString('THEME_STICKY_TOPMENU') == 'scrollleftmenu_after_mainpage') { ?>
-		display: table;					/* DOL_XXX Empeche fonctionnement correct du scroll horizontal sur tableau, avec datatable ou CSS */
+		display: table;					/* DOL_XXX Prevents the correct operation of the horizontal scroll on a table, with datatable or CSS */
 	<?php } ?>
 	/* table-layout: fixed; */
 
 }
 #id-right, #id-left {
-	display: table-cell;			/* DOL_XXX Empeche fonctionnement correct du scroll horizontal sur tableau, avec datatable ou CSS */
+	display: table-cell;			/* DOL_XXX Prevents the correct operation of the horizontal scroll on a table, with datatable or CSS */
 	float: none;
 	vertical-align: top;
 }
@@ -2728,7 +2728,7 @@ div.vmenu, td.vmenu {
 	.user-header { height: auto !important; color: var(--colortextbackhmenu); }
 
 	#id-container {
-		display: table;					/* DOL_XXX Empeche fonctionnement correct du scroll horizontal sur tableau, avec datatable ou CSS */
+		display: table;					/* DOL_XXX Prevents the correct operation of the horizontal scroll on a table, with datatable or CSS */
 		table-layout: fixed;
 		width: 100%;
 	}
