@@ -3106,41 +3106,6 @@ if (empty($reshook)) {
 
 		$line = new FactureLigne($db);
 		$line->fetch(GETPOSTINT('lineid'));
-		$percent = $line->get_prev_progress($object->id);
-		$fullprogress = (float) price2num(GETPOST('progress', 'alpha'), 2);
-		if ($fullprogress > 100) $fullprogress = 100;
-
-		if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->isSituationInvoice()) {
-			if (getDolGlobalString('INVOICE_USE_SITUATION') == 2) {
-				if ($fullprogress < $percent) {
-					setEventMessages($langs->trans('CantBeGreatThanLastForACredit'), null, 'errors');
-					$error++;
-					$result = -1;
-				} elseif ($fullprogress < 0) {
-					setEventMessages($langs->trans('CantBeNegative'), null, 'errors');
-					$error++;
-					$result = -1;
-				}
-			} else {
-				// in case of situation credit note
-				if ($fullprogress >= 0) {
-					$mesg = $langs->trans("CantBeNullOrPositive");
-					setEventMessages($mesg, null, 'warnings');
-					$error++;
-					$result = -1;
-				} elseif ($fullprogress < $line->situation_percent) { // TODO : use a modified $line->get_prev_progress($object->id) result
-					$mesg = $langs->trans("CantBeLessThanMinPercent");
-					setEventMessages($mesg, null, 'warnings');
-					$error++;
-					$result = -1;
-				} elseif ($fullprogress < $percent) {
-					$mesg = '<div class="warning">'.$langs->trans("CantBeLessThanMinPercent").'</div>';
-					setEventMessages($mesg, null, 'warnings');
-					$error++;
-					$result = -1;
-				}
-			}
-		}
 
 		$remise_percent = price2num(GETPOST('remise_percent'), '', 2);
 
@@ -3216,25 +3181,52 @@ if (empty($reshook)) {
 		}
 
 		// Invoice situation
-		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
-			$previousprogress = $line->getAllPrevProgress($line->fk_facture);
-			if ($object->type != Facture::TYPE_CREDIT_NOTE) {
-				if ($fullprogress < $previousprogress) {
-					$error++;
-					setEventMessages($langs->trans('CantBeLessThanMinPercent'), null, 'errors');
+		if ($object->isSituationInvoice()) {
+			$fullprogress = (float) price2num(GETPOST('progress', 'alpha'), 2);
+			if ($fullprogress > 100) $fullprogress = 100;
+			if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+				$previousprogress = $line->getAllPrevProgress($object->id);
+				if ($object->type == Facture::TYPE_CREDIT_NOTE) {
+					if ($fullprogress > $previousprogress) {
+						setEventMessages($langs->trans('CantBeGreatThanLastForACredit'), null, 'errors');
+						$error++;
+					} elseif ($fullprogress < 0) {
+						setEventMessages($langs->trans('CantBeNegative'), null, 'errors');
+						$error++;
+					}
+					$addprogress = $previousprogress - $fullprogress; // progress > 0 in situation credit note as subprice < 0
+				} else {
+					if ($fullprogress < $previousprogress) {
+						$error++;
+						setEventMessages($langs->trans('CantBeLessThanMinPercent'), null, 'errors');
+					}
+					$addprogress = $fullprogress - $previousprogress;
 				}
-				$addprogress = $fullprogress - $previousprogress; // progress > 0 in situation credit note as subprice < 0
-			} else {
-				if ($fullprogress > $previousprogress) {
-					$error++;
-					setEventMessages($langs->trans('CantBeGreatThanLastForACredit'), null, 'errors');
+			} else { // legacy situation mode INVOICE_USE_SITUATION=1
+				$previousprogress = $line->getAllPrevProgress($line->fk_facture);
+				if ($object->type == Facture::TYPE_CREDIT_NOTE) {
+					if ($fullprogress >= 0) {
+						$mesg = $langs->trans("CantBeNullOrPositive");
+						setEventMessages($mesg, null, 'errors');
+						$error++;
+					} elseif ($fullprogress < $line->situation_percent) { // TODO : use a modified $line->get_prev_progress($object->id) result
+						$mesg = $langs->trans("CantBeLessThanMinPercent");
+						setEventMessages($mesg, null, 'errors');
+						$error++;
+					} elseif ($fullprogress < $previousprogress) {
+						$mesg = '<div class="warning">'.$langs->trans("CantBeLessThanMinPercent").'</div>';
+						setEventMessages($mesg, null, 'errors');
+						$error++;
+					}
+				} else {
+					if ($fullprogress < $previousprogress) {
+						$error++;
+						setEventMessages($langs->trans('CantBeLessThanMinPercent'), null, 'errors');
+					}
 				}
-				$addprogress = $previousprogress - $fullprogress;
+				$addprogress = $fullprogress;
 			}
-		} else {
-			$addprogress = $fullprogress;
 		}
-
 		// Update line
 		if (!$error) {
 			if (empty($usercancreatemargin)) {
@@ -3338,22 +3330,31 @@ if (empty($reshook)) {
 			$all_progress = GETPOSTINT('all_progress');
 			if ($all_progress > 100) $all_progress = 100;
 			foreach ($object->lines as $line) {
+				$updtline = true;
 				if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
 					$percent = $line->getAllPrevProgress($object->id);
+					if ($object->type == Facture::TYPE_CREDIT_NOTE) {
+						if ((float) $all_progress > (float) $percent) {
+							$mesg = $langs->trans("Line").' '.$line->rang.' : '.$langs->trans("CantBeGreatThanLastForACredit");
+							setEventMessages($mesg, null, 'errors');
+							$updtline = false;
+						}
+					} else {
+						if ((float) $all_progress < (float) $percent) {
+							$mesg = $langs->trans("Line").' '.$line->rang.' : '.$langs->trans("CantBeLessThanMinPercent");
+							setEventMessages($mesg, null, 'errors');
+							$updtline = false;
+						}
+					}
 				} else {
 					$percent = $line->get_prev_progress($object->id);
+					if ((float) $all_progress < (float) $percent) { // TODO add some test on credit note in legacy mode
+						$mesg = $langs->trans("Line").' '.$line->rang.' : '.$langs->trans("CantBeLessThanMinPercent");
+						setEventMessages($mesg, null, 'errors');
+						$updtline = false;
+					}
 				}
-				if ($object->type != Facture::TYPE_CREDIT_NOTE && (float) $all_progress < (float) $percent) {
-					$mesg = $langs->trans("Line").' '.$line->rang.' : '.$langs->trans("CantBeLessThanMinPercent");
-					setEventMessages($mesg, null, 'warnings');
-					$result = -1;
-				} elseif (getDolGlobalInt('INVOICE_USE_SITUATION') == 2 && $object->type == Facture::TYPE_CREDIT_NOTE && (float) $all_progress > (float) $percent) {
-					$mesg = $langs->trans("Line").' '.$line->rang.' : '.$langs->trans("CantBeGreatThanLastForACredit");
-					setEventMessages($mesg, null, 'warnings');
-					$result = -1;
-				} else {
-					$object->update_percent($line, $all_progress, false);
-				}
+				if ($updtline) $object->update_percent($line, $all_progress, false);
 			}
 			$object->update_price(1);
 		}
