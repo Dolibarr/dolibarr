@@ -208,7 +208,7 @@ class FactureRec extends CommonInvoice
 	public $auto_validate; // 0 to create in draft, 1 to create and validate the new invoice, 2 to create, validate and sending the new invoice
 
 	/**
-	 * @var int
+	 * @var ?int
 	 */
 	public $fk_email_template; // Email template for auto sending invoices
 
@@ -1731,7 +1731,7 @@ class FactureRec extends CommonInvoice
 
 					// Mail error
 					if ($loopError > 0) {
-						$this->output .= $langs->trans("InvoiceSentFromTemplateError", $facture->ref, $facturerec->ref, $errormesg)."\n";
+						$this->output .= $langs->trans("InvoiceSentFromTemplateError", $facture->ref, $facturerec->ref, $errormesg ?? '')."\n";
 					}
 
 					// Mail sent
