@@ -1,0 +1,506 @@
+<?php
+/* Copyright (C) 2024       AWeerWolf
+ * Copyright (C) 2026       Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/**
+ * \file    accountancy/class/bookkeepingtemplate.class.php
+ * \ingroup accountancy
+ * \brief   This file is a CRUD class file for BookkeepingTemplate (Create/Read/Update/Delete)
+ */
+
+// Put here all includes required by your class file
+require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT . '/accountancy/class/bookkeepingtemplateline.class.php';
+
+/**
+ * Class for BookkeepingTemplate
+ */
+class BookkeepingTemplate extends CommonObject
+{
+	/**
+	 * @var string ID of module.
+	 */
+	public $module = 'accountancy';
+
+	/**
+	 * @var string ID to identify managed object.
+	 */
+	public $element = 'accounting_transaction_template';
+
+	/**
+	 * @var string Name of table without prefix where object is stored. This is also the key used for extrafields management.
+	 */
+	public $table_element = 'accounting_transaction_template';
+
+	/**
+	 * @var int Does this object support multicompany module ?
+	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
+	 */
+	public $ismultientitymanaged = 1;
+
+	/**
+	 * @var int Does object support extrafields ? 0=No, 1=Yes
+	 */
+	public $isextrafieldmanaged = 1;
+
+	/**
+	 * @var string String with name of icon for bookkeepingtemplate. Must be a 'fa-xxx' fontawesome code (or 'fa-xxx_fa_color_size') or 'bookkeepingtemplate@accountancy' if picto is file 'img/object_bookkeepingtemplate.png'.
+	 */
+	public $picto = 'fa-list';
+
+	/**
+	 * @var array Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 */
+	public $fields = array(
+		"rowid" => array("type" => "integer", "label" => "TechnicalID", "enabled" => "1", 'position' => 1, 'notnull' => 1, "visible" => "0", "noteditable" => "1", "index" => "1", "css" => "left", "comment" => "Id"),
+		"entity" => array("type" => "integer", "label" => "Entity", "enabled" => "1", 'position' => 5, 'notnull' => 1, "visible" => "0", "index" => "1", "default" => 1),
+		"code" => array("type" => "varchar(128)", "label" => "Code", "enabled" => "1", 'position' => 10, 'notnull' => 1, "visible" => "1", "index" => "2", "searchall" => 1, "css" => "minwidth300", "help" => "UniqueCodeForTemplate"),
+		"label" => array("type" => "varchar(255)", "label" => "Label", "enabled" => "1", 'position' => 20, 'notnull' => 0, "visible" => "1", "css" => "minwidth300"),
+		"date_creation" => array("type" => "datetime", "label" => "DateCreation", "enabled" => "1", 'position' => 500, 'notnull' => 1, "visible" => "-2"),
+		"tms" => array("type" => "timestamp", "label" => "DateModification", "enabled" => "1", 'position' => 501, 'notnull' => 0, "visible" => "-2"),
+		"fk_user_creat" => array("type" => "integer:User:user/class/user.class.php", "label" => "UserAuthor", "picto" => "user", "enabled" => "1", 'position' => 510, 'notnull' => 1, "visible" => "-2", "csslist" => "tdoverflowmax150"),
+		"fk_user_modif" => array("type" => "integer:User:user/class/user.class.php", "label" => "UserModif", "picto" => "user", "enabled" => "1", 'position' => 511, 'notnull' => -1, "visible" => "-2", "csslist" => "tdoverflowmax150"),
+		"import_key" => array("type" => "varchar(14)", "label" => "ImportId", "enabled" => "1", 'position' => 1000, 'notnull' => -1, "visible" => "-2"),
+	);
+
+	public $rowid;
+	public $entity;
+	public $code;
+	public $label;
+	public $date_creation;
+	public $tms;
+	public $fk_user_creat;
+	public $fk_user_modif;
+	public $import_key;
+
+	/**
+	 * @var string Name of subtable line
+	 */
+	public $table_element_line = 'accounting_transaction_template_det';
+
+	/**
+	 * @var BookkeepingTemplateLine[] Array of subtable lines
+	 */
+	public $lines = array();
+
+
+	/**
+	 * Constructor
+	 *
+	 * @param DoliDb $db Database handler
+	 */
+	public function __construct(DoliDB $db)
+	{
+		global $conf, $langs;
+
+		$this->db = $db;
+
+		if (!getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid']) && !empty($this->fields['code'])) {
+			$this->fields['rowid']['visible'] = 0;
+		}
+		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
+			$this->fields['entity']['enabled'] = 0;
+		}
+
+		// Unset fields that are disabled
+		foreach ($this->fields as $key => $val) {
+			if (isset($val['enabled']) && empty($val['enabled'])) {
+				unset($this->fields[$key]);
+			}
+		}
+
+		// Translate some data of arrayofkeyval
+		if (is_object($langs)) {
+			foreach ($this->fields as $key => $val) {
+				if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
+					foreach ($val['arrayofkeyval'] as $key2 => $val2) {
+						$this->fields[$key]['arrayofkeyval'][$key2] = $langs->trans($val2);
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Create object into database
+	 *
+	 * @param User $user User that creates
+	 * @param bool $notrigger false=launch triggers after, true=disable triggers
+	 * @return int             Return integer <0 if KO, Id of created object if OK
+	 */
+	public function create(User $user, $notrigger = false)
+	{
+		$resultcreate = $this->createCommon($user, $notrigger);
+		return $resultcreate;
+	}
+
+	/**
+	 * Clone an object into another one
+	 *
+	 * @param User $user User that creates
+	 * @param int $fromid Id of object to clone
+	 * @return mixed         New object created, <0 if KO
+	 */
+	public function createFromClone(User $user, $fromid)
+	{
+		global $langs, $extrafields;
+		$error = 0;
+
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		$object = new self($this->db);
+
+		$this->db->begin();
+
+		// Load source object
+		$result = $object->fetchCommon($fromid);
+		if ($result > 0 && !empty($object->table_element_line)) {
+			$object->fetchLines();
+		}
+
+		// Reset some properties
+		unset($object->id);
+		unset($object->fk_user_creat);
+
+		// Clear fields
+		if (property_exists($object, 'code')) {
+			$object->code = "COPY_" . $object->code;
+		}
+		if (property_exists($object, 'label')) {
+			$object->label = $langs->trans("CopyOf") . " " . $object->label;
+		}
+		if (property_exists($object, 'date_creation')) {
+			$object->date_creation = dol_now();
+		}
+
+		// Create clone
+		$object->context['createfromclone'] = 'createfromclone';
+		$result = $object->createCommon($user);
+
+		if ($result < 0) {
+			$error++;
+			$this->setErrorsFromObject($object);
+		}
+
+		if (!$error) {
+			// Copy Attached Lines
+			$this->getLinesArray();
+			foreach ($this->lines as $linetoclone) {
+				// Clear some info
+				unset($linetoclone->id);
+				unset($linetoclone->fk_user_creat);
+				$linetoclone->fk_transaction_template = $object->id;
+
+				// Save in DB
+				$linetoclone->createCommon($user);
+			}
+		}
+
+		unset($object->context['createfromclone']);
+
+		// End
+		if (!$error) {
+			$this->db->commit();
+			return $object;
+		} else {
+			$this->db->rollback();
+			return -1;
+		}
+	}
+
+	/**
+	 * Load object in memory from the database
+	 *
+	 * @param int $id Id object
+	 * @param string $code Code
+	 * @param int $noextrafields 0=Default to load extrafields, 1=No extrafields
+	 * @param int $nolines 0=Default to load lines, 1=No lines
+	 * @return int                    Return integer <0 if KO, 0 if not found, >0 if OK
+	 */
+	public function fetch($id, $code = null, $noextrafields = 0, $nolines = 0)
+	{
+		$result = $this->fetchCommon($id, $code, '', $noextrafields);
+		if ($result > 0 && !empty($this->table_element_line) && empty($nolines)) {
+			$this->fetchLines($noextrafields);
+		}
+		return $result;
+	}
+
+	/**
+	 * Load object lines in memory from the database
+	 *
+	 * @param int $noextrafields 0=Default to load extrafields, 1=No extrafields
+	 * @return int                 Return integer <0 if KO, 0 if not found, >0 if OK
+	 */
+	public function fetchLines($noextrafields = 0)
+	{
+		$this->lines = array();
+
+		$objectline = new BookkeepingTemplateLine($this->db);
+		$result = $objectline->fetchAll('ASC', 'rowid', 0, 0, array('customsql' => 'fk_transaction_template = ' . ((int)$this->id)));
+
+		if (is_numeric($result)) {
+			$this->setErrorsFromObject($objectline);
+			return $result;
+		} else {
+			$this->lines = $result;
+			return $this->lines;
+		}
+	}
+
+	/**
+	 * Update object into database
+	 *
+	 * @param User $user User that modifies
+	 * @param bool $notrigger false=launch triggers after, true=disable triggers
+	 * @return int             Return integer <0 if KO, >0 if OK
+	 */
+	public function update(User $user, $notrigger = false)
+	{
+		return $this->updateCommon($user, $notrigger);
+	}
+
+	/**
+	 * Delete object in database
+	 *
+	 * @param User $user User that deletes
+	 * @param bool $notrigger false=launch triggers, true=disable triggers
+	 * @return int Return integer <0 if KO, >0 if OK
+	 */
+	public function delete(User $user, $notrigger = false)
+	{
+		global $conf, $langs;
+
+		$error = 0;
+
+		$this->db->begin();
+
+		// Delete the Lines first
+		$obj_line = new BookkeepingTemplateLine($this->db);
+
+		$sql = "DELETE FROM ".$this->db->prefix().$obj_line->table_element;
+		$sql .= " WHERE fk_transaction_template = ".((int) $this->id);
+
+		dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->errors[] = $this->db->lasterror();
+			$error++;
+			dol_syslog(get_class($this)."::delete error deleting lines: ".$this->db->lasterror(), LOG_ERR);
+		}
+
+		if (empty($error)) {
+			// Call trigger
+			if (!$notrigger) {
+				$result = $this->call_trigger(strtoupper(get_class($this)).'_DELETE', $user);
+				if ($result < 0) {
+					$error++;
+				}
+			}
+		}
+
+		if (empty($error)) {
+			// Delete main object
+			$sql = "DELETE FROM ".$this->db->prefix().$this->table_element;
+			$sql .= " WHERE rowid = ".((int) $this->id);
+
+			dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
+
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$this->errors[] = $this->db->lasterror();
+				$this->error = $this->db->lasterror();
+				$error++;
+				dol_syslog(get_class($this)."::delete error deleting main object: ".$this->db->lasterror(), LOG_ERR);
+			}
+		}
+
+		// Commit or rollback
+		if (empty($error)) {
+			$this->db->commit();
+			return 1;
+		} else {
+			$this->error = implode(', ', $this->errors);
+			$this->db->rollback();
+			return -1;
+		}
+	}
+
+	/**
+	 * Delete a line of object in database
+	 *
+	 * @param User $user User that delete
+	 * @param int $idline Id of line to delete
+	 * @param bool $notrigger false=launch triggers after, true=disable triggers
+	 * @return int            >0 if OK, <0 if KO
+	 */
+	public function deleteLine(User $user, $idline, $notrigger = false)
+	{
+		$tmpline = new BookkeepingTemplateLine($this->db);
+		if ($tmpline->fetch($idline) > 0) {
+			return $tmpline->delete($user);
+		}
+
+		return -1;
+	}
+
+	/**
+	 * Create an array of lines
+	 *
+	 * @return array|int  array of lines if OK, <0 if KO
+	 */
+	public function getLinesArray()
+	{
+		$this->lines = array();
+
+		$objectline = new BookkeepingTemplateLine($this->db);
+		$result = $objectline->fetchAll('ASC', 'rowid', 0, 0, array('customsql' => 'fk_transaction_template = ' . ((int)$this->id)));
+
+		if (is_numeric($result)) {
+			$this->setErrorsFromObject($objectline);
+			return $result;
+		} else {
+			$this->lines = $result;
+			return $this->lines;
+		}
+	}
+
+	/**
+	 * Returns the reference to the following non used object depending on the active numbering module.
+	 *
+	 * @return string  Object free reference
+	 */
+	public function getNextNumRef()
+	{
+		global $langs, $conf;
+		$langs->load("accountancy");
+
+		// Standard numbering - Generate a code based on timestamp
+		$code = 'TPL' . dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+
+		return $code;
+	}
+
+	/**
+	 * Return a link to the object card (with optionally the picto)
+	 *
+	 * @param int $withpicto Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+	 * @param string $option On what the link point to ('nolink', ...)
+	 * @param int $notooltip 1=Disable tooltip
+	 * @param string $morecss Add more css on link
+	 * @param int $save_lastsearch_value -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 * @return string                         String with URL
+	 */
+	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
+	{
+		global $conf, $langs, $hookmanager;
+
+		if (!empty($conf->dol_no_mouse_hover)) {
+			$notooltip = 1;
+		}
+
+		$result = '';
+
+		$label = img_picto('', $this->picto) . ' <u>' . $langs->trans("BookkeepingTemplate") . '</u>';
+		if (isset($this->code)) {
+			$label .= '<br><b>' . $langs->trans('Code') . ':</b> ' . $this->code;
+		}
+		if (isset($this->label)) {
+			$label .= '<br><b>' . $langs->trans('Label') . ':</b> ' . $this->label;
+		}
+
+		$url = DOL_URL_ROOT . '/accountancy/admin/template/card.php?id=' . $this->id;
+
+		if ($option != 'nolink') {
+			// Add param to save lastsearch_values or not
+			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+				$add_save_lastsearch_values = 1;
+			}
+			if ($url && $add_save_lastsearch_values) {
+				$url .= '&save_lastsearch_values=1';
+			}
+		}
+
+		$linkclose = '';
+		if (empty($notooltip)) {
+			if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+				$label = $langs->trans("ShowBookkeepingTemplate");
+				$linkclose .= ' alt="' . dol_escape_htmltag($label, 1) . '"';
+			}
+			$linkclose .= ' title="' . dol_escape_htmltag($label, 1) . '"';
+			$linkclose .= ' class="classfortooltip' . ($morecss ? ' ' . $morecss : '') . '"';
+		} else {
+			$linkclose = ($morecss ? ' class="' . $morecss . '"' : '');
+		}
+
+		if ($option == 'nolink') {
+			$linkstart = '<span';
+		} else {
+			$linkstart = '<a href="' . $url . '"';
+		}
+		$linkstart .= $linkclose . '>';
+		if ($option == 'nolink') {
+			$linkend = '</span>';
+		} else {
+			$linkend = '</a>';
+		}
+
+		$result .= $linkstart;
+
+		if ($withpicto) {
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="' . (($withpicto != 2) ? 'paddingright ' : '') . 'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+		}
+
+		if ($withpicto != 2) {
+			$result .= $this->code;
+		}
+
+		$result .= $linkend;
+
+		return $result;
+	}
+
+	/**
+	 * Return label of status
+	 *
+	 * @param int $mode 0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 * @return string     Label of status
+	 */
+	public function getLibStatut($mode = 0)
+	{
+		return $this->LibStatut(1, $mode);
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+
+	/**
+	 * Return label of a given status
+	 *
+	 * @param int $status Status
+	 * @param int $mode 0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 * @return string       Label of status
+	 */
+	public function LibStatut($status, $mode = 0)
+	{
+		// phpcs:enable
+		global $langs;
+
+		return '';
+	}
+}
