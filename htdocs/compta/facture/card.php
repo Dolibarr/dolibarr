@@ -3226,6 +3226,8 @@ if (empty($reshook)) {
 				}
 				$addprogress = $fullprogress;
 			}
+		} else {
+			$addprogress = 100;
 		}
 		// Update line
 		if (!$error) {
