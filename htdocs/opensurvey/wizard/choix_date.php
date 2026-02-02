@@ -2,7 +2,7 @@
 /* Copyright (C) 2013       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,7 +91,7 @@ if (GETPOST('confirmation')) {
 						// If correct, add the data in the session variables
 						if ($debutcreneau[0] < 24 && $fincreneau[0] < 24 && $debutcreneau[1] < 60 && $fincreneau[1] < 60 && ($debutcreneau[0] < $fincreneau[0] || ($debutcreneau[0] == $fincreneau[0] && $debutcreneau[1] < $fincreneau[1]))) {
 							$_SESSION["horaires$i"][$j] = $creneaux[1].'-'.$creneaux[2];
-						} else { //sinon message d'erreur et nettoyage de la case
+						} else { // Else, show error and reset field.
 							$errheure[$i][$j] = true;
 							$erreur = true;
 						}
@@ -104,7 +104,7 @@ if (GETPOST('confirmation')) {
 						// If correct, add the data in the session variables
 						if ($debutcreneau[0] < 24 && $fincreneau[0] < 24 && $debutcreneau[1] < 60 && $fincreneau[1] < 60 && ($debutcreneau[0] < $fincreneau[0] || ($debutcreneau[0] == $fincreneau[0] && $debutcreneau[1] < $fincreneau[1]))) {
 							$_SESSION["horaires$i"][$j] = $creneaux[1].'-'.$creneaux[2];
-						} else { //sinon message d'erreur et nettoyage de la case
+						} else { // Else, show error and reset field.
 							$errheure[$i][$j] = true;
 							$erreur = true;
 						}
@@ -112,7 +112,7 @@ if (GETPOST('confirmation')) {
 						// If the values are ok, add the data in the session variables
 						if ($heures[1] < 24 && $heures[2] < 60) {
 							$_SESSION["horaires$i"][$j] = $heures[0];
-						} else { //sinon message d'erreur et nettoyage de la case
+						} else { // Else, show error and reset field.
 							$errheure[$i][$j] = true;
 							$erreur = true;
 						}
@@ -120,7 +120,7 @@ if (GETPOST('confirmation')) {
 						// If the values are ok, add the data in the session variables
 						if ($heures[1] < 24 && $heures[2] < 60) {
 							$_SESSION["horaires$i"][$j] = $heures[0];
-						} else { //sinon message d'erreur et nettoyage de la case
+						} else { // Else, show error and reset field.
 							$errheure[$i][$j] = true;
 							$erreur = true;
 						}
@@ -128,7 +128,7 @@ if (GETPOST('confirmation')) {
 						// If the values are ok, add the data in the session variables
 						if ($heures[1] < $heures[2] && $heures[1] < 24 && $heures[2] < 24) {
 							$_SESSION["horaires$i"][$j] = $heures[0];
-						} else { //sinon message d'erreur et nettoyage de la case
+						} else { // Else, show error and reset field.
 							$errheure[$i][$j] = true;
 							$erreur = true;
 						}
@@ -136,7 +136,7 @@ if (GETPOST('confirmation')) {
 						// If the values are ok, add the data in the session variables
 						if ($heures[1] < $heures[2] && $heures[1] < 24 && $heures[2] < 24) {
 							$_SESSION["horaires$i"][$j] = $heures[0];
-						} else { //sinon message d'erreur et nettoyage de la case
+						} else { // Else, show error and reset field.
 							$errheure[$i][$j] = true;
 							$erreur = true;
 						}
@@ -182,7 +182,7 @@ if (GETPOST('confirmation')) {
 		}
 	}
 
-	//If just one day and no other time options, error message
+	// If just one day and no other time options, error message
 	$tmphoraires0 = GETPOST('horaires0', 'array');
 	if (count($_SESSION["totalchoixjour"]) == "1" && $tmphoraires0[0] == "" && $tmphoraires0[1] == "" && $tmphoraires0[2] == "" && $tmphoraires0[3] == "" && $tmphoraires0[4] == "") {
 		setEventMessages($langs->trans("MoreChoices"), null, 'errors');
