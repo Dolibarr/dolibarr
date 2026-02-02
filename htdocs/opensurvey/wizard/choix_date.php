@@ -83,7 +83,7 @@ if (GETPOST('confirmation')) {
 					$creneaux = array();
 					$heures = array();
 					if (preg_match("/(\d{1,2}:\d{2})-(\d{1,2}:\d{2})/", $tmphorairesi[$j], $creneaux)) {
-						//on recupere les deux parties du preg_match qu'on redécoupe autour des ":"
+						// We retrieve the two parts from the preg_match and split them again around the ":"
 						$debutcreneau = explode(":", $creneaux[1]);
 						$fincreneau = explode(":", $creneaux[2]);
 
@@ -96,7 +96,7 @@ if (GETPOST('confirmation')) {
 							$erreur = true;
 						}
 					} elseif (preg_match(";^(\d{1,2}h\d{0,2})-(\d{1,2}h\d{0,2})$;i", $tmphorairesi[$j], $creneaux)) { //si c'est un creneau type 8h00-11h00
-						//on recupere les deux parties du preg_match qu'on redécoupe autour des "H"
+						// We retrieve the two parts from the preg_match and split them again around the "H"
 						$debutcreneau = preg_split("/h/i", $creneaux[1]);
 						$fincreneau = preg_split("/h/i", $creneaux[2]);
 
