@@ -1366,56 +1366,33 @@ if (empty($reshook)) {
 							if ($facture_source->isSituationInvoice()) {
 								$source_fk_prev_id = $line->fk_prev_id; // temporary storing situation invoice fk_prev_id
 								$line->fk_prev_id  = $line->id; // The new line of the new credit note we are creating must be linked to the situation invoice line it is created from
-
-								if (!empty($facture_source->tab_previous_situation_invoice)) {
-									// search the last standard invoice in cycle and the possible credit note between this last and facture_source
-									// TODO Move this out of loop of $facture_source->lines
-									$tab_jumped_credit_notes = array();
-									$lineIndex = count($facture_source->tab_previous_situation_invoice) - 1;
-									$searchPreviousInvoice = true;
-									while ($searchPreviousInvoice) {
-										if ($facture_source->tab_previous_situation_invoice[$lineIndex]->type == Facture::TYPE_SITUATION || $lineIndex < 1) {
-											$searchPreviousInvoice = false; // find, exit;
-											break;
-										} else {
-											if ($facture_source->tab_previous_situation_invoice[$lineIndex]->type == Facture::TYPE_CREDIT_NOTE) {
-												$tab_jumped_credit_notes[$lineIndex] = $facture_source->tab_previous_situation_invoice[$lineIndex]->id;
+								if (getDolGlobalString('INVOICE_USE_SITUATION') == 2) {
+									// $line->situation_percent = -$line->situation_percent; // // situation_percent is > 0 in credit notes lines, as subprice is < 0
+								} else {
+									if (!empty($facture_source->tab_previous_situation_invoice)) {
+										// search the last standard invoice in cycle and the possible credit note between this last and facture_source
+										// TODO Move this out of loop of $facture_source->lines
+										$tab_jumped_credit_notes = array();
+										$lineIndex = count($facture_source->tab_previous_situation_invoice) - 1;
+										$searchPreviousInvoice = true;
+										while ($searchPreviousInvoice) {
+											if ($facture_source->tab_previous_situation_invoice[$lineIndex]->type == Facture::TYPE_SITUATION || $lineIndex < 1) {
+												$searchPreviousInvoice = false; // find, exit;
+												break;
+											} else {
+												if ($facture_source->tab_previous_situation_invoice[$lineIndex]->type == Facture::TYPE_CREDIT_NOTE) {
+													$tab_jumped_credit_notes[$lineIndex] = $facture_source->tab_previous_situation_invoice[$lineIndex]->id;
+												}
+												$lineIndex--; // go to previous invoice in cycle
 											}
-											$lineIndex--; // go to previous invoice in cycle
 										}
-									}
 
-									$maxPrevSituationPercent = 0;
-									foreach ($facture_source->tab_previous_situation_invoice[$lineIndex]->lines as $prevLine) {
-										if ($prevLine->id == $source_fk_prev_id) {
-											$maxPrevSituationPercent = max($maxPrevSituationPercent, $prevLine->situation_percent);
+										$maxPrevSituationPercent = 0;
+										foreach ($facture_source->tab_previous_situation_invoice[$lineIndex]->lines as $prevLine) {
+											if ($prevLine->id == $source_fk_prev_id) {
+												$maxPrevSituationPercent = max($maxPrevSituationPercent, $prevLine->situation_percent);
 
-											//$line->subprice  = $line->subprice - $prevLine->subprice;
-											$line->total_ht  -= $prevLine->total_ht;
-											$line->total_tva -= $prevLine->total_tva;
-											$line->total_ttc -= $prevLine->total_ttc;
-											$line->total_localtax1 -= $prevLine->total_localtax1;
-											$line->total_localtax2 -= $prevLine->total_localtax2;
-
-											$line->multicurrency_subprice  -= $prevLine->multicurrency_subprice;
-											$line->multicurrency_total_ht  -= $prevLine->multicurrency_total_ht;
-											$line->multicurrency_total_tva -= $prevLine->multicurrency_total_tva;
-											$line->multicurrency_total_ttc -= $prevLine->multicurrency_total_ttc;
-										}
-									}
-
-									// prorata
-									$line->situation_percent = $maxPrevSituationPercent - $line->situation_percent;
-
-									//print 'New line based on invoice id '.$facture_source->tab_previous_situation_invoice[$lineIndex]->id.' fk_prev_id='.$source_fk_prev_id.' will be fk_prev_id='.$line->fk_prev_id.' '.$line->total_ht.' '.$line->situation_percent.'<br>';
-
-									// If there is some credit note between last situation invoice and invoice used for credit note generation (note: credit notes are stored as delta)
-									$maxPrevSituationPercent = 0;
-									foreach ($tab_jumped_credit_notes as $index => $creditnoteid) {
-										foreach ($facture_source->tab_previous_situation_invoice[$index]->lines as $prevLine) {
-											if ($prevLine->fk_prev_id == $source_fk_prev_id) {
-												$maxPrevSituationPercent = $prevLine->situation_percent;
-
+												//$line->subprice  = $line->subprice - $prevLine->subprice;
 												$line->total_ht  -= $prevLine->total_ht;
 												$line->total_tva -= $prevLine->total_tva;
 												$line->total_ttc -= $prevLine->total_ttc;
@@ -1428,12 +1405,38 @@ if (empty($reshook)) {
 												$line->multicurrency_total_ttc -= $prevLine->multicurrency_total_ttc;
 											}
 										}
+
+										// prorata
+										$line->situation_percent = $maxPrevSituationPercent - $line->situation_percent;
+
+										//print 'New line based on invoice id '.$facture_source->tab_previous_situation_invoice[$lineIndex]->id.' fk_prev_id='.$source_fk_prev_id.' will be fk_prev_id='.$line->fk_prev_id.' '.$line->total_ht.' '.$line->situation_percent.'<br>';
+
+										// If there is some credit note between last situation invoice and invoice used for credit note generation (note: credit notes are stored as delta)
+										$maxPrevSituationPercent = 0;
+										foreach ($tab_jumped_credit_notes as $index => $creditnoteid) {
+											foreach ($facture_source->tab_previous_situation_invoice[$index]->lines as $prevLine) {
+												if ($prevLine->fk_prev_id == $source_fk_prev_id) {
+													$maxPrevSituationPercent = $prevLine->situation_percent;
+
+													$line->total_ht  -= $prevLine->total_ht;
+													$line->total_tva -= $prevLine->total_tva;
+													$line->total_ttc -= $prevLine->total_ttc;
+													$line->total_localtax1 -= $prevLine->total_localtax1;
+													$line->total_localtax2 -= $prevLine->total_localtax2;
+
+													$line->multicurrency_subprice  -= $prevLine->multicurrency_subprice;
+													$line->multicurrency_total_ht  -= $prevLine->multicurrency_total_ht;
+													$line->multicurrency_total_tva -= $prevLine->multicurrency_total_tva;
+													$line->multicurrency_total_ttc -= $prevLine->multicurrency_total_ttc;
+												}
+											}
+										}
+
+										// prorata
+										$line->situation_percent += $maxPrevSituationPercent;
+
+										//print 'New line based on invoice id '.$facture_source->tab_previous_situation_invoice[$lineIndex]->id.' fk_prev_id='.$source_fk_prev_id.' will be fk_prev_id='.$line->fk_prev_id.' '.$line->total_ht.' '.$line->situation_percent.'<br>';
 									}
-
-									// prorata
-									$line->situation_percent += $maxPrevSituationPercent;
-
-									//print 'New line based on invoice id '.$facture_source->tab_previous_situation_invoice[$lineIndex]->id.' fk_prev_id='.$source_fk_prev_id.' will be fk_prev_id='.$line->fk_prev_id.' '.$line->total_ht.' '.$line->situation_percent.'<br>';
 								}
 							}
 
@@ -2883,54 +2886,56 @@ if (empty($reshook)) {
 		$outlangs = $langs;
 		$margin_rate = GETPOSTISSET('marginforalllines') ? GETPOST('marginforalllines', 'int') : '';
 		$mark_rate = GETPOSTISSET('markforalllines') ? GETPOST('markforalllines', 'int') : '';
-		foreach ($object->lines as &$line) if ($line->subprice > 0) {
-			if ($line->special_code == SUBTOTALS_SPECIAL_CODE) {
-				continue;
-			}
-			$subprice_multicurrency = $line->subprice;
-			if (is_numeric($margin_rate) && $margin_rate > 0) {
-				$line->subprice = (float) price2num((float) $line->pa_ht * (1 + (float) $margin_rate / 100), 'MU');
-			} elseif (is_numeric($mark_rate) && $mark_rate > 0) {
-				$line->subprice = (float) ($line->pa_ht / (1 - ((float) $mark_rate / 100)));
-			} else {
-				$line->subprice = (float) $line->pa_ht;
-			}
+		foreach ($object->lines as &$line) {
+			if ($line->subprice > 0) {
+				if ($line->special_code == SUBTOTALS_SPECIAL_CODE) {
+					continue;
+				}
+				$subprice_multicurrency = $line->subprice;
+				if (is_numeric($margin_rate) && $margin_rate > 0) {
+					$line->subprice = (float) price2num((float) $line->pa_ht * (1 + (float) $margin_rate / 100), 'MU');
+				} elseif (is_numeric($mark_rate) && $mark_rate > 0) {
+					$line->subprice = (float) ($line->pa_ht / (1 - ((float) $mark_rate / 100)));
+				} else {
+					$line->subprice = (float) $line->pa_ht;
+				}
 
-			$prod = new Product($db);
-			$res = $prod->fetch($line->fk_product);
-			if ($res > 0) {
-				if ($prod->price_min > $line->subprice) {
-					$price_subprice = price($line->subprice, 0, $outlangs, 1, -1, -1, 'auto');
-					$price_price_min = price($prod->price_min, 0, $outlangs, 1, -1, -1, 'auto');
-					setEventMessages($prod->ref . ' - ' . $prod->label . ' (' . $price_subprice . ' < ' . $price_price_min . ' ' . strtolower($langs->trans("MinPrice")) . ')' . "\n", null, 'warnings');
+				$prod = new Product($db);
+				$res = $prod->fetch($line->fk_product);
+				if ($res > 0) {
+					if ($prod->price_min > $line->subprice) {
+						$price_subprice = price($line->subprice, 0, $outlangs, 1, -1, -1, 'auto');
+						$price_price_min = price($prod->price_min, 0, $outlangs, 1, -1, -1, 'auto');
+						setEventMessages($prod->ref . ' - ' . $prod->label . ' (' . $price_subprice . ' < ' . $price_price_min . ' ' . strtolower($langs->trans("MinPrice")) . ')' . "\n", null, 'warnings');
+					} else {
+						setEventMessages($prod->error, $prod->errors, 'errors');
+					}
 				} else {
 					setEventMessages($prod->error, $prod->errors, 'errors');
 				}
-			} else {
-				setEventMessages($prod->error, $prod->errors, 'errors');
-			}
-			// Manage $line->subprice and $line->multicurrency_subprice
-			$multicurrency_subprice = (float) $line->subprice * $line->multicurrency_subprice / $subprice_multicurrency;
-			// Update DB
-			$result = $object->updateline($line->id, $line->desc, $line->subprice, $line->qty, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->product_ref, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit, $multicurrency_subprice);
-			// Update $object with new margin info
-			if ($result > 0) {
-				if (is_numeric($margin_rate) && empty($mark_rate)) {
-					$line->marge_tx = $margin_rate;
-				} elseif (is_numeric($mark_rate) && empty($margin_rate)) {
-					$line->marque_tx = $mark_rate;
-				}
-				$line->total_ht = $line->qty * (float) $line->subprice;
-				$line->total_tva = $line->tva_tx * $line->qty * (float) $line->subprice;
-				$line->total_ttc = (1 + $line->tva_tx) * $line->qty * (float) $line->subprice;
 				// Manage $line->subprice and $line->multicurrency_subprice
-				$line->multicurrency_total_ht = $line->qty * (float) $subprice_multicurrency * $line->multicurrency_subprice / $line->subprice;
-				$line->multicurrency_total_tva = $line->tva_tx * $line->qty * (float) $subprice_multicurrency * $line->multicurrency_subprice / $line->subprice;
-				$line->multicurrency_total_ttc = (1 + $line->tva_tx) * $line->qty * (float) $subprice_multicurrency * $line->multicurrency_subprice / $line->subprice;
-				// Used previous $line->subprice and $line->multicurrency_subprice above, now they can be set to their new values
-				$line->multicurrency_subprice = $multicurrency_subprice;
-			} else {
-				setEventMessages($object->error, $object->errors, 'errors');
+				$multicurrency_subprice = (float) $line->subprice * $line->multicurrency_subprice / $subprice_multicurrency;
+				// Update DB
+				$result = $object->updateline($line->id, $line->desc, $line->subprice, $line->qty, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->product_ref, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit, $multicurrency_subprice);
+				// Update $object with new margin info
+				if ($result > 0) {
+					if (is_numeric($margin_rate) && empty($mark_rate)) {
+						$line->marge_tx = $margin_rate;
+					} elseif (is_numeric($mark_rate) && empty($margin_rate)) {
+						$line->marque_tx = $mark_rate;
+					}
+					$line->total_ht = $line->qty * (float) $line->subprice;
+					$line->total_tva = $line->tva_tx * $line->qty * (float) $line->subprice;
+					$line->total_ttc = (1 + $line->tva_tx) * $line->qty * (float) $line->subprice;
+					// Manage $line->subprice and $line->multicurrency_subprice
+					$line->multicurrency_total_ht = $line->qty * (float) $subprice_multicurrency * $line->multicurrency_subprice / $line->subprice;
+					$line->multicurrency_total_tva = $line->tva_tx * $line->qty * (float) $subprice_multicurrency * $line->multicurrency_subprice / $line->subprice;
+					$line->multicurrency_total_ttc = (1 + $line->tva_tx) * $line->qty * (float) $subprice_multicurrency * $line->multicurrency_subprice / $line->subprice;
+					// Used previous $line->subprice and $line->multicurrency_subprice above, now they can be set to their new values
+					$line->multicurrency_subprice = $multicurrency_subprice;
+				} else {
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
 			}
 		}
 	} elseif ($action == 'updatetitleline' && GETPOSTISSET("save") && $usercancreate && !GETPOST('cancel', 'alpha')) {
@@ -3102,25 +3107,38 @@ if (empty($reshook)) {
 		$line = new FactureLigne($db);
 		$line->fetch(GETPOSTINT('lineid'));
 		$percent = $line->get_prev_progress($object->id);
-		$progress = price2num(GETPOST('progress', 'alpha'));
+		$fullprogress = (float) price2num(GETPOST('progress', 'alpha'), 2);
+		if ($fullprogress > 100) $fullprogress = 100;
 
-		if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->situation_cycle_ref > 0) {
-			// in case of situation credit note
-			if ($progress >= 0) {
-				$mesg = $langs->trans("CantBeNullOrPositive");
-				setEventMessages($mesg, null, 'warnings');
-				$error++;
-				$result = -1;
-			} elseif ($progress < $line->situation_percent) { // TODO : use a modified $line->get_prev_progress($object->id) result
-				$mesg = $langs->trans("CantBeLessThanMinPercent");
-				setEventMessages($mesg, null, 'warnings');
-				$error++;
-				$result = -1;
-			} elseif ($progress < $percent) {
-				$mesg = '<div class="warning">'.$langs->trans("CantBeLessThanMinPercent").'</div>';
-				setEventMessages($mesg, null, 'warnings');
-				$error++;
-				$result = -1;
+		if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->isSituationInvoice()) {
+			if (getDolGlobalString('INVOICE_USE_SITUATION') == 2) {
+				if ($fullprogress < $percent) {
+					setEventMessages($langs->trans('CantBeGreatThanLastForACredit'), null, 'errors');
+					$error++;
+					$result = -1;
+				} elseif ($fullprogress < 0) {
+					setEventMessages($langs->trans('CantBeNegative'), null, 'errors');
+					$error++;
+					$result = -1;
+				}
+			} else {
+				// in case of situation credit note
+				if ($fullprogress >= 0) {
+					$mesg = $langs->trans("CantBeNullOrPositive");
+					setEventMessages($mesg, null, 'warnings');
+					$error++;
+					$result = -1;
+				} elseif ($fullprogress < $line->situation_percent) { // TODO : use a modified $line->get_prev_progress($object->id) result
+					$mesg = $langs->trans("CantBeLessThanMinPercent");
+					setEventMessages($mesg, null, 'warnings');
+					$error++;
+					$result = -1;
+				} elseif ($fullprogress < $percent) {
+					$mesg = '<div class="warning">'.$langs->trans("CantBeLessThanMinPercent").'</div>';
+					setEventMessages($mesg, null, 'warnings');
+					$error++;
+					$result = -1;
+				}
 			}
 		}
 
@@ -3200,20 +3218,21 @@ if (empty($reshook)) {
 		// Invoice situation
 		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
 			$previousprogress = $line->getAllPrevProgress($line->fk_facture);
-			$fullprogress = (float) price2num(GETPOST('progress', 'alpha'), 2);
-
-			if ($fullprogress < $previousprogress) {
-				$error++;
-				setEventMessages($langs->trans('CantBeLessThanMinPercent'), null, 'errors');
+			if ($object->type != Facture::TYPE_CREDIT_NOTE) {
+				if ($fullprogress < $previousprogress) {
+					$error++;
+					setEventMessages($langs->trans('CantBeLessThanMinPercent'), null, 'errors');
+				}
+				$addprogress = $fullprogress - $previousprogress; // progress > 0 in situation credit note as subprice < 0
+			} else {
+				if ($fullprogress > $previousprogress) {
+					$error++;
+					setEventMessages($langs->trans('CantBeGreatThanLastForACredit'), null, 'errors');
+				}
+				$addprogress = $previousprogress - $fullprogress;
 			}
-
-			// Max 100%
-			if ($fullprogress > 100) {
-				$fullprogress = 100;
-			}
-			$addprogress = $fullprogress - $previousprogress;
 		} else {
-			$addprogress = price2num(GETPOST('progress', 'alpha'));
+			$addprogress = $fullprogress;
 		}
 
 		// Update line
@@ -3323,12 +3342,16 @@ if (empty($reshook)) {
 				} else {
 					$percent = $line->get_prev_progress($object->id);
 				}
-				if ((float) $all_progress < (float) $percent) {
+				if ($object->type != Facture::TYPE_CREDIT_NOTE && (float) $all_progress < (float) $percent) {
 					$mesg = $langs->trans("Line").' '.$line->rang.' : '.$langs->trans("CantBeLessThanMinPercent");
 					setEventMessages($mesg, null, 'warnings');
 					$result = -1;
+				} elseif (getDolGlobalInt('INVOICE_USE_SITUATION') == 2 && $object->type == Facture::TYPE_CREDIT_NOTE && (float) $all_progress > (float) $percent) {
+					$mesg = $langs->trans("Line").' '.$line->rang.' : '.$langs->trans("CantBeGreatThanLastForACredit");
+					setEventMessages($mesg, null, 'warnings');
+					$result = -1;
 				} else {
-					$object->update_percent($line, GETPOSTINT('all_progress'), false);
+					$object->update_percent($line, $all_progress, false);
 				}
 			}
 			$object->update_price(1);
@@ -6457,7 +6480,7 @@ if ($action == 'create') {
 					print '<td align="center" width="5">&nbsp;</td>';
 				}
 				print '<td class="minwidth500imp">'.$langs->trans('ModifyAllLines').'</td>';
-				print '<td class="right">'.$langs->trans('Progress').'</td>';
+				print '<td class="right">'.$langs->trans('CumulativeProgression').'</td>';
 				print '<td>&nbsp;</td>';
 				print "</tr>\n";
 
@@ -6822,7 +6845,7 @@ if ($action == 'create') {
 			}
 
 			// Create next situation invoice
-			if ($usercancreate && ($object->type == 5) && ($object->status == 1 || $object->status == 2)) {
+			if ($usercancreate && $object->type == Facture::TYPE_SITUATION && ($object->status == 1 || $object->status == 2)) {
 				if ($object->is_last_in_cycle() && $object->situation_final != 1) {
 					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=create&type=5&origin=facture&originid='.$object->id.'&socid='.$object->socid.'" >'.$langs->trans('CreateNextSituationInvoice').'</a>';
 				} elseif (!$object->is_last_in_cycle()) {
@@ -6830,6 +6853,8 @@ if ($action == 'create') {
 				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("DisabledBecauseFinal").'">'.$langs->trans('CreateNextSituationInvoice').'</a>';
 				}
+			} elseif ($usercancreate && $object->is_last_in_cycle() && $object->type == Facture::TYPE_CREDIT_NOTE && $object->isSituationInvoice() && ($object->status == 1 || $object->status == 2)) {
+				print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("DisabledGoToLastSituation").'">'.$langs->trans('CreateNextSituationInvoice').'</a>';
 			}
 
 			// Delete

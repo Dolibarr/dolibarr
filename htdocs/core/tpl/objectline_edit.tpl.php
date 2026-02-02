@@ -346,9 +346,10 @@ $coldisplay++;
 		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
 			$tmp_fieldv = (GETPOSTISSET('progress') ? GETPOST('progress') : $line->situation_percent);
 			$old_fieldv = $line->getAllPrevProgress($line->fk_facture);
-			$fieldv = $tmp_fieldv + $old_fieldv;
+			$signfs2 = $line->subprice >= 0 ? 1 : -1;
+			$fieldv = $signfs2 * $tmp_fieldv + $old_fieldv;
 
-			print '<td class="nowrap right linecolcycleref"><input class="right" type="text" size="1" value="'.$fieldv.'" name="progress">%</td>';
+			print '<td class="nowrap right linecolcycleref"><input class="right" type="text" size="1" value="'.$fieldv.'" name="progress">% <span title="'.$langs->trans("PreviousProgress").'" class="opacitymedium">('.$old_fieldv.'%)</span></td>';
 		} else {
 			print '<td class="nowrap right linecolcycleref"><input class="right" type="text" size="1" value="' . (GETPOSTISSET('progress') ? GETPOST('progress') : $line->situation_percent) . '" name="progress">%</td>';
 		}
