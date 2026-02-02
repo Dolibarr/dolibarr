@@ -76,7 +76,7 @@ create table llx_societe
   idprof4                  varchar(128),                         		-- IDProf4: depends on country (example: Rcs/rm for france, ...)
   idprof5                  varchar(128),                         		-- IDProf5: depends on country (example: EORI, ...)
   idprof6                  varchar(128),                         		-- IDProf6: depends on country (example: Not used for france, ...
-  euid                     varchar(64),                         		-- EUID number (European Unique Identifier)
+  idprof7                  varchar(64),                         		-- IDProf7: depends on country (example: EUID European Unique Identifier)
   tva_intra                varchar(20),                         		-- VAT number (example: FR12345678901 for france, ...)
   capital                  double(24,8)   DEFAULT NULL,        			-- capital of company
   fk_stcomm                integer        DEFAULT 0 NOT NULL,      		-- commercial status
