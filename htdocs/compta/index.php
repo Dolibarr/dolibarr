@@ -9,7 +9,7 @@
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2020       Tobias Sekan            <tobias.sekan@startmail.com>
  * Copyright (C) 2020       Josep Lluís Amador      <joseplluis@lliuretic.cat>
- * Copyright (C) 2021-2025  Frédéric France		    <frederic.france@free.fr>
+ * Copyright (C) 2021-2026  Frédéric France		    <frederic.france@free.fr>
  * Copyright (C) 2024       Rafael San José         <rsanjose@alxarafe.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -36,6 +36,14 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
@@ -45,18 +53,9 @@ require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php'
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 
-// L'espace compta/treso doit toujours etre actif car c'est un espace partage
-// par de nombreux modules (banque, facture, commande a facturer, etc...) independamment
-// de l'utilisation de la compta ou non. C'est au sein de cet espace que chaque sous fonction
-// est protegee par le droit qui va bien du module concerne.
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
+// The Accounting/Treasury workspace must remain enabled as it serves as a shared hub
+// for various modules (banking, invoicing, etc.), irrespective of accounting usage.
+// Individual sub-functions are secured by their respective module permissions.
 
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills'));
@@ -773,7 +772,7 @@ if (isModEnabled('invoice') && isModEnabled('order') && $user->hasRight("command
 }
 
 
-// TODO Mettre ici recup des actions en rapport avec la compta
+// TODO Place accounting-related action retrieval here.
 $sql = '';
 if ($sql) {
 	$langs->load("projects");

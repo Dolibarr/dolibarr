@@ -3,7 +3,7 @@
  * Copyright (C) 2007		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2007-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,7 +64,6 @@ $version = '0.0';
 
 if ($action == 'getlastversion') {
 	$result = getURLContent('https://sourceforge.net/projects/dolibarr/rss');
-	//var_dump($result['content']);
 	if (function_exists('simplexml_load_string')) {
 		if (LIBXML_VERSION < 20900) {
 			// Avoid load of external entities (security problem).
@@ -325,10 +324,10 @@ print '</td></tr>'."\n";
 print '</td></tr>'."\n";
 print '<tr class="oddeven"><td>&nbsp; => '.$langs->trans("ClientHour").'</td><td>'.dol_print_date(dol_now('gmt'), 'dayhour', 'tzuser').'</td></tr>'."\n";
 
-$filesystemencoding = ini_get("unicode.filesystem_encoding"); // Disponible avec PHP 6.0
+$filesystemencoding = ini_get("unicode.filesystem_encoding"); // Available with PHP 6.0
 print '<tr class="oddeven"><td>'.$langs->trans("File encoding").' (php.ini unicode.filesystem_encoding)</td><td>'.$filesystemencoding.'</td></tr>'."\n";
 
-$tmp = ini_get("unicode.filesystem_encoding"); // Disponible avec PHP 6.0
+$tmp = ini_get("unicode.filesystem_encoding"); // Available with PHP 6.0
 if (empty($tmp) && !empty($_SERVER["WINDIR"])) {
 	$tmp = 'iso-8859-1'; // By default for windows
 }

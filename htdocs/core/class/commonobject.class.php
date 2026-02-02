@@ -3934,11 +3934,11 @@ abstract class CommonObject
 	 *	Update total_ht, total_ttc, total_vat, total_localtax1, total_localtax2 for an object (sum of lines).
 	 *  Must be called at end of methods addline or updateline.
 	 *
-	 *	@param	int		$exclspec          	>0 = Exclude special product (product_type=9)
-	 *  @param  'none'|'auto'|'0'|'1'	$roundingadjust		'none'=Do nothing, 'auto'=Use default method (MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND if defined, or '0'), '0'=Force mode Total of rounding, '1'=Force mode Rounding of total
-	 *  @param	int<0,1>	$nodatabaseupdate	1=Do not update database total fields of the main object. Update only properties in memory. Can be used to save SQL when this method is called several times, so we can do it only once at end.
-	 *  @param	?Societe	$seller				If roundingadjust is '0' or '1' or maybe 'auto', it means we recalculate total for lines before calculating total for object and for this, we need seller object (used to analyze lines to check corrupted data).
-	 *	@return	int<-1,1>					Return integer <0 if KO, >0 if OK
+	 *	@param	int						$exclspec          	Use >0 = Exclude special product (product_type=9)
+	 *  @param  'none'|'auto'|'0'|'1'	$roundingadjust		'none'=Do nothing (when properties are already correctly set), 'auto'=Use default method (MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND if defined, or '0'), '0'=Force mode Total of rounding, '1'=Force mode Rounding of total
+	 *  @param	int<0,1>				$nodatabaseupdate	1=Do not update database total fields of the main object. Update only properties in memory. Can be used to save SQL when this method is called several times, so we can do it only once at end.
+	 *  @param	?Societe				$seller				If roundingadjust is '0' or '1' or maybe 'auto', it means we recalculate total for lines before calculating total for object and for this, we need seller object (used to analyze lines to check corrupted data).
+	 *	@return	int<-1,1>									Return integer <0 if KO, >0 if OK
 	 */
 	public function update_price($exclspec = 0, $roundingadjust = 'auto', $nodatabaseupdate = 0, $seller = null)
 	{
@@ -4023,8 +4023,15 @@ abstract class CommonObject
 			$base_price_type = 'TTC';
 		}
 
-		$sql = "SELECT rowid, qty, ".$fieldup." as up, remise_percent, total_ht, ".$fieldtva." as total_tva, total_ttc, ".$fieldlocaltax1." as total_localtax1, ".$fieldlocaltax2." as total_localtax2,";
-		$sql .= ' tva_tx as vatrate, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, info_bits, product_type';
+		$sql = "SELECT rowid, qty, ".$fieldup." as up, remise_percent,";
+		$sql .= " total_ht, ".$fieldtva." as total_tva, total_ttc, ".$fieldlocaltax1." as total_localtax1, ".$fieldlocaltax2." as total_localtax2,";
+		$sql .= ' tva_tx as vatrate, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type,';
+		$sql .= ' info_bits, product_type,';
+		if ($this->element == 'expensereport') {
+			$sql .= ' comments as description';
+		} else {
+			$sql .= ' description';
+		}
 		if ($this->table_element_line == 'facturedet') {
 			$sql .= ', situation_percent';
 		}
@@ -4096,25 +4103,29 @@ abstract class CommonObject
 						$obj->multicurrency_total_ttc = $tmpcal[18];
 					} elseif ($diff_when_using_price_ht) {
 						// If total_ht calculated from unit price is different than the one in database, we do nothing, this may be a regular case to have also a different VAT, that can be explained
-						// because price was entered included tax and we round the unit price without tax to store it in database (so recalculation will give different results).
+						// because price was entered included tax and we round the unit price without tax to store it in database (so recalculation will give different results),
+						// so we continue only if price HT are same.
 						if ((float) $tmpcal[0] == (float) $obj->total_ht) {
-							// After calculation from HT, total is consistent and total_ht is same, but we have found a difference between VAT part calculated from unit price and the VAT part into database,
-							// and we ask to force the use of rounding on line (like done on calculation) so this should not happen, so we force the update of line to fix.
-
-							// This part of code must be called only to fix corrupted data due to the use of the feature to round total instead of rounding lines.
-							$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line;
-							$sqlfix .= " SET ".$fieldtva." = ".price2num((float) $tmpcal[1]).", total_ttc = ".price2num((float) $tmpcal[2]);
-							$sqlfix .= ", multicurrency_total_tva = ".price2num((float) $tmpcal[17]).", multicurrency_total_ttc = ".price2num((float) $tmpcal[18]);
-							$sqlfix .= " WHERE rowid = ".((int) $obj->rowid);
-							dol_syslog('Warn2: We found a line with different rounding data into detailed line (diff_when_using_price_ht = '.$diff_when_using_price_ht.' and diff_on_current_total = '.$diff_on_current_total.') for line rowid = '.$obj->rowid." (total vat of line calculated=".$tmpcal[1].", database=".$obj->total_tva."). We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix);
-							$resqlfix = $this->db->query($sqlfix);
-							if (!$resqlfix) {
-								dol_print_error($this->db, 'Failed to update line');
+							// In rare cases, we can have the unit price that was not saved as original (like when adding a line from a discount of down payment). In this case, recalculation from unit price
+							// will give different results than the one stored in database (the good one are the one in database and we must not fix anything).
+							if ($obj->description != '(DEPOSIT)' && !getDolGlobalInt('MAIN_DISABLE_AUTOFIX_CORRUPTED_LINES_WHEN_TOTAL_DOES_NOT_MATCH_RECALCULATION_FROM_UP')) {
+								// After calculation from HT, totals sum of all part is consistent ($diff_on_current_total) + total_ht is same + we are not on a line with a bad unit amount + we have found a difference between VAT part calculated from unit price and the VAT part into database,
+								// and we ask to force the use of rounding on line (like what we did on initial calculation) so this should not happen, so we force the update of line to fix this.
+								// This part of code must be called only to fix corrupted data due to the use of the old feature to round total instead of rounding lines.
+								$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line;
+								$sqlfix .= " SET ".$fieldtva." = ".price2num((float) $tmpcal[1]).", total_ttc = ".price2num((float) $tmpcal[2]);
+								$sqlfix .= ", multicurrency_total_tva = ".price2num((float) $tmpcal[17]).", multicurrency_total_ttc = ".price2num((float) $tmpcal[18]);
+								$sqlfix .= " WHERE rowid = ".((int) $obj->rowid);
+								dol_syslog('Warn2: We found a line with different rounding data into detailed line (diff_when_using_price_ht = '.$diff_when_using_price_ht.' and diff_on_current_total = '.$diff_on_current_total.') for line rowid = '.$obj->rowid." (total vat of line calculated=".$tmpcal[1].", database=".$obj->total_tva."). We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix);
+								$resqlfix = $this->db->query($sqlfix);
+								if (!$resqlfix) {
+									dol_print_error($this->db, 'Failed to update line');
+								}
+								$obj->total_tva = $tmpcal[1];
+								$obj->total_ttc = $tmpcal[2];
+								$obj->multicurrency_total_tva = $tmpcal[17];
+								$obj->multicurrency_total_ttc = $tmpcal[18];
 							}
-							$obj->total_tva = $tmpcal[1];
-							$obj->total_ttc = $tmpcal[2];
-							$obj->multicurrency_total_tva = $tmpcal[17];
-							$obj->multicurrency_total_ttc = $tmpcal[18];
 						}
 					}
 				}
@@ -5554,7 +5565,13 @@ abstract class CommonObject
 				$description .= (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : (!empty($line->description) ? dol_htmlentitiesbr($line->description) : '')); // Description is what to show on popup. We shown nothing if already into desc.
 			}
 
-			$line->subprice_ttc = (float) price2num((!empty($line->subprice) ? $line->subprice : 0) * (1 + ((!empty($line->tva_tx) ? $line->tva_tx : 0) / 100)), 'MU');
+			// Recalculate unit price with tax if not defined
+			if (empty($line->subprice_ttc) && $line->qty) {	// subprice_ttc may be not stored on old version or not defined for lines with no unit price (like a discount)
+				// So we calculate an estimated value just to show something on screen
+				$line->subprice_ttc = (float) price2num($line->total_ttc / $line->qty, 'MU');
+				//other method is less accurate
+				// $line->subprice_ttc = (float) price2num((!empty($line->subprice) ? $line->subprice : 0) * (1 + ((!empty($line->tva_tx) ? $line->tva_tx : 0) / 100)), 'MU');
+			}
 			$line->pu_ttc = $line->subprice_ttc;	// deprecated
 
 			// Output template part (modules that overwrite templates must declare this into descriptor)
@@ -6636,7 +6653,7 @@ abstract class CommonObject
 					$sql .= ", ".$name;
 				}
 				// use geo sql fonction to read as text
-				if (empty($extrafields->attributes[$this->table_element]['type'][$name]) || in_array($extrafields->attributes[$this->table_element]['type'][$name], array('point', 'multipts', 'linestrg', 'polygon'))) {
+				if (!empty($extrafields->attributes[$this->table_element]['type'][$name]) && in_array($extrafields->attributes[$this->table_element]['type'][$name], array('point', 'multipts', 'linestrg', 'polygon'))) {
 					// TODO Add an abstraction method in the database driver
 					$sql .= ", ST_AsWKT(".$name.") as ".$name;
 				}

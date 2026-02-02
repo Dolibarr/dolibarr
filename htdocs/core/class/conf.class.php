@@ -705,9 +705,9 @@ class Conf extends stdClass
 			if (!isset($this->global->FACTURE_TVAOPTION)) {
 				$this->global->FACTURE_TVAOPTION = 1;
 			}
-			if (!isset($this->global->FAC_FORCE_DATE_VALIDATION)) {
-				$this->global->FAC_FORCE_DATE_VALIDATION = 1;
-			}
+			/*if (!isset($this->global->INVOICE_CHECK_POSTERIOR_DATE)) {
+				$this->global->INVOICE_CHECK_POSTERIOR_DATE = 1;
+			}*/
 
 			// Variable globales LDAP
 			if (empty($this->global->LDAP_FIELD_FULLNAME)) {

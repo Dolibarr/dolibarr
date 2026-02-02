@@ -424,7 +424,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 					// Notes
 					if (!empty($object->note_public)) {
 						$pdf->SetFont('', '', $default_font_size - 1); // Dans boucle pour gerer multi-page
-						$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top_alt, dol_htmlentitiesbr($object->note_public), 0, 1);
+						$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top_alt, dol_htmlentitiesbr((string) $object->note_public), 0, 1);
 					}
 
 					$nexY = $pdf->GetY();
@@ -534,18 +534,19 @@ class pdf_eagle extends ModelePDFStockTransfer
 					$curX = $this->posxdesc - 1;
 
 					$pdf->startTransaction();
+
 					if (method_exists($object->lines[$i], 'fetch_product')) {
 						$object->lines[$i]->fetch_product();
 						$object->lines[$i]->label = $object->lines[$i]->product->label;
 						$object->lines[$i]->description = $object->lines[$i]->product->description;
 						$object->lines[$i]->weight = $object->lines[$i]->product->weight;
-						$object->lines[$i]->weight_units = $object->lines[$i]->product->weight_units;
+						$object->lines[$i]->weight_units = (int) $object->lines[$i]->product->weight_units;
 						$object->lines[$i]->length = $object->lines[$i]->product->length;
-						$object->lines[$i]->length_units = $object->lines[$i]->product->length_units;
+						$object->lines[$i]->length_units = (int) $object->lines[$i]->product->length_units;
 						$object->lines[$i]->surface = $object->lines[$i]->product->surface;
-						$object->lines[$i]->surface_units = $object->lines[$i]->product->surface_units;
+						$object->lines[$i]->surface_units = (int) $object->lines[$i]->product->surface_units;
 						$object->lines[$i]->volume = $object->lines[$i]->product->volume;
-						$object->lines[$i]->volume_units = $object->lines[$i]->product->volume_units;
+						$object->lines[$i]->volume_units = (int) $object->lines[$i]->product->volume_units;
 						$object->lines[$i]->fk_unit = $object->lines[$i]->product->fk_unit;
 						//var_dump($object->lines[$i]);exit;
 					}

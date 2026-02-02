@@ -13,7 +13,7 @@
  * Copyright (C) 2014		Cédric GROSS				<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015	Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
- * Copyright (C) 2018-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2019-2023  Thibault Foucart            <support@ptibogxiv.net>
  * Copyright (C) 2020       Open-Dsi         			<support@open-dsi.fr>
  * Copyright (C) 2021       Gauthier VERDOL         	<gauthier.verdol@atm-consulting.fr>
@@ -2258,10 +2258,10 @@ function dolSlugify($stringtoslugify)
 /**
  *  Returns text escaped for inclusion into javascript code
  *
- *  @param	string	$stringtoescape			String to escape
- *  @param	int<0,3>	$mode				0=Escape also ' and " into ', 1=Escape ' but not " for usage into 'string', 2=Escape " but not ' for usage into "string", 3=Escape ' and " with \
- *  @param	int		$noescapebackslashn		0=Escape also \n. 1=Do not escape \n.
- *  @return string							Escaped string. Both ' and " are escaped into ' if they are escaped.
+ *  @param	int|string	$stringtoescape			String to escape
+ *  @param	int<0,3>	$mode					0=Escape also ' and " into ', 1=Escape ' but not " for usage into 'string', 2=Escape " but not ' for usage into "string", 3=Escape ' and " with \
+ *  @param	int			$noescapebackslashn		0=Escape also \n. 1=Do not escape \n.
+ *  @return string								Escaped string. Both ' and " are escaped into ' if they are escaped.
  */
 function dol_escape_js($stringtoescape, $mode = 0, $noescapebackslashn = 0)
 {
@@ -2287,7 +2287,7 @@ function dol_escape_js($stringtoescape, $mode = 0, $noescapebackslashn = 0)
 		$substitjs["'"] = "\\'";
 		$substitjs['"'] = "\\\"";
 	}
-	return strtr($stringtoescape, $substitjs);
+	return strtr((string) $stringtoescape, $substitjs);
 }
 
 /**
@@ -4764,13 +4764,13 @@ function dol_print_phone($phone, $countrycode = '', $contactid = 0, $socid = 0, 
 		} elseif (dol_strlen($phone) == 11) { //ex: +597_ABC_DEFG
 			$newphone = substr($newphone, 0, 4) . $separ . substr($newphone, 4, 3) . $separ . substr($newphone, 7, 4);
 		}
-	} elseif (strtoupper($countrycode) == "DE") { //Allemagne
+	} elseif (strtoupper($countrycode) == "DE") { //Deutschland
 		if (dol_strlen($phone) == 14) { //ex:  +49_ABCD_EFGH_IJK
 			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 4) . $separ . substr($newphone, 7, 4) . $separ . substr($newphone, 11, 3);
 		} elseif (dol_strlen($phone) == 13) { //ex: +49_ABC_DEFG_HIJ
 			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 3) . $separ . substr($newphone, 6, 4) . $separ . substr($newphone, 10, 3);
 		}
-	} elseif (strtoupper($countrycode) == "ES") { //Espagne
+	} elseif (strtoupper($countrycode) == "ES") { //Spain
 		if (dol_strlen($phone) == 12) { //ex:  +34_ABC_DEF_GHI
 			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 3) . $separ . substr($newphone, 6, 3) . $separ . substr($newphone, 9, 3);
 		}
@@ -13455,7 +13455,7 @@ function getImageFileNameForSize($file, $extName, $extImgTarget = '')
 		return 'Bad parameter extName';
 	}
 
-	$fileName = preg_replace('/(\.gif|\.jpeg|\.jpg|\.png|\.bmp|\.webp)$/i', '', $file); // We remove image extension, whatever is its case
+	$fileName = preg_replace('/(\.gif|\.jpeg|\.jpg|\.png|\.bmp|\.webp|\.avif)$/i', '', $file); // We remove image extension, whatever is its case
 	$fileName = basename($fileName);
 
 	if (empty($extImgTarget)) {
@@ -13475,6 +13475,9 @@ function getImageFileNameForSize($file, $extName, $extImgTarget = '')
 	}
 	if (empty($extImgTarget)) {
 		$extImgTarget = (preg_match('/\.webp$/i', $file) ? '.webp' : '');
+	}
+	if (empty($extImgTarget)) {
+		$extImgTarget = (preg_match('/\.avif$/i', $file) ? '.avif' : '');
 	}
 
 	if (!$extImgTarget) {
@@ -13594,7 +13597,7 @@ function dolIsAllowedForPreview($file)
 	}
 
 	// Check mime types
-	$mime_preview = array('bmp', 'jpeg', 'png', 'gif', 'tiff', 'pdf', 'plain', 'css', 'webp', 'webm', 'mp4');
+	$mime_preview = array('avif', 'bmp', 'jpeg', 'png', 'gif', 'tiff', 'pdf', 'plain', 'css', 'webp', 'webm', 'mp4');
 	if (getDolGlobalString('MAIN_ALLOW_SVG_FILES_AS_IMAGES')) {
 		$mime_preview[] = 'svg+xml';
 	}
@@ -13875,6 +13878,10 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 		$mime = 'video/webm';
 		$imgmime = 'video.png';
 		$famime = 'file-video';
+	} elseif (preg_match('/\.avif$/i', $tmpfile)) {
+		$mime = 'image/avif';
+		$imgmime = 'image.png';
+		$famime = 'file-image';
 	} elseif (preg_match('/\.avi$/i', $tmpfile)) {
 		$mime = 'video/x-msvideo';
 		$imgmime = 'video.png';
@@ -16768,16 +16775,16 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 				if ($truncateLines > 0 && strlen($histo[$key]['message']) > strlen($truncatedText)) {
 					$out .= '<div class="readmore-block --closed" >';
 					$out .= '	<div class="readmore-block__excerpt">';
-					$out .= 	dolPrintHTML($truncatedText);
+					$out .= 	dolPrintHTML($truncatedText, 0, array('pre', 'code'));
 					$out .= ' 	<br><a class="read-more-link" data-read-more-action="open" href="' . DOL_MAIN_URL_ROOT . '/comm/action/card.php?id=' . $actionstatic->id . '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?' . $param) . '" >' . $langs->trans("ReadMore") . ' <span class="fa fa-chevron-right" aria-hidden="true"></span></a>';
 					$out .= '	</div>';
 					$out .= '	<div class="readmore-block__full-text" >';
-					$out .=  dolPrintHTML($histo[$key]['message']);
+					$out .=  dolPrintHTML($histo[$key]['message'], 0, array('pre', 'code'));
 					$out .= ' 	<a class="read-less-link" data-read-more-action="close" href="#" ><span class="fa fa-chevron-up" aria-hidden="true"></span> ' . $langs->trans("ReadLess") . '</a>';
 					$out .= '	</div>';
 					$out .= '</div>';
 				} else {
-					$out .= dolPrintHTML($histo[$key]['message']);
+					$out .= dolPrintHTML($histo[$key]['message'], 0, array('pre', 'code'));
 				}
 
 				$out .= '</div>';
