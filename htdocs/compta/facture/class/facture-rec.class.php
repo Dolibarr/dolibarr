@@ -1533,7 +1533,7 @@ class FactureRec extends CommonInvoice
 							$arraymessage = $formmail->getEMailTemplate($this->db, 'facture_send', $user, $outputlangs, (is_numeric($template) ? $template : 0), 1, (is_numeric($template) ? '' : $template), (($template != 0) ? -1 : 1));
 							if (is_numeric($arraymessage) && $arraymessage <= 0) {
 								$langs->load("errors");
-								$this->output .= $langs->trans('ErrorFailedToFindEmailTemplate', $template);
+								$this->output .= $langs->trans('ErrorFailedToFindEmailTemplate', $template ?? '');
 								return 0;
 							}
 
