@@ -174,8 +174,6 @@ MigrationUserPhotoPath=Migración de rutas de fotos para usuarios
 MigrationFieldsSocialNetworks=Migración de campos de usuarios redes sociales (%s)
 MigrationResetBlockedLog=Restablecer módulo BlockedLog para algoritmo v7
 ErrorFoundDuringMigration=Se informó de error(es) durante el proceso de migración, por lo que el siguiente paso no está disponible. Para ignorar los errores, puede <a href="%s"> hacer clic aquí </a>, pero es posible que la aplicación o algunas funciones no funcionen correctamente hasta que se resuelvan los errores.
-YouTryInstallDisabledByDirLock=La aplicación intentó actualizarse automáticamente, pero las páginas de instalación / actualización se han deshabilitado por seguridad (directorio renombrado con el sufijo .lock). <br>
-YouTryInstallDisabledByFileLock=La aplicación intentó auto actualizarse, pero las páginas de instalación / actualización se han deshabilitado por seguridad (debido a la existencia de un archivo de bloqueo <strong> install.lock </strong> en el directorio de documentos de dolibarr). <br>
 YouTryUpgradeDisabledByMissingFileUnLock=La aplicación intentó actualizarse automáticamente, pero el proceso de actualización no está permitido actualmente.<br>
 ClickOnLinkOrRemoveManualy=Si hay una actualización en curso, espere. Si no es así, haga clic en el siguiente enlace. Si siempre ve esta misma página, debe eliminar / cambiar el nombre del archivo install.lock en el directorio de documentos.
 MigrationProductLotPath=Ruta de migración de archivos de lotes de productos

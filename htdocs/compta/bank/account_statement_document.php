@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2003-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2017 Regis Houssin         <regis.houssin@inodbox.com>
- * Copyright (C) 2019	   Nicolas ZABOURI       <info@inovea-conseil.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2003-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2008  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005       Marc Barilley / Ocebo   <marc@ocebo.com>
+ * Copyright (C) 2005-2017  Regis Houssin         	<regis.houssin@inodbox.com>
+ * Copyright (C) 2019	    Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,7 +88,7 @@ $result = restrictedArea($user, 'banque', $object->id, 'bank_account', '', '');
 // Define number of receipt to show (current, previous or next one ?)
 $found = false;
 if (GETPOST("rel") == 'prev') {
-	// Recherche valeur pour num = numero releve precedent
+	// Searching value for num = previous bank statement number
 	$sql = "SELECT DISTINCT(b.num_releve) as num";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql .= " WHERE b.num_releve < '".$db->escape($numref)."'";
@@ -106,7 +106,7 @@ if (GETPOST("rel") == 'prev') {
 		}
 	}
 } elseif (GETPOST("rel") == 'next') {
-	// Recherche valeur pour num = numero releve precedent
+	// Searching value for num = next bank statement number
 	$sql = "SELECT DISTINCT(b.num_releve) as num";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql .= " WHERE b.num_releve > '".$db->escape($numref)."'";
@@ -124,7 +124,7 @@ if (GETPOST("rel") == 'prev') {
 		}
 	}
 } else {
-	// On veut le releve num
+	// we want this statement number
 	$found = true;
 }
 

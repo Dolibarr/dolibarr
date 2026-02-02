@@ -531,13 +531,16 @@ script:
     php upgrade.php 22.0.0 23.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade22002300.log || cat $TRAVIS_BUILD_DIR/upgrade22002300.log
     php upgrade2.php 22.0.0 23.0.0 > $TRAVIS_BUILD_DIR/upgrade22002300-2.log || cat $TRAVIS_BUILD_DIR/upgrade22002300-2.log
     php step5.php 22.0.0 23.0.0 > $TRAVIS_BUILD_DIR/upgrade22002300-3.log || cat $TRAVIS_BUILD_DIR/upgrade22002300-3.log
+    php upgrade.php 23.0.0 24.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade23002400.log || cat $TRAVIS_BUILD_DIR/upgrade23002400.log
+    php upgrade2.php 23.0.0 24.0.0 > $TRAVIS_BUILD_DIR/upgrade23002400-2.log || cat $TRAVIS_BUILD_DIR/upgrade23002400-2.log
+    php step5.php 23.0.0 24.0.0 > $TRAVIS_BUILD_DIR/upgrade23002400-3.log || cat $TRAVIS_BUILD_DIR/upgrade23002400-3.log
     set +e
     echo
 
   - |
-    echo Show some debug info like table content or log
-    #echo '\d llx_adherent' | psql 'postgresql://postgres:postgres@127.0.0.1:5432/travis'
-    cat $TRAVIS_BUILD_DIR/upgrade18001900.log
+    echo Show some debug info, like table content, or migration log from some versions
+    echo '\d llx_blockedlog' | psql 'postgresql://postgres:postgres@127.0.0.1:5432/travis'
+    cat $TRAVIS_BUILD_DIR/upgrade500600.log
     cat $TRAVIS_BUILD_DIR/upgrade19002000.log
     echo
 
@@ -557,6 +560,7 @@ script:
     php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_RECEPTION,MAIN_MODULE_RECRUITMENT >> $TRAVIS_BUILD_DIR/enablemodule.log
     php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_KnowledgeManagement,MAIN_MODULE_EventOrganization,MAIN_MODULE_PARTNERSHIP >> $TRAVIS_BUILD_DIR/enablemodule.log
     php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_EmailCollector >> $TRAVIS_BUILD_DIR/enablemodule.log
+    php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_BlockedLog >> $TRAVIS_BUILD_DIR/enablemodule.log
     echo $?
     cd -
     set +e
@@ -570,6 +574,8 @@ script:
     # Execute phpunit, check its exit status and that the phpunit output shows a test summary
     phpunit -d memory_limit=-1 -c test/phpunit/phpunittest.xml test/phpunit/AllTests.php | tee /dev/tty | grep -qE "(OK .*[0-9]+ tests.*[0-9]+ assertions|Tests: [0-9]+)" ; phpunitresult=$((PIPESTATUS[0]?PIPESTATUS[0]:PIPESTATUS[2]))
     echo "Phpunit return code = $phpunitresult"
+    echo "Content of end of apache error.log"
+    sudo tail -n 200 /var/log/apache2/travis_error_log
     # Comment next line if you want to go to the end to see the dolibarr.log file.
     [ $phpunitresult == 0 ] || exit $phpunitresult
     echo

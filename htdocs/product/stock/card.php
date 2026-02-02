@@ -85,8 +85,7 @@ if (!$sortorder) {
 $hookmanager->initHooks(array('warehousecard', 'stocklist', 'globalcard'));
 
 // Security check
-//$result=restrictedArea($user,'stock', $id, 'entrepot&stock');
-$result = restrictedArea($user, 'stock');
+$result=restrictedArea($user, 'stock', $id, 'entrepot&stock');
 
 $object = new Entrepot($db);
 $extrafields = new ExtraFields($db);
@@ -284,6 +283,8 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
+	// Actions when printing a doc from card
+	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 	// Actions to build doc
 	$upload_dir = $conf->stock->dir_output;
@@ -648,36 +649,36 @@ if ($action == 'create') {
 			$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 
-			print_liste_field_titre("Products", "", "p.ref", "&amp;id=".$id, "", "", $sortfield, $sortorder);
-			print_liste_field_titre("Label", "", "p.label", "&amp;id=".$id, "", "", $sortfield, $sortorder);
-			print_liste_field_titre("NumberOfUnit", "", "ps.reel", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+			print_liste_field_titre("Products", "", "p.ref", "", "&id=".$id, "", $sortfield, $sortorder);
+			print_liste_field_titre("Label", "", "p.label", "", "&id=".$id, "", $sortfield, $sortorder);
+			print_liste_field_titre("NumberOfUnit", "", "ps.reel", "", "&id=".$id, '', $sortfield, $sortorder, 'right ');
 			$totalarray['nbfield'] += 3;
 			$totalarray['pos'][$totalarray['nbfield']] = 'totalunit';
 			$totalarray['type'][$totalarray['nbfield']] = 'stock';
 
 			if (getDolGlobalString('PRODUCT_USE_UNITS')) {
-				print_liste_field_titre("Unit", "", "p.fk_unit", "&amp;id=".$id, "", 'align="left"', $sortfield, $sortorder);
+				print_liste_field_titre("Unit", "", "p.fk_unit", "", "&id=".$id, 'align="left"', $sortfield, $sortorder);
 				$totalarray['nbfield']++;
 				$totalarray['pos'][$totalarray['nbfield']] = 'units';
 				$totalarray['type'][$totalarray['nbfield']] = 'string';
 			}
 			$usercancreadsupplierprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'read_supplier_prices') : $user->hasRight('product', 'read');
 			if ($usercancreadsupplierprice) {
-				print_liste_field_titre($form->textwithpicto($langs->trans("AverageUnitPricePMPShort"), $langs->trans("AverageUnitPricePMPDesc")), "", "p.pmp", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+				print_liste_field_titre($form->textwithpicto($langs->trans("AverageUnitPricePMPShort"), $langs->trans("AverageUnitPricePMPDesc")), "", "p.pmp", "", "&id=".$id, '', $sortfield, $sortorder, 'right ');
 				$totalarray['nbfield']++;
 
-				print_liste_field_titre("EstimatedStockValueShort", "", "svalue", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+				print_liste_field_titre("EstimatedStockValueShort", "", "svalue", "", "&id=".$id, '', $sortfield, $sortorder, 'right ');
 				$totalarray['nbfield']++;
 				$totalarray['pos'][$totalarray['nbfield']] = 'totalvalue';
 				$totalarray['type'][$totalarray['nbfield']] = '';
 			}
 
 			if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
-				print_liste_field_titre("SellPriceMin", "", "p.price", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+				print_liste_field_titre("SellPriceMin", "", "p.price", "", "&id=".$id, '', $sortfield, $sortorder, 'right ');
 				$totalarray['nbfield']++;
 			}
 			if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
-				print_liste_field_titre("EstimatedStockValueSellShort", "", "", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+				print_liste_field_titre("EstimatedStockValueSellShort", "", "", "", "&id=".$id, '', $sortfield, $sortorder, 'right ');
 				$totalarray['nbfield']++;
 				$totalarray['pos'][$totalarray['nbfield']] = 'totalvaluesell';
 				$totalarray['type'][$totalarray['nbfield']] = '';
@@ -857,7 +858,7 @@ if ($action == 'create') {
 
 					// Link to transfer
 					if ($user->hasRight('stock', 'mouvement', 'creer')) {
-						print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=transfert&token='.newToken().'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
+						print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=transfer&token='.newToken().'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
 						print img_picto($langs->trans("TransferStock"), 'add', 'class="hideonsmartphone pictofixedwidth" style="color: #a69944"');
 						print $langs->trans("TransferStock");
 						print "</a></td>";
@@ -1037,7 +1038,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete') {
 	print '<a name="builddoc"></a>'; // ancre
 
 	// Documents
-	$objectref = dol_sanitizeFileName($object->ref);
+	$objectref = dol_sanitizeFileName((string) $object->ref);
 	$relativepath = $object->ref.'/'.$objectref.'.pdf';
 	$filedir = $conf->stock->dir_output.'/'.$objectref;
 	$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;

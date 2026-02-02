@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2014-2016  Laurent Destailleur  	<eldy@users.sourceforge.net>
- * Copyright (C) 2014-2024	Frédéric France      	<frederic.france@free.fr>
+ * Copyright (C) 2014-2025  Frédéric France      	<frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -58,26 +58,13 @@ if ($action == 'print_file' && $user->hasRight('printing', 'read')) {
 			'@phan-var-force PrintingDriver $printer';
 			/** @var PrintingDriver $printer */
 			$langs->load('printing');
-			// print '<pre>'.print_r($printer, true).'</pre>';
 
 			if (getDolGlobalString($printer->active)) {
 				$printerfound++;
 
 				$subdir = '';
 				$module = GETPOST('printer', 'alpha');
-				switch ($module) {
-					case 'livraison':
-						$subdir = 'receipt';
-						$module = 'expedition';
-						break;
-					case 'expedition':
-						$subdir = 'sending';
-						break;
-					case 'commande_fournisseur':
-						$module = 'fournisseur';
-						$subdir = 'commande';
-						break;
-				}
+
 				try {
 					// Case of printing an invoice
 					$filetoprint = GETPOST('file', 'alpha');		//Example FAYYMM-123/FAYYMM-123-xxx.pdf

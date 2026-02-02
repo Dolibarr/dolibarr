@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2001      Eric Seigne         <erics@rycks.com>
- * Copyright (C) 2004-2015 Destailleur Laurent <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin       <regis.houssin@inodbox.com>
+/* Copyright (C) 2001       Eric Seigne         <erics@rycks.com>
+ * Copyright (C) 2004-2015  Destailleur Laurent <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -733,11 +733,11 @@ class Translate
 	 *               Parameters of this method must not contain any HTML tags.
 	 *
 	 *  @param	string	$key        Key to translate
-	 *  @param  string	$param1     chaine de param1
-	 *  @param  string	$param2     chaine de param2
-	 *  @param  string	$param3     chaine de param3
-	 *  @param  string	$param4     chaine de param4
-	 *  @param  string	$param5     chaine de param5
+	 *  @param  string	$param1     param1 string
+	 *  @param  string	$param2     param2 string
+	 *  @param  string	$param3     param3 string
+	 *  @param  string	$param4     param4 string
+	 *  @param  string	$param5     param5 string
 	 *  @return string      		Translated string (encoded into UTF8)
 	 */
 	public function transnoentities($key, $param1 = '', $param2 = '', $param3 = '', $param4 = '', $param5 = '')
@@ -754,11 +754,11 @@ class Translate
 	 *               Parameters of this method must not contains any HTML tags.
 	 *
 	 *  @param	string	$key        Key to translate
-	 *  @param  string	$param1     chaine de param1
-	 *  @param  string	$param2     chaine de param2
-	 *  @param  string	$param3     chaine de param3
-	 *  @param  string	$param4     chaine de param4
-	 *  @param  string	$param5     chaine de param5
+	 *  @param  string	$param1     param1 string
+	 *  @param  string	$param2     param2 string
+	 *  @param  string	$param3     param3 string
+	 *  @param  string	$param4     param4 string
+	 *  @param  string	$param5     param5 string
 	 *  @return string      		Translated string
 	 */
 	public function tr($key, $param1 = '', $param2 = '', $param3 = '', $param4 = '', $param5 = '')
@@ -774,11 +774,11 @@ class Translate
 	 *               Parameters of this method must not contains any HTML tags.
 	 *
 	 *  @param	string	$key        Key to translate
-	 *  @param  string	$param1     chaine de param1
-	 *  @param  string	$param2     chaine de param2
-	 *  @param  string	$param3     chaine de param3
-	 *  @param  string	$param4     chaine de param4
-	 *  @param  string	$param5     chaine de param5
+	 *  @param  string	$param1     param1 string
+	 *  @param  string	$param2     param2 string
+	 *  @param  string	$param3     param3 string
+	 *  @param  string	$param4     param4 string
+	 *  @param  string	$param5     param5 string
 	 *  @return string      		Translated string
 	 */
 	public function transnoentitiesnoconv($key, $param1 = '', $param2 = '', $param3 = '', $param4 = '', $param5 = '')
@@ -824,9 +824,9 @@ class Translate
 	/**
 	 *  Return translation of a key depending on country
 	 *
-	 *  @param	string	$str            string root to translate
-	 *  @param  string	$countrycode    country code (FR, ...)
-	 *  @return	string         			translated string
+	 *  @param	string	$str            String root to translate. Example 'TotalHT', 'AmountLT1', 'ProfId1', 'ProfId2', 'LocalTax1IsUsedExample', ...
+	 *  @param  string	$countrycode    Country code (FR, ...)
+	 *  @return	string         			Translated string
 	 *  @see transcountrynoentities(), picto_from_langcode()
 	 */
 	public function transcountry($str, $countrycode)
@@ -862,13 +862,15 @@ class Translate
 	/**
 	 *  Convert a string into output charset (this->charset_output that should be defined to conf->file->character_set_client)
 	 *
-	 *  @param	string	$str            String to convert
-	 *  @param	string	$pagecodefrom	Page code of src string
-	 *  @param	string	$pagecodeto		Expected page code of returned string
-	 *  @return string         			Converted string
+	 *  @param	string|null	$str            String to convert
+	 *  @param	string		$pagecodefrom	Page code of src string
+	 *  @param	string		$pagecodeto		Expected page code of returned string
+	 *  @return string      	   			Converted string
 	 */
 	public function convToOutputCharset($str, $pagecodefrom = 'UTF-8', $pagecodeto = '')
 	{
+		$str = (string) $str;
+
 		if (empty($pagecodeto)) {
 			$pagecodeto = $this->charset_output;
 		}
@@ -982,7 +984,7 @@ class Translate
 
 			if ($searchalt) {
 				$filenamealt = null;
-				// Test si fichier dans repertoire de la langue alternative
+				// Test if file is in directory of alternate language
 				if ($this->defaultlang != "en_US") {
 					$filenamealt = $searchdir . "/langs/en_US/" . $filename;
 				}

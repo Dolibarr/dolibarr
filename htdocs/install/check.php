@@ -128,7 +128,7 @@ if (empty($force_install_nophpinfo) && (!file_exists($lockfile) && !file_exists(
 print "<br>\n";
 
 // Check PHP version max
-$arrayphpmaxversionwarning = array(8, 4, 0);
+$arrayphpmaxversionwarning = array(8, 5, 0);
 if (versioncompare(versionphparray(), $arrayphpmaxversionwarning) > 0 && versioncompare(versionphparray(), $arrayphpmaxversionwarning) < 3) {        // Maximum to use (warning if higher)
 	print img_picto('', 'warning', 'class="pictofixedwidth error"');
 	print $langs->trans("ErrorPHPVersionTooHigh", versiontostring($arrayphpmaxversionwarning));
@@ -448,8 +448,8 @@ if (!file_exists($conffile)) {
 
 		// Show title
 		if (getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') || getDolGlobalString('MAIN_VERSION_LAST_INSTALL')) {
-			print $langs->trans("VersionLastUpgrade").' <b><span class="badge-text badge-secondary okinversed">'.getDolGlobalString('MAIN_VERSION_LAST_UPGRADE', getDolGlobalString('MAIN_VERSION_LAST_INSTALL')).'</span></b> &nbsp; - &nbsp; ';
-			print $langs->trans("VersionProgram").' <b><span class="badge-text badge-secondary okinversed">'.DOL_VERSION.'</span></b>';
+			print $langs->trans("VersionLastUpgrade").' <b><span class="badge-text okinversed">'.getDolGlobalString('MAIN_VERSION_LAST_UPGRADE', getDolGlobalString('MAIN_VERSION_LAST_INSTALL')).'</span></b> &nbsp; - &nbsp; ';
+			print $langs->trans("VersionProgram").' <b><span class="badge-text okinversed">'.DOL_VERSION.'</span></b>';
 			//print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired"));
 			print '<br>';
 			print '<br>';
@@ -640,7 +640,7 @@ if (!file_exists($conffile)) {
 		print '</table>'."\n";
 
 		if (count($notavailable_choices)) {
-			print '<br><div id="AShowChoices" style="opacity: 0.5">';
+			print '<br><div id="AShowChoices" class="opacitymedium cursorpointer">';
 			print '> '.$langs->trans('ShowNotAvailableOptions').'...';
 			print '</div>';
 

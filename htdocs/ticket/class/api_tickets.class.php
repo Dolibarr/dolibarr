@@ -132,6 +132,8 @@ class Tickets extends DolibarrApi
 	 */
 	private function getCommon($id = 0, $track_id = '', $ref = '', $contact_list = 1)
 	{
+		global $conf;
+
 		if (!DolibarrApiAccess::$user->hasRight('ticket', 'read')) {
 			throw new RestException(403);
 		}
@@ -149,23 +151,25 @@ class Tickets extends DolibarrApi
 			throw new RestException(404, 'Ticket not found');
 		}
 
-		// String for user assigned
-		if ($this->ticket->fk_user_assign > 0) {
-			$userStatic = new User($this->db);
-			$userStatic->fetch($this->ticket->fk_user_assign);
-			$this->ticket->fk_user_assign_string = $userStatic->firstname.' '.$userStatic->lastname;
-		}
-
 		// Messages of ticket
 		$messages = array();
+
 		$this->ticket->loadCacheMsgsTicket();
+
 		if (is_array($this->ticket->cache_msgs_ticket) && count($this->ticket->cache_msgs_ticket) > 0) {
 			$num = count($this->ticket->cache_msgs_ticket);
 			$i = 0;
 			while ($i < $num) {
-				if ($this->ticket->cache_msgs_ticket[$i]['fk_user_author'] > 0) {
-					$user_action = new User($this->db);
-					$user_action->fetch($this->ticket->cache_msgs_ticket[$i]['fk_user_author']);
+				$iduseraction = $this->ticket->cache_msgs_ticket[$i]['fk_user_action'];
+				if ($iduseraction > 0) {
+					if (empty($conf->cache['user'][$iduseraction])) {
+						$user_action = new User($this->db);
+						$user_action->fetch($iduseraction);
+
+						$conf->cache['user'][$iduseraction] = $user_action;
+					} else {
+						$user_action = $conf->cache['user'][$iduseraction];
+					}
 				} else {
 					$user_action = null;
 				}
@@ -173,11 +177,13 @@ class Tickets extends DolibarrApi
 				// Now define messages
 				$messages[] = array(
 					'id' => $this->ticket->cache_msgs_ticket[$i]['id'],
-					'fk_user_action' => $this->ticket->cache_msgs_ticket[$i]['fk_user_author'],
+					'fk_user_action' => $this->ticket->cache_msgs_ticket[$i]['fk_user_action'],		// Id of user owning the event
 					'fk_user_action_socid' =>  $user_action === null ? '' : $user_action->socid,
 					'fk_user_action_string' => $user_action === null ? '' : dolGetFirstLastname($user_action->firstname, $user_action->lastname),
-					'message' => $this->ticket->cache_msgs_ticket[$i]['message'],
 					'datec' => $this->ticket->cache_msgs_ticket[$i]['datec'],
+					'datep' => $this->ticket->cache_msgs_ticket[$i]['datep'],
+					'subject' => $this->ticket->cache_msgs_ticket[$i]['subject'],
+					'message' => $this->ticket->cache_msgs_ticket[$i]['message'],
 					'private' => $this->ticket->cache_msgs_ticket[$i]['private']
 				);
 				$i++;
@@ -209,15 +215,15 @@ class Tickets extends DolibarrApi
 	 *
 	 * Get a list of tickets
 	 *
-	 * @param int       $socid      Filter list with thirdparty ID
-	 * @param string	$sortfield	Sort field
-	 * @param string	$sortorder	Sort order
-	 * @param int		$limit		Limit for list
-	 * @param int		$page		Page number
-	 * @param string	$sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101') and (t.fk_statut:=:1)"
-	 * @param string    $properties		Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param int       $socid      		Filter list with thirdparty ID
+	 * @param string	$sortfield			Sort field
+	 * @param string	$sortorder			Sort order
+	 * @param int		$limit				Limit for list
+	 * @param int		$page				Page number
+	 * @param string	$sqlfilters 		Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101') and (t.fk_statut:=:1)"
+	 * @param string    $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param int		$loadcontacts		Load also contacts/addresses (0=No, 1=Yes)
-	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @param bool      $pagination_data    If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 *
 	 * @return array Array of ticket objects
 	 * @phan-return Ticket[]|array{data:Ticket[],pagination:array{total:int,page:int,page_count:int,limit:int}}
@@ -291,7 +297,7 @@ class Tickets extends DolibarrApi
 					if ($ticket_static->fk_user_assign > 0) {
 						$userStatic = new User($this->db);
 						$userStatic->fetch($ticket_static->fk_user_assign);
-						$ticket_static->fk_user_assign_string = $userStatic->firstname.' '.$userStatic->lastname;
+						//$ticket_static->fk_user_assign_string = dolGetFirstLastname($userStatic->firstname, $userStatic->lastname);
 					}
 
 					if ($loadcontacts) {

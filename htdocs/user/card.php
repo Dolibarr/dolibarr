@@ -13,7 +13,7 @@
  * Copyright (C) 2015		Ari Elbaz (elarifr)			<github@accedinfo.com>
  * Copyright (C) 2015-2018	Charlene Benke				<charlie@patas-monkey.com>
  * Copyright (C) 2016		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2018		David Beniamine				<David.Beniamine@Tetras-Libre.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -879,6 +879,9 @@ if (empty($reshook)) {
 	// Actions to build doc
 	$upload_dir = $conf->user->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+
+	// Actions when printing a doc from card
+	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 }
 
 
@@ -1409,7 +1412,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	}
 
 	// Multicompany
-	if (isModEnabled('multicompany') && is_object($mc)) {
+	if (isModEnabled('multicompany') && isset($mc) && is_object($mc)) {
 		// This is now done with hook formObjectOptions. Keep this code for backward compatibility with old multicompany module
 		if (!method_exists($mc, 'formObjectOptions')) {
 			if (!getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity == 1 && $user->admin && !$user->entity) {	// condition must be same for create and edit mode
@@ -1897,7 +1900,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 
 			// Multicompany
-			if (isModEnabled('multicompany') && is_object($mc)) {
+			if (isModEnabled('multicompany') && isset($mc) && is_object($mc)) {
 				// This is now done with hook formObjectOptions. Keep this code for backward compatibility with old multicompany module
 				if (!method_exists($mc, 'formObjectOptions')) {
 					if (isModEnabled('multicompany') && !getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity == 1 && $user->admin && !$user->entity) {
@@ -2100,7 +2103,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 					print $langs->trans("APIKeys");
 					print '</a>';*/
 					print '<div class="left inline-block">';
-					$s = '<!-- MAIN_SECURITY_ALLOW_TOTP --><span class="fa fa-pen valignmiddle btnTitle-icon"></span>';
+					$s = '<!-- API_IN_TOKEN_TABLE --><span class="fa fa-pen valignmiddle btnTitle-icon"></span>';
 					print dolButtonToOpenUrlInDialogPopup('openpopuptoaddapitoken', $langs->transnoentitiesnoconv("APIKeys"), $s, '/user/api_token/list.php?id='.$object->id.'&token='.newToken());
 					print '</div>';
 					print '</div>';
@@ -2110,7 +2113,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 						print showValueWithClipboardCPButton($object->api_key, 1, $langs->transnoentities("Hidden"));		// TODO Add an option to also reveal the hash, not only copy paste
 						print '</span>';
 					}
-					if (getDolGlobalString('API_ENABLE_COUNT_CALLS') || !empty($dolibarr_api_count_always_enabled)) {
+					if ($object->api_key && (getDolGlobalString('API_ENABLE_COUNT_CALLS') || !empty($dolibarr_api_count_always_enabled))) {
 						print ' &nbsp; <span class="badge badge-info" title="'.$langs->trans("TotalAPICall").'">';
 						print getDolUserInt('API_COUNT_CALL');
 						print '</span>';
@@ -2982,7 +2985,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			// Multicompany
 			// TODO check if user not linked with the current entity before change entity (thirdparty, invoice, etc.) !!
-			if (isModEnabled('multicompany') && is_object($mc)) {
+			if (isModEnabled('multicompany') && isset($mc) && is_object($mc)) {
 				// This is now done with hook formObjectOptions. Keep this code for backward compatibility with old multicompany module
 				if (!method_exists($mc, 'formObjectOptions')) {
 					if (empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && !$user->entity) {

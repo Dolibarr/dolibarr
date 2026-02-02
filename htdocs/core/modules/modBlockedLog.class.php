@@ -23,6 +23,8 @@
  *  \brief      Description and activation file for the module BlockedLog
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+
 
 /**
  *	Class to describe a BlockedLog module
@@ -51,6 +53,7 @@ class modBlockedLog extends DolibarrModules
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Enable a log on some business events into an unalterable log. This module may be mandatory for some countries.";
+
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
@@ -150,7 +153,7 @@ class modBlockedLog extends DolibarrModules
 	{
 		require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 
-		return isBlockedLogused();
+		return isBlockedLogUsed();
 	}
 
 
@@ -168,10 +171,27 @@ class modBlockedLog extends DolibarrModules
 
 		$sql = array();
 
+		require_once DOL_DOCUMENT_ROOT . '/blockedlog/class/blockedlog.class.php';
+		$b = new BlockedLog($this->db);
+
+		// forceinit can be set to bypass this redirection
+		if (isALNEQualifiedVersion(1, 1) && $options != 'forceinit') {
+			// We first switch on registration page
+			header("Location: ".DOL_URL_ROOT.'/blockedlog/admin/registration.php');
+			exit;
+		}
+
 		$this->db->begin();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+
+		// Check that the HTTPS is forced
+		$s = $b->canBeEnabled();
+		if ($s) {	// Activation not allowed
+			$this->error = $s;
+			return 0;
+		}
 
 		// Create HMAC if it does not exists yet
 		$hmac_encoded_secret_key = getDolGlobalString('BLOCKEDLOG_HMAC_KEY');
@@ -205,7 +225,6 @@ class modBlockedLog extends DolibarrModules
 
 
 		// We add an entry to show we enable module
-		require_once DOL_DOCUMENT_ROOT . '/blockedlog/class/blockedlog.class.php';
 
 		$object = new stdClass();
 		$object->id = 0;
@@ -214,11 +233,9 @@ class modBlockedLog extends DolibarrModules
 		$object->entity = $conf->entity;
 		$object->date = dol_now();
 
-		$b = new BlockedLog($this->db);
-
 		// Add first entry in unalterable Log to track that module was activated
 		$action = 'MODULE_SET';
-		$result = $b->setObjectData($object, $action, 0);
+		$result = $b->setObjectData($object, $action, 0, $user, null);
 
 		if ($result < 0) {
 			$this->error = $b->error;
@@ -262,7 +279,7 @@ class modBlockedLog extends DolibarrModules
 		$object->label = 'Module disabled';
 
 		$b = new BlockedLog($this->db);
-		$result = $b->setObjectData($object, 'MODULE_RESET', 0);
+		$result = $b->setObjectData($object, 'MODULE_RESET', 0, $user, null);
 		if ($result < 0) {
 			$this->error = $b->error;
 			$this->errors = $b->errors;
@@ -271,7 +288,7 @@ class modBlockedLog extends DolibarrModules
 
 		if ($b->alreadyUsed(1)) {
 			// Unalterable log was already used.
-			if (isALNEQualifiedVersion()) {
+			if (!$b->canBeDisabled()) {
 				// Case we refuse to disable it
 				global $langs;
 				$this->error = $langs->trans('DisablingBlockedLogIsNotallowedOnceUsedExceptOnFullreset', $langs->transnoentitiesnoconv('BlockedLog'));
@@ -290,5 +307,31 @@ class modBlockedLog extends DolibarrModules
 		}
 
 		return $this->_remove($sql, $options);
+	}
+
+
+	/**
+	 * Overwrite the common getDesc() method
+	 *
+	 * @param 	int<0,1>	$foruseinpopupdesc  	If 1, we return a short description for use into popup window
+	 * @return 	string  							Translated module description
+	 */
+	public function getDesc($foruseinpopupdesc = 0)
+	{
+		global $langs;
+		$langs->load("admin");
+
+		// If module description translation exists
+		$s = $langs->transnoentitiesnoconv("Module".$this->numero."Desc");
+
+		if ($foruseinpopupdesc) {
+			$langs->load("blockedlog");
+			$s .= '<br><br>';
+			if (isALNEQualifiedVersion(1, 1)) {
+				$s .= info_admin($langs->trans("UnalterableLogTool1FR"), 0, 0, 'warning');
+			}
+		}
+
+		return $s;
 	}
 }

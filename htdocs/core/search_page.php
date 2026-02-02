@@ -188,7 +188,7 @@ if ($conf->dol_use_jmobile) {
 	$ret .= ' style="background-repeat: no-repeat; background-position: 3px;"';
 	$ret .= ' placeholder="'.strip_tags($langs->trans("OrPasteAnURL")).'"';
 	$ret .= ' name="url" id="url" />';
-	$ret .= '<button type="submit" class="button bordertransp" style="padding-top: 4px; padding-bottom: 4px; padding-left: 6px; padding-right: 6px">';
+	$ret .= '<button type="submit" class="button bordertransp nohover" style="padding-top: 4px; padding-bottom: 4px; padding-left: 6px; padding-right: 6px">';
 	$ret .= '<span class="fa fa-search"></span>';
 	$ret .= '</button>';
 	$ret .= '</div>';

@@ -31,6 +31,13 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfiscalyear.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -42,16 +49,8 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/lettering.class.php';
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
-
 // Load translation files required by the page
-$langs->loadLangs(array("accountancy", "compta"));
+$langs->loadLangs(array("accountancy", "categories", "compta", "other"));
 
 // Get Parameters
 $socid = GETPOSTINT('socid');
@@ -339,7 +338,12 @@ if (empty($reshook)) {
 				$listofaccountsforgroup2[] = "'".$db->escape((string) $tmpval['account_number'])."'";
 			}
 		}
-		$filter['t.search_accounting_code_in'] = implode(',', $listofaccountsforgroup2);
+		if (!empty($listofaccountsforgroup2)) {
+			$filter['t.search_accounting_code_in'] = implode(',', $listofaccountsforgroup2);
+		} else {
+			$filter['t.search_accounting_code_in'] = "''";
+			setEventMessages($langs->trans("ThisCategoryHasNoItems"), null, 'warnings');
+		}
 		$param .= '&search_account_category='.urlencode((string) ($search_account_category));
 	}
 	if (!empty($search_accountancy_code)) {
@@ -484,6 +488,7 @@ if (empty($reshook)) {
 	$uploaddir = $conf->societe->dir_output;
 
 	global $error;
+	/** @var int $error */
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	if (!$error && $action == 'deletebookkeepingwriting' && $confirm == "yes" && $user->hasRight('accounting', 'mouvements', 'supprimer')) {
@@ -742,13 +747,13 @@ if (count($filter) > 0) {
 			$sqlwhere[] = natural_search($key, $value, 1, 1);
 		} elseif ($key == 't.reconciled_option') {
 			$sqlwhere[] = 't.lettering_code IS NULL';
-		} elseif ($key == 't.code_journal' && !empty($value)) {
+		} elseif ($key == 't.code_journal' && !empty($value)) {					// @phpstan-ignore-line false positive on !empty
 			if (is_array($value)) {
 				$sqlwhere[] = natural_search("t.code_journal", implode(',', $value), 3, 1);
 			} else {
 				$sqlwhere[] = natural_search("t.code_journal", $value, 3, 1);
 			}
-		} elseif ($key == 't.search_accounting_code_in' && !empty($value)) {
+		} elseif ($key == 't.search_accounting_code_in' && !empty($value)) {	// @phpstan-ignore-line false positive on !empty
 			$sqlwhere[] = 't.numero_compte IN ('.$db->sanitize($value, 1).')';
 		} else {
 			$sqlwhere[] = natural_search($key, $value, 0, 1);
@@ -1267,11 +1272,19 @@ while ($i < min($num, $limit)) {
 
 	// Piece number
 	if (!empty($arrayfields['t.piece_num']['checked'])) {
-		print '<td>';
+		print '<td class="nowraponall">';
 		$object->id = $line->id;
 		$object->piece_num = $line->piece_num;
 		$object->ref = $line->ref;
 		print $object->getNomUrl(1, '', 0, '', 1);
+		print '<span class="hideonsmartphone">';
+		if (!empty($line->date_export)) {
+			print img_picto($langs->trans("DateExport").": ".dol_print_date($line->date_export, 'dayhour')." (".$langs->trans("TransactionExportDesc").")", 'fa-file-export', 'class="paddingleft pictofixedwidth opacitymedium"');
+		}
+		if (!empty($line->date_validation)) {
+			print img_picto($langs->trans("DateValidation").": ".dol_print_date($line->date_validation, 'dayhour')." (".$langs->trans("TransactionBlockedLockedDesc").")", 'fa-lock', 'class="paddingleft pictofixedwidth opacitymedium"');
+		}
+		print '</span>';
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;

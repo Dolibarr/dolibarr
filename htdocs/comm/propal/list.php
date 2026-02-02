@@ -782,7 +782,7 @@ if ($search_note_public) {
 	$sql .= " AND p.note_public LIKE '%".$db->escape($db->escapeforlike($search_note_public))."%'";
 }
 if ($search_import_key) {
-	$sql .= natural_search("s.import_key", $search_import_key);
+	$sql .= natural_search("p.import_key", $search_import_key);
 }
 // Search on user
 $param = '';
@@ -1286,7 +1286,7 @@ if (isModEnabled('stock') && getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_
 	$formproduct = new FormProduct($db);
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('Warehouse');
-	$moreforfilter .= img_picto($tmptitle, 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($search_warehouse, 'search_warehouse');
+	$moreforfilter .= img_picto($tmptitle, 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($search_warehouse, 'search_warehouse', '', $tmptitle, 0, 0, '', 0, 0, array(), 'maxwidth250 widthcentpercentminusx');
 	$moreforfilter .= '</div>';
 }
 $parameters = array();

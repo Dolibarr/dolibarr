@@ -280,23 +280,24 @@ if ($result) {
 	print "</tr>\n";
 
 	if ($num > 0) {
+		/** @var array<int,array{name:string,htmlname:string,selling_price:float,buying_price:float,marge:float}> $group_list */
 		$group_list = array();
 		while ($objp = $db->fetch_object($result)) {
 			if ($agentid > 0) {
-				$group_id = $objp->socid;
+				$group_id = (int) $objp->socid;
 			} else {
-				$group_id = $objp->agent;
+				$group_id = (int) $objp->agent;
 			}
 
 			if (!isset($group_list[$group_id])) {
 				if ($agentid > 0) {
-					$group_name = $objp->name;
+					$group_name = (string) $objp->name;
 					$companystatic->id = $objp->socid;
 					$companystatic->name = $objp->name;
 					$companystatic->client = $objp->client;
 					$group_htmlname = $companystatic->getNomUrl(1, 'customer');
 				} else {
-					$group_name = $objp->lastname;
+					$group_name = (string) $objp->lastname;
 					$userstatic->fetch($objp->agent);
 					$group_htmlname = $userstatic->getFullName($langs, 0, 0, 0);
 				}
@@ -317,15 +318,15 @@ if ($result) {
 				} else {
 					if ($obj_seller = $db->fetch_object($resql_seller)) {
 						if ($obj_seller->nb > 0) {
-							$seller_nb = $obj_seller->nb;
+							$seller_nb = (int) $obj_seller->nb;
 						}
 					}
 				}
 			}
 
-			$group_list[$group_id]['selling_price'] += $objp->selling_price / $seller_nb;
-			$group_list[$group_id]['buying_price'] += $objp->buying_price / $seller_nb;
-			$group_list[$group_id]['marge'] += $objp->marge / $seller_nb;
+			$group_list[$group_id]['selling_price'] += (float) $objp->selling_price / $seller_nb;
+			$group_list[$group_id]['buying_price'] += (float) $objp->buying_price / $seller_nb;
+			$group_list[$group_id]['marge'] += (float) $objp->marge / $seller_nb;
 		}
 
 		// sort group array by sortfield
