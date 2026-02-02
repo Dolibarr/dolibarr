@@ -11,7 +11,7 @@
  * Copyright (C) 2011-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2015		Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2016		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2019-2025  Frédéric France         	<frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France         	<frederic.france@free.fr>
  * Copyright (C) 2020-2022  Open-Dsi                	<support@open-dsi.fr>
  * Copyright (C) 2024-2025  Charlene Benke      	    <charlene@patas-monkey.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
@@ -1053,7 +1053,7 @@ if (empty($reshook)) {
 
 			// Modify entry
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET ";
-			// Modifie valeur des champs
+			// Update fields value
 			if ($tabrowid[$id] && !in_array($tabrowid[$id], $listfieldmodify)) {
 				$sql .= $tabrowid[$id]."=";
 				$sql .= "'".$db->escape($rowid)."', ";

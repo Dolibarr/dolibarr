@@ -45,6 +45,7 @@ ALTER TABLE llx_actioncomm_reminder ADD INDEX idx_actioncomm_reminder_fk_soc (fk
 ALTER TABLE llx_actioncomm_reminder ADD INDEX idx_actioncomm_reminder_fk_contact (fk_contact);
 ALTER TABLE llx_actioncomm_reminder DROP INDEX uk_actioncomm_reminder_unique;
 ALTER TABLE llx_actioncomm_reminder ADD UNIQUE INDEX uk_actioncomm_reminder_unique(fk_actioncomm, fk_user, fk_soc, fk_contact, typeremind, offsetvalue, offsetunit);
+ALTER TABLE llx_multicurrency_rate ADD COLUMN rate_direct double DEFAULT 0 AFTER rate;
 
 CREATE TABLE llx_accounting_transaction_template (
 	rowid			integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
