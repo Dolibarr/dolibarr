@@ -1038,12 +1038,12 @@ class FactureLigne extends CommonInvoiceLine
 						$sql_credit_note .= " WHERE fd.fk_prev_id = ".((int) $lastprevid);
 						$sql_credit_note .= " AND f.situation_cycle_ref = ".((int) $invoicecache[$invoiceid]->situation_cycle_ref); // Prevent cycle outed
 						$sql_credit_note .= " AND f.type = ".Facture::TYPE_CREDIT_NOTE;
-						$sql_credit_note .= " AND fd.rowid != ".(int) $this->id; 
+						$sql_credit_note .= " AND fd.rowid != ".(int) $this->id;
 
 						$res_credit_note = $this->db->query($sql_credit_note);
 						if ($res_credit_note) {
 							while ($cn = $this->db->fetch_object($res_credit_note)) {
-								$cumulated_percent -= (float) $cn->situation_percent; // situation_percent is > 0  in credit notes lines, as subprice is < 0, so we've to substract it
+								$cumulated_percent -= (float) $cn->situation_percent; // situation_percent is > 0  in credit notes lines, as subprice is < 0, so we've to subtract it
 							}
 						} else {
 							dol_print_error($this->db);
