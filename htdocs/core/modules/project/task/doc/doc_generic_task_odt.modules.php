@@ -4,7 +4,7 @@
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013		Florian Henry		<florian.henry@ope-concept.pro>
  * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
- * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2023      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
@@ -268,7 +268,7 @@ class doc_generic_task_odt extends ModelePDFTask
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
-	 *	@param  array{type:string,ref:string,date:int,socname:string,amountht:float|string,amountttc:float|string,status:string}			$refdetail			Reference array
+	 *	@param  array{type:string,ref:string,date:int,socname:string,amountht:float|string,amountttc:float|string,status:int|string}			$refdetail			Reference array
 	 *	@param  Translate		$outputlangs        Lang object to use for output
 	 *  @return	array<string,int|string>			Return a substitution array
 	 */
@@ -276,13 +276,13 @@ class doc_generic_task_odt extends ModelePDFTask
 	{
 		// phpcs:enable
 		return array(
-			'projref_type' => $refdetail['type'],
-			'projref_ref' => $refdetail['ref'],
+			'projref_type' => (string) $refdetail['type'],
+			'projref_ref' => (string) $refdetail['ref'],
 			'projref_date' => dol_print_date($refdetail['date'], 'day'),
-			'projref_socname' => $refdetail['socname'],
+			'projref_socname' => (string) $refdetail['socname'],
 			'projref_amountht' => price($refdetail['amountht'], 0, $outputlangs),
 			'projref_amountttc' => price($refdetail['amountttc'], 0, $outputlangs),
-			'projref_status' => $refdetail['status']
+			'projref_status' => (int) $refdetail['status']
 		);
 	}
 
@@ -502,7 +502,7 @@ class doc_generic_task_odt extends ModelePDFTask
 				}
 			}
 			$project = new Project($this->db);
-			$project->fetch($object->fk_project);
+			$project->fetch((int) $object->fk_project);
 			$project->fetch_thirdparty();
 
 			$dir = $conf->project->dir_output."/".$project->ref."/";

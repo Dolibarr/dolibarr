@@ -6,7 +6,7 @@
  * Copyright (C) 2011		Fabrice CHERRIER
  * Copyright (C) 2013-2024  Philippe Grand	            <philippe.grand@atoo-net.com>
  * Copyright (C) 2015       Marcos García               <marcosgdf@gmail.com>
- * Copyright (C) 2018-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	    Nick Fragoulis
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
@@ -83,7 +83,7 @@ class pdf_strato extends ModelePDFContract
 	public $version = 'dolibarr';
 
 	/**
-	 * @var ?Societe|?Contact 	Recipient company object
+	 * @var Societe|Contact|null 	Recipient company object
 	 */
 	public $recipient;
 
@@ -622,7 +622,7 @@ class pdf_strato extends ModelePDFContract
 			$pdf->RoundedRect($this->marge_gauche, $posy + 5, $posmiddle - $this->marge_gauche - 5, 20, $this->corner_radius, '1234', 'D');
 		}
 
-		if (!getDolGlobalString('CONTRACT_HIDE_THIRPARTY_SIGNATURE_SECTION_PDF')) {
+		if (!getDolGlobalString('CONTRACT_HIDE_THIRPARTY_SIGNATURE_SECTION_PDF') && is_object($this->recipient)) {
 			$pdf->SetXY($posmiddle + 5, $posy);
 			$recipientname = pdfBuildThirdpartyName($this->recipient, $outputlangs);
 			$pdf->MultiCell($this->page_largeur - $this->marge_droite - $posmiddle - 5, 5, $outputlangs->transnoentities("ContactNameAndSignature", $recipientname), 0, 'L', false);
@@ -810,7 +810,10 @@ class pdf_strato extends ModelePDFContract
 				$this->recipient = $object->thirdparty;
 			}
 
-			$recipientname = pdfBuildThirdpartyName($this->recipient, $outputlangs);
+			$recipientname = '';
+			if ($this->recipient instanceOf Contact || $this->recipient instanceOf Societe) {
+				$recipientname = pdfBuildThirdpartyName($this->recipient, $outputlangs);
+			}
 
 			$mode = 'target';
 			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, (isset($object->contact) ? $object->contact : ''), ($usecontact ? 1 : 0), $mode, $object);

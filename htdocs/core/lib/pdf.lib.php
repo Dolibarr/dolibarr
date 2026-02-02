@@ -14,7 +14,7 @@
  * Copyright (C) 2019       Lenin Rivas           	<lenin.rivas@servcom-it.com>
  * Copyright (C) 2020       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2021-2022	Anthony Berton       	<anthony.berton@bb2a.fr>
- * Copyright (C) 2023-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2023-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -381,7 +381,7 @@ function pdfGetHeightForHtmlContent(&$pdf, $htmlcontent)
 /**
  * Returns the name of the thirdparty
  *
- * @param   Societe|Contact		    $thirdparty     Contact or thirdparty
+ * @param   Societe|Contact|null    $thirdparty     Contact or thirdparty
  * @param   Translate           	$outputlangs    Output language
  * @param   int<0,1>            	$includealias   1=Include alias name after name
  * @return  string                  	            String with name of thirdparty (+ alias if requested)

@@ -1107,11 +1107,6 @@ abstract class CommonInvoice extends CommonObject
 			$paramsBadge['badgeParams' ]['attr']['title'] = $titlestringtoshow;
 		}
 
-		/*
-		if (isset($moreparams['dispute_status'])) {
-			$statusdispute = $moreparams['dispute_status'] ? img_picto($langs->trans("DisputeOpen"), 'warning') : '';
-		}
-		*/
 		if (isset($moreparams['dispute_status']) && $moreparams['dispute_status']) {
 			$labelStatus .= ' - ';
 			if ($moreparams['dispute_status'] == 8) {
@@ -2418,5 +2413,5 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	/**
 	 * @var float 		Situation advance percentage (default 100 for standard invoices)
 	 */
-	public $situation_percent;
+	public $situation_percent = 100;
 }
