@@ -43,7 +43,6 @@ if (!defined('NOIPCHECK')) {
 if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
-
 if (!defined('XFRAMEOPTIONS_ALLOWALL')) {
 	define('XFRAMEOPTIONS_ALLOWALL', '1');
 }
@@ -605,12 +604,13 @@ if ($ispaymentok) {
 
 			// Do action only if $FinalPaymentAmt is set (session variable is cleaned after this page to avoid duplicate actions when page is POST a second time)
 			if (!empty($FinalPaymentAmt) && $paymentTypeId > 0) {
+				$typeid = $object->typeid;
+				$amountbytype = $adht->amountByType(1);		// Load the array of amount per type
+				$minimumamountbytype = $adht->minimumamountbytype(1); // Load the array of minimum amount per type
+				$minimumamount = empty($minimumamountbytype[$typeid]) ? 0 : $minimumamountbytype[$typeid];
 				// Security protection:
 				if (empty($adht->caneditamount)) {	// If we didn't allow members to choose their membership amount (if the amount is allowed in edit mode, no need to check)
 					if ($object->status == $object::STATUS_DRAFT) {		// If the member is not yet validated, we check that the amount is the same as expected.
-						$typeid = $object->typeid;
-						$amountbytype = $adht->amountByType(1);		// Load the array of amount per type
-
 						// Set amount for the subscription:
 						// - First check the amount of the member type.
 						$amountexpected = empty($amountbytype[$typeid]) ? 0 : $amountbytype[$typeid];
@@ -623,7 +623,7 @@ if ($ispaymentok) {
 						//	$amount = (GETPOST('amount') ? price2num(GETPOST('amount', 'alpha'), 'MT', 2) : '');
 						//}
 						// - If a min is set, we take it into account
-						$amountexpected = max(0, (float) $amountexpected, (float) getDolGlobalInt("MEMBER_MIN_AMOUNT"));
+						$amountexpected = max(0, (float) $amountexpected, (float) getDolGlobalInt("MEMBER_MIN_AMOUNT"), (float) $minimumamount);
 
 						if ($amountexpected && $amountexpected != $FinalPaymentAmt) {
 							$error++;
@@ -637,9 +637,9 @@ if ($ispaymentok) {
 
 				// Security protection:
 				if (getDolGlobalInt('MEMBER_MIN_AMOUNT')) {
-					if ($FinalPaymentAmt < getDolGlobalInt('MEMBER_MIN_AMOUNT')) {
+					if ($FinalPaymentAmt < getDolGlobalInt('MEMBER_MIN_AMOUNT') || $FinalPaymentAmt < $minimumamount) {
 						$error++;
-						$errmsg = 'Value of FinalPayment ('.$FinalPaymentAmt.') is lower than the minimum allowed (' . getDolGlobalString('MEMBER_MIN_AMOUNT').'). May be a hack to try to pay a different amount ?';
+						$errmsg = 'Value of FinalPayment ('.$FinalPaymentAmt.') is lower than the minimum allowed (' . max(getDolGlobalString('MEMBER_MIN_AMOUNT'), $minimumamount).'). May be a hack to try to pay a different amount ?';
 						$postactionmessages[] = $errmsg;
 						$ispostactionok = -1;
 						dol_syslog("Failed to validate member (amount propagated from payment page is lower than allowed minimum): ".$errmsg, LOG_ERR, 0, '_payment');
