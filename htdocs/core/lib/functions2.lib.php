@@ -8,6 +8,7 @@
  * Copyright (C) 2017       Juanjo Menent               <jmenent@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2026		Charlene Benke				<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1765,6 +1766,44 @@ function dol_set_user_param($db, $conf, &$user, $tab, $entity = -1)
 
 	$db->commit();
 	return 1;
+}
+
+/**
+ *	get personal parameter
+ *
+ *	@param	DoliDB						$db			Handler database
+ *	@param	Conf						$conf		Object conf
+ *	@param	User						$user		Object user
+ *	@param	string						$param		Parameter key to retrieve
+ *	@param  int							$entity		If a value is >= 0, we force the search on a specific entity. If -1, means search depends on default setup.
+ *	@return string						Return value if found
+ *
+ *	@see		dol_set_user_param(), dolibarr_get_const(), dolibarr_set_const(), dolibarr_del_const()
+ */
+function dol_get_user_param($db, $conf, &$user, $param, $entity = -1)
+{
+
+	$entity = ($entity == -1 ? ((int) $conf->entity) : ((int) $entity));
+
+	// We remove old parameters for all keys in $tab
+	$sql = "SELECT FROM ".MAIN_DB_PREFIX."user_param";
+	$sql .= " WHERE fk_user = ".((int) $user->id);
+	$sql .= " AND entity = ".((int) $entity);
+	$sql .= " AND param = '".$db->escape($param)."'";
+	dol_syslog("functions2.lib::dol_get_user_param", LOG_DEBUG);
+	$value = '';
+
+	$resql = $db->query($sql);
+	if ($resql) {
+		$obj = $db->fetch_object($resql);
+		if ($obj) {
+			$value = $obj->value;
+			$user->conf->$param = $value;
+		}
+	}
+
+	$db->commit();
+	return $value;
 }
 
 /**
