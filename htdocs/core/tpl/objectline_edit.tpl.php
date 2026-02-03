@@ -349,7 +349,9 @@ $coldisplay++;
 			$signfs2 = $line->subprice >= 0 ? 1 : -1;
 			$fieldv = $signfs2 * $tmp_fieldv + $old_fieldv;
 
-			print '<td class="nowrap right linecolcycleref"><input class="right" type="text" size="1" value="'.$fieldv.'" name="progress">% <span title="'.$langs->trans("PreviousProgress").'" class="opacitymedium">('.$old_fieldv.'%)</span></td>';
+			print '<td class="nowrap right linecolcycleref"><input class="right" type="text" size="1" value="'.$fieldv.'" name="progress">%';
+			print ' '.$form->textwithpicto('', $langs->trans("PreviousProgress").' ('.$old_fieldv.'%)');
+			print '</td>';
 		} else {
 			print '<td class="nowrap right linecolcycleref"><input class="right" type="text" size="1" value="' . (GETPOSTISSET('progress') ? GETPOST('progress') : $line->situation_percent) . '" name="progress">%</td>';
 		}
