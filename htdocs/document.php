@@ -145,6 +145,9 @@ if (empty($modulepart) && empty($hashp)) {
 if (empty($original_file) && empty($hashp)) {
 	httponly_accessforbidden('Bad link. Missing identification to find file (original_file or hashp)', 400);
 }
+if (!$user->hasRight('ecm', 'read')) {
+	httponly_accessforbidden($langs->trans("NotEnoughPermissions"), 403, 1);
+}
 if ($modulepart == 'fckeditor') {
 	$modulepart = 'medias'; // For backward compatibility
 }
