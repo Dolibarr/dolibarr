@@ -952,10 +952,10 @@ if ($result >= 0) {
 				$totalrecudeposits += $deposits;
 
 				if (isModEnabled('multicurrency')) {
-				    $multicurrency_total_ttc += $objp->multicurrency_total_ttc;
-    				$multicurrency_totalrecu += $multicurrency_payment;
-    				$multicurrency_totalrecucreditnote += $multicurrency_creditnotes;
-    				$multicurrency_totalrecudeposits += $multicurrency_deposits;
+					$multicurrency_total_ttc += $objp->multicurrency_total_ttc;
+					$multicurrency_totalrecu += $multicurrency_payment;
+					$multicurrency_totalrecucreditnote += $multicurrency_creditnotes;
+					$multicurrency_totalrecudeposits += $multicurrency_deposits;
 				}
 				
 				$i++;
@@ -978,12 +978,12 @@ if ($result >= 0) {
 					print '<td class="right"><b>'.price($sign * $multicurrency_total_ttc).'</b></td>';
 					print '<td class="right"><b>'.price($sign * $multicurrency_totalrecu);
 					if ($multicurrency_totalrecucreditnote) {
-    					print '+'.price($multicurrency_totalrecucreditnote);
-    				}
-    				if ($multicurrency_totalrecudeposits) {
-    					print '+'.price($multicurrency_totalrecudeposits);
-    				}
-    				print '</b></td>';
+						print '+'.price($multicurrency_totalrecucreditnote);
+					}
+					if ($multicurrency_totalrecudeposits) {
+						print '+'.price($multicurrency_totalrecudeposits);
+					}
+					print '</b></td>';
 					print '<td class="right"><b>'.price($sign * (float) price2num($multicurrency_total_ttc - $multicurrency_totalrecu - $multicurrency_totalrecucreditnote - $multicurrency_totalrecudeposits, 'MT')).'</b></td>';
 					print '<td class="right" id="multicurrency_result" style="font-weight: bold;"></td>';
 				}
