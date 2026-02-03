@@ -476,11 +476,10 @@ if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 	$coldisplay++;
 	if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
 		$previous_progress = $line->getAllPrevProgress($object->id);
-		$signfs2 = $line->subprice >= 0 ? 1 : -1;
-		$current_progress = $previous_progress + (float) $signfs2 * $line->situation_percent;
+		$current_progress = $previous_progress + $line->situation_percent;
 		print '<td class="linecolcycleref nowrap right">'.$current_progress.'% <span title="'.$langs->trans("PreviousProgress").'" class="opacitymedium">('.$previous_progress.'%)</span></td>';
 		$coldisplay++;
-		print '<td  class="nowrap right">'.((float) $signfs2 * $line->situation_percent).'%</td>';
+		print '<td  class="nowrap right">'.$line->situation_percent.'%</td>';
 		$coldisplay++;
 		$locataxes_array = getLocalTaxesFromRate($line->tva.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : ''), 0, ($senderissupplier ? $mysoc : $object->thirdparty), ($senderissupplier ? $object->thirdparty : $mysoc));
 		$tmp = calcul_price_total($line->qty, $line->pu, $line->remise_percent, $line->txtva, -1, -1, 0, 'HT', $line->info_bits, $line->type, ($senderissupplier ? $object->thirdparty : $mysoc), $locataxes_array, 100, $object->multicurrency_tx, $line->multicurrency_subprice);

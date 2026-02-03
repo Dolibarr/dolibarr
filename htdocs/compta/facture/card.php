@@ -1368,7 +1368,7 @@ if (empty($reshook)) {
 								$source_fk_prev_id = $line->fk_prev_id; // temporary storing situation invoice fk_prev_id
 								$line->fk_prev_id  = $line->id; // The new line of the new credit note we are creating must be linked to the situation invoice line it is created from
 								if (getDolGlobalString('INVOICE_USE_SITUATION') == 2) {
-									// $line->situation_percent = -$line->situation_percent; // // situation_percent is > 0 in credit notes lines, as subprice is < 0
+									$line->situation_percent = -$line->situation_percent;
 								} else {
 									if (!empty($facture_source->tab_previous_situation_invoice)) {
 										// search the last standard invoice in cycle and the possible credit note between this last and facture_source
@@ -3195,14 +3195,13 @@ if (empty($reshook)) {
 						setEventMessages($langs->trans('CantBeNegative'), null, 'errors');
 						$error++;
 					}
-					$addprogress = $previousprogress - $fullprogress; // progress > 0 in situation credit note as subprice < 0
 				} else {
 					if ($fullprogress < $previousprogress) {
 						$error++;
 						setEventMessages($langs->trans('CantBeLessThanMinPercent'), null, 'errors');
 					}
-					$addprogress = $fullprogress - $previousprogress;
 				}
+				$addprogress = $fullprogress - $previousprogress;
 			} else { // legacy situation mode INVOICE_USE_SITUATION=1
 				$previousprogress = $line->getAllPrevProgress($line->fk_facture);
 				if ($object->type == Facture::TYPE_CREDIT_NOTE) {
@@ -3241,7 +3240,6 @@ if (empty($reshook)) {
 					}
 				}
 			}
-
 			$result = $object->updateline(
 				GETPOSTINT('lineid'),
 				$description,
@@ -6784,17 +6782,6 @@ if ($action == 'create') {
 							print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&action=canceled">'.$langs->trans('ClassifyCanceled').'</a>';
 						}
 					}
-				}
-			}
-
-			// Create next situation invoice
-			if ($usercancreate && $object->isSituationInvoice() && ($object->status == 1 || $object->status == 2)) {
-				if ($object->is_last_in_cycle() && $object->situation_final != 1) {
-					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=create&type=5&origin=facture&originid='.$object->id.'&socid='.$object->socid.'" >'.$langs->trans('CreateNextSituationInvoice').'</a>';
-				} elseif (!$object->is_last_in_cycle()) {
-					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("DisabledBecauseNotLastInCycle").'">'.$langs->trans('CreateNextSituationInvoice').'</a>';
-				} else {
-					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("DisabledBecauseFinal").'">'.$langs->trans('CreateNextSituationInvoice').'</a>';
 				}
 			}
 
