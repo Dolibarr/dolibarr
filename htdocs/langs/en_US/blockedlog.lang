@@ -59,6 +59,18 @@ RegistrationNumber=Registration number
 NumberOfPrints=Number of prints
 NumberOfEmailsSent=Number of emails sent
 
+BLOCKEDLOG_REGISTRATION_NAME=Company name
+BLOCKEDLOG_REGISTRATION_EMAIL=Company email
+BLOCKEDLOG_REGISTRATION_COUNTRY_CODE=Company country
+BLOCKEDLOG_REGISTRATION_IDPROF1=Company Prof Id 1 (SIREN)
+MAIN_INFO_ITPROVIDER_NAME=IT service provider name
+MAIN_INFO_ITPROVIDER_MAIL=IT service provider email
+MAIN_INFO_ITPROVIDER_COUNTRY=IT service provider country
+MAIN_INFO_ITPROVIDER_IDPROF1=IT service provider Prof Id 1 (SIREN)
+RGPD=GDPR
+BLOCKEDLOG_REGISTRATION_RGPD=In order to comply with the certification requirements for cash register software, it is necessary to regularly communicate technical information to an external server (managed by the Dolibarr project). The information transferred is as follows: Line ID, hash signature of data saved on the Log Inaltérable line, date of recording, and server IP address. I agree to this information being communicated regularly (Note: Refusal will render the software incompatible with certification and will prevent the use of the certified Log Inaltérable module).
+RegistrationDoneAndModuleEnabled=All the entered information has been saved and sent to the Dolibarr organisation server for your registration. <br>You can now use blockedlog module.
+
 ## logTypes
 logBILL_DELETE=Customer invoice logically deleted
 logBILL_PAYED=Customer invoice paid
