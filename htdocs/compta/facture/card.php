@@ -3330,8 +3330,11 @@ if (empty($reshook)) {
 			dol_print_error($db);
 		}
 		if (GETPOST('all_progress') != "") {
-			$all_progress = GETPOSTINT('all_progress');
-			if ($all_progress > 100) $all_progress = 100;
+			$all_progress = GETPOSTFLOAT('all_progress');
+			if ($all_progress > 100) {
+				$all_progress = 100;
+			}
+
 			foreach ($object->lines as $line) {
 				$updtline = true;
 				if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
@@ -3358,6 +3361,17 @@ if (empty($reshook)) {
 					}
 				}
 				if ($updtline) $object->update_percent($line, $all_progress, false);
+				if ($object->type != $object::TYPE_CREDIT_NOTE && (float) $all_progress < (float) $percent) {
+					$mesg = $langs->trans("Line").' '.$line->rang.' : '.$langs->trans("CantBeLessThanMinPercent");
+					setEventMessages($mesg, null, 'warnings');
+					$result = -1;
+				} elseif ($object->type == $object::TYPE_CREDIT_NOTE && (float) $all_progress > (float) $percent) {
+					$mesg = $langs->trans("Line").' '.$line->rang.' : '.$langs->trans("CantBeMoreThanMinPercent");
+					setEventMessages($mesg, null, 'warnings');
+					$result = -1;
+				} else {
+					$object->update_percent($line, $all_progress, false);
+				}
 			}
 			$object->update_price(1);
 		}
@@ -4184,7 +4198,8 @@ if ($action == 'create') {
 				}
 				$tmp .= '> ';
 				$text = $tmp.'<label for="radio_situation_bis">'.$langs->trans("InvoiceSituationAsk").'</label> ';
-				$text .= '<select class="flat minwidth50" id="situations" name="situations"';
+
+				$text .= '<select class="flat minwidth125" id="situations" name="situations"';
 				if ($opt == ('<option value="0" selected>'.$langs->trans('NoSituations').'</option>') || (GETPOST('origin') && GETPOST('origin') != 'facture' && GETPOST('origin') != 'commande')) {
 					$text .= ' disabled';
 				}
@@ -5620,10 +5635,10 @@ if ($action == 'create') {
 		}
 		print '</td></tr></table>';
 		print '</td><td>';
-		$liststatus = array('0' => "None", '1' => "DisputeOpen", '8' => "DisputeLost", '9' => "DisputeWon");
+		$liststatus = Facture::ARRAY_OF_DISPUTE_STATUS;
 		if ($action != 'editdispute_status') {
 			if ($object->dispute_status) {
-				print $langs->trans($liststatus[$object->dispute_status]);
+				print $langs->trans($liststatus[$object->dispute_status]['label']);
 			}
 		} else {
 			print '<form enctype="multipart/form-data" action="'.DOL_URL_ROOT.'/compta/facture/card.php" method="POST">';
@@ -5995,7 +6010,7 @@ if ($action == 'create') {
 
 
 			print '<tr class="oddeven">';
-			print '<td colspan="2" class="left"><b>'.$langs->trans('CurrentSituationTotal').'</b></td>';
+			print '<td colspan="2" class="left"><b>'.$langs->trans('SituationTotalAfterInvoice').'</b></td>';
 			print '<td>';
 			$i = 0;
 			foreach ($current_situation_counter as $sit) {
@@ -6796,6 +6811,17 @@ if ($action == 'create') {
 				}
 			}
 
+			// Create next situation invoice
+			if ($usercancreate && $object->isSituationInvoice() && ($object->status == 1 || $object->status == 2)) {
+				if ($object->is_last_in_cycle() && $object->situation_final != 1) {
+					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=create&type=5&origin=facture&originid='.$object->id.'&socid='.$object->socid.'" >'.$langs->trans('CreateNextSituationInvoice').'</a>';
+				} elseif (!$object->is_last_in_cycle()) {
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("DisabledBecauseNotLastInCycle").'">'.$langs->trans('CreateNextSituationInvoice').'</a>';
+				} else {
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("DisabledBecauseFinal").'">'.$langs->trans('CreateNextSituationInvoice').'</a>';
+				}
+			}
+
 			// Create a credit note
 			if (($object->type == Facture::TYPE_STANDARD || ($object->type == Facture::TYPE_DEPOSIT && !getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) || $object->type == Facture::TYPE_PROFORMA) && $object->status > 0 && $usercancreate) {
 				if (!$objectidnext) {
@@ -6803,7 +6829,7 @@ if ($action == 'create') {
 				}
 			}
 
-			// For situation invoice
+			// For situation invoice, create credit note
 			if ($object->status > Facture::STATUS_DRAFT
 				&& $object->isSituationInvoice()
 				&& ($object->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits) > 0

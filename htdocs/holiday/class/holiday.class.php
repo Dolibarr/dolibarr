@@ -2387,7 +2387,15 @@ class Holiday extends CommonObject
 			if ($num) {
 				$types = array();
 				while ($obj = $this->db->fetch_object($result)) {
-					$types[$obj->rowid] = array('id' => $obj->rowid, 'rowid' => $obj->rowid, 'code' => $obj->code, 'label' => $obj->label, 'affect' => $obj->affect, 'delay' => $obj->delay, 'newbymonth' => $obj->newbymonth);
+					$types[$obj->rowid] = array(
+						'id' => $obj->rowid,
+						'rowid' => $obj->rowid,
+						'code' => $obj->code,
+						'label' => $obj->label,
+						'affect' => $obj->affect,
+						'delay' => $obj->delay,
+						'newbymonth' => $obj->newbymonth
+					);
 				}
 
 				return $types;
