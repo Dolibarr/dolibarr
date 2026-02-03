@@ -3189,7 +3189,7 @@ if (empty($reshook)) {
 				$previousprogress = $line->getAllPrevProgress($object->id);
 				if ($object->type == Facture::TYPE_CREDIT_NOTE) {
 					if ($fullprogress > $previousprogress) {
-						setEventMessages($langs->trans('CantBeGreatThanLastForACredit'), null, 'errors');
+						setEventMessages($langs->trans('CantBeMoreThanMinPercent'), null, 'errors');
 						$error++;
 					} elseif ($fullprogress < 0) {
 						setEventMessages($langs->trans('CantBeNegative'), null, 'errors');
@@ -3336,31 +3336,7 @@ if (empty($reshook)) {
 			}
 
 			foreach ($object->lines as $line) {
-				$updtline = true;
-				if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
-					$percent = $line->getAllPrevProgress($object->id);
-					if ($object->type == Facture::TYPE_CREDIT_NOTE) {
-						if ((float) $all_progress > (float) $percent) {
-							$mesg = $langs->trans("Line").' '.$line->rang.' : '.$langs->trans("CantBeGreatThanLastForACredit");
-							setEventMessages($mesg, null, 'errors');
-							$updtline = false;
-						}
-					} else {
-						if ((float) $all_progress < (float) $percent) {
-							$mesg = $langs->trans("Line").' '.$line->rang.' : '.$langs->trans("CantBeLessThanMinPercent");
-							setEventMessages($mesg, null, 'errors');
-							$updtline = false;
-						}
-					}
-				} else {
-					$percent = $line->get_prev_progress($object->id);
-					if ((float) $all_progress < (float) $percent) { // TODO add some test on credit note in legacy mode
-						$mesg = $langs->trans("Line").' '.$line->rang.' : '.$langs->trans("CantBeLessThanMinPercent");
-						setEventMessages($mesg, null, 'errors');
-						$updtline = false;
-					}
-				}
-				if ($updtline) $object->update_percent($line, $all_progress, false);
+				$percent = getDolGlobalInt('INVOICE_USE_SITUATION') == 2 ? $line->getAllPrevProgress($object->id) : $line->get_prev_progress($object->id);
 				if ($object->type != $object::TYPE_CREDIT_NOTE && (float) $all_progress < (float) $percent) {
 					$mesg = $langs->trans("Line").' '.$line->rang.' : '.$langs->trans("CantBeLessThanMinPercent");
 					setEventMessages($mesg, null, 'warnings');
