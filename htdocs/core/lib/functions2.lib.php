@@ -1782,10 +1782,8 @@ function dol_set_user_param($db, $conf, &$user, $tab, $entity = -1)
  */
 function dol_get_user_param($db, $conf, &$user, $param, $entity = -1)
 {
-
 	$entity = ($entity == -1 ? ((int) $conf->entity) : ((int) $entity));
 
-	// We remove old parameters for all keys in $tab
 	$sql = "SELECT FROM ".MAIN_DB_PREFIX."user_param";
 	$sql .= " WHERE fk_user = ".((int) $user->id);
 	$sql .= " AND entity = ".((int) $entity);
@@ -1802,7 +1800,6 @@ function dol_get_user_param($db, $conf, &$user, $param, $entity = -1)
 		}
 	}
 
-	$db->commit();
 	return $value;
 }
 
