@@ -310,17 +310,12 @@ if ($action == 'create') {
 
 	print "</form>";
 } else {
-	/* ************************************************************************** */
-	/*                                                                            */
-	/* Visu et edition                                                            */
-	/*                                                                            */
-	/* ************************************************************************** */
 	if ($id) {
 		$head = group_prepare_head($object);
 		$title = $langs->trans("Group");
 
 		/*
-		 * Confirmation suppression
+		 * Deletion confirmation
 		 */
 		if ($action == 'delete') {
 			print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id, $langs->trans("DeleteAGroup"), $langs->trans("ConfirmDeleteGroup", $object->name), "confirm_delete", '', 0, 1);

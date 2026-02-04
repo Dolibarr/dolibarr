@@ -559,7 +559,7 @@ if ($action == 'afteradd') {
 				url: "'.DOL_URL_ROOT.'/public/bookcal/bookcalAjax.php",
 				data: {
 					action: "verifyavailability",
-					id: '.$id.',
+					id: '.((int) $id).',
 					datetocheck: $(this).children("div").data("datetime"),
 					token: "'.currentToken().'",
 				}

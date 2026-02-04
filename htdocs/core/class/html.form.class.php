@@ -17,7 +17,7 @@
  * Copyright (C) 2012-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014-2023  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2022  Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018       Nicolas ZABOURI	        <info@inovea-conseil.com>
  * Copyright (C) 2018       Christophe Battarel     <christophe@altairis.fr>
  * Copyright (C) 2018       Josep Lluis Amador      <joseplluis@lliuretic.cat>
@@ -25,6 +25,7 @@
  * Copyright (C) 2023		Nick Fragoulis
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2026		Lenin Rivas				<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -6930,9 +6931,10 @@ class Form
 	 * @param double $rate Current rate
 	 * @param string $htmlname Name of select html field
 	 * @param string $currency Currency code to explain the rate
+	 * @param double $rate_direct Current rate_direct
 	 * @return    void
 	 */
-	public function form_multicurrency_rate($page, $rate = 0.0, $htmlname = 'multicurrency_tx', $currency = '')
+	public function form_multicurrency_rate($page, $rate = 0.0, $htmlname = 'multicurrency_tx', $currency = '', $rate_direct = 0.0)
 	{
 		// phpcs:enable
 		global $langs, $conf;
@@ -6953,7 +6955,16 @@ class Form
 			if (!empty($rate)) {
 				print price($rate, 1, $langs, 0, 0);
 				if ($currency && $rate != 1) {
-					print ' &nbsp; <span class="opacitymedium">(' . price($rate, 1, $langs, 0, 0) . ' ' . $currency . ' = 1 ' . $conf->currency . ')</span>';
+					/**
+					 * Direct	: 	1 Divisa Currency = X Currency Main.
+					 * Indirect	: 	1 Currency Main = X Divisa Currency.
+					 * Then for Dolibarr use is Indirect for default
+					 */
+					if (getDolGlobalString('MULTICURRENCY_USE_RATE_DIRECT')) {
+						print ' &nbsp; <span class="opacitymedium">(' . price($rate_direct, 1, $langs, 0, 0) . ' ' . $conf->currency . ' = 1 ' . $currency . ')</span>';
+					} else {
+						print ' &nbsp; <span class="opacitymedium">(' . price($rate, 1, $langs, 0, 0) . ' ' . $currency . ' = 1 ' . $conf->currency . ')</span>';
+					}
 				}
 			} else {
 				print 1;
@@ -7161,7 +7172,7 @@ class Form
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
-	 *    Retourne la liste des devises, dans la langue de l'utilisateur
+	 *  Returns the list of currencies in the user's language
 	 *
 	 * @param string $selected preselected currency code
 	 * @param string $htmlname name of HTML select list
@@ -7175,7 +7186,7 @@ class Form
 	}
 
 	/**
-	 *  Retourne la liste des devises, dans la langue de l'utilisateur
+	 *  Returns the list of currencies in the user's language
 	 *
 	 * @param 	string 	$selected 		Preselected currency code
 	 * @param 	string 	$htmlname 		Name of HTML select list
@@ -7416,6 +7427,8 @@ class Form
 		$hookmanager->initHooks(array('commonobject'));
 		$info_bits == 1 ? $is_npr = 1 : $is_npr = 0;
 		$parameters = array(
+			'htmlname' => $htmlname,
+			'selectedrate' => $selectedrate,
 			'seller' => $societe_vendeuse,
 			'buyer' => $societe_acheteuse,
 			'idprod' => $idprod,
