@@ -5,7 +5,7 @@
  * Copyright (C) 2010-2014 Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2024-2025  Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	   Nick Fragoulis
  *

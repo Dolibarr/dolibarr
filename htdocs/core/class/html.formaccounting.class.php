@@ -5,7 +5,7 @@
  * Copyright (C) 2016		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2016-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -581,7 +581,7 @@ class FormAccounting extends Form
 	 *
 	 * @param string 	$selected 		Preselected value
 	 * @param string 	$htmlname 		Name of HTML select object
-	 * @param int 		$useempty 		Affiche valeur vide dans liste
+	 * @param int 		$useempty 		Display empty value in list
 	 * @param string 	$output_format 	(html/option (for option html only)/array (to return options arrays
 	 * @return string|array<string,string>|int<-1,-1>	HTML select component || array of select options || - 1 if error
 	 */

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2023	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2011-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -493,8 +493,8 @@ if ($tabname[$id]) {
 		print '<td></td>';
 	}
 	foreach ($fieldlist as $field => $value) {
-		// Determine le nom du champ par rapport aux noms possibles
-		// dans les dictionnaires de donnees
+		// Determine the field name based on the possible names
+		// in the data dictionaries.
 		$valuetoshow = ucfirst($fieldlist[$field]); // By default
 		$valuetoshow = $langs->trans($valuetoshow); // try to translate
 		$class = "left";
