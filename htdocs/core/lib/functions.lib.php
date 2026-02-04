@@ -26,6 +26,7 @@
  * Copyright (C) 2024		Josep Lluís Amador Teruel	<joseplluis@lliuretic.cat>
  * Copyright (C) 2024		Benoît PASCAL				<contact@p-ben.com>
  * Copyright (C) 2020-2025	BERTON Anthony 				<anthony.berton@bb2a.fr>
+ * Copyright (C) 2026		Benjamin Falière			<benjamin@faliere.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2036,10 +2037,10 @@ function dolSlugify($stringtoslugify)
 /**
  *  Returns text escaped for inclusion into javascript code
  *
- *  @param	string	$stringtoescape			String to escape
- *  @param	int<0,3>	$mode				0=Escape also ' and " into ', 1=Escape ' but not " for usage into 'string', 2=Escape " but not ' for usage into "string", 3=Escape ' and " with \
- *  @param	int		$noescapebackslashn		0=Escape also \n. 1=Do not escape \n.
- *  @return string							Escaped string. Both ' and " are escaped into ' if they are escaped.
+ *  @param	int|string	$stringtoescape			String to escape
+ *  @param	int<0,3>	$mode					0=Escape also ' and " into ', 1=Escape ' but not " for usage into 'string', 2=Escape " but not ' for usage into "string", 3=Escape ' and " with \
+ *  @param	int			$noescapebackslashn		0=Escape also \n. 1=Do not escape \n.
+ *  @return string								Escaped string. Both ' and " are escaped into ' if they are escaped.
  */
 function dol_escape_js($stringtoescape, $mode = 0, $noescapebackslashn = 0)
 {
@@ -2065,7 +2066,7 @@ function dol_escape_js($stringtoescape, $mode = 0, $noescapebackslashn = 0)
 		$substitjs["'"] = "\\'";
 		$substitjs['"'] = "\\\"";
 	}
-	return strtr($stringtoescape, $substitjs);
+	return strtr((string) $stringtoescape, $substitjs);
 }
 
 /**
@@ -15597,10 +15598,11 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 			}
 
 			$libelle = '';
-			if (!empty($actionstatic->code) && preg_match('/^TICKET_MSG/', $actionstatic->code)) {
-				$out .= $langs->trans('TicketNewMessage');
-			} elseif (!empty($actionstatic->code) && preg_match('/^TICKET_MSG_PRIVATE/', $actionstatic->code)) {
+
+			if (!empty($actionstatic->code) && preg_match('/^TICKET_MSG_PRIVATE/', $actionstatic->code)) {
 				$out .= $langs->trans('TicketNewMessage').' <em>('.$langs->trans('Private').')</em>';
+			} elseif (!empty($actionstatic->code) && preg_match('/^TICKET_MSG/', $actionstatic->code)) {
+				$out .= $langs->trans('TicketNewMessage');
 			} elseif (isset($histo[$key]['type'])) {
 				if ($histo[$key]['type'] == 'action') {
 					$transcode = $langs->transnoentitiesnoconv("Action".$histo[$key]['acode']);
