@@ -7241,6 +7241,8 @@ div#ecm-layout-center {
 <?php if (getDolGlobalString('MAIN_JQUERY_JNOTIFY_BOTTOM')) { ?>
 	top: auto !important;
 	bottom: 4px !important;
+<?php } else { ?>
+	top: 40px !important;
 <?php } ?>
 	text-align: center;
 	min-width: <?php echo $dol_optimize_smallscreen ? '200' : '480'; ?>px;
