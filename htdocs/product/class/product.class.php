@@ -110,7 +110,14 @@ class Product extends CommonObject
 	 * @var string
 	 * @see images.lib.php
 	 */
-	public $regeximgext = '\.gif|\.jpg|\.jpeg|\.png|\.bmp|\.webp|\.xpm|\.xbm';
+	public $regeximgext = '\.gif|\.jpg|\.jpeg|\.png|\.bmp|\.webp|\.xpm|\.xbm|\.avif';
+
+	/**
+	 * Product ref
+	 *
+	 * @var string
+	 */
+	public $ref;
 
 	/**
 	 * @var string
@@ -5788,13 +5795,16 @@ class Product extends CommonObject
 			$datas['ref'] = '<br><b>'.$langs->trans('ProductRef').':</b> '.$this->ref;
 		}
 		if (!empty($this->label)) {
-			$datas['label'] = '<br><b>'.$langs->trans('ProductLabel').':</b> '.$this->label;
+			$datas['label'] = '<br><b>'.$langs->trans('ProductLabel').':</b> '.$this->label.'<br>';
 		}
 
 		if ($permissiontoreadproduct) {
-			if (!empty($this->description)) {
+			if (!empty($this->description) && getDolGlobalString('PRODUCT_SHOW_DESCRIPTION_IN_TOOLTIP')) {
 				$datas['description'] = '<br><b>'.$langs->trans('ProductDescription').':</b> '.dolGetFirstLineOfText($this->description, 5);
 			}
+
+			$datas['stockmanaged'] = "<br><b>".$langs->trans("StockableProduct").'</b>: '.yn($this->isStockManaged());
+
 			if ($this->isStockManaged()) {
 				if (isModEnabled('productbatch')) {
 					$langs->load("productbatch");

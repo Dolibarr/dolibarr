@@ -230,7 +230,7 @@ if (GETPOST("account") || GETPOST("ref")) {
 	print '<div class="div-table-responsive">';
 	print '<table class="noborder centpercent">';
 
-	// Ligne de titre tableau des ecritures
+	// Line of title for bank transactions
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("DateDue").'</td>';
 	print '<td>'.$langs->trans("Description").'</td>';

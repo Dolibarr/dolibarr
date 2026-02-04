@@ -184,7 +184,9 @@ if (empty($reshook)) {
 		}
 
 		$bankaccount = new Account($db);
-		$bankaccount->fetch($object->fk_account);
+		if ($object->fk_account > 0) {
+			$bankaccount->fetch((int) $object->fk_account);
+		}
 
 		// Check currency
 		$currencyofpayment = $conf->currency;	// The currency of various payment is not yet asked, so we suppose it is the main company currency

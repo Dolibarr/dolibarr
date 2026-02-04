@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2016	Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2018-2024	Alexandre Spangaro			<aspangaro@open-dsi.fr>
  * Copyright (C) 2021-2025  Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
@@ -169,7 +169,7 @@ $arrayfields = array(
 	'd.lastname' => array('label' => "Lastname", 'checked' => 1),
 	'd.firstname' => array('label' => "Firstname", 'checked' => 1),
 	'd.gender' => array('label' => "Gender", 'checked' => 0),
-	'd.company' => array('label' => "Company", 'checked' => 1, 'position' => 70),
+	'd.societe' => array('label' => "Company", 'checked' => 1, 'position' => 70),
 	'd.login' => array('label' => "Login", 'checked' => 1),
 	'd.morphy' => array('label' => "MemberNature", 'checked' => 1),
 	't.libelle' => array('label' => "MemberType", 'checked' => 1, 'position' => 55),
@@ -503,7 +503,7 @@ if ($search_filter == 'outofdate') {
 	$sql .= " AND (datefin < '".$db->idate($now)."')";
 }
 if ($search_status != '') {
-	// Peut valoir un nombre ou liste de nombre separates par virgules
+	// Can be a number or comma separated list of numbers
 	$sql .= " AND d.statut in (".$db->sanitize($db->escape($search_status)).")";
 }
 if ($search_morphy != '' && $search_morphy != '-1') {
@@ -931,7 +931,7 @@ if (!empty($arrayfields['d.gender']['checked'])) {
 }
 
 // Company
-if (!empty($arrayfields['d.company']['checked'])) {
+if (!empty($arrayfields['d.societe']['checked'])) {
 	print '<td class="liste_titre left">';
 	print '<input class="flat maxwidth75imp" type="text" name="search_company" value="'.dol_escape_htmltag($search_company).'"></td>';
 }
@@ -1131,8 +1131,8 @@ if (!empty($arrayfields['d.gender']['checked'])) {
 	print_liste_field_titre($arrayfields['d.gender']['label'], $_SERVER['PHP_SELF'], 'd.gender', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
-if (!empty($arrayfields['d.company']['checked'])) {
-	print_liste_field_titre($arrayfields['d.company']['label'], $_SERVER["PHP_SELF"], 'companyname', '', $param, '', $sortfield, $sortorder);
+if (!empty($arrayfields['d.societe']['checked'])) {
+	print_liste_field_titre($arrayfields['d.societe']['label'], $_SERVER["PHP_SELF"], 'companyname', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['d.login']['checked'])) {
@@ -1364,7 +1364,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 		// Company
-		if (!empty($arrayfields['d.company']['checked'])) {
+		if (!empty($arrayfields['d.societe']['checked'])) {
 			print '<td class="tdoverflowmax125" title="'.dolPrintHTMLForAttribute((string) $companyname).'">';
 			print $companynametoshow;
 			print "</td>\n";

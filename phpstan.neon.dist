@@ -78,6 +78,8 @@ parameters:
 		- '#Empty array passed to foreach#'
 		- '#Unable to resolve the template type T#'
 		- '#in empty\(\) always exists and is always falsy#'
+		- '#in empty\(\) always exists and is not falsy#'
+		- '#in isset\(\) is not nullable#'
 	internalErrorsCountLimit: 50
 	cache:
 		# nodesByFileCountMax: 512

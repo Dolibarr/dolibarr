@@ -5,7 +5,7 @@
  * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -226,7 +226,7 @@ if (empty($reshook)) {
 
 					$updSkill->rankorder = $line->rankorder;
 					$updSkill->update($user);
-				} else { // sinon on ajoute la skill
+				} else { // else we create the skill
 					$newSkill = new SkillRank($db);
 					$resCreate = $newSkill->cloneFromCurrentSkill($line, $object->fk_user);
 				}
@@ -275,17 +275,18 @@ $help_url = '';
 $css = array();
 $css[] = '/hrm/css/style.css';
 llxHeader('', $title, $help_url, '', 0, 0, '', $css);
-
-print '<script type="text/javascript" language="javascript">
+?>
+<script>
 	$(document).ready(function() {
-	  $("#btn_valid").click(function() {
-		 console.log("Click on btn_valid");
-		 var form = $("#form_save_rank");
-		 form.submit();
-		 return true;
-	   });
+		$("#btn_valid").click(function() {
+			console.log("Click on btn_valid");
+			var form = $("#form_save_rank");
+			form.submit();
+			return true;
+		});
 	});
-</script>';
+</script>
+<?php
 
 // Part to create
 if ($action == 'create') {

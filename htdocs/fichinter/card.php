@@ -11,7 +11,7 @@
  * Copyright (C) 2020-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2023       Benjamin Grembi				<benjamin@oarces.fr>
  * Copyright (C) 2023-2024	William Mead				<william.mead@manchenumerique.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2025		Pierre Ardoin				<developpeur@lesmetiersdubatiment.fr>
  *
@@ -571,7 +571,7 @@ if (empty($reshook)) {
 			dol_print_error($db, $object->error);
 		}
 	} elseif ($action == 'setref_client' && $permissiontoadd) {
-		// Positionne ref client
+		// Set customer reference
 		$result = $object->setRefClient($user, GETPOST('ref_client', 'alpha'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -724,7 +724,7 @@ if (empty($reshook)) {
 			$mesg = $object->error;
 		}
 	} elseif ($action == 'updateline' && $permissiontoadd && GETPOST('save', 'alpha')) {
-		// Mise a jour d'une ligne d'intervention
+		// Update an intervention line
 		$objectline = new FichinterLigne($db);
 		if ($objectline->fetch($lineid) <= 0) {
 			dol_print_error($db);
@@ -778,7 +778,7 @@ if (empty($reshook)) {
 		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 		exit;
 	} elseif ($action == 'confirm_deleteline' && $confirm == 'yes' && $permissiontoadd) {
-		// Supprime une ligne d'intervention AVEC confirmation
+		// Delete an intervention line WITH confirmation
 		$objectline = new FichinterLigne($db);
 		if ($objectline->fetch($lineid) <= 0) {
 			dol_print_error($db);
@@ -913,10 +913,10 @@ if (empty($reshook)) {
 				}
 			}
 		} elseif ($action == 'swapstatut' && $permissiontoadd) {
-			// bascule du statut d'un contact
+			// Toggle the status of a contact
 			$result = $object->swapContactStatus(GETPOSTINT('ligne'));
 		} elseif ($action == 'deletecontact' && $permissiontoadd) {
-			// Efface un contact
+			// Delete a contact
 			$result = $object->delete_contact(GETPOSTINT('lineid'));
 
 			if ($result >= 0) {
@@ -1580,7 +1580,7 @@ if ($action == 'create') {
 			while ($i < $num) {
 				$objp = $db->fetch_object($resql);
 
-				// Ligne en mode visu
+				// Line in view mode
 				if ($action != 'editline' || GETPOSTINT('line_id') != $objp->rowid) {
 					print '<tr class="oddeven">';
 
@@ -1605,7 +1605,7 @@ if ($action == 'create') {
 						print "</td>";
 					} else {
 						print '<td>';
-						print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
+						print '<a name="'.$objp->rowid.'"></a>'; // Anchor to return to the line
 						print dol_htmlentitiesbr($objp->description);
 
 						$objectline = new FichinterLigne($db);
@@ -1671,7 +1671,7 @@ if ($action == 'create') {
 					}
 
 					print '<td>';
-					print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
+					print '<a name="'.$objp->rowid.'"></a>'; // Anchor to return to the line
 
 					// Editeur wysiwyg
 					require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';

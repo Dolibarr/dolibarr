@@ -2,7 +2,7 @@
 /* Copyright (C) 2013-2018	Jean-François Ferry		<hello+jf@librethic.io>
  * Copyright (C) 2016		Gilles Poirier 			<glgpoirier@gmail.com>
  * Copyright (C) 2019		Josep Lluís Amador		<joseplluis@lliuretic.cat>
- * Copyright (C) 2021-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2021-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -339,7 +339,7 @@ if ($ret == -1) {
 if (!$ret) {
 	print '<div class="warning">'.$langs->trans('NoResourceInDatabase').'</div>';
 } else {
-	// Confirmation suppression resource line
+	// Deletion confirmation resource line
 	if ($action == 'delete_resource') {
 		print $form->formconfirm("element_resource.php?element=".$element."&element_id=".$element_id."&id=".$id."&lineid=".$lineid, $langs->trans("DeleteResource"), $langs->trans("ConfirmDeleteResourceElement"), "confirm_delete_linked_resource", '', '', 1);
 	}

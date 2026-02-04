@@ -6619,7 +6619,7 @@ parameters:
 			path: ../../../htdocs/core/lib/functions2.lib.php
 
 		-
-			message: '#^Call to function function_exists\(\) with ''imagecreatefromgif''\|''imagecreatefromjpeg''\|''imagecreatefrompng''\|''imagecreatefromwbmp''\|''imagecreatefromwebp'' will always evaluate to true\.$#'
+			message: '#^Call to function function_exists\(\) with ''imagecreatefromavif''\|''imagecreatefromgif''\|''imagecreatefromjpeg''\|''imagecreatefrompng''\|''imagecreatefromwbmp''\|''imagecreatefromwebp'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 3
 			path: ../../../htdocs/core/lib/images.lib.php

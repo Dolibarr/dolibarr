@@ -32,6 +32,14 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -50,15 +58,6 @@ if (isModEnabled('accounting')) {
 if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Societe $mysoc
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array("banks", "bills", "categories", "companies", "compta", "withdrawals"));
@@ -125,6 +124,24 @@ if (empty($reshook)) {
 			exit;
 		}
 		$action = '';
+	}
+
+	if ($action == 'close' && $user->hasRight('banque', 'configurer')) {
+		$error = 0;
+
+		$object = new Account($db);
+		$object->fetch(GETPOSTINT("id"));
+
+		$result = $object->setStatut($object::STATUS_CLOSED, null, '', 'BANKACCOUNT_MODIFY');
+	}
+
+	if ($action == 'reopen' && $user->hasRight('banque', 'configurer')) {
+		$error = 0;
+
+		$object = new Account($db);
+		$object->fetch(GETPOSTINT("id"));
+
+		$result = $object->setStatut($object::STATUS_OPEN, null, '', 'BANKACCOUNT_MODIFY');
 	}
 
 	if ($action == 'add' && $user->hasRight('banque', 'configurer')) {
@@ -909,8 +926,16 @@ if ($action == 'create') {
 		}
 
 		if (empty($reshook)) {
-			if ($user->hasRight('banque', 'configurer')) {
+			if ($user->hasRight('banque', 'configurer') && $object->status == $object::STATUS_CLOSED) {
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=reopen&token='.newToken().'&id='.$object->id.'">'.$langs->trans("ReOpen").'</a>';
+			}
+
+			if ($user->hasRight('banque', 'configurer') && $object->status == $object::STATUS_OPEN) {
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Modify").'</a>';
+			}
+
+			if ($user->hasRight('banque', 'configurer') && $object->status == $object::STATUS_OPEN) {
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=close&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Close").'</a>';
 			}
 
 			$canbedeleted = $object->can_be_deleted(); // Return true if account without movements

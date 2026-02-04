@@ -374,6 +374,7 @@ ErrorBlockLogNeedElement=L'objet journal inaltérable nécessite que son type d'
 ErrorBlockLogNeedObject=L'objet journal inaltérable nécessite que l'objet soit défini.
 ErrorBadParameterWhenCallingCreateOfBlockedLog=Paramètre incorrect lors de l'appel à la création du journal bloqué
 ErrorMaxDecimalsShownTooLowComparedToUnitOrTotal=La valeur de « Nombre maximal de décimales pour les prix affichés à l'écran » (%s) doit être supérieure ou égale à la fois à « Nombre maximal de décimales pour les prix unitaires » (%s) et à « Nombre maximal de décimales pour les prix totaux » (%s). Ceci est nécessaire pour éviter les incohérences d'arrondi dans les documents.
+ErrorOnlyDraftStatusCanBeDeletedInMassAction=Seuls les éléments en brouillon peuvent être supprimés lors d'une action de masse.
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Votre paramètre PHP upload_max_filesize (%s) est supérieur au paramètre PHP post_max_size (%s). Ceci n'est pas une configuration cohérente.
@@ -463,3 +464,5 @@ OperNotDefined=Méthode de paiement non définie
 EmptyMessageNotAllowedError=Les messages vides ne sont pas autorisés
 SomeShipmentExists=Erreur : une expédition est liée à commande. Suppression refusée.
 WarningEvaluationEmptyValidate=Impossible d'évaluer les niveaux de compétences non définis.
+ErrorBadParametersForDirectDebitFileCreate=Impossible de créer un virement bancaire fichier : le paramètre de format attendu n'est pas fourni.
+ErrorBadParametersForDirectDebitFileCreateDids=Impossible de créer un virement bancaire fichier : les identifiants des demandes de paiement existantes ne sont pas fournis.
