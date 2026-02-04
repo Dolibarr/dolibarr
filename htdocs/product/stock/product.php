@@ -572,7 +572,6 @@ if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
 
-
 $variants = 0;
 $iskit = 0;
 

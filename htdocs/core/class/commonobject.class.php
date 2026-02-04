@@ -8455,13 +8455,9 @@ abstract class CommonObject
 
 			// $param_list_array[0] can be the name of object (Example 'User' the field is linked to). Not as taking the information from the record in ->fields found from $objectfield.
 
-			// $valparent is a string 'dataobject@module:keyoffieldinfieldsarray' to find the record field to link to.
-			// $valparent = $this->element.($this->module ? '@'.$this->module : '').':'.$key.$keysuffix;
-
 			// $val is already the record field found at same place than found by $valparent but already loaded and may have been modified by parent caller.
 
-			//$objectfield = $valparent;
-			$objectfield = $val;			// Is better than using old method $valparent
+			$objectfield = $val;
 
 			// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 			$out = $form->selectForForms($param_list_array[0], $keyprefix.$key.$keysuffix, (int) $value, $showempty, '', '', $morecss, $moreparam, 0, (empty($val['disabled']) ? 0 : 1), '', $objectfield);

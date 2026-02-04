@@ -5,8 +5,8 @@
  * Copyright (C) 2010       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2023      	Gauthier VERDOL       	<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2440,7 +2440,7 @@ function migrate_detail_livraison($db, $langs, $conf)
 }
 
 /**
- * Migration du champ stock dans produits
+ * Migration of the stock field in the Products table
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
@@ -4864,7 +4864,6 @@ function migrate_holiday_path()
 									//print $origin.'/'.$file.' -> '.$destin.'/'.$file.'<br>'."\n";
 									print '.';
 									dol_copy($origin.'/'.$file, $destin.'/'.$file, '0', 0);
-									//var_dump('eee');exit;
 								}
 							}
 						}
@@ -4913,7 +4912,7 @@ function migrate_users_socialnetworks()
 	$sql .= " OR googleplus IS NOT NULL OR googleplus <> ''";
 	$sql .= " OR youtube IS NOT NULL OR youtube <> ''";
 	$sql .= " OR whatsapp IS NOT NULL OR whatsapp <> ''";
-	//print $sql;
+
 	$resql = $db->query($sql);
 	if ($resql) {
 		while ($obj = $db->fetch_object($resql)) {
@@ -4960,7 +4959,7 @@ function migrate_users_socialnetworks()
 			$sqlupd .= ', youtube=null';
 			$sqlupd .= ', whatsapp=null';
 			$sqlupd .= ' WHERE rowid = '.((int) $obj->rowid);
-			//print $sqlupd."<br>";
+
 			$resqlupd = $db->query($sqlupd);
 			if (!$resqlupd) {
 				dol_print_error($db);
@@ -5192,7 +5191,7 @@ function migrate_thirdparties_socialnetworks()
 	$sql .= " OR googleplus IS NOT NULL OR googleplus <> ''";
 	$sql .= " OR youtube IS NOT NULL OR youtube <> ''";
 	$sql .= " OR whatsapp IS NOT NULL OR whatsapp <> ''";
-	//print $sql;
+
 	$resql = $db->query($sql);
 	if ($resql) {
 		while ($obj = $db->fetch_object($resql)) {
