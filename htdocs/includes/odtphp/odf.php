@@ -955,7 +955,7 @@ IMG;
 		// $errorstring will be $result['output']
 		$retval=0; $output_arr=array();
 		if ($execmethod == 1) {
-			exec(escapeshellcmd($command), $output_arr, $retval);
+			exec($command, $output_arr, $retval);
 		}
 		if ($execmethod == 2) {
 			$outputfile = DOL_DATA_ROOT.'/odt2pdf.log';
