@@ -1003,28 +1003,28 @@ class KnowledgeRecord extends CommonObject
 		return $this->initAsSpecimenCommon();
 	}
 
-	/**
-	 * 	Create an array of lines
-	 *
-	 * 	@return KnowledgeRecordLine[]|int	array of lines if OK, <0 if KO
-	 */
-	public function getLinesArray()
-	{
-		$this->lines = array();
+	// /**
+	//  * 	Create an array of lines
+	//  *
+	//  * 	@return KnowledgeRecordLine[]|int	array of lines if OK, <0 if KO
+	//  */
+	// public function getLinesArray()
+	// {
+	// 	$this->lines = array();
 
-		$objectline = new KnowledgeRecordLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, '(fk_knowledgerecord:=:'.((int) $this->id).')');
+	// 	$objectline = new KnowledgeRecordLine($this->db);
+	// 	$result = $objectline->fetchAll('ASC', 'position', 0, 0, '(fk_knowledgerecord:=:'.((int) $this->id).')');
 
-		if (is_numeric($result)) {
-			$this->error = $objectline->error;
-			$this->errors = $objectline->errors;
-			return $result;
-		} else {
-			$this->lines = $result;
-			// @phpstan-ignore-next-line
-			return $result;  // @phan-suppress-current-line PhanTypeMismatchReturn
-		}
-	}
+	// 	if (is_numeric($result)) {
+	// 		$this->error = $objectline->error;
+	// 		$this->errors = $objectline->errors;
+	// 		return $result;
+	// 	} else {
+	// 		$this->lines = $result;
+	// 		// @phpstan-ignore-next-line
+	// 		return $result;  // @phan-suppress-current-line PhanTypeMismatchReturn
+	// 	}
+	// }
 
 	/**
 	 *  Returns the reference to the following non used object depending on the active numbering module.
