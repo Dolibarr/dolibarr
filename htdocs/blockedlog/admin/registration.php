@@ -169,9 +169,9 @@ if ($action == 'update') {
 	}
 	if (!$error) {
 		$db->commit();
-		setEventMessages("SetupSaved",null , 'mesgs');
+		setEventMessages("SetupSaved", null, 'mesgs');
 		header("Location: ".$_SERVER["PHP_SELF"]."?action=ping&withtab=1");
-	} else{
+	} else {
 		$db->rollback();
 	}
 }
@@ -257,7 +257,7 @@ if ($action == "ping") {
 		if ($res <= 0) {
 			setEventMessages($modblckedlog->error, $modblckedlog->errors, 'errors');
 		} else {
-			setEventMessages("ModuleEnabledAdminMustCheckRights", null , 'warnings');
+			setEventMessages("ModuleEnabledAdminMustCheckRights", null, 'warnings');
 		}
 	}
 
@@ -289,7 +289,7 @@ if ($action == "ping") {
 	//Company country code
 	$country_code = !empty(getDolGlobalString('BLOCKEDLOG_REGISTRATION_COUNTRY_CODE')) ? getDolGlobalString('BLOCKEDLOG_REGISTRATION_COUNTRY_CODE') : $mysoc->country_code;
 	$item = $formSetup->newItem('BLOCKEDLOG_REGISTRATION_COUNTRY_CODE');
-	$item->fieldInputOverride = $form->select_country($country_code, "BLOCKEDLOG_REGISTRATION_COUNTRY_CODE",'', 0, 'minwidth300', 'code2');
+	$item->fieldInputOverride = $form->select_country($country_code, "BLOCKEDLOG_REGISTRATION_COUNTRY_CODE", '', 0, 'minwidth300', 'code2');
 	$item->fieldParams['isMandatory'] = 1;
 
 	//Company address
@@ -340,7 +340,7 @@ if ($action == "ping") {
 	//IT provider state
 	$item = $formSetup->newItem('MAIN_INFO_ITPROVIDER_STATE');
 	$item->fieldInputOverride = $formcompany->select_state(getDolGlobalString('MAIN_INFO_ITPROVIDER_STATE'), getDolGlobalString('MAIN_INFO_ITPROVIDER_COUNTRY'), "MAIN_INFO_ITPROVIDER_STATE");
-	
+
 	//IT provider zip
 	$item = $formSetup->newItem('MAIN_INFO_ITPROVIDER_ZIP');
 	$item->defaultFieldValue = getDolGlobalString('MAIN_INFO_ITPROVIDER_ZIP');
