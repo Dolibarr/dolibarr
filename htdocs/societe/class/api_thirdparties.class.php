@@ -1257,6 +1257,7 @@ class Thirdparties extends DolibarrApi
 		}
 
 		// Prepare VAT rate with code if provided
+		$vatrate = "";
 		if (isset($request_data['vat_src_code']) && !empty($request_data['vat_src_code'])) {
 			$vatrate = $tva_tx . ' (' . $request_data['vat_src_code'] . ')';
 		}
@@ -1264,7 +1265,7 @@ class Thirdparties extends DolibarrApi
 		// Create the discount using Societe::set_remise_except()
 		$this->db->begin();
 
-		$result = $this->company->set_remise_except($amount, DolibarrApiAccess::$user, $description, $tva_tx, $discount_type, $price_base_type);
+		$result = $this->company->set_remise_except($amount, DolibarrApiAccess::$user, $description, $vatrate, $discount_type, $price_base_type);
 
 		if ($result > 0) {
 			$this->db->commit();
