@@ -78,10 +78,6 @@ if ($action == 'update') {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("BLOCKEDLOG_REGISTRATION_IDPROF1")), null, 'errors');
 		$error++;
 	}
-	if (!GETPOST("BLOCKEDLOG_REGISTRATION_RGPD")) {
-		setEventMessages("PleaseAcceptRGPD", null, 'errors');
-		$error++;
-	}
 
 	$company_name = GETPOST("BLOCKEDLOG_REGISTRATION_NAME");
 	$company_email = GETPOST("BLOCKEDLOG_REGISTRATION_EMAIL");
@@ -96,6 +92,7 @@ if ($action == 'update') {
 	$provider_idprof1 = GETPOST("MAIN_INFO_ITPROVIDER_IDPROF1");
 
 	if (!$error) {
+		//Company
 		$res = dolibarr_set_const($db, "BLOCKEDLOG_REGISTRATION_NAME", $company_name, 'chaine', 0, '', $conf->entity);
 		if ($res <= 0) {
 			$error ++;
@@ -112,6 +109,8 @@ if ($action == 'update') {
 		if ($res <= 0) {
 			$error ++;
 		}
+
+		//IT Provider
 		$res = dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_NAME", $provider_name, 'chaine', 0, '', $conf->entity);
 		if ($res <= 0) {
 			$error ++;
@@ -276,10 +275,6 @@ if ($action == "ping") {
 	//IT provider IDPROF1
 	$item = $formSetup->newItem('MAIN_INFO_ITPROVIDER_IDPROF1');
 	$item->defaultFieldValue = !empty(getDolGlobalString('MAIN_INFO_ITPROVIDER_IDPROF1')) ? getDolGlobalString('MAIN_INFO_ITPROVIDER_IDPROF1') : getDolGlobalString('MAIN_INFO_ITPROVIDER_IDPROF1'); // TODO: Verify if SIRET or SIREN
-
-	$formSetup->newItem('RGPD')->setAsTitle();
-	$item = $formSetup->newItem('BLOCKEDLOG_REGISTRATION_RGPD');
-	$item->fieldInputOverride = '<input id="BLOCKEDLOG_REGISTRATION_RGPD" class=" valignmiddle" type="radio" name="BLOCKEDLOG_REGISTRATION_RGPD" '.(getDolGlobalInt("BLOCKEDLOG_REGISTRATION_RGPD") ? 'checked="checked"' : '').' value="1">';
 
 	if (!empty($formSetup->items)) {
 		print $formSetup->generateOutput(true, true, '', '');
