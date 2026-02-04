@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -554,8 +554,8 @@ if ($id) {
 			// Title of lines
 			print '<tr class="liste_titre">';
 			foreach ($fieldlist as $field => $value) {
-				// Determine le nom du champ par rapport aux noms possibles
-				// dans les dictionnaires de donnees
+				// Determine the field name based on the possible names
+				// in the data dictionaries.
 				$showfield = 1; // By default
 				$align = "left";
 				$sortable = 1;

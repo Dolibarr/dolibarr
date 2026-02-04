@@ -818,7 +818,7 @@ if ($object->id > 0) {
 
 				print '<div class="center formconsumeproduce">';
 
-				print $langs->trans('CustomerIBAN').' ';
+				//print $langs->trans('CustomerIBAN').' ';
 
 				// if societe rib in model invoice, we preselect it
 				$selectedRib = '';
@@ -832,7 +832,7 @@ if ($object->id > 0) {
 					}
 				}
 
-				$selectedRib = $form->selectRib($selectedRib, 'accountcustomerid', 'fk_soc='.$object->socid, 1, '', 1);
+				$selectedRib = $form->selectRib($selectedRib, 'accountcustomerid', 'fk_soc='.$object->socid, $langs->trans("CustomerIBAN"), '', 1, 'maxwidth500 maxwidth250onsmartphone');
 
 				$defaultRibId = $object->thirdparty->getDefaultRib();
 				if ($defaultRibId) {
@@ -847,7 +847,12 @@ if ($object->id > 0) {
 
 
 				// Bank Transfer Amount
-				print ' &nbsp; &nbsp; <label for="withdraw_request_amount">';
+				if (getDolOptimizeSmallScreen()) {
+					print '<br>';
+				} else {
+					print ' &nbsp; &nbsp; ';
+				}
+				print '<label for="withdraw_request_amount">';
 				if ($type == 'bank-transfer') {
 					print $langs->trans('BankTransferAmount');
 				} else {

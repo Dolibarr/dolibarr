@@ -4,7 +4,7 @@
  * Copyright (C) 2012-2016  Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2019-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2023       Lenin Rivas         <lenin.rivas777@gmail.com>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		William Mead		<william@m34d.com>
@@ -2361,6 +2361,7 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 				if (empty($result['error'])) {
 					$textforfulltextindex = $result['content'];
 					$filetoprocess = $result['keywords'];
+					$cmd = $result['cmd'];
 				} else {
 					$error++;
 				}
@@ -4069,7 +4070,7 @@ function archiveOrBackupFile($srcfile, $max_versions = 5, $archivedir = '', $suf
  * @param 	string	$filetoprocess				File name to process
  * @param 	string 	$useFullTextIndexation		Method for txt conversion
  * @param	string	$options					Output format ('html', 'fulltext');
- * @return array<string,mixed>					Array of result ('error'=>, 'content'=> , 'keywords'=>)
+ * @return array<string,mixed>					Array of result ('error'=>, 'content'=> , 'keywords'=>, 'cmd'=> )
  */
 function dolDocToText($filetoprocess, $useFullTextIndexation = 'pdftotext', $options = 'html')
 {
@@ -4078,6 +4079,7 @@ function dolDocToText($filetoprocess, $useFullTextIndexation = 'pdftotext', $opt
 	$error = 0;
 	$keywords = array();
 	$textforfulltextindex = '';
+	$cmd = '';
 
 	if (empty($useFullTextIndexation)) {
 		$useFullTextIndexation = 'pdftotext';
@@ -4099,7 +4101,7 @@ function dolDocToText($filetoprocess, $useFullTextIndexation = 'pdftotext', $opt
 		} else {
 			$params = '-htmlmeta';
 		}
-		$cmd = getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_PDFTOTEXT', 'pdftotext').($params ? " ".$params : "")." '".escapeshellcmd($filetoprocess)."' - ";
+		$cmd = getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_PDFTOTEXT', 'pdftotext') . " " . $params ." '".escapeshellcmd($filetoprocess)."' - ";
 		$resultexec = $utils->executeCLI($cmd, $outputfile, 0, null, 1);
 
 		if (empty($resultexec['error'])) {
@@ -4150,5 +4152,5 @@ function dolDocToText($filetoprocess, $useFullTextIndexation = 'pdftotext', $opt
 		}
 	}
 
-	return array('error' => $error, 'keywords' => $keywords, 'content' => $textforfulltextindex);
+	return array('error' => $error, 'keywords' => $keywords, 'content' => $textforfulltextindex, 'cmd' => $cmd);
 }

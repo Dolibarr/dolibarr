@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2020       Andreu Bisquerra    <jove@bisquerra.com>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Abbes Bahfir        <bafbes@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -648,7 +648,7 @@ class dolReceiptPrinter extends Printer
 		$ret = $this->loadTemplate($templateid);
 
 		$now = dol_now('tzuser');
-		// tags a remplacer par leur valeur avant de parser (dol_value_xxx)
+		// Placeholders to replace with the actual value before further parsing (dol_value_xxx)
 		$this->template = str_replace('{dol_value_object_id}', (string) $object->id, $this->template);
 		$this->template = str_replace('{dol_value_object_ref}', $object->ref, $this->template);
 		//$this->template = str_replace('<dol_value_object_points>', $object->points, $this->template);

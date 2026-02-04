@@ -92,13 +92,15 @@ $label = GETPOST("label", "alpha");
 $morphy = GETPOST("morphy", "alpha");
 $status = GETPOST("status", "intcomma");
 $subscription = GETPOSTINT("subscription");
+$caneditamount = GETPOSTINT("caneditamount");
+$minimumamount = GETPOST('minimumamount', 'alpha');
 $amount = GETPOST('amount', 'alpha');
+$amountformuladescription = GETPOST("amountformuladescription", 'restricthtml');
 $duration_value = GETPOSTINT('duration_value');
 $duration_unit = GETPOST('duration_unit', 'alpha');
 $vote = GETPOSTINT("vote");
 $comment = GETPOST("comment", 'restricthtml');
 $mail_valid = GETPOST("mail_valid", 'restricthtml');
-$caneditamount = GETPOSTINT("caneditamount");
 
 // Initialize a technical object
 $object = new AdherentType($db);
@@ -173,8 +175,10 @@ if ($action == 'add' && $user->hasRight('adherent', 'configurer')) {
 	$object->morphy = trim($morphy);
 	$object->status = (int) $status;
 	$object->subscription = (string) (int) $subscription;
-	$object->amount = ($amount == '' ? '' : price2num($amount, 'MT'));
 	$object->caneditamount = $caneditamount;
+	$object->minimumamount = ($minimumamount == '' ? '' : price2num($minimumamount, 'MT'));
+	$object->amount = ($amount == '' ? '' : price2num($amount, 'MT'));
+	$object->amountformuladescription = trim($amountformuladescription);
 	$object->duration_value = $duration_value;
 	$object->duration_unit = $duration_unit;
 	$object->note_public = trim($comment);
@@ -234,8 +238,10 @@ if ($action == 'update' && $user->hasRight('adherent', 'configurer')) {
 	$object->morphy	= trim($morphy);
 	$object->status	= (int) $status;
 	$object->subscription = (string) (int) $subscription;
-	$object->amount = ($amount == '' ? '' : price2num($amount, 'MT'));
 	$object->caneditamount = $caneditamount;
+	$object->minimumamount = $minimumamount;
+	$object->amount = ($amount == '' ? '' : price2num($amount, 'MT'));
+	$object->amountformuladescription = trim($amountformuladescription);
 	$object->duration_value = $duration_value;
 	$object->duration_unit = $duration_unit;
 	$object->note_public = trim($comment);
@@ -297,7 +303,7 @@ $totalarray = [
 if (!$rowid && $action != 'create' && $action != 'edit') {
 	//print dol_get_fiche_head([]);
 
-	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.amount, d.caneditamount, d.vote,";
+	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.caneditamount, d.minimumamount, d.amount, d.amountformuladescription, d.vote,";
 	$sql .= " d.statut as status, d.morphy, d.duration,";
 	$sql .= " d.tms";
 	$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
@@ -381,12 +387,20 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			print '<th class="center">'.$langs->trans("SubscriptionRequired").'</th>';
 			$totalarray['nbfield']++;
 		}
+		if (!empty($arrayfields['t.caneditamount']['checked'])) {
+				print '<th class="center">'.$langs->trans("CanEditAmountShort").'</th>';
+				$totalarray['nbfield']++;
+		}
+		if (!empty($arrayfields['t.minimumamount']['checked'])) {
+				print '<th class="center">'.$langs->trans("MinimumAmountShort").'</th>';
+				$totalarray['nbfield']++;
+		}
 		if (!empty($arrayfields['t.amount']['checked'])) {
-			print '<th class="center">'.$langs->trans("Amount").'</th>';
+			print '<th class="center">'.$langs->trans("RecommendedAmount").'</th>';
 			$totalarray['nbfield']++;
 		}
-		if (!empty($arrayfields['t.caneditamount']['checked'])) {
-			print '<th class="center">'.$langs->trans("CanEditAmountShort").'</th>';
+		if (!empty($arrayfields['t.amountformuladescription']['checked'])) {
+			print '<th class="center">'.$langs->trans("AmountFormulaDescription").'</th>';
 			$totalarray['nbfield']++;
 		}
 		if (!empty($arrayfields['t.vote']['checked'])) {
@@ -424,8 +438,10 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			$membertype->label = $objp->rowid;
 			$membertype->status = $objp->status;
 			$membertype->subscription = $objp->subscription;
-			$membertype->amount = $objp->amount;
 			$membertype->caneditamount = $objp->caneditamount;
+			$membertype->minimumamount = $objp->minimumamount;
+			$membertype->amount = $objp->amount;
+			$membertype->amountformuladescription = $objp->amountformuladescription;
 
 			if ($mode == 'kanban') {
 				if ($i == 0) {
@@ -484,17 +500,27 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 				if (!empty($arrayfields['t.subscription']['checked'])) {
 					print '<td class="center">'.yn($objp->subscription).'</td>';
 				}
+				if (!empty($arrayfields['t.caneditamount']['checked'])) {
+					print '<td class="center">'.yn($objp->caneditamount).'</td>';
+				}
+				if (!empty($arrayfields['t.minimumamount']['checked'])) {
+					print '<td class="center">'.price($objp->minimumamount).'</td>';
+				}
 				if (!empty($arrayfields['t.amount']['checked'])) {
 					print '<td class="center">';
 					$amount = (is_null($objp->amount) || $objp->amount === '' ? '' : price($objp->amount));
+					$minimumamount = (is_null($objp->minimumamount) || $objp->minimumamount === '' ? '' : price($objp->minimumamount));
 					print '<span class="amount">'.$amount.'</span>';
 					if ($amount && $amount < (float) getDolGlobalInt("MEMBER_MIN_AMOUNT")) {
 						print img_warning('Amount lower than minimum of '.price(getDolGlobalInt("MEMBER_MIN_AMOUNT")).' defined in setup');
 					}
+					if ($amount && $minimumamount && $amount < $minimumamount) {
+						print img_warning('Amount lower than minimum of '.price($minimumamount).' defined in setup');
+					}
 					print '</td>';
 				}
-				if (!empty($arrayfields['t.caneditamount']['checked'])) {
-					print '<td class="center">'.yn($objp->caneditamount).'</td>';
+				if (!empty($arrayfields['t.amountformuladescription']['checked'])) {
+					print '<td class="center">'.dol_escape_htmltag($objp->amountformuladescription).'</td>';
 				}
 				if (!empty($arrayfields['t.vote']['checked'])) {
 					print '<td class="center">'.yn($objp->vote).'</td>';
@@ -573,13 +599,22 @@ if ($action == 'create') {
 	print $form->selectyesno("subscription", 1, 1);
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("Amount").'</td><td>';
-	print '<input name="amount" size="5" value="'.(GETPOSTISSET('amount') ? GETPOST('amount') : price($amount)).'">';
-	print '</td></tr>';
-
 	print '<tr><td>'.$form->textwithpicto($langs->trans("CanEditAmountShort"), $langs->transnoentities("CanEditAmount")).'</td><td>';
 	print $form->selectyesno("caneditamount", GETPOSTISSET('caneditamount') ? GETPOST('caneditamount') : 0, 1);
 	print '</td></tr>';
+
+	print '<tr><td>'.$langs->trans("MinimumAmountShort").'</td><td>';
+	print '<input name="minimumamount" size="5" value="'.(GETPOSTISSET('minimumamount') ? GETPOST('minimumamount') : price($minimumamount)).'">';
+	print '</td></tr>';
+
+	print '<tr><td>'.$langs->trans("RecommendedAmount").'</td><td>';
+	print '<input name="amount" size="5" value="'.(GETPOSTISSET('amount') ? GETPOST('amount') : price($amount)).'">';
+	print '</td></tr>';
+
+	print '<tr><td class="tdtop">'.$langs->trans("AmountFormulaDescription").'</td><td>';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+	$doleditor = new DolEditor('amountformuladescription', (GETPOSTISSET('amountformuladescription') ? GETPOST('amountformuladescription', 'restricthtml') : $object->amountformuladescription), '', 100, 'dolibarr_notes', '', false, true, isModEnabled('fckeditor'), 15, '90%');
+	$doleditor->Create();
 
 	print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
 	print $form->selectyesno("vote", GETPOSTISSET("vote") ? GETPOST('vote', 'aZ09') : 1, 1);
@@ -650,17 +685,29 @@ if ($rowid > 0) {
 		print '</tr>';
 
 		// Amount
-		print '<tr><td class="titlefield">'.$langs->trans("Amount").'</td><td>';
+		print '<tr><td>'.$form->textwithpicto($langs->trans("CanEditAmountShort"), $langs->transnoentities("CanEditAmount")).'</td><td>';
+		print yn($object->caneditamount);
+		print '</td></tr>';
+
+		print '<tr><td class="titlefield">'.$langs->trans("MinimumAmountShort").'</td><td>';
+		$minimumamount = ((is_null($object->minimumamount) || $object->minimumamount === '') ? '' : price($object->minimumamount));
+		print $minimumamount;
+		print '</tr>';
+
+		print '<tr><td class="titlefield">'.$langs->trans("RecommendedAmount").'</td><td>';
 		$amount = ((is_null($object->amount) || $object->amount === '') ? '' : price($object->amount));
 		print '<span class="amount">'.$amount.'</span>';
 		if ($amount && $amount < (float) getDolGlobalInt("MEMBER_MIN_AMOUNT")) {
 			print ' '.img_warning('Amount lower than minimum of '.price(getDolGlobalInt("MEMBER_MIN_AMOUNT")).' defined in setup');
 		}
+		if ($amount && $minimumamount && $amount < $minimumamount) {
+			print ' '.img_warning('Amount lower than minimum of '.price($minimumamount).' defined in setup');
+		}
 		print '</tr>';
 
-		print '<tr><td>'.$form->textwithpicto($langs->trans("CanEditAmountShort"), $langs->transnoentities("CanEditAmount")).'</td><td>';
-		print yn($object->caneditamount);
-		print '</td></tr>';
+		print '<tr><td class="tdtop">'.$langs->trans("AmountFormulaDescription").'</td><td><div class="longmessagecut">';
+		print dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->amountformuladescription));
+		print "</div></td></tr>";
 
 		print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
 		print yn($object->vote);
@@ -1097,15 +1144,28 @@ if ($rowid > 0) {
 		print $form->selectyesno("subscription", $object->subscription, 1);
 		print '</td></tr>';
 
-		print '<tr><td>'.$langs->trans("Amount").'</td><td>';
+		print '<tr><td>'.$form->textwithpicto($langs->trans("CanEditAmountShort"), $langs->transnoentities("CanEditAmountDetail")).'</td><td>';
+		print $form->selectyesno("caneditamount", $object->caneditamount, 1);
+		print '</td></tr>';
+
+		print '<tr><td>'.$langs->trans("MinimumAmountShort").'</td><td>';
+		$minimumamount = ((is_null($object->minimumamount) || $object->minimumamount === '') ? '' : price($object->minimumamount));
+		print '<input name="minimumamount" size="5" value="';
+		print $minimumamount;
+		print '">';
+		print '</td></tr>';
+
+		print '<tr><td>'.$langs->trans("RecommendedAmount").'</td><td>';
 		$amount = ((is_null($object->amount) || $object->amount === '') ? '' : price($object->amount));
 		print '<input name="amount" size="5" value="';
 		print $amount;
 		print '">';
 		print '</td></tr>';
 
-		print '<tr><td>'.$form->textwithpicto($langs->trans("CanEditAmountShort"), $langs->transnoentities("CanEditAmountDetail")).'</td><td>';
-		print $form->selectyesno("caneditamount", $object->caneditamount, 1);
+		print '<tr><td class="tdtop">'.$langs->trans("AmountFormulaDescription").'</td><td>';
+		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+		$doleditor = new DolEditor('amountformuladescription', $object->amountformuladescription, '', 220, 'dolibarr_notes', '', false, true, isModEnabled('fckeditor'), 15, '90%');
+		$doleditor->Create();
 		print '</td></tr>';
 
 		print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
