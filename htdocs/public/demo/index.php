@@ -3,7 +3,7 @@
  * Copyright (C) 2006-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2010       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -157,7 +157,7 @@ $j = 0; // j is module number. Automatically assigned if module number is not de
 $const_name = '';
 
 foreach ($modulesdir as $dir) {
-	// Charge tableaux modules, nom, numero, orders depuis repertoire dir
+	// Load tables modules, name, number, orders from directory 'dir'
 	$handle = @opendir($dir);
 	if (is_resource($handle)) {
 		while (($file = readdir($handle)) !== false) {

@@ -121,7 +121,6 @@ ValideTrip=Odobri izvještaj troškova
 ExpenseReportPayments=Isplate izvješća o troškovima
 TaxUndefinedForThisCategory = Porez je nedefiniran za ovu kategoriju
 errorComputeTtcOnMileageExpense=Pogreška u izračunavanju troškova kilometraže
-ErrorOnlyDraftStatusCanBeDeletedInMassAction=Samo elementi u statusu nacrta mogu se izbrisati u masovnoj akciji
 
 ## Dictionary
 EX_BRE=Doručak
@@ -159,3 +158,4 @@ TF_TRAIN=Vlak
 TF_TRIP=Prijevoz
 FailedToSetPaid=Postavljanje kao plaćeno nije uspjelo
 FailedToSetToCancel=Otkazivanje nije uspjelo
+NobodyHasPermissionToValidateExpenseReport=Nobody has permission to validate expensereport

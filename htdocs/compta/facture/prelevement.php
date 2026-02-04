@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2012  Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2010-2014  Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2017       Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -155,7 +155,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Make payment with Direct Debit Stripe
+	// Request payment with a Stripe Direct Debit for a customer invoice
 	if ($action == 'sepastripedirectdebit' && $usercancreate) {
 		$result = $object->makeStripeSepaRequest($user, GETPOSTINT('did'), 'direct-debit', 'facture');
 		if ($result < 0) {
@@ -170,7 +170,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Make payment with Direct Debit Stripe
+	// Make payment with a stripe sepa for a supplier invoice
 	if ($action == 'sepastripecredittransfer' && $usercancreate) {
 		$result = $object->makeStripeSepaRequest($user, GETPOSTINT('did'), 'bank-transfer', 'supplier_invoice');
 		if ($result < 0) {
@@ -350,7 +350,7 @@ if ($object->id > 0) {
 	$listofopendirectdebitorcredittransfer = $object->getListOfOpenDirectDebitOrCreditTransfer($type);
 	$numopen = count($listofopendirectdebitorcredittransfer);
 
-	print dol_get_fiche_head($head, 'standingorders', $title, -1, ($type == 'bank-transfer' ? 'supplier_invoice' : 'bill'));
+	print dol_get_fiche_head($head, 'standingorders', $title, -1, ($type == 'bank-transfer' ? 'supplier_invoice' : $object->picto));
 
 	// Invoice content
 	if ($type == 'bank-transfer') {
@@ -383,10 +383,10 @@ if ($object->id > 0) {
 	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>';
-		if (0) {
+		if (0) {	// @phpstan-ignore-line
 			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+				$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
 			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
@@ -810,7 +810,7 @@ if ($object->id > 0) {
 				}
 
 				print '<!-- form to select BAN -->';
-				print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+				print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 				print '<input type="hidden" name="token" value="'.newToken().'" />';
 				print '<input type="hidden" name="id" value="'.$object->id.'" />';
 				print '<input type="hidden" name="type" value="'.$type.'" />';
@@ -818,7 +818,7 @@ if ($object->id > 0) {
 
 				print '<div class="center formconsumeproduce">';
 
-				print $langs->trans('CustomerIBAN').' ';
+				//print $langs->trans('CustomerIBAN').' ';
 
 				// if societe rib in model invoice, we preselect it
 				$selectedRib = '';
@@ -832,7 +832,7 @@ if ($object->id > 0) {
 					}
 				}
 
-				$selectedRib = $form->selectRib($selectedRib, 'accountcustomerid', 'fk_soc='.$object->socid, 1, '', 1);
+				$selectedRib = $form->selectRib($selectedRib, 'accountcustomerid', 'fk_soc='.$object->socid, $langs->trans("CustomerIBAN"), '', 1, 'maxwidth500 maxwidth250onsmartphone');
 
 				$defaultRibId = $object->thirdparty->getDefaultRib();
 				if ($defaultRibId) {
@@ -847,7 +847,12 @@ if ($object->id > 0) {
 
 
 				// Bank Transfer Amount
-				print ' &nbsp; &nbsp; <label for="withdraw_request_amount">';
+				if (getDolOptimizeSmallScreen()) {
+					print '<br>';
+				} else {
+					print ' &nbsp; &nbsp; ';
+				}
+				print '<label for="withdraw_request_amount">';
 				if ($type == 'bank-transfer') {
 					print $langs->trans('BankTransferAmount');
 				} else {
@@ -930,6 +935,7 @@ if ($object->id > 0) {
 	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print '<td>&nbsp;</td>';
 	}
+	print '<td class="left">'.$langs->trans("ID").'</td>';
 	print '<td class="left">'.$langs->trans("DateRequest").'</td>';
 	print '<td>'.$langs->trans("User").'</td>';
 	print '<td class="center">'.$langs->trans("Amount").'</td>';
@@ -997,6 +1003,9 @@ if ($object->id > 0) {
 				print '</td>';
 			}
 
+			// ID
+			print '<td class="nowraponall">'.$obj->rowid."</td>\n";
+
 			// Date
 			print '<td class="nowraponall">'.dol_print_date($db->jdate($obj->date_demande), 'dayhour')."</td>\n";
 
@@ -1051,7 +1060,7 @@ if ($object->id > 0) {
 					if ($obj->fk_prelevement_bons > 0) {
 						print ' &nbsp; ';
 					}
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=sepastripecredittransfer&paymentservice=stripesepa&token='.newToken().'&did='.$obj->rowid.'&id='.$object->id.'&type='.urlencode($type).'">'.img_picto('', 'stripe', 'class="pictofixedwidth"').$langs->trans("RequestDirectDebitWithStripe").'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=sepastripecredittransfer&paymentservice=stripesepa&token='.newToken().'&did='.$obj->rowid.'&id='.$object->id.'&type='.urlencode($type).'">'.img_picto('', 'stripe', 'class="pictofixedwidth"').$langs->trans("RequesCreditTransferWithStripe").'</a>';
 				}
 			}
 			print '</td>';
@@ -1126,6 +1135,9 @@ if ($object->id > 0) {
 			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 				print '<td>&nbsp;</td>';
 			}
+
+			// ID
+			print '<td class="nowraponall">'.$obj->rowid."</td>\n";
 
 			// Date
 			print '<td class="nowraponall">'.dol_print_date($db->jdate($obj->date_demande), 'day', 'tzuserrel')."</td>\n";
@@ -1203,7 +1215,7 @@ if ($object->id > 0) {
 		}
 
 		if (!$numopen && !$numclosed) {
-			print '<tr class="oddeven"><td colspan="8"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+			print '<tr class="oddeven"><td colspan="9"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 		}
 
 		$db->free($resql);

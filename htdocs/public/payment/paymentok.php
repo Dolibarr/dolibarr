@@ -43,7 +43,6 @@ if (!defined('NOIPCHECK')) {
 if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
-
 if (!defined('XFRAMEOPTIONS_ALLOWALL')) {
 	define('XFRAMEOPTIONS_ALLOWALL', '1');
 }
@@ -58,14 +57,6 @@ if (is_numeric($entity)) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-if (isModEnabled('paypal')) {
-	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
-	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypalfunctions.lib.php';
-}
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -76,13 +67,20 @@ if (isModEnabled('paypal')) {
  *
  * @var string $dolibarr_main_url_root
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+if (isModEnabled('paypal')) {
+	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
+	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypalfunctions.lib.php';
+}
 
 // Hook to be used by external payment modules (ie Payzen, ...)
 $hookmanager = new HookManager($db);
 
 $hookmanager->initHooks(array('newpayment'));
 
-$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paybox", "paypal", "stripe"));
+$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paypal", "stripe"));
 
 // Clean parameters
 $PAYPAL_API_USER = "";
@@ -159,7 +157,7 @@ if (getDolGlobalString($paramcreditorlong)) {
 
 $ispaymentok = false;
 // If payment is ok
-$PAYMENTSTATUS = $TRANSACTIONID = $TAXAMT = $NOTE = '';
+$PAYMENTSTATUS = $TRANSACTIONID = $LONGTRANSACTIONID = $TAXAMT = $NOTE = '';
 // If payment is ko
 $ErrorCode = $ErrorShortMsg = $ErrorLongMsg = $ErrorSeverityCode = '';
 
@@ -437,6 +435,20 @@ if (isModEnabled('stripe') && $paymentmethod === 'stripe') {
 					$errmsg = 'Stripe payment not succeeded. Status: ' . $paymentIntent->status;
 					dol_syslog($errmsg, LOG_ERR, 0, '_payment');
 				}
+
+				// Get $customerid and $pkey to forge $LONGTRANSACTIONID
+				$customerid = '';
+				$pkey = '';
+				if ($paymentIntent instanceof \Stripe\PaymentIntent) {
+					$customerid = $paymentIntent->customer;
+				}
+				if (isset($stripearrayofkeysbyenv[$servicestatus]['publishable_key'])) {
+					$pkey = $stripearrayofkeysbyenv[$servicestatus]['publishable_key'];
+				}
+
+				if ($customerid && $pkey) {
+					$LONGTRANSACTIONID = $TRANSACTIONID.':'.$customerid.'@'.$pkey;
+				}
 			} catch (\Stripe\Exception\ApiErrorException $e) {
 				$error++;
 				$errormessage = "Stripe API error: ".$e->getMessage();
@@ -480,6 +492,8 @@ if (!in_array($paymentmethod, array('paypal', 'paybox', 'stripe'))) {
 			dol_syslog('ispaymentok overwrite by hook return with value='.$hookmanager->resArray['ispaymentok'], LOG_DEBUG, 0, '_payment');
 			$ispaymentok = $hookmanager->resArray['ispaymentok'];
 		}
+	} else {
+		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 	}
 }
 
@@ -590,12 +604,13 @@ if ($ispaymentok) {
 
 			// Do action only if $FinalPaymentAmt is set (session variable is cleaned after this page to avoid duplicate actions when page is POST a second time)
 			if (!empty($FinalPaymentAmt) && $paymentTypeId > 0) {
+				$typeid = $object->typeid;
+				$amountbytype = $adht->amountByType(1);		// Load the array of amount per type
+				$minimumamountbytype = $adht->minimumamountbytype(1); // Load the array of minimum amount per type
+				$minimumamount = empty($minimumamountbytype[$typeid]) ? 0 : $minimumamountbytype[$typeid];
 				// Security protection:
 				if (empty($adht->caneditamount)) {	// If we didn't allow members to choose their membership amount (if the amount is allowed in edit mode, no need to check)
 					if ($object->status == $object::STATUS_DRAFT) {		// If the member is not yet validated, we check that the amount is the same as expected.
-						$typeid = $object->typeid;
-						$amountbytype = $adht->amountByType(1);		// Load the array of amount per type
-
 						// Set amount for the subscription:
 						// - First check the amount of the member type.
 						$amountexpected = empty($amountbytype[$typeid]) ? 0 : $amountbytype[$typeid];
@@ -608,7 +623,7 @@ if ($ispaymentok) {
 						//	$amount = (GETPOST('amount') ? price2num(GETPOST('amount', 'alpha'), 'MT', 2) : '');
 						//}
 						// - If a min is set, we take it into account
-						$amountexpected = max(0, (float) $amountexpected, (float) getDolGlobalInt("MEMBER_MIN_AMOUNT"));
+						$amountexpected = max(0, (float) $amountexpected, (float) getDolGlobalInt("MEMBER_MIN_AMOUNT"), (float) $minimumamount);
 
 						if ($amountexpected && $amountexpected != $FinalPaymentAmt) {
 							$error++;
@@ -622,9 +637,9 @@ if ($ispaymentok) {
 
 				// Security protection:
 				if (getDolGlobalInt('MEMBER_MIN_AMOUNT')) {
-					if ($FinalPaymentAmt < getDolGlobalInt('MEMBER_MIN_AMOUNT')) {
+					if ($FinalPaymentAmt < getDolGlobalInt('MEMBER_MIN_AMOUNT') || $FinalPaymentAmt < $minimumamount) {
 						$error++;
-						$errmsg = 'Value of FinalPayment ('.$FinalPaymentAmt.') is lower than the minimum allowed (' . getDolGlobalString('MEMBER_MIN_AMOUNT').'). May be a hack to try to pay a different amount ?';
+						$errmsg = 'Value of FinalPayment ('.$FinalPaymentAmt.') is lower than the minimum allowed (' . max(getDolGlobalString('MEMBER_MIN_AMOUNT'), $minimumamount).'). May be a hack to try to pay a different amount ?';
 						$postactionmessages[] = $errmsg;
 						$ispostactionok = -1;
 						dol_syslog("Failed to validate member (amount propagated from payment page is lower than allowed minimum): ".$errmsg, LOG_ERR, 0, '_payment');
@@ -997,6 +1012,7 @@ if ($ispaymentok) {
 		// Record payment
 		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$object = new Facture($db);
+		/** @var Facture $object */
 		$result = $object->fetch((int) $tmptag['INV']);
 		if ($result) {
 			$FinalPaymentAmt = $_SESSION["FinalPaymentAmt"];
@@ -1049,9 +1065,27 @@ if ($ispaymentok) {
 				$paiement->paiementid   = $paymentTypeId;
 				$paiement->num_payment = '';
 				$paiement->note_public  = 'Online payment '.dol_print_date($now, 'standard').' from '.$ipaddress;
-				$paiement->ext_payment_id = $TRANSACTIONID;		// TODO LDR May be we should store py_... instead of pi_... but we started with pi_... so we continue.
-				//$paiement->ext_payment_id = $TRANSACTIONID.':'.$customer->id.'@'.$stripearrayofkeysbyenv[$servicestatus]['publishable_key'];	// TODO LDR It would be better if we could store this. Do we have customer->id and publishable_key ?
+
+				// May be we should store py_... instead of pi_... but we started with pi_... so we continue.
+				if ($LONGTRANSACTIONID) {
+					$paiement->ext_payment_id = $LONGTRANSACTIONID;
+				} else {
+					$paiement->ext_payment_id = $TRANSACTIONID;
+				}
 				$paiement->ext_payment_site = $service;
+
+				// Validate invoice if not already validated (this can happen for automatically generated invoices with a free amount)
+				if (!$error && $object->status == Facture::STATUS_DRAFT) {
+					$result = $object->validate($user);
+					if ($result < 0) {
+						$postactionmessages[] = $object->error;
+						$ispostactionok = -1;
+						$error++;
+					} else {
+						$postactionmessages[] = 'Invoice validated';
+						$ispostactionok = 1;
+					}
+				}
 
 				if (!$error) {
 					$paiement_id = $paiement->create($user, 1); // This include closing invoices and regenerating documents
@@ -1194,7 +1228,13 @@ if ($ispaymentok) {
 						$paiement->paiementid = $paymentTypeId;
 						$paiement->num_payment = '';
 						$paiement->note_public = 'Online payment ' . dol_print_date($now, 'standard') . ' from ' . $ipaddress;
-						$paiement->ext_payment_id = $TRANSACTIONID;		// 'pi_...' for Stripe, ... TODO Use 'pi_...:cus_...@pk_...'
+
+						// May be we should store py_... instead of pi_... but we started with pi_... so we continue.
+						if ($LONGTRANSACTIONID) {
+							$paiement->ext_payment_id = $LONGTRANSACTIONID;
+						} else {
+							$paiement->ext_payment_id = $TRANSACTIONID;
+						}
 						$paiement->ext_payment_site = $service;			// 'StripeLive' or 'Stripe', or ...
 
 						if (!$error) {
@@ -1328,7 +1368,13 @@ if ($ispaymentok) {
 				$paiement->paymenttype = $paymentTypeId;
 				$paiement->num_payment = '';
 				$paiement->note_public  = 'Online payment '.dol_print_date($now, 'standard').' from '.$ipaddress;
-				$paiement->ext_payment_id = $TRANSACTIONID;		// 'pi_...' for Stripe, ... TODO Use 'pi_...:cus_...@pk_...'
+
+				// May be we should store py_... instead of pi_... but we started with pi_... so we continue.
+				if ($LONGTRANSACTIONID) {
+					$paiement->ext_payment_id = $LONGTRANSACTIONID;
+				} else {
+					$paiement->ext_payment_id = $TRANSACTIONID;
+				}
 				$paiement->ext_payment_site = $service;			// 'StripeLive' or 'Stripe', or ...
 
 				if (!$error) {
@@ -1463,7 +1509,13 @@ if ($ispaymentok) {
 					$paiement->paiementid   = $paymentTypeId;
 					$paiement->num_payment = '';
 					$paiement->note_public  = 'Online payment '.dol_print_date($now, 'standard').' from '.$ipaddress.' for event registration';
-					$paiement->ext_payment_id = $TRANSACTIONID;		// 'pi_...' for Stripe, ... TODO Use 'pi_...:cus_...@pk_...'
+
+					// May be we should store py_... instead of pi_... but we started with pi_... so we continue.
+					if ($LONGTRANSACTIONID) {
+						$paiement->ext_payment_id = $LONGTRANSACTIONID;
+					} else {
+						$paiement->ext_payment_id = $TRANSACTIONID;
+					}
 					$paiement->ext_payment_site = $service;			// 'StripeLive' or 'Stripe', or ...
 
 					if (!$error) {
@@ -1592,7 +1644,7 @@ if ($ispaymentok) {
 								$cc = ($cc ? ', ' : '').$attendeetovalidate->email_company;
 							}
 
-							$from = getDolGlobalString('MAILING_EMAIL_FROM') ? $conf->global->MAILING_EMAIL_FROM : getDolGlobalString("MAIN_MAIL_EMAIL_FROM");
+							$from = getDolGlobalString('MAILING_EMAIL_FROM', getDolGlobalString("MAIN_MAIL_EMAIL_FROM"));
 
 							$urlback = $_SERVER["REQUEST_URI"];
 
@@ -1696,8 +1748,14 @@ if ($ispaymentok) {
 					$paiement->paiementid   = $paymentTypeId;
 					$paiement->num_payment = '';
 					$paiement->note_public  = 'Online payment '.dol_print_date($now, 'standard').' from '.$ipaddress;
-					$paiement->ext_payment_id = $TRANSACTIONID;
-					$paiement->ext_payment_site = $service;
+
+					// May be we should store py_... instead of pi_... but we started with pi_... so we continue.
+					if ($LONGTRANSACTIONID) {
+						$paiement->ext_payment_id = $LONGTRANSACTIONID;
+					} else {
+						$paiement->ext_payment_id = $TRANSACTIONID;
+					}
+					$paiement->ext_payment_site = $service;			// 'StripeLive' or 'Stripe', or ...
 
 					if (!$error) {
 						$paiement_id = $paiement->create($user, 1); // This include closing invoices and regenerating documents
@@ -1912,7 +1970,13 @@ if ($ispaymentok) {
 						$paiement->paiementid = $paymentTypeId;
 						$paiement->num_payment = '';
 						$paiement->note_public = 'Online payment ' . dol_print_date($now, 'standard') . ' from ' . $ipaddress;
-						$paiement->ext_payment_id = $TRANSACTIONID;		// pi_... for Stripe, ...
+
+						// May be we should store py_... instead of pi_... but we started with pi_... so we continue.
+						if ($LONGTRANSACTIONID) {
+							$paiement->ext_payment_id = $LONGTRANSACTIONID;
+						} else {
+							$paiement->ext_payment_id = $TRANSACTIONID;
+						}
 						$paiement->ext_payment_site = $service;			// 'StripeLive' or 'Stripe', or ...
 
 						if (!$error) {
@@ -2055,10 +2119,18 @@ if (empty($doactionsthenredirect)) {
 		}
 	} else {
 		print $langs->trans('DoExpressCheckoutPaymentAPICallFailed')."<br>\n";
-		print $langs->trans('DetailedErrorMessage').": ".$ErrorLongMsg."<br>\n";
-		print $langs->trans('ShortErrorMessage').": ".$ErrorShortMsg."<br>\n";
-		print $langs->trans('ErrorCode').": ".$ErrorCode."<br>\n";
-		print $langs->trans('ErrorSeverityCode').": ".$ErrorSeverityCode."<br>\n";
+		if ($ErrorLongMsg) {
+			print $langs->trans('DetailedErrorMessage').": ".$ErrorLongMsg."<br>\n";
+		}
+		if ($ErrorShortMsg) {
+			print $langs->trans('ShortErrorMessage').": ".$ErrorShortMsg."<br>\n";
+		}
+		if ($ErrorCode) {
+			print $langs->trans('ErrorCode').": ".$ErrorCode."<br>\n";
+		}
+		if ($ErrorSeverityCode) {
+			print $langs->trans('ErrorSeverityCode').": ".$ErrorSeverityCode."<br>\n";
+		}
 
 		if ($mysoc->email) {
 			print "\nPlease, send a screenshot of this page to ".$mysoc->email."<br>\n";

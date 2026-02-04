@@ -285,9 +285,6 @@ class modSociete extends DolibarrModules
 			'st.code' => 'ProspectStatus', 'payterm.libelle' => 'PaymentConditions', 'paymode.libelle' => 'PaymentMode',
 			's.outstanding_limit' => 'OutstandingBill', 'pbacc.ref' => 'PaymentBankAccount', 'incoterm.code' => 'IncotermLabel'
 		);
-		if (getDolGlobalString('SOCIETE_USEPREFIX')) {
-			$this->export_fields_array[$r]['s.prefix'] = 'Prefix';
-		}
 		if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 			$this->export_fields_array[$r]['s.price_level'] = 'PriceLevel';
 		}

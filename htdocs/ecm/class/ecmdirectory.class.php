@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2012  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -476,7 +476,7 @@ class EcmDirectory extends CommonObject
 	 *  @param	int		$max			Max length
 	 *  @param	string	$more			Add more param on a link
 	 *  @param	int		$notooltip		1=Disable tooltip
-	 *  @return	string					Chaine avec URL
+	 *  @return	string					String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $max = 0, $more = '', $notooltip = 0)
 	{
@@ -484,7 +484,7 @@ class EcmDirectory extends CommonObject
 
 		$result = '';
 		//$newref=str_replace('_',' ',$this->ref);
-		$newref = $this->ref;
+		$newref = (string) $this->ref;
 		$label = img_picto('', $this->picto, '', 0, 0, 0, '', 'paddingrightonly') . $langs->trans("ShowECMSection") . ': ' . $newref;
 		$linkclose = '"'.($more ? ' '.$more : '').' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 
@@ -798,8 +798,8 @@ class EcmDirectory extends CommonObject
 	 * NB2: if trigger fail, action should be canceled.
 	 * NB3: Should be deleted if EcmDirectory extend CommonObject
 	 *
-	 * @param   string    $triggerName   trigger's name to execute
-	 * @param   User      $user           Object user
+	 * @param   string    $triggerName    Trigger's name to execute
+	 * @param   ?User     $user           Object user
 	 * @return  int                       Result of run_triggers
 	 */
 	public function call_trigger($triggerName, $user)

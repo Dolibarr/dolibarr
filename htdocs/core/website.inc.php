@@ -24,6 +24,13 @@
  *  				It is run only when a web page is called.
  *  			    The global variable $websitekey must be defined.
  */
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ *
+ * @var string $websitekey
+ */
 
 // Load website class
 include_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';

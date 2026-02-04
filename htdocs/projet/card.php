@@ -80,7 +80,6 @@ $location = GETPOST('location', 'alphanohtml');
 
 
 $mine = GETPOST('mode') == 'mine' ? 1 : 0;
-//if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('projectcard', 'globalcard'));
@@ -274,7 +273,7 @@ if (empty($reshook)) {
 			}
 			if (!$error && !empty($object->id) > 0) {
 				// Category association
-				$categories = GETPOST('categories', 'array');
+				$categories = GETPOST('categories', 'array:int');
 				$result = $object->setCategories($categories);
 				if ($result < 0) {
 					$langs->load("errors");
@@ -365,16 +364,14 @@ if (empty($reshook)) {
 				setEventMessages($langs->trans("ErrorOppStatusRequiredIfAmount"), null, 'errors');
 			}
 
-			if (!$error) {
-				if ((int) $object->thirdparty->client == 0 || (int) $object->thirdparty->client == 2) {		// If not yet customer
-					// Get ID of the special opportunity status code 'WON'
-					$idoppstatuswon = (int) dol_getIdFromCode($db, 'WON', 'c_lead_status', 'code', 'rowid');
+			if (!$error && !is_null($object->thirdparty) && ((int) $object->thirdparty->client == 0 || (int) $object->thirdparty->client == 2)) {		// If not yet customer
+				// Get ID of the special opportunity status code 'WON'
+				$idoppstatuswon = (int) dol_getIdFromCode($db, 'WON', 'c_lead_status', 'code', 'rowid');
 
-					if ($object->opp_status == $idoppstatuswon) {
-						// Switch the thirdparty into a customer (only if thirdparty exists)
-						if (!empty($object->thirdparty) && !empty($object->thirdparty->id)) {
-							$object->thirdparty->setAsCustomer();
-						}
+				if ($object->opp_status == $idoppstatuswon) {
+					// Switch the thirdparty into a customer (only if thirdparty exists)
+					if (!empty($object->thirdparty) && !empty($object->thirdparty->id)) {
+						$object->thirdparty->setAsCustomer();
 					}
 				}
 			}
@@ -391,7 +388,7 @@ if (empty($reshook)) {
 				}
 			} else {
 				// Category association
-				$categories = GETPOST('categories', 'array');
+				$categories = GETPOST('categories', 'array:int');
 				$result = $object->setCategories($categories);
 				if ($result < 0) {
 					$error++;
@@ -464,7 +461,7 @@ if (empty($reshook)) {
 			}
 
 			// If opportunities are used and the customer is not yet a customer
-			if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') && $object->usage_opportunity) {
+			if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') && $object->usage_opportunity && !is_null($object->thirdparty)) {
 				if ((int) $object->thirdparty->client == 0 || (int) $object->thirdparty->client == 2) {		// If not yet customer
 					// Get ID of the special opportunity status code 'WON'
 					$idoppstatuswon = (int) dol_getIdFromCode($db, 'WON', 'c_lead_status', 'code', 'rowid');
@@ -514,7 +511,7 @@ if (empty($reshook)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 			$langs->load("other");
-			$upload_dir = $conf->project->multidir_output[$object->entity];
+			$upload_dir = $conf->project->multidir_output[$object->entity ?? $conf->entity];
 			$file = $upload_dir.'/'.GETPOST('file');
 			$ret = dol_delete_file($file, 0, 0, 0, $object);
 			if ($ret) {
@@ -618,6 +615,9 @@ if (empty($reshook)) {
 			$action = 'edit_extras';
 		}
 	}
+
+	// Actions when printing a doc from card
+	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 	// Actions to send emails
 	$triggersendname = 'PROJECT_SENTBYMAIL';
@@ -944,7 +944,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 	}
 
 	if (count($array) > 0) {
-		print $form->selectarray('public', $array, GETPOSTINT('public') ? 1 : 0, 0, 0, 0, '', 0, 0, 0, '', '', 1);
+		print $form->selectarray('public', $array, GETPOSTINT('public') ? 1 : 0, 0, 0, 0, '', 0, 0, 0, '', 'minwidth200', 1);
 	} else {
 		print '<input type="hidden" name="public" id="public" value="'.(GETPOSTINT('public') ? 1 : 0).'">';
 
@@ -963,7 +963,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 	print '<td>';
 	$contactList = $object->liste_type_contact('internal', 'position', 1);
 	$typeofcontact = GETPOST('typeofcontact') ? GETPOST('typeofcontact') : 'PROJECTLEADER';
-	print $form->selectarray('typeofcontact', $contactList, $typeofcontact, 0, 0, 0, '', 0, 0, 0, '', '', 1);
+	print $form->selectarray('typeofcontact', $contactList, $typeofcontact, 0, 0, 0, '', 0, 0, 0, '', 'minwidth200', 1);
 	print '</td></tr>';
 
 	// Other options
@@ -1671,7 +1671,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			// Send
 			if (empty($user->socid)) {
 				if ($object->status != Project::STATUS_CLOSED) {
-					print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"].'?action=presend&token='.newToken().'&id='.$object->id.'&mode=init#formmailbeforetitle', '');
+					print dolGetButtonAction('', $langs->trans('SendMail'), 'email', $_SERVER["PHP_SELF"].'?action=presend&token='.newToken().'&id='.$object->id.'&mode=init#formmailbeforetitle', '');
 				}
 			}
 
@@ -1832,7 +1832,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 		 * Generated documents
 		 */
 		$filename = dol_sanitizeFileName($object->ref);
-		$filedir = $conf->project->multidir_output[$object->entity]."/".dol_sanitizeFileName($object->ref);
+		$filedir = $conf->project->multidir_output[$object->entity ?? $conf->entity]."/".dol_sanitizeFileName($object->ref);
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 		$genallowed = ($user->hasRight('projet', 'lire') && $userAccess > 0);
 		$delallowed = ($user->hasRight('projet', 'creer') && $userWrite > 0);
@@ -1860,7 +1860,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 	$modelmail = 'project';
 	$defaulttopic = 'SendProjectRef';
 	$defaulttopiclang = 'projects';
-	$diroutput = $conf->project->multidir_output[$object->entity];
+	$diroutput = $conf->project->multidir_output[$object->entity ?? $conf->entity];
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_PROJECT_TO'; // used to know the automatic BCC to add
 	$trackid = 'proj'.$object->id;
 

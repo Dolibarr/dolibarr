@@ -36,7 +36,6 @@ if (!defined('DOL_INC_FOR_VERSION_ERROR')) {
 require_once '../filefunc.inc.php';
 
 
-
 // Define DOL_DOCUMENT_ROOT used for install/upgrade process
 if (!defined('DOL_DOCUMENT_ROOT')) {
 	define('DOL_DOCUMENT_ROOT', '..');
@@ -441,12 +440,12 @@ function conf($dolibarr_main_document_root)
 	}
 
 	$conf = new Conf();
-	$conf->db->type = trim($dolibarr_main_db_type);
-	$conf->db->host = trim($dolibarr_main_db_host);
-	$conf->db->port = trim($dolibarr_main_db_port);
-	$conf->db->name = trim($dolibarr_main_db_name);
-	$conf->db->user = trim($dolibarr_main_db_user);
-	$conf->db->pass = (empty($dolibarr_main_db_pass) ? '' : trim($dolibarr_main_db_pass));
+	$conf->db->type = trim((string) $dolibarr_main_db_type);
+	$conf->db->host = trim((string) $dolibarr_main_db_host);
+	$conf->db->port = trim((string) $dolibarr_main_db_port);
+	$conf->db->name = trim((string) $dolibarr_main_db_name);
+	$conf->db->user = trim((string) $dolibarr_main_db_user);
+	$conf->db->pass = (empty($dolibarr_main_db_pass) ? '' : trim((string) $dolibarr_main_db_pass));
 
 	// Mysql driver support has been removed in favor of mysqli
 	if ($conf->db->type == 'mysql') {
@@ -565,6 +564,7 @@ function pHeader($subtitle, $next, $action = 'set', $param = '', $forcejqueryurl
 	print '<meta name="viewport" content="width=device-width, initial-scale=1.0">'."\n";
 	print '<meta name="generator" content="Dolibarr installer">'."\n";
 	print '<link rel="stylesheet" type="text/css" href="default.css">'."\n";
+	print '<link rel="stylesheet" type="text/css" href="../public/theme/common/fontawesome-5/css/all.min.css?layout=classic">'."\n";
 
 	print '<!-- Includes CSS for JQuery -->'."\n";
 	if ($jQueryUiCustomPath) {

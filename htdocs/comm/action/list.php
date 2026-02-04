@@ -31,14 +31,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-
-include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -46,6 +38,13 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+
+include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("users", "companies", "agenda", "commercial", "other", "orders", "bills"));
@@ -55,7 +54,7 @@ $action 	= GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $confirm 	= GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'alpha');
-$toselect 	= GETPOST('toselect', 'array');
+$toselect 	= GETPOST('toselect', 'array:int');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'actioncommlist'; // To manage different context of search
 $optioncss 	= GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'aZ09');
@@ -164,27 +163,37 @@ if (!$user->hasRight('agenda', 'allactions', 'read') || $filter == 'mine') {	// 
 	$filtert = (string) $user->id;
 }
 
-$arrayfields = array(
-	'a.id' => array('label' => "Ref", 'checked' => '1'),
-	'owner' => array('label' => "Owner", 'checked' => '1'),
-	'c.libelle' => array('label' => "Type", 'checked' => '1'),
-	'a.label' => array('label' => "Title", 'checked' => '1'),
-	'a.note' => array('label' => 'Description', 'checked' => '0'),
-	'a.datep' => array('label' => "DateStart", 'checked' => '1'),
-	'a.datep2' => array('label' => "DateEnd", 'checked' => '1'),
-	's.nom' => array('label' => "ThirdParty", 'checked' => '1'),
-	'a.fk_contact' => array('label' => "Contact", 'checked' => '0'),
-	'a.fk_element' => array('label' => "LinkedObject", 'checked' => '1', 'enabled' => (getDolGlobalString('AGENDA_SHOW_LINKED_OBJECT'))),
-	'a.datec' => array('label' => 'DateCreation', 'checked' => '0', 'position' => 510),
-	'a.tms' => array('label' => 'DateModification', 'checked' => '0', 'position' => 520),
-	'a.percent' => array('label' => "Status", 'checked' => '1', 'position' => 1000)
-);
+// Definition of array of fields for columns
+$tableprefix = 'a';
+$arrayfields = array();
+foreach ($object->fields as $key => $val) {
+	// If $val['visible']==0, then we never show the field
+	if (!empty($val['visible'])) {
+		$visible = (int) dol_eval((string) $val['visible'], 1);
+		$arrayfields[$tableprefix.'.'.$key] = array(
+			'label' => $val['label'],
+			'checked' => (($visible < 0) ? '0' : '1'),
+			'enabled' => (string) (int) (abs($visible) != 3 && (bool) dol_eval((string) $val['enabled'], 1)),
+			'position' => $val['position'],
+			'help' => isset($val['help']) ? $val['help'] : ''
+		);
+	}
+}
+
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+
+// Complete arrayfields with special fields
+$arrayfields = array_merge($arrayfields, array(
+	'owner' => array('label' => "Owner", 'checked' => '1', 'position' => 46),
+	'c.libelle' => array('label' => "Type", 'checked' => '1', 'position' => 47),
+	's.nom' => array('label' => "ThirdParty", 'checked' => '1', 'position' => 54),
+));
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
+// Security check
 $result = restrictedArea($user, 'agenda', 0, '', 'myactions');
 if ($user->socid && $socid) {
 	$result = restrictedArea($user, 'societe', $socid);
@@ -243,7 +252,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 }
 
 if (empty($reshook) && !empty($massaction)) {
-	unset($percent);
+	$percent = null;
 
 	switch ($massaction) {
 		case 'set_all_events_to_todo':
@@ -425,17 +434,14 @@ if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predel
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 $sql = "SELECT";
-if ($usergroup > 0) {
-	$sql .= " DISTINCT";
-}
-$sql .= " s.nom as societe, s.rowid as socid, s.client, s.email as socemail,";
-$sql .= " a.id, a.code, a.label, a.note, a.datep as dp, a.datep2 as dp2, a.fulldayevent, a.location, a.entity,";
+$sql .= " a.datep as dp, a.id, a.code, a.label, a.note, a.datep2 as dp2, a.fulldayevent, a.location, a.entity,";
 $sql .= " a.fk_user_author, a.fk_user_action,";
 $sql .= " a.fk_contact, a.note, a.percent as percent,";
 $sql .= " a.fk_element, a.elementtype, a.datec, a.tms as datem,";
 $sql .= " a.recurid, a.recurrule, a.recurdateend,";
 $sql .= " c.code as type_code, c.libelle as type_label, c.color as type_color, c.type as type_type, c.picto as type_picto,";
-$sql .= " sp.lastname, sp.firstname, sp.email, sp.phone, sp.address, sp.phone as phone_pro, sp.phone_mobile, sp.phone_perso, sp.fk_pays as country_id";
+$sql .= " s.nom as societe, s.rowid as socid, s.client, s.email as socemail";
+//$sql .= " sp.lastname, sp.firstname, sp.email, sp.phone, sp.address, sp.phone as phone_pro, sp.phone_mobile, sp.phone_perso, sp.fk_pays as country_id";
 
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -454,26 +460,12 @@ $sqlfields = $sql; // $sql fields to remove for count total
 $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."actioncomm_extrafields as ef ON (a.id = ef.fk_object)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
+//$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON c.id = a.fk_action";
 // We must filter on resource table
 if ($resourceid > 0) {
 	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."element_resources as r ON r.element_type = 'action' AND r.element_id = a.id";
 }
-// We must filter on assignment table
-if (($filtert != '-1' && $filtert != '-2') || $usergroup > 0) {
-	// TODO Replace with a AND EXISTS
-	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm_resources as ar ON ar.fk_actioncomm = a.id AND ar.element_type = 'user'";
-	if ($filtert != '' && $filtert != '-1' && $filtert != '-2'  && $filtert != '-3') {
-		$sql .= " AND (ar.fk_element IN (".$db->sanitize($filtert).") OR (ar.fk_element IS NULL AND a.fk_user_action = ".((int) $filtert)."))"; // The OR is for backward compatibility
-	} elseif ($filtert == '-3') {
-		$sql .= " AND ar.fk_element IN (".$db->sanitize(implode(',', $user->getAllChildIds(1))).")";
-	}
-	if ($usergroup > 0) {
-		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_user = ar.fk_element AND ugu.fk_usergroup = ".((int) $usergroup);
-	}
-}
-
 // Add table from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -603,6 +595,24 @@ if ($search_categ_cus != -1) {
 	}
 }
 
+// We must filter on assignment table
+if (($filtert != '-1' && $filtert != '-2') || $usergroup > 0) {
+	if ($filtert != '' && $filtert != '-1' && $filtert != '-2'  && $filtert != '-3') {
+		$sql .= " AND (";
+		$sql .= " a.fk_user_action = ".((int) $filtert)." OR ";		// For old data compatibility (where owner was not assigned as contact)
+		$sql .= " EXISTS (SELECT ar.rowid FROM ".MAIN_DB_PREFIX."actioncomm_resources as ar WHERE ar.fk_actioncomm = a.id AND ar.element_type = 'user' AND ar.fk_element IN (".$db->sanitize($filtert)."))";
+		$sql .= ")";
+	} elseif ($filtert == '-3') {
+		$sql .= " AND (";
+		$sql .= " EXISTS (SELECT ar.rowid FROM ".MAIN_DB_PREFIX."actioncomm_resources as ar WHERE ar.fk_actioncomm = a.id AND ar.element_type = 'user' AND ar.fk_element IN (".$db->sanitize(implode(',', $user->getAllChildIds(1)))."))";
+		$sql .= ")";
+	} elseif ($usergroup > 0) {		// Filter on my hierarchy
+		$sql .= " AND (";
+		$sql .= " EXISTS (SELECT ar.rowid FROM ".MAIN_DB_PREFIX."actioncomm_resources as ar WHERE ar.fk_actioncomm = a.id AND ar.element_type = 'user' AND ar.fk_element IN (SELECT ugu.fk_user FROM ".MAIN_DB_PREFIX."usergroup_user as ugu WHERE ugu.fk_usergroup = ".((int) $usergroup)."))";
+		$sql .= ")";
+	}
+}
+
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 
@@ -621,12 +631,12 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sqlforcount);
 	if ($resql) {
 		$objforcount = $db->fetch_object($resql);
-		$nbtotalofrecords = $objforcount->nbtotalofrecords;
+		$nbtotalofrecords = (int) $objforcount->nbtotalofrecords;
 	} else {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -746,18 +756,19 @@ $viewmode .= '<span class="marginrightonly"></span>';
 
 $tmpforcreatebutton = dol_getdate(dol_now('tzuserrel'), true);
 
-$newparam = '&month='.str_pad((string) $month, 2, "0", STR_PAD_LEFT).'&year='.$tmpforcreatebutton['year'];
+$newparam = '?month='.str_pad((string) $month, 2, "0", STR_PAD_LEFT).'&year='.$tmpforcreatebutton['year'];
 
 $url = DOL_URL_ROOT.'/comm/action/card.php?action=create';
 $url .= '&apyear='.$tmpforcreatebutton['year'].'&apmonth='.$tmpforcreatebutton['mon'].'&apday='.$tmpforcreatebutton['mday'];
 $url .= '&aphour='.$tmpforcreatebutton['hours'].'&apmin='.$tmpforcreatebutton['minutes'];
-$url .= '&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam ? '?'.$newparam : ''));
+$url .= '&backtopage='.urlencode($_SERVER["PHP_SELF"].$newparam);
 
 $newcardbutton = dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', $url, '', (int) ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')));
 
 $param .= '&mode='.urlencode($mode);
 
-print_barre_liste($langs->trans("Agenda"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, is_numeric($nbtotalofrecords) ? -1 * $nbtotalofrecords : $nbtotalofrecords, 'object_action', 0, $nav.$newcardbutton, '', $limit, 0, 0, 1, $viewmode);
+// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
+print_barre_liste($langs->trans("Agenda"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'object_action', 0, $nav.$newcardbutton, '', $limit, 0, 0, 1, $viewmode);
 
 print $s;
 
@@ -806,7 +817,7 @@ if (!empty($arrayfields['a.note']['checked'])) {
 	print '<td class="liste_titre"><input type="text" class="maxwidth75" name="search_note" value="'.$search_note.'"></td>';
 }
 if (!empty($arrayfields['a.datep']['checked'])) {
-	print '<td class="liste_titre nowraponall" align="center">';
+	print '<td class="liste_titre nowraponall center">';
 	print '<div class="nowrap">';
 	print $form->selectDate($datestart_dtstart, 'datestart_dtstart', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'), 'tzuserrel');
 	print '</div>';
@@ -816,7 +827,7 @@ if (!empty($arrayfields['a.datep']['checked'])) {
 	print '</td>';
 }
 if (!empty($arrayfields['a.datep2']['checked'])) {
-	print '<td class="liste_titre nowraponall" align="center">';
+	print '<td class="liste_titre nowraponall center">';
 	print '<div class="nowrap">';
 	print $form->selectDate($dateend_dtstart, 'dateend_dtstart', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'), 'tzuserrel');
 	print '</div>';
@@ -1043,7 +1054,7 @@ while ($i < $imaxinloop) {
 	}
 	$event_start_date_css = $event_end_date_css = $event_more_class;
 
-	print '<tr class="oddeven' . ($event_more_class != '' ? ' '.$event_more_class : '') . '">';
+	print '<tr class="oddeven row-with-select ' . ($event_more_class != '' ? ' '.$event_more_class : '') . '">';
 	// Action column
 	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print '<td class="nowrap center">';
@@ -1076,8 +1087,6 @@ while ($i < $imaxinloop) {
 		}
 		if (isset($cache_user_list[$obj->fk_user_action])) {
 			print $cache_user_list[$obj->fk_user_action]->getNomUrl(-1);
-		} else {
-			print '&nbsp;';
 		}
 		print '</td>';
 	}
@@ -1114,8 +1123,11 @@ while ($i < $imaxinloop) {
 	// Description
 	if (!empty($arrayfields['a.note']['checked'])) {
 		$text = dolGetFirstLineOfText(dol_string_nohtmltag($actionstatic->note_private, 1));
-		print '<td class="tdoverflow200" title="'.dol_escape_htmltag($text).'">';
-		print $form->textwithtooltip(dol_trunc($text, 48), $actionstatic->note_private);
+		print '<td class="minwidth150">';
+		print '<div class="small twolinesmax lineheightsmall minwidth150 maxwidth250 classfortooltip" title="'.dolPrintHTMLForAttribute($actionstatic->note_private).'">';
+		//print $form->textwithtooltip(dol_trunc($text, 48), $actionstatic->note_private);
+		print dolPrintHTML($text);
+		print '</div>';
 		print '</td>';
 	}
 
@@ -1164,8 +1176,6 @@ while ($i < $imaxinloop) {
 			$societestatic->email = $obj->socemail;
 
 			print $societestatic->getNomUrl(1, '', 28);
-		} else {
-			print '&nbsp;';
 		}
 		print '</td>';
 	}
@@ -1173,8 +1183,7 @@ while ($i < $imaxinloop) {
 	// Contact
 	if (!empty($arrayfields['a.fk_contact']['checked'])) {
 		print '<td class="tdoverflowmax100">';
-
-		if (!empty($actionstatic->socpeopleassigned)) {
+		if (!empty($actionstatic->socpeopleassigned)) {		// $actionstatic->socpeopleassigned is loaded by $actionstatic->fetchResources() if property contact visible
 			$contactList = array();
 			foreach ($actionstatic->socpeopleassigned as $socpeopleassigned) {
 				if (!isset($contactListCache[$socpeopleassigned['id']])) {
@@ -1192,18 +1201,11 @@ while ($i < $imaxinloop) {
 			if (!empty($contactList)) {
 				print implode(', ', $contactList);
 			}
-		} elseif ($obj->fk_contact > 0) { //keep for retrocompatibility with faraway event
-			$contactstatic->id = $obj->fk_contact;
-			$contactstatic->email = $obj->email;
-			$contactstatic->lastname = $obj->lastname;
-			$contactstatic->firstname = $obj->firstname;
-			$contactstatic->phone_pro = $obj->phone_pro;
-			$contactstatic->phone_mobile = $obj->phone_mobile;
-			$contactstatic->phone_perso = $obj->phone_perso;
-			$contactstatic->country_id = $obj->country_id;
+		} elseif ($obj->fk_contact > 0) { // keep for retrocompatibility with faraway events (no more used)
+			$tmpcontact = new Contact($db);			// TODO Add a cache
+			$tmpcontact->fetch($obj->fk_contact);
+
 			print $contactstatic->getNomUrl(1, '', 0);
-		} else {
-			print "&nbsp;";
 		}
 		print '</td>';
 	}
@@ -1215,8 +1217,6 @@ while ($i < $imaxinloop) {
 		if ($obj->fk_element > 0 && !empty($obj->elementtype)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 			print dolGetElementUrl($obj->fk_element, $obj->elementtype, 1);
-		} else {
-			print "&nbsp;";
 		}
 		print '</td>';
 	}

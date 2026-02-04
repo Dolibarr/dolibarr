@@ -44,7 +44,9 @@ class InfoBox
 				1 => 'UsersHome',
 				2 => 'MembersHome',
 				3 => 'ThirdpartiesHome',
+				4 => 'productindex',
 				11 => 'TicketsHome',
+				20 => 'interventionindex',
 				27 => 'AccountancyHome'
 			);
 		} else {

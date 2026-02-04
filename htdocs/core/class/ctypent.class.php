@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,13 +66,12 @@ class Ctypent extends CommonDict
 	 */
 	public function create($user, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		// Clean parameters
 
-		if (isset($this->id)) {
-			$this->id = (int) $this->id;
+		if (empty($this->id)) {
+			return -1;
 		}
 		if (isset($this->code)) {
 			$this->code = trim($this->code);
@@ -97,10 +97,10 @@ class Ctypent extends CommonDict
 		$sql .= "active,";
 		$sql .= "module";
 		$sql .= ") VALUES (";
-		$sql .= " ".(!isset($this->id) ? 'NULL' : "'".$this->db->escape((string) $this->id)."'").",";
+		$sql .= (int) $this->id . ",";
 		$sql .= " ".(!isset($this->code) ? 'NULL' : "'".$this->db->escape($this->code)."'").",";
 		$sql .= " ".(!isset($this->libelle) ? 'NULL' : "'".$this->db->escape($this->libelle)."'").",";
-		$sql .= " ".(!isset($this->active) ? 'NULL' : "'".$this->db->escape((string) $this->active)."'").",";
+		$sql .= " ".(!isset($this->active) ? 'NULL' : (int) $this->active).",";
 		$sql .= " ".(!isset($this->module) ? 'NULL' : "'".$this->db->escape($this->module)."'");
 		$sql .= ")";
 
@@ -163,11 +163,11 @@ class Ctypent extends CommonDict
 			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
-				$this->id = $obj->id;
+				$this->id = (int) $obj->id;
 				$this->code = $obj->code;
 				$this->libelle = $obj->label;
 				$this->country_id = $obj->country_id;
-				$this->active = $obj->active;
+				$this->active = (int) $obj->active;
 				$this->module = $obj->module;
 			}
 			$this->db->free($resql);

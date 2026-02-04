@@ -10,7 +10,7 @@
  * Copyright (C) 2016      Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2019-2024	Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2019      Tim Otte			    <otte@meuser.it>
- * Copyright (C) 2020      Pierre Ardoin        <mapiolca@me.com>
+ * Copyright (C) 2020-2025 Pierre Ardoin        <developpeur@lesmetiersdubatiment.fr>
  * Copyright (C) 2023	   Joachim Kueter		<git-jk@bloxera.com>
  * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
@@ -36,6 +36,14 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -46,15 +54,6 @@ require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.
 if (isModEnabled('barcode')) {
 	dol_include_once('/core/class/html.formbarcode.class.php');
 }
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Societe $mysoc
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'suppliers', 'bills', 'margins', 'stocks'));
@@ -88,10 +87,6 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 
-if (!$user->hasRight('fournisseur', 'lire') && (!isModEnabled('margin') && !$user->hasRight("margin", "liretous"))) {
-	accessforbidden();
-}
-
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
@@ -119,8 +114,14 @@ if ($id > 0 || $ref) {
 	$prod->fetch($id, $ref);
 }
 
+if (!$user->hasRight('fournisseur', 'lire') && (!isModEnabled('margin') && !$user->hasRight("margin", "liretous"))) {
+	accessforbidden();
+}
+
 $usercanread = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'lire')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'lire')));
 $usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'creer')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'creer')));
+// Case of advanced permission to write supplier prices
+$usercancreate = (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $usercancreate : $user->hasRight('product', 'product_advance', 'write_supplier_prices'));
 
 if ($object->id > 0) {
 	if ($object->type == $object::TYPE_PRODUCT) {
@@ -389,7 +390,7 @@ if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) {
 llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'classforhorizontalscrolloftabs mod-product page-price_suppliers');
 
 if ($id > 0 || $ref) {
-	if ($action == 'ask_remove_pf') {
+	if ($action == 'ask_remove_pf' && $usercancreate) {
 		$form = new Form($db);
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$id.'&rowid='.$rowid, $langs->trans('DeleteProductBuyPrice'), $langs->trans('ConfirmDeleteProductBuyPrice'), 'confirm_remove_pf', '', 0, 1);
 		echo $formconfirm;
@@ -612,9 +613,9 @@ if ($id > 0 || $ref) {
 				// Packaging/Conditionnement
 				print '<tr>';
 
-				print '<td class="fieldrequired">'.$form->textwithpicto($langs->trans("PackagingForThisProduct"), $langs->trans("PackagingForThisProductDesc")).'</td>';
+				print '<td>'.$form->textwithpicto($langs->trans("PackagingForThisProduct"), $langs->trans("PackagingForThisProductDesc")).'</td>';
 				print '<td>';
-				$packaging = GETPOSTISSET('packaging') ? price2num(GETPOST('packaging', 'alphanohtml'), 'MS') : ((empty($rowid)) ? "1" : price2num($object->packaging, 'MS'));
+				$packaging = GETPOSTISSET('packaging') ? price2num(GETPOST('packaging', 'alphanohtml'), 'MS') : ((empty($rowid)) ? "" : price2num($object->packaging, 'MS'));
 				print '<input class="flat" name="packaging" size="5" value="'.$packaging.'">';
 
 				// Units
@@ -698,7 +699,7 @@ if ($id > 0 || $ref) {
 				if (empty($currencycodetouse) && $object->fourn_multicurrency_tx == 1) {
 					$currencycodetouse = $conf->currency;
 				}
-				print $form->selectMultiCurrency($currencycodetouse, "multicurrency_code", 1);
+				print $form->selectMultiCurrency((string) $currencycodetouse, "multicurrency_code", 1);
 				print ' &nbsp; &nbsp; '.$langs->trans("CurrencyRate").' ';
 				print '<input class="flat width50" name="multicurrency_tx" value="';
 				print GETPOST('multicurrency_tx');
@@ -928,14 +929,19 @@ if ($id > 0 || $ref) {
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			if (empty($reshook)) {
+				// Display add button only when user can write supplier prices
 				if ($usercancreate) {
 					print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/price_suppliers.php?id='.((int) $object->id).'&action=create_price&token='.newToken().'">';
+					print $langs->trans("AddSupplierPrice").'</a>';
+				} else {
+					print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">';
 					print $langs->trans("AddSupplierPrice").'</a>';
 				}
 			}
 		}
 
 		print "</div>\n";
+
 
 		if ($user->hasRight("fournisseur", "read")) { // Duplicate ? this check is already in the head of this file
 			$param = '';
@@ -1145,6 +1151,7 @@ if ($id > 0 || $ref) {
 					// Action column
 					if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 						print '<td class="center nowraponall">';
+						// EN: Allow editing and deletion when user can write supplier prices
 						if ($usercancreate) {
 							print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?id='.((int) $object->id).'&socid='.((int) $productfourn->fourn_id).'&action=edit_price&token='.newToken().'&rowid='.((int) $productfourn->product_fourn_price_id).'">'.img_edit()."</a>";
 							print ' &nbsp; ';
@@ -1165,7 +1172,7 @@ if ($id > 0 || $ref) {
 					}
 
 					// Supplier ref
-					if ($usercancreate) { // change required right here
+					if ($usercancreate) { // EN: Supplier link allowed when user can write supplier prices
 						print '<td class="tdoverflowmax150">'.$productfourn->getNomUrl().'</td>';
 					} else {
 						print '<td class="tdoverflowmax150">'.dol_escape_htmltag($productfourn->fourn_ref).'</td>';
@@ -1335,6 +1342,7 @@ if ($id > 0 || $ref) {
 					// Modify-Remove
 					if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 						print '<td class="center nowraponall">';
+						// EN: Allow editing and deletion when user can write supplier prices
 						if ($usercancreate) {
 							print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?id='.((int) $object->id).'&socid='.((int) $productfourn->fourn_id).'&action=edit_price&token='.newToken().'&rowid='.((int) $productfourn->product_fourn_price_id).'">'.img_edit()."</a>";
 							print ' &nbsp; ';

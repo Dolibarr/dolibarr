@@ -66,6 +66,7 @@ INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'KYD'
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'CLP', '[36]', 1,			    	'Chile Peso');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'CNY', '[165]', 1,			    	'China Yuan Renminbi');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'COP', '[36]', 1,	    			'Colombia Peso');
+INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'CDF', '[70,67]', 1,		    		'Congolese Franc');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'CRC', '[8353]', 1,		  		'Costa Rica Colon');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'HRK', '[107,110]', 1,		  	'Croatia Kuna');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'CUP', '[8369]', 1,		  		'Cuba Peso');
@@ -131,6 +132,7 @@ INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'NOK'
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'OMR', '[65020]', 1,	  			'Oman Rial');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'PKR', '[8360]', 1,		  		'Pakistan Rupee');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'PAB', '[66,47,46]', 1,			'Panama Balboa');
+INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'PGK', '[75]', 1,			'Papua New Guinea Kina');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'PYG', '[71,115]', 1,		  	'Paraguay Guarani');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'PEN', '[83,47]', 1,			    'Perú Sol');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'PHP', '[8369]', 1,			  	'Philippines Peso');

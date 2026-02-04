@@ -3,10 +3,10 @@ MenuFinancial=វិក័យប័ត្រ | ការទូទាត់
 TaxModuleSetupToModifyRules=ចូលទៅកាន់ <a href="%s">ការដំឡើងម៉ូឌុលពន្ធ</a> ដើម្បីកែប្រែច្បាប់សម្រាប់ការគណនា
 TaxModuleSetupToModifyRulesLT=ចូលទៅកាន់ <a href="%s">ការដំឡើងក្រុមហ៊ុន</a> ដើម្បីកែប្រែច្បាប់សម្រាប់ការគណនា
 OptionMode=ជម្រើសសម្រាប់គណនេយ្យ
-OptionModeTrue=Accrual accounting
-OptionModeVirtual=Cash accounting
-OptionModeTrueDesc=In this context, the turnover is calculated over payments (date of payments). The validity of the figures is assured only if the book-keeping is scrutinized through the input/output on payments.
+OptionModeVirtual=Accrual accounting
+OptionModeTrue=Cash accounting
 OptionModeVirtualDesc=នៅក្នុងបរិបទនេះ ចំណូលត្រូវបានគណនាលើវិក្កយបត្រ (កាលបរិច្ឆេទនៃសុពលភាព)។ នៅពេលដែលវិក្កយបត្រទាំងនេះដល់កំណត់ ថាតើពួកគេត្រូវបានបង់ឬអត់ ពួកគេត្រូវបានចុះបញ្ជីនៅក្នុងលទ្ធផលចំណូល។
+OptionModeTrueDesc=In this context, the turnover is calculated over payments (date of payments). The validity of the figures is assured only if the book-keeping is scrutinized through the input/output on payments.
 FeatureIsSupportedInInOutModeOnly=មុខងារ​មាន​តែ​ក្នុង​របៀប​គណនី​ឥណទាន​-​បំណុល​ប៉ុណ្ណោះ (មើល​ការ​កំណត់​រចនាសម្ព័ន្ធ​ម៉ូឌុល​គណនេយ្យ)
 VATReportBuildWithOptionDefinedInModule=ចំនួនទឹកប្រាក់ដែលបានបង្ហាញនៅទីនេះត្រូវបានគណនាដោយប្រើច្បាប់កំណត់ដោយការដំឡើងម៉ូឌុលពន្ធ។
 LTReportBuildWithOptionDefinedInModule=ចំនួនទឹកប្រាក់ដែលបង្ហាញនៅទីនេះត្រូវបានគណនាដោយប្រើច្បាប់កំណត់ដោយការដំឡើងក្រុមហ៊ុន។
@@ -302,7 +302,6 @@ ByVatRate=តាមអត្រាពន្ធលើការលក់
 TurnoverbyVatrate=ការចេញវិក្កយបត្រតាមអត្រាពន្ធលើការលក់
 TurnoverCollectedbyVatrate=ចំណូលប្រមូលបានតាមអត្រាពន្ធលើការលក់
 PurchasebyVatrate=ទិញតាមអត្រាពន្ធលក់
-LabelToShow=ស្លាកសញ្ញាខ្លី
 PurchaseTurnover=ការទិញដូរ
 PurchaseTurnoverCollected=ការប្រមូលផលនៃការទិញ
 RulesPurchaseTurnoverDue=- វារួមបញ្ចូលវិក័យប័ត្រដល់កំណត់របស់អ្នកផ្គត់ផ្គង់ថាតើពួកគេត្រូវបានបង់ឬអត់។ <br>- វាផ្អែកលើកាលបរិច្ឆេទនៃវិក្កយបត្រនៃវិក្កយបត្រទាំងនេះ។<br>
@@ -329,3 +328,4 @@ RuleForLinesDates=Rule for lines dates
 Prepaid=Prepaid
 Postpaid=Postpaid
 SetRuleForLinesDates=Set rule for lines dates
+SomeNotConvertedCreditNoteExists=There is <b>%s</b> credit notes not yet converted for consumption

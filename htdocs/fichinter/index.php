@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015	   Charlene Benke        <charlene@patas-monkey.com>
- * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+/* Copyright (C) 2003-2004  Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2015  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2015-2025  Charlene Benke       <charlene@patas-monkey.com>
+ * Copyright (C) 2019       Nicolas ZABOURI      <info@inovea-conseil.com>
+ * Copyright (C) 2024-2025  Frédéric France		 <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
 // Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -58,6 +59,9 @@ if ($user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
+
+// Load $resultboxes
+$resultboxes = FormOther::getBoxesArea($user, "20");
 
 $max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 
@@ -394,6 +398,27 @@ if (isModEnabled('intervention')) {
 }
 
 print '</div></div>';
+
+// boxes
+print '<div class="clearboth"></div>';
+print '<div class="fichecenter fichecenterbis">';
+
+$boxlist = '<div class="twocolumns">';
+
+$boxlist .= '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
+
+$boxlist .= $resultboxes['boxlista'];
+$boxlist .= "</div>\n";
+
+$boxlist .= '<div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
+$boxlist .= $resultboxes['boxlistb'];
+$boxlist .= '</div>'."\n";
+
+$boxlist .= "</div>\n";
+
+print $boxlist;
+
+print '</div>';
 
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardInterventions', $parameters, $object); // Note that $action and $object may have been modified by hook
