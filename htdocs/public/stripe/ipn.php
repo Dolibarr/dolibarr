@@ -1174,7 +1174,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 		*/
 		$paiement->paiementid   = dol_getIdFromCode($db, 'PRE', 'c_paiement', 'code', 'id', 1);
 		$paiement->num_payment  = $object->id;	// A string like 'du_...'
-		$paiement->note_private = 'Fund withdrawn by bank with id='.$object->id.'. Reason: '.$reason;
+		$paiement->note_private = 'Fund withdrawn by bank with id='.$object->id.'. Reason: '.$reason.'. A fee of '.$fees.' may have been charged by Stripe.';
 		$paiement->fk_account   = $accountfrom->id;
 
 		$paiement->ext_payment_id   = $object->payment_intent;
