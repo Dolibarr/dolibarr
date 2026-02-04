@@ -317,10 +317,12 @@ if (in_array($type, array_keys($typewecanchangeinto))) {
 		$elementprop["module"] = "intervention";
 	}
 	$substitutionarray = getCommonSubstitutionArray($langs, 1, null, $object, array("object", $elementprop["module"]));
-	$texthelp = $langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
+	$texthelp = $langs->trans("AIPromptExtrafieldDesc").'<br><br>';
+	$texthelp .= $langs->trans("FollowingConstantsWillBeSubstituted").'<br><small>';
 	foreach ($substitutionarray as $key => $val) {
 		$texthelp .= $key.' -> '.$val.'<br>';
 	}
+	$texthelp .= '</small>';
 	echo $form->textwithpicto($langs->trans("AIPromptExtrafield"), $texthelp, 1, 'help', 'valignmiddle', 0, 3, 'abc');?></td>
 <td class="valeur"><textarea name="ai_prompt" id="ai_prompt" class="quatrevingtpercent" rows="<?php echo ROWS_4 ?>"><?php echo($aiprompt); ?></textarea></td></tr>
 

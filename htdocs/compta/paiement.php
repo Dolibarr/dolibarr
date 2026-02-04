@@ -9,7 +9,7 @@
  * Copyright (C) 2014       Teddy Andreotti         <125155@supinfo.com>
  * Copyright (C) 2015       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2023  		Lenin Rivas	            <lenin.rivas777@gmail.com>
+ * Copyright (C) 2023-2026	Lenin Rivas	            <lenin.rivas777@gmail.com>
  * Copyright (C) 2023       Sylvain Legrand	        <technique@infras.fr>
  * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
@@ -431,15 +431,24 @@ if ($result >= 0) {
 
 							return subJson;
 						}
-						function callForResult(imgId)
+						function callForResult(imgId, multicurrency = 0)
 						{
 							var json = {};
 							var form = $("#payment_form");
+							var keyresult = "result";
 
 							json["invoice_type"] = $("#invoice_type").val();
-            				json["amountPayment"] = $("#amountpayment").attr("value");
-							json["amounts"] = _elemToJson(form.find("input.amount"));
-							json["remains"] = _elemToJson(form.find("input.remain"));
+            				if (multicurrency) {
+							    keyresult = "multicurrency_result";
+							    json["multicurrency"] = 1;
+							    json["multicurrency_amountPayment"] = $("#multicurrency_amountpayment").attr("value");
+							    json["multicurrency_amounts"] = _elemToJson(form.find("input.multicurrency_amount"));
+							    json["multicurrency_remains"] = _elemToJson(form.find("input.multicurrency_remain"));
+							} else {
+							    json["amountPayment"] = $("#amountpayment").attr("value");
+							    json["amounts"] = _elemToJson(form.find("input.amount"));
+							    json["remains"] = _elemToJson(form.find("input.remain"));
+							}
 							json["token"] = "'.currentToken().'";
 							if (imgId != null) {
 								json["imgClicked"] = imgId;
@@ -453,7 +462,7 @@ if ($result >= 0) {
 
 								for (var key in json)
 								{
-									if (key == "result")	{
+									if (key == keyresult)	{
 										if (json["makeRed"]) {
 											$("#"+key).addClass("error");
 										} else {
@@ -474,6 +483,13 @@ if ($result >= 0) {
 						});
 						$("#payment_form").find("input.amount").keyup(function() {
 							callForResult();
+						});
+						// Multicurrency LRR
+						$("#payment_form").find("input.multicurrency_amount").change(function() {
+							callForResult(null, 1);
+						});
+						$("#payment_form").find("input.multicurrency_amount").keyup(function() {
+							callForResult(null, 1);
 						});
 			';
 
@@ -694,6 +710,10 @@ if ($result >= 0) {
 			$totalrecu = 0;
 			$totalrecucreditnote = 0;
 			$totalrecudeposits = 0;
+			$multicurrency_total_ttc = 0;
+			$multicurrency_totalrecu = 0;
+			$multicurrency_totalrecucreditnote = 0;
+			$multicurrency_totalrecudeposits = 0;
 			$sign = 1;
 
 			print '<tbody>';
@@ -930,6 +950,14 @@ if ($result >= 0) {
 				$totalrecu += $paiement;
 				$totalrecucreditnote += $creditnotes;
 				$totalrecudeposits += $deposits;
+
+				if (isModEnabled('multicurrency')) {
+					$multicurrency_total_ttc += $objp->multicurrency_total_ttc;
+					$multicurrency_totalrecu += $multicurrency_payment;
+					$multicurrency_totalrecucreditnote += $multicurrency_creditnotes;
+					$multicurrency_totalrecudeposits += $multicurrency_deposits;
+				}
+				
 				$i++;
 			}
 
@@ -947,9 +975,16 @@ if ($result >= 0) {
 				print '<td colspan="'.$colspan.'" class="left">'.$langs->trans('TotalTTC').'</td>';
 				if (isModEnabled('multicurrency')) {
 					print '<td></td>';
-					print '<td></td>';
-					print '<td></td>';
-					print '<td></td>';
+					print '<td class="right"><b>'.price($sign * $multicurrency_total_ttc).'</b></td>';
+					print '<td class="right"><b>'.price($sign * $multicurrency_totalrecu);
+					if ($multicurrency_totalrecucreditnote) {
+						print '+'.price($multicurrency_totalrecucreditnote);
+					}
+					if ($multicurrency_totalrecudeposits) {
+						print '+'.price($multicurrency_totalrecudeposits);
+					}
+					print '</b></td>';
+					print '<td class="right"><b>'.price($sign * (float) price2num($multicurrency_total_ttc - $multicurrency_totalrecu - $multicurrency_totalrecucreditnote - $multicurrency_totalrecudeposits, 'MT')).'</b></td>';
 					print '<td class="right" id="multicurrency_result" style="font-weight: bold;"></td>';
 				}
 				print '<td class="right"><b>'.price($sign * $total_ttc).'</b></td>';

@@ -554,8 +554,8 @@ if ($id) {
 			// Title of lines
 			print '<tr class="liste_titre">';
 			foreach ($fieldlist as $field => $value) {
-				// Determine le nom du champ par rapport aux noms possibles
-				// dans les dictionnaires de donnees
+				// Determine the field name based on the possible names
+				// in the data dictionaries.
 				$showfield = 1; // By default
 				$align = "left";
 				$sortable = 1;
