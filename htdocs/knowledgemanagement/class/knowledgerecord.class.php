@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2017		Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Anthony Berton				<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1234,25 +1235,25 @@ class KnowledgeRecord extends CommonObject
 }
 
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
+// require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 
-/**
- * Class KnowledgeRecordLine. You can also remove this and generate a CRUD class for lines objects.
- */
-class KnowledgeRecordLine extends CommonObjectLine
-{
-	// To complete with content of an object KnowledgeRecordLine
-	// We should have a field rowid, fk_knowledgerecord and position
+// /**
+//  * Class KnowledgeRecordLine. You can also remove this and generate a CRUD class for lines objects.
+//  */
+// class KnowledgeRecordLine extends CommonObjectLine
+// {
+// 	// To complete with content of an object KnowledgeRecordLine
+// 	// We should have a field rowid, fk_knowledgerecord and position
 
-	/**
-	 * Constructor
-	 *
-	 * @param DoliDB $db Database handler
-	 */
-	public function __construct(DoliDB $db)
-	{
-		$this->db = $db;
+// 	/**
+// 	 * Constructor
+// 	 *
+// 	 * @param DoliDB $db Database handler
+// 	 */
+// 	public function __construct(DoliDB $db)
+// 	{
+// 		$this->db = $db;
 
-		$this->isextrafieldmanaged = 0;
-	}
-}
+// 		$this->isextrafieldmanaged = 0;
+// 	}
+// }
