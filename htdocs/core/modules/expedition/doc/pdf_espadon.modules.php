@@ -737,6 +737,11 @@ class pdf_espadon extends ModelePdfExpedition
 						$nexY = max($pdf->GetY(), $nexY);
 					}
 
+					if ($this->getColumnStatus('totalexcltax') && $object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE) {
+						$this->printStdColumnContent($pdf, $curY, 'totalexcltax', price($object->lines[$i]->total_ht, 0, $outputlangs));
+						$nexY = max($pdf->GetY(), $nexY);
+					}
+
 					// Extrafields
 					if (!empty($object->lines[$i]->array_options) && $object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE) {
 						foreach ($object->lines[$i]->array_options as $extrafieldColKey => $extrafieldValue) {
@@ -951,8 +956,8 @@ class pdf_espadon extends ModelePdfExpedition
 			$this->printStdColumnContent($pdf, $tab2_top, 'qty_shipped', $totalToShip);
 		}
 
-		if ($this->getColumnStatus('subprice')) {
-			$this->printStdColumnContent($pdf, $tab2_top, 'subprice', price($object->total_ht, 0, $outputlangs));
+		if ($this->getColumnStatus('totalexcltax')) {
+			$this->printStdColumnContent($pdf, $tab2_top, 'totalexcltax', price($object->total_ht, 0, $outputlangs));
 		}
 
 		$pdf->SetTextColor(0, 0, 0);
