@@ -197,4 +197,4 @@ FieldsEdit=Fields edit
 FieldsInsert=Fields insert
 FieldsView=Fields view
 AIPromptExtrafield=AI Prompt
-AIPromptExtrafieldDesc=The constants used in this field will be replaced with the corresponding value.
+AIPromptExtrafieldDesc=Enter here a prompt that should return a value and only the value. The substition variables are replaced into the prompt before calling the AI API.
