@@ -45,4 +45,4 @@ define('DOL_VERSION', constant('DOL_MAJOR_VERSION').'.'.constant('DOL_MINOR_VERS
 // Set to 1 if the beta version is the candidate for certification or if the stable version has been certified.
 // Use 2 to force LNE features for debug purposes.
 // Unset for standard version.
-//define('CERTIF_LNE', '2');
+define('CERTIF_LNE', '2');
