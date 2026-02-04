@@ -19,7 +19,8 @@ Module4100Desc = Modul za upravljanje zasebnosti podatkov (skladnost z GDPR)
 datapolicySetup = Nastavitev pravilnika o zasebnosti podatkov modula
 DataDeletion=Izbris podatkov
 DataAnonymization=Anonymization of data
-datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>This module will make an anonymization automatically after a certain duration without events (the duration which you will have indicated below) and if the object has no existing business object children.
+DataAnonymizationOrDeletion=Anonymization or deletion of data
+datapolicySetupPage = Depending on the laws of your country (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>This module will make an anonymization automatically after a certain duration without events (the duration which you will have indicated below) and if the object has no existing business object children.
 NB_MONTHS = %s mesecev
 ONE_YEAR = 1 leto
 NB_YEARS = %s let
@@ -34,7 +35,8 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = Potencialni kupec/kupec
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Niti potencialna stranka/niti stranka
 DATAPOLICY_CONTACT_FOURNISSEUR = Dobavitelj
 DATAPOLICY_ADHERENT = Član
-DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and working correctly.
+DATAPOLICY_RECRUITMENT_CANDIDATURE = Aplikacija
+DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and be working correctly.
 SendAgreementText = E-pošto GDPR lahko pošljete vsem svojim relevantnim kontaktom (ki še niso prejeli e-pošte in za katere niste registrirali ničesar o njihovi pogodbi GDPR). Če želite to narediti, uporabite naslednji gumb.
 SendAgreement = Pošlji e-pošto
 AllAgreementSend = Vsa e-poštna sporočila so bila poslana
@@ -52,3 +54,5 @@ DATAPOLICY_date = Date of agreement/disagreement GDPR
 DATAPOLICY_send = Date agreement email sent
 MailSent = Email je bil poslan
 NUMBER_MONTH_BEFORE_DELETION = Number of months before deletion
+TheFollowingFieldsAreReplaceWith=Some fields will be replaced by a unique value:
+OtherFieldsAreReplaceWithStaticValues=Some other fields are replaced by a static value:

@@ -193,7 +193,8 @@ $help_url = '';
 llxHeader('', $langs->trans($page_name), $help_url, '', 0, 0, '', '', '', 'mod-admin page-multicurrency');
 
 // Subheader
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans($page_name), $linkback);
 
 // Configuration header
@@ -218,7 +219,7 @@ if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE');
 } else {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE", $arrval, $conf->global->MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE);
+	print $form->selectarray("MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE", $arrval, getDolGlobalInt("MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE"));
 }
 print '</td></tr>';
 
@@ -231,7 +232,7 @@ if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('MULTICURRENCY_USE_ORIGIN_TX', array(), null, 0, 0, 0, 2, 0, 1);
 } else {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("MULTICURRENCY_USE_ORIGIN_TX", $arrval, $conf->global->MULTICURRENCY_USE_ORIGIN_TX);
+	print $form->selectarray("MULTICURRENCY_USE_ORIGIN_TX", $arrval, getDolGlobalInt("MULTICURRENCY_USE_ORIGIN_TX"));
 }
 print '</td></tr>';
 
@@ -244,7 +245,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 		print ajax_constantonoff('MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT", $arrval, $conf->global->MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT);
+		print $form->selectarray("MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT", $arrval, getDolGlobalInt("MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT"));
 	}
 	print '</td></tr>';
 }
@@ -288,7 +289,7 @@ print '<table class="noborder centpercent nomarginbottom">';
 
 print '<tr class="liste_titre">';
 print '<td>'.$form->textwithpicto($langs->trans("CurrenciesUsed"), $langs->transnoentitiesnoconv("CurrenciesUsed_help_to_add")).'</td>'."\n";
-print '<td class="right">'.$langs->trans("Rate").' / '.$langs->getCurrencySymbol($conf->currency).'</td>'."\n";
+print '<td class="right">'.$langs->trans("Rate").' / '.$langs->getCurrencySymbol(getDolCurrency()).'</td>'."\n";
 print '</tr>';
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
@@ -307,10 +308,10 @@ print '</form>';
 
 // Main currency
 print '<tr class="oddeven">';
-print '<td>'.$conf->currency;
-print ' ('.$langs->getCurrencySymbol($conf->currency).')';
+print '<td>'.getDolCurrency();
+print ' ('.$langs->getCurrencySymbol(getDolCurrency()).')';
 print $form->textwithpicto(' ', $langs->trans("BaseCurrency"));
-if (!empty($TAvailableCurrency[$conf->currency]) && empty($TAvailableCurrency[$conf->currency]['active'])) {
+if (!empty($TAvailableCurrency[getDolCurrency()]) && empty($TAvailableCurrency[getDolCurrency()]['active'])) {
 	print img_warning('Warning: This code has been disabled into Home - Setup - Dictionaries - Currencies');
 }
 print '</td>';
@@ -318,7 +319,7 @@ print '<td class="right">1</td>';
 print '</tr>';
 
 foreach ($TCurrency as &$currency) {
-	if ($currency->code == $conf->currency) {
+	if ($currency->code == getDolCurrency()) {
 		continue;
 	}
 
@@ -333,8 +334,8 @@ foreach ($TCurrency as &$currency) {
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update_currency">';
 	print '<input type="hidden" name="fk_multicurrency" value="'.$currency->id.'">';
-	print '1 '.$conf->currency.' = ';
-	print '<input type="text" name="rate" class="width75 right" value="'.($currency->rate->rate ? $currency->rate->rate : '').'" size="13">&nbsp;'.$currency->code.'&nbsp;';
+	print '1 '.getDolCurrency().' = ';
+	print '<input type="text" name="rate" class="width125 right" value="'.($currency->rate->rate ? $currency->rate->rate : '').'">&nbsp;'.$currency->code.'&nbsp;';
 	print '<input type="submit" name="updatecurrency" class="button button-edit smallpaddingimp" value="'.$langs->trans("Modify").'">&nbsp;';
 	print '<input type="submit" name="deletecurrency" class="button smallpaddingimp" value="'.$langs->trans("Delete").'">';
 	print '</form>';

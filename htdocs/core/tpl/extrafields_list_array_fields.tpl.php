@@ -48,10 +48,10 @@ if (!empty($extrafieldsobjectkey)) {	// $extrafieldsobject is the $object->table
 				$arrayfields[$extrafieldsobjectprefix.$key] = array(
 					'label'    => $extrafields->attributes[$extrafieldsobjectkey]['label'][$key],
 					'type'     => $extrafields->attributes[$extrafieldsobjectkey]['type'][$key],
-					'checked'  => (((int) dol_eval($extrafields->attributes[$extrafieldsobjectkey]['list'][$key], 1, 1, '1') <= 0) ? '0' : '1'),
+					'checked'  => (((int) dol_eval((string) $extrafields->attributes[$extrafieldsobjectkey]['list'][$key], 1, 1, '1') <= 0) ? '0' : '1'),
 					'position' => $extrafieldspositionoffset + $extrafields->attributes[$extrafieldsobjectkey]['pos'][$key],
-					'perms'    => ((dol_eval($extrafields->attributes[$extrafieldsobjectkey]['perms'][$key], 1, 1, '1') <= 0) ? '0' : '1'),
-					'enabled'  => (string) (int) (abs((int) dol_eval($extrafields->attributes[$extrafieldsobjectkey]['list'][$key], 1)) != 3),
+					'perms'    => ((dol_eval((string) $extrafields->attributes[$extrafieldsobjectkey]['perms'][$key], 1, 1, '1') <= 0) ? '0' : '1'),
+					'enabled'  => (string) (int) (abs((int) dol_eval((string) $extrafields->attributes[$extrafieldsobjectkey]['list'][$key], 1)) != 3),
 					'langfile' => $extrafields->attributes[$extrafieldsobjectkey]['langfile'][$key],
 					'help'     => $extrafields->attributes[$extrafieldsobjectkey]['help'][$key],
 				);

@@ -35,6 +35,9 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 	public $name = 'Madonna';
 	public $version = 'dolibarr';
 
+	public $position = 10;
+
+
 	// variables not inherited
 
 	/**

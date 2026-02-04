@@ -68,7 +68,7 @@ function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesu
 
 	// Add main fields of object
 	foreach ($object->fields as $key => $val) {
-		if (!empty($val['isameasure']) && (!isset($val['enabled']) || (int) dol_eval($val['enabled'], 1, 1, '1'))) {
+		if (!empty($val['isameasure']) && (!isset($val['enabled']) || (int) dol_eval((string) $val['enabled'], 1, 1, '1'))) {
 			$position = (empty($val['position']) ? 0 : intval($val['position']));
 			$arrayofmesures[$tablealias.'.'.$key.'-sum'] = array(
 				'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$langs->trans("Sum").')</span>',
@@ -227,10 +227,10 @@ function fillArrayOfXAxis($object, $tablealias, $labelofobject, &$arrayofxaxis, 
 				'parent', 'photo', 'socialnetworks', 'webservices_url', 'webservices_key'))) {
 				continue;
 			}
-			if (isset($val['enabled']) && ! (int) dol_eval($val['enabled'], 1, 1, '1')) {
+			if (isset($val['enabled']) && ! (int) dol_eval((string) $val['enabled'], 1, 1, '1')) {
 				continue;
 			}
-			if (isset($val['visible']) && ! (int) dol_eval($val['visible'], 1, 1, '1')) {
+			if (isset($val['visible']) && ! (int) dol_eval((string) $val['visible'], 1, 1, '1')) {
 				continue;
 			}
 			if (preg_match('/^fk_/', $key) && !preg_match('/^fk_statu/', $key)) {
@@ -392,10 +392,10 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
 				'parent', 'photo', 'socialnetworks', 'webservices_url', 'webservices_key'))) {
 				continue;
 			}
-			if (isset($val['enabled']) && ! (int) dol_eval($val['enabled'], 1, 1, '1')) {
+			if (isset($val['enabled']) && ! (int) dol_eval((string) $val['enabled'], 1, 1, '1')) {
 				continue;
 			}
-			if (isset($val['visible']) && ! (int) dol_eval($val['visible'], 1, 1, '1')) {
+			if (isset($val['visible']) && ! (int) dol_eval((string) $val['visible'], 1, 1, '1')) {
 				continue;
 			}
 			if (preg_match('/^fk_/', $key) && !preg_match('/^fk_statu/', $key)) {
@@ -553,10 +553,10 @@ function fillArrayOfFilterFields($object, $tablealias, $labelofobject, &$arrayof
 				'parent', 'pass', 'pass_crypted', 'pass_temp', 'photo', 'socialnetworks', 'webservices_url', 'webservices_key'))) {
 				continue;
 			}
-			if (isset($val['enabled']) && ! (int) dol_eval($val['enabled'], 1, 1, '1')) {
+			if (isset($val['enabled']) && ! (int) dol_eval((string) $val['enabled'], 1, 1, '1')) {
 				continue;
 			}
-			if (isset($val['visible']) && ! (int) dol_eval($val['visible'], 1, 1, '1')) {
+			if (isset($val['visible']) && ! (int) dol_eval((string) $val['visible'], 1, 1, '1')) {
 				continue;
 			}
 			if (preg_match('/^fk_/', $key) && !preg_match('/^fk_statu/', $key)) {

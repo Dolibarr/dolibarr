@@ -32,6 +32,13 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
@@ -41,31 +48,18 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
-
 $MAXAGENDA = getDolGlobalString('AGENDA_EXT_NB', 5);
 $DELAYFORCACHE = 300;	// 300 seconds
 
 $disabledefaultvalues = GETPOSTINT('disabledefaultvalues');
 
+$action = GETPOST('action', 'aZ09');
+
 $check_holiday = GETPOSTINT('check_holiday');
 $filter = GETPOST("search_filter", 'alpha', 3) ? GETPOST("search_filter", 'alpha', 3) : GETPOST("filter", 'alpha', 3);
-$filtert = GETPOSTINT("search_filtert", 3) ? GETPOSTINT("search_filtert", 3) : GETPOSTINT("filtert", 3);
+$filtert = GETPOST("search_filtert", "intcomma", 3) ? GETPOST("search_filtert", "intcomma", 3) : GETPOST("filtert", "intcomma", 3);
 $usergroup = GETPOSTINT("search_usergroup", 3) ? GETPOSTINT("search_usergroup", 3) : GETPOSTINT("usergroup", 3);
-//if (! ($usergroup > 0) && ! ($filtert > 0)) $filtert = $user->id;
-//$showbirthday = empty($conf->use_javascript_ajax)?GETPOST("showbirthday","int"):1;
 $showbirthday = getDolGlobalInt('AGENDA_ENABLE_SHOW_BIRTHDAY_PER_USER'); // disabled by default
-
-// If no choice done on calendar owner (like on left menu link "Agenda"), we filter on current user by default.
-/*if (empty($filtert) && !getDolGlobalString('AGENDA_ALL_CALENDARS')) {
-	$filtert = (string) $user->id;
-}*/
 
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
@@ -91,7 +85,7 @@ if ($socid < 0) {
 	$socid = '';
 }
 
-$canedit = 1;
+$canedit = 1;	// can read events of others
 if (!$user->hasRight('agenda', 'myactions', 'read')) {
 	accessforbidden();
 }
@@ -101,8 +95,6 @@ if (!$user->hasRight('agenda', 'allactions', 'read')) {
 if (!$user->hasRight('agenda', 'allactions', 'read') || $filter == 'mine') {  // If no permission to see all, we show only affected to me
 	$filtert = (string) $user->id;
 }
-
-$action = GETPOST('action', 'aZ09');
 
 $mode = 'show_peruser';
 $resourceid = GETPOSTINT("search_resourceid") ? GETPOSTINT("search_resourceid") : GETPOSTINT("resourceid");
@@ -133,6 +125,7 @@ if ($dateselect > 0) {
 	$year = GETPOSTINT('dateselectyear');
 }
 
+// working hours
 $tmp = getDolGlobalString('MAIN_DEFAULT_WORKING_HOURS', '9-18');
 $tmp = str_replace(' ', '', $tmp); // FIX 7533
 $tmparray = explode('-', $tmp);
@@ -148,6 +141,7 @@ if ($end_h <= $begin_h) {
 	$end_h = $begin_h + 1;
 }
 
+// working days
 $tmp = getDolGlobalString('MAIN_DEFAULT_WORKING_DAYS', '1-5');
 $tmp = str_replace(' ', '', $tmp); // FIX 7533
 $tmparray = explode('-', $tmp);
@@ -171,19 +165,22 @@ if (empty($mode) && !GETPOSTISSET('mode')) {
 	$mode = getDolGlobalString('AGENDA_DEFAULT_VIEW', 'show_peruser');
 }
 
+// View by month
 if (GETPOST('viewcal', 'alpha') && $mode != 'show_day' && $mode != 'show_week' && $mode != 'show_peruser') {
 	$mode = 'show_month';
 	$day = '';
-} // View by month
+}
+// View by week
 if (GETPOST('viewweek', 'alpha') || $mode == 'show_week') {
 	$mode = 'show_week';
 	$week = ($week ? $week : date("W"));
 	$day = ($day ? $day : date("d"));
-} // View by week
+}
+// View by day
 if (GETPOST('viewday', 'alpha') || $mode == 'show_day') {
 	$mode = 'show_day';
 	$day = ($day ? $day : date("d"));
-} // View by day
+}
 
 $object = new ActionComm($db);
 
@@ -335,10 +332,12 @@ if ($status == 'todo') {
 }
 
 $param = '';
-if ($actioncode || GETPOSTISSET('search_actioncode')) {
+if (($actioncode && $actioncode !== '-1') || GETPOSTISSET('search_actioncode')) {
 	if (is_array($actioncode)) {
 		foreach ($actioncode as $str_action) {
-			$param .= "&search_actioncode[]=".urlencode($str_action);
+			if ($str_action != '-1') {
+				$param .= "&search_actioncode[]=".urlencode($str_action);
+			}
 		}
 	} else {
 		$param .= "&search_actioncode=".urlencode($actioncode);
@@ -363,7 +362,7 @@ if ($usergroup > 0) {
 if ($socid > 0) {
 	$param .= "&search_socid=".urlencode((string) ($socid));
 }
-if ($showbirthday) {  // Always false @phpstan-suppress-current-line
+if ($showbirthday) {  // Always false @phpstan-ignore-line
 	$param .= "&search_showbirthday=1";
 }
 if ($pid) {
@@ -429,7 +428,7 @@ $picto = 'calendarweek';
 // Show navigation bar
 $nav = '<div class="navselectiondate inline-block nowraponall">';
 $nav .= "<a href=\"?year=".$prev_year."&amp;month=".$prev_month."&amp;day=".$prev_day.$param."\"><i class=\"fa fa-chevron-left\" title=\"".dol_escape_htmltag($langs->trans("Previous"))."\"></i></a> &nbsp; \n";
-$nav .= " <span id=\"month_name\">".dol_print_date(dol_mktime(0, 0, 0, $first_month, $first_day, $first_year), "%Y").", ".$langs->trans("Week")." ".$week;
+$nav .= " <span id=\"month_name\">".dol_print_date(dol_mktime(0, 0, 0, $first_month, $first_day, $first_year), "%Y").", ".$langs->trans("WeekShort")." ".$week;
 $nav .= " </span>\n";
 $nav .= " &nbsp; <a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;day=".$next_day.$param."\"><i class=\"fa fa-chevron-right\" title=\"".dol_escape_htmltag($langs->trans("Next"))."\"></i></a>\n";
 if (empty($conf->dol_optimize_smallscreen)) {
@@ -531,16 +530,16 @@ if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda'
 
 	$urltocreateaction = DOL_URL_ROOT.'/comm/action/card.php?action=create';
 	$urltocreateaction .= '&apyear='.$tmpforcreatebutton['year'].'&apmonth='.$tmpforcreatebutton['mon'].'&apday='.$tmpforcreatebutton['mday'].'&aphour='.$tmpforcreatebutton['hours'].'&apmin='.$tmpforcreatebutton['minutes'];
-	$urltocreateaction .= '&backtopage='.urlencode($_SERVER["PHP_SELF"] . $newparam);
+	$urltocreateaction .= '&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$newparam);
 
 	$newcardbutton .= dolGetButtonTitle($langs->trans("AddAction"), '', 'fa fa-plus-circle', $urltocreateaction);
 }
 
 
-// Define the legend/list of calendard to show
-$s = '';
 $link = '';
 
+// Define the legend/list of calendard to show
+$s = '';
 
 $showextcals = $listofextcals;
 $bookcalcalendars = array();
@@ -554,7 +553,7 @@ if (isModEnabled("bookcal")) {
 	$sql .= " WHERE bc.status = 1";
 	$sql .= " AND ba.status = 1";
 	$sql .= " AND bc.entity IN (".getEntity('agenda').")";	// bookcal is a "virtual view" of agenda
-	if (!empty($filtert) && $filtert != '-1') {
+	if (!empty($filtert) && $filtert != '-1' && $filtert != '-2') {
 		$sql .= " AND bc.visibility IN (".$db->sanitize($filtert, 0, 0, 0, 0).")";
 	}
 	$resql = $db->query($sql);
@@ -589,12 +588,12 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 	$s .= '</script>'."\n";
 
 	// Local calendar
-	$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_mytasks" name="check_mytasks" value="1" checked disabled><label class="labelcalendar"><span class="check_holiday_text"> '.$langs->trans("LocalAgenda").' &nbsp; </span></label></div>';
+	$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_mytasks" name="check_mytasks" value="1" class="check_mytasks" checked disabled><label class="labelcalendar"><span class="check_holiday_text"> '.$langs->trans("LocalAgenda").' &nbsp; </span></label></div>';
 
 	// Holiday calendar
 	if ($user->hasRight("holiday", "read")) {
 		$s .= '
-            <div class="nowrap inline-block minheight30"><input type="checkbox" id="check_holiday" name="check_holiday" value="1" class="check_holiday"' . ($check_holiday ? ' checked' : '') . '>
+            <div class="nowrap inline-block minheight30"><input type="checkbox" id="check_holiday" name="check_holiday" value="1" class="marginleftonly check_holiday"' . ($check_holiday ? ' checked' : '') . '>
                 <label for="check_holiday" class="labelcalendar">
                     <span class="check_holiday_text">' . $langs->trans("Holidays") . '</span>
                 </label> &nbsp;
@@ -677,7 +676,7 @@ $sql .= " a.id, a.label,";
 $sql .= " a.datep,";
 $sql .= " a.datep2,";
 $sql .= " a.percent,";
-$sql .= " a.fk_user_author,a.fk_user_action,";
+$sql .= " a.fk_user_author, a.fk_user_action,";
 $sql .= " a.transparency, a.priority, a.fulldayevent, a.location,";
 $sql .= " a.fk_soc, a.fk_contact, a.fk_project, a.fk_bookcal_calendar,";
 $sql .= " a.fk_element, a.elementtype,";
@@ -692,12 +691,16 @@ $sql .= " FROM ".MAIN_DB_PREFIX."c_actioncomm as ca, ".MAIN_DB_PREFIX."actioncom
 if ($resourceid > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."element_resources as r";
 }
+
 // We must filter on assignment table
-if ($filtert > 0 || $usergroup > 0) {
+if (($filtert != '-1' && $filtert != '-2') || $usergroup > 0) {
+	// TODO Replace with a AND EXISTS
 	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm_resources as ar";
-	$sql .= " ON ar.fk_actioncomm = a.id AND ar.element_type='user'";
-	if ($filtert > 0) {
-		$sql .= " AND ar.fk_element = ".((int) $filtert);
+	$sql .= " ON ar.fk_actioncomm = a.id AND ar.element_type = 'user'";
+	if ($filtert != '' && $filtert != '-1' && $filtert != '-2'  && $filtert != '-3') {
+		$sql .= " AND ar.fk_element IN (".$db->sanitize($filtert).")";
+	} elseif ($filtert == '-3') {
+		$sql .= " AND ar.fk_element IN (".$db->sanitize(implode(',', $user->getAllChildIds(1))).")";
 	}
 	if ($usergroup > 0) {
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_user = ar.fk_element AND ugu.fk_usergroup = ".((int) $usergroup);
@@ -706,29 +709,37 @@ if ($filtert > 0 || $usergroup > 0) {
 
 $sql .= " WHERE a.fk_action = ca.id";
 $sql .= " AND a.entity IN (".getEntity('agenda').")";	// bookcal is a "virtual view" of agenda
+
 // Condition on actioncode
 if (!empty($actioncode)) {
 	if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
-		if ($actioncode == 'AC_NON_AUTO') {
+		if ((is_array($actioncode) && in_array('AC_NON_AUTO', $actioncode)) || $actioncode == 'AC_NON_AUTO') {
 			$sql .= " AND ca.type != 'systemauto'";
-		} elseif ($actioncode == 'AC_ALL_AUTO') {
+		} elseif ((is_array($actioncode) && in_array('AC_ALL_AUTO', $actioncode))	|| $actioncode == 'AC_ALL_AUTO') {
 			$sql .= " AND ca.type = 'systemauto'";
 		} else {
-			if ($actioncode == 'AC_OTH') {
+			if ((is_array($actioncode) && in_array('AC_OTH', $actioncode)) || $actioncode == 'AC_OTH') {
 				$sql .= " AND ca.type != 'systemauto'";
 			}
-			if ($actioncode == 'AC_OTH_AUTO') {
+			if ((is_array($actioncode) && in_array('AC_OTH_AUTO', $actioncode)) || $actioncode == 'AC_OTH_AUTO') {
 				$sql .= " AND ca.type = 'systemauto'";
 			}
 		}
 	} else {
-		if ($actioncode == 'AC_NON_AUTO') {
+		if ((is_array($actioncode) && in_array('AC_NON_AUTO', $actioncode)) || $actioncode === 'AC_NON_AUTO') {
 			$sql .= " AND ca.type != 'systemauto'";
-		} elseif ($actioncode == 'AC_ALL_AUTO') {
+		} elseif ((is_array($actioncode) && in_array('AC_ALL_AUTO', $actioncode))	|| $actioncode === 'AC_ALL_AUTO') {
 			$sql .= " AND ca.type = 'systemauto'";
-		} elseif (/* !empty($actioncode) && */ $actioncode !== '-1') {
+		} elseif ((is_array($actioncode) && !in_array('-1', $actioncode) && !in_array('-3', $actioncode)) || ($actioncode !== '-1' && $actioncode !== '-3')) {
 			if (is_array($actioncode)) {
-				$sql .= " AND ca.code IN (".$db->sanitize("'".implode("','", $actioncode)."'", 1).")";
+				foreach ($actioncode as $key => $val) {
+					if ($val == '-1' || $val == '-2') {
+						unset($actioncode[$key]);
+					}
+				}
+				if (!empty($actioncode)) {
+					$sql .= " AND ca.code IN (".$db->sanitize("'".implode("','", $actioncode)."'", 1).")";
+				}
 			} else {
 				$sql .= " AND ca.code IN (".$db->sanitize("'".implode("','", explode(',', $actioncode))."'", 1).")";
 			}
@@ -805,10 +816,13 @@ if ($status == 'todo') {
 	$sql .= " AND (a.percent >= 0 AND a.percent < 100)";
 }
 // We must filter on assignment table
-if ($filtert > 0 || $usergroup > 0) {
+if (($filtert > 0 || $filtert == -3) || $usergroup > 0) {
+	// TODO Replace with a AND EXISTS
 	$sql .= " AND (";
 	if ($filtert > 0) {
 		$sql .= "ar.fk_element = ".((int) $filtert);
+	} elseif ($filtert == -3) {
+		$sql .= "ar.fk_element IN (".$db->sanitize(implode(',', $user->getAllChildIds(1))).")";
 	}
 	if ($usergroup > 0) {
 		$sql .= ($filtert > 0 ? " OR " : "")." ugu.fk_usergroup = ".((int) $usergroup);
@@ -1056,8 +1070,8 @@ if ($showbirthday) {  // always false @phpstan-ignore-line
 	}
 }
 
+// LEAVE-HOLIDAY CALENDAR
 if ($user->hasRight("holiday", "read")) {
-	// LEAVE-HOLIDAY CALENDAR
 	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.statut, x.rowid, x.date_debut as date_start, x.date_fin as date_end, x.halfday, x.statut as status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."holiday as x, ".MAIN_DB_PREFIX."user as u";
 	$sql .= " WHERE u.rowid = x.fk_user";
@@ -1478,14 +1492,28 @@ $maxnbofchar = 18;
 $cachethirdparties = array();
 $cachecontacts = array();
 $cacheusers = array();
-
+// default values
+$theme_datacolor = array(
+	array(137, 86, 161),
+	array(60, 147, 183),
+	array(250, 190, 80),
+	array(80, 166, 90),
+	array(190, 190, 100),
+	array(91, 115, 247),
+	array(140, 140, 220),
+	array(190, 120, 120),
+	array(115, 125, 150),
+	array(100, 170, 20),
+	array(150, 135, 125),
+	array(85, 135, 150),
+	array(150, 135, 80),
+	array(150, 80, 150)
+);
 // Define theme_datacolor array
 $color_file = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/theme_vars.inc.php";
 if (is_readable($color_file)) {
 	include $color_file;
-}
-if (!is_array($theme_datacolor)) {
-	$theme_datacolor = array(array(137, 86, 161), array(60, 147, 183), array(250, 190, 80), array(80, 166, 90), array(190, 190, 100), array(91, 115, 247), array(140, 140, 220), array(190, 120, 120), array(115, 125, 150), array(100, 170, 20), array(150, 135, 125), array(85, 135, 150), array(150, 135, 80), array(150, 80, 150));
+	global $theme_datacolor;
 }
 
 $massactionbutton = '';
@@ -1499,6 +1527,7 @@ $link = '';
 // Show div with list of calendars
 print $s;
 
+// Top filters
 print '<div class="liste_titre liste_titre_bydiv centpercent">';
 print_actions_filter($form, $canedit, $search_status, $year, $month, $day, $showbirthday, '', (string) $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid, $search_categ_cus);
 print '</div>';
@@ -1543,13 +1572,13 @@ while ($currentdaytoshow < $lastdaytoshow) {
 		print $langs->trans("DaysOfWeek").'</span>';
 		print "\n";
 		print '<div class="ui-grid-a  inline-block"><div class="ui-block-a nowraponall">';
-		print '<input type="number" class="short" name="begin_d" value="'.$begin_d.'" min="1" max="7">';
+		print '<input type="number" class="shortbis" name="begin_d" value="'.$begin_d.'" min="1" max="7">';
 		if (empty($conf->dol_use_jmobile)) {
 			print ' - ';
 		} else {
 			print '</div><div class="ui-block-b">';
 		}
-		print '<input type="number" class="short" name="end_d" value="'.$end_d.'" min="1" max="7">';
+		print '<input type="number" class="shortbis" name="end_d" value="'.$end_d.'" min="1" max="7">';
 		print '</div></div>';
 	}
 
@@ -1561,12 +1590,19 @@ while ($currentdaytoshow < $lastdaytoshow) {
 			continue;
 		}
 		echo '<td align="center" colspan="'.($end_h - $begin_h).'">';
-		echo '<span class="bold spandayofweek">'.$langs->trans("Day".(($i + (isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1)) % 7)).'</span>';
+		echo '<span class="bold spandayofweek">'.$langs->trans("Day".(($i + getDolGlobalInt('MAIN_START_WEEK', 1)) % 7)).'</span>';
 		print "<br>";
 		if ($i) {
-			print dol_print_date(dol_time_plus_duree($currentdaytoshow, $i, 'd'), 'day', 'tzuserrel');
+			$valtoshow = dol_time_plus_duree($currentdaytoshow, $i, 'd');
 		} else {
-			print dol_print_date($currentdaytoshow, 'day', 'tzuserrel');
+			$valtoshow = $currentdaytoshow;
+		}
+		if (dol_print_date($valtoshow, '%Y%m%d') == dol_print_date(dol_now(), '%Y%m%d')) {
+			echo '<span class="badgeneutral">';
+		}
+		print dol_print_date($valtoshow, 'dayreduceformat', 'tzuserrel');
+		if (dol_print_date($valtoshow, '%Y%m%d') == dol_print_date(dol_now(), '%Y%m%d')) {
+			echo '</span>';
 		}
 		echo "</td>\n";
 		$i++;
@@ -1582,13 +1618,13 @@ while ($currentdaytoshow < $lastdaytoshow) {
 	print $langs->trans("Hours").'</span>';
 	print "\n";
 	print '<div class="ui-grid-a inline-block"><div class="ui-block-a nowraponall">';
-	print '<input type="number" class="short" name="begin_h" value="'.$begin_h.'" min="0" max="23">';
+	print '<input type="number" class="shortbis" name="begin_h" value="'.$begin_h.'" min="0" max="23">';
 	if (empty($conf->dol_use_jmobile)) {
 		print ' - ';
 	} else {
 		print '</div><div class="ui-block-b">';
 	}
-	print '<input type="number" class="short" name="end_h" value="'.$end_h.'" min="1" max="24">';
+	print '<input type="number" class="shortbis" name="end_h" value="'.$end_h.'" min="1" max="24">';
 	if (empty($conf->dol_use_jmobile)) {
 		print ' '.$langs->trans("HourShort");
 	}
@@ -1630,7 +1666,7 @@ while ($currentdaytoshow < $lastdaytoshow) {
 			}
 		}
 	} else {
-		/* Use this list to have lines for all users */
+		/* Use this list to have lines of all users to show */
 		$sql = "SELECT u.rowid, u.lastname as lastname, u.firstname, u.statut, u.login, u.admin, u.entity";
 		$sql .= " FROM ".$db->prefix()."user as u";
 		if (isModEnabled('multicompany') && getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE')) {
@@ -1660,6 +1696,13 @@ while ($currentdaytoshow < $lastdaytoshow) {
 		if ($user->socid > 0) {
 			// External users should see only contacts of their company
 			$sql .= " AND u.fk_soc = ".((int) $user->socid);
+		}
+		// Filter on users in hierarchy
+		if (!$canedit || $filtert == '-3') {	// If we can't read event of others
+			if (!$user->hasRight('user', 'user', 'lire') || $filtert == '-3') {
+				$usersInHierarchy = $user->getAllChildIds(1);
+				$sql .= " AND u.rowid IN (".$db->sanitize(implode(',', $usersInHierarchy)).")";
+			}
 		}
 
 		//print $sql;
@@ -1705,7 +1748,7 @@ while ($currentdaytoshow < $lastdaytoshow) {
 		$var = !$var;
 
 		echo "<tr>";
-		echo '<td class="tdoverflowmax100 cal_current_month cal_peruserviewname'.($var ? ' cal_impair' : '').'">';
+		echo '<td class="tdoverflowmax100 cal_current_month cal_peruserviewname'.($var ? ' cal_impair' : '').' nopaddingtopimp nopaddingbottomimp noheightimp">';
 		print '<span class="paddingrightimp">';
 		print $username->getNomUrl(-1, '', 0, 0, 20, 1, '', 'paddingleft');
 		print '</span>';
@@ -1863,6 +1906,19 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 	$cases2 = array(); // Color second half hour
 	$cases3 = array(); // Color third half hour
 	$cases4 = array(); // Color 4th half hour
+
+	/**
+	 * @var array<int,array<int,array<string,string|int|bool>>> $cases1
+	 * @var array<int,array<int,array<string,string|int|bool>>> $cases2
+	 * @var array<int,array<int,array<string,string|int|bool>>> $cases3
+	 * @var array<int,array<int,array<string,string|int|bool>>> $cases4
+	 */
+	'
+   @phan-var-force array<int,array<int,array<string,string|int|bool>>> $cases1
+   @phan-var-force array<int,array<int,array<string,string|int|bool>>> $cases2
+   @phan-var-force array<int,array<int,array<string,string|int|bool>>> $cases3
+   @phan-var-force array<int,array<int,array<string,string|int|bool>>> $cases4
+   ';
 
 	$i = 0;
 	$numother = 0;
@@ -2259,7 +2315,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		$title2 = '';
 		$title3 = '';
 		$title4 = '';
-		if (isset($cases1[$h]) && $cases1[$h] != '') {
+		if (isset($cases1[$h])) {
 			//$title1.=count($cases1[$h]).' '.(count($cases1[$h])==1?$langs->trans("Event"):$langs->trans("Events"));
 			if (count($cases1[$h]) > 1) {
 				$title1 .= count($cases1[$h]).' '.(count($cases1[$h]) == 1 ? $langs->trans("Event") : $langs->trans("Events"));
@@ -2271,15 +2327,15 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				$style1 .= 'peruser_busy ';
 			}
 			foreach ($cases1[$h] as $id => $ev) {
-				if ($ev['busy']) {
-					$style1 = 'onclickopenref peruser_busy';
+				if (!empty($ev['busy'])) {
+					$style1 .= ' peruser_busy';
 				}
-				if ($ev['css']) {
-					$style1 .= ' '.$ev['css'];
+				if (!empty($ev['css'])) {
+					$style1 .= $ev['css'].' ';
 				}
 			}
 		}
-		if (isset($cases2[$h]) && $cases2[$h] != '') {
+		if (isset($cases2[$h])) {
 			//$title2.=count($cases2[$h]).' '.(count($cases2[$h])==1?$langs->trans("Event"):$langs->trans("Events"));
 			if (count($cases2[$h]) > 1) {
 				$title2 .= count($cases2[$h]).' '.(count($cases2[$h]) == 1 ? $langs->trans("Event") : $langs->trans("Events"));
@@ -2291,15 +2347,15 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				$style2 .= 'peruser_busy ';
 			}
 			foreach ($cases2[$h] as $id => $ev) {
-				if ($ev['busy']) {
-					$style2 = 'onclickopenref peruser_busy';
+				if (!empty($ev['busy'])) {
+					$style2 .= ' peruser_busy';
 				}
-				if ($ev['css']) {
-					$style2 .= ' '.$ev['css'];
+				if (!empty($ev['css'])) {
+					$style2 .= $ev['css'].' ';
 				}
 			}
 		}
-		if (isset($cases3[$h]) && $cases3[$h] != '') {
+		if (isset($cases3[$h])) {
 			//$title3.=count($cases3[$h]).' '.(count($cases3[$h])==1?$langs->trans("Event"):$langs->trans("Events"));
 			if (count($cases3[$h]) > 1) {
 				$title3 .= count($cases3[$h]).' '.(count($cases3[$h]) == 1 ? $langs->trans("Event") : $langs->trans("Events"));
@@ -2311,15 +2367,15 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				$style3 .= 'peruser_busy ';
 			}
 			foreach ($cases3[$h] as $id => $ev) {
-				if ($ev['busy']) {
-					$style3 = 'onclickopenref peruser_busy';
+				if (!empty($ev['busy'])) {
+					$style3 .= ' peruser_busy';
 				}
-				if ($ev['css']) {
-					$style3 .= ' '.$ev['css'];
+				if (!empty($ev['css'])) {
+					$style3 .= $ev['css'].' ';
 				}
 			}
 		}
-		if (isset($cases4[$h]) && $cases4[$h] != '') {
+		if (isset($cases4[$h])) {
 			//$title4.=count($cases3[$h]).' '.(count($cases3[$h])==1?$langs->trans("Event"):$langs->trans("Events"));
 			if (count($cases4[$h]) > 1) {
 				$title4 .= count($cases4[$h]).' '.(count($cases4[$h]) == 1 ? $langs->trans("Event") : $langs->trans("Events"));
@@ -2331,11 +2387,11 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				$style4 .= 'peruser_busy ';
 			}
 			foreach ($cases4[$h] as $id => $ev) {
-				if ($ev['busy']) {
-					$style4 = 'onclickopenref peruser_busy';
+				if (!empty($ev['busy'])) {
+					$style4 .= ' peruser_busy';
 				}
-				if ($ev['css']) {
-					$style4 .= ' '.$ev['css'];
+				if (!empty($ev['css'])) {
+					$style4 .= $ev['css'].' ';
 				}
 			}
 		}
@@ -2450,13 +2506,13 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		print '<table class="nobordernopadding case centpercent">';
 		print '<tr>';
 		print '<td ';
-		if ($style1 == 'peruser_notbusy') {
+		if (preg_match('/peruser_notbusy/', $style1)) {
 			print 'style="border: 1px solid #'.($color1 ? $color1 : "888").' !important" ';
 		} elseif ($color1) {
 			print 'style="background: #'.$color1.'; "';
 		}
 		print 'class="';
-		print ($style1 ? $style1.' ' : '');
+		print $style1;
 		print 'center'.($title1 ? ' classfortooltip' : '').($title1 ? ' cursorpointer' : '').'"';
 		print 'ref="'.$ref1.'_'.$username->id.'_'.sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day).'_'.sprintf("%02d", $h).'_00_'.($ids1 ? $ids1 : 'none').'"';
 		print ($title1 ? ' title="'.$title1.'"' : '').'>';
@@ -2464,13 +2520,13 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		print '</td>';
 
 		print '<td ';
-		if ($style2 == 'peruser_notbusy') {
+		if (preg_match('/peruser_notbusy/', $style2)) {
 			print 'style="border: 1px solid #'.($color2 ? $color2 : "888").' !important" ';
 		} elseif ($color2) {
 			print 'style="background: #'.$color2.'; "';
 		}
 		print 'class="';
-		print ($style2 ? $style2.' ' : '');
+		print $style2;
 		print 'center'.($title2 ? ' classfortooltip' : '').($title2 ? ' cursorpointer' : '').'"';
 		print ' ref="'.$ref2.'_'.$username->id.'_'.sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day).'_'.sprintf("%02d", $h).'_15_'.($ids2 ? $ids2 : 'none').'"';
 		print ($title2 ? ' title="'.$title2.'"' : '').'>';
@@ -2478,13 +2534,13 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		print '</td>';
 
 		print '<td ';
-		if ($style3 == 'peruser_notbusy') {
+		if (preg_match('/peruser_notbusy/', $style3)) {
 			print 'style="border: 1px solid #'.($color3 ? $color3 : "888").' !important" ';
 		} elseif ($color3) {
 			print 'style="background: #'.$color3.'; "';
 		}
 		print 'class="';
-		print ($style3 ? $style3.' ' : '');
+		print $style3;
 		print 'center'.($title3 ? ' classfortooltip' : '').($title3 ? ' cursorpointer' : '').'"';
 		print ' ref="'.$ref3.'_'.$username->id.'_'.sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day).'_'.sprintf("%02d", $h).'_30_'.($ids3 ? $ids3 : 'none').'"';
 		print ($title3 ? ' title="'.$title3.'"' : '').'>';
@@ -2492,13 +2548,13 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		print '</td>';
 
 		print '<td ';
-		if ($style4 == 'peruser_notbusy') {
+		if (preg_match('/peruser_notbusy/', $style4)) {
 			print 'style="border: 1px solid #'.($color4 ? $color4 : "888").' !important" ';
 		} elseif ($color4) {
 			print 'style="background: #'.$color4.'; "';
 		}
 		print 'class="';
-		print ($style4 ? $style4.' ' : '');
+		print $style4;
 		print 'center'.($title4 ? ' classfortooltip' : '').($title4 ? ' cursorpointer' : '').'"';
 		print ' ref="'.$ref4.'_'.$username->id.'_'.sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day).'_'.sprintf("%02d", $h).'_45_'.($ids4 ? $ids4 : 'none').'"';
 		print ($title4 ? ' title="'.$title4.'"' : '').'>';

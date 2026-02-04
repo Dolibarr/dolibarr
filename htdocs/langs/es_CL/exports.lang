@@ -24,7 +24,6 @@ FormatedImportDesc2=El primer paso es elegir el tipo de datos que desea importar
 FormatedExportDesc2=El primer paso es elegir un conjunto de datos predefinido, luego los campos que desea exportar y en qué orden.
 FormatedExportDesc3=Cuando se seleccionan los datos para exportar, puede elegir el formato del archivo de salida.
 NoImportableData=No hay datos importables (no hay un módulo con definiciones para permitir la importación de datos)
-LineId=Id de línea
 LineDescription=Descripción de la línea
 LineUnitPrice=Precio unitario de línea
 LineVATRate=Tasa de IVA

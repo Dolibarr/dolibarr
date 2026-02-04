@@ -24,6 +24,7 @@
  * @var User $user
  *
  * @var string $canvas
+ * @var int $socid
  */
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
@@ -58,13 +59,6 @@ if ($this->control->tpl['js_checkVatPopup']) {
 	<td width="20%"><?php echo $langs->trans('ThirdPartyName'); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['showrefnav']; ?></td>
 </tr>
-
-<?php if (getDolGlobalString('SOCIETE_USEPREFIX')) { ?>
-<tr>
-	<td><?php echo $langs->trans('Prefix'); ?></td>
-	<td colspan="3"><?php echo $this->control->tpl['prefix_comm']; ?></td>
-</tr>
-<?php } ?>
 
 <?php if ($this->control->tpl['client']) { ?>
 <tr>
@@ -315,7 +309,7 @@ $result = show_subsidiaries($conf, $langs, $db, $soc);
 $result = show_contacts($conf, $langs, $db, $soc);
 
 // Projects list
-$result = show_projects($conf, $langs, $db, $soc);
+$result = show_projects($conf, $langs, $db, $soc, $_SERVER["PHP_SELF"].'?socid='.$socid, 1, '', '');
 ?>
 
 <!-- END PHP TEMPLATE -->

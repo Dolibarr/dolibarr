@@ -81,11 +81,13 @@ class FactureFournisseurLigneRec extends CommonInvoiceLine
 
 	/**
 	 * @var float
+	 * @deprecated Use $subprice
 	 */
 	public $pu_ht;
 
 	/**
 	 * @var float
+	 * @deprecated Use $subprice_ttc
 	 */
 	public $pu_ttc;
 

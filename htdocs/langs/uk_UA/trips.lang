@@ -121,7 +121,6 @@ ValideTrip=Затвердити звіт про витрати
 ExpenseReportPayments=Платежі за звітом про витрати
 TaxUndefinedForThisCategory = Податок для цієї категорії не визначено
 errorComputeTtcOnMileageExpense=Помилка під час обчислення вартості пробігу
-ErrorOnlyDraftStatusCanBeDeletedInMassAction=У масовій дії можна видалити лише елементи, що мають статус чернетки
 
 ## Dictionary
 EX_BRE=Сніданок
@@ -159,3 +158,4 @@ TF_TRAIN=Потяг
 TF_TRIP=Перевезення
 FailedToSetPaid=Не вдалося встановити як платне
 FailedToSetToCancel=Не вдалося скасувати
+NobodyHasPermissionToValidateExpenseReport=Nobody has permission to validate expensereport

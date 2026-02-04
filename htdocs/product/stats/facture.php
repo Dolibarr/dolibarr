@@ -263,7 +263,11 @@ if ($id > 0 || !empty($ref)) {
 			// Add HAVING from hooks
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-			$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
+			if (empty($reshook)) {
+				$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
+			} else {
+				$sql = $hookmanager->resPrint;
+			}
 
 			$sql .= $db->order($sortfield, $sortorder);
 

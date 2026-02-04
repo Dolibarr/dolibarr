@@ -64,7 +64,7 @@ YouCanCreatePageOrImportTemplate=Du kan skapa en ny sida eller importera en full
 SyntaxHelp=Hjälp med specifika syntaxtips
 YouCanEditHtmlSourceckeditor=Du kan redigera HTML-källkod med knappen "Källa" i redigeraren.
 YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> Du kan inkludera PHP-kod i den här källkoden med hjälp av taggarna <strong>&lt;?php ?&gt;</strong>. Följande globala variabler är tillgängliga: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> Du kan också inkludera innehåll från en annan sida/behållare med följande syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> Du kan göra en omdirigering till en annan sida/behållare med följande syntax (Obs: skriv inte ut något innehåll före en omdirigering):<br><strong>&lt;?php omdirigeraTillBehållare('alias_för_behållaren_att_omdirigera_till'); ?&gt;</strong><br>Du kan också göra en omdirigering med GET-parametrar:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> För att lägga till en länk till en annan sida, använd syntaxen:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;minlänk&lt;a&gt;</strong><br><br>
-YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> You can dynamically set <strong>SEO title and meta tags</strong> (title, keywords, description). Simply define the following variables:<br> <code>$__PAGE_TITLE__ = "Title value …";</code><br> <code>$__PAGE_KEYWORDS__ = "keyword1, keyword2, keyword3 …"; // Comma separated</code><br> <code>$__PAGE_DESC__ = "Description …";</code><br>
+YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> You can dynamically set <strong>SEO title and meta tags</strong> (title, keywords, description). Simply define the following variables:<br> <code>define('__SEO_PAGE_TITLE__', "Title value …");</code><br> <code>define('__SEO_PAGE_KEYWORDS__', 'keyword1, keyword2, keyword3 …');</code><br> <code>define('__SEO_PAGE_DESC__', "Description …");</code><br>
 YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> För att inkludera en <strong>länk för att ladda ner</strong> en fil som lagrats i katalogen <strong>dokument</strong>, använd <strong>document.php</strong> wrapper:<br>Exempel, för en fil i documents/ecm (måste loggas), är syntaxen:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>För en fil till dokument/media (öppen katalog för allmän åtkomst) är syntaxen:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
 YouCanEditHtmlSourced=För en fil som delas med en delningslänk (öppen åtkomst med filens delnings-hashnyckel) är syntaxen:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
 YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> För att inkludera en <strong>bild</strong> lagrad i katalogen <strong>media</strong> (katalog öppen för allmänheten), använd den relativa sökvägen som börjar med <strong>/medias</strong>, exempel:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
@@ -81,7 +81,7 @@ LanguageMustNotBeSameThanClonedPage=Du klonar en sida som en översättning. Spr
 ParentPageId=Föräldersidans ID
 WebsiteId=Webbplats ID
 CreateByFetchingExternalPage=Skapa sida / behållare genom att hämta sida från extern webbadress ...
-OrEnterPageInfoManually=Eller skapa en sida från början eller från en sidmall ...
+OrEnterPageInfoManually=Create page from scratch or from a page template...
 FetchAndCreate=Hämta och skapa
 ExportSite=Exportera webbplats
 ImportSite=Importera webbsidans mall
@@ -99,7 +99,7 @@ SorryWebsiteIsCurrentlyOffLine=Tyvärr, den här webbplatsen är för närvarand
 WEBSITE_USE_WEBSITE_ACCOUNTS=Aktivera tabellen över webbplatskonton för tredje part
 WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Aktivera tabellen för att lagra webbplatskonton (inloggning/lösenord) för varje tredje part
 YouMustDefineTheHomePage=Du måste först definiera standard startsida
-OnlyEditionOfSourceForGrabbedContentFuture=Varning: Att skapa en webbsida genom att importera en extern webbsida är reserverat för erfarna användare. Beroende på källsidans komplexitet kan resultatet av importen skilja sig från originalet. Om källsidan använder vanliga CSS-stilar eller motstridiga JavaScript-koder kan det också påverka utseendet eller funktionerna i webbplatsredigeraren när du arbetar på den här sidan. Den här metoden är ett snabbare sätt att skapa en sida, men det rekommenderas att du skapar din nya sida från grunden eller från en föreslagen sidmall.<br>Observera också att den inline-redigeraren kanske inte fungerar korrekt när den används på en hämtad extern sida.
+OnlyEditionOfSourceForGrabbedContentFuture=Warning: Creating a web page by importing an external web page is reserved for experienced users and can work only pages rendered with HTML and CSS only. Importing pages rendered by JS frameworks are NOT supported. Depending on the complexity of the source page, the result of importation will probably differ from the original page. Also if the source page uses common CSS styles or conflicting JavaScript, it may break the look or features of the Website editor when working on this page. This method is a quick way to create a page for very advanced users when source page allows it, but it is recommended to create your new page from scratch or from a suggested page template.<br>Note also that the inline editor might not work correctly when used on a page that was grabbed.
 OnlyEditionOfSourceForGrabbedContent=Endast modifiering av HTML-källkod är möjlig när innehåll hämtas från en extern webbplats
 GrabImagesInto=Ta även bilder som finns i css och sidan.
 ImagesShouldBeSavedInto=Bilder ska sparas i katalogen
@@ -423,8 +423,8 @@ contactFormPhone = Telefon
 contactFormSubjectEntered = Ämne angivet
 contactFormMessageLabel = Meddelande
 contactFormSuccessAlert = Tack för ditt meddelande. Vi återkommer till dig inom kort.
-socials=Socialt resurser
-rgpd=RGPD
+socials=Sociala nätverk
+rgpd=GDPR
 joinUs=Gå med i USA
 home=Start
 anonymous=Anonym
@@ -455,3 +455,4 @@ SampleGoalOne=Främja samarbete och solidaritet bland medlemmarna.
 SampleGoaltwo=Uppmuntra ansvarsfulla och hållbara metoder i alla aktiviteter.
 SampleGoalthree=Stödja projekt som har betydelse och som gynnar samhället som helhet.
 SHOW_LANG_SELECTOR=Rullgardinsmeny för val av visningsspråk
+ForAdvancedWebmastersOnly=For technical webmasters only

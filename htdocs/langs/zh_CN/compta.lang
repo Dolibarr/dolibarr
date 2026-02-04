@@ -3,10 +3,10 @@ MenuFinancial=结算|付款
 TaxModuleSetupToModifyRules=转到<a href="%s">税务模块</a>设置修改计算规则
 TaxModuleSetupToModifyRulesLT=请到 <a href="%s">公司设置</a> 修改计算规则
 OptionMode=会计选项
-OptionModeTrue=Accrual accounting
-OptionModeVirtual=Cash accounting
-OptionModeTrueDesc=In this context, the turnover is calculated over payments (date of payments). The validity of the figures is assured only if the book-keeping is scrutinized through the input/output on payments.
+OptionModeVirtual=Accrual accounting
+OptionModeTrue=Cash accounting
 OptionModeVirtualDesc=在这种情况下，营业额计算超过发票（验证的日期）。当这些发票是因为，不论是否已支付或没有，他们在输出中列出的营业额。
+OptionModeTrueDesc=In this context, the turnover is calculated over payments (date of payments). The validity of the figures is assured only if the book-keeping is scrutinized through the input/output on payments.
 FeatureIsSupportedInInOutModeOnly=功能只在信用额，债务提供会计模式（见会计模块的配置）
 VATReportBuildWithOptionDefinedInModule=这里显示的数额计算使用由税务模块设置定义的规则。
 LTReportBuildWithOptionDefinedInModule=这里显示的金额是根据公司定义的规则进行计算的。
@@ -302,7 +302,6 @@ ByVatRate=按销售税率计算
 TurnoverbyVatrate=营业税按销售税率开具
 TurnoverCollectedbyVatrate=按销售税率收取的营业额
 PurchasebyVatrate=按销售税率购买
-LabelToShow=标签别名
 PurchaseTurnover=采购周转额
 PurchaseTurnoverCollected=已收取的采购周转金
 RulesPurchaseTurnoverDue=- 它包括供应商的到期发票，无论是否已支付。 <br>- 它基于这些发票的开票日期。<br>
@@ -329,3 +328,4 @@ RuleForLinesDates=Rule for lines dates
 Prepaid=Prepaid
 Postpaid=Postpaid
 SetRuleForLinesDates=Set rule for lines dates
+SomeNotConvertedCreditNoteExists=There is <b>%s</b> credit notes not yet converted for consumption

@@ -283,10 +283,10 @@ class FormProduct
 	 *                                          'warehouseopen' = select products from open warehouses,
 	 *                                          'warehouseclosed' = select products from closed warehouses,
 	 *                                          'warehouseinternal' = select products from warehouses for internal correct/transfer only
-	 *  @param  int<0,1>    $empty			    1=Can be empty, 0 if not
+	 *  @param  int<0,1>|string    $empty		Use 1 or 'label'=Can be empty, 0 if not
 	 * 	@param	int<0,1>    $disabled		    1=Select is disabled
 	 * 	@param	int		    $fk_product		    Add quantity of stock in label for product with id fk_product. Nothing if 0.
-	 *  @param	string	    $empty_label	    Empty label if needed (only if $empty=1)
+	 *  @param	string	    $empty_label	    Empty label if needed (deprecated, set the label into the field $empty)
 	 *  @param	int<0,1>    $showstock		    1=Show stock count
 	 *  @param	int<0,1>   	$forcecombo		    1=Force combo iso ajax select2
 	 *	@param	array<array{method:string,url:string,htmlname:string,params:array<string,string>}>	$events		Events to add to select2
@@ -341,7 +341,7 @@ class FormProduct
 		//$out .= ' placeholder="todo"'; 	// placeholder for select2 must be added by setting the id+placeholder js param when calling select2
 		$out .= '>';
 		if ($empty) {
-			$out .= '<option value="-1">'.($empty_label ? $empty_label : '&nbsp;').'</option>';
+			$out .= '<option value="-1">'.(is_numeric($empty) ? ($empty_label ? $empty_label : '&nbsp;') : $empty).'</option>';
 		}
 		foreach ($this->cache_warehouses as $id => $arraytypes) {
 			$label = '';
@@ -564,7 +564,7 @@ class FormProduct
 	 *
 	 *  @param  string		$name                Name of HTML field
 	 *  @param  string		$measuring_style     Unit to show: weight, size, surface, volume, time
-	 *  @param  string		$selected            Preselected value
+	 *  @param  int|string	$selected            Preselected value. Can be a numeric -3, 0, 3, ... 60, 3600, ... for time or a short label like 'm', 'm2', ...
 	 *  @param  int|string	$adddefault			 1=Add empty unit called "Default", ''=Add empty value
 	 *  @param  int<0,2>	$mode                1=Use short label as value, 0=Use rowid, 2=Use scale (power)
 	 *  @param	string		$morecss			 More CSS
@@ -575,6 +575,8 @@ class FormProduct
 		global $langs, $db;
 
 		$langs->load("other");
+
+		$selected = (string) $selected;
 
 		$return = '';
 		$placeholderID = ($mode == 2 ? '99999999' : '-1'); // we don't want ajaxcombobox replace clearing option in mode 2
@@ -624,9 +626,9 @@ class FormProduct
 				}
 				$return .= '>';
 				if ($measuring_style == 'time') {
-					$return .= $langs->trans(ucfirst($lines->label));
+					$return .= $langs->trans(ucfirst((string) $lines->label));
 				} else {
-					$return .= $langs->trans($lines->label);
+					$return .= $langs->trans((string) $lines->label);
 				}
 				$return .= '</option>';
 			}
@@ -695,7 +697,7 @@ class FormProduct
 					}
 
 					$return .= '>';
-					$return .= $langs->trans($lines->label);
+					$return .= $langs->trans((string) $lines->label);
 					$return .= '</option>';
 				}
 			}

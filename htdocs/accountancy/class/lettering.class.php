@@ -557,7 +557,7 @@ class Lettering extends BookKeeping
 				$group_error++;
 			}
 
-			// Lettering/Unlettering the group of bookkeeping lines
+			// Matching/Unmatching the group of bookkeeping lines
 			if (!$group_error && $do_it) {
 				if ($unlettering) {
 					$result = $this->deleteLettering($bookkeeping_lines);
@@ -889,12 +889,12 @@ class Lettering extends BookKeeping
 			while ($obj = $this->db->fetch_object($resql)) {
 				$current_document_ids[$obj->fk_doc] = $obj->fk_doc;
 
-				$link_key = $linked_info['prefix'] . $obj->fk_link;
+				$link_key = (string) $linked_info['prefix'] . (string) $obj->fk_link;
 				$element_by_link[$link_key][$obj->fk_doc] = $obj->fk_doc;
-				$link_by_element[$obj->fk_doc][$link_key] = $link_key;
+				$link_by_element[(int) $obj->fk_doc][$link_key] = $link_key;
 				if ($is_fk_link_is_also_fk_doc) {
 					$element_by_link[$link_key][$obj->fk_link] = $obj->fk_link;
-					$link_by_element[$obj->fk_link][$link_key] = $link_key;
+					$link_by_element[(int) $obj->fk_link][$link_key] = $link_key;
 				}
 			}
 			$this->db->free($resql);
@@ -910,11 +910,11 @@ class Lettering extends BookKeeping
 	/**
 	 * Get element ids grouped by link or element in common
 	 *
-	 * @param	array<array<string,int>>	$link_by_element	List of payment ids by link key
+	 * @param	array<int,array<string,int>>	$link_by_element	List of payment ids by link key
 	 * @param	array<string,array<int,int>>	$element_by_link	List of element ids by link key
-	 * @param	string				$link_key			Link key (used for recursive function)
-	 * @param	array<int,int>		$current_group		Current group (used for recursive function)
-	 * @return	array<int,array<int,int>>			List of element ids grouped by link or element in common
+	 * @param	string							$link_key			Link key (used for recursive function)
+	 * @param	array<int,int>					$current_group		Current group (used for recursive function)
+	 * @return	array<int,array<int,int>>							List of element ids grouped by link or element in common
 	 */
 	public function getGroupElements(&$link_by_element, &$element_by_link, $link_key = '', &$current_group = array())
 	{
@@ -929,6 +929,10 @@ class Lettering extends BookKeeping
 			// Save list when is the first step of the recursive recursive function
 			$save_link_by_element = $link_by_element;
 			$save_element_by_link = $element_by_link;
+		} else {
+			// To satisfy static analysis (phpstan)
+			$save_link_by_element = null;
+			$save_element_by_link = null;
 		}
 
 		do {

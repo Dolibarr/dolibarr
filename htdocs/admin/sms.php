@@ -2,7 +2,7 @@
 /* Copyright (C) 2007-2011  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009       Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013 	    Juanjo Menent		 <jmenent@2byte.es>
- * Copyright (C) 2020-2024  Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2020-2025  Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 $langs->loadLangs(array("companies", "admin", "products", "sms", "other", "errors"));
 
 $action = GETPOST('action', 'aZ09');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel', 'alpha');
 
 if (!$user->admin) {
 	accessforbidden();
@@ -122,16 +122,21 @@ if ($action == 'send' && !$cancel) {
 		try {
 			$smsfile = new CSMSFile($sendto, $smsfrom, $body, $deliveryreceipt, $deferred, $priority, $class); // This define OvhSms->login, pass, session and account
 		} catch (Exception $e) {
+			$error++;
 			setEventMessages($e->getMessage(), null, 'error');
 		}
-		$result = $smsfile->sendfile(); // This send SMS
+		if (!$error) {
+			$result = $smsfile->sendfile(); // This send SMS
+			if (!$result) {
+				$error++;
+				setEventMessages($smsfile->error, $smsfile->errors, 'mesgs');
+			}
+		}
 
-		if ($result) {
+		if (!$error) {
 			setEventMessages($langs->trans("SmsSuccessfulySent", $smsfrom, $sendto), null, 'mesgs');
-			setEventMessages($smsfile->error, $smsfile->errors, 'mesgs');
 		} else {
 			setEventMessages($langs->trans("ResultKo"), null, 'errors');
-			setEventMessages($smsfile->error, $smsfile->errors, 'errors');
 		}
 
 		$action = '';
@@ -169,12 +174,12 @@ asort($listofmethods);
 
 if (!count($listofmethods)) {
 	$descnosms = $langs->trans("NoSmsEngine", '{Dolistore}');
-	$descnosms = str_replace('{Dolistore}', '<a href="https://www.dolistore.com/search.php?orderby=position&orderway=desc&search_query=smsmanager">DoliStore</a>', $descnosms);
+	$descnosms = str_replace('{Dolistore}', '<a href="https://www.dolistore.com/index.php?controller=search&orderby=position&orderway=desc&website=marketplace&search_query=smsmanager">DoliStore</a>', $descnosms);
 	print '<div class="warning">'.$descnosms.'</div>';
 }
 
 if ($action == 'edit') {
-	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 

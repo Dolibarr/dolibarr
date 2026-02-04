@@ -3,10 +3,10 @@ MenuFinancial=賬單 | 支付
 TaxModuleSetupToModifyRules=轉到<a href="%s"> 稅收模塊設置</a>  修改計算規則
 TaxModuleSetupToModifyRulesLT=轉到<a href="%s"> 公司設置</a>  修改計算規則
 OptionMode=會計選項
-OptionModeTrue=Accrual accounting
-OptionModeVirtual=Cash accounting
-OptionModeTrueDesc=In this context, the turnover is calculated over payments (date of payments). The validity of the figures is assured only if the book-keeping is scrutinized through the input/output on payments.
+OptionModeVirtual=Accrual accounting
+OptionModeTrue=Cash accounting
 OptionModeVirtualDesc=在這種情況下，營業額是根據發票（驗證日期）計算的。當這些發票到期時，無論是否已支付，它們都會列在營業額輸出中。
+OptionModeTrueDesc=In this context, the turnover is calculated over payments (date of payments). The validity of the figures is assured only if the book-keeping is scrutinized through the input/output on payments.
 FeatureIsSupportedInInOutModeOnly=僅在 CREDITS-DEBTS 會計模式下可用的功能（請參閱會計模塊配置）
 VATReportBuildWithOptionDefinedInModule=此處顯示的金額是使用稅務模塊設置定義的規則計算的。
 LTReportBuildWithOptionDefinedInModule=此處顯示的金額是使用公司設置定義的規則計算的。
@@ -302,7 +302,6 @@ ByVatRate=按銷售稅率
 TurnoverbyVatrate=按銷售稅率計算的營業額
 TurnoverCollectedbyVatrate=按銷售稅率計算的已收營業額
 PurchasebyVatrate=按銷售稅率計算的採購額
-LabelToShow=簡短標籤
 PurchaseTurnover=採購營業額
 PurchaseTurnoverCollected=已收取的採購營業額
 RulesPurchaseTurnoverDue=- 它包括供應商的到期發票，無論是否已付款。<br>- 它基於這些發票的發票日期。<br>
@@ -329,3 +328,4 @@ RuleForLinesDates=Rule for lines dates
 Prepaid=Prepaid
 Postpaid=Postpaid
 SetRuleForLinesDates=Set rule for lines dates
+SomeNotConvertedCreditNoteExists=There is <b>%s</b> credit notes not yet converted for consumption
