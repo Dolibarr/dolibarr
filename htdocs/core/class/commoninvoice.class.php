@@ -291,6 +291,13 @@ abstract class CommonInvoice extends CommonObject
 	const CLOSECODE_ABANDONED = 'abandon'; // Abandoned (no payment at all) - other
 	const CLOSECODE_REPLACED = 'replaced'; // Abandoned (no payment at all) - replacedby another invoice (feature disabled by default)
 
+	const ARRAY_OF_DISPUTE_STATUS = array(
+		0 => array('label' => "None"),
+		1 => array('label' => "DisputeOpen"),
+		8 => array('label' => "DisputeLost"),
+		9 => array('label' => "DisputeWon")
+	);
+
 
 	/**
 	 * 	Return remain amount to pay. Property ->id and ->total_ttc must be set.
@@ -1107,11 +1114,6 @@ abstract class CommonInvoice extends CommonObject
 			$paramsBadge['badgeParams' ]['attr']['title'] = $titlestringtoshow;
 		}
 
-		/*
-		if (isset($moreparams['dispute_status'])) {
-			$statusdispute = $moreparams['dispute_status'] ? img_picto($langs->trans("DisputeOpen"), 'warning') : '';
-		}
-		*/
 		if (isset($moreparams['dispute_status']) && $moreparams['dispute_status']) {
 			$labelStatus .= ' - ';
 			if ($moreparams['dispute_status'] == 8) {
@@ -2414,4 +2416,9 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	 * @var int
 	 */
 	public $fk_code_ventilation;
+
+	/**
+	 * @var float 		Situation advance percentage (default 100 for standard invoices)
+	 */
+	public $situation_percent = 100;
 }

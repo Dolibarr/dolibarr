@@ -7,7 +7,7 @@
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011 	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2020		Tobias Sekan		<tobias.sekan@startmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -390,17 +390,17 @@ print '<script type="text/javascript">
     $(document).ready(function() {
         function toggleOAuthServiceDisplay() {
             if ($("#radio_oauth").is(":checked")) {
-                $("#oauth_service_div").show();  // Afficher le sélecteur OAuth
+                $("#oauth_service_div").show();  // Show the OAuth selector
             } else {
-                $("#oauth_service_div").hide();  // Cacher le sélecteur OAuth
+                $("#oauth_service_div").hide();  // Hide the OAuth selector
             }
         }
 
         function toggleAddParamRow() {
             if ($("#radio_oauth").is(":checked")) {
-                $("#add_param_row").hide();  // Cacher toute la ligne
+                $("#add_param_row").hide();  // Hide the entire line
             } else {
-                $("#add_param_row").show();  // Afficher toute la ligne
+                $("#add_param_row").show();  // Show the entire line
             }
         }
 

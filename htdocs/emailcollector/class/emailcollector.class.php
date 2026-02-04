@@ -1025,24 +1025,25 @@ class EmailCollector extends CommonObject
 									}
 								}
 							}
+
 							if (preg_match('/^options_/', $tmpproperty)) {
-								$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> found '.dol_escape_htmltag(dol_trunc($object->array_options[preg_replace('/^options_/', '', $tmpproperty)], 128));
+								$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> extract '.dol_escape_htmltag(dol_trunc($object->array_options[preg_replace('/^options_/', '', $tmpproperty)], 128)).' so object extrafield '.dol_escape_htmltag($tmpproperty).' is set.';
 							} else {
 								if (property_exists($object, $tmpproperty)) {
-									$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> found '.dol_escape_htmltag(dol_trunc($object->$tmpproperty, 128));
+									$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> extract '.dol_escape_htmltag(dol_trunc($object->$tmpproperty, 128)).' so object property '.dol_escape_htmltag($tmpproperty).' is set.';
 								} else {
-									$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> found '.dol_escape_htmltag(dol_trunc($tmp[$tmpproperty], 128));
+									$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> extract '.dol_escape_htmltag(dol_trunc($tmp[$tmpproperty], 128)).' so var '.dol_escape_htmltag($tmpproperty).' is set.';
 								}
 							}
 						} else {
 							// Regex not found
 							if (property_exists($object, $tmpproperty)) {
 								$object->$tmpproperty = null;
+								$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> not found, so object property '.dol_escape_htmltag($tmpproperty).' is set to null.';
 							} else {
 								$tmp[$tmpproperty] = null;
+								$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> not found, so var '.dol_escape_htmltag($tmpproperty).' is set to null.';
 							}
-
-							$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> not found, so property '.dol_escape_htmltag($tmpproperty).' is set to null.';
 						}
 					} else {
 						// Nothing can be done for this param
@@ -1071,7 +1072,7 @@ class EmailCollector extends CommonObject
 						complete_substitutions_array($substitutionarray, $outputlangs, $object);
 						$matcharray = array();
 						preg_match_all('/__([a-z0-9]+(?:_[a-z0-9]+)?)__/i', $valuetouse, $matcharray);
-						if (is_array($matcharray[1])) {    // $matcharray[1] is an array with the list of substitution key found without the __X__ syntax into the SET entry
+						if (is_array($matcharray[1])) {    // $matcharray[1] is an array with the list of all substitution keys found with the __X__ syntax into the SET entry.
 							foreach ($matcharray[1] as $keytoreplace) {
 								if ($keytoreplace) {
 									if (preg_match('/^options_/', $keytoreplace)) {
@@ -1151,6 +1152,9 @@ class EmailCollector extends CommonObject
 		$searchfilterreplyto = 0;
 		$searchfilterexcludebodyarray = array();
 		$searchfilterexcludesubjectarray = array();
+		$searchfilterexcludeemailarray = array();
+		$searchfilterexcludedomainarray = array();
+		$searchfilterexcludeemailmap = array();
 		$operationslog = '';
 		$rulesreplyto = array();
 		$connectstringsource = '';
@@ -1370,6 +1374,63 @@ class EmailCollector extends CommonObject
 					$rule['rulevalue'] = substr($rule['rulevalue'], 1);
 				}
 
+				if ($rule['type'] == 'excludeemail') {
+					$tmpvalues = preg_split('/[\\r\\n,;]+/', (string) $rule['rulevalue']);
+					if (is_array($tmpvalues)) {
+						foreach ($tmpvalues as $tmpvalue) {
+							$tmpvalue = trim((string) $tmpvalue);
+							if ($tmpvalue === '') continue;
+
+							if (preg_match_all('/[a-z0-9._%+\\-]+@[a-z0-9.\\-]+\\.[a-z]{2,}/i', $tmpvalue, $tmpmatches)) {
+								foreach ($tmpmatches[0] as $tmpemail) {
+									$tmpemail = strtolower(trim($tmpemail));
+									if ($tmpemail !== '') {
+										$searchfilterexcludeemailarray[] = $tmpemail;
+									}
+								}
+							}
+						}
+					}
+					continue;
+				}
+				if ($rule['type'] == 'excludedomain') {
+					$tmpvalues = preg_split('/[\\r\\n,;]+/', (string) $rule['rulevalue']);
+					if (is_array($tmpvalues)) {
+						foreach ($tmpvalues as $tmpvalue) {
+							$tmpvalue = trim((string) $tmpvalue);
+							if ($tmpvalue === '') continue;
+
+							if (preg_match_all('/[a-z0-9._%+\\-]+@([a-z0-9.\\-]+\\.[a-z]{2,})/i', $tmpvalue, $tmpmatches)) {
+								foreach ($tmpmatches[1] as $tmpdomain) {
+									$tmpdomain = strtolower(trim($tmpdomain));
+									$tmpdomain = trim($tmpdomain, ". \t\n\r\0\x0B");
+									if ($tmpdomain !== '') {
+										$searchfilterexcludedomainarray[] = $tmpdomain;
+									}
+								}
+								continue;
+							}
+
+							$tmpdomain = strtolower($tmpvalue);
+							$tmpdomain = preg_replace('/^mailto:/i', '', $tmpdomain);
+							$tmpdomain = trim($tmpdomain);
+							$tmpdomain = trim($tmpdomain, "<> \t\n\r\0\x0B.,;");
+							if (strpos($tmpdomain, '@') === 0) {
+								$tmpdomain = substr($tmpdomain, 1);
+							}
+							$posat = strrpos($tmpdomain, '@');
+							if ($posat !== false) {
+								$tmpdomain = substr($tmpdomain, $posat + 1);
+							}
+							$tmpdomain = trim($tmpdomain, ". \t\n\r\0\x0B");
+							if ($tmpdomain !== '') {
+								$searchfilterexcludedomainarray[] = $tmpdomain;
+							}
+						}
+					}
+					continue;
+				}
+
 				if ($rule['type'] == 'from') {
 					$tmprulevaluearray = explode('*', $rule['rulevalue']);
 					if (count($tmprulevaluearray) >= 2) {
@@ -1511,6 +1572,63 @@ class EmailCollector extends CommonObject
 					$rule['rulevalue'] = substr($rule['rulevalue'], 1);
 				}
 
+				if ($rule['type'] == 'excludeemail') {
+					$tmpvalues = preg_split('/[\\r\\n,;]+/', (string) $rule['rulevalue']);
+					if (is_array($tmpvalues)) {
+						foreach ($tmpvalues as $tmpvalue) {
+							$tmpvalue = trim((string) $tmpvalue);
+							if ($tmpvalue === '') continue;
+
+							if (preg_match_all('/[a-z0-9._%+\\-]+@[a-z0-9.\\-]+\\.[a-z]{2,}/i', $tmpvalue, $tmpmatches)) {
+								foreach ($tmpmatches[0] as $tmpemail) {
+									$tmpemail = strtolower(trim($tmpemail));
+									if ($tmpemail !== '') {
+										$searchfilterexcludeemailarray[] = $tmpemail;
+									}
+								}
+							}
+						}
+					}
+					continue;
+				}
+				if ($rule['type'] == 'excludedomain') {
+					$tmpvalues = preg_split('/[\\r\\n,;]+/', (string) $rule['rulevalue']);
+					if (is_array($tmpvalues)) {
+						foreach ($tmpvalues as $tmpvalue) {
+							$tmpvalue = trim((string) $tmpvalue);
+							if ($tmpvalue === '') continue;
+
+							if (preg_match_all('/[a-z0-9._%+\\-]+@([a-z0-9.\\-]+\\.[a-z]{2,})/i', $tmpvalue, $tmpmatches)) {
+								foreach ($tmpmatches[1] as $tmpdomain) {
+									$tmpdomain = strtolower(trim($tmpdomain));
+									$tmpdomain = trim($tmpdomain, ". \t\n\r\0\x0B");
+									if ($tmpdomain !== '') {
+										$searchfilterexcludedomainarray[] = $tmpdomain;
+									}
+								}
+								continue;
+							}
+
+							$tmpdomain = strtolower($tmpvalue);
+							$tmpdomain = preg_replace('/^mailto:/i', '', $tmpdomain);
+							$tmpdomain = trim($tmpdomain);
+							$tmpdomain = trim($tmpdomain, "<> \t\n\r\0\x0B.,;");
+							if (strpos($tmpdomain, '@') === 0) {
+								$tmpdomain = substr($tmpdomain, 1);
+							}
+							$posat = strrpos($tmpdomain, '@');
+							if ($posat !== false) {
+								$tmpdomain = substr($tmpdomain, $posat + 1);
+							}
+							$tmpdomain = trim($tmpdomain, ". \t\n\r\0\x0B");
+							if ($tmpdomain !== '') {
+								$searchfilterexcludedomainarray[] = $tmpdomain;
+							}
+						}
+					}
+					continue;
+				}
+
 				if ($rule['type'] == 'from') {
 					$tmprulevaluearray = explode('*', $rule['rulevalue']);	// Search on abc*def means searching on 'abc' and on 'def'
 					if (count($tmprulevaluearray) >= 2) {
@@ -1633,6 +1751,14 @@ class EmailCollector extends CommonObject
 			}
 
 			dol_syslog("IMAP search string = ".$search);
+		}
+
+		if (!empty($searchfilterexcludeemailarray)) {
+			$searchfilterexcludeemailarray = array_values(array_filter(array_unique($searchfilterexcludeemailarray)));
+			$searchfilterexcludeemailmap = array_fill_keys($searchfilterexcludeemailarray, true);
+		}
+		if (!empty($searchfilterexcludedomainarray)) {
+			$searchfilterexcludedomainarray = array_values(array_filter(array_unique($searchfilterexcludedomainarray)));
 		}
 
 		$nbemailprocessed = 0;
@@ -1858,6 +1984,7 @@ class EmailCollector extends CommonObject
 						}
 					}
 				}
+				// If we DON'T want email if there is a trackid
 				if ($searchfilternodoltrackid > 0) {
 					$referencesForFilter = $headers['References'] ?? '';
 					if (!empty($headers['References']) && !empty($headers['In-Reply-To'])) {
@@ -2131,6 +2258,70 @@ class EmailCollector extends CommonObject
 					$replyto = $replytostring;
 					$replytotext = '';
 				}
+
+				if (!empty($searchfilterexcludeemailmap) || !empty($searchfilterexcludedomainarray)) {
+					$emailsToCheck = array();
+					$tmpaddressblob = trim($fromstring.' '.$replytostring);
+					if ($tmpaddressblob !== '' && preg_match_all('/[a-z0-9._%+\\-]+@[a-z0-9.\\-]+\\.[a-z]{2,}/i', $tmpaddressblob, $tmpmatches)) {
+						foreach ($tmpmatches[0] as $tmpEmail) {
+							$tmpEmail = strtolower(trim($tmpEmail));
+							if ($tmpEmail !== '') {
+								$emailsToCheck[$tmpEmail] = true;
+							}
+						}
+					}
+
+					if (empty($emailsToCheck)) {
+						foreach (array($from, $replyto) as $tmpEmail) {
+							$tmpEmail = strtolower(trim((string) $tmpEmail));
+							if ($tmpEmail !== '' && strpos($tmpEmail, '@') !== false) {
+								$emailsToCheck[$tmpEmail] = true;
+							}
+						}
+					}
+
+					$discardEmail = '';
+					$discardDomain = '';
+					$matchedDomainRule = '';
+
+					foreach (array_keys($emailsToCheck) as $tmpEmail) {
+						if (!empty($searchfilterexcludeemailmap[$tmpEmail])) {
+							$discardEmail = $tmpEmail;
+							break;
+						}
+
+						if (!empty($searchfilterexcludedomainarray)) {
+							$posat = strrpos($tmpEmail, '@');
+							if ($posat === false) {
+								continue;
+							}
+							$tmpDomain = strtolower(substr($tmpEmail, $posat + 1));
+							foreach ($searchfilterexcludedomainarray as $excludedDomain) {
+								if ($excludedDomain === '') {
+									continue;
+								}
+								if ($tmpDomain === $excludedDomain || substr($tmpDomain, -strlen('.'.$excludedDomain)) === '.'.$excludedDomain) {
+									$discardDomain = $tmpDomain;
+									$matchedDomainRule = $excludedDomain;
+									break 2;
+								}
+							}
+						}
+					}
+
+					if ($discardEmail !== '' || $discardDomain !== '') {
+						$nbemailprocessed++;
+						if ($discardEmail !== '') {
+							$operationslog .= '<br>Discarded - Sender email excluded: '.$discardEmail;
+							dol_syslog(" Discarded - Sender email excluded: ".$discardEmail);
+						} else {
+							$operationslog .= '<br>Discarded - Sender domain excluded: '.$discardDomain.($matchedDomainRule !== '' && $matchedDomainRule !== $discardDomain ? ' (matched '.$matchedDomainRule.')' : '');
+							dol_syslog(" Discarded - Sender domain excluded: ".$discardDomain.($matchedDomainRule !== '' && $matchedDomainRule !== $discardDomain ? " (matched ".$matchedDomainRule.")" : ""));
+						}
+						continue;
+					}
+				}
+
 				$fk_element_id = 0;
 				$fk_element_type = '';
 
@@ -2517,16 +2708,16 @@ class EmailCollector extends CommonObject
 							$tickettocreate = new Ticket($this->db);
 							$errorfetchticket = 0;
 							$alreadycreated = 0;
-							if ($ticketid > 0) {
-								$alreadycreated = $tickettocreate->fetch($ticketid);
-							}
-							if ($alreadycreated == 0 && !empty($objectid)) {
+							if (!empty($objectid) && $objectemail instanceof Ticket) {
 								$alreadycreated = $tickettocreate->fetch((int) $objectid);
 							}
-							if ($alreadycreated == 0 && !empty($trackid)) {
+							if ($alreadycreated == 0 && $ticketid > 0) {	// objectemail was on a ticket it ticketid set
+								$alreadycreated = $tickettocreate->fetch($ticketid);
+							}
+							if ($alreadycreated == 0 && !empty($trackid)) {	// objectemail was on a ticket if trackid is set
 								$alreadycreated = $tickettocreate->fetch(0, '', $trackid);
 							}
-							if ($alreadycreated == 0 && !empty($msgid)) {
+							if ($alreadycreated == 0 && !empty($msgid)) {	// objectemail was on a ticket if msgid is set
 								$alreadycreated = $tickettocreate->fetch(0, '', '', $msgid);
 							}
 							if ($alreadycreated < 0) {
@@ -2687,10 +2878,11 @@ class EmailCollector extends CommonObject
 
 									if ($result < 0) {
 										$errorforactions++;
-										$this->error = 'Error when getting thirdparty with name '.$nametouseforthirdparty.' (may be 2 record exists with same name ?)';
+										$this->error = 'Error when getting thirdparty with name '.((string) $nametouseforthirdparty).', alternative name '.((string) $namealiastouseforthirdparty).' and email '.$emailtouseforthirdparty.' (may be 2 record exists with same name ?)';
 										$this->errors[] = $this->error;
 										break;
-									} elseif ($result == 0) {	// No thirdparty found
+									}
+									if ($result == 0) {	// No thirdparty found
 										if ($operation['type'] == 'loadthirdparty') {
 											dol_syslog("Third party with id=".$idtouseforthirdparty." email=".$emailtouseforthirdparty." name=".$nametouseforthirdparty." name_alias=".$namealiastouseforthirdparty." was not found");
 
@@ -2752,7 +2944,7 @@ class EmailCollector extends CommonObject
 												}
 											}
 										}
-									} else {	// $result > 0 is ID of thirdparty
+									} else {	// if $result > 0, it is ID of thirdparty
 										dol_syslog("One and only one existing third party has been found");
 
 										$thirdpartystatic->fetch($result);

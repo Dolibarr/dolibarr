@@ -13,7 +13,7 @@
  * Copyright (C) 2014		Cédric GROSS				<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015	Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
- * Copyright (C) 2018-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2019-2023  Thibault Foucart            <support@ptibogxiv.net>
  * Copyright (C) 2020       Open-Dsi         			<support@open-dsi.fr>
  * Copyright (C) 2021       Gauthier VERDOL         	<gauthier.verdol@atm-consulting.fr>
@@ -1915,16 +1915,18 @@ function dol_size($size, $type = '')
  *	Clean a string to use it as a file name.
  *  Replace also '--' and ' -' strings, they are used for parameters separation (Note: ' - ' is allowed).
  *
- *	@param	string	$str            String to clean
- * 	@param	string	$newstr			String to replace bad chars with.
- *  @param	int	    $unaccent		1=Remove also accent (default), 0 do not remove them
- *  @param	int		$includequotes	1=Include simple quotes (double is already included by default)
- *	@return string          		String cleaned
+ *	@param	string|null	$str            String to clean
+ * 	@param	string		$newstr			String to replace bad chars with.
+ *  @param	int	    	$unaccent		1=Remove also accent (default), 0 do not remove them
+ *  @param	int			$includequotes	1=Include simple quotes (double is already included by default)
+ *	@return string      	    		String cleaned
  *
  * 	@see        	dol_string_nospecial(), dol_string_unaccent(), dol_sanitizePathName()
  */
 function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1, $includequotes = 0)
 {
+	$str = (string) $str;
+
 	// List of special chars for filenames in windows are defined on page https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file
 	// Char '>' '<' '|' '$' and ';' are special chars for shells.
 	// Char '/' and '\' are file delimiters.
@@ -2256,10 +2258,10 @@ function dolSlugify($stringtoslugify)
 /**
  *  Returns text escaped for inclusion into javascript code
  *
- *  @param	string	$stringtoescape			String to escape
- *  @param	int<0,3>	$mode				0=Escape also ' and " into ', 1=Escape ' but not " for usage into 'string', 2=Escape " but not ' for usage into "string", 3=Escape ' and " with \
- *  @param	int		$noescapebackslashn		0=Escape also \n. 1=Do not escape \n.
- *  @return string							Escaped string. Both ' and " are escaped into ' if they are escaped.
+ *  @param	int|string	$stringtoescape			String to escape
+ *  @param	int<0,3>	$mode					0=Escape also ' and " into ', 1=Escape ' but not " for usage into 'string', 2=Escape " but not ' for usage into "string", 3=Escape ' and " with \
+ *  @param	int			$noescapebackslashn		0=Escape also \n. 1=Do not escape \n.
+ *  @return string								Escaped string. Both ' and " are escaped into ' if they are escaped.
  */
 function dol_escape_js($stringtoescape, $mode = 0, $noescapebackslashn = 0)
 {
@@ -2285,7 +2287,7 @@ function dol_escape_js($stringtoescape, $mode = 0, $noescapebackslashn = 0)
 		$substitjs["'"] = "\\'";
 		$substitjs['"'] = "\\\"";
 	}
-	return strtr($stringtoescape, $substitjs);
+	return strtr((string) $stringtoescape, $substitjs);
 }
 
 /**
@@ -3680,7 +3682,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 			$morehtmlref .= '</div>';
 		}
 	}
-	if (getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && (getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') == '1' || preg_match('/' . preg_quote($object->element, '/') . '/i', $conf->global->MAIN_SHOW_TECHNICAL_ID)) && !empty($object->id)) {
+	if (getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && (getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') == '1' || preg_match('/' . preg_quote($object->element, '/') . '/i', getDolGlobalString('MAIN_SHOW_TECHNICAL_ID'))) && !empty($object->id)) {
 		$morehtmlref .= '<div style="clear: both;"></div>';
 		$morehtmlref .= '<div class="refidno opacitymedium">';
 		$morehtmlref .= $langs->trans("TechnicalID") . ': ' . ((int) $object->id);
@@ -4762,13 +4764,13 @@ function dol_print_phone($phone, $countrycode = '', $contactid = 0, $socid = 0, 
 		} elseif (dol_strlen($phone) == 11) { //ex: +597_ABC_DEFG
 			$newphone = substr($newphone, 0, 4) . $separ . substr($newphone, 4, 3) . $separ . substr($newphone, 7, 4);
 		}
-	} elseif (strtoupper($countrycode) == "DE") { //Allemagne
+	} elseif (strtoupper($countrycode) == "DE") { //Deutschland
 		if (dol_strlen($phone) == 14) { //ex:  +49_ABCD_EFGH_IJK
 			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 4) . $separ . substr($newphone, 7, 4) . $separ . substr($newphone, 11, 3);
 		} elseif (dol_strlen($phone) == 13) { //ex: +49_ABC_DEFG_HIJ
 			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 3) . $separ . substr($newphone, 6, 4) . $separ . substr($newphone, 10, 3);
 		}
-	} elseif (strtoupper($countrycode) == "ES") { //Espagne
+	} elseif (strtoupper($countrycode) == "ES") { //Spain
 		if (dol_strlen($phone) == 12) { //ex:  +34_ABC_DEF_GHI
 			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 3) . $separ . substr($newphone, 6, 3) . $separ . substr($newphone, 9, 3);
 		}
@@ -10633,6 +10635,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 					$liste_factures = [];
 					$total = 0;
 
+					// @FIXME We must not have any repeated SQL access into this function.
 					$sql = 'SELECT f.ref,f.multicurrency_code as f_mccode, pf.*
 							FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf
 							JOIN '.MAIN_DB_PREFIX.'facture_fourn as f ON pf.fk_facturefourn = f.rowid
@@ -10845,7 +10848,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
  */
 function make_substitutions($text, $substitutionarray, $outputlangs = null, $converttextinhtmlifnecessary = 0)
 {
-	global $conf, $db, $langs;
+	global $db, $langs;
 
 	if (!is_array($substitutionarray)) {
 		return 'ErrorBadParameterSubstitutionArrayWhenCalling_make_substitutions';
@@ -10957,9 +10960,8 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 		}
 	}
 
-	// TODO Implement the lazyload substitution
 	/*
-	add a loop to scan $substitutionarray:
+	Loop to scan $substitutionarray for couples:    key=__XXX__@lazyload  and  value='path:class:method:id'  or 'path:class:method:id:keyinarrayresult' if method return array
 	For each key ending with '@lazyload', we extract the substitution key 'XXX' and we check inside the $text (the 1st parameter of make_substitutions), if the string XXX exists.
 	If no, we don't need to make replacement, so we do nothing.
 	If yes, we can make the substitution:
@@ -10978,11 +10980,12 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 				if (preg_match('/' . preg_quote($key_to_substitute, '/') . '/', $text)) {
 					$param_arr = explode(':', (string) $value);
 					// path:class:method:id
-					if (count($param_arr) == 4) {
+					if (count($param_arr) >= 4) {
 						$path = $param_arr[0];
 						$class = $param_arr[1];
 						$method = $param_arr[2];
 						$id = (int) $param_arr[3];
+						$keyinarrayresult = empty($param_arr[4]) ? '' : $param_arr[4];
 
 						// load class file and init object list in memory
 						if (!isset($memory_object_list[$class])) {
@@ -11002,16 +11005,21 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 								if (!isset($memory_object_list[$class]['list'][$id])) {
 									$tmpobj = new $class($db);
 									// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
-									$valuetouseforsubstitution = $tmpobj->$method($id, $key_to_substitute);
+									$tmpvaluetouseforsubstitution = $tmpobj->$method($id, $key_to_substitute);
 									$memory_object_list[$class]['list'][$id] = $tmpobj;
 								} else {
 									// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
 									$tmpobj = $memory_object_list[$class]['list'][$id];
 									// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
-									$valuetouseforsubstitution = $tmpobj->$method($id, $key_to_substitute, true);
+									$tmpvaluetouseforsubstitution = $tmpobj->$method($id, $key_to_substitute, true);
 								}
 
-								$text = str_replace((string) $key_to_substitute, (string) $valuetouseforsubstitution, $text); // Cast to string in case value is 123.5 for example
+								if ($keyinarrayresult) {
+									$valuetouseforsubstitution = (string) $tmpvaluetouseforsubstitution[$keyinarrayresult];		// Cast to string in case value is 123.5 for example
+								} else {
+									$valuetouseforsubstitution = (string) $tmpvaluetouseforsubstitution;						// Cast to string in case value is 123.5 for example
+								}
+								$text = str_replace((string) $key_to_substitute, $valuetouseforsubstitution, $text);
 							}
 						}
 					}
@@ -13461,7 +13469,7 @@ function getImageFileNameForSize($file, $extName, $extImgTarget = '')
 		return 'Bad parameter extName';
 	}
 
-	$fileName = preg_replace('/(\.gif|\.jpeg|\.jpg|\.png|\.bmp|\.webp)$/i', '', $file); // We remove image extension, whatever is its case
+	$fileName = preg_replace('/(\.gif|\.jpeg|\.jpg|\.png|\.bmp|\.webp|\.avif)$/i', '', $file); // We remove image extension, whatever is its case
 	$fileName = basename($fileName);
 
 	if (empty($extImgTarget)) {
@@ -13481,6 +13489,9 @@ function getImageFileNameForSize($file, $extName, $extImgTarget = '')
 	}
 	if (empty($extImgTarget)) {
 		$extImgTarget = (preg_match('/\.webp$/i', $file) ? '.webp' : '');
+	}
+	if (empty($extImgTarget)) {
+		$extImgTarget = (preg_match('/\.avif$/i', $file) ? '.avif' : '');
 	}
 
 	if (!$extImgTarget) {
@@ -13600,7 +13611,7 @@ function dolIsAllowedForPreview($file)
 	}
 
 	// Check mime types
-	$mime_preview = array('bmp', 'jpeg', 'png', 'gif', 'tiff', 'pdf', 'plain', 'css', 'webp', 'webm', 'mp4');
+	$mime_preview = array('avif', 'bmp', 'jpeg', 'png', 'gif', 'tiff', 'pdf', 'plain', 'css', 'webp', 'webm', 'mp4');
 	if (getDolGlobalString('MAIN_ALLOW_SVG_FILES_AS_IMAGES')) {
 		$mime_preview[] = 'svg+xml';
 	}
@@ -13881,6 +13892,10 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 		$mime = 'video/webm';
 		$imgmime = 'video.png';
 		$famime = 'file-video';
+	} elseif (preg_match('/\.avif$/i', $tmpfile)) {
+		$mime = 'image/avif';
+		$imgmime = 'image.png';
+		$famime = 'file-image';
 	} elseif (preg_match('/\.avi$/i', $tmpfile)) {
 		$mime = 'video/x-msvideo';
 		$imgmime = 'video.png';
@@ -16774,16 +16789,16 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 				if ($truncateLines > 0 && strlen($histo[$key]['message']) > strlen($truncatedText)) {
 					$out .= '<div class="readmore-block --closed" >';
 					$out .= '	<div class="readmore-block__excerpt">';
-					$out .= 	dolPrintHTML($truncatedText);
+					$out .= 	dolPrintHTML($truncatedText, 0, array('pre', 'code'));
 					$out .= ' 	<br><a class="read-more-link" data-read-more-action="open" href="' . DOL_MAIN_URL_ROOT . '/comm/action/card.php?id=' . $actionstatic->id . '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?' . $param) . '" >' . $langs->trans("ReadMore") . ' <span class="fa fa-chevron-right" aria-hidden="true"></span></a>';
 					$out .= '	</div>';
 					$out .= '	<div class="readmore-block__full-text" >';
-					$out .=  dolPrintHTML($histo[$key]['message']);
+					$out .=  dolPrintHTML($histo[$key]['message'], 0, array('pre', 'code'));
 					$out .= ' 	<a class="read-less-link" data-read-more-action="close" href="#" ><span class="fa fa-chevron-up" aria-hidden="true"></span> ' . $langs->trans("ReadLess") . '</a>';
 					$out .= '	</div>';
 					$out .= '</div>';
 				} else {
-					$out .= dolPrintHTML($histo[$key]['message']);
+					$out .= dolPrintHTML($histo[$key]['message'], 0, array('pre', 'code'));
 				}
 
 				$out .= '</div>';
