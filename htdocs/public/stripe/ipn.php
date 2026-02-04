@@ -157,7 +157,6 @@ if (isModEnabled('multicompany') && !empty($conf->stripeconnect->enabled) && iss
 	$sql .= " FROM ".MAIN_DB_PREFIX."oauth_token";
 	$sql .= " WHERE service = '".$db->escape($service)."' and tokenstring LIKE '%".$db->escape($db->escapeforlike($event->account))."%'";
 
-	dol_syslog(get_class($db)."::fetch");
 	dol_syslog(get_class($db)."::fetch", LOG_DEBUG, 0, '_payment');
 
 	$result = $db->query($sql);
@@ -1175,7 +1174,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 		*/
 		$paiement->paiementid   = dol_getIdFromCode($db, 'PRE', 'c_paiement', 'code', 'id', 1);
 		$paiement->num_payment  = $object->id;	// A string like 'du_...'
-		$paiement->note_private = 'Fund withdrawn by bank with id='.$object->id.'. Reason: '.$reason;
+		$paiement->note_private = 'Fund withdrawn by bank with id='.$object->id.'. Reason: '.$reason.'. A fee of '.$fees.' may have been charged by Stripe.';
 		$paiement->fk_account   = $accountfrom->id;
 
 		$paiement->ext_payment_id   = $object->payment_intent;

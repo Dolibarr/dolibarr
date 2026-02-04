@@ -5,7 +5,7 @@
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2014-2020  Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015  		Benoit Bruchard			<benoitb21@gmail.com>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -247,12 +247,12 @@ class html_cerfafr extends ModeleDon
 	/**
 	 * numbers to letters
 	 *
-	 * @param   mixed   $montant    amount
+	 * @param   mixed   $amount    amount
 	 * @param   string  $devise1    devise 1 ex: euro
 	 * @param   string  $devise2    devise 2 ex: centimes
 	 * @return string               amount in letters
 	 */
-	private function amountToLetters($montant, $devise1 = '', $devise2 = '')
+	private function amountToLetters($amount, $devise1 = '', $devise2 = '')
 	{
 		$unite = array();
 		$dix = array();
@@ -267,19 +267,19 @@ class html_cerfafr extends ModeleDon
 		} else {
 			$dev2 = $devise2;
 		}
-		$valeur_entiere = intval($montant);
-		$valeur_decimal = intval(round($montant - intval($montant), 2) * 100);
-		$dix_c = intval($valeur_decimal % 100 / 10);
-		$cent_c = intval($valeur_decimal % 1000 / 100);
-		$unite[1] = $valeur_entiere % 10;
-		$dix[1] = intval($valeur_entiere % 100 / 10);
-		$cent[1] = intval($valeur_entiere % 1000 / 100);
-		$unite[2] = intval($valeur_entiere % 10000 / 1000);
-		$dix[2] = intval($valeur_entiere % 100000 / 10000);
-		$cent[2] = intval($valeur_entiere % 1000000 / 100000);
-		$unite[3] = intval($valeur_entiere % 10000000 / 1000000);
-		$dix[3] = intval($valeur_entiere % 100000000 / 10000000);
-		$cent[3] = intval($valeur_entiere % 1000000000 / 100000000);
+		$integerAmount = intval($amount);
+		$fractionalAmount = intval(round($amount - intval($amount), 2) * 100);
+		$dix_c = intval($fractionalAmount % 100 / 10);
+		$cent_c = intval($fractionalAmount % 1000 / 100);
+		$unite[1] = $integerAmount % 10;
+		$dix[1] = intval($integerAmount % 100 / 10);
+		$cent[1] = intval($integerAmount % 1000 / 100);
+		$unite[2] = intval($integerAmount % 10000 / 1000);
+		$dix[2] = intval($integerAmount % 100000 / 10000);
+		$cent[2] = intval($integerAmount % 1000000 / 100000);
+		$unite[3] = intval($integerAmount % 10000000 / 1000000);
+		$dix[3] = intval($integerAmount % 100000000 / 10000000);
+		$cent[3] = intval($integerAmount % 1000000000 / 100000000);
 		$chif = array('', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf', 'dix', 'onze', 'douze', 'treize', 'quatorze', 'quinze', 'seize', 'dix sept', 'dix huit', 'dix neuf');
 		$secon_c = '';
 		$trio_c = '';

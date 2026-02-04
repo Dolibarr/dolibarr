@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017-2024  Alexandre Spangaro   <aspangaro@easya.solutions>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -409,8 +409,8 @@ if ($tabname[$id]) {
 	// Line for title
 	print '<tr class="liste_titre">';
 	foreach ($fieldlist as $field => $value) {
-		// Determine le nom du champ par rapport aux noms possibles
-		// dans les dictionnaires de donnees
+		// Determine the field name based on the possible names
+		// in the data dictionaries.
 		$valuetoshow = ucfirst($fieldlist[$field]); // By default
 		$valuetoshow = $langs->trans($valuetoshow); // try to translate
 		$class = "left";
@@ -522,8 +522,8 @@ if ($resql) {
 	// Title of lines
 	print '<tr class="liste_titre liste_titre_add">';
 	foreach ($fieldlist as $field => $value) {
-		// Determine le nom du champ par rapport aux noms possibles
-		// dans les dictionnaires de donnees
+		// Determine the field name based on the possible names
+		// in the data dictionaries.
 		$class = "left";
 		$sortable = 1;
 		$valuetoshow = '';

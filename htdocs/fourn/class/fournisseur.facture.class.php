@@ -12,7 +12,7 @@
  * Copyright (C) 2015-2022	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2016-2026	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022      	Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		Nick Fragoulis
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
@@ -1385,7 +1385,7 @@ class FactureFournisseur extends CommonInvoice
 			$facligne = new SupplierInvoiceLine($this->db);
 			$facligne->fk_facture_fourn = $this->id;
 			$facligne->fk_remise_except = $remise->id;
-			$facligne->desc = $remise->description; // Description ligne
+			$facligne->desc = $remise->description; // Line description
 			$facligne->vat_src_code = $remise->vat_src_code;
 			$facligne->tva_tx = $remise->tva_tx;
 			$facligne->subprice = -(float) $remise->amount_ht;

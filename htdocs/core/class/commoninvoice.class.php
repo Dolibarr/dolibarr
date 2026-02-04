@@ -291,6 +291,13 @@ abstract class CommonInvoice extends CommonObject
 	const CLOSECODE_ABANDONED = 'abandon'; // Abandoned (no payment at all) - other
 	const CLOSECODE_REPLACED = 'replaced'; // Abandoned (no payment at all) - replacedby another invoice (feature disabled by default)
 
+	const ARRAY_OF_DISPUTE_STATUS = array(
+		0 => array('label' => "None"),
+		1 => array('label' => "DisputeOpen"),
+		8 => array('label' => "DisputeLost"),
+		9 => array('label' => "DisputeWon")
+	);
+
 
 	/**
 	 * 	Return remain amount to pay. Property ->id and ->total_ttc must be set.

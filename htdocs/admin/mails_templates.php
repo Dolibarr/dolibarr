@@ -11,7 +11,7 @@
  * Copyright (C) 2011-2016  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2015-2024  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Vincent Maury			<vmaury@timgroup.fr>
  * Copyright (C) 2025		Jon Bendtsen			<jon.bendtsen.github@jonb.dk>
@@ -790,8 +790,8 @@ if ($action == 'create') {
 	// Line to enter new values (title)
 	print '<tr class="liste_titre">';
 	foreach ($fieldlist as $field => $value) {
-		// Determine le nom du champ par rapport aux noms possibles
-		// dans les dictionnaires de donnees
+		// Determine the field name based on the possible names
+		// in the data dictionaries.
 		$valuetoshow = ucfirst($fieldlist[$field]); // Par default
 		$valuetoshow = $langs->trans($valuetoshow); // try to translate
 		$css = "left";
