@@ -75,6 +75,7 @@ if (empty($object) || !is_object($object)) {
 @phan-var-force string $text
 @phan-var-force string $description
 @phan-var-force Object $objp
+@phan-var-force int $i
 ';
 
 // Handle subtotals line view
@@ -127,7 +128,7 @@ $coldisplay = 0;
 <!-- BEGIN PHP TEMPLATE objectline_view.tpl.php -->
 <tr  id="row-<?php print $line->id?>" class="drag drop oddeven" <?php print $domData; ?> >
 <?php if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) { ?>
-	<td class="linecolnum center"><span class="opacitymedium"><?php $coldisplay++; ?><?php print($i + 1); ?></span></td>
+	<td class="linecolnum center"><span class="opacitymedium"><?php $coldisplay++; ?><?php print ($i + 1); ?></span></td>
 <?php } ?>
 	<td class="linecoldescription minwidth300imp"><?php $coldisplay++; ?><div id="line_<?php print $line->id; ?>"></div>
 <?php

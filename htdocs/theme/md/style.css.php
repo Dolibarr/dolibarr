@@ -7117,6 +7117,7 @@ div#ecm-layout-center {
 	top: auto !important;
 	bottom: 4px !important;
 <?php } ?>
+	top: <?php print $disableimages ? '32' : ($heightmenu+4); ?>px;
 	text-align: center;
 	min-width: <?php echo $dol_optimize_smallscreen ? '200' : '480'; ?>px;
 	width: auto;
