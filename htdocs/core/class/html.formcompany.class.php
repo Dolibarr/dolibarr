@@ -313,7 +313,7 @@ class FormCompany extends Form
 				$country = '';
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($result);
-					if ($obj->code == '0') {		// Le code peut etre une chaine
+					if ($obj->code == '0') {		// Code may be a string
 						$out .= '<option value="0">&nbsp;</option>';
 					} else {
 						if (!$country || $country != $obj->country) {

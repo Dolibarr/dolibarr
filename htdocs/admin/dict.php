@@ -1479,7 +1479,11 @@ if ($id > 0) {
 		$sql .= " WHERE 1 = 1";
 	}
 	if ($search_country_id > 0) {
-		$sql .= " AND c.rowid = ".((int) $search_country_id);
+		if ($id == DICT_HRM_PUBLIC_HOLIDAY || $id == DICT_HOLIDAY_TYPES) {
+			$sql .= " AND (c.rowid IS NULL OR c.rowid = 0 OR c.rowid = ".((int) $search_country_id).")";
+		} else {
+			$sql .= " AND c.rowid = ".((int) $search_country_id);
+		}
 	}
 	if ($search_code != '') {
 		$sql .= natural_search($tablecode, $search_code);

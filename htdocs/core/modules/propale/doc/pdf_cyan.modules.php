@@ -2057,7 +2057,7 @@ class pdf_cyan extends ModelePDFPropales
 		if (getDolGlobalString('MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING')) {
 			// Can be retrieve with getSignatureAppearanceArray()
 			// Can be also detected by putting the mouse over the area when using evince pdf reader
-			$pdf->addEmptySignatureAppearance($posx, $tab_top + $tab_hl, $largcol, $tab_hl * 3);
+			$pdf->addEmptySignatureAppearance($posx, $tab_top + $tab_hl + 3, $largcol, $tab_hl * 3);
 		}
 
 		return ($tab_hl * 7);
