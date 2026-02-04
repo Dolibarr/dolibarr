@@ -406,7 +406,7 @@ class pdf_rouget extends ModelePdfExpedition
 					// Notes
 					if (!empty($object->note_public)) {
 						$pdf->SetFont('', '', $default_font_size - 1); // Dans boucle pour gerer multi-page
-						$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top, dol_htmlentitiesbr($object->note_public), 0, 1);
+						$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top, dol_htmlentitiesbr((string) $object->note_public), 0, 1);
 					}
 
 					$nexY = $pdf->GetY();
@@ -436,7 +436,7 @@ class pdf_rouget extends ModelePdfExpedition
 						$result = $module->writeBarCode($object->ref, $encoding);
 
 						// get path of qrcode image
-						$newcode = $object->ref;
+						$newcode = (string) $object->ref;
 						if (!preg_match('/^\w+$/', $newcode) || dol_strlen($newcode) > 32) {
 							$newcode = dol_hash($newcode, 'md5');
 						}

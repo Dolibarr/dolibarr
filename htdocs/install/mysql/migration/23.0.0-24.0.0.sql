@@ -45,6 +45,7 @@ ALTER TABLE llx_actioncomm_reminder ADD INDEX idx_actioncomm_reminder_fk_soc (fk
 ALTER TABLE llx_actioncomm_reminder ADD INDEX idx_actioncomm_reminder_fk_contact (fk_contact);
 ALTER TABLE llx_actioncomm_reminder DROP INDEX uk_actioncomm_reminder_unique;
 ALTER TABLE llx_actioncomm_reminder ADD UNIQUE INDEX uk_actioncomm_reminder_unique(fk_actioncomm, fk_user, fk_soc, fk_contact, typeremind, offsetvalue, offsetunit);
+ALTER TABLE llx_multicurrency_rate ADD COLUMN rate_direct double DEFAULT 0 AFTER rate;
 
 CREATE TABLE llx_accounting_transaction_template (
 	rowid			integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
@@ -102,5 +103,31 @@ ALTER TABLE llx_facture_fourn ADD COLUMN payment_reference varchar(25);
 ALTER TABLE llx_facture_fourn ADD COLUMN dispute_status	integer DEFAULT 0;
 
 ALTER TABLE llx_facture_rec ADD COLUMN fk_email_template integer DEFAULT NULL;
+
+ALTER TABLE llx_holiday_users ADD COLUMN import_key varchar(14);
+
+ALTER TABLE llx_societe ADD COLUMN euid varchar (64);
+
+CREATE TABLE llx_ai_request_log
+(
+  rowid             	  		integer AUTO_INCREMENT PRIMARY KEY,
+  entity				        integer DEFAULT 1 NOT NULL,
+  date_request			    	datetime,
+  fk_user     			    	integer NOT NULL,
+  query_text        	  		text,
+  tool_name     		    	varchar(255),
+  provider   			      	varchar(50),
+  execution_time    	  		float,
+  confidence        	  		float,
+  status            	  		varchar(50),
+  error_msg         	  		text,
+  raw_request_payload   		MEDIUMTEXT,
+  raw_response_payload			MEDIUMTEXT
+)ENGINE=innodb;
+
+ALTER TABLE llx_ai_request_log ADD INDEX idx_ai_request_log_entity (entity);
+ALTER TABLE llx_ai_request_log ADD INDEX idx_ai_request_log_date (date_request);
+ALTER TABLE llx_ai_request_log ADD INDEX idx_ai_request_log_user (fk_user);
+ALTER TABLE llx_ai_request_log ADD INDEX idx_ai_request_log_status (status);
 
 -- end of migration

@@ -1820,7 +1820,7 @@ class pdf_cyan extends ModelePDFPropales
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_client), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities((string) $object->thirdparty->code_client), '', 'R');
 		}
 
 		if (!getDolGlobalString('MAIN_PDF_HIDE_CUSTOMER_ACCOUNTING_CODE') && $object->thirdparty->code_compta_client) {
@@ -2057,7 +2057,7 @@ class pdf_cyan extends ModelePDFPropales
 		if (getDolGlobalString('MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING')) {
 			// Can be retrieve with getSignatureAppearanceArray()
 			// Can be also detected by putting the mouse over the area when using evince pdf reader
-			$pdf->addEmptySignatureAppearance($posx, $tab_top + $tab_hl, $largcol, $tab_hl * 3);
+			$pdf->addEmptySignatureAppearance($posx, $tab_top + $tab_hl + 3, $largcol, $tab_hl * 3);
 		}
 
 		return ($tab_hl * 7);

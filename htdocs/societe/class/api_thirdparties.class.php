@@ -8,6 +8,7 @@
  * Copyright (C) 2024      Jon Bendtsen             <jon.bendtsen.github@jonb.dk>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
  * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
+ * Copyright (C) 2026		Benjamin Falière		<benjamin@faliere.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1167,6 +1168,112 @@ class Thirdparties extends DolibarrApi
 		}
 
 		return $obj_ret;
+	}
+
+	/**
+	 * Create a fixed amount discount for a thirdparty
+	 *
+	 * @param int       $id                 ID of thirdparty
+	 * @param array     $request_data       Request data
+	 *                                      - amount       	float    Amount including tax (required if price_base_type is TTC)
+	 *                                      - description      string   Description of the discount (required)
+	 *                                      - tva_tx           float    VAT rate in percentage (required)
+	 *                                      - discount_type    int      Type of discount: 0 = customer discount, 1 = supplier discount (default: 0)
+	 *                                      - price_base_type  string   Price base type: 'HT' or 'TTC' (default: 'HT')
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
+	 *
+	 * @url     POST {id}/fixedamountdiscounts
+	 *
+	 * @return  int  ID of the created discount
+	 *
+	 * @throws RestException 400 Bad request
+	 * @throws RestException 401 Access not allowed for login
+	 * @throws RestException 404 Thirdparty not found
+	 * @throws RestException 500 Error creating discount
+	 */
+	public function createFixedAmountDiscount($id, $request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'creer')) {
+			throw new RestException(403);
+		}
+
+		// Check mandatory fields
+		if (empty($id)) {
+			throw new RestException(400, 'Thirdparty ID is mandatory');
+		}
+		if (!isset($request_data['amount'])) {
+			throw new RestException(400, 'Missing required field: amount');
+		}
+		if (!isset($request_data['description'])) {
+			throw new RestException(400, 'Missing required field: description');
+		}
+
+		// Check access to resource
+		if (!DolibarrApi::_checkAccessToResource('societe', $id)) {
+			throw new RestException(401, 'Access not allowed for login'.DolibarrApiAccess::$user->login);
+		}
+
+		// Fetch thirdparty to verify it exists
+		if ($this->company->fetch($id) <= 0) {
+			throw new RestException(404, 'Error creating discount, thirdparty not found');
+		}
+
+
+		// Validate amount
+		if (!is_numeric($request_data['amount']) || $request_data['amount'] <= 0) {
+			throw new RestException(400, 'Invalid amount_ht: must be a positive number');
+		}
+		$amount = (float) $request_data['amount'];
+
+		// Validate VAT rate
+		if (isset($request_data['tva_tx']) && (!is_numeric($request_data['tva_tx']) || $request_data['tva_tx'] < 0)) {
+			throw new RestException(400, 'Invalid tva_tx: must be a positive number or zero');
+		}
+		$tva_tx = isset($request_data['tva_tx']) ? (float) $request_data['tva_tx'] : 0;
+
+		// Get price base type (HT or TTC) : HT as default
+		$price_base_type = 'HT';
+		if (isset($request_data['price_base_type'])) {
+			$price_base_type = strtoupper($request_data['price_base_type']);
+			if ($price_base_type !== 'HT' && $price_base_type !== 'TTC') {
+				throw new RestException(400, 'Invalid price_base_type: must be "HT" or "TTC"');
+			}
+		}
+
+		// Get discount type (0 = customer, 1 = supplier): 0 as default
+		$discount_type = 0;
+		if (isset($request_data['discount_type'])) {
+			$discount_type = (int) $request_data['discount_type'];
+			if ($discount_type !== 0 && $discount_type !== 1) {
+				throw new RestException(400, 'Invalid discount_type: must be 0 (customer) or 1 (supplier)');
+			}
+		}
+
+		// Get description
+		$description = $request_data['description'];
+		if (empty(trim($description))) {
+			throw new RestException(400, 'Description cannot be empty');
+		}
+
+		// Prepare VAT rate with code if provided
+		$vatrate = "";
+		if (isset($request_data['vat_src_code']) && !empty($request_data['vat_src_code'])) {
+			$vatrate = $tva_tx . ' (' . $request_data['vat_src_code'] . ')';
+		}
+
+		// Create the discount using Societe::set_remise_except()
+		$this->db->begin();
+
+		$result = $this->company->set_remise_except($amount, DolibarrApiAccess::$user, $description, $vatrate, $discount_type, $price_base_type);
+
+		if ($result > 0) {
+			$this->db->commit();
+			return $result;
+		} else {
+			$this->db->rollback();
+			throw new RestException(500, 'Error creating discount: '.$this->company->error, array_merge(array($this->company->error), $this->company->errors));
+		}
 	}
 
 	/**

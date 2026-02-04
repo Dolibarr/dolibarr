@@ -462,7 +462,7 @@ if (getDolGlobalInt('MAIN_AUTHENTICATION_OIDC_ON', 0) > 0 && isset($conf->file->
 	if (!empty($url)) {
 		print '<a class="alogin" href="'.$url.'">';
 		print '<div class="loginbuttonexternal">';
-		print $langs->trans("LoginUsingOpenID");
+		print getDolGlobalString('MAIN_AUTHENTICATION_OPENID_URL_IMG') ? '<img src="'.getDolGlobalString('MAIN_AUTHENTICATION_OPENID_URL_IMG').'" height="50px" >' : $langs->trans("LoginUsingOpenID");
 		print '</div>';
 		print '</a>';
 	} else {
