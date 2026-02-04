@@ -2,7 +2,7 @@
 /* Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -160,8 +160,8 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 	$linkid = GETPOSTINT('linkid');
 	if ($urlfile) {
 		// delete of a file
-		$dir = dirname($file).'/'; // Chemin du dossier contenant l'image d'origine
-		$dirthumb = $dir.'/thumbs/'; // Chemin du dossier contenant la vignette (if file is an image)
+		$dir = dirname($file).'/'; // Path to the folder containing the original image
+		$dirthumb = $dir.'/thumbs/'; // Path to the folder containing the thumbnail (if file is an image)
 
 		$ret = dol_delete_file($file, 0, 0, 0, (is_object($object) ? $object : null));
 		if (!empty($fileold)) {
@@ -171,7 +171,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 		if ($ret) {
 			// If it exists, remove thumb.
 			$regs = array();
-			if (preg_match('/(\.jpg|\.jpeg|\.bmp|\.gif|\.png|\.tiff)$/i', $file, $regs)) {
+			if (preg_match('/(\.jpg|\.jpeg|\.bmp|\.gif|\.png|\.tiff|\.webp|\.xpm|\.xbm|\.avif)$/i', $file, $regs)) {
 				$photo_vignette = basename(preg_replace('/'.$regs[0].'/i', '', $file).'_small'.$regs[0]);
 				if (file_exists(dol_osencode($dirthumb.$photo_vignette))) {
 					dol_delete_file($dirthumb.$photo_vignette);

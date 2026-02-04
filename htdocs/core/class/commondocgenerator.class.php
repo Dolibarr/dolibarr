@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2012	Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2016-2025  Charlene Benke          <charlene@patas-monkey.com>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  * Copyright (C) 2024-2025	MDW	                    <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Mélina Joum			    <melina.joum@altairis.fr>
@@ -1188,7 +1188,7 @@ abstract class CommonDocGenerator
 	 *  Note that vars into substitutions array are formatted.
 	 *
 	 *	@param  CommonObject						$object				Object with extrafields (must have $object->array_options filled)
-	 *	@param  array<string,?int|?float|?string>	$array_to_fill      Substitution array
+	 *	@param  array<string,null|int|float|string>	$array_to_fill      Substitution array
 	 *  @param  ExtraFields							$extrafields        ExtraFields object
 	 *  @param  string								$array_key	        Prefix for name of the keys into returned array
 	 *  @param  Translate							$outputlangs        Lang object to use for output

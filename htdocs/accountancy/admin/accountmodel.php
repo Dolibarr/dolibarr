@@ -8,11 +8,11 @@
  * Copyright (C) 2011       Remy Younes             <ryounes@gmail.com>
  * Copyright (C) 2012-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2012       Christophe Battarel     <christophe.battarel@ltairis.fr>
- * Copyright (C) 2011-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
+ * Copyright (C) 2011-2026  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2015       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -585,8 +585,7 @@ if ($resql) {
 					'page' => $page,
 					'sortfield' => $sortfield,
 					'sortorder' => $sortorder,
-					'rowid' => (!empty($obj->rowid) ? $obj->rowid : (!empty($obj->code) ? $obj->code : '')),
-					'code' => $obj->code,
+					'rowid' => (!empty($obj->rowid) ? $obj->rowid : '')
 				]);
 
 				// Active

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García	    <marcosgdf@gmail.com>
- * Copyright (C) 2020-2025  Frédéric France		<frederic.france@free.fr>
+ * Copyright (C) 2020-2026  Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -182,7 +182,7 @@ class Opensurveysondage extends CommonObject
 	public $status;
 
 	/**
-	 * @var ?string format 'A' = Text choice (choices are saved into sujet field), 'D' = Date choice (choices are saved into sujet field), 'F' = Form survey
+	 * @var ?string format 'A' = Text choice (choices are saved into 'sujet' field), 'D' = Date choice (choices are saved into 'sujet' field), 'F' = Form survey
 	 */
 	public $format;
 

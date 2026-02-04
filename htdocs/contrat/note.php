@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2017		Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -162,7 +162,7 @@ if ($id > 0 || !empty($ref)) {
 	print '<table class="border centpercent tableforfield">';
 
 
-	// Ligne info remises tiers
+	// Third-party discount info
 	print '<tr><td class="titlefield">'.$langs->trans('Discount').'</td><td colspan="3">';
 	if ($object->thirdparty->remise_percent) {
 		print $langs->trans("CompanyHasRelativeDiscount", $object->thirdparty->remise_percent);
