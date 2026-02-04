@@ -62,7 +62,7 @@ $id = (GETPOSTINT('mailid') ? GETPOSTINT('mailid') : GETPOSTINT('id'));
 
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel', 'alpha');
 $urlfrom = GETPOST('urlfrom');
 $projectid = GETPOSTINT('projectid');
 $backtopage = GETPOST('backtopage');
@@ -833,10 +833,7 @@ if ($action == 'create') {	// aaa
 	}
 	$htmltext .= '</span></i>';
 
-
-	$availablelink = $form->textwithpicto('<span class="opacitymedium hideonsmartphone small">'.$langs->trans("AvailableVariables").'</span>', $htmltext, 1, 'helpclickable', '', 0, 2, 'availvar');
-	//print '<a href="javascript:document_preview(\''.DOL_URL_ROOT.'/admin/modulehelp.php?id='.$objMod->numero.'\',\'text/html\',\''.dol_escape_js($langs->trans("Module")).'\')">'.img_picto($langs->trans("ClickToShowDescription"), $imginfo).'</a>';
-
+	$availablelink = '<span class="opacitymedium hideonsmartphone small">'.$form->textwithpicto($langs->trans("AvailableVariables"), $htmltext, 1, 'helpclickable', '', 0, 2, 'availvar').'</span>';
 
 	// Print mail form
 	print load_fiche_titre($langs->trans("NewMailing"), $availablelink, 'object_email');
@@ -1127,10 +1124,10 @@ if ($action == 'create') {	// aaa
 				$email = CMailFile::getValidAddress($object->email_from, 2);
 				if ($email && !isValidEmail($email)) {
 					$langs->load("errors");
-					print img_warning($langs->trans("ErrorBadEMail", $email));
+					print img_warning($langs->transnoentitiesnoconv("ErrorBadEMail", $email));
 				} elseif ($email && !isValidMailDomain($email)) {
 					$langs->load("errors");
-					print img_warning($langs->trans("ErrorBadMXDomain", $email));
+					print img_warning($langs->transnoentitiesnoconv("ErrorBadMXDomain", $email));
 				}
 			}
 			print '</td></tr>';
@@ -1141,16 +1138,17 @@ if ($action == 'create') {	// aaa
 				print $form->editfieldkey("MailErrorsTo", 'email_errorsto', $object->email_errorsto, $object, (int) ($user->hasRight('mailing', 'creer') && $object->status < $object::STATUS_SENTCOMPLETELY), 'string');
 				print '</td><td>';
 				print $form->editfieldval("MailErrorsTo", 'email_errorsto', $object->email_errorsto, $object, $user->hasRight('mailing', 'creer') && $object->status < $object::STATUS_SENTCOMPLETELY, 'string');
+
 				$emailarray = CMailFile::getArrayAddress($object->email_errorsto);
 				foreach ($emailarray as $email => $name) {
 					if ($name != $email) {
 						if ($action != 'editemail_errorsto') {
 							if ($email && !isValidEmail($email)) {
 								$langs->load("errors");
-								print img_warning($langs->trans("ErrorBadEMail", $email));
+								print img_warning($langs->transnoentitiesnoconv("ErrorBadEMail", $email));
 							} elseif ($email && !isValidMailDomain($email)) {
 								$langs->load("errors");
-								print img_warning($langs->trans("ErrorBadMXDomain", $email));
+								print img_warning($langs->transnoentitiesnoconv("ErrorBadMXDomain", $email));
 							}
 						}
 					} else {
@@ -1386,8 +1384,10 @@ if ($action == 'create') {	// aaa
 			}
 			$htmltext .= '</span></i>';
 
+			$availablelink = '<span class="opacitymedium hideonsmartphone">'.$form->textwithpicto($langs->trans("AvailableVariables"), $htmltext, 1, 'helpclickable', '', 0, 3, 'emailsubstitionhelp').'</span>';
+
 			// Print mail content
-			print load_fiche_titre($langs->trans("EMail"), $form->textwithpicto('<span class="opacitymedium hideonsmartphone">'.$langs->trans("AvailableVariables").'</span>', $htmltext, 1, 'helpclickable', '', 0, 3, 'emailsubstitionhelp'), 'generic');
+			print load_fiche_titre($langs->trans("EMail"), $availablelink, 'generic');
 
 			print dol_get_fiche_head([], '', '', -1);
 
@@ -1589,6 +1589,7 @@ if ($action == 'create') {	// aaa
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="update">';
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
+			print '<input type="hidden" name="page_y" value="">';
 
 			$htmltext = '<i>'.$langs->trans("FollowingConstantsWillBeSubstituted").':<br><br><span class="small">';
 			foreach ($object->substitutionarray as $key => $val) {
@@ -1596,8 +1597,10 @@ if ($action == 'create') {	// aaa
 			}
 			$htmltext .= '</span></i>';
 
+			$availablelink = '<span class="opacitymedium small">'.$form->textwithpicto($langs->trans("AvailableVariables"), $htmltext, 1, 'helpclickable', '', 0, 2, 'emailsubstitionhelp').'</span>';
+
 			// Print mail content
-			print load_fiche_titre($langs->trans("EMail"), '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("AvailableVariables").'</span>', $htmltext, 1, 'help', '', 0, 2, 'emailsubstitionhelp'), 'generic');
+			print load_fiche_titre($langs->trans("EMail"), $availablelink, 'generic');
 
 			print dol_get_fiche_head([], '', '', -1);
 

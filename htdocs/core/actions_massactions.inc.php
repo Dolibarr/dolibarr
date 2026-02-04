@@ -3,7 +3,7 @@
  * Copyright (C) 2018-2021  Nicolas ZABOURI	        <info@inovea-conseil.com>
  * Copyright (C) 2018 	    Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2019 	    Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -427,6 +427,14 @@ if (!$error && $massaction == 'confirm_presend') {
 					if ($objectobj->element == 'invoice_supplier') {
 						$fileparams = dol_most_recent_file($uploaddir.'/'.get_exdir($objectobj->id, 2, 0, 0, $objectobj, $objectobj->element).$objectobj->ref, preg_quote($objectobj->ref, '/').'([^\-])+');
 						$filepath = $fileparams['fullname'];
+					}
+
+					if (getDolGlobalInt('MAIL_MASS_ACTION_SEARCH_MOST_RECENT_FILE_IF_NOT_FOUND') && isset($filepath) && !dol_is_file($filepath)) {
+						$fileparams = dol_most_recent_file($filedir, preg_quote($objectobj->ref, '/') . '([^\-])+' . (getDolGlobalInt('MAIN_ODT_AS_PDF') ? '\.pdf$' : ''));
+						if (isset($fileparams)) {
+							$filepath = $fileparams['fullname'];
+							$filename = $fileparams['name'];
+						}
 					}
 
 					// try to find other files generated for this object (last_main_doc)
@@ -956,7 +964,7 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 		$pagecount = 0;
 		// Add all others
 		foreach ($files as $file) {
-			// Charge un document PDF depuis un fichier.
+			// Load a PDF document from a file.
 			$pagecount = $pdf->setSourceFile($file);
 			for ($i = 1; $i <= $pagecount; $i++) {
 				$tplidx = $pdf->importPage($i);
@@ -1150,7 +1158,7 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 		$result = $objecttmp->fetch($toselectid);
 		if ($result > 0) {
 			// Refuse deletion for some objects/status
-			if ($objectclass == 'Facture' && !getDolGlobalString('INVOICE_CAN_ALWAYS_BE_REMOVED') && $objecttmp->status != Facture::STATUS_DRAFT) {
+			if ($objectclass == 'Facture' && $objecttmp->status != Facture::STATUS_DRAFT) {
 				$langs->load("errors");
 				$nbignored++;
 				$TMsg[] = '<div class="error">'.$langs->trans('ErrorOnlyDraftStatusCanBeDeletedInMassAction', $objecttmp->ref).'</div><br>';
@@ -1226,8 +1234,6 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 	} else {
 		$db->rollback();
 	}
-
-	//var_dump($listofobjectthirdparties);exit;
 }
 
 // Generate document foreach object according to model linked to object
@@ -1314,7 +1320,7 @@ if (!$error && ($action == 'affecttag' && $confirm == 'yes') && $permissiontoadd
 		setEventMessage('CategTypeNotFound', 'errors');
 	}
 	if (!empty($affecttag_type_array)) {
-		//check if tag type submitted exists into Tag Map categorie class
+		// check if tag type submitted exists into Tag Map categorie class
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$categ = new Categorie($db);
 		$to_affecttag_type_array = array();
@@ -1325,14 +1331,12 @@ if (!$error && ($action == 'affecttag' && $confirm == 'yes') && $permissiontoadd
 			}
 		}
 
-		//For each valid categ type set common categ
+		// For each valid categ type set common categ
 		if (!empty($to_affecttag_type_array)) {
 			foreach ($to_affecttag_type_array as $categ_type) {
 				$contcats = GETPOST('contcats_' . $categ_type, 'array');
-				//var_dump($toselect);exit;
 				foreach ($toselect as $toselectid) {
 					$result = $object->fetch($toselectid);
-					//var_dump($contcats);exit;
 					if ($result > 0) {
 						$result = $object->setCategoriesCommon($contcats, $categ_type, false);
 						if ($result > 0) {
@@ -1371,7 +1375,6 @@ if (!$error && ($action == 'updateprice' && $confirm == 'yes') && $permissiontoa
 		} else {
 			foreach ($toselect as $toselectid) {
 				$result = $object->fetch($toselectid);
-				//var_dump($contcats);exit;
 				if ($result > 0) {
 					if (getDolGlobalString('PRODUCT_PRICE_UNIQ')
 							|| getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
@@ -1432,7 +1435,6 @@ if (!$error && ($action == 'setsupervisor' && $confirm == 'yes') && $permissiont
 	if (!empty($supervisortoset)) {
 		foreach ($toselect as $toselectid) {
 			$result = $object->fetch($toselectid);
-			//var_dump($contcats);exit;
 			if ($result > 0) {
 				$object->fk_user = $supervisortoset;
 				$res = $object->update($user);
@@ -1471,7 +1473,6 @@ if (!$error && ($action == 'affectuser' && $confirm == 'yes') && $permissiontoad
 	if (!empty($usertoaffect)) {
 		foreach ($toselect as $toselectid) {
 			$result = $object->fetch($toselectid);
-			//var_dump($contcats);exit;
 			if ($result > 0) {
 				$res = $object->add_contact($usertoaffect, $projectrole, 'internal');
 				if ($res >= 0) {

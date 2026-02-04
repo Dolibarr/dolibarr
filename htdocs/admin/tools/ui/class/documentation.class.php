@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2024        Anthony Damhet        <a.damhet@progiseize.fr>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -252,6 +253,34 @@ class Documentation
 					'submenu' => array(),
 					'summary' => array(),
 				),
+				'UxDolibarrContext' => array(
+					'url' => dol_buildpath($this->baseUrl.'/experimental/experiments/dolibarr-context/index.php', 1),
+					'icon' => 'fas fa-flask',
+					'submenu' => array(
+						'UxDolibarrContextHowItWork' => array(
+							'url' => dol_buildpath($this->baseUrl.'/experimental/experiments/dolibarr-context/index.php', 1),
+							'icon' => 'fas fa-flask',
+							'submenu' => array(),
+							'summary' => array(
+								'Introduction' => '#titlesection-basicusage',
+								'ConsoleHelp' => '#titlesection-console-help',
+								'JSDolibarrhooks' => '#titlesection-hooks',
+								'JSDolibarrhooksReadyVsInit' => '#titlesection-event-init-vs-ready',
+								'JSDolibarrAwaitHooks' => '#titlesection-await-hooks',
+								'ExampleOfCreatingNewContextTool' => '#titlesection-create-tool-example',
+								'SetEventMessageTool' => '#titlesection-tool-seteventmessage',
+								'SetAndUseContextVars' => '#titlesection-contextvars',
+							),
+						),
+						'UxDolibarrContextLangsTool' => array(
+							'url' => dol_buildpath($this->baseUrl.'/experimental/experiments/dolibarr-context/langs-tool.php', 1),
+							'icon' => 'fas fa-flask',
+							'submenu' => array(),
+							'summary' => array(),
+						),
+					),
+					'summary' => array(),
+				),
 			)
 		);
 
@@ -413,7 +442,7 @@ class Documentation
 		$i = 0;
 		$menu_entry = [];
 		if (!empty($this->view)) {
-			// On se place au bon niveau
+			// Set the correct menu depth (level)
 			foreach ($this->view as $view) {
 				$i++;
 				if ($i == 1) {
@@ -470,7 +499,13 @@ class Documentation
 		if ($showsubmenu && !empty($menu['submenu'])) {
 			foreach ($menu['submenu'] as $key => $item) {
 				print '<li class="summary-title ">';
+
+				if (!empty($item['url'])) {
+					print '<h3 class="level-'.$level.'"><a href="'.dolBuildUrl($item['url']).'" >'.$langs->trans($key).'</a></h3>';
+				} else {
 					print '<h3 class="level-'.$level.'">'.$langs->trans($key).'</h3>';
+				}
+
 				if ($showsubmenu_summary) {
 					$this->displaySummary($item, $level);
 				}

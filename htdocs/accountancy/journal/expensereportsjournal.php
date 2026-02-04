@@ -3,7 +3,7 @@
  * Copyright (C) 2007-2010	Jean Heimburger				<jean@tiaris.info>
  * Copyright (C) 2011		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2012		Regis Houssin				<regis.houssin@inodbox.com>
- * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2013-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2013-2016	Olivier Geffroy				<jeff@jeffinfo.com>
  * Copyright (C) 2013-2016	Florian Henry				<florian.henry@open-concept.pro>
  * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
@@ -30,15 +30,6 @@
  * \brief		Page with expense reports journal
  */
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
-require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
-require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
-require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -47,6 +38,14 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("commercial", "compta", "bills", "other", "accountancy", "trips", "errors"));
@@ -356,6 +355,16 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 		if (!$errorforline) {
 			foreach ($tabht[$key] as $k => $mt) {
 				if ($mt) {
+					if (empty($conf->cache['accountingaccountincurrententity'][$k])) {
+						$accountingaccount = new AccountingAccount($db);
+						$accountingaccount->fetch(0, $k, true);
+						$conf->cache['accountingaccountincurrententity'][$k] = $accountingaccount;
+					} else {
+						$accountingaccount = $conf->cache['accountingaccountincurrententity'][$k];
+					}
+
+					$account_label = $accountingaccount->label;
+
 					// get compte id and label
 					if ($accountingaccount->fetch(0, $k, true)) {
 						$bookkeeping = new BookKeeping($db);
@@ -370,9 +379,10 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 						$bookkeeping->subledger_label = '';
 
 						$bookkeeping->numero_compte = $k;
-						$bookkeeping->label_compte = $accountingaccount->label;
+						$bookkeeping->label_compte = $account_label;
 
-						$bookkeeping->label_operation = $bookkeepingstatic->accountingLabelForOperation($userstatic->name, '', $accountingaccount->label);
+						$bookkeeping->label_operation = $bookkeepingstatic->accountingLabelForOperation($userstatic->name, '', $account_label);
+
 						$bookkeeping->montant = $mt;
 						$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
 						$bookkeeping->debit = ($mt > 0) ? $mt : 0;
@@ -418,12 +428,12 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 
 				foreach ($arrayofvat[$key] as $k => $mt) {
 					if ($mt) {
-						if (empty($conf->cache['accountingaccountincurrententity'][$k])) {
+						if (empty($conf->cache['accountingaccountincurrententity_vat'][$k])) {
 							$accountingaccount = new AccountingAccount($db);
 							$accountingaccount->fetch(0, $k, true);
-							$conf->cache['accountingaccountincurrententity'][$k] = $accountingaccount;
+							$conf->cache['accountingaccountincurrententity_vat'][$k] = $accountingaccount;
 						} else {
-							$accountingaccount = $conf->cache['accountingaccountincurrententity'][$k];
+							$accountingaccount = $conf->cache['accountingaccountincurrententity_vat'][$k];
 						}
 
 						$account_label = $accountingaccount->label;

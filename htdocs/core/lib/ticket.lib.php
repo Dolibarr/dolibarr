@@ -3,6 +3,7 @@
  * Copyright (C) 2016		Christophe Battarel	<christophe@altairis.fr>
  * Copyright (C) 2019-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Benjamin Falière	<benjamin@faliere.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -165,8 +166,33 @@ function ticket_prepare_head($object)
 	}
 	$head[$h][1] = $langs->trans('Events');
 	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
+		$nbEvent = 0;
+		// Enable caching of ticket count actioncomm
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+		$cachekey = 'count_events_ticket_'.$object->id;
+		$dataretrieved = dol_getcache($cachekey);
+		if (!is_null($dataretrieved)) {
+			$nbEvent = $dataretrieved;
+		} else {
+			$sql = "SELECT COUNT(id) as nb";
+			$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm";
+			$sql .= " WHERE fk_element = ".((int) $object->id);
+			$sql .= " AND elementtype = 'ticket'";
+			$resql = $db->query($sql);
+			if ($resql) {
+				$obj = $db->fetch_object($resql);
+				$nbEvent = $obj->nb;
+			} else {
+				dol_syslog('Failed to count actioncomm '.$db->lasterror(), LOG_ERR);
+			}
+			dol_setcache($cachekey, $nbEvent, 120);		// If setting cache fails, this is not a problem, so we do not test result.
+		}
+
 		$head[$h][1] .= '/';
 		$head[$h][1] .= $langs->trans("Agenda");
+		if ($nbEvent > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbEvent.'</span>';
+		}
 	}
 	$head[$h][2] = 'tabTicketLogs';
 	$h++;
@@ -217,18 +243,25 @@ function showDirectPublicLink($object)
 }
 
 /**
- *  Generate a random id
+ * Generate a random id
  *
- *  @param  int 	$car 	Length of string to generate key
- *  @return string
+ * @param  int     $car   Length of string to generate key
+ * @return string
  */
 function generate_random_id($car = 16)
 {
 	$string = "";
 	$chaine = "abcdefghijklmnopqrstuvwxyz123456789";
-	mt_srand((int) ((float) microtime() * 1000000));
+	$max = strlen($chaine) - 1;
+
 	for ($i = 0; $i < $car; $i++) {
-		$string .= $chaine[mt_rand() % strlen($chaine)];
+		try {
+			$key = random_int(0, $max);
+		} catch (\Exception $e) {
+			// Fallback. We let PHP makes the seed automatically (no manual mt_srand)
+			$key = mt_rand(0, $max);
+		}
+		$string .= $chaine[$key];
 	}
 	return $string;
 }
@@ -252,6 +285,7 @@ function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $
 
 	print '<body id="mainbody" class="publicnewticketform">';
 	print '<div class="publicnewticketform2 centpercent" style="min-height: 100%;">';
+
 
 	htmlPrintOnlineHeader($mysoc, $langs, (getDolGlobalInt('TICKET_SHOW_COMPANY_LOGO') ? getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', dol_buildpath('/public/ticket/index.php?entity='.$conf->entity, 1)) : '0'), getDolGlobalString('TICKET_PUBLIC_INTERFACE_TOPIC', $langs->trans("TicketSystem")), 'TICKET_IMAGE_PUBLIC_INTERFACE');
 }

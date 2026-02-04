@@ -4,11 +4,11 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2020  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2015-2020  Charlene Benke          <charlie@patas-monkey.com>
+ * Copyright (C) 2015-2025  Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2018       Nicolas ZABOURI	        <info@inovea-conseil.com>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023-2024  William Mead            <william.mead@manchenumerique.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,8 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinterligne.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonsignedobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/subtotals/class/commonsubtotal.class.php';
+
 
 /**
  *	Class to manage interventions
@@ -40,7 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonsignedobject.class.php';
  */
 class Fichinter extends CommonObject
 {
-	use CommonSignedObject;
+	use CommonSignedObject, CommonSubtotal;
 
 	/**
 	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
@@ -52,7 +54,7 @@ class Fichinter extends CommonObject
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'enabled' => 'isModEnabled("societe")', 'visible' => -1, 'notnull' => 1, 'position' => 15),
 		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Project', 'enabled' => 'isModEnabled("project")', 'visible' => -1, 'position' => 20),
-		'fk_contrat' => array('type' => 'integer:Contrat:contrat/class/contrat.class.php', 'label' => 'Contract', 'enabled' => '$conf->contrat->enabled', 'visible' => -1, 'position' => 25),
+		'fk_contrat' => array('type' => 'integer:Contrat:contrat/class/contrat.class.php', 'label' => 'Contract', 'enabled' => 'isModEnabled("contract")', 'visible' => -1, 'position' => 25),
 		'ref' => array('type' => 'varchar(30)', 'label' => 'Ref', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'showoncombobox' => 1, 'position' => 30),
 		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'RefExt', 'enabled' => 1, 'visible' => 0, 'position' => 35),
 		'ref_client' => array('type' => 'varchar(255)', 'label' => 'RefCustomer', 'enabled' => 1, 'visible' => -1, 'position' => 36),
@@ -291,8 +293,6 @@ class Fichinter extends CommonObject
 	 */
 	public function create($user, $notrigger = 0)
 	{
-		global $conf, $langs;
-
 		$error = 0;
 
 		dol_syslog(get_class($this)."::create ref=".$this->ref);
@@ -1448,16 +1448,19 @@ class Fichinter extends CommonObject
 	 *	@param      int		$date_intervention  	Intervention date
 	 *	@param      int		$duration            	Intervention duration
 	 *  @param		array<string,?mixed>	$array_options	Array option
+	 *  @param      int     $type               	Type of line (0=product, other for subtotal).
+	 *  @param      int     $rang                   Position of line
+	 *  @param      int  	$special_code       	Special code for subtotal lines
 	 *	@return    	int             				>0 if ok, <0 if ko
 	 */
-	public function addline($user, $fichinterid, $desc, $date_intervention, $duration, $array_options = [])
+	public function addline($user, $fichinterid, $desc, $date_intervention, $duration, $array_options = [], $type = 0, $rang = -1, $special_code = 0)
 	{
-		dol_syslog(get_class($this)."::addline $fichinterid, $desc, $date_intervention, $duration");
+		dol_syslog(get_class($this)."::addline $fichinterid, $desc, $date_intervention, $duration, $type, $rang, $special_code");
 
 		if ($this->status == self::STATUS_DRAFT) {
 			$this->db->begin();
 
-			// Insertion ligne
+			// Insert line
 			$line = new FichinterLigne($this->db);
 
 			$line->fk_fichinter = $fichinterid;
@@ -1465,6 +1468,10 @@ class Fichinter extends CommonObject
 			$line->date         = $date_intervention;
 			$line->datei        = $date_intervention;	// For backward compatibility
 			$line->duration     = $duration;
+			$line->product_type = $type;
+			$line->rang         = $rang;
+			$line->special_code = $special_code;
+
 
 			if (is_array($array_options) && count($array_options) > 0) {
 				$line->array_options = $array_options;

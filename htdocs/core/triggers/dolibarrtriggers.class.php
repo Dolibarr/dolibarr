@@ -74,6 +74,12 @@ abstract class DolibarrTriggers
 	public $errors;
 
 	/**
+	 * Warnings reported by the trigger
+	 * @var string[]
+	 */
+	public $warnings;
+
+	/**
 	 * @var string module is in development
 	 * @deprecated Use self::VERSIONS
 	 * @see self::VERSIONS
@@ -190,7 +196,7 @@ abstract class DolibarrTriggers
 	 *  All functions "runTrigger" are triggered if file is inside directory htdocs/core/triggers or htdocs/module/code/triggers (and declared)
 	 *
 	 *  @param string       $action     Event action code
-	 *  @param Object       $object     Object
+	 *  @param CommonObject $object     CommonObject
 	 *  @param User         $user       Object user
 	 *  @param Translate    $langs      Object langs
 	 *  @param Conf         $conf       Object conf

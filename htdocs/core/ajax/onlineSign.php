@@ -138,10 +138,12 @@ if ($action == "importSignature") {
 			}
 
 			if (!$error) {
-				$return = file_put_contents($upload_dir . $filename, $data);
-				if ($return == false) {
+				$return = file_put_contents($upload_dir.$filename, $data);
+				if ($return === false) {
 					$error++;
 					$response = 'Error file_put_content: failed to create signature file.';
+				} else {
+					dolChmod($upload_dir.$filename);
 				}
 			}
 
@@ -353,9 +355,11 @@ if ($action == "importSignature") {
 
 			if (!$error) {
 				$return = file_put_contents($upload_dir . $filename, $data);
-				if ($return == false) {
+				if ($return === false) {
 					$error++;
 					$response = 'Error file_put_content: failed to create signature file.';
+				} else {
+					dolChmod($upload_dir.$filename);
 				}
 			}
 
@@ -490,9 +494,11 @@ if ($action == "importSignature") {
 
 			if (!$error) {
 				$return = file_put_contents($upload_dir . $filename, $data);
-				if ($return == false) {
+				if ($return === false) {
 					$error++;
 					$response = 'Error file_put_content: failed to create signature file.';
+				} else {
+					dolChmod($upload_dir.$filename);
 				}
 			}
 
@@ -554,7 +560,7 @@ if ($action == "importSignature") {
 										if (getDolGlobalString("FICHINTER_SIGNATURE_YFORIMGSTART")) {
 											$param['yforimgstart'] = getDolGlobalString("FICHINTER_SIGNATURE_YFORIMGSTART");
 										} else {
-											$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 38);
+											$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 62);
 										}
 										if (getDolGlobalString("FICHINTER_SIGNATURE_WFORIMG")) {
 											$param['wforimg'] = getDolGlobalString("FICHINTER_SIGNATURE_WFORIMG");
@@ -576,7 +582,7 @@ if ($action == "importSignature") {
 								// TODO Get position of box from PDF template
 
 								$param['xforimgstart'] = (empty($s['w']) ? 110 : $s['w'] / 2 - 2);
-								$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 38);
+								$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 62);
 								$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 20);
 
 								dolPrintSignatureImage($pdf, $langs, $param);
@@ -637,9 +643,11 @@ if ($action == "importSignature") {
 
 				if (!$error) {
 					$return = file_put_contents($upload_dir . $filename, $data);
-					if ($return == false) {
+					if ($return === false) {
 						$error++;
 						$response = 'Error file_put_content: failed to create signature file.';
+					} else {
+						dolChmod($upload_dir.$filename);
 					}
 				}
 
@@ -834,9 +842,11 @@ if ($action == "importSignature") {
 
 			if (!$error) {
 				$return = file_put_contents($upload_dir . $filename, $data);
-				if ($return == false) {
+				if ($return === false) {
 					$error++;
 					$response = 'Error file_put_content: failed to create signature file.';
+				} else {
+					dolChmod($upload_dir.$filename);
 				}
 			}
 

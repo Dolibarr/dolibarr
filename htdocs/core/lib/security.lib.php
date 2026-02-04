@@ -5,6 +5,7 @@
  * Copyright (C) 2020	    Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -515,6 +516,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		$tableandshare = 'paiementcharge';
 		$parentfortableentity = 'fk_charge@chargesociales';
 	}
+
 	// if commonObjectLine : Using many2one related commonObject
 	// @see commonObjectLine::parentElement
 	if (in_array($features, ['commandedet', 'propaldet', 'facturedet', 'supplier_proposaldet', 'evaluationdet', 'skilldet', 'deliverydet', 'contratdet'])) {
@@ -526,6 +528,11 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	} elseif ($features == 'invoice_supplier_det_rec') {
 		$features = 'invoice_supplier_rec';
 	}
+	if ($features == 'evaluation') {
+		$features = 'hrm';
+		$feature2 = 'evaluation';
+	}
+
 	// @todo check : project_task
 	// @todo possible ?
 	// elseif (substr($features, -3, 3) == 'det') {
@@ -993,8 +1000,12 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		if ($feature == 'project') {
 			$feature = 'projet';
 		}
-		if ($feature == 'task') {
-			$feature = 'projet_task';
+		if ($feature == 'projet' && !empty($feature2) && is_array($feature2) && !empty(array_intersect(array('project_task', 'projet_task'), $feature2))) {
+			$feature = 'project_task';
+		}
+		if ($feature == 'task' || $feature == 'projet_task') {
+			$feature = 'project_task';
+			$dbtablename = 'projet_task';
 		}
 		if ($feature == 'eventorganization') {
 			$feature = 'agenda';
@@ -1011,14 +1022,14 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		$checkonentitydone = 0;
 
 		// Array to define rules of checks to do
-		$check = array('adherent', 'banque', 'bom', 'don', 'mrp', 'user', 'usergroup', 'payment', 'payment_supplier', 'payment_sc', 'product', 'produit', 'service', 'produit|service', 'categorie', 'resource', 'expensereport', 'holiday', 'salaries', 'website', 'recruitment', 'chargesociales', 'knowledgemanagement'); // Test on entity only (Objects with no link to company)
+		$check = array('adherent', 'banque', 'bom', 'don', 'mrp', 'user', 'usergroup', 'payment', 'payment_supplier', 'payment_sc', 'product', 'produit', 'service', 'produit|service', 'categorie', 'resource', 'expensereport', 'holiday', 'salaries', 'website', 'recruitment', 'chargesociales', 'knowledgemanagement', 'stock'); // Test on entity only (Objects with no link to company)
 		$checksoc = array('societe'); // Test for object Societe
 		$checkparentsoc = array('agenda', 'contact', 'contrat'); // Test on entity + link to third party on field $dbt_keyfield. Allowed if link is empty (Ex: contacts...).
 		$checkproject = array('projet', 'project'); // Test for project object
-		$checktask = array('projet_task'); // Test for task object
-		$checkhierarchy = array('expensereport', 'holiday');	// check permission among the hierarchy of user
+		$checktask = array('projet_task', 'project_task'); // Test for task object
+		$checkhierarchy = array('expensereport', 'holiday', 'hrm');	// check permission among the hierarchy of user
 		$checkuser = array('bookmark');	// check permission among the fk_user (must be myself or null)
-		$nocheck = array('barcode', 'stock', 'webhook'); // No test
+		$nocheck = array('barcode', 'webhook'); // No test
 
 		//$checkdefault = 'all other not already defined'; // Test on entity + link to third party on field $dbt_keyfield. Not allowed if link is empty (Ex: invoice, orders...).
 
@@ -1071,6 +1082,9 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				if ($user->socid != $objectid) {
 					return false;
 				}
+			} elseif (isModEnabled('societe') && !$user->hasRight('societe', 'lire') && !$user->hasRight('societe', 'client', 'voir')) {
+				dol_syslog("security.lib.php::checkUserAccessToObject Deny access due: (isModEnabled('societe') && !user->hasRight('societe', 'lire') && !user->hasRight('societe', 'client', 'voir'))", LOG_DEBUG);
+				return false;
 			} elseif (isModEnabled("societe") && ($user->hasRight('societe', 'lire') && !$user->hasRight('societe', 'client', 'voir'))) {
 				// If internal user: Check permission for internal users that are restricted on their objects
 				$sql = "SELECT COUNT(sc.fk_soc) as nb";
@@ -1155,6 +1169,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 					return false;
 				}
 			} else {
+				$sharedelement = 'project'; // for multicompany compatibility
 				$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 				$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
@@ -1243,6 +1258,20 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 					}
 				}
 			}
+			if ($feature == 'hrm' && in_array('evaluation', $feature2)) {
+				$useridtocheck = $object->fk_user;
+
+				if ($user->hasRight('hrm', 'evaluation', 'readall')) {
+					// the user can view evaluations for anyone
+					return true;
+				}
+				if (!$user->hasRight('hrm', 'evaluation', 'read')) {
+					// the user can't view any evaluations
+					return false;
+				}
+				// the user can only see their own evaluations or their subordinates'
+				return in_array($useridtocheck, $childids);
+			}
 		}
 
 		// For some object, we also have to check it is public or owned by user
@@ -1262,12 +1291,13 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 					return false;
 				}
 			} else {
-				dol_syslog("Bad forged sql in checkUserAccessToObject", LOG_WARNING);
+				dol_syslog("Bad forged sql in security.lib.php::checkUserAccessToObject", LOG_WARNING);
 				return false;
 			}
 		}
 	}
 
+	dol_syslog("security.lib.php::checkUserAccessToObject::return True", LOG_DEBUG);
 	return true;
 }
 
@@ -1433,4 +1463,50 @@ function getMaxFileSizeArray()
 	//var_dump($maxmin);
 
 	return array('max' => $max, 'maxmin' => $maxmin, 'maxphptoshow' => $maxphptoshow, 'maxphptoshowparam' => $maxphptoshowparam);
+}
+
+/**
+ * Check if IP address is in CIDR range
+ *
+ * @param	string		$ip			IP address to check (ex: 192.168.0.50, 2001:db8:3333:4444::5555:6666)
+ * @param	string		$cidr		Network IP CIDR notation (ex: 192.168.0.0/24, 2001:db8:3333:4444::/64)
+ * @return	int						1 if IP is in CIDR range, 0 if IP out of CIDR range, -1 if check error
+ */
+function checkIPInCidr($ip, $cidr)
+{
+	list($network, $prefix) = explode('/', $cidr, 2);
+
+	// Convert IPs to binary format
+	$ip_bin = @inet_pton($ip);
+	$net_bin = @inet_pton($network);
+	if ($ip_bin === false || $net_bin === false) {
+		return -1;
+	}
+
+	// Require same address IPvX family
+	if (strlen($ip_bin) !== strlen($net_bin)) {
+		return -1;
+	}
+
+	// Comparison boundaries
+	$total_bits = strlen($ip_bin) * 8;
+	$prefix = max(0, min((int) $prefix, $total_bits));
+	$full_bytes = intdiv($prefix, 8);
+	$rem_bits = $prefix % 8;
+
+	// Compare full bytes and partial bytes
+	if ($full_bytes > 0) {
+		if (substr($ip_bin, 0, $full_bytes) !== substr($net_bin, 0, $full_bytes)) {
+			return 0;
+		}
+	}
+	if ($rem_bits > 0) {
+		$mask = (0xFF << (8 - $rem_bits)) & 0xFF;
+		$ip_byte = ord($ip_bin[$full_bytes]);
+		$net_byte = ord($net_bin[$full_bytes]);
+		if (($ip_byte & $mask) !== ($net_byte & $mask)) {
+			return 0;
+		}
+	}
+	return 1;
 }

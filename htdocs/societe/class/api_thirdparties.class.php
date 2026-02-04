@@ -2,7 +2,7 @@
 /* Copyright (C) 2015   	Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2018   	Pierre Chéné            <pierre.chene44@gmail.com>
  * Copyright (C) 2019		Cedric Ancelin			<icedo.anc@gmail.com>
- * Copyright (C) 2020-2024  Frédéric France     	<frederic.france@free.fr>
+ * Copyright (C) 2020-2025  Frédéric France     	<frederic.france@free.fr>
  * Copyright (C) 2023       Alexandre Janniaux  	<alexandre.janniaux@gmail.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024      Jon Bendtsen             <jon.bendtsen.github@jonb.dk>
@@ -307,6 +307,17 @@ class Thirdparties extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('societe', 'creer')) {
 			throw new RestException(403);
 		}
+
+		// External api user does not know internal country ID
+		if (!isset($request_data['country_id']) && isset($request_data['country_code'])) {
+			$field = strlen($request_data['country_code']) > 2 ? 'code_iso' : 'code';
+			$id = dol_getIdFromCode($this->db, $request_data['country_code'], "c_country", $field, "rowid");
+			if ($id < 0) {
+				throw new RestException(404, 'Country code not found in database: ' . $this->db->error);
+			}
+			$request_data['country_id'] = $id;
+		}
+
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
 
@@ -314,6 +325,12 @@ class Thirdparties extends DolibarrApi
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->company->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				continue;
+			}
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->company->array_options[$index] = $this->_checkValForAPI('extrafields', $val, $this->company);
+				}
 				continue;
 			}
 
@@ -1077,6 +1094,7 @@ class Thirdparties extends DolibarrApi
 	 * @since	7.0.0	Initial implementation
 	 *
 	 * @param	int		$id				ID of the third party
+	 * @param	string	$mode			'customer' or 'supplier'
 	 * @param	string	$filter			Filter exceptional discount. "none" will return every discount, "available" returns unapplied discounts, "used" returns applied discounts   {@choice none,available,used}
 	 * @param	string	$sortfield		Sort field
 	 * @param	string	$sortorder		Sort order
@@ -1092,7 +1110,7 @@ class Thirdparties extends DolibarrApi
 	 * @throws RestException 404
 	 * @throws RestException 503
 	 */
-	public function getFixedAmountDiscounts($id, $filter = "none", $sortfield = "f.type", $sortorder = 'ASC')
+	public function getFixedAmountDiscounts($id, $mode = 'customer', $filter = "none", $sortfield = "f.type", $sortorder = 'ASC')
 	{
 		$obj_ret = array();
 
@@ -1113,15 +1131,27 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(404, 'Thirdparty not found');
 		}
 
-
-		$sql = "SELECT f.ref, f.type as factype, re.fk_facture_source, re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc, re.description, re.fk_facture, re.fk_facture_line";
-		$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as re, ".MAIN_DB_PREFIX."facture as f";
-		$sql .= " WHERE f.rowid = re.fk_facture_source AND re.fk_soc = ".((int) $id);
-		if ($filter == "available") {
-			$sql .= " AND re.fk_facture IS NULL AND re.fk_facture_line IS NULL";
-		}
-		if ($filter == "used") {
-			$sql .= " AND (re.fk_facture IS NOT NULL OR re.fk_facture_line IS NOT NULL)";
+		$sql = '';
+		if ($mode === 'customer') {
+			$sql = "SELECT f.ref, f.type as factype, re.fk_facture_source, re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc, re.description, re.fk_facture, re.fk_facture_line";
+			$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as re, ".MAIN_DB_PREFIX."facture as f";
+			$sql .= " WHERE f.rowid = re.fk_facture_source AND re.fk_soc = ".((int) $id);
+			if ($filter == "available") {
+				$sql .= " AND re.fk_facture IS NULL AND re.fk_facture_line IS NULL";
+			}
+			if ($filter == "used") {
+				$sql .= " AND (re.fk_facture IS NOT NULL OR re.fk_facture_line IS NOT NULL)";
+			}
+		} elseif ($mode === 'supplier') {
+			$sql = "SELECT f.ref, f.type as factype, re.fk_invoice_supplier_source, re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc, re.description, re.fk_invoice_supplier, re.fk_invoice_supplier_line";
+			$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as re, ".MAIN_DB_PREFIX."facture_fourn as f";
+			$sql .= " WHERE f.rowid = re.fk_invoice_supplier_source AND re.fk_soc = ".((int) $id);
+			if ($filter == "available") {
+				$sql .= " AND re.fk_invoice_supplier IS NULL AND re.fk_invoice_supplier_line IS NULL";
+			}
+			if ($filter == "used") {
+				$sql .= " AND (re.fk_invoice_supplier IS NOT NULL OR re.fk_invoice_supplier_line IS NOT NULL)";
+			}
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -1825,7 +1855,7 @@ class Thirdparties extends DolibarrApi
 		if (empty($account->rum)) {
 			require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 			$prelevement = new BonPrelevement($this->db);
-			$account->rum = $prelevement->buildRumNumber($this->company->code_client, $account->datec, (string) $account->id);
+			$account->rum = $prelevement->buildRumNumber((string) $this->company->code_client, $account->datec, (string) $account->id);
 			$account->date_rum = dol_now();
 		}
 
@@ -1884,7 +1914,7 @@ class Thirdparties extends DolibarrApi
 		if (empty($account->rum)) {
 			require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 			$prelevement = new BonPrelevement($this->db);
-			$account->rum = $prelevement->buildRumNumber($this->company->code_client, $account->datec, (string) $account->id);
+			$account->rum = $prelevement->buildRumNumber((string) $this->company->code_client, $account->datec, (string) $account->id);
 			$account->date_rum = dol_now();
 		}
 
@@ -2479,9 +2509,12 @@ class Thirdparties extends DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
+	 * @phpstan-template T
 	 *
 	 * @param   Object  $object     Object to clean
 	 * @return  Object				Object with cleaned properties
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	protected function _cleanObjectDatas($object)
 	{

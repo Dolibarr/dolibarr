@@ -821,6 +821,11 @@ class ActionComm extends CommonObject
 		$result = $this->create($fuser);
 		if ($result < 0) {
 			$error++;
+		} else {
+			$resultcat = $this->cloneCategories($objFrom->id, $this->id);
+			if ($resultcat < 0) {
+				$error++;
+			}
 		}
 
 		if (!$error) {
@@ -1790,7 +1795,7 @@ class ActionComm extends CommonObject
 	 *  @param	int<0,1>	$overwritepicto			1 = Overwrite picto with this one
 	 *  @param	int<0,1>	$notooltip		    	1 = Disable tooltip
 	 *  @param  int<-1,1>	$save_lastsearch_value  -1 = Auto, 0 = No save of lastsearch_values when clicking, 1 = Save lastsearch_values whenclicking
-	 *  @return	string							Chaine avec URL
+	 *  @return	string							String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $maxlength = 0, $morecss = '', $option = '', $overwritepicto = 0, $notooltip = 0, $save_lastsearch_value = -1)
 	{
@@ -2695,7 +2700,7 @@ class ActionComm extends CommonObject
 				$tmpactioncommreminder = new ActionCommReminder($this->db);
 				$tmpactioncommreminder->id = $obj->id;
 				$tmpactioncommreminder->typeremind = $obj->typeremind;
-				$tmpactioncommreminder->dateremind = $obj->dateremind;
+				$tmpactioncommreminder->dateremind = $this->db->jdate($obj->dateremind);
 				$tmpactioncommreminder->offsetvalue = $obj->offsetvalue;
 				$tmpactioncommreminder->offsetunit = $obj->offsetunit;
 				$tmpactioncommreminder->status = $obj->status;

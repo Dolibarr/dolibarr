@@ -142,7 +142,6 @@ $result = @include_once $conffile; // Keep @ because with some error reporting m
  * @var ?string $dolibarr_main_url_root_alt
  * @var ?string $dolibarr_main_document_root
  * @var ?string $dolibarr_main_document_root_alt
- * @var ?string $dolibarr_main_stream_to_disable
  * @var ?string $dolibarr_main_instance_unique_id
  * @var ?string $dolibarr_strict_mode
  * @var ?string $dolibarr_main_data_root
@@ -316,8 +315,13 @@ if (empty($dolibarr_strict_mode)) {
 
 define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root); // Filesystem core php (htdocs)
 
-if (!file_exists(DOL_DOCUMENT_ROOT."/core/lib/functions.lib.php")) {
-	print "Error: Dolibarr config file content seems to be not correctly defined (file ".DOL_DOCUMENT_ROOT."/core/lib/functions.lib.php not found).<br>\n";
+if (empty(DOL_DOCUMENT_ROOT) || !file_exists(DOL_DOCUMENT_ROOT."/core/lib/functions.lib.php")) {
+	print "Error: Dolibarr config file content seems to be not correctly defined";
+	if (empty($dolibarr_main_document_root)) {
+		print " (dolibarr_main_document_root can't be known).<br>\n";
+	} else {
+		print " (file ".DOL_DOCUMENT_ROOT."/core/lib/functions.lib.php not found).<br>\n";
+	}
 	print "Please run dolibarr setup by calling page <b>/install</b>.<br>\n";
 	exit(1);
 }

@@ -7,7 +7,7 @@
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière		<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -190,6 +190,9 @@ $search_job = GETPOST('search_job', 'alpha');
 $search_warehouse = GETPOST('search_warehouse', 'alpha');
 $search_supervisor = GETPOST('search_supervisor', 'intcomma');
 $search_categ = GETPOST("search_categ", 'intcomma');
+$search_datelastlogin = GETPOSTDATE('search_datelastlogin', '', 'tzuserrel');
+$search_datepreviouslogin = GETPOSTDATE('search_datepreviouslogin', '', 'tzuserrel');
+
 $searchCategoryUserOperator = 0;
 if (GETPOSTISSET('formfilteraction')) {
 	$searchCategoryUserOperator = GETPOSTINT('search_category_user_operator');
@@ -284,9 +287,8 @@ if (empty($reshook)) {
 		$search_warehouse = "";
 		$search_supervisor = "";
 		$search_api_key = "";
-		$search_date_creation = "";
-		$search_date_modification = "";
 		$search_categ = 0;
+		$search_all = '';
 		$toselect = array();
 		$search_array_options = array();
 		if (getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0) {
@@ -1120,9 +1122,9 @@ while ($i < $imaxinloop) {
 			print '<td class="nowraponall tdoverflowmax150">';
 			print $li;
 			if (isModEnabled('multicompany') && $obj->admin && !$obj->entity) {
-				print img_picto($langs->trans("SuperAdministratorDesc"), 'redstar', 'class="valignmiddle paddingright paddingleft"');
+				print img_picto($langs->trans("SuperAdministratorDesc"), 'superadmin', 'class="valignmiddle paddingright paddingleft"');
 			} elseif ($obj->admin) {
-				print img_picto($langs->trans("AdministratorDesc"), 'star', 'class="valignmiddle paddingright paddingleft"');
+				print img_picto($langs->trans("AdministratorDesc"), 'admin', 'class="valignmiddle paddingright paddingleft"');
 			}
 			print '</td>';
 			if (!$i) {
@@ -1194,9 +1196,9 @@ while ($i < $imaxinloop) {
 				$user2->statut = $obj->status2;
 				$user2->status = $obj->status2;
 				if (isModEnabled('multicompany') && $obj->admin2 && !$obj->entity2) {
-					print img_picto($langs->trans("SuperAdministratorDesc"), 'redstar', 'class="valignmiddle paddingright"');
+					print img_picto($langs->trans("SuperAdministratorDesc"), 'superadmin', 'class="valignmiddle paddingright"');
 				} elseif ($obj->admin2) {
-					print img_picto($langs->trans("AdministratorDesc"), 'star', 'class="valignmiddle paddingright"');
+					print img_picto($langs->trans("AdministratorDesc"), 'admin', 'class="valignmiddle paddingright"');
 				}
 				print $user2->getNomUrl(-1, '', 0, 0, 24, 0, '', '', 1);
 			}
@@ -1279,7 +1281,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 		// Multicompany enabled
-		if (isModEnabled('multicompany') && is_object($mc) && !getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
+		if (isModEnabled('multicompany') && isset($mc) && is_object($mc) && !getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 			if (!empty($arrayfields['u.entity']['checked'])) {
 				if (!$obj->entity) {
 					$labeltouse = $langs->trans("AllEntities");

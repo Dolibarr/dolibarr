@@ -7,12 +7,6 @@ parameters:
 			path: ../../../htdocs/accountancy/admin/categories.php
 
 		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 2
-			path: ../../../htdocs/accountancy/admin/categories_list.php
-
-		-
 			message: '#^Loose comparison using \=\= between 32 and 32 will always evaluate to true\.$#'
 			identifier: equal.alwaysTrue
 			count: 1
@@ -37,22 +31,10 @@ parameters:
 			path: ../../../htdocs/accountancy/admin/journals_list.php
 
 		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/accountancy/admin/productaccount.php
-
-		-
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 1
 			path: ../../../htdocs/accountancy/admin/productaccount.php
-
-		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/accountancy/admin/report_list.php
 
 		-
 			message: '#^Loose comparison using \=\= between 45 and 45 will always evaluate to true\.$#'
@@ -451,12 +433,6 @@ parameters:
 			path: ../../../htdocs/admin/emailcollector_card.php
 
 		-
-			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/admin/emailcollector_list.php
-
-		-
 			message: '#^Left side of && is always true\.$#'
 			identifier: booleanAnd.leftAlwaysTrue
 			count: 1
@@ -489,12 +465,6 @@ parameters:
 		-
 			message: '#^Left side of && is always true\.$#'
 			identifier: booleanAnd.leftAlwaysTrue
-			count: 1
-			path: ../../../htdocs/admin/fediverse.php
-
-		-
-			message: '#^Variable \$result might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/admin/fediverse.php
 
@@ -561,12 +531,6 @@ parameters:
 		-
 			message: '#^Variable \$arrayofparameters in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/admin/hrm.php
-
-		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/admin/hrm.php
 
@@ -663,7 +627,7 @@ parameters:
 		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
-			count: 4
+			count: 3
 			path: ../../../htdocs/admin/mails_templates.php
 
 		-
@@ -827,12 +791,6 @@ parameters:
 			identifier: isset.variable
 			count: 1
 			path: ../../../htdocs/admin/security_file.php
-
-		-
-			message: '#^Variable \$smsfile might not be defined\.$#'
-			identifier: variable.undefined
-			count: 5
-			path: ../../../htdocs/admin/sms.php
 
 		-
 			message: '#^Loose comparison using \=\= between ''add'' and ''add'' will always evaluate to true\.$#'
@@ -1037,18 +995,6 @@ parameters:
 			identifier: ternary.alwaysTrue
 			count: 1
 			path: ../../../htdocs/admin/website.php
-
-		-
-			message: '#^Parameter \#1 \$array of function dol_sort_array contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: ../../../htdocs/admin/workflow.php
-
-		-
-			message: '#^Return type of call to function dol_sort_array contains unresolvable type\.$#'
-			identifier: function.unresolvableReturnType
-			count: 1
-			path: ../../../htdocs/admin/workflow.php
 
 		-
 			message: '#^Loose comparison using \=\= between ''edit'' and ''edit'' will always evaluate to true\.$#'
@@ -1313,12 +1259,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/barcode/printsheet.php
-
-		-
-			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/blockedlog/admin/blockedlog_list.php
 
 		-
 			message: '#^Strict comparison using \=\=\= between ''facture'' and ''facture'' will always evaluate to true\.$#'
@@ -1595,30 +1535,6 @@ parameters:
 			identifier: identical.alwaysFalse
 			count: 1
 			path: ../../../htdocs/categories/categorie_list.php
-
-		-
-			message: '#^Method Categorie\:\:get_full_arbo\(\) should return \-1\|array\<int, array\{rowid\: int, id\: int, fk_parent\: int, label\: string, description\: string, color\: string, position\: string, visible\: int, \.\.\.\}\> but returns array\<array\{rowid\: mixed, id\: mixed, fk_parent\: mixed, label\: mixed, description\: mixed, color\: mixed, position\: mixed, visible\: mixed, \.\.\.\}\>\.$#'
-			identifier: return.type
-			count: 1
-			path: ../../../htdocs/categories/class/categorie.class.php
-
-		-
-			message: '#^Parameter \#1 \$array of function dol_sort_array contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: ../../../htdocs/categories/class/categorie.class.php
-
-		-
-			message: '#^Property Categorie\:\:\$cats \(array\<int, array\{rowid\: int, id\: int, fk_parent\: int, label\: string, description\: string, color\: string, position\: string, visible\: int, \.\.\.\}\>\) does not accept array\<array\{rowid\: mixed, id\: mixed, fk_parent\: mixed, label\: mixed, description\: mixed, color\: mixed, position\: mixed, visible\: mixed, \.\.\.\}\>\.$#'
-			identifier: assign.propertyType
-			count: 2
-			path: ../../../htdocs/categories/class/categorie.class.php
-
-		-
-			message: '#^Return type of call to function dol_sort_array contains unresolvable type\.$#'
-			identifier: function.unresolvableReturnType
-			count: 1
-			path: ../../../htdocs/categories/class/categorie.class.php
 
 		-
 			message: '#^If condition is always true\.$#'
@@ -2353,12 +2269,6 @@ parameters:
 			path: ../../../htdocs/compta/accounting-files.php
 
 		-
-			message: '#^Variable \$mc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 5
-			path: ../../../htdocs/compta/accounting-files.php
-
-		-
 			message: '#^Variable \$modulepart might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -2635,12 +2545,6 @@ parameters:
 			path: ../../../htdocs/compta/bank/treso.php
 
 		-
-			message: '#^Variable \$mc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/compta/bank/treso.php
-
-		-
 			message: '#^Call to function is_array\(\) with array will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -2703,7 +2607,7 @@ parameters:
 		-
 			message: '#^Loose comparison using \=\= between ''card'' and ''card'' will always evaluate to true\.$#'
 			identifier: equal.alwaysTrue
-			count: 1
+			count: 2
 			path: ../../../htdocs/compta/cashcontrol/cashcontrol_card.php
 
 		-
@@ -2721,7 +2625,7 @@ parameters:
 		-
 			message: '#^Loose comparison using \=\= between ''create''\|''start'' and ''close'' will always evaluate to false\.$#'
 			identifier: equal.alwaysFalse
-			count: 2
+			count: 1
 			path: ../../../htdocs/compta/cashcontrol/cashcontrol_card.php
 
 		-
@@ -3328,12 +3232,6 @@ parameters:
 			message: '#^Variable \$marginInfo might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
-			path: ../../../htdocs/compta/paiement/card.php
-
-		-
-			message: '#^Variable \$mc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
 			path: ../../../htdocs/compta/paiement/card.php
 
 		-
@@ -5653,12 +5551,6 @@ parameters:
 			path: ../../../htdocs/core/class/html.form.class.php
 
 		-
-			message: '#^Parameter \#1 \$array of function dol_sort_array contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 3
-			path: ../../../htdocs/core/class/html.form.class.php
-
-		-
 			message: '#^Parameter \#15 \$excludeids of method Form\:\:select_company\(\) expects array\<string\>, array\<int\> given\.$#'
 			identifier: argument.type
 			count: 1
@@ -5680,54 +5572,6 @@ parameters:
 			message: '#^Property CommonObject\:\:\$next_prev_filter \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
-			path: ../../../htdocs/core/class/html.form.class.php
-
-		-
-			message: '#^Property Form\:\:\$cache_conditions_paiements has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/html.form.class.php
-
-		-
-			message: '#^Property Form\:\:\$cache_demand_reason has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/html.form.class.php
-
-		-
-			message: '#^Property Form\:\:\$cache_invoice_subtype has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/html.form.class.php
-
-		-
-			message: '#^Property Form\:\:\$cache_transport_mode has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/html.form.class.php
-
-		-
-			message: '#^Property Form\:\:\$cache_types_fees has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/html.form.class.php
-
-		-
-			message: '#^Property Form\:\:\$cache_types_paiements has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/html.form.class.php
-
-		-
-			message: '#^Property Form\:\:\$cache_vatrates has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/html.form.class.php
-
-		-
-			message: '#^Return type of call to function dol_sort_array contains unresolvable type\.$#'
-			identifier: function.unresolvableReturnType
-			count: 3
 			path: ../../../htdocs/core/class/html.form.class.php
 
 		-
@@ -5767,20 +5611,8 @@ parameters:
 			path: ../../../htdocs/core/class/html.formcompany.class.php
 
 		-
-			message: '#^Parameter \#1 \$array of function dol_sort_array contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: ../../../htdocs/core/class/html.formcompany.class.php
-
-		-
 			message: '#^Parameter \#3 \$selected of method Form\:\:multiselectarray\(\) expects array\<string\>, array\<array\<string, int\>\|int\> given\.$#'
 			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/class/html.formcompany.class.php
-
-		-
-			message: '#^Return type of call to function dol_sort_array contains unresolvable type\.$#'
-			identifier: function.unresolvableReturnType
 			count: 1
 			path: ../../../htdocs/core/class/html.formcompany.class.php
 
@@ -6787,7 +6619,7 @@ parameters:
 			path: ../../../htdocs/core/lib/functions2.lib.php
 
 		-
-			message: '#^Call to function function_exists\(\) with ''imagecreatefromgif''\|''imagecreatefromjpeg''\|''imagecreatefrompng''\|''imagecreatefromwbmp''\|''imagecreatefromwebp'' will always evaluate to true\.$#'
+			message: '#^Call to function function_exists\(\) with ''imagecreatefromavif''\|''imagecreatefromgif''\|''imagecreatefromjpeg''\|''imagecreatefrompng''\|''imagecreatefromwbmp''\|''imagecreatefromwebp'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 3
 			path: ../../../htdocs/core/lib/images.lib.php
@@ -6993,7 +6825,7 @@ parameters:
 		-
 			message: '#^Left side of \|\| is always true\.$#'
 			identifier: booleanOr.leftAlwaysTrue
-			count: 4
+			count: 3
 			path: ../../../htdocs/core/menus/standard/eldy.lib.php
 
 		-
@@ -7465,24 +7297,6 @@ parameters:
 			path: ../../../htdocs/core/modules/import/import_csv.modules.php
 
 		-
-			message: '#^Property ModeleImports\:\:\$errors \(array\<string\>\) does not accept array\<array\<string, mixed\>\|string\>\.$#'
-			identifier: assign.propertyType
-			count: 3
-			path: ../../../htdocs/core/modules/import/import_csv.modules.php
-
-		-
-			message: '#^Property ModeleImports\:\:\$errors \(array\<string\>\) does not accept array\<array\<string, string\>\|string\>\.$#'
-			identifier: assign.propertyType
-			count: 3
-			path: ../../../htdocs/core/modules/import/import_csv.modules.php
-
-		-
-			message: '#^Property ModeleImports\:\:\$warnings \(array\<string\>\) does not accept array\<array\<string, mixed\>\|string\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/import/import_csv.modules.php
-
-		-
 			message: '#^Variable \$key might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -7527,24 +7341,6 @@ parameters:
 		-
 			message: '#^Property ImportXlsx\:\:\$nbupdate has no type specified\.$#'
 			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/import/import_xlsx.modules.php
-
-		-
-			message: '#^Property ModeleImports\:\:\$errors \(array\<string\>\) does not accept array\<array\<string, mixed\>\|string\>\.$#'
-			identifier: assign.propertyType
-			count: 3
-			path: ../../../htdocs/core/modules/import/import_xlsx.modules.php
-
-		-
-			message: '#^Property ModeleImports\:\:\$errors \(array\<string\>\) does not accept array\<array\<string, string\>\|string\>\.$#'
-			identifier: assign.propertyType
-			count: 3
-			path: ../../../htdocs/core/modules/import/import_xlsx.modules.php
-
-		-
-			message: '#^Property ModeleImports\:\:\$warnings \(array\<string\>\) does not accept array\<array\<string, mixed\>\|string\>\.$#'
-			identifier: assign.propertyType
 			count: 1
 			path: ../../../htdocs/core/modules/import/import_xlsx.modules.php
 
@@ -8017,12 +7813,6 @@ parameters:
 			path: ../../../htdocs/core/modules/oauth/generic_oauthcallback.php
 
 		-
-			message: '#^Variable \$state might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/modules/oauth/github_oauthcallback.php
-
-		-
 			message: '#^Strict comparison using \=\=\= between null and null will always evaluate to true\.$#'
 			identifier: identical.alwaysTrue
 			count: 2
@@ -8257,12 +8047,6 @@ parameters:
 			path: ../../../htdocs/core/multicompany_page.php
 
 		-
-			message: '#^Variable \$mc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/core/multicompany_page.php
-
-		-
 			message: '#^Negated boolean expression is always false\.$#'
 			identifier: booleanNot.alwaysFalse
 			count: 1
@@ -8347,12 +8131,6 @@ parameters:
 			path: ../../../htdocs/core/tpl/document_actions_post_headers.tpl.php
 
 		-
-			message: '#^Variable \$modulepart might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/core/tpl/document_actions_post_headers.tpl.php
-
-		-
 			message: '#^Variable \$permissiontoadd might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
@@ -8366,12 +8144,6 @@ parameters:
 
 		-
 			message: '#^Variable \$sortorder might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/document_actions_post_headers.tpl.php
-
-		-
-			message: '#^Variable \$upload_dir might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/core/tpl/document_actions_post_headers.tpl.php
@@ -8417,12 +8189,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/core/tpl/filemanager.tpl.php
-
-		-
-			message: '#^Variable \$limit might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/core/tpl/list_print_total.tpl.php
 
 		-
 			message: '#^Variable \$num might not be defined\.$#'
@@ -8531,12 +8297,6 @@ parameters:
 			identifier: function.alreadyNarrowedType
 			count: 1
 			path: ../../../htdocs/core/website.inc.php
-
-		-
-			message: '#^Variable \$mc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/cron/card.php
 
 		-
 			message: '#^Call to function is_array\(\) with array will always evaluate to true\.$#'
@@ -9223,18 +8983,6 @@ parameters:
 			path: ../../../htdocs/fourn/class/fournisseur.commande.class.php
 
 		-
-			message: '#^Call to function property_exists\(\) with \$this\(CommandeFournisseur\) and ''socid'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.commande.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(CommandeFournisseur\) and ''total_tva'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.commande.class.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 2
@@ -9628,12 +9376,6 @@ parameters:
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 2
-			path: ../../../htdocs/fourn/facture/card.php
-
-		-
-			message: '#^Property CommonInvoice\:\:\$subtype \(int\|null\) does not accept string\.$#'
-			identifier: assign.propertyType
-			count: 1
 			path: ../../../htdocs/fourn/facture/card.php
 
 		-
@@ -10317,7 +10059,7 @@ parameters:
 		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
-			count: 12
+			count: 10
 			path: ../../../htdocs/imports/import.php
 
 		-
@@ -10823,18 +10565,6 @@ parameters:
 			identifier: isset.variable
 			count: 1
 			path: ../../../htdocs/main.inc.php
-
-		-
-			message: '#^Parameter \#1 \$array of function dol_sort_array contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: ../../../htdocs/margin/agentMargins.php
-
-		-
-			message: '#^Return type of call to function dol_sort_array contains unresolvable type\.$#'
-			identifier: function.unresolvableReturnType
-			count: 1
-			path: ../../../htdocs/margin/agentMargins.php
 
 		-
 			message: '#^Ternary operator condition is always false\.$#'
@@ -11781,18 +11511,6 @@ parameters:
 		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/product/class/api_products.class.php
-
-		-
-			message: '#^Method Products\:\:getPurchasePrices\(\) should return array\<ProductFournisseur\> but returns object\.$#'
-			identifier: return.type
-			count: 1
-			path: ../../../htdocs/product/class/api_products.class.php
-
-		-
-			message: '#^Parameter \#1 \$object of method Products\:\:_cleanObjectDatas\(\) expects object, array\<ProductFournisseur\>\|int given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/product/class/api_products.class.php
 
@@ -12763,22 +12481,10 @@ parameters:
 			path: ../../../htdocs/projet/card.php
 
 		-
-			message: '#^Parameter \#1 \$object of method Projects\:\:_cleanObjectDatas\(\) expects object, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/projet/class/api_projects.class.php
-
-		-
-			message: '#^Method Tasks\:\:getRoles\(\) should return array\<int, string\> but returns list\<object\>\.$#'
+			message: '#^Method Projects\:\:getRoles\(\) should return array\<object\> but returns list\<string\>\.$#'
 			identifier: return.type
 			count: 1
-			path: ../../../htdocs/projet/class/api_tasks.class.php
-
-		-
-			message: '#^Parameter \#1 \$object of method Tasks\:\:_cleanObjectDatas\(\) expects object, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/projet/class/api_tasks.class.php
+			path: ../../../htdocs/projet/class/api_projects.class.php
 
 		-
 			message: '#^Call to function method_exists\(\) with \$this\(Project\) and ''getLibStatut'' will always evaluate to true\.$#'
@@ -13897,12 +13603,6 @@ parameters:
 			path: ../../../htdocs/public/stripe/ipn.php
 
 		-
-			message: '#^Variable \$mc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/public/stripe/ipn.php
-
-		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
 			count: 1
@@ -14119,18 +13819,6 @@ parameters:
 			path: ../../../htdocs/reception/card.php
 
 		-
-			message: '#^Loose comparison using \=\= between ''''\|''CommandeFournisseur'' and ''commande'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 2
-			path: ../../../htdocs/reception/card.php
-
-		-
-			message: '#^Loose comparison using \=\= between ''''\|''CommandeFournisseur'' and ''propal'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 2
-			path: ../../../htdocs/reception/card.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
@@ -14140,12 +13828,6 @@ parameters:
 			message: '#^Property ReceptionLineBatch\:\:\$batch \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
-			path: ../../../htdocs/reception/card.php
-
-		-
-			message: '#^Result of && is always false\.$#'
-			identifier: booleanAnd.alwaysFalse
-			count: 8
 			path: ../../../htdocs/reception/card.php
 
 		-
@@ -14297,24 +13979,6 @@ parameters:
 			identifier: variable.undefined
 			count: 2
 			path: ../../../htdocs/reception/contact.php
-
-		-
-			message: '#^Loose comparison using \=\= between ''''\|''CommandeFournisseur'' and ''commande'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/reception/dispatch.php
-
-		-
-			message: '#^Loose comparison using \=\= between ''''\|''CommandeFournisseur'' and ''propal'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/reception/dispatch.php
-
-		-
-			message: '#^Result of && is always false\.$#'
-			identifier: booleanAnd.alwaysFalse
-			count: 4
-			path: ../../../htdocs/reception/dispatch.php
 
 		-
 			message: '#^Variable \$objectsrc might not be defined\.$#'
@@ -14773,12 +14437,6 @@ parameters:
 			path: ../../../htdocs/salaries/virement_request.php
 
 		-
-			message: '#^Variable \$mc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/societe/admin/societe.php
-
-		-
 			message: '#^Call to function is_object\(\) with Societe will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -14806,12 +14464,6 @@ parameters:
 			message: '#^Variable \$objcanvas might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
-			path: ../../../htdocs/societe/canvas/company/tpl/card_view.tpl.php
-
-		-
-			message: '#^Variable \$socid might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
 			path: ../../../htdocs/societe/canvas/company/tpl/card_view.tpl.php
 
 		-
@@ -15015,12 +14667,6 @@ parameters:
 		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/societe/paymentmodes.php
-
-		-
-			message: '#^Left side of && is always true\.$#'
-			identifier: booleanAnd.leftAlwaysTrue
 			count: 1
 			path: ../../../htdocs/societe/paymentmodes.php
 
@@ -15691,12 +15337,6 @@ parameters:
 			path: ../../../htdocs/user/card.php
 
 		-
-			message: '#^Variable \$mc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/user/card.php
-
-		-
 			message: '#^Call to function method_exists\(\) with \$this\(User\) and ''getLibStatut'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -15718,12 +15358,6 @@ parameters:
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 3
-			path: ../../../htdocs/user/class/user.class.php
-
-		-
-			message: '#^Parameter \#1 \$array of function dol_sort_array contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
 			path: ../../../htdocs/user/class/user.class.php
 
 		-
@@ -15778,12 +15412,6 @@ parameters:
 			message: '#^Result of \|\| is always true\.$#'
 			identifier: booleanOr.alwaysTrue
 			count: 4
-			path: ../../../htdocs/user/class/user.class.php
-
-		-
-			message: '#^Return type of call to function dol_sort_array contains unresolvable type\.$#'
-			identifier: function.unresolvableReturnType
-			count: 1
 			path: ../../../htdocs/user/class/user.class.php
 
 		-
@@ -15859,12 +15487,6 @@ parameters:
 			path: ../../../htdocs/user/document.php
 
 		-
-			message: '#^Variable \$mc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/user/group/card.php
-
-		-
 			message: '#^Loose comparison using \!\= between '''' and '''' will always evaluate to false\.$#'
 			identifier: notEqual.alwaysFalse
 			count: 1
@@ -15883,34 +15505,10 @@ parameters:
 			path: ../../../htdocs/user/group/list.php
 
 		-
-			message: '#^Variable \$mc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/user/group/list.php
-
-		-
-			message: '#^Variable \$mc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/user/group/perms.php
-
-		-
-			message: '#^Variable \$mc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/user/hierarchy.php
-
-		-
 			message: '#^Variable \$mode in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
 			path: ../../../htdocs/user/hierarchy.php
-
-		-
-			message: '#^Variable \$mc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/user/home.php
 
 		-
 			message: '#^Offset ''u\.salary'' on array\{u\.salary\: \(float\|int\)\} in isset\(\) always exists and is not nullable\.$#'
@@ -15921,12 +15519,6 @@ parameters:
 		-
 			message: '#^Offset ''val'' on array\{val\: array\{u\.salary\: \(float\|int\)\}, nbfield\: int\<0, max\>, pos\?\: non\-empty\-array\<int, ''u\.salary''\>\} in isset\(\) always exists and is not nullable\.$#'
 			identifier: isset.offset
-			count: 1
-			path: ../../../htdocs/user/list.php
-
-		-
-			message: '#^Variable \$mc might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/user/list.php
 
@@ -16171,12 +15763,6 @@ parameters:
 			path: ../../../htdocs/webhook/triggerhistory_list.php
 
 		-
-			message: '#^Loose comparison using \=\= between ''auto'' and ''auto'' will always evaluate to true\.$#'
-			identifier: equal.alwaysTrue
-			count: 1
-			path: ../../../htdocs/webportal/class/context.class.php
-
-		-
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
 			count: 1
@@ -16187,24 +15773,6 @@ parameters:
 			identifier: empty.variable
 			count: 1
 			path: ../../../htdocs/webportal/class/html.formcardwebportal.class.php
-
-		-
-			message: '#^Comparison operation "\<\=" between int\<2, max\> and 1 is always false\.$#'
-			identifier: smallerOrEqual.alwaysFalse
-			count: 1
-			path: ../../../htdocs/webportal/class/html.formlistwebportal.class.php
-
-		-
-			message: '#^Offset ''total'' on \*NEVER\* in isset\(\) always exists and is not nullable\.$#'
-			identifier: isset.offset
-			count: 1
-			path: ../../../htdocs/webportal/class/html.formlistwebportal.class.php
-
-		-
-			message: '#^Result of && is always false\.$#'
-			identifier: booleanAnd.alwaysFalse
-			count: 1
-			path: ../../../htdocs/webportal/class/html.formlistwebportal.class.php
 
 		-
 			message: '#^Call to function is_array\(\) with list\<string\> will always evaluate to true\.$#'

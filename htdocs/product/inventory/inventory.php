@@ -49,7 +49,7 @@ $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'inventorycard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $listoffset = GETPOST('listoffset', 'alpha');
@@ -72,9 +72,9 @@ $totalExpectedValuation = 0;
 $totalRealValuation = 0;
 $hookmanager->initHooks(array('inventorycard')); // Note that conf->hooks_modules contains array
 if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
-	$result = restrictedArea($user, 'stock', $id);
+	$result = restrictedArea($user, 'stock', $id, 'inventory&stock');
 } else {
-	$result = restrictedArea($user, 'stock', $id, '', 'inventory_advance');
+	$result = restrictedArea($user, 'stock', $id, 'inventory&stock', 'inventory_advance');
 }
 
 // Initialize a technical objects
@@ -89,6 +89,10 @@ if (!$sortfield) {
 if (!$sortorder) {
 	$sortorder = "ASC";
 }
+
+// Sort by warehouse/product or product/warehouse, then by batch.
+$sortfield .= ',' . ($sortfield == 'e.ref' ? 'p.ref' : 'e.ref') . ',id.batch,id.rowid';
+$sortorder .= ',' . $sortorder.",ASC,ASC";
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -293,8 +297,10 @@ if (empty($reshook)) {
 		$sql = 'SELECT id.rowid, id.datec as date_creation, id.tms as date_modification, id.fk_inventory, id.fk_warehouse,';
 		$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'inventorydet as id';
+		$sql .= ' LEFT JOIN ' . $db->prefix() . 'product as p ON id.fk_product = p.rowid';
+		$sql .= ' LEFT JOIN ' . $db->prefix() . 'entrepot as e ON id.fk_warehouse = e.rowid';
 		$sql .= ' WHERE id.fk_inventory = '.((int) $object->id);
-		$sql .= $db->order('id.rowid', 'ASC');
+		$sql .= $db->order($sortfield, $sortorder);
 		$sql .= $db->plimit($limit, $offset);
 
 		$db->begin();
@@ -1038,10 +1044,6 @@ if ($object->status == $object::STATUS_DRAFT || $object->status == $object::STAT
 	print '</td>';
 	print '</tr>';
 }
-
-// Sort by warehouse/product or product/warehouse
-$sortfield .= ',' . ($sortfield == 'e.ref' ? 'p.ref' : 'e.ref');
-$sortorder .= ',' . $sortorder;
 
 // Request to show lines of inventory (prefilled after start/validate step)
 $sql = 'SELECT id.rowid, id.datec as date_creation, id.tms as date_modification, id.fk_inventory, id.fk_warehouse,';

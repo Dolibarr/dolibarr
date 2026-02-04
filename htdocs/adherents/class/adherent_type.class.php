@@ -6,7 +6,7 @@
  * Copyright (C) 2018-2019  Thibault Foucart		<support@ptibogxiv.net>
  * Copyright (C) 2021     	Waël Almoman            <info@almoman.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -111,8 +111,10 @@ class AdherentType extends CommonObject
 		"rowid" => array("type" => "integer", "label" => "Ref", "enabled" => "1", 'position' => 10, 'notnull' => 1, "visible" => "1",),
 		"libelle" => array("type" => "varchar(50)", "label" => "Label", "enabled" => "1", 'position' => 30, 'notnull' => 1, "visible" => "1", "showoncombobox" => 1),
 		"subscription" => array("type" => "varchar(3)", "label" => "Subscription", "enabled" => "1", 'position' => 35, 'notnull' => 1, "visible" => "1",),
-		"amount" => array("type" => "double(24,8)", "label" => "Amount", "enabled" => "1", 'position' => 40, 'notnull' => 0, "visible" => "1",),
-		"caneditamount" => array("type" => "integer", "label" => "Caneditamount", "enabled" => "1", 'position' => 45, 'notnull' => 0, "visible" => "1",),
+		"caneditamount" => array("type" => "integer", "label" => "Caneditamount", "enabled" => "1", 'position' => 40, 'notnull' => 0, "visible" => "1",),
+		"minimumamount" => array("type" => "double(24,8)", "label" => "MinimumAmount", "enabled" => "1", 'position' => 42, 'notnull' => 0, "visible" => "1",),
+		"amount" => array("type" => "double(24,8)", "label" => "Amount", "enabled" => "1", 'position' => 45, 'notnull' => 0, "visible" => "1",),
+		"amountformuladescription" => array("type" => "longtext", "label" => "AmountFormulaDescription", "enabled" => "1", 'position' => 46, 'notnull' => 0, "visible" => "1",),
 		"vote" => array("type" => "varchar(3)", "label" => "Vote", "enabled" => "1", 'position' => 50, 'notnull' => 1, "visible" => "-1",),
 		"mail_valid" => array("type" => "longtext", "label" => "MailValidation", "enabled" => "1", 'position' => 60, 'notnull' => 0, "visible" => "-3",),
 		"morphy" => array("type" => "varchar(3)", "label" => "MembersNature", "enabled" => "1", 'position' => 65, 'notnull' => 0, "visible" => "1",),
@@ -161,14 +163,24 @@ class AdherentType extends CommonObject
 	public $subscription;
 
 	/**
+	 * @var int Amount can be chosen by the visitor during subscription (0 or 1)
+	 */
+	public $caneditamount;
+
+	/**
+	 * @var float|string    Minimum Amount for subscription (null or '' means not defined)
+	 */
+	public $minimumamount;
+
+	/**
 	 * @var float|string 	Amount for subscription (null or '' means not defined)
 	 */
 	public $amount;
 
 	/**
-	 * @var int Amount can be chosen by the visitor during subscription (0 or 1)
+	 * @var string  Describe the subscription amount formula to follow
 	 */
-	public $caneditamount;
+	public $amountformuladescription;
 
 	/**
 	 * @var string 	Public note
@@ -273,7 +285,7 @@ class AdherentType extends CommonObject
 		if ($result) {
 			while ($obj = $this->db->fetch_object($result)) {
 				//print 'lang='.$obj->lang.' current='.$current_lang.'<br>';
-				if ($obj->lang == $current_lang) {  // si on a les traduct. dans la langue courante on les charge en infos principales.
+				if ($obj->lang == $current_lang) {  // if we have the translations in the current language, we load them as main information.
 					$this->label        = $obj->label;
 					$this->description = $obj->description;
 					$this->email        = $obj->email;
@@ -495,8 +507,10 @@ class AdherentType extends CommonObject
 		$sql .= "libelle = '".$this->db->escape($this->label)."',";
 		$sql .= "morphy = '".$this->db->escape($this->morphy)."',";
 		$sql .= "subscription = '".$this->db->escape((string) $this->subscription)."',";
-		$sql .= "amount = ".((empty($this->amount) && $this->amount == '') ? "null" : ((float) $this->amount)).",";
 		$sql .= "caneditamount = ".((int) $this->caneditamount).",";
+		$sql .= "minimumamount = ".((empty($this->minimumamount) && $this->minimumamount == '') ? "null" : ((float) $this->minimumamount)).",";
+		$sql .= "amount = ".((empty($this->amount) && $this->amount == '') ? "null" : ((float) $this->amount)).",";
+		$sql .= "amountformuladescription = '".$this->db->escape($this->amountformuladescription)."',";
 		$sql .= "duration = '".$this->db->escape($this->duration_value.$this->duration_unit)."',";
 		$sql .= "note = '".$this->db->escape($this->note_public)."',";
 		$sql .= "vote = ".(int) $this->db->escape((string) $this->vote).",";
@@ -586,7 +600,7 @@ class AdherentType extends CommonObject
 	 */
 	public function fetch($rowid)
 	{
-		$sql = "SELECT d.rowid, d.libelle as label, d.morphy, d.statut as status, d.duration, d.subscription, d.amount, d.caneditamount, d.mail_valid, d.note as note_public, d.vote";
+		$sql = "SELECT d.rowid, d.libelle as label, d.morphy, d.statut as status, d.duration, d.subscription, d.caneditamount, d.minimumamount, d.amount, d.amountformuladescription, d.mail_valid, d.note as note_public, d.vote";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
 		$sql .= " WHERE d.rowid = ".(int) $rowid;
 
@@ -606,8 +620,10 @@ class AdherentType extends CommonObject
 				$this->duration_value = (int) substr($obj->duration, 0, dol_strlen($obj->duration) - 1);
 				$this->duration_unit  = substr($obj->duration, -1);
 				$this->subscription   = $obj->subscription;
-				$this->amount         = $obj->amount;
 				$this->caneditamount  = $obj->caneditamount;
+				$this->minimumamount  = $obj->minimumamount;
+				$this->amount         = $obj->amount;
+				$this->amountformuladescription  = $obj->amountformuladescription;
 				$this->mail_valid     = $obj->mail_valid;
 				$this->note           = $obj->note_public;	// deprecated
 				$this->note_public    = $obj->note_public;
@@ -674,7 +690,7 @@ class AdherentType extends CommonObject
 	 *  Return the array of all amounts per membership type id
 	 *
 	 *  @param	int		$status			Filter on status of type
-	 *  @return array<int,string>		Array of membership type
+	 *  @return array<int,float>		Array of membership type
 	 */
 	public function amountByType($status = null)
 	{
@@ -696,7 +712,7 @@ class AdherentType extends CommonObject
 				while ($i < $nump) {
 					$obj = $this->db->fetch_object($resql);
 
-					$amountbytype[$obj->rowid] = $obj->amount;
+					$amountbytype[$obj->rowid] = (float) $obj->amount;
 					$i++;
 				}
 			}
@@ -780,6 +796,80 @@ class AdherentType extends CommonObject
 		}
 
 		return $caneditamountbytype;
+	}
+
+	/**
+	 *  Return the array of all minimum amounts per membership type id
+	 *
+	 *  @param      int             $status                 Filter on status of type
+	 *  @return array<int,float>            Array of membership type
+	 */
+	public function minimumAmountByType($status = null)
+	{
+		$minimumamountbytype = array();
+
+		$sql = "SELECT rowid, minimumamount";
+		$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type";
+		$sql .= " WHERE entity IN (".getEntity('member_type').")";
+		if ($status !== null) {
+			$sql .= " AND statut = ".((int) $status);
+		}
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$nump = $this->db->num_rows($resql);
+
+			if ($nump) {
+				$i = 0;
+				while ($i < $nump) {
+					$obj = $this->db->fetch_object($resql);
+
+					$minimumamountbytype[$obj->rowid] = (float) $obj->minimumamount;
+					$i++;
+				}
+			}
+		} else {
+			print $this->db->error();
+		}
+
+		return $minimumamountbytype;
+	}
+
+	/**
+	 *  Return the array of all amount formula's descriptions per membership type id
+	 *
+	 *  @param      int             $status                 Filter on status of type
+	 *  @return array<int,float>            Array of membership type
+	 */
+	public function amountFormulaDescriptionByType($status = null)
+	{
+		$amountformuladescriptionbytype = array();
+
+		$sql = "SELECT rowid, amountformuladescription";
+		$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type";
+		$sql .= " WHERE entity IN (".getEntity('member_type').")";
+		if ($status !== null) {
+			$sql .= " AND statut = ".((int) $status);
+		}
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$nump = $this->db->num_rows($resql);
+
+			if ($nump) {
+				$i = 0;
+				while ($i < $nump) {
+					$obj = $this->db->fetch_object($resql);
+
+					$amountformuladescriptionbytype[$obj->rowid] = $obj->amountformuladescription;
+					$i++;
+				}
+			}
+		} else {
+			print $this->db->error();
+		}
+
+		return $amountformuladescriptionbytype;
 	}
 
 	/**
@@ -1002,7 +1092,7 @@ class AdherentType extends CommonObject
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
+	 *	Returns full DN description in LDAP directory format for the object
 	 *
 	 *	@param	array<string,mixed>	$info	Info array loaded by _load_ldap_info
 	 *	@param	int<0,2>	$mode	0=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
@@ -1183,7 +1273,7 @@ class AdherentType extends CommonObject
 		//$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 
 		if ($user->hasRight('adherent', 'configurer')) {
-			$return .= '<span class="right paddingleft"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.urlencode($this->ref).'">'.img_edit().'</a></span>';
+			$return .= '<span class="right paddingleft"><a class="editfielda showonhover" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.urlencode($this->ref).'">'.img_edit().'</a></span>';
 		} else {
 			$return .= '<span class="right">&nbsp;</span>';
 		}

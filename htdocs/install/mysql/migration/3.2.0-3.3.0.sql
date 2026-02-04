@@ -1,7 +1,7 @@
 --
 -- Be carefull to requests order.
 -- This file must be loaded by calling /install/index.php page
--- when current version is 3.2.0 or higher. 
+-- when current version is 3.2.0 or higher.
 --
 -- To rename a table:       ALTER TABLE llx_table RENAME TO llx_table_new;
 -- To add a column:         ALTER TABLE llx_table ADD COLUMN newcol varchar(60) NOT NULL DEFAULT '0' AFTER existingcol;
@@ -40,7 +40,7 @@ ALTER TABLE llx_societe DROP COLUMN services;
 ALTER TABLE llx_societe MODIFY COLUMN ref_ext varchar(128);
 
 ALTER TABLE llx_bank ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP after datec;
-  
+
 -- Monaco VAT Rates
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 271,  27,'19.6','0','VAT standard rate (France hors DOM-TOM)',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 272,  27, '8.5','0','VAT standard rate (DOM sauf Guyane et Saint-Martin)',0);
@@ -122,32 +122,32 @@ create table llx_element_tag
   tag				varchar(255) NOT NULL,
   fk_element		integer NOT NULL,
   element			varchar(64) NOT NULL
-  
+
 )ENGINE=innodb;
 
 ALTER TABLE llx_element_tag ADD UNIQUE INDEX uk_element_tag (entity, lang, tag, fk_element, element);
 
 
-CREATE TABLE llx_holiday_config 
+CREATE TABLE llx_holiday_config
 (
 rowid    integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
 name     varchar(255) NOT NULL UNIQUE,
 value    text NULL
-) 
+)
 ENGINE=innodb;
 
-CREATE TABLE llx_holiday_events 
+CREATE TABLE llx_holiday_events
 (
 rowid    integer NOT NULL PRIMARY KEY AUTO_INCREMENT,
 entity   integer DEFAULT 1 NOT NULL,
 name     varchar(255) NOT NULL,
 value    text NOT NULL
-) 
+)
 ENGINE=innodb;
 ALTER TABLE llx_holiday_events ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
 ALTER TABLE llx_holiday_events ADD UNIQUE INDEX uk_holiday_name (name, entity);
 
-CREATE TABLE llx_holiday_logs 
+CREATE TABLE llx_holiday_logs
 (
 rowid             integer NOT NULL AUTO_INCREMENT PRIMARY KEY ,
 date_action       datetime NOT NULL ,
@@ -156,18 +156,18 @@ fk_user_update    integer NOT NULL ,
 type_action       varchar(255) NOT NULL ,
 prev_solde        varchar(255) NOT NULL ,
 new_solde         varchar(255) NOT NULL
-) 
+)
 ENGINE=innodb;
 
-CREATE TABLE llx_holiday_users 
+CREATE TABLE llx_holiday_users
 (
 fk_user     integer NOT NULL PRIMARY KEY,
 nb_holiday  real NOT NULL DEFAULT '0'
-) 
+)
 ENGINE=innodb;
 ALTER TABLE llx_holiday_users MODIFY COLUMN nb_holiday real NOT NULL DEFAULT '0';
 
-CREATE TABLE llx_holiday 
+CREATE TABLE llx_holiday
 (
 rowid          integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
 fk_user        integer NOT NULL ,
@@ -185,7 +185,7 @@ fk_user_refuse integer DEFAULT NULL ,
 date_cancel    datetime DEFAULT NULL ,
 fk_user_cancel integer DEFAULT NULL,
 detail_refuse  varchar(250) DEFAULT NULL
-) 
+)
 ENGINE=innodb;
 ALTER TABLE llx_holiday ADD COLUMN halfday        integer DEFAULT 0 after date_fin;
 
@@ -767,7 +767,7 @@ insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype,
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (412,'PCG99-BASE','PROD',  'XXXXXX',   '753','75', 'Jetons de présence et rémunérations d''administrateurs, gérants,...', '1');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (413,'PCG99-BASE','PROD',  'XXXXXX',   '754','75', 'Ristournes perçues des coopératives (provenant des excédents)', '1');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (414,'PCG99-BASE','PROD',  'XXXXXX',   '755','75', 'Quotes-parts de résultat sur opérations faites en commun', '1');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (415,'PCG99-BASE','PROD',  'XXXXXX',   '758','75', 'Produits divers de gestion courante', '1'); 
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (415,'PCG99-BASE','PROD',  'XXXXXX',   '758','75', 'Produits divers de gestion courante', '1');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (416,'PCG99-BASE','PROD',  'XXXXXX',    '76', '7', 'Produits financiers', '1');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (417,'PCG99-BASE','PROD',  'XXXXXX',   '761','76', 'Produits de participations', '1');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (418,'PCG99-BASE','PROD',  'XXXXXX',   '762','76', 'Produits des autres immobilisations financières', '1');
@@ -776,17 +776,17 @@ insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype,
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (421,'PCG99-BASE','PROD',  'XXXXXX',   '765','76', 'Escomptes obtenus', '1');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (422,'PCG99-BASE','PROD',  'XXXXXX',   '766','76', 'Gains de change', '1');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (423,'PCG99-BASE','PROD',  'XXXXXX',   '767','76', 'Produits nets sur cessions de valeurs mobilières de placement', '1');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (424,'PCG99-BASE','PROD',  'XXXXXX',   '768','76', 'Autres produits financiers', '1'); 
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (424,'PCG99-BASE','PROD',  'XXXXXX',   '768','76', 'Autres produits financiers', '1');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (425,'PCG99-BASE','PROD',  'XXXXXX',    '77', '7', 'Produits exceptionnels', '1');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (426,'PCG99-BASE','PROD',  'XXXXXX',   '771','77', 'Produits exceptionnels sur opérations de gestion', '1');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (427,'PCG99-BASE','PROD',  'XXXXXX',   '772','77', '(Compte à la disposition des entités pour enregistrer, en cours d''exercice, les produits sur exercices antérieurs)', '1');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (428,'PCG99-BASE','PROD',  'XXXXXX',   '775','77', 'Produits des cessions d''éléments d''actif', '1');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (429,'PCG99-BASE','PROD',  'XXXXXX',   '777','77', 'Quote-part des subventions d''investissement virée au résultat de l''exercice', '1');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (430,'PCG99-BASE','PROD',  'XXXXXX',   '778','77', 'Autres produits exceptionnels', '1'); 
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (430,'PCG99-BASE','PROD',  'XXXXXX',   '778','77', 'Autres produits exceptionnels', '1');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (431,'PCG99-BASE','PROD',  'XXXXXX',    '78', '7', 'Reprises sur amortissements et provisions', '1');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (432,'PCG99-BASE','PROD',  'XXXXXX',   '781','78', 'Reprises sur amortissements et provisions (à inscrire dans les produits d''exploitation)', '1');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (433,'PCG99-BASE','PROD',  'XXXXXX',   '786','78', 'Reprises sur provisions pour risques (à inscrire dans les produits financiers)', '1');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (434,'PCG99-BASE','PROD',  'XXXXXX',   '787','78', 'Reprises sur provisions (à inscrire dans les produits exceptionnels)', '1'); 
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (434,'PCG99-BASE','PROD',  'XXXXXX',   '787','78', 'Reprises sur provisions (à inscrire dans les produits exceptionnels)', '1');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (435,'PCG99-BASE','PROD',  'XXXXXX',    '79', '7', 'Transferts de charges', '1');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (436,'PCG99-BASE','PROD',  'XXXXXX',   '791','79', 'Transferts de charges d''exploitation ', '1');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (437,'PCG99-BASE','PROD',  'XXXXXX',   '796','79', 'Transferts de charges financières', '1');
@@ -794,7 +794,7 @@ insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype,
 
 -- Add discount in product supplier price
 ALTER TABLE llx_product_fournisseur_price ADD COLUMN remise_percent DOUBLE NOT NULL DEFAULT 0 AFTER quantity;
-ALTER TABLE llx_product_fournisseur_price ADD COLUMN remise DOUBLE NOT NULL DEFAULT 0 AFTER remise_percent; 
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN remise DOUBLE NOT NULL DEFAULT 0 AFTER remise_percent;
 
 -- Stock calculation on product
 UPDATE llx_product p SET p.stock= (SELECT SUM(ps.reel) FROM llx_product_stock ps WHERE ps.fk_product = p.rowid);

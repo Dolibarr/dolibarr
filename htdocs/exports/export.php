@@ -144,6 +144,7 @@ $entitytolang = array(
 	'bomline'      => 'BOMLine',
 	'mrp'          => 'ManufacturingOrder',
 	'mrp_line'     => 'ManufacturingOrderLine',
+	'conferenceorbooth' => 'ConferenceOrBooth',
 	'conferenceorboothattendee' => 'Attendee',
 	'inventory'   => 'Inventory',
 	'inventory_line' => 'InventoryLine'
@@ -810,23 +811,21 @@ if ($step == 3 && $datatoexport) {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Entities").'</td>';
-	//print '<td>'.$langs->trans("ExportableFields").'</td>';
-	//print '<td class="center"></td>';
 	print '<td>'.$langs->trans("ExportableFields").'</td>';
 	print '<td width="25%">'.$langs->trans("FilteredFieldsValues").'</td>';
 	print '</tr>';
 
-	// Champs exportables
+	// Field we can export
 	$fieldsarray = $objexport->array_export_fields[0];
-	// Champs filtrable
+	// Field that can be filtered
 	$Typefieldsarray = $objexport->array_export_TypeFields[0];
-	// valeur des filtres
+	// Value of filters
 	$ValueFiltersarray = (!empty($objexport->array_export_FilterValue[0]) ? $objexport->array_export_FilterValue[0] : '');
 	// Select request if all fields are selected
 	$sqlmaxforexport = $objexport->build_sql(0, array(), array());
 
 	$i = 0;
-	// on boucle sur les champs
+	// We loop on fields
 	foreach ($fieldsarray as $code => $label) {
 		print '<tr class="oddeven">';
 
@@ -1023,6 +1022,7 @@ if ($step == 4 && $datatoexport) {
 	// Select request if all fields are selected
 	$sqlmaxforexport = $objexport->build_sql(0, array(), array());
 
+	print '<br>';
 	print '<div class="marginbottomonly"><span class="opacitymedium">'.$langs->trans("ChooseFieldsOrdersAndTitle").'</span></div>';
 
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
@@ -1249,7 +1249,7 @@ if ($step == 5 && $datatoexport) {
 	print dol_get_fiche_head($head, $hselected, 'Export', -2, 'download');
 
 	/*
-	 * Confirmation suppression fichier
+	 * Confirmation of deletion of file
 	 */
 	if ($action == 'remove_file') {
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?step=5&datatoexport='.$datatoexport.'&file='.urlencode(GETPOST("file")), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
@@ -1353,15 +1353,16 @@ if ($step == 5 && $datatoexport) {
 	}
 	$htmltabloflibs .= '</table><br>';
 
+	print '<br>';
 	print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NowClickToGenerateToBuildExportFile"), $htmltabloflibs, 1, 'help', '', 0, 2, 'helphonformat').'</span>';
 	//print $htmltabloflibs;
-	print '<br>';
 
 	print '</div>';
 
 
 	if ($sqlusedforexport && $user->admin) {
-		print info_admin($langs->trans("SQLUsedForExport").':<br> '.$sqlusedforexport, 0, 0, '1', '', 'TechnicalInformation');
+		print info_admin($langs->trans("SQLUsedForExport").':<br> '.$sqlusedforexport, 0, 0, '1', '', 'TechnicalInformation').'<br>';
+		print '<br>';
 	}
 
 
@@ -1370,7 +1371,7 @@ if ($step == 5 && $datatoexport) {
 	}
 
 	// Show existing generated documents
-	// NB: La fonction show_documents rescanne les modules qd genallowed=1, sinon prend $liste
+	// NB: The function show_documents rescan all modules when  genallowed=1, else we take $liste
 	print $formfile->showdocuments('export', '', $upload_dir, $_SERVER["PHP_SELF"].'?step=5&datatoexport='.$datatoexport, $liste, 1, (GETPOST('model') ? GETPOST('model') : 'csv'), 1, 1, 0, 0, 0, '', 'none', '', '', '');
 }
 

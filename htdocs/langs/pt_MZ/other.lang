@@ -15,7 +15,6 @@ FTPFailedToRemoveFile=Falha ao remover o arquivo <b>%s</ b>.
 FTPFailedToRemoveDir=Falha ao remover a pasta <b>%s </b>: Verifique as permissões e que a pasta está vazia
 ChooseAFTPEntryIntoMenu=Escolha um Site FTP do menu ...
 FailedToGetFile=Falha ao obter arquivos %s
-AddThisPageToBookmarks =Adicione a página atual aos marcadores
 BookmarkTargetReplaceWindowShort =Guia atual
 BookmarksManagement =Gestor de marcadores
 BookmarksMenuShortCut =Ctrl + Shift + M

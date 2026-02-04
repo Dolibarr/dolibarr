@@ -30,7 +30,7 @@
  */
 
 
-// Include main (when file in included into send.php, $action is set and main was already loaded)
+// Include the main.inc.php (note: when file is included into send.php, $action is already set and main.inc.php was already loaded)
 /**
  * @var string $action
  */
@@ -111,13 +111,16 @@ if ($facid > 0 && !GETPOST('specimen')) {
 }
 print '<body>';
 
+
 // Record entry in blocked logs each time we print a receipt
+//
 // This will also increase the counter of printings of the receipt
 // DOL_DOCUMENT_ROOT.'/blockedlog/ajax/block-add.php?id='.$object->id.'&element='.$object->element.'&action=DOC_PREVIEW&token='.newToken();
+
 print "
 <script>
-jQuery(document).ready(function () {
-	console.log('Call /blockedlog/ajax/block-add on output of receipt.php');
+
+	console.log('Call /blockedlog/ajax/block-add on output of receipt.php.');
 	$.post('".DOL_URL_ROOT."/blockedlog/ajax/block-add.php'
 			, {
 				id: ".((int) $object->id)."
@@ -126,8 +129,12 @@ jQuery(document).ready(function () {
 									, token: '".currentToken()."'
 			   }
 	);
-});
 </script>";
+
+/*
+ * jQuery(document).ready(function () {
+});
+ */
 
 // Call to external receipt modules factory if it exists and if we can (not allowed in some cases)
 if (isALNERunningVersion()) {
@@ -246,23 +253,48 @@ if (getDolGlobalString('TAKEPOS_SHOW_CUSTOMER')) {
 		print "<br>".$langs->trans("Customer").': '.$soc->name;
 	}
 }
-// Transaction ID
-if (isALNERunningVersion()) {
-	$unalterablelogid = 'TODO';
-	print "<br>".$langs->trans("TransactionID").': '.$unalterablelogid.'<br>';
-}
 // Date
-print $langs->trans('Date')." ".dol_print_date($object->date ? $object->date : dol_now(), 'day');
+print "<br>".$langs->trans('Date').": ".dol_print_date($object->date ? $object->date : dol_now(), 'day');
 // Date of printing
 if (isALNERunningVersion() || !getDolGlobalString('TAKEPOS_HIDE_DATE_OF_PRINTING')) {
-	print "<br>".$langs->trans("DateOfPrinting").': '.dol_print_date(dol_now(), 'dayhour', 'tzuserrel').'<br>';
+	print "<br>".$langs->trans("DateOfPrinting").': '.dol_print_date(dol_now(), 'dayhour', 'tzuserrel');
+}
+// Transaction ID
+if (isALNERunningVersion() && isModEnabled('blockedlog')) {
+	if ($object->status > $object::STATUS_DRAFT) {
+		$unalterablelogid = 'UNDEFINED';
+		$sql = "SELECT signature FROM ".MAIN_DB_PREFIX."blockedlog";
+		$sql .= " WHERE action = 'BILL_VALIDATE' AND element = 'facture' AND ref_object = '".$db->escape($object->ref)."'";
+		$sql .= $db->order('rowid', 'DESC');
+		$sql .= $db->plimit(1);
+
+		$resql = $db->query($sql);
+		if ($resql) {
+			$obj = $db->fetch_object($resql);
+			if ($obj) {
+				$unalterablelogid = $obj->signature;
+			}
+		}
+
+		print "<br>".$langs->trans("SignatureID").': '.dol_trunc(strtoupper($unalterablelogid), 10);
+	}
 }
 
-// TODO Show if it is a duplicata
-$isADuplicata = $object->pos_print_counter;
+// $object->pos_print_counter is current value. It is increased by a parallel process when calling ajax block-add.php that
+// may have finished before or after this page start, so $object->pos_print_counter may be already up to date, but we use the value at begin
+// of this page start and we increase 1 to have correct value we want to show.
+$object->pos_print_counter += 1;
 
-if ($isADuplicata) {
-	print '<b>*** DUPLICATA***</b>';	// Hard coded string
+// Show if it is a duplicata
+$isADuplicata = ($object->pos_print_counter >= 2);
+
+if ($object->status == $object::STATUS_CLOSED) {
+	if ($isADuplicata) {
+		print '<br><b>*** DUPLICATA (no '.($object->pos_print_counter - 1).') ***</b>';	// Hard coded string
+	}
+} else {
+	// Not yet paid completely
+	print '<br><b>*** '.strtoupper($langs->trans("TemporaryReceipt")).' ***</b>';	// Hard coded string
 }
 ?>
 </p>
@@ -271,7 +303,7 @@ if ($isADuplicata) {
 <table class="centpercent" style="border-top-style: double;">
 	<thead>
 	<tr>
-		<th class="center"><?php print $langs->trans("Label"); ?></th>
+		<th class="left"><?php print $langs->trans("Label"); ?></th>
 		<th class="right"><?php print $langs->trans("Qty"); ?></th>
 		<th class="right"><?php if ($gift != 1) {
 			print $langs->trans("Price");
@@ -345,7 +377,7 @@ if ($isADuplicata) {
 if (getDolGlobalString('TAKEPOS_TICKET_VAT_GROUPPED')) {
 	$vat_groups = array();
 	foreach ($object->lines as $line) {
-		if (!array_key_exists($line->tva_tx, $vat_groups)) {
+		if (!array_key_exists((string) $line->tva_tx, $vat_groups)) {
 			$vat_groups[(string) $line->tva_tx] = 0;
 		}
 		$vat_groups[(string) $line->tva_tx] += $line->total_tva;

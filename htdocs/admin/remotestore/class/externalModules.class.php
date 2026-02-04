@@ -366,6 +366,22 @@ class ExternalModules
 
 		$this->numberTotalOfProducts = 0;
 
+		// Special case of category goodies
+		if ($this->categorie == 87) {
+			$html = '<div class="shop-container">
+                            <div class="shop-image">
+								<a href="https://merch.dolibarr.org/" target="_blank">
+	                                <img src="https://www.dolistore.com/medias/image/marketplace/img/goodies-shop.jpg" width="50%" alt="DoliStore Merch and Gifts" />
+	                                <div class="shop-overlay">
+	                                    <button target="new" class="shop-button">'.$langs->trans("GoodiesButtonTitle").' <i class="icon-chevron-right"></i></button>
+	                                </div>
+                                </a>
+                            </div>
+                        </div>';
+
+			return $html;
+		}
+
 		// Fetch the products from Dolistore source
 
 		$dolistoreProducts = array();
@@ -518,7 +534,7 @@ class ExternalModules
 			} elseif ($this->versionCompare($product["dolibarr_min"], $dolibarrversiontouse) <= 0) {
 				if (!empty($product["dolibarr_max"]) && $product["dolibarr_max"] != 'auto' && $product["dolibarr_max"] != 'unknown' && $this->versionCompare($product["dolibarr_max"], $dolibarrversiontouse) >= 0) {
 					//compatible
-					$version = '<span class="compatible">'.$langs->trans(
+					$version = '<span class="compatible hideonsmartphone">'.$langs->trans(
 						'CompatibleUpTo',
 						$dolibarrversiontouse,
 						$product["dolibarr_min"],
@@ -527,7 +543,7 @@ class ExternalModules
 					$compatible = '';
 				} else {
 					// never compatible, module expired
-					$version = '<span class="warning hideonsmartphone">'.$langs->trans(
+					$version = '<span class="warning">'.$langs->trans(
 						'NotCompatible',
 						$dolibarrversiontouse,
 						$product["dolibarr_min"],
@@ -558,7 +574,7 @@ class ExternalModules
 			}
 
 			// Output the line
-			$html .= '<tr class="app oddeven nohover '.dol_escape_htmltag($compatible).'">';
+			$html .= '<tr class="'.(getDolOptimizeSmallScreen() ? 'app' : 'app app2').' oddeven nohover '.dol_escape_htmltag($compatible).'">';
 
 			// Logo
 			$html .= '<td class="center width150"><div class="newAppParent">';
@@ -569,17 +585,17 @@ class ExternalModules
 			$html .= '<td class="margeCote minwidth500imp"><h2 class="appTitle">';
 			$html .= dolPrintHTML(dol_string_nohtmltag(ucfirst($product["label"])));
 			if (!empty($product['author']) && $product['author'] != 'unkownauthor') {
-				$html .= '<small> &nbsp; - &nbsp; '.img_picto('', 'company', 'class="pictofixedwidth"');
+				$html .= '<span class="small"> &nbsp; - &nbsp; '.img_picto('', 'company', 'class="pictofixedwidth"');
 				if (!empty($product['author_url'])) {
 					$html .= '<a href="'.$product['author_url'].'" target="_blank">'.$product['author'].'</a>';
 				} else {
 					$html .= $product['author'];
 				}
-				$html .= '</small>';
+				$html .= '</span>';
 			}
-			$html .= '<br><small>';
+			$html .= '<br><span class="small">';
 			$html .= $version;			// Version Dolibarr. No dol_escape_htmltag, it is already escape html
-			$html .= '</small>';
+			$html .= '</span>';
 			$html .= '</h2>';
 
 			$html .= '<small class="appDateCreation appRef"> ';
@@ -616,21 +632,32 @@ class ExternalModules
 			$html .= '<div class="storedesc">'.dolPrintHTML(dol_string_nohtmltag($product["description"])).'</div>';
 			$html .= '</td>';
 
+			if (getDolOptimizeSmallScreen()) {
+				$html .= '</tr><tr class="app2 oddeven nohover borderbottom '.dol_escape_htmltag($compatible).'">';
+			}
+
 			// Price - do not load if display none
-			$html .= '<td class="margeCote center amount">';
+			$html .= '<td class="margeCote center amount'.(getDolOptimizeSmallScreen() ? ' left" colspan="2"' : '"').'>';
 			$html .= $price;
-			$html .= '</td>';
+
+			if (!getDolOptimizeSmallScreen()) {
+				$html .= '</td>';
+				$html .= '<td class="margeCote nowraponall">';
+			}
 
 			// Links
-			$html .= '<td class="margeCote nowraponall">'.$download_link.'</td>';
+			$html .= $download_link;
+			$html .= '</td>';
 
 			$html .= '</tr>';
 		}
 
 		if (empty($this->products)) {
-			$html .= '<tr class=""><td colspan="3" class="center">';
-			$html .= '<br><br>';
+			$colspan = (getDolOptimizeSmallScreen() ? 1 : 3);
 			$langs->load("website");
+
+			$html .= '<tr class=""><td colspan="'.$colspan.'" class="center">';
+			$html .= '<br><br>';
 			$html .= $langs->trans("noResultsWereFound").'...';
 			$html .= '<br><br>';
 			$html .= '</td></tr>';
@@ -638,7 +665,7 @@ class ExternalModules
 
 		$this->numberOfProducts = count($this->products);
 
-		return $html ;
+		return $html;
 	}
 
 	/**
@@ -910,6 +937,8 @@ class ExternalModules
 				$result = file_put_contents($cache_file, $yaml);
 				if ($result === false) {
 					$this->error = 'Failed to create cache file: ' . $cache_file;
+				} else {
+					dolChmod($cache_file);
 				}
 			}
 		} else {

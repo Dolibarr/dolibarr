@@ -152,7 +152,7 @@ class Expedition extends CommonObject
 	public $billed;
 
 	/**
-	 * @var null|int|string
+	 * @var null|int|float|''
 	 */
 	public $trueWeight;
 	/**
@@ -160,7 +160,7 @@ class Expedition extends CommonObject
 	 */
 	public $weight_units;
 	/**
-	 * @var null|int|string
+	 * @var null|int|float|''
 	 */
 	public $trueWidth;
 	/**
@@ -168,7 +168,7 @@ class Expedition extends CommonObject
 	 */
 	public $width_units;
 	/**
-	 * @var null|int|string
+	 * @var null|int|float|''
 	 */
 	public $trueHeight;
 	/**
@@ -176,7 +176,7 @@ class Expedition extends CommonObject
 	 */
 	public $height_units;
 	/**
-	 * @var null|int|string
+	 * @var null|int|float|''
 	 */
 	public $trueDepth;
 	/**
@@ -184,7 +184,7 @@ class Expedition extends CommonObject
 	 */
 	public $depth_units;
 	/**
-	 * @var null|string A denormalized value
+	 * @var null|string A denormalized value ex '1x2x4'
 	 */
 	public $trueSize;
 
@@ -2891,7 +2891,7 @@ class Expedition extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			// Set order billed if 100% of order is shipped (qty in shipment lines match qty in order lines)
-			if ($this->origin == 'commande' && $this->origin_id > 0) {
+			if ($this->origin_type == 'commande' && $this->origin_id > 0) {
 				$order = new Commande($this->db);
 				$order->fetch($this->origin_id);
 
@@ -2921,6 +2921,7 @@ class Expedition extends CommonObject
 			// If stock increment is done on closing
 			if (isModEnabled('stock') && getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE')) {
 				$result = $this->manageStockMvtOnEvt($user);
+
 				if ($result < 0) {
 					$error++;
 				}

@@ -6,7 +6,7 @@
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2017		Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -245,7 +245,7 @@ if ($this->status == 0 && $user->hasRight('bom', 'write') && $action != 'selectl
 	print '<td class="linecoldelete center">';
 	$coldisplay++;
 	if (empty($disableremove)) {
-		//La suppression n'est autorisée que si il n'y a pas de ligne dans une précédente situation
+		// Deletion is authorised only when there is no line in a previous situation
 		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=deleteline&token='.newToken().'&lineid='.$line->id.'">';
 		print img_delete();
 		print '</a>';
@@ -290,6 +290,7 @@ $sql .= ' WHERE fk_bom ='. (int) $tmpbom->id;
 $resql = $object->db->query($sql);
 
 if ($resql) {
+	$j = 0; // sub bom line number
 	// Loop on all the sub-BOM lines if they exist
 	while ($obj = $object->db->fetch_object($resql)) {
 		$sub_bom_product = new Product($object->db);
@@ -308,6 +309,12 @@ if ($resql) {
 			print '<tr style="display:none" class="sub_bom_lines" parentid="'.$line->id.'">';
 		} else {
 			print '<tr class="sub_bom_lines" parentid="'.$line->id.'">';
+		}
+
+		// Line nb
+		if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
+			print '<td class="linecolnum center">'.($i + 1).'.'.($j + 1).'</td>';
+			$coldisplay++;
 		}
 
 		// Product OR BOM
@@ -392,6 +399,8 @@ if ($resql) {
 		print '<td></td>';
 		print '<td></td>';
 		print '<td></td>';
+		print '</tr>';
+		$j++;
 	}
 }
 

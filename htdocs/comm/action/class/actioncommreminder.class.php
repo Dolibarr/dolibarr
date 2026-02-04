@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,6 +51,13 @@ class ActionCommReminder extends CommonObject
 	const STATUS_DONE = 1;
 	const STATUS_ERROR = -1;
 
+	/** @var int reminder for user */
+	const TYPE_USER = 0;
+	/** @var int reminder for customer */
+	const TYPE_CUSTOMER = 1;
+	/** @var int reminder for contact */
+	const TYPE_CONTACT = 2;
+
 
 	/**
 	 *  'type' if the field format.
@@ -93,7 +100,7 @@ class ActionCommReminder extends CommonObject
 	public $rowid;
 
 	/**
-	 * @var int date remind
+	 * @var int|'' date remind
 	 */
 	public $dateremind;
 

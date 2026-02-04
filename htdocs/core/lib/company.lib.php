@@ -7,11 +7,11 @@
  * Copyright (C) 2013-2014  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2013       Christophe Battarel     <contact@altairis.fr>
  * Copyright (C) 2013-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2015-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2015-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Rui Strecht             <rui.strecht@aliartalentos.com>
  * Copyright (C) 2018-2024  Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,7 +86,7 @@ function societe_prepare_head(Societe $object)
 			dol_setcache($cachekey, $nbContact, 120);	// If setting cache fails, this is not a problem, so we do not test result.
 		}
 
-		$head[$h][0] = DOL_URL_ROOT . '/societe/contact.php?socid=' . $object->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/societe/contact.php', ['socid' => $object->id]);
 		$head[$h][1] = $langs->trans('ContactsAddresses');
 		if ($nbContact > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbContact . '</span>';
@@ -96,7 +96,7 @@ function societe_prepare_head(Societe $object)
 	}
 	if (getDolGlobalString('MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES')) {
 		// Some features may be unstable with this option, like permissions rules, import contact, ...
-		$head[$h][0] = DOL_URL_ROOT . '/societe/societecontact.php?socid=' . $object->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/societe/societecontact.php', ['socid' => $object->id]);
 		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
 		$head[$h][1] = $langs->trans("ContactsAddressesExt");
 		if ($nbContact > 0) {
@@ -107,7 +107,7 @@ function societe_prepare_head(Societe $object)
 	}
 
 	if ($object->client == 1 || $object->client == 2 || $object->client == 3) {
-		$head[$h][0] = DOL_URL_ROOT . '/comm/card.php?socid=' . $object->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/comm/card.php', ['socid' => $object->id]);
 		$head[$h][1] = '';
 		if (!getDolGlobalString('SOCIETE_DISABLE_PROSPECTS') && ($object->client == 2 || $object->client == 3)) {
 			$head[$h][1] .= $langs->trans("Prospect");
@@ -124,7 +124,7 @@ function societe_prepare_head(Societe $object)
 		if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 			$langs->load("products");
 			// price
-			$head[$h][0] = DOL_URL_ROOT . '/societe/price.php?socid=' . $object->id;
+			$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/societe/price.php', ['socid' => $object->id]);
 			$head[$h][1] = $langs->trans("CustomerPrices");
 			$head[$h][2] = 'price';
 			$h++;
@@ -154,7 +154,7 @@ function societe_prepare_head(Societe $object)
 			$mode = 'customer';
 		}
 
-		$head[$h][0] = DOL_URL_ROOT . '/accountancy/bookkeeping/listbyaccount.php?socid=' . $object->id . '&mode=' . $mode . '&type=sub&search_accountancy_code_start=' . $subledger_start_account . '&search_accountancy_code_end=' . $subledger_end_account;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/accountancy/bookkeeping/listbyaccount.php', ['socid' => $object->id, 'mode' => $mode, 'type' => 'sub', 'search_accountancy_code_start' => $subledger_start_account, 'search_accountancy_code_end' => $subledger_end_account]);
 		$head[$h][1] = $langs->trans("Accounting");
 		$head[$h][2] = 'accounting';
 		$h++;
@@ -183,7 +183,7 @@ function societe_prepare_head(Societe $object)
 			}
 			dol_setcache($cachekey, $nbProject, 120);	// If setting cache fails, this is not a problem, so we do not test result.
 		}
-		$head[$h][0] = DOL_URL_ROOT . '/societe/project.php?socid=' . $object->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/societe/project.php', ['socid' => $object->id]);
 		$head[$h][1] = $langs->trans("Projects");
 		if ($nbProject > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbProject . '</span>';
@@ -194,7 +194,7 @@ function societe_prepare_head(Societe $object)
 
 	// Tab to link resources
 	if (isModEnabled('resource') && getDolGlobalString('RESOURCE_ON_THIRDPARTIES')) {
-		$head[$h][0] = DOL_URL_ROOT . '/resource/element_resource.php?element=societe&element_id=' . $object->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/resource/element_resource.php', ['element' => 'societe', 'element_id' => $object->id]);
 		$head[$h][1] = $langs->trans("Resources");
 		$head[$h][2] = 'resources';
 		$h++;
@@ -204,7 +204,7 @@ function societe_prepare_head(Societe $object)
 	if ((isModEnabled('order') || isModEnabled('propal') || isModEnabled('invoice') || isModEnabled('intervention') || isModEnabled("supplier_proposal") || isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))
 		&& !getDolGlobalString('THIRDPARTIES_DISABLE_RELATED_OBJECT_TAB')
 	) {
-		$head[$h][0] = DOL_URL_ROOT . '/societe/consumption.php?socid=' . $object->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/societe/consumption.php', ['socid' => $object->id]);
 		$head[$h][1] = $langs->trans("Referers");
 		$head[$h][2] = 'consumption';
 		$h++;
@@ -251,7 +251,7 @@ function societe_prepare_head(Societe $object)
 
 		//if (isModEnabled('stripe') && $nbBankAccount > 0) $nbBankAccount = '...';	// No way to know exact number
 
-		$head[$h][0] = DOL_URL_ROOT . '/societe/paymentmodes.php?socid=' . urlencode((string) ($object->id));
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/societe/paymentmodes.php', ['socid' => $object->id]);
 		$head[$h][1] = $title;
 		if ($foundonexternalonlinesystem) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">...</span>';
@@ -271,7 +271,7 @@ function societe_prepare_head(Societe $object)
 			$site_filter_list[] = 'dolibarr_portal';
 		}
 
-		$head[$h][0] = DOL_URL_ROOT . '/societe/website.php?id=' . urlencode((string) ($object->id));
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/societe/website.php', ['id' => $object->id]);
 		$head[$h][1] = $langs->trans("WebSiteAccounts");
 		$nbNote = 0;
 		$sql = "SELECT COUNT(n.rowid) as nb";
@@ -299,7 +299,7 @@ function societe_prepare_head(Societe $object)
 		if ($user->hasRight('partnership', 'read')) {
 			$langs->load("partnership");
 			$nbPartnership = is_array($object->partnerships) ? count($object->partnerships) : 0;
-			$head[$h][0] = DOL_URL_ROOT . '/partnership/partnership_list.php?socid=' . $object->id;
+			$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/partnership/partnership_list.php', ['socid' => $object->id]);
 			$head[$h][1] = $langs->trans("Partnerships");
 			$nbNote = 0;
 			$sql = "SELECT COUNT(n.rowid) as nb";
@@ -349,7 +349,7 @@ function societe_prepare_head(Societe $object)
 			dol_setcache($cachekey, $nbTicket, 120);		// If setting cache fails, this is not a problem, so we do not test result.
 		}
 
-		$head[$h][0] = DOL_URL_ROOT . '/ticket/list.php?socid=' . urlencode((string) ($object->id));
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/ticket/list.php', ['socid' => $object->id]);
 		$head[$h][1] = $langs->trans("Tickets");
 		if ($nbTicket > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbTicket . '</span>';
@@ -395,7 +395,7 @@ function societe_prepare_head(Societe $object)
 				dol_setcache($cachekey, $nbNotif, 120);		// If setting cache fails, this is not a problem, so we do not test result.
 			}
 
-			$head[$h][0] = DOL_URL_ROOT . '/societe/notify/card.php?socid=' . urlencode((string) ($object->id));
+			$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/societe/notify/card.php', ['socid' => $object->id]);
 			$head[$h][1] = $langs->trans("Notifications");
 			if ($nbNotif > 0) {
 				$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbNotif . '</span>';
@@ -412,7 +412,7 @@ function societe_prepare_head(Societe $object)
 		if (!empty($object->note_public)) {
 			$nbNote++;
 		}
-		$head[$h][0] = DOL_URL_ROOT . '/societe/note.php?id=' . urlencode((string) ($object->id));
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/societe/note.php', ['id' => $object->id]);
 		$head[$h][1] = $langs->trans("Notes");
 		if ($nbNote > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbNote . '</span>';
@@ -438,7 +438,7 @@ function societe_prepare_head(Societe $object)
 			dol_setcache($cachekey, $totalAttached, 120);		// If setting cache fails, this is not a problem, so we do not test result.
 		}
 
-		$head[$h][0] = DOL_URL_ROOT . '/societe/document.php?socid=' . $object->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/societe/document.php', ['socid' => $object->id]);
 		$head[$h][1] = $langs->trans("Documents");
 		if (($totalAttached) > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">' . ($totalAttached) . '</span>';
@@ -447,7 +447,7 @@ function societe_prepare_head(Societe $object)
 		$h++;
 	}
 
-	$head[$h][0] = DOL_URL_ROOT . '/societe/messaging.php?socid=' . $object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/societe/messaging.php', ['socid' => $object->id]);
 	$head[$h][1] = $langs->trans("Events");
 	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 		$nbEvent = 0;
@@ -505,7 +505,7 @@ function societe_prepare_head2($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT . '/societe/card.php?socid=' . $object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/societe/card.php', ['socid' => $object->id]);
 	$head[$h][1] = $langs->trans("ThirdParty");
 	$head[$h][2] = 'company';
 	$h++;
@@ -536,7 +536,7 @@ function societe_admin_prepare_head()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT . '/societe/admin/societe.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/societe/admin/societe.php');
 	$head[$h][1] = $langs->trans("Miscellaneous");
 	$head[$h][2] = 'general';
 	$h++;
@@ -547,7 +547,7 @@ function societe_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'company_admin');
 
-	$head[$h][0] = DOL_URL_ROOT . '/societe/admin/societe_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/societe/admin/societe_extrafields.php');
 	$head[$h][1] = $langs->trans("ExtraFieldsThirdParties");
 	$nbExtrafields = $extrafields->attributes['societe']['count'];
 	if ($nbExtrafields > 0) {
@@ -556,7 +556,7 @@ function societe_admin_prepare_head()
 	$head[$h][2] = 'attributes';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT . '/societe/admin/contact_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/societe/admin/contact_extrafields.php');
 	$head[$h][1] = $langs->trans("ExtraFieldsContacts");
 	$nbExtrafields = $extrafields->attributes['socpeople']['count'];
 	if ($nbExtrafields > 0) {
@@ -566,7 +566,7 @@ function societe_admin_prepare_head()
 	$h++;
 
 	if (getDolGlobalString('MAIN_FEATURES_LEVEL') >= 1) {
-		$head[$h][0] = DOL_URL_ROOT . '/societe/admin/public_interface.php';
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/societe/admin/public_interface.php');
 		$head[$h][1] = $langs->trans("PublicUrl");
 		$head[$h][2] = 'publicurl';
 		$h++;
@@ -942,18 +942,20 @@ function isInSEPA($object)
 /**
  * 		Show html area for list of projects
  *
- *		@param	Conf		$conf			Object conf
- * 		@param	Translate	$langs			Object langs
- * 		@param	DoliDB		$db				Database handler
- * 		@param	Societe		$object			Third party object
- *      @param  string		$backtopage		Url to go once contact is created
- *      @param  int<0,1>    $nocreatelink   1=Hide create project link
- *      @param	string		$morehtmlright	More html on right of title
+ *		@param	Conf		$conf				Object conf
+ * 		@param	Translate	$langs				Object langs
+ * 		@param	DoliDB		$db					Database handler
+ * 		@param	Societe		$object				Third party object
+ *      @param  string		$backtopage			Url to go once contact is created
+ *      @param  int<0,1>    $nocreatelink   	1=Hide create project link
+ *      @param	string		$morehtmlright		More html on right of title
+ *      @param	string		$massactionbutton	Mass action button
  *      @return	int
  */
-function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatelink = 0, $morehtmlright = '')
+function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatelink = 0, $morehtmlright = '', $massactionbutton = '')
 {
-	global $user, $action, $hookmanager, $form, $massactionbutton, $massaction, $arrayofselected, $arrayofmassactions;
+	global $user, $action, $hookmanager, $form;
+	global $massaction, $arrayofselected, $arrayofmassactions;
 
 	$i = -1;
 
@@ -966,7 +968,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 		}
 
 		print "\n";
-		print load_fiche_titre($langs->trans("ProjectsDedicatedToThisThirdParty"), $newcardbutton . $morehtmlright, '');
+		print load_fiche_titre($langs->trans("ProjectsDedicatedToThisThirdParty"), $newcardbutton . $morehtmlright, '', 0, '', '', $massactionbutton);
 
 		print '<div class="div-table-responsive">' . "\n";
 		print '<table class="noborder centpercent">';
@@ -1876,7 +1878,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 	}
 	$sortfield_new = implode(',', $sortfield_new_list);
 
-	$complete = (string) $filters['search_complete'];	// Can be 'na', '0', '50', '100'
+	$complete = (string) (!empty($filters['search_complete']) ? $filters['search_complete']: '');	// Can be 'na', '0', '50', '100'
 	$percent = $complete !== '' ? $complete : -1;
 	if ((string) $complete == '0') {
 		$percent = '0';
@@ -1980,7 +1982,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat') {
 			$sql .= ", " . MAIN_DB_PREFIX . "contrat as o";
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Expedition') {
-			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "expedition as s ON a.fk_element = s.rowid AND a.elementtype = 'shipping'"; // Jointure sur la table des expéditions avec condition ON
+			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "expedition as s ON a.fk_element = s.rowid AND a.elementtype = 'shipping'"; // JOIN on the shipping tame using the 'ON' constraint
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Propal') {
 			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "propal as o ON a.fk_element = o.rowid AND a.elementtype = 'propal'";
 		} elseif (
@@ -2045,7 +2047,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 					$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
 				}
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'Expedition') {
-				$sql .= " AND a.fk_element = s.rowid AND a.elementtype = 'shipping'"; //expedition filter
+				$sql .= " AND a.fk_element = s.rowid AND a.elementtype = 'shipping'"; // shipping filter
 				if ($filterobj->id) {
 					$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
 				}
@@ -2399,6 +2401,65 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 			$out .= '</td>';
 
 			// Date
+			$out .=  '<td class="center nowraponall nopaddingtopimp nopaddingbottomimp">';
+			if ($histo[$key]['dateend']) {	// There is also a end date
+				$tmpa = dol_getdate($histo[$key]['datestart']);
+				$tmpb = dol_getdate($histo[$key]['dateend']);
+				if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) {
+					// The same day
+					if ($tmpa['hours'] != $tmpb['hours'] || $tmpa['minutes'] != $tmpb['minutes']) {
+						$out .= '<div class="center inline-block lineheightsmall">';
+						$out .= dol_print_date($histo[$key]['datestart'], 'dayreduceformat', 'tzuserrel');
+						$out .= '<br><span class="opacitymedium hourspan">';
+						$out .= dol_print_date($histo[$key]['datestart'], 'hourreduceformat', 'tzuserrel');
+						$out .= '-'.dol_print_date($histo[$key]['dateend'], 'hourreduceformat', 'tzuserrel');
+						$out .= '</span>';
+						$out .= '</div>';
+					} else {
+						$out .= '<div class="center inline-block lineheightsmall">';
+						$out .= dol_print_date($histo[$key]['datestart'], 'dayreduceformat', 'tzuserrel');
+						$out .= '<br><span class="opacitymedium hourspan">';
+						$out .= dol_print_date($histo[$key]['datestart'], 'hourreduceformat', 'tzuserrel');
+						$out .= '</span>';
+						$out .= '</div>';
+					}
+				} else {
+					// Not the same day
+					$out .=  '<div class="center inline-block lineheightsmall">';
+					$out .=  dol_print_date($histo[$key]['datestart'], 'dayreduceformat', 'tzuserrel');
+					$out .=  '<br><span class="opacitymedium hourspan">';
+					$out .=  dol_print_date($histo[$key]['datestart'], 'hourreduceformat', 'tzuserrel');
+					$out .=  '</span>';
+					$out .=  '</div>';
+					$out .=  ' ';
+					$out .=  '<div class="center inline-block lineheightsmall">';
+					$out .=  dol_print_date($histo[$key]['dateend'], 'dayreduceformat', 'tzuserrel');
+					$out .=  '<br><span class="opacitymedium hourspan">';
+					$out .=  dol_print_date($histo[$key]['dateend'], 'hourreduceformat', 'tzuserrel');
+					$out .=  '</span>';
+					$out .=  '</div>';
+				}
+			}
+			// Add the late warning
+			$late = 0;
+			if ($histo[$key]['percent'] == 0 && $histo[$key]['datestart'] && $histo[$key]['datestart'] < ($now - $delay_warning)) {
+				$late = 1;
+			}
+			if ($histo[$key]['percent'] == 0 && !$histo[$key]['datestart'] && $histo[$key]['dateend'] && $histo[$key]['datestart'] < ($now - $delay_warning)) {
+				$late = 1;
+			}
+			if ($histo[$key]['percent'] > 0 && $histo[$key]['percent'] < 100 && $histo[$key]['dateend'] && $histo[$key]['dateend'] < ($now - $delay_warning)) {
+				$late = 1;
+			}
+			if ($histo[$key]['percent'] > 0 && $histo[$key]['percent'] < 100 && !$histo[$key]['dateend'] && $histo[$key]['datestart'] && $histo[$key]['datestart'] < ($now - $delay_warning)) {
+				$late = 1;
+			}
+			if ($late) {
+				$out .= img_warning($langs->trans("Late")) . ' ';
+			}
+			$out .=  '</td>';
+
+			/*
 			$out .= '<td class="center nowraponall">';
 			$out .= dol_print_date($histo[$key]['datestart'], 'dayhour', 'tzuserrel');
 			if ($histo[$key]['dateend'] && $histo[$key]['dateend'] != $histo[$key]['datestart']) {
@@ -2410,6 +2471,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 					$out .= '-' . dol_print_date($histo[$key]['dateend'], 'dayhour', 'tzuserrel');
 				}
 			}
+			// Add the late warning
 			$late = 0;
 			if ($histo[$key]['percent'] == 0 && $histo[$key]['datestart'] && $histo[$key]['datestart'] < ($now - $delay_warning)) {
 				$late = 1;
@@ -2427,6 +2489,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 				$out .= img_warning($langs->trans("Late")) . ' ';
 			}
 			$out .= "</td>\n";
+			*/
 
 			// Author of event
 			$out .= '<td class="tdoverflowmax125">';

@@ -714,3 +714,9 @@ UPDATE llx_c_tva SET type_vat = 0 WHERE type_vat < 0;
 -- We can't have this on by default because we may have old payment mode using something else than stripe and account matching the pk_xxx rule.
 --update llx_societe_rib set ext_payment_site = 'StripeLive' where stripe_account like '%pk_live%' AND ext_payment_site IS NULL;
 --update llx_societe_rib set ext_payment_site = 'StripeTest' where stripe_account like '%pk_test%' AND ext_payment_site IS NULL;
+
+-- Delete entry in llx_const for 'OAUTH_XXXX-abc def' when there is a space between avc and def.
+DELETE FROM llx_const WHERE name like 'OAUTH_%-% %_ID';
+
+
+--SELECT fr.rowid, fr.titre as fr.title, fr.nb_gen_done, fr.nb_gen_max, (SELECT COUNT(f.rowid) FROM llx_facture as f WHERE f.fk_fac_rec_source = fr.rowid) as nb_invoices FROM llx_facture_rec as fr WHERE fr.nb_gen_max > 0 AND fr.nb_gen_done >= fr.nb_gen_max AND fr.nb_gen_done > 0 AND fr.nb_gen_done <> (SELECT COUNT(f.rowid) FROM llx_facture as f WHERE f.fk_fac_rec_source = fr.rowid);

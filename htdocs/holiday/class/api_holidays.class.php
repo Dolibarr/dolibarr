@@ -1,9 +1,10 @@
 <?php
 /* Copyright (C) 2015   	Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016   	Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2020-2024  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2020-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
+ * Copyright (C) 2025-2026  Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 /**
  * API class for Leaves
  *
- * @since	5.0.0	Initial implementation
+ * @since	23.0.0	Initial implementation
  *
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
@@ -65,7 +66,7 @@ class Holidays extends DolibarrApi
 	 *
 	 * Return an array with leave information
 	 *
-	 * @since	5.0.0	Initial implementation
+	 * @since	23.0.0	Initial implementation
 	 *
 	 * @param	int		$id		ID of Leave
 	 * @return	Object			Object with cleaned properties
@@ -96,7 +97,7 @@ class Holidays extends DolibarrApi
 	 *
 	 * Get a list of Leaves
 	 *
-	 * @since	5.0.0	Initial implementation
+	 * @since	23.0.0	Initial implementation
 	 *
 	 * @param	string		$sortfield			Sort field
 	 * @param	string		$sortorder			Sort order
@@ -125,6 +126,7 @@ class Holidays extends DolibarrApi
 
 		$sql = "SELECT t.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday AS t LEFT JOIN ".MAIN_DB_PREFIX."holiday_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user AS u ON t.fk_user = u.rowid";
 		$sql .= ' WHERE t.entity IN ('.getEntity('holiday').')';
 		if ($user_ids) {
 			$sql .= " AND t.fk_user IN (".$this->db->sanitize($user_ids).")";
@@ -193,7 +195,7 @@ class Holidays extends DolibarrApi
 	/**
 	 * Create a leave
 	 *
-	 * @since	5.0.0	Initial implementation
+	 * @since	23.0.0	Initial implementation
 	 *
 	 * @param	array	$request_data	Request data
 	 * @phan-param ?array<string,string> $request_data
@@ -204,7 +206,7 @@ class Holidays extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('holiday', 'creer')) {
+		if (!DolibarrApiAccess::$user->hasRight('holiday', 'write')) {
 			throw new RestException(403, "Insufficiant rights");
 		}
 
@@ -236,25 +238,25 @@ class Holidays extends DolibarrApi
 
 
 	/**
-	 * Update expense report general fields
+	 * Update holiday general fields
 	 *
-	 * Does not touch lines of the expense report
+	 * Does not touch lines of the holiday
 	 *
-	 * @since	5.0.0	Initial implementation
+	 * @since	23.0.0	Initial implementation
 	 *
-	 * @param	int		$id					ID of Expense Report to update
-	 * @param	array	$request_data		Expense report data
+	 * @param	int		$id					Leave ID to update
+	 * @param	array	$request_data		holiday report data
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
 	 * @return	Object						Updated object
 	 *
 	 * @throws	RestException	401		Not allowed
-	 * @throws  RestException	404		Expense report not found
+	 * @throws  RestException	404		Holiday not found
 	 * @throws	RestException	500		System error
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('holiday', 'creer')) {
+		if (!DolibarrApiAccess::$user->hasRight('holiday', 'write')) {
 			throw new RestException(403);
 		}
 
@@ -296,9 +298,9 @@ class Holidays extends DolibarrApi
 	/**
 	 * Delete holiday
 	 *
-	 * @since	5.0.0	Initial implementation
+	 * @since	23.0.0	Initial implementation
 	 *
-	 * @param	int		$id		Expense Report ID
+	 * @param	int		$id		Leave Report ID
 	 * @return	array
 	 * @phan-return array{success:array{code:int,message:string}}
 	 * @phpstan-return array{success:array{code:int,message:string}}
@@ -340,9 +342,9 @@ class Holidays extends DolibarrApi
 	 *   "notrigger": 0
 	 * }
 	 *
-	 * @since	22.0.0	Initial implementation
+	 * @since	23.0.0	Initial implementation
 	 *
-	 * @param	int		$id				Expense report ID
+	 * @param	int		$id				Leave report ID
 	 * @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 *
 	 * @url		POST	{id}/validate
@@ -353,7 +355,7 @@ class Holidays extends DolibarrApi
 	 */
 	public function validate($id, $notrigger = 0)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('holiday', 'creer')) {
+		if (!DolibarrApiAccess::$user->hasRight('holiday', 'write')) {
 			throw new RestException(403, "Insufficiant rights");
 		}
 		$result = $this->holiday->fetch($id);
@@ -365,7 +367,8 @@ class Holidays extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$result = $this->holiday->setValidate(DolibarrApiAccess::$user, $notrigger);
+		$this->holiday->status = Holiday::STATUS_VALIDATED;
+		$result = $this->holiday->validate(DolibarrApiAccess::$user, $notrigger);
 		if ($result == 0) {
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
@@ -385,7 +388,7 @@ class Holidays extends DolibarrApi
 	 *   "notrigger": 0
 	 * }
 	 *
-	 * @since	22.0.0	Initial implementation
+	 * @since	23.0.0	Initial implementation
 	 *
 	 * @param	int		$id				Leave ID
 	 * @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
@@ -410,24 +413,171 @@ class Holidays extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$result = $this->holiday->setApproved(DolibarrApiAccess::$user, $notrigger);
+		$this->holiday->status = Holiday::STATUS_APPROVED;
+		$result = $this->holiday->approve(DolibarrApiAccess::$user, $notrigger);
 		if ($result == 0) {
 			throw new RestException(304, 'Error nothing done. May be object is already approved');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when approving expense report: '.$this->holiday->error);
+			throw new RestException(500, 'Error when approving holiday: '.$this->holiday->error);
 		}
 
 		return $this->_cleanObjectDatas($this->holiday);
 	}
 
+	/**
+	 * Cancel a holiday
+	 *
+	 * If you get a bad value for param notrigger check, provide this in body
+	 * {
+	 *   "notrigger": 0
+	 * }
+	 *
+	 * @since	23.0.0	Initial implementation
+	 *
+	 * @param	int		$id				Holiday ID
+	 * @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
+	 *
+	 * @url		POST	{id}/cancel
+	 *
+	 * @return	Object
+	 *
+	 * @throws RestException
+	 */
+	public function cancel($id, $notrigger = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('holiday', 'write')) {
+			throw new RestException(403, "Insufficient rights");
+		}
+
+		$result = $this->holiday->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Holiday not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('holiday', $this->holiday->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$this->holiday->status = Holiday::STATUS_CANCELED;
+		$result = $this->holiday->update(DolibarrApiAccess::$user, $notrigger);
+		if ($result == 0) {
+			throw new RestException(304, 'Error nothing done. May be object is already canceled');
+		}
+		if ($result < 0) {
+			throw new RestException(500, 'Error when canceling holiday: '.$this->holiday->error);
+		}
+
+		return $this->_cleanObjectDatas($this->holiday);
+	}
+
+	/**
+	 * Refuse a holiday
+	 *
+	 * If you get a bad value for param notrigger check, provide this in body
+	 * {
+	 *   "notrigger": 0
+	 * }
+	 *
+	 * @since	23.0.0	Initial implementation
+	 *
+	 * @param	int		$id				Holiday ID
+	 * @param	string	$detail_refuse	Comments for refusal
+	 * @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
+	 *
+	 * @url		POST	{id}/refuse
+	 *
+	 * @return	Object
+	 *
+	 * @throws RestException
+	 */
+	public function refuse($id, $detail_refuse, $notrigger = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('holiday', 'approve')) {
+			throw new RestException(403, "Insufficient rights");
+		}
+
+		$result = $this->holiday->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Holiday not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('holiday', $this->holiday->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$this->holiday->status = Holiday::STATUS_REFUSED;
+		$this->holiday->detail_refuse = $detail_refuse;
+		$result = $this->holiday->update(DolibarrApiAccess::$user, $notrigger);
+		if ($result == 0) {
+			throw new RestException(304, 'Error nothing done. May be object is already refused');
+		}
+		if ($result < 0) {
+			throw new RestException(500, 'Error when refusing holiday: '.$this->holiday->error);
+		}
+
+		return $this->_cleanObjectDatas($this->holiday);
+	}
+
+	/**
+	 * Reopen a canceled holiday
+	 *
+	 * This method allows to reopen a holiday that was previously canceled
+	 * and set its status back to VALIDATED
+	 *
+	 * If you get a bad value for param notrigger check, provide this in body
+	 * {
+	 *   "notrigger": 0
+	 * }
+	 *
+	 * @since   23.0.0   New endpoint
+	 *
+	 * @param   int     $id             Holiday ID
+	 * @param   int     $notrigger      1=Does not execute triggers, 0= execute triggers
+	 *
+	 * @url     POST    {id}/reopen
+	 *
+	 * @return  Object
+	 *
+	 * @throws RestException
+	 */
+	public function reopen($id, $notrigger = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('holiday', 'write')) {
+			throw new RestException(403, "Insufficient rights");
+		}
+
+		$result = $this->holiday->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Holiday not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('holiday', $this->holiday->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		// Check if the holiday is actually canceled
+		if ($this->holiday->statut != Holiday::STATUS_CANCELED) {
+			throw new RestException(400, 'Holiday is not canceled. Only canceled holidays can be reopened.');
+		}
+		$this->holiday->status = Holiday::STATUS_VALIDATED;
+		$result = $this->holiday->validate(DolibarrApiAccess::$user, $notrigger);
+		if ($result < 0) {
+			throw new RestException(500, 'Error when canceling holiday: '.$this->holiday->error);
+		}
+
+		return $this->_cleanObjectDatas($this->holiday);
+	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
+	 * @phpstan-template T
 	 *
 	 * @param   Holiday  $object     Object to clean
 	 * @return  Object              Object with cleaned properties
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -492,13 +642,13 @@ class Holidays extends DolibarrApi
 		if ($data === null) {
 			$data = array();
 		}
-		$expensereport = array();
+		$holiday = array();
 		foreach (self::$FIELDS as $field) {
 			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
 			}
-			$expensereport[$field] = $data[$field];
+			$holiday[$field] = $data[$field];
 		}
-		return $expensereport;
+		return $holiday;
 	}
 }
