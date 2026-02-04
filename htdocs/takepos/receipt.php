@@ -119,7 +119,6 @@ print '<body>';
 
 print "
 <script>
-
 	console.log('Call /blockedlog/ajax/block-add on output of receipt.php.');
 	$.post('".DOL_URL_ROOT."/blockedlog/ajax/block-add.php'
 			, {
@@ -288,13 +287,13 @@ $object->pos_print_counter += 1;
 // Show if it is a duplicata
 $isADuplicata = ($object->pos_print_counter >= 2);
 
-if ($object->status == $object::STATUS_CLOSED) {
-	if ($isADuplicata) {
-		print '<br><b>*** DUPLICATA (no '.($object->pos_print_counter - 1).') ***</b>';	// Hard coded string
-	}
-} else {
+if ($object->status != $object::STATUS_CLOSED) {
 	// Not yet paid completely
 	print '<br><b>*** '.strtoupper($langs->trans("TemporaryReceipt")).' ***</b>';	// Hard coded string
+} else {
+	if ($isADuplicata) {
+		print '<br><b>*** '.$langs->transnoentities("DUPLICATA").' (no '.($object->pos_print_counter - 1).') ***</b>';	// Hard coded string
+	}
 }
 ?>
 </p>
