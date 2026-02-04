@@ -544,7 +544,7 @@ foreach ($search as $key => $val) {
 		$param .= '&search_'.$key.'day='.GETPOSTINT('search_'.$key.'day');
 		$param .= '&search_'.$key.'year='.GETPOSTINT('search_'.$key.'year');
 	} elseif ($search[$key] != '') {
-		$param .= '&search_'.$key.'='.urlencode($search[$key]);
+		$param .= '&search_'.$key.'='.urlencode((string) $search[$key]);
 	}
 }
 // Add $param from extra fields
