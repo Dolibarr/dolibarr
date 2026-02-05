@@ -1506,17 +1506,19 @@ if (getDolGlobalString('TAKEPOS_DIRECT_PAYMENT')) {
 }
 
 $customprinterallowed = false;
+$customprinttemplateallowed = true;
 
 // BAR RESTAURANT specific menu
 if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
 	// Button to print receipt before payment
 	$customprinterallowed = true;
 	$customprinttemplateallowed = true;
-	include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
-	if (isALNERunningVersion()) {
-		// Custom printer may be allowed if mandatory information in template are guaranteed. For the moment, we prefer not allow this.
-		$customprinttemplateallowed = false;
-	}
+}
+
+include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+if (isALNERunningVersion()) {
+	// Custom printer may be allowed if mandatory information in template are guaranteed. For the moment, we prefer not allow this.
+	$customprinttemplateallowed = false;
 }
 
 // Button to print receipt

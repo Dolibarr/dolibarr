@@ -957,7 +957,7 @@ if ($result >= 0) {
 					$multicurrency_totalrecucreditnote += $multicurrency_creditnotes;
 					$multicurrency_totalrecudeposits += $multicurrency_deposits;
 				}
-				
+
 				$i++;
 			}
 
