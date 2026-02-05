@@ -7,7 +7,7 @@
  * Copyright (C) 2011-2014  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2023		Benjamin Falière		<benjamin.faliere@altairis.fr>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -167,7 +167,7 @@ $formproduct = new FormProduct($db);
 $product_fourn = new ProductFournisseur($db);
 $productstatic = new Product($db);
 $resql = false;
-// action recherche des produits par mot-cle et/ou par categorie
+// action searching products by keywords and/or by category
 if ($action == 'search') {
 	$current_lang = $langs->getDefaultLang();
 
@@ -480,7 +480,7 @@ if ($id > 0 || !empty($ref)) {
 							if ($prod_arbo->type == 2 || $prod_arbo->type == 3) {
 								$is_pere = 0;
 								$prod_arbo->get_sousproduits_arbo();
-								// associations sousproduits
+								// associations subproducts
 								$prods_arbo = $prod_arbo->get_arbo_each_prod();
 								if (count($prods_arbo) > 0) {
 									foreach ($prods_arbo as $key => $value) {
