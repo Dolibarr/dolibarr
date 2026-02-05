@@ -2184,6 +2184,7 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 	global $user, $langs;
 
 	if ($mainmenu == 'products') {
+		$newmenu->add("/categories", $langs->trans("Categories"), 0, $user->hasRight('categorie', 'read'), '', $mainmenu, 'cat', 0, '', '', '', img_picto('', 'category', 'class="paddingright pictofixedwidth"')	);
 		// Products
 		if (isModEnabled('product')) {
 			$newmenu->add("/product/index.php?leftmenu=product", $langs->trans("Products"), 0, $user->hasRight('product', 'read'), '', $mainmenu, 'product', 0, '', '', '', img_picto('', 'product', 'class="paddingright pictofixedwidth"'));
