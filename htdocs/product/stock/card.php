@@ -87,6 +87,8 @@ $hookmanager->initHooks(array('warehousecard', 'stocklist', 'globalcard'));
 // Security check
 $result=restrictedArea($user, 'stock', $id, 'entrepot&stock');
 
+$usercancreadsupplierprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'read_supplier_prices') : $user->hasRight('product', 'read');
+
 $object = new Entrepot($db);
 $extrafields = new ExtraFields($db);
 
@@ -556,9 +558,11 @@ if ($action == 'create') {
 			print '<table class="border centpercent tableforfield">';
 
 			// Value
-			print '<tr><td class="titlefield">'.$langs->trans("EstimatedStockValueShort").'</td><td>';
-			print price((empty($calcproducts['value']) ? '0' : price2num($calcproducts['value'], 'MT')), 0, $langs, 0, -1, -1, $conf->currency);
-			print "</td></tr>";
+			if ($usercancreadsupplierprice) {
+				print '<tr><td class="titlefield">'.$langs->trans("EstimatedStockValueShort").'</td><td>';
+				print price((empty($calcproducts['value']) ? '0' : price2num($calcproducts['value'], 'MT')), 0, $langs, 0, -1, -1, $conf->currency);
+				print "</td></tr>";
+			}
 
 			// Last movement
 			if ($user->hasRight('stock', 'mouvement', 'lire')) {
@@ -662,7 +666,6 @@ if ($action == 'create') {
 				$totalarray['pos'][$totalarray['nbfield']] = 'units';
 				$totalarray['type'][$totalarray['nbfield']] = 'string';
 			}
-			$usercancreadsupplierprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'read_supplier_prices') : $user->hasRight('product', 'read');
 			if ($usercancreadsupplierprice) {
 				print_liste_field_titre($form->textwithpicto($langs->trans("AverageUnitPricePMPShort"), $langs->trans("AverageUnitPricePMPDesc")), "", "p.pmp", "", "&id=".$id, '', $sortfield, $sortorder, 'right ');
 				$totalarray['nbfield']++;
