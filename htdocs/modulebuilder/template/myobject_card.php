@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		Anthony Berton 			<anthony.berton@bb2a.fr>
  * Copyright (C) ---Replace with your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
@@ -266,6 +267,50 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-mymodule page-card')
 // });
 // </script>';
 
+if ($object->id > 0 && (empty($action) || ($action != 'create'))) {
+	$head = myobjectPrepareHead($object);
+
+	print dol_get_fiche_head($head, 'card', $langs->trans("MyObject"), -1, $object->picto, 0, '', '', 0, '', 1);
+
+	$linkback = '<a href="'.dol_buildpath('/mymodule/myobject_list.php', 1).'?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
+
+	$morehtmlref = '<div class="refidno">';
+	/*
+		// Ref customer
+		$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $usercancreate, 'string', '', 0, 1);
+		$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $usercancreate, 'string'.(getDolGlobalInt('THIRDPARTY_REF_INPUT_SIZE') ? ':'.getDolGlobalInt('THIRDPARTY_REF_INPUT_SIZE') : ''), '', null, null, '', 1);
+		// Thirdparty
+		$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'customer');
+		if (!getDolGlobalInt('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
+			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherOrders").'</a>)';
+		}
+		// Project
+		if (isModEnabled('project')) {
+			$langs->load("projects");
+			$morehtmlref .= '<br>';
+			if ($permissiontoadd) {
+				$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
+				if ($action != 'classify') {
+					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+				}
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			} else {
+				if (!empty($object->fk_project)) {
+					$proj = new Project($db);
+					$proj->fetch($object->fk_project);
+					$morehtmlref .= $proj->getNomUrl(1);
+					if ($proj->title) {
+						$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
+					}
+				}
+			}
+		}
+	*/
+	$morehtmlref .= '</div>';
+
+
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+}
 
 // Part to create
 if ($action == 'create') {
@@ -346,10 +391,6 @@ if (($id || $ref) && $action == 'edit') {
 
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
-	$head = myobjectPrepareHead($object);
-
-	print dol_get_fiche_head($head, 'card', $langs->trans("MyObject"), -1, $object->picto, 0, '', '', 0, '', 1);
-
 	$formconfirm = '';
 
 	// Confirmation to delete (using preloaded confirm popup)
@@ -406,6 +447,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Object card
 	// ------------------------------------------------------------
+
 	$linkback = '<a href="'.dol_buildpath('/mymodule/myobject_list.php', 1).'?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
@@ -444,7 +486,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
-
 
 	print '<div class="fichecenter">';
 	print '<div class="fichehalfleft">';
