@@ -1711,6 +1711,7 @@ class Ticket extends CommonObject
 
 		if ($this->status != self::STATUS_CANCELED) { // no closed
 			$this->oldcopy = dol_clone($this, 2);
+			$this->context['markAsRead'] = 1;
 
 			$this->db->begin();
 
@@ -1728,7 +1729,7 @@ class Ticket extends CommonObject
 
 				if (!$notrigger) {
 					// Call trigger
-					$result = $this->call_trigger('TICKET_READ', $user);
+					$result = $this->call_trigger('TICKET_MODIFY', $user);
 					if ($result < 0) {
 						$error++;
 					}
