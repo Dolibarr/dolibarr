@@ -2373,15 +2373,6 @@ class FactureRec extends CommonInvoice
 
 		dol_syslog(get_class($this)."::setAutoValidate", LOG_DEBUG);
 		if ($result > 0) {
-			if (!$notrigger) {
-				// Call trigger
-				$result = $this->call_trigger('BILLREC_MODIFY', $user);
-				if ($result < 0) {
-					return $result;
-				}
-				// End call triggers
-			}
-
 			return 1;
 		} else {
 			dol_print_error($this->db);
