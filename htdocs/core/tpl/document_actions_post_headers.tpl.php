@@ -211,7 +211,7 @@ $formfile->list_of_documents(
 	0,
 	-1,
 	'',
-	array('afteruploadtitle' => $formToUploadAFile, 'showhideaddbutton' => 1)
+	array('afteruploadtitle' => $formToUploadAFile, 'showhideaddbutton' => 0)
 );
 
 if (getDolGlobalString('MAIN_DOCUMENTS_LIST_IN_TWOCOLUMNS')) {
@@ -229,7 +229,7 @@ $formfile->listOfLinks(
 	(string) GETPOSTINT('linkid'),
 	$param,
 	'formaddlink',
-	array('afterlinktitle' => $formToAddALink, 'showhideaddbutton' => 1)
+	array('afterlinktitle' => $formToAddALink, 'showhideaddbutton' => 0)
 );
 
 if (getDolGlobalString('MAIN_DOCUMENTS_LIST_IN_TWOCOLUMNS')) {
