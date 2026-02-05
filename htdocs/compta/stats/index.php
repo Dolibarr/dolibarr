@@ -162,7 +162,7 @@ $periodlink = '';
 $description = '';
 $name = '';
 
-// Affiche en-tete du rapport
+// Display report header
 if ($modecompta == "CREANCES-DETTES") {
 	$name = $langs->trans("Turnover");
 	$periodlink = ($year_start ? "<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear - 2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>" : "");

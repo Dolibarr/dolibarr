@@ -2569,7 +2569,9 @@ function pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails = 0)
 		} elseif (empty($hidedetails) || $hidedetails > 1) {
 			$total_ht = (isModEnabled("multicurrency") && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_total_ht : $object->lines[$i]->total_ht);
 			if (!empty($object->lines[$i]->situation_percent) && $object->lines[$i]->situation_percent > 0) {
-				$total_ht *= $object->lines[$i]->getSituationRatio();
+				if (method_exists($object->lines[$i], 'getSituationRatio')) {
+					$total_ht *= $object->lines[$i]->getSituationRatio();
+				}
 			}
 			$result .= price($sign * $total_ht, 0, $outputlangs);
 		}

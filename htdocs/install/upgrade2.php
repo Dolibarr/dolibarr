@@ -2440,7 +2440,7 @@ function migrate_detail_livraison($db, $langs, $conf)
 }
 
 /**
- * Migration du champ stock dans produits
+ * Migration of the stock field in the Products table
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs

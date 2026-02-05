@@ -111,6 +111,13 @@ if ($action == 'set') {
 		$errors[] = $db->lasterror();
 		$error++;
 	}
+
+	$openid_url_img = GETPOST('MAIN_AUTHENTICATION_OPENID_URL_IMG', 'alpha');
+	$res = dolibarr_set_const($db, 'MAIN_AUTHENTICATION_OPENID_URL_IMG', $openid_url_img, 'chaine', 0, '', 0);
+	if (!$res > 0) {
+		$errors[] = $db->lasterror();
+		$error++;
+	}
 }
 
 if ($action != '') {
@@ -283,6 +290,14 @@ if (getDolGlobalString('MAIN_AUTHENTICATION_OIDC_ON')) {
 	print '<td>' . $langs->trans("MainAuthenticationOidcLogoutRedirectUrlDesc") . '</td>' . "\n";
 	print '<td align="right">' . "\n";
 	print '<input class="minwidth400 centpercent" value="' . dol_escape_htmltag(getDolGlobalString('MAIN_LOGOUT_GOTO_URL', DOL_MAIN_URL_ROOT . "/index.php")) . '" disabled>';
+	print '</td></tr>' . "\n";
+
+	// OPENID_URL_IMG
+	print '<tr class="oddeven">' . "\n";
+	print '<td>' . $langs->trans("MainAuthenticationOpenIDUrlImgName") . '</td>' . "\n";
+	print '<td>' . $langs->trans("MainAuthenticationOpenIDUrlImgDesc") . '</td>' . "\n";
+	print '<td align="right">' . "\n";
+	print '<input name="MAIN_AUTHENTICATION_OPENID_URL_IMG" id="MAIN_AUTHENTICATION_OPENID_URL_IMG" class="minwidth400 centpercent" value="' . dol_escape_htmltag((GETPOSTISSET('MAIN_AUTHENTICATION_OPENID_URL_IMG') ? GETPOST('MAIN_AUTHENTICATION_OPENID_URL_IMG', 'nohtml') : (getDolGlobalString('MAIN_AUTHENTICATION_OPENID_URL_IMG') ? getDolGlobalString("MAIN_AUTHENTICATION_OPENID_URL_IMG") : ''))) . '">';
 	print '</td></tr>' . "\n";
 
 	print '</table>' . "\n";
