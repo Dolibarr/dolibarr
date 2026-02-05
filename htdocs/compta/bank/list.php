@@ -629,13 +629,6 @@ foreach ($accounts as $key => $type) {
 
 	$solde = $objecttmp->solde(1);
 
-	if (!empty($lastcurrencycode) && $lastcurrencycode != $objecttmp->currency_code) {
-		$lastcurrencycode = 'various'; // We found several different currencies
-	}
-	if ($lastcurrencycode != 'various') {
-		$lastcurrencycode = $objecttmp->currency_code;
-	}
-
 	if ($mode == 'kanban') {
 		if ($i == 0) {
 			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
@@ -900,10 +893,24 @@ if (!$found) {
 	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 }
 
-// Show total line
-if ($lastcurrencycode != 'various') {	// If there is several currency, $lastcurrencycode is set to 'various' before
-	// Show total line
-	include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
+// Show total line per currency
+if (!empty($total)) {
+    foreach ($total as $currency => $amount) {
+        // Prepare data for total line template
+        $totalarray['val']['balance'] = $amount;
+        
+        print '<tr class="liste_total">';
+        print '<td colspan="'.($totalarray['nbfield'] - 1).'" class="right">';
+        print $langs->trans("Total").' '.$currency.':';
+        print '</td>';
+        print '<td class="nowraponall right">';
+        print '<span class="amount">'.price(price2num($amount, 'MT'), 0, $langs, 1, -1, -1, $currency).'</span>';
+        print '</td>';
+        if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+            print '<td></td>'; // Empty column for actions
+        }
+        print '</tr>';
+    }
 }
 
 print '</table>'."\n";
