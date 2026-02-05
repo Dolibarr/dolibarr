@@ -189,6 +189,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 		}
 	} else {
 		$thirdparty = $mysoc;
+		$result = 1; // No object to fetch (e.g. Setup -> Emails -> send test email): consider OK
 	}
 
 	if ($result > 0) {
