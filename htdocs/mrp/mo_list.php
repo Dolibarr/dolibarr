@@ -122,7 +122,18 @@ if (GETPOSTISSET('formfilteraction')) {
 $searchCategoryMoList = GETPOST('search_category_mo_list', 'array:int');
 $search = array();
 foreach ($object->fields as $key => $val) {
-	if (GETPOST('search_'.$key, 'alpha') !== '') {
+	if ($key == 'status' && GETPOSTISSET('search_status')) {
+		$search_status = GETPOST('search_status', 'array:int');
+		if (empty($search_status) && GETPOST('search_status', 'alpha') !== '') {
+			$search_status = GETPOST('search_status', 'int');
+			if ($search_status !== -1) {
+				$search_status = array($search_status);
+			} else {
+				$search_status = '';
+			}
+		}
+		$search[$key] = $search_status;
+	} elseif (GETPOST('search_'.$key, 'alpha') !== '') {
 		$search[$key] = GETPOST('search_'.$key, 'alpha');
 	}
 	if (preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
@@ -358,22 +369,40 @@ if ($object->ismultientitymanaged == 1) {
 
 foreach ($search as $key => $val) {
 	if (array_key_exists($key, $object->fields)) {
-		if ($key == 'status' && $search[$key] == -1) {
-			continue;
-		}
-		if ($key == 'status' && $search[$key] == -2) {
-			$sql .= " AND (t.status IN (".$db->sanitize($object::STATUS_VALIDATED.",".$object::STATUS_INPROGRESS)."))";
-			if ($search_option == 'late') {
+		if ($key == 'status') {
+			if ($search[$key] === -1 || (is_array($search[$key]) && (count($search[$key]) == 0 || (count($search[$key]) == 1 && reset($search[$key]) == -1)))) {
+				continue;
+			}
+
+			$status_to_search = array();
+			if (is_array($search[$key])) {
+				foreach ($search[$key] as $status_val) {
+					if ($status_val == -2) {
+						$status_to_search[] = $object::STATUS_VALIDATED;
+						$status_to_search[] = $object::STATUS_INPROGRESS;
+					} elseif ($status_val !== '' && $status_val >= 0) {
+						$status_to_search[] = $status_val;
+					}
+				}
+			} elseif ($search[$key] == -2) {
+				$status_to_search[] = $object::STATUS_VALIDATED;
+				$status_to_search[] = $object::STATUS_INPROGRESS;
+			} elseif ($search[$key] !== '' && $search[$key] >= 0) {
+				$status_to_search[] = $search[$key];
+			}
+
+			if (!empty($status_to_search)) {
+				$sql .= " AND t.status IN (".$db->sanitize(implode(',', array_unique($status_to_search))).")";
+			}
+
+			if ($search_option == 'late' && (in_array(-2, (array) $search[$key]) || in_array($object::STATUS_VALIDATED, (array) $search[$key]) || in_array($object::STATUS_INPROGRESS, (array) $search[$key]))) {
 				$sql .= " AND (t.date_end_planned < '".$db->idate(dol_now() - getWarningDelay('mrp', 'progress'))."')";
 			}
 			continue;
 		}
+
 		if ($key == 'fk_parent_line' && $search[$key] != '') {
 			$sql .= natural_search('moparent.ref', $search[$key], 0);
-			continue;
-		}
-		if ($key == 'status') {
-			$sql .= natural_search('t.status', (string) $search[$key], 0);
 			continue;
 		}
 
@@ -542,7 +571,7 @@ foreach ($search as $key => $val) {
 		$param .= '&search_'.$key.'day='.GETPOSTINT('search_'.$key.'day');
 		$param .= '&search_'.$key.'year='.GETPOSTINT('search_'.$key.'year');
 	} elseif ($search[$key] != '') {
-		$param .= '&search_'.$key.'='.urlencode($search[$key]);
+		$param .= '&search_'.$key.'='.urlencode((string) $search[$key]);
 	}
 }
 if ($searchCategoryMoOperator == 1) {
@@ -729,8 +758,10 @@ foreach ($object->fields as $key => $val) {
 		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
 			if ($key == 'status') {
 				$val['arrayofkeyval'][-2] = $langs->trans("StatusMrpValidated").'+'.$langs->trans("StatusMrpProgress");
+				print $form->multiselectarray('search_'.$key, $val['arrayofkeyval'], (isset($search[$key]) && $search[$key] !== '' && $search[$key] != -1 ? (array) $search[$key] : array()), 0, 0, 'maxwidth100', 0, 0, '', '', '');
+			} else {
+				print $form->selectarray('search_'.$key, $val['arrayofkeyval'], (isset($search[$key]) ? $search[$key] : ''), $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth100', 1);
 			}
-			print $form->selectarray('search_'.$key, $val['arrayofkeyval'], (isset($search[$key]) ? $search[$key] : ''), $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth100', 1);
 		} elseif ((strpos($val['type'], 'integer:') === 0) || (strpos($val['type'], 'sellist:') === 0)) {
 			print $object->showInputField($val, $key, (isset($search[$key]) ? $search[$key] : ''), '', '', 'search_', $cssforfield.' maxwidth125', 1);
 		} elseif (!preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
