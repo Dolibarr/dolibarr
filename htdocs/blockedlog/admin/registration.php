@@ -223,9 +223,11 @@ if (in_array($mysoc->country_code, array('FR'))) {
 print '<br>';
 
 
-// TODO Form to edit registration fields
-// + code to (re)send data when modified and to init module of not initialized yet
 if ($action == "ping") {
+	$company_state = $mysoc->state;
+	if(getDolGlobalString('BLOCKEDLOG_REGISTRATION_STATE')){
+		$company_state = getState(getDolGlobalString('BLOCKEDLOG_REGISTRATION_STATE'));
+	}
 	$arrayofdata = array(
 		'action' => 'dolibarrregistration',
 
@@ -233,7 +235,7 @@ if ($action == "ping") {
 		'company_email' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_EMAIL', $mysoc->email),
 		'company_idprof1' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_IDPROF1', $mysoc->idprof1),
 		'company_address' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_ADDRESS', $mysoc->address),
-		'company_state' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_STATE', $mysoc->state),
+		'company_state' => $company_state,
 		'company_zip' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_ZIP', $mysoc->zip),
 		'company_town' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_TOWN', $mysoc->town),
 		'country_code' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_COUNTRY_CODE', $mysoc->country_code),
@@ -299,7 +301,12 @@ if ($action == "ping") {
 
 	//Company state
 	$item = $formSetup->newItem('BLOCKEDLOG_REGISTRATION_STATE');
-	$stateid = !empty(getDolGlobalString('BLOCKEDLOG_REGISTRATION_STATE')) ? getDolGlobalString('BLOCKEDLOG_REGISTRATION_STATE') : $mysoc->state;
+	$state_id = 0;
+	if (getDolGlobalString('MAIN_INFO_SOCIETE_STATE')) {
+		$tmp = explode(':', getDolGlobalString('MAIN_INFO_SOCIETE_STATE'));
+		$state_id = $tmp[0];
+	}
+	$stateid = !empty(getDolGlobalInt('BLOCKEDLOG_REGISTRATION_STATE')) ? getDolGlobalInt('BLOCKEDLOG_REGISTRATION_STATE') : (int) $state_id;
 	$item->fieldInputOverride = $formcompany->select_state($stateid, $country_code, "BLOCKEDLOG_REGISTRATION_STATE");
 
 	//Company zip
@@ -339,7 +346,7 @@ if ($action == "ping") {
 
 	//IT provider state
 	$item = $formSetup->newItem('MAIN_INFO_ITPROVIDER_STATE');
-	$item->fieldInputOverride = $formcompany->select_state(getDolGlobalString('MAIN_INFO_ITPROVIDER_STATE'), getDolGlobalString('MAIN_INFO_ITPROVIDER_COUNTRY'), "MAIN_INFO_ITPROVIDER_STATE");
+	$item->fieldInputOverride = $formcompany->select_state(getDolGlobalInt('MAIN_INFO_ITPROVIDER_STATE'), getDolGlobalString('MAIN_INFO_ITPROVIDER_COUNTRY'), "MAIN_INFO_ITPROVIDER_STATE");
 
 	//IT provider zip
 	$item = $formSetup->newItem('MAIN_INFO_ITPROVIDER_ZIP');
