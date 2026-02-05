@@ -20,7 +20,7 @@
 /**
  *	\file       htdocs/margin/tabs/productMargins.php
  *	\ingroup    product margins
- *	\brief      Page des marges des factures clients pour un produit
+ *	\brief      client invoice margin page for a product
  */
 
 // Load Dolibarr environment

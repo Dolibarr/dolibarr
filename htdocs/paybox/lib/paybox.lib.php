@@ -92,7 +92,7 @@ function print_paybox_redirect($PRICE, $CURRENCY, $EMAIL, $urlok, $urlko, $TAG)
 
 	$conf->global->PAYBOX_HASH = 'sha512';
 
-	// Definition des parameters vente produit pour paybox
+	// Definition of product sales parameters for Paybox
 	$IBS_CMD = $TAG;
 	$IBS_TOTAL = $PRICE * 100; // En centimes
 	$IBS_MODE = 1; // Mode formulaire

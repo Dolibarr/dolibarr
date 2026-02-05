@@ -1061,7 +1061,7 @@ if ((isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && $use
 /*
  * Latest contracts
  */
-if (isModEnabled('contract') && $user->hasRight("contrat", "lire") && 0) { // TODO A REFAIRE DEPUIS NOUVEAU CONTRAT
+if (isModEnabled('contract') && $user->hasRight("contrat", "lire") && 0) { // TODO TO BE REDONE SINCE NEW CONTRACT
 	$staticcontrat = new Contrat($db);
 
 	$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";

@@ -22,7 +22,7 @@
 /**
  *      \file       htdocs/core/boxes/box_factures_fourn.php
  *      \ingroup    supplier
- *      \brief      Fichier de gestion d'une box des factures fournisseurs
+ *      \brief      File for managing a supplier invoice box
  */
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 

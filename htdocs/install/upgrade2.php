@@ -1585,7 +1585,7 @@ function migrate_contracts_open($db, $langs, $conf)
 }
 
 /**
- * Factures fournisseurs
+ * Supplier invoices
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs

@@ -681,7 +681,7 @@ if (empty($arrayfields['s.name_alias']['checked']) && $search_societe) {
 		$sql .= natural_search('s.name_alias', $search_societe_alias);
 	}
 }
-// Rechercher dans code_client si SOCIETE_ADD_REF_IN_LIST est égal à 1
+// Search in code_client if SOCIETE_ADD_REF_IN_LIST equals 1
 if ($societe_add_ref_in_list == 1 && $search_code_client && !$search_societe) {
 	$sql .= natural_search('s.code_client', $search_code_client);
 }
