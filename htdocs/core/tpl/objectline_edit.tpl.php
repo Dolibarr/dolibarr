@@ -51,6 +51,7 @@
  *
  * @var string $action
  * @var int	$dateSelector
+ * @var int $i
  */
 
 // Protection to avoid direct call of template
@@ -65,6 +66,8 @@ if (empty($object) || !is_object($object)) {
 @phan-var-force Societe $seller
 @phan-var-force Societe $buyer
 @phan-var-force string $var
+@phan-var-force int $i
+
 ';
 
 // Handle subtotals line edit

@@ -71,6 +71,7 @@ if (empty($object) || !is_object($object)) {
 @phan-var-force Propal|Contrat|Commande|Facture|Expedition|Delivery|CommandeFournisseur|FactureFournisseur|SupplierProposal $object
 @phan-var-force 0|1 $forceall
 @phan-var-force int $num
+@phan-var-force int $i
 @phan-var-force ?Product $product_static
 @phan-var-force string $text
 @phan-var-force string $description
