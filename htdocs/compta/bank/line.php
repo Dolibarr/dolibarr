@@ -635,10 +635,39 @@ if ($result) {
 		if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 			$langs->load('categories');
 
-			// Bank line
-			print '<tr><td class="toptd">'.$form->editfieldkey('RubriquesTransactions', 'custcats', '', $object, 0).'</td><td>';
-			print $form->selectCategories(Categorie::TYPE_BANK_LINE, 'custcats', $object);
-			print "</td></tr>";
+			print '<tr>';
+			print '<td class="toptd">'.$form->editfieldkey('RubriquesTransactions', 'custcats', '', $bankline, 0).'</td>';
+			print '<td>';
+
+			// If user can edit bank line and line is not conciliated -> show selector
+			if (($user->hasRight('banque', 'modifier') || $user->hasRight('banque', 'consolidate')) && empty($objp->rappro)) {
+				$cate_arbo = $form->select_all_categories(Categorie::TYPE_BANK_LINE, '', 'parent', 0, 0, 1);
+
+				// multiselectarray() last param is injected into <select ...>
+				$moreparam = 'style="width:90%;"';
+
+				print img_picto('', 'category', 'class="paddingright"');
+				print $form->multiselectarray('custcats', $cate_arbo, $arrayselected, 0, 0, '', 0, $moreparam);
+			} else {
+				// Read-only display
+				if (is_array($cats) && count($cats) > 0) {
+					$out = array();
+					foreach ($cats as $cat) {
+						// getNomUrl() exists on Categorie objects; add link when possible
+						if (method_exists($cat, 'getNomUrl')) {
+							$out[] = $cat->getNomUrl(1);
+						} else {
+							$out[] = dol_escape_htmltag($cat->label ?? '');
+						}
+					}
+					print implode(', ', $out);
+				} else {
+					print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
+				}
+			}
+
+			print '</td>';
+			print '</tr>';
 		}
 
 		// Other attributes
