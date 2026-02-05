@@ -211,8 +211,8 @@ if ($action == 'specimen') { // For products
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=product&file=SPECIMEN.pdf");
 			return;
 		} else {
-			setEventMessages($obj->error, $obj->errors, 'errors');
-			dol_syslog($obj->error, LOG_ERR);
+			setEventMessages($module->error, $module->errors, 'errors');
+			dol_syslog($module->error, LOG_ERR);
 		}
 	} else {
 		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
