@@ -119,12 +119,19 @@ foreach ($object->fields as $key => $val) {
 	}
 }
 
+// get user rights on supplier prices
+$usercancreadsupplierprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'read_supplier_prices') : $user->hasRight('product', 'read');
+
+
 // Definition of array of fields for columns
 $arrayfields = array(
 	'stockqty' => array('type' => 'float', 'label' => 'PhysicalStock', 'enabled' => '1', 'visible' => -2, 'checked' => '0', 'position' => 170),
-	'estimatedvalue' => array('type' => 'float', 'label' => 'EstimatedStockValue', 'enabled' => '1', 'visible' => 1, 'checked' => '1', 'position' => 171),
 	'estimatedstockvaluesell' => array('type' => 'float', 'label' => 'EstimatedStockValueSell', 'enabled' => '1', 'checked' => '1', 'visible' => 2, 'position' => 172),
 );
+if ($usercancreadsupplierprice) {
+	$arrayfields['estimatedvalue'] = array('type' => 'float', 'label' => 'EstimatedStockValue', 'enabled' => '1', 'visible' => 1, 'checked' => '1', 'position' => 171);
+}
+
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
