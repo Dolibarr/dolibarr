@@ -8,7 +8,7 @@
  * Copyright (C) 2012-2014	Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2017		Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2018-2025	Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2018-2024	Anthony Berton			<anthony.berton@bb2a.fr>
  * Copyright (C) 2022-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
@@ -1993,7 +1993,7 @@ class pdf_sponge extends ModelePDFFactures
 					}
 
 					foreach ($localtax_rate as $tvakey => $tvaval) {
-						if ($tvakey != 0) {    // On affiche pas taux 0
+						if ($tvakey != 0 || getDolGlobalString('INVOICE_SHOW_ALSO_LOCALTAX1_LINE_IF_ZERO')) {
 							//$this->atleastoneratenotnull++;
 
 							$index++;
@@ -2031,7 +2031,7 @@ class pdf_sponge extends ModelePDFFactures
 					}
 
 					foreach ($localtax_rate as $tvakey => $tvaval) {
-						if ($tvakey != 0) {    // On affiche pas taux 0
+						if ($tvakey != 0 || getDolGlobalString('INVOICE_SHOW_ALSO_LOCALTAX2_LINE_IF_ZERO')) {
 							//$this->atleastoneratenotnull++;
 
 							$index++;
@@ -2088,7 +2088,7 @@ class pdf_sponge extends ModelePDFFactures
 				if (!getDolGlobalInt('PDF_INVOICE_SHOW_VAT_ANALYSIS')) {
 					// VAT
 					foreach ($this->tva_array as $tvakey => $tvaval) {
-						if ($tvakey != 0) {    // On affiche pas taux 0
+						if ($tvakey != 0 || getDolGlobalString('INVOICE_SHOW_ALSO_VAT_LINE_IF_ZERO')) {
 							$this->atleastoneratenotnull++;
 
 							$index++;
@@ -2126,7 +2126,7 @@ class pdf_sponge extends ModelePDFFactures
 					}
 
 					foreach ($localtax_rate as $tvakey => $tvaval) {
-						if ($tvakey != 0) {    // On affiche pas taux 0
+						if ($tvakey != 0 || getDolGlobalString('INVOICE_SHOW_ALSO_LOCALTAX1_LINE_IF_ZERO')) {
 							//$this->atleastoneratenotnull++;
 
 							$index++;
@@ -2164,7 +2164,7 @@ class pdf_sponge extends ModelePDFFactures
 
 					foreach ($localtax_rate as $tvakey => $tvaval) {
 						// retrieve global local tax
-						if ($tvakey != 0) {    // On affiche pas taux 0
+						if ($tvakey != 0 || getDolGlobalString('INVOICE_SHOW_ALSO_LOCALTAX2_LINE_IF_ZERO')) {
 							//$this->atleastoneratenotnull++;
 
 							$index++;
@@ -2670,7 +2670,7 @@ class pdf_sponge extends ModelePDFFactures
 			$posy += 3;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_client), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities((string) $object->thirdparty->code_client), '', 'R');
 		}
 
 		if (!getDolGlobalString('MAIN_PDF_HIDE_CUSTOMER_ACCOUNTING_CODE') && $object->thirdparty->code_compta_client) {

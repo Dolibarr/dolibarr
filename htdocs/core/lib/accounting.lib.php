@@ -3,7 +3,7 @@
  * Copyright (C) 2013-2025  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2014       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2019       Eric Seigne             <eric.seigne@cap-rel.fr>
- * Copyright (C) 2021-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2021-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -273,7 +273,7 @@ function journalHead($nom, $variant, $period, $periodlink, $description, $buildd
 	}
 	print '<table class="border centpercent tableforfield">';
 
-	// Ligne de titre
+	// Title
 	print '<tr>';
 	print '<td class="titlefieldcreate">'.$langs->trans("Name").'</td>';
 	print '<td colspan="3">';
@@ -298,7 +298,7 @@ function journalHead($nom, $variant, $period, $periodlink, $description, $buildd
 		print '</tr>';
 	}
 
-	// Ligne de la periode d'analyse du rapport
+	// Period of report
 	print '<tr>';
 	print '<td>'.$langs->trans("ReportPeriod").'</td>';
 	if (!$periodlink) {
@@ -315,7 +315,7 @@ function journalHead($nom, $variant, $period, $periodlink, $description, $buildd
 	print '</td>';
 	print '</tr>';
 
-	// Ligne de description
+	// Line description
 	print '<tr>';
 	print '<td>'.$langs->trans("ReportDescription").'</td>';
 	print '<td colspan="3">'.$description.'</td>';

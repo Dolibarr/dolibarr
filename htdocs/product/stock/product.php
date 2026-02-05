@@ -572,8 +572,9 @@ if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
 
+$variants = 0;
+$iskit = 0;
 
-$variants = false;
 if ($id > 0 || $ref) {
 	$object = new Product($db);
 	$result = $object->fetch($id, $ref);

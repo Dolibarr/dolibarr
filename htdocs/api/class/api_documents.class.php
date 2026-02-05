@@ -7,7 +7,7 @@
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
- * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
+ * Copyright (C) 2025-2026	Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -318,6 +318,22 @@ class Documents extends DolibarrApi
 			if ($result <= 0) {
 				throw new RestException(500, 'Error generating document');
 			}
+		} elseif ($modulepart == 'holiday') {
+			require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
+
+			$tmpobject = new Holiday($this->db);
+			$result = $tmpobject->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
+
+			if (!$result) {
+				throw new RestException(404, 'Holiday not found');
+			}
+
+			$templateused = $doctemplate ? $doctemplate : $tmpobject->model_pdf;
+			$result = $tmpobject->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
+
+			if ($result <= 0) {
+				throw new RestException(500, 'Error generating document');
+			}
 		} elseif ($modulepart == 'product') {
 			require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
@@ -613,6 +629,20 @@ class Documents extends DolibarrApi
 			$result = $object->fetch($id, $ref);
 			if (!$result) {
 				throw new RestException(404, 'Expense report not found');
+			}
+
+			$upload_dir = getMultidirOutput($object) . '/'.dol_sanitizeFileName((string) $object->ref);
+		} elseif ($modulepart == 'holiday') {
+			require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
+
+			if (!DolibarrApiAccess::$user->hasRight('holiday', 'read')) {
+				throw new RestException(403);
+			}
+
+			$object = new Holiday($this->db);
+			$result = $object->fetch($id, $ref);
+			if (!$result) {
+				throw new RestException(404, 'Holiday not found');
 			}
 
 			$upload_dir = getMultidirOutput($object) . '/'.dol_sanitizeFileName((string) $object->ref);
@@ -948,6 +978,9 @@ class Documents extends DolibarrApi
 			} elseif ($modulepart == 'expensereport') {
 				require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 				$object = new ExpenseReport($this->db);
+			} elseif ($modulepart == 'holiday') {
+				require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
+				$object = new Holiday($this->db);
 			} elseif ($modulepart == 'ficheinter' || $modulepart == 'intervention') {
 				require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 				$object = new Fichinter($this->db);

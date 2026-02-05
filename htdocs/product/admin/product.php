@@ -656,7 +656,6 @@ if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 	print '<td>'.$form->textwithpicto($langs->trans("UseProductSupplierPackaging", $langs->transnoentities("PackagingForThisProduct")), $langs->trans("PackagingForThisProductDesc")).'</td>';
 	print '<td align="right">';
 	print ajax_constantonoff("PRODUCT_USE_SUPPLIER_PACKAGING", array(), $conf->entity, 0, 0, 0, 0);
-	//print $form->selectyesno("activate_useProdSupplierPackaging", (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING) ? $conf->global->PRODUCT_USE_SUPPLIER_PACKAGING : 0), 1);
 	print '</td>';
 	print '</tr>';
 

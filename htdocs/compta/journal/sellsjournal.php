@@ -8,7 +8,7 @@
  * Copyright (C) 2013       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2014       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -224,7 +224,7 @@ if ($result) {
 			$situation_ratio = 1;
 		}
 
-		//la ligne facture
+		// Invoice line
 		$tabfac[$obj->rowid]["date"] = $obj->datef;
 		$tabfac[$obj->rowid]["ref"] = $obj->ref;
 		$tabfac[$obj->rowid]["type"] = $obj->type;

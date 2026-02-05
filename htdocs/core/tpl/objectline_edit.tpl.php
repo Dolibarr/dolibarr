@@ -348,7 +348,9 @@ $coldisplay++;
 			$old_fieldv = $line->getAllPrevProgress($line->fk_facture);
 			$fieldv = $tmp_fieldv + $old_fieldv;
 
-			print '<td class="nowrap right linecolcycleref"><input class="right" type="text" size="1" value="'.$fieldv.'" name="progress">%</td>';
+			print '<td class="nowrap right linecolcycleref"><input class="right" type="text" size="1" value="'.$fieldv.'" name="progress">%';
+			print ' '.$form->textwithpicto('', $langs->trans("PreviousProgress").' ('.$old_fieldv.'%)');
+			print '</td>';
 		} else {
 			print '<td class="nowrap right linecolcycleref"><input class="right" type="text" size="1" value="' . (GETPOSTISSET('progress') ? GETPOST('progress') : $line->situation_percent) . '" name="progress">%</td>';
 		}
