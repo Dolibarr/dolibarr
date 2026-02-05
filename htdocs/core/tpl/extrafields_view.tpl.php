@@ -46,7 +46,7 @@ if (!is_object($form)) {
 }
 
 ?>
-<!-- BEGIN PHP TEMPLATE core/tpl/extrafields_view.tpl.php -->
+<!-- BEGIN PHP TEMPLATE core/tpl/extrafields_view.tpl.php to show formObjectOptions + extrafields -->
 <?php
 if (!isset($parameters) || !is_array($parameters)) {
 	$parameters = array();

@@ -3657,7 +3657,7 @@ if ($action == 'create') {
 			}
 
 
-			// Other attributes
+			// Other attributes. Fields from hook formObjectOptions and Extrafields.
 			$cols = 2;
 			if ($object->status != $object::STATUS_DRAFT) {
 				$disableedit = 1;
