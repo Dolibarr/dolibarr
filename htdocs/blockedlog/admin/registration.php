@@ -226,7 +226,7 @@ print '<br>';
 if ($action == "ping") {
 	$company_state = $mysoc->state;
 	if (getDolGlobalString('BLOCKEDLOG_REGISTRATION_STATE')) {
-		$company_state = getState(getDolGlobalString('BLOCKEDLOG_REGISTRATION_STATE'));
+		$company_state = getState(getDolGlobalInt('BLOCKEDLOG_REGISTRATION_STATE'));
 	}
 	$arrayofdata = array(
 		'action' => 'dolibarrregistration',
