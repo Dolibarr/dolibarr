@@ -83,6 +83,7 @@ if (GETPOSTISSET("projectid")) {
 }
 
 $object = new Reception($db);
+$objectsrc = null;
 
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref);
@@ -93,6 +94,7 @@ if ($id > 0 || !empty($ref)) {
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
+	$origin = null;
 	if (!empty($object->origin)) {
 		$origin = $object->origin;
 		$typeobject = $object->origin;
