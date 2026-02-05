@@ -53,11 +53,11 @@ $mailsonde = GETPOST('mailsonde');
 $creation_sondage_date = GETPOST('creation_sondage_date');
 $creation_sondage_autre = GETPOST('creation_sondage_autre');
 
-// We init some session variable to avoir warning
-$session_var = array('title', 'description', 'mailsonde');
+// We init some session variable to avoid warning
+$session_var = array('title', 'description', 'mailsonde', 'allow_comments', 'allow_spy');
 foreach ($session_var as $var) {
-	if (isset($_SESSION[$var])) {
-		$_SESSION[$var] = null;
+	if (!isset($_SESSION[$var])) {
+		$_SESSION[$var] = '';
 	}
 }
 
