@@ -273,30 +273,30 @@ if ($action == "ping") {
 
 	//Company name
 	$item = $formSetup->newItem('BLOCKEDLOG_REGISTRATION_NAME');
-	$item->defaultFieldValue = !empty(getDolGlobalString('BLOCKEDLOG_REGISTRATION_NAME')) ? getDolGlobalString('BLOCKEDLOG_REGISTRATION_NAME') : $mysoc->name;
+	$item->defaultFieldValue = getDolGlobalString('BLOCKEDLOG_REGISTRATION_NAME', $mysoc->name) ;
 	$item->fieldParams['isMandatory'] = 1;
 
 	//Company email
 	$item = $formSetup->newItem('BLOCKEDLOG_REGISTRATION_EMAIL');
-	$item->defaultFieldValue = !empty(getDolGlobalString('BLOCKEDLOG_REGISTRATION_EMAIL')) ? getDolGlobalString('BLOCKEDLOG_REGISTRATION_EMAIL') : $mysoc->email;
+	$item->defaultFieldValue = getDolGlobalString('BLOCKEDLOG_REGISTRATION_EMAIL', $mysoc->email);
 	$item->setAsEmail();
 	$item->fieldParams['isMandatory'] = 1;
 	$item->cssClass = "minwidth300 maxwidth500 widthcentpercentminusx";
 
 	//Company IDPROF1
 	$item = $formSetup->newItem('BLOCKEDLOG_REGISTRATION_IDPROF1');
-	$item->defaultFieldValue = !empty(getDolGlobalString('BLOCKEDLOG_REGISTRATION_IDPROF1')) ? getDolGlobalString('BLOCKEDLOG_REGISTRATION_IDPROF1') : $mysoc->idprof1;
+	$item->defaultFieldValue = getDolGlobalString('BLOCKEDLOG_REGISTRATION_IDPROF1', $mysoc->idprof1);
 	$item->fieldParams['isMandatory'] = 1;
 
 	//Company country code
-	$country_code = !empty(getDolGlobalString('BLOCKEDLOG_REGISTRATION_COUNTRY_CODE')) ? getDolGlobalString('BLOCKEDLOG_REGISTRATION_COUNTRY_CODE') : $mysoc->country_code;
+	$country_code = getDolGlobalString('BLOCKEDLOG_REGISTRATION_COUNTRY_CODE', $mysoc->country_code);
 	$item = $formSetup->newItem('BLOCKEDLOG_REGISTRATION_COUNTRY_CODE');
 	$item->fieldInputOverride = $form->select_country($country_code, "BLOCKEDLOG_REGISTRATION_COUNTRY_CODE", '', 0, 'minwidth300', 'code2');
 	$item->fieldParams['isMandatory'] = 1;
 
 	//Company address
 	$item = $formSetup->newItem('BLOCKEDLOG_REGISTRATION_ADDRESS');
-	$item->defaultFieldValue = !empty(getDolGlobalString('BLOCKEDLOG_REGISTRATION_ADDRESS')) ? getDolGlobalString('BLOCKEDLOG_REGISTRATION_ADDRESS') : $mysoc->address;
+	$item->defaultFieldValue = getDolGlobalString('BLOCKEDLOG_REGISTRATION_ADDRESS', $mysoc->address);
 	$item->setAsTextarea();
 
 	//Company state
@@ -306,17 +306,17 @@ if ($action == "ping") {
 		$tmp = explode(':', getDolGlobalString('MAIN_INFO_SOCIETE_STATE'));
 		$state_id = $tmp[0];
 	}
-	$stateid = !empty(getDolGlobalInt('BLOCKEDLOG_REGISTRATION_STATE')) ? getDolGlobalInt('BLOCKEDLOG_REGISTRATION_STATE') : (int) $state_id;
+	$stateid = getDolGlobalInt('BLOCKEDLOG_REGISTRATION_STATE',(int) $state_id);
 	$item->fieldInputOverride = $formcompany->select_state($stateid, $country_code, "BLOCKEDLOG_REGISTRATION_STATE");
 
 	//Company zip
 	$item = $formSetup->newItem('BLOCKEDLOG_REGISTRATION_ZIP');
-	$item->defaultFieldValue = !empty(getDolGlobalString('BLOCKEDLOG_REGISTRATION_ZIP')) ? getDolGlobalString('BLOCKEDLOG_REGISTRATION_ZIP') : $mysoc->zip;
+	$item->defaultFieldValue = getDolGlobalString('BLOCKEDLOG_REGISTRATION_ZIP', $mysoc->zip);
 	$item->cssClass = "width100";
 
 	//Company town
 	$item = $formSetup->newItem('BLOCKEDLOG_REGISTRATION_TOWN');
-	$item->defaultFieldValue = !empty(getDolGlobalString('BLOCKEDLOG_REGISTRATION_TOWN')) ? getDolGlobalString('BLOCKEDLOG_REGISTRATION_TOWN') : $mysoc->town;
+	$item->defaultFieldValue = getDolGlobalString('BLOCKEDLOG_REGISTRATION_TOWN', $mysoc->town);
 
 	$formSetup->newItem('ITProvider')->setAsTitle();
 
