@@ -1526,7 +1526,7 @@ class Ticket extends CommonObject
 
 				if (!$error && !$notrigger) {
 					// Call trigger
-					$result = $this->call_trigger('TICKET_MODIFY', $user);
+					$result = $this->call_trigger('TICKET_READ', $user);
 					if ($result < 0) {
 						$error++;
 					}
