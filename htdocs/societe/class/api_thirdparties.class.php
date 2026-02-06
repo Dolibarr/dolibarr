@@ -1060,12 +1060,14 @@ class Thirdparties extends DolibarrApi
 		}
 
 		$result = $this->company->fetch($id);
-		if (!is_array($result)) {
+		if (!$result) {
 			throw new RestException(404, 'Thirdparty not found');
 		}
 
 		$result = $this->company->getSalesRepresentatives(DolibarrApiAccess::$user, $mode);
-
+		if (!is_array($result)) {
+			throw new RestException(500, 'Error while retrieving sales representatives');
+		}
 		return $result;
 	}
 
