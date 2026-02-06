@@ -678,7 +678,7 @@ if (isModEnabled('salaries') && ($modecompta == 'CREANCES-DETTES' || $modecompta
  * Expense reports
  */
 
-if (!isModEnabled('expensereport') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
+if (isModEnabled('expensereport') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
 	$langs->load('trips');
 
 	if ($modecompta == 'CREANCES-DETTES') {
