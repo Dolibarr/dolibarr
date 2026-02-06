@@ -321,7 +321,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 
 					$info = $object->_load_ldap_info();
 					if (isset($info['member']) && empty($info['member']) && !getDolGlobalString('LDAP_SEND_EMPTY_MEMBERS_TO_GROUP')) {
-						// Members were not explicitly loaded and LDAP alows us not to send members, so we do not send them
+						// Members were not explicitly loaded and LDAP allows us not to send members, so we do not send them
 						unset($info['member']);
 					}
 					$dn = $object->_load_ldap_dn($info);
