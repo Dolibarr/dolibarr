@@ -3577,6 +3577,61 @@ if ($action == 'create' && $usercancreate) {
 					'label' => 'CreateBill',
 					'url' => '/compta/facture/card.php?action=create&amp;token=' . newToken() . '&amp;origin=' . urlencode($object->element) . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid
 				);
+
+				// Create event
+				if (isModEnabled('agenda') && !empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD)) {
+					$total_duration_seconds = 0;
+					if (!empty($object->lines)) {
+						foreach ($object->lines as $line) {
+							if ($line->product_type == 1 && isset($line->product)) {
+								$p_dur_val = $line->product->duration_value;
+								$p_dur_unit = $line->product->duration_unit;
+								
+								if ($p_dur_val > 0) {
+									$factor = ($p_dur_unit == 'm' ? 60 : ($p_dur_unit == 'd' ? 86400 : 3600));
+									$total_duration_seconds += ($p_dur_val * $factor * $line->qty);
+								}
+							}
+						}
+					}
+
+					$new_event_url = '/comm/action/card.php?action=create';
+					$new_event_url .= '&origin=' . urlencode($object->element);
+					$new_event_url .= '&originid=' . $object->id;
+					$new_event_url .= '&socid=' . $object->socid;
+
+					$planned_date = !empty($object->date_livraison) ? $object->date_livraison : $object->delivery_date;
+
+					if (!empty($planned_date)) {
+						$new_event_url .= '&datep=' . dol_print_date($planned_date, '%Y%m%d%H%M%S');
+						
+						if ($total_duration_seconds > 0) {
+							$datef_timestamp = $planned_date + $total_duration_seconds;
+							$new_event_url .= '&datef=' . dol_print_date($datef_timestamp, '%Y%m%d%H%M%S');
+						}
+					}
+
+					$label_text = $langs->trans("Delivery") . ': ' . $object->ref;
+					if (!empty($object->ref_client)) {
+						$label_text .= ' (' . $object->ref_client . ')';
+					}
+					$new_event_url .= '&label=' . urlencode($label_text);
+					$new_event_url .= '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?id=' . $object->id);
+
+					$arrayforbutaction[] = array(
+						'lang' => 'agenda',
+						'enabled' => (
+							isModEnabled('agenda') && 
+							$object->status > Commande::STATUS_DRAFT && 
+							$object->status < Commande::STATUS_CLOSED && 
+							count($object->lines) > 0
+						),
+						'perm' => ($user->hasRight('agenda', 'myactions', 'create')),
+						'label' => 'AddAction',
+						'url' => $new_event_url
+					);
+				}
+				
 				/*
 				 if (isModEnabled('facture') && $object->status > Commande::STATUS_DRAFT && !$object->billed && $object->total_ttc >= 0) {
 				 if (isModEnabled('facture') && $user->hasRight('facture', 'creer') && empty($conf->global->WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER)) {
