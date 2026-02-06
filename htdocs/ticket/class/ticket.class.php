@@ -1539,12 +1539,14 @@ class Ticket extends CommonObject
 				} else {
 					$this->db->rollback();
 					$this->error = join(',', $this->errors);
+					$this->status = $this->oldcopy->status;
 					dol_syslog(get_class($this)."::markAsRead ".$this->error, LOG_ERR);
 					return -1;
 				}
 			} else {
 				$this->db->rollback();
 				$this->error = $this->db->lasterror();
+				$this->status = $this->oldcopy->status;
 				dol_syslog(get_class($this)."::markAsRead ".$this->error, LOG_ERR);
 				return -1;
 			}
