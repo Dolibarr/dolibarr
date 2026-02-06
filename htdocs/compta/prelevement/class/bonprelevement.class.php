@@ -256,10 +256,17 @@ class BonPrelevement extends CommonObject
 	 * @var int
 	 */
 	public $credite;
+
+	/**
+	 * @var string
+	 * @deprecated see $note_private
+	 */
+	public $note;
+
 	/**
 	 * @var string
 	 */
-	public $note;
+	public $note_private;
 
 	/**
 	 * @var int|''|null
@@ -525,6 +532,7 @@ class BonPrelevement extends CommonObject
 				$this->ref            = $obj->ref;
 				$this->amount         = $obj->amount;
 				$this->note           = $obj->note;
+				$this->note_private   = $obj->note;
 				$this->datec          = $this->db->jdate($obj->dc);
 
 				$this->date_trans     = $this->db->jdate($obj->date_trans);
