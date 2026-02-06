@@ -2114,6 +2114,11 @@ class EmailCollector extends CommonObject
 				if (getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')) {
 					/** @var Webklex\PHPIMAP\Message $imapemail */
 					'@phan-var-force Webklex\PHPIMAP\Message $imapemail';
+					// Reset message body globals to prevent carryover from previous email in loop
+					// Note: $charset is NOT reset as PHPIMAP handles charset internally
+					$htmlmsg = $plainmsg = '';
+					$attachments = array();
+
 					if ($imapemail->hasHTMLBody()) {
 						$htmlmsg = $imapemail->getHTMLBody();
 					}
@@ -2123,7 +2128,7 @@ class EmailCollector extends CommonObject
 					if ($imapemail->hasAttachments()) {
 						$attachments = $imapemail->getAttachments()->all();
 					} else {
-						$attachments = [];
+						$attachments = array();
 					}
 				} else {
 					$getMsg = $this->getmsg($connection, $imapemail); // This set global var $charset, $htmlmsg, $plainmsg, $attachments

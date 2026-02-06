@@ -34,6 +34,7 @@
  * @var string	$forcefieldid
  * @var string	$forceobjectid
  */
+'@phan-var-force array<string,mixed>	$parameters';
 
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
