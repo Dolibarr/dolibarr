@@ -14374,6 +14374,8 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 			$class = 'butAction butActionEmail';
 		} elseif ($actionType == 'clone') {
 			$class = 'butAction butActionClone';
+		} elseif ($actionType == 'cancel') {
+			$class = 'butAction butActionDelete';
 		} elseif ($actionType == 'danger' || $actionType == 'delete') {
 			$class = 'butAction butActionDelete';
 			if (!empty($url) && strpos($url, 'token=') === false) {

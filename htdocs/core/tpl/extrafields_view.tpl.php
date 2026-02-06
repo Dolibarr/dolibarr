@@ -46,6 +46,10 @@ if (!is_object($form)) {
 	$form = new Form($db);
 }
 
+// Ensure $objectoffield is available for dol_eval visibility formulas.
+global $objectoffield;
+$objectoffield = $object;
+
 ?>
 <!-- BEGIN PHP TEMPLATE core/tpl/extrafields_view.tpl.php to show formObjectOptions + extrafields -->
 <?php

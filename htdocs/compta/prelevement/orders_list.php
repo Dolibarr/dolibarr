@@ -29,9 +29,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -40,6 +37,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'withdrawals'));
@@ -54,6 +53,11 @@ $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'alpha');
 
+// Get supervariables
+$status = GETPOSTINT('status');
+$search_ref = GETPOST('search_ref', 'alpha');
+$search_amount = GETPOST('search_amount', 'alpha');
+$search_status = GETPOST('search_status');
 $type = GETPOST('type', 'aZ09');
 
 // Load variable for pagination
@@ -74,11 +78,6 @@ if (!$sortorder) {
 if (!$sortfield) {
 	$sortfield = "p.datec";
 }
-
-// Get supervariables
-$statut = GETPOSTINT('statut');
-$search_ref = GETPOST('search_ref', 'alpha');
-$search_amount = GETPOST('search_amount', 'alpha');
 
 $bon = new BonPrelevement($db);
 $hookmanager->initHooks(array('withdrawalsreceiptslist'));
@@ -110,6 +109,7 @@ $error = 0;
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 	$search_ref = "";
 	$search_amount = "";
+	$search_status = "";
 }
 
 // Mass actions
@@ -192,7 +192,7 @@ if ($type == 'bank-transfer') {
 $help_url = '';
 
 
-$sql = "SELECT p.rowid, p.ref, p.amount, p.statut, p.datec";
+$sql = "SELECT p.rowid, p.ref, p.amount, p.statut as status, p.datec";
 
 $sqlfields = $sql; // $sql fields to remove for count total
 
@@ -208,6 +208,9 @@ if ($search_ref) {
 }
 if ($search_amount) {
 	$sql .= natural_search("p.amount", $search_amount, 1);
+}
+if ((string) $search_status != '' && (string) $search_status != '-1') {
+	$sql .= natural_search("p.statut", $search_status, 1);
 }
 
 // Count total nb of records
@@ -252,7 +255,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 $param = '';
-$param .= "&statut=".urlencode((string) ($statut));
+$param .= "&status=".urlencode((string) ($status));
 if ($type == 'bank-transfer') {
 	$param .= '&type=bank-transfer';
 }
@@ -267,6 +270,12 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 }
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
+}
+if ($search_amount) {
+	$param .= '&search_amount='.urlencode($search_amount);
+}
+if ((string) $search_status != '' && (string) $search_status != '-1') {
+	$param .= '&search_status='.((int) $search_status);
 }
 
 $arrayofmassactions = array(
@@ -349,7 +358,14 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre right"><input type="text" class="flat maxwidth100" name="search_amount" value="'.dol_escape_htmltag($search_amount).'"></td>';
-print '<td class="liste_titre">&nbsp;</td>';
+print '<td class="liste_titre right minwidth75imp parentonrightofpage">';
+$arrayofstatus = array(
+	'0' => $langs->trans('StatusWaiting'),
+	'1' => $langs->trans('StatusTrans'),
+	'2' => $langs->trans('StatusCredited')
+);
+print $form->selectarray('search_status', $arrayofstatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage', 1);
+print '</td>';
 // Action column
 if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print '<td class="liste_titre center maxwidthsearch">';
@@ -401,7 +417,8 @@ while ($i < $imaxinloop) {
 	$directdebitorder->ref = $obj->ref;
 	$directdebitorder->date_echeance = $obj->datec;
 	$directdebitorder->total = $obj->amount;
-	$directdebitorder->statut = $obj->statut;
+	$directdebitorder->statut = $obj->status;
+	$directdebitorder->status = $obj->status;
 
 	$object = $directdebitorder;
 
@@ -452,7 +469,7 @@ while ($i < $imaxinloop) {
 		print '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>\n";
 
 		print '<td class="right">';
-		print $bon->LibStatut($obj->statut, 5);
+		print $bon->LibStatut($obj->status, 5);
 		print '</td>';
 
 		// Action column
