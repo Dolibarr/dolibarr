@@ -332,10 +332,12 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 			$object->timespent_duration = GETPOSTINT("new_durationhour") * 60 * 60; // We store duration in seconds
 			$object->timespent_duration += (GETPOSTINT("new_durationmin") ? GETPOSTINT('new_durationmin') : 0) * 60; // We store duration in seconds
 			if (GETPOST("timelinehour") != '' && GETPOST("timelinehour") >= 0) {    // If hour was entered
-				$object->timespent_date = dol_mktime(GETPOSTINT("timelinehour"), GETPOSTINT("timelinemin"), 0, GETPOSTINT("timelinemonth"), GETPOSTINT("timelineday"), GETPOSTINT("timelineyear"));
+				$object->timespent_date = dol_mktime(12, 0, 0, GETPOSTINT("timelinemonth"), GETPOSTINT("timelineday"), GETPOSTINT("timelineyear"));
+				$object->timespent_datehour = dol_mktime(GETPOSTINT("timelinehour"), GETPOSTINT("timelinemin"), 0, GETPOSTINT("timelinemonth"), GETPOSTINT("timelineday"), GETPOSTINT("timelineyear"));
 				$object->timespent_withhour = 1;
 			} elseif (!empty($timespent_date)) {
 				$object->timespent_date = $timespent_date;
+				$object->timespent_datehour = $timespent_date;
 				$object->timespent_withhour = 0;
 			}
 			$object->timespent_fk_user = GETPOSTINT("userid_line");
@@ -2132,6 +2134,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 			$date1 = $db->jdate($task_time->element_date);
 			$date2 = $db->jdate($task_time->element_datehour);
+			$displaydate = (!empty($task_time->element_date_withhour) ? ($date2 ? $date2 : $date1) : $date1);
 
 			// Show here line of result
 			$j = 0;
@@ -2193,12 +2196,12 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print '<td class="nowrap">';
 				if ($action == 'editline' && GETPOSTINT('lineid') == $task_time->rowid) {
 					if (empty($task_time->element_date_withhour)) {
-						print $form->selectDate(($date2 ? $date2 : $date1), 'timeline', 4, 3, 2, "timespent_date", 1, 0);
+						print $form->selectDate($date1, 'timeline', 4, 3, 2, "timespent_date", 1, 0);
 					} else {
 						print $form->selectDate(($date2 ? $date2 : $date1), 'timeline', 2, 1, 2, "timespent_date", 1, 0);
 					}
 				} else {
-					print dol_print_date(($date2 ? $date2 : $date1), ($task_time->element_date_withhour ? 'dayhour' : 'day'));
+					print dol_print_date($displaydate, ($task_time->element_date_withhour ? 'dayhour' : 'day'));
 				}
 				print '</td>';
 				if (!$i) {
@@ -2567,12 +2570,12 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					print '<td class="nowrap">';
 					if ($action == 'splitline' && GETPOSTINT('lineid') == $task_time->rowid) {
 						if (empty($task_time->element_date_withhour)) {
-							print $form->selectDate(($date2 ? $date2 : $date1), 'timeline', 3, 3, 2, "timespent_date", 1, 0);
+							print $form->selectDate($date1, 'timeline', 3, 3, 2, "timespent_date", 1, 0);
 						} else {
 							print $form->selectDate(($date2 ? $date2 : $date1), 'timeline', 1, 1, 2, "timespent_date", 1, 0);
 						}
 					} else {
-						print dol_print_date(($date2 ? $date2 : $date1), ($task_time->element_date_withhour ? 'dayhour' : 'day'));
+						print dol_print_date($displaydate, ($task_time->element_date_withhour ? 'dayhour' : 'day'));
 					}
 					print '</td>';
 				}
@@ -2732,12 +2735,12 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					print '<td class="nowrap">';
 					if ($action == 'splitline' && GETPOSTINT('lineid') == $task_time->rowid) {
 						if (empty($task_time->element_date_withhour)) {
-							print $form->selectDate(($date2 ? $date2 : $date1), 'timeline_2', 3, 3, 2, "timespent_date", 1, 0);
+							print $form->selectDate($date1, 'timeline_2', 3, 3, 2, "timespent_date", 1, 0);
 						} else {
 							print $form->selectDate(($date2 ? $date2 : $date1), 'timeline_2', 1, 1, 2, "timespent_date", 1, 0);
 						}
 					} else {
-						print dol_print_date(($date2 ? $date2 : $date1), ($task_time->element_date_withhour ? 'dayhour' : 'day'));
+						print dol_print_date($displaydate, ($task_time->element_date_withhour ? 'dayhour' : 'day'));
 					}
 					print '</td>';
 				}
