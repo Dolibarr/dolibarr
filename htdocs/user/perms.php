@@ -8,6 +8,7 @@
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -483,6 +484,7 @@ $familyinfo = array(
 	'interface' => array('position' => '050', 'label' => $langs->trans("ModuleFamilyInterface")),
 	'base' => array('position' => '060', 'label' => $langs->trans("ModuleFamilyBase")),
 	'other' => array('position' => '100', 'label' => $langs->trans("ModuleFamilyOther")),
+	'external' => array('position' => '500', 'label' => 'External'),
 );
 
 $arrayofpermission = array();
@@ -502,7 +504,14 @@ if ($result) {
 		if (empty($obj->family)) {
 			$obj->family = 'other';
 		}
+		if (!empty($obj->family) && !isset($familyinfo[$obj->family])) {
+			$obj->family = 'external';
+		}
 
+		// Si la famille n'existe pas dans $familyinfo, on utilise 'other'
+		if (!empty($obj->family) && !isset($familyinfo[$obj->family])) {
+			$obj->family = 'other';
+		}
 		if (empty($obj->family_position)) {
 			$obj->family_position = $familyinfo[$obj->family]['position'];
 			if ($obj->module_position < 100000) {

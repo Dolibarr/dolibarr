@@ -48,6 +48,7 @@ require '../../main.inc.php'; // Load $user and permissions
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';

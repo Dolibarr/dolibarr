@@ -34,6 +34,7 @@
  * @var string	$forcefieldid
  * @var string	$forceobjectid
  */
+'@phan-var-force array<string,mixed>	$parameters';
 
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
@@ -46,7 +47,7 @@ if (!is_object($form)) {
 }
 
 ?>
-<!-- BEGIN PHP TEMPLATE core/tpl/extrafields_view.tpl.php -->
+<!-- BEGIN PHP TEMPLATE core/tpl/extrafields_view.tpl.php to show formObjectOptions + extrafields -->
 <?php
 if (!isset($parameters) || !is_array($parameters)) {
 	$parameters = array();
