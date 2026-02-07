@@ -1060,7 +1060,7 @@ class Thirdparties extends DolibarrApi
 		}
 
 		$result = $this->company->fetch($id);
-		if (!$result) {
+		if ($result <= 0) {
 			throw new RestException(404, 'Thirdparty not found');
 		}
 
