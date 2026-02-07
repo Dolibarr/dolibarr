@@ -99,7 +99,7 @@ class Odf
 	 * Class constructor
 	 *
 	 * @param string $filename     The name of the odt file
-	 * @param array $config       Array of config data
+	 * @param array $config        Array of config data
 	 * @throws OdfException
 	 */
 	public function __construct($filename, $config = array())
