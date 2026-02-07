@@ -1787,6 +1787,8 @@ class ExtraFields
 				// 6 : ids categories list separated by comma for category root. This replace the filter.
 				// 7 : sort field (not used here but used into format for commobject)
 
+				// Example with extrafield value = "societe:nom:rowid" or "categorie:label:rowid:::product"
+
 				// If there is a filter, we extract it by taking all content inside parenthesis.
 				if (! empty($InfoFieldList[4])) {
 					$pos = 0;
@@ -1836,7 +1838,7 @@ class ExtraFields
 				}
 
 				$filter_categorie = false;
-				if (count($InfoFieldList) > 5) {
+				if (count($InfoFieldList) > 5 && ((string) $InfoFieldList[5] != '')) {
 					if ($InfoFieldList[0] == 'categorie') {
 						$filter_categorie = true;
 					}
@@ -1917,6 +1919,7 @@ class ExtraFields
 					$sql .= ' ORDER BY '.implode(', ', $fields_label);
 
 					dol_syslog(get_class($this).'::showInputField type=chkbxlst', LOG_DEBUG);
+
 					$resql = $this->db->query($sql);
 					if ($resql) {
 						$num = $this->db->num_rows($resql);
@@ -2112,9 +2115,10 @@ class ExtraFields
 	 * @param	string				$extrafieldsobjectkey	Required (for example $object->table_element).
 	 * @param 	Translate|null 		$outputlangs 			Output
 	 * @param	CommonObject|null	$object					The parent object of field to show
+	 * @param	string				$mode					'' or 'list'
 	 * @return	string										Formatted value
 	 */
-	public function showOutputField($key, $value, $moreparam = '', $extrafieldsobjectkey = '', $outputlangs = null, $object = null)
+	public function showOutputField($key, $value, $moreparam = '', $extrafieldsobjectkey = '', $outputlangs = null, $object = null, $mode = '')
 	{
 		global $conf, $langs, $hookmanager;
 
@@ -2170,7 +2174,8 @@ class ExtraFields
 			return ''; // This is a protection. If field is hidden, we should just not call this method.
 		}
 
-		//if ($computed) $value =		// $value is already calculated into $value before calling this method
+		//print $key.' '.$type.'<br>';
+
 		$showsize = 0;
 		if ($type == 'date') {
 			$showsize = 10;
@@ -2279,16 +2284,16 @@ class ExtraFields
 				$sql .= ' as main';
 			}
 			if ($selectkey == 'rowid' && empty($value)) {
-				$sql .= " WHERE ".$selectkey." = 0";
+				$sql .= " WHERE ".$this->db->sanitize($selectkey)." = 0";
 			} elseif ($selectkey == 'rowid') {
-				$sql .= " WHERE ".$selectkey." = ".((int) $value);
+				$sql .= " WHERE ".$this->db->sanitize($selectkey)." = ".((int) $value);
 			} else {
-				$sql .= " WHERE ".$selectkey." = '".$this->db->escape($value)."'";
+				$sql .= " WHERE ".$this->db->sanitize($selectkey)." = '".$this->db->escape($value)."'";
 			}
-
 			//$sql.= ' AND entity = '.$conf->entity;
 
 			dol_syslog(get_class($this).':showOutputField:$type=sellist', LOG_DEBUG);
+
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				if (!$filter_categorie) {
@@ -2336,7 +2341,7 @@ class ExtraFields
 						if ($result > 0) {
 							$ways = $c->print_all_ways(); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formatted text
 							foreach ($ways as $way) {
-								$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"' . ($c->color ? ' style="background: #' . $c->color . ';"' : ' style="background: #bbb"') . '>' . img_object('', 'category') . ' ' . $way . '</li>';
+								$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories'.($mode ? ' '.$mode : '').'"' . ($c->color ? ' style="background: #' . $c->color . ';"' : ' style="background: #bbb"') . '>' . img_object('', 'category') . ' ' . $way . '</li>';
 							}
 						}
 					}
@@ -2363,108 +2368,137 @@ class ExtraFields
 			if (is_array($value_arr)) {
 				foreach ($value_arr as $keyval => $valueval) {
 					if (!empty($valueval)) {
-						$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">'.$param['options'][$valueval].'</li>';
+						$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories'.($mode ? ' '.$mode : '').'" style="background: #bbb">'.$param['options'][$valueval].'</li>';
 					}
 				}
 			}
 			$value = '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
-		} elseif ($type == 'chkbxlst') {
-			$value_arr = explode(',', $value);
+		} elseif ($type == 'chkbxlst') {				// Example with extrafield value = "societe:nom:rowid" or "categorie:label:rowid:::product"
+			// Only if something to display (perf)
+			if (!is_null($value) && $value != '') {
+				$value_arr = explode(',', $value);
 
-			$param_list = array_keys($param['options']);
-			$InfoFieldList = explode(":", $param_list[0]);
+				$param_list = array_keys($param['options']);
+				$InfoFieldList = explode(":", $param_list[0]);
 
-			$selectkey = "rowid";
-			$keyList = 'rowid';
+				$selectkey = "rowid";
+				$keyList = 'rowid';
 
-			if (count($InfoFieldList) >= 3) {
-				$selectkey = $InfoFieldList[2];
-				$keyList = $InfoFieldList[2].' as rowid';
-			}
-
-			$fields_label = explode('|', $InfoFieldList[1]);
-			if (is_array($fields_label)) {
-				$keyList .= ', ';
-				$keyList .= implode(', ', $fields_label);
-			}
-
-			$filter_categorie = false;
-			if (count($InfoFieldList) > 5) {
-				if ($InfoFieldList[0] == 'categorie') {
-					$filter_categorie = true;
+				if (count($InfoFieldList) >= 3) {
+					$selectkey = $InfoFieldList[2];
+					$keyList = $InfoFieldList[2].' as rowid';
 				}
-			}
 
-			$sql = "SELECT ".$keyList;
-			$sql .= " FROM ".$this->db->prefix().$InfoFieldList[0];
-			if (strpos($InfoFieldList[4], 'extra.') !== false) {
-				$sql .= ' as main';
-			}
-			// $sql.= " WHERE ".$selectkey."='".$this->db->escape($value)."'";
-			// $sql.= ' AND entity = '.$conf->entity;
+				$fields_label = explode('|', $InfoFieldList[1]);
+				if (is_array($fields_label)) {
+					$keyList .= ', ';
+					$keyList .= implode(', ', $fields_label);
+				}
 
-			dol_syslog(get_class($this).':showOutputField:$type=chkbxlst', LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if ($resql) {
-				if (!$filter_categorie) {
-					$value = ''; // value was used, so now we reset it to use it to build final output
-					$toprint = array();
-					while ($obj = $this->db->fetch_object($resql)) {
-						// Several field into label (eq table:code|label:rowid)
-						$fields_label = explode('|', $InfoFieldList[1]);
-						if (is_array($value_arr) && in_array($obj->rowid, $value_arr)) {
-							if (is_array($fields_label) && count($fields_label) > 1) {
-								$label = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">';
-								foreach ($fields_label as $field_toshow) {
-									$translabel = '';
-									if (!empty($obj->$field_toshow)) {
-										$translabel = $outputlangs->trans($obj->$field_toshow);
-									}
-									if ($translabel != $field_toshow) {
-										$label .= ' '.dol_trunc($translabel, 18);
+				$filter_categorie = false;
+				if (count($InfoFieldList) > 5 && ((string) $InfoFieldList[5] != '')) {
+					if ($InfoFieldList[0] == 'categorie') {
+						$filter_categorie = true;
+					}
+				}
+
+				$sql = "SELECT ".$keyList;
+				$sql .= " FROM ".$this->db->prefix().$InfoFieldList[0];
+				if (strpos($InfoFieldList[4], 'extra.') !== false) {
+					$sql .= ' as main';
+				}
+				$sql .= " WHERE ".$this->db->sanitize($selectkey)." IN (".$this->db->sanitize(implode(',', $value_arr)).")";
+
+				dol_syslog(get_class($this).':showOutputField type=chkbxlst', LOG_DEBUG);
+
+				$resql = $this->db->query($sql);
+
+				if ($resql) {
+					if (!$filter_categorie) {
+						$value = ''; // value was used, so now we reset it to use it to build final output
+						$toprint = array();
+						$numOfElem = $this->db->num_rows($resql);
+						while ($obj = $this->db->fetch_object($resql)) {
+							// Several field into label (eq table:code|label:rowid)
+							$fields_label = explode('|', $InfoFieldList[1]);
+							$txtcolor = '#bbb';
+							//var_dump($key, $type, $InfoFieldList, $fields_label, $object);
+							if (count($fields_label) > 0) {
+								if ($InfoFieldList[0] == 'societe' && $InfoFieldList[1] == 'nom' && $InfoFieldList[2] == 'rowid') {
+									// Special cas for thirdparties
+									require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+									$tmpthirdpartystatic = new Societe($this->db);
+									$tmpthirdpartystatic->id = $obj->rowid;
+									$tmpthirdpartystatic->name = $obj->nom;
+									if ($numOfElem >= 3) {
+										$tmpthirdpartystatic->name = $obj->nom;
+										$label = $tmpthirdpartystatic->getNomUrl(2);
+									} elseif ($numOfElem >= 2) {
+										$tmpthirdpartystatic->name = dol_trunc($obj->nom, 5);
+										$label = $tmpthirdpartystatic->getNomUrl(1);
 									} else {
-										$label .= ' '.$obj->$field_toshow;
+										$tmpthirdpartystatic->name = $obj->nom;
+										$label = $tmpthirdpartystatic->getNomUrl(1);
 									}
-								}
-								$label .= '</li>';
-								$toprint[] = $label;
-							} else {
-								$translabel = '';
-								if (!empty($obj->{$InfoFieldList[1]})) {
-									$translabel = $outputlangs->trans($obj->{$InfoFieldList[1]});
-								}
-								if ($translabel != $obj->{$InfoFieldList[1]}) {
-									$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">'.dol_trunc($translabel, 18).'</li>';
 								} else {
-									$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">'.$obj->{$InfoFieldList[1]}.'</li>';
+									$label = '<li class="select2-search-choice-dolibarr noborderoncategories'.($mode ? ' '.$mode : '').'" style="background: '.$txtcolor.'">';
+									foreach ($fields_label as $field_toshow) {
+										$translabel = '';
+										if (!empty($obj->$field_toshow)) {
+											$translabel = $outputlangs->trans($obj->$field_toshow);
+										}
+										if ($translabel != $field_toshow) {
+											$label .= ' '.dol_trunc($translabel, 18);
+										} else {
+											$label .= ' '.$obj->$field_toshow;
+										}
+									}
+									$label .= '</li>';
 								}
+								$toprint[] = $label;
 							}
 						}
-					}
-				} else {
-					require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+					} else {
+						require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
-					$toprint = array();
-					while ($obj = $this->db->fetch_object($resql)) {
-						if (is_array($value_arr) && in_array($obj->rowid, $value_arr)) {
+						$toprint = array();
+						$numElem = $this->db->num_rows($resql);
+						while ($obj = $this->db->fetch_object($resql)) {
 							$c = new Categorie($this->db);
 							$c->fetch($obj->rowid);
-							$ways = $c->print_all_ways(); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formatted text
-							foreach ($ways as $way) {
-								$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"'.($c->color ? ' style="background: #'.$c->color.';"' : ' style="background: #bbb"').'>'.img_object('', 'category').' '.$way.'</li>';
+							if ($mode != 'list') {
+								$ways = $c->print_all_ways(); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formatted text
+								foreach ($ways as $way) {
+									$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories'.($mode ? ' '.$mode : '').'"'.($c->color ? ' style="background: #'.$c->color.';"' : ' style="background: #bbb"').'>'.img_object('', 'category').' '.$way.'</li>';
+								}
+							} else {
+								// Check contrast with background and correct text color
+								$forced_color = 'categtextwhite'; // We want color white because the getNomUrl of a tag is always called inside a dark background like '<span color="bbb"></span>' to show it as a tag. TODO Add this in param to force when called outside of span.
+								if ($c->color) {
+									if (colorIsLight($c->color)) {
+										$forced_color = 'categtextblack';
+									}
+								}
+
+								$s = '<li class="select2-search-choice-dolibarr noborderoncategories '.$forced_color.($mode ? ' '.$mode : '').'"'.($c->color ? ' style="background: #'.$c->color.';"' : ' style="background: #bbb"').'>';
+								if ($numElem >= 2) {
+									$s .= img_object($c->label, 'category', 'class="small"');
+								} else {
+									$s .= img_object($c->label, 'category', 'class="small"').' '.$c->label;
+								}
+								$s .= '</li>';
+								$toprint[] = $s;
 							}
 						}
 					}
+					if (!empty($toprint)) {
+						$value = '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
+					}
+				} else {
+					dol_syslog(get_class($this).'::showOutputField error '.$this->db->lasterror(), LOG_WARNING);
 				}
-				if (!empty($toprint)) {
-					$value = '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
-				}
-			} else {
-				dol_syslog(get_class($this).'::showOutputField error '.$this->db->lasterror(), LOG_WARNING);
 			}
 		} elseif ($type == 'link') {
-			$out = '';
-
 			// Only if something to display (perf)
 			if ($value) {		// If we have -1 here, pb is into insert, not into output (fix insert instead of changing code here to compensate)
 				$param_list = array_keys($param['options']); // $param_list='ObjectName:classPath'
