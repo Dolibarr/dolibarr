@@ -653,6 +653,8 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		} else {
 			dol_print_error($db);
 		}
+
+		$db->free($resql);
 	} else {
 		$sqlforcount1 = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql1);
 		$sqlforcount2 = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql2);
@@ -666,13 +668,15 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		} else {
 			dol_print_error($db);
 		}
+
+		$db->free($resql1);
+		$db->free($resql2);
 	}
 
 	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
-	$db->free($resql);
 }
 
 // Complete request and execute it with limit

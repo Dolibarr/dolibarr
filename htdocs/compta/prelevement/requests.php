@@ -574,7 +574,7 @@ if ($id > 0 || $ref) {
 			print '<td>';
 			$tmpuser = new User($db);
 			$tmpuser->fetch($obj->fk_user_demande);
-			print $tmpuser->getNomUrl($db);
+			print $tmpuser->getNomUrl(1);
 			print '</td>';
 
 			print '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>\n";

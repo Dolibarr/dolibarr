@@ -392,19 +392,22 @@ abstract class DoliDB implements Database
 	 * 	19700101020000 -> 3600 with server TZ = +1 and $gm='tzserver'
 	 * 	19700101020000 -> 7200 whatever is server TZ if $gm='gmt'
 	 *
-	 * 	@param	string				$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
+	 * 	@param	?string				$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
 	 *	@param	mixed				$gm			'gmt'=Input information are GMT values, 'tzserver'=Local to server TZ
 	 *	@return	int|''							Date TMS or ''
 	 */
 	public function jdate($string, $gm = 'tzserver')
 	{
 		// TODO $string should be converted into a GMT timestamp, so param gm should be set to true by default instead of false
-		if ($string == 0 || $string == "0000-00-00 00:00:00") {
+
+		$string = (string) $string;
+		if ($string == '0' || $string == "0000-00-00 00:00:00") {
 			return '';
 		}
 		$string = preg_replace('/([^0-9])/i', '', $string);
 		$tmp = $string.'000000';
 		$date = dol_mktime((int) substr($tmp, 8, 2), (int) substr($tmp, 10, 2), (int) substr($tmp, 12, 2), (int) substr($tmp, 4, 2), (int) substr($tmp, 6, 2), (int) substr($tmp, 0, 4), $gm);
+
 		return $date;
 	}
 
