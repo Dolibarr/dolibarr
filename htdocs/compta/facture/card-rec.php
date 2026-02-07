@@ -301,8 +301,7 @@ if (empty($reshook)) {
 					$object->linked_objects['commande'] = $orderid;
 				} elseif (!empty($srcObject->linkedObjectsIds['propal'])) {
 					$proposalid = reset($srcObject->linkedObjectsIds['propal']);
-
-					$object->linked_objects['commande'] = $proposalid;
+					$object->linked_objects['propal'] = $proposalid;
 				}
 			}
 
