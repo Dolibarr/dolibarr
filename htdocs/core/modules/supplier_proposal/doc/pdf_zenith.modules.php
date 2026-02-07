@@ -25,7 +25,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/supplir_proposal/doc/pdf_zenith.modules.php
+ *	\file       htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php
  *	\ingroup    fournisseur
  *	\brief      File of class to generate suppliers proposals from zenith model
  */
