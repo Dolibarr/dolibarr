@@ -125,6 +125,8 @@ CREATE TABLE llx_ai_request_log
   raw_response_payload			MEDIUMTEXT
 )ENGINE=innodb;
 
+ALTER TABLE llx_prelevement_bons ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
 ALTER TABLE llx_ai_request_log ADD INDEX idx_ai_request_log_entity (entity);
 ALTER TABLE llx_ai_request_log ADD INDEX idx_ai_request_log_date (date_request);
 ALTER TABLE llx_ai_request_log ADD INDEX idx_ai_request_log_user (fk_user);
