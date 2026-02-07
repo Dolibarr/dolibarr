@@ -202,13 +202,13 @@ if (!$error && $modulepart == 'invoice_supplier') {
 	 },
 	 "payment_methods": [
 	  {
-       "method": "<check or cash or card or direct_debit or credit_transferor other>",
+       "method": "<check or cash or card or direct_debit or credit_transfer or other>",
        "details": "Detail of the payment mode"
       }
 	 ],
 	 "payments_done": [
 	  {
-       "method": "<check or cash or card or direct_debit or credit_transferor other>",
+       "method": "<check or cash or card or direct_debit or credit_transfer or other>",
        "amount": "<detail of the payment>",
 	   "note":"<other information on payment done>"
       }
