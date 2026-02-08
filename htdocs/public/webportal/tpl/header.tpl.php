@@ -56,8 +56,8 @@ top_httphead();
 	$jQueryUICSSUrl = $context->cdnUrl . '/jquery/css/base/jquery-ui.min.css?layout=classic';
 	print '<link rel="stylesheet" href="'.$jQueryUICSSUrl.' ">'."\n";
 
-	//$jNotifyCSSUrl = $context->rootUrl.'includes/jquery/plugins/jnotify/jquery.jnotify.css';
-	//$jNotifyCSSUrl = dol_buildpath('/includes/jquery/plugins/jnotify/jquery.jnotify.min.css', 2);
+	//$jNotifyCSSUrl = $context->rootUrl.'public/includes/jquery/plugins/jnotify/jquery.jnotify.css';
+	//$jNotifyCSSUrl = dol_buildpath('/public/includes/jquery/plugins/jnotify/jquery.jnotify.min.css', 2);
 	$jNotifyCSSUrl =  $context->cdnUrl . '/jquery/plugins/jnotify/jquery.jnotify.min.css?layout=classic';
 	print '<link rel="stylesheet" href="'.$jNotifyCSSUrl.' ">'."\n";
 
@@ -77,7 +77,7 @@ top_httphead();
 
 	// JNotify
 	//$jNotifyJSUrl = $context->rootUrl.'includes/jquery/plugins/jnotify/jquery.jnotify.js';
-	//$jNotifyJSUrl = dol_buildpath('/includes/jquery/plugins/jnotify/jquery.jnotify.min.js', 2);
+	//$jNotifyJSUrl = dol_buildpath('/public/includes/jquery/plugins/jnotify/jquery.jnotify.min.js', 2);
 	$jNotifyJSUrl =  $context->cdnUrl . '/jquery/plugins/jnotify/jquery.jnotify.min.js';
 	print '<script nonce="'.getNonce().'" src="'.$jNotifyJSUrl.'"></script>'."\n";
 
