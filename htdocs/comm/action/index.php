@@ -1951,7 +1951,10 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 	$urltocreate = '';
 	if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
 		$newparam .= '&month='.str_pad((string) $month, 2, "0", STR_PAD_LEFT).'&year='.$year;
-		$hourminsec = '100000';
+		$hourminsec = getDolGlobalString('AGENDA_DEFAULT_BEGIN_TIME');
+		if (empty($hourminsec) || !preg_match('/^[0-9]{6}$/', $hourminsec)) {
+			$hourminsec = '100000';
+		}
 		$urltocreate = DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.sprintf("%04d%02d%02d", $year, $month, $day).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam ? '?'.$newparam : ''));
 	}
 
