@@ -26,6 +26,7 @@
  * Copyright (C) 2024		Josep Lluís Amador Teruel	<joseplluis@lliuretic.cat>
  * Copyright (C) 2024		Benoît PASCAL				<contact@p-ben.com>
  * Copyright (C) 2025		Vincent Maury				<vmaury@timgroup.fr>
+ * Copyright (C) 2026		Benjamin Falière			<benjamin@faliere.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -119,6 +120,23 @@ if (!function_exists('str_contains')) {
 	{
 		return $needle !== '' && mb_strpos($haystack, $needle) !== false;
 	}
+}
+
+
+/**
+ *	Return a string serialized to be output on log with dol_syslog()
+ *	An option allow to output log in one line instead of a structured human tree
+ *
+ *  @param	mixed	$data	Any PHP object
+ *  @return	string			Serialized data for loh
+ */
+function formatLogObject($data)
+{
+	if (getDolGlobalInt("MAIN_LOG_ON_ONE_LINE")) {
+		return json_encode($data);
+	}
+
+	return var_export($data, true);
 }
 
 
@@ -16723,10 +16741,11 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 			}
 
 			$libelle = '';
-			if (!empty($actionstatic->code) && preg_match('/^TICKET_MSG/', $actionstatic->code)) {
+
+			if (!empty($actionstatic->code) && preg_match('/^TICKET_MSG_PRIVATE/', $actionstatic->code)) {
+				$out .= $langs->trans('TicketNewMessage').' <em>('.$langs->trans('Private').')</em>';
+			} elseif (!empty($actionstatic->code) && preg_match('/^TICKET_MSG/', $actionstatic->code)) {
 				$out .= $langs->trans('TicketNewMessage');
-			} elseif (!empty($actionstatic->code) && preg_match('/^TICKET_MSG_PRIVATE/', $actionstatic->code)) {
-				$out .= $langs->trans('TicketNewMessage') . ' <em>(' . $langs->trans('Private') . ')</em>';
 			} elseif (isset($histo[$key]['type'])) {
 				if ($histo[$key]['type'] == 'action') {
 					$transcode = $langs->transnoentitiesnoconv("Action" . $histo[$key]['acode']);

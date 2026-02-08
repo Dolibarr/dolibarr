@@ -2658,7 +2658,7 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'api';
 	} elseif (in_array($moduleobject, ['contact', 'contacts', 'customer', 'thirdparty', 'thirdparties'])) {
 		$moduledirforclass = 'societe';
-	} elseif ($moduleobject == 'propale' || $moduleobject == 'proposals') {
+	} elseif ($moduleobject == 'propal' || $moduleobject == 'propale' || $moduleobject == 'proposals') {
 		$moduledirforclass = 'comm/propal';
 	} elseif ($moduleobject == 'agenda' || $moduleobject == 'agendaevents') {
 		$moduledirforclass = 'comm/action';
