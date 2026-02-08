@@ -393,7 +393,7 @@ abstract class DoliDB implements Database
 	 * 	19700101020000 -> 7200 whatever is server TZ if $gm='gmt'
 	 *
 	 * 	@param	?string				$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
-	 *	@param	mixed				$gm			'gmt'=Input information are GMT values, 'tzserver'=Local to server TZ
+	 *	@param	bool|int|string		$gm			'gmt'=Input information are GMT values, 'tzserver'=Local to server TZ
 	 *	@return	int|''							Date TMS or ''
 	 */
 	public function jdate($string, $gm = 'tzserver')
@@ -401,7 +401,7 @@ abstract class DoliDB implements Database
 		// TODO $string should be converted into a GMT timestamp, so param gm should be set to true by default instead of false
 
 		$string = (string) $string;
-		if ($string == '0' || $string == "0000-00-00 00:00:00") {
+		if ($string == '' || $string == '0' || $string == "0000-00-00 00:00:00") {
 			return '';
 		}
 		$string = preg_replace('/([^0-9])/i', '', $string);
