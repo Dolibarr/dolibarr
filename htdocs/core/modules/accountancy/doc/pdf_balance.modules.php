@@ -303,7 +303,7 @@ class pdf_balance extends ModelePdfAccountancy
 		$groupDebit = $groupCredit = $totalDebit = $totalCredit = 0;
 		for ($i = 0; $i < $nblines; $i++) {
 			$accountingAccount = new AccountingAccount($this->db);
-			$accountingAccount->fetch(0, $object->lines[$i]->numero_compte);
+			$accountingAccount->fetch(0, $object->lines[$i]->numero_compte, true);
 
 			// Init the first account group
 			if (empty($accountGroup)) {
