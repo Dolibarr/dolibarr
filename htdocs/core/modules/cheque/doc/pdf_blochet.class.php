@@ -113,15 +113,15 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	 *	Fonction to generate document on disk
 	 *
 	 *	@param	RemiseCheque	$object			Object RemiseCheque
+	 *	@param	Translate		$outputlangs	Lang output object
 	 *	@param	string			$_dir			Directory
 	 *	@param	string			$number			Number
-	 *	@param	Translate		$outputlangs	Lang output object
-	 *	@return	int<-1,1>							1 if OK, <=0 if KO
+	 *	@return	int<-1,1>						Return 1 if OK, <=0 if KO
 	 */
-	public function write_file($object, $_dir, $number, $outputlangs)
+	public function write_file($object, $outputlangs, $_dir, $number)
 	{
 		// phpcs:enable
-		global $user, $conf, $langs, $hookmanager;
+		global $user, $langs, $hookmanager;
 
 		if (!is_object($outputlangs)) {
 			$outputlangs = $langs;

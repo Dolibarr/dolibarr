@@ -53,11 +53,11 @@ $mailsonde = GETPOST('mailsonde');
 $creation_sondage_date = GETPOST('creation_sondage_date');
 $creation_sondage_autre = GETPOST('creation_sondage_autre');
 
-// We init some session variable to avoir warning
-$session_var = array('title', 'description', 'mailsonde');
+// We init some session variables to avoid PHP 8 "undefined array key" warning
+$session_var = array('title', 'description', 'mailsonde', 'allow_comments', 'allow_spy', 'champdatefin');
 foreach ($session_var as $var) {
-	if (isset($_SESSION[$var])) {
-		$_SESSION[$var] = null;
+	if (!isset($_SESSION[$var])) {
+		$_SESSION[$var] = '';
 	}
 }
 
@@ -151,7 +151,7 @@ print '<table class="border centpercent">'."\n";
 
 print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("PollTitle").'</td>';
 
-print '<td><input type="text" name="title" class="minwidth300" maxlength="80" value="'.$_SESSION["title"].'" autofocus></td>'."\n";
+print '<td><input type="text" name="title" class="minwidth300" maxlength="80" value="'.dol_escape_htmltag($_SESSION["title"]).'" autofocus></td>'."\n";
 if (!$_SESSION["title"] && (GETPOST('creation_sondage_date') || GETPOST('creation_sondage_autre'))) {
 	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("PollTitle")), null, 'errors');
 }
