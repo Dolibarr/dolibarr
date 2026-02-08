@@ -310,7 +310,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 			/** @var UserGroup $object */
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (getDolGlobalString('LDAP_SYNCHRO_ACTIVE') && getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
-				if ($object->member === null && getDolGlobalString('LDAP_SEND_EMPTY_MEMBERS_TO_GROUP')) {
+				if ($object->members === null && getDolGlobalString('LDAP_SEND_EMPTY_MEMBERS_TO_GROUP')) {
 					// LDAP requires that we always send members so we load them to avoid emptying group
 					$object->members = $object->listUsersForGroup('', 0);
 				}
