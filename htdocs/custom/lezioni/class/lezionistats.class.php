@@ -99,6 +99,7 @@ class LezioniStats // extends Stats
 		$sql .= "  , sum(a.CompensoPagato) as CompensoPagato ";
 		$sql .= "  , sum(a.CompensoDaPagare) as CompensoDaPagare ";
 		$sql .= "  , sum(a.CompensoCoordinatore) as CompensoCoordinatore  ";
+		$sql .= "  , u.rowid as userid ";
 		$sql .= "   FROM ";
 		$sql .= "  ( ";
 		$sql .= "      SELECT date_format(p.datalezione,'%M %y') as dm ";
@@ -124,6 +125,7 @@ class LezioniStats // extends Stats
 		$sql .= "    		AND c.datalezione >= last_day(now()) + interval 1 day - interval 13 month ";
 		$sql .= "           AND c.coordinatore is not null ";
 		$sql .= " ) a ";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user u ON u.fk_member = a.istruttore ";
 		$sql .= " WHERE CompensoTot <> 0 OR CompensoCoordinatore <> 0 ";
 		$sql .= " GROUP BY dm, dm_num, istruttore ";
 		$sql .= $this->db->order(sortfield: 'dm_num', sortorder: 'DESC');
@@ -404,5 +406,35 @@ class LezioniStats // extends Stats
 			$MembersCountArray['total']['all'] = array_sum($totalstatus);
 		}
 		return $MembersCountArray;
+	}
+
+	public function getIstrYearlyResidui()
+	{
+        $sql = "SELECT date_format(datesp,'%y') as dy,
+				fk_user as userid,
+				SUM(amount) as total,
+				5000 - SUM(amount) as residuo
+                FROM ".MAIN_DB_PREFIX."salary 
+				GROUP BY fk_user, date_format(datesp,'%y')
+				ORDER by dy DESC";
+
+		$result = array();
+
+		dol_syslog(get_class($this).'::'.__FUNCTION__, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num) {
+				$row = $this->db->fetch_row($resql);
+				$result[$i] = $row;
+				$i++;
+			}
+			$this->db->free($resql);
+		} else {
+			dol_print_error($this->db);
+		}
+
+		return $result;
 	}
 }

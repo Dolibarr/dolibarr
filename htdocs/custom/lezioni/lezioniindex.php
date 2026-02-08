@@ -60,9 +60,11 @@ if (!$res) {
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 // load module libraries
 require_once __DIR__.'/class/lezione.class.php';
 require_once __DIR__.'/class/lezionistats.class.php';
+require_once __DIR__.'/class/myuser.class.php';
 
 include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
@@ -101,9 +103,21 @@ if (! $user->hasRight('lezioni', 'lezione', 'read')) {
 /*
  * Actions
  */
-$year = date('Y');
+$year = GETPOST('year_filter', 'int');
+if (empty($year)) {
+	$year = date('Y');
+}
 $stats = new LezioniStats($db);
 $compensi = $stats->getIstrCompensiByMonth($year);
+$allResidui = $stats->getIstrYearlyResidui();
+
+// Filtra residui per anno selezionato
+$residui = array();
+foreach ($allResidui as $row) {
+	if ($row[0] == substr($year, -2)) { // confronta solo ultimi 2 caratteri dell'anno
+		$residui[] = $row;
+	}
+}
 
 //csv export variables
 $exportInProgress = true;
@@ -125,12 +139,39 @@ $exportLine = '';
 $form = new Form($db);
 $formfile = new FormFile($db);
 $adh = new Adherent($db);
+$usr = new MyUser($db);
 
 llxHeader("", $langs->trans("LezioniArea"), '', '', 0, 0, '', '', '', 'mod-lezioni page-index');
 
 print load_fiche_titre($langs->trans("LezioniArea"), '', 'lezioni.png@lezioni');
 
+// Filtro anno
+print '<div style="margin: 10px 0;">';
+print '<form method="GET" action="">' . PHP_EOL;
+print '<label>Anno: </label>';
+print '<select name="year_filter" onchange="this.form.submit();">';
 
+// Recupera lista anni unici dai residui
+$yearsAvailable = array();
+foreach ($allResidui as $row) {
+	$yearVal = '20' . $row[0];
+	if (!in_array($yearVal, $yearsAvailable)) {
+		$yearsAvailable[] = $yearVal;
+	}
+}
+rsort($yearsAvailable);
+
+if (empty($yearsAvailable)) {
+	$yearsAvailable[] = date('Y');
+}
+
+foreach ($yearsAvailable as $yearOpt) {
+	$selected = ($yearOpt == $year) ? 'selected' : '';
+	print '<option value="' . $yearOpt . '" ' . $selected . '>' . $yearOpt . '</option>';
+}
+print '</select>';
+print '</form>';
+print '</div>' . PHP_EOL;
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 print '<div class="div-table-responsive div-table-responsive-no-min">'; // Modifica per garantire una migliore responsività
@@ -153,11 +194,21 @@ print '</tr>';
 
 $exportLine = "Mese,Istruttore,Totale,Pagato,Da Pagare,Coordinatore\n";
 
+// Filtra compensi per anno selezionato
+$compensiFiltered = array();
+$yearSuffix = substr($year, -2);
+foreach ($compensi as $row) {
+	// Estrae gli ultimi 2 caratteri del mese (es. "Gen 25" -> "25")
+	if (substr($row[0], -2) == $yearSuffix) {
+		$compensiFiltered[] = $row;
+	}
+}
+
 //rows
 $i = 1;
 $dm = "";
 
-foreach ($compensi as $row) {
+foreach ($compensiFiltered as $row) {
 	$addSeparator = false;
 	if($dm == "" || $dm != $row[0]){
 		if($dm != "") $addSeparator = true;
@@ -193,6 +244,9 @@ foreach ($compensi as $row) {
     print '<td>'.$row[5].'</td>';
     //compenso coordinatore
     print '<td>'.$row[6].'</td>';
+	//residuo non imponibile
+	//$usr->fetch($row[7]);
+	//$residuo = round(5000 - $usr->getSalaryTotalThisYear(), 2);
 
 	$exportLine .= $dm.",".$adh->ref.",".$row[3].",".$row[4].",".$row[5].",".$row[6]."\n";
 print '</tr>';
@@ -282,6 +336,59 @@ END MODULEBUILDER DRAFT MYOBJECT */
 
 print '</div><div class="fichetwothirdright">';
 
+// Tabella Residui Non Imponibili - spaccata per anno
+if (!empty($residui)) {
+	// Raggruppa per anno
+	$residuiByYear = array();
+	foreach ($residui as $residuRow) {
+		$yr = $residuRow[0];
+		if (!isset($residuiByYear[$yr])) {
+			$residuiByYear[$yr] = array();
+		}
+		$residuiByYear[$yr][] = $residuRow;
+	}
+	
+	// Ordina gli anni in ordine decrescente
+	krsort($residuiByYear);
+	
+	print '<div class="div-table-responsive div-table-responsive-no-min">';
+	foreach ($residuiByYear as $yr => $residuiRows) {
+		print '<table class="tagtable nobottomiftotal liste">'."\n";
+		print '<tr class="liste_titre">';
+		print '<th colspan="3">Residui Non Imponibili 20'.$yr.'</th>';
+		print '</tr>';
+		print '<tr class="liste_titre">';
+		print '<th class="wrapcolumntitle liste_titre" title="Istruttore">Istruttore</th>';
+		print '<th class="wrapcolumntitle liste_titre" title="Totale">Totale Stipendio (€)</th>';
+		print '<th class="wrapcolumntitle liste_titre" title="Residuo">Residuo Esentasse WB (€)</th>';
+		print '</tr>';
+		
+		foreach ($residuiRows as $residuRow) {
+			$userid = $residuRow[1]; // user id
+			$totalSalary = round($residuRow[2], 2); // totale stipendio
+			$residuoVal = round($residuRow[3], 2); // residuo
+			
+			// Fetch utente per ottenere il nome
+			$usrResidui = new MyUser($db);
+			$usrResidui->fetch($userid);
+			
+			print '<tr class="oddeven">';
+			print '<td>';
+			print $usrResidui->getNomUrl(-1);
+			print '</td>';
+			print '<td>'.number_format($totalSalary, 2, ',', '.').'</td>';
+			print '<td>'.number_format($residuoVal, 2, ',', '.').'</td>';
+			print '</tr>';
+		}
+		print '</table><br>';
+	}
+	print '</div>';
+} else {
+	print '<div class="div-table-responsive div-table-responsive-no-min">';
+	print '<table class="tagtable nobottomiftotal liste">'."\n";
+	print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+	print '</table></div>';
+}
 
 $NBMAX = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT');
 $max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT');
