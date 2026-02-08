@@ -63,7 +63,7 @@ class BonPrelevement extends CommonObject
 	public $picto = 'payment';
 
 	/**
-	 * @var int|''|null
+	 * @var int|''|null		This field is not stored yet in database, only into transfer file (Field ReqdColltnDt with SEPA, ....)
 	 */
 	public $date_echeance;
 	/**
@@ -163,6 +163,7 @@ class BonPrelevement extends CommonObject
 	const STATUS_TRANSFERED = 1;
 	const STATUS_CREDITED = 2;		// STATUS_CREDITED and STATUS_DEBITED is same. Difference is in ->type
 	const STATUS_DEBITED = 2;		// STATUS_CREDITED and STATUS_DEBITED is same. Difference is in ->type
+	const STATUS_CANCELED = 9;
 
 
 	/**
@@ -216,10 +217,10 @@ class BonPrelevement extends CommonObject
 		'statut' => array('type' => 'smallint(6)', 'label' => 'Statut', 'enabled' => 1, 'position' => 500, 'notnull' => 0, 'visible' => -1, 'arrayofkeyval' => array(0 => 'Wait', 1 => 'Transfered', 2 => 'Credited')),
 		'credite' => array('type' => 'smallint(6)', 'label' => 'Credite', 'enabled' => 1, 'position' => 40, 'notnull' => 0, 'visible' => -1,),
 		'note' => array('type' => 'text', 'label' => 'Note', 'enabled' => 1, 'position' => 45, 'notnull' => 0, 'visible' => -1,),
-		'date_trans' => array('type' => 'datetime', 'label' => 'Datetrans', 'enabled' => 1, 'position' => 50, 'notnull' => 0, 'visible' => -1,),
+		'date_trans' => array('type' => 'datetime', 'label' => 'TransData', 'enabled' => 1, 'position' => 50, 'notnull' => 0, 'visible' => -1,),
 		'method_trans' => array('type' => 'smallint(6)', 'label' => 'Methodtrans', 'enabled' => 1, 'position' => 55, 'notnull' => 0, 'visible' => -1,),
 		'fk_user_trans' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Fkusertrans', 'enabled' => 1, 'position' => 60, 'notnull' => 0, 'visible' => -1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150',),
-		'date_credit' => array('type' => 'datetime', 'label' => 'Datecredit', 'enabled' => 1, 'position' => 65, 'notnull' => 0, 'visible' => -1,),
+		'date_credit' => array('type' => 'datetime', 'label' => 'CreditDate', 'enabled' => 1, 'position' => 65, 'notnull' => 0, 'visible' => -1,),
 		'fk_user_credit' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Fkusercredit', 'enabled' => 1, 'position' => 70, 'notnull' => 0, 'visible' => -1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150',),
 		'type' => array('type' => 'varchar(16)', 'label' => 'Type', 'enabled' => 1, 'position' => 75, 'notnull' => 0, 'visible' => -1,),
 		'fk_bank_account' => array('type' => 'integer', 'label' => 'Fkbankaccount', 'enabled' => 1, 'position' => 80, 'notnull' => 0, 'visible' => -1, 'css' => 'maxwidth500 widthcentpercentminusxx',),
@@ -256,10 +257,17 @@ class BonPrelevement extends CommonObject
 	 * @var int
 	 */
 	public $credite;
+
+	/**
+	 * @var string
+	 * @deprecated see $note_private
+	 */
+	public $note;
+
 	/**
 	 * @var string
 	 */
-	public $note;
+	public $note_private;
 
 	/**
 	 * @var int|''|null
@@ -486,7 +494,7 @@ class BonPrelevement extends CommonObject
 
 		$errors[1027] = $langs->trans("DateInvalid");
 
-		return $errors[abs($error)];
+		return $errors[abs($error)] ?? 'unknown error code';
 	}
 
 	/**
@@ -525,6 +533,7 @@ class BonPrelevement extends CommonObject
 				$this->ref            = $obj->ref;
 				$this->amount         = $obj->amount;
 				$this->note           = $obj->note;
+				$this->note_private   = $obj->note;
 				$this->datec          = $this->db->jdate($obj->dc);
 
 				$this->date_trans     = $this->db->jdate($obj->date_trans);
@@ -1564,7 +1573,7 @@ class BonPrelevement extends CommonObject
 					if ($sourcetype == 'salary') {
 						$userid = $this->context['factures_prev'][0][2];
 					}
-					$result = $this->generate($format, $executiondate, $type, $fk_bank_account, $userid, $thirdpartyBANId);
+					$result = $this->generate($format, $executiondate, $type, $fk_bank_account, $userid, (int) $thirdpartyBANId);
 					if ($result < 0) {
 						//var_dump($this->error);
 						//var_dump($this->invoice_in_error);
@@ -1708,22 +1717,27 @@ class BonPrelevement extends CommonObject
 		$result = '';
 
 		$labeltoshow = 'PaymentByDirectDebit';
+		$labelforclosedate = 'CreditDate';
 		if (!empty($this->type) && $this->type == 'bank-transfer') {
 			$labeltoshow = 'PaymentByBankTransfer';
+			$labelforclosedate = 'ClosedOn';
 		}
 
 		$label = img_picto('', $this->picto) . ' <u>' . $langs->trans($labeltoshow) . '</u> ' . $this->getLibStatut(5);
 		$label .= '<br>';
 		$label .= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 		if (isset($this->amount)) {
-			$label .= '<br><b>' . $langs->trans("Amount") . ":</b> " . price($this->amount);
+			$label .= '<br><b>' . $langs->trans("Amount") . ':</b> <span class="amount">' . price($this->amount).'</span>';
+		}
+		if (isset($this->date_creation)) {
+			$label .= '<br><b>'.$langs->trans("DateCreation").":</b> ".dol_print_date($this->date_creation, 'dayhour', 'tzuserrel');
 		}
 		if (isset($this->date_trans)) {
 			$label .= '<br><b>' . $langs->trans("TransData") . ":</b> " . dol_print_date($this->date_trans, 'dayhour', 'tzuserrel');
 		}
-		/*if (isset($this->date_credit)) {
-			$label .= '<br><b>'.$langs->trans("TransData").":</b> ".dol_print_date($this->date_credit, 'dayhour', 'tzuserrel');
-		}*/
+		if (isset($this->date_credit)) {
+			$label .= '<br><b>'.$langs->trans($labelforclosedate).":</b> ".dol_print_date($this->date_credit, 'dayhour', 'tzuserrel');
+		}
 
 		$url = DOL_URL_ROOT . '/compta/prelevement/card.php?id=' . $this->id;
 		if (!empty($this->type) && $this->type == 'bank-transfer') {
@@ -1874,7 +1888,7 @@ class BonPrelevement extends CommonObject
 	 * @param	string	$type				'direct-debit' or 'bank-transfer'
 	 * @param   int     $fk_bank_account	Bank account ID the receipt is generated for. Will use the ID into the setup of module Direct Debit or Credit Transfer if 0.
 	 * @param   int  	$forsalary          If the SEPA is to pay salaries
-	 * @param   int  	$thirdpartyBANId	If defined, will use this ID to get the RIB. Otherwise, the first default BAN will be taken.
+	 * @param   int  	$thirdpartyBANId	If defined, will use this ID to get the RIB. Otherwise, the first default BAN of thirdparty will be taken.
 	 * @return	int							>=0 if OK, <0 if KO
 	 */
 	public function generate(string $format = 'ALL', int $executiondate = 0, string $type = 'direct-debit', int $fk_bank_account = 0, int $forsalary = 0, int $thirdpartyBANId = 0)
@@ -2280,7 +2294,7 @@ class BonPrelevement extends CommonObject
 	 *	@param	string	$rib_guichet 	code of bank office
 	 *	@param	string	$rib_number		bank account
 	 *	@param	float	$amount			amount
-	 *	@param	string	$ref		ref of invoice
+	 *	@param	string	$ref			ref of invoice
 	 *	@param	int		$facid			id of invoice
 	 *  @param	string	$rib_dom		bank address
 	 *  @param	string	$type			'direct-debit' or 'bank-transfer'
@@ -2901,6 +2915,8 @@ class BonPrelevement extends CommonObject
 				$this->labelStatus[self::STATUS_CREDITED] = $langs->transnoentitiesnoconv('StatusCredited');
 				$this->labelStatusShort[self::STATUS_CREDITED] = $langs->transnoentitiesnoconv('StatusCredited');
 			}
+			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Canceled');
+			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Canceled');
 		}
 
 		$statusType = 'status1';
@@ -2909,6 +2925,9 @@ class BonPrelevement extends CommonObject
 		}
 		if ($status == self::STATUS_CREDITED || $status == self::STATUS_DEBITED) {
 			$statusType = 'status6';
+		}
+		if ($status == self::STATUS_CANCELED) {
+			$statusType = 'status9';
 		}
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
@@ -2919,71 +2938,75 @@ class BonPrelevement extends CommonObject
 	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
 	 *      @param      User	$user       	Object user
-	 *      @param		string	$mode			Mode 'direct_debit' or 'credit_transfer'
+	 *      @param		string	$mode			Mode 'direct-debit' or 'credit-transfer'
 	 *      @return 	WorkboardResponse|int 	Return integer <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user, $mode)
 	{
 		// phpcs:enable
+		global $conf, $langs;
+
 		if ($user->socid) {
 			return -1; // Protection to prevent calls by external users
 		}
 
-		/*
-		 if ($mode == 'direct_debit') {
-		 $sql = "SELECT b.rowid, f.datedue as datefin";
-		 $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
-		 $sql .= " WHERE f.entity IN (".getEntity('facture').")";
-		 $sql .= " AND f.total_ttc > 0";
-		 } else {
-		 $sql = "SELECT b.rowid, f.datedue as datefin";
-		 $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
-		 $sql .= " WHERE f.entity IN (".getEntity('facture_fourn').")";
-		 $sql .= " AND f.total_ttc > 0";
-		 }
+		if ($mode == 'direct-debit') {
+			$sql = "SELECT p.rowid, p.date_trans as date_trans, p.date_credit as date_credit";
+			$sql .= " FROM " . MAIN_DB_PREFIX . "prelevement_bons as p";
+			$sql .= " WHERE p.entity IN (" . getEntity('prelevement_bons') . ")";
+			$sql .= " AND (p.type = 'debit-order' OR p.type = 'direct-debit')";			// direct debit
+			$sql .= " AND p.statut < ".((int) BonPrelevement::STATUS_DEBITED);
+		} else {
+			$sql = "SELECT p.rowid, p.date_trans as date_trans, p.date_credit as date_credit";
+			$sql .= " FROM " . MAIN_DB_PREFIX . "prelevement_bons as p";
+			$sql .= " WHERE p.entity IN (" . getEntity('prelevement_bons') . ")";
+			$sql .= " AND (p.type = 'bank-transfer' OR p.type = 'credit-transfer')";	// credit transfer
+			$sql .= " AND p.statut < ".((int) BonPrelevement::STATUS_CREDITED);
+		}
 
-		 $resql = $this->db->query($sql);
-		 if ($resql) {
-		 $langs->load("banks");
-		 $now = dol_now();
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$langs->load("banks");
+			$now = dol_now();
 
-		 $response = new WorkboardResponse();
-		 if ($mode == 'direct_debit') {
-		 $response->warning_delay = $conf->prelevement->warning_delay / 60 / 60 / 24;
-		 $response->label = $langs->trans("PendingDirectDebitToComplete");
-		 $response->labelShort = $langs->trans("PendingDirectDebitToCompleteShort");
-		 $response->url = DOL_URL_ROOT.'/compta/prelevement/index.php?leftmenu=checks&mainmenu=bank';
-		 } else {
-		 $response->warning_delay = $conf->paymentbybanktransfer->warning_delay / 60 / 60 / 24;
-		 $response->label = $langs->trans("PendingCreditTransferToComplete");
-		 $response->labelShort = $langs->trans("PendingCreditTransferToCompleteShort");
-		 $response->url = DOL_URL_ROOT.'/compta/paymentbybanktransfer/index.php?leftmenu=checks&mainmenu=bank';
-		 }
-		 $response->img = img_object('', "payment");
+			$response = new WorkboardResponse();
+			if ($mode == 'direct-debit') {
+				$response->warning_delay = $conf->warning_delays['bank_direct_debit'] / 60 / 60 / 24;
+				$response->label = $langs->trans("PendingDirectDebitToComplete");
+				$response->labelShort = $langs->trans("PendingDirectDebitToCompleteShort");
+				$response->url = DOL_URL_ROOT . '/compta/prelevement/orders_list.php?leftmenu=checks&mainmenu=bank&search_status=0,1';
+				$response->url_late = DOL_URL_ROOT . '/compta/prelevement/orders_list.php?leftmenu=checks&mainmenu=bank&search_status=0,1';
+			} else {
+				$response->warning_delay = $conf->warning_delays['bank_credit_transfer'] / 60 / 60 / 24;
+				$response->label = $langs->trans("PendingCreditTransferToComplete");
+				$response->labelShort = $langs->trans("PendingCreditTransferToCompleteShort");
+				$response->url = DOL_URL_ROOT . '/compta/prelevement/orders_list.php?leftmenu=checks&mainmenu=bank&type=bank-transfer&search_status=0,1';
+				$response->url_late = DOL_URL_ROOT . '/compta/prelevement/orders_list.php?leftmenu=checks&mainmenu=bank&type=bank-transfer&search_status=0,1';
+			}
+			$response->img = img_object('', "payment");
 
-		 while ($obj = $this->db->fetch_object($resql)) {
-		 $response->nbtodo++;
+			$response->nbtodo = 0;
+			$response->nbtodolate = 0;
 
-		 if ($this->db->jdate($obj->datefin) < ($now - $conf->withdraw->warning_delay)) {
-		 $response->nbtodolate++;
-		 }
-		 }
+			while ($obj = $this->db->fetch_object($resql)) {
+				$response->nbtodo++;
 
-		 $response->nbtodo = 0;
-		 $response->nbtodolate = 0;
-		 // Return workboard only if quantity is not 0
-		 if ($response->nbtodo) {
-		 return $response;
-		 } else {
-		 return 0;
-		 }
-		 } else {
-		 dol_print_error($this->db);
-		 $this->error = $this->db->error();
-		 return -1;
-		 }
-		 */
-		return 0;
+				if ($this->db->jdate($obj->date_trans) < ($now - $response->warning_delay)) {
+					$response->nbtodolate++;
+				}
+			}
+
+			// Return workboard only if quantity is not 0
+			if ($response->nbtodo) {
+				return $response;
+			} else {
+				return 0;
+			}
+		} else {
+			dol_print_error($this->db);
+			$this->error = $this->db->error();
+			return -1;
+		}
 	}
 
 	/**
@@ -3009,11 +3032,19 @@ class BonPrelevement extends CommonObject
 		if ($selected >= 0) {
 			$return .= '<input id="cb' . $this->id . '" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="' . $this->id . '"' . ($selected ? ' checked="checked"' : '') . '>';
 		}
+		/*
+		if (isset($this->date_trans)) {
+			$return .= '<br><span class="opacitymedium">' . $langs->trans("TransData") . '</span> : <span class="info-box-label">' . dol_print_date($this->db->jdate($this->date_tans), 'day') . '</span>';
+		}
+		if (isset($this->date_credit)) {
+			$return .= '<br><span class="opacitymedium">' . $langs->trans("CreditDate") . '</span> : <span class="info-box-label">' . dol_print_date($this->db->jdate($this->date_credit), 'day') . '</span>';
+		}
 		if (isset($this->date_echeance)) {
 			$return .= '<br><span class="opacitymedium">' . $langs->trans("Date") . '</span> : <span class="info-box-label">' . dol_print_date($this->db->jdate($this->date_echeance), 'day') . '</span>';
 		}
-		if (isset($this->total)) {
-			$return .= '<br><span class="opacitymedium">' . $langs->trans("Amount") . '</span> : <span class="amount">' . price($this->total) . '</span>';
+		*/
+		if (isset($this->amount)) {
+			$return .= '<br><span class="opacitymedium">' . $langs->trans("Amount") . '</span> : <span class="amount">' . price($this->amount) . '</span>';
 		}
 		$return .= '<br><div class="info-box-status">' . $this->getLibStatut(3) . '</div>';
 		$return .= '</div>';

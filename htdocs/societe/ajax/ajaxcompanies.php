@@ -138,6 +138,10 @@ if ($user->socid > 0) {
 	$sql .= " AND s.rowid = ".((int) $user->socid);
 }
 //if (GETPOST("filter")) $sql.= " AND (".GETPOST("filter", "alpha").")"; // Add other filters
+
+$limit = getDolGlobalInt('SEARCH_LIMIT_AJAX') ?: 1000;		// SEARCH_LIMIT_AJAX is a hidden option that has priority on option THIRDPARTY_LIMIT_SIZE if set.
+$sql .= $db->plimit($limit, 0);
+
 $sql .= " ORDER BY s.nom ASC";
 
 //dol_syslog("ajaxcompanies", LOG_DEBUG);
