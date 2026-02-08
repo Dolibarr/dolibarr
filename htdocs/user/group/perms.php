@@ -590,24 +590,24 @@ foreach ($arrayofpermission as $i => $obj) {
 			print ' <span class="opacitymedium small">('.$langs->trans("Inherited").')</span>';
 			print '</td>';
 		} else {
-		// Own permission by group
-		if ($permissiontoedit) {
+			// Own permission by group
+			if ($permissiontoedit) {
+				print '<td class="center nowrap">';
+				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delrights&token='.newToken().'&entity='.$entity.'&rights='.$obj->id.'&confirm=yes&updatedmodulename='.$obj->module.'">';
+				//print img_edit_remove($langs->trans("Remove"));
+				print img_picto($langs->trans("Remove"), 'switch_on');
+				print '</a>';
+				print '</td>';
+			} else {
+				print '<td></td>';
+			}
 			print '<td class="center nowrap">';
-			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delrights&token='.newToken().'&entity='.$entity.'&rights='.$obj->id.'&confirm=yes&updatedmodulename='.$obj->module.'">';
-			//print img_edit_remove($langs->trans("Remove"));
-			print img_picto($langs->trans("Remove"), 'switch_on');
-			print '</a>';
-			print '</td>';
-		} else {
-			print '<td></td>';
-		}
-		print '<td class="center nowrap">';
-		print img_picto($langs->trans("Active"), 'tick');
+			print img_picto($langs->trans("Active"), 'tick');
 			if ($isinherited) {
 				// Also inherited, but we also have it directly
 				print ' <span class="opacitymedium small">('.$langs->trans("AlsoInherited").')</span>';
 			}
-		print '</td>';
+			print '</td>';
 		}
 	} else {
 		// Do not own permission
