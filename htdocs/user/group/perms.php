@@ -196,8 +196,9 @@ foreach ($modulesdir as $dir) {
 
 $db->commit();
 
-// Read permissions of group
+// Read own permissions of group (not inherited)
 $permsgroupbyentity = array();
+$ownpermsbyentity = array();
 
 $sql = "SELECT DISTINCT r.id, r.libelle, r.module, r.perms, r.subperms, r.module_position, r.family, r.family_position, gr.entity";
 $sql .= " FROM ".MAIN_DB_PREFIX."rights_def as r,";
@@ -216,7 +217,11 @@ if ($result) {
 		if (!isset($permsgroupbyentity[(int) $obj->entity])) {
 			$permsgroupbyentity[(int) $obj->entity] = array();
 		}
+		if (!isset($ownpermsbyentity[(int) $obj->entity])) {
+			$ownpermsbyentity[(int) $obj->entity] = array();
+		}
 		array_push($permsgroupbyentity[(int) $obj->entity], (int) $obj->id);
+		array_push($ownpermsbyentity[(int) $obj->entity], (int) $obj->id);
 		$i++;
 	}
 	$db->free($result);
@@ -224,6 +229,39 @@ if ($result) {
 	dol_print_error($db);
 }
 
+// Read inherited permissions from parent groups
+$inheritedpermsbyentity = array();
+$inheritedpermssource = array(); // To track which parent group each permission comes from
+$parents = $object->getAllParents();
+foreach ($parents as $parentGroup) {
+	$sql = "SELECT DISTINCT r.id, gr.entity";
+	$sql .= " FROM ".MAIN_DB_PREFIX."rights_def as r,";
+	$sql .= " ".MAIN_DB_PREFIX."usergroup_rights as gr";
+	$sql .= " WHERE gr.fk_id = r.id";
+	$sql .= " AND gr.entity = ".((int) $entity);
+	$sql .= " AND gr.fk_usergroup = ".((int) $parentGroup->id);
+
+	$result = $db->query($sql);
+	if ($result) {
+		while ($obj = $db->fetch_object($result)) {
+			if (!isset($inheritedpermsbyentity[(int) $obj->entity])) {
+				$inheritedpermsbyentity[(int) $obj->entity] = array();
+			}
+			if (!in_array((int) $obj->id, $inheritedpermsbyentity[(int) $obj->entity])) {
+				array_push($inheritedpermsbyentity[(int) $obj->entity], (int) $obj->id);
+				$inheritedpermssource[(int) $obj->id] = $parentGroup;
+			}
+			// Also add to the main permissions array for display
+			if (!isset($permsgroupbyentity[(int) $obj->entity])) {
+				$permsgroupbyentity[(int) $obj->entity] = array();
+			}
+			if (!in_array((int) $obj->id, $permsgroupbyentity[(int) $obj->entity])) {
+				array_push($permsgroupbyentity[(int) $obj->entity], (int) $obj->id);
+			}
+		}
+		$db->free($result);
+	}
+}
 /*
  * Part to add/remove permissions
  */
@@ -267,6 +305,20 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
 print '<tr><td>'.$langs->trans("ColorGroup").'</td>';
 print '<td>';
 print $formother->showColor($object->color, '');
+print '</td></tr>';
+
+// Parent group
+print '<tr><td>'.$langs->trans("ParentGroup").'</td>';
+print '<td>';
+if (!empty($object->fk_parent)) {
+	$parentgroup = new UserGroup($db);
+	if ($parentgroup->fetch($object->fk_parent) > 0) {
+		print $parentgroup->getNomUrl(1);
+		print ' <span class="opacitymedium">('.$langs->trans("PermissionsInheritedFromParent").')</span>';
+	}
+} else {
+	print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
+}
 print '</td></tr>';
 
 // Other attributes
@@ -431,6 +483,22 @@ foreach ($arrayofpermission as $i => $obj) {
 	if (!empty($permsgroupbyentity[$entity])) {
 		$permsgroupbyentitypluszero = array_merge($permsgroupbyentitypluszero, $permsgroupbyentity[$entity]);
 	}
+	// Build own and inherited permissions arrays for this entity
+	$ownpermspluszero = array();
+	if (!empty($ownpermsbyentity[0])) {
+		$ownpermspluszero = array_merge($ownpermspluszero, $ownpermsbyentity[0]);
+	}
+	if (!empty($ownpermsbyentity[$entity])) {
+		$ownpermspluszero = array_merge($ownpermspluszero, $ownpermsbyentity[$entity]);
+	}
+
+	$inheritedpermspluszero = array();
+	if (!empty($inheritedpermsbyentity[0])) {
+		$inheritedpermspluszero = array_merge($inheritedpermspluszero, $inheritedpermsbyentity[0]);
+	}
+	if (!empty($inheritedpermsbyentity[$entity])) {
+		$inheritedpermspluszero = array_merge($inheritedpermspluszero, $inheritedpermsbyentity[$entity]);
+	}
 	//var_dump($permsgroupbyentitypluszero);
 
 	// Break found, it's a new module to catch
@@ -501,8 +569,27 @@ foreach ($arrayofpermission as $i => $obj) {
 
 	// Permission and tick (2 columns)
 	print '<!-- permsgroupbyentitypluszero -->';
+	// Check if permission is inherited (from parent group)
+	// @phan-suppress-next-line PhanTypeMismatchArgumentNullableInternal
+	$isinherited = in_array($obj->id, $inheritedpermspluszero);
+	// @phan-suppress-next-line PhanTypeMismatchArgumentNullableInternal
+	$isown = in_array($obj->id, $ownpermspluszero);
 	// @phan-suppress-next-line PhanTypeMismatchArgumentNullableInternal
 	if (in_array($obj->id, $permsgroupbyentitypluszero)) {
+		// Has permission (own or inherited)
+		if ($isinherited && !$isown) {
+			// Inherited permission - cannot be removed, show locked icon
+			print '<td class="center nowrap">';
+			$parentname = isset($inheritedpermssource[$obj->id]) ? $inheritedpermssource[$obj->id]->name : '';
+			print '<span class="opacitymedium" title="'.dol_escape_htmltag($langs->trans("InheritedFromGroup", $parentname)).'">';
+			print img_picto($langs->trans("InheritedFromGroup", $parentname), 'lock', 'class="pictofixedwidth"');
+			print '</span>';
+			print '</td>';
+			print '<td class="center nowrap">';
+			print img_picto($langs->trans("ActiveInherited"), 'tick');
+			print ' <span class="opacitymedium small">('.$langs->trans("Inherited").')</span>';
+			print '</td>';
+		} else {
 		// Own permission by group
 		if ($permissiontoedit) {
 			print '<td class="center nowrap">';
@@ -516,7 +603,12 @@ foreach ($arrayofpermission as $i => $obj) {
 		}
 		print '<td class="center nowrap">';
 		print img_picto($langs->trans("Active"), 'tick');
+			if ($isinherited) {
+				// Also inherited, but we also have it directly
+				print ' <span class="opacitymedium small">('.$langs->trans("AlsoInherited").')</span>';
+			}
 		print '</td>';
+		}
 	} else {
 		// Do not own permission
 		if ($permissiontoedit) {

@@ -140,6 +140,7 @@ if (empty($reshook)) {
 			$object->name	= GETPOST("nom", 'alphanohtml');
 			$object->note	= dol_htmlcleanlastbr(trim(GETPOST("note", 'restricthtml')));
 			$object->color	= GETPOST("color", 'alphanohtml');
+			$object->fk_parent = GETPOSTINT("fk_parent") > 0 ? GETPOSTINT("fk_parent") : null;
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -213,6 +214,28 @@ if (empty($reshook)) {
 		$object->color = GETPOST("color", 'alphanohtml');
 		$object->tms = dol_now();
 
+		// Handle parent group with circular reference protection
+		$newfkparent = GETPOSTINT("fk_parent") > 0 ? GETPOSTINT("fk_parent") : null;
+		if ($newfkparent) {
+			// Check for circular reference: new parent cannot be this group or a descendant of this group
+			if ($newfkparent == $object->id) {
+				setEventMessages($langs->trans("ErrorGroupCannotBeItsOwnParent"), null, 'errors');
+				$db->rollback();
+				$action = 'edit';
+			} else {
+				$testgroup = new UserGroup($db);
+				$testgroup->fetch($newfkparent);
+				if ($testgroup->isDescendantOf($object->id)) {
+					setEventMessages($langs->trans("ErrorCircularGroupReference"), null, 'errors');
+					$db->rollback();
+					$action = 'edit';
+				} else {
+					$object->fk_parent = $newfkparent;
+				}
+			}
+		} else {
+			$object->fk_parent = null;
+		}
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
 		if ($ret < 0) {
@@ -295,6 +318,21 @@ if ($action == 'create') {
 	print $formother->selectColor(GETPOSTISSET('color') ? GETPOST('color', 'alphanohtml') : $object->color, 'color', null, 1, array(), 'hideifnotset');
 	print '</td></tr>';
 
+	// Parent group
+	print '<tr><td>'.$langs->trans("ParentGroup").'</td>';
+	print '<td>';
+	$sql = "SELECT rowid, nom FROM ".$db->prefix()."usergroup WHERE entity IN (0, ".$conf->entity.") ORDER BY nom";
+	$resql = $db->query($sql);
+	$parentgroups = array();
+	if ($resql) {
+		while ($obj = $db->fetch_object($resql)) {
+			$parentgroups[$obj->rowid] = $obj->nom;
+		}
+	}
+	print $form->selectarray('fk_parent', $parentgroups, GETPOSTISSET('fk_parent') ? GETPOSTINT('fk_parent') : 0, 1, 0, 0, '', 0, 0, 0, '', 'minwidth200');
+	print '<br><span class="opacitymedium">'.$langs->trans("ParentGroupDescription").'</span>';
+	print '</td></tr>';
+
 	// Other attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 
@@ -369,6 +407,18 @@ if ($action == 'create') {
 			print $formother->showColor($object->color, '');
 			print '</td></tr>';
 
+			// Parent group
+			print '<tr><td>'.$langs->trans("ParentGroup").'</td>';
+			print '<td>';
+			if (!empty($object->fk_parent)) {
+				$parentgroup = new UserGroup($db);
+				if ($parentgroup->fetch($object->fk_parent) > 0) {
+					print $parentgroup->getNomUrl(1);
+				}
+			} else {
+				print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
+			}
+			print '</td></tr>';
 			// Other attributes
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
@@ -555,6 +605,27 @@ if ($action == 'create') {
 			print '<tr><td>'.$langs->trans("ColorGroup").'</td>';
 			print '<td>';
 			print $formother->selectColor(GETPOSTISSET('color') ? GETPOST('color', 'alphanohtml') : $object->color, 'color', null, 1, array(), 'hideifnotset');
+			print '</td></tr>';
+
+			// Parent group
+			print '<tr><td>'.$langs->trans("ParentGroup").'</td>';
+			print '<td>';
+			// Get all groups except this one and its descendants (to prevent circular references)
+			$sql = "SELECT rowid, nom FROM ".$db->prefix()."usergroup WHERE entity IN (0, ".$conf->entity.") AND rowid != ".((int) $object->id)." ORDER BY nom";
+			$resql = $db->query($sql);
+			$parentgroups = array();
+			if ($resql) {
+				while ($obj = $db->fetch_object($resql)) {
+					// Check if this group is not a descendant of current group
+					$testgroup = new UserGroup($db);
+					$testgroup->fetch($obj->rowid);
+					if (!$testgroup->isDescendantOf($object->id)) {
+						$parentgroups[$obj->rowid] = $obj->nom;
+					}
+				}
+			}
+			print $form->selectarray('fk_parent', $parentgroups, GETPOSTISSET('fk_parent') ? GETPOSTINT('fk_parent') : $object->fk_parent, 1, 0, 0, '', 0, 0, 0, '', 'minwidth200');
+			print '<br><span class="opacitymedium">'.$langs->trans("ParentGroupDescription").'</span>';
 			print '</td></tr>';
 
 			// Other attributes

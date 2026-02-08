@@ -97,6 +97,11 @@ class UserGroup extends CommonObject
 	public $color;
 
 	/**
+	 * @var int|null Parent group id for permission inheritance
+	 */
+	public $fk_parent;
+
+	/**
 	 * @var User[]  Array of users
 	 */
 	public $members = array();
@@ -112,9 +117,18 @@ class UserGroup extends CommonObject
 	public $nb_users;
 
 	/**
-	 * @var stdClass Permissions of the group
+	 * @var stdClass Permissions of the group (own + inherited)
 	 */
 	public $rights;
+	/**
+	 * @var array<int,int> Array of own permission ids (not inherited)
+	 */
+	public $own_rights_ids = array();
+
+	/**
+	 * @var array<int,int> Array of inherited permission ids (from parent groups)
+	 */
+	public $inherited_rights_ids = array();
 
 	/**
 	 * @var array<string,int> Cache array of already loaded permissions
@@ -130,6 +144,7 @@ class UserGroup extends CommonObject
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'default' => '1', 'index' => 1, 'position' => 5),
 		'nom' => array('type' => 'varchar(180)', 'label' => 'Name', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 10, 'searchall' => 1, 'comment' => 'Group name'),
+		'fk_parent' => array('type' => 'integer:UserGroup:user/class/usergroup.class.php', 'label' => 'ParentGroup', 'enabled' => 1, 'visible' => 1, 'position' => 15, 'notnull' => -1, 'index' => 1, 'comment' => 'Parent group for permission inheritance'),
 		'note' => array('type' => 'html', 'label' => 'Description', 'enabled' => 1, 'visible' => 1, 'position' => 20, 'notnull' => -1, 'searchall' => 1),
 		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -2, 'position' => 50, 'notnull' => 1,),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -2, 'position' => 60, 'notnull' => 1,),
@@ -200,6 +215,89 @@ class UserGroup extends CommonObject
 		}
 	}
 
+
+	/**
+	 *  Get all parent groups in the inheritance chain
+	 *
+	 *  @param	int		$maxdepth	Maximum depth to prevent infinite loops (default 10)
+	 *  @return	array<int,UserGroup>	Array of parent UserGroup objects indexed by id
+	 */
+	public function getAllParents($maxdepth = 10)
+	{
+		$parents = array();
+
+		if (empty($this->fk_parent) || $maxdepth <= 0) {
+			return $parents;
+		}
+
+		$parentGroup = new UserGroup($this->db);
+		if ($parentGroup->fetch($this->fk_parent) > 0) {
+			$parents[$parentGroup->id] = $parentGroup;
+			// Recursively get parents of parent
+			$grandparents = $parentGroup->getAllParents($maxdepth - 1);
+			foreach ($grandparents as $id => $group) {
+				$parents[$id] = $group;
+			}
+		}
+
+		return $parents;
+	}
+
+	/**
+	 *  Check if this group is a descendant of another group (to prevent circular references)
+	 *
+	 *  @param	int		$groupid	Group id to check
+	 *  @param	int		$maxdepth	Maximum depth to check (default 10)
+	 *  @return	bool				True if this group is a descendant of groupid
+	 */
+	public function isDescendantOf($groupid, $maxdepth = 10)
+	{
+		if (empty($this->fk_parent) || $maxdepth <= 0) {
+			return false;
+		}
+
+		if ($this->fk_parent == $groupid) {
+			return true;
+		}
+
+		$parentGroup = new UserGroup($this->db);
+		if ($parentGroup->fetch($this->fk_parent) > 0) {
+			return $parentGroup->isDescendantOf($groupid, $maxdepth - 1);
+		}
+
+		return false;
+	}
+
+	/**
+	 *  Get all child groups (direct children only)
+	 *
+	 *  @return	array<int,UserGroup>|int<-1,-1>	Array of child UserGroup objects or -1 on error
+	 */
+	public function getChildren()
+	{
+		global $conf;
+
+		$children = array();
+
+		$sql = "SELECT rowid FROM ".$this->db->prefix()."usergroup";
+		$sql .= " WHERE fk_parent = ".((int) $this->id);
+		$sql .= " AND entity IN (0, ".((int) $conf->entity).")";
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$child = new UserGroup($this->db);
+				if ($child->fetch($obj->rowid) > 0) {
+					$children[$child->id] = $child;
+				}
+			}
+			$this->db->free($resql);
+			return $children;
+		} else {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+	}
 
 	/**
 	 *  Return array of groups objects for a particular user
@@ -599,6 +697,7 @@ class UserGroup extends CommonObject
 
 	/**
 	 *  Load the list of permissions for the user into the group object
+	 *  Includes inherited permissions from parent groups
 	 *
 	 *  @param      string	$moduletag	 	Name of module we want permissions ('' means all)
 	 *  @return     int						Return integer <0 if KO, >=0 if OK
@@ -617,8 +716,63 @@ class UserGroup extends CommonObject
 			return 0;
 		}
 
-		// Load permission from group
-		$sql = "SELECT r.module, r.perms, r.subperms ";
+		// First, load inherited permissions from parent groups
+		$this->inherited_rights_ids = array();
+		$parents = $this->getAllParents();
+		foreach ($parents as $parentGroup) {
+			$sql = "SELECT r.id, r.module, r.perms, r.subperms";
+			$sql .= " FROM ".$this->db->prefix()."usergroup_rights as u, ".$this->db->prefix()."rights_def as r";
+			$sql .= " WHERE r.id = u.fk_id";
+			$sql .= " AND r.entity = ".((int) $conf->entity);
+			$sql .= " AND u.entity = ".((int) $conf->entity);
+			$sql .= " AND u.fk_usergroup = ".((int) $parentGroup->id);
+			$sql .= " AND r.perms IS NOT NULL";
+			if ($moduletag) {
+				$sql .= " AND r.module = '".$this->db->escape($moduletag)."'";
+			}
+
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				while ($obj = $this->db->fetch_object($resql)) {
+					if ($obj) {
+						// Store inherited permission id
+						$this->inherited_rights_ids[$obj->id] = $obj->id;
+
+						$module = $obj->module;
+						$perms = $obj->perms;
+						$subperms = $obj->subperms;
+
+						if ($perms) {
+							if (!isset($this->rights)) {
+								$this->rights = new stdClass();
+							}
+							if (!isset($this->rights->$module) || !is_object($this->rights->$module)) {
+								$this->rights->$module = new stdClass();
+							}
+							if ($subperms) {
+								if (!isset($this->rights->$module->$perms) || !is_object($this->rights->$module->$perms)) {
+									$this->rights->$module->$perms = new stdClass();
+								}
+								if (empty($this->rights->$module->$perms->$subperms)) {
+									$this->nb_rights++;
+								}
+								$this->rights->$module->$perms->$subperms = 1;
+							} else {
+								if (empty($this->rights->$module->$perms)) {
+									$this->nb_rights++;
+								}
+								$this->rights->$module->$perms = 1;
+							}
+						}
+					}
+				}
+				$this->db->free($resql);
+			}
+		}
+
+		// Now load own permissions from this group
+		$this->own_rights_ids = array();
+		$sql = "SELECT r.id, r.module, r.perms, r.subperms";
 		$sql .= " FROM ".$this->db->prefix()."usergroup_rights as u, ".$this->db->prefix()."rights_def as r";
 		$sql .= " WHERE r.id = u.fk_id";
 		$sql .= " AND r.entity = ".((int) $conf->entity);
@@ -638,6 +792,8 @@ class UserGroup extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				if ($obj) {
+					// Store own permission id
+					$this->own_rights_ids[$obj->id] = $obj->id;
 					$module = $obj->module;
 					$perms = $obj->perms;
 					$subperms = $obj->subperms;
