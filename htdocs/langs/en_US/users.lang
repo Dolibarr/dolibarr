@@ -168,7 +168,6 @@ ParentGroupDescription=Permissions from the parent group will be inherited by th
 PermissionsInheritedFromParent=permissions inherited from parent
 InheritedFromGroup=Inherited from group %s
 ActiveInherited=Active (inherited)
-Inherited=inherited
 AlsoInherited=also inherited
 ErrorGroupCannotBeItsOwnParent=A group cannot be its own parent
 ErrorCircularGroupReference=Circular reference: the selected parent is a descendant of this group
