@@ -59,6 +59,24 @@ RegistrationNumber=Registration number
 NumberOfPrints=Number of prints
 NumberOfEmailsSent=Number of emails sent
 
+BLOCKEDLOG_REGISTRATION_NAME=Company name
+BLOCKEDLOG_REGISTRATION_EMAIL=Company email
+BLOCKEDLOG_REGISTRATION_COUNTRY_CODE=Company country
+BLOCKEDLOG_REGISTRATION_IDPROF1=Company Prof Id 1 (SIREN)
+BLOCKEDLOG_REGISTRATION_ADDRESS=Company address
+BLOCKEDLOG_REGISTRATION_STATE=Company state/province
+BLOCKEDLOG_REGISTRATION_ZIP=Company zip
+BLOCKEDLOG_REGISTRATION_TOWN=Company town
+MAIN_INFO_ITPROVIDER_NAME=IT service provider name
+MAIN_INFO_ITPROVIDER_MAIL=IT service provider email
+MAIN_INFO_ITPROVIDER_COUNTRY=IT service provider country
+MAIN_INFO_ITPROVIDER_IDPROF1=IT service provider Prof Id 1 (SIREN)
+MAIN_INFO_ITPROVIDER_ADDRESS=IT service provider address
+MAIN_INFO_ITPROVIDER_STATE=IT service provider state/province
+MAIN_INFO_ITPROVIDER_ZIP=IT service provider zip
+MAIN_INFO_ITPROVIDER_TOWN=IT service provider town
+RegistrationDoneAndModuleEnabled=All the entered information has been saved and sent to the Dolibarr organisation server for your registration. <br>You can now use blockedlog module.
+
 ## logTypes
 logBILL_DELETE=Customer invoice logically deleted
 logBILL_PAYED=Customer invoice paid
