@@ -3433,6 +3433,7 @@ if ($action == 'create' && $usercancreate) {
 			print '<div class="tabsAction">';
 
 			$parameters = array();
+			$arrayforbutaction = array();
 			// Note that $action and $object may be modified by hook
 			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);
 			if (empty($reshook)) {
@@ -3493,7 +3494,6 @@ if ($action == 'create' && $usercancreate) {
 					print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"] . '?action=modif&amp;token=' . newToken() . '&amp;id=' . $object->id, '');
 				}
 
-				$arrayforbutaction = array();
 				// Create a purchase order
 
 				if (!getDolGlobalInt('COMMANDE_DISABLE_ADD_PURCHASE_ORDER')) {

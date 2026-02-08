@@ -124,6 +124,23 @@ if (!function_exists('str_contains')) {
 
 
 /**
+ *	Return a string serialized to be output on log with dol_syslog()
+ *	An option allow to output log in one line instead of a structured human tree
+ *
+ *  @param	mixed	$data	Any PHP object
+ *  @return	string			Serialized data for loh
+ */
+function formatLogObject($data)
+{
+	if (getDolGlobalInt("MAIN_LOG_ON_ONE_LINE")) {
+		return json_encode($data);
+	}
+
+	return var_export($data, true);
+}
+
+
+/**
  * Return the full path of the directory where a module (or an object of a module) stores its files.
  * Path may depends on the entity if a multicompany module is enabled.
  *
