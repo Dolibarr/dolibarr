@@ -8,7 +8,7 @@
  * Copyright (C) 2012		Yann Droneaud			<yann@droneaud.fr>
  * Copyright (C) 2012		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -752,7 +752,7 @@ class DoliDBPgsql extends DoliDB
 	 *  @param	string	$test           Test expression (example: 'cd.statut=0', 'field IS NULL')
 	 *  @param	string	$resok          Result to generate when test is True
 	 *  @param	string	$resko          Result to generate when test is False
-	 *  @return	string          		chaine format SQL
+	 *  @return	string          		Partial SQL string for IF condition
 	 */
 	public function ifsql($test, $resok, $resko)
 	{

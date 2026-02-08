@@ -551,22 +551,22 @@ class ProductCombination
 			if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
 				$produit_multiprices_limit = getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT');
 				for ($i = 1; $i <= $produit_multiprices_limit; $i++) {
-					if ($parent->multiprices[$i] != '' || isset($this->combination_price_levels[$i]->variation_price)) {
+					if ((isset($parent->multiprices[$i]) && $parent->multiprices[$i] != '') || isset($this->combination_price_levels[$i]->variation_price)) {
 						$new_type = empty($parent->multiprices_base_type[$i]) ? 'HT' : $parent->multiprices_base_type[$i];
-						$new_min_price = $parent->multiprices_min[$i];
+						$new_min_price = isset($parent->multiprices_min[$i]) ? $parent->multiprices_min[$i] : 0;
 						$variation_price = (float) (!isset($this->combination_price_levels[$i]->variation_price) ? $this->variation_price : $this->combination_price_levels[$i]->variation_price);
 						$variation_price_percentage = (bool) (!isset($this->combination_price_levels[$i]->variation_price_percentage) ? $this->variation_price_percentage : $this->combination_price_levels[$i]->variation_price_percentage);
 
-						if ($parent->prices_by_qty_list[$i]) {
+						if (!empty($parent->prices_by_qty_list[$i])) {
 							$new_psq = 1;
 						} else {
 							$new_psq = 0;
 						}
 
 						if ($new_type == 'TTC') {
-							$new_price = $parent->multiprices_ttc[$i];
+							$new_price = isset($parent->multiprices_ttc[$i]) ? $parent->multiprices_ttc[$i] : 0;
 						} else {
-							$new_price = $parent->multiprices[$i];
+							$new_price = isset($parent->multiprices[$i]) ? $parent->multiprices[$i] : 0;
 						}
 
 						if ($variation_price_percentage) {
