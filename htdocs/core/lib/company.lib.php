@@ -1836,6 +1836,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 {
 	global $hookmanager;
 	global $form;
+
 	global $param, $massactionbutton;
 
 	$start_year = GETPOSTINT('dateevent_startyear');
@@ -2140,10 +2141,13 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		}
 	}
 
+	$MAXWITHOUTPAGINATION = getDolGlobalInt('AGENDA_MAX_EVENTS_ON_PAGE_WITHOUT_PAGINATION', 100);
+	$num = 0;
+
 	if ($sql) {
-		//TODO Add navigation with this limits...
+		// TODO Add navigation with this limits by replacing call of show_actions_done by the code found into comm/action/list.php...
 		$offset = 0;
-		$limit = 1000;
+		$limit = $MAXWITHOUTPAGINATION;
 
 		// Complete request and execute it with limit
 		$sql .= $db->order($sortfield_new, $sortorder);
@@ -2307,8 +2311,8 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		$out .= '<td class="liste_titre">';
 		$out .= $formactions->select_type_actions($actioncode, "actioncode", '', getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? -1 : 1, 0, (getDolGlobalString('AGENDA_USE_MULTISELECT_TYPE') ? 1 : 0), 1, 'selecttype combolargeelem minwidth100 maxwidth150', 1);
 		$out .= '</td>';
-		// Label
-		$out .= '<td class="liste_titre maxwidth100onsmartphone"><input type="text" class="maxwidth100onsmartphone" name="search_agenda_label" value="' . $filters['search_agenda_label'] . '"></td>';
+		// Label - Title
+		$out .= '<td class="liste_titre maxwidth100onsmartphone"><input type="text" class="maxwidth125" name="search_agenda_label" value="' . $filters['search_agenda_label'] . '"></td>';
 		$out .= '<td class="liste_titre"></td>';
 		$out .= '<td class="liste_titre"></td>';
 		// Status ($percent can be 'na'or < 100 or 100)
@@ -2353,9 +2357,9 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		$out .= getTitleFieldOfList("Date", 0, $_SERVER["PHP_SELF"], 'a.datep,a.id', '', $param, '', $sortfield, $sortorder, 'center ');
 		$out .= getTitleFieldOfList("Owner");
 		$out .= getTitleFieldOfList("Type");
-		$out .= getTitleFieldOfList("Label", 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
-		$out .= getTitleFieldOfList("RelatedObjects", 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
+		$out .= getTitleFieldOfList("Title", 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
 		$out .= getTitleFieldOfList("ActionOnContact", 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'tdoverflowmax125 ', 0, '', 0);
+		$out .= getTitleFieldOfList("LinkedObject", 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
 		$out .= getTitleFieldOfList("Status", 0, $_SERVER["PHP_SELF"], 'a.percent', '', $param, '', $sortfield, $sortorder, 'center ');
 		// Action column
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -2401,7 +2405,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 			$out .= '</td>';
 
 			// Date
-			$out .=  '<td class="center nowraponall nopaddingtopimp nopaddingbottomimp">';
+			$out .= '<td class="center nowraponall nopaddingtopimp nopaddingbottomimp">';
 			if ($histo[$key]['dateend']) {	// There is also a end date
 				$tmpa = dol_getdate($histo[$key]['datestart']);
 				$tmpb = dol_getdate($histo[$key]['dateend']);
@@ -2431,7 +2435,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 					$out .=  dol_print_date($histo[$key]['datestart'], 'hourreduceformat', 'tzuserrel');
 					$out .=  '</span>';
 					$out .=  '</div>';
-					$out .=  ' ';
+					$out .=  ' - ';
 					$out .=  '<div class="center inline-block lineheightsmall">';
 					$out .=  dol_print_date($histo[$key]['dateend'], 'dayreduceformat', 'tzuserrel');
 					$out .=  '<br><span class="opacitymedium hourspan">';
@@ -2458,38 +2462,6 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 				$out .= img_warning($langs->trans("Late")) . ' ';
 			}
 			$out .=  '</td>';
-
-			/*
-			$out .= '<td class="center nowraponall">';
-			$out .= dol_print_date($histo[$key]['datestart'], 'dayhour', 'tzuserrel');
-			if ($histo[$key]['dateend'] && $histo[$key]['dateend'] != $histo[$key]['datestart']) {
-				$tmpa = dol_getdate($histo[$key]['datestart'], true);
-				$tmpb = dol_getdate($histo[$key]['dateend'], true);
-				if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) {
-					$out .= '-' . dol_print_date($histo[$key]['dateend'], 'hour', 'tzuserrel');
-				} else {
-					$out .= '-' . dol_print_date($histo[$key]['dateend'], 'dayhour', 'tzuserrel');
-				}
-			}
-			// Add the late warning
-			$late = 0;
-			if ($histo[$key]['percent'] == 0 && $histo[$key]['datestart'] && $histo[$key]['datestart'] < ($now - $delay_warning)) {
-				$late = 1;
-			}
-			if ($histo[$key]['percent'] == 0 && !$histo[$key]['datestart'] && $histo[$key]['dateend'] && $histo[$key]['datestart'] < ($now - $delay_warning)) {
-				$late = 1;
-			}
-			if ($histo[$key]['percent'] > 0 && $histo[$key]['percent'] < 100 && $histo[$key]['dateend'] && $histo[$key]['dateend'] < ($now - $delay_warning)) {
-				$late = 1;
-			}
-			if ($histo[$key]['percent'] > 0 && $histo[$key]['percent'] < 100 && !$histo[$key]['dateend'] && $histo[$key]['datestart'] && $histo[$key]['datestart'] < ($now - $delay_warning)) {
-				$late = 1;
-			}
-			if ($late) {
-				$out .= img_warning($langs->trans("Late")) . ' ';
-			}
-			$out .= "</td>\n";
-			*/
 
 			// Author of event
 			$out .= '<td class="tdoverflowmax125">';
@@ -2535,6 +2507,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 			}
 
 			$out .= '<td class="tdoverflowmax125" title="' . $labelOfTypeToShowLong . '">';
+			// Example $actionstatic->code = AC_COMPANY_MODIFY and $actionstatic->type_code = AC_OTH_AUTO
 			$out .= $actionstatic->getTypePicto();
 			$out .= $labelOfTypeToShow;
 			$out .= '</td>';
@@ -2561,6 +2534,39 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 			}
 			$out .= '</td>';
 
+			// Contact(s) for action
+			if (isset($histo[$key]['socpeopleassigned']) && is_array($histo[$key]['socpeopleassigned']) && count($histo[$key]['socpeopleassigned']) > 0) {
+				$out .= '<td class="valignmiddle">';
+				$contact = new Contact($db);
+				foreach ($histo[$key]['socpeopleassigned'] as $cid => $cvalue) {
+					$result = $contact->fetch($cid);
+
+					if ($result < 0) {
+						dol_print_error($db, $contact->error);
+					} elseif ($result > 0) {
+						if (count($histo[$key]['socpeopleassigned']) > 1) {
+							$out .= $contact->getNomUrl(-2, '', 0, '', -1, 0, 'paddingright');
+						} else {
+							$out .= $contact->getNomUrl(-3, '', 0, '', -1, 0, 'paddingright');
+							if (isset($histo[$key]['acode']) && $histo[$key]['acode'] == 'AC_TEL') {
+								if (!empty($contact->phone_pro)) {
+									$out .= '(' . dol_print_phone($contact->phone_pro) . ')';
+								}
+							}
+						}
+					}
+				}
+				$out .= '</td>';
+			} elseif (empty($objcon->id) && isset($histo[$key]['contact_id']) && $histo[$key]['contact_id'] > 0) {
+				$contactstatic->lastname = $histo[$key]['lastname'];
+				$contactstatic->firstname = $histo[$key]['firstname'];
+				$contactstatic->id = $histo[$key]['contact_id'];
+				$contactstatic->photo = $histo[$key]['contact_photo'];
+				$out .= '<td width="120">' . $contactstatic->getNomUrl(-1, '', 10) . '</td>';
+			} else {
+				$out .= '<td>&nbsp;</td>';
+			}
+
 			// Linked object
 			$out .= '<td class="tdoverflowmax200 nowraponall">';
 			if (isset($histo[$key]['elementtype']) && !empty($histo[$key]['fk_element'])) {
@@ -2577,38 +2583,6 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 			}
 			$out .= '</td>';
 
-			// Contact(s) for action
-			if (isset($histo[$key]['socpeopleassigned']) && is_array($histo[$key]['socpeopleassigned']) && count($histo[$key]['socpeopleassigned']) > 0) {
-				$out .= '<td class="valignmiddle">';
-				$contact = new Contact($db);
-				foreach ($histo[$key]['socpeopleassigned'] as $cid => $cvalue) {
-					$result = $contact->fetch($cid);
-
-					if ($result < 0) {
-						dol_print_error($db, $contact->error);
-					}
-
-					if ($result > 0) {
-						$out .= $contact->getNomUrl(-3, '', 10, '', -1, 0, 'paddingright');
-						if (isset($histo[$key]['acode']) && $histo[$key]['acode'] == 'AC_TEL') {
-							if (!empty($contact->phone_pro)) {
-								$out .= '(' . dol_print_phone($contact->phone_pro) . ')';
-							}
-						}
-						$out .= '<div class="paddingright"></div>';
-					}
-				}
-				$out .= '</td>';
-			} elseif (empty($objcon->id) && isset($histo[$key]['contact_id']) && $histo[$key]['contact_id'] > 0) {
-				$contactstatic->lastname = $histo[$key]['lastname'];
-				$contactstatic->firstname = $histo[$key]['firstname'];
-				$contactstatic->id = $histo[$key]['contact_id'];
-				$contactstatic->photo = $histo[$key]['contact_photo'];
-				$out .= '<td width="120">' . $contactstatic->getNomUrl(-1, '', 10) . '</td>';
-			} else {
-				$out .= '<td>&nbsp;</td>';
-			}
-
 			// Status / Progression
 			$out .= '<td class="nowrap center">';
 			$out .= $actionstatic->LibStatut($histo[$key]['percent'], 2, 0, $histo[$key]['datestart']);
@@ -2624,6 +2598,12 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		if (empty($histo)) {
 			$colspan = 9;
 			$out .= '<tr><td colspan="' . $colspan . '"><span class="opacitymedium">' . $langs->trans("NoRecordFound") . '</span></td></tr>';
+		}
+
+		if ($num > $MAXWITHOUTPAGINATION) {
+			$langs->load("errors");
+			$colspan = 9;
+			$out .= '<tr><td class="center" colspan="' . $colspan . '"><span class="opacitymedium">...' . $langs->trans("WarningTooManyDataPleaseUseMoreFilters", $MAXWITHOUTPAGINATION) . '...</span></td></tr>';
 		}
 
 		$out .= "</table>\n";

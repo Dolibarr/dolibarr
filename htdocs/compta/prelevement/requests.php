@@ -20,9 +20,9 @@
  */
 
 /**
- *	\file       htdocs/compta/prelevement/card.php
- *	\ingroup    prelevement
- *	\brief      Card of a direct debit
+ *	\file       htdocs/compta/prelevement/requests.php
+ *	\ingroup    requests
+ *	\brief      Page with details of payment requests per invoice
  */
 
 // Load Dolibarr environment
@@ -65,7 +65,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 if (!$sortfield) {
-	$sortfield = 'pl.rowid';
+	$sortfield = 'pd.rowid';
 }
 if (!$sortorder) {
 	$sortorder = 'ASC';
@@ -217,7 +217,7 @@ llxHeader('', $langs->trans("WithdrawalsReceipts"));
 if ($id > 0 || $ref) {
 	$head = prelevement_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'prelevement', $langs->trans("WithdrawalsReceipts"), -1, 'payment');
+	print dol_get_fiche_head($head, 'requests', $langs->trans("WithdrawalsReceipts"), -1, 'payment');
 
 	if (GETPOST('error', 'alpha') != '') {
 		print '<div class="error">'.$object->getErrorString(GETPOSTINT('error')).'</div>';
@@ -395,7 +395,7 @@ if ($id > 0 || $ref) {
 
 
 	if (empty($object->date_trans) && (($user->hasRight('prelevement', 'bons', 'send') && $object->type != 'bank-transfer') || ($user->hasRight('paymentbybanktransfer', 'send') && $object->type == 'bank-transfer')) && $action == 'settransmitted') {
-		print '<form method="post" name="userfile" action="card.php?id='.$object->id.'" enctype="multipart/form-data">';
+		print '<form method="post" name="userfile" action="requests.php?id='.$object->id.'" enctype="multipart/form-data">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="infotrans">';
 		print '<table class="noborder centpercent">';
@@ -415,7 +415,7 @@ if ($id > 0 || $ref) {
 
 	if ($object->status == BonPrelevement::STATUS_TRANSFERED && (($user->hasRight('prelevement', 'bons', 'credit') && $object->type != 'bank-transfer') || ($user->hasRight('paymentbybanktransfer', 'debit') && $object->type == 'bank-transfer')) && $action == 'setcredited') {
 		$btnLabel = ($object->type == 'bank-transfer') ? $langs->trans("ClassDebited") : $langs->trans("ClassCredited");
-		print '<form name="infocredit" method="post" action="card.php?id='.$object->id.'">';
+		print '<form name="infocredit" method="post" action="requests.php?id='.$object->id.'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="setinfocredit">';
 		print '<table class="noborder centpercent">';
@@ -439,43 +439,43 @@ if ($id > 0 || $ref) {
 		if (empty($reshook)) {
 			if (empty($object->date_trans)) {
 				if ($object->type == 'bank-transfer') {
-					print dolGetButtonAction($langs->trans("SetToStatusSent"), '', 'default', 'card.php?action=settransmitted&token='.newToken().'&id='.$object->id, '', $user->hasRight('paymentbybanktransfer', 'send'));
+					print dolGetButtonAction($langs->trans("SetToStatusSent"), '', 'default', 'requests.php?action=settransmitted&token='.newToken().'&id='.$object->id, '', $user->hasRight('paymentbybanktransfer', 'send'));
 				} else {
-					print dolGetButtonAction($langs->trans("SetToStatusSent"), '', 'default', 'card.php?action=settransmitted&token='.newToken().'&id='.$object->id, '', $user->hasRight('prelevement', 'bons', 'send'));
+					print dolGetButtonAction($langs->trans("SetToStatusSent"), '', 'default', 'requests.php?action=settransmitted&token='.newToken().'&id='.$object->id, '', $user->hasRight('prelevement', 'bons', 'send'));
 				}
 			}
 
 			if (getDolGlobalString('BANK_CAN_REOPEN_DIRECT_DEBIT_OR_CREDIT_TRANSFER')) {
 				if ($object->status == BonPrelevement::STATUS_DEBITED || $object->status == BonPrelevement::STATUS_CREDITED) {
 					if ($object->type == 'bank-transfer') {
-						print dolGetButtonAction($langs->trans("ReOpen"), '', 'default', 'card.php?action=reopen&token='.newToken().'&id='.$object->id, '', $user->hasRight('paymentbybanktransfer', 'debit'));
+						print dolGetButtonAction($langs->trans("ReOpen"), '', 'default', 'requests.php?action=reopen&token='.newToken().'&id='.$object->id, '', $user->hasRight('paymentbybanktransfer', 'debit'));
 					} else {
-						print dolGetButtonAction($langs->trans("ReOpen"), '', 'default', 'card.php?action=reopen&token='.newToken().'&id='.$object->id, '', $user->hasRight('prelevement', 'bons', 'credit'));
+						print dolGetButtonAction($langs->trans("ReOpen"), '', 'default', 'requests.php?action=reopen&token='.newToken().'&id='.$object->id, '', $user->hasRight('prelevement', 'bons', 'credit'));
 					}
 				}
 			}
 
 			if ($object->status == BonPrelevement::STATUS_TRANSFERED) {
 				if ($object->type == 'bank-transfer') {
-					print dolGetButtonAction($langs->trans("ClassDebited"), '', 'default', 'card.php?action=setcredited&token='.newToken().'&id='.$object->id, '', $user->hasRight('paymentbybanktransfer', 'debit'));
+					print dolGetButtonAction($langs->trans("ClassDebited"), '', 'default', 'requests.php?action=setcredited&token='.newToken().'&id='.$object->id, '', $user->hasRight('paymentbybanktransfer', 'debit'));
 				} else {
-					print dolGetButtonAction($langs->trans("ClassCredited"), '', 'default', 'card.php?action=setcredited&token='.newToken().'&id='.$object->id, '', $user->hasRight('prelevement', 'bons', 'credit'));
+					print dolGetButtonAction($langs->trans("ClassCredited"), '', 'default', 'requests.php?action=setcredited&token='.newToken().'&id='.$object->id, '', $user->hasRight('prelevement', 'bons', 'credit'));
 				}
 			}
 
 			// Cancel
 			if ($object->status == BonPrelevement::STATUS_TRANSFERED) {
 				if ($object->type == 'bank-transfer') {
-					print dolGetButtonAction($langs->trans("Cancel"), '', 'cancel', 'card.php?action=setcancel&token='.newToken().'&id='.$object->id, '', $user->hasRight('paymentbybanktransfer', 'debit'));
+					print dolGetButtonAction($langs->trans("Cancel"), '', 'cancel', 'requests.php?action=setcancel&token='.newToken().'&id='.$object->id, '', $user->hasRight('paymentbybanktransfer', 'debit'));
 				} else {
-					print dolGetButtonAction($langs->trans("Cancel"), '', 'cancel', 'card.php?action=setcancel&token='.newToken().'&id='.$object->id, '', $user->hasRight('prelevement', 'bons', 'credit'));
+					print dolGetButtonAction($langs->trans("Cancel"), '', 'cancel', 'requests.php?action=setcancel&token='.newToken().'&id='.$object->id, '', $user->hasRight('prelevement', 'bons', 'credit'));
 				}
 			}
 
 			if ($object->type == 'bank-transfer') {
-				print dolGetButtonAction($langs->trans("Delete"), '', 'delete', 'card.php?action=delete&token='.newToken().'&id='.$object->id, '', $user->hasRight('paymentbybanktransfer', 'create'));
+				print dolGetButtonAction($langs->trans("Delete"), '', 'delete', 'requests.php?action=delete&token='.newToken().'&id='.$object->id, '', $user->hasRight('paymentbybanktransfer', 'create'));
 			} else {
-				print dolGetButtonAction($langs->trans("Delete"), '', 'delete', 'card.php?action=delete&token='.newToken().'&id='.$object->id, '', $user->hasRight('prelevement', 'bons', 'creer'));
+				print dolGetButtonAction($langs->trans("Delete"), '', 'delete', 'requests.php?action=delete&token='.newToken().'&id='.$object->id, '', $user->hasRight('prelevement', 'bons', 'creer'));
 			}
 		}
 		print '</div>';
@@ -485,35 +485,21 @@ if ($id > 0 || $ref) {
 	$ligne = new LignePrelevement($db);
 
 	// Lines into withdraw request
-	if ($salaryBonPl) {
-		$sql = "SELECT pl.rowid, pl.statut, pl.amount, pl.fk_user,";
-		$sql .= " u.rowid as socid, u.login as name";
-		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-		$sql .= ", ".MAIN_DB_PREFIX."prelevement_bons as pb";
-		$sql .= ", ".MAIN_DB_PREFIX."user as u";
-		$sql .= " WHERE pl.fk_prelevement_bons = ".((int) $id);
-		$sql .= " AND pl.fk_prelevement_bons = pb.rowid";
-		$sql .= " AND pb.entity = ".((int) $conf->entity);	// No sharing of entity here
-		$sql .= " AND pl.fk_user = u.rowid";
-		if ($socid) {
-			$sql .= " AND u.rowid = ".((int) $socid);
-		}
-		$sql .= $db->order($sortfield, $sortorder);
-	} else {
-		$sql = "SELECT pl.rowid, pl.statut, pl.amount,";
-		$sql .= " s.rowid as socid, s.nom as name";
-		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-		$sql .= ", ".MAIN_DB_PREFIX."prelevement_bons as pb";
-		$sql .= ", ".MAIN_DB_PREFIX."societe as s";
-		$sql .= " WHERE pl.fk_prelevement_bons = ".((int) $id);
-		$sql .= " AND pl.fk_prelevement_bons = pb.rowid";
-		$sql .= " AND pb.entity = ".((int) $conf->entity);	// No sharing of entity here
-		$sql .= " AND pl.fk_soc = s.rowid";
-		if ($socid) {
-			$sql .= " AND s.rowid = ".((int) $socid);
-		}
-		$sql .= $db->order($sortfield, $sortorder);
+	$sql = "SELECT pd.rowid, pd.type, pd.ext_payment_id, pd.ext_payment_site, pd.amount, pd.fk_facture, pd.fk_user_demande, pd.date_demande, pd.traite, ";
+	$sql .= " s.rowid as socid, s.nom as name";
+	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pd";
+	$sql .= ", ".MAIN_DB_PREFIX."prelevement_bons as pb";
+	$sql .= ", ".MAIN_DB_PREFIX."facture as f";
+	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
+	$sql .= " WHERE pd.fk_prelevement_bons = ".((int) $id);
+	$sql .= " AND pd.fk_prelevement_bons = pb.rowid";
+	$sql .= " AND pb.entity = ".((int) $conf->entity);	// No sharing of entity here
+	$sql .= " AND pd.fk_facture = f.rowid AND f.fk_soc = s.rowid";
+	if ($socid) {
+		$sql .= " AND s.rowid = ".((int) $socid);
 	}
+	$sql .= $db->order($sortfield, $sortorder);
+
 	// Count total nb of records
 	$nbtotalofrecords = '';
 	if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
@@ -556,14 +542,16 @@ if ($id > 0 || $ref) {
 			print '<input type="hidden" name="sortorder" value="'.$sortorder.'"/>';
 		}
 		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-		print_barre_liste($langs->trans("Lines"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', 0, '', '', $limit);
+		print_barre_liste($langs->trans("Requests"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', 0, '', '', $limit);
 
 		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 		print '<table class="noborder liste centpercent">';
 		print '<tr class="liste_titre">';
-		print_liste_field_titre("Lines", $_SERVER["PHP_SELF"], "pl.rowid", '', $urladd, '', $sortfield, $sortorder);
-		print_liste_field_titre((!$salaryBonPl ? "ThirdParty" : "Employee"), $_SERVER["PHP_SELF"], "s.nom", '', $urladd, '', $sortfield, $sortorder);
-		print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "pl.amount", "", $urladd, 'class="right"', $sortfield, $sortorder);
+		print_liste_field_titre("ID", $_SERVER["PHP_SELF"], "pd.rowid", '', $urladd, '', $sortfield, $sortorder);
+		print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "pd.date_demande", '', $urladd, '', $sortfield, $sortorder);
+		print_liste_field_titre("User", $_SERVER["PHP_SELF"], "pd.fk_user_demande", "", $urladd, '', $sortfield, $sortorder);
+		print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "pd.amount", "", $urladd, 'class="right"', $sortfield, $sortorder);
+		print_liste_field_titre("Invoice", $_SERVER["PHP_SELF"], "pd.fk_facture", '', $urladd, '', $sortfield, $sortorder);
 		print_liste_field_titre('');
 		print "</tr>\n";
 
@@ -576,45 +564,32 @@ if ($id > 0 || $ref) {
 
 			// Status of line
 			print "<td>";
-			print '<a class="valignmiddle" href="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$obj->rowid.'&type='.$object->type.'&token='.newToken().'">';
-			print $ligne->LibStatut($obj->statut, 2);
-			print '<span class="paddingleft">'.$obj->rowid.'</span>';
-			print '</a></td>';
-			if (!$salaryBonPl) {
-				$thirdparty = new Societe($db);
-				$thirdparty->fetch($obj->socid);
-				$name = $thirdparty->getNomUrl(1);
-			} else {
-				$userSalary = new User($db);
-				$userSalary->fetch($obj->fk_user);
-				$name = $userSalary->getNomUrl(-1);
-			}
+			print $obj->rowid;
+			print '</td>';
+
 			print '<td class="tdoverflowmax150">';
-			print($name);
+			print dol_print_date($obj->date_demande, 'dayhour', 'tzuserrel');
 			print "</td>\n";
+
+			print '<td>';
+			$tmpuser = new User($db);
+			$tmpuser->fetch($obj->fk_user_demande);
+			print $tmpuser->getNomUrl(1);
+			print '</td>';
 
 			print '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>\n";
 
+			print '<td>';
+			$tmpinvoice = new Facture($db);
+			$tmpinvoice->fetch($obj->fk_facture);
+			print $tmpinvoice->getNomUrl(1);
+			print '</td>';
+
 			print '<td class="right">';
+			print $obj->ext_payment_id;
+			print '</td>';
 
-			if ($obj->statut == 3) {
-				print '<span class="error">'.$langs->trans("StatusRefused").'</span>';
-			} else {
-				if ($object->statut == BonPrelevement::STATUS_CREDITED) {
-					if ($obj->statut == LignePrelevement::STATUS_CREDITED) {
-						if ($user->hasRight('prelevement', 'bons', 'credit')) {
-							//print '<a class="butActionDelete" href="line.php?action=rejet&id='.$obj->rowid.'">'.$langs->trans("StandingOrderReject").'</a>';
-							print '<a href="line.php?action=rejet&type='.$object->type.'&id='.$obj->rowid.'&token='.newToken().'">'.$langs->trans("StandingOrderReject").'</a>';
-						} else {
-							//print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("StandingOrderReject").'</a>';
-						}
-					}
-				} else {
-					//print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotPossibleForThisStatusOfWithdrawReceiptORLine").'">'.$langs->trans("StandingOrderReject").'</a>';
-				}
-			}
-
-			print '</td></tr>';
+			print '</tr>';
 
 			$total += $obj->amount;
 
@@ -627,6 +602,7 @@ if ($id > 0 || $ref) {
 			print '<tr class="liste_total">';
 			print '<td>'.$langs->trans("Total").'</td>';
 			print '<td>&nbsp;</td>';
+			print '<td>&nbsp;</td>';
 			print '<td class="right">';
 			if (empty($offset) && $num <= $limit) {
 				// If we have all record on same page, then the following test/warning can be done
@@ -636,6 +612,7 @@ if ($id > 0 || $ref) {
 			}
 			print price($total);
 			print "</td>\n";
+			print '<td>&nbsp;</td>';
 			print '<td>&nbsp;</td>';
 			print "</tr>\n";
 		}

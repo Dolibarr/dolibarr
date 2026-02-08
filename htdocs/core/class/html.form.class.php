@@ -1428,7 +1428,7 @@ class Form
 			}
 
 			// mode 1
-			$urloption = 'htmlname=' . urlencode((string) (str_replace('.', '_', $htmlname))) . '&outjson=1&filter=' . urlencode((string) ($filter)) . (empty($excludeids) ? '' : '&excludeids=' . implode(',', $excludeids)) . ($showtype ? '&showtype=' . urlencode((string) ($showtype)) : '') . ($showcode ? '&showcode=' . urlencode((string) ($showcode)) : '');
+			$urloption = 'htmlname=' . urlencode((string) (str_replace('.', '_', $htmlname))) . '&outjson=1&filter=' . urlencode((string) ($filter)) . (empty($excludeids) ? '' : '&excludeids=' . implode(',', $excludeids)) . ($showtype ? '&showtype=' . urlencode((string) ($showtype)) : '') . ($showcode ? '&showcode=' . urlencode((string) ($showcode)) : '') . ($limit ? '&limit='.$limit : '');
 
 			$out .= '<!-- force css to be higher than dialog popup --><style type="text/css">.ui-autocomplete { z-index: 1010; }</style>';
 			if (empty($hidelabel)) {
@@ -3147,7 +3147,7 @@ class Form
 	 * @param 	int 		$warehouseId	 		Filter by Warehouses Id where there is real stock
 	 * @return	string|array<array{key:string,value:string,label:string,label2:string,desc:string,type:string,price_ht:string,price_ttc:string,price_ht_locale:string,price_ttc_locale:string,pricebasetype:string,tva_tx:string,default_vat_code:string,qty:string,discount:string,duration_value:string,duration_unit:string,pbq:string,labeltrans:string,desctrans:string,ref_customer:string}>		Array of keys for json
 	 */
-	public function select_produits_list($selected = 0, $htmlname = 'productid', $filtertype = '', $limit = 20, $price_level = 0, $filterkey = '', $status = 1, $finished = 2, $outputmode = 0, $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = 'maxwidth500', $hidepriceinlabel = 0, $warehouseStatus = '', $status_purchase = -1, $warehouseId = 0)
+	public function select_produits_list($selected = 0, $htmlname = 'productid', $filtertype = '', $limit = 1000, $price_level = 0, $filterkey = '', $status = 1, $finished = 2, $outputmode = 0, $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = 'maxwidth500', $hidepriceinlabel = 0, $warehouseStatus = '', $status_purchase = -1, $warehouseId = 0)
 	{
 		// phpcs:enable
 		global $langs;
@@ -3407,7 +3407,7 @@ class Form
 			$sql .= $this->db->order("p.ref");
 		}
 
-		$limit = getDolGlobalInt('SEARCH_LIMIT_AJAX') ?: $limit;
+		$limit = getDolGlobalInt('SEARCH_LIMIT_AJAX') ?: $limit;		// SEARCH_LIMIT_AJAX is a hidden option that has priority on visible option PRODUIT_LIMIT_SIZE if set.
 		$sql .= $this->db->plimit($limit, 0);
 
 		/* The fast and low memory method to get and count full list converts the sql into a sql count */
@@ -5556,9 +5556,10 @@ class Form
 	 * @param int<0,1>		$showcurrency 	Show currency in label
 	 * @param string 		$morecss 		More CSS
 	 * @param int<0,1>		$nooutput 		1=Return string, do not send to output
+	 * @param int<0,1>		$addentrynone	Add an entry None
 	 * @return int|string   	           	If nooutput=0: Return integer <0 if error, Num of bank account found if OK (0, 1, 2, ...), If nooutput=1: Return a HTML select string.
 	 */
-	public function select_comptes($selected = '', $htmlname = 'accountid', $status = 0, $filtre = '', $useempty = 0, $moreattrib = '', $showcurrency = 0, $morecss = '', $nooutput = 0)
+	public function select_comptes($selected = '', $htmlname = 'accountid', $status = 0, $filtre = '', $useempty = 0, $moreattrib = '', $showcurrency = 0, $morecss = '', $nooutput = 0, $addentrynone = 0)
 	{
 		// phpcs:enable
 		global $langs;
@@ -5624,6 +5625,11 @@ class Form
 				$out .= '</option>';
 				$i++;
 			}
+
+			if (!empty($addentrynone)) {
+				$out .= '<option value="-2"'.($selected == -2 ? ' selected="selected"': '').' data-html="'.dolPrintHTMLForAttribute('<span class="opacitymedium">'.$langs->trans("None").'</span>').'">'.$langs->trans("None").'</option>';
+			}
+
 			$out .= "</select>";
 			$out .= ajax_combobox('select' . $htmlname);
 		} else {
@@ -7143,10 +7149,12 @@ class Form
 
 		$out = '';
 		if ($htmlname != "none") {
+			$limit = getDolGlobalInt('THIRDPARTY_LIMIT_SIZE');
+
 			$out .= '<form method="post" action="' . $page . '">';
 			$out .= '<input type="hidden" name="action" value="set_thirdparty">';
 			$out .= '<input type="hidden" name="token" value="' . newToken() . '">';
-			$out .= $this->select_company($selected, $htmlname, $filter, $showempty, $showtype, $forcecombo, $events, 0, 'minwidth100', '', '', 1, array(), false, $excludeids);
+			$out .= $this->select_company($selected, $htmlname, $filter, $showempty, $showtype, $forcecombo, $events, $limit, 'minwidth100', '', '', 1, array(), false, $excludeids);
 			$out .= '<input type="submit" class="button smallpaddingimp valignmiddle" value="' . $langs->trans("Modify") . '">';
 			$out .= '</form>';
 		} else {
