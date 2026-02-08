@@ -401,7 +401,7 @@ abstract class DoliDB implements Database
 		// TODO $string should be converted into a GMT timestamp, so param gm should be set to true by default instead of false
 
 		$string = (string) $string;
-		if ($string == '0' || $string == "0000-00-00 00:00:00") {
+		if ($string == '' || $string == '0' || $string == "0000-00-00 00:00:00") {
 			return '';
 		}
 		$string = preg_replace('/([^0-9])/i', '', $string);
