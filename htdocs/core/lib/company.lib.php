@@ -2142,12 +2142,12 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 	}
 
 	$MAXWITHOUTPAGINATION = getDolGlobalInt('AGENDA_MAX_EVENTS_ON_PAGE_WITHOUT_PAGINATION', 100);
+	$num = 0;
 
 	if ($sql) {
 		// TODO Add navigation with this limits by replacing call of show_actions_done by the code found into comm/action/list.php...
 		$offset = 0;
 		$limit = $MAXWITHOUTPAGINATION;
-		$num = 0;
 
 		// Complete request and execute it with limit
 		$sql .= $db->order($sortfield_new, $sortorder);
