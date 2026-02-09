@@ -48,7 +48,7 @@ $langs->loadLangs(array('admin', 'blockedlog', 'other'));
 $action     = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-$withtab    = GETPOSTINT('withtab');
+$withtab    = GETPOSTISSET('withtab') ? GETPOSTINT('withtab') : 1;
 $origin     = GETPOST('origin');
 $mode       = GETPOST('mode');
 
@@ -173,8 +173,11 @@ if ($action == 'update') {
 		$db->commit();
 
 		//setEventMessages("SetupSaved", null, 'mesgs');
+		$urltouse = $_SERVER["PHP_SELF"]."?mode=forceregistration";
+		$urltouse .= (($withtab && GETPOST('origin')) ? '&withtab='.$withtab: '');
+		$urltouse .= (GETPOST('origin') ? '&origin='.GETPOST('origin') : '');
 
-		header("Location: ".$_SERVER["PHP_SELF"]."?mode=forceregistration".($withtab ? '&withtab='.$withtab: '').(GETPOST('origin') ? '&origin='.GETPOST('origin') : ''));
+		header("Location: ".$urltouse);
 		exit;
 	} else {
 		$db->rollback();
@@ -192,12 +195,21 @@ $formcompany = new FormCompany($db);
 $block_static = new BlockedLog($db);
 $block_static->loadTrackedEvents();
 
-$title = $langs->trans("ModuleSetup").' '.$langs->trans('BlockedLog');
+if (GETPOST('withtab', 'alpha')) {
+	$title = $langs->trans("ModuleSetup").' '.$langs->trans('BlockedLog');
+} else {
+	$title = $langs->trans("BrowseBlockedLog");
+}
+
 $help_url="EN:Module_Unalterable_Archives_-_Logs|FR:Module_Archives_-_Logs_Inaltérable";
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-blockedlog page-admin_blockedlog');
 
-$linkback = '<a href="'.dolBuildUrl($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+if (GETPOST('withtab', 'alpha')) {
+	$linkback = '<a href="'.dolBuildUrl($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+} else {
+	$linkback='';
+}
 
 $morehtmlcenter = '';
 
@@ -212,6 +224,8 @@ print load_fiche_titre($title.'<br>'.$texttop, $linkback, 'blockedlog', 0, '', '
 if ($withtab) {
 	$head = blockedlogadmin_prepare_head(GETPOST('withtab', 'alpha'));
 	print dol_get_fiche_head($head, 'registration', '', -1);
+} else {
+	print '<br>';
 }
 
 print '<span class="opacitymedium">'.$langs->trans("BlockedLogDesc")."</span><br>\n";
@@ -313,11 +327,12 @@ if ($mode == "forceregistration") {
 		print '<div class="center">';
 		print img_picto('', 'tick', 'class="large"');
 		print '<br>'.$langs->trans("RegistrationDoneAndModuleEnabled", $langs->transnoentitiesnoconv("BlockedLog"));
+
 		// Go back to setup of module page
 		if (GETPOST('origin') == 'initmodule') {
 			print '<br><br>';
 			print '<br><br>';
-			print img_picto('', 'url').' ';
+			print img_picto('', 'back').' ';
 			print '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 		}
 		print '</div>';

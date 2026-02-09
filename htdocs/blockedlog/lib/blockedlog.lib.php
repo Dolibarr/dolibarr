@@ -36,16 +36,20 @@ function blockedlogadmin_prepare_head($withtabsetup)
 
 	require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 
+	$param = '';
+	$param .= ($withtabsetup? "?withtab=".$withtabsetup : "");
+	$param .= (GETPOST('origin') ? ($param ? '&' : '').'origin='.GETPOST('origin') : '');
+
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/registration.php?withtab=".$withtabsetup;
+	$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/registration.php".$param;
 	$head[$h][1] = $langs->trans("UserRegistration");
 	$head[$h][2] = 'registration';
 	$h++;
 
 	$b = new BlockedLog($db);
-	$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog_list.php?withtab=".$withtabsetup;
+	$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog_list.php".$param;
 	$head[$h][1] = $langs->trans("BrowseBlockedLog");
 	if ($b->alreadyUsed()) {
 		$head[$h][1] .= (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">...</span>' : '');
@@ -54,14 +58,14 @@ function blockedlogadmin_prepare_head($withtabsetup)
 	$h++;
 
 
-	$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog_archives.php?withtab=".$withtabsetup;
+	$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog_archives.php".$param;
 	$head[$h][1] = $langs->trans("Archives");
 	// TODO Add number of archive files in badge
 	$head[$h][2] = 'archives';
 	$h++;
 
 	if ($withtabsetup) {
-		$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog.php?withtab=".$withtabsetup;
+		$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog.php".$param;
 		$head[$h][1] = $langs->trans("TechnicalInformation");
 		$head[$h][2] = 'technicalinfo';
 		$h++;
