@@ -177,7 +177,7 @@ print '<td></td>';
 print "</tr>\n";
 
 print '<tr class="oddeven">';
-print '<td class="titlefield">';
+print '<td class="titlefieldmiddle">';
 print $langs->trans("CompanyInitialKey").'</td><td>';
 print $block_static->getOrInitFirstSignature();
 print '</td></tr>';
@@ -239,7 +239,7 @@ print '</td>';
 
 
 print '<tr class="oddeven">';
-print '<td class="titlefield">';
+print '<td class="">';
 print $langs->trans("ListOfTrackedEvents").'</td><td>';
 $arrayoftrackedevents = $block_static->trackedevents;
 foreach ($arrayoftrackedevents as $key => $val) {
