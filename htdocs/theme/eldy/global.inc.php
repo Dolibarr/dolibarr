@@ -4176,8 +4176,8 @@ div.fiche table:not(.table-fiche-title) tr.titre td {
 }
 div.fiche >.table-fiche-title tr.toptitle td.col-picto,
 div.fiche >.table-fiche-title tr.toptitle td.col-title,
-div.fiche >form >.table-fiche-title tr.toptitle td.col-picto,
-div.fiche >form >.table-fiche-title tr.toptitle td.col-title {
+div.fiche >form >.table-fiche-title:not(.nogreyscale) tr.toptitle td.col-picto,
+div.fiche >form >.table-fiche-title:not(.nogreyscale) tr.toptitle td.col-title {
 	filter: grayscale(90%);
 }
 
@@ -4674,6 +4674,9 @@ div.tabBar div.fichehalfright table.noborder:not(.margintable):not(.paymenttable
 	border-bottom: 1px solid var(--colortopbordertitle1);
 }
 */
+div.tabBar .lastrecordtable {
+	margin-bottom: 15px;
+}
 div.tabBar table:not(.nobottom).border>tbody>tr:last-of-type>td {
 	border-bottom-width: 1px;
 	border-bottom-color: var(--colortopbordertitle1);

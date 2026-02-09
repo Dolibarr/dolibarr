@@ -3839,18 +3839,26 @@ if (!function_exists("llxFooter")) {
 		// You can use &forceregistration=1 in parameters to force also the recall if the call was already sent.
 		$forcepushcounter = GETPOSTINT('forcepushcounter');
 
-		if (isModEnabled('blockedlog') && (($_SERVER["PHP_SELF"] == DOL_URL_ROOT.'/index.php') || $forcepushcounter)) {
+		if (isModEnabled('blockedlog') && ($_SERVER["PHP_SELF"] == DOL_URL_ROOT.'/index.php') && $forcepushcounter) {
 			include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 			if (!isALNEQualifiedVersion()) {
-				print "\n<!-- NO JS CODE TO FORCE the push of blockedlog counter. Not a LNE qualified version -->\n";
+				print "\n<!-- NO CALL TO API TO PUSH COUNTER. Not a LNE qualified version -->\n";
 			} elseif (!isRegistrationDataSaved()) {
-				print "\n<!-- NO JS CODE TO FORCE the push of blockedlog counter. Registration data not saved -->\n";
+				print "\n<!-- NO CALL TO API TO PUSH COUNTER. Registration data not saved -->\n";
 			} else {
-				// TODO
-				// Get last ID and has
-				// Call API like in trigger
+				// Get last ID and hash into $tmpresult
+				include_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
+				$tmpblockedlog = new BlockedLog($db);
+				$tmpresult = $tmpblockedlog->getPreviousHash(0, 0);
+
+				// Call remote API service to record the last counter
+				include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+				$resultcall = callApiToPushCounter((int) $tmpresult['previousid'], $tmpresult['previoushash'], 1);
+
+				print "\n<!-- API TO PUSH COUNTER WAS CALLED. Result is ".$resultcall.". You may have log into dolibarr_dolibarrpushcounter.log -->\n";
 			}
 		}
+
 
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('beforeBodyClose', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
