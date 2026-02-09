@@ -152,13 +152,7 @@ print '<label>Anno: </label>';
 print '<select name="year_filter" onchange="this.form.submit();">';
 
 // Recupera lista anni unici dai residui
-$yearsAvailable = array();
-foreach ($allResidui as $row) {
-	$yearVal = '20' . $row[0];
-	if (!in_array($yearVal, $yearsAvailable)) {
-		$yearsAvailable[] = $yearVal;
-	}
-}
+$yearsAvailable = $stats->getYearFilterValue();
 rsort($yearsAvailable);
 
 if (empty($yearsAvailable)) {

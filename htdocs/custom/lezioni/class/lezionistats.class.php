@@ -111,7 +111,6 @@ class LezioniStats // extends Stats
 		$sql .= "          , 0 as CompensoCoordinatore ";
 		$sql .= "      FROM ".$this->fullTableName." as p ";
 		$sql .= "      WHERE p.status != -1 ";
-		$sql .= "       AND p.datalezione >= last_day(now()) + interval 1 day - interval 13 month ";
 		$sql .= "    UNION ALL ";
 		$sql .= "          SELECT date_format(c.datalezione,'%M %y') as dm ";
 		$sql .= "          , date_format(c.datalezione,'%Y%m') as dm_num ";
@@ -122,7 +121,6 @@ class LezioniStats // extends Stats
 		$sql .= "          , COALESCE(c.compenso_coordinatore,0) as CompensoCoordinatore ";
 		$sql .= "          FROM ".$this->fullTableName." c ";
 		$sql .= "          WHERE c.status != -1 ";
-		$sql .= "    		AND c.datalezione >= last_day(now()) + interval 1 day - interval 13 month ";
 		$sql .= "           AND c.coordinatore is not null ";
 		$sql .= " ) a ";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user u ON u.fk_member = a.istruttore ";
@@ -433,6 +431,35 @@ class LezioniStats // extends Stats
 			while ($i < $num) {
 				$row = $this->db->fetch_row($resql);
 				$result[$i] = $row;
+				$i++;
+			}
+			$this->db->free($resql);
+		} else {
+			dol_print_error($this->db);
+		}
+
+		return $result;
+	}
+
+	public function getYearFilterValue($year = null)
+	{
+		if (!$year) {
+			$year = date('Y');
+		}
+        $sql = "SELECT DISTINCT date_format(datalezione,'%Y') as year
+                FROM ".$this->fullTableName." 
+				ORDER by year ASC";
+
+		$result = array();
+
+		dol_syslog(get_class($this).'::'.__FUNCTION__, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num) {
+				$row = $this->db->fetch_row($resql);
+				$result[$i] = $row[0];
 				$i++;
 			}
 			$this->db->free($resql);
