@@ -3068,9 +3068,9 @@ class Ticket extends CommonObject
 				if ((getDolGlobalInt('TICKET_SET_STATUS_ON_ANSWER', -1) < 0
 				&& ($object->status < self::STATUS_IN_PROGRESS && !$user->socid && !$private))
 				|| ($object->status > self::STATUS_IN_PROGRESS && $public_area)) {
-					$object->setStatut($object::STATUS_IN_PROGRESS);
+					$object->setStatut($object::STATUS_IN_PROGRESS, null, '', 'TICKET_MODIFY');
 				} elseif (getDolGlobalInt('TICKET_SET_STATUS_ON_ANSWER', -1) >= 0 && empty($user->socid) && empty($private)) {
-					$object->setStatut(getDolGlobalInt('TICKET_SET_STATUS_ON_ANSWER'));
+					$object->setStatut(getDolGlobalInt('TICKET_SET_STATUS_ON_ANSWER', null, '', 'TICKET_MODIFY'));
 				}
 
 				return 1;

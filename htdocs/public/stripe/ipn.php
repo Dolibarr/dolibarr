@@ -1130,7 +1130,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 		*/
 
 		// Add a flag "dispute_status" in invoice table to Dispute Open
-		$result = $tmpinvoice->setStatut(1, null, '', 'FACTURE_MODIFY', 'dispute_status');
+		$result = $tmpinvoice->setStatut(Facture::STATUS_VALIDATED, null, '', 'FACTURE_MODIFY', 'dispute_status');
 		if ($result < 0) {
 			$errormsg = $tmpinvoice->error.implode(', ', $tmpinvoice->errors);
 			$error++;
@@ -1207,7 +1207,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 
 		if (!$error) {
 			// Add status dispute_status to Dispute Open
-			$result = $tmpinvoice->setStatut(1, null, '', 'FACTURE_MODIFY', 'dispute_status');
+			$result = $tmpinvoice->setStatut(Facture::STATUS_VALIDATED, null, '', 'FACTURE_MODIFY', 'dispute_status');
 			if ($result < 0) {
 				$errormsg = $tmpinvoice->error.implode(', ', $tmpinvoice->errors);
 				$error++;

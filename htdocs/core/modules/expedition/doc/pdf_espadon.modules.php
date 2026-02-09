@@ -532,7 +532,7 @@ class pdf_espadon extends ModelePdfExpedition
 					$barcode_path = '';
 					$result = 0;
 					if ($module->encodingIsSupported($encoding)) {
-						$result = $module->writeBarCode($object->ref, $encoding);
+						$result = $module->writeBarCode((string) $object->ref, $encoding);
 
 						// get path of qrcode image
 						$newcode = (string) $object->ref;
