@@ -66,7 +66,7 @@ class modBlockedLog extends DolibarrModules
 
 		// Config pages
 		//-------------
-		$this->config_page_url = array('blockedlog.php?withtab=1@blockedlog');
+		$this->config_page_url = array('registration.php?origin=setupmodule&withtab=1@blockedlog');
 
 		// Dependencies
 		//-------------
@@ -175,9 +175,9 @@ class modBlockedLog extends DolibarrModules
 		$b = new BlockedLog($this->db);
 
 		// forceinit can be set to bypass this redirection
-		if (isALNEQualifiedVersion(1, 1) && $options != 'forceinit') {
+		if (isALNEQualifiedVersion(1, 1) && $options == 'acceptredirect') {
 			// We first switch on registration page
-			header("Location: ".DOL_URL_ROOT.'/blockedlog/admin/registration.php?origin=setupmodule');
+			header("Location: ".DOL_URL_ROOT.'/blockedlog/admin/registration.php?origin=initmodule&withtab=0');
 			exit;
 		}
 
