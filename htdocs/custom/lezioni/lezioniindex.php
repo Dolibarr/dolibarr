@@ -109,7 +109,7 @@ if (empty($year)) {
 }
 $stats = new LezioniStats($db);
 $compensi = $stats->getIstrCompensiByMonth($year);
-$allResidui = $stats->getIstrYearlyResidui();
+$allResidui = $stats->getIstrYearlyResidui($year);
 
 // Filtra residui per anno selezionato
 $residui = array();
@@ -355,12 +355,12 @@ if (!empty($residui)) {
 	foreach ($residuiByYear as $yr => $residuiRows) {
 		print '<table class="tagtable nobottomiftotal liste">'."\n";
 		print '<tr class="liste_titre">';
-		print '<th colspan="3">Residui Non Imponibili 20'.$yr.'</th>';
+		print '<th colspan="3">Residui Non Imponibili dal 13-01-'.$year.'</th>';
 		print '</tr>';
 		print '<tr class="liste_titre">';
 		print '<th class="wrapcolumntitle liste_titre" title="Istruttore">Istruttore</th>';
-		print '<th class="wrapcolumntitle liste_titre" title="Totale">Totale Stipendio (€)</th>';
-		print '<th class="wrapcolumntitle liste_titre" title="Residuo">Residuo Esentasse WB (€)</th>';
+		print '<th class="wrapcolumntitle liste_titre" title="Totale">Totale Compenso (€)</th>';
+		print '<th class="wrapcolumntitle liste_titre" title="Residuo" data-toggle="Dal 13-01-'.$year.'" data-placement="top">Residuo Esentasse WB (€)</th>';
 		print '</tr>';
 		
 		foreach ($residuiRows as $residuRow) {

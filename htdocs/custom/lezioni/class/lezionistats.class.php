@@ -408,15 +408,20 @@ class LezioniStats // extends Stats
 		return $MembersCountArray;
 	}
 
-	public function getIstrYearlyResidui()
+	public function getIstrYearlyResidui($year = null)
 	{
-        $sql = "SELECT date_format(datesp,'%y') as dy,
+		if (!$year) {
+			$year = date('Y');
+		}
+		$resetDate = '01-13';
+        $sql = "SELECT date_format(datec,'%y') as dy,
 				fk_user as userid,
 				SUM(amount) as total,
 				5000 - SUM(amount) as residuo
                 FROM ".MAIN_DB_PREFIX."salary 
-				GROUP BY fk_user, date_format(datesp,'%y')
-				ORDER by dy DESC";
+				WHERE datec >= '".$year."-".$resetDate."' AND datec < '".($year + 1)."-".$resetDate."'
+				GROUP BY fk_user, date_format(datec,'%y')
+				ORDER by dy DESC, fk_user ASC";
 
 		$result = array();
 
