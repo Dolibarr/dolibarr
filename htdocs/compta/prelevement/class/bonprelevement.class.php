@@ -494,7 +494,7 @@ class BonPrelevement extends CommonObject
 
 		$errors[1027] = $langs->trans("DateInvalid");
 
-		return $errors[abs($error)];
+		return $errors[abs($error)] ?? 'unknown error code';
 	}
 
 	/**

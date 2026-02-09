@@ -2407,7 +2407,7 @@ class ExtraFields
 				if (strpos($InfoFieldList[4], 'extra.') !== false) {
 					$sql .= ' as main';
 				}
-				$sql .= " WHERE ".$this->db->sanitize($selectkey)." IN (".implode(',', $value_arr).")";
+				$sql .= " WHERE ".$this->db->sanitize($selectkey)." IN (".$this->db->sanitize(implode(',', $value_arr)).")";
 
 				dol_syslog(get_class($this).':showOutputField type=chkbxlst', LOG_DEBUG);
 

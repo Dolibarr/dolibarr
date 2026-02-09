@@ -26,6 +26,7 @@
  * Copyright (C) 2024		Josep Lluís Amador Teruel	<joseplluis@lliuretic.cat>
  * Copyright (C) 2024		Benoît PASCAL				<contact@p-ben.com>
  * Copyright (C) 2025		Vincent Maury				<vmaury@timgroup.fr>
+ * Copyright (C) 2026		Benjamin Falière			<benjamin@faliere.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -119,6 +120,23 @@ if (!function_exists('str_contains')) {
 	{
 		return $needle !== '' && mb_strpos($haystack, $needle) !== false;
 	}
+}
+
+
+/**
+ *	Return a string serialized to be output on log with dol_syslog()
+ *	An option allow to output log in one line instead of a structured human tree
+ *
+ *  @param	mixed	$data	Any PHP object
+ *  @return	string			Serialized data for loh
+ */
+function formatLogObject($data)
+{
+	if (getDolGlobalInt("MAIN_LOG_ON_ONE_LINE")) {
+		return json_encode($data);
+	}
+
+	return var_export($data, true);
 }
 
 
@@ -1610,7 +1628,7 @@ if (!function_exists('dol_getprefix')) {
  */
 function dol_include_once($relpath, $classname = '')
 {
-	global $conf, $langs, $user, $mysoc; // Do not remove this. They must be defined for files we include. Other globals var must be retrieved with $GLOBALS['var']
+	global $conf, $langs, $user, $mysoc; // Do not remove this. They must be defined for files we make "include". Other globals var must be retrieved with $GLOBALS['var']
 
 	$fullpath = dol_buildpath($relpath);
 
@@ -16174,8 +16192,6 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 				$sql .= ", o.ref";
 			}
 		}
-
-
 		$sql .= " FROM " . MAIN_DB_PREFIX . "actioncomm as a";
 		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "user as u on u.rowid = a.fk_user_action";
 		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_actioncomm as c ON a.fk_action = c.id";
@@ -16364,6 +16380,9 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 		$sql2 .= " AND mc.fk_mailing=m.rowid";
 	}
 
+	$MAXWITHOUTPAGINATION = getDolGlobalInt('AGENDA_MAX_EVENTS_ON_PAGE_WITHOUT_PAGINATION', 100);
+	$num = 0;
+
 	if ($sql || $sql2) {	// May not be defined if module Agenda is not enabled and mailing module disabled too
 		if (!empty($sql) && !empty($sql2)) {
 			$sql = $sql . " UNION " . $sql2;
@@ -16373,7 +16392,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 
 		//TODO Add navigation with this limits...
 		$offset = 0;
-		$limit = 1000;
+		$limit = $MAXWITHOUTPAGINATION;
 
 		// Complete request and execute it with limit
 		$sql .= $db->order($sortfield_new, $sortorder);
@@ -16382,6 +16401,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 		}
 
 		dol_syslog("function.lib::show_actions_messaging", LOG_DEBUG);
+
 		$resql = $db->query($sql);
 		if ($resql) {
 			$i = 0;
@@ -16721,10 +16741,11 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 			}
 
 			$libelle = '';
-			if (!empty($actionstatic->code) && preg_match('/^TICKET_MSG/', $actionstatic->code)) {
+
+			if (!empty($actionstatic->code) && preg_match('/^TICKET_MSG_PRIVATE/', $actionstatic->code)) {
+				$out .= $langs->trans('TicketNewMessage').' <em>('.$langs->trans('Private').')</em>';
+			} elseif (!empty($actionstatic->code) && preg_match('/^TICKET_MSG/', $actionstatic->code)) {
 				$out .= $langs->trans('TicketNewMessage');
-			} elseif (!empty($actionstatic->code) && preg_match('/^TICKET_MSG_PRIVATE/', $actionstatic->code)) {
-				$out .= $langs->trans('TicketNewMessage') . ' <em>(' . $langs->trans('Private') . ')</em>';
 			} elseif (isset($histo[$key]['type'])) {
 				if ($histo[$key]['type'] == 'action') {
 					$transcode = $langs->transnoentitiesnoconv("Action" . $histo[$key]['acode']);
@@ -16918,6 +16939,11 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 
 		if (empty($histo)) {
 			$out .= '<span class="opacitymedium">' . $langs->trans("NoRecordFound") . '</span>';
+		}
+
+		if ($num > $MAXWITHOUTPAGINATION) {
+			$langs->load("errors");
+			$out .= '<center><span class="opacitymedium">...' . $langs->trans("WarningTooManyDataPleaseUseMoreFilters", $MAXWITHOUTPAGINATION) . '...</span></center>';
 		}
 	}
 

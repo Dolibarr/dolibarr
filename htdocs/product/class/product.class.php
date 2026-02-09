@@ -16,7 +16,7 @@
  * Copyright (C) 2017		Gustavo Novaro
  * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023		Benjamin Falière		<benjamin.faliere@altairis.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Lenin Rivas				<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -35,7 +35,7 @@
 
 /**
  *    \file       htdocs/product/class/product.class.php
- *    \ingroup    produit
+ *    \ingroup    product
  *    \brief      File of class to manage the predefined products or services
  */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
@@ -2420,11 +2420,11 @@ class Product extends CommonObject
 			}
 
 			if (!$pricebycustomerexist && !empty($thirdparty_buyer->price_level)) {
-				$pu_ht = $this->multiprices[$thirdparty_buyer->price_level];
-				$pu_ttc = $this->multiprices_ttc[$thirdparty_buyer->price_level];
-				$price_min = $this->multiprices_min[$thirdparty_buyer->price_level];
-				$price_min_ttc = $this->multiprices_min_ttc[$thirdparty_buyer->price_level];
-				$price_base_type = $this->multiprices_base_type[$thirdparty_buyer->price_level];
+				$pu_ht = isset($this->multiprices[$thirdparty_buyer->price_level]) ? $this->multiprices[$thirdparty_buyer->price_level] : 0;
+				$pu_ttc = isset($this->multiprices_ttc[$thirdparty_buyer->price_level]) ? $this->multiprices_ttc[$thirdparty_buyer->price_level] : 0;
+				$price_min = isset($this->multiprices_min[$thirdparty_buyer->price_level]) ? $this->multiprices_min[$thirdparty_buyer->price_level] : 0;
+				$price_min_ttc = isset($this->multiprices_min_ttc[$thirdparty_buyer->price_level]) ? $this->multiprices_min_ttc[$thirdparty_buyer->price_level] : 0;
+				$price_base_type = isset($this->multiprices_base_type[$thirdparty_buyer->price_level]) ? $this->multiprices_base_type[$thirdparty_buyer->price_level] : 'HT';
 				if (getDolGlobalString('PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL')) {
 					// using this option is a bug. kept for backward compatibility
 					if (isset($this->multiprices_tva_tx[$thirdparty_buyer->price_level])) {
@@ -2439,11 +2439,11 @@ class Product extends CommonObject
 				}
 			}
 		} elseif (getDolGlobalString('PRODUIT_MULTIPRICES') && !empty($thirdparty_buyer->price_level)) { // // If price per segment
-			$pu_ht = $this->multiprices[$thirdparty_buyer->price_level];
-			$pu_ttc = $this->multiprices_ttc[$thirdparty_buyer->price_level];
-			$price_min = $this->multiprices_min[$thirdparty_buyer->price_level];
-			$price_min_ttc = $this->multiprices_min_ttc[$thirdparty_buyer->price_level];
-			$price_base_type = $this->multiprices_base_type[$thirdparty_buyer->price_level];
+			$pu_ht = isset($this->multiprices[$thirdparty_buyer->price_level]) ? $this->multiprices[$thirdparty_buyer->price_level] : 0;
+			$pu_ttc = isset($this->multiprices_ttc[$thirdparty_buyer->price_level]) ? $this->multiprices_ttc[$thirdparty_buyer->price_level] : 0;
+			$price_min = isset($this->multiprices_min[$thirdparty_buyer->price_level]) ? $this->multiprices_min[$thirdparty_buyer->price_level] : 0;
+			$price_min_ttc = isset($this->multiprices_min_ttc[$thirdparty_buyer->price_level]) ? $this->multiprices_min_ttc[$thirdparty_buyer->price_level] : 0;
+			$price_base_type = isset($this->multiprices_base_type[$thirdparty_buyer->price_level]) ? $this->multiprices_base_type[$thirdparty_buyer->price_level] : 'HT';
 			if (getDolGlobalString('PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL')) {
 				// using this option is a bug. kept for backward compatibility
 				if (isset($this->multiprices_tva_tx[$thirdparty_buyer->price_level])) {
@@ -2490,7 +2490,7 @@ class Product extends CommonObject
 			}
 		} elseif (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY')) {
 			// If price per quantity
-			if ($this->prices_by_qty[0]) {
+			if (!empty($this->prices_by_qty[0])) {
 				// yes, this product has some prices per quantity
 				// Search price into product_price_by_qty from $this->id
 				foreach ($this->prices_by_qty_list[0] as $priceforthequantityarray) {
@@ -2508,7 +2508,7 @@ class Product extends CommonObject
 			}
 		} elseif (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
 			// If price per quantity and customer
-			if ($this->prices_by_qty[$thirdparty_buyer->price_level]) {
+			if (!empty($this->prices_by_qty[$thirdparty_buyer->price_level])) {
 				// yes, this product has some prices per quantity
 				// Search price into product_price_by_qty from $this->id
 				foreach ($this->prices_by_qty_list[$thirdparty_buyer->price_level] as $priceforthequantityarray) {

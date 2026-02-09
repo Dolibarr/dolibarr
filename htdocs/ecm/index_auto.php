@@ -304,7 +304,7 @@ $moreheadjs = '';
 
 $morejs=array();
 if (!getDolGlobalString('MAIN_ECM_DISABLE_JS')) {
-	$morejs[] = "includes/jquery/plugins/jqueryFileTree/jqueryFileTree.js";
+	$morejs[] = "public/includes/jquery/plugins/jqueryFileTree/jqueryFileTree.js";
 }
 
 llxHeader($moreheadcss.$moreheadjs, $langs->trans("ECMArea"), '', '', 0, 0, $morejs, '', '', 'mod-ecm page-index_auto');

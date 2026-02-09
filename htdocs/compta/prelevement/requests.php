@@ -220,7 +220,7 @@ if ($id > 0 || $ref) {
 	print dol_get_fiche_head($head, 'requests', $langs->trans("WithdrawalsReceipts"), -1, 'payment');
 
 	if (GETPOST('error', 'alpha') != '') {
-		print '<div class="error">'.$object->getErrorString(GETPOST('error', 'alpha')).'</div>';
+		print '<div class="error">'.$object->getErrorString(GETPOSTINT('error')).'</div>';
 	}
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/orders_list.php?restore_lastsearch_values=1'.($object->type != 'bank-transfer' ? '' : '&type=bank-transfer').'">'.$langs->trans("BackToList").'</a>';
@@ -574,7 +574,7 @@ if ($id > 0 || $ref) {
 			print '<td>';
 			$tmpuser = new User($db);
 			$tmpuser->fetch($obj->fk_user_demande);
-			print $tmpuser->getNomUrl($db);
+			print $tmpuser->getNomUrl(1);
 			print '</td>';
 
 			print '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>\n";
