@@ -307,6 +307,8 @@ $_COOKIE[$sessionname] = 'obfuscatedcookie';
 unset($conf->file->instance_unique_id);
 
 unset($dolibarr_main_instance_unique_id);
+//unset($dolibarr_main_dolcrypt_key);  // TODO Test if we can uncomment this
+
 unset($dolibarr_main_db_host);
 unset($dolibarr_main_db_port);
 unset($dolibarr_main_db_name);

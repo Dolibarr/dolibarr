@@ -21,7 +21,6 @@ return [
     // PhanUndeclaredMethod : 5 occurrences
     // PhanPluginDuplicateArrayKey : 4 occurrences
     // PhanPluginUndeclaredVariableIsset : 2 occurrences
-    // PhanPossiblyUndeclaredGlobalVariable : 2 occurrences
     // PhanTypeMismatchArgumentProbablyReal : 2 occurrences
     // PhanParamTooMany : 1 occurrence
     // PhanPossiblyUndeclaredVariable : 1 occurrence
@@ -232,11 +231,11 @@ return [
         'htdocs/salaries/virement_request.php' => ['PhanUndeclaredProperty'],
         'htdocs/societe/ajax/company.php' => ['PhanUndeclaredProperty'],
         'htdocs/societe/class/societe.class.php' => ['PhanTypeMismatchProperty'],
-        'htdocs/societe/paymentmodes.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgument'],
+        'htdocs/societe/paymentmodes.php' => ['PhanTypeMismatchArgument'],
         'htdocs/supplier_proposal/card.php' => ['PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
         'htdocs/supplier_proposal/class/api_supplier_proposals.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/supplier_proposal/class/supplier_proposal.class.php' => ['PhanUndeclaredProperty'],
-        'htdocs/takepos/invoice.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanUndeclaredGlobalVariable'],
+        'htdocs/takepos/invoice.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/takepos/split.php' => ['PhanPluginUndeclaredVariableIsset'],
         'htdocs/ticket/card.php' => ['PhanUndeclaredProperty'],
         'htdocs/ticket/class/actions_ticket.class.php' => ['PhanUndeclaredProperty'],

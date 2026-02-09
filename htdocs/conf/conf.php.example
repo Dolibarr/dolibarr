@@ -218,6 +218,17 @@ $dolibarr_main_dolcrypt_key='';
 $dolibarr_main_instance_unique_id='84b5bc91f83b56e458db71e0adac2b62';
 
 
+// $dolibarr_website_allow_custom_php
+// ================================
+// By default for security purpose, it is not possible to add or edit PHP dynamic content into a website (even if user has permission for this). To be able
+// to edit PHP content in website page, you must first allow this globally by setting this parameter to 1.
+// Default value: 0
+// Examples:
+// $dolibarr_website_allow_custom_php = 1;
+//
+$dolibarr_website_allow_custom_php = 0;
+
+
 //##################
 // Login
 //##################
@@ -325,7 +336,8 @@ $dolibarr_main_restrict_eval_methods='getDolGlobalString, getDolGlobalInt, getDo
 // dolibarr_main_disabled_modules
 // ==================================
 // To restrict the activation and use of certain potentially security-sensitive modules.
-// Default value: array('dav')
+// TODO Not yet implemented
+// Default value: array()
 // Examples:
 // $dolibarr_main_disabled_modules = array('dav', 'api');
 //

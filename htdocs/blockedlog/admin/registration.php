@@ -36,7 +36,10 @@ require '../../main.inc.php';
  */
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/modBlockedLog.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'blockedlog', 'other'));
@@ -44,7 +47,9 @@ $langs->loadLangs(array('admin', 'blockedlog', 'other'));
 // Get Parameters
 $action     = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
+
 $withtab    = GETPOSTINT('withtab');
+$mode       = GETPOST('mode');
 
 // Access Control
 if (!$user->admin) {
@@ -52,19 +57,137 @@ if (!$user->admin) {
 }
 
 
-
 /*
  * Actions
  */
 
-// TODO
+if ($action == 'update') {
+	$error = 0;
+	$db->begin();
+	if (!GETPOST("BLOCKEDLOG_REGISTRATION_NAME")) {
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("BLOCKEDLOG_REGISTRATION_NAME")), null, 'errors');
+		$error++;
+	}
+	if (!GETPOST("BLOCKEDLOG_REGISTRATION_EMAIL")) {
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("BLOCKEDLOG_REGISTRATION_EMAIL")), null, 'errors');
+		$error++;
+	}
+	if (!GETPOST("BLOCKEDLOG_REGISTRATION_COUNTRY_CODE")) {
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("BLOCKEDLOG_REGISTRATION_COUNTRY_CODE")), null, 'errors');
+		$error++;
+	}
+	if (!GETPOST("BLOCKEDLOG_REGISTRATION_IDPROF1")) {
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("BLOCKEDLOG_REGISTRATION_IDPROF1")), null, 'errors');
+		$error++;
+	}
+
+	$company_name = GETPOST("BLOCKEDLOG_REGISTRATION_NAME");
+	$company_email = GETPOST("BLOCKEDLOG_REGISTRATION_EMAIL");
+	$company_country_code = GETPOST("BLOCKEDLOG_REGISTRATION_COUNTRY_CODE");
+	$company_idprof1 = GETPOST("BLOCKEDLOG_REGISTRATION_IDPROF1");
+	$company_address = GETPOST("BLOCKEDLOG_REGISTRATION_ADDRESS");
+	$company_state = GETPOST("BLOCKEDLOG_REGISTRATION_STATE");
+	$company_zip = GETPOST("BLOCKEDLOG_REGISTRATION_ZIP");
+	$company_town = GETPOST("BLOCKEDLOG_REGISTRATION_TOWN");
+
+	$provider_name = GETPOST("MAIN_INFO_ITPROVIDER_NAME");
+	$provider_email = GETPOST("MAIN_INFO_ITPROVIDER_MAIL");
+	$provider_country_id = GETPOST("MAIN_INFO_ITPROVIDER_COUNTRY");
+	$provider_idprof1 = GETPOST("MAIN_INFO_ITPROVIDER_IDPROF1");
+	$provider_address = GETPOST("MAIN_INFO_ITPROVIDER_ADDRESS");
+	$provider_state = GETPOST("MAIN_INFO_ITPROVIDER_STATE");
+	$provider_zip = GETPOST("MAIN_INFO_ITPROVIDER_ZIP");
+	$provider_town = GETPOST("MAIN_INFO_ITPROVIDER_TOWN");
+
+	if (!$error) {
+		//Company
+		$res = dolibarr_set_const($db, "BLOCKEDLOG_REGISTRATION_NAME", $company_name, 'chaine', 0, '', $conf->entity);
+		if ($res <= 0) {
+			$error ++;
+		}
+		$res = dolibarr_set_const($db, "BLOCKEDLOG_REGISTRATION_EMAIL", $company_email, 'chaine', 0, '', $conf->entity);
+		if ($res <= 0) {
+			$error ++;
+		}
+		$res = dolibarr_set_const($db, "BLOCKEDLOG_REGISTRATION_COUNTRY_CODE", $company_country_code, 'chaine', 0, '', $conf->entity);
+		if ($res <= 0) {
+			$error ++;
+		}
+		$res = dolibarr_set_const($db, "BLOCKEDLOG_REGISTRATION_IDPROF1", $company_idprof1, 'chaine', 0, '', $conf->entity);
+		if ($res <= 0) {
+			$error ++;
+		}
+		$res = dolibarr_set_const($db, "BLOCKEDLOG_REGISTRATION_ADDRESS", $company_address, 'chaine', 0, '', $conf->entity);
+		if ($res <= 0) {
+			$error ++;
+		}
+		$res = dolibarr_set_const($db, "BLOCKEDLOG_REGISTRATION_STATE", $company_state, 'chaine', 0, '', $conf->entity);
+		if ($res <= 0) {
+			$error ++;
+		}
+		$res = dolibarr_set_const($db, "BLOCKEDLOG_REGISTRATION_ZIP", $company_zip, 'chaine', 0, '', $conf->entity);
+		if ($res <= 0) {
+			$error ++;
+		}
+		$res = dolibarr_set_const($db, "BLOCKEDLOG_REGISTRATION_TOWN", $company_town, 'chaine', 0, '', $conf->entity);
+		if ($res <= 0) {
+			$error ++;
+		}
+
+		//IT Provider
+		$res = dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_NAME", $provider_name, 'chaine', 0, '', $conf->entity);
+		if ($res <= 0) {
+			$error ++;
+		}
+		$res = dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_MAIL", $provider_email, 'chaine', 0, '', $conf->entity);
+		if ($res <= 0) {
+			$error ++;
+		}
+		$res = dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_COUNTRY", $provider_country_id, 'chaine', 0, '', $conf->entity);
+		if ($res <= 0) {
+			$error ++;
+		}
+		$res = dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_IDPROF1", $provider_idprof1, 'chaine', 0, '', $conf->entity);
+		if ($res <= 0) {
+			$error ++;
+		}
+		$res = dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_ADDRESS", $provider_address, 'chaine', 0, '', $conf->entity);
+		if ($res <= 0) {
+			$error ++;
+		}
+		$res = dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_STATE", $provider_state, 'chaine', 0, '', $conf->entity);
+		if ($res <= 0) {
+			$error ++;
+		}
+		$res = dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_ZIP", $provider_zip, 'chaine', 0, '', $conf->entity);
+		if ($res <= 0) {
+			$error ++;
+		}
+		$res = dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_TOWN", $provider_town, 'chaine', 0, '', $conf->entity);
+		if ($res <= 0) {
+			$error ++;
+		}
+	}
+	if (!$error) {
+		$db->commit();
+
+		//setEventMessages("SetupSaved", null, 'mesgs');
+
+		header("Location: ".$_SERVER["PHP_SELF"]."?mode=ping".(GETPOST('origin') ? '&origin='.GETPOST('origin') : ''));
+		exit;
+	} else {
+		$db->rollback();
+	}
+}
 
 
 /*
  *	View
  */
 
+$formSetup = new FormSetup($db);
 $form = new Form($db);
+$formcompany = new FormCompany($db);
 $block_static = new BlockedLog($db);
 $block_static->loadTrackedEvents();
 
@@ -93,20 +216,195 @@ if ($withtab) {
 	print dol_get_fiche_head($head, 'blockedlog', '', -1);
 }
 
-//print $texttop;
-//print '<br><br>';
+// Special message for France
+if ($mysoc->country_code == 'FR') {
+	$islne = isALNEQualifiedVersion(1, 1);
+	if ($islne) {
+		$s .= info_admin($langs->trans("CertifiedVersion"), 0, 0, 'info');
+	} else {
+		$s .= info_admin($langs->trans("NotCertifiedVersionFR"), 0, 0, 'warning');
+	}
 
+	print $s;
+}
+
+// Show generic message to explain we will collect data
 if (in_array($mysoc->country_code, array('FR'))) {
 	$htmltext = $langs->trans("UnalterableLogToolRegistrationFR").'<br>';
-	print info_admin($htmltext, 0, 0, 'warning');
+
+	$organization_for_ping = getDolGlobalString('MAIN_ORGANIZATION_FOR_PING', "Association Dolibarr");
+	$dataprivacy_url = getDolGlobalString('MAIN_ORGANIZATION_URL_PRIVACY', "https://www.dolibarr.org/legal-privacy-gdpr.php");
+	$htmltext .= $langs->trans("InformationWillBePublishedTo", $organization_for_ping, $dataprivacy_url);
+
+	if (!getDolGlobalString('MAIN_FIRST_REGISTRATION_OK_DATE')) {
+		print info_admin($htmltext, 0, 0, 'warning');
+	} else {
+		$htmltext .= '<br><br>';
+		$htmltext .= $langs->trans("LastRegistrationDate").' : ';
+		//$htmltext .= dol_print_date(getDolGlobalString('MAIN_FIRST_REGISTRATION_OK_DATE'), 'dayhour', 'tzuserrel');
+		$htmltext .= getDolGlobalString('MAIN_FIRST_REGISTRATION_OK_DATE');
+
+		print info_admin($htmltext, 0, 0, 'info');
+	}
 }
 
 print '<br>';
 
 
-// TODO Form to edit registration fields
-// + code to (re)send data when modified and to init module of not initialized yet
+if ($mode == "ping") {
+	$company_state = $mysoc->state;
+	if (getDolGlobalString('BLOCKEDLOG_REGISTRATION_STATE')) {
+		$company_state = getState(getDolGlobalInt('BLOCKEDLOG_REGISTRATION_STATE'));
+	}
+	$arrayofdata = array(
+		'action' => 'dolibarrregistration',
 
+		'company_name' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_NAME', $mysoc->name),
+		'company_email' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_EMAIL', $mysoc->email),
+		'company_idprof1' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_IDPROF1', $mysoc->idprof1),
+		'company_address' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_ADDRESS', $mysoc->address),
+		'company_state' => $company_state,
+		'company_zip' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_ZIP', $mysoc->zip),
+		'company_town' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_TOWN', $mysoc->town),
+		'country_code' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_COUNTRY_CODE', $mysoc->country_code),
+
+		'provider_name' => getDolGlobalString('MAIN_INFO_ITPROVIDER_NAME'),
+		'provider_email' => getDolGlobalString('MAIN_INFO_ITPROVIDER_MAIL'),
+		'provider_phone' => getDolGlobalString('MAIN_INFO_ITPROVIDER_PHONE'),
+		'provider_address' => getDolGlobalString('MAIN_INFO_ITPROVIDER_ADDRESS'),
+		'provider_state' => getDolGlobalString('MAIN_INFO_ITPROVIDER_STATE'),
+		'provider_zip' => getDolGlobalString('MAIN_INFO_ITPROVIDER_ZIP'),
+		'provider_town' => getDolGlobalString('MAIN_INFO_ITPROVIDER_TOWN'),
+		'provider_country' => getDolGlobalString('MAIN_INFO_ITPROVIDER_COUNTRY'),
+		'provider_idprof1' => getDolGlobalString('MAIN_INFO_ITPROVIDER_IDPROF1')
+	);
+
+	// Output js code to register data.
+	// Note: You can force thereigstration message by calling page /index.php?foreceregistration=1
+	printCodeForPing("MAIN_LAST_REGISTRATION_KO_DATE", "MAIN_FIRST_REGISTRATION_OK_DATE", $arrayofdata, 1);
+
+	if (!isModEnabled("blockedlog")) {
+		$modblckedlog = new modBlockedLog($db);
+		$res = $modblckedlog->init('forceinit');
+		//$res = 1;
+
+		if ($res <= 0) {
+			setEventMessages($modblckedlog->error, $modblckedlog->errors, 'errors');
+
+			$mode = '';
+		} else {
+			print '<div class="center ok">';
+			print $langs->trans("RegistrationDoneAndModuleEnabled", $langs->transnoentitiesnoconv("BlockedLog"));
+			// Go back to setup of module page
+			if (GETPOST('origin') == 'setupmodule') {
+				print '<br><br>';
+				print img_picto('', 'url').' ';
+				print '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("ClickHereToGoBackToSetupPage").'</a>';
+			}
+			print '</div>';
+		}
+	}
+}
+if (empty($mode)) {
+	// Show version
+	print '<div class="center"><span class="opacitymedium">'.$langs->trans("CurrentVersion").'</span> <span class="badge-text badge-secondary">'.DOL_VERSION.'</span></div>';
+
+	print '<br>';
+	$formSetup->newItem('Company')->setAsTitle();
+
+	//Company name
+	$item = $formSetup->newItem('BLOCKEDLOG_REGISTRATION_NAME');
+	$item->defaultFieldValue = getDolGlobalString('BLOCKEDLOG_REGISTRATION_NAME', $mysoc->name);
+	$item->fieldParams['isMandatory'] = 1;
+
+	//Company email
+	$item = $formSetup->newItem('BLOCKEDLOG_REGISTRATION_EMAIL');
+	$item->defaultFieldValue = getDolGlobalString('BLOCKEDLOG_REGISTRATION_EMAIL', $mysoc->email);
+	$item->setAsEmail();
+	$item->fieldParams['isMandatory'] = 1;
+	$item->cssClass = "minwidth300 maxwidth500 widthcentpercentminusx";
+
+	//Company IDPROF1
+	$item = $formSetup->newItem('BLOCKEDLOG_REGISTRATION_IDPROF1');
+	$item->defaultFieldValue = getDolGlobalString('BLOCKEDLOG_REGISTRATION_IDPROF1', $mysoc->idprof1);
+	$item->fieldParams['isMandatory'] = 1;
+
+	//Company country code
+	$country_code = getDolGlobalString('BLOCKEDLOG_REGISTRATION_COUNTRY_CODE', $mysoc->country_code);
+	$item = $formSetup->newItem('BLOCKEDLOG_REGISTRATION_COUNTRY_CODE');
+	$item->fieldInputOverride = $form->select_country($country_code, "BLOCKEDLOG_REGISTRATION_COUNTRY_CODE", '', 0, 'minwidth300', 'code2');
+	$item->fieldParams['isMandatory'] = 1;
+
+	//Company address
+	$item = $formSetup->newItem('BLOCKEDLOG_REGISTRATION_ADDRESS');
+	$item->defaultFieldValue = getDolGlobalString('BLOCKEDLOG_REGISTRATION_ADDRESS', $mysoc->address);
+	$item->setAsTextarea();
+
+	//Company state
+	$item = $formSetup->newItem('BLOCKEDLOG_REGISTRATION_STATE');
+	$state_id = 0;
+	if (getDolGlobalString('MAIN_INFO_SOCIETE_STATE')) {
+		$tmp = explode(':', getDolGlobalString('MAIN_INFO_SOCIETE_STATE'));
+		$state_id = $tmp[0];
+	}
+	$stateid = getDolGlobalInt('BLOCKEDLOG_REGISTRATION_STATE', (int) $state_id);
+	$item->fieldInputOverride = $formcompany->select_state($stateid, $country_code, "BLOCKEDLOG_REGISTRATION_STATE");
+
+	//Company zip
+	$item = $formSetup->newItem('BLOCKEDLOG_REGISTRATION_ZIP');
+	$item->defaultFieldValue = getDolGlobalString('BLOCKEDLOG_REGISTRATION_ZIP', $mysoc->zip);
+	$item->cssClass = "width100";
+
+	//Company town
+	$item = $formSetup->newItem('BLOCKEDLOG_REGISTRATION_TOWN');
+	$item->defaultFieldValue = getDolGlobalString('BLOCKEDLOG_REGISTRATION_TOWN', $mysoc->town);
+
+	$formSetup->newItem('ITProvider')->setAsTitle();
+
+	//IT provider name
+	$item = $formSetup->newItem('MAIN_INFO_ITPROVIDER_NAME');
+	$item->defaultFieldValue = getDolGlobalString('MAIN_INFO_ITPROVIDER_NAME');
+
+	//IT provider email
+	$item = $formSetup->newItem('MAIN_INFO_ITPROVIDER_MAIL');
+	$item->defaultFieldValue = getDolGlobalString('MAIN_INFO_ITPROVIDER_MAIL');
+	$item->setAsEmail();
+	$item->cssClass = "minwidth300 maxwidth500 widthcentpercentminusx";
+
+	//IT provider IDPROF1
+	$item = $formSetup->newItem('MAIN_INFO_ITPROVIDER_IDPROF1');
+	$item->defaultFieldValue = getDolGlobalString('MAIN_INFO_ITPROVIDER_IDPROF1');
+
+	//IT provider country code
+	$item = $formSetup->newItem('MAIN_INFO_ITPROVIDER_COUNTRY');
+	$item->defaultFieldValue = getDolGlobalString('MAIN_INFO_ITPROVIDER_COUNTRY');
+	$item->fieldInputOverride = $form->select_country(getDolGlobalString('MAIN_INFO_ITPROVIDER_COUNTRY'), 'MAIN_INFO_ITPROVIDER_COUNTRY');
+
+	//IT provider address
+	$item = $formSetup->newItem('MAIN_INFO_ITPROVIDER_ADDRESS');
+	$item->defaultFieldValue = getDolGlobalString('MAIN_INFO_ITPROVIDER_ADDRESS');
+	$item->setAsTextarea();
+
+	//IT provider state
+	$item = $formSetup->newItem('MAIN_INFO_ITPROVIDER_STATE');
+	$item->fieldInputOverride = $formcompany->select_state(getDolGlobalInt('MAIN_INFO_ITPROVIDER_STATE'), getDolGlobalString('MAIN_INFO_ITPROVIDER_COUNTRY'), "MAIN_INFO_ITPROVIDER_STATE");
+
+	//IT provider zip
+	$item = $formSetup->newItem('MAIN_INFO_ITPROVIDER_ZIP');
+	$item->defaultFieldValue = getDolGlobalString('MAIN_INFO_ITPROVIDER_ZIP');
+	$item->cssClass = "width100";
+
+	//IT provider town
+	$item = $formSetup->newItem('MAIN_INFO_ITPROVIDER_TOWN');
+	$item->defaultFieldValue = getDolGlobalString('MAIN_INFO_ITPROVIDER_TOWN');
+
+	$formSetup->formHiddenInputs['origin'] = GETPOST('origin');
+
+	$formSetup->htmlButtonLabel = 'SaveAndEnableModule';
+
+	print $formSetup->generateOutput(true, true, '', '');
+	print '<br>';
+}
 
 if ($withtab) {
 	print dol_get_fiche_end();

@@ -43,8 +43,8 @@ require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-
 include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("users", "companies", "agenda", "commercial", "other", "orders", "bills"));
@@ -79,6 +79,19 @@ if (GETPOST('search_actioncode', 'array:aZ09')) {
 	}
 } else {
 	$actioncode = GETPOST("search_actioncode", "alpha", 3) ? GETPOST("search_actioncode", "alpha", 3) : (GETPOST("search_actioncode") == '0' ? '0' : ((!getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE') || $disabledefaultvalues) ? '' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE')));
+}
+if (is_array($actioncode)) {
+	// Remove all -1 values
+	$actioncode = array_filter(
+		$actioncode,
+		/**
+		 * @param string $value
+		 * @return	bool
+		 */
+		function ($value) {
+			return ((string) $value !== '-1');
+		}
+	);
 }
 
 // Search Fields
@@ -188,6 +201,7 @@ $arrayfields = array_merge($arrayfields, array(
 	'owner' => array('label' => "Owner", 'checked' => '1', 'position' => 46),
 	'c.libelle' => array('label' => "Type", 'checked' => '1', 'position' => 47),
 	's.nom' => array('label' => "ThirdParty", 'checked' => '1', 'position' => 54),
+	'a.fk_element' => array('label' => "LinkedObject", 'checked' => '1', 'position' => 86),
 ));
 
 $object->fields = dol_sort_array($object->fields, 'position');
@@ -458,9 +472,8 @@ $sql .= $hookmanager->resPrint;
 $sqlfields = $sql; // $sql fields to remove for count total
 
 $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."actioncomm_extrafields as ef ON (a.id = ef.fk_object)";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."actioncomm_extrafields as ef ON a.id = ef.fk_object";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
-//$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON c.id = a.fk_action";
 // We must filter on resource table
 if ($resourceid > 0) {
@@ -595,24 +608,6 @@ if ($search_categ_cus != -1) {
 	}
 }
 
-// We must filter on assignment table
-if (($filtert != '-1' && $filtert != '-2') || $usergroup > 0) {
-	if ($filtert != '' && $filtert != '-1' && $filtert != '-2'  && $filtert != '-3') {
-		$sql .= " AND (";
-		$sql .= " a.fk_user_action = ".((int) $filtert)." OR ";		// For old data compatibility (where owner was not assigned as contact)
-		$sql .= " EXISTS (SELECT ar.rowid FROM ".MAIN_DB_PREFIX."actioncomm_resources as ar WHERE ar.fk_actioncomm = a.id AND ar.element_type = 'user' AND ar.fk_element IN (".$db->sanitize($filtert)."))";
-		$sql .= ")";
-	} elseif ($filtert == '-3') {
-		$sql .= " AND (";
-		$sql .= " EXISTS (SELECT ar.rowid FROM ".MAIN_DB_PREFIX."actioncomm_resources as ar WHERE ar.fk_actioncomm = a.id AND ar.element_type = 'user' AND ar.fk_element IN (".$db->sanitize(implode(',', $user->getAllChildIds(1)))."))";
-		$sql .= ")";
-	} elseif ($usergroup > 0) {		// Filter on my hierarchy
-		$sql .= " AND (";
-		$sql .= " EXISTS (SELECT ar.rowid FROM ".MAIN_DB_PREFIX."actioncomm_resources as ar WHERE ar.fk_actioncomm = a.id AND ar.element_type = 'user' AND ar.fk_element IN (SELECT ugu.fk_user FROM ".MAIN_DB_PREFIX."usergroup_user as ugu WHERE ugu.fk_usergroup = ".((int) $usergroup)."))";
-		$sql .= ")";
-	}
-}
-
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 
@@ -621,26 +616,67 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
+$sql1 = $sql2 = '';
+
+// We must filter on assignment table
+if (($filtert != '-1' && $filtert != '-2') || $usergroup > 0) {
+	if ($filtert != '' && $filtert != '-1' && $filtert != '-2'  && $filtert != '-3') {
+		$where1 = "a.fk_user_action = ".((int) $filtert);		// For old data compatibility (where owner was not assigned as contact)
+		$where2 = "a.fk_user_action <> ".((int) $filtert)." AND EXISTS (SELECT ar.rowid FROM ".MAIN_DB_PREFIX."actioncomm_resources as ar WHERE ar.fk_actioncomm = a.id AND ar.element_type = 'user' AND ar.fk_element IN (".$db->sanitize($filtert)."))";
+		$sql1 = $sql . " AND " . $where1;
+		$sql2 = $sql . " AND " . $where2;
+		$sql .= " AND ((" . $where1 . ") OR (" . $where2."))";
+	} elseif ($filtert == '-3') {
+		// TODO If a.fk_user_action is in my hierarchy ?
+		$sql .= " AND EXISTS (SELECT ar.rowid FROM ".MAIN_DB_PREFIX."actioncomm_resources as ar WHERE ar.fk_actioncomm = a.id AND ar.element_type = 'user' AND ar.fk_element IN (".$db->sanitize(implode(',', $user->getAllChildIds(1)))."))";
+	} elseif ($usergroup > 0) {		// Filter on my hierarchy
+		// TODO If a.fk_user_action is in group ?
+		$sql .= " AND EXISTS (SELECT ar.rowid FROM ".MAIN_DB_PREFIX."actioncomm_resources as ar WHERE ar.fk_actioncomm = a.id AND ar.element_type = 'user' AND ar.fk_element IN (SELECT ugu.fk_user FROM ".MAIN_DB_PREFIX."usergroup_user as ugu WHERE ugu.fk_usergroup = ".((int) $usergroup)."))";
+	}
+}
+//print $sql."<br>".$sql1."<br>".$sql2;
+
 // Count total nb of records
 $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
-	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
-	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+	if (empty($sql1) && empty($sql2)) {
+		$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+		$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+		// TODO Add a method $sqlforcount = sqlOptimizeCount($sqlforcount, array('actioncomm_extrafields', 'societe', 'c_actioncomm')) to
+		// remove all LEFT JOIN and INNER JOIN from the $sqlforcount if there is no fields into the WHERE.
 
-	$resql = $db->query($sqlforcount);
-	if ($resql) {
-		$objforcount = $db->fetch_object($resql);
-		$nbtotalofrecords = (int) $objforcount->nbtotalofrecords;
+		$resql = $db->query($sqlforcount);
+		if ($resql) {
+			$objforcount = $db->fetch_object($resql);
+			$nbtotalofrecords = (int) $objforcount->nbtotalofrecords;
+		} else {
+			dol_print_error($db);
+		}
+
+		$db->free($resql);
 	} else {
-		dol_print_error($db);
+		$sqlforcount1 = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql1);
+		$sqlforcount2 = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql2);
+
+		$resql1 = $db->query($sqlforcount1);
+		$resql2 = $db->query($sqlforcount2);
+		if ($resql1 && $resql2) {
+			$objforcount1 = $db->fetch_object($resql1);
+			$objforcount2 = $db->fetch_object($resql2);
+			$nbtotalofrecords = (int) $objforcount1->nbtotalofrecords + (int) $objforcount2->nbtotalofrecords;
+		} else {
+			dol_print_error($db);
+		}
+
+		$db->free($resql1);
+		$db->free($resql2);
 	}
 
 	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
-	$db->free($resql);
 }
 
 // Complete request and execute it with limit
@@ -804,18 +840,6 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 if (!empty($arrayfields['a.id']['checked'])) {
 	print '<td class="liste_titre"><input type="text" class="maxwidth50" name="search_id" value="'.$search_id.'"></td>';
 }
-if (!empty($arrayfields['owner']['checked'])) {
-	print '<td class="liste_titre"></td>';
-}
-if (!empty($arrayfields['c.libelle']['checked'])) {
-	print '<td class="liste_titre"></td>';
-}
-if (!empty($arrayfields['a.label']['checked'])) {
-	print '<td class="liste_titre"><input type="text" class="maxwidth75" name="search_title" value="'.$search_title.'"></td>';
-}
-if (!empty($arrayfields['a.note']['checked'])) {
-	print '<td class="liste_titre"><input type="text" class="maxwidth75" name="search_note" value="'.$search_note.'"></td>';
-}
 if (!empty($arrayfields['a.datep']['checked'])) {
 	print '<td class="liste_titre nowraponall center">';
 	print '<div class="nowrap">';
@@ -835,6 +859,18 @@ if (!empty($arrayfields['a.datep2']['checked'])) {
 	print $form->selectDate($dateend_dtend, 'dateend_dtend', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('To'), 'tzuserrel');
 	print '</div>';
 	print '</td>';
+}
+if (!empty($arrayfields['owner']['checked'])) {
+	print '<td class="liste_titre"></td>';
+}
+if (!empty($arrayfields['c.libelle']['checked'])) {
+	print '<td class="liste_titre"></td>';
+}
+if (!empty($arrayfields['a.label']['checked'])) {
+	print '<td class="liste_titre"><input type="text" class="maxwidth125" name="search_title" value="'.$search_title.'"></td>';
+}
+if (!empty($arrayfields['a.note']['checked'])) {
+	print '<td class="liste_titre"><input type="text" class="maxwidth75" name="search_note" value="'.$search_note.'"></td>';
 }
 if (!empty($arrayfields['s.nom']['checked'])) {
 	print '<td class="liste_titre"></td>';
@@ -889,6 +925,14 @@ if (!empty($arrayfields['a.id']['checked'])) {
 	print_liste_field_titre($arrayfields['a.id']['label'], $_SERVER["PHP_SELF"], "a.id", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['a.datep']['checked'])) {
+	print_liste_field_titre($arrayfields['a.datep']['label'], $_SERVER["PHP_SELF"], "a.datep,a.id", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['a.datep2']['checked'])) {
+	print_liste_field_titre($arrayfields['a.datep2']['label'], $_SERVER["PHP_SELF"], "a.datep2", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
 if (!empty($arrayfields['owner']['checked'])) {
 	print_liste_field_titre($arrayfields['owner']['label'], $_SERVER["PHP_SELF"], "", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
@@ -903,14 +947,6 @@ if (!empty($arrayfields['a.label']['checked'])) {
 }
 if (!empty($arrayfields['a.note']['checked'])) {
 	print_liste_field_titre($arrayfields['a.note']['label'], $_SERVER["PHP_SELF"], "a.note", "", $param, "", $sortfield, $sortorder);
-	$totalarray['nbfield']++;
-}
-if (!empty($arrayfields['a.datep']['checked'])) {
-	print_liste_field_titre($arrayfields['a.datep']['label'], $_SERVER["PHP_SELF"], "a.datep,a.id", "", $param, '', $sortfield, $sortorder, 'center ');
-	$totalarray['nbfield']++;
-}
-if (!empty($arrayfields['a.datep2']['checked'])) {
-	print_liste_field_titre($arrayfields['a.datep2']['label'], $_SERVER["PHP_SELF"], "a.datep2", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.nom']['checked'])) {
@@ -959,6 +995,7 @@ require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
 $caction = new CActionComm($db);
 $arraylist = $caction->liste_array(1, 'code', '', (!getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? 1 : 0), '', 1);
 $contactListCache = array();
+$elementlinkcache = array();
 
 // Loop on record
 // --------------------------------------------------------------------
@@ -985,10 +1022,6 @@ while ($i < $imaxinloop) {
 	$actionstatic->id = $obj->id;
 	$actionstatic->ref = $obj->id;
 	$actionstatic->code = $obj->code;
-	$actionstatic->type_code = $obj->type_code;
-	$actionstatic->type_label = $obj->type_label;
-	$actionstatic->type_picto = $obj->type_picto;
-	$actionstatic->type_color = $obj->type_color;
 	$actionstatic->label = $obj->label;
 	$actionstatic->location = $obj->location;
 	$actionstatic->note_private = dol_htmlentitiesbr($obj->note);
@@ -999,6 +1032,13 @@ while ($i < $imaxinloop) {
 	$actionstatic->recurid = $obj->recurid;
 	$actionstatic->recurrule = $obj->recurrule;
 	$actionstatic->recurdateend = $db->jdate($obj->recurdateend);
+	// From type of action table
+	$actionstatic->type = $obj->type_type;
+	$actionstatic->type_code = $obj->type_code;
+	$actionstatic->type_label = $obj->type_label;
+	$actionstatic->type_picto = $obj->type_picto;
+	$actionstatic->type_color = $obj->type_color;
+
 
 	// Initialize $this->userassigned && this->socpeopleassigned array && this->userownerid
 	// but only if we need it
@@ -1055,6 +1095,7 @@ while ($i < $imaxinloop) {
 	$event_start_date_css = $event_end_date_css = $event_more_class;
 
 	print '<tr class="oddeven row-with-select ' . ($event_more_class != '' ? ' '.$event_more_class : '') . '">';
+
 	// Action column
 	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print '<td class="nowrap center">';
@@ -1074,10 +1115,62 @@ while ($i < $imaxinloop) {
 		print '</td>';
 	}
 
+	// Start date
+	if (!empty($arrayfields['a.datep']['checked'])) {
+		print '<td class="center nowraponall'.($event_start_date_css ? ' '.$event_start_date_css.'x' : '').'"><span>';
+		if (empty($obj->fulldayevent)) {
+			print '<div class="center inline-block lineheightsmall">';
+			print dol_print_date($db->jdate($obj->dp), 'dayreduceformat', 'tzuserrel');
+			print '<br><span class="opacitymedium hourspan">';
+			print dol_print_date($db->jdate($obj->dp), 'hourreduceformat', 'tzuserrel');
+			print '</span>';
+			print '</div>';
+		} else {
+			$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
+			print '<div class="center inline-block lineheightsmall">';
+			print dol_print_date($db->jdate($obj->dp), 'day', ($tzforfullday ? $tzforfullday : 'tzuserrel'));
+			print '<br><span class="opacitymedium hourspan">';
+			print dol_print_date(0, 'hourreduceformat', 'gmt');
+			print '</span>';
+			print '</div>';
+		}
+		print '</span>';
+		$late = 0;
+		if ($actionstatic->hasDelay() && $actionstatic->percentage >= 0 && $actionstatic->percentage < 100) {
+			$late = 1;
+		}
+		if ($late) {
+			print img_warning($langs->trans("Late")).' ';
+		}
+		print '</td>';
+	}
+
+	// End date
+	if (!empty($arrayfields['a.datep2']['checked'])) {
+		print '<td class="center nowraponall'.($event_end_date_css ? ' '.$event_end_date_css.'x' : '').'"><span>';
+		if (empty($obj->fulldayevent)) {
+			print '<div class="center inline-block lineheightsmall">';
+			print dol_print_date($db->jdate($obj->dp2), 'dayreduceformat', 'tzuserrel');
+			print '<br><span class="opacitymedium hourspan">';
+			print dol_print_date($db->jdate($obj->dp2), 'hourreduceformat', 'tzuserrel');
+			print '</span>';
+			print '</div>';
+		} else {
+			$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
+			print '<div class="center inline-block lineheightsmall">';
+			print dol_print_date($db->jdate($obj->dp2), 'day', ($tzforfullday ? $tzforfullday : 'tzuserrel'));
+			print '<br><span class="opacitymedium hourspan">';
+			print dol_print_date(23*60*60+59*60+59, 'hourreduceformat', 'gmt');
+			print '</span>';
+			print '</div>';
+		}
+		print '</span>';
+		print '</td>';
+	}
+
 	// User owner
 	if (!empty($arrayfields['owner']['checked'])) {
-		//print '<td class="tdoverflowmax150"' . ($event_owner_style != '' ? ' style="'.$event_owner_style.'"' : '') . '>';
-		print '<td class="tdoverflowmax150">';
+		print '<td class="tdoverflowmax125">';
 		if ($obj->fk_user_action > 0 && !isset($cache_user_list[$obj->fk_user_action])) {
 			$userstatic = new User($db);
 			$res = $userstatic->fetch($obj->fk_user_action);
@@ -1086,14 +1179,15 @@ while ($i < $imaxinloop) {
 			}
 		}
 		if (isset($cache_user_list[$obj->fk_user_action])) {
-			print $cache_user_list[$obj->fk_user_action]->getNomUrl(-1);
+			print $cache_user_list[$obj->fk_user_action]->getNomUrl(-1, '', 0, 0, 16, 0, 'firstelselast', '');
 		}
 		print '</td>';
 	}
 
 	// Type
 	if (!empty($arrayfields['c.libelle']['checked'])) {
-		print '<td class="nowraponall">';
+		print '<td class="tdoverflowmax125 nowraponall">';
+		// Example $actionstatic->code = AC_COMPANY_MODIFY and $actionstatic->type_code = AC_OTH_AUTO
 		print $actionstatic->getTypePicto();
 		$labeltype = $obj->type_code;
 		if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE') && empty($arraylist[$labeltype])) {
@@ -1115,8 +1209,8 @@ while ($i < $imaxinloop) {
 
 	// Label
 	if (!empty($arrayfields['a.label']['checked'])) {
-		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($actionstatic->label).'">';
-		print $actionstatic->label;
+		print '<td class="tdoverflowmax300" title="'.dolPrintHTMLForAttribute($actionstatic->label).'">';
+		print dolPrintHTML($actionstatic->label);
 		print '</td>';
 	}
 
@@ -1128,41 +1222,6 @@ while ($i < $imaxinloop) {
 		//print $form->textwithtooltip(dol_trunc($text, 48), $actionstatic->note_private);
 		print dolPrintHTML($text);
 		print '</div>';
-		print '</td>';
-	}
-
-	$formatToUse = $obj->fulldayevent ? 'day' : 'dayhour';
-
-	// Start date
-	if (!empty($arrayfields['a.datep']['checked'])) {
-		print '<td class="center nowraponall'.($event_start_date_css ? ' '.$event_start_date_css : '').'"><span>';
-		if (empty($obj->fulldayevent)) {
-			print dol_print_date($db->jdate($obj->dp), $formatToUse, 'tzuserrel');
-		} else {
-			$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
-			print dol_print_date($db->jdate($obj->dp), $formatToUse, ($tzforfullday ? $tzforfullday : 'tzuserrel'));
-		}
-		print '</span>';
-		$late = 0;
-		if ($actionstatic->hasDelay() && $actionstatic->percentage >= 0 && $actionstatic->percentage < 100) {
-			$late = 1;
-		}
-		if ($late) {
-			print img_warning($langs->trans("Late")).' ';
-		}
-		print '</td>';
-	}
-
-	// End date
-	if (!empty($arrayfields['a.datep2']['checked'])) {
-		print '<td class="center nowraponall'.($event_end_date_css ? ' '.$event_end_date_css : '').'"><span>';
-		if (empty($obj->fulldayevent)) {
-			print dol_print_date($db->jdate($obj->dp2), $formatToUse, 'tzuserrel');
-		} else {
-			$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
-			print dol_print_date($db->jdate($obj->dp2), $formatToUse, ($tzforfullday ? $tzforfullday : 'tzuserrel'));
-		}
-		print '</span>';
 		print '</td>';
 	}
 
@@ -1212,11 +1271,18 @@ while ($i < $imaxinloop) {
 
 	// Linked object
 	if (!empty($arrayfields['a.fk_element']['checked'])) {
-		print '<td class="tdoverflowmax150">';
-		//var_dump($obj->fkelement.' '.$obj->elementtype);
-		if ($obj->fk_element > 0 && !empty($obj->elementtype)) {
-			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-			print dolGetElementUrl($obj->fk_element, $obj->elementtype, 1);
+		print '<td class="tdoverflowmax150 nowraponall">';
+		if (isset($obj->elementtype) && !empty($obj->fk_element)) {
+			if (isset($elementlinkcache[$obj->elementtype]) && isset($elementlinkcache[$obj->elementtype][$obj->fk_element])) {
+				$link = $elementlinkcache[$obj->elementtype][$obj->fk_element];
+			} else {
+				if (!isset($elementlinkcache[$obj->elementtype])) {
+					$elementlinkcache[$obj->elementtype] = array();
+				}
+				$link = dolGetElementUrl((int) $obj->fk_element, $obj->elementtype, 1);
+				$elementlinkcache[$obj->elementtype][$obj->fk_element] = $link;
+			}
+			print $link;
 		}
 		print '</td>';
 	}

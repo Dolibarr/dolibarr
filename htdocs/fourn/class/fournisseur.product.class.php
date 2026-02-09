@@ -26,7 +26,7 @@
 
 /**
  * 	\file       htdocs/fourn/class/fournisseur.product.class.php
- * 	\ingroup    produit
+ * 	\ingroup    product
  * 	\brief      File of class to manage predefined suppliers products
  */
 

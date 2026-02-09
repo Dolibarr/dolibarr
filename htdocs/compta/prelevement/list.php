@@ -416,9 +416,11 @@ while ($i < $imaxinloop) {
 
 	$bon->id = $obj->rowid;
 	$bon->ref = $obj->ref;
-	$bon->statut = $obj->status;
-	$bon->date_echeance = $obj->datec;
-	$bon->total = $obj->amount;
+	$bon->date_creation = $db->jdate($obj->datec);
+	$bon->date_tans = $db->jdate($obj->date_trans);
+	$bon->date_credit = $db->jdate($obj->date_credit);
+	$bon->amount = $obj->amount;
+	$bon->status = $obj->status;
 
 	$object = $bon;
 	if ($object->checkIfSalaryBonPrelevement()) {
