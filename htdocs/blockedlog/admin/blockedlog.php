@@ -41,15 +41,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'blockedlog', 'other'));
 
+// Get Parameters
+$action     = GETPOST('action', 'aZ09');
+$backtopage = GETPOST('backtopage', 'alpha');
+
+$withtab    = GETPOSTINT('withtab');
+$origin     = GETPOST('origin');
+
 // Access Control
 if (!$user->admin || !isModEnabled('blockedlog')) {
 	accessforbidden();
 }
-
-// Get Parameters
-$action     = GETPOST('action', 'aZ09');
-$backtopage = GETPOST('backtopage', 'alpha');
-$withtab    = GETPOSTINT('withtab');
 
 
 /*
@@ -105,31 +107,73 @@ $morehtmlcenter = '';
 
 $registrationnumber = getHashUniqueIdOfRegistration();
 $texttop = '<small class="opacitymedium">'.$langs->trans("RegistrationNumber").':</small> <small>'.dol_trunc($registrationnumber, 10).'</small>';
+if (!isRegistrationDataSavedAndPushed()) {
+	$texttop = '';
+}
 
 print load_fiche_titre($title.'<br>'.$texttop, $linkback, 'blockedlog', 0, '', '', $morehtmlcenter);
 
 if ($withtab) {
 	$head = blockedlogadmin_prepare_head(GETPOST('withtab', 'alpha'));
-	print dol_get_fiche_head($head, 'blockedlog', '', -1);
+	print dol_get_fiche_head($head, 'technicalinfo', '', -1);
 }
-
-//print $texttop;
-//print '<br><br>';
 
 print '<span class="opacitymedium">'.$langs->trans("BlockedLogDesc")."</span><br>\n";
 
-if (in_array($mysoc->country_code, array('FR'))) {
-	$htmltext = $langs->trans("UnalterableLogTool1FR").'<br>';
-	print info_admin($htmltext, 0, 0, 'warning');
+
+// Special additional message for FR only
+$infotoshow = '';
+if ($mysoc->country_code == 'FR') {
+	$islne = isALNEQualifiedVersion(1, 1);
+	if ($islne) {
+		$infotoshow = $langs->trans("CertifiedVersion");
+	} else {
+		$infotoshow = $langs->trans("NotCertifiedVersionFR");
+	}
 }
+
+// Show generic message (for countries that need registration) to explain we need registration to collect data and why
+if (in_array($mysoc->country_code, array('FR'))) {
+	$organization_for_ping = getDolGlobalString('MAIN_ORGANIZATION_FOR_PING', "Association Dolibarr");
+	$dataprivacy_url = getDolGlobalString('MAIN_ORGANIZATION_URL_PRIVACY', "https://www.dolibarr.org/legal-privacy-gdpr.php");
+
+	if (!isRegistrationDataSavedAndPushed() || $origin == 'initmodule') {
+		if ($infotoshow) {
+			print info_admin($infotoshow, 0, 0, 'info');
+		}
+		/*
+		$htmltext = $langs->trans("UnalterableLogToolRegistrationFR").'<br>';
+		$htmltext .= $langs->trans("InformationWillBePublishedTo");
+		$htmltext .= '<br>'.$langs->trans("InformationWillBePublishedTo2", $organization_for_ping, $dataprivacy_url);
+		$htmltext .= '<br>'.$langs->trans("InformationWillBePublishedTo3");
+
+		print info_admin($htmltext, 0, 0, 'warning');
+		*/
+	} else {
+		$htmltext = ($infotoshow ? $infotoshow.'<br>' : '');
+		$htmltext .= $langs->trans("ApplicationHasBeenRegistered").'<br>';
+		$htmltext .= $langs->trans("LastRegistrationDate").' : ';
+		//$htmltext .= dol_print_date(getDolGlobalString('MAIN_FIRST_REGISTRATION_OK_DATE'), 'dayhour', 'tzuserrel');
+		$htmltext .= getDolGlobalString('MAIN_FIRST_REGISTRATION_OK_DATE');
+
+		print info_admin($htmltext, 0, 0, 'info');
+
+		// Show remind on good practices related to archives
+		/*
+		$htmltext = $langs->trans("UnalterableLogTool1FR").'<br>';
+		print info_admin($htmltext, 0, 0, 'warning');
+		*/
+	}
+}
+
 
 print '<br>';
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Key").'</td>';
-print '<td>'.$langs->trans("Value").'</td>';
+print '<td>'.$langs->trans("Parameters").'</td>';
+print '<td></td>';
 print "</tr>\n";
 
 print '<tr class="oddeven">';
@@ -216,6 +260,28 @@ print '</tr>';
 
 print '</table>';
 print '</div>';
+
+
+print '<br><br>';
+
+
+print '<!-- Link to pay -->';
+print '<span class="fas fa-external-link-alt" style=""></span> <span class="opacitymedium">'.$langs->trans("DebugTools").'</span><br>';
+print '<br>';
+
+$urlforceregistration = DOL_MAIN_URL_ROOT.'/index.php?foreregistration=1';
+print $langs->trans("URLToForceRegistration").'<br>';
+print '<div class="urllink"><input type="text" id="foreregistration" spellcheck="false" class="quatrevingtpercentminusx" value="'.$urlforceregistration.'"><a class="" href="'.$urlforceregistration.'" target="_blank" rel="noopener noreferrer"><span class="fas fa-external-link-alt paddingleft" style=""></span></a></div>';
+print ajax_autoselect('foreregistration');
+
+print '<br>';
+
+$urlforcepushcounter = DOL_MAIN_URL_ROOT.'/index.php?forcepushcounter=1';
+print $langs->trans("URLToForcePushOfBlockedLogCounter").'<br>';
+print '<div class="urllink"><input type="text" id="forcepushcounter" spellcheck="false" class="quatrevingtpercentminusx" value="'.$urlforcepushcounter.'"><a class="" href="'.$urlforcepushcounter.'" target="_blank" rel="noopener noreferrer"><span class="fas fa-external-link-alt paddingleft" style=""></span></a></div>';
+print ajax_autoselect('forcepushcounter');
+
+
 
 if ($withtab) {
 	print dol_get_fiche_end();
