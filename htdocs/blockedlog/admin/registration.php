@@ -49,6 +49,7 @@ $action     = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 $withtab    = GETPOSTINT('withtab');
+$origin     = GETPOST('origin');
 $mode       = GETPOST('mode');
 
 // Access Control
@@ -173,7 +174,7 @@ if ($action == 'update') {
 
 		//setEventMessages("SetupSaved", null, 'mesgs');
 
-		header("Location: ".$_SERVER["PHP_SELF"]."?mode=ping".(GETPOST('origin') ? '&origin='.GETPOST('origin') : ''));
+		header("Location: ".$_SERVER["PHP_SELF"]."?mode=forceregistration".($withtab ? '&withtab='.$withtab: '').(GETPOST('origin') ? '&origin='.GETPOST('origin') : ''));
 		exit;
 	} else {
 		$db->rollback();
@@ -196,16 +197,13 @@ $help_url="EN:Module_Unalterable_Archives_-_Logs|FR:Module_Archives_-_Logs_Inalt
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-blockedlog page-admin_blockedlog');
 
-$linkback = '';
-if ($withtab) {
-	$linkback = '<a href="'.dolBuildUrl($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
-}
+$linkback = '<a href="'.dolBuildUrl($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
 $morehtmlcenter = '';
 
 $registrationnumber = getHashUniqueIdOfRegistration();
 $texttop = '<small class="opacitymedium">'.$langs->trans("RegistrationNumber").':</small> <small>'.dol_trunc($registrationnumber, 10).'</small>';
-if (isRegistrationDataSaved()) {
+if (!isRegistrationDataSavedAndPushed()) {
 	$texttop = '';
 }
 
@@ -213,45 +211,62 @@ print load_fiche_titre($title.'<br>'.$texttop, $linkback, 'blockedlog', 0, '', '
 
 if ($withtab) {
 	$head = blockedlogadmin_prepare_head(GETPOST('withtab', 'alpha'));
-	print dol_get_fiche_head($head, 'blockedlog', '', -1);
+	print dol_get_fiche_head($head, 'registration', '', -1);
 }
 
-// Special message for France
+print '<span class="opacitymedium">'.$langs->trans("BlockedLogDesc")."</span><br>\n";
+
+// Show version
+print '<div class="center"><span class="opacitymedium">'.$langs->trans("CurrentVersion").'</span> <span class="badge-text badge-secondary">'.DOL_VERSION.'</span></div>';
+
+
+// Special additional message for FR only
+$infotoshow = '';
 if ($mysoc->country_code == 'FR') {
 	$islne = isALNEQualifiedVersion(1, 1);
 	if ($islne) {
-		$s = info_admin($langs->trans("CertifiedVersion"), 0, 0, 'info');
+		$infotoshow = $langs->trans("CertifiedVersion");
 	} else {
-		$s = info_admin($langs->trans("NotCertifiedVersionFR"), 0, 0, 'warning');
+		$infotoshow = $langs->trans("NotCertifiedVersionFR");
 	}
-
-	print $s;
 }
 
-// Show generic message to explain we will collect data
+// Show generic message (for countries that need registration) to explain we need registration to collect data and why
 if (in_array($mysoc->country_code, array('FR'))) {
-	$htmltext = $langs->trans("UnalterableLogToolRegistrationFR").'<br>';
-
 	$organization_for_ping = getDolGlobalString('MAIN_ORGANIZATION_FOR_PING', "Association Dolibarr");
 	$dataprivacy_url = getDolGlobalString('MAIN_ORGANIZATION_URL_PRIVACY', "https://www.dolibarr.org/legal-privacy-gdpr.php");
-	$htmltext .= $langs->trans("InformationWillBePublishedTo", $organization_for_ping, $dataprivacy_url);
 
-	if (!getDolGlobalString('MAIN_FIRST_REGISTRATION_OK_DATE')) {
+	if (!isRegistrationDataSavedAndPushed() || $origin == 'initmodule') {
+		if ($infotoshow) {
+			print info_admin($infotoshow, 0, 0, 'info');
+		}
+
+		$htmltext = $langs->trans("UnalterableLogToolRegistrationFR").'<br>';
+		$htmltext .= $langs->trans("InformationWillBePublishedTo");
+		$htmltext .= '<br>'.$langs->trans("InformationWillBePublishedTo2", $organization_for_ping, $dataprivacy_url);
+		$htmltext .= '<br>'.$langs->trans("InformationWillBePublishedTo3");
+
 		print info_admin($htmltext, 0, 0, 'warning');
 	} else {
-		$htmltext .= '<br><br>';
+		$htmltext = ($infotoshow ? $infotoshow.'<br>' : '');
+		$htmltext .= $langs->trans("ApplicationHasBeenRegistered").'<br>';
 		$htmltext .= $langs->trans("LastRegistrationDate").' : ';
 		//$htmltext .= dol_print_date(getDolGlobalString('MAIN_FIRST_REGISTRATION_OK_DATE'), 'dayhour', 'tzuserrel');
 		$htmltext .= getDolGlobalString('MAIN_FIRST_REGISTRATION_OK_DATE');
 
 		print info_admin($htmltext, 0, 0, 'info');
+
+		// Show remind on good practices related to archives
+		$htmltext = $langs->trans("UnalterableLogTool1FR").'<br>';
+		print info_admin($htmltext, 0, 0, 'warning');
 	}
 }
+
 
 print '<br>';
 
 
-if ($mode == "ping") {
+if ($mode == "forceregistration") {
 	$company_state = $mysoc->state;
 	if (getDolGlobalString('BLOCKEDLOG_REGISTRATION_STATE')) {
 		$company_state = getState(getDolGlobalInt('BLOCKEDLOG_REGISTRATION_STATE'));
@@ -292,24 +307,28 @@ if ($mode == "ping") {
 			setEventMessages($modblckedlog->error, $modblckedlog->errors, 'errors');
 
 			$mode = '';
-		} else {
-			print '<div class="center ok">';
-			print $langs->trans("RegistrationDoneAndModuleEnabled", $langs->transnoentitiesnoconv("BlockedLog"));
-			// Go back to setup of module page
-			if (GETPOST('origin') == 'setupmodule') {
-				print '<br><br>';
-				print img_picto('', 'url').' ';
-				print '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("ClickHereToGoBackToSetupPage").'</a>';
-			}
-			print '</div>';
 		}
+	}
+	if ($mode == "forceregistration") {
+		print '<div class="center">';
+		print img_picto('', 'tick', 'class="large"');
+		print '<br>'.$langs->trans("RegistrationDoneAndModuleEnabled", $langs->transnoentitiesnoconv("BlockedLog"));
+		// Go back to setup of module page
+		if (GETPOST('origin') == 'initmodule') {
+			print '<br><br>';
+			print '<br><br>';
+			print img_picto('', 'url').' ';
+			print '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+		}
+		print '</div>';
 	}
 }
 if (empty($mode)) {
-	// Show version
-	print '<div class="center"><span class="opacitymedium">'.$langs->trans("CurrentVersion").'</span> <span class="badge-text badge-secondary">'.DOL_VERSION.'</span></div>';
+	if ($origin != 'initmodule') {
+		print '<br>';
+		print '<span class="opacitymedium">'.$langs->trans("UseThisFormToUpdate").'</span><br><br>';
+	}
 
-	print '<br>';
 	$formSetup->newItem('Company')->setAsTitle();
 
 	//Company name
@@ -399,18 +418,23 @@ if (empty($mode)) {
 	$item->defaultFieldValue = getDolGlobalString('MAIN_INFO_ITPROVIDER_TOWN');
 
 	$formSetup->formHiddenInputs['origin'] = GETPOST('origin');
+	$formSetup->formHiddenInputs['withtab'] = $withtab;
 
-	$formSetup->htmlButtonLabel = 'SaveAndEnableModule';
+	if (isRegistrationDataSavedAndPushed() && $origin != 'initmodule') {
+		$formSetup->htmlButtonLabel = 'SaveUpdate';
+	} else {
+		$formSetup->htmlButtonLabel = 'SaveAndEnableModule';
+	}
 
 	print $formSetup->generateOutput(true, true, '', '');
-	print '<br>';
 }
 
 if ($withtab) {
 	print dol_get_fiche_end();
 }
 
-print '<br><br>';
+print '<br>';
+
 
 // End of page
 llxFooter();

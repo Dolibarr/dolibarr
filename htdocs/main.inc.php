@@ -3773,7 +3773,7 @@ if (!function_exists("llxFooter")) {
 			}
 		}
 
-		// Add code to force the registration of the use of the BlockedLog module if not yet done but ready (in case past submission failed)
+		// Add code for the asynchronous registration of the use of the BlockedLog module if not yet done but ready (in case past submission failed)
 		// You can use &forceregistration=1 in parameters to force also the recall if the call was already sent.
 		$forceregistration = GETPOSTINT('forceregistration');
 
@@ -3784,7 +3784,7 @@ if (!function_exists("llxFooter")) {
 			} elseif (!isRegistrationDataSaved()) {
 				print "\n<!-- NO JS CODE TO ENABLE the registration. Registration data not saved -->\n";
 			} else {
-				$hash_unique_id_registration = dol_hash('dolibarr'.$conf->file->instance_unique_id, 'sha256', 1);	// Same than getHashUniqueIdOfRegistration()
+				$hash_unique_id_registration = getHashUniqueIdOfRegistration();
 				$constanttosavelastko = 'MAIN_LAST_REGISTRATION_KO_DATE';
 				$constanttosavefirstok = 'MAIN_FIRST_REGISTRATION_OK_DATE';
 				$constanttosavefirstokid = 'MAIN_FIRST_REGISTRATION_OK_ID';
@@ -3832,6 +3832,23 @@ if (!function_exists("llxFooter")) {
 				} else {
 					print "\n<!-- NO JS CODE TO call the registration. It was already done for this couple uniqueid and version -->\n";
 				}
+			}
+		}
+
+		// Add code for the asynchronous emulation of pushing a tracking counter of the use of the BlockedLog module trigger(for test purposes)
+		// You can use &forceregistration=1 in parameters to force also the recall if the call was already sent.
+		$forcepushcounter = GETPOSTINT('forcepushcounter');
+
+		if (isModEnabled('blockedlog') && (($_SERVER["PHP_SELF"] == DOL_URL_ROOT.'/index.php') || $forcepushcounter)) {
+			include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+			if (!isALNEQualifiedVersion()) {
+				print "\n<!-- NO JS CODE TO FORCE the push of blockedlog counter. Not a LNE qualified version -->\n";
+			} elseif (!isRegistrationDataSaved()) {
+				print "\n<!-- NO JS CODE TO FORCE the push of blockedlog counter. Registration data not saved -->\n";
+			} else {
+				// TODO
+				// Get last ID and has
+				// Call API like in trigger
 			}
 		}
 

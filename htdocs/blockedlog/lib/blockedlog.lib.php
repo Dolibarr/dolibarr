@@ -34,21 +34,19 @@ function blockedlogadmin_prepare_head($withtabsetup)
 
 	$langs->load("blockedlog");
 
+	require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
+
 	$h = 0;
 	$head = array();
 
-	if ($withtabsetup) {
-		$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog.php?withtab=".$withtabsetup;
-		$head[$h][1] = $langs->trans("Setup");
-		$head[$h][2] = 'blockedlog';
-		$h++;
-	}
+	$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/registration.php?withtab=".$withtabsetup;
+	$head[$h][1] = $langs->trans("UserRegistration");
+	$head[$h][2] = 'registration';
+	$h++;
 
+	$b = new BlockedLog($db);
 	$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog_list.php?withtab=".$withtabsetup;
 	$head[$h][1] = $langs->trans("BrowseBlockedLog");
-
-	require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
-	$b = new BlockedLog($db);
 	if ($b->alreadyUsed()) {
 		$head[$h][1] .= (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">...</span>' : '');
 	}
@@ -61,6 +59,13 @@ function blockedlogadmin_prepare_head($withtabsetup)
 	// TODO Add number of archive files in badge
 	$head[$h][2] = 'archives';
 	$h++;
+
+	if ($withtabsetup) {
+		$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog.php?withtab=".$withtabsetup;
+		$head[$h][1] = $langs->trans("TechnicalInformation");
+		$head[$h][2] = 'technicalinfo';
+		$h++;
+	}
 
 
 	$object = new stdClass();
@@ -103,6 +108,17 @@ function isRegistrationDataSaved()
 	}
 
 	return true;
+}
+
+
+/**
+ * Return if the KYC mandatory parameters are set AND pushed/registered centralized server
+ *
+ * @return boolean		True or false
+ */
+function isRegistrationDataSavedAndPushed()
+{
+	return isRegistrationDataSaved() && (bool) getDolGlobalString('MAIN_FIRST_REGISTRATION_OK_DATE');
 }
 
 
