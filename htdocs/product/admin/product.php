@@ -648,7 +648,7 @@ print '</tr>';
 if (isModEnabled("order") || isModEnabled("invoice")) {
 	print '<tr class="oddeven">';
 	print '<td>'.$form->textwithpicto($langs->trans("UseProductCustomerPackaging", $langs->transnoentities("PackagingForThisProduct")), $langs->trans("PackagingForThisProductDesc")).'</td>';
-	print '<td align="right">';
+	print '<td class="right">';
 	print ajax_constantonoff("PRODUCT_USE_CUSTOMER_PACKAGING", array(), $conf->entity, 0, 0, 0, 0);
 	print '</td>';
 	print '</tr>';
@@ -658,7 +658,7 @@ if (isModEnabled("order") || isModEnabled("invoice")) {
 if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 	print '<tr class="oddeven">';
 	print '<td>'.$form->textwithpicto($langs->trans("UseProductSupplierPackaging", $langs->transnoentities("PackagingForThisProduct")), $langs->trans("PackagingForThisProductDesc")).'</td>';
-	print '<td align="right">';
+	print '<td class="right">';
 	print ajax_constantonoff("PRODUCT_USE_SUPPLIER_PACKAGING", array(), $conf->entity, 0, 0, 0, 0);
 	print '</td>';
 	print '</tr>';
