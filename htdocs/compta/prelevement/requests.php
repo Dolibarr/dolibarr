@@ -2,7 +2,7 @@
 /* Copyright (C) 2005       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2010-2016  Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -259,7 +259,7 @@ if ($id > 0 || $ref) {
 			print '<input type="submit" class="button button-edit smallpaddingimp valign middle" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {
-			print $object->date_trans ? dol_print_date($object->date_trans, 'day') : '';
+			print dol_print_date($object->date_trans, 'day'); // $object->date_trans can't be empty due to test some lines ago
 			print ' &nbsp; <span class="opacitymedium">'.$langs->trans("By").'</span> '.$muser->getNomUrl(-1).'</td>';
 		}
 		print '</td>';
