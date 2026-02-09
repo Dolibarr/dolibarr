@@ -220,9 +220,9 @@ if ($withtab) {
 if ($mysoc->country_code == 'FR') {
 	$islne = isALNEQualifiedVersion(1, 1);
 	if ($islne) {
-		$s .= info_admin($langs->trans("CertifiedVersion"), 0, 0, 'info');
+		$s = info_admin($langs->trans("CertifiedVersion"), 0, 0, 'info');
 	} else {
-		$s .= info_admin($langs->trans("NotCertifiedVersionFR"), 0, 0, 'warning');
+		$s = info_admin($langs->trans("NotCertifiedVersionFR"), 0, 0, 'warning');
 	}
 
 	print $s;
