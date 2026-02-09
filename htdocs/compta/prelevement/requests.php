@@ -255,7 +255,7 @@ if ($id > 0 || $ref) {
 			print '<form name="setdate_trans" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setdate_trans">';
-			print $form->selectDate($object->date_trans ? $object->date_trans : -1, 'date_trans', 0, 0, 0, "setdate_trans");
+			print $form->selectDate($object->date_trans, 'date_trans', 0, 0, 0, "setdate_trans"); // $object->date_trans can't be empty due to test some lines ago
 			print '<input type="submit" class="button button-edit smallpaddingimp valign middle" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {
