@@ -54,10 +54,10 @@ $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'alpha');
 
 // Get supervariables
-$status = GETPOSTINT('status');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
-$search_status = GETPOST('search_status', 'array:int');
+$search_status = GETPOSTISARRAY('search_status') ? GETPOST('search_status', 'array:int') : array(GETPOST('search_status') ? GETPOST('search_status') : GETPOSTINT('status'));
+
 $type = GETPOST('type', 'aZ09');
 
 // Load variable for pagination
@@ -259,7 +259,6 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 $param = '';
-$param .= "&status=".urlencode((string) ($status));
 if ($type == 'bank-transfer') {
 	$param .= '&type=bank-transfer';
 }
@@ -280,7 +279,7 @@ if ($search_amount) {
 }
 if (is_array($search_status)) {
 	if (!empty($search_status)) {
-		$sql .= '&search_status='.implode(',', $search_status);
+		$param .= '&search_status='.implode(',', $search_status);
 	}
 } elseif ((string) $search_status != '' && (string) $search_status != '-1') {
 	$param .= '&search_status='.((int) $search_status);
