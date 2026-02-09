@@ -1592,7 +1592,7 @@ if (empty($reshook)) {
 		if ($pu_ttc == '' && $pu_ttc_devise != '' && $currency_tx != '' && !empty((float) $currency_tx)) {
 			$pu_equivalent_ttc = (float) $pu_ttc_devise / (float) $currency_tx;
 		}
-		var_dump($pu_equivalent);
+
 		// TODO $pu_equivalent or $pu_equivalent_ttc must be calculated from the one not null taking into account all taxes
 		/*
 		 if ($pu_equivalent) {
