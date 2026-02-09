@@ -4823,7 +4823,7 @@ class Facture extends CommonInvoice
 	 * Update invoice line with percentage
 	 *
 	 * @param  FactureLigne $line       	Invoice line
-	 * @param  int          $percent    	Percentage
+	 * @param  int|float    $percent    	Percentage
 	 * @param  boolean      $update_price   Update object price
 	 * @return void
 	 */

@@ -66,6 +66,11 @@ class FormSetup
 	 */
 	public $htmlOutputMoreButton = '';
 
+	/**
+	 * Html string of button label
+	 * @var string
+	 */
+	public $htmlButtonLabel = 'Save';
 
 	/**
 	 * @var array<string,string>
@@ -77,7 +82,7 @@ class FormSetup
 
 	/**
 	 * an list of hidden inputs used only in edit mode
-	 * @var array<string,string>  Currently array{token:string,action:string}
+	 * @var array<string,int|string>  	Currently array{token:string,action:string}
 	 */
 	public $formHiddenInputs = array();
 
@@ -191,7 +196,7 @@ class FormSetup
 			} elseif ($editMode) {
 				$out .= '<div class="form-setup-button-container center">'; // Todo : remove .center by adding style to form-setup-button-container css class in all themes
 				$out .= $this->htmlOutputMoreButton;
-				$out .= '<input class="button button-save reposition" type="submit" value="' . $this->langs->trans("Save") . '">'; // Todo fix dolibarr style for <button and use <button instead of input
+				$out .= '<input class="button button-save reposition" type="submit" value="' . $this->langs->trans($this->htmlButtonLabel ?? "Save") . '">'; // Todo fix dolibarr style for <button and use <button instead of input
 				/*$out .= ' &nbsp;&nbsp; ';
 				$out .= '<a class="button button-cancel" type="submit" href="' . $this->formAttributes['action'] . '">'.$this->langs->trans('Cancel').'</a>';
 				*/

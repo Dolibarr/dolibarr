@@ -3773,7 +3773,7 @@ if (!function_exists("llxFooter")) {
 			}
 		}
 
-		// Add code to force the registration of the use of the BlockedLog module if not yet done but ready (in case past submission failed)
+		// Add code for the asynchronous registration of the use of the BlockedLog module if not yet done but ready (in case past submission failed)
 		// You can use &forceregistration=1 in parameters to force also the recall if the call was already sent.
 		$forceregistration = GETPOSTINT('forceregistration');
 
@@ -3784,7 +3784,7 @@ if (!function_exists("llxFooter")) {
 			} elseif (!isRegistrationDataSaved()) {
 				print "\n<!-- NO JS CODE TO ENABLE the registration. Registration data not saved -->\n";
 			} else {
-				$hash_unique_id_registration = dol_hash('dolibarr'.$conf->file->instance_unique_id, 'sha256', 1);	// Same than getHashUniqueIdOfRegistration()
+				$hash_unique_id_registration = getHashUniqueIdOfRegistration();
 				$constanttosavelastko = 'MAIN_LAST_REGISTRATION_KO_DATE';
 				$constanttosavefirstok = 'MAIN_FIRST_REGISTRATION_OK_DATE';
 				$constanttosavefirstokid = 'MAIN_FIRST_REGISTRATION_OK_ID';
@@ -3834,6 +3834,31 @@ if (!function_exists("llxFooter")) {
 				}
 			}
 		}
+
+		// Add code for the asynchronous emulation of pushing a tracking counter of the use of the BlockedLog module trigger(for test purposes)
+		// You can use &forceregistration=1 in parameters to force also the recall if the call was already sent.
+		$forcepushcounter = GETPOSTINT('forcepushcounter');
+
+		if (isModEnabled('blockedlog') && ($_SERVER["PHP_SELF"] == DOL_URL_ROOT.'/index.php') && $forcepushcounter) {
+			include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+			if (!isALNEQualifiedVersion()) {
+				print "\n<!-- NO CALL TO API TO PUSH COUNTER. Not a LNE qualified version -->\n";
+			} elseif (!isRegistrationDataSaved()) {
+				print "\n<!-- NO CALL TO API TO PUSH COUNTER. Registration data not saved -->\n";
+			} else {
+				// Get last ID and hash into $tmpresult
+				include_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
+				$tmpblockedlog = new BlockedLog($db);
+				$tmpresult = $tmpblockedlog->getPreviousHash(0, 0);
+
+				// Call remote API service to record the last counter
+				include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+				$resultcall = callApiToPushCounter((int) $tmpresult['previousid'], $tmpresult['previoushash'], 1);
+
+				print "\n<!-- API TO PUSH COUNTER WAS CALLED. Result is ".$resultcall.". You may have log into dolibarr_dolibarrpushcounter.log -->\n";
+			}
+		}
+
 
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('beforeBodyClose', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks

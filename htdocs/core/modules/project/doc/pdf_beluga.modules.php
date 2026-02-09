@@ -549,7 +549,7 @@ class pdf_beluga extends ModelePDFProjects
 								$pdf->startTransaction();
 								// Label
 								$pdf->SetXY($this->posxref, $curY);
-								$pdf->MultiCell($this->posxdate - $this->posxref, 3, $element->ref, 1, 'L');
+								$pdf->MultiCell($this->posxdate - $this->posxref, 3, (string) $element->ref, 1, 'L');
 								$pageposafter = $pdf->getPage();
 								if ($pageposafter > $pageposbefore) {	// There is a pagebreak
 									$pdf->rollbackTransaction(true);
@@ -559,7 +559,7 @@ class pdf_beluga extends ModelePDFProjects
 									// Label
 									$pdf->SetXY($this->posxref, $curY);
 									$posybefore = $pdf->GetY();
-									$pdf->MultiCell($this->posxdate - $this->posxref, 3, $element->ref, 1, 'L');
+									$pdf->MultiCell($this->posxdate - $this->posxref, 3, (string) $element->ref, 1, 'L');
 									$pageposafter = $pdf->getPage();
 									$posyafter = $pdf->GetY();
 									if ($posyafter > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot))) {	// There is no space left for total+free text
@@ -607,7 +607,7 @@ class pdf_beluga extends ModelePDFProjects
 											// Label
 											$pdf->SetXY($this->posxref, $curY);
 											$posybefore = $pdf->GetY();
-											$pdf->MultiCell($this->posxdate - $this->posxref, 3, $element->ref, 1, 'L');
+											$pdf->MultiCell($this->posxdate - $this->posxref, 3, (string) $element->ref, 1, 'L');
 											$pageposafter = $pdf->getPage();
 											$posyafter = $pdf->GetY();
 										}
