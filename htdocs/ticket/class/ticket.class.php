@@ -1834,8 +1834,8 @@ class Ticket extends CommonObject
 		$now = dol_now();
 
 		// Clean parameters
-		if (isset($this->fk_track_id)) {
-			$this->fk_track_id = trim($this->fk_track_id);
+		if (isset($this->track_id)) {
+			$this->track_id = trim($this->track_id);
 		}
 
 		if (isset($this->message)) {

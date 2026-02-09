@@ -125,9 +125,16 @@ CREATE TABLE llx_ai_request_log
   raw_response_payload			MEDIUMTEXT
 )ENGINE=innodb;
 
+ALTER TABLE llx_prelevement_bons ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
 ALTER TABLE llx_ai_request_log ADD INDEX idx_ai_request_log_entity (entity);
 ALTER TABLE llx_ai_request_log ADD INDEX idx_ai_request_log_date (date_request);
 ALTER TABLE llx_ai_request_log ADD INDEX idx_ai_request_log_user (fk_user);
 ALTER TABLE llx_ai_request_log ADD INDEX idx_ai_request_log_status (status);
+
+-- Add parent group support for usergroup inheritance
+ALTER TABLE llx_usergroup ADD COLUMN fk_parent integer DEFAULT NULL AFTER entity;
+ALTER TABLE llx_usergroup ADD INDEX idx_usergroup_fk_parent (fk_parent);
+ALTER TABLE llx_usergroup ADD CONSTRAINT fk_usergroup_parent FOREIGN KEY (fk_parent) REFERENCES llx_usergroup (rowid);
 
 -- end of migration

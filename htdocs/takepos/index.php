@@ -579,19 +579,31 @@ function ClickProduct(position, qty = 1) {
 		LoadProducts(position, true);
 	}
 	else{
-		console.log($('#prodiv4').data('rowid'));
 		invoiceid = $("#invoiceid").val();
 		idproduct=$('#prodiv'+position).data('rowid');
 		console.log("Click on product at position "+position+" for idproduct "+idproduct+", qty="+qty+" invoiceid="+invoiceid);
 		if (idproduct == "") {
 			return;
 		}
-		// Call page invoice.php to generate the section with product lines
-		$("#poslines").load("invoice.php?action=addline&token=<?php echo newToken(); ?>&place="+place+"&idproduct="+idproduct+"&qty="+qty+"&invoiceid="+invoiceid, function() {
-			<?php if (getDolGlobalString('TAKEPOS_CUSTOMER_DISPLAY')) {
-				echo "CustomerDisplay();";
-			}?>
-		});
+		addInvoiceLine = function(qty) {
+			// Call page invoice.php to generate the section with product lines
+			$("#poslines").load("invoice.php?action=addline&token=<?php echo newToken(); ?>&place="+place+"&idproduct="+idproduct+"&qty="+qty+"&invoiceid="+invoiceid, function() {
+				idproduct = "";
+				<?php if (getDolGlobalString('TAKEPOS_CUSTOMER_DISPLAY')) {
+					echo "CustomerDisplay();";
+				}?>
+			});
+		};
+		// call WeighingScale() if product is a product that need to measure weight
+		<?php if (getDolGlobalString('TAKEPOS_WEIGHING_SCALE')) { ?>
+			if ($('#prodiv'+position).data('unit') == 2) {
+				WeighingScale(addInvoiceLine);
+			} else {
+				addInvoiceLine(qty);
+			}
+		<?php } else { ?>
+			addInvoiceLine(qty);
+		<?php } ?>
 	}
 
 	ClearSearch(false);
@@ -1076,18 +1088,53 @@ function FullScreen() {
 	document.documentElement.requestFullscreen();
 }
 
-function WeighingScale(){
-	console.log("Weighing Scale");
+function WeighingScale(callback) {
+	console.log("Weighing Scale: invoiceid = " + placeid + ", lineid = " + selectedline);
+	<?php if (getDolGlobalString('TAKEPOS_CONNECTOR_TO_WHB_SCALE')) {?>
+		<?php if (getDolGlobalString('WEIGHINGSCALE_PROTOCOL') == "diag06") { ?>
+			// Protocole Dialog-06, il a besoin du prix unitaire, le demander s'il manque
+			var urlProduct;
+			if (idproduct == "" && selectedline > 0) {
+				urlProduct = "<?php echo DOL_URL_ROOT; ?>/api/index.php/takeposconnector/invoices/" + placeid + "/lines/" + selectedline + "/product";
+			} else {
+				urlProduct = "<?php echo DOL_URL_ROOT; ?>/api/index.php/products/" + idproduct;
+			}
+			$.ajax({
+				type: "GET",
+				headers: { "DOLAPIKEY": '<?php echo $user->api_key; ?>' },
+				url: urlProduct,
+			})
+			.done(function(product) {
+				if (callback === undefined) {
+					callback = function(qty) {
+						$("#poslines").load("invoice.php?token=<?php echo newToken(); ?>&action=updateqty&place="+place+"&idline="+selectedline+"&number="+qty);
+					};
+				}
+				if (product.fk_unit == "2") {
+					askForWeight(product.multiprices_ttc[1], callback, function (errorMessage) {
+						console.log("Erreur: " + errorMessage);
+					});
+				}
+			});
+		<?php } else { ?>
+			// Protocole par défaut de takeposconnector: réception continue du poids/stabilité
+			editnumber = globalWeight;
+			$("#poslines").load("invoice.php?token=<?php echo newToken(); ?>&action=updateqty&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
+				editnumber="";
+			});
+		<?php } ?>
+	<?php } else { ?> // utilisation du new TakePOS-Connector PHP: envoie "$" à la balance pour avoir le poids
 	$.ajax({
 		type: "POST",
 		data: { token: 'notrequired' },
 		url: '<?php print getDolGlobalString('TAKEPOS_PRINT_SERVER'); ?>/scale/index.php',
 	})
 	.done(function( editnumber ) {
-		$("#poslines").load("invoice.php?token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
+		$("#poslines").load("invoice.php?token=<?php echo newToken(); ?>&action=updateqty&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
 				editnumber="";
 			});
 	});
+	<?php } ?>
 }
 
 $( document ).ready(function() {
@@ -1459,32 +1506,38 @@ if (getDolGlobalString('TAKEPOS_DIRECT_PAYMENT')) {
 }
 
 $customprinterallowed = false;
+$customprinttemplateallowed = true;
 
 // BAR RESTAURANT specific menu
 if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
 	// Button to print receipt before payment
 	$customprinterallowed = true;
 	$customprinttemplateallowed = true;
-	include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
-	if (isALNERunningVersion()) {		// No need to show this option because it has no effect when isALNERunningVersion is true.
-		$customprinttemplateallowed = false;	// Custom printer may be allowed if mandatory information in template are guaranteed. For the moment, we prefer not allow this.
-	}
+}
+
+include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+if (isALNERunningVersion()) {
+	// Custom printer may be allowed if mandatory information in template are guaranteed. For the moment, we prefer not allow this.
+	$customprinttemplateallowed = false;
 }
 
 // Button to print receipt
 if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {		// deprecated method
-	if (getDolGlobalString('TAKEPOS_PRINT_SERVER') && filter_var(getDolGlobalString('TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL')) == true) {
-		$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("PrintTicket").'</div>', 'action' => 'TakeposConnector(placeid);');
+	if (getDolGlobalString('TAKEPOS_PRINT_SERVER') && filter_var(getDolGlobalString('TAKEPOS_PRINT_SERVER'), FILTER_VALIDATE_URL) == true) {
+		// If TAKEPOS_PRINT_SERVER is an URL
+		$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("PrintTicket").'</div>', 'action' => 'PrintByESCPOSOld(placeid);');
 	} else {
-		$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("PrintTicket").'</div>', 'action' => 'TakeposPrinting(placeid);');
+		// If TAKEPOS_PRINT_SERVER is an IP
+		// Print by calling the receipt.php to get HTML content and send the HTML content to TAKEPOS_PRINT_SERVER:8111/print
+		$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("PrintTicket").'</div>', 'action' => 'PrintHTMLToSlashPrint(placeid);');
 	}
-} elseif ($customprinterallowed && (isModEnabled('receiptprinter') && getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0) || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {		// @phpstan-ignore-line
-	// Button Print Receipt on special printer
+} elseif ($customprinterallowed && $customprinttemplateallowed && (isModEnabled('receiptprinter') && getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0) || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {		// @phpstan-ignore-line
+	// Button Print Receipt on special custom printer using custom template
 	$nameOfPrinter = dol_getIdFromCode($db, getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term), 'printer_receipt', 'rowid', 'name', 1);
-	$menus[$r++] = array('title' => '<div title="'.dolPrintHTMLForAttribute($langs->trans("PrintOn", $nameOfPrinter)).'"><span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("PrintTicket").'</div></div>', 'action' => 'DolibarrTakeposPrinting(placeid);');
+	$menus[$r++] = array('title' => '<div title="'.dolPrintHTMLForAttribute($langs->trans("PrintOn", $nameOfPrinter)).'"><span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("PrintTicket").'</div></div>', 'action' => 'PrintByESCPOS(placeid);');
 } else {
 	// Button Print Receipt on browser
-	$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("PrintTicket").'</div>', 'action' => 'Print(placeid);');
+	$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("PrintTicket").'</div>', 'action' => 'PrintByBrowser(placeid);');
 }
 
 if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector" && getDolGlobalString('TAKEPOS_ORDER_NOTES') == 1) {

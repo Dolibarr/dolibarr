@@ -318,7 +318,7 @@ class modBlockedLog extends DolibarrModules
 	 */
 	public function getDesc($foruseinpopupdesc = 0)
 	{
-		global $langs;
+		global $langs, $mysoc;
 		$langs->load("admin");
 
 		// If module description translation exists
@@ -326,8 +326,20 @@ class modBlockedLog extends DolibarrModules
 
 		if ($foruseinpopupdesc) {
 			$langs->load("blockedlog");
-			$s .= '<br><br>';
-			if (isALNEQualifiedVersion(1, 1)) {
+			$s .= '<br>';
+
+			// Special message for France
+			if ($mysoc->country_code == 'FR') {
+				$islne = isALNEQualifiedVersion(1, 1);
+				if ($islne) {
+					$s .= info_admin($langs->trans("CertifiedVersion"), 0, 0, 'info');
+				} else {
+					$s .= info_admin($langs->trans("NotCertifiedVersionFR"), 0, 0, 'warning');
+				}
+			}
+
+			// Add warning to advice users to make regularly archives
+			if (in_array($mysoc->country_code, array('FR'))) {
 				$s .= info_admin($langs->trans("UnalterableLogTool1FR"), 0, 0, 'warning');
 			}
 		}

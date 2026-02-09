@@ -579,13 +579,14 @@ if (empty($reshook)) {
 			$conf->global->STOCK_CALCULATE_ON_BILL = 1;	// We force setup to have update of stock on invoice validation/unvalidation
 
 			$constantforkey = 'CASHDESK_ID_WAREHOUSE'.(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '');
+			$warehouseid = getDolGlobalInt($constantforkey);
 
 			dol_syslog("Validate invoice with stock change into warehouse defined into constant ".$constantforkey." = ".getDolGlobalString($constantforkey)." or warehouseid= ".$warehouseid." if defined.");
 
 			// Validate invoice with stock change into warehouse getDolGlobalInt($constantforkey)
 			// Label of stock movement will be the same as when we validate invoice "Invoice XXXX validated"
 			$batch_rule = 0;	// Module productbatch is disabled here, so no need for a batch_rule.
-			$res = $creditnote->validate($user, '', getDolGlobalInt($constantforkey), 0, $batch_rule);
+			$res = $creditnote->validate($user, '', $warehouseid, 0, $batch_rule);
 			if ($res < 0) {
 				$error++;
 				dol_htmloutput_errors($creditnote->error, $creditnote->errors, 1);
@@ -1195,7 +1196,7 @@ if (empty($reshook)) {
 	if ($action == "order" && $placeid != 0 && ($user->hasRight('takepos', 'run') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE'))) {
 		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		if ((isModEnabled('receiptprinter') && getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0) || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter" || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
-			require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
+			require_once DOL_DOCUMENT_ROOT.'/takepos/class/dolreceiptprinter.class.php';
 			$printer = new dolReceiptPrinter($db);
 		}
 
@@ -1343,21 +1344,21 @@ if (empty($reshook)) {
 			} elseif (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
 				// Used when the external addon takeposconnector is installed. Deprecated.
 				if (getDolGlobalString('TAKEPOS_PRINT_SERVER') && filter_var(getDolGlobalString('TAKEPOS_PRINT_SERVER'), FILTER_VALIDATE_URL) == true) {
-					$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="TakeposConnector('.$placeid.')">'.$langs->trans('PrintTicket').'</button>';
+					$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="PrintByESCPOSOld('.$placeid.')">'.$langs->trans('PrintTicket').'</button>';
 				} else {
-					$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="TakeposPrinting('.$placeid.')">'.$langs->trans('PrintTicket').'</button>';
+					$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="PrintHTMLToSlashPrint('.$placeid.')">'.$langs->trans('PrintTicket').'</button>';
 				}
 			} elseif ($customprinterallowed && (isModEnabled('receiptprinter') && getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0) || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {	// @phpstan-ignore-line
 				// If we set to use a specific receipt printer
 				$nameOfPrinter = dol_getIdFromCode($db, getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term), 'printer_receipt', 'rowid', 'name', 1);
-				$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="DolibarrTakeposPrinting('.$placeid.')" title="'.dolPrintHTMLForAttribute($langs->trans("SentToPrinter").' '.$nameOfPrinter).'">'.$langs->trans('PrintTicket').'</button>';
+				$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="PrintByESCPOS('.$placeid.')" title="'.dolPrintHTMLForAttribute($langs->trans("SentToPrinter").' '.$nameOfPrinter).'">'.$langs->trans('PrintTicket').'</button>';
 			} else {
-				$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="Print('.$placeid.')">'.$langs->trans('PrintTicket').'</button>';
+				$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="PrintByBrowser('.$placeid.')">'.$langs->trans('PrintTicket').'</button>';
 				if ($customprinttemplateallowed && getDolGlobalString('TAKEPOS_PRINT_WITHOUT_DETAILS')) {
 					$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="PrintBox('.$placeid.', \'without_details\')">'.$langs->trans('PrintWithoutDetails').'</button>';
 				}
 				if ($customprinttemplateallowed && getDolGlobalString('TAKEPOS_GIFT_RECEIPT')) {
-					$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="Print('.$placeid.', 1)">'.$langs->trans('GiftReceipt').'</button>';
+					$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="PrintByBrowser('.$placeid.', 1)">'.$langs->trans('GiftReceipt').'</button>';
 				}
 			}
 			if (getDolGlobalString('TAKEPOS_EMAIL_TEMPLATE_INVOICE') && getDolGlobalInt('TAKEPOS_EMAIL_TEMPLATE_INVOICE') > 0) {
@@ -1540,19 +1541,16 @@ function PrintBox(id, action) {
 }
 
 /* Open the popup of the receipt to allow printing */
-function Print(id, gift) {
-
-
-
-	console.log("Call Print() to generate the receipt.");
+function PrintByBrowser(id, gift) {
+	console.log("Call PrintByBrowser() to generate the receipt.");
 	$.colorbox({href:"receipt.php?facid="+id+"&gift="+gift, width:"40%", height:"90%", transition:"none", iframe:"true", title:'<?php echo dol_escape_js($langs->trans("PrintTicket")); ?>'});
 	return true;
 }
 
-/* Print of configured printer */
-function TakeposPrinting(id){
+/* Print of configured printer when TAKEPOS_PRINT_SERVER is IP  */
+function PrintHTMLToSlashPrint(id){
 	var receipt;
-	console.log("TakeposPrinting" + id);
+	console.log("PrintHTMLToSlashPrint" + id);
 	$.get("receipt.php?facid="+id, function(data, status) {
 		receipt=data.replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '');
 		$.ajax({
@@ -1564,9 +1562,10 @@ function TakeposPrinting(id){
 	return true;
 }
 
-function TakeposConnector(id){
-	console.log("TakeposConnector" + id);
-	$.get("<?php echo DOL_URL_ROOT; ?>/takepos/ajax/ajax.php?action=printinvoiceticket&token=<?php echo newToken(); ?>&term=<?php echo urlencode(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : ''); ?>&id="+id+"&token=<?php echo currentToken(); ?>", function(data, status) {
+/* Print of configured printer when TAKEPOS_PRINT_SERVER is URL, using the ESCPOS driver */
+function PrintByESCPOSOld(id){
+	console.log("PrintByESCPOSOld id=" + id);
+	$.get("<?php echo DOL_URL_ROOT; ?>/takepos/ajax/ajax.php?action=printinvoiceticket&token=<?php echo currentToken(); ?>&term=<?php echo urlencode(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : ''); ?>&id="+id, function(data, status) {
 		$.ajax({
 			type: "POST",
 			url: '<?php print getDolGlobalString('TAKEPOS_PRINT_SERVER'); ?>/printer/index.php',
@@ -1579,15 +1578,15 @@ function TakeposConnector(id){
 <?php
 $nameOfPrinter = dol_getIdFromCode($db, getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term), 'printer_receipt', 'rowid', 'name', 1);
 ?>
-// Call the ajax to execute the print.
+// Call the ajax to execute the printinvoiceticket action, using the ESCPOS driver
 // With some external module another method may be called.
-function DolibarrTakeposPrinting(id) {
-	console.log("DolibarrTakeposPrinting Printing invoice ticket by calling takepos/aja/ajax.php" + id);
+function PrintByESCPOS(id) {
+	console.log("PrintByESCPOS Printing invoice ticket by calling takepos/aja/ajax.php id=" + id);
 
 	$.ajax({
 		type: "GET",
 		data: { token: '<?php echo currentToken(); ?>' },
-		url: "<?php print DOL_URL_ROOT.'/takepos/ajax/ajax.php?action=printinvoiceticket&token='.newToken().'&term='.urlencode(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '').'&id='; ?>" + id,
+		url: "<?php print DOL_URL_ROOT.'/takepos/ajax/ajax.php?action=printinvoiceticket&token='.currentToken().'&term='.urlencode(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '').'&id='; ?>" + id,
 		success: function(){
 				showPrintResultPopup('<?php echo dol_escape_js($langs->trans("SentToPrinter").' '.$nameOfPrinter); ?>', 2000);
 			},
@@ -1781,11 +1780,16 @@ if (getDolGlobalString('TAKEPOS_CUSTOMER_DISPLAY')) {
 	echo "line1=line1.padEnd(20);";
 	echo "var line2='".$CUSTOMER_DISPLAY_line2."'.substring(0,20);";
 	echo "line2=line2.padEnd(20);";
-	echo "$.ajax({
-		type: 'GET',
-		data: { text: line1+line2 },
-		url: '".getDolGlobalString('TAKEPOS_PRINT_SERVER')."/display/index.php',
-	});";
+	if (getDolGlobalString('TAKEPOS_CONNECTOR_TO_WHB_CUSTOMER_DISPLAY')) {
+		echo 'webSocketCustomerDisplay.send(line1);';
+		echo 'webSocketCustomerDisplay.send(line2);';
+	} else {
+		echo "$.ajax({
+			type: 'GET',
+			data: { text: line1+line2 },
+			url: '".getDolGlobalString('TAKEPOS_PRINT_SERVER')."/display/index.php',
+		});";
+	}
 	echo "}";
 }
 ?>

@@ -20,7 +20,7 @@
  */
 
 /**
- *  \file           htdocs/core/class/dolreceiptprinter.class.php
+ *  \file           htdocs/takepos/class/dolreceiptprinter.class.php
  *  \brief          Print receipt ticket on various ESC/POS printer
  */
 
@@ -630,7 +630,7 @@ class dolReceiptPrinter extends Printer
 	}
 
 	/**
-	 *  Function to Print Receipt Ticket
+	 *  Function to Print Receipt Ticket using ESCPOS lib
 	 *
 	 *  @param   Facture|Commande   $object         Order or invoice object
 	 *  @param   int       			$templateid     Template id
@@ -645,7 +645,57 @@ class dolReceiptPrinter extends Printer
 		$langs->load('bills');
 
 		$error = 0;
-		$ret = $this->loadTemplate($templateid);
+
+		include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+		$islneverion = isALNERunningVersion();
+
+		if ($templateid) {
+			// Load the custom template from table printer_receipt_template
+			$ret = $this->loadTemplate($templateid);
+
+			// For the moment, we do not allow custom ticket when used in LNE certified context because
+			if ($islneverion) {
+				// Test that all required tags are present, if not we fallback on the generic template by setting templateid=0
+				// TODO
+
+				$templateid = 0;
+			}
+		}
+
+		if (empty($templateid) || $islneverion) {
+			// The default hard coded template
+			$this->template = "{dol_align_center}\r\n";
+			$this->template .= "{dol_print_text}{dol_value_mysoc_name}\r\n";
+			$this->template .= "{dol_print_text}{dol_value_mysoc_address}\r\n";
+			$this->template .= "{dol_print_text}{dol_value_mysoc_zip}{dol_value_mysoc_town}\r\n";
+			$this->template .= "{dol_print_text}{dol_value_mysoc_idprof1}\r\n";
+			$this->template .= "{dol_print_text}{dol_value_mysoc_vatnumber}\r\n";
+			$this->template .= "{dol_line_feed}\r\n";
+			$this->template .= "{dol_print_text}".$langs->transnoentitiesnoconv("Invoice")." {dol_value_object_ref}\r\n";
+			if ($object->status != 2) {
+				$this->template .= "{dol_print_text}*** ".$langs->transnoentities("TemporaryReceipt")." ***\r\n";
+			}
+			if ($object->pos_print_counter > 1) {
+				$this->template .= "{dol_print_text}*** ".$langs->transnoentities("DUPLICATA").' (no '.($object->pos_print_counter - 1).") ***\r\n";
+			}
+
+			$this->template .= "{dol_value_date}\r\n";
+			$this->template .= "{dol_value_currentdate}\r\n";
+			$this->template .= "{dol_value_signaturehashstart}\r\n";
+			$this->template .= "{dol_line_feed}\r\n";
+			$this->template .= "{dol_align_left}\r\n";
+			$this->template .= "{dol_print_object_lines}\r\n";
+			$this->template .= "{dol_line_feed}\r\n";
+			$this->template .= "{dol_print_object_tax}\r\n";
+			$this->template .= "{dol_line_feed}\r\n";
+			$this->template .= "{dol_print_object_total}\r\n";
+			$this->template .= "{dol_line_feed}\r\n";
+			if ($islneverion) {
+				$this->template .= "{dol_value_lnemention}\r\n";
+				$this->template .= "{dol_line_feed}\r\n";
+			}
+			$this->template .= "{dol_cut_paper_full}";
+		}
 
 		$now = dol_now('tzuser');
 		// Placeholders to replace with the actual value before further parsing (dol_value_xxx)

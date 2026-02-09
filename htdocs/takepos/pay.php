@@ -534,11 +534,18 @@ if (getDolGlobalString('TAKEPOS_CUSTOMER_DISPLAY')) {
 	echo "line1=line1.padEnd(20);";
 	echo "var line2='".price($invoice->total_ttc, 1, '', 1, -1, -1)."'.substring(0,20);";
 	echo "line2=line2.padEnd(20);";
-	echo "$.ajax({
-		type: 'GET',
-		data: { text: line1+line2 },
-		url: '".getDolGlobalString('TAKEPOS_PRINT_SERVER')."/display/index.php',
-	});";
+	if (getDolGlobalString('TAKEPOS_CONNECTOR_TO_WHB_CUSTOMER_DISPLAY')) {
+		echo 'webSocketCustomerDisplay.onOpen(function() {';
+		echo '	webSocketCustomerDisplay.send(line1);';
+		echo '	webSocketCustomerDisplay.send(line2);';
+		echo '});';
+	} else {
+		echo "$.ajax({
+			type: 'GET',
+			data: { text: line1+line2 },
+			url: '".getDolGlobalString('TAKEPOS_PRINT_SERVER')."/display/index.php',
+		});";
+	}
 }
 ?>
 </script>

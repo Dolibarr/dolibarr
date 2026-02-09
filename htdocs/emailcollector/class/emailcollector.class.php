@@ -1152,6 +1152,9 @@ class EmailCollector extends CommonObject
 		$searchfilterreplyto = 0;
 		$searchfilterexcludebodyarray = array();
 		$searchfilterexcludesubjectarray = array();
+		$searchfilterexcludeemailarray = array();
+		$searchfilterexcludedomainarray = array();
+		$searchfilterexcludeemailmap = array();
 		$operationslog = '';
 		$rulesreplyto = array();
 		$connectstringsource = '';
@@ -1371,6 +1374,63 @@ class EmailCollector extends CommonObject
 					$rule['rulevalue'] = substr($rule['rulevalue'], 1);
 				}
 
+				if ($rule['type'] == 'excludeemail') {
+					$tmpvalues = preg_split('/[\\r\\n,;]+/', (string) $rule['rulevalue']);
+					if (is_array($tmpvalues)) {
+						foreach ($tmpvalues as $tmpvalue) {
+							$tmpvalue = trim((string) $tmpvalue);
+							if ($tmpvalue === '') continue;
+
+							if (preg_match_all('/[a-z0-9._%+\\-]+@[a-z0-9.\\-]+\\.[a-z]{2,}/i', $tmpvalue, $tmpmatches)) {
+								foreach ($tmpmatches[0] as $tmpemail) {
+									$tmpemail = strtolower(trim($tmpemail));
+									if ($tmpemail !== '') {
+										$searchfilterexcludeemailarray[] = $tmpemail;
+									}
+								}
+							}
+						}
+					}
+					continue;
+				}
+				if ($rule['type'] == 'excludedomain') {
+					$tmpvalues = preg_split('/[\\r\\n,;]+/', (string) $rule['rulevalue']);
+					if (is_array($tmpvalues)) {
+						foreach ($tmpvalues as $tmpvalue) {
+							$tmpvalue = trim((string) $tmpvalue);
+							if ($tmpvalue === '') continue;
+
+							if (preg_match_all('/[a-z0-9._%+\\-]+@([a-z0-9.\\-]+\\.[a-z]{2,})/i', $tmpvalue, $tmpmatches)) {
+								foreach ($tmpmatches[1] as $tmpdomain) {
+									$tmpdomain = strtolower(trim($tmpdomain));
+									$tmpdomain = trim($tmpdomain, ". \t\n\r\0\x0B");
+									if ($tmpdomain !== '') {
+										$searchfilterexcludedomainarray[] = $tmpdomain;
+									}
+								}
+								continue;
+							}
+
+							$tmpdomain = strtolower($tmpvalue);
+							$tmpdomain = preg_replace('/^mailto:/i', '', $tmpdomain);
+							$tmpdomain = trim($tmpdomain);
+							$tmpdomain = trim($tmpdomain, "<> \t\n\r\0\x0B.,;");
+							if (strpos($tmpdomain, '@') === 0) {
+								$tmpdomain = substr($tmpdomain, 1);
+							}
+							$posat = strrpos($tmpdomain, '@');
+							if ($posat !== false) {
+								$tmpdomain = substr($tmpdomain, $posat + 1);
+							}
+							$tmpdomain = trim($tmpdomain, ". \t\n\r\0\x0B");
+							if ($tmpdomain !== '') {
+								$searchfilterexcludedomainarray[] = $tmpdomain;
+							}
+						}
+					}
+					continue;
+				}
+
 				if ($rule['type'] == 'from') {
 					$tmprulevaluearray = explode('*', $rule['rulevalue']);
 					if (count($tmprulevaluearray) >= 2) {
@@ -1512,6 +1572,63 @@ class EmailCollector extends CommonObject
 					$rule['rulevalue'] = substr($rule['rulevalue'], 1);
 				}
 
+				if ($rule['type'] == 'excludeemail') {
+					$tmpvalues = preg_split('/[\\r\\n,;]+/', (string) $rule['rulevalue']);
+					if (is_array($tmpvalues)) {
+						foreach ($tmpvalues as $tmpvalue) {
+							$tmpvalue = trim((string) $tmpvalue);
+							if ($tmpvalue === '') continue;
+
+							if (preg_match_all('/[a-z0-9._%+\\-]+@[a-z0-9.\\-]+\\.[a-z]{2,}/i', $tmpvalue, $tmpmatches)) {
+								foreach ($tmpmatches[0] as $tmpemail) {
+									$tmpemail = strtolower(trim($tmpemail));
+									if ($tmpemail !== '') {
+										$searchfilterexcludeemailarray[] = $tmpemail;
+									}
+								}
+							}
+						}
+					}
+					continue;
+				}
+				if ($rule['type'] == 'excludedomain') {
+					$tmpvalues = preg_split('/[\\r\\n,;]+/', (string) $rule['rulevalue']);
+					if (is_array($tmpvalues)) {
+						foreach ($tmpvalues as $tmpvalue) {
+							$tmpvalue = trim((string) $tmpvalue);
+							if ($tmpvalue === '') continue;
+
+							if (preg_match_all('/[a-z0-9._%+\\-]+@([a-z0-9.\\-]+\\.[a-z]{2,})/i', $tmpvalue, $tmpmatches)) {
+								foreach ($tmpmatches[1] as $tmpdomain) {
+									$tmpdomain = strtolower(trim($tmpdomain));
+									$tmpdomain = trim($tmpdomain, ". \t\n\r\0\x0B");
+									if ($tmpdomain !== '') {
+										$searchfilterexcludedomainarray[] = $tmpdomain;
+									}
+								}
+								continue;
+							}
+
+							$tmpdomain = strtolower($tmpvalue);
+							$tmpdomain = preg_replace('/^mailto:/i', '', $tmpdomain);
+							$tmpdomain = trim($tmpdomain);
+							$tmpdomain = trim($tmpdomain, "<> \t\n\r\0\x0B.,;");
+							if (strpos($tmpdomain, '@') === 0) {
+								$tmpdomain = substr($tmpdomain, 1);
+							}
+							$posat = strrpos($tmpdomain, '@');
+							if ($posat !== false) {
+								$tmpdomain = substr($tmpdomain, $posat + 1);
+							}
+							$tmpdomain = trim($tmpdomain, ". \t\n\r\0\x0B");
+							if ($tmpdomain !== '') {
+								$searchfilterexcludedomainarray[] = $tmpdomain;
+							}
+						}
+					}
+					continue;
+				}
+
 				if ($rule['type'] == 'from') {
 					$tmprulevaluearray = explode('*', $rule['rulevalue']);	// Search on abc*def means searching on 'abc' and on 'def'
 					if (count($tmprulevaluearray) >= 2) {
@@ -1634,6 +1751,14 @@ class EmailCollector extends CommonObject
 			}
 
 			dol_syslog("IMAP search string = ".$search);
+		}
+
+		if (!empty($searchfilterexcludeemailarray)) {
+			$searchfilterexcludeemailarray = array_values(array_filter(array_unique($searchfilterexcludeemailarray)));
+			$searchfilterexcludeemailmap = array_fill_keys($searchfilterexcludeemailarray, true);
+		}
+		if (!empty($searchfilterexcludedomainarray)) {
+			$searchfilterexcludedomainarray = array_values(array_filter(array_unique($searchfilterexcludedomainarray)));
 		}
 
 		$nbemailprocessed = 0;
@@ -1989,6 +2114,11 @@ class EmailCollector extends CommonObject
 				if (getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')) {
 					/** @var Webklex\PHPIMAP\Message $imapemail */
 					'@phan-var-force Webklex\PHPIMAP\Message $imapemail';
+					// Reset message body globals to prevent carryover from previous email in loop
+					// Note: $charset is NOT reset as PHPIMAP handles charset internally
+					$htmlmsg = $plainmsg = '';
+					$attachments = array();
+
 					if ($imapemail->hasHTMLBody()) {
 						$htmlmsg = $imapemail->getHTMLBody();
 					}
@@ -1998,7 +2128,7 @@ class EmailCollector extends CommonObject
 					if ($imapemail->hasAttachments()) {
 						$attachments = $imapemail->getAttachments()->all();
 					} else {
-						$attachments = [];
+						$attachments = array();
 					}
 				} else {
 					$getMsg = $this->getmsg($connection, $imapemail); // This set global var $charset, $htmlmsg, $plainmsg, $attachments
@@ -2133,6 +2263,70 @@ class EmailCollector extends CommonObject
 					$replyto = $replytostring;
 					$replytotext = '';
 				}
+
+				if (!empty($searchfilterexcludeemailmap) || !empty($searchfilterexcludedomainarray)) {
+					$emailsToCheck = array();
+					$tmpaddressblob = trim($fromstring.' '.$replytostring);
+					if ($tmpaddressblob !== '' && preg_match_all('/[a-z0-9._%+\\-]+@[a-z0-9.\\-]+\\.[a-z]{2,}/i', $tmpaddressblob, $tmpmatches)) {
+						foreach ($tmpmatches[0] as $tmpEmail) {
+							$tmpEmail = strtolower(trim($tmpEmail));
+							if ($tmpEmail !== '') {
+								$emailsToCheck[$tmpEmail] = true;
+							}
+						}
+					}
+
+					if (empty($emailsToCheck)) {
+						foreach (array($from, $replyto) as $tmpEmail) {
+							$tmpEmail = strtolower(trim((string) $tmpEmail));
+							if ($tmpEmail !== '' && strpos($tmpEmail, '@') !== false) {
+								$emailsToCheck[$tmpEmail] = true;
+							}
+						}
+					}
+
+					$discardEmail = '';
+					$discardDomain = '';
+					$matchedDomainRule = '';
+
+					foreach (array_keys($emailsToCheck) as $tmpEmail) {
+						if (!empty($searchfilterexcludeemailmap[$tmpEmail])) {
+							$discardEmail = $tmpEmail;
+							break;
+						}
+
+						if (!empty($searchfilterexcludedomainarray)) {
+							$posat = strrpos($tmpEmail, '@');
+							if ($posat === false) {
+								continue;
+							}
+							$tmpDomain = strtolower(substr($tmpEmail, $posat + 1));
+							foreach ($searchfilterexcludedomainarray as $excludedDomain) {
+								if ($excludedDomain === '') {
+									continue;
+								}
+								if ($tmpDomain === $excludedDomain || substr($tmpDomain, -strlen('.'.$excludedDomain)) === '.'.$excludedDomain) {
+									$discardDomain = $tmpDomain;
+									$matchedDomainRule = $excludedDomain;
+									break 2;
+								}
+							}
+						}
+					}
+
+					if ($discardEmail !== '' || $discardDomain !== '') {
+						$nbemailprocessed++;
+						if ($discardEmail !== '') {
+							$operationslog .= '<br>Discarded - Sender email excluded: '.$discardEmail;
+							dol_syslog(" Discarded - Sender email excluded: ".$discardEmail);
+						} else {
+							$operationslog .= '<br>Discarded - Sender domain excluded: '.$discardDomain.($matchedDomainRule !== '' && $matchedDomainRule !== $discardDomain ? ' (matched '.$matchedDomainRule.')' : '');
+							dol_syslog(" Discarded - Sender domain excluded: ".$discardDomain.($matchedDomainRule !== '' && $matchedDomainRule !== $discardDomain ? " (matched ".$matchedDomainRule.")" : ""));
+						}
+						continue;
+					}
+				}
+
 				$fk_element_id = 0;
 				$fk_element_type = '';
 
@@ -2688,10 +2882,20 @@ class EmailCollector extends CommonObject
 									$result = $thirdpartystatic->findNearest((int) $idtouseforthirdparty, (string) $nametouseforthirdparty, '', '', '', '', '', '', '', '', (string) $emailtouseforthirdparty, (string) $namealiastouseforthirdparty);
 
 									if ($result < 0) {
-										$errorforactions++;
-										$this->error = 'Error when getting thirdparty with name '.((string) $nametouseforthirdparty).', alternative name '.((string) $namealiastouseforthirdparty).' and email '.$emailtouseforthirdparty.' (may be 2 record exists with same name ?)';
-										$this->errors[] = $this->error;
-										break;
+										if (getDolGlobalInt('EMAILCOLLECTOR_USE_THIS_THIRDPARTY_ID_IF_DUPLICATE') && $result == -2) {	// If 2 thirdparty found, we will use a generic one defined by EMAILCOLLECTOR_USE_THIS_THIRDPARTYID_IF_DUPLICATE
+											$idtouseforthirdparty = getDolGlobalInt('EMAILCOLLECTOR_USE_THIS_THIRDPARTY_ID_IF_DUPLICATE');
+
+											$thirdpartystatic->fetch($idtouseforthirdparty);
+
+											dol_syslog('Thirdparty found twice (or more) so, according to option EMAILCOLLECTOR_USE_THIS_THIRDPARTY_ID_IF_DUPLICATE, we will use the generic one with id = '.dol_escape_htmltag((string) $thirdpartystatic->id)." and name ".dol_escape_htmltag($thirdpartystatic->name));
+
+											$operationslog .= '<br>Thirdparty found twice (or more) so, according to option EMAILCOLLECTOR_USE_THIS_THIRDPARTY_ID_IF_DUPLICATE, we will use the generic one with id = '.dol_escape_htmltag((string) $thirdpartystatic->id)." and name ".dol_escape_htmltag($thirdpartystatic->name);
+										} else {
+											$errorforactions++;
+											$this->error = 'Error when getting thirdparty with name '.((string) $nametouseforthirdparty).', alternative name '.((string) $namealiastouseforthirdparty).' and email '.$emailtouseforthirdparty.' (may be 2 record exists with same name ?)';
+											$this->errors[] = $this->error;
+											break;
+										}
 									}
 									if ($result == 0) {	// No thirdparty found
 										if ($operation['type'] == 'loadthirdparty') {
@@ -2708,13 +2912,13 @@ class EmailCollector extends CommonObject
 												} else {
 													$errorforactions++;
 													$langs->load("errors");
-													$this->error = $langs->trans('ErrorFailedToLoadThirdParty', $idtouseforthirdparty, (string) $emailtouseforthirdparty, (string) $nametouseforthirdparty, (string) $namealiastouseforthirdparty);
+													$this->error = $langs->trans('ErrorFailedToLoadThirdParty', (string) $idtouseforthirdparty, (string) $emailtouseforthirdparty, (string) $nametouseforthirdparty, (string) $namealiastouseforthirdparty);
 													$this->errors[] = $this->error;
 												}
 											} else {
 												$errorforactions++;
 												$langs->load("errors");
-												$this->error = $langs->trans('ErrorFailedToLoadThirdParty', $idtouseforthirdparty, (string) $emailtouseforthirdparty, (string) $nametouseforthirdparty, (string) $namealiastouseforthirdparty);
+												$this->error = $langs->trans('ErrorFailedToLoadThirdParty', (string) $idtouseforthirdparty, (string) $emailtouseforthirdparty, (string) $nametouseforthirdparty, (string) $namealiastouseforthirdparty);
 												$this->errors[] = $this->error;
 											}
 										} elseif ($operation['type'] == 'loadandcreatethirdparty') {
@@ -2755,7 +2959,7 @@ class EmailCollector extends CommonObject
 												}
 											}
 										}
-									} else {	// if $result > 0, it is ID of thirdparty
+									} elseif ($result > 0) {	// if $result > 0, it is ID of thirdparty
 										dol_syslog("One and only one existing third party has been found");
 
 										$thirdpartystatic->fetch($result);
