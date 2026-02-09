@@ -453,7 +453,7 @@ if ($action == 'confirm_generateinvoice' && $user->hasRight('facture', 'creer'))
 		$prodDurationHoursBase = 1.0;
 		$product_data_cache = array();
 		if ($idprod > 0) {
-			$tmpproduct->fetch($idprod);
+			$result = $tmpproduct->fetch($idprod);
 			if ($result < 0) {
 				$error++;
 				setEventMessages($tmpproduct->error, $tmpproduct->errors, 'errors');
