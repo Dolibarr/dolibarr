@@ -818,7 +818,7 @@ if ($object->id > 0) {
 
 				print '<div class="center formconsumeproduce">';
 
-				print $langs->trans('CustomerIBAN').' ';
+				//print $langs->trans('CustomerIBAN').' ';
 
 				// if societe rib in model invoice, we preselect it
 				$selectedRib = '';
@@ -832,7 +832,7 @@ if ($object->id > 0) {
 					}
 				}
 
-				$selectedRib = $form->selectRib($selectedRib, 'accountcustomerid', 'fk_soc='.$object->socid, 1, '', 1);
+				$selectedRib = $form->selectRib($selectedRib, 'accountcustomerid', 'fk_soc='.$object->socid, $langs->trans("CustomerIBAN"), '', 1, 'maxwidth500 maxwidth250onsmartphone');
 
 				$defaultRibId = $object->thirdparty->getDefaultRib();
 				if ($defaultRibId) {
@@ -847,7 +847,12 @@ if ($object->id > 0) {
 
 
 				// Bank Transfer Amount
-				print ' &nbsp; &nbsp; <label for="withdraw_request_amount">';
+				if (getDolOptimizeSmallScreen()) {
+					print '<br>';
+				} else {
+					print ' &nbsp; &nbsp; ';
+				}
+				print '<label for="withdraw_request_amount">';
 				if ($type == 'bank-transfer') {
 					print $langs->trans('BankTransferAmount');
 				} else {
@@ -930,6 +935,7 @@ if ($object->id > 0) {
 	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print '<td>&nbsp;</td>';
 	}
+	print '<td class="left">'.$langs->trans("ID").'</td>';
 	print '<td class="left">'.$langs->trans("DateRequest").'</td>';
 	print '<td>'.$langs->trans("User").'</td>';
 	print '<td class="center">'.$langs->trans("Amount").'</td>';
@@ -996,6 +1002,9 @@ if ($object->id > 0) {
 				print '</a>';
 				print '</td>';
 			}
+
+			// ID
+			print '<td class="nowraponall">'.$obj->rowid."</td>\n";
 
 			// Date
 			print '<td class="nowraponall">'.dol_print_date($db->jdate($obj->date_demande), 'dayhour')."</td>\n";
@@ -1127,6 +1136,9 @@ if ($object->id > 0) {
 				print '<td>&nbsp;</td>';
 			}
 
+			// ID
+			print '<td class="nowraponall">'.$obj->rowid."</td>\n";
+
 			// Date
 			print '<td class="nowraponall">'.dol_print_date($db->jdate($obj->date_demande), 'day', 'tzuserrel')."</td>\n";
 
@@ -1203,7 +1215,7 @@ if ($object->id > 0) {
 		}
 
 		if (!$numopen && !$numclosed) {
-			print '<tr class="oddeven"><td colspan="8"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+			print '<tr class="oddeven"><td colspan="9"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 		}
 
 		$db->free($resql);

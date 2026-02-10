@@ -34,7 +34,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 	public $boxcode = "oldestunpaidsupplierbills";
 	public $boximg = "object_bill";
 	public $boxlabel = "BoxOldestUnpaidSupplierBills";
-	public $depends = array("facture", "fournisseur");
+	public $depends = array("invoice", "fournisseur");
 
 	/**
 	 *  Constructor

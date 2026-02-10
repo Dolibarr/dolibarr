@@ -112,6 +112,7 @@ HolidaysNumberingModules=Modèles de numérotation pour les demandes de congés
 TemplatePDFHolidays=Modèle de demande de congé PDF
 WatermarkOnDraftHolidayCards=Filigranes sur les brouillons de demandes de congés
 NobodyHasPermissionToValidateHolidays=Personne n'a la permission de valider les demandes de congés
+XIsAUsualNonWorkingDay=Excluez %s du calcul des congés, car ils sont généralement désignés comme des jours non ouvrables.
 BlockHolidayIfNegative=Bloquer si solde négatif
 ErrorLeaveRequestMustBeDraftCanceledOrRefusedToBeDeleted=La demande de congé %s doit être à l'état de brouillon, annulée ou refusée pour être supprimée
 HolidayRecordsIncreased=%s les soldes de congés ont augmenté

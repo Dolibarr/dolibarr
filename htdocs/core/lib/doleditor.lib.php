@@ -40,7 +40,7 @@ function show_skin($fuser, $edit = 0)
 
 	$formother = new FormOther($db);
 
-	$dirskins = array('/includes/ckeditor/ckeditor/skins');
+	$dirskins = array('/public/includes/ckeditor/ckeditor/skins');
 	if (!empty($conf->modules_parts['theme'])) {		// Using this feature slow down application
 		foreach ($conf->modules_parts['theme'] as $reldir) {
 			$dirskins = array_merge($dirskins, (array) ($reldir.'theme'));

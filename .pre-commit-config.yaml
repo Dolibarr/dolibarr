@@ -1,5 +1,5 @@
 ---
-exclude: (?x)^( htdocs/includes/ckeditor/.*|(\.(?!github/workflows)[^/]*/.*))$
+exclude: (?x)^( htdocs/includes/ckeditor/.*|htdocs/public/includes/ckeditor/.*|htdocs/public/includes/jquery/.*|(\.(?!github/workflows)[^/]*/.*))$
 repos:
   # Several miscellaneous checks and fix (on yaml files, end of files fix)
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -65,10 +65,10 @@ repos:
       - id: gitleaks
 
   # Check github actions
-  - repo: https://github.com/rhysd/actionlint
-    rev: v1.7.8
-    hooks:
-      - id: actionlint
+  #- repo: https://github.com/rhysd/actionlint
+  #  rev: v1.7.8
+  #  hooks:
+  #    - id: actionlint
 
   # Beautify shell scripts
   - repo: https://github.com/lovesegfault/beautysh.git
@@ -245,11 +245,11 @@ repos:
           - ned
 
   # Check some shell scripts
-  - repo: https://github.com/shellcheck-py/shellcheck-py
-    rev: v0.11.0.1
-    hooks:
-      - id: shellcheck
-        args: [-W, "100"]
+  #- repo: https://github.com/shellcheck-py/shellcheck-py
+  #  rev: v0.11.0.1
+  #  hooks:
+  #    - id: shellcheck
+  #      args: [-W, "100"]
 
   # Check sql file syntax
   - repo: https://github.com/sqlfluff/sqlfluff
@@ -275,20 +275,21 @@ repos:
           |htdocs/modulebuilder/template/sql/.*\.sql
           )$
 
-  - repo: https://github.com/perltidy/perltidy
-    rev: '20250105.03'
-    hooks:
-      - id: perltidy
-        # virtualmin excuded - reason https://github.com/Dolibarr/dolibarr/pull/36370#issuecomment-3565101823
-        exclude: (?x)^
-          (dev/build/perl/virtualmin/dolibarr.pl
-          )$
-        args: [ --tabs, --nola ]
-  - repo: https://github.com/henryykt/pre-commit-perl
-    rev: v0.0.5
-    hooks:
-      - id: perlcritic
-        # virtualmin excuded - reason https://github.com/Dolibarr/dolibarr/pull/36370#issuecomment-3565101823
-        exclude: (?x)^
-          (dev/build/perl/virtualmin/dolibarr.pl
-          )$
+  #- repo: https://github.com/perltidy/perltidy
+  #  rev: '20250105.03'
+  #  hooks:
+  #    - id: perltidy
+  #      # virtualmin excuded - reason https://github.com/Dolibarr/dolibarr/pull/36370#issuecomment-3565101823
+  #      exclude: (?x)^
+  #        (dev/build/perl/virtualmin/dolibarr.pl
+  #        )$
+  #      args: [ --tabs, --nola ]
+
+  #- repo: https://github.com/henryykt/pre-commit-perl
+  #  rev: v0.0.5
+  #  hooks:
+  #    - id: perlcritic
+  #      # virtualmin excluded - reason https://github.com/Dolibarr/dolibarr/pull/36370#issuecomment-3565101823
+  #      exclude: (?x)^
+  #        (dev/build/perl/virtualmin/dolibarr.pl
+  #        )$

@@ -74,6 +74,12 @@ abstract class DolibarrTriggers
 	public $errors;
 
 	/**
+	 * Warnings reported by the trigger
+	 * @var string[]
+	 */
+	public $warnings;
+
+	/**
 	 * @var string module is in development
 	 * @deprecated Use self::VERSIONS
 	 * @see self::VERSIONS

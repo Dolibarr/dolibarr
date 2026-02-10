@@ -1010,6 +1010,7 @@ if ($resql) {
 		print '</div>';
 
 		print '<br>';
+		print '<!-- Last bank statements -->'."\n";
 		print $langs->trans("LastAccountStatements").' : ';
 
 		foreach ($last_receipts as $num_releve) {

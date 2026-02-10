@@ -48,6 +48,13 @@ session_cache_limiter('public');
 require_once __DIR__.'/../../webportal.main.inc.php';
 dol_include_once('/webportal/class/webPortalTheme.class.php');
 
+/**
+ * @var Conf					$conf
+ * @var HookManager				$hookmanager
+ * @var Translate				$langs
+ * @var Context					$context
+ */
+
 // Define css type
 top_httphead('text/css');
 /*
@@ -84,6 +91,11 @@ $webPortalTheme = new WebPortalTheme();
 	?>
 }
 <?php
+
+$hookmanager->initHooks(array('webPortalCustomCss'));
+$parameters = array();
+$hookmanager->executeHooks('webPortalCustomCss', $parameters, $webPortalTheme);
+print $hookmanager->resPrint;
 
 print '/* Here, the content of the common custom CSS defined into Home - Setup - Display - CSS */'."\n";
 print getDolGlobalString('WEBPORTAL_CUSTOM_CSS');

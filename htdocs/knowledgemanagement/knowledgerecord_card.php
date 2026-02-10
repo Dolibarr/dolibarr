@@ -459,12 +459,17 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Add field answer
 	print '<br>';
-	print $langs->trans($object->fields['answer']['label']).'<br>';
-	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('answer', $object->answer, '', 200, 'dolibarr_notes', 'In', true, true, true, ROWS_9, '100%', 1);
-	$out = $doleditor->Create(1);
+	print load_fiche_titre($langs->trans($object->fields['answer']['label']), '', '');
+	if ($action == 'edit') {
+		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+		$doleditor = new DolEditor('answer', $object->answer, '', 200, 'dolibarr_notes', 'In', true, true, true, ROWS_9, '100%', 1);
+		$out = $doleditor->Create(1);
+	} else {
+		$out = '<div class="content">';
+		$out .= $object->answer;
+		$out .= '</div>';
+	}
 	print $out;
-
 	print dol_get_fiche_end();
 
 

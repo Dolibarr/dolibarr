@@ -23,17 +23,19 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
  * @var User $user
  *
  * @var string $butactionbg
+ * @var string $colorbackhmenu1
  * @var string $colortextlink
  * @var int $dol_optimize_smallscreen
  * @var string $fontlist
- * @var string $textbutaction
+ * @var string $left
  * @var int<0,max> $nbtopmenuentries
  * @var string $right
- * @var string $left
+ * @var string $textbutaction
  */
 
 '
 @phan-var-force string $butactionbg
+@phan-var-force string $colorbackhmenu1
 @phan-var-force string $colortextlink
 @phan-var-force int<0,1> $dol_optimize_smallscreen
 @phan-var-force string $fontlist
@@ -95,10 +97,13 @@ div.tabsAction > div.divButAction > span.butActionDelete,
 div.tabsAction > div.divButAction > span.butActionRefused,
 div.tabsAction > div.divButAction > a.butAction,
 div.tabsAction > div.divButAction > a.butActionDelete,
-div.tabsAction > div.divButAction > a.butActionRefused {
+div.tabsAction > div.divButAction > a.butActionRefused,
+div.tabsAction > .dropdown > .dropdown-toggle {
 	margin-bottom: 1.4em !important;
 	margin-right: 0px !important;
+	/* box-shadow: 1px 1px 5px #d0d0d0; */
 }
+
 .divButAction {
 	padding: 0 !important;
 	margin: 0 !important;
@@ -256,6 +261,11 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 .butActionTransparent {
 	color: #222 ! important;
 	background-color: transparent ! important;
+}
+
+.butActionLogin, .butActionLogin:link, .butActionLogin:visited, .butActionLogin:hover, .butActionLogin:active {
+	background-color: rgb(<?php echo $colorbackhmenu1; ?>);
+	padding: 1em 1em;
 }
 
 

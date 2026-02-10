@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2014  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -191,24 +191,24 @@ $(document).ready(function() {
 });
 
 jQuery(function($){
-	$.datepicker.regional['<?php echo $langs->defaultlang ?>'] = {
-		closeText: '<?php echo $langs->trans("Close2") ?>',
-		prevText: '<?php echo $langs->trans("Previous") ?>',
-		nextText: '<?php echo $langs->trans("Next") ?>',
-		currentText: '<?php echo $langs->trans("Now") ?>',
+	$.datepicker.regional['<?php echo dol_escape_js($langs->defaultlang) ?>'] = {
+		closeText: '<?php echo dol_escape_js($langs->trans("Close2")) ?>',
+		prevText: '<?php echo dol_escape_js($langs->trans("Previous")) ?>',
+		nextText: '<?php echo dol_escape_js($langs->trans("Next")) ?>',
+		currentText: '<?php echo dol_escape_js($langs->trans("Now")) ?>',
 		monthNames: tradMonths,
 		monthNamesShort: tradMonthsShort,
 		dayNames: tradDays,
 		dayNamesShort: tradDaysShort,
 		dayNamesMin: tradDaysMin,
-		weekHeader: '<?php echo $langs->trans("Week"); ?>',
-		dateFormat: '<?php echo $langs->trans("FormatDateShortJQuery"); ?>',	/* Note dd/mm/yy means year on 4 digit in jquery format */
+		weekHeader: '<?php echo dol_escape_js($langs->trans("Week")); ?>',
+		dateFormat: '<?php echo dol_escape_js($langs->trans("FormatDateShortJQuery")); ?>',	/* Note dd/mm/yy means year on 4 digit in jquery format */
 		firstDay: <?php echo getDolGlobalInt('MAIN_START_WEEK', 1); ?>,
 		isRTL: <?php echo($langs->trans("DIRECTION") == 'rtl' ? 'true' : 'false'); ?>,
 		showMonthAfterYear: false,  	/* TODO add specific to country	*/
 		 yearSuffix: ''			/* TODO add specific to country */
 	};
-	$.datepicker.setDefaults($.datepicker.regional['<?php echo $langs->defaultlang ?>']);
+	$.datepicker.setDefaults($.datepicker.regional['<?php echo dol_escape_js($langs->defaultlang) ?>']);
 });
 
 
@@ -248,15 +248,17 @@ function getObjectFromID(id){
 // Called after the selection or typing of a date to save details into detailed fields
 function dpChangeDay(dateFieldID, format)
 {
-	console.log("Call dpChangeDay, we save date into detailed fields from format = "+format);
+	console.log("Call dpChangeDay, we save date from field "+dateFieldID+" into detailed fields from format = "+format);
 
 	var thefield = getObjectFromID(dateFieldID);
 	var thefieldday = getObjectFromID(dateFieldID+"day");
 	var thefieldmonth = getObjectFromID(dateFieldID+"month");
 	var thefieldyear = getObjectFromID(dateFieldID+"year");
 
+	console.log("string date value is " + thefield.value);
+
 	var date = getDateFromFormat(thefield.value, format);
-	//console.log(date);
+
 	if (date)
 	{
 		thefieldday.value = date.getDate();
@@ -317,7 +319,7 @@ function formatDate(date,format)
 {
 	// alert('formatDate date='+date+' format='+format);
 
-	// Force parameters en chaine
+	// Force parameters to string
 	format=format+"";
 
 	var result="";
@@ -385,7 +387,7 @@ function getDateFromFormat(val, format)
 {
 	// alert('getDateFromFormat val='+val+' format='+format);
 
-	// Force parameters en chaine
+	// Force parameters to string
 	val = val+"";
 	format = format+"";
 
@@ -566,29 +568,49 @@ function cleanSerialize(expr) {
 
 
 /*
- * =================================================================
- * Purpose: Fonction to open a confirm popup on a clie of a link
+ * Purpose: Fonction to open a confirm popup on a click of a link
  * Input:   msg
- * Input:   width
+ * Input:   id
+ * Input:   popupWidth
+ * Input:   popupHeight
+ * Input:   disableCancelButton
  * Licence: GPL
- * ==================================================================
+ * See also document_preview() that also maje a dialogforpopup.dialog().
+ * See also newpopup that use window.open.
  */
-function confirmDolibarr(msg, id, width = 400) {
-  let alink = document.getElementById(id);
-  if (alink.getAttribute("data-alreadyclicked") === "0") {
-	  new Promise(res => {
-		$("#dialogforpopup").text(msg).dialog({
-		  modal: true,
-		  width: width,
-		  buttons: {
-			OK() { $(this).dialog("close"); res(false); alink.setAttribute("data-alreadyclicked", "1"); alink.click(); },
-		  }
+function confirmDolibarr(msg, id, popupWidth = 400, popupHeight = 300, disableCancelButton = 0) {
+	let alink = document.getElementById(id);
+	let title = '<?php echo dol_escape_js($langs->transnoentitiesnoconv("Note")); ?>';
+
+	if (alink.getAttribute("data-alreadyclicked") === "1") {
+		return true;
+	}
+
+	console.log("Call confirmDolibarr disableCancelButton="+disableCancelButton);
+
+	let buttons = {};
+	if (disableCancelButton === 0) {
+		buttons['<?php echo dol_escape_js($langs->transnoentitiesnoconv("Cancel")); ?>'] = function () {
+		   $(this).dialog("close");
+		};
+	}
+	buttons['<?php echo dol_escape_js($langs->transnoentitiesnoconv("Confirm")); ?>'] = function () {
+		console.log("We click OK"); $(this).dialog("close"); alink.setAttribute("data-alreadyclicked", "1"); alink.click(); return false;
+	};
+
+	new Promise(res => {
+			$("#dialogforpopup").text(msg).dialog({
+			  closeOnEscape: true,
+			  resizable: true,
+			  modal: true,
+			  width: popupWidth,
+			  height: popupHeight,
+			  title: title,
+			  buttons: buttons
+			});
 		});
-	  });
-	  return false;
-  } else {
-	  return true;
-  }
+
+	return false;
 }
 
 
@@ -1015,7 +1037,7 @@ function copyToClipboard(text,text2)
  * @param	url			Url
  * @param	title  		Title of popup
  * @return	boolean		False
- * @see document_preview()
+ * @see document_preview() and confirmDolibarr()
  */
 function newpopup(url, title) {
 	var argv = newpopup.arguments;
@@ -1040,7 +1062,8 @@ function newpopup(url, title) {
  * @param 	type 		Mime file type ("image/jpeg", "application/pdf", "text/html")
  * @param 	title		Title of popup
  * @return	void
- * @see newpopup()
+ * @see also confirmDolibarr() that also make a dialogforpopup.dialog()
+ * @see also newpopup()that use window.open
  */
 function document_preview(file, type, title)
 {
@@ -1702,9 +1725,12 @@ function onKanbanColumnChange(item, newColumn) {
 	item.data('original-column', newColumn);
 }
 
+
+if (typeof jQuery.fn.on === 'function') {
+
 /*
-* Intuitive table selection
-*/
+ * Intuitive table selection (with keyboard selection)
+ */
 $(function() {
 
 	/**
@@ -1794,5 +1820,7 @@ $(function() {
 		}
 	});
 });
+
+}
 
 // End of lib_head.js.php

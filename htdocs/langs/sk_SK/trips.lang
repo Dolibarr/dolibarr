@@ -121,7 +121,6 @@ ValideTrip=Schváľte správu o výdavkoch
 ExpenseReportPayments=Platby podľa výkazu výdavkov
 TaxUndefinedForThisCategory = Daň pre túto kategóriu nie je definovaná
 errorComputeTtcOnMileageExpense=Chyba pri výpočte nákladov na najazdené kilometre
-ErrorOnlyDraftStatusCanBeDeletedInMassAction=V hromadnej akcii je možné odstrániť iba prvky v stave konceptu
 
 ## Dictionary
 EX_BRE=Raňajky
@@ -159,3 +158,4 @@ TF_TRAIN=Vlak
 TF_TRIP=Doprava
 FailedToSetPaid=Nastavenie ako platené sa nepodarilo
 FailedToSetToCancel=Zrušenie sa nepodarilo
+NobodyHasPermissionToValidateExpenseReport=Nobody has permission to validate expensereport

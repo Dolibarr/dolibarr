@@ -34,21 +34,23 @@ function blockedlogadmin_prepare_head($withtabsetup)
 
 	$langs->load("blockedlog");
 
+	require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
+
+	$param = '';
+	$param .= ($withtabsetup? "?withtab=".$withtabsetup : "");
+	$param .= (GETPOST('origin') ? ($param ? '&' : '').'origin='.GETPOST('origin') : '');
+
 	$h = 0;
 	$head = array();
 
-	if ($withtabsetup) {
-		$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog.php?withtab=".$withtabsetup;
-		$head[$h][1] = $langs->trans("Setup");
-		$head[$h][2] = 'blockedlog';
-		$h++;
-	}
+	$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/registration.php".$param;
+	$head[$h][1] = $langs->trans("UserRegistration");
+	$head[$h][2] = 'registration';
+	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog_list.php?withtab=".$withtabsetup;
-	$head[$h][1] = $langs->trans("BrowseBlockedLog");
-
-	require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 	$b = new BlockedLog($db);
+	$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog_list.php".$param;
+	$head[$h][1] = $langs->trans("BrowseBlockedLog");
 	if ($b->alreadyUsed()) {
 		$head[$h][1] .= (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">...</span>' : '');
 	}
@@ -56,11 +58,18 @@ function blockedlogadmin_prepare_head($withtabsetup)
 	$h++;
 
 
-	$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog_archives.php?withtab=".$withtabsetup;
+	$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog_archives.php".$param;
 	$head[$h][1] = $langs->trans("Archives");
 	// TODO Add number of archive files in badge
 	$head[$h][2] = 'archives';
 	$h++;
+
+	if ($withtabsetup) {
+		$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog.php".$param;
+		$head[$h][1] = $langs->trans("TechnicalInformation");
+		$head[$h][2] = 'technicalinfo';
+		$h++;
+	}
 
 
 	$object = new stdClass();
@@ -82,7 +91,7 @@ function blockedlogadmin_prepare_head($withtabsetup)
  *
  * @return boolean		True or false
  */
-function isRegistrationRecorded()
+function isRegistrationDataSaved()
 {
 	global $mysoc;
 
@@ -105,55 +114,87 @@ function isRegistrationRecorded()
 	return true;
 }
 
+
 /**
- * Return if the version is a candidate version to get the LNE certification and if the prerequisites are OK.
- * The difference between isALNEQualifiedVersion() and isALNERunningVersion() is that this one just check if it has a sense or not to
- * activate the restrictions (it is not a strict check) and the second one is a strict check to say restrictions must be enabled and can't be disabled.
+ * Return if the KYC mandatory parameters are set AND pushed/registered centralized server
  *
  * @return boolean		True or false
  */
-function isALNEQualifiedVersion()
+function isRegistrationDataSavedAndPushed()
 {
-	global $mysoc;
-
-	// For Debug help: Constant set by developer to force all LNE restrictions even if country is not France so we can test them on any dev instance.
-	// Note that you can force, with this option, to enabling of the LNE restrictions but you can't force the disabling of the LNE restriction.
-	if (defined('CERTIF_LNE') && (int) constant('CERTIF_LNE') === 2) {
-		return true;
-	}
-
-	if (preg_match('/\-/', DOL_VERSION)) {	// This is not a stable version
-		return false;
-	}
-	if ($mysoc->country_code != 'FR') {
-		return false;
-	}
-	if (!defined('CERTIF_LNE') || (int) constant('CERTIF_LNE') === 0) {
-		return false;
-	}
-	if (!isModEnabled('blockedlog')) {
-		return false;
-	}
-
-	return true;	// all conditions are ok to become a LNE certified version
+	return isRegistrationDataSaved() && (bool) getDolGlobalString('MAIN_FIRST_REGISTRATION_OK_DATE');
 }
 
 
 /**
- * Return if the application is executed with the LNE features on.
- * This function is used to disabled some features like disabling custom receipts, or showing the mandatory information "Certified LNE"
- * on tickets when it is not true.
+ * Return a hash unique identifier of the registration
  *
- * @return boolean		True or false
+ * @return string		Hash unique ID (used to idenfiy the registration without disclosing personal data)
  */
-function isALNERunningVersion()
+function getHashUniqueIdOfRegistration()
 {
+	global $conf;
+
+	return dol_hash('dolibarr'.$conf->file->instance_unique_id, 'sha256', 1);
+}
+
+
+/**
+ * Return if the version is a candidate version to get the LNE certification and if the prerequisites are OK in production to be switched to LNE certified mode.
+ * The difference with isALNERunningVersion() is that isALNEQualifiedVersion() just checks if it has a sense or not to activate
+ * the restrictions (it is not a check to say if we are or not in a mode with restrictions activated, but if we are in a context that has a sense to activate them).
+ * It can be used to show warnings or alerts to end users.
+ *
+ * @param   int<0,1>	$ignoredev			Set this to 1 to ignore the fact the version is an alpha or beta version
+ * @param   int<0,1>	$ignoremodule		Set this to 1 to not take into account if module BlockedLog is on, so function can be used during module activation.
+ * @return 	string							'' if false or a string if true
+ */
+function isALNEQualifiedVersion($ignoredev = 0, $ignoremodule = 0)
+{
+	global $mysoc;
+
 	// For Debug help: Constant set by developer to force all LNE restrictions even if country is not France so we can test them on any dev instance.
-	// Note that you can force, with this option, to enabling of the LNE restrictions but you can't force the disabling of the LNE restriction.
+	// Note that you can force, with this option, the enabling of the LNE restrictions, but there is no way to force the disabling of the LNE restriction.
 	if (defined('CERTIF_LNE') && (int) constant('CERTIF_LNE') === 2) {
+		return 'CERTIF_LNE_IS_2';
+	}
+
+	if (!$ignoredev && preg_match('/\-/', DOL_VERSION)) {	// This is not a stable version
+		return '';
+	}
+	if ($mysoc->country_code != 'FR') {
+		return '';
+	}
+	if (!defined('CERTIF_LNE') || (int) constant('CERTIF_LNE') === 0) {
+		return '';
+	}
+	if (!$ignoremodule && !isModEnabled('blockedlog')) {
+		return '';
+	}
+
+	return ($ignoredev ? '' : 'NOT_BETA+').'FR+CERTIF_LNE_IS_1'.($ignoremodule ? '' : '+MODENABLED');	// all conditions are ok to become a LNE certified version
+}
+
+
+/**
+ * Return if the application is executed with the LNE requirements on.
+ * This function can be used to disable some features like custom receipts, or to enable others like showing the information "Certified LNE".
+ *
+ * @param	int		$blockedlogtestalreadydone	Test on blockedlog used already done
+ * @return 	boolean								True or false
+ */
+function isALNERunningVersion($blockedlogtestalreadydone = 0)
+{
+	// For Debug help: Constant set by developer to force all LNE restrictions
+	// even if country is not France so we can test them on any dev instance.
+	// Note that you can force, with this option, the enabling of the LNE restrictions,
+	// but there is no way to force the disabling of the LNE restriction.
+	if (defined('CERTIF_LNE') && (int) constant('CERTIF_LNE') === 2
+		&& isModEnabled('blockedlog') && ($blockedlogtestalreadydone || isBlockedLogUsed())) {
 		return true;
 	}
-	if (isModEnabled('blockedlog') && isBlockedLogused()) {
+	if (defined('CERTIF_LNE') && (int) constant('CERTIF_LNE') === 1
+		&& isModEnabled('blockedlog') && ($blockedlogtestalreadydone || isBlockedLogUsed())) {
 		return true;
 	}
 
@@ -166,17 +207,21 @@ function isALNERunningVersion()
  * @param   int<0,1>	$ignoresystem       Ignore system events for the test
  * @return 	boolean							True if blocked log was already used, false if not
  */
-function isBlockedLogused($ignoresystem = 0)
+function isBlockedLogUsed($ignoresystem = 0)
 {
 	global $conf, $db;
 
 	$result = true;	// by default restrictions are on, so we can't disable them
 
-	// For the moment, we don't need this. We already have a feature that does not allow to disable the LNE rstriction by
-	// adding an inalterable event in the log.
+	// Note: if module on, we suppose it is used, if not, we check in case of it was disabled.
 	if (!isModEnabled('blockedlog')) {
+		// Test the cache key
+		if (array_key_exists('isblockedlogused', $conf->cache)) {
+			return $conf->cache['isblockedlogused'.$ignoresystem];
+		}
+
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog";
-		$sql .= " WHERE entity = ".((int) $conf->entity);	// Sharing entity in blocked is disallowed
+		$sql .= " WHERE entity = ".((int) $conf->entity);	// Sharing entity in blocked log is disallowed
 		if ($ignoresystem) {
 			$sql .= " AND action NOT IN ('MODULE_SET', 'MODULE_RESET')";
 		}
@@ -191,9 +236,11 @@ function isBlockedLogused($ignoresystem = 0)
 		} else {
 			dol_print_error($db);
 		}
+
+		$conf->cache['isblockedlogused'.$ignoresystem] = $result;
 	}
 
-	dol_syslog("isBlockedLogused: ignoresystem=".$ignoresystem." returns ".(string) $result);
+	dol_syslog("isBlockedLogUsed: ignoresystem=".$ignoresystem." returns ".(string) $result);
 
 	return $result;
 }
@@ -216,7 +263,7 @@ function pdfCertifMentionblockedLog(&$pdf, $outputlangs, $seller, $default_font_
 
 	if (in_array($seller->country_code, array('FR')) && isALNEQualifiedVersion()) {	// If necessary, we could replace with "if isALNERunningVersion()"
 		$outputlangs->load("blockedlog");
-		$blockedlog_mention = $outputlangs->trans("InvoiceGeneratedWithLNECertifiedPOSSystem");
+		$blockedlog_mention = $outputlangs->transnoentitiesnoconv("InvoiceGeneratedWithLNECertifiedPOSSystem");
 		if ($blockedlog_mention) {
 			$pdf->SetFont('', '', $default_font_size - 2);
 			$pdf->SetXY($pdftemplate->marge_gauche, $posy);
@@ -227,4 +274,140 @@ function pdfCertifMentionblockedLog(&$pdf, $outputlangs, $seller, $default_font_
 	}
 
 	return $result;
+}
+
+/**
+ *      sumAmountsForUnalterableEvent
+ *
+ *      @param	BlockedLog			$block								Object BlockedLog
+ *      @param	array<string,int>	$refinvoicefound					Array of ref of invoice already found (to avoid duplicates. Should be useless but just in case of)
+ *      @param  array<string,array<string,float>>	$totalhtamount		Array of total per code event and module
+ *      @param  array<string,array<string,float>>	$totalvatamount		Array of total per code event and module
+ *      @param  array<string,array<string,float>>	$totalamount		Array of total per code event and module
+ *      @param  float				$total_ht							Total HT
+ *      @param  float				$total_vat							Total VAT
+ *      @param  float				$total_ttc							Total TTC
+ *      @return	int                                 					Return > 0
+ */
+function sumAmountsForUnalterableEvent($block, &$refinvoicefound, &$totalhtamount, &$totalvatamount, &$totalamount, &$total_ht, &$total_vat, &$total_ttc)
+{
+	// Init to avoid warnings if not initialized yet
+	if (!isset($totalamount[$block->action][$block->module_source])) {
+		$totalhtamount[$block->action][$block->module_source] = 0;
+		$totalvatamount[$block->action][$block->module_source] = 0;
+		$totalamount[$block->action][$block->module_source] = 0;
+	}
+
+	if ($block->action == 'BILL_VALIDATE') {
+		$total_ht = $block->object_data->total_ht;
+		$total_vat = $block->object_data->total_tva;
+		$total_ttc = $block->object_data->total_ttc;
+
+		// We add total for the invoice if "invoice validate event" not yet met.
+		// If we already met the event for this object, we keep only first one but this should not happen because edition of validated invoice is not allowed on secured versions.
+		if (empty($refinvoicefound[$block->ref_object])) {
+			$totalhtamount[$block->action][$block->module_source] += $total_ht;
+			$totalvatamount[$block->action][$block->module_source] += $total_vat;
+			$totalamount[$block->action][$block->module_source] += $total_ttc;
+		}
+		$refinvoicefound[$block->ref_object] = 1;
+	} elseif ($block->action == 'PAYMENT_CUSTOMER_CREATE') {
+		$total_ht = $block->object_data->amount;
+		$total_vat = 0;
+		$total_ttc = $block->object_data->amount;
+
+		$totalhtamount[$block->action][$block->module_source] += $total_ht;
+		$totalvatamount[$block->action][$block->module_source] += $total_vat;
+		$totalamount[$block->action][$block->module_source] += $total_ttc;
+	} else {
+		$total_ttc = $block->amounts;
+	}
+
+	return 1;
+}
+
+
+/**
+ * Call remote API service to push the last counter and signature
+ *
+ * @param 	int		$id			Last counter ID/value
+ * @param 	string	$signature	Signature
+ * @param	int		$test		Add property test to 1 if it is for test
+ * @return	int					Return <0 if KO, 0 if nothing done, >0 if OK
+ */
+function callApiToPushCounter($id, $signature, $test = 0)
+{
+	global $mysoc, $conf;
+
+	if (isALNERunningVersion(1) && $mysoc->country_code == 'FR') {
+		// TODO Push last rowid + signature to remote dolibarr server
+		// TODO Do it only selected events: BILL_VALIDATE
+
+		// Code here is similar to the one into printCodeForPing()
+		$url_for_ping = getDolGlobalString('MAIN_URL_FOR_PING', "https://ping.dolibarr.org/");
+
+		$algo = 'sha256';
+		$hash_unique_id = dol_hash('dolibarr'.$conf->file->instance_unique_id, $algo);	// Note: if the global salt changes, this hash changes too so ping may be counted twice. We don't mind. It is for statistics and inventory purpose only.
+
+		$data = 'hash_algo=dol_hash-'.urlencode($algo);
+		$data .= '&hash_unique_id='.urlencode($hash_unique_id);
+		$data .= '&action=dolibarrpushcounter';
+		$data .= '&version='.(float) DOL_VERSION;
+		$data .= '&version_full='.urlencode(DOL_VERSION);
+		$data .= '&entity='.(int) $conf->entity;
+
+		$data .= '&lastrowid='.(int) $id;
+		$data .= '&lastsignature='.urlencode($signature);
+		if ($test) {
+			$data .= '&test=1';
+		}
+
+		/*
+		$data = array(
+			'action' => 'dolibarrpushcounter',
+			'hash_algo' => 'dol_hash-'.$algo,
+			'hash_unique_id' => $hash_unique_id,
+			'version' => (float) DOL_VERSION,
+			'version_full' => urlencode(DOL_VERSION),
+			'entity=' => (int) $conf->entity
+		);
+		$data['lastrowid'] = (int) $this->id;
+		$data['lastsignature'] = urlencode($this->signature);
+		*/
+
+		$addheaders = array();
+		$timeoutconnect = 1;
+		$timeoutresponse = 1;
+
+		// Probability will be between 1/10 by default and 1/1 if const BLOCKEDLOG_RANDOMRANGE_FOR_TRACKING is set to 1. Can't be lower than 1/10.
+		$BLOCKEDLOG_RANDOMRANGE_FOR_TRACKING = min(10, getDolGlobalInt('BLOCKEDLOG_RANDOMRANGE_FOR_TRACKING', 10));
+		$random = 1;
+		//$BLOCKEDLOG_RANDOMRANGE_FOR_TRACKING = 1;	// To force track at every call
+		if ($BLOCKEDLOG_RANDOMRANGE_FOR_TRACKING > 1) {
+			$random = random_int(1, (int) $BLOCKEDLOG_RANDOMRANGE_FOR_TRACKING);
+		}
+
+		if ($random == 1) {	// 1 chance on BLOCKEDLOG_RANDOMRANGE_FOR_TRACKING
+			dol_syslog("callApiToPushCounter create Record is selected to be remotely pushed for tracking", LOG_DEBUG);
+
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+			try {
+				$tmpresult = getURLContent($url_for_ping, 'POST', $data, 1, $addheaders, array('https'), 0, -1, $timeoutconnect, $timeoutresponse, array(), '_dolibarrpushcounter');
+
+				// Add a warning in log in case of error
+				if ($tmpresult['http_code'] != 200) {
+					$logerrormessage = 'Error: '.$tmpresult['http_code'].' '.$tmpresult['content'];
+					dol_syslog("callApiToPushCounter create Error when pushing track info: ".$logerrormessage, LOG_WARNING);
+				}
+			} catch (Exception $e) {
+				dol_syslog("callApiToPushCounter create Error ".$e->getMessage(), LOG_ERR);
+			}
+		} else {
+			dol_syslog("callApiToPushCounter create Record is NOT selected to be remotely pushed for tracking", LOG_DEBUG);
+		}
+
+		return 1;
+	}
+
+	return 0;
 }
