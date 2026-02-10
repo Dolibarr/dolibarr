@@ -1,6 +1,7 @@
 # Changelog gta
 
 ### Added
++ Add OAuth Microsoft Exchange
 + Le code du list.php des ressources est entierement backporté de la v23 - **22/08/2025**
 
 ---
