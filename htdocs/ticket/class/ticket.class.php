@@ -1526,7 +1526,7 @@ class Ticket extends CommonObject
 
 				if (!$error && !$notrigger) {
 					// Call trigger
-					$result = $this->call_trigger('TICKET_READ', $user);
+					$result = $this->call_trigger('TICKET_MODIFY', $user);
 					if ($result < 0) {
 						$error++;
 					}
@@ -2714,7 +2714,7 @@ class Ticket extends CommonObject
 				if (($object->status < self::STATUS_IN_PROGRESS && !$user->socid && !$private) ||
 					($object->status > self::STATUS_IN_PROGRESS && $public_area)
 				) {
-					$object->setStatut(3);
+					$object->setStatut(3, null, '', 'TICKET_MODIFY');
 				}
 				return 1;
 			} else {
