@@ -205,9 +205,9 @@ if (getDolGlobalString('MAIN_API_DEBUG')) {
 		//	'route'   => $api->r->apiMethodInfo->className.'::'.$api->r->apiMethodInfo->methodName,
 		//	'version' => $api->r->getRequestedApiVersion(),
 		//	'data'    => $api->r->getRequestData(),
-		//dol_syslog("Debug API input ".var_export($r, true), LOG_DEBUG, 0, '_api');
-		dol_syslog("Debug API url ".var_export($r->url, true), LOG_DEBUG, 0, '_api');
-		dol_syslog("Debug API input ".var_export($r->getRequestData(), true), LOG_DEBUG, 0, '_api');
+		//dol_syslog("Debug API input ".formatLogObject($r), LOG_DEBUG, 0, '_api');
+		dol_syslog("Debug API url ".formatLogObject($r->url), LOG_DEBUG, 0, '_api');
+		dol_syslog("Debug API input ".formatLogObject($r->getRequestData()), LOG_DEBUG, 0, '_api');
 		//}
 	});
 }

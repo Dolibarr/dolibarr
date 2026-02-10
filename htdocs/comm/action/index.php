@@ -1759,7 +1759,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	}
 	echo " </tr>\n";
 
-	echo " <tr>\n";
+	echo ' <tr class="trcalweek">'."\n";
 
 	for ($iter_day = 0; $iter_day < 7; $iter_day++) {
 		// Show days of the current week
@@ -1833,7 +1833,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	 echo " </div>\n";
 	 */
 
-	print '<tr><td>';
+	print '<tr class="trcalday"><td class="tdtop">';
 
 	/* WIP View per hour */
 	$useviewhour = 0;

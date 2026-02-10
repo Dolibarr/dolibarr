@@ -138,7 +138,7 @@ $answer = null;
 $fileContent = '';
 
 // Set the prompting
-if (!$error && $modulepart == 'invoice_supplier') {
+if ($modulepart == 'invoice_supplier') {
 	$docformat = 'pdf';
 	$doctypelabel = 'invoice';
 
