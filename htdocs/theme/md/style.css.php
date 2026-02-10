@@ -5606,12 +5606,12 @@ div.ok {
 }
 
 div.info, div.warning, div.error, div.green, div.neutral {
-	padding-top: 8px;
+	padding-top: 16px;
 	padding-left: 10px;
 	padding-right: 4px;
-	padding-bottom: 8px;
+	padding-bottom: 16px;
 	margin: 1em 0em 1em 0em;
-	border-radius: 1px;
+	border-radius: 4px;
 }
 
 div.fiche div.info, div.fiche div.warning, div.fiche div.neutral {
