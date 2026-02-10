@@ -761,7 +761,7 @@ if ($search_note_public) {
 	$sql .= " AND p.note_public LIKE '%".$db->escape($db->escapeforlike($search_note_public))."%'";
 }
 if ($search_import_key) {
-	$sql .= natural_search("s.import_key", $search_import_key);
+	$sql .= natural_search("p.import_key", $search_import_key);
 }
 // Search on user
 if ($search_user > 0) {

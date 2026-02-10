@@ -47,7 +47,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("accountancy", "compta"));
+$langs->loadLangs(array("accountancy", "categories", "compta"));
 
 $action = GETPOST('action', 'aZ09');
 $socid = GETPOSTINT('socid');
@@ -328,7 +328,12 @@ if (empty($reshook)) {
 				$listofaccountsforgroup2[] = "'".$db->escape($tmpval['account_number'])."'";
 			}
 		}
-		$filter['t.search_accounting_code_in'] = implode(',', $listofaccountsforgroup2);
+		if (!empty($listofaccountsforgroup2)) {
+			$filter['t.search_accounting_code_in'] = implode(',', $listofaccountsforgroup2);
+		} else {
+			$filter['t.search_accounting_code_in'] = "''";
+			setEventMessages($langs->trans("ThisCategoryHasNoItems"), null, 'warnings');
+		}
 		$param .= '&search_account_category='.urlencode((string) ($search_account_category));
 	}
 	if (!empty($search_accountancy_code_start)) {

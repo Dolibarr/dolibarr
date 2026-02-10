@@ -781,7 +781,7 @@ if ($action == 'validate' && $permissiontoadd && $objectclass !== null) {
 					} else {
 						$idwarehouse = 0;
 					}
-					if ($objecttmp->valid($user, $idwarehouse)) {
+					if ($objecttmp->valid($user, $idwarehouse) > 0) {
 						setEventMessages($langs->trans('hasBeenValidated', $objecttmp->ref), null, 'mesgs');
 					} else {
 						setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
@@ -1103,7 +1103,7 @@ if ($search_fk_input_reason > 0) {
 	$sql .= " AND c.fk_input_reason = ".((int) $search_fk_input_reason);
 }
 if ($search_import_key) {
-	$sql .= natural_search("s.import_key", $search_import_key);
+	$sql .= natural_search("c.import_key", $search_import_key);
 }
 // Search on user
 if ($search_user > 0) {

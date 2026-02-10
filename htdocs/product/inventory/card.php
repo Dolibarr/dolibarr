@@ -54,9 +54,9 @@ $include_sub_warehouse = !empty(GETPOST('include_sub_warehouse')) ? GETPOST('inc
 $hookmanager->initHooks(array('inventorycard', 'globalcard')); // Note that conf->hooks_modules contains array
 
 if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
-	$result = restrictedArea($user, 'stock', $id);
+	$result = restrictedArea($user, 'stock', $id, 'inventory&stock');
 } else {
-	$result = restrictedArea($user, 'stock', $id, '', 'inventory_advance');
+	$result = restrictedArea($user, 'stock', $id, 'inventory&stock', 'inventory_advance');
 }
 
 // Initialize a technical objects

@@ -158,7 +158,7 @@ $step = GETPOSTINT("step") ? GETPOSTINT("step") : 1;
 $export_name = GETPOST("export_name", "alphanohtml");
 $hexa = GETPOST("hexa", "alpha");
 $exportmodelid = GETPOSTINT("exportmodelid");
-$field = GETPOST("field", "alpha");
+$field = (string) GETPOST("field", "alpha");
 
 $objexport = new Export($db);
 $objexport->load_arrays($user, $datatoexport);

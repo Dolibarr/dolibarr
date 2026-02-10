@@ -1603,6 +1603,13 @@ if (empty($reshook)) {
 			$special_code = 3;
 		}
 
+		$pu = $pu_ht;
+		$price_base_type = 'HT';
+		if (empty($pu) && !empty($pu_ttc)) {
+			$pu = $pu_ttc;
+			$price_base_type = 'TTC';
+		}
+
 		// Check minimum price
 		$productid = GETPOSTINT('productid');
 		if (!empty($productid)) {
@@ -1610,6 +1617,7 @@ if (empty($reshook)) {
 			$res = $product->fetch($productid);
 
 			$type = $product->type;
+			$price_base_type = $product->price_base_type;
 			$label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label') : '');
 
 			$price_min = $product->price_min;
@@ -1663,13 +1671,6 @@ if (empty($reshook)) {
 			}
 
 			$qty = price2num(GETPOST('qty', 'alpha'), 'MS');
-
-			$pu = $pu_ht;
-			$price_base_type = 'HT';
-			if (empty($pu) && !empty($pu_ttc)) {
-				$pu = $pu_ttc;
-				$price_base_type = 'TTC';
-			}
 
 			$result = $object->updateline(GETPOSTINT('lineid'), $pu, $qty, $remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, $description, $price_base_type, $info_bits, $special_code, GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, $type, $date_start, $date_end, $array_options, GETPOST("units"), $pu_ht_devise);
 

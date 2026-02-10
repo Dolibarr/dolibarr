@@ -238,7 +238,7 @@ $sql .= " bd.rowid as boxid";
 $sql .= " FROM ".MAIN_DB_PREFIX."boxes as b, ".MAIN_DB_PREFIX."boxes_def as bd";
 $sql .= " WHERE b.box_id = bd.rowid";
 $sql .= " AND b.entity IN (0,".$conf->entity.")";
-$sql .= " AND b.fk_user=0";
+$sql .= " AND b.fk_user = 0";
 $sql .= " ORDER by b.position, b.box_order";
 //print $sql;
 

@@ -413,7 +413,6 @@ class FormWebPortal extends Form
 		$classpath = $InfoFieldList[1];
 		$filter = empty($InfoFieldList[3]) ? '' : $InfoFieldList[3];
 		$sortfield = empty($InfoFieldList[4]) ? '' : $InfoFieldList[4];
-
 		if (!empty($classpath)) {
 			dol_include_once($classpath);
 
@@ -516,6 +515,10 @@ class FormWebPortal extends Form
 				$tmparray = explode('@', $objecttmp->ismultientitymanaged);
 				$sql .= " INNER JOIN " . $this->db->prefix() . $tmparray[1] . " as parenttable ON parenttable.rowid = t." . $tmparray[0];
 			}
+		}
+
+		if (!empty($objecttmp->isextrafieldmanaged)) {
+			$sql .= " LEFT JOIN " . $this->db->prefix() . $this->db->sanitize($objecttmp->table_element) . "_extrafields as e ON t.rowid = e.fk_object";
 		}
 
 		// Add where from hooks

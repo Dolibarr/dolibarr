@@ -7,8 +7,10 @@ on:
     - cron: "0 20 1 * *"
   workflow_dispatch:
 
+
 permissions:
   contents: read
+
 
 jobs:
   exakat:

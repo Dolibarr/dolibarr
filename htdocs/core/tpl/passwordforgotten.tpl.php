@@ -192,7 +192,7 @@ if (!empty($captcha)) {
 	}
 
 	// List of directories where we can find captcha handlers
-	$dirModCaptcha = array_merge(array('main' => '/core/modules/security/captcha/'), is_array($conf->modules_parts['captcha']) ? $conf->modules_parts['captcha'] : array());
+	$dirModCaptcha = array_merge(array('main' => '/core/modules/security/captcha/'), ((isset($conf->modules_parts['captcha']) && is_array($conf->modules_parts['captcha'])) ? $conf->modules_parts['captcha'] : array()));
 	$fullpathclassfile = '';
 	foreach ($dirModCaptcha as $dir) {
 		$fullpathclassfile = dol_buildpath($dir."modCaptcha".ucfirst($captcha).'.class.php', 0, 2);

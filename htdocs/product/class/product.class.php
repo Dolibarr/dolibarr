@@ -3018,8 +3018,8 @@ class Product extends CommonObject
 
 				$this->duration = $obj->duration;
 				$matches = [];
-				preg_match('/(\d+)(\w+)/', $obj->duration, $matches);
-				$this->duration_value = !empty($matches[1]) ? (int) $matches[1] : 0;
+				preg_match('/([\d.]+)(\w+)/', $obj->duration, $matches);
+				$this->duration_value = !empty($matches[1]) ? (float) $matches[1] : 0;
 				$this->duration_unit = !empty($matches[2]) ? (string) $matches[2] : null;
 				$this->canvas = $obj->canvas;
 				$this->net_measure = $obj->net_measure;

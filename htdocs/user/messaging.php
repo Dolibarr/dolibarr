@@ -166,7 +166,7 @@ $morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->tra
 dol_banner_tab($object, 'id', $linkback, $user->hasRight('user', 'user', 'lire') || $user->admin, 'rowid', 'ref', $morehtmlref);
 
 
-$object->info($id);
+$object->info($object->id);
 
 
 print '<div class="fichecenter">';
@@ -188,10 +188,10 @@ $out = '';
 $permok = $user->hasRight('agenda', 'myactions', 'create');
 if ((!empty($objUser->id) || !empty($objcon->id)) && $permok) {
 	if (is_object($objUser) && get_class($objUser) == 'User') {
-		$out .= '&amp;originid='.$objUser->id.($objUser->id > 0 ? '&amp;userid='.$objUser->id : '').'&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].($objUser->id > 0 ? '?userid='.$objUser->id : ''));
+		$out .= '&originid='.$objUser->id.($objUser->id > 0 ? '&userid='.$objUser->id : '').'&backtopage='.urlencode($_SERVER['PHP_SELF'].($objUser->id > 0 ? '?userid='.$objUser->id : ''));
 	}
-	$out .= (!empty($objcon->id) ? '&amp;contactid='.$objcon->id : '');
-	$out .= '&amp;datep='.dol_print_date(dol_now(), 'dayhourlog', 'tzuserrel');
+	$out .= (!empty($objcon->id) ? '&contactid='.$objcon->id : '');
+	$out .= '&datep='.dol_print_date(dol_now(), 'dayhourlog', 'tzuserrel');
 }
 
 $morehtmlright = '';
@@ -209,7 +209,7 @@ if (isModEnabled('agenda')) {
 
 if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allaactions', 'read'))) {
 	print '<br>';
-	$param = '&userid='.urlencode((string) ($id));
+	$param = '&userid='.urlencode((string) ($object->id));
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}

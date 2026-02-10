@@ -5,7 +5,7 @@
  * Copyright (C) 2011-2020	Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2013		Florian Henry				<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2018	Ferran Marcet				<fmarcet@2byte.es>
- * Copyright (C) 2014-2022	Charlene Benke				<charlene@patas-monkey.com>
+ * Copyright (C) 2014-2025	Charlene Benke				<charlene@patas-monkey.com>
  * Copyright (C) 2015-2016	Abbes Bahfir				<bafbes@gmail.com>
  * Copyright (C) 2018-2022	Philippe Grand				<philippe.grand@atoo-net.com>
  * Copyright (C) 2020-2024	Frédéric France				<frederic.france@free.fr>
@@ -13,6 +13,7 @@
  * Copyright (C) 2023-2024	William Mead				<william.mead@manchenumerique.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2025		Pierre Ardoin				<developpeur@lesmetiersdubatiment.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1224,6 +1225,7 @@ if ($action == 'create') {
 		$formquestion[] = [
 			'type' 		=> 'select',
 			'name' 		=> 'signed_status',
+			'select_show_empty' => 0,
 			'label'		=> '<span class="fieldrequired">'.$langs->trans('SignStatus').'</span>',
 			'values'	=> $object->getSignedStatusLocalisedArray()
 		];

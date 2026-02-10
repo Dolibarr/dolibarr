@@ -204,3 +204,4 @@ ContentOfMailHolder=Content of email goes here...
 LastNews=Latest News
 ListProducts= List of products
 PasswordReset=Password reset
+WarningDNSServerNotAvailable=Warning DNS server not available

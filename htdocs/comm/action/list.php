@@ -432,7 +432,7 @@ if ($usergroup > 0) {
 	$sql .= " DISTINCT";
 }
 $sql .= " s.nom as societe, s.rowid as socid, s.client, s.email as socemail,";
-$sql .= " a.id, a.code, a.label, a.note, a.datep as dp, a.datep2 as dp2, a.fulldayevent, a.location,";
+$sql .= " a.id, a.code, a.label, a.note, a.datep as dp, a.datep2 as dp2, a.fulldayevent, a.location, a.entity,";
 $sql .= " a.fk_user_author, a.fk_user_action,";
 $sql .= " a.fk_contact, a.note, a.percent as percent,";
 $sql .= " a.fk_element, a.elementtype, a.datec, a.tms as datem,";

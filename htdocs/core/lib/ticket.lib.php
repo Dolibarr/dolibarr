@@ -3,6 +3,7 @@
  * Copyright (C) 2016		Christophe Battarel	<christophe@altairis.fr>
  * Copyright (C) 2019-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Benjamin Falière	<benjamin@faliere.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -274,7 +275,7 @@ function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $
 		print '</div>';
 	}
 
-	if (getDolGlobalInt('TICKET_IMAGE_PUBLIC_INTERFACE')) {
+	if (getDolGlobalString('TICKET_IMAGE_PUBLIC_INTERFACE')) {
 		print '<div class="backimagepublicticket">';
 		print '<img id="idTICKET_IMAGE_PUBLIC_INTERFACE" src="'.getDolGlobalString('TICKET_IMAGE_PUBLIC_INTERFACE').'">';
 		print '</div>';

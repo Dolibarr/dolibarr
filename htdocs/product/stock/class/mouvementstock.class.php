@@ -542,6 +542,7 @@ class MouvementStock extends CommonObject
 
 			// Test if there is already a record for couple (warehouse / product), so later we will make an update or create.
 			$alreadyarecord = 0;
+			$fk_product_stock = 0;
 			if (!$error) {
 				$sql = "SELECT rowid, reel FROM ".$this->db->prefix()."product_stock";
 				$sql .= " WHERE fk_entrepot = ".((int) $entrepot_id)." AND fk_product = ".((int) $fk_product); // This is a unique key

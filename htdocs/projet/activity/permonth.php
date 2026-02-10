@@ -597,6 +597,11 @@ if (getDolGlobalString('PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT')) {
 	print '<td class="liste_titre"><input type="text" size="4" name="search_thirdparty" value="'.dol_escape_htmltag($search_thirdparty).'"></td>';
 }
 print '<td class="liste_titre"><input type="text" size="4" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'"></td>';
+// TASK fields
+$search_options_pattern = 'search_task_options_';
+$extrafieldsobjectkey = 'projet_task';
+$extrafieldsobjectprefix = 'efpt.';
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 if (!empty($arrayfields['t.planned_workload']['checked'])) {
 	print '<td class="liste_titre"></td>';
 }
@@ -625,6 +630,10 @@ if (getDolGlobalString('PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT')) {
 	print '<td>'.$langs->trans("ThirdParty").'</td>';
 }
 print '<td>'.$langs->trans("Task").'</td>';
+// TASK fields
+$extrafieldsobjectkey = 'projet_task';
+$extrafieldsobjectprefix = 'efpt.';
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 if (!empty($arrayfields['t.planned_workload']['checked'])) {
 	print '<td align="right" class="leftborder plannedworkload maxwidth75">'.$form->textwithpicto($langs->trans("PlannedWorkloadShort"), $langs->trans("PlannedWorkload")).'</td>';
 }

@@ -898,7 +898,7 @@ if ($search_fk_fac_rec_source) {
 	$sql .= ' AND f.fk_fac_rec_source = ' . (int) $search_fk_fac_rec_source;
 }
 if ($search_import_key) {
-	$sql .= natural_search("s.import_key", $search_import_key);
+	$sql .= natural_search("f.import_key", $search_import_key);
 }
 // Search on user
 if ($search_user > 0) {

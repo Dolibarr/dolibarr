@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2024  Alexandre Spangaro      <alexandre@inoveasya.solutions>
+ * Copyright (C) 2013-2025  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2022  		Lionel Vessiller        <lvessiller@open-dsi.fr>
  * Copyright (C) 2016-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
@@ -49,7 +49,7 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/lettering.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("accountancy", "compta"));
+$langs->loadLangs(array("accountancy", "categories", "compta"));
 
 // Get Parameters
 $socid = GETPOSTINT('socid');
@@ -372,7 +372,12 @@ if (empty($reshook)) {
 				$listofaccountsforgroup2[] = "'".$db->escape($tmpval['account_number'])."'";
 			}
 		}
-		$filter['t.search_accounting_code_in'] = implode(',', $listofaccountsforgroup2);
+		if (!empty($listofaccountsforgroup2)) {
+			$filter['t.search_accounting_code_in'] = implode(',', $listofaccountsforgroup2);
+		} else {
+			$filter['t.search_accounting_code_in'] = "''";
+			setEventMessages($langs->trans("ThisCategoryHasNoItems"), null, 'warnings');
+		}
 		$param .= '&search_account_category='.urlencode((string) ($search_account_category));
 	}
 	if (!empty($search_accountancy_code)) {

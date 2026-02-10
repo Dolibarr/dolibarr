@@ -1404,7 +1404,7 @@ if (empty($reshook)) {
 							$num = count($lines);
 
 							for ($i = 0; $i < $num; $i++) {
-								if (empty($lines[$i]->subprice) || $lines[$i]->qty <= 0 || !in_array($lines[$i]->id, $selectedLines)) {
+								if (empty($lines[$i]->subprice) || $lines[$i]->qty < 0 || !in_array($lines[$i]->id, $selectedLines)) {
 									continue;
 								}
 

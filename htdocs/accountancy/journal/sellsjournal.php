@@ -738,7 +738,14 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 
 				foreach ($arrayofvat[$key] as $k => $mt) {
 					if ($mt) {
-						$accountingaccount->fetch(0, $k, true);	// TODO Use a cache for label
+						if (empty($conf->cache['accountingaccountincurrententity_vat'][$k])) {
+							$accountingaccount = new AccountingAccount($db);
+							$accountingaccount->fetch(0, $k, true);
+							$conf->cache['accountingaccountincurrententity_vat'][$k] = $accountingaccount;
+						} else {
+							$accountingaccount = $conf->cache['accountingaccountincurrententity_vat'][$k];
+						}
+
 						$label_account = $accountingaccount->label;
 
 						$bookkeeping = new BookKeeping($db);
@@ -799,7 +806,14 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 			if (isset($tabrevenuestamp[$key]) && is_array($tabrevenuestamp[$key])) {
 				foreach ($tabrevenuestamp[$key] as $k => $mt) {
 					if ($mt) {
-						$accountingaccount->fetch(0, $k, true);    // TODO Use a cache for label
+						if (empty($conf->cache['accountingaccountincurrententity_rs'][$k])) {
+							$accountingaccount = new AccountingAccount($db);
+							$accountingaccount->fetch(0, $k, true);
+							$conf->cache['accountingaccountincurrententity_rs'][$k] = $accountingaccount;
+						} else {
+							$accountingaccount = $conf->cache['accountingaccountincurrententity_rs'][$k];
+						}
+
 						$label_account = $accountingaccount->label;
 
 						$bookkeeping = new BookKeeping($db);

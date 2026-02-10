@@ -167,7 +167,7 @@ $year_month = sprintf("%04d", $search_year).'-'.sprintf("%02d", $search_month);
 $sql = "SELECT cp.rowid, cp.ref, cp.fk_user, cp.date_debut, cp.date_fin, cp.fk_type, cp.description, cp.halfday, cp.statut as status";
 $sql .= " FROM ".MAIN_DB_PREFIX."holiday cp";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user u ON cp.fk_user = u.rowid";
-$sql .= " WHERE cp.rowid > 0";
+$sql .= " WHERE cp.entity IN (".getEntity('holiday').") AND cp.rowid > 0";
 $sql .= " AND cp.statut = ".Holiday::STATUS_APPROVED;
 $sql .= " AND (";
 $sql .= " (date_format(cp.date_debut, '%Y-%m') = '".$db->escape($year_month)."' OR date_format(cp.date_fin, '%Y-%m') = '".$db->escape($year_month)."')";

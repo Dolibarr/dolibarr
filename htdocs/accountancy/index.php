@@ -131,12 +131,14 @@ if (isModEnabled('accounting')) {
 
 	print load_fiche_titre($langs->trans("AccountancyArea"), empty($resultboxes['selectboxlist']) ? '' : $resultboxes['selectboxlist'], 'accountancy', 0, '', '', $showtutorial);
 
+	/*
 	if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
 		$messagewarning = $langs->trans("SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices");
 		$messagewarning .= ' '.$langs->trans("WarningExperimentalFeatureInvoiceSituationNeedToUpgradeToProgressiveMode", 'https://partners.dolibarr.org');
 		print info_admin($messagewarning);
 		print "<br>";
 	}
+	*/
 
 	if (!$helpisexpanded && empty($resultboxes['boxlista']) && empty($resultboxes['boxlistb'])) {
 		print '<div class="opacitymedium idfaq2"><br>'.$langs->trans("ClickOnUseTutorialForHelp", $langs->transnoentities("ShowTutorial"))."</div>\n";

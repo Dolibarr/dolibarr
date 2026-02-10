@@ -835,6 +835,7 @@ class Commande extends CommonOrder
 
 				if (!$error) {
 					$this->statut = self::STATUS_CLOSED;
+					$this->status = self::STATUS_CLOSED;
 
 					$this->db->commit();
 					return 1;

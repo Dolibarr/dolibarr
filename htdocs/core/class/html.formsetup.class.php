@@ -267,7 +267,6 @@ class FormSetup
 			$this->errors = $hookmanager->errors;
 			return -1;
 		}
-
 		if ($reshook > 0) {
 			return $reshook;
 		}
@@ -909,9 +908,9 @@ class FormSetupItem
 				$revertonoff = !empty($this->fieldParams['revertonoff']) ? 1 : 0;
 				$forcereload = !empty($this->fieldParams['forcereload']) ? 1 : 0;
 
-				$out .= ajax_constantonoff($this->confKey, $input, $this->entity, $revertonoff, 0, $forcereload);
+				$out .= ajax_constantonoff($this->confKey, $input, $this->entity, $revertonoff, 0, $forcereload, 2, 0, 0, '', '', $this->cssClass);
 			} else {
-				$out .= $this->form->selectyesno($this->confKey, $this->fieldValue, 1);
+				$out .= $this->form->selectyesno($this->confKey, $this->fieldValue, 1, false, 0, 0, $this->cssClass);
 			}
 		} elseif (preg_match('/emailtemplate:/', $this->type)) {
 			$out .= $this->generateInputFieldEmailTemplate();
@@ -1226,7 +1225,7 @@ class FormSetupItem
 				$revertonoff = empty($this->fieldParams['revertonoff']) ? 0 : 1;
 				$forcereload = empty($this->fieldParams['forcereload']) ? 0 : 1;
 
-				$out .= ajax_constantonoff($this->confKey, array(), $this->entity, $revertonoff, 0, $forcereload);
+				$out .= ajax_constantonoff($this->confKey, array(), $this->entity, $revertonoff, 0, $forcereload, 2, 0, 0, '', '', $this->cssClass); // TODO possibility to add $input parameter
 			} else {
 				if ($this->fieldValue == 1) {
 					$out .= $langs->trans('yes');
