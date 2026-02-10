@@ -1332,22 +1332,20 @@ abstract class CommonInvoice extends CommonObject
 				$resql = $this->db->query($sql);
 				if ($resql) {
 					$obj = $this->db->fetch_object($resql);
-						$can_create_request = ($obj && $obj->nb == 0);
-
-						// Calculate amount if not specified
-						if (empty($amount)) {
-							$totalpaid = $this->getSommePaiement();
-							$totalcreditnotes = $this->getSumCreditNotesUsed();
-							$totaldeposits = $this->getSumDepositsUsed();
-							//print "totalpaid=".$totalpaid." totalcreditnotes=".$totalcreditnotes." totaldeposts=".$totaldeposits;
-
-							// We can also use bcadd to avoid pb with floating points
-							// For example print 239.2 - 229.3 - 9.9; does not return 0.
-							//$resteapayer=bcadd($this->total_ttc,$totalpaid,$conf->global->MAIN_MAX_DECIMALS_TOT);
-							//$resteapayer=bcadd($resteapayer,$totalavoir,$conf->global->MAIN_MAX_DECIMALS_TOT);
-							$amount = price2num($this->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
-						}
-						$remaining_for_request = $amount; // For error message compatibility
+					$can_create_request = ($obj && $obj->nb == 0);
+					// Calculate amount if not specified
+					if (empty($amount)) {
+						$totalpaid = $this->getSommePaiement();
+						$totalcreditnotes = $this->getSumCreditNotesUsed();
+						$totaldeposits = $this->getSumDepositsUsed();
+						//print "totalpaid=".$totalpaid." totalcreditnotes=".$totalcreditnotes." totaldeposts=".$totaldeposits;
+						// We can also use bcadd to avoid pb with floating points
+						// For example print 239.2 - 229.3 - 9.9; does not return 0.
+						//$resteapayer=bcadd($this->total_ttc,$totalpaid,$conf->global->MAIN_MAX_DECIMALS_TOT);
+						//$resteapayer=bcadd($resteapayer,$totalavoir,$conf->global->MAIN_MAX_DECIMALS_TOT);
+						$amount = price2num($this->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
+					}
+					$remaining_for_request = $amount; // For error message compatibility
 				} else {
 					$this->error = $this->db->error();
 					dol_syslog(get_class($this).'::demandeprelevement Error -2');
