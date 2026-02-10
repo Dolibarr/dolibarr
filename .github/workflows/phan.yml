@@ -51,6 +51,12 @@ jobs:
           coverage: none # disable xdebug, pcov
           tools: phan:5.5.2
 
+
+      - name: Get all changed php files (if PR)
+        id: debug-var
+        run: |
+          echo "REF_NAME:${{ github.ref_name }}-HEAD_REF:${{ github.head_ref }}"
+
       - name: Run Phan analysis
         # Proceed when:
         #   - the action is not cancelled
@@ -58,7 +64,7 @@ jobs:
         #   - the branch is an integration branch (no merge), or,
         #   - the merge from branch contains 'phan_full', or,
         #   - there are changes in PHP files.
-        if: "! cancelled() && (github.ref_name == 'develop' || github.ref_name == 'refs/heads/develop' || endsWith(github.ref_name, '.0') || contains(github.head_ref, 'phan_full') || steps.changed-php.outputs.any_changed == 'true')"
+        if: ${{ ! cancelled() && (github.ref_name == 'develop' || github.ref_name == 'refs/heads/develop' || endsWith(github.ref_name, '.0') || contains(github.head_ref, 'phan_full') || steps.changed-php.outputs.any_changed == 'true') }}
         env:
           ALL_CHANGED_FILES: ${{ steps.changed-php.outputs.all_changed_files }}
         # shellcheck disable=2086
