@@ -153,26 +153,26 @@ if ($action == 'updateMask') {
 		$error++;
 	}
 
+	$bomsearch = GETPOST('activate_BOM_USE_SEARCH_TO_SELECT', 'alpha');
+	$res = dolibarr_set_const($db, "BOM_USE_SEARCH_TO_SELECT", $bomsearch, 'chaine', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+
 	$freetext = GETPOST("BOM_FREE_TEXT", 'restricthtml'); // No alpha here, we want exact string
 	$res = dolibarr_set_const($db, "BOM_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
 	}
 
+
+
 	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-} elseif ($action == 'updateoptions') {
-	if (GETPOST('BOM_USE_SEARCH_TO_SELECT')) {
-		$bomsearch = GETPOST('activate_BOM_USE_SEARCH_TO_SELECT', 'alpha');
-		if (dolibarr_set_const($db, "BOM_USE_SEARCH_TO_SELECT", $bomsearch, 'chaine', 0, '', $conf->entity)) {
-			$conf->global->BOM_USE_SEARCH_TO_SELECT = $bomsearch;
-		}
-	}
 }
-
 
 /*
  * View
@@ -488,9 +488,6 @@ if (getDolGlobalString('MAIN_FEATURES_LEVEL') >= 1) {
 
 
 print '<tr class="oddeven">';
-print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="updateoptions">';
 print '<td>'.$langs->trans("UseSearchToSelectBom").'</td>';
 if (!$conf->use_javascript_ajax) {
 	print '<td></td>';
@@ -498,15 +495,13 @@ if (!$conf->use_javascript_ajax) {
 	print $langs->trans("NotAvailableWhenAjaxDisabled");
 	print "</td>";
 } else {
-	print '<td class="right">';
+	print '<td>';
 	$arrval = array('0' => $langs->trans("No"),
 		'1' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')',
 		'2' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')',
 		'3' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')',
 	);
 	print $form->selectarray("activate_BOM_USE_SEARCH_TO_SELECT", $arrval, getDolGlobalString("BOM_USE_SEARCH_TO_SELECT")).'</td>';
-	print '<td class="right"><input type="submit" class="button small reposition" name="BOM_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
-	print "</td>";
 }
 print '</form>';
 print '</tr>';
@@ -540,17 +535,13 @@ print '<input class="flat minwidth200" type="text" name="BOM_DRAFT_WATERMARK" va
 print "</td></tr>\n";
 
 print '</table>';
-
-print '<center><input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></center>';
-
 print '</div>';
+
+print $form->buttonsSaveCancel("Save", '');
 
 print '</form>';
 
-print '<br>';
-
-
-
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();
