@@ -2277,13 +2277,13 @@ parameters:
 		-
 			message: '#^Parameter \#1 \$array of function array_sum expects array, string given\.$#'
 			identifier: argument.type
-			count: 2
+			count: 4
 			path: ../../../htdocs/compta/ajaxpayment.php
 
 		-
 			message: '#^Parameter \#2 \$array of function array_key_exists expects array, string given\.$#'
 			identifier: argument.type
-			count: 1
+			count: 2
 			path: ../../../htdocs/compta/ajaxpayment.php
 
 		-
