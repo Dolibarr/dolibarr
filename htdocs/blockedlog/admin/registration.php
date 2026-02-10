@@ -230,6 +230,8 @@ if ($withtab) {
 
 print '<span class="opacitymedium">'.$langs->trans("BlockedLogDesc")."</span><br>\n";
 
+print '<br>';
+
 // Show version
 print '<div class="center"><span class="opacitymedium">'.$langs->trans("CurrentVersion").'</span> <span class="badge-text badge-secondary">'.DOL_VERSION.'</span></div>';
 

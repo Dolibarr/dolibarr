@@ -365,7 +365,7 @@ class pdf_ledger extends ModelePdfAccountancy
 						$nexY,
 						$default_font_size,
 						'piece_num',
-						$langs->transnoentities('AccountAccountingShort') . ' ' . length_accountg($accountingAccount->ref) . ' - ' . $accountingAccount->label,
+						$langs->transnoentities('AccountAccountingShort') . ' ' . length_accountg((string) $accountingAccount->ref) . ' - ' . $accountingAccount->label,
 						$tab_top_newpage
 					);
 
@@ -708,7 +708,7 @@ class pdf_ledger extends ModelePdfAccountancy
 		// Name of soc
 		$pdf->SetXY($this->marge_gauche + 2, $posy + 2);
 		$text = (string) $this->emetteur->name;
-		$pdf->MultiCell($w / 3, 4, $outputlangs->convToOutputCharset($text), 0, $ltrdirection);
+		$pdf->MultiCell($w / 3, 4, $outputlangs->convToOutputCharset((string) $text), 0, $ltrdirection);
 		$nexY = max($pdf->GetY(), $nexY);
 
 		// Date of document

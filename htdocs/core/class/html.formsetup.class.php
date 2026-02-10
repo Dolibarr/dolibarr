@@ -82,7 +82,7 @@ class FormSetup
 
 	/**
 	 * an list of hidden inputs used only in edit mode
-	 * @var array<string,string>  Currently array{token:string,action:string}
+	 * @var array<string,int|string>  	Currently array{token:string,action:string}
 	 */
 	public $formHiddenInputs = array();
 
