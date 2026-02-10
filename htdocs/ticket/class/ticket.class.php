@@ -1777,7 +1777,11 @@ class Ticket extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."ticket";
 		if ($id_assign_user > 0) {
-			$sql .= " SET fk_user_assign=".((int) $id_assign_user).", fk_statut = ".Ticket::STATUS_ASSIGNED;
+			$newstatus = Ticket::STATUS_ASSIGNED;
+			if (isModEnabled('workflow') && getDolGlobalString('WORKFLOW_TICKET_CLASSIFY_READ_ASSIGN')) {
+				$newstatus = Ticket::STATUS_READ;
+			}
+			$sql .= " SET fk_user_assign=".((int) $id_assign_user).", fk_statut = ".$newstatus;
 		} else {
 			$sql .= " SET fk_user_assign=null, fk_statut = ".Ticket::STATUS_READ;
 		}

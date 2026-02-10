@@ -28,6 +28,8 @@ descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=When a customer invoice is validat
 # Autoclassify receptions
 descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=When a purchase invoice is validated, classify linked source receptions as closed (and if the amount of the invoice is the same as the total amount of the linked receptions)
 descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=When a purchase invoice is validated, classify linked source receptions as billed (and if the amount of the invoice is the same as the total amount of the linked receptions)
+# Autoclassify ticket
+descWORKFLOW_TICKET_CLASSIFY_READ_ASSIGN = When a person is assigned to a ticket, mark the ticket as read.
 # Automatically link ticket to contract
 descWORKFLOW_TICKET_LINK_CONTRACT=When a ticket is created, link it with available contracts, matching the same third party than the ticket
 descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=When linking automatically a ticket with contracts, search contracts among those of the parents companies

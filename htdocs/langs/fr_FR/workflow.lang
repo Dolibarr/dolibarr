@@ -28,6 +28,8 @@ descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=Lorsqu'une facture client est vali
 # Autoclassify receptions
 descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Lorsqu'une facture d'achat est validée, classez les réceptions sources liées comme fermées (et si le montant de la facture est le même que le montant total des réceptions liées)
 descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=Lorsqu'une facture d'achat est validée, classez les réceptions sources liées comme facturé (et si le montant de la facture est le même que le montant total des réceptions liées)
+# Autoclassify ticket
+descWORKFLOW_TICKET_CLASSIFY_READ_ASSIGN=Lorsqu'une personne est assignée à un ticket, marquer le ticket comme lu.
 # Automatically link ticket to contract
 descWORKFLOW_TICKET_LINK_CONTRACT=Lorsqu'un ticket est créé, associez-le aux contrats disponibles, correspondant au même tiers que le  ticket
 descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Lors de la liaison automatique à un ticket avec des contrats, recherchez les contrats parmi ceux des sociétés mères.
