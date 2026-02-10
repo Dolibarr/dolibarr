@@ -357,7 +357,7 @@ class pdf_espadon extends ModelePdfExpedition
 						$pdf->writeHTMLCell(60, $height_trackingnumber, $this->posxdesc - 1, $tab_top - 1, $outputlangs->transnoentities("TrackingNumber") . " : " . $object->tracking_number, 0, 1, false, true, 'L');
 						$tab_top_alt = $pdf->GetY();
 
-						$object->getUrlTrackingStatus($object->tracking_number);
+						$object->getUrlTrackingStatus((string) $object->tracking_number);
 						if (!empty($object->tracking_url)) {
 							if ($object->shipping_method_id > 0) {
 								// Get code using getLabelFromKey
