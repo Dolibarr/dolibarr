@@ -1254,6 +1254,67 @@ abstract class CommonInvoice extends CommonObject
 			$bac = new CompanyBankAccount($this->db);
 			$bac->fetch($ribId, '', $this->socid);
 
+			// Option to allow multiple partial requests
+			// If WITHDRAW_STRICT_CHECK_AMOUNT is enabled, we check the sum of amounts instead of just counting requests
+			if (getDolGlobalString('WITHDRAW_STRICT_CHECK_AMOUNT')) {
+				// Calculate sum of amounts already requested instead of just counting requests
+				// This allows multiple partial requests as long as the total doesn't exceed the remain to pay
+				$total_already_requested		= 0;
+				// Step 1: Get pending requests with no transfer receipt yet (traite = 0)
+				$sql		= "SELECT COALESCE(SUM(amount), 0) as total_requested";
+				$sql		.= " FROM ".$this->db->prefix()."prelevement_demande";
+				if ($type == 'bank-transfer') {
+					$sql	.= " WHERE fk_facture_fourn = ".((int) $this->id);
+				} else {
+					$sql	.= " WHERE fk_facture = ".((int) $this->id);
+				}
+				$sql		.= " AND type	= 'ban'";	// To exclude record done for some online payments
+				$sql		.= " AND traite	= 0";		// Not yet in a transfer receipt
+				dol_syslog(get_class($this)."::demande_prelevement - get pending requests not yet in receipt", LOG_DEBUG);
+				$resql= $this->db->query($sql);
+				if ($resql) {
+					$obj = $this->db->fetch_object($resql);
+					$total_already_requested += $obj ? (float) $obj->total_requested : 0;
+				} else {
+					$this->error = $this->db->error();
+					dol_syslog(get_class($this).'::demandeprelevement Error -2a');
+					return -2;
+				}
+				// Step 2: Get pending requests in transfer receipt but not yet credited
+				$sql	= "SELECT COALESCE(SUM(pl.amount), 0) as total_requested";
+				$sql	.= " FROM ".$this->db->prefix()."prelevement_lignes as pl";
+				$sql	.= " INNER JOIN ".$this->db->prefix()."prelevement as p ON p.fk_prelevement_lignes = pl.rowid";
+				if ($type == 'bank-transfer') {
+					$sql	.= " WHERE p.fk_facture_fourn = ".((int) $this->id);
+				} else {
+					$sql	.= " WHERE p.fk_facture = ".((int) $this->id);
+				}
+				$sql	.= " AND (pl.statut IS NULL OR pl.statut = 0)"; // Not yet processed (statut 2 = credited)
+				dol_syslog(get_class($this)."::demande_prelevement - get requests in non-credited receipts", LOG_DEBUG);
+				$resql		= $this->db->query($sql);
+				if ($resql) {
+					$obj						= $this->db->fetch_object($resql);
+					$total_already_requested	+= $obj ? (float) $obj->total_requested : 0;
+					// Calculate remain to pay
+					$totalpaid				= $this->getSommePaiement();
+					$totalcreditnotes		= $this->getSumCreditNotesUsed();
+					$totaldeposits			= $this->getSumDepositsUsed();
+					$resteapayer			= price2num($this->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
+					// Calculate remaining amount available for new requests
+					$remaining_for_request	= price2num($resteapayer - $total_already_requested, 'MT');
+					// If no amount specified, use the remaining available
+					if (empty($amount)) {
+						$amount				= $remaining_for_request;
+					}
+					// Check if there's still room for new requests
+					$can_create_request		= ($remaining_for_request > 0 && $amount <= $remaining_for_request);
+				} else {
+					$this->error			= $this->db->error();
+					dol_syslog(get_class($this).'::demandeprelevement Error -2b');
+					return -2;
+				}
+			} else {
+				// Original behavior: only check if a request already exists (count)
 			$sql = "SELECT count(rowid) as nb";
 			$sql .= " FROM ".$this->db->prefix()."prelevement_demande";
 			if ($type == 'bank-transfer') {
@@ -1271,9 +1332,10 @@ abstract class CommonInvoice extends CommonObject
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$obj = $this->db->fetch_object($resql);
-				if ($obj && $obj->nb == 0) {	// If no request found yet
-					$now = dol_now();
+					$can_create_request = ($obj && $obj->nb == 0);
 
+					// Calculate amount if not specified
+					if (empty($amount)) {
 					$totalpaid = $this->getSommePaiement();
 					$totalcreditnotes = $this->getSumCreditNotesUsed();
 					$totaldeposits = $this->getSumDepositsUsed();
@@ -1283,10 +1345,18 @@ abstract class CommonInvoice extends CommonObject
 					// For example print 239.2 - 229.3 - 9.9; does not return 0.
 					//$resteapayer=bcadd($this->total_ttc,$totalpaid,$conf->global->MAIN_MAX_DECIMALS_TOT);
 					//$resteapayer=bcadd($resteapayer,$totalavoir,$conf->global->MAIN_MAX_DECIMALS_TOT);
-					if (empty($amount)) {
 						$amount = price2num($this->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
 					}
-
+					$remaining_for_request = $amount; // For error message compatibility
+				} else {
+					$this->error = $this->db->error();
+					dol_syslog(get_class($this).'::demandeprelevement Error -2');
+					return -2;
+				}
+			}
+			// Common code for both modes
+			if ($can_create_request) {
+				$now = dol_now();
 					if (is_numeric($amount) && $amount != 0) {
 						$sql = 'INSERT INTO '.$this->db->prefix().'prelevement_demande(';
 						if ($type == 'bank-transfer') {
@@ -1342,14 +1412,17 @@ abstract class CommonInvoice extends CommonObject
 					}
 					return 1;
 				} else {
-					$this->error = "A request already exists";
-					dol_syslog(get_class($this).'::demandeprelevement Can t create a request to generate a direct debit, a request already exists.');
-					return 0;
+					// Updated error message for when amount exceeds remaining or request already exists
+					if (getDolGlobalString('WITHDRAW_STRICT_CHECK_AMOUNT')) {
+						if ($remaining_for_request <= 0) {
+							$this->error	= "AmountRequestedAlreadyReachesTotal";
+						} else {
+							$this->error	= "AmountExceedsRemainingToRequest";
 				}
 			} else {
-				$this->error = $this->db->error();
-				dol_syslog(get_class($this).'::demandeprelevement Error -2');
-				return -2;
+						$this->error		= "A request already exists";
+					}
+					return 0;
 			}
 		} else {
 			$this->error = "Status of invoice does not allow this";

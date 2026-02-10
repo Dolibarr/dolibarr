@@ -797,13 +797,21 @@ if ($object->id > 0) {
 		$buttonlabel = $langs->trans("MakeBankTransferOrder");
 		$user_perms = $user->hasRight('paymentbybanktransfer', 'create');
 	}
-
+	// Calculate the remaining amount available for new transfer requests
+	// This takes into account pending requests (traite=0) and requests in non-credited transfer receipts
+	$remaintopaylesspendingdebit	= $resteapayer - $pending;
 	// Add a transfer request
-	if ($object->status > $object::STATUS_DRAFT && $object->paid == 0 && $numopen == 0) {
-		if ($resteapayer > 0) {
+	// If WITHDRAW_STRICT_CHECK_AMOUNT is enabled, allow multiple partial requests as long as the total requested amount doesn't exceed the invoice total
+	// Otherwise, use original behavior: block if any request is pending
+	if (getDolGlobalString('WITHDRAW_STRICT_CHECK_AMOUNT')) {
+		// New behavior: check remaining amount
+		$canCreateRequest	= ($object->status > $object::STATUS_DRAFT && $object->paid == 0 && $remaintopaylesspendingdebit > 0);
+	} else {
+		// Original behavior: check if no open requests
+		$canCreateRequest	= ($object->status > $object::STATUS_DRAFT && $object->paid == 0 && $numopen == 0 && $resteapayer > 0);
+	}
+	if ($canCreateRequest) {
 			if ($user_perms) {
-				$remaintopaylesspendingdebit = $resteapayer - $pending;
-
 				$title = $langs->trans("NewStandingOrder");
 				if ($type == 'bank-transfer') {
 					$title = $langs->trans("NewPaymentByBankTransfer");
@@ -890,20 +898,27 @@ if ($object->id > 0) {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$buttonlabel.'</a>';
 			}
 		} else {
+		// Different error messages based on the mode
+		if ($object->status > $object::STATUS_DRAFT) {
+			if ($object->paid == 0) {
+				if (getDolGlobalString('WITHDRAW_STRICT_CHECK_AMOUNT')) {
+					// Total amount has already been requested (pending + in transfer receipts)
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("AmountRequestedAlreadyReachesTotal")).'">'.$buttonlabel.'</a>';
+				} else {
+					// Original behavior: request already done or amount must be positive
+					if ($numopen > 0) {
+						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("RequestAlreadyDone")).'">'.$buttonlabel.'</a>';
+					} else {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("AmountMustBePositive")).'">'.$buttonlabel.'</a>';
 		}
+				}
 	} else {
-		if ($numopen == 0) {
-			if ($object->status > $object::STATUS_DRAFT) {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("AlreadyPaid")).'">'.$buttonlabel.'</a>';
-			} else {
-				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("Draft")).'">'.$buttonlabel.'</a>';
 			}
 		} else {
-			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("RequestAlreadyDone")).'">'.$buttonlabel.'</a>';
+			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("Draft")).'">'.$buttonlabel.'</a>';
 		}
 	}
-
 	print "</div>\n";
 
 
