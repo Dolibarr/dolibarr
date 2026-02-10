@@ -58,19 +58,20 @@ jobs:
         #   - the branch is an integration branch, or,
         #   - the branch contains 'phan_full', or,
         #   - there are changes in PHP files.
-        if: "! cancelled() && (github.event.ref == 'develop' || github.event.ref == 'refs/heads/develop' || endsWith(github.event.ref, '.0') || contains(github.event.ref, 'phan_full') || steps.changed-php.outputs.any_changed == 'true')"
+        if: "! cancelled() && (github.ref_name == 'develop' || github.ref_name == 'refs/heads/develop' || endsWith(github.ref_name, '.0') || contains(github.ref_name, 'phan_full') || steps.changed-php.outputs.any_changed == 'true')"
         env:
           ALL_CHANGED_FILES: ${{ steps.changed-php.outputs.all_changed_files }}
         # shellcheck disable=2086
+          FILE_CHANGE_LIST: /tmp/phan-changed.lst
         run: |
           # shellcheck disable=2086
-          > /tmp/phpstan-files.txt
-          for f in $ALL_CHANGED_FILES; do echo "$f" >> /tmp/phan-files.txt; done
-          cat /tmp/phan-files.txt
-          if [ "${{ github.ref_name }}" == "develop" ] || [[ "${{ github.ref_name }}" =~ ^[0-9]+$ ]] || [[ "${{ github.ref_name }}" =~ phan_full ]]; then
+          if [ "${{ github.ref_name }}" == "develop" ] || [[ "${{ github.ref_name }}" == *.0 ]]|| [[ "${{ github.ref_name }}" == *"phan_full"* ]] ; then
             echo phan $PHAN_QUICK -k "$PHAN_CONFIG" -B "$PHAN_BASELINE" --analyze-twice --minimum-target-php-version "$PHAN_MIN_PHP" --output-mode=github
             phan $PHAN_QUICK -k "$PHAN_CONFIG" -B "$PHAN_BASELINE" --analyze-twice --minimum-target-php-version "$PHAN_MIN_PHP" --output-mode=github
           else
-            echo phan --file-list /tmp/phan-files.txt $PHAN_QUICK -k "$PHAN_CONFIG" -B "$PHAN_BASELINE" --analyze-twice --minimum-target-php-version "$PHAN_MIN_PHP" --output-mode=github
-            phan --file-list /tmp/phan-files.txt $PHAN_QUICK -k "$PHAN_CONFIG" -B "$PHAN_BASELINE" --analyze-twice --minimum-target-php-version "$PHAN_MIN_PHP" --output-mode=github
+            > /tmp/phpstan-files.txt
+            for f in $ALL_CHANGED_FILES; do echo "$f" >> $FILE_CHANGED_LIST; done
+            cat $FILE_CHANGED_LIST
+            echo phan --file-list $FILE_CHANGED_LIST $PHAN_QUICK -k "$PHAN_CONFIG" -B "$PHAN_BASELINE" --analyze-twice --minimum-target-php-version "$PHAN_MIN_PHP" --output-mode=github
+            phan --file-list $FILE_CHANGED_LIST $PHAN_QUICK -k "$PHAN_CONFIG" -B "$PHAN_BASELINE" --analyze-twice --minimum-target-php-version "$PHAN_MIN_PHP" --output-mode=github
           fi
