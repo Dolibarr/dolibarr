@@ -510,7 +510,7 @@ print '<br>';
  * Invoices waiting for withdraw
  */
 if ($sourcetype != 'salary') {
-	$sql = "SELECT f.ref, f.rowid, f.date_lim_reglement as datelimite, f.total_ttc, f.fk_account, s.nom as name, s.rowid as socid,"; 
+	$sql = "SELECT f.ref, f.rowid, f.date_lim_reglement as datelimite, f.total_ttc, f.fk_account, s.nom as name, s.rowid as socid,";
 	if ($type == 'bank-transfer') {
 		$sql .= " f.ref_supplier,";
 	}
@@ -579,7 +579,7 @@ if ($sourcetype != 'salary') {
 	} else {
 		// Default sort when extended list is disabled
 		$sql .= " ORDER BY f.date_lim_reglement ASC, f.rowid ASC";
-		}
+	}
 } else {
 	$sql = "SELECT s.ref, s.rowid, s.amount, CONCAT(u.lastname, ' ', u.firstname) as name, u.rowid as uid,";
 	$sql .= " pd.rowid as request_row_id, pd.date_demande, pd.amount, pd.fk_societe_rib as soc_rib_id";
@@ -673,11 +673,11 @@ if ($resql) {
 		$arrayofmassactions = array();
 		if (in_array($massaction, array('presend', 'predelete'))) {
 			$arrayofmassactions = array();
-			}
-			$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
-			print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
-			print '<input type="hidden" name="token" value="'.newToken().'">';
-			print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+		}
+		$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
+		print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 		print '<input type="hidden" name="type" value="'.$type.'">';
 		print '<input type="hidden" name="sourcetype" value="'.$sourcetype.'">';
@@ -685,29 +685,29 @@ if ($resql) {
 	} else {
 		// Original simple display
 		$arrayofselected = is_array($toselect) ? $toselect : array();
-	$param = '';
-	if ($type) {
-		$param .= '&type=' . urlencode((string) $type);
-	}
-	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit='.((int) $limit);
-	}
-	if ($socid) {
-		$param .= '&socid='.urlencode((string) ($socid));
-	}
-	if ($option) {
-		$param .= "&option=".urlencode($option);
-	}
+		$param = '';
+		if ($type) {
+			$param .= '&type=' . urlencode((string) $type);
+		}
+		if ($limit > 0 && $limit != $conf->liste_limit) {
+			$param .= '&limit='.((int) $limit);
+		}
+		if ($socid) {
+			$param .= '&socid='.urlencode((string) ($socid));
+		}
+		if ($option) {
+			$param .= "&option=".urlencode($option);
+		}
 
-	print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="page" value="'.$page.'">';
-	if (!empty($limit)) {
-		print '<input type="hidden" name="limit" value="'.$limit.'"/>';
-	}
-	if ($type != '') {
-		print '<input type="hidden" name="type" value="'.$type.'">';
-	}
+		print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input type="hidden" name="page" value="'.$page.'">';
+		if (!empty($limit)) {
+			print '<input type="hidden" name="limit" value="'.$limit.'"/>';
+		}
+		if ($type != '') {
+			print '<input type="hidden" name="type" value="'.$type.'">';
+		}
 	}
 	$title = $langs->trans("InvoiceWaitingWithdraw");
 	$picto = 'bill';
@@ -836,56 +836,56 @@ if ($resql) {
 		print "</tr>\n";
 	} else {
 		// Original simple table headers
-	$tradinvoice = "Invoice";
-	if ($type == 'bank-transfer') {
-		if ($sourcetype != 'salary') {
-			$tradinvoice = "SupplierInvoice";
-		} else {
-			$tradinvoice = "RefSalary";
+		$tradinvoice = "Invoice";
+		if ($type == 'bank-transfer') {
+			if ($sourcetype != 'salary') {
+				$tradinvoice = "SupplierInvoice";
+			} else {
+				$tradinvoice = "RefSalary";
+			}
 		}
-	}
-		print_barre_liste($title, $page, $_SERVER['PHP_SELF'], $param, '', '', '', $num, $nbtotalofrecords, $picto, 0, '', '', $limit);
+			print_barre_liste($title, $page, $_SERVER['PHP_SELF'], $param, '', '', '', $num, $nbtotalofrecords, $picto, 0, '', '', $limit);
 
-	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre">';
-	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-		if ($num) {
+		print '<div class="div-table-responsive-no-min">';
+		print '<table class="noborder centpercent">';
+		print '<tr class="liste_titre">';
+		// Action column
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if ($num) {
+				print '<td align="center">'.$form->showCheckAddButtons('checkforselect', 1).'</td>';
+			}
+		}
+		// Ref invoice or salary
+		print '<td>'.$langs->trans($tradinvoice).'</td>';
+		// Ref supplier
+		if ($type == 'bank-transfer' && $sourcetype != 'salary') {
+			print '<td>'.$langs->trans("RefSupplier").'</td>';
+		}
+		// Thirdparty or user
+		if ($sourcetype != 'salary') {
+			print '<td>'.$langs->trans("ThirdParty").'</td>';
+		} else {
+			print '<td>'.$langs->trans("Employee").'</td>';
+		}
+		// BAN
+		print '<td>'.$langs->trans("RIB").'</td>';
+		// RUM
+			if (empty($type) || $type == 'direct-debit') { // RUM is only relevant for direct debit
+			print '<td>'.$langs->trans("RUM").'</td>';
+		}
+		print '<td class="right">';
+		if ($sourcetype == 'salary') {
+			print $langs->trans("Amount");
+		} else {
+			print $langs->trans("AmountTTC");
+		}
+		print '</td>';
+		print '<td class="right">'.$langs->trans("PendingSince").'</td>';
+		// Action column
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td align="center">'.$form->showCheckAddButtons('checkforselect', 1).'</td>';
 		}
-	}
-	// Ref invoice or salary
-	print '<td>'.$langs->trans($tradinvoice).'</td>';
-	// Ref supplier
-	if ($type == 'bank-transfer' && $sourcetype != 'salary') {
-		print '<td>'.$langs->trans("RefSupplier").'</td>';
-	}
-	// Thirdparty or user
-	if ($sourcetype != 'salary') {
-		print '<td>'.$langs->trans("ThirdParty").'</td>';
-	} else {
-		print '<td>'.$langs->trans("Employee").'</td>';
-	}
-	// BAN
-	print '<td>'.$langs->trans("RIB").'</td>';
-	// RUM
-		if (empty($type) || $type == 'direct-debit') { // RUM is only relevant for direct debit
-		print '<td>'.$langs->trans("RUM").'</td>';
-	}
-	print '<td class="right">';
-	if ($sourcetype == 'salary') {
-		print $langs->trans("Amount");
-	} else {
-		print $langs->trans("AmountTTC");
-	}
-	print '</td>';
-	print '<td class="right">'.$langs->trans("PendingSince").'</td>';
-	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-		print '<td align="center">'.$form->showCheckAddButtons('checkforselect', 1).'</td>';
-	}
-	print '</tr>';
+		print '</tr>';
 	}
 	if ($num) {
 		if ($sourcetype != 'salary') {
@@ -1061,87 +1061,87 @@ if ($resql) {
 				}
 			} else {
 				// Simple display without arrayfields
-			// Ref invoice
-			print '<td class="tdoverflowmax150">';
-			if ($sourcetype != 'salary' || $salary === null) {
-				print $invoicestatic->getNomUrl(1, 'withdraw');
-			} else {
-				print $salary->getNomUrl(1, 'withdraw');
-			}
-			print '</td>';
-
-				// Ref supplier
-			if ($type == 'bank-transfer' && $sourcetype != 'salary') {
-				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($invoicestatic->ref_supplier).'">';
-				print dol_escape_htmltag($invoicestatic->ref_supplier);
-				print '</td>';
-			}
-
-				// Thirdparty / User
-			if ($sourcetype != 'salary') {
-				print '<td class="tdoverflowmax100">';
-				print $thirdpartystatic->getNomUrl(1, 'ban');
-				print '</td>';
-			} else {
-				print '<td class="tdoverflowmax100">';
-				$user->fetch($obj->uid);
-				print $user->getNomUrl(-1);
-				print '</td>';
-			}
-
-			// BAN
-			print '<td>';
-			if ($bac->id > 0) {
-				if (!empty($bac->iban) || !empty($bac->bic)) {
-					print $bac->iban.(($bac->iban && $bac->bic) ? ' / ' : '').$bac->bic;
-					if ($bac->verif() <= 0) {
-						print img_warning('Error on default bank number for IBAN : '.$langs->trans($bac->error));
-					}
-					if ($obj->soc_rib_id > 0) {
-						print $form->textwithpicto('', $langs->trans("BankAccountForcedOnRequest"));
-					} else {
-						print $form->textwithpicto('', $langs->trans("BankAccountUsedByDefault").'<br><b>'.$langs->trans("Label").'</b> : '.$bac->label.'<br><b>'.$langs->trans("BankName").'</b> : '.$bac->bank, 1, 'help', 'valigmiddle warning');
-					}
+				// Ref invoice
+				print '<td class="tdoverflowmax150">';
+				if ($sourcetype != 'salary' || $salary === null) {
+					print $invoicestatic->getNomUrl(1, 'withdraw');
 				} else {
-					print img_warning($langs->trans("IBANNotDefined"));
+					print $salary->getNomUrl(1, 'withdraw');
 				}
-			} else {
-				$langs->load("banks");
-				print img_warning($langs->trans("NoBankAccountDefined"));
-			}
-			print '</td>';
-
-			// RUM
-			if (empty($type) || $type == 'direct-debit') {
-				print '<td>';
-				if (!empty($bac->rum)) {
-					print $bac->rum;
+				print '</td>';
+	
+					// Ref supplier
+				if ($type == 'bank-transfer' && $sourcetype != 'salary') {
+					print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($invoicestatic->ref_supplier).'">';
+					print dol_escape_htmltag($invoicestatic->ref_supplier);
+					print '</td>';
+				}
+	
+					// Thirdparty / User
+				if ($sourcetype != 'salary') {
+					print '<td class="tdoverflowmax100">';
+					print $thirdpartystatic->getNomUrl(1, 'ban');
+					print '</td>';
 				} else {
-					$rumToShow = $thirdpartystatic->display_rib('rum');
-					if ($rumToShow) {
-						print $rumToShow;
-						$format = $thirdpartystatic->display_rib('format');
-						if ($type != 'bank-transfer') {
-							if ($format) {
-								print ' ('.$format.')';
-							}
+					print '<td class="tdoverflowmax100">';
+					$user->fetch($obj->uid);
+					print $user->getNomUrl(-1);
+					print '</td>';
+				}
+	
+				// BAN
+				print '<td>';
+				if ($bac->id > 0) {
+					if (!empty($bac->iban) || !empty($bac->bic)) {
+						print $bac->iban.(($bac->iban && $bac->bic) ? ' / ' : '').$bac->bic;
+						if ($bac->verif() <= 0) {
+							print img_warning('Error on default bank number for IBAN : '.$langs->trans($bac->error));
+						}
+						if ($obj->soc_rib_id > 0) {
+							print $form->textwithpicto('', $langs->trans("BankAccountForcedOnRequest"));
+						} else {
+							print $form->textwithpicto('', $langs->trans("BankAccountUsedByDefault").'<br><b>'.$langs->trans("Label").'</b> : '.$bac->label.'<br><b>'.$langs->trans("BankName").'</b> : '.$bac->bank, 1, 'help', 'valigmiddle warning');
 						}
 					} else {
-						$langs->load("banks");
-						print img_warning($langs->trans("NoBankAccountDefined"));
+						print img_warning($langs->trans("IBANNotDefined"));
 					}
+				} else {
+					$langs->load("banks");
+					print img_warning($langs->trans("NoBankAccountDefined"));
 				}
 				print '</td>';
-			}
-
-			// Amount
-			print '<td class="right amount">';
-			print price($obj->amount, 0, $langs, 0, 0, -1, $conf->currency);
-			print '</td>';
-			// Date
-			print '<td class="right">';
-			print dol_print_date($db->jdate($obj->date_demande), 'day');
-			print '</td>';
+	
+				// RUM
+				if (empty($type) || $type == 'direct-debit') {
+					print '<td>';
+					if (!empty($bac->rum)) {
+						print $bac->rum;
+					} else {
+						$rumToShow = $thirdpartystatic->display_rib('rum');
+						if ($rumToShow) {
+							print $rumToShow;
+							$format = $thirdpartystatic->display_rib('format');
+							if ($type != 'bank-transfer') {
+								if ($format) {
+									print ' ('.$format.')';
+								}
+							}
+						} else {
+							$langs->load("banks");
+							print img_warning($langs->trans("NoBankAccountDefined"));
+						}
+					}
+					print '</td>';
+				}
+	
+				// Amount
+				print '<td class="right amount">';
+				print price($obj->amount, 0, $langs, 0, 0, -1, $conf->currency);
+				print '</td>';
+				// Date
+				print '<td class="right">';
+				print dol_print_date($db->jdate($obj->date_demande), 'day');
+				print '</td>';
 			}
 			// Action column
 			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
