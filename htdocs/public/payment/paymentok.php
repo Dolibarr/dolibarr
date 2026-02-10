@@ -524,7 +524,7 @@ $fulltag = $FULLTAG;
 $tmptag = dolExplodeIntoArray($fulltag, '.', '=');
 
 
-dol_syslog("ispaymentok=".$ispaymentok." tmptag=".var_export($tmptag, true), LOG_DEBUG, 0, '_payment');
+dol_syslog("ispaymentok=".$ispaymentok." tmptag=".formatLogObject($tmptag), LOG_DEBUG, 0, '_payment');
 
 
 // Set $appli for emails title
