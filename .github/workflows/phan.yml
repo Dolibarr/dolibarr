@@ -52,11 +52,6 @@ jobs:
           tools: phan:5.5.2
 
 
-      - name: Get all changed php files (if PR)
-        id: debug-var
-        run: |
-          echo "REF_NAME:${{ github.ref_name }}-HEAD_REF:${{ github.head_ref }}"
-
       - name: Run Phan analysis
         # Proceed when:
         #   - the action is not cancelled
