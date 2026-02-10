@@ -2108,7 +2108,7 @@ function get_left_menu_bank($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 		if (isModEnabled('bank')) {
 			$newmenu->add("/compta/bank/list.php?leftmenu=bank&amp;mainmenu=bank&amp;search_status=opened", $langs->trans("MenuBankCash"), 0, $user->hasRight('banque', 'lire'), '', $mainmenu, 'bank', 0, '', '', '', img_picto('', 'bank_account', 'class="paddingright pictofixedwidth"'));
 
-			$newmenu->add("/compta/bank/card.php?action=create", $langs->trans("MenuNewFinancialAccount"), 1, $user->hasRight('banque', 'configurer'));
+			$newmenu->add("/compta/bank/card.php?action=create&token=". newToken(), $langs->trans("MenuNewFinancialAccount"), 1, $user->hasRight('banque', 'configurer'));
 			$newmenu->add("/compta/bank/list.php?leftmenu=bank&amp;mainmenu=bank&amp;search_status=opened", $langs->trans("List"), 1, $user->hasRight('banque', 'lire'), '', $mainmenu, 'bank');
 			$newmenu->add("/compta/bank/bankentries_list.php", $langs->trans("ListTransactions"), 1, $user->hasRight('banque', 'lire'));
 			$newmenu->add("/compta/bank/budget.php", $langs->trans("ListTransactionsByCategory"), 1, $user->hasRight('banque', 'lire'));
@@ -2127,7 +2127,7 @@ function get_left_menu_bank($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 			$newmenu->add("/compta/prelevement/index.php?leftmenu=withdraw&amp;mainmenu=bank", $langs->trans("PaymentByDirectDebit"), 0, $user->hasRight('prelevement', 'bons', 'lire'), '', $mainmenu, 'withdraw', 0, '', '', '', img_picto('', 'payment', 'class="paddingright pictofixedwidth"'));
 
 			if ($usemenuhider || empty($leftmenu) || $leftmenu == "withdraw") {
-				$newmenu->add("/compta/prelevement/create.php?mainmenu=bank", $langs->trans("NewStandingOrder"), 1, $user->hasRight('prelevement', 'bons', 'creer'));
+				$newmenu->add("/compta/prelevement/create.php?mainmenu=bank&token=". newToken(), $langs->trans("NewStandingOrder"), 1, $user->hasRight('prelevement', 'bons', 'creer'));
 
 				$newmenu->add("/compta/prelevement/orders_list.php?mainmenu=bank", $langs->trans("List"), 1, $user->hasRight('prelevement', 'bons', 'lire'));
 				$newmenu->add("/compta/prelevement/list.php?mainmenu=bank", $langs->trans("WithdrawalsLines"), 1, $user->hasRight('prelevement', 'bons', 'lire'));
@@ -2141,7 +2141,7 @@ function get_left_menu_bank($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 			$newmenu->add("/compta/paymentbybanktransfer/index.php?leftmenu=banktransfer&amp;mainmenu=bank", $langs->trans("PaymentByBankTransfer"), 0, $user->hasRight('paymentbybanktransfer', 'read'), '', $mainmenu, 'banktransfer', 0, '', '', '', img_picto('', 'payment', 'class="paddingright pictofixedwidth"'));
 
 			if ($usemenuhider || empty($leftmenu) || $leftmenu == "banktransfer") {
-				$newmenu->add("/compta/prelevement/create.php?type=bank-transfer&mainmenu=bank", $langs->trans("NewPaymentByBankTransfer"), 1, $user->hasRight('paymentbybanktransfer', 'create'));
+				$newmenu->add("/compta/prelevement/create.php?type=bank-transfer&mainmenu=bank&token=". newToken(), $langs->trans("NewPaymentByBankTransfer"), 1, $user->hasRight('paymentbybanktransfer', 'create'));
 
 				$newmenu->add("/compta/prelevement/orders_list.php?type=bank-transfer&mainmenu=bank", $langs->trans("List"), 1, $user->hasRight('paymentbybanktransfer', 'read'));
 				$newmenu->add("/compta/prelevement/list.php?type=bank-transfer&mainmenu=bank", $langs->trans("PaymentByBankTransferLines"), 1, $user->hasRight('paymentbybanktransfer', 'read'));
@@ -2163,7 +2163,7 @@ function get_left_menu_bank($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 		if (isModEnabled('takepos') || isModEnabled('cashdesk')) {
 			$permtomakecashfence = ($user->hasRight('cashdesk', 'run') || $user->hasRight('takepos', 'run'));
 			$newmenu->add("/compta/cashcontrol/cashcontrol_list.php", $langs->trans("CashControl"), 0, (int) $permtomakecashfence, '', $mainmenu, 'cashcontrol', 0, '', '', '', img_picto('', 'pos', 'class="paddingright pictofixedwidth"'));
-			$newmenu->add("/compta/cashcontrol/cashcontrol_card.php?action=create", $langs->trans("NewCashFence"), 1, (int) $permtomakecashfence);
+			$newmenu->add("/compta/cashcontrol/cashcontrol_card.php?action=create&token=". newToken(), $langs->trans("NewCashFence"), 1, (int) $permtomakecashfence);
 			$newmenu->add("/compta/cashcontrol/cashcontrol_list.php", $langs->trans("List"), 1, (int) $permtomakecashfence);
 		}
 	}
