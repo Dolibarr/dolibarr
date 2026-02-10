@@ -1315,39 +1315,39 @@ abstract class CommonInvoice extends CommonObject
 				}
 			} else {
 				// Original behavior: only check if a request already exists (count)
-			$sql = "SELECT count(rowid) as nb";
-			$sql .= " FROM ".$this->db->prefix()."prelevement_demande";
-			if ($type == 'bank-transfer') {
-				$sql .= " WHERE fk_facture_fourn = ".((int) $this->id);
-			} else {
-				$sql .= " WHERE fk_facture = ".((int) $this->id);
-			}
-			$sql .= " AND type = 'ban'"; // To exclude record done for some online payments
-			if (empty($checkduplicateamongall)) {
-				$sql .= " AND traite = 0";
-			}
+				$sql = "SELECT count(rowid) as nb";
+				$sql .= " FROM ".$this->db->prefix()."prelevement_demande";
+				if ($type == 'bank-transfer') {
+					$sql .= " WHERE fk_facture_fourn = ".((int) $this->id);
+				} else {
+					$sql .= " WHERE fk_facture = ".((int) $this->id);
+				}
+				$sql .= " AND type = 'ban'"; // To exclude record done for some online payments
+				if (empty($checkduplicateamongall)) {
+					$sql .= " AND traite = 0";
+				}
 
-			dol_syslog(get_class($this)."::demande_prelevement", LOG_DEBUG);
+				dol_syslog(get_class($this)."::demande_prelevement", LOG_DEBUG);
 
-			$resql = $this->db->query($sql);
-			if ($resql) {
-				$obj = $this->db->fetch_object($resql);
-					$can_create_request = ($obj && $obj->nb == 0);
+				$resql = $this->db->query($sql);
+				if ($resql) {
+					$obj = $this->db->fetch_object($resql);
+						$can_create_request = ($obj && $obj->nb == 0);
 
-					// Calculate amount if not specified
-					if (empty($amount)) {
-					$totalpaid = $this->getSommePaiement();
-					$totalcreditnotes = $this->getSumCreditNotesUsed();
-					$totaldeposits = $this->getSumDepositsUsed();
-					//print "totalpaid=".$totalpaid." totalcreditnotes=".$totalcreditnotes." totaldeposts=".$totaldeposits;
+						// Calculate amount if not specified
+						if (empty($amount)) {
+							$totalpaid = $this->getSommePaiement();
+							$totalcreditnotes = $this->getSumCreditNotesUsed();
+							$totaldeposits = $this->getSumDepositsUsed();
+							//print "totalpaid=".$totalpaid." totalcreditnotes=".$totalcreditnotes." totaldeposts=".$totaldeposits;
 
-					// We can also use bcadd to avoid pb with floating points
-					// For example print 239.2 - 229.3 - 9.9; does not return 0.
-					//$resteapayer=bcadd($this->total_ttc,$totalpaid,$conf->global->MAIN_MAX_DECIMALS_TOT);
-					//$resteapayer=bcadd($resteapayer,$totalavoir,$conf->global->MAIN_MAX_DECIMALS_TOT);
-						$amount = price2num($this->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
-					}
-					$remaining_for_request = $amount; // For error message compatibility
+							// We can also use bcadd to avoid pb with floating points
+							// For example print 239.2 - 229.3 - 9.9; does not return 0.
+							//$resteapayer=bcadd($this->total_ttc,$totalpaid,$conf->global->MAIN_MAX_DECIMALS_TOT);
+							//$resteapayer=bcadd($resteapayer,$totalavoir,$conf->global->MAIN_MAX_DECIMALS_TOT);
+							$amount = price2num($this->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
+						}
+						$remaining_for_request = $amount; // For error message compatibility
 				} else {
 					$this->error = $this->db->error();
 					dol_syslog(get_class($this).'::demandeprelevement Error -2');
@@ -1357,72 +1357,69 @@ abstract class CommonInvoice extends CommonObject
 			// Common code for both modes
 			if ($can_create_request) {
 				$now = dol_now();
-					if (is_numeric($amount) && $amount != 0) {
-						$sql = 'INSERT INTO '.$this->db->prefix().'prelevement_demande(';
-						if ($type == 'bank-transfer') {
-							$sql .= 'fk_facture_fourn, ';
-						} else {
-							$sql .= 'fk_facture, ';
-						}
-						$sql .= ' amount, date_demande, fk_user_demande, code_banque, code_guichet, number, cle_rib, sourcetype, type, entity';
-						if (empty($bac->id)) {
-							$sql .= ')';
-						} else {
-							$sql .= ', fk_societe_rib)';
-						}
-						$sql .= " VALUES (".((int) $this->id);
-						$sql .= ", ".((float) price2num($amount));
-						$sql .= ", '".$this->db->idate($now)."'";
-						$sql .= ", ".((int) $fuser->id);
-						$sql .= ", '".$this->db->escape($bac->code_banque)."'";
-						$sql .= ", '".$this->db->escape($bac->code_guichet)."'";
-						$sql .= ", '".$this->db->escape($bac->number)."'";
-						$sql .= ", '".$this->db->escape($bac->cle_rib)."'";
-						$sql .= ", '".$this->db->escape($sourcetype)."'";
-						$sql .= ", 'ban'";
-						$sql .= ", ".((int) $conf->entity);
-						if (!empty($bac->id)) {
-							$sql .= ", '".$this->db->escape((string) $bac->id)."'";
-						}
-						$sql .= ")";
-
-						dol_syslog(get_class($this)."::demande_prelevement", LOG_DEBUG);
-						$resql = $this->db->query($sql);
-						if (!$resql) {
-							$this->error = $this->db->lasterror();
-							dol_syslog(get_class($this).'::demandeprelevement Erreur');
-							$error++;
-						}
+				if (is_numeric($amount) && $amount != 0) {
+					$sql = 'INSERT INTO '.$this->db->prefix().'prelevement_demande(';
+					if ($type == 'bank-transfer') {
+						$sql .= 'fk_facture_fourn, ';
 					} else {
-						$this->error = 'WithdrawRequestErrorNilAmount';
-						dol_syslog(get_class($this).'::demandeprelevement WithdrawRequestErrorNilAmount');
+						$sql .= 'fk_facture, ';
+					}
+					$sql .= ' amount, date_demande, fk_user_demande, code_banque, code_guichet, number, cle_rib, sourcetype, type, entity';
+					if (empty($bac->id)) {
+						$sql .= ')';
+					} else {
+						$sql .= ', fk_societe_rib)';
+					}
+					$sql .= " VALUES (".((int) $this->id);
+					$sql .= ", ".((float) price2num($amount));
+					$sql .= ", '".$this->db->idate($now)."'";
+					$sql .= ", ".((int) $fuser->id);
+					$sql .= ", '".$this->db->escape($bac->code_banque)."'";
+					$sql .= ", '".$this->db->escape($bac->code_guichet)."'";
+					$sql .= ", '".$this->db->escape($bac->number)."'";
+					$sql .= ", '".$this->db->escape($bac->cle_rib)."'";
+					$sql .= ", '".$this->db->escape($sourcetype)."'";
+					$sql .= ", 'ban'";
+					$sql .= ", ".((int) $conf->entity);
+					if (!empty($bac->id)) {
+						$sql .= ", '".$this->db->escape((string) $bac->id)."'";
+					}
+					$sql .= ")";
+					dol_syslog(get_class($this)."::demande_prelevement", LOG_DEBUG);
+					$resql = $this->db->query($sql);
+					if (!$resql) {
+						$this->error = $this->db->lasterror();
+						dol_syslog(get_class($this).'::demandeprelevement Erreur');
 						$error++;
 					}
-
-					if (!$error) {
-						// Force payment mode of invoice to withdraw
-						$payment_mode_id = dol_getIdFromCode($this->db, ($type == 'bank-transfer' ? 'VIR' : 'PRE'), 'c_paiement', 'code', 'id', 1);
-						if ($payment_mode_id > 0) {
-							$result = $this->setPaymentMethods($payment_mode_id);
-						}
-					}
-
-					if ($error) {
-						return -1;
-					}
-					return 1;
 				} else {
-					// Updated error message for when amount exceeds remaining or request already exists
-					if (getDolGlobalString('WITHDRAW_STRICT_CHECK_AMOUNT')) {
-						if ($remaining_for_request <= 0) {
-							$this->error	= "AmountRequestedAlreadyReachesTotal";
-						} else {
-							$this->error	= "AmountExceedsRemainingToRequest";
+					$this->error = 'WithdrawRequestErrorNilAmount';
+					dol_syslog(get_class($this).'::demandeprelevement WithdrawRequestErrorNilAmount');
+					$error++;
 				}
-			} else {
-						$this->error		= "A request already exists";
+				if (!$error) {
+					// Force payment mode of invoice to withdraw
+					$payment_mode_id = dol_getIdFromCode($this->db, ($type == 'bank-transfer' ? 'VIR' : 'PRE'), 'c_paiement', 'code', 'id', 1);
+					if ($payment_mode_id > 0) {
+						$result = $this->setPaymentMethods($payment_mode_id);
 					}
-					return 0;
+				}
+				if ($error) {
+					return -1;
+				}
+				return 1;
+			} else {
+				// Updated error message for when amount exceeds remaining or request already exists
+				if (getDolGlobalString('WITHDRAW_STRICT_CHECK_AMOUNT')) {
+					if ($remaining_for_request <= 0) {
+						$this->error	= "AmountRequestedAlreadyReachesTotal";
+					} else {
+						$this->error	= "AmountExceedsRemainingToRequest";
+					}
+				} else {
+					$this->error		= "A request already exists";
+				}
+				return 0;
 			}
 		} else {
 			$this->error = "Status of invoice does not allow this";
