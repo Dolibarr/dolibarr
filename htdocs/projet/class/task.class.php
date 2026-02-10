@@ -1643,7 +1643,7 @@ class Task extends CommonObjectLine
 		if (getDolGlobalInt('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 			$restrictBefore = dol_time_plus_duree(dol_now(), - getDolGlobalInt('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS'), 'm');
-			if (strtotime($this->timespent_date) < $restrictBefore) {
+			if (dol_stringtotime($this->timespent_date, 0) < $restrictBefore) {
 				$this->error = $langs->trans('TimeRecordingRestrictedToNMonthsBack', getDolGlobalString('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS'));
 				$this->errors[] = $this->error;
 				return -1;
@@ -2093,7 +2093,7 @@ class Task extends CommonObjectLine
 		if (getDolGlobalString('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 			$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
-			if (strtotime($this->timespent_date) < $restrictBefore) {
+			if (dol_stringtotime($this->timespent_date, 0) < $restrictBefore) {
 				$this->error = $langs->trans('TimeRecordingRestrictedToNMonthsBack', getDolGlobalString('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS'));
 				$this->errors[] = $this->error;
 				return -1;
@@ -2227,7 +2227,7 @@ class Task extends CommonObjectLine
 		if (getDolGlobalString('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 			$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
-			if (strtotime($this->timespent_date) < $restrictBefore) {
+			if (dol_stringtotime($this->timespent_date, 0) < $restrictBefore) {
 				$this->error = $langs->trans('TimeRecordingRestrictedToNMonthsBack', getDolGlobalString('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS'));
 				$this->errors[] = $this->error;
 				return -1;
