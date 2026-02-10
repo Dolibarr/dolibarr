@@ -52,7 +52,13 @@ jobs:
           tools: phan:5.5.2
 
       - name: Run Phan analysis
-        if: "! cancelled() && (github.event.ref == 'develop' || github.event.ref == 'refs/heads/develop' || endsWith(github.event.ref, '.0') || steps.changed-php.outputs.any_changed == 'true')"
+        # Proceed when:
+        #   - the action is not cancelled
+        #  AND
+        #   - the branch is an integration branch, or,
+        #   - the branch contains 'phan_full', or,
+        #   - there are changes in PHP files.
+        if: "! cancelled() && (github.event.ref == 'develop' || github.event.ref == 'refs/heads/develop' || endsWith(github.event.ref, '.0') || contains(github.event.ref, 'phan_full') || steps.changed-php.outputs.any_changed == 'true')"
         env:
           ALL_CHANGED_FILES: ${{ steps.changed-php.outputs.all_changed_files }}
         # shellcheck disable=2086
