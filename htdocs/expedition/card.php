@@ -652,7 +652,7 @@ if (empty($reshook)) {
 		$also_update_stock = (GETPOST('alsoUpdateStock', 'alpha') ? 1 : 0);
 		$result = $object->cancel($user, 0, (bool) $also_update_stock);
 		if ($result > 0) {
-			$result = $object->setStatut(-1);
+			$result = $object->setStatut(Expedition::STATUS_CANCELED);
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -668,7 +668,7 @@ if (empty($reshook)) {
 		// TODO add alternative status
 		//} elseif ($action == 'reopen' && ($user->hasRight('expedition', 'creer') || $user->hasRight('expedition', 'shipping_advance', 'validate')))
 		//{
-		//	$result = $object->setStatut(0);
+		//	$result = $object->setStatut(Expedition::STATUS_DRAFT);
 		//	if ($result < 0)
 		//	{
 		//		setEventMessages($object->error, $object->errors, 'errors');

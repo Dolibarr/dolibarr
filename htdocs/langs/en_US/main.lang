@@ -171,6 +171,7 @@ AddLink=Add link
 RemoveLink=Remove link
 AddToDraft=Add to draft
 Update=Update
+SaveUpdate=Update
 Close=Close
 CloseAs=Set status to
 CloseBox=Remove widget from your dashboard

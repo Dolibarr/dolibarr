@@ -137,4 +137,11 @@ ALTER TABLE llx_usergroup ADD COLUMN fk_parent integer DEFAULT NULL AFTER entity
 ALTER TABLE llx_usergroup ADD INDEX idx_usergroup_fk_parent (fk_parent);
 ALTER TABLE llx_usergroup ADD CONSTRAINT fk_usergroup_parent FOREIGN KEY (fk_parent) REFERENCES llx_usergroup (rowid);
 
+-- Force change password next time
+ALTER TABLE llx_user ADD COLUMN force_pass_change TINYINT DEFAULT 0 AFTER pass_temp;
+
+-- Ticket
+INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, enabled, active, topic, content, content_lines, joinfiles) VALUES (0, 'ticket', 'ticket_send', '', 0, null, null, '(SendingAdminEmailMessage)', 100, 'isModEnabled("ticket")', 1, '[__[MAIN_INFO_SOCIETE_NOM]__] __TICKET_EMAIL_SUBJECT__', '__TICKET_EMAIL_BODY__<br><ul><li>(Title) : __TICKET_SUBJECT__</li><li>(Type) : __TICKET_TYPE__</li><li>(TicketCategory) : __TICKET_CATEGORY__</li><li>(Severity) : __TICKET_SEVERITY__</li><li>(From) : __TICKET_USER_ASSIGN__</li><li>(Company) : __THIRDPARTY_NAME__</li></ul><p>(Message) : <br><br>__TICKET_MESSAGE__ </p><br><p><a href="__TICKET_URL__">(SeeThisTicketIntomanagementInterface)</a></p>', null, 0);
+
+
 -- end of migration
