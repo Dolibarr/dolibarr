@@ -870,7 +870,7 @@ if ($resql) {
 		// BAN
 		print '<td>'.$langs->trans("RIB").'</td>';
 		// RUM
-			if (empty($type) || $type == 'direct-debit') { // RUM is only relevant for direct debit
+		if (empty($type) || $type == 'direct-debit') { // RUM is only relevant for direct debit
 			print '<td>'.$langs->trans("RUM").'</td>';
 		}
 		print '<td class="right">';
@@ -1069,15 +1069,15 @@ if ($resql) {
 					print $salary->getNomUrl(1, 'withdraw');
 				}
 				print '</td>';
-	
-					// Ref supplier
+
+				// Ref supplier
 				if ($type == 'bank-transfer' && $sourcetype != 'salary') {
 					print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($invoicestatic->ref_supplier).'">';
 					print dol_escape_htmltag($invoicestatic->ref_supplier);
 					print '</td>';
 				}
-	
-					// Thirdparty / User
+
+				// Thirdparty / User
 				if ($sourcetype != 'salary') {
 					print '<td class="tdoverflowmax100">';
 					print $thirdpartystatic->getNomUrl(1, 'ban');
@@ -1088,7 +1088,7 @@ if ($resql) {
 					print $user->getNomUrl(-1);
 					print '</td>';
 				}
-	
+
 				// BAN
 				print '<td>';
 				if ($bac->id > 0) {
@@ -1110,7 +1110,7 @@ if ($resql) {
 					print img_warning($langs->trans("NoBankAccountDefined"));
 				}
 				print '</td>';
-	
+
 				// RUM
 				if (empty($type) || $type == 'direct-debit') {
 					print '<td>';
@@ -1133,7 +1133,7 @@ if ($resql) {
 					}
 					print '</td>';
 				}
-	
+
 				// Amount
 				print '<td class="right amount">';
 				print price($obj->amount, 0, $langs, 0, 0, -1, $conf->currency);
