@@ -157,7 +157,7 @@ class CodingSqlTest extends CommonClassTest
 				// Allow ` for 'rank' column name only
 				$filecontent = str_replace('`rank`', '_rank_', $filecontent);
 
-				$filecontent = str_replace(array('["', '"]', '{"', '"}', '("', '")'), '__OKSTRING__', $filecontent);
+				$filecontent = str_replace(array('["', '"]', '{"', '"}', '("', '")', 'href="', '">'), '__OKSTRING__', $filecontent);
 				// To accept " after the comment tag
 				//$filecontent = preg_replace('/^--.*$/', '', $filecontent);
 				$filecontent = preg_replace('/--.*?\n/', '', $filecontent);
