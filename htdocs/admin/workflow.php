@@ -210,7 +210,7 @@ $workflowcodes = array(
 	'WORKFLOW_TICKET_CLASSIFY_READ_ASSIGN' => array (
 		'family' => 'classify_ticket',
 		'position' => 92,
-		'enabled' => isModEnabled("ticket"),
+		'enabled' => isModEnabled('ticket'),
 		'picto' => 'ticket'
 	),
 
