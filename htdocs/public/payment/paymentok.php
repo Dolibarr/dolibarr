@@ -1272,7 +1272,7 @@ if ($ispaymentok) {
 							}
 							if ($bankaccountid > 0) {
 								$label = '(CustomerInvoicePayment)';
-								if ($object->type == Facture::TYPE_CREDIT_NOTE) {
+								if ($invoice->type == Facture::TYPE_CREDIT_NOTE) {
 									$label = '(CustomerInvoicePaymentBack)'; // Refund of a credit note
 								}
 								$result = $paiement->addPaymentToBank($user, 'payment', $label, $bankaccountid, '', '');
@@ -2014,7 +2014,7 @@ if ($ispaymentok) {
 							}
 							if ($bankaccountid > 0) {
 								$label = '(CustomerInvoicePayment)';
-								if ($object->type == Facture::TYPE_CREDIT_NOTE) {
+								if ($invoice->type == Facture::TYPE_CREDIT_NOTE) {
 									$label = '(CustomerInvoicePaymentBack)'; // Refund of a credit note
 								}
 								$result = $paiement->addPaymentToBank($user, 'payment', $label, $bankaccountid, '', '');
