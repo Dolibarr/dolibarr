@@ -49,18 +49,44 @@ jobs:
         with:
           php-version: 8.2
           coverage: none # disable xdebug, pcov
-          tools: phan:5.5.2
+          tools: cs2pr,phan:5.5.2
+
 
       - name: Run Phan analysis
-        if: "! cancelled() && steps.changed-php.outputs.any_changed == 'true'"
+        # Proceed when:
+        #   - the action is not cancelled
+        #  AND
+        #   - the branch is an integration branch (no merge), or,
+        #   - the merge from branch contains 'phan_full', or,
+        #   - there are changes in PHP files.
+        # Note: --output-mode=github does not provide file:line, so using checkstyle and cs2pr
+        if: ${{ ! cancelled() && (github.ref_name == 'develop' || github.ref_name == 'refs/heads/develop' || endsWith(github.ref_name, '.0') || contains(github.head_ref, 'phan_full') || steps.changed-php.outputs.any_changed == 'true') }}
         env:
           ALL_CHANGED_FILES: ${{ steps.changed-php.outputs.all_changed_files }}
         # shellcheck disable=2086
+          FILE_CHANGE_LIST: /tmp/phan-changed.lst
         run: |
           # shellcheck disable=2086
-          > /tmp/phpstan-files.txt
-          for f in $ALL_CHANGED_FILES; do echo "$f" >> /tmp/phan-files.txt; done
-          cat /tmp/phan-files.txt
-          echo phan --file-list /tmp/phan-files.txt $PHAN_QUICK -k "$PHAN_CONFIG" -B "$PHAN_BASELINE" --analyze-twice --minimum-target-php-version "$PHAN_MIN_PHP" --output-mode=github
-          #echo phan $PHAN_QUICK -k "$PHAN_CONFIG" -B "$PHAN_BASELINE" --analyze-twice --minimum-target-php-version "$PHAN_MIN_PHP" --output-mode=github
-          phan --file-list /tmp/phan-files.txt $PHAN_QUICK -k "$PHAN_CONFIG" -B "$PHAN_BASELINE" --analyze-twice --minimum-target-php-version "$PHAN_MIN_PHP" --output-mode=github
+          if [ "${{ github.ref_name }}" == "develop" ] || [[ "${{ github.ref_name }}" == *.0 ]]|| [[ "${{ github.head_ref }}" == *"phan_full"* ]] ; then
+            echo phan $PHAN_QUICK -k "$PHAN_CONFIG" -B "$PHAN_BASELINE" --analyze-twice --minimum-target-php-version "$PHAN_MIN_PHP" --output-mode=checkstyle -o _phan.xml
+            phan $PHAN_QUICK -k "$PHAN_CONFIG" -B "$PHAN_BASELINE" --analyze-twice --minimum-target-php-version "$PHAN_MIN_PHP" --output-mode=checkstyle -o _phan.xml
+          else
+            > $FILE_CHANGED_LIST
+            for f in $ALL_CHANGED_FILES; do echo "$f" >> $FILE_CHANGED_LIST; done
+            cat $FILE_CHANGED_LIST
+            echo phan --file-list $FILE_CHANGED_LIST $PHAN_QUICK -k "$PHAN_CONFIG" -B "$PHAN_BASELINE" --analyze-twice --minimum-target-php-version "$PHAN_MIN_PHP" --output-mode=checkstyle -o _phan.xml
+            phan --file-list $FILE_CHANGED_LIST $PHAN_QUICK -k "$PHAN_CONFIG" -B "$PHAN_BASELINE" --analyze-twice --minimum-target-php-version "$PHAN_MIN_PHP" --output-mode=checkstyle -o _phan.xml
+          fi
+
+      - name: Add results to PR as Github notices
+        if: ${{ always() }}
+        run: |
+          cs2pr --prepend-filename --prepend-source --notices-as-warnings _phan.xml
+
+      - name: Provide phan log as artifact
+        uses: actions/upload-artifact@v4
+        if: ${{ always() }}
+        with:
+          name: phan-srcrt
+          path: ${{ github.workspace }}/_phan.xml
+          retention-days: 2

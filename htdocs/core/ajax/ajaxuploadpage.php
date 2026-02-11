@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This file is a modified version of datepicker.php from phpBSM to fix some
@@ -221,7 +221,7 @@ if ($modulepart == 'invoice_supplier') {
 
 // TODO Move this into an AJAX service and just output the JS code to call the aajax to start
 
-if ($METHOD == 'converttotext') {
+if ($METHOD == 'converttotext') { // @phpstan-ignore-line
 	$result = dolDocToText($fullpathoffile, '', 'fulltext');
 	if (empty($result['error'])) {
 		$fileContent = $result['content'];
@@ -251,7 +251,7 @@ if ($METHOD == 'converttotext') {
 }
 
 
-if ($METHOD == 'thread') {
+if ($METHOD == 'thread') { // @phpstan-ignore-line
 	$prompt = '';
 
 	$fileId = 0;

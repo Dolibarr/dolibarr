@@ -215,6 +215,11 @@ class User extends CommonObject
 	public $pass_temp;
 
 	/**
+	 * @var int 	1 if user must change password at next login
+	 */
+	public $force_pass_change = 0;
+
+	/**
 	 * Date creation record (datec)
 	 *
 	 * @var integer
@@ -543,7 +548,7 @@ class User extends CommonObject
 		$sql .= " u.signature, u.office_phone, u.office_fax, u.user_mobile, u.personal_mobile,";
 		$sql .= " u.address, u.zip, u.town, u.fk_state as state_id, u.fk_country as country_id,";
 		$sql .= " u.admin, u.login, u.note_private, u.note_public,";
-		$sql .= " u.pass, u.pass_crypted, u.pass_temp, u.api_key,";
+		$sql .= " u.pass, u.pass_crypted, u.pass_temp, u.force_pass_change, u.api_key,";
 		$sql .= " u.fk_soc, u.fk_socpeople, u.fk_member, u.fk_user, u.ldap_sid, u.fk_user_expense_validator, u.fk_user_holiday_validator,";
 		$sql .= " fk_user_creat as user_creation_id, fk_user_modif as user_modification_id,";
 		$sql .= " u.statut as status, u.lang, u.entity,";
@@ -661,6 +666,7 @@ class User extends CommonObject
 				$this->pass_indatabase_crypted = $obj->pass_crypted;
 				$this->pass = $obj->pass;
 				$this->pass_temp = $obj->pass_temp;
+				$this->force_pass_change = $obj->force_pass_change;
 				$this->datelastpassvalidation = $obj->datelastpassvalidation;
 				$this->api_key = dolDecrypt($obj->api_key);
 
@@ -1648,6 +1654,55 @@ class User extends CommonObject
 	}
 
 	/**
+	 *  Set force password change flag
+	 *
+	 *	@param	User	$user		User making the change
+	 *	@param	int		$value		1 to force password change at next login, 0 to disable
+	 *  @return int     			Return integer <0 if KO, 0 if nothing is done, >0 if OK
+	 */
+	public function setForcePasswordChange($user, $value)
+	{
+		$error = 0;
+
+		$value = (int) $value;
+
+		// Check parameters : no change short line
+		if ($this->force_pass_change == $value) {
+			return 0;
+		}
+
+		$this->db->begin();
+
+		// Save in database
+		$sql = "UPDATE ".$this->db->prefix()."user";
+		$sql .= " SET force_pass_change = ".((int) $value);
+		$sql .= " WHERE rowid = ".((int) $this->id);
+		$result = $this->db->query($sql);
+
+		dol_syslog(get_class($this)."::setForcePasswordChange", LOG_DEBUG);
+		if ($result) {
+			$this->force_pass_change = $value;
+			// Call trigger
+			$result = $this->call_trigger('USER_MODIFY', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
+		} else {
+			$error++;
+			$this->error = $this->db->lasterror();
+		}
+
+		if ($error) {
+			$this->db->rollback();
+			return -$error;
+		} else {
+			$this->db->commit();
+			return 1;
+		}
+	}
+
+	/**
 	 * Sets object to supplied categories.
 	 *
 	 * Deletes object from existing categories not supplied.
@@ -2580,7 +2635,8 @@ class User extends CommonObject
 			$sql = "UPDATE ".$this->db->prefix()."user";
 			$sql .= " SET pass_crypted = '".$this->db->escape($password_crypted)."',";
 			$sql .= " datelastpassvalidation = '".$this->db->idate(dol_now())."',";
-			$sql .= " pass_temp = null";
+			$sql .= " pass_temp = null,";
+			$sql .= " force_pass_change = 0";
 			if (!empty($flagdelsessionsbefore)) {
 				$sql .= ", flagdelsessionsbefore = '".$this->db->idate($now - 5, 'gmt')."'";
 			}
@@ -2599,6 +2655,7 @@ class User extends CommonObject
 					$this->pass = $password;
 					$this->pass_indatabase = $password;
 					$this->pass_indatabase_crypted = (string) $password_crypted;
+					$this->force_pass_change = 0;
 
 					if ($this->fk_member && !$nosyncmember) {
 						require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';

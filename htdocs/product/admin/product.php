@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2026 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2006-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2007      Auguria SARL         <info@auguria.org>
@@ -11,6 +11,7 @@
  * Copyright (C) 2016	   Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -635,7 +636,7 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DefaultPriceType").'</td>';
 print '<td class="right">';
-print $form->selectPriceBaseType($conf->global->PRODUCT_PRICE_BASE_TYPE, "price_base_type");
+print $form->selectPriceBaseType(getDolGlobalString('PRODUCT_PRICE_BASE_TYPE'), "price_base_type");
 print '</td>';
 print '</tr>';
 
@@ -643,7 +644,7 @@ print '</tr>';
 if (isModEnabled("order") || isModEnabled("invoice")) {
 	print '<tr class="oddeven">';
 	print '<td>'.$form->textwithpicto($langs->trans("UseProductCustomerPackaging", $langs->transnoentities("PackagingForThisProduct")), $langs->trans("PackagingForThisProductDesc")).'</td>';
-	print '<td align="right">';
+	print '<td class="right">';
 	print ajax_constantonoff("PRODUCT_USE_CUSTOMER_PACKAGING", array(), $conf->entity, 0, 0, 0, 0);
 	print '</td>';
 	print '</tr>';
@@ -653,7 +654,7 @@ if (isModEnabled("order") || isModEnabled("invoice")) {
 if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 	print '<tr class="oddeven">';
 	print '<td>'.$form->textwithpicto($langs->trans("UseProductSupplierPackaging", $langs->transnoentities("PackagingForThisProduct")), $langs->trans("PackagingForThisProductDesc")).'</td>';
-	print '<td align="right">';
+	print '<td class="right">';
 	print ajax_constantonoff("PRODUCT_USE_SUPPLIER_PACKAGING", array(), $conf->entity, 0, 0, 0, 0);
 	print '</td>';
 	print '</tr>';

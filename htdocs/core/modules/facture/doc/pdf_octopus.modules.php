@@ -14,6 +14,7 @@
  * Copyright (C) 2022-2024	Eric Seigne				<eric.seigne@cap-rel.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025	Nick Fragoulis
+ * Copyright (C) 2026		Vincent Maury			<vmaury@timgroup.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -863,8 +864,8 @@ class pdf_octopus extends ModelePDFFactures
 					if (isset($object->type) && $object->type == 2 && getDolGlobalString('INVOICE_POSITIVE_CREDIT_NOTE')) {
 						$sign = -1;
 					}
-					// Collect total by value of vat rate into $this->tva["taux"]=total_tva
-					$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
+					// Collect total by value of vat rate into $this->tva_array
+					$prev_progress = getDolGlobalInt('INVOICE_USE_SITUATION') == 2 ? 0 : $object->lines[$i]->get_prev_progress($object->id);
 					if ($prev_progress > 0 && !empty($object->lines[$i]->situation_percent)) { // Compute progress from previous situation
 						if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {
 							$tvaligne = $sign * $object->lines[$i]->multicurrency_total_tva * ($object->lines[$i]->situation_percent - $prev_progress) / $object->lines[$i]->situation_percent;
@@ -917,10 +918,7 @@ class pdf_octopus extends ModelePDFFactures
 					}
 
 					// Fill $this->tva and $this->tva_array
-					if (!isset($this->tva[$vatrate])) {
-						$this->tva[$vatrate] = 0;
-					}
-					$this->tva[$vatrate] += $tvaligne;	// ->tva is abandoned, we use now ->tva_array that is more complete
+					// $this->tva[$vatrate] += $tvaligne;	// ->tva is abandoned, we use now ->tva_array that is more complete
 					$vatcode = $object->lines[$i]->vat_src_code;
 					if (empty($this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'])) {
 						$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] = 0;
@@ -1733,7 +1731,11 @@ class pdf_octopus extends ModelePDFFactures
 
 		$this->atleastoneratenotnull = 0;
 		if (!getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT')) {
-			$tvaisnull = (!empty($this->tva) && count($this->tva) == 1 && isset($this->tva['0.000']) && is_float($this->tva['0.000']));
+			$tvaisnull = false;
+			if (!empty($this->tva_array) && count($this->tva_array) == 1 ) {
+				$tva_el = reset($this->tva_array);
+				if ($tva_el['vatrate'] == '0.000' && is_float($tva_el['amount'])) $tvaisnull = true;
+			}
 			if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_IFNULL') && $tvaisnull) {
 				// Nothing to do
 			} else {
@@ -1815,23 +1817,8 @@ class pdf_octopus extends ModelePDFFactures
 
 				if (!getDolGlobalInt('PDF_INVOICE_SHOW_VAT_ANALYSIS')) {
 					// VAT
-					$tvas = array();
-					$nblines = count($object->lines);
-					for ($i = 0; $i < $nblines; $i++) {
-						$tvaligne = $object->lines[$i]->total_tva;
-						$vatrate = (string) $object->lines[$i]->tva_tx;
-
-						if (($object->lines[$i]->info_bits & 0x01) == 0x01) {
-							$vatrate .= '*';
-						}
-						if (! isset($tvas[$vatrate])) {
-							$tvas[$vatrate] = 0;
-						}
-						$tvas[$vatrate] += $tvaligne;
-					}
-
-					foreach ($tvas as $tvakey => $tvaval) {
-						if ($tvakey != 0 || getDolGlobalString('INVOICE_SHOW_ALSO_VAT_LINE_IF_ZERO')) {
+					foreach ($this->tva_array as $tvakey => $tvaval) {
+						if ($tvakey != 0 || getDolGlobalString('INVOICE_SHOW_ALSO_VAT_LINE_IF_ZERO')) {	// On affiche pas taux 0
 							$this->atleastoneratenotnull++;
 
 							$index++;
@@ -2756,12 +2743,6 @@ class pdf_octopus extends ModelePDFFactures
 			$this->cols['btpsomme']['status'] = true;
 		}
 
-		$derniere_situation = $this->TDataSituation['derniere_situation'];
-
-		if (empty($derniere_situation)) {
-			$derniere_situation = 0;
-		}
-
 		// Column 'Previous progression'
 		$rank += 10;
 		$this->cols['prev_progress'] = array(
@@ -2773,13 +2754,14 @@ class pdf_octopus extends ModelePDFFactures
 			),
 			'border-left' => true, // add left line separator
 			'overtitle' => array(
-				'textkey' => 'S'.$derniere_situation->situation_counter . ' - ' . dol_print_date($derniere_situation->date, "%d/%m/%Y"),
+				// @phan-suppress-next-line PhanTypeMismatchProperty
+				'textkey' => 'S'.(!empty($this->TDataSituation['derniere_situation']) ? $this->TDataSituation['derniere_situation']->situation_counter . ' - ' . dol_print_date($this->TDataSituation['derniere_situation']->date, "%d/%m/%Y") : ''),
 				'align' => 'C',
 				'padding' => array(0.5,0.2,0.5,0.2), // Like css 0 => top, 1 => right, 2 => bottom, 3 => left
 				'width' => 10 + 18 //current width + amount cell width
 			),
 		);
-		if ($this->situationinvoice && ! empty($this->TDataSituation['date_derniere_situation'])) {
+		if ($this->situationinvoice && !empty($this->TDataSituation['date_derniere_situation'])) {
 			$this->cols['prev_progress']['status'] = true;
 		}
 
@@ -3173,10 +3155,9 @@ class pdf_octopus extends ModelePDFFactures
 		unset($object->tab_previous_situation_invoice);
 
 		// list all previous invoice
-		// print json_encode($TPreviousInvoices); exit;
 
 		$TPreviousInvoices = array_reverse($TPreviousInvoices);
-		$facDerniereSituation = $TPreviousInvoices[0];
+		$facDerniereSituation = reset($TPreviousInvoices);
 
 		$TDataSituation = array();
 
@@ -3300,7 +3281,11 @@ class pdf_octopus extends ModelePDFFactures
 		if (is_array($a)) {
 			foreach ($a as $k => $v) {
 				if (is_array($v)) {
-					$ret[$k] = $this->sumSituation($v, $b[$k]);
+					if (isset($b[$k])) {
+						$ret[$k] = $this->sumSituation($v, $b[$k]);
+					} else {
+						$ret[$k] = $v;
+					}
 				} else {
 					$ret[$k] = $a[$k];
 					if (isset($b[$k])) {
@@ -3471,7 +3456,7 @@ class pdf_octopus extends ModelePDFFactures
 		unset($object->tab_previous_situation_invoice);
 
 		$TPreviousInvoices = array_reverse($TPreviousInvoices);
-		$facDerniereSituation = $TPreviousInvoices[0];
+		$facDerniereSituation = reset($TPreviousInvoices);
 
 		$ret = array(
 			'HT' => 0,	//montant HT normal
@@ -3496,10 +3481,16 @@ class pdf_octopus extends ModelePDFFactures
 			}
 
 			// Modification of VAT format, special case of imports or others which may have 20.0000
-			$ltvatx = (float) sprintf("%01.3f", $l->tva_tx);
-
-			$ret[$ltvatx]['TVA'] += $l->total_tva;
-			$ret[$ltvatx]['HT'] += $l->total_ht;
+			$ltvatx = price2num($l->tva_tx, '', 1);	   // ltvatx is used as key or array so must be a string or int
+			if (isset($ret[$ltvatx])) {
+				// @phan-suppress-next-line PhanTypeArraySuspicious
+				$ret[$ltvatx]['TVA'] += $l->total_tva;
+				// @phan-suppress-next-line PhanTypeArraySuspicious
+				$ret[$ltvatx]['HT'] += $l->total_ht;
+			} else {
+				$ret[$ltvatx]['TVA'] = $l->total_tva;
+				$ret[$ltvatx]['HT'] = $l->total_ht;
+			}
 		}
 
 		// Retained warranty
@@ -3508,14 +3499,14 @@ class pdf_octopus extends ModelePDFFactures
 			$retenue_garantie = 0;
 		}
 
-		//les cumuls
+		// Aggregate
 		$ret['TTC'] = $object->total_ttc;
 		$ret['TVA'] = $object->total_tva;
 		$ret['HT'] = $object->total_ht - $ret['travaux_sup'];
 		$ret['total_a_payer'] = $ret['TTC'] - $retenue_garantie;
 		$ret['retenue_garantie'] = $retenue_garantie;
 
-		//Clean up before keep in "cache"
+		// Clean up before keep in "cache"
 		if (array_key_exists('derniere_situation', $ret)) {
 			unset($ret['derniere_situation']->db);
 			unset($ret['derniere_situation']->fields);
