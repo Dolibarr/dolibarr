@@ -1105,8 +1105,8 @@ if (!defined('NOLOGIN')) {
 
 	// Check if user must change password at next login
 	if (!empty($user->force_pass_change)) {
-		// Allow only access to password change page and logout
-		$allowedpages = array('/user/card.php', '/user/logout.php');
+		// redirect to a simple page with only one action is possible : change your password
+		$allowedpages = array('/user/changepassword.php', '/user/logout.php');
 		$currentpage = $_SERVER['PHP_SELF'];
 		$isallowed = false;
 		foreach ($allowedpages as $page) {
@@ -1116,7 +1116,7 @@ if (!defined('NOLOGIN')) {
 			}
 		}
 		if (!$isallowed) {
-			header('Location: '.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'&action=edit&forcepasswordchange=1');
+			header('Location: '.DOL_URL_ROOT.'/user/changepassword.php?id='.$user->id);
 			exit;
 		}
 	}
