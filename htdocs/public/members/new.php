@@ -248,7 +248,7 @@ if (empty($reshook) && getDolGlobalInt("MEMBER_SEARCH_MEMBER_PUBLIC_FORM_CREATE"
 		}
 	}
 
-	if (!$memberfound && GETPOST("morphy") == 'mor' && GETPOSTISSET("societe") ) {
+	if (!$memberfound && GETPOST("morphy") == 'mor' && GETPOSTISSET("societe")) {
 		$sql = "SELECT a.rowid as id";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent as a";
 		$sql .= " JOIN ".MAIN_DB_PREFIX."societe as s";
@@ -430,7 +430,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 		$adh->birth       = $birthday;
 		$adh->phone   = GETPOST('phone');
 		$adh->phone_perso = GETPOST('phone_perso');
-		$adh->phone_mobile= GETPOST('phone_mobile');
+		$adh->phone_mobile = GETPOST('phone_mobile');
 
 		$adh->ip = getUserRemoteIP();
 
@@ -758,6 +758,8 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 		}
 
 		print '<tr><td class="fieldrequired">'.$langs->trans("MemberNature")."</td><td>\n";
+		$disabledphy = '';
+		$disabledmor = '';
 		//$disabledphy = ($checkednature == "mor" ? ' disabled="disabled"' : '');
 		//$disabledmor = ($checkednature == "phy" ? ' disabled="disabled"' : '');
 		print '<span id="spannature1" class="nonature-back spannature paddinglarge marginrightonly"><label for="phisicalinput" class="valignmiddle">'.$morphys["phy"].'<input id="phisicalinput" class="flat checkforselect marginleftonly valignmiddle" type="radio" name="morphy" value="phy"'.($checkednature == "phy" ? ' checked="checked"' : '').$disabledphy.'></label></span>';
@@ -842,7 +844,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 				});
 			</script>';
 		}
-			print '</td></tr>'."\n";
+		print '</td></tr>'."\n";
 	} else {
 		//print $morphys[$conf->global->MEMBER_NEWFORM_FORCEMORPHY];
 		print '<input type="hidden" id="morphy" name="morphy" value="' . getDolGlobalString('MEMBER_NEWFORM_FORCEMORPHY').'">';
@@ -1022,7 +1024,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 			print '<input type="text" name="budget" id="budget" class="flat turnover right width75" value="'.GETPOST('budget').'">';
 		} else {
 			$arraybudget = array('50' => '<= 100 000', '100' => '<= 200 000', '200' => '<= 500 000', '300' => '<= 1 500 000', '600' => '<= 3 000 000', '1000' => '<= 5 000 000', '2000' => '5 000 000+');
-			print $form->selectarray('budget', $arraybudget, GETPOSTINT('budget'), 1, 0, '', 0, 0, 0, '');
+			print $form->selectarray('budget', $arraybudget, GETPOSTINT('budget'), 1, 0, 0, '', 0, 0, 0, '');
 		}
 		print ' € or $';
 
@@ -1209,7 +1211,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 		$minimumamountbytype_json = json_encode($minimumamountbytype);
 		$amountbytype_json = json_encode($amountbytype);
 		$amountformuladescriptionbytype_json = json_encode($amountformuladescriptionbytype);
-		$currencysymbol =$langs->getCurrencySymbol($conf->currency);
+		$currencysymbol = $langs->getCurrencySymbol($conf->currency);
 
 		print '<script>
 		jQuery(function($) {
