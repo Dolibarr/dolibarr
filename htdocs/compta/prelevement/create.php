@@ -649,22 +649,22 @@ if ($resql) {
 			$param .= '&search_account='.urlencode($search_account);
 		}
 		if ($search_datelimit_startday) {
-			$param .= '&search_datelimit_startday='.urlencode((string)$search_datelimit_startday);
+			$param .= '&search_datelimit_startday='.urlencode((string) $search_datelimit_startday);
 		}
 		if ($search_datelimit_startmonth) {
-			$param .= '&search_datelimit_startmonth='.urlencode((string)$search_datelimit_startmonth);
+			$param .= '&search_datelimit_startmonth='.urlencode((string) $search_datelimit_startmonth);
 		}
 		if ($search_datelimit_startyear) {
-			$param .= '&search_datelimit_startyear='.urlencode((string)$search_datelimit_startyear);
+			$param .= '&search_datelimit_startyear='.urlencode((string) $search_datelimit_startyear);
 		}
 		if ($search_datelimit_endday) {
-			$param .= '&search_datelimit_endday='.urlencode((string)$search_datelimit_endday);
+			$param .= '&search_datelimit_endday='.urlencode((string) $search_datelimit_endday);
 		}
 		if ($search_datelimit_endmonth) {
-			$param .= '&search_datelimit_endmonth='.urlencode((string)$search_datelimit_endmonth);
+			$param .= '&search_datelimit_endmonth='.urlencode((string) $search_datelimit_endmonth);
 		}
 		if ($search_datelimit_endyear) {
-			$param .= '&search_datelimit_endyear='.urlencode((string)$search_datelimit_endyear);
+			$param .= '&search_datelimit_endyear='.urlencode((string) $search_datelimit_endyear);
 		}
 		if ($option) {
 			$param .= "&search_option=".urlencode($option);
