@@ -30,12 +30,12 @@
 /**
  *	\file       htdocs/core/class/html.formother.class.php
  *  \ingroup    core
- *	\brief      Fichier de la class des functions predefinie de composants html autre
+ *	\brief      File for the class of other predefined html components
  */
 
 
 /**
- *	Class permettant la generation de composants html autre
+ *	Class to help generate other html components
  *	Only common components are here.
  */
 class FormOther
