@@ -11744,7 +11744,7 @@ abstract class CommonObject
 	 */
 	public function setErrorWithLog($message, $loglevel = LOG_ERR)
 	{
-		$this->setErrorWithLog($message);
+		$this->setErrorWithoutLog($message);
 		dol_syslog($message, $loglevel);
 	}
 }
