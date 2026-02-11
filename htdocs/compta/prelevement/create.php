@@ -108,17 +108,17 @@ $fieldstosearchall = array(
 );
 // Array fields for column selection
 $arrayfields = array(
-	'f.ref' => array('label' => ($type == 'bank-transfer' ? 'SupplierInvoice' : 'Invoice'), 'checked' => 1),
-	'f.date_lim_reglement' => array('label' => "DateDue", 'checked' => 1),
-	's.nom' => array('label' => "ThirdParty", 'checked' => 1),
-	'f.fk_account' => array('label' => "BankAccount", 'checked' => 1),
-	'pfd.fk_soc_rib' => array('label' => "SupplierIBAN", 'checked' => 1),
-	'rum' => array('label' => "RUM", 'checked' => 1),
-	'pfd.amount' => array('label' => "AmountTTC", 'checked' => 1),
-	'pfd.date_demande' => array('label' => "DateRequest", 'checked' => 1)
+	'f.ref' => array('label' => ($type == 'bank-transfer' ? 'SupplierInvoice' : 'Invoice'), 'checked' => '1'),
+	'f.date_lim_reglement' => array('label' => "DateDue", 'checked' => '1'),
+	's.nom' => array('label' => "ThirdParty", 'checked' => '1'),
+	'f.fk_account' => array('label' => "BankAccount", 'checked' => '1'),
+	'pfd.fk_soc_rib' => array('label' => "SupplierIBAN", 'checked' => '1'),
+	'rum' => array('label' => "RUM", 'checked' => '1'),
+	'pfd.amount' => array('label' => "AmountTTC", 'checked' => '1'),
+	'pfd.date_demande' => array('label' => "DateRequest", 'checked' => '1')
 );
 if ($type == 'bank-transfer') {
-	$arrayfields['f.ref_supplier'] = array('label' => 'RefSupplier', 'checked' => 1);
+	$arrayfields['f.ref_supplier'] = array('label' => 'RefSupplier', 'checked' => '1');
 }
 $hookmanager->initHooks(array('directdebitcreatecard', 'globalcard'));
 
@@ -649,22 +649,22 @@ if ($resql) {
 			$param .= '&search_account='.urlencode($search_account);
 		}
 		if ($search_datelimit_startday) {
-			$param .= '&search_datelimit_startday='.urlencode($search_datelimit_startday);
+			$param .= '&search_datelimit_startday='.urlencode((string)$search_datelimit_startday);
 		}
 		if ($search_datelimit_startmonth) {
-			$param .= '&search_datelimit_startmonth='.urlencode($search_datelimit_startmonth);
+			$param .= '&search_datelimit_startmonth='.urlencode((string)$search_datelimit_startmonth);
 		}
 		if ($search_datelimit_startyear) {
-			$param .= '&search_datelimit_startyear='.urlencode($search_datelimit_startyear);
+			$param .= '&search_datelimit_startyear='.urlencode((string)$search_datelimit_startyear);
 		}
 		if ($search_datelimit_endday) {
-			$param .= '&search_datelimit_endday='.urlencode($search_datelimit_endday);
+			$param .= '&search_datelimit_endday='.urlencode((string)$search_datelimit_endday);
 		}
 		if ($search_datelimit_endmonth) {
-			$param .= '&search_datelimit_endmonth='.urlencode($search_datelimit_endmonth);
+			$param .= '&search_datelimit_endmonth='.urlencode((string)$search_datelimit_endmonth);
 		}
 		if ($search_datelimit_endyear) {
-			$param .= '&search_datelimit_endyear='.urlencode($search_datelimit_endyear);
+			$param .= '&search_datelimit_endyear='.urlencode((string)$search_datelimit_endyear);
 		}
 		if ($option) {
 			$param .= "&search_option=".urlencode($option);
@@ -725,7 +725,7 @@ if ($resql) {
 			foreach ($fieldstosearchall as $key => $val) {
 				$fieldstosearchall[$key] = $langs->trans($val);
 			}
-			print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
+			print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>';
 		}
 		$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 		$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', ''));
@@ -894,7 +894,7 @@ if ($resql) {
 			require_once DOL_DOCUMENT_ROOT.'/user/class/userbankaccount.class.php';
 			require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 		}
-		$totalarray = array();
+		$totalarray = array('nbfield' => 0, 'pos' => array(), 'val' => array( 'pfd.amount' => 0));
 		$bankaccountstatic = new Account($db);
 		while ($i < $num && $i < $limit) {
 			$obj = $db->fetch_object($resql);
@@ -1007,7 +1007,7 @@ if ($resql) {
 						if (!empty($bac->iban) || !empty($bac->bic)) {
 							print (!empty($bac->label) ? $bac->label.' - ' : '').$bac->iban.(($bac->iban && $bac->bic) ? ' / ' : '').$bac->bic;
 							if ($bac->verif() <= 0) {
-								print img_warning('Error on default bank number for IBAN : '.$langs->trans($bac->error_message));
+								print img_warning('Error on default bank number for IBAN : '.$langs->trans($bac->error));
 							}
 						} else {
 							print img_warning($langs->trans("IBANNotDefined"));
@@ -1046,9 +1046,6 @@ if ($resql) {
 					if (!$i) {
 						$totalarray['nbfield']++;
 						$totalarray['pos'][$totalarray['nbfield']] = 'pfd.amount';
-					}
-					if (!isset($totalarray['val']['pfd.amount'])) {
-						$totalarray['val']['pfd.amount'] = 0;
 					}
 					$totalarray['val']['pfd.amount'] += $obj->amount;
 				}
