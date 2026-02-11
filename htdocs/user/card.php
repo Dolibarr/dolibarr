@@ -164,12 +164,6 @@ if ($id > 0) {
 	$permissiontoedit = ((($user->id == $id) && $user->hasRight("user", "self", "write")) || (($user->id != $id) && $user->hasRight("user", "user", "write"))) && (empty($user->socid) || $user->socid == $object->socid);
 	$permissiontoeditpasswordandsee = ((($user->id == $id) && $user->hasRight("user", "self", "password")) || (($user->id != $id) && $user->hasRight("user", "user", "password") && $user->admin))&& (empty($user->socid) || $user->socid == $object->socid);
 	$permissiontoeditpasswordandsend = ((($user->id == $id) && $user->hasRight("user", "self", "password")) || (($user->id != $id) && $user->hasRight("user", "user", "password")))&& (empty($user->socid) || $user->socid == $object->socid);
-
-	// If user must change password at next login, allow them to edit their own password
-	if (!empty($user->force_pass_change) && $user->id == $id) {
-		$permissiontoedit = true;
-		$permissiontoeditpasswordandsee = true;
-	}
 }
 
 $passwordismodified = false;
@@ -2025,16 +2019,18 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</td>';
 			print "</tr>\n";
 
-			// Force update on next login
-			print '<tr><td class="titlefieldcreate">'.$langs->trans("ForcePasswordChange").'</td>';
-			print '<td>';
-			if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2) {
-				print '<input type="checkbox" disabled name="forcepasswordchange" value="1"'.($object->force_pass_change ? ' checked="checked"' : '').'>';
-			} else {
-				print yn($object->force_pass_change);
+			// Force update on next login only on dolibarr auth mode
+			if($_SESSION["dol_authmode"] == 'dolibarr') {
+				print '<tr><td class="titlefieldcreate">'.$langs->trans("ForcePasswordChange").'</td>';
+				print '<td>';
+				if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2) {
+					print '<input type="checkbox" disabled name="forcepasswordchange" value="1"'.($object->force_pass_change ? ' checked="checked"' : '').'>';
+				} else {
+					print yn($object->force_pass_change);
+				}
+				print '</td>';
+				print "</tr>\n";
 			}
-			print '</td>';
-			print "</tr>\n";
 
 
 			// Password for LDAP or HTTP Basic
@@ -2403,11 +2399,6 @@ if ($action == 'create' || $action == 'adduserldap') {
 		 * Edit mode
 		 */
 		if ($action == 'edit' && ($permissiontoedit || $permissiontoeditpasswordandsee)) {
-			// Display warning if password change is forced
-			if (!empty($user->force_pass_change) && $user->id == $object->id) {
-				print '<div class="warning">'.$langs->trans("YouMustChangeYourPassword").'</div><br>';
-			}
-
 			print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST" name="updateuser" enctype="multipart/form-data">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="update">';
@@ -2717,16 +2708,17 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print "</tr>\n";
 
 
-			// Force update password on next login
-			print '<tr>';
-			print '<td>'.$form->editfieldkey('ForcePasswordChange', 'forcepasswordchange', '', $object, 0).'</td><td>';
-			if ($permissiontoedit) {
-				print '<input type="checkbox" name="forcepasswordchange" value="1"'.($object->force_pass_change ? ' checked="checked"' : '').'>';
-			} else {
-				print '<input type="checkbox" name="forcepasswordchange" disabled value="1"'.($object->force_pass_change ? ' checked="checked"' : '').'>';
+			// Force update on next login only on dolibarr auth mode
+			if($_SESSION["dol_authmode"] == 'dolibarr') {
+				print '<tr>';
+				print '<td>'.$form->editfieldkey('ForcePasswordChange', 'forcepasswordchange', '', $object, 0).'</td><td>';
+				if ($permissiontoedit) {
+					print '<input type="checkbox" name="forcepasswordchange" value="1"'.($object->force_pass_change ? ' checked="checked"' : '').'>';
+				} else {
+					print '<input type="checkbox" name="forcepasswordchange" disabled value="1"'.($object->force_pass_change ? ' checked="checked"' : '').'>';
+				}
+				print '</td></tr>';
 			}
-			print '</td></tr>';
-
 
 			// Pass
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("Password").'</td>';
