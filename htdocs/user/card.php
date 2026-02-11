@@ -1218,12 +1218,14 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print '</td>';
 	print "</tr>\n";
 
-	// Force update on next login
-	print '<tr><td class="titlefieldcreate">'.$langs->trans("ForcePasswordChange").'</td>';
-	print '<td>';
-	print '<input type="checkbox" name="forcepasswordchange" value="1"'.(GETPOST('forcepasswordchange') == '1' ? ' checked="checked"' : '').'>';
-	print '</td>';
-	print "</tr>\n";
+	// Force update on next login -- only on dolibarr auth context
+	if ($_SESSION["dol_authmode"] == 'dolibarr') {
+		print '<tr><td class="titlefieldcreate">'.$langs->trans("ForcePasswordChange").'</td>';
+		print '<td>';
+		print '<input type="checkbox" name="forcepasswordchange" value="1"'.(GETPOST('forcepasswordchange') == '1' ? ' checked="checked"' : '').'>';
+		print '</td>';
+		print "</tr>\n";
+	}
 
 	// Password
 	print '<tr><td class="fieldrequired">'.$langs->trans("Password").'</td>';
@@ -2020,7 +2022,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print "</tr>\n";
 
 			// Force update on next login only on dolibarr auth mode
-			if($_SESSION["dol_authmode"] == 'dolibarr') {
+			if ($_SESSION["dol_authmode"] == 'dolibarr') {
 				print '<tr><td class="titlefieldcreate">'.$langs->trans("ForcePasswordChange").'</td>';
 				print '<td>';
 				if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2) {
@@ -2709,7 +2711,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 
 			// Force update on next login only on dolibarr auth mode
-			if($_SESSION["dol_authmode"] == 'dolibarr') {
+			if ($_SESSION["dol_authmode"] == 'dolibarr') {
 				print '<tr>';
 				print '<td>'.$form->editfieldkey('ForcePasswordChange', 'forcepasswordchange', '', $object, 0).'</td><td>';
 				if ($permissiontoedit) {
