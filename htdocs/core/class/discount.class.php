@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024      Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Noé Cendrier		<noe.cendrier@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -129,7 +129,7 @@ class DiscountAbsolute extends CommonObject
 	public $vat_src_code;
 
 	/**
-	 * @var int User ID Id utilisateur qui accorde la remise
+	 * @var int User ID of the user authorising the discount
 	 */
 	public $fk_user;
 

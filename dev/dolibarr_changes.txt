@@ -263,7 +263,7 @@ with
 
 PHP JQUERYFILETREE:
 -------------------
-* Remove directory htdocs/includes/jquery/plugins/jqueryFileTree/connectors
+* Remove directory htdocs/public/includes/jquery/plugins/jqueryFileTree/connectors
 
 
 

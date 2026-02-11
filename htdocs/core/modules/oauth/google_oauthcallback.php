@@ -279,7 +279,7 @@ if (!GETPOST('code')) {
 			if (!empty($jwt[1])) {
 				$userinfo = json_decode(base64_decode($jwt[1]), true);
 
-				dol_syslog("userinfo=".var_export($userinfo, true));
+				dol_syslog("userinfo=".formatLogObject($userinfo));
 
 				$useremail = $userinfo['email'];
 
