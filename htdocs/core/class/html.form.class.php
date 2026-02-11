@@ -23,7 +23,7 @@
  * Copyright (C) 2018       Josep Lluis Amador      <joseplluis@lliuretic.cat>
  * Copyright (C) 2023		Joachim Kueter			<git-jk@bloxera.com>
  * Copyright (C) 2023		Nick Fragoulis
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2026		Lenin Rivas				<lenin.rivas777@gmail.com>
  *
@@ -4464,7 +4464,7 @@ class Form
 	 *
 	 * @param int $productid Id of product
 	 * @param string $htmlname Name of HTML field
-	 * @param int $selected_supplier Pre-selected supplier if more than 1 result
+	 * @param int $selected_supplier Preselected supplier if more than 1 result
 	 * @return        string
 	 */
 	public function select_product_fourn_price($productid, $htmlname = 'productfournpriceid', $selected_supplier = 0)
@@ -4706,8 +4706,8 @@ class Form
 	/**
 	 * Return the list of type of delay available.
 	 *
-	 * @param 	''|int			$selected	Id du type de delais pre-selectionne
-	 * @param 	string			$htmlname	Nom de la zone select
+	 * @param 	''|int			$selected	Id for preselected delay typ
+	 * @param 	string			$htmlname	Name for the selected zone
 	 * @param 	string|int<0,1> $filtertype To add a filter
 	 * @param 	int<0,1> 		$addempty	Add empty entry
 	 * @param 	string			$morecss	More CSS
@@ -5180,8 +5180,8 @@ class Form
 	/**
 	 *  Selection HT or TTC
 	 *
-	 * @param string $selected Id pre-selectionne
-	 * @param string $htmlname Nom de la zone select
+	 * @param string $selected Preselected Id
+	 * @param string $htmlname Name of the selected zone
 	 * @param int	 $addjscombo Add js combo
 	 * @return    string                    Code of HTML select to chose tax or not
 	 */
@@ -5627,7 +5627,7 @@ class Form
 			}
 
 			if (!empty($addentrynone)) {
-				$out .= '<option value="-2"'.($selected == -2 ? ' selected="selected"': '').' data-html="'.dolPrintHTMLForAttribute('<span class="opacitymedium">'.$langs->trans("None").'</span>').'">'.$langs->trans("None").'</option>';
+				$out .= '<option value="-2"'.($selected == -2 ? ' selected="selected"' : '').' data-html="'.dolPrintHTMLForAttribute('<span class="opacitymedium">'.$langs->trans("None").'</span>').'">'.$langs->trans("None").'</option>';
 			}
 
 			$out .= "</select>";
@@ -6627,7 +6627,7 @@ class Form
 	 * Form select for rule for lines dates
 	 *
 	 * @param string $page Page
-	 * @param string $selected Id condition pre-selectionne
+	 * @param string $selected Preselected Id
 	 * @param string $htmlname Name of select html field
 	 * @param int $addempty Add empty entry
 	 * @param int $nooutput No print is done. String is returned.
@@ -6673,7 +6673,7 @@ class Form
 	 *  Show a form to select a delivery delay
 	 *
 	 * @param 	string 		$page 		Page
-	 * @param 	string 		$selected 	Id condition pre-selectionne
+	 * @param 	string 		$selected 	Preselected I for condition
 	 * @param 	string 		$htmlname 	Name of select html field
 	 * @param 	int<0,1> 	$addempty 	Add an empty entry
 	 * @return  void
@@ -6705,7 +6705,7 @@ class Form
 	 *  List found into table c_input_reason loaded by loadCacheInputReason
 	 *
 	 * @param 	string 	$page 		Page
-	 * @param 	string 	$selected 	Id condition pre-selectionne
+	 * @param 	string 	$selected 	Preselected Id for condition
 	 * @param 	string 	$htmlname 	Name of select html field
 	 * @param 	int 	$addempty 	Add empty entry
 	 * @param	string	$morecss	More CSS
@@ -6829,7 +6829,7 @@ class Form
 	 *    Show form with payment mode
 	 *
 	 * @param string $page Page
-	 * @param string $selected Id mode pre-selectionne
+	 * @param string $selected Preselected Id for mode
 	 * @param string $htmlname Name of select html field
 	 * @param string $filtertype To filter on field type in llx_c_paiement ('CRDT' or 'DBIT' or array('code'=>xx,'label'=>zz))
 	 * @param int<-1,1> $active Active or not, -1 = all
@@ -6875,7 +6875,7 @@ class Form
 	 *    Show form with transport mode
 	 *
 	 * @param string $page Page
-	 * @param int|'' $selected Id mode pre-select
+	 * @param int|'' $selected Id mode preselect
 	 * @param string $htmlname Name of select html field
 	 * @param int<-1,1> $active Active or not, -1 = all
 	 * @param int<0,1> $addempty 1=Add empty entry
@@ -6907,7 +6907,7 @@ class Form
 	 *    Show form with multicurrency code
 	 *
 	 * @param string $page Page
-	 * @param string $selected code pre-selectionne
+	 * @param string $selected Preselected code
 	 * @param string $htmlname Name of select html field
 	 * @return    void
 	 */
@@ -7088,7 +7088,7 @@ class Form
 	 *
 	 * @param string 	$page 		Page
 	 * @param Societe 	$societe 	Filter on third party
-	 * @param string 	$selected 	Id contact pre-selectionne
+	 * @param string 	$selected 	Preselected contact Id
 	 * @param string 	$htmlname 	Name of HTML select. If 'none', we just show contact link.
 	 * @return    void
 	 */
@@ -7537,7 +7537,7 @@ class Form
 
 		$num = count($arrayofvatrates);
 		if ($num > 0) {
-			// Define the vat rate to pre-select (if defaulttx not forced so is -1 or '')
+			// Define the vat rate to preselect (if defaulttx not forced so is -1 or '')
 			if ($defaulttx < 0 || dol_strlen($defaulttx) == 0) {
 				// Define a default thirdparty to use if the seller or buyer is not defined
 				$tmpthirdparty = new Societe($this->db);
@@ -7659,7 +7659,7 @@ class Form
 	 *                - local date in user area, if set_time is '' (so if set_time is '', output may differs when done from two different location)
 	 *                - Empty (fields empty), if set_time is -1 (in this case, parameter empty must also have value 1)
 	 *
-	 * @param integer|string $set_time Pre-selected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date with 00:00 hour (Parameter 'empty' must be 0 or 2).
+	 * @param integer|string $set_time Preselected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date with 00:00 hour (Parameter 'empty' must be 0 or 2).
 	 * @param string $prefix Prefix for fields name
 	 * @param int $h 1 or 2=Show also hours (2=hours on a new line), -1 has same effect but hour and minutes are prefilled with 23:59 if date is empty, 3 show hour always empty
 	 * @param int $m 1=Show also minutes, -1 has same effect but hour and minutes are prefilled with 23:59 if date is empty, 3 show minutes always empty
@@ -7696,8 +7696,8 @@ class Form
 	 *              - local date in user area, if set_time is '' (so if set_time is '', output may differs when done from two different location)
 	 *              - Empty (fields empty), if set_time is -1 (in this case, parameter empty must also have value 1)
 	 *
-	 * @param int|'' $set_time Pre-selected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date with 00:00 hour (Parameter 'empty' must be 0 or 2).
-	 * @param integer|string $set_time_end Pre-selected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date with 00:00 hour (Parameter 'empty' must be 0 or 2).
+	 * @param int|'' $set_time Preselected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date with 00:00 hour (Parameter 'empty' must be 0 or 2).
+	 * @param integer|string $set_time_end Preselected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date with 00:00 hour (Parameter 'empty' must be 0 or 2).
 	 * @param string $prefix Prefix for fields name
 	 * @param int<0,2>	 $empty 0=Fields required, 1=Empty inputs are allowed, 2=Empty inputs are allowed for hours only
 	 * @param int	 $forcenewline Force new line between the 2 dates.
@@ -7723,7 +7723,7 @@ class Form
 	 *              - local date in user area, if set_time is '' (so if set_time is '', output may differs when done from two different location)
 	 *              - Empty (fields empty), if set_time is -1 (in this case, parameter empty must also have value 1)
 	 *
-	 * @param int|''		 		$set_time 		Pre-selected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date with 00:00 hour (Parameter 'empty' must be 0 or 2).  Using a "string date" is deprecated and excluded from the param type.
+	 * @param int|''		 		$set_time 		Preselected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date with 00:00 hour (Parameter 'empty' must be 0 or 2).  Using a "string date" is deprecated and excluded from the param type.
 	 * @param string 				$prefix 		Prefix for fields name
 	 * @param int 					$h 				1 or 2=Show also hours (2=hours on a new line), -1 has same effect but hour and minutes are prefilled with 23:59 if date is empty, 3 or 4 (4=hours on a new line)=Show hour always empty
 	 * @param int 					$m 				1=Show also minutes, -1 has same effect but hour and minutes are prefilled with 23:59 if date is empty, 3 show minutes always empty
@@ -7787,7 +7787,7 @@ class Form
 			}
 		}
 
-		// Analysis of the pre-selection date
+		// Analysis of the preselected date
 		$reg = array();
 		$shour = '';
 		$smin = '';
@@ -10763,7 +10763,7 @@ class Form
 	 *    Return an html string with a select combo box to choose yes or no
 	 *
 	 * @param string 		$htmlname 		Name of html select field
-	 * @param string|int<min,1>	$value 			Pre-selected value
+	 * @param string|int<min,1>	$value 			Preselected value
 	 * @param int<0,1> 		$option 		0 return yes/no, 1 return 1/0
 	 * @param bool|int<0,1>	$disabled 		true or false
 	 * @param int<0,1> 		$useempty 		1=Add empty line

@@ -391,7 +391,7 @@ class dolReceiptPrinter extends Printer
 	/**
 	 *  Form to Select type printer
 	 *
-	 *  @param    string    $selected       Id printer type pre-selected
+	 *  @param    string    $selected       Id printer type preselected
 	 *  @param    string    $htmlname       select html name
 	 *  @return  int                        0 if OK; >0 if KO
 	 */
@@ -416,7 +416,7 @@ class dolReceiptPrinter extends Printer
 	/**
 	 *  Form to Select Profile printer
 	 *
-	 *  @param    string    $selected       Id printer profile pre-selected
+	 *  @param    string    $selected       Id printer profile preselected
 	 *  @param    string    $htmlname       select html name
 	 *  @return  int                        0 if OK; >0 if KO
 	 */
