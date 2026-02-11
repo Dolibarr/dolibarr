@@ -317,7 +317,7 @@ if (isModEnabled('paypal') && $paymentmethod === 'paypal') {	// We call this pag
 				// Nothing to do
 				dol_syslog("Call to GetExpressCheckoutDetails return ".$ack, LOG_DEBUG, 0, '_payment');
 			} else {
-				dol_syslog("Call to GetExpressCheckoutDetails return error: ".json_encode($resArray), LOG_WARNING, 0, '_payment');
+				dol_syslog("Call to GetExpressCheckoutDetails return error: ".formatLogObject($resArray), LOG_WARNING, 0, '_payment');
 			}
 
 			dol_syslog("We call DoExpressCheckoutPayment token=".$onlinetoken." paymentType=".$paymentType." currencyCodeType=".$currencyCodeType." payerID=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt." fulltag=".$fulltag, LOG_DEBUG, 0, '_payment');
@@ -343,7 +343,7 @@ if (isModEnabled('paypal') && $paymentmethod === 'paypal') {	// We call this pag
 
 				$ispaymentok = true;
 			} else {
-				dol_syslog("Call to DoExpressCheckoutPayment return error: ".json_encode($resArray2), LOG_WARNING, 0, '_payment');
+				dol_syslog("Call to DoExpressCheckoutPayment return error: ".formatLogObject($resArray2), LOG_WARNING, 0, '_payment');
 
 				//Display a user friendly Error on the page using any of the following error information returned by PayPal
 				$ErrorCode = urldecode($resArray2["L_ERRORCODE0"]);
