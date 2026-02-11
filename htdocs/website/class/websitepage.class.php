@@ -5,7 +5,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2020 	   Nicolas ZABOURI		<info@inovea-conseil.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -278,6 +278,18 @@ class WebsitePage extends CommonObject
 
 		// Remove spaces and be sure we have main language only
 		$this->lang = preg_replace('/[_-].*$/', '', trim($this->lang)); // en_US or en-US -> en
+
+		// Test if page contains dynamic PHP content
+		if (!$user->hasRight('website', 'writephp')) {
+			// Check there is no PHP content into the imported file (must be only HTML + JS)
+			$phpcontent = dolKeepOnlyPhpCode($this->content);
+
+			if ($phpcontent) {
+				$this->error = 'Error: you try to create a page with PHP content without having permissions for that.';
+				$this->errors = $this->error;
+				return -1;
+			}
+		}
 
 		return $this->createCommon($user, $notrigger);
 	}
