@@ -579,7 +579,7 @@ print $formcategory->textwithpicto('', $langs->trans("TicketsAutoReadTicketHelp"
 print '</td>';
 print '</tr>';
 
-// Auto mark ticket as read when assign someon
+// Auto mark ticket as read when assign someone
 print '<tr class="oddeven"><td>'.$langs->trans("TicketsAutoReadTicketWhenAssign").'</td>';
 print '<td class="left">';
 if ($conf->use_javascript_ajax) {
