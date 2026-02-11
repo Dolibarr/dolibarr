@@ -1129,7 +1129,7 @@ class FormCompany extends Form
 	 *  @param	string		$page		Page
 	 *  @param  string		$selected	Id preselected
 	 *  @param  string		$htmlname	Name of HTML select
-	 *  @param  string		$filter		optional filters criteras
+	 *  @param  string		$filter		Optional filter criteria
 	 *  @param  int<0,1>	$nooutput	No print output. Return it only.
 	 *  @return	void|string
 	 *  @phpstan-return ($nooutput is 1 ? string : void)
