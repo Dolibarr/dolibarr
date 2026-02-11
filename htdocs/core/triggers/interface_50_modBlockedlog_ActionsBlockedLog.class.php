@@ -25,7 +25,6 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
 
-
 /**
  *  Class of triggered functions for agenda module
  */
@@ -91,6 +90,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 		}
 
 		if ($action === 'PAYMENT_CUSTOMER_CREATE' && $object->element == 'payment') {
+			include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 			if (isALNERunningVersion() && $mysoc->country_code == 'FR') {
 				if (empty($object->paiementcode) && !empty($object->paiementid)) {
 					$object->paiementcode = dol_getIdFromCode($this->db, $object->paiementid, 'c_paiement', 'id', 'code', 1);

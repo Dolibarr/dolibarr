@@ -92,7 +92,7 @@ $db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf
 
 if ($db->ok) {
 	print '<tr><td><label for="login">'.$langs->trans("Login").' :</label></td><td>';
-	print '<input id="login" name="login" type="text" value="'.(GETPOSTISSET("login") ? GETPOST("login", 'alpha') : (isset($force_install_dolibarrlogin) ? $force_install_dolibarrlogin : '')).'"'.(@$force_install_noedit == 2 && $force_install_dolibarrlogin !== null ? ' disabled' : '').' autofocus></td></tr>';
+	print '<input id="login" name="login" type="text" value="'.(GETPOSTISSET("login") ? GETPOST("login", 'alpha') : (isset($force_install_dolibarrlogin) ? $force_install_dolibarrlogin : '')).'"'.(@$force_install_noedit == 2 && $force_install_dolibarrlogin !== null ? ' disabled' : '').' spellcheck="false" autofocus></td></tr>';
 	print '<tr><td><label for="pass">'.$langs->trans("Password").' :</label></td><td>';
 	print '<input type="password" id="pass" name="pass" autocomplete="new-password" minlength="8" value="'. (isset($force_install_dolibarrpassword) ? $force_install_dolibarrpassword : '').'"'.(@$force_install_noedit == 2 && $force_install_dolibarrpassword !== null ? ' disabled' : '').'></td></tr>';
 	print '<tr><td><label for="pass_verif">'.$langs->trans("PasswordRetype").' :</label></td><td>';

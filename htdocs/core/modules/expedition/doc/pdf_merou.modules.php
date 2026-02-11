@@ -630,7 +630,7 @@ class pdf_merou extends ModelePdfExpedition
 		$pdf->SetTextColor(0, 0, 0);
 
 		if (!empty($object->tracking_number)) {
-			$object->getUrlTrackingStatus($object->tracking_number);
+			$object->getUrlTrackingStatus((string) $object->tracking_number);
 			if (!empty($object->tracking_url)) {
 				if ($object->shipping_method_id > 0) {
 					// Get code using getLabelFromKey

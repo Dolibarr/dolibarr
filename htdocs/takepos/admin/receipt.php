@@ -80,7 +80,7 @@ if (GETPOST('action', 'alpha') == 'set') {
 	dolibarr_set_const($db, "TAKEPOS_PRINT_METHOD", GETPOST('value', 'alpha'), 'chaine', 0, '', $conf->entity);
 	// TakePOS connector require ReceiptPrinter module
 	if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector" && !isModEnabled('receiptprinter')) {
-		activateModule("modReceiptPrinter");
+		activateModule("modReceiptPrinter", 1, 0);
 	}
 }
 

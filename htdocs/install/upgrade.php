@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -271,8 +271,8 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 		&& versioncompare($versioncommande, $versionarray) <= 0) {	// Si mysql >= 4.0
 			dolibarr_install_syslog("Clean database from bad named constraints");
 
-			// Remove old constraints without name and duplicated
-			// Les contraintes indesirables ont un nom qui commence par 0_ ou se determine par ibfk_999
+			// Delete old name constraints and duplicates
+			// The undesired constraint have a name starting with '0_' or defined by ibfk_999
 			$listtables = array(
 								MAIN_DB_PREFIX.'adherent_options',
 								MAIN_DB_PREFIX.'category_bankline',
