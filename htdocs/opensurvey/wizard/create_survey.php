@@ -151,7 +151,8 @@ print '<table class="border centpercent">'."\n";
 
 print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("PollTitle").'</td>';
 
-print '<td><input type="text" name="title" class="minwidth300" maxlength="80" value="'.dol_escape_htmltag($_SESSION["title"]).'" autofocus></td>'."\n";
+print '<td><input type="text" id="title" name="title" class="minwidth300" maxlength="80" value="'.dol_escape_htmltag($_SESSION["title"]).'" autofocus></td>'."\n";
+
 if (!$_SESSION["title"] && (GETPOST('creation_sondage_date') || GETPOST('creation_sondage_autre'))) {
 	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("PollTitle")), null, 'errors');
 }
