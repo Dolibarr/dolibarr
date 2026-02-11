@@ -215,9 +215,9 @@ class User extends CommonObject
 	public $pass_temp;
 
 	/**
-	 * @var int 1 if user must change password at next login
+	 * @var int 	1 if user must change password at next login
 	 */
-	public $force_pass_change;
+	public $force_pass_change = 0;
 
 	/**
 	 * Date creation record (datec)
