@@ -86,6 +86,7 @@ $cancel = GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'usercard'; // To manage different context of search
 $backtopage = GETPOST('backtopage');
 $backtopageforcancel = GETPOST('backtopageforcancel');
+$forcepasswordchange = GETPOSTINT('forcepasswordchange');
 
 if (empty($id) && $action != 'add' && $action != 'create') {
 	$id = $user->id;
@@ -163,6 +164,12 @@ if ($id > 0) {
 	$permissiontoedit = ((($user->id == $id) && $user->hasRight("user", "self", "write")) || (($user->id != $id) && $user->hasRight("user", "user", "write"))) && (empty($user->socid) || $user->socid == $object->socid);
 	$permissiontoeditpasswordandsee = ((($user->id == $id) && $user->hasRight("user", "self", "password")) || (($user->id != $id) && $user->hasRight("user", "user", "password") && $user->admin))&& (empty($user->socid) || $user->socid == $object->socid);
 	$permissiontoeditpasswordandsend = ((($user->id == $id) && $user->hasRight("user", "self", "password")) || (($user->id != $id) && $user->hasRight("user", "user", "password")))&& (empty($user->socid) || $user->socid == $object->socid);
+
+	// If user must change password at next login, allow them to edit their own password
+	if (!empty($user->force_pass_change) && $user->id == $id) {
+		$permissiontoedit = true;
+		$permissiontoeditpasswordandsee = true;
+	}
 }
 
 $passwordismodified = false;
@@ -2375,6 +2382,11 @@ if ($action == 'create' || $action == 'adduserldap') {
 		 * Edit mode
 		 */
 		if ($action == 'edit' && ($permissiontoedit || $permissiontoeditpasswordandsee)) {
+			// Display warning if password change is forced
+			if (!empty($user->force_pass_change) && $user->id == $object->id) {
+				print '<div class="warning">'.$langs->trans("YouMustChangeYourPassword").'</div><br>';
+			}
+
 			print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST" name="updateuser" enctype="multipart/form-data">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="update">';
