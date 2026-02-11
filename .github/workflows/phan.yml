@@ -71,7 +71,7 @@ jobs:
             echo phan $PHAN_QUICK -k "$PHAN_CONFIG" -B "$PHAN_BASELINE" --analyze-twice --minimum-target-php-version "$PHAN_MIN_PHP" --output-mode=checkstyle -o _phan.xml
             phan $PHAN_QUICK -k "$PHAN_CONFIG" -B "$PHAN_BASELINE" --analyze-twice --minimum-target-php-version "$PHAN_MIN_PHP" --output-mode=checkstyle -o _phan.xml
           else
-            > $FILE_CHANGED_LIST
+            echo -n "" > $FILE_CHANGED_LIST
             for f in $ALL_CHANGED_FILES; do echo "$f" >> $FILE_CHANGED_LIST; done
             cat $FILE_CHANGED_LIST
             echo phan --file-list $FILE_CHANGED_LIST $PHAN_QUICK -k "$PHAN_CONFIG" -B "$PHAN_BASELINE" --analyze-twice --minimum-target-php-version "$PHAN_MIN_PHP" --output-mode=checkstyle -o _phan.xml
