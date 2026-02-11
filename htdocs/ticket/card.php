@@ -635,7 +635,7 @@ if (empty($reshook)) {
 		if ($object->fetch(GETPOSTINT('id'), GETPOST('track_id', 'alpha')) >= 0) {
 			$new_status = GETPOSTINT('new_status');
 			//$old_status = $object->status;
-			$res = $object->setStatut($new_status);
+			$res = $object->setStatut($new_status, null, '', $triggermodname);
 			if ($res) {
 				$url = 'card.php?track_id=' . $object->track_id;
 				header("Location: " . $url);
