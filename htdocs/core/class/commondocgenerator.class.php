@@ -592,6 +592,7 @@ abstract class CommonDocGenerator
 			$array_key.'_phone_perso' => $object->phone_perso,
 			$array_key.'_phone_mobile' => $object->phone_mobile,
 			$array_key.'_fax' => $object->fax,
+			$array_key.'_birthday_locale' => (!empty($object->birthday) ? dol_print_date($object->birthday, 'day', false, $outputlangs) : ''),
 			$array_key.'_birthday' => $object->birthday,
 			$array_key.'_default_lang' => $object->default_lang,
 			$array_key.'_note_public' => $object->note_public,
