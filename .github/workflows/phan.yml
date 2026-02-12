@@ -64,14 +64,14 @@ jobs:
         env:
           ALL_CHANGED_FILES: ${{ steps.changed-php.outputs.all_changed_files }}
         # shellcheck disable=2086
-          FILE_CHANGE_LIST: /tmp/phan-changed.lst
+          FILE_CHANGED_LIST: /tmp/phan-changed.lst
         run: |
           # shellcheck disable=2086
           if [ "${{ github.ref_name }}" == "develop" ] || [[ "${{ github.ref_name }}" == *.0 ]]|| [[ "${{ github.head_ref }}" == *"phan_full"* ]] ; then
             echo phan $PHAN_QUICK -k "$PHAN_CONFIG" -B "$PHAN_BASELINE" --analyze-twice --minimum-target-php-version "$PHAN_MIN_PHP" --output-mode=checkstyle -o _phan.xml
             phan $PHAN_QUICK -k "$PHAN_CONFIG" -B "$PHAN_BASELINE" --analyze-twice --minimum-target-php-version "$PHAN_MIN_PHP" --output-mode=checkstyle -o _phan.xml
           else
-            rm "$FILE_CHANGED_LIST" 2>/dev/null
+            echo -n "" > "$FILE_CHANGED_LIST"
             for f in $ALL_CHANGED_FILES; do echo "$f" >> "$FILE_CHANGED_LIST"; done
             cat "$FILE_CHANGED_LIST"
             echo phan --file-list "$FILE_CHANGED_LIST" $PHAN_QUICK -k "$PHAN_CONFIG" -B "$PHAN_BASELINE" --analyze-twice --minimum-target-php-version "$PHAN_MIN_PHP" --output-mode=checkstyle -o _phan.xml

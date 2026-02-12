@@ -960,7 +960,7 @@ class Tva extends CommonObject
 			$return .= ' | <span class="opacitymedium">'.$langs->trans("Amount").'</span> : <span class="info-box-label amount">'.price($this->amount).'</span>';
 		}
 		if (property_exists($this, 'type_payment')) {
-			$return .= '<br><span class="opacitymedium">'.$langs->trans("Payement").'</span> : <span class="info-box-label">'.$this->type_payment.'</span>';
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("Payment").'</span> : <span class="info-box-label">'.$this->type_payment.'</span>';
 		}
 		if (property_exists($this, 'datev')) {
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("DateEnd").'</span> : <span class="info-box-label" >'.dol_print_date($this->datev).'</span>';
