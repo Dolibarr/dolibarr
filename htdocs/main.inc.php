@@ -1116,7 +1116,7 @@ if (!defined('NOLOGIN')) {
 			}
 		}
 		if (!$isallowed) {
-			header('Location: '.DOL_URL_ROOT.'/user/changepassword.php?id='.$user->id);
+			header('Location: '.DOL_URL_ROOT.'/user/changepassword.php');
 			exit;
 		}
 	}
