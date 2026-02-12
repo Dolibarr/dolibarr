@@ -181,6 +181,13 @@ if ($massaction == 'presetsupervisor') {
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmSetSupervisor"), $langs->trans("ConfirmSetSupervisorQuestion", count($toselect)), "setsupervisor", $formquestion, 1, 0, 200, 500, 1);
 }
 
+if ($massaction == 'preforcepasswordchange') {
+	//TODO for ldap and other sources of auth
+	if ($_SESSION["dol_authmode"] == 'dolibarr') {
+		print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmForcePasswordChange"), $langs->trans("ConfirmForcePasswordChangeQuestion", count($toselect)), "forcepasswordchange", array(), 1, 0, 200, 500, 1);
+	}
+}
+
 if ($massaction == 'preaffectuser') {
 	$formquestion = array();
 

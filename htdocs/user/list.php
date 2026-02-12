@@ -365,6 +365,46 @@ if (empty($reshook)) {
 		$massaction = '';
 	}
 
+	// Force password change at next login
+	if (!$error && $massaction == 'forcepasswordchange' && $permissiontoadd) {
+	//TODO for ldap and other sources of auth
+	if ($_SESSION["dol_authmode"] == 'dolibarr') {
+		$objecttmp = new User($db);
+
+			$db->begin();
+
+			$nbok = 0;
+			foreach ($toselect as $toselectid) {
+				$result = $objecttmp->fetch($toselectid);
+				if ($result > 0) {
+					$result = $objecttmp->setForcePasswordChange($user, 1);
+					if ($result == 0) {
+						// Nothing is done (already set)
+					} elseif ($result < 0) {
+						setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+						$error++;
+						break;
+					} else {
+						$nbok++;
+					}
+				} else {
+					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+					$error++;
+					break;
+				}
+			}
+
+			if (!$error) {
+				setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+				$db->commit();
+			} else {
+				$db->rollback();
+			}
+
+			$massaction = '';
+		}
+	}
+
 	// Generic mass actions
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -659,9 +699,15 @@ if (isModEnabled('category') && $permissiontoadd) {
 if ($permissiontoadd) {
 	$arrayofmassactions['presetsupervisor'] = img_picto('', 'user', 'class="pictofixedwidth"').$langs->trans("SetSupervisor");
 }
+if ($permissiontoadd) {
+	//TODO for ldap and other sources of auth
+	if ($_SESSION["dol_authmode"] == 'dolibarr') {
+		$arrayofmassactions['preforcepasswordchange'] = img_picto('', 'key', 'class="pictofixedwidth"').$langs->trans("ForcePasswordChange");
+	}
+}
 //if ($permissiontodelete) $arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 
-if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete', 'preaffecttag', 'presetsupervisor'))) {
+if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete', 'preaffecttag', 'presetsupervisor', 'preforcepasswordchange'))) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
