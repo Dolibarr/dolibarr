@@ -168,7 +168,7 @@ foreach ($argv as $key => $value) {
 			print 'Error: Bad date format or value'."\n";
 			exit(1);
 		}
-		print 'Rebuild PDF for ivoices with at least one payment between '.dol_print_date($paymentdateafter, 'day', 'gmt')." and ".dol_print_date($paymentdatebefore, 'day', 'gmt').".\n";
+		print 'Rebuild PDF for invoices with at least one payment between '.dol_print_date($paymentdateafter, 'day', 'gmt')." and ".dol_print_date($paymentdatebefore, 'day', 'gmt').".\n";
 	}
 
 	if ($value == 'filter=nopayment') {
@@ -176,7 +176,7 @@ foreach ($argv as $key => $value) {
 		$option .= (empty($option) ? '' : '_').'nopayment';
 		$filter[] = 'nopayment';
 
-		print 'Rebuild PDF for ivoices with no payment done yet.'."\n";
+		print 'Rebuild PDF for invoices with no payment done yet.'."\n";
 	}
 
 	if ($value == 'filter=bank') {
