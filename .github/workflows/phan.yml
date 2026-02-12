@@ -74,7 +74,7 @@ jobs:
             echo -n "" > "$FILE_CHANGED_LIST"
             for f in $ALL_CHANGED_FILES; do echo "$f" >> "$FILE_CHANGED_LIST"; done
             # Must exclude same files as in phan configuration
-            grep -v -E '^htdocs/(custom/|.*/canvas/.*/tpl/.*.tpl.php|admin/tools/ui/|includes/(nusoap/|restler/|stripe/)|conf/conf.php|modulebuilder/template/|[^h].*/.*)$' "$FILE_CHANGED_LIST"> "$FILE_CHANGED_LIST".tmp
+            grep -v -E '^htdocs/(custom/|.*/canvas/.*/tpl/.*.tpl.php|admin/tools/ui/|includes/(nusoap/|restler/|stripe/)|conf/conf.php)$' "$FILE_CHANGED_LIST"> "$FILE_CHANGED_LIST".tmp || true
             mv "$FILE_CHANGED_LIST".tmp "$FILE_CHANGED_LIST"
             if [ ! -s "$FILE_CHANGED_LIST" ] ; then
                echo "All changed files are excluded for phan"
