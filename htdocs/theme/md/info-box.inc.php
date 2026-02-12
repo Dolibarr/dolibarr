@@ -750,3 +750,6 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 .infobox-haslink .info-box-icon .info-box-createlink span.fas {
 	margin:auto;
 }
+.infobox-haslink i.fa.fa-exclamation-triangle.hideonsmartphone {
+	display: none;
+}
