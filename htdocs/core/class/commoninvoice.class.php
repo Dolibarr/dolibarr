@@ -1299,9 +1299,9 @@ abstract class CommonInvoice extends CommonObject
 					$totalpaid				= $this->getSommePaiement();
 					$totalcreditnotes		= $this->getSumCreditNotesUsed();
 					$totaldeposits			= $this->getSumDepositsUsed();
-					$resteapayer			= price2num($this->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
+					$resteapayer			= (float) price2num($this->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
 					// Calculate remaining amount available for new requests
-					$remaining_for_request	= price2num($resteapayer - $total_already_requested, 'MT');
+					$remaining_for_request	= (float) price2num($resteapayer - $total_already_requested, 'MT');
 					// If no amount specified, use the remaining available
 					if (empty($amount)) {
 						$amount				= $remaining_for_request;
