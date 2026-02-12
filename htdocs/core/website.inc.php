@@ -313,6 +313,7 @@ if (!empty($dolibarr_website_allow_custom_php) && $dolibarr_website_allow_custom
 		//print ini_get('disable_functions').'<br>';
 		//print exec("ls");
 
+		// @phpstan-ignore-next-line
 		if (function_exists($systemfunction)) {
 			print '<center><br><br>';
 			print 'Website features are protected to be disabled if the PHP system functions ('.implode(',', $systemfunctions).') are not disabled for the website context.<br>';
