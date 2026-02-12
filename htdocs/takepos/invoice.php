@@ -3,7 +3,7 @@
  * Copyright (C) 2018    	Andreu Bisquerra   		<jove@bisquerra.com>
  * Copyright (C) 2021    	Nicolas ZABOURI    		<info@inovea-conseil.com>
  * Copyright (C) 2022-2023	Christophe Battarel		<christophe.battarel@altairis.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -292,7 +292,7 @@ if (empty($reshook)) {
 			dol_syslog('Sale without lines');
 			dol_htmloutput_errors($langs->trans("NoLinesToBill", "TakePos"), [], 1);
 		} elseif (isModEnabled('stock') && !isModEnabled('productbatch') && $allowstockchange) {
-			// Validation of invoice with change into stock when produt/lot module is NOT enabled and stock change NOT disabled.
+			// Validation of invoice with change into stock when product/lot module is NOT enabled and stock change NOT disabled.
 			// The case for isModEnabled('productbatch') is processed few lines later.
 			$savconst = getDolGlobalString('STOCK_CALCULATE_ON_BILL');
 

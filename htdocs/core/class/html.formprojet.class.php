@@ -3,7 +3,7 @@
  * Copyright (C) 2015 		Marcos García  				<marcosgdf@gmail.com>
  * Copyright (C) 2018 		Charlene Benke 				<charlie@patas-monkey.com>
  * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -949,7 +949,7 @@ class FormProjets extends Form
 	 *  @param 	''|int $percent_value	percentage of the opportunity
 	 *  @param	string $htmlname_status	name of HTML element for status select
 	 *  @param	string $htmlname_percent	name of HTML element for percent input
-	 *  @param  string $filter         	optional filters criteras
+	 *  @param  string $filter         	Optional filter criteria
 	 *  @param  int<0,1> $nooutput     	No print output. Return it only.
 	 *  @return	void|string
 	 */

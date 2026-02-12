@@ -1865,7 +1865,7 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 								}
 
 								$key = $langs->trans("AccountingJournalType".$objp->nature);	// $objp->nature is 1, 2, 3 ...
-								$transferlabel = (($objp->nature && $key != "AccountingJournalType".$objp->nature) ? $key.($journallabelwithoutspan != $key ? ' '.$journallabel : '') : $journallabel);
+								$transferlabel = (($objp->nature && $key != "AccountingJournalType".$objp->nature) ? $key.($journallabelwithoutspan != $key ? ' '.$journallabelwithoutspan : '') : $journallabelwithoutspan);
 
 								if (getDolGlobalString('ACCOUNTING_MODE') == 'RECETTES-DEPENSES') {
 									$journalNaturePrefixUrl = 'treasury';
