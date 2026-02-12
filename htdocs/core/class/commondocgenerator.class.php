@@ -560,7 +560,7 @@ abstract class CommonDocGenerator
 	public function get_substitutionarray_contact($object, $outputlangs, $array_key = 'object')
 	{
 		// phpcs:enable
-		global $conf, $extrafields;
+		global $extrafields;
 
 		if (empty($object->country) && !empty($object->country_code)) {
 			$object->country = $outputlangs->transnoentitiesnoconv("Country".$object->country_code);
@@ -585,13 +585,14 @@ abstract class CommonDocGenerator
 			$array_key.'_country' => $object->country,
 			$array_key.'_poste' => $object->poste,
 			$array_key.'_socid' => $object->socid,
-			$array_key.'_statut' => $object->statut,
+			$array_key.'_statut' => $object->statut ? $object->statut : $object->status,
 			$array_key.'_code' => $object->code,
 			$array_key.'_email' => $object->email,
 			$array_key.'_phone_pro' => $object->phone_pro,
 			$array_key.'_phone_perso' => $object->phone_perso,
 			$array_key.'_phone_mobile' => $object->phone_mobile,
 			$array_key.'_fax' => $object->fax,
+			$array_key.'_birthday_locale' => (!empty($object->birthday) ? dol_print_date($object->birthday, 'day', false, $outputlangs) : ''),
 			$array_key.'_birthday' => $object->birthday,
 			$array_key.'_default_lang' => $object->default_lang,
 			$array_key.'_note_public' => $object->note_public,

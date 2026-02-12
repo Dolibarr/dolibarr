@@ -691,12 +691,6 @@ parameters:
 			path: ../../../htdocs/admin/security.php
 
 		-
-			message: '#^Variable \$max in isset\(\) always exists and is not nullable\.$#'
-			identifier: isset.variable
-			count: 1
-			path: ../../../htdocs/admin/security_file.php
-
-		-
 			message: '#^Loose comparison using \=\= between ''add'' and ''add'' will always evaluate to true\.$#'
 			identifier: equal.alwaysTrue
 			count: 1
