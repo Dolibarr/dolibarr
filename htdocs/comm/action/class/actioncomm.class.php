@@ -1395,6 +1395,7 @@ class ActionComm extends CommonObject
 
 	/**
 	 *  Load all objects with filters.
+	 *  This is used by the showactions used into the main tab of objects to show the last n actions.
 	 *  @TODO WARNING: This make a fetch on all records instead of making one request with a join, like done into show_actions_done.
 	 *
 	 *  @param		int		$socid			Filter by thirdparty
