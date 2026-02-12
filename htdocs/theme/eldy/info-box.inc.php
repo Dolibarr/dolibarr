@@ -162,7 +162,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle, span.badge i.fa.fa-exclamation-t
 }
 
 .info-box-line {
-	line-height: 1.35em;
+	line-height: 1.25em;
 }
 .info-box-line-text {
 	overflow: hidden;
@@ -349,6 +349,9 @@ a.info-box-text{ text-decoration: none;}
 }
 .infobox-haslink .info-box-icon .info-box-createlink span.fas {
 	margin:auto;
+}
+.infobox-haslink i.fa.fa-exclamation-triangle.hideonsmartphone {
+	display: none;
 }
 
 
@@ -679,7 +682,6 @@ a.vmenu span, span.vmenu, span.vmenu span {
 		width: 250px;
 	}
 }
-
 
 
 

@@ -9,7 +9,7 @@
  * Copyright (C) 2014		Cedric Gross			<c.gross@kreiz-it.fr>
  * Copyright (C) 2020-2021	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025       Pierre Ardoin           <developpeur@lesmetiersdubatiment.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -27,10 +27,10 @@
  */
 
 /**
- *	\defgroup   produit     Module products
+ *	\defgroup   product     Module products
  *	\brief      Module to manage catalog of predefined products
  *	\file       htdocs/core/modules/modProduct.class.php
- *	\ingroup    produit
+ *	\ingroup    product
  *	\brief      Description and activation file for the module to manage catalog of predefined products
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
@@ -639,17 +639,20 @@ class modProduct extends DolibarrModules
 			'p.recuperableonly' => '^[0|1]$',
 		);
 
-		if (isModEnabled('stock')) {//if Stock module enabled
+		// Complete if Stock module enabled
+		if (isModEnabled('stock')) {
 			$this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array(
 				'p.fk_default_warehouse' => 'DefaultWarehouse',
 				'p.tobatch' => 'ManageLotSerial',
+				'p.sell_or_eat_by_mandatory' => 'SellOrEatByMandatory',
 				'p.seuil_stock_alerte' => 'StockLimit', //lower limit for warning
 				'p.pmp' => 'PMPValue', //weighted average price
 				'p.desiredstock' => 'DesiredStock'//desired stock for replenishment feature
 			));
 
 			$this->import_regex_array[$r] = array_merge($this->import_regex_array[$r], array(
-				'p.tobatch' => '^[0|1|2]$'
+				'p.tobatch' => '^[0|1|2]$',
+				'p.sell_or_eat_by_mandatory' => '^[0-3]$'
 			));
 
 			$this->import_convertvalue_array[$r] = array_merge($this->import_convertvalue_array[$r], array(
@@ -749,6 +752,7 @@ class modProduct extends DolibarrModules
 		if (isModEnabled('stock')) {
 			$import_sample = array_merge($import_sample, array(
 				'p.tobatch' => "0 (don't use) / 1 (use batch) / 2 (use serial number)",
+				'p.sell_or_eat_by_mandatory' => "0 (none) / 1 (sell-by) / 2 (eat-by) / 3 (sell+eat)",
 				'p.seuil_stock_alerte' => '',
 				'p.pmp' => '0',
 				'p.desiredstock' => ''
@@ -994,7 +998,11 @@ class modProduct extends DolibarrModules
 			// End add extra fields
 			$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'product_price'); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
 
-			$this->import_regex_array[$r] = array('pr.datec' => '^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$', 'pr.recuperableonly' => '^[0|1]$');
+			$this->import_regex_array[$r] = array(
+				'pr.datec' => '^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$',
+				'pr.recuperableonly' => '^[0|1]$'
+			);
+
 			$this->import_convertvalue_array[$r] = array(
 				'pr.fk_product' => array('rule' => 'fetchidfromref', 'classfile' => '/product/class/product.class.php', 'class' => 'Product', 'method' => 'fetch', 'element' => 'Product')
 			);

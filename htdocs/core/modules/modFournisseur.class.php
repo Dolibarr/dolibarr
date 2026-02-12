@@ -5,7 +5,7 @@
  * Copyright (C) 2012      Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013-2015 Philippe Grand	    <philippe.grand@atoo-net.com>
  * Copyright (C) 2020      Ahmad Jamaly Rabib   <rabib@metroworks.co.jp>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -103,7 +103,7 @@ class modFournisseur extends DolibarrModules
 		$this->const[$r][0] = "INVOICE_SUPPLIER_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "canelle";
-		$this->const[$r][3] = 'Nom du gestionnaire de generation des factures fournisseur en PDF';
+		$this->const[$r][3] = 'Name of the generator for PDF supplier invoices';
 		$this->const[$r][4] = 0;
 		$r++;
 		*/

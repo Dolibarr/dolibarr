@@ -277,7 +277,7 @@ class Societe extends CommonObject
 	public $nom;
 
 	/**
-	 * @var ?string Thirdparty name
+	 * @var string Thirdparty name
 	 */
 	public $name;
 
@@ -1913,7 +1913,7 @@ class Societe extends CommonObject
 	 *    @param    string	$ref_alias 		Name_alias of third party (Warning, this can return several records)
 	 * 	  @param	int		$is_client		Only client third party
 	 *    @param	int		$is_supplier	Only supplier third party
-	 *    @return   int						>0 if OK, <0 if KO or if two records found for same ref or idprof, 0 if not found.
+	 *    @return   int						>0 if OK, <0 if KO (-2 if two records found for same ref or idprof, other negative for error), 0 if not found.
 	 */
 	public function fetch($rowid, $ref = '', $ref_ext = '', $barcode = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '', $is_client = 0, $is_supplier = 0)
 	{
@@ -2042,7 +2042,7 @@ class Societe extends CommonObject
 			$num = $this->db->num_rows($resql);
 			if ($num > 1) {
 				$this->error = 'Fetch found several records. Rename one of thirdparties to avoid duplicate.';
-				dol_syslog($this->error, LOG_ERR);
+				dol_syslog($this->error, LOG_WARNING);
 				$result = -2;
 			} elseif ($num) {   // $num = 1
 				$obj = $this->db->fetch_object($resql);
@@ -2241,7 +2241,7 @@ class Societe extends CommonObject
 	 *    @param    string	$ref_alias 		Name_alias of third party (Warning, this can return several records)
 	 * 	  @param	int		$is_client		Only client third party
 	 *    @param	int		$is_supplier	Only supplier third party
-	 *    @return   int						ID of thirdparty found if OK, <0 if KO or if two records found, 0 if not found.
+	 *    @return   int						ID of thirdparty found if OK, <0 if KO (-2 if two records found or other negative if error), 0 if not found.
 	 */
 	public function findNearest($rowid = 0, $ref = '', $ref_ext = '', $barcode = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '', $is_client = 0, $is_supplier = 0)
 	{
@@ -2321,7 +2321,7 @@ class Societe extends CommonObject
 				$num = $this->db->num_rows($resql);
 				if ($num > 1) {
 					$this->error = 'Fetch found several records. Rename one of thirdparties to avoid duplicate.';
-					dol_syslog($this->error, LOG_ERR);
+					dol_syslog($this->error, LOG_WARNING);
 					$result = -2;
 				} elseif ($num) {
 					$obj = $this->db->fetch_object($resql);
@@ -2374,7 +2374,7 @@ class Societe extends CommonObject
 				$num = $this->db->num_rows($resql);
 				if ($num > 1) {
 					$this->error = 'Fetch found several records. Rename one of thirdparties to avoid duplicate.';
-					dol_syslog($this->error, LOG_ERR);
+					dol_syslog($this->error, LOG_WARNING);
 					$result = -2;
 				} elseif ($num) {
 					$obj = $this->db->fetch_object($resql);
@@ -4672,7 +4672,7 @@ class Societe extends CommonObject
 			}
 		}
 
-		$name = $socname;
+		$name = (string) $socname;
 		$alias = $socalias ? $socalias : '';
 
 		// Positionne parameters
@@ -5385,6 +5385,31 @@ class Societe extends CommonObject
 		}
 
 		return '';
+	}
+
+
+	/**
+	 * Calculate VAT intracommunity number for a thirdparty if missing, from the professional ID
+	 *
+	 * @param 	mixed 	$thirdparty		A thirdparty object
+	 * @return 	string					A VAT number
+	 */
+	public function calculateVATNumberFromProperties($thirdparty)
+	{
+		if ($thirdparty->country_code == 'FR' && empty($thirdparty->tva_intra) && !empty($thirdparty->tva_assuj)) {
+			$siren = trim($thirdparty->idprof1);
+			if (empty($siren)) {
+				$siren = (int) substr(str_replace(' ', '', $thirdparty->idprof2), 0, 9);
+			}
+			if (!empty($siren)) {
+				// [FR + code clé  + numéro SIREN ]
+				// Key VAT = [12 + 3 × (SIREN modulo 97)] modulo 97
+				$cle = (12 + 3 * $siren % 97) % 97;
+				$tva_intra = 'FR' . $cle . $siren;
+			}
+		}
+
+		return $tva_intra ?? '';
 	}
 
 

@@ -217,6 +217,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 	// Purge search criteria
+	$search = array();
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 		foreach ($object->fields as $key => $val) {
 			$search[$key] = '';
@@ -240,21 +241,16 @@ if (empty($reshook)) {
  */
 
 $form = new Form($db);
-$proj = null;
 $accountingaccount = new AccountingAccount($db);
 $bankline = new AccountLine($db);
 $variousstatic = new PaymentVarious($db);
+$formaccounting = new FormAccounting($db);
+$accountingjournal = new AccountingJournal($db);
 $accountstatic = null;
-$accountingjournal = null;
-if ($arrayfields['account']['checked'] || $arrayfields['subledger']['checked']) {
-	$formaccounting = new FormAccounting($db);
-}
-if ($arrayfields['bank']['checked'] && isModEnabled('accounting')) {
-	$accountingjournal = new AccountingJournal($db);
-}
 if ($arrayfields['bank']['checked']) {
 	$accountstatic = new Account($db);
 }
+$proj = null;
 if (isModEnabled('project') && $arrayfields['project']['checked']) {
 	$proj = new Project($db);
 }
@@ -825,7 +821,7 @@ while ($i < $imaxinloop) {
 				$accountstatic->ref = $obj->bref;
 				$accountstatic->number = $obj->bnumber;
 
-				if (isModEnabled('accounting') && is_object($accountingjournal)) {
+				if (isModEnabled('accounting') && $obj->accountancy_journal > 0) {
 					$accountstatic->account_number = $obj->bank_account_number;
 					$accountingjournal->fetch($obj->accountancy_journal);
 					$accountstatic->accountancy_journal = $accountingjournal->getNomUrl(0, 1, 1, '', 1);

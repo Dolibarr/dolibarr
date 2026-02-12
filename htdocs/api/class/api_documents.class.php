@@ -7,7 +7,7 @@
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
- * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
+ * Copyright (C) 2025-2026	Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -318,6 +318,22 @@ class Documents extends DolibarrApi
 			if ($result <= 0) {
 				throw new RestException(500, 'Error generating document');
 			}
+		} elseif ($modulepart == 'holiday') {
+			require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
+
+			$tmpobject = new Holiday($this->db);
+			$result = $tmpobject->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
+
+			if (!$result) {
+				throw new RestException(404, 'Holiday not found');
+			}
+
+			$templateused = $doctemplate ? $doctemplate : $tmpobject->model_pdf;
+			$result = $tmpobject->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
+
+			if ($result <= 0) {
+				throw new RestException(500, 'Error generating document');
+			}
 		} elseif ($modulepart == 'product') {
 			require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
@@ -616,6 +632,20 @@ class Documents extends DolibarrApi
 			}
 
 			$upload_dir = getMultidirOutput($object) . '/'.dol_sanitizeFileName((string) $object->ref);
+		} elseif ($modulepart == 'holiday') {
+			require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
+
+			if (!DolibarrApiAccess::$user->hasRight('holiday', 'read')) {
+				throw new RestException(403);
+			}
+
+			$object = new Holiday($this->db);
+			$result = $object->fetch($id, $ref);
+			if (!$result) {
+				throw new RestException(404, 'Holiday not found');
+			}
+
+			$upload_dir = getMultidirOutput($object) . '/'.dol_sanitizeFileName((string) $object->ref);
 		} elseif ($modulepart == 'ticket') {
 			require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 
@@ -657,7 +687,7 @@ class Documents extends DolibarrApi
 				throw new RestException(404, 'Category not found');
 			}
 
-			$upload_dir = $conf->categorie->multidir_output[$object->entity ?? $conf->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'category').$object->id."/photos/".dol_sanitizeFileName($object->ref);
+			$upload_dir = $conf->categorie->multidir_output[$object->entity ?? $conf->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'category').$object->id."/photos/".dol_sanitizeFileName((string) $object->ref);
 		} elseif ($modulepart == 'ecm') {
 			throw new RestException(500, 'Modulepart Ecm not implemented yet.');
 			// require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
@@ -726,7 +756,7 @@ class Documents extends DolibarrApi
 				throw new RestException(500, 'Error while fetching project for task');
 			}
 
-			$upload_dir = $conf->project->dir_output . "/" . dol_sanitizeFileName($object->project->ref) . "/" . dol_sanitizeFileName((string) $object->ref);
+			$upload_dir = $conf->project->dir_output . "/" . dol_sanitizeFileName((string) $object->project->ref) . "/" . dol_sanitizeFileName((string) $object->ref);
 		} elseif ($modulepart == 'mrp') {
 			$modulepart = 'mrp';
 			require_once DOL_DOCUMENT_ROOT . '/mrp/class/mo.class.php';
@@ -937,7 +967,7 @@ class Documents extends DolibarrApi
 					$project_result = $object->fetchProject();
 
 					if ($project_result >= 0) {
-						$tmpreldir = dol_sanitizeFileName($object->project->ref).'/';
+						$tmpreldir = dol_sanitizeFileName((string) $object->project->ref).'/';
 					}
 				} else {
 					throw new RestException(500, 'Error while fetching Task '.$ref);
@@ -948,6 +978,9 @@ class Documents extends DolibarrApi
 			} elseif ($modulepart == 'expensereport') {
 				require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 				$object = new ExpenseReport($this->db);
+			} elseif ($modulepart == 'holiday') {
+				require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
+				$object = new Holiday($this->db);
 			} elseif ($modulepart == 'ficheinter' || $modulepart == 'intervention') {
 				require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 				$object = new Fichinter($this->db);
