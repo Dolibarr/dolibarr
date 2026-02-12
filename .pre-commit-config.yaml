@@ -78,7 +78,8 @@ repos:
       - id: beautysh
         exclude: |
           (?x)^(dev/setup/git/hooks/pre-commit
-               |dev/initdemo/initdemo.sh   # indent/outdent mismatch
+               |dev/initdemo/initdemo.sh          # indent/outdent mismatch
+               |dev/build/debian/dolibarr.postrm  # indent/outdent mismatch
                )$
         args: [--tab]
 
