@@ -131,14 +131,14 @@ repos:
         entry: ./dev/tools/fixaltlanguages_pre-commit.sh
         pass_filenames: true
       - id: hurl-all
-        stages: [manual]
+        stages: [manual]  # Use: `pre-commit run --hook-stage manual hurl-all`
         name: Run hurl tests
         language: script
         entry: test/hurl/run.sh
         pass_filenames: false
         always_run: true
       - id: hurl
-        stages: [manual]
+        stages: [manual]  # Use: `pre-commit run --hook-stage manual hurl`
         name: Run hurl tests on updated .hurl files
         language: script
         entry: test/hurl/run.sh
