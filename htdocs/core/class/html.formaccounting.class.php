@@ -4,7 +4,7 @@
  * Copyright (C) 2015		Ari Elbaz (elarifr)		<github@accedinfo.com>
  * Copyright (C) 2016		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2016-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -624,7 +624,7 @@ class FormAccounting extends Form
 	 * 	@param	string	$htmlname				Name of HTML select object
 	 *  @param  int		$option					option (0: aggregate by general account or 1: aggregate by subaccount)
 	 *  @param  int		$useempty				Show empty value in list
-	 *  @param  string	$filter         		optional filters criteria
+	 *  @param  string	$filter         		Optional filter criteria
 	 *  @param  int		$nooutput       		No print output. Return it only.
 	 *  @return	void|string
 	 */

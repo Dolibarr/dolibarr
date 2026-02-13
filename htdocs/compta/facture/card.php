@@ -1059,8 +1059,12 @@ if (empty($reshook)) {
 
 			$error = 0;
 
-			if ($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT || $object->type == Facture::TYPE_SITUATION) {
-				// If we're on a standard invoice, we have to get excess received to create a discount in TTC without VAT
+
+			// Create a discount that is the amount of the excess received
+			if ($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT || $object->type == Facture::TYPE_SITUATION
+				|| $object->type == Facture::TYPE_DEPOSIT) {
+				// If we have an excess received that need to create a discount in TTC without VAT
+				$discount->description = '(EXCESS RECEIVED)';
 
 				// Total payments
 				$sql = 'SELECT SUM(pf.amount) as total_paiements';
@@ -1092,17 +1096,28 @@ if (empty($reshook)) {
 					dol_print_error($db);
 				}
 
-				$discount->amount_ht = $discount->amount_ttc = $total_paiements + $total_creditnote_and_deposit - $object->total_ttc;
+				$discount->amount_ttc = price2num($total_paiements + $total_creditnote_and_deposit - $object->total_ttc, 'MT');
 				$discount->amount_tva = 0;
+				$discount->amount_ht = $discount->amount_ttc;
 				$discount->tva_tx = 0;
 				$discount->vat_src_code = '';
 
-				$result = $discount->create($user);
-				if ($result < 0) {
-					$error++;
+				if ($discount->amount_ttc > 0) {
+					$result = $discount->create($user);
+					if ($result < 0) {
+						$error++;
+					}
 				}
 			}
+
+			// Create a discount that is the amount of the invoice
 			if ($object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT) {
+				if ($object->type == Facture::TYPE_CREDIT_NOTE) {
+					$discount->description = '(CREDIT_NOTE)';
+				} else {
+					$discount->description = '(DEPOSIT)';
+				}
+
 				foreach ($amount_ht as $tva_tx => $xxx) {
 					if ($object->type == Facture::TYPE_CREDIT_NOTE) {
 						$discount->amount_ht = -((float) $amount_ht[$tva_tx]);
@@ -1153,18 +1168,14 @@ if (empty($reshook)) {
 			}
 
 			if (empty($error)) {
-				if ($object->type != Facture::TYPE_DEPOSIT) {
-					// Set invoice as paid
-					$result = $object->setPaid($user);
-					if ($result >= 0) {
-						$object->fetch($object->id);	// Reload properties
-						$db->commit();
-					} else {
-						setEventMessages($object->error, $object->errors, 'errors');
-						$db->rollback();
-					}
-				} else {
+				// Set invoice as paid
+				$result = $object->setPaid($user);	// We can close the invoice. Even if we got an excess received, it is now into discounts.
+				if ($result >= 0) {
+					$object->fetch($object->id);	// Reload properties
 					$db->commit();
+				} else {
+					setEventMessages($object->error, $object->errors, 'errors');
+					$db->rollback();
 				}
 			} else {
 				setEventMessages($discount->error, $discount->errors, 'errors');
@@ -2300,8 +2311,8 @@ if (empty($reshook)) {
 		} else {
 			$db->rollback();
 			$action = 'create';
-			$_GET["origin"] = $_POST["origin"];		// Keep GET and POST here ?
-			$_GET["originid"] = $_POST["originid"]; // Keep GET and POST here ?
+			$_GET["origin"] = GETPOST("origin", 'alpha');
+			$_GET["originid"] = GETPOSTINT("originid");
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'addline' && GETPOST('submitforalllines', 'aZ09') && (GETPOST('alldate_start', 'alpha') || GETPOST('alldate_end', 'alpha')) && $usercancreate) {
@@ -2747,11 +2758,11 @@ if (empty($reshook)) {
 
 			// Check if we have a foreign currency
 			// If so, we update the pu_equiv as the equivalent price in base currency
-			if ($pu_ht == '' && $pu_ht_devise != '' && $currency_tx != '') {
-				$pu_equivalent = (float) $pu_ht_devise * $currency_tx;
+			if ($pu_ht == '' && $pu_ht_devise != '' && $currency_tx != '' && !empty((float) $currency_tx)) {
+				$pu_equivalent = (float) $pu_ht_devise / (float) $currency_tx;
 			}
-			if ($pu_ttc == '' && $pu_ttc_devise != '' && $currency_tx != '') {
-				$pu_equivalent_ttc = (float) $pu_ttc_devise * $currency_tx;
+			if ($pu_ttc == '' && $pu_ttc_devise != '' && $currency_tx != '' && !empty((float) $currency_tx)) {
+				$pu_equivalent_ttc = (float) $pu_ttc_devise / (float) $currency_tx;
 			}
 
 			// TODO $pu_equivalent or $pu_equivalent_ttc must be calculated from the one not null taking into account all taxes
@@ -3037,7 +3048,6 @@ if (empty($reshook)) {
 		$date_end = dol_mktime(GETPOSTINT('date_endhour'), GETPOSTINT('date_endmin'), GETPOSTINT('date_endsec'), GETPOSTINT('date_endmonth'), GETPOSTINT('date_endday'), GETPOSTINT('date_endyear'));
 		$description = dol_htmlcleanlastbr(GETPOST('product_desc', 'restricthtml') ? GETPOST('product_desc', 'restricthtml') : GETPOST('desc', 'restricthtml'));
 		$vat_rate = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
-		$vat_rate = str_replace('*', '', $vat_rate);
 
 		$pu_ht = price2num(GETPOST('price_ht'), '', 2);
 		$pu_ttc = price2num(GETPOST('price_ttc'), '', 2);
@@ -3070,11 +3080,11 @@ if (empty($reshook)) {
 
 		// Check if we have a foreign currency
 		// If so, we update the pu_equiv as the equivalent price in base currency
-		if ($pu_ht == '' && $pu_ht_devise != '' && $currency_tx != '') {
-			$pu_equivalent = (float) $pu_ht_devise * (float) $currency_tx;
+		if ($pu_ht == '' && $pu_ht_devise != '' && $currency_tx != '' && !empty((float) $currency_tx)) {
+			$pu_equivalent = (float) $pu_ht_devise / (float) $currency_tx;
 		}
-		if ($pu_ttc == '' && $pu_ttc_devise != '' && $currency_tx != '') {
-			$pu_equivalent_ttc = (float) $pu_ttc_devise * (float) $currency_tx;
+		if ($pu_ttc == '' && $pu_ttc_devise != '' && $currency_tx != '' && !empty((float) $currency_tx)) {
+			$pu_equivalent_ttc = (float) $pu_ttc_devise / (float) $currency_tx;
 		}
 
 		// TODO $pu_equivalent or $pu_equivalent_ttc must be calculated from the one not null taking into account all taxes
@@ -3109,6 +3119,9 @@ if (empty($reshook)) {
 		$line->fetch(GETPOSTINT('lineid'));
 
 		$remise_percent = price2num(GETPOST('remise_percent'), '', 2);
+		if (empty($remise_percent)) {
+			$remise_percent = 0;
+		}
 
 		$price_base_type = 'HT';
 		$pu = $pu_ht;
@@ -6740,11 +6753,11 @@ if ($action == 'create') {
 				) {
 					print '<a class="butAction classfortooltip'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&action=converttoreduc&token='.newToken().'" title="'.dol_escape_htmltag($langs->trans("ConfirmConvertToReduc2")).'">'.$langs->trans('ConvertToReduc').'</a>';
 				}
-				// For down payment invoice (deposit)
 
+				// For down payment invoice (deposit)
 				if ($object->type == Facture::TYPE_DEPOSIT && $usercancreate && $object->status > Facture::STATUS_DRAFT && empty($discount->id)) {
 					// We can close a down payment only if paid amount is same than amount of down payment (by definition). We can bypass this if hidden and unstable option DEPOSIT_AS_CREDIT_AVAILABLE_EVEN_UNPAID is set.
-					if (price2num($object->total_ttc, 'MT') == price2num($sumofpaymentall, 'MT') || getDolGlobalInt('DEPOSIT_AS_CREDIT_AVAILABLE_EVEN_UNPAID') || ($object->type == Facture::STATUS_ABANDONED && in_array($object->close_code, array('bankcharge', 'discount_vat', 'other')))) {
+					if (price2num($object->total_ttc, 'MT') <= price2num($sumofpaymentall, 'MT') || getDolGlobalInt('DEPOSIT_AS_CREDIT_AVAILABLE_EVEN_UNPAID') || ($object->type == Facture::STATUS_ABANDONED && in_array($object->close_code, array('bankcharge', 'discount_vat', 'other')))) {
 						print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&action=converttoreduc&token='.newToken().'">'.$langs->trans('ConvertToReduc').'</a>';
 					} else {
 						print '<span class="butActionRefused classfortooltip" title="'.$langs->trans("AmountPaidMustMatchAmountOfDownPayment").'">'.$langs->trans('ConvertToReduc').'</span>';

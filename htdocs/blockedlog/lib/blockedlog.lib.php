@@ -34,21 +34,23 @@ function blockedlogadmin_prepare_head($withtabsetup)
 
 	$langs->load("blockedlog");
 
+	require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
+
+	$param = '';
+	$param .= ($withtabsetup? "?withtab=".$withtabsetup : "");
+	$param .= (GETPOST('origin') ? ($param ? '&' : '').'origin='.GETPOST('origin') : '');
+
 	$h = 0;
 	$head = array();
 
-	if ($withtabsetup) {
-		$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog.php?withtab=".$withtabsetup;
-		$head[$h][1] = $langs->trans("Setup");
-		$head[$h][2] = 'blockedlog';
-		$h++;
-	}
+	$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/registration.php".$param;
+	$head[$h][1] = $langs->trans("UserRegistration");
+	$head[$h][2] = 'registration';
+	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog_list.php?withtab=".$withtabsetup;
-	$head[$h][1] = $langs->trans("BrowseBlockedLog");
-
-	require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 	$b = new BlockedLog($db);
+	$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog_list.php".$param;
+	$head[$h][1] = $langs->trans("BrowseBlockedLog");
 	if ($b->alreadyUsed()) {
 		$head[$h][1] .= (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">...</span>' : '');
 	}
@@ -56,11 +58,18 @@ function blockedlogadmin_prepare_head($withtabsetup)
 	$h++;
 
 
-	$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog_archives.php?withtab=".$withtabsetup;
+	$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog_archives.php".$param;
 	$head[$h][1] = $langs->trans("Archives");
 	// TODO Add number of archive files in badge
 	$head[$h][2] = 'archives';
 	$h++;
+
+	if ($withtabsetup) {
+		$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog.php".$param;
+		$head[$h][1] = $langs->trans("TechnicalInformation");
+		$head[$h][2] = 'technicalinfo';
+		$h++;
+	}
 
 
 	$object = new stdClass();
@@ -79,6 +88,7 @@ function blockedlogadmin_prepare_head($withtabsetup)
 
 /**
  * Return if the KYC mandatory parameters are set
+ * Must be the samefields than the one defined as mandatory into the registration form.
  *
  * @return boolean		True or false
  */
@@ -96,26 +106,40 @@ function isRegistrationDataSaved()
 		return false;
 	}
 
+	/*
 	$providerset = getDolGlobalString('MAIN_INFO_ITPROVIDER_NAME');	// Can be 'myself'
 
 	if (empty($providerset)) {
 		return false;
 	}
+	*/
 
 	return true;
 }
 
 
 /**
- * Return a hash unique identifier of the registration
+ * Return if the KYC mandatory parameters are set AND pushed/registered centralized server
  *
- * @return string		Hash unique ID (used to idenfiy the registration without disclosing personal data)
+ * @return boolean		True or false
  */
-function getHashUniqueIdOfRegistration()
+function isRegistrationDataSavedAndPushed()
+{
+	return isRegistrationDataSaved() && (bool) getDolGlobalString('MAIN_FIRST_REGISTRATION_OK_DATE');
+}
+
+
+/**
+ * Return a hash unique identifier of the registration (used to identify the registration of instance without disclosing personal data)
+ *
+ * @param	string	$algo		Algorithm to use for hash key
+ * @return 	string				Hash unique ID
+ */
+function getHashUniqueIdOfRegistration($algo = 'sha256')
 {
 	global $conf;
 
-	return dol_hash('dolibarr'.$conf->file->instance_unique_id, 'sha256', 1);
+	return dol_hash('dolibarr'.$conf->file->instance_unique_id.($conf->entity > 1 ? $conf->entity : ''), $algo, 1);
 }
 
 
@@ -165,12 +189,16 @@ function isALNEQualifiedVersion($ignoredev = 0, $ignoremodule = 0)
  */
 function isALNERunningVersion($blockedlogtestalreadydone = 0)
 {
-	// For Debug help: Constant set by developer to force all LNE restrictions even if country is not France so we can test them on any dev instance.
-	// Note that you can force, with this option, the enabling of the LNE restrictions, but there is no way to force the disabling of the LNE restriction.
-	if (defined('CERTIF_LNE') && (int) constant('CERTIF_LNE') === 2) {
+	// For Debug help: Constant set by developer to force all LNE restrictions
+	// even if country is not France so we can test them on any dev instance.
+	// Note that you can force, with this option, the enabling of the LNE restrictions,
+	// but there is no way to force the disabling of the LNE restriction.
+	if (defined('CERTIF_LNE') && (int) constant('CERTIF_LNE') === 2
+		&& isModEnabled('blockedlog') && ($blockedlogtestalreadydone || isBlockedLogUsed())) {
 		return true;
 	}
-	if (isModEnabled('blockedlog') && ($blockedlogtestalreadydone || isBlockedLogUsed())) {
+	if (defined('CERTIF_LNE') && (int) constant('CERTIF_LNE') === 1
+		&& isModEnabled('blockedlog') && ($blockedlogtestalreadydone || isBlockedLogUsed())) {
 		return true;
 	}
 
@@ -300,4 +328,92 @@ function sumAmountsForUnalterableEvent($block, &$refinvoicefound, &$totalhtamoun
 	}
 
 	return 1;
+}
+
+
+/**
+ * Call remote API service to push the last counter and signature
+ *
+ * @param 	int		$id			Last counter ID/value
+ * @param 	string	$signature	Signature
+ * @param	int		$test		Add property test to 1 if it is for test
+ * @return	int					Return <0 if KO, 0 if nothing done, >0 if OK
+ */
+function callApiToPushCounter($id, $signature, $test = 0)
+{
+	global $mysoc, $conf;
+
+	if (isALNERunningVersion(1) && $mysoc->country_code == 'FR') {
+		// Push last rowid + signature to remote dolibarr server
+		// TODO Do it only for selected events: BILL_VALIDATE ?
+
+		// Code here is similar to the one into printCodeForPing()
+		$url_for_ping = getDolGlobalString('MAIN_URL_FOR_PING', "https://ping.dolibarr.org/");
+
+		$algo = 'sha256';
+		$hash_unique_id = getHashUniqueIdOfRegistration($algo);
+
+		$data = 'hash_algo=dol_hash-'.urlencode($algo);
+		$data .= '&hash_unique_id='.urlencode($hash_unique_id);
+		$data .= '&action=dolibarrpushcounter';
+		$data .= '&version='.(float) DOL_VERSION;
+		$data .= '&version_full='.urlencode(DOL_VERSION);
+		$data .= '&entity='.(int) $conf->entity;
+
+		$data .= '&lastrowid='.(int) $id;
+		$data .= '&lastsignature='.urlencode($signature);
+		if ($test) {
+			$data .= '&test=1';
+		}
+
+		/*
+		$data = array(
+			'action' => 'dolibarrpushcounter',
+			'hash_algo' => 'dol_hash-'.$algo,
+			'hash_unique_id' => $hash_unique_id,
+			'version' => (float) DOL_VERSION,
+			'version_full' => urlencode(DOL_VERSION),
+			'entity=' => (int) $conf->entity
+		);
+		$data['lastrowid'] = (int) $this->id;
+		$data['lastsignature'] = urlencode($this->signature);
+		*/
+
+		$addheaders = array();
+		$timeoutconnect = 1;
+		$timeoutresponse = 1;
+
+		$conf->global->BLOCKEDLOG_RANDOMRANGE_FOR_TRACKING = 1;		// Force probability to 1
+
+		// Probability will be between 1/10 by default and 1/1 if const BLOCKEDLOG_RANDOMRANGE_FOR_TRACKING is set to 1. Can't be lower than 1/10.
+		$BLOCKEDLOG_RANDOMRANGE_FOR_TRACKING = min(10, getDolGlobalInt('BLOCKEDLOG_RANDOMRANGE_FOR_TRACKING', 10));
+		$random = 1;
+		//$BLOCKEDLOG_RANDOMRANGE_FOR_TRACKING = 1;	// To force track at every call
+		if ($BLOCKEDLOG_RANDOMRANGE_FOR_TRACKING > 1) {
+			$random = random_int(1, (int) $BLOCKEDLOG_RANDOMRANGE_FOR_TRACKING);
+		}
+
+		if ($random == 1) {	// 1 chance on BLOCKEDLOG_RANDOMRANGE_FOR_TRACKING
+			dol_syslog("callApiToPushCounter create Record is selected to be remotely pushed for tracking", LOG_DEBUG);
+
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+			try {
+				$tmpresult = getURLContent($url_for_ping, 'POST', $data, 1, $addheaders, array('https'), 0, -1, $timeoutconnect, $timeoutresponse, array(), '_dolibarrpushcounter');
+
+				// Add a warning in log in case of error
+				if ($tmpresult['http_code'] != 200) {
+					$logerrormessage = 'Error: '.$tmpresult['http_code'].' '.$tmpresult['content'];
+					dol_syslog("callApiToPushCounter create Error when pushing track info: ".$logerrormessage, LOG_WARNING);
+				}
+			} catch (Exception $e) {
+				dol_syslog("callApiToPushCounter create Error ".$e->getMessage(), LOG_ERR);
+			}
+		} else {
+			dol_syslog("callApiToPushCounter create Record is NOT selected to be remotely pushed for tracking", LOG_DEBUG);
+		}
+
+		return 1;
+	}
+
+	return 0;
 }

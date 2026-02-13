@@ -3,7 +3,7 @@
  * Copyright (C) 2018    	Andreu Bisquerra   		<jove@bisquerra.com>
  * Copyright (C) 2021    	Nicolas ZABOURI    		<info@inovea-conseil.com>
  * Copyright (C) 2022-2023	Christophe Battarel		<christophe.battarel@altairis.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -292,7 +292,7 @@ if (empty($reshook)) {
 			dol_syslog('Sale without lines');
 			dol_htmloutput_errors($langs->trans("NoLinesToBill", "TakePos"), [], 1);
 		} elseif (isModEnabled('stock') && !isModEnabled('productbatch') && $allowstockchange) {
-			// Validation of invoice with change into stock when produt/lot module is NOT enabled and stock change NOT disabled.
+			// Validation of invoice with change into stock when product/lot module is NOT enabled and stock change NOT disabled.
 			// The case for isModEnabled('productbatch') is processed few lines later.
 			$savconst = getDolGlobalString('STOCK_CALCULATE_ON_BILL');
 
@@ -579,13 +579,14 @@ if (empty($reshook)) {
 			$conf->global->STOCK_CALCULATE_ON_BILL = 1;	// We force setup to have update of stock on invoice validation/unvalidation
 
 			$constantforkey = 'CASHDESK_ID_WAREHOUSE'.(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '');
+			$warehouseid = getDolGlobalInt($constantforkey);
 
 			dol_syslog("Validate invoice with stock change into warehouse defined into constant ".$constantforkey." = ".getDolGlobalString($constantforkey)." or warehouseid= ".$warehouseid." if defined.");
 
 			// Validate invoice with stock change into warehouse getDolGlobalInt($constantforkey)
 			// Label of stock movement will be the same as when we validate invoice "Invoice XXXX validated"
 			$batch_rule = 0;	// Module productbatch is disabled here, so no need for a batch_rule.
-			$res = $creditnote->validate($user, '', getDolGlobalInt($constantforkey), 0, $batch_rule);
+			$res = $creditnote->validate($user, '', $warehouseid, 0, $batch_rule);
 			if ($res < 0) {
 				$error++;
 				dol_htmloutput_errors($creditnote->error, $creditnote->errors, 1);

@@ -1190,10 +1190,11 @@ function purgeSessions($mysessionid)
  *
  *  @param      string		$value      			Name of module to activate (modModuleName)
  *  @param      int			$withdeps  				Activate/Disable also all dependencies
- * 	@param		int			$noconfverification		Remove verification of $conf variable for module
+ * 	@param		int			$noconfverification		Remove verification of $conf->global->MODULE_NAME variable for module
+ *  @param		string		$options				Option for init
  *  @return     array{nbmodules?:int,errors:string[],nbperms?:int}	array('nbmodules'=>nb modules activated with success, 'errors=>array of error messages, 'nbperms'=>Nb permission added);
  */
-function activateModule($value, $withdeps = 1, $noconfverification = 0)
+function activateModule($value, $withdeps = 1, $noconfverification = 0, $options = '')
 {
 	global $db, $langs, $conf, $mysoc;
 
@@ -1256,7 +1257,7 @@ function activateModule($value, $withdeps = 1, $noconfverification = 0)
 		}
 	}
 
-	$result = $objMod->init(); // Enable module
+	$result = $objMod->init($options); // Enable module
 
 	if ($result <= 0) {
 		$ret['errors'][] = $objMod->error;
@@ -1281,7 +1282,7 @@ function activateModule($value, $withdeps = 1, $noconfverification = 0)
 						$activateerr = '';
 						foreach ($modulesdir as $dir) {
 							if (file_exists($dir.$modulestring.".class.php")) {
-								$resarray = activateModule($modulestring);
+								$resarray = activateModule($modulestring, 1, 0, $options);
 								if (empty($resarray['errors'])) {
 									$activate = true;
 								} else {
@@ -1630,7 +1631,7 @@ function activateModulesRequiredByCountry($country_code)
 						if ($modulequalified) {
 							// Load languages files of module
 							if (isset($objMod->automatic_activation[$country_code])) {
-								activateModule($modName);
+								activateModule($modName, 1, 0);
 
 								setEventMessages($objMod->automatic_activation[$country_code], null, 'warnings');
 							}
