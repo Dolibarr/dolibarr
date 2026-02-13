@@ -517,7 +517,7 @@ class Documentation
 	/**
 	 *    Output a View Code area
 	 *
-	 * @param array $lines Lines of code to show
+	 * @param array<int,string> $lines Lines of code to show
 	 * @param string $option Source code language ('html', 'php' etc)
 	 * @return void
 	 */
