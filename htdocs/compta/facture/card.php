@@ -3344,7 +3344,7 @@ if (empty($reshook)) {
 			$all_progress = GETPOSTFLOAT('all_progress');
 			if ($all_progress > 100) {
 				$all_progress = 100;
-			} 
+			}
 			if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2 && $all_progress < 0) {
 				setEventMessages($langs->trans('CantBeNegative'), null, 'errors');
 			} else {
