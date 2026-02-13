@@ -12798,7 +12798,7 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 
 	// No need to make a return $head. Var is modified as a reference
 	if (!empty($hookmanager)) {
-		$parameters = array('object' => $object, 'mode' => $mode, 'head' => &$head, 'filterorigmodule' => $filterorigmodule);
+		$parameters = array('object' => $object, 'mode' => $mode, 'head' => &$head, 'filterorigmodule' => $filterorigmodule, 'type' => $type);
 		// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 		$reshook = $hookmanager->executeHooks('completeTabsHead', $parameters, $object);
 		if ($reshook > 0) {		// Hook ask to replace completely the array
