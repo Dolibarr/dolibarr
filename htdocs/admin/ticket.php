@@ -728,11 +728,11 @@ if (is_array($formmail->lines_model)) {
 }
 
 // Email template for notification of TICKET_CREATE
-print '<tr class="oddeven"><td><label for="TICKET_NOTIFICATION_EMAIL_TEMPLATE" class="block">'.$langs->trans("TicketEmailNotificationTemplate").'</label></td>';
+print '<tr class="oddeven"><td><label for="TICKET_NOTIFICATION_EMAIL_TEMPLATE" class="block">'.$langs->trans('TicketEmailNotificationTemplate').'</label></td>';
 print '<td class="left">';
 print $form->selectarray('TICKET_NOTIFICATION_EMAIL_TEMPLATE', $arrayofmessagename, getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TEMPLATE'), 'None', 0, 0, '', 0, 0, 0, '', '', 1);
 print '<td class="center">';
-print $formcategory->textwithpicto('', $langs->trans("TicketEmailNotificationTemplateHelp"), 1, 'help');
+print $formcategory->textwithpicto('', $langs->trans('TicketEmailNotificationTemplateHelp'), 1, 'help');
 print '</td>';
 print '</tr>';
 
