@@ -464,7 +464,7 @@ class Documentation
 	/**
 	 *    Recursive function for Automatic Summary
 	 *
-	 * @param array $menu  					$this->menu or submenus
+	 * @param array<string,mixed> $menu $this->menu or submenus
 	 * @param int   $level 					level of menu
 	 * @param int   $showsubmenu 			Show Sub menus: 0 = No, 1 = Yes
 	 * @param int   $showsubmenu_summary 	Show summary of sub menus: 0 = No, 1 = Yes
