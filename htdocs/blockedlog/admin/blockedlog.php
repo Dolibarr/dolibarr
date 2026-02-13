@@ -126,7 +126,12 @@ $infotoshow = '';
 if ($mysoc->country_code == 'FR') {
 	$islne = isALNEQualifiedVersion(1, 1);
 	if ($islne) {
-		$infotoshow = $langs->trans("CertifiedVersion");
+		if (preg_match('/\-/', DOL_VERSION)) {
+			// This is an alpha or beta version
+			$infotoshow = $langs->trans("LNECandidateVersionForCertificationFR");
+		} else {
+			$infotoshow = $langs->trans("LNECertifiedVersionFR");
+		}
 	} else {
 		$infotoshow = $langs->trans("NotCertifiedVersionFR");
 	}

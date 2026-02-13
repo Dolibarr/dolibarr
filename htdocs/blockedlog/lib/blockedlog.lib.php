@@ -88,6 +88,7 @@ function blockedlogadmin_prepare_head($withtabsetup)
 
 /**
  * Return if the KYC mandatory parameters are set
+ * Must be the samefields than the one defined as mandatory into the registration form.
  *
  * @return boolean		True or false
  */
@@ -105,11 +106,13 @@ function isRegistrationDataSaved()
 		return false;
 	}
 
+	/*
 	$providerset = getDolGlobalString('MAIN_INFO_ITPROVIDER_NAME');	// Can be 'myself'
 
 	if (empty($providerset)) {
 		return false;
 	}
+	*/
 
 	return true;
 }
@@ -127,15 +130,16 @@ function isRegistrationDataSavedAndPushed()
 
 
 /**
- * Return a hash unique identifier of the registration
+ * Return a hash unique identifier of the registration (used to identify the registration of instance without disclosing personal data)
  *
- * @return string		Hash unique ID (used to idenfiy the registration without disclosing personal data)
+ * @param	string	$algo		Algorithm to use for hash key
+ * @return 	string				Hash unique ID
  */
-function getHashUniqueIdOfRegistration()
+function getHashUniqueIdOfRegistration($algo = 'sha256')
 {
 	global $conf;
 
-	return dol_hash('dolibarr'.$conf->file->instance_unique_id, 'sha256', 1);
+	return dol_hash('dolibarr'.$conf->file->instance_unique_id.($conf->entity > 1 ? $conf->entity : ''), $algo, 1);
 }
 
 
@@ -340,14 +344,14 @@ function callApiToPushCounter($id, $signature, $test = 0)
 	global $mysoc, $conf;
 
 	if (isALNERunningVersion(1) && $mysoc->country_code == 'FR') {
-		// TODO Push last rowid + signature to remote dolibarr server
-		// TODO Do it only selected events: BILL_VALIDATE
+		// Push last rowid + signature to remote dolibarr server
+		// TODO Do it only for selected events: BILL_VALIDATE ?
 
 		// Code here is similar to the one into printCodeForPing()
 		$url_for_ping = getDolGlobalString('MAIN_URL_FOR_PING', "https://ping.dolibarr.org/");
 
 		$algo = 'sha256';
-		$hash_unique_id = dol_hash('dolibarr'.$conf->file->instance_unique_id, $algo);	// Note: if the global salt changes, this hash changes too so ping may be counted twice. We don't mind. It is for statistics and inventory purpose only.
+		$hash_unique_id = getHashUniqueIdOfRegistration($algo);
 
 		$data = 'hash_algo=dol_hash-'.urlencode($algo);
 		$data .= '&hash_unique_id='.urlencode($hash_unique_id);
@@ -378,6 +382,8 @@ function callApiToPushCounter($id, $signature, $test = 0)
 		$addheaders = array();
 		$timeoutconnect = 1;
 		$timeoutresponse = 1;
+
+		$conf->global->BLOCKEDLOG_RANDOMRANGE_FOR_TRACKING = 1;		// Force probability to 1
 
 		// Probability will be between 1/10 by default and 1/1 if const BLOCKEDLOG_RANDOMRANGE_FOR_TRACKING is set to 1. Can't be lower than 1/10.
 		$BLOCKEDLOG_RANDOMRANGE_FOR_TRACKING = min(10, getDolGlobalInt('BLOCKEDLOG_RANDOMRANGE_FOR_TRACKING', 10));

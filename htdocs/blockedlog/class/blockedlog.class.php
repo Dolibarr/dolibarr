@@ -1194,7 +1194,7 @@ class BlockedLog
 	 */
 	public function create($user, $forcesignature = '')
 	{
-		global $conf, $langs, $mysoc;
+		global $conf, $langs;
 
 		$langs->load('blockedlog');
 
@@ -1329,14 +1329,24 @@ class BlockedLog
 
 			if ($id > 0) {
 				$this->id = $id;
+				$error = 0;
 
 				$this->db->commit();
 
 				// Call remote API service to record the last counter
 				include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
-				$resultcall = callApiToPushCounter((int) $this->id, $this->signature);
+				try {
+					$resultcall = callApiToPushCounter((int) $this->id, $this->signature);
+				} catch (Exception $e) {
+					$error++;
+					$this->error = $e->getMessage();
+				}
 
-				return $this->id;
+				if (!$error) {
+					return $this->id;
+				} else {
+					return -3;
+				}
 			} else {
 				$this->db->rollback();
 				return -2;
