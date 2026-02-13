@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -128,7 +128,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 	}
 
 	/**
-	 * Retourne nombre de destinataires
+	 * Return the number of recipients
 	 *
 	 * @param      string		$sql        Sql request to count
 	 * @return     int|string      			Nb of recipient, or <0 if error, or '' if NA
@@ -161,15 +161,15 @@ class MailingTargets // This can't be abstract as it is used for some method
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Met a jour nombre de destinataires
+	 * Update the number of recipients
 	 *
-	 * @param	int		$mailing_id          Id of emailing
-	 * @return  int			                 Return integer < 0 si erreur, nb destinataires si ok
+	 * @param	int		$mailing_id			Id of emailing
+	 * @return  int							Return integer < 0 if error, otherwise number of recipients
 	 */
 	public function update_nb($mailing_id)
 	{
 		// phpcs:enable
-		// Mise a jour nombre de destinataire dans table des mailings
+		// Update the number of recipients in the mailing table
 		$sql = "SELECT COUNT(*) nb FROM ".$this->db->prefix()."mailing_cibles";
 		$sql .= " WHERE fk_mailing = ".((int) $mailing_id);
 		$result = $this->db->query($sql);

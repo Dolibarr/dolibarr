@@ -1584,6 +1584,13 @@ if (empty($reshook)) {
 				$result = $object->updateline($line->id, $line->desc, $line->subprice, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->qty, $line->fk_product, 'HT', $line->info_bits, $line->product_type, $line->remise_percent, 0, $alldate_start, $alldate_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice, $line->ref_supplier, $line->rang);
 			}
 		}
+	} elseif ($action == 'addline' && GETPOST('submitforalllines', 'alpha') && GETPOST('remiseforalllines', 'alpha') !== '' && $usercancreate) {
+		// Define vat_rate
+		$remise_percent = (GETPOST('remiseforalllines') ? GETPOST('remiseforalllines') : 0);
+		$remise_percent = str_replace('*', '', $remise_percent);
+		foreach ($object->lines as $line) {
+			$result = $object->updateline($line->id, $line->desc, $line->subprice, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->qty, $line->fk_product, 'HT', $line->info_bits, $line->product_type, $remise_percent, 0, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice, $line->ref_supplier, $line->rang);
+		}
 	} elseif ($action == 'addline' && GETPOST('submitforalllines', 'aZ09') && GETPOST('vatforalllines', 'alpha') != '' && $usercancreate) {
 		// Define vat_rate
 		$vat_rate = (GETPOST('vatforalllines') ? GETPOST('vatforalllines') : 0);
@@ -3251,7 +3258,7 @@ if ($action == 'create') {
 			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('CancelBill'), $langs->trans('ConfirmCancelBill', $object->ref), 'confirm_canceled', $formquestion, "yes", 1, 280);
 		}
 
-		// Confirmation de la suppression de la facture fournisseur
+		// Confirmation for supplier invoice deletion
 		if ($action == 'delete') {
 			$formquestion = array();
 
@@ -3650,7 +3657,7 @@ if ($action == 'create') {
 			}
 
 
-			// Other attributes
+			// Other attributes. Fields from hook formObjectOptions and Extrafields.
 			$cols = 2;
 			if ($object->status != $object::STATUS_DRAFT) {
 				$disableedit = 1;
@@ -4035,7 +4042,7 @@ if ($action == 'create') {
 					print '</span>';
 					print '</td>';
 					//print '<td></td>';
-					print '<td class="right'.($resteapayeraffiche ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'">'.price(price2num($multicurrency_resteapayer, 'MT'), 0, $langs, 1, -1, -1, $object->multicurrency_code).'</td>';
+					print '<td class="right'.($resteapayeraffiche ? ' amountremaintopaynoresize' : (' '.$cssforamountpaymentcomplete)).'">'.price(price2num($multicurrency_resteapayer, 'MT'), 0, $langs, 1, -1, -1, $object->multicurrency_code).'</td>';
 					print '</tr>';
 				}
 			} else { // Credit note
@@ -4079,7 +4086,7 @@ if ($action == 'create') {
 					print '</span>';
 					print '</td>';
 					//print '<td></td>';
-					print '<td class="right'.($resteapayeraffiche ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'">'.(!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency).' '.price(price2num($sign * $object->multicurrency_tx * $resteapayeraffiche, 'MT')).'</td>';
+					print '<td class="right'.($resteapayeraffiche ? ' amountremaintopaynoresize' : (' '.$cssforamountpaymentcomplete)).'">'.(!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency).' '.price(price2num($sign * $object->multicurrency_tx * $resteapayeraffiche, 'MT')).'</td>';
 					print '</tr>';
 				}
 
@@ -4284,7 +4291,7 @@ if ($action == 'create') {
 
 				// Create payment
 				if ($object->type != FactureFournisseur::TYPE_CREDIT_NOTE && $object->status == FactureFournisseur::STATUS_VALIDATED && $object->paid == 0) {
-					print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.DOL_URL_ROOT.'/fourn/facture/paiement.php?facid='.$object->id.'&action=create'.($object->fk_account > 0 ? '&amp;accountid='.$object->fk_account : '').'">'.$langs->trans('DoPayment').'</a>'; // must use facid because id is for payment id not invoice
+					print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/paiement.php?facid='.$object->id.'&action=create'.($object->fk_account > 0 ? '&accountid='.$object->fk_account : '').'">'.$langs->trans('DoPayment').'</a>'; // must use facid because id is for payment id not invoice
 				}
 
 				// Reverse back money or convert to reduction

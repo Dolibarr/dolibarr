@@ -7,7 +7,7 @@
  * Copyright (C) 2018-2024  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2022		Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2023		Anthony Berton			<anthony.berton@bb2a.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  *
  * This program is free software; you can redistribute it and/or modify
@@ -27,16 +27,16 @@
 /**
  *       \file       htdocs/core/class/html.formai.class.php
  *       \ingroup    core
- *       \brief      Fichier de la class permettant la generation du formulaire html d'envoi de mail unitaire
+ *       \brief      File for class FormAI class to generate HTML forms for single email
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 
 /**
- *      Class permettant la generation du formulaire html d'envoi de mail unitaire
- *      Usage: $formail = new FormAI($db)
- *             $formai->proprietes=1 ou chaine ou tableau de valeurs
- *             $formai->show_form() affiche le formulaire
+ *      Class to generate HTML forms for single email
+ *      Usage: $formai = new FormAI($db)
+ *             $formai->proprietes=1 or string or table of values
+ *             $formai->show_form() shows the form
  */
 class FormAI extends Form
 {

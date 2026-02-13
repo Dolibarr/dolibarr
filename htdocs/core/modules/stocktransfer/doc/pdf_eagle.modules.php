@@ -424,7 +424,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 					// Notes
 					if (!empty($object->note_public)) {
 						$pdf->SetFont('', '', $default_font_size - 1); // Dans boucle pour gerer multi-page
-						$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top_alt, dol_htmlentitiesbr($object->note_public), 0, 1);
+						$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top_alt, dol_htmlentitiesbr((string) $object->note_public), 0, 1);
 					}
 
 					$nexY = $pdf->GetY();
@@ -451,7 +451,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 					$barcode_path = '';
 					$result = 0;
 					if ($module->encodingIsSupported($encoding)) {
-						$result = $module->writeBarCode($object->ref, $encoding);
+						$result = $module->writeBarCode((string) $object->ref, $encoding);
 
 						// get path of qrcode image
 						$newcode = (string) $object->ref;

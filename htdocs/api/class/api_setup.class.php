@@ -3316,7 +3316,7 @@ class Setup extends DolibarrApi
 								$objMod = new $modName($db);
 								//$name = strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
 								if ($state) {
-									activateModule($modulename);
+									activateModule($modulename, 1, 0);
 									return array('result' => 'success', 'message' => 'Module '.$this->db->escape($modulename).' activated');
 								} else {
 									unActivateModule($modulename);

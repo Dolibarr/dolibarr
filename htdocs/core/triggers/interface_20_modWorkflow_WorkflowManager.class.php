@@ -120,7 +120,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					$this->setErrorsFromObject($newobject);
 				} else {
 					if (empty($object->fk_account) && !empty($object->thirdparty->fk_account) && !getDolGlobalInt('BANK_ASK_PAYMENT_BANK_DURING_ORDER')) {
-						$ret = $newobject->setBankAccount($object->thirdparty->fk_account, 1, $user);
+						$ret = $newobject->setBankAccount((int) $object->thirdparty->fk_account, 1, $user);
 						if ($ret < 0) {
 							$this->setErrorsFromObject($newobject);
 						}
@@ -147,7 +147,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						}
 					}
 					dol_syslog("Amount of linked proposals = ".$totalonlinkedelements.", of order = ".$object->total_ht.", egality is ".json_encode($totalonlinkedelements == $object->total_ht));
-					if ($this->shouldClassify($conf, $totalonlinkedelements, $object->total_ht)) {
+					if ($this->shouldClassify($conf, $totalonlinkedelements, (float) $object->total_ht)) {
 						foreach ($object->linkedObjects['propal'] as $element) {
 							/** @var Propal $element */
 							$ret = $element->classifyBilled($user);
@@ -312,7 +312,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						}
 					}
 					dol_syslog("Amount of linked orders = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".json_encode($totalonlinkedelements == $object->total_ht));
-					if ($this->shouldClassify($conf, $totalonlinkedelements, $object->total_ht)) {
+					if ($this->shouldClassify($conf, $totalonlinkedelements, (float) $object->total_ht)) {
 						foreach ($object->linkedObjects['order_supplier'] as $element) {
 							/** @var CommandeFournisseur $element */
 							$ret = $element->classifyBilled($user);
@@ -336,7 +336,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						}
 					}
 					dol_syslog("Amount of linked supplier proposals = ".$totalonlinkedelements.", of supplier invoice = ".$object->total_ht.", egality is ".json_encode($totalonlinkedelements == $object->total_ht));
-					if ($this->shouldClassify($conf, $totalonlinkedelements, $object->total_ht)) {
+					if ($this->shouldClassify($conf, $totalonlinkedelements, (float) $object->total_ht)) {
 						foreach ($object->linkedObjects['supplier_proposal'] as $element) {
 							/** @var SupplierProposal $element */
 							$ret = $element->classifyBilled($user);
@@ -415,7 +415,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						}
 					}
 					dol_syslog("Amount of linked orders = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".json_encode($totalonlinkedelements == $object->total_ht));
-					if ($this->shouldClassify($conf, $totalonlinkedelements, $object->total_ht)) {
+					if ($this->shouldClassify($conf, $totalonlinkedelements, (float) $object->total_ht)) {
 						foreach ($object->linkedObjects['commande'] as $element) {
 							/** @var Commande $element */
 							$ret = $element->classifyBilled($user);

@@ -291,6 +291,13 @@ abstract class CommonInvoice extends CommonObject
 	const CLOSECODE_ABANDONED = 'abandon'; // Abandoned (no payment at all) - other
 	const CLOSECODE_REPLACED = 'replaced'; // Abandoned (no payment at all) - replacedby another invoice (feature disabled by default)
 
+	const ARRAY_OF_DISPUTE_STATUS = array(
+		0 => array('label' => "None"),
+		1 => array('label' => "DisputeOpen"),
+		8 => array('label' => "DisputeLost"),
+		9 => array('label' => "DisputeWon")
+	);
+
 
 	/**
 	 * 	Return remain amount to pay. Property ->id and ->total_ttc must be set.
@@ -1107,11 +1114,6 @@ abstract class CommonInvoice extends CommonObject
 			$paramsBadge['badgeParams' ]['attr']['title'] = $titlestringtoshow;
 		}
 
-		/*
-		if (isset($moreparams['dispute_status'])) {
-			$statusdispute = $moreparams['dispute_status'] ? img_picto($langs->trans("DisputeOpen"), 'warning') : '';
-		}
-		*/
 		if (isset($moreparams['dispute_status']) && $moreparams['dispute_status']) {
 			$labelStatus .= ' - ';
 			if ($moreparams['dispute_status'] == 8) {
@@ -1652,7 +1654,7 @@ abstract class CommonInvoice extends CommonObject
 												$charge->customer = $customer->id;
 											} elseif ($paymentintent->status === 'requires_action') {
 												//paymentintent->status may be => 'requires_action' (no error in such a case)
-												dol_syslog(var_export($paymentintent, true), LOG_DEBUG);
+												dol_syslog(formatLogObject($paymentintent), LOG_DEBUG);
 
 												$charge->status = 'failed';
 												$charge->customer = $customer->id;
@@ -1663,7 +1665,7 @@ abstract class CommonInvoice extends CommonObject
 												$stripefailuremessage = 'Action required. Contact the support at ';// . $conf->global->SELLYOURSAAS_MAIN_EMAIL;
 												$stripefailuredeclinecode = $stripe->declinecode;
 											} else {
-												dol_syslog(var_export($paymentintent, true), LOG_DEBUG);
+												dol_syslog(formatLogObject($paymentintent), LOG_DEBUG);
 
 												$charge->status = 'failed';
 												$charge->customer = $customer->id;

@@ -321,7 +321,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					$tab_top = 88 + $height_incoterms;
 
 					$pdf->SetFont('', '', $default_font_size - 1);
-					$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top, dol_htmlentitiesbr($object->note_public), 0, 1);
+					$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top, dol_htmlentitiesbr((string) $object->note_public), 0, 1);
 					$nexY = $pdf->GetY();
 					$height_note = $nexY - $tab_top;
 

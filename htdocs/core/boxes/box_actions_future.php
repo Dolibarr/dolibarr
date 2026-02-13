@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2003-2007  Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011  Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011  Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2014 	    Charles-Fr BENKE        <charles.fr@benke.fr>
+/* Copyright (C) 2003-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2011  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2014       Charles-Fr BENKE        <charles.fr@benke.fr>
  * Copyright (C) 2015-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -227,8 +227,8 @@ class box_actions_future extends ModeleBoxes
 				$out .= '<table width=100%>';
 				for ($line = 0, $n = $nblines; $line < $n; $line++) {
 					if (isset($contents[$line])) {
-						// on affiche que les évènement du jours ou passé
-						// qui ne sont pas à 100%
+						// we display events from today or the past
+						// that are not 100% certain
 						$actioncejour = true;
 
 						// TR

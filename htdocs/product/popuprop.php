@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,7 +24,7 @@
 
 /**
  * \file       htdocs/product/popuprop.php
- * \ingroup    propal, commande, facture, produit
+ * \ingroup    propal, commande, facture, product
  * \brief      List of products or services by popularity
  */
 
