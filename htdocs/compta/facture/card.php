@@ -3344,23 +3344,26 @@ if (empty($reshook)) {
 			$all_progress = GETPOSTFLOAT('all_progress');
 			if ($all_progress > 100) {
 				$all_progress = 100;
-			}
-
-			foreach ($object->lines as $line) {
-				$percent = getDolGlobalInt('INVOICE_USE_SITUATION') == 2 ? $line->getAllPrevProgress($object->id) : $line->get_prev_progress($object->id);
-				if ($object->type != $object::TYPE_CREDIT_NOTE && (float) $all_progress < (float) $percent) {
-					$mesg = $langs->trans("Line").' '.$line->rang.' : '.$langs->trans("CantBeLessThanMinPercent");
-					setEventMessages($mesg, null, 'warnings');
-					$result = -1;
-				} elseif ($object->type == $object::TYPE_CREDIT_NOTE && (float) $all_progress > (float) $percent) {
-					$mesg = $langs->trans("Line").' '.$line->rang.' : '.$langs->trans("CantBeMoreThanMinPercent");
-					setEventMessages($mesg, null, 'warnings');
-					$result = -1;
-				} else {
-					$object->update_percent($line, $all_progress, false);
+			} 
+			if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2 && $all_progress < 0) {
+				setEventMessages($langs->trans('CantBeNegative'), null, 'errors');
+			} else {
+				foreach ($object->lines as $line) {
+					$percent = getDolGlobalInt('INVOICE_USE_SITUATION') == 2 ? $line->getAllPrevProgress($object->id) : $line->get_prev_progress($object->id);
+					if ($object->type != $object::TYPE_CREDIT_NOTE && (float) $all_progress < (float) $percent) {
+						$mesg = $langs->trans("Line").' '.$line->rang.' : '.$langs->trans("CantBeLessThanMinPercent");
+						setEventMessages($mesg, null, 'warnings');
+						$result = -1;
+					} elseif ($object->type == $object::TYPE_CREDIT_NOTE && (float) $all_progress > (float) $percent) {
+						$mesg = $langs->trans("Line").' '.$line->rang.' : '.$langs->trans("CantBeMoreThanMinPercent");
+						setEventMessages($mesg, null, 'warnings');
+						$result = -1;
+					} else {
+						$object->update_percent($line, $all_progress, false);
+					}
 				}
+				$object->update_price(1);
 			}
-			$object->update_price(1);
 		}
 	} elseif ($action == 'updateline' && $usercancreate && !$cancel) {
 		header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id); // To show again edited page
