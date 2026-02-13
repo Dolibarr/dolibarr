@@ -8,7 +8,7 @@
  * Copyright (C) 2008		Patrick Raguin				<patrick.raguin@auguria.net>
  * Copyright (C) 2010-2018	Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2013		Florian Henry				<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2013-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2013		Peter Fontaine				<contact@peterfontaine.fr>
  * Copyright (C) 2014-2015	Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
@@ -217,6 +217,7 @@ class Societe extends CommonObject
 		'idprof5' => array('type' => 'varchar(128)', 'label' => 'Idprof5', 'enabled' => 1, 'visible' => -1, 'position' => 206),
 		'idprof6' => array('type' => 'varchar(128)', 'label' => 'Idprof6', 'enabled' => 1, 'visible' => -1, 'position' => 207),
 		'tva_intra' => array('type' => 'varchar(20)', 'label' => 'Tva intra', 'enabled' => 1, 'visible' => -1, 'position' => 210),
+		'euid' => array('type' => 'varchar(20)', 'label' => 'EUIDShort', 'enabled' => 1, 'visible' => -1, 'position' => 213),
 		'capital' => array('type' => 'double(24,8)', 'label' => 'Capital', 'enabled' => 1, 'visible' => -1, 'position' => 215),
 		'fk_stcomm' => array('type' => 'integer', 'label' => 'CommercialStatus', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 220),
 		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 225),
@@ -506,6 +507,11 @@ class Societe extends CommonObject
 	 * @var ?string	Intracommunitary VAT ID
 	 */
 	public $tva_intra;
+
+	/**
+	 * @var ?string	EUID European Unique Identifier
+	 */
+	public $euid;
 
 	/**
 	 * @var int<0,1>	Vat reverse-charge concerned
@@ -1325,7 +1331,7 @@ class Societe extends CommonObject
 		}
 
 		// Check for duplicate or mandatory fields defined into setup
-		$array_to_check = array('IDPROF1', 'IDPROF2', 'IDPROF3', 'IDPROF4', 'IDPROF5', 'IDPROF6', 'EMAIL', 'TVA_INTRA', 'ACCOUNTANCY_CODE_CUSTOMER', 'ACCOUNTANCY_CODE_SUPPLIER');
+		$array_to_check = array('IDPROF1', 'IDPROF2', 'IDPROF3', 'IDPROF4', 'IDPROF5', 'IDPROF6', 'EMAIL', 'TVA_INTRA', 'EUID', 'ACCOUNTANCY_CODE_CUSTOMER', 'ACCOUNTANCY_CODE_SUPPLIER');
 		foreach ($array_to_check as $key) {
 			$keymin = strtolower($key);
 			$keyfield_db = $keymin;
@@ -1390,6 +1396,22 @@ class Societe extends CommonObject
 						$langs->load("errors");
 						$error++;
 						$this->errors[] = $langs->trans("ErrorProdIdIsMandatory", $langs->trans('VATIntra')).' ('.$langs->trans("ForbiddenBySetupRules").')';
+					}
+				} elseif ($key == 'EUID') {
+					// Check for unicity
+					if ($vallabel && getDolGlobalString('SOCIETE_EUID_UNIQUE')) {
+						if ($this->id_prof_exists($keymin, $vallabel, ($this->id > 0 ? $this->id : 0))) {
+							$langs->load("errors");
+							$error++;
+							$this->errors[] = $langs->trans('EUIDShort')." ".$langs->trans("ErrorProdIdAlreadyExist", $vallabel).' ('.$langs->trans("ForbiddenBySetupRules").')';
+						}
+					}
+
+					// Check for mandatory
+					if (getDolGlobalString('SOCIETE_EUID_MANDATORY') && (!isset($vallabel) || trim($vallabel) === '')) {
+						$langs->load("errors");
+						$error++;
+						$this->errors[] = $langs->trans("ErrorProdIdIsMandatory", $langs->trans('EUIDShort')).' ('.$langs->trans("ForbiddenBySetupRules").')';
 					}
 				} elseif ($key == 'ACCOUNTANCY_CODE_CUSTOMER' && !empty($this->client)) {
 					// Check for unicity
@@ -1509,6 +1531,7 @@ class Societe extends CommonObject
 		$this->tva_assuj = (is_numeric($this->tva_assuj)) ? (int) trim((string) $this->tva_assuj) : 0;
 		$this->tva_intra = dol_sanitizeFileName($this->tva_intra ?? '', '');
 		$this->vat_reverse_charge = empty($this->vat_reverse_charge) ? 0 : 1;
+		$this->euid = trim((string) $this->euid);
 		if (empty($this->status)) {
 			$this->status = 0;
 		}
@@ -1662,6 +1685,7 @@ class Societe extends CommonObject
 			if (!getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 				$sql .= ",vat_reverse_charge = " . ($this->vat_reverse_charge != '' ? "'" . $this->db->escape((string) $this->vat_reverse_charge) . "'" : 0);
 			}
+			$sql .= ",euid = '".$this->db->escape($this->euid)."'";
 			$sql .= ",status = ".((int) $this->status);
 
 			// Local taxes
@@ -1932,7 +1956,7 @@ class Societe extends CommonObject
 		$sql .= ', s.socialnetworks';
 		$sql .= ', s.url, s.zip, s.town, s.note_private, s.note_public, s.client, s.fournisseur';
 		$sql .= ', s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6';
-		$sql .= ', s.capital, s.tva_intra';
+		$sql .= ', s.capital, s.tva_intra, s.euid';
 		$sql .= ', s.fk_typent as typent_id';
 		$sql .= ', s.fk_effectif as effectif_id';
 		$sql .= ', s.fk_forme_juridique as forme_juridique_code';
@@ -2121,6 +2145,7 @@ class Societe extends CommonObject
 				} else {
 					$this->vat_reverse_charge = 0;
 				}
+				$this->euid			        = $obj->euid;
 
 				$this->status				= $obj->status;
 
@@ -3152,6 +3177,10 @@ class Societe extends CommonObject
 		}
 		if (!empty($this->tva_intra) || (getDolGlobalString('SOCIETE_SHOW_FIELD_IN_TOOLTIP') && strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'vatnumber') !== false)) {
 			$datas['vatintra'] = '<br><b>'.$langs->trans('VATIntra').':</b> '.dol_escape_htmltag($this->tva_intra);
+		}
+
+		if (!empty($this->euid) || (getDolGlobalString('SOCIETE_SHOW_FIELD_IN_TOOLTIP') && strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'euid') !== false)) {
+			$datas['euid'] = '<br><b>'.$langs->trans('EUIDShort').':</b> '.dol_escape_htmltag($this->euid);
 		}
 
 		if (getDolGlobalString('SOCIETE_SHOW_FIELD_IN_TOOLTIP')) {
@@ -4443,7 +4472,7 @@ class Societe extends CommonObject
 		// Now try to guess using different tips
 		if (!empty($this->tva_intra)) {
 			$isACompany = 2;
-		} elseif (!empty($this->idprof1) || !empty($this->idprof2) || !empty($this->idprof3) || !empty($this->idprof4) || !empty($this->idprof5) || !empty($this->idprof6)) {
+		} elseif (!empty($this->idprof1) || !empty($this->idprof2) || !empty($this->idprof3) || !empty($this->idprof4) || !empty($this->idprof5) || !empty($this->idprof6) || !empty($this->euid)) {
 			$isACompany = 3;
 		} else {
 			if (!getDolGlobalString('MAIN_CUSTOMERS_ARE_COMPANIES_EVEN_IF_SET_AS_INDIVIDUAL')) {	// never or rarely set
@@ -4864,6 +4893,7 @@ class Societe extends CommonObject
 		$this->idprof9 = getDolGlobalString('MAIN_INFO_PROFID9');
 		$this->idprof10 = getDolGlobalString('MAIN_INFO_PROFID10');
 		$this->tva_intra = getDolGlobalString('MAIN_INFO_TVAINTRA'); // VAT number, not necessarily INTRA.
+		$this->euid = getDolGlobalString('MAIN_INFO_EUID');
 		$this->managers = getDolGlobalString('MAIN_INFO_SOCIETE_MANAGERS');
 		$this->capital = is_numeric(getDolGlobalString('MAIN_INFO_CAPITAL')) ? (float) price2num(getDolGlobalString('MAIN_INFO_CAPITAL')) : null;
 		$this->forme_juridique_code = getDolGlobalInt('MAIN_INFO_SOCIETE_FORME_JURIDIQUE');
@@ -4918,7 +4948,7 @@ class Societe extends CommonObject
 			'facebook' => 'facebookpseudo',
 			'linkedin' => 'linkedinpseudo',
 		);
-		$this->url = 'http://www.specimen.com';
+		$this->url = 'https://www.specimen.com';
 
 		$this->phone = '0909090901';
 		$this->phone_mobile = '0909090901';
@@ -4942,6 +4972,8 @@ class Societe extends CommonObject
 		$this->idprof4 = 'idprof4';
 		$this->idprof5 = 'idprof5';
 		$this->idprof6 = 'idprof6';
+
+		$this->euid = 'FRXXXXXidprof1';
 
 		return 1;
 	}
@@ -5843,7 +5875,7 @@ class Societe extends CommonObject
 			$listofproperties = array(
 				'address', 'zip', 'town', 'state_id', 'country_id', 'phone', 'phone_mobile', 'fax', 'email', 'socialnetworks', 'url', 'barcode',
 				'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6',
-				'tva_intra', 'effectif_id', 'forme_juridique', 'remise_percent', 'remise_supplier_percent', 'mode_reglement_supplier_id', 'cond_reglement_supplier_id', 'name_bis',
+				'tva_intra', 'euid', 'effectif_id', 'forme_juridique', 'remise_percent', 'remise_supplier_percent', 'mode_reglement_supplier_id', 'cond_reglement_supplier_id', 'name_bis',
 				'stcomm_id', 'outstanding_limit', 'order_min_amount', 'supplier_order_min_amount', 'price_level', 'parent', 'default_lang', 'ref', 'ref_ext', 'import_key', 'fk_incoterms', 'fk_multicurrency',
 				'code_client', 'code_fournisseur', 'code_compta', 'code_compta_fournisseur',
 				'model_pdf', 'webservices_url', 'webservices_key', 'accountancy_code_sell', 'accountancy_code_buy', 'typent_id'
