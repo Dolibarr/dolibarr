@@ -67,6 +67,7 @@ class LanguageOfCommentsSniff implements Sniff
 		' suppression ',
 		' utilisateur ',
 		' utilisateurs ',
+		' utiliser ',
 		' valeur ',
 		' valeurs ',
 	];
