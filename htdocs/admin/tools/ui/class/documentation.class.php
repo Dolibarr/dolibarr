@@ -159,13 +159,19 @@ class Documentation
 				),
 				'Inputs' => array(
 					'url' => dol_buildpath($this->baseUrl.'/components/inputs.php', 1),
-					'icon' => 'fas fa-comments',
+					'icon' => 'far fa-edit',
 					'submenu' => array(),
 					'summary' => array(
 						'DocBasicUsage' => '#setinputssection-basicusage',
 						'DocHelperFunctionsInputUsage' => '#setinputssection-helperfunctions',
 						'DocHelperFunctionsGetSearchFilterToolInput' => '#setinputssection-getSearchFilterToolInput',
 					)
+				),
+				'ExperimentalUxInputAjaxFeedback' => array(
+					'url' => dol_buildpath($this->baseUrl.'/content/input-feedback.php', 1),
+					'icon' => 'far fa-share-square',
+					'submenu' => array(),
+					'summary' => array(),
 				),
 			),
 		);
@@ -246,12 +252,6 @@ class Documentation
 						'ExperimentalUxIntroductionTitle' => '#experimental-ux-introduction',
 						'ExperimentalUxContributionTitle' => '#experimental-ux-contribution',
 					),
-				),
-				'ExperimentalUxInputAjaxFeedback' => array(
-					'url' => dol_buildpath($this->baseUrl.'/experimental/experiments/input-feedback/index.php', 1),
-					'icon' => 'fas fa-flask',
-					'submenu' => array(),
-					'summary' => array(),
 				),
 				'UxDolibarrContext' => array(
 					'url' => dol_buildpath($this->baseUrl.'/experimental/experiments/dolibarr-context/index.php', 1),
