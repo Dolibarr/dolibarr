@@ -239,11 +239,11 @@ class Documentation
 		// Elements
 		$this->menu['UxDolibarrContext'] = array(
 			'url' => dol_buildpath($this->baseUrl.'/dolibarr-context/index.php', 1),
-			'icon' => 'fas fa-flask',
+			'icon' => 'fab fa-fort-awesome',
 			'submenu' => array(
 				'UxDolibarrContextHowItWork' => array(
 					'url' => dol_buildpath($this->baseUrl.'/dolibarr-context/index.php', 1),
-					'icon' => 'fas fa-flask',
+					'icon' => 'fab fa-fort-awesome',
 					'submenu' => array(),
 					'summary' => array(
 						'Introduction' => '#titlesection-basicusage',
@@ -258,7 +258,7 @@ class Documentation
 				),
 				'UxDolibarrContextLangsTool' => array(
 					'url' => dol_buildpath($this->baseUrl.'/dolibarr-context/langs-tool.php', 1),
-					'icon' => 'fas fa-flask',
+					'icon' => 'far fa-flag',
 					'submenu' => array(),
 					'summary' => array(),
 				),
@@ -368,7 +368,7 @@ class Documentation
 	/**
 	 *    Recursive function to set Menu
 	 *
-	 * @param array{summary?: array<string,string>, submenu?: array<string,array>} $menu Menu entry or submenu
+	 * @param array{url?: string, icon?: string, summary?: array<string,string>, submenu?: array<string,array>} $menu Menu entry or submenu
 	 * @param int   $level level of menu
 	 * @return void
 	 */
