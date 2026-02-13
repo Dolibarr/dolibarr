@@ -4973,7 +4973,7 @@ class Societe extends CommonObject
 		$this->idprof5 = 'idprof5';
 		$this->idprof6 = 'idprof6';
 
-		$this->euid = 'FRXXXXXidprof1';
+		$this->euid = 'FR-RCSXXXX-idprof1';
 
 		return 1;
 	}
