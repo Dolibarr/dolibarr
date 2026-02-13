@@ -1103,6 +1103,24 @@ if (!defined('NOLOGIN')) {
 		}
 	}
 
+	// Check if user must change password at next login
+	if (!empty($user->force_pass_change) && $dol_authmode == 'dolibarr') {
+		// redirect to a simple page with only one action is possible : change your password
+		$allowedpages = array('/user/changepassword.php', '/user/logout.php');
+		$currentpage = $_SERVER['PHP_SELF'];
+		$isallowed = false;
+		foreach ($allowedpages as $page) {
+			if (preg_match('/'.preg_quote($page, '/').'$/', $currentpage)) {
+				$isallowed = true;
+				break;
+			}
+		}
+		if (!$isallowed) {
+			header('Location: '.DOL_URL_ROOT.'/user/changepassword.php?id='.$user->id);
+			exit;
+		}
+	}
+
 	// If user admin, we force the rights-based modules
 	if ($user->admin) {
 		$user->rights->user->user->lire = 1;
@@ -1545,11 +1563,14 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 			$contentsecuritypolicy .= $hookmanager->resPrint; // Concat CSP
 		}
 
+		// Add Dolibarr to Content-Security-Policy
+		$contentsecuritypolicy = preg_replace('/default-src \'self\'/', 'default-src \'self\' *.dolibarr.org', $contentsecuritypolicy);
+
 		if (!empty($contentsecuritypolicy)) {
 			header("Content-Security-Policy-Report-Only: ".$contentsecuritypolicy);
 		}
 	} else {
-		header("Content-Security-Policy: ".constant('MAIN_SECURITY_FORCECSPRO'));
+		header("Content-Security-Policy-Report-Only: ".constant('MAIN_SECURITY_FORCECSPRO'));
 	}
 
 	// Content-Security-Policy
@@ -1581,6 +1602,9 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 		} else {
 			$contentsecuritypolicy .= $hookmanager->resPrint; // Concat CSP
 		}
+
+		// Add Dolibarr to Content-Security-Policy
+		$contentsecuritypolicy = preg_replace('/default-src \'self\'/', 'default-src \'self\' ping.dolibarr.org', $contentsecuritypolicy);
 
 		if (!empty($contentsecuritypolicy)) {
 			header("Content-Security-Policy: ".$contentsecuritypolicy);
@@ -3741,7 +3765,9 @@ if (!function_exists("llxFooter")) {
 		$forceping = GETPOSTINT('forceping');
 
 		if (($_SERVER["PHP_SELF"] == DOL_URL_ROOT.'/index.php') || $forceping) {
-			$hash_unique_id_ping = dol_hash('dolibarr'.$conf->file->instance_unique_id, 'sha256', 1);
+			require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+
+			$hash_unique_id_ping = getHashUniqueIdOfRegistration('sha256');
 			$constanttosavelastko = 'MAIN_LAST_PING_KO_DATE';
 			$constanttosavefirstok = 'MAIN_FIRST_PING_OK_DATE';
 			$constanttosavefirstokid = 'MAIN_FIRST_PING_OK_ID';
@@ -3778,7 +3804,8 @@ if (!function_exists("llxFooter")) {
 		$forceregistration = GETPOSTINT('forceregistration');
 
 		if (isModEnabled('blockedlog') && (($_SERVER["PHP_SELF"] == DOL_URL_ROOT.'/index.php') || $forceregistration)) {
-			include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+			require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+
 			if (!isALNEQualifiedVersion()) {
 				print "\n<!-- NO JS CODE TO ENABLE the registration. Not a LNE qualified version -->\n";
 			} elseif (!isRegistrationDataSaved()) {

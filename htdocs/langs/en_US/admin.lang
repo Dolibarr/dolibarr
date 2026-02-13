@@ -2772,3 +2772,4 @@ YouAreUsingTheAdvancedPermissionsMode=You are using the advanced permission mode
 YouAreUsingTheSimplePermissionsMode=You are using the simple permission mode. Go to Home - Setup - Security to switch to advanced mode if you need more granularity on permissions.
 GoodiesButtonTitle=Visit Our Merch & Gifts Store
 InitModuleIsSlow=Init of module is slow
+PreviousOptionGuaranteeThatDateIsAlwaysHigher=The previous option already guarantees that the date of invoice is always higher than the previous validated invoice
