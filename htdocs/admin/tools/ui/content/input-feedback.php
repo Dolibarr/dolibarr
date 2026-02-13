@@ -152,7 +152,7 @@ document.getElementById(\'btn-process-fail\').addEventListener(\'click\', functi
 });',
 			'</script>',
 			);
-			echo $documentation->showCode($lines, 'html'); ?>
+			$documentation->showCode($lines); ?>
 		</div>
 
 

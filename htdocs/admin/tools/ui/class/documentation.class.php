@@ -31,7 +31,7 @@ class Documentation
 	/**
 	 * Views
 	 *
-	 * @var array<int,string>
+	 * @var array|array<int,string>
 	 */
 	public $view = array();
 

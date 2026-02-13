@@ -102,7 +102,7 @@ $documentation->showSidebar(); ?>
 					']) ?>);',
 					'</script>',
 				);
-				echo $documentation->showCode($lines, 'php');
+				$documentation->showCode($lines, 'php');
 				?>
 			</div>
 		</div>
@@ -162,7 +162,7 @@ $documentation->showSidebar(); ?>
 					'});',
 					'</script>',
 				);
-				echo $documentation->showCode($lines, 'php');
+				$documentation->showCode($lines, 'php');
 
 				print implode("\n", $lines);
 				?>
