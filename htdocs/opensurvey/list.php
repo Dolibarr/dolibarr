@@ -442,7 +442,7 @@ while ($i < $imaxinloop) {
 	$opensurvey_static->date_fin = $db->jdate($obj->date_fin);
 
 	// Show here line of result
-	print '<tr data-rowid="'.$opensurvey_static->id.'" class="oddeven">';
+	print '<tr data-rowid="'.$opensurvey_static->id.'" class="oddeven row-with-select">';
 	// Action column
 	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print '<td class="nowrap center">';
