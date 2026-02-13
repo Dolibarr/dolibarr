@@ -31,21 +31,25 @@ class Documentation
 	/**
 	 * Views
 	 *
-	 * @var array
+	 * @var array<int,string>
 	 */
 	public $view = array();
 
 	/**
 	 * Menu - Set in setMenu in order to use dol_buildpath and called in constructor
 	 *
-	 * @var array
+	 * @var array<string, array{
+	 *     url?: string,
+	 *     summary?: array<string,string>,
+	 *     submenu?: array<string,array>
+	 * }>
 	 */
 	public $menu = array();
 
 	/**
 	 * Summary - Set in setSummary and called in constructor
 	 *
-	 * @var array
+	 * @var array<int,string>
 	 */
 	public $summary = array();
 
