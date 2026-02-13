@@ -151,7 +151,7 @@ $documentation->showSidebar(); ?>
 					'	Dolibarr.debugMode(false);',
 					'</script>',
 				);
-				echo $documentation->showCode($lines, 'php');
+				$documentation->showCode($lines, 'php');
 				?>
 			</div>
 
@@ -202,7 +202,7 @@ $documentation->showSidebar(); ?>
 					'	});',
 					'</script>',
 				);
-				echo $documentation->showCode($lines, 'php'); ?>
+				$documentation->showCode($lines, 'php'); ?>
 			</div>
 
 			<h3>Practical usage</h3>
@@ -244,7 +244,7 @@ $documentation->showSidebar(); ?>
 					'	});',
 					'</script>',
 				);
-				echo $documentation->showCode($lines, 'php'); ?>
+				$documentation->showCode($lines, 'php'); ?>
 
 				Open your console <code>F12</code> and click on  <button class="button" id="try-event-yourCustomHookName">try</button>
 				<script nonce="<?php print getNonce() ?>"  >
@@ -333,7 +333,7 @@ $documentation->showSidebar(); ?>
 					'	});',
 					'</script>',
 				);
-				echo $documentation->showCode($lines, 'php'); ?>
+				$documentation->showCode($lines, 'php'); ?>
 			</div>
 
 			<p>
@@ -400,7 +400,7 @@ $documentation->showSidebar(); ?>
 					'    });',
 					'</script>',
 				);
-				echo $documentation->showCode($lines, 'php'); ?>
+				$documentation->showCode($lines, 'php'); ?>
 
 				Open your console <code>F12</code> and click on  <button class="button" id="try-event-yourCustomAwaitHookName">try</button>
 
@@ -466,7 +466,7 @@ $documentation->showSidebar(); ?>
 					'});',
 				'</script>',
 				);
-				echo $documentation->showCode($lines, 'php'); ?>
+				$documentation->showCode($lines, 'php'); ?>
 			</div>
 
 			<h3>Protected Tools</h3>
@@ -485,7 +485,7 @@ $documentation->showSidebar(); ?>
 					'	}',
 					'</script>',
 				);
-				echo $documentation->showCode($lines, 'php'); ?>
+				$documentation->showCode($lines, 'php'); ?>
 			</div>
 
 			<h3>Reading Tools</h3>
@@ -501,7 +501,7 @@ $documentation->showSidebar(); ?>
 					'	if(Dolibarr.checkToolExist(\'Tool name to check\')){/* ... */}else{/* ... */}; ',
 					'</script>',
 				);
-				echo $documentation->showCode($lines, 'php'); ?>
+				$documentation->showCode($lines, 'php'); ?>
 			</div>
 
 		</div>
@@ -548,7 +548,7 @@ $documentation->showSidebar(); ?>
 					'	});',
 					'</script>',
 				);
-				echo $documentation->showCode($lines, 'php'); ?>
+				$documentation->showCode($lines, 'php'); ?>
 				<script nonce="<?php print getNonce() ?>"  >
 					document.addEventListener('Dolibarr:Ready', function(e) {
 
@@ -611,7 +611,7 @@ $documentation->showSidebar(); ?>
 					'    });',
 					'</script>',
 				);
-				echo $documentation->showCode($lines, 'php');
+				$documentation->showCode($lines, 'php');
 				?>
 			</div>
 
@@ -642,7 +642,7 @@ $documentation->showSidebar(); ?>
 					'    });',
 					'</script>',
 				);
-				echo $documentation->showCode($lines, 'php');
+				$documentation->showCode($lines, 'php');
 				?>
 			</div>
 
@@ -657,7 +657,7 @@ $documentation->showSidebar(); ?>
 					'    });',
 					'</script>',
 				);
-				echo $documentation->showCode($lines, 'php');
+				$documentation->showCode($lines, 'php');
 				?>
 			</div>
 
