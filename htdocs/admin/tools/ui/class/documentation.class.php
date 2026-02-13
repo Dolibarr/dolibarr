@@ -31,21 +31,21 @@ class Documentation
 	/**
 	 * Views
 	 *
-	 * @var array
+	 * @var array|array<int,string>
 	 */
 	public $view = array();
 
 	/**
 	 * Menu - Set in setMenu in order to use dol_buildpath and called in constructor
 	 *
-	 * @var array
+	 * @var array<array{url?: string, summary?: array<string,string>, submenu?: array<string,mixed>}>
 	 */
 	public $menu = array();
 
 	/**
 	 * Summary - Set in setSummary and called in constructor
 	 *
-	 * @var array
+	 * @var array<int,string>
 	 */
 	public $summary = array();
 
@@ -369,7 +369,7 @@ class Documentation
 	/**
 	 *    Recursive function to set Menu
 	 *
-	 * @param array $menu  $this->menu or submenus
+	 * @param array<string, array{url?: string, icon?: string, summary?: array<string,string>, submenu?: array<string,array>}> $menu Menu entry or submenu
 	 * @param int   $level level of menu
 	 * @return void
 	 */
@@ -446,9 +446,9 @@ class Documentation
 			foreach ($this->view as $view) {
 				$i++;
 				if ($i == 1) {
-					$menu_entry = $this->menu[$view];
+					$menu_entry = $this->menu[$view] ?? [];
 				} else {
-					$menu_entry = $menu_entry['submenu'][$view];
+					$menu_entry = $menu_entry['submenu'][$view] ?? [];
 				}
 			}
 		}
@@ -518,7 +518,7 @@ class Documentation
 	/**
 	 *    Output a View Code area
 	 *
-	 * @param array $lines Lines of code to show
+	 * @param array<int,string> $lines Lines of code to show
 	 * @param string $option Source code language ('html', 'php' etc)
 	 * @return void
 	 */
