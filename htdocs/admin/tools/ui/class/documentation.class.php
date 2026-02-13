@@ -38,7 +38,7 @@ class Documentation
 	/**
 	 * Menu - Set in setMenu in order to use dol_buildpath and called in constructor
 	 *
-	 * @var array<string, array{url?: string, summary?: array<string,string>, submenu?: array<string,mixed>}>
+	 * @var array<array{url?: string, summary?: array<string,string>, submenu?: array<string,mixed>}>
 	 */
 	public $menu = array();
 
