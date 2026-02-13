@@ -368,7 +368,8 @@ class Documentation
 	/**
 	 *    Recursive function to set Menu
 	 *
-	 * @param array{url?: string, icon?: string, summary?: array<string,string>, submenu?: array<string,array>} $menu Menu entry or submenu
+	 * @param array $menu Menu entry or submenu
+	 * @phan-var-force array<string, array{url?: string, icon?: string, summary?: array<string,string>, submenu?: array<string,array>}> $menu
 	 * @param int   $level level of menu
 	 * @return void
 	 */
