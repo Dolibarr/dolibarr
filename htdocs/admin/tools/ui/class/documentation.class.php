@@ -445,9 +445,9 @@ class Documentation
 			foreach ($this->view as $view) {
 				$i++;
 				if ($i == 1) {
-					$menu_entry = $this->menu[$view];
+					$menu_entry = $this->menu[$view] ?? [];
 				} else {
-					$menu_entry = $menu_entry['submenu'][$view];
+					$menu_entry = $menu_entry['submenu'][$view] ?? [];
 				}
 			}
 		}
