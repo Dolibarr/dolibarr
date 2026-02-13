@@ -332,7 +332,12 @@ class modBlockedLog extends DolibarrModules
 			if ($mysoc->country_code == 'FR') {
 				$islne = isALNEQualifiedVersion(1, 1);
 				if ($islne) {
-					$s .= info_admin($langs->trans("CertifiedVersion"), 0, 0, 'info');
+					if (preg_match('/\-/', DOL_VERSION)) {
+						// This is an alpha or beta version
+						$s .= info_admin($langs->trans("LNECandidateVersionForCertificationFR"), 0, 0, 'info');
+					} else {
+						$s .= info_admin($langs->trans("LNECertifiedVersionFR"), 0, 0, 'info');
+					}
 				} else {
 					$s .= info_admin($langs->trans("NotCertifiedVersionFR"), 0, 0, 'warning');
 				}

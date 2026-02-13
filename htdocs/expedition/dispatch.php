@@ -498,7 +498,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 	// Linked documents
 
 	// @phpstan-ignore-next-line
-	if (($objectsrc instanceOf Commande) && $object->origin_object->id && isModEnabled('order')) {
+	if (($objectsrc instanceof Commande) && $object->origin_object->id && isModEnabled('order')) {
 		print '<tr><td>';
 		print $langs->trans("RefOrder").'</td>';
 		print '<td colspan="3">';
@@ -507,7 +507,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 		print '</tr>';
 	}
 	// @phpstan-ignore-next-line
-	if (($objectsrc instanceOf Propal) && $object->origin_object->id && isModEnabled("propal")) {
+	if (($objectsrc instanceof Propal) && $object->origin_object->id && isModEnabled("propal")) {
 		print '<tr><td>';
 		print $langs->trans("RefProposal").'</td>';
 		print '<td colspan="3">';
@@ -600,7 +600,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 			$db->free($resql);
 		}
 
-		if ($objectsrc instanceOf Commande) {
+		if ($objectsrc instanceof Commande) {
 			//$sql = "SELECT l.rowid, l.fk_product, l.subprice, l.remise_percent, l.ref AS sref, SUM(l.qty) as qty,";
 			$sql = "SELECT l.rowid, l.fk_product, l.subprice, l.remise_percent, '' AS sref, l.qty as qty,";
 			$sql .= " p.ref, p.label, p.tobatch, p.fk_default_warehouse, p.barcode, p.stockable_product";
@@ -952,7 +952,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 										$dispatch_line_batch_current = null;
 										if (!empty($objd->batch_list)) {
 											$dispatch_line_batch_count = count($objd->batch_list);
-											// if only one batch found, this batch is pre-selected
+											// if only one batch found, this batch is preselected
 											if ($dispatch_line_batch_count == 1) {
 												$dispatch_line_batch_current = current($objd->batch_list);
 											}

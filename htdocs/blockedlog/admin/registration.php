@@ -65,6 +65,8 @@ if (!$user->admin) {
 if ($action == 'update') {
 	$error = 0;
 	$db->begin();
+
+	// The mandatory information must be the same than the one defined into isRegistrationDataSaved()
 	if (!GETPOST("BLOCKEDLOG_REGISTRATION_NAME")) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("BLOCKEDLOG_REGISTRATION_NAME")), null, 'errors');
 		$error++;
@@ -241,7 +243,12 @@ $infotoshow = '';
 if ($mysoc->country_code == 'FR') {
 	$islne = isALNEQualifiedVersion(1, 1);
 	if ($islne) {
-		$infotoshow = $langs->trans("CertifiedVersion");
+		if (preg_match('/\-/', DOL_VERSION)) {
+			// This is an alpha or beta version
+			$infotoshow = $langs->trans("LNECandidateVersionForCertificationFR");
+		} else {
+			$infotoshow = $langs->trans("LNECertifiedVersionFR");
+		}
 	} else {
 		$infotoshow = $langs->trans("NotCertifiedVersionFR");
 	}

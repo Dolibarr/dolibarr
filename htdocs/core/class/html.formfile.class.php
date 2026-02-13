@@ -953,10 +953,13 @@ class FormFile
 				foreach ($file_list as $file) {
 					$i++;
 
-					if (!empty($file['rowid'])) {
+					if (!empty($file['rowid']) && $user->hasRight('ecm', 'read')) {
+						// If we have permission to read ECM files, we can use link for ECM file (not blocked by security test),
+						// so it will show the expended information found into ECM table
 						$ecmfile = new EcmFiles($this->db);
 						$ecmfile->fetch($file['rowid']);
 					} else {
+						// If no permission to read ECM files, popup for ECM extended information will not work so we show a simple link with no popup.
 						$ecmfile = null;
 					}
 
@@ -984,8 +987,10 @@ class FormFile
 					if (getDolGlobalInt('PREVIEW_PICTO_ON_LEFT_OF_NAME')) {
 						$out .= $imgpreview;
 					}
+
 					if (is_object($ecmfile)) {
-						$out .= $ecmfile->getNomUrl(1, $modulepart, 0, 0, ' documentdownload');
+						$out .= $ecmfile->getNomUrl(1, $modulepart, 0, 0, ' documentdownload');				// We show property in ECM
+						//$out .= $ecmfile->getNomUrl(1, $modulepart, 0, 0, ' documentdownload', $object);	// We show property on object
 					} else {
 						$out .= '<a class="documentdownload paddingright" ';
 						if (getDolGlobalInt('MAIN_DISABLE_FORCE_SAVEAS') == 2) {
