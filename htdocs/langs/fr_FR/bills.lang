@@ -416,6 +416,7 @@ FrequencyPer_y=Tout les %s an(s)
 FrequencyUnit=Unité de fréquence
 toolTipFrequency=Exemples:<br /><b>déclarer 7 / jour</b>: génèrera une factures tous les 7 jours<br /><b>déclarer 3 / mois</b>: génèrera une facture tous les 3 mois.
 NextDateToExecution=Date pour la prochaine génération de facture
+NextDateToExecutionHelp=Si vous définissez une date supérieure ou égale à 28, la facture sera générée le dernier jour de chaque mois (mode fin de mois). Par exemple, si vous définissez le 31, les factures seront générées le 31 janvier, les 28 ou 29 février, le 31 mars, le 30 avril, etc.
 NextDateToExecutionShort=Date de prochaine génération
 DateLastGeneration=Date de la dernière génération
 DateLastGenerationShort=Date de dernière génération
