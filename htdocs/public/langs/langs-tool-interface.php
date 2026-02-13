@@ -36,7 +36,7 @@ if (! defined('NOREQUIREMENU'))            define('NOREQUIREMENU', '1');				// I
 
 
 // Load Dolibarr environment
-require '../../../../../../main.inc.php';
+require '../../main.inc.php';
 
 
 /**

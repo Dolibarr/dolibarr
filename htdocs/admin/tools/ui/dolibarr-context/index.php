@@ -18,7 +18,7 @@
  */
 
 // Load Dolibarr environment
-require '../../../../../../main.inc.php';
+require '../../../../main.inc.php';
 
 /**
  * @var DoliDB      $db
@@ -43,13 +43,10 @@ $documentation = new Documentation($db);
 $group = 'ExperimentalUx';
 $experimentName = 'UxDolibarrContext';
 
-$experimentAssetsPath = $documentation->baseUrl . '/experimental/experiments/dolibarr-context/assets/';
 $js = [
 	'/includes/ace/src/ace.js',
 	'/includes/ace/src/ext-statusbar.js',
 	'/includes/ace/src/ext-language_tools.js',
-	$experimentAssetsPath . '/dolibarr-context.umd.js',
-	$experimentAssetsPath . '/dolibarr-tool.seteventmessage.js',
 ];
 $css = [];
 
