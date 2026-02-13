@@ -15707,7 +15707,7 @@ function showValueWithClipboardCPButton($valuetocopy, $showonlyonhover = 1, $tex
  */
 function jsonOrUnserialize($stringtodecode)
 {
-	$result = json_decode($stringtodecode);
+	$result = json_decode($stringtodecode, true);
 	if ($result === null) {
 		$result = unserialize($stringtodecode);	// For backward compatibility. Is no more used in recent versions.
 	}
