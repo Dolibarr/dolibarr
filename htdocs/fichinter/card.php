@@ -443,25 +443,17 @@ if (empty($reshook)) {
 										}
 
 										if ($prod->duration_value && getDolGlobalString('FICHINTER_USE_SERVICE_DURATION')) {
-											switch ($prod->duration_unit) {
-												default:
-												case 'h':
-													$mult = 3600;
-													break;
-												case 'd':
-													$mult = 3600 * 24;
-													break;
-												case 'w':
-													$mult = 3600 * 24 * 7;
-													break;
-												case 'm':
-													$mult = (int) (3600 * 24 * (365 / 12)); // Average month duration
-													break;
-												case 'y':
-													$mult = 3600 * 24 * 365;
-													break;
-											}
-											$duration = (int) $prod->duration_value * $mult * $lines[$i]->qty;
+											$unit_to_seconds = array(
+												'p'   => 60,
+												'min' => 60,
+												'm'   => 60, 
+												'h'   => 3600,
+												'd'   => 86400,
+												'w'   => 604800
+											);
+											$u = trim($lines[$i]->duration_unit);
+											$mult = isset($unit_to_seconds[$u]) ? $unit_to_seconds[$u] : 3600;
+											$duration = $prod->duration_value * $mult * $lines[$i]->qty;
 										}
 
 										$desc = $lines[$i]->product_ref;
@@ -474,8 +466,9 @@ if (empty($reshook)) {
 									$desc .= '<br>';
 									$desc .= ' ('.$langs->trans('Quantity').': '.$lines[$i]->qty.')';
 
-									$timearray = dol_getdate(dol_now());
-									$date_intervention = dol_mktime(0, 0, 0, $timearray['mon'], $timearray['mday'], $timearray['year']);
+									$source_date = (!empty($srcobject->delivery_date) ? $srcobject->delivery_date : dol_now());
+									$timearray = dol_getdate($source_date);
+									$date_intervention = dol_mktime($timearray['hours'], $timearray['minutes'], 0, $timearray['mon'], $timearray['mday'], $timearray['year']);
 
 									if ($product_type == Product::TYPE_PRODUCT) {
 										$duration = 0;
