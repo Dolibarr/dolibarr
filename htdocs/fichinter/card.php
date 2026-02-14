@@ -446,7 +446,7 @@ if (empty($reshook)) {
 											$unit_to_seconds = array(
 												'p'   => 60,
 												'min' => 60,
-												'm'   => 60, 
+												'm'   => 60,
 												'h'   => 3600,
 												'd'   => 86400,
 												'w'   => 604800
