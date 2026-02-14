@@ -26,7 +26,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		async function openDB() {
 
 			// Generate a unique name per instance
-			const path = window.location.pathname; // or a unique Dolibarr identifier if available
+			const path = Dolibarr.getContextVar('DOL_URL_ROOT'); // or a unique Dolibarr identifier if available
 			const hashedPath = await hashString(path);
 			const dbName = `DolibarrLangs_${hashedPath}`;
 
