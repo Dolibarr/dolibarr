@@ -916,8 +916,8 @@ class AccountancyCategory // extends CommonObject
 	/**
 	 * Link an accounting account to this category (multi-report system)
 	 *
-	 * @param int $fkAccountingAccount ID of the accounting account to link
-	 * @return int <0 if KO, 0 if already exists, >0 if OK
+	 * @param   int     $fkAccountingAccount    ID of the accounting account to link
+	 * @return  int<-1,1>                       <0 if KO, 0 if already exists, >0 if OK
 	 */
 	public function addAccountToCategory($fkAccountingAccount)
 	{
@@ -949,8 +949,8 @@ class AccountancyCategory // extends CommonObject
 	/**
 	 * Unlink an accounting account from this category (multi-report system)
 	 *
-	 * @param int $fkAccountingAccount ID of the accounting account to unlink
-	 * @return int <0 if KO, >0 if OK
+	 * @param   int         $fkAccountingAccount    ID of the accounting account to unlink
+	 * @return  int<-1,1>                           <0 if KO, >0 if OK
 	 */
 	public function deleteAccountFromCategory($fkAccountingAccount)
 	{
@@ -977,7 +977,7 @@ class AccountancyCategory // extends CommonObject
 	/**
 	 * Get all accounting accounts linked to this category (multi-report system)
 	 *
-	 * @return array Array of accounts indexed by account ID, or empty array if error
+	 * @return array<array{id:int,account_number:string,account_label:string}>  Array of accounting accounts or empty array if error
 	 */
 	public function getAccountsForCategory()
 	{
@@ -1065,8 +1065,8 @@ class AccountancyCategory // extends CommonObject
 	/**
 	 * Check if an account belongs to this category (multi-report system)
 	 *
-	 * @param int $fkAccountingAccount ID of the accounting account
-	 * @return bool True if account is in category, false otherwise
+	 * @param   int     $fkAccountingAccount            ID of the accounting account
+	 * @return  bool                                    True if account is in category, false otherwise
 	 */
 	public function isAccountInCategory($fkAccountingAccount)
 	{
