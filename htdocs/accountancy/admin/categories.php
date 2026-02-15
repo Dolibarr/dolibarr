@@ -220,7 +220,7 @@ if ($useNewSystem) {
 	print load_fiche_titre($title, '', 'title_accountancy');
 
 	// Category information card
-	print dol_get_fiche_head('', '', '', -1);
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
 	print '<tr><td class="titlefield">'.$langs->trans("Code").'</td><td>'.$accountingcategory->code.'</td></tr>';
@@ -323,8 +323,7 @@ if ($useNewSystem) {
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-	print_barre_liste($langs->trans("AccountsLinked"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'accountancy', 0, '', '', $limit);
-
+	print_barre_liste($langs->trans("AccountsLinked"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'accountancy', 0, '', '', $limit, 0, 0, 0, '');
 	print '<div class="div-table-responsive">';
 	print '<table class="tagtable nobottomiftotal liste">';
 
