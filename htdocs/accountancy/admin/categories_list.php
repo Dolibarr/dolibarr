@@ -1005,7 +1005,7 @@ if ($resql) {
 					print $langs->trans("NAccounts", $nbofaccountintogroup);
 					print '</a>';
 				} else {
-					print '<i>'.$langs->trans("Formula").'</i>';
+					print '<span class="opacitymedium">'.$langs->trans("Formula").'</span>';
 				}
 				print '</td>';
 
