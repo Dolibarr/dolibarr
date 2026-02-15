@@ -1021,7 +1021,7 @@ class AccountancyCategory // extends CommonObject
 	 * Get categories for a specific accounting account (multi-report system)
 	 *
 	 * @param   int     $fkAccountingAccount                                        ID of the accounting account
-	 * @return  array<int,array{id:int,code:string,label:string,position:int}>      Array of categories indexed by category ID, or empty array if error
+	 * @return  array<int,array{id:int,code:string,label:string,fk_report:int}>     Array of categories indexed by category ID, or empty array if error
 	 */
 	public function getCategoriesForAccount($fkAccountingAccount)
 	{
@@ -1142,10 +1142,10 @@ class AccountancyCategory // extends CommonObject
 	/**
 	 * Add multiple accounts to this category at once
 	 *
-	 * @param   array       $accountIds     Array of accounting account IDs
-	 * @return  int<-1,max>                 Number of accounts added, -1 if error
+	 * @param   array<int>      $accountIds     Array of accounting account IDs
+	 * @return  int<-1,max>                     Number of accounts added, -1 if error
 	 */
-	public function addMultipleAccountsToCategory($accountIds)
+	public function addMultipleAccountsToCategory(array $accountIds)
 	{
 		$added = 0;
 		$error = 0;
