@@ -977,7 +977,7 @@ class AccountancyCategory // extends CommonObject
 	/**
 	 * Get all accounting accounts linked to this category (multi-report system)
 	 *
-	 * @return array<array{id:int,account_number:string,account_label:string}>  Array of accounting accounts or empty array if error
+	 * @return array<int,array{id:int,account_number:string,label:string}> Array of accounting accounts indexed by account ID, or empty array if error
 	 */
 	public function getAccountsForCategory()
 	{
@@ -1020,8 +1020,8 @@ class AccountancyCategory // extends CommonObject
 	/**
 	 * Get categories for a specific accounting account (multi-report system)
 	 *
-	 * @param int $fkAccountingAccount ID of the accounting account
-	 * @return array Array of categories indexed by category ID, or empty array if error
+	 * @param   int     $fkAccountingAccount                                        ID of the accounting account
+	 * @return  array<int,array{id:int,code:string,label:string,position:int}>      Array of categories indexed by category ID, or empty array if error
 	 */
 	public function getCategoriesForAccount($fkAccountingAccount)
 	{
@@ -1088,7 +1088,7 @@ class AccountancyCategory // extends CommonObject
 	/**
 	 * Get all accounting accounts NOT linked to this category (for selection)
 	 *
-	 * @return array Array of available accounts, or empty array if error
+	 * @return array<array{id:int,account_number:string,label:string}>  Array of available accounts, or empty array if error
 	 */
 	public function getAvailableAccountsForCategory()
 	{
@@ -1142,8 +1142,8 @@ class AccountancyCategory // extends CommonObject
 	/**
 	 * Add multiple accounts to this category at once
 	 *
-	 * @param array $accountIds Array of accounting account IDs
-	 * @return int Number of accounts added, <0 if error
+	 * @param   array       $accountIds     Array of accounting account IDs
+	 * @return  int<-1,max>                 Number of accounts added, -1 if error
 	 */
 	public function addMultipleAccountsToCategory($accountIds)
 	{
@@ -1181,7 +1181,7 @@ class AccountancyCategory // extends CommonObject
 	/**
 	 * Remove all accounts from this category
 	 *
-	 * @return int <0 if KO, number of deleted relations if OK
+	 * @return  int<-1,max>         Number of deleted relations if OK, -1 if error
 	 */
 	public function removeAllAccountsFromCategory()
 	{
