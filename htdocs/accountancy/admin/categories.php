@@ -165,10 +165,8 @@ if ($useNewSystem) {
 			setEventMessages($accountingcategory->error, $accountingcategory->errors, 'errors');
 		}
 	}
-
 } else {
 	// OLD SYSTEM: One-to-many via fk_accounting_category field
-
 	if ($action == 'clean') {
 		$result = $accountingcategory->deleteCptCat($cpt_id);
 		if ($result >= 0) {
