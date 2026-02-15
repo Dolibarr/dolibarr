@@ -72,7 +72,7 @@ $listlimit = GETPOSTINT('listlimit') > 0 ? GETPOSTINT('listlimit') : 1000;
 $sortfield = (string) GETPOST("sortfield", 'aZ09comma');
 $sortorder = GETPOST("sortorder", 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
-if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+if (empty($page) || $page < 0 || GETPOST('button_refresh', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
 }
@@ -501,7 +501,7 @@ if (getDolGlobalInt('ACCOUNTING_ENABLE_MULTI_REPORT')) {
 	print '</select>';
 
 	print ' ';
-	print '<input type="submit" class="button buttongen button-save small" value="'.$langs->trans("Refresh").'" name="button_search">';
+	print '<input type="submit" class="button button-add" name="button_refresh" value="'.$langs->trans("Refresh").'">';
 
 	print '</td>';
 	print '</tr>';
@@ -1010,7 +1010,7 @@ if ($resql) {
 				print '</td>';
 
 				// Active
-				print '<td class="center" class="nowrap">';
+				print '<td class="center nowrap">';
 				if ($canbedisabled) {
 					print '<a class="reposition" href="'.$url.'action='.urlencode($acts[$obj->active]).'&token='.newToken().'">'.$actl[$obj->active].'</a>';
 				} else {
