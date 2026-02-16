@@ -689,4 +689,3 @@ if (in_array('builddoc', array_keys($arrayofmassactions)) && ($nbtotalofrecords 
 // End of page
 llxFooter();
 $db->close();
-
