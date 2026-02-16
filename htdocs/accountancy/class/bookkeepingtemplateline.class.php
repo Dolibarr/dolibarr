@@ -278,4 +278,3 @@ class BookkeepingTemplateLine extends CommonObject
 		return $this->deleteCommon($user, $notrigger);
 	}
 }
-
