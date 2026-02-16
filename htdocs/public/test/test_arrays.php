@@ -32,8 +32,7 @@ if (!defined("NOLOGIN")) {
 	define("NOLOGIN", '1'); // If this page is public (can be called outside logged session)
 }
 
-// Load Dolibarr environment
-require '../../main.inc.php';
+@include '../../main.inc.php';
 /**
  * @var DoliDB $db
  * @var HookManager $hookmanager
@@ -41,10 +40,12 @@ require '../../main.inc.php';
  *
  * @var string $dolibarr_main_prod
  */
+
 // Security
-if ($dolibarr_main_prod) {
+if (!empty($dolibarr_main_prod)) {
 	accessforbidden('Access forbidden when $dolibarr_main_prod is set to 1');
 }
+
 $optioncss = GETPOST('optioncss', 'alpha');
 
 

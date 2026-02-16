@@ -7,7 +7,7 @@
  * Copyright (C) 2004-2015  Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2019-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Joachim Kueter              <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -334,7 +334,7 @@ class CMailFile
 				// TODO Exclude viewimage used for the read tracker ?
 				$dolibarr_main_data_root_images = $dolibarr_main_data_root;
 				if ((int) $conf->entity !== 1) {
-					$dolibarr_main_data_root_images.='/'.$conf->entity.'/';
+					$dolibarr_main_data_root_images .= '/'.$conf->entity.'/';
 				}
 				$findimg = $this->findHtmlImages($dolibarr_main_data_root_images.'/medias');
 				if ($findimg < 0) {
@@ -2284,7 +2284,7 @@ class CMailFile
 
 		$arrayaddress = (!empty($address) ? explode(',', $address) : array());
 
-		// Boucle sur chaque composant de l'address
+		// Loop over every component of the address
 		$i = 0;
 		foreach ($arrayaddress as $val) {
 			$regs = array();
@@ -2352,7 +2352,7 @@ class CMailFile
 
 		$arrayaddress = explode(',', $address);
 
-		// Boucle sur chaque composant de l'address
+		// Loop over every component of the address
 		foreach ($arrayaddress as $val) {
 			$regs = array();
 			if (preg_match('/^(.*)<(.*)>$/i', trim($val), $regs)) {

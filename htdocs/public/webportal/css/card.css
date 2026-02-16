@@ -59,3 +59,8 @@
 		grid-row: 2;
 	}
 }
+
+:is(.object-card-view__footer, .object-card-edit__footer):empty,
+:is(.object-card-view__footer, .object-card-edit__footer):has(#actions_buttons:empty){
+	display: none;
+}
