@@ -439,8 +439,8 @@ if (empty($error) && !empty($xml)) {
 				$out .= '<tr class="oddeven">';
 				$out .= '<td>'.$i.'</td>'."\n";
 				$out .= '<td>'.dol_escape_htmltag($file['filename']).'</td>'."\n";
-				$out .= '<td class="center">'.dol_escape_htmltag($file['expectedhash']).'</td>'."\n";
-				$out .= '<td class="center">'.dol_escape_htmltag($file['hash']).'</td>'."\n";
+				$out .= '<td class="center" title="'.dol_escape_htmltag($file['expectedhash']).'">'.dol_escape_htmltag(dol_trunc($file['expectedhash'], 16)).'</td>'."\n";
+				$out .= '<td class="center" title="'.dol_escape_htmltag($file['hash']).'">'.dol_escape_htmltag(dol_trunc($file['hash'], 16)).'</td>'."\n";
 				$out .= '<td class="right">';
 				if ($file['expectedsize']) {
 					$out .= dol_print_size((int) $file['expectedsize']);
@@ -497,8 +497,8 @@ if (empty($error) && !empty($xml)) {
 						$out .= ' '.$form->textwithpicto('', $htmltext, 1, 'help', '', 0, 2, 'helprm'.$i);
 					}
 					$out .= '</td>'."\n";
-					$out .= '<td class="center">'.dol_escape_htmltag((string) $file['expectedhash']).'</td>'."\n";  // @phan-suppress-current-line PhanTypeInvalidDimOffset
-					$out .= '<td class="center">'.dol_escape_htmltag($file['hash']).'</td>'."\n";
+					$out .= '<td class="center" title="'.dol_escape_htmltag((string) $file['expectedhash']).'">'.dol_escape_htmltag(dol_trunc((string) $file['expectedhash'], 16)).'</td>'."\n";  // @phan-suppress-current-line PhanTypeInvalidDimOffset
+					$out .= '<td class="center" title="'.dol_escape_htmltag((string) $file['hash']).'">'.dol_escape_htmltag(dol_trunc($file['hash'], 16)).'</td>'."\n";
 					$size = dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename']);
 					$totalsize += $size;
 					$out .= '<td class="right">'.dol_print_size($size).'</td>'."\n";
