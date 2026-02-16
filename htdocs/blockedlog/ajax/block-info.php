@@ -73,7 +73,8 @@ print '<tbody>';
 
 if ($block->fetch($id) > 0) {
 	$objtoshow = $block->object_data;
-	print formatObject($objtoshow, '');
+
+	print formatObject($objtoshow, '', $block->element);
 } else {
 	print 'Error, failed to get unalterable log with id '.$id;
 }
@@ -90,9 +91,10 @@ $db->close();
  *
  * @param 	Object|array<string,mixed>	$objtoshow		Object to show
  * @param	string	$prefix			Prefix of key
+ * @param	string	$parentelement	Element type ('facture', 'payment', ...)
  * @return	string					String formatted
  */
-function formatObject($objtoshow, $prefix)
+function formatObject($objtoshow, $prefix, $parentelement = '')
 {
 	global $db, $langs;
 
@@ -129,7 +131,7 @@ function formatObject($objtoshow, $prefix)
 		'pos_source' => "POSTerminal",
 		'posmodule' => 'POSModule',
 		'posnumber' => 'POSTerminal',
-		'pos_print_counter' => "NumberOfPrints",
+		'pos_print_counter' => "NumberOfPrintsIfDocValidated",
 		'email_sent_counter' => "NumberOfEmailsSent",
 		'managers' => 'Managers',
 		'type_code' => 'PaymentMode',
@@ -141,6 +143,7 @@ function formatObject($objtoshow, $prefix)
 		'amount' => 'Amount',
 		'id' => 'ID',
 		'ref' => 'Ref',
+		'payment_num' => '',			// a label
 		'element' => 'TypeOfEvent',
 		'entity' => 'Entity',
 		'label' => 'Label',
@@ -153,7 +156,7 @@ function formatObject($objtoshow, $prefix)
 		'multicurrency_total_ht' => 'TotalHTShortCurrency',
 		'multicurrency_total_ttc' => 'TotalTTCShortCurrency',
 		'multicurrency_total_tva' => 'TotalVATShortCurrency',
-		'tva_tx' => 'VatRate',
+		'tva_tx' => 'VATRate',
 		'localtax1_tx' => 'Localtax1Rate',
 		'localtax2_tx' => 'Localtax2Rate',
 		'vat_src_code' => 'VATCode',
@@ -220,7 +223,11 @@ function formatObject($objtoshow, $prefix)
 					}
 				}
 				if (empty($label) && !empty($otherlabels[$key])) {
-					$label = $langs->trans($otherlabels[$key]);
+					if (preg_match('/^invoiceline/', $prefix) && $key == 'ref') {
+						$label = $langs->trans("ProductRef");
+					} else {
+						$label = $langs->trans($otherlabels[$key]);
+					}
 				}
 				if (empty($label) && array_key_exists($key, $convertkey) && array_key_exists((string) $convertkey[$key], $otherlabels)) {
 					$label = $langs->trans((string) $otherlabels[(string) $convertkey[$key]]);
@@ -234,7 +241,13 @@ function formatObject($objtoshow, $prefix)
 
 				// Value
 				$s .= '<td>';
-				if (in_array($key, array('date', 'datef'))) {
+				if (in_array($key, array('type')) && $parentelement == 'facture') {
+					//var_dump($tmpobject);
+					include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+					$tmpinvoice = new Facture($db);
+					$tmpinvoice->type = $val;
+					$s .= $tmpinvoice->getLibType(0);
+				} elseif (in_array($key, array('date', 'datef'))) {
 					$s .= dol_print_date($val, 'day');
 				} elseif (in_array($key, array('dateh', 'datec', 'date_creation', 'datem', 'tms', 'date_valid', 'datep'))) {
 					$s .= dol_print_date($val, 'dayhour');
@@ -255,9 +268,9 @@ function formatObject($objtoshow, $prefix)
 				}
 				$s .= '</td></tr>';
 			} elseif (is_array($val)) {
-				$s .= formatObject($val, ($prefix ? $prefix.' > ' : '').$key);
+				$s .= formatObject($val, ($prefix ? $prefix.' > ' : '').$key, $parentelement);
 			} elseif (is_object($val)) {
-				$s .= formatObject($val, ($prefix ? $prefix.' > ' : '').$key);
+				$s .= formatObject($val, ($prefix ? $prefix.' > ' : '').$key, $parentelement);
 			}
 		}
 	}

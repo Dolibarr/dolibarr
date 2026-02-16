@@ -1834,7 +1834,7 @@ function show_actions_todo($conf, $langs, $db, $filterobj, $objcon = null, $nopr
  */
 function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $noprint = 0, $actioncode = '', $donetodo = 'done', $filters = array(), $sortfield = 'a.datep,a.id', $sortorder = 'DESC', $module = '')
 {
-	global $hookmanager;
+	global $hookmanager, $user;
 	global $form;
 
 	global $param, $massactionbutton;
@@ -1928,6 +1928,17 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 			} elseif (!empty($filterobj->fields['label'])) {
 				$sql .= ", o.label";
 			}
+		}
+
+		$canedit = 1;
+		if (!$user->hasRight('agenda', 'myactions', 'read')) {
+			$canedit = 0;
+		}
+		if (!$user->hasRight('agenda', 'allactions', 'read')) {
+			$canedit = 0;
+		}
+		if (!$user->hasRight('agenda', 'allactions', 'read')) {	// If no permission to see all, we show only affected to me
+			$filters['search_filtert'] = (string) $user->id;
 		}
 
 		// Fields from hook
@@ -2306,7 +2317,9 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		$out .= $form->selectDateToDate($tms_start, $tms_end, 'dateevent', 1);
 		$out .= '</td>';
 		// Owner
-		$out .= '<td class="liste_titre"></td>';
+		$out .= '<td class="liste_titre">';
+		$out .= $form->select_dolusers(($filters['search_filtert'] > 0 ? $filters['search_filtert'] : ''), 'search_filtert', 1, null, (int) !$canedit, '', '', '0', 0, 0, '', 2, '', 'minwidth100 maxwidth250 widthcentpercentminusx');
+		$out .= '</td>';
 		// Type
 		$out .= '<td class="liste_titre">';
 		$out .= $formactions->select_type_actions($actioncode, "actioncode", '', getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? -1 : 1, 0, (getDolGlobalString('AGENDA_USE_MULTISELECT_TYPE') ? 1 : 0), 1, 'selecttype combolargeelem minwidth100 maxwidth150', 1);
@@ -2784,6 +2797,9 @@ function addOtherFilterSQL(&$sql, $donetodo, $now, $filters)
 	}
 	if (is_array($filters) && !empty($filters['search_rowid'])) {
 		$sql .= natural_search('a.id', $filters['search_rowid'], 1);
+	}
+	if (is_array($filters) && !empty($filters['search_filtert'])) {
+		$sql .= natural_search('a.fk_user_action', $filters['search_filtert'], 1);
 	}
 
 	return $sql;

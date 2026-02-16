@@ -5048,11 +5048,11 @@ if ($action == 'create') {
 					break;
 				case -7:
 					// Already validated
-					setEventMessages($langs->trans("DisabledBecauseVersionProtected"), null, 'errors');
+					setEventMessages($langs->trans("DisabledBecauseVersionProtected").(empty($object->error) ? '' : ': '.$object->error), null, 'errors');
 					break;
 				default:
 					// Other error
-					setEventMessages($langs->trans("DisabledBecauseNotErasable"), null, 'errors');
+					setEventMessages($langs->trans("DisabledBecauseNotErasable").(empty($object->error) ? '' : ': '.$object->error), null, 'errors');
 					break;
 			}
 			$oktomodif = 0;

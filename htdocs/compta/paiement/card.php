@@ -312,7 +312,7 @@ dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', '');
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
 
-print '<table class="border centpercent">'."\n";
+print '<table class="border tableforfield centpercent">'."\n";
 
 // Date payment
 print '<tr><td class="titlefield">'.$form->editfieldkey("Date", 'datep', $object->date, $object, $user->hasRight('facture', 'paiement')).'</td><td>';
