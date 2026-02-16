@@ -251,7 +251,7 @@ class BookkeepingTemplate extends CommonObject
 		$this->lines = array();
 
 		$objectline = new BookkeepingTemplateLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'rowid', 0, 0, array('customsql' => 'fk_transaction_template = ' . ((int)$this->id)));
+		$result = $objectline->fetchAll('ASC', 'rowid', 0, 0, array('customsql' => 'fk_transaction_template = ' . ((int) $this->id)));
 
 		if (is_numeric($result)) {
 			$this->setErrorsFromObject($objectline);
