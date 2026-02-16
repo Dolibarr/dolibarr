@@ -69,7 +69,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-// Initialize array of search criterias
+// Initialize array of search criteria
 $search_all = trim(GETPOST("search_all", 'alpha'));
 $search = array();
 foreach ($object->fields as $key => $val) {
@@ -167,7 +167,7 @@ if ($action == 'addline' && $permissiontoadd) {
 	$credit = price2num(GETPOST('credit', 'alpha'));
 
 	// Validation
-	if (((float)$debit != 0.0) && ((float)$credit != 0.0)) {
+	if (((float) $debit != 0.0) && ((float) $credit != 0.0)) {
 		$error++;
 		setEventMessages($langs->trans('ErrorDebitCredit'), null, 'errors');
 		$action = 'edit';
@@ -225,7 +225,7 @@ if ($action == 'updateline' && $permissiontoadd) {
 	$credit = price2num(GETPOST('credit', 'alpha'));
 
 	// Validation
-	if (((float)$debit != 0.0) && ((float)$credit != 0.0)) {
+	if (((float) $debit != 0.0) && ((float) $credit != 0.0)) {
 		$error++;
 		setEventMessages($langs->trans('ErrorDebitCredit'), null, 'errors');
 		$action = 'editline';
@@ -431,7 +431,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print $formconfirm;
 
 	// Object card
-	$linkback = '<a href="' . DOL_URL_ROOT . '/accountancy/admin/template/list.php?restore_lastsearch_values=1' . '">' . $langs->trans("BackToList") . '</a>';
+	$linkback = '<a href="' . DOL_URL_ROOT . '/accountancy/admin/template/list.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
 
 	$morehtmlref = '<div class="refidno">';
 	$morehtmlref .= '</div>';
@@ -521,7 +521,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		// Show existing lines
 		foreach ($object->lines as $line) {
-
 			// Line in view mode
 			if ($action != 'editline' || GETPOST('lineid', 'int') != $line->id) {
 				print '<tr class="oddeven" id="row-' . $line->id . '">';
