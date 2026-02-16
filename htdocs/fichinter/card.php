@@ -451,8 +451,8 @@ if (empty($reshook)) {
 												'd'   => 86400,
 												'w'   => 604800
 											);
-											$u = trim($lines[$i]->duration_unit);
-											$mult = isset($unit_to_seconds[$u]) ? $unit_to_seconds[$u] : 3600;
+											$u = isset($lines[$i]->duration_unit) ? trim($lines[$i]->duration_unit) : 'h';
+											$mult = $unit_to_seconds[$u];
 											$duration = $prod->duration_value * $mult * $lines[$i]->qty;
 										}
 
