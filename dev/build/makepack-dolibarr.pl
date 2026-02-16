@@ -816,19 +816,19 @@ if ($nboftargetok) {
 		$ret = `rm -f  $BUILDROOT/$PROJECT/htdocs/includes/geoip/sample*.*`;
 		$ret = `rm -f  $BUILDROOT/$PROJECT/htdocs/includes/bin`;
 		$ret =
-`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/ckeditor/ckeditor/adapters`
+`rm -fr $BUILDROOT/$PROJECT/htdocs/public/includes/ckeditor/ckeditor/adapters`
 		  ;    # Keep this removal in case we embed libraries
 		$ret =
-		  `rm -fr $BUILDROOT/$PROJECT/htdocs/includes/ckeditor/ckeditor/samples`
+		  `rm -fr $BUILDROOT/$PROJECT/htdocs/public/includes/ckeditor/ckeditor/samples`
 		  ;    # Keep this removal in case we embed libraries
-		$ret = `rm -fr $BUILDROOT/$PROJECT/htdocs/includes/ckeditor/_source`
+		$ret = `rm -fr $BUILDROOT/$PROJECT/htdocs/public/includes/ckeditor/_source`
 		  ; # _source must be kept into tarball for official debian, not for the rest
 		$ret = `rm -f  $BUILDROOT/$PROJECT/htdocs/includes/composer`;
 		$ret = `rm -f  $BUILDROOT/$PROJECT/htdocs/includes/doctrine`;
 		$ret =
-`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/multiselect/MIT-LICENSE.txt`;
+`rm -f  $BUILDROOT/$PROJECT/htdocs/public/includes/jquery/plugins/multiselect/MIT-LICENSE.txt`;
 		$ret =
-`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/select2/release.sh`;
+`rm -f  $BUILDROOT/$PROJECT/htdocs/public/includes/jquery/plugins/select2/release.sh`;
 		$ret =
 		  `rm -fr $BUILDROOT/$PROJECT/htdocs/includes/mike42/escpos-php/doc`;
 		$ret =
@@ -934,7 +934,7 @@ if ($nboftargetok) {
 
 			$ret = `rm -fr $BUILDROOT/$FILENAMETGZ/dev/build/exe`;
 			$ret =
-			  `rm -fr $BUILDROOT/$FILENAMETGZ/htdocs/includes/ckeditor/_source`
+			  `rm -fr $BUILDROOT/$FILENAMETGZ/htdocs/public/includes/ckeditor/_source`
 			  ; # We can't remove it with exclude file, we need it for some tarball packages
 
 			print "Compress $FILENAMETGZ into $FILENAMETGZ.tgz...\n";
@@ -971,7 +971,7 @@ if ($nboftargetok) {
 
 			$ret = `rm -fr $BUILDROOT/$FILENAMEXZ/dev/build/exe`;
 			$ret =
-			  `rm -fr $BUILDROOT/$FILENAMEXZ/htdocs/includes/ckeditor/_source`
+			  `rm -fr $BUILDROOT/$FILENAMEXZ/htdocs/public/includes/ckeditor/_source`
 			  ; # We can't remove it with exclude file, we need it for some tarball packages
 
 			print "Compress $FILENAMEXZ into $FILENAMEXZ.xz...\n";
@@ -1010,7 +1010,7 @@ if ($nboftargetok) {
 
 			$ret = `rm -fr $BUILDROOT/$FILENAMEZIP/dev/build/exe`;
 			$ret =
-			  `rm -fr $BUILDROOT/$FILENAMEZIP/htdocs/includes/ckeditor/_source`
+			  `rm -fr $BUILDROOT/$FILENAMEZIP/htdocs/public/includes/ckeditor/_source`
 			  ; # We can't remove it with exclude file, we need it for some tarball packages
 
 			print "Compress $FILENAMEZIP into $FILENAMEZIP.zip...\n";
@@ -1062,7 +1062,7 @@ if ($nboftargetok) {
 			$ret = `$cmd`;
 
        # Removed files we don't need (already removed before)
-       #$ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/htdocs/includes/ckeditor/_source`;
+       #$ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/htdocs/public/includes/ckeditor/_source`;
 
 			print "Set permissions on files/dir\n";
 			$ret = `chmod -R 755 $BUILDROOT/$FILENAMETGZ2`;
@@ -1261,17 +1261,17 @@ if ($nboftargetok) {
 
 			# Removed duplicate license files
 			$ret =
-`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/ckeditor/ckeditor/_source/LICENSE.md`;
+`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/public/includes/ckeditor/ckeditor/_source/LICENSE.md`;
 			$ret =
-`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/ckeditor/ckeditor/_source/plugins/scayt/LICENSE.md`;
+`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/public/includes/ckeditor/ckeditor/_source/plugins/scayt/LICENSE.md`;
 			$ret =
-`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/ckeditor/ckeditor/_source/plugins/wsc/LICENSE.md`;
+`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/public/includes/ckeditor/ckeditor/_source/plugins/wsc/LICENSE.md`;
 			$ret =
-`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/ckeditor/ckeditor/LICENSE.md`;
+`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/public/includes/ckeditor/ckeditor/LICENSE.md`;
 			$ret =
-`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/ckeditor/ckeditor/plugins/scayt/LICENSE.md`;
+`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/public/includes/ckeditor/ckeditor/plugins/scayt/LICENSE.md`;
 			$ret =
-`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/ckeditor/ckeditor/plugins/wsc/LICENSE.md`;
+`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/public/includes/ckeditor/ckeditor/plugins/wsc/LICENSE.md`;
 			$ret =
 			  `rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/php-iban/LICENSE`;
 			$ret =
@@ -1294,7 +1294,7 @@ if ($nboftargetok) {
 `rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/mobiledetect/mobiledetectlib/LICENSE.txt`;
 
 # Removed files we don't need (already removed)
-#$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/ckeditor/ckeditor/_source`;
+#$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/public/includes/ckeditor/ckeditor/_source`;
 			$ret = `rm -fr $BUILDROOT/$PROJECT.tmp/.codeclimate.yml`;
 			$ret = `rm -fr $BUILDROOT/$PROJECT.tmp/.pre-commit-config.yaml`;
 			$ret = `rm -fr $BUILDROOT/$PROJECT.tmp/.vscode`;

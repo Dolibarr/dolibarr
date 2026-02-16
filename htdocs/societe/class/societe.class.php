@@ -5389,6 +5389,31 @@ class Societe extends CommonObject
 
 
 	/**
+	 * Calculate VAT intracommunity number for a thirdparty if missing, from the professional ID
+	 *
+	 * @param 	mixed 	$thirdparty		A thirdparty object
+	 * @return 	string					A VAT number
+	 */
+	public function calculateVATNumberFromProperties($thirdparty)
+	{
+		if ($thirdparty->country_code == 'FR' && empty($thirdparty->tva_intra) && !empty($thirdparty->tva_assuj)) {
+			$siren = trim($thirdparty->idprof1);
+			if (empty($siren)) {
+				$siren = (int) substr(str_replace(' ', '', $thirdparty->idprof2), 0, 9);
+			}
+			if (!empty($siren)) {
+				// [FR + code clé  + numéro SIREN ]
+				// Key VAT = [12 + 3 × (SIREN modulo 97)] modulo 97
+				$cle = (12 + 3 * $siren % 97) % 97;
+				$tva_intra = 'FR' . $cle . $siren;
+			}
+		}
+
+		return $tva_intra ?? '';
+	}
+
+
+	/**
 	 *  Create a document onto disk according to template module.
 	 *
 	 *	@param	string					$modele			Generator to use. Caller must set it to obj->model_pdf.

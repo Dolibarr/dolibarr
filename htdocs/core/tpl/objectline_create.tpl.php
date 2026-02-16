@@ -739,6 +739,7 @@ if ( !empty($object->thirdparty) ) {
 	];
 }
 
+//var_dump($jsConf);
 
 ?>
 <script nonce="<?php print getNonce(); ?>">
@@ -961,7 +962,7 @@ if ( !empty($object->thirdparty) ) {
 			jQuery('#trlinefordates').show();
 		});
 
-		if (jsConf.conf.freelines) {
+		if (!jsConf.conf.freelines) {
 			console.log("emulate click on prod_entry_mode_predef");
 			jQuery("#prod_entry_mode_predef").click();
 		} else if (jsConf.conf.noGetPostType){

@@ -119,7 +119,6 @@ print '<body>';
 
 print "
 <script>
-
 	console.log('Call /blockedlog/ajax/block-add on output of receipt.php.');
 	$.post('".DOL_URL_ROOT."/blockedlog/ajax/block-add.php'
 			, {
@@ -288,13 +287,13 @@ $object->pos_print_counter += 1;
 // Show if it is a duplicata
 $isADuplicata = ($object->pos_print_counter >= 2);
 
-if ($object->status == $object::STATUS_CLOSED) {
-	if ($isADuplicata) {
-		print '<br><b>*** DUPLICATA (no '.($object->pos_print_counter - 1).') ***</b>';	// Hard coded string
-	}
-} else {
+if ($object->status != $object::STATUS_CLOSED) {
 	// Not yet paid completely
 	print '<br><b>*** '.strtoupper($langs->trans("TemporaryReceipt")).' ***</b>';	// Hard coded string
+} else {
+	if ($isADuplicata) {
+		print '<br><b>*** '.$langs->transnoentities("DUPLICATA").' (no '.($object->pos_print_counter - 1).') ***</b>';	// Hard coded string
+	}
 }
 ?>
 </p>
@@ -303,7 +302,7 @@ if ($object->status == $object::STATUS_CLOSED) {
 <table class="centpercent" style="border-top-style: double;">
 	<thead>
 	<tr>
-		<th class="left"><?php print $langs->trans("Label"); ?></th>
+		<th class="left"><?php print $langs->trans("Ref").'/'.$langs->trans("Label"); ?></th>
 		<th class="right"><?php print $langs->trans("Qty"); ?></th>
 		<th class="right"><?php if ($gift != 1) {
 			print $langs->trans("Price");
@@ -337,6 +336,7 @@ if ($object->status == $object::STATUS_CLOSED) {
 		<tr>
 			<td>
 			<?php if (!empty($line->product_label)) {
+				echo $line->product_ref." - ";
 				echo $line->product_label;
 			} else {
 				echo $line->desc;

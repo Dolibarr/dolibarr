@@ -66,7 +66,7 @@ class modBlockedLog extends DolibarrModules
 
 		// Config pages
 		//-------------
-		$this->config_page_url = array('blockedlog.php?withtab=1@blockedlog');
+		$this->config_page_url = array('registration.php?origin=setupmodule&withtab=1@blockedlog');
 
 		// Dependencies
 		//-------------
@@ -175,9 +175,9 @@ class modBlockedLog extends DolibarrModules
 		$b = new BlockedLog($this->db);
 
 		// forceinit can be set to bypass this redirection
-		if (isALNEQualifiedVersion(1, 1) && $options != 'forceinit') {
+		if (isALNEQualifiedVersion(1, 1) && $options == 'acceptredirect') {
 			// We first switch on registration page
-			header("Location: ".DOL_URL_ROOT.'/blockedlog/admin/registration.php');
+			header("Location: ".DOL_URL_ROOT.'/blockedlog/admin/registration.php?origin=initmodule&withtab=0');
 			exit;
 		}
 
@@ -318,7 +318,7 @@ class modBlockedLog extends DolibarrModules
 	 */
 	public function getDesc($foruseinpopupdesc = 0)
 	{
-		global $langs;
+		global $langs, $mysoc;
 		$langs->load("admin");
 
 		// If module description translation exists
@@ -326,8 +326,26 @@ class modBlockedLog extends DolibarrModules
 
 		if ($foruseinpopupdesc) {
 			$langs->load("blockedlog");
-			$s .= '<br><br>';
-			if (isALNEQualifiedVersion(1, 1)) {
+			$s .= '<br>';
+
+			// Special message for France
+			if ($mysoc->country_code == 'FR') {
+				$islne = isALNEQualifiedVersion(1, 1);
+				$versionbadge = '<span class="badge-text badge-secondary">'.DOL_VERSION.'</span>';
+				if ($islne) {
+					if (preg_match('/\-/', DOL_VERSION)) {
+						// This is an alpha or beta version
+						$s .= info_admin($langs->trans("LNECandidateVersionForCertificationFR", $versionbadge), 0, 0, 'info');
+					} else {
+						$s .= info_admin($langs->trans("LNECertifiedVersionFR", $versionbadge), 0, 0, 'info');
+					}
+				} else {
+					$s .= info_admin($langs->trans("NotCertifiedVersionFR", $versionbadge), 0, 0, 'warning');
+				}
+			}
+
+			// Add warning to advice users to make regularly archives
+			if (in_array($mysoc->country_code, array('FR'))) {
 				$s .= info_admin($langs->trans("UnalterableLogTool1FR"), 0, 0, 'warning');
 			}
 		}

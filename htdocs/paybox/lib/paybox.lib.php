@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -92,7 +92,7 @@ function print_paybox_redirect($PRICE, $CURRENCY, $EMAIL, $urlok, $urlko, $TAG)
 
 	$conf->global->PAYBOX_HASH = 'sha512';
 
-	// Definition des parameters vente produit pour paybox
+	// Set the Paybox Product Sale parameters
 	$IBS_CMD = $TAG;
 	$IBS_TOTAL = $PRICE * 100; // En centimes
 	$IBS_MODE = 1; // Mode formulaire

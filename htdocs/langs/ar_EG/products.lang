@@ -243,7 +243,6 @@ PackagingForThisProduct=تغليف الكميات
 PackagingForThisProductDesc=ستقوم تلقائيًا بشراء مضاعف من هذه الكمية
 UseProductCustomerPackaging=استخدم خاصية "التغليف" لتقريب الكميات إلى مضاعفات معينة (عند إضافة أو تحديث سطر في مستندات العملاء، يتم إعادة حساب الكميات وأسعار البيع وفقًا لأعلى مضاعف محدد على أسعار البيع للمنتج)
 PackagingForThisProductSell=تغليف الكميات (بيع)
-PackagingForThisProductSellDesc=ستقوم تلقائيًا ببيع مضاعف من هذه الكمية
 QtyRecalculatedWithPackaging=تمت إعادة حساب الكمية في السطر وفقًا لتغليف المورد
 Attributes=السمات
 ProductAttributeExtrafields=الحقول الإضافية لسمات المتغير
