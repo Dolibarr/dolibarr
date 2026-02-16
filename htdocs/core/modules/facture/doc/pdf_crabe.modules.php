@@ -389,6 +389,19 @@ class pdf_crabe extends ModelePDFFactures
 					}
 
 					// determine category of operation
+					$is_deposit = false;
+					if (preg_match('/^\((.*)\)$/', $object->lines[$i]->desc, $reg)) {
+						if ($reg[1] == 'DEPOSIT') {
+							$is_deposit = true;
+						}
+					}
+					// If DEPOSIT, this line is completely ignored for calculations.
+					if ($is_deposit) {
+						continue;
+					}
+
+
+					// determine category of operation
 					if ($categoryOfOperation < 2) {
 						$lineProductType = $object->lines[$i]->product_type;
 						if ($lineProductType == Product::TYPE_PRODUCT) {
@@ -880,11 +893,20 @@ class pdf_crabe extends ModelePDFFactures
 					$pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
 				}
 
+				if (getDolGlobalString('INVOICE_ADD_SWISS_QR_CODE') == 'bottom') {
+					$result = $this->addBottomQRInvoice($pdf, $object, $outputlangs);
+					if (!$result) {
+						$pdf->Close();
+						return 0;
+					}
+				}
+
 				// Add terms to sale
-				if (!empty($mysoc->termsofsale) && getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_INVOICE')) {
-					$termsofsale = $conf->mycompany->dir_output.'/'.$mysoc->termsofsale;
-					if (!empty($conf->mycompany->multidir_output[$object->entity])) {
-						$termsofsale = $conf->mycompany->multidir_output[$object->entity].'/'.$mysoc->termsofsale;
+				$termsofsalefilename = getDolGlobalString('MAIN_INFO_INVOICE_TERMSOFSALE');
+				if (getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_INVOICE') && $termsofsalefilename) {
+					$termsofsale = $conf->invoice->dir_output.'/'.$termsofsalefilename;
+					if (!empty($conf->invoice->multidir_output[$object->entity ?? $conf->entity])) {
+						$termsofsale = $conf->invoice->multidir_output[$object->entity ?? $conf->entity].'/'.$termsofsalefilename;
 					}
 					if (file_exists($termsofsale) && is_readable($termsofsale)) {
 						$pagecount = $pdf->setSourceFile($termsofsale);
@@ -900,13 +922,7 @@ class pdf_crabe extends ModelePDFFactures
 						}
 					}
 				}
-				if (getDolGlobalString('INVOICE_ADD_SWISS_QR_CODE') == 'bottom') {
-					$result = $this->addBottomQRInvoice($pdf, $object, $outputlangs);
-					if (!$result) {
-						$pdf->Close();
-						return 0;
-					}
-				}
+
 				$pdf->Close();
 
 				$pdf->Output($file, 'F');

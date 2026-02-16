@@ -358,8 +358,8 @@ class CommandeFournisseurLigne extends CommonOrderLine
 		} else {
 			$sql .= "null,";
 		}
-		$sql .= "'".$this->db->escape((string) $this->product_type)."',";
-		$sql .= ((int) $this->special_code) . ",";
+		$sql .= ((int) $this->product_type).",";
+		$sql .= ((int) $this->special_code).",";
 		$sql .= "'".$this->db->escape((string) $this->rang)."',";
 		$sql .= "'".$this->db->escape((string) $this->qty)."', ";
 		$sql .= " ".(empty($this->vat_src_code) ? "''" : "'".$this->db->escape((string) $this->vat_src_code)."'").",";

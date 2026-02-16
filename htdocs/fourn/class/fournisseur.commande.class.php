@@ -546,7 +546,10 @@ class CommandeFournisseur extends CommonOrder
 
 			$this->ref = $obj->ref;
 			$this->ref_supplier = $obj->ref_supplier;
+
 			$this->socid = $obj->fk_soc;
+			$this->thirdparty = null; // Clear if another value was already set by fetch_thirdparty
+
 			$this->fourn_id = $obj->fk_soc;
 			$this->statut = $obj->status;	// deprecated
 			$this->status = $obj->status;
@@ -1986,7 +1989,7 @@ class CommandeFournisseur extends CommonOrder
 	 *	@param      string		$desc            		Description
 	 *	@param      float		$pu_ht              	Unit price (used if $price_base_type is 'HT')
 	 *	@param      float		$qty             		Quantity
-	 *	@param      float		$txtva           		VAT Rate
+	 *	@param      float|string	$txtva           	Force Vat rate, -1 for auto (Can contain the vat_src_code too with syntax '9.9 (CODE)')
 	 *	@param      float		$txlocaltax1        	Localtax1 tax
 	 *	@param      float		$txlocaltax2        	Localtax2 tax
 	 *	@param      int			$fk_product      		Id product
@@ -3067,7 +3070,7 @@ class CommandeFournisseur extends CommonOrder
 	 *	@param     	int|float	$pu              	Unit price
 	 *	@param     	int|float	$qty             	Quantity
 	 *	@param     	int|float	$remise_percent  	Percent discount on line
-	 *	@param     	int|float	$txtva          	VAT rate
+	 *	@param     	int|float|string	$txtva      VAT Rate (Can be '1.23' or '1.23 (ABC)')
 	 *  @param     	int|float	$txlocaltax1	    Localtax1 tax
 	 *  @param     	int|float	$txlocaltax2   		Localtax2 tax
 	 *  @param     	string		$price_base_type 	Type of price base

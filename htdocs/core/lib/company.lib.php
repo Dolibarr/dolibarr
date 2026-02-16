@@ -235,7 +235,7 @@ function societe_prepare_head(Societe $object)
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib as n";
 		$sql .= " WHERE n.fk_soc = ".((int) $object->id);
 		if (!isModEnabled('stripe')) {
-			$sql .= " AND n.stripe_card_ref IS NULL";
+			$sql .= " AND (n.stripe_card_ref IS NULL OR n.stripe_card_ref ='')";
 		} else {
 			$sql .= " AND (n.stripe_card_ref IS NULL OR (n.stripe_card_ref IS NOT NULL AND n.status = ".((int) $servicestatus)."))";
 		}

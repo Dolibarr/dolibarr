@@ -82,6 +82,7 @@ class modCaptchaStandard extends ModeleCaptcha
 		global $db, $conf, $langs, $user;
 
 		$generator = new modGeneratePassStandard($db, $conf, $langs, $user);
+		$generator->length = '5';
 		$example = $generator->getExample();
 
 		if (function_exists("imagecreate") && function_exists("imagepng")) {
@@ -89,7 +90,7 @@ class modCaptchaStandard extends ModeleCaptcha
 			if (!$img) {
 				return "Problem with GD creation";
 			}
-			//$background_color = imagecolorallocate($img, 250, 250, 250);
+			$background_color = imagecolorallocate($img, 250, 250, 250); // do not comment this line
 			$ecriture_color = imagecolorallocate($img, 0, 0, 0);
 			imagestring($img, 4, 15, 8, $example, $ecriture_color);
 

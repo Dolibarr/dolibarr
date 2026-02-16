@@ -32,9 +32,8 @@ if ($object->element == 'propal') {
 <!-- START TEMPLATE IMPORT OBJECT LINKED LINES -->
 <script>
 
-$(document).ready(function(){
-	$('.objectlinked_importbtn').click(function (e) {
-
+$(function() {
+	$(document).on('click', '.objectlinked_importbtn', function(e) {
 		e.preventDefault();
 		var page = $(this).attr("href");
 
@@ -79,8 +78,9 @@ $(document).ready(function(){
 							  $( this ).dialog( "close" );
 							  $("#" + formId).append('<input type="hidden" name="action" value="import_lines_from_object" />');
 							  $("#" + formId).append('<input type="hidden" name="fromelement" value="' + fromelement + '" />');
+							  $("#" + formId).append('<input type="hidden" name="token" value="<?php print dol_escape_htmltag(newToken()); ?>" />');
 							  $("#" + formId).append('<input type="hidden" name="fromelementid" value="' + fromelementid + '" />');
-							  $("#" + formId).submit();
+							  $("#" + formId).trigger('submit');
 						},
 						"<?php echo $langs->trans("Cancel"); ?>": function() {
 						  $( this ).dialog( "close" );

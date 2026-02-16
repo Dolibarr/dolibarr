@@ -334,7 +334,7 @@ class ExtraFields
 			} elseif ($type == 'phone') {
 				$typedb = 'varchar';
 				$lengthdb = '20';
-			} elseif ($type == 'mail' || $type == 'ip' || $type == 'icon') {
+			} elseif ($type == 'email' || $type == 'mail' || $type == 'ip' || $type == 'icon') {
 				$typedb = 'varchar';
 				$lengthdb = '128';
 			} elseif ($type == 'url') {
@@ -1111,14 +1111,14 @@ class ExtraFields
 	 * Code very similar with showInputField of common object
 	 *
 	 * @param  string        		$key            		Key of attribute
-	 * @param  string|array{start:int,end:int}  $value 			    Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value); for dates in filter mode, a range array('start'=><timestamp>, 'end'=><timestamp>) should be provided
+	 * @param  string|array{start:int,end:int}  $value 		Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value); for dates in filter mode, a range array('start'=><timestamp>, 'end'=><timestamp>) should be provided
 	 * @param  string        		$moreparam      		To add more parameters on html input tag
 	 * @param  string        		$keysuffix      		Suffix string to add after name and id of field (can be used to avoid duplicate names)
 	 * @param  string        		$keyprefix      		Prefix string to add before name and id of field (can be used to avoid duplicate names)
 	 * @param  string        		$morecss        		More css (to defined size of field. Old behaviour: may also be a numeric)
 	 * @param  int|CommonObject     $object       			Current object or object ID. Preferably, pass the object itself.
 	 * @param  string        		$extrafieldsobjectkey	The key to use to store retrieved data (commonly $object->table_element)
-	 * @param  int	         		$mode                  1=Used for search filters
+	 * @param  int	         		$mode                  	1=Used for search filters
 	 * @return string
 	 */
 	public function showInputField($key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '', $object = 0, $extrafieldsobjectkey = '', $mode = 0)
@@ -1151,9 +1151,9 @@ class ExtraFields
 		$unique = $this->attributes[$extrafieldsobjectkey]['unique'][$key];
 		$required = $this->attributes[$extrafieldsobjectkey]['required'][$key];
 		$param = $this->attributes[$extrafieldsobjectkey]['param'][$key];
-		$perms = (int) dol_eval($this->attributes[$extrafieldsobjectkey]['perms'][$key], 1, 1, '2');
+		$perms = (int) dol_eval((string) $this->attributes[$extrafieldsobjectkey]['perms'][$key], 1, 1, '2');
 		$langfile = $this->attributes[$extrafieldsobjectkey]['langfile'][$key];
-		$list = (string) dol_eval($this->attributes[$extrafieldsobjectkey]['list'][$key], 1, 1, '2');
+		$list = (string) dol_eval((string) $this->attributes[$extrafieldsobjectkey]['list'][$key], 1, 1, '2');
 		$totalizable = $this->attributes[$extrafieldsobjectkey]['totalizable'][$key];
 		$help = $this->attributes[$extrafieldsobjectkey]['help'][$key];
 		$alwayseditable = $this->attributes[$extrafieldsobjectkey]['alwayseditable'][$key];
@@ -1430,6 +1430,7 @@ class ExtraFields
 				}
 			}
 			if (!getDolGlobalString('MAIN_EXTRAFIELDS_ENABLE_NEW_SELECT2')) {
+				//$out .= '<!-- type = sellist -->';
 				$out .= '<select class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '').'>';
 				if (is_array($param['options'])) {
 					// WARNING!! @FIXME This code is duplicated into core/class/extrafields.class.php
@@ -1609,16 +1610,23 @@ class ExtraFields
 								$labeltoshow = '';
 								$obj = $this->db->fetch_object($resql);
 
-								// Several field into label (eq table:code|label:rowid)
+								$nameFields = $InfoFieldList[1];
+								// If text is "field1|f(a,b,c) as xxx|field2", we must convert string into 'field1|xxx|field2'
+								$nameFields = preg_replace('/[a-z_]+\([^\)]*\) as ([\w]+)/i', '\1', $nameFields);
+								// Sanitize field names to avoid error when doing $obj->field
+								$nameFields = preg_replace('/[^0-9a-z_\.\|]/i', '', $nameFields);
+
+								// Several fields into label (eq table:code|label:rowid)
 								$notrans = false;
-								$fields_label = explode('|', $InfoFieldList[1]);
+								$fields_label = explode('|', $nameFields);
 								if (is_array($fields_label) && count($fields_label) > 1) {
 									$notrans = true;
 									foreach ($fields_label as $field_toshow) {
+										$field_toshow = preg_replace('/^.*\./', '', $field_toshow);
 										$labeltoshow .= $obj->$field_toshow.' ';
 									}
 								} else {
-									$labeltoshow = $obj->{$InfoFieldList[1]};
+									$labeltoshow = $obj->$nameFields;
 								}
 
 								if ($value == $obj->rowid) {
@@ -1631,7 +1639,7 @@ class ExtraFields
 									$out .= '<option value="'.$obj->rowid.'" selected>'.$labeltoshow.'</option>';
 								} else {
 									if (!$notrans) {
-										$translabel = $langs->trans($obj->{$InfoFieldList[1]});
+										$translabel = $langs->trans($obj->$nameFields);
 										$labeltoshow = $translabel;
 									}
 									if (empty($labeltoshow)) {
@@ -1639,6 +1647,8 @@ class ExtraFields
 									}
 
 									if (!empty($InfoFieldList[3]) && $parentField) {
+										// Sanitize parent field name to avoid when doing $obj->field
+										$parentField = preg_replace('/[^a-zA-Z0-9_\-]/', '', $parentField);
 										$parent = $parentName.':'.$obj->{$parentField};
 									}
 
@@ -2055,9 +2065,9 @@ class ExtraFields
 		$unique = $this->attributes[$extrafieldsobjectkey]['unique'][$key];
 		$required = $this->attributes[$extrafieldsobjectkey]['required'][$key];
 		$param = $this->attributes[$extrafieldsobjectkey]['param'][$key];
-		$perms = (int) dol_eval($this->attributes[$extrafieldsobjectkey]['perms'][$key], 1, 1, '2');
+		$perms = (int) dol_eval((string) $this->attributes[$extrafieldsobjectkey]['perms'][$key], 1, 1, '2');
 		$langfile = $this->attributes[$extrafieldsobjectkey]['langfile'][$key];
-		$list = (string) dol_eval($this->attributes[$extrafieldsobjectkey]['list'][$key], 1, 1, '2');
+		$list = (string) dol_eval((string) $this->attributes[$extrafieldsobjectkey]['list'][$key], 1, 1, '2');
 		$help = $this->attributes[$extrafieldsobjectkey]['help'][$key];
 		$cssview = $this->attributes[$extrafieldsobjectkey]['cssview'][$key];
 		$alwayseditable = $this->attributes[$extrafieldsobjectkey]['alwayseditable'][$key];
@@ -2207,6 +2217,7 @@ class ExtraFields
 					if (is_array($fields_label) && count($fields_label) > 1) {
 						foreach ($fields_label as $field_toshow) {
 							$translabel = '';
+							$field_toshow = preg_replace('/^.*\./', '', $field_toshow);
 							if (!empty($obj->$field_toshow)) {
 								$translabel = $outputlangs->trans($obj->$field_toshow);
 
@@ -2250,11 +2261,15 @@ class ExtraFields
 				dol_syslog(get_class($this).'::showOutputField error '.$this->db->lasterror(), LOG_WARNING);
 			}
 		} elseif ($type == 'radio') {
-			if (!isset($param['options'][$value])) {
+			if ($required && !isset($param['options'][$value])) {
 				$outputlangs->load('errors');
-				$value = $outputlangs->trans('ErrorNoValueForRadioType');
+				$value = '<span class="opacitymedium">'.$outputlangs->trans('ErrorNoValueForRadioType').'</span>';
 			} else {
-				$value = $outputlangs->trans($param['options'][$value]);
+				if (isset($param['options'][$value])) {
+					$value = $outputlangs->trans($param['options'][$value]);
+				} else {
+					$value = '';
+				}
 			}
 		} elseif ($type == 'checkbox') {
 			$value_arr = explode(',', $value);
@@ -2700,12 +2715,12 @@ class ExtraFields
 
 				$visibility = 1;
 				if (isset($this->attributes[$object->table_element]['list'][$key])) {		// 'list' is option for visibility
-					$visibility = (int) dol_eval($this->attributes[$object->table_element]['list'][$key], 1, 1, '2');
+					$visibility = (int) dol_eval((string) $this->attributes[$object->table_element]['list'][$key], 1, 1, '2');
 				}
 
 				$perms = 1;
 				if (isset($this->attributes[$object->table_element]['perms'][$key])) {
-					$perms = (int) dol_eval($this->attributes[$object->table_element]['perms'][$key], 1, 1, '2');
+					$perms = (int) dol_eval((string) $this->attributes[$object->table_element]['perms'][$key], 1, 1, '2');
 				}
 				if (empty($enabled)
 					|| (

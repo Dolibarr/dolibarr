@@ -380,6 +380,7 @@ class Invoices extends DolibarrApi
 	 *
 	 * @throws RestException 400
 	 * @throws RestException 401
+	 * @throws RestException 403		Access not allowed for login
 	 * @throws RestException 404
 	 * @throws RestException 405
 	 */
@@ -395,6 +396,9 @@ class Invoices extends DolibarrApi
 		}
 		if (empty($orderid)) {
 			throw new RestException(400, 'Order ID is mandatory');
+		}
+		if (!DolibarrApi::_checkAccessToResource('commande', $orderid)) {
+			throw new RestException(403, 'Access not allowed on order for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$order = new Commande($this->db);
@@ -1558,7 +1562,7 @@ class Invoices extends DolibarrApi
 		// Clean parameters amount if payment is for a credit note
 		if ($this->invoice->type == Facture::TYPE_CREDIT_NOTE) {
 			$resteapayer = price2num($resteapayer, 'MT');
-			$amounts[$id] = (float) price2num(-1 * (float) $resteapayer, 'MT');
+			$amounts[$id] = (float) price2num(-1 * abs((float) $resteapayer), 'MT');
 			// Multicurrency
 			$newvalue = price2num($this->invoice->multicurrency_total_ttc, 'MT');
 			$multicurrency_amounts[$id] = (float) price2num(-1 * (float) $newvalue, 'MT');

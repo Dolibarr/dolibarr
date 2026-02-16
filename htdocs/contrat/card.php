@@ -134,7 +134,7 @@ $permissiontodisable = $user->hasRight('contrat', 'desactiver');	// TODO use sam
 $permissiontoeditextra = $permissiontoadd;
 if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
 	// For action 'update_extras', is there a specific permission set for the attribute to update
-	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+	$permissiontoeditextra = dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
 }
 
 $error = 0;
@@ -2341,7 +2341,7 @@ if ($action == 'create') {
 				}
 
 				// Sign
-				if ($object->status > Contrat::STATUS_DRAFT) {
+				if (getDolGlobalString('CONTRACT_SHOW_SIGNATURE_STATUS_WITH_SERVICE_STATUS') && $object->status > Contrat::STATUS_DRAFT) {
 					if ($object->signed_status != Contrat::$SIGNED_STATUSES['STATUS_SIGNED_ALL']) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=sign&token=' . newToken() . '">' . $langs->trans("ContractSign") . '</a></div>';
 					} else {

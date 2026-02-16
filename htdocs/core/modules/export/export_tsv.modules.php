@@ -77,7 +77,7 @@ class ExportTsv extends ModeleExports
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs;
+		global $langs;
 		$this->db = $db;
 
 		$this->id = 'tsv'; // Same value then xxx in file name export_xxx.modules.php
@@ -218,8 +218,6 @@ class ExportTsv extends ModeleExports
 	public function write_title($array_export_fields_label, $array_selected_sorted, $outputlangs, $array_types)
 	{
 		// phpcs:enable
-		$outputlangs->charset_output = getDolGlobalString('EXPORT_TSV_FORCE_CHARSET');
-
 		$selectlabel = array();
 		foreach ($array_selected_sorted as $code => $value) {
 			if (strpos($code, ' as ') == 0) {
@@ -232,8 +230,12 @@ class ExportTsv extends ModeleExports
 				continue;
 			}
 
-			$newvalue = $outputlangs->transnoentities($array_export_fields_label[$code]); // newvalue is now $outputlangs->charset_output encoded
-			$newvalue = $this->tsv_clean($newvalue, $outputlangs->charset_output);
+			$newvalue = $array_export_fields_label[$code];
+			if ($newvalue) {
+				$newvalue = $outputlangs->transnoentitiesnoconv($newvalue);
+			}
+
+			$newvalue = $this->tsv_clean($newvalue, getDolGlobalString('EXPORT_TSV_FORCE_CHARSET'));
 
 			fwrite($this->handle, $newvalue.$this->separator);
 			$typefield = isset($array_types[$code]) ? $array_types[$code] : '';
@@ -347,9 +349,17 @@ class ExportTsv extends ModeleExports
 	 * @param	string	$charset	Input AND Output character set
 	 * @return 	string				Value cleaned
 	 */
-	public function tsv_clean($newvalue, $charset)
+	public function tsv_clean($newvalue, $charset = '')
 	{
 		// phpcs:enable
+		global $langs;
+
+		if (empty($charset)) {
+			$charset = getDolGlobalString('EXPORT_TSV_FORCE_CHARSET');
+		}
+
+		$newvalue = $langs->convToOutputCharset($newvalue, 'UTF-8', $charset); // newvalue is now encoded into $charset
+
 
 		// Rule Dolibarr: No HTML
 		$newvalue = dol_string_nohtmltag($newvalue, 1, $charset);

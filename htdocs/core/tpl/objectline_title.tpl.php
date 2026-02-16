@@ -21,18 +21,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
- *
- * Need to have the following variables defined:
- * $object (invoice, order, ...)
- * $conf
- * $langs
- * $element     (used to test $user->rights->$element->creer)
- * $permtoedit  (used to replace test $user->rights->$element->creer)
- * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
- * $outputalsopricetotalwithtax
- * $usemargins (0 to disable all margins columns, 1 to show according to margin setup)
- *
- * $type, $text, $description, $line
  */
 
 /**
@@ -44,6 +32,11 @@
  * @var Translate $langs
  * @var Conf $conf
  * @var User $user
+ *
+ * @var int $disableedit
+ * @var int $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
+ * @var int $outputalsopricetotalwithtax
+ * @var int $usemargins (0 to disable all margins columns, 1 to show according to margin setup)
  */
 
  // Protection to avoid direct call of template
@@ -122,11 +115,13 @@ print '<th class="linecoluht right nowraponall">'.$langs->trans('PriceUHT').'</t
 
 // Multicurrency
 if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency) {
-	print '<th class="linecoluht_currency right" style="width: 80px">'.$langs->trans('PriceUTTC').' ('.$langs->getCurrencySymbol($this->multicurrency_code).')</th>';
+	print '<th class="linecoluht_currency right" style="width: 80px">'.$langs->trans('PriceUHT');
+	print '&nbsp;<span class="opacitymedium">('.$langs->getCurrencySymbol($this->multicurrency_code).')<span></th>';
 }
 
+// Price TTC
 if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
-	print '<th class="right nowraponall">'.$langs->trans('PriceUTTC').'</th>';
+	print '<th class="linecoluttc right nowraponall">'.$langs->trans('PriceUTTC').'</th>';
 }
 
 // Qty
@@ -211,7 +206,8 @@ print '<th class="linecolht right">'.$langs->trans('TotalHTShort').'</th>';
 
 // Multicurrency
 if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency) {
-	print '<th class="linecoltotalht_currency right">'.$langs->trans('TotalHTShort').' ('.$langs->getCurrencySymbol($this->multicurrency_code).')</th>';
+	print '<th class="linecoltotalht_currency right">'.$langs->trans('TotalHTShort');
+	print '&nbsp;<span class="opacitymedium">('.$langs->getCurrencySymbol($this->multicurrency_code).')<span></th>';
 }
 
 if ($outputalsopricetotalwithtax) {

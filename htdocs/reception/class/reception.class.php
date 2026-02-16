@@ -13,6 +13,7 @@
  * Copyright (C) 2018		Quentin Vial-Gouteyron  <quentin.vial-gouteyron@atm-consulting.fr>
  * Copyright (C) 2022-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Mathieu Moulin			<mathieu@iprospective.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,19 +102,19 @@ class Reception extends CommonObject
 	public $billed;
 
 	/**
-	 * @var int|float
+	 * @var int|float|string|null
 	 */
 	public $weight;
 	/**
-	 * @var int|float
+	 * @var int|float|string|null
 	 */
 	public $trueWeight;
 	/**
-	 * @var null|float|int
+	 * @var int
 	 */
 	public $weight_units;
 	/**
-	 * @var int|float
+	 * @var int|float|string|null
 	 */
 	public $trueWidth;
 	/**
@@ -121,7 +122,7 @@ class Reception extends CommonObject
 	 */
 	public $width_units;
 	/**
-	 * @var int|float
+	 * @var int|float|string|null
 	 */
 	public $trueHeight;
 	/**
@@ -129,7 +130,7 @@ class Reception extends CommonObject
 	 */
 	public $height_units;
 	/**
-	 * @var int|float
+	 * @var int|float|string|null
 	 */
 	public $trueDepth;
 	/**
@@ -137,11 +138,11 @@ class Reception extends CommonObject
 	 */
 	public $depth_units;
 	/**
-	 * @var string A denormalized value
+	 * @var int|float|string|null	A denormalized value
 	 */
 	public $trueSize;
 	/**
-	 * @var int|string
+	 * @var int
 	 */
 	public $size_units;
 	/**
@@ -328,8 +329,8 @@ class Reception extends CommonObject
 		$sql .= ", ".(is_null($this->trueDepth) ? "NULL" : ((float) $this->trueDepth));
 		$sql .= ", ".(is_null($this->trueWidth) ? "NULL" : ((float) $this->trueWidth));
 		$sql .= ", ".(is_null($this->trueHeight) ? "NULL" : ((float) $this->trueHeight));
-		$sql .= ", ".(is_null($this->weight_units) ? "NULL" : ((float) $this->weight_units));
-		$sql .= ", ".(is_null($this->size_units) ? "NULL" : ((float) $this->size_units));
+		$sql .= ", ".((int) $this->weight_units);
+		$sql .= ", ".((int) $this->size_units);
 		$sql .= ", ".(!empty($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null");
 		$sql .= ", ".(!empty($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null");
 		$sql .= ", ".(!empty($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null");
@@ -437,15 +438,16 @@ class Reception extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."reception as e";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = e.rowid AND el.targettype = '".$this->db->escape($this->element)."' AND el.sourcetype = 'order_supplier'";
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON e.fk_incoterms = i.rowid';
-		$sql .= " WHERE e.entity IN (".getEntity('reception').")";
+
 		if ($id) {
-			$sql .= " AND e.rowid = ".((int) $id);
-		}
-		if ($ref) {
-			$sql .= " AND e.ref = '".$this->db->escape($ref)."'";
-		}
-		if ($ref_ext) {
-			$sql .= " AND e.ref_ext = '".$this->db->escape($ref_ext)."'";
+			$sql .= " WHERE e.rowid = ".((int) $id);
+		} else {
+			$sql .= " WHERE e.entity IN (".getEntity('reception').")";
+			if ($ref) {
+				$sql .= " AND e.ref = '".$this->db->escape($ref)."'";
+			} elseif ($ref_ext) {
+				$sql .= " AND e.ref_ext = '".$this->db->escape($ref_ext)."'";
+			}
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -1008,23 +1010,21 @@ class Reception extends CommonObject
 			$this->statut = (int) $this->statut;
 		}
 		if (isset($this->trueDepth)) {
-			$this->trueDepth = (float) trim((string) $this->trueDepth);
+			$this->trueDepth = price2num($this->trueDepth);
 		}
 		if (isset($this->trueWidth)) {
-			$this->trueWidth = (float) trim((string) $this->trueWidth);
+			$this->trueWidth = price2num($this->trueWidth);
 		}
 		if (isset($this->trueHeight)) {
-			$this->trueHeight = (float) trim((string) $this->trueHeight);
+			$this->trueHeight = price2num($this->trueHeight);
 		}
-		if (isset($this->size_units)) {
-			$this->size_units = trim((string) $this->size_units);
-		}
-		if (isset($this->weight_units)) {
-			$this->weight_units = (float) trim((string) $this->weight_units);
-		}
+		$this->size_units = (int) $this->size_units;
+
 		if (isset($this->trueWeight)) {
-			$this->weight = (float) trim((string) $this->trueWeight);
+			$this->weight = price2num($this->trueWeight);
 		}
+		$this->weight_units = (int) $this->weight_units;
+
 		if (isset($this->note_private)) {
 			$this->note_private = trim($this->note_private);
 		}
@@ -1054,12 +1054,12 @@ class Reception extends CommonObject
 		$sql .= " fk_shipping_method=".((isset($this->shipping_method_id) && $this->shipping_method_id > 0) ? $this->shipping_method_id : "null").",";
 		$sql .= " tracking_number=".(isset($this->tracking_number) ? "'".$this->db->escape($this->tracking_number)."'" : "null").",";
 		$sql .= " fk_statut=".(isset($this->statut) ? $this->statut : "null").",";
-		$sql .= " height=".(($this->trueHeight != '') ? $this->trueHeight : "null").",";
-		$sql .= " width=".(($this->trueWidth != '') ? $this->trueWidth : "null").",";
-		$sql .= " size_units=".(isset($this->size_units) ? $this->size_units : "null").",";
-		$sql .= " size=".(($this->trueDepth != '') ? $this->trueDepth : "null").",";
-		$sql .= " weight_units=".(isset($this->weight_units) ? $this->weight_units : "null").",";
-		$sql .= " weight=".(($this->trueWeight != '') ? $this->trueWeight : "null").",";
+		$sql .= " height=".(($this->trueHeight != '') ? (float) $this->trueHeight : "null").",";
+		$sql .= " width=".(($this->trueWidth != '') ? (float) $this->trueWidth : "null").",";
+		$sql .= " size_units=".((int) $this->size_units).",";
+		$sql .= " size=".(($this->trueDepth != '') ? (float) $this->trueDepth : "null").",";
+		$sql .= " weight_units=".((int) $this->weight_units).",";
+		$sql .= " weight=".(($this->trueWeight != '') ? (float) $this->trueWeight : "null").",";
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";

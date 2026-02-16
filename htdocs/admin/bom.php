@@ -171,6 +171,13 @@ if ($action == 'updateMask') {
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
+} elseif ($action == 'updateoptions') {
+	if (GETPOST('BOM_USE_SEARCH_TO_SELECT')) {
+		$bomsearch = GETPOST('activate_BOM_USE_SEARCH_TO_SELECT', 'alpha');
+		if (dolibarr_set_const($db, "BOM_USE_SEARCH_TO_SELECT", $bomsearch, 'chaine', 0, '', $conf->entity)) {
+			$conf->global->BOM_USE_SEARCH_TO_SELECT = $bomsearch;
+		}
+	}
 }
 
 
@@ -463,6 +470,31 @@ print '<td class="center" width="60"></td>';
 print "<td>&nbsp;</td>\n";
 print "</tr>\n";
 
+
+print '<tr class="oddeven">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="updateoptions">';
+print '<td>'.$langs->trans("UseSearchToSelectBom").'</td>';
+if (!$conf->use_javascript_ajax) {
+	print '<td></td>';
+	print '<td class="nowrap right">';
+	print $langs->trans("NotAvailableWhenAjaxDisabled");
+	print "</td>";
+} else {
+	print '<td class="right">';
+	$arrval = array('0' => $langs->trans("No"),
+		'1' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')',
+		'2' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')',
+		'3' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')',
+	);
+	print $form->selectarray("activate_BOM_USE_SEARCH_TO_SELECT", $arrval, getDolGlobalString("BOM_USE_SEARCH_TO_SELECT")).'</td>';
+	print '<td class="right"><input type="submit" class="button small reposition" name="BOM_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
+	print "</td>";
+}
+print '</form>';
+print '</tr>';
+
 $substitutionarray = pdf_getSubstitutionArray($langs, null, null, 2);
 $substitutionarray['__(AnyTranslationKey)__'] = $langs->trans("Translation");
 $htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
@@ -485,7 +517,7 @@ if (!getDolGlobalString('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {
 	print $doleditor->Create();
 }
 print '</td><td class="right">';
-print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
+print '<input type="submit" class="button button-edit small" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
 print '</form>';
 
@@ -499,13 +531,15 @@ print $form->textwithpicto($langs->trans("WatermarkOnDraftBOMs"), $htmltext, 1, 
 print '</td><td>';
 print '<input class="flat minwidth200" type="text" name="BOM_DRAFT_WATERMARK" value="'.dol_escape_htmltag(getDolGlobalString('BOM_DRAFT_WATERMARK')).'">';
 print '</td><td class="right">';
-print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
+print '<input type="submit" class="button button-edit small" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
 print '</form>';
 
 print '</table>';
 print '</div>';
 print '<br>';
+
+
 
 
 // End of page

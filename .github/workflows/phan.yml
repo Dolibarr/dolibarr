@@ -36,7 +36,7 @@ jobs:
         with:
           php-version: 8.2
           coverage: none # disable xdebug, pcov
-          tools: cs2pr,phan
+          tools: cs2pr,phan:5.5.2
       - name: Run Phan analysis
         run: |
           # shellcheck disable=2086

@@ -2294,7 +2294,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				$style1 .= 'peruser_busy ';
 			}
 			foreach ($cases1[$h] as $id => $ev) {
-				if ($ev['busy']) {
+				if (!empty($ev['busy'])) {
 					$style1 = 'onclickopenref peruser_busy';
 				}
 				if (!empty($ev['css'])) {
@@ -2314,7 +2314,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				$style2 .= 'peruser_busy ';
 			}
 			foreach ($cases2[$h] as $id => $ev) {
-				if ($ev['busy']) {
+				if (!empty($ev['busy'])) {
 					$style2 = 'onclickopenref peruser_busy';
 				}
 				if (!empty($ev['css'])) {
@@ -2334,7 +2334,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				$style3 .= 'peruser_busy ';
 			}
 			foreach ($cases3[$h] as $id => $ev) {
-				if ($ev['busy']) {
+				if (!empty($ev['busy'])) {
 					$style3 = 'onclickopenref peruser_busy';
 				}
 				if (!empty($ev['css'])) {
@@ -2354,7 +2354,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				$style4 .= 'peruser_busy ';
 			}
 			foreach ($cases4[$h] as $id => $ev) {
-				if ($ev['busy']) {
+				if (!empty($ev['busy'])) {
 					$style4 = 'onclickopenref peruser_busy';
 				}
 				if (!empty($ev['css'])) {

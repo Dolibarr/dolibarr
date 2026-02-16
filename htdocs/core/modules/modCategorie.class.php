@@ -663,7 +663,7 @@ class modCategorie extends DolibarrModules
 			$this->import_label[$r] = "CatMembersLinks"; // Translation key
 			$this->import_icon[$r] = $this->picto;
 			$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
-			$this->import_tables_array[$r] = array('cm' => MAIN_DB_PREFIX.'categorie_contact');
+			$this->import_tables_array[$r] = array('cm' => MAIN_DB_PREFIX.'categorie_member');
 			$this->import_fields_array[$r] = array('cm.fk_categorie' => "Category*", 'cm.fk_member' => "Member*");
 			$this->import_regex_array[$r] = array('cm.fk_categorie' => 'rowid@'.MAIN_DB_PREFIX.'categorie:type=3');
 

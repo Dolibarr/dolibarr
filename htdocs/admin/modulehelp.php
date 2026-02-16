@@ -364,8 +364,9 @@ if ($mode == 'desc') {
 		$tmpdirofmoduletoshow = preg_replace('/^'.preg_quote(DOL_DOCUMENT_ROOT, '/').'/', '', (string) $dirofmodule);
 		$textexternal .= '<br><span class="opacitymedium">'.$langs->trans("Origin").':</span> '.$langs->trans("ExternalModule").' - '.$langs->trans("InstalledInto", $tmpdirofmoduletoshow);
 
+		$installmoduleslock = DOL_DATA_ROOT.'/installmodules.lock';
 		global $dolibarr_allow_download_external_modules;
-		if (!empty($dolibarr_allow_download_external_modules) && preg_match('/\/custom\//', (string) $dirofmodule)) {
+		if ((!file_exists($installmoduleslock) || !empty($dolibarr_allow_download_external_modules)) && preg_match('/\/custom\//', (string) $dirofmodule)) {
 			// Add a link to download a zip of the module
 			$textexternal .= ' <a href="'.DOL_URL_ROOT.'/admin/tools/export_files.php?export_type=externalmodule&what='.urlencode($moduledir).'&compression=zip&zipfilename_template=module_'.$moduledir.'-'.$version.'.notorig" target="_blank" rel="noopener">'.img_picto('', 'download').'</a>';
 		}
@@ -375,10 +376,12 @@ if ($mode == 'desc') {
 		}
 		$editor_url = $objMod->editor_url;
 		if (!preg_match('/^http/', $editor_url)) {
-			$editor_url = 'http://'.$editor_url;
+			$editor_url = 'https://'.$editor_url;
 		}
+		$editor_url_to_show = preg_replace('/(utm_[a-z_]+|origin)=[a-z0-9_]+/i', '', $editor_url);
+		$editor_url_to_show = preg_replace('/[\/\?]+$/', '', $editor_url_to_show);
 		if (!empty($objMod->editor_url) && !preg_match('/dolibarr\.org/i', $objMod->editor_url)) {
-			$textexternal .= ($objMod->editor_name != 'dolibarr' ? ' - ' : '').img_picto('', 'globe').' <a href="'.$editor_url.'" target="_blank" rel="noopener noreferrer external">'.$objMod->editor_url.'</a>';
+			$textexternal .= ($objMod->editor_name != 'dolibarr' ? ' - ' : '').img_picto('', 'globe').' <a href="'.$editor_url.'" target="_blank" rel="noopener noreferrer external">'.$editor_url_to_show.'</a>';
 		}
 		$text .= $textexternal;
 	} else {
