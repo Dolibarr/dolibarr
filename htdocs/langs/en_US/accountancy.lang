@@ -378,6 +378,7 @@ BookkeepingTemplates=Bookkeeping templates
 BookkeepingTemplate=Bookkeeping template
 ListBookkeepingTemplates=List of bookkeeping templates
 NewBookkeepingTemplate=New bookkeeping template
+NoTemplateAvailable=No template available
 CreateBookkeepingTemplate=Create bookkeeping template
 ModifyBookkeepingTemplate=Modify bookkeeping template
 DeleteBookkeepingTemplate=Delete bookkeeping template

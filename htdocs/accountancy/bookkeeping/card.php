@@ -336,12 +336,12 @@ if (empty($reshook)) {
 							$bookkeeping = new BookKeeping($db);
 
 							// Set common fields from the form
-							$bookkeeping->doc_date = $datestart;
+							$bookkeeping->doc_date = $date_start;
 							$bookkeeping->doc_type = GETPOST('doctype', 'alpha');
 							$bookkeeping->piece_num = $piece_num;
 							$bookkeeping->doc_ref = GETPOST('docref', 'alpha');
-							$bookkeeping->code_journal = $journalcode;
-							$bookkeeping->journal_label = $journallabel;
+							$bookkeeping->code_journal = $journal_code;
+							$bookkeeping->journal_label = $journal_label;
 							$bookkeeping->fk_doc = 0;
 							$bookkeeping->fk_docdet = 0;
 							$bookkeeping->ref = GETPOST('ref', 'alpha') ? GETPOST('ref', 'alpha') : $object->ref;
@@ -666,12 +666,11 @@ if ($action == 'create') {
 
 	if (count($templates) > 0) {
 		print '<select class="flat minwidth300" name="template_id" id="template_id">';
-		print '<option value="">-- '.$langs->trans("SelectATemplate").' --</option>';
+		print '<option value=""></option>';
 		foreach ($templates as $key => $label) {
 			print '<option value="'.$key.'">'.dol_escape_htmltag($label).'</option>';
 		}
 		print '</select>';
-		print ' <span class="opacitymedium">'.$langs->trans("OptionalTemplateHelp").'</span>';
 	} else {
 		print '<span class="opacitymedium">'.$langs->trans("NoTemplateAvailable").'</span>';
 	}
