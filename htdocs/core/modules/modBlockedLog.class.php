@@ -331,15 +331,16 @@ class modBlockedLog extends DolibarrModules
 			// Special message for France
 			if ($mysoc->country_code == 'FR') {
 				$islne = isALNEQualifiedVersion(1, 1);
+				$versionbadge = '<span class="badge-text badge-secondary">'.DOL_VERSION.'</span>';
 				if ($islne) {
 					if (preg_match('/\-/', DOL_VERSION)) {
 						// This is an alpha or beta version
-						$s .= info_admin($langs->trans("LNECandidateVersionForCertificationFR"), 0, 0, 'info');
+						$s .= info_admin($langs->trans("LNECandidateVersionForCertificationFR", $versionbadge), 0, 0, 'info');
 					} else {
-						$s .= info_admin($langs->trans("LNECertifiedVersionFR"), 0, 0, 'info');
+						$s .= info_admin($langs->trans("LNECertifiedVersionFR", $versionbadge), 0, 0, 'info');
 					}
 				} else {
-					$s .= info_admin($langs->trans("NotCertifiedVersionFR"), 0, 0, 'warning');
+					$s .= info_admin($langs->trans("NotCertifiedVersionFR", $versionbadge), 0, 0, 'warning');
 				}
 			}
 

@@ -1245,12 +1245,18 @@ class BlockedLog
 		// The object_format define the formatting rules into buildKeyForSignature and buildFirstPartOfKeyForSignature and buildFinalSignatureHash
 		$this->object_format = 'V1';	// TODO Switch to V2 when v2 support is complete
 
+		$previoushash = '';
+		$previousid = 0;
+
 		try {
 			$tmparray = $this->getPreviousHash(1, 0); // This get last record and lock database until insert is done and transaction closed
+
 			$previoushash = $tmparray['previoushash'];
+			$previousid = $tmparray['previousid'];
 
 			$concatenateddata = $this->buildKeyForSignature();	// All the information for the hash (meta data + data saved)
 
+			// The new hash
 			$this->signature = $this->buildFinalSignatureHash($previoushash.$concatenateddata);	// Build the hmac signature
 
 			// For debug info (we can clean this field later)
@@ -1328,7 +1334,9 @@ class BlockedLog
 			$id = $this->db->last_insert_id(MAIN_DB_PREFIX."blockedlog");
 
 			if ($id > 0) {
+				// The new ID
 				$this->id = $id;
+
 				$error = 0;
 
 				$this->db->commit();
@@ -1336,7 +1344,7 @@ class BlockedLog
 				// Call remote API service to record the last counter
 				include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 				try {
-					$resultcall = callApiToPushCounter((int) $this->id, $this->signature);
+					$resultcall = callApiToPushCounter((int) $this->id, $this->signature, 0, (int) $previousid, $previoushash);
 				} catch (Exception $e) {
 					$error++;
 					$this->error = $e->getMessage();
