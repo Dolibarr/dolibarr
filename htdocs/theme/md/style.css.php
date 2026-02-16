@@ -1046,7 +1046,7 @@ input#onlinepaymenturl, input#directdownloadlink {
 .formconsumeproduce {
 	background: #f0f0f0;
 
-	padding: 20px 0px 20px 0px;
+	padding: 20px 20px 20px 20px;
 	border-radius: 8px;
 }
 

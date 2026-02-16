@@ -290,7 +290,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 				.';'.$langs->transnoentities('VersionSignature')	// Rule used for fingerprint calculation
 				.';'.$langs->transnoentities('FingerprintDatabase')			// Signature
 				.';'.$langs->transnoentities('Status')
-				.';'.$langs->transnoentities('FingerprintExport')
+				//.';'.$langs->transnoentities('FingerprintExport')
 				."\n");
 
 			$loweridinerror = 0;
@@ -300,6 +300,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 			$totalhtamount = array();
 			$totalvatamount = array();
 			$totalamount = array();
+			$previoushashexport = '';
 
 			while ($obj = $db->fetch_object($resql)) {
 				// We set here all data used into signature calculation (see checkSignature method) and more
@@ -342,7 +343,18 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 				$block_static->debuginfo = $obj->debuginfo;
 
 				//var_dump($block->id.' '.$block->signature, $block->object_data);
-				$checksignature = $block_static->checkSignature($previoushash); 	// If $previoushash is not defined, checkSignature will search it
+
+				$checksignature = $block_static->checkSignature($previoushash); 	// If $previoushash is not defined, checkSignature will search it from $block_static->id
+
+				/* To see detail to get signature
+				if ($block_static->id == 397) {
+					$concatenateddata = $block_static->buildKeyForSignature();
+					var_export($concatenateddata);
+
+					var_dump($block_static->checkSignature($previoushash, 2));
+					exit;
+				}
+				*/
 
 				if ($checksignature) {
 					$statusofrecord = 'Valid';
@@ -363,15 +375,15 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 
 				$concatenateddata = $block_static->buildKeyForSignature();
 
-				// Version archive V1=sha256
-				$signatureexport = dol_hash($previoushash.$concatenateddata, 'sha256');		// SHA256
-				//$signatureexporthmac = 'TODO';
-
+				// Version line archive VE1=sha256
+				if ($formatexport == 'VE1') {
+					// Note: The signature on export line is not used. It has been replaced with a global signature on all file.
+					$signatureexport = dol_hash($previoushashexport.$concatenateddata, 'sha256');
+				}
 
 				// Define $totalhtamount, $totalvatamount, $totalamount for $block->action event code
 				$total_ht = $total_vat = $total_ttc = 0;
 				sumAmountsForUnalterableEvent($block_static, $refinvoicefound, $totalhtamount, $totalvatamount, $totalamount, $total_ht, $total_vat, $total_ttc);
-
 
 				fwrite($fh, ";"
 					.csvClean($block_static->id).';'
@@ -390,10 +402,12 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 					.csvClean($block_static->object_format).';'
 					.csvClean($block_static->signature).';'
 					.csvClean($statusofrecord).';'
-					.csvClean($signatureexport).';'."\n");
+					//.csvClean($signatureexport).';'
+					."\n");
 
 				// Set new previous hash for next fetch
 				$previoushash = $obj->signature;
+				$previoushashexport = $signatureexport;
 
 				$i++;
 			}
@@ -751,92 +765,295 @@ print "</div>\n";
 
 if ($action == 'check' || $action == 'checkconfirmed') {
 	print '<br>';
-	print '<div class="formconsumeproduce paddingleft paddingright">';
+	print '<div class="formconsumeproduce">';
 
 	print '<b>'.$langs->trans("File").'</b> : '.GETPOST('urlfile').'<br>';
 
 	$fullpath = $upload_dir.'/'.GETPOST('urlfile');
+
 	$handle = fopen($fullpath, "r");
 	$line = fgets($handle);
 	fclose($handle);
 
 	$reg = array();
 	$period = '';
+	$formatexport = '';
 	if (preg_match('/\speriod=([^\s]+)/', $line, $reg)) {
 		$period = $reg[1];	// Get period on first line
 	}
 	if (preg_match('/\sregnumber=([^\s]+)/', $line, $reg)) {
 		$regnumber = str_replace(array('.', '…'), '', $reg[1]);	// Get period on first line
 	}
+	if (preg_match('/\sformatexport=([^\s]+)/', $line, $reg)) {
+		$formatexport = $reg[1];	// Get export format (VE1, VE2...)
+	}
 	print '<b>'.$langs->trans("Period").'</b> : '.$period.'<br>';
+
+	print '<br>';
+
 
 	$registrationnumber = getHashUniqueIdOfRegistration();
 	$secretkey = $registrationnumber;
 
+	// Prepare to create a temporary file
+	$fullpathtmp = $upload_dir.'/tmp/'.GETPOST('urlfile').'.tmp';
+
+	dol_mkdir($upload_dir.'/tmp');
+	$result = dol_copy($fullpath, $fullpathtmp);
+
+	// Generate tmp file content without the last line
+	// TODO Move this into removeLastLine() function into files.lib.php
+	$fp = fopen($fullpathtmp, "r");
+	fseek($fp, -1, SEEK_END);
+	$pos = -1;
+	$char = fgetc($fp);
+	while ($char === "\n" || $char === "\r") {	// Go to last real char of last line
+		fseek($fp, $pos--, SEEK_END);
+		$char = fgetc($fp);
+	}
+	while ($char !== "\n" && $char !== false) {
+		fseek($fp, $pos--, SEEK_END);
+		$char = fgetc($fp);
+	}
+	/*
+	while ($char === "\n" || $char === "\r") {	// Go to last real char of last-1 line
+		fseek($fp, $pos--, SEEK_END);
+		$char = fgetc($fp);
+	}
+	*/
+	$truncatePos = ftell($fp);
+	fclose($fp);
+	// Truncate the tmp file to remove the last line
+	$fp = fopen($fullpathtmp, "c+");
+	ftruncate($fp, $truncatePos);
+	fclose($fp);
+
+
 	print $langs->trans("FileHasBeenEncodedWithASecretKeyStartingWith").' : '.$regnumber.'...<br>';
 	if (preg_match('/^'.$regnumber.'/', $secretkey)) {
-		print 'As this matches the 10 first characters of the full registration number of this instance, we will use this full registration number to control the archive file...';
+		print 'As this matches the 10 first characters of the full registration number of this instance, we will use the full registration number to control the archive file...';
 	} else {
 		print 'This archive file was not generated by this instance. The control of authenticity is possible only if you know the full registration number.';
 		print '<input type="text" name="inputregistrationnumber" placeholder="'.$langs->trans("FullRegistrationNumber").'">';
 	}
-	print '<br>';
-	print '<a class="button small nomarginleft" href="'.$_SERVER["PHP_SELF"].'?action=checkconfirmed&urlfile='.urlencode(GETPOST('urlfile')).'">'.$langs->trans("ControlFile").'</a>';
+	print '<br><br>';
+	print '<center><a class="button small nomarginleft" href="'.$_SERVER["PHP_SELF"].'?action=checkconfirmed&urlfile='.urlencode(GETPOST('urlfile')).'">'.$langs->trans("ControlFile").'</a></center>';
 
 	//<input type="text" name="inputregistrationnumber" placeholder="'.$langs->trans("RegistrationNumber").'">';
 
+	print '</div>';
+
 	if ($action == 'checkconfirmed') {
-		// TODO
-
-		print '<br><br>';
-		print '<b>File integrity</b>: '.img_picto('', 'tick').'<br>';
-		print '<b>File authenticity</b>: '.img_picto('', 'tick').'<br>';
-		print '<b>Detection of database restoration or not allowed line deletion in period</b>: This feature is available only from www.dolibarr.org/onlinecheckarchive.php<br>';
-
 		$totalamount = array(
 			'BILL_VALIDATE' => 0,
 			'PAYMENT_CUSTOMER_CREATE' => 0
 		);
+		$reg = array();
+		$refinvoicefound = array();
+		$recalculatedhashsign = '';
+		$recalculatedhashauth = '';
+		$hashsign = '';
+		$hashauth = '';
+		$algosign = '';
+		$algoauth = '';
+		$previoushash = '';
+		$previoushashexport = '';
 
-		foreach ($totalamount as $key => $totalamountperref) {
-			if ($key == 'BILL_VALIDATE' || $key == 'PAYMENT_CUSTOMER_CREATE') {
-				$totalhttoshow = 0;
-				foreach ($totalhtamount[$key] as $value) {	// Loop on each module
-					$totalhttoshow += $value;
+		$handle = fopen($fullpath, "r");
+		if ($handle) {
+			$numline = 0;
+			$nbLinesModifiedInExportButKo = 0;
+			$nbLinesModifiedBeforeExport = 0;
+
+			$block_static = new BlockedLog($db);
+
+			while ($line = fgetcsv($handle, 100000, ';', '"', '')) {
+				$numline++;
+				$lineanalyzed = 0;
+
+				$linetech = $lineactioncode = '';
+				$lineamountht = $lineamountttc = 0;
+				$lineref = '';
+
+				if ($numline < 2) {
+					// First line, we continue
+					continue;
 				}
-				$totalvattoshow = 0;
-				foreach ($totalvatamount[$key] as $value) {
-					$totalvattoshow += $value;
+
+				if ($formatexport == 'VE1' && !empty($line[1])) {
+					$lineanalyzed = 1;
+					$linetech = $line[0];
+
+					$block_static->id = $line[1];
+					$block_static->date_creation = $line[2];
+					$block_static->action = $lineactioncode = $line[3];
+					$block_static->module_source = $line[4];
+					$block_static->amounts_taxexcl = $lineamountht = $line[5];
+					$block_static->amounts = $lineamountttc = $line[6];
+					$block_static->ref_object = $lineref = $line[7];
+					$block_static->date_object = $line[8];
+					$block_static->user_fullname = $line[9];
+					$block_static->linktoref = $line[10];
+					$block_static->linktype = $line[11];
+					$block_static->object_data = json_decode($line[12]);
+					$block_static->object_version = $line[13];
+					$block_static->object_format = $line[14];
+					$block_static->signature = $line[15];
+
+					// Status from file: 'Valid' or 'KO'
+					$statusline = $line[16];
+
+					// Status revalidated from calculation using the HMAC secret key (possible only when we are on the same instance than
+					// the one hosting the initial database of the archive)
+					$tmp = $block_static->checkSignature($previoushash, 2);
+
+					/* To see detail to get signature
+					if ($block_static->id == 397) {
+						$concatenateddata = $block_static->buildKeyForSignature($block_static->object_format);
+						if (empty($previoushash)) {
+							$tmparray = $block_static->getPreviousHash(0, $block_static->id);
+							$previoushash = $tmparray['previoushash'];
+						}
+						var_dump($block_static->id, $previoushash, $concatenateddata);
+					}
+					*/
+
+					$signature = $tmp['calculatedsignature'];
+					$previoushash = $block_static->signature;
+
+					//print 'Line '.$numline.': Recalculate from file: '.$signature.', in file '.$block_static->signature."<br>\n";
+					if ($statusline == 'Valid') {
+						// The signature calculated must match the recorded signature
+						if ($signature != $block_static->signature) {
+							$nbLinesModifiedInExportButKo++;
+							//print 'Error: Line '.$numline.' reports that signature is ok but it seems to not match the one recalculated.';
+						}
+					}
+					if ($statusline == 'KO') {
+						$nbLinesModifiedBeforeExport++;
+						//print 'The line '.$numline.' was modified into the Unalterable Log before being exported.';
+					}
+
+					// With format VE1, we can also use a signature export.
+					// Note: this fieldis not more used, it has been replacedwith a global signature on all the file
+					$signatureexport = dol_hash($previoushashexport.$concatenateddata, 'sha256');
+					$previoushashexport = $signatureexport;
 				}
-				$totaltoshow = 0;
-				foreach ($totalamountperref as $value) {
-					$totaltoshow += $value;
+
+				if ($lineanalyzed && ($lineactioncode == 'BILL_VALIDATE' || $lineactioncode == 'PAYMENT_CUSTOMER_CREATE')) {
+					// For action = BILL_VALIDATE, we keep only first invoice found, but this should not happen because edition of invoice is never possible on
+					// certified version and very difficult on other version.
+					if ($lineactioncode != 'BILL_VALIDATE' || empty($refinvoicefound[$lineref])) {
+						$totalhtamount[$lineactioncode] += $lineamountht;
+						$totalvatamount[$lineactioncode] += ($lineamountttc - $lineamountht);
+						$totalamount[$lineactioncode] += $lineamountttc;
+					}
+					if ($lineactioncode == 'BILL_VALIDATE') {
+						$refinvoicefound[$lineref] = 1;
+					}
 				}
 
-				print '<b>'.dolPrintHTML($langs->trans("TotalForAction").' '.$langs->trans('log'.$key)).'</b>: ';
+				if (preg_match('/END - ([a-z0-9_]+)=([a-z0-9]+) - ([a-z0-9_]+)=([a-z0-9]+)$/', $line[0], $reg)) {
+					$lineanalyzed = 1;
+					$algosign=$reg[1];
+					$hashsign=$reg[2];
+					$algoauth=$reg[3];
+					$hashauth=$reg[4];
 
-				if ($key == 'PAYMENT_CUSTOMER_CREATE') {
-					print price($totaltoshow);
-				} else {
-					print $langs->trans("HT").': ';
-					print price($totalhttoshow);
-
-					print ' - ';
-
-					print $langs->trans("VAT").': ';
-					print price($totalvattoshow);
-
-					print ' - ';
-
-					print $langs->trans("TTC").': ';
-					print price($totaltoshow);
+					if ($algosign == 'sha256') {
+						$algo = 'sha256';
+						$recalculatedhashsign = hash_file($algo, $fullpathtmp);
+					}
+					if ($algoauth == 'hmac_sha256') {
+						$algo = 'sha256';
+						$recalculatedhashauth = hash_hmac_file($algo, $fullpathtmp, $secretkey);
+					}
 				}
-				print '<br>';
+
+				if (!$lineanalyzed) {
+					print 'Line '.$numline.' has format '.$formatexport.' that is not supported';
+				}
 			}
+			fclose($handle);
+		} else {
+			print 'Failed to open file '.GETPOST('urlfile');
+		}
+
+		print '<br><br>';
+
+		if ($recalculatedhashsign && $recalculatedhashsign == $hashsign) {
+			print img_picto('', 'tick', 'class="valignmiddle pictofixedwidth"');
+			print '<b>'.$langs->trans("FileIntegrity").'</b> ';
+			print ' '.$form->textwithpicto('', $algosign.' = '.$recalculatedhashsign);
+		} else {
+			print img_picto('', 'cross', 'class="error valignmiddle pictofixedwidth"');
+			print '<b>'.$langs->trans("FileIntegrity").'</b> ';
+			print ' '.$form->textwithpicto('', $langs->trans("FileHasBeenCorrupted").'<br>Recalculated '.$recalculatedhashsign.' != Found in file '.$hashsign);
+		}
+		print '<br><br>';
+
+		if ($recalculatedhashauth && $recalculatedhashauth == $hashauth) {
+			print img_picto('', 'tick', 'class="valignmiddle pictofixedwidth"');
+			print '<b>'.$langs->trans("FileAuthenticity").'</b> ';
+			print ' - <span class="opacitymedium">'.$langs->trans("FileWasGeneratedByThisInstance").'</span>';
+			print ' '.$form->textwithpicto('', $algoauth.' = '.$recalculatedhashauth);
+		} elseif ($recalculatedhashsign == $hashsign) {
+			print img_picto('', 'cross', 'class="error valignmiddle pictofixedwidth"');
+			print '<b>'.$langs->trans("FileAuthenticity").'</b> ';
+			print ' '.$form->textwithpicto('', $langs->trans("FileNotFromInstance").'<br><br>Recalculated '.$recalculatedhashauth.' != Found in file '.$hashauth);
+		} else {
+			print img_picto('', 'cross', 'class="error valignmiddle pictofixedwidth"');
+			print '<b>'.$langs->trans("FileAuthenticity").'</b> ';
+			print ' '.$form->textwithpicto('', $langs->trans("FileHasBeenCorruptedOrNotFromInstance").'<br><br>Recalculated '.$recalculatedhashauth.' != Found in file '.$hashauth);
+		}
+		print '<br><br>';
+
+		if ($nbLinesModifiedInExportButKo) {
+			print img_picto('', 'cross', 'class="error valignmiddle pictofixedwidth"');
+			print '<b>'.$langs->trans("nbLinesModifiedInExportButKo").'</b>: ';
+			//print ' '.$form->textwithpicto('', $langs->trans("FileHasBeenCorrupted").'<br>Recalculated '.$recalculatedhashsign.' != Found in file '.$hashsign);
+			print '<br><br>';
+		}
+
+		if ($nbLinesModifiedBeforeExport) {
+			print img_picto('', 'warning', 'class="error valignmiddle pictofixedwidth"');
+			print '<b>'.$langs->trans("nbLinesModifiedBeforeExport").'</b>';
+			//print ' '.$form->textwithpicto('', $langs->trans("FileHasBeenCorrupted").'<br>Recalculated '.$recalculatedhashsign.' != Found in file '.$hashsign);
+			print '<br><br>';
+		}
+
+		print '<b>Detection of database restoration or not allowed line deletion in period</b>: ';
+		print 'This feature is for the moment available only from https://www.dolibarr.org/onlinecheckarchive.php<br>';
+		print '<br>';
+
+		$arraykeys = array('BILL_VALIDATE', 'PAYMENT_CUSTOMER_CREATE');
+		foreach ($arraykeys as $key) {
+			$totalhttoshow = $totalhtamount[$key];
+			$totalvattoshow = $totalvatamount[$key];
+			$totaltoshow = $totalamount[$key];
+
+			print '<b>'.dolPrintHTML($langs->trans("TotalForAction").' '.$langs->trans('log'.$key)).'</b>: ';
+
+			if ($key == 'PAYMENT_CUSTOMER_CREATE') {
+				print '<span class="amount">'.price($totaltoshow, 0, $langs, 1, -1, -1, getDolCurrency()).'</span>';
+			} else {
+				print $langs->trans("HT").': ';
+				print '<span class="amount">'.price($totalhttoshow, 0, $langs, 1, -1, -1, getDolCurrency()).'</span>';
+
+				print ' - ';
+
+				print $langs->trans("VAT").': ';
+				print '<span class="amount">'.price($totalvattoshow, 0, $langs, 1, -1, -1, getDolCurrency()).'</span>';
+
+				print ' - ';
+
+				print $langs->trans("TTC").': ';
+				print '<span class="amount">'.price($totaltoshow, 0, $langs, 1, -1, -1, getDolCurrency()).'</span>';
+			}
+			print '<br><br>';
 		}
 	}
 
-	print '</div>';
 
 	print '<br><br>';
 	print '<center><a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("BackToList").'</a></center>';
