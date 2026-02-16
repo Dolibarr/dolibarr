@@ -1500,9 +1500,9 @@ class Societe extends CommonObject
 		$this->order_min_amount = price2num($this->order_min_amount);
 		$this->supplier_order_min_amount = price2num($this->supplier_order_min_amount);
 
-		$this->tva_assuj = (is_numeric($this->tva_assuj)) ? (int) trim((string) $this->tva_assuj) : 0;
-		$this->tva_intra = dol_sanitizeFileName($this->tva_intra ?? '', '');
-		$this->vat_reverse_charge = empty($this->vat_reverse_charge) ? 0 : 1;
+		$this->tva_assuj			= (is_numeric($this->tva_assuj)) ? (int) trim((string) $this->tva_assuj) : 0;
+		$this->tva_intra			= trim($this->tva_intra);
+		$this->vat_reverse_charge	= empty($this->vat_reverse_charge) ? 0 : 1;
 		if (empty($this->status)) {
 			$this->status = 0;
 		}
