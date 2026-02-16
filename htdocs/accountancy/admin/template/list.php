@@ -84,7 +84,7 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 
-// Initialize array of search criterias
+// Initialize array of search criteria
 $search_all = trim(GETPOST('search_all', 'alphanohtml'));
 $search = array();
 foreach ($object->fields as $key => $val) {
