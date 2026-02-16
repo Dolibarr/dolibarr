@@ -1372,7 +1372,7 @@ class BlockedLog
 	 *	Check if calculated signature still correct compared to the value in the chain
 	 *
 	 *	@param	string			$previoushash		If previous signature hash is known, we can provide it to avoid to make a search of it in database.
-	 *  @param	int<0,2>		$returnarray		1=Return array of details, 2=Return array of details including keyforsignature, 0=Boolean
+	 *  @param	int<0,2>		$returnarray		1=Return array of details, 2=Return array of details including keyforsignature, 0=Return a boolean
 	 *	@return	boolean|array{checkresult:bool,calculatedsignature:string,previoushash:string,keyforsignature?:string}	Array or true if OK, false if KO
 	 */
 	public function checkSignature($previoushash = '', $returnarray = 0)
@@ -1451,19 +1451,23 @@ class BlockedLog
 	/**
 	 * Return the string for signature (clear data).
 	 *
-	 * @return string		Key for signature
+	 * @param	string	$format		Force format to use
+	 * @return 	string				Key for signature
 	 */
-	public function buildKeyForSignature()
+	public function buildKeyForSignature($format = '')
 	{
 		//print_r($this->object_data);
-		if ($this->object_format == '') {
+		if (empty($format)) {
+			$format = $this->object_format;
+		}
+		if ($format == '') {
 			return $this->buildFirstPartOfKeyForSignature().'|'.print_r($this->object_data, true);
-		} elseif ($this->object_format == 'V1') {	// Note: $this->amounts can be '0', '1.1', '1.123';  // All 0 at end should have been removed already
+		} elseif ($format == 'V1') {	// Note: $this->amounts can be '0', '1.1', '1.123';  // All 0 at end should have been removed already
 			return $this->buildFirstPartOfKeyForSignature().'|'.json_encode($this->object_data, JSON_FORCE_OBJECT);
-		} elseif ($this->object_format == 'V2') {
+		} elseif ($format == 'V2') {
 			return $this->buildFirstPartOfKeyForSignature().'|'.json_encode($this->object_data, JSON_FORCE_OBJECT);
 		} else {
-			throw new Exception('Error bad value "'.$this->object_format.'" for object_format');
+			throw new Exception('Error bad value "'.$format.'" for object_format');
 		}
 	}
 
