@@ -1173,13 +1173,15 @@ class Thirdparties extends DolibarrApi
 	/**
 	 * Create a fixed amount discount for a thirdparty
 	 *
+	 * @since 24.0.0	Initial implementation
+	 *
 	 * @param int       $id                 ID of thirdparty
 	 * @param array     $request_data       Request data
-	 *                                      - amount       	float    Amount including tax (required if price_base_type is TTC)
-	 *                                      - description      string   Description of the discount (required)
-	 *                                      - tva_tx           float    VAT rate in percentage (required)
-	 *                                      - discount_type    int      Type of discount: 0 = customer discount, 1 = supplier discount (default: 0)
-	 *                                      - price_base_type  string   Price base type: 'HT' or 'TTC' (default: 'HT')
+	 *                                      - amount       		float    Amount including tax (required if price_base_type is TTC)
+	 *                                      - description      	string   Description of the discount (required)
+	 *                                      - tva_tx           	float    VAT rate in percentage
+	 *                                      - discount_type    	int      Type of discount: 0 = customer discount, 1 = supplier discount (default: 0)
+	 *                                      - price_base_type  	string   Price base type: 'HT' or 'TTC' (default: 'HT')
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
 	 *
