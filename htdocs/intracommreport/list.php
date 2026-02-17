@@ -26,10 +26,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/intracommreport/class/intracommreport.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -37,6 +33,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/intracommreport/class/intracommreport.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('intracommreport'));
@@ -50,6 +49,7 @@ $cancel     = GETPOST('cancel', 'alpha'); // We click on a Cancel button
 $toselect   = GETPOST('toselect', 'array:int'); // Array of ids of elements selected into a list
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'aZ');
+$groupby = GETPOST('groupby', 'aZ09');	// Example: $groupby = 'p.fk_opp_status' or $groupby = 'p.fk_statut'
 
 $search_all = trim(GETPOST('search_all', 'alphanohtml'));
 $search_ref = GETPOST("search_ref", 'alpha');

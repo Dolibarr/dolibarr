@@ -26,10 +26,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
-require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
-require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php";
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -37,6 +33,9 @@ require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php";
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
+require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php";
 
 // Load translation files required by the page
 $langs->load("opensurvey");
@@ -53,6 +52,7 @@ $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always ''
 $mode = GETPOST('mode', 'aZ');
 
 $search_all = trim(GETPOST('search_all', 'alphanohtml'));
+$search_expired = GETPOST('search_expired');
 
 $id = GETPOST('id', 'alpha');
 $search_ref = GETPOST('search_ref', 'alpha');
@@ -171,6 +171,9 @@ $title = $langs->trans('OpenSurveyArea');
 // --------------------------------------------------------------------
 $sql = "SELECT p.id_sondage as rowid, p.fk_user_creat, p.format, p.date_fin, p.status, p.titre as title, p.nom_admin, p.tms,";
 $sql .= " u.login, u.firstname, u.lastname";
+
+$sqlfields = $sql;
+
 $sql .= " FROM ".MAIN_DB_PREFIX."opensurvey_sondage as p";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user u ON u.rowid = p.fk_user_creat";
 $sql .= " WHERE p.entity IN (".getEntity('survey').")";
@@ -196,32 +199,42 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
-$sql .= $db->order($sortfield, $sortorder);
-
 // Count total nb of records
 $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
-	$resql = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($resql);
-	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
+	/* The fast and low memory method to get and count full list converts the sql into a sql count */
+	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+
+	$resql = $db->query($sqlforcount);
+	if ($resql) {
+		$objforcount = $db->fetch_object($resql);
+		$nbtotalofrecords = $objforcount->nbtotalofrecords;
+	} else {
+		dol_print_error($db);
+	}
+
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
+	$db->free($resql);
 }
-// if total of record found is smaller than limit, no need to do paging and to restart another select with limits set.
-if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords) {
-	$num = $nbtotalofrecords;
-} else {
+
+// Complete request and execute it with limit
+$sql .= $db->order($sortfield, $sortorder);
+if ($limit) {
 	$sql .= $db->plimit($limit + 1, $offset);
-
-	$resql = $db->query($sql);
-	if (!$resql) {
-		dol_print_error($db);
-		exit;
-	}
-
-	$num = $db->num_rows($resql);
 }
+
+$resql = $db->query($sql);
+if (!$resql) {
+	dol_print_error($db);
+	exit;
+}
+
+$num = $db->num_rows($resql);
+
 
 // Direct jump if only one record found
 if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {

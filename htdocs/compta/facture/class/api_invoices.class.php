@@ -1708,7 +1708,6 @@ class Invoices extends DolibarrApi
 		$totalpaid = $this->invoice->getSommePaiement();
 		$totalcreditnotes = $this->invoice->getSumCreditNotesUsed();
 		$totaldeposits = $this->invoice->getSumDepositsUsed();
-		$resteapayer = price2num($this->invoice->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
 
 		$this->db->begin();
 
@@ -1717,13 +1716,13 @@ class Invoices extends DolibarrApi
 
 		// Clean parameters amount if payment is for a credit note
 		if ($this->invoice->type == Facture::TYPE_CREDIT_NOTE) {
-			$resteapayer = price2num($resteapayer, 'MT');
+			$resteapayer = price2num($this->invoice->total_ttc + $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
 			$amounts[$id] = (float) price2num(-1 * abs((float) $resteapayer), 'MT');
 			// Multicurrency
 			$newvalue = price2num($this->invoice->multicurrency_total_ttc, 'MT');
 			$multicurrency_amounts[$id] = (float) price2num(-1 * (float) $newvalue, 'MT');
 		} else {
-			$resteapayer = price2num($resteapayer, 'MT');
+			$resteapayer = price2num($this->invoice->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
 			$amounts[$id] = (float) $resteapayer;
 			// Multicurrency
 			$newvalue = price2num($this->invoice->multicurrency_total_ttc, 'MT');

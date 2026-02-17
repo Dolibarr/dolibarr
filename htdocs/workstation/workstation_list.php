@@ -27,12 +27,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
-require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -40,6 +34,11 @@ require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
+require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('mrp', 'other'));
@@ -136,7 +135,7 @@ foreach ($object->fields as $key => $val) {
 
 $arrayfields['wug.fk_usergroup'] = array(
 	'label' => $langs->trans('UserGroups'),
-	'checked' => (($visible < 0) ? '0' : '1'),
+	'checked' => '1',
 	'enabled' => (string) (int) (abs($visible) != 3 && (bool) dol_eval((string) $val['enabled'], 1)),
 	'position' => 1000,
 	'help' => empty($val['help']) ? '' : $val['help'],

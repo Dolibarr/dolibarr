@@ -120,6 +120,8 @@ if ($withtab) {
 
 print '<span class="opacitymedium">'.$langs->trans("BlockedLogDesc")."</span><br>\n";
 
+$versionbadge = '<span class="badge-text badge-secondary">'.DOL_VERSION.'</span>';
+
 
 // Special additional message for FR only
 $infotoshow = '';
@@ -128,12 +130,12 @@ if ($mysoc->country_code == 'FR') {
 	if ($islne) {
 		if (preg_match('/\-/', DOL_VERSION)) {
 			// This is an alpha or beta version
-			$infotoshow = $langs->trans("LNECandidateVersionForCertificationFR");
+			$infotoshow = $langs->trans("LNECandidateVersionForCertificationFR", $versionbadge);
 		} else {
-			$infotoshow = $langs->trans("LNECertifiedVersionFR");
+			$infotoshow = $langs->trans("LNECertifiedVersionFR", $versionbadge);
 		}
 	} else {
-		$infotoshow = $langs->trans("NotCertifiedVersionFR");
+		$infotoshow = $langs->trans("NotCertifiedVersionFR", $versionbadge);
 	}
 }
 
