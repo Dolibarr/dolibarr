@@ -195,7 +195,7 @@ if ($action == 'addline' && $permissiontoadd) {
 		$line->debit = $debit;
 		$line->credit = $credit;
 
-		$result = $line->create($user, false);
+		$result = $line->create($user, 0);
 
 		if ($result < 0) {
 			$error++;
@@ -255,7 +255,7 @@ if ($action == 'updateline' && $permissiontoadd) {
 			$line->debit = $debit;
 			$line->credit = $credit;
 
-			$result = $line->update($user, false);
+			$result = $line->update($user, 0);
 
 			if ($result < 0) {
 				$error++;
