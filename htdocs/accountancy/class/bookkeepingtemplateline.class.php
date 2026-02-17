@@ -126,12 +126,12 @@ class BookkeepingTemplateLine extends CommonObject
 	public $position;
 
 	/**
-	 * @var int|string|null Creation date (timestamp or datetime string)
+	 * @var integer|''|null		Creation date
 	 */
 	public $date_creation;
 
 	/**
-	 * @var int|string|null Last modification timestamp
+	 * @var int
 	 */
 	public $tms;
 
@@ -183,11 +183,11 @@ class BookkeepingTemplateLine extends CommonObject
 	/**
 	 * Create object into database
 	 *
-	 * @param  User $user      User that creates
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             Return integer <0 if KO, Id of created object if OK
+	 * @param   User    $user       User that creates
+	 * @param   int     $notrigger  0=launch triggers after, 1=disable triggers
+	 * @return  int                 Return integer <0 if KO, Id of created object if OK
 	 */
-	public function create(User $user, $notrigger = false)
+	public function create(User $user, $notrigger = 0)
 	{
 		$resultcreate = $this->createCommon($user, $notrigger);
 		return $resultcreate;
@@ -209,13 +209,13 @@ class BookkeepingTemplateLine extends CommonObject
 	/**
 	 * Load list of objects in memory from the database.
 	 *
-	 * @param  string $sortorder  Sort Order
-	 * @param  string $sortfield  Sort field
-	 * @param  int    $limit      limit
-	 * @param  int    $offset     Offset
-	 * @param  array  $filter     Filter array. Example array('mystringfield'=>'value', 'myintfield'=>4, 'customsql'=>...)
-	 * @param  string $filtermode Filter mode (AND or OR)
-	 * @return array|int          int <0 if KO, array of pages if OK
+	 * @param  string                      $sortorder  Sort Order
+	 * @param  string                      $sortfield  Sort field
+	 * @param  int                         $limit      limit
+	 * @param  int                         $offset     Offset
+	 * @param  array<string,mixed>         $filter     Filter array. Example array('mystringfield'=>'value', 'myintfield'=>4, 'customsql'=>...)
+	 * @param  string                      $filtermode Filter mode (AND or OR)
+	 * @return BookkeepingTemplateLine[]|int           Array of BookkeepingTemplateLine objects if OK, <0 if KO
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
 	{
@@ -264,10 +264,12 @@ class BookkeepingTemplateLine extends CommonObject
 
 				// when the $key doesn't fall into the previously handled categories, we do as if the column were a varchar/text
 				if (is_array($value) && count($value)) {
-					$value = implode(',', array_map(function ($v) {
-						return "'" . $this->db->sanitize($this->db->escape($v)) . "'";
-					}, $value));
-					$sqlwhere[] = $key . ' IN (' . $this->db->sanitize($value, true) . ')';
+					$escapedValues = array();
+					foreach ($value as $v) {
+						$escapedValues[] = $this->db->escape($v);
+					}
+					$value = implode(',', $escapedValues);
+					$sqlwhere[] = $key . ' IN (' . $this->db->sanitize($value, 1) . ')';
 				} elseif (is_scalar($value)) {
 					if (strpos($value, '%') === false) {
 						$sqlwhere[] = $key . " = '" . $this->db->sanitize($this->db->escape($value)) . "'";
@@ -307,7 +309,7 @@ class BookkeepingTemplateLine extends CommonObject
 			return $records;
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -316,11 +318,11 @@ class BookkeepingTemplateLine extends CommonObject
 	/**
 	 * Update object into database
 	 *
-	 * @param  User $user      User that modifies
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             Return integer <0 if KO, >0 if OK
+	 * @param   User    $user       User that modifies
+	 * @param   int     $notrigger  0=launch triggers after, 1=disable triggers
+	 * @return  int                 Return integer <0 if KO, >0 if OK
 	 */
-	public function update(User $user, $notrigger = false)
+	public function update(User $user, $notrigger = 0)
 	{
 		return $this->updateCommon($user, $notrigger);
 	}
@@ -328,11 +330,11 @@ class BookkeepingTemplateLine extends CommonObject
 	/**
 	 * Delete object in database
 	 *
-	 * @param  User $user      User that deletes
-	 * @param  bool $notrigger false=launch triggers, true=disable triggers
-	 * @return int             Return integer <0 if KO, >0 if OK
+	 * @param   User    $user       User that deletes
+	 * @param   int     $notrigger  0=launch triggers after, 1=disable triggers
+     * @return  int                 Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user, $notrigger = false)
+	public function delete(User $user, $notrigger = 0)
 	{
 		return $this->deleteCommon($user, $notrigger);
 	}
