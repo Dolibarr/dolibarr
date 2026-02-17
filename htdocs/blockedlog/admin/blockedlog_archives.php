@@ -846,7 +846,7 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 	print '</div>';
 
 	if ($action == 'checkconfirmed') {
-		$totalhtamountforaction = $totalvatamountforaction = $totalvatamountforaction = array(
+		$totalhtamountforaction = $totalvatamountforaction = $totalamountforaction = array(
 			'BILL_VALIDATE' => 0,
 			'PAYMENT_CUSTOMER_CREATE' => 0
 		);
