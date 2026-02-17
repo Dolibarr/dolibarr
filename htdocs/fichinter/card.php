@@ -444,7 +444,7 @@ if (empty($reshook)) {
 										}
 
 										if ($prod->duration_value && getDolGlobalString('FICHINTER_USE_SERVICE_DURATION')) {
-											$u = trim($prod->duration_unit); 
+											$u = trim($prod->duration_unit);
 
 											$sql = "SELECT scale FROM ".MAIN_DB_PREFIX."c_units WHERE short_label = '".$db->escape($u)."' AND active = 1";
 											$resql = $db->query($sql);
