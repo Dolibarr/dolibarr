@@ -615,8 +615,9 @@ $conf->file->instance_unique_id = (empty($dolibarr_main_instance_unique_id) ? (e
 
 $hash_unique_id = getHashUniqueIdOfRegistration('sha256');
 
-$out  = '<input type="checkbox" name="dolibarrpingno" id="dolibarrpingno"'.((getDolGlobalString('MAIN_FIRST_PING_OK_ID') == 'disabled') ? '' : ' value="checked" checked="true"').'> ';
-$out .= '<label for="dolibarrpingno">'.$langs->trans("MakeAnonymousPing").'</label>';
+$out  = '<br>';
+$out .= '<input type="checkbox" name="dolibarrpingno" id="dolibarrpingno"'.((getDolGlobalString('MAIN_FIRST_PING_OK_ID') == 'disabled') ? '' : ' value="checked" checked="true"').'> ';
+$out .= '<label for="dolibarrpingno" class="opacitymedium">'.$langs->trans("MakeAnonymousPing").'</label>';
 
 $out .= '<!-- Add js script to manage the uncheck of option to not send the ping -->';
 $out .= '<script type="text/javascript">';

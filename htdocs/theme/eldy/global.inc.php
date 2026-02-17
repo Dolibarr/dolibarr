@@ -883,7 +883,7 @@ input#onlinepaymenturl, input#directdownloadlink {
 	background: #efefef;
 	/* background: #f3f3f3; */
 
-	padding: 20px 0px 20px 0px;
+	padding: 20px 20px 20px 20px;
 	border-radius: 8px;
 }
 

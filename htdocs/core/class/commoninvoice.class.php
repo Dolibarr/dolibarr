@@ -732,6 +732,7 @@ abstract class CommonInvoice extends CommonObject
 	 *  If already sent by email -> no (-5)
 	 *  If already printed -> no (-6)
 	 *  If running a LNE version and customer invoice was validated -> no (-7)
+	 *  Other value (may be returned by a hook -10, -11, ...)
 	 *  Otherwise -> yes (2)
 	 *
 	 *  @return    int         Return integer <=0 if no, >0 if yes
@@ -739,6 +740,7 @@ abstract class CommonInvoice extends CommonObject
 	public function is_erasable()
 	{
 		// phpcs:enable
+		global $hookmanager, $action;
 
 		// We check if invoice is a temporary number (PROVxxxx)
 		$tmppart = substr($this->ref, 1, 4);
@@ -767,6 +769,7 @@ abstract class CommonInvoice extends CommonObject
 
 				include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 				if (isALNERunningVersion()) {
+					$this->error = 'Action not allowed on the certified version';
 					return -7;
 				}
 			}
@@ -805,6 +808,18 @@ abstract class CommonInvoice extends CommonObject
 			// Test if there is at least one payment. If yes, we refuse to delete.
 			if ($this->getSommePaiement() > 0) {
 				return -4;
+			}
+
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('isEditable', $parameters, $this, $action);
+			if (!empty($hookmanager->resArray['result'])) {
+				$this->error = $hookmanager->resArray['error'];
+				if (!empty($hookmanager->resArray['errors'])) {
+					$this->errors[] = array_merge($this->errors, $this->error, $hookmanager->resArray['errors']);
+				} else {
+					$this->errors[] = array_merge($this->errors, $this->error);
+				}
+				return $hookmanager->resArray('result');
 			}
 		}
 

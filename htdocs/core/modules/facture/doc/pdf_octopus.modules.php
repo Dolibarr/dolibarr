@@ -1997,7 +1997,7 @@ class pdf_octopus extends ModelePDFFactures
 		if (! empty($object->paye)) $resteapayer=0;
 		*/
 
-		if ($deja_regle > 0) {
+		if ($deja_regle > 0 || isALNERunningVersion()) {
 			// Already paid + Deposits
 			$index++;
 
