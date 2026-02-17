@@ -1501,6 +1501,9 @@ class Societe extends CommonObject
 		$this->vat_reverse_charge = empty($this->vat_reverse_charge) ? 0 : 1;
 		$this->euid = trim((string) $this->euid);
 
+		$this->tva_assuj			= (is_numeric($this->tva_assuj)) ? (int) trim((string) $this->tva_assuj) : 0;
+		$this->tva_intra			= trim((string) $this->tva_intra);
+		$this->vat_reverse_charge	= empty($this->vat_reverse_charge) ? 0 : 1;
 		if (empty($this->status)) {
 			$this->status = 0;
 		}

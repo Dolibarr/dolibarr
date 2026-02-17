@@ -47,6 +47,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'banks', 'bills', 'blockedlog', 'other'));
+global $withtab;
 
 // Get Parameters
 $action = GETPOST('action', 'aZ09');
@@ -142,8 +143,17 @@ $upload_dir = getMultidirOutput($block_static, 'blockedlog').'/archives';
 dol_mkdir($upload_dir);
 
 $fh = null;
+$totalhtamountforaction = [];
+$totalvatamountforaction = [];
+$totalamountforaction = [];
 
+// Variables used during export / analysis (init for static analysis safety)
+$concatenateddata = '';
+$nbLinesModifiedBeforeExport = 0;
+$nbLinesModifiedInExportButKo = 0;
 
+$totalhtamount = 0.0;
+$totalvatamount = 0.0;
 /*
  * Actions
  */
@@ -324,7 +334,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 				$block_static->module_source = $obj->module_source;
 				$block_static->pos_source = $obj->pos_source;
 
-				$block_static->amounts_taxexcl = is_null($obj->amounts_taxexcl) ? null : (float) $obj->amounts_taxexcl;	// Database store value with 8 digits, we cut ending 0 them with (flow)
+				$block_static->amounts_taxexcl = (float) $obj->amounts_taxexcl;	// Database store value with 8 digits, we cut ending 0 them with (flow)
 				$block_static->amounts = (float) $obj->amounts;															// Database store value with 8 digits, we cut ending 0 them with (flow)
 
 				$block_static->fk_object = $obj->fk_object;							// Not in signature
@@ -383,7 +393,11 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 					$statusofrecordnote = $langs->trans("PreviousFingerprint").': '.$previoushash.($statusofrecordnote ? ' - '.$statusofrecordnote : '');
 				}
 
-				//$concatenateddata = $block_static->buildKeyForSignature();
+				$concatenateddata = $block_static->buildKeyForSignature();
+
+				$previoushashexport = '';
+				// Note: The signature on export line is not used. It has been replaced with a global signature on all file.
+				$signatureexport = dol_hash($previoushashexport.$concatenateddata, 'sha256');
 
 				// Define $totalhtamount, $totalvatamount, $totalamount for $block->action event / $block->module_source
 				$total_ht = $total_vat = $total_ttc = 0;
@@ -531,7 +545,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 		// We do not use $totalamountalllines because it is only for the period, but we want lifetime amount since the first record to now.
 		$totalamountlifetime = array('BILL_VALIDATE' => 0, 'PAYMENT_CUSTOMER_CREATE' => 0, 'PAYMENT_CUSTOMER_DELETE' => 0);
 		$totalhtamountlifetime = array('BILL_VALIDATE' => 0, 'PAYMENT_CUSTOMER_CREATE' => 0, 'PAYMENT_CUSTOMER_DELETE' => 0);
-		$foundoldformat = 0;
+		$foundoldformat = $foundoldformat ?? false;
 		$firstrecorddate = 0;
 		global $foundoldformat, $firstrecorddate;
 		include DOL_DOCUMENT_ROOT.'/blockedlog/admin/lifetimeamount.inc.php';
@@ -814,9 +828,17 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 
 
 	if ($action == 'checkconfirmed') {
-		$totalhtamountforaction = $totalvatamountforaction = $totalamountforaction = array(
+		$totalamount = array(
 			'BILL_VALIDATE' => 0,
-			'PAYMENT_CUSTOMER' => 0		// PAYMENT_CUSTOMER_CREATE + PAYMENT_CUSTOMER_DELETE
+			'PAYMENT_CUSTOMER_CREATE' => 0
+		);
+		$totalhtamount = array(
+			'BILL_VALIDATE' => 0,
+			'PAYMENT_CUSTOMER_CREATE' => 0
+		);
+		$totalvatamount = array(
+			'BILL_VALIDATE' => 0,
+			'PAYMENT_CUSTOMER_CREATE' => 0
 		);
 		$reg = array();
 		$refinvoicefound = array();
@@ -830,12 +852,18 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 		$nbLinesModifiedInExportButKo = 0;
 		$nbLinesModifiedBeforeExport = 0;
 
-		$amounthtlifetime = array();
-		$amountvatlifetime = array();
-		$amountttclifetime = array();
-		$amounthtlifetime['BILL_VALIDATE'] = $amounthtlifetime['PAYMENT_CUSTOMER'] = null;
-		$amountvatlifetime['BILL_VALIDATE'] = $amountvatlifetime['PAYMENT_CUSTOMER'] = null;
-		$amountttclifetime['BILL_VALIDATE'] = $amountttclifetime['PAYMENT_CUSTOMER'] = null;
+		$amounthtlifetime = array(
+			'BILL_VALIDATE' => 0,
+			'PAYMENT_CUSTOMER' => 0
+		);
+		$amountvatlifetime = array(
+			'BILL_VALIDATE' => 0,
+			'PAYMENT_CUSTOMER' => 0
+		);
+		$amountttclifetime = array(
+			'BILL_VALIDATE' => 0,
+			'PAYMENT_CUSTOMER' => 0
+		);
 
 		$handle = fopen($fullpath, "r");
 		if ($handle) {
@@ -869,7 +897,7 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 					$block_static->action = $lineactioncode = (string) $line[3];
 					$block_static->module_source = (string) $line[4];
 					$block_static->pos_source = '';
-					$block_static->amounts_taxexcl = $lineamountht = ($line[5] === '' ? null : (float) $line[5]);
+					$block_static->amounts_taxexcl = $lineamountht = (float) $line[5];
 					$block_static->amounts = $lineamountttc = (float) $line[6];
 					$block_static->ref_object = $lineref = (string) $line[7];
 					$block_static->date_object = (int) $line[8];
@@ -966,43 +994,12 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 							$lineactioncode = 'PAYMENT_CUSTOMER';
 						}
 
-						$totalhtamountforaction[$lineactioncode] += $lineamountht;
-						$totalvatamountforaction[$lineactioncode] += ($lineamountttc - $lineamountht);
-						$totalamountforaction[$lineactioncode] += $lineamountttc;
+						$totalhtamountforaction[$lineactioncode] = ($totalhtamountforaction[$lineactioncode] ?? 0) + $lineamountht;
+						$totalvatamountforaction[$lineactioncode] = ($totalvatamountforaction[$lineactioncode] ?? 0) + ($lineamountttc - $lineamountht);
+						$totalamountforaction[$lineactioncode] = ($totalamountforaction[$lineactioncode] ?? 0) + $lineamountttc;
 					}
 					if ($lineactioncode == 'BILL_VALIDATE') {
 						$refinvoicefound[$lineref] = 1;
-					}
-				}
-
-				// Test if line is a summary line
-				if (preg_match('/^SUMMARY /', (string) $line[0])) {
-					// We are on a line for summary information
-					$lineanalyzed = 1;
-					/*
-					if (preg_match('/^SUMMARY TURNOVER BILLED/', (string) $line[0])) {
-						// Do nothing, we recalculate amount from previous lines
-					}
-					if (preg_match('/^SUMMARY TURNOVER PAID/', (string) $line[0])) {
-						// Do nothing, we recalculate amount from previous lines
-					}
-					*/
-					if (preg_match('/^SUMMARY LIFETIME BILLED/', (string) $line[0])) {
-						// We load data from line
-						$amountstring = (string) $line[0];
-						if (preg_match('/^SUMMARY LIFETIME BILLED[^\d]*\s:\s([\d\.]+)\s[^\d]+\s([\d\.]+)\s[^\d]+\s([\d\.]+)\s[^\d]+/', $amountstring, $reg)) {
-							$amounthtlifetime['BILL_VALIDATE'] = (float) $reg[1];
-							$amountvatlifetime['BILL_VALIDATE'] = (float) $reg[2];
-							$amountttclifetime['BILL_VALIDATE'] = (float) $reg[3];
-						}
-					}
-					if (preg_match('/^SUMMARY LIFETIME PAID/', (string) $line[0])) {
-						$amountstring = (string) $line[0];
-						if (preg_match('/^SUMMARY LIFETIME PAID[^\d]*\s:\s([\d\.]+)/', $amountstring, $reg)) {
-							$amounthtlifetime['PAYMENT_CUSTOMER'] = (float) $reg[1];
-							$amountvatlifetime['PAYMENT_CUSTOMER'] = 0.0;
-							$amountttclifetime['PAYMENT_CUSTOMER'] = (float) $reg[1];
-						}
 					}
 				}
 
@@ -1100,9 +1097,9 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 
 		$arraykeys = array('BILL_VALIDATE', 'PAYMENT_CUSTOMER');
 		foreach ($arraykeys as $key) {
-			$totalhttoshow = $totalhtamountforaction[$key];
-			$totalvattoshow = $totalvatamountforaction[$key];
-			$totaltoshow = $totalamountforaction[$key];
+			$totalhttoshow = (float) $totalhtamountforaction[$key];
+			$totalvattoshow = (float) $totalvatamountforaction[$key];
+			$totaltoshow = (float) $totalamountforaction[$key];
 
 			print '<b>'.dolPrintHTML($langs->trans("TotalForAction").' '.$langs->trans('log'.$key)).'</b>';
 			if ($key == 'BILL_VALIDATE') {
@@ -1134,12 +1131,9 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 		// Now print the value for lifetime amounts.
 		$arraykeys = array('BILL_VALIDATE', 'PAYMENT_CUSTOMER');
 		foreach ($arraykeys as $key) {
-			if (is_null($amounthtlifetime[$key])) {		// If not entry found, we discard
-				continue;
-			}
-			$totalhttoshow = $amounthtlifetime[$key];
-			$totalvattoshow = $amountvatlifetime[$key];
-			$totaltoshow = $amountttclifetime[$key];
+			$totalhttoshow = (float) ($amounthtlifetime[$key]);
+			$totalvattoshow = (float) ($amountvatlifetime[$key]);
+			$totaltoshow = (float) ($amountttclifetime[$key]);
 
 			print '<b>'.dolPrintHTML($langs->trans("LifetimeAmountShort").' '.$langs->trans('log'.$key)).'</b>';
 			if ($key == 'BILL_VALIDATE') {

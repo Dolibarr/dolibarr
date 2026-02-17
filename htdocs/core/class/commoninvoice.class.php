@@ -957,16 +957,13 @@ abstract class CommonInvoice extends CommonObject
 			}
 
 			$parameters = array();
-			$reshook = $hookmanager->executeHooks('isErasable', $parameters, $this, $action);
-			if (!empty($hookmanager->resArray['result'])) {
-				$this->error = $hookmanager->resArray['error'];
-				if (!empty($hookmanager->resArray['errors'])) {
-					$this->errors = array_merge($this->errors, $hookmanager->resArray['errors']);
+			$reshook = $hookmanager->executeHooks('isEditable', $parameters, $this, $action);
+			if ($reshook < 0) {
+				$this->error = $hookmanager->error;
+				if (!empty($hookmanager->errors)) {
+					$this->errors = array_merge($this->errors, $hookmanager->errors);
 				}
-				if (!in_array($this->error, $this->errors)) {
-					$this->errors[] = $this->error;
-				}
-				return $hookmanager->resArray['result'];
+				return (int) $reshook;
 			}
 		}
 

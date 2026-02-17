@@ -1953,6 +1953,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 	}
 
 	$sql = '';
+	$canedit = 0;
 
 	if (isModEnabled('agenda')) {
 		// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
