@@ -4943,6 +4943,8 @@ abstract class CommonObject
 				$this->context = array_merge($this->context, array('newstatus' => $status));
 
 				if ($trigkey && $trigkey != 'none') {
+					$this->oldcopy = dol_clone($this);
+
 					// Call trigger
 					$result = $this->call_trigger($trigkey, $user);
 					if ($result < 0) {
@@ -11721,5 +11723,30 @@ abstract class CommonObject
 		} else {
 			return true;
 		}
+	}
+
+	/**
+	 * Set the error message for the object without logging it.
+	 *
+	 * @param string $message    the error message
+	 * @return void
+	 */
+	public function setErrorWithoutLog($message)
+	{
+		$this->error = $message;
+		$this->errors[] = $message;
+	}
+
+	/**
+	 * Set the error message for the object and log it.
+	 *
+	 * @param string $message      the error message
+	 * @param int<0,7> $loglevel   the log level
+	 * @return void
+	 */
+	public function setErrorWithLog($message, $loglevel = LOG_ERR)
+	{
+		$this->setErrorWithoutLog($message);
+		dol_syslog($message, $loglevel);
 	}
 }

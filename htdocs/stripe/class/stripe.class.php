@@ -389,7 +389,7 @@ class Stripe extends CommonObject
 	 */
 	public function getPaymentIntent($amount, $currency_code, $tag, $description = '', $object = null, $customer = null, $key = null, $servicestatus = 0, $usethirdpartyemailforreceiptemail = 0, $mode = 'automatic', $confirmnow = false, $payment_method = null, $off_session = 0, $noidempotency_key = 1, $did = 0)
 	{
-		global $conf, $user;
+		global $conf, $user, $hookmanager;
 
 		dol_syslog(get_class($this)."::getPaymentIntent description=".$description, LOG_INFO, 1);
 
@@ -484,10 +484,8 @@ class Stripe extends CommonObject
 
 			// list of payment method types
 			$paymentmethodtypes = array("card");
-			$descriptor = dol_trunc($tag, 10, 'right', 'UTF-8', 1);
 			if (getDolGlobalInt('STRIPE_SEPA_DIRECT_DEBIT')) {
 				$paymentmethodtypes[] = "sepa_debit"; //&& ($object->thirdparty->isInEEC())
-				//$descriptor = preg_replace('/ref=[^:=]+/', '', $descriptor);	// Clean ref
 			}
 			if (getDolGlobalInt('STRIPE_KLARNA')) {
 				$paymentmethodtypes[] = "klarna";
@@ -533,9 +531,9 @@ class Stripe extends CommonObject
 				"setup_future_usage" => "on_session",
 				"metadata" => $metadata
 			);
-			if ($descriptor) {
-				$dataforintent["statement_descriptor_suffix"] = $descriptor; // For card payment, 22 chars that appears on bank receipt (prefix into stripe setup + this suffix)
-				$dataforintent["statement_descriptor"] = $descriptor; 	// For SEPA, it will take only statement_descriptor, not statement_descriptor_suffix
+			if ($tag) {
+				$dataforintent["statement_descriptor_suffix"] = dol_trunc($tag, 12, 'right', 'UTF-8', 1); 	// For card payment, 22 chars that appears on bank receipt (prefix into stripe setup + this suffix)
+				$dataforintent["statement_descriptor"] = dol_trunc($tag, 22, 'right', 'UTF-8', 1); 			// For SEPA, 22 chars, it will take only statement_descriptor, not statement_descriptor_suffix
 			}
 			if (!is_null($customer)) {
 				$dataforintent["customer"] = $customer;
@@ -585,6 +583,24 @@ class Stripe extends CommonObject
 				// Note: If all data for payment intent are same than a previous on, even if we use 'create', Stripe will return ID of the old existing payment intent.
 				if (!empty($key)) {				// If the Stripe connect account not set, we use common API usage
 					$arrayofoptions["stripe_account"] = $key;
+				}
+
+				// Hook to allow external modules to modify Stripe PaymentIntent data before API call.
+				// Can be used to customize statement_descriptor (e.g. structured communication for SEPA),
+				// add metadata, modify description, etc.
+				// Note: $arrayofoptions is not passed for security reasons (contains stripe_account and idempotency_key).
+				$parameters = array(
+					'dataforintent' => $dataforintent,
+					'object' => $object,
+					'tag' => $tag,
+					'amount' => $amount,
+					'currency_code' => $currency_code,
+					'customer' => $customer,
+					'servicestatus' => $servicestatus,
+				);
+				$reshook = $hookmanager->executeHooks('beforeCreateStripePaymentIntent', $parameters, $this);
+				if (!empty($hookmanager->resArray['dataforintent'])) {
+					$dataforintent = $hookmanager->resArray['dataforintent'];
 				}
 
 				dol_syslog(get_class($this)."::getPaymentIntent ".$stripearrayofkeysbyenv[$servicestatus]['publishable_key'], LOG_DEBUG);

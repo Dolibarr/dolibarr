@@ -13,7 +13,6 @@ multicurrency_appCurrencySource=Moneda origen
 multicurrency_alternateCurrencySource=Moneda origen alterna
 CurrenciesUsed=Monedas usadas
 CurrenciesUsed_help_to_add=Añadir las diferentes monedas y tipos de cambio que necesita usar en sus <b> propuestas </b>, <b> ordenes </b> etc.
-rate=tipo de cambio
 MulticurrencyReceived=Recibido, moneda original
 MulticurrencyRemainderToTake=Monto pendiente, moneda original
 AmountToOthercurrency=Monto (en moneda de la cuenta receptora)

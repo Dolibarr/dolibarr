@@ -34,6 +34,7 @@ require '../../main.inc.php';
  * @var User $user
  *
  * @var string $dolibarr_main_document_root_alt
+ * @var string $dolibarr_main_prod
  * @var string $conffile
  */
 '

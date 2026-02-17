@@ -3,7 +3,7 @@
  * Copyright (C) 2010-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2018 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -396,7 +396,7 @@ class FormActions
 	/**
 	 *  Output html select list of type of event
 	 *
-	 *  @param	string[]|string	$selected       Type pre-selected (can be 'manual', 'auto' or 'AC_xxx'). Can be an array too.
+	 *  @param	string[]|string	$selected       Type preselected (can be 'manual', 'auto' or 'AC_xxx'). Can be an array too.
 	 *  @param  string		    $htmlname       Name of select field
 	 *  @param	string		    $excludetype	A type to exclude ('systemauto', 'system', '')
 	 *  @param	int<-2,1>	    $onlyautoornot	1=Group all type AC_XXX into 1 line AC_MANUAL. 0=Keep details of type, -1=Keep details and add a combined line "All manual", -2=Combined line is disabled (not implemented yet)

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2020		Tobias Sekan	<tobias.sekan@startmail.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ class FormCategory extends Form
 	 * Return a HTML filter box for a list filter view
 	 *
 	 * @param 	string		$type								The categorie type (e.g Categorie::TYPE_WAREHOUSE)
-	 * @param 	array<int|string>	$preSelected				A list with the elements that should pre-selected
+	 * @param 	array<int|string>	$preSelected				A list with the elements that should preselected
 	 * @param	string		$morecss							More CSS
 	 * @param	int<-1,1>	$searchCategoryProductOperator		Used only if $multiselect is 1. Set to 0 or 1 to enable the checkbox to search with a or (0=not preselected, 1=preselected), -1=Checkbox never shown.
 	 * @param	int<0,1>	$multiselect						0 or 1
@@ -108,7 +108,7 @@ class FormCategory extends Form
 	 *    Prints a select form for products categories
 	 *    TODO Remove this. We should already have a generic method to get list of product category.
 	 *
-	 *    @param    int 	$selected          	Id category pre-selection
+	 *    @param    int 	$selected          	Id category preselection
 	 *    @param    string	$htmlname          	Name of HTML field
 	 *    @param    int		$showempty         	Add an empty field
 	 *    @return	int|null
