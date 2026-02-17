@@ -31,7 +31,6 @@
 define('DONOTLOADCONF', 1); // To avoid loading conf by file inc.php
 
 include 'inc.php';
-
 /**
  * @var string	$conffile
  * @var string	$conffiletoshow
@@ -52,6 +51,9 @@ include 'inc.php';
  * @var string	$dolibarr_main_db_character_set
  * @var string	$dolibarr_main_db_collation
  */
+'
+@phan-var-force string $dolibarr_main_db_collation
+';
 
 global $langs;
 
@@ -748,15 +750,15 @@ if (!$error && $db->connected && $action == "set") {	// Test on permission not r
 
 		// We test access with dolibarr database user (not admin)
 		if (!$error) {
-			dolibarr_install_syslog("step1: connection type=".$conf->db->type." on host=".$conf->db->host." port=".$conf->db->port." user=".$conf->db->user." name=".$conf->db->name);
+			dolibarr_install_syslog("step1: connection type=".$conf->db->type." on host=".$conf->db->host." port=".$conf->db->port." user=".((string) $conf->db->user)." name=".((string) $conf->db->name));
 			//print "connection de type=".$conf->db->type." sur host=".$conf->db->host." port=".$conf->db->port." user=".$conf->db->user." name=".$conf->db->name;
 
-			$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, (int) $conf->db->port);
+			$db = getDoliDBInstance($conf->db->type, $conf->db->host, (string) $conf->db->user, $conf->db->pass, $conf->db->name, (int) $conf->db->port);
 
 			if ($db->connected) {
-				dolibarr_install_syslog("step1: connection to server by user ".$conf->db->user." ok");
+				dolibarr_install_syslog("step1: connection to server by user ".((string) $conf->db->user)." ok");
 				print "<tr><td>";
-				print $langs->trans("ServerConnection")." (".$langs->trans("User")." ".$conf->db->user.") : ";
+				print $langs->trans("ServerConnection")." (".$langs->trans("User")." ".((string) $conf->db->user).") : ";
 				print $dolibarr_main_db_host;
 				print "</td><td>";
 				print img_picto('OK', 'tick');
@@ -764,9 +766,9 @@ if (!$error && $db->connected && $action == "set") {	// Test on permission not r
 
 				// server access ok, basic access ok
 				if ($db->database_selected) {
-					dolibarr_install_syslog("step1: connection to database ".$conf->db->name." by user ".$conf->db->user." ok");
+					dolibarr_install_syslog("step1: connection to database ".$conf->db->name." by user ".((string) $conf->db->user)." ok");
 					print "<tr><td>";
-					print $langs->trans("DatabaseConnection")." (".$langs->trans("User")." ".$conf->db->user.") : ";
+					print $langs->trans("DatabaseConnection")." (".$langs->trans("User")." ".((string) $conf->db->user).") : ";
 					print $dolibarr_main_db_name;
 					print "</td><td>";
 					print img_picto('OK', 'tick');
@@ -774,9 +776,9 @@ if (!$error && $db->connected && $action == "set") {	// Test on permission not r
 
 					$error = 0;
 				} else {
-					dolibarr_install_syslog("step1: connection to database ".$conf->db->name." by user ".$conf->db->user." failed", LOG_ERR);
+					dolibarr_install_syslog("step1: connection to database ".$conf->db->name." by user ".((string) $conf->db->user)." failed", LOG_ERR);
 					print "<tr><td>";
-					print $langs->trans("DatabaseConnection")." (".$langs->trans("User")." ".$conf->db->user.") : ";
+					print $langs->trans("DatabaseConnection")." (".$langs->trans("User")." ".((string) $conf->db->user).") : ";
 					print $dolibarr_main_db_name;
 					print '</td><td>';
 					print img_picto('Error', 'warning', 'class="error"');
