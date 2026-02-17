@@ -39,6 +39,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 
 $langs->load("admin");
 
@@ -95,6 +96,28 @@ print ' '.$form->textwithpicto('', $htmltooltip);
 print '</td></tr>'."\n";
 print '</table>';
 print '</div>';
+
+// Version
+$versionbadge = '<span class="badge-text badge-secondary">'.DOL_VERSION.'</span>';
+
+$infotoshow = '';
+if ($mysoc->country_code == 'FR') {
+	$islne = isALNEQualifiedVersion(1, 1);
+	if ($islne) {
+		if (preg_match('/\-/', DOL_VERSION)) {
+			// This is an alpha or beta version
+			$infotoshow = $langs->trans("LNECandidateVersionForCertificationFR", $versionbadge);
+		} else {
+			$infotoshow = $langs->trans("LNECertifiedVersionFR", $versionbadge);
+		}
+	} else {
+		$infotoshow = $langs->trans("NotCertifiedVersionFR", $versionbadge);
+	}
+}
+if ($infotoshow) {
+	print info_admin($infotoshow, 0, 0, 'info');
+}
+
 print '<br><br>';
 
 
