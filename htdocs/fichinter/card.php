@@ -413,7 +413,7 @@ if (empty($reshook)) {
 								$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : Product::TYPE_PRODUCT);
 
 								if ($product_type == Product::TYPE_SERVICE || getDolGlobalString('FICHINTER_PRINT_PRODUCTS')) { //only services except if config includes products
-									$duration = 0;
+									$duration = 3600; // Default to one hour
 									$desc = '';
 									// Predefined products & services
 									if ($lines[$i]->fk_product > 0) {
