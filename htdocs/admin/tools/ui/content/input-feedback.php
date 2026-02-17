@@ -18,7 +18,7 @@
  */
 
 // Load Dolibarr environment
-require '../../../../../../main.inc.php';
+require '../../../../main.inc.php';
 
 /**
  * @var DoliDB      $db
@@ -50,7 +50,7 @@ $js = [
 	'/includes/ace/src/ext-language_tools.js',
 ];
 $css = [
-	$experimentAssetsPath . 'feddback-01.css'
+
 ];
 
 // Output html head + body - Param is Title
@@ -73,11 +73,10 @@ $documentation->showSidebar(); ?>
 		<?php $documentation->showSummary(); ?>
 
 		<div class="documentation-section" >
-			<h2 class="documentation-title" >Input Feedback (Experimental)</h2>
+			<h2 class="documentation-title" >Input Feedback</h2>
 
 			<p>
-				This experimental feature provides visual feedback on input fields based on their processing state.
-				Currently, it is only available in this documentation and may be integrated into the <code>develop</code> branch of Dolibarr in the future.
+				This feature provides visual feedback on input fields based on their processing state.
 			</p>
 
 			<h3>How It Works</h3>
@@ -153,7 +152,7 @@ document.getElementById(\'btn-process-fail\').addEventListener(\'click\', functi
 });',
 			'</script>',
 			);
-			echo $documentation->showCode($lines, 'html'); ?>
+			$documentation->showCode($lines); ?>
 		</div>
 
 

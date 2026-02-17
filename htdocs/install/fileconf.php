@@ -474,7 +474,7 @@ if (!empty($force_install_noedit)) {
 			<input type="text" class="width75"
 				   name="db_port"
 				   id="db_port"
-				   value="<?php print (!empty($force_install_port)) ? $force_install_port : $dolibarr_main_db_port; ?>"
+				   value="<?php print (!empty($force_install_port)) ? (int) $force_install_port : (empty($dolibarr_main_db_port) ? "" : $dolibarr_main_db_port); ?>"
 				<?php if (($force_install_noedit == 2 || $force_install_noedit == 3) && $force_install_port !== null) {
 					print ' disabled';
 				} ?>
