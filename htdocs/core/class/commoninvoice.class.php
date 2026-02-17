@@ -813,7 +813,7 @@ abstract class CommonInvoice extends CommonObject
 				} else {
 					$this->errors[] = array_merge($this->errors, $this->error);
 				}
-				return $hookmanager->resArray('result');
+				return $hookmanager->resArray['result'];
 			}
 		}
 
@@ -1189,7 +1189,7 @@ abstract class CommonInvoice extends CommonObject
 		}
 		$this->db->free($resqltemp);
 
-		/* Definition de la date limit */
+		/* Define date limit */
 
 		// 0 : adding the number of days
 		if ($cdr_type == 0) {
