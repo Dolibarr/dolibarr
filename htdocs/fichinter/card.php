@@ -448,7 +448,6 @@ if (empty($reshook)) {
 
 											$sql = "SELECT scale FROM ".MAIN_DB_PREFIX."c_units WHERE short_label = '".$db->escape($u)."' AND active = 1";
 											$resql = $db->query($sql);
-											
 											if ($resql && $db->num_rows($resql) > 0) {
 												$objunit = $db->fetch_object($resql);
 												$mult = $objunit->scale;
