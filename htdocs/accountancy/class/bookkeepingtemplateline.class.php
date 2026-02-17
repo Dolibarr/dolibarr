@@ -46,13 +46,12 @@ class BookkeepingTemplateLine extends CommonObject
 	public $table_element = 'accounting_transaction_template_det';
 
 	/**
-	 * @var int Does this object support multicompany module ?
-	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
+	 * @var int<0,1>|string     0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 0;
 
 	/**
-	 * @var int Does object support extrafields ? 0=No, 1=Yes
+	 * @var int<0,1>            Does object support extrafields ? 0=No, 1=Yes
 	 */
 	public $isextrafieldmanaged = 0;
 
@@ -76,15 +75,75 @@ class BookkeepingTemplateLine extends CommonObject
 		"credit" => array("type"=>"double(24,8)", "label"=>"Credit", "enabled"=>"1", 'position'=>70, 'notnull'=>0, "visible"=>"1", "css"=>"maxwidth75 right"),
 	);
 
+	/**
+	 * @var int ID
+	 */
 	public $rowid;
+
+	/**
+	 * @var int Foreign key to accounting transaction template
+	 */
 	public $fk_transaction_template;
+
+	/**
+	 * @var string General account number
+	 */
 	public $general_account;
+
+	/**
+	 * @var string|null General account label/description
+	 */
 	public $general_label;
+
+	/**
+	 * @var string|null Subledger account number (auxiliary account)
+	 */
 	public $subledger_account;
+
+	/**
+	 * @var string|null Subledger account label/description
+	 */
 	public $subledger_label;
-	public $operation_label;
+
+	/**
+	 * @var string Debit amount (stored as string for precision)
+	 */
 	public $debit;
+
+	/**
+	 * @var string Credit amount (stored as string for precision)
+	 */
 	public $credit;
+
+	/**
+	 * @var string|null Sense/direction (D for debit, C for credit)
+	 */
+	public $sens;
+
+	/**
+	 * @var int|null Line position/order
+	 */
+	public $position;
+
+	/**
+	 * @var int|string|null Creation date (timestamp or datetime string)
+	 */
+	public $date_creation;
+
+	/**
+	 * @var int|string|null Last modification timestamp
+	 */
+	public $tms;
+
+	/**
+	 * @var int|null User ID who created this line
+	 */
+	public $fk_user_creat;
+
+	/**
+	 * @var int|null User ID who last modified this line
+	 */
+	public $fk_user_modif;
 
 
 	/**

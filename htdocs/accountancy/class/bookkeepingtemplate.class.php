@@ -173,10 +173,10 @@ class BookkeepingTemplate extends CommonObject
 	 * Create object into database
 	 *
 	 * @param   User    $user       User that creates
-	 * @param   int     $notrigger  false=launch triggers after, true=disable triggers
+	 * @param   int     $notrigger  0=launch triggers after, 1=disable triggers
 	 * @return  int                 Return integer <0 if KO, Id of created object if OK
 	 */
-	public function create(User $user, $notrigger = false)
+	public function create(User $user, $notrigger = 0)
 	{
 		$resultcreate = $this->createCommon($user, $notrigger);
 		return $resultcreate;
@@ -271,8 +271,8 @@ class BookkeepingTemplate extends CommonObject
 	/**
 	 * Load object lines in memory from the database
 	 *
-	 * @param int $noextrafields 0=Default to load extrafields, 1=No extrafields
-	 * @return int                 Return integer <0 if KO, 0 if not found, >0 if OK
+	 * @param   int                             $noextrafields  0=Default to load extrafields, 1=No extrafields
+	 * @return  BookkeepingTemplateLine[]|int                   Array of line objects if OK, <0 if KO
 	 */
 	public function fetchLines($noextrafields = 0)
 	{
@@ -293,11 +293,11 @@ class BookkeepingTemplate extends CommonObject
 	/**
 	 * Update object into database
 	 *
-	 * @param User $user User that modifies
-	 * @param bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             Return integer <0 if KO, >0 if OK
+	 * @param   User      $user       User that modifies
+	 * @param   int<0,1>  $notrigger  0=launch triggers after, 1=disable triggers
+	 * @return  int                  Return integer <0 if KO, >0 if OK
 	 */
-	public function update(User $user, $notrigger = false)
+	public function update(User $user, $notrigger = 0)
 	{
 		return $this->updateCommon($user, $notrigger);
 	}
@@ -305,11 +305,11 @@ class BookkeepingTemplate extends CommonObject
 	/**
 	 * Delete object in database
 	 *
-	 * @param User $user User that deletes
-	 * @param bool $notrigger false=launch triggers, true=disable triggers
-	 * @return int Return integer <0 if KO, >0 if OK
+	 * @param   User        $user       User that deletes
+	 * @param   int<0,1>    $notrigger  0=launch triggers after, 1=disable triggers
+	 * @return  int                     Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user, $notrigger = false)
+	public function delete(User $user, $notrigger = 0)
 	{
 		global $conf, $langs;
 
@@ -372,12 +372,12 @@ class BookkeepingTemplate extends CommonObject
 	/**
 	 * Delete a line of object in database
 	 *
-	 * @param User $user User that delete
-	 * @param int $idline Id of line to delete
-	 * @param bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int            >0 if OK, <0 if KO
+	 * @param   User        $user       User that delete
+	 * @param   int         $idline     Id of line to delete
+	 * @param   int<0,1>    $notrigger  0=launch triggers after, 1=disable triggers
+	 * @return  int                     >0 if OK, <0 if KO
 	 */
-	public function deleteLine(User $user, $idline, $notrigger = false)
+	public function deleteLine(User $user, $idline, $notrigger = 0)
 	{
 		$tmpline = new BookkeepingTemplateLine($this->db);
 		if ($tmpline->fetch($idline) > 0) {
@@ -390,7 +390,7 @@ class BookkeepingTemplate extends CommonObject
 	/**
 	 * Create an array of lines
 	 *
-	 * @return array|int  array of lines if OK, <0 if KO
+	 * @return BookkeepingTemplateLine[]|int  array of BookkeepingTemplateLine objects if OK, <0 if KO
 	 */
 	public function getLinesArray()
 	{
@@ -460,7 +460,7 @@ class BookkeepingTemplate extends CommonObject
 			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
-			if ($url && $add_save_lastsearch_values) {
+			if ($add_save_lastsearch_values) {
 				$url .= '&save_lastsearch_values=1';
 			}
 		}
