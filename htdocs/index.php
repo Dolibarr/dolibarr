@@ -149,7 +149,7 @@ if (!getDolGlobalString('MAIN_REMOVE_INSTALL_WARNING')) {
 		//  @phpstan-ignore-next-line
 		if (is_writable($conffile)) {
 			$langs->load("errors");
-			$message .= info_admin($langs->transnoentities("WarningConfFileMustBeReadOnly").' '.$langs->transnoentities("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
+			$message .= info_admin($langs->transnoentities("WarningConfFileMustBeReadOnly").' '.$langs->transnoentities("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, 'warning', 'clearboth');
 		}
 	}
 

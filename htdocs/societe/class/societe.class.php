@@ -216,13 +216,13 @@ class Societe extends CommonObject
 		'idprof4' => array('type' => 'varchar(128)', 'label' => 'Idprof4', 'enabled' => 1, 'visible' => -1, 'position' => 205),
 		'idprof5' => array('type' => 'varchar(128)', 'label' => 'Idprof5', 'enabled' => 1, 'visible' => -1, 'position' => 206),
 		'idprof6' => array('type' => 'varchar(128)', 'label' => 'Idprof6', 'enabled' => 1, 'visible' => -1, 'position' => 207),
-		'tva_intra' => array('type' => 'varchar(20)', 'label' => 'Tva intra', 'enabled' => 1, 'visible' => -1, 'position' => 210),
+		'tva_intra' => array('type' => 'varchar(20)', 'label' => 'VATIntra', 'enabled' => 1, 'visible' => -1, 'position' => 210),
 		'capital' => array('type' => 'double(24,8)', 'label' => 'Capital', 'enabled' => 1, 'visible' => -1, 'position' => 215),
 		'fk_stcomm' => array('type' => 'integer', 'label' => 'CommercialStatus', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 220),
 		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 225),
 		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 230),
-		'client' => array('type' => 'tinyint(4)', 'label' => 'Client', 'enabled' => 1, 'visible' => -1, 'position' => 240),
-		'fournisseur' => array('type' => 'tinyint(4)', 'label' => 'Fournisseur', 'enabled' => 1, 'visible' => -1, 'position' => 245),
+		'client' => array('type' => 'tinyint(4)', 'label' => 'Customer', 'enabled' => 1, 'visible' => -1, 'position' => 240),
+		'fournisseur' => array('type' => 'tinyint(4)', 'label' => 'Supplier', 'enabled' => 1, 'visible' => -1, 'position' => 245),
 		'supplier_account' => array('type' => 'varchar(32)', 'label' => 'Supplier account', 'enabled' => 1, 'visible' => -1, 'position' => 250),
 		'fk_prospectlevel' => array('type' => 'varchar(12)', 'label' => 'ProspectLevel', 'enabled' => 1, 'visible' => -1, 'position' => 255),
 		'customer_bad' => array('type' => 'tinyint(4)', 'label' => 'Customer bad', 'enabled' => 1, 'visible' => -1, 'position' => 260),
@@ -1141,11 +1141,11 @@ class Societe extends CommonObject
 					}
 				}
 
-				// Ajout du commercial affecte
+				// Addition of the assigned sales representative
 				if ($this->commercial_id != '' && $this->commercial_id != -1) {
 					$this->add_commercial($user, $this->commercial_id);
 				} elseif (!$user->hasRight('societe', 'client', 'voir')) {
-					// si un commercial cree un client il lui est affecte automatiquement
+					// If a sales representative creates a customer, they are automatically assigned to them.
 					$this->add_commercial($user, $user->id);
 				}
 
@@ -1506,9 +1506,9 @@ class Societe extends CommonObject
 		$this->order_min_amount = price2num($this->order_min_amount);
 		$this->supplier_order_min_amount = price2num($this->supplier_order_min_amount);
 
-		$this->tva_assuj = (is_numeric($this->tva_assuj)) ? (int) trim((string) $this->tva_assuj) : 0;
-		$this->tva_intra = dol_sanitizeFileName($this->tva_intra ?? '', '');
-		$this->vat_reverse_charge = empty($this->vat_reverse_charge) ? 0 : 1;
+		$this->tva_assuj			= (is_numeric($this->tva_assuj)) ? (int) trim((string) $this->tva_assuj) : 0;
+		$this->tva_intra			= trim($this->tva_intra);
+		$this->vat_reverse_charge	= empty($this->vat_reverse_charge) ? 0 : 1;
 		if (empty($this->status)) {
 			$this->status = 0;
 		}
@@ -1879,7 +1879,7 @@ class Societe extends CommonObject
 				}
 			} else {
 				if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-					// Doublon
+					// Duplicate
 					$this->error = $langs->trans("ErrorDuplicateField");
 					$result = -1;
 				} else {
@@ -2179,7 +2179,7 @@ class Societe extends CommonObject
 				$this->order_min_amount			= $obj->order_min_amount;
 				$this->supplier_order_min_amount = $obj->supplier_order_min_amount;
 
-				// multiprix
+				// multi price
 				$this->price_level = $obj->price_level;
 
 				// warehouse
@@ -2567,7 +2567,7 @@ class Societe extends CommonObject
 		if ($this->id) {
 			$newclient = 1;
 			if (($this->client == 2 || $this->client == 3) && !getDolGlobalInt('SOCIETE_DISABLE_PROSPECTSCUSTOMERS')) {
-				$newclient = 3; //If prospect, we keep prospect tag
+				$newclient = 3; // If prospected, we keep prospect tag
 			}
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 			$sql .= " SET client = ".((int) $newclient);
@@ -3867,7 +3867,7 @@ class Societe extends CommonObject
 				return 1;
 			}
 			if ($mod->code_modifiable) {
-				return 1; // A mettre en dernier
+				return 1; // To be put last
 			}
 			return 0;
 		} else {
@@ -3908,7 +3908,7 @@ class Societe extends CommonObject
 				return 1;
 			}
 			if ($mod->code_modifiable) {
-				return 1; // A mettre en dernier
+				return 1; // To be put last
 			}
 			return 0;
 		} else {
@@ -4701,7 +4701,7 @@ class Societe extends CommonObject
 
 		$this->db->begin();
 
-		// Cree et positionne $this->id
+		// Creates and positions $this->id
 		$result = $this->create($user);
 
 		if ($result >= 0) {
@@ -4738,7 +4738,7 @@ class Societe extends CommonObject
 				return -1;
 			}
 		} else {
-			// $this->error deja positionne
+			// $this->error already positioned
 			dol_syslog(get_class($this)."::create_from_member - 2 - ".$this->error." - ".implode(',', $this->errors), LOG_ERR);
 
 			$this->db->rollback();
@@ -5440,7 +5440,7 @@ class Societe extends CommonObject
 			$result = $companybankaccount->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 			$this->last_main_doc = $companybankaccount->last_main_doc;
 		} else {
-			// Positionne le modele sur le nom du modele a utiliser
+			// Set the model to the name of the model to be used
 			if (!dol_strlen($modele)) {
 				if (getDolGlobalString('COMPANY_ADDON_PDF')) {
 					$modele = getDolGlobalString('COMPANY_ADDON_PDF');
