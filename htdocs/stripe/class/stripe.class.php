@@ -588,7 +588,7 @@ class Stripe extends CommonObject
 				}
 
 				dol_syslog(get_class($this)."::getPaymentIntent ".$stripearrayofkeysbyenv[$servicestatus]['publishable_key'], LOG_DEBUG);
-				dol_syslog(get_class($this)."::getPaymentIntent dataforintent to create paymentintent = ".var_export($dataforintent, true));
+				dol_syslog(get_class($this)."::getPaymentIntent dataforintent to create paymentintent = ".formatLogObject($dataforintent));
 
 				$paymentintent = \Stripe\PaymentIntent::create($dataforintent, $arrayofoptions);
 
@@ -721,7 +721,7 @@ class Stripe extends CommonObject
 
 		$noidempotency_key = 1;
 
-		dol_syslog("getSetupIntent description=".$description.' confirmnow='.json_encode($confirmnow), LOG_INFO, 1);
+		dol_syslog("getSetupIntent description=".$description.' confirmnow='.formatLogObject($confirmnow), LOG_INFO, 1);
 
 		$error = 0;
 
@@ -797,7 +797,7 @@ class Stripe extends CommonObject
 				\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$servicestatus]['secret_key']);
 
 				dol_syslog(get_class($this)."::getSetupIntent ".$stripearrayofkeysbyenv[$servicestatus]['publishable_key'], LOG_DEBUG);
-				dol_syslog(get_class($this)."::getSetupIntent dataforintent to create setupintent = ".var_export($dataforintent, true));
+				dol_syslog(get_class($this)."::getSetupIntent dataforintent to create setupintent = ".formatLogObject($dataforintent));
 
 				// Note: If all data for payment intent are same than a previous one, even if we use 'create', Stripe will return ID of the old existing payment intent.
 				if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
@@ -956,7 +956,7 @@ class Stripe extends CommonObject
 					try {
 						if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
 							if (!getDolGlobalString('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION')) {
-								dol_syslog("Try to create card with dataforcard = ".json_encode($dataforcard));
+								dol_syslog("Try to create card with dataforcard = ".formatLogObject($dataforcard));
 								$card = $cu->sources->create($dataforcard);
 								if (!$card) {
 									$this->error = 'Creation of card on Stripe has failed';
@@ -977,7 +977,7 @@ class Stripe extends CommonObject
 							}
 						} else {
 							if (!getDolGlobalString('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION')) {
-								dol_syslog("Try to create card with dataforcard = ".json_encode($dataforcard));
+								dol_syslog("Try to create card with dataforcard = ".formatLogObject($dataforcard));
 								$card = $cu->sources->create($dataforcard, array("stripe_account" => $stripeacc));
 								if (!$card) {
 									$this->error = 'Creation of card on Stripe has failed';
@@ -1131,7 +1131,7 @@ class Stripe extends CommonObject
 						global $stripearrayofkeysbyenv;
 						$stripeacc = $stripearrayofkeysbyenv[$servicestatus]['secret_key'];
 
-						dol_syslog("Try to create sepa_debit with data = ".json_encode($dataforcard));
+						dol_syslog("Try to create sepa_debit with data = ".formatLogObject($dataforcard));
 
 						$s = new \Stripe\StripeClient($stripeacc);
 
