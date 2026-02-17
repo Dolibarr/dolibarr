@@ -893,7 +893,7 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 					$block_static->amounts_taxexcl = $lineamountht = $line[5];
 					$block_static->amounts = $lineamountttc = $line[6];
 					$block_static->ref_object = $lineref = (string) $line[7];
-					$block_static->date_object = (string) $line[8];
+					$block_static->date_object = (int) $line[8];
 					$block_static->user_fullname = (string) $line[9];
 					$block_static->linktoref = (string) $line[10];
 					$block_static->linktype = (string) $line[11];
