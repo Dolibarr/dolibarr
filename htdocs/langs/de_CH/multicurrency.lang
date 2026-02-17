@@ -13,7 +13,6 @@ multicurrency_appCurrencySource=Kurs Quelle
 multicurrency_alternateCurrencySource=Alternative Kursquelle
 CurrenciesUsed=Benutzte Währungen
 CurrenciesUsed_help_to_add=Füge die verschiedenen Währungen für deine benutzten <b>Offerten</b>,<b>Bestellungen</b> usw hinzu.
-rate=Kurs
 MulticurrencyReceived=Eingang in Orignalwährung
 MulticurrencyRemainderToTake=Restbetrag in Originalwährung
 AmountToOthercurrency=Entspricht in der Währung des Eingangkontos

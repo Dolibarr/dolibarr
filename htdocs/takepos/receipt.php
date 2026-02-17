@@ -137,9 +137,12 @@ print "
 
 // Call to external receipt modules factory if it exists and if we can (not allowed in some cases)
 if (isALNERunningVersion()) {
-	// If LNE version, we force format. Custom templates is not allowed
+	// If LNE version, we force parameters.
 	$conf->global->TAKEPOS_SHOW_HT_RECEIPT = 1;
 	$conf->global->TAKEPOS_TICKET_VAT_GROUPPED = 1;
+	$conf->global->TAKEPOS_PRINT_PAYMENT_METHOD = 1;
+	$conf->global->TAKEPOS_GIFT_RECEIPT = 0;
+	$conf->global->TAKEPOS_PRINT_WITHOUT_DETAILS = 0;
 } else {
 	$parameters = array();
 	$hookmanager->initHooks(array('takeposfrontend'));
@@ -302,7 +305,7 @@ if ($object->status != $object::STATUS_CLOSED) {
 <table class="centpercent" style="border-top-style: double;">
 	<thead>
 	<tr>
-		<th class="left"><?php print $langs->trans("Label"); ?></th>
+		<th class="left"><?php print $langs->trans("Ref").'/'.$langs->trans("Label"); ?></th>
 		<th class="right"><?php print $langs->trans("Qty"); ?></th>
 		<th class="right"><?php if ($gift != 1) {
 			print $langs->trans("Price");
@@ -336,6 +339,7 @@ if ($object->status != $object::STATUS_CLOSED) {
 		<tr>
 			<td>
 			<?php if (!empty($line->product_label)) {
+				echo $line->product_ref." - ";
 				echo $line->product_label;
 			} else {
 				echo $line->desc;

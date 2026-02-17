@@ -883,7 +883,7 @@ input#onlinepaymenturl, input#directdownloadlink {
 	background: #efefef;
 	/* background: #f3f3f3; */
 
-	padding: 20px 0px 20px 0px;
+	padding: 20px 20px 20px 20px;
 	border-radius: 8px;
 }
 
@@ -9463,6 +9463,7 @@ include dol_buildpath($path.'/theme/'.$theme.'/progress.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/timeline.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/search-input.inc.css', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/tooltips.inc.css', 0);
+include dol_buildpath($path.'/theme/'.$theme.'/input-feedback.css', 0);
 
 
 // Add custom CSS if defined

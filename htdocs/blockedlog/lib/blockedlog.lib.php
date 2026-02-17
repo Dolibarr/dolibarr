@@ -38,7 +38,7 @@ function blockedlogadmin_prepare_head($withtabsetup)
 
 	$param = '';
 	$param .= ($withtabsetup? "?withtab=".$withtabsetup : "");
-	$param .= (GETPOST('origin') ? ($param ? '&' : '').'origin='.GETPOST('origin') : '');
+	$param .= (GETPOST('origin') ? ($param ? '&' : '?').'origin='.GETPOST('origin') : '');
 
 	$h = 0;
 	$head = array();
@@ -88,6 +88,7 @@ function blockedlogadmin_prepare_head($withtabsetup)
 
 /**
  * Return if the KYC mandatory parameters are set
+ * Must be the samefields than the one defined as mandatory into the registration form.
  *
  * @return boolean		True or false
  */
@@ -105,11 +106,13 @@ function isRegistrationDataSaved()
 		return false;
 	}
 
+	/*
 	$providerset = getDolGlobalString('MAIN_INFO_ITPROVIDER_NAME');	// Can be 'myself'
 
 	if (empty($providerset)) {
 		return false;
 	}
+	*/
 
 	return true;
 }
@@ -127,15 +130,16 @@ function isRegistrationDataSavedAndPushed()
 
 
 /**
- * Return a hash unique identifier of the registration
+ * Return a hash unique identifier of the registration (used to identify the registration of instance without disclosing personal data)
  *
- * @return string		Hash unique ID (used to idenfiy the registration without disclosing personal data)
+ * @param	string	$algo		Algorithm to use for hash key
+ * @return 	string				Hash unique ID
  */
-function getHashUniqueIdOfRegistration()
+function getHashUniqueIdOfRegistration($algo = 'sha256')
 {
 	global $conf;
 
-	return dol_hash('dolibarr'.$conf->file->instance_unique_id, 'sha256', 1);
+	return dol_hash('dolibarr'.$conf->file->instance_unique_id.($conf->entity > 1 ? $conf->entity : ''), $algo, 1);
 }
 
 
@@ -261,9 +265,16 @@ function pdfCertifMentionblockedLog(&$pdf, $outputlangs, $seller, $default_font_
 {
 	$result = 0;
 
-	if (in_array($seller->country_code, array('FR')) && isALNEQualifiedVersion()) {	// If necessary, we could replace with "if isALNERunningVersion()"
+	if (in_array($seller->country_code, array('FR'))) {
 		$outputlangs->load("blockedlog");
-		$blockedlog_mention = $outputlangs->transnoentitiesnoconv("InvoiceGeneratedWithLNECertifiedPOSSystem");
+
+		$isalne = isALNEQualifiedVersion(); // If necessary, we could replace with "if isALNERunningVersion()"
+		if ($isalne == 'CERTIF_LNE_IS_2') {
+			$blockedlog_mention = $outputlangs->transnoentitiesnoconv("InvoiceGeneratedWithLNECandidatePOSSystem");
+		} else {
+			$blockedlog_mention = $outputlangs->transnoentitiesnoconv("InvoiceGeneratedWithLNECertifiedPOSSystem");
+		}
+
 		if ($blockedlog_mention) {
 			$pdf->SetFont('', '', $default_font_size - 2);
 			$pdf->SetXY($pdftemplate->marge_gauche, $posy);
@@ -330,24 +341,26 @@ function sumAmountsForUnalterableEvent($block, &$refinvoicefound, &$totalhtamoun
 /**
  * Call remote API service to push the last counter and signature
  *
- * @param 	int		$id			Last counter ID/value
- * @param 	string	$signature	Signature
- * @param	int		$test		Add property test to 1 if it is for test
- * @return	int					Return <0 if KO, 0 if nothing done, >0 if OK
+ * @param 	int		$id					Last counter ID/value
+ * @param 	string	$signature			Signature
+ * @param	int		$test				Add property test to 1 if it is for test
+ * @param 	int		$previousid			Last counter ID/value
+ * @param 	string	$previoussignature	Signature
+ * @return	int							Return <0 if KO, 0 if nothing done, >0 if OK
  */
-function callApiToPushCounter($id, $signature, $test = 0)
+function callApiToPushCounter($id, $signature, $test, $previousid, $previoussignature)
 {
 	global $mysoc, $conf;
 
 	if (isALNERunningVersion(1) && $mysoc->country_code == 'FR') {
-		// TODO Push last rowid + signature to remote dolibarr server
-		// TODO Do it only selected events: BILL_VALIDATE
+		// Push last rowid + signature to remote dolibarr server
+		// TODO Do it only for selected events: BILL_VALIDATE ?
 
-		// Code here is similar to the one into printCodeForPing()
+		// Code here is similar to the one into printCodeForPing(), except that message code/properties/fields may differ.
 		$url_for_ping = getDolGlobalString('MAIN_URL_FOR_PING', "https://ping.dolibarr.org/");
 
 		$algo = 'sha256';
-		$hash_unique_id = dol_hash('dolibarr'.$conf->file->instance_unique_id, $algo);	// Note: if the global salt changes, this hash changes too so ping may be counted twice. We don't mind. It is for statistics and inventory purpose only.
+		$hash_unique_id = getHashUniqueIdOfRegistration($algo);
 
 		$data = 'hash_algo=dol_hash-'.urlencode($algo);
 		$data .= '&hash_unique_id='.urlencode($hash_unique_id);
@@ -358,6 +371,8 @@ function callApiToPushCounter($id, $signature, $test = 0)
 
 		$data .= '&lastrowid='.(int) $id;
 		$data .= '&lastsignature='.urlencode($signature);
+		$data .= '&previousrowid='.(int) $previousid;
+		$data .= '&previoussignature='.urlencode($previoussignature);
 		if ($test) {
 			$data .= '&test=1';
 		}
@@ -378,6 +393,8 @@ function callApiToPushCounter($id, $signature, $test = 0)
 		$addheaders = array();
 		$timeoutconnect = 1;
 		$timeoutresponse = 1;
+
+		$conf->global->BLOCKEDLOG_RANDOMRANGE_FOR_TRACKING = 1;		// Force probability to 1
 
 		// Probability will be between 1/10 by default and 1/1 if const BLOCKEDLOG_RANDOMRANGE_FOR_TRACKING is set to 1. Can't be lower than 1/10.
 		$BLOCKEDLOG_RANDOMRANGE_FOR_TRACKING = min(10, getDolGlobalInt('BLOCKEDLOG_RANDOMRANGE_FOR_TRACKING', 10));

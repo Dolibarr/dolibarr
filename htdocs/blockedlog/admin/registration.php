@@ -47,6 +47,7 @@ $langs->loadLangs(array('admin', 'blockedlog', 'other'));
 // Get Parameters
 $action     = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
+$cancel     = GETPOST('cancel');
 
 $withtab    = GETPOSTISSET('withtab') ? GETPOSTINT('withtab') : 1;
 $origin     = GETPOST('origin');
@@ -62,9 +63,19 @@ if (!$user->admin) {
  * Actions
  */
 
+if ($cancel && $origin == 'initmodule') {
+	header("Location: ".DOL_URL_ROOT."/admin/modules.php");
+	exit(0);
+}
+if ($cancel) {
+	$action = '';
+}
+
 if ($action == 'update') {
 	$error = 0;
 	$db->begin();
+
+	// The mandatory information must be the same than the one defined into isRegistrationDataSaved()
 	if (!GETPOST("BLOCKEDLOG_REGISTRATION_NAME")) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("BLOCKEDLOG_REGISTRATION_NAME")), null, 'errors');
 		$error++;
@@ -215,7 +226,7 @@ $morehtmlcenter = '';
 
 $registrationnumber = getHashUniqueIdOfRegistration();
 $texttop = '<small class="opacitymedium">'.$langs->trans("RegistrationNumber").':</small> <small>'.dol_trunc($registrationnumber, 10).'</small>';
-if (!isRegistrationDataSavedAndPushed()) {
+if ((!isRegistrationDataSavedAndPushed() || !isModEnabled('blockedlog')) && $mode != "forceregistration") {
 	$texttop = '';
 }
 
@@ -232,8 +243,8 @@ print '<span class="opacitymedium">'.$langs->trans("BlockedLogDesc")."</span><br
 
 print '<br>';
 
-// Show version
-print '<div class="center"><span class="opacitymedium">'.$langs->trans("CurrentVersion").'</span> <span class="badge-text badge-secondary">'.DOL_VERSION.'</span></div>';
+// Version
+$versionbadge = '<span class="badge-text badge-secondary">'.DOL_VERSION.'</span>';
 
 
 // Special additional message for FR only
@@ -243,12 +254,12 @@ if ($mysoc->country_code == 'FR') {
 	if ($islne) {
 		if (preg_match('/\-/', DOL_VERSION)) {
 			// This is an alpha or beta version
-			$infotoshow = $langs->trans("LNECandidateVersionForCertificationFR");
+			$infotoshow = $langs->trans("LNECandidateVersionForCertificationFR", $versionbadge);
 		} else {
-			$infotoshow = $langs->trans("LNECertifiedVersionFR");
+			$infotoshow = $langs->trans("LNECertifiedVersionFR", $versionbadge);
 		}
 	} else {
-		$infotoshow = $langs->trans("NotCertifiedVersionFR");
+		$infotoshow = $langs->trans("NotCertifiedVersionFR", $versionbadge);
 	}
 }
 
@@ -262,15 +273,31 @@ if (in_array($mysoc->country_code, array('FR'))) {
 			print info_admin($infotoshow, 0, 0, 'info');
 		}
 
-		$htmltext = $langs->trans("UnalterableLogToolRegistrationFR").'<br>';
+		if ((!isRegistrationDataSavedAndPushed() || !isModEnabled('blockedlog')) && $mode != "forceregistration") {
+			print '<center><span class="error"><br>'.$langs->trans("RegistrationRequired").'<br><br></span></center>';
+		}
+
+		$htmltext = "";
+		$htmltext .= $langs->trans("UnalterableLogToolRegistrationFR").'<br>';
 		$htmltext .= $langs->trans("InformationWillBePublishedTo");
 		$htmltext .= '<br>'.$langs->trans("InformationWillBePublishedTo2", $organization_for_ping, $dataprivacy_url);
-		$htmltext .= '<br>'.$langs->trans("InformationWillBePublishedTo3");
+		if (!isRegistrationDataSavedAndPushed() || !isModEnabled('blockedlog')) {
+			$htmltext .= '<br>'.$langs->trans("InformationWillBePublishedTo3");
+			$color = 'warning';
+		} else {
+			$color = 'info';
+		}
 
-		print info_admin($htmltext, 0, 0, 'warning');
+		print info_admin($htmltext, 0, 0, $color);
+
+		if (isRegistrationDataSavedAndPushed() && isModEnabled('blockedlog') && $mode != "forceregistration") {
+			print '<center><span class="ok"><br>'.$langs->trans("ApplicationHasBeenRegistered").'<br><br></span></center>';
+		}
 	} else {
 		$htmltext = ($infotoshow ? $infotoshow.'<br>' : '');
-		$htmltext .= $langs->trans("ApplicationHasBeenRegistered").'<br>';
+		$htmltext .= $langs->trans("ApplicationHasBeenRegistered");
+		$htmltext .= ' '.$langs->trans("RegistrationNumber").': <span class="badge-text badge-secondary">'.dol_trunc($registrationnumber, 10).'</span>';
+		$htmltext .= '<br>';
 		$htmltext .= $langs->trans("LastRegistrationDate").' : ';
 		//$htmltext .= dol_print_date(getDolGlobalString('MAIN_FIRST_REGISTRATION_OK_DATE'), 'dayhour', 'tzuserrel');
 		$htmltext .= getDolGlobalString('MAIN_FIRST_REGISTRATION_OK_DATE');
@@ -448,7 +475,7 @@ if (empty($mode)) {
 		$formSetup->htmlButtonLabel = 'SaveAndEnableModule';
 	}
 
-	print $formSetup->generateOutput(true, true, '', '');
+	print $formSetup->generateOutput(2, true, '', '');
 }
 
 if ($withtab) {

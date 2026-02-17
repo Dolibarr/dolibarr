@@ -415,7 +415,7 @@ print "</td></tr>\n";
 
 // disable freezone product
 print '<tr class="oddeven"><td>';
-print $langs->trans('NoFreeZoneProduct');
+print $form->textwithpicto($langs->trans('NoFreeZoneProduct'), $langs->trans('NoFreeZoneProductDesc'));
 print '</td><td>';
 print ajax_constantonoff("TAKEPOS_NO_FREE_ZONE_PRODUCT", array(), $conf->entity, 0, 0, 1, 0);
 print "</td></tr>\n";
