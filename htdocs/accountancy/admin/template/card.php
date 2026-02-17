@@ -50,7 +50,7 @@ $formaccounting = new FormAccounting($db);
 // Get parameters
 $id = GETPOST('id', 'int');
 $code = GETPOST('code', 'alpha');
-$lineid = GETPOST('lineid', 'int');
+$lineid = GETPOSTINT('lineid');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'aZ09');
@@ -181,7 +181,7 @@ if ($action == 'addline' && $permissiontoadd) {
 
 	if (!$error) {
 		// Fetch account label
-		$accountingaccount->fetch(null, $general_account, true);
+		$accountingaccount->fetch(0, $general_account, true);
 		$general_label = $accountingaccount->label;
 
 		// Create line object
@@ -239,7 +239,7 @@ if ($action == 'updateline' && $permissiontoadd) {
 
 	if (!$error) {
 		// Fetch account label
-		$accountingaccount->fetch(null, $general_account, true);
+		$accountingaccount->fetch(0, $general_account, true);
 		$general_label = $accountingaccount->label;
 
 		// Load and update line
@@ -533,8 +533,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					print dol_escape_htmltag($line->general_account).' <span class="warning">('.$langs->trans("AccountRemovedFromCurrentChartOfAccount").')</span>';
 				}
 				print '</td>';
-				print '<td>'.length_accounta($line->subledger_account);
-				if ($line->subledger_label) {
+				print '<td>'.length_accounta($line->subledger_account ?? '');
+				if (!empty($line->subledger_label)) {
 					print ' - <span class="opacitymedium">'.dol_escape_htmltag($line->subledger_label).'</span>';
 				}
 				print '</td>';
@@ -617,7 +617,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if ($action != 'editline' && $permissiontoadd) {
 			print '<tr class="liste_titre nodrag nodrop">';
 			print '<td>';
-			print $formaccounting->select_account('', 'general_account', 1, '', 1, 1, 'maxwidth300');
+			print $formaccounting->select_account('', 'general_account', 1, [], 1, 1, 'maxwidth300');
 			print '</td>';
 			print '<td>';
 			// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because:
