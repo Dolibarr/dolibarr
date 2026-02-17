@@ -382,7 +382,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 					$signatureexport = dol_hash($previoushashexport.$concatenateddata, 'sha256');
 				}
 
-				// Define $totalhtamount, $totalvatamount, $totalamount for $block->action event code
+				// Define $totalhtamount, $totalvatamount, $totalamount for $block->action event / $block->module_source
 				$total_ht = $total_vat = $total_ttc = 0;
 				sumAmountsForUnalterableEvent($block_static, $refinvoicefound, $totalhtamount, $totalvatamount, $totalamount, $total_ht, $total_vat, $total_ttc);
 
@@ -846,7 +846,7 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 	print '</div>';
 
 	if ($action == 'checkconfirmed') {
-		$totalamount = array(
+		$totalhtamountforaction = $totalvatamountforaction = $totalamountforaction = array(
 			'BILL_VALIDATE' => 0,
 			'PAYMENT_CUSTOMER_CREATE' => 0
 		);
@@ -860,12 +860,12 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 		$algoauth = '';
 		$previoushash = '';
 		$previoushashexport = '';
+		$nbLinesModifiedInExportButKo = 0;
+		$nbLinesModifiedBeforeExport = 0;
 
 		$handle = fopen($fullpath, "r");
 		if ($handle) {
 			$numline = 0;
-			$nbLinesModifiedInExportButKo = 0;
-			$nbLinesModifiedBeforeExport = 0;
 
 			$block_static = new BlockedLog($db);
 
@@ -893,7 +893,7 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 					$block_static->amounts_taxexcl = $lineamountht = $line[5];
 					$block_static->amounts = $lineamountttc = $line[6];
 					$block_static->ref_object = $lineref = (string) $line[7];
-					$block_static->date_object = (string) $line[8];
+					$block_static->date_object = (int) $line[8];
 					$block_static->user_fullname = (string) $line[9];
 					$block_static->linktoref = (string) $line[10];
 					$block_static->linktype = (string) $line[11];
@@ -938,6 +938,7 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 
 					// With format VE1, we can also use a signature export.
 					// Note: this fieldis not more used, it has been replacedwith a global signature on all the file
+					$concatenateddata = $block_static->buildKeyForSignature();
 					$signatureexport = dol_hash($previoushashexport.$concatenateddata, 'sha256');
 					$previoushashexport = $signatureexport;
 				}
@@ -946,16 +947,16 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 					// For action = BILL_VALIDATE, we keep only first invoice found, but this should not happen because edition of invoice is never possible on
 					// certified version and very difficult on other version.
 					if ($lineactioncode != 'BILL_VALIDATE' || empty($refinvoicefound[$lineref])) {
-						$totalhtamount[$lineactioncode] += $lineamountht;
-						$totalvatamount[$lineactioncode] += ($lineamountttc - $lineamountht);
-						$totalamount[$lineactioncode] += $lineamountttc;
+						$totalhtamountforaction[$lineactioncode] += $lineamountht;
+						$totalvatamountforaction[$lineactioncode] += ($lineamountttc - $lineamountht);
+						$totalamountforaction[$lineactioncode] += $lineamountttc;
 					}
 					if ($lineactioncode == 'BILL_VALIDATE') {
 						$refinvoicefound[$lineref] = 1;
 					}
 				}
 
-				if (preg_match('/END - ([a-z0-9_]+)=([a-z0-9]+) - ([a-z0-9_]+)=([a-z0-9]+)$/', $line[0], $reg)) {
+				if (preg_match('/END - ([a-z0-9_]+)=([a-z0-9]+) - ([a-z0-9_]+)=([a-z0-9]+)$/', (string) $line[0], $reg)) {
 					$lineanalyzed = 1;
 					$algosign=$reg[1];
 					$hashsign=$reg[2];
@@ -1030,9 +1031,9 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 
 		$arraykeys = array('BILL_VALIDATE', 'PAYMENT_CUSTOMER_CREATE');
 		foreach ($arraykeys as $key) {
-			$totalhttoshow = $totalhtamount[$key];
-			$totalvattoshow = $totalvatamount[$key];
-			$totaltoshow = $totalamount[$key];
+			$totalhttoshow = $totalhtamountforaction[$key];
+			$totalvattoshow = $totalvatamountforaction[$key];
+			$totaltoshow = $totalamountforaction[$key];
 
 			print '<b>'.dolPrintHTML($langs->trans("TotalForAction").' '.$langs->trans('log'.$key)).'</b>: ';
 

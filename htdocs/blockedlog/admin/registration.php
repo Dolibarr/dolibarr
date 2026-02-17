@@ -67,6 +67,9 @@ if ($cancel && $origin == 'initmodule') {
 	header("Location: ".DOL_URL_ROOT."/admin/modules.php");
 	exit(0);
 }
+if ($cancel) {
+	$action = '';
+}
 
 if ($action == 'update') {
 	$error = 0;
@@ -468,7 +471,6 @@ if (empty($mode)) {
 		$formSetup->htmlButtonLabel = 'SaveUpdate';
 	} else {
 		$formSetup->htmlButtonLabel = 'SaveAndEnableModule';
-		$formSetup->htmlButton2Label = '<input class="button button-save reposition" type="submit" value="' . $langs->trans("Cancel") . '">';
 	}
 
 	print $formSetup->generateOutput(2, true, '', '');
