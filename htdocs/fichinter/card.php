@@ -14,6 +14,7 @@
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2025		Pierre Ardoin				<developpeur@lesmetiersdubatiment.fr>
+ * Copyright (C) 2026		Krisztián Vanyolai			<vanyolai@yahoo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -412,7 +413,7 @@ if (empty($reshook)) {
 								$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : Product::TYPE_PRODUCT);
 
 								if ($product_type == Product::TYPE_SERVICE || getDolGlobalString('FICHINTER_PRINT_PRODUCTS')) { //only services except if config includes products
-									$duration = 3600; // Default to one hour
+									$duration = 0;
 									$desc = '';
 									// Predefined products & services
 									if ($lines[$i]->fk_product > 0) {
@@ -443,16 +444,17 @@ if (empty($reshook)) {
 										}
 
 										if ($prod->duration_value && getDolGlobalString('FICHINTER_USE_SERVICE_DURATION')) {
-											$unit_to_seconds = array(
-												'p'   => 60,
-												'min' => 60,
-												'm'   => 60,
-												'h'   => 3600,
-												'd'   => 86400,
-												'w'   => 604800
-											);
-											$u = isset($lines[$i]->duration_unit) ? trim($lines[$i]->duration_unit) : 'h';
-											$mult = $unit_to_seconds[$u];
+											$u = trim($prod->duration_unit); 
+
+											$sql = "SELECT scale FROM ".MAIN_DB_PREFIX."c_units WHERE short_label = '".$db->escape($u)."' AND active = 1";
+											$resql = $db->query($sql);
+											
+											if ($resql && $db->num_rows($resql) > 0) {
+												$objunit = $db->fetch_object($resql);
+												$mult = $objunit->scale; 
+											} else {
+												$mult = 3600; //defaults to one hour
+											}
 											$duration = $prod->duration_value * $mult * $lines[$i]->qty;
 										}
 
@@ -464,7 +466,12 @@ if (empty($reshook)) {
 									// Common part (predefined or free line)
 									$desc .= dol_htmlentitiesbr($lines[$i]->desc);
 									$desc .= '<br>';
-									$desc .= ' ('.$langs->trans('Quantity').': '.$lines[$i]->qty.')';
+									$unit_label = '';
+									if ($lines[$i]->fk_unit) {
+										$langs->load("measuring_units");
+										$unit_label = $langs->trans($lines[$i]->getLabelOfUnit('short'));
+									}
+									$desc .= ' ('.$langs->trans('Quantity').': '.$lines[$i]->qty.($unit_label ? " " . $unit_label : "").')';
 
 									$source_date = (!empty($srcobject->delivery_date) ? $srcobject->delivery_date : dol_now());
 									$timearray = dol_getdate($source_date);
