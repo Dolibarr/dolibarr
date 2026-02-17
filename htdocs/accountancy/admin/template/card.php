@@ -181,7 +181,7 @@ if ($action == 'addline' && $permissiontoadd) {
 
 	if (!$error) {
 		// Fetch account label
-		$accountingaccount->fetch(0, $general_account, true);
+		$accountingaccount->fetch(0, $general_account, 1);
 		$general_label = $accountingaccount->label;
 
 		// Create line object
@@ -239,7 +239,7 @@ if ($action == 'updateline' && $permissiontoadd) {
 
 	if (!$error) {
 		// Fetch account label
-		$accountingaccount->fetch(0, $general_account, true);
+		$accountingaccount->fetch(0, $general_account, 1);
 		$general_label = $accountingaccount->label;
 
 		// Load and update line

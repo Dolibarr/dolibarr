@@ -62,7 +62,7 @@ class BookkeepingTemplate extends CommonObject
 	public $picto = 'fa-list';
 
 	/**
-	 * @var array<string, array{type: string, label: string, langfile?: string, enabled: int<0, 2>|string, position: int, notnull?: int, visible: int<-6, 6>|string, alwayseditable?: int<0, 1>|string, ...}> Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string, array<string, mixed>> Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		"rowid" => array("type" => "integer", "label" => "TechnicalID", "enabled" => "1", 'position' => 1, 'notnull' => 1, "visible" => "0", "noteditable" => "1", "index" => "1", "css" => "left", "comment" => "Id"),
