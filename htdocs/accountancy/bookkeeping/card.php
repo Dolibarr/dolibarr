@@ -352,8 +352,8 @@ if (empty($reshook)) {
 							$bookkeeping->subledger_account = $templateline->subledger_account;
 							$bookkeeping->subledger_label = $templateline->subledger_label;
 							$bookkeeping->label_operation = $templateline->operation_label;
-							$bookkeeping->debit = $templateline->debit;
-							$bookkeeping->credit = $templateline->credit;
+							$bookkeeping->debit = (float) $templateline->debit;
+							$bookkeeping->credit = (float) $templateline->credit;
 
 							// Backward compatibility
 							if ((float) $bookkeeping->debit != 0.0) {
