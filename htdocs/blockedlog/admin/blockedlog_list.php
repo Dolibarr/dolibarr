@@ -478,6 +478,9 @@ if (is_array($blocks)) {
 					if ($block->linktype == 'replacedby') {
 						print '<br><span class="opacitymedium small">'.$langs->trans("ReplacedBy").' '.$block->linktoref.'</span>';
 					}
+					if ($block->linktype == 'credit_note_of') {
+						print '<br><span class="opacitymedium small">'.$langs->trans("CreditNoteOf").' '.$block->linktoref.'</span>';
+					}
 				}
 			} else {
 				// Ref not stored
