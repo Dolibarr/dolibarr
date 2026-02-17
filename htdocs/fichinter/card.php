@@ -451,7 +451,7 @@ if (empty($reshook)) {
 											
 											if ($resql && $db->num_rows($resql) > 0) {
 												$objunit = $db->fetch_object($resql);
-												$mult = $objunit->scale; 
+												$mult = $objunit->scale;
 											} else {
 												$mult = 3600; //defaults to one hour
 											}
