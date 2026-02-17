@@ -769,7 +769,7 @@ abstract class CommonInvoice extends CommonObject
 					$this->errors[] = $this->error;
 				}
 				if (!empty($hookmanager->resArray['errors'])) {
-					$this->errors[] = array_merge($this->errors, $hookmanager->resArray['errors']);
+					$this->errors = array_merge($this->errors, $hookmanager->resArray['errors']);
 				}
 				return $hookmanager->resArray['result'];
 			}
@@ -879,7 +879,7 @@ abstract class CommonInvoice extends CommonObject
 					$this->errors[] = $this->error;
 				}
 				if (!empty($hookmanager->resArray['errors'])) {
-					$this->errors[] = array_merge($this->errors, $hookmanager->resArray['errors']);
+					$this->errors = array_merge($this->errors, $hookmanager->resArray['errors']);
 				}
 				return $hookmanager->resArray['result'];
 			}
