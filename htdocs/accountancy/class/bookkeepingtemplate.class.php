@@ -47,13 +47,12 @@ class BookkeepingTemplate extends CommonObject
 	public $table_element = 'accounting_transaction_template';
 
 	/**
-	 * @var int Does this object support multicompany module ?
-	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
+	 * @var int<0,1>|string		0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 1;
 
 	/**
-	 * @var int Does object support extrafields ? 0=No, 1=Yes
+	 * @var int<0,1>            Does object support extrafields ? 0=No, 1=Yes
 	 */
 	public $isextrafieldmanaged = 1;
 
@@ -63,7 +62,7 @@ class BookkeepingTemplate extends CommonObject
 	public $picto = 'fa-list';
 
 	/**
-	 * @var array Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string, array{type: string, label: string, langfile?: string, enabled: int<0, 2>|string, position: int, notnull?: int, visible: int<-6, 6>|string, alwayseditable?: int<0, 1>|string, ...}> Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		"rowid" => array("type" => "integer", "label" => "TechnicalID", "enabled" => "1", 'position' => 1, 'notnull' => 1, "visible" => "0", "noteditable" => "1", "index" => "1", "css" => "left", "comment" => "Id"),
