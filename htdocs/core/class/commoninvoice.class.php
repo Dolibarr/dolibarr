@@ -813,7 +813,7 @@ abstract class CommonInvoice extends CommonObject
 				} else {
 					$this->errors[] = array_merge($this->errors, $this->error);
 				}
-				return $hookmanager->resArray('result');
+				return $hookmanager->resArray['result'];
 			}
 		}
 
