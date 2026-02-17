@@ -302,7 +302,7 @@ if ($object->status != $object::STATUS_CLOSED) {
 <table class="centpercent" style="border-top-style: double;">
 	<thead>
 	<tr>
-		<th class="left"><?php print $langs->trans("Label"); ?></th>
+		<th class="left"><?php print $langs->trans("Ref").'/'.$langs->trans("Label"); ?></th>
 		<th class="right"><?php print $langs->trans("Qty"); ?></th>
 		<th class="right"><?php if ($gift != 1) {
 			print $langs->trans("Price");
@@ -336,6 +336,7 @@ if ($object->status != $object::STATUS_CLOSED) {
 		<tr>
 			<td>
 			<?php if (!empty($line->product_label)) {
+				echo $line->product_ref." - ";
 				echo $line->product_label;
 			} else {
 				echo $line->desc;

@@ -223,7 +223,7 @@ if (!$sortorder) {
 	$sortorder = 'DESC';
 }
 if (!$sortfield) {
-	$sortfield = 'f.datef';
+	$sortfield = 'f.datef,f.rowid';
 }
 $pageprev = $page - 1;
 $pagenext = $page + 1;

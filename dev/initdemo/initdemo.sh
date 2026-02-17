@@ -11,8 +11,8 @@
 # Regis Houssin       - regis.houssin@inodbox.com
 # Laurent Destailleur - eldy@users.sourceforge.net
 #------------------------------------------------------
-# Usage: initdemo.sh confirm
-# usage: initdemo.sh confirm mysqldump_dolibarr_x.x.x.sql database port login pass
+# Usage: initdemo.sh confirm|confirmresetblockedlog
+# usage: initdemo.sh confirm|confirmresetblockedlog mysqldump_dolibarr_x.x.x.sql database port login pass
 #------------------------------------------------------
 
 
@@ -43,12 +43,12 @@ admin=$5
 passwd=$6
 
 # ----------------------------- check params
-if [ "$confirm" != "confirm" ]
+if [ "$confirm" != "confirm" ] && [ "$confirm" != "confirmresetblockedlog" ]
 then
 	echo "----- $0 -----"
-	echo "Usage: initdemo.sh confirm "
+	echo "Usage: initdemo.sh confirm|confirmresetblockedlog "
 	echo " or"
-	echo "Usage: initdemo.sh confirm [mysqldump_dolibarr_x.x.x.sql database port login pass]"
+	echo "Usage: initdemo.sh confirm|confirmresetblockedlog [mysqldump_dolibarr_x.x.x.sql database port login pass]"
 	exit
 fi
 
@@ -161,7 +161,7 @@ then
 
 
 	# ---------------------------- confirmation
-	$DIALOG --title "Init Dolibarr with demo values" --clear --yesno "Do you confirm ? \n Dump file : '$dumpfile' \n Dump dir : '$mydir' \n Document dir : '$documentdir' \n Mysql database : '$base' \n Mysql port : '$port' \n Mysql login: '$admin' \n Mysql password : --hidden--" 15 55
+	$DIALOG --title "Erase Dolibarr with demo values" --clear --yesno "Do you confirm ? \n Dump file : '$dumpfile' \n Dump dir : '$mydir' \n Document dir : '$documentdir' \n Mysql database : '$base' \n Mysql port : '$port' \n Mysql login: '$admin' \n Mysql password : --hidden--" 15 55
 
 	case $? in
 		0)      echo "Ok, start process..." ;;
@@ -172,7 +172,7 @@ then
 fi
 
 
-# ---------------------------- run sql file
+# ---------------------------- Run sql file
 if [ "$passwd" != "" ]
 then
 	export passwd="-p$passwd"
@@ -181,8 +181,11 @@ fi
 #echo "mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile"
 #mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile
 #echo "drop old table"
-echo "drop table"
+echo "drop table if exists llx_accounting_account;"
 echo "drop table if exists llx_accounting_account;" | mysql "-P$port" "-u$admin" "$passwd" "$base"
+echo "drop table if exists llx_accounting_system;"
+echo "drop table if exists llx_accounting_system;" | mysql "-P$port" "-u$admin" "$passwd" "$base"
+
 echo "mysql -P$port -u$admin $passwdshown $base < '$mydir/$dumpfile'"
 mysql "-P$port" "-u$admin" "$passwd" "$base" < "$mydir/$dumpfile"
 export res=$?
@@ -192,10 +195,23 @@ if [ $res -ne 0 ]; then
 	exit
 fi
 
+
+# ---------------------------- Run update of demo data
+echo
 "$mydir/updatedemo.php" confirm
 export res=$?
 
-# ---------------------------- copy demo files
+
+# ---------------------------- Run update of demo data
+if [ "$confirm" == "confirmresetblockedlog" ]; then
+	echo
+	"$mydir/updatedemo.php" confirmresetblockedlog
+	export res=$?
+fi
+
+exit;
+
+# ---------------------------- Copy demo files
 export documentdir
 # shellcheck disable=2016
 documentdir=$(< "$mydir/../../htdocs/conf/conf.php" grep '^\$dolibarr_main_data_root' | sed -e 's/$dolibarr_main_data_root=//' | sed -e 's/;//' | sed -e "s/'//g" | sed -e 's/"//g')

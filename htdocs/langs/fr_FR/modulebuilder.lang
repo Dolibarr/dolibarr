@@ -197,4 +197,4 @@ FieldsEdit=Modifier les champs
 FieldsInsert=Insérer des champs
 FieldsView=Vue des champs
 AIPromptExtrafield=Invite IA
-AIPromptExtrafieldDesc=Les constantes utilisées dans ce champ seront remplacées par la valeur correspondante.
+AIPromptExtrafieldDesc=Saisissez ici une invite qui doit renvoyer la valeur et uniquement. Les variables de substitution sont insérées dans l'invite avant l'appel à l'API AI.

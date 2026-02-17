@@ -91,19 +91,23 @@ class NumberingModulesTest extends CommonClassTest
 		print __METHOD__." result3=".$result."\n";
 		$this->assertEquals(1, $result3, 'Test that the validation of an invoice with the forced ref '.$newref.' is ok: '.$localobject->error);	// counter must start to 1
 
-		// Force enable of BlockedLog (not possible from application, but required to allow the test with sample data))
-		activateModule('modBlockedLog', 1, 1);
+		if (constant("CERTIF_LNE")) {
+			// If we are a not qualified certified version, we can add this use case test.
 
-		$result = $localobject->is_erasable();
-		print __METHOD__." is_erasable=".$result."\n";
-		$this->assertEquals(-7, $result, 'Test for is_erasable, 1st invoice without other invoice');			    // Can be deleted
+			// Force enable of BlockedLog (required to allow this use case)
+			activateModule('modBlockedLog', 1, 1);
+
+			$result = $localobject->is_erasable();
+			print __METHOD__." is_erasable=".$result."\n";
+			$this->assertEquals(-7, $result, 'Test for is_erasable, once module blockedlog is on, 1st invoice without other invoice');			    // Can be deleted
+		}
 
 		// Disable module BlockedLog (not possible from application, but required to allow the test with sample data))
-		unActivateModule('modBlockedLog');
+		unActivateModule('modBlockedLog', 1, 'forcedisable');
 
 		$result = $localobject->is_erasable();
 		print __METHOD__." is_erasable=".$result."\n";
-		$this->assertGreaterThanOrEqual(1, $result, 'Test for is_erasable, 1st invoice without other invoice');	    // Can be deleted
+		$this->assertGreaterThanOrEqual(1, $result, 'Test for is_erasable, once module blockedlog is off, 1st invoice without other invoice');	    // Can be deleted
 
 		// We emulate print on invoice 3 times
 		$localobject->pos_print_counter = 3;

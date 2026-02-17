@@ -307,12 +307,11 @@ function pdf_getPDFFontSize($outputlangs)
  *
  * @param	string		$logo		Full path to logo file to use
  * @param	bool		$url		Image with url (true or false)
- * @return	int|float
+ * @return	float
  */
 function pdf_getHeightForLogo($logo, $url = false)
 {
-	global $conf;
-	$height = (!getDolGlobalString('MAIN_DOCUMENTS_LOGO_HEIGHT') ? 20 : $conf->global->MAIN_DOCUMENTS_LOGO_HEIGHT);
+	$height = getDolGlobalFloat('MAIN_DOCUMENTS_LOGO_HEIGHT', 20);
 	$maxwidth = 130;
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 	$tmp = dol_getImageSize($logo, $url);
@@ -322,7 +321,7 @@ function pdf_getHeightForLogo($logo, $url = false)
 			$height = $height * $maxwidth / $width;
 		}
 	}
-	//print $tmp['width'].' '.$tmp['height'].' '.$width; exit;
+
 	return $height;
 }
 

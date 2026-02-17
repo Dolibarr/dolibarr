@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2012-2018  Charlene BENKE	<charlie@patas-monkey.com>
+/* Copyright (C) 2012-2026  Charlene BENKE	<charlene@patas-monkey.com>
  * Copyright (C) 2025		MDW				<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -77,9 +77,10 @@ class FormContract
 		$ret = '';
 
 		// Search all contacts
-		$sql = "SELECT c.rowid, c.ref, c.fk_soc, c.statut,";
+		$sql = "SELECT c.rowid, c.ref, c.fk_soc, c.statut, s.nom,";
 		$sql .= " c.ref_customer, c.ref_supplier";
 		$sql .= " FROM ".$this->db->prefix()."contrat as c";
+		$sql .= " INNER JOIN".$this->db->prefix()."societe as s ON s.rowid = c.fk_soc";
 		$sql .= " WHERE c.entity = ".$conf->entity;
 		//if ($contratListId) $sql.= " AND c.rowid IN (".$this->db->sanitize($contratListId).")";
 		if ($socid > 0) {
@@ -115,6 +116,7 @@ class FormContract
 						$labeltoshow = dol_trunc($obj->ref, 18);
 
 						if ($showRef) {
+							$labeltoshow = $labeltoshow." - ".$obj->nom;
 							if ($obj->ref_customer) {
 								$labeltoshow = $labeltoshow." - ".$obj->ref_customer;
 							}
