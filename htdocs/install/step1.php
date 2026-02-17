@@ -794,9 +794,9 @@ if (!$error && $db->connected && $action == "set") {	// Test on permission not r
 					$error++;
 				}
 			} else {
-				dolibarr_install_syslog("step1: connection to server by user ".$conf->db->user." failed", LOG_ERR);
+				dolibarr_install_syslog("step1: connection to server by user ".((string) $conf->db->user)." failed", LOG_ERR);
 				print "<tr><td>";
-				print $langs->trans("ServerConnection")." (".$langs->trans("User")." ".$conf->db->user.") : ";
+				print $langs->trans("ServerConnection")." (".$langs->trans("User")." ".((string) $conf->db->user).") : ";
 				print $dolibarr_main_db_host;
 				print '</td><td>';
 				print img_picto('Error', 'warning', 'class="error"');
@@ -804,7 +804,7 @@ if (!$error && $db->connected && $action == "set") {	// Test on permission not r
 
 				// warning message
 				print '<tr><td colspan="2"><br>';
-				print $langs->trans("ErrorConnection", $conf->db->host, $conf->db->name, $conf->db->user);
+				print $langs->trans("ErrorConnection", $conf->db->host, $conf->db->name, ((string) $conf->db->user));
 				print $langs->trans('IfLoginDoesNotExistsCheckCreateUser').'<br>';
 				print $langs->trans("ErrorGoBackAndCorrectParameters").'<br><br>';
 				print '</td></tr>';
@@ -990,6 +990,9 @@ function write_conf_file($conffile)
 		fwrite($fp, "\n");
 
 		fwrite($fp, '$dolibarr_main_restrict_os_commands=\'mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pg_restore, clamdscan, clamdscan.exe\';');
+		fwrite($fp, "\n");
+
+		fwrite($fp, '$dolibarr_main_restrict_eval_methods=\'getDolGlobalString, getDolGlobalInt, getDolCurrency, getDolEntity, getDolDBType, fetchNoCompute, hasRight, isAdmin, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, preg_match\';');
 		fwrite($fp, "\n");
 
 		fwrite($fp, '$dolibarr_nocsrfcheck=\'0\';');
