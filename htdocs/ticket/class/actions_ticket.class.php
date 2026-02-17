@@ -3,7 +3,7 @@
  * Copyright (C) 2016      Christophe Battarel <christophe@altairis.fr>
  * Copyright (C) 2024      Destailleur Laurent <eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -169,10 +169,11 @@ class ActionsTicket extends CommonHookActions
 	/**
 	 * Get action title
 	 *
-	 * @param string 	$action    	Type of action
-	 * @return string			Title of action
+	 * @param 	string 			$action    	Type of action
+	 * @param	Ticket|null		$object		Object ticket
+	 * @return 	string						Title of action
 	 */
-	public function getTitle($action = '')
+	public function getTitle($action = '', $object = null)
 	{
 		global $langs;
 
@@ -181,11 +182,11 @@ class ActionsTicket extends CommonHookActions
 		} elseif ($action == 'edit') {
 			return $langs->trans("EditTicket");
 		} elseif ($action == 'view') {
-			return $langs->trans("TicketCard");
+			return $langs->trans("Ticket").(is_null($object) ? '' : ' '.$object->ref);
 		} elseif ($action == 'add_message') {
 			return $langs->trans("TicketAddMessage");
 		} else {
-			return $langs->trans("TicketsManagement");
+			return $langs->trans("Ticket");
 		}
 	}
 
@@ -212,7 +213,7 @@ class ActionsTicket extends CommonHookActions
 
 		// Initial message
 		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-		print '<table class="border centpercent margintable">';
+		print '<table class="border tableforfield centpercent margintable">';
 		print '<tr class="liste_titre trforfield"><td class="nowrap titlefield">';
 		print $langs->trans("InitialMessage");
 		print '</td><td>';
@@ -263,9 +264,9 @@ class ActionsTicket extends CommonHookActions
 	/**
 	 * View html list of message for ticket
 	 *
-	 * @param 	boolean 	$show_private 	Show private messages
-	 * @param 	boolean 	$show_user    	Show user who make action
-	 * @param	Ticket		$object			Object ticket
+	 * @param 	bool 	$show_private 	Show private messages
+	 * @param 	bool 	$show_user    	Show user who make action
+	 * @param	Ticket	$object			Object ticket
 	 * @return 	void
 	 */
 	public function viewTicketMessages($show_private, $show_user, $object)
@@ -343,10 +344,11 @@ class ActionsTicket extends CommonHookActions
 
 					$documents = array();
 
-					$sql = 'SELECT ecm.rowid as id, ecm.src_object_type, ecm.src_object_id';
+					$sql = 'SELECT ecm.rowid as id, ecm.src_object_type, ecm.src_object_id, ecm.agenda_id';
 					$sql .= ', ecm.filepath, ecm.filename, ecm.share';
 					$sql .= ' FROM '.MAIN_DB_PREFIX.'ecm_files ecm';
-					$sql .= " WHERE ecm.filepath = 'agenda/".$arraymsgs['id']."'";
+					$sql .= " WHERE ecm.filepath = 'agenda/".(int) $arraymsgs['id']."'";
+					$sql .= " OR (ecm.agenda_id = ".(int) $arraymsgs['id']." AND ecm.src_object_type = 'ticket' AND ecm.src_object_id = ".(int) $this->dao->id.")";
 					$sql .= ' ORDER BY ecm.position ASC';
 
 					$resql = $this->db->query($sql);
@@ -361,7 +363,7 @@ class ActionsTicket extends CommonHookActions
 						$isshared = 0;
 						$footer = '<div class="timeline-documents-container">';
 						foreach ($documents as $doc) {
-							if (!empty($doc->share)) {
+							if (!empty($doc->share) || ($doc->src_object_type == 'ticket')) {
 								$isshared = 1;
 								$footer .= '<span id="document_'.$doc->id.'" class="timeline-documents" ';
 								$footer .= ' data-id="'.$doc->id.'" ';
@@ -369,10 +371,23 @@ class ActionsTicket extends CommonHookActions
 								$footer .= ' data-filename="'.dol_escape_htmltag($doc->filename).'" ';
 								$footer .= '>';
 
+								if (empty($doc->agenda_id)) {
+									$dir_ref = $arraymsgs['id'];
+									$modulepart = 'actions';
+								} else {
+									$split_dir = explode('/', $doc->filepath);
+									$modulepart = array_shift($split_dir);
+									$dir_ref = implode('/', $split_dir);
+								}
 								$filePath = DOL_DATA_ROOT.'/'.$doc->filepath.'/'.$doc->filename;
+								$file_relative_path = $dir_ref.'/'.$doc->filename;
 								$mime = dol_mimetype($filePath);
-								$thumb = $arraymsgs['id'].'/thumbs/'.substr($doc->filename, 0, strrpos($doc->filename, '.')).'_mini'.substr($doc->filename, strrpos($doc->filename, '.'));
-								$doclink = DOL_URL_ROOT.'/document.php?hashp='.urlencode($doc->share);
+								$doclink = '';
+								if (!empty($doc->share)) {
+									$doclink = DOL_URL_ROOT.'/document.php?hashp='.urlencode($doc->share);
+								} elseif ($doc->src_object_type == 'ticket') {
+									$doclink = dol_buildpath('document.php', 1).'?modulepart='.$modulepart.'&attachment=0&file='.urlencode($file_relative_path).'&entity='.getEntity('ticket', 0);
+								}
 
 								$mimeAttr = ' mime="'.$mime.'" ';
 								$class = '';
@@ -412,9 +427,9 @@ class ActionsTicket extends CommonHookActions
 	/**
 	 * View list of message for ticket with timeline display
 	 *
-	 * @param 	boolean 	$show_private Show private messages
-	 * @param 	boolean 	$show_user    Show user who make action
-	 * @param	Ticket	$object		 Object ticket
+	 * @param	bool	$show_private	Show private messages
+	 * @param	bool	$show_user		Show user who make action
+	 * @param	Ticket	$object			Object ticket
 	 * @return void
 	 */
 	public function viewTicketTimelineMessages($show_private, $show_user, Ticket $object)

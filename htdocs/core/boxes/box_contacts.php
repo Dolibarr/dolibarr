@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2015-2025  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2018      Josep Lluís Amador   <joseplluis@lliuretic.cat>
  * Copyright (C) 2020      Ferran Marcet	    <fmarcet@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
@@ -56,6 +56,7 @@ class box_contacts extends ModeleBoxes
 		$this->hidden = !($user->hasRight('societe', 'lire') && $user->hasRight('societe', 'contact', 'lire'));
 
 		$this->urltoaddentry = DOL_URL_ROOT.'/contact/card.php?action=create';
+
 		$this->msgNoRecords = 'NoRecordedContacts';
 	}
 
@@ -102,11 +103,11 @@ class box_contacts extends ModeleBoxes
 			if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
 			}
-			if (!$user->hasRight('societe', 'client', 'voir')) {
+			if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= " WHERE sp.entity IN (".getEntity('contact').")";
-			if (!$user->hasRight('societe', 'client', 'voir')) {
+			if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			$sql .= " AND ((sp.fk_user_creat = ".((int) $user->id)." AND sp.priv = 1) OR sp.priv = 0)"; // check if this is a private contact
@@ -136,6 +137,7 @@ class box_contacts extends ModeleBoxes
 					$contactstatic->lastname = $objp->lastname;
 					$contactstatic->firstname = $objp->firstname;
 					$contactstatic->civility_id = $objp->civility_id;
+					$contactstatic->status = $objp->status;
 					$contactstatic->statut = $objp->status;
 					$contactstatic->phone_pro = $objp->phone;
 					$contactstatic->phone_perso = $objp->phone_perso;

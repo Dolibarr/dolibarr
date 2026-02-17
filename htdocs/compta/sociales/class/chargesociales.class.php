@@ -4,7 +4,7 @@
  * Copyright (C) 2016-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2017       Alexandre Spangaro	    <aspangaro@open-dsi.fr>
  * Copyright (C) 2021       Gauthier VERDOL		    <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +62,7 @@ class ChargeSociales extends CommonObject
 	protected $table_ref_field = 'ref';
 
 	/**
-	 * @var int|string $date_ech
+	 * @var int|string
 	 */
 	public $date_ech;
 
@@ -119,7 +119,7 @@ class ChargeSociales extends CommonObject
 	public $lib;
 
 	/**
-	 * @var int account ID
+	 * @var ?int account ID
 	 */
 	public $fk_account;
 
@@ -300,7 +300,7 @@ class ChargeSociales extends CommonObject
 		$sql .= ", ".($this->mode_reglement_id > 0 ? ((int) $this->mode_reglement_id) : "NULL");
 		$sql .= ", '".$this->db->escape($this->label ? $this->label : $this->lib)."'";
 		$sql .= ", '".$this->db->idate($this->date_ech)."'";
-		$sql .= ", '".$this->db->idate($this->periode)."'";
+		$sql .= ", '".$this->db->idate($this->period)."'";
 		$sql .= ", '".price2num($newamount)."'";
 		$sql .= ", ".($this->fk_project > 0 ? ((int) $this->fk_project) : 'NULL');
 		$sql .= ", ".((int) $conf->entity);
@@ -634,9 +634,10 @@ class ChargeSociales extends CommonObject
 	 *  @param	int  	$notooltip					1=Disable tooltip
 	 *  @param  int		$short           			1=Return just URL
 	 *  @param  int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @param  int     $addlinktonotes  			1=Add link to notes
 	 *	@return	string								String with link
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $short = 0, $save_lastsearch_value = -1)
+	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $short = 0, $save_lastsearch_value = -1, $addlinktonotes = 0)
 	{
 		global $langs, $conf, $user, $hookmanager;
 
@@ -679,8 +680,9 @@ class ChargeSociales extends CommonObject
 		}
 		if (!empty($this->type_label)) {
 			$label .= '<br><b>'.$langs->trans('Type').':</b> '.$this->type_label;
-			if (!empty($this->type_accountancy_code)) {
-				$label .= ' <span class="opacitymedium">('.$langs->trans('AccountancyCode').': '.$this->type_accountancy_code.')</span>';
+			if (isModEnabled('accounting') || !empty($this->type_accountancy_code)) {
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+				$label .= ' <span class="opacitymedium">('.$langs->trans('AccountancyCode').': '.(empty($this->type_accountancy_code) ? $langs->trans("Unknown") : length_accountg($this->type_accountancy_code)).')</span>';
 			}
 		}
 
@@ -688,9 +690,9 @@ class ChargeSociales extends CommonObject
 		if (empty($notooltip) && $user->hasRight("facture", "read")) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("SocialContribution");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' title="'.dolPrintHTMLForAttribute($label).'"';
 			$linkclose .= ' class="classfortooltip"';
 		}
 
@@ -706,6 +708,18 @@ class ChargeSociales extends CommonObject
 			$result .= $this->ref;
 		}
 		$result .= $linkend;
+
+		if ($addlinktonotes) {
+			$txttoshow = ($user->socid > 0 ? $this->note_public : $this->note_private);
+			if ($txttoshow) {
+				$notetoshow = $langs->trans("ViewPrivateNote").':<br>'.$txttoshow;
+				$result .= ' <span class="note inline-block">';
+				$result .= '<a href="'.DOL_URL_ROOT.'/compta/sociales/note.php?id='.$this->id.'" class="classfortooltip" title="'.dolPrintHTMLForAttribute($notetoshow).'">';
+				$result .= img_picto('', 'note');
+				$result .= '</a>';
+				$result .= '</span>';
+			}
+		}
 
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
@@ -819,7 +833,7 @@ class ChargeSociales extends CommonObject
 	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @param		?array<string,mixed>	$arraydata				Array of data
 	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
@@ -845,14 +859,14 @@ class ChargeSociales extends CommonObject
 			$return .= '<br><span class="info-box-label">'.$arraydata['project']->getNomUrl(1).'</span>';
 		}
 		if (property_exists($this, 'date_ech')) {
-			$return .= '<br><span class="opacitymedium">'.$langs->trans("DateEnd").'</span> : <span class="info-box-label">'.dol_print_date($this->date_ech, 'day').'</span>';
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("Date").'</span> : <span class="info-box-label">'.dol_print_date($this->date_ech, 'day').'</span>';
 		}
 		if (property_exists($this, 'amount')) {
 			$return .= '<br>';
 			$return .= '<span class="info-box-label amount">'.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency).'</span>';
 		}
 		if (method_exists($this, 'LibStatut')) {
-			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3, $this->alreadypaid).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3, (float) $this->alreadypaid).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

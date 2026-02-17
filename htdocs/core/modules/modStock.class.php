@@ -44,7 +44,7 @@ class modStock extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs;
+		global $conf, $langs;	// $conf is used by inc.php
 
 		$this->db = $db;
 		$this->numero = 52;
@@ -78,7 +78,7 @@ class modStock extends DolibarrModules
 		$this->const = array();
 		$r = 0;
 
-		$this->const[$r] = array('STOCK_ALLOW_NEGATIVE_TRANSFER', 'chaine', '1', '', 1);
+		$this->const[$r] = array('STOCK_DISALLOW_NEGATIVE_TRANSFER', 'chaine', '1', '', 0);
 
 		$r++;
 		$this->const[$r][0] = "STOCK_ADDON_PDF";
@@ -97,14 +97,14 @@ class modStock extends DolibarrModules
 		$r++;
 		$this->const[$r][0] = "STOCK_ADDON_PDF_ODT_PATH";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/stocks";
+		$this->const[$r][2] = "DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/stocks";
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
 
 		$r++;
 		$this->const[$r][0] = "MOUVEMENT_ADDON_PDF_ODT_PATH";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/stocks/movements";
+		$this->const[$r][2] = "DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/stocks/movements";
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
 
@@ -155,6 +155,17 @@ class modStock extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'mouvement';
 		$this->rights[$r][5] = 'creer';
+
+		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
+			// Not yet implemented. TODO
+			$r++;
+			$this->rights[$r][0] = 1008;
+			$this->rights[$r][1] = 'Read stock value';
+			$this->rights[$r][2] = 'w';
+			$this->rights[$r][3] = 0;
+			$this->rights[$r][4] = 'value_advance';
+			$this->rights[$r][5] = 'read';
+		}
 
 		$r++;
 		$this->rights[$r][0] = 1011;
@@ -316,7 +327,7 @@ class modStock extends DolibarrModules
 				'e.rowid' => 'List:entrepot:ref::stock', 'e.ref' => 'Text', 'e.lieu' => 'Text', 'e.description' => 'Text', 'e.address' => 'Text', 'e.zip' => 'Text', 'e.town' => 'Text',
 				'p.rowid' => "Numeric", 'p.ref' => "Text", 'p.fk_product_type' => "Text", 'p.label' => "Text", 'p.description' => "Text", 'p.note' => "Text",
 				'p.price' => "Numeric", 'p.tva_tx' => 'Numeric', 'p.tosell' => "Boolean", 'p.tobuy' => "Boolean", 'p.duration' => "Duree",
-				'p.datec' => 'DateCreation', 'p.tms' => 'DateModification', 'p.pmp' => 'PMPValue', 'p.cost_price' => 'CostPrice', 'lcpn.label'=>'Text',
+				'p.datec' => 'Date', 'p.tms' => 'Date', 'p.pmp' => 'PMPValue', 'p.cost_price' => 'CostPrice', 'lcpn.label'=>'Text',
 				'pb.batch' => 'Text', 'pb.qty' => 'Numeric',
 				'pl.eatby' => 'Date', 'pl.sellby' => 'Date', 'none.dateLastMovement' => 'Date'
 			);
@@ -463,7 +474,7 @@ class modStock extends DolibarrModules
 		$this->import_label[$r] = "Warehouses"; // Translation key
 		$this->import_icon[$r] = "warehouse";
 		$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
-		$this->import_tables_array[$r] = array('e' => MAIN_DB_PREFIX.'entrepot');
+		$this->import_tables_array[$r] = array('e' => MAIN_DB_PREFIX.'entrepot', 'extra' => MAIN_DB_PREFIX.'entrepot_extrafields');
 		$this->import_tables_creator_array[$r] = array('e' => 'fk_user_author');
 		$this->import_fields_array[$r] = array('e.ref' => "LocationSummary*",
 				'e.description' => "DescWareHouse",
@@ -484,7 +495,22 @@ class modStock extends DolibarrModules
 				'e.fk_parent' => array('rule' => 'fetchidfromref', 'classfile' => '/product/stock/class/entrepot.class.php', 'class' => 'Entrepot', 'method' => 'fetch', 'element' => 'ref')
 		);
 		$this->import_regex_array[$r] = array('e.statut' => '^[0|1]');
-		$this->import_examplevalues_array[$r] = array('e.ref' => "ALM001",
+		// Add extra fields
+		$import_extrafield_sample = array();
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'entrepot' AND entity IN (0, ".$conf->entity.")";
+		$resql = $this->db->query($sql);
+		if ($resql) {    // This can fail when class is used on old database (during migration for example)
+			while ($obj = $this->db->fetch_object($resql)) {
+				$fieldname = 'extra.'.$obj->name;
+				$fieldlabel = ucfirst($obj->label);
+				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
+				$import_extrafield_sample[$fieldname] = $fieldlabel;
+			}
+		}
+		// End add extra fields
+		$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'entrepot'); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
+
+		$this->import_examplevalues_array[$r] = array_merge(array('e.ref' => "ALM001",
 				'e.description' => "Central Warehouse",
 				'e.lieu' => "Central",
 				'e.address' => "Route 66",
@@ -495,7 +521,7 @@ class modStock extends DolibarrModules
 				'e.fax' => '(+33)(0)123456790',
 				'e.statut' => '1',
 				'e.fk_parent' => 'id or ref of warehouse'
-		);
+		), $import_extrafield_sample);
 		$this->import_updatekeys_array[$r] = array('p.ref' => 'Ref');
 
 		// Import stocks
@@ -516,7 +542,7 @@ class modStock extends DolibarrModules
 		);
 		$this->import_updatekeys_array[$r] = array('ps.fk_product' => 'Product', 'ps.fk_entrepot' => "Warehouse");
 		$this->import_run_sql_after_array[$r] = array(    // Because we may change data that are denormalized, we must update dernormalized data after.
-			'UPDATE '.MAIN_DB_PREFIX.'product as p SET p.stock = (SELECT SUM(ps.reel) FROM '.MAIN_DB_PREFIX.'product_stock ps WHERE ps.fk_product = p.rowid);'
+			'UPDATE '.MAIN_DB_PREFIX.'product as p SET stock = (SELECT SUM(ps.reel) FROM '.MAIN_DB_PREFIX.'product_stock ps WHERE ps.fk_product = p.rowid);'
 		);
 	}
 
@@ -543,7 +569,7 @@ class modStock extends DolibarrModules
 
 		//ODT template
 		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/stocks/template_warehouse.odt';
-		$dirodt = DOL_DATA_ROOT.'/doctemplates/stocks';
+		$dirodt = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/stocks';
 		$dest = $dirodt.'/template_warehouse.odt';
 
 		if (file_exists($src) && !file_exists($dest)) {

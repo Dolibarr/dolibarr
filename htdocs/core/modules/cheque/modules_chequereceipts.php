@@ -4,7 +4,7 @@
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2016      Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -111,17 +111,19 @@ abstract class ModeleChequeReceipts extends CommonDocGenerator
 
 		return $list;
 	}
+
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Fonction to generate document on disk
 	 *
 	 *	@param	RemiseCheque	$object			Object RemiseCheque
+	 *	@param	Translate		$outputlangs	Lang output object
 	 *	@param	string			$_dir			Directory
 	 *	@param	string			$number			Number
-	 *	@param	Translate		$outputlangs	Lang output object
 	 *	@return	int<-1,1>  						1=ok, 0=ko
 	 */
-	abstract public function write_file($object, $_dir, $number, $outputlangs);
+	abstract public function write_file($object, $outputlangs, $_dir, $number);
 	// phpcs:enable
 }
 
@@ -167,7 +169,8 @@ function chequereceipt_pdf_create($db, $id, $message, $modele, $outputlangs)
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
 		$sav_charset_output = $outputlangs->charset_output;
-		if ($obj->write_file($id, $outputlangs) > 0) {
+		// TODO: write_file seems invalid, function is likely no longer used - delete ?
+		if ($obj->write_file($id, $outputlangs) > 0) { // @phan-suppress-current-line PhanParamTooFew,PhanPluginSuspiciousParamPosition
 			$outputlangs->charset_output = $sav_charset_output;
 			return 1;
 		} else {

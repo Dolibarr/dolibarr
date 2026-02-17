@@ -58,6 +58,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 $action = GETPOST('action', 'aZ09');
 
 $module = GETPOST('module', 'aZ09arobase');
+$uploaddirname = dol_sanitizeFileName(GETPOST('uploaddirname', 'alpha'));
 
 $flowFilename = GETPOST('flowFilename', 'alpha');
 $flowIdentifier = GETPOST('flowIdentifier', 'alpha');
@@ -73,6 +74,9 @@ if ($action != 'upload') {
 
 if (!empty($conf->$module->dir_temp)) {
 	$upload_dir = $conf->$module->dir_temp;
+	if (!empty($uploaddirname)) {
+		$upload_dir .= "/".$uploaddirname;
+	}
 } else {
 	httponly_accessforbidden("Param module does not has a dir_temp directory. Module does not exists or is not activated.");
 }

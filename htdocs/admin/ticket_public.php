@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2018	Jean-François FERRY	<hello@librethic.io>
  * Copyright (C) 2016		Christophe Battarel	<christophe@altairis.fr>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,15 +78,6 @@ if ($action == 'setTICKET_ENABLE_PUBLIC_INTERFACE') {
 	if (GETPOSTISSET('TICKET_ENABLE_PUBLIC_INTERFACE')) {	// only for no js case
 		$param_enable_public_interface = GETPOST('TICKET_ENABLE_PUBLIC_INTERFACE', 'alpha');
 		$res = dolibarr_set_const($db, 'TICKET_ENABLE_PUBLIC_INTERFACE', $param_enable_public_interface, 'chaine', 0, '', $conf->entity);
-		if (!($res > 0)) {
-			$error++;
-			$errors[] = $db->lasterror();
-		}
-	}
-
-	if (GETPOSTISSET('TICKET_DISABLE_CUSTOMER_MAILS')) {	// only for no js case
-		$param_disable_email = GETPOST('TICKET_DISABLE_CUSTOMER_MAILS', 'alpha');
-		$res = dolibarr_set_const($db, 'TICKET_DISABLE_CUSTOMER_MAILS', $param_disable_email, 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {
 			$error++;
 			$errors[] = $db->lasterror();
@@ -239,7 +230,7 @@ $page_name = "TicketSetup";
 llxHeader('', $langs->trans($page_name), $help_url, '', 0, 0, '', '', '', 'mod-admin page-ticket_public');
 
 // Subheader
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
 print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 
@@ -382,7 +373,7 @@ if (getDolGlobalInt('TICKET_ENABLE_PUBLIC_INTERFACE')) {
 		print ajax_constantonoff('TICKET_SHOW_COMPANY_FOOTER');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("TICKET_SHOW_COMPANY_FOOTER", $arrval, $conf->global->TICKET_SHOW_COMPANY_FOOTER);
+		print $form->selectarray("TICKET_SHOW_COMPANY_FOOTER", $arrval, getDolGlobalString('TICKET_SHOW_COMPANY_FOOTER'));
 	}
 	print '</td>';
 	print '<td class="center width75">';
@@ -408,23 +399,6 @@ if (getDolGlobalInt('TICKET_ENABLE_PUBLIC_INTERFACE')) {
 	print '</td>';
 	print '</tr>';
 
-	// Also send to main email address
-	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
-		print '<tr class="oddeven"><td>'.$langs->trans("TicketsEmailAlsoSendToMainAddress").'</td>';
-		print '<td class="left">';
-		if (!empty($conf->use_javascript_ajax)) {
-			print ajax_constantonoff('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS');
-		} else {
-			$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-			print $form->selectarray("TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS", $arrval, getDolGlobalInt('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS'));
-		}
-		print '</td>';
-		print '<td class="center width75">';
-		print $form->textwithpicto('', $langs->trans("TicketsEmailAlsoSendToMainAddressHelp", $langs->transnoentitiesnoconv("TicketEmailNotificationTo").' ('.$langs->transnoentitiesnoconv("Creation").')', $langs->trans("Settings")), 1, 'help');
-		print '</td>';
-		print '</tr>';
-	}
-
 	if (empty($conf->use_javascript_ajax)) {
 		print '<tr><td colspan="3" align="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></td>';
 		print '</tr>';
@@ -440,7 +414,7 @@ if (getDolGlobalInt('TICKET_ENABLE_PUBLIC_INTERFACE')) {
 	$url_interface = getDolGlobalString("TICKET_PUBLIC_INTERFACE_TOPIC");
 	print '<tr><td>'.$langs->trans("TicketPublicInterfaceTopicLabelAdmin").'</label>';
 	print '</td><td>';
-	print '<input type="text"   name="TICKET_PUBLIC_INTERFACE_TOPIC" value="'.$url_interface.'" size="40" ></td>';
+	print '<input type="text" name="TICKET_PUBLIC_INTERFACE_TOPIC" value="'.$url_interface.'" size="40" ></td>';
 	print '</td>';
 	print '<td class="center width75">';
 	print $form->textwithpicto('', $langs->trans("TicketPublicInterfaceTopicHelp"), 1, 'help');
@@ -516,20 +490,6 @@ if (getDolGlobalInt('TICKET_ENABLE_PUBLIC_INTERFACE')) {
 	print '</td>';
 	print '</tr>';
 
-	// Activate email creation to user
-	print '<tr class="oddeven"><td>';
-	print $form->textwithpicto($langs->trans("TicketsDisableCustomerEmail"), $langs->trans("TicketsDisableEmailHelp"), 1, 'help');
-	print '</td>';
-	print '<td class="left">';
-	if ($conf->use_javascript_ajax) {
-		print ajax_constantonoff('TICKET_DISABLE_CUSTOMER_MAILS');
-	} else {
-		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("TICKET_DISABLE_CUSTOMER_MAILS", $arrval, getDolGlobalInt('TICKET_DISABLE_CUSTOMER_MAILS'));
-	}
-	print '</td>';
-	print '</tr>';
-
 	// Text of email after creatio of a ticket
 	$mail_mesg_new = getDolGlobalString("TICKET_MESSAGE_MAIL_NEW", $langs->trans('TicketNewEmailBody'));
 	print '<tr class="oddeven"><td>';
@@ -563,6 +523,22 @@ if (getDolGlobalInt('TICKET_ENABLE_PUBLIC_INTERFACE')) {
 	print '<input type="text" name="TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_DEFAULT_EMAIL" value="'.getDolGlobalString("TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_DEFAULT_EMAIL").'" size="40" ></td>';
 	print '</td>';
 	print '</tr>';
+
+	// Also send to main email address
+	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
+		print '<tr class="oddeven"><td>'.$langs->trans("TicketsEmailAlsoSendToMainAddress");
+		print $form->textwithpicto('', $langs->trans("TicketsEmailAlsoSendToMainAddressHelp", $langs->transnoentitiesnoconv("TicketEmailNotificationTo").' ('.$langs->transnoentitiesnoconv("Creation").')', $langs->trans("Settings")), 1, 'help');
+		print '</td>';
+		print '<td class="left">';
+		if (!empty($conf->use_javascript_ajax)) {
+			print ajax_constantonoff('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS');
+		} else {
+			$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+			print $form->selectarray("TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS", $arrval, getDolGlobalInt('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS'));
+		}
+		print '</td>';
+		print '</tr>';
+	}
 
 	print '</table>';
 	print '</div>';

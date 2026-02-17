@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2007      Patrick Raguin 		<patrick.raguin@gmail.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ class FormAdmin
 	/**
 	 *  Return html select list with available languages (key='en_US', value='United States' for example)
 	 *
-	 *  @param      string|string[]	$selected       Language pre-selected. Can be an array if $multiselect is 1.
+	 *  @param      string|string[]	$selected       Language preselected. Can be an array if $multiselect is 1.
 	 *  @param      string			$htmlname       Name of HTML select
 	 *  @param      int<0,1>		$showauto       Show 'auto' choice
 	 *  @param      string[]		$filter         Array of keys to exclude in list (opposite of $onlykeys)
@@ -71,7 +71,7 @@ class FormAdmin
 	 *  @param		int<0,1>		$mainlangonly	1=Show only main languages ('fr_FR' no' fr_BE', 'es_ES' not 'es_MX', ...)
 	 *  @return		string							Return HTML select string with list of languages
 	 */
-	public function select_language($selected = '', $htmlname = 'lang_id', $showauto = 0, $filter = array(), $showempty = '', $showwarning = 0, $disabled = 0, $morecss = '', $showcode = 0, $forcecombo = 0, $multiselect = 0, $onlykeys = array(), $mainlangonly = 0)
+	public function select_language($selected = '', $htmlname = 'lang_id', $showauto = 0, $filter = array(), $showempty = '', $showwarning = 0, $disabled = 0, $morecss = 'minwidth100', $showcode = 0, $forcecombo = 0, $multiselect = 0, $onlykeys = array(), $mainlangonly = 0)
 	{
 		// phpcs:enable
 		global $langs;
@@ -86,7 +86,7 @@ class FormAdmin
 		$langs_available = $langs->get_available_languages(DOL_DOCUMENT_ROOT, 12, 0, $mainlangonly);
 
 		// If empty value is not allowed and the language to select is not inside the list of available language and we must find
-		// an alternative of the language code to pre-select (to avoid to have first element in list pre-selected).
+		// an alternative of the language code to preselect (to avoid to have first element in list preselected).
 		if ($selected && empty($showempty)) {
 			if (!is_array($selected) && !array_key_exists($selected, $langs_available)) {
 				$tmparray = explode('_', $selected);
@@ -303,7 +303,7 @@ class FormAdmin
 	/**
 	 *  Return combo list of available menu families
 	 *
-	 *  @param	string		$selected        Menu pre-selected
+	 *  @param	string		$selected        Menu preselected
 	 *  @param	string		$htmlname        Name of html select
 	 *  @param	string[]	$dirmenuarray    Directories to scan
 	 *  @return	void
@@ -356,7 +356,7 @@ class FormAdmin
 		ksort($menuarray);
 
 		// Show combo list of menu handlers
-		print '<select class="flat maxwidth150" id="'.$htmlname.'" name="'.$htmlname.'">';
+		print '<select class="flat width150" id="'.$htmlname.'" name="'.$htmlname.'">';
 		foreach ($menuarray as $key => $val) {
 			$tab = explode('_', $key);
 			print '<option value="'.$key.'"';
@@ -381,8 +381,8 @@ class FormAdmin
 	/**
 	 *  Return a HTML select list of timezones
 	 *
-	 *  @param	string		$selected        Menu pre-selectionnee
-	 *  @param  string		$htmlname        Nom de la zone select
+	 *  @param	string		$selected        Preselected Menu
+	 *  @param  string		$htmlname        Name of the selected zone
 	 *  @return	void
 	 */
 	public function select_timezone($selected, $htmlname)
@@ -434,7 +434,7 @@ class FormAdmin
 	/**
 	 *  Return html select list with available languages (key='en_US', value='United States' for example)
 	 *
-	 *  @param      string	$selected       Paper format pre-selected
+	 *  @param      string	$selected       Paper format preselected
 	 *  @param      string	$htmlname       Name of HTML select field
 	 *  @param		string	$filter			Value to filter on code
 	 *  @param		int		$showempty		Add empty value
@@ -511,10 +511,11 @@ class FormAdmin
 	 */
 	public function selectTypeOfFields($htmlname, $type, $typewecanchangeinto = array())
 	{
-		global $type2label;	// TODO Remove this
+		$type2label = ExtraFields::getListOfTypesLabels();
 
 		$out = '';
 
+		$out .= '<!-- combo with type of extrafields -->'."\n";
 		$out .= '<select class="flat type" id="'.$htmlname.'" name="'.$htmlname.'">';
 		foreach ($type2label as $key => $val) {
 			$selected = '';

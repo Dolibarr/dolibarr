@@ -1,4 +1,32 @@
 <?php
+/* Copyright (C) 2025		Frédéric France			<frederic.france@free.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/**
+ * @var Conf $conf
+ * @var CommonObject $object
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ *
+ * @var array<string,mixed> $arrayfields
+ * @var ?string $extrafieldsobjectkey
+ * @var	?string $extrafieldsobjectprefix
+ * @var ?string $search_options_pattern
+ * @var array<string,mixed> $search_array_options
+ */
 
 print '<!-- extrafields_list_search_input.tpl.php -->'."\n";
 
@@ -27,9 +55,11 @@ if (!empty($extrafieldsobjectkey)) {	// $extrafieldsobject is the $object->table
 				if ($extrafields->attributes[$extrafieldsobjectkey]['type'][$key] == 'separate') {
 					continue;
 				}
-				$cssclass = $extrafields->getAlignFlag($key, $extrafieldsobjectkey);
+
+				$cssclasstd = $extrafields->getCSSClass($key, $extrafieldsobjectkey, 'csslist');
+
 				$typeofextrafield = $extrafields->attributes[$extrafieldsobjectkey]['type'][$key];
-				print '<td class="liste_titre'.($cssclass ? ' '.$cssclass : '').'">';
+				print '<td class="liste_titre'.($cssclasstd ? ' '.$cssclasstd : '').'">';
 				$tmpkey = preg_replace('/'.$search_options_pattern.'/', '', $key);
 				if (in_array($typeofextrafield, array('varchar', 'mail', 'ip', 'url', 'int', 'double')) && empty($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key])) {
 					$searchclass = '';

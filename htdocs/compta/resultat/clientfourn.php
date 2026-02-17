@@ -10,6 +10,7 @@
  * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Maxime DEMAREST         <maxime@indelog.fr>
  * Copyright (C) 2021       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -185,6 +186,10 @@ $exportlink = '';
 $total_ht = 0;
 $total_ttc = 0;
 
+$builddate = '';
+$name = '';
+$period = '';
+
 // Affiche en-tete de rapport
 if ($modecompta == "CREANCES-DETTES") {
 	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByPredefinedAccountGroups");
@@ -211,7 +216,7 @@ if ($modecompta == "CREANCES-DETTES") {
 } elseif ($modecompta == "BOOKKEEPING") {
 	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByPredefinedAccountGroups");
 	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
-	$arraylist = array('no'=>$langs->trans("CustomerCode"), 'yes'=>$langs->trans("AccountWithNonZeroValues"), 'all'=>$langs->trans("All"));
+	$arraylist = array('no' => $langs->trans("CustomerCode"), 'yes' => $langs->trans("AccountWithNonZeroValues"), 'all' => $langs->trans("All"));
 	$period .= ' &nbsp; &nbsp; <span class="opacitymedium">'.$langs->trans("DetailBy").'</span> '.$form->selectarray('showaccountdetail', $arraylist, $showaccountdetail, 0);
 	$periodlink = ($year_start ? "<a href='".$_SERVER["PHP_SELF"]."?year=".($tmps['year'] - 1)."&modecompta=".$modecompta."&showaccountdetail=".$showaccountdetail."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($tmps['year'] + 1)."&modecompta=".$modecompta."&showaccountdetail=".$showaccountdetail."'>".img_next()."</a>" : "");
 	$description = $langs->trans("RulesResultBookkeepingPredefined");
@@ -238,7 +243,7 @@ if (isModEnabled('accounting')) {
 $calcmode .= '</label>';
 
 
-report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array('modecompta'=>$modecompta, 'showaccountdetail'=>$showaccountdetail), $calcmode);
+report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array('modecompta' => $modecompta, 'showaccountdetail' => $showaccountdetail), $calcmode);
 
 if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {
 	print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, '1');
@@ -269,9 +274,9 @@ print '<table class="liste noborder centpercent">';
 print '<tr class="liste_titre">';
 
 if ($modecompta == 'BOOKKEEPING') {
-	print_liste_field_titre("PredefinedGroups", $_SERVER["PHP_SELF"], 'f.thirdparty_code,f.rowid', '', $param, '', $sortfield, $sortorder, 'width200 ');
+	print_liste_field_titre("PredefinedGroups", $_SERVER["PHP_SELF"], 'f.thirdparty_code,f.rowid', '', $param, '', $sortfield, $sortorder, '');
 } else {
-	print_liste_field_titre("", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'width200 ');
+	print_liste_field_titre("", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '');
 }
 print_liste_field_titre('');
 if ($modecompta == 'BOOKKEEPING') {
@@ -304,16 +309,19 @@ if ($modecompta == 'BOOKKEEPING') {
 	if ($showaccountdetail == 'no') {
 		$sql .= ", f.thirdparty_code as name";
 	}
-	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as f";
-	$sql .= ", ".MAIN_DB_PREFIX."accounting_account as aa";
-	$sql .= " WHERE f.numero_compte = aa.account_number";
+	$sql .= " FROM ".$db->prefix()."accounting_bookkeeping as f";
+	$sql .= " INNER JOIN ".$db->prefix()."accounting_account as aa";
+	$sql .= "   ON aa.account_number = f.numero_compte";
+	$sql .= " 	AND aa.entity = f.entity"; // Security prevents duplicate.
+	$sql .= " WHERE 1=1";
 	$sql .= " AND ".$predefinedgroupwhere;
-	$sql .= " AND fk_pcg_version = '".$db->escape($charofaccountstring)."'";
+	$sql .= " AND aa.fk_pcg_version = '".$db->escape($charofaccountstring)."'";
 	$sql .= " AND f.entity = ".$conf->entity;
 	if (!empty($date_start) && !empty($date_end)) {
-		$sql .= " AND f.doc_date >= '".$db->idate($date_start)."' AND f.doc_date <= '".$db->idate($date_end)."'";
+		$sql .= " AND f.doc_date >= '".$db->idate($date_start)."'";
+		$sql .= " AND f.doc_date <= '".$db->idate($date_end)."'";
 	}
-	$sql .= " GROUP BY pcg_type";
+	$sql .= " GROUP BY aa.pcg_type";
 	if ($showaccountdetail == 'no') {
 		$sql .= ", name, socid";	// group by "accounting group" (INCOME/EXPENSE), then "customer".
 	}
@@ -378,7 +386,7 @@ if ($modecompta == 'BOOKKEEPING') {
 					$cpts = $AccCat->getCptsCat(0, $tmppredefinedgroupwhere);
 
 					foreach ($cpts as $j => $cpt) {
-						$return = $AccCat->getSumDebitCredit($cpt['account_number'], $date_start, $date_end, (empty($cpt['dc']) ? 0 : $cpt['dc']));
+						$return = $AccCat->getSumDebitCredit((int) $cpt['account_number'], $date_start, $date_end, (empty($cpt['dc']) ? 0 : $cpt['dc']));
 						if ($return < 0) {
 							setEventMessages(null, $AccCat->errors, 'errors');
 							$resultN = 0;
@@ -564,7 +572,7 @@ if ($modecompta == 'BOOKKEEPING') {
 				$sql .= " WHERE p.entity IN (".getEntity('donation').")";
 				$sql .= " AND fk_statut in (1,2)";
 			} else {
-				$sql = "SELECT p.societe as nom, p.firstname, p.lastname, date_format(p.datedon,'%Y-%m') as dm, sum(p.amount) as amount";
+				$sql = "SELECT p.societe as nom, p.firstname, p.lastname, date_format(p.datedon,'%Y-%m') as dm, sum(pe.amount) as amount";
 				$sql .= " FROM ".MAIN_DB_PREFIX."don as p";
 				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."payment_donation as pe ON pe.fk_donation = p.rowid";
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id";

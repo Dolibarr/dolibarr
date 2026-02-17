@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2017  Laurent Destailleur  	<eldy@users.sourceforge.org>
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,7 +102,7 @@ class vCard
 	/**
 	 * @var string encoding
 	 */
-	public $encoding = "ENCODING=QUOTED-PRINTABLE";
+	public $encoding = "CHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE";
 
 
 	/**
@@ -173,7 +173,7 @@ class vCard
 	public function setName($family = "", $first = "", $additional = "", $prefix = "", $suffix = "")
 	{
 		//$this->properties["N;".$this->encoding] = encode($family).";".encode($first).";".encode($additional).";".encode($prefix).";".encode($suffix);
-		$this->properties["N"] = encode($family).";".encode($first).";".encode($additional).";".encode($prefix).";".encode($suffix);
+		$this->properties["N;".$this->encoding] = encode($family).";".encode($first).";".encode($additional).";".encode($prefix).";".encode($suffix);
 
 		$this->filename = "$first%20$family.vcf";
 
@@ -385,7 +385,7 @@ class vCard
 		$text .= "VERSION:4.0\r\n";		// With V4, all encoding are UTF-8
 		//$text.= "VERSION:2.1\r\n";
 		foreach ($this->properties as $key => $value) {
-			$newkey = preg_replace('/-.*$/', '', $key);	// remove suffix -twitter, -facebook, ...
+			$newkey = preg_replace('/(?<!QUOTED|UTF)-.*$/', '', $key);	// remove suffix -twitter, -facebook, ...
 			$text .= $newkey.":".$value."\r\n";
 		}
 		$text .= "REV:".date("Ymd")."T".date("His")."Z\r\n";
@@ -506,7 +506,7 @@ class vCard
 		// For user, $object->url is not defined
 		// For contact, $object->url is not defined
 		if (!empty($object->url)) {
-			$this->setURL($object->url, "");
+			$this->setURL($object->url ?? "");
 		}
 
 		if (is_object($company)) {
@@ -515,7 +515,9 @@ class vCard
 				$this->setOrg($company->name);
 			}
 
-			$this->setURL($company->url, "");
+			if (!empty($company->url)) {
+				$this->setURL($company->url, "");
+			}
 
 			if ($company->phone && empty($object->office_phone)) {		// If we already set the type TYPE=WORK,VOICE with office_phone
 				$this->setPhoneNumber($company->phone, "TYPE=WORK,VOICE");

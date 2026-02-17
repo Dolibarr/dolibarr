@@ -4,7 +4,7 @@
  * Copyright (C) 2012-2014	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2015-2016	Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2019       Nicolas ZABOURI     <info@inovea-conseil.com>
- * Copyright (C) 2021-2024  Frédéric France		<frederic.france@free.fr>
+ * Copyright (C) 2021-2025  Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -79,6 +79,8 @@ if ($user->socid > 0) {
 
 if (!getDolGlobalString('MAIN_INFO_SOCIETE_NOM') || !getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY')) {
 	$setupcompanynotcomplete = 1;
+} else {
+	$setupcompanynotcomplete = 0;
 }
 
 $max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
@@ -114,7 +116,7 @@ print load_fiche_titre($langs->trans("HRMArea"), '', 'hrm');
 if (!empty($setupcompanynotcomplete)) {
 	$langs->load("errors");
 	$warnpicto = img_warning($langs->trans("WarningMandatorySetupNotComplete"));
-	print '<br><div class="warning"><a href="'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete) ? '' : '&action=edit&token='.newToken()).'">'.$warnpicto.' '.$langs->trans("WarningMandatorySetupNotComplete").'</a></div>';
+	print '<br><div class="warning"><a href="'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home&action=edit&token='.newToken().'">'.$warnpicto.' '.$langs->trans("WarningMandatorySetupNotComplete").'</a></div>';
 
 	llxFooter();
 	exit;
@@ -274,7 +276,7 @@ if (isModEnabled('holiday') && $user->hasRight('holiday', 'read')) {
 				print '<td class="tdoverflowmax100">'.$userstatic->getNomUrl(-1, 'leave').'</td>';
 
 				$leavecode = empty($typeleaves[$obj->fk_type]) ? 'Undefined' : $typeleaves[$obj->fk_type]['code'];
-				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($langs->trans($leavecode)).'">'.dol_escape_htmltag($langs->trans($leavecode)).'</td>';
+				print '<td class="tdoverflowmax80" title="'.dol_escape_htmltag($langs->trans($leavecode)).'">'.dol_escape_htmltag($langs->trans($leavecode)).'</td>';
 
 				$starthalfday = ($obj->halfday == -1 || $obj->halfday == 2) ? 'afternoon' : 'morning';
 				$endhalfday = ($obj->halfday == 1 || $obj->halfday == 2) ? 'morning' : 'afternoon';
@@ -353,7 +355,7 @@ if (isModEnabled('expensereport') && $user->hasRight('expensereport', 'read')) {
 
 				$expensereportstatic->id = $obj->rowid;
 				$expensereportstatic->ref = $obj->ref;
-				$expensereportstatic->statut = $obj->status;
+				$expensereportstatic->statut = $obj->status;	// deprecated
 				$expensereportstatic->status = $obj->status;
 
 				$userstatic->id = $obj->uid;
@@ -370,7 +372,7 @@ if (isModEnabled('expensereport') && $user->hasRight('expensereport', 'read')) {
 				print '<td class="tdoverflowmax150">'.$userstatic->getNomUrl(-1).'</td>';
 				print '<td class="right amount">'.price($obj->total_ht).'</td>';
 				print '<td class="right amount">'.price($obj->total_ttc).'</td>';
-				print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'dayreduceformat').'</td>';
+				print '<td class="right" title="'.$langs->trans("DateModification").': '.dol_print_date($db->jdate($obj->dm), 'dayhour').'">'.dol_print_date($db->jdate($obj->dm), 'dayreduceformat').'</td>';
 				print '<td class="right nowraponall" width="16">'.$expensereportstatic->LibStatut($obj->status, 3).'</td>';
 				print '</tr>';
 
@@ -447,7 +449,7 @@ if (isModEnabled('recruitment') && $user->hasRight('recruitment', 'recruitmentjo
 				print '<td class="nowraponall">'.$staticrecruitmentcandidature->getNomUrl(1, '').'</td>';
 				print '<td class="tdoverflowmax150">'.$staticrecruitmentcandidature->getFullName($langs).'</td>';
 				print '<td class="nowraponall">'.$staticrecruitmentjobposition->getNomUrl(1).'</td>';
-				print '<td class="right nowrap">'.dol_print_date($db->jdate($objp->tms), 'dayreduceformat').'</td>';
+				print '<td class="right nowrap" title="'.$langs->trans("DateModification").': '.dol_print_date($db->jdate($objp->tms), 'dayhour').'">'.dol_print_date($db->jdate($objp->tms), 'dayreduceformat').'</td>';
 				print '<td class="right nowrap" width="16">';
 				print $staticrecruitmentcandidature->getLibStatut(3);
 				print "</td>";

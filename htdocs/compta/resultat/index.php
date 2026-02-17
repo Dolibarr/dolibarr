@@ -5,9 +5,9 @@
  * Copyright (C) 2014-2016  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2014       Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Maxime DEMAREST         <maxime@indelog.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('compta', 'bills', 'donation', 'salaries'));
+$langs->loadLangs(array('compta', 'bills', 'donation', 'accountancy', 'salaries'));
 
 $date_startday = GETPOSTINT('date_startday');
 $date_startmonth = GETPOSTINT('date_startmonth');
@@ -54,7 +54,7 @@ $date_endyear = GETPOSTINT('date_endyear');
 
 $nbofyear = 4;
 
-// Change this to test different cases of setup
+// Change this to test different cases of setup.
 //$conf->global->SOCIETE_FISCAL_MONTH_START = 7;
 
 
@@ -150,6 +150,11 @@ llxHeader();
 
 $form = new Form($db);
 
+
+$builddate = 0;
+$name = '';
+$period = '';
+$periodlink = '';
 $exportlink = '';
 
 $encaiss = array();
@@ -157,7 +162,7 @@ $encaiss_ttc = array();
 $decaiss = array();
 $decaiss_ttc = array();
 
-// Affiche en-tete du rapport
+// Display report header
 if ($modecompta == 'CREANCES-DETTES') {
 	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByYear");
 	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
@@ -209,7 +214,6 @@ if (isModEnabled('accounting')) {
 }
 $calcmode .= '</label>';
 
-
 report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array(), $calcmode);
 
 if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {
@@ -219,7 +223,7 @@ if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {
 
 
 /*
- * Factures clients
+ * Customers invoices
  */
 
 $subtotal_ht = 0;
@@ -277,12 +281,12 @@ if (isModEnabled('invoice') && ($modecompta == 'CREANCES-DETTES' || $modecompta 
 	} else {
 		dol_print_error($db);
 	}
-} elseif ($modecompta == "BOOKKEEPING") {
-	// Nothing from this table
-}
+} // elseif ($modecompta == "BOOKKEEPING") {
+// Nothing from this table
+//}
 
 if (isModEnabled('invoice') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
-	// On ajoute les paiements clients anciennes version, non lies par paiement_facture
+	// Adding legacy client payments not linked via 'paiement_facture'.
 	if ($modecompta != 'CREANCES-DETTES') {
 		$sql = "SELECT sum(p.amount) as amount_ttc, date_format(p.datep,'%Y-%m') as dm";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
@@ -322,16 +326,16 @@ if (isModEnabled('invoice') && ($modecompta == 'CREANCES-DETTES' || $modecompta 
 		} else {
 			dol_print_error($db);
 		}
-	} elseif ($modecompta == "RECETTES-DEPENSES") {
-		// Nothing from this table
-	}
-} elseif ($modecompta == "BOOKKEEPING") {
+	} //elseif ($modecompta == "RECETTES-DEPENSES") {
 	// Nothing from this table
-}
+	//}
+} //elseif ($modecompta == "BOOKKEEPING") {
+// Nothing from this table
+//}
 
 
 /*
- * Frais, factures fournisseurs.
+ * Expenses, supplier invoices.
  */
 $subtotal_ht = 0;
 $subtotal_ttc = 0;
@@ -391,9 +395,9 @@ if (isModEnabled('invoice') && ($modecompta == 'CREANCES-DETTES' || $modecompta 
 	} else {
 		dol_print_error($db);
 	}
-} elseif ($modecompta == "BOOKKEEPING") {
-	// Nothing from this table
-}
+} //elseif ($modecompta == "BOOKKEEPING") {
+// Nothing from this table
+//}
 
 
 
@@ -557,9 +561,9 @@ if (isModEnabled('tax') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "
 			dol_print_error($db);
 		}
 	}
-} elseif ($modecompta == "BOOKKEEPING") {
-	// Nothing from this table
-}
+}// elseif ($modecompta == "BOOKKEEPING") {
+// Nothing from this table
+//}
 
 /*
  * Social contributions
@@ -616,9 +620,9 @@ if (isModEnabled('tax') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "
 	} else {
 		dol_print_error($db);
 	}
-} elseif ($modecompta == "BOOKKEEPING") {
-	// Nothing from this table
-}
+} //elseif ($modecompta == "BOOKKEEPING") {
+// Nothing from this table
+//}
 
 
 /*
@@ -626,6 +630,7 @@ if (isModEnabled('tax') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "
  */
 
 if (isModEnabled('salaries') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
+	$sql = '';
 	if ($modecompta == 'CREANCES-DETTES') {
 		$column = 's.dateep';		// we use the date of end of period of salary
 
@@ -678,9 +683,9 @@ if (isModEnabled('salaries') && ($modecompta == 'CREANCES-DETTES' || $modecompta
 	} else {
 		dol_print_error($db);
 	}
-} elseif ($modecompta == "BOOKKEEPING") {
-	// Nothing from this table
-}
+} //elseif ($modecompta == "BOOKKEEPING") {
+// Nothing from this table
+//}
 
 
 /*
@@ -740,9 +745,9 @@ if (isModEnabled('expensereport') && ($modecompta == 'CREANCES-DETTES' || $modec
 	} else {
 		dol_print_error($db);
 	}
-} elseif ($modecompta == 'BOOKKEEPING') {
-	// Nothing from this table
-}
+} //elseif ($modecompta == 'BOOKKEEPING') {
+// Nothing from this table
+//}
 
 
 /*
@@ -800,9 +805,9 @@ if (isModEnabled('don') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "
 	} else {
 		dol_print_error($db);
 	}
-} elseif ($modecompta == 'BOOKKEEPING') {
-	// Nothing from this table
-}
+} //elseif ($modecompta == 'BOOKKEEPING') {
+// Nothing from this table
+//}
 
 /*
  * Various Payments
@@ -1058,7 +1063,7 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 		print '<td class="right">';
 		if ($modecompta == 'CREANCES-DETTES' || $modecompta == 'BOOKKEEPING') {
 			if (isset($decaiss[$case]) && $decaiss[$case] != 0) {
-				print '<a href="clientfourn.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta ? '&modecompta='.$modecompta : '').'">'.price(price2num($decaiss[$case], 'MT')).'</a>';
+				print '<a href="clientfourn.php?year='.$annee_decalage.'&month='.$mois_modulo.'&modecompta='.$modecompta.'">'.price(price2num($decaiss[$case], 'MT')).'</a>';
 				if (!isset($totsorties[$annee])) {
 					$totsorties[$annee] = 0;
 				}
@@ -1078,7 +1083,7 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 		print '<td class="borderrightlight nowrap right">';
 		if ($modecompta == 'CREANCES-DETTES' || $modecompta == 'BOOKKEEPING') {
 			if (isset($encaiss[$case])) {
-				print '<a href="clientfourn.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta ? '&modecompta='.$modecompta : '').'">'.price(price2num($encaiss[$case], 'MT')).'</a>';
+				print '<a href="clientfourn.php?year='.$annee_decalage.'&month='.$mois_modulo.'&modecompta='.$modecompta.'">'.price(price2num($encaiss[$case], 'MT')).'</a>';
 				if (!isset($totentrees[$annee])) {
 					$totentrees[$annee] = 0;
 				}

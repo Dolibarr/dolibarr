@@ -7,7 +7,7 @@
  * Copyright (C) 2012      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2021		Gauthier VERDOL		<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,7 +86,7 @@ abstract class ModeleNumRefStockTransfer extends CommonNumRefGenerator
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param  StockTransfer	$object		Object we need next value for
+	 *  @param  StockTransfer|StockTransferLine	$object		Object we need next value for
 	 *  @return string|int<-1,0>			Value if OK, 0 if KO
 	 */
 	abstract public function getNextValue($object);

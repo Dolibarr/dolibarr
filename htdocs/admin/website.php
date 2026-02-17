@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,8 +53,10 @@ $rowid = GETPOST('rowid', 'alpha');
 
 $id = 1;
 
+$acts = array();
 $acts[0] = "activate";
 $acts[1] = "disable";
+$actl = array();
 $actl[0] = img_picto($langs->trans("Disabled"), 'switch_off', 'class="size15x"');
 $actl[1] = img_picto($langs->trans("Activated"), 'switch_on', 'class="size15x"');
 
@@ -171,7 +173,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 
 	$newid = 0;
 
-	// Si verif ok et action add, on ajoute la ligne
+	// In case of 'actionadd' and with valid parameters, add the line
 	if ($ok && GETPOST('actionadd', 'alpha')) {
 		if ($tabrowid[$id]) {
 			// Get free id for insert
@@ -239,7 +241,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		}
 	}
 
-	// Si verif ok et action modify, on modifie la ligne
+	// In case of 'actionmodify' and with valid parameters, modify the line
 	if ($ok && GETPOST('actionmodify', 'alpha')) {
 		if ($tabrowid[$id]) {
 			$rowidcol = $tabrowid[$id];
@@ -255,10 +257,10 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 
 		// Modify entry
 		$sql = "UPDATE ".$tabname[$id]." SET ";
-		// Modifie valeur des champs
+		// Modify the field values
 		if ($tabrowid[$id] && !in_array($tabrowid[$id], $listfieldmodify)) {
 			$sql .= $tabrowid[$id]."=";
-			$sql .= "'".$db->escape($rowid)."', ";
+			$sql .= "'".$db->escape((string) $rowid)."', ";
 		}
 		$i = 0;
 		foreach ($listfieldmodify as $field) {
@@ -412,7 +414,9 @@ $formadmin = new FormAdmin($db);
 llxHeader('', $langs->trans("WebsiteSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-website');
 
 $titre = $langs->trans("WebsiteSetup");
-$linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php').'">'.$langs->trans("BackToModuleList").'</a>';
+
+$linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($titre, $linkback, 'title_setup');
 
 // Onglets
@@ -424,10 +428,12 @@ $head[$h][1] = $langs->trans("WebSites");
 $head[$h][2] = 'website';
 $h++;
 
+/* disable, no option for the moment
 $head[$h][0] = DOL_URL_ROOT."/admin/website_options.php";
 $head[$h][1] = $langs->trans("Options");
 $head[$h][2] = 'options';
 $h++;
+*/
 
 print dol_get_fiche_head($head, 'website', '', -1);
 
@@ -436,7 +442,7 @@ print '<span class="opacitymedium">'.$langs->trans("WebsiteSetupDesc").'</span><
 print "<br>\n";
 
 
-// Confirmation de la suppression de la ligne
+// Generate form to confirm line deletion
 if ($action == 'delete') {
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$rowid, $langs->trans('DeleteWebsite'), $langs->trans('ConfirmDeleteWebsite'), 'confirm_delete', '', 0, 1, 220);
 }
@@ -446,7 +452,7 @@ if ($action == 'delete') {
  * Show website list
  */
 if ($id) {
-	// Complete requete recherche valeurs avec critere de tri
+	// Complete the request - lookup values with sort condition
 	$sql = $tabsql[$id];
 	$sql .= $db->order($sortfield, $sortorder);
 	$sql .= $db->plimit($limit + 1, $offset);
@@ -456,6 +462,8 @@ if ($id) {
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
+
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 
 	// Form to add a new line
@@ -467,16 +475,15 @@ if ($id) {
 				continue;
 			}
 
-			// Determine le nom du champ par rapport aux noms possibles
-			// dans les dictionnaires de donnees
+			// Get the field name based on the names available in the data dictionaries
 			$valuetoshow = ucfirst($fieldlist[$field]); // By default
 			$valuetoshow = $langs->trans($valuetoshow); // try to translate
-			$align = '';
+			$css = '';
 			if ($fieldlist[$field] == 'lang') {
 				$valuetoshow = $langs->trans("Language");
 			}
 			if ($valuetoshow != '') {
-				print '<td class="'.$align.'">';
+				print '<td class="'.$css.'">';
 				if (!empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i', $tabhelp[$id][$value])) {
 					print '<a href="'.$tabhelp[$id][$value].'" target="_blank" rel="noopener noreferrer">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
 				} elseif (!empty($tabhelp[$id][$value])) {
@@ -523,6 +530,8 @@ if ($id) {
 	}
 
 	print '</table>';
+	print '</div>';
+
 	print '</form>';
 
 
@@ -545,8 +554,8 @@ if ($id) {
 			// Title of lines
 			print '<tr class="liste_titre">';
 			foreach ($fieldlist as $field => $value) {
-				// Determine le nom du champ par rapport aux noms possibles
-				// dans les dictionnaires de donnees
+				// Determine the field name based on the possible names
+				// in the data dictionaries.
 				$showfield = 1; // By default
 				$align = "left";
 				$sortable = 1;
@@ -631,15 +640,24 @@ if ($id) {
 						foreach ($fieldlist as $field => $value) {
 							$showfield = 1;
 							$fieldname = $fieldlist[$field];
-							$align = "left";
+							$css = "";
+							if ($fieldlist[$field] == 'description') {
+								$css .= ' tdoverflowmax300';
+							}
 							if (in_array($fieldname, array('pageviews_total', 'pageviews_previous_month'))) {
-								$align = 'right';
+								$css = 'right';
+							}
+							if ($fieldlist[$field] == 'date_creation') {
+								$css .= ' nowraponall';
+							}
+							if ($fieldlist[$field] == 'lastaccess') {
+								$css .= ' nowraponall';
 							}
 							$valuetoshow = $obj->$fieldname;
 
 							// Show value for field
 							if ($showfield) {
-								print '<td class="'.$align.'">'.$valuetoshow.'</td>';
+								print '<td class="'.$css.'">'.$valuetoshow.'</td>';
 							}
 						}
 					}

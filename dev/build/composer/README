@@ -1,0 +1,39 @@
+--- HOW TO USE COMPOSER
+
+* Switch to the minimal version of PHP
+
+	update-alternatives --config php
+
+
+* To list packages
+
+	cd htdocs/includes/diroflib
+	composer install
+	composer show -i
+
+
+* To upgrade a lib with composer using the composer.json of the library only:
+
+Remove entry in composer.lock
+
+	cd htdocs/includes/diroflib
+	rm composer.lock
+
+Edit composer.json to change version to "x.y.z"
+
+    composer -v update --root-reqs --no-dev --ignore-platform-reqs
+	composer -v update --root-reqs --no-dev --ignore-platform-reqs [--no-autoloader] [--dry-run] ccampbell/chromephp
+
+
+* To upgrade a lib with composer using the composer.json of Dolibarr:
+
+Remove entry in composer.lock
+
+	cd /
+	mv composer.json.disabled composer.json
+	rm composer.lock
+
+Edit composer.json to change version to "x.y.z"
+
+    composer -v update --root-reqs --no-dev --ignore-platform-reqs
+	composer -v update --root-reqs --no-dev --ignore-platform-reqs [--no-autoloader] [--dry-run] ccampbell/chromephp

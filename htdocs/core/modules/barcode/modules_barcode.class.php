@@ -76,6 +76,21 @@ abstract class ModeleBarCode
 	}
 
 	/**
+	 *	Return an image file on the fly (no need to write on disk) with the HTTP content-type of image.
+	 *
+	 *	@param	string   	$code			  	Value to encode
+	 *	@param  string	 	$encoding		  	Mode of encoding
+	 *	@param  string	 	$readable		  	Code can be read (What is this ? is this used ?)
+	 *	@param	integer		$scale			  	Scale
+	 *  @param  integer     $nooutputiferror  	No output if error
+	 *	@return	int							  	Return integer <0 if KO, >0 if OK
+	 */
+	public function buildBarCode($code, $encoding, $readable = 'Y', $scale = 1, $nooutputiferror = 0)
+	{
+		return 1;
+	}
+
+	/**
 	 *  Return true if encoding is supported
 	 *
 	 *  @param  string  $encoding       Encoding norm

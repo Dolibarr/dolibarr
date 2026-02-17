@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2004-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2013-2015 Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2004-2022  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2007  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2013-2015  Juanjo Menent		    <jmenent@2byte.es>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -114,8 +114,10 @@ if ($action == 'activate_encrypt') {
 	}
 } elseif ($action == 'disable_encrypt') {
 	// By default, $allow_disable_encryption is false we do not allow to disable encryption because passwords can't be decoded once encrypted.
+	// We set entity=0 (all) because DATABASE_PWD_ENCRYPTED is a setup into conf file, so always shared for everybody
 	if ($allow_disable_encryption) {
 		dolibarr_del_const($db, "DATABASE_PWD_ENCRYPTED", $conf->entity);
+		dolibarr_del_const($db, "DATABASE_PWD_ENCRYPTED", 0);
 	}
 }
 
@@ -125,11 +127,11 @@ if ($action == 'activate_encryptdbpassconf') {
 		sleep(3); // Don't know why but we need to wait file is completely saved before making the reload. Even with flush and clearstatcache, we need to wait.
 
 		// database value not required
-		//dolibarr_set_const($db, "MAIN_DATABASE_PWD_CONFIG_ENCRYPTED", "1");
+		// dolibarr_set_const($db, "MAIN_DATABASE_PWD_CONFIG_ENCRYPTED", "1");
 		header("Location: security.php");
 		exit;
 	} else {
-		setEventMessages($langs->trans('InstrucToEncodePass', dol_encode($dolibarr_main_db_pass)), null, 'warnings');
+		setEventMessages($langs->trans('InstrucToEncodePass', dolEncrypt($dolibarr_main_db_pass)), null, 'warnings');
 	}
 } elseif ($action == 'disable_encryptdbpassconf') {
 	$result = encodedecode_dbpassconf(0);
@@ -137,11 +139,11 @@ if ($action == 'activate_encryptdbpassconf') {
 		sleep(3); // Don't know why but we need to wait file is completely saved before making the reload. Even with flush and clearstatcache, we need to wait.
 
 		// database value not required
-		//dolibarr_del_const($db, "MAIN_DATABASE_PWD_CONFIG_ENCRYPTED",$conf->entity);
+		// dolibarr_del_const($db, "MAIN_DATABASE_PWD_CONFIG_ENCRYPTED",$conf->entity);
 		header("Location: security.php");
 		exit;
 	} else {
-		//setEventMessages($langs->trans('InstrucToClearPass', $dolibarr_main_db_pass), null, 'warnings');
+		// setEventMessages($langs->trans('InstrucToClearPass', $dolibarr_main_db_pass), null, 'warnings');
 		setEventMessages($langs->trans('InstrucToClearPass', $langs->transnoentitiesnoconv("DatabasePassword")), null, 'warnings');
 	}
 }
@@ -269,7 +271,7 @@ foreach ($arrayhandler as $key => $module) {
 		print '</td>'."\n";
 
 		print '<td class="center">';
-		if ($conf->global->USER_PASSWORD_GENERATED == $key) {
+		if (getDolGlobalString('USER_PASSWORD_GENERATED') == $key) {
 			//print img_picto('', 'tick');
 			print img_picto($langs->trans("Enabled"), 'switch_on');
 		} else {
@@ -399,7 +401,7 @@ if (getDolGlobalString('USER_PASSWORD_GENERATED') == "Perso") {
 // Crypt passwords in database
 
 print '<br>';
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="encrypt">';
 
@@ -442,7 +444,7 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td colspan="3">'.$langs->trans("MainDbPasswordFileConfEncrypted").'</td>';
 print '<td align="center" width="60">';
-if (preg_match('/crypted:/i', $dolibarr_main_db_pass) || !empty($dolibarr_main_db_encrypted_pass)) {
+if (preg_match('/(crypted|dolcrypt):/i', $dolibarr_main_db_pass) || !empty($dolibarr_main_db_encrypted_pass)) {
 	print img_picto($langs->trans("Active"), 'tick');
 }
 
@@ -481,7 +483,7 @@ if (!getDolGlobalString('MAIN_SECURITY_DISABLEFORGETPASSLINK')) {
 	print "</td>";
 }
 if (getDolGlobalString('MAIN_SECURITY_DISABLEFORGETPASSLINK')) {
-	print '<td center="center" width="100">';
+	print '<td class="center" width="100">';
 	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=disable_MAIN_SECURITY_DISABLEFORGETPASSLINK&token='.newToken().'">'.$langs->trans("Disable").'</a>';
 	print "</td>";
 }

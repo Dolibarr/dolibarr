@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2008-2024 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2024  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,6 +59,8 @@ if (!defined('NOIPCHECK')) {
 /**
  * Header function
  *
+ * Note: also called by functions.lib:recordNotFound
+ *
  * @param 	string		$title				Title
  * @param 	string		$head				Head array
  * @param 	int    		$disablejs			More content into html header
@@ -66,16 +69,18 @@ if (!defined('NOIPCHECK')) {
  * @param 	string[]|string	$arrayofcss			Array of complementary css files
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])  // @phan-suppress-current-line PhanRedefineFunction
 {
 	print '<html><title>Export agenda cal</title><body>';
 }
 /**
  * Footer function
  *
+ * Note: also called by functions.lib:recordNotFound
+ *
  * @return	void
  */
-function llxFooterVierge()
+function llxFooterVierge()  // @phan-suppress-current-line PhanRedefineFunction
 {
 	print '</body></html>';
 }
@@ -90,14 +95,17 @@ if (is_numeric($entity)) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
-$object = new ActionComm($db);
+$agenda = new ActionComm($db);
 
-// Not older than
-if (!getDolGlobalString('MAIN_AGENDA_EXPORT_PAST_DELAY')) {
-	$conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY = 100; // default limit
-}
 
 // Define format, type and filter
 $format = 'ical';
@@ -143,8 +151,9 @@ if (GETPOST("actioncode", 'alpha')) {
 if (GETPOSTINT("notolderthan")) {
 	$filters['notolderthan'] = GETPOSTINT("notolderthan");
 } else {
-	$filters['notolderthan'] = getDolGlobalString('MAIN_AGENDA_EXPORT_PAST_DELAY', 100);
+	$filters['notolderthan'] = getDolGlobalInt('MAIN_AGENDA_EXPORT_PAST_DELAY', 100);
 }
+// Max security limit by default to 1000
 if (GETPOSTINT("limit")) {
 	$filters['limit'] = GETPOSTINT("limit");
 } else {
@@ -281,7 +290,6 @@ if ($shortfilename == 'dolibarrcalendar') {
 	exit;
 }
 
-$agenda = new ActionComm($db);
 
 $cachedelay = 0;
 if (getDolGlobalString('MAIN_AGENDA_EXPORT_CACHE')) {

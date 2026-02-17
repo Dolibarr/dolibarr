@@ -2,3 +2,4 @@
 MemberStatusDraftShort=A validar
 MemberStatusActiveShort=Validada
 MemberStatusNoSubscriptionShort=Validada
+MergeOriginMemberIsMAndatory=Origin member is mendatory for merging

@@ -14,8 +14,8 @@ AddResource=Krijo një burim
 ResourceFormLabel_ref=Emri i burimit
 ResourceFormLabel_description=Përshkrimi i burimit
 ResourceType=Lloji i burimit
-ResourceTypeID=Resource type ID
-ResourceTypeLabel=Resource type label
+ResourceTypeID=ID e llojit të burimit
+ResourceTypeLabel=Etiketa e llojit të burimit
 ResourcesLinkedToElement=Burimet e lidhura me elementin
 
 ShowResource=Trego burimin

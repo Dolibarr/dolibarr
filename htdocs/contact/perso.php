@@ -2,7 +2,7 @@
 /* Copyright (C) 2004		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
- * Copyright (C) 2018-2024  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
@@ -75,7 +75,7 @@ if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('societe', 'con
 
 	$result = $object->update_perso($id, $user);
 	if ($result > 0) {
-		$object->oldcopy = dol_clone($object, 2);
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 		// Logo/Photo save
 		$dir = $conf->societe->dir_output.'/contact/'.get_exdir($object->id, 0, 0, 1, $object, 'contact').'/photos';
@@ -224,9 +224,9 @@ if ($action == 'edit') {
 	print ' &nbsp; &nbsp; ';
 	print '<label for="birthday_alert">'.$langs->trans("BirthdayAlert").':</label> ';
 	if (!empty($object->birthday_alert)) {
-		print '<input type="checkbox" id="birthday_alert" name="birthday_alert" checked>';
+		print '<input type="checkbox" id="birthday_alert" name="birthday_alert" value="1" checked>';
 	} else {
-		print '<input type="checkbox" id="birthday_alert" name="birthday_alert">';
+		print '<input type="checkbox" id="birthday_alert" name="birthday_alert" value="1">';
 	}
 	print '</td>';
 	print '</tr>';
@@ -246,7 +246,7 @@ if ($action == 'edit') {
 	$linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$object->id.'" class="refid">';
-	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 	$morehtmlref .= '</a>';
 
 	$morehtmlref .= '<div class="refidno">';

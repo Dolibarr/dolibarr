@@ -10,7 +10,7 @@ ModifyMarginRates=Gewinnspannen ändern
 MarkRate=Marge
 DisplayMarginRates=Zeige Gewinnspannen-Raten an
 DisplayMarkRates=Zeige Gewinnspannen-Raten an
-InputPrice=Einstandspreis
+InputPrice=Preiseingabe
 margin=Gewinnspannen-Verwaltung
 margesSetup=Gewinnspannen Einstellungen
 MarginDetails=Details zu Gewinnspannen
@@ -25,15 +25,15 @@ ChooseProduct/Service=Produkt oder Leistung wählen
 ForceBuyingPriceIfNull=Benutze EK-Preis/Herstellkosten als Verkaufspreis, wenn nicht definiert
 ForceBuyingPriceIfNullDetails=Wenn beim Hinzufügen einer neuen Position kein Kauf-/Einstandspreis angegeben wird und diese Option AKTIVIERT ist, beträgt die Marge der neuen Position 0%% (Einkaufs-/Einstandspreis = Verkaufspreis). Wenn diese Option DEAKTIVIERT ist (empfohlen), entspricht die Marge dem standardmäßig vorgeschlagenen Wert (und kann 100%% betragen, wenn kein Standardwert gefunden werden kann).
 MARGIN_METHODE_FOR_DISCOUNT=Margin-Methode für globale Rabatte
-UseDiscountAsProduct=als Produkt
+UseDiscountAsProduct=Als Produkt
 UseDiscountAsService=Als Leistung
-UseDiscountOnTotal=auf Zwischensumme
-MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Definiert, ob ein globaler Rabatt als Produkt, als Leistung oder nur als Zwischensumme für die Gewinnberechnung benutzt wird.
+UseDiscountOnTotal=Auf Zwischensumme
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Definiert, ob ein globaler Rabatt als Produkt oder als Leistung behandelt wird oder nur auf Zwischensumme für die Gewinnberechnung angerechnet wird.
 MARGIN_TYPE=Kaufpreis / Kosten standardmäßig vorgeschlagen für Standardmargenkalkulation empfohlen\n
 MargeType1=Marge beim günstigsten Einkaufspreis
 MargeType2=gewichtete Durchschnittspreis (WAP)
 MargeType3=Marge auf Herstellkosten
-MarginTypeDesc=* Marge auf den günstigsten EK-Preis : Verkaufspreis - günstigster EK-Preis aus den Artikeldaten<br>* Marge auf den gleitenden Durchschnittspreis (GLD) : Verkaufspreis - gleitender Durchschnittspreis (GLD) oder günstigster EK-Preis falls der GLD nicht definiert ist<br>* Marge auf Herstellkosten = Verkaufspreis - Herstellkosten aus den Artikeldaten oder GLD, wenn die Herstellkosten nicht definiert sind oder günstigster EK-Preis, wenn der GLD nicht definiert ist
+MarginTypeDesc=* Marge auf den günstigsten EK-Preis : Verkaufspreis - günstigster EK-Preis aus den Artikeldaten<br>* Marge auf den gleitenden Durchschnittspreis der Ware (DSWP) : Verkaufspreis - gleitender Durchschnittspreis der Ware (DSWP) oder günstigster EK-Preis falls der DSWP nicht definiert ist<br>* Marge auf Herstellkosten = Verkaufspreis - Herstellkosten aus den Artikeldaten oder DSWP, wenn die Herstellkosten nicht definiert sind oder günstigster EK-Preis, wenn der DSWP nicht definiert ist
 CostPrice=Selbstkostenpreis
 UnitCharges=Einheit Kosten
 Charges=Kosten

@@ -47,7 +47,7 @@ require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
  * @var Translate $langs
  * @var User $user
  *
- * @var string $dolibarr_main_url_roott
+ * @var string $dolibarr_main_url_root
  */
 
 use OAuth\Common\Storage\DoliStorage;
@@ -114,7 +114,7 @@ if ($state) {
 
 // Add a test to check that the state parameter is provided into URL when we make the first call to ask the redirect or when we receive the callback
 // but not when callback was ok and we recall the page
-if ($action != 'delete' && !GETPOSTINT('afteroauthloginreturn') && (empty($statewithscopeonly) || empty($requestedpermissionsarray))) {
+if ($action != 'delete' && !GETPOST('afteroauthloginreturn') && (empty($statewithscopeonly) || empty($requestedpermissionsarray))) {
 	dol_syslog("state or statewithscopeonly and/or requestedpermissionsarray are empty");
 	setEventMessages($langs->trans('ScopeUndefined'), null, 'errors');
 	if (empty($backtourl)) {
@@ -249,16 +249,27 @@ if (!GETPOST('code')) {
 
 			$db->begin();
 
-			// This requests the token from the received OAuth code (call of the https://oauth2.googleapis.com/token endpoint)
-			// Result is stored into object managed by class DoliStorage into includes/OAuth/Common/Storage/DoliStorage.php and into database table llx_oauth_token
-			$token = $apiService->requestAccessToken(GETPOST('code'), $state);
+			$token = null;
+			try {
+				// This requests the token from the received OAuth code (call of the https://oauth2.googleapis.com/token endpoint)
+				// Result is stored into object managed by class DoliStorage into includes/OAuth/Common/Storage/DoliStorage.php and into database table llx_oauth_token
+				$token = $apiService->requestAccessToken(GETPOST('code'), $state);
+			} catch (Exception $e) {
+				dol_syslog("Failed to get token with requestAccessToken: ".$e->getMessage(), LOG_ERR);
+				setEventMessages("Failed to get token with requestAccessToken: ".$e->getMessage(), null, 'errors');
+				$errorincheck++;
+			}
 
 			// The refresh token is inside the object token if the prompt was forced only.
 			//$refreshtoken = $token->getRefreshToken();
 			//var_dump($refreshtoken);
+			dol_syslog("requestAccessToken complete");
 
 			// Note: The extraparams has the 'id_token' than contains a lot of information about the user.
-			$extraparams = $token->getExtraParams();
+			$extraparams = array();
+			if ($token) {
+				$extraparams = $token->getExtraParams();
+			}
 			$jwt = explode('.', $extraparams['id_token']);
 
 			$username = '';
@@ -268,7 +279,7 @@ if (!GETPOST('code')) {
 			if (!empty($jwt[1])) {
 				$userinfo = json_decode(base64_decode($jwt[1]), true);
 
-				dol_syslog("userinfo=".var_export($userinfo, true));
+				dol_syslog("userinfo=".formatLogObject($userinfo));
 
 				$useremail = $userinfo['email'];
 
@@ -324,7 +335,7 @@ if (!GETPOST('code')) {
 					dol_syslog("we received the login/email to log to, it is ".$useremail);
 
 					$tmparray = (empty($_SESSION['datafromloginform']) ? array() : $_SESSION['datafromloginform']);
-					$entitytosearchuser = (isset($tmparray['entity']) ? $tmparray['entity'] : -1);
+					$entitytosearchuser = ((isset($tmparray['entity']) && $tmparray['entity'] != '') ? $tmparray['entity'] : -1);
 
 					// Delete the old token
 					$storage->clearToken('Google');	// Delete the token called ("Google-".$storage->keyforprovider)
@@ -347,6 +358,8 @@ if (!GETPOST('code')) {
 
 						dol_syslog($errormessage);
 					}
+				} else {
+					setEventMessages("TokenSaved", null);
 				}
 			} else {
 				// If call back to url for a OAUTH2 login
@@ -372,7 +385,7 @@ if (!GETPOST('code')) {
 			// If call back to this url was for a OAUTH2 login
 			if ($forlogin) {
 				// _SESSION['googleoauth_receivedlogin'] has been set to the key to validate the next test by function_googleoauth(), so we can make the redirect
-				$backtourl .= '?actionlogin=login&afteroauthloginreturn=1&mainmenu=home'.($username ? '&username='.urlencode($username) : '').'&token='.newToken();
+				$backtourl .= '?actionlogin=login&afteroauthloginreturn=google&mainmenu=home'.($username ? '&username='.urlencode($username) : '').'&token='.newToken();
 				if (!empty($tmparray['entity'])) {
 					$backtourl .= '&entity='.$tmparray['entity'];
 				}

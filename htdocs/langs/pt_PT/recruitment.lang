@@ -64,3 +64,7 @@ NoPositionOpen=Nenhuma posição abrir no momento
 ConfirmClose=Confirme cancelamento
 ConfirmCloseAsk=Tem a certeza que pretende para cancelar esta candidatura de recrutamento
 Recruitment=Recrutamento
+ApplyJobCandidature=Candidatar-se para esta vaga
+ErrorRecruitmmentCandidatureAlreadyExists= Candidatura de recrutamento já existe com o e-mail %s
+RecruitmentCandidatureSaved=Candidatura de recrutamento salva com sucesso
+NoOpenJobOffer=Nenhuma oferta de emprego abrir no momento

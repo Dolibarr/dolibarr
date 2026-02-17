@@ -70,7 +70,7 @@ class CurlClient extends AbstractClient
         // Normalize method name
         $method = strtoupper($method);
 
-        $this->normalizeHeaders($extraHeaders);
+        $extraHeaders = $this->normalizeHeaders($extraHeaders);
 
         if ($method === 'GET' && !empty($requestBody)) {
             throw new \InvalidArgumentException('No body expected for "GET" request.');

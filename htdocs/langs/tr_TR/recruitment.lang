@@ -64,3 +64,7 @@ NoPositionOpen=Şu anda açık pozisyon yok
 ConfirmClose=İptal İşlemini Onayla
 ConfirmCloseAsk=Bu işe alım adaylığını iptal yapmak istediğinizden emin misiniz?
 Recruitment=İşe Alım
+ApplyJobCandidature=Bu işe başvur
+ErrorRecruitmmentCandidatureAlreadyExists= İşe alım adaylığı zaten %s e-postasıyla mevcut
+RecruitmentCandidatureSaved=İşe alım adaylığı başarıyla kaydedildi
+NoOpenJobOffer=Şu anda açık iş teklifi yok

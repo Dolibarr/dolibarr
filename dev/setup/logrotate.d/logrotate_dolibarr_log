@@ -1,0 +1,12 @@
+# Example of logrotate file to put into /etc/logrotate.d to make the rotation of
+# the dolibarr log files.
+/home/admin/wwwroot/dolibarr_documents/*.log {
+        su admin www-data
+        daily
+        rotate 7
+        compress
+        delaycompress
+        missingok
+        notifempty
+        create 660 admin www-data
+}

@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2021  Open-Dsi  <support@open-dsi.fr>
- * Copyright (C) 2024		MDW			<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2021       Open-Dsi                <support@open-dsi.fr>
+ * Copyright (C) 2024		MDW			            <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -27,8 +27,13 @@
  */
 
 /**
+ * @var AssetDepreciationOptions $assetdepreciationoptions
+ * @var DoliDB $db
  * @var Form $form
  * @var HookManager $hookmanager
+ * @var Translate $langs
+ *
+ * @var string $action
  */
 
 // Protection to avoid direct call of template

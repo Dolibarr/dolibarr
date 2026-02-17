@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2016 Regis Houssin <regis.houssin@inodbox.com>
  * Copyright (C) 2019 		Nicolas ZABOURI	<info@inovea-conseil.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,7 +66,13 @@ require_once $path."../../htdocs/master.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
 require_once DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php";
 require_once DOL_DOCUMENT_ROOT."/comm/mailing/class/mailing.class.php";
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 // Global variables
 $version = DOL_VERSION;
 $error = 0;
@@ -96,8 +102,8 @@ if (getDolGlobalInt('MAILING_DELAY')) {
 	print 'A delay of '.((float) getDolGlobalInt('MAILING_DELAY')).' seconds has been set between each email'."\n";
 }
 
-if (getDolGlobalString('MAILING_LIMIT_SENDBYCLI') == '-1') {
-}
+//if (getDolGlobalString('MAILING_LIMIT_SENDBYCLI') == '-1') {
+//}
 
 if (!empty($dolibarr_main_db_readonly)) {
 	print "Error: instance in read-only mode\n";
@@ -107,7 +113,7 @@ if (!empty($dolibarr_main_db_readonly)) {
 $user = new User($db);
 // for signature, we use user send as parameter
 if (!empty($login)) {
-	$user->fetch('', $login);
+	$user->fetch(0, $login);
 }
 /** @var DoliDB $db */
 // We get list of emailing id to process
@@ -140,7 +146,7 @@ if ($resql) {
 			$emailing = new Mailing($db);
 			$emailing->fetch($obj->rowid);
 
-			$upload_dir = $conf->mailing->dir_output."/".get_exdir($emailing->id, 2, 0, 1, $emailing, 'mailing');
+			$upload_dir = $conf->mailing->dir_output."/".get_exdir($emailing->id, getDolGlobalInt('MAILING_USE_NEW_PATH_FOR_FILES') ? 0 : 2, 0, 1, $emailing, 'mailing');
 
 			$id = $emailing->id;
 			$subject = $emailing->sujet;
@@ -427,7 +433,7 @@ if ($resql) {
 					$result_sql = $db->query($sql);
 
 					dol_syslog("update global status", LOG_DEBUG);
-					print "Update status of emailing id ".$id." to ".$statut."\n";
+					print "Update status of emailing id ".$id." to 3\n";
 				}
 			} else {
 				dol_print_error($db);

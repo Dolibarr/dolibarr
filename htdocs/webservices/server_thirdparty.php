@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006-2016  Laurent Destailleur         <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -76,6 +76,7 @@ $server->soap_defencoding = 'UTF-8';
 $server->decode_utf8 = false;
 $ns = 'http://www.dolibarr.org/ns/';
 $server->configureWSDL('WebServicesDolibarrThirdParty', $ns);
+// @phan-suppress-next-line PhanUndeclaredProperty
 $server->wsdl->schemaTargetNamespace = $ns;
 
 
@@ -347,7 +348,7 @@ function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '', $bar
 
 		if ($fuser->hasRight('societe', 'lire')) {
 			$thirdparty = new Societe($db);
-			$result = $thirdparty->fetch($id, $ref, $ref_ext, $barcode, $profid1, $profid2);
+			$result = $thirdparty->fetch((int) $id, $ref, $ref_ext, $barcode, $profid1, $profid2);
 			if ($result > 0) {
 				$thirdparty_result_fields = array(
 						'id' => $thirdparty->id,
@@ -605,7 +606,7 @@ function updateThirdParty($authentication, $thirdparty)
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 		$object = new Societe($db);
-		$result = $object->fetch($thirdparty['id']);
+		$result = $object->fetch((int) $thirdparty['id']);
 
 		if (!empty($object->id)) {
 			$objectfound = true;
@@ -671,7 +672,7 @@ function updateThirdParty($authentication, $thirdparty)
 
 			$db->begin();
 
-			$result = $object->update($thirdparty['id'], $fuser);
+			$result = $object->update((int) $thirdparty['id'], $fuser);
 			if ($result <= 0) {
 				$error++;
 			}
@@ -855,7 +856,7 @@ function deleteThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
 
 		if ($fuser->hasRight('societe', 'lire') && $fuser->hasRight('societe', 'supprimer')) {
 			$thirdparty = new Societe($db);
-			$result = $thirdparty->fetch($id, $ref, $ref_ext);
+			$result = $thirdparty->fetch((int) $id, $ref, $ref_ext);
 
 			if ($result > 0) {
 				$db->begin();

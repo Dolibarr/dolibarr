@@ -92,7 +92,7 @@ class modReception extends DolibarrModules
 
 		$this->const[$r][0] = "RECEPTION_ADDON_PDF_ODT_PATH";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/receptions";
+		$this->const[$r][2] = "DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/receptions";
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
 		$r++;
@@ -267,7 +267,7 @@ class modReception extends DolibarrModules
 
 		//ODT template
 		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/reception/template_reception.odt';
-		$dirodt = DOL_DATA_ROOT.'/doctemplates/reception';
+		$dirodt = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/reception';
 		$dest = $dirodt.'/template_reception.odt';
 
 		if (file_exists($src) && !file_exists($dest)) {

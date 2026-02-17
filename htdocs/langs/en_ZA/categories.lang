@@ -1,0 +1,5 @@
+# Dolibarr language file - Source file is en_US - categories
+AddCustomerIntoCategory=Assign category to customer
+AddSupplierIntoCategory=Assign category to supplier
+AddFichinterIntoCategory=Assign category to interventional
+AssignCategoryTo=Assign category to

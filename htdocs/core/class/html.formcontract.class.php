@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2012-2018  Charlene BENKE	<charlie@patas-monkey.com>
+/* Copyright (C) 2012-2026  Charlene BENKE	<charlene@patas-monkey.com>
+ * Copyright (C) 2025		MDW				<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,9 +77,10 @@ class FormContract
 		$ret = '';
 
 		// Search all contacts
-		$sql = "SELECT c.rowid, c.ref, c.fk_soc, c.statut,";
+		$sql = "SELECT c.rowid, c.ref, c.fk_soc, c.statut, s.nom,";
 		$sql .= " c.ref_customer, c.ref_supplier";
 		$sql .= " FROM ".$this->db->prefix()."contrat as c";
+		$sql .= " INNER JOIN".$this->db->prefix()."societe as s ON s.rowid = c.fk_soc";
 		$sql .= " WHERE c.entity = ".$conf->entity;
 		//if ($contratListId) $sql.= " AND c.rowid IN (".$this->db->sanitize($contratListId).")";
 		if ($socid > 0) {
@@ -114,6 +116,7 @@ class FormContract
 						$labeltoshow = dol_trunc($obj->ref, 18);
 
 						if ($showRef) {
+							$labeltoshow = $labeltoshow." - ".$obj->nom;
 							if ($obj->ref_customer) {
 								$labeltoshow = $labeltoshow." - ".$obj->ref_customer;
 							}
@@ -180,17 +183,17 @@ class FormContract
 	/**
 	 *  Show a form to select a contract
 	 *
-	 *  @param  int     $page       Page
+	 *  @param  string  $page       Page
 	 *  @param  int     $socid      Id third party (-1=all, 0=only contracts not linked to a third party, id=contracts not linked or linked to third party id)
 	 *  @param  int     $selected   Id contract preselected
 	 *  @param  string  $htmlname   Nom de la zone html
 	 *  @param  int     $maxlength	Maximum length of label
 	 *  @param  int     $showempty	Show empty line
 	 *  @param  int     $showRef    Show customer and supplier reference on each contract (when found)
-	 *  @param	int		$noouput	1=Return the output instead of display
+	 *  @param	int<0,1>	$nooutput	1=Return the output instead of display
 	 *  @return string|void         html string
 	 */
-	public function formSelectContract($page, $socid = -1, $selected = 0, $htmlname = 'contrattid', $maxlength = 16, $showempty = 1, $showRef = 0, $noouput = 0)
+	public function formSelectContract($page, $socid = -1, $selected = 0, $htmlname = 'contrattid', $maxlength = 16, $showempty = 1, $showRef = 0, $nooutput = 0)
 	{
 		global $langs;
 
@@ -201,7 +204,7 @@ class FormContract
 		$ret .= '<input type="submit" class="button smallpaddingimp valignmiddle" value="'.$langs->trans("Modify").'">';
 		$ret .= '</form>';
 
-		if ($noouput) {
+		if ($nooutput) {
 			return $ret;
 		}
 

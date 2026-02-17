@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2021 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,9 +26,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -35,6 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'orders', 'bills'));
@@ -78,9 +78,9 @@ if ($action == 'setremise' && $user->hasRight('societe', 'lire')) {
 	$discount_type = GETPOSTINT('discount_type');
 
 	if (!empty($discount_type)) {
-		$result = $object->set_remise_supplier(price2num(GETPOST("remise")), GETPOST("note", "alphanohtml"), $user);
+		$result = $object->set_remise_supplier((float) price2num(GETPOST("remise")), GETPOST("note", "alphanohtml"), $user);
 	} else {
-		$result = $object->set_remise_client(price2num(GETPOST("remise")), GETPOST("note", "alphanohtml"), $user);
+		$result = $object->set_remise_client((float) price2num(GETPOST("remise")), GETPOST("note", "alphanohtml"), $user);
 	}
 
 	if ($result > 0) {
@@ -165,28 +165,17 @@ print '<br>';
 
 print load_fiche_titre($langs->trans("NewRelativeDiscount"), '', '');
 
-print '<div class="underbanner clearboth"></div>';
 
-/*if (! ($isCustomer && $isSupplier))
-{
-	if ($isCustomer && ! $isSupplier) {
-		print '<input type="hidden" name="discount_type" value="0" />';
-	}
-	if (! $isCustomer && $isSupplier) {
-		print '<input type="hidden" name="discount_type" value="1" />';
-	}
-}*/
-
-print '<table class="border centpercent marginbottomonly">';
+print '<table class="noborder centpercent marginbottomonly">';
 
 if ($isCustomer || $isSupplier) {
 	// Discount type
-	print '<tr><td class="titlefield fieldrequired">'.$langs->trans('DiscountType').'</td><td>';
+	print '<tr class="trfirstline"><td class="titlefield fieldrequired">'.$langs->trans('DiscountType').'</td><td>';
 	if ($isCustomer) {
 		print '<input type="radio" name="discount_type" id="discount_type_0" '.(GETPOSTISSET('discount_type') ? (GETPOSTINT('discount_type') == 0 ? ' checked' : '') : ' checked').' value="0"> <label for="discount_type_0">'.$langs->trans('Customer').'</label>';
 	}
 	if ($isCustomer && $isSupplier) {
-		print ' &nbsp; ';
+		print ' &nbsp; &nbsp; ';
 	}
 	if ($isSupplier) {
 		print ' <input type="radio" name="discount_type" id="discount_type_1"'.(GETPOSTISSET('discount_type') ? (GETPOSTINT('discount_type') ? ' checked' : '') : ($isCustomer ? '' : ' checked')).' value="1"> <label for="discount_type_1">'.$langs->trans('Supplier').'</label>';
@@ -196,10 +185,10 @@ if ($isCustomer || $isSupplier) {
 
 // New value
 print '<tr><td class="titlefield fieldrequired">';
-print $langs->trans("NewValue").'</td><td><input type="text" size="5" name="remise" value="'.dol_escape_htmltag(GETPOST("remise")).'">%</td></tr>';
+print $langs->trans("NewValue").'</td><td><input type="text" size="5" name="remise" value="'.dol_escape_htmltag(GETPOST("remise")).'"> <span class="opacitymedium">%</span></td></tr>';
 
 // Motif/Note
-print '<tr><td class="fieldrequired">';
+print '<tr class="lastline"><td class="fieldrequired">';
 print $langs->trans("NoteReason").'</td><td><input type="text" size="60" name="note" value="'.dol_escape_htmltag(GETPOST("note", "alphanohtml")).'"></td></tr>';
 
 print "</table>";

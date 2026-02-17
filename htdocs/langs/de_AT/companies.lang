@@ -12,4 +12,6 @@ ProfId1AR=Prof Id 1 (CUIL)
 VATIntraShort=UID
 ContactLinkedFiles=Verknüpfte Dateien
 OthersNotLinkedToThirdParty=Andere, nicht mit einem Partner verknüpfte
+PL_LOW=niedrig
+PL_HIGH=hoch
 ActivityCeased=geschlossen

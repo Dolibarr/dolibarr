@@ -2,6 +2,7 @@
 /* Copyright (C) 2010-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2023		Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +36,7 @@ require_once dirname(__FILE__).'/CommonClassTest.class.php';
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
-	$user->getrights();
+	$user->loadRights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
@@ -165,6 +166,21 @@ class GetUrlLibTest extends CommonClassTest
 		$result = getDomainFromURL('https://www.with.dolimed.com.mx', 2);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('with.dolimed.com.mx', $result, 'Test dolimed.com.mx 2');
+
+
+		// Test with url with login/pass
+
+		$result = getDomainFromURL('https://mylogin:mypass@aaa.abc.mydomain.com', 2);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('abc.mydomain.com', $result, 'Test https://mylogin:mypass@mydomain.com');
+
+
+		// Test with email
+
+		$result = getDomainFromURL('myemail@mydomain.com', 1);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('mydomain.com', $result, 'Test myemail@mydomain.com');
+
 
 		return 1;
 	}

@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2005-2010 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin       <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2005-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
 *
 * This file is an example to follow to add your own email selector inside
 * the Dolibarr email tool.
@@ -26,11 +27,24 @@ include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
  */
 class mailing_advthirdparties extends MailingTargets
 {
+	/**
+	 * @var string name of mailing module
+	 */
 	public $name = 'ThirdPartyAdvancedTargeting';
-	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
+
+	/**
+	 * @var string This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
+	 */
 	public $desc = "Third parties";
+
+	/**
+	 * @var int
+	 */
 	public $require_admin = 0;
 
+	/**
+	 * @var string[]
+	 */
 	public $require_module = array("none"); // This module should not be displayed as Selector in mailing
 
 	/**
@@ -38,6 +52,9 @@ class mailing_advthirdparties extends MailingTargets
 	 */
 	public $picto = 'company';
 
+	/**
+	 * @var string condition to enable module
+	 */
 	public $enabled = 'isModEnabled("societe")';
 
 
@@ -67,7 +84,7 @@ class mailing_advthirdparties extends MailingTargets
 		// phpcs:enable
 		global $conf, $langs;
 
-		dol_syslog(get_class($this)."::add_to_target_spec socid=".var_export($socid, true).' contactid='.var_export($contactid, true));
+		dol_syslog(get_class($this)."::add_to_target_spec socid=".formatLogObject($socid).' contactid='.formatLogObject($contactid));
 
 		$cibles = array();
 
@@ -75,7 +92,7 @@ class mailing_advthirdparties extends MailingTargets
 			// Select the third parties from category
 			if (count($socid) > 0) {
 				$sql = "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact";
-				$sql .= " FROM ".MAIN_DB_PREFIX."societe as s LEFT OUTER JOIN ".MAIN_DB_PREFIX."societe_extrafields se ON se.fk_object=s.rowid";
+				$sql .= " FROM ".MAIN_DB_PREFIX."societe as s LEFT JOIN ".MAIN_DB_PREFIX."societe_extrafields se ON se.fk_object=s.rowid";
 				$sql .= " WHERE s.entity IN (".getEntity('societe').")";
 				$sql .= " AND s.rowid IN (".$this->db->sanitize(implode(',', $socid)).")";
 				if (empty($this->evenunsubscribe)) {
@@ -173,7 +190,7 @@ class mailing_advthirdparties extends MailingTargets
 		}
 
 
-		dol_syslog(get_class($this)."::add_to_target_spec mailing cibles=".var_export($cibles, true), LOG_DEBUG);
+		dol_syslog(get_class($this)."::add_to_target_spec mailing cibles=".formatLogObject($cibles), LOG_DEBUG);
 
 		return parent::addTargetsToDatabase($mailing_id, $cibles);
 	}

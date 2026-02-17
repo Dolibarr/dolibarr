@@ -114,7 +114,7 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
  * @param		string	$date	Date
  * @return		void
  */
-function pt($db, $sql, $date)
+function localtax_pt($db, $sql, $date)
 {
 	global $conf, $bc, $langs;
 
@@ -455,7 +455,7 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000) {	// $
 
 
 	print '<tr class="oddeven">';
-	print '<td class="nowrap"><a href="'.DOL_URL_ROOT.'/compta/localtax/quadri_detail.php?leftmenu=tax_vat&month='.$m.'&year='.$y.'">'.dol_print_date(dol_mktime(0, 0, 0, (int) $m, 1, (int) $y), "%b %Y").'</a></td>';
+	print '<td class="nowrap"><a href="'.DOL_URL_ROOT.'/compta/localtax/quadri_detail.php?leftmenu=tax_vat&month='.$m.'&year='.$y.'&localTaxType='.$localTaxType.'">'.dol_print_date(dol_mktime(0, 0, 0, (int) $m, 1, (int) $y), "%b %Y").'</a></td>';
 
 	$x_coll_sum = 0;
 	foreach (array_keys($x_coll) as $rate) {
@@ -469,8 +469,7 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000) {	// $
 				// Define type
 				// We MUST use dtype (type in line). We can use something else, only if dtype is really unknown.
 				$type = (isset($fields['dtype']) ? $fields['dtype'] : $fields['ptype']);
-				// Try to enhance type detection using date_start and date_end for free lines where type
-				// was not saved.
+				// Try to enhance type detection using date_start and date_end for free lines where type was not saved.
 				if (!empty($fields['ddate_start'])) {
 					$type = 1;
 				}
@@ -509,8 +508,7 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000) {	// $
 				// Define type
 				// We MUST use dtype (type in line). We can use something else, only if dtype is really unknown.
 				$type = (isset($fields['dtype']) ? $fields['dtype'] : $fields['ptype']);
-				// Try to enhance type detection using date_start and date_end for free lines where type
-				// was not saved.
+				// Try to enhance type detection using date_start and date_end for free lines where type was not saved.
 				if (!empty($fields['ddate_start'])) {
 					$type = 1;
 				}
@@ -600,7 +598,7 @@ $sql .= " GROUP BY dm";
 $sql .= " ORDER BY dm ASC, mode ASC";
 //print $sql;
 
-pt($db, $sql, $langs->trans("Month"));
+localtax_pt($db, $sql, $langs->trans("Month"));
 
 
 print '</div></div>';

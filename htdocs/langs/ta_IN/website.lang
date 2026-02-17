@@ -12,7 +12,7 @@ WEBSITE_ALIASALTDesc=மற்ற பெயர்கள்/மாற்றுப
 WEBSITE_CSS_URL=வெளிப்புற CSS கோப்பின் URL
 WEBSITE_CSS_INLINE=CSS கோப்பு உள்ளடக்கம் (அனைத்து பக்கங்களுக்கும் பொதுவானது)
 WEBSITE_JS_INLINE=JavaScript file content (common to all pages)
-WEBSITE_HTML_HEADER=HTML தலைப்பின் கீழே சேர்த்தல் (அனைத்து பக்கங்களுக்கும் பொதுவானது)
+WEBSITE_HTML_HEADER=HTML Header (common to all pages)
 WEBSITE_ROBOT=ரோபோ கோப்பு (robots.txt)
 WEBSITE_HTACCESS=வலைத்தளம் .htaccess கோப்பு
 WEBSITE_MANIFEST_JSON=இணையதளம் manifest.json கோப்பு
@@ -56,16 +56,17 @@ ReadPerm=படி
 WritePerm=எழுது
 TestDeployOnWeb=இணையத்தில் சோதனை/வரிசைப்படுத்து
 PreviewSiteServedByWebServer= <u> ஒரு புதிய தாவலில் %s முன்னோட்டம். </u> <br> <br> %s ஆனது வெளிப்புற இணைய சேவையகத்தால் (Apache, Nginx, IIS போன்றவை) வழங்கப்படும். டைரக்டரியில் புள்ளி முன்னர் இந்தப் சர்வர் நிறுவ வேண்டும் மற்றும் அமைப்பு: <br> <strong> %s </strong> <br> URL ஐ வெளி சர்வரில் சேவையாற்றி: <br> <strong> %s </strong>
-PreviewSiteServedByDolibarr= <u> %s ஐ புதிய தாவலில் முன்னோட்டமிடவும். </u> <br> <br> %s ஆனது Dolibarr சேவையகத்தால் வழங்கப்படும், எனவே இதற்கு எந்த கூடுதல் இணைய சேவையகமும் (Apache, Nginx, IIS போன்றவை) நிறுவப்பட வேண்டியதில்லை. <br> பக்கங்களின் URLகள் பயனர்களுக்கு ஏற்றதாக இல்லை மற்றும் உங்கள் Dolibarrன் பாதையில் தொடங்குவது சிரமமானது. <br> URL ஐ Dolibarr சேவையாற்றி: <br> <strong> %s </strong> <br> <br>, இந்த வலை தளத்தில் பணியாற்ற உங்கள் வலை சர்வரில் ஒரு மெய்நிகர் ஹோஸ்ட் உருவாக்க உங்கள் சொந்த வெளிப்புற வலை சர்வர் பயன்படுத்த என்று அடைவு புள்ளிகள் <br> <strong> %s </strong> <br> பின்னர் இந்த மெய்நிகர் சர்வர் பெயரை உள்ளிடவும் இந்த வலைத்தளத்தின் பண்புகளில் "சோதனை/இணையத்தில் வரிசைப்படுத்து" என்ற இணைப்பைக் கிளிக் செய்யவும்.
+PreviewSiteServedByDolibarr=<u>Preview %s in a new tab.</u><br><br>The %s will be served by Dolibarr server so it does not need any extra web server (like Apache, Nginx, IIS) to be installed.<br>The inconvenient is that the URLs of pages are not user friendly and start with the path of your Dolibarr.<br>URL served by Dolibarr:<br><strong>%s</strong><br><br>To deploy or test using your own external web server (like Apache, Nginx, Lighttp) use the link "%s".
 VirtualHostUrlNotDefined=வெளிப்புற வலை சேவையகத்தால் வழங்கப்படும் மெய்நிகர் ஹோஸ்டின் URL வரையறுக்கப்படவில்லை
 NoPageYet=இன்னும் பக்கங்கள் இல்லை
 YouCanCreatePageOrImportTemplate=நீங்கள் ஒரு புதிய பக்கத்தை உருவாக்கலாம் அல்லது முழு இணையதள டெம்ப்ளேட்டை இறக்குமதி செய்யலாம்
 SyntaxHelp=குறிப்பிட்ட தொடரியல் உதவிக்குறிப்புகளில் உதவி
 YouCanEditHtmlSourceckeditor=எடிட்டரில் உள்ள "மூல" பொத்தானைப் பயன்படுத்தி HTML மூலக் குறியீட்டைத் திருத்தலாம்.
-YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>You can also make a redirection with GET parameters:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
-YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> To include an <strong>image</strong> stored into the <strong>documents</strong> directory, use the <strong>viewimage.php</strong> wrapper.<br>Example, for an image into documents/medias (open directory for public access), syntax is:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
-YouCanEditHtmlSource2=<br> <strong> &lt;img மூல = "? / viewimage.php hashp = 12345679012 ..." &gt; </strong> <br>: (கோப்பு பகிர்வு ஹாஷ் முக்கிய பயன்படுத்தி திறந்தவெளி அணுகல்) ஒரு பங்கு இணைப்புடன் பகிர்ந்துள்ளார் ஒரு படத்திற்கு, தொடரியலாகும்
+YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>You can also make a redirection with GET parameters:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><p><span class="fa fa-bug paddingright"></span> You can dynamically set the page title and <strong>SEO meta tags</strong> (title, keywords, description). Simply define the following variables:<br> <code>$__PAGE__TITLE__ = "Title value …";</code><br> <code>$__PAGE__KEYWORDS__ = "keyword1, keyword2, keyword3 …"; // Comma separated</code><br> <code>$__PAGE__DESC__ = "Description …";</code></p><br><span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
+YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> To include an <strong>image</strong> stored into the <strong>medias</strong> directory (directory open for public access), use the relative path starting with <strong>/medias</strong>, example:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
+YouCanEditHtmlSource2=For an image shared with a share link (open access using the sharing hash key of file), use the wrapper:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource3=To get the URL of the image of a PHP object, use<br><strong>&lt;img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource4=To get the URL of an image inside a html content of an article, use<br><strong>&lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
 YouCanEditHtmlSourceMore=<br>More examples of HTML or dynamic code available on <a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible">the wiki documentation</a>.<br>
 ClonePage=குளோன் பக்கம்/கன்டெய்னர்
 CloneSite=குளோன் தளம்
@@ -87,15 +88,15 @@ WebsiteAccount=இணையதள கணக்கு
 WebsiteAccounts=இணையதள கணக்குகள்
 AddWebsiteAccount=இணைய தள கணக்கை உருவாக்கவும்
 BackToListForThirdParty=Back to list for the third parties
-DisableSiteFirst=முதலில் இணையதளத்தை முடக்கவும்
+DisableSiteFirst=Put website offline first
 MyContainerTitle=எனது வலைதள தலைப்பு
 AnotherContainer=மற்றொரு பக்கம்/கன்டெய்னரின் உள்ளடக்கத்தைச் சேர்ப்பது இப்படித்தான் (உட்பொதிக்கப்பட்ட துணைக் கொள்கலன் இல்லாததால், டைனமிக் குறியீட்டை இயக்கினால், இங்கே பிழை ஏற்படலாம்)
 SorryWebsiteIsCurrentlyOffLine=மன்னிக்கவும், இந்த இணையதளம் தற்போது ஆஃப்லைனில் உள்ளது. தயவுசெய்து பிறகு வாருங்கள்...
-WEBSITE_USE_WEBSITE_ACCOUNTS=Enable the web site account table
-WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=ஒவ்வொரு இணையதளம் / மூன்றாம் தரப்பினருக்கும் இணைய தள கணக்குகளை (உள்நுழைவு/பாஸ்) சேமிக்க அட்டவணையை இயக்கவும்
+WEBSITE_USE_WEBSITE_ACCOUNTS=Enable the table of web site account fo thirdparties
+WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Enable the table to store the web site accounts (login/pass) for each third party
 YouMustDefineTheHomePage=நீங்கள் முதலில் இயல்புநிலை முகப்புப் பக்கத்தை வரையறுக்க வேண்டும்
-OnlyEditionOfSourceForGrabbedContentFuture=Warning: Creating a web page by importing an external web page is reserved for experienced users. Depending on the complexity of source page, the result of importation may differ from the original. Also if the source page uses common CSS styles or conflicting JavaScript, it may break the look or features of the Website editor when working on this page. This method is a quicker way to create a page but it is recommended to create your new page from scratch or from a suggested page template.<br>Note also that the inline editor may not works correctty when used on a grabbed external page.
-OnlyEditionOfSourceForGrabbedContent=வெளிப்புற தளத்தில் இருந்து உள்ளடக்கம் கைப்பற்றப்பட்டால் HTML மூலத்தின் பதிப்பு மட்டுமே சாத்தியமாகும்
+OnlyEditionOfSourceForGrabbedContentFuture=Warning: Creating a web page by importing an external web page is reserved for experienced users. Depending on the complexity of source page, the result of importation may differ from the original. Also if the source page uses common CSS styles or conflicting JavaScript, it may break the look or features of the Website editor when working on this page. This method is a quicker way to create a page but it is recommended to create your new page from scratch or from a suggested page template.<br>Note also that the inline editor might not work correctly when used on a grabbed external page.
+OnlyEditionOfSourceForGrabbedContent=Only HTML source modification is possible when content is grabbed from an external site
 GrabImagesInto=css மற்றும் பக்கத்தில் காணப்படும் படங்களையும் கைப்பற்றவும்.
 ImagesShouldBeSavedInto=படங்கள் கோப்பகத்தில் சேமிக்கப்பட வேண்டும்
 WebsiteRootOfImages=இணையதளப் படங்களுக்கான ரூட் டைரக்டரி
@@ -256,6 +257,7 @@ logOutFromYourCustomerAccount=Log out from your customer account
 filteredByVersion=Filtered by version
 removeFilter=Remove filter
 viewMyCart=View my shopping cart
+Shipping=Shipping
 freeShipping=Free shipping!
 noProducts=No products
 nbrItemsInCart=There are <span class="ajax_cart_quantity">0</span> items in your cart.
@@ -271,7 +273,8 @@ totalTaxIncl=Total (tax incl.)
 clickToClose=Click to close
 sidebarCategories=Categories
 noSubCat=NoSubCat
-specialPromo=Specials promotions
+specialPromo=Promotions
+allSpecials=All promotions
 newProducts=New products
 allNewProducts= All new products
 view=View:
@@ -283,12 +286,13 @@ productNameAToZ=Product Name: A to Z
 productNameZToA=Product Name: Z to A
 referenceLowestFirst=Reference: Lowest first
 referenceHighestFirst=Reference: Highest first
+productPerPage=products per page
 perPage=per page
 showAll=Show all
 showing= Showing
 nbrOfProducts= There are %s products.
 noResultsHaveBeenFound=0 results have been found.
-noResultsWereFound= No results were found.
+noResultsWereFound=No results were found.
 addToCart=Add to cart
 backHome=Return to Home
 priceDrop=Price drop
@@ -301,10 +305,11 @@ lastUpdate=Last update
 contactSupport=How to contact support
 noProductToDisplay=Error, No product to display
 yourCompanyInformation=Your company information
+yourBillingInformation=Your billing information
 emailAlreadyRegistered=This email is already registered.
 firstnameContainsLettersOnly=<b>Firstname</b> must contain letters and spaces only
 lastnameContainsLettersOnly=<b>Lastname</b> must contain letters and spaces only
-passwordCriteria=<b>Password</b> must meet the following criteria:<br>- 12 characters<br>- 1 uppercase letter<br>- 1 digit<br>- No special characters<br>- Avoid repeating characters more than 3 times<br>
+passwordCriteria=<b>Password</b> must meet the following criteria:<br>- At least 12 characters<br>- At lest 1 uppercase letter<br>- At least 1 digit<br>- At last 1 special characters<br>- Avoid repeating characters more than 3 times<br>
 errorOccurred=An error has occurred.
 accountCreation=Create an account
 errorsOccurred=There are %s error%s
@@ -356,3 +361,7 @@ subtract=Subtract
 LoginCheckout=Login & Proceed to checkout
 paymentSuccessProcessed=Your payment has been successfully processed.
 youWillBeRedirectedToOrderPage=You will be redirected to the order details page shortly.
+WebPortalSetupNotComplete=Web portal setup is not complete
+DeleteWebsiteAccount=Delete website account
+ConfirmDeleteWebsiteAccount=Are you sure you want to delete this account.
+ConfirmDeleteWebsiteAccount2=If this account was used to login on the public portal or any otherweb site powered by Dolibarr, the login may be no more possible.

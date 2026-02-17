@@ -17,12 +17,15 @@
  */
 
 /**
+ * @var Canvas $this
  * @var Conf $conf
  * @var CommonObject $this
  * @var DoliDB $db
  * @var FormFile $formfile
  * @var Translate $langs
  * @var User $user
+ *
+ * @var string $canvas
  */
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
@@ -53,13 +56,6 @@ if ($this->control->tpl['action_delete']) {
 	<td width="20%"><?php echo $langs->trans('Name'); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['showrefnav']; ?></td>
 </tr>
-
-<?php if (getDolGlobalString('SOCIETE_USEPREFIX')) { ?>
-<tr>
-	<td><?php echo $langs->trans('Prefix'); ?></td>
-	<td colspan="3"><?php echo $this->control->tpl['prefix_comm']; ?></td>
-</tr>
-<?php } ?>
 
 <?php if ($this->control->tpl['client']) { ?>
 <tr>
@@ -241,6 +237,6 @@ $result = show_subsidiaries($conf, $langs, $db, $object);
 $result = show_contacts($conf, $langs, $db, $object);
 
 // Projects list
-$result = show_projects($conf, $langs, $db, $object);
+$result = show_projects($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id, 1, '', '');
 
 print "<!-- END PHP TEMPLATE -->\n";
