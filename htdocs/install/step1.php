@@ -49,6 +49,8 @@ include 'inc.php';
  * @var string	$dolibarr_main_db_encryption
  * @var string	$dolibarr_main_db_encrypted_pass
  * @var string	$dolibarr_main_db_cryptkey
+ * @var string	$dolibarr_main_db_character_set
+ * @var string	$dolibarr_main_db_collation
  */
 
 global $langs;
@@ -120,7 +122,7 @@ if (@file_exists($forcedfile)) {
 	 * @var string	$force_install_distrib
 	 */
 	// If forced install is enabled, replace the post values. These are empty because form fields are disabled.
-	if ($force_install_noedit) {
+	if (!empty($force_install_noedit)) {
 		$main_dir = detect_dolibarr_main_document_root();
 		if (!empty($argv[3])) {
 			$main_dir = $argv[3]; // override when executing the script in command line
@@ -904,7 +906,7 @@ function write_conf_file($conffile)
 	global $db_host, $db_port, $db_name, $db_user, $db_pass, $db_type, $db_character_set, $db_collation;
 	global $conffile, $conffiletoshow;
 	global $force_dolibarr_lib_NUSOAP_PATH;
-	global $force_dolibarr_lib_FPDF_PATH, $force_dolibarr_lib_TCPDF_PATH, $force_dolibarr_lib_FPDI_PATH;
+	global $force_dolibarr_lib_FPDF_PATH, $force_dolibarr_lib_TCPDF_PATH, $force_dolibarr_lib_TCPDI_PATH, $force_dolibarr_lib_FPDI_PATH;
 	global $force_dolibarr_lib_GEOIP_PATH;
 	global $force_dolibarr_lib_ODTPHP_PATH, $force_dolibarr_lib_ODTPHP_PATHTOPCLZIP;
 	global $force_dolibarr_js_CKEDITOR, $force_dolibarr_js_JQUERY, $force_dolibarr_js_JQUERY_UI;
