@@ -311,7 +311,7 @@ function pdf_getPDFFontSize($outputlangs)
  */
 function pdf_getHeightForLogo($logo, $url = false)
 {
-	$height = getDolGlobalString('MAIN_DOCUMENTS_LOGO_HEIGHT', 20);
+	$height = getDolGlobalFloat('MAIN_DOCUMENTS_LOGO_HEIGHT', 20);
 	$maxwidth = 130;
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 	$tmp = dol_getImageSize($logo, $url);
