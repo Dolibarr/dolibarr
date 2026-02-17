@@ -707,3 +707,4 @@ SplitDiscountTitle=Diviser la remise en plusieurs parties
 DisputeStatus=État litige
 DisputeOpen=Litige ouvert
 Sales=Ventes
+AmountRequestedAlreadyReachesTotal=Le montant demandé atteint déjà le total de la facture
