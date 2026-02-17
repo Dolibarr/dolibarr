@@ -484,10 +484,8 @@ class Stripe extends CommonObject
 
 			// list of payment method types
 			$paymentmethodtypes = array("card");
-			$descriptor = dol_trunc($tag, 10, 'right', 'UTF-8', 1);
 			if (getDolGlobalInt('STRIPE_SEPA_DIRECT_DEBIT')) {
 				$paymentmethodtypes[] = "sepa_debit"; //&& ($object->thirdparty->isInEEC())
-				//$descriptor = preg_replace('/ref=[^:=]+/', '', $descriptor);	// Clean ref
 			}
 			if (getDolGlobalInt('STRIPE_KLARNA')) {
 				$paymentmethodtypes[] = "klarna";
@@ -533,9 +531,9 @@ class Stripe extends CommonObject
 				"setup_future_usage" => "on_session",
 				"metadata" => $metadata
 			);
-			if ($descriptor) {
-				$dataforintent["statement_descriptor_suffix"] = $descriptor; // For card payment, 22 chars that appears on bank receipt (prefix into stripe setup + this suffix)
-				$dataforintent["statement_descriptor"] = $descriptor; 	// For SEPA, it will take only statement_descriptor, not statement_descriptor_suffix
+			if ($tag) {
+				$dataforintent["statement_descriptor_suffix"] = dol_trunc($tag, 12, 'right', 'UTF-8', 1); 	// For card payment, 22 chars that appears on bank receipt (prefix into stripe setup + this suffix)
+				$dataforintent["statement_descriptor"] = dol_trunc($tag, 22, 'right', 'UTF-8', 1); 			// For SEPA, 22 chars, it will take only statement_descriptor, not statement_descriptor_suffix
 			}
 			if (!is_null($customer)) {
 				$dataforintent["customer"] = $customer;

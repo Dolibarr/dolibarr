@@ -669,9 +669,9 @@ $("div#AShowChoices").click(function() {
     $("div#navail_choices").toggle();
 
     if ($("div#navail_choices").css("display") == "none") {
-        $(this).text("> '.$langs->trans('ShowNotAvailableOptions').'...");
+        $(this).text(\'> '.dol_escape_js($langs->transnoentitiesnoconv('ShowNotAvailableOptions')).'...\');
     } else {
-        $(this).text("'.$langs->trans('HideNotAvailableOptions').'...");
+        $(this).text(\'> '.dol_escape_js($langs->transnoentitiesnoconv('HideNotAvailableOptions')).'...\');
     }
 
 });
