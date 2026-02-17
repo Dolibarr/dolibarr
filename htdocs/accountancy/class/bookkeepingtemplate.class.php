@@ -76,14 +76,49 @@ class BookkeepingTemplate extends CommonObject
 		"import_key" => array("type" => "varchar(14)", "label" => "ImportId", "enabled" => "1", 'position' => 1000, 'notnull' => -1, "visible" => "-2"),
 	);
 
+	/**
+	 * @var int ID
+	 */
 	public $rowid;
+
+	/**
+	 * @var int Entity
+	 */
 	public $entity;
+
+	/**
+	 * @var string Code
+	 */
 	public $code;
+
+	/**
+	 * @var string Label
+	 */
 	public $label;
+
+	/**
+	 * @var int Unix timestamp of creation date
+	 */
 	public $date_creation;
+
+	/**
+	 * @var int Unix timestamp of last modification
+	 */
 	public $tms;
+
+	/**
+	 * @var int User ID who created
+	 */
 	public $fk_user_creat;
+
+	/**
+	 * @var int|null User ID who modified
+	 */
 	public $fk_user_modif;
+
+	/**
+	 * @var string|null Import key
+	 */
 	public $import_key;
 
 	/**
@@ -137,9 +172,9 @@ class BookkeepingTemplate extends CommonObject
 	/**
 	 * Create object into database
 	 *
-	 * @param User $user User that creates
-	 * @param bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             Return integer <0 if KO, Id of created object if OK
+	 * @param   User    $user       User that creates
+	 * @param   int     $notrigger  false=launch triggers after, true=disable triggers
+	 * @return  int                 Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = false)
 	{
@@ -176,15 +211,9 @@ class BookkeepingTemplate extends CommonObject
 		unset($object->fk_user_creat);
 
 		// Clear fields
-		if (property_exists($object, 'code')) {
-			$object->code = "COPY_" . $object->code;
-		}
-		if (property_exists($object, 'label')) {
-			$object->label = $langs->trans("CopyOf") . " " . $object->label;
-		}
-		if (property_exists($object, 'date_creation')) {
-			$object->date_creation = dol_now();
-		}
+		$object->code = "COPY_" . $object->code;
+		$object->label = $langs->trans("CopyOf") . " " . $object->label;
+		$object->date_creation = dol_now();
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
