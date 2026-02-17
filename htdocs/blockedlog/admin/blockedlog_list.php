@@ -325,7 +325,7 @@ print $form->multiselectarray('search_code', $block_static->trackedevents, $sear
 print '</td>';
 
 // Ref
-print '<td class="liste_titre"><input type="text" class="maxwidth50" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
+print '<td class="liste_titre"><input type="text" class="maxwidth100" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
 
 // Amount
 print '<td class="liste_titre right"><input type="text" class="maxwidth50" name="search_amount" value="'.dol_escape_htmltag($search_amount).'"></td>';
@@ -478,6 +478,9 @@ if (is_array($blocks)) {
 					if ($block->linktype == 'replacedby') {
 						print '<br><span class="opacitymedium small">'.$langs->trans("ReplacedBy").' '.$block->linktoref.'</span>';
 					}
+					if ($block->linktype == 'credit_note_of') {
+						print '<br><span class="opacitymedium small">'.$langs->trans("CreditNoteOf").' '.$block->linktoref.'</span>';
+					}
 				}
 			} else {
 				// Ref not stored
@@ -572,7 +575,7 @@ if (is_array($blocks)) {
 		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	} else {
 		foreach ($totalamount as $key => $totalamountperref) {
-			if ($key == 'BILL_VALIDATE') {
+			if ($key == 'BILL_VALIDATE' || $key == 'PAYMENT_CUSTOMER_CREATE') {
 				// Total
 				print '<tr class="totalline">';
 
@@ -608,26 +611,32 @@ if (is_array($blocks)) {
 				foreach ($totalhtamount[$key] as $value) {	// Loop on each module
 					$totalhttoshow += $value;
 				}
-				print $langs->trans("HT").': ';
-				print price($totalhttoshow);
-
-				print '<br>';
-
 				$totalvattoshow = 0;
 				foreach ($totalvatamount[$key] as $value) {
 					$totalvattoshow += $value;
 				}
-				print $langs->trans("VAT").': ';
-				print price($totalvattoshow);
-
-				print '<br>';
-
 				$totaltoshow = 0;
 				foreach ($totalamountperref as $value) {
 					$totaltoshow += $value;
 				}
-				print $langs->trans("TTC").': ';
-				print price($totaltoshow);
+
+				if ($key == 'PAYMENT_CUSTOMER_CREATE') {
+					print $langs->trans("Total").': ';
+					print price($totaltoshow);
+				} else {
+					print $langs->trans("HT").': ';
+					print price($totalhttoshow);
+
+					print '<br>';
+
+					print $langs->trans("VAT").': ';
+					print price($totalvattoshow);
+
+					print '<br>';
+
+					print $langs->trans("TTC").': ';
+					print price($totaltoshow);
+				}
 				print '</td>';
 
 				// Details link

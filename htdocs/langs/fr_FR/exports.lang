@@ -153,3 +153,4 @@ AllTargetMandatoryFieldsAreMapped=Tous les champs cibles qui ont besoin d'une va
 ResultOfSimulationNoError=Résultat de la simulation : Aucune erreur
 NumberOfLinesLimited=Nombre de lignes limité
 ErrorFileLinesReachEOF=L'enregistrement fichier contient %s lignes. Cependant, nous atteignons la fin de fichier ou une ligne vide à l'enregistrement %s. Cela peut se produire lorsque certains enregistrements sont répartis sur plusieurs lignes et non correctement délimitées par le délimiteur de caractères, ou s'il existe une ligne sans données dans tous les champs.
+ImportInProcess=L'importation de fichier %s est en cours.

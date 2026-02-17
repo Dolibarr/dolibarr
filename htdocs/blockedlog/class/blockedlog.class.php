@@ -1161,7 +1161,7 @@ class BlockedLog
 	{
 		$aaa = null;
 		try {
-			$aaa = (object) jsonOrUnserialize($data);
+			$aaa = (object) jsonOrUnserialize($data, false);
 		} catch (Exception $e) {
 			// print $e->getErrs);
 		}
@@ -1194,7 +1194,7 @@ class BlockedLog
 	 */
 	public function create($user, $forcesignature = '')
 	{
-		global $conf, $langs, $mysoc;
+		global $conf, $langs;
 
 		$langs->load('blockedlog');
 
@@ -1245,12 +1245,18 @@ class BlockedLog
 		// The object_format define the formatting rules into buildKeyForSignature and buildFirstPartOfKeyForSignature and buildFinalSignatureHash
 		$this->object_format = 'V1';	// TODO Switch to V2 when v2 support is complete
 
+		$previoushash = '';
+		$previousid = 0;
+
 		try {
 			$tmparray = $this->getPreviousHash(1, 0); // This get last record and lock database until insert is done and transaction closed
+
 			$previoushash = $tmparray['previoushash'];
+			$previousid = $tmparray['previousid'];
 
 			$concatenateddata = $this->buildKeyForSignature();	// All the information for the hash (meta data + data saved)
 
+			// The new hash
 			$this->signature = $this->buildFinalSignatureHash($previoushash.$concatenateddata);	// Build the hmac signature
 
 			// For debug info (we can clean this field later)
@@ -1328,15 +1334,27 @@ class BlockedLog
 			$id = $this->db->last_insert_id(MAIN_DB_PREFIX."blockedlog");
 
 			if ($id > 0) {
+				// The new ID
 				$this->id = $id;
+
+				$error = 0;
 
 				$this->db->commit();
 
 				// Call remote API service to record the last counter
 				include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
-				$resultcall = callApiToPushCounter((int) $this->id, $this->signature);
+				try {
+					$resultcall = callApiToPushCounter((int) $this->id, $this->signature, 0, (int) $previousid, $previoushash);
+				} catch (Exception $e) {
+					$error++;
+					$this->error = $e->getMessage();
+				}
 
-				return $this->id;
+				if (!$error) {
+					return $this->id;
+				} else {
+					return -3;
+				}
 			} else {
 				$this->db->rollback();
 				return -2;
@@ -1354,7 +1372,7 @@ class BlockedLog
 	 *	Check if calculated signature still correct compared to the value in the chain
 	 *
 	 *	@param	string			$previoushash		If previous signature hash is known, we can provide it to avoid to make a search of it in database.
-	 *  @param	int<0,2>		$returnarray		1=Return array of details, 2=Return array of details including keyforsignature, 0=Boolean
+	 *  @param	int<0,2>		$returnarray		1=Return array of details, 2=Return array of details including keyforsignature, 0=Return a boolean
 	 *	@return	boolean|array{checkresult:bool,calculatedsignature:string,previoushash:string,keyforsignature?:string}	Array or true if OK, false if KO
 	 */
 	public function checkSignature($previoushash = '', $returnarray = 0)
@@ -1433,19 +1451,23 @@ class BlockedLog
 	/**
 	 * Return the string for signature (clear data).
 	 *
-	 * @return string		Key for signature
+	 * @param	string	$format		Force format to use
+	 * @return 	string				Key for signature
 	 */
-	public function buildKeyForSignature()
+	public function buildKeyForSignature($format = '')
 	{
 		//print_r($this->object_data);
-		if ($this->object_format == '') {
+		if (empty($format)) {
+			$format = $this->object_format;
+		}
+		if ($format == '') {
 			return $this->buildFirstPartOfKeyForSignature().'|'.print_r($this->object_data, true);
-		} elseif ($this->object_format == 'V1') {	// Note: $this->amounts can be '0', '1.1', '1.123';  // All 0 at end should have been removed already
+		} elseif ($format == 'V1') {	// Note: $this->amounts can be '0', '1.1', '1.123';  // All 0 at end should have been removed already
 			return $this->buildFirstPartOfKeyForSignature().'|'.json_encode($this->object_data, JSON_FORCE_OBJECT);
-		} elseif ($this->object_format == 'V2') {
+		} elseif ($format == 'V2') {
 			return $this->buildFirstPartOfKeyForSignature().'|'.json_encode($this->object_data, JSON_FORCE_OBJECT);
 		} else {
-			throw new Exception('Error bad value "'.$this->object_format.'" for object_format');
+			throw new Exception('Error bad value "'.$format.'" for object_format');
 		}
 	}
 

@@ -258,7 +258,7 @@ class modBlockedLog extends DolibarrModules
 	 * The remove function removes tabs, constants, boxes, permissions and menus from Dolibarr database.
 	 * Data directories are not deleted
 	 *
-	 * @param      string	$options    Options when enabling module ('', 'noboxes')
+	 * @param      string	$options    Options when enabling module ('', 'noboxes', 'forcedisable')
 	 * @return     int             		1 if OK, 0 if KO
 	 */
 	public function remove($options = '')
@@ -269,6 +269,8 @@ class modBlockedLog extends DolibarrModules
 
 		// If already used, we add an entry to show we enable module
 		require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
+
+		dol_syslog("modBlockedLog::remove option=".$options, LOG_DEBUG);
 
 		$object = new stdClass();
 		$object->id = 1;
@@ -288,7 +290,7 @@ class modBlockedLog extends DolibarrModules
 
 		if ($b->alreadyUsed(1)) {
 			// Unalterable log was already used.
-			if (!$b->canBeDisabled()) {
+			if ($options != 'forcedisable' && !$b->canBeDisabled()) {
 				// Case we refuse to disable it
 				global $langs;
 				$this->error = $langs->trans('DisablingBlockedLogIsNotallowedOnceUsedExceptOnFullreset', $langs->transnoentitiesnoconv('BlockedLog'));
@@ -331,15 +333,16 @@ class modBlockedLog extends DolibarrModules
 			// Special message for France
 			if ($mysoc->country_code == 'FR') {
 				$islne = isALNEQualifiedVersion(1, 1);
+				$versionbadge = '<span class="badge-text badge-secondary">'.DOL_VERSION.'</span>';
 				if ($islne) {
 					if (preg_match('/\-/', DOL_VERSION)) {
 						// This is an alpha or beta version
-						$s .= info_admin($langs->trans("LNECandidateVersionForCertificationFR"), 0, 0, 'info');
+						$s .= info_admin($langs->trans("LNECandidateVersionForCertificationFR", $versionbadge), 0, 0, 'info');
 					} else {
-						$s .= info_admin($langs->trans("LNECertifiedVersionFR"), 0, 0, 'info');
+						$s .= info_admin($langs->trans("LNECertifiedVersionFR", $versionbadge), 0, 0, 'info');
 					}
 				} else {
-					$s .= info_admin($langs->trans("NotCertifiedVersionFR"), 0, 0, 'warning');
+					$s .= info_admin($langs->trans("NotCertifiedVersionFR", $versionbadge), 0, 0, 'warning');
 				}
 			}
 
