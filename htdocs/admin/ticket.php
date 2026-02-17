@@ -231,6 +231,17 @@ if ($action == 'updateMask') {
 		$error++;
 	}
 
+	$notification_email_template = GETPOST('TICKET_NOTIFICATION_EMAIL_TEMPLATE', 'alpha');
+	$notification_email_template_description = 'Template email for ticket create notification';
+	if (!empty($notification_email_to)) {
+		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_TEMPLATE', $notification_email_template, 'chaine', 0, $notification_email_template_description, $conf->entity);
+	} else {
+		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_TEMPLATE', '', 'chaine', 0, $notification_email_template_description, $conf->entity);
+	}
+	if (!($res > 0)) {
+		$error++;
+	}
+
 	$mail_intro = GETPOST('TICKET_MESSAGE_MAIL_INTRO', 'restricthtml');
 	$mail_intro_description = "Introduction text of ticket replies sent from Dolibarr";
 	if (!empty($mail_intro)) {
@@ -696,6 +707,32 @@ print img_picto('', 'email', 'class="pictofixedwidth"');
 print '<input type="text" class="minwidth200" id="TICKET_NOTIFICATION_EMAIL_TO" name="TICKET_NOTIFICATION_EMAIL_TO" value="'.getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO').'"></td>';
 print '<td class="center">';
 print $formcategory->textwithpicto('', $langs->trans("TicketEmailNotificationToHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
+
+include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+$formmail = new FormMail($db);
+
+$formmail->fetchAllEMailTemplate('ticket_send', $user, null, -1); // We set lang=null to get in priority record with no lang
+$arrayofmessagename = array();
+if (is_array($formmail->lines_model)) {
+	foreach ($formmail->lines_model as $modelmail) {
+		//var_dump($modelmail);
+		$moreonlabel = '';
+		if (!empty($arrayofmessagename[$modelmail->label])) {
+			$moreonlabel = ' <span class="opacitymedium">('.$langs->trans("SeveralLangugeVariatFound").')</span>';
+		}
+		// The 'label' is the key that is unique if we exclude the language
+		$arrayofmessagename[$modelmail->label.':ticket_send'] = $langs->trans(preg_replace('/\(|\)/', '', $modelmail->label)).$moreonlabel;
+	}
+}
+
+// Email template for notification of TICKET_CREATE
+print '<tr class="oddeven"><td><label for="TICKET_NOTIFICATION_EMAIL_TEMPLATE" class="block">'.$langs->trans('TicketEmailNotificationTemplate').'</label></td>';
+print '<td class="left">';
+print $form->selectarray('TICKET_NOTIFICATION_EMAIL_TEMPLATE', $arrayofmessagename, getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TEMPLATE'), 'None', 0, 0, '', 0, 0, 0, '', '', 1);
+print '<td class="center">';
+print $formcategory->textwithpicto('', $langs->trans('TicketEmailNotificationTemplateHelp'), 1, 'help');
 print '</td>';
 print '</tr>';
 

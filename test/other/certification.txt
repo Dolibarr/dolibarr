@@ -1,0 +1,8 @@
+QUICK TOOL FOR CERTIFICATION
+
+
+***** To generate manually the filelist of files footprints:
+~/git/dolibarr_xxx/dev/build/generate_filelist_xml.php' release=auto
+
+***** To reload demo database
+~/git/dolibarr_test/dev/initdemo/initdemo.sh confirmresetblockedlog 'mysqldump_dolibarr_24.0.0.sql' dolibarr_test 3306 dolibarr_test xxxxpass
