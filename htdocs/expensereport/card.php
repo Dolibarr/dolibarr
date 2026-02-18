@@ -984,7 +984,7 @@ if (empty($reshook)) {
 		$object = new ExpenseReport($db);
 		$object->fetch($id);
 		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid || in_array($object->fk_user_author, $childids)) {
-			$result = $object->setStatut(0);
+			$result = $object->setStatut(ExpenseReport::STATUS_DRAFT);
 
 			if ($result > 0) {
 				// Define output language

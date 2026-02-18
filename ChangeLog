@@ -189,6 +189,8 @@ NEW: action to clone ticket
 WARNING:
 --------
 The following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* If you were using the website module with PHP page, you must add the following parameter $dolibarr_website_allow_custom_php=2; into your conf.php to continue to be
+  allowed to edit PHP content into the website module.
 * The deprecated column "egroupware_id" has been dropped from table llx_user.
 * The property $sumpayed (duplicated of $totalpaid), $sumdeposit (duplicate of $totaldeposits) and $sumcreditnote (duplicate of $totalcreditnotes) has
   been removed (there are replaced with the property that was a duplication of (same for $sumpayed_multicurrency, $sumdeposit_multicurrency, $sumcreditnote_multicurrency).

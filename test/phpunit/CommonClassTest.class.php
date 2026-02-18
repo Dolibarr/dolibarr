@@ -188,7 +188,7 @@ abstract class CommonClassTest extends TestCase
 
 		if ($nbLinesToShow) {
 			print "\n";
-			print "## We try to output the last ".$nbLinesToShow." lines of the log file ".basename($this->logfile)." (that has ".$totalLines." lines)".PHP_EOL;
+			print "########## We try to output the last ".$nbLinesToShow." lines of the log file ".basename($this->logfile)." (that has ".$totalLines." lines)".PHP_EOL;
 			$newLines = count($last_lines);
 			if ($newLines > 0) {
 				// Show partial log file contents when requested.
@@ -196,7 +196,7 @@ abstract class CommonClassTest extends TestCase
 				foreach ($last_lines as $line) {
 					print $line.PHP_EOL;
 				}
-				print "## end of dolibarr.log for $className::$failedTestMethod".PHP_EOL;
+				print "########## end of dolibarr.log for $className::$failedTestMethod".PHP_EOL;
 			} else {
 				print "## No new lines in 'dolibarr.log' since start of this test.".PHP_EOL;
 			}
@@ -207,7 +207,7 @@ abstract class CommonClassTest extends TestCase
 		$logFile = '/var/log/apache2/travis_error_log';
 
 		// Check if the file exists and is readable
-		if (file_exists($logFile) && is_readable($logFile)) {
+		if (@file_exists($logFile) && is_readable($logFile)) {
 			// Read the file into an array
 			$lines = file($logFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
@@ -215,13 +215,13 @@ abstract class CommonClassTest extends TestCase
 			$lastFiveLines = array_slice($lines, -10);
 
 			// Print the last 5 lines
-			print "\n";
+			print "Content of ".$logFile."\n";
 			echo "Last 5 lines of $logFile:\n";
 			foreach ($lastFiveLines as $line) {
 				echo $line . "\n";
 			}
 		} else {
-			echo "File $logFile does not exist or is not readable so we can't show more information.\n";
+			//echo "File $logFile does not exist or is not readable so we can't show more information.\n";
 		}
 
 

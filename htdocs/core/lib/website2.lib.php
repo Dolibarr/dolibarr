@@ -352,7 +352,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 
 		$tplcontent .= $objectpage->content."\n";
 
-		// Add logic to handle view and actions for managing parameters in the config page
+		// Add logic to handle view and actions for managing parameters in the special config page
 		if ($objectpage->type_container == 'setup') {
 			$content = '<div id="websitetemplateconfigpage">'."\n";
 			$content .= '<?php'."\n";
@@ -958,6 +958,11 @@ function checkPHPCode(&$phpfullcodestringold, &$phpfullcodestring)
 
 	// First check permission
 	if ($phpfullcodestringold != $phpfullcodestring) {
+		global $dolibarr_website_allow_custom_php;
+		if (empty($dolibarr_website_allow_custom_php)) {
+			$error++;
+			setEventMessages($langs->trans("NotAllowedToAddDynamicContentDisabledGlobaly", 'dolibarr_website_allow_custom_php'), null, 'errors');
+		}
 		if (!$error && !$user->hasRight('website', 'writephp')) {
 			$error++;
 			setEventMessages($langs->trans("NotAllowedToAddDynamicContent"), null, 'errors');

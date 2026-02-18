@@ -883,7 +883,7 @@ input#onlinepaymenturl, input#directdownloadlink {
 	background: #efefef;
 	/* background: #f3f3f3; */
 
-	padding: 20px 0px 20px 0px;
+	padding: 20px 20px 20px 20px;
 	border-radius: 8px;
 }
 
@@ -1347,6 +1347,9 @@ div.urllink {
 	justify-content: flex-start;
 	align-items: center;
 	height: 2em;
+}
+div.urllink.unsetheight {
+	height: unset;
 }
 div.urllink span.fa, div.urllink span.fas, div.urllink span.far {
 	width: 22px;
@@ -2526,19 +2529,19 @@ td.showDragHandle {
 
 
 /* ============================================================================== */
-/* Styles de positionnement des zones                                             */
+/* Zone positioning styles                                                        */
 /* ============================================================================== */
 
 #id-container {
 	width: 100%;
 	<?php if (getDolGlobalString('THEME_STICKY_TOPMENU') == 'scrollleftmenu_after_mainpage') { ?>
-		display: table;					/* DOL_XXX Empeche fonctionnement correct du scroll horizontal sur tableau, avec datatable ou CSS */
+		display: table;					/* DOL_XXX Prevents the correct operation of the horizontal scroll on a table, with datatable or CSS */
 	<?php } ?>
 	/* table-layout: fixed; */
 
 }
 #id-right, #id-left {
-	display: table-cell;			/* DOL_XXX Empeche fonctionnement correct du scroll horizontal sur tableau, avec datatable ou CSS */
+	display: table-cell;			/* DOL_XXX Prevents the correct operation of the horizontal scroll on a table, with datatable or CSS */
 	float: none;
 	vertical-align: top;
 }
@@ -2728,7 +2731,7 @@ div.vmenu, td.vmenu {
 	.user-header { height: auto !important; color: var(--colortextbackhmenu); }
 
 	#id-container {
-		display: table;					/* DOL_XXX Empeche fonctionnement correct du scroll horizontal sur tableau, avec datatable ou CSS */
+		display: table;					/* DOL_XXX Prevents the correct operation of the horizontal scroll on a table, with datatable or CSS */
 		table-layout: fixed;
 		width: 100%;
 	}
@@ -3004,8 +3007,9 @@ span.widthpictotitle.pictotitle {
 	/* padding-right: 0; */
 }
 img.pictofixedwidth {
-	width: 18px;	/* Do not use em unit here */
-	padding-right: 2px;
+	width: 16px;	/* Do not use em unit here */
+	padding-right: 6px;		/* width of img + padding-right must be equal to width of .pictofixedwidth */
+	margin-right: 4px;
 }
 
 .colorthumb {
@@ -4172,8 +4176,8 @@ div.fiche table:not(.table-fiche-title) tr.titre td {
 }
 div.fiche >.table-fiche-title tr.toptitle td.col-picto,
 div.fiche >.table-fiche-title tr.toptitle td.col-title,
-div.fiche >form >.table-fiche-title tr.toptitle td.col-picto,
-div.fiche >form >.table-fiche-title tr.toptitle td.col-title {
+div.fiche >form >.table-fiche-title:not(.nogreyscale) tr.toptitle td.col-picto,
+div.fiche >form >.table-fiche-title:not(.nogreyscale) tr.toptitle td.col-title {
 	filter: grayscale(90%);
 }
 
@@ -4396,20 +4400,8 @@ input.buttonreset {
 	background-color: transparent;
 	cursor: pointer;
 }
-.nopaddingleft {
-	padding-<?php print $left; ?>: 0px;
-}
 div.tabs.nopaddingleft {
 	padding-<?php print $left; ?>: 0px;
-}
-.nopaddingright {
-	padding-<?php print $right; ?>: 0px;
-}
-.nopaddingtopimp {
-	padding-top: 0px !important;
-}
-.nopaddingbottomimp {
-	padding-bottom: 0px !important;
 }
 .notopnoleft {
 	border-collapse: collapse;
@@ -4682,6 +4674,9 @@ div.tabBar div.fichehalfright table.noborder:not(.margintable):not(.paymenttable
 	border-bottom: 1px solid var(--colortopbordertitle1);
 }
 */
+div.tabBar .lastrecordtable {
+	margin-bottom: 15px;
+}
 div.tabBar table:not(.nobottom).border>tbody>tr:last-of-type>td {
 	border-bottom-width: 1px;
 	border-bottom-color: var(--colortopbordertitle1);
@@ -6464,9 +6459,9 @@ table.cal_month.cal_peruser td { padding-left: 0 !important; padding-right: 0 !i
 .cal_past_month    { /* opacity: 0.6; */ background: #EEEEEE; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_current_month { background: #FFFFFF; border-left: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_current_month_peruserleft { background: #FFFFFF; border-left: solid 2px #6C7C7B; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
-.cal_today         { background: #FDFDF0; border-left: solid 1px #E0E0E0; border-bottom: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
-.cal_today_peruser { background: #FDFDF0; border-right: solid 1px #E0E0E0; border-bottom: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
-.cal_today_peruser_peruserleft { background: #FDFDF0; border-left: solid 2px #6C7C7B; border-right: solid 1px #E0E0E0; border-bottom: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_today         { /* background: #FDFDF0; */ border-left: solid 1px #E0E0E0; border-bottom: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_today_peruser { /* background: #FDFDF0; */ border-right: solid 1px #E0E0E0; border-bottom: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_today_peruser_peruserleft { /* background: #FDFDF0; */ border-left: solid 2px #6C7C7B; border-right: solid 1px #E0E0E0; border-bottom: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_past          { }
 .cal_peruser       { padding-top: 0 !important; padding-bottom: 0 !important; padding-<?php print $left; ?>: 0 !important; padding-<?php print $right; ?>: 0 !important; }
 .cal_impair        {
@@ -6483,6 +6478,8 @@ table.cal_event    { border: none; border-collapse: collapse; margin-bottom: 1px
 table.cal_event td { border: none; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 2px; padding-top: 0px; padding-bottom: 0px; }
 table.cal_event td.cal_event { padding: 4px 4px !important; padding-bottom: 2px !important; padding-top: 2px !important; }
 table.cal_event td.cal_event_right { padding: 4px 4px !important; }
+tr.trcalweek { height: 300px; }
+tr.trcalday { height: 300px; }
 .cal_event              { font-size: 1em; }
 .cal_event a:link       { color: #111111; font-weight: normal !important; }
 .cal_event a:visited    { color: #111111; font-weight: normal !important; }
@@ -7254,6 +7251,7 @@ div#ecm-layout-center {
 	top: auto !important;
 	bottom: 4px !important;
 <?php } ?>
+	top: <?php print $disableimages ? '32' : ($heightmenu+4); ?>px;
 	text-align: center;
 	min-width: <?php echo $dol_optimize_smallscreen ? '200' : '480'; ?>px;
 	width: auto;
@@ -9465,6 +9463,7 @@ include dol_buildpath($path.'/theme/'.$theme.'/progress.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/timeline.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/search-input.inc.css', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/tooltips.inc.css', 0);
+include dol_buildpath($path.'/theme/'.$theme.'/input-feedback.css', 0);
 
 
 // Add custom CSS if defined

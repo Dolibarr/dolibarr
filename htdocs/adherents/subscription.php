@@ -149,6 +149,8 @@ if (empty($reshook) && $action == 'confirm_create_thirdparty' && $confirm == 'ye
 			$langs->load("errors");
 			setEventMessages($company->error, $company->errors, 'errors');
 		} else {
+			$object->socid = $result;
+
 			$action = 'addsubscription';
 		}
 	} else {

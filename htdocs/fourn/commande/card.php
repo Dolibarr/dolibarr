@@ -14,7 +14,8 @@
  * Copyright (C) 2023 	   Joachim Kueter       <git-jk@bloxera.com>
  * Copyright (C) 2024-2025 MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024      Nick Fragoulis
- * Copyright (C) 2025	   Alexandre Spangaro	<alexandre@inovea-conseil.com>
+ * Copyright (C) 2025		   Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2026		William Mead		<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -450,8 +451,15 @@ if (empty($reshook)) {
 		$alldate_end = dol_mktime(GETPOSTINT('alldate_endhour'), GETPOSTINT('alldate_endmin'), 0, GETPOSTINT('alldate_endmonth'), GETPOSTINT('alldate_endday'), GETPOSTINT('alldate_endyear'));
 		foreach ($object->lines as $line) {
 			if ($line->product_type == 1) { // only service line
-				$result = $object->updateline($line->id, $line->desc, $line->subprice, $line->qty, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, 0, $alldate_start, $alldate_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice, $line->ref_supplier);
+				$result = $object->updateline($line->id, $line->desc, $line->subprice, $line->qty, (float) $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, 0, $alldate_start, $alldate_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice, $line->ref_supplier);
 			}
+		}
+	} elseif ($action == 'addline' && GETPOST('submitforalllines', 'alpha') && GETPOST('remiseforalllines', 'alpha') !== '' && $usercancreate) {
+		// Define vat_rate
+		$remise_percent = (GETPOST('remiseforalllines') ? GETPOST('remiseforalllines') : 0);
+		$remise_percent = str_replace('*', '', $remise_percent);
+		foreach ($object->lines as $line) {
+			$result = $object->updateline($line->id, $line->desc, $line->subprice, $line->qty, (float) $remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, 0, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice, $line->ref_supplier);
 		}
 	} elseif ($action == 'addline' && GETPOST('submitforalllines', 'aZ09') && GETPOST('vatforalllines', 'alpha') !== '' && $usercancreate) {
 		// Define new vat_rate for all lines
@@ -463,7 +471,7 @@ if (empty($reshook)) {
 			if ($line->special_code == SUBTOTALS_SPECIAL_CODE) {
 				continue;
 			}
-			$result = $object->updateline($line->id, $line->desc, $line->subprice, $line->qty, $line->remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, 'HT', $line->info_bits, $line->product_type, 0, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice, $line->ref_supplier);
+			$result = $object->updateline($line->id, $line->desc, $line->subprice, $line->qty, (float) $line->remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, 'HT', $line->info_bits, $line->product_type, 0, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice, $line->ref_supplier);
 		}
 	} elseif ($action == 'confirm_addtitleline' && $usercancreate) {
 		// Handling adding a new title line for subtotals module
@@ -1590,8 +1598,11 @@ if (empty($reshook)) {
 						dol_syslog("Try to find source object origin=".$object->origin_type." originid=".$object->origin_id." to add lines");
 						$result = $srcobject->fetch($object->origin_id);
 						if ($result > 0) {
-							$tmpdate = $srcobject->delivery_date;
-							$object->setDeliveryDate($user, $tmpdate);
+							if (empty($object->delivery_date)) {
+								$tmpdate = $srcobject->delivery_date;
+								$object->setDeliveryDate($user, $tmpdate);
+							}
+
 							$object->set_id_projet($user, $srcobject->fk_project);
 
 							$lines = $srcobject->lines;
@@ -1882,7 +1893,6 @@ if ($action == 'create') {
 			$cond_reglement_id = 0;
 			$deposit_percent = 0;
 			$mode_reglement_id = 0;
-			$datelivraison = '';
 			$objectsrc->note_private = '';
 			$objectsrc->note_public = '';
 			if ($societe = $object->thirdparty) {

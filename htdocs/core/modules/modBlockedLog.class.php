@@ -66,7 +66,7 @@ class modBlockedLog extends DolibarrModules
 
 		// Config pages
 		//-------------
-		$this->config_page_url = array('blockedlog.php?withtab=1@blockedlog');
+		$this->config_page_url = array('registration.php?origin=setupmodule&withtab=1@blockedlog');
 
 		// Dependencies
 		//-------------
@@ -162,7 +162,7 @@ class modBlockedLog extends DolibarrModules
 	 *      The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *      It also creates data directories.
 	 *
-	 *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @param      string	$options    Options when enabling module ('', 'noboxes', 'acceptredirect', 'forceinit')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
 	public function init($options = '')
@@ -174,12 +174,13 @@ class modBlockedLog extends DolibarrModules
 		require_once DOL_DOCUMENT_ROOT . '/blockedlog/class/blockedlog.class.php';
 		$b = new BlockedLog($this->db);
 
-		// forceinit can be set to bypass this redirection
-		if (isALNEQualifiedVersion(1, 1) && $options != 'forceinit') {
+		// any value of $options except 'acceptredirect' will bypass this redirection
+		if (isALNEQualifiedVersion(1, 1) && $options == 'acceptredirect') {
 			// We first switch on registration page
-			header("Location: ".DOL_URL_ROOT.'/blockedlog/admin/registration.php');
+			header("Location: ".DOL_URL_ROOT.'/blockedlog/admin/registration.php?origin=initmodule&withtab=0');
 			exit;
 		}
+
 
 		$this->db->begin();
 
@@ -224,7 +225,7 @@ class modBlockedLog extends DolibarrModules
 		$this->db->commit();
 
 
-		// We add an entry to show we enable module
+		// We add an entry to show we enable the module
 
 		$object = new stdClass();
 		$object->id = 0;
@@ -235,7 +236,7 @@ class modBlockedLog extends DolibarrModules
 
 		// Add first entry in unalterable Log to track that module was activated
 		$action = 'MODULE_SET';
-		$result = $b->setObjectData($object, $action, 0, $user, null);
+		$result = $b->setObjectData($object, $action, 0, $user, 0);
 
 		if ($result < 0) {
 			$this->error = $b->error;
@@ -243,14 +244,27 @@ class modBlockedLog extends DolibarrModules
 			return 0;
 		}
 
+		$this->db->begin();
+
 		$res = $b->create($user);
 		if ($res <= 0) {
+			$this->db->rollback();
+
 			$this->error = $b->error;
 			$this->errors = $b->errors;
 			return $res;
 		}
 
-		return $this->_init($sql, $options);
+		$resinit = $this->_init($sql, $options);
+		if ($resinit <= 0) {
+			$this->db->rollback();
+
+			return $resinit;
+		}
+
+		$this->db->commit();
+
+		return 1;
 	}
 
 	/**
@@ -258,7 +272,7 @@ class modBlockedLog extends DolibarrModules
 	 * The remove function removes tabs, constants, boxes, permissions and menus from Dolibarr database.
 	 * Data directories are not deleted
 	 *
-	 * @param      string	$options    Options when enabling module ('', 'noboxes')
+	 * @param      string	$options    Options when enabling module ('', 'noboxes', 'forcedisable')
 	 * @return     int             		1 if OK, 0 if KO
 	 */
 	public function remove($options = '')
@@ -270,6 +284,8 @@ class modBlockedLog extends DolibarrModules
 		// If already used, we add an entry to show we enable module
 		require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 
+		dol_syslog("modBlockedLog::remove option=".$options, LOG_DEBUG);
+
 		$object = new stdClass();
 		$object->id = 1;
 		$object->element = 'module';
@@ -279,7 +295,7 @@ class modBlockedLog extends DolibarrModules
 		$object->label = 'Module disabled';
 
 		$b = new BlockedLog($this->db);
-		$result = $b->setObjectData($object, 'MODULE_RESET', 0, $user, null);
+		$result = $b->setObjectData($object, 'MODULE_RESET', 0, $user, 0);
 		if ($result < 0) {
 			$this->error = $b->error;
 			$this->errors = $b->errors;
@@ -288,7 +304,7 @@ class modBlockedLog extends DolibarrModules
 
 		if ($b->alreadyUsed(1)) {
 			// Unalterable log was already used.
-			if (!$b->canBeDisabled()) {
+			if ($options != 'forcedisable' && !$b->canBeDisabled()) {
 				// Case we refuse to disable it
 				global $langs;
 				$this->error = $langs->trans('DisablingBlockedLogIsNotallowedOnceUsedExceptOnFullreset', $langs->transnoentitiesnoconv('BlockedLog'));
@@ -318,7 +334,7 @@ class modBlockedLog extends DolibarrModules
 	 */
 	public function getDesc($foruseinpopupdesc = 0)
 	{
-		global $langs;
+		global $langs, $mysoc;
 		$langs->load("admin");
 
 		// If module description translation exists
@@ -326,8 +342,26 @@ class modBlockedLog extends DolibarrModules
 
 		if ($foruseinpopupdesc) {
 			$langs->load("blockedlog");
-			$s .= '<br><br>';
-			if (isALNEQualifiedVersion(1, 1)) {
+			$s .= '<br>';
+
+			// Special message for France
+			if ($mysoc->country_code == 'FR') {
+				$islne = isALNEQualifiedVersion(1, 1);
+				$versionbadge = '<span class="badge-text badge-secondary">'.DOL_VERSION.'</span>';
+				if ($islne) {
+					if (preg_match('/\-/', DOL_VERSION)) {
+						// This is an alpha or beta version
+						$s .= info_admin($langs->trans("LNECandidateVersionForCertificationFR", $versionbadge), 0, 0, 'info');
+					} else {
+						$s .= info_admin($langs->trans("LNECertifiedVersionFR", $versionbadge), 0, 0, 'info');
+					}
+				} else {
+					$s .= info_admin($langs->trans("NotCertifiedVersionFR", $versionbadge), 0, 0, 'warning');
+				}
+			}
+
+			// Add warning to advice users to make regularly archives
+			if (in_array($mysoc->country_code, array('FR'))) {
 				$s .= info_admin($langs->trans("UnalterableLogTool1FR"), 0, 0, 'warning');
 			}
 		}

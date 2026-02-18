@@ -43,9 +43,6 @@ if (!defined('NOREQUIREAJAX')) {
 
 // Load Dolibarr environment
 require '../main.inc.php'; // Load $user and permissions
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -53,6 +50,9 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+
 $facid = GETPOSTINT('facid');
 $action = GETPOST('action', 'aZ09');
 $email = GETPOST('email', 'alpha');
@@ -68,34 +68,117 @@ $invoice->fetch($facid);
 $customer = new Societe($db);
 $customer->fetch($invoice->socid);
 
+$error = 0;
+
 
 /*
  * Actions
  */
 
 if ($action == "send" && $user->hasRight('takepos', 'run')) {
+	top_httphead('text/html');
+
 	include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 	$formmail = new FormMail($db);
 	$outputlangs = new Translate('', $conf);
 	$model_id = getDolGlobalInt('TAKEPOS_EMAIL_TEMPLATE_INVOICE');
 	$arraydefaultmessage = $formmail->getEMailTemplate($db, 'facture_send', $user, $outputlangs, $model_id);
+
+	// Subject
 	$subject = $arraydefaultmessage->topic;
 
-	ob_start(); // turn on output receipt
-	include DOL_DOCUMENT_ROOT.'/takepos/receipt.php';
-	$receipt = ob_get_contents(); // get the contents of the output buffer
-	ob_end_clean();
+	$receipt = '';
 
-	$msg = "<html>".$arraydefaultmessage->content."<br>".$receipt."</html>";
+	$joinFile = [];
+	$joinFileName = [];
+	$joinFileMime = [];
+
+	if (!getDolGlobalString('TAKEPOS_SEND_INVOICE_AS_PDF')) {
+		$nojs = 1;	// used by include of takepos/receipt.php
+
+		ob_start(); // turn on output receipt
+		include DOL_DOCUMENT_ROOT.'/takepos/receipt.php';
+		$receipt = ob_get_contents(); // get the contents of the output buffer
+		ob_end_clean();
+	} else {
+		if ($arraydefaultmessage->joinfiles == 1 && !empty($invoice->last_main_doc)) {
+			// TODO
+			// Generate a new customer using the email, switch invoice to the new customer
+			// TODO Ask also name/lastname to complete the customer card
+			$joinFile[] = DOL_DATA_ROOT.'/'.$invoice->last_main_doc;
+			$joinFileName[] = basename($invoice->last_main_doc);
+			$joinFileMime[] = dol_mimetype(DOL_DATA_ROOT.'/'.$invoice->last_main_doc);
+		}
+	}
+
+	// From / To
 	$sendto = $email;
 	$from = $mysoc->email;
-	$mail = new CMailFile($subject, $sendto, $from, $msg, array(), array(), array(), '', '', 0, 1, '', '', '', '', '', '', DOL_DATA_ROOT.'/documents/takepos/temp');
+
+	// Content
+	$msg = "<html>";
+	$msg .= $arraydefaultmessage->content;
+	if ($receipt) {
+		$msg .= "<br>";
+		$msg .= $receipt;
+	}
+	$msg .= "</html>";
+
+	// Send email
+	$mail = new CMailFile($subject, $sendto, $from, $msg, $joinFile, $joinFileMime, $joinFileName, '', '', 0, 1, '', '', '', '', '', '', DOL_DATA_ROOT.'/documents/takepos/temp');
+
 	if ($mail->error || !empty($mail->errors)) {
 		setEventMessages($mail->error, $mail->errors, 'errors');
+
+		print 'Failed to send email: '.$mail->error;
+
+		http_response_code('500');
 	} else {
 		$result = $mail->sendfile();
+		if ($result) {
+			$triggersendname = 'BILL_SENTBYMAIL';
+			$object = $invoice;
+			$object->context['email_from'] = $from;
+			$object->context['email_to'] = $sendto;
+			$object->context['email_msgid'] = $mail->msgid;
+
+			// Same code than into actions_sendmail.inc.php
+			if ($triggersendname == 'BILL_SENTBYMAIL' && $object instanceof Facture) {
+				/* @var Facture $object */
+
+				// If sending email for invoice, we increase the counter of invoices sent by email
+				$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET email_sent_counter = email_sent_counter + 1";
+				$sql .= " WHERE rowid = ".((int) $object->id);
+
+				$resql = $db->query($sql);
+				if ($resql) {
+					$object->email_sent_counter += 1;
+				}
+			}
+
+			$result = $object->call_trigger($triggersendname, $user);  // @phan-suppress-current-line PhanPossiblyUndeclaredGlobalVariable
+			if ($result < 0) {
+				$error++;
+			}
+			if ($error) {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+
+			if (!$error) {
+				print 'Mail successfully sent to '.$sendto.' with subject '.$subject;
+				print "\n";
+				print 'If template ask to join file, it may include the file '.implode(',', $joinFile);
+			} else {
+				http_response_code('500');
+			}
+		} else {
+			print 'Failed to send email: '.$mail->error;
+
+			http_response_code('500');
+		}
 	}
+
 	exit;
 }
 
@@ -107,6 +190,7 @@ if ($action == "send" && $user->hasRight('takepos', 'run')) {
 $arrayofcss = array('/takepos/css/pos.css.php');
 $arrayofjs  = array();
 $head = '';
+
 top_htmlhead($head, '', 0, 0, $arrayofjs, $arrayofcss);
 
 ?>
@@ -117,7 +201,15 @@ function SendMail() {
 	$.ajax({
 		type: "GET",
 		data: { token: '<?php echo currentToken(); ?>' },
-		url: "<?php print DOL_URL_ROOT.'/takepos/send.php?action=send&token='.newToken().'&facid='.$facid.'&email='; ?>" + $("#email"). val(),
+		url: '<?php print DOL_URL_ROOT.'/takepos/send.php?action=send&token='.newToken().'&facid='.((int) $facid).'&email='; ?>' + $("#email").val(),
+		success: function(response) {
+			console.log("Email sent");
+			alert("Email sent");
+		},
+		error: function(xhr, status, error) {
+			console.log("Failed to send email");
+			alert("Failed to send email : " + error);
+		}
 	});
 	parent.$.colorbox.close();
 }

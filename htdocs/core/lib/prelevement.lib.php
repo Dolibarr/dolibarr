@@ -48,11 +48,17 @@ function prelevement_prepare_head(BonPrelevement $object)
 	if ($object->type == 'bank-transfer') {
 		$titleoftab = "BankTransferReceipts";
 	}
-
 	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/prelevement/card.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans($titleoftab);
 	$head[$h][2] = 'prelevement';
 	$h++;
+
+	if (getDolGlobalString('PRELEVEMENT_SEPA_SHOW_REQUESTS') && $object->type != 'bank-transfer' && $object->type != 'salary') {
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/prelevement/requests.php', ['id' => $object->id]);
+		$head[$h][1] = $langs->trans('Requests');
+		$head[$h][2] = 'requests';
+		$h++;
+	}
 
 	$titleoftab = $langs->trans("Bills");
 	if ($object->type == 'bank-transfer') {

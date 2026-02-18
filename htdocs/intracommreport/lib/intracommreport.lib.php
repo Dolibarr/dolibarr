@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) ---Put here your own copyright and developer email---
- * Copyright (C) 2024		MDW	<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ function intracommreportAdminPrepareHead()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dol_buildpath("/intracommreport/admin/setup.php", 1);
+	$head[$h][0] = dol_buildpath("/intracommreport/admin/intracommreport.php", 1);
 	$head[$h][1] = $langs->trans("Settings");
 	$head[$h][2] = 'settings';
 	$h++;
@@ -64,9 +64,9 @@ function intracommreportAdminPrepareHead()
 	//$this->tabs = array(
 	//	'entity:-tabname:Title:@intracommreport:/intracommreport/mypage.php?id=__ID__'
 	//); // to remove a tab
-	complete_head_from_modules($conf, $langs, null, $head, $h, 'intracommreport');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'intracommreportadmin');
 
-	complete_head_from_modules($conf, $langs, null, $head, $h, 'intracommreport', 'remove');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'intracommreportadmin', 'remove');
 
 	return $head;
 }
@@ -82,7 +82,7 @@ function intracommreportPrepareHead($object)
 {
 	global $db, $langs, $conf;
 
-	$langs->load("mymodule@mymodule");
+	$langs->load("intracommreport");
 
 	$showtabofpagecontact = 0;
 	$showtabofpagenote = 0;
@@ -153,9 +153,9 @@ function intracommreportPrepareHead($object)
 	//$this->tabs = array(
 	//	'entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__'
 	//); // to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'intracommreport@mymodule');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'intracommreport');
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'intracommreport@mymodule', 'remove');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'intracommreport', 'remove');
 
 	return $head;
 }

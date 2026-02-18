@@ -36,6 +36,8 @@ require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/advtargetemailing.class.php'
 require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/html.formadvtargetemailing.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 /**
  * @var Conf $conf

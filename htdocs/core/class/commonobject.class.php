@@ -2359,6 +2359,10 @@ abstract class CommonObject
 					$this->oldcopy->$field = $oldvalue;
 				}
 
+				if (empty($this->context['actionmsgmore'])) {
+					$this->context['actionmsgmore'] = 'Trigger called by setValueFrom';
+				}
+
 				if ($result >= 0) {
 					$result = $this->call_trigger($trigkey, (!empty($fuser) && is_object($fuser)) ? $fuser : $user); // This may set this->errors
 				}
@@ -3080,7 +3084,7 @@ abstract class CommonObject
 	 */
 	public function setPaymentTerms($id, $deposit_percent = null)
 	{
-		dol_syslog(get_class($this).'::setPaymentTerms('.$id.', '.var_export($deposit_percent, true).')');
+		dol_syslog(get_class($this).'::setPaymentTerms('.$id.', '.formatLogObject($deposit_percent).')');
 		if ($this->status >= 0 || $this->element == 'societe') {
 			// TODO uniformize field name
 			$fieldname = 'fk_cond_reglement';
@@ -4939,6 +4943,8 @@ abstract class CommonObject
 				$this->context = array_merge($this->context, array('newstatus' => $status));
 
 				if ($trigkey && $trigkey != 'none') {
+					$this->oldcopy = dol_clone($this);
+
 					// Call trigger
 					$result = $this->call_trigger($trigkey, $user);
 					if ($result < 0) {
@@ -5075,7 +5081,7 @@ abstract class CommonObject
 			$arraytoscan = array_flip($this->childtables);
 		}
 
-		// Test if child exists
+		// Test on all child tables to scan if child exists
 		$haschild = 0;
 		foreach ($arraytoscan as $table => $element) {
 			//print $id.'-'.$table.'-'.$elementname.'<br>';
@@ -5112,6 +5118,7 @@ abstract class CommonObject
 					$sql .= " AND c.entity = ".((int) $entity);
 				}
 			}
+			//var_dump($table, $element, $sql);
 
 			$resql = $this->db->query($sql);
 			if ($resql) {
@@ -5134,6 +5141,7 @@ abstract class CommonObject
 				return -1;
 			}
 		}
+
 		if ($haschild > 0) {
 			$this->errors[] = "ErrorRecordHasChildren";
 			return $haschild;
@@ -6142,7 +6150,8 @@ abstract class CommonObject
 		} else {
 			// TODO: Try to set type above again
 			'@phan-var-force ModeleBarCode|ModeleExports|ModeleImports|ModelePDFAsset|ModelePDFContract|ModelePDFDeliveryOrder|ModelePDFEvaluation|ModelePDFFactures|ModelePDFFicheinter|ModelePDFMo|ModelePDFMovement|ModelePDFProduct|ModelePDFProjects|ModelePDFPropales|ModelePDFRecruitmentJobPosition|ModelePDFStock|ModelePDFStockTransfer|ModelePDFSupplierProposal|ModelePDFSuppliersInvoices|ModelePDFSuppliersOrders|ModelePDFSuppliersPayments|ModelePDFTask|ModelePDFTicket|ModelePDFUser|ModelePDFUserGroup|ModelePdfExpedition|ModelePdfReception|ModeleThirdPartyDoc $obj';
-			$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $moreparams);  // @phan-suppress-line-PhanTypeMismatchArgument
+			$this->context['moreparams'] = $moreparams;
+			$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref);  // @phan-suppress-line-PhanTypeMismatchArgument
 		}
 		// After call of write_file $obj->result['fullpath'] is set with generated file. It will be used to update the ECM database index.
 
@@ -8455,13 +8464,9 @@ abstract class CommonObject
 
 			// $param_list_array[0] can be the name of object (Example 'User' the field is linked to). Not as taking the information from the record in ->fields found from $objectfield.
 
-			// $valparent is a string 'dataobject@module:keyoffieldinfieldsarray' to find the record field to link to.
-			// $valparent = $this->element.($this->module ? '@'.$this->module : '').':'.$key.$keysuffix;
-
 			// $val is already the record field found at same place than found by $valparent but already loaded and may have been modified by parent caller.
 
-			//$objectfield = $valparent;
-			$objectfield = $val;			// Is better than using old method $valparent
+			$objectfield = $val;
 
 			// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 			$out = $form->selectForForms($param_list_array[0], $keyprefix.$key.$keysuffix, (int) $value, $showempty, '', '', $morecss, $moreparam, 0, (empty($val['disabled']) ? 0 : 1), '', $objectfield);
@@ -9351,6 +9356,7 @@ abstract class CommonObject
 	public function showOptionals($extrafields, $mode = 'view', $params = null, $keysuffix = '', $keyprefix = '', $onetrtd = '', $display_type = 'card')
 	{
 		global $db, $conf, $langs, $action, $form, $hookmanager;
+		global $objectoffield;
 
 		if (!is_object($form)) {
 			$form = new Form($db);
@@ -9362,6 +9368,9 @@ abstract class CommonObject
 		if (!is_array($extrafields->attributes[$this->table_element])) {
 			dol_syslog("extrafields->attributes was not loaded with extrafields->fetch_name_optionals_label(table_element);", LOG_WARNING);
 		}
+
+		// Ensure $objectoffield is available for dol_eval visibility formulas.
+		$objectoffield = $this;
 
 		$out = '';
 
@@ -11716,5 +11725,30 @@ abstract class CommonObject
 		} else {
 			return true;
 		}
+	}
+
+	/**
+	 * Set the error message for the object without logging it.
+	 *
+	 * @param string $message    the error message
+	 * @return void
+	 */
+	public function setErrorWithoutLog($message)
+	{
+		$this->error = $message;
+		$this->errors[] = $message;
+	}
+
+	/**
+	 * Set the error message for the object and log it.
+	 *
+	 * @param string $message      the error message
+	 * @param int<0,7> $loglevel   the log level
+	 * @return void
+	 */
+	public function setErrorWithLog($message, $loglevel = LOG_ERR)
+	{
+		$this->setErrorWithoutLog($message);
+		dol_syslog($message, $loglevel);
 	}
 }
