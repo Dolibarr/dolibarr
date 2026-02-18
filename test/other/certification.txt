@@ -7,9 +7,12 @@ QUICK TOOL FOR CERTIFICATION
 
 ***** To reload demo database
 To reload:
+~/git/dolibarr_test/dev/initdemo/initdemo.sh confirm 'mysqldump_dolibarr_24.0.0.sql' dolibarr_test 3306 dolibarr_test xxxxpass
+or
 ~/git/dolibarr_test/dev/initdemo/initdemo.sh confirmresetblockedlog 'mysqldump_dolibarr_24.0.0.sql' dolibarr_test 3306 dolibarr_test xxxxpass
+
 To save:
-~/git/dolibarr_test/dev/initdemo/savedemo.sh confirm 'mysqldump_dolibarr_24.0.0.sql' dolibarr_test 3306 dolibarr_test xxxxpass
+~/git/dolibarr_test/dev/initdemo/savedemo.sh 'mysqldump_dolibarr_24.0.0.sql' dolibarr_test 3306 dolibarr_test xxxxpass
 
 
 ***** To force all event in the blockedlog to year 2025

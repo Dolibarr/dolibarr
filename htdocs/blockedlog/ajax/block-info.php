@@ -188,15 +188,24 @@ function formatObject($objtoshow, $prefix, $parentelement = '')
 		'special_code' => 'Special line (WEEE line, option, id of module...)',
 		'status' => 'Status',
 		'cash' => 'PaymentTypeLIQ',
+		'cash_declared' => 'PaymentTypeLIQ',
 		'cash_lifetime' => $langs->transnoentities('LifetimeAmount', $langs->transnoentities('PaymentTypeLIQ')),
 		'card' => 'PaymentTypeCB',
+		'card_declared' => 'PaymentTypeCB',
 		'card_lifetime' => $langs->transnoentities('LifetimeAmount', $langs->transnoentities('PaymentTypeCB')),
 		'cheque' => 'PaymentTypeCHQ',
+		'cheque_declared' => 'PaymentTypeCHQ',
 		'cheque_lifetime' => $langs->transnoentities('LifetimeAmount', $langs->transnoentities('PaymentTypeCHQ')),
-		'lifetime_start' => 'LifetimeStartDate',
+		'lifetime_start' => 'LifetimeStatDate',
 		'email_from' => 'MailFrom',
 		'email_to' => 'MailTo',
 		'email_msgid' => 'EmailMsgID',
+		'year_close' => 'Year',
+		'month_close' => 'Month',
+		'day_close' => 'Day',
+		'hour_close' => 'Hour',
+		'min_close' => 'Minutes',
+		'sec_close' => 'Second',
 	);
 
 	if (is_object($newobjtoshow) || is_array($newobjtoshow)) {
@@ -254,7 +263,7 @@ function formatObject($objtoshow, $prefix, $parentelement = '')
 					$s .= $tmpinvoice->getLibType(0);
 				} elseif (in_array($key, array('date', 'datef'))) {
 					$s .= dol_print_date($val, 'day');
-				} elseif (in_array($key, array('dateh', 'datec', 'date_creation', 'datem', 'tms', 'date_valid', 'datep'))) {
+				} elseif (in_array($key, array('dateh', 'datec', 'date_creation', 'datem', 'tms', 'date_valid', 'datep', 'lifetime_start'))) {
 					$s .= dol_print_date($val, 'dayhour');
 				} elseif (in_array($key, array('tva_assuj', 'localtax1_assuj', 'localtax2_assuj'))) {
 					$s .= yn($val);
