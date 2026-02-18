@@ -1775,6 +1775,7 @@ DefaultSearchFilters=Filtres de recherche par défaut
 DefaultSortOrder=Ordre de tri par défaut
 DefaultFocus=Champs par défaut ayant le focus
 DefaultMandatory=Champs de formulaire obligatoires
+DefaultHidden=Champs de formulaire masqués
 ##### Products #####
 ProductSetup=Configuration du module Produits
 ServiceSetup=Configuration du module Services

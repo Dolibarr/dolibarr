@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2017-2020	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2017-2018	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2017-2020	Laurent Destailleur	    <eldy@users.sourceforge.net>
+ * Copyright (C) 2017-2018	Regis Houssin		    <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW					    <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Benoit PASCAL           <benoit@agence418.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -302,7 +303,7 @@ if ($mode != 'sortorder') {
 }
 print_liste_field_titre($textkey, $_SERVER["PHP_SELF"], 'param', '', $param, '', $sortfield, $sortorder);
 // Value
-if ($mode != 'focus' && $mode != 'mandatory') {
+if ($mode != 'focus' && $mode != 'mandatory' && $mode != 'hidden') {
 	if ($mode != 'sortorder') {
 		$substitutionarray = getCommonSubstitutionArray($langs, 2, array('object', 'objectamount')); // Must match list into GETPOST
 		unset($substitutionarray['__USER_SIGNATURE__']);
@@ -342,7 +343,7 @@ print '<td>';
 print '<input type="text" class="flat maxwidth100onsmartphone" name="defaultkey" value="'.dol_escape_htmltag($defaultkey).'">';
 print '</td>';
 // Value
-if ($mode != 'focus' && $mode != 'mandatory') {
+if ($mode != 'focus' && $mode != 'mandatory' && $mode != 'hidden') {
 	print '<td>';
 	print '<input type="text" class="flat maxwidth100onsmartphone" name="defaultvalue" value="'.dol_escape_htmltag($defaultvalue).'">';
 	if ($mode != 'sortorder') {
@@ -396,7 +397,7 @@ if (!is_array($result) && $result < 0) {
 		print '</td>'."\n";
 
 		// Value
-		if ($mode != 'focus' && $mode != 'mandatory') {
+		if ($mode != 'focus' && $mode != 'mandatory' && $mode != 'hidden') {
 			print '<td>';
 			if ($action != 'edit' || GETPOST('rowid') != $defaultvalue->id) {
 				print dol_escape_htmltag($defaultvalue->value);

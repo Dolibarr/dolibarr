@@ -5,7 +5,8 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Benoit PASCAL           <benoit@agence418.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1054,6 +1055,11 @@ function defaultvalues_prepare_head()
 		$head[$h][0] = DOL_URL_ROOT."/admin/defaultvalues.php?mode=mandatory";
 		$head[$h][1] = $langs->trans("DefaultMandatory");
 		$head[$h][2] = 'mandatory';
+		$h++;
+
+		$head[$h][0] = DOL_URL_ROOT."/admin/defaultvalues.php?mode=hidden";
+		$head[$h][1] = $langs->trans("DefaultHidden");
+		$head[$h][2] = 'hidden';
 		$h++;
 	}
 

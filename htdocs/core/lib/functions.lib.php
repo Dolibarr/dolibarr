@@ -24,9 +24,8 @@
  * Copyright (C) 2023-2024  Joachim Kueter              <git-jk@bloxera.com>
  * Copyright (C) 2024		Lenin Rivas					<lenin.rivas777@gmail.com>
  * Copyright (C) 2024		Josep Lluís Amador Teruel	<joseplluis@lliuretic.cat>
- * Copyright (C) 2024		Benoît PASCAL				<contact@p-ben.com>
- * Copyright (C) 2025		Vincent Maury				<vmaury@timgroup.fr>
  * Copyright (C) 2026		Benjamin Falière			<benjamin@faliere.com>
+ * Copyright (C) 2024-2026  Benoit PASCAL               <benoit@agence418.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13005,6 +13004,35 @@ function printCommonFooter($zone = 'private')
 								console.log("We click on cancel button so removed all required attribute");
 								jQuery("input, textarea, select").each(function(){this.removeAttribute(\'required\');});
 								});' . "\n";
+						}
+					}
+				}
+				if (!empty($user->default_values[$relativepathstring]['hidden'])) {
+					foreach ($user->default_values[$relativepathstring]['hidden'] as $defkey => $defval) {
+						$qualified = 0;
+						if ($defkey != '_noquery_') {
+							$tmpqueryarraytohave = explode('&', $defkey);
+							$foundintru = 0;
+							foreach ($tmpqueryarraytohave as $tmpquerytohave) {
+								$tmpquerytohaveparam = explode('=', $tmpquerytohave);
+								if (!GETPOSTISSET($tmpquerytohaveparam[0]) || ($tmpquerytohaveparam[1] != GETPOST($tmpquerytohaveparam[0]))) {
+									$foundintru = 1;
+								}
+							}
+							if (!$foundintru) {
+								$qualified = 1;
+							}
+						} else {
+							$qualified = 1;
+						}
+
+						if ($qualified) {
+							foreach ($defval as $paramkey => $paramval) {
+								// Hide the field and its label (the closest tr)
+								print 'jQuery(\':input[name="' . dol_escape_js($paramkey) . '"]\').closest("tr").hide();'."\n";
+								// Also try to hide by id for non-input elements
+								print 'jQuery(\'#' . dol_escape_js($paramkey) . '\').closest("tr").hide();'."\n";
+							}
 						}
 					}
 				}
