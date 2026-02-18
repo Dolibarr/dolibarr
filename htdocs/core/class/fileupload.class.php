@@ -100,11 +100,13 @@ class FileUpload
 
 				dol_include_once('/'.$parentElement.'/class/'.$parentObject.'.class.php');
 				$parent = new $parentClass($db);
-				$parent->fetch($object->$parentForeignKey);
-				if (!empty($parent->socid)) {
-					$parent->fetch_thirdparty();
+				if ($object->$parentForeignKey !== null) {
+					$parent->fetch((int) $object->$parentForeignKey);
+					if (!empty($parent->socid)) {
+						$parent->fetch_thirdparty();
+					}
+					$object->$parentObject = clone $parent;
 				}
-				$object->$parentObject = clone $parent;
 
 				$object_ref = dol_sanitizeFileName($object->project->ref).'/'.$object_ref;
 			}
