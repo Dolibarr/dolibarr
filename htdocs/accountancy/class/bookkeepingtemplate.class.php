@@ -62,8 +62,6 @@ class BookkeepingTemplate extends CommonObject
 	public $picto = 'fa-list';
 
 	/**
-	 *  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
-	 *
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
 	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
@@ -90,36 +88,7 @@ class BookkeepingTemplate extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string, array<string, mixed>>
-	 * @phpstan-var array<string, array{
-	 *   type: string,
-	 *   label: string,
-	 *   langfile?: string,
-	 *   enabled: int|string,
-	 *   position: int,
-	 *   notnull?: int,
-	 *   visible: int|string,
-	 *   alwayseditable?: int|string,
-	 *   noteditable?: int,
-	 *   default?: mixed,
-	 *   index?: int|string,
-	 *   foreignkey?: string,
-	 *   searchall?: int,
-	 *   isameasure?: int,
-	 *   css?: string,
-	 *   cssview?: string,
-	 *   csslist?: string,
-	 *   help?: string,
-	 *   showoncombobox?: int|string,
-	 *   disabled?: int,
-	 *   arrayofkeyval?: array,
-	 *   autofocusoncreate?: int,
-	 *   comment?: string,
-	 *   copytoclipboard?: int,
-	 *   validate?: int,
-	 *   showonheader?: int,
-	 *   searchmulti?: int
-	 * }>
+	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>,searchmulti?:int<0,1>}>    Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		"rowid" => array("type" => "integer", "label" => "TechnicalID", "enabled" => "1", 'position' => 1, 'notnull' => 1, "visible" => "0", "noteditable" => "1", "index" => "1", "css" => "left", "comment" => "Id"),
