@@ -133,7 +133,7 @@ if ($action == "send" && $user->hasRight('takepos', 'run')) {
 
 		print 'Failed to send email: '.$mail->error;
 
-		http_response_code('500');
+		http_response_code(500);
 	} else {
 		$result = $mail->sendfile();
 		if ($result) {
@@ -170,12 +170,12 @@ if ($action == "send" && $user->hasRight('takepos', 'run')) {
 				print "\n";
 				print 'If template ask to join file, it may include the file '.implode(',', $joinFile);
 			} else {
-				http_response_code('500');
+				http_response_code(500);
 			}
 		} else {
 			print 'Failed to send email: '.$mail->error;
 
-			http_response_code('500');
+			http_response_code(500);
 		}
 	}
 
