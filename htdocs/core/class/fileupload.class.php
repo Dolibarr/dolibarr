@@ -396,7 +396,7 @@ class FileUpload
 		// Remove path information and dots around the filename, to prevent uploading
 		// into different directories or replacing hidden system files.
 		$file_name = basename(dol_sanitizeFileName($name));
-		$file_name = preg_replace('/ {2,}/', ' ', $file_name); // replaces multiple spaces into one space linke the upload flow via input field
+		$file_name = preg_replace('/ {2,}/', ' ', $file_name); // replaces multiple spaces into one space like the upload flow via input field
 		// Add missing file extension for known image types:
 		$matches = array();
 		if (strpos($file_name, '.') === false && preg_match('/^image\/(gif|jpe?g|png)/', $type, $matches)) {
