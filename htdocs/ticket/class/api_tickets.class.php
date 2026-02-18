@@ -760,6 +760,7 @@ class Tickets extends DolibarrApi
 	 * @param int    $id             Id of ticket to update
 	 * @param int    $contactid      Id of contact
 	 * @param string $type           Type of the contact (BILLING, SHIPPING, CUSTOMER).
+	 * @param string $source		internal=Contact intern (llx_user), external=Contact extern (llx_socpeople)
 	 *
 	 * @url	DELETE {id}/contact/{contactid}/{type}
 	 *
@@ -771,10 +772,20 @@ class Tickets extends DolibarrApi
 	 * @throws RestException 404
 	 * @throws RestException 500 System error
 	 */
-	public function deleteContact($id, $contactid, $type)
+	public function deleteContact($id, $contactid, $type, $source = "external")
 	{
+		// Check permissions
 		if (!DolibarrApiAccess::$user->hasRight('ticket', 'write')) {
 			throw new RestException(403);
+		}
+
+		// test source
+		if (empty($source)) {
+			throw new RestException(400, 'Source can not be empty');
+		}
+		// test type
+		if (empty($type)) {
+			throw new RestException(400, 'type can not be empty');
 		}
 
 		$result = $this->ticket->fetch($id);
@@ -786,15 +797,13 @@ class Tickets extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		foreach (array('internal', 'external') as $source) {
-			$contacts = $this->ticket->liste_contact(-1, $source);
-			foreach ($contacts as $contact) {
-				if ($contact['id'] == $contactid && $contact['code'] == $type) {
-					$result = $this->ticket->delete_contact($contact['rowid']);
+		$contacts = $this->ticket->liste_contact(-1, $source);
+		foreach ($contacts as $contact) {
+			if ($contact['id'] == $contactid && $contact['code'] == $type) {
+				$result = $this->ticket->delete_contact($contact['rowid']);
 
-					if (!$result) {
-						throw new RestException(500, 'Error when deleting the contact '.$contact['rowid']);
-					}
+				if (!$result) {
+					throw new RestException(500, 'Error when deleting the contact '.$contact['rowid']);
 				}
 			}
 		}
