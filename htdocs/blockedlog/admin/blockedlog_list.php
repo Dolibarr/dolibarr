@@ -318,12 +318,12 @@ print '</td>';
 
 // Module source
 print '<td class="liste_titre">';
-print $form->multiselectarray('search_module_source', $block_static->trackedmodules, $search_module_source, 0, 0, 'maxwidth150', 1);
+print $form->multiselectarray('search_module_source', $block_static->trackedmodules, $search_module_source, 0, 0, 'minwidth125 maxwidth200', 1);
 print '</td>';
 
 // Actions code
 print '<td class="liste_titre">';
-print $form->multiselectarray('search_code', $block_static->trackedevents, $search_code, 0, 0, 'maxwidth150', 1);
+print $form->multiselectarray('search_code', $block_static->trackedevents, $search_code, 0, 0, 'maxwidth200', 1);
 print '</td>';
 
 // Ref
@@ -499,15 +499,16 @@ if (is_array($blocks)) {
 
 			// Amount
 			print '<td class="right nowraponall">';
-
-			if (empty($total_ttc)) {
-				print '<span class="opacitymedium">';
+			if (!in_array($block->action, array('BLOCKEDLOG_EXPORT', 'MODULE_SET', 'MODULE_RESET'))) {
+				$ingrey = !in_array($block->action, array('BILL_VALIDATE', 'PAYMENT_CUSTOMER_CREATE'));
+				if ($ingrey) {
+					print '<span class="opacitymedium">';
+				}
+				print price($total_ttc);
+				if ($ingrey) {
+					print '</span>';
+				}
 			}
-			print price($total_ttc);
-			if (empty($total_ttc)) {
-				print '</span>';
-			}
-
 			print '</td>';
 
 			// Details link
