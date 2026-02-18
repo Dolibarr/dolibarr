@@ -1,6 +1,5 @@
 <?php
-/**
- * Copyright (C) 2018    	Andreu Bisquerra   		<jove@bisquerra.com>
+/* Copyright (C) 2018    	Andreu Bisquerra   		<jove@bisquerra.com>
  * Copyright (C) 2021    	Nicolas ZABOURI    		<info@inovea-conseil.com>
  * Copyright (C) 2022-2023	Christophe Battarel		<christophe.battarel@altairis.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
@@ -1331,34 +1330,52 @@ if (empty($reshook)) {
 
 		$sectionwithinvoicelink .= '</span><br>';
 
-		$customprinterallowed = true;
+		$customprinterallowed = false;
 		$customprinttemplateallowed = true;
+
+		// BAR RESTAURANT specific menu
+		if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
+			// Button to print receipt before payment
+			$customprinterallowed = true;
+			$customprinttemplateallowed = true;
+		}
+
 		include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
-		if (isALNERunningVersion()) {		// No need to show this option because it has no effect when isALNERunningVersion is true.
-			$customprinttemplateallowed = false;	// Custom printer may be allowed if mandatory information in template are guaranteed. For the moment, we prefer not allow this.
+		if (isALNERunningVersion()) {
+			// Custom printer may be allowed if mandatory information in template are guaranteed. For the moment, we prefer not allow this.
+			$customprinttemplateallowed = false;
 		}
 
 		if ($invoice->status == $invoice::STATUS_CLOSED) {
 			if (getDolGlobalInt('TAKEPOS_PRINT_INVOICE_DOC_INSTEAD_OF_RECEIPT')) {
 				$sectionwithinvoicelink .= ' <a target="_blank" class="button" href="' . DOL_URL_ROOT . '/document.php?token=' . newToken() . '&modulepart=facture&file=' . $invoice->ref . '/' . $invoice->ref . '.pdf">'.$langs->trans("Invoice").'</a>';
-			} elseif (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
-				// Used when the external addon takeposconnector is installed. Deprecated.
-				if (getDolGlobalString('TAKEPOS_PRINT_SERVER') && filter_var(getDolGlobalString('TAKEPOS_PRINT_SERVER'), FILTER_VALIDATE_URL) == true) {
-					$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="PrintByESCPOSOld('.$placeid.')">'.$langs->trans('PrintTicket').'</button>';
-				} else {
-					$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="PrintHTMLToSlashPrint('.$placeid.')">'.$langs->trans('PrintTicket').'</button>';
-				}
-			} elseif ($customprinterallowed && (isModEnabled('receiptprinter') && getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0) || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {	// @phpstan-ignore-line
-				// If we set to use a specific receipt printer
-				$nameOfPrinter = dol_getIdFromCode($db, getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term), 'printer_receipt', 'rowid', 'name', 1);
-				$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="PrintByESCPOS('.$placeid.')" title="'.dolPrintHTMLForAttribute($langs->trans("SentToPrinter").' '.$nameOfPrinter).'">'.$langs->trans('PrintTicket').'</button>';
 			} else {
-				$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="PrintByBrowser('.$placeid.')">'.$langs->trans('PrintTicket').'</button>';
-				if ($customprinttemplateallowed && getDolGlobalString('TAKEPOS_PRINT_WITHOUT_DETAILS')) {
-					$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="PrintBox('.$placeid.', \'without_details\')">'.$langs->trans('PrintWithoutDetails').'</button>';
-				}
-				if ($customprinttemplateallowed && getDolGlobalString('TAKEPOS_GIFT_RECEIPT')) {
-					$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="PrintByBrowser('.$placeid.', 1)">'.$langs->trans('GiftReceipt').'</button>';
+				// This section should be same than into index.php
+				if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
+					// Used when the external addon takeposconnector is installed. Deprecated.
+					if (getDolGlobalString('TAKEPOS_PRINT_SERVER') && filter_var(getDolGlobalString('TAKEPOS_PRINT_SERVER'), FILTER_VALIDATE_URL) == true) {
+						// If TAKEPOS_PRINT_SERVER is an URL
+						$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="PrintByESCPOSOld('.$placeid.')">'.$langs->trans('PrintTicket').'</button>';
+					} else {
+						// If TAKEPOS_PRINT_SERVER is an IP
+						// Print by calling the receipt.php to get HTML content and send the HTML content to TAKEPOS_PRINT_SERVER:8111/print
+						$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="PrintHTMLToSlashPrint('.$placeid.')">'.$langs->trans('PrintTicket').'</button>';
+					}
+				} elseif ($customprinterallowed && $customprinttemplateallowed && (isModEnabled('receiptprinter') && getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0) || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {		// @phpstan-ignore-line
+					// Button Print Receipt on special custom printer using custom template
+					$nameOfPrinter = dol_getIdFromCode($db, getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term), 'printer_receipt', 'rowid', 'name', 1);
+					$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="PrintByESCPOS('.$placeid.')" title="'.dolPrintHTMLForAttribute($langs->trans("SentToPrinter").' '.$nameOfPrinter).'">'.$langs->trans('PrintTicket').'</button>';
+				} else {
+					// Button Print Receipt on browser
+					$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="PrintByBrowser('.$placeid.')">'.$langs->trans('PrintTicket').'</button>';
+
+					// Additional buttons
+					if ($customprinttemplateallowed && getDolGlobalString('TAKEPOS_PRINT_WITHOUT_DETAILS')) {
+						$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="PrintBox('.$placeid.', \'without_details\')">'.$langs->trans('PrintWithoutDetails').'</button>';
+					}
+					if ($customprinttemplateallowed && getDolGlobalString('TAKEPOS_GIFT_RECEIPT')) {
+						$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="PrintByBrowser('.$placeid.', 1)">'.$langs->trans('GiftReceipt').'</button>';
+					}
 				}
 			}
 			if (getDolGlobalString('TAKEPOS_EMAIL_TEMPLATE_INVOICE') && getDolGlobalInt('TAKEPOS_EMAIL_TEMPLATE_INVOICE') > 0) {

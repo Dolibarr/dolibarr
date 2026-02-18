@@ -362,9 +362,11 @@ function callApiToPushCounter($id, $signature, $test, $previousid, $previoussign
 		$algo = 'sha256';
 		$hash_unique_id = getHashUniqueIdOfRegistration($algo);
 
-		$data = 'hash_algo=dol_hash-'.urlencode($algo);
+		$data = '';
+		$data .= 'hash_algo=dol_hash-'.urlencode($algo);
 		$data .= '&hash_unique_id='.urlencode($hash_unique_id);
 		$data .= '&action=dolibarrpushcounter';
+		$data .= '&datesys='.urlencode(dol_print_date(dol_now(), 'standard', 'gmt'));
 		$data .= '&version='.(float) DOL_VERSION;
 		$data .= '&version_full='.urlencode(DOL_VERSION);
 		$data .= '&entity='.(int) $conf->entity;
@@ -376,19 +378,6 @@ function callApiToPushCounter($id, $signature, $test, $previousid, $previoussign
 		if ($test) {
 			$data .= '&test=1';
 		}
-
-		/*
-		$data = array(
-			'action' => 'dolibarrpushcounter',
-			'hash_algo' => 'dol_hash-'.$algo,
-			'hash_unique_id' => $hash_unique_id,
-			'version' => (float) DOL_VERSION,
-			'version_full' => urlencode(DOL_VERSION),
-			'entity=' => (int) $conf->entity
-		);
-		$data['lastrowid'] = (int) $this->id;
-		$data['lastsignature'] = urlencode($this->signature);
-		*/
 
 		$addheaders = array();
 		$timeoutconnect = 1;

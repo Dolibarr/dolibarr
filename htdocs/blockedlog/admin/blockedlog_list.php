@@ -171,6 +171,8 @@ $help_url = "EN:Module_Unalterable_Archives_-_Logs|FR:Module_Archives_-_Logs_Ina
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-blockedlog page-admin_blockedlog_list');
 
+// Get list of blocked logs.
+// Warning: This make a fetch on each line.
 $blocks = $block_static->getLog('all', (string) $search_id, $MAXLINES, $sortfield, $sortorder, (int) $search_fk_user, $search_start, $search_end, $search_ref, $search_amount, $search_code, $search_signature, $search_module_source);
 if (!is_array($blocks)) {
 	if ($blocks == -2) {
@@ -395,7 +397,9 @@ if (getDolGlobalString('BLOCKEDLOG_SCAN_ALL_FOR_LOWERIDINERROR')) {
 	// This is version that optimize the memory (note: it will not report errors that are outside the filter range, but we don't need them)
 	if (is_array($blocks)) {
 		foreach ($blocks as &$block) {
+			// Enable this log to get information used to recalculate the signature
 			//var_dump($block->id.' '.$block->signature, $block->object_data);
+
 			$tmpcheckresult = $block->checkSignature('', 1); // Note: this make a sql request at each call, we can't avoid this as the sorting order is various
 
 			$checksignature = $tmpcheckresult['checkresult'];

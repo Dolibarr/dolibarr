@@ -1797,8 +1797,8 @@ class FormFile
 				if (!empty($moreoptions['buttons'])) {
 					$colspan++;
 				}
-				if (empty($moreoptions['hideshared'])) {
-					$colspan--;
+				if (!empty($moreoptions['hideshared'])) {
+					$colspan++;
 				}
 				if (empty($disablemove) && count($filearray) > 1) {
 					$colspan++; // 6 columns or 7

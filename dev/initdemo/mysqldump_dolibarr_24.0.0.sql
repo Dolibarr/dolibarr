@@ -2942,7 +2942,7 @@ CREATE TABLE `llx_actioncomm` (
   KEY `idx_actioncomm_percent` (`percent`),
   KEY `idx_actioncomm_ref` (`ref`,`entity`),
   KEY `idx_actioncomm_entity` (`entity`)
-) ENGINE=InnoDB AUTO_INCREMENT=1744 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1766 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3996,7 +3996,24 @@ INSERT INTO `llx_actioncomm` VALUES
 (1740,'1740',NULL,1,'2025-06-26 22:22:16','2025-06-26 22:22:16',40,'AC_USER_MODIFY','Enregistrement 12 modifié','2025-06-26 22:22:16','2025-06-26 22:22:16',12,NULL,NULL,NULL,NULL,0,12,0,NULL,0,0,-1,'',0,NULL,'Enregistrement 12 modifié',12,'user',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'default',NULL,NULL,0,0,NULL,NULL,NULL),
 (1741,'1741',NULL,1,'2025-06-26 22:50:40','2025-06-26 22:50:40',40,'AC_FICHINTER_VALIDATE','Intervention FI2506-0004 validée','2025-06-26 22:50:40','2025-06-26 22:50:40',12,NULL,6,10,NULL,0,12,0,NULL,0,0,-1,'',0,NULL,'Intervention FI2506-0004 validée',5,'fichinter',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'default',NULL,NULL,0,0,NULL,NULL,NULL),
 (1742,'1742',NULL,1,'2025-06-27 11:05:27','2025-06-27 11:05:27',40,'AC_PROJECT_MODIFY','Projet PJ1607-0001b modifié','2025-06-27 11:05:27','2025-06-27 11:05:27',12,NULL,6,10,NULL,0,12,0,NULL,0,0,-1,'',0,NULL,'Projet PJ1607-0001b modifié\nStatut opportunité: 3 -> 4',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'default',NULL,NULL,0,0,NULL,NULL,NULL),
-(1743,'1743',NULL,1,'2026-02-15 21:13:51','2026-02-15 21:13:51',40,'AC_BILL_DELETE','Facture supprimée','2026-02-15 21:13:51','2026-02-15 20:13:51',12,NULL,NULL,7,NULL,0,12,0,NULL,0,0,-1,'',NULL,NULL,'Facture supprimée',457,'invoice',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'default',NULL,NULL,0,0,'127.0.0.1',NULL,NULL);
+(1743,'1743',NULL,1,'2026-02-15 21:13:51','2026-02-15 21:13:51',40,'AC_BILL_DELETE','Facture supprimée','2026-02-15 21:13:51','2026-02-15 20:13:51',12,NULL,NULL,7,NULL,0,12,0,NULL,0,0,-1,'',NULL,NULL,'Facture supprimée',457,'invoice',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'default',NULL,NULL,0,0,'127.0.0.1',NULL,NULL),
+(1744,'1744',NULL,1,'2025-01-15 10:22:43','2025-01-15 10:22:43',40,'AC_BILL_VALIDATE','Facture FA2501-0037 validée','2025-01-15 10:22:43','2025-01-15 09:22:43',12,NULL,NULL,26,NULL,0,12,0,NULL,0,0,-1,'',NULL,NULL,'Facture FA2501-0037 validée',458,'invoice',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'default',NULL,NULL,0,0,'127.0.0.1',NULL,NULL),
+(1745,'1745',NULL,1,'2025-01-16 09:43:42','2025-01-16 09:43:42',40,'AC_MEMBER_VALIDATE','Adhérent Test prénom Test nom validé','2025-01-16 09:43:42','2025-01-16 08:43:42',12,NULL,NULL,NULL,NULL,0,12,0,NULL,0,0,-1,'',NULL,NULL,'Adhérent Test prénom Test nom validé\nAdhérent: Test prénom Test nom\nType: Board members',14,'member',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'default',NULL,NULL,0,0,'127.0.0.1',NULL,NULL),
+(1751,'1751',NULL,1,'2025-01-16 09:47:50','2025-01-16 09:47:50',40,'AC_COMPANY_DELETE','Tiers  Test prénom Test nom supprimé','2025-01-16 09:47:50','2025-01-16 08:47:50',12,NULL,NULL,NULL,NULL,0,12,0,NULL,0,0,-1,'',NULL,NULL,'Tiers  Test prénom Test nom supprimé',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'default',NULL,NULL,0,0,'127.0.0.1',NULL,NULL),
+(1752,'1752',NULL,1,'2025-01-16 09:49:02','2025-01-16 09:49:02',40,'AC_MEMBER_VALIDATE','Adhérent test test validé','2025-01-16 09:49:02','2025-01-16 08:49:02',12,NULL,NULL,NULL,NULL,0,12,0,NULL,0,0,-1,'',NULL,NULL,'Adhérent test test validé\nAdhérent: test test\nType: Board members',15,'member',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'default',NULL,NULL,0,0,'127.0.0.1',NULL,NULL),
+(1753,'1753',NULL,1,'2025-01-16 09:53:37','2025-01-16 09:53:37',40,'AC_COMPANY_CREATE','Tiers test test créé','2025-01-16 09:53:37','2025-01-16 08:53:37',12,NULL,NULL,64,NULL,0,12,0,NULL,0,0,-1,'',NULL,NULL,'Tiers test test créé',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'default',NULL,NULL,0,0,'127.0.0.1',NULL,NULL),
+(1754,'1754',NULL,1,'2025-01-16 10:07:13','2025-01-16 10:07:13',40,'AC_MEMBER_SUBSCRIPTION_CREATE','Cotisation 11 pour l\'adhérent test test ajoutée','2025-01-16 10:07:13','2025-01-16 09:07:13',12,NULL,NULL,NULL,NULL,0,12,0,NULL,0,0,-1,'',NULL,NULL,'Cotisation 11 pour l\'adhérent test test ajoutée\nAdhérent: test test\nType: 1\nMontant: 11\nPériode: 16/01/2025 - 15/01/2026',15,'member',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'default',NULL,NULL,0,0,'127.0.0.1',NULL,NULL),
+(1755,'1755',NULL,1,'2025-01-16 10:07:13','2025-01-16 10:07:13',40,'AC_BILL_VALIDATE','Facture FA2501-0038 validée','2025-01-16 10:07:13','2025-01-16 09:07:13',12,NULL,NULL,64,NULL,0,12,0,NULL,0,0,-1,'',NULL,NULL,'Facture FA2501-0038 validée',459,'invoice',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'default',NULL,NULL,0,0,'127.0.0.1',NULL,NULL),
+(1756,'1756',NULL,1,'2025-01-16 10:07:13','2025-01-16 10:07:13',40,'AC_BILL_PAYED','Facture FA2501-0038 passée à payée','2025-01-16 10:07:13','2025-01-16 09:07:13',12,NULL,NULL,64,NULL,0,12,0,NULL,0,0,-1,'',NULL,NULL,'Facture FA2501-0038 passée à payée',459,'invoice',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'default',NULL,NULL,0,0,'127.0.0.1',NULL,NULL),
+(1757,'1757',NULL,1,'2025-01-16 10:08:55','2025-01-16 10:08:55',40,'AC_BILL_VALIDATE','Facture TC1-2501-0009 validée','2025-01-16 10:08:55','2025-01-16 09:08:55',12,NULL,NULL,7,NULL,0,12,0,NULL,0,0,-1,'',NULL,NULL,'Facture TC1-2501-0009 validée',460,'invoice',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'default',NULL,NULL,0,0,'127.0.0.1',NULL,NULL),
+(1758,'1758',NULL,1,'2025-01-16 10:08:56','2025-01-16 10:08:56',40,'AC_BILL_PAYED','Facture TC1-2501-0009 passée à payée','2025-01-16 10:08:56','2025-01-16 09:08:56',12,NULL,NULL,7,NULL,0,12,0,NULL,0,0,-1,'',NULL,NULL,'Facture TC1-2501-0009 passée à payée',460,'invoice',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'default',NULL,NULL,0,0,'127.0.0.1',NULL,NULL),
+(1759,'1759',NULL,1,'2025-01-16 10:08:56','2025-01-16 10:08:56',40,'AC_BILL_MODIFY','Enregistrement TC1-2501-0009 modifié','2025-01-16 10:08:56','2025-01-16 09:08:56',12,NULL,NULL,7,NULL,0,12,0,NULL,0,0,-1,'',NULL,NULL,'Enregistrement TC1-2501-0009 modifié',460,'invoice',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'default',NULL,NULL,0,0,'127.0.0.1',NULL,NULL),
+(1760,'1760',NULL,1,'2025-01-16 12:08:53','2025-01-16 12:08:53',40,'AC_BILL_SENTBYMAIL','Facture client TC1-2501-0009 envoyée par email','2025-01-16 12:08:53','2025-01-16 11:08:53',12,NULL,NULL,7,NULL,0,12,0,NULL,0,0,-1,'',NULL,NULL,'Facture client TC1-2501-0009 envoyée par email',460,'invoice',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'default',NULL,NULL,0,0,'127.0.0.1',NULL,NULL),
+(1761,'1761',NULL,1,'2025-01-16 12:19:25','2025-01-16 12:19:25',40,'AC_BILL_SENTBYMAIL','Facture client TC1-2501-0009 envoyée par email','2025-01-16 12:19:25','2025-01-16 11:19:25',12,NULL,NULL,7,NULL,0,12,0,NULL,0,0,-1,'',NULL,NULL,'Facture client TC1-2501-0009 envoyée par email',460,'invoice',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'default',NULL,NULL,0,0,'127.0.0.1',NULL,NULL),
+(1762,'1762',NULL,1,'2025-01-16 12:30:49','2025-01-16 12:30:49',40,'AC_BILL_SENTBYMAIL','Facture client TC1-2501-0009 envoyée par email','2025-01-16 12:30:49','2025-01-16 11:30:49',12,NULL,NULL,7,NULL,0,12,0,NULL,0,0,-1,'',NULL,NULL,'Facture client TC1-2501-0009 envoyée par email',460,'invoice',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'default',NULL,NULL,0,0,'127.0.0.1',NULL,NULL),
+(1763,'1763',NULL,1,'2025-01-16 12:38:40','2025-01-16 12:38:40',40,'AC_BILL_SENTBYMAIL','Facture client TC1-2501-0009 envoyée par email','2025-01-16 12:38:40','2025-01-16 11:38:40',12,NULL,NULL,7,NULL,0,12,0,NULL,0,0,-1,'',NULL,NULL,'Facture client TC1-2501-0009 envoyée par email',460,'invoice',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'default',NULL,NULL,0,0,'127.0.0.1',NULL,NULL),
+(1764,'1764',NULL,1,'2025-01-16 12:55:00','2025-01-16 12:55:00',40,'AC_BILL_SENTBYMAIL','Facture client TC1-2501-0009 envoyée par email','2025-01-16 12:55:00','2025-01-16 11:55:00',12,NULL,NULL,7,NULL,0,12,0,NULL,0,0,-1,'',NULL,NULL,'Facture client TC1-2501-0009 envoyée par email',460,'invoice',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'default',NULL,NULL,0,0,'127.0.0.1',NULL,NULL),
+(1765,'1765',NULL,1,'2025-01-16 12:57:34','2025-01-16 12:57:34',40,'AC_BILL_SENTBYMAIL','E-mail envoyé par aaaa à test@test.com','2025-01-16 12:57:34','2025-01-16 11:57:34',12,NULL,NULL,7,NULL,0,12,0,NULL,0,0,-1,'',NULL,NULL,'Bonjour<br>\n<br>\nVous trouverez ci-joint la facture TC1-2501-0009<br>\n<br>\nVous pouvez cliquer sur le lien ci-dessous pour effectuer votre paiement si ce n\'est déjà fait.<br>\n<br>\nhttp://localhostgit/dolibarr_test/htdocs/public/payment/newpayment.php?source=invoice&amp;ref=TC1-2501-0009<br>\n<br>\n<br>\n<br>\nSincèrement<br>\n<br>\nAlice - 123<br>\n<br>\nFichiers et documents joints: TC1-2501-0009.pdf',460,'invoice','6788f42ecbbfd9.77578037.phpmail-dolibarr-inv460@cc385f40e47e5be82815b1fa583939f749c7f86e','Envoi de la facture TC1-2501-0009','aaaa <aaaa@aa.com>',NULL,'test@test.com',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'default',NULL,NULL,0,0,'127.0.0.1',NULL,NULL);
 /*!40000 ALTER TABLE `llx_actioncomm` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -4086,7 +4103,7 @@ CREATE TABLE `llx_actioncomm_resources` (
   PRIMARY KEY (`rowid`),
   UNIQUE KEY `uk_actioncomm_resources` (`fk_actioncomm`,`element_type`,`fk_element`),
   KEY `idx_actioncomm_resources_fk_element` (`fk_element`)
-) ENGINE=InnoDB AUTO_INCREMENT=1658 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1680 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -5162,7 +5179,25 @@ INSERT INTO `llx_actioncomm_resources` VALUES
 (1654,1740,'user',12,'0',0,0),
 (1655,1741,'user',12,'0',0,0),
 (1656,1742,'user',12,'0',0,0),
-(1657,1743,'user',12,'0',0,0);
+(1657,1743,'user',12,'0',0,0),
+(1658,1744,'user',12,'0',0,0),
+(1659,1745,'user',12,'0',0,0),
+(1664,1750,'user',12,'0',0,0),
+(1665,1751,'user',12,'0',0,0),
+(1666,1752,'user',12,'0',0,0),
+(1667,1753,'user',12,'0',0,0),
+(1668,1754,'user',12,'0',0,0),
+(1669,1755,'user',12,'0',0,0),
+(1670,1756,'user',12,'0',0,0),
+(1671,1757,'user',12,'0',0,0),
+(1672,1758,'user',12,'0',0,0),
+(1673,1759,'user',12,'0',0,0),
+(1674,1760,'user',12,'0',0,0),
+(1675,1761,'user',12,'0',0,0),
+(1676,1762,'user',12,'0',0,0),
+(1677,1763,'user',12,'0',0,0),
+(1678,1764,'user',12,'0',0,0),
+(1679,1765,'user',12,'0',0,0);
 /*!40000 ALTER TABLE `llx_actioncomm_resources` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -5226,7 +5261,7 @@ CREATE TABLE `llx_adherent` (
   KEY `idx_adherent_fk_adherent_type` (`fk_adherent_type`),
   CONSTRAINT `adherent_fk_soc` FOREIGN KEY (`fk_soc`) REFERENCES `llx_societe` (`rowid`),
   CONSTRAINT `fk_adherent_adherent_type` FOREIGN KEY (`fk_adherent_type`) REFERENCES `llx_adherent_type` (`rowid`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -5239,7 +5274,8 @@ INSERT INTO `llx_adherent` VALUES
 (1,'1',1,NULL,NULL,'Smith','Vic abc','vsmith','vsx1n8tf',NULL,2,'phy','NLTechno',10,NULL,NULL,NULL,NULL,102,'vsmith@email.com',NULL,NULL,NULL,NULL,NULL,'1960-07-07',NULL,'person5.jpeg',0,0,'2014-07-09 00:00:00','fr_FR',NULL,NULL,'2012-07-10 15:12:56','2012-07-08 23:50:00','2025-02-24 12:30:22',1,12,12,NULL,NULL,NULL,'woman',NULL),
 (2,'2',1,NULL,NULL,'Curie','Pierre','pcurie','pcuriedolibarr',NULL,2,'phy',NULL,12,NULL,NULL,NULL,NULL,NULL,'pcurie@example.com',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'pierrecurie.jpg',1,1,'2020-07-17 00:00:00',NULL,NULL,NULL,'2012-07-10 15:03:32','2012-07-10 15:03:09','2025-05-05 14:48:17',1,12,1,NULL,NULL,NULL,'',NULL),
 (3,'3',1,NULL,NULL,'john','doe','john','8bs6gty5',NULL,2,'phy',NULL,NULL,NULL,NULL,NULL,NULL,1,'johndoe@email.com',NULL,'[]',NULL,NULL,NULL,NULL,NULL,'person9.jpeg',1,0,'2014-07-17 00:00:00',NULL,NULL,NULL,'2013-07-18 21:28:00','2013-07-18 21:10:09','2021-04-15 10:22:54',1,12,1,NULL,NULL,NULL,NULL,NULL),
-(4,'4',1,NULL,NULL,'smith','smith','Smith','s6hjp10f',NULL,2,'phy',NULL,NULL,NULL,NULL,NULL,NULL,11,'smith@email.com',NULL,'[]',NULL,NULL,NULL,NULL,NULL,'person2.jpeg',1,0,'2018-07-17 00:00:00',NULL,NULL,NULL,'2013-07-18 21:27:52','2013-07-18 21:27:44','2021-04-15 10:22:54',1,12,1,NULL,NULL,NULL,NULL,NULL);
+(4,'4',1,NULL,NULL,'smith','smith','Smith','s6hjp10f',NULL,2,'phy',NULL,NULL,NULL,NULL,NULL,NULL,11,'smith@email.com',NULL,'[]',NULL,NULL,NULL,NULL,NULL,'person2.jpeg',1,0,'2018-07-17 00:00:00',NULL,NULL,NULL,'2013-07-18 21:27:52','2013-07-18 21:27:44','2021-04-15 10:22:54',1,12,1,NULL,NULL,NULL,NULL,NULL),
+(15,'5',1,NULL,NULL,'test','test','test',NULL,'$2y$10$O1hyO.Wdxq7RDn3kVh3S7.kpUjEiR52jQ60P.B4ihvrD6UfU7Vjui',1,'phy',NULL,64,NULL,NULL,NULL,NULL,1,'test@test.com',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,0,'2026-01-15 00:00:00',NULL,NULL,NULL,'2025-01-16 09:49:02','2025-01-16 09:48:58','2025-01-16 09:07:13',12,12,12,NULL,NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `llx_adherent` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -5261,7 +5297,7 @@ CREATE TABLE `llx_adherent_extrafields` (
   PRIMARY KEY (`rowid`),
   UNIQUE KEY `uk_adherent_extrafields` (`fk_object`),
   KEY `idx_adherent_options` (`fk_object`)
-) ENGINE=InnoDB AUTO_INCREMENT=85 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=87 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -5274,7 +5310,9 @@ INSERT INTO `llx_adherent_extrafields` VALUES
 (77,'2020-01-21 09:30:36',3,NULL,NULL,NULL,NULL),
 (78,'2020-01-21 09:30:42',4,NULL,NULL,NULL,NULL),
 (80,'2023-01-14 10:46:33',2,NULL,NULL,NULL,NULL),
-(83,'2025-02-24 12:30:22',1,NULL,NULL,NULL,NULL);
+(83,'2025-02-24 12:30:22',1,NULL,NULL,NULL,NULL),
+(85,'2025-01-16 08:43:16',14,NULL,NULL,NULL,NULL),
+(86,'2025-01-16 08:48:58',15,NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `llx_adherent_extrafields` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -5816,7 +5854,7 @@ CREATE TABLE `llx_bank` (
   KEY `idx_bank_fk_account` (`fk_account`),
   KEY `idx_bank_rappro` (`rappro`),
   KEY `idx_bank_num_releve` (`num_releve`)
-) ENGINE=InnoDB AUTO_INCREMENT=98 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -5881,7 +5919,9 @@ INSERT INTO `llx_bank` VALUES
 (94,'2025-05-10 14:41:50','2026-02-15 18:44:54','2024-05-10','2024-05-10',2.00000000,'(CustomerInvoicePayment)',4,12,NULL,'CB',NULL,'TC1-2505-0005',0,NULL,0,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,0),
 (95,'2025-05-10 14:43:32','2026-02-15 18:44:54','2024-05-10','2024-05-10',18.00000000,'(CustomerInvoicePayment)',4,12,NULL,'CB',NULL,'TC1-2505-0006',0,NULL,0,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,0),
 (96,'2025-05-10 14:52:34','2026-02-15 18:44:54','2024-05-10','2024-05-10',3.70000000,'(CustomerInvoicePayment)',4,12,NULL,'CB',NULL,'TC1-2505-0007',0,NULL,0,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,0),
-(97,'2025-05-10 16:12:58','2026-02-15 18:44:54','2024-05-10','2024-05-10',3.70000000,'(CustomerInvoicePayment)',4,12,NULL,'CB',NULL,'TC1-2505-0008',0,NULL,0,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,0);
+(97,'2025-05-10 16:12:58','2026-02-15 18:44:54','2024-05-10','2024-05-10',3.70000000,'(CustomerInvoicePayment)',4,12,NULL,'CB',NULL,'TC1-2505-0008',0,NULL,0,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,0),
+(98,'2025-01-16 10:07:13','2025-01-16 09:07:13','2025-01-16','2025-01-16',11.00000000,'(SubscriptionPayment)',6,12,NULL,'CHQ',NULL,NULL,0,NULL,0,NULL,'test test',NULL,'',NULL,NULL,NULL,11.00000000,0),
+(99,'2025-01-16 10:08:56','2025-01-16 09:08:56','2025-01-16','2025-01-16',1.50000000,'(CustomerInvoicePayment)',3,12,NULL,'LIQ',NULL,NULL,0,NULL,0,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,0);
 /*!40000 ALTER TABLE `llx_bank` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -6157,7 +6197,7 @@ CREATE TABLE `llx_bank_url` (
   PRIMARY KEY (`rowid`),
   UNIQUE KEY `uk_bank_url` (`fk_bank`,`url_id`,`type`),
   KEY `idx_bank_url_url_id` (`url_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=149 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=153 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -6273,7 +6313,11 @@ INSERT INTO `llx_bank_url` VALUES
 (142,94,7,'/dolibarr_dev/htdocs/comm/card.php?socid=','Generic customer','company'),
 (144,95,7,'/dolibarr_dev/htdocs/comm/card.php?socid=','Generic customer','company'),
 (146,96,7,'/dolibarr_dev/htdocs/comm/card.php?socid=','Generic customer','company'),
-(148,97,7,'/dolibarr_dev/htdocs/comm/card.php?socid=','Generic customer','company');
+(148,97,7,'/dolibarr_dev/htdocs/comm/card.php?socid=','Generic customer','company'),
+(149,98,89,'/dolibarr_test/htdocs/compta/paiement/card.php?id=','(paiement)','payment'),
+(150,98,64,'/dolibarr_test/htdocs/comm/card.php?socid=','test test','company'),
+(151,99,90,'/dolibarr_test/htdocs/compta/paiement/card.php?id=','(paiement)','payment'),
+(152,99,7,'/dolibarr_test/htdocs/comm/card.php?socid=','Generic customer','company');
 /*!40000 ALTER TABLE `llx_bank_url` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -6315,7 +6359,7 @@ CREATE TABLE `llx_blockedlog` (
   KEY `entity_rowid` (`entity`,`rowid`),
   KEY `idx_entity_action` (`entity`,`action`),
   KEY `idx_ref_object` (`ref_object`)
-) ENGINE=InnoDB AUTO_INCREMENT=396 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=433 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -6325,7 +6369,21 @@ CREATE TABLE `llx_blockedlog` (
 LOCK TABLES `llx_blockedlog` WRITE;
 /*!40000 ALTER TABLE `llx_blockedlog` DISABLE KEYS */;
 INSERT INTO `llx_blockedlog` VALUES
-(395,'2026-02-15 20:05:24','MODULE_RESET','',0.00000000,NULL,'0000000000','module',1,'systemevent','2026-02-15 21:05:24','{\"mycompany\":{\"name\":\"MyBigCompany\",\"phone\":\"09123123\",\"fax\":\"09123124\",\"email\":\"myemail@mybigcompany.com\",\"idprof1\":\"123456\",\"idprof2\":\"ABC-DEF\",\"idprof3\":\"15E-45-8D\",\"tva_assuj\":1,\"tva_intra\":\"FR12345678\",\"localtax1_assuj\":0,\"localtax2_assuj\":0,\"managers\":\"Zack Zeceo\",\"capital\":10000,\"forme_juridique_code\":0,\"country_code\":\"FR\",\"address\":\"21 Jump street.\",\"zip\":\"75500\",\"town\":\"MyTown\"},\"id\":1,\"ref\":\"systemevent\",\"entity\":1,\"date\":1771185924,\"label\":\"Module disabled\"}',12,1,0,'2026-02-15 21:05:24','Alice Adminson','24.0.0-alpha','V1','',NULL,NULL,NULL);
+(411,'2025-01-15 09:13:08','MODULE_SET','',0.00000000,0.00000000,'2031b54f7017f18227cbee83d2e0c3beec2cf2169e472719dd6b920f143ed94e','module',0,'systemevent','2025-01-15 10:13:08','{\"mycompany\":{\"name\":\"MyBigCompany\",\"phone\":\"09123123\",\"fax\":\"09123124\",\"email\":\"myemail@mybigcompany.com\",\"idprof1\":\"123456\",\"idprof2\":\"ABC-DEF\",\"idprof3\":\"15E-45-8D\",\"tva_assuj\":1,\"tva_intra\":\"FR12345678\",\"localtax1_assuj\":0,\"localtax2_assuj\":0,\"managers\":\"Zack Zeceo\",\"capital\":10000,\"forme_juridique_code\":0,\"country_code\":\"FR\",\"address\":\"21 Jump street.\",\"zip\":\"75500\",\"town\":\"MyTown\"},\"id\":0,\"ref\":\"systemevent\",\"entity\":1,\"date\":1736932388}',12,1,0,'2025-01-15 10:13:08','Alice Adminson','24.0.0-alpha','V2','',NULL,NULL,NULL),
+(413,'2025-01-15 09:17:10','BLOCKEDLOG_EXPORT','',0.00000000,0.00000000,'b850352ef955c0b8133386b79f88dd347e2c625ed133e30e49314f502ace54fc','module',0,'systemevent','2025-01-15 10:17:10','{\"mycompany\":{\"name\":\"MyBigCompany\",\"phone\":\"09123123\",\"fax\":\"09123124\",\"email\":\"myemail@mybigcompany.com\",\"idprof1\":\"123456\",\"idprof2\":\"ABC-DEF\",\"idprof3\":\"15E-45-8D\",\"tva_assuj\":1,\"tva_intra\":\"FR12345678\",\"localtax1_assuj\":0,\"localtax2_assuj\":0,\"managers\":\"Zack Zeceo\",\"capital\":10000,\"forme_juridique_code\":0,\"country_code\":\"FR\",\"address\":\"21 Jump street.\",\"zip\":\"75500\",\"town\":\"MyTown\"},\"id\":0,\"ref\":\"systemevent\",\"entity\":1,\"date\":1736932630,\"fullname\":\"Alice Adminson\",\"label\":\"Export unalterable logs\",\"period\":\"year=2024 month=1\"}',12,1,0,'2025-01-15 10:17:10','Alice Adminson','24.0.0-alpha','V2','',NULL,NULL,NULL),
+(414,'2025-01-15 09:22:43','BILL_VALIDATE','',9.00000000,9.00000000,'1e43eda5e73678c9275d0137cbf5684d12a79b3d0d32eafa79583b8e21ae4869','facture',458,'FA2501-0037','2025-01-15 00:00:00','{\"mycompany\":{\"name\":\"MyBigCompany\",\"phone\":\"09123123\",\"fax\":\"09123124\",\"email\":\"myemail@mybigcompany.com\",\"idprof1\":\"123456\",\"idprof2\":\"ABC-DEF\",\"idprof3\":\"15E-45-8D\",\"tva_assuj\":1,\"tva_intra\":\"FR12345678\",\"localtax1_assuj\":0,\"localtax2_assuj\":0,\"managers\":\"Zack Zeceo\",\"capital\":10000,\"forme_juridique_code\":0,\"country_code\":\"FR\",\"address\":\"21 Jump street.\",\"zip\":\"75500\",\"town\":\"MyTown\"},\"ref\":\"FA2501-0037\",\"module_source\":\"\",\"pos_source\":\"\",\"pos_print_counter\":\"0\",\"email_sent_counter\":\"0\",\"invoiceline\":{\"1\":{\"ref\":\"PINKDRESS\",\"product_type\":\"0\",\"product_label\":\"Pink dress\",\"qty\":\"1\",\"subprice\":\"9.00000000\",\"tva_tx\":\"0.000\",\"localtax1_tx\":\"0.000\",\"localtax2_tx\":\"0.000\",\"total_ht\":\"9.00000000\",\"total_tva\":\"0.00000000\",\"total_localtax1\":\"0.00000000\",\"total_localtax2\":\"0.00000000\",\"total_ttc\":\"9.00000000\",\"info_bits\":\"0\",\"special_code\":\"0\",\"multicurrency_code\":\"EUR\",\"multicurrency_total_ht\":\"9.00000000\",\"multicurrency_total_tva\":\"0.00000000\",\"multicurrency_total_ttc\":\"9.00000000\"}},\"type\":\"0\",\"date\":1736895600,\"total_ht\":9,\"total_tva\":0,\"total_ttc\":9,\"revenuestamp\":\"0.00000000\"}',12,1,0,'2025-01-15 10:22:43','Alice Adminson','24.0.0-alpha','V2','',NULL,NULL,NULL),
+(415,'2025-01-16 09:07:13','BILL_VALIDATE','',11.00000000,11.00000000,'20ea65b804e7250ef18a4c4bb40c0dc66362c0b1bf3a2055a596920f808a15ae','facture',459,'FA2501-0038','2025-01-16 10:07:13','{\"mycompany\":{\"name\":\"MyBigCompany\",\"phone\":\"09123123\",\"fax\":\"09123124\",\"email\":\"myemail@mybigcompany.com\",\"idprof1\":\"123456\",\"idprof2\":\"ABC-DEF\",\"idprof3\":\"15E-45-8D\",\"tva_assuj\":1,\"tva_intra\":\"FR12345678\",\"localtax1_assuj\":0,\"localtax2_assuj\":0,\"managers\":\"Zack Zeceo\",\"capital\":10000,\"forme_juridique_code\":0,\"country_code\":\"FR\",\"address\":\"21 Jump street.\",\"zip\":\"75500\",\"town\":\"MyTown\"},\"ref\":\"FA2501-0038\",\"module_source\":\"\",\"pos_source\":\"\",\"pos_print_counter\":0,\"email_sent_counter\":0,\"invoiceline\":{\"1\":{\"product_type\":\"1\",\"product_label\":\"Adh\\u00e9sion \\/ cotisation 2025\",\"qty\":\"1\",\"subprice\":\"11.00000000\",\"tva_tx\":\"0.000\",\"localtax1_tx\":\"0.000\",\"localtax2_tx\":\"0.000\",\"total_ht\":\"11.00000000\",\"total_tva\":\"0.00000000\",\"total_localtax1\":\"0.00000000\",\"total_localtax2\":\"0.00000000\",\"total_ttc\":\"11.00000000\",\"info_bits\":\"0\",\"special_code\":\"0\",\"multicurrency_code\":\"EUR\",\"multicurrency_total_ht\":\"11.00000000\",\"multicurrency_total_tva\":\"0.00000000\",\"multicurrency_total_ttc\":\"11.00000000\"}},\"type\":0,\"date\":1737018433,\"total_ht\":11,\"total_tva\":0,\"total_ttc\":11}',12,1,0,'2025-01-16 10:07:13','Alice Adminson','24.0.0-alpha','V2','',NULL,NULL,NULL),
+(416,'2025-01-16 09:07:13','PAYMENT_CUSTOMER_CREATE','',11.00000000,NULL,'af79bb9344a27868825a1c22b2c9ab6d2f7db2aef315541f049490ea620daae5','payment',89,'PAY2501-0001','2025-01-16 00:00:00','{\"thirdparty\":{\"name\":\"test test\",\"email\":\"test@test.com\",\"idprof1\":\"\",\"idprof2\":\"\",\"tva_assuj\":\"1\",\"tva_intra\":\"\",\"code_client\":\"CU2501-00037\",\"country_code\":\"FR\"},\"mycompany\":{\"name\":\"MyBigCompany\",\"phone\":\"09123123\",\"fax\":\"09123124\",\"email\":\"myemail@mybigcompany.com\",\"idprof1\":\"123456\",\"idprof2\":\"ABC-DEF\",\"idprof3\":\"15E-45-8D\",\"tva_assuj\":1,\"tva_intra\":\"FR12345678\",\"localtax1_assuj\":0,\"localtax2_assuj\":0,\"managers\":\"Zack Zeceo\",\"capital\":10000,\"forme_juridique_code\":0,\"country_code\":\"FR\",\"address\":\"21 Jump street.\",\"zip\":\"75500\",\"town\":\"MyTown\"},\"ref\":\"PAY2501-0001\",\"date\":1736982000,\"type_code\":\"CHQ\",\"payment_part\":{\"1\":{\"amount\":\"11\",\"invoice\":{\"ref\":\"FA2501-0038\",\"module_source\":\"\",\"pos_source\":\"\",\"pos_print_counter\":\"0\",\"email_sent_counter\":\"0\",\"type\":\"0\",\"date\":1736982000,\"total_ht\":\"11.00000000\",\"total_tva\":\"0.00000000\",\"total_ttc\":\"11.00000000\",\"revenuestamp\":\"0.00000000\"}}},\"amount\":11}',12,1,0,'2025-01-16 10:07:13','Alice Adminson','24.0.0-alpha','V2','','FA2501-0038','payment',NULL),
+(417,'2025-01-16 09:08:55','BILL_VALIDATE','takepos',1.50000000,1.25000000,'b9c58af18960660e2d98b7ca5539677ee0b611f2f49c2ce3ddcd2a7fff06e2b8','facture',460,'TC1-2501-0009','2025-01-16 00:00:00','{\"mycompany\":{\"name\":\"MyBigCompany\",\"phone\":\"09123123\",\"fax\":\"09123124\",\"email\":\"myemail@mybigcompany.com\",\"idprof1\":\"123456\",\"idprof2\":\"ABC-DEF\",\"idprof3\":\"15E-45-8D\",\"tva_assuj\":1,\"tva_intra\":\"FR12345678\",\"localtax1_assuj\":0,\"localtax2_assuj\":0,\"managers\":\"Zack Zeceo\",\"capital\":10000,\"forme_juridique_code\":0,\"country_code\":\"FR\",\"address\":\"21 Jump street.\",\"zip\":\"75500\",\"town\":\"MyTown\"},\"ref\":\"TC1-2501-0009\",\"module_source\":\"takepos\",\"pos_source\":\"1\",\"pos_print_counter\":\"0\",\"email_sent_counter\":\"0\",\"invoiceline\":{\"1\":{\"ref\":\"POS-APPLE\",\"product_type\":\"0\",\"product_label\":\"Apple\",\"qty\":\"1\",\"subprice\":\"1.25000000\",\"tva_tx\":\"20.000\",\"localtax1_tx\":\"0.000\",\"localtax2_tx\":\"0.000\",\"total_ht\":\"1.25000000\",\"total_tva\":\"0.25000000\",\"total_localtax1\":\"0.00000000\",\"total_localtax2\":\"0.00000000\",\"total_ttc\":\"1.50000000\",\"info_bits\":\"0\",\"special_code\":\"0\",\"multicurrency_code\":\"EUR\",\"multicurrency_total_ht\":\"1.25000000\",\"multicurrency_total_tva\":\"0.25000000\",\"multicurrency_total_ttc\":\"1.50000000\"}},\"type\":\"0\",\"date\":1736982000,\"total_ht\":1.25,\"total_tva\":0.25,\"total_ttc\":1.5,\"revenuestamp\":\"0.00000000\"}',12,1,0,'2025-01-16 10:08:55','Alice Adminson','24.0.0-alpha','V2','',NULL,NULL,NULL),
+(418,'2025-01-16 09:08:56','PAYMENT_CUSTOMER_CREATE','takepos',1.50000000,NULL,'bb3ffec5b8e04ceb0f1a469b882487aadd6f5e1e04244f5e7ddf1cc2f2f2e3c4','payment',90,'PAY2501-0002','2025-01-16 10:08:55','{\"thirdparty\":{\"name\":\"Generic customer\",\"email\":\"ttt@ttt.com\",\"idprof1\":\"\",\"idprof2\":\"\",\"tva_assuj\":\"1\",\"tva_intra\":\"\",\"capital\":\"0.00000000\",\"typent_code\":\"TE_PRIVATE\",\"code_client\":\"CU1302-0011\",\"country_code\":\"GB\"},\"mycompany\":{\"name\":\"MyBigCompany\",\"phone\":\"09123123\",\"fax\":\"09123124\",\"email\":\"myemail@mybigcompany.com\",\"idprof1\":\"123456\",\"idprof2\":\"ABC-DEF\",\"idprof3\":\"15E-45-8D\",\"tva_assuj\":1,\"tva_intra\":\"FR12345678\",\"localtax1_assuj\":0,\"localtax2_assuj\":0,\"managers\":\"Zack Zeceo\",\"capital\":10000,\"forme_juridique_code\":0,\"country_code\":\"FR\",\"address\":\"21 Jump street.\",\"zip\":\"75500\",\"town\":\"MyTown\"},\"ref\":\"PAY2501-0002\",\"date\":1737018535,\"type_code\":\"LIQ\",\"payment_part\":{\"1\":{\"amount\":\"1.5\",\"invoice\":{\"ref\":\"TC1-2501-0009\",\"module_source\":\"takepos\",\"pos_source\":\"1\",\"pos_print_counter\":\"0\",\"email_sent_counter\":\"0\",\"type\":\"0\",\"date\":1736982000,\"total_ht\":\"1.25000000\",\"total_tva\":\"0.25000000\",\"total_ttc\":\"1.50000000\",\"revenuestamp\":\"0.00000000\"}}},\"amount\":1.5}',12,1,0,'2025-01-16 10:08:56','Alice Adminson','24.0.0-alpha','V2','','TC1-2501-0009','payment',NULL),
+(419,'2025-01-16 09:17:29','DOC_PREVIEW','takepos',1.50000000,1.25000000,'17a3c6170409b72a5fedf853abb00581877b18320a207e479c42d77b3d07c4d6','facture',460,'TC1-2501-0009','2025-01-16 00:00:00','{\"mycompany\":{\"name\":\"MyBigCompany\",\"phone\":\"09123123\",\"fax\":\"09123124\",\"email\":\"myemail@mybigcompany.com\",\"idprof1\":\"123456\",\"idprof2\":\"ABC-DEF\",\"idprof3\":\"15E-45-8D\",\"tva_assuj\":1,\"tva_intra\":\"FR12345678\",\"localtax1_assuj\":0,\"localtax2_assuj\":0,\"managers\":\"Zack Zeceo\",\"capital\":10000,\"forme_juridique_code\":0,\"country_code\":\"FR\",\"address\":\"21 Jump street.\",\"zip\":\"75500\",\"town\":\"MyTown\"},\"ref\":\"TC1-2501-0009\",\"module_source\":\"takepos\",\"pos_source\":\"1\",\"pos_print_counter\":1,\"email_sent_counter\":\"0\",\"invoiceline\":{\"1\":{\"ref\":\"POS-APPLE\",\"product_type\":\"0\",\"product_label\":\"Apple\",\"qty\":\"1\",\"subprice\":\"1.25000000\",\"tva_tx\":\"20.000\",\"localtax1_tx\":\"0.000\",\"localtax2_tx\":\"0.000\",\"total_ht\":\"1.25000000\",\"total_tva\":\"0.25000000\",\"total_localtax1\":\"0.00000000\",\"total_localtax2\":\"0.00000000\",\"total_ttc\":\"1.50000000\",\"info_bits\":\"0\",\"special_code\":\"0\",\"multicurrency_code\":\"EUR\",\"multicurrency_total_ht\":\"1.25000000\",\"multicurrency_total_tva\":\"0.25000000\",\"multicurrency_total_ttc\":\"1.50000000\"}},\"type\":\"0\",\"date\":1736982000,\"total_ht\":\"1.25000000\",\"total_tva\":\"0.25000000\",\"total_ttc\":\"1.50000000\",\"revenuestamp\":\"0.00000000\"}',12,1,0,'2025-01-16 10:17:29','Alice Adminson','24.0.0-alpha','V2','',NULL,NULL,NULL),
+(420,'2025-01-16 11:10:08','DOC_PREVIEW','takepos',1.50000000,1.25000000,'d8770dd062220b8332d304039a53565de2d2d5f917f0aa5620dbcb634e75462e','facture',460,'TC1-2501-0009','2025-01-16 00:00:00','{\"mycompany\":{\"name\":\"MyBigCompany\",\"phone\":\"09123123\",\"fax\":\"09123124\",\"email\":\"myemail@mybigcompany.com\",\"idprof1\":\"123456\",\"idprof2\":\"ABC-DEF\",\"idprof3\":\"15E-45-8D\",\"tva_assuj\":1,\"tva_intra\":\"FR12345678\",\"localtax1_assuj\":0,\"localtax2_assuj\":0,\"managers\":\"Zack Zeceo\",\"capital\":10000,\"forme_juridique_code\":0,\"country_code\":\"FR\",\"address\":\"21 Jump street.\",\"zip\":\"75500\",\"town\":\"MyTown\"},\"ref\":\"TC1-2501-0009\",\"module_source\":\"takepos\",\"pos_source\":\"1\",\"pos_print_counter\":2,\"email_sent_counter\":\"0\",\"invoiceline\":{\"1\":{\"ref\":\"POS-APPLE\",\"product_type\":\"0\",\"product_label\":\"Apple\",\"qty\":\"1\",\"subprice\":\"1.25000000\",\"tva_tx\":\"20.000\",\"localtax1_tx\":\"0.000\",\"localtax2_tx\":\"0.000\",\"total_ht\":\"1.25000000\",\"total_tva\":\"0.25000000\",\"total_localtax1\":\"0.00000000\",\"total_localtax2\":\"0.00000000\",\"total_ttc\":\"1.50000000\",\"info_bits\":\"0\",\"special_code\":\"0\",\"multicurrency_code\":\"EUR\",\"multicurrency_total_ht\":\"1.25000000\",\"multicurrency_total_tva\":\"0.25000000\",\"multicurrency_total_ttc\":\"1.50000000\"}},\"type\":\"0\",\"date\":1736982000,\"total_ht\":\"1.25000000\",\"total_tva\":\"0.25000000\",\"total_ttc\":\"1.50000000\",\"revenuestamp\":\"0.00000000\"}',12,1,0,'2025-01-16 10:19:41','Alice Adminson','24.0.0-alpha','V2','',NULL,NULL,NULL),
+(421,'2025-01-16 11:10:08','DOC_PREVIEW','takepos',1.50000000,1.25000000,'dbb2d0f11a6ed01566b69717ddb1c08cee10f6964c47cd6b5f0da213027fd1be','facture',460,'TC1-2501-0009','2025-01-16 00:00:00','{\"mycompany\":{\"name\":\"MyBigCompany\",\"phone\":\"09123123\",\"fax\":\"09123124\",\"email\":\"myemail@mybigcompany.com\",\"idprof1\":\"123456\",\"idprof2\":\"ABC-DEF\",\"idprof3\":\"15E-45-8D\",\"tva_assuj\":1,\"tva_intra\":\"FR12345678\",\"localtax1_assuj\":0,\"localtax2_assuj\":0,\"managers\":\"Zack Zeceo\",\"capital\":10000,\"forme_juridique_code\":0,\"country_code\":\"FR\",\"address\":\"21 Jump street.\",\"zip\":\"75500\",\"town\":\"MyTown\"},\"ref\":\"TC1-2501-0009\",\"module_source\":\"takepos\",\"pos_source\":\"1\",\"pos_print_counter\":3,\"email_sent_counter\":\"0\",\"invoiceline\":{\"1\":{\"ref\":\"POS-APPLE\",\"product_type\":\"0\",\"product_label\":\"Apple\",\"qty\":\"1\",\"subprice\":\"1.25000000\",\"tva_tx\":\"20.000\",\"localtax1_tx\":\"0.000\",\"localtax2_tx\":\"0.000\",\"total_ht\":\"1.25000000\",\"total_tva\":\"0.25000000\",\"total_localtax1\":\"0.00000000\",\"total_localtax2\":\"0.00000000\",\"total_ttc\":\"1.50000000\",\"info_bits\":\"0\",\"special_code\":\"0\",\"multicurrency_code\":\"EUR\",\"multicurrency_total_ht\":\"1.25000000\",\"multicurrency_total_tva\":\"0.25000000\",\"multicurrency_total_ttc\":\"1.50000000\"}},\"type\":\"0\",\"date\":1736982000,\"total_ht\":\"1.25000000\",\"total_tva\":\"0.25000000\",\"total_ttc\":\"1.50000000\",\"revenuestamp\":\"0.00000000\"}',12,1,0,'2025-01-16 10:22:33','Alice Adminson','24.0.0-alpha','V2','',NULL,NULL,NULL),
+(422,'2025-01-16 11:10:08','DOC_PREVIEW','takepos',1.50000000,1.25000000,'e6e65a101521cb8b3921ae31d9565be3432ac94703f2e055e8f1229cb2abee6b','facture',460,'TC1-2501-0009','2025-01-16 00:00:00','{\"mycompany\":{\"name\":\"MyBigCompany\",\"phone\":\"09123123\",\"fax\":\"09123124\",\"email\":\"myemail@mybigcompany.com\",\"idprof1\":\"123456\",\"idprof2\":\"ABC-DEF\",\"idprof3\":\"15E-45-8D\",\"tva_assuj\":1,\"tva_intra\":\"FR12345678\",\"localtax1_assuj\":0,\"localtax2_assuj\":0,\"managers\":\"Zack Zeceo\",\"capital\":10000,\"forme_juridique_code\":0,\"country_code\":\"FR\",\"address\":\"21 Jump street.\",\"zip\":\"75500\",\"town\":\"MyTown\"},\"ref\":\"TC1-2501-0009\",\"module_source\":\"takepos\",\"pos_source\":\"1\",\"pos_print_counter\":4,\"email_sent_counter\":\"0\",\"invoiceline\":{\"1\":{\"ref\":\"POS-APPLE\",\"product_type\":\"0\",\"product_label\":\"Apple\",\"qty\":\"1\",\"subprice\":\"1.25000000\",\"tva_tx\":\"20.000\",\"localtax1_tx\":\"0.000\",\"localtax2_tx\":\"0.000\",\"total_ht\":\"1.25000000\",\"total_tva\":\"0.25000000\",\"total_localtax1\":\"0.00000000\",\"total_localtax2\":\"0.00000000\",\"total_ttc\":\"1.50000000\",\"info_bits\":\"0\",\"special_code\":\"0\",\"multicurrency_code\":\"EUR\",\"multicurrency_total_ht\":\"1.25000000\",\"multicurrency_total_tva\":\"0.25000000\",\"multicurrency_total_ttc\":\"1.50000000\"}},\"type\":\"0\",\"date\":1736982000,\"total_ht\":\"1.25000000\",\"total_tva\":\"0.25000000\",\"total_ttc\":\"1.50000000\",\"revenuestamp\":\"0.00000000\"}',12,1,0,'2025-01-16 10:27:16','Alice Adminson','24.0.0-alpha','V2','',NULL,NULL,NULL),
+(423,'2025-01-16 11:10:07','DOC_PREVIEW','takepos',1.50000000,1.25000000,'24e0d354f83b5e216414930cfa0b07923725a98a0457969df3f962111932baa2','facture',460,'TC1-2501-0009','2025-01-16 00:00:00','{\"mycompany\":{\"name\":\"MyBigCompany\",\"phone\":\"09123123\",\"fax\":\"09123124\",\"email\":\"myemail@mybigcompany.com\",\"idprof1\":\"123456\",\"idprof2\":\"ABC-DEF\",\"idprof3\":\"15E-45-8D\",\"tva_assuj\":1,\"tva_intra\":\"FR12345678\",\"localtax1_assuj\":0,\"localtax2_assuj\":0,\"managers\":\"Zack Zeceo\",\"capital\":10000,\"forme_juridique_code\":0,\"country_code\":\"FR\",\"address\":\"21 Jump street.\",\"zip\":\"75500\",\"town\":\"MyTown\"},\"ref\":\"TC1-2501-0009\",\"module_source\":\"takepos\",\"pos_source\":\"1\",\"pos_print_counter\":5,\"email_sent_counter\":\"0\",\"invoiceline\":{\"1\":{\"ref\":\"POS-APPLE\",\"product_type\":\"0\",\"product_label\":\"Apple\",\"qty\":\"1\",\"subprice\":\"1.25000000\",\"tva_tx\":\"20.000\",\"localtax1_tx\":\"0.000\",\"localtax2_tx\":\"0.000\",\"total_ht\":\"1.25000000\",\"total_tva\":\"0.25000000\",\"total_localtax1\":\"0.00000000\",\"total_localtax2\":\"0.00000000\",\"total_ttc\":\"1.50000000\",\"info_bits\":\"0\",\"special_code\":\"0\",\"multicurrency_code\":\"EUR\",\"multicurrency_total_ht\":\"1.25000000\",\"multicurrency_total_tva\":\"0.25000000\",\"multicurrency_total_ttc\":\"1.50000000\"}},\"type\":\"0\",\"date\":1736982000,\"total_ht\":\"1.25000000\",\"total_tva\":\"0.25000000\",\"total_ttc\":\"1.50000000\",\"revenuestamp\":\"0.00000000\"}',12,1,0,'2025-01-16 10:33:36','Alice Adminson','24.0.0-alpha','V2','',NULL,NULL,NULL),
+(424,'2025-01-16 10:41:19','DOC_PREVIEW','takepos',1.50000000,1.25000000,'f1daed6d4977aed9427b2f6530c340b2613e0d9dbfc748d68cf5320af1def9ea','facture',460,'TC1-2501-0009','2025-01-16 00:00:00','{\"mycompany\":{\"name\":\"MyBigCompany\",\"phone\":\"09123123\",\"fax\":\"09123124\",\"email\":\"myemail@mybigcompany.com\",\"idprof1\":\"123456\",\"idprof2\":\"ABC-DEF\",\"idprof3\":\"15E-45-8D\",\"tva_assuj\":1,\"tva_intra\":\"FR12345678\",\"localtax1_assuj\":0,\"localtax2_assuj\":0,\"managers\":\"Zack Zeceo\",\"capital\":10000,\"forme_juridique_code\":0,\"country_code\":\"FR\",\"address\":\"21 Jump street.\",\"zip\":\"75500\",\"town\":\"MyTown\"},\"ref\":\"TC1-2501-0009\",\"module_source\":\"takepos\",\"pos_source\":\"1\",\"pos_print_counter\":6,\"email_sent_counter\":\"0\",\"invoiceline\":{\"1\":{\"ref\":\"POS-APPLE\",\"product_type\":\"0\",\"product_label\":\"Apple\",\"qty\":\"1\",\"subprice\":\"1.25000000\",\"tva_tx\":\"20.000\",\"localtax1_tx\":\"0.000\",\"localtax2_tx\":\"0.000\",\"total_ht\":\"1.25000000\",\"total_tva\":\"0.25000000\",\"total_localtax1\":\"0.00000000\",\"total_localtax2\":\"0.00000000\",\"total_ttc\":\"1.50000000\",\"info_bits\":\"0\",\"special_code\":\"0\",\"multicurrency_code\":\"EUR\",\"multicurrency_total_ht\":\"1.25000000\",\"multicurrency_total_tva\":\"0.25000000\",\"multicurrency_total_ttc\":\"1.50000000\"}},\"type\":\"0\",\"date\":1736982000,\"total_ht\":\"1.25000000\",\"total_tva\":\"0.25000000\",\"total_ttc\":\"1.50000000\",\"revenuestamp\":\"0.00000000\"}',12,1,0,'2025-01-16 11:41:19','Alice Adminson','24.0.0-alpha','V2','previoushash=24e0d354f83b5e216414930cfa0b07923725a98a0457969df3f962111932baa2 concatenateddatafirstpart=1|1737024079|DOC_PREVIEW|takepos|1.25|1.5|TC1-2501-0009|1736982000|Alice Adminson|| => signature=f1daed6d4977aed9427b2f6530c340b2613e0d9dbfc748d68cf5320af1def9ea',NULL,NULL,NULL),
+(431,'2025-01-16 11:55:00','BILL_SENTBYMAIL','takepos',1.50000000,1.25000000,'749dbdedc18a10087649f00ee3e6b27ce8d092c513450174dc54503959d8a2f8','facture',460,'TC1-2501-0009','2025-01-16 00:00:00','{\"mycompany\":{\"name\":\"MyBigCompany\",\"phone\":\"09123123\",\"fax\":\"09123124\",\"email\":\"myemail@mybigcompany.com\",\"idprof1\":\"123456\",\"idprof2\":\"ABC-DEF\",\"idprof3\":\"15E-45-8D\",\"tva_assuj\":1,\"tva_intra\":\"FR12345678\",\"localtax1_assuj\":0,\"localtax2_assuj\":0,\"managers\":\"Zack Zeceo\",\"capital\":10000,\"forme_juridique_code\":0,\"country_code\":\"FR\",\"address\":\"21 Jump street.\",\"zip\":\"75500\",\"town\":\"MyTown\"},\"ref\":\"TC1-2501-0009\",\"module_source\":\"takepos\",\"pos_source\":\"1\",\"pos_print_counter\":\"8\",\"email_sent_counter\":5,\"invoiceline\":{\"1\":{\"ref\":\"POS-APPLE\",\"product_type\":\"0\",\"product_label\":\"Apple\",\"qty\":\"1\",\"subprice\":\"1.25000000\",\"tva_tx\":\"20.000\",\"localtax1_tx\":\"0.000\",\"localtax2_tx\":\"0.000\",\"total_ht\":\"1.25000000\",\"total_tva\":\"0.25000000\",\"total_localtax1\":\"0.00000000\",\"total_localtax2\":\"0.00000000\",\"total_ttc\":\"1.50000000\",\"info_bits\":\"0\",\"special_code\":\"0\",\"multicurrency_code\":\"EUR\",\"multicurrency_total_ht\":\"1.25000000\",\"multicurrency_total_tva\":\"0.25000000\",\"multicurrency_total_ttc\":\"1.50000000\"}},\"type\":\"0\",\"date\":1736982000,\"total_ht\":\"1.25000000\",\"total_tva\":\"0.25000000\",\"total_ttc\":\"1.50000000\",\"revenuestamp\":\"0.00000000\",\"action_email_sent\":{\"email_from\":\"myemail@mybigcompany.com\",\"email_to\":\"ttt@ttt.com\",\"email_msgid\":\"6788f3948bc635.10121388.phpmail@cc385f40e47e5be82815b1fa583939f749c7f86e\"}}',12,1,0,'2025-01-16 12:55:00','Alice Adminson','24.0.0-alpha','V2','previoushash=f1daed6d4977aed9427b2f6530c340b2613e0d9dbfc748d68cf5320af1def9ea concatenateddatafirstpart=1|1737028500|BILL_SENTBYMAIL|takepos|1.25|1.5|TC1-2501-0009|1736982000|Alice Adminson|| => signature=749dbdedc18a10087649f00ee3e6b27ce8d092c513450174dc54503959d8a2f8',NULL,NULL,NULL),
+(432,'2025-01-16 11:57:34','BILL_SENTBYMAIL','takepos',1.50000000,1.25000000,'2456751468d90ed6cdd06da34cf8a392585eb152db6a9d457c8f6f97539a77ae','facture',460,'TC1-2501-0009','2025-01-16 00:00:00','{\"mycompany\":{\"name\":\"MyBigCompany\",\"phone\":\"09123123\",\"fax\":\"09123124\",\"email\":\"myemail@mybigcompany.com\",\"idprof1\":\"123456\",\"idprof2\":\"ABC-DEF\",\"idprof3\":\"15E-45-8D\",\"tva_assuj\":1,\"tva_intra\":\"FR12345678\",\"localtax1_assuj\":0,\"localtax2_assuj\":0,\"managers\":\"Zack Zeceo\",\"capital\":10000,\"forme_juridique_code\":0,\"country_code\":\"FR\",\"address\":\"21 Jump street.\",\"zip\":\"75500\",\"town\":\"MyTown\"},\"ref\":\"TC1-2501-0009\",\"module_source\":\"takepos\",\"pos_source\":\"1\",\"pos_print_counter\":\"6\",\"email_sent_counter\":2,\"invoiceline\":{\"1\":{\"ref\":\"POS-APPLE\",\"product_type\":\"0\",\"product_label\":\"Apple\",\"qty\":\"1\",\"subprice\":\"1.25000000\",\"tva_tx\":\"20.000\",\"localtax1_tx\":\"0.000\",\"localtax2_tx\":\"0.000\",\"total_ht\":\"1.25000000\",\"total_tva\":\"0.25000000\",\"total_localtax1\":\"0.00000000\",\"total_localtax2\":\"0.00000000\",\"total_ttc\":\"1.50000000\",\"info_bits\":\"0\",\"special_code\":\"0\",\"multicurrency_code\":\"EUR\",\"multicurrency_total_ht\":\"1.25000000\",\"multicurrency_total_tva\":\"0.25000000\",\"multicurrency_total_ttc\":\"1.50000000\"}},\"type\":\"0\",\"date\":1736982000,\"total_ht\":\"1.25000000\",\"total_tva\":\"0.25000000\",\"total_ttc\":\"1.50000000\",\"revenuestamp\":\"0.00000000\",\"action_email_sent\":{\"email_from\":\"aaaa <aaaa@aa.com>\",\"email_to\":\"test@test.com\",\"email_msgid\":\"6788f42ecbbfd9.77578037.phpmail-dolibarr-inv460@cc385f40e47e5be82815b1fa583939f749c7f86e\"}}',12,1,0,'2025-01-16 12:57:34','Alice Adminson','24.0.0-alpha','V2','previoushash=749dbdedc18a10087649f00ee3e6b27ce8d092c513450174dc54503959d8a2f8 concatenateddatafirstpart=1|1737028654|BILL_SENTBYMAIL|takepos|1.25|1.5|TC1-2501-0009|1736982000|Alice Adminson|| => signature=2456751468d90ed6cdd06da34cf8a392585eb152db6a9d457c8f6f97539a77ae',NULL,NULL,NULL);
 /*!40000 ALTER TABLE `llx_blockedlog` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -6754,7 +6812,7 @@ CREATE TABLE `llx_boxes` (
   KEY `idx_boxes_boxid` (`box_id`),
   KEY `idx_boxes_fk_user` (`fk_user`),
   CONSTRAINT `fk_boxes_box_id` FOREIGN KEY (`box_id`) REFERENCES `llx_boxes_def` (`rowid`)
-) ENGINE=InnoDB AUTO_INCREMENT=2223 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2226 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -6830,9 +6888,9 @@ INSERT INTO `llx_boxes` VALUES
 (2206,1,454,11,'B01',12,NULL,NULL),
 (2215,1,1297,0,'A01',0,NULL,NULL),
 (2216,1,1298,0,'B08',0,NULL,NULL),
-(2220,1,1306,0,'0',0,NULL,NULL),
-(2221,1,1307,0,'0',0,NULL,NULL),
-(2222,1,1308,0,'0',0,NULL,NULL);
+(2223,1,1309,0,'0',0,NULL,NULL),
+(2224,1,1310,0,'0',0,NULL,NULL),
+(2225,1,1311,0,'0',0,NULL,NULL);
 /*!40000 ALTER TABLE `llx_boxes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -6852,7 +6910,7 @@ CREATE TABLE `llx_boxes_def` (
   `fk_user` int(11) NOT NULL DEFAULT 0,
   PRIMARY KEY (`rowid`),
   UNIQUE KEY `uk_boxes_def` (`file`,`entity`,`note`)
-) ENGINE=InnoDB AUTO_INCREMENT=1309 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1312 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -6936,9 +6994,9 @@ INSERT INTO `llx_boxes_def` VALUES
 (1300,'box_graph_nb_ticket_last_x_days.php',1,'2025-06-04 16:31:05',NULL,0),
 (1301,'box_graph_nb_tickets_type.php',1,'2025-06-04 16:31:05',NULL,0),
 (1302,'box_new_vs_close_ticket.php',1,'2025-06-04 16:31:05',NULL,0),
-(1306,'box_boms.php',1,'2026-02-15 18:45:09',NULL,0),
-(1307,'box_comptes.php',1,'2026-02-15 18:45:09',NULL,0),
-(1308,'box_mos.php',1,'2026-02-15 18:45:09',NULL,0);
+(1309,'box_boms.php',1,'2025-01-16 09:06:39',NULL,0),
+(1310,'box_comptes.php',1,'2025-01-16 09:06:40',NULL,0),
+(1311,'box_mos.php',1,'2025-01-16 09:06:40',NULL,0);
 /*!40000 ALTER TABLE `llx_boxes_def` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -7029,7 +7087,7 @@ CREATE TABLE `llx_c_accounting_category` (
   `active` int(11) DEFAULT 1,
   PRIMARY KEY (`rowid`),
   UNIQUE KEY `uk_c_accounting_category` (`code`,`entity`,`fk_report`)
-) ENGINE=InnoDB AUTO_INCREMENT=94 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=97 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -7066,7 +7124,7 @@ CREATE TABLE `llx_c_accounting_report` (
   `active` int(11) DEFAULT 1,
   PRIMARY KEY (`rowid`),
   UNIQUE KEY `uk_c_accounting_report` (`code`,`entity`)
-) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -7401,7 +7459,7 @@ CREATE TABLE `llx_c_barcode_type` (
   `example` varchar(16) NOT NULL,
   PRIMARY KEY (`rowid`),
   UNIQUE KEY `uk_c_barcode_type` (`code`,`entity`)
-) ENGINE=InnoDB AUTO_INCREMENT=399 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=407 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -9364,7 +9422,7 @@ CREATE TABLE `llx_c_email_templates` (
   PRIMARY KEY (`rowid`),
   UNIQUE KEY `uk_c_email_templates` (`entity`,`label`,`lang`),
   KEY `idx_type` (`type_template`)
-) ENGINE=InnoDB AUTO_INCREMENT=1641 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1643 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -9481,7 +9539,8 @@ INSERT INTO `llx_c_email_templates` VALUES
 (1123,1,'marketplace','thirdparty','',0,NULL,NULL,'2024-12-30 17:05:39','(resetPasswordMarketplace)',120,1,'__(passwordResetRequest)__ [__[MAIN_INFO_SOCIETE_NOM]__]','__(marketplaceResetPasswordEmailContent)__',NULL,'1','0',NULL,NULL,NULL,NULL,0),
 (1124,1,'marketplace','order_send','',0,NULL,NULL,'2024-12-30 17:05:39','(BuyerOrderConfirmation)',140,1,'__(BuyerOrderConfirmation)__ __[MAIN_INFO_SOCIETE_NOM]__ __(marketplace)__','__(marketplaceBuyerOrderConfirmationContent)__',NULL,'1','0',NULL,NULL,NULL,NULL,0),
 (1125,1,'marketplace','order_send','',0,NULL,NULL,'2024-12-30 17:05:39','(SellerOrderNotification)',130,1,'__(SellerOrderNotification)__ __[MAIN_INFO_SOCIETE_NOM]__ __(marketplace)__','__(marketplaceSellersOrderConfirmationContent)__',NULL,'1','0',NULL,NULL,NULL,NULL,0),
-(1640,0,'ticket','ticket_send','',0,NULL,NULL,'2026-02-15 18:45:07','(SendingAdminEmailMessage)',100,1,'[__[MAIN_INFO_SOCIETE_NOM]__] __TICKET_EMAIL_SUBJECT__','__TICKET_EMAIL_BODY__<br><ul><li>(Title) : __TICKET_SUBJECT__</li><li>(Type) : __TICKET_TYPE__</li><li>(TicketCategory) : __TICKET_CATEGORY__</li><li>(Severity) : __TICKET_SEVERITY__</li><li>(From) : __TICKET_USER_ASSIGN__</li><li>(Company) : __THIRDPARTY_NAME__</li></ul><p>(Message) : <br><br>__TICKET_MESSAGE__ </p><br><p><a href=\"__TICKET_URL__\">(SeeThisTicketIntomanagementInterface)</a></p>',NULL,'isModEnabled(\"ticket\")','0',NULL,NULL,NULL,NULL,0);
+(1640,0,'ticket','ticket_send','',0,NULL,NULL,'2026-02-15 18:45:07','(SendingAdminEmailMessage)',100,1,'[__[MAIN_INFO_SOCIETE_NOM]__] __TICKET_EMAIL_SUBJECT__','__TICKET_EMAIL_BODY__<br><ul><li>(Title) : __TICKET_SUBJECT__</li><li>(Type) : __TICKET_TYPE__</li><li>(TicketCategory) : __TICKET_CATEGORY__</li><li>(Severity) : __TICKET_SEVERITY__</li><li>(From) : __TICKET_USER_ASSIGN__</li><li>(Company) : __THIRDPARTY_NAME__</li></ul><p>(Message) : <br><br>__TICKET_MESSAGE__ </p><br><p><a href=\"__TICKET_URL__\">(SeeThisTicketIntomanagementInterface)</a></p>',NULL,'isModEnabled(\"ticket\")','0',NULL,NULL,NULL,NULL,0),
+(1642,1,NULL,'facture_send','fr_FR',0,NULL,'2025-01-16 11:00:54','2025-01-16 10:31:38','Model POS',1,1,'Votre facture d\'achat','Test email<br>\n__REF__',NULL,'1','1',NULL,NULL,NULL,NULL,0);
 /*!40000 ALTER TABLE `llx_c_email_templates` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -10562,7 +10621,7 @@ CREATE TABLE `llx_c_partnership_type` (
   `active` tinyint(4) NOT NULL DEFAULT 1,
   PRIMARY KEY (`rowid`),
   UNIQUE KEY `uk_c_partnership_type` (`entity`,`code`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -11377,7 +11436,7 @@ CREATE TABLE `llx_c_ticket_category` (
   `public` int(11) DEFAULT 0,
   PRIMARY KEY (`rowid`),
   UNIQUE KEY `uk_code` (`code`,`entity`)
-) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -11410,7 +11469,7 @@ CREATE TABLE `llx_c_ticket_resolution` (
   `description` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`rowid`),
   UNIQUE KEY `uk_code` (`code`,`entity`)
-) ENGINE=InnoDB AUTO_INCREMENT=106 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=109 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -11445,7 +11504,7 @@ CREATE TABLE `llx_c_ticket_severity` (
   `description` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`rowid`),
   UNIQUE KEY `uk_code` (`code`,`entity`)
-) ENGINE=InnoDB AUTO_INCREMENT=121 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=125 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -11480,7 +11539,7 @@ CREATE TABLE `llx_c_ticket_type` (
   `description` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`rowid`),
   UNIQUE KEY `uk_code` (`code`,`entity`)
-) ENGINE=InnoDB AUTO_INCREMENT=217 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=224 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -11898,7 +11957,7 @@ CREATE TABLE `llx_c_type_container` (
   `typecontainer` varchar(10) DEFAULT 'page',
   PRIMARY KEY (`rowid`),
   UNIQUE KEY `uk_c_type_container_id` (`code`,`entity`)
-) ENGINE=InnoDB AUTO_INCREMENT=293 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=301 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -64768,7 +64827,7 @@ CREATE TABLE `llx_const` (
   `tms` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`rowid`),
   UNIQUE KEY `uk_const` (`name`,`entity`)
-) ENGINE=InnoDB AUTO_INCREMENT=19319 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=19569 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -65090,10 +65149,6 @@ INSERT INTO `llx_const` VALUES
 (6636,'MAIN_MODULE_TICKET_MODELS',1,'1','chaine',0,NULL,'2019-06-05 09:15:29'),
 (6795,'TICKET_ADDON',1,'mod_ticket_simple','chaine',0,'','2019-09-26 12:07:59'),
 (6796,'PRODUCT_CODEPRODUCT_ADDON',1,'mod_codeproduct_elephant','chaine',0,'','2019-09-26 12:59:00'),
-(6800,'CASHDESK_ID_THIRDPARTY1',1,'7','chaine',0,'','2019-09-26 15:30:09'),
-(6801,'CASHDESK_ID_BANKACCOUNT_CASH1',1,'3','chaine',0,'','2019-09-26 15:30:09'),
-(6802,'CASHDESK_ID_BANKACCOUNT_CHEQUE1',1,'4','chaine',0,'','2019-09-26 15:30:09'),
-(6803,'CASHDESK_ID_BANKACCOUNT_CB1',1,'4','chaine',0,'','2019-09-26 15:30:09'),
 (6804,'CASHDESK_ID_BANKACCOUNT_PRE1',1,'4','chaine',0,'','2019-09-26 15:30:09'),
 (6805,'CASHDESK_ID_BANKACCOUNT_VIR1',1,'1','chaine',0,'','2019-09-26 15:30:09'),
 (6811,'FORCEPROJECT_ON_PROPOSAL',1,'1','chaine',0,'','2019-09-27 14:52:57'),
@@ -65140,14 +65195,9 @@ INSERT INTO `llx_const` VALUES
 (7338,'EXTERNAL_RSS_URLRSS_1',1,'https://www.dolibarr.org/rss','chaine',0,'','2019-12-20 12:10:38'),
 (7339,'EXPENSEREPORT_ADDON',1,'mod_expensereport_jade','chaine',0,'','2019-12-20 16:33:46'),
 (7420,'CASHDESK_SERVICES',1,'0','chaine',0,'','2019-12-23 12:15:06'),
-(7421,'TAKEPOS_ROOT_CATEGORY_ID',1,'31','chaine',0,'','2019-12-23 12:15:06'),
 (7422,'TAKEPOSCONNECTOR',1,'0','chaine',0,'','2019-12-23 12:15:06'),
-(7424,'TAKEPOS_TICKET_VAT_GROUPPED',1,'0','chaine',0,'','2019-12-23 12:15:06'),
 (7425,'TAKEPOS_AUTO_PRINT_TICKETS',1,'0','int',0,'','2019-12-23 12:15:06'),
-(7426,'TAKEPOS_NUMPAD',1,'0','chaine',0,'','2019-12-23 12:15:06'),
-(7427,'TAKEPOS_NUM_TERMINALS',1,'1','chaine',0,'','2019-12-23 12:15:06'),
 (7429,'TAKEPOS_CUSTOM_RECEIPT',1,'0','int',0,'','2019-12-23 12:15:06'),
-(7430,'TAKEPOS_EMAIL_TEMPLATE_INVOICE',1,'-1','chaine',0,'','2019-12-23 12:15:06'),
 (7454,'MEMBER_NEWFORM_EDITAMOUNT',1,'0','chaine',0,'','2020-01-01 10:31:46'),
 (7489,'CAPTURESERVER_SECURITY_KEY',1,'securitykey123','chaine',0,'','2020-01-01 12:00:49'),
 (8136,'MAIN_AGENDA_ACTIONAUTO_EXPENSE_DELETE',1,'1','chaine',0,'','2020-01-02 19:56:28'),
@@ -65835,57 +65885,8 @@ INSERT INTO `llx_const` VALUES
 (19181,'MAIN_MODULE_EXTERNALSITE',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr_deprecated\"}','2025-07-10 13:22:31'),
 (19182,'MAIN_MODULE_EXTERNALSITE_MODULEFOREXTERNAL',1,'1','chaine',0,NULL,'2025-07-10 13:22:31'),
 (19215,'MAIN_LAST_PING_KO_DATE',1,'20260111174642','chaine',0,'','2026-01-11 17:46:42'),
-(19216,'MAIN_MODULE_ACCOUNTING',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2026-02-15 18:45:09'),
-(19217,'MAIN_MODULE_AGENDA',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2026-02-15 18:45:09'),
-(19218,'MAIN_MODULE_BOM',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2026-02-15 18:45:09'),
-(19219,'MAIN_MODULE_BANQUE',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2026-02-15 18:45:09'),
-(19220,'MAIN_MODULE_BARCODE',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2026-02-15 18:45:09'),
-(19221,'MAIN_MODULE_CRON',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2026-02-15 18:45:09'),
-(19222,'MAIN_MODULE_COMMANDE',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2026-02-15 18:45:09'),
-(19223,'MAIN_MODULE_DON',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2026-02-15 18:45:09'),
-(19224,'MAIN_MODULE_ECM',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2026-02-15 18:45:09'),
-(19225,'MAIN_MODULE_EVENTORGANIZATION',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2026-02-15 18:45:09'),
-(19226,'MAIN_MODULE_EVENTORGANIZATION_TRIGGERS',1,'1','chaine',0,NULL,'2026-02-15 18:45:09'),
-(19227,'MAIN_MODULE_EVENTORGANIZATION_MODELS',1,'1','chaine',0,NULL,'2026-02-15 18:45:09'),
-(19228,'EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF',1,'31','chaine',0,'','2026-02-15 18:45:09'),
-(19229,'EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH',1,'32','chaine',0,'','2026-02-15 18:45:09'),
-(19230,'EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH',1,'33','chaine',0,'','2026-02-15 18:45:09'),
-(19231,'EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT',1,'34','chaine',0,'','2026-02-15 18:45:09'),
-(19232,'MAIN_MODULE_EXPENSEREPORT',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2026-02-15 18:45:09'),
-(19233,'MAIN_MODULE_FACTURE',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2026-02-15 18:45:09'),
-(19234,'MAIN_MODULE_FOURNISSEUR',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2026-02-15 18:45:09'),
-(19235,'MAIN_MODULE_FICHEINTER',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2026-02-15 18:45:09'),
-(19236,'MAIN_MODULE_HOLIDAY',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2026-02-15 18:45:09'),
-(19237,'MAIN_MODULE_LOAN',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2026-02-15 18:45:09'),
-(19238,'MAIN_MODULE_MARGIN',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2026-02-15 18:45:09'),
-(19241,'MAIN_MODULE_MRP',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2026-02-15 18:45:09'),
-(19242,'MAIN_MODULE_OPENSURVEY',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2026-02-15 18:45:09'),
-(19243,'MAIN_MODULE_PARTNERSHIP',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2026-02-15 18:45:09'),
-(19244,'MAIN_MODULE_PARTNERSHIP_MODELS',1,'1','chaine',0,NULL,'2026-02-15 18:45:09'),
-(19245,'MAIN_MODULE_PRINTING',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2026-02-15 18:45:09'),
-(19246,'MAIN_MODULE_RECRUITMENT',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2026-02-15 18:45:09'),
-(19247,'MAIN_MODULE_RECRUITMENT_MODELS',1,'1','chaine',0,NULL,'2026-02-15 18:45:09'),
-(19248,'MAIN_MODULE_RESOURCE',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2026-02-15 18:45:09'),
-(19249,'MAIN_MODULE_SALARIES',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2026-02-15 18:45:09'),
-(19250,'MAIN_MODULE_SERVICE',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2026-02-15 18:45:09'),
-(19251,'MAIN_MODULE_SYSLOG',0,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2026-02-15 18:45:09'),
-(19252,'MAIN_MODULE_SOCIETE',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2026-02-15 18:45:09'),
-(19253,'MAIN_MODULE_STRIPE',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2026-02-15 18:45:09'),
-(19254,'MAIN_MODULE_TICKET',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2026-02-15 18:45:10'),
-(19255,'MAIN_MODULE_TICKET_TRIGGERS',1,'1','chaine',0,NULL,'2026-02-15 18:45:10'),
-(19256,'TAKEPOS_PRINT_METHOD',1,'browser','chaine',0,'','2026-02-15 18:45:10'),
-(19257,'MAIN_MODULE_TAKEPOS',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2026-02-15 18:45:10'),
-(19258,'MAIN_MODULE_TAKEPOS_SUBSTITUTIONS',1,'1','chaine',0,NULL,'2026-02-15 18:45:10'),
-(19259,'MAIN_MODULE_USER',0,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2026-02-15 18:45:10'),
-(19260,'MAIN_MODULE_VARIANTS',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2026-02-15 18:45:10'),
-(19261,'MAIN_MODULE_WEBSITE',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2026-02-15 18:45:10'),
 (19262,'MAIN_VERSION_LAST_UPGRADE',0,'24.0.0-alpha','chaine',0,'Dolibarr version for last upgrade','2026-02-15 18:45:11'),
-(19263,'MAIN_FIRST_PING_OK_DATE',1,'20260215184512','chaine',0,'','2026-02-15 18:45:12'),
-(19264,'MAIN_FIRST_PING_OK_ID',1,'7dd3b63bd8bc3462a2117e825dc3b36a12d8aee60ab6e1064a4b38a5a9d59282 - 24.0.0-alpha','chaine',0,'','2026-02-15 18:45:12'),
-(19265,'MAIN_FIRST_REGISTRATION_OK_DATE',1,'20260215184512','chaine',0,'','2026-02-15 18:45:12'),
-(19266,'MAIN_FIRST_REGISTRATION_OK_ID',1,'7dd3b63bd8bc3462a2117e825dc3b36a12d8aee60ab6e1064a4b38a5a9d59282 - 24.0.0-alpha','chaine',0,'','2026-02-15 18:45:12'),
 (19284,'BLOCKEDLOG_LAST_RECORD_FINGERPRINT',1,'0:none','chaine',0,'Last record fingerprint','2026-02-15 20:05:10'),
-(19285,'MAIN_IHM_PARAMS_REV',1,'716','chaine',0,'','2026-02-15 20:05:24'),
 (19286,'MAIN_FEATURES_LEVEL',0,'0','chaine',1,'Level of features to show (0=stable only, 1=stable+experimental, 2=stable+experimental+development','2026-02-15 20:15:38'),
 (19288,'MAIN_ENABLE_DOLISTORE',1,'0','chaine',1,'','2026-02-15 20:21:39'),
 (19289,'WEBSITE_PHP_ALLOW_WRITE',1,'1','chaine',1,'Allow the PHP web site to write content on disks','2026-02-15 20:21:39'),
@@ -65917,7 +65918,80 @@ INSERT INTO `llx_const` VALUES
 (19315,'MAIN_INFO_TVAINTRA',1,'FR12345678','chaine',0,'','2026-02-15 20:23:14'),
 (19316,'MAIN_INFO_SOCIETE_OBJECT',1,'A company demo to show how Dolibarr ERP CRM is wonderfull','chaine',0,'','2026-02-15 20:23:14'),
 (19317,'SOCIETE_FISCAL_MONTH_START',1,'4','chaine',0,'','2026-02-15 20:23:14'),
-(19318,'FACTURE_TVAOPTION',1,'1','chaine',0,'','2026-02-15 20:23:14');
+(19318,'FACTURE_TVAOPTION',1,'1','chaine',0,'','2026-02-15 20:23:14'),
+(19342,'BLOCKEDLOG_HMAC_KEY',0,'dolcrypt:AES-256-CTR:46cb611f00c4cff8:XVfEh15vX/JOYmpiw2QPNamcTQwdbBZJTcXBh9rMpzYJOpVPZubIWcgA8wHMXA==','chaine',0,'The secret key for HMAC used for blockedlog record','2026-02-17 20:15:19'),
+(19407,'TAKEPOS_TERMINAL_NAME_1',1,'Terminal 1','chaine',0,'','2026-02-17 20:59:26'),
+(19408,'CASHDESK_ID_THIRDPARTY1',1,'7','chaine',0,'','2026-02-17 20:59:26'),
+(19409,'CASHDESK_ID_BANKACCOUNT_CASH1',1,'3','chaine',0,'','2026-02-17 20:59:26'),
+(19410,'CASHDESK_ID_BANKACCOUNT_CHEQUE1',1,'4','chaine',0,'','2026-02-17 20:59:26'),
+(19411,'CASHDESK_ID_BANKACCOUNT_CB1',1,'4','chaine',0,'','2026-02-17 20:59:26'),
+(19412,'TAKEPOS_PRINTER_TO_USE1',1,'1','chaine',0,'','2026-02-17 20:59:26'),
+(19491,'MAIN_LAST_REGISTRATION_KO_DATE',1,'20250115084918','chaine',0,'','2025-01-15 08:49:18'),
+(19492,'MAIN_IHM_PARAMS_REV',1,'737','chaine',0,'','2025-01-15 08:51:02'),
+(19493,'BLOCKEDLOG_REGISTRATION_NAME',1,'MyBigCompany','chaine',0,'','2025-01-15 09:00:14'),
+(19494,'BLOCKEDLOG_REGISTRATION_EMAIL',1,'myemail@mybigcompany.com','chaine',0,'','2025-01-15 09:00:14'),
+(19495,'BLOCKEDLOG_REGISTRATION_COUNTRY_CODE',1,'FR','chaine',0,'','2025-01-15 09:00:14'),
+(19496,'BLOCKEDLOG_REGISTRATION_IDPROF1',1,'123456','chaine',0,'','2025-01-15 09:00:14'),
+(19497,'BLOCKEDLOG_REGISTRATION_ADDRESS',1,'21 Jump street.','chaine',0,'','2025-01-15 09:00:14'),
+(19498,'BLOCKEDLOG_REGISTRATION_STATE',1,'0','chaine',0,'','2025-01-15 09:00:14'),
+(19499,'BLOCKEDLOG_REGISTRATION_ZIP',1,'75500','chaine',0,'','2025-01-15 09:00:14'),
+(19500,'BLOCKEDLOG_REGISTRATION_TOWN',1,'MyTown','chaine',0,'','2025-01-15 09:00:14'),
+(19501,'MAIN_INFO_ITPROVIDER_STATE',1,'0','chaine',0,'','2025-01-15 09:00:14'),
+(19512,'MAIN_MODULE_BLOCKEDLOG',1,'1','string',0,'{\"authorid\":\"12\",\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2025-01-15 09:13:08'),
+(19513,'BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY',1,'FR','chaine',0,'This is list of country code where the module may be mandatory','2025-01-15 09:13:08'),
+(19514,'MAIN_FIRST_REGISTRATION_OK_DATE',1,'20250115091308','chaine',0,'','2025-01-15 09:13:08'),
+(19515,'MAIN_FIRST_REGISTRATION_OK_ID',1,'7dd3b63bd8bc3462a2117e825dc3b36a12d8aee60ab6e1064a4b38a5a9d59282 - 24.0.0-alpha','chaine',0,'','2025-01-15 09:13:08'),
+(19516,'MAIN_MODULE_ACCOUNTING',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2025-01-16 09:06:39'),
+(19517,'MAIN_MODULE_AGENDA',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2025-01-16 09:06:39'),
+(19518,'MAIN_MODULE_BOM',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2025-01-16 09:06:39'),
+(19519,'MAIN_MODULE_BANQUE',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2025-01-16 09:06:40'),
+(19520,'MAIN_MODULE_BARCODE',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2025-01-16 09:06:40'),
+(19521,'MAIN_MODULE_CRON',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2025-01-16 09:06:40'),
+(19522,'MAIN_MODULE_COMMANDE',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2025-01-16 09:06:40'),
+(19523,'MAIN_MODULE_DON',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2025-01-16 09:06:40'),
+(19524,'MAIN_MODULE_ECM',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2025-01-16 09:06:40'),
+(19525,'MAIN_MODULE_EVENTORGANIZATION',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2025-01-16 09:06:40'),
+(19526,'MAIN_MODULE_EVENTORGANIZATION_TRIGGERS',1,'1','chaine',0,NULL,'2025-01-16 09:06:40'),
+(19527,'MAIN_MODULE_EVENTORGANIZATION_MODELS',1,'1','chaine',0,NULL,'2025-01-16 09:06:40'),
+(19528,'EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF',1,'31','chaine',0,'','2025-01-16 09:06:40'),
+(19529,'EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH',1,'32','chaine',0,'','2025-01-16 09:06:40'),
+(19530,'EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH',1,'33','chaine',0,'','2025-01-16 09:06:40'),
+(19531,'EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT',1,'34','chaine',0,'','2025-01-16 09:06:40'),
+(19532,'MAIN_MODULE_EXPENSEREPORT',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2025-01-16 09:06:40'),
+(19533,'MAIN_MODULE_FACTURE',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2025-01-16 09:06:40'),
+(19534,'MAIN_MODULE_FOURNISSEUR',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2025-01-16 09:06:40'),
+(19535,'MAIN_MODULE_FICHEINTER',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2025-01-16 09:06:40'),
+(19536,'MAIN_MODULE_HOLIDAY',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2025-01-16 09:06:40'),
+(19537,'MAIN_MODULE_LOAN',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2025-01-16 09:06:40'),
+(19538,'MAIN_MODULE_MARGIN',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2025-01-16 09:06:40'),
+(19541,'MAIN_MODULE_MRP',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2025-01-16 09:06:40'),
+(19542,'MAIN_MODULE_OPENSURVEY',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2025-01-16 09:06:40'),
+(19543,'MAIN_MODULE_PARTNERSHIP',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2025-01-16 09:06:40'),
+(19544,'MAIN_MODULE_PARTNERSHIP_MODELS',1,'1','chaine',0,NULL,'2025-01-16 09:06:40'),
+(19545,'MAIN_MODULE_RECRUITMENT',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2025-01-16 09:06:40'),
+(19546,'MAIN_MODULE_RECRUITMENT_MODELS',1,'1','chaine',0,NULL,'2025-01-16 09:06:40'),
+(19547,'MAIN_MODULE_RESOURCE',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2025-01-16 09:06:40'),
+(19548,'MAIN_MODULE_SALARIES',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2025-01-16 09:06:40'),
+(19549,'MAIN_MODULE_SERVICE',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2025-01-16 09:06:40'),
+(19550,'MAIN_MODULE_SYSLOG',0,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2025-01-16 09:06:40'),
+(19551,'MAIN_MODULE_SOCIETE',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2025-01-16 09:06:40'),
+(19552,'MAIN_MODULE_STRIPE',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2025-01-16 09:06:40'),
+(19553,'MAIN_MODULE_TICKET',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2025-01-16 09:06:40'),
+(19554,'MAIN_MODULE_TICKET_TRIGGERS',1,'1','chaine',0,NULL,'2025-01-16 09:06:40'),
+(19555,'TAKEPOS_PRINT_METHOD',1,'browser','chaine',0,'','2025-01-16 09:06:40'),
+(19556,'MAIN_MODULE_TAKEPOS',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2025-01-16 09:06:40'),
+(19557,'MAIN_MODULE_TAKEPOS_SUBSTITUTIONS',1,'1','chaine',0,NULL,'2025-01-16 09:06:40'),
+(19558,'MAIN_MODULE_USER',0,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2025-01-16 09:06:40'),
+(19559,'MAIN_MODULE_VARIANTS',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2025-01-16 09:06:41'),
+(19560,'MAIN_MODULE_WEBSITE',1,'1','string',0,'{\"authorid\":0,\"ip\":\"127.0.0.1\",\"lastactivationversion\":\"dolibarr\"}','2025-01-16 09:06:41'),
+(19561,'MAIN_FIRST_PING_OK_DATE',1,'20250116090643','chaine',0,'','2025-01-16 09:06:43'),
+(19562,'MAIN_FIRST_PING_OK_ID',1,'7dd3b63bd8bc3462a2117e825dc3b36a12d8aee60ab6e1064a4b38a5a9d59282 - 24.0.0-alpha','chaine',0,'','2025-01-16 09:06:43'),
+(19563,'BLOCKEDLOG_ADD_DEBUG_INFO',1,'1','chaine',1,'','2025-01-16 09:19:31'),
+(19564,'TAKEPOS_ROOT_CATEGORY_ID',1,'31','chaine',0,'','2025-01-16 10:01:24'),
+(19565,'TAKEPOS_NUMPAD',1,'0','chaine',0,'','2025-01-16 10:01:24'),
+(19566,'TAKEPOS_SORTPRODUCTFIELD',1,'rowid','chaine',0,'','2025-01-16 10:01:24'),
+(19567,'TAKEPOS_NUM_TERMINALS',1,'2','chaine',0,'','2025-01-16 10:01:24'),
+(19568,'TAKEPOS_EMAIL_TEMPLATE_INVOICE',1,'1642','chaine',0,'','2025-01-16 10:01:24');
 /*!40000 ALTER TABLE `llx_const` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -66494,7 +66568,7 @@ CREATE TABLE `llx_document_model` (
   `tms` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`rowid`),
   UNIQUE KEY `uk_document_model` (`nom`,`type`,`entity`)
-) ENGINE=InnoDB AUTO_INCREMENT=989 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=999 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -66540,15 +66614,15 @@ INSERT INTO `llx_document_model` VALUES
 (895,'standard_movement_stock',1,'mouvement',NULL,NULL,'2026-01-11 17:46:25'),
 (896,'aurore',1,'supplier_proposal',NULL,NULL,'2026-01-11 17:46:25'),
 (925,'standard_evaluation',1,'evaluation',NULL,NULL,'2026-01-11 17:46:25'),
-(979,'eratosthene',1,'order',NULL,NULL,'2026-02-15 18:45:09'),
-(980,'html_cerfafr',1,'donation',NULL,NULL,'2026-02-15 18:45:09'),
-(981,'standard_expensereport',1,'expensereport',NULL,NULL,'2026-02-15 18:45:09'),
-(982,'sponge',1,'invoice',NULL,NULL,'2026-02-15 18:45:09'),
-(983,'cornas',1,'order_supplier',NULL,NULL,'2026-02-15 18:45:09'),
-(984,'soleil',1,'ficheinter',NULL,NULL,'2026-02-15 18:45:09'),
-(985,'vinci',1,'mrp',NULL,NULL,'2026-02-15 18:45:09'),
-(986,'standard_recruitmentjobposition',1,'recruitmentjobposition',NULL,NULL,'2026-02-15 18:45:09'),
-(987,'generic_recruitmentjobposition_odt',1,'recruitmentjobposition',NULL,NULL,'2026-02-15 18:45:09');
+(989,'eratosthene',1,'order',NULL,NULL,'2025-01-16 09:06:40'),
+(990,'html_cerfafr',1,'donation',NULL,NULL,'2025-01-16 09:06:40'),
+(991,'standard_expensereport',1,'expensereport',NULL,NULL,'2025-01-16 09:06:40'),
+(992,'sponge',1,'invoice',NULL,NULL,'2025-01-16 09:06:40'),
+(993,'cornas',1,'order_supplier',NULL,NULL,'2025-01-16 09:06:40'),
+(994,'soleil',1,'ficheinter',NULL,NULL,'2025-01-16 09:06:40'),
+(995,'vinci',1,'mrp',NULL,NULL,'2025-01-16 09:06:40'),
+(996,'standard_recruitmentjobposition',1,'recruitmentjobposition',NULL,NULL,'2025-01-16 09:06:40'),
+(997,'generic_recruitmentjobposition_odt',1,'recruitmentjobposition',NULL,NULL,'2025-01-16 09:06:40');
 /*!40000 ALTER TABLE `llx_document_model` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -66787,7 +66861,7 @@ CREATE TABLE `llx_ecm_files` (
   UNIQUE KEY `uk_ecm_files` (`filepath`,`filename`,`entity`),
   KEY `idx_ecm_files_label` (`label`),
   KEY `idx_ecm_files_src_object_type_id` (`src_object_type`,`src_object_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=766 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=775 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -67161,7 +67235,16 @@ INSERT INTO `llx_ecm_files` VALUES
 (762,'46a83a8bd7e15e4ae7abb7e213dfd880','2c74d0b87e44b5cccdefb0477ca30b3e',NULL,NULL,1,'logoFE2025.png','resource/Car Kangoo 1','logoFE2025.png','','',NULL,'uploaded',NULL,'2025-06-25 17:34:09','2025-06-25 15:34:09',12,NULL,NULL,NULL,NULL,1,'resource',1,NULL,NULL,NULL,NULL,NULL,NULL),
 (763,'6b80b3a62fb5d37fb302dcab1ff7fd18','2c74d0b87e44b5cccdefb0477ca30b3e',NULL,NULL,1,'logoFE2025.png','projet/PJ1607-0001','logoFE2025.png','','',NULL,'uploaded',NULL,'2025-06-25 17:36:15','2025-06-25 15:36:15',12,NULL,NULL,NULL,NULL,2,'projet',6,NULL,NULL,NULL,NULL,NULL,NULL),
 (764,'855a577c31e23fceaf5123046f618825','2c74d0b87e44b5cccdefb0477ca30b3e',NULL,NULL,1,'logoFE2025.png','projet/PJ1607-0001b','/home/ldestailleur/git/dolibarr_dev/documents/projet/PJ1607-0001b/logoFE2025.png','','',NULL,'unknown',NULL,'2025-06-25 17:36:27','2025-06-25 15:36:27',12,NULL,NULL,NULL,NULL,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
-(765,'3199f88485240ddfcf711732e252ca21','cb924977cc584f9f1de7dca59f30bbd1',NULL,NULL,1,'FI2506-0004.pdf','ficheinter/FI2506-0004','/home/ldestailleur/git/dolibarr_dev/documents/ficheinter/(PROV5)/(PROV5).pdf','','',NULL,'unknown',NULL,'2025-06-26 22:50:36','2025-06-26 22:50:40',12,NULL,NULL,NULL,NULL,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+(765,'3199f88485240ddfcf711732e252ca21','cb924977cc584f9f1de7dca59f30bbd1',NULL,NULL,1,'FI2506-0004.pdf','ficheinter/FI2506-0004','/home/ldestailleur/git/dolibarr_dev/documents/ficheinter/(PROV5)/(PROV5).pdf','','',NULL,'unknown',NULL,'2025-06-26 22:50:36','2025-06-26 22:50:40',12,NULL,NULL,NULL,NULL,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(766,'8ed976195a8649d8ed2021afd0cba3e5','7cfcd15d091ea6a920eb96e4d8afad45',NULL,NULL,1,'unalterable-log-archive-dolibarr_test-202602-20260216174509UTC-INCOMPLETE.csv','blockedlog/archives','/home/ldestailleur/git/dolibarr_test/documents/blockedlog/archives/unalterable-log-archive-dolibarr_test-202602-20260216174509UTC-INCOMPLETE.csv','','',NULL,'unknown',NULL,'2026-02-17 21:19:31','2026-02-17 20:19:31',12,NULL,NULL,NULL,NULL,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(767,'8ae6a26769ff9e462db3a160342bf7ef','6cfd3785a62e56c6530f161a061485d7',NULL,NULL,1,'unalterable-log-archive-dolibarr_test-202602-20260216182025UTC-INCOMPLETE.csv','blockedlog/archives','/home/ldestailleur/git/dolibarr_test/documents/blockedlog/archives/unalterable-log-archive-dolibarr_test-202602-20260216182025UTC-INCOMPLETE.csv','','',NULL,'unknown',NULL,'2026-02-17 21:19:31','2026-02-17 20:19:31',12,NULL,NULL,NULL,NULL,2,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(768,'aa82511f1fda1cdac80ebbe76e453f09','5e9f2a2add3196770fbd836c74d712ca',NULL,NULL,1,'unalterable-log-archive-dolibarr_test-202601-20250115091442UTC-INCOMPLETE.csv','blockedlog/archives','/home/ldestailleur/git/dolibarr_test/documents/blockedlog/archives/unalterable-log-archive-dolibarr_test-202601-20250115091442UTC-INCOMPLETE.csv','','',NULL,'unknown',NULL,'2025-01-15 10:14:42','2025-01-15 09:14:42',12,NULL,NULL,NULL,NULL,3,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(769,'4e603917394e2830c0394a1bea543e3b','18d401f9262952ba6961dda32274cd65',NULL,NULL,1,'unalterable-log-archive-dolibarr_test-202512-20250115091512UTC-INCOMPLETE.csv','blockedlog/archives','/home/ldestailleur/git/dolibarr_test/documents/blockedlog/archives/unalterable-log-archive-dolibarr_test-202512-20250115091512UTC-INCOMPLETE.csv','','',NULL,'unknown',NULL,'2025-01-15 10:15:12','2025-01-15 09:15:12',12,NULL,NULL,NULL,NULL,4,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(770,'785c010afc56fd3cc1e907dfc7a22698','0efd4955f56d5cf7493ac48eac67f9c0',NULL,NULL,1,'unalterable-log-archive-dolibarr_test-202401-20250115091545UTC-DONOTMODIFY.csv','blockedlog/archives','/home/ldestailleur/git/dolibarr_test/documents/blockedlog/archives/unalterable-log-archive-dolibarr_test-202401-20250115091545UTC-DONOTMODIFY.csv','','',NULL,'unknown',NULL,'2025-01-15 10:15:45','2025-01-15 09:15:45',12,NULL,NULL,NULL,NULL,5,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(771,'a96b7e4b6d6c43adf271c987f9dda788','0f4310d18d53f62f924254b248e9f93f',NULL,NULL,1,'unalterable-log-archive-dolibarr_test-202401-20250115091710UTC-DONOTMODIFY.csv','blockedlog/archives','/home/ldestailleur/git/dolibarr_test/documents/blockedlog/archives/unalterable-log-archive-dolibarr_test-202401-20250115091710UTC-DONOTMODIFY.csv','','',NULL,'unknown',NULL,'2025-01-15 10:17:10','2025-01-15 09:17:10',12,NULL,NULL,NULL,NULL,6,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(772,'a15c014bea732910439a3e9350da9f05','3fed8a3de5c8b412a22232894d6afe9a','6QJm1zb44KM06Zd57sY4sH9TumjFNmGn',NULL,1,'FA2501-0037.pdf','facture/FA2501-0037','','','',NULL,'generated',NULL,'2025-01-15 10:21:53','2025-01-15 09:22:43',12,12,NULL,NULL,NULL,1,'facture',458,NULL,NULL,NULL,NULL,NULL,NULL),
+(773,'5d2c8b413664ae24d1ff561416c7363e','8371af60641c266ab50859d1802fb9de','O9zKUu6C8njW5l92O0RnA2FbcU7kf4bN',NULL,1,'FA2501-0038.pdf','facture/FA2501-0038','','','',NULL,'generated',NULL,'2025-01-16 10:07:13','2025-01-16 09:07:13',12,12,NULL,NULL,NULL,1,'facture',459,NULL,NULL,NULL,NULL,NULL,NULL),
+(774,'dc8523ce2666fe97a38aff78ce5ceb12','f37747c26ccc27a08bea6f30c6fa1c23','09YeuM7onJKE7LO0d4To2tN5It0teS3e',NULL,1,'TC1-2501-0009.pdf','facture/TC1-2501-0009','','','',NULL,'generated',NULL,'2025-01-16 10:08:56','2025-01-16 09:08:56',12,NULL,NULL,NULL,NULL,1,'facture',460,NULL,NULL,NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `llx_ecm_files` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -67362,7 +67445,7 @@ CREATE TABLE `llx_element_element` (
   PRIMARY KEY (`rowid`),
   UNIQUE KEY `idx_element_element_idx1` (`fk_source`,`sourcetype`,`fk_target`,`targettype`),
   KEY `idx_element_element_fk_target` (`fk_target`)
-) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -67408,7 +67491,8 @@ INSERT INTO `llx_element_element` VALUES
 (38,84,'commande',249,'facture',NULL),
 (39,84,'commande',250,'facture',NULL),
 (41,85,'commande',447,'facture',NULL),
-(42,78,'commande',4,'shipping',NULL);
+(42,78,'commande',4,'shipping',NULL),
+(43,11,'subscription',459,'facture',NULL);
 /*!40000 ALTER TABLE `llx_element_element` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -67909,7 +67993,7 @@ CREATE TABLE `llx_events` (
   `fk_oauth_token` int(11) DEFAULT NULL,
   PRIMARY KEY (`rowid`),
   KEY `idx_events_dateevent` (`dateevent`)
-) ENGINE=InnoDB AUTO_INCREMENT=2144 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2161 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -69872,7 +69956,24 @@ INSERT INTO `llx_events` VALUES
 (2140,'2025-07-10 13:00:34','USER_LOGIN',1,'2025-07-10 13:00:34',12,'UserLogged - TZ=1;TZString=Europe/Paris;Screen=1920x919 - authmode=dolibarr - entity=1','127.0.0.1','Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36',NULL,'2ffc68d5704ae54c298623177314b3696a31b7bb',NULL,NULL),
 (2141,'2026-01-11 17:46:41','USER_LOGIN',1,'2026-01-11 18:46:41',12,'UserLogged - TZ=1;TZString=Europe/Paris;Screen=1920x919 - authmode=dolibarr - entity=1','127.0.0.1','Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',NULL,'7caa8ad5ba989d3d0e4259fb142a9e5817324a21',NULL,NULL),
 (2142,'2026-02-15 20:13:58','USER_LOGOUT',1,'2026-02-15 21:13:58',12,'UserLogoff','127.0.0.1','Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36',NULL,'cc385f40e47e5be82815b1fa583939f749c7f86e',NULL,NULL),
-(2143,'2026-02-15 20:14:00','USER_LOGIN',1,'2026-02-15 21:14:00',12,'UserLogged - TZ=1;TZString=Europe/Paris;Screen=1920x919 - authmode=dolibarr - entity=1','127.0.0.1','Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36',NULL,'cc385f40e47e5be82815b1fa583939f749c7f86e',NULL,NULL);
+(2143,'2026-02-15 20:14:00','USER_LOGIN',1,'2026-02-15 21:14:00',12,'UserLogged - TZ=1;TZString=Europe/Paris;Screen=1920x919 - authmode=dolibarr - entity=1','127.0.0.1','Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36',NULL,'cc385f40e47e5be82815b1fa583939f749c7f86e',NULL,NULL),
+(2144,'2026-02-17 19:59:02','USER_LOGIN',1,'2026-02-17 20:59:02',12,'UserLogged - TZ=1;TZString=Europe/Paris;Screen=1920x919 - authmode=dolibarr - entity=1','127.0.0.1','Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36',NULL,'cc385f40e47e5be82815b1fa583939f749c7f86e',NULL,NULL),
+(2145,'2026-02-17 21:37:51','USER_LOGIN',1,'2026-02-17 22:37:51',12,'UserLogged - TZ=1;TZString=Europe/Paris;Screen=1920x919 - authmode=dolibarr - entity=1','127.0.0.1','Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36',NULL,'cc385f40e47e5be82815b1fa583939f749c7f86e',NULL,NULL),
+(2146,'2025-01-16 08:30:16','USER_LOGIN',1,'2025-01-16 09:30:16',12,'UserLogged - TZ=1;TZString=Europe/Paris;Screen=1920x919 - authmode=dolibarr - entity=1','127.0.0.1','Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36',NULL,'cc385f40e47e5be82815b1fa583939f749c7f86e',NULL,NULL),
+(2147,'2025-01-16 08:30:30','USER_LOGIN_FAILED',1,'2025-01-16 09:30:30',12,'UserLoginFailed - ErrorUserSessionWasInvalidated - login=admin','127.0.0.1','Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36',NULL,'cc385f40e47e5be82815b1fa583939f749c7f86e',NULL,NULL),
+(2148,'2025-01-16 08:30:38','USER_LOGIN',1,'2025-01-16 09:30:38',12,'UserLogged - TZ=1;TZString=Europe/Paris;Screen=1920x919 - authmode=dolibarr - entity=1','127.0.0.1','Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36',NULL,'cc385f40e47e5be82815b1fa583939f749c7f86e',NULL,NULL),
+(2149,'2025-01-16 08:30:41','USER_LOGIN_FAILED',1,'2025-01-16 09:30:41',12,'UserLoginFailed - ErrorUserSessionWasInvalidated - login=admin','127.0.0.1','Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36',NULL,'cc385f40e47e5be82815b1fa583939f749c7f86e',NULL,NULL),
+(2150,'2025-01-16 08:30:46','USER_LOGIN',1,'2025-01-16 09:30:46',12,'UserLogged - TZ=1;TZString=Europe/Paris;Screen=1920x919 - authmode=dolibarr - entity=1','127.0.0.1','Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36',NULL,'cc385f40e47e5be82815b1fa583939f749c7f86e',NULL,NULL),
+(2151,'2025-01-16 08:30:48','USER_LOGIN_FAILED',1,'2025-01-16 09:30:48',12,'UserLoginFailed - ErrorUserSessionWasInvalidated - login=admin','127.0.0.1','Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36',NULL,'cc385f40e47e5be82815b1fa583939f749c7f86e',NULL,NULL),
+(2152,'2025-01-16 08:31:00','USER_LOGIN',1,'2025-01-16 09:31:00',12,'UserLogged - TZ=1;TZString=Europe/Paris;Screen=1920x919 - authmode=dolibarr - entity=1','127.0.0.1','Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36',NULL,'cc385f40e47e5be82815b1fa583939f749c7f86e',NULL,NULL),
+(2153,'2025-01-16 08:31:02','USER_LOGIN_FAILED',1,'2025-01-16 09:31:02',12,'UserLoginFailed - ErrorUserSessionWasInvalidated - login=admin','127.0.0.1','Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36',NULL,'cc385f40e47e5be82815b1fa583939f749c7f86e',NULL,NULL),
+(2154,'2025-01-16 08:31:04','USER_LOGIN',1,'2025-01-16 09:31:04',12,'UserLogged - TZ=1;TZString=Europe/Paris;Screen=1920x919 - authmode=dolibarr - entity=1','127.0.0.1','Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36',NULL,'cc385f40e47e5be82815b1fa583939f749c7f86e',NULL,NULL),
+(2155,'2025-01-16 08:30:12','USER_LOGIN_FAILED',1,'2025-01-16 09:30:12',12,'UserLoginFailed - ErrorUserSessionWasInvalidated - login=admin','127.0.0.1','Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36',NULL,'cc385f40e47e5be82815b1fa583939f749c7f86e',NULL,NULL),
+(2156,'2025-01-16 08:30:25','USER_LOGIN',1,'2025-01-16 09:30:25',12,'UserLogged - TZ=1;TZString=Europe/Paris;Screen=1920x919 - authmode=dolibarr - entity=1','127.0.0.1','Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36',NULL,'cc385f40e47e5be82815b1fa583939f749c7f86e',NULL,NULL),
+(2157,'2025-01-16 08:30:27','USER_LOGIN_FAILED',1,'2025-01-16 09:30:27',12,'UserLoginFailed - ErrorUserSessionWasInvalidated - login=admin','127.0.0.1','Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36',NULL,'cc385f40e47e5be82815b1fa583939f749c7f86e',NULL,NULL),
+(2158,'2025-01-16 08:30:36','USER_LOGIN',1,'2025-01-16 09:30:36',12,'UserLogged - TZ=1;TZString=Europe/Paris;Screen=1920x919 - authmode=dolibarr - entity=1','127.0.0.1','Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36',NULL,'cc385f40e47e5be82815b1fa583939f749c7f86e',NULL,NULL),
+(2159,'2025-01-16 08:32:48','USER_LOGIN_FAILED',1,'2025-01-16 09:32:48',12,'UserLoginFailed - ErrorUserSessionWasInvalidated - login=admin','127.0.0.1','Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36',NULL,'cc385f40e47e5be82815b1fa583939f749c7f86e',NULL,NULL),
+(2160,'2025-01-16 08:36:05','USER_LOGIN',1,'2025-01-16 09:36:05',12,'UserLogged - TZ=1;TZString=Europe/Paris;Screen=1920x919 - authmode=dolibarr - entity=1','127.0.0.1','Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36',NULL,'cc385f40e47e5be82815b1fa583939f749c7f86e',NULL,NULL);
 /*!40000 ALTER TABLE `llx_events` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -70623,7 +70724,7 @@ CREATE TABLE `llx_facture` (
   CONSTRAINT `fk_facture_fk_soc` FOREIGN KEY (`fk_soc`) REFERENCES `llx_societe` (`rowid`),
   CONSTRAINT `fk_facture_fk_user_author` FOREIGN KEY (`fk_user_author`) REFERENCES `llx_user` (`rowid`),
   CONSTRAINT `fk_facture_fk_user_valid` FOREIGN KEY (`fk_user_valid`) REFERENCES `llx_user` (`rowid`)
-) ENGINE=InnoDB AUTO_INCREMENT=458 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=461 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -70697,7 +70798,10 @@ INSERT INTO `llx_facture` VALUES
 (452,'TC1-2505-0005',1,NULL,NULL,0,NULL,NULL,7,'2024-05-10 14:40:07','2024-05-10','2024-05-10 14:41:50','2025-05-10 14:41:50','2026-02-15 18:44:54',1,0,0,0,NULL,NULL,NULL,0.34000000,0.00000000,0.00000000,0.00000000,1.66000000,2.00000000,2,12,NULL,12,12,NULL,NULL,NULL,NULL,0,6,'2024-05-10',NULL,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,0,NULL,0,0,'',NULL,NULL,0,'EUR',1.00000000,1.66000000,0.34000000,2.00000000,NULL,'facture/TC1-2505-0005/TC1-2505-0005.pdf',NULL,'takepos','1',NULL,NULL,0,NULL,0,0,NULL),
 (454,'TC1-2505-0006',1,NULL,NULL,0,NULL,NULL,7,'2024-05-10 14:43:27','2024-05-10','2024-05-10 14:43:32','2025-05-10 14:43:32','2026-02-15 18:44:54',1,0,0,0,NULL,NULL,NULL,0.00000000,0.00000000,0.00000000,0.00000000,18.00000000,18.00000000,2,12,NULL,12,12,NULL,NULL,NULL,NULL,0,6,'2024-05-10',NULL,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,0,NULL,0,0,'',NULL,NULL,0,'EUR',1.00000000,18.00000000,0.00000000,18.00000000,NULL,'facture/TC1-2505-0006/TC1-2505-0006.pdf',NULL,'takepos','1',NULL,NULL,0,NULL,0,0,NULL),
 (455,'TC1-2505-0007',1,NULL,NULL,0,NULL,NULL,7,'2024-05-10 14:51:14','2024-05-10','2024-05-10 14:52:34','2025-05-10 14:52:34','2026-02-15 18:44:54',1,0,0,0,NULL,NULL,NULL,0.62000000,0.00000000,0.00000000,0.00000000,3.08000000,3.70000000,2,12,NULL,12,12,NULL,NULL,NULL,NULL,0,6,'2024-05-10',NULL,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,0,NULL,0,0,'',NULL,NULL,0,'EUR',1.00000000,3.08000000,0.62000000,3.70000000,NULL,'facture/TC1-2505-0007/TC1-2505-0007.pdf',NULL,'takepos','1',NULL,NULL,0,NULL,0,0,NULL),
-(456,'TC1-2505-0008',1,NULL,NULL,0,NULL,NULL,7,'2024-05-10 14:52:39','2024-05-10','2024-05-10 16:12:58','2025-05-10 16:12:58','2026-02-15 18:44:54',1,0,0,0,NULL,NULL,NULL,0.62000000,0.00000000,0.00000000,0.00000000,3.08000000,3.70000000,2,12,NULL,12,12,NULL,NULL,NULL,NULL,0,6,'2024-05-10',NULL,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,0,NULL,0,0,'',NULL,NULL,0,'EUR',1.00000000,3.08000000,0.62000000,3.70000000,NULL,'facture/TC1-2505-0008/TC1-2505-0008.pdf',NULL,'takepos','1',NULL,NULL,0,NULL,0,0,NULL);
+(456,'TC1-2505-0008',1,NULL,NULL,0,NULL,NULL,7,'2024-05-10 14:52:39','2024-05-10','2024-05-10 16:12:58','2025-05-10 16:12:58','2026-02-15 18:44:54',1,0,0,0,NULL,NULL,NULL,0.62000000,0.00000000,0.00000000,0.00000000,3.08000000,3.70000000,2,12,NULL,12,12,NULL,NULL,NULL,NULL,0,6,'2024-05-10',NULL,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,0,NULL,0,0,'',NULL,NULL,0,'EUR',1.00000000,3.08000000,0.62000000,3.70000000,NULL,'facture/TC1-2505-0008/TC1-2505-0008.pdf',NULL,'takepos','1',NULL,NULL,0,NULL,0,0,NULL),
+(458,'FA2501-0037',1,NULL,NULL,0,NULL,NULL,26,'2025-01-15 10:21:53','2025-01-15','2025-01-15 10:22:43',NULL,'2025-01-15 09:22:43',0,0,0,0,NULL,NULL,NULL,0.00000000,0.00000000,0.00000000,0.00000000,9.00000000,9.00000000,1,12,NULL,12,NULL,NULL,NULL,3,NULL,2,0,'2025-02-14',NULL,0,NULL,NULL,'crabe',NULL,NULL,NULL,NULL,1,0,'2025-02-14',0,0,'',NULL,NULL,1,'EUR',1.00000000,9.00000000,0.00000000,9.00000000,NULL,'facture/FA2501-0037/FA2501-0037.pdf',NULL,NULL,NULL,NULL,0,0,NULL,0,0,NULL),
+(459,'FA2501-0038',1,NULL,NULL,0,NULL,NULL,64,'2025-01-16 10:07:13','2025-01-16','2025-01-16 10:07:13','2025-01-16 10:07:13','2025-01-16 09:07:13',1,0,0,0,NULL,NULL,NULL,0.00000000,0.00000000,0.00000000,0.00000000,11.00000000,11.00000000,2,12,NULL,12,12,NULL,NULL,4,NULL,1,0,'2025-01-16',NULL,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,0,NULL,0,0,'',NULL,NULL,0,'EUR',1.00000000,11.00000000,0.00000000,11.00000000,NULL,'facture/FA2501-0038/FA2501-0038.pdf',NULL,NULL,NULL,NULL,NULL,0,NULL,0,0,NULL),
+(460,'TC1-2501-0009',1,NULL,NULL,0,NULL,NULL,7,'2025-01-16 10:08:50','2025-01-16','2025-01-16 10:08:55','2025-01-16 10:08:56','2025-01-16 11:57:34',1,0,0,0,NULL,NULL,NULL,0.25000000,0.00000000,0.00000000,0.00000000,1.25000000,1.50000000,2,12,NULL,12,12,NULL,NULL,NULL,NULL,0,4,'2025-01-16',NULL,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,0,NULL,0,0,'',NULL,NULL,0,'EUR',1.00000000,1.25000000,0.25000000,1.50000000,NULL,'facture/TC1-2501-0009/TC1-2501-0009.pdf',NULL,'takepos','1',NULL,NULL,0,NULL,6,2,NULL);
 /*!40000 ALTER TABLE `llx_facture` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -71387,7 +71491,7 @@ CREATE TABLE `llx_facturedet` (
   KEY `idx_facturedet_fk_code_ventilation` (`fk_code_ventilation`),
   CONSTRAINT `fk_facturedet_fk_facture` FOREIGN KEY (`fk_facture`) REFERENCES `llx_facture` (`rowid`),
   CONSTRAINT `fk_facturedet_fk_unit` FOREIGN KEY (`fk_unit`) REFERENCES `llx_c_units` (`rowid`)
-) ENGINE=InnoDB AUTO_INCREMENT=2077 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2080 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -71514,7 +71618,10 @@ INSERT INTO `llx_facturedet` VALUES
 (2068,455,NULL,28,NULL,'',20.000,'',0.000,'0',0.000,'0',1,0,0,NULL,2.00000000,0.00000000,NULL,2.00000000,0.40000000,0.00000000,0.00000000,2.40000000,0,NULL,NULL,0,NULL,0.00000000,0,0,1,NULL,NULL,100,NULL,NULL,12,12,0,'EUR',2.00000000,0.00000000,2.00000000,0.40000000,2.40000000,'','',0,NULL),
 (2069,455,NULL,27,NULL,'',20.000,'',0.000,'0',0.000,'0',1,0,0,NULL,1.08333000,0.00000000,NULL,1.08000000,0.22000000,0.00000000,0.00000000,1.30000000,0,NULL,NULL,0,NULL,0.00000000,0,0,2,NULL,NULL,100,NULL,NULL,12,12,0,'EUR',1.08333000,0.00000000,1.08000000,0.22000000,1.30000000,'','',0,NULL),
 (2070,456,NULL,28,NULL,'',20.000,'',0.000,'0',0.000,'0',1,0,0,NULL,2.00000000,0.00000000,NULL,2.00000000,0.40000000,0.00000000,0.00000000,2.40000000,0,NULL,NULL,0,NULL,0.00000000,0,0,1,NULL,NULL,100,NULL,NULL,12,12,0,'EUR',2.00000000,0.00000000,2.00000000,0.40000000,2.40000000,'','',0,NULL),
-(2071,456,NULL,27,NULL,'',20.000,'',0.000,'0',0.000,'0',1,0,0,NULL,1.08333000,0.00000000,NULL,1.08000000,0.22000000,0.00000000,0.00000000,1.30000000,0,NULL,NULL,0,NULL,0.00000000,0,0,2,NULL,NULL,100,NULL,NULL,12,12,0,'EUR',1.08333000,0.00000000,1.08000000,0.22000000,1.30000000,'','',0,NULL);
+(2071,456,NULL,27,NULL,'',20.000,'',0.000,'0',0.000,'0',1,0,0,NULL,1.08333000,0.00000000,NULL,1.08000000,0.22000000,0.00000000,0.00000000,1.30000000,0,NULL,NULL,0,NULL,0.00000000,0,0,2,NULL,NULL,100,NULL,NULL,12,12,0,'EUR',1.08333000,0.00000000,1.08000000,0.22000000,1.30000000,'','',0,NULL),
+(2077,458,NULL,1,NULL,'A beatifull pink dress',0.000,'',0.000,'0',0.000,'0',1,0,0,NULL,9.00000000,0.00000000,NULL,9.00000000,0.00000000,0.00000000,0.00000000,9.00000000,0,NULL,NULL,0,NULL,79.16667000,0,0,1,NULL,NULL,100,NULL,NULL,12,12,1,'EUR',9.00000000,0.00000000,9.00000000,0.00000000,9.00000000,'','',0,NULL),
+(2078,459,NULL,NULL,NULL,'Adhésion / cotisation 2025',0.000,'',0.000,'0',0.000,'0',1,0,0,NULL,11.00000000,0.00000000,NULL,11.00000000,0.00000000,0.00000000,0.00000000,11.00000000,1,'2025-01-16 00:00:00',NULL,0,NULL,0.00000000,0,0,1,NULL,NULL,100,NULL,NULL,12,12,0,'EUR',11.00000000,0.00000000,11.00000000,0.00000000,11.00000000,'','',0,NULL),
+(2079,460,NULL,25,NULL,'',20.000,'',0.000,'0',0.000,'0',1,0,0,NULL,1.25000000,0.00000000,NULL,1.25000000,0.25000000,0.00000000,0.00000000,1.50000000,0,NULL,NULL,0,NULL,0.00000000,0,0,1,NULL,NULL,100,NULL,NULL,12,12,0,'EUR',1.25000000,0.00000000,1.25000000,0.25000000,1.50000000,'','',0,NULL);
 /*!40000 ALTER TABLE `llx_facturedet` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -73353,7 +73460,7 @@ CREATE TABLE `llx_menu` (
   `showtopmenuinframe` int(11) DEFAULT 0,
   PRIMARY KEY (`rowid`),
   KEY `idx_menu_menuhandler_type` (`menu_handler`,`type`)
-) ENGINE=InnoDB AUTO_INCREMENT=237473 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=237539 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -73741,63 +73848,63 @@ INSERT INTO `llx_menu` VALUES
 (237193,'all',1,'aaa','left','aaa',-1,NULL,'aaa',1002,'/aaa/categorie_list.php','','Categorie','<span class=\"fas fa-file paddingright pictofixedwidth valignmiddle\" style=\"\"></span>','aaa@aaa',NULL,'categorie','1','isModEnabled(\"aaa\")',2,'2025-05-05 13:06:00',0),
 (237194,'all',1,'aaa','left','aaa',-1,'categorie','aaa',1003,'/aaa/categorie_list.php','','List Categorie','','aaa@aaa',NULL,'aaa_categorie_list','1','isModEnabled(\"aaa\")',2,'2025-05-05 13:06:00',0),
 (237195,'all',1,'aaa','left','aaa',-1,'categorie','aaa',1004,'/aaa/categorie_card.php?action=create','','New Categorie','','aaa@aaa',NULL,'aaa_categorie_new','1','isModEnabled(\"aaa\")',2,'2025-05-05 13:06:00',0),
-(237415,'all',1,'agenda','top','agenda',0,NULL,NULL,86,'/comm/action/index.php','','TMenuAgenda','<span class=\"fas fa-calendar-alt infobox-action pictofixedwidth\" style=\"\"></span>','agenda',NULL,NULL,'$user->hasRight(\"agenda\", \"myactions\", \"read\") || $user->hasRight(\"resource\", \"read\")','isModEnabled(\"agenda\") || isModEnabled(\"resource\")',2,'2026-02-15 18:45:09',0),
-(237416,'all',1,'agenda','left','agenda',237415,NULL,NULL,100,'/comm/action/index.php?mainmenu=agenda&amp;leftmenu=agenda','','Actions','<span class=\"fas fa-calendar-alt infobox-action paddingright pictofixedwidth\" style=\"\"></span>','agenda',NULL,NULL,'$user->hasRight(\"agenda\", \"myactions\", \"read\")','isModEnabled(\"agenda\")',2,'2026-02-15 18:45:09',0),
-(237417,'all',1,'agenda','left','agenda',237416,NULL,NULL,101,'/comm/action/card.php?mainmenu=agenda&amp;leftmenu=agenda&action=create','','NewAction','','commercial',NULL,NULL,'($user->hasRight(\"agenda\", \"myactions\", \"create\") || $user->hasRight(\"agenda\", \"allactions\", \"create\"))','isModEnabled(\"agenda\")',2,'2026-02-15 18:45:09',0),
-(237418,'all',1,'agenda','left','agenda',237416,NULL,NULL,140,'/comm/action/index.php?mainmenu=agenda&amp;leftmenu=agenda','','Calendar','','agenda',NULL,NULL,'$user->hasRight(\"agenda\", \"myactions\", \"read\")','isModEnabled(\"agenda\")',2,'2026-02-15 18:45:09',0),
-(237419,'all',1,'agenda','left','agenda',237418,NULL,NULL,141,'/comm/action/index.php?mainmenu=agenda&amp;leftmenu=agenda&amp;status=todo&amp;filter=mine','','MenuToDoMyActions','','agenda',NULL,NULL,'$user->hasRight(\"agenda\", \"myactions\", \"read\")','isModEnabled(\"agenda\")',2,'2026-02-15 18:45:09',0),
-(237420,'all',1,'agenda','left','agenda',237418,NULL,NULL,142,'/comm/action/index.php?mainmenu=agenda&amp;leftmenu=agenda&amp;status=done&amp;filter=mine','','MenuDoneMyActions','','agenda',NULL,NULL,'$user->hasRight(\"agenda\", \"myactions\", \"read\")','isModEnabled(\"agenda\")',2,'2026-02-15 18:45:09',0),
-(237421,'all',1,'agenda','left','agenda',237418,NULL,NULL,143,'/comm/action/index.php?mainmenu=agenda&amp;leftmenu=agenda&amp;status=todo&amp;filtert=-1','','MenuToDoActions','','agenda',NULL,NULL,'$user->hasRight(\"agenda\", \"allactions\", \"read\")','isModEnabled(\"agenda\")',2,'2026-02-15 18:45:09',0),
-(237422,'all',1,'agenda','left','agenda',237418,NULL,NULL,144,'/comm/action/index.php?mainmenu=agenda&amp;leftmenu=agenda&amp;status=done&amp;filtert=-1','','MenuDoneActions','','agenda',NULL,NULL,'$user->hasRight(\"agenda\", \"allactions\", \"read\")','isModEnabled(\"agenda\")',2,'2026-02-15 18:45:09',0),
-(237423,'all',1,'agenda','left','agenda',237416,NULL,NULL,110,'/comm/action/list.php?mode=show_list&amp;mainmenu=agenda&amp;leftmenu=agenda','','List','','agenda',NULL,NULL,'$user->hasRight(\"agenda\", \"myactions\", \"read\")','isModEnabled(\"agenda\")',2,'2026-02-15 18:45:09',0),
-(237424,'all',1,'agenda','left','agenda',237423,NULL,NULL,111,'/comm/action/list.php?mode=show_list&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=todo&amp;filter=mine','','MenuToDoMyActions','','agenda',NULL,NULL,'$user->hasRight(\"agenda\", \"myactions\", \"read\")','isModEnabled(\"agenda\")',2,'2026-02-15 18:45:09',0),
-(237425,'all',1,'agenda','left','agenda',237423,NULL,NULL,112,'/comm/action/list.php?mode=show_list&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=done&amp;filter=mine','','MenuDoneMyActions','','agenda',NULL,NULL,'$user->hasRight(\"agenda\", \"myactions\", \"read\")','isModEnabled(\"agenda\")',2,'2026-02-15 18:45:09',0),
-(237426,'all',1,'agenda','left','agenda',237423,NULL,NULL,113,'/comm/action/list.php?mode=show_list&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=todo&amp;filtert=-1','','MenuToDoActions','','agenda',NULL,NULL,'$user->hasRight(\"agenda\", \"allactions\", \"read\")','isModEnabled(\"agenda\")',2,'2026-02-15 18:45:09',0),
-(237427,'all',1,'agenda','left','agenda',237423,NULL,NULL,114,'/comm/action/list.php?mode=show_list&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=done&amp;filtert=-1','','MenuDoneActions','','agenda',NULL,NULL,'$user->hasRight(\"agenda\", \"allactions\", \"read\")','isModEnabled(\"agenda\")',2,'2026-02-15 18:45:09',0),
-(237428,'all',1,'agenda','left','agenda',237416,NULL,NULL,160,'/comm/action/rapport/index.php?mainmenu=agenda&amp;leftmenu=agenda','','Reportings','','agenda',NULL,NULL,'$user->hasRight(\"agenda\", \"allactions\", \"read\")','isModEnabled(\"agenda\")',2,'2026-02-15 18:45:09',0),
-(237429,'all',1,'agenda','left','agenda',237416,NULL,NULL,170,'/categories/categorie_list.php?mainmenu=agenda&amp;leftmenu=agenda&type=10','','Categories','','agenda',NULL,NULL,'$user->hasRight(\"agenda\", \"allactions\", \"read\")','isModEnabled(\"category\") && getDolGlobalString(\"CATEGORY_EDIT_IN_MENU_NOT_IN_POPUP\")',2,'2026-02-15 18:45:09',0),
-(237430,'all',1,'barcode','left','tools',-1,NULL,'tools',200,'/barcode/printsheet.php?mainmenu=tools&leftmenu=barcodeprint','','BarCodePrintsheet','<span class=\"fas fa-barcode paddingright pictofixedwidth\" style=\"\"></span>','products',NULL,'barcodeprint','$user->hasRight(\"barcode\", \"read\")','isModEnabled(\"barcode\")',0,'2026-02-15 18:45:09',0),
-(237431,'all',1,'barcode','left','home',-1,'admintools','home',300,'/barcode/codeinit.php?mainmenu=home&leftmenu=admintools','','MassBarcodeInit','','products',NULL,NULL,'$user->admin','isModEnabled(\"barcode\") && preg_match(\'/^(admintools|all)/\', $leftmenu)',0,'2026-02-15 18:45:09',0),
-(237432,'all',1,'cron','left','home',-1,'admintools','home',500,'/cron/list.php?leftmenu=admintools','','CronList','','cron',NULL,NULL,'$user->hasRight(\"cron\", \"read\")','isModEnabled(\"cron\") && preg_match(\'/^(admintools|all)/\', $leftmenu)',2,'2026-02-15 18:45:09',0),
-(237434,'all',1,'ecm','top','ecm',0,NULL,NULL,82,'/ecm/index.php','','MenuECM','<span class=\"fas fa-folder-open pictofixedwidth\" style=\"\"></span>','ecm',NULL,NULL,'$user->hasRight(\"ecm\", \"read\") || $user->hasRight(\"ecm\", \"upload\") || $user->hasRight(\"ecm\", \"setup\")','isModEnabled(\"ecm\")',2,'2026-02-15 18:45:09',0),
-(237435,'all',1,'ecm','left','ecm',-1,NULL,'ecm',101,'/ecm/index.php?mainmenu=ecm&leftmenu=ecm','','ECMArea','<span class=\"fas fa-folder-open paddingright pictofixedwidth\" style=\"\"></span>','ecm',NULL,'ecm','$user->hasRight(\"ecm\", \"read\") || $user->hasRight(\"ecm\", \"upload\")','$user->hasRight(\"ecm\", \"read\") || $user->hasRight(\"ecm\", \"upload\")',2,'2026-02-15 18:45:09',0),
-(237436,'all',1,'ecm','left','ecm',-1,'ecm','ecm',102,'/ecm/index.php?action=file_manager&mainmenu=ecm&leftmenu=ecm','','ECMSectionsManual','','ecm',NULL,'ecm_manual','$user->hasRight(\"ecm\", \"read\") || $user->hasRight(\"ecm\", \"upload\")','$user->hasRight(\"ecm\", \"read\") || $user->hasRight(\"ecm\", \"upload\")',2,'2026-02-15 18:45:09',0),
-(237437,'all',1,'ecm','left','ecm',-1,'ecm','ecm',103,'/ecm/index_auto.php?action=file_manager&mainmenu=ecm&leftmenu=ecm','','ECMSectionsAuto','','ecm',NULL,NULL,'$user->hasRight(\"ecm\", \"read\") || $user->hasRight(\"ecm\", \"upload\")','($user->hasRight(\"ecm\", \"read\") || $user->hasRight(\"ecm\", \"upload\")) && !getDolGlobalInt(\"ECM_AUTO_TREE_HIDEN\")',2,'2026-02-15 18:45:09',0),
-(237438,'all',1,'ecm','left','ecm',-1,'ecm','ecm',104,'/ecm/index_medias.php?action=file_manager&mainmenu=ecm&leftmenu=ecm','','ECMSectionsMedias','','ecm',NULL,NULL,'$user->hasRight(\"ecm\", \"read\") || $user->hasRight(\"ecm\", \"upload\")','($user->hasRight(\"ecm\", \"read\") || $user->hasRight(\"ecm\", \"upload\")) && getDolGlobalInt(\"MAIN_FEATURES_LEVEL\") == 2',2,'2026-02-15 18:45:09',0),
-(237439,'all',1,'eventorganization','left','project',-1,NULL,'project',1001,'','','EventOrganizationMenuLeft','<span class=\"fas fa-project-diagram  em088 infobox-project paddingright pictofixedwidth\" style=\"\"></span>','eventorganization',NULL,'eventorganization','$user->hasRight(\"project\", \"read\")','isModEnabled(\"eventorganization\")',2,'2026-02-15 18:45:09',0),
-(237440,'all',1,'eventorganization','left','project',-1,'eventorganization','project',1002,'/projet/card.php?leftmenu=projects&action=create&usage_organize_event=1&usage_opportunity=0','','New','','eventorganization@eventorganization',NULL,NULL,'$user->hasRight(\"project\", \"write\")','isModEnabled(\"eventorganization\")',2,'2026-02-15 18:45:09',0),
-(237441,'all',1,'eventorganization','left','project',-1,'eventorganization','project',1003,'/projet/list.php?search_usage_event_organization=1&search_status=99&mainmenu=project&contextpage=organizedevents','','List','','eventorganization@eventorganization',NULL,NULL,'$user->hasRight(\"project\", \"write\")','isModEnabled(\"eventorganization\")',2,'2026-02-15 18:45:09',0),
-(237442,'all',1,'eventorganization','left','project',-1,NULL,'project',1004,'','','ConferenceOrBooth','<span class=\"fas fa-chalkboard-teacher  em088 infobox-project paddingright pictofixedwidth\" style=\"\"></span>','eventorganization',NULL,'eventorganizationconforbooth','$user->hasRight(\"project\", \"read\")','isModEnabled(\"eventorganization\")',2,'2026-02-15 18:45:09',0),
-(237443,'all',1,'eventorganization','left','project',-1,'eventorganizationconforbooth','project',1005,'/eventorganization/conferenceorbooth_card.php?leftmenu=projects&action=create','','New','','eventorganization',NULL,NULL,'$user->hasRight(\"project\", \"write\")','isModEnabled(\"eventorganization\")',2,'2026-02-15 18:45:09',0),
-(237444,'all',1,'eventorganization','left','project',-1,'eventorganizationconforbooth','project',1006,'/eventorganization/conferenceorbooth_list.php?mainmenu=project','','List','','eventorganization',NULL,NULL,'$user->hasRight(\"project\", \"read\")','isModEnabled(\"eventorganization\")',2,'2026-02-15 18:45:09',0),
-(237445,'all',1,'margins','left','billing',-1,NULL,'billing',100,'/margin/index.php','','Margins','<span class=\"fas fa-calculator infobox-bank_account paddingright pictofixedwidth\" style=\"\"></span>','margins',NULL,'margins','$user->hasRight(\"margins\", \"liretous\")','isModEnabled(\"margin\")',2,'2026-02-15 18:45:09',0),
-(237446,'all',1,'opensurvey','left','tools',-1,NULL,'tools',30,'/opensurvey/list.php?mainmenu=tools&leftmenu=opensurvey','','Survey','<span class=\"fas fa-check-double infobox-portal paddingright pictofixedwidth\" style=\"\"></span>','opensurvey',NULL,'opensurvey','$user->hasRight(\"opensurvey\", \"read\")','isModEnabled(\"opensurvey\")',0,'2026-02-15 18:45:09',0),
-(237447,'all',1,'opensurvey','left','tools',-1,'opensurvey','tools',32,'/opensurvey/wizard/index.php','','NewSurvey','','opensurvey',NULL,'opensurvey_new','$user->hasRight(\"opensurvey\", \"write\")','isModEnabled(\"opensurvey\")',0,'2026-02-15 18:45:09',0),
-(237448,'all',1,'opensurvey','left','tools',-1,'opensurvey','tools',34,'/opensurvey/list.php','','List','','opensurvey',NULL,'opensurvey_list','$user->hasRight(\"opensurvey\", \"read\")','isModEnabled(\"opensurvey\")',0,'2026-02-15 18:45:09',0),
-(237449,'all',1,'partnership','left','companies',-1,NULL,'companies',1101,'/partnership/partnership_list.php','','Partnership','<span class=\"fas fa-handshake  em080 paddingright pictofixedwidth\" style=\" color: #6c6aa8;\"></span>','partnership',NULL,'partnership','$user->hasRight(\"partnership\", \"read\")','isModEnabled(\"partnership\")',2,'2026-02-15 18:45:09',0),
-(237450,'all',1,'partnership','left','companies',-1,'partnership','companies',1102,'/partnership/partnership_card.php?action=create','','NewPartnership','','partnership',NULL,'partnership_new','$user->hasRight(\"partnership\", \"write\")','isModEnabled(\"partnership\")',2,'2026-02-15 18:45:09',0),
-(237451,'all',1,'partnership','left','companies',-1,'partnership','companies',1103,'/partnership/partnership_list.php','','ListOfPartnerships','','partnership',NULL,'partnership_list','$user->hasRight(\"partnership\", \"write\")','isModEnabled(\"partnership\")',2,'2026-02-15 18:45:09',0),
-(237452,'all',1,'printing','left','home',-1,'admintools','home',300,'/printing/index.php?mainmenu=home&leftmenu=admintools','','MenuDirectPrinting','','printing',NULL,NULL,'$user->hasRight(\"printing\", \"read\")','isModEnabled(\"printing\") && isStringVarMatching(\"leftmenu\", \"/^(admintools|all)/\")',0,'2026-02-15 18:45:09',0),
-(237453,'all',1,'recruitment','left','hrm',-1,NULL,'hrm',1001,'/recruitment/index.php','','Recruitment','<span class=\"fas fa-id-card-alt infobox-adherent paddingright pictofixedwidth\" style=\"\"></span>','recruitment',NULL,'recruitmentjobposition','$user->hasRight(\"recruitment\", \"recruitmentjobposition\", \"read\")','$conf->recruitment->enabled',2,'2026-02-15 18:45:09',0),
-(237454,'all',1,'recruitment','left','hrm',-1,'recruitmentjobposition','hrm',1002,'/recruitment/recruitmentjobposition_card.php?action=create','','NewPositionToBeFilled','','recruitment',NULL,'recruitment_recruitmentjobposition_new','$user->hasRight(\"recruitment\",\"recruitmentjobposition\", \"write\")','isModEnabled(\"recruitment\")',2,'2026-02-15 18:45:09',0),
-(237455,'all',1,'recruitment','left','hrm',-1,'recruitmentjobposition','hrm',1003,'/recruitment/recruitmentjobposition_list.php','','ListOfPositionsToBeFilled','','recruitment',NULL,'recruitment_recruitmentjobposition_list','$user->hasRight(\"recruitment\", \"recruitmentjobposition\", \"read\")','isModEnabled(\"recruitment\")',2,'2026-02-15 18:45:09',0),
-(237456,'all',1,'recruitment','left','hrm',-1,'recruitmentjobposition','hrm',1004,'/recruitment/recruitmentcandidature_card.php?action=create','','NewCandidature','','recruitment',NULL,'recruitment_recruitmentcandidature_new','$user->hasRight(\"recruitment\",\"recruitmentjobposition\", \"write\")','isModEnabled(\"recruitment\")',2,'2026-02-15 18:45:09',0),
-(237457,'all',1,'recruitment','left','hrm',-1,'recruitmentjobposition','hrm',1005,'/recruitment/recruitmentcandidature_list.php','','ListOfCandidatures','','recruitment',NULL,'recruitment_recruitmentcandidature_list','$user->hasRight(\"recruitment\", \"recruitmentjobposition\", \"read\")','isModEnabled(\"recruitment\")',2,'2026-02-15 18:45:09',0),
-(237458,'all',1,'resource','left','agenda',-1,NULL,'agenda',100,'/resource/list.php','','MenuResourceIndex','<span class=\"fas fa-laptop-house  em092 infobox-action paddingright pictofixedwidth em92\" style=\"\"></span>','resource',NULL,'resource','$user->hasRight(\"resource\", \"read\")','1',0,'2026-02-15 18:45:09',0),
-(237459,'all',1,'resource','left','agenda',-1,'resource','agenda',101,'/resource/card.php?action=create','','MenuResourceAdd','','resource',NULL,'resource_add','$user->hasRight(\"resource\", \"write\")','1',0,'2026-02-15 18:45:09',0),
-(237460,'all',1,'resource','left','agenda',-1,'resource','agenda',102,'/resource/list.php','','List','','resource',NULL,'resource_list','$user->hasRight(\"resource\", \"read\")','1',0,'2026-02-15 18:45:09',0),
-(237461,'all',1,'stripe','left','bank',-1,NULL,'bank',100,'','','StripeAccount','<span class=\"fab fa-stripe-s infobox-bank_account paddingright pictofixedwidth\" style=\"\"></span>','stripe',NULL,'stripe','$user->hasRight(\"banque\", \"read\")','isModEnabled(\"stripe\") && isModEnabled(\"bank\")',0,'2026-02-15 18:45:09',0),
-(237462,'all',1,'stripe','left','bank',-1,'stripe','bank',102,'/stripe/charge.php','','StripeChargeList','','stripe',NULL,NULL,'$user->hasRight(\"banque\", \"read\")','isModEnabled(\"stripe\") && isModEnabled(\"bank\") && getDolGlobalInt(\"MAIN_FEATURES_LEVEL\") >= 1',0,'2026-02-15 18:45:09',0),
-(237463,'all',1,'stripe','left','bank',-1,'stripe','bank',102,'/stripe/transaction.php','','StripeTransactionList','','stripe',NULL,NULL,'$user->hasRight(\"banque\", \"read\")','isModEnabled(\"stripe\") && isModEnabled(\"bank\") && getDolGlobalInt(\"MAIN_FEATURES_LEVEL\") >= 2',0,'2026-02-15 18:45:09',0),
-(237464,'all',1,'stripe','left','bank',-1,'stripe','bank',103,'/stripe/payout.php','','StripePayoutList','','stripe',NULL,NULL,'$user->hasRight(\"banque\", \"read\")','isModEnabled(\"stripe\") && isModEnabled(\"bank\")',0,'2026-02-15 18:45:09',0),
-(237465,'all',1,'ticket','left','ticket',-1,NULL,'ticket',101,'/ticket/index.php','','Ticket','<span class=\"fas fa-ticket-alt infobox-contrat paddingright pictofixedwidth em092\" style=\"\"></span>','ticket',NULL,'ticket','$user->hasRight(\"ticket\",\"read\")','isModEnabled(\"ticket\")',2,'2026-02-15 18:45:10',0),
-(237466,'all',1,'ticket','left','ticket',-1,'ticket','ticket',102,'/ticket/card.php?action=create&mode=init','','NewTicket','','ticket',NULL,NULL,'$user->hasRight(\"ticket\", \"write\")','isModEnabled(\"ticket\")',2,'2026-02-15 18:45:10',0),
-(237467,'all',1,'ticket','left','ticket',-1,'ticket','ticket',103,'/ticket/list.php?search_fk_statut=openall','','List','','ticket',NULL,'ticketlist','$user->hasRight(\"ticket\",\"read\")','isModEnabled(\"ticket\")',2,'2026-02-15 18:45:10',0),
-(237468,'all',1,'ticket','left','ticket',-1,'ticket','ticket',105,'/ticket/list.php?mode=mine&search_fk_statut=openall','','MenuTicketMyAssign','','ticket',NULL,'ticketmy','$user->hasRight(\"ticket\",\"read\")','isModEnabled(\"ticket\")',0,'2026-02-15 18:45:10',0),
-(237469,'all',1,'ticket','left','ticket',-1,'ticket','ticket',107,'/ticket/stats/index.php','','Statistics','','ticket',NULL,NULL,'$user->hasRight(\"ticket\",\"read\")','isModEnabled(\"ticket\")',0,'2026-02-15 18:45:10',0),
-(237470,'all',1,'ticket','left','ticket',-1,'ticket','ticket',107,'/categories/categorie_list.php?type=12','','Categories','','ticket',NULL,NULL,'$user->hasRight(\"ticket\",\"read\")','isModEnabled(\"ticket\") && isModEnabled(\"categorie\")',0,'2026-02-15 18:45:10',0),
-(237471,'all',1,'takepos','top','takepos',0,NULL,NULL,1001,'/takepos/index.php','takepos','PointOfSaleShort','<span class=\"fas fa-cash-register infobox-portal pictofixedwidth\" style=\"\"></span>','cashdesk',NULL,NULL,'$user->hasRight(\"takepos\", \"run\")','isModEnabled(\"takepos\")',2,'2026-02-15 18:45:10',0),
-(237472,'all',1,'website','top','website',0,NULL,NULL,100,'/website/index.php','','WebSites','<span class=\"fas fa-globe-americas pictofixedwidth em092\" style=\" color: #304;\"></span>','website',NULL,NULL,'$user->hasRight(\"website\",\"read\")','isModEnabled(\"website\")',2,'2026-02-15 18:45:10',0);
+(237482,'all',1,'agenda','top','agenda',0,NULL,NULL,86,'/comm/action/index.php','','TMenuAgenda','<span class=\"fas fa-calendar-alt infobox-action pictofixedwidth\" style=\"\"></span>','agenda',NULL,NULL,'$user->hasRight(\"agenda\", \"myactions\", \"read\") || $user->hasRight(\"resource\", \"read\")','isModEnabled(\"agenda\") || isModEnabled(\"resource\")',2,'2025-01-16 09:06:39',0),
+(237483,'all',1,'agenda','left','agenda',237482,NULL,NULL,100,'/comm/action/index.php?mainmenu=agenda&amp;leftmenu=agenda','','Actions','<span class=\"fas fa-calendar-alt infobox-action paddingright pictofixedwidth\" style=\"\"></span>','agenda',NULL,NULL,'$user->hasRight(\"agenda\", \"myactions\", \"read\")','isModEnabled(\"agenda\")',2,'2025-01-16 09:06:39',0),
+(237484,'all',1,'agenda','left','agenda',237483,NULL,NULL,101,'/comm/action/card.php?mainmenu=agenda&amp;leftmenu=agenda&action=create','','NewAction','','commercial',NULL,NULL,'($user->hasRight(\"agenda\", \"myactions\", \"create\") || $user->hasRight(\"agenda\", \"allactions\", \"create\"))','isModEnabled(\"agenda\")',2,'2025-01-16 09:06:39',0),
+(237485,'all',1,'agenda','left','agenda',237483,NULL,NULL,140,'/comm/action/index.php?mainmenu=agenda&amp;leftmenu=agenda','','Calendar','','agenda',NULL,NULL,'$user->hasRight(\"agenda\", \"myactions\", \"read\")','isModEnabled(\"agenda\")',2,'2025-01-16 09:06:39',0),
+(237486,'all',1,'agenda','left','agenda',237485,NULL,NULL,141,'/comm/action/index.php?mainmenu=agenda&amp;leftmenu=agenda&amp;status=todo&amp;filter=mine','','MenuToDoMyActions','','agenda',NULL,NULL,'$user->hasRight(\"agenda\", \"myactions\", \"read\")','isModEnabled(\"agenda\")',2,'2025-01-16 09:06:39',0),
+(237487,'all',1,'agenda','left','agenda',237485,NULL,NULL,142,'/comm/action/index.php?mainmenu=agenda&amp;leftmenu=agenda&amp;status=done&amp;filter=mine','','MenuDoneMyActions','','agenda',NULL,NULL,'$user->hasRight(\"agenda\", \"myactions\", \"read\")','isModEnabled(\"agenda\")',2,'2025-01-16 09:06:39',0),
+(237488,'all',1,'agenda','left','agenda',237485,NULL,NULL,143,'/comm/action/index.php?mainmenu=agenda&amp;leftmenu=agenda&amp;status=todo&amp;filtert=-1','','MenuToDoActions','','agenda',NULL,NULL,'$user->hasRight(\"agenda\", \"allactions\", \"read\")','isModEnabled(\"agenda\")',2,'2025-01-16 09:06:39',0),
+(237489,'all',1,'agenda','left','agenda',237485,NULL,NULL,144,'/comm/action/index.php?mainmenu=agenda&amp;leftmenu=agenda&amp;status=done&amp;filtert=-1','','MenuDoneActions','','agenda',NULL,NULL,'$user->hasRight(\"agenda\", \"allactions\", \"read\")','isModEnabled(\"agenda\")',2,'2025-01-16 09:06:39',0),
+(237490,'all',1,'agenda','left','agenda',237483,NULL,NULL,110,'/comm/action/list.php?mode=show_list&amp;mainmenu=agenda&amp;leftmenu=agenda','','List','','agenda',NULL,NULL,'$user->hasRight(\"agenda\", \"myactions\", \"read\")','isModEnabled(\"agenda\")',2,'2025-01-16 09:06:39',0),
+(237491,'all',1,'agenda','left','agenda',237490,NULL,NULL,111,'/comm/action/list.php?mode=show_list&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=todo&amp;filter=mine','','MenuToDoMyActions','','agenda',NULL,NULL,'$user->hasRight(\"agenda\", \"myactions\", \"read\")','isModEnabled(\"agenda\")',2,'2025-01-16 09:06:39',0),
+(237492,'all',1,'agenda','left','agenda',237490,NULL,NULL,112,'/comm/action/list.php?mode=show_list&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=done&amp;filter=mine','','MenuDoneMyActions','','agenda',NULL,NULL,'$user->hasRight(\"agenda\", \"myactions\", \"read\")','isModEnabled(\"agenda\")',2,'2025-01-16 09:06:39',0),
+(237493,'all',1,'agenda','left','agenda',237490,NULL,NULL,113,'/comm/action/list.php?mode=show_list&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=todo&amp;filtert=-1','','MenuToDoActions','','agenda',NULL,NULL,'$user->hasRight(\"agenda\", \"allactions\", \"read\")','isModEnabled(\"agenda\")',2,'2025-01-16 09:06:39',0),
+(237494,'all',1,'agenda','left','agenda',237490,NULL,NULL,114,'/comm/action/list.php?mode=show_list&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=done&amp;filtert=-1','','MenuDoneActions','','agenda',NULL,NULL,'$user->hasRight(\"agenda\", \"allactions\", \"read\")','isModEnabled(\"agenda\")',2,'2025-01-16 09:06:39',0),
+(237495,'all',1,'agenda','left','agenda',237483,NULL,NULL,160,'/comm/action/rapport/index.php?mainmenu=agenda&amp;leftmenu=agenda','','Reportings','','agenda',NULL,NULL,'$user->hasRight(\"agenda\", \"allactions\", \"read\")','isModEnabled(\"agenda\")',2,'2025-01-16 09:06:39',0),
+(237496,'all',1,'agenda','left','agenda',237483,NULL,NULL,170,'/categories/categorie_list.php?mainmenu=agenda&amp;leftmenu=agenda&type=10','','Categories','','agenda',NULL,NULL,'$user->hasRight(\"agenda\", \"allactions\", \"read\")','isModEnabled(\"category\") && getDolGlobalString(\"CATEGORY_EDIT_IN_MENU_NOT_IN_POPUP\")',2,'2025-01-16 09:06:39',0),
+(237497,'all',1,'barcode','left','tools',-1,NULL,'tools',200,'/barcode/printsheet.php?mainmenu=tools&leftmenu=barcodeprint','','BarCodePrintsheet','<span class=\"fas fa-barcode paddingright pictofixedwidth\" style=\"\"></span>','products',NULL,'barcodeprint','$user->hasRight(\"barcode\", \"read\")','isModEnabled(\"barcode\")',0,'2025-01-16 09:06:40',0),
+(237498,'all',1,'barcode','left','home',-1,'admintools','home',300,'/barcode/codeinit.php?mainmenu=home&leftmenu=admintools','','MassBarcodeInit','','products',NULL,NULL,'$user->admin','isModEnabled(\"barcode\") && preg_match(\'/^(admintools|all)/\', $leftmenu)',0,'2025-01-16 09:06:40',0),
+(237499,'all',1,'cron','left','home',-1,'admintools','home',500,'/cron/list.php?leftmenu=admintools','','CronList','','cron',NULL,NULL,'$user->hasRight(\"cron\", \"read\")','isModEnabled(\"cron\") && preg_match(\'/^(admintools|all)/\', $leftmenu)',2,'2025-01-16 09:06:40',0),
+(237500,'all',1,'blockedlog','left','tools',-1,NULL,'tools',200,'/blockedlog/admin/blockedlog_list.php?mainmenu=tools&leftmenu=blockedlogbrowser','','BrowseBlockedLog','<span class=\"fas fa-file-archive paddingright pictofixedwidth\" style=\"\"></span>','blockedlog',NULL,'blockedlogbrowser','$user->hasRight(\"blockedlog\", \"read\")','isModEnabled(\"blockedlog\")',2,'2025-01-16 09:06:40',0),
+(237501,'all',1,'ecm','top','ecm',0,NULL,NULL,82,'/ecm/index.php','','MenuECM','<span class=\"fas fa-folder-open pictofixedwidth\" style=\"\"></span>','ecm',NULL,NULL,'$user->hasRight(\"ecm\", \"read\") || $user->hasRight(\"ecm\", \"upload\") || $user->hasRight(\"ecm\", \"setup\")','isModEnabled(\"ecm\")',2,'2025-01-16 09:06:40',0),
+(237502,'all',1,'ecm','left','ecm',-1,NULL,'ecm',101,'/ecm/index.php?mainmenu=ecm&leftmenu=ecm','','ECMArea','<span class=\"fas fa-folder-open paddingright pictofixedwidth\" style=\"\"></span>','ecm',NULL,'ecm','$user->hasRight(\"ecm\", \"read\") || $user->hasRight(\"ecm\", \"upload\")','$user->hasRight(\"ecm\", \"read\") || $user->hasRight(\"ecm\", \"upload\")',2,'2025-01-16 09:06:40',0),
+(237503,'all',1,'ecm','left','ecm',-1,'ecm','ecm',102,'/ecm/index.php?action=file_manager&mainmenu=ecm&leftmenu=ecm','','ECMSectionsManual','','ecm',NULL,'ecm_manual','$user->hasRight(\"ecm\", \"read\") || $user->hasRight(\"ecm\", \"upload\")','$user->hasRight(\"ecm\", \"read\") || $user->hasRight(\"ecm\", \"upload\")',2,'2025-01-16 09:06:40',0),
+(237504,'all',1,'ecm','left','ecm',-1,'ecm','ecm',103,'/ecm/index_auto.php?action=file_manager&mainmenu=ecm&leftmenu=ecm','','ECMSectionsAuto','','ecm',NULL,NULL,'$user->hasRight(\"ecm\", \"read\") || $user->hasRight(\"ecm\", \"upload\")','($user->hasRight(\"ecm\", \"read\") || $user->hasRight(\"ecm\", \"upload\")) && !getDolGlobalInt(\"ECM_AUTO_TREE_HIDEN\")',2,'2025-01-16 09:06:40',0),
+(237505,'all',1,'ecm','left','ecm',-1,'ecm','ecm',104,'/ecm/index_medias.php?action=file_manager&mainmenu=ecm&leftmenu=ecm','','ECMSectionsMedias','','ecm',NULL,NULL,'$user->hasRight(\"ecm\", \"read\") || $user->hasRight(\"ecm\", \"upload\")','($user->hasRight(\"ecm\", \"read\") || $user->hasRight(\"ecm\", \"upload\")) && getDolGlobalInt(\"MAIN_FEATURES_LEVEL\") == 2',2,'2025-01-16 09:06:40',0),
+(237506,'all',1,'eventorganization','left','project',-1,NULL,'project',1001,'','','EventOrganizationMenuLeft','<span class=\"fas fa-project-diagram  em088 infobox-project paddingright pictofixedwidth\" style=\"\"></span>','eventorganization',NULL,'eventorganization','$user->hasRight(\"project\", \"read\")','isModEnabled(\"eventorganization\")',2,'2025-01-16 09:06:40',0),
+(237507,'all',1,'eventorganization','left','project',-1,'eventorganization','project',1002,'/projet/card.php?leftmenu=projects&action=create&usage_organize_event=1&usage_opportunity=0','','New','','eventorganization@eventorganization',NULL,NULL,'$user->hasRight(\"project\", \"write\")','isModEnabled(\"eventorganization\")',2,'2025-01-16 09:06:40',0),
+(237508,'all',1,'eventorganization','left','project',-1,'eventorganization','project',1003,'/projet/list.php?search_usage_event_organization=1&search_status=99&mainmenu=project&contextpage=organizedevents','','List','','eventorganization@eventorganization',NULL,NULL,'$user->hasRight(\"project\", \"write\")','isModEnabled(\"eventorganization\")',2,'2025-01-16 09:06:40',0),
+(237509,'all',1,'eventorganization','left','project',-1,NULL,'project',1004,'','','ConferenceOrBooth','<span class=\"fas fa-chalkboard-teacher  em088 infobox-project paddingright pictofixedwidth\" style=\"\"></span>','eventorganization',NULL,'eventorganizationconforbooth','$user->hasRight(\"project\", \"read\")','isModEnabled(\"eventorganization\")',2,'2025-01-16 09:06:40',0),
+(237510,'all',1,'eventorganization','left','project',-1,'eventorganizationconforbooth','project',1005,'/eventorganization/conferenceorbooth_card.php?leftmenu=projects&action=create','','New','','eventorganization',NULL,NULL,'$user->hasRight(\"project\", \"write\")','isModEnabled(\"eventorganization\")',2,'2025-01-16 09:06:40',0),
+(237511,'all',1,'eventorganization','left','project',-1,'eventorganizationconforbooth','project',1006,'/eventorganization/conferenceorbooth_list.php?mainmenu=project','','List','','eventorganization',NULL,NULL,'$user->hasRight(\"project\", \"read\")','isModEnabled(\"eventorganization\")',2,'2025-01-16 09:06:40',0),
+(237512,'all',1,'margins','left','billing',-1,NULL,'billing',100,'/margin/index.php','','Margins','<span class=\"fas fa-calculator infobox-bank_account paddingright pictofixedwidth\" style=\"\"></span>','margins',NULL,'margins','$user->hasRight(\"margins\", \"liretous\")','isModEnabled(\"margin\")',2,'2025-01-16 09:06:40',0),
+(237513,'all',1,'opensurvey','left','tools',-1,NULL,'tools',30,'/opensurvey/list.php?mainmenu=tools&leftmenu=opensurvey','','Survey','<span class=\"fas fa-check-double infobox-portal paddingright pictofixedwidth\" style=\"\"></span>','opensurvey',NULL,'opensurvey','$user->hasRight(\"opensurvey\", \"read\")','isModEnabled(\"opensurvey\")',0,'2025-01-16 09:06:40',0),
+(237514,'all',1,'opensurvey','left','tools',-1,'opensurvey','tools',32,'/opensurvey/wizard/index.php','','NewSurvey','','opensurvey',NULL,'opensurvey_new','$user->hasRight(\"opensurvey\", \"write\")','isModEnabled(\"opensurvey\")',0,'2025-01-16 09:06:40',0),
+(237515,'all',1,'opensurvey','left','tools',-1,'opensurvey','tools',34,'/opensurvey/list.php','','List','','opensurvey',NULL,'opensurvey_list','$user->hasRight(\"opensurvey\", \"read\")','isModEnabled(\"opensurvey\")',0,'2025-01-16 09:06:40',0),
+(237516,'all',1,'partnership','left','companies',-1,NULL,'companies',1101,'/partnership/partnership_list.php','','Partnership','<span class=\"fas fa-handshake  em080 paddingright pictofixedwidth\" style=\" color: #6c6aa8;\"></span>','partnership',NULL,'partnership','$user->hasRight(\"partnership\", \"read\")','isModEnabled(\"partnership\")',2,'2025-01-16 09:06:40',0),
+(237517,'all',1,'partnership','left','companies',-1,'partnership','companies',1102,'/partnership/partnership_card.php?action=create','','NewPartnership','','partnership',NULL,'partnership_new','$user->hasRight(\"partnership\", \"write\")','isModEnabled(\"partnership\")',2,'2025-01-16 09:06:40',0),
+(237518,'all',1,'partnership','left','companies',-1,'partnership','companies',1103,'/partnership/partnership_list.php','','ListOfPartnerships','','partnership',NULL,'partnership_list','$user->hasRight(\"partnership\", \"write\")','isModEnabled(\"partnership\")',2,'2025-01-16 09:06:40',0),
+(237519,'all',1,'recruitment','left','hrm',-1,NULL,'hrm',1001,'/recruitment/index.php','','Recruitment','<span class=\"fas fa-id-card-alt infobox-adherent paddingright pictofixedwidth\" style=\"\"></span>','recruitment',NULL,'recruitmentjobposition','$user->hasRight(\"recruitment\", \"recruitmentjobposition\", \"read\")','$conf->recruitment->enabled',2,'2025-01-16 09:06:40',0),
+(237520,'all',1,'recruitment','left','hrm',-1,'recruitmentjobposition','hrm',1002,'/recruitment/recruitmentjobposition_card.php?action=create','','NewPositionToBeFilled','','recruitment',NULL,'recruitment_recruitmentjobposition_new','$user->hasRight(\"recruitment\",\"recruitmentjobposition\", \"write\")','isModEnabled(\"recruitment\")',2,'2025-01-16 09:06:40',0),
+(237521,'all',1,'recruitment','left','hrm',-1,'recruitmentjobposition','hrm',1003,'/recruitment/recruitmentjobposition_list.php','','ListOfPositionsToBeFilled','','recruitment',NULL,'recruitment_recruitmentjobposition_list','$user->hasRight(\"recruitment\", \"recruitmentjobposition\", \"read\")','isModEnabled(\"recruitment\")',2,'2025-01-16 09:06:40',0),
+(237522,'all',1,'recruitment','left','hrm',-1,'recruitmentjobposition','hrm',1004,'/recruitment/recruitmentcandidature_card.php?action=create','','NewCandidature','','recruitment',NULL,'recruitment_recruitmentcandidature_new','$user->hasRight(\"recruitment\",\"recruitmentjobposition\", \"write\")','isModEnabled(\"recruitment\")',2,'2025-01-16 09:06:40',0),
+(237523,'all',1,'recruitment','left','hrm',-1,'recruitmentjobposition','hrm',1005,'/recruitment/recruitmentcandidature_list.php','','ListOfCandidatures','','recruitment',NULL,'recruitment_recruitmentcandidature_list','$user->hasRight(\"recruitment\", \"recruitmentjobposition\", \"read\")','isModEnabled(\"recruitment\")',2,'2025-01-16 09:06:40',0),
+(237524,'all',1,'resource','left','agenda',-1,NULL,'agenda',100,'/resource/list.php','','MenuResourceIndex','<span class=\"fas fa-laptop-house  em092 infobox-action paddingright pictofixedwidth em92\" style=\"\"></span>','resource',NULL,'resource','$user->hasRight(\"resource\", \"read\")','1',0,'2025-01-16 09:06:40',0),
+(237525,'all',1,'resource','left','agenda',-1,'resource','agenda',101,'/resource/card.php?action=create','','MenuResourceAdd','','resource',NULL,'resource_add','$user->hasRight(\"resource\", \"write\")','1',0,'2025-01-16 09:06:40',0),
+(237526,'all',1,'resource','left','agenda',-1,'resource','agenda',102,'/resource/list.php','','List','','resource',NULL,'resource_list','$user->hasRight(\"resource\", \"read\")','1',0,'2025-01-16 09:06:40',0),
+(237527,'all',1,'stripe','left','bank',-1,NULL,'bank',100,'','','StripeAccount','<span class=\"fab fa-stripe-s infobox-bank_account paddingright pictofixedwidth\" style=\"\"></span>','stripe',NULL,'stripe','$user->hasRight(\"banque\", \"read\")','isModEnabled(\"stripe\") && isModEnabled(\"bank\")',0,'2025-01-16 09:06:40',0),
+(237528,'all',1,'stripe','left','bank',-1,'stripe','bank',102,'/stripe/charge.php','','StripeChargeList','','stripe',NULL,NULL,'$user->hasRight(\"banque\", \"read\")','isModEnabled(\"stripe\") && isModEnabled(\"bank\") && getDolGlobalInt(\"MAIN_FEATURES_LEVEL\") >= 1',0,'2025-01-16 09:06:40',0),
+(237529,'all',1,'stripe','left','bank',-1,'stripe','bank',102,'/stripe/transaction.php','','StripeTransactionList','','stripe',NULL,NULL,'$user->hasRight(\"banque\", \"read\")','isModEnabled(\"stripe\") && isModEnabled(\"bank\") && getDolGlobalInt(\"MAIN_FEATURES_LEVEL\") >= 2',0,'2025-01-16 09:06:40',0),
+(237530,'all',1,'stripe','left','bank',-1,'stripe','bank',103,'/stripe/payout.php','','StripePayoutList','','stripe',NULL,NULL,'$user->hasRight(\"banque\", \"read\")','isModEnabled(\"stripe\") && isModEnabled(\"bank\")',0,'2025-01-16 09:06:40',0),
+(237531,'all',1,'ticket','left','ticket',-1,NULL,'ticket',101,'/ticket/index.php','','Ticket','<span class=\"fas fa-ticket-alt infobox-contrat paddingright pictofixedwidth em092\" style=\"\"></span>','ticket',NULL,'ticket','$user->hasRight(\"ticket\",\"read\")','isModEnabled(\"ticket\")',2,'2025-01-16 09:06:40',0),
+(237532,'all',1,'ticket','left','ticket',-1,'ticket','ticket',102,'/ticket/card.php?action=create&mode=init','','NewTicket','','ticket',NULL,NULL,'$user->hasRight(\"ticket\", \"write\")','isModEnabled(\"ticket\")',2,'2025-01-16 09:06:40',0),
+(237533,'all',1,'ticket','left','ticket',-1,'ticket','ticket',103,'/ticket/list.php?search_fk_statut=openall','','List','','ticket',NULL,'ticketlist','$user->hasRight(\"ticket\",\"read\")','isModEnabled(\"ticket\")',2,'2025-01-16 09:06:40',0),
+(237534,'all',1,'ticket','left','ticket',-1,'ticket','ticket',105,'/ticket/list.php?mode=mine&search_fk_statut=openall','','MenuTicketMyAssign','','ticket',NULL,'ticketmy','$user->hasRight(\"ticket\",\"read\")','isModEnabled(\"ticket\")',0,'2025-01-16 09:06:40',0),
+(237535,'all',1,'ticket','left','ticket',-1,'ticket','ticket',107,'/ticket/stats/index.php','','Statistics','','ticket',NULL,NULL,'$user->hasRight(\"ticket\",\"read\")','isModEnabled(\"ticket\")',0,'2025-01-16 09:06:40',0),
+(237536,'all',1,'ticket','left','ticket',-1,'ticket','ticket',107,'/categories/categorie_list.php?type=12','','Categories','','ticket',NULL,NULL,'$user->hasRight(\"ticket\",\"read\")','isModEnabled(\"ticket\") && isModEnabled(\"categorie\")',0,'2025-01-16 09:06:40',0),
+(237537,'all',1,'takepos','top','takepos',0,NULL,NULL,1001,'/takepos/index.php','takepos','PointOfSaleShort','<span class=\"fas fa-cash-register infobox-portal pictofixedwidth\" style=\"\"></span>','cashdesk',NULL,NULL,'$user->hasRight(\"takepos\", \"run\")','isModEnabled(\"takepos\")',2,'2025-01-16 09:06:40',0),
+(237538,'all',1,'website','top','website',0,NULL,NULL,100,'/website/index.php','','WebSites','<span class=\"fas fa-globe-americas pictofixedwidth em092\" style=\" color: #304;\"></span>','website',NULL,NULL,'$user->hasRight(\"website\",\"read\")','isModEnabled(\"website\")',2,'2025-01-16 09:06:41',0);
 /*!40000 ALTER TABLE `llx_menu` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -74673,7 +74780,7 @@ CREATE TABLE `llx_paiement` (
   `ext_payment_id` varchar(255) DEFAULT NULL,
   `ext_payment_site` varchar(128) DEFAULT NULL,
   PRIMARY KEY (`rowid`)
-) ENGINE=InnoDB AUTO_INCREMENT=89 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=91 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -74683,37 +74790,17 @@ CREATE TABLE `llx_paiement` (
 LOCK TABLES `llx_paiement` WRITE;
 /*!40000 ALTER TABLE `llx_paiement` DISABLE KEYS */;
 INSERT INTO `llx_paiement` VALUES
-(3,'3',NULL,1,'2013-07-18 20:50:47','2026-02-15 18:44:54','2024-07-10 00:00:00',10.00000000,4,'','',6,1,NULL,0,0,0.00000000,0.00000000,NULL,NULL),
-(5,'5',NULL,1,'2013-08-01 03:34:11','2026-02-15 18:44:54','2024-08-01 00:00:00',5.63000000,6,'','Payment Invoice FA1108-0003',8,1,NULL,0,0,0.00000000,0.00000000,NULL,NULL),
-(6,'6',NULL,1,'2013-08-06 20:33:54','2026-02-15 18:44:54','2024-08-06 00:00:00',5.98000000,4,'','Payment Invoice FA1108-0004',13,1,12,0,0,0.00000000,0.00000000,NULL,NULL),
-(8,'8',NULL,1,'2013-08-08 02:53:40','2026-02-15 18:44:54','2024-07-10 00:00:00',26.10000000,4,'','',14,1,NULL,0,0,0.00000000,0.00000000,NULL,NULL),
-(9,'9',NULL,1,'2013-08-08 02:55:58','2026-02-15 18:44:54','2024-07-18 00:00:00',26.96000000,1,'','',15,1,NULL,0,0,0.00000000,0.00000000,NULL,NULL),
 (17,'17',NULL,1,'2014-12-09 15:28:44','2026-02-15 18:44:54',NULL,2.00000000,4,'','',16,1,NULL,0,0,0.00000000,0.00000000,NULL,NULL),
 (18,'18',NULL,1,'2014-12-09 15:28:53','2026-02-15 18:44:54',NULL,-2.00000000,4,'','',17,1,NULL,0,0,0.00000000,0.00000000,NULL,NULL),
 (19,'19',NULL,1,'2014-12-09 17:35:55','2026-02-15 18:44:54',NULL,-2.00000000,4,'','',18,1,NULL,0,0,0.00000000,0.00000000,NULL,NULL),
-(20,'20',NULL,1,'2014-12-09 17:37:02','2026-02-15 18:44:54','2024-08-08 00:00:00',2.00000000,4,'','',19,1,NULL,0,0,0.00000000,0.00000000,NULL,NULL),
 (21,'21',NULL,1,'2014-12-09 18:35:07','2026-02-15 18:44:54',NULL,-2.00000000,4,'','',20,1,NULL,0,0,0.00000000,0.00000000,NULL,NULL),
 (23,'23',NULL,1,'2014-12-12 18:54:33','2026-02-15 18:44:54',NULL,1.00000000,1,'','',21,1,NULL,0,0,0.00000000,0.00000000,NULL,NULL),
 (24,'24',NULL,1,'2015-03-06 16:48:16','2026-02-15 18:44:54',NULL,20.00000000,4,'','Adhésion/cotisation 2016',22,1,NULL,0,0,0.00000000,0.00000000,NULL,NULL),
 (25,'25',NULL,1,'2015-03-20 14:30:11','2026-02-15 18:44:54',NULL,10.00000000,2,'','Adhésion/cotisation 2011',23,1,NULL,0,0,0.00000000,0.00000000,NULL,NULL),
-(26,'26',NULL,1,'2016-03-02 19:57:58','2026-02-15 18:44:54','2024-12-11 00:00:00',605.00000000,2,'','',24,1,NULL,0,0,0.00000000,0.00000000,NULL,NULL),
-(29,'29',NULL,1,'2016-03-02 20:01:39','2026-02-15 18:44:54','2024-12-11 00:00:00',500.00000000,4,'','',26,1,NULL,0,0,0.00000000,0.00000000,NULL,NULL),
-(30,'30',NULL,1,'2016-03-02 20:02:06','2026-02-15 18:44:54','2024-12-11 00:00:00',400.00000000,2,'','',27,1,NULL,0,0,0.00000000,0.00000000,NULL,NULL),
 (32,'32',NULL,1,'2016-03-03 19:22:32','2026-02-15 18:44:54',NULL,-400.00000000,4,'','',28,1,NULL,0,0,0.00000000,0.00000000,NULL,NULL),
 (33,'33',NULL,1,'2016-03-03 19:23:16','2026-02-15 18:44:54',NULL,-300.00000000,4,'','',29,1,NULL,0,0,0.00000000,0.00000000,NULL,NULL),
-(34,'PAY1603-0001',NULL,1,'2017-02-06 08:10:24','2026-02-15 18:44:54','2024-03-22 00:00:00',150.00000000,7,'','',33,12,NULL,0,0,0.00000000,150.00000000,NULL,NULL),
-(35,'PAY1603-0002',NULL,1,'2017-02-06 08:10:50','2026-02-15 18:44:54','2024-03-22 00:00:00',140.00000000,3,'','',34,12,NULL,0,0,0.00000000,140.00000000,NULL,NULL),
-(36,'PAY1702-0003',NULL,1,'2017-02-21 16:07:43','2026-02-15 18:44:54','2024-03-22 00:00:00',50.00000000,3,'T170201','',37,12,NULL,0,0,0.00000000,50.00000000,NULL,NULL),
-(38,'PAY1803-0004',NULL,1,'2018-03-16 13:59:31','2026-02-15 18:44:54','2024-01-19 00:00:00',10.00000000,7,'','',39,12,NULL,0,0,0.00000000,10.00000000,NULL,NULL),
-(40,'PAY2001-0006',NULL,1,'2020-01-16 02:36:48','2026-02-15 18:44:54','2025-01-16 00:00:00',20.50000000,2,'','',50,12,NULL,0,0,0.00000000,20.50000000,NULL,NULL),
-(41,'PAY2001-0007',NULL,1,'2020-01-21 10:23:17','2026-02-15 18:44:54','2025-07-18 00:00:00',50.00000000,7,'','Subscription 2017',53,12,NULL,0,0,0.00000000,50.00000000,NULL,NULL),
-(42,'PAY2001-0008',NULL,1,'2020-01-21 10:23:28','2026-02-15 18:44:54','2025-07-18 00:00:00',50.00000000,7,'','Subscription 2018',54,12,NULL,0,0,0.00000000,50.00000000,NULL,NULL),
-(43,'PAY2001-0009',NULL,1,'2020-01-21 10:23:49','2026-02-15 18:44:54','2025-07-18 00:00:00',50.00000000,6,'','Subscription 2019',55,12,NULL,0,0,0.00000000,50.00000000,NULL,NULL),
-(65,'PAY2412-0013','',1,'2024-12-09 14:05:31','2026-02-15 18:44:54','2024-01-19 00:00:00',2.00000000,7,'','fsfsdsd',78,12,12,0,0,0.00000000,2.60000000,NULL,NULL),
-(66,'PAY2412-0014','',1,'2024-12-09 14:06:09','2026-02-15 18:44:54','2024-01-19 00:00:00',1.53846000,6,'','',79,12,NULL,0,0,0.00000000,2.00000000,NULL,NULL),
-(72,'PAY3407-0018','',1,'2025-04-09 17:22:53','2026-02-15 18:44:54','2024-07-10 00:00:00',100.00000000,6,'','',85,12,NULL,0,0,0.00000000,100.00000000,NULL,NULL),
-(74,'PAY3107-0019','',1,'2025-04-09 18:02:42','2026-02-15 18:44:54','2024-03-20 00:00:00',5.00000000,3,'','',86,12,NULL,0,0,0.00000000,5.00000000,NULL,NULL),
-(75,'PAY3107-0020','',1,'2025-04-25 13:41:35','2026-02-15 18:44:54','2024-03-06 00:00:00',1.00000000,6,'','',88,12,NULL,0,0,0.00000000,1.00000000,NULL,NULL);
+(89,'PAY2501-0001','',1,'2025-01-16 10:07:13','2025-01-16 09:07:13','2025-01-16 00:00:00',11.00000000,7,'','',98,12,NULL,0,0,0.00000000,11.00000000,NULL,NULL),
+(90,'PAY2501-0002','',1,'2025-01-16 10:08:56','2025-01-16 09:08:56','2025-01-16 10:08:55',1.50000000,4,'','',99,12,NULL,0,0,0.00000000,1.50000000,NULL,NULL);
 /*!40000 ALTER TABLE `llx_paiement` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -74764,7 +74851,7 @@ CREATE TABLE `llx_paiement_facture` (
   KEY `idx_paiement_facture_fk_paiement` (`fk_paiement`),
   CONSTRAINT `fk_paiement_facture_fk_facture` FOREIGN KEY (`fk_facture`) REFERENCES `llx_facture` (`rowid`),
   CONSTRAINT `fk_paiement_facture_fk_paiement` FOREIGN KEY (`fk_paiement`) REFERENCES `llx_paiement` (`rowid`)
-) ENGINE=InnoDB AUTO_INCREMENT=96 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=98 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -74774,32 +74861,8 @@ CREATE TABLE `llx_paiement_facture` (
 LOCK TABLES `llx_paiement_facture` WRITE;
 /*!40000 ALTER TABLE `llx_paiement_facture` DISABLE KEYS */;
 INSERT INTO `llx_paiement_facture` VALUES
-(3,3,2,10.00000000,0.00000000,NULL,1.00000000),
-(5,5,5,5.63000000,0.00000000,NULL,1.00000000),
-(6,6,6,5.98000000,0.00000000,NULL,1.00000000),
-(9,8,2,16.10000000,0.00000000,NULL,1.00000000),
-(10,8,8,10.00000000,0.00000000,NULL,1.00000000),
-(11,9,3,15.00000000,0.00000000,NULL,1.00000000),
-(12,9,9,11.96000000,0.00000000,NULL,1.00000000),
-(24,20,9,1.00000000,0.00000000,NULL,1.00000000),
-(31,26,32,600.00000000,0.00000000,NULL,1.00000000),
-(36,29,32,500.00000000,0.00000000,NULL,1.00000000),
-(37,30,32,400.00000000,0.00000000,NULL,1.00000000),
-(38,34,211,150.00000000,150.00000000,NULL,1.00000000),
-(39,35,211,140.00000000,140.00000000,NULL,1.00000000),
-(40,36,211,50.00000000,50.00000000,NULL,1.00000000),
-(42,38,149,10.00000000,10.00000000,NULL,1.00000000),
-(44,40,224,20.50000000,20.50000000,NULL,1.00000000),
-(45,41,229,50.00000000,50.00000000,NULL,1.00000000),
-(46,42,230,50.00000000,50.00000000,NULL,1.00000000),
-(47,43,231,50.00000000,50.00000000,NULL,1.00000000),
-(70,65,219,1.00000000,1.30000000,'EUR',1.30000000),
-(71,65,148,1.00000000,1.30000000,'EUR',1.30000000),
-(72,66,219,0.77000000,1.00000000,'USD',1.30000000),
-(73,66,148,0.77000000,1.00000000,'USD',1.30000000),
-(79,72,2,100.00000000,100.00000000,'EUR',1.00000000),
-(81,74,210,5.00000000,5.00000000,'EUR',1.00000000),
-(82,75,160,1.00000000,1.00000000,'EUR',1.00000000);
+(96,89,459,11.00000000,11.00000000,'EUR',1.00000000),
+(97,90,460,1.50000000,1.50000000,'EUR',1.00000000);
 /*!40000 ALTER TABLE `llx_paiement_facture` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -75571,7 +75634,7 @@ CREATE TABLE `llx_printer_receipt` (
   `parameter` varchar(128) DEFAULT NULL,
   `entity` int(11) DEFAULT NULL,
   PRIMARY KEY (`rowid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -75580,6 +75643,8 @@ CREATE TABLE `llx_printer_receipt` (
 
 LOCK TABLES `llx_printer_receipt` WRITE;
 /*!40000 ALTER TABLE `llx_printer_receipt` DISABLE KEYS */;
+INSERT INTO `llx_printer_receipt` VALUES
+(1,'Imprimante réseau',3,0,'192.168.0.253',1);
 /*!40000 ALTER TABLE `llx_printer_receipt` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -78011,19 +78076,19 @@ CREATE TABLE `llx_rights_def` (
 LOCK TABLES `llx_rights_def` WRITE;
 /*!40000 ALTER TABLE `llx_rights_def` DISABLE KEYS */;
 INSERT INTO `llx_rights_def` VALUES
-(11,'Read invoices','facture','',1,'lire','','a',0,'1',11,'financial',0,'2026-02-15 18:45:09'),
+(11,'Read invoices','facture','',1,'lire','','a',0,'1',11,'financial',0,'2025-01-16 09:06:40'),
 (11,'Lire les factures','facture',NULL,2,'lire',NULL,'a',1,NULL,10,NULL,0,'2022-12-11 21:23:36'),
-(12,'Create and update invoices','facture','',1,'creer','','a',0,'1',11,'financial',0,'2026-02-15 18:45:09'),
+(12,'Create and update invoices','facture','',1,'creer','','a',0,'1',11,'financial',0,'2025-01-16 09:06:40'),
 (12,'Creer/modifier les factures','facture',NULL,2,'creer',NULL,'a',0,NULL,10,NULL,0,'2022-12-11 21:23:36'),
-(13,'Devalidate invoices','facture','',1,'invoice_advance','unvalidate','a',0,'1',11,'financial',0,'2026-02-15 18:45:09'),
+(13,'Devalidate invoices','facture','',1,'invoice_advance','unvalidate','a',0,'1',11,'financial',0,'2025-01-16 09:06:40'),
 (13,'Dévalider les factures','facture',NULL,2,'invoice_advance','unvalidate','a',0,NULL,10,NULL,0,'2022-12-11 21:23:36'),
-(14,'Validate invoices','facture','',1,'invoice_advance','validate','a',0,'1',11,'financial',0,'2026-02-15 18:45:09'),
+(14,'Validate invoices','facture','',1,'invoice_advance','validate','a',0,'1',11,'financial',0,'2025-01-16 09:06:40'),
 (14,'Valider les factures','facture',NULL,2,'valider',NULL,'a',0,NULL,10,NULL,0,'2022-12-11 21:23:36'),
-(15,'Send invoices by email','facture','',1,'invoice_advance','send','a',0,'1',11,'financial',0,'2026-02-15 18:45:09'),
+(15,'Send invoices by email','facture','',1,'invoice_advance','send','a',0,'1',11,'financial',0,'2025-01-16 09:06:40'),
 (15,'Envoyer les factures par mail','facture',NULL,2,'invoice_advance','send','a',0,NULL,10,NULL,0,'2022-12-11 21:23:36'),
-(16,'Issue payments on invoices','facture','',1,'paiement','','a',0,'1',11,'financial',0,'2026-02-15 18:45:09'),
+(16,'Issue payments on invoices','facture','',1,'paiement','','a',0,'1',11,'financial',0,'2025-01-16 09:06:40'),
 (16,'Emettre des paiements sur les factures','facture',NULL,2,'paiement',NULL,'a',0,NULL,10,NULL,0,'2022-12-11 21:23:36'),
-(19,'Delete invoices','facture','',1,'supprimer','','a',0,'1',11,'financial',0,'2026-02-15 18:45:09'),
+(19,'Delete invoices','facture','',1,'supprimer','','a',0,'1',11,'financial',0,'2025-01-16 09:06:40'),
 (19,'Supprimer les factures','facture',NULL,2,'supprimer',NULL,'a',0,NULL,10,NULL,0,'2022-12-11 21:23:36'),
 (21,'Read commercial proposals','propale','',1,'lire','','r',0,'1',10,NULL,0,'2025-03-25 21:59:16'),
 (21,'Lire les propositions commerciales','propale',NULL,2,'lire',NULL,'r',1,NULL,22,NULL,0,'2022-12-11 21:23:36'),
@@ -78055,13 +78120,13 @@ INSERT INTO `llx_rights_def` VALUES
 (42,'Create/modify projects and tasks (shared projects or projects I am contact for)','projet','',1,'creer','','w',0,'1',14,NULL,0,'2025-03-25 21:59:16'),
 (44,'Delete project and tasks (shared projects or projects I am contact for)','projet','',1,'supprimer','','d',0,'1',14,NULL,0,'2025-03-25 21:59:16'),
 (45,'Export projects','projet','',1,'export','','d',0,'1',14,NULL,0,'2025-03-25 21:59:16'),
-(61,'Lire les fiches d\'intervention','ficheinter','',1,'lire','','r',0,'1',41,'crm',0,'2026-02-15 18:45:09'),
-(62,'Creer/modifier les fiches d\'intervention','ficheinter','',1,'creer','','w',0,'1',41,'crm',0,'2026-02-15 18:45:09'),
-(64,'Supprimer les fiches d\'intervention','ficheinter','',1,'supprimer','','d',0,'1',41,'crm',0,'2026-02-15 18:45:09'),
-(67,'Exporter les fiches interventions','ficheinter','',1,'export','','r',0,'1',41,'crm',0,'2026-02-15 18:45:09'),
-(68,'Envoyer les fiches d\'intervention par courriel','ficheinter','',1,'ficheinter_advance','send','r',0,'1',41,'crm',0,'2026-02-15 18:45:09'),
-(69,'Valider les fiches d\'intervention ','ficheinter','',1,'ficheinter_advance','validate','a',0,'1',41,'crm',0,'2026-02-15 18:45:09'),
-(70,'Dévalider les fiches d\'intervention','ficheinter','',1,'ficheinter_advance','unvalidate','a',0,'1',41,'crm',0,'2026-02-15 18:45:09'),
+(61,'Lire les fiches d\'intervention','ficheinter','',1,'lire','','r',0,'1',41,'crm',0,'2025-01-16 09:06:40'),
+(62,'Creer/modifier les fiches d\'intervention','ficheinter','',1,'creer','','w',0,'1',41,'crm',0,'2025-01-16 09:06:40'),
+(64,'Supprimer les fiches d\'intervention','ficheinter','',1,'supprimer','','d',0,'1',41,'crm',0,'2025-01-16 09:06:40'),
+(67,'Exporter les fiches interventions','ficheinter','',1,'export','','r',0,'1',41,'crm',0,'2025-01-16 09:06:40'),
+(68,'Envoyer les fiches d\'intervention par courriel','ficheinter','',1,'ficheinter_advance','send','r',0,'1',41,'crm',0,'2025-01-16 09:06:40'),
+(69,'Valider les fiches d\'intervention ','ficheinter','',1,'ficheinter_advance','validate','a',0,'1',41,'crm',0,'2025-01-16 09:06:40'),
+(70,'Dévalider les fiches d\'intervention','ficheinter','',1,'ficheinter_advance','unvalidate','a',0,'1',41,'crm',0,'2025-01-16 09:06:40'),
 (71,'Read members\' card','adherent','',1,'lire','','r',0,'1',6,NULL,0,'2025-03-25 21:59:16'),
 (72,'Create/modify members (need also user module permissions if member linked to a user)','adherent','',1,'creer','','w',0,'1',6,NULL,0,'2025-03-25 21:59:16'),
 (74,'Remove members','adherent','',1,'supprimer','','d',0,'1',6,NULL,0,'2025-03-25 21:59:16'),
@@ -78069,14 +78134,14 @@ INSERT INTO `llx_rights_def` VALUES
 (76,'Export members','adherent','',1,'export','','r',0,'1',6,NULL,0,'2025-03-25 21:59:16'),
 (78,'Read membership fees','adherent','',1,'cotisation','lire','r',0,'1',6,NULL,0,'2025-03-25 21:59:16'),
 (79,'Create/modify/remove membership fees','adherent','',1,'cotisation','creer','w',0,'1',6,NULL,0,'2025-03-25 21:59:16'),
-(81,'Read sales orders','commande','',1,'lire','','r',0,'1',11,'crm',0,'2026-02-15 18:45:09'),
-(82,'Creeat/modify sales orders','commande','',1,'creer','','w',0,'1',11,'crm',0,'2026-02-15 18:45:09'),
-(84,'Validate sales orders','commande','',1,'order_advance','validate','d',0,'1',11,'crm',0,'2026-02-15 18:45:09'),
-(85,'Generate the documents sales orders','commande','',1,'order_advance','generetedoc','d',0,'1',11,'crm',0,'2026-02-15 18:45:09'),
-(86,'Send sales orders by email','commande','',1,'order_advance','send','d',0,'1',11,'crm',0,'2026-02-15 18:45:09'),
-(87,'Close sale orders','commande','',1,'order_advance','close','d',0,'1',11,'crm',0,'2026-02-15 18:45:09'),
-(88,'Cancel sale orders','commande','',1,'order_advance','annuler','d',0,'1',11,'crm',0,'2026-02-15 18:45:09'),
-(89,'Delete sales orders','commande','',1,'supprimer','','d',0,'1',11,'crm',0,'2026-02-15 18:45:09'),
+(81,'Read sales orders','commande','',1,'lire','','r',0,'1',11,'crm',0,'2025-01-16 09:06:40'),
+(82,'Creeat/modify sales orders','commande','',1,'creer','','w',0,'1',11,'crm',0,'2025-01-16 09:06:40'),
+(84,'Validate sales orders','commande','',1,'order_advance','validate','d',0,'1',11,'crm',0,'2025-01-16 09:06:40'),
+(85,'Generate the documents sales orders','commande','',1,'order_advance','generetedoc','d',0,'1',11,'crm',0,'2025-01-16 09:06:40'),
+(86,'Send sales orders by email','commande','',1,'order_advance','send','d',0,'1',11,'crm',0,'2025-01-16 09:06:40'),
+(87,'Close sale orders','commande','',1,'order_advance','close','d',0,'1',11,'crm',0,'2025-01-16 09:06:40'),
+(88,'Cancel sale orders','commande','',1,'order_advance','annuler','d',0,'1',11,'crm',0,'2025-01-16 09:06:40'),
+(89,'Delete sales orders','commande','',1,'supprimer','','d',0,'1',11,'crm',0,'2025-01-16 09:06:40'),
 (91,'Read social contibutions','tax','',1,'charges','lire','r',0,'1',50,NULL,0,'2025-03-25 21:59:16'),
 (91,'Lire les charges','tax',NULL,2,'charges','lire','r',1,NULL,50,NULL,0,'2022-12-11 21:23:36'),
 (92,'Create/modify social contributions','tax','',1,'charges','creer','w',0,'1',50,NULL,0,'2025-03-25 21:59:16'),
@@ -78091,29 +78156,29 @@ INSERT INTO `llx_rights_def` VALUES
 (105,'Send shipments by email to customers','expedition','',1,'shipping_advance','send','d',0,'1',40,NULL,0,'2025-03-25 21:59:16'),
 (106,'Export shipments','expedition','',1,'shipment','export','r',0,'1',40,NULL,0,'2025-03-25 21:59:16'),
 (109,'Delete shipments','expedition','',1,'supprimer','','d',0,'1',40,NULL,0,'2025-03-25 21:59:16'),
-(111,'Read bank account and transactions','banque','',1,'lire','','r',0,'1',51,'financial',0,'2026-02-15 18:45:09'),
+(111,'Read bank account and transactions','banque','',1,'lire','','r',0,'1',51,'financial',0,'2025-01-16 09:06:40'),
 (111,'Lire les comptes bancaires','banque',NULL,2,'lire',NULL,'r',1,NULL,51,NULL,0,'2022-12-11 21:23:36'),
-(112,'Creer/modifier montant/supprimer ecriture bancaire','banque','',1,'modifier','','w',0,'1',51,'financial',0,'2026-02-15 18:45:09'),
+(112,'Creer/modifier montant/supprimer ecriture bancaire','banque','',1,'modifier','','w',0,'1',51,'financial',0,'2025-01-16 09:06:40'),
 (112,'Creer/modifier montant/supprimer ecriture bancaire','banque',NULL,2,'modifier',NULL,'w',0,NULL,51,NULL,0,'2022-12-11 21:23:36'),
-(113,'Configurer les comptes bancaires (creer, gerer categories)','banque','',1,'configurer','','a',0,'1',51,'financial',0,'2026-02-15 18:45:09'),
+(113,'Configurer les comptes bancaires (creer, gerer categories)','banque','',1,'configurer','','a',0,'1',51,'financial',0,'2025-01-16 09:06:40'),
 (113,'Configurer les comptes bancaires (creer, gerer categories)','banque',NULL,2,'configurer',NULL,'a',0,NULL,51,NULL,0,'2022-12-11 21:23:36'),
-(114,'Rapprocher les ecritures bancaires','banque','',1,'consolidate','','w',0,'1',51,'financial',0,'2026-02-15 18:45:09'),
+(114,'Rapprocher les ecritures bancaires','banque','',1,'consolidate','','w',0,'1',51,'financial',0,'2025-01-16 09:06:40'),
 (114,'Rapprocher les ecritures bancaires','banque',NULL,2,'consolidate',NULL,'w',0,NULL,51,NULL,0,'2022-12-11 21:23:36'),
-(115,'Exporter transactions et releves','banque','',1,'export','','r',0,'1',51,'financial',0,'2026-02-15 18:45:09'),
+(115,'Exporter transactions et releves','banque','',1,'export','','r',0,'1',51,'financial',0,'2025-01-16 09:06:40'),
 (115,'Exporter transactions et releves','banque',NULL,2,'export',NULL,'r',0,NULL,51,NULL,0,'2022-12-11 21:23:36'),
-(116,'Virements entre comptes','banque','',1,'transfer','','w',0,'1',51,'financial',0,'2026-02-15 18:45:09'),
+(116,'Virements entre comptes','banque','',1,'transfer','','w',0,'1',51,'financial',0,'2025-01-16 09:06:40'),
 (116,'Virements entre comptes','banque',NULL,2,'transfer',NULL,'w',0,NULL,51,NULL,0,'2022-12-11 21:23:36'),
-(117,'Gerer les envois de cheques','banque','',1,'cheque','','w',0,'1',51,'financial',0,'2026-02-15 18:45:09'),
+(117,'Gerer les envois de cheques','banque','',1,'cheque','','w',0,'1',51,'financial',0,'2025-01-16 09:06:40'),
 (117,'Gerer les envois de cheques','banque',NULL,2,'cheque',NULL,'w',0,NULL,51,NULL,0,'2022-12-11 21:23:36'),
-(121,'Read third parties','societe','',1,'lire','','r',0,'1',9,'crm',0,'2026-02-15 18:45:09'),
+(121,'Read third parties','societe','',1,'lire','','r',0,'1',9,'crm',0,'2025-01-16 09:06:40'),
 (121,'Lire les societes','societe',NULL,2,'lire',NULL,'r',1,NULL,9,NULL,0,'2022-12-11 21:23:36'),
-(122,'Create and update third parties','societe','',1,'creer','','w',0,'1',9,'crm',0,'2026-02-15 18:45:09'),
+(122,'Create and update third parties','societe','',1,'creer','','w',0,'1',9,'crm',0,'2025-01-16 09:06:40'),
 (122,'Creer modifier les societes','societe',NULL,2,'creer',NULL,'w',0,NULL,9,NULL,0,'2022-12-11 21:23:36'),
-(125,'Delete third parties','societe','',1,'supprimer','','d',0,'1',9,'crm',0,'2026-02-15 18:45:09'),
+(125,'Delete third parties','societe','',1,'supprimer','','d',0,'1',9,'crm',0,'2025-01-16 09:06:40'),
 (125,'Supprimer les societes','societe',NULL,2,'supprimer',NULL,'d',0,NULL,9,NULL,0,'2022-12-11 21:23:36'),
-(126,'Export third parties','societe','',1,'export','','r',0,'1',9,'crm',0,'2026-02-15 18:45:09'),
+(126,'Export third parties','societe','',1,'export','','r',0,'1',9,'crm',0,'2025-01-16 09:06:40'),
 (126,'Exporter les societes','societe',NULL,2,'export',NULL,'r',0,NULL,9,NULL,0,'2022-12-11 21:23:36'),
-(130,'Modify thirdparty information payment','societe','',1,'thirdparty_paymentinformation','write','w',0,'1',9,'crm',0,'2026-02-15 18:45:09'),
+(130,'Modify thirdparty information payment','societe','',1,'thirdparty_paymentinformation','write','w',0,'1',9,'crm',0,'2025-01-16 09:06:40'),
 (141,'Read all projects and tasks (also private projects I am not contact for)','projet','',1,'all','lire','r',0,'1',14,NULL,0,'2025-03-25 21:59:16'),
 (142,'Create/modify all projects and tasks (also private projects I am not contact for)','projet','',1,'all','creer','w',0,'1',14,NULL,0,'2025-03-25 21:59:16'),
 (144,'Delete all projects and tasks (also private projects I am not contact for)','projet','',1,'all','supprimer','d',0,'1',14,NULL,0,'2025-03-25 21:59:16'),
@@ -78145,67 +78210,67 @@ INSERT INTO `llx_rights_def` VALUES
 (241,'Lire les categories','categorie','',1,'lire','','r',0,'1',25,NULL,0,'2025-03-25 21:59:16'),
 (242,'Creer/modifier les categories','categorie','',1,'creer','','w',0,'1',25,NULL,0,'2025-03-25 21:59:16'),
 (243,'Supprimer les categories','categorie','',1,'supprimer','','d',0,'1',25,NULL,0,'2025-03-25 21:59:16'),
-(251,'Read information of other users, groups and permissions','user','',1,'user','lire','w',0,'1',5,'hr',0,'2026-02-15 18:45:10'),
-(252,'Read permissions of other users','user','',1,'user_advance','readperms','w',0,'1',5,'hr',0,'2026-02-15 18:45:10'),
-(253,'Create/modify internal and external users, groups and permissions','user','',1,'user','creer','w',0,'1',5,'hr',0,'2026-02-15 18:45:10'),
-(254,'Create/modify external users only','user','',1,'user_advance','write','w',0,'1',5,'hr',0,'2026-02-15 18:45:10'),
-(255,'Modify the password of other users','user','',1,'user','password','w',0,'1',5,'hr',0,'2026-02-15 18:45:10'),
-(256,'Delete or disable other users','user','',1,'user','supprimer','w',0,'1',5,'hr',0,'2026-02-15 18:45:10'),
-(262,'Read all third parties (and their objects) by internal users (otherwise only if commercial contact). Not effective for external users (limited to themselves).','societe','',1,'client','voir','r',0,'1',9,'crm',0,'2026-02-15 18:45:09'),
+(251,'Read information of other users, groups and permissions','user','',1,'user','lire','w',0,'1',5,'hr',0,'2025-01-16 09:06:40'),
+(252,'Read permissions of other users','user','',1,'user_advance','readperms','w',0,'1',5,'hr',0,'2025-01-16 09:06:40'),
+(253,'Create/modify internal and external users, groups and permissions','user','',1,'user','creer','w',0,'1',5,'hr',0,'2025-01-16 09:06:40'),
+(254,'Create/modify external users only','user','',1,'user_advance','write','w',0,'1',5,'hr',0,'2025-01-16 09:06:40'),
+(255,'Modify the password of other users','user','',1,'user','password','w',0,'1',5,'hr',0,'2025-01-16 09:06:40'),
+(256,'Delete or disable other users','user','',1,'user','supprimer','w',0,'1',5,'hr',0,'2025-01-16 09:06:40'),
+(262,'Read all third parties (and their objects) by internal users (otherwise only if commercial contact). Not effective for external users (limited to themselves).','societe','',1,'client','voir','r',0,'1',9,'crm',0,'2025-01-16 09:06:40'),
 (262,'Consulter tous les tiers par utilisateurs internes (sinon uniquement si contact commercial). Non effectif pour utilisateurs externes (tjs limités à eux-meme).','societe',NULL,2,'client','voir','r',1,NULL,9,NULL,0,'2022-12-11 21:23:36'),
-(281,'Read contacts','societe','',1,'contact','lire','r',0,'1',9,'crm',0,'2026-02-15 18:45:09'),
+(281,'Read contacts','societe','',1,'contact','lire','r',0,'1',9,'crm',0,'2025-01-16 09:06:40'),
 (281,'Lire les contacts','societe',NULL,2,'contact','lire','r',1,NULL,9,NULL,0,'2022-12-11 21:23:36'),
-(282,'Create and update contact','societe','',1,'contact','creer','w',0,'1',9,'crm',0,'2026-02-15 18:45:09'),
+(282,'Create and update contact','societe','',1,'contact','creer','w',0,'1',9,'crm',0,'2025-01-16 09:06:40'),
 (282,'Creer modifier les contacts','societe',NULL,2,'contact','creer','w',0,NULL,9,NULL,0,'2022-12-11 21:23:36'),
-(283,'Delete contacts','societe','',1,'contact','supprimer','d',0,'1',9,'crm',0,'2026-02-15 18:45:09'),
+(283,'Delete contacts','societe','',1,'contact','supprimer','d',0,'1',9,'crm',0,'2025-01-16 09:06:40'),
 (283,'Supprimer les contacts','societe',NULL,2,'contact','supprimer','d',0,NULL,9,NULL,0,'2022-12-11 21:23:36'),
-(286,'Export contacts','societe','',1,'contact','export','d',0,'1',9,'crm',0,'2026-02-15 18:45:09'),
+(286,'Export contacts','societe','',1,'contact','export','d',0,'1',9,'crm',0,'2025-01-16 09:06:40'),
 (286,'Exporter les contacts','societe',NULL,2,'contact','export','d',0,NULL,9,NULL,0,'2022-12-11 21:23:36'),
-(301,'Generate PDF sheets of barcodes','barcode','',1,'read','','r',0,'1',50,'technic',0,'2026-02-15 18:45:09'),
-(304,'Read barcodes','barcode','',1,'lire_advance','','r',0,'1',50,'technic',0,'2026-02-15 18:45:09'),
-(305,'Create/modify barcodes','barcode','',1,'creer_advance','','w',0,'1',50,'technic',0,'2026-02-15 18:45:09'),
+(301,'Generate PDF sheets of barcodes','barcode','',1,'read','','r',0,'1',50,'technic',0,'2025-01-16 09:06:40'),
+(304,'Read barcodes','barcode','',1,'lire_advance','','r',0,'1',50,'technic',0,'2025-01-16 09:06:40'),
+(305,'Create/modify barcodes','barcode','',1,'creer_advance','','w',0,'1',50,'technic',0,'2025-01-16 09:06:40'),
 (331,'Lire les bookmarks','bookmark','',1,'lire','','r',0,'1',50,NULL,0,'2025-03-25 21:59:16'),
 (332,'Creer/modifier les bookmarks','bookmark','',1,'creer','','r',0,'1',50,NULL,0,'2025-03-25 21:59:16'),
 (333,'Supprimer les bookmarks','bookmark','',1,'supprimer','','r',0,'1',50,NULL,0,'2025-03-25 21:59:16'),
-(341,'Read its own permissions','user','',1,'self_advance','readperms','w',0,'1',5,'hr',0,'2026-02-15 18:45:10'),
-(342,'Create/modify of its own user','user','',1,'self','creer','w',0,'1',5,'hr',0,'2026-02-15 18:45:10'),
-(343,'Modify its own password','user','',1,'self','password','w',0,'1',5,'hr',0,'2026-02-15 18:45:10'),
-(344,'Modify its own permissions','user','',1,'self_advance','writeperms','w',0,'1',5,'hr',0,'2026-02-15 18:45:10'),
-(351,'Read groups','user','',1,'group_advance','read','w',0,'1',5,'hr',0,'2026-02-15 18:45:10'),
-(352,'Read permissions of groups','user','',1,'group_advance','readperms','w',0,'1',5,'hr',0,'2026-02-15 18:45:10'),
-(353,'Create/modify groups and permissions','user','',1,'group_advance','write','w',0,'1',5,'hr',0,'2026-02-15 18:45:10'),
-(354,'Delete groups','user','',1,'group_advance','delete','w',0,'1',5,'hr',0,'2026-02-15 18:45:10'),
-(358,'Export all users','user','',1,'user','export','w',0,'1',5,'hr',0,'2026-02-15 18:45:10'),
-(511,'Read employee salaries and payments (yours only)','salaries','',1,'read','','r',0,'1',50,'financial',0,'2026-02-15 18:45:09'),
-(512,'Read employee salaries and payments (yours and of your subordinates)','salaries','',1,'readchild','','r',0,'1',50,'financial',0,'2026-02-15 18:45:09'),
-(513,'Create/modify payments of empoyee salaries','salaries','',1,'write','','w',0,'1',50,'financial',0,'2026-02-15 18:45:09'),
-(514,'Delete payments of employee salary','salaries','',1,'delete','','d',0,'1',50,'financial',0,'2026-02-15 18:45:09'),
-(517,'Read salaries and payments (of all employees)','salaries','',1,'readall','','r',0,'1',50,'financial',0,'2026-02-15 18:45:09'),
-(519,'Export payments of employee salaries','salaries','',1,'export','','r',0,'1',50,'financial',0,'2026-02-15 18:45:09'),
-(521,'Read loans','loan','',1,'read','','r',0,'1',50,'financial',0,'2026-02-15 18:45:09'),
-(522,'Create/modify loans','loan','',1,'write','','w',0,'1',50,'financial',0,'2026-02-15 18:45:09'),
-(524,'Delete loans','loan','',1,'delete','','d',0,'1',50,'financial',0,'2026-02-15 18:45:09'),
-(525,'Access loan calculator','loan','',1,'calc','','r',0,'1',50,'financial',0,'2026-02-15 18:45:09'),
-(527,'Export loans','loan','',1,'export','','r',0,'1',50,'financial',0,'2026-02-15 18:45:09'),
-(531,'Read services','service','',1,'lire','','r',0,'1',29,'products',0,'2026-02-15 18:45:09'),
-(532,'Create/modify services','service','',1,'creer','','w',0,'1',29,'products',0,'2026-02-15 18:45:09'),
-(533,'Read prices services','service','',1,'service_advance','read_prices','w',0,'1',29,'products',0,'2026-02-15 18:45:09'),
-(534,'Delete les services','service','',1,'supprimer','','d',0,'1',29,'products',0,'2026-02-15 18:45:09'),
-(535,'Read supplier prices','service','',1,'service_advance','read_supplier_prices','w',0,'1',29,'products',0,'2026-02-15 18:45:09'),
-(538,'Export services','service','',1,'export','','r',0,'1',29,'products',0,'2026-02-15 18:45:09'),
+(341,'Read its own permissions','user','',1,'self_advance','readperms','w',0,'1',5,'hr',0,'2025-01-16 09:06:40'),
+(342,'Create/modify of its own user','user','',1,'self','creer','w',0,'1',5,'hr',0,'2025-01-16 09:06:40'),
+(343,'Modify its own password','user','',1,'self','password','w',0,'1',5,'hr',0,'2025-01-16 09:06:40'),
+(344,'Modify its own permissions','user','',1,'self_advance','writeperms','w',0,'1',5,'hr',0,'2025-01-16 09:06:40'),
+(351,'Read groups','user','',1,'group_advance','read','w',0,'1',5,'hr',0,'2025-01-16 09:06:40'),
+(352,'Read permissions of groups','user','',1,'group_advance','readperms','w',0,'1',5,'hr',0,'2025-01-16 09:06:40'),
+(353,'Create/modify groups and permissions','user','',1,'group_advance','write','w',0,'1',5,'hr',0,'2025-01-16 09:06:40'),
+(354,'Delete groups','user','',1,'group_advance','delete','w',0,'1',5,'hr',0,'2025-01-16 09:06:40'),
+(358,'Export all users','user','',1,'user','export','w',0,'1',5,'hr',0,'2025-01-16 09:06:40'),
+(511,'Read employee salaries and payments (yours only)','salaries','',1,'read','','r',0,'1',50,'financial',0,'2025-01-16 09:06:40'),
+(512,'Read employee salaries and payments (yours and of your subordinates)','salaries','',1,'readchild','','r',0,'1',50,'financial',0,'2025-01-16 09:06:40'),
+(513,'Create/modify payments of empoyee salaries','salaries','',1,'write','','w',0,'1',50,'financial',0,'2025-01-16 09:06:40'),
+(514,'Delete payments of employee salary','salaries','',1,'delete','','d',0,'1',50,'financial',0,'2025-01-16 09:06:40'),
+(517,'Read salaries and payments (of all employees)','salaries','',1,'readall','','r',0,'1',50,'financial',0,'2025-01-16 09:06:40'),
+(519,'Export payments of employee salaries','salaries','',1,'export','','r',0,'1',50,'financial',0,'2025-01-16 09:06:40'),
+(521,'Read loans','loan','',1,'read','','r',0,'1',50,'financial',0,'2025-01-16 09:06:40'),
+(522,'Create/modify loans','loan','',1,'write','','w',0,'1',50,'financial',0,'2025-01-16 09:06:40'),
+(524,'Delete loans','loan','',1,'delete','','d',0,'1',50,'financial',0,'2025-01-16 09:06:40'),
+(525,'Access loan calculator','loan','',1,'calc','','r',0,'1',50,'financial',0,'2025-01-16 09:06:40'),
+(527,'Export loans','loan','',1,'export','','r',0,'1',50,'financial',0,'2025-01-16 09:06:40'),
+(531,'Read services','service','',1,'lire','','r',0,'1',29,'products',0,'2025-01-16 09:06:40'),
+(532,'Create/modify services','service','',1,'creer','','w',0,'1',29,'products',0,'2025-01-16 09:06:40'),
+(533,'Read prices services','service','',1,'service_advance','read_prices','w',0,'1',29,'products',0,'2025-01-16 09:06:40'),
+(534,'Delete les services','service','',1,'supprimer','','d',0,'1',29,'products',0,'2025-01-16 09:06:40'),
+(535,'Read supplier prices','service','',1,'service_advance','read_supplier_prices','w',0,'1',29,'products',0,'2025-01-16 09:06:40'),
+(538,'Export services','service','',1,'export','','r',0,'1',29,'products',0,'2025-01-16 09:06:40'),
 (561,'Read bank transfer payment orders','paymentbybanktransfer','',1,'read','','r',0,'1',52,NULL,0,'2025-03-25 21:59:16'),
 (562,'Create/modify a bank transfer payment order','paymentbybanktransfer','',1,'create','','w',0,'1',52,NULL,0,'2025-03-25 21:59:16'),
 (563,'Send/Transmit bank transfer payment order','paymentbybanktransfer','',1,'send','','a',0,'1',52,NULL,0,'2025-03-25 21:59:16'),
 (564,'Record Debits/Rejects of bank transfer payment order','paymentbybanktransfer','',1,'debit','','a',0,'1',52,NULL,0,'2025-03-25 21:59:16'),
-(611,'Read attributes of variants','variants','',1,'read','','w',0,'1',50,'products',0,'2026-02-15 18:45:10'),
-(612,'Create/Update attributes of variants','variants','',1,'write','','w',0,'1',50,'products',0,'2026-02-15 18:45:10'),
-(613,'Delete attributes of variants','variants','',1,'delete','','w',0,'1',50,'products',0,'2026-02-15 18:45:10'),
-(651,'Read bom of Bom','bom','',1,'read','','w',0,'1',65,'products',0,'2026-02-15 18:45:09'),
-(652,'Create/Update bom of Bom','bom','',1,'write','','w',0,'1',65,'products',0,'2026-02-15 18:45:09'),
-(653,'Delete bom of Bom','bom','',1,'delete','','w',0,'1',65,'products',0,'2026-02-15 18:45:09'),
-(661,'Read Manufacturing Order','mrp','',1,'read','','w',0,'1',66,'products',0,'2026-02-15 18:45:09'),
-(662,'Create/Update Manufacturing Order','mrp','',1,'write','','w',0,'1',66,'products',0,'2026-02-15 18:45:09'),
-(663,'Delete Manufacturing Order','mrp','',1,'delete','','w',0,'1',66,'products',0,'2026-02-15 18:45:09'),
+(611,'Read attributes of variants','variants','',1,'read','','w',0,'1',50,'products',0,'2025-01-16 09:06:41'),
+(612,'Create/Update attributes of variants','variants','',1,'write','','w',0,'1',50,'products',0,'2025-01-16 09:06:41'),
+(613,'Delete attributes of variants','variants','',1,'delete','','w',0,'1',50,'products',0,'2025-01-16 09:06:41'),
+(651,'Read bom of Bom','bom','',1,'read','','w',0,'1',65,'products',0,'2025-01-16 09:06:39'),
+(652,'Create/Update bom of Bom','bom','',1,'write','','w',0,'1',65,'products',0,'2025-01-16 09:06:39'),
+(653,'Delete bom of Bom','bom','',1,'delete','','w',0,'1',65,'products',0,'2025-01-16 09:06:39'),
+(661,'Read Manufacturing Order','mrp','',1,'read','','w',0,'1',66,'products',0,'2025-01-16 09:06:40'),
+(662,'Create/Update Manufacturing Order','mrp','',1,'write','','w',0,'1',66,'products',0,'2025-01-16 09:06:40'),
+(663,'Delete Manufacturing Order','mrp','',1,'delete','','w',0,'1',66,'products',0,'2025-01-16 09:06:40'),
 (691,'Read objects of Workstation','workstation','',1,'workstation','read','w',0,'1',90,NULL,0,'2025-03-25 21:59:16'),
 (692,'Create/Update objects of Workstation','workstation','',1,'workstation','write','w',0,'1',90,NULL,0,'2025-03-25 21:59:16'),
 (693,'Delete objects of Workstation','workstation','',1,'workstation','delete','w',0,'1',90,NULL,0,'2025-03-25 21:59:16'),
@@ -78218,17 +78283,17 @@ INSERT INTO `llx_rights_def` VALUES
 (711,'Read stocks transfers','stocktransfer','',1,'stocktransfer','read','w',0,'1',90,NULL,0,'2025-03-25 21:59:16'),
 (712,'Create/Update stocks transfers','stocktransfer','',1,'stocktransfer','write','w',0,'1',90,NULL,0,'2025-03-25 21:59:16'),
 (713,'Delete stocks transfers','stocktransfer','',1,'stocktransfer','delete','w',0,'1',90,NULL,0,'2025-03-25 21:59:16'),
-(750,'Read job positions to fill and candidatures','recruitment','',1,'recruitmentjobposition','read','w',0,'1',44,'hr',0,'2026-02-15 18:45:09'),
-(751,'Create/Update job positions to fill and candidatures','recruitment','',1,'recruitmentjobposition','write','w',0,'1',44,'hr',0,'2026-02-15 18:45:09'),
-(752,'Delete Job positions to fill and candidatures','recruitment','',1,'recruitmentjobposition','delete','w',0,'1',44,'hr',0,'2026-02-15 18:45:09'),
-(771,'Read expense reports (yours and your subordinates)','expensereport','',1,'lire','','r',0,'1',42,'hr',0,'2026-02-15 18:45:09'),
-(772,'Create/modify expense reports','expensereport','',1,'creer','','w',0,'1',42,'hr',0,'2026-02-15 18:45:09'),
-(773,'Delete expense reports','expensereport','',1,'supprimer','','d',0,'1',42,'hr',0,'2026-02-15 18:45:09'),
-(775,'Approve expense reports','expensereport','',1,'approve','','w',0,'1',42,'hr',0,'2026-02-15 18:45:09'),
-(776,'Pay expense reports','expensereport','',1,'to_paid','','w',0,'1',42,'hr',0,'2026-02-15 18:45:09'),
-(777,'Read expense reports of everybody','expensereport','',1,'readall','','r',0,'1',42,'hr',0,'2026-02-15 18:45:09'),
-(778,'Create expense reports for everybody','expensereport','',1,'writeall_advance','','w',0,'1',42,'hr',0,'2026-02-15 18:45:09'),
-(779,'Export expense reports','expensereport','',1,'export','','r',0,'1',42,'hr',0,'2026-02-15 18:45:09'),
+(750,'Read job positions to fill and candidatures','recruitment','',1,'recruitmentjobposition','read','w',0,'1',44,'hr',0,'2025-01-16 09:06:40'),
+(751,'Create/Update job positions to fill and candidatures','recruitment','',1,'recruitmentjobposition','write','w',0,'1',44,'hr',0,'2025-01-16 09:06:40'),
+(752,'Delete Job positions to fill and candidatures','recruitment','',1,'recruitmentjobposition','delete','w',0,'1',44,'hr',0,'2025-01-16 09:06:40'),
+(771,'Read expense reports (yours and your subordinates)','expensereport','',1,'lire','','r',0,'1',42,'hr',0,'2025-01-16 09:06:40'),
+(772,'Create/modify expense reports','expensereport','',1,'creer','','w',0,'1',42,'hr',0,'2025-01-16 09:06:40'),
+(773,'Delete expense reports','expensereport','',1,'supprimer','','d',0,'1',42,'hr',0,'2025-01-16 09:06:40'),
+(775,'Approve expense reports','expensereport','',1,'approve','','w',0,'1',42,'hr',0,'2025-01-16 09:06:40'),
+(776,'Pay expense reports','expensereport','',1,'to_paid','','w',0,'1',42,'hr',0,'2025-01-16 09:06:40'),
+(777,'Read expense reports of everybody','expensereport','',1,'readall','','r',0,'1',42,'hr',0,'2025-01-16 09:06:40'),
+(778,'Create expense reports for everybody','expensereport','',1,'writeall_advance','','w',0,'1',42,'hr',0,'2025-01-16 09:06:40'),
+(779,'Export expense reports','expensereport','',1,'export','','r',0,'1',42,'hr',0,'2025-01-16 09:06:40'),
 (1001,'Read stocks','stock','',1,'lire','','r',0,'1',39,NULL,0,'2025-03-25 21:59:16'),
 (1002,'Create/Modify stocks','stock','',1,'creer','','w',0,'1',39,NULL,0,'2025-03-25 21:59:16'),
 (1003,'Delete stock','stock','',1,'supprimer','','d',0,'1',39,NULL,0,'2025-03-25 21:59:16'),
@@ -78250,46 +78315,47 @@ INSERT INTO `llx_rights_def` VALUES
 (1124,'Send supplier proposals','supplier_proposal','',1,'send_advance','','w',0,'1',35,NULL,0,'2025-03-25 21:59:16'),
 (1125,'Delete supplier proposals','supplier_proposal','',1,'supprimer','','w',0,'1',35,NULL,0,'2025-03-25 21:59:16'),
 (1126,'Close supplier price requests','supplier_proposal','',1,'cloturer','','w',0,'1',35,NULL,0,'2025-03-25 21:59:16'),
-(1181,'Consulter les fournisseurs','fournisseur','',1,'lire','','r',0,'1',12,'srm',0,'2026-02-15 18:45:09'),
-(1182,'Consulter les commandes fournisseur','fournisseur','',1,'commande','lire','r',0,'1',12,'srm',0,'2026-02-15 18:45:09'),
-(1183,'Creer une commande fournisseur','fournisseur','',1,'commande','creer','w',0,'1',12,'srm',0,'2026-02-15 18:45:09'),
-(1184,'Valider une commande fournisseur','fournisseur','',1,'supplier_order_advance','validate','w',0,'1',12,'srm',0,'2026-02-15 18:45:09'),
-(1185,'Approuver une commande fournisseur','fournisseur','',1,'commande','approuver','w',0,'1',12,'srm',0,'2026-02-15 18:45:09'),
-(1186,'Commander une commande fournisseur','fournisseur','',1,'commande','commander','w',0,'1',12,'srm',0,'2026-02-15 18:45:09'),
-(1187,'Receptionner une commande fournisseur','fournisseur','',1,'commande','receptionner','d',0,'1',12,'srm',0,'2026-02-15 18:45:09'),
-(1188,'Supprimer une commande fournisseur','fournisseur','',1,'commande','supprimer','d',0,'1',12,'srm',0,'2026-02-15 18:45:09'),
-(1189,'Check/Uncheck a supplier order reception','fournisseur','',1,'commande_advance','check','w',0,'1',12,'srm',0,'2026-02-15 18:45:09'),
-(1191,'Exporter les commande fournisseurs, attributs','fournisseur','',1,'commande','export','r',0,'1',12,'srm',0,'2026-02-15 18:45:09'),
+(1181,'Consulter les fournisseurs','fournisseur','',1,'lire','','r',0,'1',12,'srm',0,'2025-01-16 09:06:40'),
+(1182,'Consulter les commandes fournisseur','fournisseur','',1,'commande','lire','r',0,'1',12,'srm',0,'2025-01-16 09:06:40'),
+(1183,'Creer une commande fournisseur','fournisseur','',1,'commande','creer','w',0,'1',12,'srm',0,'2025-01-16 09:06:40'),
+(1184,'Valider une commande fournisseur','fournisseur','',1,'supplier_order_advance','validate','w',0,'1',12,'srm',0,'2025-01-16 09:06:40'),
+(1185,'Approuver une commande fournisseur','fournisseur','',1,'commande','approuver','w',0,'1',12,'srm',0,'2025-01-16 09:06:40'),
+(1186,'Commander une commande fournisseur','fournisseur','',1,'commande','commander','w',0,'1',12,'srm',0,'2025-01-16 09:06:40'),
+(1187,'Receptionner une commande fournisseur','fournisseur','',1,'commande','receptionner','d',0,'1',12,'srm',0,'2025-01-16 09:06:40'),
+(1188,'Supprimer une commande fournisseur','fournisseur','',1,'commande','supprimer','d',0,'1',12,'srm',0,'2025-01-16 09:06:40'),
+(1189,'Check/Uncheck a supplier order reception','fournisseur','',1,'commande_advance','check','w',0,'1',12,'srm',0,'2025-01-16 09:06:40'),
+(1191,'Exporter les commande fournisseurs, attributs','fournisseur','',1,'commande','export','r',0,'1',12,'srm',0,'2025-01-16 09:06:40'),
 (1201,'Read exports','export','',1,'lire','','r',0,'1',72,NULL,0,'2025-05-05 16:09:17'),
 (1202,'Creeate/modify export','export','',1,'creer','','w',0,'1',72,NULL,0,'2025-05-05 16:09:17'),
-(1231,'Consulter les factures fournisseur','fournisseur','',1,'facture','lire','r',0,'1',12,'srm',0,'2026-02-15 18:45:09'),
-(1232,'Creer une facture fournisseur','fournisseur','',1,'facture','creer','w',0,'1',12,'srm',0,'2026-02-15 18:45:09'),
-(1233,'Valider une facture fournisseur','fournisseur','',1,'supplier_invoice_advance','validate','w',0,'1',12,'srm',0,'2026-02-15 18:45:09'),
-(1234,'Supprimer une facture fournisseur','fournisseur','',1,'facture','supprimer','d',0,'1',12,'srm',0,'2026-02-15 18:45:09'),
-(1235,'Envoyer les factures par mail','fournisseur','',1,'supplier_invoice_advance','send','a',0,'1',12,'srm',0,'2026-02-15 18:45:09'),
-(1236,'Exporter les factures fournisseurs, attributes et reglements','fournisseur','',1,'facture','export','r',0,'1',12,'srm',0,'2026-02-15 18:45:09'),
+(1231,'Consulter les factures fournisseur','fournisseur','',1,'facture','lire','r',0,'1',12,'srm',0,'2025-01-16 09:06:40'),
+(1232,'Creer une facture fournisseur','fournisseur','',1,'facture','creer','w',0,'1',12,'srm',0,'2025-01-16 09:06:40'),
+(1233,'Valider une facture fournisseur','fournisseur','',1,'supplier_invoice_advance','validate','w',0,'1',12,'srm',0,'2025-01-16 09:06:40'),
+(1234,'Supprimer une facture fournisseur','fournisseur','',1,'facture','supprimer','d',0,'1',12,'srm',0,'2025-01-16 09:06:40'),
+(1235,'Envoyer les factures par mail','fournisseur','',1,'supplier_invoice_advance','send','a',0,'1',12,'srm',0,'2025-01-16 09:06:40'),
+(1236,'Exporter les factures fournisseurs, attributes et reglements','fournisseur','',1,'facture','export','r',0,'1',12,'srm',0,'2025-01-16 09:06:40'),
 (1251,'Run mass imports of external data (data load)','import','',1,'run','','r',0,'1',70,NULL,0,'2025-05-05 16:09:17'),
-(1321,'Export customer invoices, attributes and payments','facture','',1,'facture','export','r',0,'1',11,'financial',0,'2026-02-15 18:45:09'),
+(1321,'Export customer invoices, attributes and payments','facture','',1,'facture','export','r',0,'1',11,'financial',0,'2025-01-16 09:06:40'),
 (1321,'Exporter les factures clients, attributs et reglements','facture',NULL,2,'facture','export','r',0,NULL,10,NULL,0,'2022-12-11 21:23:36'),
-(1322,'Re-open a fully paid invoice','facture','',1,'invoice_advance','reopen','r',0,'1',11,'financial',0,'2026-02-15 18:45:09'),
-(1421,'Export sales orders and attributes','commande','',1,'commande','export','r',0,'1',11,'crm',0,'2026-02-15 18:45:09'),
-(2401,'Read actions/tasks linked to his account','agenda','',1,'myactions','read','r',0,'1',16,'projects',0,'2026-02-15 18:45:09'),
+(1322,'Re-open a fully paid invoice','facture','',1,'invoice_advance','reopen','r',0,'1',11,'financial',0,'2025-01-16 09:06:40'),
+(1421,'Export sales orders and attributes','commande','',1,'commande','export','r',0,'1',11,'crm',0,'2025-01-16 09:06:40'),
+(2401,'Read actions/tasks linked to his account','agenda','',1,'myactions','read','r',0,'1',16,'projects',0,'2025-01-16 09:06:39'),
 (2401,'Read actions/tasks linked to his account','agenda',NULL,2,'myactions','read','r',1,NULL,15,NULL,0,'2022-12-11 21:23:36'),
-(2402,'Create/modify actions/tasks linked to his account','agenda','',1,'myactions','create','w',0,'1',16,'projects',0,'2026-02-15 18:45:09'),
+(2402,'Create/modify actions/tasks linked to his account','agenda','',1,'myactions','create','w',0,'1',16,'projects',0,'2025-01-16 09:06:39'),
 (2402,'Create/modify actions/tasks linked to his account','agenda',NULL,2,'myactions','create','w',0,NULL,15,NULL,0,'2022-12-11 21:23:36'),
-(2403,'Delete actions/tasks linked to his account','agenda','',1,'myactions','delete','w',0,'1',16,'projects',0,'2026-02-15 18:45:09'),
+(2403,'Delete actions/tasks linked to his account','agenda','',1,'myactions','delete','w',0,'1',16,'projects',0,'2025-01-16 09:06:39'),
 (2403,'Delete actions/tasks linked to his account','agenda',NULL,2,'myactions','delete','w',0,NULL,15,NULL,0,'2022-12-11 21:23:36'),
-(2411,'Read actions/tasks of others','agenda','',1,'allactions','read','r',0,'1',16,'projects',0,'2026-02-15 18:45:09'),
+(2411,'Read actions/tasks of others','agenda','',1,'allactions','read','r',0,'1',16,'projects',0,'2025-01-16 09:06:39'),
 (2411,'Read actions/tasks of others','agenda',NULL,2,'allactions','read','r',0,NULL,15,NULL,0,'2022-12-11 21:23:36'),
-(2412,'Create/modify actions/tasks of others','agenda','',1,'allactions','create','w',0,'1',16,'projects',0,'2026-02-15 18:45:09'),
+(2412,'Create/modify actions/tasks of others','agenda','',1,'allactions','create','w',0,'1',16,'projects',0,'2025-01-16 09:06:39'),
 (2412,'Create/modify actions/tasks of others','agenda',NULL,2,'allactions','create','w',0,NULL,15,NULL,0,'2022-12-11 21:23:36'),
-(2413,'Delete actions/tasks of others','agenda','',1,'allactions','delete','w',0,'1',16,'projects',0,'2026-02-15 18:45:09'),
+(2413,'Delete actions/tasks of others','agenda','',1,'allactions','delete','w',0,'1',16,'projects',0,'2025-01-16 09:06:39'),
 (2413,'Delete actions/tasks of others','agenda',NULL,2,'allactions','delete','w',0,NULL,15,NULL,0,'2022-12-11 21:23:36'),
-(2414,'Export actions/tasks of others','agenda','',1,'export','','w',0,'1',16,'projects',0,'2026-02-15 18:45:09'),
-(2501,'Read or download documents','ecm','',1,'read','','r',0,'1',10,'ecm',0,'2026-02-15 18:45:09'),
-(2503,'Upload a document','ecm','',1,'upload','','w',0,'1',10,'ecm',0,'2026-02-15 18:45:09'),
-(2515,'Administer directories of documents','ecm','',1,'setup','','w',0,'1',10,'ecm',0,'2026-02-15 18:45:09'),
+(2414,'Export actions/tasks of others','agenda','',1,'export','','w',0,'1',16,'projects',0,'2025-01-16 09:06:39'),
+(2501,'Read or download documents','ecm','',1,'read','','r',0,'1',10,'ecm',0,'2025-01-16 09:06:40'),
+(2503,'Upload a document','ecm','',1,'upload','','w',0,'1',10,'ecm',0,'2025-01-16 09:06:40'),
+(2515,'Administer directories of documents','ecm','',1,'setup','','w',0,'1',10,'ecm',0,'2025-01-16 09:06:40'),
 (2610,'Generate/modify users API key','api','',1,'apikey','generate','w',0,'1',24,NULL,0,'2025-03-25 21:59:16'),
+(3201,'Read archived events and fingerprints','blockedlog','',1,'read','','w',0,'1',76,'base',0,'2025-01-15 09:13:08'),
 (3301,'Generate new modules','modulebuilder','',1,'run','','a',0,'1',90,NULL,0,'2025-03-25 21:59:16'),
 (4001,'Read skill/job/position','hrm','',1,'all','read','w',0,'1',50,NULL,0,'2025-04-25 14:19:57'),
 (4002,'Create/modify skill/job/position','hrm','',1,'all','write','w',0,'1',50,NULL,0,'2025-04-25 14:19:57'),
@@ -78302,33 +78368,33 @@ INSERT INTO `llx_rights_def` VALUES
 (4029,'Read all evaluations','hrm','',1,'evaluation','readall','w',0,'1',50,NULL,0,'2025-04-25 14:19:57'),
 (4031,'Read personal/HR information','hrm','',1,'read_personal_information','read','w',0,'1',50,NULL,0,'2025-04-25 14:19:57'),
 (4032,'Write personal/HR information','hrm','',1,'write_personal_information','write','w',0,'1',50,NULL,0,'2025-04-25 14:19:57'),
-(10001,'Read website content','website','',1,'read','','w',0,'1',50,'portal',0,'2026-02-15 18:45:10'),
-(10002,'Create/modify website content (html and javascript content)','website','',1,'write','','w',0,'1',50,'portal',0,'2026-02-15 18:45:10'),
-(10003,'Create/modify website content (dynamic php code). Dangerous, must be reserved to restricted developers.','website','',1,'writephp','','w',0,'1',50,'portal',0,'2026-02-15 18:45:10'),
-(10005,'Delete website content','website','',1,'delete','','w',0,'1',50,'portal',0,'2026-02-15 18:45:10'),
-(10008,'Export website content','website','',1,'export','','w',0,'1',50,'portal',0,'2026-02-15 18:45:10'),
-(20001,'Read leave requests (yours and your subordinates)','holiday','',1,'read','','w',0,'1',42,'hr',0,'2026-02-15 18:45:09'),
+(10001,'Read website content','website','',1,'read','','w',0,'1',50,'portal',0,'2025-01-16 09:06:41'),
+(10002,'Create/modify website content (html and javascript content)','website','',1,'write','','w',0,'1',50,'portal',0,'2025-01-16 09:06:41'),
+(10003,'Create/modify website content (dynamic php code). Dangerous, must be reserved to restricted developers.','website','',1,'writephp','','w',0,'1',50,'portal',0,'2025-01-16 09:06:41'),
+(10005,'Delete website content','website','',1,'delete','','w',0,'1',50,'portal',0,'2025-01-16 09:06:41'),
+(10008,'Export website content','website','',1,'export','','w',0,'1',50,'portal',0,'2025-01-16 09:06:41'),
+(20001,'Read leave requests (yours and your subordinates)','holiday','',1,'read','','w',0,'1',42,'hr',0,'2025-01-16 09:06:40'),
 (20001,'Créer / Modifier / Lire ses demandes de congés payés','holiday',NULL,2,'write',NULL,'w',1,NULL,42,NULL,0,'2022-12-11 21:23:36'),
-(20002,'Create/modify leave requests','holiday','',1,'write','','w',0,'1',42,'hr',0,'2026-02-15 18:45:09'),
-(20003,'Delete leave requests','holiday','',1,'delete','','w',0,'1',42,'hr',0,'2026-02-15 18:45:09'),
+(20002,'Create/modify leave requests','holiday','',1,'write','','w',0,'1',42,'hr',0,'2025-01-16 09:06:40'),
+(20003,'Delete leave requests','holiday','',1,'delete','','w',0,'1',42,'hr',0,'2025-01-16 09:06:40'),
 (20003,'Supprimer des demandes de congés payés','holiday',NULL,2,'delete',NULL,'w',0,NULL,42,NULL,0,'2022-12-11 21:23:36'),
-(20004,'Read leave requests for everybody','holiday','',1,'readall','','w',0,'1',42,'hr',0,'2026-02-15 18:45:09'),
+(20004,'Read leave requests for everybody','holiday','',1,'readall','','w',0,'1',42,'hr',0,'2025-01-16 09:06:40'),
 (20004,'Définir les congés payés des utilisateurs','holiday',NULL,2,'define_holiday',NULL,'w',0,NULL,42,NULL,0,'2022-12-11 21:23:36'),
-(20005,'Create/modify leave requests for everybody','holiday','',1,'writeall','','w',0,'1',42,'hr',0,'2026-02-15 18:45:09'),
+(20005,'Create/modify leave requests for everybody','holiday','',1,'writeall','','w',0,'1',42,'hr',0,'2025-01-16 09:06:40'),
 (20005,'Voir les logs de modification des congés payés','holiday',NULL,2,'view_log',NULL,'w',0,NULL,42,NULL,0,'2022-12-11 21:23:36'),
-(20006,'Setup leave requests of users (setup and update balance)','holiday','',1,'define_holiday','','w',0,'1',42,'hr',0,'2026-02-15 18:45:09'),
+(20006,'Setup leave requests of users (setup and update balance)','holiday','',1,'define_holiday','','w',0,'1',42,'hr',0,'2025-01-16 09:06:40'),
 (20006,'Accéder au rapport mensuel des congés payés','holiday',NULL,2,'month_report',NULL,'w',0,NULL,42,NULL,0,'2022-12-11 21:23:36'),
-(20007,'Approve leave requests','holiday','',1,'approve','','w',0,'1',42,'hr',0,'2026-02-15 18:45:09'),
-(23001,'Read cron jobs','cron','',1,'read','','w',0,'1',50,'base',0,'2026-02-15 18:45:09'),
-(23002,'Create cron Jobs','cron','',1,'create','','w',0,'1',50,'base',0,'2026-02-15 18:45:09'),
-(23003,'Delete cron Jobs','cron','',1,'delete','','w',0,'1',50,'base',0,'2026-02-15 18:45:09'),
-(23004,'Execute cron Jobs','cron','',1,'execute','','w',0,'1',50,'base',0,'2026-02-15 18:45:09'),
+(20007,'Approve leave requests','holiday','',1,'approve','','w',0,'1',42,'hr',0,'2025-01-16 09:06:40'),
+(23001,'Read cron jobs','cron','',1,'read','','w',0,'1',50,'base',0,'2025-01-16 09:06:40'),
+(23002,'Create cron Jobs','cron','',1,'create','','w',0,'1',50,'base',0,'2025-01-16 09:06:40'),
+(23003,'Delete cron Jobs','cron','',1,'delete','','w',0,'1',50,'base',0,'2025-01-16 09:06:40'),
+(23004,'Execute cron Jobs','cron','',1,'execute','','w',0,'1',50,'base',0,'2025-01-16 09:06:40'),
 (40001,'Read currencies and their rates','multicurrency','',1,'currency','read','r',1,'1',40,NULL,0,'2025-06-26 22:11:12'),
 (40002,'Create/Update currencies and their rates','multicurrency','',1,'currency','write','w',0,'1',40,NULL,0,'2025-06-26 22:11:12'),
 (40003,'Delete currencies and their rates','multicurrency','',1,'currency','delete','w',0,'1',40,NULL,0,'2025-06-26 22:11:12'),
-(50151,'Use Point Of Sale (record a sale, add products, record payment)','takepos','',1,'run','','a',0,'1',45,'portal',0,'2026-02-15 18:45:10'),
-(50152,'Can modify added sales lines (prices, discount)','takepos','',1,'editlines','','a',0,'1',45,'portal',0,'2026-02-15 18:45:10'),
-(50153,'Edit ordered sales lines (useful only when option \"Order printers\" has been enabled). Allow to edit sales lines even after the order has been printed','takepos','',1,'editorderedlines','','a',0,'1',45,'portal',0,'2026-02-15 18:45:10'),
+(50151,'Use Point Of Sale (record a sale, add products, record payment)','takepos','',1,'run','','a',0,'1',45,'portal',0,'2025-01-16 09:06:40'),
+(50152,'Can modify added sales lines (prices, discount)','takepos','',1,'editlines','','a',0,'1',45,'portal',0,'2025-01-16 09:06:40'),
+(50153,'Edit ordered sales lines (useful only when option \"Order printers\" has been enabled). Allow to edit sales lines even after the order has been printed','takepos','',1,'editorderedlines','','a',0,'1',45,'portal',0,'2025-01-16 09:06:40'),
 (50401,'Bind products and invoices with accounting accounts','accounting','',1,'bind','write','r',0,'1',62,NULL,0,'2026-01-11 17:46:25'),
 (50411,'Read operations in Ledger','accounting','',1,'mouvements','lire','r',0,'1',62,NULL,0,'2026-01-11 17:46:25'),
 (50412,'Write/Edit operations in Ledger','accounting','',1,'mouvements','creer','w',0,'1',62,NULL,0,'2026-01-11 17:46:25'),
@@ -78344,20 +78410,20 @@ INSERT INTO `llx_rights_def` VALUES
 (51004,'Read asset models','asset','',1,'model_advance','read','r',0,'1',70,NULL,0,'2025-05-30 09:25:44'),
 (51005,'Create/Update asset models','asset','',1,'model_advance','write','w',0,'1',70,NULL,0,'2025-05-30 09:25:44'),
 (51006,'Delete asset models','asset','',1,'model_advance','delete','d',0,'1',70,NULL,0,'2025-05-30 09:25:44'),
-(55001,'Read surveys','opensurvey','',1,'read','','r',0,'1',40,'portal',0,'2026-02-15 18:45:09'),
-(55002,'Create/modify surveys','opensurvey','',1,'write','','w',0,'1',40,'portal',0,'2026-02-15 18:45:09'),
-(56001,'Read ticket','ticket','',1,'read','','r',0,'1',60,'crm',0,'2026-02-15 18:45:10'),
-(56002,'Create les tickets','ticket','',1,'write','','w',0,'1',60,'crm',0,'2026-02-15 18:45:10'),
-(56003,'Delete les tickets','ticket','',1,'delete','','d',0,'1',60,'crm',0,'2026-02-15 18:45:10'),
-(56004,'Manage tickets','ticket','',1,'manage','','w',0,'1',60,'crm',0,'2026-02-15 18:45:10'),
-(56006,'Export ticket','ticket','',1,'export','','w',0,'1',60,'crm',0,'2026-02-15 18:45:10'),
+(55001,'Read surveys','opensurvey','',1,'read','','r',0,'1',40,'portal',0,'2025-01-16 09:06:40'),
+(55002,'Create/modify surveys','opensurvey','',1,'write','','w',0,'1',40,'portal',0,'2025-01-16 09:06:40'),
+(56001,'Read ticket','ticket','',1,'read','','r',0,'1',60,'crm',0,'2025-01-16 09:06:40'),
+(56002,'Create les tickets','ticket','',1,'write','','w',0,'1',60,'crm',0,'2025-01-16 09:06:40'),
+(56003,'Delete les tickets','ticket','',1,'delete','','d',0,'1',60,'crm',0,'2025-01-16 09:06:40'),
+(56004,'Manage tickets','ticket','',1,'manage','','w',0,'1',60,'crm',0,'2025-01-16 09:06:40'),
+(56006,'Export ticket','ticket','',1,'export','','w',0,'1',60,'crm',0,'2025-01-16 09:06:40'),
 (57001,'Read articles','knowledgemanagement','',1,'knowledgerecord','read','w',0,'1',90,NULL,0,'2025-03-25 21:59:16'),
 (57002,'Create/Update articles','knowledgemanagement','',1,'knowledgerecord','write','w',0,'1',90,NULL,0,'2025-03-25 21:59:16'),
 (57003,'Validate articles','knowledgemanagement','',1,'knowledgerecord_advance','validate','w',0,'1',90,NULL,0,'2025-03-25 21:59:16'),
 (57004,'Delete articles','knowledgemanagement','',1,'knowledgerecord','delete','w',0,'1',90,NULL,0,'2025-03-25 21:59:16'),
-(58000,'Read objects of Partnership','partnership','',1,'read','','w',0,'1',90,'crm',0,'2026-02-15 18:45:09'),
-(58001,'Create/Update objects of Partnership','partnership','',1,'write','','w',0,'1',90,'crm',0,'2026-02-15 18:45:09'),
-(58002,'Delete objects of Partnership','partnership','',1,'delete','','w',0,'1',90,'crm',0,'2026-02-15 18:45:09'),
+(58000,'Read objects of Partnership','partnership','',1,'read','','w',0,'1',90,'crm',0,'2025-01-16 09:06:40'),
+(58001,'Create/Update objects of Partnership','partnership','',1,'write','','w',0,'1',90,'crm',0,'2025-01-16 09:06:40'),
+(58002,'Delete objects of Partnership','partnership','',1,'delete','','w',0,'1',90,'crm',0,'2025-01-16 09:06:40'),
 (59001,'Visualiser les marges','margins','',1,'liretous','','r',0,'1',55,NULL,0,'2025-03-25 21:59:16'),
 (59002,'Définir les marges','margins','',1,'creer','','w',0,'1',55,NULL,0,'2025-03-25 21:59:16'),
 (59003,'Read every user margin','margins','',1,'read','all','r',0,'1',55,NULL,0,'2025-03-25 21:59:16'),
@@ -78365,7 +78431,6 @@ INSERT INTO `llx_rights_def` VALUES
 (63002,'Create/Modify resources','resource','',1,'write','','w',0,'1',20,NULL,0,'2025-04-25 14:19:57'),
 (63003,'Delete resources','resource','',1,'delete','','w',0,'1',20,NULL,0,'2025-04-25 14:19:57'),
 (63004,'Link resources to agenda events','resource','',1,'link','','w',0,'1',20,NULL,0,'2025-04-25 14:19:57'),
-(64001,'DirectPrint','printing','',1,'read','','r',0,'1',52,NULL,0,'2025-03-25 21:59:16'),
 (67001,'ReceiptPrinter','receiptprinter','',1,'read','','r',0,'1',53,NULL,0,'2025-03-25 21:59:16'),
 (101250,'Read surveys','opensurvey',NULL,2,'survey','read','r',0,NULL,40,NULL,0,'2022-12-11 21:23:36'),
 (101251,'Create/modify surveys','opensurvey',NULL,2,'survey','write','w',0,NULL,40,NULL,0,'2022-12-11 21:23:36'),
@@ -78642,7 +78707,7 @@ CREATE TABLE `llx_societe` (
   KEY `idx_societe_barcode` (`barcode`),
   KEY `idx_societe_warehouse` (`fk_warehouse`),
   KEY `idx_societe_nom` (`nom`)
-) ENGINE=InnoDB AUTO_INCREMENT=63 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=65 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -78681,7 +78746,8 @@ INSERT INTO `llx_societe` VALUES
 (59,0,NULL,'2025-06-25 10:13:36','2025-06-25 10:13:36','fff',1,NULL,NULL,'CU2506-00033',NULL,NULL,NULL,'411CU250600033',NULL,NULL,'',NULL,NULL,NULL,1,NULL,NULL,NULL,NULL,NULL,'[]',NULL,0,NULL,NULL,NULL,'','','','','',0.00000000,0,NULL,NULL,NULL,1,0,NULL,'',0,0,0,12,12,0,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,0,0,0.000,0,0.000,NULL,NULL,NULL,NULL,NULL,1,NULL,'','',0,NULL,NULL,'','','',0,NULL,'',NULL,1,'EUR',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'',NULL,NULL),
 (60,0,NULL,'2025-06-25 10:14:43','2025-06-25 10:14:43','bbb',1,NULL,NULL,'CU2506-00034',NULL,NULL,NULL,'411CU250600034',NULL,NULL,'',NULL,NULL,NULL,1,NULL,NULL,NULL,NULL,NULL,'[]',NULL,0,NULL,NULL,NULL,'','','','','',0.00000000,0,NULL,NULL,NULL,1,0,NULL,'',0,0,0,12,12,0,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,0,0,0.000,0,0.000,NULL,NULL,NULL,NULL,NULL,1,NULL,'','',0,NULL,NULL,'','','',0,NULL,'',NULL,1,'EUR',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'',NULL,NULL),
 (61,0,NULL,'2025-06-25 10:22:06','2025-06-25 10:22:06','ccc',1,NULL,NULL,'CU2506-00035',NULL,NULL,NULL,'411CU250600035',NULL,NULL,'',NULL,NULL,NULL,1,NULL,NULL,NULL,NULL,NULL,'[]',NULL,0,NULL,NULL,NULL,'','','','','',0.00000000,0,NULL,NULL,NULL,1,0,NULL,'',0,0,0,12,12,0,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,0,0,0.000,0,0.000,NULL,NULL,NULL,NULL,NULL,1,NULL,'','',0,NULL,NULL,'','','',0,NULL,'',NULL,1,'EUR',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'',NULL,NULL),
-(62,0,NULL,'2025-06-25 10:27:57','2025-06-25 10:27:57','ddd',1,NULL,NULL,'CU2506-00036',NULL,NULL,NULL,'411CU250600036',NULL,NULL,'',NULL,NULL,NULL,1,NULL,NULL,NULL,NULL,NULL,'[]',NULL,0,NULL,NULL,NULL,'','','','','',0.00000000,0,NULL,NULL,NULL,1,0,NULL,'',0,0,0,12,12,0,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,0,0,0.000,0,0.000,NULL,NULL,NULL,NULL,NULL,1,NULL,'','',0,NULL,NULL,'','','',0,NULL,'',NULL,1,'EUR',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'',NULL,NULL);
+(62,0,NULL,'2025-06-25 10:27:57','2025-06-25 10:27:57','ddd',1,NULL,NULL,'CU2506-00036',NULL,NULL,NULL,'411CU250600036',NULL,NULL,'',NULL,NULL,NULL,1,NULL,NULL,NULL,NULL,NULL,'[]',NULL,0,NULL,NULL,NULL,'','','','','',0.00000000,0,NULL,NULL,NULL,1,0,NULL,'',0,0,0,12,12,0,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,0,0,0.000,0,0.000,NULL,NULL,NULL,NULL,NULL,1,NULL,'','',0,NULL,NULL,'','','',0,NULL,'',NULL,1,'EUR',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'',NULL,NULL),
+(64,0,NULL,'2025-01-16 08:53:37','2025-01-16 09:53:37','test test',1,NULL,NULL,'CU2501-00037',NULL,NULL,NULL,'411CU250100037',NULL,NULL,'',NULL,NULL,NULL,1,NULL,NULL,NULL,NULL,'test@test.com','[]',NULL,0,NULL,NULL,NULL,'','','','','',NULL,0,NULL,NULL,NULL,1,0,NULL,'',0,0,0,12,12,0,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,0,NULL,0.000,NULL,0.000,NULL,NULL,NULL,NULL,NULL,1,NULL,'','',0,NULL,NULL,'','','',0,NULL,'',NULL,0,'',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `llx_societe` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -79681,7 +79747,7 @@ CREATE TABLE `llx_subscription` (
   KEY `idx_subscription_fk_adherent` (`fk_adherent`),
   KEY `idx_subscription_fk_bank` (`fk_bank`),
   KEY `idx_subscription_dateadh` (`dateadh`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -79695,7 +79761,8 @@ INSERT INTO `llx_subscription` VALUES
 (3,'2020-01-21 09:22:37','2020-01-21 10:22:37',4,'2017-07-18 00:00:00','2018-07-17 00:00:00',50.00000000,52,'Subscription 2017',2,NULL,NULL,NULL,NULL,NULL),
 (4,'2020-01-21 09:23:17','2020-01-21 10:23:17',2,'2017-07-18 00:00:00','2018-07-17 00:00:00',50.00000000,53,'Subscription 2017',2,NULL,NULL,NULL,NULL,NULL),
 (5,'2020-01-21 09:23:28','2020-01-21 10:23:28',2,'2018-07-18 00:00:00','2019-07-17 00:00:00',50.00000000,54,'Subscription 2018',2,NULL,NULL,NULL,NULL,NULL),
-(6,'2020-01-21 09:23:49','2020-01-21 10:23:49',2,'2019-07-18 00:00:00','2020-07-17 00:00:00',50.00000000,55,'Subscription 2019',2,NULL,NULL,NULL,NULL,NULL);
+(6,'2020-01-21 09:23:49','2020-01-21 10:23:49',2,'2019-07-18 00:00:00','2020-07-17 00:00:00',50.00000000,55,'Subscription 2019',2,NULL,NULL,NULL,NULL,NULL),
+(11,'2025-01-16 09:07:13','2025-01-16 10:07:13',15,'2025-01-16 00:00:00','2026-01-15 00:00:00',11.00000000,98,'Adhésion / cotisation 2025',1,12,NULL,NULL,'',NULL);
 /*!40000 ALTER TABLE `llx_subscription` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -80300,7 +80367,7 @@ INSERT INTO `llx_user` VALUES
 (4,'2015-01-23 17:52:27','2025-05-05 14:48:18',NULL,NULL,'bbookkeeper',1,'','',NULL,1,NULL,NULL,'$2y$10$Hgawd0DFS2bgBiM6rJuAZ.ff250vlm111HVWBJQvRzRq5hNijLxam',NULL,0,NULL,'Bookkeeper','Bob','Bookkeeper','','','','','bbookkeeper@example.com','','{\"skype\":\"skypebbookkeeper\"}','',0,17,6,NULL,'','2015-02-25 10:18:41','2015-01-23 17:53:20','',1,'person8.jpeg',NULL,NULL,11,NULL,NULL,NULL,'','','',NULL,NULL,'','',NULL,0,'',0,NULL,NULL,NULL,16.00000000,'man','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL),
 (10,'2017-10-03 11:47:41','2023-03-15 15:07:13',NULL,NULL,'mcurie',1,NULL,NULL,NULL,1,0,NULL,'$2y$10$Hgawd0DFS2bgBiM6rJuAZ.ff250vlm111HVWBJQvRzRq5hNijLxam',NULL,0,NULL,'Curie','Marie','','','','','','mcurie@example.com','','[]','',0,NULL,NULL,NULL,'',NULL,NULL,'',1,'mariecurie.jpg',NULL,NULL,14,NULL,NULL,NULL,'','','',NULL,NULL,'ffaaff','',NULL,0,NULL,0,NULL,NULL,NULL,44.00000000,'woman',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,-1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (11,'2017-10-05 09:07:52','2023-03-15 15:07:13',NULL,NULL,'zzeceo',1,NULL,'',NULL,1,0,NULL,'$2y$10$Hgawd0DFS2bgBiM6rJuAZ.ff250vlm111HVWBJQvRzRq5hNijLxam',NULL,0,NULL,'Zeceo','Zack','President - CEO','','','','','zzeceo@example.com','','{\"facebook\":\"\",\"skype\":\"\",\"twitter\":\"\",\"linkedin\":\"\",\"instagram\":\"\",\"snapchat\":\"\",\"googleplus\":\"\",\"youtube\":\"\",\"whatsapp\":\"\",\"tumblr\":\"\",\"vero\":\"\",\"viadeo\":\"\",\"slack\":\"\",\"xing\":\"\",\"meetup\":\"\",\"pinterest\":\"\",\"flickr\":\"\",\"500px\":\"\",\"giphy\":\"\",\"gifycat\":\"\",\"dailymotion\":\"\",\"vimeo\":\"\",\"periscope\":\"\",\"twitch\":\"\",\"discord\":\"\",\"wikipedia\":\"\",\"reddit\":\"\",\"quora\":\"\",\"tripadvisor\":\"\",\"mastodon\":\"\",\"diaspora\":\"\",\"viber\":\"\",\"github\":\"\"}','',0,NULL,NULL,NULL,'','2017-10-05 22:48:08','2017-10-05 21:18:46','',1,'person4.jpeg',NULL,NULL,NULL,NULL,NULL,NULL,'','','',NULL,NULL,'','',NULL,0,NULL,0,NULL,NULL,NULL,39.00000000,NULL,'','2019-06-10 00:00:00',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
-(12,'2017-10-05 09:09:46','2025-03-27 23:27:43',NULL,12,'admin',0,'','',NULL,1,NULL,NULL,'$2y$10$MiDs0GVn0ksYbOHw8XgAf.oEihYvLI0ZYd0PSVq7/6ret6gifWSh6',NULL,0,'demokey','Adminson','Alice','Admin Technical','','','','','laurent@destailleur.fr','','[]','Alice - 123',1,NULL,NULL,NULL,'kmlk','2026-02-15 21:14:00','2026-01-11 18:46:41','',1,NULL,NULL,NULL,11,NULL,NULL,NULL,'','','',NULL,NULL,'','',NULL,0,'',0,2700.00000000,NULL,NULL,39.00000000,'woman','',NULL,NULL,'generic_user_odt','1985-09-15',NULL,NULL,NULL,NULL,NULL,'127.0.0.1','127.0.0.1','2025-03-27 23:27:43',NULL,NULL,'',NULL,'2025-03-27 23:27:38',NULL,NULL),
+(12,'2017-10-05 09:09:46','2025-01-16 08:34:17',NULL,12,'admin',0,'','',NULL,1,NULL,NULL,'$2y$10$MiDs0GVn0ksYbOHw8XgAf.oEihYvLI0ZYd0PSVq7/6ret6gifWSh6',NULL,0,'demokey','Adminson','Alice','Admin Technical','','','','','laurent@destailleur.fr','','[]','Alice - 123',1,NULL,NULL,NULL,'The admin user for test','2025-01-16 09:36:05','2025-01-16 09:30:36','',1,NULL,NULL,NULL,11,NULL,NULL,NULL,'','','',NULL,NULL,'','',NULL,0,'',0,2700.00000000,NULL,NULL,39.00000000,'woman','',NULL,NULL,'generic_user_odt','1985-09-15',NULL,NULL,NULL,NULL,NULL,'127.0.0.1','127.0.0.1','2025-03-27 23:27:43',NULL,NULL,'',NULL,NULL,NULL,NULL),
 (13,'2017-10-05 21:29:35','2025-04-15 13:30:44',NULL,NULL,'ccommercy',1,'','',NULL,1,NULL,NULL,'$2y$10$KTaKE0NyYyJSCogsxtwR.eADst17XYMrOWlsFfVLR60IbjANIVLHK',NULL,0,NULL,'Commercy','Coraly','Commercial leader','','','','','ccommercy@example.com','','{\"facebook\":\"\",\"skype\":\"\",\"twitter\":\"\",\"linkedin\":\"\",\"instagram\":\"\",\"snapchat\":\"\",\"googleplus\":\"\",\"youtube\":\"\",\"whatsapp\":\"\",\"tumblr\":\"\",\"vero\":\"\",\"viadeo\":\"\",\"slack\":\"\",\"xing\":\"\",\"meetup\":\"\",\"pinterest\":\"\",\"flickr\":\"\",\"500px\":\"\",\"giphy\":\"\",\"gifycat\":\"\",\"dailymotion\":\"\",\"vimeo\":\"\",\"periscope\":\"\",\"twitch\":\"\",\"discord\":\"\",\"wikipedia\":\"\",\"reddit\":\"\",\"quora\":\"\",\"tripadvisor\":\"\",\"mastodon\":\"\",\"diaspora\":\"\",\"viber\":\"\",\"github\":\"\"}','',0,NULL,NULL,NULL,'',NULL,NULL,'',1,'person7.jpeg',NULL,NULL,11,NULL,NULL,NULL,'','','',NULL,NULL,'','',NULL,0,'',0,1890.00000000,NULL,NULL,25.00000000,'woman','','2018-09-11 00:00:00',NULL,NULL,'1998-12-08',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL),
 (14,'2017-10-05 21:33:33','2023-03-15 15:07:36',NULL,NULL,'sscientol',1,NULL,NULL,NULL,1,0,NULL,'$2y$10$Hgawd0DFS2bgBiM6rJuAZ.ff250vlm111HVWBJQvRzRq5hNijLxam',NULL,0,NULL,'Scientol','Sam','Scientist leader','','','','','sscientol@example.com','','[]','',0,NULL,NULL,NULL,'',NULL,NULL,'',1,'person3.jpeg',NULL,NULL,11,NULL,NULL,NULL,'','','',NULL,NULL,'','',NULL,0,NULL,0,3500.00000000,NULL,NULL,39.00000000,NULL,NULL,'2018-07-03 00:00:00',NULL,NULL,NULL,NULL,NULL,NULL,NULL,-1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (16,'2017-10-05 22:47:52','2025-01-30 14:37:22',NULL,NULL,'ccommerson',1,NULL,NULL,NULL,1,0,NULL,'$2y$10$Hgawd0DFS2bgBiM6rJuAZ.ff250vlm111HVWBJQvRzRq5hNijLxam',NULL,0,NULL,'Charle1','Commerson','Sale representative','','','','','ccommerson@example.com','','[]','',0,NULL,NULL,NULL,'','2017-10-05 23:46:24','2017-10-05 23:37:31','',0,'person1.jpeg',NULL,NULL,13,NULL,NULL,NULL,'','','',NULL,NULL,'','',NULL,0,NULL,0,2900.00000000,NULL,NULL,39.00000000,NULL,NULL,'2019-09-01 00:00:00',NULL,NULL,'1976-02-05',NULL,NULL,NULL,NULL,-1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
@@ -80308,7 +80375,7 @@ INSERT INTO `llx_user` VALUES
 (18,'2018-01-22 17:27:02','2025-02-10 19:27:07',NULL,NULL,'ldestailleur',1,'','',NULL,1,NULL,NULL,'$2y$10$Hgawd0DFS2bgBiM6rJuAZ.ff250vlm111HVWBJQvRzRq5hNijLxam',NULL,0,NULL,'Destailleur','Laurent','Project leader of Dolibarr ERP CRM','','','','','ldestailleur@example.com','','[]','',0,10,10,NULL,'More information on http://www.mydomain.com','2019-10-04 10:06:40','2017-09-06 11:55:30','',1,'ldestailleur_200x200.jpg',NULL,NULL,NULL,NULL,NULL,NULL,'','','',NULL,NULL,'007f7f','',NULL,0,'',0,NULL,NULL,NULL,NULL,'man','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL),
 (19,'2017-02-02 03:55:44','2021-04-15 10:41:35',NULL,NULL,'aboston',1,NULL,NULL,NULL,1,0,NULL,'$2y$10$Hgawd0DFS2bgBiM6rJuAZ.ff250vlm111HVWBJQvRzRq5hNijLxam',NULL,0,NULL,'Boston','Alex','','','','','','aboston@example.com','','[]','<strong>Alex Boston</strong><br />\r\nAdmin support service - 555 01 02 03 04',0,NULL,NULL,NULL,'',NULL,NULL,'',0,'person2.jpeg',NULL,NULL,12,NULL,NULL,25.00000000,'','','',NULL,NULL,'ff00ff','',NULL,0,NULL,0,2700.00000000,NULL,NULL,32.00000000,NULL,NULL,'2016-11-04 00:00:00',NULL,NULL,NULL,NULL,NULL,NULL,NULL,-1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (22,'2022-12-13 11:28:20','2023-02-25 15:00:16',NULL,NULL,'noperm',1,'','',NULL,1,0,NULL,'$2y$10$g.VTJej0pV4ozOY.X/e5muWjbKkayuu6gvf7mVgUqxsArqSoy7qnC',NULL,0,NULL,'noperm','noperm','','','','','','','','[]','',0,NULL,NULL,NULL,'','2023-02-25 12:00:24','2022-12-13 11:29:23','',1,NULL,NULL,NULL,12,12,12,NULL,'','','',NULL,NULL,'','',NULL,0,NULL,0,NULL,NULL,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'127.0.0.1','127.0.0.1',NULL,NULL,NULL,'',NULL,NULL,NULL,NULL),
-(29,'2023-02-25 12:08:43','2025-03-25 22:02:19',NULL,NULL,'test',1,'','',NULL,1,NULL,NULL,'$2y$10$n2TZheO.RK9.qVVaEhBa.uFjuuLon4kTss8s1FlrQKsweF1tY6v9W',NULL,0,NULL,'test','test','','','','','','','','[]','',0,NULL,NULL,NULL,'','2025-03-25 23:57:00','2025-03-25 22:02:25','',1,NULL,NULL,NULL,12,12,12,NULL,'','','',NULL,NULL,'','',NULL,0,'',0,NULL,NULL,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'127.0.0.1','127.0.0.1',NULL,NULL,NULL,'',NULL,'2025-03-25 22:02:14',NULL,NULL),
+(29,'2023-02-25 12:08:43','2025-01-16 08:34:27',NULL,NULL,'test',1,'','',NULL,1,NULL,NULL,'$2y$10$n2TZheO.RK9.qVVaEhBa.uFjuuLon4kTss8s1FlrQKsweF1tY6v9W',NULL,0,NULL,'test','test','','','','','','','','[]','',0,NULL,NULL,NULL,'','2025-03-25 23:57:00','2025-03-25 22:02:25','',1,NULL,NULL,NULL,12,12,12,NULL,'','','',NULL,NULL,'','',NULL,0,'',0,NULL,NULL,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'127.0.0.1','127.0.0.1',NULL,NULL,NULL,'',NULL,NULL,NULL,NULL),
 (31,'2025-03-24 17:22:07','2025-03-24 17:22:07',NULL,NULL,'testRestLogin1706283432',1,'','',NULL,1,NULL,NULL,NULL,NULL,0,NULL,'testRestUser','','','','','','','test1915104084@restuser.com','','null','',0,NULL,NULL,NULL,'',NULL,NULL,'',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'','','',NULL,NULL,'','',NULL,0,'',0,NULL,NULL,NULL,NULL,'','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL),
 (32,'2025-03-24 17:24:20','2025-03-24 17:24:20',NULL,NULL,'testRestLogin1717175400',1,'','',NULL,1,NULL,NULL,NULL,NULL,0,NULL,'testRestUser','','','','','','','test1282577259@restuser.com','','null','',0,NULL,NULL,NULL,'',NULL,NULL,'',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'','','',NULL,NULL,'','',NULL,0,'',0,NULL,NULL,NULL,NULL,'','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL),
 (33,'2025-03-24 18:17:34','2025-03-24 18:17:34',NULL,NULL,'testRestLogin1493640590',1,'','',NULL,1,NULL,NULL,NULL,NULL,0,NULL,'testRestUser','','','','','','','test1481368856@restuser.com','','null','',0,NULL,NULL,NULL,'',NULL,NULL,'',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'','','',NULL,NULL,'','',NULL,0,'',0,NULL,NULL,NULL,NULL,'','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL),
@@ -80317,7 +80384,7 @@ INSERT INTO `llx_user` VALUES
 (36,'2025-03-24 18:23:16','2025-03-24 18:23:16',NULL,NULL,'testRestLogin759626915',1,'','',NULL,1,NULL,NULL,NULL,NULL,0,NULL,'testRestUser','','','','','','','test29323439@restuser.com','','null','',0,NULL,NULL,NULL,'',NULL,NULL,'',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'','','',NULL,NULL,'','',NULL,0,'',0,NULL,NULL,NULL,NULL,'','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL),
 (37,'2025-03-24 18:24:19','2025-03-24 18:24:19',NULL,NULL,'testRestLogin2093881720',1,'','',NULL,1,NULL,NULL,NULL,NULL,0,NULL,'testRestUser','','','','','','','test1323320756@restuser.com','','null','',0,NULL,NULL,NULL,'',NULL,NULL,'',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'','','',NULL,NULL,'','',NULL,0,'',0,NULL,NULL,NULL,NULL,'','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL),
 (38,'2025-03-24 18:24:24','2025-03-24 18:24:24',NULL,NULL,'testRestLogin508772395',1,'','',NULL,1,NULL,NULL,NULL,NULL,0,NULL,'testRestUser','','','','','','','test713450811@restuser.com','','null','',0,NULL,NULL,NULL,'',NULL,NULL,'',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'','','',NULL,NULL,'','',NULL,0,'',0,NULL,NULL,NULL,NULL,'','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL),
-(39,'2025-03-25 19:02:38','2025-03-25 19:02:38',NULL,NULL,'contactspan2',1,'','',NULL,0,NULL,NULL,'$2y$10$ZzBxVa4aKc0XuTZ4jfLuaOO7PHthCOhQtUdiyJidNqO4Tj7opuSOG',NULL,0,NULL,'Contact span2','','','','','','','','','[]','',0,3,17,NULL,'',NULL,NULL,'',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'','','',NULL,4,'','',NULL,0,'',0,NULL,NULL,NULL,NULL,'','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'',NULL,'2025-03-25 19:02:33',NULL,NULL);
+(39,'2025-03-25 19:02:38','2025-01-16 08:34:27',NULL,NULL,'contactspan2',1,'','',NULL,0,NULL,NULL,'$2y$10$ZzBxVa4aKc0XuTZ4jfLuaOO7PHthCOhQtUdiyJidNqO4Tj7opuSOG',NULL,0,NULL,'Contact span2','','','','','','','','','[]','',0,3,17,NULL,'',NULL,NULL,'',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'','','',NULL,4,'','',NULL,0,'',0,NULL,NULL,NULL,NULL,'','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `llx_user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -80523,6 +80590,7 @@ INSERT INTO `llx_user_param` VALUES
 (12,1,'MAIN_SELECTEDFIELDS_supplierorderlist','cf.tms,cf.ref,cf.ref_supplier,cf.fk_soc,s.town,s.zip,cf.date_commande,cf.date_livraison,cf.total_ht,cf.total_tva,cf.fk_statut,cf.billed,'),
 (12,1,'MAIN_SELECTEDFIELDS_targetlist','t.trigger_codes,t.ref,t.label,t.url,t.status,'),
 (12,1,'MAIN_SELECTEDFIELDS_tasklist','t.tobill,t.billed,t.ref,t.label,t.dateo,t.datee,p.ref,s.nom,p.fk_statut,t.planned_workload,t.duration_effective,t.progress_calculated,t.progress,t.progress_summary,'),
+(12,1,'MAIN_SELECTEDFIELDS_thirdpartylist','s.tms,s.nom,s.name_alias,s.barcode,s.code_client,sales.representative,s.zip,s.phone,typent.code,customerorsupplier,ef.sss,s.status,'),
 (12,1,'MAIN_SELECTEDFIELDS_ticketlist','t.origin_email,t.ref,t.fk_user_create,t.subject,t.type_code,t.severity_code,t.fk_soc,t.datec,t.date_read,t.fk_user_assign,t.fk_statut,'),
 (12,1,'MAIN_SELECTEDFIELDS_userlist','u.api_key,u.login,u.lastname,u.firstname,u.employee,u.fk_user,u.email,u.fk_soc,u.job,u.datelastlogin,u.statut,'),
 (12,1,'MAIN_THEME','eldy'),
@@ -80598,7 +80666,7 @@ CREATE TABLE `llx_user_rights` (
   UNIQUE KEY `uk_user_rights` (`entity`,`fk_user`,`fk_id`),
   KEY `fk_user_rights_fk_user_user` (`fk_user`),
   CONSTRAINT `fk_user_rights_fk_user_user` FOREIGN KEY (`fk_user`) REFERENCES `llx_user` (`rowid`)
-) ENGINE=InnoDB AUTO_INCREMENT=39211 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=39491 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -81114,13 +81182,13 @@ INSERT INTO `llx_user_rights` VALUES
 (12715,1,11,2515),
 (12716,1,11,20001),
 (12718,1,11,23001),
-(39037,1,12,11),
-(39031,1,12,12),
-(39032,1,12,13),
-(39033,1,12,14),
-(39034,1,12,15),
-(39036,1,12,16),
-(39038,1,12,19),
+(39318,1,12,11),
+(39312,1,12,12),
+(39313,1,12,13),
+(39314,1,12,14),
+(39315,1,12,15),
+(39317,1,12,16),
+(39319,1,12,19),
 (36400,1,12,21),
 (36394,1,12,22),
 (36395,1,12,24),
@@ -81140,13 +81208,13 @@ INSERT INTO `llx_user_rights` VALUES
 (36380,1,12,42),
 (36382,1,12,44),
 (36384,1,12,45),
-(39071,1,12,61),
-(39068,1,12,62),
-(39070,1,12,64),
-(39072,1,12,67),
-(39073,1,12,68),
-(39074,1,12,69),
-(39075,1,12,70),
+(39352,1,12,61),
+(39349,1,12,62),
+(39351,1,12,64),
+(39353,1,12,67),
+(39354,1,12,68),
+(39355,1,12,69),
+(39356,1,12,70),
 (36317,1,12,71),
 (36312,1,12,72),
 (36314,1,12,74),
@@ -81154,14 +81222,14 @@ INSERT INTO `llx_user_rights` VALUES
 (36316,1,12,76),
 (36320,1,12,78),
 (36321,1,12,79),
-(39001,1,12,81),
-(38995,1,12,82),
-(38996,1,12,84),
-(38997,1,12,85),
-(38998,1,12,86),
-(38999,1,12,87),
-(39000,1,12,88),
-(39002,1,12,89),
+(39282,1,12,81),
+(39276,1,12,82),
+(39277,1,12,84),
+(39278,1,12,85),
+(39279,1,12,86),
+(39280,1,12,87),
+(39281,1,12,88),
+(39283,1,12,89),
 (36495,1,12,91),
 (36492,1,12,92),
 (36494,1,12,93),
@@ -81173,18 +81241,18 @@ INSERT INTO `llx_user_rights` VALUES
 (36137,1,12,105),
 (36138,1,12,106),
 (36140,1,12,109),
-(38979,1,12,111),
-(38970,1,12,112),
-(38972,1,12,113),
-(38974,1,12,114),
-(38976,1,12,115),
-(38978,1,12,116),
-(38980,1,12,117),
-(39152,1,12,121),
-(39149,1,12,122),
-(39151,1,12,125),
-(39153,1,12,126),
-(39154,1,12,130),
+(39260,1,12,111),
+(39251,1,12,112),
+(39253,1,12,113),
+(39255,1,12,114),
+(39257,1,12,115),
+(39259,1,12,116),
+(39261,1,12,117),
+(39432,1,12,121),
+(39429,1,12,122),
+(39431,1,12,125),
+(39433,1,12,126),
+(39434,1,12,130),
 (36388,1,12,141),
 (36387,1,12,142),
 (36389,1,12,144),
@@ -81214,51 +81282,51 @@ INSERT INTO `llx_user_rights` VALUES
 (36111,1,12,241),
 (36110,1,12,242),
 (36112,1,12,243),
-(39195,1,12,251),
-(39176,1,12,252),
-(39178,1,12,253),
-(39179,1,12,254),
-(39181,1,12,255),
-(39183,1,12,256),
-(39155,1,12,262),
-(39161,1,12,281),
-(39158,1,12,282),
-(39160,1,12,283),
-(39162,1,12,286),
-(38984,1,12,301),
-(38983,1,12,304),
-(38985,1,12,305),
+(39475,1,12,251),
+(39456,1,12,252),
+(39458,1,12,253),
+(39459,1,12,254),
+(39461,1,12,255),
+(39463,1,12,256),
+(39435,1,12,262),
+(39441,1,12,281),
+(39438,1,12,282),
+(39440,1,12,283),
+(39442,1,12,286),
+(39265,1,12,301),
+(39264,1,12,304),
+(39266,1,12,305),
 (36106,1,12,331),
 (36105,1,12,332),
 (36107,1,12,333),
-(39184,1,12,341),
-(39185,1,12,342),
-(39186,1,12,343),
-(39187,1,12,344),
-(39193,1,12,351),
-(39190,1,12,352),
-(39192,1,12,353),
-(39194,1,12,354),
-(39196,1,12,358),
+(39464,1,12,341),
+(39465,1,12,342),
+(39466,1,12,343),
+(39467,1,12,344),
+(39473,1,12,351),
+(39470,1,12,352),
+(39472,1,12,353),
+(39474,1,12,354),
+(39476,1,12,358),
 (36132,1,12,431),
-(39136,1,12,511),
-(39129,1,12,512),
-(39131,1,12,513),
-(39133,1,12,514),
-(39135,1,12,517),
-(39137,1,12,519),
+(39416,1,12,511),
+(39409,1,12,512),
+(39411,1,12,513),
+(39413,1,12,514),
+(39415,1,12,517),
+(39417,1,12,519),
 (23700,1,12,520),
-(39096,1,12,521),
-(39091,1,12,522),
-(39093,1,12,524),
-(39095,1,12,525),
-(39097,1,12,527),
-(39145,1,12,531),
-(39140,1,12,532),
-(39141,1,12,533),
-(39144,1,12,534),
-(39142,1,12,535),
-(39146,1,12,538),
+(39377,1,12,521),
+(39372,1,12,522),
+(39374,1,12,524),
+(39376,1,12,525),
+(39378,1,12,527),
+(39425,1,12,531),
+(39420,1,12,532),
+(39421,1,12,533),
+(39424,1,12,534),
+(39422,1,12,535),
+(39426,1,12,538),
 (36357,1,12,561),
 (36354,1,12,562),
 (36356,1,12,563),
@@ -81267,35 +81335,35 @@ INSERT INTO `llx_user_rights` VALUES
 (36285,1,12,602),
 (36287,1,12,609),
 (25481,1,12,610),
-(39200,1,12,611),
-(39199,1,12,612),
-(39201,1,12,613),
-(38966,1,12,651),
-(38965,1,12,652),
-(38967,1,12,653),
-(39104,1,12,661),
-(39103,1,12,662),
-(39105,1,12,663),
+(39480,1,12,611),
+(39479,1,12,612),
+(39481,1,12,613),
+(39247,1,12,651),
+(39246,1,12,652),
+(39248,1,12,653),
+(39385,1,12,661),
+(39384,1,12,662),
+(39386,1,12,663),
 (36551,1,12,691),
 (36550,1,12,692),
 (36552,1,12,693),
-(39007,1,12,701),
-(39006,1,12,702),
-(39008,1,12,703),
+(39288,1,12,701),
+(39287,1,12,702),
+(39289,1,12,703),
 (36474,1,12,711),
 (36473,1,12,712),
 (36475,1,12,713),
-(39118,1,12,750),
-(39117,1,12,751),
-(39119,1,12,752),
-(39027,1,12,771),
-(39016,1,12,772),
-(39018,1,12,773),
-(39020,1,12,775),
-(39022,1,12,776),
-(39024,1,12,777),
-(39026,1,12,778),
-(39028,1,12,779),
+(39398,1,12,750),
+(39397,1,12,751),
+(39399,1,12,752),
+(39308,1,12,771),
+(39297,1,12,772),
+(39299,1,12,773),
+(39301,1,12,775),
+(39303,1,12,776),
+(39305,1,12,777),
+(39307,1,12,778),
+(39309,1,12,779),
 (36461,1,12,1001),
 (36460,1,12,1002),
 (36462,1,12,1003),
@@ -81318,44 +81386,44 @@ INSERT INTO `llx_user_rights` VALUES
 (36482,1,12,1124),
 (36484,1,12,1125),
 (36486,1,12,1126),
-(39041,1,12,1181),
-(39055,1,12,1182),
-(39044,1,12,1183),
-(39045,1,12,1184),
-(39047,1,12,1185),
-(39049,1,12,1186),
-(39051,1,12,1187),
-(39054,1,12,1188),
-(39052,1,12,1189),
-(39056,1,12,1191),
+(39322,1,12,1181),
+(39336,1,12,1182),
+(39325,1,12,1183),
+(39326,1,12,1184),
+(39328,1,12,1185),
+(39330,1,12,1186),
+(39332,1,12,1187),
+(39335,1,12,1188),
+(39333,1,12,1189),
+(39337,1,12,1191),
 (38071,1,12,1201),
 (38072,1,12,1202),
-(39064,1,12,1231),
-(39059,1,12,1232),
-(39060,1,12,1233),
-(39062,1,12,1234),
-(39063,1,12,1235),
-(39065,1,12,1236),
+(39345,1,12,1231),
+(39340,1,12,1232),
+(39341,1,12,1233),
+(39343,1,12,1234),
+(39344,1,12,1235),
+(39346,1,12,1236),
 (38069,1,12,1251),
-(39039,1,12,1321),
-(39040,1,12,1322),
-(39003,1,12,1421),
+(39320,1,12,1321),
+(39321,1,12,1322),
+(39284,1,12,1421),
 (36157,1,12,1521),
 (36158,1,12,1522),
-(38955,1,12,2401),
-(38954,1,12,2402),
-(38956,1,12,2403),
-(38960,1,12,2411),
-(38959,1,12,2412),
-(38961,1,12,2413),
-(38962,1,12,2414),
-(39012,1,12,2501),
-(39011,1,12,2503),
-(39013,1,12,2515),
+(39236,1,12,2401),
+(39235,1,12,2402),
+(39237,1,12,2403),
+(39241,1,12,2411),
+(39240,1,12,2412),
+(39242,1,12,2413),
+(39243,1,12,2414),
+(39293,1,12,2501),
+(39292,1,12,2503),
+(39294,1,12,2515),
 (36058,1,12,2610),
 (36218,1,12,2801),
 (36219,1,12,2802),
-(36087,1,12,3201),
+(39219,1,12,3201),
 (36322,1,12,3301),
 (37478,1,12,4001),
 (37477,1,12,4002),
@@ -81369,67 +81437,67 @@ INSERT INTO `llx_user_rights` VALUES
 (37489,1,12,4031),
 (37490,1,12,4032),
 (30024,1,12,4033),
-(39209,1,12,10001),
-(39204,1,12,10002),
-(39206,1,12,10003),
-(39208,1,12,10005),
-(39210,1,12,10008),
-(39087,1,12,20001),
-(39078,1,12,20002),
-(39080,1,12,20003),
-(39084,1,12,20004),
-(39086,1,12,20005),
-(39088,1,12,20006),
-(39082,1,12,20007),
-(38991,1,12,23001),
-(38988,1,12,23002),
-(38990,1,12,23003),
-(38992,1,12,23004),
+(39489,1,12,10001),
+(39484,1,12,10002),
+(39486,1,12,10003),
+(39488,1,12,10005),
+(39490,1,12,10008),
+(39368,1,12,20001),
+(39359,1,12,20002),
+(39361,1,12,20003),
+(39365,1,12,20004),
+(39367,1,12,20005),
+(39369,1,12,20006),
+(39363,1,12,20007),
+(39272,1,12,23001),
+(39269,1,12,23002),
+(39271,1,12,23003),
+(39273,1,12,23004),
 (38670,1,12,40001),
 (38669,1,12,40002),
 (38671,1,12,40003),
-(39172,1,12,50151),
-(39173,1,12,50152),
-(39174,1,12,50153),
+(39452,1,12,50151),
+(39453,1,12,50152),
+(39454,1,12,50153),
 (36556,1,12,50331),
 (36555,1,12,50332),
 (36557,1,12,50333),
-(38940,1,12,50401),
-(38948,1,12,50411),
-(38943,1,12,50412),
-(38945,1,12,50414),
-(38947,1,12,50415),
-(38949,1,12,50418),
-(38950,1,12,50420),
-(38951,1,12,50430),
-(38939,1,12,50440),
+(39221,1,12,50401),
+(39229,1,12,50411),
+(39224,1,12,50412),
+(39226,1,12,50414),
+(39228,1,12,50415),
+(39230,1,12,50418),
+(39231,1,12,50420),
+(39232,1,12,50430),
+(39220,1,12,50440),
 (38079,1,12,51001),
 (38078,1,12,51002),
 (38080,1,12,51003),
 (38084,1,12,51004),
 (38083,1,12,51005),
 (38085,1,12,51006),
-(39107,1,12,55001),
-(39108,1,12,55002),
-(39170,1,12,56001),
-(39165,1,12,56002),
-(39167,1,12,56003),
-(39169,1,12,56004),
-(39171,1,12,56006),
+(39388,1,12,55001),
+(39389,1,12,55002),
+(39450,1,12,56001),
+(39445,1,12,56002),
+(39447,1,12,56003),
+(39449,1,12,56004),
+(39451,1,12,56006),
 (36281,1,12,57001),
 (36279,1,12,57002),
 (36280,1,12,57003),
 (36282,1,12,57004),
-(39112,1,12,58000),
-(39111,1,12,58001),
-(39113,1,12,58002),
-(39098,1,12,59001),
-(39099,1,12,59002),
-(39100,1,12,59003),
-(39125,1,12,63001),
-(39122,1,12,63002),
-(39124,1,12,63003),
-(39126,1,12,63004),
+(39393,1,12,58000),
+(39392,1,12,58001),
+(39394,1,12,58002),
+(39379,1,12,59001),
+(39380,1,12,59002),
+(39381,1,12,59003),
+(39405,1,12,63001),
+(39402,1,12,63002),
+(39404,1,12,63003),
+(39406,1,12,63004),
 (39114,1,12,64001),
 (36403,1,12,67001),
 (36263,1,12,68001),
@@ -82149,6 +82217,133 @@ INSERT INTO `llx_usergroup_user` VALUES
 UNLOCK TABLES;
 
 --
+-- Table structure for table `llx_verifactudolibarr_add_tpls`
+--
+
+DROP TABLE IF EXISTS `llx_verifactudolibarr_add_tpls`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `llx_verifactudolibarr_add_tpls` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(100) NOT NULL,
+  `template` varchar(100) NOT NULL,
+  `status` int(11) NOT NULL DEFAULT 0,
+  `hash_tmp` varchar(100) NOT NULL,
+  `tms` datetime NOT NULL,
+  `content_tmp` longtext NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `llx_verifactudolibarr_add_tpls`
+--
+
+LOCK TABLES `llx_verifactudolibarr_add_tpls` WRITE;
+/*!40000 ALTER TABLE `llx_verifactudolibarr_add_tpls` DISABLE KEYS */;
+INSERT INTO `llx_verifactudolibarr_add_tpls` VALUES
+(1,'Verifactu casa interior','crabe_verifactu_casa_int',1,'1a70a6e54dd7a88e4fa45932ca280b90f349c9b435ce01e53995c7111152ecb7','2025-12-12 11:18:43','<?php\n/* Copyright (C) 2004-2014	Laurent Destailleur	<eldy@users.sourceforge.net>\n * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>\n * Copyright (C) 2008		Raphael Bertrand		<raphael.bertrand@resultic.fr>\n * Copyright (C) 2010-2014	Juanjo Menent		<jmenent@2byte.es>\n * Copyright (C) 2012		Christophe Battarel	<christophe.battarel@altairis.fr>\n * Copyright (C) 2012		Cédric Salvador		<csalvador@gpcsolutions.fr>\n * Copyright (C) 2012-2014	Raphaël Doursenaud	<rdoursenaud@gpcsolutions.fr>\n * Copyright (C) 2015		Marcos García		<marcosgdf@gmail.com>\n * Copyright (C) 2017-2018	Ferran Marcet		<fmarcet@2byte.es>\n * Copyright (C) 2018-2020  Frédéric France     <frederic.france@netlogic.fr>\n * Copyright (C) 2022		Anthony Berton				<anthony.berton@bb2a.fr>\n *\n * This program is free software; you can redistribute it and/or modify\n * it under the terms of the GNU General Public License as published by\n * the Free Software Foundation; either version 3 of the License, or\n * (at your option) any later version.\n *\n * This program is distributed in the hope that it will be useful,\n * but WITHOUT ANY WARRANTY; without even the implied warranty of\n * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n * GNU General Public License for more details.\n *\n * You should have received a copy of the GNU General Public License\n * along with this program. If not, see <https://www.gnu.org/licenses/>.\n * or see https://www.gnu.org/\n */\n\n/**\n *	\\file       htdocs/core/modules/facture/doc/pdf_crabe.modules.php\n *	\\ingroup    facture\n *	\\brief      File of class to generate customers invoices from crabe model\n */\n\nrequire_once DOL_DOCUMENT_ROOT.\'/core/modules/facture/modules_facture.php\';\nrequire_once DOL_DOCUMENT_ROOT.\'/product/class/product.class.php\';\nrequire_once DOL_DOCUMENT_ROOT.\'/core/lib/company.lib.php\';\nrequire_once DOL_DOCUMENT_ROOT.\'/core/lib/functions2.lib.php\';\nrequire_once DOL_DOCUMENT_ROOT.\'/core/lib/pdf.lib.php\';\n\n\n/**\n *	Class to generate the customer invoice PDF with template Crabe\n */\nclass pdf_crabe_verifactu_casa_int extends ModelePDFFactures\n{\n	 /**\n	  * @var DoliDb Database handler\n	  */\n	public $db;\n\n	/**\n	 * @var string model name\n	 */\n	public $name;\n\n	/**\n	 * @var string model description (short text)\n	 */\n	public $description;\n\n	/**\n	 * @var int 	Save the name of generated file as the main doc when generating a doc with this template\n	 */\n	public $update_main_doc_field;\n\n	/**\n	 * @var string document type\n	 */\n	public $type;\n\n	/**\n	 * Dolibarr version of the loaded document\n	 * @var string\n	 */\n	public $version = \'dolibarr\';\n\n	/**\n	 * @var int page_largeur\n	 */\n	public $page_largeur;\n\n	/**\n	 * @var int page_hauteur\n	 */\n	public $page_hauteur;\n\n	/**\n	 * @var array format\n	 */\n	public $format;\n\n	/**\n	 * @var int marge_gauche\n	 */\n	public $marge_gauche;\n\n	/**\n	 * @var int marge_droite\n	 */\n	public $marge_droite;\n\n	/**\n	 * @var int marge_haute\n	 */\n	public $marge_haute;\n\n	/**\n	 * @var int marge_basse\n	 */\n	public $marge_basse;\n\n	/**\n	 * Issuer\n	 * @var Societe Object that emits\n	 */\n	public $emetteur;\n\n	/**\n	 * @var bool Situation invoice type\n	 */\n	public $situationinvoice;\n\n	/**\n	 * @var float X position for the situation progress column\n	 */\n	public $posxprogress;\n\n	/**\n	 * @var int Category of operation\n	 */\n	public $categoryOfOperation = -1; // unknown by default\n\n\n	/**\n	 *	Constructor\n	 *\n	 *  @param		DoliDB		$db      Database handler\n	 */\n	public function __construct($db)\n	{\n		global $conf, $langs, $mysoc;\n\n		// Translations\n		$langs->loadLangs(array(\"main\", \"bills\"));\n\n		$this->db = $db;\n		$this->name = \"Verifactu casa interior\";\n		$this->name_verifactu = \"crabe_verifactu_casa_int\";\n		$this->description = $langs->trans(\'PDFCrabeDescription\');\n		$this->update_main_doc_field = 1; // Save the name of generated file as the main doc when generating a doc with this template\n\n		// Dimension page\n		$this->type = \'pdf\';\n		$formatarray = pdf_getFormat();\n		$this->page_largeur = $formatarray[\'width\'];\n		$this->page_hauteur = $formatarray[\'height\'];\n		$this->format = array($this->page_largeur, $this->page_hauteur);\n		$this->marge_gauche = getDolGlobalInt(\'MAIN_PDF_MARGIN_LEFT\', 10);\n		$this->marge_droite = getDolGlobalInt(\'MAIN_PDF_MARGIN_RIGHT\', 10);\n		$this->marge_haute = getDolGlobalInt(\'MAIN_PDF_MARGIN_TOP\', 10);\n		$this->marge_basse = getDolGlobalInt(\'MAIN_PDF_MARGIN_BOTTOM\', 10);\n\n		$this->option_logo = 1; // Display logo\n		$this->option_tva = 1; // Manage the vat option FACTURE_TVAOPTION\n		$this->option_modereg = 1; // Display payment mode\n		$this->option_condreg = 1; // Display payment terms\n		$this->option_multilang = 1; // Available in several languages\n		$this->option_escompte = 1; // Displays if there has been a discount\n		$this->option_credit_note = 1; // Support credit notes\n		$this->option_freetext = 1; // Support add of a personalised text\n		$this->option_draft_watermark = 1; // Support add of a watermark on drafts\n		$this->watermark = \'\';\n\n		// Get source company\n		$this->emetteur = $mysoc;\n		if (empty($this->emetteur->country_code)) {\n			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default, if was not defined\n		}\n\n		// Define position of columns\n		$this->posxdesc = $this->marge_gauche + 1;\n		if (getDolGlobalInt(\'PRODUCT_USE_UNITS\')) {\n			$this->posxtva = 101;\n			$this->posxup = 118;\n			$this->posxqty = 135;\n			$this->posxunit = 151;\n		} else {\n			$this->posxtva = 106;\n			$this->posxup = 122;\n			$this->posxqty = 145;\n			$this->posxunit = 162;\n		}\n		$this->posxprogress = 151; // Only displayed for situation invoices\n		$this->posxdiscount = 162;\n		$this->posxprogress = 174;\n		$this->postotalht = 174;\n		if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) || !empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN)) {\n			$this->posxtva = $this->posxup;\n		}\n		$this->posxpicture = $this->posxtva - (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH) ? 20 : $conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH); // width of images\n		if ($this->page_largeur < 210) { // To work with US executive format\n			$this->posxpicture -= 20;\n			$this->posxtva -= 20;\n			$this->posxup -= 20;\n			$this->posxqty -= 20;\n			$this->posxunit -= 20;\n			$this->posxdiscount -= 20;\n			$this->posxprogress -= 20;\n			$this->postotalht -= 20;\n		}\n\n		$this->tva = array();\n		$this->tva_array = array();\n		$this->localtax1 = array();\n		$this->localtax2 = array();\n		$this->atleastoneratenotnull = 0;\n		$this->atleastonediscount = 0;\n		$this->situationinvoice = false;\n	}\n\n\n	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps\n	/**\n	 *  Function to build pdf onto disk\n	 *\n	 *  @param		Facture		$object				Object to generate\n	 *  @param		Translate	$outputlangs		Lang output object\n	 *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file\n	 *  @param		int			$hidedetails		Do not show line details\n	 *  @param		int			$hidedesc			Do not show desc\n	 *  @param		int			$hideref			Do not show ref\n	 *  @return     int         	    			1=OK, 0=KO\n	 */\n	public function write_file($object, $outputlangs, $srctemplatepath = \'\', $hidedetails = 0, $hidedesc = 0, $hideref = 0)\n	{\n		// phpcs:enable\n		global $user, $langs, $conf, $mysoc, $hookmanager, $nblines;\n        \n        $hideref = 1; //Casa interior\n\n		dol_syslog(\"write_file outputlangs->defaultlang=\".(is_object($outputlangs) ? $outputlangs->defaultlang : \'null\'));\n\n		if (!is_object($outputlangs)) {\n			$outputlangs = $langs;\n		}\n		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO\n		if (!empty($conf->global->MAIN_USE_FPDF)) {\n			$outputlangs->charset_output = \'ISO-8859-1\';\n		}\n\n		// Load translation files required by the page\n		$outputlangs->loadLangs(array(\"main\", \"bills\", \"products\", \"dict\", \"companies\"));\n\n		// Show Draft Watermark\n		if ($object->statut == $object::STATUS_DRAFT && (!empty($conf->global->FACTURE_DRAFT_WATERMARK))) {\n			$this->watermark = $conf->global->FACTURE_DRAFT_WATERMARK;\n		}\n\n		global $outputlangsbis;\n		$outputlangsbis = null;\n		if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) && $outputlangs->defaultlang != $conf->global->PDF_USE_ALSO_LANGUAGE_CODE) {\n			$outputlangsbis = new Translate(\'\', $conf);\n			$outputlangsbis->setDefaultLang($conf->global->PDF_USE_ALSO_LANGUAGE_CODE);\n			$outputlangsbis->loadLangs(array(\"main\", \"bills\", \"products\", \"dict\", \"companies\"));\n		}\n\n		$nblines = count($object->lines);\n\n		// Loop on each lines to detect if there is at least one image to show\n		$realpatharray = array();\n		if (!empty($conf->global->MAIN_GENERATE_INVOICES_WITH_PICTURE)) {\n			for ($i = 0; $i < $nblines; $i++) {\n				if (empty($object->lines[$i]->fk_product)) {\n					continue;\n				}\n\n				$objphoto = new Product($this->db);\n				$objphoto->fetch($object->lines[$i]->fk_product);\n\n				$pdir = get_exdir($object->lines[$i]->fk_product, 2, 0, 0, $objphoto, \'product\').$object->lines[$i]->fk_product.\"/photos/\";\n				$dir = $conf->product->dir_output.\'/\'.$pdir;\n\n				$realpath = \'\';\n				foreach ($objphoto->liste_photos($dir, 1) as $key => $obj) {\n					$filename = $obj[\'photo\'];\n					//if ($obj[\'photo_vignette\']) $filename=\'thumbs/\'.$obj[\'photo_vignette\'];\n					$realpath = $dir.$filename;\n					break;\n				}\n\n				if ($realpath) {\n					$realpatharray[$i] = $realpath;\n				}\n			}\n		}\n		if (count($realpatharray) == 0) {\n			$this->posxpicture = $this->posxtva;\n		}\n\n		if ($conf->facture->dir_output) {\n			$object->fetch_thirdparty();\n\n			$deja_regle = $object->getSommePaiement((isModEnabled(\"multicurrency\") && $object->multicurrency_tx != 1) ? 1 : 0);\n			$amount_credit_notes_included = $object->getSumCreditNotesUsed((isModEnabled(\"multicurrency\") && $object->multicurrency_tx != 1) ? 1 : 0);\n			$amount_deposits_included = $object->getSumDepositsUsed((isModEnabled(\"multicurrency\") && $object->multicurrency_tx != 1) ? 1 : 0);\n\n			// Definition of $dir and $file\n			if ($object->specimen) {\n				$dir = empty($conf->facture->multidir_output[$object->entity]) ? $conf->facture->dir_output : $conf->facture->multidir_output[$object->entity];\n				$file = $dir.\"/SPECIMEN.pdf\";\n			} else {\n				$objectref = dol_sanitizeFileName($object->ref);\n				$dir = (empty($conf->facture->multidir_output[$object->entity]) ? $conf->facture->dir_output : $conf->facture->multidir_output[$object->entity]).\"/\".$objectref;\n				$file = $dir.\"/\".$objectref.\".pdf\";\n			}\n			if (!file_exists($dir)) {\n				if (dol_mkdir($dir) < 0) {\n					$this->error = $langs->transnoentities(\"ErrorCanNotCreateDir\", $dir);\n					return 0;\n				}\n			}\n\n			if (file_exists($dir)) {\n				// Add pdfgeneration hook\n				if (!is_object($hookmanager)) {\n					include_once DOL_DOCUMENT_ROOT.\'/core/class/hookmanager.class.php\';\n					$hookmanager = new HookManager($this->db);\n				}\n				$hookmanager->initHooks(array(\'pdfgeneration\'));\n				$parameters = array(\'file\'=>$file, \'object\'=>$object, \'outputlangs\'=>$outputlangs);\n				global $action;\n				$reshook = $hookmanager->executeHooks(\'beforePDFCreation\', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks\n\n				// Set nblines with the new facture lines content after hook\n				$nblines = count($object->lines);\n				$nbpayments = count($object->getListOfPayments());\n\n				// Create pdf instance\n				$pdf = pdf_getInstance($this->format);\n				$default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance\n				$pdf->SetAutoPageBreak(1, 0);\n\n				$heightforinfotot = 50 + (4 * $nbpayments); // Height reserved to output the info and total part and payment part\n				if ($heightforinfotot > 220) {\n					$heightforinfotot = 220;\n				}\n				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page\n				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)\n				if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS)) {\n					$heightforfooter += 6;\n				}\n\n				$heightforqrinvoice_firstpage = 0;\n				if (getDolGlobalString(\'INVOICE_ADD_SWISS_QR_CODE\') == \'bottom\') {\n					$heightforqrinvoice_firstpage = $this->getHeightForQRInvoice(1, $object, $langs);\n					if ($heightforqrinvoice_firstpage > 0) {\n						// Shrink infotot to a base 30\n						$heightforinfotot = 30 + (4 * $nbpayments); // Height reserved to output the info and total part and payment part\n					}\n				}\n\n				if (class_exists(\'TCPDF\')) {\n					$pdf->setPrintHeader(false);\n					$pdf->setPrintFooter(false);\n				}\n				$pdf->SetFont(pdf_getPDFFont($outputlangs));\n\n				// Set path to the background PDF File\n				if (!empty($conf->global->MAIN_ADD_PDF_BACKGROUND)) {\n					$logodir = $conf->mycompany->dir_output;\n					if (!empty($conf->mycompany->multidir_output[$object->entity])) {\n						$logodir = $conf->mycompany->multidir_output[$object->entity];\n					}\n					$pagecount = $pdf->setSourceFile($logodir.\'/\'.$conf->global->MAIN_ADD_PDF_BACKGROUND);\n					$tplidx = $pdf->importPage(1);\n				}\n\n				$pdf->Open();\n				$pagenb = 0;\n				$pdf->SetDrawColor(128, 128, 128);\n\n				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));\n				$pdf->SetSubject($outputlangs->transnoentities(\"PdfInvoiceTitle\"));\n				$pdf->SetCreator(\"Dolibarr \".DOL_VERSION);\n				$pdf->SetAuthor($mysoc->name.($user->id > 0 ? \' - \'.$outputlangs->convToOutputCharset($user->getFullName($outputlangs)) : \'\'));\n				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref).\" \".$outputlangs->transnoentities(\"PdfInvoiceTitle\").\" \".$outputlangs->convToOutputCharset($object->thirdparty->name));\n				if (getDolGlobalString(\'MAIN_DISABLE_PDF_COMPRESSION\')) {\n					$pdf->SetCompression(false);\n				}\n\n				// Set certificate\n				$cert = empty($user->conf->CERTIFICATE_CRT) ? \'\' : $user->conf->CERTIFICATE_CRT;\n				$certprivate = empty($user->conf->CERTIFICATE_CRT_PRIVATE) ? \'\' : $user->conf->CERTIFICATE_CRT_PRIVATE;\n				// If user has no certificate, we try to take the company one\n				if (!$cert) {\n					$cert = empty($conf->global->CERTIFICATE_CRT) ? \'\' : $conf->global->CERTIFICATE_CRT;\n				}\n				if (!$certprivate) {\n					$certprivate = empty($conf->global->CERTIFICATE_CRT_PRIVATE) ? \'\' : $conf->global->CERTIFICATE_CRT_PRIVATE;\n				}\n				// If a certificate is found\n				if ($cert) {\n					$info = array(\n						\'Name\' => $this->emetteur->name,\n						\'Location\' => getCountry($this->emetteur->country_code, 0),\n						\'Reason\' => \'INVOICE\',\n						\'ContactInfo\' => $this->emetteur->email\n					);\n					$pdf->setSignature($cert, $certprivate, $this->emetteur->name, \'\', 2, $info);\n				}\n\n				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right\n\n				// Set $this->atleastonediscount if you have at least one discount\n				// and determine category of operation\n				$categoryOfOperation = 0;\n				$nbProduct = 0;\n				$nbService = 0;\n				for ($i = 0; $i < $nblines; $i++) {\n					if ($object->lines[$i]->remise_percent) {\n						$this->atleastonediscount++;\n					}\n\n					// determine category of operation\n					if ($categoryOfOperation < 2) {\n						$lineProductType = $object->lines[$i]->product_type;\n						if ($lineProductType == Product::TYPE_PRODUCT) {\n							$nbProduct++;\n						} elseif ($lineProductType == Product::TYPE_SERVICE) {\n							$nbService++;\n						}\n						if ($nbProduct > 0 && $nbService > 0) {\n							// mixed products and services\n							$categoryOfOperation = 2;\n						}\n					}\n				}\n				// determine category of operation\n				if ($categoryOfOperation <= 0) {\n					// only services\n					if ($nbProduct == 0 && $nbService > 0) {\n						$categoryOfOperation = 1;\n					}\n				}\n				$this->categoryOfOperation = $categoryOfOperation;\n				if (empty($this->atleastonediscount)) {    // retrieve space not used by discount\n					$delta = ($this->posxprogress - $this->posxdiscount);\n					$this->posxpicture += $delta;\n					$this->posxtva += $delta;\n					$this->posxup += $delta;\n					$this->posxqty += $delta;\n					$this->posxunit += $delta;\n					$this->posxdiscount += $delta;\n					// post of fields after are not modified, stay at same position\n				}\n\n				$progress_width = 0;\n				// Situation invoice handling\n				if ($object->situation_cycle_ref && empty($conf->global->MAIN_PDF_HIDE_SITUATION)) {\n					$this->situationinvoice = true;\n					$progress_width = 10;\n					$this->posxpicture -= $progress_width;\n					$this->posxtva -= $progress_width;\n					$this->posxup -= $progress_width;\n					$this->posxqty -= $progress_width;\n					$this->posxunit -= $progress_width;\n					$this->posxdiscount -= $progress_width;\n					$this->posxprogress -= $progress_width;\n				}\n\n				// New page\n				$pdf->AddPage();\n				if (!empty($tplidx)) {\n					$pdf->useTemplate($tplidx);\n				}\n				$pagenb++;\n\n				// Output header (logo, ref and address blocks). This is first call for first page.\n				$top_shift = $this->_pagehead($pdf, $object, 1, $outputlangs);\n				$pdf->SetFont(\'\', \'\', $default_font_size - 1);\n				$pdf->MultiCell(0, 3, \'\'); // Set interline to 3\n				$pdf->SetTextColor(0, 0, 0);\n\n				// $pdf->GetY() here can\'t be used. It is bottom of the second addresse box but first one may be higher\n\n				// $tab_top is y where we must continue content (90 = 42 + 48: 42 is height of logo and ref, 48 is address blocks)\n				$tab_top = 90 + $top_shift;		// top_shift is an addition for linked objects or addons (0 in most cases)\n				$tab_top_newpage = (!getDolGlobalInt(\'MAIN_PDF_DONOTREPEAT_HEAD\') ? 42 + $top_shift : 10);\n\n				// You can add more thing under header here, if you increase $extra_under_address_shift too.\n				$extra_under_address_shift = 0;\n				$qrcodestring = \'\';\n				if (!empty($conf->global->INVOICE_ADD_ZATCA_QR_CODE)) {\n					$qrcodestring = $object->buildZATCAQRString();\n				} elseif (getDolGlobalString(\'INVOICE_ADD_SWISS_QR_CODE\') == \'1\') {\n					$qrcodestring = $object->buildSwitzerlandQRString();\n				}\n\n				if ($qrcodestring) {\n					$qrcodecolor = array(\'25\', \'25\', \'25\');\n					// set style for QR-code\n					$styleQr = array(\n						\'border\' => false,\n						\'padding\' => 0,\n						\'fgcolor\' => $qrcodecolor,\n						\'bgcolor\' => false, //array(255,255,255)\n						\'module_width\' => 1, // width of a single module in points\n						\'module_height\' => 1 // height of a single module in points\n					);\n					$pdf->write2DBarcode($qrcodestring, \'QRCODE,M\', $this->marge_gauche, $tab_top - 5, 25, 25, $styleQr, \'N\');\n					$extra_under_address_shift += 25;\n				}\n\n				// Call hook printUnderHeaderPDFline\n				$parameters = array(\n					\'object\' => $object,\n					\'i\' => $i,\n					\'pdf\' =>& $pdf,\n					\'outputlangs\' => $outputlangs,\n					\'hidedetails\' => $hidedetails\n				);\n				$reshook = $hookmanager->executeHooks(\'printUnderHeaderPDFline\', $parameters, $this); // Note that $object may have been modified by hook\n				if (!empty($hookmanager->resArray[\'extra_under_address_shift\'])) {\n					$extra_under_address_shift += $hookmanager->resArray[\'extra_under_header_shift\'];\n				}\n\n				$tab_top += $extra_under_address_shift;\n				$tab_top_newpage += 0;\n\n				// Incoterm\n				$height_incoterms = 0;\n				if (isModEnabled(\'incoterm\')) {\n					$desc_incoterms = $object->getIncotermsForPDF();\n					if ($desc_incoterms) {\n						$tab_top -= 2;\n\n						$pdf->SetFont(\'\', \'\', $default_font_size - 1);\n						$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top - 1, dol_htmlentitiesbr($desc_incoterms), 0, 1);\n						$nexY = $pdf->GetY();\n						$height_incoterms = $nexY - $tab_top;\n\n						// Rect takes a length in 3rd parameter\n						$pdf->SetDrawColor(192, 192, 192);\n						$pdf->Rect($this->marge_gauche, $tab_top - 1, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_incoterms + 1);\n\n						$tab_top = $nexY + 6;\n					}\n				}\n\n				// Display notes\n				$notetoshow = empty($object->note_public) ? \'\' : $object->note_public;\n				if (!empty($conf->global->MAIN_ADD_SALE_REP_SIGNATURE_IN_NOTE)) {\n					// Get first sale rep\n					if (is_object($object->thirdparty)) {\n						$salereparray = $object->thirdparty->getSalesRepresentatives($user);\n						$salerepobj = new User($this->db);\n						$salerepobj->fetch($salereparray[0][\'id\']);\n						if (!empty($salerepobj->signature)) {\n							$notetoshow = dol_concatdesc($notetoshow, $salerepobj->signature);\n						}\n					}\n				}\n				// Extrafields in note\n				$extranote = $this->getExtrafieldsInHtml($object, $outputlangs);\n				if (!empty($extranote)) {\n					$notetoshow = dol_concatdesc($notetoshow, $extranote);\n				}\n				if ($notetoshow) {\n					$tab_top -= 2;\n\n					$substitutionarray = pdf_getSubstitutionArray($outputlangs, null, $object);\n					complete_substitutions_array($substitutionarray, $outputlangs, $object);\n\n					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);\n					$notetoshow = convertBackOfficeMediasLinksToPublicLinks($notetoshow);\n\n					$pdf->SetFont(\'\', \'\', $default_font_size - 1);\n					$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top - 1, dol_htmlentitiesbr($notetoshow), 0, 1);\n					$nexY = $pdf->GetY();\n					$height_note = $nexY - $tab_top;\n\n					// Rect takes a length in 3rd parameter\n					$pdf->SetDrawColor(192, 192, 192);\n					$pdf->Rect($this->marge_gauche, $tab_top - 1, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_note + 1);\n\n					$tab_top = $nexY + 6;\n				}\n\n				$iniY = $tab_top + 7;\n				$curY = $tab_top + 7;\n				$nexY = $tab_top + 7;\n\n				// Loop on each lines\n				for ($i = 0; $i < $nblines; $i++) {\n					$curY = $nexY;\n					$pdf->SetFont(\'\', \'\', $default_font_size - 1); // Into loop to work with multipage\n					$pdf->SetTextColor(0, 0, 0);\n\n					// Define size of image if we need it\n					$imglinesize = array();\n					if (!empty($realpatharray[$i])) {\n						$imglinesize = pdf_getSizeForImage($realpatharray[$i]);\n					}\n\n					$pdf->setTopMargin($tab_top_newpage);\n					$page_bottom_margin = $heightforfooter + $heightforfreetext + $heightforinfotot + $this->getHeightForQRInvoice($pdf->getPage(), $object, $langs);\n					$pdf->setPageOrientation(\'\', 1, $page_bottom_margin);\n					$pageposbefore = $pdf->getPage();\n\n					$showpricebeforepagebreak = 1;\n					$posYAfterImage = 0;\n					$posYAfterDescription = 0;\n\n					// We start with Photo of product line\n					if (isset($imglinesize[\'width\']) && isset($imglinesize[\'height\']) && ($curY + $imglinesize[\'height\']) > ($this->page_hauteur - $page_bottom_margin)) {	// If photo too high, we moved completely on new page\n						$pdf->AddPage(\'\', \'\', true);\n						if (!empty($tplidx)) {\n							$pdf->useTemplate($tplidx);\n						}\n						if (!getDolGlobalInt(\'MAIN_PDF_DONOTREPEAT_HEAD\')) {\n							$top_shift = $this->_pagehead($pdf, $object, 0, $outputlangs);\n							$tab_top_newpage = (!getDolGlobalInt(\'MAIN_PDF_DONOTREPEAT_HEAD\') ? 42 + $top_shift : 10);\n						}\n						$pdf->setPage($pageposbefore + 1);\n\n						$curY = $tab_top_newpage;\n\n						// Allows data in the first page if description is long enough to break in multiples pages\n						if (!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE)) {\n							$showpricebeforepagebreak = 1;\n						} else {\n							$showpricebeforepagebreak = 0;\n						}\n					}\n\n					if (isset($imglinesize[\'width\']) && isset($imglinesize[\'height\'])) {\n						$curX = $this->posxpicture - 1;\n						$pdf->Image($realpatharray[$i], $curX + (($this->posxtva - $this->posxpicture - $imglinesize[\'width\']) / 2), $curY, $imglinesize[\'width\'], $imglinesize[\'height\'], \'\', \'\', \'\', 2, 300); // Use 300 dpi\n						// $pdf->Image does not increase value return by getY, so we save it manually\n						$posYAfterImage = $curY + $imglinesize[\'height\'];\n					}\n\n					// Description of product line\n					$curX = $this->posxdesc - 1;\n\n					$pdf->startTransaction();\n					$this->pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->posxpicture - $curX - $progress_width, 3, $curX, $curY, $hideref, $hidedesc);\n					$pageposafter = $pdf->getPage();\n					if ($pageposafter > $pageposbefore) {	// There is a pagebreak\n						$pdf->rollbackTransaction(true);\n						$pageposafter = $pageposbefore;\n						//print $pageposafter.\'-\'.$pageposbefore;exit;\n						$pdf->setPageOrientation(\'\', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.\n						$this->pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->posxpicture - $curX - $progress_width, 3, $curX, $curY, $hideref, $hidedesc);\n						$pageposafter = $pdf->getPage();\n						$posyafter = $pdf->GetY();\n						//var_dump($posyafter); var_dump(($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot))); exit;\n						if ($posyafter > ($this->page_hauteur - $page_bottom_margin)) {	// There is no space left for total+free text\n							if ($i == ($nblines - 1)) {	// No more lines, and no space left to show total, so we create a new page\n								$pdf->AddPage(\'\', \'\', true);\n								if (!empty($tplidx)) {\n									$pdf->useTemplate($tplidx);\n								}\n								if (!getDolGlobalInt(\'MAIN_PDF_DONOTREPEAT_HEAD\')) {\n									$top_shift = $this->_pagehead($pdf, $object, 0, $outputlangs);\n									$tab_top_newpage = (!getDolGlobalInt(\'MAIN_PDF_DONOTREPEAT_HEAD\') ? 42 + $top_shift : 10);\n								}\n								$pdf->setPage($pageposafter + 1);\n							}\n						} else {\n							// We found a page break\n\n							// Allows data in the first page if description is long enough to break in multiples pages\n							if (!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE)) {\n								$showpricebeforepagebreak = 1;\n							} else {\n								$showpricebeforepagebreak = 0;\n							}\n						}\n					} else // No pagebreak\n					{\n						$pdf->commitTransaction();\n					}\n					$posYAfterDescription = $pdf->GetY();\n\n					$nexY = $pdf->GetY();\n					$pageposafter = $pdf->getPage();\n					$pdf->setPage($pageposbefore);\n					$pdf->setTopMargin($this->marge_haute);\n					$pdf->setPageOrientation(\'\', 1, 0); // The only function to edit the bottom margin of current page to set it.\n\n					// We suppose that a too long description or photo were moved completely on next page\n					if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {\n						$pdf->setPage($pageposafter);\n						$curY = $tab_top_newpage;\n					}\n\n					$pdf->SetFont(\'\', \'\', $default_font_size - 1); // We reposition the default font\n\n					// VAT Rate\n					if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) && empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN)) {\n						$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails);\n						$pdf->SetXY($this->posxtva - 5, $curY);\n						$pdf->MultiCell($this->posxup - $this->posxtva + 4, 3, $vat_rate, 0, \'R\');\n					}\n\n					// Unit price before discount\n					$up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails);\n					$pdf->SetXY($this->posxup, $curY);\n					$pdf->MultiCell($this->posxqty - $this->posxup - 0.8, 3, $up_excl_tax, 0, \'R\', 0);\n\n					// Quantity\n					$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);\n					$pdf->SetXY($this->posxqty, $curY);\n					$pdf->MultiCell($this->posxunit - $this->posxqty - 0.8, 4, $qty, 0, \'R\'); // Enough for 6 chars\n\n					// Unit\n					if (getDolGlobalInt(\'PRODUCT_USE_UNITS\')) {\n						$unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails, $hookmanager);\n						$pdf->SetXY($this->posxunit, $curY);\n						$pdf->MultiCell($this->posxdiscount - $this->posxunit - 0.8, 4, $unit, 0, \'L\');\n					}\n\n					// Discount on line\n					if ($object->lines[$i]->remise_percent) {\n						$pdf->SetXY($this->posxdiscount - 2, $curY);\n						$remise_percent = pdf_getlineremisepercent($object, $i, $outputlangs, $hidedetails);\n						$pdf->MultiCell($this->posxprogress - $this->posxdiscount + 2, 3, $remise_percent, 0, \'R\');\n					}\n\n					// Situation progress\n					if ($this->situationinvoice) {\n						$progress = pdf_getlineprogress($object, $i, $outputlangs, $hidedetails);\n						$pdf->SetXY($this->posxprogress, $curY);\n						$pdf->MultiCell($this->postotalht - $this->posxprogress + 1, 3, $progress, 0, \'R\');\n					}\n\n					// Total HT line\n					$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails);\n					$pdf->SetXY($this->postotalht, $curY);\n					$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->postotalht, 3, $total_excl_tax, 0, \'R\', 0);\n\n\n					$sign = 1;\n					if (isset($object->type) && $object->type == 2 && !empty($conf->global->INVOICE_POSITIVE_CREDIT_NOTE)) {\n						$sign = -1;\n					}\n					// Collection of totals by value of VAT in $this->tva[\"taux\"]=total_tva\n					$prev_progress = $object->lines[$i]->get_prev_progress($object->id);\n					if ($prev_progress > 0 && !empty($object->lines[$i]->situation_percent)) { // Compute progress from previous situation\n						if (isModEnabled(\"multicurrency\") && $object->multicurrency_tx != 1) {\n							$tvaligne = $sign * $object->lines[$i]->multicurrency_total_tva * ($object->lines[$i]->situation_percent - $prev_progress) / $object->lines[$i]->situation_percent;\n						} else {\n							$tvaligne = $sign * $object->lines[$i]->total_tva * ($object->lines[$i]->situation_percent - $prev_progress) / $object->lines[$i]->situation_percent;\n						}\n					} else {\n						if (isModEnabled(\"multicurrency\") && $object->multicurrency_tx != 1) {\n							$tvaligne = $sign * $object->lines[$i]->multicurrency_total_tva;\n						} else {\n							$tvaligne = $sign * $object->lines[$i]->total_tva;\n						}\n					}\n\n					$localtax1ligne = $object->lines[$i]->total_localtax1;\n					$localtax2ligne = $object->lines[$i]->total_localtax2;\n					$localtax1_rate = $object->lines[$i]->localtax1_tx;\n					$localtax2_rate = $object->lines[$i]->localtax2_tx;\n					$localtax1_type = $object->lines[$i]->localtax1_type;\n					$localtax2_type = $object->lines[$i]->localtax2_type;\n\n					// TODO remise_percent is an obsolete field for object parent\n					/*if ($object->remise_percent) {\n						$tvaligne -= ($tvaligne * $object->remise_percent) / 100;\n					}\n					if ($object->remise_percent) {\n						$localtax1ligne -= ($localtax1ligne * $object->remise_percent) / 100;\n					}\n					if ($object->remise_percent) {\n						$localtax2ligne -= ($localtax2ligne * $object->remise_percent) / 100;\n					}*/\n\n					$vatrate = (string) $object->lines[$i]->tva_tx;\n\n					// Retrieve type from database for backward compatibility with old records\n					if ((!isset($localtax1_type) || $localtax1_type == \'\' || !isset($localtax2_type) || $localtax2_type == \'\') // if tax type not defined\n					&& (!empty($localtax1_rate) || !empty($localtax2_rate))) { // and there is local tax\n						$localtaxtmp_array = getLocalTaxesFromRate($vatrate, 0, $object->thirdparty, $mysoc);\n						$localtax1_type = isset($localtaxtmp_array[0]) ? $localtaxtmp_array[0] : \'\';\n						$localtax2_type = isset($localtaxtmp_array[2]) ? $localtaxtmp_array[2] : \'\';\n					}\n\n					// retrieve global local tax\n					if ($localtax1_type && $localtax1ligne != 0) {\n						if (empty($this->localtax1[$localtax1_type][$localtax1_rate])) {\n							$this->localtax1[$localtax1_type][$localtax1_rate] = $localtax1ligne;\n						} else {\n							$this->localtax1[$localtax1_type][$localtax1_rate] += $localtax1ligne;\n						}\n					}\n					if ($localtax2_type && $localtax2ligne != 0) {\n						if (empty($this->localtax2[$localtax2_type][$localtax2_rate])) {\n							$this->localtax2[$localtax2_type][$localtax2_rate] = $localtax2ligne;\n						} else {\n							$this->localtax2[$localtax2_type][$localtax2_rate] += $localtax2ligne;\n						}\n					}\n\n					if (($object->lines[$i]->info_bits & 0x01) == 0x01) {\n						$vatrate .= \'*\';\n					}\n\n					// Fill $this->tva and $this->tva_array\n					if (!isset($this->tva[$vatrate])) {\n						$this->tva[$vatrate] = 0;\n					}\n					$this->tva[$vatrate] += $tvaligne;	// ->tva is abandonned, we use now ->tva_array that is more complete\n					$vatcode = $object->lines[$i]->vat_src_code;\n					if (empty($this->tva_array[$vatrate.($vatcode ? \' (\'.$vatcode.\')\' : \'\')][\'amount\'])) {\n						$this->tva_array[$vatrate.($vatcode ? \' (\'.$vatcode.\')\' : \'\')][\'amount\'] = 0;\n					}\n					$this->tva_array[$vatrate.($vatcode ? \' (\'.$vatcode.\')\' : \'\')] = array(\'vatrate\'=>$vatrate, \'vatcode\'=>$vatcode, \'amount\'=> $this->tva_array[$vatrate.($vatcode ? \' (\'.$vatcode.\')\' : \'\')][\'amount\'] + $tvaligne);\n\n					if ($posYAfterImage > $posYAfterDescription) {\n						$nexY = $posYAfterImage;\n					}\n\n					// Add line\n					if (!empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblines - 1)) {\n						$pdf->setPage($pageposafter);\n						$pdf->SetLineStyle(array(\'dash\'=>\'1,1\', \'color\'=>array(80, 80, 80)));\n						//$pdf->SetDrawColor(190,190,200);\n						$pdf->line($this->marge_gauche, $nexY + 1, $this->page_largeur - $this->marge_droite, $nexY + 1);\n						$pdf->SetLineStyle(array(\'dash\'=>0));\n					}\n\n					$nexY += 2; // Add space between lines\n\n					// Detect if some page were added automatically and output _tableau for past pages\n					while ($pagenb < $pageposafter) {\n						$pdf->setPage($pagenb);\n						if ($pagenb == 1) {\n							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter - $heightforqrinvoice_firstpage, 0, $outputlangs, 0, 1, $object->multicurrency_code);\n						} else {\n							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1, $object->multicurrency_code);\n						}\n						$this->_pagefoot($pdf, $object, $outputlangs, 1, $this->getHeightForQRInvoice($pagenb, $object, $langs));\n						$pagenb++;\n						$pdf->setPage($pagenb);\n						$pdf->setPageOrientation(\'\', 1, 0); // The only function to edit the bottom margin of current page to set it.\n						if (!getDolGlobalInt(\'MAIN_PDF_DONOTREPEAT_HEAD\')) {\n							$top_shift = $this->_pagehead($pdf, $object, 0, $outputlangs);\n							$tab_top_newpage = (!getDolGlobalInt(\'MAIN_PDF_DONOTREPEAT_HEAD\') ? 42 + $top_shift : 10);\n						}\n						if (!empty($tplidx)) {\n							$pdf->useTemplate($tplidx);\n						}\n					}\n					if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {\n						if ($pagenb == 1) {\n							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter - $heightforqrinvoice_firstpage, 0, $outputlangs, 0, 1, $object->multicurrency_code);\n						} else {\n							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1, $object->multicurrency_code);\n						}\n						$this->_pagefoot($pdf, $object, $outputlangs, 1, $this->getHeightForQRInvoice($pagenb, $object, $langs));\n						// New page\n						$pdf->AddPage();\n						if (!empty($tplidx)) {\n							$pdf->useTemplate($tplidx);\n						}\n						$pagenb++;\n						if (!getDolGlobalInt(\'MAIN_PDF_DONOTREPEAT_HEAD\')) {\n							$top_shift = $this->_pagehead($pdf, $object, 0, $outputlangs);\n							$tab_top_newpage = (!getDolGlobalInt(\'MAIN_PDF_DONOTREPEAT_HEAD\') ? 42 + $top_shift : 10);\n						}\n					}\n				}\n\n				// Show square\n				if ($pagenb == 1) {\n					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter - $heightforqrinvoice_firstpage, 0, $outputlangs, 0, 0, $object->multicurrency_code);\n					$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter - $heightforqrinvoice_firstpage + 1;\n				} else {\n					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 1, 0, $object->multicurrency_code);\n					$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;\n				}\n				dol_syslog(\"bottomlasttab=\".$bottomlasttab.\" this->page_hauteur=\".$this->page_hauteur.\" heightforinfotot=\".$heightforinfotot.\" heightforfreetext=\".$heightforfreetext.\" heightforfooter=\".$heightforfooter);\n\n				// Display info area\n				$posy = $this->_tableau_info($pdf, $object, $bottomlasttab, $outputlangs, $outputlangsbis);\n\n				// Display total area\n				$posy = $this->_tableau_tot($pdf, $object, $deja_regle, $bottomlasttab, $outputlangs, $outputlangsbis);\n\n				// Display Payments area\n				if (($deja_regle || $amount_credit_notes_included || $amount_deposits_included) && empty($conf->global->INVOICE_NO_PAYMENT_DETAILS)) {\n					$posy = $this->_tableau_versements($pdf, $object, $posy, $outputlangs, $heightforfooter);\n				}\n\n				// Pagefoot\n				$this->_pagefoot($pdf, $object, $outputlangs, 0, $this->getHeightForQRInvoice($pdf->getPage(), $object, $langs));\n				if (method_exists($pdf, \'AliasNbPages\')) {\n					$pdf->AliasNbPages();\n				}\n\n				if (getDolGlobalString(\'INVOICE_ADD_SWISS_QR_CODE\') == \'bottom\') {\n					$result = $this->addBottomQRInvoice($pdf, $object, $outputlangs);\n					if (!$result) {\n						$pdf->Close();\n						return 0;\n					}\n				}\n				$pdf->Close();\n\n				$pdf->Output($file, \'F\');\n\n				// Add pdfgeneration hook\n				$hookmanager->initHooks(array(\'pdfgeneration\'));\n				$parameters = array(\'file\'=>$file, \'object\'=>$object, \'outputlangs\'=>$outputlangs);\n				global $action;\n				$reshook = $hookmanager->executeHooks(\'afterPDFCreation\', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks\n				if ($reshook < 0) {\n					$this->error = $hookmanager->error;\n					$this->errors = $hookmanager->errors;\n				}\n\n				dolChmod($file);\n\n				$this->result = array(\'fullpath\'=>$file);\n\n				return 1; // No error\n			} else {\n				$this->error = $langs->transnoentities(\"ErrorCanNotCreateDir\", $dir);\n				return 0;\n			}\n		} else {\n			$this->error = $langs->transnoentities(\"ErrorConstantNotDefined\", \"FAC_OUTPUTDIR\");\n			return 0;\n		}\n	}\n\n\n	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps\n	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore\n	/**\n	 *  Show payments table\n	 *\n	 *  @param	TCPDF		$pdf            	Object PDF\n	 *  @param  Facture		$object         	Object invoice\n	 *  @param  int			$posy           	Position y in PDF\n	 *  @param  Translate	$outputlangs    	Object langs for output\n	 *  @param  int			$heightforfooter 	Height for footer\n	 *  @return int             				<0 if KO, >0 if OK\n	 */\n	protected function _tableau_versements(&$pdf, $object, $posy, $outputlangs, $heightforfooter = 0)\n	{\n		// phpcs:enable\n		global $conf;\n\n		$sign = 1;\n		if ($object->type == 2 && !empty($conf->global->INVOICE_POSITIVE_CREDIT_NOTE)) {\n			$sign = -1;\n		}\n\n		$current_page = $pdf->getPage();\n		$tab3_posx = 120;\n		$tab3_top = $posy + 8;\n		$tab3_width = 80;\n		$tab3_height = 4;\n		if ($this->page_largeur < 210) { // To work with US executive format\n			$tab3_posx -= 15;\n		}\n\n		$default_font_size = pdf_getPDFFontSize($outputlangs);\n\n		$this->_tableau_versements_header($pdf, $object, $outputlangs, $default_font_size, $tab3_posx, $tab3_top, $tab3_width, $tab3_height);\n\n		$y = 0;\n\n		$pdf->SetFont(\'\', \'\', $default_font_size - 4);\n\n\n		// Loop on each discount available (deposits and credit notes and excess of payment included)\n		$sql = \"SELECT re.rowid, re.amount_ht, re.multicurrency_amount_ht, re.amount_tva, re.multicurrency_amount_tva,  re.amount_ttc, re.multicurrency_amount_ttc,\";\n		$sql .= \" re.description, re.fk_facture_source,\";\n		$sql .= \" f.type, f.datef\";\n		$sql .= \" FROM \".MAIN_DB_PREFIX.\"societe_remise_except as re, \".MAIN_DB_PREFIX.\"facture as f\";\n		$sql .= \" WHERE re.fk_facture_source = f.rowid AND re.fk_facture = \".((int) $object->id);\n		$resql = $this->db->query($sql);\n		if ($resql) {\n			$num = $this->db->num_rows($resql);\n			$i = 0;\n			$invoice = new Facture($this->db);\n			while ($i < $num) {\n				$y += 3;\n				if ($tab3_top + $y >= ($this->page_hauteur - $heightforfooter)) {\n					$y = 0;\n					$current_page++;\n					$pdf->AddPage(\'\', \'\', true);\n					if (!empty($tplidx)) {\n						$pdf->useTemplate($tplidx);\n					}\n					if (!getDolGlobalInt(\'MAIN_PDF_DONOTREPEAT_HEAD\')) {\n						$top_shift = $this->_pagehead($pdf, $object, 0, $outputlangs);\n						$tab_top_newpage = (!getDolGlobalInt(\'MAIN_PDF_DONOTREPEAT_HEAD\') ? 42 + $top_shift : 10);\n					}\n					$pdf->setPage($current_page);\n					$this->_tableau_versements_header($pdf, $object, $outputlangs, $default_font_size, $tab3_posx, $tab3_top + $y - 3, $tab3_width, $tab3_height);\n				}\n\n				$obj = $this->db->fetch_object($resql);\n\n				if ($obj->type == 2) {\n					$text = $outputlangs->transnoentities(\"CreditNote\");\n				} elseif ($obj->type == 3) {\n					$text = $outputlangs->transnoentities(\"Deposit\");\n				} elseif ($obj->type == 0) {\n					$text = $outputlangs->transnoentities(\"ExcessReceived\");\n				} else {\n					$text = $outputlangs->transnoentities(\"UnknownType\");\n				}\n\n				$invoice->fetch($obj->fk_facture_source);\n\n				$pdf->SetXY($tab3_posx, $tab3_top + $y);\n				$pdf->MultiCell(20, 3, dol_print_date($this->db->jdate($obj->datef), \'day\', false, $outputlangs, true), 0, \'L\', 0);\n				$pdf->SetXY($tab3_posx + 21, $tab3_top + $y);\n				$pdf->MultiCell(20, 3, price((isModEnabled(\"multicurrency\") && $object->multicurrency_tx != 1) ? $obj->multicurrency_amount_ttc : $obj->amount_ttc, 0, $outputlangs), 0, \'L\', 0);\n				$pdf->SetXY($tab3_posx + 40, $tab3_top + $y);\n				$pdf->MultiCell(20, 3, $text, 0, \'L\', 0);\n				$pdf->SetXY($tab3_posx + 58, $tab3_top + $y);\n				$pdf->MultiCell(20, 3, $invoice->ref, 0, \'L\', 0);\n\n				$pdf->line($tab3_posx, $tab3_top + $y + 3, $tab3_posx + $tab3_width, $tab3_top + $y + 3);\n\n				$i++;\n			}\n		} else {\n			$this->error = $this->db->lasterror();\n			return -1;\n		}\n\n		// Loop on each payment\n		// TODO Call getListOfPaymentsgetListOfPayments instead of hard coded sql\n		$sql = \"SELECT p.datep as date, p.fk_paiement, p.num_paiement as num, pf.amount as amount, pf.multicurrency_amount,\";\n		$sql .= \" cp.code\";\n		$sql .= \" FROM \".MAIN_DB_PREFIX.\"paiement_facture as pf, \".MAIN_DB_PREFIX.\"paiement as p\";\n		$sql .= \" LEFT JOIN \".MAIN_DB_PREFIX.\"c_paiement as cp ON p.fk_paiement = cp.id\";\n		$sql .= \" WHERE pf.fk_paiement = p.rowid AND pf.fk_facture = \".((int) $object->id);\n		//$sql.= \" WHERE pf.fk_paiement = p.rowid AND pf.fk_facture = 1\";\n		$sql .= \" ORDER BY p.datep\";\n\n		$resql = $this->db->query($sql);\n		if ($resql) {\n			$num = $this->db->num_rows($resql);\n			$i = 0;\n			while ($i < $num) {\n				$y += 3;\n				if ($tab3_top + $y >= ($this->page_hauteur - $heightforfooter)) {\n					$y = 0;\n					$current_page++;\n					$pdf->AddPage(\'\', \'\', true);\n					if (!empty($tplidx)) {\n						$pdf->useTemplate($tplidx);\n					}\n					if (!getDolGlobalInt(\'MAIN_PDF_DONOTREPEAT_HEAD\')) {\n						$top_shift = $this->_pagehead($pdf, $object, 0, $outputlangs);\n						$tab_top_newpage = (!getDolGlobalInt(\'MAIN_PDF_DONOTREPEAT_HEAD\') ? 42 + $top_shift : 10);\n					}\n					$pdf->setPage($current_page);\n					$this->_tableau_versements_header($pdf, $object, $outputlangs, $default_font_size, $tab3_posx, $tab3_top + $y - 3, $tab3_width, $tab3_height);\n				}\n\n				$row = $this->db->fetch_object($resql);\n\n				$pdf->SetXY($tab3_posx, $tab3_top + $y);\n				$pdf->MultiCell(20, 3, dol_print_date($this->db->jdate($row->date), \'day\', false, $outputlangs, true), 0, \'L\', 0);\n				$pdf->SetXY($tab3_posx + 21, $tab3_top + $y);\n				$pdf->MultiCell(20, 3, price($sign * ((isModEnabled(\"multicurrency\") && $object->multicurrency_tx != 1) ? $row->multicurrency_amount : $row->amount), 0, $outputlangs), 0, \'L\', 0);\n				$pdf->SetXY($tab3_posx + 40, $tab3_top + $y);\n				$oper = $outputlangs->transnoentitiesnoconv(\"PaymentTypeShort\".$row->code);\n\n				$pdf->MultiCell(20, 3, $oper, 0, \'L\', 0);\n				$pdf->SetXY($tab3_posx + 58, $tab3_top + $y);\n				$pdf->MultiCell(30, 3, $row->num, 0, \'L\', 0);\n\n				$pdf->line($tab3_posx, $tab3_top + $y + 3, $tab3_posx + $tab3_width, $tab3_top + $y + 3);\n\n				$i++;\n			}\n\n			return $tab3_top + $y + 3;\n		} else {\n			$this->error = $this->db->lasterror();\n			return -1;\n		}\n	}\n\n	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps\n	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore\n	/**\n	 * Function _tableau_versements_header\n	 *\n	 * @param TCPDF 		$pdf				Object PDF\n	 * @param Facture		$object				Object invoice\n	 * @param Translate		$outputlangs		Object langs for output\n	 * @param int			$default_font_size	Font size\n	 * @param int			$tab3_posx			pos x\n	 * @param int 			$tab3_top			pos y\n	 * @param int 			$tab3_width			width\n	 * @param int 			$tab3_height		height\n	 * @return void\n	 */\n	protected function _tableau_versements_header($pdf, $object, $outputlangs, $default_font_size, $tab3_posx, $tab3_top, $tab3_width, $tab3_height)\n	{\n		// phpcs:enable\n		$title = $outputlangs->transnoentities(\"PaymentsAlreadyDone\");\n		if ($object->type == 2) {\n			$title = $outputlangs->transnoentities(\"PaymentsBackAlreadyDone\");\n		}\n\n		$pdf->SetFont(\'\', \'\', $default_font_size - 3);\n		$pdf->SetXY($tab3_posx, $tab3_top - 4);\n		$pdf->MultiCell(60, 3, $title, 0, \'L\', 0);\n\n		$pdf->line($tab3_posx, $tab3_top, $tab3_posx + $tab3_width, $tab3_top);\n\n		$pdf->SetFont(\'\', \'\', $default_font_size - 4);\n		$pdf->SetXY($tab3_posx, $tab3_top);\n		$pdf->MultiCell(20, 3, $outputlangs->transnoentities(\"Payment\"), 0, \'L\', 0);\n		$pdf->SetXY($tab3_posx + 21, $tab3_top);\n		$pdf->MultiCell(20, 3, $outputlangs->transnoentities(\"Amount\"), 0, \'L\', 0);\n		$pdf->SetXY($tab3_posx + 40, $tab3_top);\n		$pdf->MultiCell(20, 3, $outputlangs->transnoentities(\"Type\"), 0, \'L\', 0);\n		$pdf->SetXY($tab3_posx + 58, $tab3_top);\n		$pdf->MultiCell(20, 3, $outputlangs->transnoentities(\"Num\"), 0, \'L\', 0);\n\n		$pdf->line($tab3_posx, $tab3_top - 1 + $tab3_height, $tab3_posx + $tab3_width, $tab3_top - 1 + $tab3_height);\n	}\n\n	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps\n	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore\n	/**\n	 *   Show miscellaneous information (payment mode, payment term, ...)\n	 *\n	 *   @param		TCPDF		$pdf     		Object PDF\n	 *   @param		Facture		$object			Object to show\n	 *   @param		int			$posy			Y\n	 *   @param		Translate	$outputlangs	Langs object\n	 *   @param  	Translate	$outputlangsbis	Object lang for output bis\n	 *   @return	int							Pos y\n	 */\n	protected function _tableau_info(&$pdf, $object, $posy, $outputlangs, $outputlangsbis)\n	{\n		// phpcs:enable\n		global $conf, $mysoc;\n\n		$default_font_size = pdf_getPDFFontSize($outputlangs);\n\n		$pdf->SetFont(\'\', \'\', $default_font_size - 1);\n\n		// If France, show VAT mention if not applicable\n		if ($this->emetteur->country_code == \'FR\' && empty($mysoc->tva_assuj)) {\n			$pdf->SetFont(\'\', \'B\', $default_font_size - 2);\n			$pdf->SetXY($this->marge_gauche, $posy);\n			if ($mysoc->forme_juridique_code == 92) {\n				$pdf->MultiCell(100, 3, $outputlangs->transnoentities(\"VATIsNotUsedForInvoiceAsso\"), 0, \'L\', 0);\n			} else {\n				$pdf->MultiCell(100, 3, $outputlangs->transnoentities(\"VATIsNotUsedForInvoice\"), 0, \'L\', 0);\n			}\n\n			$posy = $pdf->GetY() + 4;\n		}\n\n		$posxval = 52;\n		$posxend = 110;	// End of x for text on left side\n		if ($this->page_largeur < 210) { // To work with US executive format\n			$posxend -= 10;\n		}\n\n		// Show payments conditions\n		if ($object->type != 2 && ($object->cond_reglement_code || $object->cond_reglement)) {\n			$pdf->SetFont(\'\', \'B\', $default_font_size - 2);\n			$pdf->SetXY($this->marge_gauche, $posy);\n			$titre = $outputlangs->transnoentities(\"PaymentConditions\").\':\';\n			$pdf->MultiCell(43, 4, $titre, 0, \'L\');\n\n			$pdf->SetFont(\'\', \'\', $default_font_size - 2);\n			$pdf->SetXY($posxval, $posy);\n			$lib_condition_paiement = $outputlangs->transnoentities(\"PaymentCondition\".$object->cond_reglement_code) != (\'PaymentCondition\'.$object->cond_reglement_code) ? $outputlangs->transnoentities(\"PaymentCondition\".$object->cond_reglement_code) : $outputlangs->convToOutputCharset($object->cond_reglement_doc ? $object->cond_reglement_doc : $object->cond_reglement_label);\n			$lib_condition_paiement = str_replace(\'\\n\', \"\\n\", $lib_condition_paiement);\n			$pdf->MultiCell(67, 4, $lib_condition_paiement, 0, \'L\');\n\n			$posy = $pdf->GetY() + 3;	// We need spaces for 2 lines payment conditions\n		}\n\n		// Show category of operations\n		if (getDolGlobalInt(\'INVOICE_CATEGORY_OF_OPERATION\') == 2 && $this->categoryOfOperation >= 0) {\n			$pdf->SetFont(\'\', \'B\', $default_font_size - 2);\n			$pdf->SetXY($this->marge_gauche, $posy);\n			$categoryOfOperationTitle = $outputlangs->transnoentities(\"MentionCategoryOfOperations\").\' : \';\n			$pdf->MultiCell($posxval - $this->marge_gauche, 4, $categoryOfOperationTitle, 0, \'L\');\n\n			$pdf->SetFont(\'\', \'\', $default_font_size - 2);\n			$pdf->SetXY($posxval, $posy);\n			$categoryOfOperationLabel = $outputlangs->transnoentities(\"MentionCategoryOfOperations\" . $this->categoryOfOperation);\n			$pdf->MultiCell($posxend - $posxval, 4, $categoryOfOperationLabel, 0, \'L\');\n\n			$posy = $pdf->GetY() + 3; // for 2 lines\n		}\n\n		if ($object->type != 2) {\n			// Check a payment mode is defined\n			if (empty($object->mode_reglement_code)\n			&& !getDolGlobalInt(\'FACTURE_CHQ_NUMBER\')\n			&& !getDolGlobalInt(\'FACTURE_RIB_NUMBER\')) {\n				$this->error = $outputlangs->transnoentities(\"ErrorNoPaiementModeConfigured\");\n			} elseif (($object->mode_reglement_code == \'CHQ\' && !getDolGlobalInt(\'FACTURE_CHQ_NUMBER\') && empty($object->fk_account) && empty($object->fk_bank))\n				|| ($object->mode_reglement_code == \'VIR\' && !getDolGlobalInt(\'FACTURE_RIB_NUMBER\') && empty($object->fk_account) && empty($object->fk_bank))) {\n				// Avoid having any valid PDF with setup that is not complete\n				$outputlangs->load(\"errors\");\n\n				$pdf->SetXY($this->marge_gauche, $posy);\n				$pdf->SetTextColor(200, 0, 0);\n				$pdf->SetFont(\'\', \'B\', $default_font_size - 2);\n				$this->error = $outputlangs->transnoentities(\"ErrorPaymentModeDefinedToWithoutSetup\", $object->mode_reglement_code);\n				$pdf->MultiCell(80, 3, $this->error, 0, \'L\', 0);\n				$pdf->SetTextColor(0, 0, 0);\n\n				$posy = $pdf->GetY() + 1;\n			}\n\n			// Show payment mode\n			if (!empty($object->mode_reglement_code)\n			&& $object->mode_reglement_code != \'CHQ\'\n			&& $object->mode_reglement_code != \'VIR\') {\n				$pdf->SetFont(\'\', \'B\', $default_font_size - 2);\n				$pdf->SetXY($this->marge_gauche, $posy);\n				$titre = $outputlangs->transnoentities(\"PaymentMode\").\':\';\n				$pdf->MultiCell(80, 5, $titre, 0, \'L\');\n\n				$pdf->SetFont(\'\', \'\', $default_font_size - 2);\n				$pdf->SetXY($posxval, $posy);\n				$lib_mode_reg = $outputlangs->transnoentities(\"PaymentType\".$object->mode_reglement_code) != (\'PaymentType\'.$object->mode_reglement_code) ? $outputlangs->transnoentities(\"PaymentType\".$object->mode_reglement_code) : $outputlangs->convToOutputCharset($object->mode_reglement);\n				//#21654: add account number used for the debit\n				if ($object->mode_reglement_code == \"PRE\") {\n					require_once DOL_DOCUMENT_ROOT.\'/societe/class/companybankaccount.class.php\';\n					$bac = new CompanyBankAccount($this->db);\n					$bac->fetch(0, $object->thirdparty->id);\n					$iban= $bac->iban.(($bac->iban && $bac->bic) ? \' / \' : \'\').$bac->bic;\n					$lib_mode_reg .= \' \'.$outputlangs->trans(\"PaymentTypePREdetails\", dol_trunc($iban, 6, \'right\', \'UTF-8\', 1));\n				}\n				$pdf->MultiCell(80, 5, $lib_mode_reg, 0, \'L\');\n\n				$posy = $pdf->GetY();\n			}\n\n			// Show if Option VAT debit option is on also if transmitter is french\n			// Decret n°2099-1299 2022-10-07\n			// French mention : \"Option pour le paiement de la taxe d\'après les débits\"\n			if ($this->emetteur->country_code == \'FR\') {\n				if (isset($conf->global->TAX_MODE) && $conf->global->TAX_MODE == 1) {\n					$pdf->SetXY($this->marge_gauche, $posy);\n					$pdf->writeHTMLCell(80, 5, \'\', \'\', $outputlangs->transnoentities(\"MentionVATDebitOptionIsOn\"), 0, 1);\n\n					$posy = $pdf->GetY() + 1;\n				}\n			}\n\n			// Show online payment link\n			if (empty($object->mode_reglement_code) || $object->mode_reglement_code == \'CB\' || $object->mode_reglement_code == \'VAD\') {\n				$useonlinepayment = 0;\n				if (!empty($conf->global->PDF_SHOW_LINK_TO_ONLINE_PAYMENT)) {\n					if (isModEnabled(\'paypal\')) {\n						$useonlinepayment++;\n					}\n					if (isModEnabled(\'stripe\')) {\n						$useonlinepayment++;\n					}\n					if (isModEnabled(\'paybox\')) {\n						$useonlinepayment++;\n					}\n				}\n\n				if ($object->statut != Facture::STATUS_DRAFT && $useonlinepayment) {\n					require_once DOL_DOCUMENT_ROOT.\'/core/lib/payments.lib.php\';\n					global $langs;\n\n					$langs->loadLangs(array(\'payment\', \'paybox\', \'stripe\'));\n					$servicename = $langs->transnoentities(\'Online\');\n					$paiement_url = getOnlinePaymentUrl(\'\', \'invoice\', $object->ref, \'\', \'\', \'\');\n					$linktopay = $langs->trans(\"ToOfferALinkForOnlinePayment\", $servicename).\' <a href=\"\'.$paiement_url.\'\">\'.$outputlangs->transnoentities(\"ClickHere\").\'</a>\';\n\n					$pdf->SetXY($this->marge_gauche, $posy);\n					$pdf->writeHTMLCell(80, 5, \'\', \'\', dol_htmlentitiesbr($linktopay), 0, 1);\n\n					$posy = $pdf->GetY() + 1;\n				}\n			}\n\n			// Show payment mode CHQ\n			if (empty($object->mode_reglement_code) || $object->mode_reglement_code == \'CHQ\') {\n				// If payment mode unregulated or payment mode forced to CHQ\n				if (getDolGlobalInt(\'FACTURE_CHQ_NUMBER\')) {\n					$diffsizetitle = (empty($conf->global->PDF_DIFFSIZE_TITLE) ? 3 : $conf->global->PDF_DIFFSIZE_TITLE);\n\n					if ($conf->global->FACTURE_CHQ_NUMBER > 0) {\n						$account = new Account($this->db);\n						$account->fetch(getDolGlobalInt(\'FACTURE_CHQ_NUMBER\'));\n\n						$pdf->SetXY($this->marge_gauche, $posy);\n						$pdf->SetFont(\'\', \'B\', $default_font_size - $diffsizetitle);\n						$pdf->MultiCell(100, 3, $outputlangs->transnoentities(\'PaymentByChequeOrderedTo\', $account->proprio), 0, \'L\', 0);\n						$posy = $pdf->GetY() + 1;\n\n						if (empty($conf->global->MAIN_PDF_HIDE_CHQ_ADDRESS)) {\n							$pdf->SetXY($this->marge_gauche, $posy);\n							$pdf->SetFont(\'\', \'\', $default_font_size - $diffsizetitle);\n							$pdf->MultiCell(100, 3, $outputlangs->convToOutputCharset($account->owner_address), 0, \'L\', 0);\n							$posy = $pdf->GetY() + 2;\n						}\n					}\n					if ($conf->global->FACTURE_CHQ_NUMBER == -1) {\n						$pdf->SetXY($this->marge_gauche, $posy);\n						$pdf->SetFont(\'\', \'B\', $default_font_size - $diffsizetitle);\n						$pdf->MultiCell(100, 3, $outputlangs->transnoentities(\'PaymentByChequeOrderedTo\', $this->emetteur->name), 0, \'L\', 0);\n						$posy = $pdf->GetY() + 1;\n\n						if (empty($conf->global->MAIN_PDF_HIDE_CHQ_ADDRESS)) {\n							$pdf->SetXY($this->marge_gauche, $posy);\n							$pdf->SetFont(\'\', \'\', $default_font_size - $diffsizetitle);\n							$pdf->MultiCell(100, 3, $outputlangs->convToOutputCharset($this->emetteur->getFullAddress()), 0, \'L\', 0);\n							$posy = $pdf->GetY() + 2;\n						}\n					}\n				}\n			}\n\n			// If payment mode not forced or forced to VIR, show payment with BAN\n			if (empty($object->mode_reglement_code) || $object->mode_reglement_code == \'VIR\') {\n				if ($object->fk_account > 0 || $object->fk_bank > 0 || getDolGlobalInt(\'FACTURE_RIB_NUMBER\')) {\n					$bankid = ($object->fk_account <= 0 ? $conf->global->FACTURE_RIB_NUMBER : $object->fk_account);\n					if ($object->fk_bank > 0) {\n						$bankid = $object->fk_bank; // For backward compatibility when object->fk_account is forced with object->fk_bank\n					}\n					$account = new Account($this->db);\n					$account->fetch($bankid);\n\n					$curx = $this->marge_gauche;\n					$cury = $posy;\n\n					$posy = pdf_bank($pdf, $outputlangs, $curx, $cury, $account, 0, $default_font_size);\n\n					$posy += 2;\n				}\n			}\n		}\n\n		return $posy;\n	}\n\n\n	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps\n	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore\n	/**\n	 *	Show total to pay\n	 *\n	 *	@param	TCPDF		$pdf            Object PDF\n	 *	@param  Facture		$object         Object invoice\n	 *	@param  int			$deja_regle     Amount already paid (in the currency of invoice)\n	 *	@param	int			$posy			Position depart\n	 *	@param	Translate	$outputlangs	Objet langs\n	 *  @param  Translate	$outputlangsbis	Object lang for output bis\n	 *	@return int							Position pour suite\n	 */\n	protected function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs, $outputlangsbis)\n	{\n		// phpcs:enable\n		global $conf, $mysoc, $hookmanager;\n\n		$sign = 1;\n		if ($object->type == 2 && !empty($conf->global->INVOICE_POSITIVE_CREDIT_NOTE)) {\n			$sign = -1;\n		}\n\n		$default_font_size = pdf_getPDFFontSize($outputlangs);\n\n		$outputlangsbis = null;\n		if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) && $outputlangs->defaultlang != $conf->global->PDF_USE_ALSO_LANGUAGE_CODE) {\n			$outputlangsbis = new Translate(\'\', $conf);\n			$outputlangsbis->setDefaultLang($conf->global->PDF_USE_ALSO_LANGUAGE_CODE);\n			$outputlangsbis->loadLangs(array(\"main\", \"dict\", \"companies\", \"bills\", \"products\", \"propal\"));\n			$default_font_size--;\n		}\n\n		$tab2_top = $posy;\n		$tab2_hl = 4;\n		$pdf->SetFont(\'\', \'\', $default_font_size - 1);\n\n		// Total table\n		$col1x = 120;\n		$col2x = 170;\n		if ($this->page_largeur < 210) { // To work with US executive format\n			$col1x -= 15;\n			$col2x -= 10;\n		}\n		$largcol2 = ($this->page_largeur - $this->marge_droite - $col2x);\n\n		$useborder = 0;\n		$index = 0;\n\n		// Total HT\n		$pdf->SetFillColor(255, 255, 255);\n		$pdf->SetXY($col1x, $tab2_top);\n		$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities(empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) ? \"TotalHT\" : \"Total\").(is_object($outputlangsbis) ? \' / \'.$outputlangsbis->transnoentities(empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) ? \"TotalHT\" : \"Total\") : \'\'), 0, \'L\', 1);\n\n		$total_ht = ((isModEnabled(\"multicurrency\") && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? $object->multicurrency_total_ht : $object->total_ht);\n		$pdf->SetXY($col2x, $tab2_top);\n		$pdf->MultiCell($largcol2, $tab2_hl, price($sign * ($total_ht + (!empty($object->remise) ? $object->remise : 0)), 0, $outputlangs), 0, \'R\', 1);\n\n		// Show VAT by rates and total\n		$pdf->SetFillColor(248, 248, 248);\n\n		$total_ttc = (isModEnabled(\"multicurrency\") && $object->multicurrency_tx != 1) ? $object->multicurrency_total_ttc : $object->total_ttc;\n\n		$this->atleastoneratenotnull = 0;\n		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) {\n			$tvaisnull = ((!empty($this->tva) && count($this->tva) == 1 && isset($this->tva[\'0.000\']) && is_float($this->tva[\'0.000\'])) ? true : false);\n			if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_IFNULL) && $tvaisnull) {\n				// Nothing to do\n			} else {\n				//Local tax 1 before VAT\n				//if (!empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION==\'localtax1on\')\n				//{\n				foreach ($this->localtax1 as $localtax_type => $localtax_rate) {\n					if (in_array((string) $localtax_type, array(\'1\', \'3\', \'5\'))) {\n						continue;\n					}\n\n					foreach ($localtax_rate as $tvakey => $tvaval) {\n						if ($tvakey != 0) {    // On affiche pas taux 0\n							//$this->atleastoneratenotnull++;\n\n							$index++;\n							$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);\n\n							$tvacompl = \'\';\n							if (preg_match(\'/\\*/\', $tvakey)) {\n								$tvakey = str_replace(\'*\', \'\', $tvakey);\n								$tvacompl = \" (\".$outputlangs->transnoentities(\"NonPercuRecuperable\").\")\";\n							}\n\n							$totalvat = $outputlangs->transcountrynoentities(\"TotalLT1\", $mysoc->country_code).(is_object($outputlangsbis) ? \' / \'.$outputlangsbis->transcountrynoentities(\"TotalLT1\", $mysoc->country_code) : \'\');\n							$totalvat .= \' \';\n							$totalvat .= vatrate(abs($tvakey), 1).$tvacompl;\n							$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, \'L\', 1);\n\n							$total_localtax = ((isModEnabled(\"multicurrency\") && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? price2num($tvaval * $object->multicurrency_tx, \'MT\') : $tvaval);\n\n							$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);\n							$pdf->MultiCell($largcol2, $tab2_hl, price($total_localtax, 0, $outputlangs), 0, \'R\', 1);\n						}\n					}\n				}\n				//}\n				//Local tax 2 before VAT\n				//if (!empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION==\'localtax2on\')\n				//{\n				foreach ($this->localtax2 as $localtax_type => $localtax_rate) {\n					if (in_array((string) $localtax_type, array(\'1\', \'3\', \'5\'))) {\n						continue;\n					}\n\n					foreach ($localtax_rate as $tvakey => $tvaval) {\n						if ($tvakey != 0) {    // On affiche pas taux 0\n							//$this->atleastoneratenotnull++;\n\n							$index++;\n							$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);\n\n							$tvacompl = \'\';\n							if (preg_match(\'/\\*/\', $tvakey)) {\n								$tvakey = str_replace(\'*\', \'\', $tvakey);\n								$tvacompl = \" (\".$outputlangs->transnoentities(\"NonPercuRecuperable\").\")\";\n							}\n							$totalvat = $outputlangs->transcountrynoentities(\"TotalLT2\", $mysoc->country_code).(is_object($outputlangsbis) ? \' / \'.$outputlangsbis->transcountrynoentities(\"TotalLT2\", $mysoc->country_code) : \'\');\n							$totalvat .= \' \';\n							$totalvat .= vatrate(abs($tvakey), 1).$tvacompl;\n							$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, \'L\', 1);\n\n							$total_localtax = ((isModEnabled(\"multicurrency\") && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? price2num($tvaval * $object->multicurrency_tx, \'MT\') : $tvaval);\n\n							$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);\n							$pdf->MultiCell($largcol2, $tab2_hl, price($total_localtax, 0, $outputlangs), 0, \'R\', 1);\n						}\n					}\n				}\n\n				//}\n\n				// VAT\n				foreach ($this->tva_array as $tvakey => $tvaval) {\n					if ($tvakey != 0) {    // On affiche pas taux 0\n						$this->atleastoneratenotnull++;\n\n						$index++;\n						$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);\n\n						$tvacompl = \'\';\n						if (preg_match(\'/\\*/\', $tvakey)) {\n							$tvakey = str_replace(\'*\', \'\', $tvakey);\n							$tvacompl = \" (\".$outputlangs->transnoentities(\"NonPercuRecuperable\").\")\";\n						}\n						$totalvat = $outputlangs->transcountrynoentities(\"TotalVAT\", $mysoc->country_code).(is_object($outputlangsbis) ? \' / \'.$outputlangsbis->transcountrynoentities(\"TotalVAT\", $mysoc->country_code) : \'\');\n						$totalvat .= \' \';\n						if (getDolGlobalString(\'PDF_VAT_LABEL_IS_CODE_OR_RATE\') == \'rateonly\') {\n							$totalvat .= vatrate($tvaval[\'vatrate\'], 1).$tvacompl;\n						} elseif (getDolGlobalString(\'PDF_VAT_LABEL_IS_CODE_OR_RATE\') == \'codeonly\') {\n							$totalvat .= $tvaval[\'vatcode\'].$tvacompl;\n						} else {\n							$totalvat .= vatrate($tvaval[\'vatrate\'], 1).($tvaval[\'vatcode\'] ? \' (\'.$tvaval[\'vatcode\'].\')\' : \'\').$tvacompl;\n						}\n						$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, \'L\', 1);\n\n						$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);\n						$pdf->MultiCell($largcol2, $tab2_hl, price(price2num($tvaval[\'amount\'], \'MT\'), 0, $outputlangs), 0, \'R\', 1);\n					}\n				}\n\n				//Local tax 1 after VAT\n				//if (!empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION==\'localtax1on\')\n				//{\n				foreach ($this->localtax1 as $localtax_type => $localtax_rate) {\n					if (in_array((string) $localtax_type, array(\'2\', \'4\', \'6\'))) {\n						continue;\n					}\n\n					foreach ($localtax_rate as $tvakey => $tvaval) {\n						if ($tvakey != 0) {    // On affiche pas taux 0\n							//$this->atleastoneratenotnull++;\n\n							$index++;\n							$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);\n\n							$tvacompl = \'\';\n							if (preg_match(\'/\\*/\', $tvakey)) {\n								$tvakey = str_replace(\'*\', \'\', $tvakey);\n								$tvacompl = \" (\".$outputlangs->transnoentities(\"NonPercuRecuperable\").\")\";\n							}\n							$totalvat = $outputlangs->transcountrynoentities(\"TotalLT1\", $mysoc->country_code).\' \';\n							$totalvat .= vatrate(abs($tvakey), 1).$tvacompl;\n\n							$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, \'L\', 1);\n\n							$total_localtax = ((isModEnabled(\"multicurrency\") && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? price2num($tvaval * $object->multicurrency_tx, \'MT\') : $tvaval);\n\n							$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);\n							$pdf->MultiCell($largcol2, $tab2_hl, price($total_localtax, 0, $outputlangs), 0, \'R\', 1);\n						}\n					}\n				}\n				//}\n				//Local tax 2 after VAT\n				//if (!empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION==\'localtax2on\')\n				//{\n				foreach ($this->localtax2 as $localtax_type => $localtax_rate) {\n					if (in_array((string) $localtax_type, array(\'2\', \'4\', \'6\'))) {\n						continue;\n					}\n\n					foreach ($localtax_rate as $tvakey => $tvaval) {\n						//$this->atleastoneratenotnull++;\n\n						$index++;\n						$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);\n\n						$tvacompl = \'\';\n						if (preg_match(\'/\\*/\', $tvakey)) {\n							$tvakey = str_replace(\'*\', \'\', $tvakey);\n							$tvacompl = \" (\".$outputlangs->transnoentities(\"NonPercuRecuperable\").\")\";\n						}\n						$totalvat = $outputlangs->transcountrynoentities(\"TotalLT2\", $mysoc->country_code).\' \';\n\n						$totalvat .= vatrate(abs($tvakey), 1).$tvacompl;\n						$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, \'L\', 1);\n\n						$total_localtax = ((isModEnabled(\"multicurrency\") && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? price2num($tvaval * $object->multicurrency_tx, \'MT\') : $tvaval);\n\n						$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);\n						$pdf->MultiCell($largcol2, $tab2_hl, price($total_localtax, 0, $outputlangs), 0, \'R\', 1);\n					}\n				}\n				//}\n\n				// Revenue stamp\n				if (price2num($object->revenuestamp) != 0) {\n					$index++;\n					$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);\n					$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities(\"RevenueStamp\"), $useborder, \'L\', 1);\n\n					$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);\n					$pdf->MultiCell($largcol2, $tab2_hl, price($sign * $object->revenuestamp), $useborder, \'R\', 1);\n				}\n\n				// Total TTC\n				$index++;\n				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);\n				$pdf->SetTextColor(0, 0, 60);\n				$pdf->SetFillColor(224, 224, 224);\n				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities(\"TotalTTC\"), $useborder, \'L\', 1);\n\n				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);\n				$pdf->MultiCell($largcol2, $tab2_hl, price($sign * $total_ttc, 0, $outputlangs), $useborder, \'R\', 1);\n\n				// Retained warranty\n				if ($object->displayRetainedWarranty()) {\n					$pdf->SetTextColor(40, 40, 40);\n					$pdf->SetFillColor(255, 255, 255);\n\n					$retainedWarranty = $object->getRetainedWarrantyAmount();\n					$billedWithRetainedWarranty = $object->total_ttc - $retainedWarranty;\n\n					// Billed - retained warranty\n					$index++;\n					$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);\n					$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities(\"ToPayOn\", dol_print_date($object->date_lim_reglement, \'day\')), $useborder, \'L\', 1);\n\n					$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);\n					$pdf->MultiCell($largcol2, $tab2_hl, price($billedWithRetainedWarranty), $useborder, \'R\', 1);\n\n					// retained warranty\n					$index++;\n					$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);\n\n					$retainedWarrantyToPayOn = $outputlangs->transnoentities(\"RetainedWarranty\").\' (\'.$object->retained_warranty.\'%)\';\n					$retainedWarrantyToPayOn .= !empty($object->retained_warranty_date_limit) ? \' \'.$outputlangs->transnoentities(\"toPayOn\", dol_print_date($object->retained_warranty_date_limit, \'day\')) : \'\';\n\n					$pdf->MultiCell($col2x - $col1x, $tab2_hl, $retainedWarrantyToPayOn, $useborder, \'L\', 1);\n					$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);\n					$pdf->MultiCell($largcol2, $tab2_hl, price($retainedWarranty), $useborder, \'R\', 1);\n				}\n			}\n		}\n\n		$pdf->SetTextColor(0, 0, 0);\n		$creditnoteamount = $object->getSumCreditNotesUsed((isModEnabled(\"multicurrency\") && $object->multicurrency_tx != 1) ? 1 : 0); // Warning, this also include excess received\n		$depositsamount = $object->getSumDepositsUsed((isModEnabled(\"multicurrency\") && $object->multicurrency_tx != 1) ? 1 : 0);\n		//print \"x\".$creditnoteamount.\"-\".$depositsamount;exit;\n		$resteapayer = price2num($total_ttc - $deja_regle - $creditnoteamount - $depositsamount, \'MT\');\n		if (!empty($object->paye)) {\n			$resteapayer = 0;\n		}\n\n		if (($deja_regle > 0 || $creditnoteamount > 0 || $depositsamount > 0) && empty($conf->global->INVOICE_NO_PAYMENT_DETAILS)) {\n			// Already paid + Deposits\n			$index++;\n			$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);\n			$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities(\"Paid\"), 0, \'L\', 0);\n			$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);\n			$pdf->MultiCell($largcol2, $tab2_hl, price($deja_regle + $depositsamount, 0, $outputlangs), 0, \'R\', 0);\n\n			// Credit note\n			if ($creditnoteamount) {\n				$labeltouse = ($outputlangs->transnoentities(\"CreditNotesOrExcessReceived\") != \"CreditNotesOrExcessReceived\") ? $outputlangs->transnoentities(\"CreditNotesOrExcessReceived\") : $outputlangs->transnoentities(\"CreditNotes\");\n				$index++;\n				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);\n				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $labeltouse, 0, \'L\', 0);\n				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);\n				$pdf->MultiCell($largcol2, $tab2_hl, price($creditnoteamount, 0, $outputlangs), 0, \'R\', 0);\n			}\n\n			// Escompte\n			if ($object->close_code == Facture::CLOSECODE_DISCOUNTVAT) {\n				$index++;\n				$pdf->SetFillColor(255, 255, 255);\n\n				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);\n				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities(\"EscompteOfferedShort\"), $useborder, \'L\', 1);\n				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);\n				$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ttc - $deja_regle - $creditnoteamount - $depositsamount, 0, $outputlangs), $useborder, \'R\', 1);\n\n				$resteapayer = 0;\n			}\n\n			$index++;\n			$pdf->SetTextColor(0, 0, 60);\n			$pdf->SetFillColor(224, 224, 224);\n			$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);\n			$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities(\"RemainderToPay\"), $useborder, \'L\', 1);\n			$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);\n			$pdf->MultiCell($largcol2, $tab2_hl, price($resteapayer, 0, $outputlangs), $useborder, \'R\', 1);\n\n			$pdf->SetFont(\'\', \'\', $default_font_size - 1);\n			$pdf->SetTextColor(0, 0, 0);\n		}\n\n		$index++;\n		return ($tab2_top + ($tab2_hl * $index));\n	}\n\n	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore\n	/**\n	 *   Show table for lines\n	 *\n	 *   @param		TCPDF		$pdf     		Object PDF\n	 *   @param		string		$tab_top		Top position of table\n	 *   @param		string		$tab_height		Height of table (rectangle)\n	 *   @param		int			$nexY			Y (not used)\n	 *   @param		Translate	$outputlangs	Langs object\n	 *   @param		int			$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title\n	 *   @param		int			$hidebottom		Hide bottom bar of array\n	 *   @param		string		$currency		Currency code\n	 *   @return	void\n	 */\n	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = \'\')\n	{\n		global $conf;\n\n		// Force to disable hidetop and hidebottom\n		$hidebottom = 0;\n		if ($hidetop) {\n			$hidetop = -1;\n		}\n\n		$currency = !empty($currency) ? $currency : $conf->currency;\n		$default_font_size = pdf_getPDFFontSize($outputlangs);\n\n		// Amount in (at tab_top - 1)\n		$pdf->SetTextColor(0, 0, 0);\n		$pdf->SetFont(\'\', \'\', $default_font_size - 2);\n\n		if (empty($hidetop)) {\n			// Show category of operations\n			if (getDolGlobalInt(\'INVOICE_CATEGORY_OF_OPERATION\') == 1 && $this->categoryOfOperation >= 0) {\n				$categoryOfOperations = $outputlangs->transnoentities(\"MentionCategoryOfOperations\") . \' : \' . $outputlangs->transnoentities(\"MentionCategoryOfOperations\" . $this->categoryOfOperation);\n				$pdf->SetXY($this->marge_gauche, $tab_top - 4);\n				$pdf->MultiCell(($pdf->GetStringWidth($categoryOfOperations)) + 4, 2, $categoryOfOperations);\n			}\n\n			$titre = $outputlangs->transnoentities(\"AmountInCurrency\", $outputlangs->transnoentitiesnoconv(\"Currency\".$currency));\n			$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3), $tab_top - 4);\n			$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);\n\n			//$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR=\'230,230,230\';\n			if (!empty($conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR)) {\n				$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, 5, \'F\', null, explode(\',\', $conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR));\n			}\n		}\n\n		$pdf->SetDrawColor(128, 128, 128);\n		$pdf->SetFont(\'\', \'\', $default_font_size - 1);\n\n		// Output Rect\n		$this->printRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $tab_height, $hidetop, $hidebottom); // Rect takes a length in 3rd parameter and 4th parameter\n\n		if (empty($hidetop)) {\n			$pdf->line($this->marge_gauche, $tab_top + 5, $this->page_largeur - $this->marge_droite, $tab_top + 5); // line takes a position y in 2nd parameter and 4th parameter\n\n			$pdf->SetXY($this->posxdesc - 1, $tab_top + 1);\n			$pdf->MultiCell(108, 2, $outputlangs->transnoentities(\"Designation\"), \'\', \'L\');\n		}\n\n		if (!empty($conf->global->MAIN_GENERATE_INVOICES_WITH_PICTURE)) {\n			$pdf->line($this->posxpicture - 1, $tab_top, $this->posxpicture - 1, $tab_top + $tab_height);\n			if (empty($hidetop)) {\n				//$pdf->SetXY($this->posxpicture-1, $tab_top+1);\n				//$pdf->MultiCell($this->posxtva-$this->posxpicture-1,2, $outputlangs->transnoentities(\"Photo\"),\'\',\'C\');\n			}\n		}\n\n		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) && empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN)) {\n			$pdf->line($this->posxtva - 1, $tab_top, $this->posxtva - 1, $tab_top + $tab_height);\n			if (empty($hidetop)) {\n				$pdf->SetXY($this->posxtva - 3, $tab_top + 1);\n				$pdf->MultiCell($this->posxup - $this->posxtva + 3, 2, $outputlangs->transnoentities(\"VAT\"), \'\', \'C\');\n			}\n		}\n\n		$pdf->line($this->posxup - 1, $tab_top, $this->posxup - 1, $tab_top + $tab_height);\n		if (empty($hidetop)) {\n			$pdf->SetXY($this->posxup - 1, $tab_top + 1);\n			$pdf->MultiCell($this->posxqty - $this->posxup - 1, 2, $outputlangs->transnoentities(\"PriceUHT\"), \'\', \'C\');\n		}\n\n		$pdf->line($this->posxqty - 1, $tab_top, $this->posxqty - 1, $tab_top + $tab_height);\n		if (empty($hidetop)) {\n			$pdf->SetXY($this->posxqty - 1, $tab_top + 1);\n			$pdf->MultiCell($this->posxunit - $this->posxqty - 1, 2, $outputlangs->transnoentities(\"Qty\"), \'\', \'C\');\n		}\n\n		if (getDolGlobalInt(\'PRODUCT_USE_UNITS\')) {\n			$pdf->line($this->posxunit - 1, $tab_top, $this->posxunit - 1, $tab_top + $tab_height);\n			if (empty($hidetop)) {\n				$pdf->SetXY($this->posxunit - 1, $tab_top + 1);\n				$pdf->MultiCell($this->posxdiscount - $this->posxunit - 1, 2, $outputlangs->transnoentities(\"Unit\"), \'\', \'C\');\n			}\n		}\n\n		if ($this->atleastonediscount) {\n			$pdf->line($this->posxdiscount - 1, $tab_top, $this->posxdiscount - 1, $tab_top + $tab_height);\n			if (empty($hidetop)) {\n				$pdf->SetXY($this->posxdiscount - 1, $tab_top + 1);\n				$pdf->MultiCell($this->posxprogress - $this->posxdiscount + 1, 2, $outputlangs->transnoentities(\"ReductionShort\"), \'\', \'C\');\n			}\n		}\n\n		if ($this->situationinvoice) {\n			$pdf->line($this->posxprogress - 1, $tab_top, $this->posxprogress - 1, $tab_top + $tab_height);\n			if (empty($hidetop)) {\n				$pdf->SetXY($this->posxprogress, $tab_top + 1);\n				$pdf->MultiCell($this->postotalht - $this->posxprogress, 2, $outputlangs->transnoentities(\"ProgressShort\"), \'\', \'C\');\n			}\n		}\n\n		$pdf->line($this->postotalht, $tab_top, $this->postotalht, $tab_top + $tab_height);\n		if (empty($hidetop)) {\n			$pdf->SetXY($this->postotalht - 1, $tab_top + 1);\n			$pdf->MultiCell(30, 2, $outputlangs->transnoentities(\"TotalHTShort\"), \'\', \'C\');\n		}\n	}\n\n	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore\n	/**\n	 *  Show top header of page.\n	 *\n	 *  @param	TCPDF		$pdf     		Object PDF\n	 *  @param  Facture		$object     	Object to show\n	 *  @param  int	    	$showaddress    0=no, 1=yes\n	 *  @param  Translate	$outputlangs	Object lang for output\n	 *  @param  Translate	$outputlangsbis	Object lang for output bis\n	 *  @return	int							top shift of linked object lines\n	 */\n	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $outputlangsbis = null)\n	{\n		global $conf, $langs;\n\n		$ltrdirection = \'L\';\n		if ($outputlangs->trans(\"DIRECTION\") == \'rtl\') $ltrdirection = \'R\';\n\n		// Load traductions files required by page\n		$outputlangs->loadLangs(array(\"main\", \"bills\", \"propal\", \"companies\"));\n\n		$default_font_size = pdf_getPDFFontSize($outputlangs);\n\n		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);\n\n		$pdf->SetTextColor(0, 0, 60);\n		$pdf->SetFont(\'\', \'B\', $default_font_size + 3);\n\n		$w = 110;\n\n		$posy = $this->marge_haute;\n		$posx = $this->page_largeur - $this->marge_droite - $w;\n\n		$pdf->SetXY($this->marge_gauche, $posy);\n\n		// Logo\n		if (!getDolGlobalInt(\'PDF_DISABLE_MYCOMPANY_LOGO\')) {\n			if ($this->emetteur->logo) {\n				$logodir = $conf->mycompany->dir_output;\n				if (!empty($conf->mycompany->multidir_output[$object->entity])) {\n					$logodir = $conf->mycompany->multidir_output[$object->entity];\n				}\n				if (!getDolGlobalInt(\'MAIN_PDF_USE_LARGE_LOGO\')) {\n					$logo = $logodir.\'/logos/thumbs/\'.$this->emetteur->logo_small;\n				} else {\n					$logo = $logodir.\'/logos/\'.$this->emetteur->logo;\n				}\n				if (is_readable($logo)) {\n					$height = pdf_getHeightForLogo($logo);\n					$pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)\n				} else {\n					$pdf->SetTextColor(200, 0, 0);\n					$pdf->SetFont(\'\', \'B\', $default_font_size - 2);\n					$pdf->MultiCell($w, 3, $outputlangs->transnoentities(\"ErrorLogoFileNotFound\", $logo), 0, \'L\');\n					$pdf->MultiCell($w, 3, $outputlangs->transnoentities(\"ErrorGoToGlobalSetup\"), 0, \'L\');\n				}\n			} else {\n				$text = $this->emetteur->name;\n				$pdf->MultiCell($w, 4, $outputlangs->convToOutputCharset($text), 0, $ltrdirection);\n			}\n		}\n\n		$pdf->SetFont(\'\', \'B\', $default_font_size + 3);\n		$pdf->SetXY($posx, $posy);\n		$pdf->SetTextColor(0, 0, 60);\n		$title = $outputlangs->transnoentities(\"PdfInvoiceTitle\");\n		if ($object->type == 1) {\n			$title = $outputlangs->transnoentities(\"InvoiceReplacement\");\n		}\n		if ($object->type == 2) {\n			$title = $outputlangs->transnoentities(\"InvoiceAvoir\");\n		}\n		if ($object->type == 3) {\n			$title = $outputlangs->transnoentities(\"InvoiceDeposit\");\n		}\n		if ($object->type == 4) {\n			$title = $outputlangs->transnoentities(\"InvoiceProForma\");\n		}\n		if ($this->situationinvoice) {\n			$langs->loadLangs(array(\"other\"));\n			$title = $outputlangs->transnoentities(\"PDFInvoiceSituation\") . \" \" . $outputlangs->transnoentities(\"NumberingShort\") . $object->situation_counter . \" -\";\n		}\n		if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) && is_object($outputlangsbis)) {\n			$title .= \' - \';\n			if ($object->type == 0) {\n				if ($this->situationinvoice) {\n					$title .= $outputlangsbis->transnoentities(\"PDFInvoiceSituation\");\n				}\n				$title .= $outputlangsbis->transnoentities(\"PdfInvoiceTitle\");\n			} elseif ($object->type == 1) {\n				$title .= $outputlangsbis->transnoentities(\"InvoiceReplacement\");\n			} elseif ($object->type == 2) {\n				$title .= $outputlangsbis->transnoentities(\"InvoiceAvoir\");\n			} elseif ($object->type == 3) {\n				$title .= $outputlangsbis->transnoentities(\"InvoiceDeposit\");\n			} elseif ($object->type == 4) {\n				$title .= $outputlangsbis->transnoentities(\"InvoiceProForma\");\n			}\n		}\n		$title .= \' \'.$outputlangs->convToOutputCharset($object->ref);\n		if ($object->statut == $object::STATUS_DRAFT) {\n			$pdf->SetTextColor(128, 0, 0);\n			$title .= \' - \'.$outputlangs->transnoentities(\"NotValidated\");\n		}\n\n		$pdf->MultiCell($w, 3, $title, \'\', \'R\');\n\n		$pdf->SetFont(\'\', \'B\', $default_font_size);\n\n		/*\n		$posy += 5;\n		$pdf->SetXY($posx, $posy);\n		$pdf->SetTextColor(0, 0, 60);\n		$textref = $outputlangs->transnoentities(\"Ref\").\" : \".$outputlangs->convToOutputCharset($object->ref);\n		if ($object->statut == $object::STATUS_DRAFT) {\n			$pdf->SetTextColor(128, 0, 0);\n			$textref .= \' - \'.$outputlangs->transnoentities(\"NotValidated\");\n		}\n		$pdf->MultiCell($w, 4, $textref, \'\', \'R\');*/\n\n		$posy += 3;\n		$pdf->SetFont(\'\', \'\', $default_font_size - 2);\n\n		if ($object->ref_customer) {\n			$posy += 4;\n			$pdf->SetXY($posx, $posy);\n			$pdf->SetTextColor(0, 0, 60);\n			$pdf->MultiCell($w, 3, $outputlangs->transnoentities(\"RefCustomer\").\" : \".$outputlangs->convToOutputCharset($object->ref_customer), \'\', \'R\');\n		}\n\n		if (!empty($conf->global->PDF_SHOW_PROJECT_TITLE)) {\n			$object->fetch_projet();\n			if (!empty($object->project->ref)) {\n				$posy += 3;\n				$pdf->SetXY($posx, $posy);\n				$pdf->SetTextColor(0, 0, 60);\n				$pdf->MultiCell($w, 3, $outputlangs->transnoentities(\"Project\").\" : \".(empty($object->project->title) ? \'\' : $object->project->title), \'\', \'R\');\n			}\n		}\n\n		if (!empty($conf->global->PDF_SHOW_PROJECT)) {\n			$object->fetch_projet();\n			if (!empty($object->project->ref)) {\n				$outputlangs->load(\"projects\");\n				$posy += 3;\n				$pdf->SetXY($posx, $posy);\n				$pdf->SetTextColor(0, 0, 60);\n				$pdf->MultiCell($w, 3, $outputlangs->transnoentities(\"RefProject\").\" : \".(empty($object->project->ref) ? \'\' : $object->project->ref), \'\', \'R\');\n			}\n		}\n\n		$objectidnext = $object->getIdReplacingInvoice(\'validated\');\n		if ($object->type == 0 && $objectidnext) {\n			$objectreplacing = new Facture($this->db);\n			$objectreplacing->fetch($objectidnext);\n\n			$posy += 3;\n			$pdf->SetXY($posx, $posy);\n			$pdf->SetTextColor(0, 0, 60);\n			$pdf->MultiCell($w, 3, $outputlangs->transnoentities(\"ReplacementByInvoice\").\' : \'.$outputlangs->convToOutputCharset($objectreplacing->ref), \'\', \'R\');\n		}\n		if ($object->type == 1) {\n			$objectreplaced = new Facture($this->db);\n			$objectreplaced->fetch($object->fk_facture_source);\n\n			$posy += 4;\n			$pdf->SetXY($posx, $posy);\n			$pdf->SetTextColor(0, 0, 60);\n			$pdf->MultiCell($w, 3, $outputlangs->transnoentities(\"ReplacementInvoice\").\' : \'.$outputlangs->convToOutputCharset($objectreplaced->ref), \'\', \'R\');\n		}\n		if ($object->type == 2 && !empty($object->fk_facture_source)) {\n			$objectreplaced = new Facture($this->db);\n			$objectreplaced->fetch($object->fk_facture_source);\n\n			$posy += 3;\n			$pdf->SetXY($posx, $posy);\n			$pdf->SetTextColor(0, 0, 60);\n			$pdf->MultiCell($w, 3, $outputlangs->transnoentities(\"CorrectionInvoice\").\' : \'.$outputlangs->convToOutputCharset($objectreplaced->ref), \'\', \'R\');\n		}\n\n		$posy += 4;\n		$pdf->SetXY($posx, $posy);\n		$pdf->SetTextColor(0, 0, 60);\n		$title = $outputlangs->transnoentities(\"DateInvoice\");\n		if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) && is_object($outputlangsbis)) {\n			$title .= \' - \'.$outputlangsbis->transnoentities(\"DateInvoice\");\n		}\n		$pdf->MultiCell($w, 3, $title.\" : \".dol_print_date($object->date, \"day\", false, $outputlangs, true), \'\', \'R\');\n\n		if (!empty($conf->global->INVOICE_POINTOFTAX_DATE)) {\n			$posy += 4;\n			$pdf->SetXY($posx, $posy);\n			$pdf->SetTextColor(0, 0, 60);\n			$pdf->MultiCell($w, 3, $outputlangs->transnoentities(\"DatePointOfTax\").\" : \".dol_print_date($object->date_pointoftax, \"day\", false, $outputlangs), \'\', \'R\');\n		}\n\n		if ($object->type != 2) {\n			$posy += 3;\n			$pdf->SetXY($posx, $posy);\n			$pdf->SetTextColor(0, 0, 60);\n			$title = $outputlangs->transnoentities(\"DateDue\");\n			if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) && is_object($outputlangsbis)) {\n				$title .= \' - \'.$outputlangsbis->transnoentities(\"DateDue\");\n			}\n			$pdf->MultiCell($w, 3, $title.\" : \".dol_print_date($object->date_lim_reglement, \"day\", false, $outputlangs, true), \'\', \'R\');\n		}\n\n		if (empty($conf->global->MAIN_PDF_HIDE_CUSTOMER_CODE) && $object->thirdparty->code_client) {\n			$posy += 3;\n			$pdf->SetXY($posx, $posy);\n			$pdf->SetTextColor(0, 0, 60);\n			$pdf->MultiCell($w, 3, $outputlangs->transnoentities(\"CustomerCode\").\" : \".$outputlangs->transnoentities($object->thirdparty->code_client), \'\', \'R\');\n		}\n\n		// Get contact\n		if (!empty($conf->global->DOC_SHOW_FIRST_SALES_REP)) {\n			$arrayidcontact = $object->getIdContact(\'internal\', \'SALESREPFOLL\');\n			if (count($arrayidcontact) > 0) {\n				$usertmp = new User($this->db);\n				$usertmp->fetch($arrayidcontact[0]);\n				$posy += 4;\n				$pdf->SetXY($posx, $posy);\n				$pdf->SetTextColor(0, 0, 60);\n				$pdf->MultiCell($w, 3, $outputlangs->transnoentities(\"SalesRepresentative\").\" : \".$usertmp->getFullName($langs), \'\', \'R\');\n			}\n		}\n\n		$posy += 1;\n\n		$top_shift = 0;\n		// Show list of linked objects\n		$current_y = $pdf->getY();\n		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, $w, 3, \'R\', $default_font_size);\n		if ($current_y < $pdf->getY()) {\n			$top_shift = $pdf->getY() - $current_y;\n		}\n        \n        //=======QR verifactu========\n        \n        if ($object->array_options[\'options_verifactu_url\'] !=\"\") {\n            \n            $outputlangs->loadLangs(array(\"verifactudolibarr@verifactudolibarr\"));\n            \n            $url = $object->array_options[\'options_verifactu_url\'];\n            \n            $style = [\'border\'=>false, \'padding\'=>0, \'fgcolor\'=>[0,0,0], \'bgcolor\'=>false];\n            // posicion: x=150mm, y=20mm, ancho/alto en mm\n            \n            $pdf->SetXY(100,11);\n            $pdf->SetFont(\'\', \'\', $default_font_size - 2);\n            $pdf->MultiCell(25, \'\', $outputlangs->transnoentities(\'verifactu_qr_tributario\'), 0, \'L\', 0);\n            \n            \n           $pdf->write2DBarcode($url, \'QRCODE,H\', 100, 17, 20, 20, $style, \'N\');\n            \n            $pdf->SetXY(74, 38);\n            $pdf->SetFont(\'\', \'\', $default_font_size - 2);\n            $pdf->MultiCell(75, \'\', $outputlangs->transnoentities(\'verifactu_doc_verificable_tributario\'), 0, \'C\', 0);\n            \n            $top_shift+=8;\n        }\n        \n        //=======QR verifactu========\n\n		if ($showaddress) {\n			// Sender properties\n			$carac_emetteur = \'\';\n			// Add internal contact of object if defined\n			$arrayidcontact = $object->getIdContact(\'internal\', \'BILLING\');\n			if (count($arrayidcontact) > 0) {\n				$object->fetch_user($arrayidcontact[0]);\n				$labelbeforecontactname = ($outputlangs->transnoentities(\"FromContactName\") != \'FromContactName\' ? $outputlangs->transnoentities(\"FromContactName\") : $outputlangs->transnoentities(\"Name\"));\n				$carac_emetteur .= ($carac_emetteur ? \"\\n\" : \'\').$labelbeforecontactname.\" \".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs));\n				$carac_emetteur .= \"\\n\";\n			}\n\n			$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, \'\', 0, \'source\', $object);\n\n			// Show sender\n			$posy = !empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 40 : 42;\n			$posy += $top_shift;\n			$posx = $this->marge_gauche;\n			if (!empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) {\n				$posx = $this->page_largeur - $this->marge_droite - 80;\n			}\n\n			$hautcadre = !empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 38 : 40;\n			$widthrecbox = !empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 92 : 82;\n\n\n			// Show sender frame\n			if (empty($conf->global->MAIN_PDF_NO_SENDER_FRAME)) {\n				$pdf->SetTextColor(0, 0, 0);\n				$pdf->SetFont(\'\', \'\', $default_font_size - 2);\n				$pdf->SetXY($posx, $posy - 5);\n				$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities(\"BillFrom\"), 0, $ltrdirection);\n				$pdf->SetXY($posx, $posy);\n				$pdf->SetFillColor(230, 230, 230);\n				$pdf->MultiCell($widthrecbox, $hautcadre, \"\", 0, \'R\', 1);\n				$pdf->SetTextColor(0, 0, 60);\n			}\n\n			// Show sender name\n			if (empty($conf->global->MAIN_PDF_HIDE_SENDER_NAME)) {\n				$pdf->SetXY($posx + 2, $posy + 3);\n				$pdf->SetFont(\'\', \'B\', $default_font_size);\n				$pdf->MultiCell($widthrecbox - 2, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, $ltrdirection);\n				$posy = $pdf->getY();\n			}\n\n			// Show sender information\n			$pdf->SetXY($posx + 2, $posy);\n			$pdf->SetFont(\'\', \'\', $default_font_size - 1);\n			$pdf->MultiCell($widthrecbox - 2, 4, $carac_emetteur, 0, $ltrdirection);\n\n\n			// If BILLING contact defined on invoice, we use it\n			$usecontact = false;\n			$arrayidcontact = $object->getIdContact(\'external\', \'BILLING\');\n			if (count($arrayidcontact) > 0) {\n				$usecontact = true;\n				$result = $object->fetch_contact($arrayidcontact[0]);\n			}\n\n			// Recipient name\n			if ($usecontact && ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {\n				$thirdparty = $object->contact;\n			} else {\n				$thirdparty = $object->thirdparty;\n			}\n\n			$carac_client_name = pdfBuildThirdpartyName($thirdparty, $outputlangs);\n\n			$mode =  \'target\';\n			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ($usecontact ? $object->contact : \'\'), $usecontact, $mode, $object);\n\n			// Show recipient\n			$widthrecbox = !empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 92 : 100;\n			if ($this->page_largeur < 210) {\n				$widthrecbox = 84; // To work with US executive format\n			}\n			$posy = !empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 40 : 42;\n			$posy += $top_shift;\n			$posx = $this->page_largeur - $this->marge_droite - $widthrecbox;\n			if (!empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) {\n				$posx = $this->marge_gauche;\n			}\n\n			// Show recipient frame\n			if (empty($conf->global->MAIN_PDF_NO_RECIPENT_FRAME)) {\n				$pdf->SetTextColor(0, 0, 0);\n				$pdf->SetFont(\'\', \'\', $default_font_size - 2);\n				$pdf->SetXY($posx + 2, $posy - 5);\n				$pdf->MultiCell($widthrecbox - 2, 5, $outputlangs->transnoentities(\"BillTo\"), 0, $ltrdirection);\n				$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);\n			}\n\n			// Show recipient name\n			$pdf->SetXY($posx + 2, $posy + 3);\n			$pdf->SetFont(\'\', \'B\', $default_font_size);\n			$pdf->MultiCell($widthrecbox - 2, 2, $carac_client_name, 0, $ltrdirection);\n\n			$posy = $pdf->getY();\n\n			// Show recipient information\n			$pdf->SetFont(\'\', \'\', $default_font_size - 1);\n			$pdf->SetXY($posx + 2, $posy);\n			$pdf->MultiCell($widthrecbox - 2, 4, $carac_client, 0, $ltrdirection);\n\n			// Show shipping address\n			if (getDolGlobalInt(\'INVOICE_SHOW_SHIPPING_ADDRESS\')) {\n				$idaddressshipping = $object->getIdContact(\'external\', \'SHIPPING\');\n\n				if (!empty($idaddressshipping)) {\n					$contactshipping = $object->fetch_Contact($idaddressshipping[0]);\n					$companystatic = new Societe($this->db);\n					$companystatic->fetch($object->contact->fk_soc);\n					$carac_client_name_shipping=pdfBuildThirdpartyName($object->contact, $outputlangs);\n					$carac_client_shipping = pdf_build_address($outputlangs, $this->emetteur, $companystatic, $object->contact, $usecontact, \'target\', $object);\n				} else {\n					$carac_client_name_shipping=pdfBuildThirdpartyName($object->thirdparty, $outputlangs);\n					$carac_client_shipping=pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, \'\', 0, \'target\', $object);\n				}\n				if (!empty($carac_client_shipping)) {\n					$posy += $hautcadre;\n\n					// Show shipping frame\n					$pdf->SetXY($posx + 2, $posy - 5);\n					$pdf->SetFont(\'\', \'\', $default_font_size - 2);\n					$pdf->MultiCell($widthrecbox, \'\', $outputlangs->transnoentities(\'ShippingTo\'), 0, \'L\', 0);\n					$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);\n\n					// Show shipping name\n					$pdf->SetXY($posx + 2, $posy + 3);\n					$pdf->SetFont(\'\', \'B\', $default_font_size);\n					$pdf->MultiCell($widthrecbox - 2, 2, $carac_client_name_shipping, \'\', \'L\');\n\n					$posy = $pdf->getY();\n\n					// Show shipping information\n					$pdf->SetXY($posx+2, $posy);\n					$pdf->SetFont(\'\', \'\', $default_font_size - 1);\n					$pdf->MultiCell($widthrecbox - 2, 2, $carac_client_shipping, \'\', \'L\');\n					$top_shift += $hautcadre;\n				}\n			}\n		}\n\n		$pdf->SetTextColor(0, 0, 0);\n		return $top_shift;\n	}\n\n	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore\n	/**\n	 *   	Show footer of page. Need this->emetteur object\n	 *\n	 *   	@param	TCPDF		$pdf     			PDF\n	 * 		@param	Facture		$object				Object to show\n	 *      @param	Translate	$outputlangs		Object lang for output\n	 *      @param	int			$hidefreetext		1=Hide free text\n	 *      @param	int			$heightforqrinvoice	Height for QR invoices\n	 *      @return	int								Return height of bottom margin including footer text\n	 */#VPDFC:1a70a6e54dd7a88e4fa45932ca280b90f349c9b435ce01e53995c7111152ecb7\n	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0, $heightforqrinvoice = 0)\n	{\n		$showdetails = getDolGlobalInt(\'MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS\', 0);\n		return pdf_pagefoot($pdf, $outputlangs, \'INVOICE_FREE_TEXT\', $this->emetteur, $heightforqrinvoice + $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext, $this->page_largeur, $this->watermark);\n	}\n    \n    public function pdf_writelinedesc(&$pdf, $object, $i, $outputlangs, $w, $h, $posx, $posy, $hideref = 0, $hidedesc = 0, $issupplierline = 0)\n    {\n        global $db, $conf, $langs, $hookmanager;\n\n        $reshook = 0;\n        $result = \'\';\n        //if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code)) || !empty($object->lines[$i]->fk_parent_line) ) )\n        if (is_object($hookmanager)) {   // Old code is commented on preceding line. Reproduct this test in the pdf_xxx function if you don\'t want your hook to run\n            $special_code = empty($object->lines[$i]->special_code) ? \'\' : $object->lines[$i]->special_code;\n            if (!empty($object->lines[$i]->fk_parent_line) && $object->lines[$i]->fk_parent_line > 0) {\n                $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);\n            }\n            $parameters = array(\'pdf\'=>$pdf, \'i\'=>$i, \'outputlangs\'=>$outputlangs, \'w\'=>$w, \'h\'=>$h, \'posx\'=>$posx, \'posy\'=>$posy, \'hideref\'=>$hideref, \'hidedesc\'=>$hidedesc, \'issupplierline\'=>$issupplierline, \'special_code\'=>$special_code);\n            $action = \'\';\n            $reshook = $hookmanager->executeHooks(\'pdf_writelinedesc\', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks\n\n            if (!empty($hookmanager->resPrint)) {\n                $result .= $hookmanager->resPrint;\n            }\n        }\n        if (empty($reshook)) {\n            $labelproductservice = $this->pdf_getlinedesc($object, $i, $outputlangs, $hideref, $hidedesc, $issupplierline);\n\n            //var_dump($labelproductservice);exit;\n\n            // Fix bug of some HTML editors that replace links <img src=\"http://localhostgit/viewimage.php?modulepart=medias&file=image/efd.png\" into <img src=\"http://localhostgit/viewimage.php?modulepart=medias&amp;file=image/efd.png\"\n            // We make the reverse, so PDF generation has the real URL.\n            $nbrep = 0;\n            $labelproductservice = preg_replace(\'/(<img[^>]*src=\")([^\"]*)(&amp;)([^\"]*\")/\', \'\\1\\2&\\4\', $labelproductservice, -1, $nbrep);\n\n            //var_dump($labelproductservice);exit;\n\n            // Description\n            $pdf->writeHTMLCell($w, $h, $posx, $posy, $outputlangs->convToOutputCharset($labelproductservice), 0, 1, false, true, \'J\', true);\n            $result .= $labelproductservice;\n        }\n        return $result;\n    }\n    \n    function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0, $issupplierline = 0)\n    {\n        global $db, $conf, $langs;\n\n        $idprod = (!empty($object->lines[$i]->fk_product) ? $object->lines[$i]->fk_product : false);\n        $label = (!empty($object->lines[$i]->label) ? $object->lines[$i]->label : (!empty($object->lines[$i]->product_label) ? $object->lines[$i]->product_label : \'\'));\n        $product_barcode = (!empty($object->lines[$i]->product_barcode) ? $object->lines[$i]->product_barcode : \"\");\n        $desc = (!empty($object->lines[$i]->desc) ? $object->lines[$i]->desc : (!empty($object->lines[$i]->description) ? $object->lines[$i]->description : \'\'));\n        $ref_supplier = (!empty($object->lines[$i]->ref_supplier) ? $object->lines[$i]->ref_supplier : (!empty($object->lines[$i]->ref_fourn) ? $object->lines[$i]->ref_fourn : \'\')); // TODO Not yet saved for supplier invoices, only supplier orders\n        $note = (!empty($object->lines[$i]->note) ? $object->lines[$i]->note : \'\');\n        $dbatch = (!empty($object->lines[$i]->detail_batch) ? $object->lines[$i]->detail_batch : false);\n\n        $multilangsactive = getDolGlobalInt(\'MAIN_MULTILANGS\');\n\n        if ($issupplierline) {\n            include_once DOL_DOCUMENT_ROOT.\'/fourn/class/fournisseur.product.class.php\';\n            $prodser = new ProductFournisseur($db);\n        } else {\n            include_once DOL_DOCUMENT_ROOT.\'/product/class/product.class.php\';\n            $prodser = new Product($db);\n\n            if (getDolGlobalString(\'PRODUIT_CUSTOMER_PRICES\') || getDolGlobalString(\'PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES\')) {\n                include_once DOL_DOCUMENT_ROOT . \'/product/class/productcustomerprice.class.php\';\n            }\n        }\n\n        //id\n        $idprod = (!empty($object->lines[$i]->fk_product) ? $object->lines[$i]->fk_product : false);\n        if ($idprod) {\n            $prodser->fetch($idprod);\n            //load multilangs\n            if ($multilangsactive) {\n                $prodser->getMultiLangs();\n                $object->lines[$i]->multilangs = $prodser->multilangs;\n            }\n        }\n        //label\n        if (!empty($object->lines[$i]->label)) {\n            $label = \'<b>\'.$object->lines[$i]->label.\'</b>\';\n        } else {\n            if (!empty($object->lines[$i]->multilangs[$outputlangs->defaultlang][\'label\']) && $multilangsactive) {\n                $label = \'<b>\'.$object->lines[$i]->multilangs[$outputlangs->defaultlang][\'label\'].\'</b>\';\n            } else {\n                if (!empty($object->lines[$i]->product_label)) {\n                    $label = \'<b>\'.$object->lines[$i]->product_label.\'</b>\';\n                } else {\n                    $label = \'\';\n                }\n            }\n        }\n        //description\n        if (!empty($object->lines[$i]->desc)) {\n            $desc = $object->lines[$i]->desc;\n        } else {\n            if (!empty($object->lines[$i]->multilangs[$outputlangs->defaultlang][\'description\']) && $multilangsactive) {\n                $desc = $object->lines[$i]->multilangs[$outputlangs->defaultlang][\'description\'];\n            } else {\n                if (!empty($object->lines[$i]->description)) {\n                    $desc = $object->lines[$i]->description;\n                } else {\n                    $desc = \'\';\n                }\n            }\n        }\n        //ref supplier\n        $ref_supplier = (!empty($object->lines[$i]->ref_supplier) ? $object->lines[$i]->ref_supplier : (!empty($object->lines[$i]->ref_fourn) ? $object->lines[$i]->ref_fourn : \'\')); // TODO Not yet saved for supplier invoices, only supplier orders\n        //note\n        $note = (!empty($object->lines[$i]->note) ? $object->lines[$i]->note : \'\');\n        //dbatch\n        $dbatch = (!empty($object->lines[$i]->detail_batch) ? $object->lines[$i]->detail_batch : false);\n\n        if ($idprod) {\n            // If a predefined product and multilang and on other lang, we renamed label with label translated\n            if ($multilangsactive && ($outputlangs->defaultlang != $langs->defaultlang)) {\n                $translatealsoifmodified = getDolGlobalString(\'MAIN_MULTILANG_TRANSLATE_EVEN_IF_MODIFIED\'); // By default if value was modified manually, we keep it (no translation because we don\'t have it)\n\n                // TODO Instead of making a compare to see if param was modified, check that content contains reference translation. If yes, add the added part to the new translation\n                // ($textwasnotmodified is replaced with $textwasmodifiedorcompleted and we add completion).\n\n                // Set label\n                // If we want another language, and if label is same than default language (we did not force it to a specific value), we can use translation.\n                //var_dump($outputlangs->defaultlang.\' - \'.$langs->defaultlang.\' - \'.$label.\' - \'.$prodser->label);exit;\n                $textwasnotmodified = ($label == $prodser->label);\n                if (!empty($prodser->multilangs[$outputlangs->defaultlang][\"label\"]) && ($textwasnotmodified || $translatealsoifmodified)) {\n                    $label = $prodser->multilangs[$outputlangs->defaultlang][\"label\"];\n                }\n\n                // Set desc\n                // Manage HTML entities description test because $prodser->description is store with htmlentities but $desc no\n                $textwasnotmodified = false;\n                if (!empty($desc) && dol_textishtml($desc) && !empty($prodser->description) && dol_textishtml($prodser->description)) {\n                    $textwasnotmodified = (strpos(dol_html_entity_decode($desc, ENT_QUOTES | ENT_HTML5), dol_html_entity_decode($prodser->description, ENT_QUOTES | ENT_HTML5)) !== false);\n                } else {\n                    $textwasnotmodified = ($desc == $prodser->description);\n                }\n                if (!empty($prodser->multilangs[$outputlangs->defaultlang][\"description\"])) {\n                    if ($textwasnotmodified) {\n                        $desc = str_replace($prodser->description, $prodser->multilangs[$outputlangs->defaultlang][\"description\"], $desc);\n                    } elseif ($translatealsoifmodified) {\n                        $desc = $prodser->multilangs[$outputlangs->defaultlang][\"description\"];\n                    }\n                }\n\n                // Set note\n                $textwasnotmodified = ($note == $prodser->note_public);\n                if (!empty($prodser->multilangs[$outputlangs->defaultlang][\"other\"]) && ($textwasnotmodified || $translatealsoifmodified)) {\n                    $note = $prodser->multilangs[$outputlangs->defaultlang][\"other\"];\n                }\n            }\n        } elseif (($object->element == \'facture\' || $object->element == \'facturefourn\') && preg_match(\'/^\\(DEPOSIT\\).+/\', $desc)) { // We must not replace \'(DEPOSIT)\' when it is alone, it will be translated and detailed later\n            $desc = str_replace(\'(DEPOSIT)\', $outputlangs->trans(\'Deposit\'), $desc);\n        }\n\n        $libelleproduitservice = \'\';  // Default value\n        if (!getDolGlobalString(\'PDF_HIDE_PRODUCT_LABEL_IN_SUPPLIER_LINES\')) {\n            // Description short of product line\n            $libelleproduitservice = $label;\n            if (!empty($libelleproduitservice) && getDolGlobalString(\'PDF_BOLD_PRODUCT_LABEL\')) {\n                // Adding <b> may convert the original string into a HTML string. So we have to first\n                // convert \\n into <br> we text is not already HTML.\n                if (!dol_textishtml($libelleproduitservice)) {\n                    $libelleproduitservice = str_replace(\"\\n\", \'<br>\', $libelleproduitservice);\n                }\n                $libelleproduitservice = \'<b>\'.$libelleproduitservice.\'</b>\';\n            }\n        }\n\n\n        // Add ref of subproducts\n        if (getDolGlobalString(\'SHOW_SUBPRODUCT_REF_IN_PDF\')) {\n            $prodser->get_sousproduits_arbo();\n            if (!empty($prodser->sousprods) && is_array($prodser->sousprods) && count($prodser->sousprods)) {\n                $outputlangs->load(\'mrp\');\n                $tmparrayofsubproducts = reset($prodser->sousprods);\n\n                $qtyText = null;\n                if (isset($object->lines[$i]->qty) && !empty($object->lines[$i]->qty)) {\n                    $qtyText = $object->lines[$i]->qty;\n                } elseif (isset($object->lines[$i]->qty_shipped) && !empty($object->lines[$i]->qty_shipped)) {\n                    $qtyText = $object->lines[$i]->qty;\n                }\n\n                if (getDolGlobalString(\'MAIN_GENERATE_DOCUMENTS_HIDE_REF\')) {\n                    foreach ($tmparrayofsubproducts as $subprodval) {\n                        $libelleproduitservice = dol_concatdesc(\n                            dol_concatdesc($libelleproduitservice, \" * \".$subprodval[3]),\n                            (!empty($qtyText) ?\n                                $outputlangs->trans(\'Qty\').\':\'.$qtyText.\' x \'.$outputlangs->trans(\'AssociatedProducts\').\':\'.$subprodval[1].\'= \'.$outputlangs->trans(\'QtyTot\').\':\'.$subprodval[1] * $qtyText :\n                                $outputlangs->trans(\'Qty\').\' \'.$outputlangs->trans(\'AssociatedProducts\').\':\'.$subprodval[1])\n                        );\n                    }\n                } else {\n                    foreach ($tmparrayofsubproducts as $subprodval) {\n                        $libelleproduitservice = dol_concatdesc(\n                            dol_concatdesc($libelleproduitservice, \" * \".$subprodval[5].(($subprodval[5] && $subprodval[3]) ? \' - \' : \'\').$subprodval[3]),\n                            (!empty($qtyText) ?\n                                $outputlangs->trans(\'Qty\').\':\'.$qtyText.\' x \'.$outputlangs->trans(\'AssociatedProducts\').\':\'.$subprodval[1].\'= \'.$outputlangs->trans(\'QtyTot\').\':\'.$subprodval[1] * $qtyText :\n                                $outputlangs->trans(\'Qty\').\' \'.$outputlangs->trans(\'AssociatedProducts\').\':\'.$subprodval[1])\n                        );\n                    }\n                }\n            }\n        }\n\n        if (isModEnabled(\'barcode\') && getDolGlobalString(\'MAIN_GENERATE_DOCUMENTS_SHOW_PRODUCT_BARCODE\') && !empty($product_barcode)) {\n            $libelleproduitservice = dol_concatdesc($libelleproduitservice, $outputlangs->trans(\"BarCode\").\" \".$product_barcode);\n        }\n\n        // Description long of product line\n        if (!empty($desc) && ($desc != $label)) {\n            if ($desc == \'(CREDIT_NOTE)\' && $object->lines[$i]->fk_remise_except) {\n                $discount = new DiscountAbsolute($db);\n                $discount->fetch($object->lines[$i]->fk_remise_except);\n                $sourceref = !empty($discount->discount_type) ? $discount->ref_invoice_supplier_source : $discount->ref_facture_source;\n                $libelleproduitservice = $outputlangs->transnoentitiesnoconv(\"DiscountFromCreditNote\", $sourceref);\n            } elseif ($desc == \'(DEPOSIT)\' && $object->lines[$i]->fk_remise_except) {\n                $discount = new DiscountAbsolute($db);\n                $discount->fetch($object->lines[$i]->fk_remise_except);\n                $sourceref = !empty($discount->discount_type) ? $discount->ref_invoice_supplier_source : $discount->ref_facture_source;\n                $libelleproduitservice = $outputlangs->transnoentitiesnoconv(\"DiscountFromDeposit\", $sourceref);\n                // Add date of deposit\n                if (getDolGlobalString(\'INVOICE_ADD_DEPOSIT_DATE\')) {\n                    $libelleproduitservice .= \' (\'.dol_print_date($discount->datec, \'day\', \'\', $outputlangs).\')\';\n                }\n            } elseif ($desc == \'(EXCESS RECEIVED)\' && $object->lines[$i]->fk_remise_except) {\n                $discount = new DiscountAbsolute($db);\n                $discount->fetch($object->lines[$i]->fk_remise_except);\n                $libelleproduitservice = $outputlangs->transnoentitiesnoconv(\"DiscountFromExcessReceived\", $discount->ref_facture_source);\n            } elseif ($desc == \'(EXCESS PAID)\' && $object->lines[$i]->fk_remise_except) {\n                $discount = new DiscountAbsolute($db);\n                $discount->fetch($object->lines[$i]->fk_remise_except);\n                $libelleproduitservice = $outputlangs->transnoentitiesnoconv(\"DiscountFromExcessPaid\", $discount->ref_invoice_supplier_source);\n            } else {\n                if ($idprod) {\n                    // Check if description must be output\n                    if (!empty($object->element)) {\n                        $tmpkey = \'MAIN_DOCUMENTS_HIDE_DESCRIPTION_FOR_\'.strtoupper($object->element);\n                        if (getDolGlobalString($tmpkey)) {\n                            $hidedesc = 1;\n                        }\n                    }\n                    if (empty($hidedesc)) {\n                        if (getDolGlobalString(\'MAIN_DOCUMENTS_DESCRIPTION_FIRST\')) {\n                            $libelleproduitservice = dol_concatdesc($desc, $libelleproduitservice);\n                        } else {\n                            if (getDolGlobalString(\'HIDE_LABEL_VARIANT_PDF\') && $prodser->isVariant()) {\n                                $libelleproduitservice = $desc;\n                            } else {\n                                $libelleproduitservice = dol_concatdesc($libelleproduitservice, $desc);\n                            }\n                        }\n                    }\n                } else {\n                    $libelleproduitservice = dol_concatdesc($libelleproduitservice, $desc);\n                }\n            }\n        }\n\n        // We add ref of product (and supplier ref if defined)\n        $prefix_prodserv = \"\";\n        $ref_prodserv = \"\";\n        if (getDolGlobalString(\'PRODUCT_ADD_TYPE_IN_DOCUMENTS\')) {   // In standard mode, we do not show this\n            if ($prodser->isService()) {\n                $prefix_prodserv = $outputlangs->transnoentitiesnoconv(\"Service\").\" \";\n            } else {\n                $prefix_prodserv = $outputlangs->transnoentitiesnoconv(\"Product\").\" \";\n            }\n        }\n\n        if (empty($hideref)) {\n            if ($issupplierline) {\n                if (!getDolGlobalString(\'PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES\')) {  // Common case\n                    $ref_prodserv = $prodser->ref; // Show local ref\n                    if ($ref_supplier) {\n                        $ref_prodserv .= ($prodser->ref ? \' (\' : \'\').$outputlangs->transnoentitiesnoconv(\"SupplierRef\").\' \'.$ref_supplier.($prodser->ref ? \')\' : \'\');\n                    }\n                } elseif (getDolGlobalInt(\'PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES\') == 1) {\n                    $ref_prodserv = $ref_supplier;\n                } elseif (getDolGlobalInt(\'PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES\') == 2) {\n                    $ref_prodserv = $ref_supplier.\' (\'.$outputlangs->transnoentitiesnoconv(\"InternalRef\").\' \'.$prodser->ref.\')\';\n                }\n            } else {\n                $ref_prodserv = $prodser->ref; // Show local ref only\n\n                if (getDolGlobalString(\'PRODUIT_CUSTOMER_PRICES\') || getDolGlobalString(\'PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES\')) {\n                    $productCustomerPriceStatic = new ProductCustomerPrice($db);\n                    $filter = array(\'fk_product\' => (string) $idprod, \'fk_soc\' => (string) $object->socid);\n\n                    $nbCustomerPrices = $productCustomerPriceStatic->fetchAll(\'\', \'\', 1, 0, $filter);\n\n                    if ($nbCustomerPrices > 0) {\n                        $productCustomerPrice = null;\n                        if (count($productCustomerPriceStatic->lines) > 0) {\n                            $date_now = (int) floor(dol_now() / 86400) * 86400; // date without hours\n                            foreach ($productCustomerPriceStatic->lines as $k => $custprice_line) {\n                                if ($custprice_line->date_begin <= $date_now && (empty($custprice_line->date_end) || $date_now <= $custprice_line->date_end)) {\n                                    $productCustomerPrice = $custprice_line;\n                                    break;\n                                }\n                            }\n                        }\n\n                        if (isset($productCustomerPrice) && !empty($productCustomerPrice->ref_customer)) {\n                            switch ($conf->global->PRODUIT_CUSTOMER_PRICES_PDF_REF_MODE) {\n                                case 1:\n                                    $ref_prodserv = $productCustomerPrice->ref_customer;\n                                    break;\n\n                                case 2:\n                                    $ref_prodserv = $productCustomerPrice->ref_customer . \' (\' . $outputlangs->transnoentitiesnoconv(\'InternalRef\') . \' \' . $ref_prodserv . \')\';\n                                    break;\n\n                                default:\n                                    $ref_prodserv = $ref_prodserv . \' (\' . $outputlangs->transnoentitiesnoconv(\'RefCustomer\') . \' \' . $productCustomerPrice->ref_customer . \')\';\n                            }\n                        }\n                    }\n                }\n            }\n\n            if (!empty($libelleproduitservice) && !empty($ref_prodserv)) {\n                $ref_prodserv .= \" - \";\n            }\n        }\n\n        if (!empty($ref_prodserv) && getDolGlobalString(\'PDF_BOLD_PRODUCT_REF_AND_PERIOD\')) {\n            if (!dol_textishtml($libelleproduitservice)) {\n                $libelleproduitservice = str_replace(\"\\n\", \'<br>\', $libelleproduitservice);\n            }\n            $ref_prodserv = \'<b>\'.$ref_prodserv.\'</b>\';\n            // $prefix_prodserv and $ref_prodser are not HTML var\n        }\n        $libelleproduitservice = $prefix_prodserv.$ref_prodserv.$libelleproduitservice;\n\n        // Add an additional description for the category products\n        if (getDolGlobalString(\'CATEGORY_ADD_DESC_INTO_DOC\') && $idprod && isModEnabled(\'category\')) {\n            include_once DOL_DOCUMENT_ROOT.\'/categories/class/categorie.class.php\';\n            $categstatic = new Categorie($db);\n            // recovering the list of all the categories linked to product\n            $tblcateg = $categstatic->containing($idprod, Categorie::TYPE_PRODUCT);\n            foreach ($tblcateg as $cate) {\n                // Adding the descriptions if they are filled\n                $desccateg = $cate->description;\n                if ($desccateg) {\n                    $libelleproduitservice = dol_concatdesc($libelleproduitservice, $desccateg);\n                }\n            }\n        }\n\n        if (!empty($object->lines[$i]->date_start) || !empty($object->lines[$i]->date_end)) {\n            $format = \'day\';\n            $period = \'\';\n            // Show duration if exists\n            if ($object->lines[$i]->date_start && $object->lines[$i]->date_end) {\n                $period = \'(\'.$outputlangs->transnoentitiesnoconv(\'DateFromTo\', dol_print_date($object->lines[$i]->date_start, $format, false, $outputlangs), dol_print_date($object->lines[$i]->date_end, $format, false, $outputlangs)).\')\';\n            }\n            if ($object->lines[$i]->date_start && !$object->lines[$i]->date_end) {\n                $period = \'(\'.$outputlangs->transnoentitiesnoconv(\'DateFrom\', dol_print_date($object->lines[$i]->date_start, $format, false, $outputlangs)).\')\';\n            }\n            if (!$object->lines[$i]->date_start && $object->lines[$i]->date_end) {\n                $period = \'(\'.$outputlangs->transnoentitiesnoconv(\'DateUntil\', dol_print_date($object->lines[$i]->date_end, $format, false, $outputlangs)).\')\';\n            }\n            //print \'>\'.$outputlangs->charset_output.\',\'.$period;\n            if (getDolGlobalString(\'PDF_BOLD_PRODUCT_REF_AND_PERIOD\')) {\n                if (!dol_textishtml($libelleproduitservice)) {\n                    $libelleproduitservice = str_replace(\"\\n\", \'<br>\', $libelleproduitservice);\n                }\n                $libelleproduitservice .= \'<br><b style=\"color:#333666;\" ><em>\'.$period.\'</em></b>\';\n            } else {\n                $libelleproduitservice = dol_concatdesc($libelleproduitservice, $period);\n            }\n            //print $libelleproduitservice;\n        }\n\n        // Show information for lot\n        if (!empty($dbatch)) {\n            // $object is a shipment.\n            //var_dump($object->lines[$i]->details_entrepot);		// array from llx_expeditiondet (we can have several lines for one fk_origin_line)\n            //var_dump($object->lines[$i]->detail_batch);			// array from llx_expeditiondet_batch (each line with a lot is linked to llx_expeditiondet)\n\n            include_once DOL_DOCUMENT_ROOT.\'/product/stock/class/entrepot.class.php\';\n            include_once DOL_DOCUMENT_ROOT.\'/product/class/productbatch.class.php\';\n            $tmpwarehouse = new Entrepot($db);\n            $tmpproductbatch = new Productbatch($db);\n\n            $format = \'day\';\n            foreach ($dbatch as $detail) {\n                $dte = array();\n                if ($detail->eatby) {\n                    $dte[] = $outputlangs->transnoentitiesnoconv(\'printEatby\', dol_print_date($detail->eatby, $format, false, $outputlangs));\n                }\n                if ($detail->sellby) {\n                    $dte[] = $outputlangs->transnoentitiesnoconv(\'printSellby\', dol_print_date($detail->sellby, $format, false, $outputlangs));\n                }\n                if ($detail->batch) {\n                    $dte[] = $outputlangs->transnoentitiesnoconv(\'printBatch\', $detail->batch);\n                }\n                if ($detail->qty) {\n                    $dte[] = $outputlangs->transnoentitiesnoconv(\'printQty\', (string) $detail->qty);\n                }\n\n                // Add also info of planned warehouse for lot\n                if ($object->element == \'shipping\' && $detail->fk_origin_stock > 0 && getDolGlobalInt(\'PRODUCTBATCH_SHOW_WAREHOUSE_ON_SHIPMENT\')) {\n                    $resproductbatch = $tmpproductbatch->fetch($detail->fk_origin_stock);\n                    if ($resproductbatch > 0) {\n                        $reswarehouse = $tmpwarehouse->fetch($tmpproductbatch->warehouseid);\n                        if ($reswarehouse > 0) {\n                            $dte[] = $tmpwarehouse->ref;\n                        }\n                    }\n                }\n\n                $libelleproduitservice .= \"__N__  \".implode(\" - \", $dte);\n            }\n        } else {\n            if (getDolGlobalInt(\'PRODUCTBATCH_SHOW_WAREHOUSE_ON_SHIPMENT\')) {\n                // TODO Show warehouse for shipment line without batch\n            }\n        }\n\n        // Now we convert \\n into br\n        if (dol_textishtml($libelleproduitservice)) {\n            $libelleproduitservice = preg_replace(\'/__N__/\', \'<br>\', $libelleproduitservice);\n        } else {\n            $libelleproduitservice = preg_replace(\'/__N__/\', \"\\n\", $libelleproduitservice);\n        }\n        $libelleproduitservice = dol_htmlentitiesbr($libelleproduitservice, 1);\n\n        return $libelleproduitservice;\n    }\n}\n');
+/*!40000 ALTER TABLE `llx_verifactudolibarr_add_tpls` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `llx_verifactudolibarr_facture_log`
+--
+
+DROP TABLE IF EXISTS `llx_verifactudolibarr_facture_log`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `llx_verifactudolibarr_facture_log` (
+  `rowid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `facture` varchar(22) DEFAULT NULL,
+  `datec` datetime DEFAULT NULL,
+  `fk_user_author` varchar(22) DEFAULT NULL,
+  `processed` enum('SI','NO') DEFAULT 'NO',
+  `processed_date` datetime DEFAULT NULL,
+  `error_log` enum('SI','NO') DEFAULT NULL,
+  `send_data` longtext DEFAULT NULL,
+  `response_data` mediumtext DEFAULT NULL,
+  PRIMARY KEY (`rowid`) USING BTREE
+) ENGINE=MyISAM AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC COMMENT='Almacena el log de envío a la integración';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `llx_verifactudolibarr_facture_log`
+--
+
+LOCK TABLES `llx_verifactudolibarr_facture_log` WRITE;
+/*!40000 ALTER TABLE `llx_verifactudolibarr_facture_log` DISABLE KEYS */;
+INSERT INTO `llx_verifactudolibarr_facture_log` VALUES
+(1,'464','2025-11-11 13:18:13','','SI','2025-11-11 13:18:14','NO','<?xml version=\"1.0\"?>\n<verifactu><vr_customer_vr><vr_customer_identify_num_vr>44890487F</vr_customer_identify_num_vr><vr_razon_vr>Marta Molina P&#xE9;rez</vr_razon_vr><vr_country_vr>ES</vr_country_vr></vr_customer_vr><vr_facture_inf_vr><vr_facture_ref_vr>2025-F024</vr_facture_ref_vr><vr_time_doc_vr>2025-11-11</vr_time_doc_vr></vr_facture_inf_vr><vr_desc_vr><vr_note_vr>Documento verificable</vr_note_vr><vr_transaction_date_vr>2025-11-11</vr_transaction_date_vr></vr_desc_vr><vr_doc_class_vr>F1</vr_doc_class_vr><vr_details_vr><item0><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>9530.00</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>953.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item0><item1><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>4200.00</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>420.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item1><item2><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>375.00</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>37.50</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item2><item3><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>325.00</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>32.50</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item3><item4><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>700.00</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>70.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item4><item5><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>1200.00</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>120.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item5><item6><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>190.00</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>19.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item6><item7><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>250.00</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>25.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item7><item8><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>360.00</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>36.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item8><item9><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>1650.00</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>165.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item9><item10><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>600.00</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>60.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item10><item11><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>890.00</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>89.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item11><item12><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>850.00</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>85.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item12><item13><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>400.00</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>40.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item13><item14><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>400.00</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>40.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item14><item15><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>315.00</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>31.50</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item15><item16><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>4900.00</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>490.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item16><item17><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>5976.00</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>597.60</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item17><item18><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>1404.00</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>140.40</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item18><item19><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>2500.00</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>250.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item19><item20><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>-27727.27</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>-2772.73</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item20><item21><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>-9090.91</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>-909.09</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item21><item22><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>-196.82</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>-19.68</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item22></vr_details_vr><vr_total_vr>0.00</vr_total_vr><vr_value_vr>0.00</vr_value_vr></verifactu>\n','{\"success\":true,\"data\":{\"verifactuUrl\":\"https:\\/\\/prewww2.aeat.es\\/wlpl\\/TIKE-CONT\\/ValidarQR?nif=B40529687&numserie=2025-F024&fecha=11-11-2025&importe=0.00\",\"queueId\":1}}'),
+(2,'465','2025-11-25 07:23:46','','SI','2025-11-25 07:23:47','NO','<?xml version=\"1.0\"?>\n<verifactu><vr_customer_vr><vr_customer_identify_num_vr>24390713H</vr_customer_identify_num_vr><vr_razon_vr>Victor Guillermo Cortes Tronch</vr_razon_vr><vr_country_vr>ES</vr_country_vr></vr_customer_vr><vr_facture_inf_vr><vr_facture_ref_vr>2025-F025</vr_facture_ref_vr><vr_time_doc_vr>2025-11-25</vr_time_doc_vr></vr_facture_inf_vr><vr_desc_vr><vr_note_vr>Documento verificable</vr_note_vr><vr_transaction_date_vr>2025-11-25</vr_transaction_date_vr></vr_desc_vr><vr_doc_class_vr>F1</vr_doc_class_vr><vr_details_vr><item0><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>3550.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>745.50</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item0><item1><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>1125.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>236.25</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item1><item2><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>700.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>147.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item2><item3><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>850.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>178.50</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item3><item4><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>6900.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>1449.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item4><item5><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>2660.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>558.60</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item5><item6><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>560.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>117.60</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item6><item7><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>60.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>12.60</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item7><item8><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>3680.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>772.80</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item8><item9><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>3200.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>672.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item9><item10><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>5800.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>1218.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item10><item11><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>1361.35</vr_taxable_vr><vr_tax_vr>0.00</vr_tax_vr><vr_value_vr>0.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item11><item12><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>-3.47</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>-0.73</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item12><item13><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>-5785.12</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>-1214.88</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item13><item14><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>-16157.03</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>-3392.98</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item14><item15><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>-7139.38</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>-1499.26</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item15><item16><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>-1361.35</vr_taxable_vr><vr_tax_vr>0.00</vr_tax_vr><vr_value_vr>0.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item16></vr_details_vr><vr_total_vr>0.00</vr_total_vr><vr_value_vr>0.00</vr_value_vr></verifactu>\n','{\"success\":true,\"data\":{\"verifactuUrl\":\"https:\\/\\/prewww2.aeat.es\\/wlpl\\/TIKE-CONT\\/ValidarQR?nif=B40529687&numserie=2025-F025&fecha=25-11-2025&importe=0.00\",\"queueId\":2}}'),
+(3,'466','2025-11-26 12:19:21','','SI','2025-11-26 12:19:22','NO','<?xml version=\"1.0\"?>\n<verifactu><vr_customer_vr><vr_customer_identify_num_vr>48388162A</vr_customer_identify_num_vr><vr_razon_vr>Ignacio Navarrete Dualde</vr_razon_vr><vr_country_vr>ES</vr_country_vr></vr_customer_vr><vr_facture_inf_vr><vr_facture_ref_vr>2025-F026</vr_facture_ref_vr><vr_time_doc_vr>2025-11-26</vr_time_doc_vr></vr_facture_inf_vr><vr_desc_vr><vr_note_vr>Documento verificable</vr_note_vr><vr_transaction_date_vr>2025-11-26</vr_transaction_date_vr></vr_desc_vr><vr_doc_class_vr>F1</vr_doc_class_vr><vr_details_vr><item0><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>1710.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>359.10</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item0><item1><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>6000.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>1260.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item1><item2><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>2370.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>497.70</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item2><item3><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>660.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>138.60</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item3><item4><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>660.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>138.60</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item4><item5><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>2085.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>437.85</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item5><item6><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>799.20</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>167.83</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item6><item7><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>8228.24</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>1727.93</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item7><item8><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>750.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>157.50</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item8><item9><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>1265.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>265.65</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item9><item10><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>1420.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>298.20</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item10><item11><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>667.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>140.07</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item11><item12><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>120.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>25.20</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item12><item13><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>2300.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>483.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item13><item14><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>650.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>136.50</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item14><item15><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>295.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>61.95</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item15><item16><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>95.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>19.95</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item16><item17><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>1400.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>294.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item17><item18><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>840.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>176.40</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item18><item19><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>45.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>9.45</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item19><item20><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>711.72</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>149.46</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item20><item21><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>280.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>58.80</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item21><item22><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>194.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>40.74</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item22><item23><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>198.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>41.58</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item23><item24><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>76.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>15.96</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item24><item25><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>76.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>15.96</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item25><item26><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>634.61</vr_taxable_vr><vr_tax_vr>0.00</vr_tax_vr><vr_value_vr>0.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item26><item27><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>-535.33</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>-112.42</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item27><item28><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>-634.61</vr_taxable_vr><vr_tax_vr>0.00</vr_tax_vr><vr_value_vr>0.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item28><item29><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>-33359.83</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>-7005.56</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item29></vr_details_vr><vr_total_vr>0.00</vr_total_vr><vr_value_vr>0.00</vr_value_vr></verifactu>\n','{\"success\":true,\"data\":{\"verifactuUrl\":\"https:\\/\\/prewww2.aeat.es\\/wlpl\\/TIKE-CONT\\/ValidarQR?nif=B40529687&numserie=2025-F026&fecha=26-11-2025&importe=0.00\",\"queueId\":3}}'),
+(4,'469','2025-11-26 16:26:20','','SI','2025-11-26 16:26:22','NO','<?xml version=\"1.0\"?>\n<verifactu><vr_customer_vr><vr_customer_identify_num_vr>48388162A</vr_customer_identify_num_vr><vr_razon_vr>Ignacio Navarrete Dualde</vr_razon_vr><vr_country_vr>ES</vr_country_vr></vr_customer_vr><vr_facture_inf_vr><vr_facture_ref_vr>2025-F027</vr_facture_ref_vr><vr_time_doc_vr>2025-11-26</vr_time_doc_vr></vr_facture_inf_vr><vr_desc_vr><vr_note_vr>Documento verificable</vr_note_vr><vr_transaction_date_vr>2025-11-26</vr_transaction_date_vr></vr_desc_vr><vr_doc_class_vr>F1</vr_doc_class_vr><vr_details_vr><item0><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>-1710.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>-359.10</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item0><item1><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>-6000.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>-1260.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item1><item2><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>-2370.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>-497.70</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item2><item3><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>-660.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>-138.60</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item3><item4><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>-660.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>-138.60</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item4><item5><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>-2085.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>-437.85</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item5><item6><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>-799.20</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>-167.83</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item6><item7><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>-8228.24</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>-1727.93</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item7><item8><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>-750.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>-157.50</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item8><item9><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>-1265.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>-265.65</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item9><item10><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>-1420.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>-298.20</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item10><item11><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>-667.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>-140.07</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item11><item12><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>-120.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>-25.20</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item12><item13><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>-2300.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>-483.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item13><item14><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>-650.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>-136.50</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item14><item15><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>-295.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>-61.95</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item15><item16><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>-95.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>-19.95</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item16><item17><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>-1400.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>-294.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item17><item18><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>-840.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>-176.40</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item18><item19><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>-45.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>-9.45</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item19><item20><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>-711.72</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>-149.46</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item20><item21><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>-280.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>-58.80</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item21><item22><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>-194.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>-40.74</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item22><item23><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>-198.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>-41.58</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item23><item24><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>-76.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>-15.96</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item24><item25><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>-76.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>-15.96</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item25><item26><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>-634.61</vr_taxable_vr><vr_tax_vr>0.00</vr_tax_vr><vr_value_vr>0.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item26><item27><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>535.33</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>112.42</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item27><item28><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>634.61</vr_taxable_vr><vr_tax_vr>0.00</vr_tax_vr><vr_value_vr>0.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item28><item29><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>33359.83</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>7005.56</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item29></vr_details_vr><vr_total_vr>0.00</vr_total_vr><vr_value_vr>0.00</vr_value_vr></verifactu>\n','{\"success\":true,\"data\":{\"verifactuUrl\":\"https:\\/\\/prewww2.aeat.es\\/wlpl\\/TIKE-CONT\\/ValidarQR?nif=B40529687&numserie=2025-F027&fecha=26-11-2025&importe=0.00\",\"queueId\":4}}'),
+(5,'470','2025-11-26 16:28:57','','SI','2025-11-26 16:28:58','NO','<?xml version=\"1.0\"?>\n<verifactu><vr_customer_vr><vr_customer_identify_num_vr>24373623V</vr_customer_identify_num_vr><vr_razon_vr>Juana M&#xAA; Alegr&#xED;a Llovet</vr_razon_vr><vr_country_vr>ES</vr_country_vr></vr_customer_vr><vr_facture_inf_vr><vr_facture_ref_vr>2025-F028</vr_facture_ref_vr><vr_time_doc_vr>2025-11-26</vr_time_doc_vr></vr_facture_inf_vr><vr_desc_vr><vr_note_vr>Documento verificable</vr_note_vr><vr_transaction_date_vr>2025-11-26</vr_transaction_date_vr></vr_desc_vr><vr_doc_class_vr>F1</vr_doc_class_vr><vr_details_vr><item0><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>1710.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>359.10</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item0><item1><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>6000.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>1260.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item1><item2><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>2370.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>497.70</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item2><item3><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>660.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>138.60</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item3><item4><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>660.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>138.60</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item4><item5><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>2085.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>437.85</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item5><item6><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>799.20</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>167.83</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item6><item7><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>8228.24</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>1727.93</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item7><item8><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>750.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>157.50</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item8><item9><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>1265.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>265.65</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item9><item10><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>1420.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>298.20</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item10><item11><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>667.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>140.07</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item11><item12><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>120.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>25.20</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item12><item13><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>2300.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>483.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item13><item14><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>650.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>136.50</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item14><item15><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>295.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>61.95</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item15><item16><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>95.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>19.95</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item16><item17><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>1400.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>294.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item17><item18><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>840.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>176.40</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item18><item19><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>45.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>9.45</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item19><item20><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>711.72</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>149.46</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item20><item21><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>280.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>58.80</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item21><item22><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>194.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>40.74</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item22><item23><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>198.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>41.58</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item23><item24><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>76.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>15.96</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item24><item25><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>76.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>15.96</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item25><item26><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>634.61</vr_taxable_vr><vr_tax_vr>0.00</vr_tax_vr><vr_value_vr>0.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item26><item27><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>-535.33</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>-112.42</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item27><item28><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>-634.61</vr_taxable_vr><vr_tax_vr>0.00</vr_tax_vr><vr_value_vr>0.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item28><item29><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>-33359.83</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>-7005.56</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item29></vr_details_vr><vr_total_vr>0.00</vr_total_vr><vr_value_vr>0.00</vr_value_vr></verifactu>\n','{\"success\":true,\"data\":{\"verifactuUrl\":\"https:\\/\\/prewww2.aeat.es\\/wlpl\\/TIKE-CONT\\/ValidarQR?nif=B40529687&numserie=2025-F028&fecha=26-11-2025&importe=0.00\",\"queueId\":5}}'),
+(6,'472','2025-11-26 18:39:59','','SI','2025-11-26 18:40:00','NO','<?xml version=\"1.0\"?>\n<verifactu><vr_customer_vr><vr_customer_identify_num_vr>44896705S</vr_customer_identify_num_vr><vr_razon_vr>Rosa Garc&#xED;a Dosd&#xE1;</vr_razon_vr><vr_country_vr>ES</vr_country_vr></vr_customer_vr><vr_facture_inf_vr><vr_facture_ref_vr>2025-F029</vr_facture_ref_vr><vr_time_doc_vr>2025-11-26</vr_time_doc_vr></vr_facture_inf_vr><vr_desc_vr><vr_note_vr>Documento verificable</vr_note_vr><vr_transaction_date_vr>2025-11-26</vr_transaction_date_vr></vr_desc_vr><vr_doc_class_vr>F1</vr_doc_class_vr><vr_details_vr><item0><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>8256.40</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>1733.84</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item0><item1><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>900.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>189.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item1><item2><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>1235.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>259.35</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item2><item3><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>990.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>207.90</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item3><item4><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>925.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>194.25</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item4><item5><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>350.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>73.50</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item5><item6><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>285.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>59.85</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item6><item7><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>450.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>94.50</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item7><item8><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>200.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>42.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item8><item9><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>120.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>25.20</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item9><item10><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>2950.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>619.50</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item10><item11><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>1300.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>273.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item11><item12><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>735.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>154.35</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item12><item13><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>360.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>75.60</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item13><item14><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>495.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>103.95</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item14><item15><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>570.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>119.70</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item15><item16><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>1141.75</vr_taxable_vr><vr_tax_vr>0.00</vr_tax_vr><vr_value_vr>0.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item16><item17><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>610.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>128.10</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item17><item18><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>1400.00</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>294.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item18><item19><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>3386.40</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>711.14</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item19><item20><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>-15.12</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>-3.18</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item20><item21><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>-9917.36</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>-2082.64</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item21><item22><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>-15585.33</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>-3272.91</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item22><item23><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>-1141.74</vr_taxable_vr><vr_tax_vr>0.00</vr_tax_vr><vr_value_vr>0.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item23></vr_details_vr><vr_total_vr>0.00</vr_total_vr><vr_value_vr>0.00</vr_value_vr></verifactu>\n','{\"success\":true,\"data\":{\"verifactuUrl\":\"https:\\/\\/prewww2.aeat.es\\/wlpl\\/TIKE-CONT\\/ValidarQR?nif=B40529687&numserie=2025-F029&fecha=26-11-2025&importe=0.00\",\"queueId\":6}}'),
+(7,'473','2025-11-26 19:32:44','','SI','2025-11-26 19:32:46','NO','<?xml version=\"1.0\"?>\n<verifactu><vr_customer_vr><vr_customer_identify_num_vr>44896705S</vr_customer_identify_num_vr><vr_razon_vr>Rosa Garc&#xED;a Dosd&#xE1;</vr_razon_vr><vr_country_vr>ES</vr_country_vr></vr_customer_vr><vr_facture_inf_vr><vr_facture_ref_vr>2025-F030</vr_facture_ref_vr><vr_time_doc_vr>2025-11-26</vr_time_doc_vr></vr_facture_inf_vr><vr_desc_vr><vr_note_vr>Documento verificable</vr_note_vr><vr_transaction_date_vr>2025-11-26</vr_transaction_date_vr></vr_desc_vr><vr_doc_class_vr>F1</vr_doc_class_vr><vr_details_vr><item0><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>14469.00</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>1446.90</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item0><item1><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>3835.00</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>383.50</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item1><item2><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>4900.00</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>490.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item2><item3><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>1170.00</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>117.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item3><item4><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>5490.00</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>549.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item4><item5><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>1215.00</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>121.50</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item5><item6><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>1456.00</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>145.60</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item6><item7><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>350.00</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>35.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item7><item8><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>59.50</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>5.95</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item8><item9><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>1377.00</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>137.70</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item9><item10><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>588.00</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>58.80</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item10><item11><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>582.00</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>58.20</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item11><item12><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>186.00</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>18.60</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item12><item13><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>200.00</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>20.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item13><item14><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>1000.00</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>100.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item14><item15><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>380.00</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>38.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item15><item16><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>620.00</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>62.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item16><item17><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>2500.00</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>250.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item17><item18><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>1900.00</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>190.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item18><item19><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>833.60</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>83.36</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item19><item20><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>663.00</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>66.30</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item20><item21><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>148.60</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>14.86</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item21><item22><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>204.00</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>20.40</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item22><item23><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>108.00</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>10.80</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item23><item24><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>564.00</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>56.40</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item24><item25><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>780.00</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>78.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item25><item26><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>359.00</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>35.90</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item26><item27><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>6070.00</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>607.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item27><item28><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>-147.49</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>-30.98</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item28><item29><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>2700.00</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>270.00</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item29><item30><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>-9090.91</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>-909.09</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item30><item31><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>-31818.18</vr_taxable_vr><vr_tax_vr>10.00</vr_tax_vr><vr_value_vr>-3181.82</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item31></vr_details_vr><vr_total_vr>15000.00</vr_total_vr><vr_value_vr>1348.88</vr_value_vr></verifactu>\n','{\"success\":true,\"data\":{\"verifactuUrl\":\"https:\\/\\/prewww2.aeat.es\\/wlpl\\/TIKE-CONT\\/ValidarQR?nif=B40529687&numserie=2025-F030&fecha=26-11-2025&importe=15000.00\",\"queueId\":7}}'),
+(8,'474','2025-12-23 09:14:59','','SI','2025-12-23 09:15:00','SI','<?xml version=\"1.0\"?>\n<verifactu><vr_customer_vr><vr_customer_identify_num_vr>24362205F</vr_customer_identify_num_vr><vr_razon_vr>Angel Brazales Marco</vr_razon_vr><vr_country_vr>ES</vr_country_vr></vr_customer_vr><vr_facture_inf_vr><vr_facture_ref_vr>2025-F031</vr_facture_ref_vr><vr_time_doc_vr>2025-12-23</vr_time_doc_vr></vr_facture_inf_vr><vr_desc_vr><vr_note_vr>Documento verificable</vr_note_vr><vr_transaction_date_vr>2025-12-23</vr_transaction_date_vr></vr_desc_vr><vr_doc_class_vr>F1</vr_doc_class_vr><vr_details_vr><item0><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>371.90</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>78.10</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item0></vr_details_vr><vr_total_vr>450.00</vr_total_vr><vr_value_vr>78.10</vr_value_vr></verifactu>\n','null'),
+(9,'474','2025-12-23 09:15:29','','SI','2025-12-23 09:15:29','SI','<?xml version=\"1.0\"?>\n<verifactu><vr_customer_vr><vr_customer_identify_num_vr>24362205F</vr_customer_identify_num_vr><vr_razon_vr>Angel Brazales Marco</vr_razon_vr><vr_country_vr>ES</vr_country_vr></vr_customer_vr><vr_facture_inf_vr><vr_facture_ref_vr>2025-F031</vr_facture_ref_vr><vr_time_doc_vr>2025-12-23</vr_time_doc_vr></vr_facture_inf_vr><vr_desc_vr><vr_note_vr>Documento verificable</vr_note_vr><vr_transaction_date_vr>2025-12-23</vr_transaction_date_vr></vr_desc_vr><vr_doc_class_vr>F1</vr_doc_class_vr><vr_details_vr><item0><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>371.90</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>78.10</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item0></vr_details_vr><vr_total_vr>450.00</vr_total_vr><vr_value_vr>78.10</vr_value_vr></verifactu>\n','null'),
+(10,'474','2025-12-23 09:15:53','','SI','2025-12-23 09:15:53','SI','<?xml version=\"1.0\"?>\n<verifactu><vr_customer_vr><vr_customer_identify_num_vr>24362205F</vr_customer_identify_num_vr><vr_razon_vr>Angel Brazales Marco</vr_razon_vr><vr_country_vr>ES</vr_country_vr></vr_customer_vr><vr_facture_inf_vr><vr_facture_ref_vr>2025-F031</vr_facture_ref_vr><vr_time_doc_vr>2025-12-23</vr_time_doc_vr></vr_facture_inf_vr><vr_desc_vr><vr_note_vr>Documento verificable</vr_note_vr><vr_transaction_date_vr>2025-12-23</vr_transaction_date_vr></vr_desc_vr><vr_doc_class_vr>F1</vr_doc_class_vr><vr_details_vr><item0><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>371.90</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>78.10</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item0></vr_details_vr><vr_total_vr>450.00</vr_total_vr><vr_value_vr>78.10</vr_value_vr></verifactu>\n','null'),
+(11,'474','2025-12-23 09:17:09','','SI','2025-12-23 09:17:09','SI','<?xml version=\"1.0\"?>\n<verifactu><vr_customer_vr><vr_customer_identify_num_vr>24362205F</vr_customer_identify_num_vr><vr_razon_vr>Angel Brazales Marco</vr_razon_vr><vr_country_vr>ES</vr_country_vr></vr_customer_vr><vr_facture_inf_vr><vr_facture_ref_vr>2025-F031</vr_facture_ref_vr><vr_time_doc_vr>2025-12-23</vr_time_doc_vr></vr_facture_inf_vr><vr_desc_vr><vr_note_vr>Documento verificable</vr_note_vr><vr_transaction_date_vr>2025-12-23</vr_transaction_date_vr></vr_desc_vr><vr_doc_class_vr>F1</vr_doc_class_vr><vr_details_vr><item0><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>371.90</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>78.10</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item0></vr_details_vr><vr_total_vr>450.00</vr_total_vr><vr_value_vr>78.10</vr_value_vr></verifactu>\n','null'),
+(12,'474','2025-12-23 09:19:52','','SI','2025-12-23 09:19:53','SI','<?xml version=\"1.0\"?>\n<verifactu><vr_customer_vr><vr_customer_identify_num_vr>24362205F</vr_customer_identify_num_vr><vr_razon_vr>Angel Brazales Marco</vr_razon_vr><vr_country_vr>ES</vr_country_vr></vr_customer_vr><vr_facture_inf_vr><vr_facture_ref_vr>2025-F031</vr_facture_ref_vr><vr_time_doc_vr>2025-12-23</vr_time_doc_vr></vr_facture_inf_vr><vr_desc_vr><vr_note_vr>Documento verificable</vr_note_vr><vr_transaction_date_vr>2025-12-23</vr_transaction_date_vr></vr_desc_vr><vr_doc_class_vr>F1</vr_doc_class_vr><vr_details_vr><item0><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>371.90</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>78.10</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item0></vr_details_vr><vr_total_vr>450.00</vr_total_vr><vr_value_vr>78.10</vr_value_vr></verifactu>\n','null'),
+(13,'475','2025-12-23 09:25:05','','SI','2025-12-23 09:25:06','SI','<?xml version=\"1.0\"?>\n<verifactu><vr_customer_vr><vr_customer_identify_num_vr>19984467C</vr_customer_identify_num_vr><vr_razon_vr>Adelina Bolt&#xE1; Escolano</vr_razon_vr><vr_country_vr>ES</vr_country_vr></vr_customer_vr><vr_facture_inf_vr><vr_facture_ref_vr>2025-F031</vr_facture_ref_vr><vr_time_doc_vr>2025-12-23</vr_time_doc_vr></vr_facture_inf_vr><vr_desc_vr><vr_note_vr>Documento verificable</vr_note_vr><vr_transaction_date_vr>2025-12-23</vr_transaction_date_vr></vr_desc_vr><vr_doc_class_vr>F1</vr_doc_class_vr><vr_details_vr><item0><vr_tax_type_line_vr>S1</vr_tax_type_line_vr><vr_taxable_vr>578.51</vr_taxable_vr><vr_tax_vr>21.00</vr_tax_vr><vr_value_vr>121.49</vr_value_vr><vr_tax_key_vr>01</vr_tax_key_vr></item0></vr_details_vr><vr_total_vr>700.00</vr_total_vr><vr_value_vr>121.49</vr_value_vr></verifactu>\n','null');
+/*!40000 ALTER TABLE `llx_verifactudolibarr_facture_log` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `llx_verifactudolibarr_messages`
+--
+
+DROP TABLE IF EXISTS `llx_verifactudolibarr_messages`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `llx_verifactudolibarr_messages` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `Message` text DEFAULT NULL,
+  `date` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `llx_verifactudolibarr_messages`
+--
+
+LOCK TABLES `llx_verifactudolibarr_messages` WRITE;
+/*!40000 ALTER TABLE `llx_verifactudolibarr_messages` DISABLE KEYS */;
+/*!40000 ALTER TABLE `llx_verifactudolibarr_messages` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `llx_verifactudolibarr_tax_type`
+--
+
+DROP TABLE IF EXISTS `llx_verifactudolibarr_tax_type`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `llx_verifactudolibarr_tax_type` (
+  `rowid` int(11) NOT NULL AUTO_INCREMENT,
+  `tva_id` int(11) NOT NULL,
+  `veri_type` varchar(11) NOT NULL,
+  PRIMARY KEY (`rowid`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `llx_verifactudolibarr_tax_type`
+--
+
+LOCK TABLES `llx_verifactudolibarr_tax_type` WRITE;
+/*!40000 ALTER TABLE `llx_verifactudolibarr_tax_type` DISABLE KEYS */;
+INSERT INTO `llx_verifactudolibarr_tax_type` VALUES
+(1,44,'01'),
+(2,43,'01'),
+(3,42,'01'),
+(4,41,'01');
+/*!40000 ALTER TABLE `llx_verifactudolibarr_tax_type` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `llx_webhook_history`
 --
 
@@ -82753,4 +82948,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-02-15 21:25:22
+-- Dump completed on 2026-02-18  3:36:18
