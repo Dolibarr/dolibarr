@@ -62,7 +62,7 @@ $(function() {
 			var $dialog = $('<form>', { id: formId, method: 'post' })
 			.attr('action', importTargetUrl)
 			.load(page + " #tablelines", function() {
-			  	$("#" + formId + " #tablelines").prop("id", "ajaxloaded_tablelines"); // change id attribute
+				$("#" + formId + " #tablelines").prop("id", "ajaxloaded_tablelines"); // change id attribute
 				
 				$("#" + formId + "  .linecheckbox,#" + formId + " .linecheckboxtoggle").prop("checked", true); // checked by default
 				
@@ -81,17 +81,17 @@ $(function() {
 				width: windowWidth,
 				title: "<?php echo $langs->transnoentities('LinesToImport'); ?>",
 				buttons: {
-						"<?php echo $langs->trans('Import'); ?>": function() {
-							  $( this ).dialog( "close" );
-							  $("#" + formId).append('<input type="hidden" name="action" value="import_lines_from_object" />');
-							  $("#" + formId).append('<input type="hidden" name="fromelement" value="' + fromelement + '" />');
-							  $("#" + formId).append('<input type="hidden" name="token" value="' + csrfToken + '" />');
-							  $("#" + formId).append('<input type="hidden" name="fromelementid" value="' + fromelementid + '" />');
-							  $("#" + formId).trigger('submit');
-						},
-						"<?php echo $langs->trans("Cancel"); ?>": function() {
+					"<?php echo $langs->trans('Import'); ?>": function() {
 						  $( this ).dialog( "close" );
-						}
+						  $("#" + formId).append('<input type="hidden" name="action" value="import_lines_from_object" />');
+						  $("#" + formId).append('<input type="hidden" name="fromelement" value="' + fromelement + '" />');
+						  $("#" + formId).append('<input type="hidden" name="token" value="' + csrfToken + '" />');
+						  $("#" + formId).append('<input type="hidden" name="fromelementid" value="' + fromelementid + '" />');
+						  $("#" + formId).trigger('submit');
+					},
+					"<?php echo $langs->trans("Cancel"); ?>": function() {
+					  $( this ).dialog( "close" );
+					}
 				}
 			});
 
