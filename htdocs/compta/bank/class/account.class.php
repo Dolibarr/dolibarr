@@ -11,6 +11,7 @@
  * Copyright (C) 2019		JC Prieto				<jcprieto@virtual20.com><prietojc@gmail.com>
  * Copyright (C) 2022-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Sylvain Legrand			<contact@infras.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -173,6 +174,18 @@ class Account extends CommonObject
 	 * @see $owner_name
 	 */
 	public $proprio;
+// InfraS add begin
+	/**
+	 * XML SEPA type: Category purpose of the Credit transfer for SEPA file
+	 * @var string
+	 */
+	public $ctgypurp;
+	/**
+	 * XML SEPA type: User community specific instrument for SEPA file
+	 * @var string
+	 */
+	public $lclinstrm;
+// InfraS add end
 
 	/**
 	 * Name of account holder
@@ -799,6 +812,8 @@ class Account extends CommonObject
 		$sql .= ", iban_prefix";
 		$sql .= ", domiciliation";
 		$sql .= ", pti_in_ctti";
+		$sql .= ", ctgypurp"; // InfraS add
+		$sql .= ", lclinstrm"; // InfraS add
 		$sql .= ", proprio";
 		$sql .= ", owner_address";
 		$sql .= ", owner_zip";
@@ -829,6 +844,8 @@ class Account extends CommonObject
 		$sql .= ", '".$this->db->escape($this->iban)."'";
 		$sql .= ", '".$this->db->escape($this->address)."'";
 		$sql .= ", ".((int) $this->pti_in_ctti);
+		$sql .= ", '".$this->db->escape($this->ctgypurp)."'";// InfraS add
+		$sql .= ", '".$this->db->escape($this->lclinstrm)."'";// InfraS add
 		$sql .= ", '".$this->db->escape($this->owner_name)."'";
 		$sql .= ", '".$this->db->escape($this->owner_address)."'";
 		$sql .= ", '".$this->db->escape($this->owner_zip)."'";
@@ -957,6 +974,8 @@ class Account extends CommonObject
 		$sql .= ",iban_prefix = '".$this->db->escape($this->iban)."'";
 		$sql .= ",domiciliation='".$this->db->escape($this->address)."'";
 		$sql .= ",pti_in_ctti=".((int) $this->pti_in_ctti);
+		$sql .= ",ctgypurp='".$this->db->escape($this->ctgypurp)."'"; // InfraS add
+		$sql .= ",lclinstrm='".$this->db->escape($this->lclinstrm)."'"; // InfraS add
 		$sql .= ",proprio = '".$this->db->escape($this->owner_name)."'";
 		$sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
 		$sql .= ",owner_zip = '".$this->db->escape($this->owner_zip)."'";
@@ -1104,7 +1123,7 @@ class Account extends CommonObject
 
 		$sql = "SELECT ba.rowid, ba.ref, ba.label, ba.bank, ba.number, ba.courant as type, ba.clos as status, ba.rappro, ba.url,";
 		$sql .= " ba.code_banque, ba.code_guichet, ba.cle_rib, ba.bic, ba.iban_prefix as iban,";
-		$sql .= " ba.domiciliation as address, ba.pti_in_ctti, ba.proprio as owner_name, ba.owner_address, ba.owner_zip, ba.owner_town, ba.owner_country_id, ba.state_id, ba.fk_pays as country_id,";
+		$sql .= " ba.domiciliation as address, ba.pti_in_ctti, ba.ctgypurp, ba.lclinstrm, ba.proprio as owner_name, ba.owner_address, ba.owner_zip, ba.owner_town, ba.owner_country_id, ba.state_id, ba.fk_pays as country_id,";	// InfraS change
 		$sql .= " ba.account_number, ba.fk_accountancy_journal, ba.currency_code,";
 		$sql .= " ba.min_allowed, ba.min_desired, ba.comment,";
 		$sql .= " ba.datec as date_creation, ba.tms as date_modification, ba.ics, ba.ics_transfer,";
@@ -1157,6 +1176,8 @@ class Account extends CommonObject
 				$this->owner_country_id = $obj->owner_country_id;
 
 				$this->pti_in_ctti   = $obj->pti_in_ctti;
+				$this->ctgypurp   	 = $obj->ctgypurp; // InfraS add
+				$this->lclinstrm   	 = $obj->lclinstrm; // InfraS add
 
 				$this->state_id        = $obj->state_id;
 				$this->state_code      = $obj->state_code;

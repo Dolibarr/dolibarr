@@ -208,3 +208,7 @@ PendingDirectDebitToComplete=Direct debit to close
 PendingCreditTransferToCompleteShort=Credit transfer to close
 PendingCreditTransferToComplete=Credit transfer to close
 Requests=Requests
+CtgyPurplabel=Contexte ou but des transactions SEPA
+CtgyPurphelp=Il est utilisé dans le champ "Category purpose" du fichier SEPA. Ce champ est optionnel mais peut être requis par certaines banques. Contactez votre banque pour savoir si vous devez remplir ce champ et quelles valeurs vous pouvez utiliser.
+LclInstrmlabel=Type de virement SEPA
+LclInstrmhelp=Il est utilisé dans le champ "Local Instrument" du fichier SEPA. Ce champ est optionnel mais peut être requis par certaines banques. Contactez votre banque pour savoir si vous devez remplir ce champ et quelles valeurs vous pouvez utiliser.
