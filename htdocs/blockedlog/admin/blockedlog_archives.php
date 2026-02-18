@@ -688,7 +688,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 			$object->period = 'year='.GETPOSTINT('yeartoexport').(GETPOSTINT('monthtoexport') ? ' month='.GETPOSTINT('monthtoexport') : '');
 
 			$action = 'BLOCKEDLOG_EXPORT';
-			$result = $b->setObjectData($object, $action, 0, $user, null);
+			$result = $b->setObjectData($object, $action, 0, $user, 0);
 			//var_dump($b); exit;
 
 			if ($result < 0) {

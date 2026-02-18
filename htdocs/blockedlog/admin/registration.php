@@ -295,7 +295,9 @@ if (in_array($mysoc->country_code, array('FR'))) {
 		}
 	} else {
 		$htmltext = ($infotoshow ? $infotoshow.'<br>' : '');
-		$htmltext .= $langs->trans("ApplicationHasBeenRegistered").'<br>';
+		$htmltext .= $langs->trans("ApplicationHasBeenRegistered");
+		$htmltext .= ' '.$langs->trans("RegistrationNumber").': <span class="badge-text badge-secondary">'.dol_trunc($registrationnumber, 10).'</span>';
+		$htmltext .= '<br>';
 		$htmltext .= $langs->trans("LastRegistrationDate").' : ';
 		//$htmltext .= dol_print_date(getDolGlobalString('MAIN_FIRST_REGISTRATION_OK_DATE'), 'dayhour', 'tzuserrel');
 		$htmltext .= getDolGlobalString('MAIN_FIRST_REGISTRATION_OK_DATE');

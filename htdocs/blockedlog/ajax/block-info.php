@@ -58,7 +58,7 @@ if ((!$user->admin && !$user->hasRight('blockedlog', 'read')) || empty($conf->bl
 	accessforbidden();
 }
 
-$langs->loadLangs(array("admin", "bills", "blockedlog", "cashdesk", "companies", "members", "products"));
+$langs->loadLangs(array("admin", "bills", "blockedlog", "cashdesk", "companies", "mails", "members", "products"));
 
 
 /*
@@ -193,7 +193,10 @@ function formatObject($objtoshow, $prefix, $parentelement = '')
 		'card_lifetime' => $langs->transnoentities('LifetimeAmount', $langs->transnoentities('PaymentTypeCB')),
 		'cheque' => 'PaymentTypeCHQ',
 		'cheque_lifetime' => $langs->transnoentities('LifetimeAmount', $langs->transnoentities('PaymentTypeCHQ')),
-		'lifetime_start' => 'LifetimeStartDate'
+		'lifetime_start' => 'LifetimeStartDate',
+		'email_from' => 'MailFrom',
+		'email_to' => 'MailTo',
+		'email_msgid' => 'EmailMsgID',
 	);
 
 	if (is_object($newobjtoshow) || is_array($newobjtoshow)) {
