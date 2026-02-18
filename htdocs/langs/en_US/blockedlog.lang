@@ -53,6 +53,7 @@ UnlaterableDataOfEvent=Unalterable data of event
 YourCountryCode=Your country code
 DisablingBlockedLogIsNotallowedOnceUsedExceptOnFullreset=Disabling %s module is not allowed once it has been used, except for a full database reset. Ask your integrator or reseller if you need such a reset.
 LNECertifiedPOSSystem=LNE Certified POS system
+LNECandidatePOSSystem=POS system candidate for the LNE certification
 LNECertifiedVersionFR=This version %s is a certified version of application. More information on https://www.dolibarr.org/certifications.php
 LNECandidateVersionForCertificationFR=This version %s is a candidate version to become a LNE certified version. Not yet certified.
 NotCertifiedVersionFR=This version %s of application is technically compliant with the french VAT anti-fraud law (check any update of the law of your country), but you MUST get the compliant statement from an IT company to be allowed to use this software to collect payments from private individuals (ask your reseller or integrator to get this statement of compliance).
