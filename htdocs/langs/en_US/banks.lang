@@ -208,3 +208,5 @@ PendingDirectDebitToComplete=Direct debit to close
 PendingCreditTransferToCompleteShort=Credit transfer to close
 PendingCreditTransferToComplete=Credit transfer to close
 Requests=Requests
+DictionarySepaCategoryPurpose=Context or purpose of SEPA transactions
+DictionarySepaCommunityInstrument=Type of SEPA transfer (Deadline management)
