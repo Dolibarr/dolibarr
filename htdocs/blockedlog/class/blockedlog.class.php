@@ -508,11 +508,18 @@ class BlockedLog
 
 		// entity
 		$this->entity = $object->entity ?? getDolEntity();
+
 		// action
 		$this->action = $action;
+
 		// amount
 		$this->amounts_taxexcl = $amounts_taxexcl;
 		$this->amounts = $amounts;
+		if ($action === 'MEMBER_SUBSCRIPTION_DELETE' || $action === 'PAYMENT_CUSTOMER_DELETE' || $action === 'PAYMENT_SUPPLIER_DELETE' || $action === 'DONATION_PAYMENT_DELETE') {
+			$this->amounts_taxexcl = - $this->amounts_taxexcl;
+			$this->amounts = - $this->amounts;
+		}
+
 		// date
 		if ($object->element == 'payment' || $object->element == 'payment_supplier') {
 			'@phan-var-force Paiement|PaiementFourn $object';
@@ -849,6 +856,18 @@ class BlockedLog
 			$this->linktype = $this->element;
 			$this->linktoref = '';
 
+			// If payment and $object->amounts is empty (for example when we delete), we complete the information
+			if ($this->element == 'payment' && empty($object->amounts) && $object instanceOf Paiement) {
+				$amountsarray = $object->getAmountsArray();
+				$object->amounts = $amountsarray;
+				// Invert the sign of amount into the array ->amounts if it is a deletion
+				if ($action == 'PAYMENT_CUSTOMER_DELETE') {
+					foreach ($object->amounts as $amountkey => $amountval) {
+						$object->amounts[$amountkey] = - $amountval;
+					}
+				}
+			}
+
 			// Loop on each invoice payment amount (the payment_part)
 			if (is_array($object->amounts) && !empty($object->amounts)) {
 				// Loop on each invoice the payment is part of to set the linktoref and the module_source
@@ -891,6 +910,7 @@ class BlockedLog
 
 					$this->linktoref .= ($this->linktoref ? ',' : '').$tmpobject->ref;
 					// Set the ->module_source of payment from origin object if relevant
+
 					if (property_exists($tmpobject, 'module_source')) {
 						if (is_null($originofpayment)) {
 							$originofpayment = $tmpobject->module_source;

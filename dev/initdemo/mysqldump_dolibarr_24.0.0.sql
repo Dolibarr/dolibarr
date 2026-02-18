@@ -2942,7 +2942,7 @@ CREATE TABLE `llx_actioncomm` (
   KEY `idx_actioncomm_percent` (`percent`),
   KEY `idx_actioncomm_ref` (`ref`,`entity`),
   KEY `idx_actioncomm_entity` (`entity`)
-) ENGINE=InnoDB AUTO_INCREMENT=1804 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1808 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -4051,7 +4051,11 @@ INSERT INTO `llx_actioncomm` VALUES
 (1800,'1800',NULL,1,'2025-03-05 09:40:04','2025-03-05 09:40:04',40,'AC_BILL_VALIDATE','Facture AV2503-0006 validée','2025-03-05 09:40:04','2025-03-05 08:40:04',12,NULL,NULL,7,NULL,0,12,0,NULL,0,0,-1,'',NULL,NULL,'Facture AV2503-0006 validée',473,'invoice',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'default',NULL,NULL,0,0,'127.0.0.1',NULL,NULL),
 (1801,'1801',NULL,1,'2025-03-05 09:40:29','2025-03-05 09:40:29',40,'AC_BILL_PAYED','Facture AV2503-0006 passée à payée','2025-03-05 09:40:29','2025-03-05 08:40:29',12,NULL,NULL,7,NULL,0,12,0,NULL,0,0,-1,'',NULL,NULL,'Facture AV2503-0006 passée à payée',473,'invoice',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'default',NULL,NULL,0,0,'127.0.0.1',NULL,NULL),
 (1802,'1802',NULL,1,'2025-03-05 09:40:34','2025-03-05 09:40:34',40,'AC_BILL_PAYED','Facture TC1-2503-0019 passée à payée','2025-03-05 09:40:34','2025-03-05 08:40:34',12,NULL,NULL,7,NULL,0,12,0,NULL,0,0,-1,'',NULL,NULL,'Facture TC1-2503-0019 passée à payée',472,'invoice',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'default',NULL,NULL,0,0,'127.0.0.1',NULL,NULL),
-(1803,'1803',NULL,1,'2025-03-05 10:04:53','2025-03-05 10:04:53',40,'AC_BILL_DELETE','Facture supprimée','2025-03-05 10:04:53','2025-03-05 09:04:53',12,NULL,NULL,7,NULL,0,12,0,NULL,0,0,-1,'',NULL,NULL,'Facture supprimée',474,'invoice',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'default',NULL,NULL,0,0,'127.0.0.1',NULL,NULL);
+(1803,'1803',NULL,1,'2025-03-05 10:04:53','2025-03-05 10:04:53',40,'AC_BILL_DELETE','Facture supprimée','2025-03-05 10:04:53','2025-03-05 09:04:53',12,NULL,NULL,7,NULL,0,12,0,NULL,0,0,-1,'',NULL,NULL,'Facture supprimée',474,'invoice',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'default',NULL,NULL,0,0,'127.0.0.1',NULL,NULL),
+(1804,'1804',NULL,1,'2025-03-15 10:59:39','2025-03-15 10:59:39',40,'AC_BILL_VALIDATE','Facture TC1-2503-0020 validée','2025-03-15 10:59:39','2025-03-15 09:59:39',12,NULL,NULL,7,NULL,0,12,0,NULL,0,0,-1,'',NULL,NULL,'Facture TC1-2503-0020 validée',475,'invoice',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'default',NULL,NULL,0,0,'127.0.0.1',NULL,NULL),
+(1805,'1805',NULL,1,'2025-03-15 10:59:40','2025-03-15 10:59:40',40,'AC_BILL_PAYED','Facture TC1-2503-0020 passée à payée','2025-03-15 10:59:40','2025-03-15 09:59:40',12,NULL,NULL,7,NULL,0,12,0,NULL,0,0,-1,'',NULL,NULL,'Facture TC1-2503-0020 passée à payée',475,'invoice',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'default',NULL,NULL,0,0,'127.0.0.1',NULL,NULL),
+(1806,'1806',NULL,1,'2025-03-15 10:59:40','2025-03-15 10:59:40',40,'AC_BILL_MODIFY','Enregistrement TC1-2503-0020 modifié','2025-03-15 10:59:40','2025-03-15 09:59:40',12,NULL,NULL,7,NULL,0,12,0,NULL,0,0,-1,'',NULL,NULL,'Enregistrement TC1-2503-0020 modifié',475,'invoice',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'default',NULL,NULL,0,0,'127.0.0.1',NULL,NULL),
+(1807,'1807',NULL,1,'2025-03-15 11:01:07','2025-03-15 11:01:07',40,'AC_BILL_PAYED','Facture TC1-2503-0020 passée à payée','2025-03-15 11:01:07','2025-03-15 10:01:07',12,NULL,NULL,7,NULL,0,12,0,NULL,0,0,-1,'',NULL,NULL,'Facture TC1-2503-0020 passée à payée\nInvoice set to paid by the payment->create() of payment PAY2503-0016 because the remain to pay is 0',475,'invoice',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'default',NULL,NULL,0,0,'127.0.0.1',NULL,NULL);
 /*!40000 ALTER TABLE `llx_actioncomm` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -4141,7 +4145,7 @@ CREATE TABLE `llx_actioncomm_resources` (
   PRIMARY KEY (`rowid`),
   UNIQUE KEY `uk_actioncomm_resources` (`fk_actioncomm`,`element_type`,`fk_element`),
   KEY `idx_actioncomm_resources_fk_element` (`fk_element`)
-) ENGINE=InnoDB AUTO_INCREMENT=1718 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1722 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -5273,7 +5277,11 @@ INSERT INTO `llx_actioncomm_resources` VALUES
 (1714,1800,'user',12,'0',0,0),
 (1715,1801,'user',12,'0',0,0),
 (1716,1802,'user',12,'0',0,0),
-(1717,1803,'user',12,'0',0,0);
+(1717,1803,'user',12,'0',0,0),
+(1718,1804,'user',12,'0',0,0),
+(1719,1805,'user',12,'0',0,0),
+(1720,1806,'user',12,'0',0,0),
+(1721,1807,'user',12,'0',0,0);
 /*!40000 ALTER TABLE `llx_actioncomm_resources` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -5930,7 +5938,7 @@ CREATE TABLE `llx_bank` (
   KEY `idx_bank_fk_account` (`fk_account`),
   KEY `idx_bank_rappro` (`rappro`),
   KEY `idx_bank_num_releve` (`num_releve`)
-) ENGINE=InnoDB AUTO_INCREMENT=115 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=117 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -6012,7 +6020,8 @@ INSERT INTO `llx_bank` VALUES
 (111,'2025-02-15 09:31:26','2025-02-15 08:31:26','2025-02-15','2025-02-15',0.50000000,'(CustomerInvoicePayment)',9,12,NULL,'LIQ',NULL,NULL,0,NULL,0,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,0),
 (112,'2025-03-05 09:32:24','2025-03-05 08:32:24','2025-03-05','2025-03-05',5.00000000,'(CustomerInvoicePayment)',4,12,NULL,'CB',NULL,NULL,0,NULL,0,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,0),
 (113,'2025-03-05 09:33:00','2025-03-05 08:33:00','2025-03-05','2025-03-05',9.00000000,'(CustomerInvoicePayment)',4,12,NULL,'CHQ',NULL,NULL,0,NULL,0,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,0),
-(114,'2025-03-05 09:33:07','2025-03-05 08:33:07','2025-03-05','2025-03-05',9.99000000,'(CustomerInvoicePayment)',9,12,NULL,'LIQ',NULL,NULL,0,NULL,0,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,0);
+(114,'2025-03-05 09:33:07','2025-03-05 08:33:07','2025-03-05','2025-03-05',9.99000000,'(CustomerInvoicePayment)',9,12,NULL,'LIQ',NULL,NULL,0,NULL,0,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,0),
+(116,'2025-03-15 11:01:07','2025-03-15 10:01:07','2025-03-15','2025-03-15',2.40000000,'(CustomerInvoicePayment)',9,12,NULL,'LIQ',NULL,NULL,0,NULL,0,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,0);
 /*!40000 ALTER TABLE `llx_bank` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -6290,7 +6299,7 @@ CREATE TABLE `llx_bank_url` (
   PRIMARY KEY (`rowid`),
   UNIQUE KEY `uk_bank_url` (`fk_bank`,`url_id`,`type`),
   KEY `idx_bank_url_url_id` (`url_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=179 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=183 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -6436,7 +6445,9 @@ INSERT INTO `llx_bank_url` VALUES
 (175,113,102,'/dolibarr_test/htdocs/compta/paiement/card.php?id=','(paiement)','payment'),
 (176,113,7,'/dolibarr_test/htdocs/comm/card.php?socid=','Generic customer','company'),
 (177,114,103,'/dolibarr_test/htdocs/compta/paiement/card.php?id=','(paiement)','payment'),
-(178,114,7,'/dolibarr_test/htdocs/comm/card.php?socid=','Generic customer','company');
+(178,114,7,'/dolibarr_test/htdocs/comm/card.php?socid=','Generic customer','company'),
+(181,116,105,'/dolibarr_test/htdocs/compta/paiement/card.php?id=','(paiement)','payment'),
+(182,116,7,'/dolibarr_test/htdocs/comm/card.php?socid=','Generic customer','company');
 /*!40000 ALTER TABLE `llx_bank_url` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -6478,7 +6489,7 @@ CREATE TABLE `llx_blockedlog` (
   KEY `entity_rowid` (`entity`,`rowid`),
   KEY `idx_entity_action` (`entity`,`action`),
   KEY `idx_ref_object` (`ref_object`)
-) ENGINE=InnoDB AUTO_INCREMENT=495 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=499 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -6558,7 +6569,11 @@ INSERT INTO `llx_blockedlog` VALUES
 (491,'2025-03-05 08:33:07','PAYMENT_CUSTOMER_CREATE','takepos',9.99000000,NULL,'7bf98bf63f2ca5c2efc337cd27b90e9b68208ae62a0a3af31bb73df4204075ce','payment',103,'PAY2503-0015','2025-03-05 09:33:07','{\"thirdparty\":{\"name\":\"Generic customer\",\"email\":\"ttt@ttt.com\",\"idprof1\":\"\",\"idprof2\":\"\",\"tva_assuj\":\"1\",\"tva_intra\":\"\",\"capital\":\"0.00000000\",\"typent_code\":\"TE_PRIVATE\",\"code_client\":\"CU1302-0011\",\"country_code\":\"GB\"},\"mycompany\":{\"name\":\"MyBigCompany\",\"phone\":\"09123123\",\"fax\":\"09123124\",\"email\":\"myemail@mybigcompany.com\",\"idprof1\":\"123456\",\"idprof2\":\"ABC-DEF\",\"idprof3\":\"15E-45-8D\",\"tva_assuj\":1,\"tva_intra\":\"FR12345678\",\"localtax1_assuj\":0,\"localtax2_assuj\":0,\"managers\":\"Zack Zeceo\",\"capital\":10000,\"forme_juridique_code\":0,\"country_code\":\"FR\",\"address\":\"21 Jump street.\",\"zip\":\"75500\",\"town\":\"MyTown\"},\"ref\":\"PAY2503-0015\",\"date\":1741163587,\"type_code\":\"LIQ\",\"payment_part\":{\"1\":{\"amount\":\"9.99\",\"invoice\":{\"ref\":\"TC1-2503-0019\",\"module_source\":\"takepos\",\"pos_source\":\"1\",\"pos_print_counter\":\"0\",\"email_sent_counter\":\"0\",\"type\":\"0\",\"date\":1741129200,\"total_ht\":\"20.00000000\",\"total_tva\":\"4.00000000\",\"total_ttc\":\"24.00000000\",\"revenuestamp\":\"0.00000000\"}}},\"amount\":9.99}',12,1,0,'2025-03-05 09:33:07','Alice Adminson','24.0.0-alpha','V2','previoushash=4a927584fdc392135d450ccaa6a3a802c4b2b77a8fef00a42ee1e6c6458dd58d concatenateddatafirstpart=1|1741163587|PAYMENT_CUSTOMER_CREATE|takepos||9.99|PAY2503-0015|1741163587|Alice Adminson|TC1-2503-0019|payment => signature=7bf98bf63f2ca5c2efc337cd27b90e9b68208ae62a0a3af31bb73df4204075ce','TC1-2503-0019','payment',NULL),
 (492,'2025-03-05 08:40:04','BILL_VALIDATE','',-0.01000000,-0.01000000,'9b20ced7e6f1d639d78e3f748ecdd82d50c912a16137f33a8eb511c23e617d09','facture',473,'AV2503-0006','2025-03-05 00:00:00','{\"mycompany\":{\"name\":\"MyBigCompany\",\"phone\":\"09123123\",\"fax\":\"09123124\",\"email\":\"myemail@mybigcompany.com\",\"idprof1\":\"123456\",\"idprof2\":\"ABC-DEF\",\"idprof3\":\"15E-45-8D\",\"tva_assuj\":1,\"tva_intra\":\"FR12345678\",\"localtax1_assuj\":0,\"localtax2_assuj\":0,\"managers\":\"Zack Zeceo\",\"capital\":10000,\"forme_juridique_code\":0,\"country_code\":\"FR\",\"address\":\"21 Jump street.\",\"zip\":\"75500\",\"town\":\"MyTown\"},\"ref\":\"AV2503-0006\",\"module_source\":\"\",\"pos_source\":\"\",\"pos_print_counter\":\"0\",\"email_sent_counter\":\"0\",\"invoiceline\":{\"1\":{\"product_type\":\"0\",\"product_label\":\"Avoir sur le reste &agrave; payer\",\"qty\":\"1\",\"subprice\":\"-0.01000000\",\"tva_tx\":\"0.000\",\"localtax1_tx\":\"0.000\",\"localtax2_tx\":\"0.000\",\"total_ht\":\"-0.01000000\",\"total_tva\":\"0.00000000\",\"total_localtax1\":\"0.00000000\",\"total_localtax2\":\"0.00000000\",\"total_ttc\":\"-0.01000000\",\"info_bits\":\"0\",\"special_code\":\"0\",\"multicurrency_code\":\"EUR\",\"multicurrency_total_ht\":\"-0.01000000\",\"multicurrency_total_tva\":\"0.00000000\",\"multicurrency_total_ttc\":\"-0.01000000\"}},\"type\":\"2\",\"date\":1741129200,\"total_ht\":-0.01,\"total_tva\":0,\"total_ttc\":-0.01,\"revenuestamp\":\"0.00000000\"}',12,1,0,'2025-03-05 09:40:04','Alice Adminson','24.0.0-alpha','V2','previoushash=7bf98bf63f2ca5c2efc337cd27b90e9b68208ae62a0a3af31bb73df4204075ce concatenateddatafirstpart=1|1741164004|BILL_VALIDATE||-0.01|-0.01|AV2503-0006|1741129200|Alice Adminson|TC1-2503-0019|credit_note_of => signature=9b20ced7e6f1d639d78e3f748ecdd82d50c912a16137f33a8eb511c23e617d09','TC1-2503-0019','credit_note_of',NULL),
 (493,'2025-03-05 08:40:53','DOC_PREVIEW','takepos',24.00000000,20.00000000,'66e251911990dcdd2c7e21f240bfe302f90abc8534436f13a14d83ea95771b4a','facture',472,'TC1-2503-0019','2025-03-05 00:00:00','{\"mycompany\":{\"name\":\"MyBigCompany\",\"phone\":\"09123123\",\"fax\":\"09123124\",\"email\":\"myemail@mybigcompany.com\",\"idprof1\":\"123456\",\"idprof2\":\"ABC-DEF\",\"idprof3\":\"15E-45-8D\",\"tva_assuj\":1,\"tva_intra\":\"FR12345678\",\"localtax1_assuj\":0,\"localtax2_assuj\":0,\"managers\":\"Zack Zeceo\",\"capital\":10000,\"forme_juridique_code\":0,\"country_code\":\"FR\",\"address\":\"21 Jump street.\",\"zip\":\"75500\",\"town\":\"MyTown\"},\"ref\":\"TC1-2503-0019\",\"module_source\":\"takepos\",\"pos_source\":\"1\",\"pos_print_counter\":1,\"email_sent_counter\":\"0\",\"invoiceline\":{\"1\":{\"ref\":\"POS-ORANGE\",\"product_type\":\"0\",\"product_label\":\"Orange\",\"qty\":\"10\",\"subprice\":\"2.00000000\",\"tva_tx\":\"20.000\",\"localtax1_tx\":\"0.000\",\"localtax2_tx\":\"0.000\",\"total_ht\":\"20.00000000\",\"total_tva\":\"4.00000000\",\"total_localtax1\":\"0.00000000\",\"total_localtax2\":\"0.00000000\",\"total_ttc\":\"24.00000000\",\"info_bits\":\"0\",\"special_code\":\"0\",\"multicurrency_code\":\"EUR\",\"multicurrency_total_ht\":\"20.00000000\",\"multicurrency_total_tva\":\"4.00000000\",\"multicurrency_total_ttc\":\"24.00000000\"}},\"type\":\"0\",\"date\":1741129200,\"total_ht\":\"20.00000000\",\"total_tva\":\"4.00000000\",\"total_ttc\":\"24.00000000\",\"revenuestamp\":\"0.00000000\"}',12,1,0,'2025-03-05 09:40:53','Alice Adminson','24.0.0-alpha','V2','previoushash=9b20ced7e6f1d639d78e3f748ecdd82d50c912a16137f33a8eb511c23e617d09 concatenateddatafirstpart=1|1741164053|DOC_PREVIEW|takepos|20|24|TC1-2503-0019|1741129200|Alice Adminson|| => signature=66e251911990dcdd2c7e21f240bfe302f90abc8534436f13a14d83ea95771b4a',NULL,NULL,NULL),
-(494,'2025-03-05 09:03:55','CASHCONTROL_CLOSE','takepos',23.99000000,NULL,'7adbdb2d226efe424e9bc61de18f913c8031880dd9e5f429359bb10defb9aa8d','cashcontrol',29,'29','2025-03-05 10:02:25','{\"id\":29,\"year_close\":2025,\"month_close\":3,\"day_close\":5,\"hour_close\":22,\"min_close\":59,\"sec_close\":59,\"posmodule\":\"takepos\",\"posnumber\":\"1\",\"cash\":9.99,\"cheque\":9,\"card\":5,\"cash_declared\":46.99,\"cheque_declared\":9,\"card_declared\":5,\"cash_lifetime\":\"48.49\",\"cheque_lifetime\":\"15.3\",\"card_lifetime\":\"5\",\"lifetime_start\":1737018536,\"entity\":1,\"ref\":\"29\",\"date_creation\":1741165345,\"period\":\"2025-03-05\"}',12,1,0,'2025-03-05 10:03:55','Alice Adminson','24.0.0-alpha','V2','previoushash=66e251911990dcdd2c7e21f240bfe302f90abc8534436f13a14d83ea95771b4a concatenateddatafirstpart=1|1741165435|CASHCONTROL_CLOSE|takepos||23.99|29|1741165345|Alice Adminson|| => signature=7adbdb2d226efe424e9bc61de18f913c8031880dd9e5f429359bb10defb9aa8d',NULL,NULL,NULL);
+(494,'2025-03-05 09:03:55','CASHCONTROL_CLOSE','takepos',23.99000000,NULL,'7adbdb2d226efe424e9bc61de18f913c8031880dd9e5f429359bb10defb9aa8d','cashcontrol',29,'29','2025-03-05 10:02:25','{\"id\":29,\"year_close\":2025,\"month_close\":3,\"day_close\":5,\"hour_close\":22,\"min_close\":59,\"sec_close\":59,\"posmodule\":\"takepos\",\"posnumber\":\"1\",\"cash\":9.99,\"cheque\":9,\"card\":5,\"cash_declared\":46.99,\"cheque_declared\":9,\"card_declared\":5,\"cash_lifetime\":\"48.49\",\"cheque_lifetime\":\"15.3\",\"card_lifetime\":\"5\",\"lifetime_start\":1737018536,\"entity\":1,\"ref\":\"29\",\"date_creation\":1741165345,\"period\":\"2025-03-05\"}',12,1,0,'2025-03-05 10:03:55','Alice Adminson','24.0.0-alpha','V2','previoushash=66e251911990dcdd2c7e21f240bfe302f90abc8534436f13a14d83ea95771b4a concatenateddatafirstpart=1|1741165435|CASHCONTROL_CLOSE|takepos||23.99|29|1741165345|Alice Adminson|| => signature=7adbdb2d226efe424e9bc61de18f913c8031880dd9e5f429359bb10defb9aa8d',NULL,NULL,NULL),
+(495,'2025-03-15 09:59:39','BILL_VALIDATE','takepos',2.40000000,2.00000000,'2ba69fe4ea3dea73be6d0d8dc81f1bda842d85a00d44ca39911a8eaf627a82ca','facture',475,'TC1-2503-0020','2025-03-15 00:00:00','{\"mycompany\":{\"name\":\"MyBigCompany\",\"phone\":\"09123123\",\"fax\":\"09123124\",\"email\":\"myemail@mybigcompany.com\",\"idprof1\":\"123456\",\"idprof2\":\"ABC-DEF\",\"idprof3\":\"15E-45-8D\",\"tva_assuj\":1,\"tva_intra\":\"FR12345678\",\"localtax1_assuj\":0,\"localtax2_assuj\":0,\"managers\":\"Zack Zeceo\",\"capital\":10000,\"forme_juridique_code\":0,\"country_code\":\"FR\",\"address\":\"21 Jump street.\",\"zip\":\"75500\",\"town\":\"MyTown\"},\"ref\":\"TC1-2503-0020\",\"module_source\":\"takepos\",\"pos_source\":\"1\",\"pos_print_counter\":\"0\",\"email_sent_counter\":\"0\",\"invoiceline\":{\"1\":{\"ref\":\"POS-ORANGE\",\"product_type\":\"0\",\"product_label\":\"Orange\",\"qty\":\"1\",\"subprice\":\"2.00000000\",\"tva_tx\":\"20.000\",\"localtax1_tx\":\"0.000\",\"localtax2_tx\":\"0.000\",\"total_ht\":\"2.00000000\",\"total_tva\":\"0.40000000\",\"total_localtax1\":\"0.00000000\",\"total_localtax2\":\"0.00000000\",\"total_ttc\":\"2.40000000\",\"info_bits\":\"0\",\"special_code\":\"0\",\"multicurrency_code\":\"EUR\",\"multicurrency_total_ht\":\"2.00000000\",\"multicurrency_total_tva\":\"0.40000000\",\"multicurrency_total_ttc\":\"2.40000000\"}},\"type\":\"0\",\"date\":1741993200,\"total_ht\":2,\"total_tva\":0.4,\"total_ttc\":2.4,\"revenuestamp\":\"0.00000000\"}',12,1,0,'2025-03-15 10:59:39','Alice Adminson','24.0.0-alpha','V2','previoushash=7adbdb2d226efe424e9bc61de18f913c8031880dd9e5f429359bb10defb9aa8d concatenateddatafirstpart=1|1742032779|BILL_VALIDATE|takepos|2|2.4|TC1-2503-0020|1741993200|Alice Adminson|| => signature=2ba69fe4ea3dea73be6d0d8dc81f1bda842d85a00d44ca39911a8eaf627a82ca',NULL,NULL,NULL),
+(496,'2025-03-15 09:59:39','PAYMENT_CUSTOMER_CREATE','takepos',2.40000000,NULL,'b30e15c1aad4eb810cf3ae79ce18c00fa1b7d70afbe7f1fc9b7329bda53cc621','payment',104,'PAY2503-0016','2025-03-15 10:59:39','{\"thirdparty\":{\"name\":\"Generic customer\",\"email\":\"ttt@ttt.com\",\"idprof1\":\"\",\"idprof2\":\"\",\"tva_assuj\":\"1\",\"tva_intra\":\"\",\"capital\":\"0.00000000\",\"typent_code\":\"TE_PRIVATE\",\"code_client\":\"CU1302-0011\",\"country_code\":\"GB\"},\"mycompany\":{\"name\":\"MyBigCompany\",\"phone\":\"09123123\",\"fax\":\"09123124\",\"email\":\"myemail@mybigcompany.com\",\"idprof1\":\"123456\",\"idprof2\":\"ABC-DEF\",\"idprof3\":\"15E-45-8D\",\"tva_assuj\":1,\"tva_intra\":\"FR12345678\",\"localtax1_assuj\":0,\"localtax2_assuj\":0,\"managers\":\"Zack Zeceo\",\"capital\":10000,\"forme_juridique_code\":0,\"country_code\":\"FR\",\"address\":\"21 Jump street.\",\"zip\":\"75500\",\"town\":\"MyTown\"},\"ref\":\"PAY2503-0016\",\"date\":1742032779,\"type_code\":\"LIQ\",\"payment_part\":{\"1\":{\"amount\":\"2.4\",\"invoice\":{\"ref\":\"TC1-2503-0020\",\"module_source\":\"takepos\",\"pos_source\":\"1\",\"pos_print_counter\":\"0\",\"email_sent_counter\":\"0\",\"type\":\"0\",\"date\":1741993200,\"total_ht\":\"2.00000000\",\"total_tva\":\"0.40000000\",\"total_ttc\":\"2.40000000\",\"revenuestamp\":\"0.00000000\"}}},\"amount\":2.4}',12,1,0,'2025-03-15 10:59:39','Alice Adminson','24.0.0-alpha','V2','previoushash=2ba69fe4ea3dea73be6d0d8dc81f1bda842d85a00d44ca39911a8eaf627a82ca concatenateddatafirstpart=1|1742032779|PAYMENT_CUSTOMER_CREATE|takepos||2.4|PAY2503-0016|1742032779|Alice Adminson|TC1-2503-0020|payment => signature=b30e15c1aad4eb810cf3ae79ce18c00fa1b7d70afbe7f1fc9b7329bda53cc621','TC1-2503-0020','payment',NULL),
+(497,'2025-03-15 09:59:59','PAYMENT_CUSTOMER_DELETE','takepos',-2.40000000,0.00000000,'d64f5f1bdda28074a1b15351d94a6b1622745768e08af500e77334b261e341fd','payment',104,'PAY2503-0016','2025-03-15 10:59:39','{\"thirdparty\":{\"name\":\"Generic customer\",\"email\":\"ttt@ttt.com\",\"idprof1\":\"\",\"idprof2\":\"\",\"tva_assuj\":\"1\",\"tva_intra\":\"\",\"capital\":\"0.00000000\",\"typent_code\":\"TE_PRIVATE\",\"code_client\":\"CU1302-0011\",\"country_code\":\"GB\"},\"mycompany\":{\"name\":\"MyBigCompany\",\"phone\":\"09123123\",\"fax\":\"09123124\",\"email\":\"myemail@mybigcompany.com\",\"idprof1\":\"123456\",\"idprof2\":\"ABC-DEF\",\"idprof3\":\"15E-45-8D\",\"tva_assuj\":1,\"tva_intra\":\"FR12345678\",\"localtax1_assuj\":0,\"localtax2_assuj\":0,\"managers\":\"Zack Zeceo\",\"capital\":10000,\"forme_juridique_code\":0,\"country_code\":\"FR\",\"address\":\"21 Jump street.\",\"zip\":\"75500\",\"town\":\"MyTown\"},\"ref\":\"PAY2503-0016\",\"date\":1742032779,\"type_code\":0,\"payment_part\":{\"1\":{\"amount\":-2.4,\"invoice\":{\"ref\":\"TC1-2503-0020\",\"module_source\":\"takepos\",\"pos_source\":\"1\",\"pos_print_counter\":\"0\",\"email_sent_counter\":\"0\",\"type\":\"0\",\"date\":1741993200,\"total_ht\":\"2.00000000\",\"total_tva\":\"0.40000000\",\"total_ttc\":\"2.40000000\",\"revenuestamp\":\"0.00000000\"}}},\"amount\":-2.4}',12,1,0,'2025-03-15 10:59:59','Alice Adminson','24.0.0-alpha','V2','previoushash=b30e15c1aad4eb810cf3ae79ce18c00fa1b7d70afbe7f1fc9b7329bda53cc621 concatenateddatafirstpart=1|1742032799|PAYMENT_CUSTOMER_DELETE|takepos|0|-2.4|PAY2503-0016|1742032779|Alice Adminson|TC1-2503-0020|payment => signature=d64f5f1bdda28074a1b15351d94a6b1622745768e08af500e77334b261e341fd','TC1-2503-0020','payment',NULL),
+(498,'2025-03-15 10:01:07','PAYMENT_CUSTOMER_CREATE','takepos',2.40000000,NULL,'2b62f86ff13a7ca800e4b4e63ddd870d7d33c128ec9a3fcb2f0f900fd38eb030','payment',105,'PAY2503-0016','2025-03-15 12:00:00','{\"thirdparty\":{\"name\":\"Generic customer\",\"email\":\"ttt@ttt.com\",\"idprof1\":\"\",\"idprof2\":\"\",\"tva_assuj\":\"1\",\"tva_intra\":\"\",\"capital\":\"0.00000000\",\"typent_code\":\"TE_PRIVATE\",\"code_client\":\"CU1302-0011\",\"country_code\":\"GB\"},\"mycompany\":{\"name\":\"MyBigCompany\",\"phone\":\"09123123\",\"fax\":\"09123124\",\"email\":\"myemail@mybigcompany.com\",\"idprof1\":\"123456\",\"idprof2\":\"ABC-DEF\",\"idprof3\":\"15E-45-8D\",\"tva_assuj\":1,\"tva_intra\":\"FR12345678\",\"localtax1_assuj\":0,\"localtax2_assuj\":0,\"managers\":\"Zack Zeceo\",\"capital\":10000,\"forme_juridique_code\":0,\"country_code\":\"FR\",\"address\":\"21 Jump street.\",\"zip\":\"75500\",\"town\":\"MyTown\"},\"ref\":\"PAY2503-0016\",\"date\":1742036400,\"type_code\":\"LIQ\",\"payment_part\":{\"1\":{\"amount\":\"2.4\",\"invoice\":{\"ref\":\"TC1-2503-0020\",\"module_source\":\"takepos\",\"pos_source\":\"1\",\"pos_print_counter\":\"0\",\"email_sent_counter\":\"0\",\"type\":\"0\",\"date\":1741993200,\"total_ht\":\"2.00000000\",\"total_tva\":\"0.40000000\",\"total_ttc\":\"2.40000000\",\"revenuestamp\":\"0.00000000\"}}},\"amount\":2.4}',12,1,0,'2025-03-15 11:01:07','Alice Adminson','24.0.0-alpha','V2','previoushash=d64f5f1bdda28074a1b15351d94a6b1622745768e08af500e77334b261e341fd concatenateddatafirstpart=1|1742032867|PAYMENT_CUSTOMER_CREATE|takepos||2.4|PAY2503-0016|1742036400|Alice Adminson|TC1-2503-0020|payment => signature=2b62f86ff13a7ca800e4b4e63ddd870d7d33c128ec9a3fcb2f0f900fd38eb030','TC1-2503-0020','payment',NULL);
 /*!40000 ALTER TABLE `llx_blockedlog` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -67040,7 +67055,7 @@ CREATE TABLE `llx_ecm_files` (
   UNIQUE KEY `uk_ecm_files` (`filepath`,`filename`,`entity`),
   KEY `idx_ecm_files_label` (`label`),
   KEY `idx_ecm_files_src_object_type_id` (`src_object_type`,`src_object_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=804 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=806 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -67433,7 +67448,9 @@ INSERT INTO `llx_ecm_files` VALUES
 (800,'b68d409d01b7064fc7964ea9c033685f','b8565a0cd0db394439ca5e4d66aa3e0a','30WRGMnIn59g8qqolR6HPQuqAVbb0895',NULL,1,'TC1-2502-0017.pdf','facture/TC1-2502-0017','','','',NULL,'generated',NULL,'2025-02-15 09:31:19','2025-02-15 08:31:19',12,NULL,NULL,NULL,NULL,1,'facture',470,NULL,NULL,NULL,NULL,NULL,NULL),
 (801,'a34d84caa722232ec4b0ba78089fbb4f','af9683cb2c258821abf5bdcba4604b42','D10f6IBku4av8LT56ybJ471dDLrSGcCe',NULL,1,'TC1-2502-0018.pdf','facture/TC1-2502-0018','','','',NULL,'generated',NULL,'2025-02-15 09:31:26','2025-02-15 08:31:26',12,NULL,NULL,NULL,NULL,1,'facture',471,NULL,NULL,NULL,NULL,NULL,NULL),
 (802,'a06d76cc3685fd393735b0faaf6922e0','a4c9e9d184a4394cbd5cea39f6955c1e','I6ZfPJvi0w13x0SlUfLEMC7bi7y0Bn00',NULL,1,'TC1-2503-0019.pdf','facture/TC1-2503-0019','','','',NULL,'generated',NULL,'2025-03-05 09:32:24','2025-03-05 08:40:34',12,12,NULL,NULL,NULL,1,'facture',472,NULL,NULL,NULL,NULL,NULL,NULL),
-(803,'3bb2db7402e4fada799b5714db3db826','0236651c26770d0c1e6ec6aff894b17d','sf3X3s4Rk61ha0dOoeGOIFy3L9B0YS8k',NULL,1,'AV2503-0006.pdf','facture/AV2503-0006','','','',NULL,'generated',NULL,'2025-03-05 09:39:56','2025-03-05 08:40:04',12,12,NULL,NULL,NULL,1,'facture',473,NULL,NULL,NULL,NULL,NULL,NULL);
+(803,'3bb2db7402e4fada799b5714db3db826','0236651c26770d0c1e6ec6aff894b17d','sf3X3s4Rk61ha0dOoeGOIFy3L9B0YS8k',NULL,1,'AV2503-0006.pdf','facture/AV2503-0006','','','',NULL,'generated',NULL,'2025-03-05 09:39:56','2025-03-05 08:40:04',12,12,NULL,NULL,NULL,1,'facture',473,NULL,NULL,NULL,NULL,NULL,NULL),
+(804,'a98aedb1b81afae8019f198f03ff200e','e1bef6a26132b8f61ccedaa5237171b4','2sv0HSXf1OE4qgC4ZtRRf0TmS1u980aa',NULL,1,'TC1-2503-0020.pdf','facture/TC1-2503-0020','','','',NULL,'generated',NULL,'2025-03-15 10:59:39','2025-03-15 10:01:07',12,12,NULL,NULL,NULL,1,'facture',475,NULL,NULL,NULL,NULL,NULL,NULL),
+(805,'eed2d96c2a42846b53664c7f78e1739f','31d5fc4469d2e4c96c815dcbf35e8415',NULL,NULL,1,'unalterable-log-archive-dolibarr_test-202503-20250315100506UTC-INCOMPLETE.csv','blockedlog/archives','/home/ldestailleur/git/dolibarr_test/documents/blockedlog/archives/unalterable-log-archive-dolibarr_test-202503-20250315100506UTC-INCOMPLETE.csv','','',NULL,'unknown',NULL,'2025-03-15 11:05:06','2025-03-15 10:05:06',12,NULL,NULL,NULL,NULL,5,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `llx_ecm_files` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -70917,7 +70934,7 @@ CREATE TABLE `llx_facture` (
   CONSTRAINT `fk_facture_fk_soc` FOREIGN KEY (`fk_soc`) REFERENCES `llx_societe` (`rowid`),
   CONSTRAINT `fk_facture_fk_user_author` FOREIGN KEY (`fk_user_author`) REFERENCES `llx_user` (`rowid`),
   CONSTRAINT `fk_facture_fk_user_valid` FOREIGN KEY (`fk_user_valid`) REFERENCES `llx_user` (`rowid`)
-) ENGINE=InnoDB AUTO_INCREMENT=475 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=476 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -71006,7 +71023,8 @@ INSERT INTO `llx_facture` VALUES
 (470,'TC1-2502-0017',1,NULL,NULL,0,NULL,NULL,7,'2025-02-15 09:31:17','2025-02-15','2025-02-15 09:31:18','2025-02-15 09:31:19','2025-02-15 08:31:19',1,0,0,0,NULL,NULL,NULL,0.44000000,0.00000000,0.00000000,0.00000000,2.16000000,2.60000000,2,12,NULL,12,12,NULL,NULL,NULL,NULL,0,4,'2025-02-15',NULL,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,0,NULL,0,0,'',NULL,NULL,0,'EUR',1.00000000,2.16000000,0.44000000,2.60000000,NULL,'facture/TC1-2502-0017/TC1-2502-0017.pdf',NULL,'takepos','1',NULL,NULL,0,NULL,0,0,NULL),
 (471,'TC1-2502-0018',1,NULL,NULL,0,NULL,NULL,7,'2025-02-15 09:31:23','2025-02-15','2025-02-15 09:31:26','2025-02-15 09:31:26','2025-02-15 08:31:29',1,0,0,0,NULL,NULL,NULL,0.08000000,0.00000000,0.00000000,0.00000000,0.42000000,0.50000000,2,12,NULL,12,12,NULL,NULL,NULL,NULL,0,4,'2025-02-15',NULL,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,0,NULL,0,0,'',NULL,NULL,0,'EUR',1.00000000,0.42000000,0.08000000,0.50000000,NULL,'facture/TC1-2502-0018/TC1-2502-0018.pdf',NULL,'takepos','1',NULL,NULL,0,NULL,1,0,NULL),
 (472,'TC1-2503-0019',1,NULL,NULL,0,NULL,NULL,7,'2025-03-05 09:31:56','2025-03-05','2025-03-05 09:32:23','2025-03-05 09:40:34','2025-03-05 08:40:53',1,0,0,0,NULL,NULL,NULL,4.00000000,0.00000000,0.00000000,0.00000000,20.00000000,24.00000000,2,12,NULL,12,12,NULL,NULL,NULL,NULL,0,0,'2025-03-05',NULL,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,0,NULL,0,0,'',NULL,NULL,0,'EUR',1.00000000,20.00000000,4.00000000,24.00000000,NULL,'facture/TC1-2503-0019/TC1-2503-0019.pdf',NULL,'takepos','1',NULL,NULL,0,NULL,1,0,NULL),
-(473,'AV2503-0006',1,NULL,NULL,2,NULL,NULL,7,'2025-03-05 09:39:56','2025-03-05','2025-03-05 09:40:04','2025-03-05 09:40:29','2025-03-05 08:40:29',1,0,0,0,NULL,NULL,NULL,0.00000000,0.00000000,0.00000000,0.00000000,-0.01000000,-0.01000000,2,12,NULL,12,12,472,NULL,3,NULL,0,0,'2025-03-05',NULL,0,NULL,NULL,'crabe',NULL,NULL,NULL,NULL,1,0,NULL,0,0,'',NULL,NULL,1,'EUR',1.00000000,-0.01000000,0.00000000,-0.01000000,NULL,'facture/AV2503-0006/AV2503-0006.pdf',NULL,NULL,NULL,NULL,0,0,NULL,0,0,NULL);
+(473,'AV2503-0006',1,NULL,NULL,2,NULL,NULL,7,'2025-03-05 09:39:56','2025-03-05','2025-03-05 09:40:04','2025-03-05 09:40:29','2025-03-05 08:40:29',1,0,0,0,NULL,NULL,NULL,0.00000000,0.00000000,0.00000000,0.00000000,-0.01000000,-0.01000000,2,12,NULL,12,12,472,NULL,3,NULL,0,0,'2025-03-05',NULL,0,NULL,NULL,'crabe',NULL,NULL,NULL,NULL,1,0,NULL,0,0,'',NULL,NULL,1,'EUR',1.00000000,-0.01000000,0.00000000,-0.01000000,NULL,'facture/AV2503-0006/AV2503-0006.pdf',NULL,NULL,NULL,NULL,0,0,NULL,0,0,NULL),
+(475,'TC1-2503-0020',1,NULL,NULL,0,NULL,NULL,7,'2025-03-15 10:59:38','2025-03-15','2025-03-15 10:59:39','2025-03-15 11:01:07','2025-03-15 10:01:07',1,0,0,0,NULL,NULL,NULL,0.40000000,0.00000000,0.00000000,0.00000000,2.00000000,2.40000000,2,12,NULL,12,12,NULL,NULL,NULL,NULL,0,4,'2025-03-15',NULL,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,0,NULL,0,0,'',NULL,NULL,0,'EUR',1.00000000,2.00000000,0.40000000,2.40000000,NULL,'facture/TC1-2503-0020/TC1-2503-0020.pdf',NULL,'takepos','1',NULL,NULL,0,NULL,0,0,NULL);
 /*!40000 ALTER TABLE `llx_facture` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -71696,7 +71714,7 @@ CREATE TABLE `llx_facturedet` (
   KEY `idx_facturedet_fk_code_ventilation` (`fk_code_ventilation`),
   CONSTRAINT `fk_facturedet_fk_facture` FOREIGN KEY (`fk_facture`) REFERENCES `llx_facture` (`rowid`),
   CONSTRAINT `fk_facturedet_fk_unit` FOREIGN KEY (`fk_unit`) REFERENCES `llx_c_units` (`rowid`)
-) ENGINE=InnoDB AUTO_INCREMENT=2107 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2108 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -71850,7 +71868,8 @@ INSERT INTO `llx_facturedet` VALUES
 (2102,470,NULL,26,NULL,'',20.000,'',0.000,'0',0.000,'0',1,0,0,NULL,1.08333000,0.00000000,NULL,1.08000000,0.22000000,0.00000000,0.00000000,1.30000000,0,NULL,NULL,0,NULL,0.00000000,0,0,2,NULL,NULL,100,NULL,NULL,12,12,0,'EUR',1.08333000,0.00000000,1.08000000,0.22000000,1.30000000,'','',0,NULL),
 (2103,471,NULL,30,NULL,'',20.000,'',0.000,'0',0.000,'0',1,0,0,NULL,0.41667000,0.00000000,NULL,0.42000000,0.08000000,0.00000000,0.00000000,0.50000000,0,NULL,NULL,0,NULL,11.00000000,0,0,1,NULL,NULL,100,NULL,NULL,12,12,0,'EUR',0.41667000,0.00000000,0.42000000,0.08000000,0.50000000,'','',0,NULL),
 (2104,472,NULL,28,NULL,'',20.000,'',0.000,'0',0.000,'0',10,0,0,NULL,2.00000000,0.00000000,NULL,20.00000000,4.00000000,0.00000000,0.00000000,24.00000000,0,NULL,NULL,0,NULL,0.00000000,0,0,1,NULL,NULL,100,NULL,NULL,12,12,0,'EUR',2.00000000,0.00000000,20.00000000,4.00000000,24.00000000,'','',0,NULL),
-(2105,473,NULL,NULL,NULL,'Avoir sur le reste &agrave; payer',0.000,'',0.000,'0',0.000,'0',1,0,0,NULL,-0.01000000,0.00000000,NULL,-0.01000000,0.00000000,0.00000000,0.00000000,-0.01000000,0,NULL,NULL,0,NULL,0.00000000,0,0,1,NULL,NULL,100,NULL,NULL,12,12,1,'EUR',-0.01000000,0.00000000,-0.01000000,0.00000000,-0.01000000,'','',0,NULL);
+(2105,473,NULL,NULL,NULL,'Avoir sur le reste &agrave; payer',0.000,'',0.000,'0',0.000,'0',1,0,0,NULL,-0.01000000,0.00000000,NULL,-0.01000000,0.00000000,0.00000000,0.00000000,-0.01000000,0,NULL,NULL,0,NULL,0.00000000,0,0,1,NULL,NULL,100,NULL,NULL,12,12,1,'EUR',-0.01000000,0.00000000,-0.01000000,0.00000000,-0.01000000,'','',0,NULL),
+(2107,475,NULL,28,NULL,'',20.000,'',0.000,'0',0.000,'0',1,0,0,NULL,2.00000000,0.00000000,NULL,2.00000000,0.40000000,0.00000000,0.00000000,2.40000000,0,NULL,NULL,0,NULL,0.00000000,0,0,1,NULL,NULL,100,NULL,NULL,12,12,0,'EUR',2.00000000,0.00000000,2.00000000,0.40000000,2.40000000,'','',0,NULL);
 /*!40000 ALTER TABLE `llx_facturedet` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -75009,7 +75028,7 @@ CREATE TABLE `llx_paiement` (
   `ext_payment_id` varchar(255) DEFAULT NULL,
   `ext_payment_site` varchar(128) DEFAULT NULL,
   PRIMARY KEY (`rowid`)
-) ENGINE=InnoDB AUTO_INCREMENT=104 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=106 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -75042,7 +75061,8 @@ INSERT INTO `llx_paiement` VALUES
 (100,'PAY2502-0012','',1,'2025-02-15 09:31:26','2025-02-15 08:31:26','2025-02-15 09:31:26',0.50000000,4,'','',111,12,NULL,0,0,0.00000000,0.50000000,NULL,NULL),
 (101,'PAY2503-0013','',1,'2025-03-05 09:32:24','2025-03-05 08:32:24','2025-03-05 09:32:23',5.00000000,6,'','',112,12,NULL,0,0,0.00000000,5.00000000,NULL,NULL),
 (102,'PAY2503-0014','',1,'2025-03-05 09:33:00','2025-03-05 08:33:00','2025-03-05 09:33:00',9.00000000,7,'','',113,12,NULL,0,0,0.00000000,9.00000000,NULL,NULL),
-(103,'PAY2503-0015','',1,'2025-03-05 09:33:07','2025-03-05 08:33:07','2025-03-05 09:33:07',9.99000000,4,'','',114,12,NULL,0,0,0.00000000,9.99000000,NULL,NULL);
+(103,'PAY2503-0015','',1,'2025-03-05 09:33:07','2025-03-05 08:33:07','2025-03-05 09:33:07',9.99000000,4,'','',114,12,NULL,0,0,0.00000000,9.99000000,NULL,NULL),
+(105,'PAY2503-0016','',1,'2025-03-15 11:01:07','2025-03-15 10:01:07','2025-03-15 12:00:00',2.40000000,4,'','',116,12,NULL,0,0,0.00000000,2.40000000,NULL,NULL);
 /*!40000 ALTER TABLE `llx_paiement` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -75093,7 +75113,7 @@ CREATE TABLE `llx_paiement_facture` (
   KEY `idx_paiement_facture_fk_paiement` (`fk_paiement`),
   CONSTRAINT `fk_paiement_facture_fk_facture` FOREIGN KEY (`fk_facture`) REFERENCES `llx_facture` (`rowid`),
   CONSTRAINT `fk_paiement_facture_fk_paiement` FOREIGN KEY (`fk_paiement`) REFERENCES `llx_paiement` (`rowid`)
-) ENGINE=InnoDB AUTO_INCREMENT=111 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=113 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -75117,7 +75137,8 @@ INSERT INTO `llx_paiement_facture` VALUES
 (107,100,471,0.50000000,0.50000000,'EUR',1.00000000),
 (108,101,472,5.00000000,5.00000000,'EUR',1.00000000),
 (109,102,472,9.00000000,9.00000000,'EUR',1.00000000),
-(110,103,472,9.99000000,9.99000000,'EUR',1.00000000);
+(110,103,472,9.99000000,9.99000000,'EUR',1.00000000),
+(112,105,475,2.40000000,2.40000000,'EUR',1.00000000);
 /*!40000 ALTER TABLE `llx_paiement_facture` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -76107,7 +76128,7 @@ INSERT INTO `llx_product` VALUES
 (25,'2019-11-28 16:37:36','2025-02-15 08:31:13',0,0,'POS-APPLE',1,NULL,'Apple','','','',NULL,1.25000000,1.50000000,0.00000000,0.00000000,'TTC',NULL,20.000,0,0.000,'0',0.000,'0',12,12,1,1,0,0,0,'',NULL,NULL,NULL,2,'','','','',NULL,NULL,NULL,1,0,NULL,0,NULL,0,NULL,0,4.6,0.00000000,NULL,NULL,'',NULL,0,NULL,NULL,NULL,NULL,NULL,NULL,0,NULL,'',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,1,NULL,NULL),
 (26,'2019-11-28 16:38:44','2025-02-15 08:31:19',0,0,'POS-KIWI',1,NULL,'Kiwi','','','',NULL,1.08333000,1.30000000,0.00000000,0.00000000,'TTC',NULL,20.000,0,0.000,'0',0.000,'0',12,12,1,1,0,0,0,'',NULL,NULL,NULL,2,'','','','',NULL,NULL,NULL,1,0,NULL,0,NULL,0,NULL,0,-7,0.00000000,NULL,NULL,'',NULL,0,NULL,NULL,NULL,NULL,NULL,NULL,0,NULL,'',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,1,NULL,NULL),
 (27,'2019-11-28 16:39:21','2025-02-05 14:40:15',0,0,'POS-PEACH',1,NULL,'Peach','','','',NULL,1.08333000,1.30000000,0.00000000,0.00000000,'TTC',NULL,20.000,0,0.000,'0',0.000,'0',12,12,1,1,0,0,0,'',NULL,NULL,NULL,2,'','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,-6,0.00000000,NULL,NULL,'',0,0,NULL,NULL,NULL,NULL,NULL,NULL,0,NULL,'',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,1,NULL,NULL),
-(28,'2019-11-28 16:39:58','2025-03-05 08:33:07',0,0,'POS-ORANGE',1,NULL,'Orange','','','',NULL,2.00000000,2.40000000,0.00000000,0.00000000,'HT',NULL,20.000,0,0.000,'0',0.000,'0',12,12,1,1,0,0,0,'',NULL,NULL,NULL,2,'','','','',NULL,NULL,NULL,1,0,NULL,0,NULL,0,NULL,0,-33,0.00000000,NULL,NULL,'',NULL,0,NULL,NULL,NULL,NULL,NULL,NULL,0,NULL,'',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,1,NULL,NULL),
+(28,'2019-11-28 16:39:58','2025-03-15 09:59:40',0,0,'POS-ORANGE',1,NULL,'Orange','','','',NULL,2.00000000,2.40000000,0.00000000,0.00000000,'HT',NULL,20.000,0,0.000,'0',0.000,'0',12,12,1,1,0,0,0,'',NULL,NULL,NULL,2,'','','','',NULL,NULL,NULL,1,0,NULL,0,NULL,0,NULL,0,-34,0.00000000,NULL,NULL,'',NULL,0,NULL,NULL,NULL,NULL,NULL,NULL,0,NULL,'',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,1,NULL,NULL),
 (29,'2019-11-28 17:03:14','2019-11-28 13:03:14',0,0,'POS-Eggs',1,NULL,'Eggs','','','',NULL,1.66667000,2.00000000,0.00000000,0.00000000,'TTC',NULL,20.000,0,0.000,'0',0.000,'0',12,12,1,1,0,0,0,'',NULL,NULL,NULL,2,'','','','',NULL,NULL,NULL,NULL,0,NULL,0,NULL,0,NULL,0,NULL,0.00000000,NULL,NULL,'',NULL,0,NULL,NULL,NULL,NULL,NULL,NULL,0,NULL,'',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,1,NULL,NULL),
 (30,'2019-11-28 17:09:14','2025-02-15 08:31:26',0,0,'POS-Chips',1,NULL,'Chips','','','',NULL,0.41667000,0.50000000,0.00000000,0.00000000,'TTC',NULL,20.000,0,0.000,'0',0.000,'0',12,12,1,1,0,0,0,'0',NULL,NULL,NULL,2,'','','','','','',NULL,30,-3,NULL,NULL,NULL,NULL,NULL,NULL,-1,0.00000000,NULL,NULL,'',NULL,0,NULL,NULL,NULL,NULL,11.00000000,NULL,0,NULL,'',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'',NULL,NULL,0,NULL,NULL,1,NULL,NULL),
 (31,'2021-04-15 08:38:02','2021-04-15 11:38:02',0,0,'PRODSER',1,NULL,'Product NFC - Unique','','','',NULL,0.00000000,0.00000000,0.00000000,0.00000000,'HT',NULL,19.600,0,0.000,'0',0.000,'0',12,12,1,1,2,0,0,'',0,NULL,NULL,2,'','','','','','',NULL,NULL,0,NULL,0,NULL,0,NULL,0,NULL,0.00000000,NULL,NULL,'',NULL,0,NULL,0,NULL,NULL,NULL,NULL,0,NULL,'',NULL,0,NULL,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,1,NULL,NULL),
@@ -77184,7 +77205,7 @@ INSERT INTO `llx_product_stock` VALUES
 (16,'2025-02-15 08:31:13',25,2,-10,NULL),
 (17,'2025-02-05 14:38:19',24,2,-5,NULL),
 (18,'2025-02-05 14:40:15',27,2,-6,NULL),
-(19,'2025-03-05 08:33:07',28,2,-33,NULL),
+(19,'2025-03-15 09:59:40',28,2,-34,NULL),
 (20,'2025-02-15 08:31:26',30,2,-1,NULL);
 /*!40000 ALTER TABLE `llx_product_stock` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -79734,7 +79755,7 @@ CREATE TABLE `llx_stock_mouvement` (
   PRIMARY KEY (`rowid`),
   KEY `idx_stock_mouvement_fk_product` (`fk_product`),
   KEY `idx_stock_mouvement_fk_entrepot` (`fk_entrepot`)
-) ENGINE=InnoDB AUTO_INCREMENT=113 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=114 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -79847,7 +79868,8 @@ INSERT INTO `llx_stock_mouvement` VALUES
 (109,'2025-02-15 08:31:26','2025-02-15 09:31:26',30,2,-1,0.00000000,2,12,'TakePOS - Facture TC1-2502-0018',471,'facture',NULL,0,'20250215093126','',NULL,NULL,NULL),
 (110,'2025-03-05 08:32:24','2025-03-05 09:32:24',28,2,-10,0.00000000,2,12,'TakePOS - Facture TC1-2503-0019',472,'facture',NULL,0,'20250305093224','',NULL,NULL,NULL),
 (111,'2025-03-05 08:33:00','2025-03-05 09:33:00',28,2,-10,0.00000000,2,12,'TakePOS - Facture TC1-2503-0019',472,'facture',NULL,0,'20250305093300','',NULL,NULL,NULL),
-(112,'2025-03-05 08:33:07','2025-03-05 09:33:07',28,2,-10,0.00000000,2,12,'TakePOS - Facture TC1-2503-0019',472,'facture',NULL,0,'20250305093307','',NULL,NULL,NULL);
+(112,'2025-03-05 08:33:07','2025-03-05 09:33:07',28,2,-10,0.00000000,2,12,'TakePOS - Facture TC1-2503-0019',472,'facture',NULL,0,'20250305093307','',NULL,NULL,NULL),
+(113,'2025-03-15 09:59:40','2025-03-15 10:59:40',28,2,-1,0.00000000,2,12,'TakePOS - Facture TC1-2503-0020',475,'facture',NULL,0,'20250315105940','',NULL,NULL,NULL);
 /*!40000 ALTER TABLE `llx_stock_mouvement` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -83245,4 +83267,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-03-05 10:15:54
+-- Dump completed on 2025-03-15 11:34:26

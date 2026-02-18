@@ -729,7 +729,7 @@ $formother = new FormOther($db);
 if ($withtab) {
 	$title = $langs->trans("ModuleSetup").' '.$langs->trans('BlockedLog');
 } else {
-	$title = $langs->trans("BrowseBlockedLog");
+	$title = $langs->trans("ArchiveLogs");
 }
 $help_url = "EN:Module_Unalterable_Archives_-_Logs|FR:Module_Archives_-_Logs_Inaltérable";
 
@@ -960,10 +960,14 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 					$previoushashexport = $signatureexport;
 				}
 
-				if ($lineanalyzed && ($lineactioncode == 'BILL_VALIDATE' || $lineactioncode == 'PAYMENT_CUSTOMER_CREATE')) {
+				if ($lineanalyzed && ($lineactioncode == 'BILL_VALIDATE' || $lineactioncode == 'PAYMENT_CUSTOMER_CREATE' || $lineactioncode == 'PAYMENT_CUSTOMER_DELETE')) {
 					// For action = BILL_VALIDATE, we keep only first invoice found, but this should not happen because edition of invoice is never possible on
 					// certified version and very difficult on other version.
 					if ($lineactioncode != 'BILL_VALIDATE' || empty($refinvoicefound[$lineref])) {
+						if ($lineactioncode == 'PAYMENT_CUSTOMER_CREATE' || $lineactioncode == 'PAYMENT_CUSTOMER_DELETE') {
+							$lineactioncode = 'PAYMENT_CUSTOMER';
+						}
+
 						$totalhtamountforaction[$lineactioncode] += $lineamountht;
 						$totalvatamountforaction[$lineactioncode] += ($lineamountttc - $lineamountht);
 						$totalamountforaction[$lineactioncode] += $lineamountttc;
