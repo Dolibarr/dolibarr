@@ -992,6 +992,9 @@ function write_conf_file($conffile)
 		fwrite($fp, '$dolibarr_main_restrict_os_commands=\'mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pg_restore, clamdscan, clamdscan.exe\';');
 		fwrite($fp, "\n");
 
+		fwrite($fp, '$dolibarr_main_restrict_eval_methods=\'getDolGlobalString, getDolGlobalInt, getDolCurrency, getDolEntity, getDolDBType, fetchNoCompute, hasRight, isAdmin, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, preg_match\';');
+		fwrite($fp, "\n");
+
 		fwrite($fp, '$dolibarr_nocsrfcheck=\'0\';');
 		fwrite($fp, "\n");
 
