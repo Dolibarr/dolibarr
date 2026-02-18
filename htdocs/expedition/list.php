@@ -557,8 +557,10 @@ if (empty($reshook)) {
 			if ($search_company) {
 				$param .= "&search_company=".urlencode($search_company);
 			}
-			if ($search_shipping_method_id) {
-				$param .= "&amp;search_shipping_method_id=".urlencode($search_shipping_method_id);
+			if ($search_shipping_method_ids) {
+				foreach ($search_shipping_method_ids as $value) {
+					$param .= "&amp;search_shipping_method_ids[]=".urlencode($value);
+				}
 			}
 			if ($search_tracking) {
 				$param .= "&search_tracking=".urlencode($search_tracking);
