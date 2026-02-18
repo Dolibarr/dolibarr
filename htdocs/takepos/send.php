@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2019	Thibault FOUCART      <support@ptibogxiv.net>
  * Copyright (C) 2020	Andreu Bisquerra Gaya <jove@bisquerra.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -133,7 +133,7 @@ if ($action == "send" && $user->hasRight('takepos', 'run')) {
 
 		print 'Failed to send email: '.$mail->error;
 
-		http_response_code('500');
+		http_response_code(500);
 	} else {
 		$result = $mail->sendfile();
 		if ($result) {
@@ -170,12 +170,12 @@ if ($action == "send" && $user->hasRight('takepos', 'run')) {
 				print "\n";
 				print 'If template ask to join file, it may include the file '.implode(',', $joinFile);
 			} else {
-				http_response_code('500');
+				http_response_code(500);
 			}
 		} else {
 			print 'Failed to send email: '.$mail->error;
 
-			http_response_code('500');
+			http_response_code(500);
 		}
 	}
 
