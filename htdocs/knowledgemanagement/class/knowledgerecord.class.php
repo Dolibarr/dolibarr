@@ -1003,28 +1003,28 @@ class KnowledgeRecord extends CommonObject
 		return $this->initAsSpecimenCommon();
 	}
 
-	/**
-	 * 	Create an array of lines
-	 *
-	 * 	@return KnowledgeRecordLine[]|int	array of lines if OK, <0 if KO
-	 */
-	public function getLinesArray()
-	{
-		$this->lines = array();
+	// /**
+	//  * 	Create an array of lines
+	//  *
+	//  * 	@return KnowledgeRecordLine[]|int	array of lines if OK, <0 if KO
+	//  */
+	// public function getLinesArray()
+	// {
+	// 	$this->lines = array();
 
-		$objectline = new KnowledgeRecordLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, '(fk_knowledgerecord:=:'.((int) $this->id).')');
+	// 	$objectline = new KnowledgeRecordLine($this->db);
+	// 	$result = $objectline->fetchAll('ASC', 'position', 0, 0, '(fk_knowledgerecord:=:'.((int) $this->id).')');
 
-		if (is_numeric($result)) {
-			$this->error = $objectline->error;
-			$this->errors = $objectline->errors;
-			return $result;
-		} else {
-			$this->lines = $result;
-			// @phpstan-ignore-next-line
-			return $result;  // @phan-suppress-current-line PhanTypeMismatchReturn
-		}
-	}
+	// 	if (is_numeric($result)) {
+	// 		$this->error = $objectline->error;
+	// 		$this->errors = $objectline->errors;
+	// 		return $result;
+	// 	} else {
+	// 		$this->lines = $result;
+	// 		// @phpstan-ignore-next-line
+	// 		return $result;  // @phan-suppress-current-line PhanTypeMismatchReturn
+	// 	}
+	// }
 
 	/**
 	 *  Returns the reference to the following non used object depending on the active numbering module.
@@ -1236,25 +1236,25 @@ class KnowledgeRecord extends CommonObject
 }
 
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
+// require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 
-/**
- * Class KnowledgeRecordLine. You can also remove this and generate a CRUD class for lines objects.
- */
-class KnowledgeRecordLine extends CommonObjectLine
-{
-	// To complete with content of an object KnowledgeRecordLine
-	// We should have a field rowid, fk_knowledgerecord and position
+// /**
+//  * Class KnowledgeRecordLine. You can also remove this and generate a CRUD class for lines objects.
+//  */
+// class KnowledgeRecordLine extends CommonObjectLine
+// {
+// 	// To complete with content of an object KnowledgeRecordLine
+// 	// We should have a field rowid, fk_knowledgerecord and position
 
-	/**
-	 * Constructor
-	 *
-	 * @param DoliDB $db Database handler
-	 */
-	public function __construct(DoliDB $db)
-	{
-		$this->db = $db;
+// 	/**
+// 	 * Constructor
+// 	 *
+// 	 * @param DoliDB $db Database handler
+// 	 */
+// 	public function __construct(DoliDB $db)
+// 	{
+// 		$this->db = $db;
 
-		$this->isextrafieldmanaged = 0;
-	}
-}
+// 		$this->isextrafieldmanaged = 0;
+// 	}
+// }

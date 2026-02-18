@@ -86,6 +86,7 @@ $cancel = GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'usercard'; // To manage different context of search
 $backtopage = GETPOST('backtopage');
 $backtopageforcancel = GETPOST('backtopageforcancel');
+$forcepasswordchange = GETPOSTINT('forcepasswordchange');
 
 if (empty($id) && $action != 'add' && $action != 'create') {
 	$id = $user->id;
@@ -345,6 +346,7 @@ if (empty($reshook)) {
 			$object->datestartvalidity = $datestartvalidity;
 			$object->dateendvalidity = $dateendvalidity;
 			$object->birth = $dateofbirth;
+			$object->force_pass_change = $forcepasswordchange;
 
 			$object->fk_warehouse = GETPOSTINT('fk_warehouse');
 
@@ -527,6 +529,7 @@ if (empty($reshook)) {
 				$object->datestartvalidity = $datestartvalidity;
 				$object->dateendvalidity = $dateendvalidity;
 				$object->birth = $dateofbirth;
+				$object->force_pass_change = $forcepasswordchange;
 
 				if (isModEnabled('stock')) {
 					$object->fk_warehouse = GETPOSTINT('fk_warehouse');
@@ -1214,6 +1217,15 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print $form->selectDate($dateendvalidity, 'dateendvalidity', 0, 0, 1, 'formdateendvalidity', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
 	print '</td>';
 	print "</tr>\n";
+
+	// Force update on next login -- only on dolibarr auth context
+	if ($_SESSION["dol_authmode"] == 'dolibarr') {
+		print '<tr><td class="titlefieldcreate">'.$langs->trans("ForcePasswordChange").'</td>';
+		print '<td>';
+		print '<input type="checkbox" name="forcepasswordchange" value="1"'.(GETPOST('forcepasswordchange') == '1' ? ' checked="checked"' : '').'>';
+		print '</td>';
+		print "</tr>\n";
+	}
 
 	// Password
 	print '<tr><td class="fieldrequired">'.$langs->trans("Password").'</td>';
@@ -2009,6 +2021,20 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</td>';
 			print "</tr>\n";
 
+			// Force update on next login only on dolibarr auth mode
+			if ($_SESSION["dol_authmode"] == 'dolibarr') {
+				print '<tr><td class="titlefieldcreate">'.$langs->trans("ForcePasswordChange").'</td>';
+				print '<td>';
+				if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2) {
+					print '<input type="checkbox" disabled name="forcepasswordchange" value="1"'.($object->force_pass_change ? ' checked="checked"' : '').'>';
+				} else {
+					print yn($object->force_pass_change);
+				}
+				print '</td>';
+				print "</tr>\n";
+			}
+
+
 			// Password for LDAP or HTTP Basic
 			$valuetoshow = '';
 			if (preg_match('/ldap/', $dolibarr_main_authentication)) {
@@ -2682,6 +2708,19 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 			print '</td>';
 			print "</tr>\n";
+
+
+			// Force update on next login only on dolibarr auth mode
+			if ($_SESSION["dol_authmode"] == 'dolibarr') {
+				print '<tr>';
+				print '<td>'.$form->editfieldkey('ForcePasswordChange', 'forcepasswordchange', '', $object, 0).'</td><td>';
+				if ($permissiontoedit) {
+					print '<input type="checkbox" name="forcepasswordchange" value="1"'.($object->force_pass_change ? ' checked="checked"' : '').'>';
+				} else {
+					print '<input type="checkbox" name="forcepasswordchange" disabled value="1"'.($object->force_pass_change ? ' checked="checked"' : '').'>';
+				}
+				print '</td></tr>';
+			}
 
 			// Pass
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("Password").'</td>';
