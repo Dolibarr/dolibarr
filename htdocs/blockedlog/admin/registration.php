@@ -67,6 +67,9 @@ if ($cancel && $origin == 'initmodule') {
 	header("Location: ".DOL_URL_ROOT."/admin/modules.php");
 	exit(0);
 }
+if ($cancel) {
+	$action = '';
+}
 
 if ($action == 'update') {
 	$error = 0;
@@ -292,7 +295,9 @@ if (in_array($mysoc->country_code, array('FR'))) {
 		}
 	} else {
 		$htmltext = ($infotoshow ? $infotoshow.'<br>' : '');
-		$htmltext .= $langs->trans("ApplicationHasBeenRegistered").'<br>';
+		$htmltext .= $langs->trans("ApplicationHasBeenRegistered");
+		$htmltext .= ' '.$langs->trans("RegistrationNumber").': <span class="badge-text badge-secondary">'.dol_trunc($registrationnumber, 10).'</span>';
+		$htmltext .= '<br>';
 		$htmltext .= $langs->trans("LastRegistrationDate").' : ';
 		//$htmltext .= dol_print_date(getDolGlobalString('MAIN_FIRST_REGISTRATION_OK_DATE'), 'dayhour', 'tzuserrel');
 		$htmltext .= getDolGlobalString('MAIN_FIRST_REGISTRATION_OK_DATE');
@@ -468,7 +473,6 @@ if (empty($mode)) {
 		$formSetup->htmlButtonLabel = 'SaveUpdate';
 	} else {
 		$formSetup->htmlButtonLabel = 'SaveAndEnableModule';
-		$formSetup->htmlButton2Label = '<input class="button button-save reposition" type="submit" value="' . $langs->trans("Cancel") . '">';
 	}
 
 	print $formSetup->generateOutput(2, true, '', '');

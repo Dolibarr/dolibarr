@@ -1522,6 +1522,7 @@ if (isALNERunningVersion()) {
 }
 
 // Button to print receipt
+// This section should be same than into invoice.php
 if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {		// deprecated method
 	if (getDolGlobalString('TAKEPOS_PRINT_SERVER') && filter_var(getDolGlobalString('TAKEPOS_PRINT_SERVER'), FILTER_VALIDATE_URL) == true) {
 		// If TAKEPOS_PRINT_SERVER is an URL

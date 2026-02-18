@@ -445,6 +445,7 @@ $orderprinterallowed = (getDolGlobalString('TAKEPOS_BAR_RESTAURANT') && getDolGl
 $customprinttemplateallowed = true;
 include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 if (isALNERunningVersion()) {		// No need to show the custom template when isALNERunningVersion is true because it has no effect (disabled by receipt.php).
+	$customprinterallowed = false;
 	$customprinttemplateallowed = false;	// Custom printer may be allowed if mandatory information in template are guaranteed. For the moment, we prefer not allow this.
 }
 
