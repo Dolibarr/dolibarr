@@ -447,7 +447,7 @@ if (is_array($blocks)) {
 
 			// Action column
 			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-				print '<td class="liste_titre">';
+				print '<td>';
 				print '</td>';
 			}
 
@@ -582,36 +582,43 @@ if (is_array($blocks)) {
 		foreach ($totalamount as $key => $totalamountperref) {
 			if ($key == 'BILL_VALIDATE' || $key == 'PAYMENT_CUSTOMER_CREATE') {
 				// Total
-				print '<tr class="totalline">';
+				print '<tr class="liste_total">';
 
 				// Action column
 				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-					print '<td class="liste_titre">';
+					print '<td>';
 					print '</td>';
 				}
 
 				// ID
-				print '<td colspan="2">'.dolPrintHTML($langs->trans("TotalForAction").' '.$langs->trans('log'.$key)).'</td>';
+				print '<td colspan="4">';
+				print dolPrintHTML($langs->trans("TotalForAction").' '.$langs->trans('log'.$key));
+				if ($key == 'BILL_VALIDATE') {
+					print ' <span class="opacitymedium">('.$langs->trans("Turnover").')</span>';
+				} elseif ($key == 'PAYMENT_CUSTOMER_CREATE') {
+					print ' <span class="opacitymedium">('.$langs->trans("TurnoverCollected").')</span>';
+				}
+				print '</td>';
 
 				// Date
 				//print '<td class="nowraponall"></td>';
 
 				// User
-				print '<td class="tdoverflowmax200">';
-				print '</td>';
+				//print '<td class="tdoverflowmax200">';
+				//print '</td>';
 
 				// Module source
-				print '<td></td>';
+				//print '<td></td>';
 
 				// Action
 				print '<td></td>';
 
 				// Ref
-				print '<td class="nowraponall">';
-				print '</td>';
+				//print '<td class="nowraponall">';
+				//print '</td>';
 
 				// Amount (HT)
-				print '<td class="right nowraponall">';
+				print '<td class="right nowraponall" colspan="2">';
 				$totalhttoshow = 0;
 				foreach ($totalhtamount[$key] as $value) {	// Loop on each module
 					$totalhttoshow += $value;
@@ -632,12 +639,14 @@ if (is_array($blocks)) {
 					print $langs->trans("HT").': ';
 					print price($totalhttoshow);
 
-					print '<br>';
+					//print '<br>';
+					print ' &nbsp; ';
 
 					print $langs->trans("VAT").': ';
 					print price($totalvattoshow);
 
-					print '<br>';
+					//print '<br>';
+					print ' &nbsp; ';
 
 					print $langs->trans("TTC").': ';
 					print price($totaltoshow);

@@ -273,7 +273,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 		$resql = $db->query($sql);
 		if ($resql) {
 			// Print line with title
-			fwrite($fh, "BEGIN - regnumber=".dol_trunc($registrationnumber, 10)." - date=".$yearmonthdateofexport." - period=".$yearmonthtoexport.($periodnotcomplete ? '-'.$suffixperiod : '')." - formatexport=".$formatexport." - user=".$user->getFullName($langs)
+			fwrite($fh, "BEGIN - regnumber=".dol_trunc($registrationnumber, 10)." - date=".$yearmonthdateofexport." - period=".$yearmonthtoexport.($periodnotcomplete ? '-'.$suffixperiod : '')." - entity=".((int) $conf->entity)." - formatexport=".$formatexport." - user=".$user->getFullName($langs)
 				.';'.$langs->transnoentities('Id')
 				.';'.$langs->transnoentities('DateCreation')
 				.';'.$langs->transnoentities('Action')
@@ -291,7 +291,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 				.';'.$langs->transnoentities('FingerprintDatabase')			// Signature
 				.';'.$langs->transnoentities('Status')
 				//.';'.$langs->transnoentities('FingerprintExport')
-				."\n");
+				);
 
 			$loweridinerror = 0;
 			$i = 0;
@@ -310,6 +310,13 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 
 				$block_static->id = $obj->rowid;
 				$block_static->entity = $obj->entity;
+
+				if ($i == 0) {
+					$tmparray = $block_static->getPreviousHash(0, $block_static->id);
+					$previoushash = $tmparray['previoushash'];
+
+					fwrite($fh, ";NOTE - previoushash=".$previoushash."\n");
+				}
 
 				$block_static->date_creation = $db->jdate($obj->date_creation);		// jdate(date_creation) is UTC
 				$block_static->date_modification = $db->jdate($obj->tms);			// jdate(tms) is UTC
@@ -783,6 +790,7 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 	$period = '';
 	$regnumber = '';
 	$formatexport = '';
+	$fileentity = 1;
 	if (preg_match('/\speriod=([^\s]+)/', $line, $reg)) {
 		$period = $reg[1];	// Get period on first line
 	}
@@ -791,6 +799,9 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 	}
 	if (preg_match('/\sformatexport=([^\s]+)/', $line, $reg)) {
 		$formatexport = $reg[1];	// Get export format (VE1, VE2...)
+	}
+	if (preg_match('/\sentity=([^\s]+)/', $line, $reg)) {
+		$fileentity = $reg[1];		// Get entity of file (usually 1)
 	}
 	print '<b>'.$langs->trans("Period").'</b> : '.$period.'<br>';
 
@@ -890,11 +901,12 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 					$linetech = $line[0];
 
 					$block_static->id = (int) $line[1];
+					$block_static->entity = (int) $fileentity;
 					$block_static->date_creation = (string) $line[2];
 					$block_static->action = $lineactioncode = (string) $line[3];
 					$block_static->module_source = (string) $line[4];
-					$block_static->amounts_taxexcl = $lineamountht = $line[5];
-					$block_static->amounts = $lineamountttc = $line[6];
+					$block_static->amounts_taxexcl = $lineamountht = ($line[5] === '' ? null : (float) $line[5]);
+					$block_static->amounts = $lineamountttc = (float) $line[6];
 					$block_static->ref_object = $lineref = (string) $line[7];
 					$block_static->date_object = (int) $line[8];
 					$block_static->user_fullname = (string) $line[9];
@@ -912,16 +924,18 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 					// the one hosting the initial database of the archive)
 					$tmp = $block_static->checkSignature($previoushash, 2);
 
-					/* To see detail to get signature
-					if ($block_static->id == 397) {
+					// To see detail to get signature
+					/*
+					if ($block_static->id == 411) {
 						$concatenateddata = $block_static->buildKeyForSignature($block_static->object_format);
 						if (empty($previoushash)) {
 							$tmparray = $block_static->getPreviousHash(0, $block_static->id);
 							$previoushash = $tmparray['previoushash'];
 						}
-						var_dump($block_static->id, $previoushash, $concatenateddata);
-					}
-					*/
+						var_dump($block_static->id, $previoushash, $concatenateddata, $tmp);
+						exit;
+					}*/
+
 
 					$signature = $tmp['calculatedsignature'];
 					$previoushash = $block_static->signature;
@@ -990,11 +1004,11 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 		if ($recalculatedhashsign && $recalculatedhashsign == $hashsign) {
 			print img_picto('', 'tick', 'class="valignmiddle pictofixedwidth"');
 			print '<b>'.$langs->trans("FileIntegrity").'</b> ';
-			print ' '.$form->textwithpicto('', $algosign.' = '.$recalculatedhashsign);
+			print ' '.$form->textwithpicto('', $langs->trans("FileContentMatchSignature").'<br><br>'.$algosign.' = '.$recalculatedhashsign);
 		} else {
 			print img_picto('', 'cross', 'class="error valignmiddle pictofixedwidth"');
 			print '<b>'.$langs->trans("FileIntegrity").'</b> ';
-			print ' '.$form->textwithpicto('', $langs->trans("FileHasBeenCorrupted").'<br>Recalculated '.$recalculatedhashsign.' != Found in file '.$hashsign);
+			print ' '.$form->textwithpicto('', $langs->trans("FileHasBeenCorrupted").'<br><br>Recalculated '.$recalculatedhashsign.' != Found in file '.$hashsign);
 		}
 		print '<br><br>';
 
@@ -1002,7 +1016,7 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 			print img_picto('', 'tick', 'class="valignmiddle pictofixedwidth"');
 			print '<b>'.$langs->trans("FileAuthenticity").'</b> ';
 			print ' - <span class="opacitymedium">'.$langs->trans("FileWasGeneratedByThisInstance").'</span>';
-			print ' '.$form->textwithpicto('', $algoauth.' = '.$recalculatedhashauth);
+			print ' '.$form->textwithpicto('', $langs->trans("FileContentMatchSignature").'<br><br>'.$algoauth.' = '.$recalculatedhashauth);
 		} elseif ($recalculatedhashsign == $hashsign) {
 			print img_picto('', 'cross', 'class="error valignmiddle pictofixedwidth"');
 			print '<b>'.$langs->trans("FileAuthenticity").'</b> ';
@@ -1028,9 +1042,14 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 			print '<br><br>';
 		}
 
-		print '<b>Detection of database restoration or not allowed line deletion in period</b>: ';
-		print 'This feature is for the moment available only from https://www.dolibarr.org/onlinecheckarchive.php<br>';
+		print img_picto('', 'minus', 'class="valignmiddle pictofixedwidth"');
+		print '<b>'.$langs->trans("DetectionOfSystemRestoration").'</b>: ';
+		print '<span class="opacitymedium">';
+		print $langs->trans("FeatureOnlyWhenArchiveAnalyzedFrom", "https://www.dolibarr.org/onlinecheckarchive.php");
+		print '</span><br>';
 		print '<br>';
+
+		print '<hr>';
 
 		$arraykeys = array('BILL_VALIDATE', 'PAYMENT_CUSTOMER_CREATE');
 		foreach ($arraykeys as $key) {
@@ -1038,7 +1057,13 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 			$totalvattoshow = $totalvatamountforaction[$key];
 			$totaltoshow = $totalamountforaction[$key];
 
-			print '<b>'.dolPrintHTML($langs->trans("TotalForAction").' '.$langs->trans('log'.$key)).'</b>: ';
+			print '<b>'.dolPrintHTML($langs->trans("TotalForAction").' '.$langs->trans('log'.$key)).'</b>';
+			if ($key == 'BILL_VALIDATE') {
+				print ' <span class="opacitymedium">('.$langs->trans("Turnover").')</span>';
+			} elseif ($key == 'PAYMENT_CUSTOMER_CREATE') {
+				print ' <span class="opacitymedium">('.$langs->trans("TurnoverCollected").')</span>';
+			}
+			print ': ';
 
 			if ($key == 'PAYMENT_CUSTOMER_CREATE') {
 				print '<span class="amount">'.price($totaltoshow, 0, $langs, 1, -1, -1, getDolCurrency()).'</span>';
@@ -1056,8 +1081,16 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 				print $langs->trans("TTC").': ';
 				print '<span class="amount">'.price($totaltoshow, 0, $langs, 1, -1, -1, getDolCurrency()).'</span>';
 			}
-			print '<br><br>';
+			print '<br>';
 		}
+
+		print '<br>';
+
+		$text = $langs->trans("IfIntegrityAuthenticityIsOkYouCanGetdetailByOpeningTheFile");
+		$text .= '<br>';
+		$text .= $langs->trans("IfIntegrityAuthenticityIsOkYouCanGetdetailByOpeningTheFile2");
+		//$langs->transnoentitiesnoconv("logBILL_VALIDATE"), $langs->transnoentitiesnoconv("logPAYMENT_CUSTOMER_CREATE"), $langs->transnoentitiesnoconv("logDOC_DOWNLOAD"), $langs->transnoentitiesnoconv("logCASHCONTROL_CLOSE")).'...');
+		print info_admin($text);
 	}
 
 
