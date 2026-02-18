@@ -210,7 +210,6 @@ if [ "$confirm" == "confirmresetblockedlog" ]; then
 	export res=$?
 fi
 
-exit;
 
 # ---------------------------- Copy demo files
 export documentdir
