@@ -22,8 +22,10 @@ UPDATE votre_table SET
 
 
 ***** To force date of a server to make tests
-sudo timedatectl set-ntp false; sudo timedatectl set-time "2025-01-15 09:30:00";
-sudo timedatectl status;
+timedatectl set-ntp false;   ou  systemctl stop ntp;
+timedatectl set-time "2025-04-15 09:30:00";
+timedatectl status;
+
 sudo /etc/init.d/apache2 stop; sudo /etc/init.d/apache2 start; sudo /etc/init.d/apache2 status;
 
 Warning: When going in past, you must be sure that users have no date of session invalidation after this date. You can fix this with:
