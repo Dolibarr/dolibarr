@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2017-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2023       Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2023       Joachim Kueter     		<git-jk@bloxera.com>
+/* Copyright (C) 2017-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2018-2025	Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2023		Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2023		Joachim Kueter			<git-jk@bloxera.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -49,13 +49,13 @@ if (isModEnabled('project')) {
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("compta", "banks", "bills", "users", "accountancy", "categories"));
+$langs->loadLangs(array("accountancy", "banks", "bills", "categories", "compta", "users"));
 
 // Get parameters
 $id = GETPOSTINT('id');
 $action = GETPOST('action', 'alpha');
 $confirm = GETPOST('confirm');
-$cancel = GETPOST('cancel');
+$cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 $accountid = GETPOSTINT("accountid") > 0 ? GETPOSTINT("accountid") : 0;
@@ -148,6 +148,10 @@ if (empty($reshook)) {
 		$object->sens = GETPOSTINT('sens');
 		$object->fk_project = GETPOSTINT('fk_project');
 
+		if (!checkGeneralAccountAllowsAuxiliary($db, $object->accountancy_code, $object->subledger_account)) {
+			setEventMessages($langs->trans("ErrorAccountNotCentralized"). ". " . $langs->trans("RemoveSubsidiaryAccountOrAdjustTheGeneralAccount"), null, 'errors');
+			$error++;
+		}
 		if (empty($datep) || empty($datev)) {
 			$langs->load('errors');
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
@@ -180,7 +184,9 @@ if (empty($reshook)) {
 		}
 
 		$bankaccount = new Account($db);
-		$bankaccount->fetch($object->fk_account);
+		if ($object->fk_account > 0) {
+			$bankaccount->fetch((int) $object->fk_account);
+		}
 
 		// Check currency
 		$currencyofpayment = $conf->currency;	// The currency of various payment is not yet asked, so we suppose it is the main company currency
@@ -427,6 +433,19 @@ if ($action == 'create') {
             					$(\'#fieldchqemetteur\').val(\'\');
             				}
             			}
+						function toggleSubledger() {
+							var isCentral = $("#accountancy_code option:selected").data("centralized");
+							console.log("the selected general ledger account is centralised?", isCentral);
+							if (isCentral) {
+								$("#subledger_account").prop("disabled", false);
+							} else {
+								$("#subledger_account").prop("disabled", true);
+							}
+						}
+						toggleSubledger();
+
+						$("#accountancy_code").on("change", toggleSubledger);
+						$("#accountancy_code").on("select2:select", toggleSubledger);
 			';
 
 		print '	});'."\n";
@@ -467,6 +486,7 @@ if ($action == 'create') {
 	print '<tr><td>';
 	print $form->editfieldkey('Amount', 'amount', '', $object, 0, 'string', '', 1).'</td><td>';
 	print '<input name="amount" id="amount" class="minwidth50 maxwidth100" value="'.$amount.'">';
+	print ' '.$langs->getCurrencySymbol();
 	print '</td></tr>';
 
 	// Bank
@@ -487,19 +507,19 @@ if ($action == 'create') {
 	// Number
 	if (isModEnabled("bank")) {
 		print '<tr><td><label for="num_payment">'.$langs->trans('Numero');
-		print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
+		print ' <em class="opacitymedium">('.$langs->trans("ChequeOrTransferNumber").')</em>';
 		print '</label></td>';
 		print '<td><input name="num_payment" class="maxwidth150onsmartphone" id="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";
 
 		// Check transmitter
 		print '<tr><td class="'.(GETPOST('paymenttype') == 'CHQ' ? 'fieldrequired ' : '').'fieldrequireddyn"><label for="fieldchqemetteur">'.$langs->trans('CheckTransmitter');
-		print ' <em>('.$langs->trans("ChequeMaker").')</em>';
+		print ' <em class="opacitymedium">('.$langs->trans("ChequeMaker").')</em>';
 		print '</label></td>';
 		print '<td><input id="fieldchqemetteur" name="chqemetteur" size="30" type="text" value="'.GETPOST('chqemetteur', 'alphanohtml').'"></td></tr>';
 
 		// Bank name
 		print '<tr><td><label for="chqbank">'.$langs->trans('Bank');
-		print ' <em>('.$langs->trans("ChequeBank").')</em>';
+		print ' <em class="opacitymedium">('.$langs->trans("ChequeBank").')</em>';
 		print '</label></td>';
 		print '<td><input id="chqbank" name="chqbank" size="30" type="text" value="'.GETPOST('chqbank', 'alphanohtml').'"></td></tr>';
 	}
@@ -523,9 +543,9 @@ if ($action == 'create') {
 	print $hookmanager->resPrint;
 
 	// Category
-	if (is_array($options) && count($options) && $conf->categorie->enabled) {
+	if (is_array($options) && count($options) && isModEnabled('category')) {
 		print '<tr><td>'.$langs->trans("RubriquesTransactions").'</td><td>';
-		print img_picto('', 'category').Form::selectarray('category_transaction', $options, GETPOST('category_transaction'), 1, 0, 0, '', 0, 0, 0, '', 'minwidth300', 1);
+		print img_picto('', 'category', 'class="pictofixedwidth"').Form::selectarray('category_transaction', $options, GETPOST('category_transaction'), 1, 0, 0, '', 0, 0, 0, '', 'minwidth300', 1);
 		print '</td></tr>';
 	}
 
@@ -566,7 +586,16 @@ if ($action == 'create') {
 	print '<tr><td>';
 	$labelsens = $form->textwithpicto($langs->trans('Sens'), $langs->trans("AccountingDirectionHelp"));
 	print $form->editfieldkey($labelsens, 'sens', '', $object, 0, 'string', '', 1).'</td><td>';
-	$sensarray = array('0' => $langs->trans("Debit"), '1' => $langs->trans("Credit"));
+	$sensarray = array(
+		'0' => array('label' => $langs->trans("Debit")),
+		'1' => array('label' => $langs->trans("Credit"))
+	);
+	// We can't use this module to enter customer payments
+	include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+	if (isALNERunningVersion()) {
+		$sensarray['1']['disabled'] = 1;
+	}
+
 	print $form->selectarray('sens', $sensarray, $sens, 1, 0, 0, '', 0, 0, 0, '', 'minwidth100', 1);
 	print '</td></tr>';
 
@@ -618,7 +647,7 @@ if ($id) {
 		if ($permissiontoadd) {
 			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+				$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
 			if ($action == 'classify') {
 				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);

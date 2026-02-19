@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2007-2012  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2014-2016  Juanjo Menent       <jmenent@2byte.es>
- * Copyright (C) 2016       Florian Henry       <florian.henry@atm-consulting.fr>
- * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2007-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2014-2016  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2016       Florian Henry           <florian.henry@atm-consulting.fr>
+ * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,20 +49,14 @@ class CGenericDic extends CommonDict
 	public $lines = array();
 
 	/**
-	 * @var string
+	 * @var ?string
 	 */
 	public $code;
 
 	/**
-	 * @var string Label
+	 * @var ?string Label
 	 */
 	public $label;
-
-	/**
-	 * @var int<0,1>
-	 */
-	public $active;
-
 
 	/**
 	 * Constructor
@@ -231,7 +225,7 @@ class CGenericDic extends CommonDict
 	 * @param string 		$sortfield 		Sort field
 	 * @param int    		$limit     		Limit
 	 * @param int    		$offset    		offset limit
-	 * @param string|array  $filter    		filter USF
+	 * @param string|string[] $filter    	filter USF
 	 * @param string 		$filtermode 	filter mode (AND or OR)
 	 * @return int 							Return integer <0 if KO, >0 if OK
 	 */
@@ -450,7 +444,7 @@ class CGenericDic extends CommonDict
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$error = 0;
-		$object = new Ctyperesource($this->db);
+		$object = new CGenericDic($this->db);
 
 		$this->db->begin();
 

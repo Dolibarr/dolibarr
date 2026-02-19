@@ -22,12 +22,12 @@
  *
  *   mailto:thomas.harding@laposte.net
  *   Thomas Harding, 56 rue de la bourie rouge, 45 000 ORLEANS -- FRANCE
- *   
+ *
  */
-    
+
 /*
 
-    This class is intended to implement non required operations of 
+    This class is intended to implement non required operations of
     Internet Printing Protocol on client side.
 
     References needed to debug / add functionnalities:
@@ -101,7 +101,7 @@ class ExtendedPrintIPP extends PrintIPP
                 self::_errorLog(sprintf("printing uri %s: ",$uri,$this->last_job)
                             .$this->serveroutput->status,1);
             }
-            return $this->serveroutput->status; 
+            return $this->serveroutput->status;
         }
 
         $this->status = array_merge($this->status,array("OPERATION FAILED"));
@@ -172,7 +172,7 @@ class ExtendedPrintIPP extends PrintIPP
 
         self::_putDebug(sprintf(_("String sent to the server is:\n%s\n"), $this->stringjob));
 
-        self::_putDebug(sprintf(_("purging jobs of %s\n"),$this->printer_uri)); 
+        self::_putDebug(sprintf(_("purging jobs of %s\n"),$this->printer_uri));
 
         $this->output = $this->stringjob;
 
@@ -200,7 +200,7 @@ class ExtendedPrintIPP extends PrintIPP
                                              .$this->serveroutput->status,1);
             }
 
-            return $this->serveroutput->status; 
+            return $this->serveroutput->status;
         }
 
         $this->status = array_merge($this->status,array("OPERATION FAILED"));
@@ -262,7 +262,7 @@ class ExtendedPrintIPP extends PrintIPP
         {
             $this->meta->fidelity = '';
         }
- 
+
         if (!isset($this->meta->sides))
         {
             $this->meta->sides = '';
@@ -292,7 +292,7 @@ class ExtendedPrintIPP extends PrintIPP
         }
 
         $timeout = self::_integerBuild($this->timeout);
-        
+
         $this->meta->timeout = chr(0x21) // integer
                              . self::_giveMeStringLength("multiple-operation-time-out")
                              . "multiple-operation-time-out"
@@ -327,7 +327,7 @@ class ExtendedPrintIPP extends PrintIPP
 
         self::_putDebug(sprintf(_("String sent to the server is:\n%s\n"), $this->stringjob));
 
-        self::_putDebug(sprintf(_("creating job %s, printer %s\n"),$this->last_job,$this->printer_uri)); 
+        self::_putDebug(sprintf(_("creating job %s, printer %s\n"),$this->last_job,$this->printer_uri));
 
         $this->output = $this->stringjob;
 
@@ -364,9 +364,9 @@ class ExtendedPrintIPP extends PrintIPP
                 $this->jobs = array_merge($this->jobs,array(""));
                 $this->jobs_uri = array_merge($this->jobs_uri,array(""));
                 self::_errorLog(sprintf(_("Create-Job: %s"),$this->serveroutput->status),1);
-                }                             
-            return $this->serveroutput->status; 
-            }    
+                }
+            return $this->serveroutput->status;
+            }
 
         $this->status = array_merge($this->status,array("OPERATION FAILED"));
         self::_errorLog(date("Y-m-d H:i:s : ")
@@ -390,7 +390,7 @@ class ExtendedPrintIPP extends PrintIPP
 
         if (is_readable($this->data))
         {
-            self::_putDebug( _("sending Document\n")); 
+            self::_putDebug( _("sending Document\n"));
 
             $this->output = $this->stringjob;
 
@@ -410,10 +410,10 @@ class ExtendedPrintIPP extends PrintIPP
         }
         else
         {
-            self::_putDebug( _("sending DATA as document\n")); 
+            self::_putDebug( _("sending DATA as document\n"));
 
             $this->output = $this->stringjob;
-            $this->output .= $this->datahead;    
+            $this->output .= $this->datahead;
             $this->output .= $this->data;
             $this->output .= $this->datatail;
 
@@ -437,7 +437,7 @@ class ExtendedPrintIPP extends PrintIPP
                 $this->jobs_uri = array_merge($this->jobs_uri,array($job));
                 }
             }
-        
+
         if (isset($this->serveroutput) && isset($this->serveroutput->status))
         {
             $this->status = array_merge($this->status,array($this->serveroutput->status));
@@ -452,7 +452,7 @@ class ExtendedPrintIPP extends PrintIPP
                 $this->jobs_uri = array_merge($this->jobs_uri,array(""));
                 self::_errorLog(sprintf("sending document, job %s: %s",$job,$this->serveroutput->status),1);
             }
-            return $this->serveroutput->status; 
+            return $this->serveroutput->status;
         }
 
         $this->status = array_merge($this->status,array("OPERATION FAILED"));
@@ -473,7 +473,7 @@ class ExtendedPrintIPP extends PrintIPP
             return FALSE;
         }
 
-            self::_putDebug( _("sending URI $uri\n")); 
+            self::_putDebug( _("sending URI $uri\n"));
 
             $this->output = $this->stringjob;
 
@@ -512,7 +512,7 @@ class ExtendedPrintIPP extends PrintIPP
                 $this->jobs_uri = array_merge($this->jobs_uri,array(""));
                 self::_errorLog(sprintf("sending uri, job %s: %s",$uri,$job,$this->serveroutput->status),1);
             }
-            return $this->serveroutput->status; 
+            return $this->serveroutput->status;
         }
 
         $this->status = array_merge($this->status,array("OPERATION FAILED"));
@@ -585,7 +585,7 @@ class ExtendedPrintIPP extends PrintIPP
 
         self::_putDebug(sprintf(_("String sent to the server is:\n%s\n"), $this->stringjob));
 
-        self::_putDebug(sprintf(_("pause printer %s\n"),$this->printer_uri)); 
+        self::_putDebug(sprintf(_("pause printer %s\n"),$this->printer_uri));
 
         $this->output = $this->stringjob;
 
@@ -613,7 +613,7 @@ class ExtendedPrintIPP extends PrintIPP
                                              .$this->serveroutput->status,1);
             }
 
-            return $this->serveroutput->status; 
+            return $this->serveroutput->status;
         }
 
         $this->status = array_merge($this->status,array("OPERATION FAILED"));
@@ -682,7 +682,7 @@ class ExtendedPrintIPP extends PrintIPP
 
         self::_putDebug(sprintf(_("String sent to the server is:\n%s\n"), $this->stringjob));
 
-        self::_putDebug(sprintf(_("resume printer %s\n"),$this->printer_uri)); 
+        self::_putDebug(sprintf(_("resume printer %s\n"),$this->printer_uri));
 
         $this->output = $this->stringjob;
 
@@ -710,7 +710,7 @@ class ExtendedPrintIPP extends PrintIPP
                                              .$this->serveroutput->status,1);
             }
 
-            return $this->serveroutput->status; 
+            return $this->serveroutput->status;
         }
 
         $this->status = array_merge($this->status,array("OPERATION FAILED"));
@@ -753,13 +753,13 @@ class ExtendedPrintIPP extends PrintIPP
         }
 
         self::_setJobUri($job_uri);
-        
+
         $until_strings = array('no-hold','day-time','evening','night','weekend','second-shift','third-shift');
         if (in_array($until,$until_strings))
         {
             true;
         }
-        else 
+        else
         {
             $until = 'indefinite';
         }
@@ -784,7 +784,7 @@ class ExtendedPrintIPP extends PrintIPP
 
         self::_putDebug(sprintf(_("String sent to the server is:\n%s\n"), $this->stringjob));
 
-        self::_putDebug(sprintf(_("hold job %s until %s\n"),$job_uri,$until)); 
+        self::_putDebug(sprintf(_("hold job %s until %s\n"),$job_uri,$until));
 
         $this->output = $this->stringjob;
 
@@ -798,9 +798,9 @@ class ExtendedPrintIPP extends PrintIPP
             }
         if (isset($this->serveroutput) && isset($this->serveroutput->status))
         {
-            
+
             $this->status = array_merge($this->status,array($this->serveroutput->status));
-            
+
             if ($this->serveroutput->status == "successfull-ok")
             {
                 self::_errorLog(sprintf(_("hold job %s until %s: "),$job_uri,$until)
@@ -812,7 +812,7 @@ class ExtendedPrintIPP extends PrintIPP
                                              .$this->serveroutput->status,1);
             }
 
-            return $this->serveroutput->status; 
+            return $this->serveroutput->status;
         }
 
         $this->status = array_merge($this->status,array("OPERATION FAILED"));
@@ -823,7 +823,7 @@ class ExtendedPrintIPP extends PrintIPP
 
         return false;
     }
-    
+
 
     public function releaseJob ($job_uri)
     {
@@ -869,7 +869,7 @@ class ExtendedPrintIPP extends PrintIPP
 
         self::_putDebug(sprintf(_("String sent to the server is:\n%s\n"), $this->stringjob));
 
-        self::_putDebug(sprintf(_("release job %s\n"),$job_uri)); 
+        self::_putDebug(sprintf(_("release job %s\n"),$job_uri));
 
         $this->output = $this->stringjob;
 
@@ -884,7 +884,7 @@ class ExtendedPrintIPP extends PrintIPP
         if (isset($this->serveroutput) && isset($this->serveroutput->status))
         {
             $this->status = array_merge($this->status,array($this->serveroutput->status));
-            
+
             if ($this->serveroutput->status == "successfull-ok")
             {
                 self::_errorLog(sprintf(_("release job %s: "),$job_uri)
@@ -896,7 +896,7 @@ class ExtendedPrintIPP extends PrintIPP
                                              .$this->serveroutput->status,1);
             }
 
-            return $this->serveroutput->status; 
+            return $this->serveroutput->status;
         }
 
         $this->status = array_merge($this->status,array("OPERATION FAILED"));
@@ -943,8 +943,8 @@ class ExtendedPrintIPP extends PrintIPP
         $jobattributes = '';
         $operationattributes = '';
         $printerattributes = '';
-        self::_buildValues ($operationattributes,$jobattributes,$printerattributes); 
- 
+        self::_buildValues ($operationattributes,$jobattributes,$printerattributes);
+
         $this->stringjob = chr(0x01) . chr(0x01) // 1.1  | version-number
                          . chr(0x00) . chr (0x0E) // Hold-Job | operation-id
                          . $this->meta->operation_id //           request-id
@@ -959,7 +959,7 @@ class ExtendedPrintIPP extends PrintIPP
 
         self::_putDebug(sprintf(_("String sent to the server is:\n%s\n"), $this->stringjob));
 
-        self::_putDebug(sprintf(_("release job %s\n"),$job_uri)); 
+        self::_putDebug(sprintf(_("release job %s\n"),$job_uri));
 
         $this->output = $this->stringjob;
 
@@ -987,7 +987,7 @@ class ExtendedPrintIPP extends PrintIPP
                                              .$this->serveroutput->status,1);
             }
 
-            return $this->serveroutput->status; 
+            return $this->serveroutput->status;
         }
 
         $this->status = array_merge($this->status,array("OPERATION FAILED"));
@@ -1043,13 +1043,13 @@ class ExtendedPrintIPP extends PrintIPP
         {
             $this->meta->page_ranges = '';
         }
-  
+
         self::_setJobUri($job_uri);
 
         $operationattributes = '';
         $jobattributes = '';
         $printerattributes = '';
-        self::_buildValues ($operationattributes,$jobattributes,$printerattributes); 
+        self::_buildValues ($operationattributes,$jobattributes,$printerattributes);
 
         $this->meta->deleted_attributes = "";
         for ($i = 0 ; $i < count($deleted_attributes) ; $i++)
@@ -1079,7 +1079,7 @@ class ExtendedPrintIPP extends PrintIPP
 
         self::_putDebug(sprintf(_("String sent to the server is:\n%s\n"), $this->stringjob));
 
-        self::_putDebug(sprintf(_("set job attributes for job %s\n"),$job_uri)); 
+        self::_putDebug(sprintf(_("set job attributes for job %s\n"),$job_uri));
 
         $this->output = $this->stringjob;
 
@@ -1107,7 +1107,7 @@ class ExtendedPrintIPP extends PrintIPP
             }
             $this->last_job = $job_uri;
             $this->jobs_uri[count($this->jobs_uri) - 1] = $job_uri;
-            return $this->serveroutput->status; 
+            return $this->serveroutput->status;
         }
 
         $this->status = array_merge($this->status,array("OPERATION FAILED"));
@@ -1186,7 +1186,7 @@ class ExtendedPrintIPP extends PrintIPP
         {
         $document_format = chr(0x49) // document-format tag
             . self::_giveMeStringLength('document-format')
-            . 'document-format' // 
+            . 'document-format' //
             . self::_giveMeStringLength($document_format)
             . $document_format;
         } // value
@@ -1194,7 +1194,7 @@ class ExtendedPrintIPP extends PrintIPP
         $operationattributes = '';
         $jobattributes = '';
         $printerattributes = '';
-        self::_buildValues ($operationattributes,$jobattributes,$printerattributes); 
+        self::_buildValues ($operationattributes,$jobattributes,$printerattributes);
 
         $this->meta->deleted_attributes = "";
         for ($i = 0 ; $i < count($deleted_attributes) ; $i++)
@@ -1225,7 +1225,7 @@ class ExtendedPrintIPP extends PrintIPP
 
         self::_putDebug(sprintf(_("String sent to the server is:\n%s\n"), $this->stringjob));
 
-        self::_putDebug(sprintf(_("set printer attributes for job %s\n"),$this->printer_uri)); 
+        self::_putDebug(sprintf(_("set printer attributes for job %s\n"),$this->printer_uri));
 
         $this->output = $this->stringjob;
 
@@ -1252,7 +1252,7 @@ class ExtendedPrintIPP extends PrintIPP
                                              .$this->serveroutput->status,1);
             }
 
-            return $this->serveroutput->status; 
+            return $this->serveroutput->status;
         }
 
         $this->status = array_merge($this->status,array("OPERATION FAILED"));
@@ -1310,7 +1310,7 @@ class ExtendedPrintIPP extends PrintIPP
                 return FALSE;
             }
         }
-  
+
         if (!isset($this->setup->charset))
         {
             $this->meta->charset = "";
@@ -1574,7 +1574,7 @@ class ExtendedPrintIPP extends PrintIPP
             if (array_key_exists(0,$this->available_printers))
             {
                self::setPrinterURI($this->available_printers[0]);
-            } 
+            }
             else
             {
                 trigger_error(_("_stringJob: Printer URI is not set: die"),E_USER_WARNING);

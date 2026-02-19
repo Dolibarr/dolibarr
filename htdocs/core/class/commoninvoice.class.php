@@ -48,7 +48,7 @@ abstract class CommonInvoice extends CommonObject
 	public $type = self::TYPE_STANDARD;
 
 	/**
-	 * @var int		Sub type of invoice (A subtype code coming from llx_invoice_subtype table. May be used by some countries like Greece)
+	 * @var ?int		Sub type of invoice (A subtype code coming from llx_invoice_subtype table, we store the rowid. May be used by some countries like Greece)
 	 */
 	public $subtype;
 
@@ -139,40 +139,16 @@ abstract class CommonInvoice extends CommonObject
 	/**
 	 * @var float
 	 */
-	public $totalpaid;			// duplicate with sumpayed
+	public $totalpaid;
 	/**
 	 * @var int|float
 	 */
-	public $totaldeposits;		// duplicate with sumdeposit
+	public $totaldeposits;
 	/**
 	 * @var int|float
 	 */
-	public $totalcreditnotes;	// duplicate with sumcreditnote
+	public $totalcreditnotes;
 
-	/**
-	 * @var int|float
-	 */
-	public $sumpayed;
-	/**
-	 * @var int|float
-	 */
-	public $sumpayed_multicurrency;
-	/**
-	 * @var int|float
-	 */
-	public $sumdeposit;
-	/**
-	 * @var int|float
-	 */
-	public $sumdeposit_multicurrency;
-	/**
-	 * @var int|float
-	 */
-	public $sumcreditnote;
-	/**
-	 * @var int|float
-	 */
-	public $sumcreditnote_multicurrency;
 	/**
 	 * @var int|float|string	May be used for status
 	 */
@@ -196,6 +172,17 @@ abstract class CommonInvoice extends CommonObject
 	 * @var int
 	 */
 	public $stripechargeerror;
+
+	/**
+	 * @var string	Can be used to store a payment reference that must be unique for the invoice (not commonly used)
+	 */
+	public $payment_reference;
+
+	/**
+	 * @var int		1 if a dispute has been open on one payment of invoice, keep null or 0 if not
+	 */
+	public $dispute_status = 0;
+
 
 	/**
 	 * Payment description
@@ -296,14 +283,20 @@ abstract class CommonInvoice extends CommonObject
 	const STATUS_ABANDONED = 3;
 
 
-	const CLOSECODE_DISCOUNTVAT = 'discount_vat'; // Abandoned remain - escompte
-	const CLOSECODE_BADDEBT = 'badcustomer'; // Abandoned remain - bad customer
-	const CLOSECODE_BANKCHARGE = 'bankcharge'; // Abandoned remain - bank charge
-	const CLOSECODE_WITHHOLDINGTAX = 'withholdingtax';	// Abandoned remain - source tax
-	const CLOSECODE_OTHER = 'other'; // Abandoned remain - other
+	const CLOSECODE_DISCOUNTVAT = 'discount_vat'; // Abandoned (the remain to pay) - escompte
+	const CLOSECODE_BADDEBT = 'badcustomer'; // Abandoned (the remain to pay) - bad customer
+	const CLOSECODE_BANKCHARGE = 'bankcharge'; // Abandoned (the remain to pay) - bank charge
+	const CLOSECODE_WITHHOLDINGTAX = 'withholdingtax';	// Abandoned (the remain to pay) - source tax
+	const CLOSECODE_OTHER = 'other'; // Abandoned (the remain to pay) - other
+	const CLOSECODE_ABANDONED = 'abandon'; // Abandoned (no payment at all) - other
+	const CLOSECODE_REPLACED = 'replaced'; // Abandoned (no payment at all) - replacedby another invoice (feature disabled by default)
 
-	const CLOSECODE_ABANDONED = 'abandon'; // Abandoned - other
-	const CLOSECODE_REPLACED = 'replaced'; // Closed after doing a replacement invoice
+	const ARRAY_OF_DISPUTE_STATUS = array(
+		0 => array('label' => "None"),
+		1 => array('label' => "DisputeOpen"),
+		8 => array('label' => "DisputeLost"),
+		9 => array('label' => "DisputeWon")
+	);
 
 
 	/**
@@ -335,7 +328,7 @@ abstract class CommonInvoice extends CommonObject
 	/**
 	 * 	Return amount of payments already done. This must include ONLY the record into the payment table.
 	 *  Payments done using discounts, credit notes, etc are not included.
-	 *  This also set ->sumpayed and ->sumpayed_multicurrency
+	 *  This also set ->totalpaid and ->totalpaid_multicurrency
 	 *
 	 *  @param 		int<-1,1>		$multicurrency 		Return multicurrency_amount instead of amount. -1=Return both.
 	 *	@return		float|int|array{alreadypaid:float,alreadypaid_multicurrency:float}	Amount of payment already done, <0 and set ->error if KO
@@ -365,15 +358,13 @@ abstract class CommonInvoice extends CommonObject
 			if ($obj) {
 				if ($multicurrency < 0) {
 					$this->totalpaid = $obj->amount;
-					$this->sumpayed = $obj->amount;
-					$this->sumpayed_multicurrency = $obj->multicurrency_amount;
+					$this->totalpaid_multicurrency = $obj->multicurrency_amount;
 					return array('alreadypaid' => (float) $obj->amount, 'alreadypaid_multicurrency' => (float) $obj->multicurrency_amount);
 				} elseif ($multicurrency) {
-					$this->sumpayed_multicurrency = $obj->multicurrency_amount;
+					$this->totalpaid_multicurrency = $obj->multicurrency_amount;
 					return (float) $obj->multicurrency_amount;
 				} else {
 					$this->totalpaid = $obj->amount;
-					$this->sumpayed = $obj->amount;
 					return (float) $obj->amount;
 				}
 			} else {
@@ -408,10 +399,9 @@ abstract class CommonInvoice extends CommonObject
 
 		if ($result >= 0) {
 			if ($multicurrency) {
-				$this->sumdeposit_multicurrency = $result;
+				$this->totaldeposits_multicurrency = $result;
 			} else {
 				$this->totaldeposits = $result;
-				$this->sumdeposit = $result;
 			}
 
 			return $result;
@@ -436,10 +426,9 @@ abstract class CommonInvoice extends CommonObject
 		$result = $discountstatic->getSumCreditNotesUsed($this, $multicurrency);
 		if (is_numeric($result)) {
 			if ($multicurrency) {
-				$this->sumcreditnote_multicurrency = $result;
+				$this->totalcreditnotes_multicurrency = $result;
 			} else {
 				$this->totalcreditnotes = $result;
-				$this->sumcreditnote = $result;
 			}
 
 			return $result;
@@ -481,7 +470,8 @@ abstract class CommonInvoice extends CommonObject
 		$sql = "SELECT rowid";
 		$sql .= " FROM ".$this->db->prefix().$this->table_element;
 		$sql .= " WHERE fk_facture_source = ".((int) $this->id);
-		$sql .= " AND type = 2";
+		$sql .= " AND type = ".self::TYPE_CREDIT_NOTE;
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -705,6 +695,90 @@ abstract class CommonInvoice extends CommonObject
 		return $retarray;
 	}
 
+	/**
+	 *  Return if an invoice can be set back to draft.
+	 *	Rule is:
+	 *  If invoice is draft and has a temporary ref -> yes (1)
+	 *  If hidden option INVOICE_CAN_NEVER_BE_REMOVED is 1 -> no (0)
+	 *  If invoice is transferred in bookkeeping -> no (-1)
+	 *  If invoice has a definitive ref, is not last in ref -> no (-2)
+	 *  If invoice has a definitive ref, is not last in a situation cycle -> no (-3)
+	 *  If there is one payment -> no (-4)
+	 *  If already sent by email -> no (-5)
+	 *  If already printed -> no (-6)
+	 *  If running a LNE version and customer invoice was validated -> no (-7)
+	 *  Otherwise -> yes (2)
+	 *
+	 *  @return    int         Return integer <=0 if no, >0 if yes
+	 */
+	public function isEditable()
+	{
+		$test = $this->is_erasable();
+
+		return $test;
+	}
+
+	/**
+	 *  Return if an invoice can be replaced by a Replacement invoice (also called "Correction invoice").
+	 *
+	 *  @return    int         Return integer <=0 if no, >0 if yes
+	 */
+	public function isReplacable()
+	{
+		global $hookmanager, $action;
+
+		// We check if invoice is a temporary number (PROVxxxx)
+		$tmppart = substr($this->ref, 1, 4);
+
+		if ($this->status == self::STATUS_DRAFT) { // If draft invoice, no
+			return -1;
+		}
+
+		// If not a draft invoice and not temporary invoice
+		if ($tmppart !== 'PROV') {
+			// If in accountancy, we refuse
+			$ventilExportCompta = $this->getVentilExportCompta();
+			if ($ventilExportCompta != 0) {
+				return -1;
+			}
+
+			// If invoice is situation type, we refuse if it is not the last in situation cycle
+			if (!getDolGlobalString('INVOICE_SITUATION_CAN_BE_REMOVED_EVEN_IF_NOT_LAST') && $this->situation_cycle_ref && method_exists($this, 'is_last_in_cycle')) {
+				$last = $this->is_last_in_cycle();
+				if (!$last) {
+					return -3;
+				}
+			}
+
+			// Test if there is at least one payment. If yes, we refuse to delete.
+			if ($this->getSommePaiement() > 0) {
+				return -4;
+			}
+
+			include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+			if (isALNERunningVersion()) {
+				$this->error = 'Action not allowed on the certified version';
+				return -7;
+			}
+
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('isEditable', $parameters, $this, $action);
+			if (!empty($hookmanager->resArray['result'])) {
+				$this->error = $hookmanager->resArray['error'];
+				if (!in_array($this->error, $this->errors)) {
+					$this->errors[] = $this->error;
+				}
+				if (!empty($hookmanager->resArray['errors'])) {
+					$this->errors = array_merge($this->errors, $hookmanager->resArray['errors']);
+				}
+				return $hookmanager->resArray['result'];
+			}
+
+			return 1;
+		}
+
+		return 0;
+	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -713,9 +787,13 @@ abstract class CommonInvoice extends CommonObject
 	 *  If invoice is draft and has a temporary ref -> yes (1)
 	 *  If hidden option INVOICE_CAN_NEVER_BE_REMOVED is 1 -> no (0)
 	 *  If invoice is transferred in bookkeeping -> no (-1)
-	 *  If invoice has a definitive ref, is not last in ref and INVOICE_CAN_ALWAYS_BE_REMOVED off -> no (-2)
-	 *  If invoice has a definitive ref, is not last in a situation cycle and INVOICE_CAN_ALWAYS_BE_REMOVED off  -> no (-3)
-	 *  If there is one payment and INVOICE_CAN_ALWAYS_BE_REMOVED off  -> no (-4)
+	 *  If invoice has a definitive ref, is not last in ref -> no (-2)
+	 *  If invoice has a definitive ref, is not last in a situation cycle -> no (-3)
+	 *  If there is one payment -> no (-4)
+	 *  If already sent by email -> no (-5)
+	 *  If already printed -> no (-6)
+	 *  If running a LNE version and customer invoice was validated -> no (-7)
+	 *  Other value (may be returned by a hook -10, -11, ...)
 	 *  Otherwise -> yes (2)
 	 *
 	 *  @return    int         Return integer <=0 if no, >0 if yes
@@ -723,6 +801,7 @@ abstract class CommonInvoice extends CommonObject
 	public function is_erasable()
 	{
 		// phpcs:enable
+		global $hookmanager, $action;
 
 		// We check if invoice is a temporary number (PROVxxxx)
 		$tmppart = substr($this->ref, 1, 4);
@@ -737,6 +816,26 @@ abstract class CommonInvoice extends CommonObject
 
 		// If not a draft invoice and not temporary invoice
 		if ($tmppart !== 'PROV') {
+			if ($this instanceOf Facture) {
+				/* @var Facture $this */
+				// If sent by email, we refuse
+				if ((int) $this->email_sent_counter > 0) {
+					return -5;
+				}
+
+				// If printed, we refuse
+				if ((int) $this->pos_print_counter > 0) {
+					return -6;
+				}
+
+				include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+				if (isALNERunningVersion()) {
+					$this->error = 'Action not allowed on the certified version';
+					return -7;
+				}
+			}
+
+			// If in accountancy, we refuse
 			$ventilExportCompta = $this->getVentilExportCompta();
 			if ($ventilExportCompta != 0) {
 				return -1;
@@ -745,31 +844,45 @@ abstract class CommonInvoice extends CommonObject
 			// Get last number of validated invoice
 			if ($this->element != 'invoice_supplier') {
 				if (empty($this->thirdparty)) {
-					$this->fetch_thirdparty(); // We need to have this->thirdparty defined, in case of numbering rule use tags that depend on thirdparty (like {t} tag).
+					$this->fetch_thirdparty(); // We need to have this->thirdparty defined, in case of the numbering rule uses tags that depend on thirdparty (like {t} tag).
 				}
 				$maxref = $this->getNextNumRef($this->thirdparty, 'last');
+				// $maxref can be '' (means not found) if there is no invoice yet, but also if there is no invoice for the new period when there is a reset at each period
 
-				// If there is no invoice into the reset range and not already transferred in accounting, we can delete
-				// If invoice to delete is last one and not already transferred, we can delete
-				if (!getDolGlobalString('INVOICE_CAN_ALWAYS_BE_REMOVED') && $maxref != '' && $maxref != $this->ref) {
+				// If invoice to delete is not the last one, we refuse
+				if ($maxref != '' && $maxref != $this->ref) {
 					return -2;
 				}
 
 				// TODO If there is payment in bookkeeping, check the payment is not dispatched in accounting and return -2.
 				// ...
 
-				if (!getDolGlobalString('INVOICE_CAN_ALWAYS_BE_REMOVED') && $this->situation_cycle_ref && method_exists($this, 'is_last_in_cycle')) {
+				// If invoice is situation type, we refuse if it is not the last in situation cycle
+				if (!getDolGlobalString('INVOICE_SITUATION_CAN_BE_REMOVED_EVEN_IF_NOT_LAST') && $this->situation_cycle_ref && method_exists($this, 'is_last_in_cycle')) {
 					$last = $this->is_last_in_cycle();
 					if (!$last) {
 						return -3;
 					}
 				}
 			}
-		}
 
-		// Test if there is at least one payment. If yes, refuse to delete.
-		if (!getDolGlobalString('INVOICE_CAN_ALWAYS_BE_REMOVED') && $this->getSommePaiement() > 0) {
-			return -4;
+			// Test if there is at least one payment. If yes, we refuse to delete.
+			if ($this->getSommePaiement() > 0) {
+				return -4;
+			}
+
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('isEditable', $parameters, $this, $action);
+			if (!empty($hookmanager->resArray['result'])) {
+				$this->error = $hookmanager->resArray['error'];
+				if (!in_array($this->error, $this->errors)) {
+					$this->errors[] = $this->error;
+				}
+				if (!empty($hookmanager->resArray['errors'])) {
+					$this->errors = array_merge($this->errors, $hookmanager->resArray['errors']);
+				}
+				return $hookmanager->resArray['result'];
+			}
 		}
 
 		return 2;
@@ -956,6 +1069,7 @@ abstract class CommonInvoice extends CommonObject
 			'nbofopendirectdebitorcredittransfer' => $this->nbofopendirectdebitorcredittransfer,
 			'close_code' => $this->close_code,
 			'close_note' => $this->close_note,
+			'dispute_status' => $this->dispute_status
 		);
 
 		return $this->LibStatut($this->paye, $this->status, $mode, $alreadypaid, $this->type, $moreparams);
@@ -1037,12 +1151,19 @@ abstract class CommonInvoice extends CommonObject
 			}
 		}
 
+		$paramsBadge = array('badgeParams' => array('attr' => array(
+			'data-status-element' => $this->element,
+			'data-already-paid' => $alreadypaid > 0 ? 1 : 0,
+			'data-status' => (int) $status
+		)));
+
 		$parameters = array(
 			'status'      => $status,
 			'mode'        => $mode,
 			'paye'        => $paye,
 			'alreadypaid' => $alreadypaid,
-			'type'        => $type
+			'type'        => $type,
+			'paramsBadge'=>& $paramsBadge
 		);
 
 		$reshook = $hookmanager->executeHooks('LibStatut', $parameters, $this); // Note that $action and $object may have been modified by hook
@@ -1067,12 +1188,24 @@ abstract class CommonInvoice extends CommonObject
 			}
 
 			//$paramsbutton = array('badgeParams' => array('attr' => array('title' => 'rrrr')));
-			$paramsbutton = array('badgeParams' => array('attr' => array('title' => $titlestringtoshow)));
-		} else {
-			$paramsbutton = array();
+			$paramsBadge['badgeParams' ]['attr']['title'] = $titlestringtoshow;
 		}
 
-		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode, '', $paramsbutton);
+		if (isset($moreparams['dispute_status']) && $moreparams['dispute_status']) {
+			$labelStatus .= ' - ';
+			if ($moreparams['dispute_status'] == 8) {
+				$labelStatus .= $langs->trans("DisputeLost");
+			} elseif ($moreparams['dispute_status'] == 9) {
+				$labelStatus .= $langs->trans("DisputeWon");
+			} else {
+				$labelStatus .= $langs->trans("DisputeOpen");
+				$statusType = 'status8';
+			}
+		}
+
+		$statusbadge = dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode, '', $paramsBadge);
+
+		return $statusbadge;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1124,7 +1257,7 @@ abstract class CommonInvoice extends CommonObject
 		}
 		$this->db->free($resqltemp);
 
-		/* Definition de la date limit */
+		/* Define date limit */
 
 		// 0 : adding the number of days
 		if ($cdr_type == 0) {
@@ -1360,7 +1493,7 @@ abstract class CommonInvoice extends CommonObject
 			$bac = new CompanyBankAccount($this->db);	// Table societe_rib
 			$result = $bac->fetch(0, '', $this->socid, 1, 'ban');
 			if ($result <= 0 || empty($bac->id)) {
-				$this->error = $langs->trans("ThirdpartyHasNoDefaultBanAccount");
+				$this->error = $langs->trans("ThirdpartyHasNoDefaultBankAccount");
 				$this->errors[] = $this->error;
 				dol_syslog(get_class($this)."::makeStripeSepaRequest ".$this->error);
 				return -1;
@@ -1598,7 +1731,7 @@ abstract class CommonInvoice extends CommonObject
 												$charge->customer = $customer->id;
 											} elseif ($paymentintent->status === 'requires_action') {
 												//paymentintent->status may be => 'requires_action' (no error in such a case)
-												dol_syslog(var_export($paymentintent, true), LOG_DEBUG);
+												dol_syslog(formatLogObject($paymentintent), LOG_DEBUG);
 
 												$charge->status = 'failed';
 												$charge->customer = $customer->id;
@@ -1609,7 +1742,7 @@ abstract class CommonInvoice extends CommonObject
 												$stripefailuremessage = 'Action required. Contact the support at ';// . $conf->global->SELLYOURSAAS_MAIN_EMAIL;
 												$stripefailuredeclinecode = $stripe->declinecode;
 											} else {
-												dol_syslog(var_export($paymentintent, true), LOG_DEBUG);
+												dol_syslog(formatLogObject($paymentintent), LOG_DEBUG);
 
 												$charge->status = 'failed';
 												$charge->customer = $customer->id;
@@ -2329,7 +2462,7 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	/**
 	 * List of cumulative options:
 	 * Bit 0:	0 for common VAT - 1 if VAT french NPR
-	 * Bit 1:	0 si ligne normal - 1 si bit discount (link to line into llx_remise_except)
+	 * Bit 1:	0 if standard line - 1 if bit discount (link to line into llx_remise_except)
 	 * @var int
 	 */
 	public $info_bits = 0;
@@ -2360,4 +2493,9 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	 * @var int
 	 */
 	public $fk_code_ventilation;
+
+	/**
+	 * @var float 		Situation advance percentage (default 100 for standard invoices)
+	 */
+	public $situation_percent = 100;
 }

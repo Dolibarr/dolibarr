@@ -1,7 +1,5 @@
 <?php
 /**
- * custom.css.php
- *
  * Copyright (c) 2023 Eric Seigne <eric.seigne@cap-rel.fr>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -41,6 +39,9 @@ if (!defined('NOREQUIREAJAX')) {
 session_cache_limiter('public');
 
 require_once __DIR__.'/../main.inc.php'; // __DIR__ allow this script to be included in custom themes
+/**
+ * @var string $dolibarr_nocache
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 // Define css type

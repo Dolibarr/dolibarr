@@ -1,14 +1,15 @@
--- Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
--- Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
--- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
--- Copyright (C) 2005-2025 Regis Houssin        <regis.houssin@inodbox.com>
--- Copyright (C) 2007 	   Patrick Raguin       <patrick.raguin@gmail.com>
--- Copyright (C) 2010-2016 Juanjo Menent        <jmenent@2byte.es>
--- Copyright (C) 2012      Sebastian Neuwert    <sebastian.neuwert@modula71.de>
--- Copyright (C) 2012	   Ricardo Schluter		<info@ripasch.nl>
--- Copyright (C) 2022	   Miro Sertić   		<miro.sertic0606@gmail.com>
+-- Copyright (C) 2001-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+-- Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
+-- Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+-- Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
+-- Copyright (C) 2004		Guillaume Delecourt		<guillaume.delecourt@opensides.be>
+-- Copyright (C) 2005-2025	Regis Houssin			<regis.houssin@inodbox.com>
+-- Copyright (C) 2007		Patrick Raguin			<patrick.raguin@gmail.com>
+-- Copyright (C) 2010-2016	Juanjo Menent			<jmenent@2byte.es>
+-- Copyright (C) 2012		Sebastian Neuwert		<sebastian.neuwert@modula71.de>
+-- Copyright (C) 2012		Ricardo Schluter		<info@ripasch.nl>
+-- Copyright (C) 2022		Miro Sertić				<miro.sertic0606@gmail.com>
+-- Copyright (C) 2026		Alexandre Spangaro		<alexandre@inovea-conseil.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -188,7 +189,8 @@ insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (8
 
 -- ITALY (id country=3)
 insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (3,   '0','0','VAT rate 0',1,__ENTITY__);
-insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (3,  '10','0','VAT rate - reduced',1,__ENTITY__);
+insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (3,  '10','0','VAT rate - reduced 1',1,__ENTITY__);
+insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (3,   '5','0','VAT rate - reduced 2',1,__ENTITY__);
 insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (3,   '4','0','VAT rate - super-reduced',1,__ENTITY__);
 insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (3,  '22','0','VAT rate - standard',1,__ENTITY__);
 
@@ -235,9 +237,8 @@ insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (1
 
 -- NEDERLAND (id country=17)
 insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (17,   '0','0','0 BTW tarief', 1,__ENTITY__);
-insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (17,   '6','0','Verlaagd BTW tarief', 1,__ENTITY__);
-insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (17,  '19','0','Algemeen BTW tarief',1,__ENTITY__);
-insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (17,  '21','0','Algemeen BTW tarief (vanaf 1 oktober 2012)',0,__ENTITY__);
+insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (17,   '9','0','Verlaagd BTW tarief', 1,__ENTITY__);
+insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (17,  '21','0','Algemeen BTW tarief',0,__ENTITY__);
 
 -- NEW CALEDONIA (id country=165)
 insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (165,   '0','0','VAT rate 0', 1,__ENTITY__);

@@ -7,7 +7,7 @@
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
  * Copyright (C) 2021      Jesus Jerez       	 <jesusballesteros@protonmail.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -88,6 +88,7 @@ if (!$sortfield) {
 
 // Load object
 $object = new PaiementFourn($db);
+$upload_dir = null;
 if ($object->fetch($id, $ref)) {
 	$object->fetch_thirdparty();
 	$ref = dol_sanitizeFileName($object->ref);
@@ -113,7 +114,7 @@ $form = new Form($db);
 $title = $langs->trans('Payment')." - ".$langs->trans('Documents');
 llxHeader('', $title);
 
-if ($object->id > 0) {
+if ($object->id > 0 && $upload_dir !== null) {
 	$head = payment_supplier_prepare_head($object);
 	print dol_get_fiche_head($head, 'documents', $langs->trans("SupplierPayment"), -1, 'payment');
 

@@ -1,0 +1,29 @@
+---
+# This is a basic workflow to check the lock on major version (to lock some files on certified versions)
+name: Check fileset lock
+
+on: [push, pull_request]
+
+concurrency:
+  group: check-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checkmajorversion:
+    name: Check lock on fileset unalterable_files with generate_filelist_xml.php
+    runs-on: ubuntu-latest
+    # Do not run schedule on forks
+    if: |
+      github.repository == 'Dolibarr/dolibarr'
+      || github.event.schedule == false
+    steps:
+      - uses: actions/checkout@v6
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.2
+          coverage: none # disable xdebug, pcov
+      - name: Run generate_filelist_xml.php
+        run: |
+          # shellcheck disable=2086
+          dev/build/generate_filelist_xml.php checklock=auto unalterable_files

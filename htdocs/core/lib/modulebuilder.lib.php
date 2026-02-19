@@ -628,7 +628,6 @@ function reWriteAllPermissions($file, $permissions, $key, $right, $objectname, $
 	'@phan-var-force array<int,string[]> $permissions';
 	if (!$error) {
 		// prepare permissions array
-		$count_perms = count($permissions);
 		foreach (array_keys($permissions) as $i) {
 			$permissions[$i][0] = "\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1)";
 			$permissions[$i][1] = "\$this->rights[\$r][1] = '".$permissions[$i][1]."'";
@@ -847,12 +846,14 @@ function deletePropsAndPermsFromDoc($file, $objectname)
 		$search = '/' . preg_quote($start, '/') . '(.*?)' . preg_quote($end, '/') . '/s';
 		$new_contents = preg_replace($search, '', $str);
 		file_put_contents($file, $new_contents);
+		dolChmod($file);
 
 		//perms If Exist
 		$perms = "|*".strtolower($objectname)."*|";
 		$search_pattern_perms = '/' . preg_quote($perms, '/') . '.*?\n/';
 		$new_contents = preg_replace($search_pattern_perms, '', $new_contents);
 		file_put_contents($file, $new_contents);
+		dolChmod($file);
 	}
 }
 
@@ -1039,6 +1040,7 @@ function addObjectsToApiFile($srcfile, $file, $objects, $modulename)
 
 	$allContent = implode("", $content);
 	file_put_contents($file, $allContent);
+	dolChmod($file);
 
 	// Add methods for each object
 	$allContent = getFromFile($srcfile, '/* BEGIN MODULEBUILDER API MYOBJECT */', '/* END MODULEBUILDER API MYOBJECT */');
@@ -1108,6 +1110,7 @@ function removeObjectFromApiFile($file, $objects, $objectname)
 
 	$allContent = implode("", $content);
 	file_put_contents($file, $allContent);
+	dolChmod($file);
 
 	// for delete methods of object
 	$begin = '/* BEGIN MODULEBUILDER API '.strtoupper($objectname).' */';

@@ -113,6 +113,8 @@ class AllTests
 		$suite->addTestSuite('FunctionsLibTest');
 		require_once dirname(__FILE__).'/Functions2LibTest.php';
 		$suite->addTestSuite('Functions2LibTest');
+		require_once dirname(__FILE__).'/FunctionsBELibTest.php';
+		$suite->addTestSuite('FunctionsBELibTest');
 		require_once dirname(__FILE__).'/ProfidLibTest.php';
 		$suite->addTestSuite('ProfidLibTest');
 		require_once dirname(__FILE__).'/XCalLibTest.php';
@@ -250,6 +252,9 @@ class AllTests
 		$suite->addTestSuite('AccountingAccountTest');
 		require_once dirname(__FILE__).'/AssetModelTest.php';
 		$suite->addTestSuite('AssetModelTest');
+
+		require_once dirname(__FILE__).'/BlockedLogAndLNETest.php';
+		$suite->addTestSuite('BlockedLogAndLNETest');
 
 		// Rest
 		require_once dirname(__FILE__).'/RestAPIUserTest.php';

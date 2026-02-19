@@ -22,7 +22,7 @@ printSellby=消費: %s
 printQty=数量: %d
 printPlannedWarehouse=倉庫: %s
 AddDispatchBatchLine=保存期限割当の行を追加
-WhenProductBatchModuleOnOptionAreForced=モジュールのロット/シリアルがオンの場合、自動在庫減少モードは「%s」に強制され、自動増加モードは強制的に「%s」に設定される。一部の選択肢は利用できない場合がある。他のオプションも必要に応じて定義できる。
+WhenProductBatchModuleOnOptionAreForced=モジュールのロット/シリアル番号がオンの場合、自動在庫の減少または増加の一部モードが利用できない場合がある。その他のオプションには制限はあらない。
 ProductDoesNotUseBatchSerial=この製品はロット/シリアル番号を不使用
 ProductLotSetup=モジュールのロット/シリアルの設定
 ShowCurrentStockOfLot=組合せ 製品/ロットの現在在庫を表示
@@ -50,5 +50,6 @@ ToReplace=交換
 CantMoveNonExistantSerial=エラー。既に存在しないシリアルに対応するレコードの移動を要求。同じ倉庫で同じ出荷に同一のシリアルを複数回取得したか、別の出荷でそのシリアルが使用された可能性がある。この出荷を削除して、別の出荷を準備する。
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=パラメータ「...repair.php?standard=confirmed」を使用してロット テーブルの不完全実行を修復
 IlligalQtyForSerialNumbers= シリアル番号が固有であるため、在庫 修正が必要。
-ErrorBatchesNeedStockManagement=Error. A product with batch/lot management must also be managed in stock.
-ForceBatchesNeedStockManagement=A product with batch/lot management must be managed in stock (stock management force to yes)
+ErrorBatchesNeedStockManagement=エラー。バッチ/ロット管理を伴う 製品 は、在庫 でも管理する必要がある。
+ForceBatchesNeedStockManagement=バッチ/ロット管理を伴う 製品 は、在庫 で管理する必要がある (在庫 管理を強制的に yes に設定)
+BatchInformationNotfound=バッチ情報が見つからない

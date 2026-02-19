@@ -40,7 +40,7 @@ create table llx_commandedet
   fk_remise_except				integer      NULL,               -- Lien vers table des remises fixes
   price							real,                            -- prix final
   subprice						double(24,8) DEFAULT 0,          -- unit price HT (exemple 100)
-  subprice_ttc               	double(24,8) DEFAULT 0,    		 -- unit price if price was entered including tax
+  subprice_ttc               	double(24,8) DEFAULT 0,    		 -- unit price inc Tax (if price was entered including tax)
   total_ht						double(24,8) DEFAULT 0,          -- Total HT de la ligne toute quantite et incluant remise ligne et globale
   total_tva						double(24,8) DEFAULT 0,          -- Total TVA de la ligne toute quantite et incluant remise ligne et globale
   total_localtax1				double(24,8) DEFAULT 0,          -- Total LocalTax1

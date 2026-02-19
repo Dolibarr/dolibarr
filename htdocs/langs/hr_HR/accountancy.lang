@@ -1,6 +1,8 @@
 # Dolibarr language file - en_US - Accountancy (Double entries)
 Accountancy=Računovodstvo
 Accounting=Računovodstvo
+AccountingAccount=Obračunski račun
+AccountingCode=Accounting code
 ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
 ACCOUNTING_EXPORT_DATE=Date format for export file
 ACCOUNTING_EXPORT_PIECE=Export the number of piece
@@ -193,7 +195,7 @@ DONATION_ACCOUNTINGACCOUNT=Račun (iz Kontnog plana) koji će se koristiti za up
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Račun (iz Kontnog plana) koji se koristi za registraciju članskih pretplata (Modul za članstvo - ako je članstvo evidentirano bez fakture)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Račun (iz kontnog plana) koji će se koristiti kao zadani račun za registraciju depozita klijenata
 UseAuxiliaryAccountOnCustomerDeposit=Pohrani korisnički račun kao pojedinačni račun u pomoćnoj knjizi za redove predujma (ako je onemogućeno, pojedinačni račun za predujam ostat će prazan)
-ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Račun (iz kontnog plana) koji će se koristiti kao zadani
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=Pohrani račun dobavljača kao pojedinačni račun u pomoćnoj knjizi za retke predujma (ako je onemogućeno, pojedinačni račun za retke predujma ostat će prazan)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Računovodstveni račun prema zadanim postavkama za registraciju zadržanog jamstva korisnika
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Račun (iz kontnog plana) koji će se koristiti kao zadani račun za proizvode kupljene unutar iste zemlje (koristi se ako nije definirano u listu proizvoda)
@@ -278,6 +280,7 @@ PcgtypeDesc=Grupa računa koristi se kao unaprijed definirani kriterij 'grupiran
 AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease the use of filters or building of custom reports.
 Reconcilable=Za usklađivanje
 Centralized=Centralizirani račun
+CentralizedAccountHelp=When a accounting transaction is recording on a centralized account, you are also allowed to record a more accurate subsidiary account on this transaction.
 TotalVente=Total turnover before tax
 TotalMarge=Total sales margin
 DescVentilCustomer=Ovdje pogledajte popis redova fakture kupaca povezanih (ili ne) s računom proizvoda iz kontnog plana
@@ -357,6 +360,7 @@ ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Aktivirajte upravljanje obrnutim PDV-
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Kada je ova opcija omogućena, možete definirati da se faktura dobavljača ili određenog dobavljača mora drugačije prenijeti u računovodstvo: dodatno zaduženje i kreditna linija će se generirati u računovodstvu 2. dati računi iz kontnog plana definirani na stranici za postavljanje "%s".
 ACCOUNTING_ENABLE_TABONTHIRDPARTY=Aktivirajte karticu na karticama trećih strana za pregled pomoćne knjige
 ACCOUNTING_ENABLE_TABONTHIRDPARTY_DESC=Kada je ova opcija omogućena, prikazuje se nova kartica na karticama treće strane za pregled i upravljanja računovodstvom za treću stranu radi usklađivanja, ispisa i više
+
 ## Export
 NotExportLettering=Nemojte izvoziti slova prilikom generiranja datoteke
 NotifiedExportDate=Označite još neizvezene linije kao Izvezene <span class="warning">(za promjeni - izmjeni liniju označenu kao izvezenu, morat ćete izbrisati cijelu transakciju i ponovno prenijeti u računovodstvo)</span>

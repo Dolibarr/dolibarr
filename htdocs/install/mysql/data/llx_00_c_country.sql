@@ -25,7 +25,7 @@
 -- Do not add comment at end of line. This file is parsed by install and -- are removed
 
 --
--- Countries
+-- Countries (source : https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes)
 --
 
 -- delete from llx_c_country;
@@ -102,7 +102,7 @@ INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUE
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (71, 'KM', 'COM', 'Comoros', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (72, 'CG', 'COG', 'Congo', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (73, 'CD', 'COD', 'DR Congo (RDC)', 1, 0);
-INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (74, 'CK', 'COK', 'Cook Islands‎‎', 1, 0);
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (74, 'CK', 'COK', 'Cook Islands', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (75, 'CR', 'CRI', 'Costa Rica', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (76, 'HR', 'HRV', 'Croatia', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (77, 'CU', 'CUB', 'Cuba', 1, 0);
@@ -274,9 +274,15 @@ INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUE
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (242, 'IM', 'IMN', 'Isle of Man', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (243, 'JE', 'JEY', 'Jersey', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (244, 'ME', 'MNE', 'Montenegro', 1, 0);
-INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (245, 'BL', 'BLM', 'Saint-Barthélemy', 1, 0);
-INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (246, 'MF', 'MAF', 'Saint-Martin', 1, 0);
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (245, 'BL', 'BLM', 'Saint-Barthélemy', 0, 0);		-- Not active by default, already set as region
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (246, 'MF', 'MAF', 'Saint-Martin', 0, 0);			-- Not active by default, already set as region
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (247, 'XK', 'XKX', 'Kosovo', 1, 0);
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (248, 'BQ', 'BES', 'Bonaire, Sint Eustatius and Saba', 1, 0);
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (249, 'GP', 'GLP', 'Guadeloupe', 0, 0);	-- Not active by default, already set as region
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (250, 'GY', 'GUY', 'Guyana', 0, 0);		-- Not active by default, already set as region
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (251, 'MQ', 'MTQ', 'Martinique', 0, 0);	-- Not active by default, already set as region
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (252, 'RE', 'REU', 'Réunion', 0, 0);		-- Not active by default, already set as region
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (253, 'SS', 'SSD', 'South Sudan', 1, 0);
 
 
 
@@ -537,4 +543,4 @@ UPDATE llx_c_country SET eec = 1 WHERE code IN ('AT','BE','BG','CY','CZ','DE','D
 
 -- Source: https://www.europeanpaymentscouncil.eu/document-library/other/epc-list-sepa-scheme-countries
 -- Set field sepa
-UPDATE llx_c_country SET sepa = 1 WHERE code IN ('AL','AD','AT','BE','BG','CH','CY','CZ','DE','DK','EE','ES','FI','FR','GB','GG','GR','HR','HU','IE','IM','IS','IT','JE','LI','LT','LU','LV','MC','MD','ME','MK','MT','NL','NO','PL','PM','PT','RO','RS','SE','SI','SK','SM','VA');
+UPDATE llx_c_country SET sepa = 1 WHERE code IN ('AD','AL','AT','AX','BE','BG','BL','CH','CY','CZ','DE','DK','EE','ES','FI','FR','GB','GF','GG','GI','GP','GR','HR','HU','IE','IM','IS','IT','JE','LI','LT','LU','LV','MC','MD','ME','MF','MK','MQ','MT','NL','NO','PL','PM','PT','RE','RO','RS','SE','SI','SK','SM','VA','YT');

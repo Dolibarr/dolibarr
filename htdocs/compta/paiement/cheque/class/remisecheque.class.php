@@ -1,11 +1,11 @@
 <?php
-/* Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2011-2016 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2006       Rodolphe Quiedeville 	<rodolphe@quiedeville.org>
+ * Copyright (C) 2007-2011  Laurent Destailleur  	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin        	<regis.houssin@inodbox.com>
+ * Copyright (C) 2011-2016  Juanjo Menent        	<jmenent@2byte.es>
+ * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -519,7 +519,7 @@ class RemiseCheque extends CommonObject
 		global $conf, $langs;
 
 		if ($user->socid) {
-			return -1; // protection pour eviter appel par utilisateur externe
+			return -1; // Protection to prevent calls by external users
 		}
 
 		$sql = "SELECT b.rowid, b.datev as datefin";
@@ -571,7 +571,7 @@ class RemiseCheque extends CommonObject
 		global $user;
 
 		if ($user->socid) {
-			return -1; // protection pour eviter appel par utilisateur externe
+			return -1; // Protection to prevent calls by external users
 		}
 
 		$sql = "SELECT count(b.rowid) as nb";
@@ -663,7 +663,7 @@ class RemiseCheque extends CommonObject
 			// output format that does not support UTF8.
 			$sav_charset_output = $outputlangs->charset_output;
 
-			$result = $docmodel->write_file($this, $conf->bank->dir_output.'/checkdeposits', $this->ref, $outputlangs);
+			$result = $docmodel->write_file($this, $outputlangs, $conf->bank->dir_output.'/checkdeposits', $this->ref);
 			if ($result > 0) {
 				//$outputlangs->charset_output=$sav_charset_output;
 				return 1;
@@ -815,7 +815,7 @@ class RemiseCheque extends CommonObject
 			$result = $rejectedPayment->create($user);
 			if ($result > 0) {
 				// We created a negative payment, we also add the line as bank transaction
-				$result = $rejectedPayment->addPaymentToBank($user, 'payment', '(CheckRejected)', $bankaccount, '', '');
+				$result = $rejectedPayment->addPaymentToBank($user, 'payment', '(CheckRejected)', (int) $bankaccount, '', '');
 				if ($result > 0) {
 					$result = $payment->reject();
 					if ($result > 0) {
@@ -936,7 +936,7 @@ class RemiseCheque extends CommonObject
 	 *  @param	int  	$notooltip					1=Disable tooltip
 	 *  @param  string  $morecss            		Add more css on link
 	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *	@return	string								Chaine avec URL
+	 *	@return	string								String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{

@@ -51,7 +51,7 @@ $langs->loadLangs(array("compta", "banks", "bills", "accountancy"));
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode      = GETPOST('mode', 'alpha');
 $massaction = GETPOST('massaction', 'aZ09');
-$toselect = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
+$toselect = GETPOST('toselect', 'array:int'); // Array of ids of elements selected into a list
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'directdebitcredittransferlist'; // To manage different context of search
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -217,6 +217,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 	// Purge search criteria
+	$search = array();
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 		foreach ($object->fields as $key => $val) {
 			$search[$key] = '';
@@ -240,21 +241,16 @@ if (empty($reshook)) {
  */
 
 $form = new Form($db);
-$proj = null;
 $accountingaccount = new AccountingAccount($db);
 $bankline = new AccountLine($db);
 $variousstatic = new PaymentVarious($db);
+$formaccounting = new FormAccounting($db);
+$accountingjournal = new AccountingJournal($db);
 $accountstatic = null;
-$accountingjournal = null;
-if ($arrayfields['account']['checked'] || $arrayfields['subledger']['checked']) {
-	$formaccounting = new FormAccounting($db);
-}
-if ($arrayfields['bank']['checked'] && isModEnabled('accounting')) {
-	$accountingjournal = new AccountingJournal($db);
-}
 if ($arrayfields['bank']['checked']) {
 	$accountstatic = new Account($db);
 }
+$proj = null;
 if (isModEnabled('project') && $arrayfields['project']['checked']) {
 	$proj = new Project($db);
 }
@@ -348,7 +344,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -742,7 +738,7 @@ while ($i < $imaxinloop) {
 	} else {
 		// Show here line of result
 		$j = 0;
-		print '<tr data-rowid="'.$object->id.'" class="oddeven">';
+		print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select">';
 		// Action column
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td></td>';
@@ -825,7 +821,7 @@ while ($i < $imaxinloop) {
 				$accountstatic->ref = $obj->bref;
 				$accountstatic->number = $obj->bnumber;
 
-				if (isModEnabled('accounting') && is_object($accountingjournal)) {
+				if (isModEnabled('accounting') && $obj->accountancy_journal > 0) {
 					$accountstatic->account_number = $obj->bank_account_number;
 					$accountingjournal->fetch($obj->accountancy_journal);
 					$accountstatic->accountancy_journal = $accountingjournal->getNomUrl(0, 1, 1, '', 1);

@@ -3,7 +3,7 @@
  * Copyright (C) 2007		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2007-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,15 +26,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
-'
-@phan-var-force string $dolibarr_main_document_root_alt
-';
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -43,8 +34,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
  * @var User $user
  *
  * @var string $dolibarr_main_document_root_alt
+ * @var string $dolibarr_main_prod
  * @var string $conffile
  */
+'
+@phan-var-force string $dolibarr_main_document_root_alt
+';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("install", "other", "admin"));
@@ -65,7 +65,6 @@ $version = '0.0';
 
 if ($action == 'getlastversion') {
 	$result = getURLContent('https://sourceforge.net/projects/dolibarr/rss');
-	//var_dump($result['content']);
 	if (function_exists('simplexml_load_string')) {
 		if (LIBXML_VERSION < 20900) {
 			// Avoid load of external entities (security problem).
@@ -98,16 +97,17 @@ print load_fiche_titre($title, '', 'title_setup');
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="titlefieldcreate">'.$langs->trans("Version").'</td><td></td></tr>'."\n";
-print '<tr class="oddeven"><td>'.$langs->trans("CurrentVersion").'<br><span class="opacitymedium">('.$langs->trans("Programs").')</span></td><td>'.DOL_VERSION;
+print '<tr class="oddeven"><td>'.$langs->trans("CurrentVersion").'<br><span class="opacitymedium">('.$langs->trans("Programs").')</span></td><td>';
+print '<span class="badge-text badge-secondary">'.DOL_VERSION.'</span>';
 // If current version differs from last upgrade
 if (!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE')) {
 	// Compare version with last install database version (upgrades never occurred)
-	if (DOL_VERSION != $conf->global->MAIN_VERSION_LAST_INSTALL) {
+	if (DOL_VERSION != getDolGlobalString('MAIN_VERSION_LAST_INSTALL')) {
 		print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired", DOL_VERSION, getDolGlobalString('MAIN_VERSION_LAST_INSTALL')));
 	}
 } else {
 	// Compare version with last upgrade database version
-	if (DOL_VERSION != $conf->global->MAIN_VERSION_LAST_UPGRADE) {
+	if (DOL_VERSION != getDolGlobalString('MAIN_VERSION_LAST_UPGRADE')) {
 		print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired", DOL_VERSION, getDolGlobalString('MAIN_VERSION_LAST_UPGRADE')));
 	}
 }
@@ -116,7 +116,12 @@ $version = DOL_VERSION;
 if (preg_match('/[a-z]+/i', $version)) {
 	$version = 'develop'; // If version contains text, it is not an official tagged version, so we use the full change log.
 }
-print ' &nbsp; <a href="https://raw.githubusercontent.com/Dolibarr/dolibarr/'.$version.'/ChangeLog" target="_blank" rel="noopener noreferrer external">'.$langs->trans("SeeChangeLog").'</a>';
+
+$urlofchangelog = 'https://raw.githubusercontent.com/Dolibarr/dolibarr/'.$version.'/ChangeLog';
+
+print ' &nbsp; ';
+//print dolButtonToOpenUrlInDialogPopup('changelogpopup', $langs->trans("SeeChangeLog"), $langs->trans("SeeChangeLog"), $urlofchangelog);
+print '<a href="'.$urlofchangelog.'" target="_blank" rel="noopener noreferrer external">'.img_picto('', 'url', 'class="paddingright"').$langs->trans("SeeChangeLog").'</a>';
 
 $newversion = '';
 if (function_exists('curl_init')) {
@@ -143,7 +148,7 @@ if (function_exists('curl_init')) {
 			// Show version
 			print $langs->trans("LastStableVersion").' : <b>'.(($version != '0.0') ? $version : $langs->trans("Unknown")).'</b>';
 			if ($version != '0.0') {
-				print ' &nbsp; <a href="https://raw.githubusercontent.com/Dolibarr/dolibarr/'.$version.'/ChangeLog" target="_blank" rel="noopener noreferrer external">'.$langs->trans("SeeChangeLog").'</a>';
+				print ' &nbsp; <a href="https://raw.githubusercontent.com/Dolibarr/dolibarr/'.$version.'/ChangeLog" target="_blank" rel="noopener noreferrer external">'.img_picto('', 'url', 'class="paddingright"').$langs->trans("SeeChangeLog").'</a>';
 			}
 		} else {
 			print $langs->trans("LastStableVersion").' : <b>'.$langs->trans("UpdateServerOffline").'</b>';
@@ -162,8 +167,16 @@ if (preg_match('/[a-z]+/i', $version)) {
 }
 
 print '</td></tr>'."\n";
-print '<tr class="oddeven"><td>'.$langs->trans("VersionLastUpgrade").'<br><span class="opacitymedium">('.$langs->trans("Database").')</span></td><td>'.getDolGlobalString('MAIN_VERSION_LAST_UPGRADE').'</td></tr>'."\n";
-print '<tr class="oddeven"><td>'.$langs->trans("VersionLastInstall").'<br><span class="opacitymedium">('.$langs->trans("Database").')</span></td><td>'.getDolGlobalString('MAIN_VERSION_LAST_INSTALL').'</td></tr>'."\n";
+print '<tr class="oddeven"><td>'.$langs->trans("VersionLastUpgrade").'<br><span class="opacitymedium">('.$langs->trans("Database").')</span></td><td>';
+if (getDolGlobalString('MAIN_VERSION_LAST_UPGRADE')) {
+	print '<span class="badge-text badge-secondary">'.getDolGlobalString('MAIN_VERSION_LAST_UPGRADE').'</span>';
+}
+print '</td></tr>'."\n";
+print '<tr class="oddeven"><td>'.$langs->trans("VersionLastInstall").'<br><span class="opacitymedium">('.$langs->trans("Database").')</span></td><td>';
+if (getDolGlobalString('MAIN_VERSION_LAST_INSTALL')) {
+	print '<span class="badge-text badge-secondary">'.getDolGlobalString('MAIN_VERSION_LAST_INSTALL').'</span>';
+}
+print '</td></tr>'."\n";
 print '</table>';
 print '</div>';
 print '<br>';
@@ -312,10 +325,10 @@ print '</td></tr>'."\n";
 print '</td></tr>'."\n";
 print '<tr class="oddeven"><td>&nbsp; => '.$langs->trans("ClientHour").'</td><td>'.dol_print_date(dol_now('gmt'), 'dayhour', 'tzuser').'</td></tr>'."\n";
 
-$filesystemencoding = ini_get("unicode.filesystem_encoding"); // Disponible avec PHP 6.0
+$filesystemencoding = ini_get("unicode.filesystem_encoding"); // Available with PHP 6.0
 print '<tr class="oddeven"><td>'.$langs->trans("File encoding").' (php.ini unicode.filesystem_encoding)</td><td>'.$filesystemencoding.'</td></tr>'."\n";
 
-$tmp = ini_get("unicode.filesystem_encoding"); // Disponible avec PHP 6.0
+$tmp = ini_get("unicode.filesystem_encoding"); // Available with PHP 6.0
 if (empty($tmp) && !empty($_SERVER["WINDIR"])) {
 	$tmp = 'iso-8859-1'; // By default for windows
 }

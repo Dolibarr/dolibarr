@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2003	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009	Regis Houssin				<regis.houssin@inodbox.com>
- * Copyright (C) 2016-2024  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2016-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2020		Pierre Ardoin				<mapiolca@me.com>
  * Copyright (C) 2020		Tobias Sekan				<tobias.sekan@startmail.com>
  * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
@@ -31,13 +31,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsocialcontrib.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -45,6 +38,12 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsocialcontrib.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'banks', 'bills', 'hrm', 'projects'));
@@ -52,7 +51,7 @@ $langs->loadLangs(array('compta', 'banks', 'bills', 'hrm', 'projects'));
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
-$toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
+$toselect   = GETPOST('toselect', 'array:int'); // Array of ids of elements selected into a list
 $optioncss = GETPOST('optioncss', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'sclist';
 $mode = GETPOST('mode', 'alpha');
@@ -103,15 +102,13 @@ if (!$sortorder) {
 	$sortorder = "DESC";
 }
 
-$filtre = GETPOSTINT("filtre");
-
 $arrayfields = array(
 	'cs.rowid'		=> array('label' => "Ref", 'checked' => '1', 'position' => 10),
 	'cs.libelle'	=> array('label' => "Label", 'checked' => '1', 'position' => 20),
 	'cs.fk_type'	=> array('label' => "Type", 'checked' => '1', 'position' => 30),
 	'cs.date_ech'	=> array('label' => "Date", 'checked' => '1', 'position' => 40),
 	'cs.periode'	=> array('label' => "PeriodEndDate", 'checked' => '1', 'position' => 50),
-	'p.ref'			=> array('label' => "ProjectRef", 'checked' => '1', 'position' => 60, 'enabled' => (string) (int) (isModEnabled('project'))),
+	'p.ref'			=> array('label' => "ProjectRef", 'checked' => '-1', 'position' => 60, 'enabled' => (string) (int) (isModEnabled('project'))),
 	'cs.fk_user'	=> array('label' => "Employee", 'checked' => '1', 'position' => 70),
 	'cs.fk_mode_reglement'	=> array('checked' => '-1', 'position' => 80, 'label' => "DefaultPaymentMode"),
 	'cs.amount'		=> array('label' => "Amount", 'checked' => '1', 'position' => 100),
@@ -292,7 +289,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -408,7 +405,7 @@ if (!empty($permissiontodelete)) {
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 $moreforfilter = '';
 
-print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
@@ -521,21 +518,21 @@ if (!empty($arrayfields['p.ref']['checked'])) {
 if (!empty($arrayfields['cs.fk_user']['checked'])) {
 	// Employee
 	print '<td class="liste_titre">';
-	print $form->select_dolusers($search_users, 'search_users', 1, null, 0, '', '', '0', 0, 0, '', 0, '', 'maxwidth150', 0, 0, true);
+	print $form->select_dolusers($search_users, 'search_users', 1, null, 0, '', '', '0', 0, 0, '', 0, '', 'maxwidth125', 0, 0, true);
 	print '</td>';
 }
 
 // Filter: Type
 if (!empty($arrayfields['cs.fk_mode_reglement']['checked'])) {
 	print '<td class="liste_titre">';
-	print $form->select_types_paiements($search_type, 'search_type', '', 0, 1, 1, 0, 1, 'maxwidth150', 1);
+	print $form->select_types_paiements($search_type, 'search_type', '', 0, 1, 1, 0, 1, 'maxwidth125', 1);
 	print '</td>';
 }
 
 // Filter: Bank Account
 if (!empty($arrayfields['cs.fk_account']['checked'])) {
 	print '<td class="liste_titre">';
-	$form->select_comptes($search_account, 'search_account', 0, '', 1, '', 0, 'maxwidth150');
+	$form->select_comptes($search_account, 'search_account', 0, '', 1, '', 0, 'maxwidth125');
 	print '</td>';
 }
 
@@ -685,7 +682,7 @@ while ($i < $imaxinloop) {
 			print '</td></tr>';
 		}
 	} else {
-		print '<tr class="oddeven">';
+		print '<tr class="oddeven row-with-select">';
 
 
 		// Action column
