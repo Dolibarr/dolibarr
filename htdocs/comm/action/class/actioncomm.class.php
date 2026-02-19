@@ -1353,6 +1353,7 @@ class ActionComm extends CommonObject
 				$sql = "SELECT a.id FROM ((" . $sql . ") UNION (" . $sql1;
 				$sql .= " AND EXISTS (SELECT r.rowid FROM ".MAIN_DB_PREFIX."actioncomm_resources as r WHERE";
 				$sql .= " r.element_type = 'user' AND r.fk_element = ".((int) $fk_element).' AND r.fk_actioncomm = a.id)';
+				$sql .= " AND a.fk_user_action <> ".((int) $fk_element);
 				$sql .= ")) as a";
 			} else {
 				$sql .= " AND a.fk_element = ".((int) $fk_element)." AND a.elementtype = '".$this->db->escape($elementtype)."'";
