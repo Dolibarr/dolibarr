@@ -1,5 +1,6 @@
 #!/bin/bash
-# Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+# Copyright (C) 2010-2026	Laurent Destailleur 		<eldy@users.sourceforge.net>
+# Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
 
 #------------------------------------------------------
 # Script to purge and initialize a database with demo values.
@@ -91,7 +92,7 @@ then
 	fichtemp=$(mktemp 2>/dev/null) || fichtemp=/tmp/test$$
 	# shellcheck disable=2064,2172
 	trap "rm -f '$fichtemp'" 0 1 2 5 15
-	$DIALOG --title "Init Dolibarr with demo values" --clear --inputbox "Mysql database name :" 16 55 $base 2> "$fichtemp"
+	$DIALOG --title "Init Dolibarr with demo values" --clear --inputbox "Mysql database name :" 16 55 "$base" 2> "$fichtemp"
 	valret=$?
 	case $valret in
 		0)
@@ -107,7 +108,7 @@ then
 	fichtemp=$(mktemp 2>/dev/null) || fichtemp=/tmp/test$$
 	# shellcheck disable=2064,2172
 	trap "rm -f '$fichtemp'" 0 1 2 5 15
-	$DIALOG --title "Init Dolibarr with demo values" --clear --inputbox "Mysql port (ex: 3306):" 16 55 $port 2> "$fichtemp"
+	$DIALOG --title "Init Dolibarr with demo values" --clear --inputbox "Mysql port (ex: 3306):" 16 55 "$port" 2> "$fichtemp"
 	valret=$?
 
 	case $valret in
@@ -198,6 +199,7 @@ fi
 
 # ---------------------------- Run update of demo data
 echo
+echo Run script updatedemo.php confirm
 "$mydir/updatedemo.php" confirm
 export res=$?
 
@@ -205,11 +207,11 @@ export res=$?
 # ---------------------------- Run update of demo data
 if [ "$confirm" == "confirmresetblockedlog" ]; then
 	echo
+	echo Run script updatedemo.php confirmresetblockedlog
 	"$mydir/updatedemo.php" confirmresetblockedlog
 	export res=$?
 fi
 
-exit;
 
 # ---------------------------- Copy demo files
 export documentdir
@@ -262,8 +264,8 @@ fi
 
 if [ "$res" = "0" ]
 then
-	echo "Success, file successfully loaded."
+	echo "Success, file successfully loaded: Note that crypted data need to have dolibarr_main_instance_unique_id=11f3c81e86fc9e3b3fd11d81c9a31bd0 with this data set to be readable."
 else
-	echo "Error, load failed."
+	echo "Error, 1 step of script has failed."
 fi
 echo

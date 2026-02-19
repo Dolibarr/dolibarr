@@ -171,6 +171,8 @@ $help_url = "EN:Module_Unalterable_Archives_-_Logs|FR:Module_Archives_-_Logs_Ina
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-blockedlog page-admin_blockedlog_list');
 
+// Get list of blocked logs.
+// Warning: This make a fetch on each line.
 $blocks = $block_static->getLog('all', (string) $search_id, $MAXLINES, $sortfield, $sortorder, (int) $search_fk_user, $search_start, $search_end, $search_ref, $search_amount, $search_code, $search_signature, $search_module_source);
 if (!is_array($blocks)) {
 	if ($blocks == -2) {
@@ -316,12 +318,12 @@ print '</td>';
 
 // Module source
 print '<td class="liste_titre">';
-print $form->multiselectarray('search_module_source', $block_static->trackedmodules, $search_module_source, 0, 0, 'maxwidth150', 1);
+print $form->multiselectarray('search_module_source', $block_static->trackedmodules, $search_module_source, 0, 0, 'minwidth125 maxwidth200', 1);
 print '</td>';
 
 // Actions code
 print '<td class="liste_titre">';
-print $form->multiselectarray('search_code', $block_static->trackedevents, $search_code, 0, 0, 'maxwidth150', 1);
+print $form->multiselectarray('search_code', $block_static->trackedevents, $search_code, 0, 0, 'maxwidth200', 1);
 print '</td>';
 
 // Ref
@@ -395,7 +397,9 @@ if (getDolGlobalString('BLOCKEDLOG_SCAN_ALL_FOR_LOWERIDINERROR')) {
 	// This is version that optimize the memory (note: it will not report errors that are outside the filter range, but we don't need them)
 	if (is_array($blocks)) {
 		foreach ($blocks as &$block) {
+			// Enable this log to get information used to recalculate the signature
 			//var_dump($block->id.' '.$block->signature, $block->object_data);
+
 			$tmpcheckresult = $block->checkSignature('', 1); // Note: this make a sql request at each call, we can't avoid this as the sorting order is various
 
 			$checksignature = $tmpcheckresult['checkresult'];
@@ -443,7 +447,7 @@ if (is_array($blocks)) {
 
 			// Action column
 			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-				print '<td class="liste_titre">';
+				print '<td>';
 				print '</td>';
 			}
 
@@ -451,7 +455,7 @@ if (is_array($blocks)) {
 			print '<td>'.dolPrintHTML((string) $block->id).'</td>';
 
 			// Date
-			print '<td class="nowraponall">'.dol_print_date($block->date_creation, 'dayhour').'</td>';
+			print '<td class="nowraponall">'.dol_print_date($block->date_creation, 'dayhour', 'tzuserrel').'</td>';
 
 			// User
 			print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($block->user_fullname).'">';
@@ -495,15 +499,16 @@ if (is_array($blocks)) {
 
 			// Amount
 			print '<td class="right nowraponall">';
-
-			if (empty($total_ttc)) {
-				print '<span class="opacitymedium">';
+			if (!in_array($block->action, array('BLOCKEDLOG_EXPORT', 'CASHCONTROL_CLOSE', 'MODULE_SET', 'MODULE_RESET'))) {
+				$ingrey = !in_array($block->action, array('BILL_VALIDATE', 'PAYMENT_CUSTOMER_CREATE', 'PAYMENT_CUSTOMER_DELETE'));
+				if ($ingrey) {
+					print '<span class="opacitymedium">';
+				}
+				print price($total_ttc);
+				if ($ingrey) {
+					print '</span>';
+				}
 			}
-			print price($total_ttc);
-			if (empty($total_ttc)) {
-				print '</span>';
-			}
-
 			print '</td>';
 
 			// Details link
@@ -575,38 +580,45 @@ if (is_array($blocks)) {
 		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	} else {
 		foreach ($totalamount as $key => $totalamountperref) {
-			if ($key == 'BILL_VALIDATE' || $key == 'PAYMENT_CUSTOMER_CREATE') {
+			if ($key == 'BILL_VALIDATE' || $key == 'PAYMENT_CUSTOMER') {
 				// Total
-				print '<tr class="totalline">';
+				print '<tr class="liste_total">';
 
 				// Action column
 				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-					print '<td class="liste_titre">';
+					print '<td>';
 					print '</td>';
 				}
 
 				// ID
-				print '<td colspan="2">'.dolPrintHTML($langs->trans("TotalForAction").' '.$langs->trans('log'.$key)).'</td>';
+				print '<td colspan="4">';
+				print dolPrintHTML($langs->trans("TotalForAction").' '.$langs->trans('log'.$key));
+				if ($key == 'BILL_VALIDATE') {
+					print ' <span class="opacitymedium">('.$langs->trans("Turnover").')</span>';
+				} elseif ($key == 'PAYMENT_CUSTOMER') {
+					print ' <span class="opacitymedium">('.$langs->trans("TurnoverCollected").')</span>';
+				}
+				print '</td>';
 
 				// Date
 				//print '<td class="nowraponall"></td>';
 
 				// User
-				print '<td class="tdoverflowmax200">';
-				print '</td>';
+				//print '<td class="tdoverflowmax200">';
+				//print '</td>';
 
 				// Module source
-				print '<td></td>';
+				//print '<td></td>';
 
 				// Action
 				print '<td></td>';
 
 				// Ref
-				print '<td class="nowraponall">';
-				print '</td>';
+				//print '<td class="nowraponall">';
+				//print '</td>';
 
 				// Amount (HT)
-				print '<td class="right nowraponall">';
+				print '<td class="right nowraponall" colspan="2">';
 				$totalhttoshow = 0;
 				foreach ($totalhtamount[$key] as $value) {	// Loop on each module
 					$totalhttoshow += $value;
@@ -627,12 +639,14 @@ if (is_array($blocks)) {
 					print $langs->trans("HT").': ';
 					print price($totalhttoshow);
 
-					print '<br>';
+					//print '<br>';
+					print ' &nbsp; ';
 
 					print $langs->trans("VAT").': ';
 					print price($totalvattoshow);
 
-					print '<br>';
+					//print '<br>';
+					print ' &nbsp; ';
 
 					print $langs->trans("TTC").': ';
 					print price($totaltoshow);

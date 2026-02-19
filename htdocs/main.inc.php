@@ -1116,7 +1116,7 @@ if (!defined('NOLOGIN')) {
 			}
 		}
 		if (!$isallowed) {
-			header('Location: '.DOL_URL_ROOT.'/user/changepassword.php?id='.$user->id);
+			header('Location: '.DOL_URL_ROOT.'/user/changepassword.php');
 			exit;
 		}
 	}
@@ -3784,6 +3784,8 @@ if (!function_exists("llxFooter")) {
 
 					$arrayofmoredata = array(
 						'action' => 'dolibarrping',
+						'datesys' => dol_print_date(dol_now(), 'standard', 'gmt'),
+
 						'country_code' => ($mysoc->country_code ? $mysoc->country_code : 'unknown')
 					);
 					printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayofmoredata, $forceping);
@@ -3828,6 +3830,7 @@ if (!function_exists("llxFooter")) {
 
 						$arrayofdata = array(
 							'action' => 'dolibarrregistration',
+							'datesys' => dol_print_date(dol_now(), 'standard', 'gmt'),
 
 							'company_name' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_NAME', $mysoc->name),
 							'company_email' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_EMAIL', $mysoc->email),

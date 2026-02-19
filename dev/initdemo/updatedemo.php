@@ -65,6 +65,7 @@ if (!$res) {
  * @var DoliDB $db
  */
 include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+include_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 
 
 /*
@@ -99,6 +100,115 @@ $tables = array(
 	'holiday' => array(0 => 'date_debut', 1 => 'date_fin', 2 => 'date_create', 3 => 'date_valid', 5 => 'date_refuse', 6 => 'date_cancel'),
 	'ticket' => array(0 => 'datec', 1 => 'date_read', 2 => 'date_close')
 );
+
+
+if ($confirm == 'regenerate') {
+	$entity = 1;
+	$fromrowid = 0;
+	//$fromrowid = 442;
+
+	$block_static = new BlockedLog($db);
+	$block_static->loadTrackedEvents();
+
+	print "TZ=".date_default_timezone_get()."\n";
+
+	$db->begin();
+
+	// Now restart request with all data, so without the limit(1) in sql request
+	$sql = "SELECT rowid, entity, date_creation, tms, user_fullname, action, module_source, amounts_taxexcl, amounts, element, fk_object, date_object, ref_object,";
+	$sql .= " linktoref, linktype, signature, fk_user, object_data, object_version, object_format, debuginfo";
+	$sql .= " FROM ".MAIN_DB_PREFIX."blockedlog";
+	$sql .= " WHERE entity = ".((int) $entity);
+	$sql .= " AND rowid >= ".((int) $fromrowid);
+	$sql .= " ORDER BY date_creation ASC, rowid ASC"; // Required so later we can use the parameter $previoushash of checkSignature()
+
+	$i = 0;
+
+	$resql = $db->query($sql);
+	if ($resql) {
+		// Make the first fetch to get first line and then get the previous hash.
+		while ($obj = $db->fetch_object($resql)) {
+			// We set here all data used into signature calculation (see checkSignature method) and more
+
+			// IMPORTANT: We must have here, the same rule for transformation of data than into
+			// the blockedlog->fetch() method (db->jdate for date, ...)
+
+			$block_static->id = $obj->rowid;
+			$block_static->entity = $obj->entity;
+
+			if ($i == 0) {
+				$tmparray = $block_static->getPreviousHash(0, $block_static->id);
+				$previoushash = $tmparray['previoushash'];
+			}
+
+			$tz = 'gmt';
+			if (empty($obj->object_format) || $obj->object_format == 'V1') {
+				$tz = 'tzserver';
+			}
+
+			$block_static->date_creation = $db->jdate($obj->date_creation, $tz);		// jdate(date_creation) is UTC
+			$block_static->date_modification = $db->jdate($obj->tms, $tz);			// jdate(tms) is UTC
+
+			$block_static->action = $obj->action;
+			$block_static->module_source = $obj->module_source;
+
+			$block_static->amounts_taxexcl = is_null($obj->amounts_taxexcl) ? null : (float) $obj->amounts_taxexcl;	// Database store value with 8 digits, we cut ending 0 them with (flow)
+			$block_static->amounts = (float) $obj->amounts;															// Database store value with 8 digits, we cut ending 0 them with (flow)
+
+			$block_static->fk_object = $obj->fk_object;							// Not in signature
+			$block_static->date_object = $db->jdate($obj->date_object, $tz);	// jdate(date_object) is UTC
+			$block_static->ref_object = $obj->ref_object;
+
+			$block_static->linktoref = $obj->linktoref;
+			$block_static->linktype = $obj->linktype;
+
+			$block_static->fk_user = $obj->fk_user;								// Not in signature
+			$block_static->user_fullname = $obj->user_fullname;
+
+			$block_static->object_data = $block_static->dolDecodeBlockedData($obj->object_data);
+
+			// Old hash + Previous fields concatenated = signature
+			$block_static->signature = $obj->signature;
+
+			$block_static->element = $obj->element;								// Not in signature
+
+			$block_static->object_format = $obj->object_format;					// Not in signature.
+			$block_static->object_version = $obj->object_version;				// Not in signature
+
+			//$block_static->certified = ($obj->certified == 1);				// Not in signature
+
+			//var_dump($obj->date_creation, $tz, $block_static->date_creation);
+
+			// Build/Check the string for the signature
+			$signature = $block_static->checkSignature($previoushash, 2);
+
+			print "For ROWID ".$obj->rowid." - Previous hash = ".$previoushash."\n";
+			print "Signature in db: ".$obj->signature." - New calculated: ".$signature['calculatedsignature']."\n";
+			if ($obj->signature != $signature['calculatedsignature']) {
+				$tmpsql = "UPDATE ".MAIN_DB_PREFIX."blockedlog SET signature = '".$db->escape($signature['calculatedsignature'])."'";
+				$tmpsql .= " WHERE rowid = ".((int) $obj->rowid);
+
+				print "Update for ROWID ".$obj->rowid." with ".$tmpsql."\n";
+				$tmpresult = $db->query($tmpsql);
+			}
+
+			$previoushash = $signature['calculatedsignature'];
+
+
+			// Set new previous hash for next fetch
+
+			$i++;
+
+			// Uncomment to proceed one only
+			//break;
+		}
+	} else {
+		$error++;
+		setEventMessages($db->lasterror, null, 'errors');
+	}
+
+	$db->commit();
+}
 
 
 if ($confirm == 'confirm') {

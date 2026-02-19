@@ -2318,7 +2318,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		$out .= '</td>';
 		// Owner
 		$out .= '<td class="liste_titre">';
-		$out .= $form->select_dolusers(($filters['search_filtert'] > 0 ? $filters['search_filtert'] : ''), 'search_filtert', 1, null, (int) !$canedit, '', '', '0', 0, 0, '', 2, '', 'minwidth100 maxwidth250 widthcentpercentminusx');
+		$out .= $form->select_dolusers(($filters['search_filtert'] > 0 ? $filters['search_filtert'] : ''), 'search_filtert', 1, null, 0, '', '', '0', 0, 0, '', 2, '', 'minwidth100 maxwidth250 widthcentpercentminusx');
 		$out .= '</td>';
 		// Type
 		$out .= '<td class="liste_titre">';
