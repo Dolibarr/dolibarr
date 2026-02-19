@@ -455,7 +455,7 @@ if (is_array($blocks)) {
 			print '<td>'.dolPrintHTML((string) $block->id).'</td>';
 
 			// Date
-			print '<td class="nowraponall">'.dol_print_date($block->date_creation, 'dayhour').'</td>';
+			print '<td class="nowraponall">'.dol_print_date($block->date_creation, 'dayhour', 'tzuserrel').'</td>';
 
 			// User
 			print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($block->user_fullname).'">';

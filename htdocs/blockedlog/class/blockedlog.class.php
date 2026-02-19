@@ -1120,8 +1120,15 @@ class BlockedLog
 				$this->id 				= $obj->rowid;
 				$this->entity 			= $obj->entity;
 
-				$this->date_creation 	= $this->db->jdate($obj->date_creation);	// jdate(date_creation)is UTC
-				$this->date_modification = $this->db->jdate($obj->tms);				// jdate(tms) is UTC
+				// Must be at top
+				$tz = 'gmt';
+				if (empty($obj->object_format) || $obj->object_format == 'V1') {
+					$tz = 'tzserver';
+				}
+
+				$this->date_creation 	= $this->db->jdate($obj->date_creation, $tz);	// jdate(date_creation)is UTC
+				$this->date_modification = $this->db->jdate($obj->tms, $tz);			// jdate(tms) is UTC
+
 
 				$this->action 			= $obj->action;
 				$this->module_source	= $obj->module_source;
@@ -1130,7 +1137,10 @@ class BlockedLog
 				$this->amounts			= (float) $obj->amounts;
 
 				$this->fk_object = $obj->fk_object;
-				$this->date_object = $this->db->jdate($obj->date_object);			// jdate(date_object) is UTC
+				$this->date_object = $this->db->jdate($obj->date_object, $tz);			// jdate(date_object) is UTC
+				//var_dump($obj->date_object, dol_print_date($this->date_object, 'dayhour' , $tz));
+				//exit;
+
 				$this->ref_object = $obj->ref_object;
 				$this->linktoref = $obj->linktoref;
 				$this->linktype = $obj->linktype;
@@ -1279,6 +1289,11 @@ class BlockedLog
 			$this->object_format = 'V2';
 		}
 
+		$tz = 'gmt';
+		if (empty($this->object_format) || $this->object_format == 'V1') {
+			$tz = 'tzserver';
+		}
+
 		$previoushash = '';
 		$previousid = 0;
 
@@ -1333,7 +1348,7 @@ class BlockedLog
 		$sql .= " entity,";
 		$sql .= " debuginfo";	// Only stored
 		$sql .= ") VALUES (";
-		$sql .= "'".$this->db->idate($this->date_creation)."',";
+		$sql .= "'".$this->db->idate($this->date_creation, $tz)."',";
 		$sql .= "'".$this->db->escape($this->action)."',";
 		$sql .= "'".$this->db->escape((string) $this->module_source)."',";
 		$sql .= (is_null($this->amounts_taxexcl) ? "null" : (float) $this->amounts_taxexcl).",";
@@ -1341,7 +1356,7 @@ class BlockedLog
 		$sql .= "'".$this->db->escape($this->signature)."',";
 		$sql .= "'".$this->db->escape($this->element)."',";
 		$sql .= (int) $this->fk_object.",";
-		$sql .= "'".$this->db->idate($this->date_object)."',";
+		$sql .= "'".$this->db->idate($this->date_object, $tz)."',";
 		$sql .= "'".$this->db->escape($this->ref_object)."',";
 		$sql .= ($this->linktoref ? "'".$this->db->escape($this->linktoref)."'" : "null").",";
 		$sql .= ($this->linktoref ? "'".$this->db->escape($this->linktype)."'" : "null").",";
@@ -1426,7 +1441,7 @@ class BlockedLog
 
 			$signature = $this->buildFinalSignatureHash($previoushash.$concatenateddata);
 
-			//var_dump($previoushash, $concatenateddata, $signature);
+			//var_dump($previoushash, $concatenateddata, $this->object_format, $signature);
 		} catch (Exception $e) {
 			$res = ($signature === $this->signature);
 			$this->error = $e->getMessage();
@@ -1540,7 +1555,6 @@ class BlockedLog
 			if (!preg_match('/^BLOCKEDLOGHMAC/', $hmac_secret_key)) {
 				throw new Exception('Error: Failed to decode the crypted value of the parameter BLOCKEDLOG_HMAC_KEY using the $dolibarr_main_crypt_key. A value was found but decoding failed. May be the database data were restored onto another environment and the coding/decoding key $dolibarr_main_dolcrypt_key was not restored with the same value in conf.php file.');
 			}
-
 			return hash_hmac('sha256', $clearstring, $hmac_secret_key);
 		} else {
 			throw new Exception('Error bad value "'.$this->object_format.'" for object_format');
@@ -1566,7 +1580,7 @@ class BlockedLog
 			$sql = "SELECT rowid, signature FROM ".MAIN_DB_PREFIX."blockedlog";
 			$sql .= " WHERE entity = ".((int) $conf->entity);
 			$sql .= " AND rowid = ".((int) $beforeid - 1);
-			$sql .= ($withlock ? " FOR UPDATE " : "");
+			$sql .= ($withlock ? " FOR UPDATE " : "");		// To be sure transaction the get last hash to generate the next one will be unlocked once transaction to create new record is finished
 
 			$resql = $this->db->query($sql);
 			if ($resql) {
@@ -1663,10 +1677,10 @@ class BlockedLog
 			$sql .= natural_search("fk_user", (string) $search_fk_user, 2);
 		}
 		if ($search_start > 0) {
-			$sql .= " AND date_creation >= '".$this->db->idate($search_start)."'";
+			$sql .= " AND date_creation >= '".$this->db->idate($search_start, 'gmt')."'";
 		}
 		if ($search_end > 0) {
-			$sql .= " AND date_creation <= '".$this->db->idate($search_end)."'";
+			$sql .= " AND date_creation <= '".$this->db->idate($search_end, 'gmt')."'";
 		}
 		if ($search_ref != '') {
 			$sql .= " AND (".natural_search("ref_object", $search_ref, 0, 1);
