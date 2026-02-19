@@ -162,3 +162,4 @@ print $langs->trans("Developpers").':';
 print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "cs.periode", "", $param, '', $sortfield, $sortorder, 'center ');
 select#date_startday, select#date_startmonth, select#date_endday, select#date_endmonth, select#reday, select#remonth
 select#date_startday, select#date_startmonth, select#date_endday, select#date_endmonth, select#reday, select#remonth,
+BEGIN - regnumber=7dd3b63bd8… - date=2025-02-05T11:54:50Z - period=2025-01 - entity=1 - formatexport=VE1 - user=Alice Adminson;Id;Date création;Action;Origine;Montant HT;Montant TTC;Réf.;Date;Utilisateur;Lier à;Type de lien;Données complètes;Version;Version de la signature;Signature dans la base de données;État;NOTE - previoushash=b63e359ffca54d5c2bab869916eaf23d4a736703028ccbf77ce1167c5f830e7b
