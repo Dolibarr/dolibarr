@@ -199,6 +199,7 @@ fi
 
 # ---------------------------- Run update of demo data
 echo
+echo Run script updatedemo.php confirm
 "$mydir/updatedemo.php" confirm
 export res=$?
 
@@ -206,65 +207,65 @@ export res=$?
 # ---------------------------- Run update of demo data
 if [ "$confirm" == "confirmresetblockedlog" ]; then
 	echo
+	echo Run script updatedemo.php confirmresetblockedlog
 	"$mydir/updatedemo.php" confirmresetblockedlog
 	export res=$?
 fi
 
-exit;
 
 # ---------------------------- Copy demo files
 export documentdir
 # shellcheck disable=2016
 documentdir=$(< "$mydir/../../htdocs/conf/conf.php" grep '^\$dolibarr_main_data_root' | sed -e 's/$dolibarr_main_data_root=//' | sed -e 's/;//' | sed -e "s/'//g" | sed -e 's/"//g')
-	if [ "$documentdir" != "" ]
-	then
-		$DIALOG --title "Reset document directory" --clear --yesno "DELETE and recreate document directory '$documentdir/':" 16 55
-		valret=$?
+if [ "$documentdir" != "" ]
+then
+	$DIALOG --title "Reset document directory" --clear --yesno "DELETE and recreate document directory '$documentdir/':" 16 55
+	valret=$?
 
-		case $valret in
-			0)
-				#  YES
-				echo "RECREATE $documentdir"
-				echo "  rm -fr '$documentdir/'*"
-				rm -fr "${documentdir:?}/"* ;;
-			1)
-				exit ;;
-			255)
-				exit ;;
-		esac
+	case $valret in
+		0)
+			#  YES
+			echo "RECREATE $documentdir"
+			echo "  rm -fr '$documentdir/'*"
+			rm -fr "${documentdir:?}/"* ;;
+		1)
+			exit ;;
+		255)
+			exit ;;
+	esac
 
-		echo "cp -pr '$mydir/documents_demo/'* '$documentdir/'"
-		cp -pr "$mydir/documents_demo/"* "$documentdir/"
+	echo "cp -pr '$mydir/documents_demo/'* '$documentdir/'"
+	cp -pr "$mydir/documents_demo/"* "$documentdir/"
 
-		mkdir "$documentdir/doctemplates/" 2>/dev/null
-		echo cp -pr "$mydir/../../htdocs/install/doctemplates/"* "$documentdir/doctemplates/"
-		cp -pr "$mydir/../../htdocs/install/doctemplates/"* "$documentdir/doctemplates/"
+	mkdir "$documentdir/doctemplates/" 2>/dev/null
+	echo cp -pr "$mydir/../../htdocs/install/doctemplates/"* "$documentdir/doctemplates/"
+	cp -pr "$mydir/../../htdocs/install/doctemplates/"* "$documentdir/doctemplates/"
 
-		echo cp -pr "$mydir/../../htdocs/install/medias/"* "$documentdir/medias/image/"
-		cp -pr "$mydir/../../htdocs/install/medias/"* "$documentdir/medias/image/"
+	echo cp -pr "$mydir/../../htdocs/install/medias/"* "$documentdir/medias/image/"
+	cp -pr "$mydir/../../htdocs/install/medias/"* "$documentdir/medias/image/"
 
-		mkdir -p "$documentdir/ecm/Administrative documents" 2>/dev/null
-		mkdir -p "$documentdir/ecm/Images" 2>/dev/null
-		rm -f "$documentdir/doctemplates/"*/index.html
-		echo cp -pr "$mydir/../../doc/images/"* "$documentdir/ecm/Images"
-		cp -pr "$mydir/../../doc/images/"* "$documentdir/ecm/Images"
+	mkdir -p "$documentdir/ecm/Administrative documents" 2>/dev/null
+	mkdir -p "$documentdir/ecm/Images" 2>/dev/null
+	rm -f "$documentdir/doctemplates/"*/index.html
+	echo cp -pr "$mydir/../../doc/images/"* "$documentdir/ecm/Images"
+	cp -pr "$mydir/../../doc/images/"* "$documentdir/ecm/Images"
 
-		chmod -R u+w "$documentdir/"
-		chown -R www-data "$documentdir/"
-	else
-		echo "Detection of 'documents' directory in '$mydir' failed so demo files were not copied."
-	fi
-
-
-	if [ -s "$mydir/initdemopostsql.sql" ]; then
-		mysql "-P$port" "$base" < "$mydir/initdemopostsql.sql"
-	fi
+	chmod -R u+w "$documentdir/"
+	chown -R www-data "$documentdir/"
+else
+	echo "Detection of 'documents' directory in '$mydir' failed so demo files were not copied."
+fi
 
 
-	if [ "$res" = "0" ]
-	then
-		echo "Success, file successfully loaded."
-	else
-		echo "Error, load failed."
-	fi
-	echo
+if [ -s "$mydir/initdemopostsql.sql" ]; then
+	mysql "-P$port" "$base" < "$mydir/initdemopostsql.sql"
+fi
+
+
+if [ "$res" = "0" ]
+then
+	echo "Success, file successfully loaded: Note that crypted data need to have dolibarr_main_instance_unique_id=11f3c81e86fc9e3b3fd11d81c9a31bd0 with this data set to be readable."
+else
+	echo "Error, 1 step of script has failed."
+fi
+echo

@@ -214,6 +214,34 @@ $footerorder = '';
 $printer = null;
 $idoflineadded = 0;
 if (empty($reshook)) {
+	// Test that period is not close
+	$tmpcurrentday = dol_getdate(dol_now());
+
+	$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."pos_cash_fence";
+	$sql .= " WHERE posnumber = ".((int) $takeposterminal);
+	$sql .= " AND year_close = ".((int) $tmpcurrentday['year']);
+	$sql .= " AND (";
+	$sql .= " (month_close IS NULL AND day_close IS NULL)";
+	$sql .= " OR (month_close = ".((int) $tmpcurrentday['mon'])." AND day_close IS NULL)";
+	$sql .= " OR (month_close = ".((int) $tmpcurrentday['mon'])." AND day_close = ".((int) $tmpcurrentday['mday']).")";
+	$sql .= ")";
+	$sql .= " AND status = 1";
+
+	$resql = $db->query($sql);
+	if ($resql) {
+		$obj = $db->fetch_object($resql);
+		if ($obj) {
+			$nbcashcontrol = $obj->nb;
+		}
+	}
+
+	if ($nbcashcontrol) {
+		$error++;
+		$langs->load('errors');
+		dol_htmloutput_errors($langs->trans("ACashControlHasBeenclosedForCurrentDay"), [], 1);
+		$action = '';
+	}
+
 	// Action to record a payment on a TakePOS invoice
 	if ($action == 'valid' && $user->hasRight('facture', 'creer')) {
 		$bankaccount = 0;

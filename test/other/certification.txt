@@ -7,9 +7,12 @@ QUICK TOOL FOR CERTIFICATION
 
 ***** To reload demo database
 To reload:
+~/git/dolibarr_test/dev/initdemo/initdemo.sh confirm 'mysqldump_dolibarr_24.0.0.sql' dolibarr_test 3306 dolibarr_test xxxxpass
+or
 ~/git/dolibarr_test/dev/initdemo/initdemo.sh confirmresetblockedlog 'mysqldump_dolibarr_24.0.0.sql' dolibarr_test 3306 dolibarr_test xxxxpass
+
 To save:
-~/git/dolibarr_test/dev/initdemo/savedemo.sh confirm 'mysqldump_dolibarr_24.0.0.sql' dolibarr_test 3306 dolibarr_test xxxxpass
+~/git/dolibarr_test/dev/initdemo/savedemo.sh 'mysqldump_dolibarr_24.0.0.sql' dolibarr_test 3306 dolibarr_test xxxxpass
 
 
 ***** To force all event in the blockedlog to year 2025
@@ -19,7 +22,10 @@ UPDATE votre_table SET
 
 
 ***** To force date of a server to make tests
-sudo timedatectl set-ntp false; sudo timedatectl set-time "2025-01-15 09:30:00"; sudo timedatectl status;
+timedatectl set-ntp false;   ou  systemctl stop ntp;
+timedatectl set-time "2025-04-15 09:30:00";
+timedatectl status;
+
 sudo /etc/init.d/apache2 stop; sudo /etc/init.d/apache2 start; sudo /etc/init.d/apache2 status;
 
 Warning: When going in past, you must be sure that users have no date of session invalidation after this date. You can fix this with:

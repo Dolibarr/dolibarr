@@ -188,15 +188,24 @@ function formatObject($objtoshow, $prefix, $parentelement = '')
 		'special_code' => 'Special line (WEEE line, option, id of module...)',
 		'status' => 'Status',
 		'cash' => 'PaymentTypeLIQ',
+		'cash_declared' => $langs->transnoentities('PaymentTypeLIQ').' - '.$langs->transnoentities("AmuntCountedByUserShort"),
 		'cash_lifetime' => $langs->transnoentities('LifetimeAmount', $langs->transnoentities('PaymentTypeLIQ')),
 		'card' => 'PaymentTypeCB',
+		'card_declared' => $langs->transnoentities('PaymentTypeCB').' - '.$langs->transnoentities("AmuntCountedByUserShort"),
 		'card_lifetime' => $langs->transnoentities('LifetimeAmount', $langs->transnoentities('PaymentTypeCB')),
 		'cheque' => 'PaymentTypeCHQ',
+		'cheque_declared' => $langs->transnoentities('PaymentTypeCHQ').' - '.$langs->transnoentities("AmuntCountedByUserShort"),
 		'cheque_lifetime' => $langs->transnoentities('LifetimeAmount', $langs->transnoentities('PaymentTypeCHQ')),
-		'lifetime_start' => 'LifetimeStartDate',
+		'lifetime_start' => 'LifetimeStatDate',
 		'email_from' => 'MailFrom',
 		'email_to' => 'MailTo',
 		'email_msgid' => 'EmailMsgID',
+		'year_close' => 'Year',
+		'month_close' => 'Month',
+		'day_close' => 'Day',
+		'hour_close' => 'Hour',
+		'min_close' => 'Minutes',
+		'sec_close' => 'Second',
 	);
 
 	if (is_object($newobjtoshow) || is_array($newobjtoshow)) {
@@ -254,7 +263,7 @@ function formatObject($objtoshow, $prefix, $parentelement = '')
 					$s .= $tmpinvoice->getLibType(0);
 				} elseif (in_array($key, array('date', 'datef'))) {
 					$s .= dol_print_date($val, 'day');
-				} elseif (in_array($key, array('dateh', 'datec', 'date_creation', 'datem', 'tms', 'date_valid', 'datep'))) {
+				} elseif (in_array($key, array('dateh', 'datec', 'date_creation', 'datem', 'tms', 'date_valid', 'datep', 'lifetime_start'))) {
 					$s .= dol_print_date($val, 'dayhour');
 				} elseif (in_array($key, array('tva_assuj', 'localtax1_assuj', 'localtax2_assuj'))) {
 					$s .= yn($val);
@@ -264,8 +273,10 @@ function formatObject($objtoshow, $prefix, $parentelement = '')
 					'qty', 'subprice',
 					'tva_tx', 'localtax1_tx', 'localtax2_tx', 'total_ht', 'total_ttc', 'total_tva', 'total_localtax1', 'total_localtax2', 'localtax2', 'localtax2', 'revenuestamp',
 					'multicurrency_total_ht', 'multicurrency_total_tva', 'multicurrency_total_ttc', 'multicurrency_subprice',
-					'opening', 'cash', 'cheque', 'card',
-					'amount'
+					'opening',
+					'cash', 'cheque', 'card',
+					'amount',
+					'cash_declared', 'cheque_declared', 'card_declared', 'cash_lifetime', 'cheque_lifetime', 'card_lifetime'
 				)) || (isset($arrayoffields[$key]['type']) && in_array($arrayoffields[$key]['type'], array('price')))) {
 					$s .= '<span class="amount">'.price($val, 0, $langs, 1, 0, -2).'</span>';
 				} else {
