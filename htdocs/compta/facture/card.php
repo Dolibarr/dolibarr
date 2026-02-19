@@ -2125,6 +2125,9 @@ if (empty($reshook)) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+					if (empty($object->thirdparty)) {
+						$object->fetch_thirdparty();
+					}
 					$newlang = $object->thirdparty->default_lang;
 				}
 				if (!empty($newlang)) {
