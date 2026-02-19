@@ -455,7 +455,7 @@ if (is_array($blocks)) {
 			print '<td>'.dolPrintHTML((string) $block->id).'</td>';
 
 			// Date
-			print '<td class="nowraponall">'.dol_print_date($block->date_creation, 'dayhour').'</td>';
+			print '<td class="nowraponall">'.dol_print_date($block->date_creation, 'dayhour', 'tzuserrel').'</td>';
 
 			// User
 			print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($block->user_fullname).'">';
@@ -500,7 +500,7 @@ if (is_array($blocks)) {
 			// Amount
 			print '<td class="right nowraponall">';
 			if (!in_array($block->action, array('BLOCKEDLOG_EXPORT', 'CASHCONTROL_CLOSE', 'MODULE_SET', 'MODULE_RESET'))) {
-				$ingrey = !in_array($block->action, array('BILL_VALIDATE', 'PAYMENT_CUSTOMER_CREATE'));
+				$ingrey = !in_array($block->action, array('BILL_VALIDATE', 'PAYMENT_CUSTOMER_CREATE', 'PAYMENT_CUSTOMER_DELETE'));
 				if ($ingrey) {
 					print '<span class="opacitymedium">';
 				}
@@ -580,7 +580,7 @@ if (is_array($blocks)) {
 		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	} else {
 		foreach ($totalamount as $key => $totalamountperref) {
-			if ($key == 'BILL_VALIDATE' || $key == 'PAYMENT_CUSTOMER_CREATE') {
+			if ($key == 'BILL_VALIDATE' || $key == 'PAYMENT_CUSTOMER') {
 				// Total
 				print '<tr class="liste_total">';
 
@@ -595,7 +595,7 @@ if (is_array($blocks)) {
 				print dolPrintHTML($langs->trans("TotalForAction").' '.$langs->trans('log'.$key));
 				if ($key == 'BILL_VALIDATE') {
 					print ' <span class="opacitymedium">('.$langs->trans("Turnover").')</span>';
-				} elseif ($key == 'PAYMENT_CUSTOMER_CREATE') {
+				} elseif ($key == 'PAYMENT_CUSTOMER') {
 					print ' <span class="opacitymedium">('.$langs->trans("TurnoverCollected").')</span>';
 				}
 				print '</td>';

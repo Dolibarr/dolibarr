@@ -1556,6 +1556,7 @@ if (getDolGlobalInt('TAKEPOS_ADD_BUTTON_OPEN_DRAWER'.$term) > 0) {
 	);
 }
 
+// If there is an open cash control started
 $sql = "SELECT rowid, status, entity FROM ".MAIN_DB_PREFIX."pos_cash_fence WHERE";
 $sql .= " entity = ".((int) $conf->entity)." AND ";
 $sql .= " posnumber = ".((int) empty($_SESSION["takeposterminal"]) ? 0 : $_SESSION["takeposterminal"])." AND ";

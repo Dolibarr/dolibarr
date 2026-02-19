@@ -117,7 +117,7 @@ function getServerTimeZoneInt($refgmtdate = 'now')
  *
  *  @param      int			$time               Date timestamp (Must be a UTC timestamp)
  *  @param      float		$duration_value     Value of delay to add
- *  @param      string		$duration_unit      Unit of added delay (d, m, y, w, h, i)
+ *  @param      string		$duration_unit      Unit of added delay (d, m, y, w, h, mn|i)
  *  @param      int<0,1>    $ruleforendofmonth  Change the behavior when $duration_unit = 'm' and new date reaches a non existing date. Use 0 (PHP behaviour) or 1
  *  @return     int      			        	New timestamp
  *  @see convertSecondToTime(), convertTimeToSeconds()
