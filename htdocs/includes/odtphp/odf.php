@@ -965,21 +965,20 @@ IMG;
 		}
 		$commandprotected = str_replace(array('(', ')'), array('__PARENTHESIS_OPEN__', '__PARENTHESIS_CLOSE__'), $command);
 		$commandescaped = escapeshellcmd($commandprotected);
-		$commandtoexec = str_replace(array('__PARENTHESIS_OPEN__', '__PARENTHESIS_CLOSE__'), array('(', ')'), $commandescaped);
-		
+		$commandescapedtoexec = str_replace(array('__PARENTHESIS_OPEN__', '__PARENTHESIS_CLOSE__'), array('(', ')'), $commandescaped);
+
 		$retval=0; $output_arr=array();
 		if ($execmethod == 1) {
-			exec($commandtoexec, $output_arr, $retval);
-		}
-		if ($execmethod == 2) {
+			exec($commandescapedtoexec, $output_arr, $retval);
+		} elseif ($execmethod == 2) {
 			$outputfile = DOL_DATA_ROOT.'/odt2pdf.log';
 
 			$handle = fopen($outputfile, 'w');
 			if ($handle) {
 				dol_syslog(get_class($this)."Run command ".$command, LOG_DEBUG);
-				dol_syslog(get_class($this)."escapeshellcmd(command) = ".$commandtoexec, LOG_DEBUG);
+				dol_syslog(get_class($this)."escapeshellcmd(command) = ".$commandescapedtoexec, LOG_DEBUG);
 				fwrite($handle, $command."\n");
-				$handlein = popen($commandtoexec, 'r');
+				$handlein = popen($commandescapedtoexec, 'r');
 				while (!feof($handlein)) {
 					$read = fgets($handlein);
 					fwrite($handle, $read);
