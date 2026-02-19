@@ -154,11 +154,19 @@ $importmodelid = GETPOSTINT('importmodelid');
 $excludefirstline = (GETPOST('excludefirstline') ? GETPOST('excludefirstline') : 2);
 $endatlinenb = (GETPOST('endatlinenb') ? GETPOST('endatlinenb') : '');
 $updatekeys			= (GETPOST('updatekeys', 'array') ? GETPOST('updatekeys', 'array') : array());
+$importtriggermode = GETPOST('importtriggermode', 'alpha');
 $separator			= (GETPOST('separator', 'nohtml') ? GETPOST('separator', 'nohtml', 3) : '');
 $enclosure			= (GETPOST('enclosure', 'nohtml') ? GETPOST('enclosure', 'nohtml') : '"');	// We must use 'nohtml' and not 'alphanohtml' because we must accept "
 $charset            = GETPOST('charset', 'aZ09');
 $separator_used     = str_replace('\t', "\t", $separator);
 $relativepath = '';
+
+if (empty($importtriggermode)) {
+	$importtriggermode = getDolGlobalString('IMPORT_TRIGGER_MODE_DEFAULT', 'strict_line');
+}
+if (!in_array($importtriggermode, array('strict_line', 'fast_bulk'), true)) {
+	$importtriggermode = 'strict_line';
+}
 
 $objimport = new Import($db);
 $objimport->load_arrays($user, ($step == 1 ? '' : $datatoimport));
@@ -1505,6 +1513,8 @@ if ($step == 4 && $datatoimport) {
 	require_once $dir.$file;
 	$obj = new $classname($db, $datatoimport);
 	'@phan-var-force ModeleImports $obj';
+	$obj->importtriggermode = $importtriggermode;
+	$obj->importissimulation = 1;
 	if ($model == 'csv') {
 		'@phan-var-force ImportCsv $obj';
 		$obj->separator = $separator_used;
@@ -1529,7 +1539,7 @@ if ($step == 4 && $datatoimport) {
 
 	$nboflines = $obj->import_get_nb_of_lines($conf->import->dir_temp.'/'.$filetoimport);
 
-	$param = '&leftmenu=import&format='.urlencode($format).'&datatoimport='.urlencode($datatoimport).'&filetoimport='.urlencode($filetoimport).'&nboflines='.((int) $nboflines).'&separator='.urlencode($separator).'&enclosure='.urlencode($enclosure);
+	$param = '&leftmenu=import&format='.urlencode($format).'&datatoimport='.urlencode($datatoimport).'&filetoimport='.urlencode($filetoimport).'&nboflines='.((int) $nboflines).'&separator='.urlencode($separator).'&enclosure='.urlencode($enclosure).'&importtriggermode='.urlencode($importtriggermode);
 	$param2 = $param; // $param2 = $param without excludefirstline and endatlinenb
 	if ($excludefirstline) {
 		$param .= '&excludefirstline='.urlencode($excludefirstline);
@@ -1550,6 +1560,7 @@ if ($step == 4 && $datatoimport) {
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="step" value="4">'; // step 4
 	print '<input type="hidden" name="action" value="launchsimu">'; // step 4
+	print '<input type="hidden" name="importtriggermode" value="'.dol_escape_htmltag($importtriggermode).'">';
 
 	print dol_get_fiche_head($head, 'step4', 'Import', -2, 'upload');
 
@@ -1691,6 +1702,31 @@ if ($step == 4 && $datatoimport) {
 	echo '</pre>';*/
 	print '</td></tr>';
 
+	// Trigger mode
+	print '<tr><td>';
+	print $langs->trans("ImportTriggerModeLabel");
+	print '</td><td>';
+	$triggerModeChoices = array(
+		'strict_line' => $langs->trans("ImportTriggerModeStrictLine"),
+		'fast_bulk' => $langs->trans("ImportTriggerModeFastBulk"),
+	);
+	if ($action == 'launchsimu') {
+		print dol_escape_htmltag($triggerModeChoices[$importtriggermode] ?? $importtriggermode);
+		print '<input type="hidden" name="importtriggermode" value="'.dol_escape_htmltag($importtriggermode).'">';
+		print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'?step=4'.$param.'">'.$langs->trans("Modify").'</a>';
+	} else {
+		print $form->selectarray('importtriggermode', $triggerModeChoices, $importtriggermode, 0);
+	}
+	print '<br><span class="opacitymedium">';
+	print $langs->trans("ImportTriggerModeHint");
+	print '</span>';
+	if ($importtriggermode === 'fast_bulk') {
+		print '<br><span class="warning">';
+		print $langs->trans("ImportTriggerModeFastBulkWarning");
+		print '</span>';
+	}
+	print '</td></tr>';
+
 	print '</table>';
 	print '</div>';
 
@@ -1787,6 +1823,10 @@ if ($step == 4 && $datatoimport) {
 		}
 		print '</div>';
 	} else {
+		print '<div class="warning">';
+		print '<b>'.$langs->trans("ImportTriggerModeSimulationWarningTitle").'</b><br>';
+		print $langs->trans("ImportTriggerModeSimulationWarning");
+		print '</div><br>';
 		// Launch import
 		$arrayoferrors = array();
 		$arrayofwarnings = array();
@@ -1839,6 +1879,7 @@ if ($step == 4 && $datatoimport) {
 					'fieldssource'                 => $fieldssource,
 					'importid'                     => $importid,
 					'updatekeys'                   => $updatekeys,
+					'importtriggermode'            => $importtriggermode,
 					'arrayoferrors'                => &$arrayoferrors,
 					'arrayofwarnings'              => &$arrayofwarnings,
 					'nbok'                         => &$nbok,
@@ -1878,6 +1919,11 @@ if ($step == 4 && $datatoimport) {
 		} else {
 			print $langs->trans("ErrorFailedToOpenFile", $pathfile);
 		}
+
+		$arrayofwarnings['none'][] = array(
+			'lib' => $langs->trans("ImportTriggerModeSimulationInfo"),
+			'type' => 'TRIGGERMODE',
+		);
 
 		$error = 0;
 
@@ -2009,6 +2055,8 @@ if ($step == 5 && $datatoimport) {
 	require_once $dir.$file;
 	$obj = new $classname($db, $datatoimport);
 	'@phan-var-force ModeleImports $obj';
+	$obj->importtriggermode = $importtriggermode;
+	$obj->importissimulation = 0;
 	if ($model == 'csv') {
 		'@phan-var-force ImportCsv $obj';
 		$obj->separator = $separator_used;
@@ -2032,7 +2080,7 @@ if ($step == 5 && $datatoimport) {
 
 	$nboflines = (GETPOSTISSET("nboflines") ? GETPOSTINT("nboflines") : dol_count_nb_of_line($conf->import->dir_temp.'/'.$filetoimport));
 
-	$param = '&format='.$format.'&datatoimport='.urlencode($datatoimport).'&filetoimport='.urlencode($filetoimport).'&nboflines='.((int) $nboflines);
+	$param = '&format='.$format.'&datatoimport='.urlencode($datatoimport).'&filetoimport='.urlencode($filetoimport).'&nboflines='.((int) $nboflines).'&importtriggermode='.urlencode($importtriggermode);
 	if ($excludefirstline) {
 		$param .= '&excludefirstline='.urlencode($excludefirstline);
 	}
@@ -2138,6 +2186,20 @@ if ($step == 5 && $datatoimport) {
 	print $langs->trans("EndAtLineNb");
 	print '</td><td>';
 	print '<input type="text" size="4" name="endatlinenb" disabled="disabled" value="'.$endatlinenb.'">';
+	print '</td></tr>';
+
+	// Trigger mode
+	print '<tr><td>';
+	print $langs->trans("ImportTriggerModeLabel");
+	print '</td><td>';
+	if ($importtriggermode === 'fast_bulk') {
+		print $langs->trans("ImportTriggerModeSummaryFast");
+	} else {
+		print $langs->trans("ImportTriggerModeSummaryStrict");
+	}
+	print '<br><span class="opacitymedium">';
+	print $langs->trans("ImportTriggerModeSummaryHint");
+	print '</span>';
 	print '</td></tr>';
 
 	print '</table>';
@@ -2262,6 +2324,7 @@ if ($step == 5 && $datatoimport) {
 				'fieldssource'                 => $fieldssource,
 				'importid'                     => $importid,
 				'updatekeys'                   => $updatekeys,
+				'importtriggermode'            => $importtriggermode,
 				'arrayoferrors'                => &$arrayoferrors,
 				'arrayofwarnings'              => &$arrayofwarnings,
 				'nbok'                         => &$nbok,
@@ -2322,6 +2385,22 @@ if ($step == 5 && $datatoimport) {
 			}
 		}
 
+		if (!$error && $importtriggermode === 'fast_bulk') {
+			$resbulktrigger = $obj->runImportBulkTrigger($importid, $user, $langs, $conf);
+			if ($resbulktrigger < 0) {
+				$arrayoferrors['none'][] = array('lib' => $langs->trans("ErrorFailedTriggerCall"), 'type' => 'TRIGGER');
+				if (!empty($obj->errors) && is_array($obj->errors)) {
+					foreach ($obj->errors as $tmperror) {
+						$lib = (is_array($tmperror) ? ($tmperror['lib'] ?? '') : $tmperror);
+						if ($lib !== '') {
+							$arrayoferrors['none'][] = array('lib' => $lib, 'type' => 'TRIGGER');
+						}
+					}
+				}
+				$error++;
+			}
+		}
+
 		if (!$error) {
 			$db->commit(); // We can commit if no errors.
 		} else {
@@ -2330,6 +2409,13 @@ if ($step == 5 && $datatoimport) {
 	}
 
 	print dol_get_fiche_end();
+
+	if ($importtriggermode === 'fast_bulk') {
+		print '<div class="warning">';
+		print '<b>'.$langs->trans("ImportTriggerModeFastBulkFinalWarningTitle").'</b><br>';
+		print $langs->trans("ImportTriggerModeFastBulkFinalWarning");
+		print '</div><br>';
+	}
 
 
 	// Show result
