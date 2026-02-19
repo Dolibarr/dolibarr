@@ -984,7 +984,7 @@ function dolPrintSignatureImage(TCPDF $pdf, $langs, $params)
 	$pdf->SetXY($xforimgstart, $yforimgstart + round($wforimg / 4) - 4);
 	$pdf->SetFont($default_font, '', $default_font_size - 1);
 	$pdf->SetTextColor(80, 80, 80);
-	$pdf->MultiCell($wforimg, 4, $langs->trans("Signature") . ': ' . dol_print_date(dol_now(), "day", false, $langs, true). ' - '.$params['online_sign_name'], 0, 'L');
+	$pdf->MultiCell($wforimg, 4, $langs->transnoentities("Signature") . ': ' . dol_print_date(dol_now(), "day", false, $langs, true). ' - '.$params['online_sign_name'], 0, 'L');
 	//$pdf->SetXY($xforimgstart, $yforimgstart + round($wforimg / 4));
 	//$pdf->MultiCell($wforimg, 4, $langs->trans("Lastname") . ': ' . $online_sign_name, 0, 'L');
 

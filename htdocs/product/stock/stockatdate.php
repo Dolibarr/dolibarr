@@ -29,14 +29,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
-require_once './lib/replenishment.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -44,6 +36,13 @@ require_once './lib/replenishment.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+require_once './lib/replenishment.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks', 'orders'));
@@ -103,11 +102,15 @@ if (!$sortorder) {
 	$sortorder = 'ASC';
 }
 
-$parameters = array();
-$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) {
-	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+$object = new Entrepot($db);
+
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
 }
+
+$result = restrictedArea($user, 'produit|service');	// Must have permission to read product
+$result = restrictedArea($user, 'stock');	// Must have permission to read stock
 
 $dateIsValid = true;
 if ($mode == 'future') {
@@ -122,18 +125,16 @@ if ($mode == 'future') {
 	}
 }
 
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-
-$result = restrictedArea($user, 'produit|service');	// Must have permission to read product
-$result = restrictedArea($user, 'stock');	// Must have permission to read stock
-
 
 /*
  * Actions
  */
+
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // Both test are required to be compatible with all browsers
 	$date = '';
@@ -299,6 +300,8 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
+$sqlfields = $sql;
+
 $sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
 if (!empty($search_fk_warehouse)) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as ps ON p.rowid = ps.fk_product AND ps.fk_entrepot IN ('.$db->sanitize(implode(",", $search_fk_warehouse)).")";
@@ -313,9 +316,6 @@ if ($productid > 0) {
 }
 if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 	$sql .= " AND p.fk_product_type = 0";
-}
-if (!empty($canvas)) {
-	$sql .= " AND p.canvas = '".$db->escape($canvas)."'";
 }
 if ($search_ref) {
 	$sql .= natural_search('p.ref', $search_ref);
@@ -354,15 +354,27 @@ if ($sortfield == 'stock' && !empty($search_fk_warehouse)) {
 }
 $sql .= $db->order($sortfield, $sortorder);
 
+// Count total nb of records
 $nbtotalofrecords = '';
 if ($date && $dateIsValid) {	// We avoid a heavy sql if mandatory parameter date not yet defined
 	if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
-		$result = $db->query($sql);
-		$nbtotalofrecords = $db->num_rows($result);
-		if (($page * $limit) > $nbtotalofrecords || $ext == 'csv') {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+		/* The fast and low memory method to get and count full list converts the sql into a sql count */
+		$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+		$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+
+		$resql = $db->query($sqlforcount);
+		if ($resql) {
+			$objforcount = $db->fetch_object($resql);
+			$nbtotalofrecords = $objforcount->nbtotalofrecords;
+		} else {
+			dol_print_error($db);
+		}
+
+		if (($page * $limit) > (int) $nbtotalofrecords || $ext == 'csv') {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 			$page = 0;
 			$offset = 0;
 		}
+		$db->free($resql);
 	}
 
 	//print $sql;
@@ -370,7 +382,6 @@ if ($date && $dateIsValid) {	// We avoid a heavy sql if mandatory parameter date
 		$sql .= $db->plimit($limit + 1, $offset);
 		$resql = $db->query($sql);
 	} else {
-		$resql = $result;
 		$limit = 0;
 	}
 	if (empty($resql)) {
@@ -601,6 +612,10 @@ $totalvirtualstock = 0;
 
 $i = 0;
 while ($i < ($limit ? min($num, $limit) : $num)) {
+	if (empty($resql)) {
+		break;
+	}
+
 	$objp = $db->fetch_object($resql);
 
 	if (getDolGlobalString('STOCK_SUPPORTS_SERVICES') || $objp->fk_product_type == 0) {

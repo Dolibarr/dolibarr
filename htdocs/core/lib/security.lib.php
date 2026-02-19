@@ -203,6 +203,13 @@ function dolDecrypt($chain, $key = '')
 	}
 
 	$reg = array();
+
+	// Old method (no more used, kept for compatibility)
+	if (preg_match('/^crypted:(.+)$/', $chain, $reg)) {
+		return dol_decode($reg[1]);
+	}
+
+	// New method
 	if (preg_match('/^dolcrypt:([^:]+):(.+)$/', $chain, $reg)) {
 		// Do not enable this log, except during debug
 		//dol_syslog("We try to decrypt the chain: ".$chain, LOG_DEBUG);

@@ -958,6 +958,11 @@ function checkPHPCode(&$phpfullcodestringold, &$phpfullcodestring)
 
 	// First check permission
 	if ($phpfullcodestringold != $phpfullcodestring) {
+		global $dolibarr_website_allow_custom_php;
+		if (empty($dolibarr_website_allow_custom_php)) {
+			$error++;
+			setEventMessages($langs->trans("NotAllowedToAddDynamicContentDisabledGlobaly", 'dolibarr_website_allow_custom_php'), null, 'errors');
+		}
 		if (!$error && !$user->hasRight('website', 'writephp')) {
 			$error++;
 			setEventMessages($langs->trans("NotAllowedToAddDynamicContent"), null, 'errors');

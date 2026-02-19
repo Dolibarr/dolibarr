@@ -189,6 +189,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 		}
 	} else {
 		$thirdparty = $mysoc;
+		$result = 1; // No object to fetch (e.g. Setup -> Emails -> send test email): consider OK
 	}
 
 	if ($result > 0) {
@@ -313,11 +314,11 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 			$fromtype = GETPOST('fromtype', 'alpha');
 			$emailsendersignature = '';
 			if ($fromtype === 'robot') {
-				$from = dol_string_nospecial($conf->global->MAIN_MAIL_EMAIL_FROM, ' ', array(",")).' <' . getDolGlobalString('MAIN_MAIL_EMAIL_FROM').'>';
+				$from = dol_string_nospecial(getDolGlobalString('MAIN_MAIL_EMAIL_FROM'), ' ', array(",")).' <' . getDolGlobalString('MAIN_MAIL_EMAIL_FROM').'>';
 			} elseif ($fromtype === 'user') {
 				$from = dol_string_nospecial($user->getFullName($langs), ' ', array(",")).' <'.$user->email.'>';
 			} elseif ($fromtype === 'company') {
-				$from = dol_string_nospecial($conf->global->MAIN_INFO_SOCIETE_NOM, ' ', array(",")).' <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'>';
+				$from = dol_string_nospecial(getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), ' ', array(",")).' <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'>';
 			} elseif (preg_match('/user_aliases_(\d+)/', $fromtype, $reg)) {
 				$tmp = explode(',', $user->email_aliases);
 				$from = trim($tmp[((int) $reg[1] - 1)]);
@@ -345,7 +346,11 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 				$from = dol_string_nospecial(GETPOST('fromname'), ' ', array(",")).' <'.GETPOST('frommail').'>';
 			}
 
-			$replyto = dol_string_nospecial(GETPOST('replytoname'), ' ', array(",")).' <'.GETPOST('replytomail').'>';
+			$replyto = '';
+			if (GETPOST('replytomail')) {
+				$replyto = dol_string_nospecial(GETPOST('replytoname'), ' ', array(","));
+				$replyto .= ($replyto ? ' ' : '').'<'.GETPOST('replytomail').'>';
+			}
 
 			$message = GETPOST('message', 'restricthtml');
 			$subject = GETPOST('subject', 'restricthtml');
@@ -411,7 +416,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 			if (empty($sendcontext)) {
 				$sendcontext = 'standard';
 			}
-			$mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, $sendtocc, $sendtobcc, $deliveryreceipt, -1, '', '', $trackid, '', $sendcontext, '', $upload_dir_tmp);
+			$mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, $sendtocc, $sendtobcc, $deliveryreceipt, -1, '', '', $trackid, '', $sendcontext, $replyto, $upload_dir_tmp);
 
 			if (!empty($mailfile->error) || !empty($mailfile->errors)) {
 				setEventMessages($mailfile->error, $mailfile->errors, 'errors');

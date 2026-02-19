@@ -99,7 +99,7 @@ class Odf
 	 * Class constructor
 	 *
 	 * @param string $filename     The name of the odt file
-	 * @param array $config       Array of config data
+	 * @param array $config        Array of config data
 	 * @throws OdfException
 	 */
 	public function __construct($filename, $config = array())
@@ -957,19 +957,32 @@ IMG;
 		// $result = $utils->executeCLI($command, $outputfile);  and replace test on $execmethod.
 		// $retval will be $result['result']
 		// $errorstring will be $result['output']
+
+		// Protect parentheses from being double-escaped by escapeshellcmd().
+		// The $command is already built with escapeshellarg() for all arguments,
+		// but escapeshellcmd() escapes parentheses inside quoted strings, breaking
+		// filenames like "(PROV35)_invoice.odt" for draft invoices.
+		// Security: reject if placeholder strings already exist to prevent injection.
+		if (strpos($command, '__PARENTHESIS_OPEN__') !== false || strpos($command, '__PARENTHESIS_CLOSE__') !== false) {
+			dol_syslog(get_class($this).'::exportAsAttachedPDF Invalid characters in command path: '.$command, LOG_WARNING);
+			throw new OdfException('Invalid characters in command path');
+		}
+		$commandprotected = str_replace(array('(', ')'), array('__PARENTHESIS_OPEN__', '__PARENTHESIS_CLOSE__'), $command);
+		$commandescaped = escapeshellcmd($commandprotected);
+		$commandescapedtoexec = str_replace(array('__PARENTHESIS_OPEN__', '__PARENTHESIS_CLOSE__'), array('(', ')'), $commandescaped);
+
 		$retval=0; $output_arr=array();
 		if ($execmethod == 1) {
-			exec(escapeshellcmd($command), $output_arr, $retval);
-		}
-		if ($execmethod == 2) {
+			exec($commandescapedtoexec, $output_arr, $retval);
+		} elseif ($execmethod == 2) {
 			$outputfile = DOL_DATA_ROOT.'/odt2pdf.log';
 
 			$handle = fopen($outputfile, 'w');
 			if ($handle) {
 				dol_syslog(get_class($this)."Run command ".$command, LOG_DEBUG);
-				dol_syslog(get_class($this)."escapeshellcmd(command) = ".escapeshellcmd($command), LOG_DEBUG);
+				dol_syslog(get_class($this)."escapeshellcmd(command) = ".$commandescapedtoexec, LOG_DEBUG);
 				fwrite($handle, $command."\n");
-				$handlein = popen(escapeshellcmd($command), 'r');
+				$handlein = popen($commandescapedtoexec, 'r');
 				while (!feof($handlein)) {
 					$read = fgets($handlein);
 					fwrite($handle, $read);

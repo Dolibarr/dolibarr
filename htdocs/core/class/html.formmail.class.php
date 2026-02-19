@@ -836,7 +836,7 @@ class FormMail extends Form
 					//$out .= '</span>';
 					if (getDolGlobalString('MASS_ACTION_EMAIL_ON_DIFFERENT_THIRPARTIES_ADD_CUSTOM_EMAIL')) {
 						if (!empty($this->withto) && !is_array($this->withto)) {
-							$out .= ' '.$langs->trans("or").' <input type="email" name="emailto" value="">';
+							$out .= ' <span class="opacitymedium">'.$langs->trans("or").'</span> <input type="email" name="emailto" value="">';
 						}
 					}
 					$out .= '</td></tr>';
@@ -1231,7 +1231,7 @@ class FormMail extends Form
 			// The select combo
 			if (!empty($this->withto) && is_array($this->withto)) {
 				if (!empty($this->withtofree)) {
-					$out .= " ".$langs->trans("and")."/".$langs->trans("or")." ";
+					$out .= ' <span class="opacitymedium">'.$langs->trans("and")."/".$langs->trans("or")."</span> ";
 				}
 
 				$tmparray = $this->withto;
@@ -1285,7 +1285,7 @@ class FormMail extends Form
 		} else {
 			$out .= '<input class="minwidth200" id="sendtocc" name="sendtocc" value="'.(GETPOST("sendtocc", "alpha") ? GETPOST("sendtocc", "alpha") : ((!is_array($this->withtocc) && !is_numeric($this->withtocc)) ? $this->withtocc : '')).'" />';
 			if (!empty($this->withtocc) && is_array($this->withtocc)) {
-				$out .= " ".$langs->trans("and")."/".$langs->trans("or")." ";
+				$out .= ' <span class="opacitymedium">'.$langs->trans("and")."/".$langs->trans("or")."</span> ";
 
 				$tmparray = $this->withtocc;
 				foreach ($tmparray as $key => $val) {
@@ -1335,7 +1335,7 @@ class FormMail extends Form
 		} else {
 			$out .= '<input class="minwidth200" id="sendtoccc" name="sendtoccc" value="'.(GETPOSTISSET("sendtoccc") ? GETPOST("sendtoccc", "alpha") : ((!is_array($this->withtoccc) && !is_numeric($this->withtoccc)) ? $this->withtoccc : '')).'" />';
 			if (!empty($this->withtoccc) && is_array($this->withtoccc)) {
-				$out .= " ".$langs->trans("and")."/".$langs->trans("or")." ";
+				$out .= ' <span class="opacitymedium">'.$langs->trans("and")."/".$langs->trans("or")."</span> ";
 
 				$tmparray = $this->withtoccc;
 				foreach ($tmparray as $key => $val) {

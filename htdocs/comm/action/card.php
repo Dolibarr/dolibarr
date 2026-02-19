@@ -2146,6 +2146,9 @@ if ($id > 0 && $action != 'create') {
 		// Ref
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td>'.$object->id.'</td></tr>';
 
+		// Title
+		print '<tr><td class="fieldrequired'.(!getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? ' titlefieldcreate' : '').'">'.$langs->trans("Title").'</td><td><input type="text" name="label" class="soixantepercent" value="'.$object->label.'"></td></tr>';
+
 		// Type of event
 		if (getDolGlobalString('AGENDA_USE_EVENT_TYPE') && $object->elementtype != "ticket") {
 			print '<tr><td class="fieldrequired">'.$langs->trans("Type").'</td><td>';
@@ -2166,9 +2169,6 @@ if ($id > 0 && $action != 'create') {
 			print ' '.$form->textwithpicto('', $langs->trans("TicketMessagePrivateHelp"), 1, 'help');
 			print '</td><td><input type="checkbox" id="private" name="private" '.(preg_match('/^TICKET_MSG_PRIVATE/', $object->code) ? ' checked' : '').'></td></tr>';
 		}
-
-		// Title
-		print '<tr><td'.(!getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? ' class="fieldrequired titlefieldcreate"' : '').'>'.$langs->trans("Title").'</td><td><input type="text" name="label" class="soixantepercent" value="'.$object->label.'"></td></tr>';
 
 		// Full day event
 		print '<tr><td><span class="fieldrequired">'.$langs->trans("Date").'</span></td><td class="valignmiddle height30 small">';
@@ -2244,7 +2244,14 @@ if ($id > 0 && $action != 'create') {
 		print $form->selectDate($datef ? $datef : $object->datef, 'p2', 1, 1, 1, "action", 1, 2, ($caneditdateorowner ? 0 : 1), 'fulldayend', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuserrel') : 'tzuserrel');
 		print '</td></tr>';
 
-		print '<tr><td class="">&nbsp;</td><td></td></tr>';
+		// Location
+		if (!getDolGlobalString('AGENDA_DISABLE_LOCATION')) {
+			print '<tr><td>'.$langs->trans("Location").'</td><td>';
+			print img_picto('', 'map-marker-alt', 'class="pictofixedwidth"');
+			print '<input type="text" name="location" class="minwidth300 maxwidth150onsmartphone" value="'.$object->location.'"></td></tr>';
+		}
+
+		print '<tr class="tdsmallheight"><td class="tdsmallheight">&nbsp;</td><td class="tdsmallheight"></td></tr>';
 
 		// Assigned to
 		$listofuserid = []; // User assigned
@@ -2290,17 +2297,6 @@ if ($id > 0 && $action != 'create') {
 		}*/
 		print '</td></tr>';
 
-		// Location
-		if (!getDolGlobalString('AGENDA_DISABLE_LOCATION')) {
-			print '<tr><td>'.$langs->trans("Location").'</td><td><input type="text" name="location" class="minwidth300 maxwidth150onsmartphone" value="'.$object->location.'"></td></tr>';
-		}
-
-		// Status
-		print '<tr><td class="nowrap">'.$langs->trans("Status").' / '.$langs->trans("Progression").'</td><td colspan="3">';
-		$percent = GETPOSTISSET("percentage") ? GETPOSTINT("percentage") : $object->percentage;
-		$formactions->form_select_status_action('formaction', (string) $percent, 1, 'complete', 0, 0, 'minwidth150 maxwidth300');
-		print '</td></tr>';
-
 		// Tags-Categories
 		if (isModEnabled('category')) {
 			print '<tr><td>'.$langs->trans("Categories").'</td><td>';
@@ -2311,10 +2307,16 @@ if ($id > 0 && $action != 'create') {
 		print '</table>';
 
 
-		print '<br><hr><br>';
+		print '<br>';
 
 
 		print '<table class="border tableforfield centpercent">';
+
+		// Status
+		print '<tr><td class="nowrap">'.$langs->trans("Status").' / '.$langs->trans("Progression").'</td><td colspan="3">';
+		$percent = GETPOSTISSET("percentage") ? GETPOSTINT("percentage") : $object->percentage;
+		$formactions->form_select_status_action('formaction', (string) $percent, 1, 'complete', 0, 0, 'minwidth150 maxwidth300');
+		print '</td></tr>';
 
 		if (isModEnabled("societe")) {
 			// Related company

@@ -15,7 +15,7 @@
  * Copyright (C) 2012-2016  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2014-2023  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2014-2026  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2018-2022  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018       Nicolas ZABOURI	        <info@inovea-conseil.com>
@@ -5553,9 +5553,10 @@ class Form
 	 * @param int<0,1>		$showcurrency 	Show currency in label
 	 * @param string 		$morecss 		More CSS
 	 * @param int<0,1>		$nooutput 		1=Return string, do not send to output
+	 * @param int<0,1>		$addentrynone	Add an entry None
 	 * @return int|string   	           	If nooutput=0: Return integer <0 if error, Num of bank account found if OK (0, 1, 2, ...), If nooutput=1: Return a HTML select string.
 	 */
-	public function select_comptes($selected = '', $htmlname = 'accountid', $status = 0, $filtre = '', $useempty = 0, $moreattrib = '', $showcurrency = 0, $morecss = '', $nooutput = 0)
+	public function select_comptes($selected = '', $htmlname = 'accountid', $status = 0, $filtre = '', $useempty = 0, $moreattrib = '', $showcurrency = 0, $morecss = '', $nooutput = 0, $addentrynone = 0)
 	{
 		// phpcs:enable
 		global $langs;
@@ -5621,6 +5622,11 @@ class Form
 				$out .= '</option>';
 				$i++;
 			}
+
+			if (!empty($addentrynone)) {
+				$out .= '<option value="-2"'.($selected == -2 ? ' selected="selected"': '').' data-html="'.dolPrintHTMLForAttribute('<span class="opacitymedium">'.$langs->trans("None").'</span>').'">'.$langs->trans("None").'</option>';
+			}
+
 			$out .= "</select>";
 			$out .= ajax_combobox('select' . $htmlname);
 		} else {
@@ -7363,7 +7369,7 @@ class Form
 				if (!empty($user) && $user->admin && preg_match('/\'(..)\'/', $country_code, $reg)) {
 					$langs->load("errors");
 					$new_country_code = $reg[1];
-					$country_id = dol_getIdFromCode($this->db, $new_country_code, 'c_pays', 'code', 'rowid');
+					$country_id = dol_getIdFromCode($this->db, $new_country_code, 'c_country', 'code', 'rowid');
 					$this->error .= '<br>'.$langs->trans("ErrorFixThisHere", DOL_URL_ROOT.'/admin/dict.php?id=10'.($country_id > 0 ? '&countryidforinsert='.$country_id : ''));
 				}
 				$this->error .= '</span>';

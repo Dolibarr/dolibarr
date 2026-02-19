@@ -339,7 +339,7 @@ class pdf_ledger extends ModelePdfAccountancy
 			} else {
 				if (empty($account) || $account != $object->lines[$i]->numero_compte) {
 					$accountingAccount = new AccountingAccount($this->db);
-					$accountingAccount->fetch(0, $object->lines[$i]->numero_compte);
+					$accountingAccount->fetch(0, $object->lines[$i]->numero_compte, true);
 
 					// Add the subtotal line
 					if (!empty($account)) {

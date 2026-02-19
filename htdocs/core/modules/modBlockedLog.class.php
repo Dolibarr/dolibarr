@@ -253,7 +253,7 @@ class modBlockedLog extends DolibarrModules
 	 * The remove function removes tabs, constants, boxes, permissions and menus from Dolibarr database.
 	 * Data directories are not deleted
 	 *
-	 * @param      string	$options    Options when enabling module ('', 'noboxes')
+	 * @param      string	$options    Options when enabling module ('', 'noboxes', 'forcedisable')
 	 * @return     int             		1 if OK, 0 if KO
 	 */
 	public function remove($options = '')
@@ -264,6 +264,8 @@ class modBlockedLog extends DolibarrModules
 
 		// If already used, we add an entry to show we enable module
 		require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
+
+		dol_syslog("modBlockedLog::remove option=".$options, LOG_DEBUG);
 
 		$object = new stdClass();
 		$object->id = 1;
@@ -283,7 +285,7 @@ class modBlockedLog extends DolibarrModules
 
 		if ($b->alreadyUsed(1)) {
 			// Unalterable log was already used.
-			if (!$b->canBeDisabled()) {
+			if ($options != 'forcedisable' && !$b->canBeDisabled()) {
 				// Case we refuse to disable it
 				global $langs;
 				$this->error = $langs->trans('DisablingBlockedLogIsNotallowedOnceUsedExceptOnFullreset', $langs->transnoentitiesnoconv('BlockedLog'));

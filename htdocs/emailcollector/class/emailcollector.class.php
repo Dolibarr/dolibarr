@@ -1989,6 +1989,11 @@ class EmailCollector extends CommonObject
 				if (getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')) {
 					/** @var Webklex\PHPIMAP\Message $imapemail */
 					'@phan-var-force Webklex\PHPIMAP\Message $imapemail';
+					// Reset message body globals to prevent carryover from previous email in loop
+					// Note: $charset is NOT reset as PHPIMAP handles charset internally
+					$htmlmsg = $plainmsg = '';
+					$attachments = array();
+
 					if ($imapemail->hasHTMLBody()) {
 						$htmlmsg = $imapemail->getHTMLBody();
 					}
@@ -1998,7 +2003,7 @@ class EmailCollector extends CommonObject
 					if ($imapemail->hasAttachments()) {
 						$attachments = $imapemail->getAttachments()->all();
 					} else {
-						$attachments = [];
+						$attachments = array();
 					}
 				} else {
 					$getMsg = $this->getmsg($connection, $imapemail); // This set global var $charset, $htmlmsg, $plainmsg, $attachments
@@ -2688,10 +2693,20 @@ class EmailCollector extends CommonObject
 									$result = $thirdpartystatic->findNearest((int) $idtouseforthirdparty, (string) $nametouseforthirdparty, '', '', '', '', '', '', '', '', (string) $emailtouseforthirdparty, (string) $namealiastouseforthirdparty);
 
 									if ($result < 0) {
-										$errorforactions++;
-										$this->error = 'Error when getting thirdparty with name '.((string) $nametouseforthirdparty).', alternative name '.((string) $namealiastouseforthirdparty).' and email '.$emailtouseforthirdparty.' (may be 2 record exists with same name ?)';
-										$this->errors[] = $this->error;
-										break;
+										if (getDolGlobalInt('EMAILCOLLECTOR_USE_THIS_THIRDPARTY_ID_IF_DUPLICATE') && $result == -2) {	// If 2 thirdparty found, we will use a generic one defined by EMAILCOLLECTOR_USE_THIS_THIRDPARTYID_IF_DUPLICATE
+											$idtouseforthirdparty = getDolGlobalInt('EMAILCOLLECTOR_USE_THIS_THIRDPARTY_ID_IF_DUPLICATE');
+
+											$thirdpartystatic->fetch($idtouseforthirdparty);
+
+											dol_syslog('Thirdparty found twice (or more) so, according to option EMAILCOLLECTOR_USE_THIS_THIRDPARTY_ID_IF_DUPLICATE, we will use the generic one with id = '.dol_escape_htmltag((string) $thirdpartystatic->id)." and name ".dol_escape_htmltag($thirdpartystatic->name));
+
+											$operationslog .= '<br>Thirdparty found twice (or more) so, according to option EMAILCOLLECTOR_USE_THIS_THIRDPARTY_ID_IF_DUPLICATE, we will use the generic one with id = '.dol_escape_htmltag((string) $thirdpartystatic->id)." and name ".dol_escape_htmltag($thirdpartystatic->name);
+										} else {
+											$errorforactions++;
+											$this->error = 'Error when getting thirdparty with name '.((string) $nametouseforthirdparty).', alternative name '.((string) $namealiastouseforthirdparty).' and email '.$emailtouseforthirdparty.' (may be 2 record exists with same name ?)';
+											$this->errors[] = $this->error;
+											break;
+										}
 									}
 									if ($result == 0) {	// No thirdparty found
 										if ($operation['type'] == 'loadthirdparty') {
@@ -2708,13 +2723,13 @@ class EmailCollector extends CommonObject
 												} else {
 													$errorforactions++;
 													$langs->load("errors");
-													$this->error = $langs->trans('ErrorFailedToLoadThirdParty', $idtouseforthirdparty, (string) $emailtouseforthirdparty, (string) $nametouseforthirdparty, (string) $namealiastouseforthirdparty);
+													$this->error = $langs->trans('ErrorFailedToLoadThirdParty', (string) $idtouseforthirdparty, (string) $emailtouseforthirdparty, (string) $nametouseforthirdparty, (string) $namealiastouseforthirdparty);
 													$this->errors[] = $this->error;
 												}
 											} else {
 												$errorforactions++;
 												$langs->load("errors");
-												$this->error = $langs->trans('ErrorFailedToLoadThirdParty', $idtouseforthirdparty, (string) $emailtouseforthirdparty, (string) $nametouseforthirdparty, (string) $namealiastouseforthirdparty);
+												$this->error = $langs->trans('ErrorFailedToLoadThirdParty', (string) $idtouseforthirdparty, (string) $emailtouseforthirdparty, (string) $nametouseforthirdparty, (string) $namealiastouseforthirdparty);
 												$this->errors[] = $this->error;
 											}
 										} elseif ($operation['type'] == 'loadandcreatethirdparty') {
@@ -2755,7 +2770,7 @@ class EmailCollector extends CommonObject
 												}
 											}
 										}
-									} else {	// if $result > 0, it is ID of thirdparty
+									} elseif ($result > 0) {	// if $result > 0, it is ID of thirdparty
 										dol_syslog("One and only one existing third party has been found");
 
 										$thirdpartystatic->fetch($result);

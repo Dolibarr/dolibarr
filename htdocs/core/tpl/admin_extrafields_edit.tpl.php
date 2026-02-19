@@ -58,7 +58,7 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
 	jQuery(document).ready(function() {
 		function init_typeoffields(type)
 		{
-			console.log("select a new type (edit) = "+type);
+			console.log("admin_extrafields_edit select a new type (edit) = "+type);
 			var size = jQuery("#size");
 			var computed_value = jQuery("#computed_value");
 			var langfile = jQuery("#langfile");
@@ -256,7 +256,7 @@ if (in_array($type, array_keys($typewecanchangeinto))) {
 </td></tr>
 
 <!-- Size -->
-<tr class="extra_size"><td class="fieldrequired"><?php echo $langs->trans("Size"); ?></td><td><input id="size" type="text" name="size" class="width50" value="<?php echo $size; ?>"></td></tr>
+<tr class="extra_size"><td><?php echo $langs->trans("Size"); ?></td><td><input id="size" type="text" name="size" class="width50" value="<?php echo $size; ?>"></td></tr>
 
 <!--  Value (for some fields like password, select list, radio, ...) -->
 <tr id="value_choice">

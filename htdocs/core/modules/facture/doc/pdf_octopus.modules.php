@@ -1906,7 +1906,7 @@ class pdf_octopus extends ModelePDFFactures
 					}
 
 					foreach ($localtax_rate as $tvakey => $tvaval) {
-						if ($tvakey != 0) {    // On affiche pas taux 0
+						if ($tvakey != 0 || getDolGlobalString('INVOICE_SHOW_ALSO_LOCALTAX1_LINE_IF_ZERO')) {
 							//$this->atleastoneratenotnull++;
 
 							$index++;
@@ -1944,7 +1944,7 @@ class pdf_octopus extends ModelePDFFactures
 					}
 
 					foreach ($localtax_rate as $tvakey => $tvaval) {
-						if ($tvakey != 0) {    // On affiche pas taux 0
+						if ($tvakey != 0 || getDolGlobalString('INVOICE_SHOW_ALSO_LOCALTAX2_LINE_IF_ZERO')) {
 							//$this->atleastoneratenotnull++;
 
 							$index++;
@@ -1993,7 +1993,7 @@ class pdf_octopus extends ModelePDFFactures
 					}
 
 					foreach ($tvas as $tvakey => $tvaval) {
-						if ($tvakey != 0) {	// On affiche pas taux 0
+						if ($tvakey != 0 || getDolGlobalString('INVOICE_SHOW_ALSO_VAT_LINE_IF_ZERO')) {
 							$this->atleastoneratenotnull++;
 
 							$index++;
@@ -2030,7 +2030,7 @@ class pdf_octopus extends ModelePDFFactures
 					}
 
 					foreach ($localtax_rate as $tvakey => $tvaval) {
-						if ($tvakey != 0) {    // On affiche pas taux 0
+						if ($tvakey != 0 || getDolGlobalString('INVOICE_SHOW_ALSO_LOCALTAX1_LINE_IF_ZERO')) {
 							//$this->atleastoneratenotnull++;
 
 							$index++;
@@ -2068,7 +2068,7 @@ class pdf_octopus extends ModelePDFFactures
 
 					foreach ($localtax_rate as $tvakey => $tvaval) {
 						// retrieve global local tax
-						if ($tvakey != 0) {    // On affiche pas taux 0
+						if ($tvakey != 0 || getDolGlobalString('INVOICE_SHOW_ALSO_LOCALTAX2_LINE_IF_ZERO')) {
 							//$this->atleastoneratenotnull++;
 
 							$index++;

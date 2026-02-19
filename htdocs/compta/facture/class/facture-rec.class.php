@@ -2068,6 +2068,10 @@ class FactureRec extends CommonInvoice
 			}
 
 			if (!$notrigger) {
+				if (empty($this->context['actionmsgmore'])) {
+					$this->context['actionmsgmore'] = 'Trigger called by setNextDate';
+				}
+
 				// Call trigger
 				$result = $this->call_trigger('BILLREC_MODIFY', $user);
 				if ($result < 0) {

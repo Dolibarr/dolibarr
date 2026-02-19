@@ -1341,6 +1341,8 @@ function unActivateModule($value, $requiredby = 1, $options = '')
 {
 	global $db;
 
+	dol_syslog("unActivateModule value=".$value, LOG_INFO);
+
 	// Check parameters
 	if (empty($value)) {
 		return 'ErrorBadParameter';
@@ -1368,6 +1370,7 @@ function unActivateModule($value, $requiredby = 1, $options = '')
 		$objMod = new $modName($db);
 		'@phan-var-force DolibarrModules $objMod';
 		/** @var DolibarrModules $objMod */
+
 		$result = $objMod->remove($options);
 		if ($result <= 0) {
 			$ret = $objMod->error;

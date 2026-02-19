@@ -8,6 +8,7 @@
  * Copyright (C) 2024      Jon Bendtsen             <jon.bendtsen.github@jonb.dk>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
  * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
+ * Copyright (C) 2026		Benjamin Falière		<benjamin@faliere.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1134,8 +1135,9 @@ class Thirdparties extends DolibarrApi
 		$sql = '';
 		if ($mode === 'customer') {
 			$sql = "SELECT f.ref, f.type as factype, re.fk_facture_source, re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc, re.description, re.fk_facture, re.fk_facture_line";
-			$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as re, ".MAIN_DB_PREFIX."facture as f";
-			$sql .= " WHERE f.rowid = re.fk_facture_source AND re.fk_soc = ".((int) $id);
+			$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as re";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON f.rowid = re.fk_facture_source";
+			$sql .= " WHERE re.fk_soc = ".((int) $id);
 			if ($filter == "available") {
 				$sql .= " AND re.fk_facture IS NULL AND re.fk_facture_line IS NULL";
 			}
@@ -1144,7 +1146,8 @@ class Thirdparties extends DolibarrApi
 			}
 		} elseif ($mode === 'supplier') {
 			$sql = "SELECT f.ref, f.type as factype, re.fk_invoice_supplier_source, re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc, re.description, re.fk_invoice_supplier, re.fk_invoice_supplier_line";
-			$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as re, ".MAIN_DB_PREFIX."facture_fourn as f";
+			$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as re";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as f ON f.rowid = re.fk_invoice_supplier_source";
 			$sql .= " WHERE f.rowid = re.fk_invoice_supplier_source AND re.fk_soc = ".((int) $id);
 			if ($filter == "available") {
 				$sql .= " AND re.fk_invoice_supplier IS NULL AND re.fk_invoice_supplier_line IS NULL";

@@ -477,11 +477,11 @@ class BlockedLog
 
 	/**
 	 *	Populate properties of an unalterable log entry from object data.
-	 *  This populates ->object_data but also other fields like ->action, ->module_source, ->amounts_taxexcl,  ->amounts and ->linktoref and ->linktype
+	 *  This populates ->object_data but also other fields like ->action, ->module_source, ->amounts_taxexcl, ->amounts and ->linktoref and ->linktype
 	 *  It also populates some debug info like ->element and ->fk_object
 	 *
 	 *	@param	CommonObject|stdClass		$object				Object to store
-	 *	@param	string						$action				Action code
+	 *	@param	string						$action				Action code ('BILL_VALIDATE', 'BILL_SENTBYMAIL', ...)
 	 *	@param	float|int					$amounts			amounts (incl tax)
 	 *	@param	?User						$fuser				User object (forced)
 	 *	@param	float|int|null				$amounts_taxexcl	amounts (excl tax or null if not relevant)
@@ -1151,7 +1151,7 @@ class BlockedLog
 	{
 		$aaa = null;
 		try {
-			$aaa = (object) jsonOrUnserialize($data);
+			$aaa = (object) jsonOrUnserialize($data, false);
 		} catch (Exception $e) {
 			// print $e->getErrs);
 		}

@@ -644,13 +644,15 @@ class modProduct extends DolibarrModules
 			$this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array(
 				'p.fk_default_warehouse' => 'DefaultWarehouse',
 				'p.tobatch' => 'ManageLotSerial',
+				'p.sell_or_eat_by_mandatory' => 'SellOrEatByMandatory',
 				'p.seuil_stock_alerte' => 'StockLimit', //lower limit for warning
 				'p.pmp' => 'PMPValue', //weighted average price
 				'p.desiredstock' => 'DesiredStock'//desired stock for replenishment feature
 			));
 
 			$this->import_regex_array[$r] = array_merge($this->import_regex_array[$r], array(
-				'p.tobatch' => '^[0|1|2]$'
+				'p.tobatch' => '^[0|1|2]$',
+				'p.sell_or_eat_by_mandatory' => '^[0-3]$'
 			));
 
 			$this->import_convertvalue_array[$r] = array_merge($this->import_convertvalue_array[$r], array(
@@ -750,6 +752,7 @@ class modProduct extends DolibarrModules
 		if (isModEnabled('stock')) {
 			$import_sample = array_merge($import_sample, array(
 				'p.tobatch' => "0 (don't use) / 1 (use batch) / 2 (use serial number)",
+				'p.sell_or_eat_by_mandatory' => "0 (none) / 1 (sell-by) / 2 (eat-by) / 3 (sell+eat)",
 				'p.seuil_stock_alerte' => '',
 				'p.pmp' => '0',
 				'p.desiredstock' => ''
