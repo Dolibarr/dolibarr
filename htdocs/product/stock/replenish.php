@@ -518,11 +518,10 @@ if ($usevirtualstock) {
 	}
 
 	$parameters = array();
+	$sqlHookVirtualStock = "0";
 	$reshook = $hookmanager->executeHooks('printFieldListHavingVirtualStock', $parameters); // Note that $action and $object may have been modified by hook
 	if (!empty($hookmanager->resPrint)) {
-		$sqlHookVirtualStock .= $hookmanager->resPrint;
-	} else {
-		$sqlHookVirtualStock = "0";
+		$sqlHookVirtualStock = $hookmanager->resPrint;
 	}
 
 	$sql .= ' HAVING (';
