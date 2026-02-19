@@ -322,14 +322,17 @@ function sumAmountsForUnalterableEvent($block, &$refinvoicefound, &$totalhtamoun
 			$totalamount[$block->action][$block->module_source] += $total_ttc;
 		}
 		$refinvoicefound[$block->ref_object] = 1;
-	} elseif ($block->action == 'PAYMENT_CUSTOMER_CREATE') {
+	} elseif ($block->action == 'PAYMENT_CUSTOMER_CREATE' || $block->action == 'PAYMENT_CUSTOMER_DELETE') {
 		$total_ht = $block->object_data->amount;
 		$total_vat = 0;
 		$total_ttc = $block->object_data->amount;
 
-		$totalhtamount[$block->action][$block->module_source] += $total_ht;
-		$totalvatamount[$block->action][$block->module_source] += $total_vat;
-		$totalamount[$block->action][$block->module_source] += $total_ttc;
+		//$actionkey = $block->action;
+		$actionkey = 'PAYMENT_CUSTOMER';
+
+		$totalhtamount[$actionkey][$block->module_source] += $total_ht;
+		$totalvatamount[$actionkey][$block->module_source] += $total_vat;
+		$totalamount[$actionkey][$block->module_source] += $total_ttc;
 	} else {
 		$total_ttc = $block->amounts;
 	}
