@@ -24,6 +24,7 @@
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+include_once DOL_DOCUMENT_ROOT.'/versioncert.inc.php';
 
 
 /**
@@ -55,7 +56,8 @@ class modBlockedLog extends DolibarrModules
 		$this->description = "Enable a log on some business events into an unalterable log. This module may be mandatory for some countries.";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'dolibarr';
+		$this->version = constant('DOLCERT_VERSION');
+		$this->version_core = 1;
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Name of image file used for this module.
