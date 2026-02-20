@@ -29,6 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 /**
  * API class for invoices
  *
+ * @since	5.0.0	Initial implementation
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
  */
@@ -68,6 +69,8 @@ class Invoices extends DolibarrApi
 	 *
 	 * Return an array with invoice information
 	 *
+	 * @since	3.8.0	Initial implementation
+	 *
 	 * @param	int		$id				ID of invoice
 	 * @param   int     $contact_list	0:Return array contains all properties, 1:Return array contains just id, -1: Do not return contacts/adddesses
 	 * @param 	string 	$properties 	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
@@ -92,6 +95,8 @@ class Invoices extends DolibarrApi
 	 *
 	 * Return an array with invoice information
 	 *
+	 * @since	12.0.0	Initial implementation
+	 *
 	 * @param   string		$ref			Ref of object
 	 * @param   int         $contact_list	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id, -1: Do not return contacts/adddesses
 	 * @return	Object						Object with cleaned properties
@@ -109,6 +114,8 @@ class Invoices extends DolibarrApi
 	 * Get properties of an invoice object by ref_ext
 	 *
 	 * Return an array with invoice information
+	 *
+	 * @since	12.0.0	Initial implementation
 	 *
 	 * @param   string		$ref_ext		External reference of object
 	 * @param   int         $contact_list	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id, -1: Do not return contacts/adddesses
@@ -187,6 +194,8 @@ class Invoices extends DolibarrApi
 	 * List invoices
 	 *
 	 * Get a list of invoices
+	 *
+	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param string	$sortfield		  	Sort field
 	 * @param string	$sortorder		  	Sort order
@@ -342,6 +351,8 @@ class Invoices extends DolibarrApi
 	/**
 	 * Create invoice object
 	 *
+	 * @since	3.8.0	Initial implementation
+	 *
 	 * @param array $request_data   Request data
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
@@ -397,6 +408,8 @@ class Invoices extends DolibarrApi
 	/**
 	 * Create an invoice using an existing order.
 	 *
+	 * @since	7.0.0	Initial implementation
+	 *
 	 * @param int   $orderid       Id of the order
 	 * @return	Object				Object with cleaned properties
 	 *
@@ -442,6 +455,8 @@ class Invoices extends DolibarrApi
 	/**
 	 * Create an invoice using a contract.
 	 *
+	 * @since	20.0.0	Initial implementation
+	 *
 	 * @param int   $contractid       Id of the contract
 	 * @return     Object                          Object with cleaned properties
 	 *
@@ -483,6 +498,8 @@ class Invoices extends DolibarrApi
 	/**
 	 * Get lines of an invoice
 	 *
+	 * @since	7.0.0	Initial implementation
+	 *
 	 * @param	int   $id				Id of invoice
 	 * @return	array					Array of lines
 	 * @phan-return CommonInvoiceLine[]
@@ -514,6 +531,8 @@ class Invoices extends DolibarrApi
 
 	/**
 	 * Update a line to a given invoice
+	 *
+	 * @since	6.0.3	Initial implementation
 	 *
 	 * @param	int   $id             Id of invoice to update
 	 * @param	int   $lineid         Id of line to update
@@ -588,6 +607,8 @@ class Invoices extends DolibarrApi
 
 	/**
 	 * Add a contact type of given invoice
+	 *
+	 * @since	10.0.0	Initial implementation
 	 *
 	 * @param int    $id            Id of invoice to update
 	 * @param int    $contactid     Id of contact to add
@@ -716,6 +737,8 @@ class Invoices extends DolibarrApi
 	 *
 	 * Return an array with contact information
 	 *
+	 * @since	23.0.0	Initial implementation
+	 *
 	 * @param	int					$id			ID of invoice
 	 * @param	string				$type		Type of the contact (BILLING, SHIPPING, CUSTOMER)
 	 * @return	array<int,mixed>				Array with contact and user associated
@@ -749,6 +772,8 @@ class Invoices extends DolibarrApi
 
 	/**
 	 * Delete a contact type of given invoice
+	 *
+	 * @since	10.0.0	Initial implementation
 	 *
 	 * @param	int    $id             Id of invoice to update
 	 * @param	int    $contactid      Row key of the contact in the array contact_ids.
@@ -795,6 +820,8 @@ class Invoices extends DolibarrApi
 	/**
 	 * Deletes a line of a given invoice
 	 *
+	 * @since	7.0.0	Initial implementation
+	 *
 	 * @param	int   $id				Id of invoice
 	 * @param	int   $lineid			Id of the line to delete
 	 * @return	Object					Object with cleaned properties
@@ -837,6 +864,8 @@ class Invoices extends DolibarrApi
 
 	/**
 	 * Update invoice
+	 *
+	 * @since	3.8.0	Initial implementation
 	 *
 	 * @param	int				$id             Id of invoice to update
 	 * @param	array			$request_data   Datas
@@ -902,6 +931,8 @@ class Invoices extends DolibarrApi
 	/**
 	 * Delete invoice
 	 *
+	 * @since	3.8.0	Initial implementation
+	 *
 	 * @param	int		$id		Invoice ID
 	 * @return	array
 	 * @phan-return array{success:array{code:int,message:string}}
@@ -941,6 +972,8 @@ class Invoices extends DolibarrApi
 
 	/**
 	 * Add a line to a given invoice
+	 *
+	 * @since	7.0.0	Initial implementation
 	 *
 	 * Example of POST query :
 	 * {
@@ -1036,6 +1069,8 @@ class Invoices extends DolibarrApi
 	/**
 	 * Adds a contact to an invoice
 	 *
+	 * @since	8.0.0	Initial implementation
+	 *
 	 * @param   int		$id					Order ID
 	 * @param   int		$fk_socpeople			Id of thirdparty contact (if source = 'external') or id of user (if source = 'internal') to link
 	 * @param   string	$type_contact           Type of contact (code). Must a code found into table llx_c_type_contact. For example: BILLING
@@ -1088,6 +1123,8 @@ class Invoices extends DolibarrApi
 	/**
 	 * Sets an invoice as draft
 	 *
+	 * @since	7.0.0	Initial implementation
+	 *
 	 * @param   int $id             Order ID
 	 * @param   int $idwarehouse    Warehouse ID
 	 * @return	Object				Object with cleaned properties
@@ -1132,6 +1169,8 @@ class Invoices extends DolibarrApi
 
 	/**
 	 * Validate an invoice
+	 *
+	 * @since	6.0.0	Initial implementation
 	 *
 	 * If you get a bad value for param notrigger check that ou provide this in body
 	 * {
@@ -1189,6 +1228,8 @@ class Invoices extends DolibarrApi
 	/**
 	 * Sets an invoice as paid
 	 *
+	 * @since	7.0.0	Initial implementation
+	 *
 	 * @param   int		$id            Order ID
 	 * @param   string	$close_code    Code filled if we classify to 'Paid completely' when payment is not complete (for escompte for example)
 	 * @param   string	$close_note    Comment defined if we classify to 'Paid' when payment is not complete (for escompte for example)
@@ -1241,6 +1282,8 @@ class Invoices extends DolibarrApi
 	/**
 	 * Sets an invoice as unpaid
 	 *
+	 * @since	7.0.0	Initial implementation
+	 *
 	 * @param   int     $id				Order ID
 	 * @return	Object					Object with cleaned properties
 	 *
@@ -1290,6 +1333,8 @@ class Invoices extends DolibarrApi
 	/**
 	 * Get discount from invoice
 	 *
+	 * @since	13.0.0	Initial implementation
+	 *
 	 * @param int   $id             Id of invoice
 	 * @return	Object				Object with cleaned properties
 	 *
@@ -1327,6 +1372,8 @@ class Invoices extends DolibarrApi
 
 	/**
 	 * Create a discount (credit available) for a credit note or a deposit.
+	 *
+	 * @since	10.0.0	Initial implementation
 	 *
 	 * @param   int		$id				Invoice ID
 	 * @return	Object					Object with cleaned properties
@@ -1523,6 +1570,8 @@ class Invoices extends DolibarrApi
 	 *
 	 * Note that this consume the discount.
 	 *
+	 * @since	7.0.0	Initial implementation
+	 *
 	 * @param int   $id             Id of invoice
 	 * @param int   $discountid     Id of discount
 	 * @return int
@@ -1567,6 +1616,8 @@ class Invoices extends DolibarrApi
 	 * Add an available credit note discount to payments of an existing invoice.
 	 *
 	 *  Note that this consume the credit note.
+	 *
+	 * @since	7.0.0	Initial implementation
 	 *
 	 * @param int   $id            Id of invoice
 	 * @param int   $discountid    Id of a discount coming from a credit note
@@ -1613,6 +1664,8 @@ class Invoices extends DolibarrApi
 	/**
 	 * Get list of payments of a given invoice
 	 *
+	 * @since	7.0.0	Initial implementation
+	 *
 	 * @param	int   $id             Id of invoice
 	 * @return	array
 	 * @phan-return array<array{amount:int|float,date:int,num:string,ref:string,ref_ext?:string,fk_bank_line?:int,type:string}>
@@ -1654,6 +1707,8 @@ class Invoices extends DolibarrApi
 
 	/**
 	 * Add payment line to a specific invoice with the remain to pay as amount.
+	 *
+	 * @since	7.0.0	Initial implementation
 	 *
 	 * @param int     $id                               Id of invoice
 	 * @param string  $datepaye           {@from body}  Payment date
@@ -1774,6 +1829,8 @@ class Invoices extends DolibarrApi
 	 * Add a payment to pay partially or completely one or several invoices.
 	 * Warning: Take care that all invoices are owned by the same customer.
 	 * Example of value for parameter arrayofamounts: {"1": {"amount": "99.99", "multicurrency_amount": ""}, "2": {"amount": "", "multicurrency_amount": "10"}}
+	 *
+	 * @since	8.0.0	Initial implementation
 	 *
 	 * @param array   $arrayofamounts      {@from body}  Array with id of invoices with amount to pay for each invoice
 	 * @phan-param array<string,array{amount:string,multicurrency_amount:string}> $arrayofamounts
@@ -1925,6 +1982,8 @@ class Invoices extends DolibarrApi
 	/**
 	 * Update a payment
 	 *
+	 * @since	13.0.0	Initial implementation
+	 *
 	 * @param int       $id             Id of payment
 	 * @param string    $num_payment    Payment number
 	 *
@@ -2026,6 +2085,8 @@ class Invoices extends DolibarrApi
 	 *
 	 * Return an array with invoice information
 	 *
+	 * @since	16.0.0	Initial implementation
+	 *
 	 * @param	int		$id				ID of template invoice
 	 * @param   int     $contact_list	0:Return array contains all properties, 1:Return array contains just id, -1: Do not return contacts/adddesses
 	 * @return	Object					Object with cleaned properties
@@ -2044,6 +2105,8 @@ class Invoices extends DolibarrApi
 	 * List template invoices
 	 *
 	 * Get a list of template invoices
+	 *
+	 * @since	23.0.0	Initial implementation
 	 *
 	 * @param string	$sortfield			Sort field
 	 * @param string	$sortorder			Sort order
