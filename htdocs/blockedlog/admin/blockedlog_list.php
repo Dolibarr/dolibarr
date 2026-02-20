@@ -217,6 +217,9 @@ print "</div>\n";
 $htmltext = '';
 $htmltext .= $langs->trans("UnalterableLogTool2", $langs->transnoentitiesnoconv("Archives"))."<br>";
 $htmltext .= $langs->trans("UnalterableLogTool3")."<br>";
+if ($mysoc->country_code == 'FR') {
+	$htmltext .= '<br>'.$langs->trans("UnalterableLogTool1FR").'<br>';
+}
 
 print info_admin($htmltext, 0, 0, 'warning');
 

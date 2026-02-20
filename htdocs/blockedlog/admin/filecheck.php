@@ -98,7 +98,7 @@ print '</table>';
 print '</div>';
 
 // Version
-$versionbadge = '<span class="badge-text badge-secondary">'.DOL_VERSION.'</span>';
+$versionbadge = '<span class="badge-text badge-secondary">'.getBlockedLogVersionToShow().'</span>';
 
 $infotoshow = '';
 if ($mysoc->country_code == 'FR') {
