@@ -15648,7 +15648,9 @@ function readfileLowMemory($fullpath_original_file_osencoded, $method = -1)
 	}
 
 	// Be sure we don't have output buffering enabled to have readfile working correctly
-	while (ob_get_level()) {
+	$level = ob_get_level();
+	ob_start();
+	while (ob_get_level() > $level) {
 		ob_end_clean();
 	}
 
