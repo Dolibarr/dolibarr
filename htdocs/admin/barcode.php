@@ -284,6 +284,10 @@ if (getDolGlobalString('BARCODE_USE_ON_PRODUCT') && isModEnabled('product')) {
 						dol_syslog($e->getMessage(), LOG_ERR);
 					}
 
+					if (!class_exists($file)) {
+						continue;
+					}
+
 					$modBarCode = new $file();
 					'@phan-var-force ModeleNumRefBarCode $modBarCode';
 
@@ -349,6 +353,10 @@ if (getDolGlobalString('BARCODE_USE_ON_THIRDPARTY') && isModEnabled('societe')) 
 						dol_include_once($dirroot.$file.'.php');
 					} catch (Exception $e) {
 						dol_syslog($e->getMessage(), LOG_ERR);
+					}
+
+					if (!class_exists($file)) {
+						continue;
 					}
 
 					$modBarCode = new $file();
