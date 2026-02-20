@@ -344,7 +344,7 @@ if ($release) {
 
 // Array of dir/files to include in the section
 $arrayofunalterablefiles = array(
-	array('dir' => dirname(__FILE__).'/../../htdocs/', 'file' => 'version.inc.php'),
+	//array('dir' => dirname(__FILE__).'/../../htdocs/', 'file' => 'version.inc.php'),
 	array('dir' => dirname(__FILE__).'/../../htdocs/blockedlog', 'file' => 'all', 'regextoinclude' => '(\.php|\.sql)$', 'regextoexclude' => ''),
 	array('dir' => dirname(__FILE__).'/../../htdocs/install/mysql/tables', 'file' => 'all', 'regextoinclude' => 'llx_blockedlog.*(\.php|\.sql)$', 'regextoexclude' => ''),
 	array('dir' => dirname(__FILE__).'/../../htdocs/core/triggers', 'file' => 'interface_50_modBlockedlog_ActionsBlockedLog.class.php'),
