@@ -318,6 +318,8 @@ if ($user->hasRight('banque', 'consolidate') && ($action == 'num_releve' || $act
  * View
  */
 
+$object->fetch($rowid);
+
 $form = new Form($db);
 
 llxHeader('', $langs->trans("BankTransaction"));
