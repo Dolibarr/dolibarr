@@ -5,7 +5,7 @@
  * Copyright (C) 2017		Rui Strecht				<rui.strecht@aliartalentos.com>
  * Copyright (C) 2020       Open-Dsi         		<support@open-dsi.fr>
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -642,7 +642,7 @@ class FormCompany extends Form
 	 *
 	 *  @param  object		$object         Object we try to find contacts
 	 *  @param  string		$var_id         Name of id field
-	 *  @param  int 		$selected       Pre-selected third party
+	 *  @param  int 		$selected       Preselected third party
 	 *  @param  string		$htmlname       Name of HTML form
 	 * 	@param	int[]		$limitto		Disable answers that are not id in this array list
 	 *  @param	int			$forceid		This is to force another object id than object->id
@@ -1129,7 +1129,7 @@ class FormCompany extends Form
 	 *  @param	string		$page		Page
 	 *  @param  string		$selected	Id preselected
 	 *  @param  string		$htmlname	Name of HTML select
-	 *  @param  string		$filter		optional filters criteras
+	 *  @param  string		$filter		Optional filter criteria
 	 *  @param  int<0,1>	$nooutput	No print output. Return it only.
 	 *  @return	void|string
 	 *  @phpstan-return ($nooutput is 1 ? string : void)

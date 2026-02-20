@@ -50,12 +50,13 @@ $langs->loadLangs(array('admin', 'banks', 'bills', 'blockedlog', 'other'));
 
 // Get Parameters
 $action      = GETPOST('action', 'aZ09');
-//$confirm     = GETPOST('confirm', 'aZ09');
+$confirm     = GETPOST('confirm', 'aZ09');	// Used by the actions_linkedfiles.inc.php
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : getDolDefaultContextPage(__FILE__); // To manage different context of search
 $backtopage  = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss   = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 //$hmacexportkey = GETPOST('hmacexportkey', 'password');
+$withtab    = GETPOSTINT('withtab');
 
 $search_showonlyerrors = GETPOSTINT('search_showonlyerrors');
 if ($search_showonlyerrors < 0) {
@@ -171,7 +172,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 
 include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
-if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is read/export for blockedlog
+if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is read/export for blockedlog
 	$error = 0;
 
 	$previoushash = '';
@@ -180,6 +181,7 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 
 	if (! (GETPOSTINT('yeartoexport') > 0)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Year")), null, "errors");
+		$action = '';
 		$error++;
 	}
 	/*
@@ -205,7 +207,7 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 		$sql .= " WHERE entity = ".((int) $conf->entity);
 		// For unalterable log, we are using the date of creation of the log. Note that a bookkeeper may decide to dispatch an invoice
 		// on different periods for example to manage depreciation.
-		$sql .= " AND date_creation BETWEEN '".$db->idate($dates)."' AND '".$db->idate($datee)."'";
+		$sql .= " AND date_creation BETWEEN '".$db->idate($dates, 'gmt')."' AND '".$db->idate($datee, 'gmt')."'";
 		$sql .= " ORDER BY date_creation ASC, rowid ASC"; // Required so we get the first one
 		$sql .= $db->plimit(1);
 
@@ -255,23 +257,27 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 
 	if (!$error) {
 		$fh = fopen($tmpfile, 'w');
+		if (empty($fh)) {
+			$error++;
+			setEventMessages('Failed to open file for writing', null, 'errors');
+		}
 	}
 
 	if (!$error && $fh) {
 		// Now restart request with all data, so without the limit(1) in sql request
-		$sql = "SELECT rowid, date_creation, tms, user_fullname, action, amounts_taxexcl, amounts, element, fk_object, date_object, ref_object,";
-		$sql .= " signature, fk_user, object_data, object_version, object_format, debuginfo";
+		$sql = "SELECT rowid, entity, date_creation, tms, user_fullname, action, module_source, amounts_taxexcl, amounts, element, fk_object, date_object, ref_object,";
+		$sql .= " linktoref, linktype, signature, fk_user, object_data, object_version, object_format, debuginfo";
 		$sql .= " FROM ".MAIN_DB_PREFIX."blockedlog";
 		$sql .= " WHERE entity = ".((int) $conf->entity);
 		// For unalterable log, we are using the date of creation of the log. Note that a bookkeeper may decide to dispatch an invoice
 		// or payment on different periods for example to manage depreciation, but we want here is not accountancy but payment data.
-		$sql .= " AND date_creation BETWEEN '".$db->idate($dates)."' AND '".$db->idate($datee)."'";
+		$sql .= " AND date_creation BETWEEN '".$db->idate($dates, 'gmt')."' AND '".$db->idate($datee, 'gmt')."'";
 		$sql .= " ORDER BY date_creation ASC, rowid ASC"; // Required so later we can use the parameter $previoushash of checkSignature()
 
 		$resql = $db->query($sql);
 		if ($resql) {
 			// Print line with title
-			fwrite($fh, "BEGIN - regnumber=".dol_trunc($registrationnumber, 10)." - date=".$yearmonthdateofexport." - period=".$yearmonthtoexport.($periodnotcomplete ? '-'.$suffixperiod : '')." - formatexport=".$formatexport." - user=".$user->getFullName($langs)
+			fwrite($fh, "BEGIN - regnumber=".dol_trunc($registrationnumber, 10)." - date=".$yearmonthdateofexport." - period=".$yearmonthtoexport.($periodnotcomplete ? '-'.$suffixperiod : '')." - entity=".((int) $conf->entity)." - formatexport=".$formatexport." - user=".$user->getFullName($langs)
 				.';'.$langs->transnoentities('Id')
 				.';'.$langs->transnoentities('DateCreation')
 				.';'.$langs->transnoentities('Action')
@@ -288,8 +294,8 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 				.';'.$langs->transnoentities('VersionSignature')	// Rule used for fingerprint calculation
 				.';'.$langs->transnoentities('FingerprintDatabase')			// Signature
 				.';'.$langs->transnoentities('Status')
-				.';'.$langs->transnoentities('FingerprintExport')
-				."\n");
+				//.';'.$langs->transnoentities('FingerprintExport')
+				);
 
 			$loweridinerror = 0;
 			$i = 0;
@@ -298,24 +304,46 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 			$totalhtamount = array();
 			$totalvatamount = array();
 			$totalamount = array();
+			$previoushashexport = '';
 
 			while ($obj = $db->fetch_object($resql)) {
 				// We set here all data used into signature calculation (see checkSignature method) and more
-				// IMPORTANT: We must have here, the same rule for transformation of data than into the fetch method (db->jdate for date, ...)
+
+				// IMPORTANT: We must have here, the same rule for transformation of data than into
+				// the blockedlog->fetch() method (db->jdate for date, ...)
+
 				$block_static->id = $obj->rowid;
 				$block_static->entity = $obj->entity;
 
-				$block_static->date_creation = $db->jdate($obj->date_creation);		// jdate(date_creation) is UTC
+				if ($i == 0) {
+					$tmparray = $block_static->getPreviousHash(0, $block_static->id);
+					$previoushash = $tmparray['previoushash'];
 
-				$block_static->module_source = $obj->module_source;
+					fwrite($fh, ";NOTE - previoushash=".$previoushash."\n");
+				}
 
-				$block_static->amounts_taxexcl = (float) $obj->amounts_taxexcl;		// Database store value with 8 digits, we cut ending 0 them with (flow)
-				$block_static->amounts = (float) $obj->amounts;						// Database store value with 8 digits, we cut ending 0 them with (flow)
+				$tz = 'gmt';
+				if (empty($obj->object_format) || $obj->object_format == 'V1') {
+					$tz = 'tzserver';
+				}
+
+				$block_static->date_creation = $db->jdate($obj->date_creation, $tz);		// jdate(date_creation) is UTC
+				$block_static->date_modification = $db->jdate($obj->tms, $tz);			// jdate(tms) is UTC
 
 				$block_static->action = $obj->action;
-				$block_static->date_object = $db->jdate($obj->date_object);			// jdate(date_object) is UTC
+				$block_static->module_source = $obj->module_source;
+
+				$block_static->amounts_taxexcl = is_null($obj->amounts_taxexcl) ? null : (float) $obj->amounts_taxexcl;	// Database store value with 8 digits, we cut ending 0 them with (flow)
+				$block_static->amounts = (float) $obj->amounts;															// Database store value with 8 digits, we cut ending 0 them with (flow)
+
+				$block_static->fk_object = $obj->fk_object;							// Not in signature
+				$block_static->date_object = $db->jdate($obj->date_object, $tz);	// jdate(date_object) is UTC
 				$block_static->ref_object = $obj->ref_object;
 
+				$block_static->linktoref = $obj->linktoref;
+				$block_static->linktype = $obj->linktype;
+
+				$block_static->fk_user = $obj->fk_user;								// Not in signature
 				$block_static->user_fullname = $obj->user_fullname;
 
 				$block_static->object_data = $block_static->dolDecodeBlockedData($obj->object_data);
@@ -324,23 +352,28 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 				$block_static->signature = $obj->signature;
 
 				$block_static->element = $obj->element;								// Not in signature
-				$block_static->fk_object = $obj->fk_object;							// Not in signature
 
-				$block_static->fk_user = $obj->fk_user;								// Not in signature
-
-				$block_static->date_modification = $db->jdate($obj->tms);			// Not in signature
 				$block_static->object_version = $obj->object_version;				// Not in signature
 				$block_static->object_format = $obj->object_format;					// Not in signature
 
-				$block_static->certified = ($obj->certified == 1);
+				$block_static->certified = ($obj->certified == 1);					// Not in signature
 
-				$block_static->linktoref = $obj->linktoref;
-				$block_static->linktype = $obj->linktype;
-
-				$block_static->debuginfo = $obj->debuginfo;
+				//$block_static->debuginfo = $obj->debuginfo;
 
 				//var_dump($block->id.' '.$block->signature, $block->object_data);
-				$checksignature = $block_static->checkSignature($previoushash); 	// If $previoushash is not defined, checkSignature will search it
+
+				$checksignature = $block_static->checkSignature($previoushash); 	// If $previoushash is not defined, checkSignature will search it from $block_static->id
+
+				// To see detail to get signature
+				/*
+				if ($block_static->id == 411) {
+					$concatenateddata = $block_static->buildKeyForSignature($block_static->object_format);
+
+					$tmparray = $block_static->checkSignature($previoushash, 2);
+					var_dump($previoushash, $concatenateddata, $tmparray);
+					exit;
+				}
+				*/
 
 				if ($checksignature) {
 					$statusofrecord = 'Valid';
@@ -361,15 +394,16 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 
 				$concatenateddata = $block_static->buildKeyForSignature();
 
-				// Version archive V1=sha256
-				$signatureexport = dol_hash($previoushash.$concatenateddata, 'sha256');		// SHA256
-				//$signatureexporthmac = 'TODO';
+				// Version line archive VE1=sha256
+				$signatureexport = '';
+				if ($formatexport == 'VE1') {
+					// Note: The signature on export line is not used. It has been replaced with a global signature on all file.
+					$signatureexport = dol_hash($previoushashexport.$concatenateddata, 'sha256');
+				}
 
-
-				// Define $totalhtamount, $totalvatamount, $totalamount for $block->action event code
+				// Define $totalhtamount, $totalvatamount, $totalamount for $block->action event / $block->module_source
 				$total_ht = $total_vat = $total_ttc = 0;
 				sumAmountsForUnalterableEvent($block_static, $refinvoicefound, $totalhtamount, $totalvatamount, $totalamount, $total_ht, $total_vat, $total_ttc);
-
 
 				fwrite($fh, ";"
 					.csvClean($block_static->id).';'
@@ -388,10 +422,12 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 					.csvClean($block_static->object_format).';'
 					.csvClean($block_static->signature).';'
 					.csvClean($statusofrecord).';'
-					.csvClean($signatureexport).';'."\n");
+					//.csvClean($signatureexport).';'
+					."\n");
 
 				// Set new previous hash for next fetch
 				$previoushash = $obj->signature;
+				$previoushashexport = $signatureexport;
 
 				$i++;
 			}
@@ -521,14 +557,14 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 			while ($obj = $db->fetch_object($resql)) {
 				// First record date per action code and module
 				if (!empty($firstrecorddatearray[$obj->action][$obj->module_source])) {
-					$firstrecorddatearray[$obj->action][$obj->module_source] = min($firstrecorddatearray[$obj->action][$obj->module_source], $db->jdate($obj->datemin));
+					$firstrecorddatearray[$obj->action][$obj->module_source] = min($firstrecorddatearray[$obj->action][$obj->module_source], $db->jdate($obj->datemin, 'gmt'));
 				} else {
 					$firstrecorddatearray[$obj->action] = array();
-					$firstrecorddatearray[$obj->action][$obj->module_source] = $db->jdate($obj->datemin);
+					$firstrecorddatearray[$obj->action][$obj->module_source] = $db->jdate($obj->datemin, 'gmt');
 				}
 				// First record for all actions code
 				if (!empty($firstrecorddate)) {
-					$firstrecorddate = min($firstrecorddate, $db->jdate($obj->datemin));
+					$firstrecorddate = min($firstrecorddate, $db->jdate($obj->datemin, 'gmt'));
 				} else {
 					$firstrecorddate = $obj->datemin;
 				}
@@ -561,13 +597,8 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 		$block_static->module_source = '*';
 		// if an old format was found, we do not have reliable amount excluding tax for lifetime value, we do not show it
 
-		<<<<<<< HEAD
 		$block_static->amounts_taxexcl = ($foundoldformat ? '' : $totalhtamountlifetime['BILL_VALIDATE']);
 		$block_static->amounts = $totalamountlifetime['BILL_VALIDATE'];
-		=======
-		$block_static->amounts_taxexcl = ($foundoldformat ? '' : array_sum($totalhtamountlifetime['BILL_VALIDATE']));
-		$block_static->amounts = array_sum($totalamountlifetime['BILL_VALIDATE']);
-		>>>>>>> branch '23.0' of git@github.com:Dolibarr/dolibarr.git
 		// if an old format was found, we do not have reliable VAT amount for lifetime value, we do not show it
 		$block_static->ref_object = ($foundoldformat ? '' : $langs->transnoentitiesnoconv("VAT").': '.($block_static->amounts - $block_static->amounts_taxexcl));
 		$block_static->date_object = '';
@@ -676,7 +707,7 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 			$object->period = 'year='.GETPOSTINT('yeartoexport').(GETPOSTINT('monthtoexport') ? ' month='.GETPOSTINT('monthtoexport') : '');
 
 			$action = 'BLOCKEDLOG_EXPORT';
-			$result = $b->setObjectData($object, $action, 0, $user, null);
+			$result = $b->setObjectData($object, $action, 0, $user, 0);
 			//var_dump($b); exit;
 
 			if ($result < 0) {
@@ -692,6 +723,8 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 			}
 		}
 	}
+
+	$action = '';
 }
 
 
@@ -702,7 +735,7 @@ if (GETPOST('action') == 'export' && $user->hasRight('blockedlog', 'read')) {		/
 $form = new Form($db);
 $formother = new FormOther($db);
 
-if (GETPOST('withtab', 'alpha')) {
+if ($withtab) {
 	$title = $langs->trans("ModuleSetup").' '.$langs->trans('BlockedLog');
 } else {
 	$title = $langs->trans("BrowseBlockedLog");
@@ -722,7 +755,7 @@ if (!is_array($blocks)) {
 }
 
 $linkback = '';
-if (GETPOST('withtab', 'alpha')) {
+if ($withtab) {
 	$linkback = '<a href="'.dolBuildUrl($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 }
 
@@ -730,6 +763,9 @@ $morehtmlcenter = '';
 
 $registrationnumber = getHashUniqueIdOfRegistration();
 $texttop = '<small class="opacitymedium">'.$langs->trans("RegistrationNumber").':</small> <small>'.dol_trunc($registrationnumber, 10).'</small>';
+if (!isRegistrationDataSavedAndPushed()) {
+	$texttop = '';
+}
 
 print load_fiche_titre($title.'<br>'.$texttop, $linkback, 'blockedlog', 0, '', '', $morehtmlcenter);
 
@@ -746,243 +782,531 @@ print $langs->trans("ArchivesDesc")."<br>";
 
 print "</div>\n";
 
-$htmltext = '';
 
-$htmltext .= $langs->trans("UnalterableLogTool2", $langs->transnoentities("Archives"))."<br>";
-if ($mysoc->country_code == 'FR') {
-	$htmltext .= '<br>'.$langs->trans("UnalterableLogTool1FR").'<br>';
-}
-//$htmltext .= $langs->trans("UnalterableLogTool1");
-//$htmltext .= $langs->trans("UnalterableLogTool3")."<br>";
+if ($action == 'check' || $action == 'checkconfirmed') {
+	print '<br>';
+	print '<div class="formconsumeproduce">';
 
-print info_admin($htmltext, 0, 0, 'warning');
+	print '<b>'.$langs->trans("File").'</b> : '.GETPOST('urlfile').'<br>';
+
+	$fullpath = $upload_dir.'/'.GETPOST('urlfile');
+
+	$handle = fopen($fullpath, "r");
+	$line = fgets($handle);
+	fclose($handle);
+
+	$reg = array();
+	$period = '';
+	$regnumber = '';
+	$formatexport = '';
+	$fileentity = 1;
+	if (preg_match('/\speriod=([^\s]+)/', $line, $reg)) {
+		$period = $reg[1];	// Get period on first line
+	}
+	if (preg_match('/\sregnumber=([^\s]+)/', $line, $reg)) {
+		$regnumber = str_replace(array('.', '…'), '', $reg[1]);	// Get period on first line
+	}
+	if (preg_match('/\sformatexport=([^\s]+)/', $line, $reg)) {
+		$formatexport = $reg[1];	// Get export format (VE1, VE2...)
+	}
+	if (preg_match('/\sentity=([^\s]+)/', $line, $reg)) {
+		$fileentity = $reg[1];		// Get entity of file (usually 1)
+	}
+	print '<b>'.$langs->trans("Period").'</b> : '.$period.'<br>';
+
+	print '<br>';
 
 
-print '<br>';
+	$registrationnumber = getHashUniqueIdOfRegistration();
+	$secretkey = $registrationnumber;
 
-$param = '';
-if ($contextpage != getDolDefaultContextPage(__FILE__)) {
-	$param .= '&contextpage='.urlencode($contextpage);
-}
-if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.((int) $limit);
-}
-if ($search_id != '') {
-	$param .= '&search_id='.urlencode($search_id);
-}
-if ($search_fk_user > 0) {
-	$param .= '&search_fk_user='.urlencode($search_fk_user);
-}
-if ($search_startyear > 0) {
-	$param .= '&search_startyear='.((int) $search_startyear);
-}
-if ($search_startmonth > 0) {
-	$param .= '&search_startmonth='.((int) $search_startmonth);
-}
-if ($search_startday > 0) {
-	$param .= '&search_startday='.((int) $search_startday);
-}
-if ($search_endyear > 0) {
-	$param .= '&search_endyear='.((int) $search_endyear);
-}
-if ($search_endmonth > 0) {
-	$param .= '&search_endmonth='.((int) $search_endmonth);
-}
-if ($search_endday > 0) {
-	$param .= '&search_endday='.((int) $search_endday);
-}
-if ($search_amount) {
-	$param .= '&search_amount='.urlencode($search_amount);
-}
-if ($search_signature) {
-	$param .= '&search_signature='.urlencode($search_signature);
-}
-if ($search_showonlyerrors > 0) {
-	$param .= '&search_showonlyerrors='.((int) $search_showonlyerrors);
-}
-if ($optioncss != '') {
-	$param .= '&optioncss='.urlencode($optioncss);
-}
-if (GETPOST('withtab', 'alpha')) {
-	$param .= '&withtab='.urlencode(GETPOST('withtab', 'alpha'));
+	// Prepare to create a temporary file
+	$fullpathtmp = $upload_dir.'/temp/'.GETPOST('urlfile').'.tmp';
+
+	dol_mkdir($upload_dir.'/temp');
+	$result = dol_copy($fullpath, $fullpathtmp);
+
+	// Generate tmp file content without the last line
+	// TODO Move this into removeLastLine() function into files.lib.php
+	$fp = fopen($fullpathtmp, "r");
+	fseek($fp, -1, SEEK_END);
+	$pos = -1;
+	$char = fgetc($fp);
+	while ($char === "\n" || $char === "\r") {	// Go to last real char of last line
+		fseek($fp, $pos--, SEEK_END);
+		$char = fgetc($fp);
+	}
+	while ($char !== "\n" && $char !== false) {
+		fseek($fp, $pos--, SEEK_END);
+		$char = fgetc($fp);
+	}
+	/*
+	while ($char === "\n" || $char === "\r") {	// Go to last real char of last-1 line
+		fseek($fp, $pos--, SEEK_END);
+		$char = fgetc($fp);
+	}
+	*/
+	$truncatePos = ftell($fp);
+	fclose($fp);
+	// Truncate the tmp file to remove the last line
+	$fp = fopen($fullpathtmp, "c+");
+	ftruncate($fp, $truncatePos);
+	fclose($fp);
+
+
+	print $langs->trans("FileHasBeenEncodedWithASecretKeyStartingWith").' : '.$regnumber.'...<br>';
+	if (preg_match('/^'.$regnumber.'/', $secretkey)) {
+		print 'As this matches the 10 first characters of the full registration number of this instance, we will use the full registration number to control the archive file...';
+	} else {
+		print 'This archive file was not generated by this instance. The control of authenticity is possible only if you know the full registration number.';
+		print '<input type="text" name="inputregistrationnumber" placeholder="'.$langs->trans("FullRegistrationNumber").'">';
+	}
+	print '<br><br>';
+	print '<center><a class="button small nomarginleft" href="'.$_SERVER["PHP_SELF"].'?action=checkconfirmed&urlfile='.urlencode(GETPOST('urlfile')).'">'.$langs->trans("ControlFile").'</a></center>';
+
+	//<input type="text" name="inputregistrationnumber" placeholder="'.$langs->trans("RegistrationNumber").'">';
+
+	print '</div>';
+
+	if ($action == 'checkconfirmed') {
+		$totalhtamountforaction = $totalvatamountforaction = $totalamountforaction = array(
+			'BILL_VALIDATE' => 0,
+			'PAYMENT_CUSTOMER_CREATE' => 0
+		);
+		$reg = array();
+		$refinvoicefound = array();
+		$recalculatedhashsign = '';
+		$recalculatedhashauth = '';
+		$hashsign = '';
+		$hashauth = '';
+		$algosign = '';
+		$algoauth = '';
+		$previoushash = '';
+		$previoushashexport = '';
+		$nbLinesModifiedInExportButKo = 0;
+		$nbLinesModifiedBeforeExport = 0;
+
+		$handle = fopen($fullpath, "r");
+		if ($handle) {
+			$numline = 0;
+
+			$block_static = new BlockedLog($db);
+
+			while ($line = fgetcsv($handle, 100000, ';', '"', '')) {
+				$numline++;
+				$lineanalyzed = 0;
+
+				$linetech = $lineactioncode = '';
+				$lineamountht = $lineamountttc = 0;
+				$lineref = '';
+
+				if ($numline < 2) {
+					// First line, we continue
+					continue;
+				}
+
+				if ($formatexport == 'VE1' && !empty($line[1])) {
+					$lineanalyzed = 1;
+					$linetech = $line[0];
+
+					$block_static->id = (int) $line[1];
+					$block_static->entity = (int) $fileentity;
+					$block_static->date_creation = (string) $line[2];
+					$block_static->action = $lineactioncode = (string) $line[3];
+					$block_static->module_source = (string) $line[4];
+					$block_static->amounts_taxexcl = $lineamountht = ($line[5] === '' ? null : (float) $line[5]);
+					$block_static->amounts = $lineamountttc = (float) $line[6];
+					$block_static->ref_object = $lineref = (string) $line[7];
+					$block_static->date_object = (int) $line[8];
+					$block_static->user_fullname = (string) $line[9];
+					$block_static->linktoref = (string) $line[10];
+					$block_static->linktype = (string) $line[11];
+					$block_static->object_data = json_decode((string) $line[12]);
+					$block_static->object_version = (string) $line[13];
+					$block_static->object_format = (string) $line[14];
+					$block_static->signature = (string) $line[15];
+
+					// Status from file: 'Valid' or 'KO'
+					$statusline = (string) $line[16];
+
+					// Status revalidated from calculation using the HMAC secret key (possible only when we are on the same instance than
+					// the one hosting the initial database of the archive)
+					$tmp = $block_static->checkSignature($previoushash, 2);
+
+					// To see detail to get signature
+					/*
+					if ($block_static->id == 411) {
+						$concatenateddata = $block_static->buildKeyForSignature($block_static->object_format);
+						if (empty($previoushash)) {
+							$tmparray = $block_static->getPreviousHash(0, $block_static->id);
+							$previoushash = $tmparray['previoushash'];
+						}
+						var_dump($block_static->id, $previoushash, $concatenateddata, $tmp);
+						exit;
+					}*/
+
+
+					$signature = $tmp['calculatedsignature'];
+					$previoushash = $block_static->signature;
+
+					//print 'Line '.$numline.': Recalculate from file: '.$signature.', in file '.$block_static->signature."<br>\n";
+					if ($statusline == 'Valid') {
+						// The signature calculated must match the recorded signature
+						if ($signature != $block_static->signature) {
+							$nbLinesModifiedInExportButKo++;
+							//print 'Error: Line '.$numline.' reports that signature is ok but it seems to not match the one recalculated.';
+						}
+					}
+					if ($statusline == 'KO') {
+						$nbLinesModifiedBeforeExport++;
+						//print 'The line '.$numline.' was modified into the Unalterable Log before being exported.';
+					}
+
+					// With format VE1, we can also use a signature export.
+					// Note: this fieldis not more used, it has been replacedwith a global signature on all the file
+					$concatenateddata = $block_static->buildKeyForSignature();
+					$signatureexport = dol_hash($previoushashexport.$concatenateddata, 'sha256');
+					$previoushashexport = $signatureexport;
+				}
+
+				if ($lineanalyzed && ($lineactioncode == 'BILL_VALIDATE' || $lineactioncode == 'PAYMENT_CUSTOMER_CREATE' || $lineactioncode == 'PAYMENT_CUSTOMER_DELETE')) {
+					// For action = BILL_VALIDATE, we keep only first invoice found, but this should not happen because edition of invoice is never possible on
+					// certified version and very difficult on other version.
+					if ($lineactioncode != 'BILL_VALIDATE' || empty($refinvoicefound[$lineref])) {
+						if ($lineactioncode == 'PAYMENT_CUSTOMER_CREATE' || $lineactioncode == 'PAYMENT_CUSTOMER_DELETE') {
+							$lineactioncode = 'PAYMENT_CUSTOMER';
+						}
+
+						$totalhtamountforaction[$lineactioncode] += $lineamountht;
+						$totalvatamountforaction[$lineactioncode] += ($lineamountttc - $lineamountht);
+						$totalamountforaction[$lineactioncode] += $lineamountttc;
+					}
+					if ($lineactioncode == 'BILL_VALIDATE') {
+						$refinvoicefound[$lineref] = 1;
+					}
+				}
+
+				if (preg_match('/END - ([a-z0-9_]+)=([a-z0-9]+) - ([a-z0-9_]+)=([a-z0-9]+)$/', (string) $line[0], $reg)) {
+					$lineanalyzed = 1;
+					$algosign=$reg[1];
+					$hashsign=$reg[2];
+					$algoauth=$reg[3];
+					$hashauth=$reg[4];
+
+					if ($algosign == 'sha256') {
+						$algo = 'sha256';
+						$recalculatedhashsign = hash_file($algo, $fullpathtmp);
+					}
+					if ($algoauth == 'hmac_sha256') {
+						$algo = 'sha256';
+						$recalculatedhashauth = hash_hmac_file($algo, $fullpathtmp, $secretkey);
+					}
+				}
+
+				if (!$lineanalyzed) {
+					print 'Line '.$numline.' has format '.$formatexport.' that is not supported';
+				}
+			}
+			fclose($handle);
+		} else {
+			print 'Failed to open file '.GETPOST('urlfile');
+		}
+
+		print '<br><br>';
+
+		if ($recalculatedhashsign && $recalculatedhashsign == $hashsign) {
+			print img_picto('', 'tick', 'class="valignmiddle pictofixedwidth"');
+			print '<b>'.$langs->trans("FileIntegrity").'</b> ';
+			print ' '.$form->textwithpicto('', $langs->trans("FileContentMatchSignature").'<br><br>'.$algosign.' = '.$recalculatedhashsign);
+		} else {
+			print img_picto('', 'cross', 'class="error valignmiddle pictofixedwidth"');
+			print '<b>'.$langs->trans("FileIntegrity").'</b> ';
+			print ' '.$form->textwithpicto('', $langs->trans("FileHasBeenCorrupted").'<br><br>Recalculated '.$recalculatedhashsign.' != Found in file '.$hashsign);
+		}
+		print '<br><br>';
+
+		if ($recalculatedhashauth && $recalculatedhashauth == $hashauth) {
+			print img_picto('', 'tick', 'class="valignmiddle pictofixedwidth"');
+			print '<b>'.$langs->trans("FileAuthenticity").'</b> ';
+			print ' - <span class="opacitymedium">'.$langs->trans("FileWasGeneratedByThisInstance").'</span>';
+			print ' '.$form->textwithpicto('', $langs->trans("FileContentMatchSignature").'<br><br>'.$algoauth.' = '.$recalculatedhashauth);
+		} elseif ($recalculatedhashsign == $hashsign) {
+			print img_picto('', 'cross', 'class="error valignmiddle pictofixedwidth"');
+			print '<b>'.$langs->trans("FileAuthenticity").'</b> ';
+			print ' '.$form->textwithpicto('', $langs->trans("FileNotFromInstance").'<br><br>Recalculated '.$recalculatedhashauth.' != Found in file '.$hashauth);
+		} else {
+			print img_picto('', 'cross', 'class="error valignmiddle pictofixedwidth"');
+			print '<b>'.$langs->trans("FileAuthenticity").'</b> ';
+			print ' '.$form->textwithpicto('', $langs->trans("FileHasBeenCorruptedOrNotFromInstance").'<br><br>Recalculated '.$recalculatedhashauth.' != Found in file '.$hashauth);
+		}
+		print '<br><br>';
+
+		if ($nbLinesModifiedInExportButKo) {
+			print img_picto('', 'cross', 'class="error valignmiddle pictofixedwidth"');
+			print '<b>'.$langs->trans("nbLinesModifiedInExportButKo").'</b>: ';
+			//print ' '.$form->textwithpicto('', $langs->trans("FileHasBeenCorrupted").'<br>Recalculated '.$recalculatedhashsign.' != Found in file '.$hashsign);
+			print '<br><br>';
+		}
+
+		if ($nbLinesModifiedBeforeExport) {
+			print img_picto('', 'warning', 'class="error valignmiddle pictofixedwidth"');
+			print '<b>'.$langs->trans("nbLinesModifiedBeforeExport").'</b>';
+			//print ' '.$form->textwithpicto('', $langs->trans("FileHasBeenCorrupted").'<br>Recalculated '.$recalculatedhashsign.' != Found in file '.$hashsign);
+			print '<br><br>';
+		}
+
+		print img_picto('', 'minus', 'class="valignmiddle pictofixedwidth"');
+		print '<b>'.$langs->trans("DetectionOfSystemRestoration").'</b>: ';
+		print '<span class="opacitymedium">';
+		print $langs->trans("FeatureOnlyWhenArchiveAnalyzedFrom", "https://www.dolibarr.org/onlinecheckarchive.php");
+		print '</span><br>';
+		print '<br>';
+
+		print '<hr>';
+
+		$arraykeys = array('BILL_VALIDATE', 'PAYMENT_CUSTOMER_CREATE');
+		foreach ($arraykeys as $key) {
+			$totalhttoshow = $totalhtamountforaction[$key];
+			$totalvattoshow = $totalvatamountforaction[$key];
+			$totaltoshow = $totalamountforaction[$key];
+
+			print '<b>'.dolPrintHTML($langs->trans("TotalForAction").' '.$langs->trans('log'.$key)).'</b>';
+			if ($key == 'BILL_VALIDATE') {
+				print ' <span class="opacitymedium">('.$langs->trans("Turnover").')</span>';
+			} elseif ($key == 'PAYMENT_CUSTOMER_CREATE') {
+				print ' <span class="opacitymedium">('.$langs->trans("TurnoverCollected").')</span>';
+			}
+			print ': ';
+
+			if ($key == 'PAYMENT_CUSTOMER_CREATE') {
+				print '<span class="amount">'.price($totaltoshow, 0, $langs, 1, -1, -1, getDolCurrency()).'</span>';
+			} else {
+				print $langs->trans("HT").': ';
+				print '<span class="amount">'.price($totalhttoshow, 0, $langs, 1, -1, -1, getDolCurrency()).'</span>';
+
+				print ' - ';
+
+				print $langs->trans("VAT").': ';
+				print '<span class="amount">'.price($totalvattoshow, 0, $langs, 1, -1, -1, getDolCurrency()).'</span>';
+
+				print ' - ';
+
+				print $langs->trans("TTC").': ';
+				print '<span class="amount">'.price($totaltoshow, 0, $langs, 1, -1, -1, getDolCurrency()).'</span>';
+			}
+			print '<br>';
+		}
+
+		print '<br>';
+
+		$text = $langs->trans("IfIntegrityAuthenticityIsOkYouCanGetdetailByOpeningTheFile");
+		$text .= '<br>';
+		$text .= $langs->trans("IfIntegrityAuthenticityIsOkYouCanGetdetailByOpeningTheFile2");
+		//$langs->transnoentitiesnoconv("logBILL_VALIDATE"), $langs->transnoentitiesnoconv("logPAYMENT_CUSTOMER_CREATE"), $langs->transnoentitiesnoconv("logDOC_DOWNLOAD"), $langs->transnoentitiesnoconv("logCASHCONTROL_CLOSE")).'...');
+		print info_admin($text);
+	}
+
+
+	print '<br><br>';
+	print '<center><a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("BackToList").'</a></center>';
 }
 
-// Add $param from extra fields
-//include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+if ($action != 'check' && $action != 'checkconfirmed') {
+	$htmltext = '';
 
-if ($action == 'deletefile') {
-	$langs->load("companies"); // Need for string DeleteFile+ConfirmDeleteFiles
-	print $form->formconfirm(
-		$_SERVER["PHP_SELF"].'?urlfile='.urlencode(GETPOST("urlfile")).'&linkid='.GETPOSTINT('linkid').(empty($param) ? '' : $param),
-		$langs->trans('DeleteFile'),
-		$langs->trans('ConfirmDeleteFile'),
-		'confirm_deletefile',
+	$htmltext .= $langs->trans("UnalterableLogTool2", $langs->transnoentities("Archives"))."<br>";
+	if ($mysoc->country_code == 'FR') {
+		$htmltext .= '<br>'.$langs->trans("UnalterableLogTool1FR").'<br>';
+	}
+	//$htmltext .= $langs->trans("UnalterableLogTool1");
+	//$htmltext .= $langs->trans("UnalterableLogTool3")."<br>";
+
+	print info_admin($htmltext, 0, 0, 'warning');
+
+
+	print '<br>';
+
+	$param = '';
+	if ($contextpage != getDolDefaultContextPage(__FILE__)) {
+		$param .= '&contextpage='.urlencode($contextpage);
+	}
+	if ($limit > 0 && $limit != $conf->liste_limit) {
+		$param .= '&limit='.((int) $limit);
+	}
+	if ($search_id != '') {
+		$param .= '&search_id='.urlencode($search_id);
+	}
+	if ($search_fk_user > 0) {
+		$param .= '&search_fk_user='.urlencode($search_fk_user);
+	}
+	if ($search_startyear > 0) {
+		$param .= '&search_startyear='.((int) $search_startyear);
+	}
+	if ($search_startmonth > 0) {
+		$param .= '&search_startmonth='.((int) $search_startmonth);
+	}
+	if ($search_startday > 0) {
+		$param .= '&search_startday='.((int) $search_startday);
+	}
+	if ($search_endyear > 0) {
+		$param .= '&search_endyear='.((int) $search_endyear);
+	}
+	if ($search_endmonth > 0) {
+		$param .= '&search_endmonth='.((int) $search_endmonth);
+	}
+	if ($search_endday > 0) {
+		$param .= '&search_endday='.((int) $search_endday);
+	}
+	if ($search_amount) {
+		$param .= '&search_amount='.urlencode($search_amount);
+	}
+	if ($search_signature) {
+		$param .= '&search_signature='.urlencode($search_signature);
+	}
+	if ($search_showonlyerrors > 0) {
+		$param .= '&search_showonlyerrors='.((int) $search_showonlyerrors);
+	}
+	if ($optioncss != '') {
+		$param .= '&optioncss='.urlencode($optioncss);
+	}
+	if (GETPOST('withtab', 'alpha')) {
+		$param .= '&withtab='.urlencode(GETPOST('withtab', 'alpha'));
+	}
+
+	// Add $param from extra fields
+	//include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+
+	if ($action == 'deletefile') {
+		$langs->load("companies"); // Need for string DeleteFile+ConfirmDeleteFiles
+		print $form->formconfirm(
+			$_SERVER["PHP_SELF"].'?urlfile='.urlencode(GETPOST("urlfile")).'&linkid='.GETPOSTINT('linkid').(empty($param) ? '' : $param),
+			$langs->trans('DeleteFile'),
+			$langs->trans('ConfirmDeleteFile'),
+			'confirm_deletefile',
+			'',
+			'',
+			1
+		);
+	}
+
+
+	print '<form method="POST" id="exportArchives" action="'.$_SERVER["PHP_SELF"].'?output=file">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="export">';
+
+	print '<div class="right">';
+
+	print '<span class="hideonsmartphone">'.$langs->trans("RestrictYearToExport").': </span>';
+	// Month
+	print $formother->select_month((string) GETPOSTINT('monthtoexport'), 'monthtoexport', $langs->trans("Month"), 0, 'minwidth50 maxwidth75imp valignmiddle', true);
+	print '<input type="text" name="yeartoexport" class="valignmiddle maxwidth75imp" value="'.GETPOST('yeartoexport').'" placeholder="'.$langs->trans("Year").'">';
+
+	print ' ';
+
+	// Disabled, we will use the getHashUniqueIdOfRegistration() as secret HMAC
+	//print '<input type="text" name="hmacexportkey" class="valignmiddle minwidth150imp maxwidth300imp" required value="'.GETPOST('hmacexportkey').'" placeholder="'.$langs->trans("Password").'">';
+
+	print ' ';
+
+	print '<input type="hidden" name="withtab" value="'.GETPOST('withtab', 'alpha').'">';
+	print '<input type="submit" name="downloadcsv" class="button" value="'.$langs->trans('DownloadLogCSV').'">';
+	/*if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY')) {
+		print ' | <a href="?action=downloadblockchain'.(GETPOST('withtab', 'alpha') ? '&withtab='.GETPOST('withtab', 'alpha') : '').'">'.$langs->trans('DownloadBlockChain').'</a>';
+	}*/
+	print ' </div><br>';
+
+	print '</form>';
+
+
+	/*
+	print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+
+	if ($optioncss != '') {
+		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	}
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+	print '<input type="hidden" name="action" value="list">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	print '<input type="hidden" name="page" value="'.$page.'">';
+	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+	print '<input type="hidden" name="withtab" value="'.GETPOST('withtab', 'alpha').'">';
+
+	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
+	*/
+
+	$filearray = dol_dir_list($upload_dir, 'files', 0, '', null, 'name', SORT_ASC, 1);
+
+	$modulepart = 'blockedlog';
+	$relativepathwithnofile = 'archives/';
+	$disablemove = 1;
+	/*
+	$param = '&id='.$object->id.'&entity='.(empty($object->entity) ? getDolEntity() : $object->entity);
+	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+	*/
+
+	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+	$formfile = new FormFile($db);
+
+	$savingdocmask = '';
+
+	$object = $block_static;
+
+	// Get the form to add files (upload and links)
+	$tmparray = $formfile->form_attach_new_file(
+		$_SERVER["PHP_SELF"],
+		'',
+		0,
+		0,
+		$permission,
+		$conf->browser->layout == 'phone' ? 40 : 60,
+		$object,
+		'',
+		1,
+		$savingdocmask,
+		1,
+		'formuserfile',
 		'',
 		'',
-		1
+		0,
+		0,
+		0,
+		2
+	);
+
+	$formToUploadAFile = '';
+
+	if (is_array($tmparray) && !empty($tmparray)) {
+		$formToUploadAFile = $tmparray['formToUploadAFile'];
+	}
+
+	// List of document
+	$formfile->list_of_documents(
+		$filearray,
+		null,
+		$modulepart,
+		$param,
+		0,
+		$relativepathwithnofile, // relative path with no file. For example "0/1"
+		$permission,
+		0,
+		'',
+		0,
+		$langs->transnoentitiesnoconv('Archives'),
+		'',
+		0,
+		$permtoedit,
+		$upload_dir,
+		$sortfield,
+		$sortorder,
+		$disablemove,
+		0,
+		-1,
+		'',
+		array('afteruploadtitle' => $formToUploadAFile, 'showhideaddbutton' => 1, 'hideshared' => 1, 'buttons' => array(0 => array('picto' => img_picto($langs->trans("ControlFile"), 'question'), 'url' => $_SERVER["PHP_SELF"].'?action=check'.$param)))
 	);
 }
-
-
-print '<form method="POST" id="exportArchives" action="'.$_SERVER["PHP_SELF"].'?output=file">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="export">';
-
-print '<div class="right">';
-
-print '<span class="hideonsmartphone">'.$langs->trans("RestrictYearToExport").': </span>';
-// Month
-print $formother->select_month((string) GETPOSTINT('monthtoexport'), 'monthtoexport', $langs->trans("Month"), 0, 'minwidth50 maxwidth75imp valignmiddle', true);
-print '<input type="text" name="yeartoexport" class="valignmiddle maxwidth75imp" value="'.GETPOST('yeartoexport').'" placeholder="'.$langs->trans("Year").'">';
-
-print ' ';
-
-// Disabled, we will use the getHashUniqueIdOfRegistration() as secret HMAC
-//print '<input type="text" name="hmacexportkey" class="valignmiddle minwidth150imp maxwidth300imp" required value="'.GETPOST('hmacexportkey').'" placeholder="'.$langs->trans("Password").'">';
-
-print ' ';
-
-print '<input type="hidden" name="withtab" value="'.GETPOST('withtab', 'alpha').'">';
-print '<input type="submit" name="downloadcsv" class="button" value="'.$langs->trans('DownloadLogCSV').'">';
-/*if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY')) {
-	print ' | <a href="?action=downloadblockchain'.(GETPOST('withtab', 'alpha') ? '&withtab='.GETPOST('withtab', 'alpha') : '').'">'.$langs->trans('DownloadBlockChain').'</a>';
-}*/
-print ' </div><br>';
-
-print '</form>';
-
-
-/*
-print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
-
-if ($optioncss != '') {
-	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-}
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
-print '<input type="hidden" name="action" value="list">';
-print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
-print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-print '<input type="hidden" name="page" value="'.$page.'">';
-print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
-print '<input type="hidden" name="withtab" value="'.GETPOST('withtab', 'alpha').'">';
-
-print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-*/
-
-$filearray = dol_dir_list($upload_dir, 'files', 0, '', null, 'name', SORT_ASC, 1);
-
-$modulepart = 'blockedlog';
-$relativepathwithnofile = 'archives/';
-$disablemove = 1;
-/*
-$param = '&id='.$object->id.'&entity='.(empty($object->entity) ? getDolEntity() : $object->entity);
-include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
-*/
-
-include_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-$formfile = new FormFile($db);
-
-$savingdocmask = '';
-
-$object = $block_static;
-
-// Get the form to add files (upload and links)
-$tmparray = $formfile->form_attach_new_file(
-	$_SERVER["PHP_SELF"],
-	'',
-	0,
-	0,
-	$permission,
-	$conf->browser->layout == 'phone' ? 40 : 60,
-	$object,
-	'',
-	1,
-	$savingdocmask,
-	1,
-	'formuserfile',
-	'',
-	'',
-	0,
-	0,
-	0,
-	2
-);
-
-$formToUploadAFile = '';
-
-if (is_array($tmparray) && !empty($tmparray)) {
-	$formToUploadAFile = $tmparray['formToUploadAFile'];
-}
-
-// List of document
-// TODO Replace with specific code to list files with mass action, ...
-$formfile->list_of_documents(
-	$filearray,
-	null,
-	$modulepart,
-	$param,
-	0,
-	$relativepathwithnofile, // relative path with no file. For example "0/1"
-	$permission,
-	0,
-	'',
-	0,
-	$langs->transnoentitiesnoconv('Archives'),
-	'',
-	0,
-	$permtoedit,
-	$upload_dir,
-	$sortfield,
-	$sortorder,
-	$disablemove,
-	0,
-	-1,
-	'',
-	array('afteruploadtitle' => $formToUploadAFile, 'showhideaddbutton' => 1)
-);
-
-/*
-print '</div>';
-
-print '</form>';
-*/
-
-// Javascript to manage the showinfo popup
-print '<script type="text/javascript">
-
-jQuery(document).ready(function () {
-	jQuery("#dialogforpopup").dialog({
-		closeOnEscape: true,
-		classes: { "ui-dialog": "highlight" },
-		maxHeight: window.innerHeight-60,
-		height: window.innerHeight-60,
-		width: '.($conf->browser->layout == 'phone' ? 400 : 700).',
-		modal: true,
-		autoOpen: false
-	}).css("z-index: 5000");
-
-	$("a[rel=show-info]").click(function() {
-	    console.log("We click on tooltip a[rel=show-info], we open popup and get content using an ajax call");
-
-		var fk_block = $(this).attr("data-blockid");
-
-		$.ajax({
-			method: "GET",
-			data: { token: \''.currentToken().'\' },
-			url: "'.DOL_URL_ROOT.'/blockedlog/ajax/block-info.php?id="+fk_block,
-			dataType: "html"
-		}).done(function(data) {
-			jQuery("#dialogforpopup").html(data);
-		});
-
-		var mydialog = jQuery("#dialogforpopup");
-		mydialog.dialog({autoOpen: false, modal: true, height: (window.innerHeight - 150), width: \'80%\', title: \''.dol_escape_js($langs->trans("UnlaterableDataOfEvent")).'\',});
-		mydialog.dialog("open");
-		return false;
-	});
-})
-</script>'."\n";
 
 
 if (GETPOST('withtab', 'alpha')) {

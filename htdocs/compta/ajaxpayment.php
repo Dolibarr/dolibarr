@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2011 Auguria <anthony.poiret@auguria.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2011 		Auguria 				<anthony.poiret@auguria.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2026       Lenin Rivas         	<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify

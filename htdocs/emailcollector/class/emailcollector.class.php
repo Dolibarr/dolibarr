@@ -1551,7 +1551,7 @@ class EmailCollector extends CommonObject
 				//$search.=($search?' ':'').'SINCE 8-Apr-2022';
 			}
 
-			dol_syslog("IMAP search string = ".var_export($criteria, true));
+			dol_syslog("IMAP search string = ".formatLogObject($criteria));
 			$search = var_export($criteria, true);
 		} else {
 			// Use native IMAP functions

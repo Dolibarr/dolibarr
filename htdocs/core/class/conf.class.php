@@ -90,7 +90,7 @@ class Conf extends stdClass
 	public $disable_compute;
 
 	/**
-	 * @var string Used to store current currency (ISO code like 'USD', 'EUR', ...). To get the currency symbol:->getCurrencySymbol($this->currency)
+	 * @var string Used to store current currency (ISO code like 'USD', 'EUR', ...). To get this property, you can use getDolCurrency(). To get the currency symbol:->getCurrencySymbol(getDolCurrency()).
 	 */
 	public $currency;
 

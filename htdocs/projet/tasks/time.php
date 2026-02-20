@@ -470,8 +470,8 @@ if ($action == 'confirm_generateinvoice' && $user->hasRight('facture', 'creer'))
 
 			$pu_ht = empty($dataforprice['pu_ht']) ? 0 : $dataforprice['pu_ht'];
 			$txtva = $dataforprice['tva_tx'];
-			$localtax1 = $dataforprice['localtax1'];
-			$localtax2 = $dataforprice['localtax2'];
+			$localtax1 = get_localtax($txtva, 1, $projectstatic->thirdparty);
+			$localtax2 = get_localtax($txtva, 2, $projectstatic->thirdparty);
 		} else {
 			$prodDurationHoursBase = 1;
 

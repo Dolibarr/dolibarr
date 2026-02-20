@@ -24,8 +24,11 @@
  * @var Translate $langs
  *
  * @var int			$trforbreaknobg
+ * @var int			$num
  * @var ?int		$limit
  * @var ?int		$offset
+ * @var string		$sqlfields
+ * @var string		$moreinfoontotal
  * @var array{nbfield:int,type?:array<int,string>,pos?:array<int,string>,val?:array<int,float>} $totalarray
  */
 '
@@ -81,6 +84,7 @@ if (!empty($totalarray['totalizable']) && is_array($totalarray['totalizable'])) 
 		$totalarray['val'][$keytotalizable] = isset($valtotalizable['total']) ? $valtotalizable['total'] : 0;
 	}
 }
+
 // Show total line
 if (isset($totalarray['pos'])) {
 	//print '<tfoot>';
@@ -93,7 +97,12 @@ if (isset($totalarray['pos'])) {
 		} else {
 			if ($i == 1) {
 				if ((!isset($limit) || $num < $limit) && empty($offset)) {
-					print '<td>'.$langs->trans("Total").'</td>';
+					print '<td>';
+					print $langs->trans("Total");
+					if (!empty($moreinfoontotal)) {
+						print $moreinfoontotal;
+					}
+					print '</td>';
 				} else {
 					print '<td>';
 					if (is_object($form)) {
@@ -109,6 +118,7 @@ if (isset($totalarray['pos'])) {
 		}
 	}
 	print '</tr>';
+
 	// Add grand total if necessary ie only if different of page total already printed above
 	if (getDolGlobalString('MAIN_GRANDTOTAL_LIST_SHOW') && (!(is_null($limit) || $num < $limit))) {
 		if (isset($totalarray['pos']) && is_array($totalarray['pos']) && count($totalarray['pos']) > 0) {

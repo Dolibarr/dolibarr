@@ -17,11 +17,14 @@ if (!defined("NOLOGIN")) {
 }
 
 // Load Dolibarr environment
-require '../../main.inc.php';
+@include '../../main.inc.php';
+/**
+ * @var string $dolibarr_main_prod
+ */
 
 // Security
-if ($dolibarr_main_prod) {
-	accessforbidden();
+if (!empty($dolibarr_main_prod)) {
+	accessforbidden('Access forbidden when $dolibarr_main_prod is set to 1');
 }
 
 

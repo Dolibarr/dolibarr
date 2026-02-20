@@ -1937,11 +1937,12 @@ function dol_size($size, $type = '')
  * 	@param	string		$newstr			String to replace bad chars with.
  *  @param	int	    	$unaccent		1=Remove also accent (default), 0 do not remove them
  *  @param	int			$includequotes	1=Include simple quotes (double is already included by default)
+ *  @param	int	    	$allowdash		1=Allow dash char after a space and before a string, 0 do not allow
  *	@return string      	    		String cleaned
  *
  * 	@see        	dol_string_nospecial(), dol_string_unaccent(), dol_sanitizePathName()
  */
-function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1, $includequotes = 0)
+function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1, $includequotes = 0, $allowdash = 0)
 {
 	$str = (string) $str;
 
@@ -1955,9 +1956,13 @@ function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1, $includequotes
 	}
 	$tmp = dol_string_nospecial($unaccent ? dol_string_unaccent($str) : $str, $newstr, $filesystem_forbidden_chars);
 	$tmp = preg_replace('/\-\-+/', '_', $tmp);
-	$tmp = preg_replace('/\s+\-([^\s])/', ' _$1', $tmp);
-	$tmp = preg_replace('/\s+\-$/', '', $tmp);
+	if (empty($allowdash)) {
+		$tmp = preg_replace('/\s+\-([^\s])/', ' _$1', $tmp);
+		$tmp = preg_replace('/\s+\-$/', '', $tmp);
+	}
 	$tmp = str_replace('..', '', $tmp);
+	$tmp = str_replace('~', $newstr, $tmp);
+	$tmp = preg_replace('/\s{2,}/', ' ', $tmp);
 
 	return $tmp;
 }
@@ -1998,6 +2003,8 @@ function dol_sanitizePathName($str, $newstr = '_', $unaccent = 0, $allowdash = 0
 	}
 	$tmp = str_replace('..', $newstr, $tmp);
 	$tmp = str_replace('~', $newstr, $tmp);
+	$tmp = preg_replace('/\s{2,}/', ' ', $tmp);
+
 	return $tmp;
 }
 
@@ -12253,6 +12260,10 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 
 			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("require", "include", "require_once", "include_once"));
 			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("exec", "passthru", "shell_exec", "system", "proc_open", "popen"));
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("pcntl_alarm", "pcntl_exec", "pcntl_fork", "pcntl_waitpid", "pcntl_wait", "pcntl_wifexited", "pcntl_wifstopped", "pcntl_wifsignaled", "pcntl_wifcontinued", "pcntl_wexitstatus", "pcntl_wtermsig", "pcntl_wstopsig", "pcntl_signal"));
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("pcntl_signal_get_handler", "pcntl_signal_dispatch", "pcntl_get_last_error", "pcntl_strerror", "pcntl_sigprocmask", "pcntl_sigwaitinfo", "pcntl_sigtimedwait", "pcntl_getpriority", "pcntl_async_signals", "pcntl_unshare", ));
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("putenv", "dl", "apache_child_terminate", "apache_setenv"));
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("posix_kill", "posix_setuid", "posix_setgid"));
 			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_eval", "dol_eval_new", "dol_eval_standard", "executeCLI", "verifCond", "GETPOST", "dolEncrypt", "dolDecrypt"));	// native dolibarr functions
 			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("eval", "create_function", "assert", "mb_ereg_replace")); // function with eval capabilities
 			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("readline_completion_function", "readline_callback_handler_install"));
@@ -12794,7 +12805,7 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 
 	// No need to make a return $head. Var is modified as a reference
 	if (!empty($hookmanager)) {
-		$parameters = array('object' => $object, 'mode' => $mode, 'head' => &$head, 'filterorigmodule' => $filterorigmodule);
+		$parameters = array('object' => $object, 'mode' => $mode, 'head' => &$head, 'filterorigmodule' => $filterorigmodule, 'type' => $type);
 		// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 		$reshook = $hookmanager->executeHooks('completeTabsHead', $parameters, $object);
 		if ($reshook > 0) {		// Hook ask to replace completely the array
@@ -15699,11 +15710,12 @@ function showValueWithClipboardCPButton($valuetocopy, $showonlyonhover = 1, $tex
  * Decode an encoded string. The string can be encoded in json format (recommended) or with serialize (avoid this)
  *
  * @param 	string	$stringtodecode		String to decode (json or serialize coded)
+ * @param	boolean	$assoc				true=Return is converted into associative array
  * @return	mixed						The decoded object.
  */
-function jsonOrUnserialize($stringtodecode)
+function jsonOrUnserialize($stringtodecode, $assoc = true)
 {
-	$result = json_decode($stringtodecode);
+	$result = json_decode($stringtodecode, $assoc);
 	if ($result === null) {
 		$result = unserialize($stringtodecode);	// For backward compatibility. Is no more used in recent versions.
 	}

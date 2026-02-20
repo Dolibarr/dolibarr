@@ -4,8 +4,9 @@
  * Copyright (C) 2005-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012  Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2022-2026  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -660,7 +661,7 @@ print '<td class="center">'.$langs->trans("MustBeMandatory").'</td>';
 print '<td class="center">'.$langs->trans("MustBeInvoiceMandatory").'</td>';
 print "</tr>\n";
 
-$profid = array('IDPROF1' => array(), 'IDPROF2' => array(), 'IDPROF3' => array(), 'IDPROF4' => array(), 'IDPROF5' => array(),'IDPROF6' => array(), 'EMAIL' => array());
+$profid = array('IDPROF1' => array(), 'IDPROF2' => array(), 'IDPROF3' => array(), 'IDPROF4' => array(), 'IDPROF5' => array(),'IDPROF6' => array(), 'EMAIL' => array(), 'EUID' => array());
 $profid['IDPROF1'][0] = $langs->trans("ProfId1");
 $profid['IDPROF1'][1] = $langs->transcountry('ProfId1', $mysoc->country_code);
 $profid['IDPROF2'][0] = $langs->trans("ProfId2");
@@ -675,6 +676,8 @@ $profid['IDPROF6'][0] = $langs->trans("ProfId6");
 $profid['IDPROF6'][1] = $langs->transcountry('ProfId6', $mysoc->country_code);
 $profid['EMAIL'][0] = $langs->trans("EMail");
 $profid['EMAIL'][1] = $langs->trans('Email');
+$profid['EUID'][0] = $langs->trans("EUIDShort");
+$profid['EUID'][1] = $langs->trans('EUID');
 if (isModEnabled('accounting')) {
 	$profid['ACCOUNTANCY_CODE_CUSTOMER'] = array();
 	$profid['ACCOUNTANCY_CODE_CUSTOMER'][0] = $langs->trans("CustomerAccountancyCodeShort");
