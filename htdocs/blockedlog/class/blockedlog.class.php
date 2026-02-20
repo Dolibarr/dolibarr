@@ -506,6 +506,9 @@ class BlockedLog
 			$user = $fuser;
 		}
 
+		// Init object_data for JSON data
+		$this->object_data = new stdClass();
+
 		// Generic fields
 
 		// entity
@@ -569,6 +572,8 @@ class BlockedLog
 				if ($invoice->id > 0) {
 					$this->linktype = 'credit_note_of';
 					$this->linktoref = $invoice->ref;
+
+					$this->object_data->link = $this->linktype.' '.$this->linktoref;
 				}
 				$this->module_source = (string) $invoice->module_source;
 			}
@@ -586,9 +591,6 @@ class BlockedLog
 			$object->fetch_thirdparty();
 		}
 
-
-		// Set object_data
-		$this->object_data = new stdClass();
 
 		// Add fields to exclude (this has become useless because we now use a list fields to keep later).
 		$arrayoffieldstoexclude = array(
@@ -739,7 +741,7 @@ class BlockedLog
 								'vat_src_code', 'tva_tx', 'localtax1_tx', 'localtax2_tx',
 								'total_ht', 'total_tva', 'total_ttc', 'total_localtax1', 'total_localtax2',
 								'multicurrency_code', 'multicurrency_total_ht', 'multicurrency_total_tva', 'multicurrency_total_ttc',
-								'info_bits', 'special_code',
+								'info_bits', 'special_code', 'remise_percent'
 							))) {
 								continue; // Discard if not into a dedicated list
 							}

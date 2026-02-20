@@ -106,6 +106,7 @@ IfIntegrityAuthenticityIsOkYouCanGetdetailByOpeningTheFile=If integrity and auth
 IfIntegrityAuthenticityIsOkYouCanGetdetailByOpeningTheFile2=So you can use any filter of your choice and see detail of references, amounts, cumulative and/or pertetual amounts of each events.
 DetectionOfSystemRestoration=Detection of database system restoration or deletion of the last line
 FeatureOnlyWhenArchiveAnalyzedFrom=This feature is for the moment available only when archive is controled from %s
+DiscountInPercent=Discount (in %)
 
 ## logTypes
 logBILL_DELETE=Customer invoice logically deleted
