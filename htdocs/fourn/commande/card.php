@@ -1598,6 +1598,7 @@ if (empty($reshook)) {
 						dol_syslog("Try to find source object origin=".$object->origin_type." originid=".$object->origin_id." to add lines");
 						$result = $srcobject->fetch($object->origin_id);
 						if ($result > 0) {
+							// Only copy delivery date from source if none was specified by user
 							if (empty($object->delivery_date)) {
 								$tmpdate = $srcobject->delivery_date;
 								$object->setDeliveryDate($user, $tmpdate);
