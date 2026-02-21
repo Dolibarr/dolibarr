@@ -265,7 +265,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 
 	if (!$error && $fh) {
 		// Now restart request with all data, so without the limit(1) in sql request
-		$sql = "SELECT rowid, entity, date_creation, tms, user_fullname, action, module_source, amounts_taxexcl, amounts, element, fk_object, date_object, ref_object,";
+		$sql = "SELECT rowid, entity, date_creation, tms, user_fullname, action, module_source, pos_source, amounts_taxexcl, amounts, element, fk_object, date_object, ref_object,";
 		$sql .= " linktoref, linktype, signature, fk_user, object_data, object_version, object_format, debuginfo";
 		$sql .= " FROM ".MAIN_DB_PREFIX."blockedlog";
 		$sql .= " WHERE entity = ".((int) $conf->entity);
@@ -282,6 +282,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 				.';'.$langs->transnoentities('DateCreation')
 				.';'.$langs->transnoentities('Action')
 				.';'.$langs->transnoentities('Origin')
+				.';'.$langs->transnoentities('Terminal')
 				.';'.$langs->transnoentities('AmountHT')
 				.';'.$langs->transnoentities('AmountTTC')
 				.';'.$langs->transnoentities('Ref')
@@ -332,6 +333,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 
 				$block_static->action = $obj->action;
 				$block_static->module_source = $obj->module_source;
+				$block_static->pos_source = $obj->pos_source;
 
 				$block_static->amounts_taxexcl = is_null($obj->amounts_taxexcl) ? null : (float) $obj->amounts_taxexcl;	// Database store value with 8 digits, we cut ending 0 them with (flow)
 				$block_static->amounts = (float) $obj->amounts;															// Database store value with 8 digits, we cut ending 0 them with (flow)
@@ -410,6 +412,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 					.csvClean($block_static->date_creation).';'
 					.csvClean($block_static->action).';'
 					.csvClean($block_static->module_source).';'
+					.csvClean($block_static->pos_source).';'
 					.csvClean($block_static->amounts_taxexcl).';'	// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
 					.csvClean($block_static->amounts).';'			// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
 					.csvClean($block_static->ref_object).';'
@@ -467,6 +470,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 		$block_static->date_creation = '';
 		$block_static->action = 'BILL_VALIDATE';
 		$block_static->module_source = '*';
+		$block_static->pos_source = '*';
 		$block_static->amounts_taxexcl = $totalhtamountalllines['BILL_VALIDATE'];
 		$block_static->amounts = $totalamountalllines['BILL_VALIDATE'];
 		$block_static->ref_object = $langs->transnoentitiesnoconv("VAT").': '.$totalvatamountalllines['BILL_VALIDATE'];
@@ -487,6 +491,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 			.csvClean($block_static->date_creation).';'
 			.csvClean($block_static->action).';'
 			.csvClean($block_static->module_source).';'
+			.csvClean($block_static->pos_source).';'
 			.csvClean($block_static->amounts_taxexcl).';'	// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
 			.csvClean($block_static->amounts).';'			// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
 			.csvClean($block_static->ref_object).';'
@@ -507,6 +512,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 		$block_static->date_creation = '';
 		$block_static->action = 'PAYMENT_CUSTOMER_CREATE';
 		$block_static->module_source = '*';
+		$block_static->pos_source = '*';
 		$block_static->amounts_taxexcl = '';
 		$block_static->amounts = $totalamountalllines['PAYMENT_CUSTOMER_CREATE'];
 		$block_static->ref_object = '';
@@ -525,6 +531,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 			.csvClean($block_static->date_creation).';'
 			.csvClean($block_static->action).';'
 			.csvClean($block_static->module_source).';'
+			.csvClean($block_static->pos_source).';'
 			.csvClean($block_static->amounts_taxexcl).';'	// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
 			.csvClean($block_static->amounts).';'			// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
 			.csvClean($block_static->ref_object).';'
@@ -541,13 +548,13 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 
 
 		// Calculate lifetime totals (with date of first record)
-		$sql = "SELECT action, module_source, object_format, MIN(date_creation) as datemin, SUM(amounts_taxexcl) as sumamounts_taxexcl, SUM(amounts) as sumamounts";
+		$sql = "SELECT action, module_source, pos_source, object_format, MIN(date_creation) as datemin, SUM(amounts_taxexcl) as sumamounts_taxexcl, SUM(amounts) as sumamounts";
 		$sql .= " FROM ".MAIN_DB_PREFIX."blockedlog";
 		$sql .= " WHERE entity = ".((int) $conf->entity);
 		//$sql .= " AND action IN ('BILL_VALIDATE', 'BILL_SENTBYMAIL', 'PAYMENT_CUSTOMER_CREATE', 'CASHCONTROL_CLOSE', 'PAYMENT_CUSTOMER_DELETE', 'DOC_DOWNLOAD', 'DOC_PREVIEW')";
 		$sql .= " AND action IN ('BILL_VALIDATE', 'PAYMENT_CUSTOMER_CREATE', 'PAYMENT_CUSTOMER_DELETE')";	// Only event into lifetime total
 		//$sql .= " AND action IN ('PAYMENT_CUSTOMER_CREATE')";
-		$sql .= " GROUP BY action, module_source, object_format";
+		$sql .= " GROUP BY action, module_source, pos_source, object_format";
 
 		$foundoldformat = 0;
 		$firstrecorddatearray = array();
@@ -595,6 +602,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 		$block_static->date_creation = '';
 		$block_static->action = 'BILL_VALIDATE';
 		$block_static->module_source = '*';
+		$block_static->pos_source = '*';
 		// if an old format was found, we do not have reliable amount excluding tax for lifetime value, we do not show it
 
 		$block_static->amounts_taxexcl = ($foundoldformat ? '' : $totalhtamountlifetime['BILL_VALIDATE']);
@@ -617,6 +625,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 			.csvClean($block_static->date_creation).';'
 			.csvClean($block_static->action).';'
 			.csvClean($block_static->module_source).';'
+			.csvClean($block_static->pos_source).';'
 			.csvClean($block_static->amounts_taxexcl).';'	// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
 			.csvClean($block_static->amounts).';'			// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
 			.csvClean($block_static->ref_object).';'
@@ -637,6 +646,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 		$block_static->date_creation = '';
 		$block_static->action = 'PAYMENT_CUSTOMER_CREATE';
 		$block_static->module_source = '*';
+		$block_static->pos_source = '*';
 		$block_static->amounts_taxtecl = '';
 		$block_static->amounts = array_sum($totalamountlifetime['PAYMENT_CUSTOMER_CREATE']);
 		$block_static->ref_object = '';
@@ -656,6 +666,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 			.csvClean($block_static->date_creation).';'
 			.csvClean($block_static->action).';'
 			.csvClean($block_static->module_source).';'
+			.csvClean($block_static->pos_source).';'
 			.csvClean($block_static->amounts_taxexcl).';'	// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
 			.csvClean($block_static->amounts).';'			// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
 			.csvClean($block_static->ref_object).';'
@@ -675,8 +686,8 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 
 		// Calculate the signature of the file (the last line has a return line)
 		$algo = 'sha256';
-		$sha256 = hash_file($algo, $tmpfile);
-		$hmacsha256 = hash_hmac_file($algo, $tmpfile, $secretkey);
+		$sha256 = hash_file($algo, $tmpfile);						// For integrity only
+		$hmacsha256 = hash_hmac_file($algo, $tmpfile, $secretkey);	// For integrity + authenticity
 
 		// Now add a signature to check integrity at end of file
 		file_put_contents($tmpfile, 'END - sha256='.$sha256.' - hmac_sha256='.$hmacsha256, FILE_APPEND);
@@ -707,8 +718,8 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 			$object->period = 'year='.GETPOSTINT('yeartoexport').(GETPOSTINT('monthtoexport') ? ' month='.GETPOSTINT('monthtoexport') : '');
 
 			$action = 'BLOCKEDLOG_EXPORT';
+
 			$result = $b->setObjectData($object, $action, 0, $user, 0);
-			//var_dump($b); exit;
 
 			if ($result < 0) {
 				setEventMessages('Failed to insert the export int the unalterable log', null, 'errors');
@@ -905,7 +916,7 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 					continue;
 				}
 
-				if ($formatexport == 'VE1' && !empty($line[1])) {
+				if ($formatexport == 'VE1' && !empty($line[1])) {	// Format V23
 					$lineanalyzed = 1;
 					$linetech = $line[0];
 
@@ -914,6 +925,7 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 					$block_static->date_creation = (string) $line[2];
 					$block_static->action = $lineactioncode = (string) $line[3];
 					$block_static->module_source = (string) $line[4];
+					$block_static->pos_source = '';
 					$block_static->amounts_taxexcl = $lineamountht = ($line[5] === '' ? null : (float) $line[5]);
 					$block_static->amounts = $lineamountttc = (float) $line[6];
 					$block_static->ref_object = $lineref = (string) $line[7];
@@ -928,12 +940,40 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 
 					// Status from file: 'Valid' or 'KO'
 					$statusline = (string) $line[16];
+				}
 
+				if ($formatexport == 'VE2' && !empty($line[1])) {	// Format V24+
+					$lineanalyzed = 1;
+					$linetech = $line[0];
+
+					$block_static->id = (int) $line[1];
+					$block_static->entity = (int) $fileentity;
+					$block_static->date_creation = (string) $line[2];
+					$block_static->action = $lineactioncode = (string) $line[3];
+					$block_static->module_source = (string) $line[4];
+					$block_static->pos_source = (string) $line[5];
+					$block_static->amounts_taxexcl = $lineamountht = ($line[6] === '' ? null : (float) $line[5]);
+					$block_static->amounts = $lineamountttc = (float) $line[7];
+					$block_static->ref_object = $lineref = (string) $line[8];
+					$block_static->date_object = (int) $line[9];
+					$block_static->user_fullname = (string) $line[10];
+					$block_static->linktoref = (string) $line[11];
+					$block_static->linktype = (string) $line[12];
+					$block_static->object_data = json_decode((string) $line[13]);
+					$block_static->object_version = (string) $line[14];
+					$block_static->object_format = (string) $line[15];
+					$block_static->signature = (string) $line[16];
+
+					// Status from file: 'Valid' or 'KO'
+					$statusline = (string) $line[17];
+				}
+
+				if ($block_static->id > 0) {
 					// Status revalidated from calculation using the HMAC secret key (possible only when we are on the same instance than
 					// the one hosting the initial database of the archive)
 					$tmp = $block_static->checkSignature($previoushash, 2);
 
-					// To see detail to get signature
+					// To see the detail of line to to test signature calculation
 					/*
 					if ($block_static->id == 411) {
 						$concatenateddata = $block_static->buildKeyForSignature($block_static->object_format);
@@ -971,7 +1011,7 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 
 				if ($lineanalyzed && ($lineactioncode == 'BILL_VALIDATE' || $lineactioncode == 'PAYMENT_CUSTOMER_CREATE' || $lineactioncode == 'PAYMENT_CUSTOMER_DELETE')) {
 					// For action = BILL_VALIDATE, we keep only first invoice found, but this should not happen because edition of invoice is never possible on
-					// certified version and very difficult on other version.
+					// certified version (locked) and very difficult on other version.
 					if ($lineactioncode != 'BILL_VALIDATE' || empty($refinvoicefound[$lineref])) {
 						if ($lineactioncode == 'PAYMENT_CUSTOMER_CREATE' || $lineactioncode == 'PAYMENT_CUSTOMER_DELETE') {
 							$lineactioncode = 'PAYMENT_CUSTOMER';

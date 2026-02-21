@@ -904,7 +904,7 @@ if (empty($action) || $action == "view" || $action == "close") {
 
 		if ($object->lifetime_start) {
 			print '<tr><td class="titlefield nowrap">';
-			print $langs->trans("LifetimeAmount");
+			print $langs->trans("LifetimeAmount", $langs->transnoentities("AllPaymentModes"));
 			print '</td><td colspan="3">';
 			print '<span class="amount">'.price($object->card_lifetime + $object->cheque_lifetime + $object->cash_lifetime, 0, $langs, 1, -1, -1, $conf->currency).'</span>';
 			print ' &nbsp; <span class="opacitymedium">'.$langs->trans("since").' '.dol_print_date($object->lifetime_start, 'dayhour').' ('.$langs->trans("AllTerminals").')</span>';
@@ -948,12 +948,17 @@ if (empty($action) || $action == "view" || $action == "close") {
 				}
 				print '</td>';
 				print '<td class="right">';
-				print '<span class="amount';
-				if ((($key == 'cash' ? $object->opening : 0) + $realamountforpaymentmode) != $declaredamountforpaymentmode) {
-					print ' error';
+				$calcamount = (($key == 'cash' ? $object->opening : 0) + $realamountforpaymentmode);
+				print '<span class="amount">'.price($calcamount, 0, $langs, 1, -1, -1, $conf->currency).'</span>';
+				//print '</span>';
+				//print '<span class="amount';
+				if ($calcamount != $declaredamountforpaymentmode) {
+					//print ' error';
+					print img_picto($langs->trans("Declared").': '.$declaredamountforpaymentmode, 'warning');
 				}
-				print '">';
-				print price($declaredamountforpaymentmode, 0, $langs, 1, -1, -1, $conf->currency).'</span>';
+				//print '">';
+
+
 				print '</td>';
 				print '</tr>';
 			}
