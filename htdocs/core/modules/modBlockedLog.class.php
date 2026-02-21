@@ -24,6 +24,7 @@
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+include_once DOL_DOCUMENT_ROOT.'/versioncert.inc.php';
 
 
 /**
@@ -55,7 +56,8 @@ class modBlockedLog extends DolibarrModules
 		$this->description = "Enable a log on some business events into an unalterable log. This module may be mandatory for some countries.";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'dolibarr';
+		$this->version = constant('DOLCERT_VERSION');
+		$this->version_core = 1;
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Name of image file used for this module.
@@ -162,7 +164,7 @@ class modBlockedLog extends DolibarrModules
 	 *      The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *      It also creates data directories.
 	 *
-	 *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @param      string	$options    Options when enabling module ('', 'noboxes', 'acceptredirect', 'forceinit')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
 	public function init($options = '')
@@ -174,12 +176,13 @@ class modBlockedLog extends DolibarrModules
 		require_once DOL_DOCUMENT_ROOT . '/blockedlog/class/blockedlog.class.php';
 		$b = new BlockedLog($this->db);
 
-		// forceinit can be set to bypass this redirection
+		// any value of $options except 'acceptredirect' will bypass this redirection
 		if (isALNEQualifiedVersion(1, 1) && $options == 'acceptredirect') {
 			// We first switch on registration page
 			header("Location: ".DOL_URL_ROOT.'/blockedlog/admin/registration.php?origin=initmodule&withtab=0');
 			exit;
 		}
+
 
 		$this->db->begin();
 
@@ -224,7 +227,7 @@ class modBlockedLog extends DolibarrModules
 		$this->db->commit();
 
 
-		// We add an entry to show we enable module
+		// We add an entry to show we enable the module
 
 		$object = new stdClass();
 		$object->id = 0;
@@ -235,7 +238,7 @@ class modBlockedLog extends DolibarrModules
 
 		// Add first entry in unalterable Log to track that module was activated
 		$action = 'MODULE_SET';
-		$result = $b->setObjectData($object, $action, 0, $user, null);
+		$result = $b->setObjectData($object, $action, 0, $user, 0);
 
 		if ($result < 0) {
 			$this->error = $b->error;
@@ -243,14 +246,27 @@ class modBlockedLog extends DolibarrModules
 			return 0;
 		}
 
+		$this->db->begin();
+
 		$res = $b->create($user);
 		if ($res <= 0) {
+			$this->db->rollback();
+
 			$this->error = $b->error;
 			$this->errors = $b->errors;
 			return $res;
 		}
 
-		return $this->_init($sql, $options);
+		$resinit = $this->_init($sql, $options);
+		if ($resinit <= 0) {
+			$this->db->rollback();
+
+			return $resinit;
+		}
+
+		$this->db->commit();
+
+		return 1;
 	}
 
 	/**
@@ -281,7 +297,7 @@ class modBlockedLog extends DolibarrModules
 		$object->label = 'Module disabled';
 
 		$b = new BlockedLog($this->db);
-		$result = $b->setObjectData($object, 'MODULE_RESET', 0, $user, null);
+		$result = $b->setObjectData($object, 'MODULE_RESET', 0, $user, 0);
 		if ($result < 0) {
 			$this->error = $b->error;
 			$this->errors = $b->errors;

@@ -38,13 +38,7 @@ if (!defined('DOL_APPLICATION_TITLE')) {
 
 // The major version of Dolibarr
 define('DOL_MAJOR_VERSION', '24');
+define('DOL_MINOR_VERSION', '0.0-alpha');
 
 define('DOL_VERSION', constant('DOL_MAJOR_VERSION').'.'.constant('DOL_MINOR_VERSION'));
 // DOL_VERSION is now a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
-
-// Set to 1 if the beta version is the candidate for certification or if the stable version has been certified.
-// Use 2 to force LNE features for debug purposes, without less restrictions: Same than 1 but https not required in this mode
-// Unset for standard version.
-//if (!defined('CERTIF_LNE')) {
-	define('CERTIF_LNE', '2');
-//}
