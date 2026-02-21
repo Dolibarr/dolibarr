@@ -227,6 +227,7 @@ if (empty($reshook)) {
 	$sql .= ")";
 	$sql .= " AND status = 1";
 
+	$refcashcontrol = 0;
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
