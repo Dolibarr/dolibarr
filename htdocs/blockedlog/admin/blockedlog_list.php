@@ -210,11 +210,10 @@ print dol_get_fiche_head($head, 'fingerprints', '', -1);
 print '<div class="justify">';
 print '<span class="opacitymedium hideonsmartphone">';
 print $langs->trans("FingerprintsDesc")."<br>";
-$s = $langs->trans("FilesIntegrityDesc", '{s}');
-$s = str_replace('{s}', DOL_URL_ROOT.'/blockedlog/admin/filecheck.php', $s);
-print $s;
-print '</span><br>';
-print "<br>\n";
+print $langs->trans("FilesIntegrityDesc").': ';
+print '</span>';
+print '<a href="'.DOL_URL_ROOT.'/blockedlog/admin/filecheck.php">'.img_picto('', 'url', 'class="pictofixedwidth"').$langs->trans("FileCheck").'</a>';
+print '<br>';
 print "</div>\n";
 
 $htmltext = '';
