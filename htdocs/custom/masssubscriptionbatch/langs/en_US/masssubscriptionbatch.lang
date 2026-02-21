@@ -1,0 +1,6 @@
+Module106500Name=Mass subscription batch
+Module106500Desc=Mass-create memberships with automatic invoice generation and optional email sending.
+MassSubInvoiceEmailAction=Create subscription + invoice and send email
+MassSubInvoiceEmailErrors=%s selected members could not be processed.
+MassSubscriptionBatchSetup=Mass subscription batch setup
+MassSubscriptionBatchDefaultSendMail=Send confirmation email by default during the batch action
