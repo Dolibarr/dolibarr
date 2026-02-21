@@ -207,6 +207,11 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $version;
 
 	/**
+	 * @var	int		Set to 1 to have module with a dedicated version and stay as a core module, even if a version is set.
+	 */
+	public $version_if_core = 0;
+
+	/**
 	 * Module last version
 	 * @var string
 	 */
@@ -1032,10 +1037,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		if ($this->version == 'dolibarr' || $this->version == 'dolibarr_deprecated') {
 			return 'core';
 		}
-		if (!empty($this->version) && !in_array($this->version, array('experimental', 'development'))) {
+		if (!empty($this->version) && !in_array($this->version, array('experimental', 'development')) && empty($this->version_core)) {
 			return 'external';
 		}
-		if (!empty($this->editor_name) || !empty($this->editor_url)) {
+		if (!empty($this->editor_name) || !empty($this->editor_url) && empty($this->version_core)) {
 			return 'external';
 		}
 		if ($this->numero >= 100000) {
