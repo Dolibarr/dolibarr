@@ -1,0 +1,6 @@
+Module106500Name=Massenverarbeitung Mitgliederbeiträge
+Module106500Desc=Mitgliederbeiträge gesammelt erstellen, automatische Rechnungen erzeugen und optional E-Mails versenden.
+MassSubInvoiceEmailAction=Beitrag + Rechnung erstellen und E-Mail senden
+MassSubInvoiceEmailErrors=%s ausgewählte Mitglieder konnten nicht verarbeitet werden.
+MassSubscriptionBatchSetup=Einstellungen Massenverarbeitung Mitgliederbeiträge
+MassSubscriptionBatchDefaultSendMail=Bestätigungs-E-Mail standardmäßig bei der Massenaktion versenden
