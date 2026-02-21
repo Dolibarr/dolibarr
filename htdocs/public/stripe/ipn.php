@@ -192,6 +192,7 @@ sleep(2);
 
 
 // Hook to allow external modules to handle Stripe webhook events
+$hookmanager = new HookManager($db);
 $hookmanager->initHooks(array('stripeipn'));
 $parameters = array('event' => $event, 'servicestatus' => $servicestatus, 'service' => $service);
 $reshook = $hookmanager->executeHooks('stripeWebhookEvent', $parameters, $event->data->object, $event->type);
