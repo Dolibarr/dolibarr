@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2026 */
 
-require '../../main.inc.php';
+require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once dol_buildpath('/masssubscriptionbatch/lib/masssubscriptionbatch.lib.php', 0);
 
