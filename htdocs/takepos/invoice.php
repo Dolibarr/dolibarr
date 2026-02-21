@@ -70,6 +70,7 @@ $idproduct = GETPOSTINT('idproduct');
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Bar or Restaurant
 $placeid = 0; // $placeid is ID of invoice
 $mobilepage = GETPOST('mobilepage', 'alpha');
+$batch = ''; // Default no batch if missing
 
 // Terminal is stored into $_SESSION["takeposterminal"];
 
