@@ -4,6 +4,7 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonhookactions.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 
 class ActionsMassSubscriptionBatch extends CommonHookActions
 {
@@ -61,6 +62,9 @@ class ActionsMassSubscriptionBatch extends CommonHookActions
 		}
 		$emailmaxperrun = max(0, (int) getDolGlobalInt('MASSSUBSCRIPTIONBATCH_EMAILS_PER_RUN', 100));
 		$emaildelayms = max(0, (int) getDolGlobalInt('MASSSUBSCRIPTIONBATCH_EMAIL_DELAY_MS', 200));
+		$templatelabel = getDolGlobalString('ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION');
+		$formmail = new FormMail($this->db);
+		$templatecache = array();
 
 		$member = new Adherent($this->db);
 		$membertype = new AdherentType($this->db);
@@ -134,6 +138,31 @@ class ActionsMassSubscriptionBatch extends CommonHookActions
 
 				$subject = $langs->transnoentitiesnoconv('MembershipPaid', dol_print_date($datesubend, 'day'));
 				$text = $membertype->getMailOnSubscription();
+
+				$langcode = empty($member->default_lang) ? $langs->defaultlang : $member->default_lang;
+				if (empty($templatecache[$langcode])) {
+					$templatecache[$langcode] = array('subject' => '', 'content' => '');
+					if (!empty($templatelabel)) {
+						$outputlangs = new Translate('', $conf);
+						$outputlangs->setDefaultLang($langcode);
+						$outputlangs->loadLangs(array('main', 'members'));
+						$arraydefaultmessage = $formmail->getEMailTemplate($this->db, 'member', $user, $outputlangs, 0, 1, $templatelabel);
+						if (is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
+							$templatecache[$langcode]['subject'] = (string) $arraydefaultmessage->topic;
+							$templatecache[$langcode]['content'] = (string) $arraydefaultmessage->content;
+						}
+					}
+				}
+
+				$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $member);
+				complete_substitutions_array($substitutionarray, $langs, $member);
+				if (!empty($templatecache[$langcode]['subject'])) {
+					$subject = make_substitutions($templatecache[$langcode]['subject'], $substitutionarray, $langs);
+				}
+				if (!empty($templatecache[$langcode]['content'])) {
+					$text = make_substitutions(dol_concatdesc($templatecache[$langcode]['content'], $membertype->getMailOnSubscription()), $substitutionarray, $langs);
+				}
+
 				$ressend = $member->sendEmail($text, $subject, $listofpaths, $listofmimes, $listofnames);
 				if ($ressend > 0) {
 					$nbsentemail++;
