@@ -51,12 +51,17 @@ class ActionsMassSubscriptionBatch extends CommonHookActions
 		$langs->loadLangs(array('members', 'masssubscriptionbatch@masssubscriptionbatch'));
 		$toselect = is_array($parameters['toselect']) ? $parameters['toselect'] : array();
 		$sendmailenabled = (int) getDolGlobalInt('MASSSUBSCRIPTIONBATCH_DEFAULT_SENDMAIL');
+		if (empty($sendmailenabled)) {
+			setEventMessages($langs->trans('MassSubInvoiceEmailDisabled'), null, 'warnings');
+		}
 
 		$member = new Adherent($this->db);
 		$membertype = new AdherentType($this->db);
 
 		$nbcreated = 0;
 		$nbsentemail = 0;
+		$nbemailfailed = 0;
+		$nbemailmissing = 0;
 		$nberrors = 0;
 		$datesubscription = dol_now();
 
@@ -120,13 +125,26 @@ class ActionsMassSubscriptionBatch extends CommonHookActions
 				$ressend = $member->sendEmail($text, $subject, $listofpaths, $listofmimes, $listofnames);
 				if ($ressend > 0) {
 					$nbsentemail++;
+				} else {
+					$nbemailfailed++;
+					$nberrors++;
+					setEventMessages($langs->trans('MassSubInvoiceEmailSendFailed', $member->email), array($member->error), 'warnings');
 				}
+			} elseif ($sendmailenabled) {
+				$nbemailmissing++;
+				setEventMessages($langs->trans('MassSubInvoiceEmailNoRecipient', $member->ref), null, 'warnings');
 			}
 		}
 
 		setEventMessages($langs->trans('XSubsriptionCreated', $nbcreated), null, 'mesgs');
 		if ($sendmailenabled) {
 			setEventMessages($langs->trans('XEmailSent', $nbsentemail), null, 'mesgs');
+			if ($nbemailfailed > 0) {
+				setEventMessages($langs->trans('MassSubInvoiceEmailFailedCount', $nbemailfailed), null, 'warnings');
+			}
+			if ($nbemailmissing > 0) {
+				setEventMessages($langs->trans('MassSubInvoiceEmailMissingCount', $nbemailmissing), null, 'warnings');
+			}
 		}
 		if ($nberrors > 0) {
 			setEventMessages($langs->trans('MassSubInvoiceEmailErrors', $nberrors), null, 'warnings');
