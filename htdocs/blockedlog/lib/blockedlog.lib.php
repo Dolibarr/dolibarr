@@ -22,7 +22,7 @@
  *    \brief      Library for common blockedlog functions
  */
 
-include_once DOL_DOCUMENT_ROOT.'/blockedlog/versioncert.inc.php';
+include_once DOL_DOCUMENT_ROOT.'/blockedlog/versionmod.inc.php';
 
 
 /**

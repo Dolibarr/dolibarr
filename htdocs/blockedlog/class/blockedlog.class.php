@@ -21,7 +21,7 @@
  * See https://medium.com/@lhartikk/a-blockchain-in-200-lines-of-code-963cc1cc0e54
  */
 
-include_once DOL_DOCUMENT_ROOT.'/blockedlog/versioncert.inc.php';
+include_once DOL_DOCUMENT_ROOT.'/blockedlog/versionmod.inc.php';
 
 
 /**
