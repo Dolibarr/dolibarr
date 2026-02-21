@@ -676,7 +676,11 @@ class dolReceiptPrinter extends Printer
 				$this->template .= "{dol_print_text}*** ".$langs->transnoentities("TemporaryReceipt")." ***\r\n";
 			}
 			if ($object->pos_print_counter > 1) {
-				$this->template .= "{dol_print_text}*** ".$langs->transnoentities("DUPLICATA").' (no '.($object->pos_print_counter - 1).") ***\r\n";
+				$this->template .= "{dol_print_text}*** ".$langs->transnoentities("DUPLICATA");
+				if (getDolGlobalString('TAKEPOS_SHOW_PRINT_COUNTER_ON_RECEIPT')) {
+					$this->template .= ' (no '.($object->pos_print_counter - 1).') ***';
+				}
+				$this->template .= "\r\n";
 			}
 
 			$this->template .= "{dol_value_date}\r\n";

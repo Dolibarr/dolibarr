@@ -22,6 +22,21 @@
  *    \brief      Library for common blockedlog functions
  */
 
+include_once DOL_DOCUMENT_ROOT.'/blockedlog/versioncert.inc.php';
+
+
+/**
+ *  Define head array for tabs of blockedlog tools setup pages
+ *
+ *  @return	string		Version
+ */
+function getBlockedLogVersionToShow()
+{
+	// return DOL_VERSION;
+	return constant('DOLCERT_VERSION');
+}
+
+
 /**
  *  Define head array for tabs of blockedlog tools setup pages
  *
@@ -30,7 +45,7 @@
  */
 function blockedlogadmin_prepare_head($withtabsetup)
 {
-	global $db, $langs, $conf;
+	global $db, $langs, $conf, $mysoc;
 
 	$langs->load("blockedlog");
 
@@ -57,12 +72,18 @@ function blockedlogadmin_prepare_head($withtabsetup)
 	$head[$h][2] = 'fingerprints';
 	$h++;
 
-
 	$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog_archives.php".$param;
 	$head[$h][1] = $langs->trans("Archives");
 	// TODO Add number of archive files in badge
 	$head[$h][2] = 'archives';
 	$h++;
+
+	if ($mysoc->country_code == 'FR') {
+		$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/documentation.php".$param;
+		$head[$h][1] = $langs->trans("Documentation");
+		$head[$h][2] = 'documentation';
+		$h++;
+	}
 
 	if ($withtabsetup) {
 		$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog.php".$param;
@@ -322,14 +343,17 @@ function sumAmountsForUnalterableEvent($block, &$refinvoicefound, &$totalhtamoun
 			$totalamount[$block->action][$block->module_source] += $total_ttc;
 		}
 		$refinvoicefound[$block->ref_object] = 1;
-	} elseif ($block->action == 'PAYMENT_CUSTOMER_CREATE') {
+	} elseif ($block->action == 'PAYMENT_CUSTOMER_CREATE' || $block->action == 'PAYMENT_CUSTOMER_DELETE') {
 		$total_ht = $block->object_data->amount;
 		$total_vat = 0;
 		$total_ttc = $block->object_data->amount;
 
-		$totalhtamount[$block->action][$block->module_source] += $total_ht;
-		$totalvatamount[$block->action][$block->module_source] += $total_vat;
-		$totalamount[$block->action][$block->module_source] += $total_ttc;
+		//$actionkey = $block->action;
+		$actionkey = 'PAYMENT_CUSTOMER';
+
+		$totalhtamount[$actionkey][$block->module_source] += $total_ht;
+		$totalvatamount[$actionkey][$block->module_source] += $total_vat;
+		$totalamount[$actionkey][$block->module_source] += $total_ttc;
 	} else {
 		$total_ttc = $block->amounts;
 	}
@@ -369,6 +393,9 @@ function callApiToPushCounter($id, $signature, $test, $previousid, $previoussign
 		$data .= '&datesys='.urlencode(dol_print_date(dol_now(), 'standard', 'gmt'));
 		$data .= '&version='.(float) DOL_VERSION;
 		$data .= '&version_full='.urlencode(DOL_VERSION);
+		$data .= '&versionblockedlog='.(float) getBlockedLogVersionToShow();
+		$data .= '&versionblockedlog_full='.urlencode(getBlockedLogVersionToShow());
+
 		$data .= '&entity='.(int) $conf->entity;
 
 		$data .= '&lastrowid='.(int) $id;

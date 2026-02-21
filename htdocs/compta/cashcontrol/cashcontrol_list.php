@@ -83,10 +83,13 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 // Default sort order (if not yet defined by previous GETPOST)
 if (!$sortfield) {
 	reset($object->fields);					// Reset is required to avoid key() to return null.
-	$sortfield = "t.ref"; 					// Set here default search field. By default 1st field in definition.
+	$sortfield = "t.year_close,t.month_close,t.day_close"; 					// Set here default search field. By default 1st field in definition.
 }
 if (!$sortorder) {
 	$sortorder = "DESC";
+}
+if ($sortfield == 't.year_close') {
+	$sortfield = "t.year_close,t.month_close,t.day_close"; 					// Set here default search field. By default 1st field in definition.
 }
 
 // Initialize array of search criteria
@@ -251,7 +254,13 @@ foreach ($search as $key => $val) {
 			$mode_search = 2;
 		}
 		if ($search[$key] != '') {
-			$sql .= natural_search("t.".$db->escape($key), $search[$key], (($key == 'status') ? 2 : $mode_search));
+			if ($key == 'day_close' && $search[$key] === '0') {
+				$sql .= " AND t.day_close IS NULL";
+			} elseif ($key == 'month_close' && $search[$key] === '0') {
+				$sql .= " AND t.month_close IS NULL";
+			} else {
+				$sql .= natural_search("t.".$db->escape($key), $search[$key], (($key == 'status') ? 2 : $mode_search));
+			}
 		}
 	} else {
 		if (preg_match('/(_dtstart|_dtend)$/', $key) && $search[$key] != '') {

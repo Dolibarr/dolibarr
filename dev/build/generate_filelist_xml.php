@@ -44,6 +44,7 @@ define('DOL_DOCUMENT_ROOT', dirname(dirname($path)).'/htdocs');
 $algo = 'sha256';
 
 require_once $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT."/blockedlog/versioncert.inc.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 
 
@@ -128,7 +129,10 @@ if ($tmpver[0] == 'auto') {
 		$release .= '-'.$tmpver[1];
 	}
 }
-// If release is auto, we take current version
+
+$releaseblockedlog = DOLCERT_VERSION;
+
+// If release is auto, we take current version to read checklock file
 $tmpver = explode('-', $checklock, 2);
 if ($tmpver[0] == 'auto') {
 	$checklock = DOL_VERSION;
@@ -183,6 +187,7 @@ if ($checklock && empty($checksource)) {
 if ($release) {
 	print "Working on files into           : ".DOL_DOCUMENT_ROOT."\n";
 	print "Version of target release       : ".$release."\n";
+	print "Version of blockedlog module    : ".$releaseblockedlog."\n";
 	print "Algo                            : ".$algo."\n";
 	print "Include custom dir in signature : ".(empty($includecustom) ? 'no' : 'yes')."\n";
 	print "Include constants in signature  : ".(empty($includeconstants) ? 'none' : '');
@@ -338,13 +343,13 @@ if ($release) {
 
 $checksumconcat = array();
 
-if ($release) {
-	fputs($fp, '<dolibarr_unalterable_files version="'.$release.'">'."\n");
+if ($releaseblockedlog) {
+	fputs($fp, '<dolibarr_unalterable_files version="'.$releaseblockedlog.'">'."\n");
 }
 
 // Array of dir/files to include in the section
 $arrayofunalterablefiles = array(
-	array('dir' => dirname(__FILE__).'/../../htdocs/', 'file' => 'version.inc.php'),
+	//array('dir' => dirname(__FILE__).'/../../htdocs/', 'file' => 'version.inc.php'),
 	array('dir' => dirname(__FILE__).'/../../htdocs/blockedlog', 'file' => 'all', 'regextoinclude' => '(\.php|\.sql)$', 'regextoexclude' => ''),
 	array('dir' => dirname(__FILE__).'/../../htdocs/install/mysql/tables', 'file' => 'all', 'regextoinclude' => 'llx_blockedlog.*(\.php|\.sql)$', 'regextoexclude' => ''),
 	array('dir' => dirname(__FILE__).'/../../htdocs/core/triggers', 'file' => 'interface_50_modBlockedlog_ActionsBlockedLog.class.php'),
@@ -428,6 +433,7 @@ foreach ($arrayofunalterablefiles as $entry) {
 }
 
 asort($checksumconcat); // Sort list of checksum
+
 $hashunalterable_files = hash($algo, join(',', $checksumconcat));
 
 if ($release) {

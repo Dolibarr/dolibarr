@@ -207,7 +207,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 		$sql .= " WHERE entity = ".((int) $conf->entity);
 		// For unalterable log, we are using the date of creation of the log. Note that a bookkeeper may decide to dispatch an invoice
 		// on different periods for example to manage depreciation.
-		$sql .= " AND date_creation BETWEEN '".$db->idate($dates)."' AND '".$db->idate($datee)."'";
+		$sql .= " AND date_creation BETWEEN '".$db->idate($dates, 'gmt')."' AND '".$db->idate($datee, 'gmt')."'";
 		$sql .= " ORDER BY date_creation ASC, rowid ASC"; // Required so we get the first one
 		$sql .= $db->plimit(1);
 
@@ -257,27 +257,32 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 
 	if (!$error) {
 		$fh = fopen($tmpfile, 'w');
+		if (empty($fh)) {
+			$error++;
+			setEventMessages('Failed to open file for writing', null, 'errors');
+		}
 	}
 
 	if (!$error && $fh) {
 		// Now restart request with all data, so without the limit(1) in sql request
-		$sql = "SELECT rowid, date_creation, tms, user_fullname, action, amounts_taxexcl, amounts, element, fk_object, date_object, ref_object,";
-		$sql .= " signature, fk_user, object_data, object_version, object_format, debuginfo";
+		$sql = "SELECT rowid, entity, date_creation, tms, user_fullname, action, module_source, pos_source, amounts_taxexcl, amounts, element, fk_object, date_object, ref_object,";
+		$sql .= " linktoref, linktype, signature, fk_user, object_data, object_version, object_format, debuginfo";
 		$sql .= " FROM ".MAIN_DB_PREFIX."blockedlog";
 		$sql .= " WHERE entity = ".((int) $conf->entity);
 		// For unalterable log, we are using the date of creation of the log. Note that a bookkeeper may decide to dispatch an invoice
 		// or payment on different periods for example to manage depreciation, but we want here is not accountancy but payment data.
-		$sql .= " AND date_creation BETWEEN '".$db->idate($dates)."' AND '".$db->idate($datee)."'";
+		$sql .= " AND date_creation BETWEEN '".$db->idate($dates, 'gmt')."' AND '".$db->idate($datee, 'gmt')."'";
 		$sql .= " ORDER BY date_creation ASC, rowid ASC"; // Required so later we can use the parameter $previoushash of checkSignature()
 
 		$resql = $db->query($sql);
 		if ($resql) {
 			// Print line with title
-			fwrite($fh, "BEGIN - regnumber=".dol_trunc($registrationnumber, 10)." - date=".$yearmonthdateofexport." - period=".$yearmonthtoexport.($periodnotcomplete ? '-'.$suffixperiod : '')." - formatexport=".$formatexport." - user=".$user->getFullName($langs)
+			fwrite($fh, "BEGIN - regnumber=".dol_trunc($registrationnumber, 10)." - date=".$yearmonthdateofexport." - period=".$yearmonthtoexport.($periodnotcomplete ? '-'.$suffixperiod : '')." - entity=".((int) $conf->entity)." - formatexport=".$formatexport." - user=".$user->getFullName($langs)
 				.';'.$langs->transnoentities('Id')
 				.';'.$langs->transnoentities('DateCreation')
 				.';'.$langs->transnoentities('Action')
 				.';'.$langs->transnoentities('Origin')
+				.';'.$langs->transnoentities('Terminal')
 				.';'.$langs->transnoentities('AmountHT')
 				.';'.$langs->transnoentities('AmountTTC')
 				.';'.$langs->transnoentities('Ref')
@@ -291,7 +296,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 				.';'.$langs->transnoentities('FingerprintDatabase')			// Signature
 				.';'.$langs->transnoentities('Status')
 				//.';'.$langs->transnoentities('FingerprintExport')
-				."\n");
+				);
 
 			$loweridinerror = 0;
 			$i = 0;
@@ -304,21 +309,43 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 
 			while ($obj = $db->fetch_object($resql)) {
 				// We set here all data used into signature calculation (see checkSignature method) and more
-				// IMPORTANT: We must have here, the same rule for transformation of data than into the fetch method (db->jdate for date, ...)
+
+				// IMPORTANT: We must have here, the same rule for transformation of data than into
+				// the blockedlog->fetch() method (db->jdate for date, ...)
+
 				$block_static->id = $obj->rowid;
 				$block_static->entity = $obj->entity;
 
-				$block_static->date_creation = $db->jdate($obj->date_creation);		// jdate(date_creation) is UTC
+				if ($i == 0) {
+					$tmparray = $block_static->getPreviousHash(0, $block_static->id);
+					$previoushash = $tmparray['previoushash'];
 
-				$block_static->module_source = $obj->module_source;
+					fwrite($fh, ";NOTE - previoushash=".$previoushash."\n");
+				}
 
-				$block_static->amounts_taxexcl = (float) $obj->amounts_taxexcl;		// Database store value with 8 digits, we cut ending 0 them with (flow)
-				$block_static->amounts = (float) $obj->amounts;						// Database store value with 8 digits, we cut ending 0 them with (flow)
+				$tz = 'gmt';
+				if (empty($obj->object_format) || $obj->object_format == 'V1') {
+					$tz = 'tzserver';
+				}
+
+				$block_static->date_creation = $db->jdate($obj->date_creation, $tz);		// jdate(date_creation) is UTC
+				$block_static->date_modification = $db->jdate($obj->tms, $tz);			// jdate(tms) is UTC
 
 				$block_static->action = $obj->action;
-				$block_static->date_object = $db->jdate($obj->date_object);			// jdate(date_object) is UTC
+				$block_static->module_source = $obj->module_source;
+				$block_static->pos_source = $obj->pos_source;
+
+				$block_static->amounts_taxexcl = is_null($obj->amounts_taxexcl) ? null : (float) $obj->amounts_taxexcl;	// Database store value with 8 digits, we cut ending 0 them with (flow)
+				$block_static->amounts = (float) $obj->amounts;															// Database store value with 8 digits, we cut ending 0 them with (flow)
+
+				$block_static->fk_object = $obj->fk_object;							// Not in signature
+				$block_static->date_object = $db->jdate($obj->date_object, $tz);	// jdate(date_object) is UTC
 				$block_static->ref_object = $obj->ref_object;
 
+				$block_static->linktoref = $obj->linktoref;
+				$block_static->linktype = $obj->linktype;
+
+				$block_static->fk_user = $obj->fk_user;								// Not in signature
 				$block_static->user_fullname = $obj->user_fullname;
 
 				$block_static->object_data = $block_static->dolDecodeBlockedData($obj->object_data);
@@ -327,31 +354,25 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 				$block_static->signature = $obj->signature;
 
 				$block_static->element = $obj->element;								// Not in signature
-				$block_static->fk_object = $obj->fk_object;							// Not in signature
 
-				$block_static->fk_user = $obj->fk_user;								// Not in signature
-
-				$block_static->date_modification = $db->jdate($obj->tms);			// Not in signature
 				$block_static->object_version = $obj->object_version;				// Not in signature
 				$block_static->object_format = $obj->object_format;					// Not in signature
 
-				$block_static->certified = ($obj->certified == 1);
+				$block_static->certified = ($obj->certified == 1);					// Not in signature
 
-				$block_static->linktoref = $obj->linktoref;
-				$block_static->linktype = $obj->linktype;
-
-				$block_static->debuginfo = $obj->debuginfo;
+				//$block_static->debuginfo = $obj->debuginfo;
 
 				//var_dump($block->id.' '.$block->signature, $block->object_data);
 
 				$checksignature = $block_static->checkSignature($previoushash); 	// If $previoushash is not defined, checkSignature will search it from $block_static->id
 
-				/* To see detail to get signature
-				if ($block_static->id == 397) {
-					$concatenateddata = $block_static->buildKeyForSignature();
-					var_export($concatenateddata);
+				// To see detail to get signature
+				/*
+				if ($block_static->id == 411) {
+					$concatenateddata = $block_static->buildKeyForSignature($block_static->object_format);
 
-					var_dump($block_static->checkSignature($previoushash, 2));
+					$tmparray = $block_static->checkSignature($previoushash, 2);
+					var_dump($previoushash, $concatenateddata, $tmparray);
 					exit;
 				}
 				*/
@@ -391,6 +412,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 					.csvClean($block_static->date_creation).';'
 					.csvClean($block_static->action).';'
 					.csvClean($block_static->module_source).';'
+					.csvClean($block_static->pos_source).';'
 					.csvClean($block_static->amounts_taxexcl).';'	// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
 					.csvClean($block_static->amounts).';'			// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
 					.csvClean($block_static->ref_object).';'
@@ -448,6 +470,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 		$block_static->date_creation = '';
 		$block_static->action = 'BILL_VALIDATE';
 		$block_static->module_source = '*';
+		$block_static->pos_source = '*';
 		$block_static->amounts_taxexcl = $totalhtamountalllines['BILL_VALIDATE'];
 		$block_static->amounts = $totalamountalllines['BILL_VALIDATE'];
 		$block_static->ref_object = $langs->transnoentitiesnoconv("VAT").': '.$totalvatamountalllines['BILL_VALIDATE'];
@@ -468,6 +491,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 			.csvClean($block_static->date_creation).';'
 			.csvClean($block_static->action).';'
 			.csvClean($block_static->module_source).';'
+			.csvClean($block_static->pos_source).';'
 			.csvClean($block_static->amounts_taxexcl).';'	// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
 			.csvClean($block_static->amounts).';'			// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
 			.csvClean($block_static->ref_object).';'
@@ -488,6 +512,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 		$block_static->date_creation = '';
 		$block_static->action = 'PAYMENT_CUSTOMER_CREATE';
 		$block_static->module_source = '*';
+		$block_static->pos_source = '*';
 		$block_static->amounts_taxexcl = '';
 		$block_static->amounts = $totalamountalllines['PAYMENT_CUSTOMER_CREATE'];
 		$block_static->ref_object = '';
@@ -506,6 +531,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 			.csvClean($block_static->date_creation).';'
 			.csvClean($block_static->action).';'
 			.csvClean($block_static->module_source).';'
+			.csvClean($block_static->pos_source).';'
 			.csvClean($block_static->amounts_taxexcl).';'	// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
 			.csvClean($block_static->amounts).';'			// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
 			.csvClean($block_static->ref_object).';'
@@ -522,13 +548,13 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 
 
 		// Calculate lifetime totals (with date of first record)
-		$sql = "SELECT action, module_source, object_format, MIN(date_creation) as datemin, SUM(amounts_taxexcl) as sumamounts_taxexcl, SUM(amounts) as sumamounts";
+		$sql = "SELECT action, module_source, pos_source, object_format, MIN(date_creation) as datemin, SUM(amounts_taxexcl) as sumamounts_taxexcl, SUM(amounts) as sumamounts";
 		$sql .= " FROM ".MAIN_DB_PREFIX."blockedlog";
 		$sql .= " WHERE entity = ".((int) $conf->entity);
 		//$sql .= " AND action IN ('BILL_VALIDATE', 'BILL_SENTBYMAIL', 'PAYMENT_CUSTOMER_CREATE', 'CASHCONTROL_CLOSE', 'PAYMENT_CUSTOMER_DELETE', 'DOC_DOWNLOAD', 'DOC_PREVIEW')";
 		$sql .= " AND action IN ('BILL_VALIDATE', 'PAYMENT_CUSTOMER_CREATE', 'PAYMENT_CUSTOMER_DELETE')";	// Only event into lifetime total
 		//$sql .= " AND action IN ('PAYMENT_CUSTOMER_CREATE')";
-		$sql .= " GROUP BY action, module_source, object_format";
+		$sql .= " GROUP BY action, module_source, pos_source, object_format";
 
 		$foundoldformat = 0;
 		$firstrecorddatearray = array();
@@ -538,14 +564,14 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 			while ($obj = $db->fetch_object($resql)) {
 				// First record date per action code and module
 				if (!empty($firstrecorddatearray[$obj->action][$obj->module_source])) {
-					$firstrecorddatearray[$obj->action][$obj->module_source] = min($firstrecorddatearray[$obj->action][$obj->module_source], $db->jdate($obj->datemin));
+					$firstrecorddatearray[$obj->action][$obj->module_source] = min($firstrecorddatearray[$obj->action][$obj->module_source], $db->jdate($obj->datemin, 'gmt'));
 				} else {
 					$firstrecorddatearray[$obj->action] = array();
-					$firstrecorddatearray[$obj->action][$obj->module_source] = $db->jdate($obj->datemin);
+					$firstrecorddatearray[$obj->action][$obj->module_source] = $db->jdate($obj->datemin, 'gmt');
 				}
 				// First record for all actions code
 				if (!empty($firstrecorddate)) {
-					$firstrecorddate = min($firstrecorddate, $db->jdate($obj->datemin));
+					$firstrecorddate = min($firstrecorddate, $db->jdate($obj->datemin, 'gmt'));
 				} else {
 					$firstrecorddate = $obj->datemin;
 				}
@@ -576,6 +602,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 		$block_static->date_creation = '';
 		$block_static->action = 'BILL_VALIDATE';
 		$block_static->module_source = '*';
+		$block_static->pos_source = '*';
 		// if an old format was found, we do not have reliable amount excluding tax for lifetime value, we do not show it
 
 		$block_static->amounts_taxexcl = ($foundoldformat ? '' : $totalhtamountlifetime['BILL_VALIDATE']);
@@ -598,6 +625,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 			.csvClean($block_static->date_creation).';'
 			.csvClean($block_static->action).';'
 			.csvClean($block_static->module_source).';'
+			.csvClean($block_static->pos_source).';'
 			.csvClean($block_static->amounts_taxexcl).';'	// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
 			.csvClean($block_static->amounts).';'			// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
 			.csvClean($block_static->ref_object).';'
@@ -618,6 +646,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 		$block_static->date_creation = '';
 		$block_static->action = 'PAYMENT_CUSTOMER_CREATE';
 		$block_static->module_source = '*';
+		$block_static->pos_source = '*';
 		$block_static->amounts_taxtecl = '';
 		$block_static->amounts = array_sum($totalamountlifetime['PAYMENT_CUSTOMER_CREATE']);
 		$block_static->ref_object = '';
@@ -637,6 +666,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 			.csvClean($block_static->date_creation).';'
 			.csvClean($block_static->action).';'
 			.csvClean($block_static->module_source).';'
+			.csvClean($block_static->pos_source).';'
 			.csvClean($block_static->amounts_taxexcl).';'	// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
 			.csvClean($block_static->amounts).';'			// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
 			.csvClean($block_static->ref_object).';'
@@ -656,8 +686,8 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 
 		// Calculate the signature of the file (the last line has a return line)
 		$algo = 'sha256';
-		$sha256 = hash_file($algo, $tmpfile);
-		$hmacsha256 = hash_hmac_file($algo, $tmpfile, $secretkey);
+		$sha256 = hash_file($algo, $tmpfile);						// For integrity only
+		$hmacsha256 = hash_hmac_file($algo, $tmpfile, $secretkey);	// For integrity + authenticity
 
 		// Now add a signature to check integrity at end of file
 		file_put_contents($tmpfile, 'END - sha256='.$sha256.' - hmac_sha256='.$hmacsha256, FILE_APPEND);
@@ -688,8 +718,8 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 			$object->period = 'year='.GETPOSTINT('yeartoexport').(GETPOSTINT('monthtoexport') ? ' month='.GETPOSTINT('monthtoexport') : '');
 
 			$action = 'BLOCKEDLOG_EXPORT';
+
 			$result = $b->setObjectData($object, $action, 0, $user, 0);
-			//var_dump($b); exit;
 
 			if ($result < 0) {
 				setEventMessages('Failed to insert the export int the unalterable log', null, 'errors');
@@ -780,6 +810,7 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 	$period = '';
 	$regnumber = '';
 	$formatexport = '';
+	$fileentity = 1;
 	if (preg_match('/\speriod=([^\s]+)/', $line, $reg)) {
 		$period = $reg[1];	// Get period on first line
 	}
@@ -788,6 +819,9 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 	}
 	if (preg_match('/\sformatexport=([^\s]+)/', $line, $reg)) {
 		$formatexport = $reg[1];	// Get export format (VE1, VE2...)
+	}
+	if (preg_match('/\sentity=([^\s]+)/', $line, $reg)) {
+		$fileentity = $reg[1];		// Get entity of file (usually 1)
 	}
 	print '<b>'.$langs->trans("Period").'</b> : '.$period.'<br>';
 
@@ -798,9 +832,9 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 	$secretkey = $registrationnumber;
 
 	// Prepare to create a temporary file
-	$fullpathtmp = $upload_dir.'/tmp/'.GETPOST('urlfile').'.tmp';
+	$fullpathtmp = $upload_dir.'/temp/'.GETPOST('urlfile').'.tmp';
 
-	dol_mkdir($upload_dir.'/tmp');
+	dol_mkdir($upload_dir.'/temp');
 	$result = dol_copy($fullpath, $fullpathtmp);
 
 	// Generate tmp file content without the last line
@@ -882,16 +916,18 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 					continue;
 				}
 
-				if ($formatexport == 'VE1' && !empty($line[1])) {
+				if ($formatexport == 'VE1' && !empty($line[1])) {	// Format V23
 					$lineanalyzed = 1;
 					$linetech = $line[0];
 
 					$block_static->id = (int) $line[1];
+					$block_static->entity = (int) $fileentity;
 					$block_static->date_creation = (string) $line[2];
 					$block_static->action = $lineactioncode = (string) $line[3];
 					$block_static->module_source = (string) $line[4];
-					$block_static->amounts_taxexcl = $lineamountht = $line[5];
-					$block_static->amounts = $lineamountttc = $line[6];
+					$block_static->pos_source = '';
+					$block_static->amounts_taxexcl = $lineamountht = ($line[5] === '' ? null : (float) $line[5]);
+					$block_static->amounts = $lineamountttc = (float) $line[6];
 					$block_static->ref_object = $lineref = (string) $line[7];
 					$block_static->date_object = (int) $line[8];
 					$block_static->user_fullname = (string) $line[9];
@@ -904,21 +940,51 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 
 					// Status from file: 'Valid' or 'KO'
 					$statusline = (string) $line[16];
+				}
 
+				if ($formatexport == 'VE2' && !empty($line[1])) {	// Format V24+
+					$lineanalyzed = 1;
+					$linetech = $line[0];
+
+					$block_static->id = (int) $line[1];
+					$block_static->entity = (int) $fileentity;
+					$block_static->date_creation = (string) $line[2];
+					$block_static->action = $lineactioncode = (string) $line[3];
+					$block_static->module_source = (string) $line[4];
+					$block_static->pos_source = (string) $line[5];
+					$block_static->amounts_taxexcl = $lineamountht = ($line[6] === '' ? null : (float) $line[5]);
+					$block_static->amounts = $lineamountttc = (float) $line[7];
+					$block_static->ref_object = $lineref = (string) $line[8];
+					$block_static->date_object = (int) $line[9];
+					$block_static->user_fullname = (string) $line[10];
+					$block_static->linktoref = (string) $line[11];
+					$block_static->linktype = (string) $line[12];
+					$block_static->object_data = json_decode((string) $line[13]);
+					$block_static->object_version = (string) $line[14];
+					$block_static->object_format = (string) $line[15];
+					$block_static->signature = (string) $line[16];
+
+					// Status from file: 'Valid' or 'KO'
+					$statusline = (string) $line[17];
+				}
+
+				if ($block_static->id > 0) {
 					// Status revalidated from calculation using the HMAC secret key (possible only when we are on the same instance than
 					// the one hosting the initial database of the archive)
 					$tmp = $block_static->checkSignature($previoushash, 2);
 
-					/* To see detail to get signature
-					if ($block_static->id == 397) {
+					// To see the detail of line to to test signature calculation
+					/*
+					if ($block_static->id == 411) {
 						$concatenateddata = $block_static->buildKeyForSignature($block_static->object_format);
 						if (empty($previoushash)) {
 							$tmparray = $block_static->getPreviousHash(0, $block_static->id);
 							$previoushash = $tmparray['previoushash'];
 						}
-						var_dump($block_static->id, $previoushash, $concatenateddata);
-					}
-					*/
+						var_dump($block_static->id, $previoushash, $concatenateddata, $tmp);
+						exit;
+					}*/
+
 
 					$signature = $tmp['calculatedsignature'];
 					$previoushash = $block_static->signature;
@@ -943,10 +1009,14 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 					$previoushashexport = $signatureexport;
 				}
 
-				if ($lineanalyzed && ($lineactioncode == 'BILL_VALIDATE' || $lineactioncode == 'PAYMENT_CUSTOMER_CREATE')) {
+				if ($lineanalyzed && ($lineactioncode == 'BILL_VALIDATE' || $lineactioncode == 'PAYMENT_CUSTOMER_CREATE' || $lineactioncode == 'PAYMENT_CUSTOMER_DELETE')) {
 					// For action = BILL_VALIDATE, we keep only first invoice found, but this should not happen because edition of invoice is never possible on
-					// certified version and very difficult on other version.
+					// certified version (locked) and very difficult on other version.
 					if ($lineactioncode != 'BILL_VALIDATE' || empty($refinvoicefound[$lineref])) {
+						if ($lineactioncode == 'PAYMENT_CUSTOMER_CREATE' || $lineactioncode == 'PAYMENT_CUSTOMER_DELETE') {
+							$lineactioncode = 'PAYMENT_CUSTOMER';
+						}
+
 						$totalhtamountforaction[$lineactioncode] += $lineamountht;
 						$totalvatamountforaction[$lineactioncode] += ($lineamountttc - $lineamountht);
 						$totalamountforaction[$lineactioncode] += $lineamountttc;
@@ -987,11 +1057,11 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 		if ($recalculatedhashsign && $recalculatedhashsign == $hashsign) {
 			print img_picto('', 'tick', 'class="valignmiddle pictofixedwidth"');
 			print '<b>'.$langs->trans("FileIntegrity").'</b> ';
-			print ' '.$form->textwithpicto('', $algosign.' = '.$recalculatedhashsign);
+			print ' '.$form->textwithpicto('', $langs->trans("FileContentMatchSignature").'<br><br>'.$algosign.' = '.$recalculatedhashsign);
 		} else {
 			print img_picto('', 'cross', 'class="error valignmiddle pictofixedwidth"');
 			print '<b>'.$langs->trans("FileIntegrity").'</b> ';
-			print ' '.$form->textwithpicto('', $langs->trans("FileHasBeenCorrupted").'<br>Recalculated '.$recalculatedhashsign.' != Found in file '.$hashsign);
+			print ' '.$form->textwithpicto('', $langs->trans("FileHasBeenCorrupted").'<br><br>Recalculated '.$recalculatedhashsign.' != Found in file '.$hashsign);
 		}
 		print '<br><br>';
 
@@ -999,7 +1069,7 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 			print img_picto('', 'tick', 'class="valignmiddle pictofixedwidth"');
 			print '<b>'.$langs->trans("FileAuthenticity").'</b> ';
 			print ' - <span class="opacitymedium">'.$langs->trans("FileWasGeneratedByThisInstance").'</span>';
-			print ' '.$form->textwithpicto('', $algoauth.' = '.$recalculatedhashauth);
+			print ' '.$form->textwithpicto('', $langs->trans("FileContentMatchSignature").'<br><br>'.$algoauth.' = '.$recalculatedhashauth);
 		} elseif ($recalculatedhashsign == $hashsign) {
 			print img_picto('', 'cross', 'class="error valignmiddle pictofixedwidth"');
 			print '<b>'.$langs->trans("FileAuthenticity").'</b> ';
@@ -1025,9 +1095,14 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 			print '<br><br>';
 		}
 
-		print '<b>Detection of database restoration or not allowed line deletion in period</b>: ';
-		print 'This feature is for the moment available only from https://www.dolibarr.org/onlinecheckarchive.php<br>';
+		print img_picto('', 'minus', 'class="valignmiddle pictofixedwidth"');
+		print '<b>'.$langs->trans("DetectionOfSystemRestoration").'</b>: ';
+		print '<span class="opacitymedium">';
+		print $langs->trans("FeatureOnlyWhenArchiveAnalyzedFrom", "https://www.dolibarr.org/onlinecheckarchive.php");
+		print '</span><br>';
 		print '<br>';
+
+		print '<hr>';
 
 		$arraykeys = array('BILL_VALIDATE', 'PAYMENT_CUSTOMER_CREATE');
 		foreach ($arraykeys as $key) {
@@ -1035,7 +1110,13 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 			$totalvattoshow = $totalvatamountforaction[$key];
 			$totaltoshow = $totalamountforaction[$key];
 
-			print '<b>'.dolPrintHTML($langs->trans("TotalForAction").' '.$langs->trans('log'.$key)).'</b>: ';
+			print '<b>'.dolPrintHTML($langs->trans("TotalForAction").' '.$langs->trans('log'.$key)).'</b>';
+			if ($key == 'BILL_VALIDATE') {
+				print ' <span class="opacitymedium">('.$langs->trans("Turnover").')</span>';
+			} elseif ($key == 'PAYMENT_CUSTOMER_CREATE') {
+				print ' <span class="opacitymedium">('.$langs->trans("TurnoverCollected").')</span>';
+			}
+			print ': ';
 
 			if ($key == 'PAYMENT_CUSTOMER_CREATE') {
 				print '<span class="amount">'.price($totaltoshow, 0, $langs, 1, -1, -1, getDolCurrency()).'</span>';
@@ -1053,8 +1134,16 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 				print $langs->trans("TTC").': ';
 				print '<span class="amount">'.price($totaltoshow, 0, $langs, 1, -1, -1, getDolCurrency()).'</span>';
 			}
-			print '<br><br>';
+			print '<br>';
 		}
+
+		print '<br>';
+
+		$text = $langs->trans("IfIntegrityAuthenticityIsOkYouCanGetdetailByOpeningTheFile");
+		$text .= '<br>';
+		$text .= $langs->trans("IfIntegrityAuthenticityIsOkYouCanGetdetailByOpeningTheFile2");
+		//$langs->transnoentitiesnoconv("logBILL_VALIDATE"), $langs->transnoentitiesnoconv("logPAYMENT_CUSTOMER_CREATE"), $langs->transnoentitiesnoconv("logDOC_DOWNLOAD"), $langs->transnoentitiesnoconv("logCASHCONTROL_CLOSE")).'...');
+		print info_admin($text);
 	}
 
 
