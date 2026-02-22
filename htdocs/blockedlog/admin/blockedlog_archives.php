@@ -254,6 +254,11 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 	}
 
 	if (!$error && $fh) {
+		$refinvoicefound = array();
+		$totalhtamount = array();
+		$totalvatamount = array();
+		$totalamount = array();
+
 		// Now restart request with all data, so without the limit(1) in sql request
 		$sql = "SELECT rowid, entity, date_creation, tms, user_fullname, action, module_source, pos_source, amounts_taxexcl, amounts, element, fk_object, date_object, ref_object,";
 		$sql .= " linktoref, linktype, signature, fk_user, object_data, object_version, object_format, debuginfo";
@@ -291,11 +296,6 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 			$loweridinerror = 0;
 			$i = 0;
 
-			$refinvoicefound = array();
-			$totalhtamount = array();
-			$totalvatamount = array();
-			$totalamount = array();
-
 			while ($obj = $db->fetch_object($resql)) {
 				// We set here all data used into signature calculation (see checkSignature method) and more
 
@@ -318,6 +318,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 				}
 
 				$block_static->date_creation = $db->jdate($obj->date_creation, $tz);		// jdate(date_creation) is UTC
+				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 				$block_static->date_modification = $db->jdate($obj->tms, $tz);			// jdate(tms) is UTC
 
 				$block_static->action = $obj->action;
@@ -420,6 +421,9 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 		}
 
 		// Now calculate cumulative total of all invoices validated
+		$totalhtamountalllines = array('BILL_VALIDATE' => 0, 'PAYMENT_CUSTOMER' => 0);
+		$totalvatamountalllines = array('BILL_VALIDATE' => 0, 'PAYMENT_CUSTOMER' => 0);
+		$totalamountalllines = array('BILL_VALIDATE' => 0, 'PAYMENT_CUSTOMER' => 0);
 		if (array_key_exists('BILL_VALIDATE', $totalhtamount)) {
 			foreach ($totalhtamount['BILL_VALIDATE'] as $val) {	// Loop on each module
 				$totalhtamountalllines['BILL_VALIDATE'] += $val;
@@ -444,7 +448,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 		}
 
 		// Add a final line with cumulative total of invoices validated (BILL_VALIDATE)
-		$block_static->id = '';
+		$block_static->id = 0;
 		$block_static->date_creation = '';
 		$block_static->action = '';
 		$block_static->module_source = '*';
@@ -463,7 +467,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 		$statusofrecord = '';
 
 		fwrite($fh, 'SUMMARY TURNOVER BILLED - '.$langs->transnoentitiesnoconv("Bills").' : '.$totalhtamountalllines['BILL_VALIDATE'].' '.$langs->trans("HT").' - '.$totalvatamountalllines['BILL_VALIDATE'].' '.$langs->trans("VAT").' - '.$totalamountalllines['BILL_VALIDATE'].' '.$langs->trans("HT").';'
-			.csvClean($block_static->id).';'
+			.csvClean('').';'
 			.csvClean($block_static->date_creation).';'
 			.csvClean($block_static->action).';'
 			.csvClean($block_static->module_source).';'
@@ -483,7 +487,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 
 
 		// Add a final line with cumulative total of invoices validated (PAYMENT_CUSTOMER_CREATE)
-		$block_static->id = '';
+		$block_static->id = 0;
 		$block_static->date_creation = '';
 		$block_static->action = '';
 		$block_static->module_source = '*';
@@ -501,7 +505,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 		$statusofrecord = '';
 
 		fwrite($fh, 'SUMMARY TURNOVER PAID - '.$langs->transnoentitiesnoconv("Payments").' : '.$totalamountalllines['PAYMENT_CUSTOMER'].';'
-			.csvClean($block_static->id).';'
+			.csvClean('').';'
 			.csvClean($block_static->date_creation).';'
 			.csvClean($block_static->action).';'
 			.csvClean($block_static->module_source).';'
@@ -596,7 +600,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 
 
 		// Add a final line with perpetual total for invoice validations
-		$block_static->id = '';
+		$block_static->id = 0;
 		$block_static->date_creation = '';
 		$block_static->action = '';
 		$block_static->module_source = '*';
@@ -615,7 +619,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 		$statusofrecord = '';
 
 		fwrite($fh, 'SUMMARY LIFETIME BILLED - '.$langs->transnoentitiesnoconv("Invoices").' : '.$totalhtamountalllines['BILL_VALIDATE'].' '.$langs->trans("HT")." - ".($foundoldformat ? '' : ($totalamountalllines['BILL_VALIDATE'] - $totalhtamountalllines['BILL_VALIDATE']).' '.$langs->transnoentitiesnoconv("VAT")).' - '.$totalamountalllines['BILL_VALIDATE'].' '.$langs->trans("TTC").";"
-			.csvClean($block_static->id).';'
+			.csvClean('').';'
 			.csvClean($block_static->date_creation).';'
 			.csvClean($block_static->action).';'
 			.csvClean($block_static->module_source).';'
@@ -636,7 +640,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 
 
 		// Add a final line with perpetual total for customer payments
-		$block_static->id = '';
+		$block_static->id = 0;
 		$block_static->date_creation = '';
 		$block_static->action = '';
 		$block_static->module_source = '*';
@@ -655,7 +659,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 		$statusofrecord = '';
 
 		fwrite($fh, 'SUMMARY LIFETIME PAID - '.$langs->transnoentitiesnoconv("Payments").' : '.($totalamountlifetime['PAYMENT_CUSTOMER_CREATE'] + $totalamountlifetime['PAYMENT_CUSTOMER_DELETE']).";"
-			.csvClean($block_static->id).';'
+			.csvClean('').';'
 			.csvClean($block_static->date_creation).';'
 			.csvClean($block_static->action).';'
 			.csvClean($block_static->module_source).';'
@@ -877,6 +881,7 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 				$linetech = $lineactioncode = '';
 				$lineamountht = $lineamountttc = 0;
 				$lineref = '';
+				$statusline = '';
 
 				if ($numline < 2) {
 					// First line, we continue

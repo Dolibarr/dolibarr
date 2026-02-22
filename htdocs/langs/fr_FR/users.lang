@@ -163,3 +163,5 @@ TOTP=TOTP (mot de passe à usage unique basé sur le temps)
 UserRemovedFromGroup=utilisateur supprimé du groupe
 UserSetInGroup=utilisateur défini dans le groupe
 ColorGroup=Couleur du groupe
+NotHolidayApprover=N'est pas autorisé à valider des congés
+NotExpenseReportApprover=N'est pas autorisé à valider des notes de frais
