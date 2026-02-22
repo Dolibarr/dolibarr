@@ -456,7 +456,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 		$block_static->amounts_taxexcl = '';
 		$block_static->amounts = '';
 		$block_static->ref_object = '';
-		$block_static->date_object = '';
+		$block_static->date_object = 0;
 		$block_static->user_fullname = '';
 		$block_static->linktoref = '';
 		$block_static->linktype = '';
@@ -475,11 +475,11 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 			.csvClean($block_static->amounts_taxexcl).';'	// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
 			.csvClean($block_static->amounts).';'			// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
 			.csvClean($block_static->ref_object).';'
-			.csvClean($block_static->date_object).';'
+			.csvClean('').';'
 			.csvClean($block_static->user_fullname).';'
 			.csvClean($block_static->linktoref).';'
 			.csvClean($block_static->linktype).';'
-			.csvClean($obj->object_data).';'				// We must use the string (so $obj->object_data) and not the array decoded with dolDecodeBlockedData
+			.csvClean('').';'				// We must use the string (so $obj->object_data) and not the array decoded with dolDecodeBlockedData
 			.csvClean($block_static->object_version).';'
 			.csvClean($block_static->object_format).';'
 			.csvClean($block_static->signature).';'
@@ -495,7 +495,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 		$block_static->amounts_taxexcl = '';
 		$block_static->amounts = '';
 		$block_static->ref_object = '';
-		$block_static->date_object = '';
+		$block_static->date_object = 0;
 		$block_static->user_fullname = '';
 		$block_static->linktoref = '';
 		$block_static->linktype = '';
@@ -513,11 +513,11 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 			.csvClean($block_static->amounts_taxexcl).';'	// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
 			.csvClean($block_static->amounts).';'			// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
 			.csvClean($block_static->ref_object).';'
-			.csvClean($block_static->date_object).';'
+			.csvClean('').';'
 			.csvClean($block_static->user_fullname).';'
 			.csvClean($block_static->linktoref).';'
 			.csvClean($block_static->linktype).';'
-			.csvClean($obj->object_data).';'				// We must use the string (so $obj->object_data) and not the array decoded with dolDecodeBlockedData
+			.csvClean('').';'				// We must use the string (so $obj->object_data) and not the array decoded with dolDecodeBlockedData
 			.csvClean($block_static->object_version).';'
 			.csvClean($block_static->object_format).';'
 			.csvClean($block_static->signature).';'
@@ -608,7 +608,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 		$block_static->amounts_taxexcl = '';
 		$block_static->amounts = '';
 		$block_static->ref_object = '';
-		$block_static->date_object = '';
+		$block_static->date_object = 0;
 		$block_static->user_fullname = '';
 		$block_static->linktoref = '';
 		$block_static->linktype = '';
@@ -627,11 +627,11 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 			.csvClean($block_static->amounts_taxexcl).';'	// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
 			.csvClean($block_static->amounts).';'			// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
 			.csvClean($block_static->ref_object).';'
-			.csvClean($block_static->date_object).';'
+			.csvClean('').';'
 			.csvClean($block_static->user_fullname).';'
 			.csvClean($block_static->linktoref).';'
 			.csvClean($block_static->linktype).';'
-			.csvClean($obj->object_data).';'				// We must use the string (so $obj->object_data) and not the array decoded with dolDecodeBlockedData
+			.csvClean('').';'				// We must use the string (so $obj->object_data) and not the array decoded with dolDecodeBlockedData
 			.csvClean($block_static->object_version).';'
 			.csvClean($block_static->object_format).';'
 			.csvClean($block_static->signature).';'
@@ -645,10 +645,10 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 		$block_static->action = '';
 		$block_static->module_source = '*';
 		$block_static->pos_source = '*';
-		$block_static->amounts_taxtecl = '';
+		$block_static->amounts_taxexcl = '';
 		$block_static->amounts = '';
 		$block_static->ref_object = '';
-		$block_static->date_object = '';
+		$block_static->date_object = 0;
 		$block_static->user_fullname = '';
 		$block_static->linktoref = '';
 		$block_static->linktype = '';
@@ -667,11 +667,11 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 			.csvClean($block_static->amounts_taxexcl).';'	// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
 			.csvClean($block_static->amounts).';'			// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
 			.csvClean($block_static->ref_object).';'
-			.csvClean($block_static->date_object).';'
+			.csvClean('').';'
 			.csvClean($block_static->user_fullname).';'
 			.csvClean($block_static->linktoref).';'
 			.csvClean($block_static->linktype).';'
-			.csvClean($obj->object_data).';'				// We must use the string (so $obj->object_data) and not the array decoded with dolDecodeBlockedData
+			.csvClean('').';'				// We must use the string (so $obj->object_data) and not the array decoded with dolDecodeBlockedData
 			.csvClean($block_static->object_version).';'
 			.csvClean($block_static->object_format).';'
 			.csvClean($block_static->signature).';'
@@ -1035,7 +1035,7 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 			}
 			fclose($handle);
 		} else {
-			setEventMessage('Failed to open file '.GETPOST('urlfile'), null, 'errors');
+			setEventMessages('Failed to open file '.GETPOST('urlfile'), null, 'errors');
 		}
 
 		print '<br><br>';
