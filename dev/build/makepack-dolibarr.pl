@@ -1378,61 +1378,41 @@ if ($nboftargetok) {
 
 			print "Set permissions on files/dir\n";
 			$ret = `chmod -R 755 $BUILDROOT/$PROJECT.tmp`;
-			$cmd =
-			  "find $BUILDROOT/$PROJECT.tmp -type f -exec chmod 644 {} \\; ";
+			$cmd = "find $BUILDROOT/$PROJECT.tmp -type f -exec chmod 644 {} \\; ";
 			$ret = `$cmd`;
-			$cmd =
-"find $BUILDROOT/$PROJECT.tmp/dev/build -name '*.php' -type f -exec chmod 755 {} \\; ";
+			$cmd = "find $BUILDROOT/$PROJECT.tmp/dev/build -name '*.php' -type f -exec chmod 755 {} \\; ";
 			$ret = `$cmd`;
-			$cmd =
-"find $BUILDROOT/$PROJECT.tmp/dev/build -name '*.dpatch' -type f -exec chmod 755 {} \\; ";
+			$cmd = "find $BUILDROOT/$PROJECT.tmp/dev/build -name '*.dpatch' -type f -exec chmod 755 {} \\; ";
 			$ret = `$cmd`;
-			$cmd =
-"find $BUILDROOT/$PROJECT.tmp/dev/build -name '*.pl' -type f -exec chmod 755 {} \\; ";
+			$cmd = "find $BUILDROOT/$PROJECT.tmp/dev/build -name '*.pl' -type f -exec chmod 755 {} \\; ";
 			$ret = `$cmd`;
-			$cmd =
-"find $BUILDROOT/$PROJECT.tmp/dev -name '*.php' -type f -exec chmod 755 {} \\; ";
+			$cmd = "find $BUILDROOT/$PROJECT.tmp/dev -name '*.php' -type f -exec chmod 755 {} \\; ";
 			$ret = `$cmd`;
 			$ret = `chmod 755 $BUILDROOT/$PROJECT.tmp/debian/rules`;
-			$ret =
-`chmod -R 644 $BUILDROOT/$PROJECT.tmp/dev/translation/autotranslator.class.php`;
-			$ret =
-`chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/class/actions_mymodule.class.php`;
-			$ret =
-`chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/class/api_mymodule.class.php`;
-			$ret =
-`chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/class/myobject.class.php`;
-			$ret =
-`chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/core/modules/modMyModule.class.php`;
-			$ret =
-`chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/mymoduleindex.php`;
-			$ret =
-`chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/myobject_card.php`;
-			$ret =
-`chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/myobject_list.php`;
-			$ret =
-`chmod -R 755 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/scripts/mymodule.php`;
-			$cmd =
-"find $BUILDROOT/$PROJECT.tmp/scripts -name '*.php' -type f -exec chmod 755 {} \\; ";
+			$ret = `chmod -R 644 $BUILDROOT/$PROJECT.tmp/dev/translation/autotranslator.class.php`;
+			$ret = `chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/class/actions_mymodule.class.php`;
+			$ret = `chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/class/api_mymodule.class.php`;
+			$ret = `chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/class/myobject.class.php`;
+			$ret = `chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/core/modules/modMyModule.class.php`;
+			$ret = `chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/mymoduleindex.php`;
+			$ret = `chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/myobject_card.php`;
+			$ret = `chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/myobject_list.php`;
+			$ret = `chmod -R 755 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/scripts/mymodule.php`;
+			$cmd = "find $BUILDROOT/$PROJECT.tmp/scripts -name '*.php' -type f -exec chmod 755 {} \\; ";
 			$ret = `$cmd`;
-			$cmd =
-"find $BUILDROOT/$PROJECT.tmp/scripts -name '*.sh' -type f -exec chmod 755 {} \\; ";
+			$cmd = "find $BUILDROOT/$PROJECT.tmp/scripts -name '*.sh' -type f -exec chmod 755 {} \\; ";
 			$ret = `$cmd`;
 
-			print
-"Rename directory $BUILDROOT/$PROJECT.tmp into $BUILDROOT/$PROJECT-$MAJOR.$MINOR.$build\n";
-			$cmd =
-"mv $BUILDROOT/$PROJECT.tmp $BUILDROOT/$PROJECT-$MAJOR.$MINOR.$build";
+			print "Rename directory $BUILDROOT/$PROJECT.tmp into $BUILDROOT/$PROJECT-$MAJOR.$MINOR.$build\n";
+			$cmd = "mv $BUILDROOT/$PROJECT.tmp $BUILDROOT/$PROJECT-$MAJOR.$MINOR.$build";
 			$ret = `$cmd`;
 
 			print "Go into directory $BUILDROOT\n";
 			chdir("$BUILDROOT");
 
-# We need a tarball to be able to build "quilt" debian package (not required for native but we need patch so it is not a native)
-			print
-"Compress $BUILDROOT/$PROJECT-$MAJOR.$MINOR.$build into $BUILDROOT/$FILENAMEDEBNATIVE.orig.tar.gz...\n";
-			$cmd =
-"tar --exclude-vcs --exclude-from \"$BUILDROOT/$PROJECT/dev/build/tgz/tar_exclude.txt\" --directory \"$BUILDROOT\" --mode=go-w --group=500 --owner=500 -czvf \"$BUILDROOT/$FILENAMEDEBNATIVE.orig.tar.gz\" $PROJECT-$MAJOR.$MINOR.$build";
+			# We need a tarball to be able to build "quilt" debian package (not required for native but we need patch so it is not a native)
+			print "Compress $BUILDROOT/$PROJECT-$MAJOR.$MINOR.$build into $BUILDROOT/$FILENAMEDEBNATIVE.orig.tar.gz...\n";
+			$cmd = "tar --exclude-vcs --exclude-from \"$BUILDROOT/$PROJECT/dev/build/tgz/tar_exclude.txt\" --directory \"$BUILDROOT\" --mode=go-w --group=500 --owner=500 -czvf \"$BUILDROOT/$FILENAMEDEBNATIVE.orig.tar.gz\" $PROJECT-$MAJOR.$MINOR.$build";
 			print $cmd. "\n";
 			$ret = `$cmd`;
 
@@ -1449,10 +1429,8 @@ if ($nboftargetok) {
 
 			chdir("$olddir");
 
-			print
-"You can check bin package with lintian --pedantic -E -I \"$NEWDESTI/${FILENAMEDEB}_all.deb\"\n";
-			print
-"You can check src package with lintian --pedantic -E -I \"$NEWDESTI/${FILENAMEDEB}.dsc\"\n";
+			print "You can check bin package with lintian --pedantic -E -I \"$NEWDESTI/${FILENAMEDEB}_all.deb\"\n";
+			print "You can check src package with lintian --pedantic -E -I \"$NEWDESTI/${FILENAMEDEB}.dsc\"\n";
 
 			# Move to final dir
 			print "Move *_all.deb *.dsc *.orig.tar.gz *.changes to $NEWDESTI\n";
@@ -1460,7 +1438,7 @@ if ($nboftargetok) {
 			$ret = `mv $BUILDROOT/*.dsc "$NEWDESTI/"`;
 			$ret = `mv $BUILDROOT/*.orig.tar.gz "$NEWDESTI/"`;
 
-#$ret=`mv $BUILDROOT/*.debian.tar.xz "$NEWDESTI/"`;		# xz file is generated when build/debian/sources/option
+			#$ret=`mv $BUILDROOT/*.debian.tar.xz "$NEWDESTI/"`;		# xz file is generated when build/debian/sources/option
 			$ret = `mv $BUILDROOT/*.debian.tar.gz "$NEWDESTI/"`;
 			$ret = `mv $BUILDROOT/*.changes "$NEWDESTI/"`;
 			next;
@@ -1482,17 +1460,15 @@ if ($nboftargetok) {
 				print "Check that ISCC.exe is in your PATH.\n";
 			}
 			else {
-				print
-"Check that in your Wine setup, you have created a Z: drive that point to your / directory.\n";
+				print "Check that in your Wine setup, you have created a Z: drive that point to your / directory.\n";
 			}
 
 			$SOURCEBACK = $SOURCE;
 			$SOURCEBACK =~ s/\//\\/g;
 
-			print
-"Prepare file \"$SOURCEBACK\\dev\\build\\exe\\doliwamp\\doliwamp.tmp.iss\" from \"$SOURCEBACK\\dev\\build\\exe\\doliwamp\\doliwamp.iss\"\n";
+			print "Prepare file \"$SOURCEBACK\\dev\\build\\exe\\doliwamp\\doliwamp.tmp.iss\" from \"$SOURCEBACK\\dev\\build\\exe\\doliwamp\\doliwamp.iss\"\n";
 
-#$ret=`cat "$SOURCE/dev/build/exe/doliwamp/doliwamp.iss" | sed -e 's/__FILENAMEEXEDOLIWAMP__/$FILENAMEEXEDOLIWAMP/g' > "$SOURCE/build/exe/doliwamp/doliwamp.tmp.iss"`;
+			#$ret=`cat "$SOURCE/dev/build/exe/doliwamp/doliwamp.iss" | sed -e 's/__FILENAMEEXEDOLIWAMP__/$FILENAMEEXEDOLIWAMP/g' > "$SOURCE/build/exe/doliwamp/doliwamp.tmp.iss"`;
 			open( my $IN3, '<',
 				$SOURCE . "/dev/build/exe/doliwamp/doliwamp.iss" )
 			  or die $!;
@@ -1506,40 +1482,35 @@ if ($nboftargetok) {
 			close($IN3);
 			close($OUT);
 
-			print
-"Compil exe $FILENAMEEXEDOLIWAMP.exe file from iss file \"$SOURCEBACK\\dev\\build\\exe\\doliwamp\\doliwamp.tmp.iss\" on OS $OS\n";
+			print "Compil exe $FILENAMEEXEDOLIWAMP.exe file from iss file \"$SOURCEBACK\\dev\\build\\exe\\doliwamp\\doliwamp.tmp.iss\" on OS $OS\n";
 
 			if ( $OS eq 'windows' ) {
-				$cmd =
-"ISCC.exe \"$SOURCEBACK\\dev\\build\\exe\\doliwamp\\doliwamp.tmp.iss\"";
+				$cmd = "ISCC.exe \"$SOURCEBACK\\dev\\build\\exe\\doliwamp\\doliwamp.tmp.iss\"";
 			}
 			else {
-#$cmd= "wine ISCC.exe \"Z:$SOURCEBACK\\dev\\build\\exe\\doliwamp\\doliwamp.tmp.iss\"";
+				#$cmd= "wine ISCC.exe \"Z:$SOURCEBACK\\dev\\build\\exe\\doliwamp\\doliwamp.tmp.iss\"";
 			}
 			print "$cmd\n";
 			$ret = `$cmd`;
 			print "ret=$ret\n";
 
 			# Move to final dir
-			print
-"Move \"$SOURCE\\dev\\build\\$FILENAMEEXEDOLIWAMP.exe\" to $NEWDESTI/$FILENAMEEXEDOLIWAMP.exe\n";
+			print "Move \"$SOURCE\\dev\\build\\$FILENAMEEXEDOLIWAMP.exe\" to $NEWDESTI/$FILENAMEEXEDOLIWAMP.exe\n";
 			rename(
 				"$SOURCE/dev/build/$FILENAMEEXEDOLIWAMP.exe",
 				"$NEWDESTI/$FILENAMEEXEDOLIWAMP.exe"
 			);
-			print
-"Move $SOURCE/dev/build/$FILENAMEEXEDOLIWAMP.exe to $NEWDESTI/$FILENAMEEXEDOLIWAMP.exe\n";
+			print "Move $SOURCE/dev/build/$FILENAMEEXEDOLIWAMP.exe to $NEWDESTI/$FILENAMEEXEDOLIWAMP.exe\n";
 
 			use File::Copy;
 
-#$ret=`mv "$SOURCE/dev/build/$FILENAMEEXEDOLIWAMP.exe" "$NEWDESTI/$FILENAMEEXEDOLIWAMP.exe"`;
+			#$ret=`mv "$SOURCE/dev/build/$FILENAMEEXEDOLIWAMP.exe" "$NEWDESTI/$FILENAMEEXEDOLIWAMP.exe"`;
 			$ret = move(
 				"$SOURCE/dev/build/$FILENAMEEXEDOLIWAMP.exe",
 				"$NEWDESTI/$FILENAMEEXEDOLIWAMP.exe"
 			);
 
-			print
-"Remove tmp file $SOURCE/dev/build/exe/doliwamp/doliwamp.tmp.iss\n";
+			print "Remove tmp file $SOURCE/dev/build/exe/doliwamp/doliwamp.tmp.iss\n";
 
 			#$ret=`rm "$SOURCE/dev/build/exe/doliwamp/doliwamp.tmp.iss"`;
 			$ret = unlink("$SOURCE/dev/build/exe/doliwamp/doliwamp.tmp.iss");
@@ -1558,7 +1529,7 @@ if ($nboftargetok) {
 			"$DESTI/signatures/filelist-$MAJOR.$MINOR.$BUILD.xml" =>
 			  'none',    # none means it won't be published on SF
 			"$DESTI/package_rpm_generic/$FILENAMERPM" =>
-'Dolibarr installer for Fedora-Redhat-Mandriva-Opensuse (DoliRpm)',
+				'Dolibarr installer for Fedora-Redhat-Mandriva-Opensuse (DoliRpm)',
 			"$DESTI/package_rpm_generic/$FILENAMERPMSRC" =>
 			  'none',    # none means it won't be published on SF
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}_all.deb" =>
@@ -1589,8 +1560,7 @@ if ($nboftargetok) {
 			  'package_debian-ubuntu',
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}.dsc" =>
 			  'package_debian-ubuntu',
-
-#"$DESTI/package_debian-ubuntu/${FILENAMEDEB}.debian.tar.xz"=>'package_debian-ubuntu',
+			#"$DESTI/package_debian-ubuntu/${FILENAMEDEB}.debian.tar.xz"=>'package_debian-ubuntu',
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}.debian.tar.gz" =>
 			  'package_debian-ubuntu',
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEBSHORT}.orig.tar.gz" =>
@@ -1652,8 +1622,7 @@ if ($nboftargetok) {
 			$NUM_SCRIPT = <STDIN>;
 			chomp($NUM_SCRIPT);
 
-			print
-"Create empty dir /tmp/emptydir. We need it to create target dir using rsync.\n";
+			print "Create empty dir /tmp/emptydir. We need it to create target dir using rsync.\n";
 			$ret = `mkdir -p "/tmp/emptydir/"`;
 
 			%filestoscan = %filestoscansf;
@@ -1697,13 +1666,13 @@ if ($nboftargetok) {
 				#use String::ShellQuote qw( shell_quote );
 				#$ssh->cmd('mkdir '.shell_quote($destFolder).' && exit');
 
-#use Net::SFTP::Foreign;
-#my $sftp = Net::SFTP::Foreign->new($ip, user => $user, password => $pass, autodie => 1);
-#$sftp->mkdir($destFolder)
+				#use Net::SFTP::Foreign;
+				#my $sftp = Net::SFTP::Foreign->new($ip, user => $user, password => $pass, autodie => 1);
+				#$sftp->mkdir($destFolder)
 
-    #$command="ssh eldy,dolibarr\@frs.sourceforge.net mkdir -p \"$destFolder\"";
-    #print "$command\n";
-    #my $ret=`$command 2>&1`;
+			    #$command="ssh eldy,dolibarr\@frs.sourceforge.net mkdir -p \"$destFolder\"";
+			    #print "$command\n";
+			    #my $ret=`$command 2>&1`;
 
 				$command = "rsync -s -e 'ssh' --recursive /tmp/emptydir/ \""
 				  . $destFolder . "\"";

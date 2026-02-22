@@ -127,6 +127,7 @@ function formatObject($objtoshow, $prefix, $parentelement = '')
 	);
 
 	$otherlabels = array(
+		'link' => 'Link',
 		'module_source' => 'POSModule',
 		'pos_source' => "POSTerminal",
 		'posmodule' => 'POSModule',
@@ -162,6 +163,7 @@ function formatObject($objtoshow, $prefix, $parentelement = '')
 		'vat_src_code' => 'VATCode',
 		'multicurrency_code' => 'Currency',
 		'qty' => 'Quantity',
+		'remise_percent' => 'DiscountInPercent',
 		'nom' => 'Name',
 		'name' => 'Name',
 		'email' => 'Email',
