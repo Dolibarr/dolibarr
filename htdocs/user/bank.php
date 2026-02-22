@@ -10,6 +10,7 @@
  * Copyright (C) 2021       Gauthier VERDOL             <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2026       Charlene Benke              <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -419,6 +420,20 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 			print $huser->getNomUrl(1);
 		} else {
 			print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
+		}
+		if (isModEnabled('holiday')) {
+			$holidayapprover = new Holiday($db);
+			$arrayApprover = $holidayapprover->fetch_users_approver_holiday();
+			if (!in_array((string) $object->fk_user, $arrayApprover)) {
+				print '<br><span class="opacitymedium">('.$langs->trans("NotHolidayApprover").')</span>';
+			}
+		}
+		if (isModEnabled('expensereport')) {
+			$expensereportapprover = new ExpenseReport($db);
+			$arrayApprover = $expensereportapprover->fetch_users_approver_expensereport();
+			if (!in_array((string) $object->fk_user, $arrayApprover)) {
+				print '<br><span class="opacitymedium">('.$langs->trans("NotExpenseReportApprover").')</span>';
+			}
 		}
 	}
 	print '</td>';
