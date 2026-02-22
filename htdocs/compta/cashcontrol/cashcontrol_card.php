@@ -6,7 +6,7 @@
  * Copyright (C) 2015      	Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2016      	Marcos García        	<marcosgdf@gmail.com>
  * Copyright (C) 2018      	Andreu Bisquerra		<jove@bisquerra.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -136,7 +136,7 @@ if ($object->id > 0) {
 		$datestart = dol_time_plus_duree($dateend, -1, 'm', 0);
 	} elseif (empty($object->day_close) && empty($object->month_close)) {	// Full year
 		$dateend = dol_mktime((int) $object->hour_close, (int) $object->min_close, (int) $object->sec_close, 12, 31, $object->year_close, 'gmt');
-		$datestart = dol_time_plus_duree($datestart, -1, 'y', 0);
+		$datestart = dol_time_plus_duree($dateend, -1, 'y', 0);
 	} else {
 		$dateend = dol_mktime((int) $object->hour_close, (int) $object->min_close, (int) $object->sec_close, $object->month_close, $object->day_close, $object->year_close, 'gmt');
 		$datestart = dol_time_plus_duree($dateend, -1, 'd', 0);
@@ -803,7 +803,7 @@ if ($action == "create" || $action == "start") {
 			$object->fetch($id);
 			print $object->opening;
 		} else {
-			print (GETPOSTISSET('opening') ? price2num(GETPOST('opening', 'alpha')) : price($initialbalanceforterminal[$terminalid]['cash']));
+			print(GETPOSTISSET('opening') ? price2num(GETPOST('opening', 'alpha')) : price($initialbalanceforterminal[$terminalid]['cash']));
 		}
 		print '">';
 		print '</td>';
