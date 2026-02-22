@@ -884,6 +884,7 @@ class BlockedLog
 			if (is_array($object->amounts) && !empty($object->amounts)) {
 				// Loop on each invoice the payment is part of to set the linktoref and the module_source and pos_source
 				$originofpayment = null;
+				$terminalofpayment = '';
 				$paymentpartnumber = 0;
 				foreach ($object->amounts as $objid => $amount) {
 					if (empty($amount)) {
@@ -1149,6 +1150,7 @@ class BlockedLog
 				}
 
 				$this->date_creation 	= $this->db->jdate($obj->date_creation, $tz);	// jdate(date_creation)is UTC
+				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 				$this->date_modification = $this->db->jdate($obj->tms, $tz);			// jdate(tms) is UTC
 
 
