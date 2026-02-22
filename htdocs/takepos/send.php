@@ -2,7 +2,7 @@
 /* Copyright (C) 2019	Thibault FOUCART      <support@ptibogxiv.net>
  * Copyright (C) 2020	Andreu Bisquerra Gaya <jove@bisquerra.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -133,7 +133,7 @@ if ($action == "send" && $user->hasRight('takepos', 'run')) {
 
 		print 'Failed to send email: '.$mail->error;
 
-		http_response_code('500');
+		http_response_code(500);
 	} else {
 		$result = $mail->sendfile();
 		if ($result) {
@@ -143,19 +143,17 @@ if ($action == "send" && $user->hasRight('takepos', 'run')) {
 			$object->context['email_to'] = $sendto;
 			$object->context['email_msgid'] = $mail->msgid;
 
-			// Same code than into actions_sendmail.inc.php
-			if ($triggersendname == 'BILL_SENTBYMAIL' && $object instanceof Facture) {
-				/* @var Facture $object */
+			// Same code as in actions_sendmail.inc.php
+			// if ($triggersendname === 'BILL_SENTBYMAIL' && $object instanceof Facture) { // Always true ($triggersendname is set above, and $object = $invoice = Facture object
+			// If sending email for invoice, we increase the counter of invoices sent by email
+			$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET email_sent_counter = email_sent_counter + 1";
+			$sql .= " WHERE rowid = ".((int) $object->id);
 
-				// If sending email for invoice, we increase the counter of invoices sent by email
-				$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET email_sent_counter = email_sent_counter + 1";
-				$sql .= " WHERE rowid = ".((int) $object->id);
-
-				$resql = $db->query($sql);
-				if ($resql) {
-					$object->email_sent_counter += 1;
-				}
+			$resql = $db->query($sql);
+			if ($resql) {
+				$object->email_sent_counter += 1;
 			}
+			// }
 
 			$result = $object->call_trigger($triggersendname, $user);  // @phan-suppress-current-line PhanPossiblyUndeclaredGlobalVariable
 			if ($result < 0) {
@@ -170,12 +168,12 @@ if ($action == "send" && $user->hasRight('takepos', 'run')) {
 				print "\n";
 				print 'If template ask to join file, it may include the file '.implode(',', $joinFile);
 			} else {
-				http_response_code('500');
+				http_response_code(500);
 			}
 		} else {
 			print 'Failed to send email: '.$mail->error;
 
-			http_response_code('500');
+			http_response_code(500);
 		}
 	}
 
