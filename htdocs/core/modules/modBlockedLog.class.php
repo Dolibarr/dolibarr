@@ -57,7 +57,7 @@ class modBlockedLog extends DolibarrModules
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = constant('DOLCERT_VERSION');
-		$this->version_core = 1;
+		$this->version_if_core = 1;
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Name of image file used for this module.
