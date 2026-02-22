@@ -209,9 +209,9 @@ if (empty($reshook)) {
 		$diroutput = null;
 		$template = null;
 		$is2d = false;
+		$code = $forbarcode;
 
 		if (!$error && $stdobject !== null) {
-			$code = $forbarcode;
 			$generator = $stdobject->barcode_type_coder; // coder (loaded by fetchBarCode). Engine.
 			$encoding = strtoupper($stdobject->barcode_type_code); // code (loaded by fetchBarCode). Example 'ean', 'isbn', ...
 
