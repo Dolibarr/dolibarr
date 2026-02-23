@@ -456,9 +456,9 @@ if ($result > 0) {
 	}
 
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
-	if (isset($optioncss) && $optioncss != '') {
-		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	}
+	//if (isset($optioncss) && $optioncss != '') {
+	//	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	//}
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
