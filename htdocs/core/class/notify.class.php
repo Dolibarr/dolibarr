@@ -1384,7 +1384,7 @@ class Notify
 			return trim(dolGetFirstLastname($supervisoruser->firstname, $supervisoruser->lastname).' <'.$supervisoruser->email.'>');
 		}
 
-		return trim($supervisoruser->email);
+		return trim((string) $supervisoruser->email);
 	}
 
 	/**
@@ -1426,7 +1426,7 @@ class Notify
 			return trim(dolGetFirstLastname($author->firstname, $author->lastname).' <'.$author->email.'>');
 		}
 
-		return trim($author->email);
+		return trim((string) $author->email);
 	}
 
 	/**
