@@ -71,14 +71,14 @@ repos:
       - id: actionlint
 
   # Beautify shell scripts
-  - repo: https://github.com/lovesegfault/beautysh.git
-    rev: v6.2.1
-    hooks:
-      - id: beautysh
-        exclude: |
-          (?x)^(dev/setup/git/hooks/pre-commit
-               )$
-        args: [--tab]
+  #- repo: https://github.com/lovesegfault/beautysh.git
+  #  rev: v6.2.1
+  #  hooks:
+  #    - id: beautysh
+  #      exclude: |
+  #        (?x)^(dev/setup/git/hooks/pre-commit
+  #             )$
+  #      args: [--tab]
 
   # Run local script
   #
