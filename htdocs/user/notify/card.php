@@ -253,6 +253,7 @@ if ($result > 0) {
 	$sql .= " AND n.entity IN (".getEntity('notify_def').')';
 
 	$resql = $db->query($sql);
+	$num = 0;
 	if ($resql) {
 		$num = $db->num_rows($resql);
 	} else {
