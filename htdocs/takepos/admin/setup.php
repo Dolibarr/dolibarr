@@ -382,7 +382,8 @@ if (is_array($formmail->lines_model)) {
 }
 //var_dump($arraydefaultmessage);
 //var_dump($arrayofmessagename);
-print $form->selectarray('TAKEPOS_EMAIL_TEMPLATE_INVOICE', $arrayofmessagename, getDolGlobalString('TAKEPOS_EMAIL_TEMPLATE_INVOICE'), 'None', 1, 0, '', 0, 0, 0, '', 'maxwidth500 widthcentpercentminusx', 1);
+print $form->selectarray('TAKEPOS_EMAIL_TEMPLATE_INVOICE', $arrayofmessagename, getDolGlobalString('TAKEPOS_EMAIL_TEMPLATE_INVOICE'), $langs->transnoentitiesnoconv('NoneOrChooseAnEmailTemplateForInvoice'), 1, 0, '', 0, 0, 0, '', 'maxwidth500 widthcentpercentminusx', 1);
+// TODO Add link to go to email templates
 print "</td></tr>\n";
 
 // Control cash box at opening pos
@@ -415,7 +416,7 @@ print "</td></tr>\n";
 
 // disable freezone product
 print '<tr class="oddeven"><td>';
-print $langs->trans('NoFreeZoneProduct');
+print $form->textwithpicto($langs->trans('NoFreeZoneProduct'), $langs->trans('NoFreeZoneProductDesc'));
 print '</td><td>';
 print ajax_constantonoff("TAKEPOS_NO_FREE_ZONE_PRODUCT", array(), $conf->entity, 0, 0, 1, 0);
 print "</td></tr>\n";

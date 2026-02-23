@@ -37,9 +37,10 @@ require '../../main.inc.php'; // Load $user and permissions
  * @var Societe $mysoc
  */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/takepos.lib.php";
+require_once DOL_DOCUMENT_ROOT."/blockedlog/lib/blockedlog.lib.php";
+require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 
 // Security check
 if (!$user->admin) {
@@ -116,7 +117,14 @@ print "</tr>\n";
 print '<tr class="oddeven"><td>';
 print $langs->trans('TicketVatGrouped');
 print '<td colspan="2">';
-print ajax_constantonoff("TAKEPOS_TICKET_VAT_GROUPPED", array(), $conf->entity, 0, 0, 1, 0);
+if (isALNERunningVersion()) {
+	// Always forced to true
+	$conf->global->TAKEPOS_TICKET_VAT_GROUPPED = 1;
+	print img_picto($langs->trans("Enabled"), 'switch_on', 'class="opacitymedium valignmiddle"');
+	print ' <span class="opacitymedium valignmiddle">'.$langs->trans("Always").'</span>';
+} else {
+	print ajax_constantonoff("TAKEPOS_TICKET_VAT_GROUPPED", array(), $conf->entity, 0, 0, 1, 0);
+}
 print "</td></tr>\n";
 
 if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "browser" || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
@@ -187,7 +195,7 @@ print '<tr class="oddeven"><td>';
 print $langs->trans('ShowPriceHTOnReceipt');
 print '<td colspan="2">';
 if (isALNERunningVersion()) {
-	$conf->global->TAKEPOS_PRINT_PAYMENT_METHOD = 1;
+	$conf->global->TAKEPOS_SHOW_HT_RECEIPT = 1;
 	print ajax_constantonoff("TAKEPOS_SHOW_HT_RECEIPT", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', '', 'inline-block', 0, '', 1);
 	print '<span class="opacitymedium">'.$langs->trans("Always").'</span>';
 } else {
@@ -215,7 +223,14 @@ if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector" && filter_v
 print '<tr class="oddeven"><td>';
 print $langs->trans('PrintWithoutDetailsButton');
 print '<td colspan="2">';
-print ajax_constantonoff('TAKEPOS_PRINT_WITHOUT_DETAILS', array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', '', 'inline-block', 0, '');
+if (isALNERunningVersion()) {
+	// Always forced to true
+	$conf->global->TAKEPOS_PRINT_WITHOUT_DETAILS = 1;
+	print img_picto($langs->trans("Disabled"), 'switch_off', 'class="opacitymedium valignmiddle"');
+	print ' <span class="opacitymedium valignmiddle">'.$form->textwithpicto($langs->trans("NotAvailable"), $langs->trans("NotAvailableForCountryWhenModuleIsOn", $mysoc->country_code, $langs->transnoentitiesnoconv('Module3200Name'))).'</span>';
+} else {
+	print ajax_constantonoff('TAKEPOS_PRINT_WITHOUT_DETAILS', array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', '', 'inline-block', 0, '');
+}
 print "</td></tr>\n";
 if (getDolGlobalString('TAKEPOS_PRINT_WITHOUT_DETAILS')) {
 	print '<tr class="oddeven"><td>';

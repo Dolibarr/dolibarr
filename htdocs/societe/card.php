@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2008       Patrick Raguin          <patrick.raguin@auguria.net>
  * Copyright (C) 2010-2020  Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2011-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
+ * Copyright (C) 2011-2026  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
@@ -376,6 +376,7 @@ if (empty($reshook)) {
 			$object->capital				= GETPOST('capital');	// Can be null or 0 or a float value
 			$object->barcode				= GETPOST('barcode', 'alphanohtml');
 
+			$object->euid					= GETPOST('euid', 'alphanohtml');
 			$object->tva_intra				= GETPOST('tva_intra', 'alphanohtml');
 			$object->tva_assuj				= GETPOSTINT('assujtva_value');
 			$object->vat_reverse_charge		= GETPOST('vat_reverse_charge') == 'on' ? 1 : 0;
@@ -959,6 +960,7 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $formadmin = new FormAdmin($db);
 $formcompany = new FormCompany($db);
+$formaccounting = null;
 if (isModEnabled('accounting')) {
 	$formaccounting = new FormAccounting($db);
 }
@@ -1135,6 +1137,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 		$object->localtax1_value = GETPOST('lt1', 'alpha');
 		$object->localtax2_value = GETPOST('lt2', 'alpha');
 
+		$object->euid = GETPOST('euid', 'alphanohtml');
 		$object->tva_intra = GETPOST('tva_intra', 'alphanohtml');
 
 		$object->commercial_id = GETPOSTINT('commercial_id');
@@ -1821,6 +1824,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '</td></tr>';
 			}
 
+			print '<td class="nowrap">'.$form->editfieldkey('EUIDShort', 'euid', '', $object, 0).'</td>';
+			print '<td class="nowrap">';
+			print '<input type="text" class="flat maxwidthonsmartphone" name="euid" id="euid" maxlength="20" value="'.$object->euid.'">';
+			print '</td>';
+			print '</tr>';
+
 			// Local Taxes
 			// TODO: Place into a function to control showing by country or study better option
 			if ($mysoc->localtax1_assuj == "1" && $mysoc->localtax2_assuj == "1") {
@@ -2166,6 +2175,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				$object->tva_assuj				= GETPOSTINT('assujtva_value');
 				$object->vat_reverse_charge		= GETPOST('vat_reverse_charge') == 'on' ? 1 : 0;
+				$object->euid					= GETPOST('euid', 'alphanohtml');
 				$object->tva_intra				= GETPOST('tva_intra', 'alphanohtml');
 				$object->status =				GETPOSTINT('status');
 
@@ -2720,6 +2730,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '</td>';
 				print '</tr>';
 
+				print '<tr><td>'.$form->editfieldkey('EUIDShort', 'euid', '', $object, 0).'</td>';
+				print '<td colspan="3">';
+				print '<input type="text" class="flat maxwidthonsmartphone" name="euid" id="euid" maxlength="20" value="'.$object->euid.'">';
+				print '</td>';
+				print '</tr>';
+
+
 				$colspan = 4;
 
 				print '<tr><td colspan="'.$colspan.'"><hr></td></tr>';
@@ -3226,6 +3243,16 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					}
 				}
 				print $s;
+			} else {
+				print '&nbsp;';
+			}
+			print '</td></tr>';
+
+			// EUID
+			print '<tr>';
+			print '<td class="nowrap">'.$langs->trans('EUIDShort').'</td><td>';
+			if ($object->euid) {
+				print dol_print_profids($object->euid, 'EUID', $object->country_code, 1);
 			} else {
 				print '&nbsp;';
 			}
