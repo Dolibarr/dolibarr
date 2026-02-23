@@ -21,7 +21,7 @@
  * See https://medium.com/@lhartikk/a-blockchain-in-200-lines-of-code-963cc1cc0e54
  */
 
-include_once DOL_DOCUMENT_ROOT.'/blockedlog/versioncert.inc.php';
+include_once DOL_DOCUMENT_ROOT.'/blockedlog/versionmod.inc.php';
 
 
 /**
@@ -884,6 +884,7 @@ class BlockedLog
 			if (is_array($object->amounts) && !empty($object->amounts)) {
 				// Loop on each invoice the payment is part of to set the linktoref and the module_source and pos_source
 				$originofpayment = null;
+				$terminalofpayment = '';
 				$paymentpartnumber = 0;
 				foreach ($object->amounts as $objid => $amount) {
 					if (empty($amount)) {
@@ -1149,6 +1150,7 @@ class BlockedLog
 				}
 
 				$this->date_creation 	= $this->db->jdate($obj->date_creation, $tz);	// jdate(date_creation)is UTC
+				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 				$this->date_modification = $this->db->jdate($obj->tms, $tz);			// jdate(tms) is UTC
 
 
@@ -1589,7 +1591,7 @@ class BlockedLog
 	/**
 	 *	Get previous signature/hash in chain. If there is no previous line, return the init hash.
 	 *
-	 *	@param int<0,1>	$withlock			1=With a lock
+	 *	@param int<0,1>	$withlock			1=With a lock (Used in the ->create() transaction)
 	 *	@param int		$beforeid			ID of a record
 	 *  @return	array<string, int|string>	Hash of previous record (if beforeid is defined) or hash of last record (if beforeid is 0)
 	 */
