@@ -1342,14 +1342,14 @@ class FactureRec extends CommonInvoice
 
 
 	/**
-	 * Return the next date of
- 	 * Return the next date of execution
-	 * Handles end-of-month scenarios when day >= 28 for monthly recurring invoices.
-	 * If the original date is on day 28, 29, 30, or 31, the system will automatically
-	 * calculate the appropriate last day of the target month.
-	 *
-	 * @return  int|false   false if KO, timestamp if OK
-	 */
+	* Return the next date of
+	* Return the next date of execution
+	* Handles end-of-month scenarios when day >= 28 for monthly recurring invoices.
+	* If the original date is on day 28, 29, 30, or 31, the system will automatically
+	* calculate the appropriate last day of the target month.
+	*
+	* @return  int|false   false if KO, timestamp if OK
+	*/
 	public function getNextDate()
 	{
 		if (empty($this->date_when)) {
