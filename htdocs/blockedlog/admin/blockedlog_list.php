@@ -2,7 +2,7 @@
 /* Copyright (C) 2017		ATM Consulting				<contact@atm-consulting.fr>
  * Copyright (C) 2017-2018	Laurent Destailleur			<eldy@destailleur.fr>
  * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -652,25 +652,21 @@ if (is_array($blocks)) {
 					$totaltoshow += $value;
 				}
 
-				if ($key == 'PAYMENT_CUSTOMER_CREATE') {
-					print $langs->trans("Total").': ';
-					print price($totaltoshow);
-				} else {
-					print $langs->trans("HT").': ';
-					print price($totalhttoshow);
+				print $langs->trans("HT").': ';
+				print price($totalhttoshow);
 
-					//print '<br>';
-					print ' &nbsp; ';
+				//print '<br>';
+				print ' &nbsp; ';
 
-					print $langs->trans("VAT").': ';
-					print price($totalvattoshow);
+				print $langs->trans("VAT").': ';
+				print price($totalvattoshow);
 
-					//print '<br>';
-					print ' &nbsp; ';
+				//print '<br>';
+				print ' &nbsp; ';
 
-					print $langs->trans("TTC").': ';
-					print price($totaltoshow);
-				}
+				print $langs->trans("TTC").': ';
+				print price($totaltoshow);
+
 				print '</td>';
 
 				// Details link
