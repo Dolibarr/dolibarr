@@ -271,7 +271,7 @@ class WebsitePage extends CommonObject
 
 			if ($phpcontent) {
 				$this->error = 'Error: you try to create a page with PHP content without having permissions for that.';
-				$this->errors = $this->error;
+				$this->errors[] = $this->error;
 				return -1;
 			}
 		}
