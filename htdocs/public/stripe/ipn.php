@@ -191,6 +191,18 @@ dol_syslog("***** Stripe IPN was called with event->type=".$event->type." servic
 sleep(2);
 
 
+// Hook to allow external modules to handle Stripe webhook events
+$hookmanager = new HookManager($db);
+$hookmanager->initHooks(array('stripeipn'));
+$parameters = array('event' => $event, 'servicestatus' => $servicestatus, 'service' => $service);
+$reshook = $hookmanager->executeHooks('stripeWebhookEvent', $parameters, $event->data->object, $event->type);
+if ($reshook > 0) {
+	// A hook handled the event entirely, stop processing
+	http_response_code(200);
+	return;
+}
+
+
 if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_PAYOUT')) {
 	// When a payout is created by Stripe to transfer money to your account
 	dol_syslog("object = ".formatLogObject($event->data));

@@ -163,3 +163,5 @@ TOTP=TOTP (Time-base One-Time Password)
 UserRemovedFromGroup=User removed from group
 UserSetInGroup=User set in group
 ColorGroup=Color of group
+NotHolidayApprover=Not allowed to approve holiday
+NotExpenseReportApprover=Not allowed to approve expense report
