@@ -183,7 +183,9 @@ if (in_array($mysoc->country_code, array('FR'))) {
 print '<br>';
 
 print '<center><br>';
-print $langs->trans("YouMayFindDocumentOn", 'https://www.dolibarr.org/certifications-lf');
+print $langs->trans("YouMayFindDocumentOn").'<br>';
+print '<br>';
+print img_picto('', 'url').' <a href="https://www.dolibarr.org/certifications-lf" target="_blank">https://www.dolibarr.org/certifications-lf</a>';
 print '<center>';
 
 

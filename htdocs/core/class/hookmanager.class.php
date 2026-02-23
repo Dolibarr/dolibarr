@@ -389,7 +389,7 @@ class HookManager
 							dol_syslog("Error on hook module=".$module.", method ".$method.", class ".get_class($actionclassinstance).", hooktype=".$hooktype.(empty($this->error) ? '' : " ".$this->error).(empty($this->errors) ? '' : " ".implode(",", $this->errors)), LOG_ERR);
 						}
 
-						// TODO dead code to remove (do not disable this, but fix your hook instead): result must not be a string but an int. you must use $actionclassinstance->resprints to return a string
+						// Test old code (do not disable this, but fix your hook instead): result must not be a string but an int. you must use $actionclassinstance->resprints to return a string
 						if (!is_array($resactiontmp) && !is_numeric($resactiontmp)) {
 							dol_syslog('Error: Bug into hook '.$method.' of module class '.get_class($actionclassinstance).'. Method must not return a string but an int (0=OK, 1=Replace, -1=KO) and set string into ->resprints', LOG_ERR);
 							if (empty($actionclassinstance->resprints)) {
