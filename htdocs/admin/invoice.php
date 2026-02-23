@@ -878,11 +878,11 @@ print '</form>';
 print '<tr class="oddeven"><td>'.$langs->trans("InvoiceCheckPosteriorDate"). '&nbsp;' ;
 print $form->textwithpicto('', $langs->trans("InvoiceCheckPosteriorDateHelp"), 1, 'help') . '</td>';
 print '<td class="left" colspan="2">';
-if (!getDolGlobalInt('FAC_FORCE_DATE_VALIDATION')) {	// If date is forced, this option to check become useless
-	print ajax_constantonoff('INVOICE_CHECK_POSTERIOR_DATE');
-} else {
+//if (!getDolGlobalInt('FAC_FORCE_DATE_VALIDATION')) {	// If date is forced, this option to check become useless (it should be if you male import manually, it may be not)
+print ajax_constantonoff('INVOICE_CHECK_POSTERIOR_DATE');
+/*} else {
 	print img_picto($langs->trans("PreviousOptionGuaranteeThatDateIsAlwaysHigher"), 'switch_off', 'class="opacitymedium"');
-}
+}*/
 print '</td></tr>';
 
 // Allow external download

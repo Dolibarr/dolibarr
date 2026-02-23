@@ -526,7 +526,7 @@ class CMailFile
 			$text_body = "";
 			$files_encoded = "";
 
-			// Define smtp_headers (this also set SMTP headers from ->msgid, ->in_reply_to and ->references)
+			// Define smtp_headers (this also set SMTP headers from ->in_reply_to and ->references and set the property ->msgid)
 			$smtp_headers = $this->write_smtpheaders();
 			if (!empty($moreinheader)) {
 				$smtp_headers .= $moreinheader; // $moreinheader contains the \r\n

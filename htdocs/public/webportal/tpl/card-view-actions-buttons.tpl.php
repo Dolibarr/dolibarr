@@ -22,21 +22,17 @@ $formCard = $this->formCard;
 
 $url = $context->getControllerUrl($context->controller). '&id=' . $formCard->object->id;
 
-?>
-
-<?php if ($formCard->action != 'presend' && $formCard->action != 'editline') { ?>
-<div id="actions_buttons">
-	<?php
+if ($formCard->action != 'presend' && $formCard->action != 'editline') { ?>
+<div id="actions_buttons"><?php
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $context);
-	if ($reshook < 0) {
-		$context->setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-	} elseif (empty($reshook)) {
-		// Edit card
-		if ($formCard->permissiontoadd) { ?>
+if ($reshook < 0) {
+	$context->setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+} elseif (empty($reshook)) {
+	// Edit card
+	if ($formCard->permissiontoadd) { ?>
 			<a href="<?php print $url . "&action=edit" ?>" role="button"><?php print $langs->trans('Modify') ?></a>
-		<?php }
-	}
-	?>
-</div>
-<?php } ?>
+	<?php }
+}
+?></div>
+<?php }

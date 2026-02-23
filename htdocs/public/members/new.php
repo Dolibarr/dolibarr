@@ -755,7 +755,8 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 			$checkednature = $listetype_natures[GETPOSTINT('typeid')];
 		}
 
-		print '<tr><td class="fieldrequired">'.$langs->trans("MemberNature")."</td><td>\n";
+		print '<tr><td class="fieldrequired titlefieldmiddle">'.$langs->trans("MemberNature")."</td><td>\n";
+
 		$disabledphy = '';
 		$disabledmor = '';
 		//$disabledphy = ($checkednature == "mor" ? ' disabled="disabled"' : '');
@@ -849,7 +850,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 	}
 
 	// Company   // TODO : optional hide
-	print '<tr id="trcompany" class="trcompany"><td id="tdcompany" class="'.($checkednature == "mor" ? ' fieldrequired"' : '').'">'.$langs->trans("Company").'</td><td>';
+	print '<tr id="trcompany" class="trcompany"><td id="tdcompany" class="titlefieldmiddle'.($checkednature == "mor" ? ' fieldrequired"' : '').'">'.$langs->trans("Company").'</td><td>';
 	print img_picto('', 'company', 'class="pictofixedwidth paddingright"');
 	print '<input type="text" name="societe" class="minwidth150 widthcentpercentminusx" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
 
@@ -1019,7 +1020,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 
 		$country_code = dol_getIdFromCode($db, $country_id, 'c_country', 'rowid', 'code');
 		if ($country_code === 'FR' && $checkednature === 'mor' && GETPOST('pp')) {
-			print '<input type="text" name="budget" id="budget" class="flat turnover right width75" value="'.GETPOST('budget').'">';
+			print '<input type="text" name="budget" id="budget" class="flat turnover right width100" value="'.GETPOST('budget').'">';
 		} else {
 			$arraybudget = array('50' => '<= 100 000', '100' => '<= 200 000', '200' => '<= 500 000', '300' => '<= 1 500 000', '600' => '<= 3 000 000', '1000' => '<= 5 000 000', '2000' => '5 000 000+');
 			print $form->selectarray('budget', $arraybudget, GETPOSTINT('budget'), 1, 0, 0, '', 0, 0, 0, '');

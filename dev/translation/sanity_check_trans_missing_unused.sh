@@ -23,7 +23,7 @@
 #   - Some side effects from translations on variables.
 #   - Some other minors side effects to be examined (#, %).
 #
-# Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+# Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
 
 LANG_DIR=htdocs/langs/en_US/
 MYDIR=$(dirname "$(realpath "$0")")
@@ -141,10 +141,10 @@ sed -n 's@< \(.*\)@^\1\\s*=@p' \
 #
 REPL_STR=""
 for t in trans transnoentities transnoentitiesnoconv newItem buttonsSaveCancel; do
-   REPL_STR="${REPL_STR}\n->${t}(\"\\1\","
-   REPL_STR="${REPL_STR}\n->${t}('\\1',"
-   REPL_STR="${REPL_STR}\n->${t}(\"\\1\")"
-   REPL_STR="${REPL_STR}\n->${t}('\\1')"
+	REPL_STR="${REPL_STR}\n->${t}(\"\\1\","
+	REPL_STR="${REPL_STR}\n->${t}('\\1',"
+	REPL_STR="${REPL_STR}\n->${t}(\"\\1\")"
+	REPL_STR="${REPL_STR}\n->${t}('\\1')"
 done
 
 rm -f "${MISSING_FILE}.grep" >/dev/null 2>&1

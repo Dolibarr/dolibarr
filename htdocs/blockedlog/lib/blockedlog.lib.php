@@ -22,6 +22,21 @@
  *    \brief      Library for common blockedlog functions
  */
 
+include_once DOL_DOCUMENT_ROOT.'/blockedlog/versionmod.inc.php';
+
+
+/**
+ *  Define head array for tabs of blockedlog tools setup pages
+ *
+ *  @return	string		Version
+ */
+function getBlockedLogVersionToShow()
+{
+	// return DOL_VERSION;
+	return constant('DOLCERT_VERSION');
+}
+
+
 /**
  *  Define head array for tabs of blockedlog tools setup pages
  *
@@ -30,7 +45,7 @@
  */
 function blockedlogadmin_prepare_head($withtabsetup)
 {
-	global $db, $langs, $conf;
+	global $db, $langs, $conf, $mysoc;
 
 	$langs->load("blockedlog");
 
@@ -38,7 +53,7 @@ function blockedlogadmin_prepare_head($withtabsetup)
 
 	$param = '';
 	$param .= ($withtabsetup? "?withtab=".$withtabsetup : "");
-	$param .= (GETPOST('origin') ? ($param ? '&' : '').'origin='.GETPOST('origin') : '');
+	$param .= (GETPOST('origin') ? ($param ? '&' : '?').'origin='.GETPOST('origin') : '');
 
 	$h = 0;
 	$head = array();
@@ -57,12 +72,18 @@ function blockedlogadmin_prepare_head($withtabsetup)
 	$head[$h][2] = 'fingerprints';
 	$h++;
 
-
 	$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog_archives.php".$param;
 	$head[$h][1] = $langs->trans("Archives");
 	// TODO Add number of archive files in badge
 	$head[$h][2] = 'archives';
 	$h++;
+
+	if ($mysoc->country_code == 'FR') {
+		$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/documentation.php".$param;
+		$head[$h][1] = $langs->trans("Documentation");
+		$head[$h][2] = 'documentation';
+		$h++;
+	}
 
 	if ($withtabsetup) {
 		$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog.php".$param;
@@ -265,9 +286,16 @@ function pdfCertifMentionblockedLog(&$pdf, $outputlangs, $seller, $default_font_
 {
 	$result = 0;
 
-	if (in_array($seller->country_code, array('FR')) && isALNEQualifiedVersion()) {	// If necessary, we could replace with "if isALNERunningVersion()"
+	if (in_array($seller->country_code, array('FR'))) {
 		$outputlangs->load("blockedlog");
-		$blockedlog_mention = $outputlangs->transnoentitiesnoconv("InvoiceGeneratedWithLNECertifiedPOSSystem");
+
+		$isalne = isALNEQualifiedVersion(); // If necessary, we could replace with "if isALNERunningVersion()"
+		if ($isalne == 'CERTIF_LNE_IS_2') {
+			$blockedlog_mention = $outputlangs->transnoentitiesnoconv("InvoiceGeneratedWithLNECandidatePOSSystem");
+		} else {
+			$blockedlog_mention = $outputlangs->transnoentitiesnoconv("InvoiceGeneratedWithLNECertifiedPOSSystem");
+		}
+
 		if ($blockedlog_mention) {
 			$pdf->SetFont('', '', $default_font_size - 2);
 			$pdf->SetXY($pdftemplate->marge_gauche, $posy);
@@ -315,14 +343,17 @@ function sumAmountsForUnalterableEvent($block, &$refinvoicefound, &$totalhtamoun
 			$totalamount[$block->action][$block->module_source] += $total_ttc;
 		}
 		$refinvoicefound[$block->ref_object] = 1;
-	} elseif ($block->action == 'PAYMENT_CUSTOMER_CREATE') {
+	} elseif ($block->action == 'PAYMENT_CUSTOMER_CREATE' || $block->action == 'PAYMENT_CUSTOMER_DELETE') {
 		$total_ht = $block->object_data->amount;
 		$total_vat = 0;
 		$total_ttc = $block->object_data->amount;
 
-		$totalhtamount[$block->action][$block->module_source] += $total_ht;
-		$totalvatamount[$block->action][$block->module_source] += $total_vat;
-		$totalamount[$block->action][$block->module_source] += $total_ttc;
+		//$actionkey = $block->action;
+		$actionkey = 'PAYMENT_CUSTOMER';
+
+		$totalhtamount[$actionkey][$block->module_source] += $total_ht;
+		$totalvatamount[$actionkey][$block->module_source] += $total_vat;
+		$totalamount[$actionkey][$block->module_source] += $total_ttc;
 	} else {
 		$total_ttc = $block->amounts;
 	}
@@ -334,12 +365,14 @@ function sumAmountsForUnalterableEvent($block, &$refinvoicefound, &$totalhtamoun
 /**
  * Call remote API service to push the last counter and signature
  *
- * @param 	int		$id			Last counter ID/value
- * @param 	string	$signature	Signature
- * @param	int		$test		Add property test to 1 if it is for test
- * @return	int					Return <0 if KO, 0 if nothing done, >0 if OK
+ * @param 	int		$id					Last counter ID/value
+ * @param 	string	$signature			Signature
+ * @param	int		$test				Add property test to 1 if it is for test
+ * @param 	int		$previousid			Last counter ID/value
+ * @param 	string	$previoussignature	Signature
+ * @return	int							Return <0 if KO, 0 if nothing done, >0 if OK
  */
-function callApiToPushCounter($id, $signature, $test = 0)
+function callApiToPushCounter($id, $signature, $test, $previousid, $previoussignature)
 {
 	global $mysoc, $conf;
 
@@ -347,37 +380,31 @@ function callApiToPushCounter($id, $signature, $test = 0)
 		// Push last rowid + signature to remote dolibarr server
 		// TODO Do it only for selected events: BILL_VALIDATE ?
 
-		// Code here is similar to the one into printCodeForPing()
+		// Code here is similar to the one into printCodeForPing(), except that message code/properties/fields may differ.
 		$url_for_ping = getDolGlobalString('MAIN_URL_FOR_PING', "https://ping.dolibarr.org/");
 
 		$algo = 'sha256';
 		$hash_unique_id = getHashUniqueIdOfRegistration($algo);
 
-		$data = 'hash_algo=dol_hash-'.urlencode($algo);
+		$data = '';
+		$data .= 'hash_algo=dol_hash-'.urlencode($algo);
 		$data .= '&hash_unique_id='.urlencode($hash_unique_id);
 		$data .= '&action=dolibarrpushcounter';
+		$data .= '&datesys='.urlencode(dol_print_date(dol_now(), 'standard', 'gmt'));
 		$data .= '&version='.(float) DOL_VERSION;
 		$data .= '&version_full='.urlencode(DOL_VERSION);
+		$data .= '&versionblockedlog='.(float) getBlockedLogVersionToShow();
+		$data .= '&versionblockedlog_full='.urlencode(getBlockedLogVersionToShow());
+
 		$data .= '&entity='.(int) $conf->entity;
 
 		$data .= '&lastrowid='.(int) $id;
 		$data .= '&lastsignature='.urlencode($signature);
+		$data .= '&previousrowid='.(int) $previousid;
+		$data .= '&previoussignature='.urlencode($previoussignature);
 		if ($test) {
 			$data .= '&test=1';
 		}
-
-		/*
-		$data = array(
-			'action' => 'dolibarrpushcounter',
-			'hash_algo' => 'dol_hash-'.$algo,
-			'hash_unique_id' => $hash_unique_id,
-			'version' => (float) DOL_VERSION,
-			'version_full' => urlencode(DOL_VERSION),
-			'entity=' => (int) $conf->entity
-		);
-		$data['lastrowid'] = (int) $this->id;
-		$data['lastsignature'] = urlencode($this->signature);
-		*/
 
 		$addheaders = array();
 		$timeoutconnect = 1;

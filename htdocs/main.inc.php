@@ -1116,7 +1116,7 @@ if (!defined('NOLOGIN')) {
 			}
 		}
 		if (!$isallowed) {
-			header('Location: '.DOL_URL_ROOT.'/user/changepassword.php?id='.$user->id);
+			header('Location: '.DOL_URL_ROOT.'/user/changepassword.php');
 			exit;
 		}
 	}
@@ -3784,6 +3784,8 @@ if (!function_exists("llxFooter")) {
 
 					$arrayofmoredata = array(
 						'action' => 'dolibarrping',
+						'datesys' => dol_print_date(dol_now(), 'standard', 'gmt'),
+
 						'country_code' => ($mysoc->country_code ? $mysoc->country_code : 'unknown')
 					);
 					printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayofmoredata, $forceping);
@@ -3828,6 +3830,7 @@ if (!function_exists("llxFooter")) {
 
 						$arrayofdata = array(
 							'action' => 'dolibarrregistration',
+							'datesys' => dol_print_date(dol_now(), 'standard', 'gmt'),
 
 							'company_name' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_NAME', $mysoc->name),
 							'company_email' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_EMAIL', $mysoc->email),
@@ -3878,11 +3881,18 @@ if (!function_exists("llxFooter")) {
 				$tmpblockedlog = new BlockedLog($db);
 				$tmpresult = $tmpblockedlog->getPreviousHash(0, 0);
 
-				// Call remote API service to record the last counter
-				include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
-				$resultcall = callApiToPushCounter((int) $tmpresult['previousid'], $tmpresult['previoushash'], 1);
+				if ((int) $tmpresult['previousid']) {
+					$tmpresult2 = $tmpblockedlog->getPreviousHash(0, (int) $tmpresult['previousid']);	// Get previous record
 
-				print "\n<!-- API TO PUSH COUNTER WAS CALLED. Result is ".$resultcall.". You may have log into dolibarr_dolibarrpushcounter.log -->\n";
+					if ((int) $tmpresult2['previousid']) {
+						// Call remote API service to record the last counter
+						$resultcall = callApiToPushCounter((int) $tmpresult['previousid'], $tmpresult['previoushash'], 1, (int) $tmpresult2['previousid'], $tmpresult2['previoushash']);
+
+						print "\n<!-- API TO PUSH COUNTER WAS CALLED. Result is ".$resultcall.". You may have log into dolibarr_dolibarrpushcounter.log -->\n";
+					}
+				} else {
+					print "\n<!-- NO CALL TO API TO PUSH COUNTER. Last rowid and signature not found -->\n";
+				}
 			}
 		}
 
