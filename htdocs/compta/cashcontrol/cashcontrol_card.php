@@ -6,7 +6,7 @@
  * Copyright (C) 2015      	Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2016      	Marcos García        	<marcosgdf@gmail.com>
  * Copyright (C) 2018      	Andreu Bisquerra		<jove@bisquerra.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -136,7 +136,7 @@ if ($object->id > 0) {
 		$datestart = dol_time_plus_duree($dateend, -1, 'm', 0);
 	} elseif (empty($object->day_close) && empty($object->month_close)) {	// Full year
 		$dateend = dol_mktime((int) $object->hour_close, (int) $object->min_close, (int) $object->sec_close, 12, 31, $object->year_close, 'gmt');
-		$datestart = dol_time_plus_duree($datestart, -1, 'y', 0);
+		$datestart = dol_time_plus_duree($dateend, -1, 'y', 0);
 	} else {
 		$dateend = dol_mktime((int) $object->hour_close, (int) $object->min_close, (int) $object->sec_close, $object->month_close, $object->day_close, $object->year_close, 'gmt');
 		$datestart = dol_time_plus_duree($dateend, -1, 'd', 0);
@@ -803,7 +803,7 @@ if ($action == "create" || $action == "start") {
 			$object->fetch($id);
 			print $object->opening;
 		} else {
-			print (GETPOSTISSET('opening') ? price2num(GETPOST('opening', 'alpha')) : price($initialbalanceforterminal[$terminalid]['cash']));
+			print(GETPOSTISSET('opening') ? price2num(GETPOST('opening', 'alpha')) : price($initialbalanceforterminal[$terminalid]['cash']));
 		}
 		print '">';
 		print '</td>';
@@ -904,7 +904,7 @@ if (empty($action) || $action == "view" || $action == "close") {
 
 		if ($object->lifetime_start) {
 			print '<tr><td class="titlefield nowrap">';
-			print $langs->trans("LifetimeAmount");
+			print $langs->trans("LifetimeAmount", $langs->transnoentities("AllPaymentModes"));
 			print '</td><td colspan="3">';
 			print '<span class="amount">'.price($object->card_lifetime + $object->cheque_lifetime + $object->cash_lifetime, 0, $langs, 1, -1, -1, $conf->currency).'</span>';
 			print ' &nbsp; <span class="opacitymedium">'.$langs->trans("since").' '.dol_print_date($object->lifetime_start, 'dayhour').' ('.$langs->trans("AllTerminals").')</span>';
@@ -948,12 +948,17 @@ if (empty($action) || $action == "view" || $action == "close") {
 				}
 				print '</td>';
 				print '<td class="right">';
-				print '<span class="amount';
-				if ((($key == 'cash' ? $object->opening : 0) + $realamountforpaymentmode) != $declaredamountforpaymentmode) {
-					print ' error';
+				$calcamount = (($key == 'cash' ? $object->opening : 0) + $realamountforpaymentmode);
+				print '<span class="amount">'.price($calcamount, 0, $langs, 1, -1, -1, $conf->currency).'</span>';
+				//print '</span>';
+				//print '<span class="amount';
+				if ($calcamount != $declaredamountforpaymentmode) {
+					//print ' error';
+					print img_picto($langs->trans("Declared").': '.$declaredamountforpaymentmode, 'warning');
 				}
-				print '">';
-				print price($declaredamountforpaymentmode, 0, $langs, 1, -1, -1, $conf->currency).'</span>';
+				//print '">';
+
+
 				print '</td>';
 				print '</tr>';
 			}

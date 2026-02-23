@@ -21,7 +21,7 @@
  * See https://medium.com/@lhartikk/a-blockchain-in-200-lines-of-code-963cc1cc0e54
  */
 
-include_once DOL_DOCUMENT_ROOT.'/blockedlog/versioncert.inc.php';
+include_once DOL_DOCUMENT_ROOT.'/blockedlog/versionmod.inc.php';
 
 
 /**
@@ -85,10 +85,14 @@ class BlockedLog
 	public $action = '';
 
 	/**
-	 * Module source
-	 * @var string
+	 * @var string		Module source
 	 */
 	public $module_source = '';
+
+	/**
+	 * @var string		Terminal nb
+	 */
+	public $pos_source = '';
 
 	/**
 	 * @var string $linktype. Example 'paymentofinvoice'
@@ -543,6 +547,7 @@ class BlockedLog
 			'@phan-var-force CashControl $object';
 			$this->date_object = $object->date_creation;
 			$this->module_source = $object->posmodule;
+			$this->pos_source = $object->posnumber;
 		} elseif (property_exists($object, 'date')) {
 			// Generic case
 			$this->date_object = $object->date; // @phan-suppress-current-line PhanUndeclaredProperty
@@ -562,6 +567,7 @@ class BlockedLog
 					$this->linktoref = $invoice->ref;
 				}
 				//$this->module_source = (string) $invoice->module_source;
+				//$this->pos_source = (string) $invoice->pos_source;
 			}
 		}
 		if ($object->element == 'facture') {
@@ -576,6 +582,7 @@ class BlockedLog
 					$this->object_data->link = $this->linktype.' '.$this->linktoref;
 				}
 				$this->module_source = (string) $invoice->module_source;
+				$this->pos_source = (string) $invoice->pos_source;
 			}
 		}
 
@@ -668,8 +675,8 @@ class BlockedLog
 			}
 		}
 
-		// Add my company info
-		if (!empty($mysoc) && !in_array($object->element, array('cashcontrol'))) {
+		// Add my company info (Only for customer invoice and payment)
+		if (!empty($mysoc) && in_array($object->element, array('facture', 'paiement'))) {
 			$this->object_data->mycompany = new stdClass();
 
 			foreach ($mysoc as $key => $value) {
@@ -714,6 +721,7 @@ class BlockedLog
 		if ($this->element == 'facture') {
 			'@phan-var-force Facture $object';
 			$this->module_source = (string) $object->module_source;
+			$this->pos_source = (string) $object->pos_source;
 
 			foreach ($object as $key => $value) {
 				if (in_array($key, $arrayoffieldstoexclude)) {
@@ -874,8 +882,9 @@ class BlockedLog
 
 			// Loop on each invoice payment amount (the payment_part)
 			if (is_array($object->amounts) && !empty($object->amounts)) {
-				// Loop on each invoice the payment is part of to set the linktoref and the module_source
+				// Loop on each invoice the payment is part of to set the linktoref and the module_source and pos_source
 				$originofpayment = null;
+				$terminalofpayment = '';
 				$paymentpartnumber = 0;
 				foreach ($object->amounts as $objid => $amount) {
 					if (empty($amount)) {
@@ -913,8 +922,8 @@ class BlockedLog
 					}
 
 					$this->linktoref .= ($this->linktoref ? ',' : '').$tmpobject->ref;
-					// Set the ->module_source of payment from origin object if relevant
 
+					// Set the ->module_source of payment from origin object if relevant
 					if (property_exists($tmpobject, 'module_source')) {
 						if (is_null($originofpayment)) {
 							$originofpayment = $tmpobject->module_source;
@@ -924,7 +933,16 @@ class BlockedLog
 							$originofpayment = (string) $tmpobject->module_source;
 						}
 					}
-
+					// Set the ->pos_source of payment from origin object if relevant
+					if (property_exists($tmpobject, 'pos_source')) {
+						if (is_null($originofpayment)) {
+							$terminalofpayment = $tmpobject->pos_source;
+						} elseif ($originofpayment != $tmpobject->pos_source) {
+							$terminalofpayment = 'mix';	// the payment is on several invoices with different origins
+						} else {
+							$terminalofpayment = (string) $tmpobject->pos_source;
+						}
+					}
 					$paymentpart = new stdClass();
 					$paymentpart->amount = $amount;
 
@@ -1014,6 +1032,7 @@ class BlockedLog
 				}
 
 				$this->module_source = (string) $originofpayment;
+				$this->pos_source = (string) $terminalofpayment;
 			} elseif (!empty($object->amount)) {
 				$totalamount = $object->amount;
 			}
@@ -1062,7 +1081,7 @@ class BlockedLog
 		} else {
 			if ($object->element == 'cashcontrol') {
 				$this->module_source = (string) $object->posmodule;		// Module
-				//$this->pos_source = (string) $object->posnumber;		// Terminal
+				$this->pos_source = (string) $object->posnumber;		// Terminal
 			}
 
 			// Generic case
@@ -1110,7 +1129,7 @@ class BlockedLog
 			return -1;
 		}
 
-		$sql = "SELECT b.rowid, b.date_creation, b.action, b.module_source, b.amounts_taxexcl, b.amounts, b.element, b.fk_object, b.entity,";
+		$sql = "SELECT b.rowid, b.date_creation, b.action, b.module_source, b.pos_source, b.amounts_taxexcl, b.amounts, b.element, b.fk_object, b.entity,";
 		$sql .= " b.certified, b.tms, b.fk_user, b.user_fullname, b.date_object, b.ref_object, b.linktoref, b.linktype, b.object_data, b.object_version, b.object_format, b.signature";
 		$sql .= " FROM ".MAIN_DB_PREFIX."blockedlog as b";
 		if ($id) {
@@ -1131,11 +1150,13 @@ class BlockedLog
 				}
 
 				$this->date_creation 	= $this->db->jdate($obj->date_creation, $tz);	// jdate(date_creation)is UTC
+				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 				$this->date_modification = $this->db->jdate($obj->tms, $tz);			// jdate(tms) is UTC
 
 
 				$this->action 			= $obj->action;
 				$this->module_source	= $obj->module_source;
+				$this->pos_source		= $obj->pos_source;
 
 				$this->amounts_taxexcl	= (is_null($obj->amounts_taxexcl) ? null : (float) $obj->amounts_taxexcl);
 				$this->amounts			= (float) $obj->amounts;
@@ -1334,6 +1355,7 @@ class BlockedLog
 		$sql .= " date_creation,";
 		$sql .= " action,";
 		$sql .= " module_source,";
+		$sql .= " pos_source,";
 		$sql .= " amounts_taxexcl,";
 		$sql .= " amounts,";
 		$sql .= " signature,";
@@ -1355,6 +1377,7 @@ class BlockedLog
 		$sql .= "'".$this->db->idate($this->date_creation, $tz)."',";
 		$sql .= "'".$this->db->escape($this->action)."',";
 		$sql .= "'".$this->db->escape((string) $this->module_source)."',";
+		$sql .= "'".$this->db->escape((string) $this->pos_source)."',";
 		$sql .= (is_null($this->amounts_taxexcl) ? "null" : (float) $this->amounts_taxexcl).",";
 		$sql .= (float) $this->amounts.",";
 		$sql .= "'".$this->db->escape($this->signature)."',";
@@ -1499,7 +1522,7 @@ class BlockedLog
 			return $this->date_creation.'|'.$this->action.'|'.$this->amounts.'|'.$this->ref_object.'|'.$this->date_object.'|'.$this->user_fullname;
 		} elseif ($format == 'V2') {
 			$s = $this->entity;
-			$s .= '|'.$this->date_creation.'|'.$this->action.'|'.$this->module_source.'|'.$this->amounts_taxexcl.'|'.$this->amounts.'|'.$this->ref_object.'|'.$this->date_object.'|'.$this->user_fullname;
+			$s .= '|'.$this->date_creation.'|'.$this->action.'|'.$this->module_source.'|'.$this->pos_source.'|'.$this->amounts_taxexcl.'|'.$this->amounts.'|'.$this->ref_object.'|'.$this->date_object.'|'.$this->user_fullname;
 			$s .= '|'.(string) $this->linktoref;
 			$s .= '|'.(string) $this->linktype;
 			return $s;
@@ -1568,7 +1591,7 @@ class BlockedLog
 	/**
 	 *	Get previous signature/hash in chain. If there is no previous line, return the init hash.
 	 *
-	 *	@param int<0,1>	$withlock			1=With a lock
+	 *	@param int<0,1>	$withlock			1=With a lock (Used in the ->create() transaction)
 	 *	@param int		$beforeid			ID of a record
 	 *  @return	array<string, int|string>	Hash of previous record (if beforeid is defined) or hash of last record (if beforeid is 0)
 	 */
@@ -1650,9 +1673,10 @@ class BlockedLog
 	 *  @param	string|string[]	        $search_code			Search code
 	 *  @param	string			        $search_signature		Search signature
 	 *  @param	string			        $search_module_source	Search on module source
+	 *  @param	string			        $search_pos_source		Search on terminal
 	 *	@return	BlockedLog[]|int<-2,-1>							Array of object log or <0 if error
 	 */
-	public function getLog($element, $fk_object, $limit = 0, $sortfield = '', $sortorder = '', $search_fk_user = -1, $search_start = -1, $search_end = -1, $search_ref = '', $search_amount = '', $search_code = '', $search_signature = '', $search_module_source = '')
+	public function getLog($element, $fk_object, $limit = 0, $sortfield = '', $sortorder = '', $search_fk_user = -1, $search_start = -1, $search_end = -1, $search_ref = '', $search_amount = '', $search_code = '', $search_signature = '', $search_module_source = '', $search_pos_source = '')
 	{
 		global $conf;
 		//global $cachedlogs;
@@ -1718,13 +1742,19 @@ class BlockedLog
 				if (!empty($search_module_source)) {
 					$sql .= natural_search("module_source", implode(',', $search_module_source), 3, 1);
 				}
-				$sql .= " OR module_source = 'mix'";	// When a payment was reocrd and payment was on an invoice with different origins (pos and not pos)
+				$sql .= " OR module_source = 'mix'";	// When a payment was recorded and payment was on an invoice with different origins (pos and not pos)
 				$sql .= ")";
 			}
 		} else {
 			if ($search_module_source != '' && $search_module_source != '-1') {
 				$sql .= natural_search("module_source", $search_module_source, 3);
 			}
+		}
+		if ($search_pos_source != '') {
+			$sql .= " AND (";
+			$sql .= natural_search("pos_source", $search_pos_source, 0, 1);
+			$sql .= " OR pos_source = 'mix'";	// When a payment was recorded and payment was on an invoice with different terminal (pos and not pos)
+			$sql .= ")";
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
