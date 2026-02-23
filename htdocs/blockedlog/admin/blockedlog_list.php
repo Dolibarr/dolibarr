@@ -76,6 +76,7 @@ if (GETPOST('search_endyear') != '') {
 }
 $search_code = GETPOST('search_code', 'array:alpha');
 $search_module_source = GETPOST('search_module_source', 'array:alpha');
+$search_pos_source = GETPOST('search_pos_source');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
 $search_signature = GETPOST('search_signature', 'alpha');
@@ -141,6 +142,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_end = -1;
 	$search_code = array();
 	$search_module_source = '';
+	$search_pos_source = '';
 	$search_ref = '';
 	$search_amount = '';
 	$search_signature = '';
@@ -173,7 +175,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-blockedl
 
 // Get list of blocked logs.
 // Warning: This make a fetch on each line.
-$blocks = $block_static->getLog('all', (string) $search_id, $MAXLINES, $sortfield, $sortorder, (int) $search_fk_user, $search_start, $search_end, $search_ref, $search_amount, $search_code, $search_signature, $search_module_source);
+$blocks = $block_static->getLog('all', (string) $search_id, $MAXLINES, $sortfield, $sortorder, (int) $search_fk_user, $search_start, $search_end, $search_ref, $search_amount, $search_code, $search_signature, $search_module_source, $search_pos_source);
 if (!is_array($blocks)) {
 	if ($blocks == -2) {
 		setEventMessages($langs->trans("TooManyRecordToScanRestrictFilters", $MAXLINES), null, 'errors');
@@ -205,18 +207,21 @@ print dol_get_fiche_head($head, 'fingerprints', '', -1);
 //print $texttop;
 //print '<br><br>';
 
-print '<div class="opacitymedium hideonsmartphone justify">';
-
+print '<div class="justify">';
+print '<span class="opacitymedium hideonsmartphone">';
 print $langs->trans("FingerprintsDesc")."<br>";
-$s = $langs->trans("FilesIntegrityDesc", '{s}');
-$s = str_replace('{s}', DOL_URL_ROOT.'/blockedlog/admin/filecheck.php', $s);
-print $s;
-print "<br>\n";
+print $langs->trans("FilesIntegrityDesc").': ';
+print '</span>';
+print '<a href="'.DOL_URL_ROOT.'/blockedlog/admin/filecheck.php">'.img_picto('', 'url', 'class="pictofixedwidth"').$langs->trans("FileCheck").'</a>';
+print '<br>';
 print "</div>\n";
 
 $htmltext = '';
 $htmltext .= $langs->trans("UnalterableLogTool2", $langs->transnoentitiesnoconv("Archives"))."<br>";
 $htmltext .= $langs->trans("UnalterableLogTool3")."<br>";
+if ($mysoc->country_code == 'FR') {
+	$htmltext .= '<br>'.$langs->trans("UnalterableLogTool1FR").'<br>';
+}
 
 print info_admin($htmltext, 0, 0, 'warning');
 
@@ -230,6 +235,9 @@ if ($contextpage != getDolDefaultContextPage(__FILE__)) {
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.((int) $limit);
 }
+if ($optioncss != '') {
+	$param .= '&optioncss='.urlencode($optioncss);
+}
 if ($search_id != '') {
 	$param .= '&search_id='.urlencode($search_id);
 }
@@ -238,6 +246,12 @@ if ($search_ref != '') {
 }
 if ($search_fk_user > 0) {
 	$param .= '&search_fk_user='.urlencode($search_fk_user);
+}
+if ($search_amount) {
+	$param .= '&search_module_source='.urlencode($search_module_source);
+}
+if ($search_pos_source) {
+	$param .= '&search_pos_source='.urlencode($search_pos_source);
 }
 if ($search_startyear > 0) {
 	$param .= '&search_startyear='.((int) $search_startyear);
@@ -265,9 +279,6 @@ if ($search_signature) {
 }
 if ($search_showonlyerrors > 0) {
 	$param .= '&search_showonlyerrors='.((int) $search_showonlyerrors);
-}
-if ($optioncss != '') {
-	$param .= '&optioncss='.urlencode($optioncss);
 }
 if (GETPOST('withtab', 'alpha')) {
 	$param .= '&withtab='.urlencode(GETPOST('withtab', 'alpha'));
@@ -318,12 +329,17 @@ print '</td>';
 
 // Module source
 print '<td class="liste_titre">';
-print $form->multiselectarray('search_module_source', $block_static->trackedmodules, $search_module_source, 0, 0, 'maxwidth150', 1);
+print $form->multiselectarray('search_module_source', $block_static->trackedmodules, $search_module_source, 0, 0, 'minwidth75 maxwidth200', 1);
+print '</td>';
+
+// POS source
+print '<td class="liste_titre">';
+print '<input type="text" class="maxwidth50" name="search_pos_source" value="'.dol_escape_htmltag($search_pos_source).'">';
 print '</td>';
 
 // Actions code
 print '<td class="liste_titre">';
-print $form->multiselectarray('search_code', $block_static->trackedevents, $search_code, 0, 0, 'maxwidth150', 1);
+print $form->multiselectarray('search_code', $block_static->trackedevents, $search_code, 0, 0, 'maxwidth200', 1);
 print '</td>';
 
 // Ref
@@ -369,6 +385,7 @@ print getTitleFieldOfList($langs->trans('#'), 0, $_SERVER["PHP_SELF"], 'rowid', 
 print getTitleFieldOfList($langs->trans('Date'), 0, $_SERVER["PHP_SELF"], 'date_creation', '', $param, '', $sortfield, $sortorder, '')."\n";
 print getTitleFieldOfList($langs->trans('Author'), 0, $_SERVER["PHP_SELF"], 'user_fullname', '', $param, '', $sortfield, $sortorder, '')."\n";
 print getTitleFieldOfList($langs->trans('POS'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '')."\n";
+print getTitleFieldOfList($langs->trans('Terminal'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '')."\n";
 print getTitleFieldOfList($langs->trans('Action'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '')."\n";
 print getTitleFieldOfList($langs->trans('Ref'), 0, $_SERVER["PHP_SELF"], 'ref_object', '', $param, '', $sortfield, $sortorder, '')."\n";
 print getTitleFieldOfList($langs->trans('Amount'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ', 0, $langs->trans("TotalTTCIfInvoiceSeeCompleteDataForDetail").'<br>'.$langs->trans("AmountInCurrency", getDolCurrency()))."\n";
@@ -447,7 +464,7 @@ if (is_array($blocks)) {
 
 			// Action column
 			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-				print '<td class="liste_titre">';
+				print '<td>';
 				print '</td>';
 			}
 
@@ -455,7 +472,7 @@ if (is_array($blocks)) {
 			print '<td>'.dolPrintHTML((string) $block->id).'</td>';
 
 			// Date
-			print '<td class="nowraponall">'.dol_print_date($block->date_creation, 'dayhour').'</td>';
+			print '<td class="nowraponall">'.dol_print_date($block->date_creation, 'dayhour', 'tzuserrel').'</td>';
 
 			// User
 			print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($block->user_fullname).'">';
@@ -463,9 +480,12 @@ if (is_array($blocks)) {
 			print dolPrintHTML($block->user_fullname);
 			print '</td>';
 
-			// ModulePOS
+			// Module
 			$labelofmodulesource = $block->module_source;
 			print '<td class="tdoverflowmax250" title="'.dolPrintHTMLForAttribute($labelofmodulesource).'">'.dolPrintHTML($labelofmodulesource).'</td>';
+
+			// Terminal
+			print '<td>'.dolPrintHTML($block->pos_source).'</td>';
 
 			// Action
 			$labelofaction = $langs->transnoentitiesnoconv('log'.$block->action);
@@ -499,15 +519,16 @@ if (is_array($blocks)) {
 
 			// Amount
 			print '<td class="right nowraponall">';
-
-			if (empty($total_ttc)) {
-				print '<span class="opacitymedium">';
+			if (!in_array($block->action, array('BLOCKEDLOG_EXPORT', 'CASHCONTROL_CLOSE', 'MODULE_SET', 'MODULE_RESET'))) {
+				$ingrey = !in_array($block->action, array('BILL_VALIDATE', 'PAYMENT_CUSTOMER_CREATE', 'PAYMENT_CUSTOMER_DELETE'));
+				if ($ingrey) {
+					print '<span class="opacitymedium">';
+				}
+				print price($total_ttc);
+				if ($ingrey) {
+					print '</span>';
+				}
 			}
-			print price($total_ttc);
-			if (empty($total_ttc)) {
-				print '</span>';
-			}
-
 			print '</td>';
 
 			// Details link
@@ -579,38 +600,45 @@ if (is_array($blocks)) {
 		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	} else {
 		foreach ($totalamount as $key => $totalamountperref) {
-			if ($key == 'BILL_VALIDATE' || $key == 'PAYMENT_CUSTOMER_CREATE') {
+			if ($key == 'BILL_VALIDATE' || $key == 'PAYMENT_CUSTOMER') {
 				// Total
-				print '<tr class="totalline">';
+				print '<tr class="liste_total">';
 
 				// Action column
 				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-					print '<td class="liste_titre">';
+					print '<td>';
 					print '</td>';
 				}
 
 				// ID
-				print '<td colspan="2">'.dolPrintHTML($langs->trans("TotalForAction").' '.$langs->trans('log'.$key)).'</td>';
+				print '<td colspan="4">';
+				print dolPrintHTML($langs->trans("TotalForAction").' '.$langs->trans('log'.$key));
+				if ($key == 'BILL_VALIDATE') {
+					print ' <span class="opacitymedium">('.$langs->trans("Turnover").')</span>';
+				} elseif ($key == 'PAYMENT_CUSTOMER') {
+					print ' <span class="opacitymedium">('.$langs->trans("TurnoverCollected").')</span>';
+				}
+				print '</td>';
 
 				// Date
 				//print '<td class="nowraponall"></td>';
 
 				// User
-				print '<td class="tdoverflowmax200">';
-				print '</td>';
+				//print '<td class="tdoverflowmax200">';
+				//print '</td>';
 
 				// Module source
-				print '<td></td>';
+				//print '<td></td>';
 
 				// Action
 				print '<td></td>';
 
 				// Ref
-				print '<td class="nowraponall">';
-				print '</td>';
+				//print '<td class="nowraponall">';
+				//print '</td>';
 
 				// Amount (HT)
-				print '<td class="right nowraponall">';
+				print '<td class="right nowraponall" colspan="2">';
 				$totalhttoshow = 0;
 				foreach ($totalhtamount[$key] as $value) {	// Loop on each module
 					$totalhttoshow += $value;
@@ -631,12 +659,14 @@ if (is_array($blocks)) {
 					print $langs->trans("HT").': ';
 					print price($totalhttoshow);
 
-					print '<br>';
+					//print '<br>';
+					print ' &nbsp; ';
 
 					print $langs->trans("VAT").': ';
 					print price($totalvattoshow);
 
-					print '<br>';
+					//print '<br>';
+					print ' &nbsp; ';
 
 					print $langs->trans("TTC").': ';
 					print price($totaltoshow);

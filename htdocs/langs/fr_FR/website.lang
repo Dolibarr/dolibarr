@@ -118,8 +118,8 @@ ThisPageHasTranslationPages=Cette page / container a une traduction
 NoWebSiteCreateOneFirst=Aucun site Web n'a encore été créé. Créez-en un d'abord.
 GoTo=Aller à
 DynamicPHPCodeContainsAForbiddenInstruction=Vous ajoutez du code PHP dynamique contenant l'instruction PHP '<strong>%s</strong> ' qui est interdite par défaut en tant que contenu dynamique (voir les options masquées WEBSITE_PHP_ALLOW_xxx pour augmenter la liste des commandes autorisées).
-NotAllowedToAddDynamicContent=You don't have permission to add or edit dynamic PHP content in websites. Ask permission or just keep code into php tags unmodified.
-NotAllowedToAddDynamicContentDisabledGlobaly=You currently can't add or edit dynamic PHP content in this website (even if you have permission to), because this feature must be first enabled globally by setting the parameter %s=1 int the conf.php file.<br>Edit your conf.php file to add this parameter, or ask your administrator or support to do it for you.
+NotAllowedToAddDynamicContent=Vous n'êtes pas autorisé à ajouter ou à modifier du contenu PHP dynamique sur les sites web. Veuillez demander l'autorisation ou laisser le code PHP intact.
+NotAllowedToAddDynamicContentDisabledGlobaly=Vous ne pouvez actuellement pas ajouter ni modifier de contenu PHP dynamique sur ce site web (même si vous y êtes autorisé), car cette fonctionnalité doit d'abord être activée globalement en définissant le paramètre `%s`=1 dans le fichier `conf.php`. Modifiez votre fichier `conf.php` pour ajouter ce paramètre, ou demandez à votre administrateur ou au support technique de le faire pour vous.
 ReplaceWebsiteContent=Rechercher ou remplacer un contenu du site
 DeleteAlsoJs=Supprimer également tous les fichiers JavaScript spécifiques à ce site ?
 DeleteAlsoMedias=Supprimer également tous les fichiers médias spécifiques à ce site ?

@@ -181,4 +181,7 @@ ALTER TABLE llx_c_sepa_community_instrument ADD INDEX idx_c_sepa_community_instr
 
 INSERT INTO llx_c_sepa_community_instrument (code, label, position, active) VALUES ('CORE', 'c_sepa_community_instrumentCORE', 0, 1);
 INSERT INTO llx_c_sepa_community_instrument (code, label, position, active) VALUES ('INST', 'c_sepa_community_instrumentINST', 1, 1);
+
+ALTER TABLE llx_blockedlog ADD COLUMN pos_source varchar(32) DEFAULT '';
+
 -- end of migration
