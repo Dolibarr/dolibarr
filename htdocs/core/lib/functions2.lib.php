@@ -3170,6 +3170,8 @@ function printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayo
 						hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>',
 						version: '<?php echo (float) DOL_VERSION; ?>',
 						version_full: '<?php echo DOL_VERSION; ?>',
+						versionblockedlog: '<?php echo (float) getBlockedLogVersionToShow(); ?>',
+						versionblockedlog_full: '<?php echo getBlockedLogVersionToShow(); ?>',
 						entity: '<?php echo (int) $conf->entity; ?>',
 						dbtype: '<?php echo dol_escape_js($db->type); ?>',
 						php_version: '<?php echo dol_escape_js(phpversion()); ?>',

@@ -209,9 +209,9 @@ if (empty($reshook)) {
 		$diroutput = null;
 		$template = null;
 		$is2d = false;
+		$code = $forbarcode;
 
 		if (!$error && $stdobject !== null) {
-			$code = $forbarcode;
 			$generator = $stdobject->barcode_type_coder; // coder (loaded by fetchBarCode). Engine.
 			$encoding = strtoupper($stdobject->barcode_type_code); // code (loaded by fetchBarCode). Example 'ean', 'isbn', ...
 
@@ -364,6 +364,7 @@ if (empty($reshook)) {
 						$result = doc_label_pdf_create($db, $arrayofrecords, $modellabel, $outputlangs, (string) $diroutput, (string) $template, dol_sanitizeFileName($outfile));
 					} catch (Exception $e) {
 						$mesg = $langs->trans('ErrorGeneratingBarcode');
+						$error++;
 					}
 
 					$conf->global->TCPDF_THROW_ERRORS_INSTEAD_OF_DIE = $previousConf;
