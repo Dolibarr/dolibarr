@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2017-2025   Laurent Destailleur  <eldy@users.sourcefore.net>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +25,7 @@
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
-include_once DOL_DOCUMENT_ROOT.'/versionmod.inc.php';
+include_once DOL_DOCUMENT_ROOT.'/blockedlog/versionmod.inc.php';
 
 
 /**
@@ -73,14 +74,14 @@ class modBlockedLog extends DolibarrModules
 		// Dependencies
 		//-------------
 		$this->hidden = false; // A condition to disable module
-		$this->depends = array('always'=>'modFacture'); // List of modules id that must be enabled if this module is enabled
+		$this->depends = array('always' => 'modFacture'); // List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of modules id to disable if this one is disabled
 		$this->conflictwith = array(); // List of modules id this module is in conflict with
 		$this->langfiles = array('blockedlog');
 
 		$this->warnings_activation = array();
 		$this->warnings_activation_ext = array();
-		$this->warnings_unactivation = array('FR'=>'BlockedLogAreRequiredByYourCountryLegislation');
+		$this->warnings_unactivation = array('FR' => 'BlockedLogAreRequiredByYourCountryLegislation');
 
 		// Currently, activation is not automatic because only companies (in France) making invoices to non business customers must
 		// enable this module.
@@ -102,7 +103,7 @@ class modBlockedLog extends DolibarrModules
 		// Constants
 		//-----------
 		$this->const = array(
-			1=>array('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY', 'chaine', 'FR', 'This is list of country code where the module may be mandatory', 0, 'current', 0)
+			1 => array('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY', 'chaine', 'FR', 'This is list of country code where the module may be mandatory', 0, 'current', 0)
 		);
 
 		// New pages on tabs
@@ -128,19 +129,19 @@ class modBlockedLog extends DolibarrModules
 		// -----------------
 		$r = 0;
 		$this->menu[$r] = array(
-			'fk_menu'=>'fk_mainmenu=tools', // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'mainmenu'=>'tools',
-			'leftmenu'=>'blockedlogbrowser',
-			'type'=>'left', // This is a Left menu entry
-			'titre'=>'BrowseBlockedLog',
+			'fk_menu' => 'fk_mainmenu=tools', // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'mainmenu' => 'tools',
+			'leftmenu' => 'blockedlogbrowser',
+			'type' => 'left', // This is a Left menu entry
+			'titre' => 'BrowseBlockedLog',
 			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
-			'url'=>'/blockedlog/admin/blockedlog_list.php?mainmenu=tools&leftmenu=blockedlogbrowser',
-			'langs'=>'blockedlog', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'position'=>200,
-			'enabled'=>'isModEnabled("blockedlog")', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'$user->hasRight("blockedlog", "read")', // Use 'perms'=>'$user->hasRight("mymodule","level1","level2")' if you want your menu with a permission rules
-			'target'=>'',
-			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
+			'url' => '/blockedlog/admin/blockedlog_list.php?mainmenu=tools&leftmenu=blockedlogbrowser',
+			'langs' => 'blockedlog', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'position' => 200,
+			'enabled' => 'isModEnabled("blockedlog")', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+			'perms' => '$user->hasRight("blockedlog", "read")', // Use 'perms'=>'$user->hasRight("mymodule","level1","level2")' if you want your menu with a permission rules
+			'target' => '',
+			'user' => 2, // 0=Menu for internal users, 1=external users, 2=both
 		);
 		$r++;
 	}
