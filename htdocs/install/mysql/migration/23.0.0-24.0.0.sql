@@ -146,4 +146,6 @@ INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private,
 ALTER TABLE llx_adherent_type ADD COLUMN minimumamount    double(24,8) DEFAULT NULL;
 ALTER TABLE llx_adherent_type ADD COLUMN amountformuladescription text;
 
+ALTER TABLE llx_blockedlog ADD COLUMN pos_source varchar(32) DEFAULT '';
+
 -- end of migration

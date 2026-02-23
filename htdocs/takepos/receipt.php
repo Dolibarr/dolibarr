@@ -298,7 +298,11 @@ if ($object->status != $object::STATUS_CLOSED) {
 	print '<br><b>*** '.strtoupper($langs->trans("TemporaryReceipt")).' ***</b>';	// Hard coded string
 } else {
 	if ($isADuplicata) {
-		print '<br><b>*** '.$langs->transnoentities("DUPLICATA").' (no '.($object->pos_print_counter - 1).') ***</b>';	// Hard coded string
+		print '<br><b>*** '.$langs->transnoentities("DUPLICATA");
+		if (getDolGlobalString('TAKEPOS_SHOW_PRINT_COUNTER_ON_RECEIPT')) {
+			print ' (no '.($object->pos_print_counter - 1).')';
+		}
+		print ' ***</b>';	// Hard coded string
 	}
 }
 ?>
@@ -441,12 +445,17 @@ if (isModEnabled('multicurrency') && !empty($_SESSION["takeposcustomercurrency"]
 	if ($gift != 1) {
 		echo ''.$langs->trans("TotalTTC").' '.$_SESSION["takeposcustomercurrency"].'</th><td class="right">'.price($object->total_ttc * $multicurrency->rate->rate, 1, '', 1, - 1, - 1, $_SESSION["takeposcustomercurrency"])."\n";
 	}
-	echo '</td></tr>';
+	echo '</th></tr>';
 }
 
 // We force the feature when LNE is on, whatever is setup. When a payment is done, we always want to see it on receipt.
 if (isALNERunningVersion()) {
 	$conf->global->TAKEPOS_PRINT_PAYMENT_METHOD = 1;
+	if ($object->status == $object::STATUS_CLOSED) {
+		print '<tr><th class="right"></th><td>';
+		print '--- '.$langs->trans("Paid").' ---';
+		print '</td></tr>';
+	}
 }
 
 if (getDolGlobalString('TAKEPOS_PRINT_PAYMENT_METHOD')) {
