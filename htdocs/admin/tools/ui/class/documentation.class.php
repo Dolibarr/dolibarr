@@ -281,6 +281,12 @@ class Documentation
 					),
 					'summary' => array(),
 				),
+				'UiDolibarrDialog' => array(
+					'url' => dol_buildpath($this->baseUrl.'/experimental/experiments/dialog/index.php', 1),
+					'icon' => 'fas fa-flask',
+					'submenu' => array(),
+					'summary' => array(),
+				),
 			)
 		);
 
