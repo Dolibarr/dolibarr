@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - blockedlog
-BlockedLog=Journaux inaltérables
 Fingerprints=Événements archivés et empreintes digitales
 FingerprintsDesc=Cet outil permet de consulter ou d'extraire les journaux inaltérables. Ces journaux sont générés et stockés en temps réel dans une table dédiée du système, dès qu'un événement métier se produit.
 ArchivesDesc=Cet outil permet d'exporter les journaux non modifiables dans des fichiers d'archive. Ces journaux sont conservés dans le système, mais vous devez les télécharger et les copier sur un support externe.

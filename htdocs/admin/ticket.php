@@ -590,6 +590,22 @@ print $formcategory->textwithpicto('', $langs->trans("TicketsAutoReadTicketHelp"
 print '</td>';
 print '</tr>';
 
+// Auto mark ticket as read when assign someone
+print '<tr class="oddeven"><td>'.$langs->trans("TicketsAutoReadTicketWhenAssign").'</td>';
+print '<td class="left">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('TICKET_AUTO_READ_WHEN_ASSIGN');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $formcategory->selectarray("TICKET_AUTO_READ_WHEN_ASSIGN", $arrval, getDolGlobalString('TICKET_AUTO_READ_WHEN_ASSIGN'));
+}
+print '</td>';
+print '<td class="center">';
+print $formcategory->textwithpicto('', $langs->trans("TicketsAutoReadTicketWhenAssignHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
+
+
 // Auto assign ticket to user who created it
 print '<tr class="oddeven">';
 print '<td><label for="TICKET_AUTO_ASSIGN_USER_CREATE" class="block">'.$langs->trans("TicketsAutoAssignTicket").'</label></td>';
