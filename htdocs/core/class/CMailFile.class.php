@@ -1294,6 +1294,7 @@ class CMailFile
 					$this->transport->setPassword(getDolGlobalString($keyforsmtppw));
 				}
 				if (getDolGlobalString($keyforsmtpauthtype) === "XOAUTH2") {
+					$this->transport->setAuthMode('XOAUTH2');
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php';
 
 					$supportedoauth2array = getSupportedOauth2Array();
@@ -1328,9 +1329,11 @@ class CMailFile
 						// Is token expired or will token expire in the next 30 seconds
 						if (is_object($tokenobj)) {
 							$expire = ($tokenobj->getEndOfLife() !== -9002 && $tokenobj->getEndOfLife() !== -9001 && time() > ($tokenobj->getEndOfLife() - 30));
+							dol_syslog("CMailFile::sendfile: Token expiration check - EndOfLife=".$tokenobj->getEndOfLife().", Current time=".time().", Expired=".($expire ? 'YES' : 'NO'), LOG_DEBUG);
 						}
 						// Token expired so we refresh it
 						if (is_object($tokenobj) && $expire) {
+							dol_syslog("CMailFile::sendfile: Token is expired, attempting to refresh", LOG_INFO);
 							$credentials = new Credentials(
 								getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_ID'),
 								getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_SECRET'),
@@ -1341,6 +1344,7 @@ class CMailFile
 							// ex service is Google-Emails we need only the first part Google
 							$apiService = $serviceFactory->createService($oauthname[0], $credentials, $storage, array());
 							$refreshtoken = $tokenobj->getRefreshToken();
+							dol_syslog("CMailFile::sendfile: Refresh token available: ".($refreshtoken ? 'YES' : 'NO'), LOG_DEBUG);
 
 							if ($apiService instanceof OAuth\OAuth2\Service\AbstractService || $apiService instanceof OAuth\OAuth1\Service\AbstractService) {
 								// ServiceInterface does not provide refreshAccessToken, AbstractService does
@@ -1350,14 +1354,29 @@ class CMailFile
 								$storage->storeAccessToken($OAUTH_SERVICENAME, $tokenobj);
 
 								$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
+								dol_syslog("CMailFile::sendfile: Token refreshed successfully, new EndOfLife=".$tokenobj->getEndOfLife(), LOG_INFO);
 							}
 						}
 
 						if (is_object($tokenobj)) {
+							// Debug logging
+							dol_syslog("CMailFile::sendfile: OAuth2 token retrieved successfully", LOG_DEBUG);
+							dol_syslog("CMailFile::sendfile: Token EndOfLife=".$tokenobj->getEndOfLife()." (current time=".time().")", LOG_DEBUG);
+							dol_syslog("CMailFile::sendfile: Token has refresh token=".($tokenobj->getRefreshToken() ? 'YES' : 'NO'), LOG_DEBUG);
+							dol_syslog("CMailFile::sendfile: Access token length=".strlen($tokenobj->getAccessToken()), LOG_DEBUG);
+
 							$this->transport->setAuthMode('XOAUTH2');
 							$this->transport->setPassword($tokenobj->getAccessToken());
+
+							// Verify auth mode was set correctly
+							$authMode = $this->transport->getAuthMode();
+							dol_syslog("CMailFile::sendfile: Auth mode set to: ".$authMode, LOG_DEBUG);
+							if ($authMode !== 'XOAUTH2') {
+								dol_syslog("CMailFile::sendfile: WARNING - Auth mode is not XOAUTH2 but ".$authMode, LOG_WARNING);
+							}
 						} else {
 							$this->errors[] = "Token not found";
+							dol_syslog("CMailFile::sendfile: OAuth2 token object is not valid", LOG_ERR);
 						}
 					} catch (Exception $e) {
 						// Return an error if token not found

@@ -1488,7 +1488,7 @@ class Form
 	 * @param string 			$filter 		Optional filters criteras. WARNING: To avoid SQL injection, only few chars [.a-z0-9 =<>] are allowed here, example: 's.rowid <> x'
 	 * 											If you need parenthesis, use the Universal Filter Syntax, example: '(s.client:in:1,3)'
 	 * 											Do not use a filter coming from input of users.
-	 * @param string|int<0,1> 	$showempty 		Add an empty field (Can be '1' or text to use on empty line like 'SelectThirdParty')
+	 * @param string|int<0,1> 	$showempty 		$showtype$showtypeAdd an empty field (Can be '1' or text to use on empty line like 'SelectThirdParty')
 	 * @param int<0,1>			$showtype 		Show third party nature in combolist (customer, prospect or supplier)
 	 * @param int 				$forcecombo 	Force to use standard HTML select component without beautification
 	 * @param array<array{method:string,url:string,htmlname:string,params:array<string,string>}> 	$events 	Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))

@@ -18,9 +18,14 @@
  */
 
 /**
- *      \file       htdocs/core/modules/oauth/microsoft_oauthcallback.php
+ *      \file       htdocs/core/modules/oauth/microsoft3_oauthcallback.php
  *      \ingroup    oauth
- *      \brief      Page to get oauth callback
+ *      \brief      Page to get oauth callback for Microsoft Graph (SMTP/IMAP)
+ *
+ *      Uses Microsoft Graph API scopes:
+ *        - openid, profile, email, offline_access
+ *        - https://graph.microsoft.com/SMTP.Send
+ *        - https://graph.microsoft.com/IMAP.AccessAsUser.All
  */
 
 // Load Dolibarr environment
@@ -50,7 +55,8 @@ $keyforprovider = GETPOST('keyforprovider', 'aZ09');
 if (empty($keyforprovider) && !empty($_SESSION["oauthkeyforproviderbeforeoauthjump"]) && (GETPOST('code') || $action == 'delete')) {
 	$keyforprovider = $_SESSION["oauthkeyforproviderbeforeoauthjump"];
 }
-$genericstring = 'MICROSOFT';
+$genericstring = 'MICROSOFT3';
+
 
 /**
  * Create a new instance of the URI class with the current URI, stripping the query string
@@ -58,7 +64,8 @@ $genericstring = 'MICROSOFT';
 $uriFactory = new \OAuth\Common\Http\Uri\UriFactory();
 //$currentUri = $uriFactory->createFromSuperGlobalArray($_SERVER);
 //$currentUri->setQuery('');
-$currentUri = $uriFactory->createFromAbsolute($urlwithroot.'/core/modules/oauth/microsoft_oauthcallback.php');
+
+$currentUri = $uriFactory->createFromAbsolute($urlwithroot.'/core/modules/oauth/microsoft3_oauthcallback.php');
 
 
 /**
@@ -86,6 +93,7 @@ $credentials = new Credentials(
 	getDolGlobalString($keyforparamsecret),
 	$currentUri->getAbsoluteUri()
 );
+
 
 $state = GETPOST('state');
 
@@ -169,7 +177,7 @@ if (GETPOST('code') || GETPOST('error')) {     // We are coming from oauth provi
 	// This was a callback request from service, get the token
 	try {
 		//var_dump($state);
-		//var_dump($apiService);      // OAuth\OAuth2\Service\Microsoft
+		//var_dump($apiService);      // OAuth\OAuth2\Service\Microsoft3
 
 		if (GETPOST('error')) {
 			setEventMessages(GETPOST('error').' '.GETPOST('error_description'), null, 'errors');
@@ -181,7 +189,7 @@ if (GETPOST('code') || GETPOST('error')) {     // We are coming from oauth provi
 			// Microsoft is a service that does not need state to be stored as second parameter of requestAccessToken
 
 			//print $token->getAccessToken().'<br><br>';
-			//print $token->getExtraParams()['id_token'].'<br><br>';
+			//print $token->getExtraParams()['id_token'].'<br>';
 			//print $token->getRefreshToken().'<br>';exit;
 
 			setEventMessages($langs->trans('NewTokenStored'), null, 'mesgs'); // Stored into object managed by class DoliStorage so into table oauth_token
