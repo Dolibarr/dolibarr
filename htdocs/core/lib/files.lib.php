@@ -3465,7 +3465,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->accounting->dir_output.'/'.$original_file;
-	} elseif (($modulepart == 'expedition' || $modulepart == 'shipment') && !empty($conf->expedition->dir_output)) {
+	} elseif (($modulepart == 'expedition' || $modulepart == 'shipment' || $modulepart == 'shipping') && !empty($conf->expedition->dir_output)) {
 		// Wrapping pour les expedition
 		if ($fuser->hasRight('expedition', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
