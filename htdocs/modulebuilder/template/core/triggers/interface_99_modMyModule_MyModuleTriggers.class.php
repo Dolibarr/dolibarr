@@ -149,6 +149,7 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 			//case 'ORDER_SUPPLIER_VALIDATE':
 			//case 'ORDER_SUPPLIER_DELETE':
 			//case 'ORDER_SUPPLIER_APPROVE':
+			//case 'ORDER_SUPPLIER_SUBMIT':
 			//case 'ORDER_SUPPLIER_CLASSIFY_BILLED':		// TODO Replace with ORDER_SUPPLIER_BILLED
 			//case 'ORDER_SUPPLIER_CLASSIFY_UNBILLED':		// TODO Replace with ORDER_SUPPLIER_UNBILLED
 			//case 'ORDER_SUPPLIER_REFUSE':
