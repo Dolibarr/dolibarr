@@ -334,7 +334,7 @@ function getSupportedOauth2Array()
 		'name' => 'Microsoft [outlook.office365]',
 		'urlforcredentials' => 'https://portal.azure.com/',
 		// User.Read is a microsoftgraph scope, if it's not working, do not select it
-		'availablescopes' => 'openid,offline_access,profile,email,https://outlook.office365.com/IMAP.AccessAsUser.All,https://outlook.office365.com/SMTP.Send',
+		'availablescopes' => 'openid,offline_access,profile,email,User.Read,https://outlook.office365.com/IMAP.AccessAsUser.All,https://outlook.office365.com/SMTP.Send',
 		'returnurl' => '/core/modules/oauth/microsoft_oauthcallback.php'
 	);
 	$supportedoauth2array['OAUTH_MICROSOFT2_NAME'] = array(
@@ -344,7 +344,7 @@ function getSupportedOauth2Array()
 		'name' => 'Microsoft [outlook.office]',
 		'urlforcredentials' => 'https://portal.azure.com/',
 		// User.Read is a microsoftgraph scope, if it's not working, do not select it
-		'availablescopes' => 'openid,offline_access,profile,email,https://outlook.office.com/.default',
+		'availablescopes' => 'openid,offline_access,profile,email,User.Read,https://outlook.office.com/.default',
 		'returnurl' => '/core/modules/oauth/microsoft2_oauthcallback.php'
 	);
 	$supportedoauth2array['OAUTH_MICROSOFT3_NAME'] = array(
