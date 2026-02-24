@@ -34,3 +34,4 @@ ARollbackWasPerformedOnPostActions=Minden közzétételi művelet visszaállít�
 ValidationOfPaymentFailed=A fizetés ellenőrzése nem sikerült
 CardOwner=Kártyatartó
 PayPalBalance=Paypal jóváírás
+OnlineSubscriptionPaymentLine=Online előfizetés rögzítve: %s <br> Fizetve: %s <br> Eredeti IP-cím: %s <br> Tranzakció azonosítója:%s

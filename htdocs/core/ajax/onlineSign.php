@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		William Mead				<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,6 +55,13 @@ if (is_numeric($entity)) {
 }
 include '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $action = GETPOST('action', 'aZ09');
 
@@ -84,7 +92,7 @@ if (empty($SECUREKEY) || !dol_verifyHash($securekeyseed . $type . $ref . (!isMod
 	httponly_accessforbidden('Bad value for securitykey. Value provided ' . dol_escape_htmltag($SECUREKEY) . ' does not match expected value for ref=' . dol_escape_htmltag($ref), 403);
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('ajaxonlinesign'));
 
 
@@ -113,7 +121,7 @@ if ($action == "importSignature") {
 			$object = new Propal($db);
 			$object->fetch(0, $ref);
 
-			$upload_dir = !empty($conf->propal->multidir_output[$object->entity]) ? $conf->propal->multidir_output[$object->entity] : $conf->propal->dir_output;
+			$upload_dir = !empty($conf->propal->multidir_output[$object->entity ?? $conf->entity]) ? $conf->propal->multidir_output[$object->entity ?? $conf->entity] : $conf->propal->dir_output;
 			$upload_dir .= '/' . dol_sanitizeFileName($object->ref) . '/';
 
 			$default_font_size = pdf_getPDFFontSize($langs);    // Must be after pdf_getInstance
@@ -130,10 +138,12 @@ if ($action == "importSignature") {
 			}
 
 			if (!$error) {
-				$return = file_put_contents($upload_dir . $filename, $data);
-				if ($return == false) {
+				$return = file_put_contents($upload_dir.$filename, $data);
+				if ($return === false) {
 					$error++;
 					$response = 'Error file_put_content: failed to create signature file.';
+				} else {
+					dolChmod($upload_dir.$filename);
 				}
 			}
 
@@ -143,9 +153,11 @@ if ($action == "importSignature") {
 				$directdownloadlink = $object->getLastMainDocLink('proposal');    // url to download the $object->last_main_doc
 
 				if (preg_match('/\.pdf/i', $last_main_doc_file)) {
-					// TODO Use the $last_main_doc_file to defined the $newpdffilename and $sourcefile
-					$newpdffilename = $upload_dir . $ref . "_signed-" . $date . ".pdf";
-					$sourcefile = $upload_dir . $ref . ".pdf";
+					$ref_pdf = pathinfo($last_main_doc_file, PATHINFO_FILENAME); // Retrieves the name of external or internal PDF
+					$ref_pdf = preg_replace('/_signed-(\d+)/', '', $ref_pdf);
+
+					$newpdffilename = $upload_dir . $ref_pdf . "_signed-" . $date . ".pdf";
+					$sourcefile = $upload_dir . $ref_pdf . ".pdf";
 
 					if (dol_is_file($sourcefile)) {
 						$parameters = array('sourcefile' => $sourcefile, 'newpdffilename' => $newpdffilename);
@@ -174,6 +186,8 @@ if ($action == "importSignature") {
 							$param['online_sign_name'] = $online_sign_name;
 							$param['pathtoimage'] = $upload_dir . $filename;
 
+							$propalsignonspecificpage = getDolGlobalInt("PROPAL_SIGNATURE_ON_SPECIFIC_PAGE");
+
 							$s = array();    // Array with size of each page. Example array(w'=>210, 'h'=>297);
 							for ($i = 1; $i < ($pagecount + 1); $i++) {
 								try {
@@ -181,9 +195,18 @@ if ($action == "importSignature") {
 									$s = $pdf->getTemplatesize($tppl);
 									$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
 									$pdf->useTemplate($tppl);
-									$propalsignonspecificpage = getDolGlobalInt("PROPAL_SIGNATURE_ON_SPECIFIC_PAGE");
 									if ($propalsignonspecificpage < 0) {
 										$propalsignonspecificpage = $pagecount - abs($propalsignonspecificpage);
+									}
+
+									if (empty($propalsignonspecificpage)) {
+										// Now we get the metadata keywords from the $sourcefile PDF (by parsing the binary PDF file) and use it to extract
+										// the page x in PAGESIGN=x into $propalsignonspecificpage
+										$keywords = pdfExtractMetadata($sourcefile, 'Keywords');
+										$reg = array();
+										if (preg_match('/PAGESIGN=(\d+)/', $keywords, $reg)) {
+											$propalsignonspecificpage = (int) $reg[1];
+										}
 									}
 
 									if (getDolGlobalString("PROPAL_SIGNATURE_ON_ALL_PAGES") || $propalsignonspecificpage == $i) {
@@ -215,12 +238,11 @@ if ($action == "importSignature") {
 								}
 							}
 
-							if (!getDolGlobalString("PROPAL_SIGNATURE_ON_ALL_PAGES") && !getDolGlobalInt("PROPAL_SIGNATURE_ON_SPECIFIC_PAGE")) {
+							if (!getDolGlobalString("PROPAL_SIGNATURE_ON_ALL_PAGES") && !$propalsignonspecificpage) {
+								// We do not found specific instruction or page for the signature, so we add it now we are on the last page.
 								// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
-								// TODO Get position of box from PDF template
-
 								if (getDolGlobalString("PROPAL_SIGNATURE_XFORIMGSTART")) {
-											$param['xforimgstart'] = getDolGlobalString("PROPAL_SIGNATURE_XFORIMGSTART");
+									$param['xforimgstart'] = getDolGlobalString("PROPAL_SIGNATURE_XFORIMGSTART");
 								} else {
 									$param['xforimgstart'] = (empty($s['w']) ? 120 : round($s['w'] / 2) + 15);
 								}
@@ -287,7 +309,15 @@ if ($action == "importSignature") {
 							$error++;
 							$response = "error in trigger " . $object->error;
 						} else {
-							$response = "success";
+							$soc = new Societe($db);
+							$soc->id = $object->socid;
+							$result = $soc->setAsCustomer();
+							if ($result < 0) {
+								$error++;
+								$response = $db->lasterror();
+							} else {
+								$response = "success";
+							}
 						}
 					} else {
 						$response = "success";
@@ -311,7 +341,7 @@ if ($action == "importSignature") {
 			$object = new Contrat($db);
 			$object->fetch(0, $ref);
 
-			$upload_dir = !empty($conf->contrat->multidir_output[$object->entity]) ? $conf->contrat->multidir_output[$object->entity] : $conf->contrat->dir_output;
+			$upload_dir = !empty($conf->contrat->multidir_output[$object->entity ?? $conf->entity]) ? $conf->contrat->multidir_output[$object->entity ?? $conf->entity] : $conf->contrat->dir_output;
 			$upload_dir .= '/' . dol_sanitizeFileName($object->ref) . '/';
 
 			$date = dol_print_date(dol_now(), "%Y%m%d%H%M%S");
@@ -325,9 +355,11 @@ if ($action == "importSignature") {
 
 			if (!$error) {
 				$return = file_put_contents($upload_dir . $filename, $data);
-				if ($return == false) {
+				if ($return === false) {
 					$error++;
 					$response = 'Error file_put_content: failed to create signature file.';
+				} else {
+					dolChmod($upload_dir.$filename);
 				}
 			}
 
@@ -337,9 +369,10 @@ if ($action == "importSignature") {
 				$directdownloadlink = $object->getLastMainDocLink('contrat');    // url to download the $object->last_main_doc
 
 				if (preg_match('/\.pdf/i', $last_main_doc_file)) {
-					// TODO Use the $last_main_doc_file to defined the $newpdffilename and $sourcefile
-					$newpdffilename = $upload_dir . $ref . "_signed-" . $date . ".pdf";
-					$sourcefile = $upload_dir . $ref . ".pdf";
+					$ref_pdf = pathinfo($last_main_doc_file, PATHINFO_FILENAME); // Retrieves the name of external or internal PDF
+
+					$newpdffilename = $upload_dir . $ref_pdf . "_signed-" . $date . ".pdf";
+					$sourcefile = $upload_dir . $ref_pdf . ".pdf";
 
 					if (dol_is_file($sourcefile)) {
 						$parameters = array('sourcefile' => $sourcefile, 'newpdffilename' => $newpdffilename);
@@ -383,17 +416,17 @@ if ($action == "importSignature") {
 										if (getDolGlobalString("CONTRACT_SIGNATURE_XFORIMGSTART")) {
 											$param['xforimgstart'] = getDolGlobalString("CONTRACT_SIGNATURE_XFORIMGSTART");
 										} else {
-											$param['xforimgstart'] = 10;
+											$param['xforimgstart'] = (empty($s['w']) ? 110 : $s['w'] / 2 - 0);
 										}
 										if (getDolGlobalString("CONTRACT_SIGNATURE_YFORIMGSTART")) {
 											$param['yforimgstart'] = getDolGlobalString("CONTRACT_SIGNATURE_YFORIMGSTART");
 										} else {
-											$param['yforimgstart'] = (empty($s['h']) ? 240 : $s['h'] - 65);
+											$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 62);
 										}
 										if (getDolGlobalString("CONTRACT_SIGNATURE_WFORIMG")) {
 											$param['wforimg'] = getDolGlobalString("CONTRACT_SIGNATURE_WFORIMG");
 										} else {
-											$param['wforimg'] = $s['w'] / 2 - $param['xforimgstart'];
+											$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 16);
 										}
 
 										dolPrintSignatureImage($pdf, $langs, $param);
@@ -409,9 +442,9 @@ if ($action == "importSignature") {
 								// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
 								// TODO Get position of box from PDF template
 
-								$param['xforimgstart'] = 10;
-								$param['yforimgstart'] = (empty($s['h']) ? 240 : $s['h'] - 65);
-								$param['wforimg'] = $s['w'] / 2 - $param['xforimgstart'];
+								$param['xforimgstart'] = (empty($s['w']) ? 110 : $s['w'] / 2 - 0);
+								$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 62);
+								$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 16);
 
 								dolPrintSignatureImage($pdf, $langs, $param);
 							}
@@ -433,6 +466,8 @@ if ($action == "importSignature") {
 					// Document format not supported to insert online signature.
 					// We should just create an image file with the signature.
 				}
+				$user = new User($db);
+				$object->setSignedStatus($user, Contrat::$SIGNED_STATUSES['STATUS_SIGNED_RECEIVER_ONLINE'], 0, 'CONTRACT_MODIFY');
 			}
 		} elseif ($mode == 'fichinter') {
 			require_once DOL_DOCUMENT_ROOT . '/fichinter/class/fichinter.class.php';
@@ -440,7 +475,7 @@ if ($action == "importSignature") {
 			$object = new Fichinter($db);
 			$object->fetch(0, $ref);
 
-			$upload_dir = !empty($conf->ficheinter->multidir_output[$object->entity]) ? $conf->ficheinter->multidir_output[$object->entity] : $conf->ficheinter->dir_output;
+			$upload_dir = !empty($conf->ficheinter->multidir_output[$object->entity ?? $conf->entity]) ? $conf->ficheinter->multidir_output[$object->entity ?? $conf->entity] : $conf->ficheinter->dir_output;
 			$upload_dir .= '/'.dol_sanitizeFileName($object->ref).'/';
 
 			$langs->loadLangs(array("main", "companies"));
@@ -459,9 +494,11 @@ if ($action == "importSignature") {
 
 			if (!$error) {
 				$return = file_put_contents($upload_dir . $filename, $data);
-				if ($return == false) {
+				if ($return === false) {
 					$error++;
 					$response = 'Error file_put_content: failed to create signature file.';
+				} else {
+					dolChmod($upload_dir.$filename);
 				}
 			}
 
@@ -471,9 +508,10 @@ if ($action == "importSignature") {
 				$directdownloadlink = $object->getLastMainDocLink('fichinter');    // url to download the $object->last_main_doc
 
 				if (preg_match('/\.pdf/i', $last_main_doc_file)) {
-					// TODO Use the $last_main_doc_file to defined the $newpdffilename and $sourcefile
-					$newpdffilename = $upload_dir . $ref . "_signed-" . $date . ".pdf";
-					$sourcefile = $upload_dir . $ref . ".pdf";
+					$ref_pdf = pathinfo($last_main_doc_file, PATHINFO_FILENAME); // Retrieves the name of external or internal PDF
+
+					$newpdffilename = $upload_dir . $ref_pdf . "_signed-" . $date . ".pdf";
+					$sourcefile = $upload_dir . $ref_pdf . ".pdf";
 
 					if (dol_is_file($sourcefile)) {
 						$parameters = array('sourcefile' => $sourcefile, 'newpdffilename' => $newpdffilename);
@@ -517,17 +555,17 @@ if ($action == "importSignature") {
 										if (getDolGlobalString("FICHINTER_SIGNATURE_XFORIMGSTART")) {
 											$param['xforimgstart'] = getDolGlobalString("FICHINTER_SIGNATURE_XFORIMGSTART");
 										} else {
-											$param['xforimgstart'] = 111;
+											$param['xforimgstart'] = (empty($s['w']) ? 110 : $s['w'] / 2 - 2);
 										}
 										if (getDolGlobalString("FICHINTER_SIGNATURE_YFORIMGSTART")) {
 											$param['yforimgstart'] = getDolGlobalString("FICHINTER_SIGNATURE_YFORIMGSTART");
 										} else {
-											$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 60);
+											$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 62);
 										}
 										if (getDolGlobalString("FICHINTER_SIGNATURE_WFORIMG")) {
 											$param['wforimg'] = getDolGlobalString("FICHINTER_SIGNATURE_WFORIMG");
 										} else {
-											$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 16);
+											$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 20);
 										}
 
 										dolPrintSignatureImage($pdf, $langs, $param);
@@ -543,9 +581,9 @@ if ($action == "importSignature") {
 								// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
 								// TODO Get position of box from PDF template
 
-								$param['xforimgstart'] = 111;
-								$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 60);
-								$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 16);
+								$param['xforimgstart'] = (empty($s['w']) ? 110 : $s['w'] / 2 - 2);
+								$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 62);
+								$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 20);
 
 								dolPrintSignatureImage($pdf, $langs, $param);
 							}
@@ -567,6 +605,8 @@ if ($action == "importSignature") {
 					// Document format not supported to insert online signature.
 					// We should just create an image file with the signature.
 				}
+				$user = new User($db);
+				$object->setSignedStatus($user, Fichinter::$SIGNED_STATUSES['STATUS_SIGNED_RECEIVER_ONLINE'], 0, 'FICHINTER_MODIFY');
 			}
 		} elseif ($mode == "societe_rib") {
 			$langs->load('withdrawals');
@@ -578,7 +618,7 @@ if ($action == "importSignature") {
 			if (!empty($object->id)) {
 				$object->fetch_thirdparty();
 
-				$upload_dir = $conf->societe->multidir_output[$object->thirdparty->entity] . '/' . dol_sanitizeFileName($object->thirdparty->id) . '/';
+				$upload_dir = $conf->societe->multidir_output[$object->thirdparty->entity] . '/' . dol_sanitizeFileName((string) $object->thirdparty->id) . '/';
 
 				$default_font_size = pdf_getPDFFontSize($langs);    // Must be after pdf_getInstance
 				$default_font = pdf_getPDFFont($langs);    // Must be after pdf_getInstance
@@ -603,9 +643,11 @@ if ($action == "importSignature") {
 
 				if (!$error) {
 					$return = file_put_contents($upload_dir . $filename, $data);
-					if ($return == false) {
+					if ($return === false) {
 						$error++;
 						$response = 'Error file_put_content: failed to create signature file.';
+					} else {
+						dolChmod($upload_dir.$filename);
 					}
 				}
 
@@ -800,9 +842,11 @@ if ($action == "importSignature") {
 
 			if (!$error) {
 				$return = file_put_contents($upload_dir . $filename, $data);
-				if ($return == false) {
+				if ($return === false) {
 					$error++;
 					$response = 'Error file_put_content: failed to create signature file.';
+				} else {
+					dolChmod($upload_dir.$filename);
 				}
 			}
 
@@ -819,9 +863,10 @@ if ($action == "importSignature") {
 				$directdownloadlink = $object->getLastMainDocLink('expedition');    // url to download the $object->last_main_doc
 
 				if (preg_match('/\.pdf/i', $last_main_doc_file)) {
-					// TODO Use the $last_main_doc_file to defined the $newpdffilename and $sourcefile
-					$newpdffilename = $upload_dir . $ref . "_signed-" . $date . ".pdf";
-					$sourcefile = $upload_dir . $ref . ".pdf";
+					$ref_pdf = pathinfo($last_main_doc_file, PATHINFO_FILENAME); // Retrieves the name of external or internal PDF
+
+					$newpdffilename = $upload_dir . $ref_pdf . "_signed-" . $date . ".pdf";
+					$sourcefile = $upload_dir . $ref_pdf . ".pdf";
 
 					if (dol_is_file($sourcefile)) {
 						$parameters = array('sourcefile' => $sourcefile, 'newpdffilename' => $newpdffilename);
@@ -904,30 +949,8 @@ if ($action == "importSignature") {
 					// We should just create an image file with the signature.
 				}
 			}
-
-			if (!$error) {
-				$db->begin();
-
-				$sql = "UPDATE " . MAIN_DB_PREFIX . "expedition";
-				$sql .= " SET signed_status = " . ((int) $object::STATUS_SIGNED) ;
-				$sql .= " WHERE rowid = " . ((int) $object->id);
-
-				dol_syslog(__FILE__, LOG_DEBUG);
-				$resql = $db->query($sql);
-				if (!$resql) {
-					$error++;
-				} else {
-					$num = $db->affected_rows($resql);
-				}
-
-				if (!$error) {
-					$db->commit();
-					$response = "success";
-					setEventMessages("ExpeditionSigned", null, 'warnings');
-				} else {
-					$db->rollback();
-				}
-			}
+			$user = new User($db);
+			$object->setSignedStatus($user, Expedition::$SIGNED_STATUSES['STATUS_SIGNED_RECEIVER_ONLINE'], 0, 'SHIPPING_MODIFY');
 		}
 	} else {
 		$error++;
@@ -947,7 +970,7 @@ echo $response;
  *
  * @param 	TCPDF 		$pdf		PDF handler
  * @param	Translate	$langs		Language
- * @param	array		$params		Array of params
+ * @param	array<string,int|float|string|mixed[]>		$params		Array of params
  * @return	void
  */
 function dolPrintSignatureImage(TCPDF $pdf, $langs, $params)
@@ -961,7 +984,7 @@ function dolPrintSignatureImage(TCPDF $pdf, $langs, $params)
 	$pdf->SetXY($xforimgstart, $yforimgstart + round($wforimg / 4) - 4);
 	$pdf->SetFont($default_font, '', $default_font_size - 1);
 	$pdf->SetTextColor(80, 80, 80);
-	$pdf->MultiCell($wforimg, 4, $langs->trans("Signature") . ': ' . dol_print_date(dol_now(), "day", false, $langs, true). ' - '.$params['online_sign_name'], 0, 'L');
+	$pdf->MultiCell($wforimg, 4, $langs->transnoentities("Signature") . ': ' . dol_print_date(dol_now(), "day", false, $langs, true). ' - '.$params['online_sign_name'], 0, 'L');
 	//$pdf->SetXY($xforimgstart, $yforimgstart + round($wforimg / 4));
 	//$pdf->MultiCell($wforimg, 4, $langs->trans("Lastname") . ': ' . $online_sign_name, 0, 'L');
 

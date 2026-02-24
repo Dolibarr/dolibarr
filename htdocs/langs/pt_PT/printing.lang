@@ -32,6 +32,7 @@ PRINTIPP_HOST=Servidor de Impressão
 PRINTIPP_PORT=Porta
 PRINTIPP_USER=Iniciar Sessão
 PRINTIPP_PASSWORD=Senha
+PRINTIPP_SSL=Usar SSL
 NoDefaultPrinterDefined=Não foi definida nenhuma impressora predefinda
 DefaultPrinter=Impressora Predefinida
 Printer=Impressora
@@ -52,3 +53,4 @@ PrintingDriverDescprintgcp=Variáveis ​​de configuração para o driver de i
 PrintingDriverDescprintipp=Variáveis ​​de configuração para o driver de impressão.
 PrintTestDescprintgcp=Lista de Impressoras para a Impressão na Nuvem da Google
 PrintTestDescprintipp=Lista de impressoras para copos.
+Testbbbb

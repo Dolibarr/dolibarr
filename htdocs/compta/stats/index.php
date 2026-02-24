@@ -3,8 +3,9 @@
  * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2017       Olivier Geffroy         <jeff@jeffinfo.com>
- * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024       Benjamin B.             <b.crozon@trebisol.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,14 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills', 'donation', 'salaries'));
 
@@ -45,12 +54,12 @@ $nbofyear = 4;
 // Date range
 $year = GETPOSTINT('year');
 if (empty($year)) {
-	$year_current = dol_print_date(dol_now(), "%Y");
-	$month_current = dol_print_date(dol_now(), "%m");
+	$year_current = (int) dol_print_date(dol_now(), "%Y");
+	$month_current = (int) dol_print_date(dol_now(), "%m");
 	$year_start = $year_current - ($nbofyear - 1);
 } else {
 	$year_current = $year;
-	$month_current = dol_print_date(dol_now(), "%m");
+	$month_current = (int) dol_print_date(dol_now(), "%m");
 	$year_start = $year - $nbofyear + (getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') > 1 ? 0 : 1);
 }
 $date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear, 'tzserver');	// We use timezone of server so report is same from everywhere
@@ -149,8 +158,11 @@ $form = new Form($db);
 $exportlink = '';
 $namelink = '';
 $builddate = dol_now();
+$periodlink = '';
+$description = '';
+$name = '';
 
-// Affiche en-tete du rapport
+// Display report header
 if ($modecompta == "CREANCES-DETTES") {
 	$name = $langs->trans("Turnover");
 	$periodlink = ($year_start ? "<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear - 2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>" : "");
@@ -211,7 +223,7 @@ report_header($name, $namelink, $period, $periodlink, $description, $builddate, 
 
 if (isModEnabled('accounting')) {
 	if ($modecompta != 'BOOKKEEPING') {
-		print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
+		print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, '1');
 	} else {
 		// Test if there is at least one line in bookkeeping
 		$pcgverid = getDolGlobalInt('CHARTOFACCOUNTS');
@@ -233,7 +245,7 @@ if (isModEnabled('accounting')) {
 		$nb = $db->num_rows($resql);
 		if ($nb == 0) {
 			$langs->load("errors");
-			print info_admin($langs->trans("WarningNoDataTransferedInAccountancyYet"), 0, 0, 1);
+			print info_admin($langs->trans("WarningNoDataTransferedInAccountancyYet"), 0, 0, '1');
 		}
 	}
 }
@@ -448,7 +460,7 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 				if ($annee < $year_end || ($annee == $year_end && $mois <= $month_end)) {
 					if (!empty($cumulative_ht[$case])) {
 						$now_show_delta = 1; // On a trouve le premier mois de la premiere annee generant du chiffre.
-						print '<a href="casoc.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta ? '&modecompta='.$modecompta : '').'">'.price($cumulative_ht[$case], 1).'</a>';
+						print '<a href="casoc.php?year='.$annee_decalage.'&month='.$mois_modulo.'&modecompta='.$modecompta.'">'.price($cumulative_ht[$case], 1).'</a>';
 					} else {
 						if ($minyearmonth < $case && $case <= max($maxyearmonth, $nowyearmonth)) {
 							print '0';
@@ -490,9 +502,11 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 					if ($modecompta=='CREANCES-DETTES') {
 						$cumulative_previous_year = (!empty($cumulative_ht[$caseprev])?$cumulative_ht[$caseprev]:0);
 						$cumulative_year = (!empty($cumulative_ht[$case])?$cumulative_ht[$case]:0);
+						$isset_cumulative_previous_year = isset($cumulative_ht[$caseprev]);
 					} else {
 						$cumulative_previous_year = (!empty($cumulative[$caseprev])?$cumulative[$caseprev]:0);
 						$cumulative_year = (!empty($cumulative[$case])?$cumulative[$case]:0);
+						$isset_cumulative_previous_year = isset($cumulative_ht[$caseprev]);
 					}
 					if (!empty($cumulative_previous_year) && !empty($cumulative_year)) {
 						$percent = (round(($cumulative_year - $cumulative_previous_year) / $cumulative_previous_year, 4) * 100);
@@ -506,10 +520,10 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 						//print '<td class="right">+Inf%</td>';
 						print '-';
 					}
-					if (isset($cumulative_previous_year) && empty($cumulative_previous_year) && empty($cumulative_year)) {
+					if ($isset_cumulative_previous_year && empty($cumulative_previous_year) && empty($cumulative_year)) {
 						print '+0%';
 					}
-					if (!isset($cumulative_previous_year) && empty($cumulative_year)) {
+					if (!$isset_cumulative_previous_year && empty($cumulative_year)) {
 						print '-';
 					}
 				} else {
@@ -557,11 +571,11 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
  $case = dol_print_date(dol_mktime(1,1,1,$mois,1,$annee),"%Y-%m");
  $caseprev = dol_print_date(dol_mktime(1,1,1,$mois,1,$annee-1),"%Y-%m");
 
- // Valeur CA du mois
+ // Value of CA for the month
  print '<td class="right">';
  if ($cumulative[$case])
  {
- $now_show_delta=1;  // On a trouve le premier mois de la premiere annee generant du chiffre.
+ $now_show_delta=1;  // The first month of the initial year to generate turnover has been identified.
  print '<a href="casoc.php?year='.$annee.'&month='.$mois.'">'.price($cumulative[$case],1).'</a>';
  }
  else
@@ -571,10 +585,9 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
  }
  print "</td>";
 
- // Pourcentage du mois
+ // Percentage of the month
  if ($annee > $minyear && $case <= $casenow) {
- if ($cumulative[$caseprev] && $cumulative[$case])
- {
+ if ($cumulative[$caseprev] && $cumulative[$case]) {
  $percent=(round(($cumulative[$case]-$cumulative[$caseprev])/$cumulative[$caseprev],4)*100);
  //print "X $cumulative[$case] - $cumulative[$caseprev] - $cumulative[$caseprev] - $percent X";
  print '<td class="right">'.($percent>=0?"+$percent":"$percent").'%</td>';
@@ -632,7 +645,7 @@ for ($annee = $year_start; $annee <= $year_end; $annee++) {
 		print '<td>&nbsp;</td>';
 	}
 
-	// Pourcentage total
+	// Percentage total
 	if ($annee > $minyear && $annee <= max($nowyear, $maxyear)) {
 		if ($modecompta == 'CREANCES-DETTES') {
 			$total_previous_year = (!empty($total_ht[$annee - 1])?$total_ht[$annee - 1]:0);
@@ -658,7 +671,7 @@ for ($annee = $year_start; $annee <= $year_end; $annee++) {
 		}
 	} else {
 		print '<td class="borderrightlight right">';
-		if (!empty($total_ht[$annee]) || ($minyear <= $annee && $annee <= max($nowyear, $maxyear))) {
+		if (!empty($total[$annee]) || ($minyear <= $annee && $annee <= max($nowyear, $maxyear))) {
 			print '-';
 		} else {
 			print '&nbsp;';
@@ -676,23 +689,22 @@ print '</div>';
 
 
 /*
- * En mode recettes/depenses, on complete avec les montants factures non regles
- * et les propales signees mais pas facturees. En effet, en recettes-depenses,
- * on comptabilise lorsque le montant est sur le compte donc il est interessant
- * d'avoir une vision de ce qui va arriver.
+ * In cash accounting mode, we include outstanding invoiced amounts and signed proposals
+ * that haven't been invoiced yet. Since cash accounting only records transactions
+ * when funds hit the account, it is useful to have visibility into upcoming cash flow.
  */
 
 /*
- Je commente toute cette partie car les chiffres affichees sont faux - Eldy.
- En attendant correction.
+ Commenting out this entire section because the displayed figures are incorrect - Eldy.
+ Waiting for the fix.
 
  if ($modecompta != 'CREANCES-DETTES')
  {
 
  print '<br><table width="100%" class="noborder">';
 
- // Factures non reglees
- // Y a bug ici. Il faut prendre le reste a payer et non le total des factures non reglees !
+ // Unpaid invoices
+ // There is a bug here.  We need to use the remaining to pay and not the total of unpaid invoices!
 
  $sql = "SELECT f.ref, f.rowid, s.nom, s.rowid as socid, f.total_ttc, sum(pf.amount) as am";
  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f left join ".MAIN_DB_PREFIX."paiement_facture as pf on f.rowid=pf.fk_facture";
@@ -720,7 +732,7 @@ print '</div>';
  $i++;
  }
 
- print "<tr class="oddeven"><td class=\"right\" colspan=\"5\"><i>Facture a encaisser : </i></td><td class=\"right\"><i>".price($total_ttc_Rac)."</i></td><td colspan=\"5\"><-- bug ici car n'exclut pas le deja r?gl? des factures partiellement r?gl?es</td></tr>";
+ print "<tr class="oddeven"><td class=\"right\" colspan=\"5\"><i>Invoice a encaisser : </i></td><td class=\"right\"><i>".price($total_ttc_Rac)."</i></td><td colspan=\"5\"><-- bug ici car n'exclut pas le deja réglé des invoices partiellement réglées</td></tr>";
  }
  $db->free($resql);
  }
@@ -737,8 +749,8 @@ print '</div>';
  */
 
 /*
- Je commente toute cette partie car les chiffres affichees sont faux - Eldy.
- En attendant correction.
+ Commenting out this entire section because the displayed figures are incorrect - Eldy.
+ Waiting for the fix.
 
  $sql = "SELECT sum(f.total_ht) as tot_fht,sum(f.total_ttc) as tot_fttc, p.rowid, p.ref, s.nom, s.rowid as socid, p.total_ht, p.total_ttc
  FROM ".MAIN_DB_PREFIX."commande AS p, ".MAIN_DB_PREFIX."societe AS s

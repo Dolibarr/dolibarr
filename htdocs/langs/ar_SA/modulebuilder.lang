@@ -14,7 +14,7 @@ ModuleName=اسم نموذج
 ModuleKey=مفتاح الوحدة
 ObjectKey=مفتاح الكائن
 DicKey=مفتاح القاموس
-ModuleInitialized=الوحدة النمطية مهيأة
+ModuleInitialized=ملفات الوحدة النمطية تم تهيئتها إلى المجلد <b>%s</b>
 FilesForObjectInitialized=تمت تهيئة ملفات الكائن الجديد '%s'
 FilesForObjectUpdated=تم تحديث ملفات الكائن '%s' (ملفات .sql وملف .class.php)
 ModuleBuilderDescdescription=أدخل هنا جميع المعلومات العامة التي تصف الوحدة الخاصة بك.
@@ -27,7 +27,7 @@ ModuleBuilderDeschooks=علامة التبويب هذه مخصصة للخطاف�
 ModuleBuilderDescwidgets=علامة التبويب هذه مخصصة لبناء\\إدارة البريمجات
 ModuleBuilderDescbuildpackage=يمكنك هنا إنشاء ملف حزمة "جاهز للتوزيع" (ملف مضغوط. مضغوط) للوحدة النمطية الخاصة بك وملف توثيق "جاهز للتوزيع". ما عليك سوى النقر فوق الزر لإنشاء الحزمة أو ملف التوثيق.
 EnterNameOfModuleToDeleteDesc=يمكنك حذف الوحدة الخاصة بك. تحذير: سيتم حذف جميع ملفات الترميز الخاصة بالوحدة النمطية (التي تم إنشاؤها أو إنشاؤها يدويًا) والبيانات المنظمة والوثائق!
-EnterNameOfObjectToDeleteDesc=You can delete an object. WARNING: All coding files (generated or created manually) related to the object will be deleted!
+EnterNameOfObjectToDeleteDesc=يمكنك حذف كائن. تحذير: سيتم حذف جميع ملفات الترميز (التي تم إنشاؤها أو إنشاؤها يدويًا) المتعلقة بالكائن!
 DangerZone=منطقة الخطر
 BuildPackage=بناء الحزمة
 BuildPackageDesc=يمكنك إنشاء حزمة مضغوطة لتطبيقك حتى تكون جاهزًا لتوزيعها على أي Dolibarr. يمكنك أيضًا توزيعه أو بيعه في السوق مثل <a href="https://www.dolistore.com"> DoliStore.com </a>.
@@ -148,7 +148,7 @@ CSSListClass=CSS للحصول على قائمة
 NotEditable=غير قابل للتحرير
 ForeignKey=مفتاح غريب
 ForeignKeyDesc=إذا كان يجب ضمان وجود قيمة هذا الحقل في جدول آخر. أدخل هنا صيغة مطابقة القيمة: tablename.parentfieldtocheck
-TypeOfFieldsHelp=مثال:<br>varchar(99)<br>البريد الإلكتروني<br>الهاتف<br>ip<br>url<br>كلمة المرور<br>مزدوج(24,8)<br>حقيقي<br>نص<br>html <br>التاريخ<br>التاريخ والوقت<br>الطابع الزمني <br>عدد صحيح<br>عدد صحيح:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br><br>'1' يعني أننا نضيف زر + بعد التحرير والسرد لإنشاء السجل<br>'filter' هو شرط بناء جملة المرشح العام، مثال: '((حالة:=:1) و (fk_user:=:__USER_ID__) و (الكيان:IN:(__SHARED_ENTITIES__))'
+TypeOfFieldsHelp=مثال: <br>varchar(99)<br>email<br>phone<br>ip<br>url<br>password<br>double(24,8)<br>real<br>text<br>html<br>date<br>datetime<br>timestamp<br>stars(NumberOfStars) يجب أن يكون NumberOfStars بين 1 و10.<br>integer<br>integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br><br>'1' يعني أننا نضيف زر + بعد المجموعة لإنشاء السجل<br>'filter' هو شرط نحوي لمرشح عالمي، على سبيل المثال: '((status:=:1) AND (fk_user:=:__USER_ID__) AND (entity:IN:(__SHARED_ENTITIES__))'
 TypeOfFieldsHelpIntro=هذا هو نوع الحقل/السمة.
 AsciiToHtmlConverter=Ascii لتحويل HTML
 AsciiToPdfConverter=Ascii لتحويل PDF
@@ -173,6 +173,7 @@ PermissionAddedSuccesfuly=تمت إضافة الإذن بنجاح
 MenuDeletedSuccessfuly=تم حذف القائمة بنجاح
 MenuAddedSuccessfuly=تمت إضافة القائمة بنجاح
 MenuUpdatedSuccessfuly=تم تحديث القائمة بنجاح
+AddAPIsForThisObject=أضف واجهات برمجة التطبيقات لهذا الكائن
 ApiObjectDeleted=تم حذف واجهة برمجة التطبيقات للكائن %s بنجاح
 CRUDRead=قراءة
 CRUDCreateWrite=إنشاء أو تحديث
@@ -181,8 +182,16 @@ DictionariesCreated=تم إنشاء القاموس <b>%s</b> بنجاح
 DictionaryDeleted=تمت إزالة القاموس <b>%s</b> بنجاح
 PropertyModuleUpdated=تم تحديث الخاصية <b>%s</b> بنجاح
 InfoForApiFile=* عند إنشاء ملف لأول مرة، سيتم إنشاء جميع الطرق <strong>لكل كائن.</strong><br>* عند النقر فوق <strong>إزالة</strong> فإنك تقوم فقط بإزالة كافة الأساليب الخاصة بـ <strong>الكائن المحدد</strong>.
+AboutFile=صفحة "حول الوحدة"
 SetupFile=صفحة لإعداد نموذج
-EmailingSelectors=Emails selectors
-EmailingSelectorDesc=You can generate and edit here the class files to provide new email target selectors for the mass emailing module
-EmailingSelectorFile=Emails selector file
-NoEmailingSelector=No emails selector file
+EmailingSelectors=محددات رسائل البريد الإلكتروني
+EmailingSelectorDesc=يمكنك إنشاء و هنا وتحرير ملفات الفصل لتوفير محددات جديدة لأهداف البريد الإلكتروني لإرسال البريد الإلكتروني الجماعي نموذج
+EmailingSelectorFile=ملف محدد رسائل البريد الإلكتروني
+NoEmailingSelector=لا يوجد ملف محدد لرسائل البريد الإلكتروني
+ModuleTranslatedIntoLangForKeyInto=تمت ترجمته إلى ملف .lang للمفتاح %s في "%s"
+PageLinkedByAMenuEntry=الصفحة مرتبطة بإدخال قائمة واحد على الأقل
+FieldsEdit=تحرير الحقول
+FieldsInsert=إدراج الحقول
+FieldsView=عرض الحقول
+AIPromptExtrafield=موجه الذكاء الاصطناعي
+AIPromptExtrafieldDesc=سيتم استبدال الثوابت المستخدمة في هذا المجال بالقيمة المقابلة.

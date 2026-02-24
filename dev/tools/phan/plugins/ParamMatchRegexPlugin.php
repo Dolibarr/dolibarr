@@ -135,8 +135,16 @@ class ParamMatchVisitor extends PluginAwarePostAnalysisVisitor
 	{
 		$class_name = $node->children['class']->children['name'] ?? null;
 		if (!\is_string($class_name)) {
-			throw new NodeException($expr, 'does not have class');
+			// May happen for $this->className::$name(...$arguments); (variable class name)
+			$location = $this->context->getFile().":".$node->lineno;
+			print "$location: Node does not have fixed string class_name - node type ".(is_object($class_name) ? get_class_name($class_name) : gettype($class_name)).PHP_EOL;
+			return;
+			// throw new NodeException($node, 'does not have class');
 		}
+		// } else {
+		//	$location = $this->context->getFile().":".$node->lineno;
+		//	print "$location: Static call - node type ".get_class($node).PHP_EOL;
+		//}
 		try {
 			$class_name = (string) FullyQualifiedClassName::fromFullyQualifiedString($class_name);
 		} catch (FQSENException $_) {

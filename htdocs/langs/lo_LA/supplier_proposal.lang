@@ -35,7 +35,6 @@ SupplierProposalStatusSignedShort=ຍອມຮັບແລ້ວ
 SupplierProposalStatusNotSignedShort=ປະຕິເສດ
 CopyAskFrom=ສ້າງການຮ້ອງຂໍລາຄາໂດຍການອັດ ສຳ ເນົາການຮ້ອງຂໍທີ່ມີຢູ່
 CreateEmptyAsk=ສ້າງຄໍາຮ້ອງຂໍເປົ່າ
-ConfirmCloneAsk=ເຈົ້າແນ່ໃຈບໍ່ວ່າເຈົ້າຕ້ອງການໂຄນຄໍາຮ້ອງຂໍລາຄາ <b> %s </b>?
 ConfirmReOpenAsk=ເຈົ້າແນ່ໃຈບໍ່ວ່າເຈົ້າຕ້ອງການເປີດຄືນການຮ້ອງຂໍລາຄາ <b> %s </b>?
 SendAskByMail=ສົ່ງການຮ້ອງຂໍລາຄາທາງໄປສະນີ
 SendAskRef=ກຳ ລັງສົ່ງ ຄຳ ຮ້ອງຂໍລາຄາ %s

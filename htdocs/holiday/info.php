@@ -1,6 +1,8 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2015	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +22,7 @@
 /**
  * 	\file       htdocs/holiday/info.php
  * 	\ingroup    holiday
- * 	\brief      Page to show a leave information
+ * 	\brief      Page to show leave information
  */
 
 // Load Dolibarr environment
@@ -28,6 +30,14 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/holiday.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->load("holiday");
@@ -50,6 +60,8 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
+$permissiontoapprove = $user->hasRight('holiday', 'approve');
+
 if (($id > 0) || $ref) {
 	$object->fetch($id, $ref);
 
@@ -59,6 +71,9 @@ if (($id > 0) || $ref) {
 		$canread = 1;
 	}
 	if ($user->hasRight('holiday', 'read') && in_array($object->fk_user, $childids)) {
+		$canread = 1;
+	}
+	if ($permissiontoapprove && $object->fk_validator == $user->id && !getDolGlobalString('HOLIDAY_CAN_APPROVE_ONLY_THE_SUBORDINATES')) {	// TODO HOLIDAY_CAN_APPROVE_ONLY_THE_SUBORDINATES not completely implemented
 		$canread = 1;
 	}
 	if (!$canread) {
@@ -80,8 +95,9 @@ $result = restrictedArea($user, 'holiday', $object->id, 'holiday');
 $form = new Form($db);
 
 $title = $langs->trans("Leave")." - ".$langs->trans("Info");
-$helpurl = "";
-llxHeader("", $title, $helpurl);
+$help_url = 'EN:Module_Holiday';
+
+llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-holiday page-card_info');
 
 if ($id > 0 || !empty($ref)) {
 	$object = new Holiday($db);

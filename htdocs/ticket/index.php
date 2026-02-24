@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2013-2016  Jean-François FERRY     <hello@librethic.io>
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2021-2024	Frédéric France			<frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2021-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,9 +33,15 @@ require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticketstats.class.php';
 
 
-$hookmanager = new HookManager($db);
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('ticketsindex'));
 
 // Load translation files required by the page
@@ -65,7 +72,7 @@ $endyear = $year;
 $object = new Ticket($db);
 
 // Security check
-//$result = restrictedArea($user, 'ticket|knowledgemanagement', 0, '', '', '', '');
+//restrictedArea($user, 'ticket|knowledgemanagement', 0, '', '', '', '');
 if (!$user->hasRight('ticket', 'read') && !$user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')) {
 	accessforbidden('Not enough permissions');
 }
@@ -104,6 +111,8 @@ $param_year = 'DOLUSERCOOKIE_ticket_by_status_year';
 $param_shownb = 'DOLUSERCOOKIE_ticket_by_status_shownb';
 $param_showtot = 'DOLUSERCOOKIE_ticket_by_status_showtot';
 $autosetarray = preg_split("/[,;:]+/", GETPOST('DOL_AUTOSET_COOKIE'));
+$showtot = 0;
+$shownb = 0;
 if (in_array('DOLUSERCOOKIE_ticket_by_status', $autosetarray)) {
 	$endyear = GETPOSTINT($param_year);
 	$shownb = GETPOST($param_shownb, 'alpha');
@@ -179,6 +188,7 @@ if ($user->socid > 0) {
 }
 $sql .= " GROUP BY t.fk_statut";
 
+$dataseries = array();
 $result = $db->query($sql);
 if ($result) {
 	while ($objp = $db->fetch_object($result)) {
@@ -209,9 +219,18 @@ if ($result) {
 		}
 	}
 
+	/**
+	 * @var string $badgeStatus0
+	 * @var string $badgeStatus1
+	 * @var string $badgeStatus3
+	 * @var string $badgeStatus4
+	 * @var string $badgeStatus5
+	 * @var string $badgeStatus6
+	 * @var string $badgeStatus8
+	 * @var string $badgeStatus9
+	 */
 	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';	// This define $badgeStatusX
 
-	$dataseries = array();
 	$colorseries = array();
 
 	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($object->labelStatusShort[Ticket::STATUS_NOT_READ]), 'data' => round($tick['unread']));
@@ -244,26 +263,26 @@ $stringtoshow = '<script type="text/javascript">
     });
     </script>';
 $stringtoshow .= '<div class="center hideobject" id="idfilterDOLUSERCOOKIE_ticket_by_status">'; // hideobject is to start hidden
-$stringtoshow .= '<form class="flat formboxfilter" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+$stringtoshow .= '<form class="flat formboxfilter" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 $stringtoshow .= '<input type="hidden" name="token" value="'.newToken().'">';
 $stringtoshow .= '<input type="hidden" name="action" value="refresh">';
 $stringtoshow .= '<input type="hidden" name="DOL_AUTOSET_COOKIE" value="DOLUSERCOOKIE_ticket_by_status:year,shownb,showtot">';
 $stringtoshow .= $langs->trans("Year").' <input class="flat" size="4" type="text" name="'.$param_year.'" value="'.$endyear.'">';
-$stringtoshow .= '<input type="image" alt="'.$langs->trans("Refresh").'" src="'.img_picto($langs->trans("Refresh"), 'refresh.png', '', '', 1).'">';
+$stringtoshow .= '<input type="image" alt="'.$langs->trans("Refresh").'" src="'.img_picto($langs->trans("Refresh"), 'refresh.png', '', 0, 1).'">';
 $stringtoshow .= '</form>';
 $stringtoshow .= '</div>';
 
 if ($user->hasRight('ticket', 'read')) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><th >'.$langs->trans("Statistics").' '.$endyear.' '.img_picto('', 'filter.png', 'id="idsubimgDOLUSERCOOKIE_ticket_by_status" class="linkobject"').'</th></tr>';
+	print '<tr class="liste_titre"><th  colspan=2>'.$langs->trans("Statistics").' '.$endyear.' '.img_picto('', 'filter.png', 'id="idsubimgDOLUSERCOOKIE_ticket_by_status" class="linkobject"').'</th></tr>';
 
-	print '<tr><td class="center">';
+	print '<tr><td class="center" colspan=2>';
 	print $stringtoshow;
 
 	// don't display graph if no series
+	$totalnb = 0;
 	if (!empty($dataseries) && count($dataseries) > 1) {
-		$totalnb = 0;
 		foreach ($dataseries as $key => $value) {
 			$totalnb += $value['data'];
 		}
@@ -303,7 +322,7 @@ if ($user->hasRight('ticket', 'read')) {
 		}
 	}
 	print '</td></tr>';
-
+	print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">'.$totalnb.'</td></tr>';
 	print '</table>';
 	print '</div>';
 }
@@ -331,9 +350,9 @@ if ($user->hasRight('ticket', 'read')) {
 	$sql .= " category.code as category_code, category.label as category_label,";
 	$sql .= " severity.code as severity_code, severity.label as severity_label";
 	$sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_type as type ON type.code=t.type_code";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_category as category ON category.code=t.category_code";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_severity as severity ON severity.code=t.severity_code";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_type as type ON type.code = t.type_code AND type.entity = t.entity";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_category as category ON category.code = t.category_code AND category.entity = t.entity";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_severity as severity ON severity.code = t.severity_code AND severity.entity = t.entity";
 	if (!$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
@@ -398,12 +417,12 @@ if ($user->hasRight('ticket', 'read')) {
 
 				// Creation date
 				print '<td class="center nowraponall">';
-				print dol_print_date($db->jdate($objp->datec), 'dayhour');
+				print dol_print_date($db->jdate($objp->datec), 'dayhourreduceformat');
 				print "</td>";
 
 				// Subject
-				print '<td class="nowrap">';
-				print '<a href="card.php?track_id='.$objp->track_id.'">'.dol_trunc($objp->subject, 30).'</a>';
+				print '<td class="nowrap tdoverflowmax150">';
+				print '<a href="card.php?track_id='.$objp->track_id.'" title="'.dolPrintHTMLForAttribute($objp->subject).'">'.dol_trunc($objp->subject, 30).'</a>';
 				print "</td>\n";
 
 				// Type
@@ -422,7 +441,7 @@ if ($user->hasRight('ticket', 'read')) {
 				print "</td>";
 
 				// Severity = Priority
-				print '<td class="nowrap">';
+				print '<td class="nowrap" title="'.$langs->trans("Priority").'">';
 				$s = $langs->getLabelFromKey($db, 'TicketSeverityShort'.$objp->severity_code, 'c_ticket_severity', 'code', 'label', $objp->severity_code);
 				print '<span title="'.dol_escape_htmltag($s).'">'.$s.'</span>';
 				//print $objp->severity_label;

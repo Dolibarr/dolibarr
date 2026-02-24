@@ -6,6 +6,7 @@ ErrorDeleteCurrencyFail=Error ao eliminar
 multicurrency_syncronize_error=Erro de sincronización: %s
 MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE=Usar data do documento para atopar a taxa da moeda, no lugar de usar a derradeira taxa coñecida
 multicurrency_useOriginTx=Cando un obxecto é creado dende outro, manteña a conversión orixinal do obxecto de orixe (na contra, utilice a taxa de conversión mais reciente coñecida)
+multicurrency_useOriginTxHelp=Esta opción non se aplica á creación dunha factura a partir dunha factura recorrente
 CurrencyLayerAccount=API Capa da moeda
 CurrencyLayerAccount_help_to_synchronize=Debe crear unha cota no sitio web para usar esta funcionalidade<br>Acade a súa <b>chave API</b><br>Se usa unha conta gratuita non pode cambiar a <b>moeda orixe</b> (por defecto USD)<br>Pero se a súa moeda principal non é USD pode usar a <b>moeda orixe alternativa</b> para forzar a súa moeda principal<br><br>Estará limitado a 1000 sincronizacións por mes
 multicurrency_appId=Clave API

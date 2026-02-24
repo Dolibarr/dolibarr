@@ -2,6 +2,7 @@
 IdAgenda=ID udalosti
 Actions=Udalosti
 Agenda=Program rokovania
+AgendaEvents=Program podujatí
 TMenuAgenda=Program rokovania
 Agendas=Program
 LocalAgenda=Predvolený kalendár
@@ -21,7 +22,6 @@ MenuDoneMyActions=Moje ukončených akcií
 ListOfEvents=Zoznam udalostí (predvolený kalendár)
 ActionsAskedBy=Akcia hlásené
 ActionsToDoBy=Akcia priradené
-ActionsDoneBy=Akcie vykonané
 ActionAssignedTo=Udalosť priradená na
 ViewCal=Mesačný pohľad
 ViewDay=Denné zobrazenie
@@ -45,6 +45,7 @@ PropalClosedRefusedInDolibarr=Ponuka %s odmietnutá
 PropalValidatedInDolibarr=Návrh %s overená
 PropalBackToDraftInDolibarr=Návrh %s prejsť späť do stavu konceptu
 PropalClassifiedBilledInDolibarr=Ponuka %s označená ako faktúrovaná
+InvoiceCreatedInDolibarr=Faktúra %s bola vytvorená
 InvoiceValidatedInDolibarr=Faktúra %s overená
 InvoiceValidatedInDolibarrFromPos=Faktúra %s overená z miesta predaja
 InvoiceBackToDraftInDolibarr=Faktúra %s vrátiť do stavu návrhu
@@ -135,12 +136,14 @@ AgendaModelModule=Šablóny dokumentov pre udalosť
 DateActionStart=Dátum začatia
 DateActionEnd=Dátum ukončenia
 AgendaUrlOptions1=Môžete tiež pridať nasledujúce parametre filtrovania výstupu:
-AgendaUrlOptions3=<b>logina=%s</b> pre obmedzenie výstupu akciam ktoré vlastní užívateľ <b>%s</b>.
-AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> na obmedzenie výstupu na akcie, ktoré nie sú vlastnené používateľ <b>%s</b>.
+AgendaUrlOptions3=<b>logina=%s</b> na obmedzenie výstupu na akcie vlastnené používateľom <b>%s</b> (použite <b>logina=!%s</b> pre udalosti, ktoré nevlastní používateľ).
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> na vylúčenie automatických udalostí.
+AgendaUrlOptionsType=<b>actiontype=%s</b> na získanie automatických alebo manuálnych udalostí
+AgendaUrlOptionsCode=<b>actioncode=%s</b> na získanie iba udalostí s daným kódom
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> na zahrnutie udalostí sviatkov.
+AgendaUrlOptionsLimitDays=<b>noolderthan=%s</b> na obmedzenie udalostí za posledných %s dní (predvolená hodnota je %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> na obmedzenie na posledných 50 udalostí (predvolená hodnota a maximálna hodnota je %s).
 AgendaShowBirthdayEvents=Narodeniny kontaktov
 AgendaHideBirthdayEvents=Skryť naroodeniny kontaktov
 Busy=Zaneprázdnený
@@ -201,4 +204,9 @@ AppointmentDuration = Trvanie stretnutia : %s
 BookingSuccessfullyBooked=Vaša rezervácia bola uložená
 BookingReservationHourAfter=Potvrdzujeme rezerváciu nášho stretnutia na dátum %s
 BookcalBookingTitle=Online stretnutie
-Transparency = Transparency
+Transparency = Transparentnosť
+ReadMore = Čítať ďalej
+ReadLess = Zobraziť menej
+RecurringEvent=Opakujúca sa udalosť
+EventPartOfARecurringSerie=Udalosť je súčasťou opakujúcej sa série s ID %s
+BookCalSystem=Online rezervácia

@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2022   Open-Dsi		<support@open-dsi.fr>
+/* Copyright (C) 2022       Open-Dsi				<support@open-dsi.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,12 +15,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Need to have following variables defined:
+ * Need to have the following variables defined:
  * $object (invoice, order, ...)
  * $conf
  * $langs
  * $element     (used to test $user->hasRight('element', 'creer'))
- * $permtoedit  (used to replace test $user->hasright('element', 'creer'))
  * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
  * $outputalsopricetotalwithtax
  * $usemargins (0 to disable all margins columns, 1 to show according to margin setup)
@@ -32,6 +32,11 @@ if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
+/**
+ * @var Translate $langs
+ *
+ * @var string $action
+ */
 
 print "<!-- BEGIN PHP TEMPLATE productattributevalueline_title.tpl.php -->\n";
 

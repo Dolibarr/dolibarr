@@ -2,7 +2,7 @@
 /* Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
  * Copyright (C) 2009      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2008-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -27,6 +27,8 @@
 
 /**
  *	Class to manage menu Auguria
+ *
+ *	@phan-suppress PhanRedefineClass
  */
 class MenuManager
 {
@@ -36,12 +38,12 @@ class MenuManager
 	public $db;
 
 	/**
-	 * @var int Put 0 for internal users, 1 for external users
+	 * @var int<0,1>	0 for internal users, 1 for external users
 	 */
 	public $type_user;
 
 	/**
-	 * @var string To store default target to use onto links
+	 * @var string		Default target to use for links
 	 */
 	public $atarget = "";
 
@@ -55,9 +57,18 @@ class MenuManager
 	 */
 	public $menu;
 
+	/**
+	 * @var array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,positionfull:int|string,showtopmenuinframe:int,level:int,prefix:string}>
+	 */
 	public $menu_array;
+	/**
+	 * @var array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,positionfull:int|string,showtopmenuinframe:int,level:int,prefix:string}>
+	 */
 	public $menu_array_after;
 
+	/**
+	 * @var array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,positionfull:int|string,showtopmenuinframe:int,level:int,prefix:string}>
+	 */
 	public $tabMenu;
 
 
@@ -65,7 +76,7 @@ class MenuManager
 	 *  Constructor
 	 *
 	 *  @param	DoliDB		$db     	Database handler
-	 *  @param	int			$type_user	Type of user
+	 *  @param	int<0,1>	$type_user	Type of user
 	 */
 	public function __construct($db, $type_user)
 	{
@@ -83,8 +94,6 @@ class MenuManager
 	 */
 	public function loadMenu($forcemainmenu = '', $forceleftmenu = '')
 	{
-		global $conf, $user, $langs;
-
 		// We save into session the main menu selected
 		if (GETPOSTISSET("mainmenu")) {
 			$_SESSION["mainmenu"] = GETPOST("mainmenu", 'aZ09');
@@ -100,7 +109,7 @@ class MenuManager
 			$_SESSION["mainmenu"] = $mainmenu;
 			$_SESSION["leftmenuopened"] = "";
 		} else {
-			// On va le chercher en session si non defini par le lien
+			// Look for the menu in the session if not set by the link
 			$mainmenu = isset($_SESSION["mainmenu"]) ? $_SESSION["mainmenu"] : '';
 		}
 		if (!empty($forcemainmenu)) {
@@ -119,7 +128,7 @@ class MenuManager
 				$_SESSION["leftmenuopened"] = $leftmenu;
 			}
 		} else {
-			// On va le chercher en session si non defini par le lien
+			// Look for the menu in the session if not set by the link
 			$leftmenu = isset($_SESSION["leftmenu"]) ? $_SESSION["leftmenu"] : '';
 		}
 		if (!empty($forceleftmenu)) {
@@ -138,12 +147,12 @@ class MenuManager
 
 
 	/**
-	 *  Show menu.
+	 *  Output menu on screen.
 	 *  Menu defined in sql tables were stored into $this->tabMenu BEFORE this is called.
 	 *
-	 *	@param	string	$mode		    'top', 'topnb', 'left', 'jmobile' (used to get full xml ul/li menu)
-	 *  @param	array	$moredata		An array with more data to output
-	 *  @return int                     0 or nb of top menu entries if $mode = 'topnb'
+	 *	@param	string					$mode	    'top', 'topnb', 'left', 'jmobile' (used to get full xml ul/li menu)
+	 *  @param	?array<string,string>	$moredata	An array with more data to output
+	 *  @return int<0,max>							0 or nb of top menu entries if $mode = 'topnb'
 	 */
 	public function showmenu($mode, $moredata = null)
 	{
@@ -189,10 +198,11 @@ class MenuManager
 			$lastlevel = array();
 			$showmenu = true;  // Is current menu shown - define here to keep static code checker happy
 			print '<!-- Generate menu list from menu handler '.$this->name.' -->'."\n";
+			print '<ul class="ulmenu ullevel0" data-inset="true">'."\n";
 			foreach ($this->menu->liste as $key => $val) {		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
-				print '<ul class="ulmenu" data-inset="true">';
-				print '<li class="lilevel0">';
 				if ($val['enabled'] == 1) {
+					print '<li class="lilevel0">';
+
 					$substitarray = array('__LOGIN__' => $user->login, '__USER_ID__' => $user->id, '__USER_SUPERVISOR_ID__' => $user->fk_user);
 					$substitarray['__USERID__'] = $user->id; // For backward compatibility
 					$val['url'] = make_substitutions($val['url'], $substitarray);
@@ -200,14 +210,20 @@ class MenuManager
 					$relurl = dol_buildpath($val['url'], 1);
 					$canonurl = preg_replace('/\?.*$/', '', $val['url']);
 
+					// Label li level 0
 					print '<a class="alilevel0" href="#">';
 
 					// Add font-awesome
 					if ($val['level'] == 0 && !empty($val['prefix'])) {
-						print str_replace('<span class="', '<span class="paddingright pictofixedwidth ', $val['prefix']);
+						$reg = array();
+						if (preg_match('/^(fa[rsb]? )?fa-/', $val['prefix'], $reg)) {
+							print '<span class="'.(empty($reg[1]) ? 'fa ' : '').$val['prefix'].' paddingright pictofixedwidth"></span>';
+						} else {
+							print str_replace('<span class="', '<span class="paddingright pictofixedwidth ', $val['prefix']);
+						}
 					}
 
-					print $val['titre'];
+					print ucfirst($val['titre']);
 					print '</a>'."\n";
 
 					// Search submenu for this mainmenu entry
@@ -225,11 +241,15 @@ class MenuManager
 					$canonnexturl = preg_replace('/\?.*$/', '', $nexturl);
 					//var_dump($canonrelurl);
 					//var_dump($canonnexturl);
-					print '<ul>'."\n";
+
+					// Start a new ul level 1
+					$level = 1;
+					print str_repeat(' ', $level).'<ul class="ullevel1">'."\n";
+
+					// Do we have to add an extra entry that is not into menu array ?
 					if (($canonrelurl != $canonnexturl && !in_array($val['mainmenu'], array('tools')))
 						|| (strpos($canonrelurl, '/product/index.php') !== false || strpos($canonrelurl, '/compta/bank/list.php') !== false)) {
-						// We add sub entry
-						print str_pad('', 1).'<li class="lilevel1 ui-btn-icon-right ui-btn">'; // ui-btn to highlight on clic
+						print str_repeat(' ', $level).'<li class="lilevel1 ui-btn-icon-right ui-btn">'; // ui-btn to highlight on clic
 						print '<a href="'.$relurl.'">';
 
 						if ($val['level'] == 0) {
@@ -260,7 +280,10 @@ class MenuManager
 					}
 
 					$lastlevel2 = array();
-					foreach ($submenu->liste as $key2 => $val2) {		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
+					$lastlinelevel = $level;
+
+					'@phan-var-force array<string> $lastlevel2';
+					foreach ($submenu->liste as $key2 => $val2) {		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu','prefix']
 						$showmenu = true;
 						if (getDolGlobalString('MAIN_MENU_HIDE_UNAUTHORIZED') && empty($val2['enabled'])) {
 							$showmenu = false;
@@ -270,6 +293,7 @@ class MenuManager
 						if ($val2['level'] > 0) {
 							$levelcursor = $val2['level'] - 1;
 							while ($levelcursor >= 0) {
+								// @phan-suppress-next-line PhanTypeInvalidDimOffset
 								if ($lastlevel2[$levelcursor] != 'enabled') {
 									$showmenu = false;
 								}
@@ -278,6 +302,12 @@ class MenuManager
 						}
 
 						if ($showmenu) {		// Visible (option to hide when not allowed is off or allowed)
+							$newlinelevel = ($val2['level'] + 1);
+							if ($newlinelevel > $lastlinelevel) {
+								print str_repeat(' ', $newlinelevel).'<ul class="ullevel'.$newlinelevel.'" xx>'."\n";
+							}
+							$lastlinelevel = ($val2['level'] + 1);
+
 							$substitarray = array('__LOGIN__' => $user->login, '__USER_ID__' => $user->id, '__USER_SUPERVISOR_ID__' => $user->fk_user);
 							$substitarray['__USERID__'] = $user->id; // For backward compatibility
 							$val2['url'] = make_substitutions($val2['url'], $substitarray); // Make also substitution of __(XXX)__ and __[XXX]__
@@ -298,20 +328,22 @@ class MenuManager
 								$disabled = " vsmenudisabled";
 							}
 
+							// Show entry li level $val2['level']+1
+
 							// @phan-suppress-next-line PhanParamSuspiciousOrder
-							print str_pad('', $val2['level'] + 1);
+							print str_repeat(' ', ($val2['level'] + 1));
 							print '<li class="lilevel'.($val2['level'] + 1);
 							if ($val2['level'] == 0) {
 								print ' ui-btn-icon-right ui-btn'; // ui-btn to highlight on clic
 							}
 							print $disabled.'">'; // ui-btn to highlight on clic
 							if ($relurl2) {
-								if ($val2['enabled']) {	// Allowed
-									print '<a href="'.$relurl2.'"';
-									//print ' data-ajax="false"';
-									print '>';
+								if ($val2['enabled']) {
+									// Allowed
+									print '<a href="'.$relurl2.'">';
 									$lastlevel2[$val2['level']] = 'enabled';
-								} else { // Not allowed but visible (greyed)
+								} else {
+									// Not allowed but visible (greyed)
 									print '<a href="#" class="vsmenudisabled">';
 									$lastlevel2[$val2['level']] = 'greyed';
 								}
@@ -323,23 +355,47 @@ class MenuManager
 								}
 							}
 
+							// Add font-awesome for level 0 and 1 (if $val2['level'] == 1, we are on level2, if $val2['level'] == 2, we are on level 3...)
 							if ($val2['level'] == 0 && !empty($val2['prefix'])) {
-								print $val2['prefix'];
+								print $val2['prefix'];	// the picto must have class="pictofixedwidth paddingright"
 							} else {
-								print '<i class="fa fa-does-not-exists fa-fw paddingright pictofixedwidth"></i>';
+								print '<i class="fa fa-does-not-exists fa-fw paddingright pictofixedwidth level'.($val2['level'] + 1).'"></i>';
 							}
 
 							print $val2['titre'];
 							if ($relurl2) {
 								print '</a>';
 							}
-							print '</li>'."\n";
+
+
+							$currentlevel = (empty($submenu->liste[$key2]) ? 1 : $submenu->liste[$key2]['level'] + 1);
+							$nextlevel = (empty($submenu->liste[$key2 + 1]) ? 1 : $submenu->liste[$key2 + 1]['level'] + 1);
+							// If there is no lower level
+							if ($nextlevel > $currentlevel) {
+								// There is a submenu with a lower level, we do not close the li
+								print "\n";
+							} elseif ($nextlevel < $currentlevel) {
+								// Next menu is lower
+								print '</li>'."\n";
+								$fromcursor = 0;
+								while ($fromcursor < ($currentlevel - $nextlevel)) {
+									print str_repeat(' ', $currentlevel - $fromcursor).'</ul>'."\n";
+									print str_repeat(' ', $currentlevel - $fromcursor - 1).'</li>'."\n";	// end level $val2['level']+1
+									$fromcursor++;
+								}
+							} else {
+								print '</li>'."\n";	// end level $val2['level']+1
+							}
 						}
+						//var_dump($submenu);
 					}
-					//var_dump($submenu);
-					print '</ul>';
-				}
-				if ($val['enabled'] == 2) {
+
+					print str_repeat(' ', $level).'</ul>'."\n";			// end ul level 1
+					print str_repeat(' ', $level - 1).'</li>'."\n";			// end ul level 1
+				} elseif ($val['enabled'] == 2) {
+					print '<li class="lilevel0">';
+
+					// Label li level 0
 					print '<span class="spanlilevel0 vsmenudisabled">';
 
 					// Add font-awesome
@@ -349,10 +405,11 @@ class MenuManager
 
 					print $val['titre'];
 					print '</span>';
+
+					print '</li>'."\n";		// close entry level 0
 				}
-				print '</li>';
-				print '</ul>'."\n";
 			}
+			print '</ul>'."\n";		// close entry level 0
 		}
 
 		unset($this->menu);

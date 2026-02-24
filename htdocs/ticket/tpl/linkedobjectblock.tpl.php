@@ -1,6 +1,8 @@
 <?php
-/* Copyright (C) 2010-2012 Regis Houssin <regis.houssin@inodbox.com>
- * Copyright (C) 2013      Jean-François FERRY <hello@librethic.io>
+/* Copyright (C) 2010-2012  Regis Houssin 			<regis.houssin@inodbox.com>
+ * Copyright (C) 2013       Jean-François FERRY 	<hello@librethic.io>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,6 +17,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
+
+/**
+ *  \file		htdocs/ticket/tpl/linkedobjectblock.tpl.php
+ *  \ingroup	ticket
+ *  \brief		Template to show objects linked to tickets
+ */
+
+/**
+ * @var Translate $langs
+ * @var Conf $conf
+ * @var User $user
+ *
+ * @var CommonObject $object
+ * @var int $noMoreLinkedObjectBlockAfter
+ * @var int $showImportButton
+ * @var Ticket[] $linkedObjectBlock
+ */
+
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
@@ -23,17 +43,12 @@ if (empty($conf) || !is_object($conf)) {
 
 print "<!-- BEGIN PHP TEMPLATE ticket/tpl/linkedobjectblock.tpl.php -->\n";
 
-
-global $user;
-global $noMoreLinkedObjectBlockAfter;
-
-$langs = $GLOBALS['langs'];
-$linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
-
 // Load translation files required by the page
 $langs->load('ticket');
 
-$linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'datec', 'desc', 0, 0, 1);
+$linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'datec,ref', 'desc', 0, 0, 1);
+'@phan-var-force Ticket[] $linkedObjectBlock';  // Repeat because type lost after dol_sort_array)
+/** @var Ticket[] $linkedObjectBlock */
 
 $total = 0;
 $ilink = 0;
@@ -45,13 +60,10 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		$trclass .= ' liste_sub_total';
 	} ?>
 	<tr class="<?php echo $trclass; ?>" >
-		<td class="linkedcol-element tdoverflowmax100"><?php echo $langs->trans("Ticket"); ?>
-		<?php if (!empty($showImportButton) && getDolGlobalString('MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES')) {
-			print '<a class="objectlinked_importbtn" href="'.$objectlink->getNomUrl(0, '', 0, 1).'&amp;action=selectlines&amp;token='.newToken().'"  data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a';
-		} ?>
+		<td class="linkedcol-element tdoverflowmax125"><?php echo $langs->trans("Ticket"); ?>
 		</td>
 		<td class="linkedcol-name tdoverflowmax150"><?php echo $objectlink->getNomUrl(1); ?></td>
-		<td class="linkedcol-ref center"><?php echo $objectlink->ref_client; ?></td>
+		<td class="linkedcol-ref tdoverflowmax125 center" title="<?php echo dolPrintHTMLForAttribute($objectlink->track_id); ?>"><?php echo dolPrintHTML($objectlink->track_id); ?></td>
 		<td class="linkedcol-date center"><?php echo dol_print_date($objectlink->datec, 'day'); ?></td>
 		<?php
 		//$objectlink->socid = $objectlink->fk_soc;

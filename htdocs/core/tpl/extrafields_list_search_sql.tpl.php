@@ -1,4 +1,33 @@
 <?php
+/* Copyright (C) 2025		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		Laurent Destailleur     <eldy@users.sourceforge.net>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/**
+ *	\file       htdocs/core/tpl/extrafields_list_search_sql.tpl.php
+ *  \brief      Include file extrafields columns on the line for search input of fields
+ */
+
+/**
+ * @var Conf $conf
+ * @var CommonObject $object
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var string $sql
+ */
 
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
@@ -19,6 +48,8 @@ if (!empty($extrafieldsobjectkey) && !empty($search_array_options) && is_array($
 		$search_options_pattern = 'search_options_';
 	}
 
+	$morewhere = '';
+
 	foreach ($search_array_options as $key => $val) {
 		$crit = $val;
 		$tmpkey = preg_replace('/'.$search_options_pattern.'/', '', $key);
@@ -30,23 +61,23 @@ if (!empty($extrafieldsobjectkey) && !empty($search_array_options) && is_array($
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 					$crit = dol_get_first_hour($crit);
 				}
-				$sql .= " AND ".$extrafieldsobjectprefix.$tmpkey." = '".$db->idate($crit)."'";
+				$morewhere .= " AND ".$extrafieldsobjectprefix.$tmpkey." = '".$db->idate($crit)."'";
 			} elseif (is_array($crit)) {
-				if ($crit['start'] !== '' && $crit['end'] !== '') {
-					$sql .= " AND (".$extrafieldsobjectprefix.$tmpkey." BETWEEN '". $db->idate($crit['start']). "' AND '".$db->idate($crit['end']) . "')";
-				} elseif ($crit['start'] !== '') {
-					$sql .= " AND (".$extrafieldsobjectprefix.$tmpkey." >= '". $db->idate($crit['start'])."')";
-				} elseif ($crit['end'] !== '') {
-					$sql .= " AND (".$extrafieldsobjectprefix.$tmpkey." <= '". $db->idate($crit['end'])."')";
+				if (!is_null($crit['start']) && $crit['start'] !== '' && !is_null($crit['end']) && $crit['end'] !== '') {
+					$morewhere .= " AND (".$extrafieldsobjectprefix.$tmpkey." BETWEEN '". $db->idate($crit['start']). "' AND '".$db->idate($crit['end']) . "')";
+				} elseif (!is_null($crit['start']) && $crit['start'] !== '') {
+					$morewhere .= " AND (".$extrafieldsobjectprefix.$tmpkey." >= '". $db->idate($crit['start'])."')";
+				} elseif (!is_null($crit['end']) && $crit['end'] !== '') {
+					$morewhere .= " AND (".$extrafieldsobjectprefix.$tmpkey." <= '". $db->idate($crit['end'])."')";
 				}
 			}
 		} elseif (in_array($typ, array('boolean'))) {
 			if ($crit !== '-1' && $crit !== '') {
-				$sql .= " AND (".$extrafieldsobjectprefix.$tmpkey." = '".$db->escape($crit)."'";
+				$morewhere .= " AND (".$extrafieldsobjectprefix.$tmpkey." = '".$db->escape($crit)."'";
 				if ($crit == '0') {
-					$sql .= " OR ".$extrafieldsobjectprefix.$tmpkey." IS NULL";
+					$morewhere .= " OR ".$extrafieldsobjectprefix.$tmpkey." IS NULL";
 				}
-				$sql .= ")";
+				$morewhere .= ")";
 			}
 		} elseif ($crit != '' && (!in_array($typ, array('select', 'sellist', 'select')) || $crit != '0') && (!in_array($typ, array('link')) || $crit != '-1')) {
 			$mode_search = 0;
@@ -66,10 +97,12 @@ if (!empty($extrafieldsobjectkey) && !empty($search_array_options) && is_array($
 				$crit = implode(' ', $crit); // natural_search() expects a string
 			} elseif ($typ === 'select' and is_string($crit) and strpos($crit, ',') === false) {
 				$critSelect = "'".implode("','", array_map(array($db, 'escape'), explode(',', $crit)))."'";
-				$sql .= " AND (".$extrafieldsobjectprefix.$tmpkey." IN (".$db->sanitize($critSelect, 1).") )";
+				$morewhere .= " AND (".$extrafieldsobjectprefix.$tmpkey." IN (".$db->sanitize($critSelect, 1).") )";
 				continue;
 			}
-			$sql .= natural_search($extrafieldsobjectprefix.$tmpkey, $crit, $mode_search);
+			$morewhere .= natural_search($extrafieldsobjectprefix.$tmpkey, $crit, $mode_search);
 		}
 	}
+
+	$sql .= $morewhere;
 }

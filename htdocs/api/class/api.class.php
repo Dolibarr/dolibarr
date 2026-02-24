@@ -1,9 +1,11 @@
 <?php
-/* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2020		Frédéric France		<frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025	William Mead			<william@m34d.com>
+/* Copyright (C) 2015   	Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2016		Laurent Destailleur		<eldy@users.sourceforge.net>
+/* Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2016	    Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2020-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025	    William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,12 +32,12 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 class DolibarrApi
 {
 	/**
-	 * @var DoliDB        $db Database object
+	 * @var DoliDB        Database object
 	 */
 	protected $db;
 
 	/**
-	 * @var Restler     $r	Restler object
+	 * @var Restler    	Restler object
 	 */
 	public $r;
 
@@ -57,7 +59,7 @@ class DolibarrApi
 
 		$this->db = $db;
 
-		$production_mode = (getDolGlobalString('API_PRODUCTION_MODE') ? true : false);
+		$production_mode = getDolGlobalBool('API_PRODUCTION_MODE');
 
 		if ($production_mode) {
 			// Create the directory Defaults::$cacheDirectory if it does not exist. If dir does not exist, using production_mode generates an error 500.
@@ -89,9 +91,9 @@ class DolibarrApi
 	 * Check and convert a string depending on its type/name.
 	 *
 	 * @param	string			$field		Field name
-	 * @param	string|array	$value		Value to check/clean
+	 * @param	string|string[]	$value		Value to check/clean
 	 * @param	Object			$object		Object
-	 * @return 	string|array				Value cleaned
+	 * @return 	string|array<string,mixed>	Value cleaned
 	 */
 	protected function _checkValForAPI($field, $value, $object)
 	{
@@ -143,9 +145,13 @@ class DolibarrApi
 	/**
 	 * Filter properties that will be returned on object
 	 *
+	 * @phpstan-template T
+	 *
 	 * @param   Object  $object			Object to clean
-	 * @param   String  $properties		Comma separated list of properties names
+	 * @param   string  $properties		Comma separated list of properties names
 	 * @return	Object					Object with cleaned properties
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	protected function _filterObjectProperties($object, $properties)
 	{
@@ -189,10 +195,14 @@ class DolibarrApi
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 * Clean sensible object datas
+	 * Clean sensitive object data
+	 * @phpstan-template T
 	 *
 	 * @param   Object  $object		Object to clean
 	 * @return	Object				Object with cleaned properties
+	 *
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -216,6 +226,8 @@ class DolibarrApi
 		unset($object->error);
 		unset($object->errors);
 		unset($object->errorhidden);
+		unset($object->warnings);
+		unset($object->TRIGGER_PREFIX);
 
 		unset($object->ref_previous);
 		unset($object->ref_next);
@@ -230,7 +242,6 @@ class DolibarrApi
 		unset($object->contact);			// We use contact_id now
 		unset($object->thirdparty);			// We use thirdparty_id or fk_soc or socid now
 
-		unset($object->projet); // Should be fk_project
 		unset($object->project); // Should be fk_project
 		unset($object->fk_projet); // Should be fk_project
 		unset($object->author); // Should be fk_user_author
@@ -243,7 +254,7 @@ class DolibarrApi
 		unset($object->timespent_fk_user);
 		unset($object->timespent_note);
 		unset($object->fk_delivery_address);
-		unset($object->model_pdf);
+		//unset($object->model_pdf);
 		unset($object->sendtoid);
 		unset($object->name_bis);
 		unset($object->newref);
@@ -279,7 +290,6 @@ class DolibarrApi
 		unset($object->country);
 		unset($object->state);
 		unset($object->state_code);
-		unset($object->fk_departement);
 		unset($object->departement);
 		unset($object->departement_code);
 
@@ -421,13 +431,13 @@ class DolibarrApi
 	 * Function to forge a SQL criteria from a Generic filter string.
 	 * Function no more used. Kept for backward compatibility with old APIs of modules
 	 *
-	 * @param  array    $matches    Array of found string by regex search.
+	 * @param  string[]	$matches    Array of found string by regex search.
 	 * 								Each entry is 1 and only 1 criteria.
 	 * 								Example: "t.ref:like:'SO-%'", "t.date_creation:<:'20160101'", "t.date_creation:<:'2016-01-01 12:30:00'", "t.nature:is:NULL", "t.field2:isnot:NULL"
 	 * @return string               Forged criteria. Example: "t.field like 'abc%'"
 	 */
 	protected static function _forge_criteria_callback($matches)
 	{
-		return dolForgeCriteriaCallback($matches);
+		return dolForgeSQLCriteriaCallback($matches);
 	}
 }

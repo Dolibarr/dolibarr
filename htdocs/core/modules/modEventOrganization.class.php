@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -117,7 +118,7 @@ class modEventOrganization extends DolibarrModules
 		// A condition to hide module
 		$this->hidden = false;
 		// List of module class names as string that must be enabled if this module is enabled. Example: array('always'=>array('modModuleToEnable1','modModuleToEnable2'), 'FR'=>array('modModuleToEnableFR'...))
-		$this->depends = array('modProjet','modCategorie');
+		$this->depends = array('modProjet', 'modCategorie', 'modAgenda');
 		$this->requiredby = array(); // List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
 
@@ -129,10 +130,9 @@ class modEventOrganization extends DolibarrModules
 		$this->need_dolibarr_version = array(13, -3); // Minimum version of Dolibarr required by module
 
 		// Messages at activation
-		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
-		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
+		$this->warnings_activation = array();
+		$this->warnings_activation_ext = array();
 		//$this->automatic_activation = array('FR'=>'EventOrganizationWasAutomaticallyActivatedBecauseOfYourCountryChoice');
-		//$this->always_enabled = true;								// If true, can't be disabled
 
 		// Constants
 		// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
@@ -208,6 +208,7 @@ class modEventOrganization extends DolibarrModules
 
 		// Add here entries to declare new permissions
 		/* BEGIN MODULEBUILDER PERMISSIONS */
+		/*
 		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Read objects of EventOrganization'; // Permission label
 		$this->rights[$r][4] = 'read'; // In php code, permission will be checked by test if ($user->rights->eventorganization->level1)
@@ -220,6 +221,7 @@ class modEventOrganization extends DolibarrModules
 		$this->rights[$r][1] = 'Delete objects of EventOrganization'; // Permission label
 		$this->rights[$r][4] = 'delete'; // In php code, permission will be checked by test if ($user->rights->eventorganization->level1)
 		$r++;
+		*/
 		/* END MODULEBUILDER PERMISSIONS */
 
 		// Main menu entries to add
@@ -240,7 +242,7 @@ class modEventOrganization extends DolibarrModules
 			'langs' => 'eventorganization',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
 			'enabled' => 'isModEnabled("eventorganization")',  // Define condition to show or hide menu entry. Use '$conf->eventorganization->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms' => '$user->hasRight("eventorganization", "read")',			                // Use 'perms'=>'$user->rights->eventorganization->level1->level2' if you want your menu with a permission rules
+			'perms' => '$user->hasRight("project", "read")',			                // Use 'perms'=>'$user->rights->eventorganization->level1->level2' if you want your menu with a permission rules
 			'target' => '',
 			'user' => 2,				                // 0=Menu for internal users, 1=external users, 2=both
 		);
@@ -252,7 +254,7 @@ class modEventOrganization extends DolibarrModules
 			'langs' => 'eventorganization@eventorganization',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
 			'enabled' => 'isModEnabled("eventorganization")',  // Define condition to show or hide menu entry. Use '$conf->eventorganization->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms' => '$user->hasRight("eventorganization", "write")',			                // Use 'perms'=>'$user->rights->eventorganization->level1->level2' if you want your menu with a permission rules
+			'perms' => '$user->hasRight("project", "write")',			                // Use 'perms'=>'$user->rights->eventorganization->level1->level2' if you want your menu with a permission rules
 			'target' => '',
 			'user' => 2,				                // 0=Menu for internal users, 1=external users, 2=both
 		);
@@ -264,7 +266,7 @@ class modEventOrganization extends DolibarrModules
 			'langs' => 'eventorganization@eventorganization',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
 			'enabled' => 'isModEnabled("eventorganization")',  // Define condition to show or hide menu entry. Use '$conf->eventorganization->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms' => '$user->hasRight("eventorganization", "write")',			                // Use 'perms'=>'$user->rights->eventorganization->level1->level2' if you want your menu with a permission rules
+			'perms' => '$user->hasRight("project", "write")',			                // Use 'perms'=>'$user->rights->eventorganization->level1->level2' if you want your menu with a permission rules
 			'target' => '',
 			'user' => 2,				                // 0=Menu for internal users, 1=external users, 2=both
 		);
@@ -279,7 +281,7 @@ class modEventOrganization extends DolibarrModules
 			'langs' => 'eventorganization',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
 			'enabled' => 'isModEnabled("eventorganization")',  // Define condition to show or hide menu entry. Use '$conf->eventorganization->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms' => '$user->hasRight("eventorganization", "read")',			                // Use 'perms'=>'$user->rights->eventorganization->level1->level2' if you want your menu with a permission rules
+			'perms' => '$user->hasRight("project", "read")',			                // Use 'perms'=>'$user->rights->eventorganization->level1->level2' if you want your menu with a permission rules
 			'target' => '',
 			'user' => 2,				                // 0=Menu for internal users, 1=external users, 2=both
 		);
@@ -291,7 +293,7 @@ class modEventOrganization extends DolibarrModules
 			'langs' => 'eventorganization',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
 			'enabled' => 'isModEnabled("eventorganization")',  // Define condition to show or hide menu entry. Use '$conf->eventorganization->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms' => '$user->hasRight("eventorganization", "write")',			                // Use 'perms'=>'$user->rights->eventorganization->level1->level2' if you want your menu with a permission rules
+			'perms' => '$user->hasRight("project", "write")',			                // Use 'perms'=>'$user->rights->eventorganization->level1->level2' if you want your menu with a permission rules
 			'target' => '',
 			'user' => 2,				                // 0=Menu for internal users, 1=external users, 2=both
 		);
@@ -303,7 +305,7 @@ class modEventOrganization extends DolibarrModules
 			'langs' => 'eventorganization',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
 			'enabled' => 'isModEnabled("eventorganization")',  // Define condition to show or hide menu entry. Use '$conf->eventorganization->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms' => '$user->hasRight("eventorganization", "read")',			                // Use 'perms'=>'$user->rights->eventorganization->level1->level2' if you want your menu with a permission rules
+			'perms' => '$user->hasRight("project", "read")',			                // Use 'perms'=>'$user->rights->eventorganization->level1->level2' if you want your menu with a permission rules
 			'target' => '',
 			'user' => 2,				                // 0=Menu for internal users, 1=external users, 2=both
 		);
@@ -338,18 +340,18 @@ class modEventOrganization extends DolibarrModules
 		$this->export_TypeFields_array[$r]['t.fk_soc'] = 'Numeric';
 		//$this->export_fields_array[$r]['t.fieldtoadd']='FieldToAdd'; $this->export_TypeFields_array[$r]['t.fieldtoadd']='Text';
 		//unset($this->export_fields_array[$r]['t.fieldtoremove']);
-		$keyforselect = 'conferenceorboothattendee';
+		$keyforselect = 'eventorganization_conferenceorboothattendee';		// The value in column elementtype of llx_extrafields table
 		$keyforaliasextra = 'extra';
-		$keyforelement = 'conferenceorboothattendee';
+		$keyforelement = 'conferenceorboothattendee';						// The value of key for icon and class
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		//$this->export_dependencies_array[$r] = array('aaaline'=>array('tl.rowid','tl.ref')); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
 		//$this->export_special_array[$r] = array('t.field'=>'...');
 		//$this->export_examplevalues_array[$r] = array('t.field'=>'Example');
 		//$this->export_help_array[$r] = array('t.field'=>'FieldDescHelp');
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
-		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'eventorganization_conferenceorboothattendee as t, '.MAIN_DB_PREFIX.'projet as p';
-		$this->export_sql_end[$r] .= ' WHERE t.fk_project = p.rowid';
-		$this->export_sql_end[$r] .= ' AND p.entity IN ('.getEntity('conferenceorboothattendee').')';
+		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'eventorganization_conferenceorboothattendee as t';
+		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'projet as p ON t.fk_project = p.rowid AND p.entity IN ('.getEntity('conferenceorboothattendee').')';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'eventorganization_conferenceorboothattendee_extrafields as extra on t.rowid = extra.fk_object';
 		$r++;
 		/* END MODULEBUILDER EXPORT CONFERENCEORBOOTHATTENDEES */
 
@@ -387,7 +389,7 @@ class modEventOrganization extends DolibarrModules
 		$this->export_TypeFields_array[$r]['s.nom'] = 'Text';
 		//$this->export_fields_array[$r]['t.fieldtoadd']='FieldToAdd'; $this->export_TypeFields_array[$r]['t.fieldtoadd']='Text';
 		//unset($this->export_fields_array[$r]['t.fieldtoremove']);
-		$keyforselect = 'conferenceorbooth';
+		$keyforselect = 'actioncomm';		// The value in column elementtype of llx_extrafields table
 		$keyforaliasextra = 'extra';
 		$keyforelement = 'conferenceorbooth';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
@@ -395,16 +397,13 @@ class modEventOrganization extends DolibarrModules
 		//$this->export_special_array[$r] = array('t.field'=>'...');
 		//$this->export_examplevalues_array[$r] = array('t.field'=>'Example');
 		//$this->export_help_array[$r] = array('t.field'=>'FieldDescHelp');
-		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
+		$this->export_sql_start[$r] = "SELECT DISTINCT ";
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'actioncomm as t';
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON t.fk_soc = s.rowid,';
-		$this->export_sql_end[$r] .= ' '.MAIN_DB_PREFIX.'projet as p,';
-		$this->export_sql_end[$r] .= ' '.MAIN_DB_PREFIX.'c_actioncomm as ca';
-		$this->export_sql_end[$r] .= ' WHERE t.fk_project = p.rowid';
-		$this->export_sql_end[$r] .= ' AND ca.id = t.fk_action';
-		$this->export_sql_end[$r] .= " AND t.code LIKE 'AC_EO_%'";
-		$this->export_sql_end[$r] .= ' AND p.usage_organize_event = 1';
-		$this->export_sql_end[$r] .= ' AND p.entity IN ('.getEntity('conferenceorboothattendee').')';
+		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'projet as p ON t.fk_project = p.rowid AND p.usage_organize_event = 1 AND p.entity IN ('.getEntity('conferenceorboothattendee').')';
+		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'c_actioncomm as ca ON ca.id = t.fk_action';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON t.fk_soc = s.rowid';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'actioncomm_extrafields as extra on t.id = extra.fk_object';
+		$this->export_sql_end[$r] .= " WHERE t.code LIKE 'AC_EO_%'";
 		$r++;
 		/* END MODULEBUILDER EXPORT CONFERENCEORBOOTH */
 
@@ -445,9 +444,6 @@ class modEventOrganization extends DolibarrModules
 		$myTmpObjects['ConferenceOrBooth'] = array('includerefgeneration' => 0, 'includedocgeneration' => 0);
 
 		foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
-			if ($myTmpObjectKey == 'ConferenceOrBooth') {
-				continue;
-			}
 			if ($myTmpObjectArray['includerefgeneration']) {
 				$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/eventorganization/template_conferenceorbooths.odt';
 				$dirodt = DOL_DATA_ROOT.'/doctemplates/eventorganization';
@@ -456,7 +452,7 @@ class modEventOrganization extends DolibarrModules
 				if (file_exists($src) && !file_exists($dest)) {
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 					dol_mkdir($dirodt);
-					$result = dol_copy($src, $dest, 0, 0);
+					$result = dol_copy($src, $dest, '0', 0);
 					if ($result < 0) {
 						$langs->load("errors");
 						$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2016-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2016-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
- * Copyright (C) 2019-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,10 +30,19 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "other", "accountancy", "loans", "banks", "admin", "dict"));
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
 $hookmanager->initHooks(array('accountancyindex'));
 
 // Security check
@@ -93,14 +102,13 @@ $boxlist .= '</div>';
 if (isModEnabled('accounting')) {
 	$step = 0;
 
-	$helpisexpanded = false;
-	//$helpisexpanded = empty($resultboxes['boxactivated']) || (empty($resultboxes['boxlista']) && empty($resultboxes['boxlistb'])); // If there is no widget, the tooltip help is expanded by default.
+	$helpisexpanded = GETPOSTINT('showtuto');
 	$showtutorial = '';
 
 	if (!$helpisexpanded) {
 		$showtutorial  = '<div class="right"><a href="#" id="show_hide">';
-		$showtutorial .= img_picto('', 'chevron-down');
-		$showtutorial .= ' '.$langs->trans("ShowTutorial");
+		$showtutorial .= img_picto('', 'chevron-down', 'class="show_hide_picto pictofixedwidth"');
+		$showtutorial .= $langs->trans("ShowTutorial");
 		$showtutorial .= '</a></div>';
 
 		$showtutorial .= '<script type="text/javascript">
@@ -109,8 +117,10 @@ if (isModEnabled('accounting')) {
 				console.log("We click on show-hide");
 				if ($(".idfaq2").is(":hidden")) {
 					jQuery( ".idfaq2" ).show();
+					jQuery( ".show_hide_picto" ).removeClass("fa-chevron-up").addClass("fa-chevron-down");
 				} else {
 					jQuery( ".idfaq2" ).hide();
+					jQuery( ".show_hide_picto" ).removeClass("fa-chevron-down").addClass("fa-chevron-up");
 				}
 	            jQuery( ".idfaq" ).toggle({
 	                duration: 400,

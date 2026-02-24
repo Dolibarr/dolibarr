@@ -5,7 +5,8 @@
  * Copyright (C) 2012      Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013-2015 Philippe Grand	    <philippe.grand@atoo-net.com>
  * Copyright (C) 2020      Ahmad Jamaly Rabib   <rabib@metroworks.co.jp>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,7 +103,7 @@ class modFournisseur extends DolibarrModules
 		$this->const[$r][0] = "INVOICE_SUPPLIER_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "canelle";
-		$this->const[$r][3] = 'Nom du gestionnaire de generation des factures fournisseur en PDF';
+		$this->const[$r][3] = 'Name of the generator for PDF supplier invoices';
 		$this->const[$r][4] = 0;
 		$r++;
 		*/
@@ -539,14 +540,14 @@ class modFournisseur extends DolibarrModules
 		$r++;
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
 		$this->export_label[$r] = 'Purchase Orders and lines of purchase orders';
-		$this->export_icon[$r] = 'order';
+		$this->export_icon[$r] = 'supplier_order';
 		$this->export_permission[$r] = array(array("fournisseur", "commande", "export"));
 		$this->export_fields_array[$r] = array(
 			's.rowid' => "IdCompany", 's.nom' => 'CompanyName', 'ps.nom' => 'ParentCompany', 's.address' => 'Address', 's.zip' => 'Zip', 's.town' => 'Town', 'c.code' => 'CountryCode', 's.phone' => 'Phone',
 			's.siren' => 'ProfId1', 's.siret' => 'ProfId2', 's.ape' => 'ProfId3', 's.idprof4' => 'ProfId4', 's.idprof5' => 'ProfId5', 's.idprof6' => 'ProfId6', 's.tva_intra' => 'VATIntra',
 			'f.rowid' => "OrderId", 'f.ref' => "Ref", 'f.ref_supplier' => "RefSupplier", 'f.date_creation' => "DateCreation", 'f.date_commande' => "OrderDate", 'f.date_livraison' => "DateDeliveryPlanned",
 			'f.total_ht' => "TotalHT", 'f.total_ttc' => "TotalTTC", 'f.total_tva' => "TotalVAT", 'f.fk_statut' => 'Status', 'f.date_valid' => 'DateValidation', 'f.date_approve' => 'DateApprove', 'f.date_approve2' => 'DateApprove2',
-			'f.note_public' => "NotePublic", 'f.note_private' => "NotePrivate", 'uv.login' => 'UserValidation', 'ua1.login' => 'ApprovedBy', 'ua2.login' => 'ApprovedBy2', 'fd.rowid' => 'LineId', 'fd.description' => "LineDescription",
+			'f.note_public' => "NotePublic", 'f.note_private' => "NotePrivate", 'uv.login' => 'UserValidation', 'ua1.login' => 'ApprovedBy', 'ua2.login' => 'ApprovedBy2', 'f.source' => 'Source', 'fd.rowid' => 'LineId', 'fd.description' => "LineDescription",
 			'fd.tva_tx' => "LineVATRate", 'fd.qty' => "LineQty", 'fd.remise_percent' => "Discount", 'fd.total_ht' => "LineTotalHT", 'fd.total_ttc' => "LineTotalTTC",
 			'fd.total_tva' => "LineTotalVAT", 'fd.date_start' => "DateStart", 'fd.date_end' => "DateEnd", 'fd.special_code' => 'SpecialCode',
 			'fd.product_type' => 'TypeOfLineServiceOrProduct', 'fd.ref' => 'SupplierRef', 'fd.fk_product' => 'ProductId',
@@ -567,7 +568,7 @@ class modFournisseur extends DolibarrModules
 			's.rowid' => "company", 's.nom' => 'Text', 'ps.nom' => 'Text', 's.address' => 'Text', 's.cp' => 'Text', 's.ville' => 'Text', 'c.code' => 'Text', 's.tel' => 'Text', 's.siren' => 'Text',
 			's.siret' => 'Text', 's.ape' => 'Text', 's.idprof4' => 'Text', 's.idprof5' => 'Text', 's.idprof6' => 'Text', 's.tva_intra' => 'Text', 'f.ref' => "Text", 'f.ref_supplier' => "Text",
 			'f.date_creation' => "Date", 'f.date_commande' => "Date", 'f.date_livraison' => "Date", 'f.total_ht' => "Numeric", 'f.total_ttc' => "Numeric", 'f.total_tva' => "Numeric",
-			'f.fk_statut' => 'Status', 'f.date_valid' => 'Date', 'f.date_approve' => 'Date', 'f.date_approve2' => 'Date', 'f.note_public' => "Text", 'f.note_private' => "Text", 'fd.description' => "Text",
+			'f.fk_statut' => 'Status', 'f.date_valid' => 'Date', 'f.date_approve' => 'Date', 'f.date_approve2' => 'Date', 'f.note_public' => "Text", 'f.note_private' => "Text", 'f.source' => 'Numeric', 'fd.description' => "Text",
 			'fd.tva_tx' => "Numeric", 'fd.qty' => "Numeric", 'fd.remise_percent' => "Numeric", 'fd.total_ht' => "Numeric", 'fd.total_ttc' => "Numeric", 'fd.total_tva' => "Numeric",
 			'fd.date_start' => "Date", 'fd.date_end' => "Date", 'fd.special_code' => "Numeric",
 			'fd.product_type' => 'Numeric', 'fd.ref' => 'Text', 'fd.fk_product' => 'List:product:label', 'p.ref' => 'Text', 'p.label' => 'Text', 'project.ref' => 'Text', 'project.title' => 'Text'
@@ -575,7 +576,7 @@ class modFournisseur extends DolibarrModules
 		$this->export_entities_array[$r] = array(
 			's.rowid' => "company", 's.nom' => 'company', 'ps.nom' => 'company', 's.address' => 'company', 's.zip' => 'company', 's.town' => 'company', 'c.code' => 'company', 's.phone' => 'company', 's.siren' => 'company',
 			's.siret' => 'company', 's.ape' => 'company', 's.idprof4' => 'company', 's.idprof5' => 'company', 's.idprof6' => 'company', 's.tva_intra' => 'company', 'uv.login' => 'user', 'ua1.login' => 'user',
-			'ua2.login' => 'user', 'fd.rowid' => 'order_line', 'fd.description' => "order_line", 'fd.tva_tx' => "order_line", 'fd.qty' => "order_line", 'fd.remise_percent' => "order_line",
+			'ua2.login' => 'user', 'f.source' => 'order', 'fd.rowid' => 'order_line', 'fd.description' => "order_line", 'fd.tva_tx' => "order_line", 'fd.qty' => "order_line", 'fd.remise_percent' => "order_line",
 			'fd.total_ht' => "order_line", 'fd.total_ttc' => "order_line", 'fd.total_tva' => "order_line", 'fd.date_start' => "order_line", 'fd.date_end' => "order_line", 'fd.special_code' => "order_line",
 			'fd.product_type' => 'order_line', 'fd.ref' => 'order_line', 'fd.fk_product' => 'product',
 			'p.ref' => 'product', 'p.label' => 'product', 'project.rowid' => 'project', 'project.ref' => 'project', 'project.title' => 'project'
@@ -622,7 +623,7 @@ class modFournisseur extends DolibarrModules
 		$r++;
 		$this->import_code[$r] = $this->rights_class.'_'.$r;
 		$this->import_label[$r] = "SupplierInvoices"; // Translation key
-		$this->import_icon[$r] = $this->picto;
+		$this->import_icon[$r] = 'supplier_invoice';
 		$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
 		$this->import_tables_array[$r] = array('f' => MAIN_DB_PREFIX.'facture_fourn', 'extra' => MAIN_DB_PREFIX.'facture_fourn_extrafields');
 		$this->import_tables_creator_array[$r] = array('f' => 'fk_user_author'); // Fields to store import user id
@@ -724,7 +725,7 @@ class modFournisseur extends DolibarrModules
 		$r++;
 		$this->import_code[$r] = $this->rights_class.'_'.$r;
 		$this->import_label[$r] = "SupplierInvoiceLines"; // Translation key
-		$this->import_icon[$r] = $this->picto;
+		$this->import_icon[$r] = 'supplier_invoice';
 		$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
 		$this->import_tables_array[$r] = array('fd' => MAIN_DB_PREFIX.'facture_fourn_det', 'extra' => MAIN_DB_PREFIX.'facture_fourn_det_extrafields');
 		$this->import_fields_array[$r] = array(
@@ -802,7 +803,7 @@ class modFournisseur extends DolibarrModules
 		$r++;
 		$this->import_code[$r] = 'commande_fournisseur_'.$r;
 		$this->import_label[$r] = 'SuppliersOrders';
-		$this->import_icon[$r] = $this->picto;
+		$this->import_icon[$r] = 'supplier_order';
 		$this->import_entities_array[$r] = array();
 		$this->import_tables_array[$r] = array('c' => MAIN_DB_PREFIX.'commande_fournisseur', 'extra' => MAIN_DB_PREFIX.'commande_fournisseur_extrafields');
 		$this->import_tables_creator_array[$r] = array('c' => 'fk_user_author'); // Fields to store import user id
@@ -890,7 +891,7 @@ class modFournisseur extends DolibarrModules
 		$r++;
 		$this->import_code[$r] = 'commande_fournisseurdet_'.$r;
 		$this->import_label[$r] = 'PurchaseOrderLines';
-		$this->import_icon[$r] = $this->picto;
+		$this->import_icon[$r] = 'supplier_order';
 		$this->import_entities_array[$r] = array();
 		$this->import_tables_array[$r] = array('cd' => MAIN_DB_PREFIX.'commande_fournisseurdet', 'extra' => MAIN_DB_PREFIX.'commande_fournisseurdet_extrafields');
 		$this->import_fields_array[$r] = array(
@@ -941,7 +942,7 @@ class modFournisseur extends DolibarrModules
 			'cd.fk_product'         => 'rowid@'.MAIN_DB_PREFIX.'product',
 			'cd.multicurrency_code' => 'code@'.MAIN_DB_PREFIX.'multicurrency'
 		);
-		$this->import_updatekeys_array[$r] = array('cd.fk_commande' => 'Purchase Order Id');
+		$this->import_updatekeys_array[$r] = array('cd.fk_commande' => 'Purchase Order Id', 'cd.rang' => 'LinePosition');
 		$this->import_convertvalue_array[$r] = array(
 			'cd.fk_commande' => array(
 				'rule'    => 'fetchidfromref',
@@ -978,7 +979,7 @@ class modFournisseur extends DolibarrModules
 		if (file_exists($src) && !file_exists($dest)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
-			$result = dol_copy($src, $dest, 0, 0);
+			$result = dol_copy($src, $dest, '0', 0);
 			if ($result < 0) {
 				$langs->load("errors");
 				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
@@ -999,7 +1000,7 @@ class modFournisseur extends DolibarrModules
 		if (file_exists($src) && !file_exists($dest)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
-			$result = dol_copy($src, $dest, 0, 0);
+			$result = dol_copy($src, $dest, '0', 0);
 			if ($result < 0) {
 				$langs->load("errors");
 				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);

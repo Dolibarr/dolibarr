@@ -5,7 +5,7 @@ Holiday=الاجازات
 CPTitreMenu=الاجازات
 MenuReportMonth=البيان الشهري
 MenuAddCP=طلب إجازة جديدة
-MenuCollectiveAddCP=New collective leave
+MenuCollectiveAddCP=إجازة جماعية جديدة
 NotActiveModCP=يجب تمكين وحدة مغادرة لعرض هذه الصفحة.
 AddCP=تقديم طلب إجازة
 DateDebCP=تاريخ البدء
@@ -41,8 +41,8 @@ TitreRequestCP=ترك الطلب
 TypeOfLeaveId=نوع معرف الإجازة
 TypeOfLeaveCode=نوع رمز الإجازة
 TypeOfLeaveLabel=نوع ملصق الإجازة
-NbUseDaysCP=عدد أيام الإجازة المستخدمة
-NbUseDaysCPHelp=يأخذ الحساب في الاعتبار أيام العطلات والعطلات المحددة في القاموس.
+NbUseDaysCP=عدد الأيام
+NbUseDaysCPHelp=يتم حساب عدد أيام الإجازة المستخدمة مع الأخذ بعين الاعتبار أيام العطلات الرسمية و العطلات الرسمية المحددة في القاموس.
 NbUseDaysCPShort=أيام الإجازة
 NbUseDaysCPShortInMonth=أيام الإجازة في الشهر
 DayIsANonWorkingDay=%s هو يوم عطلة
@@ -95,12 +95,15 @@ UseralreadyCPexist=لقد تم بالفعل إجراء طلب إجازة في ه
 groups=المجموعات
 users=المستخدمين
 AutoSendMail=البريد التلقائي
-NewHolidayForGroup=New collective leave
-SendRequestCollectiveCP=Create collective leave
+NewHolidayForGroup=إجازة جماعية جديدة
+SendRequestCollectiveCP=إنشاء إجازة جماعية
 AutoValidationOnCreate=التحقق التلقائي
 FirstDayOfHoliday=بداية يوم طلب الإجازة
 LastDayOfHoliday=يوم انتهاء طلب الإجازة
 HolidaysMonthlyUpdate=تحديث شهري
+HolidayMonthlyCredit=الائتمان الشهري
+HolidayConsumption=الاستهلاك
+HolidayCreditAfterCancellation=الائتمان بعد الإلغاء
 ManualUpdate=التحديث اليدوي
 HolidaysCancelation=ترك إلغاء الطلب
 EmployeeLastname=Employee last name
@@ -109,7 +112,6 @@ TypeWasDisabledOrRemoved=Leave type (id %s) was disabled or removed
 LastHolidays=أحدث طلبات ترك %s
 AllHolidays=جميع طلبات الإجازة
 HalfDay=نصف يوم
-NotTheAssignedApprover=أنت لست الموافق المعين
 LEAVE_PAID=اجازه مدفوعة
 LEAVE_SICK=أجازة مرضية
 LEAVE_OTHER=إجازة أخرى
@@ -144,7 +146,7 @@ WatermarkOnDraftHolidayCards=العلامات المائية على مسودة �
 HolidaysToApprove=العطل للموافقة
 NobodyHasPermissionToValidateHolidays=لا أحد لديه الإذن بالتحقق من صحة طلبات الإجازة
 HolidayBalanceMonthlyUpdate=التحديث الشهري للإجازة الرصيد
-XIsAUsualNonWorkingDay=%s عادة ما يكون يوم غير عمل
+XIsAUsualNonWorkingDay=Exclude %s from the leave calculation, as they are typically designated as non-working days.
 BlockHolidayIfNegative=كتلة إذا كان الرصيد سلبي
 LeaveRequestCreationBlockedBecauseBalanceIsNegative=تم حظر إنشاء طلب الإجازة هذا لأن رصيدك سلبي
 ErrorLeaveRequestMustBeDraftCanceledOrRefusedToBeDeleted=يجب أن يكون طلب الإجازة %s مسودة أو إلغاء أو رفض حذفه
@@ -155,3 +157,7 @@ ConfirmMassIncreaseHoliday=زيادة الإجازات المجمعة الرصي
 NumberDayAddMass=عدد الأيام المراد إضافتها إلى التحديد
 ConfirmMassIncreaseHolidayQuestion=هل أنت متأكد أنك تريد زيادة العطلة للسجل (السجلات) المحدد %s؟
 HolidayQtyNotModified=الرصيد من الأيام المتبقية لـ %s لم يتم تغييرها
+ConsumeHolidaysAtTheEndOfTheMonthTheyAreTakenAt=استهلاك الإجازات في نهاية الشهر الذي يتم أخذها فيه
+PleaseDefineSomeTypeOfHolidayFirst=Please define first some types of holiday into the dictionary (Menu Home - Setup - dictionaries)
+HolidayMailSenderAdress=Email address for holiday requests
+HolidayMailSenderAdressHelp=If you leave this field blank, the default e-mail address will be used.

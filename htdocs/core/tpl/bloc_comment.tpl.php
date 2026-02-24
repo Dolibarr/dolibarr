@@ -1,4 +1,17 @@
 <?php
+/* Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ */
+
+/**
+ * @var CommonObject $object
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $action
+ * @var string $withproject
+ */
 
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
@@ -43,7 +56,7 @@ if ($action !== 'editcomment') {
 
 	$desc = GETPOST('comment_description');
 
-	$doleditor = new DolEditor('comment_description', $desc, '', 80, 'dolibarr_notes', 'In', 0, true, true, ROWS_3, '100%');
+	$doleditor = new DolEditor('comment_description', $desc, '', 80, 'dolibarr_notes', 'In', false, true, true, ROWS_3, '100%');
 	print $doleditor->Create(1);
 
 	print '</td>';
@@ -100,7 +113,7 @@ if (!empty($object->comments)) {
 
 		print '<div class="comment-description comment-cell">';
 		if ($action === 'editcomment' && $comment->id == $idcomment) {
-			$doleditor = new DolEditor('comment_description', $comment->description, '', 80, 'dolibarr_notes', 'In', 0, true, true, ROWS_3, '100%');
+			$doleditor = new DolEditor('comment_description', $comment->description, '', 80, 'dolibarr_notes', 'In', false, true, true, ROWS_3, '100%');
 			print $doleditor->Create(1);
 		} else {
 			print $comment->description;
@@ -115,12 +128,12 @@ if (!empty($object->comments)) {
 		} else {
 			if ($fk_user == $user->id || $user->admin == 1) {
 				print '<a class="comment-edit comment-cell" href="'.$varpage.'?action=editcomment&token='.newToken().'&id='.$id.'&withproject=1&idcomment='.$comment->id.'#comment" title="'.$langs->trans('Edit').'">';
-				print img_picto('', 'edit.png');
+				print img_picto('', 'edit');
 				print '</a>';
 			}
 			if (($first && $fk_user == $user->id) || $user->admin == 1) {
 				print '<a class="comment-delete comment-cell" href="'.$varpage.'?action=deletecomment&token='.newToken().'&id='.$id.'&withproject=1&idcomment='.$comment->id.'" title="'.$langs->trans('Delete').'">';
-				print img_picto('', 'delete.png');
+				print img_picto('', 'delete');
 				print '</a>';
 			}
 		}

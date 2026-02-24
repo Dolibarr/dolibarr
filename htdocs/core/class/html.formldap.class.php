@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2021	Regis Houssin	<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW				<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,8 +109,8 @@ class FormLdap
 	 *
 	 *	@param	int			$selected		Preselected type
 	 *	@param  string		$htmlname		Name of field in form
-	 *	@param	array		$exclude		Exclude values from the list
-	 *	@param	int			$scriptonly		Add warning if synchro only work with a script (0 = disable, 1 = Dolibarr2ldap, 2 = ldap2dolibarr, 3 = all)
+	 *	@param	string[]	$exclude		Exclude values from the list
+	 *	@param	int<0,3>	$scriptonly		Add warning if synchro only work with a script (0 = disable, 1 = Dolibarr2ldap, 2 = ldap2dolibarr, 3 = all)
 	 * 	@param	int			$showempty		Add an empty field
 	 *  @return	string						HTML select string
 	 */

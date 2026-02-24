@@ -25,7 +25,6 @@ Receipt=Recibo
 Header=Encabezado
 AmountAtEndOfPeriod=Cantidad al final del período (día, mes o año)
 RealAmount=Cantidad real
-CashFenceDone=Cierre de caja realizado para el período.
 NbOfInvoices=Nb de facturas
 Paymentnumpad=Tipo de Pad para ingresar el pago
 Numberspad=Pad de números

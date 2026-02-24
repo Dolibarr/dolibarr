@@ -2,6 +2,7 @@
 IdAgenda=ID for begivenhed
 Actions=Begivenheder
 Agenda=Tidsplan
+AgendaEvents=Dagsorden begivenheder
 TMenuAgenda=Tidsplan
 Agendas=Tidsplaner
 LocalAgenda=Standardkalender
@@ -21,7 +22,6 @@ MenuDoneMyActions=Mine gennemførte
 ListOfEvents=Liste over begivenheder (standardkalender)
 ActionsAskedBy=Begivenheder anmodet af
 ActionsToDoBy=Begivenheder tildelt til
-ActionsDoneBy=Begivenheder udført af
 ActionAssignedTo=Begivenhed tildelt til
 ViewCal=Månedsvisning
 ViewDay=Dagsvisning
@@ -34,6 +34,7 @@ AgendaSetupOtherDesc= Denne side giver mulighed for at tillade eksport af dine D
 AgendaExtSitesDesc=Denne side giver mulighed for at angive eksterne kalendere, så deres begivenheder kan ses i tidsplanen i Dolibarr.
 ActionsEvents=Begivenheder, for hvilke Dolibarr vil skabe en indsats på dagsordenen automatisk
 EventRemindersByEmailNotEnabled=Hændelsesindkaldelser via e-mail blev ikke aktiveret til %s modulopsætning.
+EventRemindersBySmsNotEnabled=Påmindelser om begivenheder via sms var ikke aktiveret i opsætningen af %s-modulet.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Tredjepart %s oprettet
 COMPANY_MODIFYInDolibarr=Tredjeparts %s ændret
@@ -45,6 +46,7 @@ PropalClosedRefusedInDolibarr=Forslag %s nægtet
 PropalValidatedInDolibarr=Tilbud %s godkendt
 PropalBackToDraftInDolibarr=Forslag %s går tilbage til udkaststatus
 PropalClassifiedBilledInDolibarr=Forslag %s klassificeret faktureret
+InvoiceCreatedInDolibarr=Faktura %s oprettet
 InvoiceValidatedInDolibarr=Faktura %s godkendt
 InvoiceValidatedInDolibarrFromPos=Faktura %s bekræftet fra POS
 InvoiceBackToDraftInDolibarr=Faktura %s sæt status tilbage til udkast
@@ -135,12 +137,14 @@ AgendaModelModule=Skabeloner for dokument til begivenhed
 DateActionStart=Startdato
 DateActionEnd=Slutdato
 AgendaUrlOptions1=Du kan også tilføje følgende parametre til at filtrere output:
-AgendaUrlOptions3=<b> logind = %s </b> for at begrænse output til handlinger ejet af en bruger <b> %s </b>.
-AgendaUrlOptionsNotAdmin=<b> logina =! %s </ b> for at begrænse output til handlinger, der ikke ejes af brugeren <b> %s </ b>.
+AgendaUrlOptions3=<b>logina=%s</b> for at begrænse output til handlinger, der ejes af en bruger <b>%s</b> (brug  <b>logina=!%s</b> for begivenheder, der ikke ejes af brugeren).
 AgendaUrlOptions4=<b> logind = %s </b> for at begrænse uddata til handlinger tildelt bruger <b> %s </b> (ejer og andre).
 AgendaUrlOptionsProject=<b>projekt = __ PROJECT_ID __ </b> for at begrænse output til handlinger, der er knyttet til projektet <b> __ PROJECT_ID __ </b>.
-AgendaUrlOptionsNotAutoEvent=<b> notactiontype = systemauto </ b> for at udelukke automatiske begivenheder.
+AgendaUrlOptionsType=<b>actiontype=%s</b> for at få enten automatiske eller manuelle hændelser
+AgendaUrlOptionsCode=<b>actioncode=%s</b> for kun at få begivenheder med en given kode
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> for at inkludere helligdagsbegivenheder.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> for at begrænse til begivenheder i de sidste %s dage (standard er %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> for at begrænse til de seneste 50 hændelser (standard og maks. er %s).
 AgendaShowBirthdayEvents=Fødselsdage for kontakter
 AgendaHideBirthdayEvents=Skjul fødselsdage på kontakter
 Busy=Travl
@@ -167,8 +171,10 @@ OnceOnly=kun Én gang
 EveryDay=Hver dag
 EveryWeek=Hver uge
 EveryMonth=Hver måned
+EveryYear=Hvert år
 DayOfMonth=Dag i måneden
 DayOfWeek=Ugedag
+DayOfYear=Årets dag
 DateStartPlusOne=Dato start + 1 time
 SetAllEventsToTodo=Indstil alle begivenheder til at gøre
 SetAllEventsToInProgress=Indstil alle begivenheder til at være i gang
@@ -202,3 +208,10 @@ BookingSuccessfullyBooked=Din reservation er blevet gemt
 BookingReservationHourAfter=Vi bekræfter reservationen af vores møde på datoen %s
 BookcalBookingTitle=Online aftale
 Transparency = Gennemsigtighed
+ReadMore = Læs mere
+ReadLess = Læs mindre
+RecurringEvent=Tilbagevendende begivenhed
+EventPartOfARecurringSerie=Begivenheden er en del af en tilbagevendende serie med ID %s
+BookCalSystem=Online booking
+BookCalInitHelp=For at starte skal du gå ind i menuen for at oprette en ny kalender med tilgængelighed...
+PublicLinkForBooking=Offentligt link til booking

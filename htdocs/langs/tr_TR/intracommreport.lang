@@ -1,5 +1,5 @@
 IntraCommReport=Dahili iletişim raporu
-IntraCommReports=Intracomm reports
+IntraCommReports=Intracomm raporları
 
 Module68000Name = Dahili iletişim raporu
 Module68000Desc = Dahili iletişim raporu yönetimi (Fransız DEB/DES formatı desteği)
@@ -35,4 +35,4 @@ IntracommReportTypeDeclaration=Beyan türü
 IntracommReportDownload=XML dosyasını indir
 # Invoice
 IntracommReportTransportMode=Taşıma modu
-DeleteIntraCommReport=Delete IntraComm report
+DeleteIntraCommReport=IntraComm raporunu sil

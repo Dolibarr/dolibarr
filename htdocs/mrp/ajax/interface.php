@@ -41,6 +41,13 @@ if (!defined('NOREQUIREAJAX')) {
 }
 
 require '../../main.inc.php'; // Load $user and permissions
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $warehouse_id = GETPOSTINT('warehouse_id');
 $batch = GETPOST('batch', 'alphanohtml');
