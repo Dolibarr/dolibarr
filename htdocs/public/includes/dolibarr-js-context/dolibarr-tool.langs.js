@@ -24,8 +24,14 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		 * @returns {Promise<IDBDatabase>}
 		 */
 		async function openDB() {
+
+			// Generate a unique name per instance
+			const path = Dolibarr.getContextVar('DOL_URL_ROOT'); // or a unique Dolibarr identifier if available
+			const hashedPath = await hashString(path);
+			const dbName = `DolibarrLangs_${hashedPath}`;
+
 			return new Promise((resolve, reject) => {
-				const request = indexedDB.open('DolibarrLangs', 1);
+				const request = indexedDB.open(dbName, 1);
 				request.onupgradeneeded = e => {
 					const db = e.target.result;
 					if (!db.objectStoreNames.contains('langs')) db.createObjectStore('langs');
@@ -33,6 +39,22 @@ document.addEventListener('Dolibarr:Init', function(e) {
 				request.onsuccess = () => resolve(request.result);
 				request.onerror = () => reject(request.error);
 			});
+		}
+
+		// Create a secure DB name
+		async function getSafeDbName() {
+			const path = window.location.pathname;
+			const hashedPath = await hashString(path);
+			return `DolibarrLangs_${hashedPath}`;
+		}
+
+		// Simple function to generate a hash from a string
+		async function hashString(str) {
+			const encoder = new TextEncoder();
+			const data = encoder.encode(str);
+			const hashBuffer = await crypto.subtle.digest('SHA-1', data);
+			const hashArray = Array.from(new Uint8Array(hashBuffer));
+			return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 		}
 
 		/**

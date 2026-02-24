@@ -405,7 +405,9 @@ if ($resql) {
 		print '<div class="inline-block amount width100">'.price($cash).'</div>';
 	}
 	if (!$summaryonly && $object->status == $object::STATUS_CLOSED && price2num($newcash) != price2num((float) $object->cash_declared)) {
-		print ' <div class="inline-block amountremaintopay fontsizeunset small"><> '.$langs->trans("Declared").': '.price($object->cash_declared).'</div>';
+		//$s = '<div class="inline-block amountremaintopay fontsizeunset small">';
+		$s = $langs->trans("Declared").': '.price($object->cash_declared);
+		print img_picto($s, 'warning');
 	}
 	print "<br>";
 
@@ -414,7 +416,8 @@ if ($resql) {
 	print '<div class="inline-block amount width100"></div>';
 	print '<div class="inline-block amount width100">'.price($cheque).'</div>';
 	if (!$summaryonly && $object->status == $object::STATUS_CLOSED && price2num($cheque) != price2num((float) $object->cheque_declared)) {
-		print ' <div class="inline-block amountremaintopay fontsizeunset small"><> '.$langs->trans("Declared").' : '.price($object->cheque_declared).'</div>';
+		//print ' <div class="inline-block amountremaintopay fontsizeunset small"><> '.$langs->trans("Declared").' : '.price($object->cheque_declared).'</div>';
+		$s = $langs->trans("Declared").': '.price($object->cheque_declared);
 	}
 	print "<br>";
 
@@ -423,7 +426,8 @@ if ($resql) {
 	print '<div class="inline-block amount width100"></div>';
 	print '<div class="inline-block amount width100">'.price($bank).'</div>';
 	if (!$summaryonly && $object->status == $object::STATUS_CLOSED && price2num($bank) != price2num((float) $object->card_declared)) {
-		print ' <div class="inline-block amountremaintopay fontsizeunset small"><> '.$langs->trans("Declared").': '.price($object->card_declared).'</div>';
+		//print ' <div class="inline-block amountremaintopay fontsizeunset small"><> '.$langs->trans("Declared").': '.price($object->card_declared).'</div>';
+		$s = $langs->trans("Declared").': '.price($object->card_declared);
 	}
 	print "<br>";
 
