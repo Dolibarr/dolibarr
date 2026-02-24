@@ -298,7 +298,11 @@ if ($object->status != $object::STATUS_CLOSED) {
 	print '<br><b>*** '.strtoupper($langs->trans("TemporaryReceipt")).' ***</b>';	// Hard coded string
 } else {
 	if ($isADuplicata) {
-		print '<br><b>*** '.$langs->transnoentities("DUPLICATA").' (no '.($object->pos_print_counter - 1).') ***</b>';	// Hard coded string
+		print '<br><b>*** '.$langs->transnoentities("DUPLICATA");
+		if (getDolGlobalString('TAKEPOS_SHOW_PRINT_COUNTER_ON_RECEIPT')) {
+			print ' (no '.($object->pos_print_counter - 1).')';
+		}
+		print ' ***</b>';	// Hard coded string
 	}
 }
 ?>
