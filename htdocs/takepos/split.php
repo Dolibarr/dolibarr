@@ -88,6 +88,7 @@ if ($action == "split" && $user->hasRight('takepos', 'run')) {
 				if ($placeid < 0) {
 					dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
 				}
+
 				$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET ref='(PROV-POS".$_SESSION["takeposterminal"]."-SPLIT)'";
 				$sql .= " WHERE rowid = ".((int) $placeid);
 				$db->query($sql);

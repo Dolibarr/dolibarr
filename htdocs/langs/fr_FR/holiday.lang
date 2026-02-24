@@ -165,3 +165,6 @@ HolidayMailSenderAdress=Adresse e-mail pour les demandes de vacances
 HolidayMailSenderAdressHelp=Si vous laissez ce champ vide, l'adresse e-mail par défaut sera utilisée.
 WrongAmount=Nombre de jours incorrect
 ErrorUpdatingUsersCP=Erreur lors de la mise à jour des congés payés des utilisateurs
+LeaveBalance=Laissez balance
+ListeLB=Liste des congés balance
+LeaveType = Type de congé balance
