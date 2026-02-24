@@ -144,7 +144,6 @@ if ($action == "send" && $user->hasRight('takepos', 'run')) {
 			$object->context['email_msgid'] = $mail->msgid;
 
 			// Same code as in actions_sendmail.inc.php
-			// if ($triggersendname === 'BILL_SENTBYMAIL' && $object instanceof Facture) { // Always true ($triggersendname is set above, and $object = $invoice = Facture object
 			// If sending email for invoice, we increase the counter of invoices sent by email
 			$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET email_sent_counter = email_sent_counter + 1";
 			$sql .= " WHERE rowid = ".((int) $object->id);

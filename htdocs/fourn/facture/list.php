@@ -420,9 +420,39 @@ if (empty($reshook)) {
 						$numprlv = $db->num_rows($result_sql);
 					}
 
-					if ($numprlv > 0) {
+					// Calculate pending amount to check if more requests can be made
+					$pending = 0;
+					// Get pending requests open with no transfer receipt yet
+					$sqlPending1 = "SELECT SUM(pfd.amount) as amount";
+					$sqlPending1 .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
+					$sqlPending1 .= " WHERE pfd.fk_facture_fourn = ".((int) $objecttmp->id);
+					$sqlPending1 .= " AND pfd.traite = 0";
+					$resPending1 = $db->query($sqlPending1);
+					if ($resPending1) {
+						$objPending1 = $db->fetch_object($resPending1);
+						if ($objPending1) {
+							$pending += (float) $objPending1->amount;
+						}
+					}
+					$db->free($resPending1);
+					// Get pending request with a transfer receipt generated but not yet processed
+					$sqlPending2 = "SELECT SUM(pl.amount) as amount";
+					$sqlPending2 .= " FROM ".$db->prefix()."prelevement_lignes as pl";
+					$sqlPending2 .= " INNER JOIN ".$db->prefix()."prelevement as p ON p.fk_prelevement_lignes = pl.rowid";
+					$sqlPending2 .= " WHERE p.fk_facture_fourn = ".((int) $objecttmp->id);
+					$sqlPending2 .= " AND (pl.statut IS NULL OR pl.statut = 0)";
+					$resPending2 = $db->query($sqlPending2);
+					if ($resPending2) {
+						if ($objPending2 = $db->fetch_object($resPending2)) {
+							$pending += (float) $objPending2->amount;
+						}
+					}
+					$db->free($resPending2);
+					$remaintopaylesspendingdebit = $objecttmp->resteapayer - $pending;
+					// Check remaining amount (allows multiple partial requests as long as total doesn't exceed invoice amount)
+					if ($remaintopaylesspendingdebit <= 0) {
 						$error++;
-						setEventMessages($objecttmp->ref.' '.$langs->trans("RequestAlreadyDone"), $objecttmp->errors, 'warnings');
+						setEventMessages($objecttmp->ref.' '.$langs->trans("AmountRequestedAlreadyReachesTotal"), $objecttmp->errors, 'warnings');
 					} elseif (!empty($objecttmp->mode_reglement_code) && $objecttmp->mode_reglement_code != 'VIR') {
 						$langs->load("errors");
 						$error++;
