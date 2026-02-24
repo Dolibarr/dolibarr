@@ -236,8 +236,6 @@ class Documentation
 			)
 		);
 
-
-
 		// Elements
 		$this->menu['ExperimentalUx'] = array(
 			'url' => dol_buildpath($this->baseUrl.'/experimental/index.php', 1),
@@ -285,7 +283,9 @@ class Documentation
 					'url' => dol_buildpath($this->baseUrl.'/experimental/experiments/dialog/index.php', 1),
 					'icon' => 'fas fa-flask',
 					'submenu' => array(),
-					'summary' => array(),
+					'summary' => array(
+						'DocBasicUsage' => '#dialogsection-basicusage',
+					),
 				),
 			)
 		);

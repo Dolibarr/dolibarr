@@ -1,0 +1,111 @@
+/* ============================================================
+   UI Dialog - Base
+   ============================================================ */
+
+dialog.dol-dialog {
+	border: none;
+	padding: 0;
+	background: #fff;
+	box-shadow: 0 4px 32px rgba(0, 0, 0, 0.18);
+	overflow: auto;
+}
+
+dialog.dol-dialog .dol-dialog-title {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+	box-sizing: border-box;
+	margin: 0;
+	padding: 1rem 1.25rem;
+	font-size: 1.1rem;
+	border-bottom: 1px solid #e0e0e0;
+}
+
+dialog.dol-dialog .dol-dialog-close {
+	background: none;
+	border: none;
+	cursor: pointer;
+	font-size: 1.4rem;
+	line-height: 1;
+	padding: 0 0 0 0.75rem;
+	color: #666;
+}
+
+dialog.dol-dialog .dol-dialog-close:hover {
+	color: #000;
+}
+
+dialog.dol-dialog .dol-dialog-content {
+	padding: 1.25rem;
+}
+
+/* ============================================================
+   Animations
+   ============================================================ */
+
+@keyframes dol-dialog-fade-in  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes dol-dialog-fade-out { from { opacity: 1; } to { opacity: 0; } }
+
+@keyframes dol-dialog-slide-in  { from { transform: translateX(100%); } to { transform: translateX(0); } }
+@keyframes dol-dialog-slide-out { from { transform: translateX(0); } to { transform: translateX(100%); } }
+
+/* ============================================================
+   Align: center
+   ============================================================ */
+
+dialog.dol-dialog.dol-dialog__center {
+	position: fixed;
+	inset: 0;
+	margin: auto;
+	border-radius: 8px;
+	width: 500px;  /* Default width: can be overridden via inline style */
+	height: 320px; /* Default height: can be overridden via inline style */
+}
+
+dialog.dol-dialog.dol-dialog__center {
+	animation: dol-dialog-fade-in 0.2s ease;
+}
+
+dialog.dol-dialog.dol-dialog__center.is-closing {
+	animation: dol-dialog-fade-out 0.2s ease forwards;
+}
+
+dialog.dol-dialog.dol-dialog__center::backdrop {
+	background: rgba(0, 0, 0, 0.45);
+}
+
+/* ============================================================
+   Align: right
+   ============================================================ */
+
+dialog.dol-dialog.dol-dialog__right {
+	position: fixed;
+	inset: 0 0 0 auto;
+	margin: 0;
+	height: 100dvh;
+	max-height: 100dvh;
+	border-radius: 0;
+	width: 500px; /* Default width: can be overridden via inline style */
+}
+
+dialog.dol-dialog.dol-dialog__right {
+	animation: dol-dialog-slide-in 0.3s ease;
+}
+
+dialog.dol-dialog.dol-dialog__right.is-closing {
+	animation: dol-dialog-slide-out 0.3s ease forwards;
+}
+
+dialog.dol-dialog.dol-dialog__right::backdrop {
+	background: rgba(0, 0, 0, 0.3);
+}
+
+/* ============================================================
+   No animation override — must be last
+   ============================================================ */
+
+dialog.dol-dialog.no-animation,
+dialog.dol-dialog.no-animation.is-closing {
+	animation: none;
+}

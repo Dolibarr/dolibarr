@@ -195,3 +195,12 @@ SetEventMessageTool = Dolibarr Tool : Set event message
 ContextLangToolTest = This text is in english
 LangsLocalChangedTo = Language locale changed to %s. Translations will now use the new locale.
 CacheCleared = Cache cleared
+
+# Dialog
+DocUiDialogDescription=Replaced legacy jQuery UI modals with native HTML <dialog> elements for improved performance and reduced dependencies.
+UiDolibarrDialog=Native modals
+UiDolibarrDialogCenter=Center Dialog
+UiDolibarrDialogRight=Right Dialog
+DocUiDialogTitle=New Dialog Modal
+DocUiDialogExamplePresentation=Hey %s, I'm the new native HTML dialog. I'm here to replace those old jQuery UI modals. Let's get to work
+DocUiDialogExampleDataAttributes=<b>Need a variable?</b><br> Just set a data- attribute in kebab-case and grab it in camelCase<br>E.g. `data-product-ref` becomes `GETPOST('productRef')`.
