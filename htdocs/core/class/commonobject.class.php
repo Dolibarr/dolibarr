@@ -11740,7 +11740,7 @@ abstract class CommonObject
 	}
 
 	/**
-	 * Set the error message for the object and log it.
+	 * Set the error message for the object and logs it, including the file name and line number.
 	 *
 	 * @param string $message      the error message
 	 * @param int<0,7> $loglevel   the log level
@@ -11748,7 +11748,13 @@ abstract class CommonObject
 	 */
 	public function setErrorWithLog($message, $loglevel = LOG_ERR)
 	{
+		global $dolibarr_main_document_root;
+
 		$this->setErrorWithoutLog($message);
-		dol_syslog($message, $loglevel);
+		$trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
+		$file = str_replace($dolibarr_main_document_root, '', $trace[0]['file'] ?? 'file unknown');
+		$line = $trace[0]['line'] ?? 'line unknown';
+		$syslogMessage = sprintf('%s:%s %s', $file, $line, $message);
+		dol_syslog($syslogMessage, $loglevel);
 	}
 }
