@@ -25,6 +25,17 @@
  *  \brief		Template to show objects linked to proposals
  */
 
+/**
+ * @var Translate $langs
+ * @var Conf $conf
+ * @var User $user
+ *
+ * @var CommonObject $object
+ * @var int $noMoreLinkedObjectBlockAfter
+ * @var int $showImportButton
+ * @var Propal[] $linkedObjectBlock
+ */
+
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
@@ -33,16 +44,6 @@ if (empty($conf) || !is_object($conf)) {
 
 
 print "<!-- BEGIN PHP TEMPLATE comm/propal/tpl/linkedobjectblock.tpl.php -->\n";
-
-global $user;
-
-$langs = $GLOBALS['langs'];
-'@phan-var-force Translate $langs';
-/**
- * @var Translate $langs
- * @var CommonObject $object
- */
-$linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
 // Load translation files required by the page
 $langs->load("propal");
@@ -63,12 +64,12 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	print '<tr class="'.$trclass.'"  data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'" >';
 	print '<td class="linkedcol-element tdoverflowmax100">'.$langs->trans("Proposal");
 	if (!empty($showImportButton) && getDolGlobalInt('MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES')) {
-		$url = DOL_URL_ROOT.'/comm/propal/card.php?id='.$objectlink->id;
-		print '<a class="objectlinked_importbtn" href="'.$url.'&amp;action=selectlines&amp;token='.newToken().'"  data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a>';
+		$url = dolBuildUrl(DOL_URL_ROOT.'/comm/propal/card.php', ['id' => $objectlink->id, 'action' => 'selectlines'], true);
+		print '<a class="objectlinked_importbtn" href="'.$url.'"  data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a>';
 	}
 	print '</td>';
 	print '<td class="linkedcol-name tdoverflowmax150">'.$objectlink->getNomUrl(1).'</td>';
-	print '<td class="linkedcol-ref" >'.$objectlink->ref_customer.'</td>';
+	print '<td class="linkedcol-ref tdoverflowmax150" title="'.dolPrintHTMLForAttribute($objectlink->ref_client).'">'.dolPrintHTML($objectlink->ref_client).'</td>';
 	print '<td class="linkedcol-date center">'.dol_print_date($objectlink->date, 'day').'</td>';
 	print '<td class="linkedcol-amount right">';
 	if ($user->hasRight('propal', 'lire')) {
@@ -77,7 +78,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	}
 	print '</td>';
 	print '<td class="linkedcol-statut right">'.$objectlink->getLibStatut(3).'</td>';
-	print '<td class="linkedcol-action right"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&token='.newToken().'&dellinkid='.$key.'">'.img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink').'</a></td>';
+	print '<td class="linkedcol-action right"><a class="reposition" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'dellink', 'dellinkid' => $key], true).'">'.img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink').'</a></td>';
 	print "</tr>\n";
 }
 if (count($linkedObjectBlock) > 1) {

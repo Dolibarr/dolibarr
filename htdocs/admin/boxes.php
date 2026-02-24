@@ -238,7 +238,7 @@ $sql .= " bd.rowid as boxid";
 $sql .= " FROM ".MAIN_DB_PREFIX."boxes as b, ".MAIN_DB_PREFIX."boxes_def as bd";
 $sql .= " WHERE b.box_id = bd.rowid";
 $sql .= " AND b.entity IN (0,".$conf->entity.")";
-$sql .= " AND b.fk_user=0";
+$sql .= " AND b.fk_user = 0";
 $sql .= " ORDER by b.position, b.box_order";
 //print $sql;
 
@@ -459,7 +459,9 @@ print '<td class="liste_titre"></td>';
 print '</tr>';
 
 // Activate FileCache (so content of file boxes are stored into a cache file int boxes/temp for 3600 seconds)
-print '<tr class="oddeven"><td>'.$langs->trans("EnableFileCache").'</td><td>';
+print '<tr class="oddeven"><td>'.$langs->trans("EnableFileCache");
+print ' <span class="opacitymedium">('.getDolGlobalInt('MAIN_ACTIVATE_FILECACHE_DELAY', 900)." ".$langs->trans("seconds").")</span>";
+print '</td><td>';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('MAIN_ACTIVATE_FILECACHE', array(), null, 0, 0, 0, 2, 0, 1);
 } else {

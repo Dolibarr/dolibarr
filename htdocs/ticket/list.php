@@ -157,7 +157,7 @@ foreach ($object->fields as $key => $val) {
 		$arrayfields['t.'.$key] = array(
 			'label' => $val['label'],
 			'checked' => (($visible < 0) ? 0 : 1),
-			'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
+			'enabled' => (abs($visible) != 3 && (bool) dol_eval((string) $val['enabled'], 1)),
 			'position' => $val['position'],
 			'help' => isset($val['help']) ? $val['help'] : ''
 		);
@@ -298,7 +298,9 @@ if (empty($reshook)) {
 			$result = $objecttmp->fetch($toselectid);
 			if ($result > 0) {
 				if ($objecttmp->status == Ticket::STATUS_CLOSED || $objecttmp->status == Ticket::STATUS_CANCELED) {
-					$result = $objecttmp->setStatut(Ticket::STATUS_ASSIGNED);
+					// Set status
+					$result = $objecttmp->setStatut(Ticket::STATUS_ASSIGNED, null, '', 'TICKET_MODIFY');
+
 					if ($result < 0) {
 						setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 						$error++;
@@ -1071,7 +1073,7 @@ while ($i < $imaxinloop) {
 	} else {
 		// Show line of result
 		$j = 0;
-		print '<tr data-rowid="'.$object->id.'" class="oddeven">';
+		print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select">';
 
 		// Action column
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {

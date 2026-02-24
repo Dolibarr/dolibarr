@@ -28,10 +28,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -40,12 +36,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "products", "admin", "mails", "other", "errors"));
 
 $action = GETPOST('action', 'aZ09');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel', 'alpha');
 
 $trackid = GETPOST('trackid');
 
@@ -367,7 +366,7 @@ if ($action == 'edit') {
 		print '</script>'."\n";
 	}
 
-	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
@@ -1127,8 +1126,15 @@ if ($action == 'edit') {
 						if ($dnstype == 'DMARC') {
 							$domain = '_dmarc.'.$domain;
 						}
-						$dnsinfo = dns_get_record($domain, DNS_TXT);
+
+						$authns = (getDolGlobalString('MAIN_MAIL_OVERRIDE_AUTHORITATIVE_DNS') ? explode(',', getDolGlobalString('MAIN_MAIL_OVERRIDE_AUTHORITATIVE_DNS')) : null); // eg 8.8.8.8, x.x.x.x
+						$dnsinfo = @dns_get_record($domain, DNS_TXT, $authns);
+						if ($dnsinfo === false) {
+							$langs->load("errors");
+							$text .= ($text ? '<br>' : '').$langs->trans("WarningDNSServerNotAvailable");
+						}
 					}
+
 					if (!empty($dnsinfo) && is_array($dnsinfo)) {
 						foreach ($dnsinfo as $info) {
 							if (($dnstype == 'SPF' && stripos($info['txt'], 'v=spf') !== false)

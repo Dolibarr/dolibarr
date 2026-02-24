@@ -8,7 +8,7 @@
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2016       Meziane Sof             <virtualsof@yahoo.fr>
- * Copyright (C) 2017-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2017-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023-2024  Nick Fragoulis
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -129,7 +129,7 @@ $permissiontodelete = ($user->hasRight("fournisseur", "facture", "supprimer") ||
 $permissiontoeditextra = $permissiontoadd;
 if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
 	// For action 'update_extras', is there a specific permission set for the attribute to update
-	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+	$permissiontoeditextra = dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
 }
 
 $usercanread = $user->hasRight("fournisseur", "facture", "lire") || $user->hasRight("supplier_invoice", "lire");
@@ -594,8 +594,8 @@ if (empty($reshook)) {
 					$pu_ht = price2num($price_ht, 'MU');
 					$pu_ttc = price2num((float) $pu_ht * (1 + ((float) $tmpvat / 100)), 'MU');
 				} elseif ($tmpvat != $tmpprodvat) {
-					// On reevalue prix selon taux tva car taux tva transaction peut etre different
-					// de ceux du produit par default (par example si pays different entre vendeur et acheteur).
+					// We reevaluate the price according to the var rate because vat of transaction can be different of
+					// the one of the product by default (for example when country is different between seller and buyer).
 					if ($price_base_type != 'HT') {
 						$pu_ht = price2num($pu_ttc / (1 + ((float) $tmpvat / 100)), 'MU');
 					} else {
@@ -697,7 +697,7 @@ if (empty($reshook)) {
 				setEventMessages($mesg, null, 'errors');
 			} else {
 				// Insert line
-				$result = $object->addline($idprod, (string) $ref_fournisseur, $label, $desc, $pu_ht, $pu_ttc, (float) $qty, $remise_percent, (float) $tva_tx, $localtax1_tx, $localtax2_tx, $price_base_type, $type, $date_start_fill, $date_end_fill, $info_bits, $special_code, -1, $fk_unit);
+				$result = $object->addline($idprod, (string) $ref_fournisseur, $label, $desc, $pu_ht, $pu_ttc, (float) $qty, $remise_percent, (string) $tva_tx, $localtax1_tx, $localtax2_tx, $price_base_type, $type, $date_start_fill, $date_end_fill, $info_bits, $special_code, -1, $fk_unit);
 
 				if ($result > 0) {
 					$object->fetch($object->id); // Reload lines
@@ -844,7 +844,7 @@ if (empty($reshook)) {
 
 		// Update line
 		if (! $error) {
-			$result = $object->updateline(GETPOSTINT('lineid'), GETPOSTINT('productid'), $ref_fourn, $label, $description, (float) $pu_ht, (float) $qty, $remise_percent, (float) $vat_rate, $localtax1_rate, $localtax1_rate, 'HT', $type, $date_start_fill, $date_end_fill, $info_bits, $special_code, -1);
+			$result = $object->updateline(GETPOSTINT('lineid'), GETPOSTINT('productid'), $ref_fourn, $label, $description, (float) $pu_ht, (float) $qty, (float) $remise_percent, $vat_rate, $localtax1_rate, $localtax1_rate, 'HT', $type, $date_start_fill, $date_end_fill, $info_bits, $special_code, -1);
 			if ($result >= 0) {
 				$object->fetch($object->id); // Reload lines
 
@@ -1161,7 +1161,7 @@ if ($action == 'create') {
 
 		// Confirm delete of repeatable invoice
 		if ($action == 'ask_deleteinvoice') {
-			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteRepeatableInvoice'), $langs->trans('ConfirmDeleteRepeatableInvoice'), 'confirm_deleteinvoice', '', 'no', 1);
+			$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('DeleteRepeatableInvoice'), $langs->trans('ConfirmDeleteRepeatableInvoice'), 'confirm_deleteinvoice', '', 'no', 1);
 		}
 
 		print $formconfirm;
@@ -1485,7 +1485,7 @@ if ($action == 'create') {
 		if ($object->frequency > 0) {
 			print '<br>';
 
-			if (empty($conf->cron->enabled)) {
+			if (!isModEnabled('cron')) {
 				print info_admin($langs->trans("EnableAndSetupModuleCron", $langs->transnoentitiesnoconv("Module2300Name")));
 			}
 

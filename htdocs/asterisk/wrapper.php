@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2009-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2009-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,9 +94,6 @@ function llxFooter($comment = '', $zone = 'private', $disabledoutputofmessages =
 }
 
 require_once '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -105,6 +102,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
  * @var User $user
  */
 
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
 // Security check
 if (!isModEnabled('clicktodial')) {
 	accessforbidden();
@@ -112,34 +112,9 @@ if (!isModEnabled('clicktodial')) {
 
 
 // Define Asterisk setup
-if (!getDolGlobalString('ASTERISK_HOST')) {
-	$conf->global->ASTERISK_HOST = "127.0.0.1";
-}
-if (!getDolGlobalString('ASTERISK_TYPE')) {
-	$conf->global->ASTERISK_TYPE = "SIP/";
-}
-if (!getDolGlobalString('ASTERISK_INDICATIF')) {
-	$conf->global->ASTERISK_INDICATIF = "0";
-}
-if (!getDolGlobalString('ASTERISK_PORT')) {
-	$conf->global->ASTERISK_PORT = 5038;
-}
 if (getDolGlobalString('ASTERISK_INDICATIF') == 'NONE') {
 	$conf->global->ASTERISK_INDICATIF = '';
 }
-if (!getDolGlobalString('ASTERISK_CONTEXT')) {
-	$conf->global->ASTERISK_CONTEXT = "from-internal";
-}
-if (!getDolGlobalString('ASTERISK_WAIT_TIME')) {
-	$conf->global->ASTERISK_WAIT_TIME = "30";
-}
-if (!getDolGlobalString('ASTERISK_PRIORITY')) {
-	$conf->global->ASTERISK_PRIORITY = "1";
-}
-if (!getDolGlobalString('ASTERISK_MAX_RETRY')) {
-	$conf->global->ASTERISK_MAX_RETRY = "2";
-}
-
 
 $login = GETPOST('login', 'alphanohtml');
 $password = GETPOST('password', 'password');
@@ -153,29 +128,29 @@ $caller = preg_replace('/[\n\r]/', '', $caller);
 $called = preg_replace('/[\n\r]/', '', $called);
 
 // IP address of Asterisk server
-$strHost = getDolGlobalString('ASTERISK_HOST');
+$strHost = getDolGlobalString('ASTERISK_HOST', '127.0.0.1');
 
 // Specify the type of extension through which your extension is connected.
 // ex: SIP/, IAX2/, ZAP/, etc
-$channel = getDolGlobalString('ASTERISK_TYPE');
+$channel = getDolGlobalString('ASTERISK_TYPE', 'SIP/');
 
 // Outgoing call sign
-$prefix = getDolGlobalString('ASTERISK_INDICATIF');
+$prefix = getDolGlobalString('ASTERISK_INDICATIF', '0');
 
 // Asterisk Port
-$port = getDolGlobalString('ASTERISK_PORT');
+$port = getDolGlobalInt('ASTERISK_PORT', 5038);
 
 // Context ( generalement from-internal )
-$strContext = getDolGlobalString('ASTERISK_CONTEXT');
+$strContext = getDolGlobalString('ASTERISK_CONTEXT', 'from-internal');
 
 // Waiting time before hanging up
-$strWaitTime = getDolGlobalString('ASTERISK_WAIT_TIME');
+$strWaitTime = getDolGlobalString('ASTERISK_WAIT_TIME', '30');
 
 // Priority
-$strPriority = getDolGlobalString('ASTERISK_PRIORITY');
+$strPriority = getDolGlobalString('ASTERISK_PRIORITY', '1');
 
 // Number of call attempts
-$strMaxRetry = getDolGlobalString('ASTERISK_MAX_RETRY');
+$strMaxRetry = getDolGlobalString('ASTERISK_MAX_RETRY', "2");
 
 
 /*

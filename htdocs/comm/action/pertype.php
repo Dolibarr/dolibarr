@@ -6,7 +6,7 @@
  * Copyright (C) 2011       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2014       Cedric GROSS            <c.gross@kreiz-it.fr>
  * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -254,11 +254,11 @@ $nowday   = $nowarray['mday'];
 // Define list of all external calendars (global setup)
 $listofextcals = array();
 
-$prev = dol_get_first_day($year, $month);
 $first_day   = 1;
 $first_month = 1;
 $first_year  = $year;
 
+$prev = dol_get_first_day_week($day, $month, $year);
 $week = $prev['week'];
 
 $day  = (int) $day;
@@ -311,7 +311,7 @@ if ($usergroup > 0) {
 if ($socid > 0) {
 	$param .= "&search_socid=".urlencode((string) ($socid));
 }
-if ($showbirthday) {  // Always false @phpstan-suppress-current-line
+if ($showbirthday) {  // Always false @phpstan-ignore-line
 	$param .= "&search_showbirthday=1";
 }
 if ($pid) {
@@ -339,7 +339,6 @@ $param .= "&maxprint=".urlencode((string) ($maxprint));
 
 $paramnoactionodate = $param;
 
-$prev = dol_get_first_day($year, 1);
 $prev_year  = $year - 1;
 $prev_month = $month;
 $prev_day   = $day;
@@ -347,6 +346,7 @@ $first_day  = 1;
 $first_month = 1;
 $first_year = $year;
 
+$prev = dol_get_first_day_week(1, 1, $year);
 $week = $prev['week'];
 
 $day = (int) $day;
@@ -419,7 +419,7 @@ if ($conf->use_javascript_ajax) {
 				$s .= '		});'."\n";
 				$s .= '});'."\n";
 				$s .= '</script>'."\n";
-				$s .= '<div class="nowrap float"><input type="checkbox" id="check_ext'.$htmlname.'" name="check_ext'.$htmlname.'" checked> '.$val ['name'].' &nbsp; </div>';
+				$s .= '<div class="nowrap float"><input type="checkbox" id="check_ext'.$htmlname.'" name="check_ext'.$htmlname.'" class="marginleftonly" checked> '.$val ['name'].' &nbsp; </div>';
 			}
 		}
 
@@ -1016,6 +1016,14 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 
 	$cases1 = array(); // Color first half hour
 	$cases2 = array(); // Color second half hour
+	/**
+	 * @var array<int,array<int,array<string,string|int|bool>>> $cases1
+	 * @var array<int,array<int,array<string,string|int|bool>>> $cases2
+	 */
+	'
+	@phan-var-force array<int,array<int,array<string,string|int|bool>>> $cases1
+	@phan-var-force array<int,array<int,array<string,string|int|bool>>> $cases2
+	';
 
 	$i = 0;
 	$nummytasks = 0;
@@ -1236,7 +1244,7 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 		$string2 = '&nbsp;';
 		$title1 = '';
 		$title2 = '';
-		if (isset($cases1[$h]) && $cases1[$h] != '') {
+		if (isset($cases1[$h])) {
 			//$title1.=count($cases1[$h]).' '.(count($cases1[$h])==1?$langs->trans("Event"):$langs->trans("Events"));
 			if (count($cases1[$h]) > 1) {
 				$title1 .= count($cases1[$h]).' '.(count($cases1[$h]) == 1 ? $langs->trans("Event") : $langs->trans("Events"));
@@ -1253,7 +1261,7 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 				}
 			}
 		}
-		if (isset($cases2[$h]) && $cases2[$h] != '') {
+		if (isset($cases2[$h])) {
 			//$title2.=count($cases2[$h]).' '.(count($cases2[$h])==1?$langs->trans("Event"):$langs->trans("Events"));
 			if (count($cases2[$h]) > 1) {
 				$title2 .= count($cases2[$h]).' '.(count($cases2[$h]) == 1 ? $langs->trans("Event") : $langs->trans("Events"));

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2019 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,7 @@ $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'inventorycard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $listoffset = GETPOST('listoffset', 'alpha');
@@ -72,9 +72,9 @@ $totalExpectedValuation = 0;
 $totalRealValuation = 0;
 $hookmanager->initHooks(array('inventorycard')); // Note that conf->hooks_modules contains array
 if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
-	$result = restrictedArea($user, 'stock', $id);
+	$result = restrictedArea($user, 'stock', $id, 'inventory&stock');
 } else {
-	$result = restrictedArea($user, 'stock', $id, '', 'inventory_advance');
+	$result = restrictedArea($user, 'stock', $id, 'inventory&stock', 'inventory_advance');
 }
 
 // Initialize a technical objects
@@ -123,6 +123,9 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 	$paramwithsearch .= '&limit='.((int) $limit);
 }
 
+// Sort by warehouse/product or product/warehouse
+$sortfield .= ',' . ($sortfield == 'e.ref' ? 'p.ref' : 'e.ref') . ',id.batch,id.rowid';
+$sortorder .= ',' . $sortorder.",ASC,ASC";
 
 if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$permissiontoadd = $user->hasRight('stock', 'creer');
@@ -293,8 +296,10 @@ if (empty($reshook)) {
 		$sql = 'SELECT id.rowid, id.datec as date_creation, id.tms as date_modification, id.fk_inventory, id.fk_warehouse,';
 		$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'inventorydet as id';
+		$sql .= ' LEFT JOIN ' . $db->prefix() . 'product as p ON id.fk_product = p.rowid';
+		$sql .= ' LEFT JOIN ' . $db->prefix() . 'entrepot as e ON id.fk_warehouse = e.rowid';
 		$sql .= ' WHERE id.fk_inventory = '.((int) $object->id);
-		$sql .= $db->order('id.rowid', 'ASC');
+		$sql .= $db->order($sortfield, $sortorder);
 		$sql .= $db->plimit($limit, $offset);
 
 		$db->begin();
@@ -547,7 +552,7 @@ if (isModEnabled('project'))
 	{
 		if ($action != 'classify')
 		{
-			$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+			$morehtmlref.='<a class="editfielda" href="' . dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true) . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 			if ($action == 'classify') {
 				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 				$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
@@ -1039,10 +1044,6 @@ if ($object->status == $object::STATUS_DRAFT || $object->status == $object::STAT
 	print '</tr>';
 }
 
-// Sort by warehouse/product or product/warehouse
-$sortfield .= ',' . ($sortfield == 'e.ref' ? 'p.ref' : 'e.ref');
-$sortorder .= ',' . $sortorder;
-
 // Request to show lines of inventory (prefilled after start/validate step)
 $sql = 'SELECT id.rowid, id.datec as date_creation, id.tms as date_modification, id.fk_inventory, id.fk_warehouse,';
 $sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated, id.fk_movement, id.pmp_real, id.pmp_expected';
@@ -1194,7 +1195,7 @@ if ($resql) {
 			if ($permissiontoupdatestock) {
 				print '<a class="reposition" href="'.DOL_URL_ROOT.'/product/inventory/inventory.php?id='.$object->id.'&lineid='.$obj->rowid.'&action=deleteline&page='.$page.$paramwithsearch.'&token='.newToken().'">'.img_delete().'</a>';
 			}
-			$qty_tmp = price2num(GETPOST("id_".$obj->rowid."_input_tmp", 'MS')) >= 0 ? GETPOST("id_".$obj->rowid."_input_tmp") : $qty_view;
+			$qty_tmp = price2num(GETPOST("id_".$obj->rowid."_input_tmp"), 'MS') >= 0 ? GETPOST("id_".$obj->rowid."_input_tmp") : $qty_view;
 			print '<input type="hidden" class="maxwidth50 right realqty" name="id_'.$obj->rowid.'_input_tmp" id="id_'.$obj->rowid.'_input_tmp" value="'.$qty_tmp.'">';
 			print '</td>';
 		} else {

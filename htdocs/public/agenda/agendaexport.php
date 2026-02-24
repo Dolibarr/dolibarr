@@ -95,7 +95,6 @@ if (is_numeric($entity)) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -103,12 +102,10 @@ require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
  * @var Translate $langs
  * @var User $user
  */
-$object = new ActionComm($db);
+require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
-// Not older than
-if (!getDolGlobalString('MAIN_AGENDA_EXPORT_PAST_DELAY')) {
-	$conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY = 100; // default limit
-}
+$agenda = new ActionComm($db);
+
 
 // Define format, type and filter
 $format = 'ical';
@@ -154,7 +151,7 @@ if (GETPOST("actioncode", 'alpha')) {
 if (GETPOSTINT("notolderthan")) {
 	$filters['notolderthan'] = GETPOSTINT("notolderthan");
 } else {
-	$filters['notolderthan'] = getDolGlobalString('MAIN_AGENDA_EXPORT_PAST_DELAY', 100);
+	$filters['notolderthan'] = getDolGlobalInt('MAIN_AGENDA_EXPORT_PAST_DELAY', 100);
 }
 // Max security limit by default to 1000
 if (GETPOSTINT("limit")) {
@@ -293,7 +290,6 @@ if ($shortfilename == 'dolibarrcalendar') {
 	exit;
 }
 
-$agenda = new ActionComm($db);
 
 $cachedelay = 0;
 if (getDolGlobalString('MAIN_AGENDA_EXPORT_CACHE')) {

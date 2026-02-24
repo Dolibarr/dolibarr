@@ -204,7 +204,7 @@ if (!empty($captcha)) {
 	}
 
 	// List of directories where we can find captcha handlers
-	$dirModCaptcha = array_merge(array('main' => '/core/modules/security/captcha/'), is_array($conf->modules_parts['captcha']) ? $conf->modules_parts['captcha'] : array());
+	$dirModCaptcha = array_merge(array('main' => '/core/modules/security/captcha/'), ((isset($conf->modules_parts['captcha']) && is_array($conf->modules_parts['captcha'])) ? $conf->modules_parts['captcha'] : array()));
 	$fullpathclassfile = '';
 	foreach ($dirModCaptcha as $dir) {
 		$fullpathclassfile = dol_buildpath($dir."modCaptcha".ucfirst($captcha).'.class.php', 0, 2);
@@ -262,7 +262,7 @@ if (!empty($morelogincontent)) {
 <div id="login_line2" style="clear: both">
 
 <!-- Button "Regenerate and Send password" -->
-<br><input type="submit" <?php echo $disabled; ?> class="button small" name="button_password" value="<?php echo $langs->trans('SendNewPassword'); ?>" tabindex="4" />
+<br><input type="submit" <?php echo $disabled; ?> class="butAction butActionLogin noborderfocus small" id="button_password" name="button_password" value="<?php echo $langs->trans('SendNewPassword'); ?>" tabindex="4" />
 
 <br>
 <div class="center" style="margin-top: 15px;">

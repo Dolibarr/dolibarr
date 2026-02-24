@@ -647,9 +647,9 @@ class Delivery extends CommonObject
 	/**
 	 * 	Add line
 	 *
-	 *	@param	int		$origin_id				Origin id
-	 *	@param	float	$qty					Qty
-	 *  @param	array<string,mixed>	$array_options		Array options
+	 *	@param	int					$origin_id				Origin id
+	 *	@param	float				$qty					Qty
+	 *  @param	array<string,mixed>	$array_options			Array options
 	 *	@return	void
 	 */
 	public function addline($origin_id, $qty, $array_options = [])
@@ -789,7 +789,7 @@ class Delivery extends CommonObject
 	 *
 	 *	@param	int<0,2>	$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
 	 *  @param  int<-1,1>	$save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *	@return	string								Chaine avec URL
+	 *	@return	string								String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $save_lastsearch_value = -1)
 	{
@@ -1100,7 +1100,7 @@ class Delivery extends CommonObject
 	/**
 	 *	Set the planned delivery date
 	 *
-	 *	@param      User			$user        		Object utilisateur qui modifie
+	 *	@param      User			$user        		Object User who makes the update
 	 *	@param      integer 		$delivery_date     Delivery date
 	 *	@return     int         						Return integer <0 if KO, >0 if OK
 	 */

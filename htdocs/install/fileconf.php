@@ -251,6 +251,7 @@ if (!empty($force_install_noedit)) {
 	<?php
 	if (empty($dolibarr_main_url_root)) {
 		$dolibarr_main_url_root = GETPOSTISSET('main_url') ? GETPOST('main_url') : detect_dolibarr_main_url_root();
+		$dolibarr_main_url_root = trim($dolibarr_main_url_root);
 	}
 	?>
 	<tr>
@@ -261,7 +262,7 @@ if (!empty($force_install_noedit)) {
 				   class="minwidth300"
 				   id="main_url"
 				   name="main_url"
-				   value="<?php print $dolibarr_main_url_root; ?> "
+				   value="<?php print $dolibarr_main_url_root; ?>"
 <?php if (!empty($force_install_noedit) && $force_install_noedit != 3) {
 	print ' disabled';
 }
@@ -470,10 +471,10 @@ if (!empty($force_install_noedit)) {
 	<tr class="hidesqlite">
 		<td class="label"><label for="db_port"><?php echo $langs->trans("Port"); ?></label></td>
 		<td class="label">
-			<input type="text"
+			<input type="text" class="width75"
 				   name="db_port"
 				   id="db_port"
-				   value="<?php print (!empty($force_install_port)) ? $force_install_port : $dolibarr_main_db_port; ?>"
+				   value="<?php print (!empty($force_install_port)) ? (int) $force_install_port : (empty($dolibarr_main_db_port) ? "" : $dolibarr_main_db_port); ?>"
 				<?php if (($force_install_noedit == 2 || $force_install_noedit == 3) && $force_install_port !== null) {
 					print ' disabled';
 				} ?>

@@ -339,13 +339,13 @@ class Project extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>,searchmulti?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'ID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
-		'fk_project' => array('type' => 'integer', 'label' => 'Parent', 'enabled' => 1, 'visible' => 1, 'notnull' => 0, 'position' => 12),
+		'fk_project' => array('type' => 'integer', 'label' => 'Parent', 'enabled' => 1, 'visible' => -1, 'notnull' => 0, 'position' => 12),
 		'ref' => array('type' => 'varchar(50)', 'label' => 'Ref', 'enabled' => 1, 'visible' => 1, 'showoncombobox' => 1, 'position' => 15, 'searchall' => 1),
-		'title' => array('type' => 'varchar(255)', 'label' => 'ProjectLabel', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 17, 'showoncombobox' => 2, 'searchall' => 1),
+		'title' => array('type' => 'varchar(255)', 'label' => 'ProjectLabel', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 17, 'showoncombobox' => 2, 'searchall' => 1, 'csslist' => 'tdoverflowmax250'),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => 3, 'notnull' => 1, 'position' => 19),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'enabled' => 1, 'visible' => 0, 'position' => 20),
 		'dateo' => array('type' => 'date', 'label' => 'DateStart', 'enabled' => 1, 'visible' => -1, 'position' => 30),
@@ -1229,7 +1229,7 @@ class Project extends CommonObject
 		}
 
 		// Check parameters
-		if (preg_match('/^'.preg_quote($langs->trans("CopyOf").' ').'/', $this->title)) {
+		if (preg_match('/^'.preg_quote($langs->trans("CopyOf").' ', '/').'/', $this->title)) {
 			$this->error = $langs->trans("ErrorFieldFormat", $langs->transnoentities("Label")).'. '.$langs->trans('RemoveString', $langs->transnoentitiesnoconv("CopyOf"));
 			return -1;
 		}
@@ -1643,33 +1643,17 @@ class Project extends CommonObject
 	/**
 	 * Return array of projects a user has permission on, is affected to, or all projects
 	 *
-	 * @param 	User	$user			User object
-	 * @param 	int		$mode			0=All project I have permission on (assigned to me or public), 1=Projects assigned to me only, 2=Will return list of all projects with no test on contacts
+	 * @param 	User	$fuser			User object
+	 * @param 	int		$mode			0=All project user has permission on (assigned to the user or public), 1=Projects assigned to the user only, 2=Will return list of all projects with no test on contacts
 	 * @param 	int		$list			0=Return array, 1=Return string list
 	 * @param	int		$socid			0=No filter on third party, id of third party
-	 * @param	string	$filter			Additional filter on project (statut, ref, ...). TODO Use USF syntax here.
-	 * @return 	int[]|string			Array of projects id, or string with projects id separated with "," if list is 1
+	 * @param	string	$filter			Additional filter on project (statut, ref, ...). Use USF syntax here.
+	 * @return 	int[]|string			Array of projects id, or string with projects id separated with "," if param list is 1
 	 */
-	public function getProjectsAuthorizedForUser($user, $mode = 0, $list = 0, $socid = 0, $filter = '')
+	public function getProjectsAuthorizedForUser($fuser, $mode = 0, $list = 0, $socid = 0, $filter = '')
 	{
 		$projects = array();
 		$temp = array();
-
-		$sql = "SELECT ".(($mode == 0 || $mode == 1) ? "DISTINCT " : "")."p.rowid, p.ref";
-		$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
-		if ($mode == 0) {
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_contact as ec ON ec.element_id = p.rowid";
-		} elseif ($mode == 1) {
-			$sql .= ", ".MAIN_DB_PREFIX."element_contact as ec";
-		} // elseif ($mode == 2) {
-		// No filter. Use this if user has permission to see all project
-		// }
-		$sql .= " WHERE p.entity IN (".getEntity('project').")";
-		// Internal users must see project he is contact to even if project linked to a third party he can't see.
-		//if ($socid || ! $user->rights->societe->client->voir)	$sql.= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
-		if ($socid > 0) {
-			$sql .= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
-		}
 
 		// Get id of types of contacts for projects (This list never contains a lot of elements)
 		$listofprojectcontacttype = array();
@@ -1688,19 +1672,27 @@ class Project extends CommonObject
 			$listofprojectcontacttype[0] = '0'; // To avoid syntax error if not found
 		}
 
+
+		$sql = "SELECT p.rowid, p.ref";
+		$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
+		$sql .= " WHERE p.entity IN (".getEntity('project').")";
+		// Internal users must see project he is contact to even if project is linked to a third party he can't see.
+		if ($socid > 0) {
+			$sql .= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
+		}
+
 		if ($mode == 0) {
-			$sql .= " AND ( p.public = 1";
-			$sql .= " OR ( ec.fk_c_type_contact IN (".$this->db->sanitize(implode(',', array_keys($listofprojectcontacttype))).")";
-			$sql .= " AND ec.fk_socpeople = ".((int) $user->id).")";
-			$sql .= " )";
+			$sql .= " AND (p.public = 1";
+			$sql .= " OR EXISTS (SELECT ec.rowid FROM ".MAIN_DB_PREFIX."element_contact as ec";
+			$sql .= " WHERE ec.element_id = p.rowid AND ec.fk_c_type_contact IN (".$this->db->sanitize(implode(',', array_keys($listofprojectcontacttype))).")";
+			$sql .= " AND ec.fk_socpeople = ".((int) $fuser->id).")";
+			$sql .= ")";
 		} elseif ($mode == 1) {
-			$sql .= " AND ec.element_id = p.rowid";
-			$sql .= " AND (";
-			$sql .= "  ( ec.fk_c_type_contact IN (".$this->db->sanitize(implode(',', array_keys($listofprojectcontacttype))).")";
-			$sql .= " AND ec.fk_socpeople = ".((int) $user->id).")";
-			$sql .= " )";
+			$sql .= " AND EXISTS (SELECT ec.rowid FROM ".MAIN_DB_PREFIX."element_contact as ec";
+			$sql .= " WHERE ec.element_id = p.rowid AND ec.fk_c_type_contact IN (".$this->db->sanitize(implode(',', array_keys($listofprojectcontacttype))).")";
+			$sql .= " AND ec.fk_socpeople = ".((int) $fuser->id).")";
 		} // elseif ($mode == 2) {
-		// No filter. Use this if user has permission to see all project
+		// No filter. Use this if fuser has permission to see all project
 		//}
 
 		// Manage filter
@@ -1711,8 +1703,6 @@ class Project extends CommonObject
 			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 			$sql .= $filter;
 		}
-
-		//print $sql;
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

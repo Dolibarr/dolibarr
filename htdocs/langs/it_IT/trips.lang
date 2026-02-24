@@ -121,7 +121,6 @@ ValideTrip=Approva la nota spese
 ExpenseReportPayments=Pagamenti note spese
 TaxUndefinedForThisCategory = imposte non è definito per questo categorie
 errorComputeTtcOnMileageExpense=Errore nel calcolo della spesa chilometrica
-ErrorOnlyDraftStatusCanBeDeletedInMassAction=Solo gli elementi con stato Bozza possono essere eliminati nell'azione di massa
 
 ## Dictionary
 EX_BRE=Colazione
@@ -159,3 +158,4 @@ TF_TRAIN=Treno
 TF_TRIP=Trasporto
 FailedToSetPaid=Impossibile impostare come Pagato
 FailedToSetToCancel=Impossibile eseguire cancella
+NobodyHasPermissionToValidateExpenseReport=Nessuno ha il permesso di convalidare la nota spese

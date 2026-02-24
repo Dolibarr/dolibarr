@@ -8,7 +8,7 @@
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2016       Meziane Sof             <virtualsof@yahoo.fr>
- * Copyright (C) 2017-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2017-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023       Nick Fragoulis
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -34,6 +34,14 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -44,15 +52,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Societe $mysoc
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'companies', 'compta', 'admin', 'other', 'products', 'banks'));
@@ -129,7 +128,7 @@ $permissiontoedit = $user->hasRight('facture', 'creer'); // Used by the include 
 $permissiontoeditextra = $permissiontoadd;
 if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
 	// For action 'update_extras', is there a specific permission set for the attribute to update
-	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+	$permissiontoeditextra = dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
 }
 
 $usercanread = $user->hasRight('facture', 'lire');
@@ -142,6 +141,7 @@ $usercanvalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $usercanc
 $usercansend = (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || $user->hasRight('facture', 'invoice_advance', 'send'));
 $usercanreopen = (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || $user->hasRight('facture', 'invoice_advance', 'reopen'));
 $usercanunvalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($usercancreate)) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('facture', 'invoice_advance', 'unvalidate')));
+$usermustrespectpricemin = ((getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight('produit', 'ignore_price_min_advance')) || !getDolGlobalString('MAIN_USE_ADVANCED_PERMS'));
 
 // Other permissions
 $usercanproductignorepricemin = ((getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight('produit', 'ignore_price_min_advance')) || !getDolGlobalString('MAIN_USE_ADVANCED_PERMS'));
@@ -270,6 +270,7 @@ if (empty($reshook)) {
 			$object->unit_frequency        = GETPOST('unit_frequency', 'alpha');
 			$object->nb_gen_max            = $nb_gen_max;
 			$object->auto_validate         = GETPOSTINT('auto_validate');
+			$object->fk_email_template     = GETPOSTINT('auto_send_model_mail');
 			$object->generate_pdf          = GETPOSTINT('generate_pdf');
 			$object->fk_project            = $projectid;
 
@@ -301,8 +302,7 @@ if (empty($reshook)) {
 					$object->linked_objects['commande'] = $orderid;
 				} elseif (!empty($srcObject->linkedObjectsIds['propal'])) {
 					$proposalid = reset($srcObject->linkedObjectsIds['propal']);
-
-					$object->linked_objects['commande'] = $proposalid;
+					$object->linked_objects['propal'] = $proposalid;
 				}
 			}
 
@@ -408,6 +408,9 @@ if (empty($reshook)) {
 	} elseif ($action == 'setauto_validate' && $usercancreate) {
 		// Set auto validate
 		$object->setAutoValidate(GETPOSTINT('auto_validate'));
+	} elseif ($action == 'setEmailTemplate' && $usercancreate) {
+		// Set Email Template
+		$object->setMailTemplate(GETPOSTINT('auto_send_model_mail'));
 	} elseif ($action == 'setgenerate_pdf' && $usercancreate) {
 		// Set generate pdf
 		$object->setGeneratepdf(GETPOSTINT('generate_pdf'));
@@ -656,8 +659,8 @@ if (empty($reshook)) {
 					$pu_ht = price2num($price_ht, 'MU');
 					$pu_ttc = price2num((float) $pu_ht * (1 + ($tmpvat / 100)), 'MU');
 				} elseif ($tmpvat != $tmpprodvat) {
-					// On reevalue prix selon taux tva car taux tva transaction peut etre different
-					// de ceux du produit par default (par example si pays different entre vendeur et acheteur).
+					// We reevaluate the price according to vat rate because vat rate of transactionmay differs from
+					// the one oth the product by default (for example when country of seller and buyer are different).
 					if ($price_base_type != 'HT') {
 						$pu_ht = price2num((float) $pu_ttc / (1 + ($tmpvat / 100)), 'MU');
 					} else {
@@ -687,8 +690,6 @@ if (empty($reshook)) {
 				} else {
 					$desc = $prod->description;
 				}
-
-				$desc = dol_concatdesc($desc, $product_desc);
 
 				// Add custom code and origin country into description
 				if (!getDolGlobalString('MAIN_PRODUCT_DISABLE_CUSTOMCOUNTRYCODE') && (!empty($prod->customcode) || !empty($prod->country_code))) {
@@ -909,7 +910,10 @@ if (empty($reshook)) {
 		$vat_rate = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
 
 		$pu_ht = price2num(GETPOST('price_ht'), '', 2);
+		$pu_ttc = price2num(GETPOST('price_ttc'), '', 2);
+
 		$pu_ht_devise = price2num(GETPOST('multicurrency_subprice'), '', 2);
+		$pu_ttc_devise = price2num(GETPOST('multicurrency_subprice_ttc'), '', 2);
 
 		$qty = (float) price2num(GETPOST('qty', 'alpha'), 'MS');
 
@@ -928,6 +932,32 @@ if (empty($reshook)) {
 		$fournprice = (int) (GETPOST('fournprice') ? GETPOST('fournprice') : '');
 		$buyingprice = price2num(GETPOST('buying_price') != '' ? GETPOST('buying_price') : ''); // If buying_price is '0', we must keep this value
 
+		// Prepare a price equivalent for minimum price check
+		$pu_equivalent = $pu_ht;
+		$pu_equivalent_ttc = $pu_ttc;
+
+		$currency_tx = $object->multicurrency_tx;
+
+		// Check if we have a foreign currency
+		// If so, we update the pu_equiv as the equivalent price in base currency
+		if ($pu_ht == '' && $pu_ht_devise != '' && $currency_tx != '' && !empty((float) $currency_tx)) {
+			$pu_equivalent = (float) $pu_ht_devise / (float) $currency_tx;
+		}
+		if ($pu_ttc == '' && $pu_ttc_devise != '' && $currency_tx != '' && !empty((float) $currency_tx)) {
+			$pu_equivalent_ttc = (float) $pu_ttc_devise / (float) $currency_tx;
+		}
+
+		// TODO $pu_equivalent or $pu_equivalent_ttc must be calculated from the one not null taking into account all taxes
+		/*
+		 if ($pu_equivalent) {
+		 $tmp = calcul_price_total(1, $pu_equivalent, 0, $vat_rate, -1, -1, 0, 'HT', $info_bits, $type);
+		 $pu_equivalent_ttc = ...
+		 } else {
+		 $tmp = calcul_price_total(1, $pu_equivalent_ttc, 0, $vat_rate, -1, -1, 0, 'TTC', $info_bits, $type);
+		 $pu_equivalent_ht = ...
+		 }
+		 */
+
 		// Extrafields
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
 		$array_options = $extrafields->getOptionalsFromPost($object->table_element_line);
@@ -940,7 +970,6 @@ if (empty($reshook)) {
 				setEventMessages($langs->trans('Error').$result, null, 'errors');
 			}
 		}
-
 		$position = ($objectline->rang >= 0 ? $objectline->rang : 0);
 
 		// Unset extrafield
@@ -957,21 +986,24 @@ if (empty($reshook)) {
 			$special_code = 0;	// Options should not exists on invoices
 		}
 
-		/*$line = new FactureLigne($db);
+		/*
+		$line = new FactureLigne($db);
 		$line->fetch(GETPOST('lineid', 'int'));
 		$percent = $line->get_prev_progress($object->id);
 
-		if (GETPOST('progress') < $percent)
-		{
-				$mesg = '<div class="warning">' . $langs->trans("CantBeLessThanMinPercent") . '</div>';
-				setEventMessages($mesg, null, 'warnings');
-				$error++;
-				$result = -1;
-		}*/
+		...
+		*/
 
 		$remise_percent = price2num(GETPOST('remise_percent'), '', 2);
 		if (empty($remise_percent)) {
 			$remise_percent = 0;
+		}
+
+		$price_base_type = 'HT';
+		$pu = $pu_ht;
+		if (empty($pu) && !empty($pu_ttc)) {
+			$pu = $pu_ttc;
+			$price_base_type = 'TTC';
 		}
 
 		// Check minimum price
@@ -983,8 +1015,12 @@ if (empty($reshook)) {
 			$type = $product->type;
 
 			$price_min = $product->price_min;
-			if (getDolGlobalString('PRODUIT_MULTIPRICES') && !empty($object->thirdparty->price_level)) {
+			if ((getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) && !empty($object->thirdparty->price_level)) {
 				$price_min = $product->multiprices_min[$object->thirdparty->price_level];
+			}
+			$price_min_ttc = $product->price_min_ttc;
+			if ((getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) && !empty($object->thirdparty->price_level)) {
+				$price_min_ttc = $product->multiprices_min_ttc[$object->thirdparty->price_level];
 			}
 
 			$label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label') : '');
@@ -992,9 +1028,18 @@ if (empty($reshook)) {
 			$typeinvoice = Facture::TYPE_STANDARD;
 
 			// Check price is not lower than minimum (check is done only for standard or replacement invoices)
-			if (((getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight('produit', 'ignore_price_min_advance')) || !getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) && (($typeinvoice == Facture::TYPE_STANDARD || $typeinvoice == Facture::TYPE_REPLACEMENT) && $price_min && ((float) price2num($pu_ht) * (1 - (float) $remise_percent / 100) < (float) price2num($price_min)))) {
-				setEventMessages($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency)), null, 'errors');
-				$error++;
+			if ($usermustrespectpricemin && ($typeinvoice == Facture::TYPE_STANDARD || $typeinvoice == Facture::TYPE_REPLACEMENT)) {
+				if ($pu_equivalent && $price_min && (((float) price2num($pu_equivalent) * (1 - (float) $remise_percent / 100)) < (float) price2num($price_min)) && $price_base_type == 'HT') {
+					$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
+					setEventMessages($mesg, null, 'errors');
+					$error++;
+					$action = 'editline';
+				} elseif ($pu_equivalent_ttc && $price_min_ttc && (((float) price2num($pu_equivalent_ttc) * (1 - (float) $remise_percent / 100)) < (float) price2num($price_min_ttc)) && $price_base_type == 'TTC') {
+					$mesg = $langs->trans("CantBeLessThanMinPriceInclTax", price(price2num($price_min_ttc, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
+					setEventMessages($mesg, null, 'errors');
+					$error++;
+					$action = 'editline';
+				}
 			}
 		} else {
 			$type = GETPOSTINT('type');
@@ -1023,7 +1068,7 @@ if (empty($reshook)) {
 				$description,
 				(float) $pu_ht,
 				(float) $qty,
-				(float) $vat_rate,
+				$vat_rate,
 				$localtax1_rate,
 				$localtax1_rate,
 				GETPOSTINT('productid'),
@@ -1042,7 +1087,7 @@ if (empty($reshook)) {
 				$date_start_fill,
 				$date_end_fill,
 				(int) $fournprice,
-				(int) $buyingprice,
+				(float) $buyingprice,
 				(int) $fk_parent_line
 			);
 
@@ -1051,17 +1096,18 @@ if (empty($reshook)) {
 					// Define output language
 					$outputlangs = $langs;
 					$newlang = '';
-					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id','aZ09'))
+					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id','aZ09')) {
 						$newlang = GETPOST('lang_id','aZ09');
-						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang))
-							$newlang = $object->thirdparty->default_lang;
-							if (!empty($newlang)) {
-								$outputlangs = new Translate("", $conf);
-								$outputlangs->setDefaultLang($newlang);
-							}
-
-							$ret = $object->fetch($id); // Reload to get new records
-							$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+					}
+					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+						$newlang = $object->thirdparty->default_lang;
+					}
+					if (!empty($newlang)) {
+						$outputlangs = new Translate("", $conf);
+						$outputlangs->setDefaultLang($newlang);
+					}
+					$ret = $object->fetch($id); // Reload to get new records
+					$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				}*/
 
 				$object->fetch($object->id); // Reload lines
@@ -1230,7 +1276,7 @@ if ($action == 'create') {
 		// Invoice subtype
 		if (getDolGlobalInt('INVOICE_SUBTYPE_ENABLED')) {
 			print "<tr><td>".$langs->trans("InvoiceSubtype")."</td><td>";
-			print $form->getSelectInvoiceSubtype(GETPOSTISSET('subtype') ? GETPOST('subtype') : $sourceInvoice->subtype, 'subtype', 0, 0, '');
+			print $form->getSelectInvoiceSubtype(GETPOSTISSET('subtype') ? GETPOSTINT('subtype') : $sourceInvoice->subtype, 'subtype', 0, 0, '');
 			print "</td></tr>";
 		}
 
@@ -1408,9 +1454,26 @@ if ($action == 'create') {
 
 		// Auto validate the invoice
 		print "<tr><td>".$langs->trans("StatusOfAutoGeneratedInvoices")."</td><td>";
-		$select = array('0' => $langs->trans('BillStatusDraft'), '1' => $langs->trans('BillStatusValidated'));
+		$select = array('0' => $langs->trans('BillStatusDraft'), '1' => $langs->trans('BillStatusValidated'), '2' => $langs->trans('BillStatusValidatedWithSendind'));
 		print $form->selectarray('auto_validate', $select, GETPOSTINT('auto_validate'));
 		print "</td></tr>";
+
+		// Email template for auto sending invoices
+		print "<tr id='col_auto_send_model_mail' class='".(GETPOSTINT('auto_validate') != 2 ? 'hidden' : '')."'><td>" . $langs->trans("EmailTemplateForAutoSend") . "</td><td>";
+		print $form->selectModelMail("auto_send_", "facture_send", 1, 0, GETPOSTINT('auto_send_model_mail'));
+		print "</td></tr>";
+		print "	<script>
+					$(document).ready(function() {
+						$('#auto_validate').on('change', function () {
+							if(+$(this).val() === 2) {
+								$('#col_auto_send_model_mail').show();
+							} else {
+								$('#col_auto_send_model_mail').hide();
+								$('#select_auto_send_model_mail').val(0);
+							}
+						});
+					});
+				</script>";
 
 		// Auto generate document
 		if (getDolGlobalString('INVOICE_REC_CAN_DISABLE_DOCUMENT_FILE_GENERATION')) {
@@ -1485,7 +1548,7 @@ if ($action == 'create') {
 		if ($action == 'delete') {
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteRepeatableInvoice'), $langs->trans('ConfirmDeleteRepeatableInvoice'), 'confirm_delete', '', 'no', 1);
 		}
-		// Confirmation de la suppression d'une ligne subtotal
+		// Confirmation of deletion of the subtotal line
 		if ($action == 'ask_subtotal_deleteline') {
 			$langs->load("subtotals");
 			$title = "DeleteSubtotalLine";
@@ -1553,7 +1616,7 @@ if ($action == 'create') {
 			if ($user->hasRight('facture', 'creer')) {
 				$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 				if ($action != 'classify') {
-					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+					$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 				}
 				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			} else {
@@ -1940,7 +2003,7 @@ if ($action == 'create') {
 				print $langs->trans("StatusOfAutoGeneratedInvoices");
 			}
 			print '</td><td>';
-			$select = 'select;0:'.$langs->trans('BillStatusDraft').',1:'.$langs->trans('BillStatusValidated');
+			$select = 'select;0:' . $langs->trans('BillStatusDraft') . ',1:' . $langs->trans('BillStatusValidated') . ',2:' . $langs->trans('BillStatusValidatedWithSendind');
 			if ($action == 'auto_validate' || $object->frequency > 0) {
 				print $form->editfieldval($langs->trans("StatusOfAutoGeneratedInvoices"), 'auto_validate', $object->auto_validate, $object, $user->hasRight('facture', 'creer'), $select);
 			}
@@ -1949,6 +2012,49 @@ if ($action == 'create') {
 				print '<td></td>';
 			}
 			print '</tr>';
+
+			// Email template for auto sending invoices
+			if ($object->frequency > 0 && $object->auto_validate == 2) {
+				print '<tr><td style="width: 50%">';
+				print '<table class="nobordernopadding" width="100%"><tr><td>';
+				print $langs->trans("EmailTemplateForAutoSend");
+				print '</td>';
+				if ($action != 'editEmailTemplate' && $user->hasRight('facture', 'creer')) {
+					print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editEmailTemplate&token=' . newToken() . '&facid=' . $object->id . '">' . img_edit($langs->trans('Edit'), 1) . '</a></td>';
+				}
+				print '</tr></table>';
+				print '</td><td>';
+
+				if ($action == 'editEmailTemplate') {
+					// Edit
+					print '<form method="POST" action="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '">';
+					print '<input type="hidden" name="token" value="' . newToken() . '">';
+					print '<input type="hidden" name="action" value="setEmailTemplate">';
+					print $form->selectModelMail("auto_send_", "facture_send", 1, 0, $object->fk_email_template);
+					print '<input type="submit" class="button valignmiddle smallpaddingimp" name="modify" value="' . $langs->trans("Modify") . '">';
+					print '<input type="submit" class="button button-cancel valignmiddle smallpaddingimp" name="cancel" value="' . $langs->trans("Cancel") . '">';
+					print '</form>';
+				} else {
+					// Show
+					if (!empty($object->fk_email_template)) {
+						$sql = "SELECT label
+							FROM ".$db->prefix()."c_email_templates
+							WHERE rowid = ".((int) $object->fk_email_template);
+						$result = $db->query($sql);
+						if ($result) {
+							if ($obj = $db->fetch_object($result)) {
+								print $obj->label;
+							}
+						}
+					} else {
+						print $langs->trans('DefaultMailModel');
+					}
+				}
+
+				print '</td>';
+				print '</tr>';
+			}
+
 			// Auto generate documents
 			if (getDolGlobalString('INVOICE_REC_CAN_DISABLE_DOCUMENT_FILE_GENERATION')) {
 				print '<tr>';
@@ -2076,14 +2182,15 @@ if ($action == 'create') {
 			);
 
 			// Subtotal
-			if (empty($object->suspended) && isModEnabled('subtotals') && getDolGlobalString('SUBTOTAL_TITLE_'.strtoupper($object->element))) {
+			if (empty($object->suspended) && isModEnabled('subtotals')
+				&& (getDolGlobalInt('SUBTOTAL_TITLE_'.strtoupper($object->element)) || getDolGlobalInt('SUBTOTAL_'.strtoupper($object->element)))) {
 				$langs->load("subtotals");
 
 				$url_button = array();
 
 				$url_button[] = array(
 					'lang' => 'subtotals',
-					'enabled' => (isModEnabled('invoice') && $object->status == Facture::STATUS_DRAFT),
+					'enabled' => (isModEnabled('invoice') && $object->status == Facture::STATUS_DRAFT && getDolGlobalInt('SUBTOTAL_TITLE_'.strtoupper($object->element))),
 					'perm' => (bool) $usercancreate,
 					'label' => $langs->trans('AddTitleLine'),
 					'url' => '/compta/facture/card-rec.php?id='.$object->id.'&action=add_title_line&token='.newToken()
@@ -2091,7 +2198,7 @@ if ($action == 'create') {
 
 				$url_button[] = array(
 					'lang' => 'subtotals',
-					'enabled' => (isModEnabled('invoice') && $object->status == Facture::STATUS_DRAFT),
+					'enabled' => (isModEnabled('invoice') && $object->status == Facture::STATUS_DRAFT && getDolGlobalInt('SUBTOTAL_'.strtoupper($object->element))),
 					'perm' => (bool) $usercancreate,
 					'label' => $langs->trans('AddSubtotalLine'),
 					'url' => '/compta/facture/card-rec.php?id='.$object->id.'&action=add_subtotal_line&token='.newToken()

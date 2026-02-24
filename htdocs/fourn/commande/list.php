@@ -6,7 +6,7 @@
  * Copyright (C) 2014      Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2014      Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2016      Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2018-2024  Frédéric France		<frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2018-2022 Charlene Benke		<charlene@patas-monkey.com>
  * Copyright (C) 2019      Nicolas Zabouri		<info@inovea-conseil.com>
  * Copyright (C) 2021-2023 Alexandre Spangaro   <aspangaro@open-dsi.fr>
@@ -137,11 +137,13 @@ $search_total_tva = GETPOST('search_total_tva', 'alpha');
 $search_total_ttc = GETPOST('search_total_ttc', 'alpha');
 $search_multicurrency_code = GETPOST('search_multicurrency_code', 'alpha');
 $search_multicurrency_tx = GETPOST('search_multicurrency_tx', 'alpha');
+$search_note_private = GETPOST('search_note_private', 'alpha');
+$search_note_public = GETPOST('search_note_public', 'alpha');
 $search_multicurrency_montant_ht = GETPOST('search_multicurrency_montant_ht', 'alpha');
 $search_multicurrency_montant_tva = GETPOST('search_multicurrency_montant_tva', 'alpha');
 $search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
-$billed = GETPOSTINT('billed');
+$billed = GETPOST('billed', 'int');		// Value '' must be possible
 $search_project_ref = GETPOST('search_project_ref', 'alpha');
 $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
@@ -433,8 +435,8 @@ if (empty($reshook)) {
 				}
 				$objecttmp->socid = $cmd->socid;
 				$objecttmp->type = $objecttmp::TYPE_STANDARD;
-				$objecttmp->cond_reglement_id	= $cmd->cond_reglement_id;
-				$objecttmp->mode_reglement_id	= $cmd->mode_reglement_id;
+				$objecttmp->cond_reglement_id = $cmd->cond_reglement_id;
+				$objecttmp->mode_reglement_id = $cmd->mode_reglement_id;
 				$objecttmp->fk_project = $cmd->fk_project;
 				$objecttmp->multicurrency_code = $cmd->multicurrency_code;
 				$objecttmp->ref_supplier = !empty($cmd->ref_supplier) ? $cmd->ref_supplier : $default_ref_supplier;
@@ -446,8 +448,8 @@ if (empty($reshook)) {
 				}
 
 				$objecttmp->date = $datefacture;
-				$objecttmp->origin    = 'order_supplier';
-				$objecttmp->origin_id = $id_order;
+				$objecttmp->origin = 'order_supplier';
+				$objecttmp->origin_id = (int) $id_order;
 
 				$res = $objecttmp->create($user);
 
@@ -788,8 +790,8 @@ if (empty($reshook)) {
 		} else {
 			$db->rollback();
 			$action = 'create';
-			$_GET["origin"] = $_POST["origin"];		// Keep this ?
-			$_GET["originid"] = $_POST["originid"];	// Keep this ?
+			$_GET["origin"] = GETPOST("origin", 'alpha');
+			$_GET["originid"] = GETPOSTINT("originid");
 			setEventMessages("Error", null, 'errors');
 			$error++;
 		}
@@ -925,6 +927,12 @@ if ($search_date_delivery_end) {
 }
 if ($search_date_valid_start) {
 	$sql .= " AND cf.date_valid >= '".$db->idate($search_date_valid_start)."'";
+}
+if ($search_note_public) {
+	$sql .= " AND cf.note_public LIKE '%".$db->escape($db->escapeforlike($search_note_public))."%'";
+}
+if ($search_date_approve_start) {
+	$sql .= " AND cf.date_livraison >= '".$db->idate($search_date_approve_start)."'";
 }
 if ($search_date_valid_end) {
 	$sql .= " AND cf.date_valid <= '".$db->idate($search_date_valid_end)."'";
@@ -1306,7 +1314,7 @@ if ($resql) {
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewSupplierOrderShort'), '', 'fa fa-plus-circle', $url, '', (int) $permissiontoadd);
 
 	// Lines of title fields
-	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	if ($optioncss != '') {
 		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	}
@@ -1408,8 +1416,8 @@ if ($resql) {
 		$moreforfilter .= '</div>';
 	}
 	// alert on late date
-	$moreforfilter .= '<div class="divsearchfield">';
-	$moreforfilter .= $langs->trans('Alert').' <input type="checkbox" name="search_option" value="'.(($search_status == '3,4') ? 'recv_late' : 'late').'"'.((array_search($search_option, array('late','recv_late')) !== false) ? ' checked' : '').'>';
+	$moreforfilter .= '<div class="divsearchfield valignmiddle" title="'.$langs->trans("Alert").' '.$langs->trans("Late").'">';
+	$moreforfilter .= '<label class="valignmiddle" for="search_option">'.$langs->trans('Alert').'</label> <input type="checkbox" class="valignmiddle" id="search_option" name="search_option" value="'.(($search_status == '3,4') ? 'recv_late' : 'late').'"'.((array_search($search_option, array('late','recv_late')) !== false) ? ' checked' : '').'>';
 	$moreforfilter .= '</div>';
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -1623,14 +1631,16 @@ if ($resql) {
 		print '</div>';
 		print '</td>';
 	}
-	// Note public
 	if (!empty($arrayfields['cf.note_public']['checked'])) {
+		// Note public
 		print '<td class="liste_titre">';
+		print '<input class="flat maxwidth75" type="text" name="search_note_public" value="'.dol_escape_htmltag($search_note_public).'">';
 		print '</td>';
 	}
-	// Note private
 	if (!empty($arrayfields['cf.note_private']['checked'])) {
+		// Note private
 		print '<td class="liste_titre">';
+		print '<input class="flat maxwidth75" type="text" name="search_note_private" value="'.dol_escape_htmltag($search_note_private).'">';
 		print '</td>';
 	}
 	// Action column
@@ -1817,7 +1827,9 @@ if ($resql) {
 		$objectstatic->total_ht = $obj->total_ht;
 		$objectstatic->total_tva = $obj->total_tva;
 		$objectstatic->total_ttc = $obj->total_ttc;
+		$objectstatic->date = $db->jdate($obj->date_commande);
 		$objectstatic->date_commande = $db->jdate($obj->date_commande);
+		$objectstatic->date_creation = $db->jdate($obj->date_creation);
 		$objectstatic->delivery_date = $db->jdate($obj->delivery_date);
 		$objectstatic->note_public = $obj->note_public;
 		$objectstatic->note_private = $obj->note_private;
@@ -1843,7 +1855,7 @@ if ($resql) {
 				print '</td></tr>';
 			}
 		} else {
-			print '<tr class="oddeven '.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->billed == 1) ? 'opacitymedium' : '').'">';
+			print '<tr class="oddeven row-with-select '.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->billed == 1) ? 'opacitymedium' : '').'">';
 			// Action column
 			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 				print '<td class="nowraponall center">';

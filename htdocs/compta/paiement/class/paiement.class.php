@@ -631,6 +631,8 @@ class Paiement extends CommonObject
 
 							dol_syslog(get_class($this).'::create Regenerate end result='.$result, LOG_DEBUG);
 
+							$this->warnings = $invoice->warnings;
+
 							if ($result < 0) {
 								$this->error = $invoice->error;
 								$this->errors = $invoice->errors;
@@ -708,6 +710,7 @@ class Paiement extends CommonObject
 
 		// Delete bank urls. If payment is on a conciliated line, return error.
 		if ($bank_line_id > 0) {
+			include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 			$accline = new AccountLine($this->db);
 
 			$result = $accline->fetch($bank_line_id);
@@ -1383,7 +1386,7 @@ class Paiement extends CommonObject
 	 *  @param  string  $mode           'withlistofinvoices'=Include list of invoices into tooltip
 	 *  @param	int  	$notooltip		1=Disable tooltip
 	 *  @param	string	$morecss		Add more CSS
-	 *	@return	string					Chaine avec URL
+	 *	@return	string					String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $mode = 'withlistofinvoices', $notooltip = 0, $morecss = '')
 	{
@@ -1557,6 +1560,7 @@ class Paiement extends CommonObject
 	 */
 	public function isReconciled()
 	{
+		include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 		$accountline = new AccountLine($this->db);
 		$accountline->fetch($this->bank_line);
 		return $accountline->rappro ? true : false;

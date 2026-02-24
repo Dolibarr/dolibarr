@@ -93,10 +93,9 @@ class modDataPolicy extends DolibarrModules
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
 		$this->langfiles = array("datapolicy");
 		$this->phpmin = array(7, 1); // Minimum version of PHP required by module
-		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
-		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
+		$this->warnings_activation = array();
+		$this->warnings_activation_ext = array();
 		//$this->automatic_activation = array('FR'=>'datapolicyWasAutomaticallyActivatedBecauseOfYourCountryChoice');
-		//$this->always_enabled = true;								// If true, can't be disabled
 		// Constants
 		// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
 		// Example: $this->const=array(0=>array('datapolicy_MYNEWCONST1','chaine','myvalue','This is a constant to add',1),

@@ -21,7 +21,7 @@
 --
 
 -- Bank Thirdparty
-INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, enabled, active, topic, content, content_lines, joinfiles) VALUES (0, 'banque','thirdparty','',0,null,null,'(YourSEPAMandate)',1,'isModEnabled("societe") && isModEnabled("banque") && isModEnabled("prelevement")',0,'__(YourSEPAMandate)__','__(Hello)__,<br><br>\n\n__(FindYourSEPAMandate)__ :<br>\n__MYCOMPANY_NAME__<br>\n__MYCOMPANY_FULLADDRESS__<br><br>\n__(Sincerely)__<br>\__SENDEREMAIL_SIGNATURE__',null, 0);
+INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, enabled, active, topic, content, content_lines, joinfiles) VALUES (0, 'banque','thirdparty','',0,null,null,'(YourSEPAMandate)',1,'isModEnabled("societe") && isModEnabled("bank") && isModEnabled("prelevement")',0,'__(YourSEPAMandate)__','__(Hello)__,<br><br>\n\n__(FindYourSEPAMandate)__ :<br>\n__MYCOMPANY_NAME__<br>\n__MYCOMPANY_FULLADDRESS__<br><br>\n__(Sincerely)__<br>\__SENDEREMAIL_SIGNATURE__',null, 0);
 
 -- Members
 INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, enabled, active, topic, content, content_lines, joinfiles) VALUES (0, 'adherent','member','',0,null,null,'(SendingEmailOnAutoSubscription)'       ,10, 'isModEnabled("adherent")',1,'[__[MAIN_INFO_SOCIETE_NOM]__] __(YourMembershipRequestWasReceived)__','__(Hello)__ __MEMBER_FULLNAME__,<br><br>\n\n__(ThisIsContentOfYourMembershipRequestWasReceived)__<br>\n<br>__ONLINE_PAYMENT_TEXT_AND_URL__<br>\n<br><br>\n__(Sincerely)__<br>__SENDEREMAIL_SIGNATURE__',null, 0);
@@ -54,3 +54,6 @@ INSERT INTO llx_c_email_templates (entity, module, type_template, label, lang, p
 
 -- Supplier
 INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, enabled, active, topic, content, content_lines, joinfiles) VALUES (0, 'supplier_invoice','invoice_supplier_send','',0,null,null,'(SendingReminderEmailOnUnpaidSupplierInvoice)',100, 'isModEnabled("supplier_invoice")',1,'[__[MAIN_INFO_SOCIETE_NOM]__] - __(SupplierInvoice)__','__(Hello)__,<br /><br />__(SupplierInvoiceUnpaidContent)__<br />__URL_SUPPLIER_INVOICE__<br /><br />__(Sincerely)__<br />__SENDEREMAIL_SIGNATURE__',null, 0);
+
+-- Ticket
+INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, enabled, active, topic, content, content_lines, joinfiles) VALUES (0, 'ticket', 'ticket_send', '', 0, null, null, '(SendingAdminEmailMessage)', 100, 'isModEnabled("ticket")', 1, '[__[MAIN_INFO_SOCIETE_NOM]__] __TICKET_EMAIL_SUBJECT__', '__TICKET_EMAIL_BODY__<br><ul><li>(Title) : __TICKET_SUBJECT__</li><li>(Type) : __TICKET_TYPE__</li><li>(TicketCategory) : __TICKET_CATEGORY__</li><li>(Severity) : __TICKET_SEVERITY__</li><li>(From) : __TICKET_USER_ASSIGN__</li><li>(Company) : __THIRDPARTY_NAME__</li></ul><p>(Message) : <br><br>__TICKET_MESSAGE__ </p><br><p><a href="__TICKET_URL__">(SeeThisTicketIntomanagementInterface)</a></p>', null, 0);

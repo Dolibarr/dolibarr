@@ -22,11 +22,11 @@
 * 		functions xxx_completesubstitutionarray are called by make_substitutions() if file
 * 		is inside directory htdocs/core/substitutions
 *
-*		@param	array<string,string|float|null>		$substitutionarray	Array with substitution key=>val
-*		@param	Translate							$langs				Output langs
-*		@param	CommonObject						$object				Object to use to get values
-*		@param 	CommonObjectLine					$line 				Line to use to get values
-* 		@return	void													The entry parameter $substitutionarray is modified
+*		@param	array<string,string|float|null> 	$substitutionarray	Array with substitution key=>val
+*		@param	Translate 							$langs 				Output langs
+*		@param	Propal|Commande|Facture|FactureRec|Expedition|SupplierProposal|CommandeFournisseur|FactureFournisseur $object Object to use to get values
+*		@param 	CommonObjectLine 					$line				Line to use to get values
+* 		@return	void 													The entry parameter $substitutionarray is modified
 */
 function subtotals_completesubstitutionarray_lines(&$substitutionarray, $langs, $object, $line)
 {
@@ -39,7 +39,7 @@ function subtotals_completesubstitutionarray_lines(&$substitutionarray, $langs, 
 		$substitutionarray['is_subtotals_title'] = (($line->special_code == SUBTOTALS_SPECIAL_CODE) && $line->qty > 0);
 		$substitutionarray['is_subtotals_subtotal'] = (($line->special_code == SUBTOTALS_SPECIAL_CODE) && $line->qty < 0);
 		$subtotal_total = 0;
-		if (isModEnabled('multicurrency') && $object->multicurrency_code != $conf->currency) {
+		if (isModEnabled('multicurrency') && $object->multicurrency_code != getDolCurrency()) {
 			$subtotal_total = $object->getSubtotalLineMulticurrencyAmount($line); // @phan-suppress-current-line PhanPluginUnknownObjectMethodCall
 		} else {
 			$subtotal_total = $object->getSubtotalLineAmount($line); // @phan-suppress-current-line PhanPluginUnknownObjectMethodCall

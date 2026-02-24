@@ -48,6 +48,9 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 .spannature {
 	padding-top: 5px !important;
 	padding-bottom: 6px !important;
+	vertical-align: middle;
+	white-space: nowrap;
+	display: inline-block;
 }
 
 .nonature-back {
@@ -141,7 +144,7 @@ div.login_block_other:not(.takepos) a {
 	color: var(--colortextbackvmenu);
 }
 
-.infobox-adherent, .infobox-member {
+.infobox-adherent, .infobox-member, .infobox-expensereport {
 	color: #79633f;
 }
 .infobox-project{
@@ -168,12 +171,6 @@ div.login_block_other:not(.takepos) a {
 }
 .infobox-bank_account{
 	color: #b0a53e;
-}
-.infobox-adherent, .infobox-member {
-	color: #79633f;
-}
-.infobox-expensereport{
-	color: #79633f;
 }
 .infobox-holiday{
 	color: #755114;
@@ -306,7 +303,8 @@ a.info-box-text-a i.fa.fa-exclamation-triangle, span.badge i.fa.fa-exclamation-t
 }
 .info-box-line-text {
 	overflow: hidden;
-	width: calc(100% - 76px);
+	width: calc(100% - 92px);
+	max-width: calc(100% - 82px);
 	text-overflow: ellipsis;
 }
 
@@ -751,4 +749,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 }
 .infobox-haslink .info-box-icon .info-box-createlink span.fas {
 	margin:auto;
+}
+.infobox-haslink i.fa.fa-exclamation-triangle.hideonsmartphone {
+	display: none;
 }

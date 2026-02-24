@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2014-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2015-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2015-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -588,7 +588,7 @@ class Loan extends CommonObject
 	 *  @param  int     $notooltip                  1=Disable tooltip
 	 *  @param  string  $morecss                    Add more css on link
 	 *  @param  int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *  @return	string								Chaine with URL
+	 *  @return	string								Text with URL
 	 */
 	public function getNomUrl($withpicto = 0, $maxlen = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
@@ -610,8 +610,8 @@ class Loan extends CommonObject
 			$label .= '<br><strong>'.$langs->trans("DateEnd").':</strong> '.dol_print_date($this->dateend, 'day');
 		}
 
-		$url = DOL_URL_ROOT.'/loan/card.php?id='.$this->id;
-
+		$baseurl = DOL_URL_ROOT.'/loan/card.php';
+		$query = ['id' => $this->id];
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
@@ -619,14 +619,15 @@ class Loan extends CommonObject
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+				$query += ['save_lastsearch_values' => 1];
 			}
 		}
+		$url = dolBuildUrl($baseurl, $query);
 
 		$linkclose = '';
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
-				$label = $langs->trans("ShowMyObject");
+				$label = $langs->trans("ShowLoan");
 				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
 			$linkclose .= ' title="'.dolPrintHTMLForAttribute($label).'"';

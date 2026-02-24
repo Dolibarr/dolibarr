@@ -362,8 +362,8 @@ if ($source == 'proposal') {
 
 	$amount = '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Amount");
 	$amount .= '</td><td class="CTableRow2">';
-	$amount .= '<b>'.price($object->total_ttc, 0, $langs, 1, -1, -1, $conf->currency).'</b>';
-	if ($object->multicurrency_code != $conf->currency) {
+	$amount .= '<b>'.price($object->total_ttc, 0, $langs, 1, -1, -1, getDolCurrency()).'</b>';
+	if ($object->multicurrency_code != getDolCurrency()) {
 		$amount .= ' ('.price($object->multicurrency_total_ttc, 0, $langs, 1, -1, -1, $object->multicurrency_code).')';
 	}
 	$amount .= '</td></tr>'."\n";
@@ -734,7 +734,7 @@ if ($action == "dosign" && empty($cancel)) {
 
 	// Add js code managed into the div #signature
 	$urltogo = $_SERVER["PHP_SELF"].'?ref='.urlencode($ref).'&source='.urlencode($source).'&message=signed&securekey='.urlencode($SECUREKEY).(isModEnabled('multicompany') ? '&entity='.(int) $entity : '');
-	print '<script language="JavaScript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jSignature/jSignature.js"></script>
+	print '<script language="JavaScript" type="text/javascript" src="'.DOL_URL_ROOT.'/public/includes/jquery/plugins/jSignature/jSignature.js"></script>
 	<script type="text/javascript">
 	$(document).ready(function() {
 	  $("#signature").jSignature({ color:"#000", lineWidth:0, '.(empty($conf->dol_optimize_smallscreen) ? '' : 'width: 280, ').'height: 180});

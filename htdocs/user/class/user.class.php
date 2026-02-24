@@ -175,7 +175,7 @@ class User extends CommonObject
 	public $personal_mobile;
 
 	/**
-	 * @var int 1 if admin 0 if standard user
+	 * @var int<0,1> 1 if admin 0 if standard user
 	 */
 	public $admin;
 
@@ -213,6 +213,11 @@ class User extends CommonObject
 	 * @var string Temporary password
 	 */
 	public $pass_temp;
+
+	/**
+	 * @var int 	1 if user must change password at next login
+	 */
+	public $force_pass_change = 0;
 
 	/**
 	 * Date creation record (datec)
@@ -372,7 +377,7 @@ class User extends CommonObject
 	public $lastsearch_values; // To store last saved search criteria for user
 
 	/**
-	 *	@var array<int,User>|array<int,array{rowid:int,id:int,fk_user:int,fk_soc:int,firstname:string,lastname:string,login:string,statut:int,entity:int,email:string,gender:string|int<-1,-1>,admin:int<0,1>,photo:string,fullpath:string,fullname:string,level:int}>  Array of User (filled from fetchAll) or Array with hierarchy of user information (filled with get_full_tree()
+	 *	@var array<int,User>|array<int,array{rowid:int,id:int,fk_user:int,fk_soc:int,firstname:string,lastname:string,login:string,statut:int,entity:int,email:string,gender:string|int<-1,-1>,admin:int<0,1>,photo:string,fullpath:string,fullname:string,level:int}>  Array of User (filled from fetchAll) or Array with hierarchy of user information (filled with get_full_tree())
 	 */
 	public $users = array();
 	/**
@@ -452,7 +457,7 @@ class User extends CommonObject
 	public $default_range;
 
 	/**
-	 *@var int id of warehouse
+	 *@var ?int id of warehouse
 	 */
 	public $fk_warehouse;
 
@@ -523,7 +528,7 @@ class User extends CommonObject
 	 * 	@param  string	$login       		If defined, login to used for search
 	 *	@param  string	$sid				If defined, sid to used for search
 	 * 	@param	int<0,1>	$loadpersonalconf	1=also load personal conf of user (in $user->conf->xxx), 0=do not load personal conf.
-	 *  @param  int     $entity             If a value is >= 0, we force the search on a specific entity. If -1, means search depens on default setup.
+	 *  @param  int     $entity             If a value is >= 0, we force the search on a specific entity. If -1, means search depends on default setup.
 	 *  @param	string	$email       		If defined, email to used for search
 	 *  @param	int		$fk_socpeople		If defined, id of contact for search
 	 *  @param	int<0,1>	$use_email_oauth2	1=Use also email_oauth2 to fetch on email
@@ -543,7 +548,7 @@ class User extends CommonObject
 		$sql .= " u.signature, u.office_phone, u.office_fax, u.user_mobile, u.personal_mobile,";
 		$sql .= " u.address, u.zip, u.town, u.fk_state as state_id, u.fk_country as country_id,";
 		$sql .= " u.admin, u.login, u.note_private, u.note_public,";
-		$sql .= " u.pass, u.pass_crypted, u.pass_temp, u.api_key,";
+		$sql .= " u.pass, u.pass_crypted, u.pass_temp, u.force_pass_change, u.api_key,";
 		$sql .= " u.fk_soc, u.fk_socpeople, u.fk_member, u.fk_user, u.ldap_sid, u.fk_user_expense_validator, u.fk_user_holiday_validator,";
 		$sql .= " fk_user_creat as user_creation_id, fk_user_modif as user_modification_id,";
 		$sql .= " u.statut as status, u.lang, u.entity,";
@@ -661,6 +666,7 @@ class User extends CommonObject
 				$this->pass_indatabase_crypted = $obj->pass_crypted;
 				$this->pass = $obj->pass;
 				$this->pass_temp = $obj->pass_temp;
+				$this->force_pass_change = $obj->force_pass_change;
 				$this->datelastpassvalidation = $obj->datelastpassvalidation;
 				$this->api_key = dolDecrypt($obj->api_key);
 
@@ -761,7 +767,7 @@ class User extends CommonObject
 
 		// To get back the global configuration unique to the user
 		if ($loadpersonalconf) {
-			$result = $this->loadPersonalConf();
+			$result = $this->loadPersonalConf($entity);
 
 			$result = $this->loadDefaultValues();
 
@@ -784,16 +790,22 @@ class User extends CommonObject
 	/**
 	 *  Load const values from database table user_param and set it into user->conf->XXX
 	 *
+	 *  @param	int		$entity			If >=0, force the entity, if -1, use the default entity
 	 *  @return int						>= 0 if OK, < 0 if KO
 	 */
-	public function loadPersonalConf()
+	public function loadPersonalConf($entity = -1)
 	{
 		global $conf;
 
 		// Load user->conf for user
 		$sql = "SELECT param, value FROM ".$this->db->prefix()."user_param";
 		$sql .= " WHERE fk_user = ".((int) $this->id);
-		$sql .= " AND entity = ".((int) $conf->entity);
+		if ($entity < 0) {
+			$sql .= " AND entity IN (0, ".((int) $conf->entity).")"; // IN (0, x)
+		} else {
+			$sql .= " AND entity = ".((int) $entity); // 0 or x
+		}
+
 		//dol_syslog(get_class($this).'::fetch load personalized conf', LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -864,6 +876,18 @@ class User extends CommonObject
 	}
 
 	/**
+	 *  Return if a user is an admin user
+	 *  It replaces old syntax: if ($user->admin)
+	 *
+	 *  @return int<0,1>				Return integer 1 if user is admin, 0 if not.
+	 */
+	public function isAdmin()
+	{
+		return $this->admin;
+	}
+
+
+	/**
 	 *  Return if a user has a permission.
 	 *  You can use it like this: if ($user->hasRight('module', 'level11')).
 	 *  It replaces old syntax: if ($user->rights->module->level1)
@@ -893,7 +917,7 @@ class User extends CommonObject
 			'fichinter' => 'ficheinter',
 			'inventory' => 'stock',
 			'invoice' => 'facture',
-			'invoice_supplier' => 'fournisseur',
+			'invoice_supplier' => 'facture@fournisseur',
 			'order_supplier' => 'fournisseur',
 			'knowledgerecord' => 'knowledgerecord@knowledgemanagement',
 			'skill@hrm' => 'all@hrm', // skill / job / position objects rights are for the moment grouped into right level "all"
@@ -1211,7 +1235,7 @@ class User extends CommonObject
 
 			// Where clause for the list of permissions to delete
 			$wherefordel = "id=".((int) $rid);
-			// Suppression des droits induits
+			// Removal of induced rights
 			if ($subperms == 'lire' || $subperms == 'read') {
 				$wherefordel .= " OR (module='".$this->db->escape($module)."' AND perms='".$this->db->escape($perms)."' AND subperms IS NOT NULL)";
 			}
@@ -1630,6 +1654,55 @@ class User extends CommonObject
 	}
 
 	/**
+	 *  Set force password change flag
+	 *
+	 *	@param	User	$user		User making the change
+	 *	@param	int		$value		1 to force password change at next login, 0 to disable
+	 *  @return int     			Return integer <0 if KO, 0 if nothing is done, >0 if OK
+	 */
+	public function setForcePasswordChange($user, $value)
+	{
+		$error = 0;
+
+		$value = (int) $value;
+
+		// Check parameters : no change short line
+		if ($this->force_pass_change == $value) {
+			return 0;
+		}
+
+		$this->db->begin();
+
+		// Save in database
+		$sql = "UPDATE ".$this->db->prefix()."user";
+		$sql .= " SET force_pass_change = ".((int) $value);
+		$sql .= " WHERE rowid = ".((int) $this->id);
+		$result = $this->db->query($sql);
+
+		dol_syslog(get_class($this)."::setForcePasswordChange", LOG_DEBUG);
+		if ($result) {
+			$this->force_pass_change = $value;
+			// Call trigger
+			$result = $this->call_trigger('USER_MODIFY', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
+		} else {
+			$error++;
+			$this->error = $this->db->lasterror();
+		}
+
+		if ($error) {
+			$this->db->rollback();
+			return -$error;
+		} else {
+			$this->db->commit();
+			return 1;
+		}
+	}
+
+	/**
 	 * Sets object to supplied categories.
 	 *
 	 * Deletes object from existing categories not supplied.
@@ -1950,7 +2023,7 @@ class User extends CommonObject
 				return -1;
 			}
 		} else {
-			// $this->error deja positionne
+			// $this->error already set
 			dol_syslog(get_class($this)."::create_from_contact - 0");
 
 			$this->db->rollback();
@@ -2153,7 +2226,7 @@ class User extends CommonObject
 
 		$this->accountancy_code_user_general = trim((string) $this->accountancy_code_user_general);
 		$this->accountancy_code				= trim((string) $this->accountancy_code);
-		$this->color						= trim((string) $this->color);
+		$this->color						= trim(str_replace('#', '', (string) $this->color));
 		$this->dateemployment				= empty($this->dateemployment) ? '' : $this->dateemployment;
 		$this->dateemploymentend			= empty($this->dateemploymentend) ? '' : $this->dateemploymentend;
 
@@ -2278,6 +2351,7 @@ class User extends CommonObject
 		$sql .= ", fk_warehouse = ".($this->fk_warehouse > 0 ? $this->fk_warehouse : "null");
 		$sql .= ", fk_establishment = ".($this->fk_establishment > 0 ? $this->fk_establishment : "null");
 		$sql .= ", lang = ".($this->lang ? "'".$this->db->escape($this->lang)."'" : "null");
+		$sql .= ", force_pass_change = ".($this->force_pass_change ? ((int) $this->force_pass_change) : "0");
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -2562,7 +2636,8 @@ class User extends CommonObject
 			$sql = "UPDATE ".$this->db->prefix()."user";
 			$sql .= " SET pass_crypted = '".$this->db->escape($password_crypted)."',";
 			$sql .= " datelastpassvalidation = '".$this->db->idate(dol_now())."',";
-			$sql .= " pass_temp = null";
+			$sql .= " pass_temp = null,";
+			$sql .= " force_pass_change = 0";
 			if (!empty($flagdelsessionsbefore)) {
 				$sql .= ", flagdelsessionsbefore = '".$this->db->idate($now - 5, 'gmt')."'";
 			}
@@ -2581,6 +2656,7 @@ class User extends CommonObject
 					$this->pass = $password;
 					$this->pass_indatabase = $password;
 					$this->pass_indatabase_crypted = (string) $password_crypted;
+					$this->force_pass_change = 0;
 
 					if ($this->fk_member && !$nosyncmember) {
 						require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
@@ -2763,9 +2839,9 @@ class User extends CommonObject
 	}
 
 	/**
-	 * 		Renvoie la derniere erreur fonctionnelle de manipulation de l'objet
+	 *  Returns the last functional error when manipulating the object
 	 *
-	 * 		@return    string      chaine erreur
+	 *  @return    string      error string
 	 */
 	public function error()
 	{
@@ -3107,7 +3183,7 @@ class User extends CommonObject
 	 *  Return a HTML link to the user card (with optionally the picto)
 	 * 	Use this->id,this->lastname, this->firstname
 	 *
-	 *	@param	int			$withpictoimg				Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small)
+	 *	@param	int			$withpictoimg				Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small, -4=Include photo very small into link)
 	 *	@param	string		$option						On what the link point to ('leave', 'accountancy', 'nolink', )
 	 *  @param  integer 	$infologin      			0=Add default info tooltip, 1=Add complete info tooltip, -1=No info tooltip
 	 *  @param	integer		$notooltip					1=Disable tooltip on picto and name
@@ -3118,7 +3194,7 @@ class User extends CommonObject
 	 *  @param  int<-1,1>	$save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return	string									String with URL
 	 */
-	public function getNomUrl($withpictoimg = 0, $option = '', $infologin = 0, $notooltip = 0, $maxlen = 24, $hidethirdpartylogo = 0, $mode = '', $morecss = 'valignmiddle', $save_lastsearch_value = -1)
+	public function getNomUrl($withpictoimg = 0, $option = '', $infologin = 0, $notooltip = 0, $maxlen = 24, $hidethirdpartylogo = 0, $mode = '', $morecss = '', $save_lastsearch_value = -1)
 	{
 		global $langs, $hookmanager, $user;
 
@@ -3161,11 +3237,11 @@ class User extends CommonObject
 			$label = '';
 		}
 
-		$url = DOL_URL_ROOT.'/user/card.php?id='.$this->id;
+		$baseurl = DOL_URL_ROOT . '/user/card.php';
 		if ($option == 'leave') {
-			$url = DOL_URL_ROOT.'/holiday/list.php?id='.$this->id;
+			$baseurl = DOL_URL_ROOT . '/holiday/list.php';
 		}
-
+		$query = ['id' => $this->id];
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
@@ -3173,9 +3249,10 @@ class User extends CommonObject
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+				$query = array_merge($query, ['save_lastsearch_values' => 1]);
 			}
 		}
+		$url = dolBuildUrl($baseurl, $query);
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkclose = "";
@@ -3198,7 +3275,7 @@ class User extends CommonObject
 		$result .= (($option == 'nolink') ? '' : $linkstart);
 		if ($withpictoimg) {
 			$paddafterimage = '';
-			if (abs((int) $withpictoimg) == 1) {
+			if (abs((int) $withpictoimg) == 1 || abs((int) $withpictoimg) == 4) {
 				$paddafterimage = 'style="margin-'.($langs->trans("DIRECTION") == 'rtl' ? 'left' : 'right').': 3px;"';
 			}
 			// Only picto
@@ -3206,11 +3283,11 @@ class User extends CommonObject
 				$picto = '<!-- picto user --><span class="nopadding userimg'.($morecss ? ' '.$morecss : '').'"><div class="valignmiddle userphoto inline-block center marginrightonlyshort"'.($paddafterimage ? ' '.$paddafterimage : '').'>'.img_object('', 'user', 'class=""', 0, 0, $notooltip ? 0 : 1).'</div></span>';
 			} else {
 				// Picto must be a photo
-				$picto = '<!-- picto photo user --><span class="nopadding userimg'.($morecss ? ' '.$morecss : '').'"'.($paddafterimage ? ' '.$paddafterimage : '').'>'.Form::showphoto('userphoto', $this, 0, 0, 0, 'userphoto'.($withpictoimg == -3 ? 'small' : ''), 'mini', 0, 1).'</span>';
+				$picto = '<!-- picto photo user --><span class="nopadding userimg'.($morecss ? ' '.$morecss : '').'"'.($paddafterimage ? ' '.$paddafterimage : '').'>'.Form::showphoto('userphoto', $this, 0, 0, 0, 'userphoto'.(($withpictoimg == -3 || $withpictoimg == -4) ? 'small' : ''), 'mini', 0, 1).'</span>';
 			}
 			$result .= $picto;
 		}
-		if ($withpictoimg > -2 && $withpictoimg != 2) {
+		if ($withpictoimg == -4 || ($withpictoimg > -2 && $withpictoimg != 2)) {
 			if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$result .= '<span class="nopadding usertext'.((!isset($this->status) || $this->status) ? '' : ' strikefordisabled').($morecss ? ' '.$morecss : '').'">';
 			}
@@ -3383,9 +3460,9 @@ class User extends CommonObject
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(0, '', 0, 0, 24, 0, '', 'valignmiddle') : $this->ref);
 		if (isModEnabled('multicompany') && $this->admin && !$this->entity) {
-			$return .= img_picto($langs->trans("SuperAdministratorDesc"), 'redstar', 'class="valignmiddle paddingright paddingleft"');
+			$return .= img_picto($langs->trans("SuperAdministratorDesc"), 'superadmin', 'class="valignmiddle paddingright paddingleft"');
 		} elseif ($this->admin) {
-			$return .= img_picto($langs->trans("AdministratorDesc"), 'star', 'class="valignmiddle paddingright paddingleft"');
+			$return .= img_picto($langs->trans("AdministratorDesc"), 'admin', 'class="valignmiddle paddingright paddingleft"');
 		}
 		$return .= '</span>';
 		if ($selected >= 0) {
@@ -3411,7 +3488,7 @@ class User extends CommonObject
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
+	 *	Returns the complete DN (Distinguished Name) string in the LDAP directory for the object
 	 *
 	 *	@param	array<string,mixed>	$info	Info array loaded by _load_ldap_info
 	 *	@param	int<0,2>			$mode	0=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
@@ -3755,7 +3832,7 @@ class User extends CommonObject
 	public function update_ldap2dolibarr(&$ldapuser)
 	{
 		// phpcs:enable
-		// TODO: Voir pourquoi le update met à jour avec toutes les valeurs vide (global $user écrase ?)
+		// TODO: See why the update sets all values to empty (does global $user overwrite?)
 		global $user;
 
 		$socialnetworks = getArrayOfSocialNetworks();
@@ -3904,23 +3981,26 @@ class User extends CommonObject
 		if ($resql) {
 			$i = 0;
 			while ($obj = $this->db->fetch_object($resql)) {
-				$this->users[$obj->rowid]['rowid'] = $obj->rowid;
-				$this->users[$obj->rowid]['id'] = $obj->rowid;
-				$this->users[$obj->rowid]['fk_user'] = $obj->fk_user;
-				$this->users[$obj->rowid]['fk_soc'] = $obj->fk_soc;
-				$this->users[$obj->rowid]['firstname'] = $obj->firstname;
-				$this->users[$obj->rowid]['lastname'] = $obj->lastname;
-				$this->users[$obj->rowid]['login'] = $obj->login;
-				$this->users[$obj->rowid]['statut'] = $obj->statut;
-				$this->users[$obj->rowid]['entity'] = $obj->entity;
-				$this->users[$obj->rowid]['email'] = $obj->email;
-				$this->users[$obj->rowid]['gender'] = $obj->gender;
-				$this->users[$obj->rowid]['admin'] = $obj->admin;
-				$this->users[$obj->rowid]['photo'] = $obj->photo;
-				// fields are filled with build_path_from_id_user
-				$this->users[$obj->rowid]['fullpath'] = '';
-				$this->users[$obj->rowid]['fullname'] = '';
-				$this->users[$obj->rowid]['level'] = 0;
+				$this->users[(int) $obj->rowid]
+					= array(
+						'rowid' => (int) $obj->rowid,
+						'id' => (int) $obj->rowid,
+						'fk_user' => (int) $obj->fk_user,
+						'fk_soc' => (int) $obj->fk_soc,
+						'firstname' => (string) $obj->firstname,
+						'lastname' => (string) $obj->lastname,
+						'login' => (string) $obj->login,
+						'statut' => (int) $obj->statut,
+						'entity' => (int) $obj->entity,
+						'email' => (string) $obj->email,
+						'gender' => (string) $obj->gender,
+						'admin' => (int) $obj->admin,
+						'photo' => (string) $obj->photo,
+						// fields are filled with build_path_from_id_user
+						'fullpath' => '',
+						'fullname' => '',
+						'level' => 0,
+					);
 				$i++;
 			}
 		} else {
@@ -3957,8 +4037,6 @@ class User extends CommonObject
 		dol_syslog(get_class($this)."::get_full_tree dol_sort_array", LOG_DEBUG);
 		$this->users = dol_sort_array($this->users, 'fullname', 'asc', 1, 0, 1);
 
-		//var_dump($this->users);
-
 		return $this->users;
 	}
 
@@ -3984,7 +4062,6 @@ class User extends CommonObject
 
 			dol_syslog("Build childid for id = ".$idtoscan);
 			foreach ($this->users as $id => $val) {
-				//var_dump($val['fullpath']);
 				if (preg_match('/_'.$idtoscan.'_/', $val['fullpath'])) {
 					$childids[$val['id']] = $val['id'];
 				}

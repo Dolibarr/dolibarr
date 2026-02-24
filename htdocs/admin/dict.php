@@ -11,9 +11,9 @@
  * Copyright (C) 2011-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2015		Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2016		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2019-2025  Frédéric France         	<frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France         	<frederic.france@free.fr>
  * Copyright (C) 2020-2022  Open-Dsi                	<support@open-dsi.fr>
- * Copyright (C) 2024       Charlene Benke      	    <charlene@patas-monkey.com>
+ * Copyright (C) 2024-2025  Charlene Benke      	    <charlene@patas-monkey.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -40,6 +40,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -707,6 +708,7 @@ if ($id == DICT_TYPE_CONTACT) {
 		'agenda' => img_picto('', 'action', 'class="pictofixedwidth"').$langs->trans('Agenda'),
 		'dolresource' => img_picto('', 'resource', 'class="pictofixedwidth"').$langs->trans('Resource'),
 		'societe' => img_picto('', 'company', 'class="pictofixedwidth"').$langs->trans('ThirdParty'),
+		'product' => img_picto('', 'product', 'class="pictofixedwidth"').$langs->trans('Product'),
 		// 'proposal' => $langs->trans('Proposal'),
 		// 'order' => $langs->trans('Order'),
 		// 'invoice' => $langs->trans('Bill'),
@@ -999,7 +1001,7 @@ if (empty($reshook)) {
 				} elseif ($value == 'taux' || $value == 'localtax1') {
 					$_POST[$keycode] = price2num(GETPOST($keycode), 8);	// Note that localtax2 can be a list of rates separated by coma like X:Y:Z
 				} elseif ($value == 'entity') {
-					$_POST[$keycode] = getEntity($tablename);
+					$_POST[$keycode] = (int) getEntity($tablename, 0);
 				}
 
 				if ($i) {
@@ -1051,7 +1053,7 @@ if (empty($reshook)) {
 
 			// Modify entry
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET ";
-			// Modifie valeur des champs
+			// Update fields value
 			if ($tabrowid[$id] && !in_array($tabrowid[$id], $listfieldmodify)) {
 				$sql .= $tabrowid[$id]."=";
 				$sql .= "'".$db->escape($rowid)."', ";
@@ -1068,7 +1070,7 @@ if (empty($reshook)) {
 				} elseif ($field == 'taux' || $field == 'localtax1') {
 					$_POST[$keycode] = price2num(GETPOST($keycode), 8);	// Note that localtax2 can be a list of rates separated by coma like X:Y:Z
 				} elseif ($field == 'entity') {
-					$_POST[$keycode] = getEntity($tablename);
+					$_POST[$keycode] = (int) getEntity($tablename, 0);
 				}
 
 				if ($i) {
@@ -1376,6 +1378,7 @@ if (empty($reshook)) {
  */
 
 $form = new Form($db);
+$formother = new FormOther($db);
 
 $title = $langs->trans("DictionarySetup");
 
@@ -1476,7 +1479,11 @@ if ($id > 0) {
 		$sql .= " WHERE 1 = 1";
 	}
 	if ($search_country_id > 0) {
-		$sql .= " AND c.rowid = ".((int) $search_country_id);
+		if ($id == DICT_HRM_PUBLIC_HOLIDAY || $id == DICT_HOLIDAY_TYPES) {
+			$sql .= " AND (c.rowid IS NULL OR c.rowid = 0 OR c.rowid = ".((int) $search_country_id).")";
+		} else {
+			$sql .= " AND c.rowid = ".((int) $search_country_id);
+		}
 	}
 	if ($search_code != '') {
 		$sql .= natural_search($tablecode, $search_code);
@@ -1585,7 +1592,7 @@ if ($id > 0) {
 				$tdsoffields = '<tr class="liste_titre">';
 				foreach ($fieldlist as $field => $value) {
 					if ($value == 'entity') {
-						$withentity = getEntity($tabname[$id]);
+						$withentity = (int) getEntity($tabname[$id], 0);
 						continue;
 					}
 
@@ -2617,6 +2624,10 @@ if ($id > 0) {
 								}
 							} elseif (in_array($value, array('leftmargin', 'topmargin', 'spacex', 'spacey', 'width', 'height', 'custom_x', 'custom_y'))) {
 								$valuetoshow = price2num($valuetoshow);
+							} elseif ($value == 'type' && $id == DICT_ACTIONCOMM && !empty($obj->module)) {
+								$titletoshow = $langs->trans("Module").' '.$obj->module;
+							} elseif ($value == 'color') {
+								$valuetoshow = $formother->showColor($obj->{$value}, '');
 							}
 
 
@@ -2821,7 +2832,7 @@ $db->close();
 function dictFieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 {
 	global $langs, $db, $mysoc;
-	global $form;
+	global $form, $formother;
 	global $region_id;
 	global $elementList, $sourceList, $localtax_typeList, $type_vatList;
 
@@ -3031,6 +3042,10 @@ function dictFieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 		} elseif ($value == 'type_duration') {
 			print '<td>';
 			print $form->selectTypeDuration('', (empty($obj->type_duration) ? '' : $obj->type_duration), ['s', 'i', 'h']);
+			print '</td>';
+		} elseif ($value == 'color') {
+			print '<td>';
+			print $formother->selectColor((empty($obj->{$value}) ? '' : $obj->{$value}), 'color');
 			print '</td>';
 		} else {
 			$fieldValue = isset($obj->{$value}) ? $obj->{$value} : '';

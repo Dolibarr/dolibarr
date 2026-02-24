@@ -139,7 +139,7 @@ foreach ($object->fields as $key => $val) {
 		$arrayfields['s.'.$key] = array(
 			'label' => $val['label'],
 			'checked' => (($visible < 0) ? 0 : 1),
-			'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
+			'enabled' => (abs($visible) != 3 && (bool) dol_eval((string) $val['enabled'], 1)),
 			'position' => $val['position'],
 			'help' => isset($val['help']) ? $val['help'] : ''
 		);
@@ -361,9 +361,13 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account ba ON (ba.rowid = s.fk_accoun
 $sql .= " ".MAIN_DB_PREFIX."user as u";
 $sql .= " WHERE u.rowid = s.fk_user";
 $sql .= " AND s.entity IN (".getEntity('salaries').")";
+if (!$user->hasRight('salaries', 'readchild')) {
+	$sql .= " AND s.fk_user = ".(int) $user->id;
+}
 if (!$user->hasRight('salaries', 'readall')) {
 	$sql .= " AND s.fk_user IN (".$db->sanitize(implode(',', $childids)).")";
 }
+
 //print $sql;
 
 // Search criteria
@@ -837,7 +841,7 @@ while ($i < $imaxinloop) {
 	} else {
 		// Show here line of result
 		$j = 0;
-		print '<tr data-rowid="'.$object->id.'" class="oddeven">';
+		print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select">';
 		// Action column
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td class="nowrap center">';

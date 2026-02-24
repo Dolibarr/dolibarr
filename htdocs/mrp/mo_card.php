@@ -31,6 +31,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 require_once DOL_DOCUMENT_ROOT.'/mrp/lib/mrp_mo.lib.php';
@@ -60,7 +61,7 @@ $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'mocard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
@@ -139,7 +140,7 @@ if (empty($reshook)) {
 
 	$backurlforlist = dol_buildpath('/mrp/mo_list.php', 1);
 
-	$object->oldQty = $object->qty;
+	$object->oldQty = (float) $object->qty;
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
@@ -204,6 +205,11 @@ if (empty($reshook)) {
 			exit;
 		} else {
 			$action = '';
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	} elseif ($action == 'settags' && isModEnabled('category') && $permissiontoadd) {
+		$result = $object->setCategories(GETPOST('categories', 'array'));
+		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
@@ -354,7 +360,7 @@ if ($action == 'create') {
 
 	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("Mo")), '', 'mrp');
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	if ($backtopage) {
@@ -373,6 +379,13 @@ if ($action == 'create') {
 
 	// Other attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
+
+	if (isModEnabled('category')) {
+		// Categories
+		print '<tr><td>'.$langs->trans("Categories").'</td><td>';
+		print $form->selectCategories(Categorie::TYPE_MO, 'categories', $object);
+		print '</td></tr>';
+	}
 
 	print '</table>'."\n";
 
@@ -476,7 +489,7 @@ if ($action == 'create') {
 if (($id || $ref) && $action == 'edit') {
 	print load_fiche_titre($langs->trans("ManufacturingOrder"), '', 'mrp');
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
@@ -498,6 +511,13 @@ if (($id || $ref) && $action == 'edit') {
 
 	// Other attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
+
+	if (isModEnabled('category')) {
+		// Categories
+		print '<tr><td>'.$langs->trans("Categories").'</td><td>';
+		print $form->selectCategories(Categorie::TYPE_MO, 'categories', $object);
+		print '</td></tr>';
+	}
 
 	print '</table>';
 
@@ -598,7 +618,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				'value' => 0
 			),
 		);
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('CancelMo'), $langs->trans('ConfirmCancelMo'), 'confirm_cancel', $formquestion, 0, 1);
+		$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('CancelMo'), $langs->trans('ConfirmCancelMo'), 'confirm_cancel', $formquestion, 0, 1);
 	}
 
 	// Clone confirmation
@@ -646,7 +666,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if ($permissiontoadd) {
 			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+				$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
 			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
@@ -685,6 +705,33 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	unset($object->fields['fk_project']);
 	unset($object->fields['fk_soc']);
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
+
+	// Tags-Categories
+	if (isModEnabled('category')) {
+		print '<tr><td>';
+		print '<table class="nobordernopadding centpercent"><tr><td>';
+		print $langs->trans("Categories");
+		print '<td><td class="right">';
+		if ($permissiontoadd) {
+			print '<a class="editfielda" href="' . DOL_URL_ROOT . '/mrp/mo_card.php?id=' . $object->id . '&action=edittags&token=' . newToken() . '">' . img_edit() . '</a>';
+		} else {
+			print '&nbsp;';
+		}
+		print '</td></tr></table>';
+		print '</td>';
+		print '<td>';
+		if ($action == 'edittags') {
+			print '<form method="POST" action="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '">';
+			print '<input type="hidden" name="action" value="settags">';
+			print '<input type="hidden" name="token" value="' . newToken() . '">';
+			print $form->selectCategories(Categorie::TYPE_MO, 'categories', $object);
+			print '<input type="submit" class="button valignmiddle smallpaddingimp" value="' . $langs->trans("Modify") . '">';
+			print '</form>';
+		} else {
+			print $form->showCategories($object->id, Categorie::TYPE_MO, 1);
+		}
+		print "</td></tr>";
+	}
 
 	// Other attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';

@@ -25,35 +25,56 @@ require_once __DIR__ . '/../class/controller.class.php';
 abstract class AbstractDocumentController extends Controller
 {
 	/**
-	 * Renders an HTML table for a given list of files.
+	 * Renders an HTML file browser table for a given list of files and directories.
 	 *
 	 * @param   string                               $title              The main H2 title for the page.
-	 * @param   array<int, array<string, mixed>>     $fileList           The list of files from dol_dir_list().
-	 * @param   string                               $noFileMessage      The message to display if the file list is empty.
-	 * @param   callable                             $linkBuilder        A function that takes a file array and returns its download URL.
+	 * @param   array<int, array<string, mixed>>     $itemList           The list of items from dol_dir_list('all').
+	 * @param   string                               $emptyMessage       The message to display if the list is empty.
+	 * @param   array<string, callable>              $linkBuilder        An array of functions to build URLs ('dir' and 'file').
 	 * @return  void
 	 */
-	protected function displayDocumentTable($title, $fileList, $noFileMessage, callable $linkBuilder)
+	protected function displayDocumentTable($title, $itemList, $emptyMessage, array $linkBuilder)
 	{
 		global $langs;
 
 		echo '<h2>' . htmlspecialchars($title) . '</h2>';
 
-		if (is_array($fileList) && count($fileList) > 0) {
-			echo '<table class="table" width="100%">';
+		if (is_array($itemList) && count($itemList) > 0) {
+			// 1. Separate folders and files
+			$directories = array();
+			$files = array();
+			foreach ($itemList as $item) {
+				if ($item['type'] === 'dir') {
+					$directories[] = $item;
+				} else {
+					$files[] = $item;
+				}
+			}
+
+			// 2. Display the table
+			echo '<table class="table table-hover" width="100%">';
 			echo '<thead><tr>';
-			echo '<th>' . $langs->trans('File') . '</th>';
+			echo '<th>' . $langs->trans('Name') . '</th>';
 			echo '<th style="text-align: right; white-space: nowrap;">' . $langs->trans('Size') . '</th>';
 			echo '<th style="text-align: right; white-space: nowrap;">' . $langs->trans('DateM') . '</th>';
 			echo '</tr></thead>';
 			echo '<tbody>';
 
-			foreach ($fileList as $file) {
-				// The magic happens here: we call the provided function to build the specific URL
-				$downloadLink = $linkBuilder($file);
-
+			// 3. Display all folders first
+			foreach ($directories as $dir) {
 				echo '<tr>';
-				echo '<td><a href="' . $downloadLink . '" target="_blank">' . htmlspecialchars($file['name']) . '</a></td>';
+				// The link for a directory is for navigation
+				echo '<td><a href="' . $linkBuilder['dir']($dir) . '">📁&nbsp;' . htmlspecialchars($dir['name']) . '</a></td>';
+				echo '<td style="text-align: right;">--</td>'; // No size for a directory
+				echo '<td style="text-align: right;">' . dol_print_date($dir['date'], 'dayhour') . '</td>';
+				echo '</tr>';
+			}
+
+			// 4. Then, display all files
+			foreach ($files as $file) {
+				echo '<tr>';
+				// The link for a file is for download
+				echo '<td><a href="' . $linkBuilder['file']($file) . '" target="_blank">📄&nbsp;' . htmlspecialchars($file['name']) . '</a></td>';
 				echo '<td style="text-align: right;">' . dol_print_size($file['size']) . '</td>';
 				echo '<td style="text-align: right;">' . dol_print_date($file['date'], 'dayhour') . '</td>';
 				echo '</tr>';
@@ -61,7 +82,7 @@ abstract class AbstractDocumentController extends Controller
 
 			echo '</tbody></table>';
 		} else {
-			echo '<p>' . htmlspecialchars($noFileMessage) . '</p>';
+			echo '<p>' . htmlspecialchars($emptyMessage) . '</p>';
 		}
 
 		echo '<br>';

@@ -31,7 +31,7 @@
  */
 function calendarPrepareHead($object)
 {
-	global $db, $langs, $conf;
+	global $langs, $conf;
 
 	$langs->load("agenda");
 
@@ -43,12 +43,12 @@ function calendarPrepareHead($object)
 	$head[$h][2] = 'card';
 	$h++;
 
-	if ($object->status == Calendar::STATUS_VALIDATED) {
+	//if ($object->status == Calendar::STATUS_VALIDATED) {
 		$head[$h][0] = DOL_URL_ROOT . '/bookcal/booking_list.php?id=' . $object->id;
 		$head[$h][1] = $langs->trans("Bookings");
 		$head[$h][2] = 'booking';
 		$h++;
-	}
+	//}
 
 	// $head[$h][0] = DOL_URL_ROOT . '/bookcal/calendar_contact.php?id=' . $object->id;
 	// $head[$h][1] = $langs->trans("Contacts");

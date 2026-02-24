@@ -54,6 +54,11 @@ class pdf_standard_actions
 	public $errors;
 
 	/**
+	 * @var string[] array of warnings messages
+	 */
+	public $warnings;
+
+	/**
 	 * @var string description
 	 */
 	public $description;
@@ -193,7 +198,7 @@ class pdf_standard_actions
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products"));
 
 		$dir = $conf->agenda->dir_temp."/";
-		$file = $dir."actions-".sprintf("%02d", $this->month)."-".sprintf("%04d", $this->year).".pdf";
+		$file = $dir."actions-".sprintf("%04d", $this->year)."-".sprintf("%02d", $this->month).".pdf";
 
 		if (!file_exists($dir)) {
 			if (dol_mkdir($dir) < 0) {
@@ -260,6 +265,7 @@ class pdf_standard_actions
 			$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 			global $action;
 			$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+			$this->warnings = $hookmanager->warnings;
 			if ($reshook < 0) {
 				$this->error = $hookmanager->error;
 				$this->errors = $hookmanager->errors;

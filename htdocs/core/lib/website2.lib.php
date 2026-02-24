@@ -144,7 +144,7 @@ function dolSavePageAlias($filealias, $object, $objectpage)
  */
 function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, $backupold = 0)
 {
-	global $db;
+	global $conf, $db;
 
 	// Now create the .tpl file (duplicate code with actions updatesource or updatecontent but we need this to save new header)
 	dol_syslog("dolSavePageContent We regenerate the tpl page filetpl=".$filetpl);
@@ -213,7 +213,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 		$tplcontent .= '<title>'.dol_string_nohtmltag($objectpage->title, 1, 'UTF-8').'</title>'."\n";
 		$tplcontent .= '<meta charset="utf-8">'."\n";
 		$tplcontent .= '<meta http-equiv="content-type" content="text/html; charset=utf-8" />'."\n";
-		$tplcontent .= '<meta name="robots" content="index, follow" />'."\n";
+		$tplcontent .= '<meta name="robots" content="'.($objectpage->index ? 'index' : 'noindex').', '.($objectpage->follow ? 'follow' : 'nofollow').'" />'."\n";
 		$tplcontent .= '<meta name="viewport" content="width=device-width, initial-scale=1.0">'."\n";
 		$tplcontent .= '<meta name="keywords" content="'.dol_string_nohtmltag($objectpage->keywords, 1, 'UTF-8').'" />'."\n";
 		$tplcontent .= '<meta name="title" content="'.dol_string_nohtmltag($objectpage->title, 1, 'UTF-8').'" />'."\n";
@@ -221,8 +221,10 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 		$tplcontent .= '<meta name="generator" content="'.DOL_APPLICATION_TITLE.' '.DOL_VERSION.' (https://www.dolibarr.org)" />'."\n";
 		$tplcontent .= '<meta name="dolibarr:pageid" content="'.((int) $objectpage->id).'" />'."\n";
 
-		// Add favicon
-		if (in_array($objectpage->type_container, array('page', 'blogpost'))) {
+		// Add favicon if not already done in htmlheader
+		$htmldeaderindestdir = dol_sanitizePathName($conf->website->dir_temp.'/'.$object->ref.'/containers/htmlheader.html');
+		$htmlheader = file_get_contents($htmldeaderindestdir);
+		if (in_array($objectpage->type_container, array('page', 'blogpost')) && !preg_match('/'.preg_quote('rel="icon"', '/').'/', $htmlheader)) {
 			$tplcontent .= '<link rel="icon" type="image/png" href="/favicon.png" />'."\n";
 		}
 
@@ -350,7 +352,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 
 		$tplcontent .= $objectpage->content."\n";
 
-		// Add logic to handle view and actions for managing parameters in the config page
+		// Add logic to handle view and actions for managing parameters in the special config page
 		if ($objectpage->type_container == 'setup') {
 			$content = '<div id="websitetemplateconfigpage">'."\n";
 			$content .= '<?php'."\n";
@@ -956,6 +958,11 @@ function checkPHPCode(&$phpfullcodestringold, &$phpfullcodestring)
 
 	// First check permission
 	if ($phpfullcodestringold != $phpfullcodestring) {
+		global $dolibarr_website_allow_custom_php;
+		if (empty($dolibarr_website_allow_custom_php)) {
+			$error++;
+			setEventMessages($langs->trans("NotAllowedToAddDynamicContentDisabledGlobaly", 'dolibarr_website_allow_custom_php'), null, 'errors');
+		}
 		if (!$error && !$user->hasRight('website', 'writephp')) {
 			$error++;
 			setEventMessages($langs->trans("NotAllowedToAddDynamicContent"), null, 'errors');
@@ -989,9 +996,14 @@ function checkPHPCode(&$phpfullcodestringold, &$phpfullcodestring)
 			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("eval", "create_function", "assert", "mb_ereg_replace")); // function with eval capabilities
 		}
 		if (!getDolGlobalString('WEBSITE_PHP_ALLOW_WRITE')) {    // If option is not on, we disallow functions to write files
-			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_compress_dir", "dol_decode", "dol_delete_file", "dol_delete_dir", "dol_delete_dir_recursive", "dol_copy", "archiveOrBackupFile")); // more dolibarr functions
-			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("fopen", "file_put_contents", "fputs", "fputscsv", "fwrite", "fpassthru", "mkdir", "rmdir", "symlink", "touch", "unlink", "umask"));
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_compress_dir", "dol_delete_file", "dol_delete_dir", "dol_delete_dir_recursive", "dol_copy", "archiveOrBackupFile")); // more dolibarr functions
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("fopen", "file_put_contents", "flock", "fputs", "fputscsv", "fwrite", "fpassthru", "mkdir", "rmdir", "symlink", "touch", "unlink", "umask"));
 		}
+		if (getDolGlobalString('WEBSITE_PHP_DISALLOW_READ')) {    // If option is not on, we disallow functions to read files
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_decode")); // more dolibarr functions
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("file", "fopen", "file_get_contents", "fgets", "fgetscsv", "fgetss", "fread"));
+		}
+
 		//$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("require", "include"));
 
 		$forbiddenphpmethods = array('invoke', 'invokeArgs');	// Method of ReflectionFunction to execute a function

@@ -33,14 +33,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -48,6 +40,13 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 $MAXAGENDA = getDolGlobalString('AGENDA_EXT_NB', 5);
 $DELAYFORCACHE = 300;	// 300 seconds
@@ -62,10 +61,10 @@ if (empty($mode) && preg_match('/show_/', $action)) {
 $disabledefaultvalues = GETPOSTINT('disabledefaultvalues');
 
 $check_holiday = GETPOSTINT('check_holiday');
+$check_birthday = !empty($conf->use_javascript_ajax) ? GETPOSTINT("check_birthday") : 1;
 $filter = GETPOST("search_filter", 'alpha', 3) ? GETPOST("search_filter", 'alpha', 3) : GETPOST("filter", 'alpha', 3);
 $filtert = GETPOST("search_filtert", "intcomma", 3) ? GETPOST("search_filtert", "intcomma", 3) : GETPOST("filtert", "intcomma", 3);
 $usergroup = GETPOST("search_usergroup", "intcomma", 3) ? GETPOST("search_usergroup", "intcomma", 3) : GETPOST("usergroup", "intcomma", 3);
-$showbirthday = empty($conf->use_javascript_ajax) ? GETPOSTINT("showbirthday") : 1;
 $search_categ_cus = GETPOST("search_categ_cus", 'intcomma', 3) ? GETPOST("search_categ_cus", 'intcomma', 3) : 0;
 
 // If no choice done on calendar owner (like on left menu link "Agenda"), we filter on current user by default.
@@ -184,6 +183,8 @@ if ($user->socid && $socid) {
 	$result = restrictedArea($user, 'societe', $socid);
 }
 
+require_once DOL_DOCUMENT_ROOT.'/core/redirect_if_setup_not_complete.inc.php';
+
 
 /*
  * Actions
@@ -237,7 +238,7 @@ $parameters = array(
 	'maxprint' => $maxprint,
 	'filter' => $filter,
 	'filtert' => $filtert,
-	'showbirthday' => $showbirthday,
+	'showbirthday' => $check_birthday,
 	'canedit' => $canedit,
 	'optioncss' => $optioncss,
 	'actioncode' => $actioncode,
@@ -349,7 +350,7 @@ if (empty($mode) || $mode == 'show_month') {
 	$max_day_in_month = (int) date("t", dol_mktime(12, 0, 0, $month, 1, $year, 'gmt')); // Nb of days in next month
 	// tmpday is a negative or null cursor to know how many days before the 1st to show on month view (if tmpday=0, 1st is monday)
 	$tmpday = - (int) date("w", dol_mktime(12, 0, 0, $month, 1, $year, 'gmt')) + 2; // date('w') is 0 for sunday
-	$tmpday += ((isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1) - 1);
+	$tmpday += (getDolGlobalInt('MAIN_START_WEEK', 1) - 1);
 	if ($tmpday >= 1) {
 		$tmpday -= 7; // If tmpday is 0 we start with sunday, if -6, we start with monday of previous week.
 	}
@@ -440,8 +441,11 @@ if ($usergroup > 0) {
 if ($socid > 0) {
 	$param .= "&search_socid=".urlencode((string) ($socid));
 }
-if ($showbirthday) {
-	$param .= "&search_showbirthday=1";
+if ($check_birthday) {
+	$param .= "&check_birthday=1";
+}
+if ($check_holiday) {
+	$param .= "&check_holiday=1";
 }
 if ($pid) {
 	$param .= "&search_projectid=".urlencode((string) ($pid));
@@ -654,7 +658,7 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 	// Holiday calendar
 	if ($user->hasRight("holiday", "read")) {
 		$s .= '
-            <div class="nowrap inline-block minheight30"><input type="checkbox" id="check_holiday" name="check_holiday" value="1" class="check_holiday"' . ($check_holiday
+            <div class="nowrap inline-block minheight30"><input type="checkbox" id="check_holiday" name="check_holiday" value="1" class="marginleftonly check_holiday"' . ($check_holiday
 					? ' checked' : '') . '>
                 <label for="check_holiday" class="labelcalendar">
                     <span class="check_holiday_text">' . $langs->trans("Holidays") . '</span>
@@ -693,12 +697,12 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 
 			$tooltip = $langs->trans("Cache").' '.round($DELAYFORCACHE / 60).'mn';
 
-			$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_ext'.$htmlname.'" name="check_ext'.$htmlname.'" value="1" '.$default.'><label for="check_ext'.$htmlname.'" title="'.dol_escape_htmltag($tooltip).'" class="labelcalendar">'.dol_escape_htmltag($val['name']).'</label> &nbsp; </div>';
+			$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_ext'.$htmlname.'" class="marginleftonly check_ext_'.$htmlname.'" name="check_ext'.$htmlname.'" value="1" '.$default.'><label for="check_ext'.$htmlname.'" title="'.dol_escape_htmltag($tooltip).'" class="labelcalendar">'.dol_escape_htmltag($val['name']).'</label> &nbsp; </div>';
 		}
 	}
 
 	// Birthdays
-	$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_birthday" name="check_birthday" class="check_birthday"><label for="check_birthday" class="labelcalendar"> <span class="check_birthday_text">'.$langs->trans("AgendaShowBirthdayEvents").'</span></label> &nbsp; </div>';
+	$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_birthday" name="check_birthday" class="marginleftonly check_birthday" value="1" '. (GETPOSTINT('check_birthday') ? ' checked' : '') .'><label for="check_birthday" class="labelcalendar"> <span class="check_birthday_text">'.$langs->trans("AgendaShowBirthdayEvents").'</span></label> &nbsp; </div>';
 
 	// Bookcal Calendar
 	if (isModEnabled("bookcal")) {
@@ -706,7 +710,7 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 			foreach ($bookcalcalendars["calendars"] as $key => $value) {
 				$label = $value['label'];
 				$s .= '<div class="nowrap inline-block minheight30">';
-				$s .= '<input '.(GETPOST('check_bookcal_calendar_'.$value['id']) ? "checked" : "").' type="checkbox" id="check_bookcal_calendar_'.$value['id'].'" name="check_bookcal_calendar_'.$value['id'].'" class="check_bookcal_calendar_'.$value['id'].'">';
+				$s .= '<input '.(GETPOST('check_bookcal_calendar_'.$value['id']) ? "checked" : "").' type="checkbox" id="check_bookcal_calendar_'.$value['id'].'" name="check_bookcal_calendar_'.$value['id'].'" class="marginleftonly check_bookcal_calendar_'.$value['id'].'">';
 				$s .= '<label for="check_bookcal_calendar_'.$value['id'].'" class="labelcalendar">';
 				$s .= '<span class="check_bookcal_calendar_'.$value['id'].'_text">'.$langs->trans("AgendaShowBookcalCalendar", $label).'</span>';
 				$s .= '</label> &nbsp; </div>';
@@ -726,13 +730,13 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 	$s .= "\n".'<!-- End div to calendars selectors -->'."\n";
 } else { // If javascript off
 	$newparam = $param; // newparam is for birthday links
-	$newparam = preg_replace('/showbirthday=[0-1]/i', 'showbirthday='.(empty($showbirthday) ? 1 : 0), $newparam);
-	if (!preg_match('/showbirthday=/i', $newparam)) {
-		$newparam .= '&showbirthday=1';
+	$newparam = preg_replace('/check_birthday=[0-1]/i', 'check_birthday='.(empty($check_birthday) ? 1 : 0), $newparam);
+	if (!preg_match('/check_birthday=/i', $newparam)) {
+		$newparam .= '&check_birthday=1';
 	}
 	$s = '<a href="'.$_SERVER['PHP_SELF'].'?'.dol_escape_htmltag($newparam);
 	$s .= '">';
-	if (empty($showbirthday)) {
+	if (empty($check_birthday)) {
 		$s .= $langs->trans("AgendaShowBirthdayEvents");
 	} else {
 		$s .= $langs->trans("AgendaHideBirthdayEvents");
@@ -1075,7 +1079,7 @@ if ($resql) {
 
 // BIRTHDATES CALENDAR
 // Complete $eventarray with birthdates
-if ($showbirthday) {
+if ($check_birthday) {
 	// Add events in array
 	$sql = 'SELECT sp.rowid, sp.lastname, sp.firstname, sp.birthday';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'socpeople as sp';
@@ -1608,7 +1612,7 @@ if (is_readable($color_file)) {
 
 $massactionbutton = '';
 
-print_barre_liste($langs->trans("Agenda"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, -1, 'object_action', 0, $nav.'<span class="marginleftonly"></span>'.$newcardbutton, '', $limit, 1, 0, 1, $viewmode);
+print_barre_liste($langs->trans("Agenda"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, -1, -1, 'object_action', 0, $nav.'<span class="marginleftonly"></span>'.$newcardbutton, '', $limit, 1, 0, 1, $viewmode);
 
 if ($nbevents > $MAXONSAMEPAGE) {
 	print info_admin('Number of results has been truncated to '.$MAXONSAMEPAGE, 0, 0, 'warning').'<br>';
@@ -1620,29 +1624,29 @@ print $s;
 
 if (empty($mode) || $mode == 'show_month') {      // View by month
 	$newparam = $param; // newparam is for birthday links
-	$newparam = preg_replace('/showbirthday=/i', 'showbirthday_=', $newparam); // To avoid replacement when replace day= is done
+	$newparam = preg_replace('/check_birthday=/i', 'check_birthday_=', $newparam); // To avoid replacement when replace day= is done
 	$newparam = preg_replace('/mode=show_month&?/i', '', $newparam);
 	$newparam = preg_replace('/mode=show_week&?/i', '', $newparam);
 	$newparam = preg_replace('/day=[0-9]+&?/i', '', $newparam);
 	$newparam = preg_replace('/month=[0-9]+&?/i', '', $newparam);
 	$newparam = preg_replace('/year=[0-9]+&?/i', '', $newparam);
 	$newparam = preg_replace('/viewcal=[0-9]+&?/i', '', $newparam);
-	$newparam = preg_replace('/showbirthday_=/i', 'showbirthday=', $newparam); // Restore correct parameter
+	$newparam = preg_replace('/check_birthday_=/i', 'check_birthday=', $newparam); // Restore correct parameter
 	$newparam .= '&viewcal=1';
 
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
-	print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid, $search_categ_cus);
+	print_actions_filter($form, $canedit, $status, $year, $month, $day, $check_birthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid, $search_categ_cus);
 	print '</div>';
 
 	print '<div class="div-table-responsive-no-min sectioncalendarbymonth maxscreenheightless300">';
 	print '<table class="centpercent noborder nocellnopadd cal_pannel cal_month listwithfilterbefore">';
-	print ' <tr class="liste_titre">';
+	print ' <tr class="liste_titre sticky">';
 	// Column title of weeks numbers
 	echo '  <td class="center">#</td>';
 	$i = 0;
 	while ($i < 7) {
 		print '  <td class="center bold uppercase tdfordaytitle'.($i == 0 ? ' borderleft' : '').'">';
-		$numdayinweek = (($i + (isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1)) % 7);
+		$numdayinweek = (($i + (getDolGlobalInt('MAIN_START_WEEK', 1))) % 7);
 		if (!empty($conf->dol_optimize_smallscreen)) {
 			$labelshort = array(0 => 'SundayMin', 1 => 'MondayMin', 2 => 'TuesdayMin', 3 => 'WednesdayMin', 4 => 'ThursdayMin', 5 => 'FridayMin', 6 => 'SaturdayMin');
 			print $langs->trans($labelshort[$numdayinweek]);
@@ -1731,18 +1735,18 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 } elseif ($mode == 'show_week') {
 	// View by week
 	$newparam = $param; // newparam is for birthday links
-	$newparam = preg_replace('/showbirthday=/i', 'showbirthday_=', $newparam); // To avoid replacement when replace day= is done
+	$newparam = preg_replace('/check_birthday=/i', 'check_birthday_=', $newparam); // To avoid replacement when replace day= is done
 	$newparam = preg_replace('/mode=show_month&?/i', '', $newparam);
 	$newparam = preg_replace('/mode=show_week&?/i', '', $newparam);
 	$newparam = preg_replace('/day=[0-9]+&?/i', '', $newparam);
 	$newparam = preg_replace('/month=[0-9]+&?/i', '', $newparam);
 	$newparam = preg_replace('/year=[0-9]+&?/i', '', $newparam);
 	$newparam = preg_replace('/viewweek=[0-9]+&?/i', '', $newparam);
-	$newparam = preg_replace('/showbirthday_=/i', 'showbirthday=', $newparam); // Restore correct parameter
+	$newparam = preg_replace('/check_birthday_=/i', 'check_birthday=', $newparam); // Restore correct parameter
 	$newparam .= '&viewweek=1';
 
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
-	print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
+	print_actions_filter($form, $canedit, $status, $year, $month, $day, $check_birthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
 	print '</div>';
 
 	print '<div class="div-table-responsive-no-min sectioncalendarbyweek maxscreenheightless300">';
@@ -1750,12 +1754,12 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	print ' <tr class="liste_titre">';
 	$i = 0;
 	while ($i < 7) {
-		echo '  <td class="center bold uppercase tdfordaytitle">'.$langs->trans("Day".(($i + (isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1)) % 7))."</td>\n";
+		echo '  <td class="center bold uppercase tdfordaytitle">'.$langs->trans("Day".(($i + (getDolGlobalInt('MAIN_START_WEEK', 1))) % 7))."</td>\n";
 		$i++;
 	}
 	echo " </tr>\n";
 
-	echo " <tr>\n";
+	echo ' <tr class="trcalweek">'."\n";
 
 	for ($iter_day = 0; $iter_day < 7; $iter_day++) {
 		// Show days of the current week
@@ -1810,7 +1814,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	$arraytimestamp = dol_getdate($timestamp);
 
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
-	print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
+	print_actions_filter($form, $canedit, $status, $year, $month, $day, $check_birthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
 	print '</div>';
 
 	print '<div class="div-table-responsive-no-min sectioncalendarbyday maxscreenheightless300">';
@@ -1829,7 +1833,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	 echo " </div>\n";
 	 */
 
-	print '<tr><td>';
+	print '<tr class="trcalday"><td class="tdtop">';
 
 	/* WIP View per hour */
 	$useviewhour = 0;
@@ -1937,8 +1941,8 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 	}
 
 	$dateint = sprintf("%04d", $year).sprintf("%02d", $month).sprintf("%02d", $day);
-
-	//print 'show_day_events day='.$day.' month='.$month.' year='.$year.' dateint='.$dateint;
+	$datenowint = dol_print_date(dol_now(), "%Y%m%d");
+	//print 'show_day_events day='.$day.' month='.$month.' year='.$year.' dateint='.$dateint.' datenowint='.$datenowint;
 
 	print "\n";
 
@@ -1947,7 +1951,10 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 	$urltocreate = '';
 	if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
 		$newparam .= '&month='.str_pad((string) $month, 2, "0", STR_PAD_LEFT).'&year='.$year;
-		$hourminsec = '100000';
+		$hourminsec = getDolGlobalString('AGENDA_DEFAULT_BEGIN_TIME');
+		if (empty($hourminsec) || !preg_match('/^[0-9]{6}$/', $hourminsec)) {
+			$hourminsec = '100000';
+		}
 		$urltocreate = DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.sprintf("%04d%02d%02d", $year, $month, $day).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam ? '?'.$newparam : ''));
 	}
 
@@ -1957,11 +1964,13 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 	if ($nonew <= 0) {
 		print '<div class="tagtr cursorpointer" onclick="window.location=\''.$urltocreate.'\';"><div class="nowrap tagtd"><div class="left inline-block">';
 		print '<a class="dayevent-aday" style="color: #666" href="'.$urltoshow.'">';
+		print ($datenowint == $dateint ? '<span class="badgeneutral">' : '');
 		if ($showinfo) {
 			print dol_print_date($curtime, 'daytextshort');
 		} else {
 			print dol_print_date($curtime, '%d');
 		}
+		print ($datenowint == $dateint ? '</span>' : '');
 		print '</a>';
 		print '</div><div class="nowrap floatright inline-block marginrightonly">';
 		if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {

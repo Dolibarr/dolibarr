@@ -44,6 +44,12 @@ class modCaptchaStandard extends ModeleCaptcha
 	public $picto = 'fa-shield-alt';
 
 	/**
+	 * @var	int
+	 */
+	public $position = 10;
+
+
+	/**
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db			Database handler
@@ -82,6 +88,7 @@ class modCaptchaStandard extends ModeleCaptcha
 		global $db, $conf, $langs, $user;
 
 		$generator = new modGeneratePassStandard($db, $conf, $langs, $user);
+		$generator->length = '5';
 		$example = $generator->getExample();
 
 		if (function_exists("imagecreate") && function_exists("imagepng")) {
@@ -89,7 +96,7 @@ class modCaptchaStandard extends ModeleCaptcha
 			if (!$img) {
 				return "Problem with GD creation";
 			}
-			//$background_color = imagecolorallocate($img, 250, 250, 250);
+			$background_color = imagecolorallocate($img, 250, 250, 250); // do not comment this line
 			$ecriture_color = imagecolorallocate($img, 0, 0, 0);
 			imagestring($img, 4, 15, 8, $example, $ecriture_color);
 
@@ -115,6 +122,8 @@ class modCaptchaStandard extends ModeleCaptcha
 	public function getCaptchaCodeForForm($php_self = '')
 	{
 		global $langs;
+
+		$idofbutton ="actionlogin";
 
 		// Output the image by calling /core/antispamimage.php
 		// This antispamimage also record the value of code into $_SESSION['dol_antispam_value'] so we will be able to validate by calling
@@ -147,8 +156,12 @@ class modCaptchaStandard extends ModeleCaptcha
 
 			// Submit the form if found
 			if (form) {
-				console.log("we set actionlogin to value \"disabled\"");
-				document.getElementById("actionlogin").value = "disabled";
+				console.log(\'we set '.dol_escape_js($idofbutton).' to value "disabled" if found\');		/* TODO Why this ? #actionlogn seems to not exists */
+				elementid = document.getElementById(\''.dol_escape_js($idofbutton).'\');
+				console.log(elementid);
+				if (elementid) {
+					elementid.value = "disabled";
+				}
 
 				form.submit();
 			}

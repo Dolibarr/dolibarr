@@ -20,7 +20,7 @@
  * Copyright (C) 2022       Sylvain Legrand         <contact@infras.fr>
  * Copyright (C) 2023      	Gauthier VERDOL       	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		Nick Fragoulis
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -80,7 +80,7 @@ class FactureLigne extends CommonInvoiceLine
 	public $fk_parent_line;
 
 	/**
-	 * @var string Description ligne
+	 * @var string Description of the invoice line
 	 */
 	public $desc;
 	/**
@@ -169,11 +169,6 @@ class FactureLigne extends CommonInvoiceLine
 	 * @var int<0,1>
 	 */
 	public $skip_update_total; // Skip update price total for special lines
-
-	/**
-	 * @var float 		Situation advance percentage (default 100 for standard invoices)
-	 */
-	public $situation_percent;
 
 	/**
 	 * @var int 		Previous situation line id reference
@@ -368,7 +363,7 @@ class FactureLigne extends CommonInvoiceLine
 						if (empty($conf->disable_compute)) {
 							global $objectoffield;
 							$objectoffield = $this;
-							$this->array_options['options_' . $key] = dol_eval($extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '2');
+							$this->array_options['options_' . $key] = dol_eval((string) $extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '2');
 						}
 					}
 				}
@@ -954,7 +949,7 @@ class FactureLigne extends CommonInvoiceLine
 				$invoicecache[$invoiceid] = new Facture($this->db);
 				$invoicecache[$invoiceid]->fetch($invoiceid);
 			}
-			if ($invoicecache[$invoiceid]->type != Facture::TYPE_SITUATION) {
+			if (empty($invoicecache[$invoiceid]->situation_cycle_ref)) {
 				return 0;
 			}
 
@@ -976,7 +971,7 @@ class FactureLigne extends CommonInvoiceLine
 					$sql .= ' JOIN '.MAIN_DB_PREFIX.'facture f ON (f.rowid = fd.fk_facture) ';
 					$sql .= " WHERE fd.fk_prev_id = ".((int) $this->fk_prev_id);
 					$sql .= " AND f.situation_cycle_ref = ".((int) $invoicecache[$invoiceid]->situation_cycle_ref); // Prevent cycle outed
-					$sql .= " AND f.type = ".Facture::TYPE_CREDIT_NOTE;
+					$sql .= " AND f.type = ".((int) Facture::TYPE_CREDIT_NOTE);
 
 					$res = $this->db->query($sql);
 					if ($res) {
@@ -1021,7 +1016,7 @@ class FactureLigne extends CommonInvoiceLine
 				$invoicecache[$invoiceid] = new Facture($this->db);
 				$invoicecache[$invoiceid]->fetch($invoiceid);
 			}
-			if ($invoicecache[$invoiceid]->type != Facture::TYPE_SITUATION) {
+			if (!$invoicecache[$invoiceid]->isSituationInvoice()) {
 				return 0;
 			}
 
@@ -1057,7 +1052,7 @@ class FactureLigne extends CommonInvoiceLine
 					// Si fk_prev_id, on continue
 					if ($obj->fk_prev_id) {
 						$lastprevid = $obj->fk_prev_id;
-					} else { // Sinon on stoppe la boucle
+					} else { // else we stop the loop
 						$all_found = true;
 					}
 				} else {
@@ -1069,5 +1064,39 @@ class FactureLigne extends CommonInvoiceLine
 			}
 			return $cumulated_percent;
 		}
+	}
+
+	/**
+	 * Determines if we are using situation invoices.
+	 * If so, determines if we are using the new mode (2) or legacy mode (1).
+	 *
+	 * Legacy mode means invoice line fields store the state of the cycle at the current
+	 * situation (a cumulative value) rather than the delta between the previous situation
+	 * and the current one. In that case, we need a ratio to convert those values.
+	 *
+	 * New mode = the values on the line already represent the delta between the previous
+	 * state and the current state, so we don't need a conversion (we return 1).
+	 *
+	 * @return float
+	 */
+	public function getSituationRatio()
+	{
+		if (getDolGlobalInt('INVOICE_USE_SITUATION') === 1) {
+			// in legacy mode, the situation invoice line stores the (cumulative) state of the
+			// cycle at the current situation. To get the delta, we need to subtract the
+			// state at the previous situation (if applicable).
+			$prevProgress = $this->get_prev_progress($this->fk_facture);
+
+			if ($this->situation_percent == 0) {
+				// should not happen
+				return 0;
+			}
+
+			return ($this->situation_percent - $prevProgress) / $this->situation_percent;
+		}
+		// new mode (INVOICE_USE_SITUATION == 2):
+		// no ratio needed (data stored on line is already a delta)
+		// or not a situation invoice: no ratio needed either
+		return 1;
 	}
 }

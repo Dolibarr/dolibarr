@@ -3,7 +3,7 @@
  * Copyright (C) 2011-2012	Juanjo Menent	<jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry	<florian.henry@open-concept.pro>
  * Copyright (C) 2017       Ferran Marcet   <fmarcet@2byte.es>
- * Copyright (C) 2024       Frédéric France <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France <frederic.france@free.fr>
  * Copyright (C) 2025		MDW				<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Charlene Benke	<charlene@patas-monkey.com>
  *
@@ -24,7 +24,7 @@
 /**
  *	\file       htdocs/ticket/note.php
  *	\ingroup    ticket
- *	\brief      Fiche d'information sur une ticket
+ *	\brief      Tab for notes on ticket
  */
 
 // Load Dolibarr environment
@@ -136,7 +136,7 @@ if ($id > 0 || !empty($ref)) {
 			$morehtmlref .= '<br>';
 			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+				$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
 			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {

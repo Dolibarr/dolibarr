@@ -3,6 +3,7 @@
  * Copyright (C) 2019		Cedric Ancelin			<icedo.anc@gmail.com>
  * Copyright (C) 2024		Christian Humpel		<christian.humpel@gmail.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -184,21 +185,25 @@ class Workstations extends DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
+	 * @phpstan-template T
 	 *
 	 * @param   Object	$object		Object to clean
 	 * @return  Object  			Object with cleaned properties
+	 *
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	protected function _cleanObjectDatas($object)
 	{
 		// phpcs:enable
 		$object = parent::_cleanObjectDatas($object);
+		/** @var Workstation $object */
 
 		unset($object->statut);
 
 		unset($object->regeximgext);
 		unset($object->price_by_qty);
 		unset($object->prices_by_qty_id);
-		unset($object->libelle);
 		unset($object->product_id_already_linked);
 		unset($object->reputations);
 		unset($object->db);

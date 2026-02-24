@@ -19,6 +19,8 @@
  * Copyright (C) 2023		William Mead				<william.mead@manchenumerique.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2025		Benjamin Falière			<benjamin@faliere.com>
+ * Copyright (C) 2025		Anthony Berton				<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,6 +45,7 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formpropal.class.php';
@@ -155,10 +158,12 @@ $permissiontoedit = $usercancreate; // Used by the include of actions_lineupdown
 $permissiontoeditextra = $permissiontoadd;
 if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
 	// For action 'update_extras', is there a specific permission set for the attribute to update
-	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+	$permissiontoeditextra = dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
 }
 
 $price_base_type = null;
+$shipping_method_id = null;
+$warehouse_id = -1;
 
 // Security check
 if (!empty($user->socid)) {
@@ -205,6 +210,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT . '/core/actions_dellink.inc.php'; // Must be 'include', not 'include_once'
 
 	include DOL_DOCUMENT_ROOT . '/core/actions_lineupdown.inc.php'; // Must be 'include', not 'include_once'
+
 	// Action clone object
 	if ($action == 'confirm_clone' && $confirm == 'yes' && $usercancreate) {
 		if (!($socid > 0)) {
@@ -475,6 +481,8 @@ if (empty($reshook)) {
 	} elseif ($action == 'set_incoterms' && isModEnabled('incoterm') && $usercancreate) {
 		// Set incoterm
 		$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOST('location_incoterms'));
+	} elseif ($action == 'settags' && isModEnabled('category') && $usercancreate) {		// Set tags
+		$result = $object->setCategories(GETPOST('categories', 'array'));
 	} elseif ($action == 'add' && $usercancreate) {
 		// Create proposal
 		$object->socid = $socid;
@@ -749,6 +757,12 @@ if (empty($reshook)) {
 						if ($result < 0) {
 							$error++;
 							setEventMessages($langs->trans("ErrorFailedToAddUserAsContact"), null, 'errors');
+						}
+					}
+					if (isModEnabled('category')) {
+						$categories = GETPOST('categories', 'array');
+						if (method_exists($object, 'setCategories')) {
+							$object->setCategories($categories);
 						}
 					}
 
@@ -1268,6 +1282,13 @@ if (empty($reshook)) {
 			}
 		}
 
+		$price_to_test_sign = ($price_ht ? $price_ht : $price_ttc);
+
+		if ((empty($idprod) || $idprod < 0) && ($price_to_test_sign < 0) && ($qty < 0)) {
+			$langs->load("errors");
+			setEventMessages($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPriceHT'), $langs->transnoentitiesnoconv('Qty')), null, 'errors');
+			$error++;
+		}
 		if ($prod_entry_mode == 'free' && (empty($idprod) || $idprod < 0) && GETPOST('type') < 0) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 			$error++;
@@ -1275,6 +1296,10 @@ if (empty($reshook)) {
 
 		if ($prod_entry_mode == 'free' && (empty($idprod) || $idprod < 0) && $price_ht === '' && $price_ht_devise === '' && $price_ttc === '' && $price_ttc_devise === '') { 	// Unit price can be 0 but not ''. Also price can be negative for proposal.
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("UnitPriceHT")), null, 'errors');
+			$error++;
+		}
+		if ($qty < 0 && !getDolGlobalString('PROPAL_ENABLE_NEGATIVE_QTY')) {
+			setEventMessages($langs->trans('FieldCannotBeNegative', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 			$error++;
 		}
 		if ($prod_entry_mode == 'free' && (empty($idprod) || $idprod < 0) && empty($line_desc)) {
@@ -1296,8 +1321,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		$propal_qty_requirement = (getDolGlobalString('PROPAL_ENABLE_NEGATIVE_QTY') ? ($qty >= 0 || $qty <= 0) : $qty >= 0);
-		if (!$error && $propal_qty_requirement && (!empty($line_desc) || (!empty($idprod) && $idprod > 0))) {
+		if (!$error && (!empty($line_desc) || (!empty($idprod) && $idprod > 0))) {
 			$pu_ht = 0;
 			$pu_ttc = 0;
 			$pu_ht_devise = 0;
@@ -1615,11 +1639,11 @@ if (empty($reshook)) {
 
 			// Check if we have a foreign currency
 			// If so, we update the pu_equiv as the equivalent price in base currency
-			if ($pu_ht == '' && $pu_ht_devise != '' && $currency_tx != '') {
-				$pu_equivalent = (float) $pu_ht_devise * (float) $currency_tx;
+			if ($pu_ht == '' && $pu_ht_devise != '' && $currency_tx != '' && !empty((float) $currency_tx)) {
+				$pu_equivalent = (float) $pu_ht_devise / (float) $currency_tx;
 			}
-			if ($pu_ttc == '' && $pu_ttc_devise != '' && $currency_tx != '') {
-				$pu_equivalent_ttc = (float) $pu_ttc_devise * (float) $currency_tx;
+			if ($pu_ttc == '' && $pu_ttc_devise != '' && $currency_tx != '' && !empty((float) $currency_tx)) {
+				$pu_equivalent_ttc = (float) $pu_ttc_devise / (float) $currency_tx;
 			}
 
 			// TODO $pu_equivalent or $pu_equivalent_ttc must be calculated from the one not null taking into account all taxes
@@ -1897,11 +1921,11 @@ if (empty($reshook)) {
 
 		// Check if we have a foreign currency
 		// If so, we update the pu_equiv as the equivalent price in base currency
-		if ($pu_ht == '' && $pu_ht_devise != '' && $currency_tx != '') {
-			$pu_equivalent = (float) $pu_ht_devise * (float) $currency_tx;
+		if ($pu_ht == '' && $pu_ht_devise != '' && $currency_tx != '' && !empty((float) $currency_tx)) {
+			$pu_equivalent = (float) $pu_ht_devise / (float) $currency_tx;
 		}
-		if ($pu_ttc == '' && $pu_ttc_devise != '' && $currency_tx != '') {
-			$pu_equivalent_ttc = (float) $pu_ttc_devise * (float) $currency_tx;
+		if ($pu_ttc == '' && $pu_ttc_devise != '' && $currency_tx != '' && !empty((float) $currency_tx)) {
+			$pu_equivalent_ttc = (float) $pu_ttc_devise / (float) $currency_tx;
 		}
 
 		// TODO $pu_equivalent or $pu_equivalent_ttc must be calculated from the one not null taking into account all taxes
@@ -1946,7 +1970,13 @@ if (empty($reshook)) {
 			$res = $product->fetch($productid);
 
 			$type = $product->type;
-			$$price_base_type = $product->price_base_type;
+			$price_base_type = $product->price_base_type;
+
+			// If base type TTc, we change pu value to define the TTC one
+			if ($price_base_type == 'TTC' && !empty($pu_ttc)) {
+				$pu = $pu_ttc;
+			}
+
 			$label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label') : '');
 
 			$price_min = $product->price_min;
@@ -2001,7 +2031,7 @@ if (empty($reshook)) {
 
 			$qty = price2num(GETPOST('qty', 'alpha'), 'MS');
 
-			$result = $object->updateline(GETPOSTINT('lineid'), (float) $pu, (float) $qty, $remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, $description, $price_base_type, $info_bits, $special_code, GETPOSTINT('fk_parent_line'), 0, (int) $fournprice, $buyingprice, $label, $type, $date_start, $date_end, $array_options, GETPOSTINT("units"), (float) $pu_ht_devise);
+			$result = $object->updateline(GETPOSTINT('lineid'), (float) $pu, (float) $qty, (float) $remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, $description, $price_base_type, $info_bits, $special_code, GETPOSTINT('fk_parent_line'), 0, (int) $fournprice, $buyingprice, $label, $type, $date_start, $date_end, $array_options, GETPOSTINT("units"), (float) $pu_ht_devise);
 
 			if ($result >= 0) {
 				$db->commit();
@@ -2067,24 +2097,7 @@ if (empty($reshook)) {
 		$result = $object->set_demand_reason($user, GETPOSTINT('demand_reason_id'));
 	} elseif ($action == 'setconditions' && $usercancreate) {
 		// Terms of payment
-		$sql = "SELECT code ";
-		$sql .= "FROM " . $db->prefix() . "c_payment_term";
-		$sql .= " WHERE rowid = " . ((int) GETPOST('cond_reglement_id', 'int'));
-		$result = $db->query($sql);
-		if ($result) {
-			$obj = $db->fetch_object($result);
-			if ($obj->code == 'DEP30PCTDEL') {
-				$result = $object->setPaymentTerms(GETPOSTINT('cond_reglement_id'), GETPOSTFLOAT('cond_reglement_id_deposit_percent'));
-			} else {
-				$object->deposit_percent = 0;
-				$object->update($user);
-				$result = $object->setPaymentTerms(GETPOSTINT('cond_reglement_id'), $object->deposit_percent);
-			}
-		}
-		//} elseif ($action == 'setremisepercent' && $usercancreate) {
-		//	$result = $object->set_remise_percent($user, price2num(GETPOST('remise_percent'), '', 2));
-		//} elseif ($action == 'setremiseabsolue' && $usercancreate) {
-		//	$result = $object->set_remise_absolue($user, price2num(GETPOST('remise_absolue'), 'MU', 2));
+		$result = $object->setPaymentTerms(GETPOSTINT('cond_reglement_id'), GETPOSTFLOAT('cond_reglement_id_deposit_percent'));
 	} elseif ($action == 'setmode' && $usercancreate) {
 		// Payment choice
 		$result = $object->setPaymentMethods(GETPOSTINT('mode_reglement_id'));
@@ -2197,7 +2210,7 @@ $now = dol_now();
 
 // Add new proposal
 if ($action == 'create') {
-	$currency_code = $conf->currency;
+	$currency_code = getDolCurrency();
 
 	print load_fiche_titre($langs->trans("NewProp"), '', 'propal');
 
@@ -2206,13 +2219,11 @@ if ($action == 'create') {
 		$res = $soc->fetch($socid);
 	}
 
-	$currency_code = $conf->currency;
-
 	$cond_reglement_id = GETPOSTINT('cond_reglement_id');
 	$deposit_percent = GETPOSTFLOAT('cond_reglement_id_deposit_percent');
 	$mode_reglement_id = GETPOSTINT('mode_reglement_id');
 	$fk_account = GETPOSTINT('fk_account');
-	$datepropal = (empty($datepropal) ? (!getDolGlobalString('MAIN_AUTOFILL_DATE_PROPOSAL') ? -1 : '') : $datepropal);
+	$datepropal = (getDolGlobalString('MAIN_DO_NOT_AUTOFILL_DATE_PROPOSAL') ? -1 : '');		// By default '' so we will autofill date. -1 means keep empty.
 
 	// Load objectsrc
 	$objectsrc = null;
@@ -2270,7 +2281,7 @@ if ($action == 'create') {
 
 			$cond_reglement_id = (!empty($objectsrc->cond_reglement_id) ? $objectsrc->cond_reglement_id : (!empty($soc->cond_reglement_id) ? $soc->cond_reglement_id : 0));
 			$mode_reglement_id = (!empty($objectsrc->mode_reglement_id) ? $objectsrc->mode_reglement_id : (!empty($soc->mode_reglement_id) ? $soc->mode_reglement_id : 0));
-			$warehouse_id      = (!empty($objectsrc->warehouse_id) ? $objectsrc->warehouse_id : (!empty($soc->warehouse_id) ? $soc->warehouse_id : 0));
+			$warehouse_id      = (!empty($objectsrc->warehouse_id) ? $objectsrc->warehouse_id : (!empty($soc->warehouse_id) ? $soc->warehouse_id : -1));
 
 			// Replicate extrafields
 			$objectsrc->fetch_optionals();
@@ -2294,7 +2305,7 @@ if ($action == 'create') {
 		$mode_reglement_id  = empty($soc->mode_reglement_id) ? $mode_reglement_id : $soc->mode_reglement_id;
 		$fk_account         = empty($soc->fk_account) ? $fk_account : $soc->fk_account;
 		$shipping_method_id = $soc->shipping_method_id;
-		$warehouse_id       = $soc->fk_warehouse;
+		$warehouse_id       = !empty($soc->fk_warehouse) ? $soc->fk_warehouse : $warehouse_id;
 		$remise_percent     = $soc->remise_percent;
 
 		if (isModEnabled("multicurrency") && !empty($soc->multicurrency_code)) {
@@ -2317,12 +2328,11 @@ if ($action == 'create') {
 			$fk_account = GETPOSTINT('fk_account');
 		}
 	}
-
 	// Warehouse default if null
 	if ($soc->fk_warehouse > 0) {
 		$warehouse_id = $soc->fk_warehouse;
 	}
-	if (isModEnabled('stock') && empty($warehouse_id) && getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_PROPAL')) {
+	if (isModEnabled('stock') && $warehouse_id < 0 && getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_PROPAL')) {
 		if (empty($object->warehouse_id) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE')) {
 			$warehouse_id = getDolGlobalString('MAIN_DEFAULT_WAREHOUSE');
 		}
@@ -2365,9 +2375,11 @@ if ($action == 'create') {
 
 		// Third party
 		print '<tr class="field_socid">';
+
 		print '<td class="titlefieldcreate fieldrequired">' . $langs->trans('Customer') . '</td>';
 		$shipping_method_id = 0;
 		$warehouse_id = 0;
+
 		if ($socid > 0) {
 			print '<td class="valuefieldcreate">';
 			print $soc->getNomUrl(1, 'customer');
@@ -2376,7 +2388,6 @@ if ($action == 'create') {
 			if (getDolGlobalString('SOCIETE_ASK_FOR_SHIPPING_METHOD') && !empty($soc->shipping_method_id)) {
 				$shipping_method_id = $soc->shipping_method_id;
 			}
-			//$warehouse_id       = $soc->warehouse_id;
 		} else {
 			print '<td class="valuefieldcreate">';
 			$filter = '((s.client:IN:1,2,3) AND (s.status:=:1))';
@@ -2474,7 +2485,7 @@ if ($action == 'create') {
 			require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
 			$formproduct = new FormProduct($db);
 			print '<tr class="field_warehouse_id"><td class="titlefieldcreate">' . $langs->trans('Warehouse') . '</td><td class="valuefieldcreate">';
-			print img_picto('', 'stock', 'class="pictofixedwidth"') . $formproduct->selectWarehouses($warehouse_id, 'warehouse_id', '', 1, 0, 0, '', 0, 0, array(), 'maxwidth500 widthcentpercentminusxx');
+			print img_picto('', 'stock', 'class="pictofixedwidth"') . $formproduct->selectWarehouses((int) $warehouse_id, 'warehouse_id', '', 1, 0, 0, '', 0, 0, array(), 'maxwidth500 widthcentpercentminusxx');
 			print '</td></tr>';
 		}
 
@@ -2508,9 +2519,9 @@ if ($action == 'create') {
 		if (isModEnabled('project') && is_object($formproject)) {
 			$langs->load("projects");
 			print '<tr class="field_projectid">';
-			print '<td class="titlefieldcreate">' . $langs->trans("Project") . '</td><td class="valuefieldcreate">';
-			print img_picto('', 'project', 'class="pictofixedwidth"') . $formproject->select_projects(($soc->id > 0 ? $soc->id : -1), (string) $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500 widthcentpercentminusxx');
-			print ' <a href="' . DOL_URL_ROOT . '/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?action=create&socid=' . $soc->id) . '"><span class="fa fa-plus-circle valignmiddle paddingleft" title="' . $langs->trans("AddProject") . '"></span></a>';
+			print '<td class="titlefieldcreate">'.$langs->trans("Project").'</td><td class="valuefieldcreate">';
+			print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects((($soc->id > 0 && !getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_CUSTOMERS')) ? $soc->id : -1), (string) $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500 widthcentpercentminusxx');
+			print ' <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProject").'"></span></a>';
 			print '</td>';
 			print '</tr>';
 		}
@@ -2524,14 +2535,19 @@ if ($action == 'create') {
 			print $form->select_incoterms((!empty($soc->fk_incoterms) ? $soc->fk_incoterms : ''), (!empty($soc->location_incoterms) ? $soc->location_incoterms : ''));
 			print '</td></tr>';
 		}
-
+		if (isModEnabled('category')) {
+			// Categories
+			print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
+			print $form->selectCategories(Categorie::TYPE_PROPOSAL, 'categories', $object);
+			print "</td></tr>";
+		}
 		// Template to use by default
 		print '<tr class="field_model">';
 		print '<td class="titlefieldcreate">' . $langs->trans("DefaultModel") . '</td>';
 		print '<td class="valuefieldcreate">';
 		print img_picto('', 'pdf', 'class="pictofixedwidth"');
 		$liste = ModelePDFPropales::liste_modeles($db);
-		$preselected = (getDolGlobalString('PROPALE_ADDON_PDF_ODT_DEFAULT') ? $conf->global->PROPALE_ADDON_PDF_ODT_DEFAULT : getDolGlobalString("PROPALE_ADDON_PDF"));
+		$preselected = getDolGlobalString('PROPALE_ADDON_PDF_ODT_DEFAULT', getDolGlobalString("PROPALE_ADDON_PDF"));
 		print $form->selectarray('model', $liste, $preselected, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth200 widthcentpercentminusx', 1);
 		print "</td></tr>";
 
@@ -2548,8 +2564,11 @@ if ($action == 'create') {
 		print '<tr class="field_note_public">';
 		print '<td class="titlefieldcreate tdtop">' . $langs->trans('NotePublic') . '</td>';
 		print '<td class="valuefieldcreate">';
-		$note_public = $object->getDefaultCreateValueFor('note_public', (!empty($objectsrc) ? $objectsrc->note_public : (getDolGlobalString('PROPALE_ADDON_NOTE_PUBLIC_DEFAULT') ? $conf->global->PROPALE_ADDON_NOTE_PUBLIC_DEFAULT : null)), 'restricthtml');
-		$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', false, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
+		$note_public = GETPOST('note_public', 'restricthtml');
+		if (!GETPOSTISSET('note_public') && empty($note_public) && !empty($objectsrc)) {
+			$note_public = $objectsrc->note_public;
+		}
+		$doleditor = new DolEditor('note_public', (string) $note_public, '', 80, 'dolibarr_notes', 'In', false, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
 		print $doleditor->Create(1);
 
 		// Private note
@@ -2557,14 +2576,20 @@ if ($action == 'create') {
 			print '<tr class="field_note_private">';
 			print '<td class="titlefieldcreate tdtop">' . $langs->trans('NotePrivate') . '</td>';
 			print '<td class="valuefieldcreate">';
-			$note_private = $object->getDefaultCreateValueFor('note_private', ((!empty($origin) && !empty($originid) && is_object($objectsrc)) ? $objectsrc->note_private : null));
-			$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', false, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
+			$note_private = GETPOST('note_private', 'restricthtml');
+			if (!GETPOSTISSET('note_private') && empty($note_private) && !empty($objectsrc)) {
+				$note_private = $objectsrc->note_private;
+			}
+			$doleditor = new DolEditor('note_private', (string) $note_private, '', 80, 'dolibarr_notes', 'In', false, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
 			print $doleditor->Create(1);
 			// print '<textarea name="note_private" wrap="soft" cols="70" rows="'.ROWS_3.'">'.$note_private.'.</textarea>
 			print '</td></tr>';
 		}
 
 		// Other attributes
+		if (getDolGlobalInt('THIRDPARTY_PROPAGATE_EXTRAFIELDS_TO_PROPAL') && $socid > 0) {
+			$thirdpartytopropagateextrafieldsfrom = $soc;
+		}
 		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_add.tpl.php';
 
 		// Lines from source
@@ -2722,7 +2747,7 @@ if ($action == 'create') {
 			$formquestion[] = array('type' => 'date', 'name' => 'date_delivery', 'label' => $langs->trans("DeliveryDate"), 'value' => $object->delivery_date);
 		}
 		// Incomplete payment. We ask if reason = discount or other
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ToClone'), $langs->trans('ConfirmClonePropal', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 250, 600);
+		$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('ToClone'), $langs->trans('ConfirmClonePropal', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 250, 600);
 	}
 
 	// Subtotal line form
@@ -2888,24 +2913,24 @@ if ($action == 'create') {
 		}
 
 		if (!getDolGlobalString('PROPAL_SKIP_ACCEPT_REFUSE')) {
-			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('SetAcceptedRefused'), '', 'confirm_closeas', $formquestion, '', 1, 250);
+			$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('SetAcceptedRefused'), '', 'confirm_closeas', $formquestion, '', 1, 250);
 		} else {
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?statut=3&id=' . $object->id, $langs->trans('Close'), '', 'confirm_closeas', $formquestion, '', 1, 250);
 		}
 	} elseif ($action == 'cancel') {
 		// Confirm cancel
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans("CancelPropal"), $langs->trans('ConfirmCancelPropal', $object->ref), 'confirm_cancel', '', 0, 1);
+		$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans("CancelPropal"), $langs->trans('ConfirmCancelPropal', $object->ref), 'confirm_cancel', '', 0, 1);
 	} elseif ($action == 'delete') {
 		// Confirm delete
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteProp'), $langs->trans('ConfirmDeleteProp', $object->ref), 'confirm_delete', '', 0, 1);
+		$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('DeleteProp'), $langs->trans('ConfirmDeleteProp', $object->ref), 'confirm_delete', '', 0, 1);
 	} elseif ($action == 'reopen') {
 		// Confirm reopen
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ReOpen'), $langs->trans('ConfirmReOpenProp', $object->ref), 'confirm_reopen', '', 0, 1);
+		$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('ReOpen'), $langs->trans('ConfirmReOpenProp', $object->ref), 'confirm_reopen', '', 0, 1);
 	} elseif ($action == 'ask_deleteline') {
 		// Confirmation delete product/service line
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id . '&lineid=' . $lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
 	} elseif ($action == 'ask_subtotal_deleteline') {
-		// Confirmation de la suppression d'une ligne subtotal
+		// Confirmation of removal of a subtotal line
 		$langs->load("subtotals");
 		$title = "DeleteSubtotalLine";
 		$question = "ConfirmDeleteSubtotalLine";
@@ -2960,7 +2985,7 @@ if ($action == 'create') {
 		}
 
 		if (!$error) {
-			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ValidateProp'), $text, 'confirm_validate', '', 0, 1, 240);
+			$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('ValidateProp'), $text, 'confirm_validate', '', 0, 1, 240);
 		}
 	}
 
@@ -3311,6 +3336,33 @@ if ($action == 'create') {
 			print '</td></tr>';
 		}
 
+		// Categories
+		if (isModEnabled('category')) {
+			print '<tr><td>';
+			print '<table class="nobordernopadding centpercent"><tr><td>';
+			print $langs->trans("Categories");
+			print '<td><td class="right">';
+			if ($usercancreate) {
+				print '<a class="editfielda" href="'.DOL_URL_ROOT.'/comm/propal/card.php?id='.$object->id.'&action=edittags&token='.newToken().'">'.img_edit().'</a>';
+			} else {
+				print '&nbsp;';
+			}
+			print '</td></tr></table>';
+			print '</td>';
+			print '<td>';
+			if ($action == 'edittags') {
+				print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+				print '<input type="hidden" name="action" value="settags">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
+				print $form->selectCategories(Categorie::TYPE_PROPOSAL, 'categories', $object);
+				print '<input type="submit" class="button valignmiddle smallpaddingimp" value="'.$langs->trans("Modify").'">';
+				print '</form>';
+			} else {
+				print $form->showCategories($object->id, Categorie::TYPE_PROPOSAL, 1);
+			}
+			print "</td></tr>";
+		}
+
 		// Other attributes
 		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
@@ -3476,14 +3528,15 @@ if ($action == 'create') {
 		if (empty($reshook)) {
 			if ($action != 'editline') {
 				// Subtotal
-				if ($object->status == Propal::STATUS_DRAFT && isModEnabled('subtotals') && getDolGlobalString('SUBTOTAL_TITLE_' . strtoupper($object->element))) {
+				if ($object->status == Propal::STATUS_DRAFT && isModEnabled('subtotals')
+					&& (getDolGlobalInt('SUBTOTAL_TITLE_'.strtoupper($object->element)) || getDolGlobalInt('SUBTOTAL_'.strtoupper($object->element)))) {
 					$langs->load('subtotals');
 
 					$url_button = array();
 
 					$url_button[] = array(
 						'lang' => 'subtotals',
-						'enabled' => (isModEnabled('propal') && $object->status == Propal::STATUS_DRAFT),
+						'enabled' => (isModEnabled('propal') && $object->status == Propal::STATUS_DRAFT && getDolGlobalInt('SUBTOTAL_TITLE_'.strtoupper($object->element))),
 						'perm' => (bool) $usercancreate,
 						'label' => $langs->trans('AddTitleLine'),
 						'url' => '/comm/propal/card.php?id=' . $object->id . '&action=add_title_line&token=' . newToken()
@@ -3491,7 +3544,7 @@ if ($action == 'create') {
 
 					$url_button[] = array(
 						'lang' => 'subtotals',
-						'enabled' => (isModEnabled('propal') && $object->status == Propal::STATUS_DRAFT),
+						'enabled' => (isModEnabled('propal') && $object->status == Propal::STATUS_DRAFT && getDolGlobalInt('SUBTOTAL_'.strtoupper($object->element))),
 						'perm' => (bool) $usercancreate,
 						'label' => $langs->trans('AddSubtotalLine'),
 						'url' => '/comm/propal/card.php?id=' . $object->id . '&action=add_subtotal_line&token=' . newToken()
@@ -3533,7 +3586,7 @@ if ($action == 'create') {
 				// Send
 				if (empty($user->socid)) {
 					if ($object->status == Propal::STATUS_VALIDATED || $object->status == Propal::STATUS_SIGNED || getDolGlobalString('PROPOSAL_SENDBYEMAIL_FOR_ALL_STATUS')) {
-						print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"] . '?action=presend&token=' . newToken() . '&id=' . $object->id . '&mode=init#formmailbeforetitle', '', $usercansend);
+						print dolGetButtonAction('', $langs->trans('SendMail'), 'email', $_SERVER["PHP_SELF"] . '?action=presend&token=' . newToken() . '&id=' . $object->id . '&mode=init#formmailbeforetitle', '', $usercansend);
 					}
 				}
 
@@ -3689,8 +3742,12 @@ if ($action == 'create') {
 		$urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
 		$genallowed = $usercanread;
 		$delallowed = $usercancreate;
+		$tooltipAfterComboOfModels = '';
+		if (getDolGlobalString('MAIN_PDF_ADD_TERMSOFSALE_PROPAL')) {
+			$tooltipAfterComboOfModels = $langs->trans("AccordingToYourSetupTheFileWillBeConcatenated", getDolGlobalString('MAIN_INFO_PROPAL_TERMSOFSALE'));
+		}
 
-		print $formfile->showdocuments('propal', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '0', '', $soc->default_lang, '', $object);
+		print $formfile->showdocuments('propal', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '0', '', $soc->default_lang, '', $object, 0, 'remove_file', $tooltipAfterComboOfModels);
 
 		// Show links to link elements
 		$tmparray = $form->showLinkToObjectBlock($object, array(), array('propal'), 1);

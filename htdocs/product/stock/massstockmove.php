@@ -2,7 +2,7 @@
 /* Copyright (C) 2013-2022  Laurent Destaileur		<ely@users.sourceforge.net>
  * Copyright (C) 2014	    Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -224,7 +224,7 @@ if ($action == 'createmovements' && $user->hasRight('stock', 'mouvement', 'creer
 
 				//print 'price src='.$pricesrc.', price dest='.$pricedest;exit;
 
-				if (empty($conf->productbatch->enabled) || !$product->hasbatch()) {	// If product does not need lot/serial
+				if (!isModEnabled('productbatch') || !$product->hasbatch()) {	// If product does not need lot/serial
 					// Remove stock if source warehouse defined
 					if ($id_sw > 0) {
 						$result1 = $product->correct_stock(

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2008  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
- * Copyright (C) 2024-2025  MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,6 +23,8 @@
  *  \ingroup    core
  *  \brief      File of the superclass of classes of lines of business objects (invoice, contract, proposal, orders, etc. ...)
  */
+
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 
 /**
@@ -191,6 +193,21 @@ abstract class CommonObjectLine extends CommonObject
 	public $product_desc;
 
 	/**
+	 * @var ?string Product custom code
+	 */
+	public $product_custom_code;
+
+	/**
+	 * @var ?string Product custom country code
+	 */
+	public $product_custom_country_code;
+
+	/**
+	 * @var ?int Product custom country id
+	 */
+	public $product_custom_country_id;
+
+	/**
 	 * @var int type in product table
 	 */
 	public $fk_product_type;
@@ -211,7 +228,7 @@ abstract class CommonObjectLine extends CommonObject
 	/**
 	 * List of cumulative options:
 	 * Bit 0:	0 for common VAT - 1 if VAT french NPR
-	 * Bit 1:	0 si ligne normal - 1 si bit discount (link to line into llx_remise_except)
+	 * Bit 1:	0 if standard line - 1 if discount (link to line into llx_remise_except)
 	 * @var ?int
 	 */
 	public $info_bits;

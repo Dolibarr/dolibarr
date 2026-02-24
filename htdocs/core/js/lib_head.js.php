@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2014  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -191,24 +191,24 @@ $(document).ready(function() {
 });
 
 jQuery(function($){
-	$.datepicker.regional['<?php echo $langs->defaultlang ?>'] = {
-		closeText: '<?php echo $langs->trans("Close2") ?>',
-		prevText: '<?php echo $langs->trans("Previous") ?>',
-		nextText: '<?php echo $langs->trans("Next") ?>',
-		currentText: '<?php echo $langs->trans("Now") ?>',
+	$.datepicker.regional['<?php echo dol_escape_js($langs->defaultlang) ?>'] = {
+		closeText: '<?php echo dol_escape_js($langs->trans("Close2")) ?>',
+		prevText: '<?php echo dol_escape_js($langs->trans("Previous")) ?>',
+		nextText: '<?php echo dol_escape_js($langs->trans("Next")) ?>',
+		currentText: '<?php echo dol_escape_js($langs->trans("Now")) ?>',
 		monthNames: tradMonths,
 		monthNamesShort: tradMonthsShort,
 		dayNames: tradDays,
 		dayNamesShort: tradDaysShort,
 		dayNamesMin: tradDaysMin,
-		weekHeader: '<?php echo $langs->trans("Week"); ?>',
-		dateFormat: '<?php echo $langs->trans("FormatDateShortJQuery"); ?>',	/* Note dd/mm/yy means year on 4 digit in jquery format */
-		firstDay: <?php echo(isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : '1'); ?>,
+		weekHeader: '<?php echo dol_escape_js($langs->trans("Week")); ?>',
+		dateFormat: '<?php echo dol_escape_js($langs->trans("FormatDateShortJQuery")); ?>',	/* Note dd/mm/yy means year on 4 digit in jquery format */
+		firstDay: <?php echo getDolGlobalInt('MAIN_START_WEEK', 1); ?>,
 		isRTL: <?php echo($langs->trans("DIRECTION") == 'rtl' ? 'true' : 'false'); ?>,
 		showMonthAfterYear: false,  	/* TODO add specific to country	*/
 		 yearSuffix: ''			/* TODO add specific to country */
 	};
-	$.datepicker.setDefaults($.datepicker.regional['<?php echo $langs->defaultlang ?>']);
+	$.datepicker.setDefaults($.datepicker.regional['<?php echo dol_escape_js($langs->defaultlang) ?>']);
 });
 
 
@@ -248,15 +248,17 @@ function getObjectFromID(id){
 // Called after the selection or typing of a date to save details into detailed fields
 function dpChangeDay(dateFieldID, format)
 {
-	console.log("Call dpChangeDay, we save date into detailed fields from format = "+format);
+	console.log("Call dpChangeDay, we save date from field "+dateFieldID+" into detailed fields from format = "+format);
 
 	var thefield = getObjectFromID(dateFieldID);
 	var thefieldday = getObjectFromID(dateFieldID+"day");
 	var thefieldmonth = getObjectFromID(dateFieldID+"month");
 	var thefieldyear = getObjectFromID(dateFieldID+"year");
 
+	console.log("string date value is " + thefield.value);
+
 	var date = getDateFromFormat(thefield.value, format);
-	//console.log(date);
+
 	if (date)
 	{
 		thefieldday.value = date.getDate();
@@ -317,7 +319,7 @@ function formatDate(date,format)
 {
 	// alert('formatDate date='+date+' format='+format);
 
-	// Force parameters en chaine
+	// Force parameters to string
 	format=format+"";
 
 	var result="";
@@ -385,7 +387,7 @@ function getDateFromFormat(val, format)
 {
 	// alert('getDateFromFormat val='+val+' format='+format);
 
-	// Force parameters en chaine
+	// Force parameters to string
 	val = val+"";
 	format = format+"";
 
@@ -566,37 +568,49 @@ function cleanSerialize(expr) {
 
 
 /*
- * =================================================================
- * Purpose: Display a temporary message in input text fields (For showing help message on
- *          input field).
- * Input:   fieldId
- * Input:   message
- * Author:  Regis Houssin
+ * Purpose: Fonction to open a confirm popup on a click of a link
+ * Input:   msg
+ * Input:   id
+ * Input:   popupWidth
+ * Input:   popupHeight
+ * Input:   disableCancelButton
  * Licence: GPL
- * ==================================================================
+ * See also document_preview() that also maje a dialogforpopup.dialog().
+ * See also newpopup that use window.open.
  */
-function displayMessage(fieldId,message) {
-	var textbox = document.getElementById(fieldId);
-	if (textbox.value == '') {
-		textbox.style.color = 'grey';
-		textbox.value = message;
-	}
-}
+function confirmDolibarr(msg, id, popupWidth = 400, popupHeight = 300, disableCancelButton = 0) {
+	let alink = document.getElementById(id);
+	let title = '<?php echo dol_escape_js($langs->transnoentitiesnoconv("Note")); ?>';
 
-/*
- * =================================================================
- * Purpose: Hide a temporary message in input text fields (For showing help message on
- *          input field).
- * Input:   fiedId
- * Input:   message
- * Author:  Regis Houssin
- * Licence: GPL
- * ==================================================================
- */
-function hideMessage(fieldId,message) {
-	var textbox = document.getElementById(fieldId);
-	textbox.style.color = 'black';
-	if (textbox.value == message) textbox.value = '';
+	if (alink.getAttribute("data-alreadyclicked") === "1") {
+		return true;
+	}
+
+	console.log("Call confirmDolibarr disableCancelButton="+disableCancelButton);
+
+	let buttons = {};
+	if (disableCancelButton === 0) {
+		buttons['<?php echo dol_escape_js($langs->transnoentitiesnoconv("Cancel")); ?>'] = function () {
+		   $(this).dialog("close");
+		};
+	}
+	buttons['<?php echo dol_escape_js($langs->transnoentitiesnoconv("Confirm")); ?>'] = function () {
+		console.log("We click OK"); $(this).dialog("close"); alink.setAttribute("data-alreadyclicked", "1"); alink.click(); return false;
+	};
+
+	new Promise(res => {
+			$("#dialogforpopup").text(msg).dialog({
+			  closeOnEscape: true,
+			  resizable: true,
+			  modal: true,
+			  width: popupWidth,
+			  height: popupHeight,
+			  title: title,
+			  buttons: buttons
+			});
+		});
+
+	return false;
 }
 
 
@@ -1023,7 +1037,7 @@ function copyToClipboard(text,text2)
  * @param	url			Url
  * @param	title  		Title of popup
  * @return	boolean		False
- * @see document_preview()
+ * @see document_preview() and confirmDolibarr()
  */
 function newpopup(url, title) {
 	var argv = newpopup.arguments;
@@ -1048,7 +1062,8 @@ function newpopup(url, title) {
  * @param 	type 		Mime file type ("image/jpeg", "application/pdf", "text/html")
  * @param 	title		Title of popup
  * @return	void
- * @see newpopup()
+ * @see also confirmDolibarr() that also make a dialogforpopup.dialog()
+ * @see also newpopup()that use window.open
  */
 function document_preview(file, type, title)
 {
@@ -1384,7 +1399,7 @@ function pricejs(amount, mode = 'MT', currency_code = '', force_locale = '') {
 	var amountAsLocalizedString;
 	var useIntl = Boolean(Intl && Intl.NumberFormat);
 	var nDigits;
-	if (currency_code === 'auto') currency_code = <?php echo json_encode($conf->currency) ?>;
+	if (currency_code === 'auto') currency_code = <?php echo json_encode(getDolCurrency()) ?>;
 
 	if (mode === 'MU') nDigits = main_rounding_unit;
 	else if (mode === 'MT') nDigits = main_rounding_tot;
@@ -1593,14 +1608,20 @@ jQuery(document).ready(function() {
 
 // Code to manage the js for combo list with dependencies (called by extrafields_view.tpl.php)
 function showOptions(child_list, parent_list) {
-		   var val = $("select[name="+parent_list+"]").val();
-		   var parentVal = parent_list + ":" + val;
-		if(val > 0) {
-			$("select[name=\""+child_list+"\"] option[parent]").hide();
-			$("select[name=\""+child_list+"\"] option[parent=\""+parentVal+"\"]").show();
+	var parentInput = $("select[name="+parent_list+"]");
+	if (parentInput.length === 0) { // when parent extra-field is in view mode and the child is edited directly on card (on line edit)
+		parentInput = $("input[name="+parent_list+"]");
+	}
+	if (parentInput.length > 0) {
+		var val = parentInput.val();
+		var parentVal = parent_list + ":" + val;
+		if (val > 0) {
+			$("select[name=\""+child_list+"\"] option[parent]").prop("disabled", true).hide(); // hide not work with select2 element so disabled it
+			$("select[name=\""+child_list+"\"] option[parent=\""+parentVal+"\"]").prop('disabled', false).show(); // show not work with select2 element so enabled it
 		} else {
-			$("select[name=\""+child_list+"\"] option").show();
+			$("select[name=\""+child_list+"\"] option").prop("disabled", false).show(); // show not work with select2 element so enabled it
 		}
+	}
 }
 function setListDependencies() {
 		console.log("setListDependencies");
@@ -1704,9 +1725,12 @@ function onKanbanColumnChange(item, newColumn) {
 	item.data('original-column', newColumn);
 }
 
+
+if (typeof jQuery.fn.on === 'function') {
+
 /*
-* Intuitive table selection
-*/
+ * Intuitive table selection (with keyboard selection)
+ */
 $(function() {
 
 	/**
@@ -1747,6 +1771,7 @@ $(function() {
 
 		// this part of code prevent weird behavior when user (ctrl or maj) + click directly on checkbox
 		// We simulate a click on the parent line
+		console.log("Emulate click on parent line");
 		parentRow.trigger({
 			type: "click",
 			ctrlKey: !e.shiftKey, // simulate ctrlKey click will automatically prop activate the checkbox with parent event but not if shift key is pressed.
@@ -1758,12 +1783,14 @@ $(function() {
 	});
 
 	$(document).on("click", ".row-with-select", function (e) {
+		console.log("A click on line was done");
+
 		let checkBox = $(this).find('.checkforselect');
 		let nextCheckStatus = !checkBox.is(':checked')
 
 		if (e.ctrlKey || e.metaKey) {
 			// Add line to selection
-			if(checkBox){
+			if (checkBox) {
 				checkBox.prop('checked', nextCheckStatus).trigger('change');
 			}
 			setLastClickedRowStatus($(this), 1);
@@ -1772,13 +1799,13 @@ $(function() {
 		if (e.shiftKey) {
 			let lastLastChanged = $(this).closest('table').find('.row-with-select[data-is-last-changed="1"]');
 
-			if(lastLastChanged.length>0){
-				// Add all lines to selection betwin last selected line
-				if($(this).index() === lastLastChanged.index()) {
+			if (lastLastChanged.length>0) {
+				// Add all lines to selection beetwin last selected line
+				if ($(this).index() === lastLastChanged.index()) {
 					return null;
 				}
 
-				if($(this).index() < lastLastChanged.index()) {
+				if ($(this).index() < lastLastChanged.index()) {
 					$(this).nextUntil(lastLastChanged, ".row-with-select" ).find('.checkforselect').prop('checked', nextCheckStatus).trigger('change');
 				}else{
 					lastLastChanged.nextUntil($(this), ".row-with-select" ).find('.checkforselect').prop('checked', nextCheckStatus).trigger('change');
@@ -1793,5 +1820,7 @@ $(function() {
 		}
 	});
 });
+
+}
 
 // End of lib_head.js.php

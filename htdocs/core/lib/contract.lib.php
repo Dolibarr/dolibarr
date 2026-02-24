@@ -38,14 +38,14 @@ function contract_prepare_head(Contrat $object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/contrat/card.php?id='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/contrat/card.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans("ContractCard");
 	$head[$h][2] = 'card';
 	$h++;
 
 	if (!getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB')) {
 		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
-		$head[$h][0] = DOL_URL_ROOT.'/contrat/contact.php?id='.$object->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/contrat/contact.php', ['id' => $object->id]);
 		$head[$h][1] = $langs->trans("ContactsAddresses");
 		if ($nbContact > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
@@ -56,7 +56,7 @@ function contract_prepare_head(Contrat $object)
 
 	/* deprecated. Contracts and tickets are already linked with the generic "Link to" feature */
 	if (isModEnabled('ticket') && getDolGlobalString('TICKET_LINK_TO_CONTRACT_WITH_HARDLINK')) {
-		$head[$h][0] = DOL_URL_ROOT.'/contrat/ticket.php?id='.$object->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/contrat/ticket.php', ['id' => $object->id]);
 		$head[$h][1] = $langs->trans("Tickets");
 		$head[$h][2] = 'ticket';
 		$h++;
@@ -76,7 +76,7 @@ function contract_prepare_head(Contrat $object)
 		if (!empty($object->note_public)) {
 			$nbNote++;
 		}
-		$head[$h][0] = DOL_URL_ROOT.'/contrat/note.php?id='.$object->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/contrat/note.php', ['id' => $object->id]);
 		$head[$h][1] = $langs->trans("Notes");
 		if ($nbNote > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
@@ -90,7 +90,7 @@ function contract_prepare_head(Contrat $object)
 	$upload_dir = $conf->contrat->multidir_output[$object->entity ?? $conf->entity]."/".dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 	$nbLinks = Link::count($db, $object->element, $object->id);
-	$head[$h][0] = DOL_URL_ROOT.'/contrat/document.php?id='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/contrat/document.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans("Documents");
 	if (($nbFiles + $nbLinks) > 0) {
 		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
@@ -99,7 +99,7 @@ function contract_prepare_head(Contrat $object)
 	$h++;
 
 
-	$head[$h][0] = DOL_URL_ROOT.'/contrat/agenda.php?id='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/contrat/agenda.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans("Events");
 	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 		$nbEvent = 0;
@@ -156,7 +156,7 @@ function contract_admin_prepare_head()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/contract.php";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/admin/contract.php");
 	$head[$h][1] = $langs->trans("Contracts");
 	$head[$h][2] = 'contract';
 	$h++;
@@ -167,7 +167,7 @@ function contract_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'contract_admin', 'add', 'core');
 
-	$head[$h][0] = DOL_URL_ROOT.'/contrat/admin/contract_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/contrat/admin/contract_extrafields.php');
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$nbExtrafields = $extrafields->attributes['contrat']['count'];
 	if ($nbExtrafields > 0) {
@@ -176,7 +176,7 @@ function contract_admin_prepare_head()
 	$head[$h][2] = 'attributes';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/contrat/admin/contractdet_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/contrat/admin/contractdet_extrafields.php');
 	$head[$h][1] = $langs->trans("ExtraFieldsLines");
 	$nbExtrafields = $extrafields->attributes['contratdet']['count'];
 	if ($nbExtrafields > 0) {

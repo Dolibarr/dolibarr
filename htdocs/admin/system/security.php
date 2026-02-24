@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2022	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,14 +24,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -43,7 +35,23 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
  * @var string 		$conffile 				// $conffile is defined into filefunc.inc.php
  * @var string 		$dolibarr_main_prod
  * @var string		$dolibarr_main_document_root
+ * @var string		$dolibarr_main_restrict_os_commands
+ * @var string		$dolibarr_main_restrict_eval_methods
+ * @var string		$dolibarr_main_restrict_ip
+ * @var string		$dolibarr_main_db_pass
+ * @var string		$dolibarr_main_db_encrypted_pass
+ * @var string		$dolibarr_website_allow_custom_php
+ * @var string		$dolibarr_nocsrfcheck
+ * @var string|string[]		$dolibarr_main_stream_to_disable
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("install", "other", "admin", "errors", "website"));
@@ -148,7 +156,26 @@ if (getDolGlobalString('MAIN_SECURITY_SHOW_MORE_INFO')) {
 
 print '<br>';
 print "<strong>PHP disable_functions</strong>: ";
-$arrayoffunctionsdisabled = explode(',', ini_get('disable_functions'));
+// The original value is...
+$disablefunctionorign = '';
+$phparray = phpinfo_array();
+foreach ($phparray as $key => $value) {
+	foreach ($value as $keyparam => $keyvalue) {
+		if ($keyparam == 'disable_functions') {
+			if (!empty($keyvalue['master'])) {
+				$disablefunctionorign = $keyvalue['master'];
+				break;
+			}
+		}
+	}
+}
+/*
+if (empty($disablefunctionorign)) {
+	$disablefunctionorign = ini_get('disable_functions');		// Not always the real value
+}
+*/
+$arrayoffunctionsdisabled = explode(',', $disablefunctionorign);
+
 $arrayoffunctionstodisable = explode(',', 'dl,apache_note,apache_setenv,pcntl_alarm,pcntl_fork,pcntl_waitpid,pcntl_wait,pcntl_wifexited,pcntl_wifstopped,pcntl_wifsignaled,pcntl_wifcontinued,pcntl_wexitstatus,pcntl_wtermsig,pcntl_wstopsig,pcntl_signal,pcntl_signal_get_handler,pcntl_signal_dispatch,pcntl_get_last_error,pcntl_strerror,pcntl_sigprocmask,pcntl_sigwaitinfo,pcntl_sigtimedwait,pcntl_exec,pcntl_getpriority,pcntl_setpriority,pcntl_async_signals,show_source,virtual');
 //$arrayoffunctionstodisable[] = 'stream_wrapper_restore';
 //$arrayoffunctionstodisable[] = 'stream_wrapper_register';
@@ -198,13 +225,13 @@ if ($todisabletext) {
 	print img_picto('', 'warning', 'class="pictofixedwidth nopaddingleft"').$langs->trans("IfCLINotRequiredYouShouldDisablePHPFunctions").': '.$todisabletext;
 	print '<br>';
 }
-if (!\function_exists($functiontokeep)) {
+if (!function_exists($functiontokeep)) {
 	print img_picto($langs->trans("PHPFunctionsRequiredForCLI"), 'warning', 'class="pictofixedwidth"');
 } else {
 	print img_picto('', 'tick', 'class="pictofixedwidth"');
 }
 print $langs->trans("PHPFunctionsRequiredForCLI").': ';
-print '<span class="opacitymedium">'.$functiontokeep.'</span>';
+print '<span class="opacitymedium" title="exec or popen can be used depending on MAIN_EXEC_USE_POPEN option, currently to '.getDolGlobalInt('MAIN_EXEC_USE_POPEN').'">'.$functiontokeep.'</span>';
 print '<br>';
 
 print '<br>';
@@ -362,13 +389,11 @@ if (empty($dolibarr_main_prod)) {
 }
 print '<br>';
 
-print '<strong>$dolibarr_nocsrfcheck</strong>: '.(empty($dolibarr_nocsrfcheck) ? '0' : $dolibarr_nocsrfcheck);
 if (!empty($dolibarr_nocsrfcheck)) {
+	print '<strong>$dolibarr_nocsrfcheck</strong>: '.(empty($dolibarr_nocsrfcheck) ? '0' : $dolibarr_nocsrfcheck);
 	print ' &nbsp; &nbsp;'.img_picto('', 'error').' '.$langs->trans("IfYouAreOnAProductionSetThis", 0);
-} else {
-	print ' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 0)</span>';
+	print '<br>';
 }
-print '<br>';
 
 print '<strong>$dolibarr_main_restrict_ip</strong>: ';
 if (empty($dolibarr_main_restrict_ip)) {
@@ -379,14 +404,45 @@ if (empty($dolibarr_main_restrict_ip)) {
 }
 print '<br>';
 
+
 print '<strong>$dolibarr_main_restrict_os_commands</strong>: ';
 if (empty($dolibarr_main_restrict_os_commands)) {
 	print $langs->trans("None");
 } else {
 	print $dolibarr_main_restrict_os_commands;
 }
-print ' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'mysqldump, mysql, pg_dump, pg_restore, mariadb, mariadb-dump, clamdscan').')</span>';
+print ' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pg_restore, clamdscan').')</span>';
 print '<br>';
+
+
+print '<strong>$dolibarr_main_restrict_eval_methods</strong>: ';
+if (empty($dolibarr_main_restrict_eval_methods)) {
+	print $langs->trans("None");
+} else {
+	print $dolibarr_main_restrict_eval_methods;
+}
+print ' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'getDolGlobalString, getDolGlobalInt, getDolCurrency, getDolEntity, getDolDBType, fetchNoCompute, hasRight, isAdmin, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, dol_concat, preg_match').')</span>';
+print '<br>';
+
+
+print '<strong>$dolibarr_website_allow_custom_php</strong>: ';
+if (!empty($dolibarr_website_allow_custom_php) && $dolibarr_website_allow_custom_php == 2) {
+	print img_picto('', 'warning').' ';
+}
+if (empty($dolibarr_website_allow_custom_php)) {
+	print '0';
+} else {
+	print $dolibarr_website_allow_custom_php;
+}
+print ' &nbsp; &nbsp; <span class="opacitymedium">(';
+if (isModEnabled('website')) {
+	print $langs->trans("RecommendedValueIs", '0 if you don\'t include PHP in your websites, else 1');
+} else {
+	print $langs->trans("RecommendedValueIs", '0');
+}
+print ')</span>';
+print '<br>';
+
 
 if (!getDolGlobalString('SECURITY_DISABLE_TEST_ON_OBFUSCATED_CONF')) {
 	print '<strong>$dolibarr_main_db_pass</strong>: ';
@@ -804,17 +860,22 @@ $exampletodecrypt = GETPOST('exampletodecrypt', 'password');
 
 print '<strong>'.$langs->trans("AlgorithmFor", $langs->transnoentitiesnoconv("SensitiveData"));
 print $form->textwithpicto('', 'reversible encryption done with dolEncrypt/dolDecrypt');
-print '</strong> = '.constant('MAIN_SECURITY_REVERSIBLE_ALGO').' with key defined into conf.php file in $dolibarr_main_dolcrypt_key (or $dolibarr_main_instance_unique_id)<br>';
-print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '</strong> = '.constant('MAIN_SECURITY_REVERSIBLE_ALGO').' with a random seed + a crypt key defined into the conf.php file (in $dolibarr_main_dolcrypt_key or $dolibarr_main_instance_unique_id)<br>';
+print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="action" value="doldecrypt">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="page_y" value="">';
 print $langs->trans("ToolToDecryptAString").': ';
-print '<input type="text" class="minwidth300" name="exampletodecrypt" placeholder="dolcrypt:ALGOXXXX:ABCDFEF1234" value="'.$exampletodecrypt.'">';
+print '<input type="text" class="minwidth500" name="exampletodecrypt" placeholder="dolcrypt:ALGOXXXX:ABCDFEF1234" value="'.$exampletodecrypt.'">';
 print '<input type="submit" class="reposition button small smallpaddingimp" name="submit" value="'.$langs->transnoentitiesnoconv("Decrypt").'">';
 if ($action == 'doldecrypt' && $user->admin && $exampletodecrypt) {
 	usleep(200);
-	print ' => <textarea rows="'.ROWS_1.'" class="valignmiddle">'.dolPrintHTMLForTextArea(dolDecrypt($exampletodecrypt)).'</textarea>';
+	$decryptedstring = dolDecrypt($exampletodecrypt);
+	if (ascii_check($decryptedstring)) {
+		print '<br> => <textarea rows="'.ROWS_1.'" class="valignmiddle quatrevingtpercent">'.dolPrintHTMLForTextArea($decryptedstring).'</textarea>';
+	} else {
+		print '<br><span class="error"> => Failed to decrypt. The crypting key saved into the conf.php file seems to not be the one used to encrypt the provided encrypted string</span>';
+	}
 }
 print '</form>';
 
@@ -960,16 +1021,20 @@ print '<strong>MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES</strong> = '.(getDol
 print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").": 1 - does not work on HTML5 with some old libxml libs)</span><br>";
 print '<br>';
 
-// MAIN_DISALLOW_URL_INTO_DESCRIPTIONS = 1, disallow url links except if on /medias
-// MAIN_DISALLOW_URL_INTO_DESCRIPTIONS = 2, disallow all external urls link
-print '<strong>MAIN_DISALLOW_URL_INTO_DESCRIPTIONS</strong> = '.getDolGlobalString('MAIN_DISALLOW_URL_INTO_DESCRIPTIONS', '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': 1=only local links allowed or 2=no links at all)</span>')."<br>";
+// MAIN_DISALLOW_URL_INTO_DESCRIPTIONS = 1, disallow url links except if on the local wrapper document.php or viewimage.php
+// MAIN_DISALLOW_URL_INTO_DESCRIPTIONS = 2, disallow all urls link
+print '<strong>MAIN_DISALLOW_URL_INTO_DESCRIPTIONS</strong> = '.getDolGlobalString('MAIN_DISALLOW_URL_INTO_DESCRIPTIONS', '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': 1=only local links allowed (to wrapper document.php or image.php) or 2=no links at all)</span>')."<br>";
 print '<br>';
 
 print '<strong>MAIN_ALLOW_SVG_FILES_AS_EXTERNAL_LINKS</strong> = '.getDolGlobalString('MAIN_ALLOW_SVG_FILES_AS_EXTERNAL_LINKS', '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 0)</span>')."<br>";
 print '<br>';
 
-print '<strong>MAIN_DISALLOW_STRING_OBFUSCATION_IN_DOL_EVAL</strong> = '.(getDolGlobalString('MAIN_DISALLOW_STRING_OBFUSCATION_IN_DOL_EVAL') ? '1' : '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
-print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").": 1 - may break use of concatenation function like . or dol_concatdesc into extra fields conditions or formula)</span><br>";
+print '<strong>MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL</strong> = '.getDolGlobalString('MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
+print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").": ".$langs->trans("Undefined").' '.$langs->trans("or")." 0 - The value 1 allows the use of concatenation functions like . or dol_concat into extra fields conditions or formula but is not secured)</span><br>";
+print '<br>';
+
+print '<strong>MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER</strong> = '.getDolGlobalString('MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
+print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").": 1 - The value 0 allows the use of subrequests into extrafields conditions. It remains not possible in API filters to avoid bind SQL injections whatever is this value)</span><br>";
 print '<br>';
 
 

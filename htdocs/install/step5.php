@@ -101,8 +101,8 @@ if (!empty($action) && preg_match('/upgrade/i', $action)) {
 $langs->loadLangs(array("admin", "install"));
 
 $login = GETPOST('login', 'alpha') ? GETPOST('login', 'alpha') : (empty($argv[5]) ? '' : $argv[5]);
-$pass = GETPOST('pass', 'alpha') ? GETPOST('pass', 'alpha') : (empty($argv[6]) ? '' : $argv[6]);
-$pass_verif = GETPOST('pass_verif', 'alpha') ? GETPOST('pass_verif', 'alpha') : (empty($argv[7]) ? '' : $argv[7]);
+$pass = GETPOST('pass', 'password') ? GETPOST('pass', 'password') : (empty($argv[6]) ? '' : $argv[6]);
+$pass_verif = GETPOST('pass_verif', 'password') ? GETPOST('pass_verif', 'password') : (empty($argv[7]) ? '' : $argv[7]);
 
 $success = 0;
 
@@ -178,7 +178,7 @@ if ($action == "set") {		// Test on permissions not required here
 
 $morehtml = '';
 
-pHeader($langs->trans("DolibarrSetup").' - '.$langs->trans("SetupEnd"), "step5", 'set', '', '', 'main-inside main-inside-borderbottom');
+pHeader($langs->trans("DolibarrSetup"), "step5", 'set', '', '', 'main-inside main-inside-borderbottom no-bottom');
 print '<br>';
 
 // Test if we can run a first install process
@@ -526,11 +526,11 @@ if ($action == "set") {
 
 			print "<br>";
 
-			print $langs->trans("YouNeedToPersonalizeSetup")."<br><br><br>";
+			print '<span class="opacitymedium">'.$langs->trans("YouNeedToPersonalizeSetup")."</span><br><br><br>";
 
-			print '<div class="center">&gt; <a href="../admin/index.php?mainmenu=home&leftmenu=setup'.(isset($login) ? '&username='.urlencode($login) : '').'">';
+			print '<div class="center divlinktogotosetup"><a href="../admin/index.php?mainmenu=home&leftmenu=setup'.(isset($login) ? '&username='.urlencode($login) : '').'">';
 			print '<span class="fas fa-external-link-alt"></span> '.$langs->trans("GoToSetupArea");
-			print '</a></div><br>';
+			print '</a></div><br><br>';
 		} else {
 			// If here MAIN_VERSION_LAST_UPGRADE is not empty
 			print $langs->trans("VersionLastUpgrade").': <b><span class="ok">' . getDolGlobalString('MAIN_VERSION_LAST_UPGRADE').'</span></b><br>';
@@ -540,7 +540,8 @@ if ($action == "set") {
 
 			print '<div class="center"><a href="'.$dolibarr_main_url_root.'/install/index.php">';
 			print '<span class="fas fa-link-alt"></span> '.$langs->trans("GoToUpgradePage");
-			print '</a></div>';
+			print '</a>';
+			print '</div>';
 		}
 	}
 } elseif (empty($action) || preg_match('/upgrade/i', $action)) {
@@ -583,10 +584,11 @@ if ($action == "set") {
 		$morehtml .= '</a></div><br>';
 	} else {
 		// If here MAIN_VERSION_LAST_UPGRADE is not empty
-		print $langs->trans("VersionLastUpgrade").': <b><span class="ok">' . getDolGlobalString('MAIN_VERSION_LAST_UPGRADE').'</span></b><br>';
-		print $langs->trans("VersionProgram").': <b><span class="ok">'.DOL_VERSION.'</span></b>';
+		print $langs->trans("VersionLastUpgrade").': <b><span class="okinversed">' . getDolGlobalString('MAIN_VERSION_LAST_UPGRADE').'</span></b><br>';
+		print '<br>';
+		print $langs->trans("VersionProgram").': <b><span class="okinversed">'.DOL_VERSION.'</span></b>';
 
-		print "<br>";
+		print "<br><br>";
 
 		$morehtml = '<br><div class="center"><a class="buttonGoToupgrade" href="../install/index.php">';
 		$morehtml .= '<span class="fas fa-link-alt"></span> '.$langs->trans("GoToUpgradePage");

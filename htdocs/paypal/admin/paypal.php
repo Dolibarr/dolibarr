@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2013	Laurent Destailleur		<eldy@users.sourceforge.org>
  * Copyright (C) 2011-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012  Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -152,12 +152,12 @@ $form = new Form($db);
 llxHeader('', $langs->trans("PaypalSetup"), '', '', 0, 0, '', '', '', 'mod-paypal page-admin_paypal');
 
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 print load_fiche_titre($langs->trans("ModuleSetup").' PayPal', $linkback);
 
 $head = paypaladmin_prepare_head();
 
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setvalue">';
 

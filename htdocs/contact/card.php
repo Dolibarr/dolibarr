@@ -111,7 +111,7 @@ $permissiontoadd = $user->hasRight('societe', 'contact', 'creer');
 $permissiontoeditextra = $permissiontoadd;
 if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
 	// For action 'update_extras', is there a specific permission set for the attribute to update
-	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+	$permissiontoeditextra = dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
 }
 
 // Security check
@@ -183,6 +183,9 @@ if (empty($reshook)) {
 				$error = $nuser->error;
 				$errors = $nuser->errors;
 				$db->rollback();
+			}
+			if ($error) {
+				setEventMessage($langs->trans('ImpossibleToCreateUserFromContact').' : '.$nuser->errorsToString(), 'errors');
 			}
 		} else {
 			$error = $object->error;
@@ -664,7 +667,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '</script>'."\n";
 			}
 
-			print '<form method="post" name="formsoc" action="'.$_SERVER["PHP_SELF"].'">';
+			print '<form method="post" name="formsoc" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="add">';
 			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
@@ -1327,7 +1330,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 		$morehtmlref = '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$object->id.'" class="refid">';
-		$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+		$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 		$morehtmlref .= '</a>';
 
 		$morehtmlref .= '<div class="refidno">';
@@ -1413,8 +1416,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		if (getDolGlobalString('THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES')) {
 			if ($object->thirdparty->client == 2 || $object->thirdparty->client == 3) {
 				// Level of prospect
-				print '<tr><td class="titlefield">';
-				print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+				print '<tr><td class="">';
+				print '<table class="nobordernopadding centpercent"><tr><td class="nowrap">';
 				print $langs->trans('ProspectLevel');
 				print '<td>';
 				if ($action != 'editlevel' && $user->hasRight('societe', 'contact', 'creer')) {
@@ -1450,7 +1453,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Categories
 		if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
-			print '<tr><td class="titlefield">'.$langs->trans("Categories").'</td>';
+			print '<tr><td class="">'.$langs->trans("Categories").'</td>';
 			print '<td>';
 			print $form->showCategories($object->id, Categorie::TYPE_CONTACT, 1);
 			print '</td></tr>';
@@ -1458,7 +1461,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Contact by default for
 		if (!empty($object->socid)) {
-			print '<tr><td class="titlefield">'.$langs->trans("ContactByDefaultFor").'</td>';
+			print '<tr><td class="">'.$langs->trans("ContactByDefaultFor").'</td>';
 			print '<td>';
 			print $formcompany->showRoles("roles", $object, 'view', $object->roles, '');
 			print '</td></tr>';
@@ -1471,13 +1474,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$object->load_ref_elements();
 
 		if (isModEnabled("propal")) {
-			print '<tr><td class="titlefield tdoverflow">'.$langs->trans("ContactForProposals").'</td><td>';
+			print '<tr><td class="">'.$langs->trans("ContactForProposals").'</td><td>';
 			print $object->ref_propal ? $object->ref_propal : '<span class="opacitymedium">'.$langs->trans("NoContactForAnyProposal").'<span>';
 			print '</td></tr>';
 		}
 
 		if (isModEnabled('order') || isModEnabled("shipping")) {
-			print '<tr><td class="titlefield tdoverflow">';
+			print '<tr><td class="">';
 			if (isModEnabled("shipping")) {
 				print $langs->trans("ContactForOrdersOrShipments");
 			} else {
@@ -1493,13 +1496,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		if (isModEnabled('contract')) {
-			print '<tr><td class="tdoverflow">'.$langs->trans("ContactForContracts").'</td><td>';
+			print '<tr><td class="">'.$langs->trans("ContactForContracts").'</td><td>';
 			print $object->ref_contrat ? $object->ref_contrat : '<span class="opacitymedium">'.$langs->trans("NoContactForAnyContract").'</span>';
 			print '</td></tr>';
 		}
 
 		if (isModEnabled('invoice')) {
-			print '<tr><td class="tdoverflow">'.$langs->trans("ContactForInvoices").'</td><td>';
+			print '<tr><td class="">'.$langs->trans("ContactForInvoices").'</td><td>';
 			print $object->ref_facturation ? $object->ref_facturation : '<span class="opacitymedium">'.$langs->trans("NoContactForAnyInvoice").'</span>';
 			print '</td></tr>';
 		}
@@ -1524,6 +1527,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		print dol_get_fiche_end();
 
+
 		/*
 		 * Action bar
 		 */
@@ -1535,10 +1539,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if (empty($user->socid)) {
 				if (!empty($object->email)) {
 					$langs->load("mails");
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
+					print dolGetButtonAction('', $langs->trans('SendMail'), 'email', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'presend', 'mode' => 'init'], true).'#formmailbeforetitle', '');
 				} else {
 					$langs->load("mails");
-					print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans('SendMail').'</a></div>';
+					print dolGetButtonAction('', $langs->trans('SendMail'), 'email', '#', '', false);
 				}
 			}
 

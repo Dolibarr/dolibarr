@@ -102,7 +102,7 @@ if (!empty($inputalsopricewithtax)) {
 if (in_array($object->element, array('propal', 'supplier_proposal', 'facture', 'facturerec', 'invoice', 'commande', 'order', 'order_supplier', 'invoice_supplier', 'invoice_supplier_rec'))) {
 	$colspan++; // With this, there is a column move button
 }
-if (isModEnabled("multicurrency") && $object->multicurrency_code != $conf->currency) {
+if (isModEnabled("multicurrency") && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
 	$colspan += 2;
 }
 if (isModEnabled('asset') && $object->element == 'invoice_supplier') {
@@ -189,12 +189,12 @@ $coldisplay++;
 		if (getDolGlobalString('MAIN_INPUT_DESC_HEIGHT')) {
 			$nbrows = getDolGlobalString('MAIN_INPUT_DESC_HEIGHT');
 		}
-		$enable = (isset($conf->global->FCKEDITOR_ENABLE_DETAILS) ? $conf->global->FCKEDITOR_ENABLE_DETAILS : 0);
+		$enable = getDolGlobalInt('FCKEDITOR_ENABLE_DETAILS');
 		$toolbarname = 'dolibarr_details';
 		if (getDolGlobalString('FCKEDITOR_ENABLE_DETAILS_FULL')) {
 			$toolbarname = 'dolibarr_notes';
 		}
-		$doleditor = new DolEditor('product_desc', GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description, '', (!getDolGlobalString('MAIN_DOLEDITOR_HEIGHT') ? 164 : $conf->global->MAIN_DOLEDITOR_HEIGHT), $toolbarname, '', false, true, $enable, $nbrows, '98%');
+		$doleditor = new DolEditor('product_desc', GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description, '', getDolGlobalInt('MAIN_DOLEDITOR_HEIGHT', 164), $toolbarname, '', false, true, $enable, $nbrows, '98%');
 		$doleditor->Create();
 	} else {
 		print '<textarea id="product_desc" class="flat" name="product_desc" readonly style="width: 200px; height:80px;">';
@@ -260,7 +260,7 @@ $coldisplay++;
 	}
 	print '></td>';
 
-	if (isModEnabled("multicurrency") && $object->multicurrency_code != $conf->currency) {
+	if (isModEnabled("multicurrency") && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
 		$coldisplay++;
 		print '<td class="right"><input rel="'.$object->multicurrency_tx.'" type="text" class="flat right width50" id="multicurrency_subprice" name="multicurrency_subprice" value="'.(GETPOSTISSET('multicurrency_subprice') ? GETPOST('multicurrency_subprice', 'alpha') : price($line->multicurrency_subprice)).'" /></td>';
 	}
@@ -278,7 +278,7 @@ $coldisplay++;
 		print '></td>';
 	}
 
-	if (isModEnabled("multicurrency") && $object->multicurrency_code != $conf->currency && !empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
+	if (isModEnabled("multicurrency") && $object->multicurrency_code && $object->multicurrency_code != $conf->currency && !empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
 		$coldisplay++;
 		$multicurrency_upinctax = $line->multicurrency_subprice_ttc ? $line->multicurrency_subprice_ttc : null;
 		if (!$multicurrency_upinctax) {
@@ -348,7 +348,9 @@ $coldisplay++;
 			$old_fieldv = $line->getAllPrevProgress($line->fk_facture);
 			$fieldv = $tmp_fieldv + $old_fieldv;
 
-			print '<td class="nowrap right linecolcycleref"><input class="right" type="text" size="1" value="'.$fieldv.'" name="progress">%</td>';
+			print '<td class="nowrap right linecolcycleref"><input class="right" type="text" size="1" value="'.$fieldv.'" name="progress">%';
+			print ' '.$form->textwithpicto('', $langs->trans("PreviousProgress").' ('.$old_fieldv.'%)');
+			print '</td>';
 		} else {
 			print '<td class="nowrap right linecolcycleref"><input class="right" type="text" size="1" value="' . (GETPOSTISSET('progress') ? GETPOST('progress') : $line->situation_percent) . '" name="progress">%</td>';
 		}
@@ -504,6 +506,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 	if (getDolGlobalString('DISPLAY_MARGIN_RATES')) {
 		?>
 			$("input[name='np_marginRate']:first").blur(function(e) {
+				console.log("np_marginRate blur, call checkFreeLine");
 				return checkFreeLine(e, "np_marginRate");
 			});
 		<?php
@@ -511,6 +514,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 	if (getDolGlobalString('DISPLAY_MARK_RATES')) {
 		?>
 			$("input[name='np_markRate']:first").blur(function(e) {
+				console.log("np_markRate blur, call checkFreeLine");
 				return checkFreeLine(e, "np_markRate");
 			});
 		<?php
@@ -528,15 +532,13 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 			return true;
 
 		var ratejs = price2numjs(rate.val());
-		if (! $.isNumeric(ratejs))
-		{
+		if (! $.isNumeric(rate.val().replace(',','.')))	{		// TODO Use price2numjs ?
 			alert('<?php echo dol_escape_js($langs->transnoentities("rateMustBeNumeric")); ?>');
 			e.stopPropagation();
 			setTimeout(function () { rate.focus() }, 50);
 			return false;
 		}
-		if (npRate == "np_markRate" && rate.val() >= 100)
-		{
+		if (npRate == "np_markRate" && rate.val() >= 100) {		// TODO Use price2numjs ?
 			alert('<?php echo dol_escape_js($langs->transnoentities("markRateShouldBeLesserThan100")); ?>');
 			e.stopPropagation();
 			setTimeout(function () { rate.focus() }, 50);
@@ -546,7 +548,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 		var price = 0;
 		remisejs = price2numjs(remise.val());
 
-		if (remisejs != 100) {	// If a discount not 100 or no discount
+		if (remisejs != 100) {		// If there is a discount that is not 100 or if no discount at all (most common case)
 			if (remisejs == '') {
 				remisejs = 0;
 			}
@@ -559,7 +561,9 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 			else if (npRate == "np_markRate")
 				price = ((bpjs / (1 - ratejs / 100)) / (1 - remisejs / 100));
 		}
-		$("input[name='price_ht']:first").val(price);	// TODO Must use a function like php price to have here a formatted value
+
+		// $("input[name='price_ht']:first").val(price);	// TODO Must use a function like php price to have here a formatted value
+		$("input[name='price_ht']:first").val(pricejs(price));
 
 		return true;
 	}

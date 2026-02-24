@@ -1,7 +1,7 @@
 <?php
 /*
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Schaffhauser sébastien		<sebastien@webmaster67.fr>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ class DocumentListController extends AbstractDocumentController
 	/**
 	 * Action method is called before HTML output.
 	 *
-	 * @return int Returns >0 on success, 0 if no action, <0 on error.
+	 * @return int Returns >0 on success, <0 on error.
 	 */
 	public function action(): int
 	{
@@ -96,17 +96,27 @@ class DocumentListController extends AbstractDocumentController
 			$fileList = dol_dir_list($dir_ged_tiers, 'files', 0, '', '', 'date', SORT_DESC);
 
 			// 2. Define the link builder function
-			/** @param array<string, mixed> $file */
-			$linkBuilder = function (array $file) use ($client_dir_name) {
+			/**
+			 * Get url for file (anonymous function)
+			 *
+			 * @param	array<string, mixed> $file  File (array) to get url for
+			 * @return	string						Url for file
+			 */
+			$linkBuilder = static function (array $file) use ($client_dir_name) {
 				return DOL_URL_ROOT . '/document.php?modulepart=societe&attachment=1&file=' . urlencode($client_dir_name . '/' . $file['name']);
 			};
 
-			// 3. Call the parent method to display the table
+			// 3. Encapsulate the link builder in an array, as required by displayDocumentTable
+			$linkBuilderArray = [
+				'file' => $linkBuilder
+			];
+
+			// 4. Call the correct parent method (displayDocumentTable) with the correct parameter type
 			$this->displayDocumentTable(
 				$langs->trans('MyDocuments'),
 				$fileList,
 				$langs->trans('NoDocumentAvailable'),
-				$linkBuilder
+				$linkBuilderArray
 			);
 		}
 

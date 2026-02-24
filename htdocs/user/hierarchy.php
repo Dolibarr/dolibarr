@@ -4,7 +4,7 @@
  * Copyright (C) 2006-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2007       Patrick Raguin          <patrick.raguin@gmail.com>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -107,10 +107,10 @@ if ($contextpage == 'employeelist' && $search_employee == 1) {
 	$title = $langs->trans("Users");
 }
 $arrayofjs = array(
-	'/includes/jquery/plugins/jquerytreeview/jquery.treeview.js',
-	'/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js',
+	'/public/includes/jquery/plugins/jquerytreeview/jquery.treeview.js',
+	'/public/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js',
 );
-$arrayofcss = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
+$arrayofcss = array('/public/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
 
 llxHeader('', $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', 'bodyforlist mod-user page-hierarchy');
 
@@ -165,7 +165,7 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 		$entitystring = '';
 
 		// TODO Set of entitystring should be done with a hook
-		if (isModEnabled('multicompany') && is_object($mc)) {
+		if (isModEnabled('multicompany') && isset($mc) && is_object($mc)) {
 			if (empty($entity)) {
 				$entitystring = $langs->trans("AllEntities");
 			} else {
@@ -176,9 +176,9 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 
 		$li = $userstatic->getNomUrl(-1, '', 0, 1);
 		if (isModEnabled('multicompany') && $userstatic->admin && !$userstatic->entity) {
-			$li .= img_picto($langs->trans("SuperAdministratorDesc"), 'redstar', 'class="valignmiddle paddingright paddingleft"');
+			$li .= img_picto($langs->trans("SuperAdministratorDesc"), 'superadmin', 'class="valignmiddle paddingright paddingleft"');
 		} elseif ($userstatic->admin) {
-			$li .= img_picto($langs->trans("AdministratorDesc"), 'star', 'class="valignmiddle paddingright paddingleft"');
+			$li .= img_picto($langs->trans("AdministratorDesc"), 'admin', 'class="valignmiddle paddingright paddingleft"');
 		}
 		$li .= ' <span class="opacitymedium">('.$val['login'].($entitystring ? ' - '.$entitystring : '').')</span>';
 
@@ -221,7 +221,7 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 					$entitystring = '';
 
 					// TODO Set of entitystring should be done with a hook
-					if (isModEnabled('multicompany') && is_object($mc)) {
+					if (isModEnabled('multicompany') && isset($mc) && is_object($mc)) {
 						if (empty($entity)) {
 							$entitystring = $langs->trans("AllEntities");
 						} else {
@@ -233,9 +233,9 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 					$li = '<span class="opacitymedium">';
 					$li .= $userstatic->getNomUrl(-1, '', 0, 1);
 					if (isModEnabled('multicompany') && $userstatic->admin && !$userstatic->entity) {
-						$li .= img_picto($langs->trans("SuperAdministrator"), 'redstar');
+						$li .= img_picto($langs->trans("SuperAdministrator"), 'superadmin');
 					} elseif ($userstatic->admin) {
-						$li .= img_picto($langs->trans("Administrator"), 'star');
+						$li .= img_picto($langs->trans("Administrator"), 'admin');
 					}
 					$li .= ' <span class="opacitymedium">('.$val['login'].($entitystring ? ' - '.$entitystring : '').')</span>';
 					$li .= ' - <span class="opacitymedium">'.$langs->trans("ExcludedByFilter").'</span>';

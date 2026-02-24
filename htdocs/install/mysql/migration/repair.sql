@@ -633,6 +633,10 @@ DELETE from llx_c_regions WHERE fk_pays NOT IN (select rowid from llx_c_country)
 UPDATE llx_mrp_production SET disable_stock_change = 0 WHERE disable_stock_change IS NULL;
 
 
+-- Fix status of thirdparty when there is at least one win opportunity
+UPDATE llx_societe as s SET s.client = 1 WHERE s.client = 0 AND EXISTS (SELECT rowid FROM llx_projet as p WHERE p.fk_soc = s.rowid AND p.fk_opp_status IN (SELECT rowid FROM llx_c_lead_status as ls WHERE ls.code = 'WON'));
+UPDATE llx_societe as s SET s.client = 3 WHERE s.client = 2 AND EXISTS (SELECT rowid FROM llx_projet as p WHERE p.fk_soc = s.rowid AND p.fk_opp_status IN (SELECT rowid FROM llx_c_lead_status as ls WHERE ls.code = 'WON'));
+
 -- Drop duplicate indexes not named correctly and create the only one we should have
 alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combination;
 alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_2;
@@ -710,3 +714,9 @@ UPDATE llx_c_tva SET type_vat = 0 WHERE type_vat < 0;
 -- We can't have this on by default because we may have old payment mode using something else than stripe and account matching the pk_xxx rule.
 --update llx_societe_rib set ext_payment_site = 'StripeLive' where stripe_account like '%pk_live%' AND ext_payment_site IS NULL;
 --update llx_societe_rib set ext_payment_site = 'StripeTest' where stripe_account like '%pk_test%' AND ext_payment_site IS NULL;
+
+-- Delete entry in llx_const for 'OAUTH_XXXX-abc def' when there is a space between avc and def.
+DELETE FROM llx_const WHERE name like 'OAUTH_%-% %_ID';
+
+
+--SELECT fr.rowid, fr.titre as fr.title, fr.nb_gen_done, fr.nb_gen_max, (SELECT COUNT(f.rowid) FROM llx_facture as f WHERE f.fk_fac_rec_source = fr.rowid) as nb_invoices FROM llx_facture_rec as fr WHERE fr.nb_gen_max > 0 AND fr.nb_gen_done >= fr.nb_gen_max AND fr.nb_gen_done > 0 AND fr.nb_gen_done <> (SELECT COUNT(f.rowid) FROM llx_facture as f WHERE f.fk_fac_rec_source = fr.rowid);
