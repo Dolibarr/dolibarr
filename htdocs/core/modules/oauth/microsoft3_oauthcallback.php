@@ -21,12 +21,12 @@
 /**
  *      \file       htdocs/core/modules/oauth/microsoft3_oauthcallback.php
  *      \ingroup    oauth
- *      \brief      Page to get oauth callback for Microsoft Graph (SMTP/IMAP)
+ *      \brief      Page to get oauth callback for Microsoft Exchange Online (SMTP/IMAP)
  *
- *      Uses Microsoft Graph API scopes:
- *        - openid, profile, email, offline_access
- *        - https://graph.microsoft.com/SMTP.Send
- *        - https://graph.microsoft.com/IMAP.AccessAsUser.All
+ *      Uses Exchange Online OAuth2 scopes for SMTP/IMAP:
+ *        - offline_access
+ *        - https://outlook.office.com/SMTP.Send
+ *        - https://outlook.office.com/IMAP.AccessAsUser.All
  */
 
 // Load Dolibarr environment

@@ -11,15 +11,9 @@ use OAuth\Common\Storage\TokenStorageInterface;
 use OAuth\Common\Http\Uri\UriInterface;
 
 /**
- * Microsoft Graph OAuth2 service
+ * Microsoft Exchange Online OAuth2 service (SMTP/IMAP)
  *
- * Uses Microsoft Graph API scopes (https://graph.microsoft.com/...)
- * instead of the legacy Exchange Online scopes (https://outlook.office365.com/...).
- *
- * Required Azure App Registration permissions (Delegated):
- *   - openid
- *   - profile
- *   - email
+ * Uses Exchange Online OAuth2 scopes for legacy protocols (SMTP/IMAP):
  *   - offline_access (required for refresh token)
  *   - https://outlook.office.com/SMTP.Send
  *   - https://outlook.office.com/IMAP.AccessAsUser.All
@@ -51,6 +45,7 @@ class Microsoft3 extends AbstractService
         $this->storage = $storage;
 
         if (null === $baseApiUri) {
+            // baseApiUri is not used for SMTP/IMAP auth, but keep a sensible default for potential API calls.
             $this->baseApiUri = new Uri('https://graph.microsoft.com/v1.0/');
         }
     }
