@@ -87,18 +87,18 @@ class BookkeepingTemplateLine extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>,searchmulti?:int<0,1>}>    Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>,searchmulti?:int<0,1>}>    Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		"rowid" => array("type"=>"integer", "label"=>"TechnicalID", "enabled"=>"1", 'position'=>1, 'notnull'=>1, "visible"=>0, "noteditable"=>1, "index"=>1, "css"=>"left", "comment"=>"Id"),
-		"fk_transaction_template" => array("type"=>"integer", "label"=>"Template", "enabled"=>"1", 'position'=>5, 'notnull'=>1, "visible"=>0, "noteditable"=>1, "foreignkey"=>"accounting_transaction_template.rowid"),
-		"general_account" => array("type"=>"varchar(32)", "label"=>"AccountNumber", "enabled"=>"1", 'position'=>10, 'notnull'=>1, "visible"=>1, "css"=>"minwidth100"),
-		"general_label" => array("type"=>"varchar(255)", "label"=>"AccountLabel", "enabled"=>"1", 'position'=>20, 'notnull'=>1, "visible"=>1, "css"=>"minwidth200"),
-		"subledger_account" => array("type"=>"varchar(32)", "label"=>"SubledgerAccount", "enabled"=>"1", 'position'=>30, 'notnull'=>0, "visible"=>1, "css"=>"minwidth100"),
-		"subledger_label" => array("type"=>"varchar(255)", "label"=>"SubledgerLabel", "enabled"=>"1", 'position'=>40, 'notnull'=>0, "visible"=>1, "css"=>"minwidth200"),
-		"operation_label" => array("type"=>"varchar(255)", "label"=>"OperationLabel", "enabled"=>"1", 'position'=>50, 'notnull'=>0, "visible"=>1, "css"=>"minwidth200"),
-		"debit" => array("type"=>"double(24,8)", "label"=>"Debit", "enabled"=>"1", 'position'=>60, 'notnull'=>0, "visible"=>1, "css"=>"maxwidth75 right"),
-		"credit" => array("type"=>"double(24,8)", "label"=>"Credit", "enabled"=>"1", 'position'=>70, 'notnull'=>0, "visible"=>1, "css"=>"maxwidth75 right"),
+		"rowid" => array("type"=>"integer", "label"=>"TechnicalID", "enabled"=>1, 'position'=>1, 'notnull'=>1, "visible"=>0, "noteditable"=>1, "index"=>1, "css"=>"left", "comment"=>"Id"),
+		"fk_transaction_template" => array("type"=>"integer", "label"=>"Template", "enabled"=>1, 'position'=>5, 'notnull'=>1, "visible"=>0, "noteditable"=>1, "foreignkey"=>"accounting_transaction_template.rowid"),
+		"general_account" => array("type"=>"varchar(32)", "label"=>"AccountNumber", "enabled"=>1, 'position'=>10, 'notnull'=>1, "visible"=>1, "css"=>"minwidth100"),
+		"general_label" => array("type"=>"varchar(255)", "label"=>"AccountLabel", "enabled"=>1, 'position'=>20, 'notnull'=>1, "visible"=>1, "css"=>"minwidth200"),
+		"subledger_account" => array("type"=>"varchar(32)", "label"=>"SubledgerAccount", "enabled"=>1, 'position'=>30, 'notnull'=>0, "visible"=>1, "css"=>"minwidth100"),
+		"subledger_label" => array("type"=>"varchar(255)", "label"=>"SubledgerLabel", "enabled"=>1, 'position'=>40, 'notnull'=>0, "visible"=>1, "css"=>"minwidth200"),
+		"operation_label" => array("type"=>"varchar(255)", "label"=>"OperationLabel", "enabled"=>1, 'position'=>50, 'notnull'=>0, "visible"=>1, "css"=>"minwidth200"),
+		"debit" => array("type"=>"double(24,8)", "label"=>"Debit", "enabled"=>1, 'position'=>60, 'notnull'=>0, "visible"=>1, "css"=>"maxwidth75 right"),
+		"credit" => array("type"=>"double(24,8)", "label"=>"Credit", "enabled"=>1, 'position'=>70, 'notnull'=>0, "visible"=>1, "css"=>"maxwidth75 right"),
 	);
 	// END MODULEBUILDER PROPERTIES
 
