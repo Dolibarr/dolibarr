@@ -161,7 +161,6 @@ if (GETPOST('code') || GETPOST('error')) {     // We are coming from oauth provi
 
 	// This was a callback request from service, get the token
 	try {
-
 		if (GETPOST('error')) {
 			setEventMessages(GETPOST('error').' '.GETPOST('error_description'), null, 'errors');
 		} else {
