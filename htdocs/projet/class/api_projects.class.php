@@ -565,7 +565,7 @@ class Projects extends DolibarrApi
 		return $result;
 	}
 
-    /**
+	/**
 	 * Get timespents of a user
 	 *
 	 * This returns all timespent lines for given user id.
@@ -577,8 +577,6 @@ class Projects extends DolibarrApi
 	 */
 	public function getUserTimespent($id = 0)
 	{
-		global $db;
-
 		if (!DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
 			throw new RestException(403);
 		}
@@ -588,12 +586,12 @@ class Projects extends DolibarrApi
 			$userid = DolibarrApiAccess::$user->id;
 		}
 
-		$sql = "SELECT s.rowid as socid, s.nom as thirdparty_name, s.email as thirdparty_email, ptt.rowid, ptt.ref_ext, ptt.fk_element as fk_task, ptt.element_date as task_date, ptt.element_datehour as task_datehour, ptt.element_date_withhour as task_date_withhour, ptt.element_duration as task_duration, ptt.fk_user, ptt.note, ptt.thm, pt.rowid as task_id, pt.ref as task_ref, pt.label as task_label, p.rowid as project_id, p.ref as project_ref, p.title as project_label, p.public as project_public"
-			. " FROM " . MAIN_DB_PREFIX . "element_time as ptt, " . MAIN_DB_PREFIX . "projet_task as pt, " . MAIN_DB_PREFIX . "projet as p"
-			. " LEFT JOIN " . MAIN_DB_PREFIX . "societe as s ON p.fk_soc = s.rowid"
-			. " WHERE ptt.fk_element = pt.rowid AND pt.fk_projet = p.rowid AND ptt.elementtype = 'task' AND ptt.fk_user = " . ((int) $userid) . " AND p.entity IN (" . getEntity('project') . ")";
+		$sql = "SELECT s.rowid as socid, s.nom as thirdparty_name, s.email as thirdparty_email, ptt.rowid, ptt.ref_ext, ptt.fk_element as fk_task, ptt.element_date as task_date, ptt.element_datehour as task_datehour, ptt.element_date_withhour as task_date_withhour, ptt.element_duration as task_duration, ptt.fk_user, ptt.note, ptt.thm, pt.rowid as task_id, pt.ref as task_ref, pt.label as task_label, p.rowid as project_id, p.ref as project_ref, p.title as project_label, p.public as project_public";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "element_time as ptt, " . MAIN_DB_PREFIX . "projet_task as pt, " . MAIN_DB_PREFIX . "projet as p";
+		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe as s ON p.fk_soc = s.rowid";
+		$sql .= " WHERE ptt.fk_element = pt.rowid AND pt.fk_projet = p.rowid AND ptt.elementtype = 'task' AND ptt.fk_user = " . ((int) $userid) . " AND p.entity IN (" . getEntity('project') . ")";
 
-		dol_syslog(get_class($this)."::getUserTimespent", LOG_DEBUG);
+		dol_syslog(get_class($this) . "::getUserTimespent", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
