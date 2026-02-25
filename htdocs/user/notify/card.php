@@ -1,11 +1,12 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010-2014 Juanjo Menent	    <jmenent@2byte.es>
- * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2016      Abbes Bahfir         <contact@dolibarrpar.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2003       Rodolphe Quiedeville<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2014  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2010-2014  Juanjo Menent	    <jmenent@2byte.es>
+ * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
+ * Copyright (C) 2016       Abbes Bahfir        <contact@dolibarrpar.com>
+ * Copyright (C) 2024-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Charlene Benke		<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -159,7 +160,7 @@ if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', 
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-notify_card');
-
+$type = array('email' => $langs->trans("EMail"), 'sms' => $langs->trans("SMS"));
 
 if ($result > 0) {
 	$langs->load("other");
@@ -252,6 +253,7 @@ if ($result > 0) {
 	$sql .= " AND n.entity IN (".getEntity('notify_def').')';
 
 	$resql = $db->query($sql);
+	$num = 0;
 	if ($resql) {
 		$num = $db->num_rows($resql);
 	} else {
@@ -305,7 +307,6 @@ if ($result > 0) {
 			print img_picto('', 'object_action', '', 0, 0, 0, '', 'paddingright').$form->selectarray("actionid", $actions, '', 1);
 			print '</td>';
 			print '<td>';
-			$type = array('email' => $langs->trans("EMail"));
 			print $form->selectarray("typeid", $type);
 			print '</td>';
 			print '<td class="nowraponall">';
@@ -354,12 +355,7 @@ if ($result > 0) {
 				print '</td>';
 
 				print '<td>';
-				if ($obj->type == 'email') {
-					print $langs->trans("Email");
-				}
-				if ($obj->type == 'sms') {
-					print $langs->trans("SMS");
-				}
+				print $type[$obj->type];
 				print '</td>';
 				print '<td class="right"><a href="card.php?id='.$id.'&action=delete&token='.newToken().'&actid='.$obj->rowid.'">'.img_delete().'</a></td>';
 				print '</tr>';
@@ -460,9 +456,9 @@ if ($result > 0) {
 	}
 
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
-	if (isset($optioncss) && $optioncss != '') {
-		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	}
+	//if (isset($optioncss) && $optioncss != '') {
+	//	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	//}
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -516,12 +512,7 @@ if ($result > 0) {
 			print img_picto('', 'object_action', '', 0, 0, 0, '', 'pictofixedwidth').$label;
 			print '</td>';
 			print '<td>';
-			if ($obj->type == 'email') {
-				print $langs->trans("Email");
-			}
-			if ($obj->type == 'sms') {
-				print $langs->trans("Sms");
-			}
+			print $type[$obj->type];
 			print '</td>';
 			// TODO Add link to object here for other types
 			/*print '<td>';

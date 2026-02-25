@@ -13,7 +13,7 @@
  * Copyright (C) 2015-2022	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2017		Josep Lluís Amador		<joseplluis@lliuretic.cat>
  * Copyright (C) 2018		Charlene Benke			<charlie@patas-monkey.com>
- * Copyright (C) 2019-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2019-2026	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2021-2024	Anthony Berton			<anthony.berton@bb2a.fr>
  * Copyright (C) 2023		Nick Fragoulis
  * Copyright (C) 2023		Joachim Kueter			<git-jk@bloxera.com>
@@ -120,7 +120,18 @@ $search_multicurrency_montant_ht = GETPOST('search_multicurrency_montant_ht', 'a
 $search_multicurrency_montant_vat = GETPOST('search_multicurrency_montant_vat', 'alpha');
 $search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 'alpha');
 $search_dispute_status = GETPOST('search_dispute_status', 'intcomma');
-$search_status = GETPOST('search_status', 'intcomma');
+$search_status = GETPOST('search_status', 'array:intcomma');
+if (empty($search_status) && GETPOSTISSET('search_status')) {
+	// The parameter exists in the URL but was not recognized as an array.
+	$search_status = GETPOST('search_status', 'intcomma');
+	if ($search_status !== '' && $search_status !== '-1') {
+		$search_status = array($search_status);
+	} else {
+		$search_status = '';
+	}
+} elseif (is_array($search_status) && count($search_status) == 0) {
+	$search_status = '';
+}
 $search_paymentmode = GETPOST('search_paymentmode', 'intcomma');
 $search_paymentterms = GETPOST('search_paymentterms', 'intcomma');
 $search_bankaccount = GETPOST('search_bankaccount', 'intcomma');
@@ -212,7 +223,7 @@ if (!$sortorder) {
 	$sortorder = 'DESC';
 }
 if (!$sortfield) {
-	$sortfield = 'f.datef';
+	$sortfield = 'f.datef,f.rowid';
 }
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -258,8 +269,8 @@ $arrayfields = array(
 	'f.date_valid' => array('label' => "DateValidation", 'checked' => '0', 'position' => 22),
 	'f.date_lim_reglement' => array('label' => "DateDue", 'checked' => '1', 'position' => 25),
 	'f.date_closing' => array('label' => "DateClosing", 'checked' => '0', 'position' => 30),
-	'p.ref' => array('label' => "ProjectRef", 'langfile' => 'projects', 'checked' => '1', 'enabled' => (!isModEnabled('project') ? '0' : '1'), 'position' => 40),
-	'p.title' => array('label' => "ProjectLabel", 'langfile' => 'projects', 'checked' => '0', 'enabled' => (!isModEnabled('project') ? '0' : '1'), 'position' => 41),
+	'p.ref' => array('label' => "ProjectRef", 'langfile' => 'projects', 'checked' => '1', 'enabled' => (isModEnabled('project') ? '1' : '0'), 'position' => 40),
+	'p.title' => array('label' => "ProjectLabel", 'langfile' => 'projects', 'checked' => '0', 'enabled' => (isModEnabled('project') ? '1' : '0'), 'position' => 41),
 	's.nom' => array('label' => "ThirdParty", 'checked' => '1', 'position' => 50),
 	's.name_alias' => array('label' => "AliasNameShort", 'checked' => '-1', 'position' => 51),
 	's.code_client' => array('label' => "CustomerCodeShort", 'checked' => '-1', 'position' => 52),
@@ -270,7 +281,7 @@ $arrayfields = array(
 	'country.code_iso' => array('label' => "Country", 'checked' => '0', 'position' => 70),
 	'typent.code' => array('label' => "ThirdPartyType", 'checked' => $checkedtypetiers, 'position' => 75),
 	'f.fk_mode_reglement' => array('label' => "PaymentMode", 'checked' => '1', 'position' => 80),
-	'f.fk_cond_reglement' => array('label' => "PaymentConditionsShort", 'checked' => '1', 'position' => 85),
+	'f.fk_cond_reglement' => array('label' => "PaymentConditionsShort", 'checked' => '0', 'position' => 85),
 	'ba.label' => array('label' => "DefaultBankAccount", 'langfile' => 'banks', 'checked' => '0', 'enabled' => (isModEnabled('bank')?'1':'0'), 'position' => 192),
 	'f.fk_input_reason' => array('label' => "Source", 'checked' => 0, 'enabled' => 1, 'position' => 88),
 	'f.module_source' => array('label' => "POSModule", 'langfile' => 'cashdesk', 'checked' => ($contextpage == 'poslist' ? '1' : '0'), 'enabled' => "(isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('INVOICE_SHOW_POS'))", 'position' => 90),
@@ -295,7 +306,7 @@ $arrayfields = array(
 	'total_mark_rate' => array('label' => 'MarkRate', 'langfile' => 'margins', 'checked' => '0', 'position' => 303, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') || !getDolGlobalString('DISPLAY_MARK_RATES') ? '0' : '1')),
 	'f.datec' => array('label' => "DateCreation", 'checked' => '0', 'position' => 500),
 	'f.tms' => array('type' => 'timestamp', 'label' => 'DateModificationShort', 'enabled' => '1', 'visible' => -1, 'notnull' => 1, 'position' => 502),
-	'u.login' => array('label' => "UserAuthor", 'checked' => '1', 'visible' => -1, 'position' => 504),
+	'u.login' => array('label' => "UserAuthor", 'checked' => '0', 'visible' => -1, 'position' => 504),
 	'sale_representative' => array('label' => "SaleRepresentativesOfThirdParty", 'checked' => '0', 'position' => 506),
 	//'f.fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-1, 'position'=>506),
 	//'f.fk_user_modif' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-1, 'notnull'=>-1, 'position'=>508),
@@ -954,23 +965,9 @@ if ($search_dispute_status != '-1' && $search_dispute_status != '') {
 		$sql .= " AND f.dispute_status IN (".$db->sanitize($search_dispute_status).")";
 	}
 }
-if ($search_status != '-1' && $search_status != '') {
-	if (is_numeric($search_status) && $search_status >= 0) {
-		if ($search_status == '0') {
-			$sql .= " AND f.fk_statut = 0"; // draft
-		}
-		if ($search_status == '1') {
-			$sql .= " AND f.fk_statut = 1"; // unpayed
-		}
-		if ($search_status == '2') {
-			$sql .= " AND f.fk_statut = 2"; // paid     Not that some corrupted data may contains f.fk_statut = 1 AND f.paye = 1 (it means paid too but should not happen. If yes, reopen and reclassify billed)
-		}
-		if ($search_status == '3') {
-			$sql .= " AND f.fk_statut = 3"; // abandoned
-		}
-	} else {
-		$sql .= " AND f.fk_statut IN (".$db->sanitize($search_status).")"; // When search_status is '1,2' for example
-	}
+if (is_array($search_status) && count($search_status) > 0) {
+	$search_statusArray = $search_status;
+	$sql .= " AND f.fk_statut IN (" . $db->sanitize(implode(',', array_map('intval', $search_statusArray))) . ")";
 }
 
 if ($search_paymentmode > 0) {
@@ -1416,7 +1413,13 @@ if ($search_dispute_status != '') {
 	$param .= '&search_dispute_status='.urlencode($search_dispute_status);
 }
 if ($search_status != '') {
-	$param .= '&search_status='.urlencode($search_status);
+	if (is_array($search_status)) {
+		foreach ($search_status as $key => $val) {
+			$param .= '&search_status[]='.urlencode($val);
+		}
+	} else {
+		$param .= '&search_status='.urlencode($search_status);
+	}
 }
 if ($search_paymentmode > 0) {
 	$param .= '&search_paymentmode='.urlencode((string) ($search_paymentmode));
@@ -1958,7 +1961,7 @@ if (!empty($arrayfields['f.import_key']['checked'])) {
 // Dispute status
 if (!empty($arrayfields['f.dispute_status']['checked'])) {
 	print '<td class="liste_titre center parentonrightofpage">';
-	$liststatus = array('0' => "None", '1' => "DisputeOpen", '8' => "DisputeLost", '9' => "DisputeWon");
+	$liststatus = Facture::ARRAY_OF_DISPUTE_STATUS;
 	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 	print $form->selectarray('search_dispute_status', $liststatus, $search_dispute_status, 1, 0, 0, '', 1, 0, 0, '', 'search_status width100 onrightofpage', 1);
 	print '</td>';
@@ -1966,9 +1969,13 @@ if (!empty($arrayfields['f.dispute_status']['checked'])) {
 // Status
 if (!empty($arrayfields['f.fk_statut']['checked'])) {
 	print '<td class="liste_titre center parentonrightofpage">';
-	$liststatus = array('0' => $langs->trans("BillShortStatusDraft"), '0,1' => $langs->trans("BillShortStatusDraft").'+'.$langs->trans("BillShortStatusNotPaid"), '1' => $langs->trans("BillShortStatusNotPaid"), '1,2' => $langs->trans("BillShortStatusNotPaid").'+'.$langs->trans("BillShortStatusPaid"), '2' => $langs->trans("BillShortStatusPaid"), '3' => $langs->trans("BillShortStatusCanceled"));
+	$liststatus = array(
+		'0' => $langs->trans("BillShortStatusDraft"),
+		'1' => $langs->trans("BillShortStatusNotPaid"),
+		'2' => $langs->trans("BillShortStatusPaid"),
+		'3' => $langs->trans("BillShortStatusCanceled"));
 	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-	print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage', 1);
+	print $form->multiselectarray('search_status', $liststatus, (is_array($search_status) ? $search_status : array()), 0, 0, 'minwidth125', 1, 0);
 	print '</td>';
 }
 // Action column
@@ -3087,8 +3094,8 @@ if ($num > 0) {
 			if (!empty($arrayfields['f.dispute_status']['checked'])) {
 				print '<td class="nowrap center">';
 				if ($facturestatic->dispute_status) {
-					$liststatus = array('0' => "None", '1' => "DisputeOpen", '8' => "DisputeWon", '9' => "DisputeLost");
-					print $langs->trans($liststatus[$facturestatic->dispute_status]);
+					$liststatus = Facture::ARRAY_OF_DISPUTE_STATUS;
+					print $langs->trans($liststatus[$facturestatic->dispute_status]['label']);
 				}
 				print "</td>";
 				if (!$i) {

@@ -7,7 +7,7 @@
  * Copyright (C) 2004-2015  Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2019-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Joachim Kueter              <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -334,7 +334,7 @@ class CMailFile
 				// TODO Exclude viewimage used for the read tracker ?
 				$dolibarr_main_data_root_images = $dolibarr_main_data_root;
 				if ((int) $conf->entity !== 1) {
-					$dolibarr_main_data_root_images.='/'.$conf->entity.'/';
+					$dolibarr_main_data_root_images .= '/'.$conf->entity.'/';
 				}
 				$findimg = $this->findHtmlImages($dolibarr_main_data_root_images.'/medias');
 				if ($findimg < 0) {
@@ -526,7 +526,7 @@ class CMailFile
 			$text_body = "";
 			$files_encoded = "";
 
-			// Define smtp_headers (this also set SMTP headers from ->msgid, ->in_reply_to and ->references)
+			// Define smtp_headers (this also set SMTP headers from ->in_reply_to and ->references and set the property ->msgid)
 			$smtp_headers = $this->write_smtpheaders();
 			if (!empty($moreinheader)) {
 				$smtp_headers .= $moreinheader; // $moreinheader contains the \r\n
@@ -1175,16 +1175,30 @@ class CMailFile
 							);
 							$serviceFactory = new \OAuth\ServiceFactory();
 							$oauthname = explode('-', $OAUTH_SERVICENAME);
-							// ex service is Google-Emails we need only the first part Google
-							$apiService = $serviceFactory->createService($oauthname[0], $credentials, $storage, array());
+							// Recreate the service with its configured scopes.
+							// This matters for some providers (Microsoft v2 token endpoint) where scope may be required on refresh.
+							$oauthScopes = array();
+							$oauthScopesStr = getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_SCOPE');
+							if (!empty($oauthScopesStr)) {
+								$oauthScopes = preg_split('/\s*,\s*/', $oauthScopesStr);
+								if (!is_array($oauthScopes)) {
+									$oauthScopes = array();
+								}
+							}
 
-							// We have to save the refresh token because Google give it only once
+							// ex service is Google-Emails we need only the first part Google
+							$apiService = $serviceFactory->createService($oauthname[0], $credentials, $storage, $oauthScopes);
+
+							// Some providers (like Google) return a refresh token only once.
+							// If the refreshed token does not contain one, keep the previous refresh token.
 							$refreshtoken = $tokenobj->getRefreshToken();
 
 							if ($apiService instanceof OAuth\OAuth2\Service\AbstractService || $apiService instanceof OAuth\OAuth1\Service\AbstractService) {
 								// ServiceInterface does not provide refreshAccessToken, AbstractService does
 								$tokenobj = $apiService->refreshAccessToken($tokenobj);
-								$tokenobj->setRefreshToken($refreshtoken);	// Restore the refresh token
+								if (empty($tokenobj->getRefreshToken())) {
+									$tokenobj->setRefreshToken($refreshtoken);
+								}
 								$storage->storeAccessToken($OAUTH_SERVICENAME, $tokenobj);
 							}
 
@@ -1345,15 +1359,27 @@ class CMailFile
 							);
 							$serviceFactory = new \OAuth\ServiceFactory();
 							$oauthname = explode('-', $OAUTH_SERVICENAME);
+							// Recreate the service with its configured scopes.
+							// This matters for some providers (Microsoft v2 token endpoint) where scope may be required on refresh.
+							$oauthScopes = array();
+							$oauthScopesStr = getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_SCOPE');
+							if (!empty($oauthScopesStr)) {
+								$oauthScopes = preg_split('/\s*,\s*/', $oauthScopesStr);
+								if (!is_array($oauthScopes)) {
+									$oauthScopes = array();
+								}
+							}
+
 							// ex service is Google-Emails we need only the first part Google
-							$apiService = $serviceFactory->createService($oauthname[0], $credentials, $storage, array());
+							$apiService = $serviceFactory->createService($oauthname[0], $credentials, $storage, $oauthScopes);
 							$refreshtoken = $tokenobj->getRefreshToken();
 
 							if ($apiService instanceof OAuth\OAuth2\Service\AbstractService || $apiService instanceof OAuth\OAuth1\Service\AbstractService) {
 								// ServiceInterface does not provide refreshAccessToken, AbstractService does
-								// We must save the token because Google provides it only once
 								$tokenobj = $apiService->refreshAccessToken($tokenobj);
-								$tokenobj->setRefreshToken($refreshtoken);
+								if (empty($tokenobj->getRefreshToken())) {
+									$tokenobj->setRefreshToken($refreshtoken);
+								}
 								$storage->storeAccessToken($OAUTH_SERVICENAME, $tokenobj);
 
 								$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
@@ -1460,7 +1486,7 @@ class CMailFile
 			dol_syslog("CMailFile::sendfile: ".$this->error, LOG_WARNING);
 		}
 
-		error_reporting($errorlevel); // Reactive niveau erreur origine
+		error_reporting($errorlevel); // Reactive original error level
 		return $res;
 	}
 
@@ -1903,7 +1929,7 @@ class CMailFile
 	 * Attach an image to email (mode = 'mail')
 	 *
 	 * @param	array<array{name:string,fullpath:string,content_type:string,cid:string,image_encoded:string}>	$images_list	Array of array image
-	 * @return	string					Chaine images encodees
+	 * @return	string					String with encoded images
 	 */
 	public function write_images($images_list)
 	{
@@ -2258,7 +2284,7 @@ class CMailFile
 
 		$arrayaddress = (!empty($address) ? explode(',', $address) : array());
 
-		// Boucle sur chaque composant de l'address
+		// Loop over every component of the address
 		$i = 0;
 		foreach ($arrayaddress as $val) {
 			$regs = array();
@@ -2326,7 +2352,7 @@ class CMailFile
 
 		$arrayaddress = explode(',', $address);
 
-		// Boucle sur chaque composant de l'address
+		// Loop over every component of the address
 		foreach ($arrayaddress as $val) {
 			$regs = array();
 			if (preg_match('/^(.*)<(.*)>$/i', trim($val), $regs)) {

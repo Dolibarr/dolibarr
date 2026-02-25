@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013      Laurent Destailleur        <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García              <marcosgdf@gmail.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -73,7 +73,7 @@ $now = dol_now();
 $nbcolonnes = substr_count($object->sujet, ',') + 1;
 $toutsujet = explode(",", $object->sujet);
 $somme = array();
-// affichage des sujets du sondage
+// display subjects of survey
 $input = $langs->trans("Name").";";
 for ($i = 0; $toutsujet[$i]; $i++) {
 	if ($object->format == "D") {

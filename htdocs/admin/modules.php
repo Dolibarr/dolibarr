@@ -414,7 +414,9 @@ if ($action == 'set' && $user->admin) {
 	// We made some check against evil eternal modules that try to low security options.
 	$checkOldValue = getDolGlobalInt('CHECKLASTVERSION_EXTERNALMODULE');
 	$csrfCheckOldValue = getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN');
-	$resarray = activateModule($value);
+
+	$resarray = activateModule($value, 1, 0, 'acceptredirect');
+
 	if ($checkOldValue != getDolGlobalInt('CHECKLASTVERSION_EXTERNALMODULE')) {
 		setEventMessage($langs->trans('WarningModuleHasChangedLastVersionCheckParameter', $value), 'warnings');
 	}
@@ -458,8 +460,11 @@ if ($action == 'set' && $user->admin) {
 	if ($result) {
 		setEventMessages($result, null, 'errors');
 		header("Location: ".$_SERVER["PHP_SELF"]."?mode=".$mode.$param.($page_y ? '&page_y='.$page_y : ''));
+		exit;
 	}
-	$resarray = activateModule($value, 0, 1);
+
+	$resarray = activateModule($value, 0, 1, 'acceptredirect');
+
 	dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1), 'chaine', 0, '', $conf->entity);
 	if (!empty($resarray['errors'])) {
 		setEventMessages('', $resarray['errors'], 'errors');
@@ -674,7 +679,7 @@ if ($action == 'reset_confirm' && $user->admin) {
 		}
 
 		$form = new Form($db);
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?value='.$value.'&mode='.$mode.$param, $langs->trans('ConfirmUnactivation'), $langs->trans(GETPOST('confirm_message_code')), 'reset', '', 'no', 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?value='.$value.'&mode='.$mode.$param, $langs->trans('ConfirmUnactivation'), $langs->trans(GETPOST('confirm_message_code')), 'reset', '', 'no', 1, 300, 550);
 	}
 }
 
@@ -1300,8 +1305,8 @@ if ($mode == 'marketplace') {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table summary="list_of_modules" class="noborder centpercent">'."\n";
 	print '<tr class="liste_titre">'."\n";
-	print '<td colspan="2" class="hideonsmartphone">'.$form->textwithpicto($langs->trans("ModuleProviderSites"), $langs->trans("WebSiteDesc")).'</td>';
-	print '<td>';
+	print '<td colspan="2">'.$form->textwithpicto($langs->trans("ModuleProviderSites"), $langs->trans("WebSiteDesc")).'</td>';
+	print '<td class="hideonsmartphone">';
 	print '</td>';
 	print '<td></td>';
 	print '</tr>';
@@ -1416,8 +1421,9 @@ if ($mode == 'marketplace') {
 			print $remotestore->getPagination();
 		print '</form>';
 
-		print '</div></div>';
+		print '</div>';
 		print '<div class="clearboth"></div>';
+		print '</div>';
 		?>
 			<?php if (!empty($categories_tree)) { ?>
 				<div id="category-tree-left" class="paddingtop">

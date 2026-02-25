@@ -3,7 +3,7 @@
  * Copyright (C) 2013-2020	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2016	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2018		Charlene Benke				<charlie@patas-monkey.com>
- * Copyright (C) 2019-2024  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
@@ -258,7 +258,7 @@ $min_year = 10;
 $user_id = $user->id;
 
 if ($id > 0) {
-	// Charge utilisateur edite
+	// Load editing user
 	$fuser->fetch($id, '', '', 1);
 	$fuser->loadRights();
 	$user_id = $fuser->id;

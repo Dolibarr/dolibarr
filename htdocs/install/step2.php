@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Cedric GROSS            <c.gross@kreiz-it.fr>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,8 +35,11 @@ include 'inc.php';
  * @var Translate $langs
  *
  * @var string	$dolibarr_main_document_root
+ * @var string	$dolibarr_main_db_type
+ * @var string	$dolibarr_main_instance_unique_id
  */
 
+require_once $dolibarr_main_document_root.'/blockedlog/lib/blockedlog.lib.php';
 require_once $dolibarr_main_document_root.'/core/class/conf.class.php';
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 require_once $dolibarr_main_document_root.'/core/lib/security.lib.php';
@@ -130,7 +133,7 @@ if ($action == "set") {		// Test on permission not required. Already managed by 
 	print '<table cellspacing="0" style="padding: 4px 4px 4px 0" border="0" width="100%">';
 	$error = 0;
 
-	$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, (int) $conf->db->port);
+	$db = getDoliDBInstance($conf->db->type, $conf->db->host, (string) $conf->db->user, (string) $conf->db->pass, (string) $conf->db->name, (int) $conf->db->port);
 
 	if ($db->connected) {
 		print "<tr><td>";
@@ -314,7 +317,7 @@ if ($action == "set") {		// Test on permission not required. Already managed by 
 				while (!feof($fp)) {
 					$buf = fgets($fp, 4096);
 
-					// Special case of lines allowed for some version only
+					// Special case of lines allowed for some versions only
 					// MySQL
 					if ($choix == 1 && preg_match('/^--\sV([0-9\.]+)/i', $buf, $reg)) {
 						$versioncommande = explode('.', $reg[1]);
@@ -565,7 +568,7 @@ if ($action == "set") {		// Test on permission not required. Already managed by 
 						//$db->free($resql);     // Not required as request we launch here does not return memory needs.
 					} else {
 						if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-							//print "<tr><td>Insertion ligne : $buffer</td><td>";
+							//print "<tr><td>Insert line : $buffer</td><td>";
 						} else {
 							$ok = 0;
 							$okallfile = 0;
@@ -610,10 +613,11 @@ dolibarr_install_syslog("- step2: end");
 
 $conf->file->instance_unique_id = (empty($dolibarr_main_instance_unique_id) ? (empty($dolibarr_main_cookie_cryptkey) ? '' : $dolibarr_main_cookie_cryptkey) : $dolibarr_main_instance_unique_id); // Unique id of instance
 
-$hash_unique_id = dol_hash('dolibarr'.$conf->file->instance_unique_id, 'sha256');	// Note: if the global salt changes, this hash changes too so ping may be counted twice. We don't mind. It is for statistics purpose only.
+$hash_unique_id = getHashUniqueIdOfRegistration('sha256');
 
-$out  = '<input type="checkbox" name="dolibarrpingno" id="dolibarrpingno"'.((getDolGlobalString('MAIN_FIRST_PING_OK_ID') == 'disabled') ? '' : ' value="checked" checked="true"').'> ';
-$out .= '<label for="dolibarrpingno">'.$langs->trans("MakeAnonymousPing").'</label>';
+$out  = '<br>';
+$out .= '<input type="checkbox" name="dolibarrpingno" id="dolibarrpingno"'.((getDolGlobalString('MAIN_FIRST_PING_OK_ID') == 'disabled') ? '' : ' value="checked" checked="true"').'> ';
+$out .= '<label for="dolibarrpingno" class="opacitymedium">'.$langs->trans("MakeAnonymousPing").'</label>';
 
 $out .= '<!-- Add js script to manage the uncheck of option to not send the ping -->';
 $out .= '<script type="text/javascript">';

@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -65,6 +65,9 @@ require_once $conffile;
  * @var string	$dolibarr_main_db_cryptkey
  * @var string  $dolibarr_main_document_root
  */
+'
+@phan-var-force string $dolibarr_main_db_type
+';
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 
 global $langs;
@@ -143,12 +146,12 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 	}
 
 	// $conf is already instantiated inside inc.php
-	$conf->db->type = $dolibarr_main_db_type;
-	$conf->db->host = $dolibarr_main_db_host;
-	$conf->db->port = $dolibarr_main_db_port;
-	$conf->db->name = $dolibarr_main_db_name;
-	$conf->db->user = $dolibarr_main_db_user;
-	$conf->db->pass = $dolibarr_main_db_pass;
+	$conf->db->type = (string) $dolibarr_main_db_type;
+	$conf->db->host = (string) $dolibarr_main_db_host;
+	$conf->db->port = (string) $dolibarr_main_db_port;
+	$conf->db->name = (string) $dolibarr_main_db_name;
+	$conf->db->user = (string) $dolibarr_main_db_user;
+	$conf->db->pass = (string) $dolibarr_main_db_pass;
 
 	// Load type and crypt key
 	if (empty($dolibarr_main_db_encryption)) {
@@ -268,8 +271,8 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 		&& versioncompare($versioncommande, $versionarray) <= 0) {	// Si mysql >= 4.0
 			dolibarr_install_syslog("Clean database from bad named constraints");
 
-			// Suppression vieilles contraintes sans noms et en doubles
-			// Les contraintes indesirables ont un nom qui commence par 0_ ou se determine par ibfk_999
+			// Delete old name constraints and duplicates
+			// The undesired constraint have a name starting with '0_' or defined by ibfk_999
 			$listtables = array(
 								MAIN_DB_PREFIX.'adherent_options',
 								MAIN_DB_PREFIX.'category_bankline',
