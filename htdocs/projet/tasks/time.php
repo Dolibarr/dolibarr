@@ -336,10 +336,12 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 			$object->timespent_duration = GETPOSTINT("new_durationhour") * 60 * 60; // We store duration in seconds
 			$object->timespent_duration += (GETPOSTINT("new_durationmin") ? GETPOSTINT('new_durationmin') : 0) * 60; // We store duration in seconds
 			if (GETPOST("timelinehour") != '' && GETPOST("timelinehour") >= 0) {    // If hour was entered
-				$object->timespent_date = dol_mktime(GETPOSTINT("timelinehour"), GETPOSTINT("timelinemin"), 0, GETPOSTINT("timelinemonth"), GETPOSTINT("timelineday"), GETPOSTINT("timelineyear"));
+				$object->timespent_date = dol_mktime(12, 0, 0, GETPOSTINT("timelinemonth"), GETPOSTINT("timelineday"), GETPOSTINT("timelineyear"));
+				$object->timespent_datehour = dol_mktime(GETPOSTINT("timelinehour"), GETPOSTINT("timelinemin"), 0, GETPOSTINT("timelinemonth"), GETPOSTINT("timelineday"), GETPOSTINT("timelineyear"));
 				$object->timespent_withhour = 1;
 			} elseif (!empty($timespent_date)) {
 				$object->timespent_date = $timespent_date;
+				$object->timespent_datehour = $timespent_date;
 				$object->timespent_withhour = 0;
 			}
 			$object->timespent_fk_user = GETPOSTINT("userid_line");

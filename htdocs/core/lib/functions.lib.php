@@ -1784,6 +1784,7 @@ function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1, $includequotes
 	$tmp = preg_replace('/\s+\-([^\s])/', ' _$1', $tmp);
 	$tmp = preg_replace('/\s+\-$/', '', $tmp);
 	$tmp = str_replace('..', '', $tmp);
+	$tmp = preg_replace('/\s{2,}/', ' ', $tmp);
 
 	return $tmp;
 }
@@ -1816,6 +1817,8 @@ function dol_sanitizePathName($str, $newstr = '_', $unaccent = 1)
 	$tmp = preg_replace('/\s+\-([^\s])/', ' _$1', $tmp);
 	$tmp = preg_replace('/\s+\-$/', '', $tmp);
 	$tmp = str_replace('..', '', $tmp);
+	$tmp = preg_replace('/\s{2,}/', ' ', $tmp);
+
 	return $tmp;
 }
 

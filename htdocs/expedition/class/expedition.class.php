@@ -549,7 +549,7 @@ class Expedition extends CommonObject
 						if (!isset($kits_id_cached[$line->fk_product])) {
 							if (!isset($line->detail_batch) || (isset($kits_list[$line->fk_product]) && !getDolGlobalInt('PRODUIT_SOUSPRODUITS_ALSO_ENABLE_PARENT_STOCK_MOVE'))) {    // no batch management or is kit
 								$qty = isset($kits_list[$line->fk_product]) ? $kits_list[$line->fk_product]['total_qty'] : $line->qty;
-								$warehouse_id = isset($kits_list[$line->fk_product]) ? 0 : $line->entrepot_id;
+								$warehouse_id = (isset($kits_list[$line->fk_product]) && !getDolGlobalInt('PRODUIT_SOUSPRODUITS_ALSO_ENABLE_PARENT_STOCK_MOVE')) ? 0 : $line->entrepot_id;
 								$line_id = $this->create_line($warehouse_id, $line->origin_line_id, $qty, $line->rang, $line->array_options, 0, $line->fk_product);
 								if ($line_id <= 0) {
 									$error++;
@@ -565,7 +565,7 @@ class Expedition extends CommonObject
 						}
 
 						// virtual products
-						if (isset($kits_list[$line->fk_product])) {
+						if (isset($kits_list[$line->fk_product]) && !getDolGlobalInt('PRODUIT_SOUSPRODUITS_ALSO_ENABLE_PARENT_STOCK_MOVE')) {
 							$prods_arbo = $kits_list[$line->fk_product]['arbo'];
 							$total_qty = $kits_list[$line->fk_product]['total_qty'];
 
@@ -626,7 +626,7 @@ class Expedition extends CommonObject
 
 								// create line for a child of virtual product
 								if (!isset($sub_kits_id_cached[$product_child_id]) || $warehouse_id > 0) {
-									$line_id = $this->create_line($warehouse_id, $line->origin_line_id, $product_child_qty, $line->rang, $line->array_options, $parent_line_id, $product_child_id);
+									$line_id = $this->create_line($warehouse_id, ($parent_line_id ? 0 : $line->origin_line_id), $product_child_qty, $line->rang, $line->array_options, $parent_line_id, $product_child_id);
 									if ($line_id <= 0) {
 										$error++;
 										dol_syslog(__METHOD__ . ' : ' . $this->errorsToString(), LOG_ERR);
