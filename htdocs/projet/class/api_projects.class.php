@@ -565,6 +565,73 @@ class Projects extends DolibarrApi
 		return $result;
 	}
 
+    /**
+	 * Get timespents of a user
+	 *
+	 * This returns all timespent lines for given user id.
+	 *
+	 * @param int $id Id of user (0 = connected user)
+	 * @return array
+	 *
+	 * @url GET user/{id}/timespent
+	 */
+	public function getUserTimespent($id = 0)
+	{
+		global $db;
+
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
+			throw new RestException(403);
+		}
+
+		$userid = $id;
+		if ($userid == 0) {
+			$userid = DolibarrApiAccess::$user->id;
+		}
+
+		$sql = "SELECT s.rowid as socid, s.nom as thirdparty_name, s.email as thirdparty_email, ptt.rowid, ptt.ref_ext, ptt.fk_element as fk_task, ptt.element_date as task_date, ptt.element_datehour as task_datehour, ptt.element_date_withhour as task_date_withhour, ptt.element_duration as task_duration, ptt.fk_user, ptt.note, ptt.thm, pt.rowid as task_id, pt.ref as task_ref, pt.label as task_label, p.rowid as project_id, p.ref as project_ref, p.title as project_label, p.public as project_public"
+			. " FROM " . MAIN_DB_PREFIX . "element_time as ptt, " . MAIN_DB_PREFIX . "projet_task as pt, " . MAIN_DB_PREFIX . "projet as p"
+			. " LEFT JOIN " . MAIN_DB_PREFIX . "societe as s ON p.fk_soc = s.rowid"
+			. " WHERE ptt.fk_element = pt.rowid AND pt.fk_projet = p.rowid AND ptt.elementtype = 'task' AND ptt.fk_user = " . ((int) $userid) . " AND p.entity IN (" . getEntity('project') . ")";
+
+		dol_syslog(get_class($this)."::getUserTimespent", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			$result = array();
+			while ($i < $num) {
+				$obj = $this->db->fetch_object($resql);
+				$newobj = new stdClass();
+				$newobj->socid = $obj->socid;
+				$newobj->thirdparty_name = $obj->thirdparty_name;
+				$newobj->thirdparty_email = $obj->thirdparty_email;
+				$newobj->fk_project = $obj->project_id;
+				$newobj->project_ref = $obj->project_ref;
+				$newobj->project_label = $obj->project_label;
+				$newobj->public = $obj->project_public;
+				$newobj->fk_task = $obj->task_id;
+				$newobj->task_ref = $obj->task_ref;
+				$newobj->task_label = $obj->task_label;
+				$newobj->timespent_line_id = $obj->rowid;
+				$newobj->timespent_line_ref_ext = $obj->ref_ext;
+				$newobj->timespent_line_date = $this->db->jdate($obj->task_date);
+				$newobj->timespent_line_datehour = $this->db->jdate($obj->task_datehour);
+				$newobj->timespent_line_withhour = $obj->task_date_withhour;
+				$newobj->timespent_line_duration = $obj->task_duration;
+				$newobj->timespent_line_fk_user = $obj->fk_user;
+				$newobj->timespent_line_thm = $obj->thm;
+				$newobj->timespent_line_note = $obj->note;
+
+				$result[] = $newobj;
+				$i++;
+			}
+			$this->db->free($resql);
+			return $result;
+		} else {
+			throw new RestException(503, 'Error when retrieving timespents: ' . $this->db->lasterror());
+		}
+	}
+
 
 	/**
 	 * Add a task to given project
