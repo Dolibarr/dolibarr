@@ -978,7 +978,7 @@ class Product extends CommonObject
 		if (empty($this->tva_npr)) {
 			$this->tva_npr = 0;
 		}
-		//Local taxes
+		// Local taxes
 		if (empty($this->localtax1_tx)) {
 			$this->localtax1_tx = 0;
 		}
@@ -990,6 +990,10 @@ class Product extends CommonObject
 		}
 		if (empty($this->localtax2_type)) {
 			$this->localtax2_type = '0';
+		}
+		// Price
+		if (empty($this->price_base_type) && getDolGlobalString('PRODUCT_PRICE_BASE_TYPE')) {
+			$this->price_base_type = getDolGlobalString('PRODUCT_PRICE_BASE_TYPE');
 		}
 		if (empty($this->price)) {
 			$this->price = 0;
