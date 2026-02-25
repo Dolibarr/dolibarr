@@ -11,7 +11,7 @@
  * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2015-2017	Jean-François Ferry			<jfefe@aternatik.fr>
  * Copyright (C) 2015		Ari Elbaz (elarifr)			<github@accedinfo.com>
- * Copyright (C) 2015-2018	Charlene Benke				<charlie@patas-monkey.com>
+ * Copyright (C) 2015-2026	Charlene Benke				<charlene@patas-monkey.com>
  * Copyright (C) 2016		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2018		David Beniamine				<David.Beniamine@Tetras-Libre.fr>
@@ -3223,14 +3223,6 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			print $formfile->showdocuments('user', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 0, 0, 0, 28, 0, '', '', '', !is_object($societe) || empty($societe->default_lang) ? '' : $societe->default_lang);
 			$somethingshown = $formfile->numoffiles;
-
-			// Show links to link elements
-			$tmparray = $form->showLinkToObjectBlock($object, array(), array(), 1);
-			$linktoelem = $tmparray['linktoelem'];
-			$htmltoenteralink = $tmparray['htmltoenteralink'];
-			print $htmltoenteralink;
-
-			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 			$MAXEVENT = 10;
 
