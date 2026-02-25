@@ -721,4 +721,3 @@ InvoiceSentFromTemplate=Invoice %s sent from recurring invoice template %s
 InvoiceSentFromTemplateError=Failed to send invoice %s from recurring invoice template %s : %s
 BillStatusValidatedWithSendind=Validated (needs to be paid) and sending
 sendAutoEmailInvoiceKO=Failed to send email from %s to %s
-AmountRequestedAlreadyReachesTotal=The amount requested already reaches the total of the invoice
