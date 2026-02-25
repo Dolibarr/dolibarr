@@ -276,13 +276,6 @@ class WebPortalPropal extends Propal
 		if ($selected >= 0) {
 			$return .= '<input id="cb' . $this->id . '" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="' . $this->id . '"' . ($selected ? ' checked="checked"' : '') . '>';
 		}
-		if (property_exists($this, 'label')) {
-			$return .= ' <div class="inline-block opacitymedium valignmiddle tdoverflowmax100">' . $this->label . '</div>';
-		}
-		if (property_exists($this, 'amount')) {
-			$return .= '<br>';
-			$return .= '<span class="info-box-label amount">' . price($this->amount, 0, $langs, 1, -1, -1, getDolCurrency()) . '</span>';
-		}
 		if (method_exists($this, 'getLibStatut')) {
 			$return .= '<br><div class="info-box-status margintoponly">' . $this->getLibStatut(3) . '</div>';
 		}

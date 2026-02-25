@@ -610,7 +610,7 @@ class ExpenseReports extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$result = $this->expensereport->setStatut(0);
+		$result = $this->expensereport->setStatut(ExpenseReport::STATUS_DRAFT);
 		if ($result == 0) {
 			throw new RestException(304, 'Error nothing done. May be object is already draft');
 		}

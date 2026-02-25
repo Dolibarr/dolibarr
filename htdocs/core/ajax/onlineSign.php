@@ -560,7 +560,7 @@ if ($action == "importSignature") {
 										if (getDolGlobalString("FICHINTER_SIGNATURE_YFORIMGSTART")) {
 											$param['yforimgstart'] = getDolGlobalString("FICHINTER_SIGNATURE_YFORIMGSTART");
 										} else {
-											$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 38);
+											$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 62);
 										}
 										if (getDolGlobalString("FICHINTER_SIGNATURE_WFORIMG")) {
 											$param['wforimg'] = getDolGlobalString("FICHINTER_SIGNATURE_WFORIMG");
@@ -582,7 +582,7 @@ if ($action == "importSignature") {
 								// TODO Get position of box from PDF template
 
 								$param['xforimgstart'] = (empty($s['w']) ? 110 : $s['w'] / 2 - 2);
-								$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 38);
+								$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 62);
 								$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 20);
 
 								dolPrintSignatureImage($pdf, $langs, $param);
@@ -984,7 +984,7 @@ function dolPrintSignatureImage(TCPDF $pdf, $langs, $params)
 	$pdf->SetXY($xforimgstart, $yforimgstart + round($wforimg / 4) - 4);
 	$pdf->SetFont($default_font, '', $default_font_size - 1);
 	$pdf->SetTextColor(80, 80, 80);
-	$pdf->MultiCell($wforimg, 4, $langs->trans("Signature") . ': ' . dol_print_date(dol_now(), "day", false, $langs, true). ' - '.$params['online_sign_name'], 0, 'L');
+	$pdf->MultiCell($wforimg, 4, $langs->transnoentities("Signature") . ': ' . dol_print_date(dol_now(), "day", false, $langs, true). ' - '.$params['online_sign_name'], 0, 'L');
 	//$pdf->SetXY($xforimgstart, $yforimgstart + round($wforimg / 4));
 	//$pdf->MultiCell($wforimg, 4, $langs->trans("Lastname") . ': ' . $online_sign_name, 0, 'L');
 

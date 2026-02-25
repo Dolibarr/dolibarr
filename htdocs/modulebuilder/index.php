@@ -2726,7 +2726,7 @@ if ($action == 'set' && $user->admin /* && $user->hasRight("modulebuilder", "run
 	$param .= '&tabobj='.urlencode($tabobj);
 
 	$value = GETPOST('value', 'alpha');
-	$resarray = activateModule($value);
+	$resarray = activateModule($value, 1, 0);
 	if (!empty($resarray['errors'])) {
 		setEventMessages('', $resarray['errors'], 'errors');
 	} else {

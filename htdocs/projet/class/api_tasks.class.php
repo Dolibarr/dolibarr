@@ -5,6 +5,7 @@
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025   	Jessica Kowal			<jessicakowal69@gmail.com>
  * Copyright (C) 2025   	Charlene Benke			<charlene@patas-monkey.com>
+ * Copyright (C) 2026		William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/timespent.class.php';
 /**
  * API class for projects
  *
+ * @since	5.0.0	Initial implementation
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
  */
@@ -62,6 +64,8 @@ class Tasks extends DolibarrApi
 	 * Get properties of a task object
 	 *
 	 * Return an array with task information
+	 *
+	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param   int         $id                     ID of task
 	 * @param   int         $includetimespent       0=Return only task. 1=Include a summary of time spent, 2=Include details of time spent lines
@@ -101,17 +105,20 @@ class Tasks extends DolibarrApi
 	 *
 	 * Get a list of tasks
 	 *
-	 * @param string		   $sortfield			Sort field
-	 * @param string		   $sortorder			Sort order
-	 * @param int			   $limit				Limit for list
-	 * @param int			   $page				Page number
-	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
-	 * @return  array                               Array of project objects
+	 * @since	5.0.0	Initial implementation
+	 *
+	 * @param	string			$sortfield			Sort field
+	 * @param	string			$sortorder			Sort order
+	 * @param	int				$limit				Limit for list
+	 * @param	int				$page				Page number
+	 * @param	string			$sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param	string			$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param	bool			$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0
+	 * @return	array								Array of project objects
 	 * @phan-return Task[]
 	 * @phpstan-return Task[]
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
 		global $db, $conf;
 
@@ -155,6 +162,9 @@ class Tasks extends DolibarrApi
 			}
 		}
 
+		//this query will return total tasks with the filters given
+		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
 			if ($page < 0) {
@@ -184,11 +194,30 @@ class Tasks extends DolibarrApi
 			throw new RestException(503, 'Error when retrieve task list : ' . $this->db->lasterror());
 		}
 
+		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		if ($pagination_data) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = [];
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = [
+				'total' => (int) $total,
+				'page' => $page, //count starts from 0
+				'page_count' => ceil((int) $total / $limit),
+				'limit' => $limit
+			];
+		}
+
 		return $obj_ret;
 	}
 
 	/**
 	 * Create task object
+	 *
+	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param   array   $request_data   Request data
 	 * @phan-param ?array<string,string> $request_data
@@ -273,6 +302,8 @@ class Tasks extends DolibarrApi
 	/**
 	 * Get time spent of a task
 	 *
+	 * @since	23.0.0	Initial implementation
+	 *
 	 * @param 	int   				$id         Id of task
 	 * @return	array<int,mixed>				Array of timespent lines
 	 *
@@ -305,6 +336,8 @@ class Tasks extends DolibarrApi
 
 	/**
 	 * Get roles a user is assigned to a task with
+	 *
+	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param   int   $id           Id of task
 	 * @param   int   $userid       Id of user (0 = connected user)
@@ -483,6 +516,8 @@ class Tasks extends DolibarrApi
 	/**
 	 * Update task general fields (won't touch time spent of task)
 	 *
+	 * @since	5.0.0	Initial implementation
+	 *
 	 * @param 	int   	$id             	Id of task to update
 	 * @param 	array 	$request_data   	Data
 	 * @phan-param ?array<string,string> $request_data
@@ -532,6 +567,8 @@ class Tasks extends DolibarrApi
 	/**
 	 * Delete task
 	 *
+	 * @since	5.0.0	Initial implementation
+	 *
 	 * @param   int     $id         Task ID
 	 *
 	 * @return  array
@@ -567,6 +604,8 @@ class Tasks extends DolibarrApi
 
 	/**
 	 * Get time spent of a task
+	 *
+	 * @since	23.0.0	Initial implementation
 	 *
 	 * @param int   $id                     Id of task
 	 * @param int   $timespent_id           Id of timespent
@@ -608,6 +647,8 @@ class Tasks extends DolibarrApi
 	 * Add time spent to a task of a project.
 	 * You can test this API with the following input message
 	 * { "date": "2016-12-31 23:15:00", "duration": 1800, "user_id": 1, "note": "My time test" }
+	 *
+	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param   int         	$id                 Task ID
 	 * @param   datetime|string	$date               Date (YYYY-MM-DD HH:MI:SS in GMT)
@@ -677,6 +718,8 @@ class Tasks extends DolibarrApi
 	 * You can test this API with the following input message
 	 * { "date": "2016-12-31 23:15:00", "duration": 1800, "user_id": 1, "note": "My time test" }
 	 *
+	 * @since	17.0.0	Initial implementation
+	 *
 	 * @param   int         $id                 Task ID
 	 * @param   int         $timespent_id       Time spent ID (llx_element_time.rowid)
 	 * @param   datetime    $date               Date (YYYY-MM-DD HH:MI:SS in GMT)
@@ -730,6 +773,8 @@ class Tasks extends DolibarrApi
 
 	/**
 	 * Delete time spent for a task of a project.
+	 *
+	 * @since	17.0.0	Initial implementation
 	 *
 	 * @param   int         $id                 Task ID
 	 * @param   int         $timespent_id       Time spent ID (llx_element_time.rowid)
@@ -992,6 +1037,8 @@ class Tasks extends DolibarrApi
 	 *
 	 * Return an array with contact information
 	 *
+	 * @since	23.0.0	Initial implementation
+	 *
 	 * @param int    $id     ID of task
 	 * @param string $type   Type of the contact
 	 * @return array<int,mixed>		Array with cleaned properties
@@ -1025,6 +1072,8 @@ class Tasks extends DolibarrApi
 
 	/**
 	 * Adds a contact to a task
+	 *
+	 * @since	23.0.0	Initial implementation
 	 *
 	 * @param int    $id             Task ID
 	 * @param int    $fk_socpeople   Id of thirdparty contact (if source = 'external') or id of user (if source = 'internal') to link
@@ -1072,6 +1121,8 @@ class Tasks extends DolibarrApi
 
 	/**
 	 * Delete a contact type of given task
+	 *
+	 * @since	23.0.0	Initial implementation
 	 *
 	 * @param int    $id         Id of task to update
 	 * @param int    $contactid  Row key of the contact in the array contact_ids.

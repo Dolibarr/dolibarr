@@ -4,7 +4,7 @@
  * Copyright (C) 2012-2016  Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2019-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2023       Lenin Rivas         <lenin.rivas777@gmail.com>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		William Mead		<william@m34d.com>
@@ -2361,6 +2361,7 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 				if (empty($result['error'])) {
 					$textforfulltextindex = $result['content'];
 					$filetoprocess = $result['keywords'];
+					$cmd = $result['cmd'];
 				} else {
 					$error++;
 				}
@@ -3464,7 +3465,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->accounting->dir_output.'/'.$original_file;
-	} elseif (($modulepart == 'expedition' || $modulepart == 'shipment') && !empty($conf->expedition->dir_output)) {
+	} elseif (($modulepart == 'expedition' || $modulepart == 'shipment' || $modulepart == 'shipping') && !empty($conf->expedition->dir_output)) {
 		// Wrapping pour les expedition
 		if ($fuser->hasRight('expedition', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
@@ -4069,7 +4070,7 @@ function archiveOrBackupFile($srcfile, $max_versions = 5, $archivedir = '', $suf
  * @param 	string	$filetoprocess				File name to process
  * @param 	string 	$useFullTextIndexation		Method for txt conversion
  * @param	string	$options					Output format ('html', 'fulltext');
- * @return array<string,mixed>					Array of result ('error'=>, 'content'=> , 'keywords'=>)
+ * @return array<string,mixed>					Array of result ('error'=>, 'content'=> , 'keywords'=>, 'cmd'=> )
  */
 function dolDocToText($filetoprocess, $useFullTextIndexation = 'pdftotext', $options = 'html')
 {
@@ -4078,6 +4079,7 @@ function dolDocToText($filetoprocess, $useFullTextIndexation = 'pdftotext', $opt
 	$error = 0;
 	$keywords = array();
 	$textforfulltextindex = '';
+	$cmd = '';
 
 	if (empty($useFullTextIndexation)) {
 		$useFullTextIndexation = 'pdftotext';
@@ -4099,7 +4101,7 @@ function dolDocToText($filetoprocess, $useFullTextIndexation = 'pdftotext', $opt
 		} else {
 			$params = '-htmlmeta';
 		}
-		$cmd = getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_PDFTOTEXT', 'pdftotext').($params ? " ".$params : "")." '".escapeshellcmd($filetoprocess)."' - ";
+		$cmd = getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_PDFTOTEXT', 'pdftotext') . " " . $params ." '".escapeshellcmd($filetoprocess)."' - ";
 		$resultexec = $utils->executeCLI($cmd, $outputfile, 0, null, 1);
 
 		if (empty($resultexec['error'])) {
@@ -4150,5 +4152,42 @@ function dolDocToText($filetoprocess, $useFullTextIndexation = 'pdftotext', $opt
 		}
 	}
 
-	return array('error' => $error, 'keywords' => $keywords, 'content' => $textforfulltextindex);
+	return array('error' => $error, 'keywords' => $keywords, 'content' => $textforfulltextindex, 'cmd' => $cmd);
+}
+
+/**
+ * Remove the last line of a text file
+ *
+ * @param  string	$fullpath		Full path of file
+ * @return int						Return <0 if error, >0 if OK
+ */
+function removeLastLine($fullpath)
+{
+	// Generate tmp file content without the last line
+	$fp = fopen($fullpath, "r");
+	fseek($fp, -1, SEEK_END);
+	$pos = -1;
+	$char = fgetc($fp);
+	while ($char === "\n" || $char === "\r") {	// Go to last real char of last line
+		fseek($fp, $pos--, SEEK_END);
+		$char = fgetc($fp);
+	}
+	while ($char !== "\n" && $char !== false) {
+		fseek($fp, $pos--, SEEK_END);
+		$char = fgetc($fp);
+	}
+	/*
+	while ($char === "\n" || $char === "\r") {	// Go to last real char of last-1 line
+		fseek($fp, $pos--, SEEK_END);
+		$char = fgetc($fp);
+	}
+	*/
+	$truncatePos = ftell($fp);
+	fclose($fp);
+	// Truncate the tmp file to remove the last line
+	$fp = fopen($fullpath, "c+");
+	ftruncate($fp, $truncatePos);
+	fclose($fp);
+
+	return 1;
 }

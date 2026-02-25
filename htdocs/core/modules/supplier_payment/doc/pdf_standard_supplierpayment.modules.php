@@ -4,7 +4,7 @@
  * Copyright (C) 2010-2014  Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Marcos García               <marcosgdf@gmail.com>
  * Copyright (C) 2022       Ferran Marcet               <fmarcet@2byte.es>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	    Nick Fragoulis
  *
@@ -392,7 +392,7 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 
 					// ref facture fourn
 					$pdf->SetXY($this->posxreffacture, $curY);
-					$pdf->MultiCell($this->posxreffacture - 0.8, 3, $object->lines[$i]->ref, 0, 'L', false);
+					$pdf->MultiCell($this->posxreffacture - 0.8, 3, (string) $object->lines[$i]->ref, 0, 'L', false);
 
 					// type
 					$pdf->SetXY($this->posxtype, $curY);
@@ -540,7 +540,7 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 
 		// Ref payment
 		$pdf->SetXY($this->marge_gauche + 30, $posy);
-		$pdf->MultiCell(50, 4, $object->ref, 0, 'L', true);
+		$pdf->MultiCell(50, 4, (string) $object->ref, 0, 'L', true);
 
 		// Total payments
 		$pdf->SetXY($this->page_largeur - $this->marge_droite - 50, $posy);
@@ -567,7 +567,7 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 
 		// City
 		$pdf->SetXY($this->page_largeur - $this->marge_droite - 30, $posy);
-		$pdf->MultiCell(150, 4, $mysoc->town, 0, 'L', true);
+		$pdf->MultiCell(150, 4, (string) $mysoc->town, 0, 'L', true);
 		$posy += 4;
 
 		// Date
@@ -606,10 +606,6 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 		// Amount in (at tab_top - 1)
 		$pdf->SetTextColor(0, 0, 0);
 		$pdf->SetFont('', '', $default_font_size - 2);
-
-		/*$titre = strtoupper($mysoc->town).' - '.dol_print_date(dol_now(), 'day', 'tzserver', $outputlangs);
-		$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3) - 60, $tab_top - 6);
-		$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);*/
 
 		$titre = $outputlangs->transnoentities("AmountInCurrency", $outputlangs->transnoentitiesnoconv("Currency".$currency));
 		$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3), $tab_top);

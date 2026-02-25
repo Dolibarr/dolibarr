@@ -60,7 +60,7 @@
         Require all granted
     </Directory>
 
-    # You may also want to allow access to everyone to wrappers for api, document, viewimage, manifest and public json/img
+    # You may also want to allow access to everyone to wrappers for api, document, viewimage, manifest and public json/img files
     # but if you can avoid it, it is better.
     <Files /home/admin/wwwroot/dolibarr/htdocs/api/index.php>
         AuthType None
