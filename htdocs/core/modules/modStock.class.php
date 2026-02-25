@@ -235,8 +235,8 @@ class modStock extends DolibarrModules
 		);
 		$this->export_entities_array[$r] = array();	// We define here only fields that use another icon that the one defined into export_icon
 		$this->export_aggregate_array[$r] = array();	// TODO Not used yet
-		$keyforselect = 'warehouse';
-		$keyforelement = 'warehouse';
+		$keyforselect = 'entrepot';
+		$keyforelement = 'entrepot';
 		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 

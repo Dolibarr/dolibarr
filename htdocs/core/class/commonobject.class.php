@@ -5081,7 +5081,7 @@ abstract class CommonObject
 			$arraytoscan = array_flip($this->childtables);
 		}
 
-		// Test if child exists
+		// Test on all child tables to scan if child exists
 		$haschild = 0;
 		foreach ($arraytoscan as $table => $element) {
 			//print $id.'-'.$table.'-'.$elementname.'<br>';
@@ -5118,6 +5118,7 @@ abstract class CommonObject
 					$sql .= " AND c.entity = ".((int) $entity);
 				}
 			}
+			//var_dump($table, $element, $sql);
 
 			$resql = $this->db->query($sql);
 			if ($resql) {
@@ -5140,6 +5141,7 @@ abstract class CommonObject
 				return -1;
 			}
 		}
+
 		if ($haschild > 0) {
 			$this->errors[] = "ErrorRecordHasChildren";
 			return $haschild;
@@ -11738,7 +11740,7 @@ abstract class CommonObject
 	}
 
 	/**
-	 * Set the error message for the object and log it.
+	 * Set the error message for the object and logs it, including the file name and line number.
 	 *
 	 * @param string $message      the error message
 	 * @param int<0,7> $loglevel   the log level
@@ -11746,7 +11748,13 @@ abstract class CommonObject
 	 */
 	public function setErrorWithLog($message, $loglevel = LOG_ERR)
 	{
+		global $dolibarr_main_document_root;
+
 		$this->setErrorWithoutLog($message);
-		dol_syslog($message, $loglevel);
+		$trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
+		$file = str_replace($dolibarr_main_document_root, '', $trace[0]['file'] ?? 'file unknown');
+		$line = $trace[0]['line'] ?? 'line unknown';
+		$syslogMessage = sprintf('%s:%s %s', $file, $line, $message);
+		dol_syslog($syslogMessage, $loglevel);
 	}
 }
