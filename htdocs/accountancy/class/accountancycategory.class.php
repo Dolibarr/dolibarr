@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2016		Jamal Elbaz			<jamelbaz@gmail.pro>
- * Copyright (C) 2016-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
- * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2016       Jamal Elbaz             <jamelbaz@gmail.pro>
+ * Copyright (C) 2016-2026	Alexandre Spangaro      <alexandre@inovea-conseil.com>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  MDW                     <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -903,6 +903,328 @@ class AccountancyCategory // extends CommonObject
 			$this->error = "Error ".$this->db->lasterror();
 			dol_syslog(__METHOD__." ".$this->error, LOG_ERR);
 
+			return -1;
+		}
+	}
+
+
+	// ====================================================================
+	// MULTI REPORT METHODS (New system with llx_accounting_category_account)
+	// Requires constant ACCOUNTING_ENABLE_MULTI_REPORT
+	// ====================================================================
+
+	/**
+	 * Link an accounting account to this category (multi-report system)
+	 *
+	 * @param   int     $fkAccountingAccount    ID of the accounting account to link
+	 * @return  int<-1,1>                       <0 if KO, 0 if already exists, >0 if OK
+	 */
+	public function addAccountToCategory($fkAccountingAccount)
+	{
+		// Check if relation already exists
+		if ($this->isAccountInCategory($fkAccountingAccount)) {
+			return 0;
+		}
+
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."accounting_category_account";
+		$sql .= " (fk_accounting_category, fk_accounting_account)";
+		$sql .= " VALUES (".((int) $this->id).", ".((int) $fkAccountingAccount).")";
+
+		dol_syslog(get_class($this)."::addAccountToCategory", LOG_DEBUG);
+
+		$this->db->begin();
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$this->db->commit();
+			return 1;
+		} else {
+			$this->error = $this->db->lasterror();
+			$this->errors[] = $this->error;
+			$this->db->rollback();
+			return -1;
+		}
+	}
+
+	/**
+	 * Unlink an accounting account from this category (multi-report system)
+	 *
+	 * @param   int         $fkAccountingAccount    ID of the accounting account to unlink
+	 * @return  int<-1,1>                           <0 if KO, >0 if OK
+	 */
+	public function deleteAccountFromCategory($fkAccountingAccount)
+	{
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."accounting_category_account";
+		$sql .= " WHERE fk_accounting_category = ".((int) $this->id);
+		$sql .= " AND fk_accounting_account = ".((int) $fkAccountingAccount);
+
+		dol_syslog(get_class($this)."::deleteAccountFromCategory", LOG_DEBUG);
+
+		$this->db->begin();
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$this->db->commit();
+			return 1;
+		} else {
+			$this->error = $this->db->lasterror();
+			$this->errors[] = $this->error;
+			$this->db->rollback();
+			return -1;
+		}
+	}
+
+	/**
+	 * Get all accounting accounts linked to this category (multi-report system)
+	 *
+	 * @return array<int,array{id:int,account_number:string,label:string}> Array of accounting accounts indexed by account ID, or empty array if error
+	 */
+	public function getAccountsForCategory()
+	{
+		global $conf;
+
+		$accounts = array();
+
+		$sql = "SELECT aca.fk_accounting_account, aa.account_number, aa.label";
+		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_category_account as aca";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.rowid = aca.fk_accounting_account";
+		$sql .= " WHERE aca.fk_accounting_category = ".((int) $this->id);
+		$sql .= " AND aa.entity = ".$conf->entity;
+		$sql .= " ORDER BY aa.account_number ASC";
+
+		dol_syslog(get_class($this)."::getAccountsForCategory", LOG_DEBUG);
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num) {
+				$obj = $this->db->fetch_object($resql);
+				$accounts[$obj->fk_accounting_account] = array(
+					'id' => $obj->fk_accounting_account,
+					'account_number' => $obj->account_number,
+					'label' => $obj->label
+				);
+				$i++;
+			}
+			$this->db->free($resql);
+			return $accounts;
+		} else {
+			$this->error = $this->db->lasterror();
+			$this->errors[] = $this->error;
+			dol_syslog(get_class($this)."::getAccountsForCategory ".$this->error, LOG_ERR);
+			return array();
+		}
+	}
+
+	/**
+	 * Get categories for a specific accounting account (multi-report system)
+	 *
+	 * @param   int     $fkAccountingAccount                                        ID of the accounting account
+	 * @return  array<int,array{id:int,code:string,label:string,fk_report:int}>     Array of categories indexed by category ID, or empty array if error
+	 */
+	public function getCategoriesForAccount($fkAccountingAccount)
+	{
+		global $conf;
+
+		$categories = array();
+
+		$sql = "SELECT aca.fk_accounting_category, ac.code, ac.label, ac.fk_report";
+		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_category_account as aca";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."c_accounting_category as ac ON ac.rowid = aca.fk_accounting_category";
+		$sql .= " WHERE aca.fk_accounting_account = ".((int) $fkAccountingAccount);
+		$sql .= " AND ac.entity = ".$conf->entity;
+		$sql .= " ORDER BY ac.position ASC";
+
+		dol_syslog(get_class($this)."::getCategoriesForAccount", LOG_DEBUG);
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num) {
+				$obj = $this->db->fetch_object($resql);
+				$categories[$obj->fk_accounting_category] = array(
+					'id' => $obj->fk_accounting_category,
+					'code' => $obj->code,
+					'label' => $obj->label,
+					'fk_report' => $obj->fk_report
+				);
+				$i++;
+			}
+			$this->db->free($resql);
+			return $categories;
+		} else {
+			$this->error = $this->db->lasterror();
+			$this->errors[] = $this->error;
+			dol_syslog(get_class($this)."::getCategoriesForAccount ".$this->error, LOG_ERR);
+			return array();
+		}
+	}
+
+	/**
+	 * Check if an account belongs to this category (multi-report system)
+	 *
+	 * @param   int     $fkAccountingAccount            ID of the accounting account
+	 * @return  bool                                    True if account is in category, false otherwise
+	 */
+	public function isAccountInCategory($fkAccountingAccount)
+	{
+		$sql = "SELECT COUNT(*) as nb";
+		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_category_account";
+		$sql .= " WHERE fk_accounting_category = ".((int) $this->id);
+		$sql .= " AND fk_accounting_account = ".((int) $fkAccountingAccount);
+
+		dol_syslog(get_class($this)."::isAccountInCategory", LOG_DEBUG);
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$obj = $this->db->fetch_object($resql);
+			return ($obj->nb > 0);
+		}
+		return false;
+	}
+
+	/**
+	 * Get all accounting accounts NOT linked to this category (for selection)
+	 *
+	 * @return array<array{id:int,account_number:string,label:string}>  Array of available accounts, or empty array if error
+	 */
+	public function getAvailableAccountsForCategory()
+	{
+		global $conf;
+
+		$accounts = array();
+
+		$pcgverid = getDolGlobalInt('CHARTOFACCOUNTS');
+		$pcgvercode = dol_getIdFromCode($this->db, (string) $pcgverid, 'accounting_system', 'rowid', 'pcg_version');
+		if (empty($pcgvercode)) {
+			$pcgvercode = $pcgverid;
+		}
+
+		$sql = "SELECT aa.rowid, aa.account_number, aa.label";
+		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as aa";
+		$sql .= " WHERE aa.rowid NOT IN (";
+		$sql .= "   SELECT fk_accounting_account";
+		$sql .= "   FROM ".MAIN_DB_PREFIX."accounting_category_account";
+		$sql .= "   WHERE fk_accounting_category = ".((int) $this->id);
+		$sql .= " )";
+		$sql .= " AND aa.entity = ".$conf->entity;
+		$sql .= " AND aa.active = 1";
+		$sql .= " AND aa.fk_pcg_version = '".$this->db->escape($pcgvercode)."'";
+		$sql .= " ORDER BY aa.account_number ASC";
+
+		dol_syslog(get_class($this)."::getAvailableAccountsForCategory", LOG_DEBUG);
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num) {
+				$obj = $this->db->fetch_object($resql);
+				$accounts[$obj->rowid] = array(
+					'id' => $obj->rowid,
+					'account_number' => $obj->account_number,
+					'label' => $obj->label
+				);
+				$i++;
+			}
+			$this->db->free($resql);
+			return $accounts;
+		} else {
+			$this->error = $this->db->lasterror();
+			$this->errors[] = $this->error;
+			dol_syslog(get_class($this)."::getAvailableAccountsForCategory ".$this->error, LOG_ERR);
+			return array();
+		}
+	}
+
+	/**
+	 * Add multiple accounts to this category at once
+	 *
+	 * @param   array<int>      $accountIds     Array of accounting account IDs
+	 * @return  int<-1,max>                     Number of accounts added, -1 if error
+	 */
+	public function addMultipleAccountsToCategory(array $accountIds)
+	{
+		$added = 0;
+		$error = 0;
+
+		$this->db->begin();
+
+		foreach ($accountIds as $accountId) {
+			if (!$this->isAccountInCategory($accountId)) {
+				$sql = "INSERT INTO ".MAIN_DB_PREFIX."accounting_category_account";
+				$sql .= " (fk_accounting_category, fk_accounting_account)";
+				$sql .= " VALUES (".((int) $this->id).", ".((int) $accountId).")";
+
+				$resql = $this->db->query($sql);
+				if ($resql) {
+					$added++;
+				} else {
+					$error++;
+					$this->error = $this->db->lasterror();
+					$this->errors[] = $this->error;
+				}
+			}
+		}
+
+		if ($error) {
+			$this->db->rollback();
+			return -1;
+		} else {
+			$this->db->commit();
+			return $added;
+		}
+	}
+
+	/**
+	 * Remove all accounts from this category
+	 *
+	 * @return  int<-1,max>         Number of deleted relations if OK, -1 if error
+	 */
+	public function removeAllAccountsFromCategory()
+	{
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."accounting_category_account";
+		$sql .= " WHERE fk_accounting_category = ".((int) $this->id);
+
+		dol_syslog(get_class($this)."::removeAllAccountsFromCategory", LOG_DEBUG);
+
+		$this->db->begin();
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$affected = $this->db->affected_rows($resql);
+			$this->db->commit();
+			return $affected;
+		} else {
+			$this->error = $this->db->lasterror();
+			$this->errors[] = $this->error;
+			$this->db->rollback();
+			return -1;
+		}
+	}
+
+	/**
+	 * Count number of accounts linked to this category
+	 *
+	 * @return int Number of accounts, <0 if error
+	 */
+	public function countAccountsInCategory()
+	{
+		$sql = "SELECT COUNT(*) as nb";
+		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_category_account";
+		$sql .= " WHERE fk_accounting_category = ".((int) $this->id);
+
+		dol_syslog(get_class($this)."::countAccountsInCategory", LOG_DEBUG);
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$obj = $this->db->fetch_object($resql);
+			return (int) $obj->nb;
+		} else {
+			$this->error = $this->db->lasterror();
+			$this->errors[] = $this->error;
 			return -1;
 		}
 	}

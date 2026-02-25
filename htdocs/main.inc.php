@@ -45,7 +45,7 @@
 // For optional tuning. Enabled if environment variable MAIN_SHOW_TUNING_INFO is defined.
 $micro_start_time = 0;	// Used as global var into printCommonFooter()
 if (!empty($_SERVER['MAIN_SHOW_TUNING_INFO'])) {
-	list($usec, $sec) = explode(" ", microtime());
+	[$usec, $sec] = explode(" ", microtime());
 	$micro_start_time = ((float) $usec + (float) $sec);
 	// Add Xdebug code coverage
 	//define('XDEBUGCOVERAGE',1);
@@ -1813,6 +1813,42 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 			$themeparam .= '&amp;THEME_SATURATE_RATIO='.GETPOSTINT('THEME_SATURATE_RATIO');
 		}
+
+
+		/**
+		 * ====================================
+		 * DEFINE DOLIBARR JS CONTEXT AND TOOLS
+		 * ====================================
+		 * see Documentation at admin/tools/ui/dolibarr-context/index.php
+		 */
+		$jsContextVars = [
+			'DOL_VERSION' => DOL_VERSION,
+			'DOL_URL_ROOT' => DOL_URL_ROOT,
+		];
+
+		$jsContextPathUrl = DOL_URL_ROOT . '/public/includes/dolibarr-js-context';
+		$jsContextFiles = [
+			'dolibarr-context.umd.js', // The js Dolibarr context definition
+			'dolibarr-tool.seteventmessage.js' // The first tools to help dev for easy event in js
+		];
+
+		if (! defined('NOREQUIRETRAN')) {
+			// Langs tool see Documentation at admin/tools/ui/dolibarr-context/index.php
+			$jsContextFiles[] = 'dolibarr-tool.langs.js';
+			$jsContextVars['MAIN_LANG_DEFAULT'] = $langs->getDefaultLang();// For langs tool
+			$jsContextVars['DOL_LANG_INTERFACE_URL'] = dol_buildpath('public/langs/langs-tool-interface.php', 1);// For langs tool
+		}
+
+		// Load context and all js tools
+		foreach ($jsContextFiles as $jsContextFile) {
+			print '<script nonce="'.getNonce().'" src="'.$jsContextPathUrl.'/'.$jsContextFile.'?' . $ext . '" ></script>'."\n";
+		}
+
+		// DEFINE FIRST NEEDED JS CONTEXT VARS
+		print '<script nonce="'.getNonce().'">Dolibarr.setContextVars('.json_encode($jsContextVars).');</script>'."\n";
+
+		// -- END OF DEFINITION OF DOLIBARR JS CONTEXT AND TOOLS
+
 
 		if (getDolGlobalString('MAIN_ENABLE_FONT_ROBOTO')) {
 			print '<link rel="preconnect" href="https://fonts.gstatic.com">'."\n";

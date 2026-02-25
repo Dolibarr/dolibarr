@@ -148,6 +148,9 @@ ALTER TABLE llx_adherent_type ADD COLUMN amountformuladescription text;
 
 ALTER TABLE llx_blockedlog ADD COLUMN pos_source varchar(32) DEFAULT '';
 
+ALTER TABLE llx_website_page ADD COLUMN keep_history integer DEFAULT 5;
+ALTER TABLE llx_website_page ADD COLUMN metarobots varchar(128) after keywords;
+
 CREATE TABLE llx_element_fields_positions
 (
 	rowid							integer AUTO_INCREMENT PRIMARY KEY,

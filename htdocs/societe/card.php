@@ -1917,7 +1917,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '</td></tr>';
 
 			// Date birth
-			print '<tr class="morefields"><td>'.$form->editfieldkey('CompnanyBirthDate', 'birth', '', $object, 0).'</td>';
+			print '<tr class="morefields"><td>'.$form->editfieldkey('CompanyBirthDate', 'birth', '', $object, 0).'</td>';
 			print '<td colspan="3" class="maxwidthonsmartphone">';
 			print $form->selectDate($object->birth, 'birth', 0, 0, 1, "", 1);
 			print '</td></tr>';
@@ -2792,7 +2792,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '</td></tr>';
 
 				// Date birth
-				print '<tr class="morefields"><td>'.$form->editfieldkey('CompnanyBirthDate', 'birth', '', $object, 0).'</td>';
+				print '<tr class="morefields"><td>'.$form->editfieldkey('CompanyBirthDate', 'birth', '', $object, 0).'</td>';
 				print '<td class="maxwidthonsmartphone" colspan="3">';
 				print $form->selectDate($object->birth, 'birth', 0, 0, 1, "", 1);
 				print '</td></tr>';
@@ -3328,7 +3328,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td>'.dolPrintHTML($object->forme_juridique).'</td></tr>';
 
 			// Date birth
-			print '<tr><td>'.$langs->trans('CompnanyBirthDate').'</td><td>'.dol_print_date($object->birth).'</td></tr>';
+			print '<tr><td>'.$langs->trans('CompanyBirthDate').'</td><td>'.dol_print_date($object->birth).'</td></tr>';
 
 			// Capital
 			print '<tr><td>'.$langs->trans('Capital').'</td><td>';

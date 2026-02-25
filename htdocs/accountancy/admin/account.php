@@ -259,6 +259,9 @@ if ($action == 'delete') {
 $pcgver = getDolGlobalInt('CHARTOFACCOUNTS');
 
 $sql = "SELECT aa.rowid, aa.fk_pcg_version, aa.pcg_type, aa.account_number, aa.account_parent, aa.label, aa.labelshort, aa.fk_accounting_category,";
+if (getDolGlobalInt('ACCOUNTING_ENABLE_MULTI_REPORT')) {
+	$sql .= " (SELECT COUNT(*) FROM ".MAIN_DB_PREFIX."accounting_category_account aca WHERE aca.fk_accounting_account = aa.rowid) as nb_categories,";
+}
 $sql .= " aa.reconcilable, aa.centralized, aa.active, aa.import_key,";
 $sql .= " a2.rowid as rowid2, a2.label as label2, a2.account_number as account_number2";
 
@@ -761,9 +764,31 @@ if ($resql) {
 		}
 		// Custom accounts
 		if (!empty($arrayfields['categories']['checked'])) {
-			print '<td class="right">';
-			// TODO Get all custom groups labels the account is in
-			print dol_escape_htmltag($obj->fk_accounting_category);
+			print '<td>';
+
+			if (getDolGlobalInt('ACCOUNTING_ENABLE_MULTI_REPORT')) {
+				// Multi report system
+				if (!empty($obj->nb_categories)) {
+					$accountingcategory_temp = new AccountancyCategory($db);
+					$categories = $accountingcategory_temp->getCategoriesForAccount($obj->rowid);
+
+					$categoriesLabels = array();
+					foreach ($categories as $cat) {
+						$categoriesLabels[] = '<span class="badge badge-status4" title="'.dol_escape_htmltag($cat['label']).'">'.dol_escape_htmltag($cat['code']).'</span>';
+					}
+					print implode(' ', $categoriesLabels);
+				} else {
+					print '<span class="opacitymedium">-</span>';
+				}
+			} else {
+				// OLD SYSTEM: One-to-many
+				if (!empty($obj->fk_accounting_category)) {
+					print dol_escape_htmltag($obj->fk_accounting_category);
+				} else {
+					print '<span class="opacitymedium">-</span>';
+				}
+			}
+
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
