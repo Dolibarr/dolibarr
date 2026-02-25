@@ -24,6 +24,6 @@ create table llx_element_fields_positions
 	rowid							integer AUTO_INCREMENT PRIMARY KEY,
 	entity							integer DEFAULT 1 NOT NULL,
 	elementtype						varchar(64) NOT NULL,
-	fields_postitions				text,
+	fields_positions				text,
 	fk_user							integer NOT NULL
 ) ENGINE=innodb;
