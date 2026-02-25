@@ -50,3 +50,4 @@ RefreshToken=Refresh token
 RefreshTokenHelp=Use the Refresh Token to get a new Access Token
 OldTokenWasExpiredItHasBeenRefresh=Old token was expired, it has been refreshed
 OldTokenWasNotExpiredButItHasBeenRefresh=Old token was not expired but it has been refreshed
+OAuthErrorStateDiffers=Value for state=%s differs from value in session. Code is refused.

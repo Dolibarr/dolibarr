@@ -191,10 +191,22 @@ dol_syslog("***** Stripe IPN was called with event->type=".$event->type." servic
 sleep(2);
 
 
+// Hook to allow external modules to handle Stripe webhook events
+$hookmanager = new HookManager($db);
+$hookmanager->initHooks(array('stripeipn'));
+$parameters = array('event' => $event, 'servicestatus' => $servicestatus, 'service' => $service);
+$reshook = $hookmanager->executeHooks('stripeWebhookEvent', $parameters, $event->data->object, $event->type);
+if ($reshook > 0) {
+	// A hook handled the event entirely, stop processing
+	http_response_code(200);
+	return;
+}
+
+
 if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_PAYOUT')) {
 	// When a payout is created by Stripe to transfer money to your account
-	dol_syslog("object = ".var_export($event->data, true));
-	dol_syslog("object = ".var_export($event->data, true), LOG_DEBUG, 0, '_payment');
+	dol_syslog("object = ".formatLogObject($event->data));
+	dol_syslog("object = ".formatLogObject($event->data), LOG_DEBUG, 0, '_payment');
 
 	$error = 0;
 
@@ -239,8 +251,8 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 	}
 } elseif ($event->type == 'payout.paid' && getDolGlobalString('STRIPE_AUTO_RECORD_PAYOUT')) {
 	// When a payout to transfer money to your account is completely done
-	dol_syslog("object = ".var_export($event->data, true));
-	dol_syslog("object = ".var_export($event->data, true), LOG_DEBUG, 0, '_payment');
+	dol_syslog("object = ".formatLogObject($event->data));
+	dol_syslog("object = ".formatLogObject($event->data), LOG_DEBUG, 0, '_payment');
 
 	$error = 0;
 	$result = dolibarr_set_const($db, $service."_NEXTPAYOUT", 0, 'chaine', 0, '', $conf->entity);
@@ -361,8 +373,8 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 	$db->commit();
 } elseif ($event->type == 'payment_intent.succeeded') {
 	// Called when making payment with PaymentIntent method.
-	dol_syslog("object = ".var_export($event->data, true));
-	dol_syslog("object = ".var_export($event->data, true), LOG_DEBUG, 0, '_payment');
+	dol_syslog("object = ".formatLogObject($event->data));
+	dol_syslog("object = ".formatLogObject($event->data), LOG_DEBUG, 0, '_payment');
 
 	include_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
 	global $stripearrayofkeysbyenv;
@@ -448,8 +460,8 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 
 		$stripeacc = $stripearrayofkeysbyenv[$servicestatus]['secret_key'];
 
-		dol_syslog("Get the Stripe payment object for the payment method id = ".json_encode($paymentmethodstripeid));
-		dol_syslog("Get the Stripe payment object for the payment method id = ".json_encode($paymentmethodstripeid), LOG_DEBUG, 0, '_payment');
+		dol_syslog("Get the Stripe payment object for the payment method id = ".formatLogObject($paymentmethodstripeid));
+		dol_syslog("Get the Stripe payment object for the payment method id = ".formatLogObject($paymentmethodstripeid), LOG_DEBUG, 0, '_payment');
 
 		$s = new \Stripe\StripeClient($stripeacc);
 
@@ -872,8 +884,8 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 } elseif ($event->type == 'checkout.session.completed') {		// Called when making payment with new Checkout method (getDolGlobalString('STRIPE_USE_NEW_CHECKOUT') is on).
 	// TODO: create fees
 } elseif ($event->type == 'payment_method.attached') {
-	dol_syslog("object = ".var_export($event->data, true));
-	dol_syslog("object = ".var_export($event->data, true), LOG_DEBUG, 0, '_payment');
+	dol_syslog("object = ".formatLogObject($event->data));
+	dol_syslog("object = ".formatLogObject($event->data), LOG_DEBUG, 0, '_payment');
 
 	// When we link a payment method with a customer on Stripe side
 	require_once DOL_DOCUMENT_ROOT.'/societe/class/companypaymentmode.class.php';
@@ -924,8 +936,8 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 		}
 	}
 } elseif ($event->type == 'payment_method.updated') {
-	dol_syslog("object = ".var_export($event->data, true));
-	dol_syslog("object = ".var_export($event->data, true), LOG_DEBUG, 0, '_payment');
+	dol_syslog("object = ".formatLogObject($event->data));
+	dol_syslog("object = ".formatLogObject($event->data), LOG_DEBUG, 0, '_payment');
 
 	// When we update a payment method on Stripe side
 	require_once DOL_DOCUMENT_ROOT.'/societe/class/companypaymentmode.class.php';
@@ -949,16 +961,17 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 		$companypaymentmode->status          = $servicestatus;
 
 		$db->begin();
-		if (!$error) {
-			$result = $companypaymentmode->update($user);
-			if ($result < 0) {
-				$error++;
-			}
+
+		$result = $companypaymentmode->update($user);
+		if ($result < 0) {
+			$error++;
 		}
+
 		if (!$error) {
 			$db->commit();
 		} else {
 			$db->rollback();
+
 			http_response_code(500);
 			return -1;
 		}
@@ -977,12 +990,12 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 	// Deprecated.
 } elseif ($event->type == 'charge.dispute.closed') {
 	// When a dispute to cancel a SEPA payment is finished
-	dol_syslog("object = ".var_export($event->data, true));
-	dol_syslog("object = ".var_export($event->data, true), LOG_DEBUG, 0, '_payment');
+	dol_syslog("object = ".formatLogObject($event->data));
+	dol_syslog("object = ".formatLogObject($event->data), LOG_DEBUG, 0, '_payment');
 } elseif ($event->type == 'charge.dispute.funds_withdrawn') {
 	// When a dispute/withdraw to cancel a payment (card or SEPA) is done
-	dol_syslog("object = ".var_export($event->data, true));
-	dol_syslog("object = ".var_export($event->data, true), LOG_DEBUG, 0, '_payment');
+	dol_syslog("object = ".formatLogObject($event->data));
+	dol_syslog("object = ".formatLogObject($event->data), LOG_DEBUG, 0, '_payment');
 
 	global $stripearrayofkeysbyenv;
 	$error = 0;
@@ -1130,7 +1143,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 		*/
 
 		// Add a flag "dispute_status" in invoice table to Dispute Open
-		$result = $tmpinvoice->setStatut(1, null, '', 'FACTURE_MODIFY', 'dispute_status');
+		$result = $tmpinvoice->setStatut(Facture::STATUS_VALIDATED, null, '', 'FACTURE_MODIFY', 'dispute_status');
 		if ($result < 0) {
 			$errormsg = $tmpinvoice->error.implode(', ', $tmpinvoice->errors);
 			$error++;
@@ -1207,7 +1220,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 
 		if (!$error) {
 			// Add status dispute_status to Dispute Open
-			$result = $tmpinvoice->setStatut(1, null, '', 'FACTURE_MODIFY', 'dispute_status');
+			$result = $tmpinvoice->setStatut(Facture::STATUS_VALIDATED, null, '', 'FACTURE_MODIFY', 'dispute_status');
 			if ($result < 0) {
 				$errormsg = $tmpinvoice->error.implode(', ', $tmpinvoice->errors);
 				$error++;

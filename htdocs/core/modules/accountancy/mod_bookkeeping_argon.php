@@ -152,6 +152,6 @@ class mod_bookkeeping_argon extends ModeleNumRefBookkeeping
 		$docYear = (int) dol_print_date($object->doc_date, '%Y');
 		$docMonth = (int) dol_print_date($object->doc_date, '%m');
 		$docFiscalYear = $docMonth < $fiscalStartMonth ? ($docYear - 1) : $docYear;
-		return $docFiscalYear .  str_pad($object->code_journal, 3, "0", STR_PAD_LEFT);
+		return $docFiscalYear .  str_pad((string) $object->code_journal, 3, "0", STR_PAD_LEFT);
 	}
 }

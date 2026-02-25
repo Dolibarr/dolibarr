@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2013       Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -824,7 +824,7 @@ class Lettering extends BookKeeping
 	 *
 	 * @param	int[]			$document_ids	List of document id
 	 * @param	string			$doc_type		Type of document ('customer_invoice' or 'supplier_invoice', ...)
-	 * @return	array<int,array<int,int>>|int<-1,-1>		Return integer <0 if error otherwise all linked document ids by group and type [ [ 'doc_type' => [ doc_id, ... ], ... ], ... ]
+	 * @return	array<int,array<int,int>>|int<-1,-1>	Return integer <0 if error otherwise all linked document ids by group and type [ [ 'doc_type' => [ doc_id, ... ], ... ], ... ]
 	 */
 	public function getLinkedDocumentByGroup($document_ids, $doc_type)
 	{
@@ -910,7 +910,7 @@ class Lettering extends BookKeeping
 	/**
 	 * Get element ids grouped by link or element in common
 	 *
-	 * @param	array<int,array<string,int>>	$link_by_element	List of payment ids by link key
+	 * @param	array<int,array<string,int|string>>	$link_by_element	List of payment ids by link key
 	 * @param	array<string,array<int,int>>	$element_by_link	List of element ids by link key
 	 * @param	string							$link_key			Link key (used for recursive function)
 	 * @param	array<int,int>					$current_group		Current group (used for recursive function)

@@ -3861,14 +3861,14 @@ function migrate_reset_blocked_log($db, $langs, $conf)
 						} else {
 							// Add set line
 							$object = new stdClass();
-							$object->id = 1;
+							$object->id = 0;
 							$object->element = 'module';
 							$object->ref = 'systemevent';
 							$object->entity = $obj->entity;
 							$object->date = dol_now();
 
 							$b = new BlockedLog($db);
-							$b->setObjectData($object, 'MODULE_SET', 0, $user, null);
+							$b->setObjectData($object, 'MODULE_SET', 0, $user, 0);
 
 							$res = $b->create($user);
 							if ($res <= 0) {

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2021  John BOTELLA    <john.botella@atm-consulting.fr>
  * Copyright (C) 2024-2025	MDW			<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,6 +67,11 @@ class FormSetup
 	 */
 	public $htmlOutputMoreButton = '';
 
+	/**
+	 * Html string of button label
+	 * @var string
+	 */
+	public $htmlButtonLabel = 'Save';
 
 	/**
 	 * @var array<string,string>
@@ -77,7 +83,7 @@ class FormSetup
 
 	/**
 	 * an list of hidden inputs used only in edit mode
-	 * @var array<string,string>  Currently array{token:string,action:string}
+	 * @var array<string,int|string>  	Currently array{token:string,action:string}
 	 */
 	public $formHiddenInputs = array();
 
@@ -139,11 +145,11 @@ class FormSetup
 	/**
 	 * Generate the form (in read or edit mode depending on $editMode)
 	 *
-	 * @param 	bool 	$editMode 		True will display output on edit mod
-	 * @param	bool	$hideTitle		True to hide the first title line
-	 * @param	string	$title			Title of first line
-	 * @param	string	$cssfirstcolumn	CSS first column
-	 * @return 	string					Html output
+	 * @param 	int|bool 	$editMode 		True will display output on edit mod
+	 * @param	bool		$hideTitle		True to hide the first title line
+	 * @param	string		$title			Title of first line
+	 * @param	string		$cssfirstcolumn	CSS first column
+	 * @return 	string						Html output
 	 */
 	public function generateOutput($editMode = false, $hideTitle = false, $title = '', $cssfirstcolumn = '')
 	{
@@ -178,7 +184,7 @@ class FormSetup
 			}
 
 			// generate output table
-			$out .= $this->generateTableOutput($editMode, $hideTitle, $title, $cssfirstcolumn);
+			$out .= $this->generateTableOutput((bool) $editMode, $hideTitle, $title, $cssfirstcolumn);
 
 
 			$reshook = $hookmanager->executeHooks('formSetupBeforeGenerateOutputButton', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
@@ -191,10 +197,12 @@ class FormSetup
 			} elseif ($editMode) {
 				$out .= '<div class="form-setup-button-container center">'; // Todo : remove .center by adding style to form-setup-button-container css class in all themes
 				$out .= $this->htmlOutputMoreButton;
-				$out .= '<input class="button button-save reposition" type="submit" value="' . $this->langs->trans("Save") . '">'; // Todo fix dolibarr style for <button and use <button instead of input
-				/*$out .= ' &nbsp;&nbsp; ';
-				$out .= '<a class="button button-cancel" type="submit" href="' . $this->formAttributes['action'] . '">'.$this->langs->trans('Cancel').'</a>';
-				*/
+				$out .= '<input class="button button-save reposition" type="submit" value="' . $this->langs->trans($this->htmlButtonLabel ?: "Save") . '" name="save">'; // Todo fix dolibarr style for <button and use <button instead of input
+				if ($editMode === 2) {
+					// Add also a cancel button
+					$out .= ' &nbsp;&nbsp; ';
+					$out .= '<input class="button button-cancel" type="submit" value="' . $this->langs->trans('Cancel') . '" name="cancel">';
+				}
 				$out .= '</div>';
 			}
 
