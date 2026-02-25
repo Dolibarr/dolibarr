@@ -662,7 +662,7 @@ class Tickets extends DolibarrApi
 	 * @throws RestException 404
 	 * @throws RestException 503
 	 */
-	public function postContact($id, $contactid, $type, $source = "external", $notrigger = 0)
+	public function postContact(int $id, int $contactid, string $type, string $source = "external", int $notrigger = 0): array
 	{
 		// Check permissions
 		if (!DolibarrApiAccess::$user->hasRight('ticket', 'write')) {
@@ -696,7 +696,7 @@ class Tickets extends DolibarrApi
 			// Check external contact exists
 			$sqlCheckExternalContact = "SELECT 1 as exist";
 			$sqlCheckExternalContact .= " FROM llx_socpeople";
-			$sqlCheckExternalContact .= " WHERE rowid = " . $contactid;
+			$sqlCheckExternalContact .= " WHERE rowid = " . intval($contactid);
 			$result = $this->db->query($sqlCheckExternalContact);
 
 			if ($result && $this->db->num_rows($result) == 0) {
@@ -706,7 +706,7 @@ class Tickets extends DolibarrApi
 			// Check internal contact exists
 			$sqlCheckInternalContact = "SELECT 1 as exist";
 			$sqlCheckInternalContact .= " FROM llx_user";
-			$sqlCheckInternalContact .= " WHERE rowid = " . $contactid;
+			$sqlCheckInternalContact .= " WHERE rowid = " . intval($contactid);
 			$result = $this->db->query($sqlCheckInternalContact);
 
 			if ($result && $this->db->num_rows($result) == 0) {
@@ -772,7 +772,7 @@ class Tickets extends DolibarrApi
 	 * @throws RestException 404
 	 * @throws RestException 500 System error
 	 */
-	public function deleteContact($id, $contactid, $type, $source = "external")
+	public function deleteContact(int $id, int $contactid, string $type, string $source = "external"): array
 	{
 		// Check permissions
 		if (!DolibarrApiAccess::$user->hasRight('ticket', 'write')) {
