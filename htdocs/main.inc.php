@@ -736,15 +736,16 @@ if (!defined('NOLOGIN')) {
 
 			if ($login) {
 				$dol_authmode = $conf->authmode; // This property is defined only when logged, to say what mode was successfully used
-				$dol_tz = empty($_POST["tz"]) ? (empty($_SESSION["tz"]) ? '' : $_SESSION["tz"]) : $_POST["tz"];
-				$dol_tz_string = empty($_POST["tz_string"]) ? (empty($_SESSION["tz_string"]) ? '' : $_SESSION["tz_string"]) : $_POST["tz_string"];
+				// Check POST first, then GET (for OIDC callback redirect), then SESSION
+				$dol_tz = empty($_POST["tz"]) ? (empty($_GET["tz"]) ? (empty($_SESSION["tz"]) ? '' : $_SESSION["tz"]) : (int) $_GET["tz"]) : $_POST["tz"];
+				$dol_tz_string = empty($_POST["tz_string"]) ? (empty($_GET["tz_string"]) ? (empty($_SESSION["tz_string"]) ? '' : $_SESSION["tz_string"]) : $_GET["tz_string"]) : $_POST["tz_string"];
 				$dol_tz_string = preg_replace('/\s*\(.+\)$/', '', $dol_tz_string);
 				$dol_tz_string = preg_replace('/,/', '/', $dol_tz_string);
 				$dol_tz_string = preg_replace('/\s/', '_', $dol_tz_string);
 				$dol_dst = 0;
-				// Keep $_POST here. Do not use GETPOSTISSET
-				$dol_dst_first = empty($_POST["dst_first"]) ? (empty($_SESSION["dst_first"]) ? '' : $_SESSION["dst_first"]) : $_POST["dst_first"];
-				$dol_dst_second = empty($_POST["dst_second"]) ? (empty($_SESSION["dst_second"]) ? '' : $_SESSION["dst_second"]) : $_POST["dst_second"];
+				// Check POST first, then GET (for OIDC callback redirect), then SESSION
+				$dol_dst_first = empty($_POST["dst_first"]) ? (empty($_GET["dst_first"]) ? (empty($_SESSION["dst_first"]) ? '' : $_SESSION["dst_first"]) : (int) $_GET["dst_first"]) : $_POST["dst_first"];
+				$dol_dst_second = empty($_POST["dst_second"]) ? (empty($_GET["dst_second"]) ? (empty($_SESSION["dst_second"]) ? '' : $_SESSION["dst_second"]) : (int) $_GET["dst_second"]) : $_POST["dst_second"];
 				if ($dol_dst_first && $dol_dst_second) {
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 					$datenow = dol_now();
@@ -754,8 +755,8 @@ if (!defined('NOLOGIN')) {
 						$dol_dst = 1;
 					}
 				}
-				$dol_screenheight = empty($_POST["screenheight"]) ? (empty($_SESSION["dol_screenheight"]) ? '' : $_SESSION["dol_screenheight"]) : $_POST["screenheight"];
-				$dol_screenwidth = empty($_POST["screenwidth"]) ? (empty($_SESSION["dol_screenwidth"]) ? '' : $_SESSION["dol_screenwidth"]) : $_POST["screenwidth"];
+				$dol_screenheight = empty($_POST["screenheight"]) ? (empty($_GET["screenheight"]) ? (empty($_SESSION["dol_screenheight"]) ? '' : $_SESSION["dol_screenheight"]) : (int) $_GET["screenheight"]) : $_POST["screenheight"];
+				$dol_screenwidth = empty($_POST["screenwidth"]) ? (empty($_GET["screenwidth"]) ? (empty($_SESSION["dol_screenwidth"]) ? '' : $_SESSION["dol_screenwidth"]) : (int) $_GET["screenwidth"]) : $_POST["screenwidth"];
 				//print $datefirst.'-'.$datesecond.'-'.$datenow.'-'.$dol_tz.'-'.$dol_tzstring.'-'.$dol_dst.'-'.sdol_screenheight.'-'.sdol_screenwidth; exit;
 			}
 
