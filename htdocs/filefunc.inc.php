@@ -36,9 +36,6 @@
 if (!defined('DOL_APPLICATION_TITLE')) {
 	define('DOL_APPLICATION_TITLE', 'Dolibarr');
 }
-if (!defined('DOL_VERSION')) {
-	define('DOL_VERSION', '23.0.0'); // a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
-}
 
 require_once 'version.inc.php';		// Define the DOL_VERSION
 
