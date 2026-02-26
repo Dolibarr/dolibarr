@@ -316,6 +316,7 @@ MAIN_MAIL_AUTOCOPY_TO= Envoyer systématiquement une copie cachée (Bcc) des ema
 MAIN_DISABLE_ALL_MAILS=Désactiver globalement tout envoi d'emails (pour mode test ou démos)
 MAIN_MAIL_FORCE_SENDTO=Envoyer tous les emails à (au lieu des vrais destinataires, à des fins de test)
 MAIN_MAIL_ENABLED_USER_DEST_SELECT=Proposer les courriels des employés (si définis) dans la liste des destinataires prédéfinis lors de la rédaction d'un nouveau courriel
+MAIN_MAIL_NO_WITH_TOUSER_SELECTED=Désactiver la sélection d'un destinataire employé par défaut lors de la rédaction d'un email, même s'il n'y a qu'1 seul choix possible
 MAIN_MAIL_NO_WITH_TO_SELECTED=Désactiver la sélection d'un destinataire par défaut lors de la rédaction d'un email, même s'il n'y a qu'1 seul choix possible
 MAIN_MAIL_SENDMODE=Méthode d'envoi
 MAIN_MAIL_SMTPS_ID=Nom d'utilisateur ou identifiant SMTP (si le serveur d'envoi nécessite une authentification)
