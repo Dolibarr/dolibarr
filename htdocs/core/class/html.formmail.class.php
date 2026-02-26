@@ -812,7 +812,7 @@ class FormMail extends Form
 					$tmparray[$key] = dol_htmlentities($tmparray[$key], 0, 'UTF-8', true);
 				}
 				$withtoselected = GETPOST("receiveruser", 'array'); // Array of selected value
-				if (!getDolGlobalInt('MAIN_MAIL_NO_WITH_TO_SELECTED') && !getDolGlobalInt('MAIN_MAIL_NO_WITH_TOUSER_SELECTED')) {
+				if (!getDolGlobalInt('MAIN_MAIL_NO_WITH_TOUSER_SELECTED')) {
 					if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action', 'aZ09') == 'presend') {
 						$withtoselected = array_keys($tmparray);
 					}
@@ -863,7 +863,7 @@ class FormMail extends Form
 					$tmparray[$key] = dol_htmlentities($tmparray[$key], 0, 'UTF-8', true);
 				}
 				$withtoselected = GETPOST("receiverccuser", 'array'); // Array of selected value
-				if (!getDolGlobalInt('MAIN_MAIL_NO_WITH_TO_SELECTED') && !getDolGlobalInt('MAIN_MAIL_NO_WITH_TOUSER_SELECTED')) {
+				if (!getDolGlobalInt('MAIN_MAIL_NO_WITH_TOUSER_SELECTED')) {
 					if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action', 'aZ09') == 'presend') {
 						$withtoselected = array_keys($tmparray);
 					}
