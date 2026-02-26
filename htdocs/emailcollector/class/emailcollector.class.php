@@ -1767,6 +1767,7 @@ class EmailCollector extends CommonObject
 		$nbactiondone = 0;
 		$charset = ($this->hostcharset ? $this->hostcharset : "UTF-8");
 		$arrayofemail = array();
+		$Query = 0;
 
 		if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP') && is_object($client)) {
 			try {
@@ -1783,10 +1784,10 @@ class EmailCollector extends CommonObject
 					foreach ($f as $_f) {
 						if ($_f->path == $this->source_directory && $_f instanceof Webklex\PHPIMAP\Folder) {
 							$Query = $_f->messages()->where($criteria); // @phan-suppress-current-line PhanPluginUnknownObjectMethodCall
-							$foundSourceFolder = true;
 						}
 					}
-					if (!$foundSourceFolder) {
+					// @phpstan-ignore-line
+					if (empty($Query)) {
 						$error++;
 						$this->error = "Source directory ".$sourcedir." not found";
 						$this->errors[] = $this->error;
