@@ -22,6 +22,10 @@
  *	\brief      Library of functions for OpenID Connect authentication
  */
 
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+
+
 /**
  * Generate a self-verifiable state token for the OIDC authorization request.
  *
@@ -113,9 +117,6 @@ function openid_connect_get_url()
  */
 function openid_connect_create_user($db, $userinfo, $login, $entity)
 {
-	require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-
 	// Read claim mapping configuration
 	$claim_email = getDolGlobalString('MAIN_AUTHENTICATION_OIDC_CLAIM_EMAIL', 'email');
 	$claim_firstname = getDolGlobalString('MAIN_AUTHENTICATION_OIDC_CLAIM_FIRSTNAME', 'given_name');
