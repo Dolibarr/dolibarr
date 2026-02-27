@@ -216,7 +216,7 @@ if (empty($user->socid)) {
 }
 
 // Show POS fields if cashdesk or takepos module enabled or if global configuration to show POS fields on order list is enabled
-$showpos = (isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('ORDER_SHOW_POS')) ? 1 : 0;
+$showpos = (isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('ORDER_SHOW_POS')) ? '1' : '0';
 
 $checkedtypetiers = '0';
 $arrayfields = array(
