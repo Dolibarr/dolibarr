@@ -40,20 +40,17 @@ $action = GETPOST('action', 'aZ09');
 // Security check - user must be logged in
 if (!$user->id) {
 	accessforbidden('', 0, 0);
-	exit;
 }
 
 // Check permission to change own password
 // note eric: maybe we have to add that check on card where there is the checkbox on in user.class.php ?
 if (!$user->hasRight('user', 'self', 'password')) {
 	accessforbidden($langs->trans("ErrorForbidden"), 0, 0);
-	exit;
 }
 
 // Check authentication mode - only dolibarr auth can change password here
 if ($_SESSION['dol_authmode'] !== 'dolibarr') {
 	accessforbidden($langs->trans("ErrorForbidden").' - '.$langs->trans("YouMustUseDolibarrAuthModeToChangePassword"), 0, 0);
-	exit;
 }
 
 $error = 0;
