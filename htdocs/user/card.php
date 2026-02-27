@@ -11,7 +11,7 @@
  * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2015-2017	Jean-François Ferry			<jfefe@aternatik.fr>
  * Copyright (C) 2015		Ari Elbaz (elarifr)			<github@accedinfo.com>
- * Copyright (C) 2015-2018	Charlene Benke				<charlie@patas-monkey.com>
+ * Copyright (C) 2015-2026	Charlene Benke				<charlene@patas-monkey.com>
  * Copyright (C) 2016		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2018		David Beniamine				<David.Beniamine@Tetras-Libre.fr>
@@ -1222,7 +1222,12 @@ if ($action == 'create' || $action == 'adduserldap') {
 	if ($_SESSION["dol_authmode"] == 'dolibarr') {
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("ForcePasswordChange").'</td>';
 		print '<td>';
-		print '<input type="checkbox" name="forcepasswordchange" value="1"'.(GETPOST('forcepasswordchange') == '1' ? ' checked="checked"' : '').'>';
+		if ($object->hasRight('user', 'self', 'password')) {
+			print '<input type="checkbox" name="forcepasswordchange" value="1"'.(GETPOST('forcepasswordchange') == '1' ? ' checked="checked"' : '').'>';
+		} else {
+			print '<input type="checkbox" name="forcepasswordchange" value="1" disabled>';
+			print $langs->trans("UserDoesNotHaveRightsToChangeHisPassword");
+		}
 		print '</td>';
 		print "</tr>\n";
 	}
@@ -2025,10 +2030,15 @@ if ($action == 'create' || $action == 'adduserldap') {
 			if ($_SESSION["dol_authmode"] == 'dolibarr') {
 				print '<tr><td class="titlefieldcreate">'.$langs->trans("ForcePasswordChange").'</td>';
 				print '<td>';
-				if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2) {
-					print '<input type="checkbox" disabled name="forcepasswordchange" value="1"'.($object->force_pass_change ? ' checked="checked"' : '').'>';
+				if ($object->hasRight('user', 'self', 'password')) {
+					if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2) {
+						print '<input type="checkbox" disabled name="forcepasswordchange" value="1"'.($object->force_pass_change ? ' checked="checked"' : '').'>';
+					} else {
+						print yn($object->force_pass_change);
+					}
 				} else {
-					print yn($object->force_pass_change);
+					print '<input type="checkbox" name="forcepasswordchange" value="1" disabled>';
+					print $langs->trans("UserDoesNotHaveRightsToChangeHisPassword");
 				}
 				print '</td>';
 				print "</tr>\n";
@@ -2714,11 +2724,18 @@ if ($action == 'create' || $action == 'adduserldap') {
 			if ($_SESSION["dol_authmode"] == 'dolibarr') {
 				print '<tr>';
 				print '<td>'.$form->editfieldkey('ForcePasswordChange', 'forcepasswordchange', '', $object, 0).'</td><td>';
-				if ($permissiontoedit) {
-					print '<input type="checkbox" name="forcepasswordchange" value="1"'.($object->force_pass_change ? ' checked="checked"' : '').'>';
+
+				if ($object->hasRight('user', 'self', 'password')) {
+					if ($permissiontoedit) {
+						print '<input type="checkbox" name="forcepasswordchange" value="1"'.($object->force_pass_change ? ' checked="checked"' : '').'>';
+					} else {
+						print '<input type="checkbox" name="forcepasswordchange" disabled value="1"'.($object->force_pass_change ? ' checked="checked"' : '').'>';
+					}
 				} else {
-					print '<input type="checkbox" name="forcepasswordchange" disabled value="1"'.($object->force_pass_change ? ' checked="checked"' : '').'>';
+					print '<input type="checkbox" name="forcepasswordchange" value="1" disabled>';
+					print $langs->trans("UserDoesNotHaveRightsToChangeHisPassword");
 				}
+
 				print '</td></tr>';
 			}
 
@@ -3206,14 +3223,6 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			print $formfile->showdocuments('user', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 0, 0, 0, 28, 0, '', '', '', !is_object($societe) || empty($societe->default_lang) ? '' : $societe->default_lang);
 			$somethingshown = $formfile->numoffiles;
-
-			// Show links to link elements
-			$tmparray = $form->showLinkToObjectBlock($object, array(), array(), 1);
-			$linktoelem = $tmparray['linktoelem'];
-			$htmltoenteralink = $tmparray['htmltoenteralink'];
-			print $htmltoenteralink;
-
-			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 			$MAXEVENT = 10;
 

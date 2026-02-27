@@ -128,6 +128,15 @@ if (empty($reshook)) {
 
 		$object->clearrights();
 		$object->loadRights();
+
+		// We redirect to avoid to get an URL with token inside
+		$qs = $_SERVER["QUERY_STRING"];
+		$qs = preg_replace('/&action=addrights/', '', $qs);
+		$qs = preg_replace('/&token=[0-9a-f]+/i', '', $qs);
+		$qs = preg_replace('/&confirm=yes/', '', $qs);
+		//var_dump($qs);exit;
+		header("Location: ".$_SERVER["PHP_SELF"].($qs ? "?".$qs : ""));
+		exit;
 	}
 
 	if ($action == 'delrights' && $caneditperms && $confirm == 'yes') {
@@ -148,6 +157,14 @@ if (empty($reshook)) {
 
 		$object->clearrights();
 		$object->loadRights();
+
+		// We redirect to avoid to get an URL with token inside
+		$qs = $_SERVER["QUERY_STRING"];
+		$qs = preg_replace('/&action=delrights/', '', $qs);
+		$qs = preg_replace('/&token=[0-9a-f]+/i', '', $qs);
+		$qs = preg_replace('/&confirm=yes/', '', $qs);
+		header("Location: ".$_SERVER["PHP_SELF"].($qs ? "?".$qs : ""));
+		exit;
 	}
 }
 
@@ -661,7 +678,7 @@ foreach ($arrayofpermission as $i => $obj) {
 	print '<td class="maxwidthonsmartphone">';
 	print '</td>';
 
-		// Permission and tick (2 columns)
+	// Permission and tick (2 columns)
 	if (!empty($object->admin) && !empty($objMod->rights_admin_allowed)) {    // Permission granted because admin
 		print '<!-- perm is a perm allowed to any admin -->';
 		if ($caneditperms) {
@@ -679,7 +696,7 @@ foreach ($arrayofpermission as $i => $obj) {
 		print '<!-- user has perm -->';
 		if ($caneditperms) {
 			print '<td class="center nowrap">';
-			print '<a class="reposition addexpandedmodulesinparamlist" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'delrights', 'entity' => $entity, 'rights' => $obj->id, 'confirm' => 'yes', 'updatedmodulename' => $obj->module], true).'">';
+			print '<a class="reposition addexpandedmodulesinparamlist" id="'.$obj->id.'" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'delrights', 'entity' => $entity, 'rights' => $obj->id, 'confirm' => 'yes', 'updatedmodulename' => $obj->module], true).'">';
 			//print img_edit_remove($langs->trans("Remove"));
 			print img_picto($langs->trans("Remove"), 'switch_on');
 			print '</a>';
@@ -705,7 +722,7 @@ foreach ($arrayofpermission as $i => $obj) {
 			// Do not own permission
 			if ($caneditperms) {
 				print '<td class="center nowrap">';
-				print '<a class="reposition addexpandedmodulesinparamlist" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'addrights', 'entity' => $entity, 'rights' => $obj->id, 'confirm' => 'yes', 'updatedmodulename' => $obj->module], true).'">';
+				print '<a class="reposition addexpandedmodulesinparamlist" id="'.$obj->id.'" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'addrights', 'entity' => $entity, 'rights' => $obj->id, 'confirm' => 'yes', 'updatedmodulename' => $obj->module], true).'">';
 				//print img_edit_add($langs->trans("Add"));
 				print img_picto($langs->trans("Add"), 'switch_off');
 				print '</a>';
@@ -723,7 +740,7 @@ foreach ($arrayofpermission as $i => $obj) {
 		print '<!-- do not own permission -->';
 		if ($caneditperms) {
 			print '<td class="center nowrap">';
-			print '<a class="reposition addexpandedmodulesinparamlist" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'addrights', 'entity' => $entity, 'rights' => $obj->id, 'confirm' => 'yes', 'updatedmodulename' => $obj->module], true).'">';
+			print '<a class="reposition addexpandedmodulesinparamlist" id="'.$obj->id.'" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'addrights', 'entity' => $entity, 'rights' => $obj->id, 'confirm' => 'yes', 'updatedmodulename' => $obj->module], true).'">';
 			//print img_edit_add($langs->trans("Add"));
 			print img_picto($langs->trans("Add"), 'switch_off');
 			print '</a>';

@@ -338,6 +338,7 @@ RelativeDiscount=Relative discount
 AbsoluteDiscount=Absolute discount
 GlobalDiscount=Global discount
 CreditNote=Credit note
+CreditNoteOf=Credit note of %s
 CreditNotes=Credit notes
 CreditNotesOrExcessReceived=Credit notes or excess received
 Deposit=Down payment

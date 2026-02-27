@@ -1046,9 +1046,16 @@ input#onlinepaymenturl, input#directdownloadlink {
 .formconsumeproduce {
 	background: #f0f0f0;
 
-	padding: 20px 0px 20px 0px;
+	padding: 20px 20px 20px 20px;
 	border-radius: 8px;
 }
+.formborder {
+	border: solid 2px #444;
+	padding: 20px;
+	border-radius: 8px;
+	background-color: #fffff4;
+}
+
 
 div#moretabsList, div#moretabsListaction {
 	z-index: 5;
@@ -7120,7 +7127,9 @@ div#ecm-layout-center {
 	top: auto !important;
 	bottom: 4px !important;
 <?php } ?>
+	<?php if (getDolGlobalString('MAIN_JQUERY_JNOTIFY_UNDER_MENU')) { ?>
 	top: <?php print $disableimages ? '32' : ($heightmenu+4); ?>px;
+	<?php } ?>
 	text-align: center;
 	min-width: <?php echo $dol_optimize_smallscreen ? '200' : '480'; ?>px;
 	width: auto;
@@ -9186,6 +9195,7 @@ include dol_buildpath($path.'/theme/'.$theme.'/progress.inc.php', 0);
 include dol_buildpath($path.'/theme/eldy/timeline.inc.php', 0); // actually md use same style as eldy theme
 include dol_buildpath($path.'/theme/'.$theme.'/search-input.inc.css', 0); // actually md use same style as eldy theme
 include dol_buildpath($path.'/theme/'.$theme.'/tooltips.inc.css', 0);
+include dol_buildpath($path.'/theme/eldy/input-feedback.css', 0); // actually md use same style as eldy theme
 
 if (getDolGlobalString('THEME_CUSTOM_CSS')) {
 	print getDolGlobalString('THEME_CUSTOM_CSS');

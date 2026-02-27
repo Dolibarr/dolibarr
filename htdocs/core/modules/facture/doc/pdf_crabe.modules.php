@@ -1907,7 +1907,8 @@ class pdf_crabe extends ModelePDFFactures
 			$resteapayer = 0;
 		}
 
-		if (($deja_regle > 0 || $creditnoteamount > 0 || $depositsamount > 0) && !getDolGlobalString('INVOICE_NO_PAYMENT_DETAILS')) {
+		if ((($deja_regle > 0 || $creditnoteamount > 0 || $depositsamount > 0) && !getDolGlobalString('INVOICE_NO_PAYMENT_DETAILS'))
+			|| isALNERunningVersion()) {
 			// Already paid + Deposits
 			$index++;
 			$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
