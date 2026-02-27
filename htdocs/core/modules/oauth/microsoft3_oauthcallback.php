@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2022       Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015-2024  Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW					 <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Vidal Nicolas		 <nicolas.vidal@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,9 +19,14 @@
  */
 
 /**
- *      \file       htdocs/core/modules/oauth/microsoft_oauthcallback.php
+ *      \file       htdocs/core/modules/oauth/microsoft3_oauthcallback.php
  *      \ingroup    oauth
- *      \brief      Page to get oauth callback
+ *      \brief      Page to get oauth callback for Microsoft Exchange Online (SMTP/IMAP)
+ *
+ *      Uses Exchange Online OAuth2 scopes for SMTP/IMAP:
+ *        - offline_access
+ *        - https://outlook.office.com/SMTP.Send
+ *        - https://outlook.office.com/IMAP.AccessAsUser.All
  */
 
 // Load Dolibarr environment
@@ -41,7 +47,6 @@ use OAuth\Common\Consumer\Credentials;
 // Define $urlwithroot
 $urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
-//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 
 $action = GETPOST('action', 'aZ09');
@@ -50,15 +55,16 @@ $keyforprovider = GETPOST('keyforprovider', 'aZ09');
 if (empty($keyforprovider) && !empty($_SESSION["oauthkeyforproviderbeforeoauthjump"]) && (GETPOST('code') || $action == 'delete')) {
 	$keyforprovider = $_SESSION["oauthkeyforproviderbeforeoauthjump"];
 }
-$genericstring = 'MICROSOFT';
+$genericstring = 'MICROSOFT3';
+
 
 /**
  * Create a new instance of the URI class with the current URI, stripping the query string
  */
 $uriFactory = new \OAuth\Common\Http\Uri\UriFactory();
-//$currentUri = $uriFactory->createFromSuperGlobalArray($_SERVER);
-//$currentUri->setQuery('');
-$currentUri = $uriFactory->createFromAbsolute($urlwithroot.'/core/modules/oauth/microsoft_oauthcallback.php');
+
+
+$currentUri = $uriFactory->createFromAbsolute($urlwithroot.'/core/modules/oauth/microsoft3_oauthcallback.php');
 
 
 /**
@@ -68,9 +74,7 @@ $currentUri = $uriFactory->createFromAbsolute($urlwithroot.'/core/modules/oauth/
 /** @var \OAuth\ServiceFactory $serviceFactory An OAuth service factory. */
 $serviceFactory = new \OAuth\ServiceFactory();
 $httpClient = new \OAuth\Common\Http\Client\CurlClient();
-// TODO Set options for proxy and timeout
-// $params=array('CURLXXX'=>value, ...)
-//$httpClient->setCurlParameters($params);
+
 $serviceFactory->setHttpClient($httpClient);
 
 // Setup the credentials for the requests
@@ -97,12 +101,7 @@ if ($action != 'delete' && empty($requestedpermissionsarray)) {
 	print 'Error, parameter state is not defined';
 	exit;
 }
-//var_dump($requestedpermissionsarray);exit;
 
-// Instantiate the Api service using the credentials, http client and storage mechanism for the token
-// ucfirst(strtolower($genericstring)) must be the name of a class into OAuth/OAuth2/Services/Xxxx
-// $requestedpermissionsarray contains list of scopes.
-// Conversion into URL is done by Reflection on constant with name SCOPE_scope_in_uppercase
 try {
 	$nameofservice = ucfirst(strtolower($genericstring));
 	$apiService = $serviceFactory->createService($nameofservice, $credentials, $storage, $requestedpermissionsarray);
@@ -111,20 +110,11 @@ try {
 	print $e->getMessage();
 	exit;
 }
-/*
-var_dump($genericstring.($keyforprovider ? '-'.$keyforprovider : ''));
-var_dump($credentials);
-var_dump($storage);
-var_dump($requestedpermissionsarray);
-*/
 
 if (empty($apiService)) {
 	print 'Error, failed to create serviceFactory';
 	exit;
 }
-
-// access type needed to have oauth provider refreshing token
-//$apiService->setAccessType('offline');
 
 $langs->load("oauth");
 
@@ -137,7 +127,6 @@ if (!getDolGlobalString($keyforparamsecret)) {
 if (!getDolGlobalString($keyforparamtenant)) {
 	accessforbidden('Setup of service is not complete. Tenant/Annuary ID key is missing');
 }
-
 
 /*
  * Actions
@@ -157,33 +146,25 @@ if ($action == 'delete' && (!empty($user->admin) || $user->id == GETPOSTINT('use
 	exit();
 }
 
-//dol_syslog("GET=".join(',', $_GET));
-
 
 if (GETPOST('code') || GETPOST('error')) {     // We are coming from oauth provider page
 	// We should have
-	//$_GET=array('code' => string 'aaaaaaaaaaaaaa' (length=20), 'state' => string 'user,public_repo' (length=16))
 
 	dol_syslog(basename(__FILE__)." We are coming from the oauth provider page code=".dol_trunc(GETPOST('code'), 5)." error=".GETPOST('error'));
 
+	// We must validate that the $state is the same than the one into $_SESSION['oauthstateanticsrf'], return error if not.
+	if (isset($_SESSION['oauthstateanticsrf']) && $state != $_SESSION['oauthstateanticsrf']) {
+		print $langs->trans("OAuthErrorStateDiffers", dol_escape_htmltag($state));
+		unset($_SESSION['oauthstateanticsrf']);
+		exit;
+	}
+
 	// This was a callback request from service, get the token
 	try {
-		//var_dump($state);
-		//var_dump($apiService);      // OAuth\OAuth2\Service\Microsoft
-
 		if (GETPOST('error')) {
 			setEventMessages(GETPOST('error').' '.GETPOST('error_description'), null, 'errors');
 		} else {
-			//print GETPOST('code');exit;
-
-			//$token = $apiService->requestAccessToken(GETPOST('code'), $state);
 			$token = $apiService->requestAccessToken(GETPOST('code'));
-			// Microsoft is a service that does not need state to be stored as second parameter of requestAccessToken
-
-			//print $token->getAccessToken().'<br><br>';
-			//print $token->getExtraParams()['id_token'].'<br><br>';
-			//print $token->getRefreshToken().'<br>';exit;
-
 			setEventMessages($langs->trans('NewTokenStored'), null, 'mesgs'); // Stored into object managed by class DoliStorage so into table oauth_token
 		}
 
@@ -202,31 +183,21 @@ if (GETPOST('code') || GETPOST('error')) {     // We are coming from oauth provi
 	$_SESSION["oauthkeyforproviderbeforeoauthjump"] = $keyforprovider;
 	$_SESSION['oauthstateanticsrf'] = $state;
 
-	//if (!preg_match('/^forlogin/', $state)) {
-	//	$apiService->setApprouvalPrompt('auto');
-	//}
-
 	// This may create record into oauth_state before the header redirect.
 	// Creation of record with state in this tables depend on the Provider used (see its constructor).
-	$params = array();
+	$params = array('prompt' => 'consent');
 	if ($state) {
 		$params['state'] = $state;
 	}
-	if (!empty($params)) {
-		$url = $apiService->getAuthorizationUri($params);
-	} else {
-		$url = $apiService->getAuthorizationUri(); // Parameter state will be randomly generated
-	}
+	$url = $apiService->getAuthorizationUri($params);
 
 	// Show url to get authorization
-	//var_dump((string) $url);exit;
 	dol_syslog("Redirect to url=".$url);
 
 	// we go on oauth provider authorization page
 	header('Location: '.$url);
 	exit();
 }
-
 
 /*
  * View

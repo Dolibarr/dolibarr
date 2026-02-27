@@ -28,6 +28,7 @@ require_once DOL_DOCUMENT_ROOT . '/projet/class/task.class.php';
 /**
  * API class for projects
  *
+ * @since	5.0.0	Initial implementation
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
  */
@@ -68,6 +69,7 @@ class Projects extends DolibarrApi
 	 *
 	 * Return an array with project information
 	 *
+	 * @since	5.0.0	Initial implementation
 	 * @param   int         $id         ID of project
 	 * @return  Object					Object with cleaned properties
 	 *
@@ -97,6 +99,7 @@ class Projects extends DolibarrApi
 	 *
 	 * Return an array with project information
 	 *
+	 * @since	20.0.0	Initial implementation
 	 * @param	string	$ref			Ref of project
 	 * @return  Object					Object with cleaned properties
 	 *
@@ -128,6 +131,7 @@ class Projects extends DolibarrApi
 	 *
 	 * Return an array with project information
 	 *
+	 * @since	20.0.0	Initial implementation
 	 * @param	string	$ref_ext			Ref_Ext of project
 	 * @return  Object					Object with cleaned properties
 	 *
@@ -159,6 +163,7 @@ class Projects extends DolibarrApi
 	 *
 	 * Return an array with project information
 	 *
+	 * @since	20.0.0	Initial implementation
 	 * @param	string	$email_msgid	Email msgid of project
 	 * @return  Object					Object with cleaned properties
 	 *
@@ -190,6 +195,7 @@ class Projects extends DolibarrApi
 	 *
 	 * Get a list of projects
 	 *
+	 * @since	5.0.0	Initial implementation
 	 * @param string		   $sortfield			Sort field
 	 * @param string		   $sortorder			Sort order
 	 * @param int			   $limit				Limit for list
@@ -307,6 +313,7 @@ class Projects extends DolibarrApi
 	/**
 	 * Create project object
 	 *
+	 * @since	5.0.0	Initial implementation
 	 * @param   array   $request_data   Request data
 	 * @phan-param array<string,mixed> $request_data
 	 * @phpstan-param array<string,mixed> $request_data
@@ -390,6 +397,7 @@ class Projects extends DolibarrApi
 	/**
 	 * Adds a contact to an project
 	 *
+	 * @since	23.0.0	Initial implementation
 	 * @param   int		$id					project ID
 	 * @param   int		$fk_socpeople		Id of thirdparty contact (if source = 'external') or id of user (if source = 'internal') to link
 	 * @param   string	$type_contact       Type of contact (code). Must a code found into table llx_c_type_contact. For example: BILLING
@@ -431,6 +439,7 @@ class Projects extends DolibarrApi
 	/**
 	 * Delete a contact type of given project
 	 *
+	 * @since	23.0.0	Initial implementation
 	 * @param	int    $id             Id of project to update
 	 * @param	int    $contactid      Row key of the contact in the array contact_ids.
 	 * @param	string $type           Type of the contact (BILLING, SHIPPING, CUSTOMER).
@@ -475,6 +484,7 @@ class Projects extends DolibarrApi
 	 * Get tasks of a project.
 	 * See also API /tasks
 	 *
+	 * @since	5.0.0	Initial implementation
 	 * @param int   $id                     Id of project
 	 * @param int   $includetimespent       0=Return only list of tasks. 1=Include a summary of time spent, 2=Include details of time spent lines
 	 * @return array
@@ -515,6 +525,7 @@ class Projects extends DolibarrApi
 	/**
 	 * Get roles a user is assigned to a project with
 	 *
+	 * @since	5.0.0	Initial implementation
 	 * @param   int   $id             Id of project
 	 * @param   int   $userid         Id of user (0 = connected user)
 	 * @return array
@@ -693,6 +704,7 @@ class Projects extends DolibarrApi
 	/**
 	 * Update project general fields (won't touch lines of project)
 	 *
+	 * @since	5.0.0	Initial implementation
 	 * @param 	int   	$id             	Id of project to update
 	 * @param 	array 	$request_data   	Datas
 	 * @phan-param ?array<string,mixed> $request_data
@@ -744,6 +756,7 @@ class Projects extends DolibarrApi
 	/**
 	 * Delete project
 	 *
+	 * @since	5.0.0	Initial implementation
 	 * @param   int     $id         Project ID
 	 *
 	 * @return  array
@@ -781,6 +794,7 @@ class Projects extends DolibarrApi
 	 * You can test this API with the following input message
 	 * { "notrigger": 0 }
 	 *
+	 * @since	5.0.0	Initial implementation
 	 * @param   int $id             Project ID
 	 * @param   int $notrigger      1=Does not execute triggers, 0= execute triggers
 	 * @phan-param int<0,1> $notrigger
@@ -831,6 +845,7 @@ class Projects extends DolibarrApi
 	/**
 	 * Get all timespent
 	 *
+	 * @since	23.0.0	Initial implementation
 	 * @param string		   $sortfield			Sort field
 	 * @param string		   $sortorder			Sort order
 	 * @param int			   $limit				Limit for list
@@ -1027,6 +1042,7 @@ class Projects extends DolibarrApi
 	 *
 	 * Return an array with contact information
 	 *
+	 * @since	23.0.0	Initial implementation
 	 * @param int    $id     ID of project
 	 * @param string $type   Type of the contact
 	 * @return array<int,mixed>         Array with cleaned properties
@@ -1061,6 +1077,7 @@ class Projects extends DolibarrApi
 	/**
 	 * Adds a contact to a project
 	 *
+	 * @since	23.0.0	Initial implementation
 	 * @param int    $id             Project ID
 	 * @param int    $fk_socpeople   Id of thirdparty contact (if source = 'external') or id of user (if source = 'internal') to link
 	 * @param string $type_contact   Type of contact (code). Must a code found into table llx_c_type_contact. For example: BILLING
@@ -1121,6 +1138,7 @@ class Projects extends DolibarrApi
 	/**
 	 * Delete a contact type of given project
 	 *
+	 * @since	23.0.0	Initial implementation
 	 * @param int    $id         Id of project to update
 	 * @param int    $contactid  Row key of the contact in the array contact_ids.
 	 * @param string $type       Type of the contact (BILLING, SHIPPING, CUSTOMER).
@@ -1167,6 +1185,7 @@ class Projects extends DolibarrApi
 	/**
 	 * Get timespent of a project (from all its tasks)
 	 *
+	 * @since	23.0.0	Initial implementation
 	 * @param int   $id         ID of project
 	 * @return array<int,mixed>            Array of timespent objects
 	 *

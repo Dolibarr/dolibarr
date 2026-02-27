@@ -715,6 +715,7 @@ DisputeWon=Victoire en litige
 DisputeClosed=Litige clos
 Dispute=Différend
 Sales=Ventes
+AmountRequestedAlreadyReachesTotal=Le montant demandé atteint déjà le total de la facture
 AutoSendEmail=Envoi automatique d'e-mails
 EmailTemplateForAutoSend=Modèle d'e-mail pour l'envoi automatique
 InvoiceSentFromTemplate=facture %s envoyé depuis le modèle récurrent facture %s

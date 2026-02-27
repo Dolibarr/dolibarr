@@ -113,10 +113,25 @@ function dol_convertToWord($num, $langs, $currency = '', $centimes = false)
 			if ($tens < 20) {
 				$tens = ($tens ? ' '.$list1[$tens].' ' : '');
 			} else {
-				$tens = (int) ($tens / 10);
-				$tens = ' '.$list2[$tens].' ';
-				$singles = (int) ((int) $num_levels[$i] % 10);
-				$singles = ' '.$list1[$singles].' ';
+				$tsd = (int) ($tens / 10);  // tens digit (2-9)
+				$usd = (int) ($tens % 10);  // units digit (0-9)
+
+				// French-style systems: 70-79 = sixty + (10-19), 90-99 = eighty + (10-19)
+				// Detection: if the translation of "seventy"/"ninety" contains the word for "ten"
+				$tenWord = trim($list1[10]);  // e.g. "dix"
+				if ($usd > 0 && ($tsd == 7 || $tsd == 9) && $tenWord !== '' && strpos(trim($list2[$tsd]), $tenWord) !== false) {
+					// Use the base ten word (60 for 70s, 80 for 90s) + teen word (11-19)
+					$baseWord = trim($list2[$tsd - 1]);
+					// Remove trailing 's' (e.g. quatre-vingts → quatre-vingt when used in composition)
+					if (substr($baseWord, -1) === 's') {
+						$baseWord = substr($baseWord, 0, -1);
+					}
+					$tens = ' '.$baseWord.' ';
+					$singles = ' '.$list1[10 + $usd].' ';
+				} else {
+					$tens = ' '.$list2[$tsd].' ';
+					$singles = ' '.$list1[$usd].' ';
+				}
 			}
 			$words[] = $hundreds.$tens.$singles.(($levels && (int) ($num_levels[$i])) ? ' '.$list3[$levels].' ' : '');
 		} //end for loop

@@ -708,7 +708,7 @@ print '<tr class="oddeven"><td class="titlefieldmiddle"><label for="TICKET_SEND_
 print $form->textwithpicto($langs->trans("TicketSendToInternalCC"), $langs->trans("TicketSendToInternalCCHelp")).'</label></td>';
 print '<td>';
 print img_picto('', 'email', 'class="pictofixedwidth"');
-print '<input class="flat width300" name="TICKET_SEND_INTERNAL_CC" value="'.getDolGlobalString('TICKET_SEND_INTERNAL_CC').'">';
+print '<input class="minwidth200" name="TICKET_SEND_INTERNAL_CC" value="'.getDolGlobalString('TICKET_SEND_INTERNAL_CC').'">';
 print '</td>';
 print '<td></td>';
 print '</tr>';
