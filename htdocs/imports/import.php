@@ -151,10 +151,10 @@ $step				= (GETPOST('step') ? GETPOST('step') : 1);
 $import_name = GETPOST('import_name');
 $hexa = GETPOST('hexa');
 $importmodelid = GETPOSTINT('importmodelid');
-$excludefirstline = (GETPOST('excludefirstline') ? GETPOST('excludefirstline') : 2);
-$endatlinenb = (GETPOST('endatlinenb') ? GETPOST('endatlinenb') : '');
-$updatekeys			= (GETPOST('updatekeys', 'array') ? GETPOST('updatekeys', 'array') : array());
-$importtriggermode = GETPOST('importtriggermode', 'alpha');
+$excludefirstline = (GETPOST('excludefirstline', 'alphanohtml', 3) ? GETPOST('excludefirstline', 'alphanohtml', 3) : 2);
+$endatlinenb = (GETPOST('endatlinenb', 'alphanohtml', 3) ? GETPOST('endatlinenb', 'alphanohtml', 3) : '');
+$updatekeys			= (GETPOST('updatekeys', 'array', 3) ? GETPOST('updatekeys', 'array', 3) : array());
+$importtriggermode = GETPOST('importtriggermode', 'alpha', 3);
 $separator			= (GETPOST('separator', 'nohtml') ? GETPOST('separator', 'nohtml', 3) : '');
 $enclosure			= (GETPOST('enclosure', 'nohtml') ? GETPOST('enclosure', 'nohtml') : '"');	// We must use 'nohtml' and not 'alphanohtml' because we must accept "
 $charset            = GETPOST('charset', 'aZ09');
@@ -1137,8 +1137,9 @@ if ($step == 3 && $datatoimport) {
 				if ($objimport->array_import_convertvalue[0][$tmpcode]['rule'] == 'fetchidfromref') {
 					$htmltext .= $langs->trans("DataComeFromIdFoundFromRef", $langs->transnoentitiesnoconv($entitylang)).'<br>';
 				}
-				if ($objimport->array_import_convertvalue[0][$tmpcode]['rule'] == 'fetchidfromcodeid') {
-					$htmltext .= $langs->trans("DataComeFromIdFoundFromCodeId", $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$tmpcode]['dict'])).'<br>';
+					if ($objimport->array_import_convertvalue[0][$tmpcode]['rule'] == 'fetchidfromcodeid') {
+						$dictlabel = $objimport->array_import_convertvalue[0][$tmpcode]['dict'] ?? '';
+						$htmltext .= $langs->trans("DataComeFromIdFoundFromCodeId", $langs->transnoentitiesnoconv($dictlabel)).'<br>';
 				}
 			}
 			// Source required
@@ -1151,8 +1152,9 @@ if ($step == 3 && $datatoimport) {
 			} else {
 				if ($objimport->array_import_convertvalue[0][$tmpcode]['rule'] == 'fetchidfromref') {
 					$htmltext .= $langs->trans("SourceExample").': <b>'.$langs->transnoentitiesnoconv("ExampleAnyRefFoundIntoElement", $entitylang).($example ? ' ('.$langs->transnoentitiesnoconv("Example").': '.str_replace('"', '', $example).')' : '').'</b><br>';
-				} elseif ($objimport->array_import_convertvalue[0][$tmpcode]['rule'] == 'fetchidfromcodeid') {
-					$htmltext .= $langs->trans("SourceExample").': <b>'.$langs->trans("ExampleAnyCodeOrIdFoundIntoDictionary", $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$tmpcode]['dict'])).($example ? ' ('.$langs->transnoentitiesnoconv("Example").': '.str_replace('"', '', $example).')' : '').'</b><br>';
+					} elseif ($objimport->array_import_convertvalue[0][$tmpcode]['rule'] == 'fetchidfromcodeid') {
+						$dictlabel = $objimport->array_import_convertvalue[0][$tmpcode]['dict'] ?? '';
+						$htmltext .= $langs->trans("SourceExample").': <b>'.$langs->trans("ExampleAnyCodeOrIdFoundIntoDictionary", $langs->transnoentitiesnoconv($dictlabel)).($example ? ' ('.$langs->transnoentitiesnoconv("Example").': '.str_replace('"', '', $example).')' : '').'</b><br>';
 				} elseif ($example) {
 					$htmltext .= $langs->trans("SourceExample").': <b>'.str_replace('"', '', $example).'</b><br>';
 				}
@@ -1712,7 +1714,9 @@ if ($step == 4 && $datatoimport) {
 	);
 	if ($action == 'launchsimu') {
 		print dol_escape_htmltag($triggerModeChoices[$importtriggermode] ?? $importtriggermode);
-		print '<input type="hidden" name="importtriggermode" value="'.dol_escape_htmltag($importtriggermode).'">';
+		if ($action == 'launchsimu') {
+			print '<input type="hidden" name="importtriggermode" value="'.dol_escape_htmltag($importtriggermode).'">';
+		}
 		print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'?step=4'.$param.'">'.$langs->trans("Modify").'</a>';
 	} else {
 		print $form->selectarray('importtriggermode', $triggerModeChoices, $importtriggermode, 0);

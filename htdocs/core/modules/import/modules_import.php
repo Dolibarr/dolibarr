@@ -1051,8 +1051,9 @@ class ModeleImports
 										$file = (empty($objimport->array_import_convertvalue[0][$val]['classfile']) ? $objimport->array_import_convertvalue[0][$val]['file'] : $objimport->array_import_convertvalue[0][$val]['classfile']);
 										$class = $objimport->array_import_convertvalue[0][$val]['class'];
 										$method = $objimport->array_import_convertvalue[0][$val]['method'];
-										if ($this->cacheconvert[$file.'_'.$class.'_'.$method.'_'][$newval] != '') {
-											$newval = $this->cacheconvert[$file.'_'.$class.'_'.$method.'_'][$newval];
+											$cachekey = $file.'_'.$class.'_'.$method.'_';
+											if (isset($this->cacheconvert[$cachekey][$newval]) && $this->cacheconvert[$cachekey][$newval] != '') {
+												$newval = $this->cacheconvert[$cachekey][$newval];
 										} else {
 											$resultload = dol_include_once($file);
 											if (empty($resultload)) {
@@ -1100,7 +1101,7 @@ class ModeleImports
 												$param_array = array('', '', $newval);
 												call_user_func_array(array($classinstance, $method), $param_array);
 											}
-											$this->cacheconvert[$file.'_'.$class.'_'.$method.'_'][$newval] = $classinstance->id;
+											$this->cacheconvert[$cachekey][$newval] = $classinstance->id;
 
 											//print 'We have made a '.$class.'->'.$method.' to get id from code '.$newval.'. ';
 											if ($classinstance->id != '') {	// id may be 0, it is a found value
@@ -1132,8 +1133,9 @@ class ModeleImports
 										$method = $objimport->array_import_convertvalue[0][$val]['method'];
 										$codefromfield = $objimport->array_import_convertvalue[0][$val]['codefromfield'];
 										$code = $arrayrecord[$arrayfield[$codefromfield]]['val'];
-										if ($this->cacheconvert[$file.'_'.$class.'_'.$method.'_'.$code][$newval] != '') {
-											$newval = $this->cacheconvert[$file.'_'.$class.'_'.$method.'_'.$code][$newval];
+											$cachekey = $file.'_'.$class.'_'.$method.'_'.$code;
+											if (isset($this->cacheconvert[$cachekey][$newval]) && $this->cacheconvert[$cachekey][$newval] != '') {
+												$newval = $this->cacheconvert[$cachekey][$newval];
 										} else {
 											$resultload = dol_include_once($file);
 											if (empty($resultload)) {
@@ -1144,7 +1146,7 @@ class ModeleImports
 											// Try the fetch from code and ref
 											$param_array = array('', $newval, $code);
 											call_user_func_array(array($classinstance, $method), $param_array);
-											$this->cacheconvert[$file.'_'.$class.'_'.$method.'_'.$code][$newval] = $classinstance->id;
+												$this->cacheconvert[$cachekey][$newval] = $classinstance->id;
 											if ($classinstance->id > 0) {    // we found record
 												$newval = $classinstance->id;
 											} else {
@@ -1168,8 +1170,9 @@ class ModeleImports
 									$class = $objimport->array_import_convertvalue[0][$val]['class'];
 									$method = $objimport->array_import_convertvalue[0][$val]['method'];
 									$units = $objimport->array_import_convertvalue[0][$val]['units'];
-									if ($this->cacheconvert[$file.'_'.$class.'_'.$method.'_'.$units][$newval] != '') {
-										$newval = $this->cacheconvert[$file.'_'.$class.'_'.$method.'_'.$units][$newval];
+										$cachekey = $file.'_'.$class.'_'.$method.'_'.$units;
+										if (isset($this->cacheconvert[$cachekey][$newval]) && $this->cacheconvert[$cachekey][$newval] != '') {
+											$newval = $this->cacheconvert[$cachekey][$newval];
 									} else {
 										$resultload = dol_include_once($file);
 										if (empty($resultload)) {
@@ -1180,7 +1183,7 @@ class ModeleImports
 										// Try the fetch from code or ref
 										call_user_func_array(array($classinstance, $method), array('', '', $newval, $units));
 										$scaleorid = (($objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchidfromcodeunits') ? $classinstance->id : $classinstance->scale);
-										$this->cacheconvert[$file.'_'.$class.'_'.$method.'_'.$units][$newval] = $scaleorid;
+											$this->cacheconvert[$cachekey][$newval] = $scaleorid;
 										//print 'We have made a '.$class.'->'.$method." to get a value from key '".$newval."' and we got '".$scaleorid."'.";exit;
 										if ($classinstance->id > 0) {	// we found record
 											$newval = $scaleorid ? $scaleorid : 0;
