@@ -58,21 +58,21 @@ repos:
       # Check that there are no files that have are the same when uppercased (conflict on windows)
       - id: check-case-conflict
 
-  # Beautify shell scripts
+  # Git leaks
   - repo: https://github.com/gitleaks/gitleaks.git
     rev: v8.16.1
     hooks:
       - id: gitleaks
 
   # Beautify shell scripts
-  - repo: https://github.com/lovesegfault/beautysh.git
-    rev: v6.2.1
-    hooks:
-      - id: beautysh
-        exclude: |
-          (?x)^(dev/setup/git/hooks/pre-commit
-               )$
-        args: [--tab]
+  #- repo: https://github.com/lovesegfault/beautysh.git
+  #  rev: v6.2.1
+  #  hooks:
+  #    - id: beautysh
+  #      exclude: |
+  #        (?x)^(dev/setup/git/hooks/pre-commit
+  #             )$
+  #      args: [--tab]
 
   # Run local script
   #
