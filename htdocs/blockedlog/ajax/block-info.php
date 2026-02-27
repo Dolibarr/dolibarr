@@ -58,7 +58,7 @@ if ((!$user->admin && !$user->hasRight('blockedlog', 'read')) || empty($conf->bl
 	accessforbidden();
 }
 
-$langs->loadLangs(array("admin", "bills", "blockedlog", "cashdesk", "companies", "mails", "members", "products"));
+$langs->loadLangs(array("admin", "bills", "blockedlog", "cashdesk", "companies", "compta", "mails", "members", "products"));
 
 
 /*
@@ -199,6 +199,10 @@ function formatObject($objtoshow, $prefix, $parentelement = '')
 		'cheque_declared' => $langs->transnoentities('PaymentTypeCHQ').' - '.$langs->transnoentities("AmuntCountedByUserShort"),
 		'cheque_lifetime' => $langs->transnoentities('LifetimeAmount', $langs->transnoentities('PaymentTypeCHQ')),
 		'lifetime_start' => 'LifetimeStatDate',
+		'total_billed' => 'Turnover',
+		'total_collected' => 'TurnoverCollected',
+		'totallifetime_billed' => $langs->transnoentitiesnoconv('Turnover').' - '.$langs->transnoentitiesnoconv('LifetimeAmountShort'),
+		'totallifetime_collected' => $langs->transnoentitiesnoconv('TurnoverCollected').' - '.$langs->transnoentitiesnoconv('LifetimeAmountShort'),
 		'email_from' => 'MailFrom',
 		'email_to' => 'MailTo',
 		'email_msgid' => 'EmailMsgID',
@@ -281,6 +285,8 @@ function formatObject($objtoshow, $prefix, $parentelement = '')
 					'cash_declared', 'cheque_declared', 'card_declared', 'cash_lifetime', 'cheque_lifetime', 'card_lifetime'
 				)) || (isset($arrayoffields[$key]['type']) && in_array($arrayoffields[$key]['type'], array('price')))) {
 					$s .= '<span class="amount">'.price($val, 0, $langs, 1, 0, -2).'</span>';
+				} elseif (in_array($key, array('total_billed', 'total_collected', 'totallifetime_billed', 'totallifetime_collected'))) {
+					$s .= '<span class="amount">'.$val.'</span>';
 				} else {
 					$s .= $val;
 				}

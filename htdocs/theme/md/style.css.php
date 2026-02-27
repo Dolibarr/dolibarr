@@ -1049,6 +1049,13 @@ input#onlinepaymenturl, input#directdownloadlink {
 	padding: 20px 20px 20px 20px;
 	border-radius: 8px;
 }
+.formborder {
+	border: solid 2px #444;
+	padding: 20px;
+	border-radius: 8px;
+	background-color: #fffff4;
+}
+
 
 div#moretabsList, div#moretabsListaction {
 	z-index: 5;
