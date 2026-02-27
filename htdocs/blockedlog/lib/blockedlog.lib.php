@@ -426,6 +426,7 @@ function callApiToPushCounter($id, $signature, $test, $previousid, $previoussign
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 			try {
 				$tmpresult = getURLContent($url_for_ping, 'POST', $data, 1, $addheaders, array('https'), 0, -1, $timeoutconnect, $timeoutresponse, array(), '_dolibarrpushcounter');
+				usleep(1000);
 
 				// Add a warning in log in case of error
 				if ($tmpresult['http_code'] != 200) {
