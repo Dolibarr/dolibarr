@@ -33,6 +33,8 @@
  * @var int $error
  * @var ?int $search_end
  */
+'@phan-var-force array<string,float> $totalamountlifetime';
+'@phan-var-force array<string,float> $totalhtamountlifetime';
 
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
