@@ -771,7 +771,7 @@ print img_picto('', 'email', 'class="pictofixedwidth"');
 $formmail = new FormMail($db);
 $result = $formmail->fetchAllEMailTemplate('ticket_send', $user, $langs);
 if ($result < 0) {
-	setEventMessages($this->error, $this->errors, 'errors');
+	setEventMessages($formmail->error, $formmail->errors, 'errors');
 } else {
 	$modelmail_array=[];
 
