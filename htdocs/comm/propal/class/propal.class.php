@@ -3495,7 +3495,12 @@ class Propal extends CommonObject
 		$clause = " WHERE";
 
 		$sql = "SELECT p.rowid, p.ref, p.datec as datec, p.fin_validite as datefin, p.total_ht";
-		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as p";
+		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
+			$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as p";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc";
+		} else {
+			$sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
+		}
 		$sql .= $clause." p.entity IN (".getEntity('propal').")";
 		if ($mode == 'opened') {
 			$sql .= " AND p.fk_statut = ".self::STATUS_VALIDATED;
@@ -3503,6 +3508,14 @@ class Propal extends CommonObject
 		if ($mode == 'signed') {
 			$sql .= " AND p.fk_statut = ".self::STATUS_SIGNED;
 		}
+
+		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
+			$sql .= " AND sc.fk_user = ".((int) $user->id);
+		}
+		if ($user->socid) {
+			$sql .= " AND p.fk_soc = ".((int) $user->socid);
+		}
+
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {

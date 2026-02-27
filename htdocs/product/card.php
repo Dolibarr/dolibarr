@@ -2490,6 +2490,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
 						print '<td>';
 						print $formaccounting->select_account((GETPOSTISSET('accountancy_code_sell') ? GETPOST('accountancy_code_sell') : $object->accountancy_code_sell), 'accountancy_code_sell', 1, array(), 1, 1, 'minwidth150 maxwidth300');
+						$nb = $formaccounting->nbaccounts;
+						if ($nb == 0) {
+							print ' &nbsp; <a href="'.DOL_URL_ROOT.'/accountancy/admin/account.php">'.$langs->trans("SetupOn", $langs->trans("Chartofaccounts")).'</a>';
+						}
 						print '</td></tr>';
 
 						// Accountancy_code_sell_intra

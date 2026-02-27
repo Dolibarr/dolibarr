@@ -1970,12 +1970,6 @@ if (empty($reshook)) {
 			$res = $product->fetch($productid);
 
 			$type = $product->type;
-			$price_base_type = $product->price_base_type;
-
-			// If base type TTc, we change pu value to define the TTC one
-			if ($price_base_type == 'TTC' && !empty($pu_ttc)) {
-				$pu = $pu_ttc;
-			}
 
 			$label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label') : '');
 

@@ -40,10 +40,11 @@ require '../../main.inc.php';
  * @var Societe $mysoc
  */
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/cashcontrol/class/cashcontrol.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $langs->loadLangs(array("install", "cashdesk", "admin", "banks", "blockedlog"));
 
@@ -112,6 +113,10 @@ if (!$user->hasRight("cashdesk", "run") && !$user->hasRight("takepos", "run")) {
 
 $permissiontoadd = ($user->hasRight("cashdesk", "run") || $user->hasRight("takepos", "run"));
 $permissiontodelete = ($user->hasRight("cashdesk", "run") || $user->hasRight("takepos", "run")) || ($permissiontoadd && $object->status == 0);
+if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
+	// For action 'update_extras', is there a specific permission set for the attribute to update
+	$permissiontoeditextra = dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+}
 
 $sqlfilteronopdate = '';
 
@@ -453,6 +458,31 @@ if ($action == 'confirm_delete' && !empty($permissiontodelete)) {
 		} else {
 			setEventMessages($object->error, null, 'errors');
 		}
+	}
+}
+
+if ($action == 'update_extras' && $permissiontoeditextra) {
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
+
+	$attribute_name = GETPOST('attribute', 'aZ09');
+
+	// Fill array 'array_options' with data from add form
+	$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
+	if ($ret < 0) {
+		$error++;
+	}
+
+	if (!$error) {
+		// Actions on extra fields
+		$result = $object->updateExtraField($attribute_name, 'CASHCONTROL_MODIFY');
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$error++;
+		}
+	}
+
+	if ($error) {
+		$action = 'edit_extras';
 	}
 }
 
@@ -901,6 +931,14 @@ if (empty($action) || $action == "view" || $action == "close") {
 		$htmltooltip .= '</span>';
 		print $form->textwithpicto('', $htmltooltip);
 		print '</td></tr>';
+
+		// Other attributes
+		$parameters = array('colspan' => ' colspan="2"', 'cols' => '2');
+		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
+		if (empty($reshook)) {
+			print $object->showOptionals($extrafields, 'create', $parameters);
+		}
 
 		if ($object->lifetime_start) {
 			print '<tr><td class="titlefield nowrap">';
