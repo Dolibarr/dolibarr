@@ -2,7 +2,7 @@
 /* Copyright (C) 2013-2016    Jean-François FERRY <hello@librethic.io>
  * Copyright (C) 2016         Christophe Battarel <christophe@altairis.fr>
  * Copyright (C) 2023         Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -207,8 +207,8 @@ if (empty($reshook)) {
 			// Search company saved with email
 			$searched_companies = $object->searchSocidByEmail($origin_email, 0);
 
-			// Chercher un contact existent avec cette address email
-			// Le premier contact trouvé est utilisé pour déterminer le contact suivi
+			// Look for an existing contact with this email address
+			// The first contact found is used to dtermine the tracking contact
 			$contacts = $object->searchContactByEmail($origin_email);
 			if (!is_array($contacts)) {
 				$contacts = array();

@@ -12,7 +12,7 @@
  * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2016		Yasser Carreón			<yacasia@gmail.com>
  * Copyright (C) 2018	    Quentin Vial-Gouteyron  <quentin.vial-gouteyron@atm-consulting.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		Nick Fragoulis
  *
@@ -596,7 +596,7 @@ if (empty($reshook)) {
 
 		// TODO add alternative status
 		/*} elseif ($action == 'reopen' && ($user->hasRights('reception', 'creer') || $user->hasRights('reception', 'reception_advance', 'validate'))) {
-			$result = $object->setStatut(0);
+			$result = $object->setStatut(Reception::STATUS_DRAFT);
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 		}*/
@@ -1706,7 +1706,7 @@ if ($action == 'create' && $permissiontoadd) {
 					//var_dump($dispatchLines[$indiceAsked]);
 
 					print '<td>';
-					print '<a name="'.$line->id.'"></a>'; // ancre pour retourner sur la ligne
+					print '<a name="'.$line->id.'"></a>'; // Anchor to return to the line
 
 					print '<input type="hidden" name="productl'.$indiceAsked.'" value="'.$line->fk_product.'">';
 
@@ -2871,7 +2871,7 @@ if ($action == 'create' && $permissiontoadd) {
 	if ($action != 'presend' && $action != 'editline') {
 		print '<div class="fichecenter"><div class="fichehalfleft">';
 
-		$objectref = dol_sanitizeFileName($object->ref);
+		$objectref = dol_sanitizeFileName((string) $object->ref);
 		$filedir = $conf->reception->dir_output."/".$objectref;
 
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;

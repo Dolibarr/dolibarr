@@ -18,7 +18,7 @@
  * Copyright (C) 2022       ATM Consulting          <contact@atm-consulting.fr>
  * Copyright (C) 2022       OpenDSI                 <support@open-dsi.fr>
  * Copyright (C) 2022      	Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -743,14 +743,14 @@ class Propal extends CommonObject
 			if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
 				$tmpproduct = new Product($this->db);
 				$result = $tmpproduct->fetch($fk_product);
-				if (abs($qty) < $tmpproduct->packaging) {
+				if (abs((float) $qty) < $tmpproduct->packaging) {
 					$qty = (float) $tmpproduct->packaging;
-					setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'mesgs');
+					setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'warnings');
 				} else {
-					if (!empty($tmpproduct->packaging) && $qty > $tmpproduct->packaging) {
-						$coeff = intval(abs($qty) / $tmpproduct->packaging) + 1;
+					if (!empty($tmpproduct->packaging) && (float) price2num(fmod((float) $qty, (float) $tmpproduct->packaging), 'MS')) {
+						$coeff = intval(abs((float) $qty) / $tmpproduct->packaging) + 1;
 						$qty = price2num((float) $tmpproduct->packaging * $coeff, 'MS');
-						setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'mesgs');
+						setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'warnings');
 					}
 				}
 			}
@@ -836,7 +836,7 @@ class Propal extends CommonObject
 			$this->line->multicurrency_total_tva 	= (float) $multicurrency_total_tva;
 			$this->line->multicurrency_total_ttc 	= (float) $multicurrency_total_ttc;
 
-			// Mise en option de la ligne
+			// Set the line as optional
 			if (empty($qty) && empty($special_code)) {
 				$this->line->special_code = 3;
 			}
@@ -1011,16 +1011,17 @@ class Propal extends CommonObject
 			}
 
 			if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
-				if ($qty < $this->line->packaging) {
+				if (abs((float) $qty) < $this->line->packaging) {
 					$qty = $this->line->packaging;
+					setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'warnings');
 				} else {
 					if (!empty($this->line->packaging)
 						&& is_numeric($this->line->packaging)
 						&& (float) $this->line->packaging > 0
-						&& fmod((float) $qty, (float) $this->line->packaging) > 0) {
-						$coeff = intval($qty / $this->line->packaging) + 1;
+						&& (float) price2num(fmod((float) $qty, (float) $this->line->packaging), 'MS')) {
+						$coeff = intval(abs((float) $qty) / $this->line->packaging) + 1;
 						$qty = $this->line->packaging * $coeff;
-						setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'mesgs');
+						setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'warnings');
 					}
 				}
 			}
@@ -3494,7 +3495,12 @@ class Propal extends CommonObject
 		$clause = " WHERE";
 
 		$sql = "SELECT p.rowid, p.ref, p.datec as datec, p.fin_validite as datefin, p.total_ht";
-		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as p";
+		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
+			$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as p";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc";
+		} else {
+			$sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
+		}
 		$sql .= $clause." p.entity IN (".getEntity('propal').")";
 		if ($mode == 'opened') {
 			$sql .= " AND p.fk_statut = ".self::STATUS_VALIDATED;
@@ -3502,6 +3508,14 @@ class Propal extends CommonObject
 		if ($mode == 'signed') {
 			$sql .= " AND p.fk_statut = ".self::STATUS_SIGNED;
 		}
+
+		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
+			$sql .= " AND sc.fk_user = ".((int) $user->id);
+		}
+		if ($user->socid) {
+			$sql .= " AND p.fk_soc = ".((int) $user->socid);
+		}
+
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {

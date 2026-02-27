@@ -16,7 +16,7 @@
  * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
  * Copyright (C) 2022       Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -386,7 +386,7 @@ class SupplierProposal extends CommonObject
 			$supplier_proposalligne = new SupplierProposalLine($this->db);
 			$supplier_proposalligne->fk_supplier_proposal = $this->id;
 			$supplier_proposalligne->fk_remise_except = $remise->id;
-			$supplier_proposalligne->desc = $remise->description; // Description ligne
+			$supplier_proposalligne->desc = $remise->description; // Description of the proposal line
 			$supplier_proposalligne->tva_tx = $remise->tva_tx;
 			$supplier_proposalligne->subprice = -(float) $remise->amount_ht;
 			$supplier_proposalligne->fk_product = 0; // Predefined Product ID
@@ -672,7 +672,7 @@ class SupplierProposal extends CommonObject
 			$this->line->multicurrency_total_tva	= (float) $multicurrency_total_tva;
 			$this->line->multicurrency_total_ttc	= (float) $multicurrency_total_ttc;
 
-			// Mise en option de la ligne
+			// Set the proposal line as optional
 			if (empty($qty) && empty($special_code)) {
 				$this->line->special_code = 3;
 			}
@@ -717,7 +717,7 @@ class SupplierProposal extends CommonObject
 	/**
 	 *  Update a proposal line
 	 *
-	 *  @param      int				$rowid           	Id de la ligne
+	 *  @param      int				$rowid           	Id of the row
 	 *  @param      float			$pu		     	  	Unit price (HT or TTC depending on price_base_type)
 	 *  @param      float			$qty            	Quantity
 	 *  @param      float			$remise_percent  	Discount on line
@@ -1401,7 +1401,7 @@ class SupplierProposal extends CommonObject
 						$line->fk_parent_line = $objp->fk_parent_line;
 						$line->product_type     = $objp->product_type;
 						$line->label            = $objp->custom_label;
-						$line->desc             = $objp->description; // Description ligne
+						$line->desc             = $objp->description; // Description of the line
 						$line->qty              = $objp->qty;
 						$line->tva_tx           = $objp->tva_tx;
 						$line->localtax1_tx		= $objp->localtax1_tx;
@@ -2992,7 +2992,7 @@ class SupplierProposalLine extends CommonObjectLine
 	/**
 	 * @var string
 	 */
-	public $desc; // Description ligne
+	public $desc; // Description of the line
 
 	/**
 	 * @var int ID

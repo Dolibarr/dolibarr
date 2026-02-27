@@ -3,7 +3,7 @@
  * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,7 +75,7 @@ class FormResource
 	 *
 	 *	@param	int|int[]	$selected		Preselected resource id
 	 *	@param	string		$htmlname		Name of field in form
-	 *  @param	string		$filter			Optional filters criteria (example: 's.rowid <> x')
+	 *  @param	string		$filter			Optional filter criteria (example: 's.rowid <> x')
 	 *	@param	int<0,1>	$showempty		Add an empty field
 	 * 	@param	int<0,1>	$showtype		Show third party type in combo list (customer, prospect or supplier)
 	 * 	@param	int<0,1>		$forcecombo		Force to use combo box

@@ -32,6 +32,13 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
@@ -40,14 +47,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 $MAXAGENDA = getDolGlobalString('AGENDA_EXT_NB', 5);
 $DELAYFORCACHE = 300;	// 300 seconds
@@ -1594,9 +1593,16 @@ while ($currentdaytoshow < $lastdaytoshow) {
 		echo '<span class="bold spandayofweek">'.$langs->trans("Day".(($i + getDolGlobalInt('MAIN_START_WEEK', 1)) % 7)).'</span>';
 		print "<br>";
 		if ($i) {
-			print dol_print_date(dol_time_plus_duree($currentdaytoshow, $i, 'd'), 'day', 'tzuserrel');
+			$valtoshow = dol_time_plus_duree($currentdaytoshow, $i, 'd');
 		} else {
-			print dol_print_date($currentdaytoshow, 'day', 'tzuserrel');
+			$valtoshow = $currentdaytoshow;
+		}
+		if (dol_print_date($valtoshow, '%Y%m%d') == dol_print_date(dol_now(), '%Y%m%d')) {
+			echo '<span class="badgeneutral">';
+		}
+		print dol_print_date($valtoshow, 'dayreduceformat', 'tzuserrel');
+		if (dol_print_date($valtoshow, '%Y%m%d') == dol_print_date(dol_now(), '%Y%m%d')) {
+			echo '</span>';
 		}
 		echo "</td>\n";
 		$i++;
@@ -1742,7 +1748,7 @@ while ($currentdaytoshow < $lastdaytoshow) {
 		$var = !$var;
 
 		echo "<tr>";
-		echo '<td class="tdoverflowmax100 cal_current_month cal_peruserviewname'.($var ? ' cal_impair' : '').'">';
+		echo '<td class="tdoverflowmax100 cal_current_month cal_peruserviewname'.($var ? ' cal_impair' : '').' nopaddingtopimp nopaddingbottomimp noheightimp">';
 		print '<span class="paddingrightimp">';
 		print $username->getNomUrl(-1, '', 0, 0, 20, 1, '', 'paddingleft');
 		print '</span>';
@@ -1939,7 +1945,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		if ($day == $jour && (int) $month == $mois && $year == $annee) {	// Is it the day we are looking for when calling function ?
 			//var_dump("day=$day jour=$jour month=$month mois=$mois year=$year annee=$annee");
 
-			// Scan all event for this date
+			// Scan all events for this date
 			foreach ($eventarray[$daykey] as $index => $event) {
 				//print 'daykey='.$daykey.'='.dol_print_date($daykey, 'dayhour', 'gmt').' '.$year.'-'.$month.'-'.$day.' -> The event id '.$event->id.' index '.$index.' is open for this daykey '.$annee.'-'.$mois.'-'.$jour."<br>\n";
 				//var_dump($event);
@@ -2055,7 +2061,6 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 						}
 
 						//print dol_print_date($event->date_start_in_calendar,'dayhour').'-'.dol_print_date($a,'dayhour').'-'.dol_print_date($b,'dayhour').'<br>';
-
 						if ($event->date_start_in_calendar < $b && $dateendtouse > $a) {
 							$busy = $event->transparency;
 							$cases1[$h][$event->id]['busy'] = $busy;
@@ -2315,14 +2320,11 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				$title1 .= count($cases1[$h]).' '.(count($cases1[$h]) == 1 ? $langs->trans("Event") : $langs->trans("Events"));
 			}
 
-			if (!getDolGlobalString('AGENDA_NO_TRANSPARENT_ON_NOT_BUSY')) {
-				$style1 .= 'peruser_notbusy ';
-			} else {
-				$style1 .= 'peruser_busy ';
-			}
 			foreach ($cases1[$h] as $id => $ev) {
-				if (!empty($ev['busy'])) {
+				if (!empty($ev['busy']) && !getDolGlobalString('AGENDA_NO_TRANSPARENT_ON_NOT_BUSY')) {
 					$style1 .= ' peruser_busy';
+				} else {
+					$style1 .= 'peruser_notbusy ';
 				}
 				if (!empty($ev['css'])) {
 					$style1 .= $ev['css'].' ';
@@ -2335,14 +2337,11 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				$title2 .= count($cases2[$h]).' '.(count($cases2[$h]) == 1 ? $langs->trans("Event") : $langs->trans("Events"));
 			}
 
-			if (!getDolGlobalString('AGENDA_NO_TRANSPARENT_ON_NOT_BUSY')) {
-				$style2 .= 'peruser_notbusy ';
-			} else {
-				$style2 .= 'peruser_busy ';
-			}
 			foreach ($cases2[$h] as $id => $ev) {
-				if (!empty($ev['busy'])) {
+				if (!empty($ev['busy']) && !getDolGlobalString('AGENDA_NO_TRANSPARENT_ON_NOT_BUSY')) {
 					$style2 .= ' peruser_busy';
+				} else {
+					$style2 .= 'peruser_notbusy ';
 				}
 				if (!empty($ev['css'])) {
 					$style2 .= $ev['css'].' ';
@@ -2355,14 +2354,11 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				$title3 .= count($cases3[$h]).' '.(count($cases3[$h]) == 1 ? $langs->trans("Event") : $langs->trans("Events"));
 			}
 
-			if (!getDolGlobalString('AGENDA_NO_TRANSPARENT_ON_NOT_BUSY')) {
-				$style3 .= 'peruser_notbusy ';
-			} else {
-				$style3 .= 'peruser_busy ';
-			}
 			foreach ($cases3[$h] as $id => $ev) {
-				if (!empty($ev['busy'])) {
+				if (!empty($ev['busy']) && !getDolGlobalString('AGENDA_NO_TRANSPARENT_ON_NOT_BUSY')) {
 					$style3 .= ' peruser_busy';
+				} else {
+					$style3 .= 'peruser_notbusy ';
 				}
 				if (!empty($ev['css'])) {
 					$style3 .= $ev['css'].' ';
@@ -2375,14 +2371,11 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				$title4 .= count($cases4[$h]).' '.(count($cases4[$h]) == 1 ? $langs->trans("Event") : $langs->trans("Events"));
 			}
 
-			if (!getDolGlobalString('AGENDA_NO_TRANSPARENT_ON_NOT_BUSY')) {
-				$style4 .= 'peruser_notbusy ';
-			} else {
-				$style4 .= 'peruser_busy ';
-			}
 			foreach ($cases4[$h] as $id => $ev) {
-				if (!empty($ev['busy'])) {
+				if (!empty($ev['busy']) && !getDolGlobalString('AGENDA_NO_TRANSPARENT_ON_NOT_BUSY')) {
 					$style4 .= ' peruser_busy';
+				} else {
+					$style4 .= 'peruser_notbusy ';
 				}
 				if (!empty($ev['css'])) {
 					$style4 .= $ev['css'].' ';
@@ -2484,7 +2477,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				$ref4 = 'holiday';
 				$title4 = $langs->trans("Holiday");
 			} else {
-				$title4 = $langs->trans("Ref").' '.$ids3.($title4 ? ' - '.$title4 : '');
+				$title4 = $langs->trans("Ref").' '.$ids4.($title4 ? ' - '.$title4 : '');
 				if ($output[0]['string']) {
 					$title4 .= ' - '.$output[0]['string'];
 				}

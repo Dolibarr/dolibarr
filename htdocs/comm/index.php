@@ -6,7 +6,7 @@
  * Copyright (C) 2019		Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2020		Pierre Ardoin			<mapiolca@me.com>
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1061,7 +1061,7 @@ if ((isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && $use
 /*
  * Latest contracts
  */
-if (isModEnabled('contract') && $user->hasRight("contrat", "lire") && 0) { // TODO A REFAIRE DEPUIS NOUVEAU CONTRAT
+if (isModEnabled('contract') && $user->hasRight("contrat", "lire") && 0) { // TODO To redo/reimplement for new contract
 	$staticcontrat = new Contrat($db);
 
 	$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";

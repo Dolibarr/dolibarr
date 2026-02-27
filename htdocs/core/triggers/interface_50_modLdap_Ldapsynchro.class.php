@@ -310,6 +310,10 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 			/** @var UserGroup $object */
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (getDolGlobalString('LDAP_SYNCHRO_ACTIVE') && getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
+				if ($object->members === null && getDolGlobalString('LDAP_SEND_EMPTY_MEMBERS_TO_GROUP')) {
+					// LDAP requires that we always send members so we load them to avoid emptying group
+					$object->members = $object->listUsersForGroup('', 0);
+				}
 				$ldap = new Ldap();
 				$result = $ldap->connectBind();
 
@@ -331,6 +335,10 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					}
 
 					$info = $object->_load_ldap_info();
+					if (isset($info['member']) && empty($info['member']) && !getDolGlobalString('LDAP_SEND_EMPTY_MEMBERS_TO_GROUP')) {
+						// Members were not explicitly loaded and LDAP allows us not to send members, so we do not send them
+						unset($info['member']);
+					}
 					$dn = $object->_load_ldap_dn($info);
 
 					$result = $ldap->update($dn, $info, $user, $olddn);

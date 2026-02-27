@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2010	Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009	Regis Houssin       	<regis.houssin@inodbox.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026	Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -202,14 +202,14 @@ if ($result < 0) {
 			dol_print_error($db);
 		}
 
-		// Chargement de labels et datas pour tableau 1
+		// Loading labels and datas for dashboard 1
 		$labels = array();
 		$datas = array();
 		$datamin = array();
 
 		$subtotal = 0;
 		$day = dol_mktime(12, 0, 0, (int) $month, 1, (int) $year);
-		//$textdate = strftime("%Y%m%d", $day);
+		// $textdate = strftime("%Y%m%d", $day);
 		$textdate = dol_print_date($day, "%Y%m%d");
 		$xyear = substr($textdate, 0, 4);
 		$xday = substr($textdate, 6, 2);
@@ -220,7 +220,7 @@ if ($result < 0) {
 		while ($xmonth == $month) {
 			$subtotal += (isset($amounts[$textdate]) ? $amounts[$textdate] : 0);
 			if ($day > $nowlasthourmidday) {
-				$datas[$i] = ''; // Valeur speciale permettant de ne pas tracer le graph
+				$datas[$i] = ''; // Special value to ignore this point
 			} else {
 				$datas[$i] = $solde + $subtotal;
 			}
@@ -351,7 +351,7 @@ if ($result < 0) {
 			dol_print_error($db);
 		}
 
-		// Chargement de labels et datas pour tableau 2
+		// Loading labels and datas for dashboard 2
 		$labels = array();
 		$datas = array();
 		$datamin = array();
@@ -385,7 +385,7 @@ if ($result < 0) {
 			$i++;
 		}
 
-		// Fabrication tableau 2
+		// Building dashboard 2
 		$file = $conf->bank->dir_temp."/balance".$account."-".$year.".png";
 		$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='."/balance".$account."-".$year.".png";
 		$title = $langs->transnoentities("Balance").' - '.$langs->transnoentities("Year").': '.$year;
@@ -470,7 +470,7 @@ if ($result < 0) {
 		// Calcul de $solde avant le debut du graphe
 		$solde = 0;
 
-		// Chargement de labels et datas pour tableau 3
+		// Loading labels and datas for dashboard 3
 		$labels = array();
 		$datas = array();
 		$datamin = array();
@@ -487,7 +487,7 @@ if ($result < 0) {
 			$subtotal += (isset($amounts[$textdate]) ? $amounts[$textdate] : 0);
 			//print strftime ("%e %d %m %y",$day)." ".$subtotal."\n<br>";
 			if ($day > ($max + 86400)) {
-				$datas[$i] = ''; // Valeur speciale permettant de ne pas tracer le graph
+				$datas[$i] = ''; // Special value to ignore this point
 			} else {
 				$datas[$i] = $solde + $subtotal;
 			}
@@ -505,7 +505,7 @@ if ($result < 0) {
 			$i++;
 		}
 
-		// Fabrication tableau 3
+		// Building dashboard 3
 		$file = $conf->bank->dir_temp."/balance".$account.".png";
 		$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='."/balance".$account.".png";
 		$title = $langs->transnoentities("Balance")." - ".$langs->transnoentities("AllTime");
@@ -633,7 +633,7 @@ if ($result < 0) {
 		}
 
 
-		// Chargement de labels et data_xxx pour tableau 4 Movements
+		// Loading labels and data_xxx for dashboard 4 Movements
 		$labels = array();
 		$data_credit = array();
 		$data_debit = array();
@@ -734,7 +734,7 @@ if ($result < 0) {
 		}
 
 
-		// Chargement de labels et data_xxx pour tableau 4 Movements
+		// Loading labels and data_xxx for dashboard 4 Movements
 		$labels = array();
 		$data_credit = array();
 		$data_debit = array();
@@ -779,7 +779,7 @@ if ($result < 0) {
 }
 
 
-// Onglets
+// Tabs
 $head = bank_prepare_head($object);
 print dol_get_fiche_head($head, 'annual', $langs->trans("FinancialAccount"), 0, 'account');
 
