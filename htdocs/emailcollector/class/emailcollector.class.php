@@ -3809,7 +3809,7 @@ class EmailCollector extends CommonObject
 
 								'actionparam' =>  $operation['actionparam'],
 
-								'thirdpartyid' => !$thirdpartyid?$thirdpartystatic->id:0,
+								'thirdpartyid' => !$thirdpartyid?$thirdpartystatic->id:$thirdpartyid,
 								'objectid' => $objectid,
 								'objectemail' => $objectemail,
 
