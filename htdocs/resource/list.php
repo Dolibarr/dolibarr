@@ -4,6 +4,7 @@
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+  * Copyright (C) 2026		Anthony Berton			<anthony.berton@bb2a.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -610,22 +611,6 @@ while ($i < $imaxinloop) {
 	$objectstatic->url = $obj->url;
 
 	print '<tr data-rowid="'.$obj->rowid.'"  class="oddeven">';
-	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-		print '<td class="nowrap center">';
-		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-			$selected = 0;
-			if (in_array($obj->rowid, $arrayofselected)) {
-				$selected = 1;
-			}
-			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
-		}
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-
 	// Action column
 	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print '<td class="nowrap center">';
