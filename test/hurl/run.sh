@@ -1,6 +1,6 @@
 #!/bin/bash
 # Copyright (C) 2025		Jon Bendtsen	<jon.bendtsen.github@jonb.dk>
-# Copyright (C) 2025		MDW		<mdeweerd@users.noreply.github.com>
+# Copyright (C) 2025-2026	MDW		<mdeweerd@users.noreply.github.com>
 
 # Script to run unit tests on API with hurl
 #
@@ -145,31 +145,31 @@ if ! command -v hurl &> /dev/null; then
 			fi
 			case "${ID}" in
 				ubuntu)
-					echo "For Ubuntu >=18.04, Hurl can be installed from ppa:lepapareil/hurl"
-					echo "    VERSION=7.0.0"
-					echo "    sudo apt-add-repository -y ppa:lepapareil/hurl"
-					echo "    sudo apt install hurl=\"${VERSION}*\""
+					echo 'For Ubuntu >=18.04, Hurl can be installed from ppa:lepapareil/hurl'
+					echo '    VERSION=7.0.0'
+					echo '    sudo apt-add-repository -y ppa:lepapareil/hurl'
+					echo '    sudo apt install hurl="${VERSION}*"'
 					;;
 				debian)
-					echo "For Debian >=12, Hurl can be installed using a binary .deb file provided in each Hurl release."
-					echo "    VERSION=7.0.0"
-					echo "    curl --location --remote-name https://github.com/Orange-OpenSource/hurl/releases/download/${VERSION}/hurl_${VERSION}_amd64.deb"
-					echo "    sudo apt update && sudo apt install ./hurl_${VERSION}_amd64.deb"
+					echo 'For Debian >=12, Hurl can be installed using a binary .deb file provided in each Hurl release.'
+					echo '    VERSION=7.0.0'
+					echo '    curl --location --remote-name https://github.com/Orange-OpenSource/hurl/releases/download/${VERSION}/hurl_${VERSION}_amd64.deb'
+					echo '    sudo apt update && sudo apt install ./hurl_${VERSION}_amd64.deb'
 					;;
 				alpine)
-					echo "For Alpine, Hurl is available on testing channel."
-					echo "    apk add --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing hurl"
+					echo 'For Alpine, Hurl is available on testing channel.'
+					echo '    apk add --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing hurl'
 					;;
 				arch)
-					echo "For Arch Linux / Manjaro, Hurl is available on extra channel."
-					echo "    pacman -Sy hurl"
+					echo 'For Arch Linux / Manjaro, Hurl is available on extra channel.'
+					echo '    pacman -Sy hurl'
 					;;
 				*)
-					echo "On Linux, try:"
-					echo "    INSTALL_DIR=/tmp"
-					echo "    VERSION=7.0.0"
-					echo "    curl --silent --location https://github.com/Orange-OpenSource/hurl/releases/download/${VERSION}/hurl-${VERSION}-x86_64-unknown-linux-gnu.tar.gz | tar xvz -C ${INSTALL_DIR}"
-					echo "    export PATH=${INSTALL_DIR}/hurl-${VERSION}-x86_64-unknown-linux-gnu/bin:$PATH"
+					echo 'On Linux, try:'
+					echo '    INSTALL_DIR=/tmp'
+					echo '    VERSION=7.0.0'
+					echo '    curl --silent --location https://github.com/Orange-OpenSource/hurl/releases/download/${VERSION}/hurl-${VERSION}-x86_64-unknown-linux-gnu.tar.gz | tar xvz -C ${INSTALL_DIR}'
+					echo '    export PATH=${INSTALL_DIR}/hurl-${VERSION}-x86_64-unknown-linux-gnu/bin:$PATH'
 					;;
 			esac
 			;;

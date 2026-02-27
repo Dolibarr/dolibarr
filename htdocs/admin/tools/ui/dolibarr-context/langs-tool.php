@@ -18,7 +18,7 @@
  */
 
 // Load Dolibarr environment
-require '../../../../../../main.inc.php';
+require '../../../../main.inc.php';
 
 /**
  * @var DoliDB      $db
@@ -43,14 +43,11 @@ $documentation = new Documentation($db);
 $group = 'ExperimentalUx';
 $experimentName = 'UxDolibarrContextLangsTool';
 
-$experimentAssetsPath = $documentation->baseUrl . '/experimental/experiments/dolibarr-context/assets/';
+$experimentAssetsPath = dolBuildUrl('/public/includes/dolibarr-js-context');
 $js = [
 	'/includes/ace/src/ace.js',
 	'/includes/ace/src/ext-statusbar.js',
-	'/includes/ace/src/ext-language_tools.js',
-	$experimentAssetsPath . '/dolibarr-context.umd.js',
-	$experimentAssetsPath . '/dolibarr-tool.langs.js',
-	$experimentAssetsPath . '/dolibarr-tool.seteventmessage.js',
+	'/includes/ace/src/ext-language_tools.js'
 ];
 $css = [];
 
@@ -62,13 +59,7 @@ $documentation->view = [$group, 'UxDolibarrContext', $experimentName];
 
 // Output sidebar
 $documentation->showSidebar(); ?>
-<script>
-	Dolibarr.setContextVars(<?php print json_encode([
-		'DOL_VERSION' => DOL_VERSION,
-		'MAIN_LANG_DEFAULT' => $langs->getDefaultLang(),
-		'DOL_LANG_INTERFACE_URL' =>  dol_buildpath('admin/tools/ui/experimental/experiments/dolibarr-context/langs-tool-interface.php', 1),
-	]) ?>);
-</script>
+
 <div class="doc-wrapper">
 
 	<?php $documentation->showBreadCrumb(); ?>
@@ -107,11 +98,11 @@ $documentation->showSidebar(); ?>
 					'Dolibarr.setContextVars(<?php print json_encode([',
 					'	\'DOL_VERSION\' => DOL_VERSION,',
 					'	\'MAIN_LANG_DEFAULT\'  => $langs->getDefaultLang(),',
-					'	\'DOL_LANG_INTERFACE_URL\' =>  dol_buildpath(\'admin/tools/ui/experimental/experiments/dolibarr-context/langs-tool-interface.php\',1),',
+					'	\'DOL_LANG_INTERFACE_URL\' =>  dol_buildpath(\'public/langs/langs-tool-interface.php\', 1),',
 					']) ?>);',
 					'</script>',
 				);
-				echo $documentation->showCode($lines, 'php');
+				$documentation->showCode($lines, 'php');
 				?>
 			</div>
 		</div>
@@ -171,7 +162,7 @@ $documentation->showSidebar(); ?>
 					'});',
 					'</script>',
 				);
-				echo $documentation->showCode($lines, 'php');
+				$documentation->showCode($lines, 'php');
 
 				print implode("\n", $lines);
 				?>

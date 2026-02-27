@@ -12,6 +12,7 @@ VersionExperimental=Experimental
 VersionDevelopment=Development
 VersionUnknown=Unknown
 VersionRecommanded=Recommended
+VersionOfModule=Version of module "%s"
 FileCheck=Fileset integrity check
 FileCheckDesc=This tool checks the integrity of your files and application setup by comparing each file with the official version. It also verifies certain setup constants. Use this tool to detect if any files have been modified (e.g., by a hacker).
 FileIntegrityIsStrictlyConformedWithReference=File integrity strictly matches the reference.
@@ -1034,7 +1035,7 @@ Permission2515=Setup documents directories
 Permission2610=Generate/modify users API key
 Permission2801=Use FTP client in read mode (browse and download only)
 Permission2802=Use FTP client in write mode (delete or upload files)
-Permission3201=Read Unalterable Logs and signature
+Permission3201=Read, Export and Control Immutable Logs and signature
 Permission3301=Generate new modules
 Permission4001=Read skill/job/position
 Permission4002=Create/modify skill/job/position
@@ -2688,8 +2689,8 @@ AlgorithmFor=Algorithm for %s
 SensitiveData=Sensitive data
 ToolToDecryptAString=Tool to decrypt a string
 Decrypt=Decrypt
-FilesIntegrityDesc=If you want to check the integrity of files instead of database, you can do it by using <a href="%s"><span class="fas fa-external-link-alt pictofixedwidth"></span>this tool</a>.
-DataIntegrityDesc=If you want to check the integrity of unalterable data, you can do it by using <a href="%s"><span class="fas fa-external-link-alt pictofixedwidth"></span>this tool</a>.
+FilesIntegrityDesc=If you want to check the integrity of files instead of database, you can do it by using this tool
+DataIntegrityDesc=If you want to check the integrity of immutable data, you can do it by using this tool
 AttributeCodeHelp=A code of your choice (without special chars and spaces) to identify the property.<br>Note that if an object B is created from an existing object A that has a different type (for example creation of an invoice from an order), the value of the complementary attributes of A are also copied into the complementary attributes of B when the code of the attribute is the same.
 ThereIsMoreThanXAnswers=There is more than %s answers with your filter. Please add more filters...
 PdfAddTermOfSaleHelp=You can upload the file at the bottom of this setup page

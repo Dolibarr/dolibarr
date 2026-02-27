@@ -34,7 +34,7 @@
  *
  * @param	string	  			$url 			    URL to call.
  * @param	'POST'|'GET'|'HEAD'|'PUT'|'PATCH'|'PUTALREADYFORMATED'|'POSTALREADYFORMATED'|'PATCHALREADYFORMATED'|'DELETE'	$postorget		    'POST', 'GET', 'HEAD', 'PUT', 'PATCH', 'PUTALREADYFORMATED', 'POSTALREADYFORMATED', 'PATCHALREADYFORMATED', 'DELETE'
- * @param	string    			$param			    Parameters of URL (x=value1&y=value2 urlencoded even with POST) or may be a formatted content with $postorget='POST/PUTALREADYFORMATED'
+ * @param	string    			$param			    Parameters of URL (x=value1&y=value2 urlencoded even with POST) or may be a formatted content with $postorget='POSTALREADYFORMATED/PUTALREADYFORMATED'
  * @param	int<0,1>  			$followlocation		0=Do not follow, 1=Follow location.
  * @param	string[]  			$addheaders			Array of string to add into header. Example: ('Accept: application/xrds+xml', ....)
  * @param	string[]  			$allowedschemes		List of schemes that are allowed ('http' + 'https' only by default)

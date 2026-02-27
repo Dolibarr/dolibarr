@@ -1222,7 +1222,12 @@ if ($action == 'create' || $action == 'adduserldap') {
 	if ($_SESSION["dol_authmode"] == 'dolibarr') {
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("ForcePasswordChange").'</td>';
 		print '<td>';
-		print '<input type="checkbox" name="forcepasswordchange" value="1"'.(GETPOST('forcepasswordchange') == '1' ? ' checked="checked"' : '').'>';
+		if ($object->hasRight('user', 'self', 'password')) {
+			print '<input type="checkbox" name="forcepasswordchange" value="1"'.(GETPOST('forcepasswordchange') == '1' ? ' checked="checked"' : '').'>';
+		} else {
+			print '<input type="checkbox" name="forcepasswordchange" value="1" disabled>';
+			print $langs->trans("UserDoesNotHaveRightsToChangeHisPassword");
+		}
 		print '</td>';
 		print "</tr>\n";
 	}
@@ -2025,10 +2030,15 @@ if ($action == 'create' || $action == 'adduserldap') {
 			if ($_SESSION["dol_authmode"] == 'dolibarr') {
 				print '<tr><td class="titlefieldcreate">'.$langs->trans("ForcePasswordChange").'</td>';
 				print '<td>';
-				if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2) {
-					print '<input type="checkbox" disabled name="forcepasswordchange" value="1"'.($object->force_pass_change ? ' checked="checked"' : '').'>';
+				if ($object->hasRight('user', 'self', 'password')) {
+					if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2) {
+						print '<input type="checkbox" disabled name="forcepasswordchange" value="1"'.($object->force_pass_change ? ' checked="checked"' : '').'>';
+					} else {
+						print yn($object->force_pass_change);
+					}
 				} else {
-					print yn($object->force_pass_change);
+					print '<input type="checkbox" name="forcepasswordchange" value="1" disabled>';
+					print $langs->trans("UserDoesNotHaveRightsToChangeHisPassword");
 				}
 				print '</td>';
 				print "</tr>\n";
@@ -2714,11 +2724,18 @@ if ($action == 'create' || $action == 'adduserldap') {
 			if ($_SESSION["dol_authmode"] == 'dolibarr') {
 				print '<tr>';
 				print '<td>'.$form->editfieldkey('ForcePasswordChange', 'forcepasswordchange', '', $object, 0).'</td><td>';
-				if ($permissiontoedit) {
-					print '<input type="checkbox" name="forcepasswordchange" value="1"'.($object->force_pass_change ? ' checked="checked"' : '').'>';
+
+				if ($object->hasRight('user', 'self', 'password')) {
+					if ($permissiontoedit) {
+						print '<input type="checkbox" name="forcepasswordchange" value="1"'.($object->force_pass_change ? ' checked="checked"' : '').'>';
+					} else {
+						print '<input type="checkbox" name="forcepasswordchange" disabled value="1"'.($object->force_pass_change ? ' checked="checked"' : '').'>';
+					}
 				} else {
-					print '<input type="checkbox" name="forcepasswordchange" disabled value="1"'.($object->force_pass_change ? ' checked="checked"' : '').'>';
+					print '<input type="checkbox" name="forcepasswordchange" value="1" disabled>';
+					print $langs->trans("UserDoesNotHaveRightsToChangeHisPassword");
 				}
+
 				print '</td></tr>';
 			}
 

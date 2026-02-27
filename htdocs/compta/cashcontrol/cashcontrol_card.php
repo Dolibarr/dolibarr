@@ -6,7 +6,7 @@
  * Copyright (C) 2015      	Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2016      	Marcos García        	<marcosgdf@gmail.com>
  * Copyright (C) 2018      	Andreu Bisquerra		<jove@bisquerra.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -40,10 +40,11 @@ require '../../main.inc.php';
  * @var Societe $mysoc
  */
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/cashcontrol/class/cashcontrol.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $langs->loadLangs(array("install", "cashdesk", "admin", "banks", "blockedlog"));
 
@@ -112,6 +113,10 @@ if (!$user->hasRight("cashdesk", "run") && !$user->hasRight("takepos", "run")) {
 
 $permissiontoadd = ($user->hasRight("cashdesk", "run") || $user->hasRight("takepos", "run"));
 $permissiontodelete = ($user->hasRight("cashdesk", "run") || $user->hasRight("takepos", "run")) || ($permissiontoadd && $object->status == 0);
+if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
+	// For action 'update_extras', is there a specific permission set for the attribute to update
+	$permissiontoeditextra = dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+}
 
 $sqlfilteronopdate = '';
 
@@ -136,7 +141,7 @@ if ($object->id > 0) {
 		$datestart = dol_time_plus_duree($dateend, -1, 'm', 0);
 	} elseif (empty($object->day_close) && empty($object->month_close)) {	// Full year
 		$dateend = dol_mktime((int) $object->hour_close, (int) $object->min_close, (int) $object->sec_close, 12, 31, $object->year_close, 'gmt');
-		$datestart = dol_time_plus_duree($datestart, -1, 'y', 0);
+		$datestart = dol_time_plus_duree($dateend, -1, 'y', 0);
 	} else {
 		$dateend = dol_mktime((int) $object->hour_close, (int) $object->min_close, (int) $object->sec_close, $object->month_close, $object->day_close, $object->year_close, 'gmt');
 		$datestart = dol_time_plus_duree($dateend, -1, 'd', 0);
@@ -453,6 +458,31 @@ if ($action == 'confirm_delete' && !empty($permissiontodelete)) {
 		} else {
 			setEventMessages($object->error, null, 'errors');
 		}
+	}
+}
+
+if ($action == 'update_extras' && $permissiontoeditextra) {
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
+
+	$attribute_name = GETPOST('attribute', 'aZ09');
+
+	// Fill array 'array_options' with data from add form
+	$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
+	if ($ret < 0) {
+		$error++;
+	}
+
+	if (!$error) {
+		// Actions on extra fields
+		$result = $object->updateExtraField($attribute_name, 'CASHCONTROL_MODIFY');
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$error++;
+		}
+	}
+
+	if ($error) {
+		$action = 'edit_extras';
 	}
 }
 
@@ -803,7 +833,7 @@ if ($action == "create" || $action == "start") {
 			$object->fetch($id);
 			print $object->opening;
 		} else {
-			print (GETPOSTISSET('opening') ? price2num(GETPOST('opening', 'alpha')) : price($initialbalanceforterminal[$terminalid]['cash']));
+			print(GETPOSTISSET('opening') ? price2num(GETPOST('opening', 'alpha')) : price($initialbalanceforterminal[$terminalid]['cash']));
 		}
 		print '">';
 		print '</td>';
@@ -902,9 +932,17 @@ if (empty($action) || $action == "view" || $action == "close") {
 		print $form->textwithpicto('', $htmltooltip);
 		print '</td></tr>';
 
+		// Other attributes
+		$parameters = array('colspan' => ' colspan="2"', 'cols' => '2');
+		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
+		if (empty($reshook)) {
+			print $object->showOptionals($extrafields, 'create', $parameters);
+		}
+
 		if ($object->lifetime_start) {
 			print '<tr><td class="titlefield nowrap">';
-			print $langs->trans("LifetimeAmount");
+			print $langs->trans("LifetimeAmount", $langs->transnoentities("AllPaymentModes"));
 			print '</td><td colspan="3">';
 			print '<span class="amount">'.price($object->card_lifetime + $object->cheque_lifetime + $object->cash_lifetime, 0, $langs, 1, -1, -1, $conf->currency).'</span>';
 			print ' &nbsp; <span class="opacitymedium">'.$langs->trans("since").' '.dol_print_date($object->lifetime_start, 'dayhour').' ('.$langs->trans("AllTerminals").')</span>';
@@ -948,12 +986,17 @@ if (empty($action) || $action == "view" || $action == "close") {
 				}
 				print '</td>';
 				print '<td class="right">';
-				print '<span class="amount';
-				if ((($key == 'cash' ? $object->opening : 0) + $realamountforpaymentmode) != $declaredamountforpaymentmode) {
-					print ' error';
+				$calcamount = (($key == 'cash' ? $object->opening : 0) + $realamountforpaymentmode);
+				print '<span class="amount">'.price($calcamount, 0, $langs, 1, -1, -1, $conf->currency).'</span>';
+				//print '</span>';
+				//print '<span class="amount';
+				if ($calcamount != $declaredamountforpaymentmode) {
+					//print ' error';
+					print img_picto($langs->trans("Declared").': '.$declaredamountforpaymentmode, 'warning');
 				}
-				print '">';
-				print price($declaredamountforpaymentmode, 0, $langs, 1, -1, -1, $conf->currency).'</span>';
+				//print '">';
+
+
 				print '</td>';
 				print '</tr>';
 			}

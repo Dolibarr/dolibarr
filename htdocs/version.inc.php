@@ -38,14 +38,7 @@ if (!defined('DOL_APPLICATION_TITLE')) {
 
 // The major version of Dolibarr
 define('DOL_MAJOR_VERSION', '24');
+define('DOL_MINOR_VERSION', '0.0-alpha');
 
 define('DOL_VERSION', constant('DOL_MAJOR_VERSION').'.'.constant('DOL_MINOR_VERSION'));
 // DOL_VERSION is now a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
-
-// Set to 1 if the beta version is the candidate for certification or if the stable version has been certified.
-// Set to 2 to force LNE features for debug purposes, and flag version as candidate for certification. It just has one difference with 1: https is not required in this mode
-// Set to 0 for standard version or if you don't want to use the certification because you chosen to comply the law by using an attestation of an IT provider that guarantee
-//          the the software is compliant. WARNING: In this case, you must find an IT company that give you the attestation of conformity.
-if (!defined('CERTIF_LNE')) {
-	define('CERTIF_LNE', '2');
-}
