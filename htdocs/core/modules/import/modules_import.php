@@ -568,56 +568,98 @@ class ModeleImports
 		$actions = array();
 		if (!empty($actionMap[$tableElement][$operation])) {
 			$actions[] = $actionMap[$tableElement][$operation];
-			return array_values(array_unique(array_filter($actions)));
 		}
 
-		// Dynamic fallback only for real business objects.
+		// Let external modules add explicit import trigger actions.
+		// We merge with core mapping when present.
+		$hookactions = $this->getImportTriggerActionsFromHooks($tableElement, $operation, $element, $object);
+		if (!empty($hookactions)) {
+			$actions = array_merge($actions, $hookactions);
+		}
+
+		// Dynamic fallback only for real business objects and only when
+		// no explicit mapping/hook action exists.
 		// Avoid generating trigger names from stdClass (legacy SQL context).
-		if (is_object($object) && method_exists($object, 'call_trigger')) {
-			$triggerprefix = '';
-			if (!empty($object->TRIGGER_PREFIX)) {
-				$triggerprefix = strtoupper((string) $object->TRIGGER_PREFIX);
-			} elseif (!empty($object->element)) {
-				$triggerprefix = strtoupper((string) $object->element);
-			} else {
-				$triggerprefix = strtoupper(get_class($object));
+		if (empty($actions) && is_object($object) && method_exists($object, 'call_trigger')) {
+			$triggerprefix = $this->getImportTriggerPrefixFromObject($object);
+			$action = $this->buildImportTriggerActionFromPrefix($triggerprefix, $operation);
+			if (!empty($action)) {
+				$actions[] = $action;
 			}
-
-			if ($operation === 'update') {
-				$actions[] = $triggerprefix.'_MODIFY';
-			} elseif ($operation === 'insert') {
-				$actions[] = (preg_match('/^LINE/', $triggerprefix) ? $triggerprefix.'_INSERT' : $triggerprefix.'_CREATE');
-			}
-		}
-
-		// Let external modules define explicit import trigger actions.
-		// This takes precedence over the generic fallback derived from element/table name.
-		if (empty($actions)) {
-			$actions = $this->getImportTriggerActionsFromHooks($tableElement, $operation, $element, $object);
 		}
 
 		// Generic fallback for external/custom objects imported through legacy SQL path:
 		// derive a deterministic trigger prefix from element/table when no explicit mapping exists.
 		if (empty($actions)) {
-			$rawprefix = '';
-			if (!empty($element)) {
-				$rawprefix = (string) $element;
-			} elseif (!empty($tableElement)) {
-				$rawprefix = (string) $tableElement;
-			}
-			$triggerprefix = strtoupper(preg_replace('/[^A-Za-z0-9]+/', '_', $rawprefix));
-			$triggerprefix = trim($triggerprefix, '_');
-
-			if ($triggerprefix !== '') {
-				if ($operation === 'update') {
-					$actions[] = $triggerprefix.'_MODIFY';
-				} elseif ($operation === 'insert') {
-					$actions[] = (preg_match('/^LINE/', $triggerprefix) ? $triggerprefix.'_INSERT' : $triggerprefix.'_CREATE');
-				}
+			$triggerprefix = $this->getImportGenericTriggerPrefix($element, $tableElement);
+			$action = $this->buildImportTriggerActionFromPrefix($triggerprefix, $operation);
+			if (!empty($action)) {
+				$actions[] = $action;
 			}
 		}
 
 		return array_values(array_unique(array_filter($actions)));
+	}
+
+	/**
+	 * Build trigger action code from prefix and operation.
+	 *
+	 * @param string $triggerprefix
+	 * @param string $operation
+	 * @return string
+	 */
+	protected function buildImportTriggerActionFromPrefix($triggerprefix, $operation)
+	{
+		$triggerprefix = strtoupper(trim((string) $triggerprefix));
+		$operation = strtolower((string) $operation);
+		if ($triggerprefix === '') {
+			return '';
+		}
+
+		if ($operation === 'update') {
+			return $triggerprefix.'_MODIFY';
+		}
+		if ($operation === 'insert') {
+			return preg_match('/^LINE/', $triggerprefix) ? $triggerprefix.'_INSERT' : $triggerprefix.'_CREATE';
+		}
+
+		return '';
+	}
+
+	/**
+	 * Return trigger prefix from a business object.
+	 *
+	 * @param object $object
+	 * @return string
+	 */
+	protected function getImportTriggerPrefixFromObject($object)
+	{
+		if (!empty($object->TRIGGER_PREFIX)) {
+			return (string) $object->TRIGGER_PREFIX;
+		}
+		if (!empty($object->element)) {
+			return (string) $object->element;
+		}
+		return get_class($object);
+	}
+
+	/**
+	 * Return generic trigger prefix derived from element or table.
+	 *
+	 * @param string $element
+	 * @param string $tableElement
+	 * @return string
+	 */
+	protected function getImportGenericTriggerPrefix($element, $tableElement)
+	{
+		$rawprefix = '';
+		if (!empty($element)) {
+			$rawprefix = (string) $element;
+		} elseif (!empty($tableElement)) {
+			$rawprefix = (string) $tableElement;
+		}
+
+		return trim((string) preg_replace('/[^A-Za-z0-9]+/', '_', strtoupper($rawprefix)), '_');
 	}
 
 	/**
