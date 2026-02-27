@@ -346,57 +346,57 @@ if (getDolGlobalString('MAIN_AUTHENTICATION_OIDC_ON')) {
 	}
 
 	if (!empty($dolibarr_main_authentication_autocreateuser)) {
-	print '<div class="div-table-responsive-no-min">';
-	print '<table class="tagtable noborder liste nobottomiftotal">';
-	print '<tr class="liste_titre">';
-	print '<th class="liste_titre" colspan="3">' . $langs->trans("MainAuthenticationOidcAutoCreateTitle") . '</th>' . "\n";
-	print "</tr>\n";
+		print '<div class="div-table-responsive-no-min">';
+		print '<table class="tagtable noborder liste nobottomiftotal">';
+		print '<tr class="liste_titre">';
+		print '<th class="liste_titre" colspan="3">' . $langs->trans("MainAuthenticationOidcAutoCreateTitle") . '</th>' . "\n";
+		print "</tr>\n";
 
-	// MAIN_AUTHENTICATION_OIDC_DEFAULT_CREATOR
-	$form = new Form($db);
-	print '<tr class="oddeven">' . "\n";
-	print '<td>' . $langs->trans("MainAuthenticationOidcDefaultCreatorName") . '</td>' . "\n";
-	print '<td>' . $langs->trans("MainAuthenticationOidcDefaultCreatorDesc") . '</td>' . "\n";
-	print '<td align="right">' . "\n";
-	$creator_val = GETPOSTISSET('MAIN_AUTHENTICATION_OIDC_DEFAULT_CREATOR') ? GETPOSTINT('MAIN_AUTHENTICATION_OIDC_DEFAULT_CREATOR') : getDolGlobalInt('MAIN_AUTHENTICATION_OIDC_DEFAULT_CREATOR');
-	print $form->select_dolusers($creator_val, 'MAIN_AUTHENTICATION_OIDC_DEFAULT_CREATOR', 1, null, 0, '', '', '', 0, 0, '(admin:=:1) AND (statut:=:1)', 0, '', 'minwidth200 maxwidth500');
-	print '</td></tr>' . "\n";
+		// MAIN_AUTHENTICATION_OIDC_DEFAULT_CREATOR
+		$form = new Form($db);
+		print '<tr class="oddeven">' . "\n";
+		print '<td>' . $langs->trans("MainAuthenticationOidcDefaultCreatorName") . '</td>' . "\n";
+		print '<td>' . $langs->trans("MainAuthenticationOidcDefaultCreatorDesc") . '</td>' . "\n";
+		print '<td align="right">' . "\n";
+		$creator_val = GETPOSTISSET('MAIN_AUTHENTICATION_OIDC_DEFAULT_CREATOR') ? GETPOSTINT('MAIN_AUTHENTICATION_OIDC_DEFAULT_CREATOR') : getDolGlobalInt('MAIN_AUTHENTICATION_OIDC_DEFAULT_CREATOR');
+		print $form->select_dolusers($creator_val, 'MAIN_AUTHENTICATION_OIDC_DEFAULT_CREATOR', 1, null, 0, '', '', '', 0, 0, '(admin:=:1) AND (statut:=:1)', 0, '', 'minwidth200 maxwidth500');
+		print '</td></tr>' . "\n";
 
-	// MAIN_AUTHENTICATION_OIDC_DEFAULT_GROUP
-	print '<tr class="oddeven">' . "\n";
-	print '<td>' . $langs->trans("MainAuthenticationOidcDefaultGroupName") . '</td>' . "\n";
-	print '<td>' . $langs->trans("MainAuthenticationOidcDefaultGroupDesc") . '</td>' . "\n";
-	print '<td align="right">' . "\n";
-	$defaultgroup_val = GETPOSTISSET('MAIN_AUTHENTICATION_OIDC_DEFAULT_GROUP') ? GETPOSTINT('MAIN_AUTHENTICATION_OIDC_DEFAULT_GROUP') : getDolGlobalInt('MAIN_AUTHENTICATION_OIDC_DEFAULT_GROUP');
-	$form->select_dolgroups($defaultgroup_val, 'MAIN_AUTHENTICATION_OIDC_DEFAULT_GROUP', 1);
-	print '</td></tr>' . "\n";
+		// MAIN_AUTHENTICATION_OIDC_DEFAULT_GROUP
+		print '<tr class="oddeven">' . "\n";
+		print '<td>' . $langs->trans("MainAuthenticationOidcDefaultGroupName") . '</td>' . "\n";
+		print '<td>' . $langs->trans("MainAuthenticationOidcDefaultGroupDesc") . '</td>' . "\n";
+		print '<td align="right">' . "\n";
+		$defaultgroup_val = GETPOSTISSET('MAIN_AUTHENTICATION_OIDC_DEFAULT_GROUP') ? GETPOSTINT('MAIN_AUTHENTICATION_OIDC_DEFAULT_GROUP') : getDolGlobalInt('MAIN_AUTHENTICATION_OIDC_DEFAULT_GROUP');
+		$form->select_dolgroups($defaultgroup_val, 'MAIN_AUTHENTICATION_OIDC_DEFAULT_GROUP', 1);
+		print '</td></tr>' . "\n";
 
-	// MAIN_AUTHENTICATION_OIDC_CLAIM_FIRSTNAME
-	print '<tr class="oddeven">' . "\n";
-	print '<td>' . $langs->trans("MainAuthenticationOidcClaimFirstnameName") . '</td>' . "\n";
-	print '<td>' . $langs->trans("MainAuthenticationOidcClaimFirstnameDesc") . '</td>' . "\n";
-	print '<td align="right">' . "\n";
-	print '<input name="MAIN_AUTHENTICATION_OIDC_CLAIM_FIRSTNAME" id="MAIN_AUTHENTICATION_OIDC_CLAIM_FIRSTNAME" class="minwidth400 centpercent" value="' . dol_escape_htmltag((GETPOSTISSET('MAIN_AUTHENTICATION_OIDC_CLAIM_FIRSTNAME') ? GETPOST('MAIN_AUTHENTICATION_OIDC_CLAIM_FIRSTNAME', 'nohtml') : (getDolGlobalString('MAIN_AUTHENTICATION_OIDC_CLAIM_FIRSTNAME') ? getDolGlobalString("MAIN_AUTHENTICATION_OIDC_CLAIM_FIRSTNAME") : ''))) . '" placeholder="given_name">';
-	print '</td></tr>' . "\n";
+		// MAIN_AUTHENTICATION_OIDC_CLAIM_FIRSTNAME
+		print '<tr class="oddeven">' . "\n";
+		print '<td>' . $langs->trans("MainAuthenticationOidcClaimFirstnameName") . '</td>' . "\n";
+		print '<td>' . $langs->trans("MainAuthenticationOidcClaimFirstnameDesc") . '</td>' . "\n";
+		print '<td align="right">' . "\n";
+		print '<input name="MAIN_AUTHENTICATION_OIDC_CLAIM_FIRSTNAME" id="MAIN_AUTHENTICATION_OIDC_CLAIM_FIRSTNAME" class="minwidth400 centpercent" value="' . dol_escape_htmltag((GETPOSTISSET('MAIN_AUTHENTICATION_OIDC_CLAIM_FIRSTNAME') ? GETPOST('MAIN_AUTHENTICATION_OIDC_CLAIM_FIRSTNAME', 'nohtml') : (getDolGlobalString('MAIN_AUTHENTICATION_OIDC_CLAIM_FIRSTNAME') ? getDolGlobalString("MAIN_AUTHENTICATION_OIDC_CLAIM_FIRSTNAME") : ''))) . '" placeholder="given_name">';
+		print '</td></tr>' . "\n";
 
-	// MAIN_AUTHENTICATION_OIDC_CLAIM_LASTNAME
-	print '<tr class="oddeven">' . "\n";
-	print '<td>' . $langs->trans("MainAuthenticationOidcClaimLastnameName") . '</td>' . "\n";
-	print '<td>' . $langs->trans("MainAuthenticationOidcClaimLastnameDesc") . '</td>' . "\n";
-	print '<td align="right">' . "\n";
-	print '<input name="MAIN_AUTHENTICATION_OIDC_CLAIM_LASTNAME" id="MAIN_AUTHENTICATION_OIDC_CLAIM_LASTNAME" class="minwidth400 centpercent" value="' . dol_escape_htmltag((GETPOSTISSET('MAIN_AUTHENTICATION_OIDC_CLAIM_LASTNAME') ? GETPOST('MAIN_AUTHENTICATION_OIDC_CLAIM_LASTNAME', 'nohtml') : (getDolGlobalString('MAIN_AUTHENTICATION_OIDC_CLAIM_LASTNAME') ? getDolGlobalString("MAIN_AUTHENTICATION_OIDC_CLAIM_LASTNAME") : ''))) . '" placeholder="family_name">';
-	print '</td></tr>' . "\n";
+		// MAIN_AUTHENTICATION_OIDC_CLAIM_LASTNAME
+		print '<tr class="oddeven">' . "\n";
+		print '<td>' . $langs->trans("MainAuthenticationOidcClaimLastnameName") . '</td>' . "\n";
+		print '<td>' . $langs->trans("MainAuthenticationOidcClaimLastnameDesc") . '</td>' . "\n";
+		print '<td align="right">' . "\n";
+		print '<input name="MAIN_AUTHENTICATION_OIDC_CLAIM_LASTNAME" id="MAIN_AUTHENTICATION_OIDC_CLAIM_LASTNAME" class="minwidth400 centpercent" value="' . dol_escape_htmltag((GETPOSTISSET('MAIN_AUTHENTICATION_OIDC_CLAIM_LASTNAME') ? GETPOST('MAIN_AUTHENTICATION_OIDC_CLAIM_LASTNAME', 'nohtml') : (getDolGlobalString('MAIN_AUTHENTICATION_OIDC_CLAIM_LASTNAME') ? getDolGlobalString("MAIN_AUTHENTICATION_OIDC_CLAIM_LASTNAME") : ''))) . '" placeholder="family_name">';
+		print '</td></tr>' . "\n";
 
-	// MAIN_AUTHENTICATION_OIDC_CLAIM_EMAIL
-	print '<tr class="oddeven">' . "\n";
-	print '<td>' . $langs->trans("MainAuthenticationOidcClaimEmailName") . '</td>' . "\n";
-	print '<td>' . $langs->trans("MainAuthenticationOidcClaimEmailDesc") . '</td>' . "\n";
-	print '<td align="right">' . "\n";
-	print '<input name="MAIN_AUTHENTICATION_OIDC_CLAIM_EMAIL" id="MAIN_AUTHENTICATION_OIDC_CLAIM_EMAIL" class="minwidth400 centpercent" value="' . dol_escape_htmltag((GETPOSTISSET('MAIN_AUTHENTICATION_OIDC_CLAIM_EMAIL') ? GETPOST('MAIN_AUTHENTICATION_OIDC_CLAIM_EMAIL', 'nohtml') : (getDolGlobalString('MAIN_AUTHENTICATION_OIDC_CLAIM_EMAIL') ? getDolGlobalString("MAIN_AUTHENTICATION_OIDC_CLAIM_EMAIL") : ''))) . '" placeholder="email">';
-	print '</td></tr>' . "\n";
+		// MAIN_AUTHENTICATION_OIDC_CLAIM_EMAIL
+		print '<tr class="oddeven">' . "\n";
+		print '<td>' . $langs->trans("MainAuthenticationOidcClaimEmailName") . '</td>' . "\n";
+		print '<td>' . $langs->trans("MainAuthenticationOidcClaimEmailDesc") . '</td>' . "\n";
+		print '<td align="right">' . "\n";
+		print '<input name="MAIN_AUTHENTICATION_OIDC_CLAIM_EMAIL" id="MAIN_AUTHENTICATION_OIDC_CLAIM_EMAIL" class="minwidth400 centpercent" value="' . dol_escape_htmltag((GETPOSTISSET('MAIN_AUTHENTICATION_OIDC_CLAIM_EMAIL') ? GETPOST('MAIN_AUTHENTICATION_OIDC_CLAIM_EMAIL', 'nohtml') : (getDolGlobalString('MAIN_AUTHENTICATION_OIDC_CLAIM_EMAIL') ? getDolGlobalString("MAIN_AUTHENTICATION_OIDC_CLAIM_EMAIL") : ''))) . '" placeholder="email">';
+		print '</td></tr>' . "\n";
 
-	print '</table>' . "\n";
-	print '</div>';
+		print '</table>' . "\n";
+		print '</div>';
 	} // end if autocreateuser
 
 	print '<br>';
