@@ -179,6 +179,7 @@ CashControlEndDateMustBeBeforeNow=It is not possible to make a monthly or yearly
 CashControlEndDayMustNotBeInPast=It is not possible to make a daily cash register closing on a day in the future.
 TheoricalView=Theorical view
 SentOrderToKitchen=Send order to kitchen
+LifetimeAmountShort=Lifetime amount
 LifetimeAmount=Lifetime amount (%s)
 LifetimeStatDate=Lifetime amount start date
 AllTerminals=All terminals

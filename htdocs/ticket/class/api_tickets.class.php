@@ -641,4 +641,178 @@ class Tickets extends DolibarrApi
 		}
 		return $object;
 	}
+
+	/**
+	 * Add a contact type of given ticket
+	 *
+	 * @param int    $id            Id of ticket to update
+	 * @param int    $contactid     Id of contact to add
+	 * @param string $type          Type (code in dictionary) of the contact (BILLING, SHIPPING, CUSTOMER + possibly your own)
+	 * @param string $source		internal=Contact intern (llx_user), external=Contact extern (llx_socpeople)
+	 * @param int    $notrigger		0=Enable all triggers (default), 1=Disable all triggers
+	 * @return array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
+	 *
+	 * @url	POST {id}/contact/{contactid}/{type}
+	 *
+	 * @throws RestException 400
+	 * @throws RestException 401
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 503
+	 */
+	public function postContact(int $id, int $contactid, string $type, string $source = "external", int $notrigger = 0): array
+	{
+		// Check permissions
+		if (!DolibarrApiAccess::$user->hasRight('ticket', 'write')) {
+			throw new RestException(403);
+		}
+
+		// test source
+		if (empty($source)) {
+			throw new RestException(400, 'Source can not be empty');
+		}
+		// test type
+		if (empty($type)) {
+			throw new RestException(400, 'type can not be empty');
+		}
+
+		// Check type/source contact exists
+		$sqlCheckTypeSource = "SELECT tc.rowid";
+		$sqlCheckTypeSource .= " FROM ".$this->db->prefix()."c_type_contact as tc";
+		$sqlCheckTypeSource .= " WHERE tc.element LIKE 'ticket'";
+		$sqlCheckTypeSource .= " AND tc.source = '".$this->db->escape($source)."'";
+		$sqlCheckTypeSource .= " AND tc.code = '".$this->db->escape($type)."'";
+		$sqlCheckTypeSource .= " AND tc.active = 1";
+		$result = $this->db->query($sqlCheckTypeSource);
+
+		if ($result && $this->db->num_rows($result) == 0) {
+			throw new RestException(400, 'Contact type not found');
+		}
+
+		// Check contact exists
+		if ($source == "external") {
+			// Check external contact exists
+			$sqlCheckExternalContact = "SELECT 1 as exist";
+			$sqlCheckExternalContact .= " FROM llx_socpeople";
+			$sqlCheckExternalContact .= " WHERE rowid = " . intval($contactid);
+			$result = $this->db->query($sqlCheckExternalContact);
+
+			if ($result && $this->db->num_rows($result) == 0) {
+				throw new RestException(404, 'External contact not found');
+			}
+		} else {
+			// Check internal contact exists
+			$sqlCheckInternalContact = "SELECT 1 as exist";
+			$sqlCheckInternalContact .= " FROM llx_user";
+			$sqlCheckInternalContact .= " WHERE rowid = " . intval($contactid);
+			$result = $this->db->query($sqlCheckInternalContact);
+
+			if ($result && $this->db->num_rows($result) == 0) {
+				throw new RestException(404, 'Internal contact not found');
+			}
+		}
+
+		// tests done, let's get it
+		$result = $this->ticket->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Ticket not found');
+		}
+		if (!DolibarrApi::_checkAccessToResource('ticket', $this->ticket->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$result = $this->ticket->add_contact($contactid, $type, $source, $notrigger);
+
+		if ($result == 0) {
+			throw new RestException(400, 'Already exists: Contact='.$contactid.' is already linked to the ticket='.$id.' as source='.$source.' and type='.$type);
+		} elseif ($result == -1) {
+			throw new RestException(400, 'Wrong contact='.$contactid);
+		} elseif ($result == -2) {
+			throw new RestException(400, 'Wrong type='.$type);
+		} elseif ($result == -3) {
+			throw new RestException(400, 'Not allowed contacts');
+		} elseif ($result == -4) {
+			throw new RestException(400, 'ErrorCommercialNotAllowedForThirdparty');
+		} elseif ($result == -5) {
+			throw new RestException(400, 'Trigger failed');
+		} elseif ($result == -6) {
+			throw new RestException(400, 'DB_ERROR_RECORD_ALREADY_EXISTS');
+		} elseif ($result == -7) {
+			throw new RestException(400, 'Some other error');
+		} elseif ($result <= -8) {
+			throw new RestException(400, 'Unknown error occurred');
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Contact='.$contactid.' linked to the ticket='.$id.' as '.$source.' '.$type
+			)
+		);
+	}
+
+	/**
+	 * Unlink a contact type of given ticket
+	 *
+	 * @since	12.0.0	Initial implementation
+	 * @param int    $id             Id of ticket to update
+	 * @param int    $contactid      Id of contact
+	 * @param string $type           Type of the contact (BILLING, SHIPPING, CUSTOMER).
+	 * @param string $source		internal=Contact intern (llx_user), external=Contact extern (llx_socpeople)
+	 *
+	 * @url	DELETE {id}/contact/{contactid}/{type}
+	 *
+	 * @return array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
+	 *
+	 * @throws RestException 401
+	 * @throws RestException 404
+	 * @throws RestException 500 System error
+	 */
+	public function deleteContact(int $id, int $contactid, string $type, string $source = "external"): array
+	{
+		// Check permissions
+		if (!DolibarrApiAccess::$user->hasRight('ticket', 'write')) {
+			throw new RestException(403);
+		}
+
+		// test source
+		if (empty($source)) {
+			throw new RestException(400, 'Source can not be empty');
+		}
+		// test type
+		if (empty($type)) {
+			throw new RestException(400, 'type can not be empty');
+		}
+
+		$result = $this->ticket->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Ticket not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('ticket', $this->ticket->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$contacts = $this->ticket->liste_contact(-1, $source);
+		foreach ($contacts as $contact) {
+			if ($contact['id'] == $contactid && $contact['code'] == $type) {
+				$result = $this->ticket->delete_contact($contact['rowid']);
+
+				if (!$result) {
+					throw new RestException(500, 'Error when deleting the contact '.$contact['rowid']);
+				}
+			}
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Contact unlinked from ticket'
+			)
+		);
+	}
 }
