@@ -1924,11 +1924,6 @@ if ($step == 4 && $datatoimport) {
 			print $langs->trans("ErrorFailedToOpenFile", $pathfile);
 		}
 
-		$arrayofwarnings['none'][] = array(
-			'lib' => $langs->trans("ImportTriggerModeSimulationInfo"),
-			'type' => 'TRIGGERMODE',
-		);
-
 		$error = 0;
 
 		// Run the sql after import if defined
