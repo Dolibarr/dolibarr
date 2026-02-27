@@ -2,6 +2,7 @@
 /* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW				<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Vincent de Grandpré	<vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1189,6 +1190,23 @@ class EmailCollector extends CommonObject
 		$sourcedir = $this->source_directory;
 		$targetdir = ($this->target_directory ? $this->target_directory : ''); // Can be '[Gmail]/Trash' or 'mytag'
 
+		// Avoid long blocks on IMAP operations (applies to native IMAP and Webklex/php-imap).
+		$timeoutconnect = (int) getDolGlobalInt('MAIN_USE_CONNECT_TIMEOUT', 5);
+		if ($timeoutconnect <= 0) {
+			$timeoutconnect = 5;
+		}
+		$timeoutread = (int) getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 20);
+		if ($timeoutread <= 0) {
+			$timeoutread = 20;
+		}
+		if (function_exists('imap_timeout')) {
+			imap_timeout(IMAP_OPENTIMEOUT, $timeoutconnect); // timeout seems ignored with ssl connect
+			imap_timeout(IMAP_READTIMEOUT, $timeoutread);
+			imap_timeout(IMAP_WRITETIMEOUT, 5);
+			imap_timeout(IMAP_CLOSETIMEOUT, 5);
+			$this->debuginfo .= 'IMAP timeouts: connect='.$timeoutconnect.'s, read='.$timeoutread.'s<br>';
+		}
+
 		if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 			if ($this->acces_type == 1) {
 				// Mode OAUth2 (access_type == 1) with PHP-IMAP
@@ -1766,6 +1784,7 @@ class EmailCollector extends CommonObject
 		$nbactiondone = 0;
 		$charset = ($this->hostcharset ? $this->hostcharset : "UTF-8");
 		$arrayofemail = array();
+		$Query = 0;
 
 		if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP') && is_object($client)) {
 			try {
@@ -1779,10 +1798,13 @@ class EmailCollector extends CommonObject
 
 				$f = $client->getFolders(false, $tmpsourcedir);	// Note the search of directory do a search on sourcedir*
 				if ($f) {
-					$folder = $f[0];
-					if ($folder instanceof Webklex\PHPIMAP\Folder) {
-						$Query = $folder->messages()->where($criteria); // @phan-suppress-current-line PhanPluginUnknownObjectMethodCall
-					} else {
+					foreach ($f as $_f) {
+						if ($_f->path == $this->source_directory && $_f instanceof Webklex\PHPIMAP\Folder) {
+							$Query = $_f->messages()->where($criteria); // @phan-suppress-current-line PhanPluginUnknownObjectMethodCall
+						}
+					}
+					// @phpstan-ignore-line
+					if (empty($Query)) {
 						$error++;
 						$this->error = "Source directory ".$sourcedir." not found";
 						$this->errors[] = $this->error;
