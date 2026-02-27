@@ -1422,3 +1422,4 @@ since=depuis
 SignatureID=Signature
 except=sauf
 DUPLICATA=DUPLICATA
+ErrorFailedTriggerCall=Echec de l'appel du trigger

@@ -535,6 +535,7 @@ class ModeleImports
 	 * @param	string	$tableElement	Table name without database prefix
 	 * @param	string	$operation		Operation insert|update
 	 * @param	string	$element		Element name
+	 * @param	object|null $object		Object context
 	 * @return	string[]				List of trigger action codes
 	 */
 	protected function getImportTriggerActions($tableElement, $operation, $element, $object = null)
@@ -604,9 +605,9 @@ class ModeleImports
 	/**
 	 * Build trigger action code from prefix and operation.
 	 *
-	 * @param string $triggerprefix
-	 * @param string $operation
-	 * @return string
+	 * @param string $triggerprefix Trigger prefix (for example COMPANY or LINEORDER)
+	 * @param string $operation     SQL operation (insert|update)
+	 * @return string               Trigger action code, empty string if no match
 	 */
 	protected function buildImportTriggerActionFromPrefix($triggerprefix, $operation)
 	{
@@ -629,8 +630,8 @@ class ModeleImports
 	/**
 	 * Return trigger prefix from a business object.
 	 *
-	 * @param object $object
-	 * @return string
+	 * @param object $object Business object
+	 * @return string        Trigger prefix
 	 */
 	protected function getImportTriggerPrefixFromObject($object)
 	{
@@ -646,9 +647,9 @@ class ModeleImports
 	/**
 	 * Return generic trigger prefix derived from element or table.
 	 *
-	 * @param string $element
-	 * @param string $tableElement
-	 * @return string
+	 * @param string $element      Object element name
+	 * @param string $tableElement Table name without DB prefix
+	 * @return string              Trigger prefix
 	 */
 	protected function getImportGenericTriggerPrefix($element, $tableElement)
 	{
@@ -970,7 +971,7 @@ class ModeleImports
 	 * @param	int							$recordpositionbase				0 when $arrayrecord starts at 0, 1 when starts at 1
 	 * @return	int														Return integer <0 if KO, >0 if OK
 	 */
-	protected function _common_import_insert($arrayrecord, $array_match_file_to_database, $objimport, $maxfields, $importid, $updatekeys, $recordpositionbase = 0)
+	protected function commonImportInsert($arrayrecord, $array_match_file_to_database, $objimport, $maxfields, $importid, $updatekeys, $recordpositionbase = 0)
 	{
 		global $langs, $conf, $user;
 		global $thirdparty_static; // Specific to thirdparty import
@@ -1093,9 +1094,9 @@ class ModeleImports
 										$file = (empty($objimport->array_import_convertvalue[0][$val]['classfile']) ? $objimport->array_import_convertvalue[0][$val]['file'] : $objimport->array_import_convertvalue[0][$val]['classfile']);
 										$class = $objimport->array_import_convertvalue[0][$val]['class'];
 										$method = $objimport->array_import_convertvalue[0][$val]['method'];
-											$cachekey = $file.'_'.$class.'_'.$method.'_';
-											if (isset($this->cacheconvert[$cachekey][$newval]) && $this->cacheconvert[$cachekey][$newval] != '') {
-												$newval = $this->cacheconvert[$cachekey][$newval];
+										$cachekey = $file.'_'.$class.'_'.$method.'_';
+										if (isset($this->cacheconvert[$cachekey][$newval]) && $this->cacheconvert[$cachekey][$newval] != '') {
+											$newval = $this->cacheconvert[$cachekey][$newval];
 										} else {
 											$resultload = dol_include_once($file);
 											if (empty($resultload)) {
@@ -1171,13 +1172,13 @@ class ModeleImports
 
 									if ($isidorref == 'ref') {
 										$file = (empty($objimport->array_import_convertvalue[0][$val]['classfile']) ? $objimport->array_import_convertvalue[0][$val]['file'] : $objimport->array_import_convertvalue[0][$val]['classfile']);
-										$class = $objimport->array_import_convertvalue[0][$val]['class'];
-										$method = $objimport->array_import_convertvalue[0][$val]['method'];
-										$codefromfield = $objimport->array_import_convertvalue[0][$val]['codefromfield'];
-										$code = $arrayrecord[$arrayfield[$codefromfield]]['val'];
+											$class = $objimport->array_import_convertvalue[0][$val]['class'];
+											$method = $objimport->array_import_convertvalue[0][$val]['method'];
+											$codefromfield = $objimport->array_import_convertvalue[0][$val]['codefromfield'];
+											$code = $arrayrecord[$arrayfield[$codefromfield]]['val'];
 											$cachekey = $file.'_'.$class.'_'.$method.'_'.$code;
-											if (isset($this->cacheconvert[$cachekey][$newval]) && $this->cacheconvert[$cachekey][$newval] != '') {
-												$newval = $this->cacheconvert[$cachekey][$newval];
+										if (isset($this->cacheconvert[$cachekey][$newval]) && $this->cacheconvert[$cachekey][$newval] != '') {
+											$newval = $this->cacheconvert[$cachekey][$newval];
 										} else {
 											$resultload = dol_include_once($file);
 											if (empty($resultload)) {
@@ -1188,7 +1189,7 @@ class ModeleImports
 											// Try the fetch from code and ref
 											$param_array = array('', $newval, $code);
 											call_user_func_array(array($classinstance, $method), $param_array);
-												$this->cacheconvert[$cachekey][$newval] = $classinstance->id;
+											$this->cacheconvert[$cachekey][$newval] = $classinstance->id;
 											if ($classinstance->id > 0) {    // we found record
 												$newval = $classinstance->id;
 											} else {
@@ -1208,13 +1209,13 @@ class ModeleImports
 										$newval = '0';
 									}
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchidfromcodeunits' || $objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchscalefromcodeunits') {
-									$file = (empty($objimport->array_import_convertvalue[0][$val]['classfile']) ? $objimport->array_import_convertvalue[0][$val]['file'] : $objimport->array_import_convertvalue[0][$val]['classfile']);
-									$class = $objimport->array_import_convertvalue[0][$val]['class'];
-									$method = $objimport->array_import_convertvalue[0][$val]['method'];
-									$units = $objimport->array_import_convertvalue[0][$val]['units'];
+										$file = (empty($objimport->array_import_convertvalue[0][$val]['classfile']) ? $objimport->array_import_convertvalue[0][$val]['file'] : $objimport->array_import_convertvalue[0][$val]['classfile']);
+										$class = $objimport->array_import_convertvalue[0][$val]['class'];
+										$method = $objimport->array_import_convertvalue[0][$val]['method'];
+										$units = $objimport->array_import_convertvalue[0][$val]['units'];
 										$cachekey = $file.'_'.$class.'_'.$method.'_'.$units;
-										if (isset($this->cacheconvert[$cachekey][$newval]) && $this->cacheconvert[$cachekey][$newval] != '') {
-											$newval = $this->cacheconvert[$cachekey][$newval];
+									if (isset($this->cacheconvert[$cachekey][$newval]) && $this->cacheconvert[$cachekey][$newval] != '') {
+										$newval = $this->cacheconvert[$cachekey][$newval];
 									} else {
 										$resultload = dol_include_once($file);
 										if (empty($resultload)) {
@@ -1225,7 +1226,7 @@ class ModeleImports
 										// Try the fetch from code or ref
 										call_user_func_array(array($classinstance, $method), array('', '', $newval, $units));
 										$scaleorid = (($objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchidfromcodeunits') ? $classinstance->id : $classinstance->scale);
-											$this->cacheconvert[$cachekey][$newval] = $scaleorid;
+										$this->cacheconvert[$cachekey][$newval] = $scaleorid;
 										//print 'We have made a '.$class.'->'.$method." to get a value from key '".$newval."' and we got '".$scaleorid."'.";exit;
 										if ($classinstance->id > 0) {	// we found record
 											$newval = $scaleorid ? $scaleorid : 0;
@@ -1787,7 +1788,7 @@ class ModeleImports
 	public function import_insert($arrayrecord, $array_match_file_to_database, $objimport, $maxfields, $importid, $updatekeys)
 	{
 		// phpcs:enable
-		return $this->_common_import_insert($arrayrecord, $array_match_file_to_database, $objimport, $maxfields, $importid, $updatekeys, 0);
+		return $this->commonImportInsert($arrayrecord, $array_match_file_to_database, $objimport, $maxfields, $importid, $updatekeys, 0);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

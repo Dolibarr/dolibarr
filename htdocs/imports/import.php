@@ -1137,9 +1137,9 @@ if ($step == 3 && $datatoimport) {
 				if ($objimport->array_import_convertvalue[0][$tmpcode]['rule'] == 'fetchidfromref') {
 					$htmltext .= $langs->trans("DataComeFromIdFoundFromRef", $langs->transnoentitiesnoconv($entitylang)).'<br>';
 				}
-					if ($objimport->array_import_convertvalue[0][$tmpcode]['rule'] == 'fetchidfromcodeid') {
-						$dictlabel = $objimport->array_import_convertvalue[0][$tmpcode]['dict'] ?? '';
-						$htmltext .= $langs->trans("DataComeFromIdFoundFromCodeId", $langs->transnoentitiesnoconv($dictlabel)).'<br>';
+				if ($objimport->array_import_convertvalue[0][$tmpcode]['rule'] == 'fetchidfromcodeid') {
+					$dictlabel = $objimport->array_import_convertvalue[0][$tmpcode]['dict'] ?? '';
+					$htmltext .= $langs->trans("DataComeFromIdFoundFromCodeId", $langs->transnoentitiesnoconv($dictlabel)).'<br>';
 				}
 			}
 			// Source required
@@ -1152,9 +1152,9 @@ if ($step == 3 && $datatoimport) {
 			} else {
 				if ($objimport->array_import_convertvalue[0][$tmpcode]['rule'] == 'fetchidfromref') {
 					$htmltext .= $langs->trans("SourceExample").': <b>'.$langs->transnoentitiesnoconv("ExampleAnyRefFoundIntoElement", $entitylang).($example ? ' ('.$langs->transnoentitiesnoconv("Example").': '.str_replace('"', '', $example).')' : '').'</b><br>';
-					} elseif ($objimport->array_import_convertvalue[0][$tmpcode]['rule'] == 'fetchidfromcodeid') {
-						$dictlabel = $objimport->array_import_convertvalue[0][$tmpcode]['dict'] ?? '';
-						$htmltext .= $langs->trans("SourceExample").': <b>'.$langs->trans("ExampleAnyCodeOrIdFoundIntoDictionary", $langs->transnoentitiesnoconv($dictlabel)).($example ? ' ('.$langs->transnoentitiesnoconv("Example").': '.str_replace('"', '', $example).')' : '').'</b><br>';
+				} elseif ($objimport->array_import_convertvalue[0][$tmpcode]['rule'] == 'fetchidfromcodeid') {
+					$dictlabel = $objimport->array_import_convertvalue[0][$tmpcode]['dict'] ?? '';
+					$htmltext .= $langs->trans("SourceExample").': <b>'.$langs->trans("ExampleAnyCodeOrIdFoundIntoDictionary", $langs->transnoentitiesnoconv($dictlabel)).($example ? ' ('.$langs->transnoentitiesnoconv("Example").': '.str_replace('"', '', $example).')' : '').'</b><br>';
 				} elseif ($example) {
 					$htmltext .= $langs->trans("SourceExample").': <b>'.str_replace('"', '', $example).'</b><br>';
 				}
@@ -1714,12 +1714,10 @@ if ($step == 4 && $datatoimport) {
 	);
 	if ($action == 'launchsimu') {
 		print dol_escape_htmltag($triggerModeChoices[$importtriggermode] ?? $importtriggermode);
-		if ($action == 'launchsimu') {
-			print '<input type="hidden" name="importtriggermode" value="'.dol_escape_htmltag($importtriggermode).'">';
-		}
+		print '<input type="hidden" name="importtriggermode" value="'.dol_escape_htmltag($importtriggermode).'">';
 		print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'?step=4'.$param.'">'.$langs->trans("Modify").'</a>';
 	} else {
-		print $form->selectarray('importtriggermode', $triggerModeChoices, $importtriggermode, 0);
+			print $form->selectarray('importtriggermode', $triggerModeChoices, $importtriggermode, 0);
 	}
 	print '<br><span class="opacitymedium">';
 	print $langs->trans("ImportTriggerModeHint");

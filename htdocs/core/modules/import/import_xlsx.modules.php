@@ -393,6 +393,6 @@ class ImportXlsx extends ModeleImports
 	public function import_insert($arrayrecord, $array_match_file_to_database, $objimport, $maxfields, $importid, $updatekeys)
 	{
 		// phpcs:enable
-		return $this->_common_import_insert($arrayrecord, $array_match_file_to_database, $objimport, $maxfields, $importid, $updatekeys, 1);
+		return $this->commonImportInsert($arrayrecord, $array_match_file_to_database, $objimport, $maxfields, $importid, $updatekeys, 1);
 	}
 }
