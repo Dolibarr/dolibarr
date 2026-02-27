@@ -60,9 +60,19 @@ my %ALTERNATEPATH = (
 );
 
 my $RPMSUBVERSION = "auto";    # auto use value found into BUILD
+my $RPMDIR = "$ENV{HOME}/rpmbuild";	# by default
 if ( -d "/usr/src/redhat" )   { $RPMDIR = "/usr/src/redhat"; }      # redhat
 if ( -d "/usr/src/packages" ) { $RPMDIR = "/usr/src/packages"; }    # opensuse
-if ( -d "/usr/src/RPM" )      { $RPMDIR = "/usr/src/RPM"; }         # mandrake
+
+if ( ! -d "$RPMDIR/SOURCES" ) {
+	mkdir("$RPMDIR/SOURCES");
+	if ( ! -d "$RPMDIR/SOURCES" ) {
+		print "Failed to create dir $RPMDIR/SOURCES\n";
+		sleep 2;
+		exit 1;
+	}
+}
+
 
 use vars qw/ $REVISION $VERSION /;
 my $VERSION = "4.0";
@@ -203,10 +213,10 @@ while (<$IN>) {
 	}
 }
 close $IN;
-open( my $IN2, "<", $SOURCE . "/htdocs/filefunc.inc.php" )
+open( my $IN2, "<", $SOURCE . "/htdocs/version.inc.php" )
   or die "Error: Can't open version file "
   . $SOURCE
-  . "/htdocs/filefunc.inc.php\n";
+  . "/htdocs/version.inc.php\n";
 while (<$IN2>) {
 	if ( $_ =~ /define\('DOL_MINOR_VERSION',\s*'([\d\.a-z\-]+)'\)/ ) {
 		$MINORVERSION = $1;

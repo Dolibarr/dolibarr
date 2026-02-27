@@ -220,6 +220,21 @@ document.addEventListener('Dolibarr:Init', function(e) {
 			return sprintf(text, ...args);
 		}
 
+		/**
+		 * Translate a key using current locale
+		 * Supports placeholders like %s, %d, %f (simple sprintf)
+		 * @param {string} key
+		 * @param  {...any} args
+		 * @returns {string}
+		 */
+		function transNoEntities(key, ...args) {
+			let str = trans(key, ...args);
+			let txt = document.createElement('textarea');
+			txt.innerHTML = str;
+			return txt.value;
+		}
+
+
 		function sprintf(fmt, ...args) {
 			let i = 0;
 			return fmt.replace(/%[%bcdeEfFgGosuxX]/g, (match) => {
@@ -246,6 +261,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 			clearCache,
 			setLocale,
 			trans,
+			transNoEntities,
 			get currentLocale() { return currentLocale; }
 		};
 	};
