@@ -204,6 +204,34 @@ class ModeleImports
 	public $importtriggeractionshookcache = array();
 
 	/**
+	 * Array to cache list of values resolved after conversion rules.
+	 *
+	 * @var array<string,array<string,mixed>>
+	 */
+	public $cacheconvert = array();
+
+	/**
+	 * Array to cache list of values loaded from field@table rules.
+	 *
+	 * @var array<string,array<int|string,mixed>>
+	 */
+	public $cachefieldtable = array();
+
+	/**
+	 * Number of inserted rows during current import.
+	 *
+	 * @var int
+	 */
+	public $nbinsert = 0;
+
+	/**
+	 * Number of updated rows during current import.
+	 *
+	 * @var int
+	 */
+	public $nbupdate = 0;
+
+	/**
 	 * @var	array<string,string>	Element mapping from table name
 	 */
 	public static $mapTableToElement = MODULE_MAPPING;
@@ -1323,7 +1351,8 @@ class ModeleImports
 										break;
 									}
 									$classinstance = new $class($this->db);
-									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $arrayfield, ($key - 1)));
+										$computedFieldPos = isset($arrayfield[$fieldname]) ? ((int) $arrayfield[$fieldname]) : 0;
+										$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $arrayfield, $computedFieldPos));
 									if (empty($classinstance->error) && empty($classinstance->errors)) {
 										$newval = $res; 	// We get new value computed.
 									} else {
@@ -1498,7 +1527,8 @@ class ModeleImports
 										break;
 									}
 									$classinstance = new $class($this->db);
-									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $arrayfield, ($key - 1)));
+										$computedFieldPos = isset($arrayfield[$fieldname]) ? ((int) $arrayfield[$fieldname]) : 0;
+										$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $arrayfield, $computedFieldPos));
 									if (empty($classinstance->error) && empty($classinstance->errors)) {
 										$fieldArr = explode('.', $fieldname);
 										if (count($fieldArr) > 0) {
@@ -1541,6 +1571,7 @@ class ModeleImports
 					if (!empty($listfields)) {
 						$updatedone = false;
 						$insertdone = false;
+						$where = array();
 
 						$is_table_category_link = false;
 						$fname = 'rowid';
@@ -1665,7 +1696,7 @@ class ModeleImports
 
 								$sqlend = " WHERE ".$keyfield." = ".((int) $lastinsertid);
 
-								if ($is_table_category_link) {
+								if ($is_table_category_link && !empty($where)) {
 									'@phan-var-force string[] $where';
 									$sqlend = " WHERE " . implode(' AND ', $where);
 								}
@@ -1720,40 +1751,38 @@ class ModeleImports
 								$sqlstart .= ", ".$objimport->array_import_tables_creator[0][$alias];
 								$sqlend .= ", ".$user->id;
 							}
-							$sql = $sqlstart.$sqlend.")";
-							//dol_syslog("import_csv.modules", LOG_DEBUG);
+								$sql = $sqlstart.$sqlend.")";
+								//dol_syslog("import_csv.modules", LOG_DEBUG);
 
-							// Run insert request
-							if ($sql) {
+								// Run insert request
 								$resql = $this->db->query($sql);
-								if ($resql) {
-									if (!$is_table_category_link) {
-										$last_insert_id_array[$tablename] = $this->db->last_insert_id($tablename); // store the last inserted auto_increment id for each table, so that child tables can be inserted with the appropriate id. This must be done just after the INSERT request, else we risk losing the id (because another sql query will be issued somewhere in Dolibarr).
-									}
-									$insertdone = true;
-									if (!$importissimulation && $importtriggermode === 'strict_line') {
-										$triggerrowid = (!$is_table_category_link && !empty($last_insert_id_array[$tablename])) ? (int) $last_insert_id_array[$tablename] : 0;
-										$restrigger = $this->triggerImportSqlOperation($tablename, 'insert', $triggerrowid, $importid, $user, $langs, $conf);
-										if ($restrigger < 0) {
-											$this->errors[$error]['lib'] = $langs->trans('ErrorFailedTriggerCall');
-											$this->errors[$error]['type'] = 'TRIGGER';
-											$error++;
-										}
-									} elseif (!$importissimulation) {
-										$this->registerImportBulkEvent($tablename, 'insert');
-									}
-								} else {
-									//print 'E';
-									$this->errors[$error]['lib'] = $this->db->lasterror();
-									$this->errors[$error]['type'] = 'SQL';
-									$error++;
+							if ($resql) {
+								if (!$is_table_category_link) {
+									$last_insert_id_array[$tablename] = $this->db->last_insert_id($tablename); // store the last inserted auto_increment id for each table, so that child tables can be inserted with the appropriate id. This must be done just after the INSERT request, else we risk losing the id (because another sql query will be issued somewhere in Dolibarr).
 								}
+								$insertdone = true;
+								if (!$importissimulation && $importtriggermode === 'strict_line') {
+									$triggerrowid = (!$is_table_category_link && !empty($last_insert_id_array[$tablename])) ? (int) $last_insert_id_array[$tablename] : 0;
+									$restrigger = $this->triggerImportSqlOperation($tablename, 'insert', $triggerrowid, $importid, $user, $langs, $conf);
+									if ($restrigger < 0) {
+										$this->errors[$error]['lib'] = $langs->trans('ErrorFailedTriggerCall');
+										$this->errors[$error]['type'] = 'TRIGGER';
+										$error++;
+									}
+								} elseif (!$importissimulation) {
+									$this->registerImportBulkEvent($tablename, 'insert');
+								}
+							} else {
+								//print 'E';
+								$this->errors[$error]['lib'] = $this->db->lasterror();
+								$this->errors[$error]['type'] = 'SQL';
+								$error++;
 							}
 						}
 					}
 					/*else
 					{
-						dol_print_error(null,'ErrorFieldListEmptyFor '.$alias."/".$tablename);
+					dol_print_error(null,'ErrorFieldListEmptyFor '.$alias."/".$tablename);
 					}*/
 				}
 
