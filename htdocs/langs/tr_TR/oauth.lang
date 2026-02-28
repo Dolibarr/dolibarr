@@ -40,7 +40,7 @@ URLOfOAuthServiceEndpointsExample=https://mastodon.örneği.com
 URLOfServiceForAuthorization=Kimlik doğrulama için OAuth hizmeti tarafından sağlanan URL
 Scopes=İzinler (Kapsamlar)
 ScopeUndefined=İzinler (Kapsamlar) tanımsız (önceki sekmeye bakın)
-ScopesDesc=Örnek: Mastodon ile okuma, yazma
+ScopesDesc=Example: "read", "write" with Mastodon or "none"
 TokenRawValue=Tam işaret (nesne)
 AccessToken=işaret'e erişin
 TokenExpired=Süresi doldu
@@ -50,3 +50,4 @@ RefreshToken=işaret'i yenileyin
 RefreshTokenHelp=Yeni bir Erişim işaret almak için Yenile işaret'yi kullanın
 OldTokenWasExpiredItHasBeenRefresh=Eski işaret süresi dolmuştu, yenilendi
 OldTokenWasNotExpiredButItHasBeenRefresh=Eski işaret süresi dolmamıştı ancak yenilendi
+OAuthErrorStateDiffers=Value for state=%s differs from value in session. Code is refused.

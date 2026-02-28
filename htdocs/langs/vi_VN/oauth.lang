@@ -40,7 +40,7 @@ URLOfOAuthServiceEndpointsExample=https://mastodon.example.com
 URLOfServiceForAuthorization=URL được cung cấp bởi dịch vụ OAuth để xác thực
 Scopes=Quyền (Phạm vi)
 ScopeUndefined=Quyền (Phạm vi) không xác định (xem tab trước)
-ScopesDesc=Ví dụ: đọc, viết với Mastodon
+ScopesDesc=Example: "read", "write" with Mastodon or "none"
 TokenRawValue=Mã thông báo đầy đủ (đối tượng)
 AccessToken=Mã thông báo truy cập
 TokenExpired=Đã hết hạn
@@ -50,3 +50,4 @@ RefreshToken=Làm mới mã thông báo
 RefreshTokenHelp=Sử dụng Mã thông báo làm mới để nhận Mã thông báo truy cập mới
 OldTokenWasExpiredItHasBeenRefresh=Mã thông báo cũ đã hết hạn, nó đã được làm mới
 OldTokenWasNotExpiredButItHasBeenRefresh=Mã thông báo cũ chưa hết hạn nhưng đã được làm mới
+OAuthErrorStateDiffers=Value for state=%s differs from value in session. Code is refused.

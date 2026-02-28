@@ -467,3 +467,4 @@ SomeShipmentExists=Erreur : une expédition est liée à commande. Suppression 
 WarningEvaluationEmptyValidate=Impossible d'évaluer les niveaux de compétences non définis.
 ErrorBadParametersForDirectDebitFileCreate=Impossible de créer un virement bancaire fichier : le paramètre de format attendu n'est pas fourni.
 ErrorBadParametersForDirectDebitFileCreateDids=Impossible de créer un virement bancaire fichier : les identifiants des demandes de paiement existantes ne sont pas fournis.
+UserDoesNotHaveRightsToChangeHisPassword=That user doesn't have the rights to change his own password

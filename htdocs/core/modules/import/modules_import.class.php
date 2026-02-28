@@ -20,7 +20,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/import/modules_import.php
+ *	\file       htdocs/core/modules/import/modules_import.class.php
  *	\ingroup    export
  *	\brief      File of parent class for import file readers
  */

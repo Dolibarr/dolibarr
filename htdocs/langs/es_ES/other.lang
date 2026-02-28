@@ -268,6 +268,7 @@ RequestToResetPasswordReceived=Se ha recibido una solicitud para cambiar tu cont
 NewKeyIs=Esta es su nueva contraseña para iniciar sesión
 NewKeyWillBe=Su nueva contraseña para iniciar sesión en el software será
 ClickHereToGoTo=Haga click aquí para ir a %s
+ClickHereToGoToDictionary=Haga clic aquí para editar la configuración del diccionario (también disponible en el menú %s - %s - %s)
 YouMustClickToChange=Sin embargo, debe hacer click primero en el siguiente enlace para validar este cambio de contraseña
 ConfirmPasswordChange=Confirmar cambio de contraseña
 ForgetIfNothing=Si usted no ha solicitado este cambio, simplemente ignore este email. Sus credenciales son guardadas de forma segura.
@@ -385,6 +386,7 @@ FillExtrafieldWithAi=Rellene el campo adicional con contenido de IA
 ExtrafieldFiller=Relleno de campo extra
 OurProductSelection=El producto por descubrir
 NoSupportedModulesHaveBeenActivated=La herramienta de informes solo puede generar informes dinámicos para algunos módulos. Aún no hay ningún módulo compatible habilitado.
+TryAnotherConnectionMode=Pruebe otro modo de conexión
 # Bookmarks
 BehaviourOnClick = Comportamiento cuando se selecciona la URL de un marcador
 BookmarkTargetNewWindowShort = Nueva pestaña

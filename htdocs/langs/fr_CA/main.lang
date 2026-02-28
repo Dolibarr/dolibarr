@@ -330,6 +330,7 @@ SearchIntoKM=Base de connaissances
 SearchIntoTickets=Billets
 SearchIntoCustomerPayments=Paiements clients
 SearchIntoVendorPayments=Paiements aux fournisseurs
+SearchIntoMiscPayments=Saisie manuelle des entrées du journal
 CommentPage=Espace commentaires
 EverybodySmall=Tout le monde
 Quarter=Quart

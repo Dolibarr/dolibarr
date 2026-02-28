@@ -40,7 +40,7 @@ URLOfOAuthServiceEndpointsExample=https://mastodon.example.com
 URLOfServiceForAuthorization=URL proporcionat pel servei OAuth per a l'autenticació
 Scopes=Permisos (àmbits)
 ScopeUndefined=Permisos (àmbits) sense definir (vegeu la pestanya anterior)
-ScopesDesc=Exemple: llegir,escriure amb Mastodon
+ScopesDesc=Example: "read", "write" with Mastodon or "none"
 TokenRawValue=Testimoni complet (objecte)
 AccessToken=Testimoni d'accés
 TokenExpired=Caducat
@@ -50,3 +50,4 @@ RefreshToken=Actualitza el testimoni
 RefreshTokenHelp=Utilitzeu el testimoni d'actualització per a obtenir un testimoni d'accés nou
 OldTokenWasExpiredItHasBeenRefresh=El testimoni antic ha caducat, s'ha actualitzat
 OldTokenWasNotExpiredButItHasBeenRefresh=El testimoni antic no ha caducat, però s'ha actualitzat
+OAuthErrorStateDiffers=Value for state=%s differs from value in session. Code is refused.

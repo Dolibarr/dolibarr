@@ -37,7 +37,7 @@ require_once '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/imports/class/import.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/modules/import/modules_import.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/import/modules_import.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/import.lib.php';
@@ -535,7 +535,7 @@ if ($step == 2 && $datatoimport) {
 
 	// Add format information and link to download example
 	print '<tr class="liste_titre"><td colspan="4">';
-	print $langs->trans("FileMustHaveOneOfFollowingFormat");
+	print $langs->trans("FileMustHaveOneOfFollowingFormat").'...';
 	print '</td></tr>';
 	$list = $objmodelimport->listOfAvailableImportFormat($db);
 	foreach ($list as $key) {
@@ -559,6 +559,9 @@ if ($step == 2 && $datatoimport) {
 	}
 
 	print '</table>';
+
+	print '<br>';
+
 	// Input file name box
 	print '<div class="marginbottomonly">';
 	$maxfilesizearray = getMaxFileSizeArray();
@@ -621,6 +624,8 @@ if ($step == 2 && $datatoimport) {
 		$out .= ' ('.$langs->trans("UploadDisabled").')';
 	}
 	print $out;
+
+	print '<br><br>';
 
 	// Search available imports
 	$filearray = dol_dir_list($conf->import->dir_temp, 'files', 0, '', '', 'name', SORT_DESC);

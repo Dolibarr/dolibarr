@@ -40,7 +40,7 @@ URLOfOAuthServiceEndpointsExample=https://mastodon.example.com
 URLOfServiceForAuthorization=URL-ja e ofruar nga shërbimi OAuth për vërtetim
 Scopes=Lejet (Fushat)
 ScopeUndefined=Lejet (Scopes) të papërcaktuara (shih skedën e mëparshme)
-ScopesDesc=Shembull: lexo, shkruaj me Mastodon
+ScopesDesc=Example: "read", "write" with Mastodon or "none"
 TokenRawValue=Token i plotë (objekt)
 AccessToken=Tokeni i Qasjes
 TokenExpired=Skaduar
@@ -50,3 +50,4 @@ RefreshToken=Rifresko tokenin
 RefreshTokenHelp=Përdorni Shenjën e Rifreskimit për të marrë një Shenjë të re Qasjeje
 OldTokenWasExpiredItHasBeenRefresh=Tokeni i vjetër kishte skaduar, është rifreskuar
 OldTokenWasNotExpiredButItHasBeenRefresh=Tokeni i vjetër nuk kishte skaduar, por është rifreskuar
+OAuthErrorStateDiffers=Value for state=%s differs from value in session. Code is refused.

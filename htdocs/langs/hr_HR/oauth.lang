@@ -40,7 +40,7 @@ URLOfOAuthServiceEndpointsExample=https://mastodon.example.com
 URLOfServiceForAuthorization=URL pruža OAuth usluga za Ovjera vjerodostojnosti
 Scopes=Dopuštenja (opsezi)
 ScopeUndefined=Dozvole (opsezi) nedefinirane (pogledajte prethodnu karticu)
-ScopesDesc=Primjer: čitaj, piši s Mastodonom
+ScopesDesc=Example: "read", "write" with Mastodon or "none"
 TokenRawValue=Puni token (objekt)
 AccessToken=Pristupni token
 TokenExpired=Isteklo
@@ -50,3 +50,4 @@ RefreshToken=Osvježi token
 RefreshTokenHelp=Upotrijebite Refresh Token za dobivanje novog Access Tokena
 OldTokenWasExpiredItHasBeenRefresh=Stari token je istekao, osvježen je
 OldTokenWasNotExpiredButItHasBeenRefresh=Stari token nije istekao, ali je osvježen
+OAuthErrorStateDiffers=Value for state=%s differs from value in session. Code is refused.

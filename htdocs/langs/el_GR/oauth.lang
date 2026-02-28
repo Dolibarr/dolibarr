@@ -40,7 +40,7 @@ URLOfOAuthServiceEndpointsExample=https://mastodon.example.com
 URLOfServiceForAuthorization=URL που παρέχεται από την υπηρεσία OAuth για έλεγχο ταυτότητας
 Scopes=Άδειες (Πεδίο εφαρμογής)
 ScopeUndefined=Άδειες (Πεδίο εφαρμογής) ακαθόριστα (δείτε προηγούμενη καρτέλα)
-ScopesDesc=Παράδειγμα: ανάγνωση, εγγραφή με το Mastodon
+ScopesDesc=Example: "read", "write" with Mastodon or "none"
 TokenRawValue=Πλήρες Token (αντικείμενο)
 AccessToken=Token πρόσβασης
 TokenExpired=Έληξε
@@ -50,3 +50,4 @@ RefreshToken=Ανανέωση Token
 RefreshTokenHelp=Χρησιμοποιήστε την ανανέωση Token για να αποκτήσετε ένα νέο Token πρόσβασης
 OldTokenWasExpiredItHasBeenRefresh=Το προηγούμενο Token έληξε, αντικαταστάθηκε
 OldTokenWasNotExpiredButItHasBeenRefresh=Το προηγουμενο Token δεν είχε λήξει, αλλά έχει ανανεωθεί
+OAuthErrorStateDiffers=Value for state=%s differs from value in session. Code is refused.

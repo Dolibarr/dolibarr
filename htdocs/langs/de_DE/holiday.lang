@@ -165,3 +165,6 @@ HolidayMailSenderAdress=E-Mail Adresse für Urlaubsanträge
 HolidayMailSenderAdressHelp=Wenn Sie dieses Feld leer lassen, wird die Standard-E-Mail-Adresse verwendet.
 WrongAmount=Falsche Anzahl an Tagen
 ErrorUpdatingUsersCP=Fehler beim Aktualisieren des bezahlten Urlaubs der Benutzer
+LeaveBalance=Urlaubsguthaben
+ListeLB=Liste des Urlaubsguthabens
+LeaveType = Art des Urlaubsguthabens

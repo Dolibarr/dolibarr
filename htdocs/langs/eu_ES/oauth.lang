@@ -40,7 +40,7 @@ URLOfOAuthServiceEndpointsExample=https://mastodon.adibidea.com
 URLOfServiceForAuthorization=OAuth zerbitzuak autentifikaziorako emandako URLa
 Scopes=Baimenak (Esparruak)
 ScopeUndefined=Baimenak (Espazioak) definitu gabe (ikusi aurreko fitxa)
-ScopesDesc=Adibidea: irakurri, idatzi Mastodon-ekin
+ScopesDesc=Example: "read", "write" with Mastodon or "none"
 TokenRawValue=Token osoa (objektua)
 AccessToken=Sarbide-tokena
 TokenExpired=Iraungita
@@ -50,3 +50,4 @@ RefreshToken=Freskatu tokena
 RefreshTokenHelp=Erabili Freskatzeko Tokena Sarbide Token berri bat lortzeko
 OldTokenWasExpiredItHasBeenRefresh=Token zaharra iraungi zen, freskatu egin da
 OldTokenWasNotExpiredButItHasBeenRefresh=Token zaharra ez zegoen iraungituta, baina freskatu egin da
+OAuthErrorStateDiffers=Value for state=%s differs from value in session. Code is refused.

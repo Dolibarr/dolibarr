@@ -153,3 +153,4 @@ AllTargetMandatoryFieldsAreMapped=Mapeáronse todos os campos de destino que pre
 ResultOfSimulationNoError=Resultado da simulación: Sen erro
 NumberOfLinesLimited=Número de liñas limitado
 ErrorFileLinesReachEOF=O ficheiro ten liñas %s. Porén, chegamos ao final do ficheiro ou a unha liña baleira no rexistro %s. Isto pode ocorrer cando algúns rexistros están divididos en varias liñas e non están delimitados correctamente polo "Delimitador de caracteres", ou se hai unha liña sen datos en todos os campos.
+ImportInProcess=A importación do ficheiro %s está en proceso

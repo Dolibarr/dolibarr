@@ -40,7 +40,7 @@ URLOfOAuthServiceEndpointsExample=https://mastodon.example.com
 URLOfServiceForAuthorization=OAuth 服務提供的驗證網址
 Scopes=權限（範圍）
 ScopeUndefined=權限（範圍）未定義（請參閱上一頁籤）
-ScopesDesc=範例：使用 Mastodon 進行讀、寫
+ScopesDesc=Example: "read", "write" with Mastodon or "none"
 TokenRawValue=完整 Token（物件）
 AccessToken=訪問 Token
 TokenExpired=已過期
@@ -50,3 +50,4 @@ RefreshToken=刷新 Token
 RefreshTokenHelp=使用刷新 Token 獲取新的訪問 Token
 OldTokenWasExpiredItHasBeenRefresh=舊 Token 已過期，已刷新
 OldTokenWasNotExpiredButItHasBeenRefresh=舊 Token 未過期，但已刷新
+OAuthErrorStateDiffers=Value for state=%s differs from value in session. Code is refused.

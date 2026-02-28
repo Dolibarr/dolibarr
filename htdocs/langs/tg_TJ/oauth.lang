@@ -40,7 +40,7 @@ URLOfOAuthServiceEndpointsExample=https://mastodon.example.com
 URLOfServiceForAuthorization=URL аз ҷониби хидмати OAuth барои аутентификатсия пешниҳод карда мешавад
 Scopes=Иҷозатҳо (миқёсҳо)
 ScopeUndefined=Иҷозатҳо (миқёсҳо) муайяннашуда (ба ҷадвали қаблӣ нигаред)
-ScopesDesc=Мисол: бо Мастодон хондан, навиштан
+ScopesDesc=Example: "read", "write" with Mastodon or "none"
 TokenRawValue=Токен пурра (объект)
 AccessToken=Токен дастрас
 TokenExpired=Муддат гузаштааст
@@ -50,3 +50,4 @@ RefreshToken=Токенро навсозӣ кунед
 RefreshTokenHelp=Барои гирифтани аломати дастрасии нав аз Токени навсозӣ истифода баред
 OldTokenWasExpiredItHasBeenRefresh=Мӯҳлати нишонаи кӯҳна гузаштааст, он нав карда шуд
 OldTokenWasNotExpiredButItHasBeenRefresh=Мӯҳлати нишонаи кӯҳна ба охир нарасидааст, аммо навсозӣ шудааст
+OAuthErrorStateDiffers=Value for state=%s differs from value in session. Code is refused.

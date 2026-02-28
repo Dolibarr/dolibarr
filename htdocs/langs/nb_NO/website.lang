@@ -118,7 +118,8 @@ ThisPageHasTranslationPages=Denne siden/containeren har oversettelse
 NoWebSiteCreateOneFirst=Ingen nettside er opprettet ennå. Opprett en først.
 GoTo=Gå til
 DynamicPHPCodeContainsAForbiddenInstruction=Du legger til dynamisk PHP-kode som inneholder PHP-instruksjonen '<strong>%s</strong>' som vanligvis er forbudt som dynamisk innhold (se skjulte alternativer WEBSITE_PHP_ALLOW_xxx for å øke listen over tillatte kommandoer).
-NotAllowedToAddDynamicContent=Du har ikke tillatelse til å legge til eller redigere PHP dynamisk innhold på nettsteder. Be om tillatelse eller behold koden i php-kodene uendret.
+NotAllowedToAddDynamicContent=You don't have permission to add or edit dynamic PHP content in websites. Ask permission or just keep code into php tags unmodified.
+NotAllowedToAddDynamicContentDisabledGlobaly=You currently can't add or edit dynamic PHP content in this website (even if you have permission to), because this feature must be first enabled globally by setting the parameter %s=1 int the conf.php file.<br>Edit your conf.php file to add this parameter, or ask your administrator or support to do it for you.
 ReplaceWebsiteContent=Søk eller erstatt nettstedsinnhold
 DeleteAlsoJs=Vil du også slette alle JavaScript-filer som er spesifikke for dette nettstedet?
 DeleteAlsoMedias=Vil du også slette alle mediefiler som er spesifikke for dette nettstedet?

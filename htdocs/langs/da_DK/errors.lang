@@ -375,6 +375,7 @@ ErrorBlockLogNeedObject=Objektet "unalterbale log" skal sættes
 ErrorBadParameterWhenCallingCreateOfBlockedLog=Forkert parameter ved kald af oprettelse af blokeret log
 ErrorMaxDecimalsShownTooLowComparedToUnitOrTotal=Værdien for 'Maks. decimaler for priser vist på skærmen' (%s) skal være lig med eller større end både 'Maks. decimaler for enhedspriser' (%s) og 'Maks. decimaler for samlede priser' (%s). Dette er nødvendigt for at forhindre afrundingsuoverensstemmelser på dokumenter.
 ErrorOnlyDraftStatusCanBeDeletedInMassAction=Kun elementer i udkaststatus kan slettes i masseaktion
+ErrorLDAPFunctionsAreDisabledOnThisPHP=LDAP-funktioner er deaktiveret på denne PHP.
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Din PHP-parameter upload_max_filesize (%s) er højere end PHP-parameter post_max_size (%s). Dette er ikke en ensartet opsætning.
@@ -466,3 +467,4 @@ SomeShipmentExists=Fejl, der er en forsendelse knyttet til ordren. Sletning afvi
 WarningEvaluationEmptyValidate=Kan ikke validere evalueringen, niveauer af færdigheder er ikke defineret
 ErrorBadParametersForDirectDebitFileCreate=Kan ikke oprette bankoverførselsfil: Forventet formatparameter er ikke angivet.
 ErrorBadParametersForDirectDebitFileCreateDids=Kan ikke oprette bankoverførselsfil: ID'er for eksisterende betalingsanmodninger er ikke angivet.
+UserDoesNotHaveRightsToChangeHisPassword=That user doesn't have the rights to change his own password

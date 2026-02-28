@@ -40,7 +40,7 @@ URLOfOAuthServiceEndpointsExample=https://mastodon.example.com
 URLOfServiceForAuthorization=عنوان URL المقدم من خدمة OAuth للمصادقة
 Scopes=الأذونات (النطاقات)
 ScopeUndefined=الأذونات (النطاقات) غير محددة (راجع علامة التبويب السابقة)
-ScopesDesc=مثال: القراءة والكتابة مع ماستدون -Mastodon-
+ScopesDesc=Example: "read", "write" with Mastodon or "none"
 TokenRawValue=الرمز الكامل (الكائن)
 AccessToken=رمز الوصول
 TokenExpired=انتهى
@@ -50,3 +50,4 @@ RefreshToken=رمز التحديث
 RefreshTokenHelp=استخدم رمز التحديث للحصول على رمز وصول جديد
 OldTokenWasExpiredItHasBeenRefresh=انتهت صلاحية الرمز القديم، وتم تحديثه
 OldTokenWasNotExpiredButItHasBeenRefresh=الرمز القديم لم تنتهي صلاحيته ولكن تم تحديثه
+OAuthErrorStateDiffers=Value for state=%s differs from value in session. Code is refused.

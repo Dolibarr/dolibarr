@@ -40,7 +40,7 @@ URLOfOAuthServiceEndpointsExample=https://mastodon.example.com
 URLOfServiceForAuthorization=प्रमाणीकरण के लिए OAuth सेवा द्वारा प्रदान किया गया URL
 Scopes=अनुमतियाँ (दायरे)
 ScopeUndefined=अनुमतियाँ (दायरे) अपरिभाषित (पिछला टैब देखें)
-ScopesDesc=उदाहरण: मैस्टोडॉन के साथ पढ़ना, लिखना
+ScopesDesc=Example: "read", "write" with Mastodon or "none"
 TokenRawValue=पूर्ण टोकन (ऑब्जेक्ट)
 AccessToken=एक्सेस टोकन
 TokenExpired=खत्म हो चुका
@@ -50,3 +50,4 @@ RefreshToken=टोकन ताज़ा करें
 RefreshTokenHelp=नया एक्सेस टोकन प्राप्त करने के लिए रिफ्रेश टोकन का उपयोग करें
 OldTokenWasExpiredItHasBeenRefresh=पुराना टोकन समाप्त हो गया था, उसे ताज़ा कर दिया गया है
 OldTokenWasNotExpiredButItHasBeenRefresh=पुराना टोकन समाप्त नहीं हुआ था बल्कि उसे ताज़ा कर दिया गया है
+OAuthErrorStateDiffers=Value for state=%s differs from value in session. Code is refused.

@@ -40,7 +40,7 @@ URLOfOAuthServiceEndpointsExample=https://mastodon.example.com
 URLOfServiceForAuthorization=Az OAuth szolgáltatás által hitelesítéshez biztosított URL
 Scopes=Engedélyek (hatókörök)
 ScopeUndefined=Engedélyek (hatókörök) nincsenek meghatározva (lásd az előző lapot)
-ScopesDesc=Példa: olvasás, írás a Mastodonnal
+ScopesDesc=Example: "read", "write" with Mastodon or "none"
 TokenRawValue=Teljes token (objektum)
 AccessToken=Hozzáférési token
 TokenExpired=Lejárt
@@ -50,3 +50,4 @@ RefreshToken=Frissítési token
 RefreshTokenHelp=Használja a Frissítési tokent új hozzáférési token beszerzéséhez
 OldTokenWasExpiredItHasBeenRefresh=A régi token lejárt, frissítettük.
 OldTokenWasNotExpiredButItHasBeenRefresh=A régi token nem járt le, de frissítették.
+OAuthErrorStateDiffers=Value for state=%s differs from value in session. Code is refused.

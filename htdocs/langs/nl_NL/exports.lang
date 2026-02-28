@@ -153,3 +153,4 @@ AllTargetMandatoryFieldsAreMapped=Alle doelvelden die een verplichte waarde nodi
 ResultOfSimulationNoError=Resultaat van simulatie: Geen fout
 NumberOfLinesLimited=Aantal lijnen beperkt
 ErrorFileLinesReachEOF=Het bestand bevat %s regels. We bereiken echter het einde van het bestand of een lege regel bij record %s. Dit kan gebeuren wanneer sommige records over meerdere regels zijn verdeeld en niet correct zijn gescheiden door het "tekenscheidingsteken", of als er een regel is met geen gegevens in alle velden.
+ImportInProcess=Het importeren van bestand %s is bezig

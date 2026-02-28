@@ -40,7 +40,7 @@ URLOfOAuthServiceEndpointsExample=https://mastodon.example.com
 URLOfServiceForAuthorization=OAuth サービスが認証用に提供する URL
 Scopes=権限 (スコープ)
 ScopeUndefined=パーミッション (スコープ) 未定義 (前のタブを参照)
-ScopesDesc=例: Mastodon での読み取り、書き込み
+ScopesDesc=Example: "read", "write" with Mastodon or "none"
 TokenRawValue=フルトークン（オブジェクト）
 AccessToken=アクセストークン
 TokenExpired=期限切れ
@@ -50,3 +50,4 @@ RefreshToken=リフレッシュトークン
 RefreshTokenHelp=リフレッシュトークンを使用して新しいアクセストークンを取得する
 OldTokenWasExpiredItHasBeenRefresh=古いトークンは期限切れ。更新された
 OldTokenWasNotExpiredButItHasBeenRefresh=古いトークンは期限切れではないが、更新された
+OAuthErrorStateDiffers=Value for state=%s differs from value in session. Code is refused.

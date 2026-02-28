@@ -375,6 +375,7 @@ ErrorBlockLogNeedObject=Das Objekt für das unveränderliche Protokoll Objekt be
 ErrorBadParameterWhenCallingCreateOfBlockedLog=Ungültiger Parameter beim Aufruf zum Erstellen eines Eintrags im unveränderlichen Archiv
 ErrorMaxDecimalsShownTooLowComparedToUnitOrTotal=Der Wert für „Max. Dezimalzahlen für die Anzeige von Preisen auf dem Bildschirm“ (%s) muss gleich oder größer sein als die beiden Werte für „Max. Dezimalzahlen für Einzelpreise“ (%s) und „Max. Dezimalstellen für die Gesamtsumme" (%s). Dies ist erforderlich, um Rundungsfehler in den Dokumenten zu vermeiden.
 ErrorOnlyDraftStatusCanBeDeletedInMassAction=Nur Elemente im Status 'Entwurf' können in einer Massenaktion gelöscht werden
+ErrorLDAPFunctionsAreDisabledOnThisPHP=Die LDAP-Funktionen sind bei diesem PHP deaktiviert.
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Ihr PHP Parameter upload_max_filesize (%s) ist größer als Parameter post_max_size (%s). Dies ist eine inkonsistente Einstellung.
@@ -466,3 +467,4 @@ SomeShipmentExists=Fehler, mit dem Auftrag ist eine Lieferung verknüpft. Lösch
 WarningEvaluationEmptyValidate=Die Bewertung kann nicht freigegeben werden, da die Kompetenzstufen nicht definiert sind
 ErrorBadParametersForDirectDebitFileCreate=Transferdatei für Bank kann nicht erstellt werden: Ein vom Format erwarteter Parameter ist nicht vorhanden.
 ErrorBadParametersForDirectDebitFileCreateDids=Transferdatei für Bank kann nicht erstellt werden: IDs von bestehenden Zahlungsanfragen wurden nicht angegeben.
+UserDoesNotHaveRightsToChangeHisPassword=That user doesn't have the rights to change his own password

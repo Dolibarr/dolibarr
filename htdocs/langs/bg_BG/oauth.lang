@@ -40,7 +40,7 @@ URLOfOAuthServiceEndpointsExample=https://mastodon.example.com
 URLOfServiceForAuthorization=URL адрес, предоставен от услугата OAuth за удостоверяване
 Scopes=права (Обхвати)
 ScopeUndefined=права (Обхват) недефиниран (вижте предишния раздел)
-ScopesDesc=Пример: четене, писане с Mastodon
+ScopesDesc=Example: "read", "write" with Mastodon or "none"
 TokenRawValue=Пълен токен (обект)
 AccessToken=Токен за достъп
 TokenExpired=Изтекъл
@@ -50,3 +50,4 @@ RefreshToken=Опресняване на токена
 RefreshTokenHelp=Използвайте маркера за опресняване, за да получите нов маркер за достъп
 OldTokenWasExpiredItHasBeenRefresh=Старият токен е с изтекъл срок на валидност, той е обновен
 OldTokenWasNotExpiredButItHasBeenRefresh=Старият токен не е с изтекъл срок на валидност, но е бил обновен
+OAuthErrorStateDiffers=Value for state=%s differs from value in session. Code is refused.

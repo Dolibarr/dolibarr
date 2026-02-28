@@ -40,7 +40,7 @@ URLOfOAuthServiceEndpointsExample=https://mastodon.example.com
 URLOfServiceForAuthorization=URL fournie par le service OAuth pour l'authentification
 Scopes=Permissions ("Scopes" OAuth)
 ScopeUndefined=Permissions (Cibles) non définies (voir onglet précédent)
-ScopesDesc=Exemple : lire, écrire avec Mastodon
+ScopesDesc=Example: "read", "write" with Mastodon or "none"
 TokenRawValue=Jeton complet (objet)
 AccessToken=Jeton d'accès
 TokenExpired=Expiré
@@ -50,4 +50,4 @@ RefreshToken=Rafraîchir Jeton
 RefreshTokenHelp=Utilisez le jeton d'actualisation pour obtenir un nouveau jeton d'accès
 OldTokenWasExpiredItHasBeenRefresh=L'ancien jeton avait expiré, il a été actualisé
 OldTokenWasNotExpiredButItHasBeenRefresh=L'ancien jeton n'avait pas expiré mais il a été actualisé
-OAuthErrorStateDiffers=La valeur de state=%s diffère de la valeur en session. Le code est refusé.
+OAuthErrorStateDiffers=Value for state=%s differs from value in session. Code is refused.

@@ -70,6 +70,15 @@ if ($size > 10000) {
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
+/**
+ * @var HookManager $hookmanager
+ *
+ * @var string $action
+ * @var string $captcha
+ * @var string $message
+ * @var string $title
+ * @var ?string $php_self
+ */
 '
 @phan-var-force HookManager $hookmanager
 @phan-var-force string $action
@@ -88,15 +97,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 @phan-var-force string $titletruedolibarrversion
 @phan-var-force string $urllogo
 @phan-var-force int<0,1> $forgetpasslink
+@phan-var-force string $title
+@phan-var-force ?string $php_self
 ';
-
-/**
- * @var HookManager $hookmanager
- * @var string $action
- * @var string $captcha
- * @var string $message
- * @var string $title
- */
 
 
 /*

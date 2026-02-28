@@ -40,7 +40,7 @@ URLOfOAuthServiceEndpointsExample=https://mastodon.contoh.com
 URLOfServiceForAuthorization=URL disediakan oleh layanan OAuth untuk otentikasi
 Scopes=Izin (Cakupan)
 ScopeUndefined=Izin (Cakupan) tidak ditentukan (lihat tab sebelumnya)
-ScopesDesc=Contoh: membaca, menulis dengan Mastodon
+ScopesDesc=Example: "read", "write" with Mastodon or "none"
 TokenRawValue=Token Penuh (objek)
 AccessToken=Token Akses
 TokenExpired=Kedaluwarsa
@@ -50,3 +50,4 @@ RefreshToken=Perbarui token
 RefreshTokenHelp=Gunakan Token Penyegaran untuk mendapatkan Token Akses baru
 OldTokenWasExpiredItHasBeenRefresh=Token lama telah kedaluwarsa, telah diperbarui
 OldTokenWasNotExpiredButItHasBeenRefresh=Token lama belum kadaluarsa tetapi telah diperbarui
+OAuthErrorStateDiffers=Value for state=%s differs from value in session. Code is refused.
