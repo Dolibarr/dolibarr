@@ -193,7 +193,7 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 
 		dol_syslog("functions_openid_connect::check_user_password_openid_connect::User not found, auto-creating from OIDC claims");
 
-		$claim_value = $userinfo_content->$login_claim;
+		$claim_value = (string) $userinfo_content->$login_claim;
 		$result_create = openid_connect_create_user($db, $userinfo_content, $claim_value, $entity);
 		if (is_numeric($result_create) && $result_create < 0) {
 			$_SESSION["dol_loginmesg"] = "Error creating user from OIDC";
