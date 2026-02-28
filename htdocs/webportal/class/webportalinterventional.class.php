@@ -297,7 +297,7 @@ class WebPortalInterventional extends Fichinter
 	 */
 	public function getLabelStatus($mode = 0)
 	{
-		return $this->LibStatut($this->fk_statut, $mode, -1);
+		return $this->LibStatut($this->fk_statut, $mode);
 	}
 
 	/**
