@@ -323,6 +323,6 @@ class WebPortalInterventional extends Fichinter
 	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
-		return $this->getFichinterStatic()->LibStatut( $status, $mode);
+		return $this->getFichinterStatic()->LibStatut($status, $mode);
 	}
 }
