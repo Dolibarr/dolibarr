@@ -38,7 +38,7 @@ class InterventionalListController extends AbstractListController
 	 */
 	public function checkAccess()
 	{
-		$this->accessRight = isModEnabled('ficheinter') && getDolGlobalInt('WEBPORTAL_INTERVENTIONAL_LIST_ACCESS');
+		$this->accessRight = isModEnabled('intervention') && getDolGlobalInt('WEBPORTAL_INTERVENTIONAL_LIST_ACCESS');
 
 		return parent::checkAccess();
 	}
