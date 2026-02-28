@@ -25,6 +25,12 @@ if (empty($context) || !is_object($context)) {
 				<?php print '<a class="home-links-card__link" href="' . $context->getControllerUrl('propallist') . '" title="' . $langs->trans('WebPortalPropalListDesc') . '">' . $langs->trans('WebPortalPropalListTitle') . '</a>'; ?>
 			</article>
 			<?php endif; ?>
+			<?php if (isModEnabled('ficheinter') && getDolGlobalInt('WEBPORTAL_INTERVENTIONAL_LIST_ACCESS')) : ?>
+			<article class="home-links-card --interventional-list">
+				<div class="home-links-card__icon" ></div>
+				<?php print '<a class="home-links-card__link" href="' . $context->getControllerUrl('interventionallist') . '" title="' . $langs->trans('WebPortalInterventionalListDesc') . '">' . $langs->trans('WebPortalInterventionalListTitle') . '</a>'; ?>
+			</article>
+			<?php endif; ?>
 			<?php if (isModEnabled('order') && getDolGlobalInt('WEBPORTAL_ORDER_LIST_ACCESS')) : ?>
 			<article class="home-links-card --order-list">
 				<div class="home-links-card__icon" ></div>
