@@ -2831,4 +2831,5 @@ KeyGenerationSuccessfull=New API Key Generated Successfully
 KeySaveFailed=Failed to save new API key
 AIMCPConfig=AI & MCP Configuration
 LogRetention=Log Retention (Days)
+AI_API_MODEL=AI API model
 AI_API_MODEL_HELP=The AI model to use
