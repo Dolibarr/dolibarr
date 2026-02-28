@@ -189,6 +189,7 @@ WebPortalMemberCardAccessHelp=Autoriser l'accès à l'enregistrement des adhére
 WEBPORTAL_PARTNERSHIP_CARD_ACCESS=Autoriser l'accès au dossier des partenariats
 WebPortalPartnerShipCardAccessHelp=Autoriser l'accès à l'enregistrement des partenariats (Caché / Visible ou Modifiable)
 WEBPORTAL_PROPAL_LIST_ACCESS=Autoriser l'accès aux devis
+WEBPORTAL_INTERVENTIONAL_LIST_ACCESS=Autoriser l'accès aux interventions
 WEBPORTAL_ORDER_LIST_ACCESS=Autoriser l'accès aux commandes
 WEBPORTAL_INVOICE_LIST_ACCESS=Autoriser l'accès aux factures
 WEBPORTAL_USER_LOGGED=Sélectionnez un utilisateur anonyme
