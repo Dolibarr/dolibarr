@@ -106,7 +106,7 @@ if (isModEnabled('propal')) {
 }
 
 // Enable access for the interventionals
-if (isModEnabled('ficheinter')) {
+if (isModEnabled('intervention')) {
 	$formSetup->newItem('WEBPORTAL_INTERVENTIONAL_LIST_ACCESS')->setAsYesNo();
 }
 
