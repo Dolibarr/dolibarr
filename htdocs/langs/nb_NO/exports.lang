@@ -153,3 +153,4 @@ AllTargetMandatoryFieldsAreMapped=Alle målfelt som trenger en obligatorisk verd
 ResultOfSimulationNoError=Resultat av simulering: Ingen feil
 NumberOfLinesLimited=Antall linjer begrenset
 ErrorFileLinesReachEOF=Filen har %s linjer. Vi når imidlertid slutten av filen eller en tom linje ved posten %s. Dette kan oppstå når noen poster er delt inn i flere linjer og som ikke er riktig avgrenset av "tegnskilletegnet", eller hvis det er en linje uten data i alle felt.
+ImportInProcess=Import av filen %s pågår

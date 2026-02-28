@@ -60,6 +60,15 @@ var Dolibarr = {
 			 * @returns {string}
 			 */
 			trans(key, ...args) {},
+
+			/**
+			 * Translate a key using current locale
+			 * Supports placeholders like %s, %d, %f (simple sprintf)
+			 * @param {string} key
+			 * @param  {...any} args
+			 * @returns {string}
+			 */
+			transNoEntities(key, ...args) {},
 		},
 
 		// You can add more standard Dolibarr tools here for IDE autocompletion.

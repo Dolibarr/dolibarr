@@ -184,7 +184,7 @@ if ($confirm == 'regenerate') {
 
 			print "For ROWID ".$obj->rowid." - Previous hash = ".$previoushash."\n";
 			print "Signature in db: ".$obj->signature." - New calculated: ".$signature['calculatedsignature']."\n";
-			if ($obj->signature != $signature['calculatedsignature']) {
+			if (!empty($signature['calculatedsignature']) && $obj->signature != $signature['calculatedsignature']) {
 				$tmpsql = "UPDATE ".MAIN_DB_PREFIX."blockedlog SET signature = '".$db->escape($signature['calculatedsignature'])."'";
 				$tmpsql .= " WHERE rowid = ".((int) $obj->rowid);
 

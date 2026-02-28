@@ -40,7 +40,7 @@ URLOfOAuthServiceEndpointsExample=https://mastodon.example.com
 URLOfServiceForAuthorization=Autentifikatsiya uchun OAuth xizmati tomonidan taqdim etilgan URL
 Scopes=Ruxsatlar (ko'lamlar)
 ScopeUndefined=Ruxsatlar (ko'lamlar) aniqlanmagan (oldingi yorliqni ko'ring)
-ScopesDesc=Misol: Mastodon bilan o'qing, yozing
+ScopesDesc=Example: "read", "write" with Mastodon or "none"
 TokenRawValue=To'liq token (ob'ekt)
 AccessToken=Kirish tokeni
 TokenExpired=Muddati tugagan
@@ -50,3 +50,4 @@ RefreshToken=Tokenni yangilash
 RefreshTokenHelp=Yangi kirish tokenini olish uchun yangilash tokenidan foydalaning
 OldTokenWasExpiredItHasBeenRefresh=Eski token muddati tugagan, u yangilangan
 OldTokenWasNotExpiredButItHasBeenRefresh=Eski token muddati tugamagan, lekin yangilangan
+OAuthErrorStateDiffers=Value for state=%s differs from value in session. Code is refused.

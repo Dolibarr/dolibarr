@@ -40,7 +40,7 @@ URLOfOAuthServiceEndpointsExample=https://mastodon.example.com
 URLOfServiceForAuthorization=URL ที่จัดทำโดยบริการ OAuth สำหรับการตรวจสอบสิทธิ์
 Scopes=สิทธิ์ (ขอบเขต)
 ScopeUndefined=สิทธิ์ (ขอบเขต) ไม่ได้กำหนด (ดูแท็บก่อนหน้า)
-ScopesDesc=ตัวอย่าง: อ่านเขียนด้วย Mastodon
+ScopesDesc=Example: "read", "write" with Mastodon or "none"
 TokenRawValue=โทเค็นเต็ม (วัตถุ)
 AccessToken=โทเค็นการเข้าถึง
 TokenExpired=หมดอายุ
@@ -50,3 +50,4 @@ RefreshToken=รีเฟรชโทเค็น
 RefreshTokenHelp=ใช้โทเค็นรีเฟรชเพื่อรับโทเค็นการเข้าถึงใหม่
 OldTokenWasExpiredItHasBeenRefresh=โทเค็นเก่าหมดอายุแล้ว ได้ถูกรีเฟรชแล้ว
 OldTokenWasNotExpiredButItHasBeenRefresh=โทเค็นเก่าไม่หมดอายุแต่ได้รับการรีเฟรชแล้ว
+OAuthErrorStateDiffers=Value for state=%s differs from value in session. Code is refused.

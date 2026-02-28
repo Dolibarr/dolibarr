@@ -168,6 +168,8 @@ ErrorPaymentModeDefinedToWithoutSetup=A payment mode was set to type %s but setu
 ErrorPHPNeedModule=Error, your PHP must have module <b>%s</b> installed to use this feature.
 ErrorOpenIDSetupConfNotComplete=For security purposes, you must also setup the Dolibarr config file conf.php to allow OpenID authentication
 ErrorOpenIDSetupNotComplete=You setup Dolibarr config file to allow OpenID authentication, but URL of OpenID service is not defined into constant %s
+OIDCAutocreateUserDisabled=Auto-creation of users on OIDC login is currently disabled. To enable it, add $dolibarr_main_authentication_autocreateuser=1 to your conf.php file.
+OIDCAutocreateUserEnabled=Auto-creation of users on OIDC login is enabled ($dolibarr_main_authentication_autocreateuser=1 is set in conf.php).
 ErrorWarehouseMustDiffers=Source and target warehouses must differs
 ErrorBadFormat=Bad format!
 ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Error, this member is not yet linked to any third party. Link member to an existing third party or create a new third party before creating subscription with invoice.
@@ -363,7 +365,7 @@ ErrorTooManyAttempts= Too many attempts, please try again later
 ErrorThisContactXIsAlreadyDefinedAsThisType=%s is already defined as contact for this type.
 ErrorThisGroupIsAlreadyDefinedAsThisType=The contacts with this group are already defined as contact for this type.
 ErrorIsNotInError=%s is not in error
-ErrorFilenameExtensionNotAllowed=File %s has a forbidden file extension
+ErrorFilenameExtensionNotAllowed=The file %s has a forbidden file extension
 ErrorNoValueForSelectListType=Error, a value for this type of field is mandatory
 ErrorPaymentAmountMustNotBeNull=Error, payment amount must be defined and not zero
 ErrorOneLineContainsADisactivatedProduct=Error, at least one product is not or no more on sale or for purchase
@@ -467,3 +469,4 @@ SomeShipmentExists=Error, there is some shipment linked to the order. Deletion r
 WarningEvaluationEmptyValidate=Can't validate evaluation, levels on skills not defined
 ErrorBadParametersForDirectDebitFileCreate=Can't create bank transfer file: expected format parameter is not provided.
 ErrorBadParametersForDirectDebitFileCreateDids=Can't create bank transfer file: IDs of existing payment requests are not provided.
+UserDoesNotHaveRightsToChangeHisPassword=That user doesn't have the rights to change his own password

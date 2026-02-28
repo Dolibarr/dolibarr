@@ -40,7 +40,7 @@ URLOfOAuthServiceEndpointsExample=https://mastodon.example.com
 URLOfServiceForAuthorization=Doğrulama üçün OAuth xidməti tərəfindən təmin edilən URL
 Scopes=İcazələr (Əhatə dairələri)
 ScopeUndefined=İcazələr (Əhatə dairələri) qeyri-müəyyən (əvvəlki nişana baxın)
-ScopesDesc=Misal: Mastodonla oxu, yaz
+ScopesDesc=Example: "read", "write" with Mastodon or "none"
 TokenRawValue=Tam Token (obyekt)
 AccessToken=Giriş Tokeni
 TokenExpired=İstifadə müddəti bitdi
@@ -50,3 +50,4 @@ RefreshToken=Tokeni yeniləyin
 RefreshTokenHelp=Yeni Giriş Tokeni əldə etmək üçün Yeniləmə Tokenindən istifadə edin
 OldTokenWasExpiredItHasBeenRefresh=Köhnə tokenin vaxtı bitdi, təzələndi
 OldTokenWasNotExpiredButItHasBeenRefresh=Köhnə nişanın vaxtı bitməyib, lakin təzələnib
+OAuthErrorStateDiffers=Value for state=%s differs from value in session. Code is refused.

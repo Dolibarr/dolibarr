@@ -1279,6 +1279,22 @@ abstract class CommonObject
 			dol_syslog(get_class($this)."::add_contact ".$this->error, LOG_ERR);
 			return -1;
 		}
+
+		// Check that the contact actually exists in database
+		$sql_check = "SELECT rowid FROM ".$this->db->prefix().($source == 'internal' ? "user" : "socpeople")." WHERE rowid = ".((int) $fk_socpeople);
+		$resql_check = $this->db->query($sql_check);
+		if ($resql_check) {
+			if (!$this->db->num_rows($resql_check)) {
+				$langs->load("errors");
+				$this->error = $langs->trans("ErrorRecordNotFound");
+				dol_syslog(get_class($this)."::add_contact Contact/user id ".$fk_socpeople." does not exist", LOG_ERR);
+				return -1;
+			}
+		} else {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+
 		if (!$type_contact) {
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorWrongValueForParameterX", "2");
@@ -11740,7 +11756,7 @@ abstract class CommonObject
 	}
 
 	/**
-	 * Set the error message for the object and log it.
+	 * Set the error message for the object and logs it, including the file name and line number.
 	 *
 	 * @param string $message      the error message
 	 * @param int<0,7> $loglevel   the log level
@@ -11748,7 +11764,13 @@ abstract class CommonObject
 	 */
 	public function setErrorWithLog($message, $loglevel = LOG_ERR)
 	{
+		global $dolibarr_main_document_root;
+
 		$this->setErrorWithoutLog($message);
-		dol_syslog($message, $loglevel);
+		$trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
+		$file = str_replace($dolibarr_main_document_root, '', $trace[0]['file'] ?? 'file unknown');
+		$line = $trace[0]['line'] ?? 'line unknown';
+		$syslogMessage = sprintf('%s:%s %s', $file, $line, $message);
+		dol_syslog($syslogMessage, $loglevel);
 	}
 }

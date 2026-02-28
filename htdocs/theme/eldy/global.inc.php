@@ -886,6 +886,12 @@ input#onlinepaymenturl, input#directdownloadlink {
 	padding: 20px 20px 20px 20px;
 	border-radius: 8px;
 }
+.formborder {
+	border: solid 2px #444;
+	padding: 20px;
+	border-radius: 8px;
+	background-color: #fffff4;
+}
 
 div#moretabsList, div#moretabsListaction {
 	z-index: 5;
@@ -7251,7 +7257,9 @@ div#ecm-layout-center {
 	top: auto !important;
 	bottom: 4px !important;
 <?php } ?>
+	<?php if (getDolGlobalString('MAIN_JQUERY_JNOTIFY_UNDER_MENU')) { ?>
 	top: <?php print $disableimages ? '32' : ($heightmenu+4); ?>px;
+	<?php } ?>
 	text-align: center;
 	min-width: <?php echo $dol_optimize_smallscreen ? '200' : '480'; ?>px;
 	width: auto;

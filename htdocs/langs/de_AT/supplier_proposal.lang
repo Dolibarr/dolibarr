@@ -1,12 +1,8 @@
 # Dolibarr language file - Source file is en_US - supplier_proposal
-CommRequests=Preisanfrage
-SearchRequest=Eine Anfrage finden
-DraftRequests=Anfrageentwurf
-SupplierProposalsDraft=Entwurf Lieferantenangebot
-LastModifiedRequests=Letzten %s geänderten Preisanfragen
-ShowSupplierProposal=Zeige Preisanfrage
-AddSupplierProposal=Erstelle eine Preisanfrage
 SupplierProposalRefFourn=Lieferant Zeichen
 SupplierProposalDate=Lieferdatum
 SupplierProposalStatusClosed=geschlossen
+SupplierProposalStatusValidatedShort=Bestätigt
 SupplierProposalStatusClosedShort=geschlossen
+DocModelAuroreDescription=A complete template for a vendor quotation request (old implementation of Zenith template)
+TypeContact_supplier_proposal_external_SERVICE=Angebotsnachverfolgung durch Vertreter

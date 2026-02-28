@@ -40,7 +40,7 @@ URLOfOAuthServiceEndpointsExample=https://mastodon.example.com
 URLOfServiceForAuthorization=URL leveret af OAuth-tjenesten til godkendelse
 Scopes=Tilladelser (omfang)
 ScopeUndefined=Tilladelser (omfang) udefinerede (se forrige fane)
-ScopesDesc=Eksempel: læs, skriv med Mastodon
+ScopesDesc=Example: "read", "write" with Mastodon or "none"
 TokenRawValue=Fuld token (objekt)
 AccessToken=Adgangstoken
 TokenExpired=Udløbet
@@ -50,3 +50,4 @@ RefreshToken=Opdater token
 RefreshTokenHelp=Brug Refresh Token til at få et nyt Adgangstoken
 OldTokenWasExpiredItHasBeenRefresh=Gammelt token var udløbet, det er blevet opdateret
 OldTokenWasNotExpiredButItHasBeenRefresh=Gammelt token var ikke udløbet, men det er blevet opdateret
+OAuthErrorStateDiffers=Value for state=%s differs from value in session. Code is refused.

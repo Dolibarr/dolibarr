@@ -173,3 +173,5 @@ RefSalary=Gehalt
 NoSalaryInvoiceToWithdraw=Kein Gehalt, des auf  '%s' wartet. Gehen Sie auf den Tab  „%s“  auf der Gehaltsseite, um eine Anfrage zu erstellen.
 SalaryInvoiceWaitingWithdraw=Gehälter , die auf Zahlung per Überweisung warten
 ErrorBankTransferNoPaymentRequestSelected=Kein Zahlungsanfrage ausgewählt.
+AmountRequestedAlreadyReachesTotal=The total invoice amount has already been requested for payment
+AmountExceedsRemainingToRequest=The requested amount exceeds the remaining amount available for payment requests

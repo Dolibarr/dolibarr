@@ -209,7 +209,7 @@ class Societe extends CommonObject
 		'fk_effectif' => array('type' => 'integer', 'label' => 'Workforce', 'enabled' => 1, 'visible' => -1, 'position' => 170),
 		'fk_typent' => array('type' => 'integer', 'label' => 'ThirdPartyType', 'enabled' => 1, 'visible' => -1, 'position' => 175, 'csslist' => 'minwidth200'),
 		'fk_forme_juridique' => array('type' => 'integer', 'label' => 'JuridicalStatus', 'enabled' => 1, 'visible' => -1, 'position' => 180),
-		'birth' => array('type' => 'date', 'label' => 'CompnanyBirthDate', 'enabled' => 1, 'visible' => -1, 'position' => 182),
+		'birth' => array('type' => 'date', 'label' => 'CompanyBirthDate', 'enabled' => 1, 'visible' => -1, 'position' => 182),
 		'fk_currency' => array('type' => 'varchar(3)', 'label' => 'Currency', 'enabled' => 1, 'visible' => -1, 'position' => 185),
 		'siren' => array('type' => 'varchar(128)', 'label' => 'Idprof1', 'enabled' => 1, 'visible' => -1, 'position' => 190),
 		'siret' => array('type' => 'varchar(128)', 'label' => 'Idprof2', 'enabled' => 1, 'visible' => -1, 'position' => 195),
@@ -3356,7 +3356,7 @@ class Societe extends CommonObject
 				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
 			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
-			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').' refurl valignmiddle"';
+			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').' refurl'.($withpicto ? ' valignmiddle' : '').'"';
 			$target_value = array('_self', '_blank', '_parent', '_top');
 			if (in_array($target, $target_value)) {
 				$linkclose .= ' target="'.dol_escape_htmltag($target).'"';

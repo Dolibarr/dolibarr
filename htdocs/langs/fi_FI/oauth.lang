@@ -28,7 +28,7 @@ OAUTH_GOOGLE_SECRET=OAuth Google Secret
 OAUTH_GITHUB_ID=OAuth GitHub -tunnus
 OAUTH_GITHUB_SECRET=OAuth GitHub Secret
 OAUTH_URL_FOR_CREDENTIAL=Siirry <a class="notasortlink" href="%s" target="_blank" rel="noopener noreferrer external">tälle sivulle<span class="fas fa-external-link-alt paddingleft"></span></a> numeroon luo tai hanki OAuth-tunnuksesi ja Secret
-OAUTH_STRIPE_TEST_NAME=Raitatesti
+OAUTH_STRIPE_TEST_NAME=OAuth Stripe -testi
 OAUTH_STRIPE_LIVE_NAME=Stripe Live
 OAUTH_ID=OAuth-asiakastunnus
 OAUTH_SECRET=OAuth-salaisuus
@@ -40,7 +40,7 @@ URLOfOAuthServiceEndpointsExample=https://mastodon.esimerkki.com
 URLOfServiceForAuthorization=OAuth-palvelun tarjoama URL-osoite kohteelle Autentikointi
 Scopes=Käyttöoikeudet (laajuudet)
 ScopeUndefined=Käyttöoikeudet (laajuudet) määrittelemättömät (katso edellinen välilehti)
-ScopesDesc=Esimerkki: lue, kirjoita Mastodonilla
+ScopesDesc=Example: "read", "write" with Mastodon or "none"
 TokenRawValue=Täysi merkki (objekti)
 AccessToken=Käyttöoikeustunnus
 TokenExpired=Lakkaa
@@ -50,3 +50,4 @@ RefreshToken=Päivitä tunnus
 RefreshTokenHelp=Käytä Refresh Tokenia saadaksesi uuden käyttöoikeustunnuksen
 OldTokenWasExpiredItHasBeenRefresh=Vanha tunnus vanheni, se on päivitetty
 OldTokenWasNotExpiredButItHasBeenRefresh=Vanha tunnus ei ollut vanhentunut, mutta se on päivitetty
+OAuthErrorStateDiffers=Value for state=%s differs from value in session. Code is refused.

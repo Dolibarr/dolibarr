@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
- * Copyright (C) 2013-2025  Alexandre Spangaro      <alexandre@inovea-conseil.com>
+ * Copyright (C) 2013-2026  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2014       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2019       Eric Seigne             <eric.seigne@cap-rel.fr>
  * Copyright (C) 2021-2026  Frédéric France         <frederic.france@free.fr>
@@ -101,6 +101,31 @@ function accounting_transaction_prepare_head(BookKeeping $object, $mode = '', $t
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'accounting_transaction');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'accounting_transaction', 'remove');
+
+	return $head;
+}
+
+/**
+ *	Prepare array with list of tabs for accounting transaction template
+ *
+ *	@param	BookkeepingTemplate	$object		Bookkeeping template
+ *	@return	array<array{0:string,1:string,2:string}>	Array of tabs to show
+ */
+function accountingTransactionTemplatePrepareHead(BookkeepingTemplate $object)
+{
+	global $langs, $conf;
+
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/accountancy/admin/template/card.php', ['id' => $object->id]);
+	$head[$h][1] = $langs->trans("BookkeepingTemplate");
+	$head[$h][2] = 'card';
+	$h++;
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'accounting_template_transaction');
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'accounting_template_transaction', 'remove');
 
 	return $head;
 }

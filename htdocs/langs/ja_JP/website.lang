@@ -118,7 +118,8 @@ ThisPageHasTranslationPages=このページ/コンテナには翻訳がある
 NoWebSiteCreateOneFirst=ウェブサイトはまだ作成されていない。最初に作成する。
 GoTo=に移動
 DynamicPHPCodeContainsAForbiddenInstruction=動的コンテンツとしてデフォルトで禁止されているPHP命令 '<strong> %s </strong>'を含む動的PHPコードを追加する(許可されるコマンドのリストを増やすには、非表示のオプションWEBSITE_PHP_ALLOW_xxxを参照すること)。
-NotAllowedToAddDynamicContent=WebサイトでPHP動的コンテンツを追加または編集する権限がない。許可を求めるか、コードを変更せずにphpタグに入れること。
+NotAllowedToAddDynamicContent=You don't have permission to add or edit dynamic PHP content in websites. Ask permission or just keep code into php tags unmodified.
+NotAllowedToAddDynamicContentDisabledGlobaly=You currently can't add or edit dynamic PHP content in this website (even if you have permission to), because this feature must be first enabled globally by setting the parameter %s=1 int the conf.php file.<br>Edit your conf.php file to add this parameter, or ask your administrator or support to do it for you.
 ReplaceWebsiteContent=Webサイトのコンテンツを検索または置換する
 DeleteAlsoJs=削除 この ウェブサイト に固有のすべての JavaScript ファイルも対象 か?
 DeleteAlsoMedias=削除 この ウェブサイト に固有のすべてのメディア ファイルも対象か?

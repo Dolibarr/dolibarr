@@ -27,7 +27,6 @@ URLOfOAuthServiceEndpoints=URL de base pour les points de terminaison du service
 URLOfOAuthServiceEndpointsExample=https://mastodon.exemple.com
 Scopes=Autorisations (Portées)
 ScopeUndefined=Autorisations (Portées) non définies (voir onglet précédent)
-ScopesDesc=Exemple : lecture, écriture avec Mastodon
 TokenNotExpired=Pas expiré
 ExpirationDate=Date d'expiration
 RefreshToken=Jeton de rafraîchissement

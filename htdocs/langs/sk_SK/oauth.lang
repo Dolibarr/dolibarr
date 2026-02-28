@@ -40,7 +40,7 @@ URLOfOAuthServiceEndpointsExample=https://mastodon.example.com
 URLOfServiceForAuthorization=Webová adresa poskytnutá službou OAuth na overenie
 Scopes=Povolenia (rozsahy)
 ScopeUndefined=Nedefinované povolenia (rozsahy) (pozri predchádzajúcu kartu)
-ScopesDesc=Príklad: čítanie, písanie s Mastodonom
+ScopesDesc=Example: "read", "write" with Mastodon or "none"
 TokenRawValue=Úplný token (objekt)
 AccessToken=Prístupový token
 TokenExpired=Vypršala
@@ -50,3 +50,4 @@ RefreshToken=Obnoviť token
 RefreshTokenHelp=Použite obnovovací token na získanie nového prístupového tokenu
 OldTokenWasExpiredItHasBeenRefresh=Platnosť starého tokenu vypršala, bol obnovený.
 OldTokenWasNotExpiredButItHasBeenRefresh=Platnosť starého tokenu nevypršala, ale bol obnovený.
+OAuthErrorStateDiffers=Value for state=%s differs from value in session. Code is refused.

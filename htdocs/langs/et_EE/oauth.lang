@@ -40,7 +40,7 @@ URLOfOAuthServiceEndpointsExample=https://mastodon.example.com
 URLOfServiceForAuthorization=OAuthi teenuse poolt autentimiseks pakutav URL
 Scopes=Õigused (ulatus)
 ScopeUndefined=Õigused (ulatus) määratlemata (vt eelmist vahelehte)
-ScopesDesc=Näide: loe, kirjuta Mastodoniga
+ScopesDesc=Example: "read", "write" with Mastodon or "none"
 TokenRawValue=Täielik märk (objekt)
 AccessToken=Juurdepääsuluba
 TokenExpired=Aegunud
@@ -50,3 +50,4 @@ RefreshToken=Värskenda luba
 RefreshTokenHelp=Uue juurdepääsutokeni saamiseks kasutage värskendustokenit
 OldTokenWasExpiredItHasBeenRefresh=Vana token aegus, seda on värskendatud
 OldTokenWasNotExpiredButItHasBeenRefresh=Vana token ei olnud aegunud, aga seda on uuendatud
+OAuthErrorStateDiffers=Value for state=%s differs from value in session. Code is refused.

@@ -40,7 +40,7 @@ URLOfOAuthServiceEndpointsExample=https://mastodon.Пример.com
 URLOfServiceForAuthorization=URL-адрес, предоставленный OAuth услуга для Аутентификация
 Scopes=Разрешения (области действия)
 ScopeUndefined=Разрешения (области) не определены (см. предыдущую вкладку)
-ScopesDesc=Пример: читать, пишите с помощью Mastodon
+ScopesDesc=Example: "read", "write" with Mastodon or "none"
 TokenRawValue=Полный жетон (объект)
 AccessToken=Доступ жетон
 TokenExpired=Истек
@@ -50,3 +50,4 @@ RefreshToken=Обновить жетон
 RefreshTokenHelp=Используйте Refresh жетон, чтобы получить новый Access жетон
 OldTokenWasExpiredItHasBeenRefresh=Старый жетон устарел, он был обновлен
 OldTokenWasNotExpiredButItHasBeenRefresh=Старый жетон не был просрочен, но был обновлен
+OAuthErrorStateDiffers=Value for state=%s differs from value in session. Code is refused.
