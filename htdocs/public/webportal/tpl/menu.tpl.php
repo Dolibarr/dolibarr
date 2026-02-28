@@ -42,6 +42,16 @@ if ($context->userIsLog()) {
 			'group' => 'administrative' // group identifier for the group if necessary
 		);
 	}
+	// menu interventional
+	if (isModEnabled('ficheinter') && getDolGlobalInt('WEBPORTAL_INTERVENTIONAL_LIST_ACCESS')) {
+		$navMenu['interventional_list'] = array(
+			'id' => 'interventional_list',
+			'rank' => 15,
+			'url' => $context->getControllerUrl('interventionallist'),
+			'name' => $langs->trans('WebPortalInterventionalListMenu'),
+			'group' => 'administrative' // group identifier for the group if necessary
+		);
+	}
 	// menu orders
 	if (isModEnabled('order') && getDolGlobalInt('WEBPORTAL_ORDER_LIST_ACCESS')) {
 		$navMenu['order_list'] = array(
