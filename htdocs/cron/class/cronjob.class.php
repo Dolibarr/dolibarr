@@ -1346,27 +1346,27 @@ class Cronjob extends CommonObject
 		// (they fetch jobs with processing=0 by default). We register a shutdown handler to unlock it.
 		$cronjobid = (int) $this->id;
 		$cronjobpid = (int) $this->pid;
-		$dbhandler = $this->db;
-		register_shutdown_function(static function () use ($cronjobid, $cronjobpid, $dbhandler) {
-			if (empty($cronjobid) || empty($dbhandler)) {
+		$dbs = $this->db;
+		register_shutdown_function(static function () use ($cronjobid, $cronjobpid, $dbs) {
+			if (empty($cronjobid) || empty($dbs)) {
 				return;
 			}
 
 			try {
 				// Ensure we are not trapped into a transaction left open by the job.
-				$dbhandler->rollback();
+				$dbs->rollback();
 			} catch (Throwable $e) {
 				// Ignore
 			}
 
 			// If job is already closed, do nothing.
 			$sql = "SELECT processing, pid, datelastresult FROM ".MAIN_DB_PREFIX."cronjob WHERE rowid = ".((int) $cronjobid);
-			$resql = $dbhandler->query($sql);
+			$resql = $dbs->query($sql);
 			if (!$resql) {
 				return;
 			}
-			$obj = $dbhandler->fetch_object($resql);
-			$dbhandler->free($resql);
+			$obj = $dbs->fetch_object($resql);
+			$dbs->free($resql);
 
 			if (!$obj || (int) $obj->processing !== 1 || !empty($obj->datelastresult)) {
 				return;
@@ -1386,9 +1386,9 @@ class Cronjob extends CommonObject
 			}
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."cronjob";
-			$sql .= " SET processing = 0, pid = NULL, datelastresult = '".$dbhandler->idate($now)."', lastresult = '-1', lastoutput = '".$dbhandler->escape($lastoutput)."'";
+			$sql .= " SET processing = 0, pid = NULL, datelastresult = '".$dbs->idate($now)."', lastresult = '-1', lastoutput = '".$dbs->escape($lastoutput)."'";
 			$sql .= " WHERE rowid = ".((int) $cronjobid)." AND processing = 1 AND datelastresult IS NULL";
-			$dbhandler->query($sql);
+			$dbs->query($sql);
 		});
 
 		// Run a method
