@@ -43,7 +43,7 @@ if ($context->userIsLog()) {
 		);
 	}
 	// menu interventional
-	if (isModEnabled('ficheinter') && getDolGlobalInt('WEBPORTAL_INTERVENTIONAL_LIST_ACCESS')) {
+	if (isModEnabled('intervention') && getDolGlobalInt('WEBPORTAL_INTERVENTIONAL_LIST_ACCESS')) {
 		$navMenu['interventional_list'] = array(
 			'id' => 'interventional_list',
 			'rank' => 15,
