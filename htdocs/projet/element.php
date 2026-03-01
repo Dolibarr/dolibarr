@@ -794,31 +794,33 @@ $listofreferent = array(
 		 'testnew'=>$user->rights->agenda->myactions->create,
 		'test'=> isModEnabled('agenda') && $user->hasRight('agenda', 'myactions', 'read')),
 		*/
-);
+	);
 
-// Change rules for profit/benefit calculation
-if (getDolGlobalString('PROJECT_ELEMENTS_FOR_PLUS_MARGIN')) {
-	foreach ($listofreferent as $key => $element) {
-		if ($listofreferent[$key]['margin'] == 'add') {
-			unset($listofreferent[$key]['margin']);
+	// Change rules for profit/benefit calculation
+	$confElementsForPlusMargin = getDolGlobalString('PROJECT_ELEMENTS_FOR_PLUS_MARGIN');
+	if (!empty($confElementsForPlusMargin)) {
+		foreach ($listofreferent as $key => $element) {
+			if ($listofreferent[$key]['margin'] == 'add') {
+				unset($listofreferent[$key]['margin']);
+			}
+		}
+		$newelementforplusmargin = explode(',', (string) $confElementsForPlusMargin);
+		foreach ($newelementforplusmargin as $value) {
+			$listofreferent[trim($value)]['margin'] = 'add';
 		}
 	}
-	$newelementforplusmargin = explode(',', getDolGlobalString('PROJECT_ELEMENTS_FOR_PLUS_MARGIN'));
-	foreach ($newelementforplusmargin as $value) {
-		$listofreferent[trim($value)]['margin'] = 'add';
-	}
-}
-if (getDolGlobalString('PROJECT_ELEMENTS_FOR_MINUS_MARGIN')) {
-	foreach ($listofreferent as $key => $element) {
-		if ($listofreferent[$key]['margin'] == 'minus') {
-			unset($listofreferent[$key]['margin']);
+	$confElementsForMinusMargin = getDolGlobalString('PROJECT_ELEMENTS_FOR_MINUS_MARGIN');
+	if (!empty($confElementsForMinusMargin)) {
+		foreach ($listofreferent as $key => $element) {
+			if ($listofreferent[$key]['margin'] == 'minus') {
+				unset($listofreferent[$key]['margin']);
+			}
+		}
+		$newelementforminusmargin = explode(',', (string) $confElementsForMinusMargin);
+		foreach ($newelementforminusmargin as $value) {
+			$listofreferent[trim($value)]['margin'] = 'minus';
 		}
 	}
-	$newelementforminusmargin = explode(',', getDolGlobalString('PROJECT_ELEMENTS_FOR_MINUS_MARGIN'));
-	foreach ($newelementforminusmargin as $value) {
-		$listofreferent[trim($value)]['margin'] = 'minus';
-	}
-}
 
 
 $parameters = array('listofreferent' => $listofreferent);
@@ -1270,49 +1272,55 @@ foreach ($listofreferent as $key => $value) {
 		}
 
 		if (is_array($elementarray) && count($elementarray) > 0 && $key == "order_supplier") {
-			$addform .= '<div class="inline-block valignmiddle"><a id="btnShow" class="buttonxxx marginleftonly" href="#" onClick="return false;">
-						 <span id="textBtnShow" class="valignmiddle text-plus-circle hideonsmartphone">'.$langs->trans("CanceledShown").'</span><span id="minus-circle" class="fa fa-eye valignmiddle paddingleft"></span>
+			$addform .= '<div class="inline-block valignmiddle"><a id="btnShow" class="buttonxxx marginleftonly" href="#" onClick="return false;" data-canceledarehidden="1">
+						 <span id="textBtnShow" class="valignmiddle text-plus-circle hideonsmartphone">'.$langs->trans("CanceledHidden").'</span><span id="minus-circle" class="fa fa-eye-slash valignmiddle paddingleft"></span>
 						 </a>
 						 <script>
-						 $("#btnShow").on("click", function () {
-							console.log("We click to show or hide the canceled lines");
-							var attr = $(this).attr("data-canceledarehidden");
-							if (typeof attr !== "undefined" && attr !== false) {
-								console.log("Show canceled");
-								$(".tr_canceled").show();
-								$("#textBtnShow").text("'.dol_escape_js($langs->transnoentitiesnoconv("CanceledShown")).'");
-								$("#btnShow").removeAttr("data-canceledarehidden");
-								$("#minus-circle").removeClass("fa-eye-slash").addClass("fa-eye");
-							} else {
-								console.log("Hide canceled");
-								$(".tr_canceled").hide();
-								$("#textBtnShow").text("'.dol_escape_js($langs->transnoentitiesnoconv("CanceledHidden")).'");
-								$("#btnShow").attr("data-canceledarehidden", 1);
-								$("#minus-circle").removeClass("fa-eye").addClass("fa-eye-slash");
-							}
+						 $(document).ready(function () {
+							$(".tr_canceled").hide();
+							$("#btnShow").on("click", function () {
+								console.log("We click to show or hide the canceled lines");
+								var attr = $(this).attr("data-canceledarehidden");
+								if (typeof attr !== "undefined" && attr !== false) {
+									console.log("Show canceled");
+									$(".tr_canceled").show();
+									$("#textBtnShow").text("'.dol_escape_js($langs->transnoentitiesnoconv("CanceledShown")).'");
+									$("#btnShow").removeAttr("data-canceledarehidden");
+									$("#minus-circle").removeClass("fa-eye-slash").addClass("fa-eye");
+								} else {
+									console.log("Hide canceled");
+									$(".tr_canceled").hide();
+									$("#textBtnShow").text("'.dol_escape_js($langs->transnoentitiesnoconv("CanceledHidden")).'");
+									$("#btnShow").attr("data-canceledarehidden", 1);
+									$("#minus-circle").removeClass("fa-eye").addClass("fa-eye-slash");
+								}
+							});
 						 });
 						 </script></div>';
 
-			$addform .= '<div class="inline-block valignmiddle"><a id="btnShowPaid" class="buttonxxx marginleftonly" href="#" onClick="return false;">
-						 <span id="textBtnShowPaid" class="valignmiddle text-plus-circle hideonsmartphone">'.$langs->trans("PaidShown").'</span><span id="minus-circle-paid" class="fa fa-eye valignmiddle paddingleft"></span>
+			$addform .= '<div class="inline-block valignmiddle"><a id="btnShowPaid" class="buttonxxx marginleftonly" href="#" onClick="return false;" data-paidarehidden="1">
+						 <span id="textBtnShowPaid" class="valignmiddle text-plus-circle hideonsmartphone">'.$langs->trans("PaidHidden").'</span><span id="minus-circle-paid" class="fa fa-eye-slash valignmiddle paddingleft"></span>
 						 </a>
 						 <script>
-						 $("#btnShowPaid").on("click", function () {
-							console.log("We click to show or hide the paid lines");
-							var attr = $(this).attr("data-paidarehidden");
-							if (typeof attr !== "undefined" && attr !== false) {
-								console.log("Show paid");
-								$(".tr_paid").show();
-								$("#textBtnShowPaid").text("'.dol_escape_js($langs->transnoentitiesnoconv("PaidShown")).'");
-								$("#btnShowPaid").removeAttr("data-paidarehidden");
-								$("#minus-circle-paid").removeClass("fa-eye-slash").addClass("fa-eye");
-							} else {
-								console.log("Hide paid");
-								$(".tr_paid").hide();
-								$("#textBtnShowPaid").text("'.dol_escape_js($langs->transnoentitiesnoconv("PaidHidden")).'");
-								$("#btnShowPaid").attr("data-paidarehidden", 1);
-								$("#minus-circle-paid").removeClass("fa-eye").addClass("fa-eye-slash");
-							}
+						 $(document).ready(function () {
+							$(".tr_paid").hide();
+							$("#btnShowPaid").on("click", function () {
+								console.log("We click to show or hide the paid lines");
+								var attr = $(this).attr("data-paidarehidden");
+								if (typeof attr !== "undefined" && attr !== false) {
+									console.log("Show paid");
+									$(".tr_paid").show();
+									$("#textBtnShowPaid").text("'.dol_escape_js($langs->transnoentitiesnoconv("PaidShown")).'");
+									$("#btnShowPaid").removeAttr("data-paidarehidden");
+									$("#minus-circle-paid").removeClass("fa-eye-slash").addClass("fa-eye");
+								} else {
+									console.log("Hide paid");
+									$(".tr_paid").hide();
+									$("#textBtnShowPaid").text("'.dol_escape_js($langs->transnoentitiesnoconv("PaidHidden")).'");
+									$("#btnShowPaid").attr("data-paidarehidden", 1);
+									$("#minus-circle-paid").removeClass("fa-eye").addClass("fa-eye-slash");
+								}
+							});
 						 });
 						 </script></div>';
 		}
