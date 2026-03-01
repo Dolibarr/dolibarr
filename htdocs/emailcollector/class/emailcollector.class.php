@@ -1356,7 +1356,7 @@ class EmailCollector extends CommonObject
 		$criteria = array();
 		if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 			// Use PHPIMAP external library
-			$criteria = array('UNDELETED'); // Seems not supported by some servers
+			$criteria = array(array('UNDELETED')); // Seems not supported by some servers
 			foreach ($this->filters as $rule) {
 				if (empty($rule['status'])) {
 					continue;
@@ -1374,15 +1374,15 @@ class EmailCollector extends CommonObject
 					if (count($tmprulevaluearray) >= 2) {
 						foreach ($tmprulevaluearray as $tmprulevalue) {
 							if ($not) {
-								$criteria[] = 'NOT';
+								array_push($criteria, array('NOT'));
 							}
-							$criteria[] = array("FROM" => $tmprulevalue);
+							array_push($criteria, array("FROM" => $tmprulevalue));
 						}
 					} else {
 						if ($not) {
-							$criteria[] = 'NOT';
+							array_push($criteria, array('NOT'));
 						}
-						$criteria[] = array("FROM" => $rule['rulevalue']);
+						array_push($criteria, array("FROM" => $rule['rulevalue']));
 					}
 				}
 				if ($rule['type'] == 'to') {
@@ -1390,35 +1390,35 @@ class EmailCollector extends CommonObject
 					if (count($tmprulevaluearray) >= 2) {
 						foreach ($tmprulevaluearray as $tmprulevalue) {
 							if ($not) {
-								$criteria[] = 'NOT';
+								array_push($criteria, array('NOT'));
 							}
-							$criteria[] = array("TO" => $tmprulevalue);
+							array_push($criteria, array("TO" => $tmprulevalue));
 						}
 					} else {
 						if ($not) {
-							$criteria[] = 'NOT';
+							array_push($criteria, array('NOT'));
 						}
-						$criteria[] = array("TO" => $rule['rulevalue']);
+						array_push($criteria, array("TO" => $rule['rulevalue']));
 					}
 				}
 				if ($rule['type'] == 'bcc') {
 					if ($not) {
-						$criteria[] = 'NOT';
+						array_push($criteria, array('NOT'));
 					}
-					$criteria[] = array("BCC" => $rule['rulevalue']);
+					array_push($criteria, array("BCC" => $rule['rulevalue']));
 				}
 				if ($rule['type'] == 'cc') {
 					if ($not) {
-						$criteria[] = 'NOT';
+						array_push($criteria, array('NOT'));
 					}
-					$criteria[] = array("CC" => $rule['rulevalue']);
+					array_push($criteria, array("CC" => $rule['rulevalue']));
 				}
 				if ($rule['type'] == 'subject') {
 					if ($not) {
 						//array_push($criteria, array("NOT SUBJECT" => $rule['rulevalue']));
 						$searchfilterexcludesubjectarray[] = $rule['rulevalue'];
 					} else {
-						$criteria[] = array("SUBJECT" => $rule['rulevalue']);
+						array_push($criteria, array("SUBJECT" => $rule['rulevalue']));
 					}
 				}
 				if ($rule['type'] == 'body') {
@@ -1426,14 +1426,14 @@ class EmailCollector extends CommonObject
 						//array_push($criteria, array("NOT BODY" => $rule['rulevalue']));
 						$searchfilterexcludebodyarray[] = $rule['rulevalue'];
 					} else {
-						$criteria[] = array("BODY" => $rule['rulevalue']);
+						array_push($criteria, array("BODY" => $rule['rulevalue']));
 					}
 				}
 				if ($rule['type'] == 'header') {
 					if ($not) {
-						$criteria[] = 'NOT';
+						array_push($criteria, array('NOT'));
 					}
-					$criteria[] = "CUSTOM HEADER ".$rule['rulevalue'];
+					array_push($criteria, array("CUSTOM HEADER ".$rule['rulevalue']));
 				}
 
 				/* seems not used */
@@ -1447,39 +1447,39 @@ class EmailCollector extends CommonObject
 
 				if ($rule['type'] == 'seen') {
 					if ($not) {
-						$criteria[] = 'NOT';
+						array_push($criteria, array('NOT'));
 					}
-					$criteria[] = "SEEN";
+					array_push($criteria, array("SEEN"));
 				}
 				if ($rule['type'] == 'unseen') {
 					if ($not) {
-						$criteria[] = 'NOT';
+						array_push($criteria, array('NOT'));
 					}
-					$criteria[] = "UNSEEN";
+					array_push($criteria, array("UNSEEN"));
 				}
 				if ($rule['type'] == 'unanswered') {
 					if ($not) {
-						$criteria[] = 'NOT';
+						array_push($criteria, array('NOT'));
 					}
-					$criteria[] = "UNANSWERED";
+					array_push($criteria, array("UNANSWERED"));
 				}
 				if ($rule['type'] == 'answered') {
 					if ($not) {
-						$criteria[] = 'NOT';
+						array_push($criteria, array('NOT'));
 					}
-					$criteria[] = "ANSWERED";
+					array_push($criteria, array("ANSWERED"));
 				}
 				if ($rule['type'] == 'smaller') {
 					if ($not) {
-						$criteria[] = 'NOT';
+						array_push($criteria, array('NOT'));
 					}
-					$criteria[] = "CUSTOM SMALLER ".$rule['rulevalue'];
+					array_push($criteria, array("CUSTOM SMALLER ".$rule['rulevalue']));
 				}
 				if ($rule['type'] == 'larger') {
 					if ($not) {
-						$criteria[] = 'NOT';
+						array_push($criteria, array('NOT'));
 					}
-					$criteria[] = "CUSTOM LARGER ".$rule['rulevalue'];
+					array_push($criteria, array("CUSTOM LARGER ".$rule['rulevalue']));
 				}
 
 				// Rules to filter after the search imap
