@@ -1779,7 +1779,20 @@ class EmailCollector extends CommonObject
 
 				$f = $client->getFolders(false, $tmpsourcedir);	// Note the search of directory do a search on sourcedir*
 				if ($f) {
-					$folder = $f[0];
+					// getFolders() matches sourcedir* so it may return sub-folders too.
+					// Find the folder whose path exactly matches the configured source directory.
+					$folder = null;
+					foreach ($f as $tmpfolder) {
+						if ($tmpfolder instanceof Webklex\PHPIMAP\Folder) {
+							if ($tmpfolder->path === $tmpsourcedir || $tmpfolder->full_name === $sourcedir) {
+								$folder = $tmpfolder;
+								break;
+							}
+						}
+					}
+					if (is_null($folder)) {
+						$folder = $f[0]; // fallback to first result if no exact match
+					}
 					if ($folder instanceof Webklex\PHPIMAP\Folder) {
 						$Query = $folder->messages()->where($criteria); // @phan-suppress-current-line PhanPluginUnknownObjectMethodCall
 					} else {
