@@ -26,12 +26,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/fiscalyear.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
-require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -39,6 +33,11 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/fiscalyear.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("accountancy", "bills", "compta", "exports", "other"));
@@ -241,7 +240,7 @@ if (isset($current_fiscal_period)) {
 			$form_question,
 			'',
 			1,
-			300,
+			340,
 			600
 		);
 	} elseif ($action == 'step_2') {
@@ -279,7 +278,7 @@ if (isset($current_fiscal_period)) {
 			$form_question,
 			'',
 			1,
-			300,
+			340,
 			600
 		);
 	} elseif ($action == 'step_3') {
@@ -323,7 +322,7 @@ if (isset($current_fiscal_period)) {
 			$form_question,
 			'',
 			1,
-			300,
+			340,
 			600
 		);
 	}
@@ -343,11 +342,13 @@ print $formconfirm;
 
 $fiscal_period_nav_text = $langs->trans("FiscalPeriod");
 
-$fiscal_period_nav_text .= '&nbsp;<a href="' . (isset($last_fiscal_period) ? $_SERVER["PHP_SELF"] . '?fiscal_period_id=' . $last_fiscal_period['id'] : '#" class="disabled') . '">' . img_previous() . '</a>';
-$fiscal_period_nav_text .= '&nbsp;<a href="' . (isset($next_fiscal_period) ? $_SERVER["PHP_SELF"] . '?fiscal_period_id=' . $next_fiscal_period['id'] : '#" class="disabled') . '">' . img_next() . '</a>';
 if (!empty($current_fiscal_period)) {
-	$fiscal_period_nav_text .= $current_fiscal_period['label'].' &nbsp;(' . dol_print_date($current_fiscal_period['date_start'], 'day') . '&nbsp;-&nbsp;' . dol_print_date($current_fiscal_period['date_end'], 'day') . ')';
+	$fiscal_period_nav_text .= ' '.$current_fiscal_period['label'].' &nbsp;(' . dol_print_date($current_fiscal_period['date_start'], 'day') . '&nbsp;-&nbsp;' . ($current_fiscal_period['date_end'] ? dol_print_date($current_fiscal_period['date_end'], 'day') : '?'). ')';
 }
+$fiscal_period_nav_text .= '&nbsp; &nbsp; ';
+$fiscal_period_nav_text .= '<a href="' . (isset($last_fiscal_period) ? $_SERVER["PHP_SELF"] . '?fiscal_period_id=' . $last_fiscal_period['id'] : '#" class="disabled') . '">' . img_previous() . '</a>';
+$fiscal_period_nav_text .= '&nbsp;';
+$fiscal_period_nav_text .= '<a href="' . (isset($next_fiscal_period) ? $_SERVER["PHP_SELF"] . '?fiscal_period_id=' . $next_fiscal_period['id'] : '#" class="disabled') . '">' . img_next() . '</a>';
 
 print load_fiche_titre($langs->trans("Closure") . " - " . $fiscal_period_nav_text, '', 'title_accountancy');
 
@@ -362,7 +363,7 @@ if (empty($current_fiscal_period)) {
 		$head[0][2] = 'step1';
 		print dol_get_fiche_head($head, 'step1', '', -1, '');
 
-		print '<span class="opacitymedium">' . $langs->trans("AccountancyClosureStep1Desc") . '</span><br>';
+		//print '<span class="opacitymedium">' . $langs->trans("AccountancyClosureStep1Desc") . '</span><br>';
 
 		$count_by_month = $object->getCountByMonthForFiscalPeriod((int) $current_fiscal_period['date_start'], (int) $current_fiscal_period['date_end']);
 
@@ -391,7 +392,7 @@ if (empty($current_fiscal_period)) {
 		print '<td class="right"><b>' . $langs->trans("Total") . '</b></td>';
 		print '</tr>';
 
-		if (is_array($count_by_month['list'])) {
+		if (is_array($count_by_month['list']) && count($count_by_month['list']) > 0) {
 			foreach ($count_by_month['list'] as $info) {
 				print '<tr class="oddeven">';
 				if ($nb_years > 1) {
@@ -400,8 +401,15 @@ if (empty($current_fiscal_period)) {
 				for ($i = 1; $i <= 12; $i++) {
 					print '<td class="right">' . ((int) $info['count'][$i]) . '</td>';
 				}
-				print '<td class="right"><b>' . $info['total'] . '</b></td></tr>';
+				print '<td class="right"><b>' . $info['total'] . '</b></td>';
+				print '</tr>';
 			}
+		} else {
+			print '<tr class="oddeven"><td colspan="' . (12 + ($nb_years > 1 ? 1 : 0) + 1) . '">';
+			print '<span class="opacitymedium">';
+			print $langs->trans("None");
+			print '</span>';
+			print '</td></tr>';
 		}
 
 		print "</table>\n";

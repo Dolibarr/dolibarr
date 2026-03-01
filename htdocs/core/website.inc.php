@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017-2024  Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW							<mdeweerd@users.noreply.github.com>
  *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -100,7 +101,7 @@ if (!empty($pageid) && $pageid > 0) {
 		}
 	}
 	if (empty($srclang)) {
-		$srclang= 'auto';
+		$srclang = 'auto';
 	}
 	$weblangs->setDefaultLang($srclang);
 
@@ -160,7 +161,7 @@ if (!defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {
 		}
 		$hookmanager->initHooks(array("main"));
 
-		$parameters = array('contentsecuritypolicy'=>$contentsecuritypolicy, 'mode'=>'reportonly');
+		$parameters = array('contentsecuritypolicy' => $contentsecuritypolicy, 'mode' => 'reportonly');
 		$result = $hookmanager->executeHooks('setContentSecurityPolicy', $parameters); // Note that $action and $object may have been modified by some hooks
 		if ($result > 0) {
 			$contentsecuritypolicy = $hookmanager->resPrint; // Replace CSP
@@ -193,7 +194,7 @@ if (!defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {
 		}
 		$hookmanager->initHooks(array("main"));
 
-		$parameters = array('contentsecuritypolicy'=>$contentsecuritypolicy, 'mode'=>'active');
+		$parameters = array('contentsecuritypolicy' => $contentsecuritypolicy, 'mode' => 'active');
 		$result = $hookmanager->executeHooks('setContentSecurityPolicy', $parameters); // Note that $action and $object may have been modified by some hooks
 		if ($result > 0) {
 			$contentsecuritypolicy = $hookmanager->resPrint; // Replace CSP
@@ -303,10 +304,46 @@ $prefix = dol_getprefix('');
 $sessionname = 'DOLSESSID_'.$prefix;
 //$savsessionid = $_COOKIE[$sessionname];
 
+
+// Add a protection if custom PHP is not allowed or allowed with conditions
+global $dolibarr_website_allow_custom_php;
+if (!empty($dolibarr_website_allow_custom_php) && $dolibarr_website_allow_custom_php == 1) {
+	$systemfunctions = array("exec", "passthru", "shell_exec", "system", "popen", "proc_open");
+	foreach ($systemfunctions as $systemfunction) {
+		//print ini_get('disable_functions').'<br>';
+		//print exec("ls");
+
+		// @phpstan-ignore-next-line
+		if (function_exists($systemfunction)) {
+			print '<center><br><br>';
+			print 'Website features are protected to be disabled if the PHP system functions ('.implode(',', $systemfunctions).') are not disabled for the website context.<br>';
+			print 'The value "'.$systemfunction.'" has NOT been found into the <b>current disable_functions</b>=<br>';
+			print '<textarea cols="100" rows="5">';
+			print ini_get('disable_functions');		// Warning, the real value may not be this one.Only the master initial value from php.ini is effective, not the local value set at virtualhost.
+			//print (implode(', ', explode(',', (string) ini_get('disable_functions'))));
+			print '</textarea>';
+			print '<br><br>';
+			print 'You can fix this by changing setup of your PHP ini (changing this in a virtual host with php_admin_value is not effective):<br>';
+			print 'disable_functions="exec,passthru,shell_exec,system,popen,proc_open,..."<br>';
+			print 'but WARNING, this may also break features for:<br>';
+			print '- cron tasks calling command line tools.<br>';
+			print '- and for the backup feature running the database dump tool.<br>';
+			print '- and for the command line antivirus check ran when uploading a file.<br>';
+			print '<br>';
+			print 'If you don\'t use this 3 feature, change your php.ini, if you need at least one, you can bypass this protection by setting $dolibarr_website_allow_custom_php to 2 in your dolibarr config file.';
+			print '</center>';
+			exit;		// Stop here to PHP later won't be executed
+		}
+	}
+}
+
+
 $_COOKIE[$sessionname] = 'obfuscatedcookie';
 unset($conf->file->instance_unique_id);
 
 unset($dolibarr_main_instance_unique_id);
+//unset($dolibarr_main_dolcrypt_key);  // TODO Test if we can uncomment this
+
 unset($dolibarr_main_db_host);
 unset($dolibarr_main_db_port);
 unset($dolibarr_main_db_name);

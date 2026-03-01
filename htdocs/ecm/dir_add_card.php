@@ -3,7 +3,7 @@
  * Copyright (C) 2008-2012	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2015-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -128,7 +128,7 @@ if (!$permissiontoadd) {
  * Actions
  */
 
-// Action ajout d'un produit ou service
+// Action - add product or service
 if ($action == 'add' && $permissiontoadd) {
 	if ($cancel) {
 		if (!empty($backtopage)) {
@@ -290,7 +290,7 @@ if (empty($action) || $action == 'delete_section') {
 	print "<br><br>";
 	*/
 
-	// Confirmation de la suppression d'une ligne categorie
+	// Generate form to confirm deletion of a category line
 	if ($action == 'delete_section') {
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section, $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection', $ecmdir->label), 'confirm_deletesection');
 	}

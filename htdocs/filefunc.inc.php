@@ -33,10 +33,11 @@
  */
 
 
-define('DOL_MINOR_VERSION', '0.0-alpha');
-
 if (!defined('DOL_APPLICATION_TITLE')) {
 	define('DOL_APPLICATION_TITLE', 'Dolibarr');
+}
+if (!defined('DOL_VERSION')) {
+	define('DOL_VERSION', '23.0.0'); // a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
 }
 
 require_once 'version.inc.php';		// Define the DOL_VERSION
@@ -125,7 +126,7 @@ function dol_session_rotate($sessionname = '')
 // Define localization of conf file
 // --- Start of part replaced by Dolibarr packager makepack-dolibarr
 $conffile = "conf/conf.php";
-$conffiletoshow = "htdocs/conf/conf.php";	// Used into the include
+$conffiletoshow = "htdocs/conf/conf.php";
 // For debian/redhat like systems
 //$conffile = "/etc/dolibarr/conf.php";
 //$conffiletoshow = "/etc/dolibarr/conf.php";

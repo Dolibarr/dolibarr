@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2017	Olivier Geffroy			<jeff@jeffinfo.com>
  * Copyright (C) 2013-2017	Florian Henry			<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2013-2026	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2017		Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2018-2024	Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
@@ -38,6 +38,8 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/lettering.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeepingtemplate.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeepingtemplateline.class.php';
 
 /**
  * @var Conf $conf
@@ -313,14 +315,79 @@ if (empty($reshook)) {
 
 				$action = 'create';
 			} else {
-				$reshook = $hookmanager->executeHooks('afterCreateBookkeeping', $parameters, $object, $action);
+				// Transaction created successfully
+				$piece_num = $object->piece_num;
 
-				if ($mode != '_tmp') {
-					setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+				// Check if a template was selected
+				$template_id = GETPOSTINT('template_id');
+
+				if ($template_id > 0) {
+					require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeepingtemplate.class.php';
+					require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeepingtemplateline.class.php';
+
+					$template = new BookkeepingTemplate($db);
+					$result_template = $template->fetch($template_id);
+
+					if ($result_template > 0 && !empty($template->lines)) {
+						$db->begin();
+						$error_template = 0;
+
+						foreach ($template->lines as $templateline) {
+							$bookkeeping = new BookKeeping($db);
+
+							// Set common fields from the form
+							$bookkeeping->doc_date = $date_start;
+							$bookkeeping->doc_type = GETPOST('doctype', 'alpha');
+							$bookkeeping->piece_num = $piece_num;
+							$bookkeeping->doc_ref = GETPOST('docref', 'alpha');
+							$bookkeeping->code_journal = $journal_code;
+							$bookkeeping->journal_label = $journal_label;
+							$bookkeeping->fk_doc = 0;
+							$bookkeeping->fk_docdet = 0;
+							$bookkeeping->ref = GETPOST('ref', 'alpha') ? GETPOST('ref', 'alpha') : $object->ref;
+
+							// Set fields from template line
+							$bookkeeping->numero_compte = $templateline->general_account;
+							$bookkeeping->label_compte = $templateline->general_label;
+							$bookkeeping->subledger_account = $templateline->subledger_account;
+							$bookkeeping->subledger_label = $templateline->subledger_label;
+							$bookkeeping->label_operation = $templateline->operation_label;
+							$bookkeeping->debit = (float) $templateline->debit;
+							$bookkeeping->credit = (float) $templateline->credit;
+
+							// Backward compatibility
+							if ((float) $bookkeeping->debit != 0.0) {
+								$bookkeeping->montant = $bookkeeping->debit;
+								$bookkeeping->amount = $bookkeeping->debit;
+								$bookkeeping->sens = 'D';
+							}
+							if ((float) $bookkeeping->credit != 0.0) {
+								$bookkeeping->montant = $bookkeeping->credit;
+								$bookkeeping->amount = $bookkeeping->credit;
+								$bookkeeping->sens = 'C';
+							}
+
+							$result_line = $bookkeeping->createStd($user, 0, '_tmp');
+
+							if ($result_line < 0) {
+								$error_template++;
+								setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
+								break;
+							}
+						}
+
+						if (!$error_template) {
+							$db->commit();
+							setEventMessages($langs->trans('TemplateLinesLoaded', count($template->lines)), null, 'mesgs');
+						} else {
+							$db->rollback();
+						}
+					}
 				}
-				$action = '';
-				$id = $object->id;
-				$piece_num = (int) $object->piece_num;
+
+				// Redirect to the transaction
+				header("Location: ".$_SERVER["PHP_SELF"]."?piece_num=".$piece_num."&mode=_tmp");
+				exit;
 			}
 		}
 	}
@@ -571,14 +638,46 @@ if ($action == 'create') {
 		print '<span class="opacitymedium">'.$langs->trans("Automatic").'</span>';
 	}
 	print '</td>';
+
+	// Template
+	print '<tr>';
+	print '<td>'.$langs->trans("BookkeepingTemplate").'</td>';
+	print '<td>';
+	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeepingtemplate.class.php';
+
+	$sql = "SELECT rowid, code, label";
+	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_transaction_template";
+	$sql .= " WHERE entity IN (".getEntity('accounting').")";
+	$sql .= " ORDER BY code ASC";
+
+	$resql = $db->query($sql);
+	$templates = array();
+
+	if ($resql) {
+		$num = $db->num_rows($resql);
+		$i = 0;
+		while ($i < $num) {
+			$obj = $db->fetch_object($resql);
+			$templates[$obj->rowid] = $obj->code.' - '.$obj->label;
+			$i++;
+		}
+		$db->free($resql);
+	}
+
+	if (count($templates) > 0) {
+		print '<select class="flat minwidth300" name="template_id" id="template_id">';
+		print '<option value=""></option>';
+		foreach ($templates as $key => $label) {
+			print '<option value="'.$key.'">'.dol_escape_htmltag($label).'</option>';
+		}
+		print '</select>';
+	} else {
+		print '<span class="opacitymedium">'.$langs->trans("NoTemplateAvailable").'</span>';
+	}
+
+	print '</td>';
 	print '</tr>';
 
-	/*
-	print '<tr>';
-	print '<td>' . $langs->trans("Doctype") . '</td>';
-	print '<td><input type="text" class="minwidth200 name="doc_type" value=""/></td>';
-	print '</tr>';
-	*/
 	$reshookAddLine = $hookmanager->executeHooks('bookkeepingAddLine', $parameters, $object, $action);
 
 	print '</table>';

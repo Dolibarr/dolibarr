@@ -663,7 +663,7 @@ class RemiseCheque extends CommonObject
 			// output format that does not support UTF8.
 			$sav_charset_output = $outputlangs->charset_output;
 
-			$result = $docmodel->write_file($this, $conf->bank->dir_output.'/checkdeposits', $this->ref, $outputlangs);
+			$result = $docmodel->write_file($this, $outputlangs, $conf->bank->dir_output.'/checkdeposits', $this->ref);
 			if ($result > 0) {
 				//$outputlangs->charset_output=$sav_charset_output;
 				return 1;

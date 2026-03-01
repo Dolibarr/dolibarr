@@ -445,12 +445,13 @@ $orderprinterallowed = (getDolGlobalString('TAKEPOS_BAR_RESTAURANT') && getDolGl
 $customprinttemplateallowed = true;
 include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 if (isALNERunningVersion()) {		// No need to show the custom template when isALNERunningVersion is true because it has no effect (disabled by receipt.php).
+	$customprinterallowed = false;
 	$customprinttemplateallowed = false;	// Custom printer may be allowed if mandatory information in template are guaranteed. For the moment, we prefer not allow this.
 }
 
 if (isModEnabled('receiptprinter')) {
 	// Select printer to use with terminal
-	require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/takepos/class/dolreceiptprinter.class.php';
 	$printer = new dolReceiptPrinter($db);
 
 	$printer->listprinters();
@@ -487,7 +488,7 @@ if (isModEnabled('receiptprinter')) {
 
 if (isModEnabled('receiptprinter') || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter" || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
 	// Select printer to use with terminal
-	require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/takepos/class/dolreceiptprinter.class.php';
 	$printer = new dolReceiptPrinter($db);
 	$printer->listPrintersTemplates();
 	$templates = array();

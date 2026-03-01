@@ -1382,6 +1382,16 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 		}
 	}
 } else {
+	// Type
+	if (isModEnabled("product") && isModEnabled("service")) {
+		$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
+		print '<tr><td class="">';
+		print (!getDolGlobalString('PRODUCT_DENY_CHANGE_PRODUCT_TYPE')) ? $form->editfieldkey("Type", 'fk_product_type', (string) $object->type, $object, 0, $typeformat) : $langs->trans('Type');
+		print '</td><td>';
+		print $form->editfieldval("Type", 'fk_product_type', $object->type, $object, 0, $typeformat);
+		print '</td></tr>';
+	}
+
 	// TVA
 	print '<tr><td class="titlefield">'.$langs->trans("DefaultTaxRate").'</td><td>';
 
@@ -1434,7 +1444,7 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 
 	// Packaging
 	if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
-		print '<tr class="field_price_label"><td>'.$form->textwithpicto($langs->trans("PackagingForThisProduct"), $langs->trans("PackagingForThisProductSellDesc")).'</td><td>';
+		print '<tr class="field_price_label"><td>'.$form->textwithpicto($langs->trans("PackagingForThisProduct"), $langs->trans("PackagingForThisProductDesc")).'</td><td>';
 		print $object->packaging;
 		print '</td></tr>';
 	}
@@ -1546,23 +1556,19 @@ print dol_get_fiche_end();
 
 
 
-/*
- * Action bar
- */
-
+// Button for actions
 
 if (!$action || $action == 'delete' || $action == 'showlog_customer_price' || $action == 'showlog_default_price' || $action == 'add_customer_price'
 	|| $action == 'activate_price_by_qty' || $action == 'disable_price_by_qty') {
 	print "\n".'<div class="tabsAction">'."\n";
 
-
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
 	if (empty($reshook)) {
 		if ($object->isVariant()) {
-			if ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer')) {
-				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="' . dol_escape_htmltag($langs->trans("NoEditVariants")) . '">' . $langs->trans("UpdateDefaultPrice") . '</a></div>';
-			}
+			//if ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer')) {
+			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="' . dol_escape_htmltag($langs->trans("NoEditVariants")) . '">' . $langs->trans("UpdateDefaultPrice") . '</a></div>';
+			//}
 		} else {
 			if (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 				if ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer')) {
@@ -1719,9 +1725,9 @@ if (($action == 'edit_price' || $action == 'edit_level_price') && $object->getRi
 		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", getDolGlobalString('MAIN_MAX_DECIMALS_UNIT')), 1, 'help');
 		print '</td><td>';
 		if ($object->price_base_type == 'TTC') {
-			print '<input name="price_min" size="10" value="'.price($object->price_min_ttc).'">';
+			print '<input name="price_min" size="10" value="'.($object->price_min_ttc ? price($object->price_min_ttc) : '').'">';
 		} else {
-			print '<input name="price_min" size="10" value="'.price($object->price_min).'">';
+			print '<input name="price_min" size="10" value="'.($object->price_min ? price($object->price_min) : '').'">';
 		}
 		if (getDolGlobalString('PRODUCT_MINIMUM_RECOMMENDED_PRICE')) {
 			print ' &nbsp; '.$langs->trans("MinimumRecommendedPrice", price((float) $maxpricesupplier, 0, '', 1, -1, -1, 'auto')).' '.img_warning().'</td>';
@@ -1732,10 +1738,10 @@ if (($action == 'edit_price' || $action == 'edit_level_price') && $object->getRi
 		// Packaging
 		if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
 			print '<tr><td>';
-			print $form->textwithpicto($langs->trans("PackagingForThisProduct"), $langs->trans("PackagingForThisProductSellDesc"));
+			print $form->textwithpicto($langs->trans("PackagingForThisProduct"), $langs->trans("PackagingForThisProductDesc"));
 			print '</td><td>';
 			$packaging = $object->packaging;
-			print '<input class="flat" name="packaging" size="5" value="' . price($packaging, 0, '', 1, -1, 2).'">';
+			print '<input class="flat" name="packaging" size="5" value="' . ($packaging ? price($packaging, 0, '', 1, -1, 2) : '').'">';
 			print '</td>';
 			print '</tr>';
 		}
@@ -2755,8 +2761,8 @@ if ((!getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || $action == 'showlog_defau
 		if (!$num) {
 			$db->free($result);
 
-			// Il doit au moins y avoir la ligne de prix initial.
-			// On l'ajoute donc pour remettre a niveau (pb vieilles versions)
+			// We must have at least one initial line
+			// We add it to fix this if not (trouble with old versions)
 			// We emulate the change of the price from interface with the same value than the one into table llx_product
 			if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 				$ret = $object->updatePrice(($object->multiprices_base_type[1] == 'TTC' ? $object->multiprices_ttc[1] : $object->multiprices[1]), $object->multiprices_base_type[1], $user, (empty($object->multiprices_tva_tx[1]) ? 0 : $object->multiprices_tva_tx[1]), ($object->multiprices_base_type[1] == 'TTC' ? $object->multiprices_min_ttc[1] : $object->multiprices_min[1]), 1);

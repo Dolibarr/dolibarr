@@ -5,7 +5,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1190,10 +1190,11 @@ function purgeSessions($mysessionid)
  *
  *  @param      string		$value      			Name of module to activate (modModuleName)
  *  @param      int			$withdeps  				Activate/Disable also all dependencies
- * 	@param		int			$noconfverification		Remove verification of $conf variable for module
+ * 	@param		int			$noconfverification		Remove verification of $conf->global->MODULE_NAME variable for module
+ *  @param		string		$options				Option for init
  *  @return     array{nbmodules?:int,errors:string[],nbperms?:int}	array('nbmodules'=>nb modules activated with success, 'errors=>array of error messages, 'nbperms'=>Nb permission added);
  */
-function activateModule($value, $withdeps = 1, $noconfverification = 0)
+function activateModule($value, $withdeps = 1, $noconfverification = 0, $options = '')
 {
 	global $db, $langs, $conf, $mysoc;
 
@@ -1256,7 +1257,7 @@ function activateModule($value, $withdeps = 1, $noconfverification = 0)
 		}
 	}
 
-	$result = $objMod->init(); // Enable module
+	$result = $objMod->init($options); // Enable module
 
 	if ($result <= 0) {
 		$ret['errors'][] = $objMod->error;
@@ -1281,7 +1282,7 @@ function activateModule($value, $withdeps = 1, $noconfverification = 0)
 						$activateerr = '';
 						foreach ($modulesdir as $dir) {
 							if (file_exists($dir.$modulestring.".class.php")) {
-								$resarray = activateModule($modulestring);
+								$resarray = activateModule($modulestring, 1, 0, $options);
 								if (empty($resarray['errors'])) {
 									$activate = true;
 								} else {
@@ -1342,6 +1343,8 @@ function unActivateModule($value, $requiredby = 1, $options = '')
 {
 	global $db;
 
+	dol_syslog("unActivateModule value=".$value, LOG_INFO);
+
 	// Check parameters
 	if (empty($value)) {
 		return 'ErrorBadParameter';
@@ -1369,6 +1372,7 @@ function unActivateModule($value, $requiredby = 1, $options = '')
 		$objMod = new $modName($db);
 		'@phan-var-force DolibarrModules $objMod';
 		/** @var DolibarrModules $objMod */
+
 		$result = $objMod->remove($options);
 		if ($result <= 0) {
 			$ret = $objMod->error;
@@ -1630,7 +1634,7 @@ function activateModulesRequiredByCountry($country_code)
 						if ($modulequalified) {
 							// Load languages files of module
 							if (isset($objMod->automatic_activation[$country_code])) {
-								activateModule($modName);
+								activateModule($modName, 1, 0);
 
 								setEventMessages($objMod->automatic_activation[$country_code], null, 'warnings');
 							}
@@ -2285,7 +2289,7 @@ function GetContentPolicyToArray($forceCSP)
 	foreach ($sourceCSPArr as $key => $arr) {
 		$sourceCSPArrflatten = array_merge($sourceCSPArrflatten, array_keys($arr));
 	}
-	// Manage the trouble with data:text/plain;base64,SGVsbG8sIFdvcmxkIQ%3D%3D that is split + problem with the add button
+	// Manage the issue where the data:text/plain;base64,SGVsbG8sIFdvcmxkIQ%3D%3D string is getting split, as well as the issue with the "add" button.
 	$forceCSP = preg_replace('/;base64,/', "__semicolumnbase64__", $forceCSP);
 	$securitypolicies = explode(";", $forceCSP);
 

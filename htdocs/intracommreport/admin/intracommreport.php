@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2015      ATM Consulting       <support@atm-consulting.fr>
- * Copyright (C) 2019-2020 Open-DSI             <support@open-dsi.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2015       ATM Consulting          <support@atm-consulting.fr>
+ * Copyright (C) 2019-2020  Open-DSI                <support@open-dsi.fr>
+ * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -141,7 +142,7 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("INTRACOMMREPORT_TYPE_ACTEUR").'</td>';
 $arraychoices = array('' => $langs->trans("None"), 'PSI' => 'Déclarant pour son compte', 'TDP' => 'Tiers déclarant');
 print '<td>';
-print $form->selectarray('INTRACOMMREPORT_TYPE_ACTEUR', $arraychoices, $conf->global->INTRACOMMREPORT_TYPE_ACTEUR, 0);
+print $form->selectarray('INTRACOMMREPORT_TYPE_ACTEUR', $arraychoices, getDolGlobalString('INTRACOMMREPORT_TYPE_ACTEUR'), 0);
 print '</td>';
 print "</tr>\n";
 
@@ -149,7 +150,7 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("INTRACOMMREPORT_ROLE_ACTEUR").'</td>';
 $arraychoices = array('' => $langs->trans("None"), 'sender' => 'Emetteur', 'PSI' => 'Déclarant');
 print '<td>';
-print $form->selectarray('INTRACOMMREPORT_ROLE_ACTEUR', $arraychoices, $conf->global->INTRACOMMREPORT_ROLE_ACTEUR, 0);
+print $form->selectarray('INTRACOMMREPORT_ROLE_ACTEUR', $arraychoices, getDolGlobalString('INTRACOMMREPORT_ROLE_ACTEUR'), 0);
 print '</td>';
 print "</tr>\n";
 
@@ -157,7 +158,7 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION").'</td>';
 $arraychoices = array(1 => 'Seuil de 460 000 €', 2 => 'En dessous de 460 000 €');
 print '<td>';
-print $form->selectarray('INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION', $arraychoices, $conf->global->INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION, 0);
+print $form->selectarray('INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION', $arraychoices, getDolGlobalString('INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION'), 0);
 print '</td>';
 print "</tr>\n";
 
@@ -165,14 +166,14 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION").'</td>';
 $arraychoices = array(3 => 'Seuil de 460 000 €', 4 => 'En dessous de 460 000 €');
 print '<td>';
-print $form->selectarray('INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION', $arraychoices, $conf->global->INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION, 0);
+print $form->selectarray('INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION', $arraychoices, getDolGlobalString('INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION'), 0);
 print '</td>';
 print "</tr>\n";
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("INTRACOMMREPORT_CATEG_FRAISDEPORT").'</td>';
 print '<td>';
-print $formother->select_categories('product', $conf->global->INTRACOMMREPORT_CATEG_FRAISDEPORT, 'INTRACOMMREPORT_CATEG_FRAISDEPORT');
+print $formother->select_categories('product', getDolGlobalInt('INTRACOMMREPORT_CATEG_FRAISDEPORT'), 'INTRACOMMREPORT_CATEG_FRAISDEPORT');
 print '</td>';
 print "</tr>\n";
 
