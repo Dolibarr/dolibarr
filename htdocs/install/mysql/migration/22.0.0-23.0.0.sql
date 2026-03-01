@@ -393,6 +393,22 @@ CREATE TABLE llx_expensereport_det_extrafields
 	import_key                varchar(14)
 ) ENGINE=innodb;
 
+-- Add table to store user-defined ordering of project referrers lists (propal, orders, invoices, ...).
+CREATE TABLE llx_projet_elementorder
+(
+  rowid					integer AUTO_INCREMENT PRIMARY KEY,
+  entity				integer DEFAULT 1 NOT NULL,		-- multi company id
+  fk_projet				integer NOT NULL,
+  elementtype			varchar(64) NOT NULL,
+  fk_element			integer NOT NULL,
+  rang					integer DEFAULT 0,
+  tms					timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=innodb;
+
+ALTER TABLE llx_projet_elementorder ADD UNIQUE INDEX uk_projet_elementorder (entity, fk_projet, elementtype, fk_element);
+ALTER TABLE llx_projet_elementorder ADD INDEX idx_projet_elementorder_rank (entity, fk_projet, elementtype, rang);
+ALTER TABLE llx_projet_elementorder ADD CONSTRAINT fk_projet_elementorder_fk_projet FOREIGN KEY (fk_projet) REFERENCES llx_projet (rowid);
+
 
 ALTER TABLE llx_blockedlog ADD INDEX idx_ref_object (ref_object);
 ALTER TABLE llx_blockedlog DROP FOREIGN KEY fk_linktoref;
