@@ -10079,6 +10079,18 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				'__USER_REMOTE_IP__' => (string) getUserRemoteIP(),
 				'__USER_VCARD_URL__' => (string) $user->getOnlineVirtualCardUrl('', 'external')
 			));
+			if (isModEnabled('stock') && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER') && is_object($user->warehouse)) {
+				$substitutionarray = array_merge($substitutionarray, array(
+					'__USER_WAREHOUSE_ID__' => isset($user->warehouse->id) ? $user->warehouse->id : '',
+					'__USER_WAREHOUSE_REF__' => isset($user->warehouse->ref) ? $user->warehouse->ref : '',
+					'__USER_WAREHOUSE_DESCRIPTION__' => isset($user->warehouse->description) ? $user->warehouse->description : '',
+					'__USER_WAREHOUSE_ADDRESS__' => isset($user->warehouse->address) ? $user->warehouse->address : '',
+					'__USER_WAREHOUSE_ZIP__' => isset($user->warehouse->zip) ? $user->warehouse->zip : '',
+					'__USER_WAREHOUSE_TOWN__' => isset($user->warehouse->town) ? $user->warehouse->town : '',
+					'__USER_WAREHOUSE_PHONE__' => isset($user->warehouse->phone) ? (string) dol_print_phone($user->warehouse->phone, '', 0, 0, '', " ", '', '', -1) : '',
+					'__USER_WAREHOUSE_FAX__' => isset($user->warehouse->fax) ? (string) dol_print_phone($user->warehouse->fax, '', 0, 0, '', " ", '', '', -1) : ''
+				));
+			}
 		}
 	}
 	if ((empty($exclude) || !in_array('mycompany', $exclude)) && is_object($mysoc) && (empty($include) || in_array('mycompany', $include))) {
@@ -10752,22 +10764,6 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__TOTAL_HT__']     = is_object($object) ? $object->total_ht : '';
 			$substitutionarray['__TOTAL_VAT__']    = is_object($object) ? (isset($object->total_vat) ? $object->total_vat : $object->total_tva) : '';
 		}
-	}
-
-	if (isModEnabled('stock') && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER') && is_object($user) && !empty($user->fk_warehouse)) {
-		require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
-		$useridwarehouse = $user->fk_warehouse;
-		$warehousestatic = new Entrepot($db);
-		$warehousestatic->fetch($useridwarehouse);
-
-		$substitutionarray['__USER_WAREHOUSE_ID__'] = isset($warehousestatic->rowid) ? $warehousestatic->rowid : '';
-		$substitutionarray['__USER_WAREHOUSE_REF__'] = isset($warehousestatic->ref) ? $warehousestatic->ref : '';
-		$substitutionarray['__USER_WAREHOUSE_DESCRIPTION__'] = isset($warehousestatic->description) ? $warehousestatic->description : '';
-		$substitutionarray['__USER_WAREHOUSE_ADDRESS__'] = isset($warehousestatic->address) ? $warehousestatic->address : '';
-		$substitutionarray['__USER_WAREHOUSE_ZIP__'] = isset($warehousestatic->zip) ? $warehousestatic->zip : '';
-		$substitutionarray['__USER_WAREHOUSE_TOWN__'] = isset($warehousestatic->town) ? $warehousestatic->town : '';
-		$substitutionarray['__USER_WAREHOUSE_PHONE__'] = isset($warehousestatic->phone) ? (string) dol_print_phone($warehousestatic->phone, '', 0, 0, '', " ", '', '', -1) : '';
-		$substitutionarray['__USER_WAREHOUSE_FAX__'] = isset($warehousestatic->fax) ? (string) dol_print_phone($warehousestatic->fax, '', 0, 0, '', " ", '', '', -1) : '';
 	}
 
 	if ((empty($exclude) || !in_array('date', $exclude)) && (empty($include) || in_array('date', $include))) {

@@ -452,9 +452,9 @@ class User extends CommonObject
 	public $default_range;
 
 	/**
-	 *@var ?int id of warehouse
+	 * @var int Warehouse Id
 	 */
-	public $fk_warehouse;
+	public $warehouse_id;
 
 	/**
 	 *@var int id of establishment
@@ -476,6 +476,7 @@ class User extends CommonObject
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
 		'lastname' => array('type' => 'varchar(50)', 'label' => 'Lastname', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 20, 'searchall' => 1),
 		'firstname' => array('type' => 'varchar(50)', 'label' => 'Firstname', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 10, 'searchall' => 1),
+		'fk_warehouse' => array('type' => 'integer:Entrepot:product\stock\class\entrepot.class.php', 'label' => 'Warehouse', 'enabled' => "isModEnabled('stock')", 'visible' => 1, 'notnull' => 0, 'showoncombobox' => 1, 'index' => 1, 'position' => 50, 'searchall' => 1),
 		'ref_employee' => array('type' => 'varchar(50)', 'label' => 'RefEmployee', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 30, 'searchall' => 1),
 		'national_registration_number' => array('type' => 'varchar(50)', 'label' => 'NationalRegistrationNumber', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 40, 'searchall' => 1)
 	);
@@ -733,6 +734,8 @@ class User extends CommonObject
 				$this->default_range = $obj->default_range;
 				$this->default_c_exp_tax_cat = $obj->default_c_exp_tax_cat;
 				$this->fk_warehouse = $obj->fk_warehouse;
+				$this->warehouse_id = $obj->fk_warehouse; // To avoid that some code use $user->warehouse when it is not loaded. It must be loaded with $user->fetch_warehouse() before.
+				$this->warehouse = null; // To avoid that some code use $user->warehouse when it is not loaded. It must be loaded with $user->fetch_warehouse() before.
 				$this->fk_establishment = $obj->fk_establishment;
 				$this->label_establishment = $obj->label_establishment;
 
@@ -742,6 +745,10 @@ class User extends CommonObject
 					$this->entity = 0;
 				}
 
+				// If user is linked to a warehouse, we load it into memory
+				if (isModEnabled('stock') && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER') && (!empty($this->fk_warehouse) || !empty($this->warehouse_id))) {
+					$this->fetchWarehouse();
+				}
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
