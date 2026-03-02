@@ -133,6 +133,11 @@ class BookkeepingTemplateLine extends CommonObject
 	public $subledger_label;
 
 	/**
+	 * @var ?string label operation
+	 */
+	public $operation_label;
+
+	/**
 	 * @var string Debit amount (stored as string for precision)
 	 */
 	public $debit;
