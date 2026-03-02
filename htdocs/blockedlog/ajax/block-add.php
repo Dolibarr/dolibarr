@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2017 Laurent Destailleur  	<eldy@users.sourceforge.net>
- * Copyright (C) 2017 ATM Consulting       	<contact@atm-consulting.fr>
- * Copyright (C) 2024 Frédéric France		<frederic.france@free.fr>
+/* Copyright (C) 2017-2026 Laurent Destailleur      <eldy@users.sourceforge.net>
+ * Copyright (C) 2017      ATM Consulting           <contact@atm-consulting.fr>
+ * Copyright (C) 2024      Frédéric France		    <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,6 +75,7 @@ if ($element === 'facture') {	// Test on permission done in top of page
 	if ($facture->fetch($id) > 0) {
 		//print 'Object '.$element.' logged with action code = '.$action." pos_print_counter is currently ".$facture->pos_print_counter;
 
+		/* Increase of counter is now managed inside the document.php file
 		if ($facture->status > Facture::STATUS_DRAFT) {
 			// Increase counter by 1
 			$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET pos_print_counter = pos_print_counter + 1";
@@ -84,6 +85,7 @@ if ($element === 'facture') {	// Test on permission done in top of page
 			$facture->pos_print_counter += 1;
 			// $facture->update($user, 1);	// disabled update, we did a direct sql update before. We disable trigger here because we already call the trigger $action = DOC_PREVIEW or DOC_DOWNLOAD just after.
 		}
+		*/
 
 		$facture->call_trigger($action, $user);
 	}
