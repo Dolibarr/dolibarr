@@ -171,8 +171,6 @@ ALTER TABLE llx_accounting_balance_snapshot ADD UNIQUE INDEX uk_accounting_balan
 ALTER TABLE llx_accounting_balance_snapshot ADD INDEX idx_accounting_balance_snapshot_account (entity, fk_fiscalyear, account_number, debit, credit);
 ALTER TABLE llx_accounting_balance_snapshot ADD INDEX idx_accounting_balance_snapshot_subaccount (entity, fk_fiscalyear, subledger_account, debit, credit);
 
-ALTER TABLE llx_accounting_balance_snapshot ADD CONSTRAINT fk_accounting_balance_snapshot_fk_fiscalyear FOREIGN KEY (fk_fiscalyear) REFERENCES llx_accounting_fiscalyear (rowid);
-
 
 -- Switch all crabe templates into sponge
 UPDATE llx_facture SET model_pdf = 'sponge' WHERE model_pdf = 'crabe';
