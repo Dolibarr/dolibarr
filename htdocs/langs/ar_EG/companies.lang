@@ -357,7 +357,6 @@ InEEC=أوروبا (الاتحاد الاقتصادي الأوروبي)
 RestOfEurope=باقي أوروبا (الاتحاد الاقتصادي الأوروبي)
 OutOfEurope=خارج أوروبا (الاتحاد الاقتصادي الأوروبي)
 CurrentOutstandingBillLate=الرصيد الحالي المتأخر
-BecarefullChangeThirdpartyBeforeAddProductToInvoice=تنبيه، حسب إعدادات تسعير المنتجات، يفضل تغيير الجهة الخارجية قبل إضافة منتج إلى نقطة البيع
 EmailAlreadyExistsPleaseRewriteYourCompanyName=البريد الإلكتروني موجود مسبقا، يرجى إعادة كتابة اسم شركتك
 TwoRecordsOfCompanyName=يوجد أكثر من سجل لنفس اسم الشركة، يرجى التواصل معنا لاستكمال طلب الشراكة
 CompanySection=قسم الشركة

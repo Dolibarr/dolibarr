@@ -3356,7 +3356,7 @@ class Societe extends CommonObject
 				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
 			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
-			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').' refurl valignmiddle"';
+			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').' refurl'.($withpicto ? ' valignmiddle' : '').'"';
 			$target_value = array('_self', '_blank', '_parent', '_top');
 			if (in_array($target, $target_value)) {
 				$linkclose .= ' target="'.dol_escape_htmltag($target).'"';
@@ -4300,16 +4300,15 @@ class Societe extends CommonObject
 	public function id_prof_check($idprof, $soc)
 	{
 		// phpcs:enable
-		global $conf;
-
-		// load the library necessary to check the professional identifiers
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/profid.lib.php';
 
 		$ok = 1;
 
 		if (getDolGlobalString('MAIN_DISABLEPROFIDRULES')) {
 			return 1;
 		}
+
+		// load the library necessary to check the professional identifiers
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/profid.lib.php';
 
 		// Check SIREN
 		if ($idprof == 1 && $soc->country_code == 'FR' && !isValidSiren($this->idprof1)) {
@@ -4356,7 +4355,7 @@ class Societe extends CommonObject
 	public function id_prof_url($idprof, $thirdparty)
 	{
 		// phpcs:enable
-		global $conf, $langs, $hookmanager;
+		global $langs, $hookmanager;
 
 		$url = '';
 		$action = '';
@@ -4369,25 +4368,25 @@ class Societe extends CommonObject
 				return '';
 			}
 
-			// TODO Move links to validate professional ID into a dictionary table "country" + "link"
+			// TODO Move links to validate professional ID into the dictionary table "country" + column "linkidprof1"
 			$strippedIdProf1 = str_replace(' ', '', $thirdparty->idprof1);
 			if ($idprof == 1 && $thirdparty->country_code == 'FR') {
-				$url = 'https://annuaire-entreprises.data.gouv.fr/entreprise/'.$strippedIdProf1; // See also http://avis-situation-sirene.insee.fr/
+				$url = 'https://annuaire-entreprises.data.gouv.fr/entreprise/'.urlencode($strippedIdProf1); // See also http://avis-situation-sirene.insee.fr/
 			}
 			if ($idprof == 1 && ($thirdparty->country_code == 'GB' || $thirdparty->country_code == 'UK')) {
-				$url = 'https://beta.companieshouse.gov.uk/company/'.$strippedIdProf1;
+				$url = 'https://beta.companieshouse.gov.uk/company/'.urlencode($strippedIdProf1);
 			}
 			if ($idprof == 1 && $thirdparty->country_code == 'ES') {
-				$url = 'http://www.e-informa.es/servlet/app/portal/ENTP/screen/SProducto/prod/ETIQUETA_EMPRESA/nif/'.$strippedIdProf1;
+				$url = 'http://www.e-informa.es/servlet/app/portal/ENTP/screen/SProducto/prod/ETIQUETA_EMPRESA/nif/'.urlencode($strippedIdProf1);
 			}
 			if ($idprof == 1 && $thirdparty->country_code == 'IN') {
-				$url = 'http://www.tinxsys.com/TinxsysInternetWeb/dealerControllerServlet?tinNumber='.$strippedIdProf1.';&searchBy=TIN&backPage=searchByTin_Inter.jsp';
+				$url = 'http://www.tinxsys.com/TinxsysInternetWeb/dealerControllerServlet?tinNumber='.urlencode($strippedIdProf1).';&searchBy=TIN&backPage=searchByTin_Inter.jsp';
 			}
 			if ($idprof == 1 && $thirdparty->country_code == 'DZ') {
-				$url = 'http://nif.mfdgi.gov.dz/nif.asp?Nif='.$strippedIdProf1;
+				$url = 'http://nif.mfdgi.gov.dz/nif.asp?Nif='.urlencode($strippedIdProf1);
 			}
 			if ($idprof == 1 && $thirdparty->country_code == 'PT') {
-				$url = 'http://www.nif.pt/'.$strippedIdProf1;
+				$url = 'http://www.nif.pt/'.urlencode($strippedIdProf1);
 			}
 
 			if ($url) {

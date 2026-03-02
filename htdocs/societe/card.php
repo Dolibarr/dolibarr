@@ -1760,7 +1760,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					}
 
 					$idprof_mandatory = 'SOCIETE_IDPROF'.($i).'_MANDATORY';
-					print '<td>'.$form->editfieldkey($idprof, $key, '', $object, 0, 'string', '', (empty($conf->global->$idprof_mandatory) ? 0 : 1)).'</td><td>';
+					print '<td>'.$form->editfieldkey($idprof, $key, '', $object, 0, 'string', '', (getDolGlobalString($idprof_mandatory) ? 1 : 0)).'</td><td>';
 
 					print $formcompany->get_input_id_prof($i, $key, $object->$key, $object->country_code);
 					print '</td>';
@@ -1834,21 +1834,21 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			// TODO: Place into a function to control showing by country or study better option
 			if ($mysoc->localtax1_assuj == "1" && $mysoc->localtax2_assuj == "1") {
 				print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code).'</td><td>';
-				print '<input id="localtax1assuj_value" name="localtax1assuj_value" type="checkbox" ' . (isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX1) ? 'checked="checked"' : '') . ' value="1">';
+				print '<input id="localtax1assuj_value" name="localtax1assuj_value" type="checkbox" ' . (getDolGlobalString('THIRDPARTY_DEFAULT_USELOCALTAX1') ? 'checked="checked"' : '') . ' value="1">';
 				print '</td>';
 				if ($conf->browser->layout == 'phone') {
 					print '</tr><tr>';
 				}
 				print '<td>'.$langs->transcountry("LocalTax2IsUsed", $mysoc->country_code).'</td><td>';
-				print '<input id="localtax2assuj_value" name="localtax2assuj_value" type="checkbox" ' . (isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX2) ? 'checked="checked"' : '') . ' value="1">';
+				print '<input id="localtax2assuj_value" name="localtax2assuj_value" type="checkbox" ' . (getDolGlobalString('THIRDPARTY_DEFAULT_USELOCALTAX2') ? 'checked="checked"' : '') . ' value="1">';
 				print '</td></tr>';
 			} elseif ($mysoc->localtax1_assuj == "1") {
 				print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code).'</td><td colspan="3">';
-				print '<input id="localtax1assuj_value" name="localtax1assuj_value" type="checkbox" ' . (isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX1) ? 'checked="checked"' : '') . ' value="1">';
+				print '<input id="localtax1assuj_value" name="localtax1assuj_value" type="checkbox" ' . (getDolGlobalString('THIRDPARTY_DEFAULT_USELOCALTAX1') ? 'checked="checked"' : '') . ' value="1">';
 				print '</td></tr>';
 			} elseif ($mysoc->localtax2_assuj == "1") {
 				print '<tr><td>'.$langs->transcountry("LocalTax2IsUsed", $mysoc->country_code).'</td><td colspan="3">';
-				print '<input id="localtax2assuj_value" name="localtax2assuj_value" type="checkbox" ' . (isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX2) ? 'checked="checked"' : '') . ' value="1">';
+				print '<input id="localtax2assuj_value" name="localtax2assuj_value" type="checkbox" ' . (getDolGlobalString('THIRDPARTY_DEFAULT_USELOCALTAX2') ? 'checked="checked"' : '') . ' value="1">';
 				print '</td></tr>';
 			}
 
@@ -3093,8 +3093,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print dol_print_profids($object->$key, 'ProfId'.$i, $object->country_code, 1);
 					if ($object->$key) {
 						if ($object->id_prof_check($i, $object) > 0) {
-							if (!empty($object->id_prof_url($i, $object))) {
-								print ' &nbsp; '.$object->id_prof_url($i, $object);
+							$profidurl = $object->id_prof_url($i, $object);
+							if (!empty($profidurl)) {
+								print ' &nbsp; '.$profidurl;
 							}
 						} else {
 							print ' <span class="error">('.$langs->trans("ErrorWrongValue").')</span>';

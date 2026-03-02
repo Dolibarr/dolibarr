@@ -116,6 +116,9 @@ if (GETPOSTISSET("limityear") && GETPOSTINT("limityear") < 2100) {
 
 // Security check
 $socid = GETPOSTINT('socid');
+if (empty($socid)) {
+	$socid = $user->socid; // External users: fall back to their own company (consistent with other card pages)
+}
 $id = GETPOSTINT('id');
 if ($user->socid && ($socid != $user->socid)) {
 	accessforbidden();

@@ -118,7 +118,8 @@ ThisPageHasTranslationPages=Această pagină/container are traducere
 NoWebSiteCreateOneFirst=Niciun site nu a fost creat încă. Creați unul mai întâi.
 GoTo=Mergi la
 DynamicPHPCodeContainsAForbiddenInstruction=Adăugați cod PHP dinamic care conține instrucțiunea PHP '<strong>%s</strong>' care este interzisă în mod implicit ca şi conținut dinamic (consultați opțiunile ascunse WEBSITE_PHP_ALLOW_xxx pentru a extinde lista comenzilor permise).
-NotAllowedToAddDynamicContent=Nu aveți permisiunea să adăugați sau să editați conținut dinamic PHP în site-uri web. Cereți permisiunea sau păstrați codul nemodificat în etichetele php.
+NotAllowedToAddDynamicContent=You don't have permission to add or edit dynamic PHP content in websites. Ask permission or just keep code into php tags unmodified.
+NotAllowedToAddDynamicContentDisabledGlobaly=You currently can't add or edit dynamic PHP content in this website (even if you have permission to), because this feature must be first enabled globally by setting the parameter %s=1 int the conf.php file.<br>Edit your conf.php file to add this parameter, or ask your administrator or support to do it for you.
 ReplaceWebsiteContent=Căutare sau înlocuire conținut website
 DeleteAlsoJs=Șterg și toate fișierele JavaScript specifice acestui site?
 DeleteAlsoMedias=Șterg și toate fișierele media specifice acestui site?

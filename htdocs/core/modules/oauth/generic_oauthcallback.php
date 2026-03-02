@@ -310,8 +310,9 @@ if (!GETPOST('code') && !GETPOST('error')) {
 				'@phan-var-force OAuth\Common\Token\AbstractToken $token';
 
 				$storage = $apiService->getStorage();
-				if (property_exists($storage, 'last_insert_id')) {
-					$last_insert_id = $storage->last_insert_id;
+				/** @var DoliStorage $storage */
+				if (property_exists($storage, 'last_insert_id')) {		// @phan-suppress-current-line PhanUndeclaredProperty
+					$last_insert_id = $storage->last_insert_id;			// @phan-suppress-current-line PhanUndeclaredProperty
 				}
 			} catch (Exception $e) {
 				dol_syslog("Failed to get token with requestAccessToken: ".$e->getMessage(), LOG_ERR);
