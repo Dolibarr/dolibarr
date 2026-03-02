@@ -3835,6 +3835,32 @@ class User extends CommonObject
 		}
 	}
 
+	/**
+	 * Return a safe entity list for SQL IN(...)
+	 * Avoid invalid SQL like IN (0,) or IN (,)
+	 *
+	 * @param string $element Element name for getEntity()
+	 * @return string CSV of integers, never empty
+	 */
+	private function getEntityListForSql($element)
+	{
+		$list = (string) getEntity($element);
+
+		// Split by comma, keep only numeric ids
+		$parts = preg_split('/\s*,\s*/', $list);
+		$parts = array_values(array_filter($parts, static function ($v) {
+			$v = (string) $v;
+			return ($v !== '' && ctype_digit($v));
+		}));
+
+		// Never return empty list (avoid IN ())
+		if (empty($parts)) {
+			return '0'; // or '-1' if you prefer returning no rows
+		}
+
+		return implode(',', $parts);
+	}
+
 
 	/**
 	 *  Load this->parentof that is array(id_son=>id_parent, ...)
@@ -3845,11 +3871,13 @@ class User extends CommonObject
 	{
 		$this->parentof = array();
 
+		$entityList = $this->getEntityListForSql('user');
+
 		// Load array[child]=parent
 		$sql = "SELECT fk_user as id_parent, rowid as id_son";
 		$sql .= " FROM ".$this->db->prefix()."user";
 		$sql .= " WHERE fk_user <> 0";
-		$sql .= " AND entity IN (".getEntity('user').")";
+		$sql .= " AND entity IN (".$entityList.")";
 
 		dol_syslog(get_class($this)."::loadParentOf", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -3897,10 +3925,11 @@ class User extends CommonObject
 		// Add fields from hooks
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('printUserListWhere', $parameters); // Note that $action and $object may have been modified by hook
+		$entityList = $this->getEntityListForSql('user');
 		if ($reshook > 0) {
 			$sql .= $hookmanager->resPrint;
 		} else {
-			$sql .= " WHERE u.entity IN (".getEntity('user').")";
+			$sql .= " WHERE u.entity IN (".$entityList.")";
 		}
 		if ($filter) {
 			$sql .= " AND ".$filter;	// already sanitized
