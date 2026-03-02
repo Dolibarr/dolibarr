@@ -538,6 +538,12 @@ print '<td colspan="2">';
 print ajax_constantonoff('SUPPLIER_ORDER_DISABLE_CLASSIFY_BILLED_FROM_SUPPLIER_ORDER');
 print '</td></tr>';
 
+// Allow external download
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("AllowExternalDownload").'</td>';
+print '<td class="left" colspan="2">';
+print ajax_constantonoff('SUPPLIER_ORDER_ALLOW_EXTERNAL_DOWNLOAD', array(), null, 0, 0, 0, 2, 0, 1);
+print '</td></tr>';
 
 // Notifications
 print '<tr class="oddeven">';
