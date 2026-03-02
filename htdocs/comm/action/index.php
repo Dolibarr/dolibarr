@@ -1163,7 +1163,11 @@ if ($user->hasRight("holiday", "read")) {
 		$sql .= " AND x.date_debut <= '".$db->idate(dol_get_last_day($year, $month))."'";
 		$sql .= " AND x.date_fin >= '".$db->idate(dol_get_first_day($year, $month))."'";
 	}
-	if (!$user->hasRight('holiday', 'readall')) {
+	if ($filtert > 0) {
+		// Restrict on user
+		$sql .= " AND x.fk_user = ".((int) $filtert);
+	} elseif (!$user->hasRight('holiday', 'readall') || $filtert == '-3') {
+		// Restrict on users of current user and his children
 		$sql .= " AND x.fk_user IN(".$db->sanitize(implode(", ", $user->getAllChildIds(1))).") ";
 	}
 
