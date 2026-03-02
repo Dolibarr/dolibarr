@@ -6995,7 +6995,7 @@ class Form
 		global $conf, $langs;
 
 		if ($htmlname != "none") {
-			print '<form method="post" action="' . $page . '">';
+			print '<form method="post" action="' . $page . '" class="inline-block">';
 			print '<input type="hidden" name="action" value="setabsolutediscount">';
 			print '<input type="hidden" name="token" value="' . newToken() . '">';
 			print '<div class="inline-block">';
