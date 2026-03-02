@@ -1,0 +1,55 @@
+Content-Type: multipart/mixed;
+	boundary="BOUNDARY"
+
+--BOUNDARY
+Content-Type: text/plain;
+ name*0*=utf-8''Buchungsbest%C3%A4tigung-%20Rechnung-Gesch%C3%A4ftsbedingung;
+ name*1*=en-Nr.B123-45%20-%20XXXX%20xxxxxxxxxxxxxxxxx%20XxxX%2C%20L%C3%BCd;
+ name*2*=xxxxxxxx%20-%20VM%20Klaus%20XXXXXX%20-%20xxxxxxxx.pdf
+Content-Disposition: attachment;
+ filename*0*=utf-8''Buchungsbest%C3%A4tigung-%20Rechnung-Gesch%C3%A4ftsbedin;
+ filename*1*=gungen-Nr.B123-45%20-%20XXXXX%20xxxxxxxxxxxxxxxxx%20XxxX%2C;
+ filename*2*=%20L%C3%BCxxxxxxxxxx%20-%20VM%20Klaus%20XXXXXX%20-%20xxxxxxxx.p;
+ filename*3*=df
+Content-Transfer-Encoding: base64
+
+SGkh
+--BOUNDARY
+Content-Type: text/plain; charset=UTF-8;
+ name="=?UTF-8?B?MDFfQeKCrMOgw6TEhdCx2YrYr0BaLTAxMjM0NTY3ODktcXdlcnR5dWlv?=
+ =?UTF-8?Q?pasdfghjklzxcvbnmopqrstuvz-0123456789-qwertyuiopasdfghjklzx?=
+ =?UTF-8?Q?cvbnmopqrstuvz-0123456789-qwertyuiopasdfghjklzxcvbnmopqrstu?=
+ =?UTF-8?Q?vz.txt?="
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment;
+ filename*0*=iso-8859-15''%30%31%5F%41%A4%E0%E4%3F%3F%3F%3F%40%5A%2D%30%31;
+ filename*1*=%32%33%34%35%36%37%38%39%2D%71%77%65%72%74%79%75%69%6F%70%61;
+ filename*2*=%73%64%66%67%68%6A%6B%6C%7A%78%63%76%62%6E%6D%6F%70%71%72%73;
+ filename*3*=%74%75%76%7A%2D%30%31%32%33%34%35%36%37%38%39%2D%71%77%65%72;
+ filename*4*=%74%79%75%69%6F%70%61%73%64%66%67%68%6A%6B%6C%7A%78%63%76%62;
+ filename*5*=%6E%6D%6F%70%71%72%73%74%75%76%7A%2D%30%31%32%33%34%35%36%37;
+ filename*6*=%38%39%2D%71%77%65%72%74%79%75%69%6F%70%61%73%64%66%67%68%6A;
+ filename*7*=%6B%6C%7A%78%63%76%62%6E%6D%6F%70%71%72%73%74%75%76%7A%2E%74;
+ filename*8*=%78%74
+
+SGkh
+--BOUNDARY
+Content-Type: text/plain; charset=UTF-8;
+ name="=?UTF-8?B?MDJfQeKCrMOgw6TEhdCx2YrYr0BaLTAxMjM0NTY3ODktcXdlcnR5dWlv?=
+ =?UTF-8?Q?pasdfghjklzxcvbnmopqrstuvz-0123456789-qwertyuiopasdfghjklzx?=
+ =?UTF-8?Q?cvbnmopqrstuvz-0123456789-qwertyuiopasdfghjklzxcvbnmopqrstu?=
+ =?UTF-8?Q?vz.txt?="
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment;
+ filename*0*=UTF-8''%30%32%5F%41%E2%82%AC%C3%A0%C3%A4%C4%85%D0%B1%D9%8A%D8;
+ filename*1*=%AF%40%5A%2D%30%31%32%33%34%35%36%37%38%39%2D%71%77%65%72%74;
+ filename*2*=%79%75%69%6F%70%61%73%64%66%67%68%6A%6B%6C%7A%78%63%76%62%6E;
+ filename*3*=%6D%6F%70%71%72%73%74%75%76%7A%2D%30%31%32%33%34%35%36%37%38;
+ filename*4*=%39%2D%71%77%65%72%74%79%75%69%6F%70%61%73%64%66%67%68%6A%6B;
+ filename*5*=%6C%7A%78%63%76%62%6E%6D%6F%70%71%72%73%74%75%76%7A%2D%30%31;
+ filename*6*=%32%33%34%35%36%37%38%39%2D%71%77%65%72%74%79%75%69%6F%70%61;
+ filename*7*=%73%64%66%67%68%6A%6B%6C%7A%78%63%76%62%6E%6D%6F%70%71%72%73;
+ filename*8*=%74%75%76%7A%2E%74%78%74
+
+SGkh
+--BOUNDARY--

@@ -12,10 +12,13 @@
 
 namespace Webklex\PHPIMAP\Support;
 
+use Illuminate\Support\Collection;
+
 /**
  * Class FlagCollection
  *
  * @package Webklex\PHPIMAP\Support
+ * @implements Collection<string, string>
  */
 class FlagCollection extends PaginatedCollection {
 

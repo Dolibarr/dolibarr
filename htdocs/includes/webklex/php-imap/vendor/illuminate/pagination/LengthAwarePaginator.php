@@ -11,6 +11,18 @@ use Illuminate\Support\Collection;
 use IteratorAggregate;
 use JsonSerializable;
 
+/**
+ * @template TKey of array-key
+ *
+ * @template-covariant TValue
+ *
+ * @extends AbstractPaginator<TKey, TValue>
+ *
+ * @implements Arrayable<TKey, TValue>
+ * @implements ArrayAccess<TKey, TValue>
+ * @implements IteratorAggregate<TKey, TValue>
+ * @implements LengthAwarePaginatorContract<TKey, TValue>
+ */
 class LengthAwarePaginator extends AbstractPaginator implements Arrayable, ArrayAccess, Countable, IteratorAggregate, Jsonable, JsonSerializable, LengthAwarePaginatorContract
 {
     /**
@@ -30,12 +42,11 @@ class LengthAwarePaginator extends AbstractPaginator implements Arrayable, Array
     /**
      * Create a new paginator instance.
      *
-     * @param  mixed  $items
+     * @param  Collection<TKey, TValue>|Arrayable<TKey, TValue>|iterable<TKey, TValue>|null  $items
      * @param  int  $total
      * @param  int  $perPage
      * @param  int|null  $currentPage
      * @param  array  $options  (path, query, fragment, pageName)
-     * @return void
      */
     public function __construct($items, $total, $perPage, $currentPage = null, array $options = [])
     {
@@ -46,11 +57,11 @@ class LengthAwarePaginator extends AbstractPaginator implements Arrayable, Array
         }
 
         $this->total = $total;
-        $this->perPage = $perPage;
+        $this->perPage = (int) $perPage;
         $this->lastPage = max((int) ceil($total / $perPage), 1);
         $this->path = $this->path !== '/' ? rtrim($this->path, '/') : $this->path;
         $this->currentPage = $this->setCurrentPage($currentPage, $this->pageName);
-        $this->items = $items instanceof Collection ? $items : Collection::make($items);
+        $this->items = $items instanceof Collection ? $items : new Collection($items);
     }
 
     /**
@@ -101,25 +112,28 @@ class LengthAwarePaginator extends AbstractPaginator implements Arrayable, Array
      */
     public function linkCollection()
     {
-        return collect($this->elements())->flatMap(function ($item) {
+        return (new Collection($this->elements()))->flatMap(function ($item) {
             if (! is_array($item)) {
                 return [['url' => null, 'label' => '...', 'active' => false]];
             }
 
-            return collect($item)->map(function ($url, $page) {
+            return (new Collection($item))->map(function ($url, $page) {
                 return [
                     'url' => $url,
                     'label' => (string) $page,
+                    'page' => $page,
                     'active' => $this->currentPage() === $page,
                 ];
             });
         })->prepend([
             'url' => $this->previousPageUrl(),
             'label' => function_exists('__') ? __('pagination.previous') : 'Previous',
+            'page' => $this->currentPage() > 1 ? $this->currentPage() - 1 : null,
             'active' => false,
         ])->push([
             'url' => $this->nextPageUrl(),
             'label' => function_exists('__') ? __('pagination.next') : 'Next',
+            'page' => $this->hasMorePages() ? $this->currentPage() + 1 : null,
             'active' => false,
         ]);
     }
@@ -213,8 +227,7 @@ class LengthAwarePaginator extends AbstractPaginator implements Arrayable, Array
      *
      * @return array
      */
-    #[\ReturnTypeWillChange]
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }
@@ -228,5 +241,17 @@ class LengthAwarePaginator extends AbstractPaginator implements Arrayable, Array
     public function toJson($options = 0)
     {
         return json_encode($this->jsonSerialize(), $options);
+    }
+
+    /**
+     * Convert the object to pretty print formatted JSON.
+     *
+     * @params int $options
+     *
+     * @return string
+     */
+    public function toPrettyJson(int $options = 0)
+    {
+        return $this->toJson(JSON_PRETTY_PRINT | $options);
     }
 }

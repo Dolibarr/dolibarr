@@ -19,6 +19,14 @@ interface Filesystem
     const VISIBILITY_PRIVATE = 'private';
 
     /**
+     * Get the full path to the file that exists at the given relative path.
+     *
+     * @param  string  $path
+     * @return string
+     */
+    public function path($path);
+
+    /**
      * Determine if a file exists.
      *
      * @param  string  $path
@@ -30,9 +38,7 @@ interface Filesystem
      * Get the contents of a file.
      *
      * @param  string  $path
-     * @return string
-     *
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     * @return string|null
      */
     public function get($path);
 
@@ -41,8 +47,6 @@ interface Filesystem
      *
      * @param  string  $path
      * @return resource|null The path resource or null on failure.
-     *
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     public function readStream($path);
 
@@ -50,11 +54,32 @@ interface Filesystem
      * Write the contents of a file.
      *
      * @param  string  $path
-     * @param  string|resource  $contents
+     * @param  \Psr\Http\Message\StreamInterface|\Illuminate\Http\File|\Illuminate\Http\UploadedFile|string|resource  $contents
      * @param  mixed  $options
      * @return bool
      */
     public function put($path, $contents, $options = []);
+
+    /**
+     * Store the uploaded file on the disk.
+     *
+     * @param  \Illuminate\Http\File|\Illuminate\Http\UploadedFile|string  $path
+     * @param  \Illuminate\Http\File|\Illuminate\Http\UploadedFile|string|array|null  $file
+     * @param  mixed  $options
+     * @return string|false
+     */
+    public function putFile($path, $file = null, $options = []);
+
+    /**
+     * Store the uploaded file on the disk with a given name.
+     *
+     * @param  \Illuminate\Http\File|\Illuminate\Http\UploadedFile|string  $path
+     * @param  \Illuminate\Http\File|\Illuminate\Http\UploadedFile|string|array|null  $file
+     * @param  string|array|null  $name
+     * @param  mixed  $options
+     * @return string|false
+     */
+    public function putFileAs($path, $file, $name = null, $options = []);
 
     /**
      * Write a new file using a stream.
@@ -63,9 +88,6 @@ interface Filesystem
      * @param  resource  $resource
      * @param  array  $options
      * @return bool
-     *
-     * @throws \InvalidArgumentException If $resource is not a file handle.
-     * @throws \Illuminate\Contracts\Filesystem\FileExistsException
      */
     public function writeStream($path, $resource, array $options = []);
 
@@ -151,7 +173,7 @@ interface Filesystem
      *
      * @param  string|null  $directory
      * @param  bool  $recursive
-     * @return array
+     * @return array<string>
      */
     public function files($directory = null, $recursive = false);
 
@@ -159,7 +181,7 @@ interface Filesystem
      * Get all of the files from the given directory (recursive).
      *
      * @param  string|null  $directory
-     * @return array
+     * @return array<string>
      */
     public function allFiles($directory = null);
 
@@ -168,7 +190,7 @@ interface Filesystem
      *
      * @param  string|null  $directory
      * @param  bool  $recursive
-     * @return array
+     * @return array<string>
      */
     public function directories($directory = null, $recursive = false);
 
@@ -176,7 +198,7 @@ interface Filesystem
      * Get all (recursive) of the directories within a given directory.
      *
      * @param  string|null  $directory
-     * @return array
+     * @return array<string>
      */
     public function allDirectories($directory = null);
 

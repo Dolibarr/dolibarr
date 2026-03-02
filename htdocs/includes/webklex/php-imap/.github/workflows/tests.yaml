@@ -1,0 +1,50 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '0 0 * * *'
+
+permissions:
+  contents: read
+
+jobs:
+  phpunit:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: true
+      matrix:
+        php: ['8.0', 8.1, 8.2, 8.3, 8.4]
+
+    name: PHP ${{ matrix.php }}
+
+    env:
+      LIVE_MAILBOX: true
+      LIVE_MAILBOX_DEBUG: true
+      LIVE_MAILBOX_HOST: mail.example.local
+      LIVE_MAILBOX_PORT: 993
+      LIVE_MAILBOX_USERNAME: root@example.local
+      LIVE_MAILBOX_ENCRYPTION: ssl
+      LIVE_MAILBOX_PASSWORD: foobar
+      LIVE_MAILBOX_QUOTA_SUPPORT: true
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: openssl, json, mbstring, iconv, fileinfo, libxml, zip
+          coverage: none
+
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - run: "sh .github/docker/dovecot_setup.sh"
+
+      - name: Execute tests
+        run: vendor/bin/phpunit

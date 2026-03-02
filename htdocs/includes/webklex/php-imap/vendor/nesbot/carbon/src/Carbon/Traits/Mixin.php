@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of the Carbon package.
  *
@@ -11,6 +13,9 @@
 
 namespace Carbon\Traits;
 
+use Carbon\CarbonInterface;
+use Carbon\CarbonInterval;
+use Carbon\CarbonPeriod;
 use Closure;
 use Generator;
 use ReflectionClass;
@@ -27,10 +32,8 @@ trait Mixin
 {
     /**
      * Stack of macro instance contexts.
-     *
-     * @var array
      */
-    protected static $macroContextStack = [];
+    protected static array $macroContextStack = [];
 
     /**
      * Mix another object into the class.
@@ -57,13 +60,9 @@ trait Mixin
      * echo "$previousBlackMoon\n";
      * ```
      *
-     * @param object|string $mixin
-     *
      * @throws ReflectionException
-     *
-     * @return void
      */
-    public static function mixin($mixin)
+    public static function mixin(object|string $mixin): void
     {
         \is_string($mixin) && trait_exists($mixin)
             ? self::loadMixinTrait($mixin)
@@ -71,14 +70,12 @@ trait Mixin
     }
 
     /**
-     * @param object|string $mixin
-     *
      * @throws ReflectionException
      */
-    private static function loadMixinClass($mixin)
+    private static function loadMixinClass(object|string $mixin): void
     {
         $methods = (new ReflectionClass($mixin))->getMethods(
-            ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PROTECTED
+            ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PROTECTED,
         );
 
         foreach ($methods as $method) {
@@ -86,43 +83,84 @@ trait Mixin
                 continue;
             }
 
-            $method->setAccessible(true);
+            $macro = $method->invoke($mixin);
 
-            static::macro($method->name, $method->invoke($mixin));
+            if (\is_callable($macro)) {
+                static::macro($method->name, $macro);
+            }
         }
     }
 
-    /**
-     * @param string $trait
-     */
-    private static function loadMixinTrait($trait)
+    private static function loadMixinTrait(string $trait): void
     {
         $context = eval(self::getAnonymousClassCodeForTrait($trait));
         $className = \get_class($context);
+        $baseClass = static::class;
 
         foreach (self::getMixableMethods($context) as $name) {
             $closureBase = Closure::fromCallable([$context, $name]);
 
-            static::macro($name, function () use ($closureBase, $className) {
-                /** @phpstan-ignore-next-line */
+            static::macro($name, function (...$parameters) use ($closureBase, $className, $baseClass) {
+                $downContext = isset($this) ? ($this) : new $baseClass();
                 $context = isset($this) ? $this->cast($className) : new $className();
 
                 try {
                     // @ is required to handle error if not converted into exceptions
                     $closure = @$closureBase->bindTo($context);
-                } catch (Throwable $throwable) { // @codeCoverageIgnore
+                } catch (Throwable) { // @codeCoverageIgnore
                     $closure = $closureBase; // @codeCoverageIgnore
                 }
 
                 // in case of errors not converted into exceptions
                 $closure = $closure ?: $closureBase;
 
-                return $closure(...\func_get_args());
+                $result = $closure(...$parameters);
+
+                if (!($result instanceof $className)) {
+                    return $result;
+                }
+
+                if ($downContext instanceof CarbonInterface && $result instanceof CarbonInterface) {
+                    if ($context !== $result) {
+                        $downContext = $downContext->copy();
+                    }
+
+                    return $downContext
+                        ->setTimezone($result->getTimezone())
+                        ->modify($result->format('Y-m-d H:i:s.u'))
+                        ->settings($result->getSettings());
+                }
+
+                if ($downContext instanceof CarbonInterval && $result instanceof CarbonInterval) {
+                    if ($context !== $result) {
+                        $downContext = $downContext->copy();
+                    }
+
+                    $downContext->copyProperties($result);
+                    self::copyStep($downContext, $result);
+                    self::copyNegativeUnits($downContext, $result);
+
+                    return $downContext->settings($result->getSettings());
+                }
+
+                if ($downContext instanceof CarbonPeriod && $result instanceof CarbonPeriod) {
+                    if ($context !== $result) {
+                        $downContext = $downContext->copy();
+                    }
+
+                    return $downContext
+                        ->setDates($result->getStartDate(), $result->getEndDate())
+                        ->setRecurrences($result->getRecurrences())
+                        ->setOptions($result->getOptions())
+                        ->settings($result->getSettings());
+                }
+
+                return $result;
             });
         }
     }
 
-    private static function getAnonymousClassCodeForTrait(string $trait)
+    private static function getAnonymousClassCodeForTrait(string $trait): string
     {
         return 'return new class() extends '.static::class.' {use '.$trait.';};';
     }
@@ -140,51 +178,30 @@ trait Mixin
 
     /**
      * Stack a Carbon context from inside calls of self::this() and execute a given action.
-     *
-     * @param static|null $context
-     * @param callable    $callable
-     *
-     * @throws Throwable
-     *
-     * @return mixed
      */
-    protected static function bindMacroContext($context, callable $callable)
+    protected static function bindMacroContext(?self $context, callable $callable): mixed
     {
         static::$macroContextStack[] = $context;
-        $exception = null;
-        $result = null;
 
         try {
-            $result = $callable();
-        } catch (Throwable $throwable) {
-            $exception = $throwable;
+            return $callable();
+        } finally {
+            array_pop(static::$macroContextStack);
         }
-
-        array_pop(static::$macroContextStack);
-
-        if ($exception) {
-            throw $exception;
-        }
-
-        return $result;
     }
 
     /**
      * Return the current context from inside a macro callee or a null if static.
-     *
-     * @return static|null
      */
-    protected static function context()
+    protected static function context(): ?static
     {
         return end(static::$macroContextStack) ?: null;
     }
 
     /**
      * Return the current context from inside a macro callee or a new one if static.
-     *
-     * @return static
      */
-    protected static function this()
+    protected static function this(): static
     {
         return end(static::$macroContextStack) ?: new static();
     }

@@ -1,0 +1,96 @@
+Return-Path: <>
+Received: from somewhere.your-server.de
+	by somewhere.your-server.de with LMTP
+	id 3TP8LrElAGSOaAAAmBr1xw
+	(envelope-from <>); Thu, 02 Mar 2023 05:27:29 +0100
+Envelope-to: demo@foo.de
+Delivery-date: Thu, 02 Mar 2023 05:27:29 +0100
+Authentication-Results: somewhere.your-server.de;
+	iprev=pass (somewhere06.your-server.de) smtp.remote-ip=1b21:2f8:e0a:50e4::2;
+	spf=none smtp.mailfrom=<>;
+	dmarc=skipped
+Received: from somewhere06.your-server.de ([1b21:2f8:e0a:50e4::2])
+	by somewhere.your-server.de with esmtps  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	id 1pXaXR-0006xQ-BN
+	for demo@foo.de; Thu, 02 Mar 2023 05:27:29 +0100
+Received: from [192.168.0.10] (helo=sslproxy01.your-server.de)
+	by somewhere06.your-server.de with esmtps (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	id 1pXaXO-000LYP-9R
+	for demo@foo.de; Thu, 02 Mar 2023 05:27:26 +0100
+Received: from localhost ([127.0.0.1] helo=sslproxy01.your-server.de)
+	by sslproxy01.your-server.de with esmtps (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	id 1pXaXO-0008gy-7x
+	for demo@foo.de; Thu, 02 Mar 2023 05:27:26 +0100
+Received: from Debian-exim by sslproxy01.your-server.de with local (Exim 4.92)
+	id 1pXaXO-0008gb-6g
+	for demo@foo.de; Thu, 02 Mar 2023 05:27:26 +0100
+X-Failed-Recipients: ding@ding.de
+Auto-Submitted: auto-replied
+From: Mail Delivery System <Mailer-Daemon@sslproxy01.your-server.de>
+To: demo@foo.de
+Content-Type: multipart/report; report-type=delivery-status; boundary=1677731246-eximdsn-678287796
+MIME-Version: 1.0
+Subject: Mail delivery failed
+Message-Id: <E1pXaXO-0008gb-6g@sslproxy01.your-server.de>
+Date: Thu, 02 Mar 2023 05:27:26 +0100
+X-Virus-Scanned: Clear (ClamAV 0.103.8/26827/Wed Mar  1 09:28:49 2023)
+X-Spam-Score: 0.0 (/)
+Delivered-To: bar-demo@foo.de
+
+--1677731246-eximdsn-678287796
+Content-type: text/plain; charset=us-ascii
+
+This message was created automatically by mail delivery software.
+
+A message sent by
+
+  <info@foo.de>
+
+could not be delivered to one or more of its recipients. The following
+address(es) failed:
+
+  ding@ding.de
+    host 36.143.65.153 [36.143.65.153]
+    SMTP error from remote mail server after pipelined end of data:
+    550-Verification failed for <info@foo.de>
+    550-Unrouteable address
+    550 Sender verify failed
+
+--1677731246-eximdsn-678287796
+Content-type: message/delivery-status
+
+Reporting-MTA: dns; sslproxy01.your-server.de
+
+Action: failed
+Final-Recipient: rfc822;ding@ding.de
+Status: 5.0.0
+Remote-MTA: dns; 36.143.65.153
+Diagnostic-Code: smtp; 550-Verification failed for <info@foo.de>
+ 550-Unrouteable address
+ 550 Sender verify failed
+
+--1677731246-eximdsn-678287796
+Content-type: message/rfc822
+
+Return-path: <info@foo.de>
+Received: from [31.18.107.47] (helo=127.0.0.1)
+	by sslproxy01.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <info@foo.de>)
+	id 1pXaXO-0008eK-11
+	for ding@ding.de; Thu, 02 Mar 2023 05:27:26 +0100
+Date: Thu, 2 Mar 2023 05:27:25 +0100
+To: ding <ding@ding.de>
+From: =?iso-8859-1?Q?S=C3=BCderbar_Foo_=28SI=29_GmbH?= <info@foo.de>
+Subject: Test
+Message-ID: <UyVznI5nOyYGnv7Ij0hi6ro4gvxwGT999eQAtc4o@127.0.0.1>
+X-Mailer: PHPMailer 6.7.1 (https://github.com/PHPMailer/PHPMailer)
+Return-Path: bounce@foo.de
+MIME-Version: 1.0
+Content-Type: text/html; charset=iso-8859-1
+X-Authenticated-Sender: demo@foo.de
+
+<div class="some_class"><strong>Hallo</strong>, <i>dies</i> ist ein Beispiel-Text.</div>

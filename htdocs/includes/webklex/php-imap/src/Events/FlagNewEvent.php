@@ -22,17 +22,18 @@ use Webklex\PHPIMAP\Message;
 class FlagNewEvent extends Event {
 
     /** @var Message $message */
-    public $message;
+    public Message $message;
 
     /** @var string $flag */
-    public $flag;
+    public string $flag;
 
     /**
      * Create a new event instance.
-     * @var mixed[] $arguments
+     * @var array $arguments
+     *
      * @return void
      */
-    public function __construct($arguments) {
+    public function __construct(array $arguments) {
         $this->message = $arguments[0];
         $this->flag = $arguments[1];
     }

@@ -1,0 +1,24 @@
+From: from@there.com
+To: to@here.com
+Date: Wed, 27 Sep 2017 12:48:51 +0200
+Subject: test
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_000_0081_01D32C91.033E7020"
+
+This is a multipart message in MIME format.
+
+------=_NextPart_000_0081_01D32C91.033E7020
+Content-Type: text/plain;
+	charset=
+Content-Transfer-Encoding: foobar
+
+MyPlain
+
+------=_NextPart_000_0081_01D32C91.033E7020
+Content-Type: text/html;
+	charset=""
+Content-Transfer-Encoding: quoted-printable
+
+MyHtml
+------=_NextPart_000_0081_01D32C91.033E7020--
+

@@ -29,7 +29,7 @@ class NamespacedItemResolver
         // If the key does not contain a double colon, it means the key is not in a
         // namespace, and is just a regular configuration item. Namespaces are a
         // tool for organizing configuration items for things such as modules.
-        if (strpos($key, '::') === false) {
+        if (! str_contains($key, '::')) {
             $segments = explode('.', $key);
 
             $parsed = $this->parseBasicSegments($segments);
@@ -60,8 +60,8 @@ class NamespacedItemResolver
         // a specific item out of a group and will need to return this item name
         // as well as the group so we know which item to pull from the arrays.
         $item = count($segments) === 1
-                    ? null
-                    : implode('.', array_slice($segments, 1));
+            ? null
+            : implode('.', array_slice($segments, 1));
 
         return [null, $group, $item];
     }

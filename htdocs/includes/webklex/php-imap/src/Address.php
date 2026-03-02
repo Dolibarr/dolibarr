@@ -27,22 +27,40 @@ class Address {
      * @var string $mail
      * @var string $full
      */
-    public $personal = "";
-    public $mailbox = "";
-    public $host = "";
-    public $mail = "";
-    public $full = "";
+    public string $personal = "";
+    public string $mailbox = "";
+    public string $host = "";
+    public string $mail = "";
+    public string $full = "";
 
     /**
      * Address constructor.
-     * @param object   $object
+     * @param object $object
      */
-    public function __construct($object) {
-        if (property_exists($object, "personal")){ $this->personal = $object->personal; }
-        if (property_exists($object, "mailbox")){ $this->mailbox = $object->mailbox; }
-        if (property_exists($object, "host")){ $this->host = $object->host; }
-        if (property_exists($object, "mail")){ $this->mail = $object->mail; }
-        if (property_exists($object, "full")){ $this->full = $object->full; }
+    public function __construct(object $object) {
+        if (property_exists($object, "personal")){ $this->personal = $object->personal ?? ''; }
+        if (property_exists($object, "mailbox")){ $this->mailbox = $object->mailbox ?? ''; }
+        if (property_exists($object, "host")){ $this->host = $object->host ?? ''; }
+        if (property_exists($object, "mail")){ $this->mail = $object->mail ?? ''; }
+        if (property_exists($object, "full")){ $this->full = $object->full ?? ''; }
+        $this->boot();
+    }
+
+    /**
+     * Boot the address
+     */
+    private function boot(): void {
+        if($this->mail === "" && $this->mailbox !== "" && $this->host !== ""){
+            $this->mail = $this->mailbox . "@" . $this->host;
+        }elseif($this->mail === "" && $this->mailbox !== ""){
+            $this->mail = $this->mailbox;
+        }
+
+        if($this->full === "" && $this->mail !== "" && $this->personal !== ""){
+            $this->full = $this->personal . " <" . $this->mail . ">";
+        }elseif($this->full === "" && $this->mail !== ""){
+            $this->full = $this->mail;
+        }
     }
 
 
@@ -52,7 +70,7 @@ class Address {
      * @return string
      */
     public function __toString() {
-        return $this->full ? $this->full : "";
+        return $this->full ?: "";
     }
 
     /**
@@ -75,7 +93,7 @@ class Address {
      *
      * @return array
      */
-    public function toArray(){
+    public function toArray(): array {
         return $this->__serialize();
     }
 
@@ -84,7 +102,7 @@ class Address {
      *
      * @return string
      */
-    public function toString(){
+    public function toString(): string {
         return $this->__toString();
     }
 }

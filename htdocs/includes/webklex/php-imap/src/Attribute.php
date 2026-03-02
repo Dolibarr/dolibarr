@@ -23,25 +23,45 @@ use Carbon\Carbon;
 class Attribute implements ArrayAccess {
 
     /** @var string $name */
-    protected $name;
+    protected string $name;
 
     /**
      * Value holder
      *
      * @var array $values
      */
-    protected $values = [];
+    protected array $values = [];
 
     /**
      * Attribute constructor.
-     * @param string   $name
-     * @param array|mixed      $value
+     * @param string $name
+     * @param mixed|null $value
      */
-    public function __construct($name, $value = null) {
+    public function __construct(string $name, mixed $value = null) {
         $this->setName($name);
         $this->add($value);
     }
 
+    /**
+     * Handle class invocation calls
+     *
+     * @return array|string
+     */
+    public function __invoke(): array|string {
+        if ($this->count() > 1) {
+            return $this->toArray();
+        }
+        return $this->toString();
+    }
+
+    /**
+     * Return the serialized address
+     *
+     * @return array
+     */
+    public function __serialize(){
+        return $this->values;
+    }
 
     /**
      * Return the stringified attribute
@@ -57,17 +77,8 @@ class Attribute implements ArrayAccess {
      *
      * @return string
      */
-    public function toString(){
+    public function toString(): string {
         return $this->__toString();
-    }
-
-    /**
-     * Return the serialized attribute
-     *
-     * @return array
-     */
-    public function __serialize(){
-        return $this->values;
     }
 
     /**
@@ -75,16 +86,16 @@ class Attribute implements ArrayAccess {
      *
      * @return array
      */
-    public function toArray(){
+    public function toArray(): array {
         return $this->__serialize();
     }
 
     /**
      * Convert first value to a date object
      *
-     * @return Carbon|null
+     * @return Carbon
      */
-    public function toDate(){
+    public function toDate(): Carbon {
         $date = $this->first();
         if ($date instanceof Carbon) return $date;
 
@@ -92,48 +103,72 @@ class Attribute implements ArrayAccess {
     }
 
     /**
-     * Determine if a value exists at an offset.
+     * Determine if a value exists at a given key.
      *
-     * @param  mixed  $key
+     * @param int|string $key
      * @return bool
      */
-    public function offsetExists($key) {
+    public function has(mixed $key = 0): bool {
         return array_key_exists($key, $this->values);
     }
 
     /**
-     * Get a value at a given offset.
+     * Determine if a value exists at a given key.
      *
-     * @param  mixed  $key
-     * @return mixed
+     * @param int|string $key
+     * @return bool
      */
-    public function offsetGet($key) {
-        return $this->values[$key];
+    public function exist(mixed $key = 0): bool {
+        return $this->has($key);
     }
 
     /**
-     * Set the value at a given offset.
+     * Check if the attribute contains the given value
+     * @param mixed $value
      *
-     * @param  mixed  $key
-     * @param  mixed  $value
-     * @return void
+     * @return bool
      */
-    public function offsetSet($key, $value) {
+    public function contains(mixed $value): bool {
+        return in_array($value, $this->values, true);
+    }
+
+    /**
+     * Get a value by a given key.
+     *
+     * @param int|string $key
+     * @return mixed
+     */
+    public function get(int|string $key = 0): mixed {
+        return $this->values[$key] ?? null;
+    }
+
+    /**
+     * Set the value by a given key.
+     *
+     * @param mixed $key
+     * @param mixed $value
+     * @return Attribute
+     */
+    public function set(mixed $value, mixed $key = 0): Attribute {
         if (is_null($key)) {
             $this->values[] = $value;
         } else {
             $this->values[$key] = $value;
         }
+        return $this;
     }
 
     /**
-     * Unset the value at a given offset.
+     * Unset a value by a given key.
      *
-     * @param  string  $key
-     * @return void
+     * @param int|string $key
+     * @return Attribute
      */
-    public function offsetUnset($key) {
-        unset($this->values[$key]);
+    public function remove(int|string $key = 0): Attribute {
+        if (isset($this->values[$key])) {
+            unset($this->values[$key]);
+        }
+        return $this;
     }
 
     /**
@@ -143,7 +178,7 @@ class Attribute implements ArrayAccess {
      *
      * @return Attribute
      */
-    public function add($value, $strict = false) {
+    public function add(mixed $value, bool $strict = false): Attribute {
         if (is_array($value)) {
             return $this->merge($value, $strict);
         }elseif ($value !== null) {
@@ -160,37 +195,21 @@ class Attribute implements ArrayAccess {
      *
      * @return Attribute
      */
-    public function merge($values, $strict = false) {
-        if (is_array($values)) {
-            foreach ($values as $value) {
-                $this->attach($value, $strict);
-            }
+    public function merge(array $values, bool $strict = false): Attribute {
+        foreach ($values as $value) {
+            $this->attach($value, $strict);
         }
 
         return $this;
     }
 
     /**
-     * Check if the attribute contains the given value
-     * @param mixed $value
-     *
-     * @return bool
-     */
-    public function contains($value) {
-        foreach ($this->values as $v) {
-            if ($v === $value) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * Attach a given value to the current value array
      * @param $value
      * @param bool $strict
+     * @return Attribute
      */
-    public function attach($value, $strict = false) {
+    public function attach($value, bool $strict = false): Attribute {
         if ($strict === true) {
             if ($this->contains($value) === false) {
                 $this->values[] = $value;
@@ -198,6 +217,7 @@ class Attribute implements ArrayAccess {
         }else{
             $this->values[] = $value;
         }
+        return $this;
     }
 
     /**
@@ -206,7 +226,7 @@ class Attribute implements ArrayAccess {
      *
      * @return Attribute
      */
-    public function setName($name){
+    public function setName($name): Attribute {
         $this->name = $name;
 
         return $this;
@@ -217,7 +237,7 @@ class Attribute implements ArrayAccess {
      *
      * @return string
      */
-    public function getName(){
+    public function getName(): string {
         return $this->name;
     }
 
@@ -226,17 +246,9 @@ class Attribute implements ArrayAccess {
      *
      * @return array
      */
-    public function get(){
+    public function all(): array {
+        reset($this->values);
         return $this->values;
-    }
-
-    /**
-     * Alias method for self::get()
-     *
-     * @return array
-     */
-    public function all(){
-        return $this->get();
     }
 
     /**
@@ -244,11 +256,8 @@ class Attribute implements ArrayAccess {
      *
      * @return mixed|null
      */
-    public function first(){
-        if ($this->offsetExists(0)) {
-            return $this->values[0];
-        }
-        return null;
+    public function first(): mixed {
+        return reset($this->values);
     }
 
     /**
@@ -256,11 +265,8 @@ class Attribute implements ArrayAccess {
      *
      * @return mixed|null
      */
-    public function last(){
-        if (($cnt = $this->count()) > 0) {
-            return $this->values[$cnt - 1];
-        }
-        return null;
+    public function last(): mixed {
+        return end($this->values);
     }
 
     /**
@@ -268,7 +274,52 @@ class Attribute implements ArrayAccess {
      *
      * @return int
      */
-    public function count(){
+    public function count(): int {
         return count($this->values);
+    }
+
+    /**
+     * @see  ArrayAccess::offsetExists
+     * @param mixed $offset
+     * @return bool
+     */
+    public function offsetExists(mixed $offset): bool {
+        return $this->has($offset);
+    }
+
+    /**
+     * @see  ArrayAccess::offsetGet
+     * @param mixed $offset
+     * @return mixed
+     */
+    public function offsetGet(mixed $offset): mixed {
+        return $this->get($offset);
+    }
+
+    /**
+     * @see  ArrayAccess::offsetSet
+     * @param mixed $offset
+     * @param mixed $value
+     * @return void
+     */
+    public function offsetSet(mixed $offset, mixed $value): void {
+        $this->set($value, $offset);
+    }
+
+    /**
+     * @see  ArrayAccess::offsetUnset
+     * @param mixed $offset
+     * @return void
+     */
+    public function offsetUnset(mixed $offset): void {
+        $this->remove($offset);
+    }
+
+    /**
+     * @param callable $callback
+     * @return array
+     */
+    public function map(callable $callback): array {
+        return array_map($callback, $this->values);
     }
 }

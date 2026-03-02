@@ -1,0 +1,39 @@
+Return-Path: <real_sender@sender_domain.pl>
+Delivered-To: receipent@receipent_domain.pl
+Received: from h2.server.pl
+\tby h2.server.pl with LMTP
+\tid 4IDTIEUkm18ZSSkA87l24w
+\t(envelope-from <real_sender@sender_domain.pl>)
+\tfor <receipent@receipent_domain.pl>; Thu, 29 Oct 2020 21:21:25 +0100
+Return-path: <real_sender@sender_domain.pl>
+Envelope-to: receipent@receipent_domain.pl
+Delivery-date: Thu, 29 Oct 2020 21:21:25 +0100
+Received: from sender_domain.pl ([server ip])
+\tby h2.server.pl with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+\t(Exim 4.94)
+\t(envelope-from <real_sender@sender_domain.pl>)
+\tid 1kYEQG-00BPgD-S0
+\tfor receipent@receipent_domain.pl; Thu, 29 Oct 2020 21:21:25 +0100
+Received: by sender_domain.pl (Postfix, from userid 1000)
+\tid 57DADAB; Thu, 29 Oct 2020 21:21:23 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=sender_domain.pl; s=default;
+\tt=1604002883; bh=CsZufJouWdjY/W12No6MSSMwbp0VaS8EOMGg9WptEaI=;
+\th=From:To:Subject:Date;
+\tb=v0NAncnNT/w+gInANxAkMt20ktM4LZquuwlokUmLpPyO3++8dy112olu63Dkn9L2E
+\t GwfHGqW+8f7g494UK6asUKqTx8fHxlEJbHqAiEV5QrlynSeZDFXsKvGDW8XNMFBKop
+\t sAjvp8NTUiNcA4MTbFaZ7RX15A/9d9QVEynU8MaNP2ZYKnq9J/JXgUjjMnx+FiULqf
+\t xJN/5rjwHRx7f6JQoXXUxuck6Zh4tSDiLLnDFasrSxed6sTNfnZMAggCyb1++estNk
+\t q6HNBwp85Az3ELo10RbBF/WM2FhxxFz1khncRtCyLXLUZ2lzhjan765KXpeYg7FUa9
+\t zItPWVTaTzTEg==
+From: faked_sender@sender_domain.pl
+To: receipent@receipent_domain.pl
+Subject: Zly from
+Message-Id: <20201029202123.57DADAB@sender_domain.pl>
+Date: Thu, 29 Oct 2020 21:21:01 +0100 (CET)
+Forward-Confirmed-ReverseDNS: Reverse and forward lookup success on server ip, -10 Spam score
+SPFCheck: Server passes SPF test, -30 Spam score
+X-DKIM: signer='sender_domain.pl' status='pass' reason=''
+DKIMCheck: Server passes DKIM test, -20 Spam score
+X-Spam-Score: -0.2 (/)
+
+Test message

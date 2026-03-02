@@ -1,0 +1,32 @@
+Return-Path: <radicore@radicore.org>
+Delivered-To: gmx@tonymarston.co.uk
+Received: from ion.dnsprotect.com
+	by ion.dnsprotect.com with LMTP
+	id oPy8IzIke2Rr4gIAzEkvSQ
+	(envelope-from <radicore@radicore.org>)
+	for <gmx@tonymarston.co.uk>; Sat, 03 Jun 2023 07:29:54 -0400
+Return-path: <radicore@radicore.org>
+Envelope-to: gmx@tonymarston.net
+Delivery-date: Sat, 03 Jun 2023 07:29:54 -0400
+Received: from [::1] (port=48740 helo=ion.dnsprotect.com)
+	by ion.dnsprotect.com with esmtpa (Exim 4.96)
+	(envelope-from <radicore@radicore.org>)
+	id 1q5PSF-000nPQ-1F
+	for gmx@tonymarston.net;
+	Sat, 03 Jun 2023 07:29:54 -0400
+MIME-Version: 1.0
+Date: Sat, 03 Jun 2023 07:29:54 -0400
+From: radicore <radicore@radicore.org>
+To: gmx@tonymarston.net
+Subject: Test Message
+User-Agent: Roundcube Webmail/1.6.0
+Message-ID: <d0ac7f3d4ffc4d3f01ab38e92fc001ed@radicore.org>
+X-Sender: radicore@radicore.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+X-From-Rewrite: unmodified, already matched
+
+This is just a test, so ignore it (if you can!)
+
+Tony Marston

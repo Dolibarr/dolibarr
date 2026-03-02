@@ -33,9 +33,7 @@ interface Job
     public function fire();
 
     /**
-     * Release the job back into the queue.
-     *
-     * Accepts a delay specified in seconds.
+     * Release the job back into the queue after (n) seconds.
      *
      * @param  int  $delay
      * @return void
@@ -135,13 +133,22 @@ interface Job
     public function getName();
 
     /**
-     * Get the resolved name of the queued job class.
+     * Get the display name of the queued job class.
      *
      * Resolves the name of "wrapped" jobs such as class-based handlers.
      *
      * @return string
      */
     public function resolveName();
+
+    /**
+     * Get the class of the queued job.
+     *
+     * Resolves the class of "wrapped" jobs such as class-based handlers.
+     *
+     * @return string
+     */
+    public function resolveQueuedJobClass();
 
     /**
      * Get the name of the connection the job belongs to.

@@ -1,0 +1,8 @@
+Subject: test
+MIME-Version: 1.0
+Content-Type: text/plain
+Date: %date_raw_header%
+From: from@there.com
+To: to@here.com
+
+Hi!

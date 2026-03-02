@@ -1,0 +1,65 @@
+To: test@example.com
+From: test@example.com
+Subject: Certified
+Date: Mon, 2 Oct 2017 12:13:43 +0200
+Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg="sha1"; boundary="----258A05BDE519DE69AAE8D59024C32F5E"
+
+This is an S/MIME signed message
+
+------258A05BDE519DE69AAE8D59024C32F5E
+Content-Type: multipart/mixed; boundary="----------=_1506939223-24530-42"
+Content-Transfer-Encoding: binary
+
+------------=_1506939223-24530-42
+Content-Type: multipart/alternative;
+ boundary="----------=_1506939223-24530-43"
+Content-Transfer-Encoding: binary
+
+------------=_1506939223-24530-43
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Signed
+
+------------=_1506939223-24530-43
+Content-Type: text/html; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+<html><body>Signed</body></html>
+
+------------=_1506939223-24530-43--
+
+------------=_1506939223-24530-42
+Content-Type: application/xml; name="data.xml"
+Content-Disposition: inline; filename="data.xml"
+Content-Transfer-Encoding: base64
+
+PHhtbC8+
+
+------------=_1506939223-24530-42
+Content-Type: message/rfc822; name="postacert.eml"
+Content-Disposition: inline; filename="postacert.eml"
+Content-Transfer-Encoding: 7bit
+
+To: test@example.com
+From: test@example.com
+Subject: test-subject
+Date: Mon, 2 Oct 2017 12:13:50 +0200
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
+Content-Transfer-Encoding: 7bit
+
+test-content
+
+------------=_1506939223-24530-42--
+
+------258A05BDE519DE69AAE8D59024C32F5E
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+
+MQ==
+
+------258A05BDE519DE69AAE8D59024C32F5E--
+
