@@ -1379,8 +1379,8 @@ class Conf extends stdClass
 			}
 
 			if (!isset($this->global->MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER)) {
-				// Note value is always forced to 1 in API context to avoid bind SQL injection into API filters.
-				$this->global->MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER = 0;		// TODO Move this into 1 by default
+				// Note value is always forced to 1 in API and customreport context to avoid bind SQL injection into user input filters.
+				$this->global->MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER = 1;
 			}
 
 			// For backward compatibility
@@ -1392,11 +1392,11 @@ class Conf extends stdClass
 				}
 			}
 			// For backward compatibility
-			if (!empty($this->global->LDAP_MEMBER_ACTIVE) && $this->global->LDAP_MEMBER_ACTIVE == 'ldap2dolibarr') {
+			if (getDolGlobalString('LDAP_MEMBER_ACTIVE') == 'ldap2dolibarr') {
 				$this->global->LDAP_MEMBER_ACTIVE = 2;
 			}
 			// For backward compatibility
-			if (!empty($this->global->LDAP_MEMBER_TYPE_ACTIVE) && $this->global->LDAP_MEMBER_TYPE_ACTIVE == 'ldap2dolibarr') {
+			if (getDolGlobalString('LDAP_MEMBER_TYPE_ACTIVE') == 'ldap2dolibarr') {
 				$this->global->LDAP_MEMBER_TYPE_ACTIVE = 2;
 			}
 

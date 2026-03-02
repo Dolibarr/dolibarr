@@ -18,8 +18,9 @@
  */
 
 /**
- *       \file       htdocs/core/ajax/selectobject.php
- *       \brief      File to return Ajax response on a selection list request
+ *       \file      htdocs/core/ajax/selectobject.php
+ *       \brief     File to return Ajax response on a selection list request
+ *       			Used by selectForForms(). See code comment in this function to find how it is used by modulebuilder fields or by extrafields.
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -40,8 +41,6 @@ if (!defined('NOREQUIRESOC')) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -49,10 +48,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 $extrafields = new ExtraFields($db);
 
-$objectdesc = GETPOST('objectdesc', 'alphanohtml', 0, null, null, 1);
+$objectdesc = GETPOST('objectdesc', 'alphanohtml', 0, null, null, 1);	// Deprecated. Do not use this anymore. Use param 'objectfield' instead.
 $htmlname = GETPOST('htmlname', 'aZ09');
 $outjson = (GETPOSTINT('outjson') ? GETPOSTINT('outjson') : 0);
 $id = GETPOSTINT('id');
@@ -107,7 +108,8 @@ if ($objectdesc) {
 	$InfoFieldList[3] = preg_replace('/:\w*$/', '', $vartmp);    // take the filter field
 
 	$classname = $InfoFieldList[0];
-	$classpath = $InfoFieldList[1];
+	$classpath = dol_sanitizePathName($InfoFieldList[1]);
+
 	//$addcreatebuttonornot = empty($InfoFieldList[2]) ? 0 : $InfoFieldList[2];
 	$filter = empty($InfoFieldList[3]) ? '' : $InfoFieldList[3];
 	$sortfield = empty($InfoFieldList[4]) ? '' : $InfoFieldList[4];
@@ -116,7 +118,7 @@ if ($objectdesc) {
 	$objecttmp = fetchObjectByElement(0, strtolower($InfoFieldList[0]));
 
 	// Fallback to another solution to get $objecttmp
-	if (empty($objecttmp) && !empty($classpath)) {
+	if (empty($objecttmp) && !empty($classpath) && preg_match('/\.class\.php$/', $classpath)) {
 		dol_include_once($classpath);
 
 		if ($classname && class_exists($classname)) {
@@ -151,7 +153,7 @@ $allowModules = ['bom'];
 if ($objecttmp !== null && !empty($objecttmp->module) && !in_array($objecttmp->module, $allowModules)) {
 	restrictedArea($user, $objecttmp->module, $id, $objecttmp->table_element, $objecttmp->element);
 } else {
-	restrictedArea($user, $objecttmp !== null ? $objecttmp->element : '', $id);
+	restrictedArea($user, $objecttmp !== null ? $objecttmp->element : 'unknownobject', $id);	// If object is unknown, we force to 'unknownobject' instead of '' to be sure access is forbidden
 }
 
 

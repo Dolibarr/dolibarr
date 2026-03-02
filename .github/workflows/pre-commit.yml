@@ -169,7 +169,7 @@ jobs:
           key: pre-commit-4|${{ env.pythonLocation }}|${{ hashFiles('.pre-commit-config.yaml') }}
       # Upload result log files of precommit into the Artifact shared store
       - name: Provide log as artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: ${{ ! cancelled() }}
         with:
           name: precommit-logs

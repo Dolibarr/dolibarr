@@ -1818,7 +1818,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 	}
 
 	// TODO Move this into previous hook
-	if (getDolGlobalString('MEMBER_NEWFORM_DOLIBARRTURNOVER')) {
+	if (getDolGlobalString('MEMBER_NEWFORM_DOLIBARRTURNOVER') && $action != 'dopayment') {
 		$country_id = 0;
 		if ($member->thirdparty instanceOf Societe) {
 			$country_id = $member->thirdparty->country_id;
@@ -1830,7 +1830,8 @@ if ($source == 'member' || $source == 'membersubscription') {
 		$pp = 0;
 		include_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership.class.php';
 		$partnership = new Partnership($db);
-		$result = $partnership->fetch(0, null, null, $member->thirdparty->id);
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
+		$result = $partnership->fetch(0, '', 0, (int) $member->thirdparty->id);
 		if ($result > 0) {
 			$pp = 1;
 		}
@@ -1846,7 +1847,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 
 		$country_code = dol_getIdFromCode($db, $country_id, 'c_country', 'rowid', 'code');
 		if ($country_code === 'FR' && $checkednature === 'mor' && (GETPOST('reload') ? GETPOST('pp') : $pp)) {
-			print '<input type="text" name="budget" id="budget" class="flat turnover right width100" value="'.GETPOST('budget').'" required autofocus>';
+			print '<input type="text" name="budget" id="budget" class="flat turnover right width100" value="'.GETPOST('budget').'"'.($action != 'dopayment' ? ' required autofocus' : '').'>';
 		} else {
 			$arraybudget = array('50' => '<= 100 000', '100' => '<= 200 000', '200' => '<= 500 000', '300' => '<= 1 500 000', '600' => '<= 3 000 000', '1000' => '<= 5 000 000', '2000' => '5 000 000+');
 			print $form->selectarray('budget', $arraybudget, GETPOSTINT('budget'), 1, 0, 0, ($checkednature === 'mor' ? 'required' :''), 0, 0, 0, '');
@@ -1926,6 +1927,9 @@ if ($source == 'member' || $source == 'membersubscription') {
 					}
 
 					if (selectcountry_id == 1) {
+						if (jQuery("#budget").val() == \'\') {
+							return null;
+						}
 						if (pp) {
 							console.log("value selected in input text field is "+jQuery("#budget").val());
 							newamount = Math.max(Math.round(price2numjs(jQuery("#budget").val()) * 0.005), 50);

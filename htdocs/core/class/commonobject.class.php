@@ -21,6 +21,7 @@
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  * Copyright (C) 2025		Alexandre Janniaux	<alexandre.janniaux@gmail.com>
  * Copyright (C) 2025		Vincent Maury		<vmaury@timgroup.fr>
+ * Copyright (C) 2026		Pierre Ardoin		<developpeur@lesmetiersdubatiment.fr>
 *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -5761,7 +5762,7 @@ abstract class CommonObject
 
 		$this->tpl['label'] = '';
 		if (!empty($line->fk_parent_line)) {
-			$this->tpl['label'] .= img_picto('', 'rightarrow');
+			$this->tpl['label'] .= img_picto('', 'rightarrow.png');
 		}
 
 		if (((int) $line->info_bits & 2) == 2) {  // TODO Not sure this is used for source object
@@ -6267,6 +6268,12 @@ abstract class CommonObject
 				$setsharekey = true;
 			}
 			if ($this->element == 'supplier_proposal' && getDolGlobalInt("SUPPLIER_PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD")) {
+				$setsharekey = true;
+			}
+			if ($this->element == 'order_supplier' && getDolGlobalInt("SUPPLIER_ORDER_ALLOW_EXTERNAL_DOWNLOAD")) {
+				$setsharekey = true;
+			}
+			if ($this->element == 'invoice_supplier' && getDolGlobalInt("SUPPLIER_INVOICE_ALLOW_EXTERNAL_DOWNLOAD")) {
 				$setsharekey = true;
 			}
 			if ($this->element == 'societe_rib' && getDolGlobalInt("SOCIETE_RIB_ALLOW_ONLINESIGN")) {

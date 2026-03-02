@@ -27,6 +27,7 @@
  * Copyright (C) 2024		Benoît PASCAL				<contact@p-ben.com>
  * Copyright (C) 2025		Vincent Maury				<vmaury@timgroup.fr>
  * Copyright (C) 2026		Benjamin Falière			<benjamin@faliere.com>
+ * Copyright (C) 2026		Pierre Ardoin				<developpeur@lesmetiersdubatiment.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1622,13 +1623,24 @@ if (!function_exists('dol_getprefix')) {
  *  To link to a module file from a module file, use include './mymodulefile';
  *  To link to a module file from a core file, then this function can be used (call by hook / trigger / speciales pages)
  *
- * 	@param	string	$relpath	Relative path to file (Ie: mydir/myfile, ../myfile, ...)
+ * 	@param	string	$relpath	Relative path to file (Ie: mydir/myfile, ./myfile, ...)
  * 	@param	string	$classname	Class name (deprecated)
  *  @return bool                True if load is a success, False if it fails
  */
 function dol_include_once($relpath, $classname = '')
 {
 	global $conf, $langs, $user, $mysoc; // Do not remove this. They must be defined for files we make "include". Other globals var must be retrieved with $GLOBALS['var']
+
+	if (strpos($relpath, '..') !== false) {
+		// Found a not valid path
+		dol_syslog('functions::dol_include_once Tried to load a file with a path including a forbidden sequence ".." : ' . $relpath, LOG_WARNING);
+		return false;
+	}
+	if (!preg_match('/\.php$/', $relpath)) {
+		// Found a not valid path
+		dol_syslog('functions::dol_include_once Tried to load a file that is not a PHP file : ' . $relpath, LOG_WARNING);
+		return false;
+	}
 
 	$fullpath = dol_buildpath($relpath);
 
@@ -5926,6 +5938,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'square' => '#888',
 				'stop-circle' => '#888',
 				'stats' => '#444',
+				'superadmin' => '#600',
 				'switch_off' => '#999',
 				'technic' => '#999',
 				'tick' => '#282',
@@ -6789,7 +6802,7 @@ function img_searchclear($titlealt = 'default', $other = '')
 		$titlealt = $langs->trans('Search');
 	}
 
-	$img = img_picto($titlealt, 'searchclear', $other, 0, 1);
+	$img = img_picto($titlealt, 'searchclear.png', $other, 0, 1);
 
 	$input = '<input type="image" class="liste_titre" name="button_removefilter" src="' . $img . '" ';
 	$input .= 'value="' . dol_escape_htmltag($titlealt) . '" title="' . dol_escape_htmltag($titlealt) . '" >';
@@ -10242,6 +10255,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__DIRECTDOWNLOAD_URL_INVOICE__'] = 'Direct download url of an invoice';
 			$substitutionarray['__DIRECTDOWNLOAD_URL_CONTRACT__'] = 'Direct download url of a contract';
 			$substitutionarray['__DIRECTDOWNLOAD_URL_SUPPLIER_PROPOSAL__'] = 'Direct download url of a supplier proposal';
+			$substitutionarray['__DIRECTDOWNLOAD_URL_SUPPLIER_ORDER__'] = 'Direct download url of a supplier order';
+			$substitutionarray['__DIRECTDOWNLOAD_URL_SUPPLIER_INVOICE__'] = 'Direct download url of a supplier invoice';
 
 			if (isModEnabled("shipping") && (!is_object($object) || $object->element == 'shipping')) {
 				$substitutionarray['__SHIPPINGTRACKNUM__'] = 'Shipping tracking number';
@@ -10611,6 +10626,16 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 					$substitutionarray['__DIRECTDOWNLOAD_URL_SUPPLIER_PROPOSAL__'] = $object->getLastMainDocLink($object->element);
 				} else {
 					$substitutionarray['__DIRECTDOWNLOAD_URL_SUPPLIER_PROPOSAL__'] = '';
+				}
+				if (getDolGlobalString('SUPPLIER_ORDER_ALLOW_EXTERNAL_DOWNLOAD') && is_object($object) && $object->element == 'order_supplier') {
+					$substitutionarray['__DIRECTDOWNLOAD_URL_SUPPLIER_ORDER__'] = $object->getLastMainDocLink($object->element);
+				} else {
+					$substitutionarray['__DIRECTDOWNLOAD_URL_SUPPLIER_ORDER__'] = '';
+				}
+				if (getDolGlobalString('SUPPLIER_INVOICE_ALLOW_EXTERNAL_DOWNLOAD') && is_object($object) && $object->element == 'invoice_supplier') {
+					$substitutionarray['__DIRECTDOWNLOAD_URL_SUPPLIER_INVOICE__'] = $object->getLastMainDocLink($object->element);
+				} else {
+					$substitutionarray['__DIRECTDOWNLOAD_URL_SUPPLIER_INVOICE__'] = '';
 				}
 
 				if (is_object($object) && $object->element == 'propal') {
@@ -16744,6 +16769,8 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 					}
 				}
 				$out .= $contactGetNomUrlCache[$histo[$key]['msg_from']];
+			} else {
+				$out .= '<img class="photomemberphoto userphoto" alt="" src="/public/theme/common/user_anonymous.png">'.$langs->trans("Anonymous");
 			}
 			$out .= '</div>';
 
