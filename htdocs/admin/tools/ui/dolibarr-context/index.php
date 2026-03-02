@@ -439,6 +439,216 @@ $documentation->showSidebar(); ?>
 
 		</div>
 
+		<div class="documentation-section">
+			<h2 id="titlesection-dom-initnewcontent" class="documentation-title">
+				initNewContent event system
+			</h2>
+
+			<p>
+				The <strong>initNewContent</strong> event is a standardized Dolibarr mechanism
+				to re-initialize UI components on dynamically added content.
+				Use it whenever you inject new DOM elements via AJAX, templates, or other dynamic updates.
+			</p>
+
+			<h3 id="titlesection-usecase-tooltips" class="documentation-title">
+				Use Case example: Dynamic Tooltips
+			</h3>
+
+			<p>
+				In a typical Dolibarr page, tooltips are initialized on page load for all elements
+				that have the class <code>.classfortooltip</code>. This works perfectly for static content.
+			</p>
+
+			<p>
+				However, when a section of the page is dynamically recreated or loaded via AJAX,
+				the new elements with <code>.classfortooltip</code> do not automatically have tooltips,
+				because the initialization script has already run on the initial DOM and is not rerun for the new elements.
+			</p>
+
+			<p>
+				The <strong>initNewContent</strong> mechanism solves this problem by providing a standardized hook
+				to re-initialize all interactive components on newly added DOM elements.
+				Developers can listen to <code>initNewContent</code> and re-run tooltip initialization
+				(or any other dynamic behavior) only on the new elements or their children, ensuring consistency and avoiding duplication.
+			</p>
+
+			<p>
+				This approach guarantees that tooltips, dialogs, and other interactive components
+				remain functional even when content is injected or updated asynchronously.
+			</p>
+
+			<p>
+				In addition to <code>document.ready</code> or <code>$(document).ready()</code>,
+				listen to <strong>initNewContent</strong> to ensure that tooltips, dialogs, or other interactive components
+				are properly initialized on any new DOM fragment added dynamically.
+			</p>
+
+
+			<div class="documentation-example">
+				<p>
+					<button class="button" id="try-no-initNewContent">Test without event</button>
+					<button class="button" id="try-initNewContent">Test with initNewContent event</button>
+				</p>
+				<div id="initNewContent-test-container"></div>
+
+				<style>
+					/* Animation for highlighting new content */
+					@keyframes highlightfortest {
+						from { background-color: #fffa8d; }
+						to { background-color: transparent; }
+					}
+					.highlightfortest {
+						padding: 10px;
+						animation: highlightfortest 1s ease-out;
+					}
+				</style>
+
+				<script nonce="<?php print getNonce() ?>">
+					document.addEventListener('Dolibarr:Ready', function(e) {
+						const container = document.getElementById('initNewContent-test-container');
+
+						document.getElementById('try-no-initNewContent').addEventListener('click', function() {
+							container.innerHTML = `<span class="classfortooltip highlightfortest" title="this is the title">A text with a tooltip but the tooltip isn't load</span>
+								And <span class="classfortooltiponclicktext highlightfortest" title="this is the title">A text with a tooltip to click but the tooltip isn't load</span>`;
+						});
+
+						document.getElementById('try-initNewContent').addEventListener('click', function() {
+							container.innerHTML = `<span class="classfortooltip highlightfortest" title="this is the title">A text with a tooltip and the tooltip is loaded</span>
+								And <span class="classfortooltiponclicktext" title="this is the title">A text with a tooltip to click and the tooltip is loaded</span>`;
+							Dolibarr.initNewContent(container);
+						});
+					});
+				</script>
+			</div>
+
+
+			<h3 id="titlesection-usecase-tooltips" class="documentation-title">
+				How to use it
+			</h3>
+
+			<p>
+				The event handler receives an object with the property <code>targets</code>,
+				which is an array of DOM elements or jQuery collections to initialize. Each element can be:
+			</p>
+
+			<ul>
+				<li>a container with child elements to initialize</li>
+				<li>or a direct element that needs initialization</li>
+			</ul>
+
+			<h4>Example: Trigger initNewContent manually on a container</h4>
+			<div class="documentation-example">
+				<?php
+				$lines = array(
+					'<script nonce="<?php print getNonce() ?>">',
+					'    document.addEventListener(\'Dolibarr:Ready\', function(e) {',
+					'        /* [... code that dynamically reloads part of the DOM ...] */',
+					'',
+					'        /**',
+					'         * true: only include the children of each target element',
+					'         * false: include the target elements themselves',
+					'         */',
+					'        const applyToChildrenOnly = true;',
+					'',
+					'        // Trigger initNewContent manually on a jQuery container',
+					'        Dolibarr.initNewContent($("#myContainer"), applyToChildrenOnly);',
+					'',
+					'        // Trigger initNewContent manually on a vanilla JS element',
+					'        const element = document.getElementById("myContainer");',
+					'        Dolibarr.initNewContent(element, applyToChildrenOnly);',
+					'    });',
+					'</script>',
+				);
+				$documentation->showCode($lines, 'php');
+				?>
+			</div>
+
+			<p>
+				Dolibarr provides a custom event system to properly initialize dynamic content.
+				Always use <strong>initNewContent</strong> when working with AJAX-injected fragments or
+				dynamically created elements instead of relying solely on jQuery document ready.
+			</p>
+
+
+
+			<h4>Example in pure JS style: listening to initNewContent</h4>
+			<div class="documentation-example">
+				<?php
+				$lines = array(
+					'<script nonce="<?php print getNonce() ?>">',
+					'    Dolibarr.on("initNewContent", ({ targets }) => {',
+					'        targets.forEach(root => {',
+					'',
+					'            // Array to store all matching dialog elements',
+					'            const dialogs = [];',
+					'',
+					'            // Include the root element if it matches the selector',
+					'            if (root.matches(".classfortooltiponclicktext")) {',
+					'                dialogs.push(root);',
+					'            }',
+					'',
+					'            // Add all descendants matching the selector',
+					'            dialogs.push(...root.querySelectorAll(".classfortooltiponclicktext"));',
+					'',
+					'            // Initialize each dialog element',
+					'            dialogs.forEach(el => {',
+					'                // Your code to initialize the tooltip/dialog or other stuff',
+					'            });',
+					'        });',
+					'    });',
+					'</script>',
+				);
+				$documentation->showCode($lines, 'php');
+				?>
+			</div>
+
+			<h4>Compact version in pure JS</h4>
+			<div class="documentation-example">
+				<?php
+				$lines = array(
+					'<script nonce="<?php print getNonce() ?>">',
+					'    Dolibarr.on("initNewContent", ({ targets }) => {',
+					'        targets.forEach(root => {',
+					'            const dialogs = [',
+					'                ...(root.matches(".classfortooltiponclicktext") ? [root] : []),',
+					'                ...root.querySelectorAll(".classfortooltiponclicktext")',
+					'            ];',
+					'            dialogs.forEach(el => {',
+					'                // Initialize tooltip/dialog or other stuff here',
+					'            });',
+					'        });',
+					'    });',
+					'</script>',
+				);
+				$documentation->showCode($lines, 'php');
+				?>
+			</div>
+
+			<h4>Example in jQuery style</h4>
+			<div class="documentation-example">
+				<?php
+				$lines = array(
+					'<script nonce="<?php print getNonce() ?>">',
+					'    Dolibarr.on("initNewContent", ({ targets }) => {',
+					'        targets.forEach($root => {',
+					'            const $dialogs = $root',
+					'                .filter(".classfortooltiponclicktext")',
+					'                .add($root.find(".classfortooltiponclicktext"));',
+					'            $dialogs.each(function () {',
+					'                const $el = $(this);',
+					'                // Initialize tooltip/dialog behavior or other stuff here',
+					'            });',
+					'        });',
+					'    });',
+					'</script>',
+				);
+				$documentation->showCode($lines, 'php');
+				?>
+			</div>
+
+		</div>
+
+
 
 		<div class="documentation-section">
 			<h2 id="titlesection-create-tool-example" class="documentation-title">Example of creating a new context tool</h2>

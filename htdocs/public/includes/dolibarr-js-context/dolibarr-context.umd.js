@@ -260,6 +260,58 @@
 		},
 
 		/**
+		 * Trigger a standardized Dolibarr DOM reload hook.
+		 * Useful for re-initializing UX components (tooltips, selects, modals, etc.)
+		 * on dynamically injected or updated DOM portions.
+		 *
+		 * @param {HTMLElement|NodeList|Array<HTMLElement>|jQuery|string} targetEl
+		 *   - A single DOM element
+		 *   - A CSS selector string
+		 *   - A NodeList or array of DOM elements
+		 *   - A jQuery object (can contain multiple elements)
+		 * @param {boolean} applyToChildrenOnly
+		 *   - true: include only the children of each target element
+		 *   - false: include the target elements themselves
+		 */
+		initNewContent(targetEl, applyToChildrenOnly = true) {
+			let elements = [];
+
+			// Convert jQuery to array of DOM elements
+			if (typeof jQuery !== 'undefined' && targetEl instanceof jQuery) {
+				elements = targetEl.toArray();
+			}
+			// CSS selector
+			else if (typeof targetEl === 'string') {
+				elements = Array.from(document.querySelectorAll(targetEl));
+			}
+			// NodeList or array
+			else if (NodeList.prototype.isPrototypeOf(targetEl) || Array.isArray(targetEl)) {
+				elements = Array.from(targetEl);
+			}
+			// Single HTMLElement
+			else if (targetEl instanceof HTMLElement) {
+				elements = [targetEl];
+			}
+
+			if (elements.length === 0) return;
+
+			// Flatten elements according to applyToChildrenOnly
+			const finalElements = [];
+			elements.forEach(el => {
+				if (applyToChildrenOnly) {
+					finalElements.push(...Array.from(el.children));
+				} else {
+					finalElements.push(el);
+				}
+			});
+
+			if (finalElements.length === 0) return;
+
+			// Trigger standardized hook with an array of elements
+			this.executeHook('initNewContent', { targets: finalElements });
+		},
+
+		/**
 		 * Registers an event listener.
 		 * @param {string} eventName Event to listen to
 		 * @param {function} callback Listener function
