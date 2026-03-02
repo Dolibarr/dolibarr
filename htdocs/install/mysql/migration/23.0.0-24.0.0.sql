@@ -151,4 +151,25 @@ ALTER TABLE llx_blockedlog ADD COLUMN pos_source varchar(32) DEFAULT '';
 ALTER TABLE llx_website_page ADD COLUMN keep_history integer DEFAULT 5;
 ALTER TABLE llx_website_page ADD COLUMN metarobots varchar(128) after keywords;
 
+CREATE TABLE llx_accounting_balance_snapshot (
+	rowid              integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	entity             integer DEFAULT 1 NOT NULL,
+	fk_fiscalyear      integer NOT NULL,
+	account_number     varchar(32) NOT NULL,
+	account_label      varchar(255) NOT NULL,
+	subledger_account  varchar(32),
+	subledger_label    varchar(255),
+	debit              double(24,8) NOT NULL default 0,
+	credit             double(24,8) NOT NULL default 0,
+	date_snapshot      datetime,
+	tms                timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=innodb;
+
+ALTER TABLE llx_accounting_balance_snapshot ADD UNIQUE INDEX uk_accounting_balance_snapshot(entity, fk_fiscalyear, account_number, subledger_account);
+
+ALTER TABLE llx_accounting_balance_snapshot ADD INDEX idx_accounting_balance_snapshot_account (entity, fk_fiscalyear, account_number, debit, credit);
+ALTER TABLE llx_accounting_balance_snapshot ADD INDEX idx_accounting_balance_snapshot_subaccount (entity, fk_fiscalyear, subledger_account, debit, credit);
+
+ALTER TABLE llx_accounting_balance_snapshot ADD CONSTRAINT fk_accounting_balance_snapshot_fk_fiscalyear FOREIGN KEY (fk_fiscalyear) REFERENCES llx_accounting_fiscalyear (rowid);
+
 -- end of migration
