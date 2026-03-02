@@ -1057,7 +1057,8 @@ class EmailCollector extends CommonObject
 				} elseif (preg_match('/^(SET|SETIFEMPTY):(.*)$/', $valueforproperty, $regforregex)) {
 					$valuecurrent = '';
 					if (preg_match('/^options_/', $tmpproperty)) {
-						$valuecurrent = $object->array_options[preg_replace('/^options_/', '', $tmpproperty)];
+						$tmpoptionkey = preg_replace('/^options_/', '', $tmpproperty);
+						$valuecurrent = (is_array($object->array_options) && array_key_exists($tmpoptionkey, $object->array_options)) ? $object->array_options[$tmpoptionkey] : '';
 					} else {
 						if (property_exists($object, $tmpproperty)) {
 							$valuecurrent = $object->$tmpproperty;
@@ -1077,7 +1078,8 @@ class EmailCollector extends CommonObject
 							foreach ($matcharray[1] as $keytoreplace) {
 								if ($keytoreplace) {
 									if (preg_match('/^options_/', $keytoreplace)) {
-										$substitutionarray['__'.$keytoreplace.'__'] = $object->array_options[preg_replace('/^options_/', '', $keytoreplace)];
+										$tmpoptionkey = preg_replace('/^options_/', '', $keytoreplace);
+										$substitutionarray['__'.$keytoreplace.'__'] = (is_array($object->array_options) && array_key_exists($tmpoptionkey, $object->array_options)) ? $object->array_options[$tmpoptionkey] : '';
 									} else {
 										if (property_exists($object, $keytoreplace)) {
 											$substitutionarray['__'.$keytoreplace.'__'] = $object->$keytoreplace;
