@@ -3912,15 +3912,15 @@ class User extends CommonObject
 	 * @param string $element Element name for getEntity()
 	 * @return string CSV of integers, never empty
 	 */
-	private function getEntityListForSql($element)
+	private function getEntityListForSql(string $element): string
 	{
 		$list = (string) getEntity($element);
 
 		// Split by comma, keep only numeric ids
-		$parts = preg_split('/\s*,\s*/', $list);
-		$parts = array_values(array_filter($parts, static function ($v) {
-			$v = (string) $v;
-			return ($v !== '' && ctype_digit($v));
+		$parts = preg_split('/\s*,\s*/', $list, -1, PREG_SPLIT_NO_EMPTY);
+
+		$parts = array_values(array_filter($parts, static function (string $v): bool {
+			return (ctype_digit($v));
 		}));
 
 		// Never return empty list (avoid IN ())
