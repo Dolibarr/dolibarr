@@ -140,7 +140,7 @@ function initTooltipDialogs(root, dialogWidth) {
 			if (!dolid) return false;
 
 			const $dialog = jQuery("#idfortooltiponclick_" + dolid);
-			if ($dialog.length) {
+			if ($dialog.length && $dialog.data("ui-dialog")) {
 				$dialog.dialog("open");
 			}
 

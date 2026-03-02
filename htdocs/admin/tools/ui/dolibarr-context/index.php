@@ -137,7 +137,6 @@ $documentation->showSidebar(); ?>
 				When enabled, <code>Dolibarr.log()</code> behaves like <code>console.log()</code>.
 			</p>
 
-			<div class="documentation-example">
 				<?php
 				$lines = array(
 					'<script>',
@@ -153,7 +152,6 @@ $documentation->showSidebar(); ?>
 				);
 				$documentation->showCode($lines, 'php');
 				?>
-			</div>
 
 			<h3>Summary</h3>
 			<ul>
@@ -187,7 +185,6 @@ $documentation->showSidebar(); ?>
 				<code>e.detail</code> and the event name is prefixed by <code>Dolibarr:</code> so for a hook named A event name is <code>Dolibarr:A</code>
 			</p>
 
-			<div class="documentation-example">
 				<?php
 				$lines = array(
 					'<script>',
@@ -203,7 +200,7 @@ $documentation->showSidebar(); ?>
 					'</script>',
 				);
 				$documentation->showCode($lines, 'php'); ?>
-			</div>
+
 
 			<h3>Practical usage</h3>
 			<p>
@@ -212,7 +209,6 @@ $documentation->showSidebar(); ?>
 				are valid, but <code>Dolibarr.on()</code> is simpler and more convenient because you get the
 				data directly.
 			</p>
-			<div  class="documentation-example">
 				<?php
 				$lines = array(
 					'<script>',
@@ -246,6 +242,7 @@ $documentation->showSidebar(); ?>
 				);
 				$documentation->showCode($lines, 'php'); ?>
 
+			<div  class="documentation-example">
 				Open your console <code>F12</code> and click on  <button class="button" id="try-event-yourCustomHookName">try</button>
 				<script nonce="<?php print getNonce() ?>"  >
 					document.addEventListener('Dolibarr:Ready', function(e) {
@@ -309,7 +306,6 @@ $documentation->showSidebar(); ?>
 			</p>
 
 			<h3>Examples of usage</h3>
-			<div class="documentation-example">
 				<?php
 				$lines = array(
 					'<script>',
@@ -334,7 +330,7 @@ $documentation->showSidebar(); ?>
 					'</script>',
 				);
 				$documentation->showCode($lines, 'php'); ?>
-			</div>
+
 
 			<p>
 				In summary:
@@ -364,7 +360,6 @@ $documentation->showSidebar(); ?>
 				This means you can <code>await</code> their results in your code, and any asynchronous operations inside a hook (e.g., API calls, timers) will be handled correctly before moving to the next hook.
 			</p>
 
-			<div class="documentation-example">
 				<?php
 				$lines = array(
 					'<script nonce="<?php print getNonce() ?>">',
@@ -402,6 +397,7 @@ $documentation->showSidebar(); ?>
 				);
 				$documentation->showCode($lines, 'php'); ?>
 
+			<div class="documentation-example">
 				Open your console <code>F12</code> and click on  <button class="button" id="try-event-yourCustomAwaitHookName">try</button>
 
 				<script nonce="<?php print getNonce() ?>">
@@ -502,25 +498,49 @@ $documentation->showSidebar(); ?>
 						animation: highlightfortest 1s ease-out;
 					}
 				</style>
-
+				<div id="idfortooltiponclick_doc-event-dialog-test" class="classfortooltiponclicktext" title="The title" style="display: none" >Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec elit venenatis, bibendum dui in, tristique dolor. In hac habitasse platea dictumst. Vestibulum consectetur quam non felis fringilla mollis pretium vel nibh. Pellentesque congue risus et laoreet blandit. Aliquam orci ipsum, gravida id leo eget, molestie pulvinar sem. Nulla sed felis et lacus tristique finibus. Cras ornare tincidunt. Aenean hendrerit volutpat efficitur. Integer vestibulum dui eget lectus pulvinar, vel mattis odio facilisis. Etiam convallis scelerisque lobortis. Mauris tristique, quam dignissim sollicitudin sodales, elit ligula venenatis neque, sit amet interdum lacus tellus id tellus. Mauris eu pretium turpis. Proin porta sem eget nisl vulputate vehicula.</div>
 				<script nonce="<?php print getNonce() ?>">
 					document.addEventListener('Dolibarr:Ready', function(e) {
 						const container = document.getElementById('initNewContent-test-container');
 
 						document.getElementById('try-no-initNewContent').addEventListener('click', function() {
 							container.innerHTML = `<span class="classfortooltip highlightfortest" title="this is the title">A text with a tooltip but the tooltip isn't load</span>
-								And <span class="classfortooltiponclicktext highlightfortest" title="this is the title">A text with a tooltip to click but the tooltip isn't load</span>`;
+								and <span class="classfortooltiponclick highlightfortest" dolid="doc-event-dialog-test" style="cursor: pointer;" >A text with a tooltip to click but the tooltip isn't load</span>`;
 						});
 
 						document.getElementById('try-initNewContent').addEventListener('click', function() {
 							container.innerHTML = `<span class="classfortooltip highlightfortest" title="this is the title">A text with a tooltip and the tooltip is loaded</span>
-								And <span class="classfortooltiponclicktext" title="this is the title">A text with a tooltip to click and the tooltip is loaded</span>`;
+								And <span class="classfortooltiponclick highlightfortest" dolid="doc-event-dialog-test"  style="cursor: pointer;" >A text with a tooltip to click and the tooltip is loaded</span>`;
 							Dolibarr.initNewContent(container);
 						});
 					});
 				</script>
-			</div>
 
+
+			</div>
+			<?php
+			$lines = array(
+				'<div id="idfortooltiponclick_doc-event-dialog-test" class="classfortooltiponclicktext" title="The title" >Lorem ipsum .....</div>',
+				'<script nonce="<?php print getNonce() ?>">',
+				'document.addEventListener("Dolibarr:Ready", function(e) {',
+				'    const container = document.getElementById("initNewContent-test-container");',
+				'',
+				'    // Insert content without calling initNewContent',
+				'    document.getElementById("try-no-initNewContent").addEventListener("click", function() {',
+				'        container.innerHTML = `<span class="classfortooltip highlightfortest" title="this is the title">A text with a tooltip but the tooltip isn\'t load</span>',
+				'            and <span class="classfortooltiponclick highlightfortest" dolid="doc-event-dialog-test" style="cursor: pointer;">A text with a tooltip to click but the tooltip isn\'t load</span>`;',
+				'    });',
+				'',
+				'    // Insert content and trigger initNewContent',
+				'    document.getElementById("try-initNewContent").addEventListener("click", function() {',
+				'        container.innerHTML = `<span class="classfortooltip highlightfortest" title="this is the title">A text with a tooltip and the tooltip is loaded</span>',
+				'            and <span class="classfortooltiponclick highlightfortest" dolid="doc-event-dialog-test" style="cursor: pointer;">A text with a tooltip to click and the tooltip is loaded</span>`;',
+				'        Dolibarr.initNewContent(container);',
+				'    });',
+				'});',
+				'</script>',
+			);
+			$documentation->showCode($lines, 'php'); ?>
 
 			<h3 id="titlesection-usecase-tooltips" class="documentation-title">
 				How to use it
@@ -537,8 +557,8 @@ $documentation->showSidebar(); ?>
 			</ul>
 
 			<h4>Example: Trigger initNewContent manually on a container</h4>
-			<div class="documentation-example">
-				<?php
+
+			<?php
 				$lines = array(
 					'<script nonce="<?php print getNonce() ?>">',
 					'    document.addEventListener(\'Dolibarr:Ready\', function(e) {',
@@ -559,9 +579,7 @@ $documentation->showSidebar(); ?>
 					'    });',
 					'</script>',
 				);
-				$documentation->showCode($lines, 'php');
-				?>
-			</div>
+				$documentation->showCode($lines, 'php'); ?>
 
 			<p>
 				Dolibarr provides a custom event system to properly initialize dynamic content.
@@ -572,7 +590,6 @@ $documentation->showSidebar(); ?>
 
 
 			<h4>Example in pure JS style: listening to initNewContent</h4>
-			<div class="documentation-example">
 				<?php
 				$lines = array(
 					'<script nonce="<?php print getNonce() ?>">',
@@ -600,10 +617,8 @@ $documentation->showSidebar(); ?>
 				);
 				$documentation->showCode($lines, 'php');
 				?>
-			</div>
 
 			<h4>Compact version in pure JS</h4>
-			<div class="documentation-example">
 				<?php
 				$lines = array(
 					'<script nonce="<?php print getNonce() ?>">',
@@ -622,10 +637,8 @@ $documentation->showSidebar(); ?>
 				);
 				$documentation->showCode($lines, 'php');
 				?>
-			</div>
 
 			<h4>Example in jQuery style</h4>
-			<div class="documentation-example">
 				<?php
 				$lines = array(
 					'<script nonce="<?php print getNonce() ?>">',
@@ -644,7 +657,6 @@ $documentation->showSidebar(); ?>
 				);
 				$documentation->showCode($lines, 'php');
 				?>
-			</div>
 
 		</div>
 
@@ -660,7 +672,6 @@ $documentation->showSidebar(); ?>
 			<p>See also <code>dolibarr-context.mock.js</code> for defining all standard Dolibarr tools and creating mock implementations to improve code completion and editor support.</p>
 			<p><b>Note :</b> a tool can be a class not only a function</p>
 
-			<div class="documentation-example">
 				<?php
 				$lines = array(
 				'<script>',
@@ -677,14 +688,12 @@ $documentation->showSidebar(); ?>
 				'</script>',
 				);
 				$documentation->showCode($lines, 'php'); ?>
-			</div>
 
 			<h3>Protected Tools</h3>
 			<p>
 				Once a tool is defined on overwrite false, it cannot be replaced. Attempting to redefine it without overwrite will throw an error:
 			</p>
 
-			<div class="documentation-example">
 				<?php
 				$lines = array(
 					'<script>',
@@ -696,14 +705,12 @@ $documentation->showSidebar(); ?>
 					'</script>',
 				);
 				$documentation->showCode($lines, 'php'); ?>
-			</div>
 
 			<h3>Reading Tools</h3>
 			<p>
 				You can read the list of available tools using <code>Dolibarr.tools</code>. It returns a frozen copy:
 			</p>
 
-			<div class="documentation-example">
 				<?php
 				$lines = array(
 					'<script>',
@@ -712,7 +719,6 @@ $documentation->showSidebar(); ?>
 					'</script>',
 				);
 				$documentation->showCode($lines, 'php'); ?>
-			</div>
 
 		</div>
 
@@ -732,33 +738,33 @@ $documentation->showSidebar(); ?>
 				This means all developers can write features without worrying about frontend compatibility or future library replacements. Enjoy!
 
 			</p>
-
+			<?php
+			$lines = array(
+				'<script nonce="<?php print getNonce() ?>" >',
+				'	document.addEventListener(\'Dolibarr:Ready\', function(e) {',
+				'',
+				'		document.getElementById(\'setEventMessage-success\').addEventListener(\'click\', function(e) {',
+				'			Dolibarr.tools.setEventMessage(\'Success Test\');',
+				'		});',
+				'',
+				'		document.getElementById(\'setEventMessage-error\').addEventListener(\'click\', function(e) {',
+				'			Dolibarr.tools.setEventMessage(\'Error Test\', \'errors\');',
+				'		});',
+				'',
+				'		document.getElementById(\'setEventMessage-error-sticky\').addEventListener(\'click\', function(e) {',
+				'			Dolibarr.tools.setEventMessage(\'Error Test\', \'errors\', true);',
+				'		});',
+				'',
+				'		document.getElementById(\'setEventMessage-warning\').addEventListener(\'click\', function(e) {',
+				'			Dolibarr.tools.setEventMessage(\'Warning Test\', \'warnings\');',
+				'		});',
+				'',
+				'	});',
+				'</script>',
+			);
+			$documentation->showCode($lines, 'php'); ?>
 			<div class="documentation-example">
-				<?php
-				$lines = array(
-					'<script nonce="<?php print getNonce() ?>" >',
-					'	document.addEventListener(\'Dolibarr:Ready\', function(e) {',
-					'',
-					'		document.getElementById(\'setEventMessage-success\').addEventListener(\'click\', function(e) {',
-					'			Dolibarr.tools.setEventMessage(\'Success Test\');',
-					'		});',
-					'',
-					'		document.getElementById(\'setEventMessage-error\').addEventListener(\'click\', function(e) {',
-					'			Dolibarr.tools.setEventMessage(\'Error Test\', \'errors\');',
-					'		});',
-					'',
-					'		document.getElementById(\'setEventMessage-error-sticky\').addEventListener(\'click\', function(e) {',
-					'			Dolibarr.tools.setEventMessage(\'Error Test\', \'errors\', true);',
-					'		});',
-					'',
-					'		document.getElementById(\'setEventMessage-warning\').addEventListener(\'click\', function(e) {',
-					'			Dolibarr.tools.setEventMessage(\'Warning Test\', \'warnings\');',
-					'		});',
-					'',
-					'	});',
-					'</script>',
-				);
-				$documentation->showCode($lines, 'php'); ?>
+
 				<script nonce="<?php print getNonce() ?>"  >
 					document.addEventListener('Dolibarr:Ready', function(e) {
 
@@ -808,7 +814,6 @@ $documentation->showSidebar(); ?>
 			</p>
 
 			<h3>Add  context var (overridable or not)</h3>
-			<div class="documentation-example">
 				<?php
 				$lines = array(
 					'<script nonce="<?php print getNonce() ?>" >',
@@ -823,11 +828,9 @@ $documentation->showSidebar(); ?>
 				);
 				$documentation->showCode($lines, 'php');
 				?>
-			</div>
 
 
 			<h3>Add multiple context vars (overridable or not)</h3>
-			<div class="documentation-example">
 				<?php
 				$lines = array(
 					'<?php',
@@ -854,10 +857,8 @@ $documentation->showSidebar(); ?>
 				);
 				$documentation->showCode($lines, 'php');
 				?>
-			</div>
 
 			<h3>Get context var</h3>
-			<div class="documentation-example">
 				<?php
 				$lines = array(
 					'<script nonce="<?php print getNonce() ?>" >',
@@ -869,7 +870,6 @@ $documentation->showSidebar(); ?>
 				);
 				$documentation->showCode($lines, 'php');
 				?>
-			</div>
 
 		</div>
 
