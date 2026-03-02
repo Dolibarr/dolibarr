@@ -1348,7 +1348,7 @@ class Cronjob extends CommonObject
 		$cronjobpid = (int) $this->pid;
 		$dbs = $this->db;
 		register_shutdown_function(static function () use ($cronjobid, $cronjobpid, $dbs) {
-			if (empty($cronjobid) || empty($dbs)) {
+			if (empty($cronjobid) || !is_object($dbs) || empty($dbs->connected)) {
 				return;
 			}
 
@@ -1360,8 +1360,12 @@ class Cronjob extends CommonObject
 			}
 
 			// If job is already closed, do nothing.
-			$sql = "SELECT processing, pid, datelastresult FROM ".MAIN_DB_PREFIX."cronjob WHERE rowid = ".((int) $cronjobid);
-			$resql = $dbs->query($sql);
+			try {
+				$sql = "SELECT processing, pid, datelastresult FROM ".MAIN_DB_PREFIX."cronjob WHERE rowid = ".((int) $cronjobid);
+				$resql = $dbs->query($sql);
+			} catch (Throwable $e) {
+				return;
+			}
 			if (!$resql) {
 				return;
 			}
