@@ -635,10 +635,8 @@ if ($nboftargetok) {
 				  . $BUILD . '"' . "\n";
 				$ret =
 `git tag -a -f -m "$MAJOR.$MINOR.$BUILD" "$MAJOR.$MINOR.$BUILD"`;
-				print 'Run git push '
-				  . $GITREMOTENAME
-				  . ' -f "$MAJOR.$MINOR.$BUILD"' . "\n";
-				$ret = `git push $GITREMOTENAME -f -"$MAJOR.$MINOR.$BUILD"`;
+				print "Run git push $GITREMOTENAME -f '$MAJOR.$MINOR.$BUILD'\n";
+				$ret = `git push $GITREMOTENAME -f "$MAJOR.$MINOR.$BUILD"`;
 
 				#$ret=`git push -f origin "$MAJOR.$MINOR.$BUILD"`;
 			}

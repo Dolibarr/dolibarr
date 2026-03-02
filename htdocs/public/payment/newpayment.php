@@ -1830,6 +1830,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 		$pp = 0;
 		include_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership.class.php';
 		$partnership = new Partnership($db);
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		$result = $partnership->fetch(0, '', 0, (int) $member->thirdparty->id);
 		if ($result > 0) {
 			$pp = 1;

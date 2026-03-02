@@ -151,4 +151,10 @@ ALTER TABLE llx_blockedlog ADD COLUMN pos_source varchar(32) DEFAULT '';
 ALTER TABLE llx_website_page ADD COLUMN keep_history integer DEFAULT 5;
 ALTER TABLE llx_website_page ADD COLUMN metarobots varchar(128) after keywords;
 
+-- Switch all crabe templates into sponge
+UPDATE llx_facture SET model_pdf = 'sponge' WHERE model_pdf = 'crabe';
+UPDATE llx_const SET value = 'sponge' WHERE value = 'crabe' AND name ='FACTURE_ADDON_PDF';
+UPDATE llx_document_model as dm SET nom = 'sponge' WHERE nom = 'crabe' AND type ='invoice' AND NOT EXISTS (SELECT nom FROM llx_document_model AS dm2 WHERE nom = 'sponge' AND type = 'invoice' and dm2.entity = dm.entity);
+
+
 -- end of migration
