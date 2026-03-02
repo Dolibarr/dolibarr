@@ -450,7 +450,16 @@ if (empty($reshook)) {
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		} else {
-			header("Location: " . $backtopage . "?sortfield=t.piece_num&sortorder=asc" . ($type ? '&type='.$type : ''));
+			$linkEntry = '<a href="'.$_SERVER["PHP_SELF"].'?piece_num='.(int) $piece_num.'">'.$langs->trans('NumMvts').': '.(int) $piece_num.'</a>';
+			setEventMessages($langs->trans('RecordSaved').' - '.$linkEntry, null, 'mesgs', '', 1);
+
+			if (getDolGlobalInt('ACCOUNTANCY_VALID_REDIRECT_TO_CARD')) {
+				// Redirection vers la fiche de l'écriture validée
+				header("Location: ".$_SERVER["PHP_SELF"]."?piece_num=".(int) $piece_num);
+			} else {
+				// Comportement par défaut : retour au journal
+				header("Location: ".$backtopage."?sortfield=t.piece_num&sortorder=asc".($type ? '&type='.$type : ''));
+			}
 			exit;
 		}
 	}
