@@ -499,6 +499,12 @@ print '</td><td class="right">';
 print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
 
+// Allow external download
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("AllowExternalDownload").'</td>';
+print '<td class="left" colspan="2">';
+print ajax_constantonoff('SUPPLIER_INVOICE_ALLOW_EXTERNAL_DOWNLOAD', array(), null, 0, 0, 0, 2, 0, 1);
+print '</td></tr>';
 
 // Notifications
 print '<tr class="oddeven">';
