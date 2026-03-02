@@ -40,8 +40,8 @@ $langs->load('uxdocumentation');
 
 //
 $documentation = new Documentation($db);
-$group = 'ExperimentalUx';
-$experimentName = 'UxDolibarrContext';
+$group = 'UxDolibarrContext';
+$experimentName = 'UxDolibarrContextHowItWork';
 
 $js = [
 	'/includes/ace/src/ace.js',
@@ -65,7 +65,7 @@ $documentation->showSidebar(); ?>
 
 	<div class="doc-content-wrapper">
 
-		<h1 class="documentation-title"><?php echo $langs->trans($experimentName); ?> : <?php echo $langs->trans('UxDolibarrContextHowItWork'); ?></h1>
+		<h1 class="documentation-title"><?php echo $langs->trans($group); ?> : <?php echo $langs->trans('UxDolibarrContextHowItWork'); ?></h1>
 
 		<?php $documentation->showSummary(); ?>
 
