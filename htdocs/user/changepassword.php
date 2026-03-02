@@ -60,7 +60,7 @@ $error = 0;
  * Actions
  */
 
-if ($action == 'update' && GETPOST('token', 'alpha') == newToken()) {
+if ($action == 'update' && GETPOST('token', 'alpha') == newToken()) {	// Test on pemrission already done
 	$oldpassword = GETPOST('oldpassword', 'password');
 	$newpassword = GETPOST('newpassword', 'password');
 	$confirmpassword = GETPOST('confirmpassword', 'password');
