@@ -135,6 +135,7 @@ $hookmanager->initHooks(array('propalcard', 'globalcard'));
 $usercanread = $user->hasRight("propal", "lire");
 $usercancreate = $user->hasRight("propal", "creer");
 $usercandelete = $user->hasRight("propal", "supprimer");
+$usercandeletedraft = (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('propal', 'propal_advance', 'deletedraft')));
 
 $usercanclose = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $usercancreate) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('propal', 'propal_advance', 'close')));
 $usercanvalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $usercancreate) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('propal', 'propal_advance', 'validate')));
@@ -3713,7 +3714,12 @@ if ($action == 'create') {
 				}
 
 				// Delete
-				print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=delete&token=' . newToken(), 'delete', $usercandelete);
+				if ($object->status > Propal::STATUS_DRAFT && getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$usercandelete) {
+					print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=delete&token=' . newToken(), 'delete', $usercandeletedraft);
+				} else {
+					print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=delete&token=' . newToken(), 'delete', $usercandelete);
+				}
+				
 			}
 		}
 
