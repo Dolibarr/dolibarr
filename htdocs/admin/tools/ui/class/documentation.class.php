@@ -285,6 +285,11 @@ class Documentation
 					'submenu' => array(),
 					'summary' => array(
 						'DocBasicUsage' => '#dialogsection-basicusage',
+						'DocDialogHeaderAndFooter' => '#dialogsection-header',
+						'DocDialogData' => '#dialogsection-data',
+						'DocDialogForms' => '#dialogsection-forms',
+						'DocDialogSize' => '#dialogsection-size',
+						'DocDialogOthers' => '#dialogsection-params',
 					),
 				),
 			)
