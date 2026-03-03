@@ -6071,8 +6071,9 @@ button.ui-button-icon-only.ui-dialog-titlebar-close {
 
 .ui-dialog .ui-widget-header {
 	border: none;
-	border-bottom: 1px solid #ededed;
+	border-bottom: 1px solid #dbdbdb;
 	background: none;
+	border-radius: unset;
 }
 
 
