@@ -9,7 +9,7 @@ $res=0;
 if (! $res && file_exists("../../../../../../../main.inc.php")): $res=@include '../../../../../../../main.inc.php'; endif;
 
 //
-header('Content-Type: application/json');
+top_httphead('application/json');
 
 //
 $langs->load('errors');
