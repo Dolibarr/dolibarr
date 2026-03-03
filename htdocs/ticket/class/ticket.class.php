@@ -212,7 +212,7 @@ class Ticket extends CommonObject
 	public $cache_types_tickets;
 
 	/**
-	 * @var array<int,array{private:int,fk_user_author:int,fk_contact_author?:string,message:string}> cache msgs ticket  // fk_contact_author is email, not key in the cache
+	 * @var array<int,array{id:int,private:int,fk_user_author:int,fk_user_action:int,fk_contact_author?:string,datec:int,datep:int,subject:string,message:string}> cache msgs ticket  // fk_contact_author is email, not key in the cache
 	 */
 	public $cache_msgs_ticket;
 
@@ -1717,7 +1717,7 @@ class Ticket extends CommonObject
 			$this->status = Ticket::STATUS_READ;
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."ticket";
-			$sql .= " SET fk_statut = ".Ticket::STATUS_READ.", date_read = '".$this->db->idate(dol_now())."'";
+			$sql .= " SET fk_statut = ".((int) $this->status) .", date_read = '".$this->db->idate(dol_now())."'";
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::markAsRead");
@@ -1742,7 +1742,9 @@ class Ticket extends CommonObject
 					$this->status = $this->oldcopy->status;
 
 					$this->db->rollback();
+
 					$this->error = implode(',', $this->errors);
+
 					dol_syslog(get_class($this)."::markAsRead ".$this->error, LOG_ERR);
 					return -1;
 				}
@@ -1777,7 +1779,11 @@ class Ticket extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."ticket";
 		if ($id_assign_user > 0) {
-			$sql .= " SET fk_user_assign=".((int) $id_assign_user).", fk_statut = ".Ticket::STATUS_ASSIGNED;
+			$newstatus = Ticket::STATUS_ASSIGNED;
+			if (getDolGlobalString('TICKET_AUTO_READ_WHEN_ASSIGN')) {
+				$newstatus = Ticket::STATUS_READ;
+			}
+			$sql .= " SET fk_user_assign=".((int) $id_assign_user).", fk_statut = ".$newstatus;
 		} else {
 			$sql .= " SET fk_user_assign=null, fk_statut = ".Ticket::STATUS_READ;
 		}
@@ -1834,8 +1840,8 @@ class Ticket extends CommonObject
 		$now = dol_now();
 
 		// Clean parameters
-		if (isset($this->fk_track_id)) {
-			$this->fk_track_id = trim($this->fk_track_id);
+		if (isset($this->track_id)) {
+			$this->track_id = trim($this->track_id);
 		}
 
 		if (isset($this->message)) {
@@ -1962,7 +1968,7 @@ class Ticket extends CommonObject
 
 		// Cache already loaded
 
-		$sql = "SELECT id as rowid, fk_user_author, email_from, datec, datep, label, note as message, code";
+		$sql = "SELECT id as rowid, fk_user_author, fk_user_action, email_from, datec, datep, label, note as message, code";
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm";
 		$sql .= " WHERE fk_element = ".(int) $this->id;
 		$sql .= " AND elementtype = 'ticket'";
@@ -1977,6 +1983,7 @@ class Ticket extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 				$this->cache_msgs_ticket[$i]['id'] = $obj->rowid;
 				$this->cache_msgs_ticket[$i]['fk_user_author'] = $obj->fk_user_author;
+				$this->cache_msgs_ticket[$i]['fk_user_action'] = $obj->fk_user_action;	// owner of the action
 				if (in_array($obj->code, array('TICKET_MSG', 'AC_TICKET_CREATE')) && empty($obj->fk_user_author)) {
 					$this->cache_msgs_ticket[$i]['fk_contact_author'] = $obj->email_from;
 				}
@@ -2008,8 +2015,11 @@ class Ticket extends CommonObject
 		if ($this->status != Ticket::STATUS_CLOSED && $this->status != Ticket::STATUS_CANCELED) { // not closed
 			$this->db->begin();
 
+			$this->oldcopy = dol_clone($this);
+			$this->status = ($mode ? Ticket::STATUS_CANCELED : Ticket::STATUS_CLOSED);
+
 			$sql = "UPDATE ".MAIN_DB_PREFIX."ticket";
-			$sql .= " SET fk_statut=".($mode ? Ticket::STATUS_CANCELED : Ticket::STATUS_CLOSED).", progress=100, date_close='".$this->db->idate(dol_now())."'";
+			$sql .= " SET fk_statut = ".((int) $this->status).", progress=100, date_close='".$this->db->idate(dol_now())."'";
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::close mode=".$mode);
@@ -3067,9 +3077,11 @@ class Ticket extends CommonObject
 				if ((getDolGlobalInt('TICKET_SET_STATUS_ON_ANSWER', -1) < 0
 				&& ($object->status < self::STATUS_IN_PROGRESS && !$user->socid && !$private))
 				|| ($object->status > self::STATUS_IN_PROGRESS && $public_area)) {
-					$object->setStatut($object::STATUS_IN_PROGRESS);
+					// Set status
+					$object->setStatut($object::STATUS_IN_PROGRESS, null, '', 'TICKET_MODIFY');
 				} elseif (getDolGlobalInt('TICKET_SET_STATUS_ON_ANSWER', -1) >= 0 && empty($user->socid) && empty($private)) {
-					$object->setStatut(getDolGlobalInt('TICKET_SET_STATUS_ON_ANSWER'));
+					// Set status
+					$object->setStatut(getDolGlobalInt('TICKET_SET_STATUS_ON_ANSWER'), null, '', 'TICKET_MODIFY');
 				}
 
 				return 1;

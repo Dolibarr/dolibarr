@@ -434,7 +434,7 @@ class Mos extends DolibarrApi
 
 		if (!empty($arraytoconsume) && !empty($arraytoproduce)) {
 			$pos = 0;
-			$arrayofarrayname = array("arraytoconsume","arraytoproduce");
+			$arrayofarrayname = array("arraytoconsume", "arraytoproduce");
 			foreach ($arrayofarrayname as $arrayname) {
 				foreach (${$arrayname} as $value) {
 					$tmpproduct = new Product($this->db);
@@ -555,12 +555,12 @@ class Mos extends DolibarrApi
 							if (!($line->fk_warehouse > 0)) {	// If there is no warehouse set.
 								$langs->load("errors");
 								$error++;
-								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), $tmpproduct->ref));
+								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), (string) $tmpproduct->ref));
 							}
 							if ($tmpproduct->status_batch) {
 								$langs->load("errors");
 								$error++;
-								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), $tmpproduct->ref));
+								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), (string) $tmpproduct->ref));
 							}
 						}
 						$idstockmove = 0;
@@ -615,12 +615,12 @@ class Mos extends DolibarrApi
 							if (!($line->fk_warehouse > 0)) {	// If there is no warehouse set.
 								$langs->load("errors");
 								$error++;
-								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), $tmpproduct->ref));
+								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), (string) $tmpproduct->ref));
 							}
 							if ($tmpproduct->status_batch) {
 								$langs->load("errors");
 								$error++;
-								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), $tmpproduct->ref));
+								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), (string) $tmpproduct->ref));
 							}
 						}
 						$idstockmove = 0;
@@ -806,7 +806,7 @@ class Mos extends DolibarrApi
 		$this->db->begin();
 
 		$pos = 0;
-		$arrayofarrayname = array("arraytoconsume","arraytoproduce");
+		$arrayofarrayname = array("arraytoconsume", "arraytoproduce");
 		foreach ($arrayofarrayname as $arrayname) {
 			foreach (${$arrayname} as $value) {
 				if (empty($value["objectid"])) {

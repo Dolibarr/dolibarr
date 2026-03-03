@@ -883,7 +883,7 @@ foreach ($arrayofalerts as $key => $alert) {
 	// VDP ID
 	$html .= '<td style="white-space: nowrap">';
 	if (!empty($alert['issueidvdp'])) {
-		$html .= '#vdp'.$alert['issueidvdp'];
+		$html .= '#'.$alert['issueidvdp'];
 		$arrayofalerts[$key]['description'] .= "\n<br>".'VDP ID #'.$alert['issueidvdp'];
 	} else {
 		//$html .= '<span class="opacitymedium">public issue</span>';
@@ -1158,11 +1158,11 @@ function cleanVal2($val)
 	if (preg_match('/CVE([0-9\-\s]+)/', $tmpval['title'], $reg)) {
 		$tmpval['issueidcve'] = preg_replace('/^\-/', '', preg_replace('/\s+/', '-', trim($reg[1])));
 	}
-	if (preg_match('/#yogosha(\d+)/i', $tmpval['title'], $reg)) {
-		$tmpval['issueidvdp'] = $reg[1];
+	if (preg_match('/#(yogosha\d+)/i', $tmpval['title'], $reg)) {
+		$tmpval['issueidvdp'] = strtolower($reg[1]);
 	}
-	if (preg_match('/#ghsa([a-z\-\d]+)/i', $tmpval['title'], $reg)) {
-		$tmpval['issueidvdp'] = $reg[1];
+	if (preg_match('/#(ghsa[a-z\-\d]+)/i', $tmpval['title'], $reg)) {
+		$tmpval['issueidvdp'] = strtolower($reg[1]);
 	}
 
 	return $tmpval;

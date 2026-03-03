@@ -60,7 +60,7 @@ class Ai
 	const AI_DEFAULT_PROMPT_FOR_TEXT_SUMMARIZE = 'You are a writer, make the answer in the same language than the original text to summarize.';
 	const AI_DEFAULT_PROMPT_FOR_TEXT_REPHRASER = 'You are a writer, give only one answer with no comment and explanation and give the answer in the same language than the original text to rephrase.';
 	const AI_DEFAULT_PROMPT_FOR_EXTRAFIELD_FILLER = 'Give only one answer with no comment and explanation, I want the text to be ready to copy and paste.';
-	const AI_DEFAULT_PROMPT_FOR_DOC_PARSING = 'You are an assistant to anayze documents.';
+	const AI_DEFAULT_PROMPT_FOR_DOC_PARSING = 'You are an assistant to anayze documents. Return your answer with a JSON string and only a JSON string, do not add any other comment.';
 
 
 	/**
@@ -91,7 +91,7 @@ class Ai
 	/**
 	 * Generate response of instructions
 	 *
-	 * @param   string|array<string,mixed>	$instructions   String instruction to generate content (or file path) or array of payload or ID of file with function threads
+	 * @param   string|array<mixed,mixed>	$instructions   String instruction to generate content (or file path) or array of payload or ID of file with function threads
 	 * @param   string  					$model          Model name ('gpt-4.1-turbo', 'gpt-4.1', 'dall-e-3', ...)
 	 * @param   string  					$function     	Code of the feature we want to use ('textgeneration', 'transcription', 'audiogeneration', 'imagegeneration', 'translation', 'docparsing')
 	 * @param	string						$format			Format for output ('', 'html', ...)
@@ -137,10 +137,7 @@ class Ai
 			} elseif ($function == 'thread') {
 				$this->apiEndpoint = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_URL', $arrayofai[$this->apiService]['url']);
 				$this->apiEndpoint .= (preg_match('/\/$/', $this->apiEndpoint) ? '' : '/').'threads';
-			} elseif ($function == 'docparsing') {
-				$this->apiEndpoint = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_URL', $arrayofai[$this->apiService]['url']);
-				$this->apiEndpoint .= (preg_match('/\/$/', $this->apiEndpoint) ? '' : '/').'chat/completions';
-			} else {
+			} else {	// if $function == 'docparsing', ...
 				$this->apiEndpoint = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_URL', $arrayofai[$this->apiService]['url']);
 				$this->apiEndpoint .= (preg_match('/\/$/', $this->apiEndpoint) ? '' : '/').'chat/completions';
 			}
@@ -221,6 +218,7 @@ class Ai
 
 			if (is_array($instructions)) {
 				$arrayforpayload = $instructions;
+				$fullInstructions = '';
 			} else {
 				$fullInstructions = $instructions.($postPrompt ? (preg_match('/[\.\!\?]$/', $instructions) ? '' : '.').' '.$postPrompt : '');
 
@@ -269,19 +267,7 @@ class Ai
 			$arrayforpayload['stream'] = false;
 			*/
 
-			if ($function == 'docparsing') {
-				// $arrayforpayload is not used in this case
-				// $fullInstructions is not used in this case
-				// $prePrompt is not used in this case
-				$payload = array(
-					"name" => "PDF Analyzer",
-					"model" => $model,
-					"instructions" => $instructions,
-					"tools" => [
-						["type" => "file_search"]
-					]
-				);
-			} elseif ($function == 'thread') {
+			if ($function == 'thread') {
 				$payload = $instructions;
 			} else {
 				$payload = json_encode($arrayforpayload);
@@ -355,6 +341,7 @@ class Ai
 					$fp = fopen($outputfile, "a");
 
 					if ($fp) {
+						fwrite($fp, "Answer\n");
 						fwrite($fp, var_export((empty($response['content']) ? 'No content result' : $response['content']), true)."\n");
 
 						fclose($fp);

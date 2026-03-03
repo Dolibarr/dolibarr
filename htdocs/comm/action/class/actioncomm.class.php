@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncommreminder.class.php'
 
 
 /**
- *		Class to manage agenda events (actions)
+ *	Class to manage agenda events (actions)
  */
 class ActionComm extends CommonObject
 {
@@ -426,12 +426,12 @@ class ActionComm extends CommonObject
 		"id" => array("type" => "integer", "label" => "Ref", "enabled" => "1", 'position' => 10, 'notnull' => 1, "visible" => "1",),
 		"ref" => array("type" => "varchar(30)", "label" => "Ref", "enabled" => "1", 'position' => 15, 'notnull' => 1, "visible" => "0", "csslist" => "tdoverflowmax150", "showoncombobox" => "1",),
 		"ref_ext" => array("type" => "varchar(255)", "label" => "Refext", "enabled" => "1", 'position' => 20, 'notnull' => 0, "visible" => "0",),
+		"datep" => array("type" => "datetime", "label" => "DateStart", "enabled" => "1", 'position' => 25, 'notnull' => 0, "visible" => "1",),
+		"datep2" => array("type" => "datetime", "label" => "DateEnd", "enabled" => "1", 'position' => 26, 'notnull' => 0, "visible" => "-1",),
 		"fk_action" => array("type" => "integer", "label" => "Fkaction", "enabled" => "1", 'position' => 40, 'notnull' => 0, "visible" => "0", "css" => "maxwidth500 widthcentpercentminusxx",),
 		"code" => array("type" => "varchar(50)", "label" => "Code", "enabled" => "1", 'position' => 45, 'notnull' => 0, "visible" => "0", "showoncombobox" => "1",),
 		"label" => array("type" => "varchar(255)", "label" => "Title", "enabled" => "1", 'position' => 50, 'notnull' => 1, "visible" => "1", "alwayseditable" => "1", "css" => "minwidth300", "cssview" => "wordbreak", "csslist" => "tdoverflowmax150",),
 		"note" => array("type" => "mediumtext", "label" => "Description", "enabled" => "1", 'position' => 51, 'notnull' => 0, "visible" => "-1",),
-		"datep" => array("type" => "datetime", "label" => "DateStart", "enabled" => "1", 'position' => 53, 'notnull' => 0, "visible" => "1",),
-		"datep2" => array("type" => "datetime", "label" => "DateEnd", "enabled" => "1", 'position' => 54, 'notnull' => 0, "visible" => "1",),
 		"fk_project" => array("type" => "integer", "label" => "Project", "picto" => "project", "enabled" => "1", 'position' => 75, 'notnull' => 0, "visible" => "0", "css" => "maxwidth500 widthcentpercentminusxx",),
 		"fk_soc" => array("type" => "integer", "label" => "ThirdParty", "picto" => "company", "enabled" => "1", 'position' => 80, 'notnull' => 0, "visible" => "0", "css" => "maxwidth500 widthcentpercentminusxx",),
 		"fk_contact" => array("type" => "integer", "label" => "Contact", "picto" => "contact", "enabled" => "1", 'position' => 85, 'notnull' => 0, "visible" => "-1", "css" => "maxwidth500 widthcentpercentminusxx",),
@@ -1395,6 +1395,7 @@ class ActionComm extends CommonObject
 
 	/**
 	 *  Load all objects with filters.
+	 *  This is used by the showactions used into the main tab of objects to show the last n actions.
 	 *  @TODO WARNING: This make a fetch on all records instead of making one request with a join, like done into show_actions_done.
 	 *
 	 *  @param		int		$socid			Filter by thirdparty
@@ -1422,6 +1423,9 @@ class ActionComm extends CommonObject
 		$hookmanager->initHooks(array('agendadao'));
 
 		$sql = "SELECT a.id";
+		if ($elementtype == 'user') {
+			$sql .= ",a.datep";
+		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
 		// Fields from hook
 		$parameters = array('sql' => &$sql, 'socid' => $socid, 'fk_element' => $fk_element, 'elementtype' => $elementtype);
@@ -1441,10 +1445,13 @@ class ActionComm extends CommonObject
 				$sql .= " (SELECT r.rowid FROM ".MAIN_DB_PREFIX."actioncomm_resources as r WHERE";
 				$sql .= " r.element_type = 'socpeople' AND r.fk_element = ".((int) $fk_element).' AND r.fk_actioncomm = a.id)';
 			} elseif ($elementtype == 'user') {
-				$sql .= " AND (a.fk_user_action = ".((int) $fk_element)." OR EXISTS";
-				$sql .= " (SELECT r.rowid FROM ".MAIN_DB_PREFIX."actioncomm_resources as r WHERE";
+				$sql1 = $sql;
+				$sql .= " AND a.fk_user_action = ".((int) $fk_element);
+				$sql = "SELECT a.id FROM ((" . $sql . ") UNION (" . $sql1;
+				$sql .= " AND EXISTS (SELECT r.rowid FROM ".MAIN_DB_PREFIX."actioncomm_resources as r WHERE";
 				$sql .= " r.element_type = 'user' AND r.fk_element = ".((int) $fk_element).' AND r.fk_actioncomm = a.id)';
-				$sql .= ")";
+				$sql .= " AND a.fk_user_action <> ".((int) $fk_element);
+				$sql .= ")) as a";
 			} else {
 				$sql .= " AND a.fk_element = ".((int) $fk_element)." AND a.elementtype = '".$this->db->escape($elementtype)."'";
 			}
@@ -1934,7 +1941,8 @@ class ActionComm extends CommonObject
 	}
 
 	/**
-	 *  Return Picto of type of event
+	 *  Return Picto of type of event.
+	 *  It used the property type_color, type_code, type
 	 *
 	 *  @param	string		$morecss			More CSS
 	 *  @param	string		$titlealt			Title alt
@@ -1951,19 +1959,19 @@ class ActionComm extends CommonObject
 			if ($this->type_picto) {
 				$imgpicto = img_picto($titlealt, $this->type_picto, '', 0, 0, 0, '', ($morecss ? ' '.$morecss : ''));
 			} else {
-				if ($this->type_code == 'AC_RDV') {
+				if ($this->type_code === 'AC_RDV') {
 					$imgpicto = img_picto($titlealt, 'meeting', $color, 0, 0, 0, '', ($morecss ? ' '.$morecss : ''));
-				} elseif ($this->type_code == 'AC_TEL') {
+				} elseif ($this->type_code === 'AC_TEL') {
 					$imgpicto = img_picto($titlealt, 'object_phoning', $color, 0, 0, 0, '', ($morecss ? ' '.$morecss : ''));
-				} elseif ($this->type_code == 'AC_FAX') {
+				} elseif ($this->type_code === 'AC_FAX') {
 					$imgpicto = img_picto($titlealt, 'object_phoning_fax', $color, 0, 0, 0, '', ($morecss ? ' '.$morecss : ''));
-				} elseif ($this->type_code == 'AC_EMAIL' || $this->type_code == 'AC_EMAIL_IN' || $this->type_code == 'AC_EMAILING' || (!empty($this->code) && preg_match('/_SENTBYMAIL/', $this->code))) {
+				} elseif ($this->type_code === 'AC_EMAIL' || $this->type_code === 'AC_EMAIL_IN' || $this->type_code === 'AC_EMAILING' || (!empty($this->code) && preg_match('/_SENTBYMAIL/', $this->code))) {
 					$imgpicto = img_picto($titlealt, 'object_email', $color, 0, 0, 0, '', ($morecss ? ' '.$morecss : ''));
-				} elseif ($this->type_code == 'AC_INT') {
+				} elseif ($this->type_code === 'AC_INT') {
 					$imgpicto = img_picto($titlealt, 'object_intervention', $color, 0, 0, 0, '', ($morecss ? ' '.$morecss : ''));
 				} elseif (!empty($this->code) && preg_match('/^TICKET_MSG/', $this->code)) {
 					$imgpicto = img_picto($titlealt, 'object_conversation', $color, 0, 0, 0, '', ($morecss ? ' '.$morecss : ''));
-				} elseif ($this->type != 'systemauto') {
+				} elseif ((string) $this->type != 'systemauto') {
 					$imgpicto = img_picto($titlealt, 'user-cog', $color, 0, 0, 0, '', ($morecss ? ' '.$morecss : ''));
 				} else {
 					$imgpicto = img_picto($titlealt, 'cog', $color, 0, 0, 0, '', ($morecss ? ' '.$morecss : ''));

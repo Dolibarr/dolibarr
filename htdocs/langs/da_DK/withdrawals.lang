@@ -173,3 +173,5 @@ RefSalary=Løn
 NoSalaryInvoiceToWithdraw=Ingen løn, der venter på en '%s'. Gå på fanen '%s' på lønkortet for at fremsætte en anmodning.
 SalaryInvoiceWaitingWithdraw=Løn, der venter på betaling ved kreditoverførsel
 ErrorBankTransferNoPaymentRequestSelected=Ingen betalingsanmodning valgt.
+AmountRequestedAlreadyReachesTotal=Det samlede fakturabeløb er allerede anmodet om betaling
+AmountExceedsRemainingToRequest=Det anmodede beløb overstiger det resterende beløb, der er tilgængeligt for betalingsanmodninger

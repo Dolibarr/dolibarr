@@ -56,6 +56,13 @@ class Account extends CommonObject
 	public $picto = 'account';
 
 	/**
+	 * Ref
+	 *
+	 * @var string
+	 */
+	public $ref;
+
+	/**
 	 * @var	int
 	 * @deprecated	Use $id instead of $rowid
 	 * @see $id
@@ -1403,7 +1410,6 @@ class Account extends CommonObject
 		if ($filteraccountid) {
 			$sql .= " AND ba.rowid = ".((int) $filteraccountid);
 		}
-
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$langs->load("banks");
@@ -1424,7 +1430,6 @@ class Account extends CommonObject
 					$response->nbtodolate++;
 				}
 			}
-
 			return $response;
 		} else {
 			dol_print_error($this->db);

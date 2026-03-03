@@ -268,6 +268,7 @@ RequestToResetPasswordReceived=Έχει ληφθεί ένα αίτημα για 
 NewKeyIs=Αυτό είναι το νέο σας κλειδί για να συνδεθείτε
 NewKeyWillBe=Το νέο σας κλειδί για να συνδεθείτε με το λογισμικό είναι
 ClickHereToGoTo=Κάντε κλικ εδώ για να μεταβείτε στο %s
+ClickHereToGoToDictionary=Click here to edit the dictionary setup (also available from menu %s - %s - %s)
 YouMustClickToChange=Θα πρέπει πρώτα να κάνετε κλικ στον παρακάτω σύνδεσμο για να επικυρώσετε την αλλαγή του κωδικού πρόσβασης
 ConfirmPasswordChange=Επιβεβαιώστε την αλλαγή κωδικού πρόσβασης
 ForgetIfNothing=Αν δεν ζητήσατε αυτή την αλλαγή, απλά ξεχάστε αυτό το email. Τα διαπιστευτήριά σας παραμένουν ασφαλή.
@@ -385,6 +386,7 @@ FillExtrafieldWithAi=Συμπληρώστε το πεδίο συμπληρωμα
 ExtrafieldFiller=Extrafield filler
 OurProductSelection=Το προϊόν μας
 NoSupportedModulesHaveBeenActivated=Το εργαλείο αναφοράς μπορεί να δημιουργήσει δυναμική αναφορά μόνο για ορισμένες ενότητες. Δεν έχει ενεργοποιηθεί ακόμα κάποια υποστηριζόμενη ενότητα.
+TryAnotherConnectionMode=Δοκιμάστε μια άλλη λειτουργία σύνδεσης
 # Bookmarks
 BehaviourOnClick = Συμπεριφορά όταν επιλέγεται ένα URL σελιδοδείκτη
 BookmarkTargetNewWindowShort = Νέα καρτέλα

@@ -1430,7 +1430,6 @@ OpeningHoursDesc=Introduzca aquí el horario habitual de apertura de su empresa.
 ResourceSetup=Configuración del módulo de recursos
 DisabledResourceLinkUser=Deshabilitar la función para vincular un recurso a los usuarios
 DisabledResourceLinkContact=Deshabilitar función para vincular un recurso a contactos
-ConfirmUnactivation=Confirmar reinicio del módulo
 OnMobileOnly=Solo en pantalla pequeña (smartphone)
 DisableProspectCustomerType=Deshabilite el tipo de tercero "Prospecto + Cliente" (de modo que el tercero debe ser "Prospecto" o "Cliente", pero no ambos)
 MAIN_OPTIMIZEFORTEXTBROWSER=Simplificar la interfaz para personas ciegas

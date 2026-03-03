@@ -1335,8 +1335,8 @@ class DolGraph
 
 
 			if ($this->type[$firstlot] == 'piesemicircle') {
-				$this->stringtoshow .= 'circumference: Math.PI,' . "\n";
-				$this->stringtoshow .= 'rotation: -Math.PI,' . "\n";
+				$this->stringtoshow .= 'circumference: 180,' . "\n";
+				$this->stringtoshow .= 'rotation: -90,' . "\n";
 			}
 			$this->stringtoshow .= 'elements: { arc: {' . "\n";
 			// Color of each arc

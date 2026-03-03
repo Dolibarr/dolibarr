@@ -107,3 +107,54 @@ dialog article .dialog-header-btn.close {
 	margin-top: 0;
 	margin-bottom: 0;
 }
+
+body.--is-modal {
+	background: var(--colorbackbody);
+}
+
+body.--is-modal .modal-hidden,
+body:not(.--is-modal) .modal-displayed {
+	display: none;
+}
+
+
+body.--is-modal .card-view-container,
+body.--is-modal main.container  {
+	margin-top: 0;
+	margin-bottom: 0;
+	padding-top: 0;
+	padding-bottom: 0;
+}
+
+body.--is-modal article.card-view-container {
+	box-shadow: none;
+}
+
+body.--is-modal article.card-view-container > header {
+	margin-top: 0;
+}
+body.--is-modal article.card-view-container > footer {
+	margin-bottom: 0;
+	margin-bottom: 0;
+}
+
+@media (min-width: 576px) {
+	body.--is-modal .container {
+		max-width: 100%;
+	}
+}
+@media (min-width: 768px) {
+	body.--is-modal .container {
+		max-width: 100%;
+	}
+}
+@media (min-width: 992px) {
+	body.--is-modal .container {
+		max-width: 100%;
+	}
+}
+@media (min-width: 1200px) {
+	body.--is-modal .container {
+		max-width: 100%;
+	}
+}

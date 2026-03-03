@@ -1046,6 +1046,7 @@ class CommandeFournisseur extends CommonOrder
 				$datas['date'] = '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->date, 'day');
 			}
 			if (!empty($this->delivery_date)) {
+				$langs->load("sendings");
 				$datas['deliverydate'] = '<br><b>'.$langs->trans('DeliveryDate').':</b> '.dol_print_date($this->delivery_date, 'dayhour');
 			}
 		}
@@ -2157,11 +2158,11 @@ class CommandeFournisseur extends CommonOrder
 					$prod = new Product($this->db);
 					$prod->get_buyprice($fk_prod_fourn_price, (float) $qty, $fk_product, 'none', (empty($this->fk_soc) ? $this->socid : $this->fk_soc));
 
-					if ($qty < $prod->packaging) {
+					if (abs((float) $qty) < $prod->packaging) {
 						$qty = (float) $prod->packaging;
 					} else {
-						if (!empty($prod->packaging) && (fmod((float) $qty, (float) $prod->packaging)  > 0.000001)) {
-							$coeff = intval((float) $qty / $prod->packaging) + 1;
+						if (!empty($prod->packaging) && (float) price2num(fmod((float) $qty, (float) $prod->packaging), 'MS')) {
+							$coeff = intval(abs((float) $qty) / $prod->packaging) + 1;
 							$qty = (float) $prod->packaging * $coeff;
 							setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'mesgs');
 						}
@@ -3213,13 +3214,7 @@ class CommandeFournisseur extends CommonOrder
 				if ($qty < $this->line->packaging) {
 					$qty = $this->line->packaging;
 				} else {
-					// Ensure packaging is numeric, positive, and use fmod instead of %, to prevent error with decimal packaging values (resulting in division by zero)
-					if (
-						!empty($this->line->packaging)
-						&& is_numeric($this->line->packaging)
-						&& (float) $this->line->packaging > 0
-						&& fmod((float) $qty, (float) $this->line->packaging) > 0
-					) {
+					if (!empty($this->line->packaging) && is_numeric($this->line->packaging) && (float) $this->line->packaging > 0 && (fmod((float) $qty, (float) $this->line->packaging) > 0)) {
 						$coeff = intval($qty / $this->line->packaging) + 1;
 						$qty = $this->line->packaging * $coeff;
 						setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'mesgs');
