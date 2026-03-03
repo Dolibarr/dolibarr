@@ -855,12 +855,6 @@ class Form
 			$img = img_help(($tooltiptrigger != '' ? 2 : 1), $alt);
 		} elseif ($type == 'helpclickable') {
 			$img = img_help(($tooltiptrigger != '' ? 2 : 1), $alt);
-		} elseif ($type == 'superadmin') {
-			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-			$img = img_picto($alt, 'redstar');
-		} elseif ($type == 'admin') {
-			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-			$img = img_picto($alt, 'star');
 		} elseif ($type == 'warning') {
 			$img = img_warning($alt);
 		} elseif ($type != 'none') {
@@ -7001,7 +6995,7 @@ class Form
 		global $conf, $langs;
 
 		if ($htmlname != "none") {
-			print '<form method="post" action="' . $page . '">';
+			print '<form method="post" action="' . $page . '" class="inline-block">';
 			print '<input type="hidden" name="action" value="setabsolutediscount">';
 			print '<input type="hidden" name="token" value="' . newToken() . '">';
 			print '<div class="inline-block">';

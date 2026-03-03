@@ -4981,7 +4981,7 @@ class Societe extends CommonObject
 	/**
 	 *  Check if we must use localtax feature or not according to country (country of $mysoc in most cases).
 	 *
-	 *	@param		int<-1,2>		$localTaxNum	Use 1 or 2 to get info for only localtax1 or localtax2, 0 to get both a boolean using a OR, -1 to get array for each case.
+	 *	@param		int<-1,2>		$localTaxNum	Use 1 or 2 to get info for only localtax1 or localtax2, 0 to get both using a boolean test using a OR, -1 to get array for each case.
 	 * 	@param		int<0,1>		$mode			0=Check according to vat dictionary, 1=Check according to ->localtaxX_assuj field of $thirdparty
 	 *  @param      Societe|null	$thirdparty		Object thirdparty
 	 *  @return		boolean|array<int,boolean>		true or false or array of 2 booleans if $localTaxNum == -1

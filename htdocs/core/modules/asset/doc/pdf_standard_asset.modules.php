@@ -260,11 +260,9 @@ class pdf_standard_asset extends ModelePDFAsset
 				}
 
 				// Set certificate
-				$cert = empty($user->conf->CERTIFICATE_CRT) ? '' : $user->conf->CERTIFICATE_CRT;
-				// If user has no certificate, we try to take the company one
-				if (!$cert) {
-					$cert = !getDolGlobalString('CERTIFICATE_CRT') ? '' : $conf->global->CERTIFICATE_CRT;
-				}
+				$cert = getDolUserString('CERTIFICATE_CRT', getDolGlobalString('CERTIFICATE_CRT'));
+				$certprivate = getDolUserString('CERTIFICATE_CRT_PRIVATE', getDolGlobalString('CERTIFICATE_CRT_PRIVATE'));
+
 				// If a certificate is found
 				if ($cert) {
 					$info = array(
@@ -273,7 +271,7 @@ class pdf_standard_asset extends ModelePDFAsset
 						'Reason' => 'ASSET',
 						'ContactInfo' => $this->emetteur->email
 					);
-					$pdf->setSignature($cert, $cert, (string) $this->emetteur->name, '', 2, $info);
+					$pdf->setSignature($cert, $certprivate, $this->emetteur->name, '', 2, $info);
 				}
 
 				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
