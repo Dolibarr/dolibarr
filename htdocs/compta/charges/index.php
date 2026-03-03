@@ -9,6 +9,7 @@
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -145,8 +146,8 @@ print '<span class="opacitymedium">'.$langs->trans("DescTaxAndDividendsArea").'<
 print "<br>";
 
 if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
-	$sql = "SELECT c.id, c.libelle as label,";
-	$sql .= " cs.rowid, cs.libelle, cs.fk_type as type, cs.periode as period, cs.date_ech, cs.amount as total,";
+	$sql = "SELECT c.id, c.libelle as type_label,";
+	$sql .= " cs.rowid, cs.libelle as label, cs.fk_type as type, cs.periode as period, cs.date_ech, cs.amount as total,";
 	$sql .= " pc.rowid as pid, pc.datep, pc.amount as totalpaid, pc.num_paiement as num_payment, pc.fk_bank,";
 	$sql .= " pct.code as payment_code,";
 	$sql .= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel";
@@ -184,8 +185,8 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "cs.date_ech", "", $param, 'width="120"', $sortfield, $sortorder, 'nowraponall ');
-		print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "c.libelle", "", $param, '', $sortfield, $sortorder);
-		print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "cs.fk_type", "", $param, '', $sortfield, $sortorder);
+		print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "cs.libelle", "", $param, '', $sortfield, $sortorder);
+		print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "c.libelle", "", $param, '', $sortfield, $sortorder);
 		print_liste_field_titre("ExpectedToPay", $_SERVER["PHP_SELF"], "cs.amount", "", $param, 'class="right"', $sortfield, $sortorder);
 		print_liste_field_titre("RefPayment", $_SERVER["PHP_SELF"], "pc.rowid", "", $param, '', $sortfield, $sortorder);
 		print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "pc.datep", "", $param, 'align="center"', $sortfield, $sortorder);
@@ -216,12 +217,11 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 			// Label
 			print '<td>';
 			$socialcontrib->id = $obj->rowid;
-			$socialcontrib->ref = $obj->label;
 			$socialcontrib->label = $obj->label;
 			print $socialcontrib->getNomUrl(1, '20');
 			print '</td>';
 			// Type
-			print '<td class="tdoverflowmax200"><a href="'.DOL_URL_ROOT.'/compta/sociales/list.php?filtre=cs.fk_type:'.$obj->type.'">'.$obj->label.'</a></td>';
+            print '<td class="tdoverflowmax200"><a href="'.DOL_URL_ROOT.'/compta/sociales/list.php?filtre=cs.fk_type:'.$obj->type.'">'.$obj->type_label.'</a></td>';
 			// Expected to pay
 			print '<td class="right"><span class="amount">'.price($obj->total).'</span></td>';
 			// Ref payment
