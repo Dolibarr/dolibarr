@@ -672,12 +672,12 @@ class ChargeSociales extends CommonObject
 		if (isset($this->paye)) {
 			$label .= ' '.$this->getLibStatut(5);
 		}
-        if (!empty($this->id)) {
-            $label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->id;
-        }
-        if (!empty($this->label)) {
-            $label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
-        }
+		if (!empty($this->id)) {
+			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->id;
+		}
+		if (!empty($this->label)) {
+			$label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
+		}
 		if (!empty($this->type_label)) {
 			$label .= '<br><b>'.$langs->trans('Type').':</b> '.$this->type_label;
 			if (isModEnabled('accounting') || !empty($this->type_accountancy_code)) {
