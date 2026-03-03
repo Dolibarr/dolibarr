@@ -161,7 +161,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 	$sql .= " AND cs.entity IN (".getEntity("tax").")";
 	if ($year > 0) {
 		$sql .= " AND (";
-		// If period defined, we use it as dat criteria, if not  we use date echeance,
+		// If period defined, we use it as date criteria, if not  we use date echeance,
 		// so we are compatible when period is not mandatory
 		$sql .= "   (cs.periode IS NOT NULL AND cs.periode between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
 		$sql .= " OR (cs.periode IS NULL AND cs.date_ech between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
@@ -221,7 +221,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 			print $socialcontrib->getNomUrl(1, '20');
 			print '</td>';
 			// Type
-            print '<td class="tdoverflowmax200"><a href="'.DOL_URL_ROOT.'/compta/sociales/list.php?filtre=cs.fk_type:'.$obj->type.'">'.$obj->type_label.'</a></td>';
+			print '<td class="tdoverflowmax200"><a href="'.DOL_URL_ROOT.'/compta/sociales/list.php?filtre=cs.fk_type:'.$obj->type.'">'.$obj->type_label.'</a></td>';
 			// Expected to pay
 			print '<td class="right"><span class="amount">'.price($obj->total).'</span></td>';
 			// Ref payment
@@ -275,7 +275,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 
 		print '<td colspan="3" class="liste_total">'.$langs->trans("Total").'</td>';
 
-		// Total here has no sens because we can have several time the same line
+		//Total here makes no sense because we can have the same line several times.
 		//print '<td class="liste_total right">'.price($total).'</td>';
 		print '<td class="liste_total right"></td>';
 
@@ -306,7 +306,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON ptva.fk_typepaiement = pct.id";
 	$sql .= " WHERE pv.entity IN (".getEntity("tax").")";
 	if ($year > 0) {
-		// If period defined, we use it as dat criteria, if not  we use date echeance,
+		// If period defined, we use it as date criteria, if not  we use date echeance,
 		// so we are compatible when period is not mandatory
 		$sql .= " AND pv.datev between '".$db->idate(dol_get_first_day($year, 1, false))."' AND '".$db->idate(dol_get_last_day($year, 12, false))."'";
 	}
@@ -410,7 +410,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 
 		print '<td class="liste_total" colspan="2">'.$langs->trans("Total").'</td>';
 
-		// Total here has no sens because we can have several time the same line
+		// Total here makes no sense because we can have the same line several times.
 		//print '<td class="right">'.price($totaltopay).'</td>';
 		print '<td class="liste_total">&nbsp;</td>';
 
@@ -461,7 +461,7 @@ while ($j < $numlt) {
 	$sql .= " FROM ".MAIN_DB_PREFIX."localtax as pv";
 	$sql .= " WHERE pv.entity = ".$conf->entity." AND localtaxtype = ".((int) $j);
 	if ($year > 0) {
-		// If period defined, we use it as dat criteria, if not  we use date echeance,
+		// If period defined, we use it as date criteria, if not  we use date echeance,
 		// so we are compatible when period is not mandatory
 		$sql .= " AND pv.datev between '".$db->idate(dol_get_first_day($year, 1, false))."' AND '".$db->idate(dol_get_last_day($year, 12, false))."'";
 	}
