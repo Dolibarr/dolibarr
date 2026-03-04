@@ -232,9 +232,9 @@ print '<tr class="oddeven">';
 print '<td>Default Interface Mode</td>';
 print '<td>';
 $input_modes = [
-    'text' => '💬 ' . $langs->trans('OptionTextOnly'),
-    'native' => '☁️ ' . $langs->trans('OptionCloudFast') . ' - ' . $langs->trans('OptionCloudFasthelp'),
-    'whisper' => '🔒 ' . $langs->trans('OptionWhisperLocal') . ' - ' . $langs->trans('OptionWhisperLocalhelp')
+	'text' => '💬 ' . $langs->trans('OptionTextOnly'),
+	'native' => '☁️ ' . $langs->trans('OptionCloudFast') . ' - ' . $langs->trans('OptionCloudFasthelp'),
+	'whisper' => '🔒 ' . $langs->trans('OptionWhisperLocal') . ' - ' . $langs->trans('OptionWhisperLocalhelp')
 ];
 print $form->selectarray('AI_DEFAULT_INPUT_MODE', $input_modes, getDolGlobalString('AI_DEFAULT_INPUT_MODE'), 0, 0, 0);
 print '<br><span class="opacitymedium small">' . $langs->trans("InputMethodHelp") . '</span>';
@@ -256,9 +256,9 @@ print '<td class="titlefield" width="30%">' . $langs->trans("AskConfirmation");
 print ' <span class="fa fa-info-circle" title="' . $langs->trans("AskConfirmationHelp") . '"></span></td>';
 print '<td>';
 $confirmation_options = [
-    '0' => $langs->trans("ConfirmNever"),
-    '1' => $langs->trans("ConfirmWriteOnly"),
-    '2' => $langs->trans("ConfirmAlways")
+	'0' => $langs->trans("ConfirmNever"),
+	'1' => $langs->trans("ConfirmWriteOnly"),
+	'2' => $langs->trans("ConfirmAlways")
 ];
 print $form->selectarray('AI_ASK_FOR_CONFIRMATION', $confirmation_options, getDolGlobalInt('AI_ASK_FOR_CONFIRMATION', 1), 0, 0, 0);
 print '</td>';
@@ -303,7 +303,7 @@ $currentService = getDolGlobalString('AI_API_SERVICE');
 print load_fiche_titre($langs->trans("AIProviderConfigTitle"), '', 'fa fa-plug');
 
 if (empty($currentService) || $currentService == '-1') {
-    print '<div class="warning">'.$langs->trans("NoAIProviderSelected").' <a href="'.dol_buildpath('/ai/admin/setup.php', 1).'">'.$langs->trans("ConfigureHere").'</a></div>';
+	print '<div class="warning">'.$langs->trans("NoAIProviderSelected").' <a href="'.dol_buildpath('/ai/admin/setup.php', 1).'">'.$langs->trans("ConfigureHere").'</a></div>';
 } else {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
@@ -319,7 +319,7 @@ if (empty($currentService) || $currentService == '-1') {
 	print '<div class="center">';
 
 	if ($currentService && $currentService !== '-1') {
-    	print ' <a href="'.$_SERVER["PHP_SELF"].'?action=test_provider&service_key='.$currentService.'" class="button">Test Connection</a>';
+		print ' <a href="'.$_SERVER["PHP_SELF"].'?action=test_provider&service_key='.$currentService.'" class="button">Test Connection</a>';
 	}
 
 	print '</div>';
