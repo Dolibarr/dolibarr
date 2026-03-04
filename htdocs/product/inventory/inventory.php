@@ -582,8 +582,7 @@ if ($action != 'record') {
 		// Save
 		if ($object->status == $object::STATUS_VALIDATED) {
 			if ($permissiontoadd) {
-				// Url is called in $("#idbuttonmakemovementandclose").click event AFTER qties update (old href value = $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=record&page='.$page.$paramwithsearch.'&token='.newToken())
-				print '<a class="butAction classfortooltip" id="idbuttonmakemovementandclose" href="#" title="'.dol_escape_htmltag($langs->trans("MakeMovementsAndClose")).'">'.$langs->trans("MakeMovementsAndClose").'</a>'."\n";
+				print '<a class="butAction classfortooltip" id="idbuttonmakemovementandclose" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=record&page='.$page.$paramwithsearch.'&token='.newToken().'" title="'.dol_escape_htmltag($langs->trans("MakeMovementsAndClose")).'">'.$langs->trans("MakeMovementsAndClose").'</a>'."\n";
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('MakeMovementsAndClose').'</a>'."\n";
 			}
@@ -1216,6 +1215,7 @@ print '<script type="text/javascript">
         					success: function(result){
            				 	window.location.href = "'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&page='.($page + 1).$paramwithsearch.'";
     						}});
+							return false;
     					});
 
 
@@ -1229,6 +1229,7 @@ print '<script type="text/javascript">
         					success: function(result){
            				 	window.location.href = "'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&page='.($page - 1).$paramwithsearch.'";
        					 	}});
+							return false;
 						 });
 
                           $("#idbuttonmakemovementandclose").click(function(e){
@@ -1241,6 +1242,7 @@ print '<script type="text/javascript">
         					success: function(result){
            				 	window.location.href = "'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&page='.($page - 1).$paramwithsearch.'&action=record";
        					 	}});
+							return false;
 						 });
 					});
 </script>';
