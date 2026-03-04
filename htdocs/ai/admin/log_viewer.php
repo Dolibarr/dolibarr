@@ -362,9 +362,16 @@ if ($res && $db->num_rows($res) > 0) {
 		print '<td style="' . $timeColor . '" align="center">' . round($obj->execution_time, 2) . 's</td>';
 
 		// Status
-		if ($obj->status == $langs->transnoentitiesnoconv("Success")) $badge = 'badge-status4'; // Green
-		if ($obj->status == $langs->transnoentitiesnoconv("Confirm")) $badge = 'badge-status3'; // Yellow
-		if ($obj->status == $langs->transnoentitiesnoconv('Error')) $badge = 'badge-status8'; // Red
+		$badge = 'badge-status0';
+		if ($obj->status == $langs->transnoentitiesnoconv("Success")) {
+			$badge = 'badge-status4'; // Green
+		}
+		if ($obj->status == $langs->transnoentitiesnoconv("Confirm")) {
+			$badge = 'badge-status3'; // Yellow
+		}
+		if ($obj->status == $langs->transnoentitiesnoconv('Error')) {
+			$badge = 'badge-status8'; // Red
+		}
 		print '<td align="center"><span class="badge ' . $badge . '">' . dol_escape_htmltag($obj->status) . '</span></td>';
 
 		// Details Button (Triggers Modal)
