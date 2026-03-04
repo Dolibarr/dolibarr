@@ -12,7 +12,7 @@
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * but WITHOUT ANY WARRANTY, without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
@@ -77,86 +77,92 @@ if ($action == 'update') {
 		}
 	}
 
-    if (GETPOSTISSET('AI_DEFAULT_INPUT_MODE')) {
-        $res = dolibarr_set_const($db, "AI_DEFAULT_INPUT_MODE", GETPOST("AI_DEFAULT_INPUT_MODE"), 'chaine', 0, '', $conf->entity);
-        if ($res <= 0) $error++;
-    }
+	if (GETPOSTISSET('AI_DEFAULT_INPUT_MODE')) {
+		$res = dolibarr_set_const($db, "AI_DEFAULT_INPUT_MODE", GETPOST("AI_DEFAULT_INPUT_MODE"), 'chaine', 0, '', $conf->entity);
+		if ($res <= 0) {
+			$error++;
+		}
+	}
 
-    if (GETPOSTISSET('AI_INTENT_PROMPT')) {
-        $res = dolibarr_set_const($db, "AI_INTENT_PROMPT", GETPOST("AI_INTENT_PROMPT"), 'chaine', 0, '', $conf->entity);
-        if ($res <= 0) $error++;
-    }
+	if (GETPOSTISSET('AI_INTENT_PROMPT')) {
+		$res = dolibarr_set_const($db, "AI_INTENT_PROMPT", GETPOST("AI_INTENT_PROMPT"), 'chaine', 0, '', $conf->entity);
+		if ($res <= 0) {
+			$error++;
+		}
+	}
 
-    if ($error) {
-        setEventMessages($langs->trans("ErrorSavingSettings"), null, 'errors');
-    } else {
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
+	if ($error) {
+		setEventMessages($langs->trans("ErrorSavingSettings"), null, 'errors');
+	} else {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	}
 
-    header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home");
-    exit;
+	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home");
+	exit;
 }
 
 // Test connection
 if ($action == 'test_provider') {
-    $service = GETPOST('service_key', 'aZ09');
-    if ($service) {
-        $key = getDolGlobalString('AI_API_' . strtoupper($service) . '_KEY');
-        $url = getDolGlobalString('AI_API_' . strtoupper($service) . '_URL');
+	$service = GETPOST('service_key', 'aZ09');
+	if ($service) {
+		$key = getDolGlobalString('AI_API_' . strtoupper($service) . '_KEY');
+		$url = getDolGlobalString('AI_API_' . strtoupper($service) . '_URL');
 
-        // Decrypt if needed
+		// Decrypt if needed
 		if (preg_match('/^crypted:/', $key)) {
-    		$key = dol_decode(substr($key, 8));
+			$key = dol_decode(substr($key, 8));
 		} elseif (preg_match('/^dolcrypt:/', $key)) {
-    		$key = dolDecrypt($key);
+			$key = dolDecrypt($key);
 		}
 
-        // Only proceed if the key is valid (decrypted or not encrypted)
-        if ($key !== null) {
-            $res = testAIConnection($service, $key, $url);
+		// Only proceed if the key is valid (decrypted or not encrypted)
+		if ($key !== null) {
+			$res = testAIConnection($service, $key, $url);
 
-            if ($res['success']) {
-                setEventMessages($langs->trans("ConnectionSuccessful") . $res['message'], null, 'mesgs');
-            } else {
-                setEventMessages($langs->trans("ConnectionFailed") . $res['message'], null, 'errors');
-            }
-        }
-    }
+			if ($res['success']) {
+				setEventMessages($langs->trans("ConnectionSuccessful") . $res['message'], null, 'mesgs');
+			} else {
+				setEventMessages($langs->trans("ConnectionFailed") . $res['message'], null, 'errors');
+			}
+		}
+	}
 }
 
 // External Access Settings
 if ($action == 'update_external') {
-    $error = 0;
+	$error = 0;
 
-    $user_id = GETPOSTINT("AI_MCP_USER_ID");
-    if (GETPOSTISSET('AI_MCP_USER_ID')) {
-        $res = dolibarr_set_const($db, "AI_MCP_USER_ID", $user_id,  'int', 0, '', $conf->entity);
-        if ($res <= 0) $error++;
-    }
+	$user_id = GETPOSTINT("AI_MCP_USER_ID");
+	if (GETPOSTISSET('AI_MCP_USER_ID')) {
+		$res = dolibarr_set_const($db, "AI_MCP_USER_ID", $user_id,  'int', 0, '', $conf->entity);
+		if ($res <= 0) {
+			$error++;
+		}
+	}
 
-    if ($error) {
-        setEventMessages($langs->trans("ErrorSavingSettings"), null, 'errors');
-    } else {
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
+	if ($error) {
+		setEventMessages($langs->trans("ErrorSavingSettings"), null, 'errors');
+	} else {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	}
 
-    header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home");
-    exit;
+	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home");
+	exit;
 }
 
 // Generate New API Key
 if ($action == 'generate_key') {
-    $newKey = dolGetRandomBytes(64);
+	$newKey = dolGetRandomBytes(64);
 
-    if (empty($newKey)) {
-         setEventMessages($langs->trans("KeyGenerationFailed"), null, 'errors');
-    } else {
-        if (dolibarr_set_const($db, 'AI_MCP_API_KEY', $newKey, 'chaine', 0, '', $conf->entity) > 0) {
-            setEventMessages($langs->trans("KeyGenerationSuccessfull"), null, 'mesgs');
-        } else {
-            setEventMessages($langs->trans("KeySaveFailed"), null, 'errors');
-        }
-    }
+	if (empty($newKey)) {
+		setEventMessages($langs->trans("KeyGenerationFailed"), null, 'errors');
+	} else {
+		if (dolibarr_set_const($db, 'AI_MCP_API_KEY', $newKey, 'chaine', 0, '', $conf->entity) > 0) {
+			setEventMessages($langs->trans("KeyGenerationSuccessfull"), null, 'mesgs');
+		} else {
+			setEventMessages($langs->trans("KeySaveFailed"), null, 'errors');
+		}
+	}
 }
 
 /*
@@ -299,16 +305,16 @@ print load_fiche_titre($langs->trans("AIProviderConfigTitle"), '', 'fa fa-plug')
 if (empty($currentService) || $currentService == '-1') {
     print '<div class="warning">'.$langs->trans("NoAIProviderSelected").' <a href="'.dol_buildpath('/ai/admin/setup.php', 1).'">'.$langs->trans("ConfigureHere").'</a></div>';
 } else {
-    print '<div class="div-table-responsive-no-min">';
-    print '<table class="noborder centpercent">';
-    
-    print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("AIProvider").'</td><td>'.$services[$currentService]['label'].'</td></tr>';
-    
-    $prefix = 'AI_API_'.strtoupper($currentService);
-    $modelVal = getDolGlobalString($prefix.'_MODEL', $services[$currentService]['textgeneration']);
-    
-    print '<tr class="oddeven"><td>'.$langs->trans("AI_API_MODEL").'</td><td>'.$modelVal.'</td></tr>';
-    print '</table></div>';
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent">';
+
+	print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("AIProvider").'</td><td>'.$services[$currentService]['label'].'</td></tr>';
+
+	$prefix = 'AI_API_'.strtoupper($currentService);
+	$modelVal = getDolGlobalString($prefix.'_MODEL', $services[$currentService]['textgeneration']);
+
+	print '<tr class="oddeven"><td>'.$langs->trans("AI_API_MODEL").'</td><td>'.$modelVal.'</td></tr>';
+	print '</table></div>';
 
 	print '<div class="center">';
 
@@ -316,7 +322,7 @@ if (empty($currentService) || $currentService == '-1') {
     	print ' <a href="'.$_SERVER["PHP_SELF"].'?action=test_provider&service_key='.$currentService.'" class="button">Test Connection</a>';
 	}
 
-    print '</div>';
+	print '</div>';
 }
 print '</div>';
 print '</form>';
@@ -347,12 +353,12 @@ print '<tr class="oddeven">';
 print '<td width="30%">API Key</td>';
 print '<td>';
 if ($apiKey) {
-    print '<input type="text" id="apikey" value="'.$apiKey.'" readonly style="width:400px; padding:6px; background:#f4f4f4; border:1px solid #ccc; color:#555;">';
-    print ' <button type="button" class="button small" onclick="navigator.clipboard.writeText(document.getElementById(\'apikey\').value)">' . $langs->trans("Copy") . '</button>';
-    print ' <a class="button" href="'.$_SERVER["PHP_SELF"].'?action=generate_key&token='.newToken().'">Generate New Key</a>';
+	print '<input type="text" id="apikey" value="'.$apiKey.'" readonly style="width:400px; padding:6px; background:#f4f4f4; border:1px solid #ccc; color:#555;">';
+	print ' <button type="button" class="button small" onclick="navigator.clipboard.writeText(document.getElementById(\'apikey\').value)">' . $langs->trans("Copy") . '</button>';
+	print ' <a class="button" href="'.$_SERVER["PHP_SELF"].'?action=generate_key&token='.newToken().'">Generate New Key</a>';
 } else {
-    print '<span class="opacitymedium">' . $langs->trans("NoKeyWarning") . '</span>';
-    print ' <a class="button" href="' . $_SERVER["PHP_SELF"] . '?action=generate_key&token=' . newToken() . '">' . $langs->trans("GenerateKey") . '</a>';
+	print '<span class="opacitymedium">' . $langs->trans("NoKeyWarning") . '</span>';
+	print ' <a class="button" href="' . $_SERVER["PHP_SELF"] . '?action=generate_key&token=' . newToken() . '">' . $langs->trans("GenerateKey") . '</a>';
 }
 print '</td>';
 print '</tr>';
