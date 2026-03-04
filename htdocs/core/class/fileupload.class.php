@@ -100,11 +100,13 @@ class FileUpload
 
 				dol_include_once('/'.$parentElement.'/class/'.$parentObject.'.class.php');
 				$parent = new $parentClass($db);
-				$parent->fetch($object->$parentForeignKey);
-				if (!empty($parent->socid)) {
-					$parent->fetch_thirdparty();
+				if ($object->$parentForeignKey !== null) {
+					$parent->fetch((int) $object->$parentForeignKey);
+					if (!empty($parent->socid)) {
+						$parent->fetch_thirdparty();
+					}
+					$object->$parentObject = clone $parent;
 				}
-				$object->$parentObject = clone $parent;
 
 				$object_ref = dol_sanitizeFileName($object->project->ref).'/'.$object_ref;
 			}
@@ -396,6 +398,7 @@ class FileUpload
 		// Remove path information and dots around the filename, to prevent uploading
 		// into different directories or replacing hidden system files.
 		$file_name = basename(dol_sanitizeFileName($name));
+		$file_name = preg_replace('/ {2,}/', ' ', $file_name); // replaces multiple spaces into one space like the upload flow via input field
 		// Add missing file extension for known image types:
 		$matches = array();
 		if (strpos($file_name, '.') === false && preg_match('/^image\/(gif|jpe?g|png)/', $type, $matches)) {

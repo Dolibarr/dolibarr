@@ -1645,7 +1645,7 @@ if ($reshook == 0) {  //add buttons
 			print '<!-- Show the search input text -->'."\n";
 			print '<div class="margintoponly">';
 			print '<input type="text" id="search" class="input-search-takepos input-nobottom" name="search" onkeyup="Search2(\''.dol_escape_js($keyCodeForEnter).'\', null);" style="width: 80%; width:calc(100% - 51px); font-size: 150%;" placeholder="'.dol_escape_htmltag($langs->trans("Search")).'" autofocus> ';
-			print '<a class="marginleftonly hideonsmartphone" onclick="ClearSearch(false);">'.img_picto('', 'searchclear').'</a>';
+			print '<a class="marginleftonly hideonsmartphone" onclick="ClearSearch(false);">'.img_picto('', 'searchclear.png').'</a>';
 			print '</div>';
 		}
 		?>

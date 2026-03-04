@@ -114,6 +114,9 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	}
 }
 
+// In customreport context, we force the protection to avoid forging of criteria including bind SQL injection
+$conf->global->MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER = 1;
+
 if (empty($mode)) {
 	$mode = 'graph';
 }

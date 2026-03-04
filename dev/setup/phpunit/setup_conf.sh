@@ -47,7 +47,7 @@ function save_db_cache() (
 	# Get the target version from the version.inc.php file
 	target_version=$(sed -n "s/.*define('DOL_\\(MAJOR_\\)\\?VERSION',[[:space:]]*'\\([0-9.]*\\).*/\\2/p" ../version.inc.php) ; echo $target_version
 	# Default in case that failed
-	target_version=${target_version:=22.0.0}
+	target_version=${target_version:=23.0.0}
 
 	# Sequence of versions for upgrade process (to be completed)
 	VERSIONS=("3.5.0" "3.6.0" "3.7.0" "3.8.0" "3.9.0")

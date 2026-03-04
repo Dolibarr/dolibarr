@@ -855,12 +855,6 @@ class Form
 			$img = img_help(($tooltiptrigger != '' ? 2 : 1), $alt);
 		} elseif ($type == 'helpclickable') {
 			$img = img_help(($tooltiptrigger != '' ? 2 : 1), $alt);
-		} elseif ($type == 'superadmin') {
-			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-			$img = img_picto($alt, 'redstar');
-		} elseif ($type == 'admin') {
-			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-			$img = img_picto($alt, 'star');
 		} elseif ($type == 'warning') {
 			$img = img_warning($alt);
 		} elseif ($type != 'none') {
@@ -5895,7 +5889,7 @@ class Form
 		$arrayselected = array();
 		if (GETPOSTISARRAY($htmlname)) {
 			$arrayselected = GETPOST($htmlname, 'array:int');
-		} elseif (is_object($object)) {
+		} elseif (is_object($object) && $object->id > 0) {
 			$c = new Categorie($this->db);
 			$cats = $c->containing($object->id, $categtype);
 			$arrayselected = array();
@@ -6123,7 +6117,7 @@ class Form
 		if (empty($height)) {
 			$height = 250;
 			if (is_array($formquestion) && count($formquestion) > 2) {
-				$height += ((count($formquestion) - 2) * 24) + 5;
+				$height += ((count($formquestion) - 2) * 24) + 10;
 			}
 		}
 
@@ -7001,7 +6995,7 @@ class Form
 		global $conf, $langs;
 
 		if ($htmlname != "none") {
-			print '<form method="post" action="' . $page . '">';
+			print '<form method="post" action="' . $page . '" class="inline-block">';
 			print '<input type="hidden" name="action" value="setabsolutediscount">';
 			print '<input type="hidden" name="token" value="' . newToken() . '">';
 			print '<div class="inline-block">';
@@ -9039,7 +9033,8 @@ class Form
 	 * @param 	int				$forcecombo           	Force to load all values and output a standard combobox (with no beautification)
 	 * @param 	int<0,1>		$disabled             	1=Html component is disabled
 	 * @param	string			$selected_input_value 	Value of preselected input text (for use with ajax)
-	 * @param	string|array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}	$objectfield	'Object:Field' that contains the definition of parent (in table $fields or $extrafields). Example: 'Object:xxx' or 'Object@module:xxx' or 'Object:options_xxx' or 'Object@module:options_xxx' or,  better, the full entry array in ->fields
+	 * @param	string|array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}	$objectfield	'Object:fieldkey' that contains the definition of parent (in table $fields or $extrafields). Example: 'Object:xxx' or 'Object@module:xxx' or 'Object:options_xxx' or 'Object@module:options_xxx' or
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  better, the full entry array in ->fields
 	 * @return  string	    							Return HTML string
 	 * @see selectForFormsList(), select_thirdparty_list()
 	 */
@@ -9052,14 +9047,14 @@ class Form
 		// We got this in a modulebuilder form of "MyObject" of module "mymodule".
 		// When ->fields is array( ... "fk_soc" => array("type"=>"integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))" ...), we have
 		// $objectdesc = 'Societe'
-		// $objectfield = 'myobject@mymodule:fk_soc'  ('fk_soc' is code to retrieve myobject->fields['fk_soc'])   or it can be an array that is directly
-		//                 array("type"=>"integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))" ...)
+		// $objectfield = Method 1: 'myobject@mymodule:fk_soc'  ('fk_soc' is code to retrieve myobject->fields['fk_soc'])
+		//                Method 2 recommended (it can be the array): array("type"=>"integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))" ...)
 
 		// We got this when showing an extrafields on resource that is a link to societe
-		// When extrafields 'link_to_societe' of Resource is 'link' to 'Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))" ...)', we have
+		// When extrafields 'link_to_societe' for object Resource is 'link' to 'Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', we have
 		// $objectdesc = 'Societe'
-		// $objectfield = 'resource:options_link_to_societe'  or it can be an array that is directly
-		//                array("type"=>'Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))" ...)
+		// $objectfield = Method 1: 'resource:options_link_to_societe'
+		//                Method 2 recommended (it can be the array): array("type"=>'Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))" ...)
 
 		// With old usage:
 		// $objectdesc = 'Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))'
@@ -9200,6 +9195,7 @@ class Form
 			// Set url and param to call to get json of the search results
 			$urlforajaxcall = DOL_URL_ROOT . '/core/ajax/selectobject.php';
 			$urloption = 'htmlname=' . urlencode($htmlname) . '&outjson=1&objectdesc=' . urlencode($objectdescorig) . (is_scalar($objectfield) ? '&objectfield='.urlencode($objectfield) : '') . ($sortfield ? '&sortfield=' . urlencode($sortfield) : '');
+			//$urloption = 'htmlname=' . urlencode($htmlname) . '&outjson=1'.(is_scalar($objectfield) ? '&objectfield='.urlencode($objectfield) : '') . ($sortfield ? '&sortfield=' . urlencode($sortfield) : '');
 
 			// Activate the auto complete using ajax call.
 			$out .= ajax_autocompleter((string) $preSelectedValue, $htmlname, $urlforajaxcall, $urloption, getDolGlobalInt($confkeyforautocompletemode), 0);
@@ -11108,21 +11104,22 @@ class Form
 	/**
 	 * Return HTML code to output a photo
 	 *
-	 * @param string 	$modulepart 						Key to define module concerned ('societe', 'userphoto', 'memberphoto')
-	 * @param Societe|Adherent|Contact|User|CommonObject	$object	Object containing data to retrieve file name
-	 * @param int 		$width 								Width of photo
-	 * @param int 		$height 							Height of photo (auto if 0)
-	 * @param int<0,1>	$caneditfield 						Add edit fields
-	 * @param string 	$cssclass 							CSS name to use on img for photo
-	 * @param string 	$imagesize 							'mini', 'small' or '' (original)
-	 * @param int<0,1>	$addlinktofullsize 					Add link to fullsize image
-	 * @param int<0,1>	$cache 								1=Accept to use image in cache
-	 * @param ''|'user'|'environment' 	$forcecapture 		'', 'user' (user-facing camera) or 'environment' ('outward-facing camera'). Force the parameter capture on HTML input file element to ask a smartphone to allow to open camera to take photo. Auto if ''.
-	 * @param int<0,1>	$noexternsourceoverwrite 			No overwrite image with extern source (like 'gravatar' or other module)
-	 * @return string                            			HTML code to output photo
+	 * @param string 										$modulepart 				Key to define module concerned ('societe', 'userphoto', 'memberphoto')
+	 * @param Societe|Adherent|Contact|User|CommonObject	$object						Object containing data to retrieve file name
+	 * @param int 											$width 						Width of photo
+	 * @param int 											$height 					Height of photo (auto if 0)
+	 * @param int<0,1>										$caneditfield 				Add edit fields
+	 * @param string 										$cssclass 					CSS name to use on img for photo
+	 * @param string 										$imagesize 					'mini', 'small' or '' (original)
+	 * @param int<0,1>										$addlinktofullsize 			Add link to fullsize image
+	 * @param int<0,1>										$cache 						1=Accept to use image in cache
+	 * @param ''|'user'|'environment' 						$forcecapture 				'', 'user' (user-facing camera) or 'environment' ('outward-facing camera'). Force the parameter capture on HTML input file element to ask a smartphone to allow to open camera to take photo. Auto if ''.
+	 * @param int<0,1>										$noexternsourceoverwrite 	No overwrite image with extern source (like 'gravatar' or other module)
+	 * @param int<0,1>										$usesharelinkifavailable	Use 1 to use the share=key link if available. This is slower.
+	 * @return string                            										HTML code to output photo
 	 * @see getImagePublicURLOfObject()
 	 */
-	public static function showphoto($modulepart, $object, $width = 100, $height = 0, $caneditfield = 0, $cssclass = 'photowithmargin', $imagesize = '', $addlinktofullsize = 1, $cache = 0, $forcecapture = '', $noexternsourceoverwrite = 0)
+	public static function showphoto($modulepart, $object, $width = 100, $height = 0, $caneditfield = 0, $cssclass = 'photowithmargin', $imagesize = '', $addlinktofullsize = 1, $cache = 0, $forcecapture = '', $noexternsourceoverwrite = 0, $usesharelinkifavailable = 0)
 	{
 		global $conf, $db, $langs;
 
@@ -11229,10 +11226,6 @@ class Form
 		$ret = '';
 
 		if ($dir) {
-			require_once DOL_DOCUMENT_ROOT . '/ecm/class/ecmfiles.class.php';
-			$ecmfiles = new EcmFiles($db);
-			$relativefile = str_replace(DOL_DATA_ROOT .'/', '', $dir.'/'.$originalfile);
-			$ecmfiles->fetch(0, '', $relativefile);
 			if ($file && file_exists($dir . "/" . $file)) {
 				if ($addlinktofullsize) {
 					$urladvanced = getAdvancedPreviewUrl($modulepart, $originalfile, 0, '&entity=' . $entity);
@@ -11242,8 +11235,21 @@ class Form
 						$ret .= '<a href="' . DOL_URL_ROOT . '/viewimage.php?modulepart=' . $modulepart . '&entity=' . $entity . '&file=' . urlencode($originalfile) . '&cache=' . $cache . '">';
 					}
 				}
-				if (!empty($ecmfiles->share)) {
-					$ret .= '<img alt="" class="photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . ' photologo' . (preg_replace('/[^a-z]/i', '_', $file)) . '" ' . ($width ? ' width="' . $width . '"' : '') . ($height ? ' height="' . $height . '"' : '') . ' src="' . DOL_URL_ROOT . '/viewimage.php?hashp=' . urlencode((string) $ecmfiles->share) . '&cache=' . urlencode((string) $cache) . '">';
+
+				$sharekey = '';
+				if ($usesharelinkifavailable) {
+					// $dir is a full path '/home/.../dolibarr_documents/module'
+					$relativefileforecm = preg_replace('/^'.preg_quote(DOL_DATA_ROOT.'/', '/').'/', '', $dir.'/'.$originalfile);
+					// $relativefileforecme = 'module/...'
+					require_once DOL_DOCUMENT_ROOT . '/ecm/class/ecmfiles.class.php';
+					$ecmfiles = new EcmFiles($db);
+					$ecmfiles->fetch(0, '', $relativefileforecm);
+
+					$sharekey = (string) $ecmfiles->share;
+				}
+
+				if (!empty($sharekey)) {
+					$ret .= '<img alt="" class="photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . ' photologo' . (preg_replace('/[^a-z]/i', '_', $file)) . '" ' . ($width ? ' width="' . $width . '"' : '') . ($height ? ' height="' . $height . '"' : '') . ' src="' . DOL_URL_ROOT . '/viewimage.php?hashp=' . urlencode($sharekey) . '&cache=' . urlencode((string) $cache) . '">';
 				} else {
 					$ret .= '<img alt="" class="photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . ' photologo' . (preg_replace('/[^a-z]/i', '_', $file)) . '" ' . ($width ? ' width="' . $width . '"' : '') . ($height ? ' height="' . $height . '"' : '') . ' src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=' . urlencode($modulepart) . '&entity=' . ((int) $entity) . '&file=' . urlencode($file) . '&cache=' . urlencode((string) $cache) . '">';
 				}

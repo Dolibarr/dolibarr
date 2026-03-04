@@ -2997,11 +2997,11 @@ class BonPrelevement extends CommonObject
 			}
 
 			// Return workboard only if quantity is not 0
-			if ($response->nbtodo) {
+			//if ($response->nbtodo) {
 				return $response;
-			} else {
-				return 0;
-			}
+			//} else {
+			//	return 0;
+			//}
 		} else {
 			dol_print_error($this->db);
 			$this->error = $this->db->error();
