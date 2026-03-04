@@ -28,9 +28,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		async function openDB(clear = false) {
 
 			// Generate a unique name per instance
-			const path = Dolibarr.getContextVar('DOL_URL_ROOT'); // or a unique Dolibarr identifier if available
-			const hashedPath = await hashString(path);
-			const dbName = `DolibarrLangs_${hashedPath}`;
+			const dbName = await getSafeDbName();
 
 			return new Promise((resolve, reject) => {
 				const request = indexedDB.open(dbName, 1);
@@ -122,6 +120,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 				await store.clear();
 
 				// Delete database
+				const dbName = await getSafeDbName();
 				const deleteRequest = indexedDB.deleteDatabase(dbName);
 				deleteRequest.onsuccess = () => Dolibarr.log('Dolibarr.tools.langs: database deleted');
 				deleteRequest.onerror = () => console.error('Dolibarr.tools.langs:Failed to delete DB', deleteRequest.error);
