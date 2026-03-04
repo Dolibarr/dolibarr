@@ -14009,7 +14009,7 @@ function getDictionaryValue($tablename, $field, $id, $checkentity = false, $rowi
 }
 
 /**
- *	Return true if the color is light
+ *	Return 1 if the color is light, 0 if dark
  *
  *  @param	string	$stringcolor		String with hex (AABBCC) or (ABC) or comma RGB ('255,255,255')
  *  @return	int<-1,1>					-1 : Error with argument passed | 0 : color is dark | 1 : color is light
