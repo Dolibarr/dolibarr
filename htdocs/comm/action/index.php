@@ -456,6 +456,9 @@ if ($mode == 'show_day' || $mode == 'show_week' || $mode == 'show_month') {
 if ($search_categ_cus != 0) {
 	$param .= '&search_categ_cus='.urlencode((string) ($search_categ_cus));
 }
+if ($check_holiday) {
+	$param .= '&check_holiday=1';
+}
 
 // Show navigation bar
 $nav = '';
