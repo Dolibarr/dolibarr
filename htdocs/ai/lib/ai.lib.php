@@ -217,7 +217,7 @@ function testAIConnection(string $service, string $key, string $url): array
 	if (!function_exists('getListOfAIServices')) {
 		return ['success' => false, 'message' => 'Configuration helper function missing.'];
 	}
-    
+
 	$list = getListOfAIServices();
 	$defUrl = $list[$service]['url'] ?? '';
 	// Use model from config, fallback to hardcoded if necessary
@@ -250,7 +250,7 @@ function testAIConnection(string $service, string $key, string $url): array
 		}
 		$url .= "?key=" . $key;
 		$data = ["contents" => [ ["parts" => [ ["text" => "Hello"] ] ] ], "generationConfig" => ["maxOutputTokens" => 5]];
-	} 
+	}
 	// ANTHROPIC
 	elseif ($service == 'anthropic' || strpos($url, 'anthropic') !== false) {
 		if (strpos($url, 'messages') === false) $url .= '/messages';
@@ -261,7 +261,7 @@ function testAIConnection(string $service, string $key, string $url): array
 			"messages" => [["role" => "user", "content" => "Hello"]],
 			"max_tokens" => 5
 		];
-	} 
+	}
 	// OPENAI / GROQ / MISTRAL / DEEPSEEK / PERPLEXITY / Z.AI / CUSTOM
 	else {
 		if (strpos($url, '/chat/completions') === false) $url .= '/chat/completions';
@@ -283,7 +283,7 @@ function testAIConnection(string $service, string $key, string $url): array
 	curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 	curl_setopt($ch, CURLOPT_TIMEOUT, 10);
 	// Optional: Add SSL verification if behind a proxy with self-signed certs
-	// curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); 
+	// curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
 	$result = curl_exec($ch);
 	$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -358,7 +358,7 @@ function ai_log_request($db, $user, $query, array $response, $provider, float $t
 	$sql .= ")";
 
 	$resql = $db->query($sql);
-	
+
 	if (!$resql) {
 		dol_print_error($db);
 	}
