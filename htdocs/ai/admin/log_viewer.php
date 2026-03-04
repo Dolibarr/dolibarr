@@ -165,11 +165,6 @@ llxHeader('', $langs->trans("AIRequestLogs"), '');
 
 // Build WHERE clause
 $where = array();
-foreach ($search_array as $key => $val) {
-	if (!empty($val) || $val === '0') {
-		$parameters[$key] = $val;
-	}
-}
 
 if ($search_date_start) {
 	$where[] = "l.date_request >= '" . $db->escape(date('Y-m-d H:i:s', $search_date_start)) . "'";
