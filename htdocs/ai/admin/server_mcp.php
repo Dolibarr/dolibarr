@@ -48,10 +48,10 @@ $langs->loadLangs(array("admin", "website", "other"));
 
 // Access control
 if (!$user->admin) {
-    accessforbidden();
+	accessforbidden();
 }
 if (!isModEnabled('ai')) {
-    accessforbidden('Module AI not activated.');
+	accessforbidden('Module AI not activated.');
 }
 
 // Parameters
@@ -63,17 +63,19 @@ $action = GETPOST('action', 'aZ09');
 
 // Main Settings
 if ($action == 'update') {
-    $error = 0;
+	$error = 0;
 
-    if (GETPOSTISSET('AI_ASK_FOR_CONFIRMATION')) {
-        $res = dolibarr_set_const($db, "AI_ASK_FOR_CONFIRMATION", GETPOSTINT("AI_ASK_FOR_CONFIRMATION"), 'int', 0, '', $conf->entity);
-        if ($res <= 0) $error++;
-    }
+	if (GETPOSTISSET('AI_ASK_FOR_CONFIRMATION')) {
+		$res = dolibarr_set_const($db, "AI_ASK_FOR_CONFIRMATION", GETPOSTINT("AI_ASK_FOR_CONFIRMATION"), 'int', 0, '', $conf->entity);
+		if ($res <= 0) $error++;
+	}
 
-    if (GETPOSTISSET('AI_LOG_RETENTION')) {
-        $res = dolibarr_set_const($db, "AI_LOG_RETENTION", GETPOST("AI_LOG_RETENTION"), 'int', 0, '', $conf->entity);
-        if ($res <= 0) $error++;
-    }
+	if (GETPOSTISSET('AI_LOG_RETENTION')) {
+		$res = dolibarr_set_const($db, "AI_LOG_RETENTION", GETPOST("AI_LOG_RETENTION"), 'int', 0, '', $conf->entity);
+		if ($res <= 0) {
+			$error++;
+		}
+	}
 
     if (GETPOSTISSET('AI_DEFAULT_INPUT_MODE')) {
         $res = dolibarr_set_const($db, "AI_DEFAULT_INPUT_MODE", GETPOST("AI_DEFAULT_INPUT_MODE"), 'chaine', 0, '', $conf->entity);
