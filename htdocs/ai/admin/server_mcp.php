@@ -112,7 +112,7 @@ if ($action == 'test_provider') {
 		if (preg_match('/^crypted:/', $key)) {
 			$key = dol_decode(substr($key, 8));
 		} elseif (preg_match('/^dolcrypt:/', $key)) {
-			$key = dolDecrypt($key);
+			$key = dolDecrypt($key, '');
 		}
 
 		// Only proceed if the key is valid (decrypted or not encrypted)
