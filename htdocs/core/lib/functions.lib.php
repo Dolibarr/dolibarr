@@ -14011,33 +14011,39 @@ function getDictionaryValue($tablename, $field, $id, $checkentity = false, $rowi
 /**
  *	Return true if the color is light
  *
- *  @param	string	$stringcolor		String with hex (FFFFFF) or comma RGB ('255,255,255')
+ *  @param	string	$stringcolor		String with hex (AABBCC) or (ABC) or comma RGB ('255,255,255')
  *  @return	int<-1,1>					-1 : Error with argument passed | 0 : color is dark | 1 : color is light
  */
 function colorIsLight($stringcolor)
 {
-	$stringcolor = str_replace('#', '', $stringcolor);
+	$stringcolor = str_replace('#', '', trim($stringcolor));
 	$res = -1;
+
 	if (!empty($stringcolor)) {
-		$res = 0;
-		$tmp = explode(',', $stringcolor);
-		if (count($tmp) > 1) {   // This is a comma RGB ('255','255','255')
-			$r = $tmp[0];
-			$g = $tmp[1];
-			$b = $tmp[2];
-		} else {
-			$hexr = $stringcolor[0] . $stringcolor[1];
-			$hexg = $stringcolor[2] . $stringcolor[3];
-			$hexb = $stringcolor[4] . $stringcolor[5];
-			$r = hexdec($hexr);
-			$g = hexdec($hexg);
-			$b = hexdec($hexb);
+		$r = $g = $b = 0;
+
+		if (strpos($stringcolor, ',') !== false) {
+			// Handle "r,g,b" format
+			list($r, $g, $b) = array_map('intval', explode(',', $stringcolor));
+		} elseif (strlen($stringcolor) === 6) {
+			// Handle hex format
+			$r = hexdec(substr($stringcolor, 0, 2));
+			$g = hexdec(substr($stringcolor, 2, 2));
+			$b = hexdec(substr($stringcolor, 4, 2));
+		} elseif (strlen($stringcolor) === 3) {
+			// Handle shorthand hex (#abc)
+			$r = hexdec(str_repeat($stringcolor[0], 2));
+			$g = hexdec(str_repeat($stringcolor[1], 2));
+			$b = hexdec(str_repeat($stringcolor[2], 2));
 		}
-		$bright = (max($r, $g, $b) + min($r, $g, $b)) / 510.0; // HSL algorithm
-		if ($bright > 0.6) {
-			$res = 1;
-		}
+
+		// Compute perceived brightness (luminosity)
+		$luminosity = (0.2126 * $r + 0.7152 * $g + 0.0722 * $b) / 255;
+
+		// Light if luminosity > 0.6
+		$res = ($luminosity > 0.6) ? 1 : 0;
 	}
+
 	return $res;
 }
 
