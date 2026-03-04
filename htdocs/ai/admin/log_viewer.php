@@ -107,9 +107,8 @@ if ($action == 'purge') {
 if ($massaction == 'purge' && !empty($toselect)) {
 	$db->begin();
 
-	foreach($toselect as $id) {
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."ai_request_log WHERE rowid = ".(int)$id;
-		$resql = $db->query($sql);
+	foreach ($toselect as $id) {
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."ai_request_log WHERE rowid = " . (int) $id;
 		if (!$resql) {
 			$error++;
 			$db->rollback();
@@ -154,7 +153,7 @@ if ($contextpage != $_SERVER["PHP_SELF"]) {
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.urlencode($limit);
 }
-foreach($search_array as $key => $val) {
+foreach ($search_array as $key => $val) {
 	if (!empty($val) || $val === '0') {
 		$param .= '&' . $key . '=' . urlencode($val);
 	}
@@ -165,7 +164,7 @@ llxHeader('', $langs->trans("AIRequestLogs"), '');
 
 // Build WHERE clause
 $where = array();
-foreach($search_array as $key => $val) {
+foreach ($search_array as $key => $val) {
 	if (!empty($val) || $val === '0') {
 		$parameters[$key] = $val;
 	}
@@ -361,7 +360,7 @@ if ($res && $db->num_rows($res) > 0) {
 		$timeColor = ($obj->execution_time > 5) ? 'color:red;' : '';
 		print '<td style="' . $timeColor . '" align="center">' . round($obj->execution_time, 2) . 's</td>';
 
-        // Status
+		// Status
 		if ($obj->status == $langs->transnoentitiesnoconv("Success")) $badge = 'badge-status4'; // Green
 		if ($obj->status == $langs->transnoentitiesnoconv("Confirm")) $badge = 'badge-status3'; // Yellow
 		if ($obj->status == $langs->transnoentitiesnoconv('Error')) $badge = 'badge-status8'; // Red
@@ -465,7 +464,7 @@ function openLogModal(btn) {
 	let res = '';
 	let err = '';
 
-    try {
+	try {
 		// Decode Unicode escape sequences
 		if (reqBase64) {
 			req = base64ToUtf8(reqBase64);
