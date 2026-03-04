@@ -250,9 +250,7 @@ function testAIConnection(string $service, string $key, string $url): array
 		}
 		$url .= "?key=" . $key;
 		$data = ["contents" => [ ["parts" => [ ["text" => "Hello"] ] ] ], "generationConfig" => ["maxOutputTokens" => 5]];
-	}
-	// ANTHROPIC
-	elseif ($service == 'anthropic' || strpos($url, 'anthropic') !== false) {
+	} elseif ($service == 'anthropic' || strpos($url, 'anthropic') !== false) {  // ANTHROPIC
 		if (strpos($url, 'messages') === false) $url .= '/messages';
 		$headers[] = "x-api-key: $key";
 		$headers[] = "anthropic-version: 2023-06-01";
@@ -261,9 +259,7 @@ function testAIConnection(string $service, string $key, string $url): array
 			"messages" => [["role" => "user", "content" => "Hello"]],
 			"max_tokens" => 5
 		];
-	}
-	// OPENAI / GROQ / MISTRAL / DEEPSEEK / PERPLEXITY / Z.AI / CUSTOM
-	else {
+	} else {
 		if (strpos($url, '/chat/completions') === false) $url .= '/chat/completions';
 		$headers[] = "Authorization: Bearer $key";
 
