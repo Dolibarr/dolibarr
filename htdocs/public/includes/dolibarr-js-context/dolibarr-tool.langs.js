@@ -19,31 +19,33 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		if (!domainsLoaded[currentLocale]) domainsLoaded[currentLocale] = new Set();
 		let domainsRequested = new Set();     // Set of domain names that were requested at least once
 
+
+
 		/**
 		 * Open or create IndexedDB for caching translations
 		 * @returns {Promise<IDBDatabase>}
 		 */
-		async function openDB() {
+		async function openDB(clear = false) {
 
 			// Generate a unique name per instance
 			const path = Dolibarr.getContextVar('DOL_URL_ROOT'); // or a unique Dolibarr identifier if available
 			const hashedPath = await hashString(path);
 			const dbName = `DolibarrLangs_${hashedPath}`;
 
-			// Check if this is a reload to clear the cache
-			const [nav] = performance.getEntriesByType("navigation");
-			if (nav && nav.type === "reload") {
-				this.clearCache(true);
-			}
-
-			// Open or create the database
 			return new Promise((resolve, reject) => {
 				const request = indexedDB.open(dbName, 1);
 				request.onupgradeneeded = e => {
 					const db = e.target.result;
 					if (!db.objectStoreNames.contains('langs')) db.createObjectStore('langs');
 				};
-				request.onsuccess = () => resolve(request.result);
+				request.onsuccess = async () => {
+					const db = request.result;
+					if (clear) {
+						const tx = db.transaction('langs', 'readwrite');
+						tx.objectStore('langs').clear();
+					}
+					resolve(db);
+				};
 				request.onerror = () => reject(request.error);
 			});
 		}
@@ -114,10 +116,17 @@ document.addEventListener('Dolibarr:Init', function(e) {
 			}
 
 			try {
-				const db = await openDB();
+				const db = await openDB(true);
 				const tx = db.transaction('langs', 'readwrite');
 				const store = tx.objectStore('langs');
 				await store.clear();
+
+				// 1. Supprimer la base entière
+				const deleteRequest = indexedDB.deleteDatabase(dbName);
+				deleteRequest.onsuccess = () => Dolibarr.log('Dolibarr.tools.langs: database deleted');
+				deleteRequest.onerror = () => console.error('Dolibarr.tools.langs:Failed to delete DB', deleteRequest.error);
+				deleteRequest.onblocked = () => console.warn('Dolibarr.tools.langs: DB deletion blocked, maybe open connections exist');
+
 				Dolibarr.log('Dolibarr.tools.langs: cache cleared');
 			} catch (err) {
 				console.error('Dolibarr.tools.langs: failed to clear cache', err);
@@ -262,6 +271,15 @@ document.addEventListener('Dolibarr:Init', function(e) {
 				}
 			});
 		}
+
+
+		// Clear cache automatically on browser reload
+		(async () => {
+			const navType = performance?.getEntriesByType?.("navigation")?.[0]?.type || performance.navigation.type;
+			if (navType === "reload") {
+				await clearCache(true);
+			}
+		})();
 
 		return {
 			load,
