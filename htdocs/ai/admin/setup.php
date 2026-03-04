@@ -12,7 +12,7 @@
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * but WITHOUT ANY WARRANTY, without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
@@ -108,13 +108,13 @@ foreach ($arrayofai as $ia => $iarecord) {
 		$item->fieldAttr['placeholder'] = 'https://domainofapi.com/v1/';
 	}
 
-    // Generic Model Field
-    $item = $formSetup->newItem('AI_API_'.strtoupper($ia).'_MODEL');
-    $item->nameText = $langs->trans("AI_API_MODEL").' ('.$ialabel.')';
-    $item->defaultFieldValue = $iarecord['textgeneration']; 
-    $item->fieldParams['trClass'] = 'iaservice '.$ia;
-    $item->cssClass = 'minwidth500 input'.$ia;
-    $item->helpText = $langs->trans("AI_API_MODEL_HELP");
+	// Generic Model Field
+	$item = $formSetup->newItem('AI_API_'.strtoupper($ia).'_MODEL');
+	$item->nameText = $langs->trans("AI_API_MODEL").' ('.$ialabel.')';
+	$item->defaultFieldValue = $iarecord['textgeneration']; 
+	$item->fieldParams['trClass'] = 'iaservice '.$ia;
+	$item->cssClass = 'minwidth500 input'.$ia;
+	$item->helpText = $langs->trans("AI_API_MODEL_HELP");
 }
 
 $setupnotempty = + count($formSetup->items);
