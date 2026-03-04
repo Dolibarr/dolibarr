@@ -105,19 +105,19 @@ if ($action == 'update') {
 if ($action == 'test_provider') {
 	$service = GETPOST('service_key', 'aZ09');
 	if ($service) {
-		$key = getDolGlobalString('AI_API_' . strtoupper($service) . '_KEY');
+		$credential = getDolGlobalString('AI_API_' . strtoupper($service) . '_KEY');
 		$url = getDolGlobalString('AI_API_' . strtoupper($service) . '_URL');
 
 		// Decrypt if needed
-		if (preg_match('/^crypted:/', $key)) {
-			$key = dol_decode(substr($key, 8));
-		} elseif (preg_match('/^dolcrypt:/', $key)) {
-			$key = dolDecrypt($key, '');
+		if (preg_match('/^crypted:/', $credential)) {
+			$credential = dol_decode(substr($credential, 8));
+		} elseif (preg_match('/^dolcrypt:/', $credential)) {
+			$credential = dolDecrypt($credential, '');
 		}
 
 		// Only proceed if the key is valid (decrypted or not encrypted)
-		if ($key !== null) {
-			$res = testAIConnection($service, $key, $url);
+		if ($credential !== null) {
+			$res = testAIConnection($service, $credential, $url);
 
 			if ($res['success']) {
 				setEventMessages($langs->trans("ConnectionSuccessful") . $res['message'], null, 'mesgs');
