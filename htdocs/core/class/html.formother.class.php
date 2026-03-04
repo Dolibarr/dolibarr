@@ -11,7 +11,7 @@
  * Copyright (C) 2007      Patrick Raguin 		<patrick.raguin@gmail.com>
  * Copyright (C) 2019       Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2024-2026  Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,12 +30,12 @@
 /**
  *	\file       htdocs/core/class/html.formother.class.php
  *  \ingroup    core
- *	\brief      Fichier de la class des functions predefinie de composants html autre
+ *	\brief      File for the class of other predefined html components
  */
 
 
 /**
- *	Class permettant la generation de composants html autre
+ *	Class to help generate other html components
  *	Only common components are here.
  */
 class FormOther
@@ -140,9 +140,9 @@ class FormOther
 	/**
 	 *    Return HTML select list of export models
 	 *
-	 *    @param    string	$selected          Id modele pre-selectionne
-	 *    @param    string	$htmlname          Nom de la zone select
-	 *    @param    string	$type              Type des modeles recherches
+	 *    @param    string	$selected          Id of the preselected model
+	 *    @param    string	$htmlname          Name of the selected zone
+	 *    @param    string	$type              Type of the desired models
 	 *    @param    int		$useempty          Show an empty value in list
 	 *    @param    int		$fk_user           User we want templates
 	 *    @return	void
@@ -202,9 +202,9 @@ class FormOther
 	/**
 	 *    Return list of export models
 	 *
-	 *    @param    string	$selected          Id modele pre-selectionne
-	 *    @param    string	$htmlname          Nom de la zone select
-	 *    @param    string	$type              Type des modeles recherches
+	 *    @param    string	$selected          Id of the preselected model
+	 *    @param    string	$htmlname          Name of the selected zone
+	 *    @param    string	$type              Type of the desired models
 	 *    @param    int		$useempty          Show an empty value in list
 	 *    @param    int		$fk_user           User that has created the template
 	 *    @return	void
@@ -364,7 +364,7 @@ class FormOther
 	/**
 	 *    Return a HTML select list to select a percent
 	 *
-	 *    @param	integer	$selected      	Percentage pre-selectionne
+	 *    @param	int		$selected      	Preselected percentage
 	 *    @param    string	$htmlname      	Name of HTML combo list
 	 *    @param	int		$disabled		Disabled or not
 	 *    @param    int		$increment     	Increment value
@@ -655,7 +655,7 @@ class FormOther
 	/**
 	 *	Return list of project and tasks
 	 *
-	 *	@param  int		$selectedtask   		Pre-selected task
+	 *	@param  int		$selectedtask   		Preselected task
 	 *  @param  int		$projectid				Project id
 	 * 	@param  string	$htmlname    			Name of html select
 	 * 	@param	int		$modeproject			1 to restrict on projects owned by user
@@ -830,7 +830,7 @@ class FormOther
 	/**
 	 *  Output a HTML code to select a color
 	 *
-	 *  @param	string		$set_color		Pre-selected color
+	 *  @param	string		$set_color		Preselected color
 	 *  @param	string		$prefix			Name of HTML field
 	 *  @param	string		$form_name		Deprecated. Not used.
 	 *  @param	int			$showcolorbox	1=Show color code and color box, 0=Show only color code
@@ -848,7 +848,7 @@ class FormOther
 	/**
 	 *  Output a HTML code to select a color. Field will return an hexa color like '334455'.
 	 *
-	 *  @param	string		$set_color				Pre-selected color with format '#......'
+	 *  @param	string		$set_color				Preselected color with format '#......'
 	 *  @param	string		$prefix					Name of HTML field
 	 *  @param	null|''		$form_name				Deprecated. Not used.
 	 *  @param	int			$showcolorbox			1=Show color code and color box, 0=Show only color code
@@ -1553,7 +1553,7 @@ class FormOther
 	 *	Return an html string with a select combo box to choose yes or no
 	 *
 	 *	@param	string		$htmlname		Name of html select field
-	 *	@param	string		$value			Pre-selected value
+	 *	@param	string		$value			Preselected value
 	 *	@param	int			$option			0 return automatic/manual, 1 return 1/0
 	 *	@param	bool		$disabled		true or false
 	 *  @param	int      	$useempty		1=Add empty line

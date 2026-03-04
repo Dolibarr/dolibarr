@@ -1834,7 +1834,7 @@ function show_actions_todo($conf, $langs, $db, $filterobj, $objcon = null, $nopr
  */
 function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $noprint = 0, $actioncode = '', $donetodo = 'done', $filters = array(), $sortfield = 'a.datep,a.id', $sortorder = 'DESC', $module = '')
 {
-	global $hookmanager;
+	global $hookmanager, $user;
 	global $form;
 
 	global $param, $massactionbutton;
@@ -1899,7 +1899,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		$sql .= " a.percent as percent, 'action' as type,";
 		$sql .= " a.fk_element, a.elementtype,";
 		$sql .= " a.fk_contact,";
-		$sql .= " a.code,";
+		$sql .= " a.code, a.fulldayevent,";
 		$sql .= " c.code as acode, c.libelle as alabel, c.picto as apicto,";
 		$sql .= " u.rowid as user_id, u.login as user_login, u.photo as user_photo, u.firstname as user_firstname, u.lastname as user_lastname";
 		if (is_object($filterobj) && in_array(get_class($filterobj), array('Societe', 'Client', 'Fournisseur'))) {
@@ -1928,6 +1928,17 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 			} elseif (!empty($filterobj->fields['label'])) {
 				$sql .= ", o.label";
 			}
+		}
+
+		$canedit = 1;
+		if (!$user->hasRight('agenda', 'myactions', 'read')) {
+			$canedit = 0;
+		}
+		if (!$user->hasRight('agenda', 'allactions', 'read')) {
+			$canedit = 0;
+		}
+		if (!$user->hasRight('agenda', 'allactions', 'read')) {	// If no permission to see all, we show only affected to me
+			$filters['search_filtert'] = (string) $user->id;
 		}
 
 		// Fields from hook
@@ -2191,6 +2202,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 						'id' => (int) $obj->id,
 						'datestart' => $db->jdate($obj->dp),
 						'dateend' => $db->jdate($obj->dp2),
+						'fulldayevent' => (int) $obj->fulldayevent,
 						'note' => $obj->label,
 						'percent' => (int) $obj->percent,
 
@@ -2222,6 +2234,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 						'id' => (int) $obj->id,
 						'datestart' => $db->jdate($obj->dp),
 						'dateend' => $db->jdate($obj->dp2),
+						'fulldayevent' => (int) $obj->fulldayevent,
 						'note' => $obj->label,
 						'percent' => (int) $obj->percent,
 
@@ -2306,7 +2319,9 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		$out .= $form->selectDateToDate($tms_start, $tms_end, 'dateevent', 1);
 		$out .= '</td>';
 		// Owner
-		$out .= '<td class="liste_titre"></td>';
+		$out .= '<td class="liste_titre">';
+		$out .= $form->select_dolusers(($filters['search_filtert'] > 0 ? $filters['search_filtert'] : ''), 'search_filtert', 1, null, 0, '', '', '0', 0, 0, '', 2, '', 'minwidth100 maxwidth250 widthcentpercentminusx');
+		$out .= '</td>';
 		// Type
 		$out .= '<td class="liste_titre">';
 		$out .= $formactions->select_type_actions($actioncode, "actioncode", '', getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? -1 : 1, 0, (getDolGlobalString('AGENDA_USE_MULTISELECT_TYPE') ? 1 : 0), 1, 'selecttype combolargeelem minwidth100 maxwidth150', 1);
@@ -2406,44 +2421,9 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 
 			// Date
 			$out .= '<td class="center nowraponall nopaddingtopimp nopaddingbottomimp">';
-			if ($histo[$key]['dateend']) {	// There is also a end date
-				$tmpa = dol_getdate($histo[$key]['datestart']);
-				$tmpb = dol_getdate($histo[$key]['dateend']);
-				if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) {
-					// The same day
-					if ($tmpa['hours'] != $tmpb['hours'] || $tmpa['minutes'] != $tmpb['minutes']) {
-						$out .= '<div class="center inline-block lineheightsmall">';
-						$out .= dol_print_date($histo[$key]['datestart'], 'dayreduceformat', 'tzuserrel');
-						$out .= '<br><span class="opacitymedium hourspan">';
-						$out .= dol_print_date($histo[$key]['datestart'], 'hourreduceformat', 'tzuserrel');
-						$out .= '-'.dol_print_date($histo[$key]['dateend'], 'hourreduceformat', 'tzuserrel');
-						$out .= '</span>';
-						$out .= '</div>';
-					} else {
-						$out .= '<div class="center inline-block lineheightsmall">';
-						$out .= dol_print_date($histo[$key]['datestart'], 'dayreduceformat', 'tzuserrel');
-						$out .= '<br><span class="opacitymedium hourspan">';
-						$out .= dol_print_date($histo[$key]['datestart'], 'hourreduceformat', 'tzuserrel');
-						$out .= '</span>';
-						$out .= '</div>';
-					}
-				} else {
-					// Not the same day
-					$out .=  '<div class="center inline-block lineheightsmall">';
-					$out .=  dol_print_date($histo[$key]['datestart'], 'dayreduceformat', 'tzuserrel');
-					$out .=  '<br><span class="opacitymedium hourspan">';
-					$out .=  dol_print_date($histo[$key]['datestart'], 'hourreduceformat', 'tzuserrel');
-					$out .=  '</span>';
-					$out .=  '</div>';
-					$out .=  ' - ';
-					$out .=  '<div class="center inline-block lineheightsmall">';
-					$out .=  dol_print_date($histo[$key]['dateend'], 'dayreduceformat', 'tzuserrel');
-					$out .=  '<br><span class="opacitymedium hourspan">';
-					$out .=  dol_print_date($histo[$key]['dateend'], 'hourreduceformat', 'tzuserrel');
-					$out .=  '</span>';
-					$out .=  '</div>';
-				}
-			}
+
+			$out .= dolOutputDates($histo[$key]['datestart'], $histo[$key]['dateend'], $histo[$key]['fulldayevent'], 0, '', 'tzuserrel', 1);
+
 			// Add the late warning
 			$late = 0;
 			if ($histo[$key]['percent'] == 0 && $histo[$key]['datestart'] && $histo[$key]['datestart'] < ($now - $delay_warning)) {
@@ -2784,6 +2764,9 @@ function addOtherFilterSQL(&$sql, $donetodo, $now, $filters)
 	}
 	if (is_array($filters) && !empty($filters['search_rowid'])) {
 		$sql .= natural_search('a.id', $filters['search_rowid'], 1);
+	}
+	if (is_array($filters) && !empty($filters['search_filtert'])) {
+		$sql .= natural_search('a.fk_user_action', $filters['search_filtert'], 1);
 	}
 
 	return $sql;

@@ -7,7 +7,7 @@
  * Copyright (C) 2004-2015  Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2019-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Joachim Kueter              <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -108,7 +108,6 @@ class CMailFile
 	 */
 	public $errors = array();
 
-
 	/**
 	 * @var SMTPS (if this method is used)
 	 */
@@ -202,7 +201,6 @@ class CMailFile
 		'webp' => 'image/webp',
 	);
 
-
 	/**
 	 *	CMailFile
 	 *
@@ -233,7 +231,6 @@ class CMailFile
 
 		dol_syslog("CMailFile::CMailFile: charset=".$conf->file->character_set_client." from=$from, to=$to, addr_cc=$addr_cc, addr_bcc=$addr_bcc, errors_to=$errors_to, replyto=$replyto trackid=$trackid sendcontext=$sendcontext");
 		dol_syslog("CMailFile::CMailFile: subject=".$subject.", deliveryreceipt=".$deliveryreceipt.", msgishtml=".$msgishtml, LOG_DEBUG);
-
 
 		// Clean values of $mimefilename_list
 		if (is_array($mimefilename_list)) {
@@ -334,7 +331,7 @@ class CMailFile
 				// TODO Exclude viewimage used for the read tracker ?
 				$dolibarr_main_data_root_images = $dolibarr_main_data_root;
 				if ((int) $conf->entity !== 1) {
-					$dolibarr_main_data_root_images.='/'.$conf->entity.'/';
+					$dolibarr_main_data_root_images .= '/'.$conf->entity.'/';
 				}
 				$findimg = $this->findHtmlImages($dolibarr_main_data_root_images.'/medias');
 				if ($findimg < 0) {
@@ -526,7 +523,7 @@ class CMailFile
 			$text_body = "";
 			$files_encoded = "";
 
-			// Define smtp_headers (this also set SMTP headers from ->msgid, ->in_reply_to and ->references)
+			// Define smtp_headers (this also set SMTP headers from ->in_reply_to and ->references and set the property ->msgid)
 			$smtp_headers = $this->write_smtpheaders();
 			if (!empty($moreinheader)) {
 				$smtp_headers .= $moreinheader; // $moreinheader contains the \r\n
@@ -1315,6 +1312,7 @@ class CMailFile
 					$this->transport->setPassword(getDolGlobalString($keyforsmtppw));
 				}
 				if (getDolGlobalString($keyforsmtpauthtype) === "XOAUTH2") {
+					$this->transport->setAuthMode('XOAUTH2');
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php';
 
 					$supportedoauth2array = getSupportedOauth2Array();
@@ -1391,6 +1389,7 @@ class CMailFile
 							$this->transport->setPassword($tokenobj->getAccessToken());
 						} else {
 							$this->errors[] = "Token not found";
+							dol_syslog("CMailFile::sendfile: OAuth2 token object is not valid", LOG_ERR);
 						}
 					} catch (Exception $e) {
 						// Return an error if token not found
@@ -1525,7 +1524,6 @@ class CMailFile
 		}
 	}
 
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Write content of a SMTP request into a dump file (mode = all)
@@ -1610,7 +1608,6 @@ class CMailFile
 		}
 	}
 
-
 	/**
 	 * Correct an incomplete html string
 	 *
@@ -1662,7 +1659,6 @@ class CMailFile
 			$this->styleCSS .= '</style>';
 		}
 	}
-
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -1746,7 +1742,6 @@ class CMailFile
 		dol_syslog("CMailFile::write_smtpheaders smtp_header=\n".$out, LOG_DEBUG);
 		return $out;
 	}
-
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -1923,7 +1918,6 @@ class CMailFile
 		return $out;
 	}
 
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Attach an image to email (mode = 'mail')
@@ -1953,7 +1947,6 @@ class CMailFile
 
 		return $out;
 	}
-
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -2284,7 +2277,7 @@ class CMailFile
 
 		$arrayaddress = (!empty($address) ? explode(',', $address) : array());
 
-		// Boucle sur chaque composant de l'address
+		// Loop over every component of the address
 		$i = 0;
 		foreach ($arrayaddress as $val) {
 			$regs = array();
@@ -2352,7 +2345,7 @@ class CMailFile
 
 		$arrayaddress = explode(',', $address);
 
-		// Boucle sur chaque composant de l'address
+		// Loop over every component of the address
 		foreach ($arrayaddress as $val) {
 			$regs = array();
 			if (preg_match('/^(.*)<(.*)>$/i', trim($val), $regs)) {

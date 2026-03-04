@@ -1970,12 +1970,6 @@ if (empty($reshook)) {
 			$res = $product->fetch($productid);
 
 			$type = $product->type;
-			$price_base_type = $product->price_base_type;
-
-			// If base type TTc, we change pu value to define the TTC one
-			if ($price_base_type == 'TTC' && !empty($pu_ttc)) {
-				$pu = $pu_ttc;
-			}
 
 			$label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label') : '');
 
@@ -2097,24 +2091,7 @@ if (empty($reshook)) {
 		$result = $object->set_demand_reason($user, GETPOSTINT('demand_reason_id'));
 	} elseif ($action == 'setconditions' && $usercancreate) {
 		// Terms of payment
-		$sql = "SELECT code ";
-		$sql .= "FROM " . $db->prefix() . "c_payment_term";
-		$sql .= " WHERE rowid = " . ((int) GETPOST('cond_reglement_id', 'int'));
-		$result = $db->query($sql);
-		if ($result) {
-			$obj = $db->fetch_object($result);
-			if ($obj->code == 'DEP30PCTDEL') {
-				$result = $object->setPaymentTerms(GETPOSTINT('cond_reglement_id'), GETPOSTFLOAT('cond_reglement_id_deposit_percent'));
-			} else {
-				$object->deposit_percent = 0;
-				$object->update($user);
-				$result = $object->setPaymentTerms(GETPOSTINT('cond_reglement_id'), $object->deposit_percent);
-			}
-		}
-		//} elseif ($action == 'setremisepercent' && $usercancreate) {
-		//	$result = $object->set_remise_percent($user, price2num(GETPOST('remise_percent'), '', 2));
-		//} elseif ($action == 'setremiseabsolue' && $usercancreate) {
-		//	$result = $object->set_remise_absolue($user, price2num(GETPOST('remise_absolue'), 'MU', 2));
+		$result = $object->setPaymentTerms(GETPOSTINT('cond_reglement_id'), GETPOSTFLOAT('cond_reglement_id_deposit_percent'));
 	} elseif ($action == 'setmode' && $usercancreate) {
 		// Payment choice
 		$result = $object->setPaymentMethods(GETPOSTINT('mode_reglement_id'));
@@ -2345,7 +2322,6 @@ if ($action == 'create') {
 			$fk_account = GETPOSTINT('fk_account');
 		}
 	}
-
 	// Warehouse default if null
 	if ($soc->fk_warehouse > 0) {
 		$warehouse_id = $soc->fk_warehouse;

@@ -748,7 +748,7 @@ print $form->selectarray("PRODUIT_DESC_IN_FORM", $arrayofchoices, getDolGlobalIn
 print '</td>';
 print '</tr>';
 
-// Activate propal merge produt card
+// Activate propal merge product card
 /* Kept as hidden feature only. PRODUIT_PDF_MERGE_PROPAL can be added manually. Still did not understand how this feature works.
 
 print '<tr class="oddeven">';

@@ -3129,8 +3129,10 @@ function printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayo
 	global $dolibarr_distrib;
 	global $db, $conf;
 
+	require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+
 	$algo = 'sha256';
-	$hash_unique_id = dol_hash('dolibarr'.$conf->file->instance_unique_id, $algo);	// Note: if the global salt changes, this hash changes too so ping may be counted twice. We don't mind. It is for statistics and inventory purpose only.
+	$hash_unique_id = getHashUniqueIdOfRegistration($algo);
 
 	// Disable ping if $constanttosavelastpingko is set and is recent (this month)
 	if (getDolGlobalString($constanttosavelastko) && substr(getDolGlobalString($constanttosavelastko), 0, 6) == dol_print_date(dol_now(), '%Y%m') && !$forceping) {
@@ -3168,6 +3170,8 @@ function printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayo
 						hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>',
 						version: '<?php echo (float) DOL_VERSION; ?>',
 						version_full: '<?php echo DOL_VERSION; ?>',
+						versionblockedlog: '<?php echo (float) getBlockedLogVersionToShow(); ?>',
+						versionblockedlog_full: '<?php echo getBlockedLogVersionToShow(); ?>',
 						entity: '<?php echo (int) $conf->entity; ?>',
 						dbtype: '<?php echo dol_escape_js($db->type); ?>',
 						php_version: '<?php echo dol_escape_js(phpversion()); ?>',
@@ -3177,7 +3181,7 @@ function printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayo
 						token: 'notrequired'
 					},
 					success: function (data, status, xhr) {   // success callback function (data contains body of response)
-							console.log("Ping ok");
+							console.log("Ping ok - we call pingresult to save this");
 							$.ajax({
 								method: 'GET',
 								url: '<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>',
@@ -3187,7 +3191,7 @@ function printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayo
 							});
 					},
 					error: function (data,status,xhr) {   // error callback function
-							console.log("Ping ko: " + data);
+							console.log("Ping ko - we call pingresult to save this: " + data);
 							$.ajax({
 								method: 'GET',
 								url: '<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>',

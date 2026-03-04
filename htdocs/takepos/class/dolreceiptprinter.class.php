@@ -391,7 +391,7 @@ class dolReceiptPrinter extends Printer
 	/**
 	 *  Form to Select type printer
 	 *
-	 *  @param    string    $selected       Id printer type pre-selected
+	 *  @param    string    $selected       Id printer type preselected
 	 *  @param    string    $htmlname       select html name
 	 *  @return  int                        0 if OK; >0 if KO
 	 */
@@ -416,7 +416,7 @@ class dolReceiptPrinter extends Printer
 	/**
 	 *  Form to Select Profile printer
 	 *
-	 *  @param    string    $selected       Id printer profile pre-selected
+	 *  @param    string    $selected       Id printer profile preselected
 	 *  @param    string    $htmlname       select html name
 	 *  @return  int                        0 if OK; >0 if KO
 	 */
@@ -676,7 +676,11 @@ class dolReceiptPrinter extends Printer
 				$this->template .= "{dol_print_text}*** ".$langs->transnoentities("TemporaryReceipt")." ***\r\n";
 			}
 			if ($object->pos_print_counter > 1) {
-				$this->template .= "{dol_print_text}*** ".$langs->transnoentities("DUPLICATA").' (no '.($object->pos_print_counter - 1).") ***\r\n";
+				$this->template .= "{dol_print_text}*** ".$langs->transnoentities("DUPLICATA");
+				if (getDolGlobalString('TAKEPOS_SHOW_PRINT_COUNTER_ON_RECEIPT')) {
+					$this->template .= ' (no '.($object->pos_print_counter - 1).') ***';
+				}
+				$this->template .= "\r\n";
 			}
 
 			$this->template .= "{dol_value_date}\r\n";

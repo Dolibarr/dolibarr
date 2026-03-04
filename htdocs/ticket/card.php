@@ -634,7 +634,7 @@ if (empty($reshook)) {
 		// Reopen ticket
 		if ($object->fetch(GETPOSTINT('id'), GETPOST('track_id', 'alpha')) >= 0) {
 			$new_status = GETPOSTINT('new_status');
-			//$old_status = $object->status;
+
 			$res = $object->setStatut($new_status, null, '', $triggermodname);
 			if ($res) {
 				$url = 'card.php?track_id=' . $object->track_id;
@@ -948,7 +948,7 @@ if ($action == 'create' || $action == 'presend') {
 			$morehtmlref .= '<a class="editfielda" href="'.$url_page_current.'?action=editsubject&token='.newToken().'&track_id='.$object->track_id.'">'.img_edit($langs->transnoentitiesnoconv('SetTitle'), 0).'</a> ';
 		}
 		if ($action != 'editsubject') {
-			$morehtmlref .= dolPrintLabel($object->subject);
+			$morehtmlref .= '<span class="smallonsmartphone">'.dolPrintLabel($object->subject).'</span>';
 		} else {
 			$morehtmlref .= '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 			$morehtmlref .= '<input type="hidden" name="action" value="setsubject">';
@@ -968,7 +968,7 @@ if ($action == 'create' || $action == 'presend') {
 
 			$fuser = new User($db);
 			$fuser->fetch($object->fk_user_create);
-			$morehtmlref .= $fuser->getNomUrl(-1);
+			$morehtmlref .= $fuser->getNomUrl(-4);
 			$createdbyshown++;
 		}
 

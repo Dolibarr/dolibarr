@@ -1540,8 +1540,9 @@ while ($i < $imaxinloop) {
 		}
 		// Product ref
 		if (!empty($arrayfields['p.ref']['checked'])) {
-			print '<td class="nowraponall">';
+			print '<td class="nowraponall tdoverflowmax150 cell2linesheight">';
 			print $productstatic->getNomUrl(1, 'stock', 16);
+			print '<br><span class="opacitymedium">'.$productstatic->label.'</span>';
 			print "</td>\n";
 		}
 		// Product label

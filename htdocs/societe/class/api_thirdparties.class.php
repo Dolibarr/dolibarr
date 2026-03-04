@@ -1135,8 +1135,9 @@ class Thirdparties extends DolibarrApi
 		$sql = '';
 		if ($mode === 'customer') {
 			$sql = "SELECT f.ref, f.type as factype, re.fk_facture_source, re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc, re.description, re.fk_facture, re.fk_facture_line";
-			$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as re, ".MAIN_DB_PREFIX."facture as f";
-			$sql .= " WHERE f.rowid = re.fk_facture_source AND re.fk_soc = ".((int) $id);
+			$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as re";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON f.rowid = re.fk_facture_source";
+			$sql .= " WHERE re.fk_soc = ".((int) $id);
 			if ($filter == "available") {
 				$sql .= " AND re.fk_facture IS NULL AND re.fk_facture_line IS NULL";
 			}
@@ -1145,7 +1146,8 @@ class Thirdparties extends DolibarrApi
 			}
 		} elseif ($mode === 'supplier') {
 			$sql = "SELECT f.ref, f.type as factype, re.fk_invoice_supplier_source, re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc, re.description, re.fk_invoice_supplier, re.fk_invoice_supplier_line";
-			$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as re, ".MAIN_DB_PREFIX."facture_fourn as f";
+			$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as re";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as f ON f.rowid = re.fk_invoice_supplier_source";
 			$sql .= " WHERE f.rowid = re.fk_invoice_supplier_source AND re.fk_soc = ".((int) $id);
 			if ($filter == "available") {
 				$sql .= " AND re.fk_invoice_supplier IS NULL AND re.fk_invoice_supplier_line IS NULL";
@@ -1173,13 +1175,15 @@ class Thirdparties extends DolibarrApi
 	/**
 	 * Create a fixed amount discount for a thirdparty
 	 *
+	 * @since 24.0.0	Initial implementation
+	 *
 	 * @param int       $id                 ID of thirdparty
 	 * @param array     $request_data       Request data
-	 *                                      - amount       	float    Amount including tax (required if price_base_type is TTC)
-	 *                                      - description      string   Description of the discount (required)
-	 *                                      - tva_tx           float    VAT rate in percentage (required)
-	 *                                      - discount_type    int      Type of discount: 0 = customer discount, 1 = supplier discount (default: 0)
-	 *                                      - price_base_type  string   Price base type: 'HT' or 'TTC' (default: 'HT')
+	 *                                      - amount       		float    Amount including tax (required if price_base_type is TTC)
+	 *                                      - description      	string   Description of the discount (required)
+	 *                                      - tva_tx           	float    VAT rate in percentage
+	 *                                      - discount_type    	int      Type of discount: 0 = customer discount, 1 = supplier discount (default: 0)
+	 *                                      - price_base_type  	string   Price base type: 'HT' or 'TTC' (default: 'HT')
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
 	 *

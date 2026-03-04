@@ -1507,7 +1507,16 @@ class FactureRec extends CommonInvoice
 					if (!$errorforinvoice && $facturerec->generate_pdf) {
 						// We refresh the object in order to have all necessary data (like date_lim_reglement)
 						$facture->fetch($facture->id);
-						$result = $facture->generateDocument($facturerec->model_pdf, $langs);
+						$outputlangs = $langs;
+						if (getDolGlobalInt('MAIN_MULTILANGS')) {
+							$facture->fetch_thirdparty();
+							if (!empty($facture->thirdparty->default_lang)) {
+								$outputlangs = new Translate('', $conf);
+								$outputlangs->setDefaultLang($facture->thirdparty->default_lang);
+								$outputlangs->loadLangs(array('main', 'bills'));
+							}
+						}
+						$result = $facture->generateDocument($facturerec->model_pdf, $outputlangs);
 						if ($result <= 0) {
 							$this->setErrorsFromObject($facture);
 							$error++;

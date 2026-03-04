@@ -145,11 +145,11 @@ class FormSetup
 	/**
 	 * Generate the form (in read or edit mode depending on $editMode)
 	 *
-	 * @param 	bool 	$editMode 		True will display output on edit mod
-	 * @param	bool	$hideTitle		True to hide the first title line
-	 * @param	string	$title			Title of first line
-	 * @param	string	$cssfirstcolumn	CSS first column
-	 * @return 	string					Html output
+	 * @param 	int|bool 	$editMode 		True will display output on edit mod
+	 * @param	bool		$hideTitle		True to hide the first title line
+	 * @param	string		$title			Title of first line
+	 * @param	string		$cssfirstcolumn	CSS first column
+	 * @return 	string						Html output
 	 */
 	public function generateOutput($editMode = false, $hideTitle = false, $title = '', $cssfirstcolumn = '')
 	{
@@ -184,7 +184,7 @@ class FormSetup
 			}
 
 			// generate output table
-			$out .= $this->generateTableOutput($editMode, $hideTitle, $title, $cssfirstcolumn);
+			$out .= $this->generateTableOutput((bool) $editMode, $hideTitle, $title, $cssfirstcolumn);
 
 
 			$reshook = $hookmanager->executeHooks('formSetupBeforeGenerateOutputButton', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
@@ -197,10 +197,14 @@ class FormSetup
 			} elseif ($editMode) {
 				$out .= '<div class="form-setup-button-container center">'; // Todo : remove .center by adding style to form-setup-button-container css class in all themes
 				$out .= $this->htmlOutputMoreButton;
-				$out .= '<input class="button button-save reposition" type="submit" value="' . $this->langs->trans($this->htmlButtonLabel ?: "Save") . '">'; // Todo fix dolibarr style for <button and use <button instead of input
-				/*$out .= ' &nbsp;&nbsp; ';
-				$out .= '<a class="button button-cancel" type="submit" href="' . $this->formAttributes['action'] . '">'.$this->langs->trans('Cancel').'</a>';
-				*/
+				if ($editMode !== 3) {
+					$out .= '<input class="button button-save reposition" type="submit" value="' . $this->langs->trans($this->htmlButtonLabel ?: "Save") . '" name="save">'; // Todo fix dolibarr style for <button and use <button instead of input
+				}
+				if ($editMode === 2) {
+					// Add also a cancel button
+					$out .= ' &nbsp;&nbsp; ';
+					$out .= '<input class="button button-cancel" type="submit" value="' . $this->langs->trans('Cancel') . '" name="cancel">';
+				}
 				$out .= '</div>';
 			}
 
@@ -1169,7 +1173,7 @@ class FormSetupItem
 			$min = $genhandler->length;
 			$max = $genhandler->length2;
 		}
-		$out = '<input required="required" type="password" class="flat" id="'.$this->confKey.'" name="'.$this->confKey.'" value="'.(GETPOST($this->confKey, 'alpha') ? GETPOST($this->confKey, 'alpha') : $this->fieldValue).'"';
+		$out = '<input required="required" type="password" class="flat minwidth150'.($this->cssClass ? ' '.$this->cssClass : '').'" id="'.$this->confKey.'" name="'.$this->confKey.'" value="'.(GETPOST($this->confKey, 'alpha') ? GETPOST($this->confKey, 'alpha') : $this->fieldValue).'"';
 		if ($min) {
 			$out .= ' minlength="' . $min . '"';
 		}
@@ -1684,7 +1688,7 @@ class FormSetupItem
 
 
 	/**
-	 * Set type of input as a simple title. No data to store
+	 * Set type of input as a multiselect list.
 	 *
 	 * @param array<string,string|array{id:string,label:string,color:string,picto:string,labelhtml:string}> $fieldOptions A table of field options
 	 * @return self
@@ -1700,7 +1704,7 @@ class FormSetupItem
 	}
 
 	/**
-	 * Set type of input as a simple title. No data to store
+	 * Set type of input as a select list.
 	 *
 	 * @param ?array<string,string|array{id:string,label:string,color:string,picto:string,labelhtml:string}>  $fieldOptions  A table of field options
 	 * @return self
@@ -1717,7 +1721,7 @@ class FormSetupItem
 
 
 	/**
-	 * Set type of input as a simple title. No data to store
+	 * Set type of input as a radio button.
 	 *
 	 * @param  ?array<string,string|array{id:string,label:string,picto?:string,labelIsHtml?:bool}> $fieldOptions  A table of field options
 	 * @return self
@@ -1733,7 +1737,7 @@ class FormSetupItem
 	}
 
 	/**
-	 * Set type of input as a simple title. No data to store
+	 * Set type of input as a selection of a user from dolibarr users list
 	 *
 	 * @return self
 	 */
@@ -1744,7 +1748,7 @@ class FormSetupItem
 	}
 
 	/**
-	 * Set type of input as a simple title. No data to store
+	 * Set type of input as a bank account selection from dolibarr bank accounts list
 	 *
 	 * @return self
 	 */
