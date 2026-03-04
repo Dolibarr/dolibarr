@@ -232,6 +232,7 @@ function testAIConnection(string $service, string $key, string $url): array
 	$data = [];
 	$headers = ["Content-Type: application/json"];
 
+	$model = '';
 	if (empty($model)) {
 		$model = getDolGlobalString('AI_API_' . strtoupper($service) . '_MODEL');
 	}
