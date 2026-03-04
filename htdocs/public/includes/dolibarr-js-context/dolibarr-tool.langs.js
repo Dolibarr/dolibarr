@@ -12,7 +12,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	 */
 	const langs = function() {
 
-		const ONE_DAY = 86400000;
+		const CACHE_MSTIME = 86400000;
 		let currentLocale = Dolibarr.getContextVar('MAIN_LANG_DEFAULT', 'en_US');
 		let translations = {}; // { en_US: {KEY: TEXT}, fr_FR: {...} }
 		let domainsLoaded = {}; // { en_US: Set(['main','other']), fr_FR: Set([...]) }
@@ -30,6 +30,13 @@ document.addEventListener('Dolibarr:Init', function(e) {
 			const hashedPath = await hashString(path);
 			const dbName = `DolibarrLangs_${hashedPath}`;
 
+			// Check if this is a reload to clear the cache
+			const [nav] = performance.getEntriesByType("navigation");
+			if (nav && nav.type === "reload") {
+				this.clearCache(true);
+			}
+
+			// Open or create the database
 			return new Promise((resolve, reject) => {
 				const request = indexedDB.open(dbName, 1);
 				request.onupgradeneeded = e => {
@@ -128,7 +135,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 			const now = Date.now();
 			const dolibarrVersion = Dolibarr.getContextVar('DOL_VERSION', 0);
 
-			if (cache && cache.data && (now - cache.timestamp < ONE_DAY) && cache.dolibarrVersion === dolibarrVersion) {
+			if (cache && cache.data && (now - cache.timestamp < CACHE_MSTIME) && cache.dolibarrVersion === dolibarrVersion) {
 				Dolibarr.log('Langs tool : Load lang from cache');
 				return cache.data;
 			}
