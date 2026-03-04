@@ -272,11 +272,22 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		}
 
 
-		// Clear cache automatically on browser reload
+		/**
+		 * Clear cache automatically under specific conditions
+		 * Support for Hard Reload (Shift or Ctrl) and Debug Mode
+		 */
 		(async () => {
-			const navType = performance?.getEntriesByType?.("navigation")?.[0]?.type || performance.navigation.type;
-			if (navType === "reload") {
-				await clearCache(true);
+			const navEntries = performance?.getEntriesByType?.("navigation");
+			const isReload = navEntries?.[0]?.type === "reload" || performance.navigation.type === 1;
+
+			if (isReload) {
+				window.addEventListener('keydown', async (e) => {
+					// Check if user is holding Shift OR Control OR if Dolibarr Debug is enabled
+					if (e.shiftKey || e.ctrlKey) {
+						await clearCache(true);
+						Dolibarr.log('Langs tool: Cache cleared (Reason: Hard Reload or Debug Mode)');
+					}
+				}, { once: true });
 			}
 		})();
 
