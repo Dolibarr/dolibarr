@@ -20,6 +20,7 @@ document.addEventListener('Dolibarr:Init', function () {
 			height: 0,		 				// Box height - Overrride CSS - Do not work on align right
 			closedby: 'any', 				// 'any' | 'closerequest' | 'none'
 			url: null,       				// Ajax url
+			content: null,   				// Static HTML content (alternative to url)
 			animation: true, 				// Enable open/close animations
 			persist: true,  				// Keep dialog in DOM after close (avoid reloading content)
 			footer: null,    				// Footer config: { showCancel, cancelLabel, showSubmit, submitLabel, submitFormId, borderTop }
@@ -115,6 +116,27 @@ document.addEventListener('Dolibarr:Init', function () {
 			// --- Insert HTML ---
 			document.body.insertAdjacentHTML('beforeend', innerHTML);
 			const dialogEl = document.getElementById(param.dialogId);
+
+			// --- Static HTML content ---
+			if (param.content) {
+				const contentEl = dialogEl.querySelector('.dol-dialog-content');
+				contentEl.innerHTML = typeof param.content === 'function' ? param.content(triggerData) : param.content;
+
+				const staticFooter = contentEl.querySelector('.dol-dialog-footer');
+				if (staticFooter) {
+					if (param.footer !== null) {
+						staticFooter.remove();
+					} else {
+						dialogEl.appendChild(staticFooter);
+					}
+				}
+
+				dialogEl.querySelectorAll('[data-dol-dialog-close]').forEach(function (btn) {
+					btn.addEventListener('click', closeDialog);
+				});
+
+				bindAjaxForms();
+			}
 
 			// --- Load AJAX content if url is provided ---
 			if (param.url) {
