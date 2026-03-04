@@ -1424,5 +1424,3 @@ since=desde
 SignatureID=Firma
 except=excepto
 DUPLICATA=DUPLICATA
-MailSupplierBankLast4MessageDefault=Actualmente en nuestra base de datos consta la cuenta bancaria acabada en estos 4 numeros: %s
-MailSupplierBankLast4FallbackDefault=Actualmente no tenemos datos bancarios registrados para este proveedor.
