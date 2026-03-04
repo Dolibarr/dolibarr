@@ -111,7 +111,7 @@ foreach ($arrayofai as $ia => $iarecord) {
 	// Generic Model Field
 	$item = $formSetup->newItem('AI_API_'.strtoupper($ia).'_MODEL');
 	$item->nameText = $langs->trans("AI_API_MODEL").' ('.$ialabel.')';
-	$item->defaultFieldValue = $iarecord['textgeneration']; 
+	$item->defaultFieldValue = $iarecord['textgeneration'];
 	$item->fieldParams['trClass'] = 'iaservice '.$ia;
 	$item->cssClass = 'minwidth500 input'.$ia;
 	$item->helpText = $langs->trans("AI_API_MODEL_HELP");
