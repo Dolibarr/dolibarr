@@ -109,6 +109,7 @@ if ($massaction == 'purge' && !empty($toselect)) {
 
 	foreach ($toselect as $id) {
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."ai_request_log WHERE rowid = " . (int) $id;
+		$resql = $db->query($sql);
 		if (!$resql) {
 			$error++;
 			$db->rollback();
