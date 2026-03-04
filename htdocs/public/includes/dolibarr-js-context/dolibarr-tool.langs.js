@@ -121,7 +121,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 				const store = tx.objectStore('langs');
 				await store.clear();
 
-				// 1. Supprimer la base entière
+				// Delete database
 				const deleteRequest = indexedDB.deleteDatabase(dbName);
 				deleteRequest.onsuccess = () => Dolibarr.log('Dolibarr.tools.langs: database deleted');
 				deleteRequest.onerror = () => console.error('Dolibarr.tools.langs:Failed to delete DB', deleteRequest.error);
