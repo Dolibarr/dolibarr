@@ -375,6 +375,7 @@ ErrorBlockLogNeedObject=O obxecto de rexistro inalterable precisa que o obxecto 
 ErrorBadParameterWhenCallingCreateOfBlockedLog=Parámetro incorrecto ao chamar á creación do rexistro bloqueado
 ErrorMaxDecimalsShownTooLowComparedToUnitOrTotal=O valor para "Decimais máximos para os prezos que se amosan na pantalla" (%s) debe ser igual ou superior a "Decimais máximos para os prezos unitarios" (%s) e "Decimais máximos para os prezos totais" (%s). Isto é necesario para evitar inconsistencias no arredondamento nos documentos.
 ErrorOnlyDraftStatusCanBeDeletedInMassAction=Só se poden eliminar elementos co estado de borrador nunha acción masiva
+ErrorLDAPFunctionsAreDisabledOnThisPHP=As funcións LDAP están desactivadas neste PHP.
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=O seu parámetro PHP upload_max_filesize (%s) é superior ao parámetro PHP post_max_size (%s). Esta non é unha configuración consistente.
@@ -466,3 +467,4 @@ SomeShipmentExists=Erro, hai algún envío ligado ao pedimento. Eliminación rex
 WarningEvaluationEmptyValidate=Non se pode validar a avaliación, os niveis das competencias non están definidos
 ErrorBadParametersForDirectDebitFileCreate=Non se pode crear o ficheiro de transferencia bancaria: non se proporcionou o parámetro de formato esperado.
 ErrorBadParametersForDirectDebitFileCreateDids=Non se pode crear o ficheiro de transferencia bancaria: non se proporcionan os ID das solicitudes de pagamento existentes.
+UserDoesNotHaveRightsToChangeHisPassword=That user doesn't have the rights to change his own password

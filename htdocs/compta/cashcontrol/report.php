@@ -175,7 +175,7 @@ if ($resql) {
 	$uservalid = new User($db);
 	if ($userauthor > 0) {
 		$uservalid->fetch($userauthor);
-		print '<br>'.$langs->trans("Author").': '.$uservalid->getFullName($langs);
+		print ' - '.$langs->trans("Author").': '.$uservalid->getFullName($langs);
 	}
 	print '<br>'.$langs->trans("Period").': '.$object->year_close.($object->month_close ? '-'.sprintf("%02d", $object->month_close) : '').($object->day_close ? '-'.sprintf("%02d", $object->day_close) : '');
 	print '</center>';

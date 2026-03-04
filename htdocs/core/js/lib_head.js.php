@@ -1464,6 +1464,7 @@ function pricejs(amount, mode = 'MT', currency_code = '', force_locale = '') {
  */
 function price2numjs(amount) {
 	if (amount == '') return '';
+	if (amount == null) return '';	/* null or undefined */
 
 	var dec = <?php echo json_encode($dec) ?>;
 	var thousand = <?php echo json_encode($thousand) ?>;

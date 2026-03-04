@@ -58,7 +58,7 @@ if ((!$user->admin && !$user->hasRight('blockedlog', 'read')) || empty($conf->bl
 	accessforbidden();
 }
 
-$langs->loadLangs(array("admin", "bills", "blockedlog", "cashdesk", "companies", "mails", "members", "products"));
+$langs->loadLangs(array("admin", "bills", "blockedlog", "cashdesk", "companies", "compta", "mails", "members", "products"));
 
 
 /*
@@ -163,7 +163,7 @@ function formatObject($objtoshow, $prefix, $parentelement = '')
 		'vat_src_code' => 'VATCode',
 		'multicurrency_code' => 'Currency',
 		'qty' => 'Quantity',
-		'remise_percent' => 'DiscountInPercent',
+		'remise_percent' => $langs->transnoentitiesnoconv('Discount').' (%)',
 		'nom' => 'Name',
 		'name' => 'Name',
 		'email' => 'Email',
@@ -190,15 +190,19 @@ function formatObject($objtoshow, $prefix, $parentelement = '')
 		'special_code' => 'Special line (WEEE line, option, id of module...)',
 		'status' => 'Status',
 		'cash' => 'PaymentTypeLIQ',
-		'cash_declared' => $langs->transnoentities('PaymentTypeLIQ').' - '.$langs->transnoentities("AmuntCountedByUserShort"),
-		'cash_lifetime' => $langs->transnoentities('LifetimeAmount', $langs->transnoentities('PaymentTypeLIQ')),
+		'cash_declared' => $langs->transnoentitiesnoconv('PaymentTypeLIQ').' - '.$langs->transnoentitiesnoconv("AmuntCountedByUserShort"),
+		'cash_lifetime' => $langs->transnoentitiesnoconv('LifetimeAmount', $langs->transnoentitiesnoconv('PaymentTypeLIQ')),
 		'card' => 'PaymentTypeCB',
-		'card_declared' => $langs->transnoentities('PaymentTypeCB').' - '.$langs->transnoentities("AmuntCountedByUserShort"),
-		'card_lifetime' => $langs->transnoentities('LifetimeAmount', $langs->transnoentities('PaymentTypeCB')),
+		'card_declared' => $langs->transnoentitiesnoconv('PaymentTypeCB').' - '.$langs->transnoentitiesnoconv("AmuntCountedByUserShort"),
+		'card_lifetime' => $langs->transnoentitiesnoconv('LifetimeAmount', $langs->transnoentitiesnoconv('PaymentTypeCB')),
 		'cheque' => 'PaymentTypeCHQ',
-		'cheque_declared' => $langs->transnoentities('PaymentTypeCHQ').' - '.$langs->transnoentities("AmuntCountedByUserShort"),
-		'cheque_lifetime' => $langs->transnoentities('LifetimeAmount', $langs->transnoentities('PaymentTypeCHQ')),
+		'cheque_declared' => $langs->transnoentitiesnoconv('PaymentTypeCHQ').' - '.$langs->transnoentitiesnoconv("AmuntCountedByUserShort"),
+		'cheque_lifetime' => $langs->transnoentitiesnoconv('LifetimeAmount', $langs->transnoentitiesnoconv('PaymentTypeCHQ')),
 		'lifetime_start' => 'LifetimeStatDate',
+		'total_billed' => 'Turnover',
+		'total_collected' => 'TurnoverCollected',
+		'totallifetime_billed' => $langs->transnoentitiesnoconv('Turnover').' - '.$langs->transnoentitiesnoconv('LifetimeAmountShort'),
+		'totallifetime_collected' => $langs->transnoentitiesnoconv('TurnoverCollected').' - '.$langs->transnoentitiesnoconv('LifetimeAmountShort'),
 		'email_from' => 'MailFrom',
 		'email_to' => 'MailTo',
 		'email_msgid' => 'EmailMsgID',
@@ -281,6 +285,8 @@ function formatObject($objtoshow, $prefix, $parentelement = '')
 					'cash_declared', 'cheque_declared', 'card_declared', 'cash_lifetime', 'cheque_lifetime', 'card_lifetime'
 				)) || (isset($arrayoffields[$key]['type']) && in_array($arrayoffields[$key]['type'], array('price')))) {
 					$s .= '<span class="amount">'.price($val, 0, $langs, 1, 0, -2).'</span>';
+				} elseif (in_array($key, array('total_billed', 'total_collected', 'totallifetime_billed', 'totallifetime_collected'))) {
+					$s .= '<span class="amount">'.$val.'</span>';
 				} else {
 					$s .= $val;
 				}

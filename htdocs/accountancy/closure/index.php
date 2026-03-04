@@ -155,8 +155,8 @@ if (empty($reshook)) {
 			}
 		} elseif ($action == 'confirm_step_2' && $confirm == "yes" && $user->hasRight('accounting', 'fiscalyear', 'write')) {
 			$new_fiscal_period_id = GETPOSTINT('new_fiscal_period_id');
-			$separate_auxiliary_account = GETPOSTINT('separate_auxiliary_account');
-			$generate_bookkeeping_records = GETPOSTINT('generate_bookkeeping_records');
+			$separate_auxiliary_account = (!empty(GETPOST('separate_auxiliary_account')) ? 1 : 0);
+			$generate_bookkeeping_records = (!empty(GETPOST('generate_bookkeeping_records')) ? 1 : 0);
 
 			$error = 0;
 			if ($generate_bookkeeping_records) {

@@ -1,0 +1,2 @@
+# Dolibarr language file - Source file is en_US - modulebuilder
+AIPromptExtrafieldDesc=Enter here a prompt that should return a value and only the value. The substition variables are replaced into the prompt before calling the AI API.

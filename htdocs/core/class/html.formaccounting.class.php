@@ -429,6 +429,9 @@ class FormAccounting extends Form
 			if ($num_rows == 0 && getDolGlobalInt('CHARTOFACCOUNTS') <= 0) {
 				$langs->load("errors");
 				$showempty = $langs->trans("ErrorYouMustFirstSetupYourChartOfAccount");
+			} elseif ($num_rows == 0) {
+				$langs->load("errors");
+				$showempty = $langs->trans("ErrorYouMustFirstSetupYourChartOfAccount");
 			} else {
 				$selected = $selectid;
 				$lastCentralized = null;

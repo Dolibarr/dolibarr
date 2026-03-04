@@ -705,7 +705,7 @@ class FormProjets extends Form
 	 */
 	public function selectOpportunityStatus($htmlname, $preselected = -1, $showempty = 1, $useshortlabel = 0, $showallnone = 0, $showpercent = 0, $morecss = '', $noadmininfo = 0, $addcombojs = 0)
 	{
-		global $conf, $langs, $user;
+		global $langs, $user;
 
 		$sql = "SELECT rowid, code, label, percent";
 		$sql .= " FROM " . $this->db->prefix() . 'c_lead_status';
@@ -729,10 +729,15 @@ class FormProjets extends Form
 					$sellist .= '<option value="notopenedopp"' . ($preselected == 'notopenedopp' ? ' selected="selected"' : '') . '>-- ' . $langs->trans("NotOpenedOpportunitiesShort") . '</option>';
 					$sellist .= '<option value="none"' . ($preselected == 'none' ? ' selected="selected"' : '') . '>-- ' . $langs->trans("NotAnOpportunityShort") . '</option>';
 				}
+				$separatoradded = 0;
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($resql);
 
-					$sellist .= '<option value="' . $obj->rowid . '" defaultpercent="' . $obj->percent . '" elemcode="' . $obj->code . '"';
+					if (($obj->code == 'WON' || $obj->code == 'LOST') && !$separatoradded) {
+						$separatoradded = 1;
+						$sellist .= '<option value="" disabled>--------------------</option>';
+					}
+					$sellist .= '<option value="' . $obj->rowid . '" defaultpercent="' . $obj->percent . '" data-elemcode="' . $obj->code . '"';
 					if ($obj->rowid == $preselected) {
 						$sellist .= ' selected="selected"';
 					}
@@ -759,12 +764,7 @@ class FormProjets extends Form
 					$sellist .= ajax_combobox($htmlname);
 				}
 			}
-			/*else
-			{
-				$sellist = '<select class="flat" name="elementselect">';
-				$sellist.= '<option value="0" disabled>'.$langs->trans("None").'</option>';
-				$sellist.= '</select>';
-			}*/
+
 			$this->db->free($resql);
 
 			return $sellist;

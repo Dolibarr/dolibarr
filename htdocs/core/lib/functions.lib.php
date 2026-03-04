@@ -27,6 +27,7 @@
  * Copyright (C) 2024		Benoît PASCAL				<contact@p-ben.com>
  * Copyright (C) 2025		Vincent Maury				<vmaury@timgroup.fr>
  * Copyright (C) 2026		Benjamin Falière			<benjamin@faliere.com>
+ * Copyright (C) 2026		Pierre Ardoin				<developpeur@lesmetiersdubatiment.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1622,13 +1623,24 @@ if (!function_exists('dol_getprefix')) {
  *  To link to a module file from a module file, use include './mymodulefile';
  *  To link to a module file from a core file, then this function can be used (call by hook / trigger / speciales pages)
  *
- * 	@param	string	$relpath	Relative path to file (Ie: mydir/myfile, ../myfile, ...)
+ * 	@param	string	$relpath	Relative path to file (Ie: mydir/myfile, ./myfile, ...)
  * 	@param	string	$classname	Class name (deprecated)
  *  @return bool                True if load is a success, False if it fails
  */
 function dol_include_once($relpath, $classname = '')
 {
 	global $conf, $langs, $user, $mysoc; // Do not remove this. They must be defined for files we make "include". Other globals var must be retrieved with $GLOBALS['var']
+
+	if (strpos($relpath, '..') !== false) {
+		// Found a not valid path
+		dol_syslog('functions::dol_include_once Tried to load a file with a path including a forbidden sequence ".." : ' . $relpath, LOG_WARNING);
+		return false;
+	}
+	if (!preg_match('/\.php$/', $relpath)) {
+		// Found a not valid path
+		dol_syslog('functions::dol_include_once Tried to load a file that is not a PHP file : ' . $relpath, LOG_WARNING);
+		return false;
+	}
 
 	$fullpath = dol_buildpath($relpath);
 
@@ -3971,6 +3983,12 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 		$format = ($outputlangs->trans("FormatDateShort") != "FormatDateShort" ? $outputlangs->trans("FormatDateShort") : $conf->format_date_short);
 	} elseif ($format == 'hour') {
 		$format = ($outputlangs->trans("FormatHourShort") != "FormatHourShort" ? $outputlangs->trans("FormatHourShort") : $conf->format_hour_short);
+	} elseif ($format == 'hoursec') {
+		$s1 = $outputlangs->trans("FormatDateShort");
+		$s2 = $outputlangs->trans("FormatDateHourSecShort");
+		$s3 = trim(preg_replace('/'.preg_quote($s1, '/').'/', '', $s2));	// Try to guess the format for FormatHourSecShort using FormatDateShort and FormatDateHourSecShort
+		$format = $s3;
+		//$format = ($outputlangs->trans("FormatHourSecShort") != "FormatHourSecShort" ? $outputlangs->trans("FormatHourSecShort") : ($s3 ? $s3 : $conf->format_hour_sec_short));
 	} elseif ($format == 'hourduration') {
 		$format = ($outputlangs->trans("FormatHourShortDuration") != "FormatHourShortDuration" ? $outputlangs->trans("FormatHourShortDuration") : $conf->format_hour_short_duration);
 	} elseif ($format == 'daytext') {
@@ -4528,6 +4546,82 @@ function dol_print_email($email, $contactid = 0, $socid = 0, $addlink = 0, $max 
 
 	return $rep;
 }
+
+
+/**
+ * Print decorated date-hour
+ *
+ * @param	int			$datep			Date
+ * @param	int|null	$datef			Second date
+ * @param	int			$fullday		Set to 1 for full day (hours are hidden)
+ * @param	int			$addseconds		Add also seconds
+ * @param	string		$pictotoadd		Picto to add
+ * @param	string|bool	$tzoutput		true or 'gmt' => string is for Greenwich location
+ * 										false or 'tzserver' => output string is for local PHP server TZ usage
+ * 										'tzuser' => output string is for user TZ (current browser TZ with current dst) => In a future, we should have same behaviour than 'tzuserrel'
+ *                                 	    'tzuserrel' => output string is for user TZ (current browser TZ with dst or not, depending on date position)
+ * @param	string 		$reduceformat	Use 1 to use a reduce format
+ * @return	string						Decorated date
+ */
+function dolOutputDates($datep, $datef = null, $fullday = 0, $addseconds = 0, $pictotoadd = '', $tzoutput = 'tzuserrel', $reduceformat = 0)
+{
+	$tmpa = dol_getdate($datep);
+	if (empty($datef)) {
+		$tmpb = $tmpa;
+	} else {
+		$tmpb = dol_getdate($datef);
+	}
+
+	$s = '';
+
+	if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) {
+		// The same day
+		$s .= '<div class="center inline-block">';
+		if ($tmpa['hours'] != $tmpb['hours'] || $tmpa['minutes'] != $tmpb['minutes']) {
+			// Not the same hour
+			$s .=  dol_print_date($datep, 'day'.($reduceformat ? 'reduceformat' : ''), $tzoutput);
+			$s .= $pictotoadd;
+			if (empty($fullday)) {
+				$s .=  '<br><span class="small opacitymedium">';
+				$s .=  dol_print_date($datep, 'hour'.($addseconds ? 'sec' : '').'reduceformat', $tzoutput);
+				$s .=  '-'.dol_print_date($datef, 'hour'.($addseconds ? 'sec' : '').'reduceformat', $tzoutput);
+				$s .=  '</span>';
+			}
+		} else {
+			// The same hour
+			$s .=  dol_print_date($datep, 'day'.($reduceformat ? 'reduceformat' : ''), 'tzuserrel');
+			$s .= $pictotoadd;
+			if (empty($fullday)) {
+				$s .=  '<br><span class="small opacitymedium">';
+				$s .=  dol_print_date($datep, 'hour'.($addseconds ? 'sec' : '').'reduceformat', $tzoutput);
+				$s .=  '</span>';
+			}
+		}
+		$s .=  '</div>';
+	} else {
+		// Not the same day
+		$s .=  '<div class="center inline-block dateborderright">';
+		$s .=  dol_print_date($datep, 'day'.($reduceformat ? 'reduceformat' : ''), $tzoutput);
+		if (empty($fullday)) {
+			$s .=  '<br><span class="small opacitymedium">';
+			$s .=  dol_print_date($datep, 'hour'.($addseconds ? 'sec' : '').'reduceformat', $tzoutput);
+			$s .=  '</span>';
+		}
+		$s .=  '</div>';
+		$s .=  '<div class="center inline-block dateborderleft">';
+		$s .=  dol_print_date($datef, 'day'.($reduceformat ? 'reduceformat' : ''), 'tzuserrel');
+		$s .= $pictotoadd;
+		if (empty($fullday)) {
+			$s .=  '<br><span class="small opacitymedium">';
+			$s .=  dol_print_date($datef, 'hour'.($addseconds ? 'sec' : '').'reduceformat', $tzoutput);
+			$s .=  '</span>';
+		}
+		$s .=  '</div>';
+	}
+
+	return $s;
+}
+
 
 /**
  * Get array of social network dictionary
@@ -5926,6 +6020,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'square' => '#888',
 				'stop-circle' => '#888',
 				'stats' => '#444',
+				'superadmin' => '#600',
 				'switch_off' => '#999',
 				'technic' => '#999',
 				'tick' => '#282',
@@ -6789,7 +6884,7 @@ function img_searchclear($titlealt = 'default', $other = '')
 		$titlealt = $langs->trans('Search');
 	}
 
-	$img = img_picto($titlealt, 'searchclear', $other, 0, 1);
+	$img = img_picto($titlealt, 'searchclear.png', $other, 0, 1);
 
 	$input = '<input type="image" class="liste_titre" name="button_removefilter" src="' . $img . '" ';
 	$input .= 'value="' . dol_escape_htmltag($titlealt) . '" title="' . dol_escape_htmltag($titlealt) . '" >';
@@ -10242,6 +10337,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__DIRECTDOWNLOAD_URL_INVOICE__'] = 'Direct download url of an invoice';
 			$substitutionarray['__DIRECTDOWNLOAD_URL_CONTRACT__'] = 'Direct download url of a contract';
 			$substitutionarray['__DIRECTDOWNLOAD_URL_SUPPLIER_PROPOSAL__'] = 'Direct download url of a supplier proposal';
+			$substitutionarray['__DIRECTDOWNLOAD_URL_SUPPLIER_ORDER__'] = 'Direct download url of a supplier order';
+			$substitutionarray['__DIRECTDOWNLOAD_URL_SUPPLIER_INVOICE__'] = 'Direct download url of a supplier invoice';
 
 			if (isModEnabled("shipping") && (!is_object($object) || $object->element == 'shipping')) {
 				$substitutionarray['__SHIPPINGTRACKNUM__'] = 'Shipping tracking number';
@@ -10512,7 +10609,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				}
 				$extrafields->fetch_name_optionals_label($object->table_element, true);
 
-				if ($object->fetch_optionals() > 0) {
+				if ($object->fetch_optionals() > 0) {	// @FIXME: Remove this, the fetch should have been done already, by the caller of getCommonSubstitutionArray()
 					if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0) {
 						foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label) {
 							if ($extrafields->attributes[$object->table_element]['type'][$key] == 'date') {
@@ -10611,6 +10708,16 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 					$substitutionarray['__DIRECTDOWNLOAD_URL_SUPPLIER_PROPOSAL__'] = $object->getLastMainDocLink($object->element);
 				} else {
 					$substitutionarray['__DIRECTDOWNLOAD_URL_SUPPLIER_PROPOSAL__'] = '';
+				}
+				if (getDolGlobalString('SUPPLIER_ORDER_ALLOW_EXTERNAL_DOWNLOAD') && is_object($object) && $object->element == 'order_supplier') {
+					$substitutionarray['__DIRECTDOWNLOAD_URL_SUPPLIER_ORDER__'] = $object->getLastMainDocLink($object->element);
+				} else {
+					$substitutionarray['__DIRECTDOWNLOAD_URL_SUPPLIER_ORDER__'] = '';
+				}
+				if (getDolGlobalString('SUPPLIER_INVOICE_ALLOW_EXTERNAL_DOWNLOAD') && is_object($object) && $object->element == 'invoice_supplier') {
+					$substitutionarray['__DIRECTDOWNLOAD_URL_SUPPLIER_INVOICE__'] = $object->getLastMainDocLink($object->element);
+				} else {
+					$substitutionarray['__DIRECTDOWNLOAD_URL_SUPPLIER_INVOICE__'] = '';
 				}
 
 				if (is_object($object) && $object->element == 'propal') {
@@ -16163,7 +16270,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 	}
 
 	$histo = array();
-	'@phan-var-force array<int,array{type:string,tododone:string,id:string,datestart:int|string,dateend:int|string,note:string,message:string,percent:string,userid:string,login:string,userfirstname:string,userlastname:string,userphoto:string,msg_from?:string,contact_id?:string,socpeopleassigned?:int[],lastname?:string,firstname?:string,fk_element?:int,elementtype?:string,acode:string,alabel?:string,libelle?:string,apicto?:string}> $histo';
+	'@phan-var-force array<int,array{type:string,tododone:string,id:string,datestart:int|string,dateend:int|string,fulldayevent:int,note:string,message:string,percent:string,userid:string,login:string,userfirstname:string,userlastname:string,userphoto:string,msg_from?:string,contact_id?:string,socpeopleassigned?:int[],lastname?:string,firstname?:string,fk_element?:int,elementtype?:string,acode:string,alabel?:string,libelle?:string,apicto?:string}> $histo';
 
 	$numaction = 0;
 	$now = dol_now();
@@ -16191,7 +16298,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 		$sql .= " a.datep2 as dp2,";
 		$sql .= " a.percent as percent, 'action' as type,";
 		$sql .= " a.fk_element, a.elementtype,";
-		$sql .= " a.fk_contact,";
+		$sql .= " a.fk_contact, a.fulldayevent,";
 		$sql .= " a.email_from as msg_from,";
 		$sql .= " c.code as acode, c.libelle as alabel, c.picto as apicto,";
 		$sql .= " u.rowid as user_id, u.login as user_login, u.photo as user_photo, u.firstname as user_firstname, u.lastname as user_lastname";
@@ -16447,6 +16554,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 						'id' => $obj->id,
 						'datestart' => $db->jdate($obj->dp),
 						'dateend' => $db->jdate($obj->dp2),
+						'fulldayevent' => (int) $obj->fulldayevent,
 						'note' => $obj->label,
 						'message' => dol_htmlentitiesbr($obj->message),
 						'percent' => $obj->percent,
@@ -16477,6 +16585,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 						'id' => $obj->id,
 						'datestart' => $db->jdate($obj->dp),
 						'dateend' => $db->jdate($obj->dp2),
+						'fulldayevent' => (int) $obj->fulldayevent,
 						'note' => $obj->label,
 						'message' => dol_htmlentitiesbr($obj->message),
 						'percent' => $obj->percent,
@@ -16744,6 +16853,8 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 					}
 				}
 				$out .= $contactGetNomUrlCache[$histo[$key]['msg_from']];
+			} else {
+				$out .= '<img class="photomemberphoto userphoto" alt="" src="/public/theme/common/user_anonymous.png">'.$langs->trans("Anonymous");
 			}
 			$out .= '</div>';
 

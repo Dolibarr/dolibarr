@@ -205,7 +205,7 @@ The following changes may create regressions for some external modules, but were
 * Because of the new TRIGGER_PREFIX property, the triggers SUPPLIER_PRODUCT_BUYPRICE_XXX are renamed into PRODUCT_BUYPRICE_XXX.
 * Function img_pdf() has been removed. Replace it with img_picto('', 'pdf') if you were using it.
 * The method run_trigger() was deprecated 10+ years ago in favor of runTrigger(). It has been removed. Change your trigger file if you still use it.
-* Property ->picto of module descriptors must contains the image extension if it is not a font awesome tag. Example: $this->picto="mymoduleimg.png";
+* Property ->picto of module descriptors or menu entries must contains the image extension if it is not a font awesome tag. Example: $this->picto="mymoduleimg.png";
 * Stock movement API GET method output variable names has been harmonized with POST input parameter names
 * Concatenation into computed property of extrafields is off by default. You can enable it from conf.php file by adding dol_concat to list of allowed function in $dolibarr_main_restrict_eval_methods,
   For example: $dolibarr_main_restrict_eval_methods='getDolGlobalString,getDolGlobalInt,getDolCurrency,fetchNoCompute,hasRight,isModEnabled,isStringVarMatching,abs,min,max,round,dol_now,dol_concat,preg_match';

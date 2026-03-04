@@ -299,8 +299,24 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 
 	$db->begin();
 
+	$morphy = GETPOST("morphy", 'alphanohtml');
+	$lastname = GETPOST("lastname", 'alphanohtml');
+	$firstname = GETPOST("firstname", 'alphanohtml');
+	$societe = GETPOST("societe", 'alphanohtml');
+	$email = preg_replace('/\s+/', '', GETPOST("member_email", 'aZ09arobase'));
+	$country_id = getDolGlobalInt("MEMBER_NEWFORM_FORCECOUNTRYCODE", GETPOSTINT('country_id'));
+
+	if (!in_array($morphy, array('mor', 'phy'))) {
+		$error++;
+		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv('MemberNature'))."<br>\n";
+	}
+
 	// test if login already exists
 	if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
+		if (!GETPOST('member_email')) {
+			$error++;
+			$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("EMail"))."<br>\n";
+		}
 		if (!GETPOST('login')) {
 			$error++;
 			$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Login"))."<br>\n";
@@ -320,51 +336,36 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 			$langs->load("errors");
 			$errmsg .= $langs->trans("ErrorPasswordsMustMatch")."<br>\n";
 		}
-		if (!GETPOST('member_email')) {
-			$error++;
-			$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("EMail"))."<br>\n";
-		}
 	}
 	if (GETPOST('typeid') <= 0) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type"))."<br>\n";
 	}
-	if (!in_array(GETPOST('morphy'), array('mor', 'phy'))) {
-		$error++;
-		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv('Nature'))."<br>\n";
-	}
 
-	$lastname = GETPOST("lastname", 'alphanohtml');
-	$firstname = GETPOST("firstname", 'alphanohtml');
-	$societe = GETPOST("societe", 'alphanohtml');
-	$morphy = GETPOST("morphy", 'alphanohtml');
-	$email = preg_replace('/\s+/', '', GETPOST("member_email", 'aZ09arobase'));
-	$country_id = getDolGlobalInt("MEMBER_NEWFORM_FORCECOUNTRYCODE", GETPOSTINT('country_id'));
-
-	if ($morphy != 'mor' && empty($lastname)) {
+	if ($morphy && $morphy != 'mor' && empty($lastname)) {
 		$error++;
 		$langs->load("errors");
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Lastname")), null, 'errors');
+		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentities("Lastname"));
 	}
-	if ($morphy != 'mor' && (!isset($firstname) || $firstname == '')) {
+	if ($morphy && $morphy != 'mor' && (!isset($firstname) || $firstname == '')) {
 		$error++;
 		$langs->load("errors");
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Firstname")), null, 'errors');
+		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentities("Firstname"));
 	}
 	if ($morphy == 'mor' && empty($societe)) {
 		$error++;
 		$langs->load("errors");
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Company")), null, 'errors');
+		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentities("Company"));
 	}
 	if (empty($country_id)) {
 		$error++;
 		$langs->load("errors");
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Country")), null, 'errors');
+		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentities("Country"));
 	}
-	if (getDolGlobalString('ADHERENT_MAIL_REQUIRED') && !isValidEmail($email)) {
+	if (getDolGlobalString('ADHERENT_MAIL_REQUIRED') && $email && !isValidEmail($email)) {
 		$error++;
 		$langs->load("errors");
-		setEventMessages($langs->trans("ErrorBadEMail", $email), null, 'errors');
+		$errmsg .= $langs->trans("ErrorBadEMail", $email);
 	}
 	$birthday = dol_mktime(GETPOSTINT("birthhour"), GETPOSTINT("birthmin"), GETPOSTINT("birthsec"), GETPOSTINT("birthmonth"), GETPOSTINT("birthday"), GETPOSTINT("birthyear"));
 	if (GETPOST("birthmonth") && empty($birthday)) {
@@ -850,7 +851,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 	}
 
 	// Company   // TODO : optional hide
-	print '<tr id="trcompany" class="trcompany"><td id="tdcompany" class="titlefieldmiddle'.($checkednature == "mor" ? ' fieldrequired"' : '').'">'.$langs->trans("Company").'</td><td>';
+	print '<tr id="trcompany" class="trcompany"><td id="tdcompany" class="titlefieldmiddle paddingrightonly'.($checkednature == "mor" ? ' fieldrequired"' : '').'">'.$langs->trans("Company").'</td><td>';
 	print img_picto('', 'company', 'class="pictofixedwidth paddingright"');
 	print '<input type="text" name="societe" class="minwidth150 widthcentpercentminusx" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
 
@@ -1001,7 +1002,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 
 
 	// Add hook to complete the form
-	$parameters = array('country_id' => $country_id);
+	$parameters = array('country_id' => $country_id, 'mode' => 'new');
 	$reshook = $hookmanager->executeHooks('membershipNewSubscriptionPublicForm', $parameters, $object, $action);
 	if ($reshook < 0) {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -1012,15 +1013,15 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 		// Do not set a default amount MEMBER_NEWFORM_AMOUNT if you use MEMBER_NEWFORM_DOLIBARRTURNOVER
 		$s = $langs->trans("AreYouAPreferredPartner", '<a href="https://partners.dolibarr.org" target="_blank">{s1}</a>');
 		$s = str_replace('{s1}', 'Peferred Partner', $s);
-		print '<tr id="trbudget" class="trcompany"><td><label for="pp">'.$s.'</label></td><td>';
+		print '<tr id="trbudget" class="trcompany"><td class="paddingrightonly"><label for="pp" class="small">'.$s.'</label></td><td>';
 		print '<input type="checkbox" name="pp" id="pp" value="1"'.(GETPOST('pp') ? ' checked="checked"' : '').' class="reposition">';
 		print '</td></tr>';
 
-		print '<tr id="trbudget" class="trcompany"><td class="fieldrequired">'.$langs->trans("TurnoverOrBudget").'</td><td>';
+		print '<tr id="trbudget" class="trcompany"><td class="fieldrequired paddingrightonly"><span class="small">'.$langs->trans("TurnoverOrBudget").'</span></td><td>';
 
 		$country_code = dol_getIdFromCode($db, $country_id, 'c_country', 'rowid', 'code');
 		if ($country_code === 'FR' && $checkednature === 'mor' && GETPOST('pp')) {
-			print '<input type="text" name="budget" id="budget" class="flat turnover right width100" value="'.GETPOST('budget').'">';
+			print '<input type="text" name="budget" id="budget" class="flat turnover right width100" value="'.GETPOST('budget').'" required>';
 		} else {
 			$arraybudget = array('50' => '<= 100 000', '100' => '<= 200 000', '200' => '<= 500 000', '300' => '<= 1 500 000', '600' => '<= 3 000 000', '1000' => '<= 5 000 000', '2000' => '5 000 000+');
 			print $form->selectarray('budget', $arraybudget, GETPOSTINT('budget'), 1, 0, 0, '', 0, 0, 0, '');
@@ -1058,14 +1059,16 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 				jQuery("#newmember").submit();
 			});
 			jQuery("#budget").change(function() {
-				console.log("Turnover amount has been modified");
+				console.log("Turnover amount has been modified on change");
 				newamount = initturnover();
 				jQuery("#amount").val(newamount);
+				jQuery("#amounthidden").val(newamount);
 			});
 			jQuery("#budget").keyup(function() {
-				console.log("Turnover amount has been modified");
+				console.log("Turnover amount has been modified on keyup");
 				newamount = initturnover();
 				jQuery("#amount").val(newamount);
+				jQuery("#amounthidden").val(newamount);
 			});
 
 			function initturnover() {
@@ -1074,7 +1077,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 				morphy = jQuery("#moralinput").is(\':checked\') ? \'mor\' : \'phy\';
 				selectcountry_id = jQuery("#selectcountry_id").val();
 				pp = jQuery("#pp").is(\':checked\') ? true : false;
-				console.log("Set fields according to nature other properties");
+				console.log("Set fields according to nature and other properties");
 				console.log("morphy="+morphy);
 				console.log("selectcountry_id="+selectcountry_id);
 				console.log("pp="+pp);
@@ -1098,7 +1101,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 					if (selectcountry_id == 1) {
 						if (pp) {
 							console.log("value selected in input text field is "+jQuery("#budget").val());
-							newamount = Math.max(Math.round(jQuery("#budget").val() * 0.005), 50);
+							newamount = Math.max(Math.round(price2numjs(jQuery("#budget").val()) * 0.005), 50);
 							console.log("newamount = "+newamount);
 						} else {
 							console.log("not a pp");
@@ -1117,6 +1120,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 							jQuery("#budget").val(\'\');
 							newamount = \'\';
 						}
+						console.log("newamount="+newamount);
 					}
 				}
 
