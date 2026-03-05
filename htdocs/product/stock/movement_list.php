@@ -892,7 +892,7 @@ if ($warehouse->id > 0) {
 				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$warehouse->id.'">';
 				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-				$morehtmlref .= $formproject->select_projects(($socid > 0 ? $socid : -1), (string) $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
+				$morehtmlref .= $formproject->select_projects(-1, (string) $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
 				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 				$morehtmlref .= '</form>';
 			} else {
@@ -1706,7 +1706,7 @@ print '</div>'."\n";
 print '</form>'."\n";
 
 // Add number of product when there is a filter on period
-if (count($arrayofuniqueproduct) == 1 && !empty($year) && is_numeric($year)) {
+if (count($arrayofuniqueproduct) == 1 && !empty($search_date_startyear) && is_numeric($search_date_startyear)) {
 	print "<br>";
 
 	$productidselected = 0;
@@ -1714,8 +1714,8 @@ if (count($arrayofuniqueproduct) == 1 && !empty($year) && is_numeric($year)) {
 		$productidselected = $key;
 		$productlabelselected = $val;
 	}
-	$datebefore = dol_get_first_day($year ? $year : (int) dol_print_date(time(), "%Y"), $month ? $month : 1, true);
-	$dateafter = dol_get_last_day($year ? $year : (int) dol_print_date(time(), "%Y"), $month ? $month : 12, true);
+	$datebefore = dol_get_first_day($search_date_startyear ? $search_date_startyear : dol_print_date(time(), "%Y"), $search_date_startmonth ? $search_date_startmonth : 1, true);
+	$dateafter = dol_get_last_day($search_date_endyear ? $search_date_endyear : dol_print_date(time(), "%Y"), $search_date_endmonth ? $search_date_endmonth : 12, true);
 	$balancebefore = $object->calculateBalanceForProductBefore($productidselected, $datebefore);
 	$balanceafter = $object->calculateBalanceForProductBefore($productidselected, $dateafter);
 
