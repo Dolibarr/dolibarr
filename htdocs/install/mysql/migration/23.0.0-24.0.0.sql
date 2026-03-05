@@ -174,6 +174,7 @@ ALTER TABLE llx_accounting_balance_snapshot ADD INDEX idx_accounting_balance_sna
 
 -- Switch all crabe templates into sponge
 UPDATE llx_facture SET model_pdf = 'sponge' WHERE model_pdf = 'crabe';
+UPDATE llx_facture_rec SET modelpdf = 'sponge' WHERE modelpdf = 'crabe';
 UPDATE llx_const SET value = 'sponge' WHERE value = 'crabe' AND name ='FACTURE_ADDON_PDF';
 UPDATE llx_document_model as dm SET nom = 'sponge' WHERE nom = 'crabe' AND type ='invoice' AND NOT EXISTS (SELECT nom FROM llx_document_model AS dm2 WHERE nom = 'sponge' AND type = 'invoice' and dm2.entity = dm.entity);
 

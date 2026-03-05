@@ -2668,7 +2668,8 @@ class Form
 			$out .= '})</script>';
 			$out .= img_picto('', 'user', 'class="pictofixedwidth"');
 			$out .= $this->select_dolusers('', $htmlname, $show_empty, $exclude, $disabled, $include, $enableonly, $force_entity, $maxlength, $showstatus, $morefilter, 0, '', 'minwidth200');
-			$out .= ' <input type="submit" disabled class="button valignmiddle smallpaddingimp reposition" id="' . $action . 'assignedtouser" name="' . $action . 'assignedtouser" value="' . dol_escape_htmltag($langs->trans("Add")) . '">';
+			$out .= ' <button type="submit" disabled class="button valignmiddle smallpaddingimp reposition butActionAdd" id="' . $action . 'assignedtouser" name="' . $action . 'assignedtouser" value="' . dol_escape_htmltag($langs->trans("Add")) . '">';
+			$out .= $langs->trans("Add").'</button>';
 			$out .= '</div>';
 			//$out .= '<br>';
 		}
@@ -2770,7 +2771,9 @@ class Form
 			}
 			$out .= $formresources->select_resource_list(0, $htmlname, '', 1, 1, 0, $events, '', 2, 0, 'minwidth200');
 			//$out .= $this->select_dolusers('', $htmlname, $show_empty, $exclude, $disabled, $include, $enableonly, $force_entity, $maxlength, $showstatus, $morefilter);
-			$out .= ' <input type="submit" disabled class="button valignmiddle smallpaddingimp reposition" id="' . $action . 'assignedtoresource" name="' . $action . 'assignedtoresource" value="' . dol_escape_htmltag($langs->trans("Add")) . '">';
+			$out .= ' <button type="submit" disabled class="button valignmiddle smallpaddingimp reposition butActionAdd" id="' . $action . 'assignedtoresource" name="' . $action . 'assignedtoresource" value="' . dol_escape_htmltag($langs->trans("Add")) . '">';
+			$out .= $langs->trans("Add");
+			$out .= '</button>';
 			$out .= '<br>';
 		}
 
@@ -6117,7 +6120,7 @@ class Form
 		if (empty($height)) {
 			$height = 250;
 			if (is_array($formquestion) && count($formquestion) > 2) {
-				$height += ((count($formquestion) - 2) * 24) + 5;
+				$height += ((count($formquestion) - 2) * 24) + 10;
 			}
 		}
 
@@ -11104,21 +11107,22 @@ class Form
 	/**
 	 * Return HTML code to output a photo
 	 *
-	 * @param string 	$modulepart 						Key to define module concerned ('societe', 'userphoto', 'memberphoto')
-	 * @param Societe|Adherent|Contact|User|CommonObject	$object	Object containing data to retrieve file name
-	 * @param int 		$width 								Width of photo
-	 * @param int 		$height 							Height of photo (auto if 0)
-	 * @param int<0,1>	$caneditfield 						Add edit fields
-	 * @param string 	$cssclass 							CSS name to use on img for photo
-	 * @param string 	$imagesize 							'mini', 'small' or '' (original)
-	 * @param int<0,1>	$addlinktofullsize 					Add link to fullsize image
-	 * @param int<0,1>	$cache 								1=Accept to use image in cache
-	 * @param ''|'user'|'environment' 	$forcecapture 		'', 'user' (user-facing camera) or 'environment' ('outward-facing camera'). Force the parameter capture on HTML input file element to ask a smartphone to allow to open camera to take photo. Auto if ''.
-	 * @param int<0,1>	$noexternsourceoverwrite 			No overwrite image with extern source (like 'gravatar' or other module)
-	 * @return string                            			HTML code to output photo
+	 * @param string 										$modulepart 				Key to define module concerned ('societe', 'userphoto', 'memberphoto')
+	 * @param Societe|Adherent|Contact|User|CommonObject	$object						Object containing data to retrieve file name
+	 * @param int 											$width 						Width of photo
+	 * @param int 											$height 					Height of photo (auto if 0)
+	 * @param int<0,1>										$caneditfield 				Add edit fields
+	 * @param string 										$cssclass 					CSS name to use on img for photo
+	 * @param string 										$imagesize 					'mini', 'small' or '' (original)
+	 * @param int<0,1>										$addlinktofullsize 			Add link to fullsize image
+	 * @param int<0,1>										$cache 						1=Accept to use image in cache
+	 * @param ''|'user'|'environment' 						$forcecapture 				'', 'user' (user-facing camera) or 'environment' ('outward-facing camera'). Force the parameter capture on HTML input file element to ask a smartphone to allow to open camera to take photo. Auto if ''.
+	 * @param int<0,1>										$noexternsourceoverwrite 	No overwrite image with extern source (like 'gravatar' or other module)
+	 * @param int<0,1>										$usesharelinkifavailable	Use 1 to use the share=key link if available. This is slower.
+	 * @return string                            										HTML code to output photo
 	 * @see getImagePublicURLOfObject()
 	 */
-	public static function showphoto($modulepart, $object, $width = 100, $height = 0, $caneditfield = 0, $cssclass = 'photowithmargin', $imagesize = '', $addlinktofullsize = 1, $cache = 0, $forcecapture = '', $noexternsourceoverwrite = 0)
+	public static function showphoto($modulepart, $object, $width = 100, $height = 0, $caneditfield = 0, $cssclass = 'photowithmargin', $imagesize = '', $addlinktofullsize = 1, $cache = 0, $forcecapture = '', $noexternsourceoverwrite = 0, $usesharelinkifavailable = 0)
 	{
 		global $conf, $db, $langs;
 
@@ -11225,10 +11229,6 @@ class Form
 		$ret = '';
 
 		if ($dir) {
-			require_once DOL_DOCUMENT_ROOT . '/ecm/class/ecmfiles.class.php';
-			$ecmfiles = new EcmFiles($db);
-			$relativefile = str_replace(DOL_DATA_ROOT .'/', '', $dir.'/'.$originalfile);
-			$ecmfiles->fetch(0, '', $relativefile);
 			if ($file && file_exists($dir . "/" . $file)) {
 				if ($addlinktofullsize) {
 					$urladvanced = getAdvancedPreviewUrl($modulepart, $originalfile, 0, '&entity=' . $entity);
@@ -11238,8 +11238,21 @@ class Form
 						$ret .= '<a href="' . DOL_URL_ROOT . '/viewimage.php?modulepart=' . $modulepart . '&entity=' . $entity . '&file=' . urlencode($originalfile) . '&cache=' . $cache . '">';
 					}
 				}
-				if (!empty($ecmfiles->share)) {
-					$ret .= '<img alt="" class="photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . ' photologo' . (preg_replace('/[^a-z]/i', '_', $file)) . '" ' . ($width ? ' width="' . $width . '"' : '') . ($height ? ' height="' . $height . '"' : '') . ' src="' . DOL_URL_ROOT . '/viewimage.php?hashp=' . urlencode((string) $ecmfiles->share) . '&cache=' . urlencode((string) $cache) . '">';
+
+				$sharekey = '';
+				if ($usesharelinkifavailable) {
+					// $dir is a full path '/home/.../dolibarr_documents/module'
+					$relativefileforecm = preg_replace('/^'.preg_quote(DOL_DATA_ROOT.'/', '/').'/', '', $dir.'/'.$originalfile);
+					// $relativefileforecme = 'module/...'
+					require_once DOL_DOCUMENT_ROOT . '/ecm/class/ecmfiles.class.php';
+					$ecmfiles = new EcmFiles($db);
+					$ecmfiles->fetch(0, '', $relativefileforecm);
+
+					$sharekey = (string) $ecmfiles->share;
+				}
+
+				if (!empty($sharekey)) {
+					$ret .= '<img alt="" class="photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . ' photologo' . (preg_replace('/[^a-z]/i', '_', $file)) . '" ' . ($width ? ' width="' . $width . '"' : '') . ($height ? ' height="' . $height . '"' : '') . ' src="' . DOL_URL_ROOT . '/viewimage.php?hashp=' . urlencode($sharekey) . '&cache=' . urlencode((string) $cache) . '">';
 				} else {
 					$ret .= '<img alt="" class="photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . ' photologo' . (preg_replace('/[^a-z]/i', '_', $file)) . '" ' . ($width ? ' width="' . $width . '"' : '') . ($height ? ' height="' . $height . '"' : '') . ' src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=' . urlencode($modulepart) . '&entity=' . ((int) $entity) . '&file=' . urlencode($file) . '&cache=' . urlencode((string) $cache) . '">';
 				}
