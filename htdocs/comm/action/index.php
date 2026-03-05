@@ -629,7 +629,7 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 	$s .= '<script type="text/javascript">'."\n";
 	$s .= 'jQuery(document).ready(function () {'."\n";
 	$s .= 'jQuery(".check_birthday").click(function() { console.log("Toggle class .family_birthday"); jQuery(".family_birthday").toggle(); });'."\n";
-	$s .= 'jQuery(".check_holiday").click(function() { console.log("Toggle class .family_holiday"); jQuery(".family_holiday").toggle(); });'."\n";
+	$s .= 'jQuery(".check_holiday").click(function() { console.log("Toggle class .family_holiday"); jQuery(".family_holiday").toggle(); jQuery(this).closest("form").submit(); });'."\n";
 	if (isModEnabled("bookcal") && !empty($bookcalcalendars["calendars"])) {
 		foreach ($bookcalcalendars["calendars"] as $key => $value) {
 			$s .= 'jQuery(".check_bookcal_calendar_'.$value['id'].'").click(function() { console.log("Toggle Bookcal Calendar '.$value['id'].'"); jQuery(".family_bookcal_calendar_'.$value['id'].'").toggle(); });'."\n";
