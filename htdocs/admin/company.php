@@ -32,6 +32,14 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -45,15 +53,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 $action = GETPOST('action', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'admincompany'; // To manage different context of search
 $page_y = GETPOSTINT('page_y');
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Societe $mysoc
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'companies', 'bills'));
@@ -141,7 +140,15 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 	foreach ($arrayofimages as $varforimage) {
 		if ($_FILES[$varforimage]["name"] && !image_format_supported($_FILES[$varforimage]["name"], 0)) {	// Logo can be used on a lot of different places. Recommend using jpg and png for better compatibility.
 			$langs->load("errors");
-			setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');
+			$mesg = $langs->trans("ErrorBadImageFormat");
+			if (!function_exists("imagecreate")) {
+				$mesg .= ' - '.$langs->trans("ErrorPHPDoesNotSupport", "GD");
+			} else {
+				$supportedextensions = getListOfPossibleImageExt();
+				$supportedextensions = preg_replace('/\\\./', '', $supportedextensions); // Remove '\.'
+				$mesg .= ' - '.$langs->trans("ErrorSupportedFormatAre", implode(', ', explode('|', $supportedextensions)));
+			}
+			setEventMessages($mesg, null, 'errors');
 			break;
 		}
 
@@ -462,7 +469,7 @@ print '<input name="name" id="name" maxlength="'.$mysoc->fields['nom']['length']
 // Main currency
 print '<tr class="oddeven"><td class="fieldrequired"><label for="currency">'.$langs->trans("CompanyCurrency").'</label></td><td>';
 print img_picto('', 'multicurrency', 'class="pictofixedwidth"');
-print $form->selectCurrency($conf->currency, "currency");
+print $form->selectCurrency(getDolCurrency(), "currency", 2);
 print '</td></tr>'."\n";
 
 // Country
@@ -596,15 +603,6 @@ print '<input name="MAIN_INFO_GDPR" id="infodirector" class="minwidth300" value=
 print '<tr class="oddeven"><td><label for="capital">'.$langs->trans("Capital").'</label></td><td>';
 print '<input name="capital" id="capital" class="maxwidth100" value="'.dolPrintHTMLForAttribute((GETPOSTISSET('capital') ? GETPOST('capital', 'alphanohtml') : getDolGlobalString('MAIN_INFO_CAPITAL'))).'"></td></tr>';
 
-// Juridical Status
-print '<tr class="oddeven"><td><label for="forme_juridique_code">'.$langs->trans("JuridicalStatus").'</label></td><td>';
-if ($mysoc->country_code) {
-	print $formcompany->select_juridicalstatus(getDolGlobalInt('MAIN_INFO_SOCIETE_FORME_JURIDIQUE'), $mysoc->country_code, '', 'forme_juridique_code');
-} else {
-	print $countrynotdefined;
-}
-print '</td></tr>';
-
 // Object of the company
 print '<tr class="oddeven"><td><label for="socialobject">'.$langs->trans("CompanyObject").'</label></td><td>';
 print '<textarea class="flat quatrevingtpercent" name="socialobject" id="socialobject" rows="'.ROWS_3.'">'.getDolGlobalString('MAIN_INFO_SOCIETE_OBJECT').'</textarea></td></tr>';
@@ -613,6 +611,15 @@ print '</td></tr>';
 // Tax ID Intra-community VAT number
 print '<tr class="oddeven"><td><label for="intra_vat">'.$langs->trans("VATIntra").'</label></td><td>';
 print '<input name="tva" id="intra_vat" class="minwidth200" value="'.dolPrintHTMLForAttribute(getDolGlobalString('MAIN_INFO_TVAINTRA')).'">';
+print '</td></tr>';
+
+// Juridical Status
+print '<tr class="oddeven"><td><label for="forme_juridique_code">'.$langs->trans("JuridicalStatus").'</label></td><td>';
+if ($mysoc->country_code) {
+	print $formcompany->select_juridicalstatus(getDolGlobalInt('MAIN_INFO_SOCIETE_FORME_JURIDIQUE'), $mysoc->country_code, '', 'forme_juridique_code');
+} else {
+	print $countrynotdefined;
+}
 print '</td></tr>';
 
 // ProfId1
@@ -795,7 +802,7 @@ if ($mysoc->useLocalTax(1)) {
 	print $form->textwithpicto($langs->transcountry("LocalTax1IsUsedDesc", $mysoc->country_code), $tooltiphelp);
 	if (!isOnlyOneLocalTax(1)) {
 		print '<br><label for="lt1">'.$langs->trans("LTRate").'</label>: ';
-		$formcompany->select_localtax(1, $conf->global->MAIN_INFO_VALUE_LOCALTAX1, "lt1");
+		$formcompany->select_localtax(1, getDolGlobalFloat('MAIN_INFO_VALUE_LOCALTAX1'), "lt1");
 	}
 
 	$options = array($langs->trans("CalcLocaltax1").' '.$langs->trans("CalcLocaltax1Desc"), $langs->trans("CalcLocaltax2").' - '.$langs->trans("CalcLocaltax2Desc"), $langs->trans("CalcLocaltax3").' - '.$langs->trans("CalcLocaltax3Desc"));
@@ -839,7 +846,7 @@ if ($mysoc->useLocalTax(2)) {
 	$tooltiphelp = ($tooltiphelp != "LocalTax2IsUsedExample" ? "<i>".$langs->trans("Example").': '.$langs->transcountry("LocalTax2IsUsedExample", $mysoc->country_code)."</i>\n" : "");
 	if (!isOnlyOneLocalTax(2)) {
 		print '<br><label for="lt2">'.$langs->trans("LTRate").'</label>: ';
-		$formcompany->select_localtax(2, (float) getDolGlobalString('MAIN_INFO_VALUE_LOCALTAX2'), "lt2");
+		$formcompany->select_localtax(2, getDolGlobalFloat('MAIN_INFO_VALUE_LOCALTAX2'), "lt2");
 	}
 
 	$options = array($langs->trans("CalcLocaltax1").' '.$langs->trans("CalcLocaltax1Desc"), $langs->trans("CalcLocaltax2").' - '.$langs->trans("CalcLocaltax2Desc"), $langs->trans("CalcLocaltax3").' - '.$langs->trans("CalcLocaltax3Desc"));

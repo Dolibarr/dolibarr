@@ -100,11 +100,13 @@ class FileUpload
 
 				dol_include_once('/'.$parentElement.'/class/'.$parentObject.'.class.php');
 				$parent = new $parentClass($db);
-				$parent->fetch($object->$parentForeignKey);
-				if (!empty($parent->socid)) {
-					$parent->fetch_thirdparty();
+				if ($object->$parentForeignKey !== null) {
+					$parent->fetch((int) $object->$parentForeignKey);
+					if (!empty($parent->socid)) {
+						$parent->fetch_thirdparty();
+					}
+					$object->$parentObject = clone $parent;
 				}
-				$object->$parentObject = clone $parent;
 
 				$object_ref = dol_sanitizeFileName($object->project->ref).'/'.$object_ref;
 			}
@@ -396,6 +398,7 @@ class FileUpload
 		// Remove path information and dots around the filename, to prevent uploading
 		// into different directories or replacing hidden system files.
 		$file_name = basename(dol_sanitizeFileName($name));
+		$file_name = preg_replace('/ {2,}/', ' ', $file_name); // replaces multiple spaces into one space like the upload flow via input field
 		// Add missing file extension for known image types:
 		$matches = array();
 		if (strpos($file_name, '.') === false && preg_match('/^image\/(gif|jpe?g|png)/', $type, $matches)) {
@@ -456,6 +459,8 @@ class FileUpload
 					// Non-multipart uploads (PUT method support)
 					file_put_contents($file_path, fopen('php://input', 'r'), $append_file ? FILE_APPEND : 0);
 				}
+				dolChmod($file_path);
+
 				$file_size = dol_filesize($file_path);
 				if ($file_size === $file->size) {
 					$file->url = $this->options['upload_url'].urlencode($file->name);

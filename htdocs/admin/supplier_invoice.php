@@ -7,7 +7,8 @@
  * Copyright (C) 2010-2013 Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2011-2018 Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2026		Pierre Ardoin				<developpeur@lesmetiersdubatiment.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -146,7 +147,7 @@ if ($action == 'specimen') {  // For invoices
 } elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		if ($conf->global->INVOICE_SUPPLIER_ADDON_PDF == "$value") {
+		if (getDolGlobalString('INVOICE_SUPPLIER_ADDON_PDF') == "$value") {
 			dolibarr_del_const($db, 'INVOICE_SUPPLIER_ADDON_PDF', $conf->entity);
 		}
 	}
@@ -206,7 +207,8 @@ $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-supplier_invoice');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans("SuppliersSetup"), $linkback, 'title_setup');
 
 print "<br>";
@@ -276,7 +278,7 @@ foreach ($dirmodels as $reldir) {
 						print '</td>'."\n";
 
 						print '<td class="center">';
-						if ($conf->global->INVOICE_SUPPLIER_ADDON_NUMBER == "$file") {
+						if (getDolGlobalString('INVOICE_SUPPLIER_ADDON_NUMBER') == "$file") {
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						} else {
 							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.urlencode($file).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
@@ -332,7 +334,7 @@ $def = array();
 $sql = "SELECT nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."document_model";
 $sql .= " WHERE type = 'invoice_supplier'";
-$sql .= " AND entity = ".$conf->entity;
+$sql .= " AND entity = ".((int) $conf->entity);
 
 $resql = $db->query($sql);
 if ($resql) {
@@ -472,7 +474,7 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td align="center" width="60"></td>';
+print '<td></td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 
@@ -498,29 +500,32 @@ print '</td><td class="right">';
 print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
 
+// Allow external download
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("AllowExternalDownload").'</td>';
+print '<td class="left" colspan="2">';
+print ajax_constantonoff('SUPPLIER_INVOICE_ALLOW_EXTERNAL_DOWNLOAD', array(), null, 0, 0, 0, 2, 0, 1);
+print '</td></tr>';
+
+// Notifications
+print '<tr class="oddeven">';
+print '<td>'.img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("Notifications").'</td>';
+print '<td colspan="2">';
+print $langs->trans("YouMayFindNotificationsFeaturesIntoModuleNotification");
+print '</td></tr>';
+
+// More PDF options
+/*
+print '<tr class="oddeven">';
+print '<td>'.img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("MoreOptionsRelatedToPDF").'</td>';
+print '<td colspan="2">';
+print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.DOL_URL_ROOT.'/admin/pdf_other.php">'.$langs->trans("SeeInPDFSetupPage").'</a>';
+print '</td></tr>';
+*/
+
 print '</table></div><br>';
 
 print '</form>';
-
-
-/*
- * Notifications
- */
-
-print load_fiche_titre($langs->trans("Notifications"), '', '');
-
-print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder centpercent">';
-print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td align="center" width="60"></td>';
-print '<td width="80">&nbsp;</td>';
-print "</tr>\n";
-
-print '<tr class="oddeven"><td colspan="2">';
-print $langs->trans("YouMayFindNotificationsFeaturesIntoModuleNotification").'<br>';
-print '</td><td class="right">';
-print "</td></tr>\n";
 
 print '</table>';
 print '</div>';

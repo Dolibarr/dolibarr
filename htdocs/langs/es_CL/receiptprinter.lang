@@ -1,11 +1,7 @@
 # Dolibarr language file - Source file is en_US - receiptprinter
-ReceiptPrinterSetup=Configuración del módulo ReceiptPrinter
 PrinterAdded=Impresora %s agregada
 TestSentToPrinter=Prueba enviada a la impresora %s
 ReceiptPrinter=Impresoras de recibo
-ReceiptPrinterDesc=Configuración de impresoras de recibos
-ReceiptPrinterTypeDesc=Descripción del tipo de impresora de recibo
-ReceiptPrinterProfileDesc=Descripción del perfil de la impresora de recibos
 ListPrinters=Lista de impresoras
 SetupReceiptTemplate=Configuración de plantilla
 CONNECTOR_DUMMY=Impresora simulada
@@ -13,7 +9,6 @@ CONNECTOR_FILE_PRINT=Impresora local
 CONNECTOR_DUMMY_HELP=Impresora falsa para prueba, no hace nada
 CONNECTOR_NETWORK_PRINT_HELP=10.x.x.x: 9100
 CONNECTOR_FILE_PRINT_HELP=/ dev / usb / lp0, / dev / usb / lp1
-CONNECTOR_WINDOWS_PRINT_HELP=LPT1, COM1, smb://FooUser:secret@computername/workgroup/Receipt\nPrinter
 PROFILE_EPOSTEP=Perfil de Epos Tep
 PROFILE_STAR=Perfil de estrella
 PROFILE_DEFAULT_HELP=Perfil predeterminado adecuado para impresoras Epson

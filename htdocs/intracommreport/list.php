@@ -26,10 +26,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/intracommreport/class/intracommreport.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -37,6 +33,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/intracommreport/class/intracommreport.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('intracommreport'));
@@ -50,6 +49,7 @@ $cancel     = GETPOST('cancel', 'alpha'); // We click on a Cancel button
 $toselect   = GETPOST('toselect', 'array:int'); // Array of ids of elements selected into a list
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'aZ');
+$groupby = GETPOST('groupby', 'aZ09');	// Example: $groupby = 'p.fk_opp_status' or $groupby = 'p.fk_statut'
 
 $search_all = trim(GETPOST('search_all', 'alphanohtml'));
 $search_ref = GETPOST("search_ref", 'alpha');
@@ -340,31 +340,6 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
-/* If a group by is required
- $sql .= " GROUP BY ";
- foreach($object->fields as $key => $val) {
- $sql .= "t.".$db->sanitize($key).", ";
- }
- // Add fields from extrafields
- if (!empty($extrafields->attributes[$object->table_element]['label'])) {
- foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
- $sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.', ' : '');
- }
- }
- // Add groupby from hooks
- $parameters = array();
- $reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
- $sql .= $hookmanager->resPrint;
- $sql = preg_replace('/,\s*$/', '', $sql);
- */
-
-// Add HAVING from hooks
-/*
- $parameters = array();
- $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
- $sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
- */
-
 // Count total nb of records
 $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
@@ -380,7 +355,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -725,7 +700,7 @@ while ($i < $imaxinloop) {
 	} else {
 		// Show line of result
 		$j = 0;
-		print '<tr data-rowid="'.$object->id.'" class="oddeven">';
+		print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select">';
 
 		// Action column
 		if ($conf->main_checkbox_left_column) {

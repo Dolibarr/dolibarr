@@ -61,7 +61,7 @@ $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:int');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'bankaccountlist'; // To manage different context of search
 $mode = GETPOST('mode', 'aZ');
 
@@ -288,7 +288,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -658,7 +658,7 @@ foreach ($accounts as $key => $type) {
 	} else {
 		// Show line of result
 		$j = 0;
-		print '<tr data-rowid="'.$objecttmp->id.'" class="oddeven">';
+		print '<tr data-rowid="'.$objecttmp->id.'" class="oddeven row-with-select">';
 
 		// Action column
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -712,12 +712,16 @@ foreach ($accounts as $key => $type) {
 		// Account number
 		if (!empty($arrayfields['b.account_number']['checked'])) {
 			print '<td class="tdoverflowmax250">';
-			if (isModEnabled('accounting') && !empty($objecttmp->account_number)) {
-				$accountingaccount = new AccountingAccount($db);
-				$accountingaccount->fetch(0, $objecttmp->account_number, 1);
-				print '<span title="'.dol_escape_htmltag($accountingaccount->account_number.' - '.$accountingaccount->label).'">';
-				print $accountingaccount->getNomUrl(0, 1, 1, '', 0);
-				print '</span>';
+			if (isModEnabled('accounting')) {
+				if (empty($objecttmp->account_number)) {
+					print img_warning($langs->trans("Mandatory"));
+				} else {
+					$accountingaccount = new AccountingAccount($db);
+					$accountingaccount->fetch(0, $objecttmp->account_number, 1);
+					print '<span title="'.dol_escape_htmltag($accountingaccount->account_number.' - '.$accountingaccount->label).'">';
+					print $accountingaccount->getNomUrl(0, 1, 1, '', 0);
+					print '</span>';
+				}
 			} else {
 				print '<span title="'.dol_escape_htmltag($objecttmp->account_number).'">'.$objecttmp->account_number.'</span>';
 			}

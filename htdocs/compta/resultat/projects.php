@@ -7,7 +7,7 @@
  * Copyright (C) 2014-2016	Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2014		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2014		Florian Henry				<florian.henry@open-concept.pro>
- * Copyright (C) 2018		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2020		Maxime DEMAREST				<maxime@indelog.fr>
  * Copyright (C) 2021-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2024		Yoan Mollard				<ymollard@users.noreply.github.com>
@@ -424,32 +424,29 @@ if (isModEnabled('invoice') && ($modecompta == 'CREANCES-DETTES' || $modecompta 
 	/*
 	 * Donations
 	 */
-
 	if (isModEnabled('don')) {
 		echo '<tr class="trforbreak"><td colspan="4">'.$langs->trans("Donations").'</td></tr>';
 
-		if ($modecompta == 'CREANCES-DETTES' || $modecompta == 'RECETTES-DEPENSES') {
-			if ($modecompta == 'CREANCES-DETTES') {
-				$sql = "SELECT p.rowid as rowid, p.ref as project_ref, sum(d.amount) as amount";
-				$sql .= " FROM ".MAIN_DB_PREFIX."don as d";
-				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON d.fk_projet = p.rowid";
-				$sql .= " WHERE d.entity IN (".getEntity('donation').")";
-				$sql .= " AND d.fk_statut in (1,2)";
-			} else {
-				$sql = "SELECT p.rowid as rowid, p.ref as project_ref, sum(d.amount) as amount";
-				$sql .= " FROM ".MAIN_DB_PREFIX."don as d";
-				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."payment_donation as pe ON pe.fk_donation = d.rowid";
-				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON d.fk_projet = p.rowid";
-				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id";
-				$sql .= " WHERE d.entity IN (".getEntity('donation').")";
-				$sql .= " AND d.fk_statut >= 2";
-			}
-			if (!empty($date_start)) {
-				$sql .= " AND d.datedon >= '".$db->idate($date_start)."'";
-			}
-			if (!empty($date_end)) {
-				$sql .= " AND d.datedon <= '".$db->idate($date_end)."'";
-			}
+		if ($modecompta == 'CREANCES-DETTES') {
+			$sql = "SELECT p.rowid as rowid, p.ref as project_ref, sum(d.amount) as amount";
+			$sql .= " FROM ".MAIN_DB_PREFIX."don as d";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON d.fk_projet = p.rowid";
+			$sql .= " WHERE d.entity IN (".getEntity('donation').")";
+			$sql .= " AND d.fk_statut in (1,2)";
+		} else {
+			$sql = "SELECT p.rowid as rowid, p.ref as project_ref, sum(d.amount) as amount";
+			$sql .= " FROM ".MAIN_DB_PREFIX."don as d";
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."payment_donation as pe ON pe.fk_donation = d.rowid";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON d.fk_projet = p.rowid";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id";
+			$sql .= " WHERE d.entity IN (".getEntity('donation').")";
+			$sql .= " AND d.fk_statut >= 2";
+		}
+		if (!empty($date_start)) {
+			$sql .= " AND d.datedon >= '".$db->idate($date_start)."'";
+		}
+		if (!empty($date_end)) {
+			$sql .= " AND d.datedon <= '".$db->idate($date_end)."'";
 		}
 		$sql .= " GROUP BY p.rowid, p.ref";
 		$newsortfield = $sortfield;
@@ -635,56 +632,53 @@ if (isModEnabled('invoice') && ($modecompta == 'CREANCES-DETTES' || $modecompta 
 	/*
 	 * Salaries
 	 */
-
 	if (isModEnabled('salaries')) {
 		echo '<tr class="trforbreak"><td colspan="4">'.$langs->trans("Salaries").'</td></tr>';
 
-		if ($modecompta == 'CREANCES-DETTES' || $modecompta == 'RECETTES-DEPENSES') {
-			if ($modecompta == 'CREANCES-DETTES') {
-				$column = 's.dateep';	// We use the date of end of period of salary
+		if ($modecompta == 'CREANCES-DETTES') {
+			$column = 's.dateep';	// We use the date of end of period of salary
 
-				$sql = "SELECT p.rowid as rowid, p.ref as project_ref, sum(s.amount) as amount";
-				$sql .= " FROM ".MAIN_DB_PREFIX."salary as s";
-				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = s.fk_user";
-				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON s.fk_projet = p.rowid";
-				$sql .= " WHERE s.entity IN (".getEntity('salary').")";
-				if (!empty($date_start)) {
-					$sql .= " AND ".$db->sanitize($column)." >= '".$db->idate($date_start)."'";
-				}
-				if (!empty($date_end)) {
-					$sql .= " AND ".$db->sanitize($column)." <= '".$db->idate($date_end)."'";
-				}
-			} else {
-				$column = 'ps.datep';
+			$sql = "SELECT p.rowid as rowid, p.ref as project_ref, sum(s.amount) as amount";
+			$sql .= " FROM ".MAIN_DB_PREFIX."salary as s";
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = s.fk_user";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON s.fk_projet = p.rowid";
+			$sql .= " WHERE s.entity IN (".getEntity('salary').")";
+			if (!empty($date_start)) {
+				$sql .= " AND ".$db->sanitize($column)." >= '".$db->idate($date_start)."'";
+			}
+			if (!empty($date_end)) {
+				$sql .= " AND ".$db->sanitize($column)." <= '".$db->idate($date_end)."'";
+			}
+		} else {
+			$column = 'ps.datep';
 
-				$sql = "SELECT pr.rowid as rowid, pr.ref as project_ref, sum(ps.amount) as amount";
-				$sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as ps";
-				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."salary as s ON s.rowid = ps.fk_salary";
-				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = s.fk_user";
-				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as pr ON s.fk_projet = pr.rowid";
-				$sql .= " WHERE ps.entity IN (".getEntity('payment_salary').")";
-				if (!empty($date_start)) {
-					$sql .= " AND ".$db->sanitize($column)." >= '".$db->idate($date_start)."'";
-				}
-				if (!empty($date_end)) {
-					$sql .= " AND ".$db->sanitize($column)." <= '".$db->idate($date_end)."'";
-				}
+			$sql = "SELECT pr.rowid as rowid, pr.ref as project_ref, sum(ps.amount) as amount";
+			$sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as ps";
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."salary as s ON s.rowid = ps.fk_salary";
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = s.fk_user";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as pr ON s.fk_projet = pr.rowid";
+			$sql .= " WHERE ps.entity IN (".getEntity('payment_salary').")";
+			if (!empty($date_start)) {
+				$sql .= " AND ".$db->sanitize($column)." >= '".$db->idate($date_start)."'";
 			}
-
-
-			$sql .= " GROUP BY rowid, project_ref";
-			$newsortfield = $sortfield;
-			if ($newsortfield == 's.nom, s.rowid') {
-				$newsortfield = 'project_ref';
+			if (!empty($date_end)) {
+				$sql .= " AND ".$db->sanitize($column)." <= '".$db->idate($date_end)."'";
 			}
-			if ($newsortfield == 'amount_ht') {
-				$newsortfield = 'amount';
-			}
-			if ($newsortfield == 'amount_ttc') {
-				$newsortfield = 'amount';
-			}
-			$sql .= $db->order($newsortfield, $sortorder);
 		}
+
+
+		$sql .= " GROUP BY rowid, project_ref";
+		$newsortfield = $sortfield;
+		if ($newsortfield == 's.nom, s.rowid') {
+			$newsortfield = 'project_ref';
+		}
+		if ($newsortfield == 'amount_ht') {
+			$newsortfield = 'amount';
+		}
+		if ($newsortfield == 'amount_ttc') {
+			$newsortfield = 'amount';
+		}
+		$sql .= $db->order($newsortfield, $sortorder);
 
 		dol_syslog("by project, get salaries");
 		$result = $db->query($sql);
@@ -750,44 +744,41 @@ if (isModEnabled('invoice') && ($modecompta == 'CREANCES-DETTES' || $modecompta 
 	/*
 	 * Expense report
 	 */
-
 	if (isModEnabled('expensereport')) {
-		if ($modecompta == 'CREANCES-DETTES' || $modecompta == 'RECETTES-DEPENSES') {
-			$langs->load('trips');
-			if ($modecompta == 'CREANCES-DETTES') {
-				$sql = "SELECT ed.rowid as rowid, ed.fk_projet, p.rowid as project_rowid, p.ref as project_ref, sum(ed.total_ht) as amount_ht, sum(ed.total_ttc) as amount_ttc";
-				$sql .= " FROM ".MAIN_DB_PREFIX."expensereport_det as ed";
-				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."expensereport as e ON ed.fk_expensereport = e.rowid";
-				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON ed.fk_projet = p.rowid";
-				$sql .= " WHERE e.entity IN (".getEntity('expensereport').")";
-				$sql .= " AND e.fk_statut >= 5";
+		$langs->load('trips');
+		if ($modecompta == 'CREANCES-DETTES') {
+			$sql = "SELECT ed.rowid as rowid, ed.fk_projet, p.rowid as project_rowid, p.ref as project_ref, sum(ed.total_ht) as amount_ht, sum(ed.total_ttc) as amount_ttc";
+			$sql .= " FROM ".MAIN_DB_PREFIX."expensereport_det as ed";
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."expensereport as e ON ed.fk_expensereport = e.rowid";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON ed.fk_projet = p.rowid";
+			$sql .= " WHERE e.entity IN (".getEntity('expensereport').")";
+			$sql .= " AND e.fk_statut >= 5";
 
-				$column = 'e.date_valid';
-			} else {
-				$sql = "SELECT ed.rowid as rowid, ed.fk_projet, p.rowid as project_rowid, p.ref as project_ref, sum(DISTINCT pe.amount) as amount_ht, sum(DISTINCT pe.amount) as amount_ttc";
-				$sql .= " FROM ".MAIN_DB_PREFIX."expensereport_det as ed";
-				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."expensereport as e ON ed.fk_expensereport = e.rowid";
-				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."payment_expensereport as pe ON pe.fk_expensereport = e.rowid";
-				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON ed.fk_projet = p.rowid";
-				$sql .= " WHERE e.entity IN (".getEntity('expensereport').")";
-				$sql .= " AND e.fk_statut >= 5";
+			$column = 'e.date_valid';
+		} else {
+			$sql = "SELECT ed.rowid as rowid, ed.fk_projet, p.rowid as project_rowid, p.ref as project_ref, sum(DISTINCT pe.amount) as amount_ht, sum(DISTINCT pe.amount) as amount_ttc";
+			$sql .= " FROM ".MAIN_DB_PREFIX."expensereport_det as ed";
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."expensereport as e ON ed.fk_expensereport = e.rowid";
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."payment_expensereport as pe ON pe.fk_expensereport = e.rowid";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON ed.fk_projet = p.rowid";
+			$sql .= " WHERE e.entity IN (".getEntity('expensereport').")";
+			$sql .= " AND e.fk_statut >= 5";
 
-				$column = 'pe.datep';
-			}
-			if (!empty($date_start)) {
-				$sql .= " AND ".$db->sanitize($column)." >= '".$db->idate($date_start)."'";
-			}
-			if (!empty($date_end)) {
-				$sql .= " AND ".$db->sanitize($column)." <= '".$db->idate($date_end)."'";
-			}
-
-			$sql .= " GROUP BY ed.rowid, ed.fk_projet, p.rowid, p.ref";
-			$newsortfield = $sortfield;
-			if ($newsortfield == 's.nom, s.rowid') {
-				$newsortfield = 'project_ref';
-			}
-			$sql .= $db->order($newsortfield, $sortorder);
+			$column = 'pe.datep';
 		}
+		if (!empty($date_start)) {
+			$sql .= " AND ".$db->sanitize($column)." >= '".$db->idate($date_start)."'";
+		}
+		if (!empty($date_end)) {
+			$sql .= " AND ".$db->sanitize($column)." <= '".$db->idate($date_end)."'";
+		}
+
+		$sql .= " GROUP BY ed.rowid, ed.fk_projet, p.rowid, p.ref";
+		$newsortfield = $sortfield;
+		if ($newsortfield == 's.nom, s.rowid') {
+			$newsortfield = 'project_ref';
+		}
+		$sql .= $db->order($newsortfield, $sortorder);
 
 		echo '<tr class="trforbreak"><td colspan="4">'.$langs->trans("ExpenseReport").'</td></tr>';
 
@@ -860,8 +851,7 @@ if (isModEnabled('invoice') && ($modecompta == 'CREANCES-DETTES' || $modecompta 
 	 * Various Payments
 	 */
 	//$conf->global->ACCOUNTING_REPORTS_INCLUDE_VARPAY = 1;
-
-	if (getDolGlobalString('ACCOUNTING_REPORTS_INCLUDE_VARPAY') && isModEnabled("bank") && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
+	if (getDolGlobalString('ACCOUNTING_REPORTS_INCLUDE_VARPAY') && isModEnabled("bank")) {
 		$subtotal_ht = 0;
 		$subtotal_ttc = 0;
 
@@ -953,8 +943,7 @@ if (isModEnabled('invoice') && ($modecompta == 'CREANCES-DETTES' || $modecompta 
 	/*
 	 * Payment Loan
 	 */
-
-	if (getDolGlobalString('ACCOUNTING_REPORTS_INCLUDE_LOAN') && isModEnabled('don') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
+	if (getDolGlobalString('ACCOUNTING_REPORTS_INCLUDE_LOAN') && isModEnabled('don')) {
 		$subtotal_ht = 0;
 		$subtotal_ttc = 0;
 

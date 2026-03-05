@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2018	   Quentin Vial-Gouteyron    <quentin.vial-gouteyron@atm-consulting.fr>
+/* Copyright (C) 2018	    Quentin Vial-Gouteyron      <quentin.vial-gouteyron@atm-consulting.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -131,6 +131,7 @@ if ($action == 'updateMask') {
 
 		$module = new $classname($db);
 		'@phan-var-force ModelePdfReception $module';
+		/** @var ModelePdfReception $module */
 
 		if ($module->write_file($exp, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=reception&file=SPECIMEN.pdf");
@@ -149,7 +150,7 @@ if ($action == 'updateMask') {
 } elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		if ($conf->global->RECEPTION_ADDON_PDF == "$value") {
+		if (getDolGlobalString('RECEPTION_ADDON_PDF') == "$value") {
 			dolibarr_del_const($db, 'RECEPTION_ADDON_PDF', $conf->entity);
 		}
 	}
@@ -183,7 +184,8 @@ $form = new Form($db);
 
 llxHeader('', $langs->trans("ReceptionsSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-reception_setup');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans("ReceptionsSetup"), $linkback, 'title_setup');
 print '<br>';
 $head = reception_admin_prepare_head();
@@ -192,7 +194,7 @@ print dol_get_fiche_head($head, 'reception', $langs->trans("Receptions"), -1, 'r
 
 // Reception numbering model
 
-print load_fiche_titre($langs->trans("ReceptionsNumberingModules"));
+print load_fiche_titre($langs->trans("ReceptionsNumberingModules"), '', '');
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
@@ -219,8 +221,8 @@ foreach ($dirmodels as $reldir) {
 					require_once $dir.'/'.$file.'.php';
 
 					$module = new $file();
-
 					'@phan-var-force ModelNumRefReception $module';
+					/** @var ModelNumRefReception $module */
 
 					if ($module->isEnabled()) {
 						// Show modules according to features level
@@ -250,7 +252,7 @@ foreach ($dirmodels as $reldir) {
 						print '</td>'."\n";
 
 						print '<td class="center">';
-						if ($conf->global->RECEPTION_ADDON_NUMBER == "$file") {
+						if (getDolGlobalString('RECEPTION_ADDON_NUMBER') == "$file") {
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						} else {
 							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmodel&token='.newToken().'&value='.urlencode($file).(!empty($module->name) ? '&label='.urlencode($module->name) : '').'">';
@@ -299,7 +301,7 @@ print '<br>';
 /*
  *  Documents models for Receptions Receipt
  */
-print load_fiche_titre($langs->trans("ReceptionsReceiptModel"));
+print load_fiche_titre($langs->trans("ReceptionsReceiptModel"), '', '');
 
 // Defini tableau def de modele invoice
 $type = "reception";
@@ -308,7 +310,7 @@ $def = array();
 $sql = "SELECT nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."document_model";
 $sql .= " WHERE type = '".$db->escape($type)."'";
-$sql .= " AND entity = ".$conf->entity;
+$sql .= " AND entity = ".((int) $conf->entity);
 
 $resql = $db->query($sql);
 if ($resql) {
@@ -363,12 +365,13 @@ foreach ($dirmodels as $reldir) {
 							$module = new $classname($db);
 
 							'@phan-var-force ModelePdfReception $module';
+							/** @var ModelePdfReception $module */
 
 							$modulequalified = 1;
-							if (isset($module->version) && $module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
+							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 								$modulequalified = 0;
 							}
-							if (isset($module->version) && $module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
+							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 								$modulequalified = 0;
 							}
 
@@ -398,7 +401,7 @@ foreach ($dirmodels as $reldir) {
 
 								// Default
 								print '<td class="center">';
-								if ($conf->global->RECEPTION_ADDON_PDF == $name) {
+								if (getDolGlobalString('RECEPTION_ADDON_PDF') == $name) {
 									print img_picto($langs->trans("Default"), 'on');
 								} else {
 									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
@@ -451,49 +454,34 @@ print '<br>';
 
 /*
  * Other options
- *
  */
-/*
-print load_fiche_titre($langs->trans("OtherOptions"));
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="set_param">';
+print load_fiche_titre($langs->trans("OtherOptions"), '', '');
 
-print "<table class=\"noborder\" width=\"100%\">";
-print "<tr class=\"liste_titre\">";
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre">';
 print "<td>".$langs->trans("Parameter")."</td>\n";
-print "</tr>";
+print "<td></td>\n";
+print '</tr>';
 
-$substitutionarray=pdf_getSubstitutionArray($langs);
-$substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
-$htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
-foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
-$htmltext.='</i>';
-
-print '<tr><td>';
-print $form->textwithpicto($langs->trans("FreeLegalTextOnReceptions"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext).'<br>';
-$variablename='RECEPTION_FREE_TEXT';
-if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
-{
-	print '<textarea name="'.$variablename.'" class="flat" cols="120">'.getDolGlobalString($variablename).'</textarea>';
-}
-else
-{
-	include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor=new DolEditor($variablename, getDolGlobalString($variablename),'',80,'dolibarr_notes');
-	print $doleditor->Create();
-}
-print "</td></tr>\n";
-
-print '<tr><td>';
-print $form->textwithpicto($langs->trans("WatermarkOnDraftContractCards"), $htmltext).'<br>';
-print '<input class="flat minwidth200" type="text" name="RECEPTION_DRAFT_WATERMARK" value="'.dol_escape_htmltag(getDolGlobalString('RECEPTION_DRAFT_WATERMARK')).'">';
-print "</td></tr>\n";
+// Notifications
+/*
+print '<tr class="oddeven">';
+print '<td>'.img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("Notifications").'</td>';
+print '<td>';
+print $langs->trans("YouMayFindNotificationsFeaturesIntoModuleNotification");
+print '</td></tr>';
 */
+
+// More PDF options
+print '<tr class="oddeven">';
+print '<td>'.img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("MoreOptionsRelatedToPDF").'</td>';
+print '<td>';
+print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.DOL_URL_ROOT.'/admin/pdf_other.php">'.$langs->trans("SeeInPDFSetupPage").'</a>';
+print '</td></tr>';
+
 print '</table>';
 
-//print $form->buttonsSaveCancel("Modify", '');
 
 print '</form>';
 

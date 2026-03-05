@@ -1,8 +1,8 @@
 <?php
 
-/* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2020 Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2007-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2020       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,7 +75,9 @@ restrictedArea($user, $object->element, $object->id, $object->table_element, 'wo
  * Actions
  */
 $parameters = array();
+// \PHPStan\dumpType($object);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);     // Note that $action and $object may have been modified by some hooks
+// \PHPStan\dumpType($object);
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
@@ -113,14 +115,12 @@ if ($id > 0 || !empty($ref)) {
 	 // Thirdparty
 	 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	 // Project
-	 if (isModEnabled('project'))
-	 {
+	 if (isModEnabled('project')) {
 	 $langs->load("projects");
 	 $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
-	 if ($permissiontoadd)
-	 {
+	 if ($permissiontoadd) {
 	 if ($action != 'classify')
-	 //$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+	 //$morehtmlref.='<a class="editfielda" href="' . dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true) . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 	 $morehtmlref.=' : ';
 	 if ($action == 'classify') {
 	 //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);

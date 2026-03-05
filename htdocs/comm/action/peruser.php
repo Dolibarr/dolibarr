@@ -32,6 +32,13 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
@@ -40,14 +47,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 $MAXAGENDA = getDolGlobalString('AGENDA_EXT_NB', 5);
 $DELAYFORCACHE = 300;	// 300 seconds
@@ -363,7 +362,7 @@ if ($usergroup > 0) {
 if ($socid > 0) {
 	$param .= "&search_socid=".urlencode((string) ($socid));
 }
-if ($showbirthday) {  // Always false @phpstan-suppress-current-line
+if ($showbirthday) {  // Always false @phpstan-ignore-line
 	$param .= "&search_showbirthday=1";
 }
 if ($pid) {
@@ -429,7 +428,7 @@ $picto = 'calendarweek';
 // Show navigation bar
 $nav = '<div class="navselectiondate inline-block nowraponall">';
 $nav .= "<a href=\"?year=".$prev_year."&amp;month=".$prev_month."&amp;day=".$prev_day.$param."\"><i class=\"fa fa-chevron-left\" title=\"".dol_escape_htmltag($langs->trans("Previous"))."\"></i></a> &nbsp; \n";
-$nav .= " <span id=\"month_name\">".dol_print_date(dol_mktime(0, 0, 0, $first_month, $first_day, $first_year), "%Y").", ".$langs->trans("Week")." ".$week;
+$nav .= " <span id=\"month_name\">".dol_print_date(dol_mktime(0, 0, 0, $first_month, $first_day, $first_year), "%Y").", ".$langs->trans("WeekShort")." ".$week;
 $nav .= " </span>\n";
 $nav .= " &nbsp; <a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;day=".$next_day.$param."\"><i class=\"fa fa-chevron-right\" title=\"".dol_escape_htmltag($langs->trans("Next"))."\"></i></a>\n";
 if (empty($conf->dol_optimize_smallscreen)) {
@@ -589,12 +588,12 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 	$s .= '</script>'."\n";
 
 	// Local calendar
-	$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_mytasks" name="check_mytasks" value="1" checked disabled><label class="labelcalendar"><span class="check_holiday_text"> '.$langs->trans("LocalAgenda").' &nbsp; </span></label></div>';
+	$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_mytasks" name="check_mytasks" value="1" class="check_mytasks" checked disabled><label class="labelcalendar"><span class="check_holiday_text"> '.$langs->trans("LocalAgenda").' &nbsp; </span></label></div>';
 
 	// Holiday calendar
 	if ($user->hasRight("holiday", "read")) {
 		$s .= '
-            <div class="nowrap inline-block minheight30"><input type="checkbox" id="check_holiday" name="check_holiday" value="1" class="check_holiday"' . ($check_holiday ? ' checked' : '') . '>
+            <div class="nowrap inline-block minheight30"><input type="checkbox" id="check_holiday" name="check_holiday" value="1" class="marginleftonly check_holiday"' . ($check_holiday ? ' checked' : '') . '>
                 <label for="check_holiday" class="labelcalendar">
                     <span class="check_holiday_text">' . $langs->trans("Holidays") . '</span>
                 </label> &nbsp;
@@ -1493,14 +1492,28 @@ $maxnbofchar = 18;
 $cachethirdparties = array();
 $cachecontacts = array();
 $cacheusers = array();
-
+// default values
+$theme_datacolor = array(
+	array(137, 86, 161),
+	array(60, 147, 183),
+	array(250, 190, 80),
+	array(80, 166, 90),
+	array(190, 190, 100),
+	array(91, 115, 247),
+	array(140, 140, 220),
+	array(190, 120, 120),
+	array(115, 125, 150),
+	array(100, 170, 20),
+	array(150, 135, 125),
+	array(85, 135, 150),
+	array(150, 135, 80),
+	array(150, 80, 150)
+);
 // Define theme_datacolor array
 $color_file = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/theme_vars.inc.php";
 if (is_readable($color_file)) {
 	include $color_file;
-}
-if (!is_array($theme_datacolor)) {
-	$theme_datacolor = array(array(137, 86, 161), array(60, 147, 183), array(250, 190, 80), array(80, 166, 90), array(190, 190, 100), array(91, 115, 247), array(140, 140, 220), array(190, 120, 120), array(115, 125, 150), array(100, 170, 20), array(150, 135, 125), array(85, 135, 150), array(150, 135, 80), array(150, 80, 150));
+	global $theme_datacolor;
 }
 
 $massactionbutton = '';
@@ -1577,12 +1590,19 @@ while ($currentdaytoshow < $lastdaytoshow) {
 			continue;
 		}
 		echo '<td align="center" colspan="'.($end_h - $begin_h).'">';
-		echo '<span class="bold spandayofweek">'.$langs->trans("Day".(($i + (isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1)) % 7)).'</span>';
+		echo '<span class="bold spandayofweek">'.$langs->trans("Day".(($i + getDolGlobalInt('MAIN_START_WEEK', 1)) % 7)).'</span>';
 		print "<br>";
 		if ($i) {
-			print dol_print_date(dol_time_plus_duree($currentdaytoshow, $i, 'd'), 'day', 'tzuserrel');
+			$valtoshow = dol_time_plus_duree($currentdaytoshow, $i, 'd');
 		} else {
-			print dol_print_date($currentdaytoshow, 'day', 'tzuserrel');
+			$valtoshow = $currentdaytoshow;
+		}
+		if (dol_print_date($valtoshow, '%Y%m%d') == dol_print_date(dol_now(), '%Y%m%d')) {
+			echo '<span class="badgeneutral">';
+		}
+		print dol_print_date($valtoshow, 'dayreduceformat', 'tzuserrel');
+		if (dol_print_date($valtoshow, '%Y%m%d') == dol_print_date(dol_now(), '%Y%m%d')) {
+			echo '</span>';
 		}
 		echo "</td>\n";
 		$i++;
@@ -1728,7 +1748,7 @@ while ($currentdaytoshow < $lastdaytoshow) {
 		$var = !$var;
 
 		echo "<tr>";
-		echo '<td class="tdoverflowmax100 cal_current_month cal_peruserviewname'.($var ? ' cal_impair' : '').'">';
+		echo '<td class="tdoverflowmax100 cal_current_month cal_peruserviewname'.($var ? ' cal_impair' : '').' nopaddingtopimp nopaddingbottomimp noheightimp">';
 		print '<span class="paddingrightimp">';
 		print $username->getNomUrl(-1, '', 0, 0, 20, 1, '', 'paddingleft');
 		print '</span>';
@@ -1887,6 +1907,19 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 	$cases3 = array(); // Color third half hour
 	$cases4 = array(); // Color 4th half hour
 
+	/**
+	 * @var array<int,array<int,array<string,string|int|bool>>> $cases1
+	 * @var array<int,array<int,array<string,string|int|bool>>> $cases2
+	 * @var array<int,array<int,array<string,string|int|bool>>> $cases3
+	 * @var array<int,array<int,array<string,string|int|bool>>> $cases4
+	 */
+	'
+   @phan-var-force array<int,array<int,array<string,string|int|bool>>> $cases1
+   @phan-var-force array<int,array<int,array<string,string|int|bool>>> $cases2
+   @phan-var-force array<int,array<int,array<string,string|int|bool>>> $cases3
+   @phan-var-force array<int,array<int,array<string,string|int|bool>>> $cases4
+   ';
+
 	$i = 0;
 	$numother = 0;
 	$numbirthday = 0;
@@ -1912,7 +1945,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		if ($day == $jour && (int) $month == $mois && $year == $annee) {	// Is it the day we are looking for when calling function ?
 			//var_dump("day=$day jour=$jour month=$month mois=$mois year=$year annee=$annee");
 
-			// Scan all event for this date
+			// Scan all events for this date
 			foreach ($eventarray[$daykey] as $index => $event) {
 				//print 'daykey='.$daykey.'='.dol_print_date($daykey, 'dayhour', 'gmt').' '.$year.'-'.$month.'-'.$day.' -> The event id '.$event->id.' index '.$index.' is open for this daykey '.$annee.'-'.$mois.'-'.$jour."<br>\n";
 				//var_dump($event);
@@ -2028,7 +2061,6 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 						}
 
 						//print dol_print_date($event->date_start_in_calendar,'dayhour').'-'.dol_print_date($a,'dayhour').'-'.dol_print_date($b,'dayhour').'<br>';
-
 						if ($event->date_start_in_calendar < $b && $dateendtouse > $a) {
 							$busy = $event->transparency;
 							$cases1[$h][$event->id]['busy'] = $busy;
@@ -2282,83 +2314,71 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		$title2 = '';
 		$title3 = '';
 		$title4 = '';
-		if (isset($cases1[$h]) && $cases1[$h] != '') {
+		if (isset($cases1[$h])) {
 			//$title1.=count($cases1[$h]).' '.(count($cases1[$h])==1?$langs->trans("Event"):$langs->trans("Events"));
 			if (count($cases1[$h]) > 1) {
 				$title1 .= count($cases1[$h]).' '.(count($cases1[$h]) == 1 ? $langs->trans("Event") : $langs->trans("Events"));
 			}
 
-			if (!getDolGlobalString('AGENDA_NO_TRANSPARENT_ON_NOT_BUSY')) {
-				$style1 .= 'peruser_notbusy ';
-			} else {
-				$style1 .= 'peruser_busy ';
-			}
 			foreach ($cases1[$h] as $id => $ev) {
-				if (!empty($ev['busy'])) {
-					$style1 = 'onclickopenref peruser_busy';
+				if (!empty($ev['busy']) && !getDolGlobalString('AGENDA_NO_TRANSPARENT_ON_NOT_BUSY')) {
+					$style1 .= ' peruser_busy';
+				} else {
+					$style1 .= 'peruser_notbusy ';
 				}
 				if (!empty($ev['css'])) {
-					$style1 .= ' '.$ev['css'];
+					$style1 .= $ev['css'].' ';
 				}
 			}
 		}
-		if (isset($cases2[$h]) && $cases2[$h] != '') {
+		if (isset($cases2[$h])) {
 			//$title2.=count($cases2[$h]).' '.(count($cases2[$h])==1?$langs->trans("Event"):$langs->trans("Events"));
 			if (count($cases2[$h]) > 1) {
 				$title2 .= count($cases2[$h]).' '.(count($cases2[$h]) == 1 ? $langs->trans("Event") : $langs->trans("Events"));
 			}
 
-			if (!getDolGlobalString('AGENDA_NO_TRANSPARENT_ON_NOT_BUSY')) {
-				$style2 .= 'peruser_notbusy ';
-			} else {
-				$style2 .= 'peruser_busy ';
-			}
 			foreach ($cases2[$h] as $id => $ev) {
-				if (!empty($ev['busy'])) {
-					$style2 = 'onclickopenref peruser_busy';
+				if (!empty($ev['busy']) && !getDolGlobalString('AGENDA_NO_TRANSPARENT_ON_NOT_BUSY')) {
+					$style2 .= ' peruser_busy';
+				} else {
+					$style2 .= 'peruser_notbusy ';
 				}
 				if (!empty($ev['css'])) {
-					$style2 .= ' '.$ev['css'];
+					$style2 .= $ev['css'].' ';
 				}
 			}
 		}
-		if (isset($cases3[$h]) && $cases3[$h] != '') {
+		if (isset($cases3[$h])) {
 			//$title3.=count($cases3[$h]).' '.(count($cases3[$h])==1?$langs->trans("Event"):$langs->trans("Events"));
 			if (count($cases3[$h]) > 1) {
 				$title3 .= count($cases3[$h]).' '.(count($cases3[$h]) == 1 ? $langs->trans("Event") : $langs->trans("Events"));
 			}
 
-			if (!getDolGlobalString('AGENDA_NO_TRANSPARENT_ON_NOT_BUSY')) {
-				$style3 .= 'peruser_notbusy ';
-			} else {
-				$style3 .= 'peruser_busy ';
-			}
 			foreach ($cases3[$h] as $id => $ev) {
-				if (!empty($ev['busy'])) {
-					$style3 = 'onclickopenref peruser_busy';
+				if (!empty($ev['busy']) && !getDolGlobalString('AGENDA_NO_TRANSPARENT_ON_NOT_BUSY')) {
+					$style3 .= ' peruser_busy';
+				} else {
+					$style3 .= 'peruser_notbusy ';
 				}
 				if (!empty($ev['css'])) {
-					$style3 .= ' '.$ev['css'];
+					$style3 .= $ev['css'].' ';
 				}
 			}
 		}
-		if (isset($cases4[$h]) && $cases4[$h] != '') {
+		if (isset($cases4[$h])) {
 			//$title4.=count($cases3[$h]).' '.(count($cases3[$h])==1?$langs->trans("Event"):$langs->trans("Events"));
 			if (count($cases4[$h]) > 1) {
 				$title4 .= count($cases4[$h]).' '.(count($cases4[$h]) == 1 ? $langs->trans("Event") : $langs->trans("Events"));
 			}
 
-			if (!getDolGlobalString('AGENDA_NO_TRANSPARENT_ON_NOT_BUSY')) {
-				$style4 .= 'peruser_notbusy ';
-			} else {
-				$style4 .= 'peruser_busy ';
-			}
 			foreach ($cases4[$h] as $id => $ev) {
-				if (!empty($ev['busy'])) {
-					$style4 = 'onclickopenref peruser_busy';
+				if (!empty($ev['busy']) && !getDolGlobalString('AGENDA_NO_TRANSPARENT_ON_NOT_BUSY')) {
+					$style4 .= ' peruser_busy';
+				} else {
+					$style4 .= 'peruser_notbusy ';
 				}
 				if (!empty($ev['css'])) {
-					$style4 .= ' '.$ev['css'];
+					$style4 .= $ev['css'].' ';
 				}
 			}
 		}
@@ -2457,7 +2477,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				$ref4 = 'holiday';
 				$title4 = $langs->trans("Holiday");
 			} else {
-				$title4 = $langs->trans("Ref").' '.$ids3.($title4 ? ' - '.$title4 : '');
+				$title4 = $langs->trans("Ref").' '.$ids4.($title4 ? ' - '.$title4 : '');
 				if ($output[0]['string']) {
 					$title4 .= ' - '.$output[0]['string'];
 				}
@@ -2473,13 +2493,13 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		print '<table class="nobordernopadding case centpercent">';
 		print '<tr>';
 		print '<td ';
-		if ($style1 == 'peruser_notbusy') {
+		if (preg_match('/peruser_notbusy/', $style1)) {
 			print 'style="border: 1px solid #'.($color1 ? $color1 : "888").' !important" ';
 		} elseif ($color1) {
 			print 'style="background: #'.$color1.'; "';
 		}
 		print 'class="';
-		print $style1.' ';
+		print $style1;
 		print 'center'.($title1 ? ' classfortooltip' : '').($title1 ? ' cursorpointer' : '').'"';
 		print 'ref="'.$ref1.'_'.$username->id.'_'.sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day).'_'.sprintf("%02d", $h).'_00_'.($ids1 ? $ids1 : 'none').'"';
 		print ($title1 ? ' title="'.$title1.'"' : '').'>';
@@ -2487,13 +2507,13 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		print '</td>';
 
 		print '<td ';
-		if ($style2 == 'peruser_notbusy') {
+		if (preg_match('/peruser_notbusy/', $style2)) {
 			print 'style="border: 1px solid #'.($color2 ? $color2 : "888").' !important" ';
 		} elseif ($color2) {
 			print 'style="background: #'.$color2.'; "';
 		}
 		print 'class="';
-		print $style2.' ';
+		print $style2;
 		print 'center'.($title2 ? ' classfortooltip' : '').($title2 ? ' cursorpointer' : '').'"';
 		print ' ref="'.$ref2.'_'.$username->id.'_'.sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day).'_'.sprintf("%02d", $h).'_15_'.($ids2 ? $ids2 : 'none').'"';
 		print ($title2 ? ' title="'.$title2.'"' : '').'>';
@@ -2501,13 +2521,13 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		print '</td>';
 
 		print '<td ';
-		if ($style3 == 'peruser_notbusy') {
+		if (preg_match('/peruser_notbusy/', $style3)) {
 			print 'style="border: 1px solid #'.($color3 ? $color3 : "888").' !important" ';
 		} elseif ($color3) {
 			print 'style="background: #'.$color3.'; "';
 		}
 		print 'class="';
-		print $style3.' ';
+		print $style3;
 		print 'center'.($title3 ? ' classfortooltip' : '').($title3 ? ' cursorpointer' : '').'"';
 		print ' ref="'.$ref3.'_'.$username->id.'_'.sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day).'_'.sprintf("%02d", $h).'_30_'.($ids3 ? $ids3 : 'none').'"';
 		print ($title3 ? ' title="'.$title3.'"' : '').'>';
@@ -2515,13 +2535,13 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		print '</td>';
 
 		print '<td ';
-		if ($style4 == 'peruser_notbusy') {
+		if (preg_match('/peruser_notbusy/', $style4)) {
 			print 'style="border: 1px solid #'.($color4 ? $color4 : "888").' !important" ';
 		} elseif ($color4) {
 			print 'style="background: #'.$color4.'; "';
 		}
 		print 'class="';
-		print $style4.' ';
+		print $style4;
 		print 'center'.($title4 ? ' classfortooltip' : '').($title4 ? ' cursorpointer' : '').'"';
 		print ' ref="'.$ref4.'_'.$username->id.'_'.sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day).'_'.sprintf("%02d", $h).'_45_'.($ids4 ? $ids4 : 'none').'"';
 		print ($title4 ? ' title="'.$title4.'"' : '').'>';

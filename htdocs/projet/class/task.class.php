@@ -2,9 +2,9 @@
 /* Copyright (C) 2008-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2014       Marcos García       <marcosgdf@gmail.com>
- * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2020       Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2022       Charlene Benke		<charlene@patas-monkey.com>
+ * Copyright (C) 2022-2025  Charlene Benke		<charlene@patas-monkey.com>
  * Copyright (C) 2023      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Vincent de Grandpré <vincent@de-grandpre.quebec>
@@ -684,6 +684,7 @@ class Task extends CommonObjectLine
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " duration_effective=".(isset($this->duration_effective) ? $this->duration_effective : "null").",";
 		$sql .= " planned_workload=".((isset($this->planned_workload) && $this->planned_workload != '') ? $this->planned_workload : "null").",";
+		$sql .= " datec=".(isDolTms($this->date_c) ? "'".$this->db->idate($this->date_c)."'" : 'null').",";
 		$sql .= " dateo=".(isDolTms($this->date_start) ? "'".$this->db->idate($this->date_start)."'" : 'null').",";
 		$sql .= " datee=".(isDolTms($this->date_end) ? "'".$this->db->idate($this->date_end)."'" : 'null').",";
 		$sql .= " progress=".(($this->progress != '' && $this->progress >= 0) ? $this->progress : 'null').",";
@@ -1014,7 +1015,7 @@ class Task extends CommonObjectLine
 	 *  @param	string	$sep			Separator between ref and label if option addlabel is set
 	 *  @param	int   	$notooltip		1=Disable tooltip
 	 *  @param  int     $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *	@return	string					Chaine avec URL
+	 *	@return	string					String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $mode = 'task', $addlabel = 0, $sep = ' - ', $notooltip = 0, $save_lastsearch_value = -1)
 	{
@@ -1762,7 +1763,7 @@ class Task extends CommonObjectLine
 		$sql .= " p.rowid as project_id,";
 		$sql .= " p.ref as project_ref,";
 		$sql .= " p.title as project_label,";
-		$sql .= " p.public as public";
+		$sql .= " p.public as project_public";
 		$sql .= " FROM ".MAIN_DB_PREFIX."element_time as ptt, ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."projet as p";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
 		$sql .= " WHERE ptt.fk_element = pt.rowid AND pt.fk_projet = p.rowid";
@@ -1791,7 +1792,8 @@ class Task extends CommonObjectLine
 				$newobj->fk_project			= $obj->project_id;
 				$newobj->project_ref		= $obj->project_ref;
 				$newobj->project_label = $obj->project_label;
-				$newobj->public				= $obj->project_public;
+				$newobj->project_public		= $obj->project_public;
+				$newobj->public				= $obj->project_public;		// deprecated
 
 				$newobj->fk_task			= $obj->task_id;
 				$newobj->task_ref = $obj->task_ref;
@@ -1896,7 +1898,7 @@ class Task extends CommonObjectLine
 	 *	@param	User|string	$fuser		Filter on a dedicated user
 	 *  @param	string		$dates		Start date (ex 00:00:00)
 	 *  @param	string		$datee		End date (ex 23:59:59)
-	 *  @return	array{}|array{amount:float,nbseconds:int,nblinesnull:int}	Array of info for task array('amount','nbseconds','nblinesnull')
+	 *  @return	array{}|array{amount:float,nbseconds:int,nblinesnull:int,nbuserthmnull:int}	Array of info for task array('amount','nbseconds','nblinesnull','nbuserthmnull')
 	 */
 	public function getSumOfAmount($fuser = '', $dates = '', $datee = '')
 	{
@@ -1906,8 +1908,10 @@ class Task extends CommonObjectLine
 
 		$sql = "SELECT";
 		$sql .= " SUM(t.element_duration) as nbseconds,";
+		$sql .= " SUM(".$this->db->ifsql("u.thm IS NULL", '1', '0').") as nbuserthmnull,";
 		$sql .= " SUM(t.element_duration / 3600 * ".$this->db->ifsql("t.thm IS NULL", '0', "t.thm").") as amount, SUM(".$this->db->ifsql("t.thm IS NULL", '1', '0').") as nblinesnull";
 		$sql .= " FROM ".MAIN_DB_PREFIX."element_time as t";
+		$sql .= " JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = t.fk_user";
 		$sql .= " WHERE t.elementtype='task' AND t.fk_element = ".((int) $id);
 		if (is_object($fuser) && $fuser->id > 0) {
 			$sql .= " AND fk_user = ".((int) $fuser->id);
@@ -1930,6 +1934,7 @@ class Task extends CommonObjectLine
 			$result['amount'] = $obj->amount;
 			$result['nbseconds'] = $obj->nbseconds;
 			$result['nblinesnull'] = $obj->nblinesnull;
+			$result['nbuserthmnull'] = $obj->nbuserthmnull;
 
 			$this->db->free($resql);
 			return $result;
@@ -2101,21 +2106,26 @@ class Task extends CommonObjectLine
 
 		$timespent = new TimeSpent($this->db);
 		$timespent->fetch($this->timespent_id);
+		$old_fk_element = $timespent->fk_element; // Store old task ID before potential change
 
 		$timespent->element_date = $this->timespent_date;
 		$timespent->element_datehour = $this->timespent_datehour;
-		$timespent->element_date_withhour = $this->timespent_withhour;
+
+		$timespent->element_date_withhour = $this->timespent_withhour;		// 0 or 1
 		$timespent->element_duration = $this->timespent_duration;
 		if ($this->timespent_fk_user > 0) {
 			$timespent->fk_user = $this->timespent_fk_user;
 		}
 		$timespent->fk_product = $this->timespent_fk_product;
+		$timespent->fk_element = $this->id; // Update task assignment (may be changed)
 		$timespent->note = $this->timespent_note;
 		$timespent->invoice_id = $this->timespent_invoiceid;
 		$timespent->invoice_line_id = $this->timespent_invoicelineid;
 
 		dol_syslog(get_class($this)."::updateTimeSpent", LOG_DEBUG);
-		if ($timespent->update($user) > 0) {
+
+		$resupdate = $timespent->update($user);
+		if ($resupdate > 0) {
 			if (!$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('TASK_TIMESPENT_MODIFY', $user);
@@ -2168,6 +2178,32 @@ class Task extends CommonObjectLine
 			if ($res_update <= 0) {
 				$this->error = $this->db->lasterror();
 				$ret = -2;
+			}
+		}
+
+		// If task assignment changed, recalculate duration_effective for both old and new tasks
+		if ($ret == 1 && $old_fk_element != $this->id) {
+			// Recalculate duration_effective for the OLD task
+			$sql = "UPDATE " . MAIN_DB_PREFIX . "projet_task";
+			$sql .= " SET duration_effective = (SELECT COALESCE(SUM(element_duration), 0) FROM " . MAIN_DB_PREFIX . "element_time as ptt where ptt.elementtype = 'task' AND ptt.fk_element = " . ((int) $old_fk_element) . ")";
+			$sql .= " WHERE rowid = " . ((int) $old_fk_element);
+			dol_syslog(get_class($this) . "::updateTimeSpent update old task", LOG_DEBUG);
+			if (!$this->db->query($sql)) {
+				$this->error = $this->db->lasterror();
+				$this->db->rollback();
+				$ret = -2;
+			}
+			// Recalculate duration_effective for the NEW task
+			if ($ret == 1) {
+				$sql = "UPDATE " . MAIN_DB_PREFIX . "projet_task";
+				$sql .= " SET duration_effective = (SELECT COALESCE(SUM(element_duration), 0) FROM " . MAIN_DB_PREFIX . "element_time as ptt where ptt.elementtype = 'task' AND ptt.fk_element = " . ((int) $this->id) . ")";
+				$sql .= " WHERE rowid = " . ((int) $this->id);
+				dol_syslog(get_class($this) . "::updateTimeSpent update new task", LOG_DEBUG);
+				if (!$this->db->query($sql)) {
+					$this->error = $this->db->lasterror();
+					$this->db->rollback();
+					$ret = -2;
+				}
 			}
 		}
 
@@ -2895,5 +2931,21 @@ class Task extends CommonObjectLine
 		}
 
 		return -1;
+	}
+
+	/**
+	 * Sets object to task categories.
+	 *
+	 * Deletes object from existing categories not supplied.
+	 * Adds it to non existing supplied categories.
+	 * Existing categories are left untouch.
+	 *
+	 * @param 	int[]|int 	$categories 	Category or categories IDs
+	 * @return 	int							Return integer <0 if KO, >0 if OK
+	 */
+	public function setCategories($categories)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+		return parent::setCategoriesCommon($categories, Categorie::TYPE_PROJECT_TASK);
 	}
 }

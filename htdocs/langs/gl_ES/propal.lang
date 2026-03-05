@@ -14,6 +14,7 @@ DeleteProp=Eliminar orzamento a cliente
 ValidateProp=Validar orzamento a cliente
 CancelPropal=Cancelar
 AddProp=Crear orzamento a cliente
+AddRenewalProp=Crear orzamento de renovación
 ConfirmDeleteProp=¿Está certo de querer eliminar este orzamento?
 ConfirmValidateProp=¿Está certo de querer validar este orzamento coa referencia <b>%s</b> ?
 ConfirmCancelPropal=Está certo de querer cancelar o orzamento a cliente <b>%s</b>?

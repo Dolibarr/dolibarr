@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2007  Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2008       Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
- * Copyright (C) 2019-2024  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2019-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -80,7 +80,7 @@ class mod_asset_advanced extends ModeleNumRefAsset
 		$tooltip .= $langs->trans("GenericMaskCodes5");
 		//$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
-		// Parametrage du prefix
+		// Setting of prefix
 		$text .= '<tr><td>'.$langs->trans("Mask").':</td>';
 		$text .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="mask" value="'.getDolGlobalString('ASSET_ADVANCED_MASK').'">', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name).'</td>';
 

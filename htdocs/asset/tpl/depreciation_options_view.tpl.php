@@ -27,6 +27,7 @@
  */
 
 /**
+ * @var DoliDB $db
  * @var Form $form
  * @var HookManager $hookmanager
  * @var AssetDepreciationOptions $assetdepreciationoptions

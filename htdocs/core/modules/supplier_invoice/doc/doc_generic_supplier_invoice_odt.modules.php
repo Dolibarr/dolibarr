@@ -25,7 +25,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/supplier_invoce/doc/doc_generic_supplier_invoice_odt.modules.php
+ *	\file       htdocs/core/modules/supplier_invoice/doc/doc_generic_supplier_invoice_odt.modules.php
  *	\ingroup    invoice
  *	\brief      File of class to build ODT documents for supplier invoices
  */
@@ -392,7 +392,7 @@ class doc_generic_supplier_invoice_odt extends ModelePDFSuppliersInvoices
 
 				// retrieve the constant to apply a ratio for image size or set the ratio to 1
 				if (getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO')) {
-					$ratio = floatval(getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO'));
+					$ratio = (float) getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO');
 				} else {
 					$ratio = 1;
 				}

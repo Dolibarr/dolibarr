@@ -7,7 +7,7 @@
  * Copyright (C) 2015-2017 Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -94,9 +94,19 @@ $object = new AccountLine($db);
 $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($object->element);
 
+if ($id > 0) {
+	$result = $object->fetch($id);
+	if ($result <= 0) {
+		dol_syslog('Failed to read bank line with id '.$rowid, LOG_WARNING);	// This happens due to old bug that has set fk_account to null.
+		$object->id = $id;
+	}
+}
+
+
 /*
  * Actions
  */
+
 $error = 0;
 
 $parameters = array('socid' => $socid);
@@ -139,12 +149,6 @@ if ($action == 'confirm_delete_categ' && $confirm == "yes" && $user->hasRight('b
 }
 
 if ($user->hasRight('banque', 'modifier') && $action == "update") {
-	$result = $object->fetch($rowid);
-	if ($result <= 0) {
-		dol_syslog('Failed to read bank line with id '.$rowid, LOG_WARNING);	// This happens due to old bug that has set fk_account to null.
-		$object->id = $rowid;
-	}
-
 	$acsource = new Account($db);
 	$acsource->fetch($accountoldid);
 
@@ -256,7 +260,7 @@ if ($user->hasRight('banque', 'consolidate') && ($action == 'num_releve' || $act
 
 	if (!$error) {
 		$db->begin();
-		$object->fetch($rowid);
+
 		$oldNum_rel = $object->num_releve;
 		$id = $object->fk_account;
 
@@ -317,6 +321,8 @@ if ($user->hasRight('banque', 'consolidate') && ($action == 'num_releve' || $act
 /*
  * View
  */
+
+$object->fetch($rowid);
 
 $form = new Form($db);
 
@@ -457,13 +463,13 @@ if ($result) {
 					print '</a>';
 				} elseif ($links[$key]['type'] == 'payment_salary') {
 					print '<a href="'.DOL_URL_ROOT.'/salaries/payment_salary/card.php?id='.$links[$key]['url_id'].'">';
-					print img_object($langs->trans('PaymentSalary'), 'payment').' ';
+					print img_object($langs->trans('SalaryPayment'), 'payment').' ';
 					print $langs->trans("SalaryPayment");
 					print '</a>';
 				} elseif ($links[$key]['type'] == 'payment_loan') {
 					print '<a href="'.DOL_URL_ROOT.'/loan/payment/card.php?id='.$links[$key]['url_id'].'">';
 					print img_object($langs->trans('LoanPayment'), 'payment').' ';
-					print $langs->trans("PaymentLoan");
+					print $langs->trans("LoanPayment");
 					print '</a>';
 				} elseif ($links[$key]['type'] == 'loan') {
 					print '<a href="'.DOL_URL_ROOT.'/loan/card.php?id='.$links[$key]['url_id'].'">';

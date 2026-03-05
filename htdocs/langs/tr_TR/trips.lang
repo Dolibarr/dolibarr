@@ -121,7 +121,6 @@ ValideTrip=Gider raporunu onayla
 ExpenseReportPayments=Gider raporu ödemeleri
 TaxUndefinedForThisCategory = Bu kategori için vergi tanımsız
 errorComputeTtcOnMileageExpense=Kilometre giderinin hesaplanmasında hata
-ErrorOnlyDraftStatusCanBeDeletedInMassAction=Toplu eylemde yalnızca taslak durumundaki öğeler silinebilir
 
 ## Dictionary
 EX_BRE=Kahvaltı
@@ -159,3 +158,4 @@ TF_TRAIN=Tren
 TF_TRIP=Taşıma
 FailedToSetPaid=Ödendi olarak ayarlanamadı
 FailedToSetToCancel=iptal başarısız oldu
+NobodyHasPermissionToValidateExpenseReport=Gider raporunu doğrulamak için kimsenin izni yok

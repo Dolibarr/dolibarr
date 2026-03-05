@@ -6,17 +6,23 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
 }
 
+// Expected to be defined by including parent
 /**
  * @var Conf $conf
+ * @var string $left
+ * @var string $right
  */
-
-// Expected to be defined by including parent
 '
 @phan-var-force string $right
 @phan-var-force string $left
 ';
 
 $borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobalInt('THEME_ELDY_BORDER_RADIUS', 6) : 0;
+
+$heightbox = 94;
+if (isModEnabled("bank") && isModEnabled("prelevement") && isModEnabled("paymentbybanktransfer")) {
+	$heightbox = 110;
+}
 
 ?>
 
@@ -44,6 +50,14 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 }
 
 ?>
+
+.spannature {
+	padding-top: 5px !important;
+	padding-bottom: 6px !important;
+	vertical-align: middle;
+	white-space: nowrap;
+	display: inline-block;
+}
 
 .nonature-back {
 	background-color: #EEE;
@@ -136,7 +150,7 @@ div.login_block_other:not(.takepos) a {
 	color: var(--colortextbackvmenu);
 }
 
-.infobox-adherent, .infobox-member {
+.infobox-adherent, .infobox-member, .infobox-expensereport {
 	color: #79633f;
 }
 .infobox-project{
@@ -164,12 +178,6 @@ div.login_block_other:not(.takepos) a {
 .infobox-bank_account{
 	color: #b0a53e;
 }
-.infobox-adherent, .infobox-member {
-	color: #79633f;
-}
-.infobox-expensereport{
-	color: #79633f;
-}
 .infobox-holiday{
 	color: #755114;
 }
@@ -190,7 +198,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle, span.badge i.fa.fa-exclamation-t
 .info-box {
 	display: block;
 	position: relative;
-	min-height: 94px;
+	min-height: <?php echo $heightbox; ?>px;
 	background: var(--colorbacklineimpair2);
 	width: 100%;
 	/* box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); */
@@ -243,8 +251,8 @@ a.info-box-text-a i.fa.fa-exclamation-triangle, span.badge i.fa.fa-exclamation-t
 	float: left;
 	text-align: center;
 	font-size: 45px;
-	line-height: 94px;	/* must be same height as min-height of .info-box */
-	height: 94px;		/* must be same height as min-height of .info-box */
+	line-height: <?php echo $heightbox; ?>px;	/* must be same height as min-height of .info-box */
+	height: <?php echo $heightbox; ?>px;		/* must be same height as min-height of .info-box */
 	width: 86px;
 	background: var(--colorbacktitle1) !important;
 	border-top-left-radius: <?php print $borderradius; ?>px;
@@ -301,7 +309,8 @@ a.info-box-text-a i.fa.fa-exclamation-triangle, span.badge i.fa.fa-exclamation-t
 }
 .info-box-line-text {
 	overflow: hidden;
-	width: calc(100% - 76px);
+	width: calc(100% - 92px);
+	max-width: calc(100% - 82px);
 	text-overflow: ellipsis;
 }
 
@@ -575,7 +584,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 }
 .fa-weather-level4:before{
 	content: "\f0e7";
-	color : #b01000;
+	color : #993013;
 }
 
 
@@ -718,4 +727,35 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	.box-flex-item {
 		width: 250px;
 	}
+}
+
+/* customize section for home box link */
+.infobox-haslink .info-box-icon i {
+	transition: opacity 0.2s ease-in-out;
+}
+.infobox-haslink .info-box-icon:hover i {
+	opacity: 0.2;
+}
+.infobox-haslink .info-box-icon .info-box-createlink {
+	height:100%;
+	width:100%;
+	display:block;
+	position:absolute;
+	top:0;
+	left:0;
+	font-size:0.6em;
+	display: flex;
+	opacity: 0;
+	transition: opacity 0.2s ease-in-out;
+	color:inherit;
+	text-decoration: none;
+}
+.infobox-haslink .info-box-icon:hover .info-box-createlink {
+	opacity: 1;
+}
+.infobox-haslink .info-box-icon .info-box-createlink span.fas {
+	margin:auto;
+}
+.infobox-haslink i.fa.fa-exclamation-triangle.hideonsmartphone {
+	display: none;
 }

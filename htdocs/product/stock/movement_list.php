@@ -61,14 +61,14 @@ if (isModEnabled('productbatch')) {
 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
-$confirm    = GETPOST('confirm', 'alpha'); // Result of a confirmation
+$confirm = GETPOST('confirm', 'alpha'); // Result of a confirmation
 $cancel = GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
-$toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
+$toselect = GETPOST('toselect', 'array:int'); // Array of ids of elements selected into a list
 $backtopage = GETPOST("backtopage", "alpha");
-$optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+$optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 $show_files = GETPOST('show_files', 'aZ');
-$mode       = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
+$mode = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
 
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
@@ -267,20 +267,20 @@ if (empty($reshook)) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 		$objecttmp = new MouvementStock($db);
-		$listofobjectid = array();
+		$listofobjectids = array();
 		foreach ($toselect as $toselectid) {
-			$objecttmp = new MouvementStock($db); // must create new instance because instance is saved into $listofobjectref array for future use
+			$objecttmp = new MouvementStock($db); // must create new instance because instance is saved into $listofobjectids array for future use
 			$result = $objecttmp->fetch($toselectid);
 			if ($result > 0) {
-				$listofobjectid[$toselectid] = $toselectid;
+				$listofobjectids[$toselectid] = $toselectid;
 			}
 		}
 
 		$arrayofinclusion = array();
-		foreach ($listofobjectref as $tmppdf) {
+		foreach ($listofobjectids as $tmppdf) {
 			$arrayofinclusion[] = '^'.preg_quote(dol_sanitizeFileName($tmppdf), '/').'\.pdf$';
 		}
-		foreach ($listofobjectref as $tmppdf) {
+		foreach ($listofobjectids as $tmppdf) {
 			$arrayofinclusion[] = '^'.preg_quote(dol_sanitizeFileName($tmppdf), '/').'_[a-zA-Z0-9-_]+\.pdf$'; // To include PDF generated from ODX files
 		}
 		$listoffiles = dol_dir_list($uploaddir, 'all', 1, implode('|', $arrayofinclusion), '\.meta$|\.png', 'date', SORT_DESC, 0, 1);
@@ -320,7 +320,7 @@ if (empty($reshook)) {
 
 
 		// Create PDF
-		// TODO Create the pdf including list of movement ids found into $listofobjectid
+		// TODO Create the pdf including list of movement ids found into $listofobjectids
 		// ...
 
 
@@ -461,22 +461,22 @@ if ($action == "transfert_stock" && $permissiontoadd && !$cancel) {
 	if (!(GETPOSTINT("id_entrepot_destination") > 0)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
 		$error++;
-		$action = 'transfert';
+		$action = 'transfer';
 	}
 	if (empty($product_id)) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Product")), null, 'errors');
-		$action = 'transfert';
+		$action = 'transfer';
 	}
 	if (!GETPOSTFLOAT("nbpiece")) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NumberOfUnit")), null, 'errors');
 		$error++;
-		$action = 'transfert';
+		$action = 'transfer';
 	}
 	if ($id == GETPOSTINT("id_entrepot_destination")) {
 		setEventMessages($langs->trans("ErrorSrcAndTargetWarehouseMustDiffers"), null, 'errors');
 		$error++;
-		$action = 'transfert';
+		$action = 'transfer';
 	}
 
 	if (isModEnabled('productbatch')) {
@@ -486,7 +486,7 @@ if ($action == "transfert_stock" && $permissiontoadd && !$cancel) {
 		if ($product->hasbatch() && !GETPOST("batch_number")) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("batch_number")), null, 'errors');
 			$error++;
-			$action = 'transfert';
+			$action = 'transfer';
 		}
 	}
 
@@ -536,7 +536,7 @@ if ($action == "transfert_stock" && $permissiontoadd && !$cancel) {
 						$srcwarehouseid,
 						GETPOSTFLOAT("nbpiece"),
 						1,
-						GETPOST("label", 'san_alpha'),
+						GETPOST("label", 'aZ09comma'),
 						(float) $pricesrc,
 						$eatby,
 						$sellby,
@@ -553,7 +553,7 @@ if ($action == "transfert_stock" && $permissiontoadd && !$cancel) {
 						GETPOSTINT("id_entrepot_destination"),
 						GETPOSTFLOAT("nbpiece"),
 						0,
-						GETPOST("label", 'san_alpha'),
+						GETPOST("label", 'aZ09comma'),
 						(float) $pricedest,
 						$eatby,
 						$sellby,
@@ -609,7 +609,7 @@ if ($action == "transfert_stock" && $permissiontoadd && !$cancel) {
 			} else {
 				setEventMessages($product->error, $product->errors, 'errors');
 				$db->rollback();
-				$action = 'transfert';
+				$action = 'transfer';
 			}
 		}
 	}
@@ -798,7 +798,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -871,7 +871,7 @@ if ($warehouse->id > 0) {
 	// Project
 	if (isModEnabled('project') && $formproject !== null) {
 		$langs->load("projects");
-		$morehtmlref .= '<br>'.img_picto('', 'project').' '.$langs->trans('Project').' ';
+		$morehtmlref .= '<br>'.img_picto('', 'project', 'class="pictofixedwidth"').$langs->trans('Project').' ';
 		if ($usercancreate && 1 == 2) {  // @phan-suppress-current-line PhanPluginBothLiteralsBinaryOp
 			if ($action != 'classify') {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$warehouse->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
@@ -998,7 +998,7 @@ if ($action == "correction") {
 }
 
 // Transfer of units
-if ($action == "transfert") {
+if ($action == "transfer") {
 	$d_eatby = GETPOSTDATE('eatby');	// used by the tpl
 	$d_sellby = GETPOSTDATE('sellby');	// used by the tpl
 	include DOL_DOCUMENT_ROOT.'/product/stock/tpl/stocktransfer.tpl.php';
@@ -1015,7 +1015,7 @@ if ((empty($action) || $action == 'list') && $id > 0) {
 	// modified by hook
 	if (empty($reshook)) {
 		if ($user->hasRight('stock', 'mouvement', 'creer')) {
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=transfert&token='.newToken().'">'.$langs->trans("TransferStock").'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=transfer&token='.newToken().'">'.$langs->trans("TransferStock").'</a>';
 		}
 
 		if ($user->hasRight('stock', 'mouvement', 'creer')) {
@@ -1531,9 +1531,7 @@ while ($i < $imaxinloop) {
 		// Id movement
 		if (!empty($arrayfields['m.rowid']['checked'])) {
 			print '<td class="nowraponall">';
-			//print img_picto($langs->trans("StockMovement"), 'movement', 'class="pictofixedwidth"');
 			print $object->getNomUrl(1);
-			;
 			print '</td>'; // This is primary not movement id
 		}
 		// Date
@@ -1542,8 +1540,9 @@ while ($i < $imaxinloop) {
 		}
 		// Product ref
 		if (!empty($arrayfields['p.ref']['checked'])) {
-			print '<td class="nowraponall">';
+			print '<td class="nowraponall tdoverflowmax150 cell2linesheight">';
 			print $productstatic->getNomUrl(1, 'stock', 16);
+			print '<br><span class="opacitymedium">'.$productstatic->label.'</span>';
 			print "</td>\n";
 		}
 		// Product label

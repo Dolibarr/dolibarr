@@ -217,7 +217,7 @@ function ordersupplier_prepare_head(CommandeFournisseur $object)
 			}
 			for ($line = 0 ; $line < $nbLinesOrdered; $line++) {
 				//If line is a product of conf to manage stocks for services
-				if ($object->lines[$line]->product_type == 0 || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
+				if ($object->lines[$line]->product_type == 0 || ($object->lines[$line]->product_type == 1 && getDolGlobalString('STOCK_SUPPORTS_SERVICES'))) {
 					$sumQtyOrdered += $object->lines[$line]->qty;
 				}
 			}
@@ -267,8 +267,33 @@ function ordersupplier_prepare_head(CommandeFournisseur $object)
 	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/info.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Events");
 	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
+		$nbEvent = 0;
+		// Enable caching of order supplier count actioncomm
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+		$cachekey = 'count_events_order_'.$object->id;
+		$dataretrieved = dol_getcache($cachekey);
+		if (!is_null($dataretrieved)) {
+			$nbEvent = $dataretrieved;
+		} else {
+			$sql = "SELECT COUNT(id) as nb";
+			$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm";
+			$sql .= " WHERE fk_element = ".((int) $object->id);
+			$sql .= " AND elementtype = 'order_supplier'";
+			$resql = $db->query($sql);
+			if ($resql) {
+				$obj = $db->fetch_object($resql);
+				$nbEvent = $obj->nb;
+			} else {
+				dol_syslog('Failed to count actioncomm '.$db->lasterror(), LOG_ERR);
+			}
+			dol_setcache($cachekey, $nbEvent, 120);		// If setting cache fails, this is not a problem, so we do not test result.
+		}
+
 		$head[$h][1] .= '/';
 		$head[$h][1] .= $langs->trans("Agenda");
+		if ($nbEvent > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbEvent.'</span>';
+		}
 	}
 	$head[$h][2] = 'info';
 	$h++;
@@ -300,24 +325,24 @@ function supplierorder_admin_prepare_head()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/supplier_order.php";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/admin/supplier_order.php");
 	$head[$h][1] = $langs->trans("SupplierOrder");
 	$head[$h][2] = 'order';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/supplier_invoice.php";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/admin/supplier_invoice.php");
 	$head[$h][1] = $langs->trans("SuppliersInvoice");
 	$head[$h][2] = 'invoice';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/supplier_payment.php";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/admin/supplier_payment.php");
 	$head[$h][1] = $langs->trans("SuppliersPayment");
 	$head[$h][2] = 'supplierpayment';
 	$h++;
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'supplierorder_admin');
 
-	$head[$h][0] = DOL_URL_ROOT.'/admin/supplierorder_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/supplierorder_extrafields.php');
 	$head[$h][1] = $langs->trans("ExtraFieldsSupplierOrders");
 	$nbExtrafields = $extrafields->attributes['commande_fournisseur']['count'];
 	if ($nbExtrafields > 0) {
@@ -326,7 +351,7 @@ function supplierorder_admin_prepare_head()
 	$head[$h][2] = 'supplierorder';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/admin/supplierorderdet_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/supplierorderdet_extrafields.php');
 	$head[$h][1] = $langs->trans("ExtraFieldsSupplierOrdersLines");
 	$nbExtrafields = $extrafields->attributes['commande_fournisseurdet']['count'];
 	if ($nbExtrafields > 0) {
@@ -335,7 +360,7 @@ function supplierorder_admin_prepare_head()
 	$head[$h][2] = 'supplierorderdet';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/admin/supplierinvoice_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/supplierinvoice_extrafields.php');
 	$head[$h][1] = $langs->trans("ExtraFieldsSupplierInvoices");
 	$nbExtrafields = $extrafields->attributes['facture_fourn']['count'];
 	if ($nbExtrafields > 0) {
@@ -344,7 +369,7 @@ function supplierorder_admin_prepare_head()
 	$head[$h][2] = 'supplierinvoice';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/admin/supplierinvoicedet_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/supplierinvoicedet_extrafields.php');
 	$head[$h][1] = $langs->trans("ExtraFieldsSupplierInvoicesLines");
 	$nbExtrafields = $extrafields->attributes['facture_fourn_det']['count'];
 	if ($nbExtrafields > 0) {
@@ -353,7 +378,7 @@ function supplierorder_admin_prepare_head()
 	$head[$h][2] = 'supplierinvoicedet';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/admin/supplierinvoice_rec_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/supplierinvoice_rec_extrafields.php');
 	$head[$h][1] = $langs->trans("ExtraFieldsSupplierInvoicesRec");
 	$nbExtrafields = $extrafields->attributes['facture_fourn_rec']['count'];
 	if ($nbExtrafields > 0) {
@@ -362,7 +387,7 @@ function supplierorder_admin_prepare_head()
 	$head[$h][2] = 'attributesrec';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/admin/supplierinvoicedet_rec_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/supplierinvoicedet_rec_extrafields.php');
 	$head[$h][1] = $langs->trans("ExtraFieldsSupplierInvoicesLinesRec");
 	$nbExtrafields = $extrafields->attributes['facture_fourn_det_rec']['count'];
 	if ($nbExtrafields > 0) {

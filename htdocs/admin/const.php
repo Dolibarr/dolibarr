@@ -27,9 +27,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -37,6 +34,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 
 // Load translation files required by the page
 $langs->load("admin");
@@ -44,11 +43,14 @@ $langs->load("admin");
 $rowid = GETPOSTINT('rowid');
 $entity = GETPOSTINT('entity');
 $action = GETPOST('action', 'aZ09');
+$massaction = GETPOST('massaction', 'aZ09');
+
 $debug = GETPOSTINT('debug');
 $consts = GETPOST('const', 'array');
 $constname = GETPOST('constname', 'alphanohtml');
 $constvalue = GETPOST('constvalue', 'restricthtml'); // We should be able to send everything here
 $constnote = GETPOST('constnote', 'alpha');
+
 // Load variable for pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');

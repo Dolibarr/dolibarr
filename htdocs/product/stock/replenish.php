@@ -4,10 +4,11 @@
  * Copyright (C) 2014		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2016		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2016		ATM Consulting		<support@atm-consulting.fr>
- * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2021		Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2021		Antonin MARCHAL		<antonin@letempledujeu.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Josep Lluís Amador	<joseplluis@lliuretic.cat>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,7 +67,7 @@ $search_ref = GETPOST('search_ref', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
 $sall = trim(GETPOST('search_all', 'alphanohtml'));
 $type = GETPOSTINT('type');
-$tobuy = GETPOSTINT('tobuy');
+$tobuy = GETPOSTFLOAT('tobuy');
 $salert = GETPOST('salert', 'alpha');
 $includeproductswithoutdesiredqty = GETPOST('includeproductswithoutdesiredqty', 'alpha');
 $mode = GETPOST('mode', 'alpha');
@@ -87,7 +88,7 @@ while ($tmpobj = $db->fetch_object($resWar)) {
 		$listofqualifiedwarehousesid .= ",";
 	}
 	$listofqualifiedwarehousesid .= $tmpobj->rowid;
-	$lastWarehouseID = $tmpobj->rowid;
+	$lastWarehouseID = (int) $tmpobj->rowid;
 	$count++;
 }
 
@@ -184,7 +185,7 @@ if ($action == 'order' && GETPOST('valid') && $user->hasRight('fournisseur', 'co
 				$box = $i;
 				$supplierpriceid = GETPOSTINT('fourn'.$i);
 				//get all the parameters needed to create a line
-				$qty = GETPOSTINT('tobuy'.$i);
+				$qty = GETPOSTFLOAT('tobuy'.$i);
 				$idprod = $productsupplier->get_buyprice($supplierpriceid, $qty);
 				$res = $productsupplier->fetch($idprod);
 				if ($res && $idprod > 0) {
@@ -431,7 +432,7 @@ if (isModEnabled('variants') && !getDolGlobalString('VARIANT_ALLOW_STOCK_MOVEMEN
 	$sql .= ' AND p.rowid NOT IN (SELECT pac.fk_product_parent FROM '.MAIN_DB_PREFIX.'product_attribute_combination as pac WHERE pac.entity IN ('.getEntity('product').'))';
 }
 if ($fk_supplier > 0) {
-	$sql .= ' AND EXISTS (SELECT pfp.rowid FROM ' . MAIN_DB_PREFIX . 'product_fournisseur_price as pfp WHERE pfp.fk_product = p.rowid AND pfp.fk_soc = ' . ((int) $fk_supplier) . ' AND pfp.entity IN (' . getEntity('product_fournisseur_price') . '))';
+	$sql .= ' AND EXISTS (SELECT pfp.rowid FROM ' . MAIN_DB_PREFIX . 'product_fournisseur_price as pfp WHERE pfp.fk_product = p.rowid AND pfp.fk_soc = ' . ((int) $fk_supplier) . ' AND pfp.entity IN (' . getEntity('productsupplierprice') . '))';
 }
 // Add where from hooks
 $parameters = array();
@@ -516,16 +517,23 @@ if ($usevirtualstock) {
 		$sqlProductionToProduce = '0';
 	}
 
+	$parameters = array();
+	$sqlHookVirtualStock = "0";
+	$reshook = $hookmanager->executeHooks('printFieldListHavingVirtualStock', $parameters); // Note that $action and $object may have been modified by hook
+	if (!empty($hookmanager->resPrint)) {
+		$sqlHookVirtualStock = $hookmanager->resPrint;
+	}
+
 	$sql .= ' HAVING (';
 	$sql .= " (" . $sqldesiredtock . " >= 0 AND (" . $sqldesiredtock . " > SUM(" . $db->ifsql("s.reel IS NULL", "0", "s.reel") . ')';
-	$sql .= " - (" . $sqlCommandesCli . " - " . $sqlExpeditionsCli . ") + (" . $sqlCommandesFourn . " - " . $sqlReceptionFourn . ") + (" . $sqlProductionToProduce . " - " . $sqlProductionToConsume . ")))";
+	$sql .= " - (" . $sqlCommandesCli . " - " . $sqlExpeditionsCli . ") + (" . $sqlCommandesFourn . " - " . $sqlReceptionFourn . ") + (" . $sqlProductionToProduce . " - " . $sqlProductionToConsume . ") + ".$sqlHookVirtualStock."))";
 	$sql .= ' OR';
 	if ($includeproductswithoutdesiredqty == 'on') {
 		$sql .= " ((" . $sqlalertstock . " >= 0 OR " . $sqlalertstock . " IS NULL) AND (" . $db->ifsql($sqlalertstock . " IS NULL", "0", $sqlalertstock) . " > SUM(" . $db->ifsql("s.reel IS NULL", "0", "s.reel") . ")";
 	} else {
 		$sql .= " (" . $sqlalertstock . " >= 0 AND (" . $sqlalertstock . " > SUM(" . $db->ifsql("s.reel IS NULL", "0", "s.reel") . ')';
 	}
-	$sql .= " - (" . $sqlCommandesCli . " - " . $sqlExpeditionsCli . ") + (" . $sqlCommandesFourn . " - " . $sqlReceptionFourn . ") + (" . $sqlProductionToProduce . " - " . $sqlProductionToConsume . ")))";
+	$sql .= " - (" . $sqlCommandesCli . " - " . $sqlExpeditionsCli . ") + (" . $sqlCommandesFourn . " - " . $sqlReceptionFourn . ") + (" . $sqlProductionToProduce . " - " . $sqlProductionToConsume . ") + ".$sqlHookVirtualStock."))";
 	$sql .= ")";
 	if (getDolGlobalString('STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE') && $fk_entrepot > 0) {
 		$sql .= " AND (";
@@ -539,7 +547,7 @@ if ($usevirtualstock) {
 		} else {
 			$sql .= $sqlalertstock . " >= 0 AND (" . $sqlalertstock . " > SUM(" . $db->ifsql("s.reel IS NULL", "0", "s.reel") . ")";
 		}
-		$sql .= " - (" . $sqlCommandesCli . " - " . $sqlExpeditionsCli . ") + (" . $sqlCommandesFourn . " - " . $sqlReceptionFourn . ")  + (" . $sqlProductionToProduce . " - " . $sqlProductionToConsume . "))";
+		$sql .= " - (" . $sqlCommandesCli . " - " . $sqlExpeditionsCli . ") + (" . $sqlCommandesFourn . " - " . $sqlReceptionFourn . ")  + (" . $sqlProductionToProduce . " - " . $sqlProductionToConsume . ") + ".$sqlHookVirtualStock.")";
 		$sql .= ")";
 		$alertchecked = 'checked';
 	}
@@ -579,7 +587,7 @@ $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords) {
+	if (($page * $limit) > (int) $nbtotalofrecords) {
 		$page = 0;
 		$offset = 0;
 	}
@@ -654,7 +662,7 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 }
 if (getDolGlobalString('STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE')) {
 	print '<div class="inline-block valignmiddle" style="padding-right: 20px;">';
-	print $langs->trans('Warehouse') . ' ' . $formproduct->selectWarehouses($fk_entrepot, 'fk_entrepot', '', 1);
+	print $langs->trans('Warehouse') . ' ' . $formproduct->selectWarehouses((int) $fk_entrepot, 'fk_entrepot', '', 1);
 	print '</div>';
 }
 print '<div class="inline-block valignmiddle" style="padding-right: 20px;">';
@@ -884,12 +892,12 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			$stock = $prod->stock_theorique;
 			//if conf active, stock virtual by warehouse is calculated
 			if (getDolGlobalString('STOCK_ALLOW_VIRTUAL_STOCK_PER_WAREHOUSE')) {
-				$stockwarehouse = $prod->stock_warehouse[$fk_entrepot]->virtual;
+				$stockwarehouse = $prod->stock_warehouse[(int) $fk_entrepot]->virtual;
 			}
 		} else {
 			$stock = $prod->stock_reel;
 			if (getDolGlobalString('STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE') && $fk_entrepot > 0) {
-				$stockwarehouse = $prod->stock_warehouse[$fk_entrepot]->real;
+				$stockwarehouse = $prod->stock_warehouse[(int) $fk_entrepot]->real;
 			}
 		}
 
@@ -982,7 +990,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		print '<td class="right">'.((getDolGlobalString('STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE') && $fk_entrepot > 0) > 0 ? ($objp->seuil_stock_alertepse ? $alertstockwarehouse : img_info($langs->trans('ProductValuesUsedBecauseNoValuesForThisWarehouse')) . '0') : $alertstock).'</td>';
 
 		// Current stock (all warehouses)
-		print '<td class="right">' . $warning . $stock;
+		print '<td class="right">' . $warning . price(price2num($stock, 'MS'));
 		print '<!-- stock returned by main sql is ' . $objp->stock_physique . ' -->';
 		print '</td>';
 
