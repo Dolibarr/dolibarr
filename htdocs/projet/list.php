@@ -1209,11 +1209,14 @@ if ($search_opp_amount != '') {
 if ($search_budget_amount != '') {
 	$param .= '&search_budget_amount='.urlencode($search_budget_amount);
 }
+if ($search_usage_opportunity != '') {
+	$param .= '&search_usage_opportunity='.urlencode($search_usage_opportunity);
+}
 if ($search_usage_task != '') {
 	$param .= '&search_usage_task='.urlencode($search_usage_task);
 }
 if ($search_usage_bill_time != '') {
-	$param .= '&search_usage_opportunity='.urlencode($search_usage_bill_time);
+	$param .= '&search_usage_bill_time='.urlencode($search_usage_bill_time);
 }
 if ($search_usage_event_organization != '') {
 	$param .= '&search_usage_event_organization='.urlencode($search_usage_event_organization);
