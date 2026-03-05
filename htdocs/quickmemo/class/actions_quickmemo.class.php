@@ -26,7 +26,6 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonhookactions.class.php';
 
 require_once __DIR__ . '/memo.class.php';
-require_once __DIR__ . '/../lib/backport.lib.php';
 
 
 /**
