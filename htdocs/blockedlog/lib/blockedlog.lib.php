@@ -387,7 +387,7 @@ function callApiToPushCounter($id, $signature, $test, $previousid, $previoussign
 		$hash_unique_id = getHashUniqueIdOfRegistration($algo);		// The hash of the unique IDof instance
 
 		$t = microtime(true);
-		$micro = sprintf("%06d", ($t - floor($t)) * 1000000);
+		$micro = sprintf("%06d", (int) ($t - floor($t)) * 1000000);
 
 		$data = '';
 		$data .= 'hash_algo=dol_hash-'.urlencode($algo);
