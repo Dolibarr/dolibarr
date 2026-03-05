@@ -389,37 +389,6 @@ class modQuickMemo extends DolibarrModules
 
 		$sql = array();
 
-		// Document templates
-		//      $moduledir = dol_sanitizeFileName('quickmemo');
-		//      $myTmpObjects = array();
-		//      $myTmpObjects['Memo'] = array('includerefgeneration' => 0, 'includedocgeneration' => 0);
-		//
-		//      foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
-		//          if ($myTmpObjectArray['includerefgeneration']) {
-		//              $src = DOL_DOCUMENT_ROOT.'/install/doctemplates/'.$moduledir.'/template_memos.odt';
-		//              $dirodt = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/'.$moduledir;
-		//              $dest = $dirodt.'/template_memos.odt';
-		//
-		//              if (file_exists($src) && !file_exists($dest)) {
-		//                  require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-		//                  dol_mkdir($dirodt);
-		//                  $result = dol_copy($src, $dest, '0', 0);
-		//                  if ($result < 0) {
-		//                      $langs->load("errors");
-		//                      $this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
-		//                      return 0;
-		//                  }
-		//              }
-		//
-		//              $sql = array_merge($sql, array(
-		//                  "DELETE FROM ".$this->db->prefix()."document_model WHERE nom = 'standard_".strtolower($myTmpObjectKey)."' AND type = '".$this->db->escape(strtolower($myTmpObjectKey))."' AND entity = ".((int) $conf->entity),
-		//                  "INSERT INTO ".$this->db->prefix()."document_model (nom, type, entity) VALUES('standard_".strtolower($myTmpObjectKey)."', '".$this->db->escape(strtolower($myTmpObjectKey))."', ".((int) $conf->entity).")",
-		//                  "DELETE FROM ".$this->db->prefix()."document_model WHERE nom = 'generic_".strtolower($myTmpObjectKey)."_odt' AND type = '".$this->db->escape(strtolower($myTmpObjectKey))."' AND entity = ".((int) $conf->entity),
-		//                  "INSERT INTO ".$this->db->prefix()."document_model (nom, type, entity) VALUES('generic_".strtolower($myTmpObjectKey)."_odt', '".$this->db->escape(strtolower($myTmpObjectKey))."', ".((int) $conf->entity).")"
-		//              ));
-		//          }
-		//      }
-
 		return $this->_init($sql, $options);
 	}
 
