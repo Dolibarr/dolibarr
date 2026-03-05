@@ -217,6 +217,10 @@ class ViewImageController extends Controller
 			$accessallowed = $check_access['accessallowed'];
 			$sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 			$fullpath_original_file = $check_access['original_file']; // $fullpath_original_file is now a full path name
+		} else {
+			$accessallowed = $parameters['accessallowed'];
+			$sqlprotectagainstexternals = $parameters['sqlprotectagainstexternals'];
+			$fullpath_original_file = $parameters['original_file']; // $fullpath_original_file is now a full path name
 		}
 
 		if (!empty($hashp)) {
