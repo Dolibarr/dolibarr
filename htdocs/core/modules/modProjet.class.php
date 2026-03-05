@@ -316,7 +316,7 @@ class modProjet extends DolibarrModules
 			}
 		}
 		// End add extra fields
-		$this->import_fieldshidden_array[$r] = array('t.fk_user_creat'=>'user->id', 'extra.fk_object'=>'lastrowid-'.MAIN_DB_PREFIX.'projet'); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
+		$this->import_fieldshidden_array[$r] = array('t.fk_user_creat'=>'user->id', 't.fk_user_modif'=>'user->id', 'extra.fk_object'=>'lastrowid-'.MAIN_DB_PREFIX.'projet'); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
 		$this->import_convertvalue_array[$r] = array(
 			't.ref' => array(
 				'rule' => 'getrefifauto',
