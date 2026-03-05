@@ -4560,7 +4560,7 @@ function dol_print_email($email, $contactid = 0, $socid = 0, $addlink = 0, $max 
  * 										false or 'tzserver' => output string is for local PHP server TZ usage
  * 										'tzuser' => output string is for user TZ (current browser TZ with current dst) => In a future, we should have same behaviour than 'tzuserrel'
  *                                 	    'tzuserrel' => output string is for user TZ (current browser TZ with dst or not, depending on date position)
- * @param	string 		$reduceformat	Use 1 to use a reduce format
+ * @param	int 		$reduceformat	Use 1 to use a reduce format
  * @return	string						Decorated date
  */
 function dolOutputDates($datep, $datef = null, $fullday = 0, $addseconds = 0, $pictotoadd = '', $tzoutput = 'tzuserrel', $reduceformat = 0)

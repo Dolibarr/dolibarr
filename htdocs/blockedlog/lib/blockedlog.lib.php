@@ -384,13 +384,16 @@ function callApiToPushCounter($id, $signature, $test, $previousid, $previoussign
 		$url_for_ping = getDolGlobalString('MAIN_URL_FOR_PING', "https://ping.dolibarr.org/");
 
 		$algo = 'sha256';
-		$hash_unique_id = getHashUniqueIdOfRegistration($algo);
+		$hash_unique_id = getHashUniqueIdOfRegistration($algo);		// The hash of the unique IDof instance
+
+		$t = microtime(true);
+		$micro = sprintf("%06d", ($t - floor($t)) * 1000000);
 
 		$data = '';
 		$data .= 'hash_algo=dol_hash-'.urlencode($algo);
 		$data .= '&hash_unique_id='.urlencode($hash_unique_id);
 		$data .= '&action=dolibarrpushcounter';
-		$data .= '&datesys='.urlencode(dol_print_date(dol_now(), 'standard', 'gmt'));
+		$data .= '&datesys='.urlencode(dol_print_date(dol_now('gmt'), 'standard', 'gmt').'.'.$micro);
 		$data .= '&version='.(float) DOL_VERSION;
 		$data .= '&version_full='.urlencode(DOL_VERSION);
 		$data .= '&versionblockedlog='.(float) getBlockedLogVersionToShow();

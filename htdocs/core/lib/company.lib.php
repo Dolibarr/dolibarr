@@ -2259,7 +2259,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		}
 	}
 
-	'@phan-var-force array<int,array{userid:int,type:string,tododone:string,apicto:string,acode:string,alabel:string,note:string,id:int,percent:int<0,100>,datestart:int,dateend:int,fk_element:string,elementtype:string,contact_id:int,lastname:string,firstname:string,contact_photo:string,socpeopleassigned:int[],login:string,userfirstname:string,userlastname:string,userphoto:string}> $histo';
+	'@phan-var-force array<int,array{userid:int,type:string,tododone:string,apicto:string,acode:string,alabel:string,note:string,id:int,percent:int<0,100>,datestart:int,dateend:int,fulldayevent:int,fk_element:string,elementtype:string,contact_id:int,lastname:string,firstname:string,contact_photo:string,socpeopleassigned:int[],login:string,userfirstname:string,userlastname:string,userphoto:string}> $histo';
 
 	if (isModEnabled('agenda') || (isModEnabled('mailing') && !empty($objcon->email))) {
 		$delay_warning = getDolGlobalInt('MAIN_DELAY_ACTIONS_TODO') * 24 * 60 * 60;
@@ -2422,7 +2422,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 			// Date
 			$out .= '<td class="center nowraponall nopaddingtopimp nopaddingbottomimp">';
 
-			$out .= dolOutputDates($histo[$key]['datestart'], $histo[$key]['dateend'], $histo[$key]['fulldayevent'], 0, '', 'tzuserrel', 1);
+			$out .= dolOutputDates($histo[$key]['datestart'], $histo[$key]['dateend'], (int) $histo[$key]['fulldayevent'], 0, '', 'tzuserrel', 1);
 
 			// Add the late warning
 			$late = 0;
