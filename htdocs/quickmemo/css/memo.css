@@ -387,6 +387,11 @@ input[type="color"].quickmemo-color-input {
 	line-height: 1.2;
 	color: inherit;
 }
+
+.quickmemo-markdown-preview .markdown-line:first-child > :is(h1, h2, h3, h4, h5) {
+	margin-top: 0;
+}
+
 .quickmemo-markdown-preview .markdown-line:has(:is(h1, h2, h3, h4, h5)) + .markdown-line.empty-line {
 	display: none;
 }
