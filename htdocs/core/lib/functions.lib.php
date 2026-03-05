@@ -7087,11 +7087,12 @@ function print_liste_field_titre($name, $file = "", $field = "", $begin = "", $p
  *  @param	int<0,1>	$disablesortlink			1=Disable sort link
  *  @param	?string		$tooltip 					Text of tooltip with syntax 'Tooltip' or 'Tooltip:[keytoenabledtheonclicktooltip]:[tooltipdirection]'
  *  @param	int<0,1> 	$forcenowrapcolumntitle		No need to use 'wrapcolumntitle' css style
+ *  @param	string		$contextpagedraganddrop		Context page for drag and drop feature ("" by default and drag and drop disabled)
  *	@return	string
  */
-function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin = "", $moreparam = "", $moreattrib = "", $sortfield = "", $sortorder = "", $prefix = "", $disablesortlink = 0, $tooltip = '', $forcenowrapcolumntitle = 0)
+function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin = "", $moreparam = "", $moreattrib = "", $sortfield = "", $sortorder = "", $prefix = "", $disablesortlink = 0, $tooltip = '', $forcenowrapcolumntitle = 0, $contextpagedraganddrop = "")
 {
-	global $langs, $form;
+	global $langs, $form, $user;
 	//print "$name, $file, $field, $begin, $options, $moreattrib, $sortfield, $sortorder<br>\n";
 
 	if ($moreattrib == 'class="right"') {
@@ -7134,7 +7135,7 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 		$liste_titre = 'liste_titre_sel';
 	}
 
-	$tagstart = '<' . $tag . ' class="' . $prefix . $liste_titre . '" ' . $moreattrib;
+	$tagstart = '<' . $tag . (!empty($field) ? ' id="'.$field.'"' : '') .' class="' . $prefix . $liste_titre . '" ' . $moreattrib;
 	//$out .= (($field && empty($conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE) && preg_match('/^[a-zA-Z_0-9\s\.\-:&;]*$/', $name)) ? ' title="'.dol_escape_htmltag($langs->trans($name)).'"' : '');
 	$tagstart .= ($name && !getDolGlobalString('MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE') && $wrapcolumntitle && !dol_textishtml($name)) ? ' title="' . dolPrintHTMLForAttribute($langs->trans($name)) . '"' : '';
 	$tagstart .= '>';
@@ -7195,11 +7196,39 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 				$sortimg .= '<span class="nowrap">' . img_down("A-Z", 0, 'paddingright') . '</span>';
 			}
 		}
+		if (!empty($contextpagedraganddrop)) {
+			$out .= img_picto($langs->trans("MoveTitle".$name), 'grip_title', 'class="opacitymedium boxhandle hideonsmartphone cursormove marginleftonly"');
+		}
 	}
 
 	$tagend = '</' . $tag . '>';
 
 	$out = $tagstart . $sortimg . $out . $tagend;
+
+	if (!empty($contextpagedraganddrop)) {
+		$out .= '<script>
+			function updateFieldOrder() {
+				var positionfields = $(".sortable").sortable("toArray");
+				$.ajax({
+					url: \''.DOL_URL_ROOT.'/core/ajax/changepositionfields.php?positionfields=\'+positionfields+\'&token='.newToken().'&action=listafterchangingpositionfields&contextpage='.$contextpagedraganddrop.'&userid='.$user->id.'\',
+					async: false,
+					success: function () {
+						// realod page
+						window.location.href = "'.$_SERVER["PHP_SELF"].'";
+					}
+				});
+			}
+			$( ".sortable" ).sortable({
+				handle: \'.boxhandle\',
+				revert: \'invalid\',
+				items: \'.boxsortable\',
+				stop: function(event, ui) {
+					console.log("We moved box so we call updateBoxOrder with ajax actions");
+					updateFieldOrder();  /* 1 to avoid message after a move */
+				}
+			});
+		</script>';
+	}
 
 	return $out;
 }
