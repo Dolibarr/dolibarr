@@ -165,6 +165,17 @@ if (getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 	unset($arrayfields['pl.eatby']);
 }
 
+if (!getDolGlobalString('STOCK_SUPPORT_SERVICES')) {
+	$usercanreadsupplierprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'read_supplier_prices') : $user->hasRight('product', 'lire');
+} elseif (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
+	$usercanreadsupplierprice = $user->hasRight('product', 'product_advance', 'read_supplier_prices') || $user->hasRight('product', 'service_advance', 'read_supplier_prices');
+} else {
+	$usercanreadsupplierprice = $user->hasRight('product', 'lire') || $user->hasRight('service', 'lire');
+}
+
+if (!$usercanreadsupplierprice) {
+	unset($arrayfields['m.price']);
+}
 
 $tmpwarehouse = new Entrepot($db);
 if ($id > 0 || !empty($ref)) {
@@ -944,9 +955,11 @@ if ($warehouse->id > 0) {
 	print '<table class="border centpercent tableforfield">';
 
 	// Value
-	print '<tr><td class="titlefield">'.$langs->trans("EstimatedStockValueShort").'</td><td>';
-	print price((empty($calcproducts['value']) ? '0' : price2num($calcproducts['value'], 'MT')), 0, $langs, 0, -1, -1, $conf->currency);
-	print "</td></tr>";
+	if ($usercanreadsupplierprice) {
+		print '<tr><td class="titlefield">'.$langs->trans("EstimatedStockValueShort").'</td><td>';
+		print price((empty($calcproducts['value']) ? '0' : price2num($calcproducts['value'], 'MT')), 0, $langs, 0, -1, -1, $conf->currency);
+		print "</td></tr>";
+	}
 
 	// Last movement
 	$sql = "SELECT MAX(m.datem) as datem";
@@ -1629,12 +1642,13 @@ while ($i < $imaxinloop) {
 		}
 		// Price
 		if (!empty($arrayfields['m.price']['checked'])) {
-			$usercancreadsupplierprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'read_supplier_prices') : $user->hasRight('product', 'lire');
+			// Product and service differentiation, if we have permissions for only one of them
+			$displayprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'read_supplier_prices') : $user->hasRight('product', 'lire');
 			if ($productstatic->isService()) {
-				$usercancreadsupplierprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('service', 'service_advance', 'read_supplier_prices') : $user->hasRight('service', 'lire');
+				$displayprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('service', 'service_advance', 'read_supplier_prices') : $user->hasRight('service', 'lire');
 			}
 			print '<td class="right">';
-			if ($obj->price != 0 && $usercancreadsupplierprice) {
+			if ($obj->price != 0 && $displayprice) {
 				print price($obj->price);
 			}
 			print '</td>';
