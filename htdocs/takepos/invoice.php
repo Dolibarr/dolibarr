@@ -2193,8 +2193,12 @@ if ($placeid > 0) {
 					$moreinfo .= '<br>'.$langs->trans("VATCode").': '.$line->vat_src_code;
 				}
 				$moreinfo .= '<br>'.$langs->trans("TotalVAT").': '.price($line->total_tva);
-				$moreinfo .= '<br>'.$langs->transcountry("TotalLT1", $mysoc->country_code).': '.price($line->total_localtax1);
-				$moreinfo .= '<br>'.$langs->transcountry("TotalLT2", $mysoc->country_code).': '.price($line->total_localtax2);
+				if ($mysoc->useLocalTax(1, 1, $mysoc)) {
+					$moreinfo .= '<br>'.$langs->transcountry("TotalLT1", $mysoc->country_code).': '.price($line->total_localtax1);
+				}
+				if ($mysoc->useLocalTax(2, 1, $mysoc)) {
+					$moreinfo .= '<br>'.$langs->transcountry("TotalLT2", $mysoc->country_code).': '.price($line->total_localtax2);
+				}
 				$moreinfo .= '<hr>';
 				$moreinfo .= $langs->transcountry("TotalTTC", $mysoc->country_code).': '.price($line->total_ttc);
 				//$moreinfo .= $langs->trans("TotalHT").': '.$line->total_ht;

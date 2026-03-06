@@ -415,6 +415,7 @@ class pdf_sponge extends ModelePDFFactures
 
 					// Do not take into account lines of the type “deposit.”
 					$is_deposit = false;
+					$reg = array();
 					if (preg_match('/^\((.*)\)$/', $object->lines[$i]->desc, $reg)) {
 						if ($reg[1] == 'DEPOSIT') {
 							$is_deposit = true;

@@ -9,9 +9,13 @@ END=23
 DEV_DIR="dolibarr_dev"
 DEV_BRANCH="develop"
 
+if [ "x$2" != "x" ]; then
+	START=$2
+fi
 
 if [ -z "$param1" ]; then
-    echo "Usage: $0 <pull|merge|all>"
+    echo "Usage: $0 <pull|merge|all>  [xx]"
+    echo "       where xx is version to start from (14, 18, ...)"
     echo
     echo "Example:"
     echo "$0 pull   # For pull only"
